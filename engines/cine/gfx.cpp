@@ -145,7 +145,7 @@ uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
 	else if (oriB > 7)
 		oriB = 7;
 
-	return (oriR | (oriG << 4) | (oriB << 8));
+	return oriR | (oriG << 4) | (oriB << 8);
 }
 
 void transformPaletteRange(byte startColor, byte stopColor, int8 r, int8 g, int8 b) {
@@ -235,7 +235,7 @@ int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width) {
 		return 0;
 	}
 
-	return (1);
+	return 1;
 }
 
 void gfxResetRawPage(byte *pageRaw) {

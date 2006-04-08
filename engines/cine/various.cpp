@@ -221,7 +221,7 @@ int16 stopObjectScript(int16 entryIdx) {
 		currentHead = currentHead->next;
 	}
 
-	return (-1);
+	return -1;
 }
 
 void runObjectScript(int16 entryIdx) {
@@ -306,7 +306,7 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 				objX = objectTable[currentHead->objIdx].x;
 				objY = objectTable[currentHead->objIdx].y;
 
-				frame = abs((int16)(objectTable[currentHead->objIdx].frame));
+				frame = ABS((int16)(objectTable[currentHead->objIdx].frame));
 
 				part = objectTable[currentHead->objIdx].part;
 
@@ -725,7 +725,7 @@ int16 makeLoad(char *saveName) {
 		}*/
 	}
 
-	return (0);
+	return 0;
 }
 
 void makeSave(char *saveFileName) {
@@ -1108,7 +1108,7 @@ int16 buildObjectListCommand(void) {
 		}
 	}
 
-	return (j);
+	return j;
 }
 
 int16 buildObjectListCommand2(int16 param) {
@@ -1131,7 +1131,7 @@ int16 buildObjectListCommand2(int16 param) {
 		}
 	}
 
-	return (j);
+	return j;
 }
 
 int16 selectSubObject(int16 x, int16 y) {
@@ -1986,38 +1986,26 @@ uint16 executePlayerInput(void) {
 
 		switch (globalVars[VAR_MOUSE_X_MODE]) {
 		case 1:
-			{
-				mouseX = objectTable[1].x + 12;
-				break;
-			}
+			mouseX = objectTable[1].x + 12;
+			break;
 		case 2:
-			{
-				mouseX = objectTable[1].x + 7;
-				break;
-			}
+			mouseX = objectTable[1].x + 7;
+			break;
 		default:
-			{
-				mouseX = globalVars[VAR_MOUSE_X_POS];
-				break;
-			}
+			mouseX = globalVars[VAR_MOUSE_X_POS];
+			break;
 		}
 
 		switch (globalVars[VAR_MOUSE_Y_MODE]) {
 		case 1:
-			{
-				mouseY = objectTable[1].y + 34;
-				break;
-			}
+			mouseY = objectTable[1].y + 34;
+			break;
 		case 2:
-			{
-				mouseY = objectTable[1].y + 28;
-				break;
-			}
+			mouseY = objectTable[1].y + 28;
+			break;
 		default:
-			{
-				mouseY = globalVars[VAR_MOUSE_Y_POS];
-				break;
-			}
+			mouseY = globalVars[VAR_MOUSE_Y_POS];
+			break;
 		}
 
 		if (var_5E == bgVar0) {
@@ -2053,71 +2041,53 @@ uint16 executePlayerInput(void) {
 
 		switch (var_2 - 59) {
 		case 0:
-			{
-				if (allowPlayerInput) {
-					playerCommand = 0;
-					makeCommandLine();
-				}
-				break;
+			if (allowPlayerInput) {
+				playerCommand = 0;
+				makeCommandLine();
 			}
+			break;
 		case 1:
-			{
-				if (allowPlayerInput) {
-					playerCommand = 1;
-					makeCommandLine();
-				}
-				break;
+			if (allowPlayerInput) {
+				playerCommand = 1;
+				makeCommandLine();
 			}
+			break;
 		case 2:
-			{
-				if (allowPlayerInput) {
-					playerCommand = 2;
-					makeCommandLine();
-				}
-				break;
+			if (allowPlayerInput) {
+				playerCommand = 2;
+				makeCommandLine();
 			}
+			break;
 		case 3:
-			{
-				if (allowPlayerInput) {
-					playerCommand = 3;
-					makeCommandLine();
-				}
-				break;
+			if (allowPlayerInput) {
+				playerCommand = 3;
+				makeCommandLine();
 			}
+			break;
 		case 4:
-			{
-				if (allowPlayerInput) {
-					playerCommand = 4;
-					makeCommandLine();
-				}
-				break;
+			if (allowPlayerInput) {
+				playerCommand = 4;
+				makeCommandLine();
 			}
+			break;
 		case 5:
-			{
-				if (allowPlayerInput) {
-					playerCommand = 5;
-					makeCommandLine();
-				}
-				break;
+			if (allowPlayerInput) {
+				playerCommand = 5;
+				makeCommandLine();
 			}
+			break;
 		case 6:
 		case 7:
 		case 8:
 		case 23:
-			{
-				break;
-			}
+			break;
 		case 9:
 		case 24:
-			{
-				makeSystemMenu();
-				break;
-			}
+			makeSystemMenu();
+			break;
 		default:
-			{
-				//  printf("Unhandled case %d in last part of executePLayerInput\n",var2-59);
-				break;
-			}
+			//  printf("Unhandled case %d in last part of executePLayerInput\n",var2-59);
+			break;
 		}
 	}
 
@@ -2132,7 +2102,7 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 	uint16 si = 0;
 	overlayHeadElement *pCurrentOverlay = currentOverlay;
 
-	while(pCurrentOverlay) { // unfinished, probably for mask handling..
+	while (pCurrentOverlay) { // unfinished, probably for mask handling..
 		if (pCurrentOverlay->type == 5) {
 			int16 maskX;
 			int16 maskY;
@@ -2159,7 +2129,7 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 		pCurrentOverlay = pCurrentOverlay->next;
 	} 
 	 
-	if(si) {
+	if (si) {
 		gfxSpriteFunc1(ptr, width, height, page, x, y);
 		free(ptr);
 	} else
@@ -2259,7 +2229,7 @@ uint16 computeMessageLength(byte *ptr, uint16 width, uint16 *numWords, uint16 *m
 	*messageWidth = localMessageWidth;
 	*lineResult = si;
 
-	return (di);
+	return di;
 }
 
 void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
@@ -2733,13 +2703,13 @@ void resetGfxEntityEntry(uint16 objIdx) {
 	byte* var_1A = NULL;
 	overlayHeadElement* var1E = &overlayHead;
 
-	while(currentHead) {
+	while (currentHead) {
 		tempHead2 = currentHead->next;
 
-		if(currentHead->objIdx == objIdx && currentHead->type!=2 && currentHead->type!=3 && currentHead->type!=0x14) {
+		if (currentHead->objIdx == objIdx && currentHead->type!=2 && currentHead->type!=3 && currentHead->type!=0x14) {
 			tempHead->next = tempHead2;
 
-			if(tempHead2) {
+			if (tempHead2) {
 				tempHead2->previous = currentHead->previous;
 			} else {
 				seqVar0 = currentHead->previous;
@@ -2747,7 +2717,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 
 			var_22 = var_16;
 
-			if(!var_22) {
+			if (!var_22) {
 				// todo: goto?
 			}
 
@@ -2755,17 +2725,17 @@ void resetGfxEntityEntry(uint16 objIdx) {
 		} else {
 		}
 
-		if(currentHead->type == 0x14) {
+		if (currentHead->type == 0x14) {
 		} else {
 		}
 
-		if(currentHead->type == 0x2 || currentHead->type == 0x3) {
+		if (currentHead->type == 0x2 || currentHead->type == 0x3) {
 			si = 10000;
 		} else {
 			si = objectTable[currentHead->objIdx];
 		}
 
-		if(objectTable[objIdx]>si) {
+		if (objectTable[objIdx]>si) {
 			var1E = currentHead;
 		}
 
@@ -2779,11 +2749,11 @@ void resetGfxEntityEntry(uint16 objIdx) {
 		var_1E->next = currentHead;
 		var_1A->next = var_22;
 
-		if(var_1E != &gfxEntityHead) {
+		if (var_1E != &gfxEntityHead) {
 			currentHead->previous = var_1E;
 		}
 
-		if(!var_22) {
+		if (!var_22) {
 			seqVar0 = var_1A;
 		} else {
 			var_22->previous = var_1A;

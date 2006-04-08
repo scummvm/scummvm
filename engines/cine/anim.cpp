@@ -238,7 +238,7 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 
 	frameVar0++;
 
-	return (i);
+	return i;
 }
 
 int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
@@ -288,7 +288,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 
 	frameVar0++;
 
-	return (i);
+	return i;
 }
 
 int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
@@ -332,7 +332,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 
 	frameVar0++;
 
-	return (i);
+	return i;
 }
 
 void generateMask(byte * sprite, byte * mask, uint16 size, byte transparency) {

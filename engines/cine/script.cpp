@@ -121,10 +121,10 @@ uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
 	}
 
 	if (currentHead && currentHead->var6 == param1 && currentHead->var4 == param2 && currentHead->varE == param3) {
-		return (1);
+		return 1;
 	}
 
-	return (0);
+	return 0;
 }
 
 scriptStruct scriptTable[NUM_MAX_SCRIPT];
@@ -327,7 +327,7 @@ uint16 computeScriptStackSub(byte mode, byte *scriptPtr, int16 *stackPtr, uint16
 					stackPtr[di] = position;
 				} else {
 					if (param1 == di) {
-						return (position);
+						return position;
 					}
 				}
 
@@ -434,7 +434,7 @@ uint16 computeScriptStackSub(byte mode, byte *scriptPtr, int16 *stackPtr, uint16
 
 	} while (!exitScript);
 
-	return (position);
+	return position;
 }
 
 void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize) {
@@ -540,7 +540,7 @@ int16 endScript0(uint16 scriptIdx) {
 
 	currentHead->scriptIdx = -1;
 
-	return (0);
+	return 0;
 }
 
 int16 endScript1(uint16 scriptIdx) {
@@ -564,7 +564,7 @@ int16 endScript1(uint16 scriptIdx) {
 
 	currentHead->scriptIdx = -1;
 
-	return (0);
+	return 0;
 }
 
 int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
@@ -577,7 +577,7 @@ int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
 		zoneVar = (*(ptr)) & 0xF;
 	}
 
-	return (zoneVar);
+	return zoneVar;
 }
 
 int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
@@ -586,7 +586,7 @@ int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 
 	zoneVar = (*(ptr)) & 0xF;
 
-	return (zoneVar);
+	return zoneVar;
 }
 
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
@@ -600,7 +600,7 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 	for (i = 0; i < numZones; i++) {
 		int16 idx;
 
-		// if(gameType == GAME_OS)
+		// if (gameType == GAME_OS)
 		{
 			idx = getZoneFromPositionRaw(page3Raw, lx + i, ly, 320);
 		}
@@ -2021,34 +2021,20 @@ byte compareString2[256];
 byte *getObjPramName(byte paramIdx) {
 	switch (paramIdx) {
 	case 1:
-		{
-			return (".X");
-		}
+		return ".X";
 	case 2:
-		{
-			return (".Y");
-		}
+		return ".Y";
 	case 3:
-		{
-			return (".mask");
-		}
+		return ".mask";
 	case 4:
-		{
-			return (".frame");
-		}
+		return ".frame";
 	case 5:
-		{
-			return (".status");
-		}
+		return ".status";
 	case 6:
-		{
-			return (".costume");
-		}
+		return ".costume";
 	default:
-		{
-			sprintf(bufferDec, ".param%d", paramIdx);
-			return (bufferDec);
-		}
+		sprintf(bufferDec, ".param%d", paramIdx);
+		return bufferDec;
 	}
 }
 
