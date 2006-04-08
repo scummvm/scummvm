@@ -1013,20 +1013,31 @@ void ScummEngine_v2::o2_drawSentence() {
 		// The prepositions, like the fonts, were hard code in the engine. Thus
 		// we have to do that, too, and provde localized versions for all the
 		// languages MM/Zak are available in.
-		//
-		// The order here matches the one defined in gameDetector.h
 		const char *prepositions[][5] = {
-			{ " ", " in", " with", " on", " to" },	// English
-			{ " ", " mit", " mit", " mit", " zu" },	// German
-			{ " ", " dans", " avec", " sur", " <" },	// French
-			{ " ", " in", " con", " su", " a" },	// Italian
-			{ " ", " in", " with", " on", " to" },	// Portugese
-			{ " ", " en", " con", " en", " a" },	// Spanish
-			{ " ", " in", " with", " on", " to" },	// Japanese
-			{ " ", " in", " with", " on", " to" },	// Chinese
-			{ " ", " in", " with", " on", " to" }	// Korean
+			{ " ", " in", " with", " on", " to" },   // English
+			{ " ", " mit", " mit", " mit", " zu" },  // German
+			{ " ", " dans", " avec", " sur", " <" }, // French
+			{ " ", " in", " con", " su", " a" },     // Italian
+			{ " ", " en", " con", " en", " a" },     // Spanish
 			};
-		int lang = (_language <= 8) ? _language : 0;	// Default to english
+		int lang;
+		switch (_language) {
+		case Common::DE_DEU:
+			lang = 1;
+			break;
+		case Common::FR_FRA:
+			lang = 2;
+			break;
+		case Common::IT_ITA:
+			lang = 3;
+			break;
+		case Common::ES_ESP:
+			lang = 4;
+			break;
+		default:
+			lang = 0;	// Default to english
+		}
+
 		if (_game.platform == Common::kPlatformNES) {
 			strcat(sentence, (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2));
 		} else
