@@ -1160,10 +1160,10 @@ void o1_loadVar() {
 			error("executeScript: o1_loadVar: Unknown variable type %d", varType);
 		}
 	} else {
-		int16 newData = getNextWord();
+		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] = %d", varIdx, newData);
-		_currentScriptElement->localVars[varIdx] = newData;
+		DEBUG_SCRIPT(_currentLine, "var[%d] = %d", varIdx, value);
+		_currentScriptElement->localVars[varIdx] = value;
 	}
 }
 
@@ -1177,10 +1177,10 @@ void o1_addVar() {
 		DEBUG_SCRIPT(_currentLine, "var[%d] += var[%d]", varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] += _currentScriptElement->localVars[dataIdx];
 	} else {
-		int16 newData = getNextWord();
+		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] += %d", varIdx, newData);
-		_currentScriptElement->localVars[varIdx] += newData;
+		DEBUG_SCRIPT(_currentLine, "var[%d] += %d", varIdx, value);
+		_currentScriptElement->localVars[varIdx] += value;
 	}
 }
 
@@ -1194,10 +1194,10 @@ void o1_subVar() {
 		DEBUG_SCRIPT(_currentLine, "var[%d] -= var[%d]", varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] -= _currentScriptElement->localVars[dataIdx];
 	} else {
-		int16 newData = getNextWord();
+		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] -= %d", varIdx, newData);
-		_currentScriptElement->localVars[varIdx] -= newData;
+		DEBUG_SCRIPT(_currentLine, "var[%d] -= %d", varIdx, value);
+		_currentScriptElement->localVars[varIdx] -= value;
 	}
 }
 
@@ -1211,10 +1211,10 @@ void o1_mulVar() {
 		DEBUG_SCRIPT(_currentLine, "var[%d] *= var[%d]", varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] *= _currentScriptElement->localVars[dataIdx];
 	} else {
-		int16 newData = getNextWord();
+		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] *= %d", varIdx, newData);
-		_currentScriptElement->localVars[varIdx] *= newData;
+		DEBUG_SCRIPT(_currentLine, "var[%d] *= %d", varIdx, value);
+		_currentScriptElement->localVars[varIdx] *= value;
 	}
 }
 
@@ -1228,10 +1228,10 @@ void o1_divVar() {
 		DEBUG_SCRIPT(_currentLine, "var[%d] /= var[%d]", varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] /= _currentScriptElement->localVars[dataIdx];
 	} else {
-		int16 newData = getNextWord();
+		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] /= %d", varIdx, newData);
-		_currentScriptElement->localVars[varIdx] /= newData;
+		DEBUG_SCRIPT(_currentLine, "var[%d] /= %d", varIdx, value);
+		_currentScriptElement->localVars[varIdx] /= value;
 	}
 }
 
@@ -1249,13 +1249,11 @@ void o1_compareVar() {
 			assert(dataIdx < 50);
 
 			DEBUG_SCRIPT(_currentLine, "compare var[%d] and var[%d]", varIdx, dataIdx);
-
 			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], _currentScriptElement->localVars[dataIdx]);
 		} else if (varType == 2) {
-			DEBUG_SCRIPT(_currentLine, "compare var[%d] and globalVar[%d]", varIdx, dataIdx);
-
 			assert(varIdx < 50);
 
+			DEBUG_SCRIPT(_currentLine, "compare var[%d] and globalVar[%d]", varIdx, dataIdx);
 			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], globalVars[dataIdx]);
 		}
 	} else {
@@ -1629,10 +1627,10 @@ void o1_loadGlobalVar() {
 			globalVars[varIdx] = globalVars[dataIdx];
 		}
 	} else {
-		uint16 newData = getNextWord();
+		uint16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "globalVars[%d] = %d", varIdx, newData);
-		globalVars[varIdx] = newData;
+		DEBUG_SCRIPT(_currentLine, "globalVars[%d] = %d", varIdx, value);
+		globalVars[varIdx] = value;
 	}
 }
 
@@ -1646,14 +1644,14 @@ void o1_compareGlobalVar() {
 		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and var[%d]", varIdx, value);
 		_currentScriptElement->compareResult = compareVars(globalVars[varIdx], _currentScriptElement->localVars[value]);
 	} else {
-		uint16 newData = getNextWord();
+		uint16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and %d", varIdx, newData);
+		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and %d", varIdx, value);
 
 		if (varIdx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
 			_currentScriptElement->compareResult = 1;
 		} else {
-			_currentScriptElement->compareResult = compareVars(globalVars[varIdx], newData);
+			_currentScriptElement->compareResult = compareVars(globalVars[varIdx], value);
 		}
 	}
 }
