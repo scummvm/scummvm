@@ -61,7 +61,7 @@ struct ObsoleteGameID {
 	Common::Platform platform;
 };
 
-static const Common::Platform UNK = Common::kPlatformUnknown;
+#define UNK Common::kPlatformUnknown
 
 
 
@@ -152,8 +152,6 @@ static const PlainGameDescriptor gameDescriptions[] = {
 /**
  * Conversion table mapping old obsolete game IDs to the
  * corresponding new game ID and platform combination.
- *
- * We use an ugly macro 'UNK' here to make the following table more readable.
  */
 static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"bluesabctimedemo", "bluesabctime", UNK},
@@ -188,7 +186,7 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{NULL, NULL, UNK}
 };
 
-static const ScummGameSettings scumm_settings[] = {
+static const GameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
@@ -389,10 +387,10 @@ static const ScummGameSettings scumm_settings[] = {
 
 // The following table contains information about variants of our various games.
 // We index into it with help of md5table (from scumm-md5.h), to find the correct
-// ScummGameSettings for a given game variant.
+// GameSettings for a given game variant.
 //
 // Note: This will probably eventually be merged with the scumm_settings table.
-static const ScummGameSettings extra_versions[] = {
+static const GameSettings extra_versions[] = {
 	// The C64 version of MM is detected via the platform field and hence has no seperate entry in this list
 	{"maniac", "V2",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"maniac", "NES", GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
@@ -496,7 +494,6 @@ static const ScummGameSettings extra_versions[] = {
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, UNK}
 };
-
 
 static const SubstResFileNames substResFileNameTable[] = {
 	// The first few entries for 00.LFL/01.LFL files are here for two reasons:
@@ -727,6 +724,7 @@ static const SubstResFileNames substResFileNameTable[] = {
 	{ NULL, NULL, kGenAsIs }
 };
 
+
 #pragma mark -
 #pragma mark --- Miscellaneous ---
 #pragma mark -
@@ -885,7 +883,7 @@ enum {
 	kDetectNameMethodsCount = 8
 };
 
-static bool generateDetectName(const ScummGameSettings *g, int method, char *detectName) {
+static bool generateDetectName(const GameSettings *g, int method, char *detectName) {
 	detectName[0] = '\0';
 
 	switch (method) {
@@ -944,7 +942,7 @@ static bool generateDetectName(const ScummGameSettings *g, int method, char *det
 
 DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const ScummGameSettings *g;
+	const GameSettings *g;
 	char detectName[128];
 	char tempName[128];
 	SubstResFileNames subst = { 0, 0, kGenAsIs };
@@ -1215,7 +1213,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	// Lookup the game ID in our database. If this lookup fails, then
 	// the game ID is unknown, and we have to abort.
-	const ScummGameSettings *g = scumm_settings;
+	const GameSettings *g = scumm_settings;
 	while (g->gameid) {
 		if (!scumm_stricmp(detector->_gameid.c_str(), g->gameid))
 			break;
@@ -1233,7 +1231,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	SubstResFileNames subst = { 0, 0, kGenAsIs };
 	bool found = false;
 
-	ScummGameSettings game = *g;
+	GameSettings game = *g;
 
 	// To this end, we first have to figure out what the proper detection file
 	// is (00.LFL, 000.LFL, ...). So we iterate over all possible names,

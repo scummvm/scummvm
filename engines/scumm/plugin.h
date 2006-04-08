@@ -30,7 +30,7 @@
  * Descriptor of a specific SCUMM game. Used internally to store
  * information about the tons of game variants that exist.
  */
-struct ScummGameSettings {
+struct GameSettings {
 	const char *gameid;
 	const char *variant;
 	byte id, version, heversion;

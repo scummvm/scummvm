@@ -428,7 +428,7 @@ public:
 	ScummDebugger *_debugger;
 
 	// Core variables
-	ScummGameSettings _game;
+	GameSettings _game;
 	uint8 _gameMD5[16];
 
 	/** Random number generator */
@@ -445,7 +445,7 @@ protected:
 
 public:
 	// Constructor / Destructor
-	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 	virtual ~ScummEngine();
 
 	/** Startup function, main loop. */
