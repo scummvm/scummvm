@@ -129,7 +129,7 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 
 	free(currentHeadPtr);
 
-	return (0);
+	return 0;
 }
 
 int16 freeOverlay(uint16 objIdx, uint16 param) {
@@ -216,39 +216,27 @@ void subObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 
 	switch (paramIdx) {
 	case 0:
-		{
-			objectTable[objIdx].x -= newValue;
-			break;
-		}
+		objectTable[objIdx].x -= newValue;
+		break;
 	case 1:
-		{
-			objectTable[objIdx].y -= newValue;
-			break;
-		}
+		objectTable[objIdx].y -= newValue;
+		break;
 	case 2:
-		{
-			objectTable[objIdx].mask -= newValue;
+		objectTable[objIdx].mask -= newValue;
 
-			if (!removeOverlayElement(objIdx, 0)) {
-				loadOverlayElement(objIdx, 0);
-			}
-			break;
+		if (!removeOverlayElement(objIdx, 0)) {
+			loadOverlayElement(objIdx, 0);
 		}
+		break;
 	case 3:
-		{
-			objectTable[objIdx].frame -= newValue;
-			break;
-		}
+		objectTable[objIdx].frame -= newValue;
+		break;
 	case 4:
-		{
-			objectTable[objIdx].costume -= newValue;
-			break;
-		}
+		objectTable[objIdx].costume -= newValue;
+		break;
 	case 5:
-		{
-			objectTable[objIdx].part -= newValue;
-			break;
-		}
+		objectTable[objIdx].part -= newValue;
+		break;
 	}
 }
 
@@ -259,39 +247,27 @@ void addObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 
 	switch (paramIdx) {
 	case 0:
-		{
-			objectTable[objIdx].x += newValue;
-			break;
-		}
+		objectTable[objIdx].x += newValue;
+		break;
 	case 1:
-		{
-			objectTable[objIdx].y += newValue;
-			break;
-		}
+		objectTable[objIdx].y += newValue;
+		break;
 	case 2:
-		{
-			objectTable[objIdx].mask += newValue;
+		objectTable[objIdx].mask += newValue;
 
-			if (!removeOverlayElement(objIdx, 0)) {
-				loadOverlayElement(objIdx, 0);
-			}
-			break;
+		if (!removeOverlayElement(objIdx, 0)) {
+			loadOverlayElement(objIdx, 0);
 		}
+		break;
 	case 3:
-		{
-			objectTable[objIdx].frame += newValue;
-			break;
-		}
+		objectTable[objIdx].frame += newValue;
+		break;
 	case 4:
-		{
-			objectTable[objIdx].costume += newValue;
-			break;
-		}
+		objectTable[objIdx].costume += newValue;
+		break;
 	case 5:
-		{
-			objectTable[objIdx].part += newValue;
-			break;
-		}
+		objectTable[objIdx].part += newValue;
+		break;
 	}
 }
 
@@ -302,43 +278,31 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 
 	switch (paramIdx) {
 	case 0:
-		{
-			objectTable[objIdx].x = newValue;
-			break;
-		}
+		objectTable[objIdx].x = newValue;
+		break;
 	case 1:
-		{
-			objectTable[objIdx].y = newValue;
-			break;
-		}
+		objectTable[objIdx].y = newValue;
+		break;
 	case 2:
-		{
-			objectTable[objIdx].mask = newValue;
+		objectTable[objIdx].mask = newValue;
 
-			if (!removeOverlayElement(objIdx, 0)) {
-				loadOverlayElement(objIdx, 0);
-			}
-			break;
+		if (!removeOverlayElement(objIdx, 0)) {
+			loadOverlayElement(objIdx, 0);
 		}
+		break;
 	case 3:
-		{
-			objectTable[objIdx].frame = newValue;
-			break;
-		}
+		objectTable[objIdx].frame = newValue;
+		break;
 	case 4:
-		{
-			if (newValue == -1) {
-				objectTable[objIdx].costume = globalVars[0];
-			} else {
-				objectTable[objIdx].costume = newValue;
-			}
-			break;
+		if (newValue == -1) {
+			objectTable[objIdx].costume = globalVars[0];
+		} else {
+			objectTable[objIdx].costume = newValue;
 		}
+		break;
 	case 5:
-		{
-			objectTable[objIdx].part = newValue;
-			break;
-		}
+		objectTable[objIdx].part = newValue;
+		break;
 	}
 }
 
@@ -347,94 +311,80 @@ byte compareObjectParam(byte objIdx, byte param1, int16 param2) {
 
 	switch (param1 - 1) {
 	case 0:
-		{
-			if (objectTable[objIdx].x == param2) {
-				compareResult |= 1;
-			}
-
-			if (objectTable[objIdx].x > param2) {
-				compareResult |= 2;
-			}
-
-			if (objectTable[objIdx].x < param2) {
-				compareResult |= 4;
-			}
-
-			break;
+		if (objectTable[objIdx].x == param2) {
+			compareResult |= 1;
 		}
+
+		if (objectTable[objIdx].x > param2) {
+			compareResult |= 2;
+		}
+
+		if (objectTable[objIdx].x < param2) {
+			compareResult |= 4;
+		}
+
+		break;
 	case 1:
-		{
-			if (objectTable[objIdx].y == param2) {
-				compareResult |= 1;
-			}
-
-			if (objectTable[objIdx].y > param2) {
-				compareResult |= 2;
-			}
-
-			if (objectTable[objIdx].y < param2) {
-				compareResult |= 4;
-			}
-
-			break;
+		if (objectTable[objIdx].y == param2) {
+			compareResult |= 1;
 		}
+
+		if (objectTable[objIdx].y > param2) {
+			compareResult |= 2;
+		}
+
+		if (objectTable[objIdx].y < param2) {
+			compareResult |= 4;
+		}
+
+		break;
 	case 2:
-		{
-			if (objectTable[objIdx].mask == param2) {
-				compareResult |= 1;
-			}
-
-			if (objectTable[objIdx].mask > param2) {
-				compareResult |= 2;
-			}
-
-			if (objectTable[objIdx].mask < param2) {
-				compareResult |= 4;
-			}
-
-			break;
+		if (objectTable[objIdx].mask == param2) {
+			compareResult |= 1;
 		}
+
+		if (objectTable[objIdx].mask > param2) {
+			compareResult |= 2;
+		}
+
+		if (objectTable[objIdx].mask < param2) {
+			compareResult |= 4;
+		}
+
+		break;
 	case 3:
-		{
-			if (objectTable[objIdx].frame == param2) {
-				compareResult |= 1;
-			}
-
-			if (objectTable[objIdx].frame > param2) {
-				compareResult |= 2;
-			}
-
-			if (objectTable[objIdx].frame < param2) {
-				compareResult |= 4;
-			}
-
-			break;
+		if (objectTable[objIdx].frame == param2) {
+			compareResult |= 1;
 		}
+
+		if (objectTable[objIdx].frame > param2) {
+			compareResult |= 2;
+		}
+
+		if (objectTable[objIdx].frame < param2) {
+			compareResult |= 4;
+		}
+
+		break;
 	case 4:
-		{
-			if (objectTable[objIdx].costume == param2) {
-				compareResult |= 1;
-			}
-
-			if (objectTable[objIdx].costume > param2) {
-				compareResult |= 2;
-			}
-
-			if (objectTable[objIdx].costume < param2) {
-				compareResult |= 4;
-			}
-
-			break;
+		if (objectTable[objIdx].costume == param2) {
+			compareResult |= 1;
 		}
+
+		if (objectTable[objIdx].costume > param2) {
+			compareResult |= 2;
+		}
+
+		if (objectTable[objIdx].costume < param2) {
+			compareResult |= 4;
+		}
+
+		break;
 	default:
-		{
-			error
-			    ("Unsupported compare type: %d in compareObjectParam",
-			    param1 - 1);
-		}
+		error("Unsupported compare type: %d in compareObjectParam", param1 - 1);
 	}
 
-	return (compareResult);
+	return compareResult;
 }
 
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
@@ -446,35 +396,17 @@ int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 
 	switch (paramIdx) {
 	case 0:
-		{
-			return objectTable[objIdx].x;
-			break;
-		}
+		return objectTable[objIdx].x;
 	case 1:
-		{
-			return objectTable[objIdx].y;
-			break;
-		}
+		return objectTable[objIdx].y;
 	case 2:
-		{
-			return objectTable[objIdx].mask;
-			break;
-		}
+		return objectTable[objIdx].mask;
 	case 3:
-		{
-			return objectTable[objIdx].frame;
-			break;
-		}
+		return objectTable[objIdx].frame;
 	case 4:
-		{
-			return objectTable[objIdx].costume;
-			break;
-		}
+		return objectTable[objIdx].costume;
 	case 5:
-		{
-			return objectTable[objIdx].part;
-			break;
-		}
+		return objectTable[objIdx].part;
 	}
 
 	return 0;
