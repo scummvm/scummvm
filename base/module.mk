@@ -4,7 +4,8 @@ MODULE_OBJS := \
 	engine.o \
 	gameDetector.o \
 	main.o \
-	plugins.o
+	plugins.o \
+	version.o
 
 MODULE_DIRS += \
 	base

@@ -70,10 +70,10 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULE_DIRS))
 DEPFILES = 
 
-# Make main.o depend on all other object files. This way if anything is
-# changed, it causes main.cpp to be recompiled. This in turn ensures that
+# Make base/version.o depend on all other object files. This way if anything is
+# changed, it causes version.cpp to be recompiled. This in turn ensures that
 # the build date in gScummVMBuildDate is correct.
-base/main.o: $(filter-out base/libbase.a,$(OBJS))
+base/version.o: $(filter-out base/libbase.a,$(OBJS))
 
 # The build rule for the ScummVM executable
 $(EXECUTABLE):  $(OBJS)
