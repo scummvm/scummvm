@@ -201,7 +201,6 @@ void SimonEngine::listSaveGames(int n) {
 				j--;
 			}
 
-			printf("Opened saved game %s\n", gen_savename(j));
 			if (!(in = _saveFileMan->openForLoading(gen_savename(j))))
 				break;
 			in->read(b, 100);
