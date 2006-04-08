@@ -34,6 +34,27 @@
 
 namespace Cine {
 
+byte *_currentScriptPtr;
+uint16 _currentPosition;
+
+byte getNextByte() {
+	byte val = *(_currentScriptPtr + _currentPosition);
+	_currentPosition++;
+	return val;
+}
+
+uint16 getNextWord() {
+	uint16 val = READ_BE_UINT16(_currentScriptPtr + _currentPosition);
+	_currentPosition += 2;
+	return val;
+}
+
+const char *getNextString() {
+	const char *val = (const char *)(_currentScriptPtr + _currentPosition);
+	_currentPosition += strlen(val);
+	return val;
+}
+
 void addGfxElementA0(int16 param1, int16 param2) {
 	overlayHeadElement *currentHead = &overlayHead;
 	overlayHeadElement *tempHead = currentHead;
@@ -617,9 +638,7 @@ uint16 compareVars(int16 a, int16 b) {
 }
 
 void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
-	byte *currentScriptPtr;
 	uint16 closeScript;
-	uint16 currentPosition;
 
 	assert(scriptElement);
 
@@ -627,21 +646,19 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 		return;
 	}
 
-	currentScriptPtr = scriptElement->scriptPtr;
+	assert(scriptElement->scriptPtr);
 
-	assert(currentScriptPtr);
+	// Used to be local variables, but as far as I can tell there's no
+	// recursion that can mess things up when making them global.
 
-	currentPosition = scriptElement->scriptPosition;
+	_currentScriptPtr = scriptElement->scriptPtr;
+	_currentPosition = scriptElement->scriptPosition;
+
 	closeScript = 0;
 
 	while (!closeScript) {
-		uint16 currentLine;
-		uint16 opcode;
-
-		currentLine = currentPosition;
-
-		opcode = *(currentScriptPtr + currentPosition);
-		currentPosition++;
+		uint16 currentLine = _currentPosition;
+		byte opcode = getNextByte();
 
 		//printf("Op: %X\n", opcode - 1);
 
@@ -660,18 +677,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x0:	// OP_modifyObjectParam
 			{
-				byte objIdx;
-				byte paramIdx;
-				int16 newValue;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				paramIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				newValue = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte objIdx = getNextByte();
+				byte paramIdx = getNextByte();
+				int16 newValue = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
 
@@ -681,18 +689,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1:	// OP_getObjectParam
 			{
-				byte objIdx;
-				byte paramIdx;
-				byte newValue;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				paramIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				newValue = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte objIdx = getNextByte();
+				byte paramIdx = getNextByte();
+				byte newValue = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", objIdx, paramIdx, newValue);
 
@@ -702,18 +701,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x2:	// OP_addObjectParam
 			{
-				byte objIdx;
-				byte paramIdx;
-				int16 newValue;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				paramIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				newValue = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte objIdx = getNextByte();
+				byte paramIdx = getNextByte();
+				int16 newValue = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
 
@@ -723,18 +713,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x3:	// OP_subObjectParam
 			{
-				byte objIdx;
-				byte paramIdx;
-				int16 newValue;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				paramIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				newValue = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte objIdx = getNextByte();
+				byte paramIdx = getNextByte();
+				int16 newValue = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
 
@@ -754,18 +735,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x6:	// OP_compareObjectParam
 			{
-				byte objIdx;
-				byte param1;
-				int16 param2;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte objIdx = getNextByte();
+				byte param1 = getNextByte();
+				int16 param2 = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "compareObjectParam(objIdx:%d,type:%d,value:%d)", objIdx, param1, param2);
 
@@ -775,26 +747,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x7:	// OP_setupObject
 			{
-				byte objIdx;
-				int16 param1;
-				int16 param2;
-				int16 param3;
-				int16 param4;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param1 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param3 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param4 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte objIdx = getNextByte();
+				int16 param1 = getNextWord();
+				int16 param2 = getNextWord();
+				int16 param3 = getNextWord();
+				int16 param4 = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "setupObject(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
 
@@ -804,26 +761,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8:	// OP_checkCollision
 			{
-				byte objIdx;
-				int16 param1;
-				int16 param2;
-				int16 param3;
-				int16 param4;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param1 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param3 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param4 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte objIdx = getNextByte();
+				int16 param1 = getNextWord();
+				int16 param2 = getNextWord();
+				int16 param3 = getNextWord();
+				int16 param4 = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "checkCollision(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
 
@@ -833,20 +775,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x9:	// OP_loadVar
 			{
-				byte varIdx;
-				byte varType;
-
-				varIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				varType = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
 				if (varType) {
-					byte dataIdx;
-
-					dataIdx = *(currentScriptPtr + currentPosition);
-					currentPosition++;
+					byte dataIdx = getNextByte();
 
 					switch (varType) {
 					case 1:
@@ -903,10 +836,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 						}
 					}
 				} else {
-					int16 newData;
-
-					newData = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					int16 newData = getNextWord();
 
 					DEBUG_SCRIPT(currentLine, "var[%d] = %d", varIdx, newData);
 
@@ -916,152 +846,95 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xA:	// OP_addVar
 			{
-				byte param1;
-				byte type;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				if (varType) {
+					byte dataIdx = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+					DEBUG_SCRIPT(currentLine, "var[%d] += var[%d]", varIdx, dataIdx);
 
-				if (type) {
-					byte param2;
-
-					param2 = *(currentScriptPtr + currentPosition);
-					currentPosition++;
-
-					DEBUG_SCRIPT(currentLine, "var[%d] += var[%d]", param1, param2);
-
-					scriptElement->localVars[param1] += scriptElement->localVars[param2];
+					scriptElement->localVars[varIdx] += scriptElement->localVars[dataIdx];
 				} else {
-					int16 param2;
+					int16 newData = getNextWord();
 
-					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					DEBUG_SCRIPT(currentLine, "var[%d] += %d", varIdx, newData);
 
-					DEBUG_SCRIPT(currentLine, "var[%d] += %d", param1, param2);
-
-					scriptElement->localVars[param1] += param2;
+					scriptElement->localVars[varIdx] += newData;
 				}
 
 				break;
 			}
 		case 0xB:	// OP_subVar
 			{
-				byte param1;
-				byte type;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				if (varType) {
+					byte dataIdx = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+					DEBUG_SCRIPT(currentLine, "var[%d] -= var[%d]", varIdx, dataIdx);
 
-				if (type) {
-					byte param2;
-
-					param2 = *(currentScriptPtr + currentPosition);
-					currentPosition++;
-
-					DEBUG_SCRIPT(currentLine, "var[%d] -= var[%d]", param1, param2);
-
-					scriptElement->localVars[param1] = scriptElement->localVars[param1] - scriptElement->localVars[param2];
+					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] - scriptElement->localVars[dataIdx];
 				} else {
-					int16 param2;
+					int16 newData = getNextWord();
 
-					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					DEBUG_SCRIPT(currentLine, "var[%d] -= %d", varIdx, newData);
 
-					DEBUG_SCRIPT(currentLine, "var[%d] -= %d", param1, param2);
-
-					scriptElement->localVars[param1] = scriptElement->localVars[param1] - param2;
+					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] - newData;
 				}
 
 				break;
 			}
 		case 0xC:	// OP_mulVar
 			{
-				byte param1;
-				byte type;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				if (varType) {
+					byte dataIdx = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+					DEBUG_SCRIPT(currentLine, "var[%d] *= var[%d]", varIdx, dataIdx);
 
-				if (type) {
-					byte param2;
-
-					param2 = *(currentScriptPtr + currentPosition);
-					currentPosition++;
-
-					DEBUG_SCRIPT(currentLine, "var[%d] *= var[%d]", param1, param2);
-
-					scriptElement->localVars[param1] = scriptElement->localVars[param1] * scriptElement->localVars[param2];
+					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] * scriptElement->localVars[dataIdx];
 				} else {
-					int16 param2;
+					int16 newData = getNextWord();
 
-					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					DEBUG_SCRIPT(currentLine, "var[%d] *= %d", varIdx, newData);
 
-					DEBUG_SCRIPT(currentLine, "var[%d] *= %d", param1, param2);
-
-					scriptElement->localVars[param1] = scriptElement->localVars[param1] * param2;
+					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] * newData;
 				}
 
 				break;
 			}
 		case 0xD:	// OP_divVar
 			{
-				byte param1;
-				byte type;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				if (varType) {
+					byte dataIdx = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+					DEBUG_SCRIPT(currentLine, "var[%d] /= var[%d]", varIdx, dataIdx);
 
-				if (type) {
-					byte param2;
-
-					param2 = *(currentScriptPtr + currentPosition);
-					currentPosition++;
-
-					DEBUG_SCRIPT(currentLine, "var[%d] /= var[%d]", param1, param2);
-
-					scriptElement->localVars[param1] = scriptElement->localVars[param1] / scriptElement->localVars[param2];
+					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] / scriptElement->localVars[dataIdx];
 				} else {
-					int16 param2;
+					int16 newData = getNextWord();
 
-					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					DEBUG_SCRIPT(currentLine, "var[%d] /= %d", varIdx, newData);
 
-					DEBUG_SCRIPT(currentLine, "var[%d] /= %d", param1, param2);
-
-					scriptElement->localVars[param1] = scriptElement->localVars[param1] / param2;
+					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] / newData;
 				}
 
 				break;
 			}
 		case 0xE:	// OP_compareVar
 			{
-				byte varIdx;
-				byte varType;
-
-				varIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				varType = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
 				if (varType) {
-					byte value;
-
-					value = *(currentScriptPtr + currentPosition);
-					currentPosition++;
+					byte value = getNextByte();
 
 					// printf("Val: %d\n", value);
 
@@ -1080,10 +953,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 						scriptElement->compareResult = compareVars(scriptElement->localVars[varIdx], globalVars[value]);
 					}
 				} else {
-					int16 value;
-
-					value = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					int16 value = getNextWord();
 
 					DEBUG_SCRIPT(currentLine, "compare var[%d] and %d", varIdx, value);
 
@@ -1094,18 +964,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xF:	// OP_modifyObjectParam2
 			{
-				byte objIdx;
-				byte paramIdx;
-				byte newValue;
-
-				objIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				paramIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				newValue = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte objIdx = getNextByte();
+				byte paramIdx = getNextByte();
+				byte newValue = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", objIdx, paramIdx, newValue);
 
@@ -1115,10 +976,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x13:	// OP_loadV7Element (OP_loadMask0?)
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "addSpriteOverlay(%d)", param);
 
@@ -1128,10 +986,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x14:	// OP_unloadMask0
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "removeSpriteOverlay(%d)", param);
 
@@ -1141,10 +996,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x15:
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "addToBGList(%d)", param);
 
@@ -1154,10 +1006,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x16:	// OP_loadMask1
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "addOverlay1(%d)", param);
 
@@ -1167,10 +1016,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x17:	// OP_unloadMask1
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "removeOverlay1(%d)", param);
 
@@ -1180,10 +1026,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x18:	// OP_loadMask4
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "addOverlayType4(%d)", param);
 
@@ -1193,10 +1036,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x19:	// OP_unloadMask4
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "removeSpriteOverlay4(%d)", param);
 
@@ -1206,10 +1046,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1A:
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "op1A(%d) -> TODO !", param);
 
@@ -1225,42 +1062,33 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1D:	// OP_label
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "label(%d)", labelIdx);
 
-				scriptElement->stack[labelIdx] = currentPosition;
+				scriptElement->stack[labelIdx] = _currentPosition;
 
 				break;
 			}
 		case 0x1E:	// OP_goto
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "goto label(%d)", labelIdx);
 
 				assert(scriptElement->stack[labelIdx] != -1);
-				currentPosition = scriptElement->stack[labelIdx];
+				_currentPosition = scriptElement->stack[labelIdx];
 
 				break;
 			}
 		case 0x1F:	// OP_gotoIfSup
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if ((scriptElement->compareResult & 2) && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(>) goto %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>) goto %d (false)", labelIdx);
 				}
@@ -1269,15 +1097,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x20:	// OP_gotoIfSupEqu
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if (scriptElement->compareResult & 2 || scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto %d (false)",
 					    labelIdx);
@@ -1287,15 +1112,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x21:	// OP_gotoIfInf
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if ((scriptElement->compareResult & 4) && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<) goto %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<) goto %d (false)", labelIdx);
 				}
@@ -1304,15 +1126,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x22:	// OP_gotoIfInfEqu
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if ((scriptElement->compareResult & 4) || (scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto %d (false)", labelIdx);
 				}
@@ -1321,15 +1140,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x23:	// OP_gotoIfEqu
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if (scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(==) goto %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(==) goto %d (false)", labelIdx);
 				}
@@ -1338,15 +1154,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x24:	// OP_gotoIfDiff
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if (!(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto %d (false)", labelIdx);
 				}
@@ -1360,21 +1173,15 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x26:	// OP_loop
 			{
-				byte varIdx;
-				byte labelIdx;
-
-				varIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte varIdx = getNextByte();
+				byte labelIdx = getNextByte();
 
 				scriptElement->localVars[varIdx]--;
 
 				if (scriptElement->localVars[varIdx] >= 0) {
 					DEBUG_SCRIPT(currentLine, "loop(var[%]) goto %d (continue)", varIdx, labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = scriptElement->stack[labelIdx];
+					_currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "loop(var[%]) goto %d (stop)", varIdx, labelIdx);
 				}
@@ -1383,10 +1190,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x31:	// OP_startScript (OP_startGlobalScript?)
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				assert(param < NUM_MAX_SCRIPT);
 
@@ -1397,10 +1201,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x32:	// OP_endGlobalScript
 			{
-				byte scriptIdx;
-
-				scriptIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte scriptIdx = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "stopGlobalScript(%d)", scriptIdx);
 
@@ -1409,46 +1210,43 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x3B:	// OP_loadResource (OP_loadAnim?)
 			{
-				DEBUG_SCRIPT(currentLine, "loadResource(\"%s\")", currentScriptPtr + currentPosition);
+				const char *param = getNextString();
 
-				loadResource((const char *)(currentScriptPtr + currentPosition));
+				DEBUG_SCRIPT(currentLine, "loadResource(\"%s\")", param);
 
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
-
+				loadResource(param);
 				break;
 			}
 		case 0x3C:	// OP_loadBg
 			{
-				DEBUG_SCRIPT(currentLine, "loadBg(\"%s\")", currentScriptPtr + currentPosition);
+				const char *param = getNextString();
 
-				loadBg((const char *)(currentScriptPtr + currentPosition));
+				DEBUG_SCRIPT(currentLine, "loadBg(\"%s\")", param);
 
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
-
+				loadBg(param);
 				closeEngine7();
-
 				bgVar0 = 0;
 
 				break;
 			}
 		case 0x3D:	// OP_loadCt
 			{
-				DEBUG_SCRIPT(currentLine, "loadCt(\"%s\")", currentScriptPtr + currentPosition);
+				const char *param = getNextString();
 
-				loadCt((const char *)(currentScriptPtr + currentPosition));
+				DEBUG_SCRIPT(currentLine, "loadCt(\"%s\")", param);
 
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
-
+				loadCt(param);
 				break;
 			}
 		case 0x3F:	// OP_loadPart
 			{
-				DEBUG_SCRIPT(currentLine, "loadPart(\"%s\")", currentScriptPtr + currentPosition);
+				const char *param = getNextString();
+
+				DEBUG_SCRIPT(currentLine, "loadPart(\"%s\")", param);
 
 				if (gameType == Cine::GID_FW)
-					loadPart((const char *)(currentScriptPtr + currentPosition));
+					loadPart(param);
 
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 				break;
 			}
 		case 0x40:	// OP_closePart
@@ -1456,46 +1254,42 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				DEBUG_SCRIPT(currentLine, "closePart");
 
 				closePart();
-
 				break;
 			}
 		case 0x41:	// OP_loadData (OP_loadNewPrcName?)
 			{
-				byte param;
+				byte param1 = getNextByte();
+				const char *param2 = getNextString();
 
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				assert(param1 <= 3);
 
-				assert(param <= 3);
-
-				switch (param) {
+				switch (param1) {
 				case 0:
 					{
-						DEBUG_SCRIPT(currentLine, "loadPrc(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newPrcName, (const char *)(currentScriptPtr + currentPosition));
+						DEBUG_SCRIPT(currentLine, "loadPrc(\"%s\")", param2);
+						strcpy(newPrcName, param2);
 						break;
 					}
 				case 1:
 					{
-						DEBUG_SCRIPT(currentLine, "loadRel(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newRelName, (const char *)(currentScriptPtr + currentPosition));
+						DEBUG_SCRIPT(currentLine, "loadRel(\"%s\")", param2);
+						strcpy(newRelName, param2);
 						break;
 					}
 				case 2:
 					{
-						DEBUG_SCRIPT(currentLine, "loadObject(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newObjectName, (const char *)(currentScriptPtr + currentPosition));
+						DEBUG_SCRIPT(currentLine, "loadObject(\"%s\")", param2);
+						strcpy(newObjectName, param2);
 						break;
 					}
 				case 3:
 					{
-						DEBUG_SCRIPT(currentLine, "loadMsg(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newMsgName, (const char *)(currentScriptPtr + currentPosition));
+						DEBUG_SCRIPT(currentLine, "loadMsg(\"%s\")", param2);
+						strcpy(newMsgName, param2);
 						break;
 					}
 				}
 
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition)) + 1;
 				break;
 			}
 		case 0x42:	// OP_requestCheckPendingDataLoad
@@ -1525,26 +1319,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x47:	// OP_transformPaletteRange
 			{
-				byte startColor;
-				byte numColor;
-				uint16 r;
-				uint16 g;
-				uint16 b;
-
-				startColor = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				numColor = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				r = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				g = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				b = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte startColor = getNextByte();
+				byte numColor = getNextByte();
+				uint16 r = getNextWord();
+				uint16 g = getNextWord();
+				uint16 b = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", startColor, numColor, r, g, b);
 
@@ -1554,8 +1333,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x49:	// OP_setDefaultMenuColor2
 			{
-				defaultMenuBoxColor2 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				defaultMenuBoxColor2 = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "setDefaultMenuColor2(%d)", defaultMenuBoxColor2);
 
@@ -1563,18 +1341,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x4A:
 			{
-				byte a;
-				byte b;
-				byte c;
-
-				a = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				b = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				c = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte a = getNextByte();
+				byte b = getNextByte();
+				byte c = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "palRotate(%d,%d,%d)", a, b, c);
 
@@ -1585,7 +1354,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			{
 				DEBUG_SCRIPT(currentLine, "break");
 
-				scriptElement->scriptPosition = currentPosition;
+				scriptElement->scriptPosition = _currentPosition;
 				closeScript = 1;
 				break;
 			}
@@ -1600,31 +1369,15 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				}
 
 				closeScript = 1;
-
 				break;
 			}
 		case 0x51:	// OP_message
 			{
-				byte param1;
-				uint16 param2;
-				uint16 param3;
-				uint16 param4;
-				uint16 param5;
-
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param3 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param4 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param5 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte param1 = getNextByte();
+				uint16 param2 = getNextWord();
+				uint16 param3 = getNextWord();
+				uint16 param4 = getNextWord();
+				uint16 param5 = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "message(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5);
 
@@ -1634,77 +1387,53 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x52:	// OP_loadGlobalVar
 			{
-				byte idx;
-				byte type;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
-				idx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				if (varType) {
+					byte dataIdx = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+					if (varType == 1) {
+						DEBUG_SCRIPT(currentLine, "globalVars[%d] = var[%d]", varIdx, dataIdx);
 
-				if (type) {
-					byte idx2;
-
-					idx2 = *(currentScriptPtr + currentPosition);
-					currentPosition++;
-
-					if (type == 1) {
-						DEBUG_SCRIPT(currentLine, "globalVars[%d] = var[%d]", idx, idx2);
-
-						globalVars[idx] = scriptElement->localVars[idx2];
+						globalVars[varIdx] = scriptElement->localVars[dataIdx];
 					} else {
-						DEBUG_SCRIPT(currentLine, "globalVars[%d] = globalVars[%d]", idx, idx2);
+						DEBUG_SCRIPT(currentLine, "globalVars[%d] = globalVars[%d]", varIdx, dataIdx);
 
-						globalVars[idx] = globalVars[idx2];
+						globalVars[varIdx] = globalVars[dataIdx];
 					}
 				} else {
-					uint16 newData;
+					uint16 newData = getNextWord();
 
-					newData = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					DEBUG_SCRIPT(currentLine, "globalVars[%d] = %d", varIdx, newData);
 
-					DEBUG_SCRIPT(currentLine, "globalVars[%d] = %d", idx, newData);
-
-					globalVars[idx] = newData;
+					globalVars[varIdx] = newData;
 				}
 
 				break;
 			}
 		case 0x53:	// OP_compareGlobalVar
 			{
-				byte idx;
-				byte type;
+				byte varIdx = getNextByte();
+				byte varType = getNextByte();
 
-				idx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				if (varType) {
+					byte value = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+					DEBUG_SCRIPT(currentLine, "compare globalVars[%d] and var[%d]", varIdx, value);
 
-				if (type) {
-					byte b;
-
-					b = *(currentScriptPtr + currentPosition);
-					currentPosition++;
-
-					DEBUG_SCRIPT(currentLine, "compare globalVars[%d] and var[%d]", idx, b);
-
-					scriptElement->compareResult = compareVars(globalVars[idx], scriptElement->localVars[b]);
+					scriptElement->compareResult = compareVars(globalVars[varIdx], scriptElement->localVars[value]);
 				} else {
-					uint16 newData;
-
-					newData = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					uint16 newData = getNextWord();
 
 					DEBUG_SCRIPT(currentLine,
 					    "compare globalVars[%d] and %d",
-					    idx, newData);
+					    varIdx, newData);
 
-					if (idx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
+					if (varIdx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
 						scriptElement->compareResult = 1;
 					} else {
-						scriptElement->compareResult = compareVars(globalVars[idx], newData);
+						scriptElement->compareResult = compareVars(globalVars[varIdx], newData);
 					}
 				}
 
@@ -1712,21 +1441,15 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x59:	// OP_declareFunctionName
 			{
-				DEBUG_SCRIPT(currentLine, "comment(%s)", currentScriptPtr + currentPosition);
+				const char *param = getNextString();
 
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
+				DEBUG_SCRIPT(currentLine, "comment(%s)", param);
 				break;
 			}
 		case 0x5A:	// OP_freePartRange
 			{
-				byte startIdx;
-				byte numIdx;
-
-				startIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				numIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte startIdx = getNextByte();
+				byte numIdx = getNextByte();
 
 				assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
@@ -1768,14 +1491,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x66:	// OP_setZoneDataEntry
 			{
-				byte zoneIdx;
-				uint16 var;
-
-				zoneIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				var = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte zoneIdx = getNextByte();
+				uint16 var = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "setZone[%d] = %d", zoneIdx, var);
 
@@ -1790,8 +1507,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x68:	// OP_setDefaultMenuColor
 			{
-				defaultMenuBoxColor = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				defaultMenuBoxColor = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "setDefaultMenuColor(%d)", defaultMenuBoxColor2);
 
@@ -1813,10 +1529,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x6B:	// OP_changeDataDisk
 			{
-				byte newDisk;
-
-				newDisk = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte newDisk = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "changeDataDisk(%d)", newDisk);
 
@@ -1825,9 +1538,10 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x6D:	// OP_loadMusic
 			{
-				DEBUG_SCRIPT(currentLine, "loadMusic(%s)", currentScriptPtr + currentPosition);
-				g_sfxPlayer->load((const char *)(currentScriptPtr + currentPosition));
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition)) + 1;
+				const char *param = getNextString();
+
+				DEBUG_SCRIPT(currentLine, "loadMusic(%s)", param);
+				g_sfxPlayer->load(param);
 				break;
 			}
 		case 0x6E:	// OP_playMusic
@@ -1867,27 +1581,15 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 		case 0x78:	// OP_playSample
 			{
 				DEBUG_SCRIPT(currentLine, "playSample()");
-				byte anim, channel;
-				int16 volume;
-				uint16 flag;
 
-				anim = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte anim = getNextByte();
+				byte channel = getNextByte();
 
-				channel = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				getNextWord();
+				getNextByte();
 
-				/* unused */
-				currentPosition += 2;
-
-				/* unused */
-				currentPosition++;
-
-				volume = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				flag = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				int16 volume = getNextWord();
+				uint16 flag = getNextWord();
 
 				if (volume > 63)
 					volume = 63;
@@ -1901,7 +1603,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					if (volume < 50) {
 						volume = 50;
 					}
-						
+
 					g_sfxPlayer->stop();
 					
 					if (flag == 0xFFFF) {
@@ -1914,69 +1616,38 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x79:	// OP_allowSystemMenu
 			{
-				var22 = *(currentScriptPtr + currentPosition);
+				var22 = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "OP79 load var22 to %d -> TODO", var22);
-
-				currentPosition++;
 				break;
 			}
 		case 0x7A:	// OP_loadMask5
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "addOverlay5(%d)", param);
 
 				loadOverlayElement(param, 5);
-
 				break;
 			}
 		case 0x7B:	// OP_unloadMask5
 			{
-				byte param;
-
-				param = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "freeOverlay5(%d)", param);
 
 				freeOverlay(param, 5);
-
 				break;
 			}
 		case 0x7F:
 			{
-				byte param1;
-				byte param2;
-				byte param3;
-				byte param4;
-				uint16 param5;
-				uint16 param6;
-				uint16 param7;
-
-				param1 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param2 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param3 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param4 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				param5 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param6 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param7 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				byte param1 = getNextByte();
+				byte param2 = getNextByte();
+				byte param3 = getNextByte();
+				byte param4 = getNextByte();
+				uint16 param5 = getNextWord();
+				uint16 param6 = getNextWord();
+				uint16 param7 = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "addSeqListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
 
@@ -1986,19 +1657,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x80:
 			{
-				byte a;
-				byte b;
-
-				a = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				b = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte a = getNextByte();
+				byte b = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "removeSeq(%d,%d) -> TODO", a, b);
 
 				removeSeq(a, 0, b);
-
 				break;
 			}
 		case 0x81:
@@ -2013,14 +1677,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x83:
 			{
-				byte a;
-				byte b;
-
-				a = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				b = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte a = getNextByte();
+				byte b = getNextByte();
 
 				DEBUG_SCRIPT(currentLine, "OP83(%d,%d) -> TODO", a, b);
 
@@ -2033,16 +1691,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x84:	// OP_gotoIfSup nearest
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if ((scriptElement->compareResult & 2)
 				    && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, currentPosition, labelIdx,
+					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, _currentPosition, labelIdx,
 									scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (false)", labelIdx);
@@ -2052,15 +1707,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x85:	// OP_gotoIfSupEqu nearest
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if (scriptElement->compareResult & 2 || scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, currentPosition, labelIdx,
+					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, _currentPosition, labelIdx,
 								    scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (false)", labelIdx);
@@ -2070,16 +1722,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x86:	// OP_gotoIfInf nearest
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if ((scriptElement->compareResult & 4) && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-									currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
+					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
+									_currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (false)", labelIdx);
 				}
@@ -2088,16 +1737,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x87:	// OP_gotoIfInfEqu nearest
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if ((scriptElement->compareResult & 4) || (scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
+					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
+								    _currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (false)", labelIdx);
 				}
@@ -2106,16 +1752,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x88:	// OP_gotoIfEqu nearest
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if (scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
+					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
+								    _currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (false)", labelIdx);
 				}
@@ -2124,16 +1767,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x89:	// OP_gotoIfDiff nearest
 			{
-				byte labelIdx;
-
-				labelIdx = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte labelIdx = getNextByte();
 
 				if (!(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (true)", labelIdx);
 					assert(scriptElement->stack[labelIdx] != -1);
-					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
+					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
+								    _currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (false)", labelIdx);
 				}
@@ -2142,22 +1782,20 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8B:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
-				DEBUG_SCRIPT(currentLine, "startObjectScript(%d,%d)", temp, currentScriptPtr + currentPosition);
+				DEBUG_SCRIPT(currentLine, "startObjectScript(%d)", param);
 
-				runObjectScript(temp);
+				runObjectScript(param);
 				break;
 			}
 		case 0x8C:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
-				DEBUG_SCRIPT(currentLine, "startObjectScript(%d,%d)", temp, currentScriptPtr + currentPosition);
+				DEBUG_SCRIPT(currentLine, "stopObjectScript(%d)", param);
 
-				stopObjectScript(temp);
+				stopObjectScript(param);
 				break;
 			}
 		case 0x8D:
@@ -2167,65 +1805,58 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8E:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param1 = getNextWord();
+				const char *param2 = getNextString();
 
-				DEBUG_SCRIPT(currentLine, "addBackground(%s,%d)", currentScriptPtr + currentPosition, temp);
+				DEBUG_SCRIPT(currentLine, "addBackground(%s,%d)", param2, param1);
 
-				addBackground((const char *)(currentScriptPtr + currentPosition), temp);
-
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
+				addBackground(param2, param1);
 				break;
 			}
 		case 0x8F:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
-				DEBUG_SCRIPT(currentLine, "removeBackground(%d)", temp);
+				DEBUG_SCRIPT(currentLine, "removeBackground(%d)", param);
 
-				assert(temp);
-				if (additionalBgTable[temp]) {
-					free(additionalBgTable[temp]);
-					additionalBgTable[temp] = NULL;
+				assert(param);
+				if (additionalBgTable[param]) {
+					free(additionalBgTable[param]);
+					additionalBgTable[param] = NULL;
 				}
 
-				if (currentAdditionalBgIdx == temp) {
+				if (currentAdditionalBgIdx == param) {
 					currentAdditionalBgIdx = 0;
 				}
 
-				if (currentAdditionalBgIdx2 == temp) {
+				if (currentAdditionalBgIdx2 == param) {
 					currentAdditionalBgIdx2 = 0;
 				}
 
-				strcpy(currentBgName[temp], "");
+				strcpy(currentBgName[param], "");
 
 				break;
 			}
 		case 0x90:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param1 = getNextByte();
+				const char *param2 = getNextString();
 
-				DEBUG_SCRIPT(currentLine, "loadABS(%d,%s)", temp, currentScriptPtr + currentPosition);
+				DEBUG_SCRIPT(currentLine, "loadABS(%d,%s)", param1, param2);
 
-				loadAbs((const char *)(currentScriptPtr + currentPosition), temp);
-
-				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
-
+				loadAbs(param2, param1);
 				break;
 			}
 		case 0x91:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
-				DEBUG_SCRIPT(currentLine, "useBg(%d)", temp);
+				DEBUG_SCRIPT(currentLine, "useBg(%d)", param);
 
-				assert(temp <= 8);
+				assert(param <= 8);
 
-				if (additionalBgTable[temp]) {
-					currentAdditionalBgIdx = temp;
+				if (additionalBgTable[param]) {
+					currentAdditionalBgIdx = param;
 					//if (adBgVar0 == 0) {
 					//	adBgVar1 = 1;
 					//}
@@ -2254,39 +1885,29 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x9D:
 			{
-				byte temp = *(currentScriptPtr + currentPosition);
-				currentPosition++;
+				byte param = getNextByte();
 
-				DEBUG_SCRIPT(currentLine, "useBgScroll(%d)", temp);
+				DEBUG_SCRIPT(currentLine, "useBgScroll(%d)", param);
 
-				assert(temp <= 8);
+				assert(param <= 8);
 
-				if (additionalBgTable[temp]) {
-					currentAdditionalBgIdx2 = temp;
+				if (additionalBgTable[param]) {
+					currentAdditionalBgIdx2 = param;
 				}
 				break;
 			}
 		case 0x9E:
 			{
-				byte type;
+				byte param1 = getNextByte();
 
-				type = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				if (type) {
-					byte param2;
-
-					param2 = *(currentScriptPtr + currentPosition);
-					currentPosition++;
+				if (param1) {
+					byte param2 = getNextByte();
 
 					DEBUG_SCRIPT(currentLine, "additionalBgVScroll = var[%d]", param2);
 
 					additionalBgVScroll = scriptElement->localVars[param2];
 				} else {
-					uint16 param2;
-
-					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-					currentPosition += 2;
+					uint16 param2 = getNextWord();
 
 					DEBUG_SCRIPT(currentLine, "additionalBgVScroll = %d", param2);
 
@@ -2302,14 +1923,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xA0:
 			{
-				uint16 param1;
-				uint16 param2;
-
-				param1 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
-
-				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
-				currentPosition += 2;
+				uint16 param1 = getNextWord();
+				uint16 param2 = getNextWord();
 
 				DEBUG_SCRIPT(currentLine, "addGfxElementA0(%d,%d)", param1, param2);
 
@@ -2319,19 +1934,19 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 		case 0xA1:
 			{
 				warning("STUB: Opcode 0xA1");
-				currentPosition += 4;
+				_currentPosition += 4;
 				break;
 			}
 		case 0xA2:
 			{
 				warning("STUB: Opcode 0xA2");
-				currentPosition += 4;
+				_currentPosition += 4;
 				break;
 			}
 		case 0xA3:
 			{
 				warning("STUB: Opcode 0xA3");
-				currentPosition += 4;
+				_currentPosition += 4;
 				break;
 			}
 		case 0xA4:
