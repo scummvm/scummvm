@@ -188,6 +188,8 @@ int gameType;
 static void initialize() {
 	uint16 i;
 
+	setupOpcodes();
+
 	initLanguage(Common::parseLanguage(ConfMan.get("language")));
 	init_video();
 

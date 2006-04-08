@@ -34,8 +34,402 @@
 
 namespace Cine {
 
+prcLinkedListStruct *_currentScriptElement;
 byte *_currentScriptPtr;
+uint16 _currentScriptParams;
 uint16 _currentPosition;
+uint16 _currentLine;
+uint16 _closeScript;
+
+typedef void (*OpcodeProc) ();
+const OpcodeProc *_opcodeTable;
+int _numOpcodes;
+
+void setupOpcodes() {
+	static const OpcodeProc opcodeTableFW[] = {
+		/* 00 */
+		o1_modifyObjectParam,
+		o1_getObjectParam,
+		o1_addObjectParam,
+		o1_subObjectParam,
+		/* 04 */
+		o1_add2ObjectParam,
+		o1_sub2ObjectParam,
+		o1_compareObjectParam,
+		o1_setupObject,
+		/* 08 */
+		o1_checkCollision,
+		o1_loadVar,
+		o1_addVar,
+		o1_subVar,
+		/* 0C */
+		o1_mulVar,
+		o1_divVar,
+		o1_compareVar,
+		o1_modifyObjectParam2,
+		/* 10 */
+		NULL,
+		NULL,
+		NULL,
+		o1_loadMask0,
+		/* 14 */
+		o1_unloadMask0,
+		o1_addToBgList,
+		o1_loadMask1,
+		o1_unloadMask1,
+		/* 18 */
+		o1_loadMask4,
+		o1_unloadMask4,
+		o1_addSpriteFilledToBgList,
+		o1_op1B,
+		/* 1C */
+		NULL,
+		o1_label,
+		o1_goto,
+		o1_gotoIfSup,
+		/* 20 */
+		o1_gotoIfSupEqu,
+		o1_gotoIfInf,
+		o1_gotoIfInfEqu,
+		o1_gotoIfEqu,
+		/* 24 */
+		o1_gotoIfDiff,
+		o1_removeLabel,
+		o1_loop,
+		NULL,
+		/* 28 */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 2C */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 30 */
+		NULL,
+		o1_startGlobalScript,
+		o1_endGlobalScript,
+		NULL,
+		/* 34 */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 38 */
+		NULL,
+		NULL,
+		NULL,
+		o1_loadAnim,
+		/* 3C */
+		o1_loadBg,
+		o1_loadCt,
+		NULL,
+		o1_loadPart,
+		/* 40 */
+		o1_closePart,
+		o1_loadNewPrcName,
+		o1_requestCheckPendingDataLoad,
+		NULL,
+		/* 44 */
+		NULL,
+		o1_blitAndFade,
+		o1_fadeToBlack,
+		o1_transformPaletteRange,
+		/* 48 */
+		NULL,
+		o1_setDefaultMenuColor2,
+		o1_palRotate,
+		NULL,
+		/* 4C */
+		NULL,
+		NULL,
+		NULL,
+		o1_break,
+		/* 50 */
+		o1_endScript,
+		o1_message,
+		o1_loadGlobalVar,
+		o1_compareGlobalVar,
+		/* 54 */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 58 */
+		NULL,
+		o1_declareFunctionName,
+		o1_freePartRange,
+		o1_unloadAllMasks,
+		// 5C */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 60 */
+		NULL,
+		NULL,
+		NULL,
+		o1_op63,
+		/* 64 */
+		o1_op64,
+		o1_initializeZoneData,
+		o1_setZoneDataEntry,
+		o1_getZoneDataEntry,
+		/* 68 */
+		o1_setDefaultMenuColor,
+		o1_allowPlayerInput,
+		o1_disallowPlayerInput,
+		o1_changeDataDisk,
+		/* 6C */
+		NULL,
+		o1_loadMusic,
+		o1_playMusic,
+		o1_fadeOutMusic,
+		/* 70 */
+		o1_stopSample,
+		o1_op71,
+		o1_op72,
+		o1_op73,
+		/* 74 */
+		NULL,
+		NULL,
+		NULL,
+		o1_playSample,
+		/* 78 */
+		o1_playSample,
+		o1_allowSystemMenu,
+		o1_loadMask5,
+		o1_unloadMask5
+	};
+
+	// TODO: We need to verify the Operation Stealth opcodes.
+
+	static const OpcodeProc opcodeTableOS[] = {
+		/* 00 */
+		o1_modifyObjectParam,
+		o1_getObjectParam,
+		o1_addObjectParam,
+		o1_subObjectParam,
+		/* 04 */
+		o1_add2ObjectParam,
+		o1_sub2ObjectParam,
+		o1_compareObjectParam,
+		o1_setupObject,
+		/* 08 */
+		o1_checkCollision,
+		o1_loadVar,
+		o1_addVar,
+		o1_subVar,
+		/* 0C */
+		o1_mulVar,
+		o1_divVar,
+		o1_compareVar,
+		o1_modifyObjectParam2,
+		/* 10 */
+		NULL,
+		NULL,
+		NULL,
+		o1_loadMask0,
+		/* 14 */
+		o1_unloadMask0,
+		o1_addToBgList,
+		o1_loadMask1,
+		o1_unloadMask1,
+		/* 18 */
+		o1_loadMask4,
+		o1_unloadMask4,
+		o1_addSpriteFilledToBgList,
+		o1_op1B,
+		/* 1C */
+		NULL,
+		o1_label,
+		o1_goto,
+		o1_gotoIfSup,
+		/* 20 */
+		o1_gotoIfSupEqu,
+		o1_gotoIfInf,
+		o1_gotoIfInfEqu,
+		o1_gotoIfEqu,
+		/* 24 */
+		o1_gotoIfDiff,
+		o1_removeLabel,
+		o1_loop,
+		NULL,
+		/* 28 */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 2C */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 30 */
+		NULL,
+		o1_startGlobalScript,
+		o1_endGlobalScript,
+		NULL,
+		/* 34 */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 38 */
+		NULL,
+		NULL,
+		NULL,
+		o1_loadAnim,
+		/* 3C */
+		o1_loadBg,
+		o1_loadCt,
+		NULL,
+		o2_loadPart,
+		/* 40 */
+		NULL,
+		o1_loadNewPrcName,
+		o1_requestCheckPendingDataLoad,
+		NULL,
+		/* 44 */
+		NULL,
+		o1_blitAndFade,
+		o1_fadeToBlack,
+		o1_transformPaletteRange,
+		/* 48 */
+		NULL,
+		o1_setDefaultMenuColor2,
+		o1_palRotate,
+		NULL,
+		/* 4C */
+		NULL,
+		NULL,
+		NULL,
+		o1_break,
+		/* 50 */
+		o1_endScript,
+		o1_message,
+		o1_loadGlobalVar,
+		o1_compareGlobalVar,
+		/* 54 */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 58 */
+		NULL,
+		o1_declareFunctionName,
+		o1_freePartRange,
+		o1_unloadAllMasks,
+		// 5C */
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		/* 60 */
+		NULL,
+		NULL,
+		NULL,
+		o1_op63,
+		/* 64 */
+		o1_op64,
+		o1_initializeZoneData,
+		o1_setZoneDataEntry,
+		o1_getZoneDataEntry,
+		/* 68 */
+		o1_setDefaultMenuColor,
+		o1_allowPlayerInput,
+		o1_disallowPlayerInput,
+		o1_changeDataDisk,
+		/* 6C */
+		NULL,
+		o1_loadMusic,
+		o1_playMusic,
+		o1_fadeOutMusic,
+		/* 70 */
+		o1_stopSample,
+		o1_op71,
+		o1_op72,
+		o1_op73,
+		/* 74 */
+		NULL,
+		NULL,
+		NULL,
+		o1_playSample,
+		/* 78 */
+		o1_playSample,
+		o1_allowSystemMenu,
+		o1_loadMask5,
+		o1_unloadMask5,
+		/* 7C */
+		NULL,
+		NULL,
+		NULL,
+		o2_addSeqListElement,
+		/* 80 */
+		o2_removeSeq,
+		o2_op81,
+		o2_op82,
+		o2_isSeqRunning,
+		/* 84 */
+		o2_gotoIfSupNearest,
+		o2_gotoIfSupEquNearest,
+		o2_gotoIfInfNearest,
+		o2_gotoIfInfEquNearest,
+		/* 88 */
+		o2_gotoIfEquNearest,
+		o2_gotoIfDiffNearest,
+		NULL,
+		o2_startObjectScript,
+		/* 8C */
+		o2_stopObjectScript,
+		o2_op8D,
+		o2_addBackground,
+		o2_removeBackground,
+		/* 90 */
+		o2_loadAbs,
+		o2_loadBg,
+		NULL,
+		NULL,
+		/* 94 */
+		NULL,
+		o2_op95,
+		NULL,
+		NULL,
+		/* 98 */
+		NULL,
+		NULL,
+		o2_wasZoneChecked,
+		o2_op9B,
+		/* 9C */
+		o2_op9C,
+		o2_useBgScroll,
+		o2_setAdditionalBgVScroll,
+		o2_op9F,
+		/* A0 */
+		o2_addGfxElementA0,
+		o2_opA1,
+		o2_opA2,
+		o2_opA3,
+		/* A4 */
+		o2_opA4,
+		o2_opA5,
+		NULL,
+		NULL,
+		/* A8 */
+		NULL,
+		o2_opA9
+	};
+
+	if (gameType == Cine::GID_FW) {
+		_opcodeTable = opcodeTableFW;
+		_numOpcodes = ARRAYSIZE(opcodeTableFW);
+	} else {
+		_opcodeTable = opcodeTableOS;
+		_numOpcodes = ARRAYSIZE(opcodeTableOS);
+	}
+}
 
 byte getNextByte() {
 	byte val = *(_currentScriptPtr + _currentPosition);
@@ -637,9 +1031,1084 @@ uint16 compareVars(int16 a, int16 b) {
 	return flag;
 }
 
-void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
-	uint16 closeScript;
+// ------------------------------------------------------------------------
+// FUTURE WARS opcodes
+// ------------------------------------------------------------------------
 
+void o1_modifyObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
+
+	modifyObjectParam(objIdx, paramIdx, newValue);
+}
+
+void o1_getObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	byte newValue = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", objIdx, paramIdx, newValue);
+
+	_currentScriptElement->localVars[newValue] = getObjectParam(objIdx, paramIdx);
+}
+
+void o1_addObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
+
+	addObjectParam(objIdx, paramIdx, newValue);
+}
+
+void o1_subObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
+
+	subObjectParam(objIdx, paramIdx, newValue);
+}
+
+void o1_add2ObjectParam() {
+	warning("STUB: o1_add2ObjectParam()");
+}
+
+void o1_sub2ObjectParam() {
+	warning("STUB: o1_sub2ObjectParam()");
+}
+
+void o1_compareObjectParam() {
+	byte objIdx = getNextByte();
+	byte param1 = getNextByte();
+	int16 param2 = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "compareObjectParam(objIdx:%d,type:%d,value:%d)", objIdx, param1, param2);
+
+	_currentScriptElement->compareResult = compareObjectParam(objIdx, param1, param2);
+}
+
+void o1_setupObject() {
+	byte objIdx = getNextByte();
+	int16 param1 = getNextWord();
+	int16 param2 = getNextWord();
+	int16 param3 = getNextWord();
+	int16 param4 = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "setupObject(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
+
+	setupObject(objIdx, param1, param2, param3, param4);
+}
+
+void o1_checkCollision() {
+	byte objIdx = getNextByte();
+	int16 param1 = getNextWord();
+	int16 param2 = getNextWord();
+	int16 param3 = getNextWord();
+	int16 param4 = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "checkCollision(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
+
+	_currentScriptElement->compareResult = checkCollision(objIdx, param1, param2, param3, param4);
+}
+
+void o1_loadVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+		int16 var;
+
+		switch (varType) {
+		case 1:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = var[%d]", varIdx, dataIdx);
+			_currentScriptElement->localVars[varIdx] = _currentScriptElement->localVars[dataIdx];
+			break;
+		case 2:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = globalVars[%d]", varIdx, dataIdx);
+			_currentScriptElement->localVars[varIdx] = globalVars[dataIdx];
+			break;
+		case 3:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = mouseX", varIdx, dataIdx);
+			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&var, (uint16 *)&dummyU16);
+			_currentScriptElement->localVars[varIdx] = var;
+			break;
+		case 4:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = mouseY", varIdx, dataIdx);
+			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&dummyU16, (uint16 *)&var);
+			_currentScriptElement->localVars[varIdx] = var;
+			break;
+		case 5:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = rand mod %d", varIdx, dataIdx);
+			_currentScriptElement->localVars[varIdx] = rand() % dataIdx;
+			break;
+		case 8:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = file[%d].packedSize", varIdx, dataIdx);
+			_currentScriptElement->localVars[varIdx] = partBuffer[dataIdx].packedSize;
+			break;
+		case 9:
+			DEBUG_SCRIPT(_currentLine, "var[%d] = file[%d].unpackedSize", varIdx, dataIdx);
+			_currentScriptElement->localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
+			break;
+		default:
+			error("executeScript: o1_loadVar: Unknown variable type %d", varType);
+		}
+	} else {
+		int16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] = %d", varIdx, newData);
+		_currentScriptElement->localVars[varIdx] = newData;
+	}
+}
+
+void o1_addVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] += var[%d]", varIdx, dataIdx);
+		_currentScriptElement->localVars[varIdx] += _currentScriptElement->localVars[dataIdx];
+	} else {
+		int16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] += %d", varIdx, newData);
+		_currentScriptElement->localVars[varIdx] += newData;
+	}
+}
+
+void o1_subVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] -= var[%d]", varIdx, dataIdx);
+		_currentScriptElement->localVars[varIdx] -= _currentScriptElement->localVars[dataIdx];
+	} else {
+		int16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] -= %d", varIdx, newData);
+		_currentScriptElement->localVars[varIdx] -= newData;
+	}
+}
+
+void o1_mulVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] *= var[%d]", varIdx, dataIdx);
+		_currentScriptElement->localVars[varIdx] *= _currentScriptElement->localVars[dataIdx];
+	} else {
+		int16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] *= %d", varIdx, newData);
+		_currentScriptElement->localVars[varIdx] *= newData;
+	}
+}
+
+void o1_divVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] /= var[%d]", varIdx, dataIdx);
+		_currentScriptElement->localVars[varIdx] /= _currentScriptElement->localVars[dataIdx];
+	} else {
+		int16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "var[%d] /= %d", varIdx, newData);
+		_currentScriptElement->localVars[varIdx] /= newData;
+	}
+}
+
+void o1_compareVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		// printf("Val: %d\n", dataIdx);
+
+		if (varType == 1) {
+			assert(varIdx < 50);
+			assert(dataIdx < 50);
+
+			DEBUG_SCRIPT(_currentLine, "compare var[%d] and var[%d]", varIdx, dataIdx);
+
+			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], _currentScriptElement->localVars[dataIdx]);
+		} else if (varType == 2) {
+			DEBUG_SCRIPT(_currentLine, "compare var[%d] and globalVar[%d]", varIdx, dataIdx);
+
+			assert(varIdx < 50);
+
+			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], globalVars[dataIdx]);
+		}
+	} else {
+		int16 value = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "compare var[%d] and %d", varIdx, value);
+		_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], value);
+	}
+}
+
+void o1_modifyObjectParam2() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	byte newValue = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", objIdx, paramIdx, newValue);
+
+	modifyObjectParam(objIdx, paramIdx, _currentScriptElement->localVars[newValue]);
+}
+
+void o1_loadMask0() {
+	// OP_loadV7Element
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "addSpriteOverlay(%d)", param);
+	loadOverlayElement(param, 0);
+}
+
+void o1_unloadMask0() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "removeSpriteOverlay(%d)", param);
+	freeOverlay(param, 0);
+}
+
+void o1_addToBgList() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "addToBGList(%d)", param);
+	addToBGList(param);
+}
+
+void o1_loadMask1() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "addOverlay1(%d)", param);
+	loadOverlayElement(param, 1);
+}
+
+void o1_unloadMask1() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "removeOverlay1(%d)", param);
+	freeOverlay(param, 1);
+}
+
+void o1_loadMask4() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "addOverlayType4(%d)", param);
+	loadOverlayElement(param, 4);
+}
+
+void o1_unloadMask4() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "removeSpriteOverlay4(%d)", param);
+	freeOverlay(param, 4);
+}
+
+void o1_addSpriteFilledToBgList() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "op1A(%d) -> TODO !", param);
+	addSpriteFilledToBGList(param);
+}
+
+void o1_op1B() {
+	DEBUG_SCRIPT(_currentLine, "closeEngine7");
+	closeEngine7();
+}
+
+void o1_label() {
+	byte labelIdx = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "label(%d)", labelIdx);
+	_currentScriptElement->stack[labelIdx] = _currentPosition;
+}
+
+void o1_goto() {
+	byte labelIdx = getNextByte();
+
+	assert(_currentScriptElement->stack[labelIdx] != -1);
+
+	DEBUG_SCRIPT(_currentLine, "goto label(%d)", labelIdx);
+	_currentPosition = _currentScriptElement->stack[labelIdx];
+}
+
+void o1_gotoIfSup() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 2) && !(_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(>) goto %d (true)", labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(>) goto %d (false)", labelIdx);
+	}
+}
+
+void o1_gotoIfSupEqu() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 2) || (_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(>=) goto %d (true)", labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(>=) goto %d (false)", labelIdx);
+	}
+}
+
+void o1_gotoIfInf() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 4) && !(_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(<) goto %d (true)", labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(<) goto %d (false)", labelIdx);
+	}
+}
+
+void o1_gotoIfInfEqu() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 4) || (_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(<=) goto %d (true)", labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(<=) goto %d (false)", labelIdx);
+	}
+}
+
+void o1_gotoIfEqu() {
+	byte labelIdx = getNextByte();
+
+	if (_currentScriptElement->compareResult & 1) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(==) goto %d (true)", labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(==) goto %d (false)", labelIdx);
+	}
+}
+
+void o1_gotoIfDiff() {
+	byte labelIdx = getNextByte();
+
+	if (!(_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(!=) goto %d (true)", labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(!=) goto %d (false)", labelIdx);
+	}
+}
+
+void o1_removeLabel() {
+	warning("STUB: o1_removeLabel()");
+}
+
+void o1_loop() {
+	byte varIdx = getNextByte();
+	byte labelIdx = getNextByte();
+
+	_currentScriptElement->localVars[varIdx]--;
+
+	if (_currentScriptElement->localVars[varIdx] >= 0) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "loop(var[%]) goto %d (continue)", varIdx, labelIdx);
+		_currentPosition = _currentScriptElement->stack[labelIdx];
+	} else {
+		DEBUG_SCRIPT(_currentLine, "loop(var[%]) goto %d (stop)", varIdx, labelIdx);
+	}
+}
+
+void o1_startGlobalScript() {
+	// OP_startScript
+	byte param = getNextByte();
+
+	assert(param < NUM_MAX_SCRIPT);
+
+	DEBUG_SCRIPT(_currentLine, "startScript(%d)", param);
+	addScriptToList0(param);
+}
+
+void o1_endGlobalScript() {
+	byte scriptIdx = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "stopGlobalScript(%d)", scriptIdx);
+	stopGlobalScript(scriptIdx);
+}
+
+void o1_loadAnim() {
+	// OP_loadResource
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadResource(\"%s\")", param);
+	loadResource(param);
+}
+
+void o1_loadBg() {
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadBg(\"%s\")", param);
+
+	loadBg(param);
+	closeEngine7();
+	bgVar0 = 0;
+}
+
+void o1_loadCt() {
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadCt(\"%s\")", param);
+	loadCt(param);
+}
+
+void o1_loadPart() {
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadPart(\"%s\")", param);
+	loadPart(param);
+}
+
+void o1_closePart() {
+	DEBUG_SCRIPT(_currentLine, "closePart");
+	closePart();
+}
+
+void o1_loadNewPrcName() {
+	// OP_loadData
+	byte param1 = getNextByte();
+	const char *param2 = getNextString();
+
+	assert(param1 <= 3);
+
+	switch (param1) {
+	case 0:
+		DEBUG_SCRIPT(_currentLine, "loadPrc(\"%s\")", param2);
+		strcpy(newPrcName, param2);
+		break;
+	case 1:
+		DEBUG_SCRIPT(_currentLine, "loadRel(\"%s\")", param2);
+		strcpy(newRelName, param2);
+		break;
+	case 2:
+		DEBUG_SCRIPT(_currentLine, "loadObject(\"%s\")", param2);
+		strcpy(newObjectName, param2);
+		break;
+	case 3:
+		DEBUG_SCRIPT(_currentLine, "loadMsg(\"%s\")", param2);
+		strcpy(newMsgName, param2);
+		break;
+	}
+}
+
+void o1_requestCheckPendingDataLoad() {
+	DEBUG_SCRIPT(_currentLine, "request data load");
+	checkForPendingDataLoadSwitch = 1;
+}
+
+void o1_blitAndFade() {
+	DEBUG_SCRIPT(_currentLine, "request fadein");
+	// TODO: use real code
+
+	memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
+	drawOverlays();
+	flip();
+
+	fadeRequired = 1;
+}
+
+void o1_fadeToBlack() {
+	DEBUG_SCRIPT(_currentLine, "request fadeout");
+	//fadeToBlack();
+	warning("STUB: o1_fadeToBlack()");
+}
+
+void o1_transformPaletteRange() {
+	byte startColor = getNextByte();
+	byte numColor = getNextByte();
+	uint16 r = getNextWord();
+	uint16 g = getNextWord();
+	uint16 b = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", startColor, numColor, r, g, b);
+
+	transformPaletteRange(startColor, numColor, r, g, b);
+}
+
+void o1_setDefaultMenuColor2() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "setDefaultMenuColor2(%d)", param);
+	defaultMenuBoxColor2 = param;
+}
+
+void o1_palRotate() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+	byte c = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "palRotate(%d,%d,%d)", a, b, c);
+	palRotate(a, b, c);
+}
+
+void o1_break() {
+	DEBUG_SCRIPT(_currentLine, "break");
+
+	_currentScriptElement->scriptPosition = _currentPosition;
+	_closeScript = 1;
+}
+
+void o1_endScript() {
+	DEBUG_SCRIPT(_currentLine, "endScript");
+
+	if (_currentScriptParams == 0) {
+		endScript0(_currentScriptElement->scriptIdx);
+	} else {
+		endScript1(_currentScriptElement->scriptIdx);
+	}
+
+	_closeScript = 1;
+}
+
+void o1_message() {
+	byte param1 = getNextByte();
+	uint16 param2 = getNextWord();
+	uint16 param3 = getNextWord();
+	uint16 param4 = getNextWord();
+	uint16 param5 = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "message(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5);
+
+	addMessage(param1, param2, param3, param4, param5);
+}
+
+void o1_loadGlobalVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			DEBUG_SCRIPT(_currentLine, "globalVars[%d] = var[%d]", varIdx, dataIdx);
+			globalVars[varIdx] = _currentScriptElement->localVars[dataIdx];
+		} else {
+			DEBUG_SCRIPT(_currentLine, "globalVars[%d] = globalVars[%d]", varIdx, dataIdx);
+			globalVars[varIdx] = globalVars[dataIdx];
+		}
+	} else {
+		uint16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "globalVars[%d] = %d", varIdx, newData);
+		globalVars[varIdx] = newData;
+	}
+}
+
+void o1_compareGlobalVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte value = getNextByte();
+
+		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and var[%d]", varIdx, value);
+		_currentScriptElement->compareResult = compareVars(globalVars[varIdx], _currentScriptElement->localVars[value]);
+	} else {
+		uint16 newData = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and %d", varIdx, newData);
+
+		if (varIdx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
+			_currentScriptElement->compareResult = 1;
+		} else {
+			_currentScriptElement->compareResult = compareVars(globalVars[varIdx], newData);
+		}
+	}
+}
+
+void o1_declareFunctionName() {
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "comment(%s)", param);
+}
+
+void o1_freePartRange() {
+	byte startIdx = getNextByte();
+	byte numIdx = getNextByte();
+
+	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
+
+	DEBUG_SCRIPT(_currentLine, "freePartRange(%d,%d)", startIdx, numIdx);
+	freePartRange(startIdx, numIdx);
+}
+
+void o1_unloadAllMasks() {
+	DEBUG_SCRIPT(_currentLine, "unloadAllMasks()");
+	unloadAllMasks();
+}
+
+void o1_op63() {
+	warning("STUB: o1_op63()");
+}
+
+void o1_op64() {
+	warning("STUB: o1_op64()");
+}
+
+void o1_initializeZoneData() {
+	DEBUG_SCRIPT(_currentLine, "initializeZoneData()");
+
+	for (int i = 0; i < NUM_MAX_ZONE; i++) {
+		zoneData[i] = i;
+	}
+}
+
+void o1_setZoneDataEntry() {
+	byte zoneIdx = getNextByte();
+	uint16 var = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "setZone[%d] = %d", zoneIdx, var);
+	zoneData[zoneIdx] = var;
+}
+
+void o1_getZoneDataEntry() {
+	warning("STUB: o1_getZoneDataEntry()");
+}
+
+void o1_setDefaultMenuColor() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "setDefaultMenuColor(%d)", param);
+	defaultMenuBoxColor = param;
+}
+
+void o1_allowPlayerInput() {
+	DEBUG_SCRIPT(_currentLine, "allowPlayerInput()");
+	allowPlayerInput = 1;
+}
+
+void o1_disallowPlayerInput() {
+	DEBUG_SCRIPT(_currentLine, "dissallowPlayerInput()");
+	allowPlayerInput = 0;
+}
+
+void o1_changeDataDisk() {
+	byte newDisk = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "changeDataDisk(%d)", newDisk);
+	checkDataDisk(newDisk);
+}
+
+void o1_loadMusic() {
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadMusic(%s)", param);
+	g_sfxPlayer->load(param);
+}
+
+void o1_playMusic() {
+	DEBUG_SCRIPT(_currentLine, "playMusic()");
+	g_sfxPlayer->play();
+}
+
+void o1_fadeOutMusic() {
+	DEBUG_SCRIPT(_currentLine, "fadeOutMusic()");
+	g_sfxPlayer->fadeOut();
+}
+
+void o1_stopSample() {
+	DEBUG_SCRIPT(_currentLine, "stopSample()");
+	g_sfxPlayer->stop();
+}
+
+void o1_op71() {
+	warning("STUB: o1_op71()");
+}
+
+void o1_op72() {
+	warning("STUB: o1_op72()");
+}
+
+void o1_op73() {
+	warning("STUB: o1_op73()");
+}
+
+void o1_playSample() {
+	DEBUG_SCRIPT(_currentLine, "playSample()");
+
+	byte anim = getNextByte();
+	byte channel = getNextByte();
+
+	getNextWord();
+	getNextByte();
+
+	int16 volume = getNextWord();
+	uint16 flag = getNextWord();
+
+	if (volume > 63)
+		volume = 63;
+	if (volume < 0)
+		volume = 63;
+
+	if (animDataTable[anim].ptr1) {
+		if (channel >= 10) {
+			channel -= 10;
+		}
+		if (volume < 50) {
+			volume = 50;
+		}
+
+		g_sfxPlayer->stop();
+					
+		if (flag == 0xFFFF) {
+			g_soundDriver->playSound(animDataTable[anim].ptr1, channel, volume);
+		} else {
+			g_soundDriver->resetChannel(channel);
+		}
+	}
+}
+
+void o1_allowSystemMenu() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "OP79 load var22 to %d -> TODO", param);
+	var22 = param;
+}
+
+void o1_loadMask5() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "addOverlay5(%d)", param);
+	loadOverlayElement(param, 5);
+}
+
+void o1_unloadMask5() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "freeOverlay5(%d)", param);
+	freeOverlay(param, 5);
+}
+
+// ------------------------------------------------------------------------
+// OPERATION STEALTH opcodes
+// ------------------------------------------------------------------------
+
+void o2_loadPart() {
+	const char *param = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadPart(\"%s\")", param);
+}
+
+void o2_addSeqListElement() {
+	byte param1 = getNextByte();
+	byte param2 = getNextByte();
+	byte param3 = getNextByte();
+	byte param4 = getNextByte();
+	uint16 param5 = getNextWord();
+	uint16 param6 = getNextWord();
+	uint16 param7 = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "addSeqListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
+	addSeqListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
+}
+
+void o2_removeSeq() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "removeSeq(%d,%d) -> TODO", a, b);
+	removeSeq(a, 0, b);
+}
+
+void o2_op81() {
+	warning("STUB: o2_op81()");
+}
+
+void o2_op82() {
+	warning("STUB: o2_op82()");
+}
+
+void o2_isSeqRunning() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "OP83(%d,%d) -> TODO", a, b);
+
+	if (isSeqRunning(a, 0, b)) {
+		_currentScriptElement->compareResult = 1;
+	} else {
+		_currentScriptElement->compareResult = 0;
+	}
+}
+
+void o2_gotoIfSupNearest() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 2) && !(_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(>) goto nearest %d (true)", labelIdx);
+		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(>) goto nearest %d (false)", labelIdx);
+	}
+}
+
+void o2_gotoIfSupEquNearest() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 2) || (_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(>=) goto nearest %d (true)", labelIdx);
+		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(>=) goto nearest %d (false)", labelIdx);
+	}
+}
+
+void o2_gotoIfInfNearest() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 4) && !(_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(<) goto nearest %d (true)", labelIdx);
+		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(<) goto nearest %d (false)", labelIdx);
+	}
+}
+
+void o2_gotoIfInfEquNearest() {
+	byte labelIdx = getNextByte();
+
+	if ((_currentScriptElement->compareResult & 4) || (_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(<=) goto nearest %d (true)", labelIdx);
+		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(<=) goto nearest %d (false)", labelIdx);
+	}
+}
+
+void o2_gotoIfEquNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_currentScriptElement->compareResult & 1) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(==) goto nearest %d (true)", labelIdx);
+		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(==) goto nearest %d (false)", labelIdx);
+	}
+}
+
+void o2_gotoIfDiffNearest() {
+	byte labelIdx = getNextByte();
+
+	if (!(_currentScriptElement->compareResult & 1)) {
+		assert(_currentScriptElement->stack[labelIdx] != -1);
+
+		DEBUG_SCRIPT(_currentLine, "if(!=) goto nearest %d (true)", labelIdx);
+		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
+	} else {
+		DEBUG_SCRIPT(_currentLine, "if(!=) goto nearest %d (false)", labelIdx);
+	}
+}
+
+void o2_startObjectScript() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "startObjectScript(%d)", param);
+	runObjectScript(param);
+}
+
+void o2_stopObjectScript() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "stopObjectScript(%d)", param);
+	stopObjectScript(param);
+}
+
+void o2_op8D() {
+	warning("STUB: o2_op8D()");
+}
+
+void o2_addBackground() {
+	byte param1 = getNextWord();
+	const char *param2 = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "addBackground(%s,%d)", param2, param1);
+	addBackground(param2, param1);
+}
+
+void o2_removeBackground() {
+	byte param = getNextByte();
+
+	assert(param);
+
+	DEBUG_SCRIPT(_currentLine, "removeBackground(%d)", param);
+
+	if (additionalBgTable[param]) {
+		free(additionalBgTable[param]);
+		additionalBgTable[param] = NULL;
+	}
+
+	if (currentAdditionalBgIdx == param) {
+		currentAdditionalBgIdx = 0;
+	}
+
+	if (currentAdditionalBgIdx2 == param) {
+		currentAdditionalBgIdx2 = 0;
+	}
+
+	strcpy(currentBgName[param], "");
+}
+
+void o2_loadAbs() {
+	byte param1 = getNextByte();
+	const char *param2 = getNextString();
+
+	DEBUG_SCRIPT(_currentLine, "loadABS(%d,%s)", param1, param2);
+	loadAbs(param2, param1);
+}
+
+void o2_loadBg() {
+	byte param = getNextByte();
+
+	assert(param <= 8);
+
+	DEBUG_SCRIPT(_currentLine, "useBg(%d)", param);
+
+	if (additionalBgTable[param]) {
+		currentAdditionalBgIdx = param;
+		//if (adBgVar0 == 0) {
+		//	adBgVar1 = 1;
+		//}
+	}
+}
+
+void o2_op95() {
+	warning("STUB: o2_op95()");
+}
+
+void o2_wasZoneChecked() {
+	warning("STUB: o2_wasZoneChecked()");
+}
+
+void o2_op9B() {
+	warning("STUB: o2_9B()");
+}
+
+void o2_op9C() {
+	warning("STUB: o2_9C()");
+}
+
+void o2_useBgScroll() {
+	byte param = getNextByte();
+
+	assert(param <= 8);
+
+	DEBUG_SCRIPT(_currentLine, "useBgScroll(%d)", param);
+
+	if (additionalBgTable[param]) {
+		currentAdditionalBgIdx2 = param;
+	}
+}
+
+void o2_setAdditionalBgVScroll() {
+	byte param1 = getNextByte();
+
+	if (param1) {
+		byte param2 = getNextByte();
+
+		DEBUG_SCRIPT(_currentLine, "additionalBgVScroll = var[%d]", param2);
+		additionalBgVScroll = _currentScriptElement->localVars[param2];
+	} else {
+		uint16 param2 = getNextWord();
+
+		DEBUG_SCRIPT(_currentLine, "additionalBgVScroll = %d", param2);
+		additionalBgVScroll = param2;
+	}
+}
+
+void o2_op9F() {
+	warning("o2_op9F()");
+}
+
+void o2_addGfxElementA0() {
+	uint16 param1 = getNextWord();
+	uint16 param2 = getNextWord();
+
+	DEBUG_SCRIPT(_currentLine, "addGfxElementA0(%d,%d)", param1, param2);
+	addGfxElementA0(param1, param2);
+}
+
+void o2_opA1() {
+	_currentPosition += 4;
+	warning("STUB: o2_opA1()");
+}
+
+void o2_opA2() {
+	_currentPosition += 4;
+	warning("STUB: o2_opA2()");
+}
+
+void o2_opA3() {
+	_currentPosition += 4;
+	warning("STUB: o2_opA3()");
+}
+
+void o2_opA4() {
+	warning("STUB: o2_opA4()");
+}
+
+void o2_opA5() {
+	warning("STUB: o2_opA5()");
+}
+
+void o2_opA9() {
+	warning("STUB: o2_opA9()");
+}
+
+// ------------------------------------------------------------------------
+
+void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 	assert(scriptElement);
 
 	if (scriptElement->scriptIdx == -1) {
@@ -648,1326 +2117,25 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 	assert(scriptElement->scriptPtr);
 
-	// Used to be local variables, but as far as I can tell there's no
-	// recursion that can mess things up when making them global.
-
+	_currentScriptElement = scriptElement;
+	_currentScriptParams = params;
 	_currentScriptPtr = scriptElement->scriptPtr;
 	_currentPosition = scriptElement->scriptPosition;
 
-	closeScript = 0;
+	_closeScript = 0;
 
-	while (!closeScript) {
-		uint16 currentLine = _currentPosition;
+	while (!_closeScript) {
+		_currentLine = _currentPosition;
+
 		byte opcode = getNextByte();
 
 		//printf("Op: %X\n", opcode - 1);
 
-		// Future Wars:       opcodes 0x00 - 0x7B
-		// Operation Stealth: opcodes 0x00 - 0xB6
-		//
-		// Both opcode tables have plenty of holes in them, though.
-		//
-		// 0x40: Future Wars only
-		// 0x48: Future Wars only
-
-		switch (opcode - 1) {
-		case -1:
-			{
-				break;
-			}
-		case 0x0:	// OP_modifyObjectParam
-			{
-				byte objIdx = getNextByte();
-				byte paramIdx = getNextByte();
-				int16 newValue = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
-
-				modifyObjectParam(objIdx, paramIdx, newValue);
-
-				break;
-			}
-		case 0x1:	// OP_getObjectParam
-			{
-				byte objIdx = getNextByte();
-				byte paramIdx = getNextByte();
-				byte newValue = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", objIdx, paramIdx, newValue);
-
-				scriptElement->localVars[newValue] = getObjectParam(objIdx, paramIdx);
-
-				break;
-			}
-		case 0x2:	// OP_addObjectParam
-			{
-				byte objIdx = getNextByte();
-				byte paramIdx = getNextByte();
-				int16 newValue = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
-
-				addObjectParam(objIdx, paramIdx, newValue);
-
-				break;
-			}
-		case 0x3:	// OP_subObjectParam
-			{
-				byte objIdx = getNextByte();
-				byte paramIdx = getNextByte();
-				int16 newValue = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
-
-				subObjectParam(objIdx, paramIdx, newValue);
-
-				break;
-			}
-		case 0x4:	// OP_add2ObjectParam
-			{
-				warning("STUB: Opcode 0x4\n");
-				break;
-			}
-		case 0x5:	// OP_sub2ObjectParam
-			{
-				warning("STUB: Opcode 0x5\n");
-				break;
-			}
-		case 0x6:	// OP_compareObjectParam
-			{
-				byte objIdx = getNextByte();
-				byte param1 = getNextByte();
-				int16 param2 = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "compareObjectParam(objIdx:%d,type:%d,value:%d)", objIdx, param1, param2);
-
-				scriptElement->compareResult = compareObjectParam(objIdx, param1, param2);
-
-				break;
-			}
-		case 0x7:	// OP_setupObject
-			{
-				byte objIdx = getNextByte();
-				int16 param1 = getNextWord();
-				int16 param2 = getNextWord();
-				int16 param3 = getNextWord();
-				int16 param4 = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "setupObject(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
-
-				setupObject(objIdx, param1, param2, param3, param4);
-
-				break;
-			}
-		case 0x8:	// OP_checkCollision
-			{
-				byte objIdx = getNextByte();
-				int16 param1 = getNextWord();
-				int16 param2 = getNextWord();
-				int16 param3 = getNextWord();
-				int16 param4 = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "checkCollision(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
-
-				scriptElement->compareResult = checkCollision(objIdx, param1, param2, param3, param4);
-
-				break;
-			}
-		case 0x9:	// OP_loadVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte dataIdx = getNextByte();
-
-					switch (varType) {
-					case 1:
-						{
-							DEBUG_SCRIPT(currentLine, "var[%d] = var[%d]", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = scriptElement->localVars[dataIdx];
-							break;
-						}
-					case 2:
-						{
-							DEBUG_SCRIPT(currentLine, "var[%d] = globalVars[%d]", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = globalVars[dataIdx];
-							break;
-						}
-					case 3:
-						{
-							int16 var;
-
-							DEBUG_SCRIPT(currentLine, "var[%d] = mouseX", varIdx, dataIdx);
-							getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&var, (uint16 *)&dummyU16);
-							scriptElement->localVars[varIdx] = var;
-							break;
-						}
-					case 4:
-						{
-							int16 var;
-
-							DEBUG_SCRIPT(currentLine, "var[%d] = mouseY", varIdx, dataIdx);
-							getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&dummyU16, (uint16 *)&var);
-							scriptElement->localVars[varIdx] = var;
-							break;
-						}
-					case 5:
-						{
-							DEBUG_SCRIPT(currentLine, "var[%d] = rand mod %d", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = rand() % dataIdx;
-							break;
-						}
-					case 8:
-						{
-							DEBUG_SCRIPT(currentLine, "var[%d] = file[%d].packedSize", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = partBuffer[dataIdx].packedSize;
-							break;
-						}
-					case 9:
-						{
-							DEBUG_SCRIPT(currentLine, "var[%d] = file[%d].unpackedSize", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
-							break;
-						}
-					default:
-						{
-							error("executeScript: OP_loadVar: Unknown variable type %d", varType);
-						}
-					}
-				} else {
-					int16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] = %d", varIdx, newData);
-
-					scriptElement->localVars[varIdx] = newData;
-				}
-				break;
-			}
-		case 0xA:	// OP_addVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte dataIdx = getNextByte();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] += var[%d]", varIdx, dataIdx);
-
-					scriptElement->localVars[varIdx] += scriptElement->localVars[dataIdx];
-				} else {
-					int16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] += %d", varIdx, newData);
-
-					scriptElement->localVars[varIdx] += newData;
-				}
-
-				break;
-			}
-		case 0xB:	// OP_subVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte dataIdx = getNextByte();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] -= var[%d]", varIdx, dataIdx);
-
-					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] - scriptElement->localVars[dataIdx];
-				} else {
-					int16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] -= %d", varIdx, newData);
-
-					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] - newData;
-				}
-
-				break;
-			}
-		case 0xC:	// OP_mulVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte dataIdx = getNextByte();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] *= var[%d]", varIdx, dataIdx);
-
-					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] * scriptElement->localVars[dataIdx];
-				} else {
-					int16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] *= %d", varIdx, newData);
-
-					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] * newData;
-				}
-
-				break;
-			}
-		case 0xD:	// OP_divVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte dataIdx = getNextByte();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] /= var[%d]", varIdx, dataIdx);
-
-					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] / scriptElement->localVars[dataIdx];
-				} else {
-					int16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "var[%d] /= %d", varIdx, newData);
-
-					scriptElement->localVars[varIdx] = scriptElement->localVars[varIdx] / newData;
-				}
-
-				break;
-			}
-		case 0xE:	// OP_compareVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte value = getNextByte();
-
-					// printf("Val: %d\n", value);
-
-					if (varType == 1) {
-						DEBUG_SCRIPT(currentLine, "compare var[%d] and var[%d]", varIdx, value);
-
-						assert(varIdx < 50);
-						assert(value < 50);
-
-						scriptElement->compareResult = compareVars(scriptElement->localVars[varIdx], scriptElement->localVars[value]);
-					} else if (varType == 2) {
-						DEBUG_SCRIPT(currentLine, "compare var[%d] and globalVar[%d]", varIdx, value);
-
-						assert(varIdx < 50);
-
-						scriptElement->compareResult = compareVars(scriptElement->localVars[varIdx], globalVars[value]);
-					}
-				} else {
-					int16 value = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "compare var[%d] and %d", varIdx, value);
-
-					scriptElement->compareResult = compareVars(scriptElement->localVars[varIdx], value);
-				}
-
-				break;
-			}
-		case 0xF:	// OP_modifyObjectParam2
-			{
-				byte objIdx = getNextByte();
-				byte paramIdx = getNextByte();
-				byte newValue = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", objIdx, paramIdx, newValue);
-
-				modifyObjectParam(objIdx, paramIdx, scriptElement->localVars[newValue]);
-
-				break;
-			}
-		case 0x13:	// OP_loadV7Element (OP_loadMask0?)
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "addSpriteOverlay(%d)", param);
-
-				loadOverlayElement(param, 0);
-
-				break;
-			}
-		case 0x14:	// OP_unloadMask0
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "removeSpriteOverlay(%d)", param);
-
-				freeOverlay(param, 0);
-
-				break;
-			}
-		case 0x15:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "addToBGList(%d)", param);
-
-				addToBGList(param);
-
-				break;
-			}
-		case 0x16:	// OP_loadMask1
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "addOverlay1(%d)", param);
-
-				loadOverlayElement(param, 1);
-
-				break;
-			}
-		case 0x17:	// OP_unloadMask1
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "removeOverlay1(%d)", param);
-
-				freeOverlay(param, 1);
-
-				break;
-			}
-		case 0x18:	// OP_loadMask4
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "addOverlayType4(%d)", param);
-
-				loadOverlayElement(param, 4);
-
-				break;
-			}
-		case 0x19:	// OP_unloadMask4
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "removeSpriteOverlay4(%d)", param);
-
-				freeOverlay(param, 4);
-
-				break;
-			}
-		case 0x1A:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "op1A(%d) -> TODO !", param);
-
-				addSpriteFilledToBGList(param);
-
-				break;
-			}
-		case 0x1B:
-			{
-				DEBUG_SCRIPT(currentLine, "closeEngine7");
-				closeEngine7();
-				break;
-			}
-		case 0x1D:	// OP_label
-			{
-				byte labelIdx = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "label(%d)", labelIdx);
-
-				scriptElement->stack[labelIdx] = _currentPosition;
-
-				break;
-			}
-		case 0x1E:	// OP_goto
-			{
-				byte labelIdx = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "goto label(%d)", labelIdx);
-
-				assert(scriptElement->stack[labelIdx] != -1);
-				_currentPosition = scriptElement->stack[labelIdx];
-
-				break;
-			}
-		case 0x1F:	// OP_gotoIfSup
-			{
-				byte labelIdx = getNextByte();
-
-				if ((scriptElement->compareResult & 2) && !(scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(>) goto %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(>) goto %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x20:	// OP_gotoIfSupEqu
-			{
-				byte labelIdx = getNextByte();
-
-				if (scriptElement->compareResult & 2 || scriptElement->compareResult & 1) {
-					DEBUG_SCRIPT(currentLine, "if(>=) goto %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(>=) goto %d (false)",
-					    labelIdx);
-				}
-
-				break;
-			}
-		case 0x21:	// OP_gotoIfInf
-			{
-				byte labelIdx = getNextByte();
-
-				if ((scriptElement->compareResult & 4) && !(scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(<) goto %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(<) goto %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x22:	// OP_gotoIfInfEqu
-			{
-				byte labelIdx = getNextByte();
-
-				if ((scriptElement->compareResult & 4) || (scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(<=) goto %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(<=) goto %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x23:	// OP_gotoIfEqu
-			{
-				byte labelIdx = getNextByte();
-
-				if (scriptElement->compareResult & 1) {
-					DEBUG_SCRIPT(currentLine, "if(==) goto %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(==) goto %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x24:	// OP_gotoIfDiff
-			{
-				byte labelIdx = getNextByte();
-
-				if (!(scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(!=) goto %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(!=) goto %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x25:	// OP_removeLabel
-			{
-				warning("STUB: Opcode 0x25");
-				break;
-			}
-		case 0x26:	// OP_loop
-			{
-				byte varIdx = getNextByte();
-				byte labelIdx = getNextByte();
-
-				scriptElement->localVars[varIdx]--;
-
-				if (scriptElement->localVars[varIdx] >= 0) {
-					DEBUG_SCRIPT(currentLine, "loop(var[%]) goto %d (continue)", varIdx, labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = scriptElement->stack[labelIdx];
-				} else {
-					DEBUG_SCRIPT(currentLine, "loop(var[%]) goto %d (stop)", varIdx, labelIdx);
-				}
-
-				break;
-			}
-		case 0x31:	// OP_startScript (OP_startGlobalScript?)
-			{
-				byte param = getNextByte();
-
-				assert(param < NUM_MAX_SCRIPT);
-
-				DEBUG_SCRIPT(currentLine, "startScript(%d)", param);
-
-				addScriptToList0(param);
-				break;
-			}
-		case 0x32:	// OP_endGlobalScript
-			{
-				byte scriptIdx = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "stopGlobalScript(%d)", scriptIdx);
-
-				stopGlobalScript(scriptIdx);
-				break;
-			}
-		case 0x3B:	// OP_loadResource (OP_loadAnim?)
-			{
-				const char *param = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "loadResource(\"%s\")", param);
-
-				loadResource(param);
-				break;
-			}
-		case 0x3C:	// OP_loadBg
-			{
-				const char *param = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "loadBg(\"%s\")", param);
-
-				loadBg(param);
-				closeEngine7();
-				bgVar0 = 0;
-
-				break;
-			}
-		case 0x3D:	// OP_loadCt
-			{
-				const char *param = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "loadCt(\"%s\")", param);
-
-				loadCt(param);
-				break;
-			}
-		case 0x3F:	// OP_loadPart
-			{
-				const char *param = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "loadPart(\"%s\")", param);
-
-				if (gameType == Cine::GID_FW)
-					loadPart(param);
-
-				break;
-			}
-		case 0x40:	// OP_closePart
-			{
-				DEBUG_SCRIPT(currentLine, "closePart");
-
-				closePart();
-				break;
-			}
-		case 0x41:	// OP_loadData (OP_loadNewPrcName?)
-			{
-				byte param1 = getNextByte();
-				const char *param2 = getNextString();
-
-				assert(param1 <= 3);
-
-				switch (param1) {
-				case 0:
-					{
-						DEBUG_SCRIPT(currentLine, "loadPrc(\"%s\")", param2);
-						strcpy(newPrcName, param2);
-						break;
-					}
-				case 1:
-					{
-						DEBUG_SCRIPT(currentLine, "loadRel(\"%s\")", param2);
-						strcpy(newRelName, param2);
-						break;
-					}
-				case 2:
-					{
-						DEBUG_SCRIPT(currentLine, "loadObject(\"%s\")", param2);
-						strcpy(newObjectName, param2);
-						break;
-					}
-				case 3:
-					{
-						DEBUG_SCRIPT(currentLine, "loadMsg(\"%s\")", param2);
-						strcpy(newMsgName, param2);
-						break;
-					}
-				}
-
-				break;
-			}
-		case 0x42:	// OP_requestCheckPendingDataLoad
-			{
-				DEBUG_SCRIPT(currentLine, "request data load");
-				checkForPendingDataLoadSwitch = 1;
-				break;
-			}
-		case 0x45:	// OP_blitAndFade
-			{
-				DEBUG_SCRIPT(currentLine, "request fadein");
-				// TODO: use real code
-
-				memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
-				drawOverlays();
-				flip();
-
-				fadeRequired = 1;
-				break;
-			}
-		case 0x46:	// OP_fadeToBlack
-			{
-				DEBUG_SCRIPT(currentLine, "request fadeout");
-				//fadeToBlack();
-				warning("STUB: Opcode 0x46");
-				break;
-			}
-		case 0x47:	// OP_transformPaletteRange
-			{
-				byte startColor = getNextByte();
-				byte numColor = getNextByte();
-				uint16 r = getNextWord();
-				uint16 g = getNextWord();
-				uint16 b = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", startColor, numColor, r, g, b);
-
-				transformPaletteRange(startColor, numColor, r, g, b);
-
-				break;
-			}
-		case 0x49:	// OP_setDefaultMenuColor2
-			{
-				defaultMenuBoxColor2 = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "setDefaultMenuColor2(%d)", defaultMenuBoxColor2);
-
-				break;
-			}
-		case 0x4A:
-			{
-				byte a = getNextByte();
-				byte b = getNextByte();
-				byte c = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "palRotate(%d,%d,%d)", a, b, c);
-
-				palRotate(a, b, c);
-				break;
-			}
-		case 0x4F:	// OP_break;
-			{
-				DEBUG_SCRIPT(currentLine, "break");
-
-				scriptElement->scriptPosition = _currentPosition;
-				closeScript = 1;
-				break;
-			}
-		case 0x50:	// OP_endScript
-			{
-				DEBUG_SCRIPT(currentLine, "endScript");
-
-				if (params == 0) {
-					endScript0(scriptElement->scriptIdx);
-				} else {
-					endScript1(scriptElement->scriptIdx);
-				}
-
-				closeScript = 1;
-				break;
-			}
-		case 0x51:	// OP_message
-			{
-				byte param1 = getNextByte();
-				uint16 param2 = getNextWord();
-				uint16 param3 = getNextWord();
-				uint16 param4 = getNextWord();
-				uint16 param5 = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "message(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5);
-
-				addMessage(param1, param2, param3, param4, param5);
-
-				break;
-			}
-		case 0x52:	// OP_loadGlobalVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte dataIdx = getNextByte();
-
-					if (varType == 1) {
-						DEBUG_SCRIPT(currentLine, "globalVars[%d] = var[%d]", varIdx, dataIdx);
-
-						globalVars[varIdx] = scriptElement->localVars[dataIdx];
-					} else {
-						DEBUG_SCRIPT(currentLine, "globalVars[%d] = globalVars[%d]", varIdx, dataIdx);
-
-						globalVars[varIdx] = globalVars[dataIdx];
-					}
-				} else {
-					uint16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "globalVars[%d] = %d", varIdx, newData);
-
-					globalVars[varIdx] = newData;
-				}
-
-				break;
-			}
-		case 0x53:	// OP_compareGlobalVar
-			{
-				byte varIdx = getNextByte();
-				byte varType = getNextByte();
-
-				if (varType) {
-					byte value = getNextByte();
-
-					DEBUG_SCRIPT(currentLine, "compare globalVars[%d] and var[%d]", varIdx, value);
-
-					scriptElement->compareResult = compareVars(globalVars[varIdx], scriptElement->localVars[value]);
-				} else {
-					uint16 newData = getNextWord();
-
-					DEBUG_SCRIPT(currentLine,
-					    "compare globalVars[%d] and %d",
-					    varIdx, newData);
-
-					if (varIdx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
-						scriptElement->compareResult = 1;
-					} else {
-						scriptElement->compareResult = compareVars(globalVars[varIdx], newData);
-					}
-				}
-
-				break;
-			}
-		case 0x59:	// OP_declareFunctionName
-			{
-				const char *param = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "comment(%s)", param);
-				break;
-			}
-		case 0x5A:	// OP_freePartRange
-			{
-				byte startIdx = getNextByte();
-				byte numIdx = getNextByte();
-
-				assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
-
-				DEBUG_SCRIPT(currentLine, "freePartRange(%d,%d)", startIdx, numIdx);
-
-				freePartRange(startIdx, numIdx);
-
-				break;
-			}
-		case 0x5B:	// OP_unloadAllMasks
-			{
-				DEBUG_SCRIPT(currentLine, "unloadAllMasks()");
-
-				unloadAllMasks();
-
-				break;
-			}
-		case 0x63:
-			{
-				warning("STUB: Opcode 0x63");
-				break;
-			}
-		case 0x64:
-			{
-				warning("STUB: Opcode 0x64");
-				break;
-			}
-		case 0x65:	// OP_initializeZoneData
-			{
-				byte i;
-
-				DEBUG_SCRIPT(currentLine, "initializeZoneData()");
-
-				for (i = 0; i < NUM_MAX_ZONE; i++) {
-					zoneData[i] = i;
-				}
-
-				break;
-			}
-		case 0x66:	// OP_setZoneDataEntry
-			{
-				byte zoneIdx = getNextByte();
-				uint16 var = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "setZone[%d] = %d", zoneIdx, var);
-
-				zoneData[zoneIdx] = var;
-
-				break;
-			}
-		case 0x67:	// OP_getZoneDataEntry
-			{
-				warning("STUB: Opcode 0x67");
-				break;
-			}
-		case 0x68:	// OP_setDefaultMenuColor
-			{
-				defaultMenuBoxColor = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "setDefaultMenuColor(%d)", defaultMenuBoxColor2);
-
-				break;
-			}
-		case 0x69:	// OP_allowPlayerInput
-			{
-				DEBUG_SCRIPT(currentLine, "allowPlayerInput()");
-
-				allowPlayerInput = 1;
-				break;
-			}
-		case 0x6A:	// OP_dissallowPlayerInput
-			{
-				DEBUG_SCRIPT(currentLine, "dissallowPlayerInput()");
-
-				allowPlayerInput = 0;
-				break;
-			}
-		case 0x6B:	// OP_changeDataDisk
-			{
-				byte newDisk = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "changeDataDisk(%d)", newDisk);
-
-				checkDataDisk(newDisk);
-				break;
-			}
-		case 0x6D:	// OP_loadMusic
-			{
-				const char *param = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "loadMusic(%s)", param);
-				g_sfxPlayer->load(param);
-				break;
-			}
-		case 0x6E:	// OP_playMusic
-			{
-				DEBUG_SCRIPT(currentLine, "playMusic()");
-				g_sfxPlayer->play();
-				break;
-			}
-		case 0x6F:	// OP_fadeOutMusic
-			{
-				DEBUG_SCRIPT(currentLine, "fadeOutMusic()");
-				g_sfxPlayer->fadeOut();
-				break;
-			}
-		case 0x70:	// OP_stopSample
-			{
-				DEBUG_SCRIPT(currentLine, "stopSample()");
-				g_sfxPlayer->stop();
-				break;
-			}
-		case 0x71:
-			{
-				warning("STUB: Opcode 0x71");
-				break;
-			}
-		case 0x72:
-			{
-				warning("STUB: Opcode 0x72");
-				break;
-			}
-		case 0x73:
-			{
-				warning("STUB: Opcode 0x73");
-				break;
-			}
-		case 0x77:	// OP_playSample
-		case 0x78:	// OP_playSample
-			{
-				DEBUG_SCRIPT(currentLine, "playSample()");
-
-				byte anim = getNextByte();
-				byte channel = getNextByte();
-
-				getNextWord();
-				getNextByte();
-
-				int16 volume = getNextWord();
-				uint16 flag = getNextWord();
-
-				if (volume > 63)
-					volume = 63;
-				if (volume < 0)
-					volume = 63;
-
-				if (animDataTable[anim].ptr1) {
-					if (channel >= 10) {
-						channel -= 10;
-					}
-					if (volume < 50) {
-						volume = 50;
-					}
-
-					g_sfxPlayer->stop();
-					
-					if (flag == 0xFFFF) {
-						g_soundDriver->playSound(animDataTable[anim].ptr1, channel, volume);
-					} else {
-						g_soundDriver->resetChannel(channel);
-					}
-				}
-				break;
-			}
-		case 0x79:	// OP_allowSystemMenu
-			{
-				var22 = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "OP79 load var22 to %d -> TODO", var22);
-				break;
-			}
-		case 0x7A:	// OP_loadMask5
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "addOverlay5(%d)", param);
-
-				loadOverlayElement(param, 5);
-				break;
-			}
-		case 0x7B:	// OP_unloadMask5
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "freeOverlay5(%d)", param);
-
-				freeOverlay(param, 5);
-				break;
-			}
-		case 0x7F:
-			{
-				byte param1 = getNextByte();
-				byte param2 = getNextByte();
-				byte param3 = getNextByte();
-				byte param4 = getNextByte();
-				uint16 param5 = getNextWord();
-				uint16 param6 = getNextWord();
-				uint16 param7 = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "addSeqListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
-
-				addSeqListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
-
-				break;
-			}
-		case 0x80:
-			{
-				byte a = getNextByte();
-				byte b = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "removeSeq(%d,%d) -> TODO", a, b);
-
-				removeSeq(a, 0, b);
-				break;
-			}
-		case 0x81:
-			{
-				warning("STUB: Opcode 0x81");
-				break;
-			}
-		case 0x82:
-			{
-				warning("STUB: Opcode 0x82");
-				break;
-			}
-		case 0x83:
-			{
-				byte a = getNextByte();
-				byte b = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "OP83(%d,%d) -> TODO", a, b);
-
-				if (isSeqRunning(a, 0, b)) {
-					scriptElement->compareResult = 1;
-				} else {
-					scriptElement->compareResult = 0;
-				}
-				break;
-			}
-		case 0x84:	// OP_gotoIfSup nearest
-			{
-				byte labelIdx = getNextByte();
-
-				if ((scriptElement->compareResult & 2)
-				    && !(scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, _currentPosition, labelIdx,
-									scriptTable[scriptElement->scriptIdx].size);
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x85:	// OP_gotoIfSupEqu nearest
-			{
-				byte labelIdx = getNextByte();
-
-				if (scriptElement->compareResult & 2 || scriptElement->compareResult & 1) {
-					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, _currentPosition, labelIdx,
-								    scriptTable[scriptElement->scriptIdx].size);
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x86:	// OP_gotoIfInf nearest
-			{
-				byte labelIdx = getNextByte();
-
-				if ((scriptElement->compareResult & 4) && !(scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-									_currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x87:	// OP_gotoIfInfEqu nearest
-			{
-				byte labelIdx = getNextByte();
-
-				if ((scriptElement->compareResult & 4) || (scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    _currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x88:	// OP_gotoIfEqu nearest
-			{
-				byte labelIdx = getNextByte();
-
-				if (scriptElement->compareResult & 1) {
-					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    _currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x89:	// OP_gotoIfDiff nearest
-			{
-				byte labelIdx = getNextByte();
-
-				if (!(scriptElement->compareResult & 1)) {
-					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (true)", labelIdx);
-					assert(scriptElement->stack[labelIdx] != -1);
-					_currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    _currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
-				} else {
-					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (false)", labelIdx);
-				}
-
-				break;
-			}
-		case 0x8B:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "startObjectScript(%d)", param);
-
-				runObjectScript(param);
-				break;
-			}
-		case 0x8C:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "stopObjectScript(%d)", param);
-
-				stopObjectScript(param);
-				break;
-			}
-		case 0x8D:
-			{
-				warning("STUB: Opcode 0x8D");
-				break;
-			}
-		case 0x8E:
-			{
-				byte param1 = getNextWord();
-				const char *param2 = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "addBackground(%s,%d)", param2, param1);
-
-				addBackground(param2, param1);
-				break;
-			}
-		case 0x8F:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "removeBackground(%d)", param);
-
-				assert(param);
-				if (additionalBgTable[param]) {
-					free(additionalBgTable[param]);
-					additionalBgTable[param] = NULL;
-				}
-
-				if (currentAdditionalBgIdx == param) {
-					currentAdditionalBgIdx = 0;
-				}
-
-				if (currentAdditionalBgIdx2 == param) {
-					currentAdditionalBgIdx2 = 0;
-				}
-
-				strcpy(currentBgName[param], "");
-
-				break;
-			}
-		case 0x90:
-			{
-				byte param1 = getNextByte();
-				const char *param2 = getNextString();
-
-				DEBUG_SCRIPT(currentLine, "loadABS(%d,%s)", param1, param2);
-
-				loadAbs(param2, param1);
-				break;
-			}
-		case 0x91:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "useBg(%d)", param);
-
-				assert(param <= 8);
-
-				if (additionalBgTable[param]) {
-					currentAdditionalBgIdx = param;
-					//if (adBgVar0 == 0) {
-					//	adBgVar1 = 1;
-					//}
-				}
-				break;
-			}
-		case 0x95:
-			{
-				warning("STUB: Opcode 0x95");
-				break;
-			}
-		case 0x9A:	// OP_wasZoneChecked
-			{
-				warning("STUB: Opcode 0x9A");
-				break;
-			}
-		case 0x9B:
-			{
-				warning("STUB: Opcode 0x9B");
-				break;
-			}
-		case 0x9C:
-			{
-				warning("STUB: Opcode 0x9C");
-				break;
-			}
-		case 0x9D:
-			{
-				byte param = getNextByte();
-
-				DEBUG_SCRIPT(currentLine, "useBgScroll(%d)", param);
-
-				assert(param <= 8);
-
-				if (additionalBgTable[param]) {
-					currentAdditionalBgIdx2 = param;
-				}
-				break;
-			}
-		case 0x9E:
-			{
-				byte param1 = getNextByte();
-
-				if (param1) {
-					byte param2 = getNextByte();
-
-					DEBUG_SCRIPT(currentLine, "additionalBgVScroll = var[%d]", param2);
-
-					additionalBgVScroll = scriptElement->localVars[param2];
-				} else {
-					uint16 param2 = getNextWord();
-
-					DEBUG_SCRIPT(currentLine, "additionalBgVScroll = %d", param2);
-
-					additionalBgVScroll = param2;
-				}
-
-				break;
-			}
-		case 0x9F:
-			{
-				warning("STUB: Opcode 0x9F");
-				break;
-			}
-		case 0xA0:
-			{
-				uint16 param1 = getNextWord();
-				uint16 param2 = getNextWord();
-
-				DEBUG_SCRIPT(currentLine, "addGfxElementA0(%d,%d)", param1, param2);
-
-				addGfxElementA0(param1, param2);
-				break;
-			}
-		case 0xA1:
-			{
-				warning("STUB: Opcode 0xA1");
-				_currentPosition += 4;
-				break;
-			}
-		case 0xA2:
-			{
-				warning("STUB: Opcode 0xA2");
-				_currentPosition += 4;
-				break;
-			}
-		case 0xA3:
-			{
-				warning("STUB: Opcode 0xA3");
-				_currentPosition += 4;
-				break;
-			}
-		case 0xA4:
-			{
-				warning("STUB: Opcode 0xA4");
-				break;
-			}
-		case 0xA5:
-			{
-				warning("STUB: Opcode 0xA5");
-				break;
-			}
-		case 0xB6:
-			{
-				warning("STUB: Opcode 0xB6");
-				break;
-			}
-		default:
-			{
+		if (opcode) {
+			if (opcode < _numOpcodes && _opcodeTable[opcode - 1])
+				(_opcodeTable[opcode - 1]) ();
+			else
 				error("Unsupported opcode %X", opcode - 1);
-			}
 		}
 	}
 }
