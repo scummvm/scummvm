@@ -2689,34 +2689,54 @@ void SimonEngine::timer_vga_sprites() {
 void SimonEngine::scrollEvent() {
 	byte *dst = getFrontBuf();
 	const byte *src;
-	uint x;
+	uint x, y;;
 
-	if (_scrollFlag < 0) {
-		memmove(dst + 8, dst, _screenWidth * _scrollHeight - 8);
+	if (_scrollXMax == 0) {
+		if (_scrollFlag < 0) {
+			memmove(dst + 8 * _screenWidth, dst, (_scrollHeight - 8) * _screenWidth);
+		} else {
+			memmove(dst, dst + 8 * _screenWidth, (_scrollHeight - 8) * _screenWidth);
+		}
+
+		y = _scrollY - 8;
+
+		if (_scrollFlag > 0) {
+			dst += (_scrollHeight - 8) * _screenWidth;
+			y += 488;
+		}
+
+		src = _scrollImage + y / 2;
+		decodeRow(dst, src + readUint32Wrapper(src), _scrollWidth);
+
+		_scrollY += _scrollFlag;
+		vcWriteVar(250, _scrollY);
 	} else {
-		memmove(dst, dst + 8, _screenWidth * _scrollHeight - 8);
+		if (_scrollFlag < 0) {
+			memmove(dst + 8, dst, _screenWidth * _scrollHeight - 8);
+		} else {
+			memmove(dst, dst + 8, _screenWidth * _scrollHeight - 8);
+		}
+
+		x = _scrollX;
+		x -= (getGameType() == GType_FF) ? 8 : 1;
+
+		if (_scrollFlag > 0) {
+			dst += _screenWidth - 8;
+			x += (getGameType() == GType_FF) ? 648 : 41;
+		}
+
+		if (getGameType() == GType_FF)
+			src = _scrollImage + x / 2;
+		else
+			src = _scrollImage + x * 4;
+		decodeColumn(dst, src + readUint32Wrapper(src), _scrollHeight);
+
+		_scrollX += _scrollFlag;
+		vcWriteVar(251, _scrollX);
 	}
-
-	x = _scrollX;
-	x -= (getGameType() == GType_FF) ? 8 : 1;
-
-	if (_scrollFlag > 0) {
-		dst += _screenWidth - 8;
-		x += (getGameType() == GType_FF) ? 648 : 41;
-	}
-
-	if (getGameType() == GType_FF)
-		src = _scrollImage + x / 2;
-	else
-		src = _scrollImage + x * 4;
-	decodeStripA(dst, src + readUint32Wrapper(src), _scrollHeight);
 
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
-	dx_copy_from_attached_to_3(_scrollHeight);
-
-	_scrollX += _scrollFlag;
-
-	vcWriteVar(251, _scrollX);
+	memcpy(_sdl_buf_3, _sdl_buf_attached, _scrollHeight * _screenWidth);
 
 	_scrollFlag = 0;
 }

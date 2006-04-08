@@ -1101,7 +1101,8 @@ protected:
 	void o_waitForMark(uint i);
 	void scrollEvent();
 
-	void decodeStripA(byte *dst, const byte *src, int height);
+	void decodeColumn(byte *dst, const byte *src, int height);
+	void decodeRow(byte *dst, const byte *src, int width);
 	void scroll_timeout();
 	void hitarea_stuff_helper_2();
 	void fastFadeIn();

@@ -608,7 +608,7 @@ static uint16 _video_windows[128] = {
 };
 
 /* simon2 specific */
-void SimonEngine::decodeStripA(byte *dst, const byte *src, int height) {
+void SimonEngine::decodeColumn(byte *dst, const byte *src, int height) {
 	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
 	byte color;
@@ -646,6 +646,50 @@ void SimonEngine::decodeStripA(byte *dst, const byte *src, int height) {
 						return;
 					dst = ++dst_org;
 					h = height;
+				}
+			} while (++reps != 0);
+		}
+	}
+}
+
+void SimonEngine::decodeRow(byte *dst, const byte *src, int width) {
+	const uint pitch = _dxSurfacePitch;
+	int8 reps = (int8)0x80;
+	byte color;
+	byte *dst_org = dst;
+	uint w = width, h = 8;
+
+	for (;;) {
+		reps = *src++;
+		if (reps >= 0) {
+			color = *src++;
+
+			do {
+				*dst++ = color;
+
+				/* reached right edge? */
+				if (--w == 0) {
+					/* reached bottom? */
+					if (--h == 0)
+						return;
+					dst_org += pitch;
+					dst = dst_org;
+					w = width;
+				}
+			} while (--reps >= 0);
+		} else {
+
+			do {
+				*dst++ = *src++;
+
+				/* reached right edge? */
+				if (--w == 0) {
+					/* reached bottom? */
+					if (--h == 0)
+						return;
+					dst_org += pitch;
+					dst = dst_org;
+					w = width;
 				}
 			} while (++reps != 0);
 		}
@@ -1281,7 +1325,7 @@ void SimonEngine::horizontalScroll(VC10_state *state) {
 		src = state->depack_src + _scrollX * 4;
 
 	for (w = 0; w < _screenWidth; w += 8) {
-		decodeStripA(dst, src + readUint32Wrapper(src), state->height);
+		decodeColumn(dst, src + readUint32Wrapper(src), state->height);
 		dst += 8;
 		src += 4;
 	}
@@ -1309,8 +1353,8 @@ void SimonEngine::verticalScroll(VC10_state *state) {
 	src = state->depack_src + _scrollY / 2;
 
 	for (h = 0; h < _screenHeight; h += 8) {
-		//decodeRow(dst, src + READ_LE_UINT32(src), state->width);
-		dst += 8;
+		decodeRow(dst, src + READ_LE_UINT32(src), state->width);
+		dst += 8 * state->width;
 		src += 4;
 	}
 }
@@ -1862,7 +1906,7 @@ void SimonEngine::vc48_setPathFinder() {
 
 		y = vsp->y;
 		vsp->y = y1;
-		checkScrollY(y, y1);
+		checkScrollY(y1 - y, y1);
 
 		_variableArray[11] = readUint16Wrapper(p);
 		_variableArray[13] = pos;
@@ -2356,7 +2400,8 @@ void SimonEngine::vc77_setScaleYOffs() {
 	vsp->y += getScale(vsp->y, y);
 	_variableArray[var] = vsp->y;
 
-	checkScrollY(y, vsp->y);
+	if (y != 0) 
+		checkScrollY(y, vsp->y);
 
 	vsp->flags = kDFScaled;
 }
