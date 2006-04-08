@@ -272,7 +272,7 @@ protected:
 	int _scrollY, _scrollYMax, _scrollHeight;
 	int _scrollCount, _scrollFlag;
 	const byte *_scrollImage;
-	byte _vgaVar8;
+	byte _boxStarHeight;
 
  	uint16 _hyperLink, _newLines;
  	uint16 _oracleMaxScrollY, _noOracleScroll;
@@ -291,8 +291,6 @@ protected:
 	HitArea *_lastHitArea;
 	HitArea *_lastNameOn;
 	HitArea *_lastHitArea3;
-	byte _leftButtonDown;
-	byte _rightButtonDown;
 	Item *_hitAreaSubjectItem;
 	HitArea *_currentVerbBox, *_lastVerbOn;
 	uint _needHitAreaRecalc;
@@ -304,7 +302,7 @@ protected:
 
 	uint16 _windowNum;
 
-	uint _printCharCurPos, _printCharMaxPos;
+	uint _printCharCurPos, _printCharMaxPos, _printCharPixelCount;
 	uint _numLettersToPrint;
 
 	uint _lastTime;
@@ -315,6 +313,10 @@ protected:
 
 	int _mouseX, _mouseY;
 	int _mouseXOld, _mouseYOld;
+
+	byte _leftButtonDown;
+	byte _rightButtonDown;
+	bool _noRightClick;
 
 	Item *_dummyItem1;
 	Item *_dummyItem2;
@@ -334,7 +336,6 @@ protected:
 	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
 	bool _exitCutscene;
-	bool _noRightClick;
 	byte _paletteFlag;
 
 	uint _soundFileId;
@@ -660,7 +661,7 @@ protected:
 
 	void read_vga_from_datfile_1(uint vga_id);
 
-	uint get_fcs_ptr_3_index(WindowBlock *window);
+	uint getWindowNum(WindowBlock *window);
 
 	void setup_hitarea_from_pos(uint x, uint y, uint mode);
 	void displayName(HitArea * ha);
@@ -1037,7 +1038,7 @@ protected:
 	void restoreWindow(WindowBlock *window);
 	void colorWindow(WindowBlock *window);
 
-	void restoreBlock(uint b, uint r, uint y, uint x);
+	void restoreBlock(uint h, uint w, uint y, uint x);
 
 	byte *getFrontBuf();
 	byte *getBackBuf();
@@ -1087,8 +1088,8 @@ protected:
 	bool saveGame(uint slot, char *caption);
 	bool loadGame(uint slot);
 
-	void showmessage_helper_2();
-	void print_char_helper_6(uint i);
+	void openTextWindow();
+	void tidyIconArray(uint i);
 
 	void video_putchar_newline(WindowBlock *window);
 	void video_putchar_drawchar(WindowBlock *window, uint x, uint y, byte chr);

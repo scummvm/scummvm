@@ -224,7 +224,7 @@ static const byte _simon2_cursors[10][256] = {
 };
 
 void SimonEngine::drawMousePointer() {
-	debug(0, "Mouse %d Anim %d Max %d", _mouseCursor, _mouseAnim, _mouseAnimMax);
+	//debug(0, "Mouse %d Anim %d Max %d", _mouseCursor, _mouseAnim, _mouseAnimMax);
 
 	if (getGameType() == GType_SIMON2)
 		_system->setMouseCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);

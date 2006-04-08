@@ -224,7 +224,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK_160",
+	"B|SET_INK",
 	"BWBW|SETUP_TEXT",
 	"BBT|PRINT_STR",
 	"W|SOUND_1",
@@ -462,7 +462,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK_160",
+	"B|SET_INK",
 	"BWBW|SETUP_TEXT",
 	"BBTW|PRINT_STR",
 	"W|SOUND_1",
@@ -700,7 +700,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK_160",
+	"B|SET_INK",
 	"BWBW|SETUP_TEXT",
 	"BBT|PRINT_STR",
 	"W|SOUND_1",
@@ -942,7 +942,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK_160",
+	"B|SET_INK",
 	"BWBW|SETUP_TEXT",
 	"BBTW|PRINT_STR",
 	"W|SOUND_1",
@@ -1184,7 +1184,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK_160",
+	"B|SET_INK",
 	"BWWW|SETUP_TEXT",
 	"BBTW|PRINT_STR",
 	"W|SOUND_1",

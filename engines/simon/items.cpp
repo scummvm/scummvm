@@ -1936,6 +1936,8 @@ void SimonEngine::o_unk_103() {
 		showMessageFormat("\x0E");
 	else
 		showMessageFormat("\x0C");
+	_oracleMaxScrollY = 0;
+	_noOracleScroll = 0;
 	mouseOn();
 }
 

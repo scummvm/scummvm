@@ -526,7 +526,7 @@ void SimonEngine::checkUp(WindowBlock *window) {
 		k = (((_variableArray[31] / 52) - 2) % 3);
 		j = k * 6;
 		if (!is_hitarea_0x40_clear(j + 201)) {
-			uint index = get_fcs_ptr_3_index(window);
+			uint index = getWindowNum(window);
 			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 			loadSprite(4, 9, k + 34, 0, 0, 0);	
 		}
@@ -552,7 +552,7 @@ void SimonEngine::checkDown(WindowBlock *window) {
 	uint16 j, k;
 
 	if (((_variableArray[31] - _variableArray[30]) == 24) && (_iOverflow == 1)) {
-		uint index = get_fcs_ptr_3_index(window);
+		uint index = getWindowNum(window);
 		drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 		k = ((_variableArray[31] / 52) % 3);
 		loadSprite(4, 9, k + 25, 0, 0, 0);	
@@ -593,7 +593,7 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 			return;
 
 		mouseOff();
-		uint index = get_fcs_ptr_3_index(window);
+		uint index = getWindowNum(window);
 		drawIconArray(index, window->iconPtr->itemRef, window->iconPtr->line - 1, window->iconPtr->classMask);
 		mouseOn();
 	}
@@ -616,7 +616,7 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 		checkDown(window);
 	} else {
 		mouseOff();
-		uint index = get_fcs_ptr_3_index(window);
+		uint index = getWindowNum(window);
 		drawIconArray(index, window->iconPtr->itemRef, window->iconPtr->line + 1, window->iconPtr->classMask);
 		mouseOn();
 	}

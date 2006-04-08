@@ -268,7 +268,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_scrollHeight = 0;
 	_scrollWidth = 0;
 	_scrollImage = 0;
-	_vgaVar8 = 0;
+	_boxStarHeight = 0;
 
 	_scriptVerb = 0;
 	_scriptNoun1 = 0;
@@ -289,7 +289,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_lastHitArea = 0;
 	_lastNameOn = 0;
 	_lastHitArea3 = 0;
-	_leftButtonDown = 0;
 	_hitAreaSubjectItem = 0;
 	_currentVerbBox = 0;
 	_lastVerbOn = 0;
@@ -302,6 +301,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	_printCharCurPos = 0;
 	_printCharMaxPos = 0;
+	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
 
 	_lastTime = 0;
@@ -316,6 +316,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_mouseXOld = 0;
 	_mouseYOld = 0;
 
+	_leftButtonDown = 0;
+	_rightButtonDown = 0;
 	_noRightClick = false;
 
 	_dummyItem1 = new Item();
@@ -1667,14 +1669,14 @@ void SimonEngine::endCutscene() {
 	_runScriptReturn1 = true;
 }
 
-uint SimonEngine::get_fcs_ptr_3_index(WindowBlock *window) {
+uint SimonEngine::getWindowNum(WindowBlock *window) {
 	uint i;
 
 	for (i = 0; i != ARRAYSIZE(_windowArray); i++)
 		if (_windowArray[i] == window)
 			return i;
 
-	error("get_fcs_ptr_3_index: not found");
+	error("getWindowNum: not found");
 	return 0;
 }
 
@@ -1843,7 +1845,7 @@ void SimonEngine::displayBoxStars() {
 						continue;
 				}
 
-				if (ha->y >= limit || ((getGameType() == GType_SIMON2) && ha->y >= _vgaVar8))
+				if (ha->y >= limit || ((getGameType() == GType_SIMON2) && ha->y >= _boxStarHeight))
 					continue;
 
 				y_ = (ha->height / 2) - 4 + ha->y;
@@ -2405,7 +2407,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			else
 				num_lines = _windowNum == 4 ? 134 : 200;
 
-			_vgaVar8 = num_lines;
+			_boxStarHeight = num_lines;
 			dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
 			dx_copy_from_attached_to_3(num_lines);
 			_syncFlag2 = 1;
@@ -3021,23 +3023,23 @@ void SimonEngine::clearWindow(WindowBlock *window) {
 	window->textRow = 0;
 	window->textColumnOffset = 0;
 	window->textLength = 0;
+	window->scrollY = 0;
 }
 
 void SimonEngine::restoreWindow(WindowBlock *window) {
 	_lockWord |= 0x8000;
 
-	if (getGameType() == GType_SIMON1) {
-		restoreBlock(window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0), (window->x + window->width) * 8, window->y, window->x * 8);
-	} else {
+	if (getGameType() == GType_FF) {
+		restoreBlock(window->y + window->height, window->x + window->width, window->y, window->x);
+	} else if (getGameType() == GType_SIMON2) {
 		if (_restoreWindow6 && _windowArray[2] == window) {
 			window = _windowArray[6];
 			_restoreWindow6 = 0;
 		}
 
-		if (getGameType() == GType_FF)
-			restoreBlock(window->y + window->height, window->x + window->width, window->y, window->x);
-		else
-			restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
+		restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
+	} else {
+		restoreBlock(window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0), (window->x + window->width) * 8, window->y, window->x * 8);
 	}
 
 	_lockWord &= ~0x8000;
@@ -3053,18 +3055,24 @@ void SimonEngine::colorWindow(WindowBlock *window) {
 
 	if (getGameType() == GType_FF) {
 		dst += _dxSurfacePitch * window->y + window->x;
-		h = window->height;
-		w = window->width;
+
+		for (h = 0; h < window->height; h++) {
+			for (w = 0; w < window->width; w++) {
+				if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
+					dst[w] = window->fill_color;
+			}
+			dst += _screenWidth;
+		}
 	} else {
 		dst += _dxSurfacePitch * window->y + window->x * 8;
 		h = window->height * 8;
 		w = window->width * 8;
-	}
 
-	do {
-		memset(dst, window->fill_color, w);
-		dst += _dxSurfacePitch;
-	} while (--h);
+		do {
+			memset(dst, window->fill_color, w);
+			dst += _dxSurfacePitch;
+		} while (--h);
+	}
 
 	_lockWord &= ~0x8000;
 }
@@ -3695,7 +3703,7 @@ void SimonEngine::runSubroutine101() {
 	permitInput();
 }
 
-void SimonEngine::restoreBlock(uint b, uint r, uint y, uint x) {
+void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 
@@ -3705,8 +3713,8 @@ void SimonEngine::restoreBlock(uint b, uint r, uint y, uint x) {
 	dst += y * _dxSurfacePitch;
 	src += y * _dxSurfacePitch;
 
-	while (y < b) {
-		for (i = x; i < r; i++)
+	while (y < h) {
+		for (i = x; i < w; i++)
 			dst[i] = src[i];
 		y++;
 		dst += _dxSurfacePitch;

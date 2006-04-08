@@ -27,7 +27,7 @@
 namespace Simon {
 
 void SimonEngine::print_char_helper_1(const byte *src, uint len) {
-	uint ind;
+	uint idx;
 
 	if (_textWindow == NULL)
 		return;
@@ -52,18 +52,17 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 						src++;
 					}
 				} else {
-					//if (getBitFlag(92))
-					//	while(!_nextCharacter);
+					if (getBitFlag(92))
+						delay(50);
 					windowPutChar(*src++);
-					//_nextCharacter = false;
 				}
 			}
 		} else {
 			if (*src != 12 && _textWindow->iconPtr != NULL &&
-					_fcsData1[ind = get_fcs_ptr_3_index(_textWindow)] != 2) {
+					_fcsData1[idx = getWindowNum(_textWindow)] != 2) {
 	
-				_fcsData1[ind] = 2;
-				_fcsData2[ind] = 1;
+				_fcsData1[idx] = 2;
+				_fcsData2[idx] = 1;
 			}
 
 			windowPutChar(*src++);
@@ -72,12 +71,12 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 }
 
 void SimonEngine::print_char_helper_5(WindowBlock *window) {
-	uint index = get_fcs_ptr_3_index(window);
-	print_char_helper_6(index);
+	uint index = getWindowNum(window);
+	tidyIconArray(index);
 	_fcsData1[index] = 0;
 }
 
-void SimonEngine::print_char_helper_6(uint i) {
+void SimonEngine::tidyIconArray(uint i) {
 	WindowBlock *window;
 
 	if (_fcsData2[i]) {
@@ -287,7 +286,7 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 	va_end(va);
 
 	if (!_fcsData1[_curWindow]) {
-		showmessage_helper_2();
+		openTextWindow();
 		if (!_showMessageFlag) {
 			_windowArray[0] = _textWindow;
 			if (getGameType() == GType_FF)
@@ -307,11 +306,14 @@ void SimonEngine::showmessage_print_char(byte chr) {
 	if (chr == 12) {
 		_numLettersToPrint = 0;
 		_printCharCurPos = 0;
+		_printCharPixelCount = 0;
 		print_char_helper_1(&chr, 1);
 		print_char_helper_5(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		if (_printCharMaxPos - _printCharCurPos >= _numLettersToPrint) {
-			_printCharCurPos += _numLettersToPrint;
+		uint count = (getGameType() == GType_FF) ? _printCharPixelCount : _numLettersToPrint;
+
+		if (_printCharMaxPos - _printCharCurPos >= count) {
+			_printCharCurPos += count;
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 
 			if (_printCharCurPos == _printCharMaxPos) {
@@ -326,7 +328,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 			}
 		} else {
 			const byte newline_character = 10;
-			_printCharCurPos = _numLettersToPrint;
+			_printCharCurPos = count;
 			print_char_helper_1(&newline_character, 1);
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
@@ -338,14 +340,15 @@ void SimonEngine::showmessage_print_char(byte chr) {
 			}
 		}
 		_numLettersToPrint = 0;
+		_printCharPixelCount = 0;
 	} else {
-		if (getGameType() == GType_FF)
-			_printCharCurPos += feebleFontSize[chr - 32];
 		_lettersToPrintBuf[_numLettersToPrint++] = chr;
+		if (getGameType() == GType_FF)
+			_printCharPixelCount += feebleFontSize[chr - 32];
 	}
 }
 
-void SimonEngine::showmessage_helper_2() {
+void SimonEngine::openTextWindow() {
 	if (_textWindow)
 		return;
 
@@ -358,6 +361,7 @@ void SimonEngine::showmessage_helper_2() {
 void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_printCharCurPos = a;
 	_printCharMaxPos = b;
+	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
 	_newLines = 0;
 }
@@ -437,10 +441,10 @@ void SimonEngine::videoPutchar(WindowBlock *window, byte c, byte b) {
 void SimonEngine::video_putchar_newline(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		if (_noOracleScroll == 0) {
-			if (window->textRow + 30 > window->height) {
-				if (getBitFlag(94) == false) {
+			if (window->height < window->textRow + 30) {
+				if (!getBitFlag(94)) {
 					_noOracleScroll = 1;
-					if (getBitFlag(92) == true) {
+					if (getBitFlag(92)) {
 						_noOracleScroll = 0;
 						checkLinkBox();
 						scrollOracle();
@@ -465,9 +469,9 @@ void SimonEngine::video_putchar_newline(WindowBlock *window) {
 			window->textRow++;
 	}
 
+	window->textColumn = 0;
 	window->textColumnOffset = 0;
 	window->textLength = 0;
-	window->textColumn = 0;
 }
 
 #ifdef PALMOS_68K
@@ -1293,6 +1297,10 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 	const byte *src;
 	byte color, *dst;
 	uint h, i;
+
+	// FIXME
+	//if (_noOracleScroll)
+	//	return;
 
 	_lockWord |= 0x8000;
 
