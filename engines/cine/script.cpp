@@ -1968,7 +1968,7 @@ void o2_op8D() {
 }
 
 void o2_addBackground() {
-	byte param1 = getNextWord();
+	byte param1 = getNextByte();
 	const char *param2 = getNextString();
 
 	DEBUG_SCRIPT(_currentLine, "addBackground(%s,%d)", param2, param1);
@@ -2129,11 +2129,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 		//printf("Op: %X\n", opcode - 1);
 
-		if (opcode) {
-			if (opcode < _numOpcodes && _opcodeTable[opcode - 1])
+		if (opcode && opcode < _numOpcodes) {
+			if (_opcodeTable[opcode - 1])
 				(_opcodeTable[opcode - 1]) ();
 			else
-				error("Unsupported opcode %X", opcode - 1);
+				warning("Undefined opcode %X", opcode - 1);
 		}
 	}
 }
