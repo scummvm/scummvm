@@ -2689,7 +2689,7 @@ void SimonEngine::timer_vga_sprites() {
 void SimonEngine::scrollEvent() {
 	byte *dst = getFrontBuf();
 	const byte *src;
-	uint x, y;;
+	uint x, y;
 
 	if (_scrollXMax == 0) {
 		if (_scrollFlag < 0) {
