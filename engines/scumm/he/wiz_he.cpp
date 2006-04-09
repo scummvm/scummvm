@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -1523,6 +1524,11 @@ void Wiz::loadWizCursor(int resId) {
 	getWizImageDim(resId, 0, cw, ch);
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
 	_vm->setCursorHotspot(x, y);
+
+	// Since we set up cursor palette for default cursor, disable it now
+	if (_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		_vm->_system->disableCursorPalette(true);
+
 	free(cursor);
 }
 

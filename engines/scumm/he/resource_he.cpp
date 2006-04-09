@@ -1062,10 +1062,9 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 						uint32 color = simple_vec(image_data, x + imod, bitmap.bit_count);
 
-						// FIXME?: This works only with b/w cursors and white index may be
-						// different. But now it's enough.
+						// We set up cursor palette for default cursor, so use it
 						if (color) {
-							cursor[0][width * d + x] = 15; // white in SCUMM
+							cursor[0][width * d + x] = 254; // white
 						} else {
 							cursor[0][width * d + x] = 255; // transparent
 						}
