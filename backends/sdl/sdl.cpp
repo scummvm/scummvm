@@ -37,7 +37,8 @@ const char* stackCookie = "$STACK: 655360\0";
 
 #if defined (WIN32)
 int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-    return main(__argc, __argv);
+	SDL_SetModuleHandle(GetModuleHandle(NULL));
+	return main(__argc, __argv);
 }
 #endif
 
