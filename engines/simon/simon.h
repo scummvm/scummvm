@@ -307,6 +307,8 @@ protected:
 	uint _numLettersToPrint;
 
 	uint _lastTime;
+	uint _clockStopped, _gameStoppedClock;
+	time_t _timeStore;
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 
@@ -1032,7 +1034,7 @@ protected:
 
 	bool isSpriteLoaded(uint16 id, uint16 fileId);
 
-	void video_copy_if_flag_0x8_c(WindowBlock *window);
+	void resetWindow(WindowBlock *window);
 	void delete_hitarea_by_index(uint index);
 
 	void windowPutChar(uint a);

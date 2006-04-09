@@ -1217,7 +1217,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"W|CLEAR_VGAPOINTER_ENTRY",
 	NULL,
 	"|VGA_POINTER_OP_3",
-	NULL,
+	"|CENTRE_SCROLL",
 	/* 188 */
 	"BSJ|STRING2_IS",
 	"|CLEAR_MARKS",

@@ -304,6 +304,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
 
+	_clockStopped = 0;
+	_gameStoppedClock = 0;
 	_lastTime = 0;
 
 	_firstTimeStruct = 0;
@@ -2663,6 +2665,11 @@ void SimonEngine::timer_vga_sprites() {
 		scrollEvent();
 	}
 
+	if (getGameType() == GType_FF && getBitFlag(84)) {
+		// TODO
+		warning("Animation by Y value not supported");
+	}
+
 	vsp = _vgaSprites;
 
 	while (vsp->id != 0) {
@@ -2904,7 +2911,7 @@ void SimonEngine::closeWindow(uint a) {
 	if (_windowArray[a] == NULL)
 		return;
 	removeIconArray(a);
-	video_copy_if_flag_0x8_c(_windowArray[a]);
+	resetWindow(_windowArray[a]);
 	_windowArray[a] = NULL;
 	if (_curWindow == a) {
 		_textWindow = NULL;
@@ -3265,7 +3272,7 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::video_copy_if_flag_0x8_c(WindowBlock *window) {
+void SimonEngine::resetWindow(WindowBlock *window) {
 	if (window->flags & 8)
 		restoreWindow(window);
 	window->mode = 0;

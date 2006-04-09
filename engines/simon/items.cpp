@@ -1445,14 +1445,22 @@ void SimonEngine::o3_oracleTextUp() {
 
 void SimonEngine::o3_ifTime() {
 	// 124: if time
-	uint time = getVarOrWord();
-	setScriptCondition(true);
-	warning("STUB: script opcode 124 (%d)", time);
+	time_t t;
+
+	uint a = getVarOrWord();
+	time(&t);
+	t -= _gameStoppedClock;
+	t -= a;
+	if (t >= _timeStore)
+		setScriptCondition(true);
+	else
+		setScriptCondition(false);
 }
 
 void SimonEngine::o3_setTime() {
 	// 131
-	warning("STUB: script opcode 131");
+	time(&_timeStore);
+	_timeStore -= _gameStoppedClock;
 }
 
 void SimonEngine::o3_loadUserGame() {
@@ -1547,12 +1555,14 @@ void SimonEngine::o3_setPathValues() {
 
 void SimonEngine::o3_stopClock() {
 	// 193: pause clock
-	warning("STUB: script opcode 193");
+	_clockStopped = time(NULL);
 }
 
 void SimonEngine::o3_restartClock() {
 	// 194: resume clock
-	warning("STUB: script opcode 194");
+	if (_clockStopped != 0)
+		_gameStoppedClock += time(NULL) - _clockStopped;
+	_clockStopped = 0;
 }
 
 void SimonEngine::o3_setColour() {
