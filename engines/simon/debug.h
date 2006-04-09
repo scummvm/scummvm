@@ -1136,8 +1136,8 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	/* 120 */
 	"W|SYNC",
 	"BI|SET_VGA_ITEM",
-	"ORACLE_TEXT_DOWN",
-	"ORACLE_TEXT_UP",
+	"|ORACLE_TEXT_DOWN",
+	"|ORACLE_TEXT_UP",
 	/* 124 */
 	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
