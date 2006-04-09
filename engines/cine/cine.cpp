@@ -51,21 +51,12 @@ SfxPlayer *g_sfxPlayer;
 
 static void initialize();
 
-char *savePath;
-
-} // End of namespace Cine
-
-
-
 struct GameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	byte id;
 	uint32 features;
 	const char *detectname;
-	GameDescriptor toGameDescriptor() const {
-		return GameDescriptor(name, description);
-	}
 };
 
 static const GameSettings cine_settings[] = {
@@ -74,12 +65,15 @@ static const GameSettings cine_settings[] = {
 	{NULL, NULL, 0, 0, NULL}
 };
 
+} // End of namespace Cine
+
+
 GameList Engine_CINE_gameIDList() {
 	GameList games;
-	const GameSettings *g = cine_settings;
+	const Cine::GameSettings *g = Cine::cine_settings;
 
-	while (g->name) {
-		games.push_back(g->toGameDescriptor());
+	while (g->gameid) {
+		games.push_back(*g);
 		g++;
 	}
 
@@ -87,20 +81,20 @@ GameList Engine_CINE_gameIDList() {
 }
 
 GameDescriptor Engine_CINE_findGameID(const char *gameid) {
-	const GameSettings *g = cine_settings;
-	while (g->name) {
-		if (0 == scumm_stricmp(gameid, g->name))
+	const Cine::GameSettings *g = Cine::cine_settings;
+	while (g->gameid) {
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
-	return g->toGameDescriptor();
+	return *g;
 }
 
 DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const GameSettings *g;
+	const Cine::GameSettings *g;
 
-	for (g = cine_settings; g->name; ++g) {
+	for (g = Cine::cine_settings; g->gameid; ++g) {
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin();
 		    file != fslist.end(); ++file) {
@@ -108,7 +102,7 @@ DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 
 			if (0 == scumm_stricmp(g->detectname, gameName)) {
 				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(g->toGameDescriptor());
+				detectedGames.push_back(*g);
 				break;
 			}
 		}
@@ -134,10 +128,10 @@ CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	const GameSettings *g;
+	const Cine::GameSettings *g;
 
-	for (g = cine_settings; g->name; ++g)
-		if (!scumm_stricmp(g->name, detector->_targetName.c_str()))
+	for (g = Cine::cine_settings; g->gameid; ++g)
+		if (!scumm_stricmp(g->gameid, detector->_targetName.c_str()))
 			_gameId = g->id;
 
 	gameType = _gameId;

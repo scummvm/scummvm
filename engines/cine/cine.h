@@ -68,8 +68,6 @@ public:
 	}
 };
 
-extern char *savePath;
-
 #define BOOT_PRC_NAME "AUTO00.PRC"
 
 enum {

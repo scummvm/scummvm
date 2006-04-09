@@ -343,7 +343,8 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	return -1;
 }
 
-commandeType currentSaveName[10];
+static commandeType currentSaveName[10];
+static char *savePath;
 
 int16 loadSaveDirectory(void) {
 	Common::File fHandle;
