@@ -67,6 +67,7 @@ struct HitArea {
 	uint16 width, height;
 	uint16 flags;
 	uint16 id;
+	uint16 data;
 	WindowBlock *window;
 	Item *item_ptr;
 	uint16 verb;
@@ -1015,6 +1016,7 @@ protected:
 	int getScale(int y, int x);
 	void checkScrollX(int x, int xpos);
 	void checkScrollY(int y, int ypos);
+	void centreScroll();
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);

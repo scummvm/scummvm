@@ -183,7 +183,7 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
 	const int textHeight = (getGameType() == GType_FF) ? 15: 10;
-	uint count;
+	uint count = 0;
 
 	if (vga_sprite_id >= 100) {
 		vga_sprite_id -= 100;
@@ -192,9 +192,14 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 
 	src = dst = vpe->vgaFile2;
 
-	count = 4000;
-	if (vga_sprite_id == 1)
-		count *= 2;
+	if (getGameType() == GType_FF) {
+		if (vga_sprite_id == 1)
+			count = 11025;
+	} else {
+		count = 4000;
+		if (vga_sprite_id == 1)
+			count *= 2;
+	}
 
 	p = dst + vga_sprite_id * 8;
 
@@ -207,7 +212,9 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 	}
 	dst += readUint32Wrapper(p);
 
-	memset(dst, 0, count);
+	if (count != 0)
+		memset(dst, 0, count);
+
 	if (_language == Common::HB_ISR)
 		dst += width - 1; // For Hebrew, start at the right edge, not the left.
 

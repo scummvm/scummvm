@@ -1512,7 +1512,7 @@ void SimonEngine::o3_playSmack() {
 
 void SimonEngine::o3_centreScroll() {
 	// 187
-	warning("STUB: script opcode 187");
+	centreScroll();
 }
 
 void SimonEngine::o3_resetPVCount() {

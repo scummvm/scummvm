@@ -125,8 +125,6 @@ bool SimonEngine::printNameOf(Item *item, uint x, uint y) {
 }
 
 void SimonEngine::printInteractText(uint16 num, const char *string) {
-	printf("printInteractText: num %d, string %s\n", num, string);
-
 	char convertedString[320];
 	char *convertedString2 = convertedString;
 	const char *string2 = string;

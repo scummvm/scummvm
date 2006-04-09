@@ -396,7 +396,7 @@ void SimonEngine::defineBox(int id, int x, int y, int width, int height, int fla
 	ha->item_ptr = item_ptr;
 
 	if (getGameType() == GType_FF && (ha->flags & kBFHyperBox)) {
-		// TODO
+		ha->data = _hyperLink;
 		ha->priority = 50;
 	}
 

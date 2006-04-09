@@ -1554,6 +1554,7 @@ void SimonEngine::o_setup_cond_c() {
 
 void SimonEngine::setup_cond_c_helper() {
 	HitArea *last;
+	uint id;
 
 	_noRightClick = 1;
 
@@ -1644,7 +1645,14 @@ void SimonEngine::setup_cond_c_helper() {
 			inventoryDown(_lastHitArea->window);
 		} else if (_lastHitArea->item_ptr != NULL) {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
-			_variableArray[60] = (_lastHitArea->flags & kBFTextBox) ? (_lastHitArea->flags / 256) : 0xFFFF;
+			id = 0xFFFF;
+			if (_lastHitArea->flags & kBFTextBox) {
+				if (getGameType() == GType_FF && (_lastHitArea->flags & kBFHyperBox))
+					id = _lastHitArea->data;
+				else
+					id = _lastHitArea->flags / 256;
+			}
+			_variableArray[60] = id;
 			break;
 		}
 	}
@@ -1950,8 +1958,12 @@ startOver:
 			if_1:;
 				_hitAreaSubjectItem = ha->item_ptr;
 				id = 0xFFFF;
-				if (ha->flags & kBFTextBox)
-					id = ha->flags / 256;
+				if (ha->flags & kBFTextBox) {
+					if (getGameType() == GType_FF && (ha->flags & kBFHyperBox))
+						id = ha->data;
+					else
+						id = ha->flags / 256;
+				}
 				_variableArray[60] = id;
 				displayName(ha);
 				if (_verbHitArea != 0)
