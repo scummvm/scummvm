@@ -137,7 +137,12 @@ FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 
 #ifdef __DC__
 		entry._isDirectory = dp->d_size < 0;
-#elif defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
+#elif defined(SYSTEM_NOT_SUPPORTING_D_TYPE) || defined(__x86_64__)
+		// HACK: on debian/unstable (and gentoo it seems) running on amd64 the d_type field
+		// is always 0/DT_UNKNOWN so use this also on amd64 systems maybe check this in
+		// the configure script when running on an amd64 instead of forcing it for all amd64
+		// systems. It seems to work on Fedora though.
+
 		// TODO: d_type is not part of POSIX, so it might not be supported
 		// on some of our targets. For those systems where it isn't supported,
 		// add this #elif case, which tries to use stat() instead.
