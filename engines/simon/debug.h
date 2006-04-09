@@ -1147,7 +1147,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
 	"Bww|SET_ADJ_NOUN",
-	NULL,
+	"|SET_TIME",
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
@@ -1225,8 +1225,8 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"|RESET_PV_COUNT",
 	/* 192 */
 	"BBBB|SET_PATH_VALUES",
-	"|PAUSE_CLOCK",
-	"|RESUME_CLOCK",
+	"|STOP_CLOCK",
+	"|RESTART_CLOCK",
 	"BBBB|SET_COLOR",
 	/* 196 */
 	"B|B3_SET",
