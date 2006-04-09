@@ -366,7 +366,7 @@ int16 loadSaveDirectory(void) {
 
 int16 currentDisk;
 
-void loadObjectScritpFromSave(Common::File *fHandle) {
+void loadObjectScriptFromSave(Common::File *fHandle) {
 	int16 i;
 
 	prcLinkedListStruct *newElement;
@@ -393,9 +393,7 @@ void loadObjectScritpFromSave(Common::File *fHandle) {
 		newElement->localVars[i] = fHandle->readUint16BE();
 
 	newElement->compareResult = fHandle->readUint16BE();
-
 	newElement->scriptPosition = fHandle->readUint16BE();
-
 	newElement->scriptIdx = fHandle->readUint16BE();
 
 	newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].data;
@@ -643,7 +641,7 @@ int16 makeLoad(char *saveName) {
 	defaultMenuBoxColor2 = fHandle.readUint16BE();
 
 	fHandle.readUint16BE();
-	fHandle.readSint16BE();
+	fHandle.readUint16BE();
 
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		animDataTable[i].width = fHandle.readUint16BE();
@@ -655,7 +653,13 @@ int16 makeLoad(char *saveName) {
 		fHandle.read(animDataTable[i].name, 10);
 	}
 
-	fHandle.seek(12, SEEK_CUR);	// TODO: handle screen params (realy required ?)
+	// TODO: handle screen params (realy required ?)
+	fHandle.readUint16BE();
+	fHandle.readUint16BE();
+	fHandle.readUint16BE();
+	fHandle.readUint16BE();
+	fHandle.readUint16BE();
+	fHandle.readUint16BE();
 
 	size = fHandle.readSint16BE();
 	for (i = 0; i < size; i++) {
@@ -664,7 +668,7 @@ int16 makeLoad(char *saveName) {
 
 	size = fHandle.readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadObjectScritpFromSave(&fHandle);
+		loadObjectScriptFromSave(&fHandle);
 	}
 
 	size = fHandle.readSint16BE();
@@ -787,6 +791,7 @@ void makeSave(char *saveFileName) {
 	fHandle.writeUint16BE(var2);
 	fHandle.writeUint16BE(commandVar2);
 	fHandle.writeUint16BE(defaultMenuBoxColor2);
+
 	fHandle.writeUint16BE(0xFF);
 	fHandle.writeUint16BE(0x1E);
 
@@ -832,7 +837,6 @@ void makeSave(char *saveFileName) {
 
 			fHandle.writeUint16BE(currentHead->compareResult);
 			fHandle.writeUint16BE(currentHead->scriptPosition);
-
 			fHandle.writeUint16BE(currentHead->scriptIdx);
 
 			currentHead = currentHead->next;
@@ -864,7 +868,6 @@ void makeSave(char *saveFileName) {
 
 			fHandle.writeUint16BE(currentHead->compareResult);
 			fHandle.writeUint16BE(currentHead->scriptPosition);
-
 			fHandle.writeUint16BE(currentHead->scriptIdx);
 
 			currentHead = currentHead->next;
