@@ -317,9 +317,9 @@ void SimonEngine::showmessage_print_char(byte chr) {
 		print_char_helper_1(&chr, 1);
 		print_char_helper_5(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		uint count = (getGameType() == GType_FF) ? _printCharPixelCount - 1 : _numLettersToPrint;
-		if (_printCharMaxPos - _printCharCurPos >= count) {
-			_printCharCurPos += (getGameType() == GType_FF) ? _printCharPixelCount : _numLettersToPrint;
+		uint count = (getGameType() == GType_FF) ? _printCharPixelCount : _numLettersToPrint;
+		if (_printCharMaxPos - _printCharCurPos > /* count */_printCharPixelCount) {
+			_printCharCurPos += count;
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 
 			if (_printCharCurPos == _printCharMaxPos) {
