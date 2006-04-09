@@ -414,8 +414,8 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	78bd5f036ea35a878b74e4f47941f784	ru	Windows	HE 99	-	-	sev
 
 	7c2e76087027eeee9c8f8985f93a1cc5	en	All	-	Demo	-	khalek
-	c25755b08a8d0d47695e05f1e2111bfc	en	All	-	Demo	-	sev
-	ebd324dcf06a4c49e1ba5c231eee1060	en	All	HE 99	Demo	-	sev
+	c25755b08a8d0d47695e05f1e2111bfc	us	All	-	Demo	-	sev
+	ebd324dcf06a4c49e1ba5c231eee1060	us	All	HE 99	Demo	-	sev
 	688328c5bdc4c8ec4145688dfa077bf2	de	All	HE 99	Demo	-	Joachim Eberhard
 	16effd200aa6b8abe9c569c3e578814d	nl	Windows	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	nl	Windows	HE 99	Demo	-	adutchguy
@@ -496,11 +496,11 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	20176076d708bf14407bcc9bdcd7a418	ru	Windows	-	-	-	sev
 
 	f08145577e4f13584cc90b3d6e9caa55	nl	All	-	Demo	-	joostp
-	a654fb60c3b67d6317a7894ffd9f25c5	en	All	-	Demo	-	sev
-	a9f2f04b1ecaab9495b59befffe9bf88	en	All	-	Demo	-	sev
+	a654fb60c3b67d6317a7894ffd9f25c5	us	All	-	Demo	-	sev
+	a9f2f04b1ecaab9495b59befffe9bf88	us	All	-	Demo	-	sev
 	0c45eb4baff0c12c3d9dfa889c8070ab	de	All	-	Demo	-	Joachim Eberhard
 	3e48298920fab9b7aec5a971e1bd1fab	gb	Windows	-	Demo	-	eriktorbjorn
-	cf90b4db5486ef798db78fe6fbf897e5	en	Windows	-	Demo	-	khalek
+	cf90b4db5486ef798db78fe6fbf897e5	us	Windows	-	Demo	-	khalek
 
 pjgames	Pajama Sam: Games to Play On Any Day
 	8a484262363a8e18be87112454f1456b	en	All	-	-	-	Kirben
@@ -524,7 +524,7 @@ puttrace	Putt-Putt Enters the Race
 
 	6af2419fe3db5c2fdb091ae4e5833770	nl	All	HE 98.5	Demo	-	Kirben
 	aaa587701cde7e74692c68c1024b85eb	nl	All	HE 99	Demo	-	joostp
-	0ac41e2e3d2174e5a042a6b565328dba	en	All	HE 98	Demo	-	sev
+	0ac41e2e3d2174e5a042a6b565328dba	us	All	HE 98	Demo	-	sev
 	663743c03ae0c007f3d665cf631c0e6b	de	All	HE 99	Demo	-	Joachim Eberhard
 	7c8100e360e8ef05f88069d4cfa0afd1	gb	Windows	HE 99	Demo	-	eriktorbjorn
 
@@ -629,7 +629,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	71fe97c3108678cf604f14abe342341b	nl	Windows	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	nl	All	-	Demo	-	joostp
-	7222f260253f325c21fcfa68b5bfab67	en	All	-	Demo	-	Kirben
+	7222f260253f325c21fcfa68b5bfab67	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	de	All	-	Demo	-	Joachim Eberhard
 	19bf6938a94698296bcb0c99c31c91a7	gb	Windows	-	Demo	-	eriktorbjorn
 
