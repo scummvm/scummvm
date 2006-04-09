@@ -310,9 +310,9 @@ void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int cla
 
 	if (showArrows != 0 || window->iconPtr->line != 0) {
 		/* Plot arrows and add their boxes */
+		defineArrowBoxes(window);		
 		window->iconPtr->upArrow = _scrollUpHitArea;
 		window->iconPtr->downArrow = _scrollDownHitArea;
-		defineArrowBoxes(window);		
 	}
 }
 
@@ -415,9 +415,9 @@ l1:;		itemRef = derefItem(itemRef->sibling);
 	}
 
 	/* Plot arrows and add their boxes */
+	defineArrowBoxes(window);		
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
-	defineArrowBoxes(window);		
 }
 
 void SimonEngine::defineArrowBoxes(WindowBlock *window) {
