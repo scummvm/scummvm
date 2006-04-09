@@ -275,13 +275,13 @@ public:
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
 
-	const char **seqWSATable() { return _seq_WSATable; }
-	const char **seqCPSTable() { return _seq_CPSTable; }
-	const char **seqCOLTable() { return _seq_COLTable; }
-	const char **seqTextsTable() { return _seq_textsTable; }
+	const char * const*seqWSATable() { return _seq_WSATable; }
+	const char * const*seqCPSTable() { return _seq_CPSTable; }
+	const char * const*seqCOLTable() { return _seq_COLTable; }
+	const char * const*seqTextsTable() { return _seq_textsTable; }
 	
-	const uint8 **palTable1() { return &_specialPalettes[0]; }
-	const uint8 **palTable2() { return &_specialPalettes[29]; }
+	const uint8 * const*palTable1() { return &_specialPalettes[0]; }
+	const uint8 * const*palTable2() { return &_specialPalettes[29]; }
 
 	bool seq_skipSequence() const;
 	void delay(uint32 millis, bool update = false, bool mainLoop = false);
@@ -847,34 +847,34 @@ protected:
 	const uint8 *_seq_Demo4;
 	const uint8 *_seq_Reunion;
 	
-	const char **_seq_WSATable;
-	const char **_seq_CPSTable;
-	const char **_seq_COLTable;
-	const char **_seq_textsTable;
+	const char * const*_seq_WSATable;
+	const char * const*_seq_CPSTable;
+	const char * const*_seq_COLTable;
+	const char * const*_seq_textsTable;
 	
 	int _seq_WSATable_Size;
 	int _seq_CPSTable_Size;
 	int _seq_COLTable_Size;
 	int _seq_textsTable_Size;
 	
-	const char **_itemList;
-	const char **_takenList;
-	const char **_placedList;
-	const char **_droppedList;
-	const char **_noDropList;
-	const char **_putDownFirst;
-	const char **_waitForAmulet;
-	const char **_blackJewel;
-	const char **_poisonGone;
-	const char **_healingTip;
-	const char **_thePoison;
-	const char **_fluteString;
-	const char **_wispJewelStrings;
-	const char **_magicJewelString;
-	const char **_flaskFull;
-	const char **_fullFlask;
-	const char **_veryClever;
-	const char **_homeString;
+	const char * const*_itemList;
+	const char * const*_takenList;
+	const char * const*_placedList;
+	const char * const*_droppedList;
+	const char * const*_noDropList;
+	const char * const*_putDownFirst;
+	const char * const*_waitForAmulet;
+	const char * const*_blackJewel;
+	const char * const*_poisonGone;
+	const char * const*_healingTip;
+	const char * const*_thePoison;
+	const char * const*_fluteString;
+	const char * const*_wispJewelStrings;
+	const char * const*_magicJewelString;
+	const char * const*_flaskFull;
+	const char * const*_fullFlask;
+	const char * const*_veryClever;
+	const char * const*_homeString;
 	
 	int _itemList_Size;
 	int _takenList_Size;
@@ -895,7 +895,7 @@ protected:
 	int _veryClever_Size;
 	int _homeString_Size;
 	
-	const char **_characterImageTable;
+	const char * const*_characterImageTable;
 	int _characterImageTableSize;
 	
 	Shape *_defaultShapeTable;
@@ -933,12 +933,12 @@ protected:
 	
 	Room *_roomTable;
 	int _roomTableSize;
-	const char **_roomFilenameTable;
+	const char * const*_roomFilenameTable;
 	int _roomFilenameTableSize;
 	
 	const uint8 *_amuleteAnim;
 	
-	const uint8 **_specialPalettes;
+	const uint8 * const*_specialPalettes;
 
 	Timer _timers[34];
 	uint32 _timerNextRun;	

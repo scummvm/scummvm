@@ -169,11 +169,11 @@ public:
 	bool init();
 	void deinit();
 
-	const char **loadStrings(int id, int &strings);
+	const char * const*loadStrings(int id, int &strings);
 	const uint8 *loadRawData(int id, int &size);
 	const Shape *loadShapeTable(int id, int &entries);
 	const Room *loadRoomTable(int id, int &entries);
-	const uint8 **loadPaletteTable(int id, int &entries);
+	const uint8 * const*loadPaletteTable(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources

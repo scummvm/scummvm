@@ -172,11 +172,11 @@ void StaticResource::deinit() {
 	unloadId(-1);
 }
 
-const char **StaticResource::loadStrings(int id, int &strings) {
-	const char **temp = (const char**)getData(id, kStringList, strings);
+const char * const*StaticResource::loadStrings(int id, int &strings) {
+	const char * const*temp = (const char* const*)getData(id, kStringList, strings);
 	if (temp)
 		return temp;
-	return (const char**)getData(id, kLanguageList, strings);
+	return (const char* const*)getData(id, kLanguageList, strings);
 }
 
 const uint8 *StaticResource::loadRawData(int id, int &size) {
@@ -191,8 +191,8 @@ const Room *StaticResource::loadRoomTable(int id, int &entries) {
 	return (const Room*)getData(id, StaticResource::kRoomList, entries);
 }
 
-const uint8 **StaticResource::loadPaletteTable(int id, int &entries) {
-	return (const uint8**)getData(id, kPaletteTable, entries);
+const uint8 * const*StaticResource::loadPaletteTable(int id, int &entries) {
+	return (const uint8* const*)getData(id, kPaletteTable, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
