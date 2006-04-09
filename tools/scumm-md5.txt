@@ -419,7 +419,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	688328c5bdc4c8ec4145688dfa077bf2	de	All	HE 99	Demo	-	Joachim Eberhard
 	16effd200aa6b8abe9c569c3e578814d	nl	Windows	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	nl	Windows	HE 99	Demo	-	adutchguy
-	e03ed1474ec14de78359970e0457a820	en	Windows	HE 99	Demo	-	eriktorbjorn
+	e03ed1474ec14de78359970e0457a820	gb	Windows	HE 99	Demo	-	eriktorbjorn
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	590e6546aacd0d374b7f3a4f53013ab1	All	All	-	-	-	cyx
@@ -499,7 +499,7 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	a654fb60c3b67d6317a7894ffd9f25c5	en	All	-	Demo	-	sev
 	a9f2f04b1ecaab9495b59befffe9bf88	en	All	-	Demo	-	sev
 	0c45eb4baff0c12c3d9dfa889c8070ab	de	All	-	Demo	-	Joachim Eberhard
-	3e48298920fab9b7aec5a971e1bd1fab	en	Windows	-	Demo	-	eriktorbjorn
+	3e48298920fab9b7aec5a971e1bd1fab	gb	Windows	-	Demo	-	eriktorbjorn
 	cf90b4db5486ef798db78fe6fbf897e5	en	Windows	-	Demo	-	khalek
 
 pjgames	Pajama Sam: Games to Play On Any Day
@@ -526,7 +526,7 @@ puttrace	Putt-Putt Enters the Race
 	aaa587701cde7e74692c68c1024b85eb	nl	All	HE 99	Demo	-	joostp
 	0ac41e2e3d2174e5a042a6b565328dba	en	All	HE 98	Demo	-	sev
 	663743c03ae0c007f3d665cf631c0e6b	de	All	HE 99	Demo	-	Joachim Eberhard
-	7c8100e360e8ef05f88069d4cfa0afd1	en	Windows	HE 99	Demo	-	eriktorbjorn
+	7c8100e360e8ef05f88069d4cfa0afd1	gb	Windows	HE 99	Demo	-	eriktorbjorn
 
 puttmoon	Putt-Putt Goes to the Moon
 	a9543ef0d79bcb47cd76ec197ad0a967	en	3DO	-	-	-	sev
@@ -631,7 +631,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	1c792d28376d45e145cb916bca0400a2	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	en	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	de	All	-	Demo	-	Joachim Eberhard
-	19bf6938a94698296bcb0c99c31c91a7	en	Windows	-	Demo	-	eriktorbjorn
+	19bf6938a94698296bcb0c99c31c91a7	gb	Windows	-	Demo	-	eriktorbjorn
 
 spyozon	SPY Fox 3: Operation Ozone
 	600abd3e9f47e63e670188b7e4e86ac7	en	All	-	-	-	Kirben
