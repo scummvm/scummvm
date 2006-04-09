@@ -1964,10 +1964,7 @@ void SimonEngine::o_setTextColor(uint color) {
 void SimonEngine::o_unk_103() {
 	mouseOff();
 	removeIconArray(_curWindow);
-	if (getGameType() == GType_FF)
-		showMessageFormat("\x0E");
-	else
-		showMessageFormat("\x0C");
+	showMessageFormat("\x0C");
 	_oracleMaxScrollY = 0;
 	_noOracleScroll = 0;
 	mouseOn();
