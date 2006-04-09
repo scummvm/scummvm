@@ -436,6 +436,7 @@ begin_credits("Credits");
 	  begin_persons();
 		add_person('James Brown', 'ender', "");
 		add_person('Max Horn', 'Fingolfin', "");
+		add_person("Eugene Sandulenko", "sev", "");
 	  end_persons();
     end_section();
 

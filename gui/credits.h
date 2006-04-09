@@ -5,6 +5,7 @@ static const char *credits[] = {
 "\\C\\c1""Project Leaders",
 "\\C\\c0""James Brown",
 "\\C\\c0""Max Horn",
+"\\C\\c0""Eugene Sandulenko",
 "\\C\\c0""",
 "\\C\\c1""Engine Teams",
 "\\C\\c1""SCUMM",
