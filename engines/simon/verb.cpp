@@ -359,8 +359,13 @@ void SimonEngine::set_hitarea_bit_0x40(uint hitarea) {
 void SimonEngine::moveBox(uint hitarea, int x, int y) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
-		ha->x = x;
-		ha->y = y;
+		if (getGameType() == GType_FF) {
+			ha->x += x;
+			ha->y += y;
+		} else {
+			ha->x = x;
+			ha->y = y;
+		}
 	}
 }
 
