@@ -1527,15 +1527,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				if (!exactMatch)
 					detectedGames.clear();	// Clear all the non-exact candidates
 
-				const char *gameid = elem->gameid;
-
-				// Find the GameDescriptor for that gameid
-				for (g = scumm_settings; g->gameid; ++g) {
-					if (0 == scumm_stricmp(g->gameid, gameid))
-						break;
-				}
-				assert(g->gameid);
-				DetectedGame dg(g->gameid, findDescriptionFromGameID(g->gameid), elem->language);
+				DetectedGame dg(elem->gameid, findDescriptionFromGameID(elem->gameid), elem->language);
 				if (iter->_value == true) // This was HE Mac game
 					dg.platform = Common::kPlatformMacintosh;
 				else
