@@ -1305,9 +1305,8 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 	byte color, *dst;
 	uint h, i;
 
-	// FIXME
-	//if (_noOracleScroll)
-	//	return;
+	if (_noOracleScroll)
+		return;
 
 	_lockWord |= 0x8000;
 
