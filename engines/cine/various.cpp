@@ -104,8 +104,6 @@ int16 playerCommand;
 
 char commandBuffer[80];
 
-uint16 palette_[256];
-
 char currentPrcName[20];
 char currentRelName[20];
 char currentObjectName[20];
@@ -403,7 +401,7 @@ void loadObjectScritpFromSave(Common::File *fHandle) {
 	newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].data;
 }
 
-void loadGlobalScritpFromSave(Common::File *fHandle) {
+void loadGlobalScriptFromSave(Common::File *fHandle) {
 	int16 i;
 
 	prcLinkedListStruct *newElement;
@@ -429,9 +427,7 @@ void loadGlobalScritpFromSave(Common::File *fHandle) {
 		newElement->localVars[i] = fHandle->readUint16BE();
 
 	newElement->compareResult = fHandle->readUint16BE();
-
 	newElement->scriptPosition = fHandle->readUint16BE();
-
 	newElement->scriptIdx = fHandle->readUint16BE();
 
 	newElement->scriptPtr = scriptTable[newElement->scriptIdx].ptr;
@@ -468,9 +464,7 @@ void loadOverlayFromSave(Common::File *fHandle) {
 		currentHead = &overlayHead;
 
 	newElement->previous = currentHead->previous;
-
 	currentHead->previous = newElement;
-
 }
 
 void setupGlobalScriptList(void) {
@@ -478,7 +472,6 @@ void setupGlobalScriptList(void) {
 
 	while (currentHead) {
 		currentHead->scriptPtr = scriptTable[currentHead->scriptIdx].ptr;
-
 		currentHead = currentHead->next;
 	}
 }
@@ -583,7 +576,7 @@ int16 makeLoad(char *saveName) {
 	fadeRequired = 0;
 
 	for (i = 0; i < 16; i++) {
-		palette_[i] = 0;
+		c_palette[i] = 0;
 	}
 
 	checkForPendingDataLoadSwitch = 0;
@@ -601,22 +594,21 @@ int16 makeLoad(char *saveName) {
 	fHandle.read(currentBgName[0], 13);
 	fHandle.read(currentCtName, 13);
 
-	i = fHandle.readUint16BE();
-	i = fHandle.readUint16BE();
+	fHandle.readUint16BE();
+	fHandle.readUint16BE();
 
-	fHandle.read(objectTable, i * 255);
-
-	for (i = 0; i < NUM_MAX_OBJECT; i++) {
-		objectTable[i].x = TO_BE_16(objectTable[i].x);
-		objectTable[i].y = TO_BE_16(objectTable[i].y);
-		objectTable[i].mask = TO_BE_16(objectTable[i].mask);
-		objectTable[i].frame = TO_BE_16(objectTable[i].frame);
-		objectTable[i].costume = TO_BE_16(objectTable[i].costume);
-		objectTable[i].part = TO_BE_16(objectTable[i].part);
+	for (i = 0; i < 255; i++) {
+		objectTable[i].x = fHandle.readSint16BE();
+		objectTable[i].y = fHandle.readSint16BE();
+		objectTable[i].mask = fHandle.readUint16BE();
+		objectTable[i].frame = fHandle.readSint16BE();
+		objectTable[i].costume = fHandle.readSint16BE();
+		fHandle.read(objectTable[i].name, 20);
+		objectTable[i].part = fHandle.readUint16BE();
 	}
 
 	for (i = 0; i < 16; i++) {
-		palette_[i] = fHandle.readUint16BE();
+		c_palette[i] = fHandle.readUint16BE();
 	}
 
 	for (i = 0; i < 16; i++) {
@@ -650,23 +642,24 @@ int16 makeLoad(char *saveName) {
 	commandVar2 = fHandle.readSint16BE();
 	defaultMenuBoxColor2 = fHandle.readUint16BE();
 
-	i = fHandle.readUint16BE();
-	i = fHandle.readSint16BE();
-	fHandle.read(animDataTable, i * 255);
+	fHandle.readUint16BE();
+	fHandle.readSint16BE();
+
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].width = TO_BE_16(animDataTable[i].width);
-		animDataTable[i].var1 = TO_BE_16(animDataTable[i].var1);
-		animDataTable[i].bpp = TO_BE_16(animDataTable[i].bpp);
-		animDataTable[i].height = TO_BE_16(animDataTable[i].height);
-		animDataTable[i].fileIdx = TO_BE_16(animDataTable[i].fileIdx);
-		animDataTable[i].frameIdx = TO_BE_16(animDataTable[i].frameIdx);
+		animDataTable[i].width = fHandle.readUint16BE();
+		animDataTable[i].var1 = fHandle.readUint16BE();
+		animDataTable[i].bpp = fHandle.readUint16BE();
+		animDataTable[i].height = fHandle.readUint16BE();
+		animDataTable[i].fileIdx = fHandle.readSint16BE();
+		animDataTable[i].frameIdx = fHandle.readSint16BE();
+		fHandle.read(animDataTable[i].name, 10);
 	}
 
 	fHandle.seek(12, SEEK_CUR);	// TODO: handle screen params (realy required ?)
 
 	size = fHandle.readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadGlobalScritpFromSave(&fHandle);
+		loadGlobalScriptFromSave(&fHandle);
 	}
 
 	size = fHandle.readSint16BE();
@@ -761,7 +754,7 @@ void makeSave(char *saveFileName) {
 	}
 
 	for (i = 0; i < 16; i++) {
-		fHandle.writeUint16BE(palette_[i]);
+		fHandle.writeUint16BE(c_palette[i]);
 	}
 
 	for (i = 0; i < 16; i++) {

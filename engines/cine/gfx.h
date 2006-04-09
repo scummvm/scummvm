@@ -34,6 +34,8 @@ extern byte *page1;
 extern byte *page2;
 extern byte *page3;
 
+extern uint16 c_palette[256];
+
 void init_video();
 void setMouseCursor(int cursor);
 void convertGfx(byte *source, byte *dest, const uint16 width, const uint16 height);

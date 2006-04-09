@@ -117,8 +117,6 @@ extern int16 playerCommand;
 
 extern char commandBuffer[80];
 
-extern uint16 c_palette[256];
-
 extern char currentPrcName[20];
 extern char currentRelName[20];
 extern char currentObjectName[20];
