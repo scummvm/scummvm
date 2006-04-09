@@ -263,8 +263,7 @@ void runObjectScript(int16 entryIdx) {
 	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].size);
 }
 
-int16 getRelEntryForObject(uint16 param1, uint16 param2,
-    selectedObjStruct *pSelectedObject) {
+int16 getRelEntryForObject(uint16 param1, uint16 param2, selectedObjStruct *pSelectedObject) {
 	int16 i;
 	int16 di = -1;
 
@@ -1249,7 +1248,10 @@ void makeCommandLine(void) {
 			isDrawCommandEnabled = 1;
 
 			if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
-				int16 di = getRelEntryForObject(playerCommand, commandVar1, (selectedObjStruct *) & commandVar3);
+				selectedObjStruct obj;
+				obj.idx = commandVar3[0];
+				obj.param = commandVar3[1];
+				int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
 
 				if (di != -1) {
 					runObjectScript(di);
@@ -1838,8 +1840,11 @@ uint16 executePlayerInput(void) {
 							int16 relEntry;
 
 							drawMenuBox(commandBuffer, 10, defaultMenuBoxColor);
+							selectedObjStruct obj;
+							obj.idx = commandVar3[0];
+							obj.param = commandVar3[1];
 
-							relEntry = getRelEntryForObject(playerCommand, commandVar1, (selectedObjStruct *)commandVar3);
+							relEntry = getRelEntryForObject(playerCommand, commandVar1, &obj);
 
 							if (relEntry != -1) {
 								runObjectScript(relEntry);
