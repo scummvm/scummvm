@@ -569,17 +569,17 @@ puttzoo	Putt-Putt Saves the Zoo
 	2a446817ffcabfef8716e0c456ecaf81	de	Windows	-	Demo	-	Joachim Eberhard
 
 PuttTime	Putt-Putt Travels Through Time
-	2108d83dcf09f8adb4bc524669c8cf51	en	All	HE 99	-	-	Kirben
-	a525c1753c1db5011c00417da37887ef	en	All	HE 100	-	-	Kirben
+	2108d83dcf09f8adb4bc524669c8cf51	us	All	HE 99	-	-	Kirben
+	a525c1753c1db5011c00417da37887ef	us	All	HE 100	-	-	Kirben
 	7c980a1b1596a93f26917318884f48f7	de	All	HE 99	-	-	Joachim Eberhard
 	fcb78ebecab2757264c590890c319cc5	nl	Windows	HE 100	-	-	adutchguy
 	63fdcdc95cdeea00060883aed38e5504	en	Windows	HE 80	-	-	iziku
-	d4aac997e2f4e15341f0bfbf905419bd	en	Windows	HE 99	-	-	eriktorbjorn
+	d4aac997e2f4e15341f0bfbf905419bd	gb	Windows	HE 99	-	-	eriktorbjorn
 	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	HE 80	-	-	oncer
 	defb8cb9ec4b0f91acfb6b61c6129ad9	ru	Windows	HE 99	-	-	sev
 
-	0ab19be9e2a3f6938226638b2a3744fe	en	All	HE 100	Demo	-	khalek
-	4e5867848ee61bc30d157e2c94eee9b4	en	All	HE 90	Demo	-	khalek, sev
+	0ab19be9e2a3f6938226638b2a3744fe	us	All	HE 100	Demo	-	khalek
+	4e5867848ee61bc30d157e2c94eee9b4	us	All	HE 90	Demo	-	khalek, sev
 	59d5cfcc5e672a6e07baae01328b918b	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	de	All	HE 90	Demo	-	Joachim Eberhard
 	6b19d0e25cbf720d05822379b8b90ed9	nl	Windows	HE 90	Demo	-	adutchguy
