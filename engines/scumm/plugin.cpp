@@ -1113,6 +1113,14 @@ static int compareMD5Table(const void *a, const void *b) {
 	return strcmp(key, elem->md5);
 }
 
+const MD5Table *findInMD5Table(const char *md5) {
+#ifdef PALMOS_68K
+	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
+#else
+	uint32 arraySize = ARRAYSIZE(md5table) - 1;
+#endif
+	return (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
+}
 
 #pragma mark -
 #pragma mark --- Filename substitution ---
@@ -1253,52 +1261,52 @@ enum {
 	kDetectNameMethodsCount = 8
 };
 
-static bool generateDetectName(const GameSettings *g, int method, char *detectName) {
+static bool generateDetectName(const GameSettings &g, int method, char *detectName) {
 	detectName[0] = '\0';
 
 	switch (method) {
 	case 0:
-		if (g->version > 3)
+		if (g.version > 3)
 			return false;
 		strcpy(detectName, "00.LFL");
 		break;
 	case 1:
-		if (g->version < 3 || g->version > 5)
+		if (g.version < 3 || g.version > 5)
 			return false;
 		strcpy(detectName, "000.LFL");
 		break;
 	case 2:
-		if (g->version < 4 || g->version > 7)
+		if (g.version < 4 || g.version > 7)
 			return false;
-		strcpy(detectName, g->gameid);
+		strcpy(detectName, g.gameid);
 		strcat(detectName, ".000");
 		break;
 	case 3:
-		if (g->version < 7)
+		if (g.version < 7)
 			return false;
-		strcpy(detectName, g->gameid);
+		strcpy(detectName, g.gameid);
 		strcat(detectName, ".la0");
 		break;
 	case 4:
-		if (g->heversion == 0)
+		if (g.heversion == 0)
 			return false;
-		strcpy(detectName, g->gameid);
+		strcpy(detectName, g.gameid);
 		strcat(detectName, ".he0");
 		break;
 	case 5:
 		// FIXME: Fingolfin asks: For which games is this case used? 
 		// Please document this. Also: Why was this case missing in
 		// Engine_SCUMM_create ? 
-		strcpy(detectName, g->gameid);
+		strcpy(detectName, g.gameid);
 		break;
 	case 6:
-		if (g->id != GID_SAMNMAX)
+		if (g.id != GID_SAMNMAX)
 			return false;
-		strcpy(detectName, g->gameid);
+		strcpy(detectName, g.gameid);
 		strcat(detectName, ".sm0");
 		break;
 	case 7:
-		if (g->id != GID_MANIAC)
+		if (g.id != GID_MANIAC)
 			return false;
 		strcpy(detectName, "00.MAN");
 		break;
@@ -1327,7 +1335,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 		// TODO: we need to add cache here
 		for (int method = 0; method < kDetectNameMethodsCount; method++) {
-			if (!generateDetectName(g, method, detectName))
+			if (!generateDetectName(*g, method, detectName))
 				continue;
 
 			strcpy(tempName, detectName);
@@ -1521,8 +1529,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
 
-			const MD5Table *elem;
-			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+			const MD5Table *elem = findInMD5Table(md5str);
 			if (elem) {
 				if (!exactMatch)
 					detectedGames.clear();	// Clear all the non-exact candidates
@@ -1588,7 +1595,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// We now want to calculate the MD5 of the games detection file, so that we
 	// can store it in savegames etc..
 	const char *gameid = g->gameid;
-	char detectName[256], tempName[256], gameMD5[32+1];
+	char detectName[256], tempName[256];
 	uint8 md5sum[16];
 	SubstResFileNames subst = { 0, 0, kGenAsIs };
 	bool found = false;
@@ -1599,7 +1606,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// is (00.LFL, 000.LFL, ...). So we iterate over all possible names,
 	// and once we find a matching file, we assume that's it.
 	for (int method = 0; method < kDetectNameMethodsCount && !found; method++) {
-		if (!generateDetectName(g, method, detectName))
+		if (!generateDetectName(game, method, detectName))
 			continue;
 
 		strcpy(tempName, detectName);
@@ -1638,53 +1645,52 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			game.platform = Common::kPlatformMacintosh;
 	}
 
-	// Check if the MD5 was overwritten, if so, use that in the subsequent search
-	Common::File target_md5F;
-
-	target_md5F.open("target_md5.txt");
-
+	// Determine a MD5 checksum which then is used to narrow down the choice
+	// of game variants. 
 	const char *md5 = NULL;
 	char md5buf[33];
-	if (target_md5F.isOpen()) {
-		bool valid = true;
 
-		target_md5F.readLine(md5buf, 33);
-		for (int j = 0; j < 32; j++)
-			if (!((md5buf[j] >= '0' && md5buf[j] <= '9') || 
-				  (md5buf[j] >= 'A' && md5buf[j] <= 'F') ||
-				  (md5buf[j] >= 'a' && md5buf[j] <= 'f')))
-				valid = false;
-
-		if (valid)
-			md5 = md5buf;
-		else
-			target_md5F.close();
-	}
-
-	if (ConfMan.hasKey("target_md5") && !target_md5F.isOpen()) {
+	// First, check if the MD5 was overridden with a config file entry.
+	if (ConfMan.hasKey("target_md5")) {
+		assert(ConfMan.get("target_md5").size() == 32);
 		md5 = ConfMan.get("target_md5").c_str();
-	} else if (!target_md5F.isOpen()) {
+	} else {
+		// Next, check if the MD5 was overridden via a target_md5.txt file.
+		Common::File target_md5F;
+		target_md5F.open("target_md5.txt");
+	
+		if (target_md5F.isOpen()) {
+			bool valid = true;
+	
+			target_md5F.readLine(md5buf, 33);
+			for (int j = 0; j < 32 && valid; ++j)
+				if (!((md5buf[j] >= '0' && md5buf[j] <= '9') || 
+					  (md5buf[j] >= 'A' && md5buf[j] <= 'F') ||
+					  (md5buf[j] >= 'a' && md5buf[j] <= 'f')))
+					valid = false;
+	
+			if (valid)
+				md5 = md5buf;
+		}
+	}
+	
+	// Finally, if no MD5 value has been determined so far, compute it from the
+	// detect file.
+	if (!md5) {
 		// Compute the MD5 of the file, and (if we succeeded) store a hex version
 		// of it in gameMD5 (useful to print it to the user in messages).
 		if (Common::md5_file(detectName, md5sum, NULL, kMD5FileSizeLimit)) {
 			for (int j = 0; j < 16; j++) {
-				sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
+				sprintf(md5buf + j*2, "%02x", (int)md5sum[j]);
 			}
 		}
-		md5 = gameMD5;
-	} else {
-		target_md5F.close();
+		md5 = md5buf;
 	}
 
 
 
 	// Now look up the MD5 in our lookup table (md5table).
-#ifdef PALMOS_68K
-	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
-#else
-	uint32 arraySize = ARRAYSIZE(md5table) - 1;
-#endif
-	const MD5Table *elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
+	const MD5Table *elem = findInMD5Table(md5);
 
 
 	// If a match was found, we use the information obtained from the md5table
