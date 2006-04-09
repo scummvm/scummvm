@@ -317,10 +317,9 @@ void SimonEngine::showmessage_print_char(byte chr) {
 		print_char_helper_1(&chr, 1);
 		print_char_helper_5(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		uint count = (getGameType() == GType_FF) ? _printCharPixelCount : _numLettersToPrint;
-
+		uint count = (getGameType() == GType_FF) ? _printCharPixelCount - 1 : _numLettersToPrint;
 		if (_printCharMaxPos - _printCharCurPos >= count) {
-			_printCharCurPos += count;
+			_printCharCurPos += (getGameType() == GType_FF) ? _printCharPixelCount : _numLettersToPrint;
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 
 			if (_printCharCurPos == _printCharMaxPos) {
@@ -335,7 +334,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 			}
 		} else {
 			const byte newline_character = 10;
-			_printCharCurPos = count;
+			_printCharCurPos = (getGameType() == GType_FF) ? _printCharPixelCount : _numLettersToPrint;
 			print_char_helper_1(&newline_character, 1);
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
