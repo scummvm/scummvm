@@ -279,7 +279,17 @@ void SimonEngine::scrollOracleDown() {
 }
 
 void SimonEngine::bltOracleText() {
-	// TODO
+	byte *src, *dst;
+	uint16 h;
+
+	src = getFrontBuf() + 103 * _screenWidth + 136;
+	dst = getBackBuf() + 103 * _screenWidth + 136;
+
+	for (h = 0; h < 104; h++) {
+		memcpy(dst, src, 360);
+		dst += _screenWidth;
+		src += _screenWidth;
+	}
 }
 
 void SimonEngine::oracleLogo() {
