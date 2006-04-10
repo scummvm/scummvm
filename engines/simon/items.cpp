@@ -42,177 +42,177 @@ void SimonEngine::setupOpcodes() {
 	static OpcodeProc opcode_table[200] = {
 		// 0 - 4
 		NULL,
-		&SimonEngine::o1_at,
-		&SimonEngine::o1_notAt,
+		&SimonEngine::o_at,
+		&SimonEngine::o_notAt,
 		NULL,
 		NULL,
 		// 5 - 9
-		&SimonEngine::o1_carried,
-		&SimonEngine::o1_notCarried,
-		&SimonEngine::o1_isAt,
+		&SimonEngine::o_carried,
+		&SimonEngine::o_notCarried,
+		&SimonEngine::o_isAt,
 		NULL,
 		NULL,
 		// 10 - 14
 		NULL,
-		&SimonEngine::o1_zero,
-		&SimonEngine::o1_notZero,
-		&SimonEngine::o1_eq,
-		&SimonEngine::o1_notEq,
+		&SimonEngine::o_zero,
+		&SimonEngine::o_notZero,
+		&SimonEngine::o_eq,
+		&SimonEngine::o_notEq,
 		// 15 - 19
-		&SimonEngine::o1_gt,
-		&SimonEngine::o1_lt,
-		&SimonEngine::o1_eqf,
-		&SimonEngine::o1_notEqf,
-		&SimonEngine::o1_ltf,
+		&SimonEngine::o_gt,
+		&SimonEngine::o_lt,
+		&SimonEngine::o_eqf,
+		&SimonEngine::o_notEqf,
+		&SimonEngine::o_ltf,
 		// 20 - 24
-		&SimonEngine::o1_gtf,
+		&SimonEngine::o_gtf,
 		NULL,
 		NULL,
-		&SimonEngine::o1_chance,
+		&SimonEngine::o_chance,
 		NULL,
 		// 25 - 29
-		&SimonEngine::o1_isRoom,
-		&SimonEngine::o1_isObject,
-		&SimonEngine::o1_state,
-		&SimonEngine::o1_oflag,
+		&SimonEngine::o_isRoom,
+		&SimonEngine::o_isObject,
+		&SimonEngine::o_state,
+		&SimonEngine::o_oflag,
 		NULL,
 		// 30 - 34
 		NULL,
-		&SimonEngine::o1_destroy,
+		&SimonEngine::o_destroy,
 		NULL,
-		&SimonEngine::o1_place,
+		&SimonEngine::o_place,
 		NULL,
 		// 35 - 39
 		NULL,
-		&SimonEngine::o1_copyff,
+		&SimonEngine::o_copyff,
 		NULL,
 		NULL,
 		NULL,
 		// 40 - 44
 		NULL,
-		&SimonEngine::o1_clear,
-		&SimonEngine::o1_let,
-		&SimonEngine::o1_add,
-		&SimonEngine::o1_sub,
+		&SimonEngine::o_clear,
+		&SimonEngine::o_let,
+		&SimonEngine::o_add,
+		&SimonEngine::o_sub,
 		// 45 - 49
-		&SimonEngine::o1_addf,
-		&SimonEngine::o1_subf,
-		&SimonEngine::o1_mul,
-		&SimonEngine::o1_div,
-		&SimonEngine::o1_mulf,
+		&SimonEngine::o_addf,
+		&SimonEngine::o_subf,
+		&SimonEngine::o_mul,
+		&SimonEngine::o_div,
+		&SimonEngine::o_mulf,
 		// 50 - 54
-		&SimonEngine::o1_divf,
-		&SimonEngine::o1_mod,
-		&SimonEngine::o1_modf,
-		&SimonEngine::o1_random,
+		&SimonEngine::o_divf,
+		&SimonEngine::o_mod,
+		&SimonEngine::o_modf,
+		&SimonEngine::o_random,
 		NULL,
 		// 55 - 59
-		&SimonEngine::o1_goto,
-		&SimonEngine::o1_oset,
-		&SimonEngine::o1_oclear,
-		&SimonEngine::o1_putBy,
-		&SimonEngine::o1_inc,
+		&SimonEngine::o_goto,
+		&SimonEngine::o_oset,
+		&SimonEngine::o_oclear,
+		&SimonEngine::o_putBy,
+		&SimonEngine::o_inc,
 		// 60 - 64
-		&SimonEngine::o1_dec,
-		&SimonEngine::o1_setState,
-		&SimonEngine::o1_print,
-		&SimonEngine::o1_message,
-		&SimonEngine::o1_msg,
+		&SimonEngine::o_dec,
+		&SimonEngine::o_setState,
+		&SimonEngine::o_print,
+		&SimonEngine::o_message,
+		&SimonEngine::o_msg,
 		// 65 - 69
-		&SimonEngine::o1_addTextBox,
-		&SimonEngine::o1_setShortText,
-		&SimonEngine::o1_setLongText,
-		&SimonEngine::o1_end,
-		&SimonEngine::o1_done,
+		&SimonEngine::o_addTextBox,
+		&SimonEngine::o_setShortText,
+		&SimonEngine::o_setLongText,
+		&SimonEngine::o_end,
+		&SimonEngine::o_done,
 		// 70 - 74
-		&SimonEngine::o1_printLongText,
-		&SimonEngine::o1_process,
+		&SimonEngine::o_printLongText,
+		&SimonEngine::o_process,
 		NULL,
 		NULL,
 		NULL,
 		// 75 - 79
 		NULL,
-		&SimonEngine::o1_when,
-		&SimonEngine::o1_if1,
-		&SimonEngine::o1_if2,
-		&SimonEngine::o1_isCalled,
+		&SimonEngine::o_when,
+		&SimonEngine::o_if1,
+		&SimonEngine::o_if2,
+		&SimonEngine::o_isCalled,
 		// 80 - 84
-		&SimonEngine::o1_is,
+		&SimonEngine::o_is,
 		NULL,
-		&SimonEngine::o1_debug,
-		&SimonEngine::o1_rescan,
+		&SimonEngine::o_debug,
+		&SimonEngine::o_rescan,
 		NULL,
 		// 85 - 89
 		NULL,
 		NULL,
-		&SimonEngine::o1_comment,
-		&SimonEngine::o1_haltAnimation,
-		&SimonEngine::o1_restartAnimation,
+		&SimonEngine::o_comment,
+		&SimonEngine::o_haltAnimation,
+		&SimonEngine::o_restartAnimation,
 		// 90 - 94
-		&SimonEngine::o1_getParent,
-		&SimonEngine::o1_getNext,
-		&SimonEngine::o1_getChildren,
+		&SimonEngine::o_getParent,
+		&SimonEngine::o_getNext,
+		&SimonEngine::o_getChildren,
 		NULL,
 		NULL,
 		// 95 - 99
 		NULL,
-		&SimonEngine::o1_picture,
-		&SimonEngine::o1_loadZone,
-		&SimonEngine::o1_animate,
-		&SimonEngine::o1_stopAnimate,
+		&SimonEngine::o_picture,
+		&SimonEngine::o_loadZone,
+		&SimonEngine::o_animate,
+		&SimonEngine::o_stopAnimate,
 		// 100 - 104
-		&SimonEngine::o1_killAnimate,
-		&SimonEngine::o1_defWindow,
-		&SimonEngine::o1_window,
-		&SimonEngine::o1_cls,
-		&SimonEngine::o1_closeWindow,
+		&SimonEngine::o_killAnimate,
+		&SimonEngine::o_defWindow,
+		&SimonEngine::o_window,
+		&SimonEngine::o_cls,
+		&SimonEngine::o_closeWindow,
 		// 105 - 109
 		NULL,
 		NULL,
-		&SimonEngine::o1_addBox,
-		&SimonEngine::o1_delBox,
-		&SimonEngine::o1_enableBox,
+		&SimonEngine::o_addBox,
+		&SimonEngine::o_delBox,
+		&SimonEngine::o_enableBox,
 		// 110 - 114
-		&SimonEngine::o1_disableBox,
-		&SimonEngine::o1_moveBox,
+		&SimonEngine::o_disableBox,
+		&SimonEngine::o_moveBox,
 		NULL,
 		NULL,
-		&SimonEngine::o1_doIcons,
+		&SimonEngine::o_doIcons,
 		// 115 - 119
-		&SimonEngine::o1_isClass,
-		&SimonEngine::o1_setClass,
-		&SimonEngine::o1_unsetClass,
+		&SimonEngine::o_isClass,
+		&SimonEngine::o_setClass,
+		&SimonEngine::o_unsetClass,
 		NULL,
-		&SimonEngine::o1_waitSync,
+		&SimonEngine::o_waitSync,
 		// 120 - 124
-		&SimonEngine::o1_sync,
-		&SimonEngine::o1_defObj,
+		&SimonEngine::o_sync,
+		&SimonEngine::o_defObj,
 		NULL,
 		NULL,
 		NULL,
 		// 125 - 129
-		&SimonEngine::o1_here,
-		&SimonEngine::o1_doClassIcons,
-		&SimonEngine::o1_playTune,
-		&SimonEngine::o1_waitEndTune,
-		&SimonEngine::o1_ifEndTune,
+		&SimonEngine::o_here,
+		&SimonEngine::o_doClassIcons,
+		&SimonEngine::o_playTune,
+		&SimonEngine::o_waitEndTune,
+		&SimonEngine::o_ifEndTune,
 		// 130 - 134
-		&SimonEngine::o1_setAdjNoun,
+		&SimonEngine::o_setAdjNoun,
 		NULL,
-		&SimonEngine::o1_saveUserGame,
-		&SimonEngine::o1_loadUserGame,
-		&SimonEngine::o1_stopTune,
+		&SimonEngine::o_saveUserGame,
+		&SimonEngine::o_loadUserGame,
+		&SimonEngine::o_stopTune,
 		// 135 - 139
-		&SimonEngine::o1_pauseGame,
-		&SimonEngine::o1_copysf,
-		&SimonEngine::o1_restoreIcons,
-		&SimonEngine::o1_freezeZones,
-		&SimonEngine::o1_placeNoIcons,
+		&SimonEngine::o_pauseGame,
+		&SimonEngine::o_copysf,
+		&SimonEngine::o_restoreIcons,
+		&SimonEngine::o_freezeZones,
+		&SimonEngine::o_placeNoIcons,
 		// 140 - 144
-		&SimonEngine::o1_clearTimers,
-		&SimonEngine::o1_setDollar,
-		&SimonEngine::o1_isBox,
-		&SimonEngine::o1_doTable,
+		&SimonEngine::o_clearTimers,
+		&SimonEngine::o_setDollar,
+		&SimonEngine::o_isBox,
+		&SimonEngine::o_doTable,
 		NULL,
 		// 145 - 149
 		NULL,
@@ -222,28 +222,28 @@ void SimonEngine::setupOpcodes() {
 		NULL,
 		// 150 - 154
 		NULL,
-		&SimonEngine::o1_storeItem,
-		&SimonEngine::o1_getItem,
-		&SimonEngine::o1_bSet,
-		&SimonEngine::o1_bClear,
+		&SimonEngine::o_storeItem,
+		&SimonEngine::o_getItem,
+		&SimonEngine::o_bSet,
+		&SimonEngine::o_bClear,
 		// 155 - 159
-		&SimonEngine::o1_bZero,
-		&SimonEngine::o1_bNotZero,
-		&SimonEngine::o1_getOValue,
-		&SimonEngine::o1_setOValue,
+		&SimonEngine::o_bZero,
+		&SimonEngine::o_bNotZero,
+		&SimonEngine::o_getOValue,
+		&SimonEngine::o_setOValue,
 		NULL,
 		// 160 - 164
-		&SimonEngine::o1_ink,
-		&SimonEngine::o1_screenTextBox,
-		&SimonEngine::o1_screenTextMsg,
-		&SimonEngine::o1_playEffect,
-		&SimonEngine::o1_getDollar2,
+		&SimonEngine::o_ink,
+		&SimonEngine::o_screenTextBox,
+		&SimonEngine::o_screenTextMsg,
+		&SimonEngine::o_playEffect,
+		&SimonEngine::o_getDollar2,
 		// 165 - 169
-		&SimonEngine::o1_isAdjNoun,
-		&SimonEngine::o1_b2Set,
-		&SimonEngine::o1_b2Clear,
-		&SimonEngine::o1_b2Zero,
-		&SimonEngine::o1_b2NotZero,
+		&SimonEngine::o_isAdjNoun,
+		&SimonEngine::o_b2Set,
+		&SimonEngine::o_b2Clear,
+		&SimonEngine::o_b2Zero,
+		&SimonEngine::o_b2NotZero,
 		// 170 - 174
 		NULL,
 		NULL,
@@ -251,21 +251,21 @@ void SimonEngine::setupOpcodes() {
 		NULL,
 		NULL,
 		// 175 - 179
-		&SimonEngine::o1_lockZones,
-		&SimonEngine::o1_unlockZones,
-		&SimonEngine::o1_screenTextPObj,
-		&SimonEngine::o1_getPathPosn,
-		&SimonEngine::o1_scnTxtLongText,
+		&SimonEngine::o_lockZones,
+		&SimonEngine::o_unlockZones,
+		&SimonEngine::o_screenTextPObj,
+		&SimonEngine::o_getPathPosn,
+		&SimonEngine::o_scnTxtLongText,
 		// 180 - 184
-		&SimonEngine::o1_mouseOn,
-		&SimonEngine::o1_mouseOff,
-		&SimonEngine::o1_loadBeard,
-		&SimonEngine::o1_unloadBeard,
-		&SimonEngine::o1_unloadZone,
+		&SimonEngine::o_mouseOn,
+		&SimonEngine::o_mouseOff,
+		&SimonEngine::o_loadBeard,
+		&SimonEngine::o_unloadBeard,
+		&SimonEngine::o_unloadZone,
 		// 185 - 189
-		&SimonEngine::o1_loadStrings,
-		&SimonEngine::o1_unfreezeZones,
-		&SimonEngine::o1_specialFade,
+		&SimonEngine::o_loadStrings,
+		&SimonEngine::o_unfreezeZones,
+		&SimonEngine::o_specialFade,
 		NULL,
 		NULL,
 		// 190 - 194
@@ -361,91 +361,91 @@ int SimonEngine::getScriptReturn() {
 // Simon 1 Opcodes
 // -----------------------------------------------------------------------
 
-void SimonEngine::o1_at() {
+void SimonEngine::o_at() {
 	// 1: ptrA parent is
 	setScriptCondition(getItem1Ptr()->parent == getNextItemID());
 }
 
-void SimonEngine::o1_notAt() {
+void SimonEngine::o_notAt() {
 	// 2: ptrA parent is not
 	setScriptCondition(getItem1Ptr()->parent != getNextItemID());
 }
 
-void SimonEngine::o1_carried() {
+void SimonEngine::o_carried() {
 	// 5: parent is 1
 	setScriptCondition(getNextItemPtr()->parent == getItem1ID());
 }
 
-void SimonEngine::o1_notCarried() {
+void SimonEngine::o_notCarried() {
 	// 6: parent isnot 1
 	setScriptCondition(getNextItemPtr()->parent != getItem1ID());
 }
 
-void SimonEngine::o1_isAt() {
+void SimonEngine::o_isAt() {
 	// 7: parent is
 	Item *item = getNextItemPtr();
 	setScriptCondition(item->parent == getNextItemID());
 }
 
-void SimonEngine::o1_zero() {
+void SimonEngine::o_zero() {
 	// 11: is zero
 	setScriptCondition(getNextVarContents() == 0);
 }
 
-void SimonEngine::o1_notZero() {
+void SimonEngine::o_notZero() {
 	// 12: isnot zero
 	setScriptCondition(getNextVarContents() != 0);
 }
 
-void SimonEngine::o1_eq() {
+void SimonEngine::o_eq() {
 	// 13: equal
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp == getVarOrWord());
 }
 
-void SimonEngine::o1_notEq() {
+void SimonEngine::o_notEq() {
 	// 14: not equal
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp != getVarOrWord());
 }
 
-void SimonEngine::o1_gt() {
+void SimonEngine::o_gt() {
 	// 15: is greater
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp > getVarOrWord());
 }
 
-void SimonEngine::o1_lt() {
+void SimonEngine::o_lt() {
 	// 16: is less
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp < getVarOrWord());
 }
 
-void SimonEngine::o1_eqf() {
+void SimonEngine::o_eqf() {
 	// 17: is eq f
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp == getNextVarContents());
 }
 
-void SimonEngine::o1_notEqf() {
+void SimonEngine::o_notEqf() {
 	// 18: is not equal f
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp != getNextVarContents());
 }
 
-void SimonEngine::o1_ltf() {
+void SimonEngine::o_ltf() {
 	// 19: is greater f
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp < getNextVarContents());
 }
 
-void SimonEngine::o1_gtf() {
+void SimonEngine::o_gtf() {
 	// 20: is less f
 	uint tmp = getNextVarContents();
 	setScriptCondition(tmp > getNextVarContents());
 }
 
-void SimonEngine::o1_chance() {
+void SimonEngine::o_chance() {
 	// 23
 	uint a = getVarOrWord();
 
@@ -479,130 +479,130 @@ void SimonEngine::o1_chance() {
 	}
 }
 
-void SimonEngine::o1_isRoom() {
+void SimonEngine::o_isRoom() {
 	// 25: is room
 	setScriptCondition(isRoom(getNextItemPtr()));
 }
 
-void SimonEngine::o1_isObject() {
+void SimonEngine::o_isObject() {
 	// 26: is object
 	setScriptCondition(isObject(getNextItemPtr()));
 }
 
-void SimonEngine::o1_state() {
+void SimonEngine::o_state() {
 	// 27: item state is
 	Item *item = getNextItemPtr();
 	setScriptCondition((uint) item->state == getVarOrWord());
 }
 
-void SimonEngine::o1_oflag() {
+void SimonEngine::o_oflag() {
 	// 28: item has prop
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	byte num = getVarOrByte();
 	setScriptCondition(subObject != NULL && (subObject->objectFlags & (1 << num)) != 0);
 }
 
-void SimonEngine::o1_destroy() {
+void SimonEngine::o_destroy() {
 	// 31: set no parent
 	setItemParent(getNextItemPtr(), NULL);
 }
 
-void SimonEngine::o1_place() {
+void SimonEngine::o_place() {
 	// 33: set item parent
 	Item *item = getNextItemPtr();
 	setItemParent(item, getNextItemPtr());
 }
 
-void SimonEngine::o1_copyff() {
+void SimonEngine::o_copyff() {
 	// 36: copy var
 	uint value = getNextVarContents();
 	writeNextVarContents(value);
 }
 
-void SimonEngine::o1_clear() {
+void SimonEngine::o_clear() {
 	// 41: zero var
 	writeNextVarContents(0);
 }
 
-void SimonEngine::o1_let() {
+void SimonEngine::o_let() {
 	// 42: set var
 	uint var = getVarOrByte();
 	writeVariable(var, getVarOrWord());
 }
 
-void SimonEngine::o1_add() {
+void SimonEngine::o_add() {
 	// 43: add
 	uint var = getVarOrByte();
 	writeVariable(var, readVariable(var) + getVarOrWord());
 }
 
-void SimonEngine::o1_sub() {
+void SimonEngine::o_sub() {
 	// 44: sub
 	uint var = getVarOrByte();
 	writeVariable(var, readVariable(var) - getVarOrWord());
 }
 
-void SimonEngine::o1_addf() {
+void SimonEngine::o_addf() {
 	// 45: add f
 	uint var = getVarOrByte();
 	writeVariable(var, readVariable(var) + getNextVarContents());
 }
 
-void SimonEngine::o1_subf() {
+void SimonEngine::o_subf() {
 	// 46: sub f
 	uint var = getVarOrByte();
 	writeVariable(var, readVariable(var) - getNextVarContents());
 }
 
-void SimonEngine::o1_mul() {
+void SimonEngine::o_mul() {
 	// 47: mul
 	uint var = getVarOrByte();
 	writeVariable(var, readVariable(var) * getVarOrWord());
 }
 
-void SimonEngine::o1_div() {
+void SimonEngine::o_div() {
 	// 48: div
 	uint var = getVarOrByte();
 	int value = getVarOrWord();
 	if (value == 0)
-		error("o1_div: Division by zero");
+		error("o_div: Division by zero");
 	writeVariable(var, readVariable(var) / value);
 }
 
-void SimonEngine::o1_mulf() {
+void SimonEngine::o_mulf() {
 	// 49: mul f
 	uint var = getVarOrByte();
 	writeVariable(var, readVariable(var) * getNextVarContents());
 }
 
-void SimonEngine::o1_divf() {
+void SimonEngine::o_divf() {
 	// 50: div f
 	uint var = getVarOrByte();
 	int value = getNextVarContents();
 	if (value == 0)
-		error("o1_divf: Division by zero");
+		error("o_divf: Division by zero");
 	writeVariable(var, readVariable(var) / value);
 }
 
-void SimonEngine::o1_mod() {
+void SimonEngine::o_mod() {
 	// 51: mod
 	uint var = getVarOrByte();
 	int value = getVarOrWord();
 	if (value == 0)
-		error("o1_mod: Division by zero");
+		error("o_mod: Division by zero");
 	writeVariable(var, readVariable(var) % value);
 }
 
-void SimonEngine::o1_modf() {
+void SimonEngine::o_modf() {
 	// 52: mod f
 	uint var = getVarOrByte();
 	int value = getNextVarContents();
 	if (value == 0)
-		error("o1_modf: Division by zero");
+		error("o_modf: Division by zero");
 	writeVariable(var, readVariable(var) % value);
 }
 
-void SimonEngine::o1_random() {
+void SimonEngine::o_random() {
 	// 53: random
 	uint var = getVarOrByte();
 	uint value = (uint16)getVarOrWord();
@@ -615,12 +615,12 @@ void SimonEngine::o1_random() {
 		writeVariable(var, _rnd.getRandomNumber(value - 1));
 }
 
-void SimonEngine::o1_goto() {
+void SimonEngine::o_goto() {
 	// 55: set itemA parent
 	setItemParent(getItem1Ptr(), getNextItemPtr());
 }
 
-void SimonEngine::o1_oset() {
+void SimonEngine::o_oset() {
 	// 56: set child2 fr bit
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	int value = getVarOrByte();
@@ -628,7 +628,7 @@ void SimonEngine::o1_oset() {
 		subObject->objectFlags |= (1 << value);
 }
 
-void SimonEngine::o1_oclear() {
+void SimonEngine::o_oclear() {
 	// 57: clear child2 fr bit
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	int value = getVarOrByte();
@@ -636,27 +636,27 @@ void SimonEngine::o1_oclear() {
 		subObject->objectFlags &= ~(1 << value);
 }
 
-void SimonEngine::o1_putBy() {
+void SimonEngine::o_putBy() {
 	// 58: make siblings
 	Item *item = getNextItemPtr();
 	setItemParent(item, derefItem(getNextItemPtr()->parent));
 }
 
-void SimonEngine::o1_inc() {
+void SimonEngine::o_inc() {
 	// 59: item inc state
 	Item *item = getNextItemPtr();
 	if (item->state <= 30000)
 		setItemState(item, item->state + 1);
 }
 
-void SimonEngine::o1_dec() {
+void SimonEngine::o_dec() {
 	// 60: item dec state
 	Item *item = getNextItemPtr();
 	if (item->state >= 0)
 		setItemState(item, item->state - 1);
 }
 
-void SimonEngine::o1_setState() {
+void SimonEngine::o_setState() {
 	// 61: item set state
 	Item *item = getNextItemPtr();
 	int value = getVarOrWord();
@@ -667,22 +667,22 @@ void SimonEngine::o1_setState() {
 	setItemState(item, value);
 }
 
-void SimonEngine::o1_print() {
+void SimonEngine::o_print() {
 	// 62: show int
 	showMessageFormat("%d", getNextVarContents());
 }
 
-void SimonEngine::o1_message() {
+void SimonEngine::o_message() {
 	// 63: show string nl
 	showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
 }
 
-void SimonEngine::o1_msg() {
+void SimonEngine::o_msg() {
 	// 64: show string
 	showMessageFormat("%s", getStringPtrByID(getNextStringID()));
 }
 
-void SimonEngine::o1_addTextBox() {
+void SimonEngine::o_addTextBox() {
 	// 65: add hit area
 	int id = getVarOrWord();
 	int x = getVarOrWord();
@@ -694,7 +694,7 @@ void SimonEngine::o1_addTextBox() {
 		defineBox(id, x, y, w, h, (number << 8) + 129, 208, _dummyItem2);
 }
 
-void SimonEngine::o1_setShortText() {
+void SimonEngine::o_setShortText() {
 	// 66: set item name
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
@@ -702,7 +702,7 @@ void SimonEngine::o1_setShortText() {
 		_stringIdArray2[var] = stringId;
 }
 
-void SimonEngine::o1_setLongText() {
+void SimonEngine::o_setLongText() {
 	// 67: set item description
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
@@ -719,83 +719,83 @@ void SimonEngine::o1_setLongText() {
 	}
 }
 
-void SimonEngine::o1_end() {
+void SimonEngine::o_end() {
 	// 68: exit interpreter
 	shutdown();
 }
 
-void SimonEngine::o1_done() {
+void SimonEngine::o_done() {
 	// 69: return 1
 	setScriptReturn(1);
 }
 
-void SimonEngine::o1_printLongText() {
+void SimonEngine::o_printLongText() {
 	// 70: show string from array
 	const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
 	showMessageFormat("%s\n", str);
 }
 
-void SimonEngine::o1_process() {
+void SimonEngine::o_process() {
 	// 71: start subroutine
 	Subroutine *sub = getSubroutineByID(getVarOrWord());
 	if (sub != NULL)
 		startSubroutine(sub);
 }
 
-void SimonEngine::o1_when() {
+void SimonEngine::o_when() {
 	// 76: add timeout
 	uint timeout = getVarOrWord();
 	addTimeEvent(timeout, getVarOrWord());
 }
 
-void SimonEngine::o1_if1() {
+void SimonEngine::o_if1() {
 	// 77: has item minus 1
 	setScriptCondition(_subjectItem != NULL);
 }
 
-void SimonEngine::o1_if2() {
+void SimonEngine::o_if2() {
 	// 78: has item minus 3
 	setScriptCondition(_objectItem != NULL);
 }
 
-void SimonEngine::o1_isCalled() {
+void SimonEngine::o_isCalled() {
 	// 79: childstruct fr2 is
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	uint stringId = getNextStringID();
 	setScriptCondition((subObject != NULL) && subObject->objectName == stringId);
 }
 
-void SimonEngine::o1_is() {
+void SimonEngine::o_is() {
 	// 80: item equal
 	setScriptCondition(getNextItemPtr() == getNextItemPtr());
 }
 
-void SimonEngine::o1_debug() {
+void SimonEngine::o_debug() {
 	// 82: debug opcode
 	getVarOrByte();
 }
 
-void SimonEngine::o1_rescan() {
+void SimonEngine::o_rescan() {
 	// 83: restart subroutine
 	setScriptReturn(-10);
 }
 
-void SimonEngine::o1_comment() {
+void SimonEngine::o_comment() {
 	// 87: comment
 	getNextStringID();
 }
 
-void SimonEngine::o1_haltAnimation() {
+void SimonEngine::o_haltAnimation() {
 	// 88: stop animation
 	_lockWord |= 0x10;
 }
 
-void SimonEngine::o1_restartAnimation() {
+void SimonEngine::o_restartAnimation() {
 	// 89: restart animation
 	_lockWord &= ~0x10;
 }
 
-void SimonEngine::o1_getParent() {
+void SimonEngine::o_getParent() {
 	// 90: set minusitem to parent
 	Item *item = derefItem(getNextItemPtr()->parent);
 	switch (getVarOrByte()) {
@@ -806,11 +806,11 @@ void SimonEngine::o1_getParent() {
 		_subjectItem = item;
 		break;
 	default:
-		error("o1_getParent: invalid subcode");
+		error("o_getParent: invalid subcode");
 	}
 }
 
-void SimonEngine::o1_getNext() {
+void SimonEngine::o_getNext() {
 	// 91: set minusitem to sibling
 	Item *item = derefItem(getNextItemPtr()->sibling);
 	switch (getVarOrByte()) {
@@ -821,11 +821,11 @@ void SimonEngine::o1_getNext() {
 		_subjectItem = item;
 		break;
 	default:
-		error("o1_getNext: invalid subcode");
+		error("o_getNext: invalid subcode");
 	}
 }
 
-void SimonEngine::o1_getChildren() {
+void SimonEngine::o_getChildren() {
 	// 92: set minusitem to child
 	Item *item = derefItem(getNextItemPtr()->child);
 	switch (getVarOrByte()) {
@@ -836,11 +836,11 @@ void SimonEngine::o1_getChildren() {
 		_subjectItem = item;
 		break;
 	default:
-		error("o1_getChildren: invalid subcode");
+		error("o_getChildren: invalid subcode");
 	}
 }
 
-void SimonEngine::o1_picture() {
+void SimonEngine::o_picture() {
 	// 96
 	uint vga_res = getVarOrWord();
 	uint mode = getVarOrByte();
@@ -849,12 +849,12 @@ void SimonEngine::o1_picture() {
 		vc29_stopAllSounds();
 
 	if (_lockWord & 0x10)
-		error("o1_picture: _lockWord & 0x10");
+		error("o_picture: _lockWord & 0x10");
 
 	set_video_mode_internal(mode, vga_res);
 }
 
-void SimonEngine::o1_loadZone() {
+void SimonEngine::o_loadZone() {
 	// 97: load vga
 	uint vga_res = getVarOrWord();
 
@@ -863,7 +863,7 @@ void SimonEngine::o1_loadZone() {
 	_lockWord &= ~0x80;
 }
 
-void SimonEngine::o1_animate() {
+void SimonEngine::o_animate() {
 	// 98: start vga
 	uint vga_res, vgaSpriteId, windowNum, x, y, palette;
 	vgaSpriteId = getVarOrWord();
@@ -875,19 +875,19 @@ void SimonEngine::o1_animate() {
 	loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
 }
 
-void SimonEngine::o1_stopAnimate() {
+void SimonEngine::o_stopAnimate() {
 	// 99: kill sprite
 	kill_sprite_simon1(getVarOrWord());
 }
 
-void SimonEngine::o1_killAnimate() {
+void SimonEngine::o_killAnimate() {
 	// 100: vga reset
 	_lockWord |= 0x8000;
 	vc27_resetSprite();
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::o1_defWindow() {
+void SimonEngine::o_defWindow() {
 	// 101
 	uint num = getVarOrByte();
 	uint x = getVarOrWord();
@@ -914,12 +914,12 @@ void SimonEngine::o1_defWindow() {
 	}
 }
 
-void SimonEngine::o1_window() {
+void SimonEngine::o_window() {
 	// 102
 	changeWindow(getVarOrByte() & 7);
 }
 
-void SimonEngine::o1_cls() {
+void SimonEngine::o_cls() {
 	// 103
 	mouseOff();
 	removeIconArray(_curWindow);
@@ -929,12 +929,12 @@ void SimonEngine::o1_cls() {
 	mouseOn();
 }
 
-void SimonEngine::o1_closeWindow() {
+void SimonEngine::o_closeWindow() {
 	// 104
 	closeWindow(getVarOrByte() & 7);
 }
 
-void SimonEngine::o1_addBox() {
+void SimonEngine::o_addBox() {
 	// 107: add item hitarea
 	uint flags = 0;
 	uint id = getVarOrWord();
@@ -968,22 +968,22 @@ void SimonEngine::o1_addBox() {
 	defineBox(id, x, y, w, h, flags, verb, item);
 }
 
-void SimonEngine::o1_delBox() {
+void SimonEngine::o_delBox() {
 	// 108: delete hitarea
 	delete_hitarea(getVarOrWord());
 }
 
-void SimonEngine::o1_enableBox() {
+void SimonEngine::o_enableBox() {
 	// 109: clear hitarea bit 0x40
 	clear_hitarea_bit_0x40(getVarOrWord());
 }
 
-void SimonEngine::o1_disableBox() {
+void SimonEngine::o_disableBox() {
 	// 110: set hitarea bit 0x40
 	set_hitarea_bit_0x40(getVarOrWord());
 }
 
-void SimonEngine::o1_moveBox() {
+void SimonEngine::o_moveBox() {
 	// 111: set hitarea xy
 	uint hitarea_id = getVarOrWord();
 	uint x = getVarOrWord();
@@ -991,7 +991,7 @@ void SimonEngine::o1_moveBox() {
 	moveBox(hitarea_id, x, y);
 }
 
-void SimonEngine::o1_doIcons() {
+void SimonEngine::o_doIcons() {
 	// 114
 	Item *item = getNextItemPtr();
 	uint num = getVarOrByte();
@@ -1000,25 +1000,25 @@ void SimonEngine::o1_doIcons() {
 	mouseOn();
 }
 
-void SimonEngine::o1_isClass() {
+void SimonEngine::o_isClass() {
 	// 115: item has flag
 	Item *item = getNextItemPtr();
 	setScriptCondition((item->classFlags & (1 << getVarOrByte())) != 0);
 }
 
-void SimonEngine::o1_setClass() {
+void SimonEngine::o_setClass() {
 	// 116: item set flag
 	Item *item = getNextItemPtr();
 	item->classFlags |= (1 << getVarOrByte());
 }
 
-void SimonEngine::o1_unsetClass() {
+void SimonEngine::o_unsetClass() {
 	// 117: item clear flag
 	Item *item = getNextItemPtr();
 	item->classFlags &= ~(1 << getVarOrByte());
 }
 
-void SimonEngine::o1_waitSync() {
+void SimonEngine::o_waitSync() {
 	// 119: wait vga
 	uint var = getVarOrWord();
 	_scriptVar2 = (var == 200);
@@ -1028,24 +1028,24 @@ void SimonEngine::o1_waitSync() {
 	_skipVgaWait = false;
 }
 
-void SimonEngine::o1_sync() {
+void SimonEngine::o_sync() {
 	// 120: sync
 	sendSync(getVarOrWord());
 }
 
-void SimonEngine::o1_defObj() {
+void SimonEngine::o_defObj() {
 	// 121: set vga item
 	uint slot = getVarOrByte();
 	_vcItemArray[slot] = getNextItemPtr();
 }
 
-void SimonEngine::o1_here() {
+void SimonEngine::o_here() {
 	// 125: item is sibling with item 1
 	Item *item = getNextItemPtr();
 	setScriptCondition(getItem1Ptr()->parent == item->parent);
 }
 
-void SimonEngine::o1_doClassIcons() {
+void SimonEngine::o_doClassIcons() {
 	// 126
 	Item *item = getNextItemPtr();
 	uint num = getVarOrByte();
@@ -1055,7 +1055,7 @@ void SimonEngine::o1_doClassIcons() {
 	mouseOn();
 }
 
-void SimonEngine::o1_playTune() {
+void SimonEngine::o_playTune() {
 	// 127: deals with music
 	int music = getVarOrWord();
 	int track = getVarOrWord();
@@ -1085,18 +1085,18 @@ void SimonEngine::o1_playTune() {
 	}
 }
 
-void SimonEngine::o1_waitEndTune() {
+void SimonEngine::o_waitEndTune() {
 	// 128: dummy instruction
 	getVarOrWord();
 }
 
-void SimonEngine::o1_ifEndTune() {
+void SimonEngine::o_ifEndTune() {
 	// 129: dummy instruction
 	getVarOrWord();
 	setScriptCondition(true);
 }
 
-void SimonEngine::o1_setAdjNoun() {
+void SimonEngine::o_setAdjNoun() {
 	// 130: set adj noun
 	uint var = getVarOrByte();
 	if (var == 1) {
@@ -1108,27 +1108,27 @@ void SimonEngine::o1_setAdjNoun() {
 	}
 }
 
-void SimonEngine::o1_saveUserGame() {
+void SimonEngine::o_saveUserGame() {
 	// 132: save game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	saveOrLoadDialog(false);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void SimonEngine::o1_loadUserGame() {
+void SimonEngine::o_loadUserGame() {
 	// 133: load game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	saveOrLoadDialog(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void SimonEngine::o1_stopTune() {
+void SimonEngine::o_stopTune() {
 	// 134: dummy opcode?
 	midi.stop();
 	_lastMusicPlayed = -1;
 }
 
-void SimonEngine::o1_pauseGame() {
+void SimonEngine::o_pauseGame() {
 	// 135: quit if user presses y
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -1182,13 +1182,13 @@ void SimonEngine::o1_pauseGame() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void SimonEngine::o1_copysf() {
+void SimonEngine::o_copysf() {
 	// 136: set var to item unk3
 	Item *item = getNextItemPtr();
 	writeNextVarContents(item->state);
 }
 
-void SimonEngine::o1_restoreIcons() {
+void SimonEngine::o_restoreIcons() {
 	// 137
 	uint num = getVarOrByte();
 	WindowBlock *window = _windowArray[num & 7];
@@ -1196,12 +1196,12 @@ void SimonEngine::o1_restoreIcons() {
 		drawIconArray(num, window->iconPtr->itemRef, window->iconPtr->line, window->iconPtr->classMask);
 }
 
-void SimonEngine::o1_freezeZones() {
+void SimonEngine::o_freezeZones() {
 	// 138: vga pointer op 4
 	freezeBottom();
 }
 
-void SimonEngine::o1_placeNoIcons() {
+void SimonEngine::o_placeNoIcons() {
 	// 139: set parent special
 	Item *item = getNextItemPtr();
 	_noParentNotify = true;
@@ -1209,13 +1209,13 @@ void SimonEngine::o1_placeNoIcons() {
 	_noParentNotify = false;
 }
 
-void SimonEngine::o1_clearTimers() {
+void SimonEngine::o_clearTimers() {
 	// 140: del te and add one
 	killAllTimers();
 	addTimeEvent(3, 0xA0);
 }
 
-void SimonEngine::o1_setDollar() {
+void SimonEngine::o_setDollar() {
 	// 141: set m1 to m3
 	uint which = getVarOrByte();
 	Item *item = getNextItemPtr();
@@ -1226,12 +1226,12 @@ void SimonEngine::o1_setDollar() {
 	}
 }
 
-void SimonEngine::o1_isBox() {
+void SimonEngine::o_isBox() {
 	// 142: is hitarea 0x40 clear
 	setScriptCondition(is_hitarea_0x40_clear(getVarOrWord()));
 }
 
-void SimonEngine::o1_doTable() {
+void SimonEngine::o_doTable() {
 	// 143: start item sub
 	SubRoom *subRoom = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
 	if (subRoom != NULL) {
@@ -1241,14 +1241,14 @@ void SimonEngine::o1_doTable() {
 	}
 }
 
-void SimonEngine::o1_storeItem() {
+void SimonEngine::o_storeItem() {
 	// 151: set array6 to item
 	uint var = getVarOrByte();
 	Item *item = getNextItemPtr();
 	_itemArray6[var] = item;
 }
 
-void SimonEngine::o1_getItem() {
+void SimonEngine::o_getItem() {
 	// 152: set m1 to m3 to array 6
 	Item *item = _itemArray6[getVarOrByte()];
 	uint var = getVarOrByte();
@@ -1259,22 +1259,22 @@ void SimonEngine::o1_getItem() {
 	}
 }
 
-void SimonEngine::o1_bSet() {
+void SimonEngine::o_bSet() {
 	// 153: set bit
 	setBitFlag(getVarOrByte(), true);
 }
 
-void SimonEngine::o1_bClear() {
+void SimonEngine::o_bClear() {
 	// 154: clear bit
 	setBitFlag(getVarOrByte(), false);
 }
 
-void SimonEngine::o1_bZero() {
+void SimonEngine::o_bZero() {
 	// 155: is bit clear
 	setScriptCondition(!getBitFlag(getVarOrByte()));
 }
 
-void SimonEngine::o1_bNotZero() {
+void SimonEngine::o_bNotZero() {
 	// 156: is bit set
 	uint bit = getVarOrByte();
 
@@ -1286,7 +1286,7 @@ void SimonEngine::o1_bNotZero() {
 	setScriptCondition(getBitFlag(bit));
 }
 
-void SimonEngine::o1_getOValue() {
+void SimonEngine::o_getOValue() {
 	// 157: get item int prop
 	Item *item = getNextItemPtr();
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
@@ -1300,7 +1300,7 @@ void SimonEngine::o1_getOValue() {
 	}
 }
 
-void SimonEngine::o1_setOValue() {
+void SimonEngine::o_setOValue() {
 	// 158: set item prop
 	Item *item = getNextItemPtr();
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
@@ -1313,12 +1313,12 @@ void SimonEngine::o1_setOValue() {
 	}
 }
 
-void SimonEngine::o1_ink() {
+void SimonEngine::o_ink() {
 	// 160
 	setTextColor(getVarOrByte());
 }
 
-void SimonEngine::o1_screenTextBox() {
+void SimonEngine::o_screenTextBox() {
 	// 161: setup text
 	TextLocation *tl = getTextLocation(getVarOrByte());
 
@@ -1327,7 +1327,7 @@ void SimonEngine::o1_screenTextBox() {
 	tl->width = getVarOrWord();
 }
 	
-void SimonEngine::o1_screenTextMsg() {
+void SimonEngine::o_screenTextMsg() {
 	// 162: print string
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -1356,7 +1356,7 @@ void SimonEngine::o1_screenTextMsg() {
 
 }
 
-void SimonEngine::o1_playEffect() {
+void SimonEngine::o_playEffect() {
 	// 163: play sound
 	uint sound_id = getVarOrWord();
 
@@ -1366,7 +1366,7 @@ void SimonEngine::o1_playEffect() {
 		_sound->playEffects(sound_id);
 }
 
-void SimonEngine::o1_getDollar2() {
+void SimonEngine::o_getDollar2() {
 	// 164
 	_showPreposition = true;
 
@@ -1391,45 +1391,45 @@ void SimonEngine::o1_getDollar2() {
 	_showPreposition = false;
 }
 
-void SimonEngine::o1_isAdjNoun() {
+void SimonEngine::o_isAdjNoun() {
 	// 165: item unk1 unk2 is
 	Item *item = getNextItemPtr();
 	int16 a = getNextWord(), b = getNextWord();
 	setScriptCondition(item->adjective == a && item->noun == b);
 }
 
-void SimonEngine::o1_b2Set() {
+void SimonEngine::o_b2Set() {
 	// 166: set bit2
 	setBitFlag(256 + getVarOrByte(), true);
 }
 
-void SimonEngine::o1_b2Clear() {
+void SimonEngine::o_b2Clear() {
 	// 167: clear bit2
 	setBitFlag(256 + getVarOrByte(), false);
 }
 
-void SimonEngine::o1_b2Zero() {
+void SimonEngine::o_b2Zero() {
 	// 168: is bit2 clear
 	setScriptCondition(!getBitFlag(256 + getVarOrByte()));
 }
 
-void SimonEngine::o1_b2NotZero() {
+void SimonEngine::o_b2NotZero() {
 	// 169: is bit2 set
 	setScriptCondition(getBitFlag(256 + getVarOrByte()));
 }
 
-void SimonEngine::o1_lockZones() {
+void SimonEngine::o_lockZones() {
 	// 175: vga pointer op 1
 	_vgaBufStart = _vgaBufFreeStart;
 }
 
-void SimonEngine::o1_unlockZones() {
+void SimonEngine::o_unlockZones() {
 	// 176: vga pointer op 2
 	_vgaBufFreeStart = _vgaFileBufOrg;
 	_vgaBufStart = _vgaFileBufOrg;
 }
 
-void SimonEngine::o1_screenTextPObj() {
+void SimonEngine::o_screenTextPObj() {
 	// 177: inventory descriptions
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -1515,7 +1515,7 @@ void SimonEngine::o1_screenTextPObj() {
 	}
 }
 
-void SimonEngine::o1_getPathPosn() {
+void SimonEngine::o_getPathPosn() {
 	// 178: path find
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
@@ -1570,7 +1570,7 @@ void SimonEngine::o1_getPathPosn() {
 	}
 }
 
-void SimonEngine::o1_scnTxtLongText() {
+void SimonEngine::o_scnTxtLongText() {
 	// 179: conversation responses and room descriptions
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -1592,17 +1592,17 @@ void SimonEngine::o1_scnTxtLongText() {
 		printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 }
 
-void SimonEngine::o1_mouseOn() {
+void SimonEngine::o_mouseOn() {
 	// 180: force mouseOn
 	scriptMouseOn();
 }
 
-void SimonEngine::o1_mouseOff() {
+void SimonEngine::o_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
 }
 
-void SimonEngine::o1_loadBeard() {
+void SimonEngine::o_loadBeard() {
 	// 182: load beard
 	if (_beardLoaded == false) {
 		_beardLoaded = true;
@@ -1612,7 +1612,7 @@ void SimonEngine::o1_loadBeard() {
 	}
 }
 
-void SimonEngine::o1_unloadBeard() {
+void SimonEngine::o_unloadBeard() {
 	// 183: unload beard
 	if (_beardLoaded == true) {
 		_beardLoaded = false;
@@ -1622,7 +1622,7 @@ void SimonEngine::o1_unloadBeard() {
 	}
 }
 
-void SimonEngine::o1_unloadZone() {
+void SimonEngine::o_unloadZone() {
 	// 184: clear vgapointer entry
 	uint a = getVarOrWord();
 	VgaPointersEntry *vpe = &_vgaBufferPointers[a];
@@ -1632,7 +1632,7 @@ void SimonEngine::o1_unloadZone() {
 	vpe->vgaFile2 = NULL;
 }
 
-void SimonEngine::o1_loadStrings() {
+void SimonEngine::o_loadStrings() {
 	// 185: load sound files
 	_soundFileId = getVarOrWord();
 	if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE) {
@@ -1644,12 +1644,12 @@ void SimonEngine::o1_loadStrings() {
 	}
 }
 
-void SimonEngine::o1_unfreezeZones() {
+void SimonEngine::o_unfreezeZones() {
 	// 186: vga pointer op 3
 	unfreezeBottom();
 }
 
-void SimonEngine::o1_specialFade() {
+void SimonEngine::o_specialFade() {
 	// 187: fade to black
 	fadeToBlack();
 }
