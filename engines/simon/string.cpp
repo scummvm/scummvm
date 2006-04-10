@@ -168,7 +168,7 @@ void SimonEngine::printInteractText(uint16 num, const char *string) {
 	_variableArray[53] = w;
 	_variableArray[54] = height;
 
-	o_kill_sprite_simon2(2, num + 6);
+	kill_sprite_simon2(2, num + 6);
 	renderString(num, 0, w, height, convertedString);
 	loadSprite(4, 2, num + 6, x, _interactY, 12);
 
@@ -279,9 +279,9 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 	}
 
 	if (getGameType() == GType_SIMON1)
-		o_kill_sprite_simon1(vgaSpriteId + 199);
+		kill_sprite_simon1(vgaSpriteId + 199);
 	else
-		o_kill_sprite_simon2(2, vgaSpriteId);
+		kill_sprite_simon2(2, vgaSpriteId);
 
 	if (getGameType() == GType_FF) {
 		renderString(1, color, width, height, convertedString);

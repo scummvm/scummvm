@@ -877,7 +877,7 @@ void SimonEngine::o1_animate() {
 
 void SimonEngine::o1_stopAnimate() {
 	// 99: kill sprite
-	o_kill_sprite_simon1(getVarOrWord());
+	kill_sprite_simon1(getVarOrWord());
 }
 
 void SimonEngine::o1_killAnimate() {
@@ -1024,13 +1024,13 @@ void SimonEngine::o1_waitSync() {
 	_scriptVar2 = (var == 200);
 
 	if (var != 200 || !_skipVgaWait)
-		o_waitForSync(var);
+		waitForSync(var);
 	_skipVgaWait = false;
 }
 
 void SimonEngine::o1_sync() {
 	// 120: sync
-	o_sync(getVarOrWord());
+	sendSync(getVarOrWord());
 }
 
 void SimonEngine::o1_defObj() {
@@ -1198,7 +1198,7 @@ void SimonEngine::o1_restoreIcons() {
 
 void SimonEngine::o1_freezeZones() {
 	// 138: vga pointer op 4
-	o_freezeBottom();
+	freezeBottom();
 }
 
 void SimonEngine::o1_placeNoIcons() {
@@ -1315,7 +1315,7 @@ void SimonEngine::o1_setOValue() {
 
 void SimonEngine::o1_ink() {
 	// 160
-	o_setTextColor(getVarOrByte());
+	setTextColor(getVarOrByte());
 }
 
 void SimonEngine::o1_screenTextBox() {
@@ -1349,7 +1349,7 @@ void SimonEngine::o1_screenTextMsg() {
 	if (_speech && speech_id != 0)
 		playSpeech(speech_id, vgaSpriteId);
 	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speech_id == 0)
-		o_kill_sprite_simon2(2, vgaSpriteId + 2);
+		kill_sprite_simon2(2, vgaSpriteId + 2);
 
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
@@ -1594,12 +1594,12 @@ void SimonEngine::o1_scnTxtLongText() {
 
 void SimonEngine::o1_mouseOn() {
 	// 180: force mouseOn
-	o_mouseOn();
+	scriptMouseOn();
 }
 
 void SimonEngine::o1_mouseOff() {
 	// 181: force mouseOff
-	o_mouseOff();
+	scriptMouseOff();
 }
 
 void SimonEngine::o1_loadBeard() {
@@ -1646,12 +1646,12 @@ void SimonEngine::o1_loadStrings() {
 
 void SimonEngine::o1_unfreezeZones() {
 	// 186: vga pointer op 3
-	o_unfreezeBottom();
+	unfreezeBottom();
 }
 
 void SimonEngine::o1_specialFade() {
 	// 187: fade to black
-	o_fadeToBlack();
+	fadeToBlack();
 }
 
 // -----------------------------------------------------------------------
@@ -1694,12 +1694,12 @@ void SimonEngine::o2_stopAnimate() {
 	// 99: kill sprite
 	uint a = getVarOrWord();
 	uint b = getVarOrWord();
-	o_kill_sprite_simon2(a, b);
+	kill_sprite_simon2(a, b);
 }
 
 void SimonEngine::o2_mouseOff() {
 	// 181: force mouseOff
-	o_mouseOff();
+	scriptMouseOff();
 	changeWindow(1);
 	showMessageFormat("\xC");
 }
@@ -1720,7 +1720,7 @@ void SimonEngine::o2_waitMark() {
 	// 190
 	uint i = getVarOrByte();
 	if (!(_marks & (1 << i)))
-		o_waitForMark(i);
+		waitForMark(i);
 }
 
 // -----------------------------------------------------------------------
@@ -1832,7 +1832,7 @@ void SimonEngine::o3_checkPaths() {
 
 void SimonEngine::o3_mouseOff() {
 	// 181: force mouseOff
-	o_mouseOff();
+	scriptMouseOff();
 	clearName();
 }
 
@@ -2029,7 +2029,19 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 	return true;
 }
 
-void SimonEngine::o_waitForMark(uint i) {
+void SimonEngine::scriptMouseOn() {
+	if (getGameType() == GType_SIMON2 && getBitFlag(79))
+		_mouseCursor = 0;
+	_mouseHideCount = 0;
+}
+
+void SimonEngine::scriptMouseOff() {
+	_lockWord |= 0x8000;
+	vc34_setMouseOff();
+	_lockWord &= ~0x8000;
+}
+
+void SimonEngine::waitForMark(uint i) {
 	_exitCutscene = false;
 	while (!(_marks & (1 << i))) {
 		if (_exitCutscene) {
@@ -2045,18 +2057,18 @@ void SimonEngine::o_waitForMark(uint i) {
 	}
 }
 
-void SimonEngine::o_freezeBottom() {
+void SimonEngine::freezeBottom() {
 	_vgaBufStart = _vgaBufFreeStart;
 	_vgaFileBufOrg = _vgaBufFreeStart;
 }
 
-void SimonEngine::o_unfreezeBottom() {
+void SimonEngine::unfreezeBottom() {
 	_vgaBufFreeStart = _vgaFileBufOrg2;
 	_vgaBufStart = _vgaFileBufOrg2;
 	_vgaFileBufOrg = _vgaFileBufOrg2;
 }
 
-void SimonEngine::o_sync(uint a) {
+void SimonEngine::sendSync(uint a) {
 	uint16 id = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&id;
@@ -2064,14 +2076,14 @@ void SimonEngine::o_sync(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::o_setTextColor(uint color) {
+void SimonEngine::setTextColor(uint color) {
 	WindowBlock *window;
 
 	window = _windowArray[_curWindow];
 	window->text_color = color;
 }
 
-void SimonEngine::o_kill_sprite_simon1(uint a) {
+void SimonEngine::kill_sprite_simon1(uint a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
@@ -2079,7 +2091,7 @@ void SimonEngine::o_kill_sprite_simon1(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
+void SimonEngine::kill_sprite_simon2(uint a, uint b) {
 	uint16 items[2];
 
 	items[0] = to16Wrapper(a);

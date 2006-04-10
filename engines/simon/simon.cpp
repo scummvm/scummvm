@@ -2366,7 +2366,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	}
 }
 
-void SimonEngine::o_fadeToBlack() {
+void SimonEngine::fadeToBlack() {
 	uint i;
 
 	memcpy(_videoBuf1, _paletteBackup, 1024);
@@ -2509,19 +2509,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 	_lockWord &= ~1;
 }
 
-void SimonEngine::o_mouseOn() {
-	if (getGameType() == GType_SIMON2 && getBitFlag(79))
-		_mouseCursor = 0;
-	_mouseHideCount = 0;
-}
-
-void SimonEngine::o_mouseOff() {
-	_lockWord |= 0x8000;
-	vc34_setMouseOff();
-	_lockWord &= ~0x8000;
-}
-
-void SimonEngine::o_waitForSync(uint a) {
+void SimonEngine::waitForSync(uint a) {
 	_vgaWaitFor = a;
 	_syncCount = 0;
 	_exitCutscene = false;
@@ -2563,13 +2551,13 @@ void SimonEngine::skipSpeech() {
 		if (getGameType() == GType_FF) {
 			_variableArray[103] = 5;
 			loadSprite(4, 2, 13, 0, 0, 0);
-			o_waitForSync(213);
-			o_kill_sprite_simon2(2, 1);
+			waitForSync(213);
+			kill_sprite_simon2(2, 1);
 		} else {
 			_variableArray[100] = 5;
 			loadSprite(4, 1, 30, 0, 0, 0);
-			o_waitForSync(130);
-			o_kill_sprite_simon2(2, 1);
+			waitForSync(130);
+			kill_sprite_simon2(2, 1);
 		}
 	}
 }
@@ -3239,16 +3227,16 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 				setBitFlag(14, true);
 				_variableArray[100] = 15;
 				loadSprite(4, 1, 130, 0, 0, 0);
-				o_waitForSync(130);
+				waitForSync(130);
 			}
 			_skipVgaWait = true;
 		} else {
 			if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 204, 0, 0, 0);
-				o_waitForSync(204);
-				o_kill_sprite_simon1(204);
+				waitForSync(204);
+				kill_sprite_simon1(204);
 			}
-			o_kill_sprite_simon1(vgaSpriteId + 201);
+			kill_sprite_simon1(vgaSpriteId + 201);
 			_sound->playVoice(speech_id);
 			loadSprite(4, 2, vgaSpriteId + 201, 0, 0, 0);
 		}
@@ -3260,7 +3248,7 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 				setBitFlag(14, true);
 				_variableArray[100] = 5;
 				loadSprite(4, 1, 30, 0, 0, 0);
-				o_waitForSync(130);
+				waitForSync(130);
 			}
 			_skipVgaWait = true;
 		} else {
@@ -3269,11 +3257,11 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 				return;
 			} else if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 5, 0, 0, 0);
-				o_waitForSync(205);
-				o_kill_sprite_simon2(2,5);
+				waitForSync(205);
+				kill_sprite_simon2(2,5);
 			}
 
-			o_kill_sprite_simon2(2, vgaSpriteId + 2);
+			kill_sprite_simon2(2, vgaSpriteId + 2);
 			_sound->playVoice(speech_id);
 			loadSprite(4, 2, vgaSpriteId + 2, 0, 0, 0);
 		}

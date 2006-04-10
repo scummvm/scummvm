@@ -554,8 +554,8 @@ protected:
 	void unlinkItem(Item *item);
 	void linkItem(Item *item, Item *parent);
 
-	void o_kill_sprite_simon1(uint a);
-	void o_kill_sprite_simon2(uint a, uint b);
+	void kill_sprite_simon1(uint a);
+	void kill_sprite_simon2(uint a, uint b);
 
 	void changeWindow(uint a);
 	void closeWindow(uint a);
@@ -571,18 +571,18 @@ protected:
 	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 
-	void o_waitForSync(uint a);
+	void waitForSync(uint a);
 	void skipSpeech();
-	void o_sync(uint a);
-	void o_freezeBottom();
+	void sendSync(uint a);
+	void freezeBottom();
 	void killAllTimers();
 
 	uint getOffsetOfChild2Param(SubObject *child, uint prop);
-	void o_setTextColor(uint color);
-	void o_mouseOn();
-	void o_mouseOff();
-	void o_unfreezeBottom();
-	void o_fadeToBlack();
+	void setTextColor(uint color);
+	void scriptMouseOn();
+	void scriptMouseOff();
+	void unfreezeBottom();
+	void fadeToBlack();
 
 	TextLocation *getTextLocation(uint a);
 	void setup_cond_c_helper();
@@ -1080,7 +1080,7 @@ protected:
 	void delay(uint delay);
 	void pause();
 
-	void o_waitForMark(uint i);
+	void waitForMark(uint i);
 	void scrollEvent();
 
 	void decodeColumn(byte *dst, const byte *src, int height);
@@ -1097,11 +1097,11 @@ protected:
 	void set_volume(int volume);
 
 	void saveOrLoadDialog(bool load);
-	void o_unk_132_helper_3();
-	int o_unk_132_helper(bool *b, char *buf);
-	void o_clearCharacter(WindowBlock *window, int x, byte b = 0);
+	void unk_132_helper_3();
+	int unk_132_helper(bool *b, char *buf);
+	void clearCharacter(WindowBlock *window, int x, byte b = 0);
 	void saveGameDialog(char *buf);
-	void o_fileError(WindowBlock *window, bool save_error);
+	void fileError(WindowBlock *window, bool save_error);
 
 	int countSaveGames();
 	int displaySaveGameList(int curpos, bool load, char *dst);

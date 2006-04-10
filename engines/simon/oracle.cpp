@@ -193,10 +193,10 @@ void SimonEngine::listSaveGames(int n) {
 			if (j == maxFiles + 1) {
 				showMessageFormat("\n");
 				hyperLinkOn(j + 400);
-				o_setTextColor(116);
+				setTextColor(116);
 	    			showMessageFormat(" %d. ",1);
 				hyperLinkOff();
-				o_setTextColor(113);
+				setTextColor(113);
 				k++;
 				j--;
 			}
@@ -209,11 +209,11 @@ void SimonEngine::listSaveGames(int n) {
 
 		showMessageFormat("\n");
 		hyperLinkOn(j + 400);
-		o_setTextColor(116);
+		setTextColor(116);
 		if (k < 10)
 			showMessageFormat(" ");
 		showMessageFormat("%d. ",k);
-		o_setTextColor(113);
+		setTextColor(113);
 		showMessageFormat("%s ",b);
 		hyperLinkOff();
 		j--;

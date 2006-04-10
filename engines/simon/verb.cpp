@@ -193,7 +193,7 @@ void SimonEngine::clearName() {
 	HitArea *ha;
 
 	if (getGameType() == GType_FF) {
-		o_kill_sprite_simon2(2, 6);
+		kill_sprite_simon2(2, 6);
 		_lastNameOn = NULL;
 		_animatePointer = 0;
 		_mouseAnim = 1;
@@ -202,7 +202,7 @@ void SimonEngine::clearName() {
 
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
-			o_sync(202);
+			sendSync(202);
 			_lastNameOn = NULL;
 			return;
 		}
@@ -593,10 +593,10 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 				break;
 			checkUp(window);
 		}
-		o_waitForMark(2);
+		waitForMark(2);
 		checkUp(window);
-		o_sync(922);
-		o_waitForMark(1);
+		sendSync(922);
+		waitForMark(1);
 		checkUp(window);
 	} else {
 		if (window->iconPtr->line == 0)
@@ -619,10 +619,10 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 				break;
 			checkDown(window);
 		}
-		o_waitForMark(2);
+		waitForMark(2);
 		checkDown(window);
-		o_sync(924);
-		o_waitForMark(1);
+		sendSync(924);
+		waitForMark(1);
 		checkDown(window);
 	} else {
 		mouseOff();

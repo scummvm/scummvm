@@ -68,7 +68,7 @@ void SimonEngine::loadIconData() {
 		error("Out of icon memory");
 
 	memcpy(_iconFilePtr, src, 43 * 336);
-	o_unfreezeBottom();
+	unfreezeBottom();
 }
 
 // Thanks to Stuart Caie for providing the original
@@ -491,7 +491,7 @@ void SimonEngine::defineArrowBoxes(WindowBlock *window) {
 		ha->window = window;
 		ha->verb = 1;
 
-		o_kill_sprite_simon1(128);
+		kill_sprite_simon1(128);
 		loadSprite(0, 1, 128, 0, 0, 14);
 	}
 }
@@ -575,7 +575,7 @@ void SimonEngine::removeIconArray(uint num) {
 }
 
 void SimonEngine::removeArrows(WindowBlock *window, uint num) {
-	o_kill_sprite_simon1(128);
+	kill_sprite_simon1(128);
 }
 
 } // End of namespace Simon

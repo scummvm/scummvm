@@ -146,7 +146,7 @@ void SimonEngine::quickLoadOrSave() {
 void SimonEngine::saveGameDialog(char *buf) {
 	int i;
 
-	o_unk_132_helper_3();
+	unk_132_helper_3();
 
 	i = displaySaveGameList(_saveLoadRowCurPos, _saveOrLoad, buf);
 
@@ -201,7 +201,7 @@ void SimonEngine::saveOrLoadDialog(bool load) {
 
 restart:;
 	do {
-		i = o_unk_132_helper(&b, buf);
+		i = unk_132_helper(&b, buf);
 	} while (!b);
 
 	if (i == 205)
@@ -269,14 +269,14 @@ restart:;
 
 			// do_2
 			do {
-				i = o_unk_132_helper(&b, buf);
+				i = unk_132_helper(&b, buf);
 
 				if (b) {
 					if (i == 205)
 						goto get_out;
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					if (_saveLoadFlag) {
-						o_clearCharacter(_windowArray[5], 8);
+						clearCharacter(_windowArray[5], 8);
 						// move code
 					}
 					goto if_1;
@@ -290,7 +290,7 @@ restart:;
 			} while (i >= 0x80 || i == 0);
 
 			// after_do_2
-			o_clearCharacter(_windowArray[5], 8);
+			clearCharacter(_windowArray[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
@@ -309,7 +309,7 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_clearCharacter(_windowArray[5], x, m);
+					clearCharacter(_windowArray[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
@@ -320,14 +320,14 @@ restart:;
 
 		// do_save
 		if (!saveGame(_saveLoadRowCurPos + unk132_result, buf + unk132_result * 18))
-			o_fileError(_windowArray[5], true);
+			fileError(_windowArray[5], true);
 	} else {
 		if (!loadGame(_saveLoadRowCurPos + i))
-			o_fileError(_windowArray[5], false);
+			fileError(_windowArray[5], false);
 	}
 
 get_out:;
-	o_unk_132_helper_3();
+	unk_132_helper_3();
 
 	_base_time = time(NULL) - save_time + _base_time;
 	_copyPartialMode = 0;
@@ -342,7 +342,7 @@ get_out:;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
+int SimonEngine::unk_132_helper(bool *b, char *buf) {
 	HitArea *ha;
 	*b = true;
 
@@ -402,12 +402,12 @@ start_over_2:;
 	return ha->id - 208;
 }
 
-void SimonEngine::o_unk_132_helper_3() {
+void SimonEngine::unk_132_helper_3() {
 	for (int i = 208; i != 208 + 6; i++)
 		set_hitarea_bit_0x40(i);
 }
 
-void SimonEngine::o_clearCharacter(WindowBlock *window, int x, byte b) {
+void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
 	byte old_text;
 
 	videoPutchar(window, x, b);
@@ -429,7 +429,7 @@ void SimonEngine::o_clearCharacter(WindowBlock *window, int x, byte b) {
 	videoPutchar(window, 8);
 }
 
-void SimonEngine::o_fileError(WindowBlock *window, bool save_error) {
+void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 	HitArea *ha;
 	const char *string, *string2;
 
