@@ -558,7 +558,6 @@ protected:
 	void o_kill_sprite_simon2(uint a, uint b);
 
 	void changeWindow(uint a);
-	void o_unk_103();
 	void closeWindow(uint a);
 	void clear_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_bit_0x40(uint hitarea);

@@ -909,7 +909,12 @@ void SimonEngine::o1_window() {
 
 void SimonEngine::o1_cls() {
 	// 103
-	o_unk_103();
+	mouseOff();
+	removeIconArray(_curWindow);
+	showMessageFormat("\x0C");
+	_oracleMaxScrollY = 0;
+	_noOracleScroll = 0;
+	mouseOn();
 }
 
 void SimonEngine::o1_closeWindow() {
@@ -1975,15 +1980,6 @@ void SimonEngine::o_setTextColor(uint color) {
 
 	window = _windowArray[_curWindow];
 	window->text_color = color;
-}
-
-void SimonEngine::o_unk_103() {
-	mouseOff();
-	removeIconArray(_curWindow);
-	showMessageFormat("\x0C");
-	_oracleMaxScrollY = 0;
-	_noOracleScroll = 0;
-	mouseOn();
 }
 
 void SimonEngine::o_kill_sprite_simon1(uint a) {
