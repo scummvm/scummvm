@@ -1533,27 +1533,6 @@ void SimonEngine::invokeTimeEvent(TimeEvent *te) {
 	_runScriptReturn1 = false;
 }
 
-void SimonEngine::o_setup_cond_c() {
-
-	setup_cond_c_helper();
-
-	_objectItem = _hitAreaObjectItem;
-
-	if (_objectItem == _dummyItem2)
-		_objectItem = getItem1Ptr();
-
-	if (_objectItem == _dummyItem3)
-		_objectItem = derefItem(getItem1Ptr()->parent);
-
-	if (_objectItem != NULL) {
-		_scriptNoun2 = _objectItem->noun;
-		_scriptAdj2 = _objectItem->adjective;
-	} else {
-		_scriptNoun2 = -1;
-		_scriptAdj2 = -1;
-	}
-}
-
 void SimonEngine::setup_cond_c_helper() {
 	HitArea *last;
 	uint id;

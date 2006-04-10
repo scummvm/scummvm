@@ -585,7 +585,6 @@ protected:
 	void o_fadeToBlack();
 
 	TextLocation *getTextLocation(uint a);
-	void o_setup_cond_c();
 	void setup_cond_c_helper();
 
 	void checkLinkBox();
