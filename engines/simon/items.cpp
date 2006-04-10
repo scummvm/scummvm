@@ -1684,13 +1684,12 @@ void SimonEngine::o2_rescan() {
 
 void SimonEngine::o2_animate() {
 	// 98: start vga
-	uint vga_res, vgaSpriteId, windowNum, x, y, palette;
-	vga_res = getVarOrWord();
-	vgaSpriteId = getVarOrWord();
-	windowNum = getVarOrByte();
-	x = getVarOrWord();
-	y = getVarOrWord();
-	palette = getVarOrWord();
+	uint vga_res = getVarOrWord();
+	uint vgaSpriteId = getVarOrWord();
+	uint windowNum = getVarOrByte();
+	uint x = getVarOrWord();
+	uint y = getVarOrWord();
+	uint palette = getVarOrWord();
 	loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
 }
 
