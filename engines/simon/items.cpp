@@ -125,7 +125,7 @@ void SimonEngine::setupOpcodes() {
 		&SimonEngine::o_end,
 		&SimonEngine::o_done,
 		// 70 - 74
-		&SimonEngine::o_printLongText,
+		NULL,
 		&SimonEngine::o_process,
 		NULL,
 		NULL,
@@ -140,7 +140,7 @@ void SimonEngine::setupOpcodes() {
 		&SimonEngine::o_is,
 		NULL,
 		&SimonEngine::o_debug,
-		&SimonEngine::o_rescan,
+		NULL,
 		NULL,
 		// 85 - 89
 		NULL,
@@ -158,8 +158,8 @@ void SimonEngine::setupOpcodes() {
 		NULL,
 		&SimonEngine::o_picture,
 		&SimonEngine::o_loadZone,
-		&SimonEngine::o_animate,
-		&SimonEngine::o_stopAnimate,
+		NULL,
+		NULL,
 		// 100 - 104
 		&SimonEngine::o_killAnimate,
 		&SimonEngine::o_defWindow,
@@ -258,14 +258,14 @@ void SimonEngine::setupOpcodes() {
 		&SimonEngine::o_scnTxtLongText,
 		// 180 - 184
 		&SimonEngine::o_mouseOn,
-		&SimonEngine::o_mouseOff,
-		&SimonEngine::o_loadBeard,
-		&SimonEngine::o_unloadBeard,
+		NULL,
+		NULL,
+		NULL,
 		&SimonEngine::o_unloadZone,
 		// 185 - 189
-		&SimonEngine::o_loadStrings,
+		NULL,
 		&SimonEngine::o_unfreezeZones,
-		&SimonEngine::o_specialFade,
+		NULL,
 		NULL,
 		NULL,
 		// 190 - 194
@@ -287,6 +287,15 @@ void SimonEngine::setupOpcodes() {
 
 	switch (getGameType()) {
 	case GType_SIMON1:
+		opcode_table[70] = &SimonEngine::o1_printLongText;
+		opcode_table[83] = &SimonEngine::o1_rescan;
+		opcode_table[98] = &SimonEngine::o1_animate;
+		opcode_table[99] = &SimonEngine::o1_stopAnimate;
+		opcode_table[181] = &SimonEngine::o1_mouseOff;
+		opcode_table[182] = &SimonEngine::o1_loadBeard;
+		opcode_table[183] = &SimonEngine::o1_unloadBeard;
+		opcode_table[185] = &SimonEngine::o1_loadStrings;
+		opcode_table[187] = &SimonEngine::o1_specialFade;
 		break;
 	case GType_SIMON2:
 		opcode_table[70] = &SimonEngine::o2_printLongText;
@@ -294,8 +303,6 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[98] = &SimonEngine::o2_animate;
 		opcode_table[99] = &SimonEngine::o2_stopAnimate;
 		opcode_table[181] = &SimonEngine::o2_mouseOff;
-		opcode_table[185] = NULL;
-		opcode_table[187] = NULL;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
 		opcode_table[190] = &SimonEngine::o2_waitMark;
@@ -321,7 +328,6 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[181] = &SimonEngine::o3_mouseOff;
 		opcode_table[182] = &SimonEngine::o3_loadSmack;
 		opcode_table[183] = &SimonEngine::o3_playSmack;
-		opcode_table[185] = NULL;
 		opcode_table[187] = &SimonEngine::o3_centreScroll;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
@@ -729,12 +735,6 @@ void SimonEngine::o_done() {
 	setScriptReturn(1);
 }
 
-void SimonEngine::o_printLongText() {
-	// 70: show string from array
-	const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
-	showMessageFormat("%s\n", str);
-}
-
 void SimonEngine::o_process() {
 	// 71: start subroutine
 	Subroutine *sub = getSubroutineByID(getVarOrWord());
@@ -773,11 +773,6 @@ void SimonEngine::o_is() {
 void SimonEngine::o_debug() {
 	// 82: debug opcode
 	getVarOrByte();
-}
-
-void SimonEngine::o_rescan() {
-	// 83: restart subroutine
-	setScriptReturn(-10);
 }
 
 void SimonEngine::o_comment() {
@@ -861,23 +856,6 @@ void SimonEngine::o_loadZone() {
 	_lockWord |= 0x80;
 	loadZone(vga_res);
 	_lockWord &= ~0x80;
-}
-
-void SimonEngine::o_animate() {
-	// 98: start vga
-	uint vga_res, vgaSpriteId, windowNum, x, y, palette;
-	vgaSpriteId = getVarOrWord();
-	vga_res = vgaSpriteId / 100;
-	windowNum = getVarOrByte();
-	x = getVarOrWord();
-	y = getVarOrWord();
-	palette = getVarOrWord();
-	loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
-}
-
-void SimonEngine::o_stopAnimate() {
-	// 99: kill sprite
-	kill_sprite_simon1(getVarOrWord());
 }
 
 void SimonEngine::o_killAnimate() {
@@ -1597,31 +1575,6 @@ void SimonEngine::o_mouseOn() {
 	scriptMouseOn();
 }
 
-void SimonEngine::o_mouseOff() {
-	// 181: force mouseOff
-	scriptMouseOff();
-}
-
-void SimonEngine::o_loadBeard() {
-	// 182: load beard
-	if (_beardLoaded == false) {
-		_beardLoaded = true;
-		_lockWord |= 0x8000;
-		read_vga_from_datfile_1(328);
-		_lockWord &= ~0x8000;
-	}
-}
-
-void SimonEngine::o_unloadBeard() {
-	// 183: unload beard
-	if (_beardLoaded == true) {
-		_beardLoaded = false;
-		_lockWord |= 0x8000;
-		read_vga_from_datfile_1(23);
-		_lockWord &= ~0x8000;
-	}
-}
-
 void SimonEngine::o_unloadZone() {
 	// 184: clear vgapointer entry
 	uint a = getVarOrWord();
@@ -1632,7 +1585,69 @@ void SimonEngine::o_unloadZone() {
 	vpe->vgaFile2 = NULL;
 }
 
-void SimonEngine::o_loadStrings() {
+void SimonEngine::o_unfreezeZones() {
+	// 186: vga pointer op 3
+	unfreezeBottom();
+}
+
+// -----------------------------------------------------------------------
+// Simon 1 Opcodes
+// -----------------------------------------------------------------------
+
+void SimonEngine::o1_printLongText() {
+	// 70: show string from array
+	const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
+	showMessageFormat("%s\n", str);
+}
+
+void SimonEngine::o1_rescan() {
+	// 83: restart subroutine
+	setScriptReturn(-10);
+}
+
+void SimonEngine::o1_animate() {
+	// 98: start vga
+	uint vga_res, vgaSpriteId, windowNum, x, y, palette;
+	vgaSpriteId = getVarOrWord();
+	vga_res = vgaSpriteId / 100;
+	windowNum = getVarOrByte();
+	x = getVarOrWord();
+	y = getVarOrWord();
+	palette = getVarOrWord();
+	loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
+}
+
+void SimonEngine::o1_stopAnimate() {
+	// 99: kill sprite
+	kill_sprite_simon1(getVarOrWord());
+}
+
+void SimonEngine::o1_mouseOff() {
+	// 181: force mouseOff
+	scriptMouseOff();
+}
+
+void SimonEngine::o1_loadBeard() {
+	// 182: load beard
+	if (_beardLoaded == false) {
+		_beardLoaded = true;
+		_lockWord |= 0x8000;
+		read_vga_from_datfile_1(328);
+		_lockWord &= ~0x8000;
+	}
+}
+
+void SimonEngine::o1_unloadBeard() {
+	// 183: unload beard
+	if (_beardLoaded == true) {
+		_beardLoaded = false;
+		_lockWord |= 0x8000;
+		read_vga_from_datfile_1(23);
+		_lockWord &= ~0x8000;
+	}
+}
+
+void SimonEngine::o1_loadStrings() {
 	// 185: load sound files
 	_soundFileId = getVarOrWord();
 	if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE) {
@@ -1644,12 +1659,7 @@ void SimonEngine::o_loadStrings() {
 	}
 }
 
-void SimonEngine::o_unfreezeZones() {
-	// 186: vga pointer op 3
-	unfreezeBottom();
-}
-
-void SimonEngine::o_specialFade() {
+void SimonEngine::o1_specialFade() {
 	// 187: fade to black
 	fadeToBlack();
 }

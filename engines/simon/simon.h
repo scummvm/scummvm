@@ -850,7 +850,6 @@ public:
 	void o_setLongText();
 	void o_end();
 	void o_done();
-	void o_printLongText();
 	void o_process();
 	void o_when();
 	void o_if1();
@@ -858,7 +857,6 @@ public:
 	void o_isCalled();
 	void o_is();
 	void o_debug();
-	void o_rescan();
 	void o_comment();
 	void o_haltAnimation();
 	void o_restartAnimation();
@@ -867,8 +865,6 @@ public:
 	void o_getChildren();
 	void o_picture();
 	void o_loadZone();
-	void o_animate();
-	void o_stopAnimate();
 	void o_killAnimate();
 	void o_defWindow();
 	void o_window();
@@ -928,13 +924,19 @@ public:
 	void o_getPathPosn();
 	void o_scnTxtLongText();
 	void o_mouseOn();
-	void o_mouseOff();
-	void o_loadBeard();
-	void o_unloadBeard();
 	void o_unloadZone();
-	void o_loadStrings();
 	void o_unfreezeZones();
-	void o_specialFade();
+
+	// Opcodes, Simon 1 only
+	void o1_printLongText();
+	void o1_rescan();
+	void o1_animate();
+	void o1_stopAnimate();
+	void o1_mouseOff();
+	void o1_loadBeard();
+	void o1_unloadBeard();
+	void o1_loadStrings();
+	void o1_specialFade();
 
 	// Opcodes, Simon 2 and later
 	void o2_printLongText();
@@ -946,7 +948,7 @@ public:
 	void o2_clearMarks();
 	void o2_waitMark();
 
-	// Opcodes, Feeble Files
+	// Opcodes, Feeble Files only
 	void o3_jumpOut();
 	void o3_addTextBox();
 	void o3_printLongText();
