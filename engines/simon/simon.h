@@ -700,7 +700,6 @@ protected:
 	void loadZone(uint vga_res);
 
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
-	void o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void playSpeech(uint speech_id, uint vga_sprite_id);
 	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 
