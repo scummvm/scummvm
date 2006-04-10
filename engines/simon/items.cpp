@@ -842,8 +842,16 @@ void SimonEngine::o1_getChildren() {
 
 void SimonEngine::o1_picture() {
 	// 96
-	uint val = getVarOrWord();
-	o_set_video_mode(getVarOrByte(), val);
+	uint vga_res = getVarOrWord();
+	uint mode = getVarOrByte();
+
+	if (mode == 4)
+		vc29_stopAllSounds();
+
+	if (_lockWord & 0x10)
+		error("o1_picture: _lockWord & 0x10");
+
+	set_video_mode_internal(mode, vga_res);
 }
 
 void SimonEngine::o1_loadZone() {

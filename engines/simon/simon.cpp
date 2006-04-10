@@ -2306,16 +2306,6 @@ void SimonEngine::o_unloadZone(uint a) {
 	vpe->vgaFile2 = NULL;
 }
 
-void SimonEngine::o_set_video_mode(uint mode, uint vga_res) {
-	if (mode == 4)
-		vc29_stopAllSounds();
-
-	if (_lockWord & 0x10)
-		error("o_set_video_mode_ex: _lockWord & 0x10");
-
-	set_video_mode_internal(mode, vga_res);
-}
-
 void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
