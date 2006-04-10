@@ -224,26 +224,6 @@ void SimonEngine::vcSkipNextInstruction() {
 		fprintf(_dumpFile, "; skipped\n");
 }
 
-void SimonEngine::o_unloadBeard() {
-	// Simon1 Only
-	if (_beardLoaded == true) {
-		_beardLoaded = false;
-		_lockWord |= 0x8000;
-		read_vga_from_datfile_1(23);
-		_lockWord &= ~0x8000;
-	}
-}
-
-void SimonEngine::o_loadBeard() {
-	// Simon1 Only
-	if (_beardLoaded == false) {
-		_beardLoaded = true;
-		_lockWord |= 0x8000;
-		read_vga_from_datfile_1(328);
-		_lockWord &= ~0x8000;
-	}
-}
-
 // VGA Script commands
 void SimonEngine::vc1_fadeOut() {
 	/* dummy opcode */

@@ -1376,12 +1376,22 @@ void SimonEngine::o1_mouseOff() {
 
 void SimonEngine::o1_loadBeard() {
 	// 182: load beard
-	o_loadBeard();
+	if (_beardLoaded == false) {
+		_beardLoaded = true;
+		_lockWord |= 0x8000;
+		read_vga_from_datfile_1(328);
+		_lockWord &= ~0x8000;
+	}
 }
 
 void SimonEngine::o1_unloadBeard() {
 	// 183: unload beard
-	o_unloadBeard();
+	if (_beardLoaded == true) {
+		_beardLoaded = false;
+		_lockWord |= 0x8000;
+		read_vga_from_datfile_1(23);
+		_lockWord &= ~0x8000;
+	}
 }
 
 void SimonEngine::o1_unloadZone() {

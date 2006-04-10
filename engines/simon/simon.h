@@ -587,8 +587,6 @@ protected:
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
 	void o_mouseOn();
 	void o_mouseOff();
-	void o_loadBeard();
-	void o_unloadBeard();
 	void o_unloadZone(uint a);
 	void o_unfreezeBottom();
 	void o_fadeToBlack();
