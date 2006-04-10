@@ -1190,7 +1190,10 @@ void SimonEngine::o1_copysf() {
 
 void SimonEngine::o1_restoreIcons() {
 	// 137
-	o_restoreIconArray(getVarOrByte());
+	uint num = getVarOrByte();
+	WindowBlock *window = _windowArray[num & 7];
+	if (window->iconPtr)
+		drawIconArray(num, window->iconPtr->itemRef, window->iconPtr->line, window->iconPtr->classMask);
 }
 
 void SimonEngine::o1_freezeZones() {
@@ -1952,15 +1955,6 @@ void SimonEngine::o_waitForMark(uint i) {
 
 		delay(10);
 	}
-}
-
-void SimonEngine::o_restoreIconArray(uint num) {
-	WindowBlock *window;
-
-	window = _windowArray[num & 7];
-	if (window->iconPtr == NULL)
-		return;
-	drawIconArray(num, window->iconPtr->itemRef, window->iconPtr->line, window->iconPtr->classMask);
 }
 
 void SimonEngine::o_freezeBottom() {
