@@ -606,14 +606,44 @@ enum FilenameGenMethod {
 	kGenUnchanged
 };
 
-struct GameFilenames {
+struct GameFilenamePattern {
 	const char *gameid;
-	const char *expandedName;
+	const char *pattern;
 	FilenameGenMethod genMethod;
 	Common::Language language;
 	Common::Platform platform;
 	const char *variant;
 };
+
+Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
+	char buf[128];
+
+	switch (gfp.genMethod) {
+	case kGenDiskNum:
+	case kGenRoomNum:
+		snprintf(buf, sizeof(buf), gfp.pattern, 0);
+		break;
+
+	case kGenHEPC:
+		snprintf(buf, sizeof(buf), "%s.he0", gfp.pattern);
+		break;
+
+	case kGenHEMac:
+		// FIXME: Is this correct?
+		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
+		break;
+
+	case kGenHEMacNoParens:
+		// FIXME: Is this correct?
+		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
+		break;
+
+	default:
+		error("FOO");
+	}
+
+	return buf;
+}
 
 #if 0
 Common::String ScummEngine::generateFilename(int room, int diskNumber) {
@@ -621,25 +651,26 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 
 	if (_game.version == 4) {
 		if (room == 0 || room >= 900) {
-			sprintf(buf, "%.3d.lfl", room);
+			snprintf(buf, sizeof(buf), "%.3d.lfl", room);
 		} else {
-			sprintf(buf, "disk%.2d.lec", diskNumber);
+			snprintf(buf, sizeof(buf), "disk%.2d.lec", diskNumber);
 		}
 	} else {
 		char id = 0;
 
-		switch (_substEntry.method) {
+		switch (_substEntry.genMethod) {
 		case kGenDiskNum:
-			sprintf(buf, _substEntry.formatStr, diskNumber);
+			snprintf(buf, sizeof(buf), _substEntry.pattern, diskNumber);
 			break;
 	
 		case kGenRoomNum:
-			sprintf(buf, _substEntry.formatStr, room);
+			snprintf(buf, sizeof(buf), _substEntry.pattern, room);
 			break;
 
 		case kGenHEMac:
 		case kGenHEMacNoParens:
 		case kGenHEPC:
+			// FIXME: Not sure if the following HE section is quite correct...
 			if (_game.heversion >= 98) {
 				int disk = 0;
 				if (_heV7DiskOffsets)
@@ -648,12 +679,15 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 				switch(disk) {
 				case 2:
 					id = 'b';
+					snprintf(buf, sizeof(buf), "%s.(b)", pattern);
 					break;
 				case 1:
 					id = 'a';
+					snprintf(buf, sizeof(buf), "%s.(a)", pattern);
 					break;
 				default:
 					id = '0';
+					snprintf(buf, sizeof(buf), "%s.he0", pattern);
 				}
 			} else if (_game.heversion >= 70) {
 				id = (room == 0) ? '0' : '1';
@@ -661,20 +695,19 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 				id = diskNumber + '0';
 			}
 			
-			if (_substEntry.method == kGenHEPC) {
-				if (_game.heversion >= 98)
-					sprintf(buf, _substEntry.formatStr, id);
-				else
-					sprintf(buf, "%s.he%c", _baseName.c_str(), id);
+			if (_substEntry.genMethod == kGenHEPC) {
+				// For HE >= 98, we already called snprintf above.
+				if (_game.heversion < 98)
+					snprintf(buf, sizeof(buf), "%s.he%c", pattern, id);
 			} else {
 				if (id == '3') { // special case for cursors
 					// For mac they're stored in game binary
-					strncpy(buf, _substEntry.formatStr, bufsize);
+					strncpy(buf, _substEntry.pattern, bufsize);
 				} else {
 					if (subst.genMethod == kGenMac)
-						snprintf(buf, bufsize, "%s (%c)", _substEntry.formatStr, id);
+						snprintf(buf, sizeof(buf), "%s (%c)", _substEntry.pattern, id);
 					else
-						snprintf(buf, bufsize, "%s %c", _substEntry.formatStr, id);
+						snprintf(buf, sizeof(buf), "%s %c", _substEntry.pattern, id);
 				}
 			}
 
@@ -697,14 +730,14 @@ using Common::UNK_LANG;
 // The following table maps gameids to possible filename variants for that game.
 // This information is used by the detector to determin possible "detect files".
 // It is also later used by the engine creation code to verify the game to be
-// launched is present. Finally, the correct GameFilenames entry is passed on
+// launched is present. Finally, the correct GameFilenamePattern entry is passed on
 // to the engine which uses it to locate the files for the game.
 //
 // The table is augmented by platform/language/variant information where applicable.
 //
 // Note: Setting variant to 0 means "don't care", while setting it to ""
 // (i.e. an empty string) means "use the default variant".
-static const GameFilenames gameFilenamesTable[] = {
+static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "maniac", "%.2d.MAN", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, 0 },   // ... and maniac2.d64
