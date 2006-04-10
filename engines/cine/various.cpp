@@ -650,6 +650,8 @@ int16 makeLoad(char *saveName) {
 		animDataTable[i].var1 = fHandle->readUint16BE();
 		animDataTable[i].bpp = fHandle->readUint16BE();
 		animDataTable[i].height = fHandle->readUint16BE();
+		animDataTable[i].ptr1 = NULL;
+		animDataTable[i].ptr2 = NULL;
 		animDataTable[i].fileIdx = fHandle->readSint16BE();
 		animDataTable[i].frameIdx = fHandle->readSint16BE();
 		fHandle->read(animDataTable[i].name, 10);
