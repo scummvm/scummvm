@@ -48,6 +48,7 @@ namespace Cine {
 
 SoundDriver *g_soundDriver;
 SfxPlayer *g_sfxPlayer;
+Common::SaveFileManager *g_saveFileMan;
 
 static void initialize();
 
@@ -157,6 +158,7 @@ int CineEngine::init(GameDetector &detector) {
 		g_soundDriver = new AdlibSoundDriverADL(_mixer);
 	}
 	g_sfxPlayer = new SfxPlayer(g_soundDriver);
+	g_saveFileMan = _saveFileMan;
 
 	initialize();
 

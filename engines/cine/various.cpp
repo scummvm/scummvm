@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/savefile.h"
 
 #include "cine/cine.h"
 #include "cine/font.h"
@@ -344,29 +345,28 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 }
 
 static commandeType currentSaveName[10];
-static char *savePath;
 
 int16 loadSaveDirectory(void) {
-	Common::File fHandle;
+	Common::InSaveFile *fHandle;
 
 	if (gameType == Cine::GID_FW)
-		fHandle.open("FW.DIR", Common::File::kFileReadMode, savePath);
+		fHandle = g_saveFileMan->openForLoading("FW.DIR");
 	else
-		fHandle.open("OS.DIR", Common::File::kFileReadMode, savePath);
+		fHandle = g_saveFileMan->openForLoading("OS.DIR");
 
-	if (!fHandle.isOpen()) {
+	if (!fHandle) {
 		return 0;
 	}
 
-	fHandle.read(currentSaveName, 10 * 20);
-	fHandle.close();
+	fHandle->read(currentSaveName, 10 * 20);
+	delete fHandle;
 
 	return 1;
 }
 
 int16 currentDisk;
 
-void loadObjectScriptFromSave(Common::File *fHandle) {
+void loadObjectScriptFromSave(Common::InSaveFile *fHandle) {
 	int16 i;
 
 	prcLinkedListStruct *newElement;
@@ -399,7 +399,7 @@ void loadObjectScriptFromSave(Common::File *fHandle) {
 	newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].data;
 }
 
-void loadGlobalScriptFromSave(Common::File *fHandle) {
+void loadGlobalScriptFromSave(Common::InSaveFile *fHandle) {
 	int16 i;
 
 	prcLinkedListStruct *newElement;
@@ -431,7 +431,7 @@ void loadGlobalScriptFromSave(Common::File *fHandle) {
 	newElement->scriptPtr = scriptTable[newElement->scriptIdx].ptr;
 }
 
-void loadOverlayFromSave(Common::File *fHandle) {
+void loadOverlayFromSave(Common::InSaveFile *fHandle) {
 	overlayHeadElement *newElement;
 	overlayHeadElement *currentHead = &overlayHead;
 	overlayHeadElement *tempHead = currentHead;
@@ -486,11 +486,11 @@ void setupObjectScriptList(void) {
 int16 makeLoad(char *saveName) {
 	int16 i;
 	int16 size;
-	Common::File fHandle;
+	Common::InSaveFile *fHandle;
 
-	fHandle.open(saveName, Common::File::kFileReadMode, savePath);
+	fHandle = g_saveFileMan->openForLoading(saveName);
 
-	if (!fHandle.isOpen()) {
+	if (!fHandle) {
 		drawString("Cette sauvegarde n'existe pas ...", 0);
 		waitPlayerInput();
 		// restoreScreen();
@@ -579,109 +579,109 @@ int16 makeLoad(char *saveName) {
 
 	checkForPendingDataLoadSwitch = 0;
 
-	currentDisk = fHandle.readUint16BE();
+	currentDisk = fHandle->readUint16BE();
 
-	fHandle.read(currentPartName, 13);
-	fHandle.read(currentDatName, 13);
+	fHandle->read(currentPartName, 13);
+	fHandle->read(currentDatName, 13);
 
-	saveVar2 = fHandle.readSint16BE();
+	saveVar2 = fHandle->readSint16BE();
 
-	fHandle.read(currentPrcName, 13);
-	fHandle.read(currentRelName, 13);
-	fHandle.read(currentMsgName, 13);
-	fHandle.read(currentBgName[0], 13);
-	fHandle.read(currentCtName, 13);
+	fHandle->read(currentPrcName, 13);
+	fHandle->read(currentRelName, 13);
+	fHandle->read(currentMsgName, 13);
+	fHandle->read(currentBgName[0], 13);
+	fHandle->read(currentCtName, 13);
 
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
-
-	for (i = 0; i < 255; i++) {
-		objectTable[i].x = fHandle.readSint16BE();
-		objectTable[i].y = fHandle.readSint16BE();
-		objectTable[i].mask = fHandle.readUint16BE();
-		objectTable[i].frame = fHandle.readSint16BE();
-		objectTable[i].costume = fHandle.readSint16BE();
-		fHandle.read(objectTable[i].name, 20);
-		objectTable[i].part = fHandle.readUint16BE();
-	}
-
-	for (i = 0; i < 16; i++) {
-		c_palette[i] = fHandle.readUint16BE();
-	}
-
-	for (i = 0; i < 16; i++) {
-		tempPalette[i] = fHandle.readUint16BE();
-	}
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
 
 	for (i = 0; i < 255; i++) {
-		globalVars[i] = fHandle.readUint16BE();
+		objectTable[i].x = fHandle->readSint16BE();
+		objectTable[i].y = fHandle->readSint16BE();
+		objectTable[i].mask = fHandle->readUint16BE();
+		objectTable[i].frame = fHandle->readSint16BE();
+		objectTable[i].costume = fHandle->readSint16BE();
+		fHandle->read(objectTable[i].name, 20);
+		objectTable[i].part = fHandle->readUint16BE();
 	}
 
 	for (i = 0; i < 16; i++) {
-		zoneData[i] = fHandle.readUint16BE();
+		c_palette[i] = fHandle->readUint16BE();
+	}
+
+	for (i = 0; i < 16; i++) {
+		tempPalette[i] = fHandle->readUint16BE();
+	}
+
+	for (i = 0; i < 255; i++) {
+		globalVars[i] = fHandle->readUint16BE();
+	}
+
+	for (i = 0; i < 16; i++) {
+		zoneData[i] = fHandle->readUint16BE();
 	}
 
 	for (i = 0; i < 4; i++) {
-		commandVar3[i] = fHandle.readUint16BE();
+		commandVar3[i] = fHandle->readUint16BE();
 	}
 
-	fHandle.read(commandBuffer, 0x50);
+	fHandle->read(commandBuffer, 0x50);
 
-	defaultMenuBoxColor = fHandle.readUint16BE();
-	bgVar0 = fHandle.readUint16BE();
-	allowPlayerInput = fHandle.readUint16BE();
-	playerCommand = fHandle.readSint16BE();
-	commandVar1 = fHandle.readSint16BE();
-	isDrawCommandEnabled = fHandle.readUint16BE();
-	var5 = fHandle.readUint16BE();
-	var4 = fHandle.readUint16BE();
-	var3 = fHandle.readUint16BE();
-	var2 = fHandle.readUint16BE();
-	commandVar2 = fHandle.readSint16BE();
-	defaultMenuBoxColor2 = fHandle.readUint16BE();
+	defaultMenuBoxColor = fHandle->readUint16BE();
+	bgVar0 = fHandle->readUint16BE();
+	allowPlayerInput = fHandle->readUint16BE();
+	playerCommand = fHandle->readSint16BE();
+	commandVar1 = fHandle->readSint16BE();
+	isDrawCommandEnabled = fHandle->readUint16BE();
+	var5 = fHandle->readUint16BE();
+	var4 = fHandle->readUint16BE();
+	var3 = fHandle->readUint16BE();
+	var2 = fHandle->readUint16BE();
+	commandVar2 = fHandle->readSint16BE();
+	defaultMenuBoxColor2 = fHandle->readUint16BE();
 
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
 
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].width = fHandle.readUint16BE();
-		animDataTable[i].var1 = fHandle.readUint16BE();
-		animDataTable[i].bpp = fHandle.readUint16BE();
-		animDataTable[i].height = fHandle.readUint16BE();
-		animDataTable[i].fileIdx = fHandle.readSint16BE();
-		animDataTable[i].frameIdx = fHandle.readSint16BE();
-		fHandle.read(animDataTable[i].name, 10);
+		animDataTable[i].width = fHandle->readUint16BE();
+		animDataTable[i].var1 = fHandle->readUint16BE();
+		animDataTable[i].bpp = fHandle->readUint16BE();
+		animDataTable[i].height = fHandle->readUint16BE();
+		animDataTable[i].fileIdx = fHandle->readSint16BE();
+		animDataTable[i].frameIdx = fHandle->readSint16BE();
+		fHandle->read(animDataTable[i].name, 10);
 	}
 
 	// TODO: handle screen params (realy required ?)
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
-	fHandle.readUint16BE();
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
+	fHandle->readUint16BE();
 
-	size = fHandle.readSint16BE();
+	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadGlobalScriptFromSave(&fHandle);
+		loadGlobalScriptFromSave(fHandle);
 	}
 
-	size = fHandle.readSint16BE();
+	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadObjectScriptFromSave(&fHandle);
+		loadObjectScriptFromSave(fHandle);
 	}
 
-	size = fHandle.readSint16BE();
+	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadOverlayFromSave(&fHandle);
+		loadOverlayFromSave(fHandle);
 	}
 
-	size = fHandle.readSint16BE();
+	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		// loadBgIncrustFromSave(&fHandle);
+		// loadBgIncrustFromSave(fHandle);
 	}
 
-	fHandle.close();
+	delete fHandle;
 
 	checkDataDisk(currentDisk);
 
@@ -730,87 +730,95 @@ int16 makeLoad(char *saveName) {
 
 void makeSave(char *saveFileName) {
 	int16 i;
-	Common::File fHandle;
+	Common::OutSaveFile *fHandle;
 
-	fHandle.open(saveFileName, Common::File::kFileWriteMode, savePath);
+	fHandle = g_saveFileMan->openForSaving(saveFileName);
 
-	fHandle.writeUint16BE(currentDisk);
-	fHandle.write(currentPartName, 13);
-	fHandle.write(currentDatName, 13);
-	fHandle.writeUint16BE(saveVar2);
-	fHandle.write(currentPrcName, 13);
-	fHandle.write(currentRelName, 13);
-	fHandle.write(currentMsgName, 13);
-	fHandle.write(currentBgName[0], 13);
-	fHandle.write(currentCtName, 13);
+	if (!fHandle) {
+		drawString("Could not create save file ...", 0);
+		waitPlayerInput();
+		// restoreScreen();
+		checkDataDisk(-1);
+		return;
+	}
 
-	fHandle.writeUint16BE(0xFF);
-	fHandle.writeUint16BE(0x20);
+	fHandle->writeUint16BE(currentDisk);
+	fHandle->write(currentPartName, 13);
+	fHandle->write(currentDatName, 13);
+	fHandle->writeUint16BE(saveVar2);
+	fHandle->write(currentPrcName, 13);
+	fHandle->write(currentRelName, 13);
+	fHandle->write(currentMsgName, 13);
+	fHandle->write(currentBgName[0], 13);
+	fHandle->write(currentCtName, 13);
+
+	fHandle->writeUint16BE(0xFF);
+	fHandle->writeUint16BE(0x20);
 
 	for (i = 0; i < 255; i++) {
-		fHandle.writeUint16BE(objectTable[i].x);
-		fHandle.writeUint16BE(objectTable[i].y);
-		fHandle.writeUint16BE(objectTable[i].mask);
-		fHandle.writeUint16BE(objectTable[i].frame);
-		fHandle.writeUint16BE(objectTable[i].costume);
-		fHandle.write(objectTable[i].name, 20);
-		fHandle.writeUint16BE(objectTable[i].part);
+		fHandle->writeUint16BE(objectTable[i].x);
+		fHandle->writeUint16BE(objectTable[i].y);
+		fHandle->writeUint16BE(objectTable[i].mask);
+		fHandle->writeUint16BE(objectTable[i].frame);
+		fHandle->writeUint16BE(objectTable[i].costume);
+		fHandle->write(objectTable[i].name, 20);
+		fHandle->writeUint16BE(objectTable[i].part);
 	}
 
 	for (i = 0; i < 16; i++) {
-		fHandle.writeUint16BE(c_palette[i]);
+		fHandle->writeUint16BE(c_palette[i]);
 	}
 
 	for (i = 0; i < 16; i++) {
-		fHandle.writeUint16BE(tempPalette[i]);
+		fHandle->writeUint16BE(tempPalette[i]);
 	}
 
 	for (i = 0; i < 255; i++) {
-		fHandle.writeUint16BE(globalVars[i]);
+		fHandle->writeUint16BE(globalVars[i]);
 	}
 
 	for (i = 0; i < 16; i++) {
-		fHandle.writeUint16BE(zoneData[i]);
+		fHandle->writeUint16BE(zoneData[i]);
 	}
 
 	for (i = 0; i < 4; i++) {
-		fHandle.writeUint16BE(commandVar3[i]);
+		fHandle->writeUint16BE(commandVar3[i]);
 	}
 
-	fHandle.write(commandBuffer, 0x50);
+	fHandle->write(commandBuffer, 0x50);
 
-	fHandle.writeUint16BE(defaultMenuBoxColor);
-	fHandle.writeUint16BE(bgVar0);
-	fHandle.writeUint16BE(allowPlayerInput);
-	fHandle.writeUint16BE(playerCommand);
-	fHandle.writeUint16BE(commandVar1);
-	fHandle.writeUint16BE(isDrawCommandEnabled);
-	fHandle.writeUint16BE(var5);
-	fHandle.writeUint16BE(var4);
-	fHandle.writeUint16BE(var3);
-	fHandle.writeUint16BE(var2);
-	fHandle.writeUint16BE(commandVar2);
-	fHandle.writeUint16BE(defaultMenuBoxColor2);
+	fHandle->writeUint16BE(defaultMenuBoxColor);
+	fHandle->writeUint16BE(bgVar0);
+	fHandle->writeUint16BE(allowPlayerInput);
+	fHandle->writeUint16BE(playerCommand);
+	fHandle->writeUint16BE(commandVar1);
+	fHandle->writeUint16BE(isDrawCommandEnabled);
+	fHandle->writeUint16BE(var5);
+	fHandle->writeUint16BE(var4);
+	fHandle->writeUint16BE(var3);
+	fHandle->writeUint16BE(var2);
+	fHandle->writeUint16BE(commandVar2);
+	fHandle->writeUint16BE(defaultMenuBoxColor2);
 
-	fHandle.writeUint16BE(0xFF);
-	fHandle.writeUint16BE(0x1E);
+	fHandle->writeUint16BE(0xFF);
+	fHandle->writeUint16BE(0x1E);
 
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		fHandle.writeUint16BE(animDataTable[i].width);
-		fHandle.writeUint16BE(animDataTable[i].var1);
-		fHandle.writeUint16BE(animDataTable[i].bpp);
-		fHandle.writeUint16BE(animDataTable[i].height);
-		fHandle.writeSint16BE(animDataTable[i].fileIdx);
-		fHandle.writeSint16BE(animDataTable[i].frameIdx);
-		fHandle.write(animDataTable[i].name, 10);
+		fHandle->writeUint16BE(animDataTable[i].width);
+		fHandle->writeUint16BE(animDataTable[i].var1);
+		fHandle->writeUint16BE(animDataTable[i].bpp);
+		fHandle->writeUint16BE(animDataTable[i].height);
+		fHandle->writeSint16BE(animDataTable[i].fileIdx);
+		fHandle->writeSint16BE(animDataTable[i].frameIdx);
+		fHandle->write(animDataTable[i].name, 10);
 	}
 
-	fHandle.writeUint16BE(0);  // Screen params, unhandled
-	fHandle.writeUint16BE(0);
-	fHandle.writeUint16BE(0);
-	fHandle.writeUint16BE(0);
-	fHandle.writeUint16BE(0);
-	fHandle.writeUint16BE(0);
+	fHandle->writeUint16BE(0);  // Screen params, unhandled
+	fHandle->writeUint16BE(0);
+	fHandle->writeUint16BE(0);
+	fHandle->writeUint16BE(0);
+	fHandle->writeUint16BE(0);
+	fHandle->writeUint16BE(0);
 
 	{
 		int16 numScript = 0;
@@ -821,23 +829,23 @@ void makeSave(char *saveFileName) {
 			currentHead = currentHead->next;
 		}
 
-		fHandle.writeUint16BE(numScript);
+		fHandle->writeUint16BE(numScript);
 
 		// actual save
 		currentHead = globalScriptsHead.next;
 
 		while (currentHead) {
 			for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
-				fHandle.writeUint16BE(currentHead->stack[i]);
+				fHandle->writeUint16BE(currentHead->stack[i]);
 			}
 
 			for (i = 0; i < 50; i++) {
-				fHandle.writeUint16BE(currentHead->localVars[i]);
+				fHandle->writeUint16BE(currentHead->localVars[i]);
 			}
 
-			fHandle.writeUint16BE(currentHead->compareResult);
-			fHandle.writeUint16BE(currentHead->scriptPosition);
-			fHandle.writeUint16BE(currentHead->scriptIdx);
+			fHandle->writeUint16BE(currentHead->compareResult);
+			fHandle->writeUint16BE(currentHead->scriptPosition);
+			fHandle->writeUint16BE(currentHead->scriptIdx);
 
 			currentHead = currentHead->next;
 		}
@@ -852,23 +860,23 @@ void makeSave(char *saveFileName) {
 			currentHead = currentHead->next;
 		}
 
-		fHandle.writeUint16BE(numScript);
+		fHandle->writeUint16BE(numScript);
 
 		// actual save
 		currentHead = objScriptList.next;
 
 		while (currentHead) {
 			for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
-				fHandle.writeUint16BE(currentHead->stack[i]);
+				fHandle->writeUint16BE(currentHead->stack[i]);
 			}
 
 			for (i = 0; i < 50; i++) {
-				fHandle.writeUint16BE(currentHead->localVars[i]);
+				fHandle->writeUint16BE(currentHead->localVars[i]);
 			}
 
-			fHandle.writeUint16BE(currentHead->compareResult);
-			fHandle.writeUint16BE(currentHead->scriptPosition);
-			fHandle.writeUint16BE(currentHead->scriptIdx);
+			fHandle->writeUint16BE(currentHead->compareResult);
+			fHandle->writeUint16BE(currentHead->scriptPosition);
+			fHandle->writeUint16BE(currentHead->scriptIdx);
 
 			currentHead = currentHead->next;
 		}
@@ -883,29 +891,30 @@ void makeSave(char *saveFileName) {
 			currentHead = currentHead->next;
 		}
 
-		fHandle.writeUint16BE(numScript);
+		fHandle->writeUint16BE(numScript);
 
 		// actual save
 		currentHead = overlayHead.next;
 
 		assert(sizeof(overlayHeadElement) == 0x14);
 		while (currentHead) {
-			fHandle.writeUint32BE(0);
-			fHandle.writeUint32BE(0);
-			fHandle.writeUint16BE(currentHead->objIdx);
-			fHandle.writeUint16BE(currentHead->type);
-			fHandle.writeSint16BE(currentHead->x);
-			fHandle.writeSint16BE(currentHead->y);
-			fHandle.writeSint16BE(currentHead->width);
-			fHandle.writeSint16BE(currentHead->color);
+			fHandle->writeUint32BE(0);
+			fHandle->writeUint32BE(0);
+			fHandle->writeUint16BE(currentHead->objIdx);
+			fHandle->writeUint16BE(currentHead->type);
+			fHandle->writeSint16BE(currentHead->x);
+			fHandle->writeSint16BE(currentHead->y);
+			fHandle->writeSint16BE(currentHead->width);
+			fHandle->writeSint16BE(currentHead->color);
 
 			currentHead = currentHead->next;
 		}
 	}
 
-	fHandle.writeUint16BE(0);
+	// This corresponds to the loadBgIncrustFromSave() handling, I think.
+	fHandle->writeUint16BE(0);
 
-	fHandle.close();
+	delete fHandle;
 
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }
@@ -1022,15 +1031,15 @@ void makeSystemMenu(void) {
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 						char saveString[256];
 
-						Common::File fHandle;
+						Common::OutSaveFile *fHandle;
 
 						if (gameType == Cine::GID_FW)
-							fHandle.open("FW.DIR", Common::File::kFileWriteMode, savePath);
+							fHandle = g_saveFileMan->openForSaving("FW.DIR");
 						else
-							fHandle.open("OS.DIR", Common::File::kFileWriteMode, savePath);
+							fHandle = g_saveFileMan->openForSaving("OS.DIR");
 
-						fHandle.write(currentSaveName, 200);
-						fHandle.close();
+						fHandle->write(currentSaveName, 200);
+						delete fHandle;
 
 						sprintf(saveString, "Sauvegarde de |%s", currentSaveName[selectedSave]);
 						drawString(saveString, 0);
