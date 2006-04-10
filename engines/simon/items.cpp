@@ -1319,12 +1319,13 @@ void SimonEngine::o1_b2NotZero() {
 
 void SimonEngine::o1_lockZones() {
 	// 175: vga pointer op 1
-	o_lockZone();
+	_vgaBufStart = _vgaBufFreeStart;
 }
 
 void SimonEngine::o1_unlockZones() {
 	// 176: vga pointer op 2
-	o_unlockZone();
+	_vgaBufFreeStart = _vgaFileBufOrg;
+	_vgaBufStart = _vgaFileBufOrg;
 }
 
 void SimonEngine::o1_screenTextPObj() {
@@ -1953,15 +1954,6 @@ void SimonEngine::o_unfreezeBottom() {
 	_vgaBufFreeStart = _vgaFileBufOrg2;
 	_vgaBufStart = _vgaFileBufOrg2;
 	_vgaFileBufOrg = _vgaFileBufOrg2;
-}
-
-void SimonEngine::o_lockZone() {
-	_vgaBufStart = _vgaBufFreeStart;
-}
-
-void SimonEngine::o_unlockZone() {
-	_vgaBufFreeStart = _vgaFileBufOrg;
-	_vgaBufStart = _vgaFileBufOrg;
 }
 
 void SimonEngine::o_sync(uint a) {
