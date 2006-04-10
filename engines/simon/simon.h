@@ -554,8 +554,6 @@ protected:
 	void unlinkItem(Item *item);
 	void linkItem(Item *item, Item *parent);
 
-	bool o_chance(uint a);
-
 	void o_kill_sprite_simon1(uint a);
 	void o_kill_sprite_simon2(uint a, uint b);
 

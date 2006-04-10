@@ -447,7 +447,36 @@ void SimonEngine::o1_gtf() {
 
 void SimonEngine::o1_chance() {
 	// 23
-	setScriptCondition(o_chance(getVarOrWord()));
+	uint a = getVarOrWord();
+
+	if (a == 0) {
+		setScriptCondition(false);
+		return;
+	}
+
+	if (a == 100) {
+		setScriptCondition(true);
+		return;
+	}
+
+	a += _scriptUnk1;
+
+	if (a <= 0) {
+		_scriptUnk1 = 0;
+		setScriptCondition(false);
+	} else if ((uint)_rnd.getRandomNumber(99) < a) {
+		if (_scriptUnk1 <= 0)
+			_scriptUnk1 -= 5;
+		else
+			_scriptUnk1 = 0;
+		setScriptCondition(true);
+	} else {
+		if (_scriptUnk1 >= 0)
+			_scriptUnk1 += 5;
+		else
+			_scriptUnk1 = 0;
+		setScriptCondition(false);
+	}
 }
 
 void SimonEngine::o1_isRoom() {
@@ -1715,36 +1744,6 @@ void SimonEngine::o_waitForMark(uint i) {
 
 		delay(10);
 	}
-}
-
-
-bool SimonEngine::o_chance(uint a) {
-	if (a == 0)
-		return 0;
-
-	if (a == 100)
-		return 1;
-
-	a += _scriptUnk1;
-	if (a <= 0) {
-		_scriptUnk1 = 0;
-		return 0;
-	}
-
-	if ((uint)_rnd.getRandomNumber(99) < a) {
-		if (_scriptUnk1 <= 0)
-			_scriptUnk1 -= 5;
-		else
-			_scriptUnk1 = 0;
-		return 1;
-	}
-
-	if (_scriptUnk1 >= 0)
-		_scriptUnk1 += 5;
-	else
-		_scriptUnk1 = 0;
-
-	return 0;
 }
 
 void SimonEngine::o_inventory_descriptions() {
