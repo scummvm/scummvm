@@ -2172,12 +2172,6 @@ void SimonEngine::o_printStr() {
 
 }
 
-void SimonEngine::o_loadZone(uint vga_res) {
-	_lockWord |= 0x80;
-	loadZone(vga_res);
-	_lockWord &= ~0x80;
-}
-
 void SimonEngine::loadZone(uint vga_res) {
 	VgaPointersEntry *vpe;
 
@@ -2294,16 +2288,6 @@ void SimonEngine::vga_buf_unk_proc2(uint a, byte *end) {
 	} else {
 		_videoVar5 = false;
 	}
-}
-
-void SimonEngine::o_unloadZone(uint a) {
-	VgaPointersEntry *vpe;
-
-	vpe = &_vgaBufferPointers[a];
-
-	vpe->sfxFile = NULL;
-	vpe->vgaFile1 = NULL;
-	vpe->vgaFile2 = NULL;
 }
 
 void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {

@@ -856,7 +856,11 @@ void SimonEngine::o1_picture() {
 
 void SimonEngine::o1_loadZone() {
 	// 97: load vga
-	o_loadZone(getVarOrWord());
+	uint vga_res = getVarOrWord();
+
+	_lockWord |= 0x80;
+	loadZone(vga_res);
+	_lockWord &= ~0x80;
 }
 
 void SimonEngine::o1_animate() {
@@ -1401,7 +1405,12 @@ void SimonEngine::o1_unloadBeard() {
 
 void SimonEngine::o1_unloadZone() {
 	// 184: clear vgapointer entry
-	o_unloadZone(getVarOrWord());
+	uint a = getVarOrWord();
+	VgaPointersEntry *vpe = &_vgaBufferPointers[a];
+
+	vpe->sfxFile = NULL;
+	vpe->vgaFile1 = NULL;
+	vpe->vgaFile2 = NULL;
 }
 
 void SimonEngine::o1_loadStrings() {

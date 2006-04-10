@@ -586,7 +586,6 @@ protected:
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
 	void o_mouseOn();
 	void o_mouseOff();
-	void o_unloadZone(uint a);
 	void o_unfreezeBottom();
 	void o_fadeToBlack();
 
@@ -688,7 +687,6 @@ protected:
 
 	void set_video_mode_internal(uint mode, uint vga_res_id);
 
-	void o_loadZone(uint vga_res);
 	void loadZone(uint vga_res);
 
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
