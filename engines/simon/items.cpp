@@ -193,7 +193,7 @@ void SimonEngine::setupOpcodes() {
 		// 125 - 129
 		&SimonEngine::o_here,
 		&SimonEngine::o_doClassIcons,
-		&SimonEngine::o_playTune,
+		NULL,
 		&SimonEngine::o_waitEndTune,
 		&SimonEngine::o_ifEndTune,
 		// 130 - 134
@@ -291,6 +291,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[83] = &SimonEngine::o1_rescan;
 		opcode_table[98] = &SimonEngine::o1_animate;
 		opcode_table[99] = &SimonEngine::o1_stopAnimate;
+		opcode_table[127] = &SimonEngine::o1_playTune;
 		opcode_table[181] = &SimonEngine::o1_mouseOff;
 		opcode_table[182] = &SimonEngine::o1_loadBeard;
 		opcode_table[183] = &SimonEngine::o1_unloadBeard;
@@ -302,6 +303,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[83] = &SimonEngine::o2_rescan;
 		opcode_table[98] = &SimonEngine::o2_animate;
 		opcode_table[99] = &SimonEngine::o2_stopAnimate;
+		opcode_table[127] = &SimonEngine::o2_playTune;
 		opcode_table[181] = &SimonEngine::o2_mouseOff;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
@@ -317,6 +319,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[122] = &SimonEngine::o3_oracleTextDown;
 		opcode_table[123] = &SimonEngine::o3_oracleTextUp;
 		opcode_table[124] = &SimonEngine::o3_ifTime;
+		opcode_table[127] = &SimonEngine::o3_playTune;
 		opcode_table[131] = &SimonEngine::o3_setTime;
 		opcode_table[133] = &SimonEngine::o3_loadUserGame;
 		opcode_table[134] = &SimonEngine::o3_listSaveGames;
@@ -1033,36 +1036,6 @@ void SimonEngine::o_doClassIcons() {
 	mouseOn();
 }
 
-void SimonEngine::o_playTune() {
-	// 127: deals with music
-	int music = getVarOrWord();
-	int track = getVarOrWord();
-
-	// Jamieson630:
-	// This appears to be a "load or play music" command.
-	// The music resource is specified, and optionally
-	// a track as well. Normally we see two calls being
-	// made, one to load the resource and another to
-	// actually start a track (so the resource is
-	// effectively preloaded so there's no latency when
-	// starting playback).
-	if (getGameType() == GType_SIMON2) {
-		int loop = getVarOrByte();
-
-		midi.setLoop(loop != 0);
-		if (_lastMusicPlayed != music)
-			_nextMusicToPlay = music;
-		else
-			midi.startTrack(track);
-	} else {
-		if (music != _lastMusicPlayed) {
-			_lastMusicPlayed = music;
-			loadMusic(music);
-			midi.startTrack(track);
-		}
-	}
-}
-
 void SimonEngine::o_waitEndTune() {
 	// 128: dummy instruction
 	getVarOrWord();
@@ -1622,6 +1595,27 @@ void SimonEngine::o1_stopAnimate() {
 	kill_sprite_simon1(getVarOrWord());
 }
 
+void SimonEngine::o1_playTune() {
+	// 127: deals with music
+	int music = getVarOrWord();
+	int track = getVarOrWord();
+
+	// Jamieson630:
+	// This appears to be a "load or play music" command.
+	// The music resource is specified, and optionally
+	// a track as well. Normally we see two calls being
+	// made, one to load the resource and another to
+	// actually start a track (so the resource is
+	// effectively preloaded so there's no latency when
+	// starting playback).
+
+	if (music != _lastMusicPlayed) {
+		_lastMusicPlayed = music;
+		loadMusic(music);
+		midi.startTrack(track);
+	}
+}
+
 void SimonEngine::o1_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
@@ -1705,6 +1699,28 @@ void SimonEngine::o2_stopAnimate() {
 	uint a = getVarOrWord();
 	uint b = getVarOrWord();
 	kill_sprite_simon2(a, b);
+}
+
+void SimonEngine::o2_playTune() {
+	// 127: deals with music
+	int music = getVarOrWord();
+	int track = getVarOrWord();
+	int loop = getVarOrByte();
+
+	// Jamieson630:
+	// This appears to be a "load or play music" command.
+	// The music resource is specified, and optionally
+	// a track as well. Normally we see two calls being
+	// made, one to load the resource and another to
+	// actually start a track (so the resource is
+	// effectively preloaded so there's no latency when
+	// starting playback).
+
+	midi.setLoop(loop != 0);
+	if (_lastMusicPlayed != music)
+		_nextMusicToPlay = music;
+	else
+		midi.startTrack(track);
 }
 
 void SimonEngine::o2_mouseOff() {
@@ -1793,6 +1809,13 @@ void SimonEngine::o3_ifTime() {
 		setScriptCondition(true);
 	else
 		setScriptCondition(false);
+}
+
+void SimonEngine::o3_playTune() {
+	// 127: usually deals with music, but is a no-op in FF.
+	getVarOrWord();
+	getVarOrWord();
+	getVarOrByte();
 }
 
 void SimonEngine::o3_setTime() {

@@ -884,7 +884,6 @@ public:
 	void o_defObj();
 	void o_here();
 	void o_doClassIcons();
-	void o_playTune();
 	void o_waitEndTune();
 	void o_ifEndTune();
 	void o_setAdjNoun();
@@ -932,6 +931,7 @@ public:
 	void o1_rescan();
 	void o1_animate();
 	void o1_stopAnimate();
+	void o1_playTune();
 	void o1_mouseOff();
 	void o1_loadBeard();
 	void o1_unloadBeard();
@@ -943,6 +943,7 @@ public:
 	void o2_rescan();
 	void o2_animate();
 	void o2_stopAnimate();
+	void o2_playTune();
 	void o2_mouseOff();
 	void o2_isShortText();
 	void o2_clearMarks();
@@ -955,6 +956,7 @@ public:
 	void o3_oracleTextDown();
 	void o3_oracleTextUp();
 	void o3_ifTime();
+	void o3_playTune();
 	void o3_setTime();
 	void o3_loadUserGame();
 	void o3_listSaveGames();
