@@ -33,14 +33,6 @@
 
 namespace Simon {
 
-void SimonEngine::o_saveGame() {
-	saveOrLoadDialog(false);
-}
-
-void SimonEngine::o_loadGame() {
-	saveOrLoadDialog(true);
-}
-
 int SimonEngine::countSaveGames() {
 	Common::InSaveFile *f;
 	uint i = 1;

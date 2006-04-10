@@ -1111,14 +1111,14 @@ void SimonEngine::o1_setAdjNoun() {
 void SimonEngine::o1_saveUserGame() {
 	// 132: save game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	o_saveGame();
+	saveOrLoadDialog(false);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void SimonEngine::o1_loadUserGame() {
 	// 133: load game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	o_loadGame();
+	saveOrLoadDialog(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
