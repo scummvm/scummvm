@@ -1339,7 +1339,88 @@ void SimonEngine::o1_unlockZones() {
 
 void SimonEngine::o1_screenTextPObj() {
 	// 177: inventory descriptions
-	o_inventory_descriptions();
+	uint vgaSpriteId = getVarOrByte();
+	uint color = getVarOrByte();
+	const char *string_ptr = NULL;
+	TextLocation *tl = NULL;
+	char buf[256];
+
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	if (subObject != NULL && subObject->objectFlags & kOFText) {
+		string_ptr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
+		tl = getTextLocation(vgaSpriteId);
+	}
+
+	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
+		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
+
+			if (subObject->objectFlags & kOFNumber) {
+				uint speechIdOffs = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
+
+				if (speechId == 116)
+					speechId = speechIdOffs + 115;
+				if (speechId == 92)
+					speechId = speechIdOffs + 98;
+				if (speechId == 99)
+					speechId = 9;
+				if (speechId == 97) {
+					switch (speechIdOffs) {
+					case 12:
+						speechId = 109;
+						break;
+					case 14:
+						speechId = 108;
+						break;
+					case 18:
+						speechId = 107;
+						break;
+					case 20:
+						speechId = 106;
+						break;
+					case 22:
+						speechId = 105;
+						break;
+					case 28:
+						speechId = 104;
+						break;
+					case 90:
+						speechId = 103;
+						break;
+					case 92:
+						speechId = 102;
+						break;
+					case 100:
+						speechId = 51;
+						break;
+					default:
+						error("o_177: invalid case %d", speechIdOffs);
+					}
+				}
+			}
+
+			if (_speech)
+				playSpeech(speechId, vgaSpriteId);
+		}
+
+	} else if (getFeatures() & GF_TALKIE) {
+		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
+			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
+		} else if (subObject != NULL && subObject->objectFlags & kOFNumber) {
+			uint offs = getOffsetOfChild2Param(subObject, kOFNumber);
+			playSpeech(subObject->objectFlagValue[offs] + 3550, vgaSpriteId);
+		}
+	}
+
+	if (subObject != NULL && (subObject->objectFlags & kOFText) && _subtitles) {
+		if (subObject->objectFlags & kOFNumber) {
+			sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
+			string_ptr = buf;
+		}
+		if (string_ptr != NULL)
+			printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+	}
 }
 
 void SimonEngine::o1_getPathPosn() {
@@ -1823,91 +1904,6 @@ void SimonEngine::o_waitForMark(uint i) {
 		}
 
 		delay(10);
-	}
-}
-
-void SimonEngine::o_inventory_descriptions() {
-	uint vgaSpriteId = getVarOrByte();
-	uint color = getVarOrByte();
-	const char *string_ptr = NULL;
-	TextLocation *tl = NULL;
-	char buf[256];
-
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
-	if (subObject != NULL && subObject->objectFlags & kOFText) {
-		string_ptr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
-		tl = getTextLocation(vgaSpriteId);
-	}
-
-	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
-		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
-			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
-
-			if (subObject->objectFlags & kOFNumber) {
-				uint speechIdOffs = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
-
-				if (speechId == 116)
-					speechId = speechIdOffs + 115;
-				if (speechId == 92)
-					speechId = speechIdOffs + 98;
-				if (speechId == 99)
-					speechId = 9;
-				if (speechId == 97) {
-					switch (speechIdOffs) {
-					case 12:
-						speechId = 109;
-						break;
-					case 14:
-						speechId = 108;
-						break;
-					case 18:
-						speechId = 107;
-						break;
-					case 20:
-						speechId = 106;
-						break;
-					case 22:
-						speechId = 105;
-						break;
-					case 28:
-						speechId = 104;
-						break;
-					case 90:
-						speechId = 103;
-						break;
-					case 92:
-						speechId = 102;
-						break;
-					case 100:
-						speechId = 51;
-						break;
-					default:
-						error("o_177: invalid case %d", speechIdOffs);
-					}
-				}
-			}
-
-			if (_speech)
-				playSpeech(speechId, vgaSpriteId);
-		}
-
-	} else if (getFeatures() & GF_TALKIE) {
-		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
-			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
-			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
-		} else if (subObject != NULL && subObject->objectFlags & kOFNumber) {
-			uint offs = getOffsetOfChild2Param(subObject, kOFNumber);
-			playSpeech(subObject->objectFlagValue[offs] + 3550, vgaSpriteId);
-		}
-	}
-
-	if (subObject != NULL && (subObject->objectFlags & kOFText) && _subtitles) {
-		if (subObject->objectFlags & kOFNumber) {
-			sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
-			string_ptr = buf;
-		}
-		if (string_ptr != NULL)
-			printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 	}
 }
 

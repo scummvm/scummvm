@@ -592,8 +592,6 @@ protected:
 	void o_setup_cond_c();
 	void setup_cond_c_helper();
 
-	void o_inventory_descriptions();
-
 	void checkLinkBox();
  	void hyperLinkOn(uint16 x);
  	void hyperLinkOff();
