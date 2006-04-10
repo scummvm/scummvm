@@ -2863,12 +2863,6 @@ void SimonEngine::timer_callback() {
 	}
 }
 
-void SimonEngine::o_vga_reset() {
-	_lockWord |= 0x8000;
-	vc27_resetSprite();
-	_lockWord &= ~0x8000;
-}
-
 bool SimonEngine::itemIsSiblingOf(uint16 a) {
 	Item *item;
 

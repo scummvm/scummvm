@@ -870,7 +870,9 @@ void SimonEngine::o1_stopAnimate() {
 
 void SimonEngine::o1_killAnimate() {
 	// 100: vga reset
-	o_vga_reset();
+	_lockWord |= 0x8000;
+	vc27_resetSprite();
+	_lockWord &= ~0x8000;
 }
 
 void SimonEngine::o1_defWindow() {

@@ -557,7 +557,6 @@ protected:
 	void o_kill_sprite_simon1(uint a);
 	void o_kill_sprite_simon2(uint a, uint b);
 
-	void o_vga_reset();
 	void changeWindow(uint a);
 	void o_unk_103();
 	void closeWindow(uint a);
