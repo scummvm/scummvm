@@ -89,7 +89,7 @@ struct VgaSprite {
 	uint16 x, y;									/* actually signed numbers */
 	uint16 flags;
 	uint16 priority;
-	uint16 windowNum, fileId;
+	uint16 windowNum, zoneNum;
 	VgaSprite() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -329,13 +329,13 @@ protected:
 	uint16 _scrollUpHitArea;
 	uint16 _scrollDownHitArea;
 
-	uint16 _videoVar7;
+	uint16 _noOverWrite;
 	volatile uint16 _paletteColorCount;
 
 	int _screenWidth, _screenHeight;
 
-	byte _videoVar4;
-	bool _videoVar5;
+	byte _rejectCount;
+	bool _rejectBlock;
 	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
 	bool _exitCutscene;
@@ -363,8 +363,8 @@ protected:
 
 	uint16 _frameRate;
 
-	uint16 _vgaCurFile2;
-	uint16 _vgaWaitFor, _vgaCurFileId;
+	uint16 _zoneNumber;
+	uint16 _vgaWaitFor, _vgaCurZoneNum;
 	uint16 _vgaCurSpriteId;
 	uint16 _vgaCurSpritePriority;
 
@@ -418,7 +418,7 @@ protected:
 
 	byte _videoBuf1[3000];
 
-	VgaTimerEntry _vgaTimerList[95];
+	VgaTimerEntry _vgaTimerList[900];
 
 	WindowBlock *_windowList;
 
@@ -692,11 +692,11 @@ protected:
 	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
-	byte *setup_vga_destination(uint32 size);
-	void vga_buf_unk_proc3(byte *end);
-	void vga_buf_unk_proc1(byte *end);
-	void vga_buf_unk_proc2(uint a, byte *end);
-	void delete_memptr_range(byte *end);
+	byte *allocBlock(uint32 size);
+	void checkNoOverWrite(byte *end);
+	void checkRunningAnims(byte *end);
+	void checkAnims(uint a, byte *end);
+	void checkZonePtrs(byte *end);
 
 	void setup_vga_file_buf_pointers();
 
@@ -1013,7 +1013,7 @@ protected:
 
 	void expire_vga_timers();
 
-	bool isSpriteLoaded(uint16 id, uint16 fileId);
+	bool isSpriteLoaded(uint16 id, uint16 zoneNum);
 
 	void resetWindow(WindowBlock *window);
 	void delete_hitarea_by_index(uint index);

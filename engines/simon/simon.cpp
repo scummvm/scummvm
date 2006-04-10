@@ -330,11 +330,11 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
 
-	_videoVar7 = 0xFFFF;
+	_noOverWrite = 0xFFFF;
 	_paletteColorCount = 0;
 
-	_videoVar4 = 0;
-	_videoVar5 = 0;
+	_rejectCount = 0;
+	_rejectBlock = 0;
 	_fastFadeOutFlag = 0;
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
@@ -367,9 +367,9 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	_frameRate = 1;
 
-	_vgaCurFile2 = 0;
+	_zoneNumber = 0;
 	_vgaWaitFor = 0;
-	_vgaCurFileId = 0;
+	_vgaCurZoneNum = 0;
 	_vgaCurSpriteId = 0;
 	_vgaCurSpritePriority = 0;
 
@@ -2140,29 +2140,29 @@ void SimonEngine::loadZone(uint vga_res) {
 		vpe->sfxFile = read_vga_from_datfile_2(vga_res * 2, 3);
 }
 
-byte *SimonEngine::setup_vga_destination(uint32 size) {
-	byte *dest, *end;
+byte *SimonEngine::allocBlock(uint32 size) {
+	byte *block, *blockEnd;
 
-	_videoVar4 = 0;
+	_rejectCount = 0;
 
 	for (;;) {
-		dest = _vgaBufFreeStart;
+		block = _vgaBufFreeStart;
 
-		end = dest + size;
+		blockEnd = block + size;
 
-		if (end >= _vgaBufEnd) {
+		if (blockEnd >= _vgaBufEnd) {
 			_vgaBufFreeStart = _vgaBufStart;
 		} else {
-			_videoVar5 = false;
-			vga_buf_unk_proc3(end);
-			if (_videoVar5)
+			_rejectBlock = false;
+			checkNoOverWrite(blockEnd);
+			if (_rejectBlock)
 				continue;
-			vga_buf_unk_proc1(end);
-			if (_videoVar5)
+			checkRunningAnims(blockEnd);
+			if (_rejectBlock)
 				continue;
-			delete_memptr_range(end);
-			_vgaBufFreeStart = end;
-			return dest;
+			checkZonePtrs(blockEnd);
+			_vgaBufFreeStart = blockEnd;
+			return block;
 		}
 	}
 }
@@ -2179,40 +2179,40 @@ void SimonEngine::setup_vga_file_buf_pointers() {
 	_vgaBufEnd = alloced + VGA_MEM_SIZE;
 }
 
-void SimonEngine::vga_buf_unk_proc3(byte *end) {
+void SimonEngine::checkNoOverWrite(byte *end) {
 	VgaPointersEntry *vpe;
 
-	if (_videoVar7 == 0xFFFF)
+	if (_noOverWrite == 0xFFFF)
 		return;
 
-	if (_videoVar4 == 2)
-		error("vga_buf_unk_proc3: _videoVar4 == 2");
+	if (_rejectCount == 2)
+		error("checkNoOverWrite: _rejectCount == 2");
 
-	vpe = &_vgaBufferPointers[_videoVar7];
+	vpe = &_vgaBufferPointers[_noOverWrite];
 
 	if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
 			_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
-		_videoVar5 = 1;
-		_videoVar4++;
+		_rejectBlock = 1;
+		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile1 + 0x5000;
 	} else {
-		_videoVar5 = 0;
+		_rejectBlock = 0;
 	}
 }
 
-void SimonEngine::vga_buf_unk_proc1(byte *end) {
+void SimonEngine::checkRunningAnims(byte *end) {
 	VgaSprite *vsp;
 	if (_lockWord & 0x20)
 		return;
 
 	for (vsp = _vgaSprites; vsp->id; vsp++) {
-		vga_buf_unk_proc2(vsp->fileId, end);
-		if (_videoVar5 == true)
+		checkAnims(vsp->zoneNum, end);
+		if (_rejectBlock == true)
 			return;
 	}
 }
 
-void SimonEngine::delete_memptr_range(byte *end) {
+void SimonEngine::checkZonePtrs(byte *end) {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
@@ -2226,18 +2226,18 @@ void SimonEngine::delete_memptr_range(byte *end) {
 	} while (++vpe, --count);
 }
 
-void SimonEngine::vga_buf_unk_proc2(uint a, byte *end) {
+void SimonEngine::checkAnims(uint a, byte *end) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vgaBufferPointers[a];
 
 	if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
 			_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
-		_videoVar5 = true;
-		_videoVar4++;
+		_rejectBlock = true;
+		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile1 + 0x5000;
 	} else {
-		_videoVar5 = false;
+		_rejectBlock = false;
 	}
 }
 
@@ -2254,13 +2254,13 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	if (vga_res_id == 0) {
 		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
-		} else {
+		} else if (getGameType() == GType_SIMON2) {
 			_dxUse3Or4ForLock = true;
 			_restoreWindow6 = true;
 		}
 	}
 
-	_vgaCurFile2 = num = vga_res_id / 100;
+	_zoneNumber = num = vga_res_id / 100;
 
 	for (;;) {
 		vpe = &_vgaBufferPointers[num];
@@ -2410,7 +2410,7 @@ void SimonEngine::expire_vga_timers() {
 	while (vte->delay) {
 		if (!--vte->delay) {
 			uint16 cur_file = vte->cur_vga_file;
-			uint16 cur_unk = vte->sprite_id;
+			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
 
 			_nextVgaTimerToProcess = vte + 1;
@@ -2420,7 +2420,7 @@ void SimonEngine::expire_vga_timers() {
 				// special scroll timer
 				scroll_timeout();
 			} else {
-				vcResumeSprite(script_ptr, cur_file, cur_unk);
+				vcResumeSprite(script_ptr, cur_file, cur_sprite);
 			}
 			vte = _nextVgaTimerToProcess;
 		} else {
@@ -2470,8 +2470,8 @@ void SimonEngine::vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 c
 
 	_vgaCurSpriteId = cur_sprite;
 
-	_vgaCurFileId = cur_file;
-	_vgaCurFile2 = cur_file;
+	_vgaCurZoneNum = cur_file;
+	_zoneNumber = cur_file;
 	vpe = &_vgaBufferPointers[cur_file];
 
 	_curVgaFile1 = vpe->vgaFile1;
@@ -2588,7 +2588,7 @@ void SimonEngine::timer_vga_sprites() {
 	while (vsp->id != 0) {
 		vsp->windowNum &= 0x7FFF;
 
-		vpe = &_vgaBufferPointers[vsp->fileId];
+		vpe = &_vgaBufferPointers[vsp->zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
 		_curSfxFile = vpe->sfxFile;
@@ -2688,7 +2688,7 @@ void SimonEngine::timer_vga_sprites_2() {
 	while (vsp->id != 0) {
 		vsp->windowNum &= 0x7FFF;
 
-		vpe = &_vgaBufferPointers[vsp->fileId];
+		vpe = &_vgaBufferPointers[vsp->zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
 		_curSfxFile = vpe->sfxFile;
@@ -2961,7 +2961,7 @@ VgaSprite *SimonEngine::findCurSprite() {
 			if (vsp->id == _vgaCurSpriteId)
 				break;
 		} else {
-			if (vsp->id == _vgaCurSpriteId && vsp->fileId == _vgaCurFileId)
+			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
 				break;
 		}
 		vsp++;
@@ -2969,14 +2969,14 @@ VgaSprite *SimonEngine::findCurSprite() {
 	return vsp;
 }
 
-bool SimonEngine::isSpriteLoaded(uint16 id, uint16 fileId) {
+bool SimonEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
 		if (getGameType() == GType_SIMON1) {
 			if (vsp->id == id)
 				return true;
 		} else {
-			if (vsp->id == id && vsp->fileId == fileId)
+			if (vsp->id == id && vsp->zoneNum == zoneNum)
 				return true;
 		}
 		vsp++;
@@ -3016,6 +3016,10 @@ void SimonEngine::processSpecialKeys() {
 	case 63: // F5
 		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 			_exitCutscene = true;
+		break;
+	case 65: // F7
+		if (getGameType() == GType_FF && getBitFlag(76))
+			_variableArray[254] = 70;
 		break;
 	case 'p':
 		pause();
@@ -3136,7 +3140,7 @@ void SimonEngine::resetWindow(WindowBlock *window) {
 	window->mode = 0;
 }
 
-void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint x, uint y, uint palette) {
+void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -3144,7 +3148,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 
 	_lockWord |= 0x40;
 
-	if (isSpriteLoaded(vgaSpriteId, fileId)) {
+	if (isSpriteLoaded(vgaSpriteId, zoneNum)) {
 		_lockWord &= ~0x40;
 		return;
 	}
@@ -3163,18 +3167,18 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 	vsp->palette = palette;
 	vsp->id = vgaSpriteId;
 	if (getGameType() == GType_SIMON1)
-		vsp->fileId = fileId = vgaSpriteId / 100;
+		vsp->zoneNum = zoneNum = vgaSpriteId / 100;
 	else
-		vsp->fileId = fileId;
+		vsp->zoneNum = zoneNum;
 
 
 	for (;;) {
-		vpe = &_vgaBufferPointers[fileId];
-		_vgaCurFile2 = fileId;
+		vpe = &_vgaBufferPointers[zoneNum];
+		_zoneNumber = zoneNum;
 		_curVgaFile1 = vpe->vgaFile1;
 		if (vpe->vgaFile1 != NULL)
 			break;
-		loadZone(fileId);
+		loadZone(zoneNum);
 	}
 
 	pp = _curVgaFile1;
@@ -3192,18 +3196,18 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 		if (getGameType() == GType_FF) {
 			if (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId) {
 				if (_startVgaScript)
-					dump_vga_script(pp + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), fileId, vgaSpriteId);
+					dump_vga_script(pp + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
 
-				add_vga_timer(VGA_DELAY_BASE, pp + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, fileId);
+				add_vga_timer(VGA_DELAY_BASE, pp + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, zoneNum);
 				break;
 			}
 			p += sizeof(AnimationHeader_Feeble);
 		} else {
 			if (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId) {
 				if (_startVgaScript)
-					dump_vga_script(pp + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), fileId, vgaSpriteId);
+					dump_vga_script(pp + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), zoneNum, vgaSpriteId);
 
-				add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, fileId);
+				add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, zoneNum);
 				break;
 			}
 			p += sizeof(AnimationHeader_Simon);
@@ -3457,7 +3461,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_2: can't open %s", buf);
 
-		dst = setup_vga_destination(dstSize);
+		dst = allocBlock(dstSize);
 
 		in.seek(offset, SEEK_SET);
 		if (srcSize != dstSize) {
@@ -3509,11 +3513,11 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_2: read failed");
-			dst = setup_vga_destination (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
+			dst = allocBlock (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
 			decrunchFile(buffer, dst, size);
 			delete[] buffer;
 		} else {
-			dst = setup_vga_destination(size + extraBuffer);
+			dst = allocBlock(size + extraBuffer);
 			if (in.read(dst, size) != size)
 				error("read_vga_from_datfile_2: read failed");
 		}
@@ -3525,7 +3529,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 		uint32 size = _gameOffsetsPtr[id + 1] - offs_a;
 		byte *dst;
 
-		dst = setup_vga_destination(size + extraBuffer);
+		dst = allocBlock(size + extraBuffer);
 		resfile_read(dst, offs_a, size);
 
 		return dst;

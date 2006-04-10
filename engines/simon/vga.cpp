@@ -130,7 +130,7 @@ void SimonEngine::run_vga_script() {
 
 		if (_continousVgaScript) {
 			if (_vcPtr != (const byte *)&_vc_get_out_of_code) {
-				fprintf(_dumpFile, "%.5d %.5X: %5d %4d ", _vgaTickCounter, _vcPtr - _curVgaFile1, _vgaCurSpriteId, _vgaCurFileId);
+				fprintf(_dumpFile, "%.5d %.5X: %5d %4d ", _vgaTickCounter, _vcPtr - _curVgaFile1, _vgaCurSpriteId, _vgaCurZoneNum);
 				dump_video_script(_vcPtr, true);
 			}
 		}
@@ -251,11 +251,11 @@ void SimonEngine::vc2_call() {
 		_curVgaFile2 = vpe->vgaFile2;
 		if (vpe->vgaFile1 != NULL)
 			break;
-		if (_vgaCurFile2 != res)
-			_videoVar7 = _vgaCurFile2;
+		if (_zoneNumber != res)
+			_noOverWrite = _zoneNumber;
 
 		loadZone(res);
-		_videoVar7 = 0xFFFF;
+		_noOverWrite = 0xFFFF;
 	}
 
 
@@ -292,7 +292,7 @@ void SimonEngine::vc2_call() {
 }
 
 void SimonEngine::vc3_loadSprite() {
-	uint16 windowNum, fileId, palette, x, y, vgaSpriteId;
+	uint16 windowNum, zoneNum, palette, x, y, vgaSpriteId;
 	uint16 res;
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
@@ -303,9 +303,9 @@ void SimonEngine::vc3_loadSprite() {
 
 	if (getGameType() == GType_SIMON1) {
 		vgaSpriteId = vcReadNextWord();	/* 2 */
-		fileId = vgaSpriteId / 100;
+		zoneNum = vgaSpriteId / 100;
 	} else {
-		fileId = vcReadNextWord();	/* 0 */
+		zoneNum = vcReadNextWord();	/* 0 */
 		vgaSpriteId = vcReadNextWord();	/* 2 */
 	}
 
@@ -314,7 +314,7 @@ void SimonEngine::vc3_loadSprite() {
 	palette = vcReadNextWord();		/* 8 */
 
 	/* 2nd param ignored with simon1 */
-	if (isSpriteLoaded(vgaSpriteId, fileId))
+	if (isSpriteLoaded(vgaSpriteId, zoneNum))
 		return;
 
 	vsp = _vgaSprites;
@@ -329,7 +329,7 @@ void SimonEngine::vc3_loadSprite() {
 	vsp->x = x;
 	vsp->y = y;
 	vsp->id = vgaSpriteId;
-	vsp->fileId = res = fileId;
+	vsp->zoneNum = res = zoneNum;
 
 	old_file_1 = _curVgaFile1;
 	for (;;) {
@@ -338,11 +338,11 @@ void SimonEngine::vc3_loadSprite() {
 
 		if (vpe->vgaFile1 != NULL)
 			break;
-		if (_vgaCurFile2 != res)
-			_videoVar7 = _vgaCurFile2;
+		if (_zoneNumber != res)
+			_noOverWrite = _zoneNumber;
 
 		loadZone(res);
-		_videoVar7 = 0xFFFF;
+		_noOverWrite = 0xFFFF;
 	}
 
 	pp = _curVgaFile1;
@@ -723,7 +723,7 @@ void SimonEngine::vc10_draw() {
 		return;
 
 	if (_dumpImages)
-		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width, height,
+		dump_single_bitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
 											 state.palette);
 	// Check if image is compressed
 	if (getGameType() == GType_FF) {
@@ -1424,7 +1424,7 @@ void SimonEngine::vc12_delay() {
 	else
 		num += VGA_DELAY_BASE;
 
-	add_vga_timer(num, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
+	add_vga_timer(num, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
@@ -1469,7 +1469,7 @@ void SimonEngine::vc16_sleep_on_id() {
 	vfs->ident = vcReadNextWord();
 	vfs->code_ptr = _vcPtr;
 	vfs->sprite_id = _vgaCurSpriteId;
-	vfs->cur_vga_file = _vgaCurFileId;
+	vfs->cur_vga_file = _vgaCurZoneNum;
 
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
@@ -1816,7 +1816,7 @@ void SimonEngine::vc42_delayIfNotEQ() {
 	uint val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 
-		add_vga_timer(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurFileId);
+		add_vga_timer(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
 		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }
@@ -2007,7 +2007,7 @@ void SimonEngine::vc55_offset_hit_area() {
 void SimonEngine::vc56_delay() {
 	uint num = vcReadVarOrWord() * _frameRate;
 
-	add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
+	add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
@@ -2028,11 +2028,11 @@ void SimonEngine::vc59() {
 
 void SimonEngine::vc58() {
 	uint sprite = _vgaCurSpriteId;
-	uint file = _vgaCurFileId;
+	uint file = _vgaCurZoneNum;
 	const byte *vc_ptr_org;
 	uint16 tmp;
 
-	_vgaCurFileId = vcReadNextWord();
+	_vgaCurZoneNum = vcReadNextWord();
 	_vgaCurSpriteId = vcReadNextWord();
 
 	tmp = to16Wrapper(vcReadNextWord());
@@ -2043,7 +2043,7 @@ void SimonEngine::vc58() {
 
 	_vcPtr = vc_ptr_org;
 	_vgaCurSpriteId = sprite;
-	_vgaCurFileId = file;
+	_vgaCurZoneNum = file;
 }
 
 void SimonEngine::vc57_no_op() {
@@ -2058,15 +2058,15 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	const byte *vc_ptr_org;
 
 	old_sprite_id = _vgaCurSpriteId;
-	old_cur_file_id = _vgaCurFileId;
+	old_cur_file_id = _vgaCurZoneNum;
 	vc_ptr_org = _vcPtr;
 
-	_vgaCurFileId = file;
+	_vgaCurZoneNum = file;
 	_vgaCurSpriteId = sprite;
 
 	vfs = _vgaSleepStructs;
 	while (vfs->ident != 0) {
-		if (vfs->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vfs->cur_vga_file == _vgaCurFileId)) {
+		if (vfs->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vfs->cur_vga_file == _vgaCurZoneNum)) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
 				vfs++;
@@ -2082,7 +2082,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay != 0) {
-			if (vte->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vte->cur_vga_file == _vgaCurFileId)) {
+			if (vte->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vte->cur_vga_file == _vgaCurZoneNum)) {
 				delete_vga_timer(vte);
 				break;
 			}
@@ -2090,7 +2090,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 		}
 	}
 
-	_vgaCurFileId = old_cur_file_id;
+	_vgaCurZoneNum = old_cur_file_id;
 	_vgaCurSpriteId = old_sprite_id;
 	_vcPtr = vc_ptr_org;
 }
@@ -2099,7 +2099,7 @@ void SimonEngine::vc60_killSprite() {
 	uint file;
 
 	if (getGameType() == GType_SIMON1) {
-		file = _vgaCurFileId;
+		file = _vgaCurZoneNum;
 	} else {
 		file = vcReadNextWord();
 	}
@@ -2114,7 +2114,7 @@ void SimonEngine::vc61_setMaskImage() {
 
 	vsp->x += vcReadNextWord();
 	vsp->y += vcReadNextWord();
-	vsp->flags = kDFMasked | 0x4;
+	vsp->flags = kDFMasked | kDFUseFrontBuf;
 
 	_vgaSpriteChanged++;
 }
@@ -2155,7 +2155,7 @@ void SimonEngine::vc62_fastFadeOut() {
 					byte *old_file_2 = _curVgaFile2;
 					uint palmode = _windowNum;
 
-					vpe = &_vgaBufferPointers[vsp->fileId];
+					vpe = &_vgaBufferPointers[vsp->zoneNum];
 					_curVgaFile1 = vpe->vgaFile1;
 					_curVgaFile2 = vpe->vgaFile2;
 					_windowNum = vsp->windowNum;
@@ -2518,7 +2518,6 @@ void SimonEngine::checkScrollY(int y, int ypos) {
 		if (_scrollCount != 0) {
 			if (_scrollCount >= 0)
 				return;
-			_scrollCount = 0;
 		} else {
 			if (_scrollFlag != 0)
 				return;
@@ -2534,7 +2533,6 @@ void SimonEngine::checkScrollY(int y, int ypos) {
 		if (_scrollCount != 0) {
 			if (_scrollCount < 0)
 				return;
-			_scrollCount = 0;
 		} else {
 			if (_scrollFlag != 0)
 				return;
