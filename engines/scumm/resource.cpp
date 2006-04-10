@@ -62,48 +62,6 @@ static bool checkTryMedia(BaseScummFile *handle);
 #endif
 
 
-#if 0
-Common::String generateFilename(int room, int diskNumber) {
-	char buf[128];
-
-	if (_game.version == 4) {
-		if (room == 0 || room >= 900) {
-			sprintf(buf, "%.3d.lfl", room);
-		} else {
-			sprintf(buf, "disk%.2d.lec", diskNumber);
-		}
-	} else if (_game.heversion >= 98) {
-		char c;
-		int disk = 0;
-		if (_heV7DiskOffsets)
-			disk = _heV7DiskOffsets[room];
-
-		switch(disk) {
-		case 2:
-			c = 'b';
-			break;
-		case 1:
-			c = 'a';
-			break;
-		default:
-			c = '0';
-		}
-		sprintf(buf, _substEntry.formatStr, c);
-
-	} else if (_substEntry.method == kGenDiskNum) {
-		sprintf(buf, _substEntry.formatStr, diskNumber);
-
-	} else if (_substEntry.method == kGenRoomNum) {
-		sprintf(buf, _substEntry.formatStr, room);
-	
-	} else {
-		error("FOO");
-	}
-	
-	return buf;
-}
-#endif
-
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
 	bool result;
