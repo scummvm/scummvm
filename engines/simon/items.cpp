@@ -1280,7 +1280,12 @@ void SimonEngine::o1_screenTextMsg() {
 
 void SimonEngine::o1_playEffect() {
 	// 163: play sound
-	o_playSFX(getVarOrWord());
+	uint sound_id = getVarOrWord();
+
+	if (getGameId() == GID_SIMON1DOS)
+		playSting(sound_id);
+	else
+		_sound->playEffects(sound_id);
 }
 
 void SimonEngine::o1_getDollar2() {
@@ -1972,13 +1977,6 @@ void SimonEngine::o_sync(uint a) {
 	_vcPtr = (byte *)&id;
 	vc15_wakeup_id();
 	_lockWord &= ~0x8000;
-}
-
-void SimonEngine::o_playSFX(uint sound_id) {
-	if (getGameId() == GID_SIMON1DOS)
-		playSting(sound_id);
-	else
-		_sound->playEffects(sound_id);
 }
 
 void SimonEngine::o_setTextColor(uint color) {
