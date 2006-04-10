@@ -1475,11 +1475,57 @@ void SimonEngine::o1_screenTextPObj() {
 
 void SimonEngine::o1_getPathPosn() {
 	// 178: path find
-	uint a = getVarOrWord();
-	uint b = getVarOrWord();
-	uint c = getVarOrByte();
-	uint d = getVarOrByte();
-	o_pathfind(a, b, c, d);
+	uint x = getVarOrWord();
+	uint y = getVarOrWord();
+	uint var_1 = getVarOrByte();
+	uint var_2 = getVarOrByte();
+
+	const uint16 *p;
+	uint i, j;
+	uint prev_i;
+	uint x_diff, y_diff;
+	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
+
+	if (getGameType() == GType_FF) {
+		x += _scrollX;
+		y += _scrollY;
+	}
+
+	if (getGameType() == GType_SIMON2) {
+		x += _scrollX * 8;
+	}
+
+	int end = (getGameType() == GType_FF) ? 9999 : 999;
+	prev_i = 21 - _variableArray[12];
+	for (i = 20; i != 0; --i) {
+		p = (const uint16 *)_pathFindArray[20 - i];
+		if (!p)
+			continue;
+		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {
+			x_diff = abs((int)(readUint16Wrapper(&p[0]) - x));
+			y_diff = abs((int)(readUint16Wrapper(&p[1]) - 12 - y));
+
+			if (x_diff < y_diff) {
+				x_diff /= 4;
+				y_diff *= 4;
+			}
+			x_diff += y_diff /= 4;
+
+			if (x_diff < best_dist || x_diff == best_dist && prev_i == i) {
+				best_dist = x_diff;
+				best_i = 21 - i;
+				best_j = j;
+			}
+		}
+	}
+
+	if (getGameType() == GType_FF && getBitFlag(83)) {
+		_variableArray[var_1] = best_i;
+		_variableArray[var_2] = best_j;
+	} else {
+		_variableArray[var_1] = best_i;
+		_variableArray[var_2] = best_j;
+	}
 }
 
 void SimonEngine::o1_scnTxtLongText() {

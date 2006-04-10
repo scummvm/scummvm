@@ -579,7 +579,6 @@ protected:
 
 	uint getOffsetOfChild2Param(SubObject *child, uint prop);
 	void o_setTextColor(uint color);
-	void o_pathfind(int x, int y, uint var_1, uint var_2);
 	void o_mouseOn();
 	void o_mouseOff();
 	void o_unfreezeBottom();
