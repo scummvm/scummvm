@@ -52,6 +52,8 @@ uint16 var3;
 uint16 var4;
 uint16 var5;
 
+bool refreshAnimData[NUM_MAX_ANIMDATA];
+
 void drawString(const char *string, byte param) {
 }
 
@@ -651,6 +653,7 @@ int16 makeLoad(char *saveName) {
 		animDataTable[i].fileIdx = fHandle->readSint16BE();
 		animDataTable[i].frameIdx = fHandle->readSint16BE();
 		fHandle->read(animDataTable[i].name, 10);
+		refreshAnimData[i] = (fHandle->readByte() != 0);
 	}
 
 	// TODO: handle screen params (realy required ?)
@@ -811,6 +814,14 @@ void makeSave(char *saveFileName) {
 		fHandle->writeSint16BE(animDataTable[i].fileIdx);
 		fHandle->writeSint16BE(animDataTable[i].frameIdx);
 		fHandle->write(animDataTable[i].name, 10);
+
+		// Horrifyingly, cinE used to dump the entire struct to the
+		// save file, including the data pointers. While these pointers
+		// would be invalid after loading, the loadResourcesFromSave()
+		// function would still test if ptr1 was non-NULL, presumably
+		// to see if the object was present in the room.
+
+		fHandle->writeByte(animDataTable[i].ptr1 ? 1 : 0);
 	}
 
 	fHandle->writeUint16BE(0);  // Screen params, unhandled

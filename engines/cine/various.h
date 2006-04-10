@@ -81,6 +81,8 @@ extern uint16 var3;
 extern uint16 var4;
 extern uint16 var5;
 
+extern bool refreshAnimData[NUM_MAX_ANIMDATA]; 
+
 extern Common::File palFileHandle;
 extern Common::File partFileHandle;
 

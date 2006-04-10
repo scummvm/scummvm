@@ -855,7 +855,7 @@ void loadResourcesFromSave() {
 
 	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim++) {
 		AnimData *currentPtr = &animDataTable[currentAnim];
-		if (currentPtr->ptr1 && currentPtr->fileIdx != -1) {
+		if (refreshAnimData[currentAnim] && currentPtr->fileIdx != -1) {
 			int8 isMask = 0;
 			int8 isSpl = 0;
 			int16 foundFileIdx;
