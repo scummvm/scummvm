@@ -596,27 +596,102 @@ static const SubstResFileNames substResFileNameTable[] = {
 
 
 #if 0
-/*
+
 enum FilenameGenMethod {
-	kGenMac,
-	kGenMacNoParens,
-	kGenPC,
-	kGenAsIs
+	kGenDiskNum,
+	kGenRoomNum,
+	kGenHEMac,
+	kGenHEMacNoParens,
+	kGenHEPC,
+	kGenUnchanged
 };
-*/
 
 struct GameFilenames {
 	const char *gameid;
 	const char *expandedName;
-	GenMethods genMethod;
+	FilenameGenMethod genMethod;
 	Common::Language language;
 	Common::Platform platform;
 	const char *variant;
 };
 
+#if 0
+Common::String ScummEngine::generateFilename(int room, int diskNumber) {
+	char buf[128];
+
+	if (_game.version == 4) {
+		if (room == 0 || room >= 900) {
+			sprintf(buf, "%.3d.lfl", room);
+		} else {
+			sprintf(buf, "disk%.2d.lec", diskNumber);
+		}
+	} else {
+		char id = 0;
+
+		switch (_substEntry.method) {
+		case kGenDiskNum:
+			sprintf(buf, _substEntry.formatStr, diskNumber);
+			break;
+	
+		case kGenRoomNum:
+			sprintf(buf, _substEntry.formatStr, room);
+			break;
+
+		case kGenHEMac:
+		case kGenHEMacNoParens:
+		case kGenHEPC:
+			if (_game.heversion >= 98) {
+				int disk = 0;
+				if (_heV7DiskOffsets)
+					disk = _heV7DiskOffsets[room];
+		
+				switch(disk) {
+				case 2:
+					id = 'b';
+					break;
+				case 1:
+					id = 'a';
+					break;
+				default:
+					id = '0';
+				}
+			} else if (_game.heversion >= 70) {
+				id = (room == 0) ? '0' : '1';
+			} else {
+				id = diskNumber + '0';
+			}
+			
+			if (_substEntry.method == kGenHEPC) {
+				if (_game.heversion >= 98)
+					sprintf(buf, _substEntry.formatStr, id);
+				else
+					sprintf(buf, "%s.he%c", _baseName.c_str(), id);
+			} else {
+				if (id == '3') { // special case for cursors
+					// For mac they're stored in game binary
+					strncpy(buf, _substEntry.formatStr, bufsize);
+				} else {
+					if (subst.genMethod == kGenMac)
+						snprintf(buf, bufsize, "%s (%c)", _substEntry.formatStr, id);
+					else
+						snprintf(buf, bufsize, "%s %c", _substEntry.formatStr, id);
+				}
+			}
+
+			break;
+
+		default:
+			error("FOO");
+		}
+	}
+
+	return buf;
+}
+#endif
+
 using Common::UNK_LANG;
 
-// The followin describes how Fingolfin thinks this table might be used one day;
+// The following describes how Fingolfin thinks this table might be used one day;
 // this is work in progress, so read this with a salt of grain...
 //
 // The following table maps gameids to possible filename variants for that game.
@@ -630,334 +705,337 @@ using Common::UNK_LANG;
 // Note: Setting variant to 0 means "don't care", while setting it to ""
 // (i.e. an empty string) means "use the default variant".
 static const GameFilenames gameFilenamesTable[] = {
-	{ "maniac", "00.LFL", kGenAsIs, UNK_LANG, UNK, 0 },
-	{ "maniac", "maniac1.d64", kGenAsIs, UNK_LANG, Common::kPlatformC64, 0 },   // ... and maniac2.d64
-	{ "maniac", "Maniac Mansion (E).prg", kGenAsIs, Common::EN_GRB, Common::kPlatformNES, "NES" },
-	{ "maniac", "Maniac Mansion (F).prg", kGenAsIs, Common::FR_FRA, Common::kPlatformNES, "NES" },
-	{ "maniac", "Maniac Mansion (SW).prg", kGenAsIs, Common::SE_SWE, Common::kPlatformNES, "NES" },
-	{ "maniac", "Maniac Mansion (U).prg", kGenAsIs, Common::EN_USA, Common::kPlatformNES, "NES" },
-	{ "maniac", "Maniac Mansion (G).prg", kGenAsIs, Common::DE_DEU, Common::kPlatformNES, "NES" },
+	{ "maniac", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "maniac", "%.2d.MAN", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, 0 },   // ... and maniac2.d64
+	{ "maniac", "Maniac Mansion (E).prg", kGenUnchanged, Common::EN_GRB, Common::kPlatformNES, "NES" },
+	{ "maniac", "Maniac Mansion (F).prg", kGenUnchanged, Common::FR_FRA, Common::kPlatformNES, "NES" },
+	{ "maniac", "Maniac Mansion (SW).prg", kGenUnchanged, Common::SE_SWE, Common::kPlatformNES, "NES" },
+	{ "maniac", "Maniac Mansion (U).prg", kGenUnchanged, Common::EN_USA, Common::kPlatformNES, "NES" },
+	{ "maniac", "Maniac Mansion (G).prg", kGenUnchanged, Common::DE_DEU, Common::kPlatformNES, "NES" },
 
-	{ "zak", "00.LFL", kGenAsIs, UNK_LANG, UNK, 0 },
-	{ "zak", "zak1.d64", kGenAsIs, UNK_LANG, Common::kPlatformC64, 0 },         // ... and zak2.d64
+	{ "zak", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "zak", "zak1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, 0 },         // ... and zak2.d64
 
-	{ "indy3", "00.LFL", kGenAsIs, UNK_LANG, UNK, 0 },
+	{ "indy3", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 
-	{ "loom", "00.LFL", kGenAsIs, UNK_LANG, UNK, 0 },
-	{ "loom", "000.LFL", kGenAsIs, UNK_LANG, UNK, "VGA" },	// Loom CD
+	{ "loom", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "loom", "%.3d.LFL", kGenRoomNum, UNK_LANG, UNK, "VGA" },	// Loom CD
 
-	{ "pass", "000.LFL", kGenPC, UNK_LANG, UNK, 0 },
+	{ "pass", "%.3d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 
-	{ "monkey", "000.LFL", kGenPC, UNK_LANG, UNK, 0 },		// EGA & VGA versions
-	{ "monkey", "monkey", kGenPC, UNK_LANG, UNK, 0 },
-	{ "monkey", "monkey1", kGenPC, UNK_LANG, UNK, 0 },
-	{ "monkey", "monkeyk", kGenPC, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" }, // FM-TOWNS Jap
-	{ "monkey", "game", kGenPC, UNK_LANG, Common::kPlatformSegaCD, "SEGA" }, // SegaCD
+	{ "monkey", "%.3d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },		// EGA & VGA versions
+	{ "monkey", "monkey.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "monkey", "monkey1.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "monkey", "monkeyk.%.3d", kGenRoomNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" }, // FM-TOWNS Jap
+	{ "monkey", "game.%.3d", kGenRoomNum, UNK_LANG, Common::kPlatformSegaCD, "SEGA" }, // SegaCD
 
-	{ "monkey2", "monkey2", kGenPC, UNK_LANG, UNK, 0 },
-	{ "monkey2", "mi2demo", kGenPC, UNK_LANG, UNK, 0 },
+	{ "monkey2", "monkey2.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "monkey2", "mi2demo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
 
-	{ "atlantis", "atlantis", kGenPC, UNK_LANG, UNK, 0 },
-	{ "atlantis", "fate", kGenPC, UNK_LANG, UNK, 0 },
-	{ "atlantis", "playfate", kGenPC, UNK_LANG, UNK, 0 },
-	{ "atlantis", "indy4", kGenPC, UNK_LANG, UNK, 0 },
-	{ "atlantis", "indydemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "atlantis", "Fate of Atlantis Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "atlantis", "atlantis.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "fate.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "playfate.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "indy4.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "indydemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "Fate of Atlantis Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "tentacle", "tentacle", kGenPC, UNK_LANG, UNK, 0 },
-	{ "tentacle", "dottdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "tentacle", "Day of the Tentacle Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "tentacle", "Day of the Tentacle Demo Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "tentacle", "tentacle.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "tentacle", "dottdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "tentacle", "Day of the Tentacle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "tentacle", "Day of the Tentacle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "samnmax", "samnmax", kGenPC, UNK_LANG, UNK, 0 },
-	{ "samnmax", "Sam & Max Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "samnmax", "Sam & Max Demo Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "samnmax", "ramnmax", kGenPC, Common::RU_RUS, UNK, 0 }, // Used in some releases of Russian Sam'n'Max
-	{ "samnmax", "samdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "samnmax", "snmdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "samnmax", "snmidemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "samnmax", "sdemo", kGenPC, UNK_LANG, UNK, 0 },
+	{ "samnmax", "samnmax.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "samnmax.sm%d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "Sam & Max Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "samnmax", "Sam & Max Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "samnmax", "ramnmax.%.3d", kGenRoomNum, Common::RU_RUS, UNK, 0 }, // Used in some releases of Russian Sam'n'Max
+	{ "samnmax", "samdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "snmdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "snmidemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "sdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
 
 #ifndef DISABLE_SCUMM_7_8
-	{ "dig", "dig", kGenPC, UNK_LANG, UNK, 0 },
-	{ "dig", "The Dig Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "dig", "The Dig Demo Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "dig", "The Dig Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "ft", "ft", kGenPC, UNK_LANG, UNK, 0 },
-	{ "ft", "ftdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "ft", "Full Throttle Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "ft", "Full Throttle Demo Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "ft", "Vollgas Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "ft", "Vollgas Demo Data", kGenAsIs, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "ft", "ft.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "ft", "ft.%.3d", kGenDiskNum, UNK_LANG, UNK, 0 },    // Used by PC version of Full Throttle demo
+	{ "ft", "ftdemo.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "ft", "Full Throttle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "ft", "Full Throttle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "ft", "Vollgas Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "ft", "Vollgas Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "comi", "comi", kGenPC, UNK_LANG, UNK, 0 },
+	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 #endif
 
-	{ "fbear", "fbear", kGenPC, UNK_LANG, UNK, 0 },
-	{ "fbear", "fbdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "fbear", "Fatty Bear Demo", kGenMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "fbear", "Fatty Bear", kGenMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "fbear", "fbear", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "fbear", "fbdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "fbear", "Fatty Bear Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "fbear", "Fatty Bear", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "puttmoon", "puttmoon", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttmoon", "moondemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttmoon", "Putt-Putt Moon Demo", kGenMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttmoon", "Putt-Putt Moon", kGenMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttmoon", "puttmoon", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttmoon", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttmoon", "Putt-Putt Moon Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttmoon", "Putt-Putt Moon", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "puttputt", "puttputt", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttputt", "puttdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttputt", "Putt-Putt's Demo", kGenMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttputt", "puttputt", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttputt", "puttdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttputt", "Putt-Putt's Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttputt", "Putt-Putt Parade", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 #ifndef DISABLE_HE
-	{ "airport", "airport", kGenPC, UNK_LANG, UNK, 0 },
-	{ "airport", "airdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "airport", "Airport Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "airport", "The AirPort", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "balloon", "balloon", kGenPC, UNK_LANG, UNK, 0 },
-	{ "balloon", "Balloon-O-Rama", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "baseball", "baseball", kGenPC, UNK_LANG, UNK, 0 },
-	{ "baseball", "BaseBall", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "baseball", "baseball", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "baseball", "BaseBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "baseball2001", "baseball2001", kGenPC, UNK_LANG, UNK, 0 },
-	{ "baseball2001", "bb2demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "baseball2001", "Baseball 2001 Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "baseball2001", "Baseball 2001", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "baseball2001", "baseball 2001", kGenPC, UNK_LANG, UNK, 0 },
+	{ "baseball2001", "baseball2001", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "baseball2001", "bb2demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "baseball2001", "Baseball 2001 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "baseball2001", "Baseball 2001", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "baseball2001", "baseball 2001", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "Baseball2003", "Baseball2003", kGenPC, UNK_LANG, UNK, 0 },
-	{ "Baseball2003", "Baseball 2003", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "Baseball2003", "Baseball2003", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "Baseball2003", "Baseball 2003", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "basketball", "basketball", kGenPC, UNK_LANG, UNK, 0 },
-	{ "basketball", "Basketball", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "basketball", "basketball", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "basketball", "Basketball", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "bluesabctime", "bluesabctime", kGenPC, UNK_LANG, UNK, 0 },
-	{ "bluesabctime", "BluesABCTimeDemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "bluesabctime", "BluesABCTimeDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "bluesabctime", "bluesabctime", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "catalog", "catalog", kGenPC, UNK_LANG, UNK, 0 },
-	{ "catalog", "catalog2", kGenPC, UNK_LANG, UNK, 0 },
+	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "chase", "chase", kGenPC, UNK_LANG, UNK, 0 },
-	{ "chase", "Cheese Chase", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "chase", "chase", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "chase", "Cheese Chase", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "dog", "dog", kGenPC, UNK_LANG, UNK, 0 },
-	{ "dog", "Dog on a Stick", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "dog", "dog", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "dog", "Dog on a Stick", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "farm", "farm", kGenPC, UNK_LANG, UNK, 0 },
-	{ "farm", "farmdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "farm", "Farm Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "farm", "farm", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "farm", "farmdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "farm", "Farm Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "football", "football", kGenPC, UNK_LANG, UNK, 0 },
-	{ "football", "FootBall", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "football", "FootBall Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "football", "FootBall2002", kGenPC, UNK_LANG, UNK, 0 },
-	{ "football", "footdemo", kGenPC, UNK_LANG, UNK, 0 },
+	{ "football", "football", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "football", "FootBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "football", "FootBall Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "football", "FootBall2002", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "football", "footdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "freddi", "freddi", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi", "freddemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi", "Freddi Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi", "Freddi Fish", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi", "FreddiD", kGenPC, UNK_LANG, UNK, 0 },
+	{ "freddi", "freddi", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi", "freddemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi", "Freddi Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi", "Freddi Fish", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi", "FreddiD", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "freddi2", "freddi2", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi2", "ff2-demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi2", "FFHSDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi2", "FFHSDemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi2", "Freddi Fish 2 Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi2", "Freddi Fish 2", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi2", "FreddiCHSH", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi2", "Fritzi Fisch 2", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "freddi2", "freddi2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi2", "ff2-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi2", "FFHSDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi2", "FFHSDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi2", "Freddi Fish 2 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi2", "Freddi Fish 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi2", "FreddiCHSH", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi2", "Fritzi Fisch 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
 
-	{ "freddi3", "freddi3", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "F3-mdemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi3", "F3-Mdemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi3", "f3-mdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "FF3-DEMO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "Freddi Fish 3", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi3", "FreddiFGT", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "FreddiFGT", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi3", "FreddiSCS", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "Fritzi3demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
-	{ "freddi3", "Fritzi3demo", kGenPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
-	{ "freddi3", "MM3-DEMO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "MM3-Demo", kGenMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "freddi3", "freddi3", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "F3-mdemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi3", "F3-Mdemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi3", "f3-mdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "FF3-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "Freddi Fish 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi3", "FreddiFGT", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "FreddiFGT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi3", "FreddiSCS", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "Fritzi3demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "freddi3", "Fritzi3demo", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
+	{ "freddi3", "MM3-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "MM3-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
 
-	{ "freddi4", "freddi4", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi4", "f4-demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi4", "ff4demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi4", "Ff4demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi4", "Freddi 4", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi4", "Freddi 4 Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi4", "FreddiGS", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddi4", "FreddiGS", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi4", "FreddiHRBG", kGenPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "freddi4", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "f4-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "ff4demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "Ff4demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi4", "Freddi 4", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi4", "Freddi 4 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi4", "FreddiGS", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "FreddiGS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi4", "FreddiHRBG", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "freddicove", "freddicove", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FreddiCCC", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FreddiCove", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "FreddiDZZ", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "ff5demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FFCoveDemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FreddiCoveDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "FF5Demo", kGenMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiCove", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddicove", "FreddiDZZ", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "ff5demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiCoveDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddicove", "FF5Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
 
-	{ "FreddisFunShop", "FreddisFunShop", kGenPC, UNK_LANG, UNK, 0 },
-	{ "FreddisFunShop", "Freddi's FunShop", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "FreddisFunShop", "FreddisFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "FreddisFunShop", "Freddi's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "jungle", "jungle", kGenPC, UNK_LANG, UNK, 0 },
-	{ "jungle", "The Jungle", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "jungle", "jungle", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "jungle", "The Jungle", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "lost", "lost", kGenPC, UNK_LANG, UNK, 0 },
-	{ "lost", "Lost and Found", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "lost", "smaller", kGenPC, UNK_LANG, UNK, 0 },
+	{ "lost", "lost", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "lost", "Lost and Found", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "lost", "smaller", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "maze", "maze", kGenPC, UNK_LANG, UNK, 0 },
-	{ "maze", "Maze Madness", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "maze", "maze", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "maze", "Maze Madness", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "TODO", "TODO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "mustard", "Mustard", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "mustard", "mustard", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "mustard", "Mustard", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "TODO", "TODO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "Pyjama Pit", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama", "Pajama Sam", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama", "PajamaNHD", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "PJS-DEMO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "PYJAMA", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "SAMDEMO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "SAMDEMO", kGenMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "pajama", "pajama", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama", "Pyjama Pit", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama", "Pajama Sam", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama", "PajamaNHD", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama", "PJS-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama", "PYJAMA", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama", "SAMDEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama", "SAMDEMO", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
 
-	{ "TODO", "TODO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "Pajama Sam 2", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama2", "PajamaTAL", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "PyjamaDBMN", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "PyjamaDBMN", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama2", "Pyjama Pit 2 Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama2", "PJP2DEMO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "PJ2Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama2", "pj2demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "Pjs2demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "PJ2 Demo", kGenMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "pajama2", "pajama2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "Pajama Sam 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "PajamaTAL", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "PyjamaDBMN", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "PyjamaDBMN", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "Pyjama Pit 2 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "PJP2DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "PJ2Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "pj2demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "Pjs2demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
 
-	{ "TODO", "TODO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "GPJ3Demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "Pajama Sam 3", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "Pajama Sam 3-Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "pj3-demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "pj3demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "PJ3Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "Pajama Sam Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "PjSamDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "PjSamDemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "PyjamaSKS", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "PyjamaSKS", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "UKPajamaEAT", kGenPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "GPJ3Demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "Pajama Sam 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "Pajama Sam 3-Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "pj3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "pj3demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "PJ3Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "Pajama Sam Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "PjSamDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "PjSamDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "PyjamaSKS", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "PyjamaSKS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "UKPajamaEAT", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
 
-	{ "TODO", "TODO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "pjgames", "PJGames", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pjgames", "pjgames", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pjgames", "PJGames", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "TODO", "TODO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttcircus", "circdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttcircus", "Putt Circus Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttcircus", "Putt Circus", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttcircus", "puttcircus", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttcircus", "circdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttcircus", "Putt Circus Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttcircus", "Putt Circus", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "puttrace", "puttrace", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttrace", "500demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttrace", "racedemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttrace", "RaceDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttrace", "Rennen", kGenPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
-	{ "puttrace", "Putt500 demo", kGenMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
-	{ "puttrace", "Putt Race", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttrace", "ToffRennen", kGenPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
-	{ "puttrace", "ToffRennen", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
-	{ "puttrace", "UKPuttRace", kGenPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttrace", "500demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttrace", "racedemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttrace", "RaceDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttrace", "Rennen", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
+	{ "puttrace", "Putt500 demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "puttrace", "Putt Race", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttrace", "ToffRennen", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
+	{ "puttrace", "ToffRennen", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
 
-	{ "PuttsFunShop", "PuttsFunShop", kGenPC, UNK_LANG, UNK, 0 },
-	{ "PuttsFunShop", "Putt's FunShop", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "PuttsFunShop", "PuttsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "PuttsFunShop", "Putt's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "putttime", "putttime", kGenPC, UNK_LANG, UNK, 0 },
-	{ "putttime", "PuttPuttTTT", kGenPC, UNK_LANG, UNK, 0 },
-	{ "putttime", "PuttPuttTTT", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "putttime", "PuttTijd", kGenPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a dutch version?
-	{ "putttime", "Putt Time", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "putttime", "PuttTTT", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "putttime", "PuttTTT", kGenPC, UNK_LANG, UNK, 0 },
-	{ "putttime", "TIJDDEMO", kGenPC, UNK_LANG, UNK, 0 },
-	{ "putttime", "timedemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "putttime", "TimeDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "putttime", "TEMPDEMO", kGenPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a french version?
-	{ "putttime", "Tempdemo", kGenMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
-	{ "putttime", "toffzeit", kGenPC, Common::DE_DEU, UNK, 0 }, // German Toeff-Toeff: Reist durch die Zeit
-	{ "putttime", "toffzeit", kGenMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 }, // German Toeff-Toeff: Reist durch die Zeit
-	{ "putttime", "ZeitDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
-	{ "putttime", "ZEITDEMO", kGenPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
+	{ "putttime", "putttime", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "PuttPuttTTT", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "PuttPuttTTT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "putttime", "PuttTijd", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a dutch version?
+	{ "putttime", "Putt Time", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "putttime", "PuttTTT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "putttime", "PuttTTT", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "TIJDDEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "timedemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "TimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "putttime", "TEMPDEMO", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a french version?
+	{ "putttime", "Tempdemo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "putttime", "toffzeit", kGenHEPC, Common::DE_DEU, UNK, 0 }, // German Toeff-Toeff: Reist durch die Zeit
+	{ "putttime", "toffzeit", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 }, // German Toeff-Toeff: Reist durch die Zeit
+	{ "putttime", "ZeitDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "putttime", "ZEITDEMO", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
 
-	{ "puttzoo", "puttzoo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttzoo", "Puttzoo Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttzoo", "PuttZoo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 }, 
-	{ "puttzoo", "T\xC3\xB6""ff-T\xC3\xB6""ff\xE2\x84\xA2 Zoo Demo", kGenMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// UTF-8 encoding
-	{ "puttzoo", "T\xF6""ff-T""\xF6""ff\x99 Zoo Demo", kGenMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// Windows encoding
-	{ "puttzoo", "zoodemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "puttzoo", "Zoo Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttzoo", "puttzoo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttzoo", "Puttzoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttzoo", "PuttZoo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 }, 
+	{ "puttzoo", "T\xC3\xB6""ff-T\xC3\xB6""ff\xE2\x84\xA2 Zoo Demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// UTF-8 encoding
+	{ "puttzoo", "T\xF6""ff-T""\xF6""ff\x99 Zoo Demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// Windows encoding
+	{ "puttzoo", "zoodemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "SamsFunShop", "SamsFunShop", kGenPC, UNK_LANG, UNK, 0 },
-	{ "SamsFunShop", "Sam's FunShop", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "SamsFunShop", "SamsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "SamsFunShop", "Sam's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "soccer", "soccer", kGenPC, UNK_LANG, UNK, 0 },
-	{ "soccer", "Soccer", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "soccer", "soccer", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "soccer", "Soccer", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "Soccer2004", "Soccer2004", kGenPC, UNK_LANG, UNK, 0 },
-	{ "Soccer2004", "Soccer 2004", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "Soccer2004", "Soccer2004", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "Soccer2004", "Soccer 2004", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "socks", "socks", kGenPC, UNK_LANG, UNK, 0 },
-	{ "socks", "SockWorks", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "socks", "socks", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "socks", "SockWorks", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "spyfox", "spyfox", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "Fuchsdem", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
-	{ "spyfox", "FUCHSDEM", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "FoxDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "foxdemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "JAMESDEM", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "Spydemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "Spydemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "SPYFox", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "SPYFoxDC", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "SPYFoxDC", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "SpyFoxDMK", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "SpyFoxDMK", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "Spy Fox Demo", kGenMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
-	{ "spyfox", "JR-Demo", kGenMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "spyfox", "spyfox", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "Fuchsdem", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "spyfox", "FUCHSDEM", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "FoxDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox", "foxdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "JAMESDEM", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "Spydemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox", "Spydemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "SPYFox", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox", "SPYFoxDC", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "SPYFoxDC", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox", "SpyFoxDMK", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "SpyFoxDMK", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox", "Spy Fox Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "spyfox", "JR-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
 
-	{ "spyfox2", "spyfox2", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox2", "sf2-demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox2", "sf2demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox2", "Sf2demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox2", "Spy Fox 2 - Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox2", "Spy Fox 2", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox2", "SpyFoxOR", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyfox2", "SpyFoxOR", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox2", "spyfoxsr", kGenPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "spyfox2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "sf2-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "sf2demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "Sf2demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox2", "Spy Fox 2 - Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox2", "Spy Fox 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox2", "SpyFoxOR", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "SpyFoxOR", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyfox2", "spyfoxsr", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "spyozon", "spyozon", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyozon", "sf3-demo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyozon", "Spy Ozone Demo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyozon", "SPYFoxOZU", kGenPC, UNK_LANG, UNK, 0 },
-	{ "spyozon", "SpyOzon", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "Spy Ozone Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "thinker1", "thinker1", kGenPC, UNK_LANG, UNK, 0 },
-	{ "thinker1", "1grademo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "thinker1", "Thinker1", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "thinker1", "thinker1", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "thinker1", "1grademo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "thinker1", "Thinker1", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "thinkerk", "thinkerk", kGenPC, UNK_LANG, UNK, 0 },
-	{ "thinkerk", "kinddemo", kGenPC, UNK_LANG, UNK, 0 },
-	{ "thinkerk", "KindDemo", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "thinkerk", "ThinkerK", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "thinkerk", "thinkerk", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "thinkerk", "kinddemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "thinkerk", "KindDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "thinkerk", "ThinkerK", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "water", "water", kGenPC, UNK_LANG, UNK, 0 },
-	{ "water", "Water Worries", kGenMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "water", "water", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "water", "Water Worries", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 #endif
-	{ NULL, NULL, kGenAsIs, UNK_LANG, UNK, 0 }
+	{ NULL, NULL, kGenUnchanged, UNK_LANG, UNK, 0 }
 };
 #endif
 
@@ -1142,7 +1220,7 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 		strcpy(detectName, "00.LFL");
 		break;
 	case 1:
-		if (g.version < 3 || g.version > 5)
+		if (g.version != 4)
 			return false;
 		strcpy(detectName, "000.LFL");
 		break;
