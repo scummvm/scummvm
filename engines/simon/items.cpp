@@ -1131,7 +1131,54 @@ void SimonEngine::o1_stopTune() {
 void SimonEngine::o1_pauseGame() {
 	// 135: quit if user presses y
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	o_confirmQuit();
+
+	// If all else fails, use English as fallback.
+	byte keyYes = 'y';
+	byte keyNo = 'n';
+
+	switch (_language) {
+	case Common::RU_RUS:
+		break;
+	case Common::PL_POL:
+		keyYes = 't';
+		break;
+	case Common::HB_ISR:
+		keyYes = 'f';
+		break;
+	case Common::ES_ESP:
+		keyYes = 's';
+		break;
+	case Common::IT_ITA:
+		keyYes = 's';
+		break;
+	case Common::FR_FRA:
+		keyYes = 'o';
+		break;
+	case Common::DE_DEU:
+		keyYes = 'j';
+		break;
+	default:
+		break;
+	}
+
+	for (;;) {
+		delay(1);
+#ifdef _WIN32_WCE
+		if (isSmartphone()) {
+			if (_keyPressed) {
+				if (_keyPressed == 13)
+					shutdown();
+				else
+					break;
+			}
+		}
+#endif
+		if (_keyPressed == keyYes)
+			shutdown();
+		else if (_keyPressed == keyNo)
+			break;
+	}
+
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
@@ -1904,55 +1951,6 @@ void SimonEngine::o_waitForMark(uint i) {
 		}
 
 		delay(10);
-	}
-}
-
-void SimonEngine::o_confirmQuit() {
-	// If all else fails, use English as fallback.
-	byte keyYes = 'y';
-	byte keyNo = 'n';
-
-	switch (_language) {
-	case Common::RU_RUS:
-		break;
-	case Common::PL_POL:
-		keyYes = 't';
-		break;
-	case Common::HB_ISR:
-		keyYes = 'f';
-		break;
-	case Common::ES_ESP:
-		keyYes = 's';
-		break;
-	case Common::IT_ITA:
-		keyYes = 's';
-		break;
-	case Common::FR_FRA:
-		keyYes = 'o';
-		break;
-	case Common::DE_DEU:
-		keyYes = 'j';
-		break;
-	default:
-		break;
-	}
-
-	for (;;) {
-		delay(1);
-#ifdef _WIN32_WCE
-		if (isSmartphone()) {
-			if (_keyPressed) {
-				if (_keyPressed == 13)
-					shutdown();
-				else
-					break;
-			}
-		}
-#endif
-		if (_keyPressed == keyYes)
-			shutdown();
-		else if (_keyPressed == keyNo)
-			break;
 	}
 }
 

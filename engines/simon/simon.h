@@ -574,7 +574,6 @@ protected:
 	void o_waitForSync(uint a);
 	void skipSpeech();
 	void o_sync(uint a);
-	void o_confirmQuit();
 	void o_restoreIconArray(uint a);
 	void o_freezeBottom();
 	void killAllTimers();
