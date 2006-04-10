@@ -2144,34 +2144,6 @@ TextLocation *SimonEngine::getTextLocation(uint a) {
 	return NULL;
 }
 
-void SimonEngine::o_printStr() {
-	uint vgaSpriteId = getVarOrByte();
-	uint color = getVarOrByte();
-	uint stringId = getNextStringID();
-	const byte *string_ptr = NULL;
-	uint speech_id = 0;
-	TextLocation *tl;
-
-	if (stringId != 0xFFFF)
-		string_ptr = getStringPtrByID(stringId);
-
-	if (getFeatures() & GF_TALKIE)
-		speech_id = (uint16)getNextWord();
-
-	if (getGameType() == GType_FF)
-		vgaSpriteId = 1;
-
-	tl = getTextLocation(vgaSpriteId);
-	if (_speech && speech_id != 0)
-		playSpeech(speech_id, vgaSpriteId);
-	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speech_id == 0)
-		o_kill_sprite_simon2(2, vgaSpriteId + 2);
-
-	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
-
-}
-
 void SimonEngine::loadZone(uint vga_res) {
 	VgaPointersEntry *vpe;
 
