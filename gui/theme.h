@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/file.h"
 #include "common/config-file.h"
 
 #include "graphics/surface.h"
@@ -426,9 +427,15 @@ private:
 	Common::String _shadingEpxressionR, _shadingEpxressionG, _shadingEpxressionB;
 	
 	uint _numCacheColors;
+	bool _usingColorCache;
 	OverlayColor *_colorCacheTable;
 	void setupColorCache();
-	
+	void clearColorCache();
+
+	Common::String cacheFileName();
+	bool loadCacheFile();
+	bool createCacheFile();
+
 	typedef OverlayColor (ThemeNew::*InactiveDialogCallback)(OverlayColor col, bool cache);
 	
 	InactiveDialogCallback _dialogShadingCallback;

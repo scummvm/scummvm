@@ -267,6 +267,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 	// inactive dialog shading stuff
 	_numCacheColors = 0;
 	_colorCacheTable = 0;
+	_usingColorCache = false;
 	_dialogShadingCallback = 0;
 	_shadingEpxressionR = _shadingEpxressionG = _shadingEpxressionB = "";
 	_shadingEffect = kShadingEffectNothing;
@@ -320,6 +321,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 		
 		if (createCacheTable) {
 			_numCacheColors = 65536;
+			_usingColorCache = true;
 			_colorCacheTable = new OverlayColor[_numCacheColors];
 			assert(_colorCacheTable);
 		}
@@ -327,6 +329,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 	
 	// load the colors from the config file
 	setupColors();
+	clearColorCache();
 
 	_imageHandles = imageHandlesTable;
 
@@ -397,6 +400,7 @@ void ThemeNew::refresh() {
 
 void ThemeNew::enable() {
 	init();
+	setupColorCache();
 	resetupGuiRenderer();
 	resetDrawArea();
 	_system->showOverlay();
@@ -404,6 +408,7 @@ void ThemeNew::enable() {
 }
 
 void ThemeNew::disable() {
+	clearColorCache();
 	_system->hideOverlay();
 }
 
@@ -1367,19 +1372,152 @@ void ThemeNew::setupColors() {
 	setupColorCache();
 }
 
-void ThemeNew::setupColorCache() {
-	// TODO: use file caches + show process bar
+#pragma mark -
 
-	// inactive dialog cache
-	if (_colorCacheTable && _dialogShadingCallback) {
-		memset(_colorCacheTable, 0, sizeof(OverlayColor)*_numCacheColors);
-		for (uint i = 0; i < _numCacheColors; ++i) {
-			_colorCacheTable[i] = (this->*(_dialogShadingCallback))(i, true);
+void ThemeNew::setupColorCache() {
+	if (!_usingColorCache)
+		return;
+	if (!_colorCacheTable) {
+		_colorCacheTable = new OverlayColor[_numCacheColors];
+		assert(_colorCacheTable);
+	}
+	// TODO: show process bar?
+	if (!loadCacheFile()) {
+		// inactive dialog cache
+		if (_dialogShadingCallback) {
+			memset(_colorCacheTable, 0, sizeof(OverlayColor)*_numCacheColors);
+			for (uint i = 0; i < _numCacheColors; ++i) {
+				_colorCacheTable[i] = (this->*(_dialogShadingCallback))(i, true);
+			}
 		}
+		createCacheFile();
 	}
 }
 
-#pragma mark -
+void ThemeNew::clearColorCache() {
+	delete [] _colorCacheTable;
+	_colorCacheTable = 0;
+}
+
+static uint32 hashString(const Common::String &string) {
+	uint32 hash = 0;
+	for (uint i = 0; i < string.size(); ++i) {
+		int offset = (hash % 30);
+		hash ^= (uint32)(string[i]) << offset;
+	}
+	return hash;
+}
+
+bool ThemeNew::loadCacheFile() {
+	if (sizeof(OverlayColor) != 2) {
+		warning("color cache only supported for 15/16 bpp mode");
+		return false;
+	}
+
+	if (!_colorCacheTable || _shadingEffect == kShadingEffectNothing)
+		return false;
+
+	Common::File cacheFile;
+	if (!cacheFile.open(cacheFileName().c_str()))
+		return false;
+
+	if (cacheFile.readUint32BE() != _numCacheColors)
+		return false;
+
+	switch (_shadingEffect) {
+	case kShadingEffectDim: {
+		int cachedDim = cacheFile.readByte();
+		if (cachedDim != _dimPercentValue)
+			return false;
+		} break;
+
+	case kShadingEffectCustom: {
+		uint32 size = 0;
+		uint32 hash = 0;
+
+		size = cacheFile.readUint32BE();
+		hash = cacheFile.readUint32BE();
+		if (size != _shadingEpxressionR.size() || hash != hashString(_shadingEpxressionR))
+			return false;
+
+		size = cacheFile.readUint32BE();
+		hash = cacheFile.readUint32BE();
+		if (size != _shadingEpxressionG.size() || hash != hashString(_shadingEpxressionG))
+			return false;
+
+		size = cacheFile.readUint32BE();
+		hash = cacheFile.readUint32BE();
+		if (size != _shadingEpxressionB.size() || hash != hashString(_shadingEpxressionB))
+			return false;
+		} break;
+
+	default:
+		break;
+	}
+
+	for (uint i = 0; i < _numCacheColors; ++i) {
+		_colorCacheTable[i] = cacheFile.readUint16BE();
+	}
+
+	return !cacheFile.ioFailed();
+}
+
+bool ThemeNew::createCacheFile() {
+	if (sizeof(OverlayColor) != 2) {
+		warning("color cache only supported for 15/16 bpp mode");
+		return false;
+	}
+
+	if (!_colorCacheTable || _shadingEffect == kShadingEffectNothing)
+		return false;
+
+	Common::File cacheFile;
+	if (!cacheFile.open(cacheFileName().c_str(), Common::File::kFileWriteMode))
+		return false;
+
+	cacheFile.writeUint32BE(_numCacheColors);
+
+	switch (_shadingEffect) {
+	case kShadingEffectDim: {
+		cacheFile.writeByte(_dimPercentValue);
+		} break;
+
+	case kShadingEffectCustom: {
+		uint32 size = 0;
+		uint32 hash = 0;
+
+		size = _shadingEpxressionR.size();
+		hash = hashString(_shadingEpxressionR);
+		cacheFile.writeUint32BE(size);
+		cacheFile.writeUint32BE(hash);
+
+		size = _shadingEpxressionG.size();
+		hash = hashString(_shadingEpxressionG);
+		cacheFile.writeUint32BE(size);
+		cacheFile.writeUint32BE(hash);
+
+		size = _shadingEpxressionB.size();
+		hash = hashString(_shadingEpxressionB);
+		cacheFile.writeUint32BE(size);
+		cacheFile.writeUint32BE(hash);
+		} break;
+
+	default:
+		break;
+	}
+
+	for (uint i = 0; i < _numCacheColors; ++i) {
+		cacheFile.writeUint16BE(_colorCacheTable[i]);
+	}
+
+	return !cacheFile.ioFailed();
+}
+
+Common::String ThemeNew::cacheFileName() {
+	char filebuf[128];
+	snprintf(filebuf, 128, "theme-colorcache-%d-%d.raw", gBitFormat, _shadingEffect);
+	return filebuf;
+}
 
 OverlayColor ThemeNew::calcLuminance(OverlayColor col, bool cache) {
 	uint8 r, g, b;
