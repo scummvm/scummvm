@@ -1053,7 +1053,32 @@ void SimonEngine::o1_doClassIcons() {
 
 void SimonEngine::o1_playTune() {
 	// 127: deals with music
-	o_playMusic();
+	int music = getVarOrWord();
+	int track = getVarOrWord();
+
+	// Jamieson630:
+	// This appears to be a "load or play music" command.
+	// The music resource is specified, and optionally
+	// a track as well. Normally we see two calls being
+	// made, one to load the resource and another to
+	// actually start a track (so the resource is
+	// effectively preloaded so there's no latency when
+	// starting playback).
+	if (getGameType() == GType_SIMON2) {
+		int loop = getVarOrByte();
+
+		midi.setLoop(loop != 0);
+		if (_lastMusicPlayed != music)
+			_nextMusicToPlay = music;
+		else
+			midi.startTrack(track);
+	} else {
+		if (music != _lastMusicPlayed) {
+			_lastMusicPlayed = music;
+			loadMusic(music);
+			midi.startTrack(track);
+		}
+	}
 }
 
 void SimonEngine::o1_waitEndTune() {
@@ -1937,35 +1962,6 @@ void SimonEngine::o_lockZone() {
 void SimonEngine::o_unlockZone() {
 	_vgaBufFreeStart = _vgaFileBufOrg;
 	_vgaBufStart = _vgaFileBufOrg;
-}
-
-void SimonEngine::o_playMusic() {
-	int music = getVarOrWord();
-	int track = getVarOrWord();
-
-	// Jamieson630:
-	// This appears to be a "load or play music" command.
-	// The music resource is specified, and optionally
-	// a track as well. Normally we see two calls being
-	// made, one to load the resource and another to
-	// actually start a track (so the resource is
-	// effectively preloaded so there's no latency when
-	// starting playback).
-	if (getGameType() == GType_SIMON2) {
-		int loop = getVarOrByte();
-
-		midi.setLoop (loop != 0);
-		if (_lastMusicPlayed != music)
-			_nextMusicToPlay = music;
-		else
-			midi.startTrack (track);
-	} else {
-		if (music != _lastMusicPlayed) {
-			_lastMusicPlayed = music;
-			loadMusic (music);
-			midi.startTrack (track);
-		}
-	}
 }
 
 void SimonEngine::o_sync(uint a) {

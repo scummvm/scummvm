@@ -574,7 +574,6 @@ protected:
 	void o_waitForSync(uint a);
 	void skipSpeech();
 	void o_sync(uint a);
-	void o_playMusic();
 	void o_saveGame();
 	void o_loadGame();
 	void o_confirmQuit();
