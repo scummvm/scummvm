@@ -317,8 +317,19 @@ void SimonEngine::showmessage_print_char(byte chr) {
 		print_char_helper_1(&chr, 1);
 		print_char_helper_5(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		uint count = (getGameType() == GType_FF) ? _printCharPixelCount + 1 : _printCharPixelCount;
-		if (_printCharMaxPos - _printCharCurPos >= count) {
+		bool fit;
+
+		// Note that in FF, _printCharCurPos may be greater than
+		// _printCharMaxPos. In Simon, that is probably prevented by
+		// testing if _printCharCurPos == _printCharMaxPos below.
+
+		if (getGameType() == GType_FF) {
+			fit = _printCharMaxPos > _printCharCurPos + _printCharPixelCount;
+		} else {
+			fit = _printCharMaxPos - _printCharCurPos >= _printCharPixelCount;
+		}
+
+		if (fit) {
 			_printCharCurPos += _printCharPixelCount;
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 
