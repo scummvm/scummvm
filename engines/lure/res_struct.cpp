@@ -35,11 +35,13 @@ const char *actionList[] = {NULL, "Get", NULL, "Push", "Pull", "Operate", "Open"
 
 // Room data holding class
 
-RoomData::RoomData(RoomResource *rec) {
+RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
 	roomNumber = READ_LE_UINT16(&rec->roomNumber);
 	descId = READ_LE_UINT16(&rec->descId);
 	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 	numLayers = READ_LE_UINT16(&rec->numLayers);
+
+	paths.load(pathData->data() + (roomNumber - 1) * ROOM_PATHS_SIZE);
 
 	for (int ctr = 0; ctr < 4; ++ctr)
 		layers[ctr] = READ_LE_UINT16(&rec->layers[ctr]);
@@ -92,16 +94,127 @@ RoomExitData::RoomExitData(RoomExitResource *rec) {
 }
 
 bool RoomExitData::insideRect(int16 xp, int16 yp) {
-	return ((xp >= xs) && (xp <= xe) && (yp >= ys) && (yp <= ye));
+	return ((xp >= xs) && (xp < xe) && (yp >= ys) && (yp < ye));
 }
 
 RoomExitData *RoomExitList::checkExits(int16 xp, int16 yp) {
 	iterator i;
 	for (i = begin(); i != end(); i++) {
 		RoomExitData *rec = *i;
-		if (rec->insideRect(xp, yp)) return rec;
+		if (rec->insideRect(xp, yp)) {
+			return rec;
+		}
 	}
 	return NULL;
+}
+
+// Room paths
+
+bool RoomPathsData::isOccupied(int x, int y) {
+	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (y >= ROOM_PATHS_HEIGHT))
+		// Off screen, so flag as not occupied
+		return false;
+	return (_data[y * 5 + (x >> 3)] & (0x80 >> (x % 8))) != 0;
+}
+
+void RoomPathsData::setOccupied(int x, int y, int width) {
+	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (x >= ROOM_PATHS_HEIGHT))
+		return;
+
+	byte *p = &_data[y * 5 + (x % 8)];
+	byte bitMask = 0x80 >> (x % 8);
+
+	for (int bitCtr = 0; bitCtr < width; ++bitCtr) {
+		*p |= bitMask;
+		bitMask >>= 1;
+		if (bitMask == 0) {
+			++p;
+			bitMask = 0x80;
+		}
+	}
+}
+
+void RoomPathsData::clearOccupied(int x, int y, int width) {
+	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (x >= ROOM_PATHS_HEIGHT))
+		return;
+
+	byte *p = &_data[y * 5 + (x % 8)];
+	byte bitMask = 0x80 >> (x % 8);
+
+	for (int bitCtr = 0; bitCtr < width; ++bitCtr) {
+		*p &= !bitMask;
+		bitMask >>= 1;
+		if (bitMask == 0) {
+			++p;
+			bitMask = 0x80;
+		}
+	}
+}
+
+// decompresses the bit-packed data for which parts of a room are occupied
+// into a byte array. It also adds a column and row of padding around the
+// edges of the screen, and extends occupied areas to adjust for the width
+// of the chracter
+
+void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int characterWidth) {
+	byte *pIn = &_data[ROOM_PATHS_SIZE - 1];
+	uint16 *pOut = &dataOut[DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT - 1];
+	byte v;
+	int paddingCtr;
+	int charWidth = (characterWidth - 1) >> 3;
+	int charCtr = 0;
+	bool charState = false;
+
+	// Handle padding for last row, including left/right edge padding, as
+	// well as the right column of the second row
+	for (paddingCtr = 0; paddingCtr < (DECODED_PATHS_WIDTH + 1); ++paddingCtr)
+		*pOut-- = 0;
+
+	for (int y = 0; y < ROOM_PATHS_HEIGHT; ++y) {
+		for (int x = 0; x < (ROOM_PATHS_WIDTH / 8); ++x) {
+			// Get next byte, which containing bits for 8 blocks
+			v = *pIn--;		
+
+			for (int bitCtr = 0; bitCtr < 8; ++bitCtr) {
+				bool isSet = (v & 1) != 0;
+				v >>= 1;
+
+				if (charState) {
+					// Handling occupied characters adjusted for character width
+					if (isSet) 
+						// Reset character counter
+						charCtr = charWidth;
+
+					*pOut-- = 0xffff;
+					charState = (--charCtr != 0);
+
+				} else {
+					// Normal decompression
+					if (!isSet) {
+						// Flag block is available for walking on
+						*pOut-- = 0;
+					} else {
+						// Flag block is occupied
+						*pOut-- = 0xffff;
+
+						// Handling for adjusting for character widths
+						charCtr = charWidth - 1;
+						charState = charCtr >= 0;
+					}
+				}
+			}
+		}
+
+		// Store 2 words to allow off-screen row-start/prior row end
+		*pOut-- = 0;
+		*pOut-- = 0;
+		charState = false;
+	}
+
+	// Handle padding for final top row - no need for end column, as end of prior
+	// row provided padding for it
+	for (paddingCtr = 0; paddingCtr < (ROOM_PATHS_WIDTH + 1); ++paddingCtr)
+		*pOut-- = 0;
 }
 
 // Room exit joins class
@@ -110,13 +223,14 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 	hotspot1Id = READ_LE_UINT16(&rec->hotspot1Id);
 	h1CurrentFrame = rec->h1CurrentFrame;
 	h1DestFrame = rec->h1DestFrame;
-	h1Unknown = READ_LE_UINT16(&rec->h1Unknown);
+	h1OpenSound = rec->h1OpenSound;
+	h1CloseSound = rec->h1CloseSound;
 	hotspot2Id = READ_LE_UINT16(&rec->hotspot2Id);
 	h2CurrentFrame = rec->h2CurrentFrame;
 	h2DestFrame = rec->h2DestFrame;
-	h2Unknown = READ_LE_UINT16(&rec->h2Unknown);
+	h2OpenSound = rec->h2OpenSound;
+	h2CloseSound = rec->h2CloseSound;
 	blocked = rec->blocked;
-	unknown = rec->unknown;
 }
 
 // Hotspot action record
@@ -159,6 +273,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	height = READ_LE_UINT16(&rec->height);
 	widthCopy = READ_LE_UINT16(&rec->widthCopy);
 	heightCopy = READ_LE_UINT16(&rec->heightCopy);
+	yCorrection = READ_LE_UINT16(&rec->yCorrection);
 	talkX = rec->talkX;
 	talkY = rec->talkY;
 	colourOffset = READ_LE_UINT16(&rec->colourOffset);
@@ -309,6 +424,34 @@ TalkEntryData *TalkData::getResponse(int index) {
 	return *i;
 }
 
+// The following class handles a set of coordinates a character should walk to
+// if they're to exit a room to a designated secondary room
+
+RoomExitCoordinates::RoomExitCoordinates(RoomExitCoordinateEntryResource *rec) {
+	int ctr;
+	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ENTRIES; ++ctr) {
+		_entries[ctr].x = FROM_LE_16(rec->entries[ctr].x);
+		_entries[ctr].y = FROM_LE_16(rec->entries[ctr].y);
+		uint16 v = FROM_LE_16(rec->entries[ctr].roomNumber);
+		_entries[ctr].roomNumber = v & 0xfff;
+		_entries[ctr].unknown = v >> 12;
+	}
+
+	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ROOMS; ++ctr) 
+		_roomIndex[ctr] = rec->roomIndex[ctr];
+}
+
+RoomExitCoordinates &RoomExitCoordinatesList::getEntry(uint16 roomNumber) {
+	RoomExitCoordinatesList::iterator i = begin();
+	while (--roomNumber > 0) 
+		++i;
+	return **i;
+}
+
+RoomExitCoordinateData &RoomExitCoordinates::getData(uint16 destRoomNumber) {
+	return _entries[_roomIndex[destRoomNumber - 1]];
+}
+
 // The following classes hold any sequence offsets that are being delayed
 
 SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset) {
@@ -338,11 +481,32 @@ void SequenceDelayList::tick() {
 	}
 }
 
+// The following class holds the proximity data for hotspots that is used
+// to determine whether a character needs to walk to a hotspot or not
+
+HotspotProximityData::HotspotProximityData(HotspotProximityResource *rec) {
+	hotspotId = FROM_LE_16(rec->hotspotId);
+	x = FROM_LE_16(rec->x);
+	y = FROM_LE_16(rec->y);
+}
+
+HotspotProximityData *HotspotProximityList::getHotspot(uint16 hotspotId) {
+	iterator i;
+	for (i = begin(); i != end(); ++i) {
+		HotspotProximityData *rec = *i;
+		if (rec->hotspotId == hotspotId) return rec;
+	}
+
+	return NULL;
+}
+
 // Field list and miscellaneous variables
 
 ValueTableData::ValueTableData() {
 	_numGroats = 0;
-
+	_playerNewPos.roomNumber = 0;
+	_playerNewPos.position.x = 0;
+	_playerNewPos.position.y = 0;
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;
 }

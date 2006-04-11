@@ -28,6 +28,8 @@
 
 namespace Lure {
 
+using namespace Common;
+
 extern const char *actionList[];
 
 /*-------------------------------------------------------------------------*/
@@ -70,6 +72,7 @@ struct HotspotResource {
 	uint16 height;
 	uint16 widthCopy;
 	uint16 heightCopy;
+	uint16 yCorrection;
 	int8 talkX;
 	int8 talkY;
 	uint16 colourOffset;
@@ -136,13 +139,14 @@ struct RoomExitJoinResource {
 	uint16 hotspot1Id;
 	byte h1CurrentFrame;
 	byte h1DestFrame;
-	uint16 h1Unknown;
+	uint8 h1OpenSound;
+	uint8 h1CloseSound;
 	uint16 hotspot2Id;
 	byte h2CurrentFrame;
 	byte h2DestFrame;
-	uint16 h2Unknown;
+	uint8 h2OpenSound;
+	uint8 h2CloseSound;
 	byte blocked;
-	uint32 unknown;
 } GCC_PACK;
 
 struct HotspotActionResource {
@@ -171,6 +175,26 @@ struct TalkResponseResource {
 	uint16 sequenceId1;
 	uint16 sequenceId2;
 	uint16 sequenceId3;
+} GCC_PACK;
+
+struct HotspotProximityResource {
+	uint16 hotspotId;
+	uint16 x;
+	uint16 y;
+} GCC_PACK;
+
+struct RoomExitCoordinateResource {
+	int16 x;
+	int16 y;
+	uint16 roomNumber;
+} GCC_PACK;
+
+#define ROOM_EXIT_COORDINATES_NUM_ENTRIES 6
+#define ROOM_EXIT_COORDINATES_NUM_ROOMS 52
+
+struct RoomExitCoordinateEntryResource {
+	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
+	uint8 roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
 } GCC_PACK;
 
 #if !defined(__GNUC__)
@@ -247,11 +271,35 @@ public:
 	RoomExitData *checkExits(int16 xp, int16 yp);
 };
 
+#define ROOM_PATHS_WIDTH 40
+#define ROOM_PATHS_HEIGHT 24
+#define ROOM_PATHS_SIZE (ROOM_PATHS_WIDTH / 8 * ROOM_PATHS_HEIGHT)
+#define DECODED_PATHS_WIDTH 42
+#define DECODED_PATHS_HEIGHT 26
+
+typedef uint16 RoomPathsDecompressedData[DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT];
+
+class RoomPathsData {
+private:
+	byte _data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
+public:
+	RoomPathsData() {};
+	RoomPathsData(byte *srcData) { load(srcData); }
+
+	void load(byte *srcData) {
+		memcpy(_data, srcData, ROOM_PATHS_SIZE);
+	}
+	bool isOccupied(int x, int y);
+	void setOccupied(int x, int y, int width);
+	void clearOccupied(int x, int y, int width);
+	void decompress(RoomPathsDecompressedData &dataOut, int characterWidth);
+};
+
 #define MAX_NUM_LAYERS 4
 
 class RoomData {
 public:
-	RoomData(RoomResource *rec);
+	RoomData(RoomResource *rec, MemoryBlock *pathData);
 
 	uint16 roomNumber;
 	uint16 descId;
@@ -262,6 +310,7 @@ public:
 	int16 clippingXEnd;
 	RoomExitHotspotList exitHotspots;
 	RoomExitList exits;
+	RoomPathsData paths;
 };
 
 typedef ManagedList<RoomData *> RoomDataList;
@@ -273,11 +322,13 @@ public:
 	uint16 hotspot1Id;
 	byte h1CurrentFrame;
 	byte h1DestFrame;
-	uint16 h1Unknown;
+	uint8 h1OpenSound;
+	uint8 h1CloseSound;
 	uint16 hotspot2Id;
 	byte h2CurrentFrame;
 	byte h2DestFrame;
-	uint16 h2Unknown;
+	uint8 h2OpenSound;
+	uint8 h2CloseSound;
 	byte blocked;
 	uint32 unknown;
 };
@@ -326,6 +377,7 @@ public:
 	uint16 height;
 	uint16 widthCopy;
 	uint16 heightCopy;
+	uint16 yCorrection;
 	int8 talkX;
 	int8 talkY;
 	uint16 colourOffset;
@@ -333,6 +385,9 @@ public:
 	uint16 sequenceOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
+
+	void enable() { flags |= 0x80; }
+	void disable() { flags &= 0x7F; }
 };
 
 typedef ManagedList<HotspotData *> HotspotDataList;
@@ -407,7 +462,7 @@ public:
 
 typedef ManagedList<TalkEntryData *> TalkEntryList;
 
-struct TalkData {
+class TalkData {
 public:
 	TalkData(uint16 id);
 	~TalkData();
@@ -420,6 +475,27 @@ public:
 };
 
 typedef ManagedList<TalkData *> TalkDataList;
+
+struct RoomExitCoordinateData {
+	int16 x;
+	int16 y;
+	uint16 roomNumber;
+	byte unknown;
+};
+
+class RoomExitCoordinates {
+private:
+	RoomExitCoordinateData _entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
+	uint8 _roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
+public:
+	RoomExitCoordinates(RoomExitCoordinateEntryResource *rec);
+	RoomExitCoordinateData &getData(uint16 destRoomNumber);
+};
+
+class RoomExitCoordinatesList: public ManagedList<RoomExitCoordinates *> {
+public:
+	RoomExitCoordinates &getEntry(uint16 roomNumber);
+};
 
 // The following classes hold any sequence offsets that are being delayed
 
@@ -438,10 +514,29 @@ public:
 	void tick();
 };
 
+class HotspotProximityData {
+public:
+	HotspotProximityData(HotspotProximityResource *rec);
+
+	uint16 hotspotId;
+	uint16 x;
+	uint16 y;
+};
+
+class HotspotProximityList: public ManagedList<HotspotProximityData *> {
+public:
+	HotspotProximityData *getHotspot(uint16 hotspotId);
+};
+
+struct PlayerNewPosition {
+	Point position;
+	uint16 roomNumber;
+};
+
 // The following class holds the field list used by the script engine as 
 // well as miscellaneous fields used by the game.                          
 
-#define NUM_VALUE_FIELDS 85
+#define NUM_VALUE_FIELDS 90
 
 enum FieldName {
 	ROOM_NUMBER = 0, 
@@ -463,6 +558,8 @@ enum FieldName {
 class ValueTableData {
 private:
 	uint16 _numGroats;
+	PlayerNewPosition _playerNewPos;
+
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
 public:
@@ -473,6 +570,7 @@ public:
 	void setField(uint16 fieldIndex, uint16 value);
 	void setField(FieldName fieldName, uint16 value);
 	uint16 &numGroats() { return _numGroats; }
+	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 };
 
 } // End of namespace Lure
