@@ -301,7 +301,7 @@ public:
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
-    const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
+	const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
 
 private:
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);

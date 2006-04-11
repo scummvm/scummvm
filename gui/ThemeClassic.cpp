@@ -453,6 +453,7 @@ bool ThemeClassic::addDirtyRect(Common::Rect r, bool save) {
 	r.clip(_screen.w, _screen.h);
 	r.clip(_drawArea);
 	_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(r.left, r.top), _screen.w, r.left, r.top, r.width(), r.height());
+#ifdef OLDGUI_TRANSPARENCY
 	if (_dialog && save) {
 		if (_dialog->screen.pixels) {
 			OverlayColor *dst = (OverlayColor*)_dialog->screen.getBasePtr(r.left, r.top);
@@ -465,6 +466,7 @@ bool ThemeClassic::addDirtyRect(Common::Rect r, bool save) {
 			}
 		}
 	}
+#endif
 	return true;
 }
 
