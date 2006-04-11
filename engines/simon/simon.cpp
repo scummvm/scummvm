@@ -2150,20 +2150,20 @@ byte *SimonEngine::allocBlock(uint32 size) {
 
 		blockEnd = block + size;
 
-		if (blockEnd >= _vgaBufEnd) {
-			_vgaBufFreeStart = _vgaBufStart;
-		} else {
-			_rejectBlock = false;
-			checkNoOverWrite(blockEnd);
-			if (_rejectBlock)
-				continue;
-			checkRunningAnims(blockEnd);
-			if (_rejectBlock)
-				continue;
-			checkZonePtrs(blockEnd);
+		//if (blockEnd >= _vgaBufEnd) {
+		//	_vgaBufFreeStart = _vgaBufStart;
+		//} else {
+		//	_rejectBlock = false;
+		//	checkNoOverWrite(blockEnd);
+		//	if (_rejectBlock)
+		//		continue;
+		//	checkRunningAnims(blockEnd);
+		//	if (_rejectBlock)
+		//		continue;
+		//	checkZonePtrs(blockEnd);
 			_vgaBufFreeStart = blockEnd;
 			return block;
-		}
+		//}
 	}
 }
 
@@ -2510,37 +2510,33 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 }
 
 void SimonEngine::waitForSync(uint a) {
+	const uint maxCount = (getGameType() == GType_SIMON1) ? 500 : 1000;
+
 	_vgaWaitFor = a;
 	_syncCount = 0;
 	_exitCutscene = false;
 	_rightButtonDown = false;
 	while (_vgaWaitFor != 0) {
 		if (_rightButtonDown && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
-			if (_vgaWaitFor == 200 && !getBitFlag(14)) {
+			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
 				skipSpeech();
 				break;
 			}
-		} else if (_exitCutscene) {
+		}
+		if (_exitCutscene) {
 			if (getBitFlag(9)) {
 				endCutscene();
 				break;
 			}
-		} else {
-			processSpecialKeys();
 		}
+		processSpecialKeys();
 
-		delay(10);
-
-		if (getGameType() == GType_SIMON2) {
-			if (_syncCount >= 1000) {
-				warning("wait timed out");
-				break;
-			}
-		} else if (_syncCount >= 500) {
-			warning("wait timed out");
+		if (_syncCount >= maxCount) {
+			warning("waitForSync: wait timed out");
 			break;
 		}
 
+		delay(1);
 	}
 }
 
