@@ -1141,7 +1141,6 @@ void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, c
 			upDown = true;
 
 		for (int i = 0; i < partsW; ++i) {
-
 			// calculate the correct drawing width
 			int usedWidth = drawWidth;
 			if (specialWidth && i == 1) {
@@ -1187,90 +1186,65 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 	const OverlayColor *src = 0;
 
 	const OverlayColor transparency = _colors[kColorTransparency];
+	int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
 
-	if (upDown && !leftRight) {	// upsidedown
+	int srcAdd = 0;
+	if (upDown) {
 		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
-		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
-
-		for (int i = 0; i < r.height(); ++i) {
-			if (dst < _screen.pixels) {
-				dst += _screen.w;
-				src -= surf->w;
-				continue;
-			}
-
-			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
-			for (int x = 0; x < drawWidth; ++x) {
-				if (src[x] != transparency) {
-					dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
-				}
-			}
-
-			dst += _screen.w;
-			src -= surf->w;
-		}
-	} else if (upDown && leftRight) { // upsidedown + left right inverse
-		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
-		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
-
-		for (int i = 0; i < r.height(); ++i) {
-			if (dst < _screen.pixels) {
-				dst += _screen.w;
-				src -= surf->w;
-				continue;
-			}
-
-			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
-			for (int x = 0; x < drawWidth; ++x) {
-				if (src[drawWidth-x-1] != transparency) {
-					dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
-				}
-			}
-
-			dst += _screen.w;
-			src -= surf->w;
-		}
-	} else if (!upDown && leftRight) { // left right inverse
+		srcAdd = -surf->w;
+	} else {
 		src = (const OverlayColor*)surf->pixels;
-		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
+		srcAdd = surf->w;
+	}
 
-		for (int i = 0; i < r.height(); ++i) {
-			if (dst < _screen.pixels) {
-				dst += _screen.w;
-				src += surf->w;
-				continue;
-			}
+	while (dst < _screen.pixels) {
+		dst += _screen.w;
+		src += srcAdd;
+	}
 
-			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
-			for (int x = 0; x < drawWidth; ++x) {
-				if (src[drawWidth-x-1] != transparency) {
-					dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
+	if (alpha >= 256) {
+		if (leftRight) {
+			for (int i = 0; i < r.height(); ++i) {
+				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
+				for (int x = 0; x < drawWidth; ++x) {
+					if (src[drawWidth-x-1] != transparency)
+						dst[x] = src[drawWidth-x-1] & rowColor;
 				}
+				dst += _screen.w;
+				src += srcAdd;
 			}
-
-			dst += _screen.w;
-			src += surf->w;
+		} else {
+			for (int i = 0; i < r.height(); ++i) {
+				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
+				for (int x = 0; x < drawWidth; ++x) {
+					if (src[x] != transparency)
+						dst[x] = src[x] & rowColor;
+				}
+				dst += _screen.w;
+				src += srcAdd;
+			}
 		}
-	} else { // normal
-		src = (const OverlayColor*)surf->pixels;
-		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
-
-		for (int i = 0; i < r.height(); ++i) {
-			if (dst < _screen.pixels) {
-				dst += _screen.w;
-				src += surf->w;
-				continue;
-			}
-
-			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
-			for (int x = 0; x < drawWidth; ++x) {
-				if (src[x] != transparency) {
-					dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
+	} else {
+		if (leftRight) {
+			for (int i = 0; i < r.height(); ++i) {
+				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
+				for (int x = 0; x < drawWidth; ++x) {
+					if (src[drawWidth-x-1] != transparency)
+						dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
 				}
+				dst += _screen.w;
+				src += srcAdd;
 			}
-
-			dst += _screen.w;
-			src += surf->w;
+		} else {
+			for (int i = 0; i < r.height(); ++i) {
+				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
+				for (int x = 0; x < drawWidth; ++x) {
+					if (src[x] != transparency)
+						dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
+				}
+				dst += _screen.w;
+				src += srcAdd;
+			}
 		}
 	}
 }
