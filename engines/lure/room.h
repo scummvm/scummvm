@@ -59,6 +59,7 @@ private:
 	uint16 _descId;
 	uint16 _hotspotId;
 	uint16 _hotspotNameId;
+	uint16 _destRoomNumber;
 	bool _isExit;
 	char _hotspotName[MAX_HOTSPOT_NAME_SIZE + MAX_ACTION_NAME_SIZE];
 	HotspotData *_hotspot;
@@ -78,6 +79,7 @@ private:
 	void addLayers(Hotspot &h);
 	void addCell(int16 xp, int16 yp, int layerNum);
 public:
+	RoomPathsDecompressedData tempLayer;
 	Room();
 	~Room();
 	static Room &getReference();
@@ -89,6 +91,7 @@ public:
 	void setRoomNumber(uint16 newRoomNumber, bool showOverlay = false);
 	void leaveRoom();
 	uint16 hotspotId() { return _hotspotId; }
+	uint16 destRoomNumber() { return _destRoomNumber; }
 	uint16 isExit() { return _isExit; }
 	uint32 hotspotActions() { return _hotspot->actions & 0x10ffffff; }
 	uint8 hotspotFlags() { return (_hotspot->actions >> 24) & 0xfe; }

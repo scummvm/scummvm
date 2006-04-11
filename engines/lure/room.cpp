@@ -82,6 +82,7 @@ Room::Room(): _screen(Screen::getReference()) {
 	_numLayers = 0;
 	_showInfo = false;
 	_isExit = false;
+	_destRoomNumber = 0;
 }
 
 Room::~Room() {
@@ -198,6 +199,7 @@ void Room::checkRoomHotspots() {
 		_hotspot = entry;
 		_hotspotId = entry->hotspotId;
 		_isExit = false;
+		_destRoomNumber = 0;
 	}
 }
 
@@ -225,6 +227,7 @@ uint8 Room::checkRoomExits() {
 			(m.y() >= rec->ys) && (m.y() <= rec->ye)) {
 			// Cursor is within exit area
 			uint8 cursorNum = rec->cursorNum;
+			_destRoomNumber = rec->destRoomNumber;
 
 			// If it's a hotspotted exit, change arrow to the + arrow
 			if (rec->hotspotId != 0) {
@@ -433,12 +436,26 @@ void Room::update() {
 		}
 	}
 
-	// If show information is turned on, show room and position
+	// If show information is turned on, show extra debugging information
 	if (_showInfo) {
 		char buffer[64];
 		Mouse &m = Mouse::getReference();
 		sprintf(buffer, "Room %d Pos (%d,%d)", _roomNumber, m.x(), m.y());
 		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, DIALOG_TEXT_COLOUR);
+
+		// Temporary display of pathfinding data
+		for (int yctr = 0; yctr < ROOM_PATHS_HEIGHT; ++yctr) {
+			for (int xctr = 0; xctr < ROOM_PATHS_WIDTH; ++xctr) {
+				uint16 v = tempLayer[(yctr + 1) * DECODED_PATHS_WIDTH + xctr + 1];
+				if ((v != 0) && (v < 100)) {
+					sprintf(buffer, "%d", v % 10);
+					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
+				} else if (v == 0xffff) {
+//				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
+					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
+				}
+			}
+		}
 	}
 }
 
