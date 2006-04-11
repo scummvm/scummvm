@@ -100,58 +100,60 @@ void ScummEngine::openRoom(const int room) {
 			// Maniac Mansion demo has .man instead of .lfl
 			if (_game.id == GID_MANIAC)
 				sprintf(buf2, "%.2d.man", room);
-			encByte = (_game.features & GF_USE_KEY) ? 0xFF : 0;
 		} else if (_game.version == 4) {
 			if (room == 0 || room >= 900) {
 				sprintf(buf, "%.3d.lfl", room);
-				encByte = 0;
-				if (openResourceFile(buf, encByte)) {
-					return;
-				}
-				askForDisk(buf, diskNumber);
-
 			} else {
 				sprintf(buf, "disk%.2d.lec", diskNumber);
-				encByte = 0x69;
 			}
+		} else if (_game.heversion >= 98) {
+			int disk = 0;
+			if (_heV7DiskOffsets)
+				disk = _heV7DiskOffsets[room];
+
+			switch(disk) {
+			case 2:
+				sprintf(buf, "%s.(b)", _baseName.c_str());
+				break;
+			case 1:
+				sprintf(buf, "%s.(a)", _baseName.c_str());
+				break;
+			default:
+				sprintf(buf, "%s.he0", _baseName.c_str());
+			}
+		} else if (_game.heversion >= 70) {
+			// FIXME: Is it really necessary to keep this sepearet from the HE60
+			// code path? In particular, what values does "diskNumber" have?
+			if (room > 0 && 1 != diskNumber)
+				warning("Tell Fingolfin: room %d but disk %d (base %s)", room, diskNumber, _baseName.c_str());
+			sprintf(buf, "%s.he%d", _baseName.c_str(), room == 0 ? 0 : 1);
+		} else if (_game.heversion >= 60) {
+			sprintf(buf, "%s.he%d", _baseName.c_str(), diskNumber);
+
+		} else if (_game.version >= 7) {
+			sprintf(buf, "%s.la%d", _baseName.c_str(), diskNumber);
+
+			// Used by PC version of Full Throttle demo
+			if (_game.id == GID_FT && (_game.features & GF_DEMO) && _game.platform == Common::kPlatformPC)
+				sprintf(buf2, "%s.%.3d", _baseName.c_str(), diskNumber);
 		} else {
-
-			if (_game.heversion >= 70) { // Windows titles
-				if (_game.heversion >= 98) {
-					int disk = 0;
-					if (_heV7DiskOffsets)
-						disk = _heV7DiskOffsets[room];
-
-					switch(disk) {
-					case 2:
-						sprintf(buf, "%s.%s", _baseName.c_str(), "(b)");
-						break;
-					case 1:
-						sprintf(buf, "%s.%s", _baseName.c_str(), "(a)");
-						break;
-					default:
-						sprintf(buf, "%s.%s", _baseName.c_str(), "he0");
-					}
-				} else
-					sprintf(buf, "%s.he%.1d", _baseName.c_str(), room == 0 ? 0 : 1);
-			} else if (_game.version >= 7) {
-				if (room > 0 && (_game.version == 8))
-					VAR(VAR_CURRENTDISK) = diskNumber;
-				sprintf(buf, "%s.la%d", _baseName.c_str(), diskNumber);
-
-				// Used by PC version of Full Throttle demo
-				if (_game.id == GID_FT && (_game.features & GF_DEMO) && _game.platform == Common::kPlatformPC)
-					sprintf(buf2, "%s.%.3d", _baseName.c_str(), diskNumber);
-			} else if (_game.heversion >= 60) {
-				sprintf(buf, "%s.he%.1d", _baseName.c_str(), diskNumber);
-			} else {
-				sprintf(buf, "%s.%.3d", _baseName.c_str(), diskNumber);
-				if (_game.id == GID_SAMNMAX)
-					sprintf(buf2, "%s.sm%.1d", _baseName.c_str(), diskNumber);
-			}
-
-			encByte = (_game.features & GF_USE_KEY) ? 0x69 : 0;
+			sprintf(buf, "%s.%.3d", _baseName.c_str(), diskNumber);
+			if (_game.id == GID_SAMNMAX)
+				sprintf(buf2, "%s.sm%d", _baseName.c_str(), diskNumber);
 		}
+		
+		if (_game.features & GF_USE_KEY) {
+			if (_game.version <= 3)
+				encByte = 0xFF;
+			else if ((_game.version == 4) && (room == 0 || room >= 900))
+				encByte = 0;
+			else
+				encByte = 0x69;
+		} else
+			encByte = 0;
+
+		if (room > 0 && (_game.version == 8))
+			VAR(VAR_CURRENTDISK) = diskNumber;
 
 		// If we have substitute
 		if (_substResFileName.almostGameID != 0 && !(_game.platform == Common::kPlatformNES || _game.platform == Common::kPlatformC64)) {
