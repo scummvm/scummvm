@@ -37,9 +37,40 @@
 #include <AdnDebugMgr.h>
 //#define DEBUG_ARM
 
+#include "stdafx.h"
+#include "base/main.h"
+#include "be_zodiac.h"
+#include "be_os5ex.h"
+
 GlobalsDataType g_vars;
 GlobalsDataPtr gVars = &g_vars;
 UInt32 g_stackSize;
+
+static void palm_main(int argc, char **argvP)  {
+#ifdef COMPILE_OS5
+	if (gVars->advancedMode)
+		g_system = new OSystem_PalmOS5Ex();
+	else
+		g_system = new OSystem_PalmOS5();
+#elif defined(COMPILE_ZODIAC)
+	g_system = new OSystem_PalmZodiac();
+#else
+	#error "No target defined."
+#endif
+
+	assert(g_system);
+
+	// Invoke the actual ScummVM main entry point:
+	extern void initGlobalHashes();
+	initGlobalHashes();
+
+	scummvm_main(argc, argvP);
+
+	extern void freeGlobalHashes();
+	freeGlobalHashes();
+
+	g_system->quit();	// TODO: Consider removing / replacing this!
+}
 
 static void Go() {
 	void *tmp;
@@ -76,8 +107,7 @@ static void Go() {
 	if (HWR_INIT(INIT_VIBRATOR))	gVars->vibrator =	RumbleInit();
 
 	// run ...
-	extern int main(int, char **);
-	DO_EXIT ( main(argc, argvP); )	
+	DO_EXIT ( palm_main(argc, argvP); )	
 
 	// release 
 	if (HWR_INIT(INIT_VIBRATOR))	RumbleRelease();

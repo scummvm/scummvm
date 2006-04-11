@@ -91,6 +91,31 @@ void run(int argc, char *argv[]) {
 
 #else
 
+#include "stdafx.h"
+#include "base/main.h"
+#include "be_zodiac.h"
+#include "be_os5ex.h"
+
+static void palm_main(int argc, char **argvP)  {
+#ifdef COMPILE_OS5
+	if (gVars->advancedMode)
+		g_system = new OSystem_PalmOS5Ex();
+	else
+		g_system = new OSystem_PalmOS5();
+#elif defined(COMPILE_ZODIAC)
+	g_system = new OSystem_PalmZodiac();
+#else
+	#error "No target defined."
+#endif
+
+	assert(g_system);
+
+	// Invoke the actual ScummVM main entry point:
+	scummvm_main(argc, argvP);
+
+	g_system->quit();	// TODO: Consider removing / replacing this!
+}
+
 void run(int argc, char *argv[]) {
 
 	MathlibInit();
@@ -119,7 +144,7 @@ void run(int argc, char *argv[]) {
 	// be sure to have a VG
 	void *__ptr = StuffsForceVG();
 
-	DO_EXIT( main(argc, argv); )
+	DO_EXIT( palm_main(argc, argv); )
 
 	// be sure to release features memory
 	FREE_FTR(ftrBufferOverlay)
