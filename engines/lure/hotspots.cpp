@@ -623,11 +623,11 @@ void Hotspot::doGet(HotspotData *hotspot) {
 	} 
 	
 	if (sequenceOffset != 0) {
-		uint16 result = Script::execute(sequenceOffset);
+		uint16 execResult = Script::execute(sequenceOffset);
 
-		if (result == 1) return;
-		else if (result != 0) {
-			Dialog::showMessage(result, hotspotId());
+		if (execResult == 1) return;
+		else if (execResult != 0) {
+			Dialog::showMessage(execResult, hotspotId());
 			return;
 		}
 	}
