@@ -33,7 +33,7 @@
 
 namespace Lure {
 
-Hotspot::Hotspot(HotspotData *res) {
+Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_data = res;
 	_anim = NULL;
 	_frames = NULL;
@@ -51,6 +51,7 @@ Hotspot::Hotspot(HotspotData *res) {
 	_width = res->width;
 	_heightCopy = res->heightCopy;
 	_widthCopy = res->widthCopy;
+	_yCorrection = res->yCorrection;
 	_talkX = res->talkX;
 	_talkY = res->talkY;
 	_layer = res->layer;
@@ -65,11 +66,15 @@ Hotspot::Hotspot(HotspotData *res) {
 		setAnimation(_data->animRecordId);
 
 	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcOffset);
+	_frameCtr = 0;
+	_skipFlag = false;
+	_pathfindCovered = false;
+	_charRectY = 0;
 }
 
 // Special constructor used to create a voice hotspot
 
-Hotspot::Hotspot(Hotspot *character, uint16 objType) {
+Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_data = NULL;
 	_anim = NULL;
 	_frames = NULL;
@@ -170,11 +175,11 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	headerEntry = (uint16 *) (src->data() + 2);
 	MemoryBlock &mDest = _frames->data();
 
-	for (uint16 frameCtr = 0; frameCtr < _numFrames; ++frameCtr, ++headerEntry) {
+	for (uint16 frameNumCtr = 0; frameNumCtr < _numFrames; ++frameNumCtr, ++headerEntry) {
 
 		if ((newRecord->flags & PIXELFLAG_HAS_TABLE) != 0) {
 			// For animations with an offset table, set the source point for each frame
-			uint16 frameOffset = *((uint16 *) (src->data() + ((frameCtr + 1) * sizeof(uint16)))) + 0x40;
+			uint16 frameOffset = *((uint16 *) (src->data() + ((frameNumCtr + 1) * sizeof(uint16)))) + 0x40;
 			if ((uint32) frameOffset + _height * (_width / 2) > dest->size()) 
 				error("Invalid frame offset in animation %x", newRecord->animRecordId);
 			pSrc = dest->data() + frameOffset;
@@ -182,7 +187,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 
 		// Copy over the frame, applying the colour offset to each nibble
 		for (uint16 yPos = 0; yPos < _height; ++yPos) {
-			pDest = mDest.data() + (yPos * _numFrames + frameCtr) * _width;
+			pDest = mDest.data() + (yPos * _numFrames + frameNumCtr) * _width;
 
 			for (uint16 ctr = 0; ctr < _width / 2; ++ctr) {
 				*pDest++ = _colourOffset + (*pSrc >> 4);
@@ -285,33 +290,143 @@ void Hotspot::setTickProc(uint16 newVal) {
 	_tickHandler = HotspotTickHandlers::getHandler(newVal);	
 }
 
+void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
+	if ((hotspotId() == PLAYER_ID) && (PATHFIND_COUNTDOWN != 0)) {
+		// Show the clock cursor whilst pathfinding will be calculated
+		Mouse &mouse = Mouse::getReference();
+		mouse.setCursorNum(CURSOR_TIME_START, 0, 0);
+	}
 
-void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot, bool immediate) {
 	_destX = endPosX;
-	_destY = endPosY - _height;
-
+	_destY = endPosY;
 	_destHotspotId = destHotspot;
-	if (immediate) 
-		setPosition(_destX, _destY);
+	_currentActions.clear();
+	setCurrentAction(START_WALKING);
 }
 
 void Hotspot::setDirection(Direction dir) {
+	_direction = dir;
+
 	switch (dir) {
 	case UP:
 		setFrameNumber(_anim->upFrame);
+		_charRectY = 4;
 		break;
 	case DOWN:
 		setFrameNumber(_anim->downFrame);
+		_charRectY = 4;
 		break;
 	case LEFT:
 		setFrameNumber(_anim->leftFrame);
+		_charRectY = 0;
 		break;
 	case RIGHT:
 		setFrameNumber(_anim->rightFrame);
+		_charRectY = 0;
 		break;
 	default:
 		break;
 	}
+}
+
+// Makes the character face the given hotspot
+
+void Hotspot::faceHotspot(HotspotData *hotspot) {
+	if (hotspot->hotspotId >= START_NONVISUAL_HOTSPOT_ID) {
+		// Non visual hotspot
+		// TODO:
+	} else {
+		// Visual hotspot
+		int xp = x() - hotspot->startX;
+		int yp = y() + heightCopy() - (hotspot->startY + hotspot->heightCopy);
+
+		if (abs(yp) >= abs(xp)) {
+			if (yp < 0) setDirection(DOWN);
+			else setDirection(UP);
+		} else {
+			if (xp < 0) setDirection(LEFT);
+			else setDirection(RIGHT);
+		}
+	}
+}
+
+// Sets or clears the hotspot as occupying an area in it's room's pathfinding data
+
+void Hotspot::setOccupied(bool occupiedFlag) {
+	if (occupiedFlag == _pathfindCovered) return;
+	_pathfindCovered = occupiedFlag;
+
+	int yp = (y() - 8 + heightCopy() - 4) >> 3;
+	int widthVal = max((widthCopy() >> 3), 1);
+
+	// Handle cropping for screen left
+	int xp = (x() >> 3) - 16;
+	if (xp < 0) {
+		xp = -xp;
+		widthVal -= xp;
+		if (widthVal <= 0) return;
+		xp = 0;
+	}
+
+	// Handle cropping for screen right
+	int x2 = xp + widthVal;
+	if (x2 > ROOM_PATHS_WIDTH) {
+		++x2;
+		widthVal -= x2;
+		if (widthVal <= 0) return;
+	}
+
+	RoomPathsData &paths = Resources::getReference().getRoom(_roomNumber)->paths;
+	if (occupiedFlag) {
+		paths.setOccupied(xp, yp, widthVal);
+	} else {
+		paths.clearOccupied(xp, yp, widthVal);
+	}
+}
+
+// walks the character a single step in a sequence defined by the walking list
+
+bool Hotspot::walkingStep() {
+	if (_pathFinder.isEmpty())	return true;
+
+	// Check to see if the end of the next straight walking slice
+	if (_pathFinder.stepCtr() >= _pathFinder.top().numSteps()) {
+		// Move to next slice in walking sequence
+		_pathFinder.stepCtr() = 0;
+		_pathFinder.pop();
+		if (_pathFinder.isEmpty())	return true;
+	}
+
+	if (_pathFinder.stepCtr() == 0)
+		// At start of new slice, set the direction
+		setDirection(_pathFinder.top().direction());
+
+	MovementDataList *frameSet;
+	switch (_pathFinder.top().direction()) {
+	case UP:
+		frameSet = &_anim->upFrames;
+		break;
+	case DOWN:
+		frameSet = &_anim->downFrames;
+		break;
+	case LEFT:
+		frameSet = &_anim->leftFrames;
+		break;
+	case RIGHT:
+		frameSet = &_anim->rightFrames;
+		break;
+	default:
+		return true;
+	}
+
+	int16 _xChange, _yChange;
+	uint16 nextFrame;
+	frameSet->getFrame(frameNumber(), _xChange, _yChange, nextFrame);
+	setFrameNumber(nextFrame);
+	setPosition(x() + _xChange, y() + _yChange);
+
+	++_pathFinder.stepCtr();
+	return false;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -327,6 +442,101 @@ bool Hotspot::isRoomExit(uint16 id) {
 	for (uint16 *p = &validRoomExitHotspots[0]; *p != 0; ++p) 
 		if (*p == id) return true;
 	return false;
+}
+
+HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
+	if ((hotspot->hotspotId == 0x420) || (hotspot->hotspotId == 0x436) ||
+		(hotspot->hotspotId == 0x429)) {
+		// TODO: figure out specific handling code
+		actionPrecheck3(hotspot);
+		return PC_0;
+	} else {
+		return actionPrecheck2(hotspot);
+	}
+}
+
+HotspotPrecheckResult Hotspot::actionPrecheck2(HotspotData *hotspot) {
+	ValueTableData fields = Resources::getReference().fieldList();
+
+	if (hotspot->roomNumber != roomNumber()) {
+		// Hotspot isn't in same room as character
+		if (frameNumber() != 0) {
+			Dialog::showMessage(0, hotspotId());
+			setFrameNumber(0);
+		}
+		return PC_1;
+	} else if (frameNumber() != 0) {
+		// TODO: loc_883
+		setFrameNumber(frameNumber() + 1);
+		if (frameNumber() >= 6) {
+			Dialog::showMessage(0xD, hotspotId());
+			return PC_4;
+		}
+
+		if ((hotspot->hotspotId < 0x408)) {
+			// TODO: Does other checks on HS[44] -> loc_886
+			setFrameNumber(0);
+			Dialog::showMessage(0xE, hotspotId());
+			return PC_2;
+		}
+	}
+
+	if (characterWalkingCheck(hotspot)) {
+		return PC_INITIAL;
+	} else {
+		actionPrecheck3(hotspot);
+		return PC_0;
+	}
+}
+
+void Hotspot::actionPrecheck3(HotspotData *hotspot) {
+	setFrameNumber(0);
+	if (hotspot->hotspotId < 0x408) {
+		// TODO: HS[44]=8, HS[42]=1E, HS[50]=ID
+	}
+}
+
+// Checks to see whether a character needs to walk to the given hotspot
+
+bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+	HotspotProximityList &list = res.proximityList();
+	HotspotProximityList::iterator i;
+	int16 xp, yp;
+
+	// Get default position
+	xp = hotspot->startX;
+	yp = hotspot->startY + hotspot->heightCopy - 4;
+
+	// Scan through the list for a proximity record
+	for (i = list.begin(); i != list.end(); ++i) {
+		HotspotProximityData *rec = *i;
+		if (rec->hotspotId != hotspot->hotspotId) continue;
+
+		xp = (int16) rec->x;
+		yp = (int16) (rec->y & 0x7fff);
+
+		// If the high bit of the Y position is clear, use standard handling
+		// with the co-ordinates provided by the record
+		if ((rec->y & 0x8000) == 0) 
+			break;
+		
+		// Special handling for if hi-bit of Y is set
+		if (((x() >> 3) != (xp >> 3)) ||
+			((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
+			walkTo(xp, yp);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// Default handling 
+	if ((abs(x() - xp) < 8) && (abs(y() + heightCopy() - 1 - yp) < 19))
+		return false;
+	
+	walkTo(xp, yp);
+	return true;
 }
 
 void Hotspot::doAction(Action action, HotspotData *hotspot) {
@@ -395,8 +605,18 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 
 void Hotspot::doGet(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, GET);
 
+	HotspotPrecheckResult result = actionPrecheck(hotspot);
+	if (result == PC_INITIAL) return;
+	else if (result != PC_0) {
+		stopWalking();
+		return;
+	}
+
+	stopWalking();
+	faceHotspot(hotspot);
+
+	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, GET);
 	if (sequenceOffset >= 0x8000) {
 		Dialog::showMessage(sequenceOffset, hotspotId());
 		return;
@@ -746,6 +966,8 @@ void Hotspot::startTalk(HotspotData *charHotspot) {
 
 HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 	switch (procOffset) {
+	case 0x4F82:
+		return standardCharacterAnimHandler;
 	case 0x7F3A:
 		return standardAnimHandler;
 	case 0x7207:
@@ -774,6 +996,10 @@ void HotspotTickHandlers::standardAnimHandler(Hotspot &h) {
 		h.setTickCtr(h.tickCtr() - 1);
 	else 
 		h.executeScript();
+}
+
+void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
+
 }
 
 void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
@@ -808,48 +1034,109 @@ void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
-	int16 xPos = h.x();
-	int16 yPos = h.y();
-	if ((xPos == h.destX()) && (yPos == h.destY())) return;
-	HotspotAnimData &anim = h.anim();
-	int16 xDiff = h.destX() - h.x();
-	int16 yDiff = h.destY() - h.y();
+	Resources &res = Resources::getReference();
+	Mouse &mouse = Mouse::getReference();
+	RoomPathsData &paths = Resources::getReference().getRoom(h.roomNumber())->paths;
+	PathFinder &pathFinder = h.pathFinder();
+	CurrentActionStack &actions = h.currentActions();
+	uint16 impingingList[MAX_NUM_IMPINGING];
+	int numImpinging;
+	Action hsAction;
+	uint16 hotspotId;
+	HotspotData *hotspot;
 
-	int16 xChange, yChange;
-	uint16 nextFrame;
-	MovementDataList *moves;
+	// TODO: handle talk dialogs countdown if necessary
+	
+	numImpinging = Support::findIntersectingCharacters(h, impingingList);
+	if (h.skipFlag()) {
+		if (numImpinging > 0) 
+			return;
+		h.setSkipFlag(false);
+	}
 
-	if ((yDiff < 0) && (xDiff <= 0)) moves = &anim.upFrames;
-	else if (xDiff < 0) moves = &anim.leftFrames;
-	else if (yDiff > 0) moves = &anim.downFrames;
-	else moves = &anim.rightFrames;
+	// If a frame countdown is in progress, then decrement and exit
+	if (h.frameCtr() > 0) {
+		h.decrFrameCtr();
+		return;
+	}
 
-	// Get movement amount and next frame number
-	moves->getFrame(h.frameNumber(), xChange, yChange, nextFrame);
-	xPos += xChange; yPos += yChange;
+	CurrentAction action = actions.action();
 
-	// Make sure that the move amount doesn't overstep the destination X/Y
-	if ((yDiff < 0) && (yPos < h.destY())) yPos = h.destY();
-	else if ((xDiff < 0) && (xPos < h.destX())) xPos = h.destX();
-	else if ((yDiff > 0) && (yPos > h.destY())) yPos = h.destY();
-	else if ((xDiff > 0) && (xPos > h.destX())) xPos = h.destX();
+	switch (action) {
+	case NO_ACTION:
+		// Make sure there is no longer any destination
+		h.setDestHotspot(0);
+		break;
 
-	// Check to see if player has entered an exit area
-	RoomData *roomData = Resources::getReference().getRoom(h.roomNumber());
-	Room &room = Room::getReference();
-	bool charInRoom = room.roomNumber() == h.roomNumber();
-	RoomExitData *exitRec = roomData->exits.checkExits(xPos, yPos + h.height());
+	case DISPATCH_ACTION:
+		// Dispatch an action
+		h.setDestHotspot(0);
+		hsAction = actions.top().hotspotAction();
+		hotspotId = actions.top().hotspotId();
+		actions.pop();
 
-	if (!exitRec) {
-		h.setPosition(xPos, yPos);
-		h.setFrameNumber(nextFrame);
-	} else {
-		h.setRoomNumber(exitRec->roomNumber);
-		h.walkTo(exitRec->x, exitRec->y, 0, true);
-		if (exitRec->direction != NO_DIRECTION)
-			h.setDirection(exitRec->direction);
-		if (charInRoom)
-			room.setRoomNumber(exitRec->roomNumber, false);
+		hotspot = res.getHotspot(hotspotId);
+		h.doAction(hsAction, hotspot);
+		break;
+
+	case EXEC_HOTSPOT_SCRIPT:
+		// A hotspot script is in progress for the player, so don't interrupt
+		if (h.executeScript()) {
+			// Script is finished, so pop of the execution action
+			actions.pop();
+		}
+		break;
+
+	case START_WALKING:
+		// Start the player walking to the given destination
+		h.setOccupied(false);        // clear pathfinding area
+
+		// Reset the path finder / walking sequence
+		pathFinder.reset(paths);
+
+		// Set current action to processing walking path
+		actions.pop();
+		h.setCurrentAction(PROCESSING_PATH);
+		// Deliberate fall through to processing walking path
+
+	case PROCESSING_PATH:
+		if (!pathFinder.process()) break;
+
+		// Pathfinding is now complete 
+		actions.pop();
+
+		if (pathFinder.isEmpty()) {
+			mouse.setCursorNum(CURSOR_ARROW);
+			break;
+		}
+
+		if (mouse.getCursorNum() != CURSOR_CAMERA)
+			mouse.setCursorNum(CURSOR_ARROW);
+		h.setCurrentAction(WALKING);
+		h.setPosition(h.x(), h.y() & 0xFFF8);
+		
+		// Deliberate fall through to walking
+
+	case WALKING:
+		// The character is currently moving
+		if ((h.destHotspotId() != 0) && (h.destHotspotId() != 0xffff)) {
+			// Player is walking to a room exit hotspot
+			RoomExitJoinData *joinRec = res.getExitJoin(h.destHotspotId());
+			if (joinRec->blocked) {
+				// Exit now blocked, so stop walking
+				actions.pop();
+				break;
+			}
+		}
+
+		if (h.walkingStep()) {
+			// Walking done
+			actions.pop();
+		}
+	
+		// Check for whether need to change room
+		Support::checkRoomChange(h);
+		break;
 	}
 }
 
@@ -875,7 +1162,7 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 
 void HotspotTickHandlers::fireAnimHandler(Hotspot &h) {
 	standardAnimHandler(h);
-	// TODO: figure out remainder of method
+	h.setOccupied(true);
 }
 
 // Special variables used across multiple calls to talkAnimHandler
@@ -1068,6 +1355,476 @@ void HotspotTickHandlers::headAnimationHandler(Hotspot &h) {
 	}
 
 	h.setFrameNumber(frameNumber);
+}
+
+/*-------------------------------------------------------------------------*/
+/* Miscellaneous classes                                                   */
+/*                                                                         */
+/*-------------------------------------------------------------------------*/
+
+// WalkingActionEntry class
+
+// This method performs rounding of the number of steps depending on direciton
+
+int WalkingActionEntry::numSteps() {
+	switch (_direction) {
+	case UP:
+	case DOWN:
+		return (_numSteps + 1) >> 1;
+
+	case LEFT:
+	case RIGHT:
+		return (_numSteps + 3) >> 2;
+	default:
+		return 0;
+	}
+}
+
+// PathFinder class
+
+PathFinder::PathFinder(Hotspot *h) { 
+	_hotspot = h;
+	_list.clear(); 
+	_stepCtr = 0; 
+}
+
+void PathFinder::reset(RoomPathsData &src) {
+	_stepCtr = 0;
+	_list.clear();
+	src.decompress(_layer, _hotspot->widthCopy());
+	_inProgress = false;
+	_countdownCtr = PATHFIND_COUNTDOWN;
+}
+
+// Does the next stage of processing to figure out a path to take to a given
+// destination. Returns true if the path finding has been completed
+
+bool PathFinder::process() {
+	bool returnFlag = _inProgress;
+	// Check whether the pathfinding can be broken by the countdown counter
+	bool breakFlag = (PATHFIND_COUNTDOWN != 0);
+	_countdownCtr = PATHFIND_COUNTDOWN;
+	int v;
+	uint16 *pTemp;
+	bool scanFlag = false;
+	Direction currDirection = NO_DIRECTION;
+	Direction newDirection;
+	uint16 numSteps = 0, savedSteps = 0;
+	bool altFlag;
+	uint16 *pCurrent;
+
+	if (!_inProgress) {
+		// Following code only done during first call to method
+		_inProgress = true;
+		initVars();
+
+		_xCurrent >>= 3; _yCurrent >>= 3;
+		_xDestCurrent >>= 3; _yDestCurrent >>= 3;
+		if ((_xCurrent == _xDestCurrent) && (_yCurrent == _yDestCurrent)) {
+			// Very close move
+			if (_xDestPos > 0) 
+				add(RIGHT, _xDestPos);
+			else if (_xDestPos < 0) 
+				add(LEFT, -_xDestPos);
+
+			goto final_step;
+		}
+
+		// Path finding
+
+		_destX >>= 3;
+		_destY >>= 3;
+		_pSrc = &_layer[(_yCurrent + 1) * DECODED_PATHS_WIDTH + 1 + _xCurrent];
+		_pDest = &_layer[(_yDestCurrent + 1) * DECODED_PATHS_WIDTH + 1 + _xDestCurrent];
+
+		// Flag starting/ending cells
+		*_pSrc = 1;
+		_destOccupied = *_pDest != 0;
+		_result = _destOccupied ? PF_DEST_OCCUPIED : PF_OK;
+		*_pDest = 0;
+
+		// Set up the current pointer, adjusting away from edges if necessary 
+
+		if (_xCurrent >= _xDestCurrent) {
+			_xChangeInc = -1;
+			_xChangeStart = ROOM_PATHS_WIDTH;
+		} else {
+			_xChangeInc = 1;
+			_xChangeStart = 1;
+		}
+
+		if (_yCurrent >= _yDestCurrent) {
+			_yChangeInc = -1;
+			_yChangeStart = ROOM_PATHS_HEIGHT;
+		} else {
+			_yChangeInc = 1;
+			_yChangeStart = 1;
+		}
+	}
+
+	// Major loop to populate data
+	_cellPopulated = false;
+
+	while (1) {
+		// Loop through to process cells in the given area
+		if (!returnFlag) _yCtr = 0;
+		while (returnFlag || (_yCtr < ROOM_PATHS_HEIGHT)) {
+			if (!returnFlag) _xCtr = 0;
+
+			while (returnFlag || (_xCtr < ROOM_PATHS_WIDTH)) {
+				if (!returnFlag) {
+					processCell(&_layer[(_yChangeStart + _yCtr * _yChangeInc) * DECODED_PATHS_WIDTH +
+						(_xChangeStart + _xCtr * _xChangeInc)]);
+					if (breakFlag && (_countdownCtr <= 0)) return false;
+				} else {
+					returnFlag = false;
+				}
+				++_xCtr;
+			}
+			++_yCtr;
+		}
+
+		// If the destination cell has been filled in, then break out of loop
+		if (*_pDest != 0) break;
+
+		if (_cellPopulated) {
+			// At least one cell populated, so go repeat loop
+			_cellPopulated = false;
+		} else {
+			_result = PF_NO_PATH;
+			scanFlag = true;
+			break;
+		}
+	} 
+
+	if (scanFlag || _destOccupied) {
+		// Adjust the end point if necessary to stop character walking into occupied area
+
+		// Restore destination's occupied state if necessary
+		if (_destOccupied) {
+			*_pDest = 0xffff;
+			_destOccupied = false;
+		}
+
+		// Scan through lines
+		v = 0xff;
+		pTemp = _pDest;
+		scanLine(_destX, -1, pTemp, v);
+		scanLine(ROOM_PATHS_WIDTH - _destX, 1, pTemp, v);
+		scanLine(_destY, -DECODED_PATHS_WIDTH, pTemp, v);
+		scanLine(ROOM_PATHS_HEIGHT - _destY, DECODED_PATHS_WIDTH, pTemp, v); 
+
+		if (pTemp == _pDest) {
+			_result = PF_NO_WALK;
+			clear();
+			return true;
+		}
+
+		_pDest = pTemp;
+	}
+
+	// ****DEBUG****
+	for (int ctr = 0; ctr < DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT; ++ctr)
+		Room::getReference().tempLayer[ctr] = _layer[ctr];
+
+	// Determine the walk path by working backwards from the destination, adding in the 
+	// walking steps in reverse order until source is reached
+
+	for (int stageCtr = 0; stageCtr < 3; ++stageCtr) {
+		altFlag = stageCtr == 1;
+		pCurrent = _pDest;
+
+		numSteps = 0;
+		currDirection = NO_DIRECTION;
+		while (1) {
+			v = *pCurrent - 1;
+			if (v == 0) break;
+			
+			newDirection = NO_DIRECTION;
+			if (!altFlag && (currDirection != LEFT) && (currDirection != RIGHT)) {
+				// Standard order direction checking
+				if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
+				else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
+				else if (*(pCurrent + 1) == v) newDirection = LEFT;
+				else if (*(pCurrent - 1) == v) newDirection = RIGHT;
+			} else {
+				// Alternate order direction checking
+				if (*(pCurrent + 1) == v) newDirection = LEFT;
+				else if (*(pCurrent - 1) == v) newDirection = RIGHT;
+				else if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
+				else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
+			}
+			if (newDirection == NO_DIRECTION) 
+				error("Path finding process failed");
+
+			// Process for the specified direction
+			if (newDirection != currDirection) add(newDirection, 0);
+
+			switch (newDirection) {
+			case UP:
+				pCurrent += DECODED_PATHS_WIDTH;
+				break;
+
+			case DOWN:
+				pCurrent -= DECODED_PATHS_WIDTH;
+				break;
+
+			case LEFT:
+				++pCurrent;
+				break;
+
+			case RIGHT:
+				--pCurrent;
+				break;
+
+			default:
+				break;
+			}
+
+			++numSteps;
+			top().rawSteps() += 8;
+			currDirection = newDirection;
+		}
+
+		if (stageCtr == 0) 
+			// Save the number of steps needed
+			savedSteps = numSteps;
+		if ((stageCtr == 1) && (numSteps <= savedSteps))
+			// Less steps were needed, so break out
+			break;
+
+		// Clear out any previously determined directions
+		clear();
+	}
+
+	// Add a final move if necessary
+
+	if (_result == PF_OK) {
+		if (_xDestPos < 0) 
+			addBack(LEFT, -_xDestPos);
+		else if (_xDestPos > 0) 
+			addBack(RIGHT, _xDestPos);
+	}
+	
+final_step:
+	if (_xPos < 0) add(LEFT, -_xPos);
+	else if (_xPos > 0) add(RIGHT, _xPos);
+
+	return true;
+}
+
+void PathFinder::processCell(uint16 *p) {
+	// Only process cells that are still empty
+	if (*p == 0) {
+		uint16 vMax = 0xffff;
+		uint16 vTemp;
+
+		// Check the surrounding cells (up,down,left,right) for values
+		// Up
+		vTemp = *(p - DECODED_PATHS_WIDTH);
+		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		// Down
+		vTemp = *(p + DECODED_PATHS_WIDTH);
+		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		// Left
+		vTemp = *(p - 1);
+		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		// Right
+		vTemp = *(p + 1);
+		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+
+		if (vMax != 0xffff) {
+			// A surrounding cell with a value was found
+			++vMax;
+			*p = vMax;
+			_cellPopulated = true;
+		}
+
+		_countdownCtr -= 3;
+
+	} else {
+		--_countdownCtr;
+	}
+}
+
+void PathFinder::scanLine(int numScans, int changeAmount, uint16 *&pEnd, int &v) {
+	uint16 *pTemp = _pDest;
+
+	for (int ctr = 1; ctr <= numScans; ++ctr) {
+		pTemp += changeAmount;
+		if ((*pTemp != 0) && (*pTemp != 0xffff)) {
+			if ((v < ctr) || ((v == ctr) && (*pTemp >= *pEnd))) return;
+			pEnd = pTemp;
+			v = ctr;
+			break;
+		}
+	}
+}
+
+void PathFinder::initVars() {
+	int16 xRight;
+
+	// Set up dest position, adjusting for walking off screen if necessary
+	_destX = _hotspot->destX();
+	_destY = _hotspot->destY();
+
+	if (_destX < 10) _destX -= 50;
+	if (_destX >= FULL_SCREEN_WIDTH-10) _destX += 50;
+
+	_xPos = 0; _yPos = 0;
+	_xDestPos = 0; _yDestPos = 0;
+
+	_xCurrent = _hotspot->x();
+	if (_xCurrent < 0) {
+		_xPos = _xCurrent;
+		_xCurrent = 0;
+	}
+	xRight = FULL_SCREEN_WIDTH - _hotspot->widthCopy() - 1;
+	if (_xCurrent >= xRight) {
+		_xPos = _xCurrent - xRight;
+		_xCurrent = xRight;
+	}
+
+	_yCurrent = (_hotspot->y() & 0xf8) + _hotspot->heightCopy() - MENUBAR_Y_SIZE - 4;
+	if (_yCurrent < 0) {
+		_yPos = _yCurrent;
+		_yCurrent = 0;
+	}
+	if (_yCurrent >= (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE)) {
+		_yPos = _yCurrent - (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE);
+		_yCurrent = FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE;
+	}
+
+	_xDestCurrent = _destX;
+	if (_xDestCurrent < 0) {
+		_xDestPos = _xDestCurrent;
+		_xDestCurrent = 0;
+	}
+	xRight = FULL_SCREEN_WIDTH - _hotspot->widthCopy();
+	if (_xDestCurrent >= xRight) {
+		_xDestPos = _xDestCurrent - xRight;
+		_xDestCurrent = xRight;
+	}
+
+	_yDestCurrent = _destY - 8;
+	if (_yDestCurrent < 0)
+		_yDestCurrent = 0;
+	if (_yDestCurrent >= (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE))
+		_yDestCurrent = FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE - 1;
+
+	// Subtract an amount from the countdown counter to compensate for
+	// the time spent decompressing the walkable areas set for the room
+	_countdownCtr -= 700;
+}
+
+/*-------------------------------------------------------------------------*/
+/* Support methods                                                         */
+/*                                                                         */
+/*-------------------------------------------------------------------------*/
+
+// finds a list of character animations whose base area are impinging 
+// that of the specified character (ie. are bumping into them)
+
+int Support::findIntersectingCharacters(Hotspot &h, uint16 *charList) {
+	int numImpinging = 0;
+	Resources &res = Resources::getReference();
+	Rect r;
+
+	r.left = h.x();
+	r.right = h.x() + h.widthCopy();
+	r.top = h.y() + h.heightCopy() - h.yCorrection() - h.charRectY();
+	r.bottom = h.y() + h.heightCopy() + h.charRectY();
+
+	HotspotList::iterator i;
+	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
+		Hotspot &hotspot = **i;
+		
+		// Check for basic reasons to skip checking the animation
+		if ((h.hotspotId() == hotspot.hotspotId()) || (hotspot.layer() == 0) ||
+			(h.roomNumber() != hotspot.roomNumber()) || (h.hotspotId() >= 0x408) ||
+			h.skipFlag()) continue;
+		// TODO: See why si+ANIM_HOTSPOT_OFFSET compared aganst di+ANIM_VOICE_CTR
+
+		if ((hotspot.x() > r.right) || (hotspot.x() + hotspot.widthCopy() >= r.left) ||
+			(hotspot.y() + hotspot.heightCopy() + hotspot.charRectY() < r.top) ||
+			(hotspot.y() + hotspot.heightCopy() - hotspot.charRectY() 
+			- hotspot.yCorrection() >= r.bottom)) 
+			continue;
+		
+		// Add hotspot Id to list
+		if (numImpinging == MAX_NUM_IMPINGING)
+			error("Exceeded maximum allowable number of impinging characters");
+		*charList++ = hotspot.hotspotId();
+		++numImpinging;
+	}
+
+	return numImpinging;
+}
+
+// Returns true if any other characters are intersecting the specified one
+
+bool Support::checkForIntersectingCharacter(Hotspot &h) {
+	uint16 tempList[MAX_NUM_IMPINGING];
+	return findIntersectingCharacters(h, tempList) != 0;
+}
+
+// Check whether a character needs to change the room they're in
+
+void Support::checkRoomChange(Hotspot &h) {
+	int16 x = h.x() + (h.widthCopy() >> 1);
+	int16 y = h.y() + h.heightCopy() - (h.yCorrection() >> 1);
+
+	RoomData *roomData = Resources::getReference().getRoom(h.roomNumber());
+	RoomExitData *exitRec = roomData->exits.checkExits(x, y);
+
+	if (exitRec) {
+		if (exitRec->sequenceOffset != 0xffff) {
+			Script::execute(exitRec->sequenceOffset);
+		} else {
+			Support::characterChangeRoom(h, exitRec->roomNumber, 
+				exitRec->x, exitRec->y, exitRec->direction);
+		}
+	}
+}
+
+void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber, 
+								  int16 newX, int16 newY, Direction dir) {
+	ValueTableData &fields = Resources::getReference().fieldList();
+
+	if (h.hotspotId() == PLAYER_ID) {
+		// Room change code for the player
+
+		h.setDirection(dir);
+		PlayerNewPosition &p = fields.playerNewPos();
+		p.roomNumber = roomNumber;
+		p.position.x = newX;
+		p.position.y = newY - 48;
+
+		// TODO: Call sub_136, and if !ZF reset new room number back to 0 
+	} else {
+		// Any other character changing room
+		if (checkForIntersectingCharacter(h)) {
+			// Character is blocked, so abort room change
+			h.currentActions().clear();
+		} else {
+			// Handle character room change
+			h.setRoomNumber(roomNumber);
+			h.setPosition((newX & 0xfff8) || 5, (newY - h.heightCopy()) & 0xfff8);
+			h.setSkipFlag(true);
+			h.setDirection(dir);
+
+			h.currentActions().pop();
+		}
+	}
+}
+
+bool Support::charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2) {
+	return !((hotspot1->startX + hotspot1->widthCopy + 4 < hotspot2->startX) ||
+		(hotspot2->startX + hotspot2->widthCopy + 4 < hotspot1->startX) ||
+		(hotspot2->startY + hotspot2->heightCopy - hotspot2->yCorrection - 2 >=
+			hotspot1->startY + hotspot1->heightCopy + 2) ||
+		(hotspot2->startY + hotspot2->heightCopy + 2 < 
+			hotspot1->startY + hotspot1->heightCopy - hotspot1->yCorrection - 2));
 }
 
 } // end of namespace Lure
