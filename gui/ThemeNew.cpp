@@ -1187,6 +1187,8 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 
 	const OverlayColor transparency = _colors[kColorTransparency];
 	int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
+	if (r.left + drawWidth > _screen.w)
+		drawWidth = _screen.w - r.left;
 
 	int srcAdd = 0;
 	if (upDown) {
@@ -1197,14 +1199,22 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		srcAdd = surf->w;
 	}
 
+	int h = r.height();
+	if (r.top + h > _screen.h)
+		h = _screen.h - r.top;
+
 	while (dst < _screen.pixels) {
 		dst += _screen.w;
 		src += srcAdd;
+		--h;
 	}
+
+	if (h <= 0)
+		return;
 
 	if (alpha >= 256) {
 		if (leftRight) {
-			for (int i = 0; i < r.height(); ++i) {
+			for (int i = 0; i < h; ++i) {
 				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 				for (int x = 0; x < drawWidth; ++x) {
 					if (src[drawWidth-x-1] != transparency)
@@ -1214,7 +1224,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 				src += srcAdd;
 			}
 		} else {
-			for (int i = 0; i < r.height(); ++i) {
+			for (int i = 0; i < h; ++i) {
 				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 				for (int x = 0; x < drawWidth; ++x) {
 					if (src[x] != transparency)
@@ -1226,7 +1236,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		}
 	} else {
 		if (leftRight) {
-			for (int i = 0; i < r.height(); ++i) {
+			for (int i = 0; i < h; ++i) {
 				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 				for (int x = 0; x < drawWidth; ++x) {
 					if (src[drawWidth-x-1] != transparency)
@@ -1236,7 +1246,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 				src += srcAdd;
 			}
 		} else {
-			for (int i = 0; i < r.height(); ++i) {
+			for (int i = 0; i < h; ++i) {
 				OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 				for (int x = 0; x < drawWidth; ++x) {
 					if (src[x] != transparency)
