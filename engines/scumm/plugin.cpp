@@ -1248,14 +1248,16 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 
 	switch (method) {
 	case 0:
-		if (g.version > 3)
-			return false;
-		strcpy(detectName, "00.LFL");
+		if (g.version <= 3)
+			strcpy(detectName, "00.LFL");
 		break;
 	case 1:
-		if (g.version != 4)
-			return false;
-		strcpy(detectName, "000.LFL");
+		// FIXME: The following would normally only allow for V4 games. But 
+		// for loom, there is both a v3 and a v4 version, but due to the way
+		// the detector works at this time, we'll only ever see the v3 variant
+		// here.
+		if (g.version == 3 || g.version == 4)
+			strcpy(detectName, "000.LFL");
 		break;
 	case 2:
 		if (g.version < 4 || g.version > 7)
@@ -1264,16 +1266,16 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 		strcat(detectName, ".000");
 		break;
 	case 3:
-		if (g.version < 7)
-			return false;
-		strcpy(detectName, g.gameid);
-		strcat(detectName, ".la0");
+		if (g.version >= 7) {
+			strcpy(detectName, g.gameid);
+			strcat(detectName, ".la0");
+		}
 		break;
 	case 4:
-		if (g.heversion == 0)
-			return false;
-		strcpy(detectName, g.gameid);
-		strcat(detectName, ".he0");
+		if (g.heversion != 0) {
+			strcpy(detectName, g.gameid);
+			strcat(detectName, ".he0");
+		}
 		break;
 	case 5:
 		// FIXME: Fingolfin asks: For which games is this case used? 
@@ -1282,15 +1284,14 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 		strcpy(detectName, g.gameid);
 		break;
 	case 6:
-		if (g.id != GID_SAMNMAX)
-			return false;
-		strcpy(detectName, g.gameid);
-		strcat(detectName, ".sm0");
+		if (g.id == GID_SAMNMAX) {
+			strcpy(detectName, g.gameid);
+			strcat(detectName, ".sm0");
+		}
 		break;
 	case 7:
-		if (g.id != GID_MANIAC)
-			return false;
-		strcpy(detectName, "00.MAN");
+		if (g.id == GID_MANIAC)
+			strcpy(detectName, "00.MAN");
 		break;
 	default:
 		return false;
