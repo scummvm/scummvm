@@ -60,14 +60,7 @@ static void palm_main(int argc, char **argvP)  {
 
 	assert(g_system);
 
-	// Invoke the actual ScummVM main entry point:
-	extern void initGlobalHashes();
-	initGlobalHashes();
-
 	scummvm_main(argc, argvP);
-
-	extern void freeGlobalHashes();
-	freeGlobalHashes();
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
 }

@@ -37,20 +37,8 @@ typedef HashMap<String, int> StringIntMap;
 // The following two objects could be turned into static members of class
 // File. However, then we would be forced to #include hashmap in file.h
 // which seems to be a high price just for a simple beautification...
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
-static StringIntMap _defaultDirectories;
-static FilesMap _filesMap;
-
-#else
-// This is a very bad hack to make these global objects work with PalmOS ARM version.
-// In fact global objects are correctly allocated but constructors/destructors are not called
-// and so, the object is not correctly initialized. See also the 2 functions at end of file.
-// This is related to how ARM apps are handled in PalmOS, there is no problem with 68k version.
-static StringIntMap *__defaultDirectories;
-static FilesMap *__filesMap;
-#define _defaultDirectories	(*__defaultDirectories)
-#define _filesMap	(*__filesMap)
-#endif
+static StringIntMap *_defaultDirectories;
+static FilesMap *_filesMap;
 
 static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
@@ -133,9 +121,12 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 	if (level <= 0)
 		return;
 
+	if (!_defaultDirectories)
+		_defaultDirectories = new StringIntMap;
+
 	// Do not add directories multiple times, unless this time they are added
 	// with a bigger depth.
-	if (_defaultDirectories.contains(directory) && _defaultDirectories[directory] >= level)
+	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
 		return;
 
 	FilesystemNode dir(directory.c_str());
@@ -144,7 +135,10 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 	if (!dir.isDirectory())
 		return;
 
-	_defaultDirectories[directory] = level;
+	(*_defaultDirectories)[directory] = level;
+
+	if (!_filesMap)
+		_filesMap = new FilesMap;
 
 	const FSList fslist(dir.listDir(FilesystemNode::kListAllNoRoot));
 	
@@ -154,15 +148,18 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 		} else {
 			String lfn = file->displayName();
 			lfn.toLowercase();
-			if (!_filesMap.contains(lfn))
-				_filesMap[lfn] = file->path();
+			if (!_filesMap->contains(lfn))
+				(*_filesMap)[lfn] = file->path();
 		}
 	}
 }
 
 void File::resetDefaultDirectories() {
-	_defaultDirectories.clear();
-	_filesMap.clear();
+	delete _defaultDirectories;
+	delete _filesMap;
+	
+	_defaultDirectories = 0;
+	_filesMap = 0;
 }
 
 File::File()
@@ -214,21 +211,28 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 	if (mode == kFileWriteMode || directory) {
 		_handle = fopenNoCase(filename, directory ? directory : "", modeStr);
-	} else if (_filesMap.contains(fname)) {
-		debug(3, "Opening hashed: %s", _filesMap[fname].c_str());
-		_handle = fopen(_filesMap[fname].c_str(), modeStr);
-	} else if (_filesMap.contains(fname + ".")) {
+	} else if (_filesMap && _filesMap->contains(fname)) {
+		fname = (*_filesMap)[fname];
+		debug(3, "Opening hashed: %s", fname.c_str());
+		_handle = fopen(fname.c_str(), modeStr);
+	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
-		debug(3, "Opening hashed: %s", _filesMap[fname].c_str());
-		_handle = fopen(_filesMap[fname].c_str(), modeStr);
+		
+		// FIXME: Shouldn't we add a '+ "."' after fname here?
+		fname = (*_filesMap)[fname];
+		debug(3, "Opening hashed: %s", fname.c_str());
+		_handle = fopen(fname.c_str(), modeStr);
 	} else {
 
-		StringIntMap::const_iterator x;
-		// Try all default directories
-		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {
-			_handle = fopenNoCase(filename, x->_key.c_str(), modeStr);
+		if (_defaultDirectories) {
+			// Try all default directories
+			StringIntMap::const_iterator x(_defaultDirectories->begin());
+			for (; _handle == NULL && x != _defaultDirectories->end(); ++x) {
+				_handle = fopenNoCase(filename, x->_key.c_str(), modeStr);
+			}
 		}
+
 		// Last resort: try the current directory
 		if (_handle == NULL)
 			_handle = fopenNoCase(filename, "", modeStr);
@@ -370,14 +374,3 @@ uint32 File::write(const void *ptr, uint32 len) {
 }
 
 }	// End of namespace Common
-
-#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
-void initGlobalHashes() {
-	Common::__defaultDirectories = new Common::StringIntMap;
-	Common::__filesMap = new Common::FilesMap;
-}
-void freeGlobalHashes() {
-	delete Common::__defaultDirectories;
-	delete Common::__filesMap;
-}
-#endif
