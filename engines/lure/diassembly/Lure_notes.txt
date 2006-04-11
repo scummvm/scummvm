@@ -461,6 +461,14 @@ room_check_x_extents - Checks whether a given hotspot's position is within
    Input:  si = Hotspot
   Output:  ax = 0 = Hotspot within valid range, 1 = otherwise
 
+room_exit_get_coordinates - Gets the walking coordinates for the exit from
+              a given room into a secondary room
+   Input:  ax = Starting room
+           bx = Destination room
+  Output:  cx = X-coordinate
+           dx = Y-coordinate
+           ax = 
+
 room_exit_hs_get_pointer - Scans through a list of room exit hotspots that
               connect to each other.
    Input:  ax = Hotspot Id

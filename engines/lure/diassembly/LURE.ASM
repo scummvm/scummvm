@@ -3216,7 +3216,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 
 ; Walking to another room
 273F:13B5  A1 6CF5                              mov     ax, player_room_number
-273F:13B8  E8 401F                              call    sub_126
+273F:13B8  E8 401F                              call    room_exit_get_coordinates
 273F:13BB  81 E2 0FFF                           and     dx,0FFFh
 273F:13BF ˙BE 6CEF                              mov     si, offset player_hotspot_rec
 273F:13C2  8B DE                                mov     bx, si
@@ -11008,7 +11008,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4718  8B DE                                mov     bx, si
 273F:471A  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
 273F:471D  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
-273F:4720  8A 07                                mov     al, [bx]
+273F:4720  8A 07                                mov     al, [bx]                ; Get current action
 273F:4722  5B                                   pop     bx
 273F:4723  81 3E BA1B 7530                      cmp     active_hotspot_id, 7530h
 273F:4729  72 17                                jb      loc_897
@@ -11520,7 +11520,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4A83  8B F0                                mov     si, ax                  ; si=end of pathfind layer for room
 273F:4A85  FD                                   std                             ; Set for reverse direction
 273F:4A86  33 C0                                xor     ax, ax
-273F:4A88  B9 002B                              mov     cx, 2Bh                 ; # cols + start col of row #2
+273F:4A88  B9 002B                              mov     cx, 2Bh                 ; # cols + end col of 2nd last row
 273F:4A8B  F3/ AB                               rep     stosw                   ; Clear area
 273F:4A8D  83 C7 01                             add     di, 1                   ; For player di=41D0h
 
@@ -11582,14 +11582,14 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4AD9  80 EA 01                             sub     dl,1
 273F:4ADC  75 B6                                jnz     loc_940                 ; Jump if not zero
 273F:4ADE                       loc_949:
-273F:4ADE  B9 0004                              mov     cx, 4
-273F:4AE1  F3/ AA                               rep     stosb                   ; Rep when cx >0 Store al to es:[di]
+273F:4ADE  B9 0004                              mov     cx, 4                   ; Store end col, next row start col
+273F:4AE1  F3/ AA                               rep     stosb                   
 273F:4AE3  B2 05                                mov     dl, 5
 273F:4AE5  80 EE 01                             sub     dh, 1
 273F:4AE8  75 A8                                jnz     loc_939                 ; Jump if not zero
 
 273F:4AEA  83 EF 01                             sub     di, 1
-273F:4AED  B9 0029                              mov     cx, 29h                 ; Handle final off-screen row
+273F:4AED  B9 0029                              mov     cx, 29h                 ; Handle final top off-screen row
 273F:4AF0  33 C0                                xor     ax, ax
 273F:4AF2  F3/ AB                               rep     stosw
 
@@ -11640,7 +11640,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4B5C  89 4D 10                             mov     [di+PATHFIND_DEST_X2], cx   ; Store X (will be negative)
 273F:4B5F  33 C9                                xor     cx, cx
 273F:4B61                       loc_954:
-273F:4B61  BA 0140                              mov     dx, 320
+273F:4B61  BA 0140                              mov     dx, SCREEN_WIDTH
 273F:4B64  2B 54 13                             sub     dx, [si+ANIM_WIDTH_COPY]
 273F:4B67  3B CA                                cmp     cx, dx
 273F:4B69  72 07                                jb      loc_955                 ; Jump if fully on screen
@@ -11739,7 +11739,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4C18  5D                                   pop     bp
 273F:4C19  58                                   pop     ax
 
-; Source/8=(ax,bp), Dest/8=(cx,dx), si=source cell, bx=dest cell 
+; Source/8=(ax,bp), Dest/8=(cx,dx), bx=source cell, si=dest cell 
 273F:4C1A  3B C1                                cmp     ax,cx                   ; Start X against Dest X
 273F:4C1C  73 19                                jae     loc_964                 ; Jump if >=
 273F:4C1E  0B C0                                or      ax,ax                   ; Is Start X 0?
@@ -11748,12 +11748,12 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4C25  83 EB 02                             sub     bx, 2
 273F:4C28                       loc_963:
 273F:4C28  C7 45 14 0002                        mov     word ptr [di+PATHFIND_X_CHANGE1], 2
-273F:4C2D  B9 0028                              mov     cx, 28h
+273F:4C2D  B9 0028                              mov     cx, ROOM_PATHS_WIDTH
 273F:4C30  2B C8                                sub     cx, ax
 273F:4C32  89 4D 18                             mov     [di+PATHFIND_X_CHANGE2], cx
 273F:4C35  EB 17                                jmp     short loc_966           ; (4C4E)
 273F:4C37                       loc_964:                                        ;  xref 273F:4C1C
-273F:4C37  3D 0027                              cmp     ax, 27h
+273F:4C37  3D 0027                              cmp     ax, ROOM_PATHS_WIDTH - 1
 273F:4C3A  74 06                                je      loc_965                 ; Jump if equal
 273F:4C3C  05 0001                              add     ax, 1
 273F:4C3F  83 C3 02                             add     bx, 2
@@ -11764,7 +11764,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4C4E                       loc_966:                                        ;  xref 273F:4C35
 273F:4C4E  3B EA                                cmp     bp, dx
 273F:4C50  72 19                                jb      loc_968                 ; Jump if below
-273F:4C52  83 FD 17                             cmp     bp, 17h
+273F:4C52  83 FD 17                             cmp     bp, ROOM_PATHS_HEIGHT - 1
 273F:4C55  74 06                                je      loc_967                 ; Jump if equal
 273F:4C57  83 C5 01                             add     bp, 1
 273F:4C5A  83 C3 54                             add     bx, DECODED_PATHS_WIDTH * 2
@@ -11774,21 +11774,21 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4C65  83 45 1A 01                          add     [di+PATHFIND_Y_CHANGE2], 1
 273F:4C69  EB 17                                jmp     short loc_970           ; (4C82)
 273F:4C6B                       loc_968:                                        ;  xref 273F:4C50
-273F:4C6B  0B ED                                or      bp,bp                   ; Zero ?
+273F:4C6B  0B ED                                or      bp, bp                   ; Zero ?
 273F:4C6D  74 06                                jz      loc_969                 ; Jump if zero
-273F:4C6F  83 ED 01                             sub     bp,1
-273F:4C72  83 EB 54                             sub     bx,54h
+273F:4C6F  83 ED 01                             sub     bp, 1
+273F:4C72  83 EB 54                             sub     bx, DECODED_PATHS_WIDTH * 2
 273F:4C75                       loc_969:                                        ;  xref 273F:4C6D
 273F:4C75  C7 45 16 0054                        mov     word ptr [di+PATHFIND_Y_CHANGE1], DECODED_PATHS_WIDTH * 2
-273F:4C7A  B9 0018                              mov     cx,18h
-273F:4C7D  2B CD                                sub     cx,bp
+273F:4C7A  B9 0018                              mov     cx, ROOM_PATHS_HEIGHT
+273F:4C7D  2B CD                                sub     cx, bp
 273F:4C7F  89 4D 1A                             mov     [di+PATHFIND_Y_CHANGE2], cx
 273F:4C82                       loc_970:
 
 ; This next section populates the walkable sections of the decompressed array
 ; with incrementing numbers indicating the number of cells away each cell is
-; from the destination. A walkable path can be later formed by following the
-; path of decrementing numbers from the source to the destination
+; from the source. A walkable path can be later formed by following the
+; path of decrementing numbers from the destination to the source and reversing it
 
 273F:4C82  8B 55 14                             mov     dx,[di+PATHFIND_X_CHANGE1]
 273F:4C85                       loc_971:                                        ;  xref 273F:4CC6, 4CCE, 4CDA
@@ -11849,7 +11849,8 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:4CEC  C6 45 12 00                          mov     byte ptr [di+PATHFIND_DEST_OCCUPIED], 0
 273F:4CF0                       loc_980:
 
-; Do a prescanning of the lines
+; Do a scan of the lines, if necessary, to allow the character to walk up to
+; a wall without walking into it
 273F:4CF0  57                                   push    di
 273F:4CF1  8B EE                                mov     bp, si
 273F:4CF3  8B DE                                mov     bx, si                  ; bx=bp=destination cell
@@ -12686,7 +12687,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:530D  73 AF                                jae     loc_1073                ; Jump if above or =
 273F:530F  53                                   push    bx
 273F:5310  8B 5F 03                             mov     bx,[bx+3]
-273F:5313  E8 00C4                              call    sub_126                 ; (53DA)
+273F:5313  E8 00C4                              call    room_exit_get_coordinates
 273F:5316  81 7D 1B 03E9                        cmp     word ptr [di+1Bh],3E9h
 273F:531B  74 39                                je      loc_1081                ; Jump if equal
 273F:531D  51                                   push    cx
@@ -12696,17 +12697,17 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:5325  33 D2                                xor     dx,dx                   ; Zero register
 
 273F:5327                       locloop_1079:                                   ;  xref 273F:5346
-273F:5327  39 47 0E                             cmp     [bx+0Eh],ax
+273F:5327  39 47 0E                             cmp     [bx+ANIM_ROOM_NUM], ax
 273F:532A  75 17                                jne     loc_1080                ; Jump if not equal
-273F:532C  F6 47 0C FF                          test    byte ptr [bx+0Ch],0FFh
+273F:532C  F6 47 0C FF                          test    byte ptr [bx+ANIM_LAYER], 0FFh
 273F:5330  74 11                                jz      loc_1080                ; Jump if zero
-273F:5332  81 7F 1B 03E8                        cmp     word ptr [bx+1Bh], PLAYER_HOTSPOT_ID
+273F:5332  81 7F 1B 03E8                        cmp     word ptr [bx+ANIM_HOTSPOT_ID], PLAYER_HOTSPOT_ID
 273F:5337  72 0A                                jb      loc_1080                ; Jump if below
-273F:5339  81 7F 1B 0408                        cmp     word ptr [bx+1Bh],408h
+273F:5339  81 7F 1B 0408                        cmp     word ptr [bx+ANIM_HOTSPOT_ID],408h
 273F:533E  73 03                                jae     loc_1080                ; Jump if above or =
 273F:5340  80 C2 01                             add     dl,1
 273F:5343                       loc_1080:                                       ;  xref 273F:532A, 5330, 5337, 533E
-273F:5343  83 C3 29                             add     bx,29h
+273F:5343  83 C3 29                             add     bx, ANIMATION_SLOT_SIZE
 273F:5346  E2 DF                                loop    locloop_1079            ; Loop if cx > 0
 
 273F:5348  8A C2                                mov     al,dl
@@ -12783,11 +12784,11 @@ PATHFIND_Y_CHANGE2      equ  1Ah
                                 ;         Called from:   273F:13B8, 5313
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:53DA                       sub_126         proc    near
+                   room_exit_get_coordinates    proc    near
 273F:53DA  48                                   dec     ax
 273F:53DB  B9 0058                              mov     cx,58h
 273F:53DE  F7 E1                                mul     cx                      ; dx:ax = reg * ax
-273F:53E0  05 1929                              add     ax, offset sub_129_list
+273F:53E0  05 1929                              add     ax, offset exit_coord_list
 273F:53E3  03 D8                                add     bx, ax                  ; Move offset for indexing
 273F:53E5  8A 5F 23                             mov     bl, [bx+23h]
 273F:53E8  32 FF                                xor     bh, bh                  ; Zero register
@@ -12796,7 +12797,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:53EE  8B 57 02                             mov     dx, [bx+2]
 273F:53F1  8B 47 04                             mov     ax, [bx+4]
 273F:53F4  C3                                   retn
-                                sub_126         endp
+                   room_exit_get_coordinates    endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -14543,7 +14544,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
                        player_change_room       proc    near
 273F:6075 ˙BE 6CEF                              mov     si, offset player_hotspot_rec
 273F:6078  8B 7C 0B                             mov     di, [si+HS_ANIM_OFFSET] ; Get player anim rec
-273F:607B  C6 45 1D 2A                          mov     byte ptr [di+1Dh], 2Ah
+273F:607B  C6 45 1D 2A                          mov     byte ptr [di+ANIM_LAYER1_SKIP], 2Ah
 273F:607F  8B DE                                mov     bx, si
 273F:6081  03 5F 61                             add     bx, [bx+HS_ACTION_OFFSET]
 273F:6084  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
@@ -14554,7 +14555,7 @@ PATHFIND_Y_CHANGE2      equ  1Ah
 273F:6093  A1 982E                              mov     ax, new_room_x          ; Set x position
 273F:6096  24 F8                                and     al, 0F8h
 273F:6098  0C 05                                or      al, 5
-273F:609A  89 05                                mov     [di], ax
+273F:609A  89 05                                mov     [di+ANIM_X], ax
 273F:609C  89 44 0D                             mov     [si+HS_X], ax
 273F:609F  A1 9830                              mov     ax, new_room_y          ; Set y position
 273F:60A2  25 FFF8                              and     ax, 0FFF8h
@@ -25478,14 +25479,17 @@ PATHFIND_Y_CHANGE2      equ  1Ah
                                                                                 ;       273F:A00C
 31E4:1927  0000      active_animation_offset    dw      0
 
-31E4:1929  96 00 24 81          sub_129_list    db       96h, 00h, 24h, 81h
+31E4:1929  96 00 24 81       exit_coord_list    db       96h, 00h, 24h, 81h
 31E4:192D  02 00 00                             db       02h, 00h, 00h
 31E4:1930  0051[00]                             db      81 dup (0)
+
 31E4:1981  E3 00 DA 80 01 00                    db      0E3h, 00h,0DAh, 80h, 01h, 00h
 31E4:1987  44 01 DA 00 03 00                    db       44h, 01h,0DAh, 00h, 03h, 00h
-31E4:198D  BA 01 FC 00 05                       db      0BAh, 01h,0FCh, 00h, 05h
-31E4:1992  0015[00]                             db      21 dup (0)
-31E4:19A7  06 06                                db      6, 6
+31E4:198D  BA 01 FC 00 05 00                    db      0BAh, 01h,0FCh, 00h, 05h, 00h
+31E4:1993  00 00 00 00 00 00                    db       00h, 00h, 00h, 00h, 00h, 00h
+31E4:1999  00 00 00 00 00 00                    db       00h, 00h, 00h, 00h, 00h, 00h
+31E4:199F  00 00 00 00 00 00                    db       00h, 00h, 00h, 00h, 00h, 00h
+31E4:19A5  00 00 06 06                          db       0, 0, 6, 6
 31E4:19A9  0018[0C]                             db      24 dup (0Ch)
 31E4:19C1  00 00 00 00 00 0C                    db       00h, 00h, 00h, 00h, 00h, 0Ch
 31E4:19C7  0012[00]                             db      18 dup (0)
