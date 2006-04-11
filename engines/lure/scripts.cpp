@@ -175,6 +175,20 @@ void Script::isSkorlInCell(uint16 v1, uint16 v2, uint16 v3) {
 	res.fieldList().setField(GENERAL, v);
 }
 
+// Sets a character to a given hotspot script, and sets the character's current 
+// action to executing a script
+
+void Script::setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 v3) {
+	Resources &r = Resources::getReference();
+	uint16 offset = r.getHotspotScript(scriptIndex);
+
+	HotspotData *rsc = r.getHotspot(charId);
+	rsc->sequenceOffset = offset;
+
+	Hotspot *hs = r.getActiveHotspot(charId);
+	hs->setCurrentAction(EXEC_HOTSPOT_SCRIPT);
+}
+
 // Decrements the number of inventory itemst he player has
 
 void Script::decrInventoryItems(uint16 v1, uint16 v2, uint16 v3) {
@@ -325,9 +339,8 @@ void Script::addActions(uint16 hotspotId, uint16 actions, uint16 v3) {
 
 void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
 	// In the original game, this method checks to see if the cell door
-	// is currently open, if it is, starts a music sequence. I'll 
-	// implement this method properly when I get around to implementing
-	// the in-game music
+	// is currently open, if it is, starts a music sequence. 
+	// TODO: Implement starting music if cell door is open
 }
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
@@ -353,6 +366,7 @@ SequenceMethodRecord scriptMethods[] = {
 	{20, Script::checkCellDoor},
 	{22, Script::getDoorBlocked},
 	{23, Script::isSkorlInCell},
+	{27, Script::setBlockingHotspotScript},
 	{28, Script::decrInventoryItems},
 	{30, Script::setFrameNumber},
 	{32, Script::disableHotspot},

@@ -89,6 +89,7 @@ public:
 	static void remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3);
 	static void getDoorBlocked(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void isSkorlInCell(uint16 v1, uint16 v2, uint16 v3);
+	static void setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 v3);
 	static void decrInventoryItems(uint16 v1, uint16 v2, uint16 v3);
 	static void setFrameNumber(uint16 hotspotId, uint16 offset, uint16 v3);
 	static void disableHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
