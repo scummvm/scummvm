@@ -174,11 +174,6 @@
 
 	#define SCUMM_NEED_ALIGNMENT
 
-	// FIXME: Do you really need to use 'long' on this port? Please replace
-	// this comment with a new comment that states so, and ideally also
-	// explains the reasons briefly.
-	#define SCUMMVM_USE_LONG_INT
-
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
 
