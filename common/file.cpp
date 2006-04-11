@@ -37,9 +37,20 @@ typedef HashMap<String, int> StringIntMap;
 // The following two objects could be turned into static members of class
 // File. However, then we would be forced to #include hashmap in file.h
 // which seems to be a high price just for a simple beautification...
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 static StringIntMap _defaultDirectories;
 static FilesMap _filesMap;
 
+#else
+// This is a very bad hack to make these global objects work with PalmOS ARM version.
+// In fact global objects are correctly allocated but constructors/destructors are not called
+// and so, the object is not correctly initialized. See also the 2 functions at end of file.
+// This is related to how ARM apps are handled in PalmOS, there is no problem with 68k version.
+static StringIntMap *__defaultDirectories;
+static FilesMap *__filesMap;
+#define _defaultDirectories	(*__defaultDirectories)
+#define _filesMap	(*__filesMap)
+#endif
 
 static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
@@ -359,3 +370,14 @@ uint32 File::write(const void *ptr, uint32 len) {
 }
 
 }	// End of namespace Common
+
+#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
+void initGlobalHashes() {
+	Common::__defaultDirectories = new Common::StringIntMap;
+	Common::__filesMap = new Common::FilesMap;
+}
+void freeGlobalHashes() {
+	delete Common::__defaultDirectories;
+	delete Common::__filesMap;
+}
+#endif
