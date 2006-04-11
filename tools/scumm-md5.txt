@@ -13,6 +13,8 @@
 #  - Description
 #    -> optional short text that will be added to the description displayed by
 #       ScummVM, and is also visible on our website.
+#       Where available, use the text printed by 'Ctrl-V', possibly augmented by
+#       some extra information (e.g. to distinguish 3.5" and 5.25" variants).
 #  - Extra description
 #    -> Some additional description text, only shown on the website
 #  - Source
@@ -89,20 +91,20 @@ indy3	Indiana Jones and the Last Crusade
 	62b8c16b6db226ba95aaa8be73f9885c	es	Amiga	EGA	EGA	-	
 	157367c3c21e0d03a0cba44361b4cf65	en	Atari	No Adlib	EGA	-	Andreas Bylund
 	0f9c7a76657f0840b8f7ccb5bffeb9f4	fr	Atari	No Adlib	EGA	-	Andreas Bylund
-	5fbe557049892eb4b709d90916ec97ca	en	DOS	EGA	EGA	1.0 7/09/89	
-	6b3ec67da214f558dc5ceaa2acd47453	en	DOS	EGA	EGA	1.3 8/14/89	tsuteiuQ, Andrea Petrucci
-	6508fd55530e6915507e1cc37f7f045d	en	DOS	EGA	EGA	1.3 8/14/89 5.25\"	Zer02
-	66236cd1aec24e1d4aff4c4cc93b7e18	fr	DOS	EGA	EGA	-	Andrea Petrucci
-	89cfc425566003ff74b7dc7b3e6fd469 	fr	DOS	EGA	EGA	1.3 8/25/89	Jorpho
-	6f6ef668c608c7f534fea6e6d3878dde	de	DOS	EGA	EGA	-	dhewg
-	d62d248c3df6ec177405e2cb23d923b2	it	DOS	EGA	EGA	-	Andrea Petrucci
-	86be8ada36371d4fdc35659d0e912a26	es	DOS	EGA	EGA	-	Andrea Petrucci
-	ce7fd0c382389a6791fc3e199c117ef4	es	DOS	EGA	EGA	alt?	abnog
+	5fbe557049892eb4b709d90916ec97ca	en	DOS	EGA	EGA	1.0, 7/09/89	
+	6b3ec67da214f558dc5ceaa2acd47453	en	DOS	EGA	EGA	v1.3 from 14 Aug 89	tsuteiuQ, Andrea Petrucci, Peter Eckerlein
+	6508fd55530e6915507e1cc37f7f045d	en	DOS	EGA	EGA	1.3, 8/14/89 (5.25\")	Zer02
+	66236cd1aec24e1d4aff4c4cc93b7e18	fr	DOS	EGA	EGA	v1.3 from 25 Aug 89	Andrea Petrucci, Peter Eckerlein
+	89cfc425566003ff74b7dc7b3e6fd469 	fr	DOS	EGA	EGA	1.3, 25 Aug 89	Jorpho
+	6f6ef668c608c7f534fea6e6d3878dde	de	DOS	EGA	EGA	v1.4 from 19 Oct 89	dhewg, Peter Eckerlein
+	d62d248c3df6ec177405e2cb23d923b2	it	DOS	EGA	EGA	v1.4 from 25 Nov 89	Andrea Petrucci, Peter Eckerlein
+	86be8ada36371d4fdc35659d0e912a26	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	Andrea Petrucci, Peter Eckerlein
+	ce7fd0c382389a6791fc3e199c117ef4	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	abnog, Peter Eckerlein
 	1dd7aa088e09f96d06818aa9a9deabe0	en	Mac	No Adlib	EGA	-	
 
-	1875b90fade138c9253a8e967007031a	en	DOS	VGA	VGA	VGA	
-	399b217b0c8d65d0398076da486363a9	de	DOS	VGA	VGA	VGA	
-	17b5d5e6af4ae89d62631641d66d5a05	it	DOS	VGA	VGA	VGA	Andrea Petrucci
+	1875b90fade138c9253a8e967007031a	en	DOS	VGA	VGA	IBM 256 color v2.0 from 3 May 90	Peter Eckerlein
+	399b217b0c8d65d0398076da486363a9	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein
+	17b5d5e6af4ae89d62631641d66d5a05	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	ru	DOS	VGA	VGA	VGA	
 
 	04687cdf7f975a89d2474929f7b80946	en	FM-TOWNS	FM-TOWNS	-	-	
@@ -119,20 +121,20 @@ loom	Loom
 	a0a7dea72003933b8b3f8b99b9f7ddeb	en	Atari	No Adlib	EGA	-	
 	0e9b01430e31d9fcd94071d433bbc6bf	fr	Atari	No Adlib	EGA	-	
 	c24c490373aeb48fbd54caa8e7ae376d	de	Atari	No Adlib	EGA	-	Andreas Bylund
-	28ef68ee3ed76d7e2ee8ee13c15fbd5b	en	DOS	EGA	EGA	1.0	
+	28ef68ee3ed76d7e2ee8ee13c15fbd5b	en	DOS	EGA	EGA	v1.0 from 8 Mar 90	Peter Eckerlein
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	en	DOS	EGA	EGA	1.0 alt	Andrea Petrucci
-	37f56ceb13e401a7ac7d9e6b37fecaf7	en	DOS	EGA	EGA	1.1 16 Mar 90	Kirben, Andrea Petrucci
-	22f4ea88a09da12df9308ba30bcb7d0f	en	DOS	EGA	EGA	1.1 29 Mar 90	James Grosbeck
+	37f56ceb13e401a7ac7d9e6b37fecaf7	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
+	22f4ea88a09da12df9308ba30bcb7d0f	en	DOS	EGA	EGA	v1.1 from 29 Mar 90	James Grosbeck, Peter Eckerlein
 	b886b0a5d909c7158a914e1d7c1c6c65	fr	DOS	EGA	EGA	-	Andrea Petrucci
 	6f8a22bfa397be1f7ed4b74aba0e397e	fr	DOS	EGA	EGA	1.2 26 Jun 90	Jorpho
-	470c45b636139bb40716daa1c7edaad0	de	DOS	EGA	EGA	1.2 7 Jun 90	Peter Eckerlein
+	470c45b636139bb40716daa1c7edaad0	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Peter Eckerlein
 	fa127d7c4bb47d05bb1c33ddcaa9f767	de	DOS	EGA	EGA	-	
 	187d315f6b5168f68680dfe8c3d76a3e	hb	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	it	DOS	EGA	EGA	-	Andrea Petrucci
-	2a208ffbcd0e83e86f4356e6f64aa6e1	es	DOS	EGA	EGA	-	abnog, Andrea Petrucci
+	2a208ffbcd0e83e86f4356e6f64aa6e1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
 	6f0be328c64d689bb606d22a389e1b0f	en	Mac	No Adlib	EGA	-	
 
-	5d88b9d6a88e6f8e90cded9d01b7f082	en	DOS	VGA	VGA	Talkie	
+	5d88b9d6a88e6f8e90cded9d01b7f082	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein
 
 	c5d10e190d4b4d59114b824f2fdbd00e	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
