@@ -98,7 +98,7 @@ uint nextTableSize(uint x);
 template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
 private:
-#if defined (_WIN32_WCE) || defined (_MSC_VER) || defined (__SYMBIAN32__)
+#if defined (_WIN32_WCE) || defined (_MSC_VER) || defined (__SYMBIAN32__) || defined (PALMOS_MODE)
 //FIXME evc4, msvc6,msvc7 & GCC 2.9x doesn't like it as private member
 public:
 #endif
