@@ -2150,20 +2150,20 @@ byte *SimonEngine::allocBlock(uint32 size) {
 
 		blockEnd = block + size;
 
-		//if (blockEnd >= _vgaBufEnd) {
-		//	_vgaBufFreeStart = _vgaBufStart;
-		//} else {
-		//	_rejectBlock = false;
-		//	checkNoOverWrite(blockEnd);
-		//	if (_rejectBlock)
-		//		continue;
-		//	checkRunningAnims(blockEnd);
-		//	if (_rejectBlock)
-		//		continue;
-		//	checkZonePtrs(blockEnd);
+		if (blockEnd >= _vgaBufEnd) {
+			_vgaBufFreeStart = _vgaBufStart;
+		} else {
+			_rejectBlock = false;
+			checkNoOverWrite(blockEnd);
+			if (_rejectBlock)
+				continue;
+			checkRunningAnims(blockEnd);
+			if (_rejectBlock)
+				continue;
+			checkZonePtrs(blockEnd);
 			_vgaBufFreeStart = blockEnd;
 			return block;
-		//}
+		}
 	}
 }
 
