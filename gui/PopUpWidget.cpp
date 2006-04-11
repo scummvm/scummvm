@@ -322,7 +322,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		// Draw a separator
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
-		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w-1, y+kLineHeight), name,	hilite ? Theme::kStateHighlight : Theme::kStateEnabled,
+		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? Theme::kStateHighlight : Theme::kStateEnabled,
 								Theme::kTextAlignLeft);
 	}
 }
@@ -410,7 +410,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+_labelWidth, _y+g_gui.theme()->getFontHeight()), _label,
+		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label,
 								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, Theme::kTextAlignRight);
 
 	// Draw a set of arrows at the right end to signal this is a dropdown/popup
@@ -432,7 +432,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
 		TextAlignment align = (g_gui.getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
-		g_gui.theme()->drawText(Common::Rect(x+2, _y+3, _x+w-6, _y+g_gui.theme()->getFontHeight()), _entries[_selectedItem].name,
+		g_gui.theme()->drawText(Common::Rect(x+2, _y+3, _x+2+w-6, _y+3+g_gui.theme()->getFontHeight()), _entries[_selectedItem].name,
 								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(align));
 	}
 }
