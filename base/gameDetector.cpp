@@ -128,8 +128,11 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 static Common::String s_appName("scummvm");
+#else
+static const char *s_appName = "scummvm";
+#endif
 
 static void usage(const char *s, ...) GCC_PRINTF(1, 2);
 
@@ -141,7 +144,9 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 	printf(USAGE_STRING, s_appName.c_str(), buf, s_appName.c_str(), s_appName.c_str());
+#endif
 	exit(1);
 }
 
