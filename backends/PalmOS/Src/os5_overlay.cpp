@@ -23,6 +23,7 @@
  */
 
 #include "be_os5.h"
+#include "common/endian.h"
 
 void OSystem_PalmOS5::showOverlay() {
 	// hide fight indicator

@@ -23,6 +23,7 @@
  */
 
 #include "be_zodiac.h"
+#include "common/endian.h"
 
 void OSystem_PalmZodiac::clearOverlay() {
 	if (!_overlayVisible)
