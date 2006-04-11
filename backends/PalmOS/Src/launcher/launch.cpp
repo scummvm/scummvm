@@ -338,36 +338,26 @@ Boolean StartScummVM() {
 
 		// music driver
 		if (gameInfoP->musicInfo.sound.music) {
-			switch (gameInfoP->musicInfo.sound.drvMusic) {
-				case 0:	// NULL
-					ArgsAdd(&argvP[argc], "-e", "null", &argc);
-					break;
+			static char *drv[] = {
+				"auto",
+				"null",
+				"adlib",
+				"towns",
+				"pcjr",
+				"native",
+				"pcspk"
+			};
 
-				case 1: // AdLib
-					ArgsAdd(&argvP[argc], "-e", "adlib", &argc);
-					break;
-
-				case 2: // FM Towns
-					ArgsAdd(&argvP[argc], "-e", "towns", &argc);
-					break;
-
-				case 3: // IBM PCjr
-					ArgsAdd(&argvP[argc], "-e", "pcjr", &argc);
-					break;
-
-				case 4:	// built-in MIDI
-					if (OPTIONS_TST(kOptDeviceZodiac))
-						ArgsAdd(&argvP[argc], "-e", "zodiac", &argc);	// Tapwave Zodiac
-					else if (OPTIONS_TST(kOptSonyPa1LibAPI))
-						ArgsAdd(&argvP[argc], "-e", "ypa1", &argc);		// Pa1Lib devices
-					else
-						ArgsAdd(&argvP[argc], "-e", "null", &argc);		// error, no music driver
-					break;
-
-				case 5: // PC Speaker
-					ArgsAdd(&argvP[argc], "-e", "pcspk", &argc);
-					break;
-			}		
+			if (StrCompare(drv[gameInfoP->musicInfo.sound.drvMusic], "native") == 0) {
+				if (OPTIONS_TST(kOptDeviceZodiac))
+					ArgsAdd(&argvP[argc], "-e", "zodiac", &argc);	// Tapwave Zodiac
+				else if (OPTIONS_TST(kOptSonyPa1LibAPI))
+					ArgsAdd(&argvP[argc], "-e", "ypa1", &argc);		// Pa1Lib devices
+				else
+					ArgsAdd(&argvP[argc], "-e", "auto", &argc);		// no driver, switch to auto
+			} else {
+				ArgsAdd(&argvP[argc], "-e", drv[gameInfoP->musicInfo.sound.drvMusic], &argc);	
+			}
 
 			// output rate
 			UInt32 rates[] = {4000, 8000, 11025, 22050, 44100};

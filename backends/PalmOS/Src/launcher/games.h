@@ -25,9 +25,10 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
-#define curItemVersion sysMakeROMVersion(3,5,3,0,0)	// Added : CinE engine and 3DO platform
+#define curItemVersion sysMakeROMVersion(3,5,4,0,0)	// Added : Default/Auto music driver
 
 
+#define itemVersion_353 sysMakeROMVersion(3,5,3,0,0)	// Added : CinE engine and 3DO platform
 #define itemVersion_352 sysMakeROMVersion(3,5,2,0,0)	// Added : Lure engine
 #define itemVersion_351 sysMakeROMVersion(3,5,1,0,0)	// Added : Sega CD platform
 #define itemVersion_350 sysMakeROMVersion(3,5,0,0,0)

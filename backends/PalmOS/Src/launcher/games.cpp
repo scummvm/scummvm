@@ -69,7 +69,8 @@ static Err GamUpdateList() {
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_352 ||
+				if (version == itemVersion_353 ||
+					version == itemVersion_352 ||
 					version == itemVersion_351 ||
 					version == itemVersion_350 ||
 					version == itemVersion_340 ||
@@ -181,6 +182,9 @@ static Err GamUpdateList() {
 							
 							gitCur.platform++;
 						}
+						
+						if (version <= itemVersion_353)
+							gitCur.musicInfo.sound.drvMusic++;
 
 						if (gitCur.musicInfo.volume.palm > 100)
 							gitCur.musicInfo.volume.palm = 50;
