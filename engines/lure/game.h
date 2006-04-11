@@ -43,6 +43,8 @@ private:
 	void handleClick();
 	void handleRightClickMenu();
 	void handleLeftClick();
+
+	void playerChangeRoom();
 public:
 	Game();
 	static Game &getReference();
