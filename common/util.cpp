@@ -112,6 +112,7 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 const LanguageDescription g_languages[] = {
 	{"en", "English", EN_ANY}, // Generic English (when only one game version exist)
 	{"us", "English (US)", EN_USA},
+	{"gb", "English (GB)", EN_GRB},
 	{"de", "German", DE_DEU},
 	{"fr", "French", FR_FRA},
 	{"it", "Italian", IT_ITA},
@@ -120,7 +121,6 @@ const LanguageDescription g_languages[] = {
 	{"jp", "Japanese", JA_JPN},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
 	{"kr", "Korean", KO_KOR},
-	{"gb", "English (GB)", EN_GRB},
 	{"se", "Swedish", SE_SWE},
 	{"hb", "Hebrew", HB_ISR},
 	{"ru", "Russian", RU_RUS},

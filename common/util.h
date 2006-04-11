@@ -84,31 +84,30 @@ public:
 };
 
 /**
- * List of language ids.
- * @note The order and mappings of the values 0..8 are *required* to stay the
- * way they are now, as scripts in COMI rely on them. So don't touch them.
- * I am working on removing this restriction.
+ * List of game language.
  */
 enum Language {
-	UNK_LANG = -1,	// Use default language (i.e. none specified)
-	EN_ANY = 0,     // Generic English (when only one game version exist)
-	EN_USA = 1,
-	DE_DEU = 2,
-	FR_FRA = 3,
-	IT_ITA = 4,
-	PT_BRA = 5,
-	ES_ESP = 6,
-	JA_JPN = 7,
-	ZH_TWN = 8,
-	KO_KOR = 9,
-	SE_SWE = 10,
-	EN_GRB = 11,
-	HB_ISR = 20,
-	RU_RUS = 21,
-	CZ_CZE = 22,
-	NL_NLD = 23,
-	NB_NOR = 24,
-	PL_POL = 25
+	EN_ANY,     // Generic English (when only one game version exist)
+	EN_USA,
+	EN_GRB,
+
+	DE_DEU,
+	FR_FRA,
+	IT_ITA,
+	PT_BRA,
+	ES_ESP,
+	JA_JPN,
+	ZH_TWN,
+	KO_KOR,
+	SE_SWE,
+	HB_ISR,
+	RU_RUS,
+	CZ_CZE,
+	NL_NLD,
+	NB_NOR,
+	PL_POL,
+
+	UNK_LANG = -1	// Use default language (i.e. none specified)
 };
 
 struct LanguageDescription {
@@ -132,22 +131,21 @@ extern const char *getLanguageDescription(Language id);
  * game in question.
  */
 enum Platform {
-	kPlatformUnknown = -1,
-	kPlatformPC = 0,
-	kPlatformAmiga = 1,
-	kPlatformAtariST = 2,
-	kPlatformMacintosh = 3,
-	kPlatformFMTowns = 4,
-	kPlatformWindows = 5,
-	kPlatformNES = 6,
-	kPlatformC64 = 7,
-	kPlatformLinux = 8,
-	kPlatformAcorn = 9,
-	kPlatformSegaCD = 10,
-	kPlatform3DO = 11
-/*
-	kPlatformPCEngine
-*/
+	kPlatformPC,
+	kPlatformAmiga,
+	kPlatformAtariST,
+	kPlatformMacintosh,
+	kPlatformFMTowns,
+	kPlatformWindows,
+	kPlatformNES,
+	kPlatformC64,
+	kPlatformLinux,
+	kPlatformAcorn,
+	kPlatformSegaCD,
+	kPlatform3DO,
+//	kPlatformPCEngine,
+
+	kPlatformUnknown = -1
 };
 
 struct PlatformDescription {
