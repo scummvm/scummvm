@@ -68,7 +68,7 @@ struct AnimRecordTemp {
 
 void Resources::reloadData() {
 	Disk &d = Disk::getReference();
-	MemoryBlock *mb;
+	MemoryBlock *mb, *paths;
 	uint16 *offset, offsetVal;
 	uint16 recordId;
 	int ctr;
@@ -78,13 +78,17 @@ void Resources::reloadData() {
 
 	// Load room data 
 	mb = d.getEntry(ROOM_DATA_RESOURCE_ID);
+	paths = d.getEntry(ROOM_PATHS_RESOURCE_ID);
+
 	offset = (uint16 *) mb->data();
 	for (ctr = 0; READ_LE_UINT16(offset) != 0xffff; ++ctr, ++offset) {
 		offsetVal = READ_LE_UINT16(offset);
+
 		if (offsetVal != 0) {
 			// Get room resource
 			RoomResource *rec = (RoomResource *) (mb->data() + offsetVal);
-			RoomData *newEntry = new RoomData(rec);
+			
+			RoomData *newEntry = new RoomData(rec, paths);
 			_roomData.push_back(newEntry);
 
 			if (rec->numExits > 0) {
@@ -99,6 +103,7 @@ void Resources::reloadData() {
 		}
 	}
 	delete mb;
+	delete paths;
 
 	// Load room exits
 	mb = d.getEntry(ROOM_EXITS_RESOURCE_ID);
@@ -246,6 +251,27 @@ void Resources::reloadData() {
 
 		_talkData.push_back(data);
 		++tdHeader;
+	}
+	delete mb;
+
+	// Load a list of hotspot proximities
+	mb = d.getEntry(HOTSPOT_PROXIMITY_RESOURCE_ID);
+	HotspotProximityResource *proxRec = (HotspotProximityResource *) mb->data();
+	while (FROM_LE_16(proxRec->hotspotId) != 0xffff) {
+		HotspotProximityData *newEntry = new HotspotProximityData(proxRec);
+		_proximityList.push_back(newEntry);
+		++joinRec;
+		++proxRec;
+	}
+	delete mb;
+
+	// Load in the list of room exit coordinates
+	mb = d.getEntry(EXIT_COORDINATES_RESOURCE_ID);
+	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();	
+	while (*((uint16 *) coordRec) != 0xffff) {
+		RoomExitCoordinates *newEntry = new RoomExitCoordinates(coordRec);
+		_coordinateList.push_back(newEntry);
+		++coordRec;
 	}
 	delete mb;
 

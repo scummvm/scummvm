@@ -60,6 +60,8 @@ private:
 	SequenceDelayList _delayList;
 	Action _currentAction;
 	MemoryBlock *_talkDialogData;
+	HotspotProximityList _proximityList;
+	RoomExitCoordinatesList _coordinateList;
 
 	TalkData *_activeTalkData;
 	TalkState _talkState;
@@ -105,6 +107,11 @@ public:
 	ValueTableData &fieldList() { return _fieldList; }
 	SequenceDelayList &delayList() { return _delayList; }
 	MemoryBlock &getTalkDialogData() { return *_talkDialogData; }
+	HotspotProximityList &proximityList() { return _proximityList; }
+	HotspotProximityData *getHotspotProximity(uint16 hotspotId) { 
+		return _proximityList.getHotspot(hotspotId);
+	}
+	RoomExitCoordinatesList &coordinateList() { return _coordinateList; }
 	void copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y);
 
 	uint16 numInventoryItems();
