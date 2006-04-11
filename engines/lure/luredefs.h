@@ -80,7 +80,7 @@ enum Action {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 3
+#define LURE_DAT_MINOR 4
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
@@ -109,6 +109,7 @@ enum Action {
 #define CURSOR_TIME_START 2
 #define CURSOR_TIME_END 9
 #define CURSOR_CROSS 10
+#define CURSOR_CAMERA 15
 #define CURSOR_TALK 16
 #define CURSOR_MENUBAR 17
 
@@ -171,6 +172,9 @@ enum Action {
 #define ACTION_LIST_RESOURCE_ID 0x3f0f
 #define TALK_HEADER_RESOURCE_ID 0x3f10
 #define TALK_DATA_RESOURCE_ID 0x3f11
+#define ROOM_PATHS_RESOURCE_ID 0x3f12
+#define HOTSPOT_PROXIMITY_RESOURCE_ID 0x3f13
+#define EXIT_COORDINATES_RESOURCE_ID 0x3f14
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
@@ -201,6 +205,11 @@ enum Action {
 
 // Misc constants
 #define VOICE_ANIM_ID 0x5810
+
+// Countdown for # operations in path finder before breaking until next
+// tick - set it to 0 if you'd like all pathfinding to be done at once
+//#define PATHFIND_COUNTDOWN 4000
+#define PATHFIND_COUNTDOWN 0
 
 // Pixel record flags
 #define PIXELFLAG_HAS_TABLE 4
