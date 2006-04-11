@@ -357,7 +357,7 @@ void Hotspot::setOccupied(bool occupiedFlag) {
 	_pathfindCovered = occupiedFlag;
 
 	int yp = (y() - 8 + heightCopy() - 4) >> 3;
-	int widthVal = max((widthCopy() >> 3), 1);
+	int widthVal = MAX((widthCopy() >> 3), 1);
 
 	// Handle cropping for screen left
 	int xp = (x() >> 3) - 16;
