@@ -52,6 +52,11 @@ uint16 var3;
 uint16 var4;
 uint16 var5;
 
+// TODO: This could/should be a field in the AnimData struct, but as long as it
+// is marked as packed I don't dare add anything to it without knowing more
+// about how it's used. (It's quite possible that it no longer needs to be
+// packed.)
+
 bool refreshAnimData[NUM_MAX_ANIMDATA];
 
 void drawString(const char *string, byte param) {
