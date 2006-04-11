@@ -1797,6 +1797,25 @@ void drawMenuBox(char *command, int16 x, int16 y) {
 	gfxFuncGen2();
 }
 
+void makeActionMenu(void) {
+	uint16 mouseButton;
+	uint16 mouseX;
+	uint16 mouseY;
+
+	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
+
+	if (gameType == Cine::GID_OS) {
+		playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
+
+		if (playerCommand >= 8000) {
+			playerCommand -= 8000;
+			canUseOnObject = 1;
+		}
+	} else {
+		playerCommand =  makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
+	}
+}
+
 uint16 executePlayerInput(void) {
 	uint16 var_5E;
 	uint16 var_2;
@@ -1896,17 +1915,7 @@ uint16 executePlayerInput(void) {
 						makeSystemMenu();
 					}
 
-					if (gameType == Cine::GID_OS) {
-						playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
-
-						if (playerCommand >= 8000) {
-							playerCommand -= 8000;
-							canUseOnObject = 1;
-						}
-					} else {
-						playerCommand =  makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
-					}
-
+					makeActionMenu();
 					makeCommandLine();
 				} else {
 					int16 objIdx;

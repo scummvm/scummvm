@@ -59,6 +59,59 @@ void manageEvents(int count) {
 		case OSystem::EVENT_QUIT:
 			g_system->quit();
 			break;
+		case OSystem::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case 282: // F1
+				if (allowPlayerInput) {
+					playerCommand = 0; // EXAMINE
+					makeCommandLine();
+				}
+				break;
+			case 283: // F2
+				if (allowPlayerInput) {
+					playerCommand = 1; // TAKE
+					makeCommandLine();
+				}
+				break;
+			case 284: // F3
+				if (allowPlayerInput) {
+					playerCommand = 2; // INVENTORY
+					makeCommandLine();
+				}
+				break;
+			case 285: // F4
+				if (allowPlayerInput) {
+					playerCommand = 3; // USE
+					makeCommandLine();
+				}
+				break;
+			case 286: // F5
+				if (allowPlayerInput) {
+					playerCommand = 4; // ACTIVATE
+					makeCommandLine();
+				}
+				break;
+			case 287: // F6
+				if (allowPlayerInput) {
+					playerCommand = 5; // SPEAK
+					makeCommandLine();
+				}
+				break;
+			case 290: // F9
+				if (allowPlayerInput) {
+					makeActionMenu();
+					makeCommandLine();
+				}
+				break;
+			case 291: // F10
+				if (allowPlayerInput) {
+					makeSystemMenu();
+				}
+				break;
+			default:
+				break;
+			}
+			break;
 		default:
 			break;
 		}
