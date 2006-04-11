@@ -110,7 +110,7 @@ uint8 Menu::execute() {
 	_selectedIndex = 0;
 
 	while (mouse.lButton() || mouse.rButton()) {
-		if (events.pollEvent()) {
+		while (events.pollEvent()) {
 			if (events.quitFlag) return MENUITEM_NONE;
 
 			if (mouse.y() < MENUBAR_Y_SIZE)
@@ -155,6 +155,8 @@ uint8 Menu::execute() {
 				if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
 			}
 		}
+
+		system.delayMillis(10);
 	}
 
 	if (_surfaceMenu) delete _surfaceMenu;

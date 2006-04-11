@@ -109,7 +109,7 @@ void Game::execute() {
 		}
 		res.delayList().tick();
 
-		if (events.pollEvent()) {
+		while (events.pollEvent()) {
 			if (events.type() == OSystem::EVENT_KEYDOWN) {
 				uint16 roomNum = r.roomNumber();
 
@@ -171,6 +171,8 @@ void Game::execute() {
 		if (destRoom != 0) {
 			playerChangeRoom();
 		}
+
+		system.delayMillis(10);
 	}
 
 	r.leaveRoom();
