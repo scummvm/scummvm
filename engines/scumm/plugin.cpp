@@ -1278,7 +1278,7 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 	case 5:
 		// FIXME: Fingolfin asks: For which games is this case used? 
 		// Please document this. Also: Why was this case missing in
-		// Engine_SCUMM_create ? 
+		// Engine_SCUMM_create ?
 		strcpy(detectName, g.gameid);
 		break;
 	case 6:
@@ -1295,6 +1295,9 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 	default:
 		return false;
 	}
+
+	if (!detectName[0])
+		return false;
 
 	return true;
 }
