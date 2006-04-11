@@ -249,6 +249,7 @@ private:
 	void blendScreenToDialog();
 #endif
 
+	bool _forceRedraw;
 	bool _initOk;
 
 	const Graphics::Font *_font;

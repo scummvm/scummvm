@@ -112,6 +112,7 @@ void ThemeClassic::closeDialog() {
 		delete _dialog;
 		_dialog = 0;
 	}
+	_forceRedraw = true;
 #endif
 }
 
@@ -124,8 +125,7 @@ void ThemeClassic::clearAll() {
 }
 
 void ThemeClassic::drawAll() {
-	if (!_initOk)
-		return;
+	_forceRedraw = false;
 }
 
 void ThemeClassic::resetDrawArea() {
@@ -140,7 +140,7 @@ void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, kSt
 	
 	restoreBackground(r);
 	
-	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW)) {
+	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		addDirtyRect(r);
 		return;
 	}
@@ -178,7 +178,7 @@ void ThemeClassic::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWi
 
 	restoreBackground(r);
 	
-	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW)) {
+	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		addDirtyRect(r);
 		return;
 	}
