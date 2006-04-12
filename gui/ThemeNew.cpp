@@ -1540,8 +1540,9 @@ OverlayColor ThemeNew::calcCustomColor(OverlayColor col, bool cache) {
 template<class T>
 inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int alpha) {
 	OverlayColor output = 0;
-	output |= ((alpha * ((col1 & T::kRBMask) - (col2 & T::kRBMask)) >> 8) + (col2 & T::kRBMask)) & T::kRBMask;
+	output |= ((alpha * ((col1 & T::kRedMask) - (col2 & T::kRedMask)) >> 8) + (col2 & T::kRedMask)) & T::kRedMask;
 	output |= ((alpha * ((col1 & T::kGreenMask) - (col2 & T::kGreenMask)) >> 8) + (col2 & T::kGreenMask)) & T::kGreenMask;
+	output |= ((alpha * ((col1 & T::kBlueMask) - (col2 & T::kBlueMask)) >> 8) + (col2 & T::kBlueMask)) & T::kBlueMask;
 	return output;
 }
 
@@ -1556,9 +1557,9 @@ OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
 template<class T>
 inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos) {
 	OverlayColor output = 0;
-	output |= ((start & T::kRedMask) + (((((end & T::kRedMask) - (start & T::kRedMask))) * pos >> 12) & T::kRedMask)) & T::kRedMask;
-	output |= ((start & T::kGreenMask) + (((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos >> 12) & T::kGreenMask)) & T::kGreenMask;
-	output |= ((start & T::kBlueMask) + (((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos >> 12) & T::kBlueMask)) & T::kBlueMask;
+	output |= (start + ((((end & T::kRedMask) - (start & T::kRedMask))) * pos >> 12)) & T::kRedMask;
+	output |= (start + ((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos >> 12)) & T::kGreenMask;
+	output |= (start + ((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos >> 12)) & T::kBlueMask;
 	return output;
 }
 
