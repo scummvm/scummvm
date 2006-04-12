@@ -87,7 +87,7 @@ void loadRel(char *pRelName) {
 
 	for (i = 0; i < numEntry; i++) {
 		if (relTable[i].size) {
-			relTable[i].data = (char *)malloc(relTable[i].size);
+			relTable[i].data = (byte *)malloc(relTable[i].size);
 
 			assert(relTable[i].data);
 
@@ -96,17 +96,17 @@ void loadRel(char *pRelName) {
 		}
 	}
 
-#ifdef DUMP_SCRIPTS_OBJ
+#ifdef DUMP_SCRIPTS
 
 	{
-		uint16 i;
-		byte buffer[256];
+		uint16 s;
+		char buffer[256];
 
-		for (i = 0; i < numEntry; i++) {
-			if (relTable[i].var4) {
-				sprintf(buffer, "%s_%03d.txt", pRelName, i);
+		for (s = 0; s < numEntry; s++) {
+			if (relTable[s].size) {
+				sprintf(buffer, "%s_%03d.txt", pRelName, s);
 
-				decompileScript(relTable[i].data, NULL, relTable[i].size, i);
+				decompileScript(relTable[s].data, NULL, relTable[s].size, s);
 				dumpScript(buffer);
 			}
 		}

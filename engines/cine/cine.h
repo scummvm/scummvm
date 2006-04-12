@@ -43,6 +43,8 @@
 #include "cine/gfx.h"
 #include "cine/anim.h"
 
+//#define DUMP_SCRIPTS
+
 namespace Cine {
 
 enum CineGameId {

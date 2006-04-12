@@ -2205,15 +2205,15 @@ void purgeList0(void) {
 
 #ifdef DUMP_SCRIPTS
 
-byte decompileBuffer[10000][1000];
+char decompileBuffer[10000][1000];
 uint16 decompileBufferPosition = 0;
 
-byte bufferDec[256];
+char bufferDec[256];
 
-byte compareString1[256];
-byte compareString2[256];
+char compareString1[256];
+char compareString2[256];
 
-byte *getObjPramName(byte paramIdx) {
+const char *getObjPramName(byte paramIdx) {
 	switch (paramIdx) {
 	case 1:
 		return ".X";
@@ -2234,7 +2234,7 @@ byte *getObjPramName(byte paramIdx) {
 }
 
 void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx) {
-	byte lineBuffer[256];
+	char lineBuffer[256];
 	byte *localScriptPtr = scriptPtr;
 	uint16 exitScript;
 	uint32 position = 0;
@@ -2892,28 +2892,28 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "loadResource(%s)\n", localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position) + 1;
+				position += strlen((char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x3C:
 			{
 				sprintf(lineBuffer, "loadBg(%s)\n",	localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position) + 1;
+				position += strlen((char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x3D:
 			{
 				sprintf(lineBuffer, "loadCt(%s)\n", localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position) + 1;
+				position += strlen((char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case OP_loadPart:
 			{
 				sprintf(lineBuffer, "loadPart(%s)\n", localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position) + 1;
+				position += strlen((char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x40:
@@ -2930,7 +2930,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "loadPrc(%d,%s)\n", param, localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position) + 1;
+				position += strlen((char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case OP_requestCheckPendingDataLoad:	// nop
@@ -2965,7 +2965,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param4 = READ_BE_UINT16)(localScriptPtr + position);
+				param4 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
 				param5 = READ_BE_UINT16(localScriptPtr + position);
@@ -3099,7 +3099,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "comment: %s\n", localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position);
+				position += strlen((char *)localScriptPtr + position);
 				break;
 			}
 		case 0x5A:
@@ -3178,7 +3178,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "loadDat(%s)\n", localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position) + 1;
+				position += strlen((char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x6E:	// nop
@@ -3322,7 +3322,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 				param7 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				sprintf(lineBuffer, "OP_7F(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6, param7);
+				sprintf(lineBuffer, "OP_7F(%d,%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6, param7);
 
 				break;
 			}
@@ -3465,7 +3465,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "ADDBG(%d,%s)\n", param1, localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position);
+				position += strlen((char *)localScriptPtr + position);
 
 				break;
 			}
@@ -3489,7 +3489,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "loadABS(%d,%s)\n", param1, localScriptPtr + position);
 
-				position += strlen(localScriptPtr + position);
+				position += strlen((char *)localScriptPtr + position);
 
 				break;
 			}
@@ -3589,17 +3589,17 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 	} while (!exitScript);
 }
 
-void dumpScript(byte *dumpName) {
-	File *fHandle;
+void dumpScript(char *dumpName) {
+    Common::File fHandle;
 	uint16 i;
 
-	fHandle = fopen(dumpName, "wt+");
+	fHandle.open(dumpName, Common::File::kFileWriteMode);
 
 	for (i = 0; i < decompileBufferPosition; i++) {
-		fprintf(fHandle, decompileBuffer[i]);
+		fHandle.writeString(Common::String(decompileBuffer[i]));
 	}
 
-	fclose(fHandle);
+	fHandle.close();
 
 	decompileBufferPosition = 0;
 }

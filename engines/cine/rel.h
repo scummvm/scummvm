@@ -28,7 +28,7 @@
 namespace Cine {
 
 struct RelObjectScript {
-	char *data;
+	byte *data;
 	uint16 size;
 	uint16 obj1Param1;
 	uint16 obj1Param2;
