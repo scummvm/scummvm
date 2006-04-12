@@ -62,8 +62,8 @@ const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0x11a, 0x11b, SDLK_MENU, 
 #endif
 
 // creator function according to Factory Pattern
-void SymbianActions::init(GameDetector &detector) {
-	_instance = new SymbianActions(detector);
+void SymbianActions::init(const Common::String &gameid) {
+	_instance = new SymbianActions(gameid);
 }
 
 
@@ -83,8 +83,8 @@ int SymbianActions::version() {
 	return ACTION_VERSION;
 }
 
-SymbianActions::SymbianActions(GameDetector &detector) :
-	Actions(detector) {
+SymbianActions::SymbianActions(const Common::String &gameid) :
+	Actions(gameid) {
 	int i;
 
 	for (i = 0; i < ACTION_LAST; i++) {
@@ -121,17 +121,17 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 }
 
 void SymbianActions::initInstanceGame() {
-	bool is_simon = (strncmp(_detector->_gameid.c_str(), "simon", 5) == 0);
-	bool is_sky = (_detector->_gameid == "sky");
-	bool is_queen = (_detector->_gameid == "queen");
-	bool is_gob = (strncmp(_detector->_gameid.c_str(), "gob", 3) == 0);
-	bool is_ite = ((strncmp(_detector->_gameid.c_str(), "ite", 3) == 0) ||
-				  (strncmp(_detector->_gameid.c_str(), "ihnm", 4) == 0));
+	bool is_simon = (strncmp(_gameid.c_str(), "simon", 5) == 0);
+	bool is_sky = (_gameid == "sky");
+	bool is_queen = (_gameid == "queen");
+	bool is_gob = (strncmp(_gameid.c_str(), "gob", 3) == 0);
+	bool is_ite = ((strncmp(_gameid.c_str(), "ite", 3) == 0) ||
+				  (strncmp(_gameid.c_str(), "ihnm", 4) == 0));
 	
 	Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sky || _detector->_gameid == "samnmax" || is_gob)
+	if (is_sky || _gameid == "samnmax" || is_gob)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions

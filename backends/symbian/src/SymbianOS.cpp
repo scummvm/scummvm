@@ -377,7 +377,7 @@ void OSystem_SDL_Symbian::setWindowCaption(const char *caption) {
 }
 
 void OSystem_SDL_Symbian::check_mappings() {
-	if (!GUI::Actions::Instance()->gameDetector()._targetName.size() || GUI::Actions::Instance()->initialized())
+	if (!GUI::Actions::Instance()->_gameid.size() || GUI::Actions::Instance()->initialized())
 		return;
 
 	GUI::Actions::Instance()->initInstanceGame();

@@ -39,8 +39,8 @@ Actions* Actions::Instance() {
 	return _instance;
 }
 
-Actions::Actions(GameDetector &detector) :
-	_detector(&detector), _mapping_active(false), _initialized(false)
+Actions::Actions(const Common::String &gameid) :
+	_gameid(gameid), _mapping_active(false), _initialized(false)
 {
 }
 
@@ -49,15 +49,15 @@ Actions::~Actions() {
 }
 
 // call the correct object creator function according to the Factory Pattern
-void Actions::init(GameDetector &detector) {
+void Actions::init(const Common::String &gameid) {
 #ifdef _WIN32_WCE
 	// For WinCE: now use software + Factory pattern to create correct objects
 	if (!CEDevice::isSmartphone())
-		CEActionsPocket::init(detector);
+		CEActionsPocket::init(gameid);
 	else
-		CEActionsSmartphone::init(detector);
+		CEActionsSmartphone::init(gameid);
 #elif defined(__SYMBIAN32__)
-	SymbianActions::init(detector);
+	SymbianActions::init(gameid);
 #endif
 }
 
@@ -160,10 +160,6 @@ Key& Actions::getKeyAction(ActionType action)
 	return _key_action[action];
 }
 
-// Game detector
-GameDetector& Actions::gameDetector(){
-	return *_detector;
-}
 Actions *Actions::_instance = NULL;
 
 

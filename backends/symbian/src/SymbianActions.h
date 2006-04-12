@@ -26,7 +26,6 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "base/gameDetector.h"
 #include "gui/Key.h"
 #include "gui/Actions.h"
 
@@ -58,7 +57,7 @@ public:
 	bool perform(ActionType action, bool pushed = true);
 	Common::String actionName(ActionType action);
 	int size();
-	static void init(GameDetector &detector);
+	static void init(const Common::String &gameid);
 	void initInstanceMain(OSystem *mainSystem);
 	void initInstanceGame();
 
@@ -69,7 +68,7 @@ public:
 	~SymbianActions();
 
 private:
-	SymbianActions(GameDetector &detector);
+	SymbianActions(const Common::String &gameid);
 	bool _right_click_needed;
 };
 

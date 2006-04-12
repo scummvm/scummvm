@@ -230,11 +230,7 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	return result;
 }
 
-#ifdef _WIN32_WCE
-extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
-#else
 extern "C" int scummvm_main(int argc, char *argv[]) {
-#endif
 	Common::String specialDebug;
 	Common::String command;
 	bool running = true;
@@ -291,14 +287,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	
 
 	// Process the remaining command line settings
-#ifndef _WIN32_WCE
 	GameDetector detector;
-#endif
 	detector.processSettings(command, settings);
 
-#ifdef __SYMBIAN32__
+#if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// init keymap support here: we wanna move this somewhere else?
-	GUI::Actions::init(detector);
+	GUI::Actions::init(detector._gameid);
 #endif
 
 #ifdef PALMOS_68K

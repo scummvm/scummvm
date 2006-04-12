@@ -28,7 +28,6 @@
 #include "common/system.h"
 
 
-#include "base/gameDetector.h"
 #include "wince-sdl.h"
 #include "gui/Key.h"
 
@@ -62,7 +61,7 @@ class CEActionsPocket : public GUI::Actions {
 		String actionName(GUI::ActionType action);
 		int size();
 
-		static void init(GameDetector &detector);
+		static void init(const Common::String &gameid);
 		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 
@@ -77,7 +76,7 @@ class CEActionsPocket : public GUI::Actions {
 
 		~CEActionsPocket();
 	private:
-		CEActionsPocket(GameDetector &detector);
+		CEActionsPocket(const Common::String &gameid);
 		bool _right_click_needed;
 		bool _hide_toolbar_needed;
 		bool _zoom_needed;

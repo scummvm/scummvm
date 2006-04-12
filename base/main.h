@@ -29,10 +29,6 @@
 //
 // The scummvm main entry point, to be invoked by ports
 //
-#ifdef _WIN32_WCE
-extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]);
-#else
 extern "C" int scummvm_main(int argc, char *argv[]);
-#endif
 
 #endif

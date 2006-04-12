@@ -54,8 +54,8 @@ const String pocketActionNames[] = {
 	"Bind Keys"
 };
 
-void CEActionsPocket::init(GameDetector &detector) {
-	_instance = new CEActionsPocket(detector);
+void CEActionsPocket::init(const Common::String &gameid) {
+	_instance = new CEActionsPocket(gameid);
 }
 
 
@@ -75,8 +75,8 @@ int CEActionsPocket::version() {
 	return POCKET_ACTION_VERSION;
 }
 
-CEActionsPocket::CEActionsPocket(GameDetector &detector) :
-GUI::Actions(detector)
+CEActionsPocket::CEActionsPocket(const Common::String &gameid) :
+GUI::Actions(gameid)
 {
 	int i;
 
@@ -98,21 +98,21 @@ void CEActionsPocket::initInstanceMain(OSystem *mainSystem) {
 }
 
 void CEActionsPocket::initInstanceGame() {
-	bool is_simon = (strncmp(_detector->_gameid.c_str(), "simon", 5) == 0);
-	bool is_sword1 = (_detector->_gameid == "sword1");
-	bool is_sword2 = (strcmp(_detector->_gameid.c_str(), "sword2") == 0);
-	bool is_queen = (_detector->_gameid == "queen");
-	bool is_sky = (_detector->_gameid == "sky");
-	bool is_comi = (strncmp(_detector->_gameid.c_str(), "comi", 4) == 0);
-	bool is_gob = (strncmp(_detector->_gameid.c_str(), "gob", 3) == 0);
-	bool is_ite = ((strncmp(_detector->_gameid.c_str(), "ite", 3) == 0) ||
-				  (strncmp(_detector->_gameid.c_str(), "ihnm", 4) == 0));
+	bool is_simon = (strncmp(_gameid.c_str(), "simon", 5) == 0);
+	bool is_sword1 = (_gameid == "sword1");
+	bool is_sword2 = (strcmp(_gameid.c_str(), "sword2") == 0);
+	bool is_queen = (_gameid == "queen");
+	bool is_sky = (_gameid == "sky");
+	bool is_comi = (strncmp(_gameid.c_str(), "comi", 4) == 0);
+	bool is_gob = (strncmp(_gameid.c_str(), "gob", 3) == 0);
+	bool is_ite = ((strncmp(_gameid.c_str(), "ite", 3) == 0) ||
+				  (strncmp(_gameid.c_str(), "ihnm", 4) == 0));
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
 	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob ||
-		_detector->_gameid == "samnmax")
+		_gameid == "samnmax")
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed

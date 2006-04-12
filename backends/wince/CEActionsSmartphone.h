@@ -30,7 +30,6 @@
 #include "common/system.h"
 
 
-#include "base/gameDetector.h"
 #include "wince-sdl.h"
 #include "gui/Key.h"
 
@@ -61,7 +60,7 @@ class CEActionsSmartphone : public GUI::Actions {
 		bool perform(GUI::ActionType action, bool pushed = true);
 		String actionName(GUI::ActionType action);
 		int size();
-		static void init(GameDetector &detector);
+		static void init(const Common::String &gameid);
 		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 
@@ -71,7 +70,7 @@ class CEActionsSmartphone : public GUI::Actions {
 
 		~CEActionsSmartphone();
 	private:
-		CEActionsSmartphone(GameDetector &detector);
+		CEActionsSmartphone(const Common::String &gameid);
 		bool _right_click_needed;
 		OSystem_WINCE3 *_CESystem;
 	};

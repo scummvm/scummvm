@@ -24,7 +24,6 @@
 #include "wince-sdl.h"
 
 #include "common/util.h"
-#include "base/gameDetector.h"
 #include "base/engine.h"
 #include "base/main.h"
 #include "base/plugins.h"
@@ -68,7 +67,6 @@ using namespace CEGUI;
 
 // Given to the true main, needed for backend adaptation
 
-static GameDetector _gameDetector;
 static FILE *stdout_file;
 static FILE *stderr_file;
 
@@ -144,7 +142,6 @@ int SDL_main(int argc, char **argv) {
 	/* Avoid print problems - this file will be put in RAM anyway */
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
-	GUI::Actions::init(_gameDetector);
 
 	int rest = 0;
 
@@ -525,7 +522,8 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
 
 void OSystem_WINCE3::get_sample_rate() {
 	// Force at least medium quality FM synthesis for FOTAQ
-	if (_gameDetector._gameid == "queen") {
+	Common::String gameid(GUI::Actions::Instance()->_gameid);
+	if (gameid == "queen") {
 		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) ||
 			(ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
 			ConfMan.set("FM_medium_quality", true);
@@ -533,12 +531,12 @@ void OSystem_WINCE3::get_sample_rate() {
 		}
 	}
 	// See if the output frequency is forced by the game
-	if ((_gameDetector._gameid == "ft" ||
-		_gameDetector._gameid == "dig" ||
-		_gameDetector._gameid == "comi" ||
-		_gameDetector._gameid == "queen" ||
-		strncmp(_gameDetector._gameid.c_str(), "sword", 5) == 0 ||
-		strncmp(_gameDetector._gameid.c_str(), "sky", 3) == 0)
+	if ((gameid == "ft" ||
+		gameid == "dig" ||
+		gameid == "comi" ||
+		gameid == "queen" ||
+		strncmp(gameid.c_str(), "sword", 5) == 0 ||
+		strncmp(gameid.c_str(), "sky", 3) == 0)
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
@@ -655,7 +653,9 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 void OSystem_WINCE3::check_mappings() {
 		CEActionsPocket *instance;
 
-		if (!_gameDetector._gameid.size() || GUI_Actions::Instance()->initialized())
+		Common::String gameid(GUI::Actions::Instance()->_gameid);
+
+		if (!gameid.size() || GUI_Actions::Instance()->initialized())
 			return;
 
 		GUI_Actions::Instance()->initInstanceGame();
@@ -698,7 +698,7 @@ void OSystem_WINCE3::check_mappings() {
 		}
 
 		// Extra warning for Zak Mc Kracken
-		if (strncmp(_gameDetector._gameid.c_str(), "zak", 3) == 0 &&
+		if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
 			!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
 			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
 			alert.runModal();
@@ -707,8 +707,10 @@ void OSystem_WINCE3::check_mappings() {
 }
 
 void OSystem_WINCE3::update_game_settings() {
+	Common::String gameid(GUI::Actions::Instance()->_gameid);
+
 	// Finish panel initialization
-	if (!_panelInitialized && _gameDetector._gameid.size()) {
+	if (!_panelInitialized && gameid.size()) {
 		Panel *panel;
 		_panelInitialized = true;
 		// Add the main panel
@@ -731,7 +733,7 @@ void OSystem_WINCE3::update_game_settings() {
 		_toolbarHandler.setVisible(true);
 
 		// Keyboard is active for Monkey 1 or 2 initial copy-protection
-		if (strncmp(_gameDetector._gameid.c_str(), "monkey", 6) == 0) {
+		if (strncmp(gameid.c_str(), "monkey", 6) == 0) {
 			_monkeyKeyboard = true;
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}

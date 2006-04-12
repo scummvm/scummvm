@@ -26,7 +26,6 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "base/gameDetector.h"
 #include "gui/Key.h"
 namespace GUI {
 
@@ -38,7 +37,7 @@ class Actions {
 
 public:
 	static Actions* Instance();
-	static void init(GameDetector &detector);
+	static void init(const Common::String &gameid);
 	virtual void initInstanceMain(OSystem *mainSystem);
 	virtual void initInstanceGame();
 	bool initialized();
@@ -66,13 +65,16 @@ public:
 
 	virtual ~Actions();
 
-    // Game detector
-    GameDetector& gameDetector();
+public:
+	// Since _gameid is const it's safe to let the public read it.
+	const Common::String _gameid;
+
 protected:
-	Actions(GameDetector &detector);
+	Actions(const Common::String &gameid);
+
+protected:
 	static Actions* _instance;
 	OSystem *_mainSystem;
-	GameDetector *_detector;
 	Key _key_action[MAX_ACTIONS + 1];
 	bool _action_enabled[MAX_ACTIONS + 1];
 	unsigned int _action_mapping[MAX_ACTIONS + 1];
