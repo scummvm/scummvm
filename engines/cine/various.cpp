@@ -2384,6 +2384,7 @@ void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color
 
 	if (!messagePtr) {
 		freeOverlay(msgIdx, 2);
+		return;
 	}
 
 	var20 += strlen(messagePtr);
