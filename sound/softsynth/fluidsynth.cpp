@@ -110,7 +110,7 @@ int MidiDriver_FluidSynth::open() {
 		return MERR_ALREADY_OPEN;
 
 	if (!ConfMan.hasKey("soundfont"))
-		error("FluidSynth recquires a 'soundfont' setting");
+		error("FluidSynth requires a 'soundfont' setting");
 
 	_settings = new_fluid_settings();
 
