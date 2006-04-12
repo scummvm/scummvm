@@ -218,9 +218,7 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
-		
-		// FIXME: Shouldn't we add a '+ "."' after fname here?
-		fname = (*_filesMap)[fname];
+		fname = (*_filesMap)[fname + "."];
 		debug(3, "Opening hashed: %s", fname.c_str());
 		_handle = fopen(fname.c_str(), modeStr);
 	} else {
