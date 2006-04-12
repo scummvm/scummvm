@@ -1178,11 +1178,11 @@ void Inter_v2::o2_initMult(void) {
 	animDataVar = _vm->_parse->parseVarIndex();
 
 	if (_vm->_mult->_objects == 0) {
-		// GOB2: _vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 2];
+		_vm->_mult->_renderData2 = new Mult::Mult_Object*[_vm->_mult->_objCount];
 		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
 		if (_vm->_inter->_terminate)
 			return;
-		warning("GOB2 Stub! dword_2FC74 = new int8[_vm->_mult->_objCount];");
+		_vm->_mult->_orderArray = new int8[_vm->_mult->_objCount];
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
 
 		for (i = 0; i < _vm->_mult->_objCount; i++) {
@@ -1221,7 +1221,7 @@ void Inter_v2::o2_initMult(void) {
 			_vm->_anim->_animSurf = new Video::SurfaceDesc;
 			memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
 			_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
-			_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FF8) - 1;
+			_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FFF8) - 1;
 			_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
 			_vm->_anim->_animSurf->vidPtr += 0x0C000;
 		} else {

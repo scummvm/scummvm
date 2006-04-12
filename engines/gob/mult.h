@@ -45,6 +45,11 @@ public:
 		int8 newAnimation;
 		byte intersected;
 		int8 newCycle;
+		int8 somethingAnimation; // New in GOB2
+		int8 somethingLayer;     // New in GOB2
+		int8 somethingFrame;     // New in GOB2
+		int8 someFlag;           // New in GOB2
+		int8 field_F;            // New in GOB2
 	} GCC_PACK;
 
 	struct Mult_Object {
@@ -56,6 +61,11 @@ public:
 		int16 lastRight;
 		int16 lastTop;
 		int16 lastBottom;
+		int8 someFlag;         // New in GOB2
+		int16 somethingLeft;   // New in GOB2
+		int16 somethingTop;    // New in GOB2
+		int16 somethingRight;  // New in GOB2
+		int16 somethingBottom; // New in GOB2
 	};
 
 	struct Mult_StaticKey {
@@ -110,6 +120,7 @@ public:
 
 	Mult_Object *_objects;
 	int16 *_renderData;
+	Mult_Object **_renderData2;
 	int16 _objCount;
 	Video::SurfaceDesc *_underAnimSurf;
 
@@ -173,12 +184,11 @@ public:
 	int16 _sndKeysCount;
 	Mult_SndKey *_sndKeys;
 
+	int8 *_orderArray;
+
 	void zeroMultData(void);
 	void freeMultKeys(void);
 	void checkFreeMult(void);
-	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
-				  char handleMouse);
-	void animate(void);
 	void interGetObjAnimSize(void);
 	void freeMult(void);
 	void interLoadMult(void);
@@ -189,6 +199,9 @@ public:
 
 	virtual void setMultData(uint16 multindex) = 0;
 	virtual void loadMult(int16 resId) = 0;
+	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
+				  char handleMouse) = 0;
+	virtual void animate(void) = 0;
 
 	Mult(GobEngine *vm);
 	virtual ~Mult() {};
@@ -197,13 +210,13 @@ protected:
 	Video::Color _fadePal[5][16];
 	GobEngine *_vm;
 
-	char drawStatics(char stop);
-	void drawAnims(void);
-	void drawText(char *pStop, char *pStopNoClear);
-	char prepPalAnim(char stop);
-	void doPalAnim(void);
-	char doFadeAnim(char stop);
-	char doSoundAnim(char stop);
+	virtual char drawStatics(char stop) = 0;
+	virtual char drawAnims(char stop) = 0;
+	virtual void drawText(char *pStop, char *pStopNoClear) = 0;
+	virtual char prepPalAnim(char stop) = 0;
+	virtual void doPalAnim(void) = 0;
+	virtual char doFadeAnim(char stop) = 0;
+	virtual char doSoundAnim(char stop) = 0;
 };
 
 class Mult_v1 : public Mult {
@@ -213,6 +226,18 @@ public:
 
 	virtual void setMultData(uint16 multindex);
 	virtual void loadMult(int16 resId);
+	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
+				  char handleMouse);
+	virtual void animate(void);
+
+protected:
+	virtual char drawStatics(char stop);
+	virtual char drawAnims(char stop);
+	virtual void drawText(char *pStop, char *pStopNoClear);
+	virtual char prepPalAnim(char stop);
+	virtual void doPalAnim(void);
+	virtual char doFadeAnim(char stop);
+	virtual char doSoundAnim(char stop);
 };
 
 class Mult_v2 : public Mult_v1 {
@@ -250,6 +275,7 @@ public:
 		int16 frameRate;      
 
 		Video::Color fadePal[5][16];
+		int16 field_124[4][4]; // Not sure here either
 		int16 palAnimIndices[4]; // Not sure here either
 		int16 frameStart;
 
@@ -278,6 +304,21 @@ public:
 
 	virtual void setMultData(uint16 multindex);
 	virtual void loadMult(int16 resId);
+	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
+				  char handleMouse);
+	virtual void animate(void);
+
+protected:
+	virtual char drawStatics(char stop);
+	virtual char drawAnims(char stop);
+	virtual void drawText(char *pStop, char *pStopNoClear);
+	virtual char prepPalAnim(char stop);
+	virtual void doPalAnim(void);
+	virtual char doFadeAnim(char stop);
+	virtual char doSoundAnim(char stop);
+
+	void sub_62DD(int16 index);
+	void sub_6A35(void);
 };
 
 }				// End of namespace Gob
