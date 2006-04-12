@@ -1995,7 +1995,7 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 	if (_currentScript != 0xFF) {
 		ScriptSlot *ss = &vm.slot[_currentScript];
 		sprintf(buf2, "(%d:%d:0x%lX): %s", _roomResource,
-			ss->number, _scriptPointer - _scriptOrgPointer, buf1);
+			ss->number, (long)(_scriptPointer - _scriptOrgPointer), buf1);
 	} else {
 		strcpy(buf2, buf1);
 	}

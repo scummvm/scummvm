@@ -612,7 +612,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 }
 
 void ScummEngine_v6::o6_invalid() {
-	error("Invalid opcode '%x' at %lx", _opcode, _scriptPointer - _scriptOrgPointer);
+	error("Invalid opcode '%x' at %lx", _opcode, (long)(_scriptPointer - _scriptOrgPointer));
 }
 
 void ScummEngine_v6::o6_byteArrayRead() {

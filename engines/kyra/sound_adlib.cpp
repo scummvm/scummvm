@@ -769,7 +769,7 @@ void AdlibDriver::writeOPL(byte reg, byte val) {
 }
 
 void AdlibDriver::initChannel(Channel &channel) {
-	debugC(9, kDebugLevelSound, "initChannel(%lu)", &channel - _channels);
+	debugC(9, kDebugLevelSound, "initChannel(%lu)", (long)(&channel - _channels));
 	memset(&channel.dataptr, 0, sizeof(Channel) - ((char*)&channel.dataptr - (char*)&channel));
 
 	channel.tempo = 0xFF;
@@ -781,7 +781,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
-	debugC(9, kDebugLevelSound, "noteOff(%lu)", &channel - _channels);
+	debugC(9, kDebugLevelSound, "noteOff(%lu)", (long)(&channel - _channels));
 
 	// The control channel has no corresponding Adlib channel
 
@@ -860,7 +860,7 @@ uint16 AdlibDriver::getRandomNr() {
 }
 
 void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
-	debugC(9, kDebugLevelSound, "setupDuration(%d, %lu)", duration, &channel - _channels);
+	debugC(9, kDebugLevelSound, "setupDuration(%d, %lu)", duration, (long)(&channel - _channels));
 	if (channel.durationRandomness) {
 		channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 		return;
@@ -875,7 +875,7 @@ void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 // to noteOn(), which will always play the current note.
 
 void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
-	debugC(9, kDebugLevelSound, "setupNote(%d, %lu)", rawNote, &channel - _channels);
+	debugC(9, kDebugLevelSound, "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
 
 	channel.rawNote = rawNote;
 
@@ -929,7 +929,7 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 }
 
 void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel) {
-	debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, &channel - _channels);
+	debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
 	// Keyboard Scaling Rate / Modulator Frequency Multiple
 	writeOPL(0x20 + regOffset, *dataptr++);
@@ -976,7 +976,7 @@ void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &chan
 // primary effect 2.
 
 void AdlibDriver::noteOn(Channel &channel) {
-	debugC(9, kDebugLevelSound, "noteOn(%lu)", &channel - _channels);
+	debugC(9, kDebugLevelSound, "noteOn(%lu)", (long)(&channel - _channels));
 
 	// The "note on" bit is set, and the current note is played.
 
@@ -990,7 +990,7 @@ void AdlibDriver::noteOn(Channel &channel) {
 }
 
 void AdlibDriver::adjustVolume(Channel &channel) {
-	debugC(9, kDebugLevelSound, "adjustVolume(%lu)", &channel - _channels);
+	debugC(9, kDebugLevelSound, "adjustVolume(%lu)", (long)(&channel - _channels));
 	// Level Key Scaling / Total Level
 
 	writeOPL(0x43 + _regOffset[_curChannel], calculateOpLevel2(channel));

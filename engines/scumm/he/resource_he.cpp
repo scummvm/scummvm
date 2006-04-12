@@ -94,13 +94,13 @@ void ResExtractor::setCursor(int id) {
 	int keycolor = 0;
 	CachedCursor *cc = findCachedCursor(id);
 	if (cc != NULL) {
-		debug(7, "Found cursor %d in cache slot %lu", id, cc - _cursorCache);
+		debug(7, "Found cursor %d in cache slot %lu", id, (long)(cc - _cursorCache));
 	} else {
 		cc = getCachedCursorSlot();
 		assert(cc && !cc->valid);
 		cursorsize = extractResource(id, &cursorRes);
 		convertIcons(cursorRes, cursorsize, &cc->bitmap, &cc->w, &cc->h, &cc->hotspot_x, &cc->hotspot_y, &keycolor, &cc->palette, &cc->palSize);
-		debug(7, "Adding cursor %d to cache slot %lu", id, cc - _cursorCache);
+		debug(7, "Adding cursor %d to cache slot %lu", id, (long)(cc - _cursorCache));
 		free(cursorRes);
 		cc->valid = true;
 		cc->id = id;
