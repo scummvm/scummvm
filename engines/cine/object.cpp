@@ -306,82 +306,82 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	}
 }
 
-byte compareObjectParam(byte objIdx, byte param1, int16 param2) {
+byte compareObjectParam(byte objIdx, byte type, int16 value) {
 	byte compareResult = 0;
 
-	switch (param1 - 1) {
+	switch (type - 1) {
 	case 0:
-		if (objectTable[objIdx].x == param2) {
-			compareResult |= 1;
+		if (objectTable[objIdx].x == value) {
+			compareResult |= kCmpEQ;
 		}
 
-		if (objectTable[objIdx].x > param2) {
-			compareResult |= 2;
+		if (objectTable[objIdx].x > value) {
+			compareResult |= kCmpGT;
 		}
 
-		if (objectTable[objIdx].x < param2) {
-			compareResult |= 4;
+		if (objectTable[objIdx].x < value) {
+			compareResult |= kCmpLT;
 		}
 
 		break;
 	case 1:
-		if (objectTable[objIdx].y == param2) {
-			compareResult |= 1;
+		if (objectTable[objIdx].y == value) {
+			compareResult |= kCmpEQ;
 		}
 
-		if (objectTable[objIdx].y > param2) {
-			compareResult |= 2;
+		if (objectTable[objIdx].y > value) {
+			compareResult |= kCmpGT;
 		}
 
-		if (objectTable[objIdx].y < param2) {
-			compareResult |= 4;
+		if (objectTable[objIdx].y < value) {
+			compareResult |= kCmpLT;
 		}
 
 		break;
 	case 2:
-		if (objectTable[objIdx].mask == param2) {
-			compareResult |= 1;
+		if (objectTable[objIdx].mask == value) {
+			compareResult |= kCmpEQ;
 		}
 
-		if (objectTable[objIdx].mask > param2) {
-			compareResult |= 2;
+		if (objectTable[objIdx].mask > value) {
+			compareResult |= kCmpGT;
 		}
 
-		if (objectTable[objIdx].mask < param2) {
-			compareResult |= 4;
+		if (objectTable[objIdx].mask < value) {
+			compareResult |= kCmpLT;
 		}
 
 		break;
 	case 3:
-		if (objectTable[objIdx].frame == param2) {
-			compareResult |= 1;
+		if (objectTable[objIdx].frame == value) {
+			compareResult |= kCmpEQ;
 		}
 
-		if (objectTable[objIdx].frame > param2) {
-			compareResult |= 2;
+		if (objectTable[objIdx].frame > value) {
+			compareResult |= kCmpGT;
 		}
 
-		if (objectTable[objIdx].frame < param2) {
-			compareResult |= 4;
+		if (objectTable[objIdx].frame < value) {
+			compareResult |= kCmpLT;
 		}
 
 		break;
 	case 4:
-		if (objectTable[objIdx].costume == param2) {
-			compareResult |= 1;
+		if (objectTable[objIdx].costume == value) {
+			compareResult |= kCmpEQ;
 		}
 
-		if (objectTable[objIdx].costume > param2) {
-			compareResult |= 2;
+		if (objectTable[objIdx].costume > value) {
+			compareResult |= kCmpGT;
 		}
 
-		if (objectTable[objIdx].costume < param2) {
-			compareResult |= 4;
+		if (objectTable[objIdx].costume < value) {
+			compareResult |= kCmpLT;
 		}
 
 		break;
 	default:
-		error("Unsupported compare type: %d in compareObjectParam", param1 - 1);
+		error("Unsupported compare type: %d in compareObjectParam", type - 1);
 	}
 
 	return compareResult;

@@ -87,6 +87,11 @@ enum {
 	kCineDebugScript = 1 << 0
 };
 
+enum {
+	kCmpEQ = (1 << 0),
+	kCmpGT = (1 << 1),
+	kCmpLT = (1 << 2)
+};
 
 
 extern Common::SaveFileManager *g_saveFileMan; // TEMP

@@ -34,12 +34,6 @@
 
 namespace Cine {
 
-enum {
-	kCmpEQ = (1 << 0),
-	kCmpGT = (1 << 1),
-	kCmpLT = (1 << 2)
-};
-
 prcLinkedListStruct *_currentScriptElement;
 byte *_currentScriptPtr;
 uint16 _currentScriptParams;
@@ -982,14 +976,7 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 	for (i = 0; i < numZones; i++) {
 		int16 idx;
 
-		// if (gameType == GAME_OS)
-		{
-			idx = getZoneFromPositionRaw(page3Raw, lx + i, ly, 320);
-		}
-		/*  else
-		 * {
-		 * idx = getZoneFromPosition(page3, lx + i, ly, 160);
-		 * } */
+		idx = getZoneFromPositionRaw(page3Raw, lx + i, ly, 320);
 
 		assert(idx >= 0 && idx <= NUM_MAX_ZONE);
 
