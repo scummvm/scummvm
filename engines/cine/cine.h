@@ -83,6 +83,12 @@ enum {
 	MOUSE_CURSOR_CROSS
 };
 
+enum {
+	kCineDebugScript = 1 << 0
+};
+
+
+
 extern Common::SaveFileManager *g_saveFileMan; // TEMP
 
 } // End of namespace Cine

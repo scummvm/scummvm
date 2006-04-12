@@ -822,9 +822,7 @@ uint16 computeScriptStackSub(byte mode, byte *scriptPtr, int16 *stackPtr, uint16
 			}
 		default:
 			{
-				error
-				    ("Unsupported opcode %X in computeScriptStack",
-				    opcode - 1);
+				error("Unsupported opcode %X in computeScriptStack", opcode - 1);
 			}
 		}
 
@@ -900,22 +898,6 @@ void addScriptToList0(uint16 idx) {
 	pNewElement->scriptPtr = scriptTable[idx].ptr;
 	pNewElement->scriptIdx = idx;
 }
-
-#ifdef _DEBUG
-#define DEBUG_SCRIPT debugScript
-void debugScript(int currentLine, const char *string, ...) {
-	va_list va;
-
-	va_start(va, string);
-	vprintf(string, va);
-	va_end(va);
-	printf("\n");
-}
-#else
-#define DEBUG_SCRIPT debugScriptInline
-void debugScriptInline(int currentLine, const char *string, ...) {
-}
-#endif
 
 int16 endScript0(uint16 scriptIdx) {
 	prcLinkedListStruct *currentHead = &globalScriptsHead;
@@ -1046,7 +1028,7 @@ void o1_modifyObjectParam() {
 	byte paramIdx = getNextByte();
 	int16 newValue = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
+	debugC(5, kCineDebugScript, "Line: %d: modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _currentLine, objIdx, paramIdx, newValue);
 
 	modifyObjectParam(objIdx, paramIdx, newValue);
 }
@@ -1056,7 +1038,7 @@ void o1_getObjectParam() {
 	byte paramIdx = getNextByte();
 	byte newValue = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", objIdx, paramIdx, newValue);
+	debugC(5, kCineDebugScript, "Line: %d: getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", _currentLine, objIdx, paramIdx, newValue);
 
 	_currentScriptElement->localVars[newValue] = getObjectParam(objIdx, paramIdx);
 }
@@ -1066,7 +1048,7 @@ void o1_addObjectParam() {
 	byte paramIdx = getNextByte();
 	int16 newValue = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
+	debugC(5, kCineDebugScript, "Line: %d: addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _currentLine, objIdx, paramIdx, newValue);
 
 	addObjectParam(objIdx, paramIdx, newValue);
 }
@@ -1076,7 +1058,7 @@ void o1_subObjectParam() {
 	byte paramIdx = getNextByte();
 	int16 newValue = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
+	debugC(5, kCineDebugScript, "Line: %d: subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _currentLine, objIdx, paramIdx, newValue);
 
 	subObjectParam(objIdx, paramIdx, newValue);
 }
@@ -1094,7 +1076,7 @@ void o1_compareObjectParam() {
 	byte param1 = getNextByte();
 	int16 param2 = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "compareObjectParam(objIdx:%d,type:%d,value:%d)", objIdx, param1, param2);
+	debugC(5, kCineDebugScript, "Line: %d: compareObjectParam(objIdx:%d,type:%d,value:%d)", _currentLine, objIdx, param1, param2);
 
 	_currentScriptElement->compareResult = compareObjectParam(objIdx, param1, param2);
 }
@@ -1106,7 +1088,7 @@ void o1_setupObject() {
 	int16 param3 = getNextWord();
 	int16 param4 = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "setupObject(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
+	debugC(5, kCineDebugScript, "Line: %d: setupObject(objIdx:%d,%d,%d,%d,%d)", _currentLine, objIdx, param1, param2, param3, param4);
 
 	setupObject(objIdx, param1, param2, param3, param4);
 }
@@ -1118,7 +1100,7 @@ void o1_checkCollision() {
 	int16 param3 = getNextWord();
 	int16 param4 = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "checkCollision(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
+	debugC(5, kCineDebugScript, "Line: %d: checkCollision(objIdx:%d,%d,%d,%d,%d)", _currentLine, objIdx, param1, param2, param3, param4);
 
 	_currentScriptElement->compareResult = checkCollision(objIdx, param1, param2, param3, param4);
 }
@@ -1133,33 +1115,33 @@ void o1_loadVar() {
 
 		switch (varType) {
 		case 1:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = var[%d]", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = var[%d]", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->localVars[varIdx] = _currentScriptElement->localVars[dataIdx];
 			break;
 		case 2:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = globalVars[%d]", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = globalVars[%d]", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->localVars[varIdx] = globalVars[dataIdx];
 			break;
 		case 3:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = mouseX", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = mouseX", _currentLine, varIdx);
 			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&var, (uint16 *)&dummyU16);
 			_currentScriptElement->localVars[varIdx] = var;
 			break;
 		case 4:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = mouseY", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = mouseY", _currentLine, varIdx);
 			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&dummyU16, (uint16 *)&var);
 			_currentScriptElement->localVars[varIdx] = var;
 			break;
 		case 5:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = rand mod %d", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = rand mod %d", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->localVars[varIdx] = rand() % dataIdx;
 			break;
 		case 8:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = file[%d].packedSize", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].packedSize", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->localVars[varIdx] = partBuffer[dataIdx].packedSize;
 			break;
 		case 9:
-			DEBUG_SCRIPT(_currentLine, "var[%d] = file[%d].unpackedSize", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].unpackedSize", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
 			break;
 		default:
@@ -1168,7 +1150,7 @@ void o1_loadVar() {
 	} else {
 		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] = %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] = %d", _currentLine, varIdx, value);
 		_currentScriptElement->localVars[varIdx] = value;
 	}
 }
@@ -1180,12 +1162,12 @@ void o1_addVar() {
 	if (varType) {
 		byte dataIdx = getNextByte();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] += var[%d]", varIdx, dataIdx);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] += var[%d]", _currentLine, varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] += _currentScriptElement->localVars[dataIdx];
 	} else {
 		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] += %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] += %d", _currentLine, varIdx, value);
 		_currentScriptElement->localVars[varIdx] += value;
 	}
 }
@@ -1197,12 +1179,12 @@ void o1_subVar() {
 	if (varType) {
 		byte dataIdx = getNextByte();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] -= var[%d]", varIdx, dataIdx);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] -= var[%d]", _currentLine, varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] -= _currentScriptElement->localVars[dataIdx];
 	} else {
 		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] -= %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] -= %d", _currentLine, varIdx, value);
 		_currentScriptElement->localVars[varIdx] -= value;
 	}
 }
@@ -1214,12 +1196,12 @@ void o1_mulVar() {
 	if (varType) {
 		byte dataIdx = getNextByte();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] *= var[%d]", varIdx, dataIdx);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] *= var[%d]", _currentLine, varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] *= _currentScriptElement->localVars[dataIdx];
 	} else {
 		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] *= %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] *= %d", _currentLine, varIdx, value);
 		_currentScriptElement->localVars[varIdx] *= value;
 	}
 }
@@ -1231,12 +1213,12 @@ void o1_divVar() {
 	if (varType) {
 		byte dataIdx = getNextByte();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] /= var[%d]", varIdx, dataIdx);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] /= var[%d]", _currentLine, varIdx, dataIdx);
 		_currentScriptElement->localVars[varIdx] /= _currentScriptElement->localVars[dataIdx];
 	} else {
 		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "var[%d] /= %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] /= %d", _currentLine, varIdx, value);
 		_currentScriptElement->localVars[varIdx] /= value;
 	}
 }
@@ -1254,18 +1236,18 @@ void o1_compareVar() {
 			assert(varIdx < 50);
 			assert(dataIdx < 50);
 
-			DEBUG_SCRIPT(_currentLine, "compare var[%d] and var[%d]", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and var[%d]", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], _currentScriptElement->localVars[dataIdx]);
 		} else if (varType == 2) {
 			assert(varIdx < 50);
 
-			DEBUG_SCRIPT(_currentLine, "compare var[%d] and globalVar[%d]", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and globalVar[%d]", _currentLine, varIdx, dataIdx);
 			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], globalVars[dataIdx]);
 		}
 	} else {
 		int16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "compare var[%d] and %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and %d", _currentLine, varIdx, value);
 		_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], value);
 	}
 }
@@ -1275,7 +1257,7 @@ void o1_modifyObjectParam2() {
 	byte paramIdx = getNextByte();
 	byte newValue = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", objIdx, paramIdx, newValue);
+	debugC(5, kCineDebugScript, "Line: %d: modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", _currentLine, objIdx, paramIdx, newValue);
 
 	modifyObjectParam(objIdx, paramIdx, _currentScriptElement->localVars[newValue]);
 }
@@ -1284,68 +1266,68 @@ void o1_loadMask0() {
 	// OP_loadV7Element
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "addSpriteOverlay(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: addSpriteOverlay(%d)", _currentLine, param);
 	loadOverlayElement(param, 0);
 }
 
 void o1_unloadMask0() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "removeSpriteOverlay(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay(%d)", _currentLine, param);
 	freeOverlay(param, 0);
 }
 
 void o1_addToBgList() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "addToBGList(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: addToBGList(%d)", _currentLine, param);
 	addToBGList(param);
 }
 
 void o1_loadMask1() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "addOverlay1(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: addOverlay1(%d)", _currentLine, param);
 	loadOverlayElement(param, 1);
 }
 
 void o1_unloadMask1() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "removeOverlay1(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: removeOverlay1(%d)", _currentLine, param);
 	freeOverlay(param, 1);
 }
 
 void o1_loadMask4() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "addOverlayType4(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: addOverlayType4(%d)", _currentLine, param);
 	loadOverlayElement(param, 4);
 }
 
 void o1_unloadMask4() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "removeSpriteOverlay4(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay4(%d)", _currentLine, param);
 	freeOverlay(param, 4);
 }
 
 void o1_addSpriteFilledToBgList() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "op1A(%d) -> TODO !", param);
+	debugC(5, kCineDebugScript, "Line: %d: op1A(%d) -> TODO !", _currentLine, param);
 	addSpriteFilledToBGList(param);
 }
 
 void o1_op1B() {
-	DEBUG_SCRIPT(_currentLine, "closeEngine7");
+	debugC(5, kCineDebugScript, "Line: %d: closeEngine7", _currentLine);
 	closeEngine7();
 }
 
 void o1_label() {
 	byte labelIdx = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "label(%d)", labelIdx);
+	debugC(5, kCineDebugScript, "Line: %d: label(%d)", _currentLine, labelIdx);
 	_currentScriptElement->stack[labelIdx] = _currentPosition;
 }
 
@@ -1354,7 +1336,7 @@ void o1_goto() {
 
 	assert(_currentScriptElement->stack[labelIdx] != -1);
 
-	DEBUG_SCRIPT(_currentLine, "goto label(%d)", labelIdx);
+	debugC(5, kCineDebugScript, "Line: %d: goto label(%d)", _currentLine, labelIdx);
 	_currentPosition = _currentScriptElement->stack[labelIdx];
 }
 
@@ -1364,10 +1346,10 @@ void o1_gotoIfSup() {
 	if (_currentScriptElement->compareResult == kCmpGT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(>) goto %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto %d (true)", _currentLine, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(>) goto %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1377,10 +1359,10 @@ void o1_gotoIfSupEqu() {
 	if (_currentScriptElement->compareResult & (kCmpGT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(>=) goto %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto %d (true)", _currentLine, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(>=) goto %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1390,10 +1372,10 @@ void o1_gotoIfInf() {
 	if (_currentScriptElement->compareResult == kCmpLT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(<) goto %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto %d (true)", _currentLine, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(<) goto %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1403,10 +1385,10 @@ void o1_gotoIfInfEqu() {
 	if (_currentScriptElement->compareResult & (kCmpLT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(<=) goto %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto %d (true)", _currentLine, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(<=) goto %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1416,10 +1398,10 @@ void o1_gotoIfEqu() {
 	if (_currentScriptElement->compareResult == kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(==) goto %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto %d (true)", _currentLine, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(==) goto %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1429,10 +1411,10 @@ void o1_gotoIfDiff() {
 	if (_currentScriptElement->compareResult != kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(!=) goto %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto %d (true)", _currentLine, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(!=) goto %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1440,7 +1422,7 @@ void o1_removeLabel() {
 	// TODO: verify this
 	byte labelIdx = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "removeLabel(%d)", labelIdx);
+	debugC(5, kCineDebugScript, "Line: %d: removeLabel(%d)", _currentLine, labelIdx);
 	_currentScriptElement->stack[labelIdx] = -1;
 }
 
@@ -1453,10 +1435,10 @@ void o1_loop() {
 	if (_currentScriptElement->localVars[varIdx] >= 0) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "loop(var[%]) goto %d (continue)", varIdx, labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: loop(var[%d]) goto %d (continue)", _currentLine, varIdx, labelIdx);
 		_currentPosition = _currentScriptElement->stack[labelIdx];
 	} else {
-		DEBUG_SCRIPT(_currentLine, "loop(var[%]) goto %d (stop)", varIdx, labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: loop(var[%d]) goto %d (stop)", _currentLine, varIdx, labelIdx);
 	}
 }
 
@@ -1466,14 +1448,14 @@ void o1_startGlobalScript() {
 
 	assert(param < NUM_MAX_SCRIPT);
 
-	DEBUG_SCRIPT(_currentLine, "startScript(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _currentLine, param);
 	addScriptToList0(param);
 }
 
 void o1_endGlobalScript() {
 	byte scriptIdx = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "stopGlobalScript(%d)", scriptIdx);
+	debugC(5, kCineDebugScript, "Line: %d: stopGlobalScript(%d)", _currentLine, scriptIdx);
 	stopGlobalScript(scriptIdx);
 }
 
@@ -1481,14 +1463,14 @@ void o1_loadAnim() {
 	// OP_loadResource
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadResource(\"%s\")", param);
+	debugC(5, kCineDebugScript, "Line: %d: loadResource(\"%s\")", _currentLine, param);
 	loadResource(param);
 }
 
 void o1_loadBg() {
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadBg(\"%s\")", param);
+	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _currentLine, param);
 
 	loadBg(param);
 	closeEngine7();
@@ -1498,19 +1480,19 @@ void o1_loadBg() {
 void o1_loadCt() {
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadCt(\"%s\")", param);
+	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _currentLine, param);
 	loadCt(param);
 }
 
 void o1_loadPart() {
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadPart(\"%s\")", param);
+	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _currentLine, param);
 	loadPart(param);
 }
 
 void o1_closePart() {
-	DEBUG_SCRIPT(_currentLine, "closePart");
+	debugC(5, kCineDebugScript, "Line: %d: closePart", _currentLine);
 	closePart();
 }
 
@@ -1523,31 +1505,31 @@ void o1_loadNewPrcName() {
 
 	switch (param1) {
 	case 0:
-		DEBUG_SCRIPT(_currentLine, "loadPrc(\"%s\")", param2);
+		debugC(5, kCineDebugScript, "Line: %d: loadPrc(\"%s\")", _currentLine, param2);
 		strcpy(newPrcName, param2);
 		break;
 	case 1:
-		DEBUG_SCRIPT(_currentLine, "loadRel(\"%s\")", param2);
+		debugC(5, kCineDebugScript, "Line: %d: loadRel(\"%s\")", _currentLine, param2);
 		strcpy(newRelName, param2);
 		break;
 	case 2:
-		DEBUG_SCRIPT(_currentLine, "loadObject(\"%s\")", param2);
+		debugC(5, kCineDebugScript, "Line: %d: loadObject(\"%s\")", _currentLine, param2);
 		strcpy(newObjectName, param2);
 		break;
 	case 3:
-		DEBUG_SCRIPT(_currentLine, "loadMsg(\"%s\")", param2);
+		debugC(5, kCineDebugScript, "Line: %d: loadMsg(\"%s\")", _currentLine, param2);
 		strcpy(newMsgName, param2);
 		break;
 	}
 }
 
 void o1_requestCheckPendingDataLoad() {
-	DEBUG_SCRIPT(_currentLine, "request data load");
+	debugC(5, kCineDebugScript, "Line: %d: request data load", _currentLine);
 	checkForPendingDataLoadSwitch = 1;
 }
 
 void o1_blitAndFade() {
-	DEBUG_SCRIPT(_currentLine, "request fadein");
+	debugC(5, kCineDebugScript, "Line: %d: request fadein", _currentLine);
 	// TODO: use real code
 
 	memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
@@ -1558,7 +1540,7 @@ void o1_blitAndFade() {
 }
 
 void o1_fadeToBlack() {
-	DEBUG_SCRIPT(_currentLine, "request fadeout");
+	debugC(5, kCineDebugScript, "Line: %d: request fadeout", _currentLine);
 	//fadeToBlack();
 	warning("STUB: o1_fadeToBlack()");
 }
@@ -1570,7 +1552,7 @@ void o1_transformPaletteRange() {
 	uint16 g = getNextWord();
 	uint16 b = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", startColor, numColor, r, g, b);
+	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", _currentLine, startColor, numColor, r, g, b);
 
 	transformPaletteRange(startColor, numColor, r, g, b);
 }
@@ -1578,7 +1560,7 @@ void o1_transformPaletteRange() {
 void o1_setDefaultMenuColor2() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "setDefaultMenuColor2(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _currentLine, param);
 	defaultMenuBoxColor2 = param;
 }
 
@@ -1587,19 +1569,19 @@ void o1_palRotate() {
 	byte b = getNextByte();
 	byte c = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "palRotate(%d,%d,%d)", a, b, c);
+	debugC(5, kCineDebugScript, "Line: %d: palRotate(%d,%d,%d)", _currentLine, a, b, c);
 	palRotate(a, b, c);
 }
 
 void o1_break() {
-	DEBUG_SCRIPT(_currentLine, "break");
+	debugC(5, kCineDebugScript, "Line: %d: break", _currentLine);
 
 	_currentScriptElement->scriptPosition = _currentPosition;
 	_closeScript = 1;
 }
 
 void o1_endScript() {
-	DEBUG_SCRIPT(_currentLine, "endScript");
+	debugC(5, kCineDebugScript, "Line: %d: endScript", _currentLine);
 
 	if (_currentScriptParams == 0) {
 		endScript0(_currentScriptElement->scriptIdx);
@@ -1617,7 +1599,7 @@ void o1_message() {
 	uint16 param4 = getNextWord();
 	uint16 param5 = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "message(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5);
+	debugC(5, kCineDebugScript, "Line: %d: message(%d,%d,%d,%d,%d)", _currentLine, param1, param2, param3, param4, param5);
 
 	addMessage(param1, param2, param3, param4, param5);
 }
@@ -1630,16 +1612,16 @@ void o1_loadGlobalVar() {
 		byte dataIdx = getNextByte();
 
 		if (varType == 1) {
-			DEBUG_SCRIPT(_currentLine, "globalVars[%d] = var[%d]", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = var[%d]", _currentLine, varIdx, dataIdx);
 			globalVars[varIdx] = _currentScriptElement->localVars[dataIdx];
 		} else {
-			DEBUG_SCRIPT(_currentLine, "globalVars[%d] = globalVars[%d]", varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = globalVars[%d]", _currentLine, varIdx, dataIdx);
 			globalVars[varIdx] = globalVars[dataIdx];
 		}
 	} else {
 		uint16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "globalVars[%d] = %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = %d", _currentLine, varIdx, value);
 		globalVars[varIdx] = value;
 	}
 }
@@ -1651,12 +1633,12 @@ void o1_compareGlobalVar() {
 	if (varType) {
 		byte value = getNextByte();
 
-		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and var[%d]", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and var[%d]", _currentLine, varIdx, value);
 		_currentScriptElement->compareResult = compareVars(globalVars[varIdx], _currentScriptElement->localVars[value]);
 	} else {
 		uint16 value = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "compare globalVars[%d] and %d", varIdx, value);
+		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _currentLine, varIdx, value);
 
 		if (varIdx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
 			_currentScriptElement->compareResult = 1;
@@ -1669,7 +1651,7 @@ void o1_compareGlobalVar() {
 void o1_declareFunctionName() {
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "comment(%s)", param);
+	debugC(5, kCineDebugScript, "Line: %d: comment(%s)", _currentLine, param);
 }
 
 void o1_freePartRange() {
@@ -1678,12 +1660,12 @@ void o1_freePartRange() {
 
 	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
-	DEBUG_SCRIPT(_currentLine, "freePartRange(%d,%d)", startIdx, numIdx);
+	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _currentLine, startIdx, numIdx);
 	freePartRange(startIdx, numIdx);
 }
 
 void o1_unloadAllMasks() {
-	DEBUG_SCRIPT(_currentLine, "unloadAllMasks()");
+	debugC(5, kCineDebugScript, "Line: %d: unloadAllMasks()", _currentLine);
 	unloadAllMasks();
 }
 
@@ -1701,7 +1683,7 @@ void o1_op64() {
 }
 
 void o1_initializeZoneData() {
-	DEBUG_SCRIPT(_currentLine, "initializeZoneData()");
+	debugC(5, kCineDebugScript, "Line: %d: initializeZoneData()", _currentLine);
 
 	for (int i = 0; i < NUM_MAX_ZONE; i++) {
 		zoneData[i] = i;
@@ -1712,7 +1694,7 @@ void o1_setZoneDataEntry() {
 	byte zoneIdx = getNextByte();
 	uint16 var = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "setZone[%d] = %d", zoneIdx, var);
+	debugC(5, kCineDebugScript, "Line: %d: setZone[%d] = %d", _currentLine, zoneIdx, var);
 	zoneData[zoneIdx] = var;
 }
 
@@ -1723,46 +1705,46 @@ void o1_getZoneDataEntry() {
 void o1_setDefaultMenuColor() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "setDefaultMenuColor(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _currentLine, param);
 	defaultMenuBoxColor = param;
 }
 
 void o1_allowPlayerInput() {
-	DEBUG_SCRIPT(_currentLine, "allowPlayerInput()");
+	debugC(5, kCineDebugScript, "Line: %d: allowPlayerInput()", _currentLine);
 	allowPlayerInput = 1;
 }
 
 void o1_disallowPlayerInput() {
-	DEBUG_SCRIPT(_currentLine, "dissallowPlayerInput()");
+	debugC(5, kCineDebugScript, "Line: %d: dissallowPlayerInput()", _currentLine);
 	allowPlayerInput = 0;
 }
 
 void o1_changeDataDisk() {
 	byte newDisk = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "changeDataDisk(%d)", newDisk);
+	debugC(5, kCineDebugScript, "Line: %d: changeDataDisk(%d)", _currentLine, newDisk);
 	checkDataDisk(newDisk);
 }
 
 void o1_loadMusic() {
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadMusic(%s)", param);
+	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _currentLine, param);
 	g_sfxPlayer->load(param);
 }
 
 void o1_playMusic() {
-	DEBUG_SCRIPT(_currentLine, "playMusic()");
+	debugC(5, kCineDebugScript, "Line: %d: playMusic()", _currentLine);
 	g_sfxPlayer->play();
 }
 
 void o1_fadeOutMusic() {
-	DEBUG_SCRIPT(_currentLine, "fadeOutMusic()");
+	debugC(5, kCineDebugScript, "Line: %d: fadeOutMusic()", _currentLine);
 	g_sfxPlayer->fadeOut();
 }
 
 void o1_stopSample() {
-	DEBUG_SCRIPT(_currentLine, "stopSample()");
+	debugC(5, kCineDebugScript, "Line: %d: stopSample()", _currentLine);
 	g_sfxPlayer->stop();
 }
 
@@ -1789,7 +1771,7 @@ void o1_op73() {
 }
 
 void o1_playSample() {
-	DEBUG_SCRIPT(_currentLine, "playSample()");
+	debugC(5, kCineDebugScript, "Line: %d: playSample()", _currentLine);
 
 	byte anim = getNextByte();
 	byte channel = getNextByte();
@@ -1826,21 +1808,21 @@ void o1_playSample() {
 void o1_allowSystemMenu() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "OP79 load var22 to %d -> TODO", param);
+	debugC(5, kCineDebugScript, "Line: %d: OP79 load var22 to %d -> TODO", _currentLine, param);
 	var22 = param;
 }
 
 void o1_loadMask5() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "addOverlay5(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: addOverlay5(%d)", _currentLine, param);
 	loadOverlayElement(param, 5);
 }
 
 void o1_unloadMask5() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "freeOverlay5(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: freeOverlay5(%d)", _currentLine, param);
 	freeOverlay(param, 5);
 }
 
@@ -1851,7 +1833,7 @@ void o1_unloadMask5() {
 void o2_loadPart() {
 	const char *param = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadPart(\"%s\")", param);
+	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _currentLine, param);
 }
 
 void o2_op78() {
@@ -1869,7 +1851,7 @@ void o2_addSeqListElement() {
 	uint16 param6 = getNextWord();
 	uint16 param7 = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "addSeqListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
+	debugC(5, kCineDebugScript, "Line: %d: addSeqListElement(%d,%d,%d,%d,%d,%d,%d)", _currentLine, param1, param2, param3, param4, param5, param6, param7);
 	addSeqListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
 }
 
@@ -1877,7 +1859,7 @@ void o2_removeSeq() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "removeSeq(%d,%d) -> TODO", a, b);
+	debugC(5, kCineDebugScript, "Line: %d: removeSeq(%d,%d) -> TODO", _currentLine, a, b);
 	removeSeq(a, 0, b);
 }
 
@@ -1897,7 +1879,7 @@ void o2_isSeqRunning() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "OP83(%d,%d) -> TODO", a, b);
+	debugC(5, kCineDebugScript, "Line: %d: OP83(%d,%d) -> TODO", _currentLine, a, b);
 
 	if (isSeqRunning(a, 0, b)) {
 		_currentScriptElement->compareResult = 1;
@@ -1912,10 +1894,10 @@ void o2_gotoIfSupNearest() {
 	if (_currentScriptElement->compareResult == kCmpGT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(>) goto nearest %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto nearest %d (true)", _currentLine, labelIdx);
 		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(>) goto nearest %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto nearest %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1925,10 +1907,10 @@ void o2_gotoIfSupEquNearest() {
 	if (_currentScriptElement->compareResult & (kCmpGT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(>=) goto nearest %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto nearest %d (true)", _currentLine, labelIdx);
 		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(>=) goto nearest %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto nearest %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1938,10 +1920,10 @@ void o2_gotoIfInfNearest() {
 	if (_currentScriptElement->compareResult == kCmpLT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(<) goto nearest %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto nearest %d (true)", _currentLine, labelIdx);
 		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(<) goto nearest %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto nearest %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1951,10 +1933,10 @@ void o2_gotoIfInfEquNearest() {
 	if (_currentScriptElement->compareResult & (kCmpLT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(<=) goto nearest %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto nearest %d (true)", _currentLine, labelIdx);
 		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(<=) goto nearest %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto nearest %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1964,10 +1946,10 @@ void o2_gotoIfEquNearest() {
 	if (_currentScriptElement->compareResult == kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(==) goto nearest %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto nearest %d (true)", _currentLine, labelIdx);
 		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(==) goto nearest %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto nearest %d (false)", _currentLine, labelIdx);
 	}
 }
 
@@ -1977,24 +1959,24 @@ void o2_gotoIfDiffNearest() {
 	if (_currentScriptElement->compareResult != kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
-		DEBUG_SCRIPT(_currentLine, "if(!=) goto nearest %d (true)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto nearest %d (true)", _currentLine, labelIdx);
 		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
 	} else {
-		DEBUG_SCRIPT(_currentLine, "if(!=) goto nearest %d (false)", labelIdx);
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto nearest %d (false)", _currentLine, labelIdx);
 	}
 }
 
 void o2_startObjectScript() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "startObjectScript(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: startObjectScript(%d)", _currentLine, param);
 	runObjectScript(param);
 }
 
 void o2_stopObjectScript() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "stopObjectScript(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: stopObjectScript(%d)", _currentLine, param);
 	stopObjectScript(param);
 }
 
@@ -2015,7 +1997,7 @@ void o2_addBackground() {
 	byte param1 = getNextByte();
 	const char *param2 = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "addBackground(%s,%d)", param2, param1);
+	debugC(5, kCineDebugScript, "Line: %d: addBackground(%s,%d)", _currentLine, param2, param1);
 	addBackground(param2, param1);
 }
 
@@ -2024,7 +2006,7 @@ void o2_removeBackground() {
 
 	assert(param);
 
-	DEBUG_SCRIPT(_currentLine, "removeBackground(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: removeBackground(%d)", _currentLine, param);
 
 	if (additionalBgTable[param]) {
 		free(additionalBgTable[param]);
@@ -2046,7 +2028,7 @@ void o2_loadAbs() {
 	byte param1 = getNextByte();
 	const char *param2 = getNextString();
 
-	DEBUG_SCRIPT(_currentLine, "loadABS(%d,%s)", param1, param2);
+	debugC(5, kCineDebugScript, "Line: %d: loadABS(%d,%s)", _currentLine, param1, param2);
 	loadAbs(param2, param1);
 }
 
@@ -2055,7 +2037,7 @@ void o2_loadBg() {
 
 	assert(param <= 8);
 
-	DEBUG_SCRIPT(_currentLine, "useBg(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: useBg(%d)", _currentLine, param);
 
 	if (additionalBgTable[param]) {
 		currentAdditionalBgIdx = param;
@@ -2094,7 +2076,7 @@ void o2_useBgScroll() {
 
 	assert(param <= 8);
 
-	DEBUG_SCRIPT(_currentLine, "useBgScroll(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: useBgScroll(%d)", _currentLine, param);
 
 	if (additionalBgTable[param]) {
 		currentAdditionalBgIdx2 = param;
@@ -2107,12 +2089,12 @@ void o2_setAdditionalBgVScroll() {
 	if (param1) {
 		byte param2 = getNextByte();
 
-		DEBUG_SCRIPT(_currentLine, "additionalBgVScroll = var[%d]", param2);
+		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = var[%d]", _currentLine, param2);
 		additionalBgVScroll = _currentScriptElement->localVars[param2];
 	} else {
 		uint16 param2 = getNextWord();
 
-		DEBUG_SCRIPT(_currentLine, "additionalBgVScroll = %d", param2);
+		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = %d", _currentLine, param2);
 		additionalBgVScroll = param2;
 	}
 }
@@ -2127,7 +2109,7 @@ void o2_addGfxElementA0() {
 	uint16 param1 = getNextWord();
 	uint16 param2 = getNextWord();
 
-	DEBUG_SCRIPT(_currentLine, "addGfxElementA0(%d,%d)", param1, param2);
+	debugC(5, kCineDebugScript, "Line: %d: addGfxElementA0(%d,%d)", _currentLine, param1, param2);
 	addGfxElementA0(param1, param2);
 }
 
@@ -2155,14 +2137,14 @@ void o2_opA3() {
 void o2_loadMask22() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "addOverlay22(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: addOverlay22(%d)", _currentLine, param);
 	loadOverlayElement(param, 22);
 }
 
 void o2_unloadMask22() {
 	byte param = getNextByte();
 
-	DEBUG_SCRIPT(_currentLine, "removeOverlay22(%d)", param);
+	debugC(5, kCineDebugScript, "Line: %d: removeOverlay22(%d)", _currentLine, param);
 	freeOverlay(param, 22);
 }
 

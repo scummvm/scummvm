@@ -120,6 +120,7 @@ REGISTER_PLUGIN(CINE, "CINE Engine");
 namespace Cine {
 
 CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
+	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
