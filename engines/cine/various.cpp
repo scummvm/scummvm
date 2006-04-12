@@ -271,6 +271,13 @@ void runObjectScript(int16 entryIdx) {
 	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].size);
 }
 
+void addPlayerCommandMessage(int16 cmd) {
+	// Something to do with default responses to commands? Currently,
+	// nothing happens if you do silly things like, say, trying to talk to
+	// a tree.
+	warning("STUB: addPlayerCommandMessage(%d)", cmd);
+}
+
 int16 getRelEntryForObject(uint16 param1, uint16 param2, selectedObjStruct *pSelectedObject) {
 	int16 i;
 	int16 di = -1;
@@ -1895,7 +1902,7 @@ uint16 executePlayerInput(void) {
 							if (relEntry != -1) {
 								runObjectScript(relEntry);
 							} else {
-								//addPlayerCommandMessage(playerCommand);
+								addPlayerCommandMessage(playerCommand);
 							}
 
 							playerCommand = -1;
