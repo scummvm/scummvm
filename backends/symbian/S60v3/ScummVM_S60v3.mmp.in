@@ -119,4 +119,4 @@ LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib 
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
-library avkon.lib
+library avkon.lib bafl.lib

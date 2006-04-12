@@ -98,5 +98,5 @@ LIBRARY cone.lib  eikcore.lib
 LIBRARY euser.lib apparc.lib fbscli.lib  
 LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib
-LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
+LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib bafl.lib
 

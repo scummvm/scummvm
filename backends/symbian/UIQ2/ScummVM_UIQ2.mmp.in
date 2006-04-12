@@ -98,4 +98,4 @@ LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
-LIBRARY qikctl.lib
+LIBRARY qikctl.lib bafl.lib

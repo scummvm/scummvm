@@ -17,7 +17,6 @@ chdir("../../");
 	"mmp/scummvm_sword2.mmp", 
 	"mmp/scummvm_lure.mmp", 
 	"mmp/scummvm_cine.mmp", 
-
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
 	"S80/ScummVM_S80.mmp", 

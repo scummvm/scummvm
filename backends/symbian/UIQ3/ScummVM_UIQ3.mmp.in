@@ -122,4 +122,4 @@ LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 LIBRARY qikctl.lib
-library qikcore.lib
+library qikcore.lib bafl.lib
