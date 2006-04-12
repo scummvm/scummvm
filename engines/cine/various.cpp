@@ -914,7 +914,6 @@ void makeSave(char *saveFileName) {
 		// actual save
 		currentHead = overlayHead.next;
 
-		assert(sizeof(overlayHeadElement) == 0x14);
 		while (currentHead) {
 			fHandle->writeUint32BE(0);
 			fHandle->writeUint32BE(0);
