@@ -133,7 +133,7 @@ void Player_V1::parseSpeakerChunk() {
 
  parse_again:
 	_chunk_type = READ_LE_UINT16(_next_chunk);
-	debug(6, "parseSpeakerChunk: sound %d, offset %4x, chunk %x",
+	debug(6, "parseSpeakerChunk: sound %d, offset %lx, chunk %x",
 			_current_nr, _next_chunk - _current_data, _chunk_type);
 
 	_next_chunk += 2;
@@ -209,7 +209,7 @@ void Player_V1::nextSpeakerCmd() {
 			_time_left = READ_LE_UINT16(_next_chunk);
 			_next_chunk += 2;
 		}
-		debug(7, "nextSpeakerCmd: chunk %d, offset %4x: notelen %d",
+		debug(7, "nextSpeakerCmd: chunk %d, offset %4lx: notelen %d",
 				_chunk_type, _next_chunk - 2 - _current_data, _time_left);
 		if (_time_left == 0) {
 			parseSpeakerChunk();
@@ -265,7 +265,7 @@ void Player_V1::parsePCjrChunk() {
 parse_again:
 
 	_chunk_type = READ_LE_UINT16(_next_chunk);
-	debug(6, "parsePCjrChunk: sound %d, offset %4x, chunk %x",
+	debug(6, "parsePCjrChunk: sound %d, offset %4lx, chunk %x",
 		  _current_nr, _next_chunk - _current_data, _chunk_type);
 
 	_next_chunk += 2;
@@ -351,7 +351,7 @@ parse_again:
 			}
 			*_value_ptr_2 = _start_2;
 		}
-		debug(6, "chunk 1: %d: %d step %d for %d, %d: %d step %d for %d",
+		debug(6, "chunk 1: %lu: %d step %d for %d, %lu: %d step %d for %d",
 			  _value_ptr - (uint*)_channels, _start, _delta, _time_left,
 			  _value_ptr_2 - (uint*)_channels, _start_2, _delta_2, _time_left_2);
 		break;

@@ -1421,7 +1421,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 		_skyCompact->fetchCpt(cnt)->status = 0;
 
 	if (srcPos - srcBuf != (int32)size)
-		error("Restore failed! Savegame data = %d bytes. Expected size: %d", srcPos-srcBuf, size);
+		error("Restore failed! Savegame data = %lu bytes. Expected size: %d", srcPos-srcBuf, size);
 
 	_skyDisk->refreshFilesList(reloadList);
 	SkyEngine::_systemVars.currentMusic = (uint16)music;
