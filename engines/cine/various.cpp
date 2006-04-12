@@ -137,6 +137,7 @@ byte inputVar1 = 0;
 uint16 inputVar2;
 uint16 inputVar3;
 
+const char **failureMessages;
 const commandeType *defaultActionCommand;
 const commandeType *systemMenu;
 const commandeType *confirmMenu;
@@ -145,6 +146,39 @@ const char *commandPrepositionOn;
 selectedObjStruct currentSelectedObject;
 
 void initLanguage(Common::Language lang) {
+	static const char *failureMessages_EN[] = {
+		// EXAMINE
+		"I don't see anything unusual.",
+		"There's nothing of interest here.",
+		"This isn't particularly interesting.",
+		"You won't find anything.",
+		// TAKE
+		"I can't take that.",
+		"I find it difficult.",
+		"I don't see what I am supposed to take.",
+		"I have difficulty in following you.",
+		// INVENTORY (???)
+		"There's no point.",
+		"You have better things to do.",
+		"Come on, don't let's waste any time.",
+		"That doesn't seem to me to be a good idea.",
+		// USE
+		"I don't see why I should do that.",
+		"It's had no effect whatsoever.",
+		"It won't produce any results.",
+		"Try and find something else.",
+		// OPERATE
+		"It doesn't work.",
+		"Let suppose you are trying and don't let's mention it again.",
+		"Nothing happens.",
+		"You have better things to do.",
+		// SPEAK
+		"No answer.",
+		"More action , less talking !",
+		"I'd be very surprised if you got an answer",
+		"A wall of silence ..."
+	};
+
 	static const commandeType defaultActionCommand_EN[] = {
 		"EXAMINE",
 		"TAKE",
@@ -167,6 +201,43 @@ void initLanguage(Common::Language lang) {
 	static const commandeType confirmMenu_EN[] = {
 		"Ok, go ahead ...",
 		"Absolutely Not!"
+	};
+
+	static const char *failureMessages_FR[] = {
+		// FIXME: I've replaced some French characters with question
+		// marks, simply because I have no idea what characters they
+		// really are.
+
+		// EXAMINER
+		"Je ne vois rien de special.",
+		"Il n'y a rien d'intèrressant.",
+		"Cela prèsente peu d'intèr?ts.",		// FIXME
+		"Vous ne trouvez rien.",
+		// PRENDRE
+		"Je ne peux pas prendre cela.",
+		"Cela me semble difficile",
+		"Je ne vois pas ce qu'il y a ? prendre",	// FIXME
+		"j'ai du mal ? vous suivre.",			// FIXME
+		// INVENTAIRE (???)
+		"C'est inutile",
+		"Vous avez mieux ? faire",			// FIXME
+		"Allons , ne perdons pas de temps",
+		"?a ne me semble pas ?tre une bonne idèe",	// FIXME
+		// UTILISER
+		"Je ne vois pas pourquoi je ferais cela.",
+		"C'est absolument sans effets",
+		"Cela n'amenerait ? rien",			// FIXME
+		"Essayez de trouver autre chose.",
+		// ACTIONNER
+		"Ca ne marche pas",
+		"Supposons que vous essayez et n'en parlons plus.",
+		"Rien n'y fait.",
+		"Vous avez mieux ? faire.",			// FIXME
+		// PARLER
+		"Vous lui parlez . Sans rèponse.",
+		"Plus d'actes et moins de Paroles !",
+		"Je serais bien surpris si vous obteniez une rèponse.",
+		"Un mur de silence ..."
 	};
 
 	static const commandeType defaultActionCommand_FR[] = {
@@ -195,12 +266,14 @@ void initLanguage(Common::Language lang) {
 
 	switch (lang) {
 	case Common::FR_FRA:
+		failureMessages = failureMessages_FR;
 		defaultActionCommand = defaultActionCommand_FR;
 		systemMenu = systemMenu_FR;
 		confirmMenu = confirmMenu_FR;
 		commandPrepositionOn = "sur";
 		break;
 	default:
+		failureMessages = failureMessages_EN;
 		defaultActionCommand = defaultActionCommand_EN;
 		systemMenu = systemMenu_EN;
 		confirmMenu = confirmMenu_EN;
@@ -272,10 +345,31 @@ void runObjectScript(int16 entryIdx) {
 }
 
 void addPlayerCommandMessage(int16 cmd) {
-	// Something to do with default responses to commands? Currently,
-	// nothing happens if you do silly things like, say, trying to talk to
-	// a tree.
-	warning("STUB: addPlayerCommandMessage(%d)", cmd);
+	overlayHeadElement *currentHeadPtr = overlayHead.next;
+	overlayHeadElement *tempHead = &overlayHead;
+	overlayHeadElement *pNewElement;
+
+	while (currentHeadPtr) {
+		tempHead = currentHeadPtr;
+		currentHeadPtr = tempHead->next;
+	}
+
+	pNewElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
+
+	assert(pNewElement);
+
+	pNewElement->next = tempHead->next;
+	tempHead->next = pNewElement;
+
+	pNewElement->objIdx = cmd;
+	pNewElement->type = 3;
+
+	if (!currentHeadPtr) {
+		currentHeadPtr = &overlayHead;
+	}
+
+	pNewElement->previous = currentHeadPtr->previous;
+	currentHeadPtr->previous = pNewElement;
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2, selectedObjStruct *pSelectedObject) {
@@ -2379,6 +2473,114 @@ void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color
 	freeOverlay(msgIdx, 2);
 }
 
+void drawFailureMessage(byte cmd) {
+	byte color2 = 2;
+	byte endOfMessageReached = 0;
+	int16 localX;
+	int16 localY;
+	int16 localWidth;
+
+	byte msgIdx = cmd * 4 + rand() % 4;
+
+	const char *messagePtr = failureMessages[msgIdx];
+	int len = strlen(messagePtr);
+
+	var20 += len;
+
+	int16 width = 6 * len + 20;
+
+	if (width > 300)
+		width = 300;
+	
+	int16 x = (320 - width) / 2;
+	int16 y = 80;
+	int16 color = 4;
+
+	gfxDrawPlainBoxRaw(x, y, x + width, y + 4, color, page1Raw);
+
+	localX = x + 4;
+	localY = y + 4;
+	localWidth = width - 8;
+
+	do {
+		uint16 messageLength = 0;
+		uint16 numWords;
+		uint16 messageWidth;
+		uint16 lineResult;
+		const char *endOfMessagePtr;
+		uint16 fullLineWidth;
+		uint16 interWordSize;
+		uint16 interWordSizeRemain;
+		byte currentChar;
+		byte characterWidth;
+
+		while (messagePtr[messageLength] == ' ') {
+			messageLength++;
+		}
+
+		messagePtr += messageLength;
+
+		messageLength = computeMessageLength((byte *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
+
+		endOfMessagePtr = messagePtr + messageLength;
+
+		if (lineResult) {
+			fullLineWidth = localWidth - messageWidth;
+
+			if (numWords) {
+				interWordSize = fullLineWidth / numWords;
+				interWordSizeRemain = fullLineWidth % numWords;
+			} else {
+				interWordSize = 5;
+				interWordSizeRemain = 0;
+			}
+		} else {
+			interWordSize = 5;
+			interWordSizeRemain = 0;
+		}
+
+		gfxDrawPlainBoxRaw(x, localY, x + width, localY + 9, color, page1Raw);
+
+		do {
+			currentChar = *(messagePtr++);
+
+			if (currentChar == 0) {
+				endOfMessageReached = 1;
+			} else if (currentChar == ' ') {
+				localX += interWordSizeRemain + interWordSize;
+
+				if (interWordSizeRemain)
+					interWordSizeRemain = 0;
+			} else {
+				characterWidth = fontParamTable[currentChar].characterWidth;
+
+				if (characterWidth) {
+					byte characterIdx = fontParamTable[currentChar].characterIdx;
+					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
+					localX += characterWidth + 1;
+				}
+			}
+		} while ((messagePtr < endOfMessagePtr) && !endOfMessageReached);
+
+		localX = x + 4;
+		localY += 9;
+	} while (!endOfMessageReached);
+
+	gfxDrawPlainBoxRaw(x, localY, x + width, localY + 4, color, page1Raw);
+
+	gfxDrawLine(x + 1, y + 1, x + width - 1, y + 1, 0, page1Raw);	// top
+	gfxDrawLine(x + 1, localY + 3, x + width - 1, localY + 3, 0, page1Raw);	// bottom
+	gfxDrawLine(x + 1, y + 1, x + 1, localY + 3, 0, page1Raw);	// left
+	gfxDrawLine(x + width - 1, y + 1, x + width - 1, localY + 3, 0, page1Raw);	// right
+
+	gfxDrawLine(x, y, x + width, y, color2, page1Raw);
+	gfxDrawLine(x, localY + 4, x + width, localY + 4, color2, page1Raw);
+	gfxDrawLine(x, y, x, localY + 4, color2, page1Raw);
+	gfxDrawLine(x + width, y, x + width, localY + 4, color2, page1Raw);
+
+	freeOverlay(cmd, 3);
+}
+
 void drawOverlays(void) {
 	overlayHeadElement *currentOverlay;
 
@@ -2469,6 +2671,19 @@ void drawOverlays(void) {
 			}
 		case 3:
 			{
+				// gfxWaitSync()
+				// hideMouse();
+
+				blitRawScreen(page1Raw);
+
+				drawFailureMessage(currentOverlay->objIdx);
+
+				//blitScreen(page0, NULL);
+
+				gfxFuncGen2();
+
+				waitForPlayerClick = 1;
+
 				break;
 			}
 		case 4:
