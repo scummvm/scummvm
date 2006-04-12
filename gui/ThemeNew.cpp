@@ -296,7 +296,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 				}
 				
 				if (_dimPercentValue != 0) {
-					_dimPercentValue = 100 - _dimPercentValue;
+					_dimPercentValue = 256 * (100 - _dimPercentValue) / 100;
 					_dialogShadingCallback = &ThemeNew::calcDimColor;
 					createCacheTable = true;
 					_shadingEffect = kShadingEffectDim;
@@ -965,9 +965,7 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 
 	for (int y = 0; y < partsH; ++y) {
 		int xPos = r.left;
-		bool upDown = false;
-		if (y == partsH - 1)
-			upDown = true;
+		bool upDown = (y == partsH - 1);
 
 		// calculate the correct drawing height
 		int usedHeight = drawHeight;
@@ -979,7 +977,6 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 		OverlayColor endCol = calcGradient(start, end, yPos-r.top+usedHeight, r.height(), factor);
 
 		for (int i = 0; i < partsW; ++i) {
-
 			// calculate the correct drawing width
 			int usedWidth = drawWidth;
 			if (specialWidth && i == 1) {
@@ -987,25 +984,20 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 			}
 
 			// draw the right surface
-			if (!i) {
+			if (!i || i == partsW - 1) {
 				if (!y || (y == partsH - 1 && !skipLastRow)) {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, false, alpha, startCol, endCol);
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, (i == partsW - 1), alpha, startCol, endCol);
 				} else {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, false, alpha, startCol, endCol);
-				}
-			} else if (i == partsW - 1) {
-				if (!y || (y == partsH - 1 && !skipLastRow)) {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, true, alpha, startCol, endCol);
-				} else {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, true, alpha, startCol, endCol);
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, (i == partsW - 1), alpha, startCol, endCol);
 				}
 			} else if (!y || (y == partsH - 1 && !skipLastRow)) {
 				drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), top, upDown, false, alpha, startCol, endCol);
 			} else {
-				drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), fill, upDown, false, alpha, startCol, endCol);
+				drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), fill, false, false, alpha, startCol, endCol);
 			}
 			xPos += usedWidth;
 		}
+
 		yPos += usedHeight;
 	}
 }
@@ -1136,9 +1128,7 @@ void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, c
 		}
 
 		int xPos = r.left;
-		bool upDown = false;
-		if (y == partsH - 1)
-			upDown = true;
+		bool upDown = (y == partsH - 1);
 
 		for (int i = 0; i < partsW; ++i) {
 			// calculate the correct drawing width
@@ -1153,17 +1143,11 @@ void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, c
 			}
 
 			// draw the right surface
-			if (!i) {
+			if (!i || i == partsW - 1) {
 				if (!y || (y == partsH - 1 && !skipLastRow)) {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, false, alpha, startCol, endCol);
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, (i == partsW - 1), alpha, startCol, endCol);
 				} else {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, false, alpha, startCol, endCol);
-				}
-			} else if (i == partsW - 1) {
-				if (!y || (y == partsH - 1 && !skipLastRow)) {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, true, alpha, startCol, endCol);
-				} else {
-					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, true, alpha, startCol, endCol);
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, (i == partsW - 1), alpha, startCol, endCol);
 				}
 			} else if (!y || (y == partsH - 1 && !skipLastRow)) {
 				drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), top, upDown, false, alpha, startCol, endCol);
@@ -1405,7 +1389,7 @@ bool ThemeNew::loadCacheFile() {
 
 	switch (_shadingEffect) {
 	case kShadingEffectDim: {
-		int cachedDim = cacheFile.readByte();
+		int cachedDim = cacheFile.readUint32BE();
 		if (cachedDim != _dimPercentValue)
 			return false;
 		} break;
@@ -1458,7 +1442,7 @@ bool ThemeNew::createCacheFile() {
 
 	switch (_shadingEffect) {
 	case kShadingEffectDim: {
-		cacheFile.writeByte(_dimPercentValue);
+		cacheFile.writeUint32BE(_dimPercentValue);
 		} break;
 
 	case kShadingEffectCustom: {
@@ -1508,9 +1492,6 @@ OverlayColor ThemeNew::calcLuminance(OverlayColor col, bool cache) {
 		_system->colorToRGB(col, r, g, b);
 	}
 
-	//uint lum = (76 * r / 0xFF);
-	//lum += (151 * g / 0xFF);
-	//lum += (28 * b / 0xFF);
 	uint lum = (r >> 2) + (g >> 1) + (b >> 3);
 	
 	return _system->RGBToColor(lum, lum, lum);
@@ -1526,9 +1507,9 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col, bool cache) {
 		_system->colorToRGB(col, r, g, b);
 	}
 	
-	r = r * _dimPercentValue / 100;
-	g = g * _dimPercentValue / 100;
-	b = b * _dimPercentValue / 100;
+	r = r * _dimPercentValue >> 8;
+	g = g * _dimPercentValue >> 8;
+	b = b * _dimPercentValue >> 8;
 
 	return _system->RGBToColor(r, g, b);
 }
@@ -1565,8 +1546,6 @@ inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int 
 }
 
 OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
-	if (alpha >= 256)
-		return col1;
 	if (gBitFormat == 565) {
 		return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
 	} else {
@@ -1575,29 +1554,26 @@ OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
 }
 
 template<class T>
-inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max) {
+inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos) {
 	OverlayColor output = 0;
-	output |= ((start & T::kRedMask) + (((((end & T::kRedMask) - (start & T::kRedMask))) * pos / max) & T::kRedMask)) & T::kRedMask;
-	output |= ((start & T::kGreenMask) + (((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos / max) & T::kGreenMask)) & T::kGreenMask;
-	output |= ((start & T::kBlueMask) + (((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos / max) & T::kBlueMask)) & T::kBlueMask;
+	output |= ((start & T::kRedMask) + (((((end & T::kRedMask) - (start & T::kRedMask))) * pos >> 12) & T::kRedMask)) & T::kRedMask;
+	output |= ((start & T::kGreenMask) + (((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos >> 12) & T::kGreenMask)) & T::kGreenMask;
+	output |= ((start & T::kBlueMask) + (((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos >> 12) & T::kBlueMask)) & T::kBlueMask;
 	return output;
 }
 
 OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
 	max /= factor;
 	pos *= factor;
-	if (pos > max) {
+	if (pos >= max)
 		return end;
-	} else if (!pos) {
-		return start;
-	} else if (start == end) {
-		return end;
-	}
+
+	pos = (0x1000 * pos) / max;
 
 	if (gBitFormat == 565) {
-		return calcGradient<ColorMasks<565> >(start, end, pos, max);
+		return calcGradient<ColorMasks<565> >(start, end, pos);
 	} else {
-		return calcGradient<ColorMasks<555> >(start, end, pos, max);
+		return calcGradient<ColorMasks<555> >(start, end, pos);
 	}
 }
 } // end of namespace GUI
