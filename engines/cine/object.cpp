@@ -105,7 +105,7 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 
 	currentHeadPtr = tempHead->next;
 
-	while (currentHeadPtr && (objIdx == currentHeadPtr->objIdx || param == currentHeadPtr->type)) {
+	while (currentHeadPtr && (objIdx != currentHeadPtr->objIdx || param != currentHeadPtr->type)) {
 		tempHead = currentHeadPtr;
 		currentHeadPtr = tempHead->next;
 	}
