@@ -56,7 +56,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(PALMOS_MODE) || defined(__SYMBIAN32__)
+#if defined(PALMOS_MODE) || defined(__SYMBIAN32__) || defined(__GP32__)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -128,7 +128,7 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 static Common::String s_appName("scummvm");
 #else
 static const char *s_appName = "scummvm";
@@ -144,7 +144,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	printf(USAGE_STRING, s_appName.c_str(), buf, s_appName.c_str(), s_appName.c_str());
 #endif
 	exit(1);
@@ -556,7 +556,7 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE)
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE) && !defined(__GP32__)
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < 1024) {
