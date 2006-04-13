@@ -303,6 +303,7 @@ protected:
 	virtual const char *getOpcodeGoblinDesc(int i);
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
+	void o2_stub0x40(void);
 	void o2_stub0x80(void);
 	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);

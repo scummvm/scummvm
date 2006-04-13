@@ -114,18 +114,38 @@ public:
 	void clearPalette(void);
 	void blitCursor(void);
 
-	void spriteOperation(int16 operation);
 	void animateCursor(int16 cursor);
-	void printText(void);
 
 	void freeSprite(int16 index);
 	void adjustCoords(int16 *coord1, int16 *coord2, char adjust);
 	void initBigSprite(int16 index, int16 height, int16 width, int16 flags);
 
+	virtual void printText(void) = 0;
+	virtual void spriteOperation(int16 operation) = 0;
+
 	Draw(GobEngine *vm);
+	virtual ~Draw() {};
 
 protected:
 	GobEngine *_vm;
+};
+
+class Draw_v1 : public Draw {
+public:
+	virtual void printText(void);
+	virtual void spriteOperation(int16 operation);
+
+	Draw_v1(GobEngine *vm);
+	virtual ~Draw_v1() {};
+};
+
+class Draw_v2 : public Draw_v1 {
+public:
+	virtual void printText(void);
+	virtual void spriteOperation(int16 operation);
+
+	Draw_v2(GobEngine *vm);
+	virtual ~Draw_v2() {};
 };
 
 // Draw operations

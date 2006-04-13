@@ -199,7 +199,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 40 */
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x40),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
@@ -704,6 +704,31 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
 	return "";
+}
+
+void Inter_v2::o2_stub0x40(void) {
+	char str[18];
+	int i;
+	int length;
+
+	warning("STUB: Gob2 drawOperation 0x40");
+	
+	length = *_vm->_global->_inter_execPtr++;
+	if (length > 17)
+		error("Length in o2_stub0x40 is greater than 17 (%d)", length);
+	if (length & 0x80) {
+		evalExpr(0);
+		strcpy(str, _vm->_global->_inter_resStr);
+	} else { // loc_E8CE
+		for (i = 0; i < length; i++) // loc_E8E3
+			str[i] = *_vm->_global->_inter_execPtr++;
+		str[i] = 0;
+	}
+
+	// loc_E910
+
+	_vm->_global->_inter_execPtr++;
+	warning("GOB2 Stub! sub_A6EB(%d, \"%s\");", *_vm->_global->_inter_execPtr, str);
 }
 
 void Inter_v2::o2_stub0x80(void) {

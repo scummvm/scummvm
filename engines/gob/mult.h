@@ -187,21 +187,21 @@ public:
 	int8 *_orderArray;
 
 	void zeroMultData(void);
-	void freeMultKeys(void);
 	void checkFreeMult(void);
 	void interGetObjAnimSize(void);
 	void freeMult(void);
 	void interLoadMult(void);
 	void freeAll(void);
 	void initAll(void);
-	void playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
-				   int16 channel);
 
 	virtual void setMultData(uint16 multindex) = 0;
 	virtual void loadMult(int16 resId) = 0;
 	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				  char handleMouse) = 0;
 	virtual void animate(void) = 0;
+	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
+				  int16 freq, int16 channel) = 0;
+	virtual void freeMultKeys(void) = 0;
 
 	Mult(GobEngine *vm);
 	virtual ~Mult() {};
@@ -229,6 +229,9 @@ public:
 	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				  char handleMouse);
 	virtual void animate(void);
+	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
+				  int16 freq, int16 channel);
+	virtual void freeMultKeys(void);
 
 protected:
 	virtual char drawStatics(char stop);
@@ -307,6 +310,9 @@ public:
 	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				  char handleMouse);
 	virtual void animate(void);
+	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
+				  int16 freq, int16 channel);
+	virtual void freeMultKeys(void);
 
 protected:
 	virtual char drawStatics(char stop);

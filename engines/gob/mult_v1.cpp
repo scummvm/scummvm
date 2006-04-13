@@ -905,4 +905,74 @@ void Mult_v1::animate(void) {
 	}
 }
 
+void Mult_v1::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
+	    int16 channel) {
+	_vm->_snd->playSample(soundDesc, repCount, freq);
+}
+
+void Mult_v1::freeMultKeys(void) {
+	int i;
+	char animCount;
+	char staticCount;
+
+	_dataPtr = _multData;
+	staticCount = _dataPtr[0];
+	animCount = _dataPtr[1];
+
+	delete[] _dataPtr;
+
+	staticCount++;
+	animCount++;
+	for (i = 0; i < staticCount; i++) {
+
+		if (_staticLoaded[i] != 0)
+			_vm->_scenery->freeStatic(_staticIndices[i]);
+	}
+
+	for (i = 0; i < animCount; i++) {
+		if (_animLoaded[i] != 0)
+			_vm->_scenery->freeAnim(_animIndices[i]);
+	}
+
+	delete[] _staticKeys;
+
+	for (i = 0; i < 4; i++)
+		delete[] _animKeys[i];
+
+	delete[] _palFadeKeys;
+	delete[] _palKeys;
+	delete[] _textKeys;
+
+	for (i = 0; i < _sndSlotsCount; i++) {
+		_vm->_game->freeSoundSlot(19 - i);
+	}
+
+	delete[] _sndKeys;
+
+	_multData = 0;
+
+	if (_animDataAllocated != 0) {
+		delete[] _objects;
+		_objects = 0;
+
+		delete[] _renderData;
+		_renderData = 0;
+
+		delete[] _animArrayX;
+		_animArrayX = 0;
+
+		delete[] _animArrayY;
+		_animArrayY = 0;
+
+		delete[] _animArrayData;
+		_animArrayData = 0;
+
+		if (_vm->_anim->_animSurf)
+			_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+		_vm->_anim->_animSurf = 0;
+
+		_animDataAllocated = 0;
+	}
+}
+
 } // End of namespace Gob

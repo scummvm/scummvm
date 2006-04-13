@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	cdrom.o \
 	dataio.o \
 	draw.o \
+	draw_v1.o \
+	draw_v2.o \
 	driver_vga.o \
 	game.o \
 	global.o \

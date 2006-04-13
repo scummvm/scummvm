@@ -1,4 +1,4 @@
-	/* ScummVM - Scumm Interpreter
+/* ScummVM - Scumm Interpreter
  * Copyright (C) 2004 Ivan Dubrov
  * Copyright (C) 2004-2006 The ScummVM project
  *
@@ -1139,6 +1139,83 @@ void Mult_v2::animate(void) {
 				animData2->intersected = animIndices[i];
 		}
 	}
+}
+
+void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
+	    int16 channel) {
+	warning("GOB2 Stub! Mult_v2::playSound()");
+//	_vm->_snd->playSample(soundDesc, repCount, freq);
+}
+
+void Mult_v2::freeMultKeys(void) {
+	int i;
+	char animCount;
+	char staticCount;
+
+	warning("GOB2 Stub! Mult_v2::freeMultKeys()");
+
+	if (_multData2 == 0)
+		return;
+
+	return; 
+
+	// loc_7323
+
+	staticCount = (_multData2->staticCount + 1) && 0x7F;
+	animCount = _multData2->animCount + 1;
+
+	for (i = 0; i < staticCount; i++) { // loc_7345
+		if (_multData2->staticLoaded[i] != 0)
+			_vm->_scenery->freeStatic(_multData2->staticIndices[i]);
+	}
+
+	for (i = 0; i < animCount; i++) { // loc_7377
+		if (_multData2->animLoaded[i] != 0)
+			_vm->_scenery->freeAnim(_multData2->animIndices[i]);
+	}
+
+	delete[] _multData2->staticKeys;
+
+	for (i = 0; i < 4; i++) { // loc_73BA
+		delete[] _multData2->animKeys[i];
+		if (_multData2->somepointer05[i] != 0)
+			delete[] _multData2->somepointer05[i];
+	}
+
+	delete[] _multData2->palFadeKeys;
+	delete[] _multData2->palKeys;
+	delete[] _multData2->textKeys;
+
+	for (i = 0; i < _multData2->sndSlotsCount; i++) { // loc_7448
+		if ((_multData2->sndSlot[i] & 0x8000) == 0)
+			_vm->_game->freeSoundSlot(_multData2->sndSlot[i]);
+	}
+	
+	delete[] _multData2->sndKeys;
+	delete[] _multData2->fadePal;
+
+	if (_multData2->somepointer09 != 0)
+		delete[] _multData2->somepointer09;
+	if (_multData2->somepointer10 != 0)
+		delete[] _multData2->somepointer10;
+
+	if (_animDataAllocated != 0) {
+		freeMult();
+		
+		delete[] _animArrayX;
+		_animArrayX = 0;
+
+		delete[] _animArrayY;
+		_animArrayY = 0;
+
+		delete[] _animArrayData;
+		_animArrayData = 0;
+
+		_animDataAllocated = 0;
+	}
+
+	delete _multData2;
+	_multData2 = 0;
 }
 
 } // End of namespace Gob
