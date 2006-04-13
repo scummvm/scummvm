@@ -238,9 +238,15 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 void MidiParser_SMF::compressToType0() {
 	// We assume that _buffer has been allocated
 	// to sufficient size for this operation.
-	byte *track_pos[16];
-	byte running_status[16];
-	uint32 track_timer[16];
+
+	// using 0xFF since it could write track_pos[0 to _num_tracks] here
+	// this would cause some illegal writes and could lead to segfaults
+	// (it crashed for some midis for me, they're not used in any game
+	// scummvm supports though). *Maybe* handle this in another way,
+	// it's at the moment only to be sure, that nothing goes wrong.
+	byte *track_pos[0xFF];
+	byte running_status[0xFF];
+	uint32 track_timer[0xFF];
 	uint32 delta;
 	int i;
 
