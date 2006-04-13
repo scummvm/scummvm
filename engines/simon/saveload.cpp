@@ -99,9 +99,9 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 }
 
 void SimonEngine::quickLoadOrSave() {
-	// simon1demo subroutines are missing too many segments
-	// original demo didn't allow load or save either.
-	if (getGameId() == GID_SIMON1DEMO)
+	// The demo of Simon 1 (DOS Floppy) is missing too many segments
+	// and the Feeble Files doesn't always allow a load or save
+	if (getGameId() == GID_SIMON1DEMO || getGameType() == GType_FF)
 		return;
 
 	bool success;
