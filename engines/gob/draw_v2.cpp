@@ -83,7 +83,7 @@ void Draw_v2::printText(void) {
 
 	_backColor = *ptr++;
 	_transparency = 1;
-	spriteOperation(DRAW_CLEARRECT);
+//	spriteOperation(DRAW_CLEARRECT);
 
 	_backColor = 0;
 	savedFlags = _renderFlags;
@@ -99,13 +99,13 @@ void Draw_v2::printText(void) {
 		cmd = (*ptr & 0xf0) >> 4;
 		if (cmd == 0) {
 			_frontColor = *ptr & 0xf;
-			spriteOperation(DRAW_DRAWLINE);
+//			spriteOperation(DRAW_DRAWLINE);
 		} else if (cmd == 1) {
 			_frontColor = *ptr & 0xf;
-			spriteOperation(DRAW_DRAWBAR);
+//			spriteOperation(DRAW_DRAWBAR);
 		} else if (cmd == 2) {
 			_backColor = *ptr & 0xf;
-			spriteOperation(DRAW_FILLRECTABS);
+//			spriteOperation(DRAW_FILLRECTABS);
 		}
 	}
 	ptr += 2;
