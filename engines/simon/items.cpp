@@ -1865,8 +1865,42 @@ void SimonEngine::o3_hyperLinkOff() {
 }
 
 void SimonEngine::o3_checkPaths() {
-	// 173
-	warning("STUB: script opcode 173");
+	// 173 check paths
+	int val, count;
+	const uint8 *pathVal1 = _pathValues1;
+	bool result = false;
+
+	count = _variableArray2[38];
+	while (count) {
+		val = pathVal1[2];
+		if (val == _variableArray2[50] ||
+			val == _variableArray2[50] ||
+			val == _variableArray2[51] ||
+			val == _variableArray2[201] ||
+			val == _variableArray2[203] ||
+			val == _variableArray2[205] ||
+			val == _variableArray2[207] ||
+			val == _variableArray2[209] ||
+			val == _variableArray2[211] ||
+			val == _variableArray2[213] ||
+			val == _variableArray2[215] ||
+			val == _variableArray2[219] ||
+			val == _variableArray2[220] ||
+			val == _variableArray2[221] ||
+			val == _variableArray2[222] ||
+			val == _variableArray2[223] ||
+			val == _variableArray2[224] ||
+			val == _variableArray2[225] ||
+			val == _variableArray2[226]) {
+				result = true;
+				break;
+		}
+
+		count--;
+		pathVal1++;
+	}
+
+	_variableArray2[57] = result;
 }
 
 void SimonEngine::o3_mouseOff() {
