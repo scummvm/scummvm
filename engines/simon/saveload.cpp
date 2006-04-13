@@ -263,7 +263,7 @@ restart:;
 
 		// do_3_start
 		for (;;) {
-			videoPutchar(window, 0x7f);
+			windowPutChar(window, 0x7f);
 
 			_saveLoadFlag = true;
 
@@ -314,7 +314,7 @@ restart:;
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
 
-				videoPutchar(_windowArray[5], i);
+				windowPutChar(_windowArray[5], i);
 			}
 		}
 
@@ -410,7 +410,7 @@ void SimonEngine::unk_132_helper_3() {
 void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
 	byte old_text;
 
-	videoPutchar(window, x, b);
+	windowPutChar(window, x, b);
 	old_text = window->text_color;
 	window->text_color = window->fill_color;
 
@@ -423,10 +423,10 @@ void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
 
 	}
 
-	videoPutchar(window, x);
+	windowPutChar(window, x);
 
 	window->text_color = old_text;
-	videoPutchar(window, 8);
+	windowPutChar(window, 8);
 }
 
 void SimonEngine::fileError(WindowBlock *window, bool save_error) {
@@ -441,11 +441,11 @@ void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 		string2 = "\r     File not found.";
 	}
 
-	videoPutchar(window, 0xC);
+	windowPutChar(window, 0xC);
 	for (; *string; string++)
-		videoPutchar(window, *string);
+		windowPutChar(window, *string);
 	for (; *string2; string2++)
-		videoPutchar(window, *string2);
+		windowPutChar(window, *string2);
 
 	window->textColumn = (window->width / 2) - 3;
 	window->textRow = window->height - 1;
@@ -453,7 +453,7 @@ void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 
 	string = "[ OK ]";
 	for (; *string; string++)
-		videoPutchar(window, *string);
+		windowPutChar(window, *string);
 
 	ha = findEmptyHitArea();
 	ha->x = ((window->width >> 1) + (window->x - 3)) * 8;

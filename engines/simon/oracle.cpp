@@ -154,73 +154,6 @@ void SimonEngine::oracleTextDown() {
 	}
 }
 
-void SimonEngine::listSaveGames(int n) {
-	char b[108];
-	Common::InSaveFile *in;
-	uint16 j, k, z, maxFiles;
-	int OK;
-	memset(b, 0, 108);
-
-	maxFiles = countSaveGames() - 1;
-	j = maxFiles - n + 1;
-	k = maxFiles - j + 1;
-	z = maxFiles;
-	if (getBitFlag(95)) {
-		j++;
-		z++;
-	}
-
-	while(1) {
-		OK=1;
-		if (getBitFlag(93) || getBitFlag(94)) {
-			OK = 0;
-			if(j > z)
-				break;
-		}
-
-		if (getBitFlag(93)) {
-			if (((_newLines + 1) >= _textWindow->scrollY) && ((_newLines + 1) < (_textWindow->scrollY + 3)))
-				OK = 1;
-		}
-
-		if (getBitFlag(94)) {
-			if ((_newLines + 1) == (_textWindow->scrollY + 7))
-				OK = 1;
-		}
-
-
-		if (OK == 1) {
-			if (j == maxFiles + 1) {
-				showMessageFormat("\n");
-				hyperLinkOn(j + 400);
-				setTextColor(116);
-	    			showMessageFormat(" %d. ",1);
-				hyperLinkOff();
-				setTextColor(113);
-				k++;
-				j--;
-			}
-
-			if (!(in = _saveFileMan->openForLoading(gen_savename(j))))
-				break;
-			in->read(b, 100);
-			delete in;
-		}
-
-		showMessageFormat("\n");
-		hyperLinkOn(j + 400);
-		setTextColor(116);
-		if (k < 10)
-			showMessageFormat(" ");
-		showMessageFormat("%d. ",k);
-		setTextColor(113);
-		showMessageFormat("%s ",b);
-		hyperLinkOff();
-		j--;
-		k++;
-	}
-}
-
 void SimonEngine::scrollOracleUp() {
 	byte *src, *dst;
 	uint16 w, h;
@@ -358,6 +291,159 @@ void SimonEngine::swapCharacterLogo() {
 		src += 336;
 		dst += _screenWidth;
 	}
+}
+
+void SimonEngine::listSaveGames(int n) {
+	char b[108];
+	Common::InSaveFile *in;
+	uint16 j, k, z, maxFiles;
+	int OK;
+	memset(b, 0, 108);
+
+	maxFiles = countSaveGames() - 1;
+	j = maxFiles - n + 1;
+	k = maxFiles - j + 1;
+	z = maxFiles;
+	if (getBitFlag(95)) {
+		j++;
+		z++;
+	}
+
+	while(1) {
+		OK=1;
+		if (getBitFlag(93) || getBitFlag(94)) {
+			OK = 0;
+			if(j > z)
+				break;
+		}
+
+		if (getBitFlag(93)) {
+			if (((_newLines + 1) >= _textWindow->scrollY) && ((_newLines + 1) < (_textWindow->scrollY + 3)))
+				OK = 1;
+		}
+
+		if (getBitFlag(94)) {
+			if ((_newLines + 1) == (_textWindow->scrollY + 7))
+				OK = 1;
+		}
+
+
+		if (OK == 1) {
+			if (j == maxFiles + 1) {
+				showMessageFormat("\n");
+				hyperLinkOn(j + 400);
+				setTextColor(116);
+	    			showMessageFormat(" %d. ",1);
+				hyperLinkOff();
+				setTextColor(113);
+				k++;
+				j--;
+			}
+
+			if (!(in = _saveFileMan->openForLoading(gen_savename(j))))
+				break;
+			in->read(b, 100);
+			delete in;
+		}
+
+		showMessageFormat("\n");
+		hyperLinkOn(j + 400);
+		setTextColor(116);
+		if (k < 10)
+			showMessageFormat(" ");
+		showMessageFormat("%d. ",k);
+		setTextColor(113);
+		showMessageFormat("%s ",b);
+		hyperLinkOff();
+		j--;
+		k++;
+	}
+}
+
+void SimonEngine::saveUserGame(int slot) {
+	WindowBlock *window;
+	Common::InSaveFile *in;
+	char name[108];
+	int len;
+	memset(name, 0, 108);
+
+	window = _windowArray[3];
+
+	window->textRow = (slot + 1 - window->scrollY) * 15;
+	window->textColumn = 26;
+
+	if ((in = _saveFileMan->openForLoading(gen_savename(readVariable(55))))) {
+		in->read(name, 100);
+		delete in;
+	}
+
+	len = 0;
+	while (name[len]) {
+		byte chr = name[len - 32];
+		window->textColumn += getFeebleFontSize(chr);
+		len++;
+	}
+
+	windowPutChar(window, 0x7f);
+	for (;;) {
+		_keyPressed = 0;
+		delay(1);
+
+		if (_keyPressed == 0 || _keyPressed >= 127)
+			continue;
+
+		window->textColumn -= getFeebleFontSize(127);
+		name[len] = 0;
+		windowBackSpace(_windowArray[3]);
+
+		if (_keyPressed == 27) {
+			writeVariable(55, _keyPressed);
+			break;
+		}
+
+		if (_keyPressed == 10 || _keyPressed == 13) {
+			if (!saveGame(readVariable(55), name))
+				writeVariable(55, 0xFFFF);
+			else
+				writeVariable(55, 0);
+			break;
+		}
+		if (_keyPressed == 8 && len != 0) {
+			len--;
+			byte chr = name[len];
+			window->textColumn -= getFeebleFontSize(chr);
+			name[len] = 0;
+			windowBackSpace(_windowArray[3]);
+			windowPutChar(window, 0x7f);
+		}
+		if (_keyPressed >= 32 && window->textColumn + 26 <= window->width) {
+			name[len++] = _keyPressed;
+			windowPutChar(_windowArray[3], _keyPressed);
+			windowPutChar(window, 0x7f);
+		}
+	}
+}
+
+void SimonEngine::windowBackSpace(WindowBlock *window) {
+	byte *dst;
+	uint x, y, h, w;
+
+	_lockWord |= 0x8000;
+
+	x = window->x + window->textColumn;
+	y = window->y + window->textRow;
+
+	dst = getFrontBuf() + _dxSurfacePitch * y + x;
+
+	for (h = 0; h < 13; h++) {
+		for (w = 0; w < 8; w++) {
+			if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
+				dst[w] = 0;
+		}
+		dst += _screenWidth;
+	}
+
+	_lockWord &= ~0x8000;
 }
 
 } // End of namespace Simon

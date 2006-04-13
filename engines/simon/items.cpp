@@ -321,6 +321,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[124] = &SimonEngine::o3_ifTime;
 		opcode_table[127] = &SimonEngine::o3_playTune;
 		opcode_table[131] = &SimonEngine::o3_setTime;
+		opcode_table[132] = &SimonEngine::o3_saveUserGame,
 		opcode_table[133] = &SimonEngine::o3_loadUserGame;
 		opcode_table[134] = &SimonEngine::o3_listSaveGames;
 		opcode_table[135] = &SimonEngine::o3_checkCD;
@@ -1821,6 +1822,12 @@ void SimonEngine::o3_setTime() {
 	// 131
 	time(&_timeStore);
 	_timeStore -= _gameStoppedClock;
+}
+
+void SimonEngine::o3_saveUserGame() {
+	// 132: save game
+	_noOracleScroll = 0;
+	saveUserGame(countSaveGames() + 1 - readVariable(55));
 }
 
 void SimonEngine::o3_loadUserGame() {

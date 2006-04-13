@@ -301,7 +301,7 @@ void SimonEngine::showActionString(const byte *string) {
 	window->textColumnOffset = x & 7;
 
 	for (; *string; string++)
-		videoPutchar(window, *string);
+		windowPutChar(window, *string);
 }
 
 void SimonEngine::resetNameWindow() {

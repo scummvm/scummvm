@@ -592,9 +592,11 @@ protected:
  	void hyperLinkOff();
 	void linksUp();
 	void linksDown();
-	void listSaveGames(int n);
 	void oracleTextUp();
 	void oracleTextDown();
+	void listSaveGames(int n);
+	void saveUserGame(int slot);
+	void windowBackSpace(WindowBlock *window);
 
 	void bltOracleText();
 	void oracleLogo();
@@ -636,7 +638,7 @@ protected:
 	HitArea *findHitAreaByID(uint hitarea_id);
 
 	void showActionString(const byte *string);
-	void videoPutchar(WindowBlock *window, byte c, byte b = 0);
+	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 	void clearWindow(WindowBlock *window);
 	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
@@ -671,6 +673,8 @@ protected:
 	void hitarea_stuff_helper();
 
 	void permitInput();
+
+	uint getFeebleFontSize(byte chr);
 	void showmessage_helper_3(uint a, uint b);
 	void showmessage_print_char(byte chr);
 
@@ -958,6 +962,7 @@ public:
 	void o3_ifTime();
 	void o3_playTune();
 	void o3_setTime();
+	void o3_saveUserGame();
 	void o3_loadUserGame();
 	void o3_listSaveGames();
 	void o3_checkCD();

@@ -2886,7 +2886,7 @@ void SimonEngine::delete_hitarea_by_index(uint index) {
 
 void SimonEngine::windowPutChar(uint a) {
 	if (_textWindow != _windowArray[0])
-		videoPutchar(_textWindow, a);
+		windowPutChar(_textWindow, a);
 }
 
 void SimonEngine::clearWindow(WindowBlock *window) {

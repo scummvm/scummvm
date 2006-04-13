@@ -283,6 +283,10 @@ static const byte feebleFontSize[208] = {
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
 };
 
+uint SimonEngine::getFeebleFontSize(byte chr) {
+	return feebleFontSize[chr - 32];
+}
+
 void SimonEngine::showMessageFormat(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	char *str;
@@ -382,7 +386,7 @@ void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_newLines = 0;
 }
 
-void SimonEngine::videoPutchar(WindowBlock *window, byte c, byte b) {
+void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 
 	if (c == 12) {
