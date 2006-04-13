@@ -1084,7 +1084,7 @@ static const char *findDescriptionFromGameID(const char *gameid) {
 		}
 		g++;
 	}
-	error("Unknown gameid encountered in findDescriptionFromGameID");
+	error("Unknown gameid '%s' encountered in findDescriptionFromGameID", gameid);
 }
 
 static int compareMD5Table(const void *a, const void *b) {
