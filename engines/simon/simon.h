@@ -262,10 +262,6 @@ protected:
 	bool _speech;
 	bool _subtitles;
 	bool _fade;
-	byte _animatePointer;
-	byte _mouseCursor;
-	byte _mouseAnim;
-	byte _mouseAnimMax;
 	bool _vgaVar9;
 	int16 _scriptUnk1;
 	bool _restoreWindow6;
@@ -297,7 +293,6 @@ protected:
 	uint _needHitAreaRecalc;
 	uint _verbHitArea;
 	uint16 _defaultVerb;
-	uint _mouseHideCount;
 	uint _currentBoxNumber;
 	uint _iOverflow;
 
@@ -316,6 +311,11 @@ protected:
 
 	int _mouseX, _mouseY;
 	int _mouseXOld, _mouseYOld;
+
+	byte _animatePointer;
+	byte _mouseCursor, _mouseAnim, _mouseAnimMax;
+	byte _oldMouseCursor, _oldMouseAnimMax;
+	uint _mouseHideCount;
 
 	byte _leftButtonDown;
 	byte _rightButtonDown;
@@ -568,7 +568,7 @@ protected:
 	HitArea *findEmptyHitArea();
 	void resetVerbs();
 	void setVerb(HitArea * ha);
-	void hitarea_leave(HitArea * ha);
+	void hitarea_leave(HitArea * ha, bool state = false);
 	void leaveHitAreaById(uint hitarea_id);
 
 	void waitForSync(uint a);
@@ -650,6 +650,7 @@ protected:
 	void displayName(HitArea * ha);
 	void displayBoxStars();
 	void hitarea_stuff();
+	void invertBox(HitArea *ha, bool state);
 
 	void handleMouseMoved();
 	void pollMouseXY();

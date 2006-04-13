@@ -515,11 +515,13 @@ void SimonEngine::setVerb(HitArea *ha) {
 	}
 }
 
-void SimonEngine::hitarea_leave(HitArea *ha) {
-	if (!(getGameType() == GType_SIMON2)) {
-		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
-	} else {
+void SimonEngine::hitarea_leave(HitArea *ha, bool state) {
+	if (getGameType() == GType_FF) {
+		invertBox(ha, state);
+	} else if (getGameType() == GType_SIMON2) {
 		video_toggle_colors(ha, 0xe7, 0xe5, 0xe6, 1);
+	} else {
+		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
 	}
 }
 
@@ -661,7 +663,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 					best_ha = ha;
 				} else {
 					if (ha->flags & kBFBoxSelected) {
-						hitarea_leave(ha);
+						hitarea_leave(ha , true);
 						ha->flags &= ~kBFBoxSelected;
 					}
 				}
@@ -693,7 +695,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	}
 
 	if (best_ha->flags & kBFInvertTouch && !(best_ha->flags & kBFBoxSelected)) {
-		hitarea_leave(best_ha);
+		hitarea_leave(best_ha, false);
 		best_ha->flags |= kBFBoxSelected;
 	}
 
@@ -740,6 +742,49 @@ void SimonEngine::displayName(HitArea *ha) {
 
 	if (result)
 		_lastNameOn = ha;
+}
+
+void SimonEngine::invertBox(HitArea *ha, bool state) {
+	if (getBitFlag(205) && getBitFlag(206)) {
+		if (state != 0) {
+			_mouseAnimMax = _oldMouseAnimMax;
+			_mouseCursor = _oldMouseCursor;
+		} else if (_mouseCursor != 18) {
+			_oldMouseCursor = _mouseCursor;
+			_animatePointer = 0;
+			_oldMouseAnimMax = _mouseAnimMax;
+			_mouseAnimMax = 2;
+			_mouseCursor = 18;
+
+		}
+	} else {
+		if (getBitFlag(207)) {
+			if (state != 0) {
+				_noRightClick = 0;
+				resetVerbs();
+			} else {
+				int cursor = ha->id + 9;
+				if (cursor >= 23)
+					cursor = 21;
+				_mouseCursor = cursor;
+				_mouseAnimMax = 8;
+				_noRightClick = 1;
+			}
+		} else {
+			VgaSprite *vsp = _vgaSprites;
+
+			int id = ha->id - 43;
+			while (vsp->id) {
+				if (vsp->id == id && vsp->zoneNum == 2) {
+					if (state == 0)
+						vsp->flags |= kDFShaded;
+					else
+						vsp->flags &= ~kDFShaded;
+					break;
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace Simon

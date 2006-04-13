@@ -252,10 +252,14 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_speech = true;
 	_subtitles = true;
 	_fade = true;
+
 	_animatePointer = 0;
 	_mouseCursor = 0;
 	_mouseAnim = 0;
 	_mouseAnimMax = 0;
+	_oldMouseCursor = 0;
+	_oldMouseAnimMax = 0;
+
 	_vgaVar9 = 0;
 	_scriptUnk1 = 0;
 	_restoreWindow6 = 0;

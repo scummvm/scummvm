@@ -211,8 +211,8 @@ restart:;
 	if_1:;
 		unk132_result = i;
 
-		set_hitarea_bit_0x40(0xd0 + i);
-		leaveHitAreaById(0xd0 + i);
+		set_hitarea_bit_0x40(208 + i);
+		leaveHitAreaById(208 + i);
 
 		// some code here
 
