@@ -87,6 +87,22 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_curImaFile[0] = 0;
 	_soundFromExt[0] = 0;
 	_collStr[0] = 0;
+
+	_backupedCount = 0;
+	_curBackupPos = 0;
+	
+	for (i = 0; i < 5; i++) {
+		_cursorXDeltaArray[i] = 0;
+		_cursorYDeltaArray[i] = 0;
+		_totTextDataArray[i] = 0;
+		_totFileDataArray[i] = 0;
+		_totResourceTableArray[i] = 0;
+		_extTableArray[i] = 0;
+		_extHandleArray[i] = 0;
+		_imFileDataArray[i] = 0;
+		_variablesArray[i] = 0;
+		_curTotFileArray[i][0] = 0;
+	}
 }
 
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
@@ -1927,6 +1943,75 @@ void Game::start(void) {
 	_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
 	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
 	_vm->_video->freeSurfDesc(_vm->_draw->_backSurface);
+}
+
+// flagbits: 0 = freeInterVariables, 1 = skipPlay
+void Game::totSub(int8 flags, char *newTotFile) {
+	int8 curBackupPos;
+
+	warning("totSub(%d, \"%s\");", flags, newTotFile);
+
+	if (_backupedCount >= 5)
+		return;
+
+	_cursorXDeltaArray[_backupedCount] = _vm->_draw->_cursorXDeltaVar;
+	_cursorYDeltaArray[_backupedCount] = _vm->_draw->_cursorYDeltaVar;
+	_totTextDataArray[_backupedCount] = _totTextData;
+	_totFileDataArray[_backupedCount] = _totFileData;
+	_totResourceTableArray[_backupedCount] = _totResourceTable;
+	_extTableArray[_backupedCount] = _extTable;
+	_extHandleArray[_backupedCount] = _extHandle;
+	_imFileDataArray[_backupedCount] = _imFileData;
+	_variablesArray[_backupedCount] = _vm->_global->_inter_variables;
+	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
+
+	curBackupPos = _curBackupPos;
+	_backupedCount++;
+	_curBackupPos = _backupedCount;
+
+	_totTextData = 0;
+	_totFileData = 0;
+	_totResourceTable = 0;
+	if (flags & 1)
+		_vm->_global->_inter_variables = 0;
+
+	strcpy(_curTotFile, newTotFile);
+	strcat(_curTotFile, ".TOT");
+
+	if (_vm->_inter->_terminate != 0)
+		return;
+
+	pushCollisions(0);
+
+	if (flags & 2)
+		playTot(-1);
+	else
+		playTot(0);
+
+	if (_vm->_inter->_terminate != 2)
+		_vm->_inter->_terminate = 0;
+
+	warning("GOB2 Stub! sub_18072");
+
+	if ((flags & 1) && (_vm->_global->_inter_variables != 0))
+		delete[] _vm->_global->_inter_variables;
+
+	_backupedCount--;
+	_curBackupPos = curBackupPos;
+
+	_vm->_draw->_cursorXDeltaVar = _cursorXDeltaArray[_backupedCount];
+	_vm->_draw->_cursorYDeltaVar = _cursorYDeltaArray[_backupedCount];
+	_totTextData = _totTextDataArray[_backupedCount];
+	_totFileData = _totFileDataArray[_backupedCount];
+	_totResourceTable = _totResourceTableArray[_backupedCount];
+	_extTable = _extTableArray[_backupedCount];
+	_extHandle = _extHandleArray[_backupedCount];
+	_imFileData = _imFileDataArray[_backupedCount];
+	_vm->_global->_inter_variables = _variablesArray[_backupedCount];
+	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
+	strcpy(_curExtFile, _curTotFile);
+	_curExtFile[strlen(_curExtFile)-4] = '\0';
+	strcat(_curExtFile, ".EXT");
 }
 
 } // End of namespace Gob

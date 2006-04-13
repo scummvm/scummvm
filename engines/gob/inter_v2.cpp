@@ -20,6 +20,10 @@
  * $Id$
  *
  */
+
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/inter.h"
@@ -199,7 +203,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 40 */
-		OPCODE(o2_stub0x40),
+		OPCODE(o2_totSub),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
@@ -226,7 +230,7 @@ void Inter_v2::setupOpcodes(void) {
 		/* 54 */
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x56),
 		{NULL, ""},
 		/* 58 */
 		{NULL, ""},
@@ -706,29 +710,13 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 	return "";
 }
 
-void Inter_v2::o2_stub0x40(void) {
-	char str[18];
-	int i;
-	int length;
+void Inter_v2::o2_stub0x56(void) {
+	int16 expr1 = _vm->_parse->parseValExpr();
+	int16 expr2 = _vm->_parse->parseValExpr();
+	int16 expr3 = _vm->_parse->parseValExpr();
+	int16 expr4 = _vm->_parse->parseValExpr();
 
-	warning("STUB: Gob2 drawOperation 0x40");
-	
-	length = *_vm->_global->_inter_execPtr++;
-	if (length > 17)
-		error("Length in o2_stub0x40 is greater than 17 (%d)", length);
-	if (length & 0x80) {
-		evalExpr(0);
-		strcpy(str, _vm->_global->_inter_resStr);
-	} else { // loc_E8CE
-		for (i = 0; i < length; i++) // loc_E8E3
-			str[i] = *_vm->_global->_inter_execPtr++;
-		str[i] = 0;
-	}
-
-	// loc_E910
-
-	_vm->_global->_inter_execPtr++;
-	warning("GOB2 Stub! sub_A6EB(%d, \"%s\");", *_vm->_global->_inter_execPtr, str);
+	warning("STUB: Gob2 drawOperation 0x56 (%d %d %d %d)", expr1, expr2, expr3, expr4);
 }
 
 void Inter_v2::o2_stub0x80(void) {
@@ -890,6 +878,32 @@ int16 Inter_v2::loadSound(int16 search) {
 	return;
 
 	_vm->_game->loadSound(slot, dataPtr);*/
+}
+
+void Inter_v2::loadMult(void) {
+	int16 val;
+	int16 objIndex;
+	int16 i;
+	char *lmultData;
+
+	debugC(4, DEBUG_GAMEFLOW, "Inter_v2::loadMult(): Loading...");
+
+	objIndex = _vm->_parse->parseValExpr();
+	val = _vm->_parse->parseValExpr();
+	*_vm->_mult->_objects[objIndex].pPosX = val;
+	val = _vm->_parse->parseValExpr();
+	*_vm->_mult->_objects[objIndex].pPosY = val;
+
+	lmultData = (char *)_vm->_mult->_objects[objIndex].pAnimData;
+	for (i = 0; i < 11; i++) {
+		if (*_vm->_global->_inter_execPtr != 99) {
+			val = _vm->_parse->parseValExpr();
+			lmultData[i] = val;
+		} else
+			_vm->_global->_inter_execPtr++;
+	}
+
+	warning("GOB2 Stub! Inter_v2::loadMult()");
 }
 
 bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) {
@@ -1343,6 +1357,31 @@ void Inter_v2::o2_playMult(void) {
 
 	_vm->_mult->setMultData(checkEscape >> 1);
 	_vm->_mult->playMult(VAR(57), -1, checkEscape & 0x1, 0);
+}
+
+void Inter_v2::o2_totSub(void) {
+	char totFile[14];
+	int flags;
+	int length;
+	int i;
+
+	length = *_vm->_global->_inter_execPtr++;
+	if (length > 13)
+		error("Length in o2_totSub is greater than 13 (%d)", length);
+	if (length & 0x80) {
+		evalExpr(0);
+		strcpy(totFile, _vm->_global->_inter_resStr);
+	} else { // loc_E8CE
+		for (i = 0; i < length; i++) // loc_E8E3
+			totFile[i] = *_vm->_global->_inter_execPtr++;
+		totFile[i] = 0;
+	}
+
+	// loc_E910
+
+	_vm->_global->_inter_execPtr++;
+	flags = *_vm->_global->_inter_execPtr;
+	_vm->_game->totSub(flags, totFile);
 }
 
 } // End of namespace Gob

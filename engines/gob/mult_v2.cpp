@@ -864,7 +864,6 @@ void Mult_v2::animate(void) {
 	int numAnims = 0; // di
 	// .-----
 	int off_2CE67 = 1000;
-	int word_2CC88 = 1;
 	// '-----
 	
 	if (_objects == 0)
@@ -987,8 +986,8 @@ void Mult_v2::animate(void) {
 		}
 	}
 
-	warning("GOB2 Stub! word_2CC88");
-	if (word_2CC88 >= 0) {
+	warning("GOB2 Stub! _word_2CC88");
+	if (_word_2CC88 >= 0) {
 		for (i = 0; i < orderArrayPos; i++) {
 			animObj1 = _renderData2[orderArray[i]];
 			for (j = i+1; j < orderArrayPos; j++) {
@@ -1061,7 +1060,7 @@ void Mult_v2::animate(void) {
 
 		if (animData1->maxTick == animObj1->tick) {
 			animObj1->tick = 0;
-			if ((animData1->animType < 100) || (word_2CC88 < 0)) {
+			if ((animData1->animType < 100) || (_word_2CC88 < 0)) {
 				if (animData1->animType == 4) {
 					animData1->frame = 0;
 					animData1->isPaused = 1;

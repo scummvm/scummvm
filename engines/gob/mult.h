@@ -186,11 +186,12 @@ public:
 
 	int8 *_orderArray;
 
+	int16 _word_2CC88;
+
 	void zeroMultData(void);
 	void checkFreeMult(void);
 	void interGetObjAnimSize(void);
 	void freeMult(void);
-	void interLoadMult(void);
 	void freeAll(void);
 	void initAll(void);
 

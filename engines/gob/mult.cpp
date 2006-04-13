@@ -120,6 +120,7 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 		}
 
 	_orderArray = 0;
+	_word_2CC88 = -1;
 }
 
 void Mult::interGetObjAnimSize(void) {
@@ -149,31 +150,6 @@ void Mult::freeMult(void) {
 	_objects = 0;
 	_renderData = 0;
 	_vm->_anim->_animSurf = 0;
-}
-
-void Mult::interLoadMult(void) {
-	int16 val;
-	int16 objIndex;
-	int16 i;
-	char *lmultData;
-
-	debugC(4, DEBUG_GAMEFLOW, "interLoadMult: Loading...");
-
-	_vm->_inter->evalExpr(&objIndex);
-	_vm->_inter->evalExpr(&val);
-	*_objects[objIndex].pPosX = val;
-	_vm->_inter->evalExpr(&val);
-	*_objects[objIndex].pPosY = val;
-
-	lmultData = (char *)_objects[objIndex].pAnimData;
-	for (i = 0; i < 11; i++) {
-		if ((char)READ_LE_UINT16(_vm->_global->_inter_execPtr) == (char)99) {
-			_vm->_inter->evalExpr(&val);
-			lmultData[i] = val;
-		} else {
-			_vm->_global->_inter_execPtr++;
-		}
-	}
 }
 
 void Mult::freeAll(void) {

@@ -1323,6 +1323,9 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 flag;
 	int16 key;
 
+	// Gob2 busy-waits here, so add a delay
+	_vm->_util->longDelay(1);
+
 	flag = load16();
 	animPalette();
 	_vm->_draw->blitInvalidated();
@@ -1562,7 +1565,7 @@ void Inter_v1::o1_animate(void) {
 }
 
 void Inter_v1::o1_multLoadMult(void) {
-	_vm->_mult->interLoadMult();
+	loadMult();
 }
 
 void Inter_v1::o1_storeParams(void) {
@@ -2723,6 +2726,31 @@ int16 Inter_v1::loadSound(int16 slot) {
 
 	_vm->_game->loadSound(slot, dataPtr);
 	return 0;
+}
+
+void Inter_v1::loadMult(void) {
+	int16 val;
+	int16 objIndex;
+	int16 i;
+	char *lmultData;
+
+	debugC(4, DEBUG_GAMEFLOW, "Inter_v1::loadMult(): Loading...");
+
+	evalExpr(&objIndex);
+	evalExpr(&val);
+	*_vm->_mult->_objects[objIndex].pPosX = val;
+	evalExpr(&val);
+	*_vm->_mult->_objects[objIndex].pPosY = val;
+
+	lmultData = (char *)_vm->_mult->_objects[objIndex].pAnimData;
+	for (i = 0; i < 11; i++) {
+		if ((char)READ_LE_UINT16(_vm->_global->_inter_execPtr) == (char)99) {
+			evalExpr(&val);
+			lmultData[i] = val;
+		} else {
+			_vm->_global->_inter_execPtr++;
+		}
+	}
 }
 
 } // End of namespace Gob

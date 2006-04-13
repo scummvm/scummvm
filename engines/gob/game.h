@@ -117,6 +117,20 @@ public:
 
 	char _soundFromExt[20];
 
+	// For totSub()
+	int8 _backupedCount;
+	int8 _curBackupPos;
+	int16 _cursorXDeltaArray[5];
+	int16 _cursorYDeltaArray[5];
+	TotTextTable *_totTextDataArray[5];
+	char *_totFileDataArray[5];
+	TotResTable *_totResourceTableArray[5];
+	ExtTable *_extTableArray[5];
+	int16 _extHandleArray[5];
+	char *_imFileDataArray[5];
+	char *_variablesArray[5];
+	char _curTotFileArray[5][14];
+
 	Game(GobEngine *vm);
 
 	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight);
@@ -148,6 +162,7 @@ public:
 	void loadImFile(void);
 	void playTot(int16 skipPlay);
 	void start(void);
+	void totSub(int8 flags, char *newTotFile);
 
 protected:
 

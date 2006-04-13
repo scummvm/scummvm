@@ -76,6 +76,7 @@ protected:
 	virtual const char *getOpcodeDrawDesc(byte i) = 0;
 	virtual const char *getOpcodeFuncDesc(byte i, byte j) = 0;
 	virtual const char *getOpcodeGoblinDesc(int i) = 0;
+	virtual void loadMult(void) = 0;
 };
 
 class Inter_v1 : public Inter {
@@ -112,6 +113,7 @@ protected:
 	virtual const char *getOpcodeDrawDesc(byte i);
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void loadMult(void);
 
 	void o1_loadMult(void);
 	void o1_playMult(void);
@@ -301,9 +303,11 @@ protected:
 	virtual const char *getOpcodeDrawDesc(byte i);
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void loadMult(void);
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
-	void o2_stub0x40(void);
+	void o2_totSub(void);
+	void o2_stub0x56(void);
 	void o2_stub0x80(void);
 	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
