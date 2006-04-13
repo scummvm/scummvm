@@ -197,8 +197,17 @@ static void initialize() {
 	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
 	
 	loadTextData("texte.dat", textDataPtr);
-	if (gameType == Cine::GID_FW)
+
+	switch (gameType) {
+	case Cine::GID_FW:
 		snd_loadBasesonEntries("BASESON.SND");
+		break;
+	case Cine::GID_OS:
+		// TODO
+		// load POLDAT.DAT
+		// load ERRMESS.DAT (default responses to actions)
+		break;
+	}
 
 	for (i = 0; i < NUM_MAX_OBJECT; i++) {
 		objectTable[i].part = 0;
