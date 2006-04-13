@@ -161,9 +161,9 @@ void SimonEngine::listSaveGames(int n) {
 	int OK;
 	memset(b, 0, 108);
 
-	maxFiles = countSaveGames();
-	j = maxFiles - n;
-	k = maxFiles - j;
+	maxFiles = countSaveGames() - 1;
+	j = maxFiles - n + 1;
+	k = maxFiles - j + 1;
 	z = maxFiles;
 	if (getBitFlag(95)) {
 		j++;
