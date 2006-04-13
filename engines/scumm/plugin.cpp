@@ -629,17 +629,15 @@ Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
 		break;
 
 	case kGenHEMac:
-		// FIXME: Is this correct?
 		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
 		break;
 
 	case kGenHEMacNoParens:
-		// FIXME: Is this correct?
 		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
 		break;
 
 	default:
-		error("FOO");
+		error("generateFilenameForDetection: Unhandled genMethod");
 	}
 
 	return buf;
