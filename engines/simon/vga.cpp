@@ -239,6 +239,8 @@ void SimonEngine::vc2_call() {
 	const byte *vc_ptr_org;
 
 	num = vcReadVarOrWord();
+	if (getGameType() == GType_FF)
+		num &= 0xFFFF;
 
 	old_file_1 = _curVgaFile1;
 	old_file_2 = _curVgaFile2;
