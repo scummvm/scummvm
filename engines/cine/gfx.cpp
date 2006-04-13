@@ -324,12 +324,16 @@ void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
 	int16 i;
 	int16 j;
 
+	// FIXME: Is it a bug if maskPtr == NULL?
+	if (!maskPtr)
+		warning("drawSpriteRaw: maskPtr == NULL");
+
 	for (i = 0; i < height; i++) {
 		byte *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
-			if (((gameType == Cine::GID_FW && !(*maskPtr)) || (gameType == Cine::GID_OS)) && (x + j >= 0
+			if (((gameType == Cine::GID_FW && (!maskPtr || !(*maskPtr))) || (gameType == Cine::GID_OS)) && (x + j >= 0
 					&& x + j < 320 && i + y >= 0 && i + y < 200)) {
 				*(destPtr++) = *(spritePtr++);
 			} else {
@@ -337,7 +341,8 @@ void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
 				spritePtr++;
 			}
 
-			maskPtr++;
+			if (maskPtr)
+				maskPtr++;
 		}
 	}
 }
