@@ -176,8 +176,6 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	_saveHeader.version = CURRENT_SAGA_VER;
 	strncpy(_saveHeader.name, saveName, SAVE_TITLE_SIZE);
 
-	out->write(&_saveHeader, sizeof(_saveHeader));
-
 	out->writeUint32BE(_saveHeader.type);
 	out->writeUint32LE(_saveHeader.size);
 	out->writeUint32LE(_saveHeader.version);
