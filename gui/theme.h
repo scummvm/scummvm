@@ -326,8 +326,7 @@ private:
 
 	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);
 	void drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
-					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool full,
-					bool skipLastRow = false);
+					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow = false);
 	void drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
 						const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
 						int alpha, bool skipLastRow = false);
