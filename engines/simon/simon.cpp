@@ -2251,6 +2251,9 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	_windowNum = mode;
 	_lockWord |= 0x20;
 
+	if (getGameType() == GType_FF)
+		vga_res_id &= 0xFFFF;
+
 	if (vga_res_id == 0) {
 		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
@@ -2306,7 +2309,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_scrollCount = 0;
 		_scrollFlag = 0;
 		_scrollHeight = 134;
-		if (_variableArray[34] != -1) {
+		if (_variableArray[34] >= 0) {
 			if (getGameType() == GType_FF)
 				_variableArray[250] = 0;
 			_variableArray[251] = 0;

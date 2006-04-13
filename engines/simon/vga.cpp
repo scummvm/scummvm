@@ -1292,7 +1292,7 @@ void SimonEngine::horizontalScroll(VC10_state *state) {
 	_scrollYMax = 0;
 	_scrollImage = state->depack_src;
 	_scrollHeight = state->height;
-	if (_variableArray[34] == -1)
+	if (_variableArray[34] < 0)
 		state->x = _variableArray[251];
 
 	_scrollX = state->x;
@@ -1324,7 +1324,7 @@ void SimonEngine::verticalScroll(VC10_state *state) {
 	_scrollYMax = state->height - 480;
 	_scrollImage = state->depack_src;
 	_scrollWidth = state->width;
-	if (_variableArray[34] == -1)
+	if (_variableArray[34] < 0)
 		state->y = _variableArray[250];
 
 	_scrollY = state->y;
