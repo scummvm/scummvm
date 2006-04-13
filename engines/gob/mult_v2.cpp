@@ -196,8 +196,8 @@ void Mult_v2::loadMult(int16 resId) {
 		_multData2->sndKeys[i].freq = (int16)READ_LE_UINT16(_dataPtr + 4);
 		_multData2->sndKeys[i].channel = (int16)READ_LE_UINT16(_dataPtr + 6);
 		_multData2->sndKeys[i].repCount = (int16)READ_LE_UINT16(_dataPtr + 8);
-		_multData2->sndKeys[i].resId = (int16)READ_LE_UINT16(_dataPtr + 10);
-		_multData2->sndKeys[i].soundIndex = (int16)READ_LE_UINT16(_dataPtr + 12);
+/*		_multData2->sndKeys[i].resId = (int16)READ_LE_UINT16(_dataPtr + 10);
+		_multData2->sndKeys[i].soundIndex = (int16)READ_LE_UINT16(_dataPtr + 12);*/
 
 		_multData2->sndKeys[i].soundIndex = -1;
 		_multData2->sndKeys[i].resId = -1;

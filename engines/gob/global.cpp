@@ -147,6 +147,9 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_inter_mouseX = 0;
 	_inter_mouseY = 0;
+
+	for (i = 0; i < 128; i++)
+		_pressedKeys[i] = 0;
 }
 
 } // End of namespace Gob
