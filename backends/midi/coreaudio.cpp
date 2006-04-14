@@ -40,9 +40,9 @@
 // A macro to simplify error handling a bit.
 #define RequireNoErr(error)                                         \
 do {                                                                \
-	OSStatus localError = error;                                    \
-	if (localError != noErr)                                        \
-		throw localError;                                           \
+	err = error;                                                    \
+	if (err != noErr)                                               \
+		goto bail;                                                  \
 } while (false)
 
 
@@ -68,6 +68,8 @@ MidiDriver_CORE::MidiDriver_CORE()
 }
 
 int MidiDriver_CORE::open() {
+	OSStatus err = 0;
+
 	if (_auGraph)
 		return MERR_ALREADY_OPEN;
 
@@ -75,86 +77,84 @@ int MidiDriver_CORE::open() {
 	// We use the AudioUnit v1 API, even though it is deprecated, because
 	// this way we stay compatible with older OS X versions.
 	// For v2, we'd use kAudioUnitType_MusicDevice and kAudioUnitSubType_DLSSynth
-	try {
-		RequireNoErr(NewAUGraph(&_auGraph));
+	RequireNoErr(NewAUGraph(&_auGraph));
 
-		AUNode outputNode, synthNode;
-		ComponentDescription desc;
+	AUNode outputNode, synthNode;
+	ComponentDescription desc;
 
-		// The default output device
-		desc.componentType = kAudioUnitComponentType;
-		desc.componentSubType = kAudioUnitSubType_Output;
-		desc.componentManufacturer = kAudioUnitID_DefaultOutput;
-		desc.componentFlags = 0;
-		desc.componentFlagsMask = 0;
-		RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
+	// The default output device
+	desc.componentType = kAudioUnitComponentType;
+	desc.componentSubType = kAudioUnitSubType_Output;
+	desc.componentManufacturer = kAudioUnitID_DefaultOutput;
+	desc.componentFlags = 0;
+	desc.componentFlagsMask = 0;
+	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
 
-		// The built-in default (softsynth) music device
-		desc.componentSubType = kAudioUnitSubType_MusicDevice;
-		desc.componentManufacturer = kAudioUnitID_DLSSynth;
-		RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
+	// The built-in default (softsynth) music device
+	desc.componentSubType = kAudioUnitSubType_MusicDevice;
+	desc.componentManufacturer = kAudioUnitID_DLSSynth;
+	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
 
-		// Connect the softsynth to the default output
-		RequireNoErr(AUGraphConnectNodeInput(_auGraph, synthNode, 0, outputNode, 0));
+	// Connect the softsynth to the default output
+	RequireNoErr(AUGraphConnectNodeInput(_auGraph, synthNode, 0, outputNode, 0));
 
-		// Open and initialize the whole graph
-		RequireNoErr(AUGraphOpen(_auGraph));
-		RequireNoErr(AUGraphInitialize(_auGraph));
+	// Open and initialize the whole graph
+	RequireNoErr(AUGraphOpen(_auGraph));
+	RequireNoErr(AUGraphInitialize(_auGraph));
 
-		// Get the music device from the graph.
-		RequireNoErr(AUGraphGetNodeInfo(_auGraph, synthNode, NULL, NULL, NULL, &_synth));
+	// Get the music device from the graph.
+	RequireNoErr(AUGraphGetNodeInfo(_auGraph, synthNode, NULL, NULL, NULL, &_synth));
 
 
-		// Load custom soundfont, if specified
-		if (ConfMan.hasKey("soundfont")) {
-			OSErr	err;
-			FSRef	fsref;
-			FSSpec	fsSpec;
-			const char *soundfont = ConfMan.get("soundfont").c_str();
+	// Load custom soundfont, if specified
+	if (ConfMan.hasKey("soundfont")) {
+		FSRef	fsref;
+		FSSpec	fsSpec;
+		const char *soundfont = ConfMan.get("soundfont").c_str();
 
-			err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
+		err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
 
-			if (err == noErr) {
-				err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
-			}
-
-			if (err == noErr) {
-				// TODO: We should really check here whether the file contains an
-				// actual soundfont...
-				err = AudioUnitSetProperty (
-					_synth,
-					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-					0,
-					&fsSpec, sizeof(fsSpec)
-				);
-			}
-
-			if (err != noErr)
-				warning("Failed loading custom sound font '%s' (error %d)\n", soundfont, err);
+		if (err == noErr) {
+			err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
 		}
 
+		if (err == noErr) {
+			// TODO: We should really check here whether the file contains an
+			// actual soundfont...
+			err = AudioUnitSetProperty (
+				_synth,
+				kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+				0,
+				&fsSpec, sizeof(fsSpec)
+			);
+		}
+
+		if (err != noErr)
+			warning("Failed loading custom sound font '%s' (error %ld)\n", soundfont, err);
+	}
+
 #ifdef COREAUDIO_DISABLE_REVERB
-		// Disable reverb mode, as that sucks up a lot of CPU power, which can
-		// be painful on low end machines.
-		// TODO: Make this customizable via a config key?
-		UInt32 usesReverb = 0;
-		AudioUnitSetProperty (_synth, kMusicDeviceProperty_UsesInternalReverb,
-			kAudioUnitScope_Global, 0, &usesReverb, sizeof (usesReverb));
+	// Disable reverb mode, as that sucks up a lot of CPU power, which can
+	// be painful on low end machines.
+	// TODO: Make this customizable via a config key?
+	UInt32 usesReverb = 0;
+	AudioUnitSetProperty (_synth, kMusicDeviceProperty_UsesInternalReverb,
+		kAudioUnitScope_Global, 0, &usesReverb, sizeof (usesReverb));
 #endif
 
 
-		// Finally: Start the graph!
-		RequireNoErr(AUGraphStart(_auGraph));
+	// Finally: Start the graph!
+	RequireNoErr(AUGraphStart(_auGraph));
 
-	} catch (OSStatus err) {
-		if (_auGraph) {
-			AUGraphStop(_auGraph);
-			DisposeAUGraph(_auGraph);
-			_auGraph = 0;
-		}
-		return MERR_CANNOT_CONNECT;
-	}
 	return 0;
+
+bail:
+	if (_auGraph) {
+		AUGraphStop(_auGraph);
+		DisposeAUGraph(_auGraph);
+		_auGraph = 0;
+	}
+	return MERR_CANNOT_CONNECT;
 }
 
 void MidiDriver_CORE::close() {
