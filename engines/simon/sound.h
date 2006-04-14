@@ -65,7 +65,10 @@ public:
 	void playVoice(uint sound);
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
+
+	// Feeble Files specific
 	void playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient);
+	void playVoiceData(byte *soundData, uint sound);
 
 	bool hasVoice() const;
 	bool isVoiceActive() const;

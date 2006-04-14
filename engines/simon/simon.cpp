@@ -3240,7 +3240,7 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 				kill_sprite_simon1(204);
 			}
 			kill_sprite_simon1(vgaSpriteId + 201);
-			_sound->playVoice(speech_id);
+			loadVoice(speech_id);
 			loadSprite(4, 2, vgaSpriteId + 201, 0, 0, 0);
 		}
 	} else {
@@ -3256,7 +3256,7 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			_skipVgaWait = true;
 		} else {
 			if (_subtitles && _language != Common::HB_ISR) {
-				_sound->playVoice(speech_id);
+				loadVoice(speech_id);
 				return;
 			} else if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 5, 0, 0, 0);
@@ -3265,7 +3265,7 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			}
 
 			kill_sprite_simon2(2, vgaSpriteId + 2);
-			_sound->playVoice(speech_id);
+			loadVoice(speech_id);
 			loadSprite(4, 2, vgaSpriteId + 2, 0, 0, 0);
 		}
 	}

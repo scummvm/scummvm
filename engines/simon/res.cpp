@@ -706,4 +706,28 @@ void SimonEngine::loadSound(uint sound, uint pan, uint vol, bool ambient) {
 	}
 }
 
+void SimonEngine::loadVoice(uint speechId) {
+	if (getFeatures() & GF_ZLIBCOMP) {
+		char filename[15];
+
+		uint32 file, offset, srcSize, dstSize;
+		if (getPlatform() == Common::kPlatformAmiga) {
+			loadOffsets((const char*)"spindex.dat", speechId, file, offset, srcSize, dstSize);
+		} else {
+			loadOffsets((const char*)"speech.wav", speechId, file, offset, srcSize, dstSize);
+		}
+
+		if (getPlatform() == Common::kPlatformAmiga)
+			sprintf(filename, "sp%d.wav", file);
+		else
+			sprintf(filename, "speech.wav");
+
+		byte *dst = (byte *)malloc(dstSize);
+		decompressData(filename, dst, offset, srcSize, dstSize);
+		_sound->playVoiceData(dst, speechId);
+	} else {
+		_sound->playVoice(speechId);
+	}
+}
+
 } // End of namespace Simon

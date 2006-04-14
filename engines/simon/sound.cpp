@@ -494,6 +494,23 @@ void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool 
 	}
 }
 
+void Sound::playVoiceData(byte *soundData, uint sound) {
+	byte flags;
+	int rate;
+
+	int size = READ_LE_UINT32(soundData + 4);
+	Common::MemoryReadStream stream(soundData, size);
+	if (!loadWAVFromStream(stream, size, rate, flags)) {
+		error("playSoundData: Not a valid WAV data");
+	}
+
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, soundData + stream.pos(), size);
+
+	_mixer->stopHandle(_voiceHandle);
+	_mixer->playRaw(&_voiceHandle, buffer, size, rate, flags);
+}
+
 void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;
