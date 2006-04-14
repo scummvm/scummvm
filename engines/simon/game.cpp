@@ -486,13 +486,13 @@ static GameFileDescription SIMON2WIN_PL_GameFiles[] = {
 
 static GameFileDescription FEEBLEFILES_AMI_DE_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"bcd76ac080003eee3649df18db25b60e"},
-	{ "graphics.vga",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2"},
+	{ "gfxindex.dat",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
 static GameFileDescription FEEBLEFILES_AMI_UK_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7"},
-	{ "graphics.vga",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2"},
+	{ "gfxindex.dat",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
@@ -1131,7 +1131,7 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_AMI_UK_GameFiles),
 		FEEBLEFILES_AMI_UK_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
 	},
@@ -1144,7 +1144,7 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_AMI_DE_GameFiles),
 		FEEBLEFILES_AMI_DE_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::DE_DEU,
 		Common::kPlatformAmiga,
 	},
@@ -1157,7 +1157,7 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_UK_GameFiles),
 		FEEBLEFILES_MAC_UK_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 	},
@@ -1170,7 +1170,7 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_FR_GameFiles),
 		FEEBLEFILES_MAC_FR_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::FR_FRA,
 		Common::kPlatformMacintosh,
 	},
@@ -1183,7 +1183,7 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_DE_GameFiles),
 		FEEBLEFILES_MAC_DE_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::DE_DEU,
 		Common::kPlatformMacintosh,
 	},
@@ -1196,7 +1196,7 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_SP_GameFiles),
 		FEEBLEFILES_MAC_SP_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::ES_ESP,
 		Common::kPlatformMacintosh,
 	},

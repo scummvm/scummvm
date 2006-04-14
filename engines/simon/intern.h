@@ -176,7 +176,8 @@ struct GameSpecificSettings {
 enum GameFeatures {
 	GF_TALKIE     = 1 << 0,
 	GF_OLD_BUNDLE = 1 << 1,
-	GF_CRUNCHED   = 1 << 2
+	GF_CRUNCHED   = 1 << 2,
+	GF_ZLIBCOMP   = 1 << 3
 };
 
 enum GameFileTypes {
