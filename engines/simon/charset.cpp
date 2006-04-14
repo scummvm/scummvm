@@ -194,7 +194,7 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 
 	if (getGameType() == GType_FF) {
 		if (vga_sprite_id == 1)
-			count = 11025;
+			count = 45000;
 	} else {
 		count = 4000;
 		if (vga_sprite_id == 1)
