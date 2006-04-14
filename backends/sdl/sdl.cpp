@@ -28,10 +28,6 @@
 
 #include "icons/scummvm.xpm"
 
-#if defined(__amigaos4__)
-// Set the stack cookie, 640 KB should be enough for everyone
-const char* stackCookie = "$STACK: 655360\0";
-#endif
 
 #if !defined(_WIN32_WCE) && !defined(__MAEMO__)
 
