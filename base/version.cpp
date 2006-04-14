@@ -22,6 +22,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/scummsys.h"
 #include "base/internal_version.h"
 #include "base/version.h"
 
