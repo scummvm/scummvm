@@ -379,7 +379,7 @@ void SimonEngine::saveUserGame(int slot) {
 
 	len = 0;
 	while (name[len]) {
-		byte chr = name[len - 32];
+		byte chr = name[len];
 		window->textColumn += getFeebleFontSize(chr);
 		len++;
 	}
