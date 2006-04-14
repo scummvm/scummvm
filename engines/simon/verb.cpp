@@ -782,7 +782,7 @@ void SimonEngine::invertBox(HitArea *ha, bool state) {
 						vsp->flags &= ~kDFShaded;
 					break;
 				}
-				vsp->id++;
+				vsp++;
 			}
 		}
 	}
