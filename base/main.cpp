@@ -279,10 +279,10 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// inside parseCommandLine. This should be unified.
 	if (command == "list-targets") {
 		listTargets();
-		exit(0);
+		return 0;
 	} else if (command == "list-games") {
 		listGames();
-		exit(0);
+		return 0;
 	}
 	
 
