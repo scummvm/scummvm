@@ -1479,20 +1479,20 @@ void SimonEngine::o_getPathPosn() {
 	uint prev_i;
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
+	uint maxPath = (getGameType() == GType_FF) ? 100 : 20;
 
 	if (getGameType() == GType_FF) {
 		x += _scrollX;
 		y += _scrollY;
 	}
-
 	if (getGameType() == GType_SIMON2) {
 		x += _scrollX * 8;
 	}
 
 	int end = (getGameType() == GType_FF) ? 9999 : 999;
-	prev_i = 21 - _variableArray[12];
-	for (i = 20; i != 0; --i) {
-		p = (const uint16 *)_pathFindArray[20 - i];
+	prev_i = maxPath + 1 - readVariable(12);
+	for (i = maxPath; i != 0; --i) {
+		p = (const uint16 *)_pathFindArray[maxPath - i];
 		if (!p)
 			continue;
 		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {
@@ -1507,19 +1507,14 @@ void SimonEngine::o_getPathPosn() {
 
 			if (x_diff < best_dist || x_diff == best_dist && prev_i == i) {
 				best_dist = x_diff;
-				best_i = 21 - i;
+				best_i = maxPath + 1 - i;
 				best_j = j;
 			}
 		}
 	}
 
-	if (getGameType() == GType_FF && getBitFlag(83)) {
-		_variableArray[var_1] = best_i;
-		_variableArray[var_2] = best_j;
-	} else {
-		_variableArray[var_1] = best_i;
-		_variableArray[var_2] = best_j;
-	}
+	writeVariable(var_1, best_i);
+	writeVariable(var_2, best_j);
 }
 
 void SimonEngine::o_scnTxtLongText() {

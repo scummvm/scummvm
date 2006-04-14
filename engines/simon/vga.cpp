@@ -1863,7 +1863,7 @@ void SimonEngine::vc48_setPathFinder() {
 		int16 x, x2, y, y1, y2, ydiff;
 		uint pos = 0;
 
-		while(vsp->x > readUint16Wrapper(p + 2)) {
+		while (vsp->x >= readUint16Wrapper(p + 2)) {
 			p += 2;
 			pos++;
 		}
