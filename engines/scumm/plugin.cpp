@@ -194,12 +194,12 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 // variant that gets used when no explicit variant code has been specified.
 static const GameSettings gameVariantsTable[] = {
 	// The C64 version of MM is detected via the platform field and hence has no seperate entry in this list
-	{"maniac", "V2",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"maniac", "V2",  GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"maniac", "NES", GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
 	{"maniac", "V1",  GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	// The C64 version of Zak is detected via the platform field and hence has no seperate entry in this list
-	{"zak", "V2",         GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"zak", "V2",       GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
@@ -255,61 +255,61 @@ static const GameSettings gameVariantsTable[] = {
 	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 #ifndef DISABLE_HE
-	{"activity", 0, GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"activity", "", GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
-	{"catalog", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"freddi", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"catalog", "", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"freddi", "", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 7.2
-	{"airport", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"puttzoo", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"airport", "", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"puttzoo", "", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Changed o_getResourceSize to cover all resource types
-	{"farm", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"jungle", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"farm", "", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"jungle", "", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
-	{"freddi2", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"pajama", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"putttime", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"freddi2", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"pajama", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"putttime", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"balloon", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"dog", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"maze", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"socks", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"balloon", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"dog", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"maze", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"socks", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"water", 0,       GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"water", "",       GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"water", "HE 80", GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"water", "HE 99", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	{"baseball", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"thinkerk", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"thinker1", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"freddi3", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"spyfox", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"baseball", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"thinkerk", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"thinker1", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"freddi3", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"spyfox", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
-	{"pajama2", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"chase", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"pajama2", "", GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"chase", "", GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
-	{"lost", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"lost", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"puttrace", "HE 98",   GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"puttrace", "HE 98.5", GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 	{"puttrace", "HE 99",   GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"bluesabctime", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"soccer", 0, GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"bluesabctime", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"soccer", "", GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Global scripts increased to 2048
-	{"freddi4", 0,       GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"freddi4", "",       GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 	{"freddi4", "unenc", GID_HEGAME, 6, 98, MDT_NONE,              GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
@@ -1068,6 +1068,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 #endif
 	{ NULL, NULL, kGenUnchanged, UNK_LANG, UNK, 0 }
 };
+
+
 #endif
 
 
@@ -1301,7 +1303,6 @@ static bool generateDetectName(const GameSettings &g, int method, char *detectNa
 	return true;
 }
 
-
 DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	const GameSettings *g;
@@ -1433,7 +1434,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								_numSounds 199
 
 								Assuming that all the town variants look like the latter, we can
-								do the chceck like this:
+								do the check like this:
 								  if (numScripts == 139)
 									assume Indy3
 								  else if (numScripts == 199)
