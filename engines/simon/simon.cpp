@@ -2298,9 +2298,11 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			b += sizeof(ImageHeader_Simon);
 	}
 
-	if ((getGameType() == GType_SIMON1) && vga_res_id == 16300) {
-		dx_clear_attached_from_top(134);
-		_usePaletteDelay = true;
+	if (getGameType() == GType_SIMON1) {
+		if (vga_res_id == 16300) {
+			dx_clear_attached_from_top(134);
+			_usePaletteDelay = true;
+		}
 	} else {
 		_scrollX = 0;
 		_scrollY = 0;
