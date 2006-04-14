@@ -400,7 +400,6 @@ void SimonEngine::saveUserGame(int slot) {
 			writeVariable(55, _keyPressed);
 			break;
 		}
-
 		if (_keyPressed == 10 || _keyPressed == 13) {
 			if (!saveGame(readVariable(55), name))
 				writeVariable(55, 0xFFFF);
@@ -414,13 +413,13 @@ void SimonEngine::saveUserGame(int slot) {
 			window->textColumn -= getFeebleFontSize(chr);
 			name[len] = 0;
 			windowBackSpace(_windowArray[3]);
-			windowPutChar(window, 0x7f);
 		}
 		if (_keyPressed >= 32 && window->textColumn + 26 <= window->width) {
 			name[len++] = _keyPressed;
 			windowPutChar(_windowArray[3], _keyPressed);
-			windowPutChar(window, 0x7f);
 		}
+
+		windowPutChar(window, 0x7f);
 	}
 }
 
