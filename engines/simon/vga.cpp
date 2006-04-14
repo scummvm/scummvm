@@ -1805,7 +1805,6 @@ void SimonEngine::vc41() {
 
 		if ((uint16)(value - _scrollX) < 11) {
 			_scrollCount = -20;
-			tmp = _scrollXMax - _scrollX;
 			if (_scrollX < 20)
 				_scrollCount = -_scrollX;
 			add_vga_timer(6, NULL, 0, 0);	/* special timer */
@@ -2504,7 +2503,6 @@ void SimonEngine::checkScrollX(int x, int xpos) {
 
 		if ((uint16)(xpos - _scrollX) < 161) {
 			_scrollCount = -320;
-			tmp = _scrollXMax - _scrollX;
 			if (_scrollX < 320)
 				_scrollCount = -_scrollX;
 		}
@@ -2516,7 +2514,7 @@ void SimonEngine::checkScrollY(int y, int ypos) {
 		return;
 
 	int16 tmp;
-	if (y > 0) {
+	if (y >= 0) {
 		if (_scrollCount != 0) {
 			if (_scrollCount >= 0)
 				return;
@@ -2542,7 +2540,6 @@ void SimonEngine::checkScrollY(int y, int ypos) {
 
 		if ((uint16)(ypos - _scrollY) < 100) {
 			_scrollCount = -240;
-			tmp = _scrollYMax - _scrollY;
 			if (_scrollY < 240)
 				_scrollCount = -_scrollY;
 		}
