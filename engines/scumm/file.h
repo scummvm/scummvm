@@ -31,8 +31,8 @@ class BaseScummFile : public Common::File {
 public:
 	virtual void setEnc(byte value) = 0;
 
-	virtual bool open(const char *filename, AccessMode mode = kFileReadMode) = 0;
-	virtual bool openSubFile(const char *filename) = 0;
+	virtual bool open(const Common::String &filename, AccessMode mode = kFileReadMode) = 0;
+	virtual bool openSubFile(const Common::String &filename) = 0;
 
 	virtual bool eof() = 0;
 	virtual uint32 pos() = 0;
@@ -54,8 +54,8 @@ public:
 	void setSubfileRange(uint32 start, uint32 len);
 	void resetSubfile();
 
-	bool open(const char *filename, AccessMode mode = kFileReadMode);
-	bool openSubFile(const char *filename);
+	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool openSubFile(const Common::String &filename);
 
 	bool eof();
 	uint32 pos();
@@ -96,8 +96,8 @@ public:
 	ScummNESFile();
 	void setEnc(byte value);
 
-	bool open(const char *filename, AccessMode mode = kFileReadMode);
-	bool openSubFile(const char *filename);
+	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool openSubFile(const Common::String &filename);
 
 	void close();
 	bool eof() { return _stream->eos(); }
@@ -142,8 +142,8 @@ public:
 	ScummC64File(const char *disk1, const char *disk2, bool maniac);
 	void setEnc(byte value);
 
-	bool open(const char *filename, AccessMode mode = kFileReadMode);
-	bool openSubFile(const char *filename);
+	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool openSubFile(const Common::String &filename);
 
 	void close();
 	bool eof() { return _stream->eos(); }

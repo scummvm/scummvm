@@ -250,7 +250,7 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resou
 		char name[128];
 
 		file.close();
-		file.open(_containerFile.c_str());
+		file.open(_containerFile);
 		assert(file.isOpen());
 
 		strncpy(name, filename, 128);

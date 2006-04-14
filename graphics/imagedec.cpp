@@ -140,7 +140,7 @@ Surface *ImageDecoder::loadFile(const Common::String &name) {
 	Surface *newSurf = 0;
 
 	Common::File imageFile;
-	if (imageFile.open(name.c_str())) {
+	if (imageFile.open(name)) {
 		newSurf = loadFile(imageFile);
 	}
 

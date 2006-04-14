@@ -137,7 +137,7 @@ void ConfigManager::loadConfigFile(const String &filename) {
 void ConfigManager::loadFile(const String &filename) {
 	File cfg_file;
 
-	if (!cfg_file.open(filename.c_str())) {
+	if (!cfg_file.open(filename)) {
 		printf("Creating configuration file: %s\n", filename.c_str());
 	} else {
 		char buf[MAXLINELEN];

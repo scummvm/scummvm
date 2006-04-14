@@ -239,7 +239,7 @@ PAKFile::PAKFile(const Common::String& file, bool isAmiga) {
 	uint8 *buffer = 0;
 	_open = false;
 
-	if (!pakfile.open(file.c_str())) {
+	if (!pakfile.open(file)) {
 		debug(3, "couldn't open pakfile '%s'\n", file.c_str());
 		return;
 	}

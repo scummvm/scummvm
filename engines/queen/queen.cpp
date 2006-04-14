@@ -101,7 +101,7 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 
 			if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
 				Common::File dataFile;
-				dataFile.open(file->path().c_str());
+				dataFile.open(file->path());
 				assert(dataFile.isOpen());
 
 				if (0 == scumm_stricmp("queen.1", gameName)) {	//an unmodified file

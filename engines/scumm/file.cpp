@@ -56,7 +56,7 @@ void ScummFile::resetSubfile() {
 	seek(0, SEEK_SET);
 }
 
-bool ScummFile::open(const char *filename, AccessMode mode) {
+bool ScummFile::open(const Common::String &filename, AccessMode mode) {
 	if (File::open(filename, mode)) {
 		resetSubfile();
 		return true;
@@ -65,7 +65,7 @@ bool ScummFile::open(const char *filename, AccessMode mode) {
 	}
 }
 
-bool ScummFile::openSubFile(const char *filename) {
+bool ScummFile::openSubFile(const Common::String &filename) {
 	assert(isOpen());
 
 	// Disable the XOR encryption and reset any current subfile range
@@ -112,7 +112,7 @@ bool ScummFile::openSubFile(const char *filename) {
 			return false;
 		}
 
-		if (scumm_stricmp(file_name, filename) == 0) {
+		if (scumm_stricmp(file_name, filename.c_str()) == 0) {
 			// We got a match!
 			setSubfileRange(file_off, file_len);
 			return true;
@@ -1380,11 +1380,11 @@ bool ScummNESFile::generateIndex() {
 	return true;
 }
 
-bool ScummNESFile::open(const char *filename, AccessMode mode) {
+bool ScummNESFile::open(const Common::String &filename, AccessMode mode) {
 	uint8 md5sum[16];
 
 	if (_ROMset == kROMsetNum) {
-		if (Common::md5_file(filename, md5sum)) {
+		if (Common::md5_file(filename.c_str(), md5sum)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -1439,10 +1439,10 @@ void ScummNESFile::close() {
 	File::close();
 }
 
-bool ScummNESFile::openSubFile(const char *filename) {
+bool ScummNESFile::openSubFile(const Common::String &filename) {
 	assert(isOpen());
 
-	const char *ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename.c_str(), '.');
 	char resNum[3];
 	int res;
 
@@ -1556,7 +1556,7 @@ bool ScummC64File::openDisk(char num) {
 	return true;
 }
 
-bool ScummC64File::open(const char *filename, AccessMode mode) {
+bool ScummC64File::open(const Common::String &filename, AccessMode mode) {
 	uint16 signature;
 
 	// check signature
@@ -1708,10 +1708,10 @@ void ScummC64File::close() {
 	File::close();
 }
 
-bool ScummC64File::openSubFile(const char *filename) {
+bool ScummC64File::openSubFile(const Common::String &filename) {
 	assert(isOpen());
 
-	const char *ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename.c_str(), '.');
 	char resNum[3];
 	int res;
 

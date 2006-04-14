@@ -67,7 +67,6 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 	// Try again, with file name converted to upper case
 	//
 	if (!file) {
-		
 		for (i = offsetToFileName; i < buf.size(); ++i) {
 			buf[i] = toupper(buf[i]);
 		}
@@ -185,20 +184,19 @@ void File::decRef() {
 }
 
 
-bool File::open(const char *f, AccessMode mode, const char *directory) {
+bool File::open(const String &filename, AccessMode mode, const char *directory) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
-	if (f == NULL || *f == 0) {
+	if (filename.empty()) {
 		error("File::open: No filename was specified!");
 	}
 
 	if (_handle) {
-		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), f);
+		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
 	}
 
 	clearIOFailed();
 
-	String filename(f);
 	String fname(filename);
 
 	fname.toLowercase();
@@ -265,7 +263,7 @@ bool File::open(const char *f, AccessMode mode, const char *directory) {
 	return true;
 }
 
-bool File::exists(const char *filename, const char *directory) {
+bool File::exists(const String &filename, const char *directory) {
 	// FIXME: Ugly ugly hack!
 	File tmp;
 	return tmp.open(filename, kFileReadMode, directory);

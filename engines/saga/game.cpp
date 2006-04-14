@@ -1556,7 +1556,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 			tstr.toLowercase();
 
 			if(!filesMD5.contains(tstr)) {
-				if (testFile.open(file->_key.c_str())) {
+				if (testFile.open(file->_key)) {
 					testFile.close();
 
 					if (Common::md5_file(file->_key.c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
