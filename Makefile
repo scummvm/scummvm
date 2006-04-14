@@ -44,9 +44,9 @@ install: all
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -c -s -m 755 "$(srcdir)/scummvm$(EXEEXT)" "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
-	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.6" "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
-	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 
@@ -56,8 +56,8 @@ uninstall:
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 
-scummvmico.o: scummvm.ico
-	windres scummvm.rc scummvmico.o
+scummvmico.o: icons/scummvm.ico
+	windres dists/scummvm.rc icons/scummvmico.o
 
 dist:
 	$(RM) $(ZIPFILE)
@@ -76,7 +76,7 @@ bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
-	cp $(srcdir)/scummvm.icns $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/gui/themes/default-theme.ini $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/gui/themes/default-theme.zip $(bundle_name)/Contents/Resources/
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm

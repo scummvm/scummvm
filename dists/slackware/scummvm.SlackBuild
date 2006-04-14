@@ -34,9 +34,9 @@ chmod 755 scummvm
 mkdir -p $PKG/usr/bin
 cp scummvm $PKG/usr/bin
 chown -R root:bin $PKG/usr/bin
-gzip -9 scummvm.6
+gzip -9 dists/scummvm.6
 mkdir -p $PKG/usr/man/man6
-cp scummvm.6.gz $PKG/usr/man/man6
+cp dists/scummvm.6.gz $PKG/usr/man/man6
 mkdir -p $PKG/usr/doc/scummvm-$VERSION
 cp -a AUTHORS COPYING ChangeLog NEWS README TODO \
   $PKG/usr/doc/scummvm-$VERSION
@@ -44,10 +44,10 @@ chmod 644 $PKG/usr/doc/scummvm-$VERSION
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 mkdir -p $PKG/usr/share/pixmaps
-cp -a scummvm.ico scummvm.xpm \
+cp -a icons/scummvm.ico icons/scummvm.xpm \
   $PKG/usr/share/pixmaps
 mkdir -p $PKG/usr/share/applications
-cp -a scummvm.desktop \
+cp -a dists/scummvm.desktop \
   $PKG/usr/share/applications
 
 cd $PKG

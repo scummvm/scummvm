@@ -26,7 +26,7 @@
 #include "common/util.h"
 #include "base/main.h"
 
-#include "scummvm.xpm"
+#include "icons/scummvm.xpm"
 
 #if defined(__amigaos4__)
 // Set the stack cookie, 640 KB should be enough for everyone

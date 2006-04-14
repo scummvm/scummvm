@@ -20124,7 +20124,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\extend.h"\
@@ -20177,7 +20177,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	{$(INCLUDE)}"SDL.h"\
 	{$(INCLUDE)}"SDL\begin_code.h"\
 	{$(INCLUDE)}"SDL\close_code.h"\
@@ -20228,7 +20228,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\extend.h"\
@@ -20277,7 +20277,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\compile.h"\
@@ -20327,7 +20327,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\extend.h"\
@@ -20375,7 +20375,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\extend.h"\
@@ -20422,7 +20422,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\extend.h"\
@@ -20447,7 +20447,7 @@ DEP_CPP_SDL_C=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scummvm.xpm"\
+	"..\..\..\icons\scummvm.xpm"\
 	
 NODEP_CPP_SDL_C=\
 	"..\..\..\common\extend.h"\

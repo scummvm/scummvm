@@ -641,7 +641,7 @@ SOURCE=..\..\README
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\scummvm.ico
+SOURCE=..\..\icons\scummvm.ico
 # End Source File
 # Begin Source File
 

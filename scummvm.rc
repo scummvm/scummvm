@@ -1,6 +1,6 @@
 #include "winresrc.h"
 
-IDI_ICON               ICON    DISCARDABLE     "scummvm.ico"
+IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 0,9,0,0

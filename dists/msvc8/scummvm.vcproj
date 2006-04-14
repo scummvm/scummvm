@@ -682,7 +682,7 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\..\scummvm.ico"
+				RelativePath="..\..\icons\scummvm.ico"
 				>
 			</File>
 			<File

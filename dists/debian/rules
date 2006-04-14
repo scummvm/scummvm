@@ -28,7 +28,7 @@ install: build
 	dh_clean
 	dh_installdirs
 	install -m0755 scummvm debian/scummvm/usr/games/scummvm
-	install -m0644 scummvm.xpm debian/scummvm/usr/share/icons
+	install -m0644 icons/scummvm.xpm debian/scummvm/usr/share/icons
 
 binary: binary-arch
 

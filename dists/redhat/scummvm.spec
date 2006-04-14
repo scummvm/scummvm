@@ -54,9 +54,9 @@ make
 
 %install
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
-install -m644 -D scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
-install -m644 -D scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
-desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications scummvm.desktop
+install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
+install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
+desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
