@@ -323,7 +323,7 @@ HitArea *SimonEngine::findBox(uint hitarea_id) {
 	uint count = ARRAYSIZE(_hitAreas);
 
 	do {
-		if (ha->id == hitarea_id)
+		if (ha->id == hitarea_id && ha->flags != 0)
 			return ha;
 	} while (ha++, --count);
 	return NULL;
