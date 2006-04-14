@@ -1874,7 +1874,6 @@ void SimonEngine::o3_checkPaths() {
 	while (count) {
 		val = pathVal1[2];
 		if (val == _variableArray2[50] ||
-			val == _variableArray2[50] ||
 			val == _variableArray2[51] ||
 			val == _variableArray2[201] ||
 			val == _variableArray2[203] ||
