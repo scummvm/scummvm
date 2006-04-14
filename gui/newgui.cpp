@@ -96,8 +96,12 @@ NewGui::NewGui() : _needRedraw(false),
 	_currentKeyDown.keycode = 0;
 
 #ifndef DISABLE_FANCY_THEMES
-	ConfMan.registerDefault("gui_theme", "default-theme");
+	ConfMan.registerDefault("gui_theme", "default");
 	Common::String style = ConfMan.get("gui_theme");
+	// The default theme for now is the 'modern' theme.
+	if (scumm_stricmp(style.c_str(), "default") == 0)
+		style = "modern";
+
 	if (scumm_stricmp(style.c_str(), "classic") == 0) {
 #endif
 		_theme = new ThemeClassic(_system);
