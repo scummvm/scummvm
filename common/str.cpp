@@ -37,7 +37,7 @@ String::String(const char *str, int len)
 
 	_refCount = new int(1);
 
-	if (str && len != 0) {
+	if (str && *str && len != 0) {
 		if (len > 0)
 			_capacity = _len = len;
 		else
