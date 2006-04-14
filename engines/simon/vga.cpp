@@ -1389,12 +1389,12 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 
 	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
 
-	for (int dstY = 0; dstY < h; dstY++) {
+	for (int dstY = 0; dstY < scaledH; dstY++) {
 		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
 			int srcY = (dstY * h) / scaledH;
 			byte *srcPtr = src + _dxSurfacePitch * srcY;
 			byte *dstPtr = dst + _dxSurfacePitch * dstY;
-			for (int dstX = 0; dstX < w; dstX++) {
+			for (int dstX = 0; dstX < scaledW; dstX++) {
 				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
 					int srcX = (dstX * w) / scaledW;
 					if (srcPtr[srcX])
