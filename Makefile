@@ -141,5 +141,17 @@ win32dist: scummvm$(EXEEXT)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
 
+# Special target to create an AmigaOS snapshot installation
+aos4dist: scummvm
+	mkdir -p $(AOS4PATH)
+	strip -R.comment $< -o $(AOS4PATH)/$<
+	cp icons/scummvm.info $(AOS4PATH)/$<.info
+	cp gui/themes/default-theme.ini $(AOS4PATH)
+	cp gui/themes/default-theme.zip $(AOS4PATH)
+	cp AUTHORS $(AOS4PATH)/AUTHORS.txt
+	cp COPYING $(AOS4PATH)/COPYING.txt
+	cp NEWS $(AOS4PATH)/NEWS.txt
+	cp README $(AOS4PATH)/README.txt
+	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
 
 .PHONY: deb bundle osxsnap win32dist dist install uninstall

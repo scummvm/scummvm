@@ -78,6 +78,7 @@ _rm_rec="$_rm -r"
 _zip="zip -q"
 _cp=cp
 _win32path="C:/scummvm"
+_aos4path="Games:ScummVM_Snapshot"
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
 _nasmpath="$PATH"
@@ -1419,6 +1420,7 @@ RM_REC := $_rm_rec
 ZIP := $_zip
 CP := $_cp
 WIN32PATH=$_win32path
+AOS4PATH=$_aos4path
 
 BACKEND := $_backend
 MODULES += $MODULES
