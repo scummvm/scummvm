@@ -39,18 +39,19 @@ Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
 }
 
 void Draw_v2::printText(void) {
+/*
 	int16 savedFlags;
 	int16 ldestSpriteX;
 	char *dataPtr;
 	char *ptr;
 	char *ptr2;
-	int16 index;
 	int16 destX;
 	int16 destY;
 	char cmd;
 	int16 val;
 	char buf[20];
-
+*/
+	int16 index;
 	warning("GOB2 Stub! Draw_v2::printText()");
 
 	index = _vm->_inter->load16();
