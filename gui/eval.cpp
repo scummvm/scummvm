@@ -250,6 +250,10 @@ static const BuiltinConsts builtinConsts[] = {
 	{"kTextAlignRight", kTextAlignRight},
 	{"kTextAlignCenter", kTextAlignCenter},
 
+	{"kFontStyleBold", Theme::kFontStyleBold},
+	{"kFontStyleNormal", Theme::kFontStyleNormal},
+	{"kFontStyleItalic", Theme::kFontStyleItalic},
+
 	{"false", 0},
 	{"true", 1},
 	{NULL, 0}

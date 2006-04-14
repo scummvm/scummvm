@@ -72,7 +72,7 @@ void EditTextWidget::drawWidget(bool hilite) {
 
 	// Draw the text
 	adjustOffset();
-	g_gui.theme()->drawText(Common::Rect(_x+2,_y+2, _x+getEditRect().width()-2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false);
+	g_gui.theme()->drawText(Common::Rect(_x+2,_y+2, _x+getEditRect().width()-2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false, Theme::kFontStyleNormal);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

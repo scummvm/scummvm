@@ -119,7 +119,8 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 #pragma mark -
 
 ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
-_lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
+_lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
+	_stylefile = stylefile;
 	_initOk = false;
 	memset(&_screen, 0, sizeof(_screen));
 	memset(&_dialog, 0, sizeof(_dialog));
@@ -130,11 +131,6 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 	if (_screen.pixels) {
 		_initOk = true;
 		clearAll();
-		if (_screen.w >= 400 && _screen.h >= 300) {
-			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		} else {
-			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		}
 	}
 
 	if (ConfMan.hasKey("extrapath"))
@@ -167,6 +163,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 			delete [] buffer;
 			buffer = 0;
 		} else {
+			unzClose(zipFile);
 			warning("Can not find theme config file '%s'", (stylefile + ".ini").c_str());
 			return;
 		}
@@ -296,6 +293,9 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 			warning("no valid 'inactive_dialog_shading' specified");
 		}
 	}
+
+	// load up all fonts
+	setupFonts();
 	
 	// load the colors from the config file
 	setupColors();
@@ -314,6 +314,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 }
 
 ThemeNew::~ThemeNew() {
+	deleteFonts();
 	deinit();
 	delete [] _images;
 	_images = 0;
@@ -338,11 +339,7 @@ bool ThemeNew::init() {
 	if (_screen.pixels) {
 		_initOk = true;
 		clearAll();
-		if (_screen.w >= 400 && _screen.h >= 300) {
-			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		} else {
-			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		}
+		setupFonts();
 	}
 
 	if (isThemeLoadingRequired()) {
@@ -471,10 +468,10 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 	addDirtyRect(r2, (hints & THEME_HINT_SAVE_BACKGROUND) != 0, true);
 }
 
-void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis) {
+void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font) {
 	if (!_initOk)
 		return;
-	Common::Rect r2(r.left, r.top, r.right, r.top+_font->getFontHeight());
+	Common::Rect r2(r.left, r.top, r.right, r.top+getFontHeight(font));
 	uint32 color;
 
 	restoreBackground(r2);
@@ -487,7 +484,7 @@ void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState
 		color = getColor(state);
 	}
 
-	_font->drawString(&_screen, str, r.left, r.top, r.width(), color, convertAligment(align), deltax, useEllipsis);
+	getFont(font)->drawString(&_screen, str, r.left, r.top, r.width(), color, convertAligment(align), deltax, useEllipsis);
 	addDirtyRect(r2);
 }
 
@@ -559,7 +556,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 						_gradientFactors[kButtonFactor]);
 	}
 
-	const int off = (r.height() - _font->getFontHeight()) / 2;
+	const int off = (r.height() - getFontHeight()) / 2;
 
 	OverlayColor col = 0;
 	switch (state) {
@@ -576,7 +573,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 		break;
 	};
 
-	_font->drawString(&_screen, str, r.left, r.top + off, r.width(), col, Graphics::kTextAlignCenter, 0, true);
+	getFont()->drawString(&_screen, str, r.left, r.top + off, r.width(), col, Graphics::kTextAlignCenter, 0, true);
 
 	addDirtyRect(r2);
 }
@@ -657,7 +654,7 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	drawSurface(Common::Rect(r.left, r.top, r.left+checkBox->w, r.top+checkBox->h), checkBox, false, false, (state == kStateDisabled) ? 128 : 256);
 
 	r2.left += checkBoxSize + 5;
-	_font->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, false);
+	getFont()->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, false);
 
 	addDirtyRect(r);
 }
@@ -679,7 +676,7 @@ void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const
 		drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
 					128, _colors[kTabBackgroundStart], tabEnd, _gradientFactors[kTabFactor], true);
 
-		_font->drawString(&_screen, tabs[i], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateEnabled), Graphics::kTextAlignCenter, 0, true);
+		getFont()->drawString(&_screen, tabs[i], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateEnabled), Graphics::kTextAlignCenter, 0, true);
 	}
 	
 	Common::Rect widgetBackground = Common::Rect(r.left, r.top + tabHeight, r.right, r.bottom);
@@ -692,7 +689,7 @@ void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const
 	drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
 				256, _colors[kTabBackgroundStart], tabEnd, _gradientFactors[kTabFactor], true);
 
-	_font->drawString(&_screen, tabs[active], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
+	getFont()->drawString(&_screen, tabs[active], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
 
 	addDirtyRect(r);
 }
@@ -1264,6 +1261,116 @@ void ThemeNew::setupColors() {
 	getColorFromConfig(_configFile, "scrollbar_slider_highlight_end", _colors[kScrollbarSliderHighlightEnd]);
 	
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
+}
+
+#define FONT_NAME_NORMAL "newgui_normal"
+#define FONT_NAME_BOLD "newgui_bold"
+#define FONT_NAME_ITALIC "newgui_italic"
+
+void ThemeNew::setupFonts() {
+	if (_screen.w >= 400 && _screen.h >= 300) {
+		if (_configFile.hasKey("fontfile_bold", "extra")) {
+			_fonts[kFontStyleBold] = FontMan.getFontByName(FONT_NAME_BOLD);
+
+			if (!_fonts[kFontStyleBold]) {
+				Common::String temp;
+				_configFile.getKey("fontfile_bold", "extra", temp);
+
+				_fonts[kFontStyleBold] = loadFont(temp.c_str());
+				if (!_fonts[kFontStyleBold])
+					error("Couldn't load bold font '%s'", temp.c_str());
+
+				FontMan.assignFontToName(FONT_NAME_BOLD, _fonts[kFontStyleBold]);
+			}
+		} else {
+			_fonts[kFontStyleBold] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		}
+
+		if (_configFile.hasKey("fontfile_normal", "extra")) {
+			_fonts[kFontStyleNormal] = FontMan.getFontByName(FONT_NAME_NORMAL);
+
+			if (!_fonts[kFontStyleNormal]) {
+				Common::String temp;
+				_configFile.getKey("fontfile_normal", "extra", temp);
+
+				_fonts[kFontStyleNormal] = loadFont(temp.c_str());
+				if (!_fonts[kFontStyleNormal])
+					error("Couldn't load normal font '%s'", temp.c_str());
+
+				FontMan.assignFontToName(FONT_NAME_NORMAL, _fonts[kFontStyleNormal]);
+			}
+		} else {
+			_fonts[kFontStyleNormal] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		}
+
+		if (_configFile.hasKey("fontfile_italic", "extra")) {
+			_fonts[kFontStyleItalic] = FontMan.getFontByName(FONT_NAME_ITALIC);
+
+			if (!_fonts[kFontStyleItalic]) {
+				Common::String temp;
+				_configFile.getKey("fontfile_italic", "extra", temp);
+
+				_fonts[kFontStyleNormal] = loadFont(temp.c_str());
+				if (!_fonts[kFontStyleItalic])
+					error("Couldn't load italic font '%s'", temp.c_str());
+
+				FontMan.assignFontToName(FONT_NAME_ITALIC, _fonts[kFontStyleItalic]);
+			}
+		} else {
+			_fonts[kFontStyleItalic] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		}
+	} else {
+		_fonts[kFontStyleBold] = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		_fonts[kFontStyleNormal] = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		_fonts[kFontStyleItalic] = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+}
+
+void ThemeNew::deleteFonts() {
+	const Graphics::Font *normal = FontMan.getFontByName(FONT_NAME_NORMAL);
+	const Graphics::Font *bold = FontMan.getFontByName(FONT_NAME_BOLD);
+	const Graphics::Font *italic = FontMan.getFontByName(FONT_NAME_ITALIC);
+
+	delete normal;
+	delete bold;
+	delete italic;
+
+	FontMan.removeFontName(FONT_NAME_NORMAL);
+	FontMan.removeFontName(FONT_NAME_BOLD);
+	FontMan.removeFontName(FONT_NAME_ITALIC);
+}
+
+const Graphics::Font *ThemeNew::loadFont(const char *filename) {
+	const Graphics::Font *font = 0;
+
+	Common::File fontFile;
+	if (fontFile.open(filename)) {
+		font = Graphics::loadFont(fontFile);
+		if (font)
+			return font;
+	}
+
+#ifdef USE_ZLIB
+	unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+	if (zipFile && unzLocateFile(zipFile, filename, 2) == UNZ_OK) {
+		unz_file_info fileInfo;
+		unzOpenCurrentFile(zipFile);
+		unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+		uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+		assert(buffer);
+		memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+		unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+		unzCloseCurrentFile(zipFile);
+		Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+
+		font = Graphics::loadFont(stream);
+
+		delete [] buffer;
+		buffer = 0;
+	}
+	unzClose(zipFile);
+#endif
+	return font;
 }
 
 #pragma mark -

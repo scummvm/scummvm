@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/str.h"
+#include "common/hashmap.h"
 #include "graphics/font.h"
 
 
@@ -46,7 +47,23 @@ public:
 	 * @param name	the name of the font to be retrieved.
 	 * @return a pointer to a font, or 0 if no suitable font was found.
 	 */
-	//const Font *getFontByName(const Common::String &name) const;
+	const Font *getFontByName(const Common::String &name) const;
+
+	/**
+	 * Associates a font object with an 'name'
+	 *
+	 * @param name	the name of the font
+	 * @param font	the font object
+	 * @return true on success, false on failure
+	 */
+	bool assignFontToName(const Common::String &name, const Font *font) { _fontMap[name] = font; return true; }
+
+	/**
+	 * Removes binding from name to font
+	 *
+	 * @param name	name which should be removed
+	 */
+	void removeFontName(const Common::String &name) { _fontMap.erase(name); }
 
 	/**
 	 * Retrieve a font object based on what it is supposed
@@ -63,6 +80,8 @@ public:
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	FontManager();
+
+	Common::HashMap<Common::String, const Font *> _fontMap;
 };
 
 

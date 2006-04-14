@@ -149,7 +149,7 @@ void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, kSt
 	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
-void ThemeClassic::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis) {
+void ThemeClassic::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font) {
 	if (!_initOk)
 		return;
 

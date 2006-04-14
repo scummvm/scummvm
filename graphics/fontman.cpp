@@ -58,8 +58,11 @@ FontManager::FontManager() {
 }
 #endif
 
-//const Font *FontManager::getFontByName(const Common::String &name) const {
-//}
+const Font *FontManager::getFontByName(const Common::String &name) const {
+	if (!_fontMap.contains(name))
+		return 0;
+	return _fontMap[name];
+}
 
 const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	switch (usage) {

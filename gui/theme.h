@@ -94,6 +94,13 @@ public:
 		kScrollbarStateSinglePage
 	};
 
+	enum kFontStyle {
+		kFontStyleBold = 0,	// standard font
+		kFontStyleNormal = 1,
+		kFontStyleItalic = 2,
+		kFontStyleMax
+	};
+
 	virtual bool init() = 0;
 	virtual void deinit() = 0;
 
@@ -114,13 +121,13 @@ public:
 	
 	virtual const Common::ConfigFile &getConfigFile() { return _configFile; }
 
-	virtual const Graphics::Font *getFont() const = 0;
-	virtual int getFontHeight() const = 0;
-	virtual int getStringWidth(const Common::String &str) const = 0;
-	virtual int getCharWidth(byte c) const = 0;
+	virtual const Graphics::Font *getFont(kFontStyle font = kFontStyleBold) const = 0;
+	virtual int getFontHeight(kFontStyle font = kFontStyleBold) const = 0;
+	virtual int getStringWidth(const Common::String &str, kFontStyle font = kFontStyleBold) const = 0;
+	virtual int getCharWidth(byte c, kFontStyle font = kFontStyleBold) const = 0;
 
 	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state = kStateEnabled) = 0;
-	virtual void drawText(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled, kTextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true) = 0;
+	virtual void drawText(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled, kTextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, kFontStyle font = kFontStyleBold) = 0;
 	// this should ONLY be used by the debugger until we get a nicer solution
 	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state = kStateEnabled) = 0;
 
@@ -211,13 +218,13 @@ public:
 
 	typedef Common::String String;
 
-	const Graphics::Font *getFont() const { return _font; }
-	int getFontHeight() const { if (_initOk) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const String &str) const { if (_initOk) return _font->getStringWidth(str); return 0; }
-	int getCharWidth(byte c) const { if (_initOk) return _font->getCharWidth(c); return 0; }
+	const Graphics::Font *getFont(kFontStyle font) const { return _font; }
+	int getFontHeight(kFontStyle font = kFontStyleBold) const { if (_initOk) return _font->getFontHeight(); return 0; }
+	int getStringWidth(const String &str, kFontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
+	int getCharWidth(byte c, kFontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
-	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
+	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
@@ -284,13 +291,13 @@ public:
 	void setDrawArea(const Common::Rect &r);
 	void resetDrawArea();
 
-	const Graphics::Font *getFont() const { return _font; }
-	int getFontHeight() const { if (_font) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const String &str) const { if (_font) return _font->getStringWidth(str); return 0; }
-	int getCharWidth(byte c) const { if (_font) return _font->getCharWidth(c); return 0; }
+	const Graphics::Font *getFont(kFontStyle font = kFontStyleBold) const { return _fonts[font]; }
+	int getFontHeight(kFontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getFontHeight(); return 0; }
+	int getStringWidth(const String &str, kFontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getStringWidth(str); return 0; }
+	int getCharWidth(byte c, kFontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getCharWidth(c); return 0; }
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
-	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
+	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
@@ -338,9 +345,11 @@ private:
 	Graphics::Surface _screen;
 	Common::Rect _shadowDrawArea;
 
+	Common::String _stylefile;
+
 	bool _initOk;
 	bool _forceRedraw;
-	
+
 	int _lastUsedBitMask;
 	void resetupGuiRenderer();
 	void setupColors();
@@ -352,7 +361,10 @@ private:
 		Graphics::Surface screen;
 	} *_dialog;
 
-	const Graphics::Font *_font;
+	void setupFonts();
+	void deleteFonts();
+	const Graphics::Font *loadFont(const char *filename);
+	const Graphics::Font *_fonts[kFontStyleMax];
 
 public:
 	enum kImageHandles {

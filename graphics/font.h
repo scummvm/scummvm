@@ -25,6 +25,10 @@
 #include "common/str.h"
 #include "graphics/surface.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Graphics {
 
 // Text alignment modes for drawString()
@@ -103,12 +107,16 @@ struct FontDesc {
 	long	bits_size;	/* # words of bitmap_t bits*/
 };
 
+struct NewFontData;
+
 class NewFont : public Font {
 protected:
 	FontDesc desc;
+	NewFontData *font;
 
 public:
-	NewFont(const FontDesc &d) : desc(d) {}
+	NewFont(const FontDesc &d, NewFontData *font_ = 0) : desc(d), font(font_) {}
+	~NewFont();
 
 	virtual int getFontHeight() const { return desc.height; }
 	virtual int getMaxCharWidth() const { return desc.maxwidth; };
@@ -116,6 +124,9 @@ public:
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 };
+
+NewFont *loadFont(Common::SeekableReadStream &stream);
+NewFont *loadFont(const byte *src, uint32 size);
 
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 #	define DEFINE_FONT(n) \

@@ -20,9 +20,18 @@
  */
 
 #include "common/stdafx.h"
+#include "common/stream.h"
 #include "graphics/font.h"
 
 namespace Graphics {
+
+void free_font(NewFontData* pf);
+
+NewFont::~NewFont() {
+	if (font) {
+		free_font(font);
+	}
+}
 
 int NewFont::getCharWidth(byte chr) const {
 	// If no width table is specified, return the maximum width
@@ -70,6 +79,508 @@ void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) con
 	}
 }
 
+
+#pragma mark -
+
+/* BEGIN font.h*/
+/* bitmap_t helper macros*/
+#define BITMAP_WORDS(x)			(((x)+15)/16)	/* image size in words*/
+#define BITMAP_BYTES(x)			(BITMAP_WORDS(x)*sizeof(bitmap_t))
+#define BITMAP_BITSPERIMAGE		(sizeof(bitmap_t) * 8)
+#define BITMAP_BITVALUE(n)		((bitmap_t) (((bitmap_t) 1) << (n)))
+#define BITMAP_FIRSTBIT			(BITMAP_BITVALUE(BITMAP_BITSPERIMAGE - 1))
+#define BITMAP_TESTBIT(m)	((m) & BITMAP_FIRSTBIT)
+#define BITMAP_SHIFTBIT(m)	((bitmap_t) ((m) << 1))
+
+typedef unsigned short bitmap_t; /* bitmap image unit size*/
+
+/* builtin C-based proportional/fixed font structure */
+/* based on The Microwindows Project http://microwindows.org */
+struct NewFontData {
+	char *	name;		/* font name*/
+	int		maxwidth;	/* max width in pixels*/
+	int		height;		/* height in pixels*/
+	int		ascent;		/* ascent (baseline) height*/
+	int		firstchar;	/* first character in bitmap*/
+	int		size;		/* font size in glyphs*/
+	bitmap_t*	bits;		/* 16-bit right-padded bitmap data*/
+	unsigned long* offset;	/* offsets into bitmap data*/
+	unsigned char* width;	/* character widths or NULL if fixed*/
+	int		defaultchar;	/* default char (not glyph index)*/
+	long	bits_size;	/* # words of bitmap_t bits*/
+	
+	/* unused by runtime system, read in by convbdf*/
+	char *	facename;	/* facename of font*/
+	char *	copyright;	/* copyright info for loadable fonts*/
+	int		pixel_size;
+	int		descent;
+	int		fbbw, fbbh, fbbx, fbby;
+};
+/* END font.h*/
+
+#define isprefix(buf,str)	(!strncmp(buf, str, strlen(str)))
+#define strequal(s1,s2)		(!strcmp(s1, s2))
+
+#define EXTRA	300
+
+int start_char = 0;
+int limit_char = 255;
+
+NewFontData* bdf_read_font(Common::SeekableReadStream &fp);
+int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf);
+int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf);
+char * bdf_getline(Common::SeekableReadStream &fp, char *buf, int len);
+bitmap_t bdf_hexval(unsigned char *buf, int ndx1, int ndx2);
+
+void free_font(NewFontData* pf) {
+	if (!pf)
+		return;
+	free(pf->name);
+	free(pf->facename);
+	free(pf->bits);
+	free(pf->offset);
+	free(pf->width);
+	free(pf);
+}
+
+/* build incore structure from .bdf file*/
+NewFontData* bdf_read_font(Common::SeekableReadStream &fp) {
+	NewFontData* pf;
+	
+	pf = (NewFontData*)calloc(1, sizeof(NewFontData));
+	if (!pf)
+		goto errout;
+
+	if (!bdf_read_header(fp, pf)) {
+		fprintf(stderr, "Error reading font header\n");
+		goto errout;
+	}
+
+	if (!bdf_read_bitmaps(fp, pf)) {
+		fprintf(stderr, "Error reading font bitmaps\n");
+		goto errout;
+	}
+
+	return pf;
+
+ errout:
+	free_font(pf);
+	return NULL;
+}
+
+/* read bdf font header information, return 0 on error*/
+int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
+	int encoding;
+	int nchars, maxwidth;
+	int firstchar = 65535;
+	int lastchar = -1;
+	char buf[256];
+	char facename[256];
+	char copyright[256];
+
+	/* set certain values to errors for later error checking*/
+	pf->defaultchar = -1;
+	pf->ascent = -1;
+	pf->descent = -1;
+
+	for (;;) {
+		if (!bdf_getline(fp, buf, sizeof(buf))) {
+			fprintf(stderr, "Error: EOF on file\n");
+			return 0;
+		}
+		if (isprefix(buf, "FONT ")) {		/* not required*/
+			if (sscanf(buf, "FONT %[^\n]", facename) != 1) {
+				fprintf(stderr, "Error: bad 'FONT'\n");
+				return 0;
+			}
+			pf->facename = strdup(facename);
+			continue;
+		}
+		if (isprefix(buf, "COPYRIGHT ")) {	/* not required*/
+			if (sscanf(buf, "COPYRIGHT \"%[^\"]", copyright) != 1) {
+				fprintf(stderr, "Error: bad 'COPYRIGHT'\n");
+				return 0;
+			}
+			pf->copyright = strdup(copyright);
+			continue;
+		}
+		if (isprefix(buf, "DEFAULT_CHAR ")) {	/* not required*/
+			if (sscanf(buf, "DEFAULT_CHAR %d", &pf->defaultchar) != 1) {
+				fprintf(stderr, "Error: bad 'DEFAULT_CHAR'\n");
+				return 0;
+			}
+		}
+		if (isprefix(buf, "FONT_DESCENT ")) {
+			if (sscanf(buf, "FONT_DESCENT %d", &pf->descent) != 1) {
+				fprintf(stderr, "Error: bad 'FONT_DESCENT'\n");
+				return 0;
+			}
+			continue;
+		}
+		if (isprefix(buf, "FONT_ASCENT ")) {
+			if (sscanf(buf, "FONT_ASCENT %d", &pf->ascent) != 1) {
+				fprintf(stderr, "Error: bad 'FONT_ASCENT'\n");
+				return 0;
+			}
+			continue;
+		}
+		if (isprefix(buf, "FONTBOUNDINGBOX ")) {
+			if (sscanf(buf, "FONTBOUNDINGBOX %d %d %d %d",
+					   &pf->fbbw, &pf->fbbh, &pf->fbbx, &pf->fbby) != 4) {
+				fprintf(stderr, "Error: bad 'FONTBOUNDINGBOX'\n");
+				return 0;
+			}
+			continue;
+		}
+		if (isprefix(buf, "CHARS ")) {
+			if (sscanf(buf, "CHARS %d", &nchars) != 1) {
+				fprintf(stderr, "Error: bad 'CHARS'\n");
+				return 0;
+			}
+			continue;
+		}
+
+		/*
+		 * Reading ENCODING is necessary to get firstchar/lastchar
+		 * which is needed to pre-calculate our offset and widths
+		 * array sizes.
+		 */
+		if (isprefix(buf, "ENCODING ")) {
+			if (sscanf(buf, "ENCODING %d", &encoding) != 1) {
+				fprintf(stderr, "Error: bad 'ENCODING'\n");
+				return 0;
+			}
+			if (encoding >= 0 && 
+				encoding <= limit_char && 
+				encoding >= start_char) {
+
+				if (firstchar > encoding)
+					firstchar = encoding;
+				if (lastchar < encoding)
+					lastchar = encoding;
+			}
+			continue;
+		}
+		if (strequal(buf, "ENDFONT"))
+			break;
+	}
+
+	/* calc font height*/
+	if (pf->ascent < 0 || pf->descent < 0 || firstchar < 0) {
+		fprintf(stderr, "Error: Invalid BDF file, requires FONT_ASCENT/FONT_DESCENT/ENCODING\n");
+		return 0;
+	}
+	pf->height = pf->ascent + pf->descent;
+
+	/* calc default char*/
+	if (pf->defaultchar < 0 || 
+		pf->defaultchar < firstchar || 
+		pf->defaultchar > limit_char )
+		pf->defaultchar = firstchar;
+
+	/* calc font size (offset/width entries)*/
+	pf->firstchar = firstchar;
+	pf->size = lastchar - firstchar + 1;
+	
+	/* use the font boundingbox to get initial maxwidth*/
+	/*maxwidth = pf->fbbw - pf->fbbx;*/
+	maxwidth = pf->fbbw;
+
+	/* initially use font maxwidth * height for bits allocation*/
+	pf->bits_size = nchars * BITMAP_WORDS(maxwidth) * pf->height;
+
+	/* allocate bits, offset, and width arrays*/
+	pf->bits = (bitmap_t *)malloc(pf->bits_size * sizeof(bitmap_t) + EXTRA);
+	pf->offset = (unsigned long *)malloc(pf->size * sizeof(unsigned long));
+	pf->width = (unsigned char *)malloc(pf->size * sizeof(unsigned char));
+	
+	if (!pf->bits || !pf->offset || !pf->width) {
+		fprintf(stderr, "Error: no memory for font load\n");
+		return 0;
+	}
+
+	return 1;
+}
+
+/* read bdf font bitmaps, return 0 on error*/
+int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
+	long ofs = 0;
+	int maxwidth = 0;
+	int i, k, encoding, width;
+	int bbw, bbh, bbx, bby;
+	int proportional = 0;
+	int encodetable = 0;
+	long l;
+	char buf[256];
+
+	/* reset file pointer*/
+	fp.seek(0, SEEK_SET);
+
+	/* initially mark offsets as not used*/
+	for (i = 0; i < pf->size; ++i)
+		pf->offset[i] = (unsigned long)-1;
+
+	for (;;) {
+		if (!bdf_getline(fp, buf, sizeof(buf))) {
+			fprintf(stderr, "Error: EOF on file\n");
+			return 0;
+		}
+		if (isprefix(buf, "STARTCHAR")) {
+			encoding = width = bbw = bbh = bbx = bby = -1;
+			continue;
+		}
+		if (isprefix(buf, "ENCODING ")) {
+			if (sscanf(buf, "ENCODING %d", &encoding) != 1) {
+				fprintf(stderr, "Error: bad 'ENCODING'\n");
+				return 0;
+			}
+			if (encoding < start_char || encoding > limit_char)
+				encoding = -1;
+			continue;
+		}
+		if (isprefix(buf, "DWIDTH ")) {
+			if (sscanf(buf, "DWIDTH %d", &width) != 1) {
+				fprintf(stderr, "Error: bad 'DWIDTH'\n");
+				return 0;
+			}
+			/* use font boundingbox width if DWIDTH <= 0*/
+			if (width <= 0)
+				width = pf->fbbw - pf->fbbx;
+			continue;
+		}
+		if (isprefix(buf, "BBX ")) {
+			if (sscanf(buf, "BBX %d %d %d %d", &bbw, &bbh, &bbx, &bby) != 4) {
+				fprintf(stderr, "Error: bad 'BBX'\n");
+				return 0;
+			}
+			continue;
+		}
+		if (strequal(buf, "BITMAP")) {
+			bitmap_t *ch_bitmap = pf->bits + ofs;
+			int ch_words;
+
+			if (encoding < 0)
+				continue;
+
+			/* set bits offset in encode map*/
+			if (pf->offset[encoding-pf->firstchar] != (unsigned long)-1) {
+				fprintf(stderr, "Error: duplicate encoding for character %d (0x%02x), ignoring duplicate\n",
+						encoding, encoding);
+				continue;
+			}
+			pf->offset[encoding-pf->firstchar] = ofs;
+
+			/* calc char width*/
+			if (bbx < 0) {
+				width -= bbx;
+				/*if (width > maxwidth)
+					width = maxwidth;*/
+				bbx = 0;
+			}
+			if (width > maxwidth)
+				maxwidth = width;
+			pf->width[encoding-pf->firstchar] = width;
+
+			/* clear bitmap*/
+			memset(ch_bitmap, 0, BITMAP_BYTES(width) * pf->height);
+
+			ch_words = BITMAP_WORDS(width);
+#define BM(row,col) (*(ch_bitmap + ((row)*ch_words) + (col)))
+#define BITMAP_NIBBLES	(BITMAP_BITSPERIMAGE/4)
+
+			/* read bitmaps*/
+			for (i = 0; ; ++i) {
+				int hexnibbles;
+
+				if (!bdf_getline(fp, buf, sizeof(buf))) {
+					fprintf(stderr, "Error: EOF reading BITMAP data\n");
+					return 0;
+				}
+				if (isprefix(buf, "ENDCHAR"))
+					break;
+
+				hexnibbles = strlen(buf);
+				for (k = 0; k < ch_words; ++k) {
+					int ndx = k * BITMAP_NIBBLES;
+					uint padnibbles = hexnibbles - ndx;
+					bitmap_t value;
+					
+					if (padnibbles <= 0)
+						break;
+					if (padnibbles >= BITMAP_NIBBLES)
+						padnibbles = 0;
+
+					value = bdf_hexval((unsigned char *)buf,
+									   ndx, ndx+BITMAP_NIBBLES-1-padnibbles);
+					value <<= padnibbles * BITMAP_NIBBLES;
+
+					BM(pf->height - pf->descent - bby - bbh + i, k) |=
+						value >> bbx;
+					/* handle overflow into next image word*/
+					if (bbx) {
+						BM(pf->height - pf->descent - bby - bbh + i, k+1) =
+							value << (BITMAP_BITSPERIMAGE - bbx);
+					}
+				}
+			}
+
+			ofs += BITMAP_WORDS(width) * pf->height;
+
+			continue;
+		}
+		if (strequal(buf, "ENDFONT"))
+			break;
+	}
+
+	/* set max width*/
+	pf->maxwidth = maxwidth;
+
+	/* change unused offset/width values to default char values*/
+	for (i = 0; i < pf->size; ++i) {
+		int defchar = pf->defaultchar - pf->firstchar;
+
+		if (pf->offset[i] == (unsigned long)-1) {
+			pf->offset[i] = pf->offset[defchar];
+			pf->width[i] = pf->width[defchar];
+		}
+	}
+
+	/* determine whether font doesn't require encode table*/
+	l = 0;
+	for (i = 0; i < pf->size; ++i) {
+		if (pf->offset[i] != (unsigned long)l) {
+			encodetable = 1;
+			break;
+		}
+		l += BITMAP_WORDS(pf->width[i]) * pf->height;
+	}
+	if (!encodetable) {
+		free(pf->offset);
+		pf->offset = NULL;
+	}
+
+	/* determine whether font is fixed-width*/
+	for (i = 0; i < pf->size; ++i) {
+		if (pf->width[i] != maxwidth) {
+			proportional = 1;
+			break;
+		}
+	}
+	if (!proportional) {
+		free(pf->width);
+		pf->width = NULL;
+	}
+
+	/* reallocate bits array to actual bits used*/
+	if (ofs < pf->bits_size) {
+		pf->bits = (bitmap_t *)realloc(pf->bits, ofs * sizeof(bitmap_t));
+		pf->bits_size = ofs;
+	}
+	else {
+		if (ofs > pf->bits_size) {
+			fprintf(stderr, "Warning: DWIDTH spec > max FONTBOUNDINGBOX\n");
+			if (ofs > pf->bits_size+EXTRA) {
+				fprintf(stderr, "Error: Not enough bits initially allocated\n");
+				return 0;
+			}
+			pf->bits_size = ofs;
+		}
+	}
+
+	return 1;
+}
+
+/* read the next non-comment line, returns buf or NULL if EOF*/
+char *bdf_getline(Common::SeekableReadStream &fp, char *buf, int len) {
+	int c;
+	char *b;
+
+	for (;;) {
+		b = buf;
+		while (!fp.eos()) {
+			c = fp.readByte();
+			if (c == '\r')
+				continue;
+			if (c == '\n')
+				break;
+			if (b - buf >= (len - 1))
+				break;
+			*b++ = c;
+		}
+		*b = '\0';
+		if (fp.eos() && b == buf)
+			return NULL;
+		if (b != buf && !isprefix(buf, "COMMENT"))
+			break;
+	}
+	return buf;
+}
+
+/* return hex value of portion of buffer*/
+bitmap_t bdf_hexval(unsigned char *buf, int ndx1, int ndx2) {
+	bitmap_t val = 0;
+	int i, c;
+
+	for (i = ndx1; i <= ndx2; ++i) {
+		c = buf[i];
+		if (c >= '0' && c <= '9')
+			c -= '0';
+		else 
+			if (c >= 'A' && c <= 'F')
+				c = c - 'A' + 10;
+			else 
+				if (c >= 'a' && c <= 'f')
+					c = c - 'a' + 10;
+				else 
+					c = 0;
+		val = (val << 4) | c;
+	}
+	return val;
+}
+
+NewFont *loadFont(Common::SeekableReadStream &stream) {
+	NewFontData *data = bdf_read_font(stream);
+	if (!data)
+		return 0;
+
+	FontDesc desc;
+	desc.name = data->name;
+	desc.maxwidth = data->maxwidth;
+	desc.height = data->height;
+	desc.ascent = data->ascent;
+	desc.firstchar = data->firstchar;
+	desc.size = data->size;
+	desc.bits = data->bits;
+	desc.offset = data->offset;
+	desc.width = data->width;
+	desc.defaultchar = data->defaultchar;
+	desc.bits_size = data->bits_size;
+
+	return new NewFont(desc, data);
+}
+
+NewFont *loadFont(const byte *src, uint32 size) {
+	Common::MemoryReadStream stream(src, size);
+
+	NewFontData *data = bdf_read_font(stream);
+	if (!data)
+		return 0;
+
+	FontDesc desc;
+	desc.name = data->name;
+	desc.maxwidth = data->maxwidth;
+	desc.height = data->height;
+	desc.ascent = data->ascent;
+	desc.firstchar = data->firstchar;
+	desc.size = data->size;
+	desc.bits = data->bits;
+	desc.offset = data->offset;
+	desc.width = data->width;
+	desc.defaultchar = data->defaultchar;
+	desc.bits_size = data->bits_size;
+
+	return new NewFont(desc, data);
+}
 
 #pragma mark -
 
