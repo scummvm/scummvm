@@ -31,10 +31,10 @@ print "Setting version to '$VERSION'\n";
 
 # List of the files in which we need to perform substitution.
 my @subs_files = qw(
-	scummvm.rc
 	base/internal_version.h
 	dists/macosx/Info.plist
 	dists/redhat/scummvm.spec
+	dists/scummvm.rc
 	);
 
 # The following files also contain version data and should possible be modified

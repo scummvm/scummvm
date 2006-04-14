@@ -1600,7 +1600,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit163]
-FileName=..\..\scummvm.rc
+FileName=..\..\dists\scummvm.rc
 CompileCpp=1
 Folder=Resources
 Compile=1

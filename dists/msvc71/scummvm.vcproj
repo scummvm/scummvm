@@ -463,7 +463,7 @@
 				RelativePath="..\..\icons\scummvm.ico">
 			</File>
 			<File
-				RelativePath="..\..\scummvm.rc">
+				RelativePath="..\..\dists\scummvm.rc">
 			</File>
 		</Filter>
 		<Filter

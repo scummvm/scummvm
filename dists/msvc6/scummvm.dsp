@@ -645,7 +645,7 @@ SOURCE=..\..\icons\scummvm.ico
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\scummvm.rc
+SOURCE=..\..\dists\scummvm.rc
 # End Source File
 # End Target
 # End Project
