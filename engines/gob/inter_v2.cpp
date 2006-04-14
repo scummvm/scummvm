@@ -158,7 +158,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_loadStatic),
 		OPCODE(o1_freeStatic),
 		/* 1C */
-		OPCODE(o1_renderStatic),
+		OPCODE(o2_renderStatic),
 		OPCODE(o2_loadCurLayer),
 		{NULL, ""},
 		{NULL, ""},
@@ -878,6 +878,15 @@ int16 Inter_v2::loadSound(int16 search) {
 	return;
 
 	_vm->_game->loadSound(slot, dataPtr);*/
+}
+
+void Inter_v2::o2_renderStatic(void) {
+	int16 layer;
+	int16 index;
+
+	index = _vm->_parse->parseValExpr();
+	layer = _vm->_parse->parseValExpr();
+	_vm->_scenery->renderStatic(index, layer);
 }
 
 void Inter_v2::loadMult(void) {

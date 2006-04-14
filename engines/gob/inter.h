@@ -309,6 +309,7 @@ protected:
 	void o2_totSub(void);
 	void o2_stub0x56(void);
 	void o2_stub0x80(void);
+	void o2_renderStatic(void);
 	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);

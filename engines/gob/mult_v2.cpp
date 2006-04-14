@@ -1005,6 +1005,25 @@ void Mult_v2::animate(void) {
 		animObj1 = _renderData2[orderArray[i]];
 		animData1 = animObj1->pAnimData;
 		if (animObj1->someFlag == 0) {
+			if (animData1->isStatic == 0) {
+				for (j = 0; j < orderArrayPos; j++) {
+					animObj2 = _renderData2[orderArray[j]];
+					if ((animObj2->someFlag != 0) &&
+							(animObj1->somethingRight >= animObj2->somethingLeft) &&
+							(animObj2->somethingRight >= animObj1->somethingLeft) &&
+							(animObj1->somethingBottom >= animObj2->somethingTop) &&
+							(animObj2->somethingBottom >= animObj1->somethingTop))
+					{
+						_vm->_scenery->_toRedrawLeft = animObj2->somethingLeft;
+						_vm->_scenery->_toRedrawRight = animObj2->somethingRight;
+						_vm->_scenery->_toRedrawTop = animObj2->somethingTop;
+						_vm->_scenery->_toRedrawBottom = animObj2->somethingBottom;
+						_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+								animData1->animation, 12, *animObj1->pPosX, *animObj1->pPosY, 1);
+						_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
+					}
+				}
+			}
 		} else {
 			if (animData1->isStatic == 0) {
 				_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
@@ -1039,7 +1058,7 @@ void Mult_v2::animate(void) {
 				_vm->_scenery->_toRedrawTop = animObj1->somethingTop;
 				_vm->_scenery->_toRedrawBottom = animObj1->somethingBottom;
 			}
-			warning("GOB2 Stub! sub_1A52B(animObj1->pAnimData->order);");
+			_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
 		}
 	}
 

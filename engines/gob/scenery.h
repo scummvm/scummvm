@@ -127,7 +127,6 @@ public:
 	int16 loadStatic(char search);
 	void freeStatic(int16 index);
 	void renderStatic(int16 scenery, int16 layer);
-	void interRenderStatic(void);
 	void updateStatic(int16 orderFrom);
 	int16 loadAnim(char search);
 	void updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,

@@ -285,15 +285,6 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	}
 }
 
-void Scenery::interRenderStatic(void) {
-	int16 layer;
-	int16 index;
-
-	_vm->_inter->evalExpr(&index);
-	_vm->_inter->evalExpr(&layer);
-	renderStatic(index, layer);
-}
-
 void Scenery::updateStatic(int16 orderFrom) {
 	StaticLayer *layerPtr;
 	PieceDesc **pictPtr;

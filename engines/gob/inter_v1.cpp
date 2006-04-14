@@ -1585,7 +1585,12 @@ void Inter_v1::o1_freeStatic(void) {
 }
 
 void Inter_v1::o1_renderStatic(void) {
-	_vm->_scenery->interRenderStatic();
+	int16 layer;
+	int16 index;
+
+	_vm->_inter->evalExpr(&index);
+	_vm->_inter->evalExpr(&layer);
+	_vm->_scenery->renderStatic(index, layer);
 }
 
 void Inter_v1::o1_loadCurLayer(void) {
