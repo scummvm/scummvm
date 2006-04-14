@@ -1958,9 +1958,7 @@ void SimonEngine::vc52_playSound() {
 	if (getGameType() == GType_FF) {
 		uint16 pan = vcReadNextWord();
 		uint16 vol = vcReadNextWord();
-
-		if (_curSfxFile != NULL)
-			_sound->playSoundData(_curSfxFile, sound, pan, vol, ambient);
+		loadSound(sound, pan, vol, ambient);
 	} else if (getGameType() == GType_SIMON2) {
 		if (ambient) {
 			_sound->playAmbient(sound);

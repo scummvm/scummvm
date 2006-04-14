@@ -22,9 +22,19 @@
 
 // Resource file routines for Simon1/Simon2
 #include "common/stdafx.h"
+
 #include "common/file.h"
+
 #include "simon/simon.h"
 #include "simon/intern.h"
+#include "simon/sound.h"
+
+
+#ifdef USE_ZLIB
+#include <zlib.h>
+#endif
+
+using Common::File;
 
 namespace Simon {
 
@@ -133,6 +143,35 @@ uint32 SimonEngine::readUint32Wrapper(const void *src) {
 		return READ_LE_UINT32(src);
 	else
 		return READ_BE_UINT32(src);
+}
+
+void SimonEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {
+#ifdef USE_ZLIB
+		File in;
+		in.open(srcName);
+		if (in.isOpen() == false)
+			error("decompressData: can't open %s", srcName);
+
+		in.seek(offset, SEEK_SET);
+		if (srcSize != dstSize) {
+			byte *srcBuffer = (byte *)malloc(srcSize);
+
+			if (in.read(srcBuffer, srcSize) != srcSize)
+				error("decompressData: read failed");
+
+			unsigned long decompressedSize = dstSize;
+			int result = uncompress(dst, &decompressedSize, srcBuffer, srcSize);
+			if (result != Z_OK)
+				error("decompressData() Zlib uncompress error");
+			free(srcBuffer);
+		} else {
+			if (in.read(dst, dstSize) != dstSize)
+				error("decompressData: read failed");
+		}
+		in.close();
+#else
+	error("Zlib support is required for Amiga and Macintosh versions");
+#endif
 }
 
 void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &srcSize, uint32 &dstSize) {
@@ -406,6 +445,264 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		default:
 			error("Bad cmd table entry %c", l);
 		}
+	}
+}
+
+// Thanks to Stuart Caie for providing the original
+// C conversion upon which this decruncher is based.
+
+#define SD_GETBIT(var) do {     \
+	if (!bits--) {              \
+		s -= 4;                 \
+		if (s < src)            \
+			return false;       \
+		bb = READ_BE_UINT32(s); \
+		bits = 31;              \
+	}                           \
+	(var) = bb & 1;             \
+	bb >>= 1;                   \
+}while (0)
+
+#define SD_GETBITS(var, nbits) do { \
+	bc = (nbits);                   \
+	(var) = 0;                      \
+	while (bc--) {                   \
+		(var) <<= 1;                \
+		SD_GETBIT(bit);             \
+		(var) |= bit;               \
+	}                               \
+}while (0)
+
+#define SD_TYPE_LITERAL (0)
+#define SD_TYPE_MATCH   (1)
+
+static bool decrunchFile(byte *src, byte *dst, uint32 size) {
+	byte *s = src + size - 4;
+	uint32 destlen = READ_BE_UINT32 (s);
+	uint32 bb, x, y;
+	byte *d = dst + destlen;
+	byte bc, bit, bits, type;
+
+	// Initialize bit buffer.
+	s -= 4;
+	bb = x = READ_BE_UINT32 (s);
+	bits = 0;
+	do {
+		x >>= 1;
+		bits++;
+	} while (x);
+	bits--;
+
+	while (d > dst) {
+		SD_GETBIT(x);
+		if (x) {
+			SD_GETBITS(x, 2);
+			switch (x) {
+			case 0:
+				type = SD_TYPE_MATCH;
+				x = 9;
+				y = 2;
+				break;
+
+			case 1:
+				type = SD_TYPE_MATCH;
+				x = 10;
+				y = 3;
+				break;
+
+			case 2:
+				type = SD_TYPE_MATCH;
+				x = 12;
+				SD_GETBITS(y, 8);
+				break;
+
+			default:
+				type = SD_TYPE_LITERAL;
+				x = 8;
+				y = 8;
+			}
+		} else {
+			SD_GETBIT(x);
+			if (x) {
+				type = SD_TYPE_MATCH;
+				x = 8;
+				y = 1;
+			} else {
+				type = SD_TYPE_LITERAL;
+				x = 3;
+				y = 0;
+			}
+		}
+
+		if (type == SD_TYPE_LITERAL) {
+			SD_GETBITS(x, x);
+			y += x;
+			if ((int)(y + 1) > (d - dst))
+				return false; // Overflow?
+			do {
+				SD_GETBITS(x, 8);
+				*--d = x;
+			} while (y-- > 0);
+		} else {
+			if ((int)(y + 1) > (d - dst))
+				return false; // Overflow?
+			SD_GETBITS(x, x);
+			if ((d + x) > (dst + destlen))
+				return false; // Offset overflow?
+			do {
+				d--;
+				*d = d[x];
+			} while (y-- > 0);
+		}
+	}
+
+	// Successful decrunch.
+	return true;
+}
+
+#undef SD_GETBIT
+#undef SD_GETBITS
+#undef SD_TYPE_LITERAL
+#undef SD_TYPE_MATCH
+
+void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
+	if (getFeatures() & GF_OLD_BUNDLE) {
+		File in;
+		char filename[15];
+		uint32 size;
+		if (vga_id == 23)
+			vga_id = 112;
+		if (vga_id == 328)
+			vga_id = 119;
+
+		if (getPlatform() == Common::kPlatformAmiga) {
+			if (getFeatures() & GF_TALKIE)
+				sprintf(filename, "0%d.out", vga_id);
+			else 
+				sprintf(filename, "0%d.pkd", vga_id);
+		} else {
+			sprintf(filename, "0%d.VGA", vga_id);
+		}
+
+		in.open(filename);
+		if (in.isOpen() == false)
+			error("read_vga_from_datfile_1: can't open %s", filename);
+		size = in.size();
+
+		if (getFeatures() & GF_CRUNCHED) {
+			byte *buffer = new byte[size];
+			if (in.read(buffer, size) != size)
+				error("read_vga_from_datfile_1: read failed");
+			decrunchFile(buffer, _vgaBufferPointers[11].vgaFile2, size);
+			delete [] buffer;
+		} else {
+			if (in.read(_vgaBufferPointers[11].vgaFile2, size) != size)
+				error("read_vga_from_datfile_1: read failed");
+		}
+		in.close();
+	} else {
+		uint32 offs_a = _gameOffsetsPtr[vga_id];
+		uint32 size = _gameOffsetsPtr[vga_id + 1] - offs_a;
+
+		resfile_read(_vgaBufferPointers[11].vgaFile2, offs_a, size);
+	}
+}
+
+byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
+	File in;
+	char filename[15];
+	byte *dst = NULL;
+
+	// !!! HACK !!!
+	// allocate more space for text to cope with foreign languages that use
+	// up more space than english. I hope 6400 bytes are enough. This number
+	// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
+	int extraBuffer = (id == 5 ? 6400 : 0);
+
+	if (getFeatures() & GF_ZLIBCOMP) {
+		uint32 file, offset, srcSize, dstSize;
+		if (getPlatform() == Common::kPlatformAmiga) {
+			loadOffsets((const char*)"gfxindex.dat", id / 2 * 3 + type, file, offset, srcSize, dstSize);
+		} else {
+			loadOffsets((const char*)"graphics.vga", id / 2 * 3 + type, file, offset, srcSize, dstSize);
+		}
+
+		if (getPlatform() == Common::kPlatformAmiga)
+			sprintf(filename, "GFX%d.VGA", file);
+		else
+			sprintf(filename, "graphics.vga");
+
+		dst = allocBlock(dstSize);
+		decompressData(filename, dst, offset, srcSize, dstSize);
+		return dst;
+	} else if (getFeatures() & GF_OLD_BUNDLE) {
+		uint32 size;
+		if (getPlatform() == Common::kPlatformAmiga) {
+			if (getFeatures() & GF_TALKIE)
+				sprintf(filename, "%.3d%d.out", id / 2, type);
+			else 
+				sprintf(filename, "%.3d%d.pkd", id / 2, type);
+		} else {
+			sprintf(filename, "%.3d%d.VGA", id / 2, type);
+		}
+
+		in.open(filename);
+		if (in.isOpen() == false) {
+			if (type == 3) 
+				return NULL;
+			else
+				error("read_vga_from_datfile_2: can't open %s", filename);
+		}
+		size = in.size();
+
+		if (getFeatures() & GF_CRUNCHED) {
+			byte *buffer = new byte[size];
+			if (in.read(buffer, size) != size)
+				error("read_vga_from_datfile_2: read failed");
+			dst = allocBlock (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
+			decrunchFile(buffer, dst, size);
+			delete[] buffer;
+		} else {
+			dst = allocBlock(size + extraBuffer);
+			if (in.read(dst, size) != size)
+				error("read_vga_from_datfile_2: read failed");
+		}
+		in.close();
+
+		return dst;
+	} else {
+		uint32 offs_a = _gameOffsetsPtr[id];
+		uint32 size = _gameOffsetsPtr[id + 1] - offs_a;
+
+		dst = allocBlock(size + extraBuffer);
+		resfile_read(dst, offs_a, size);
+
+		return dst;
+	}
+}
+
+void SimonEngine::loadSound(uint sound, uint pan, uint vol, bool ambient) {
+	if (getFeatures() & GF_ZLIBCOMP) {
+		char filename[15];
+
+		uint32 file, offset, srcSize, dstSize;
+		if (getPlatform() == Common::kPlatformAmiga) {
+			loadOffsets((const char*)"sfxindex.dat", _zoneNumber * 22 + sound, file, offset, srcSize, dstSize);
+		} else {
+			loadOffsets((const char*)"effects.wav", _zoneNumber * 22 + sound, file, offset, srcSize, dstSize);
+		}
+
+		if (getPlatform() == Common::kPlatformAmiga)
+			sprintf(filename, "sfx%d.wav", file);
+		else
+			sprintf(filename, "effects.wav");
+
+		byte *dst = (byte *)malloc(dstSize);
+		decompressData(filename, dst, offset, srcSize, dstSize);
+		_sound->playSoundData(dst, sound, pan, vol, ambient);
+	} else {
+		int offs = READ_LE_UINT32(_curSfxFile + sound * 4);
+		_sound->playSoundData(_curSfxFile + offs, sound, pan, vol, ambient);
 	}
 }
 
