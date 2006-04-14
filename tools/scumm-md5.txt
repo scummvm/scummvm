@@ -610,7 +610,7 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	en	All	-	-	-	Kirben
 
 spyfox	SPY Fox 1: Dry Cereal
-	3de99ef0523f8ca7958faa3afccd035a	en	All	-	-	-	Kirben
+	3de99ef0523f8ca7958faa3afccd035a	en	All	HE 100	-	-	Kirben
 	58436e634f4fae1d9973591c2ffa1fcb	en	All	HE 99	-	-	Joachim Eberhard
 	a28135a7ade38cc0208b04507c46efd1	de	All	HE 99	-	-	nachbarnebenan
 	6bf70eee5de3d24d2403e0dd3d267e8a	All	Windows	-	-	-	khalek
