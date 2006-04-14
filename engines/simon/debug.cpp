@@ -348,7 +348,7 @@ void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int
 
 	if (getGameType() == GType_FF) {
 		for (i = 0; i != w; i++) {
-			byte *c = vc10_depack_column(&state);
+			byte *c = vc10_depackColumn(&state);
 			for (j = 0; j != h; j++) {
 				byte pix = c[j];
 				b[j * w + i] = pix;
@@ -356,7 +356,7 @@ void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int
 		}
 	} else {
 		for (i = 0; i != w; i += 2) {
-			byte *c = vc10_depack_column(&state);
+			byte *c = vc10_depackColumn(&state);
 			for (j = 0; j != h; j++) {
 				byte pix = c[j];
 				b[j * w + i] = (pix >> 4) | base;

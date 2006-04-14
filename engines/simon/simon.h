@@ -562,11 +562,11 @@ protected:
 
 	void changeWindow(uint a);
 	void closeWindow(uint a);
-	void clear_hitarea_bit_0x40(uint hitarea);
-	void set_hitarea_bit_0x40(uint hitarea);
+	void enableBox(uint hitarea);
+	void disableBox(uint hitarea);
 	void moveBox(uint hitarea, int x, int y);
 	bool is_hitarea_0x40_clear(uint hitarea);
-	void delete_hitarea(uint hitarea);
+	void undefineBox(uint hitarea);
 	void defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr);
 	HitArea *findEmptyHitArea();
 	void resetVerbs();
@@ -638,7 +638,7 @@ protected:
 
 	void resetNameWindow();
 	void printVerbOf(uint hitarea_id);
-	HitArea *findHitAreaByID(uint hitarea_id);
+	HitArea *findBox(uint hitarea_id);
 
 	void showActionString(const byte *string);
 	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
@@ -726,8 +726,8 @@ public:
 	void vc12_delay();
 	void vc13_addToSpriteX();
 	void vc14_addToSpriteY();
-	void vc15_wakeup_id();
-	void vc16_sleep_on_id();
+	void vc15_sync();
+	void vc16_waitSync();
 	void vc17_setPathfinderItem();
 	void vc18_jump();
 	void vc19_chain_to_script();
@@ -762,11 +762,11 @@ public:
 	void vc48_setPathFinder();
 	void vc49_setBit();
 	void vc50_clearBit();
-	void vc51_clear_hitarea_bit_0x40();
+	void vc51_enableBox();
 	void vc52_playSound();
-	void vc53_no_op();
+	void vc53_panSFX();
 	void vc54_no_op();
-	void vc55_offset_hit_area();
+	void vc55_moveBox();
 	void vc56_delay();
 	void vc57_no_op();
 	void vc58();

@@ -216,7 +216,7 @@ void SimonEngine::clearName() {
 	resetNameWindow();
 	_lastVerbOn = last;
 
-	if (last != NULL && (ha = findHitAreaByID(200)) && (ha->flags & kBFBoxDead) && !(last->flags & kBFBoxDead))
+	if (last != NULL && (ha = findBox(200)) && (ha->flags & kBFBoxDead) && !(last->flags & kBFBoxDead))
 		printVerbOf(last->id);
 }
 
@@ -318,7 +318,7 @@ void SimonEngine::resetNameWindow() {
 	_lastVerbOn = NULL;
 }
 
-HitArea *SimonEngine::findHitAreaByID(uint hitarea_id) {
+HitArea *SimonEngine::findBox(uint hitarea_id) {
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
 
@@ -340,14 +340,14 @@ HitArea *SimonEngine::findEmptyHitArea() {
 	return NULL;
 }
 
-void SimonEngine::clear_hitarea_bit_0x40(uint hitarea) {
-	HitArea *ha = findHitAreaByID(hitarea);
+void SimonEngine::enableBox(uint hitarea) {
+	HitArea *ha = findBox(hitarea);
 	if (ha != NULL)
 		ha->flags &= ~kBFBoxDead;
 }
 
-void SimonEngine::set_hitarea_bit_0x40(uint hitarea) {
-	HitArea *ha = findHitAreaByID(hitarea);
+void SimonEngine::disableBox(uint hitarea) {
+	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
 		ha->flags |= kBFBoxDead;
 		ha->flags &= ~kBFBoxSelected;
@@ -357,7 +357,7 @@ void SimonEngine::set_hitarea_bit_0x40(uint hitarea) {
 }
 
 void SimonEngine::moveBox(uint hitarea, int x, int y) {
-	HitArea *ha = findHitAreaByID(hitarea);
+	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
 		if (getGameType() == GType_FF) {
 			ha->x += x;
@@ -369,8 +369,8 @@ void SimonEngine::moveBox(uint hitarea, int x, int y) {
 	}
 }
 
-void SimonEngine::delete_hitarea(uint hitarea) {
-	HitArea *ha = findHitAreaByID(hitarea);
+void SimonEngine::undefineBox(uint hitarea) {
+	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
 		ha->flags = 0;
 		if (ha == _lastNameOn)
@@ -380,7 +380,7 @@ void SimonEngine::delete_hitarea(uint hitarea) {
 }
 
 bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
-	HitArea *ha = findHitAreaByID(hitarea);
+	HitArea *ha = findBox(hitarea);
 	if (ha == NULL)
 		return false;
 	return (ha->flags & kBFBoxDead) == 0;
@@ -388,7 +388,7 @@ bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
 
 void SimonEngine::defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
 	HitArea *ha;
-	delete_hitarea(id);
+	undefineBox(id);
 
 	ha = findEmptyHitArea();
 	ha->x = x;
@@ -447,7 +447,7 @@ void SimonEngine::resetVerbs() {
 
 		_defaultVerb = id;
 
-		ha = findHitAreaByID(id);
+		ha = findBox(id);
 		if (ha == NULL)
 			return;
 
@@ -526,7 +526,7 @@ void SimonEngine::hitarea_leave(HitArea *ha, bool state) {
 }
 
 void SimonEngine::leaveHitAreaById(uint hitarea_id) {
-	HitArea *ha = findHitAreaByID(hitarea_id);
+	HitArea *ha = findBox(hitarea_id);
 	if (ha)
 		hitarea_leave(ha);
 }
@@ -548,12 +548,12 @@ void SimonEngine::checkUp(WindowBlock *window) {
 		j = k * 6;
 		if (is_hitarea_0x40_clear(j + 201)) {
 			loadSprite(4, 9, k + 31, 0, 0, 0);
-			delete_hitarea(j + 201);
-			delete_hitarea(j + 202);
-			delete_hitarea(j + 203);
-			delete_hitarea(j + 204);
-			delete_hitarea(j + 205);
-			delete_hitarea(j + 206);
+			undefineBox(j + 201);
+			undefineBox(j + 202);
+			undefineBox(j + 203);
+			undefineBox(j + 204);
+			undefineBox(j + 205);
+			undefineBox(j + 206);
 		}
 		_variableArray[31] -= 52;
 		_iOverflow = 1;
@@ -575,12 +575,12 @@ void SimonEngine::checkDown(WindowBlock *window) {
 		j = k * 6;
 		if (is_hitarea_0x40_clear(j + 201)) {
 			loadSprite(4, 9, k + 28, 0, 0, 0);
-			delete_hitarea(j + 201);
-			delete_hitarea(j + 202);
-			delete_hitarea(j + 203);
-			delete_hitarea(j + 204);
-			delete_hitarea(j + 205);
-			delete_hitarea(j + 206);
+			undefineBox(j + 201);
+			undefineBox(j + 202);
+			undefineBox(j + 203);
+			undefineBox(j + 204);
+			undefineBox(j + 205);
+			undefineBox(j + 206);
 		}
 	}
 }
@@ -711,7 +711,7 @@ void SimonEngine::displayName(HitArea *ha) {
 			_lastNameOn = ha;
 			return;
 		}
-		if (findHitAreaByID(50))
+		if (findBox(50))
 			return;
 
 		if (getBitFlag(99))

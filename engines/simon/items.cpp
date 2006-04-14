@@ -952,17 +952,17 @@ void SimonEngine::o_addBox() {
 
 void SimonEngine::o_delBox() {
 	// 108: delete hitarea
-	delete_hitarea(getVarOrWord());
+	undefineBox(getVarOrWord());
 }
 
 void SimonEngine::o_enableBox() {
 	// 109: clear hitarea bit 0x40
-	clear_hitarea_bit_0x40(getVarOrWord());
+	enableBox(getVarOrWord());
 }
 
 void SimonEngine::o_disableBox() {
 	// 110: set hitarea bit 0x40
-	set_hitarea_bit_0x40(getVarOrWord());
+	disableBox(getVarOrWord());
 }
 
 void SimonEngine::o_moveBox() {
@@ -2139,7 +2139,7 @@ void SimonEngine::sendSync(uint a) {
 	uint16 id = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&id;
-	vc15_wakeup_id();
+	vc15_sync();
 	_lockWord &= ~0x8000;
 }
 

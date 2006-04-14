@@ -48,8 +48,8 @@ void SimonEngine::setupVgaOpcodes() {
 		&SimonEngine::vc12_delay,
 		&SimonEngine::vc13_addToSpriteX,
 		&SimonEngine::vc14_addToSpriteY,
-		&SimonEngine::vc15_wakeup_id,
-		&SimonEngine::vc16_sleep_on_id,
+		&SimonEngine::vc15_sync,
+		&SimonEngine::vc16_waitSync,
 		&SimonEngine::vc17_setPathfinderItem,
 		&SimonEngine::vc18_jump,
 		&SimonEngine::vc19_chain_to_script,
@@ -84,11 +84,11 @@ void SimonEngine::setupVgaOpcodes() {
 		&SimonEngine::vc48_setPathFinder,
 		&SimonEngine::vc49_setBit,
 		&SimonEngine::vc50_clearBit,
-		&SimonEngine::vc51_clear_hitarea_bit_0x40,
+		&SimonEngine::vc51_enableBox,
 		&SimonEngine::vc52_playSound,
-		&SimonEngine::vc53_no_op,
+		&SimonEngine::vc53_panSFX,
 		&SimonEngine::vc54_no_op,
-		&SimonEngine::vc55_offset_hit_area,
+		&SimonEngine::vc55_moveBox,
 		&SimonEngine::vc56_delay,
 		&SimonEngine::vc57_no_op,
 		&SimonEngine::vc58,
@@ -436,7 +436,7 @@ void SimonEngine::vc9_skip_if_unk3_is() {
 		vcSkipNextInstruction();
 }
 
-byte *vc10_depack_column(VC10_state * vs) {
+byte *vc10_depackColumn(VC10_state * vs) {
 	int8 a = vs->depack_cont;
 	const byte *src = vs->depack_src;
 	byte *dst = vs->depack_dest;
@@ -480,7 +480,7 @@ get_out:;
 
 void vc10_skip_cols(VC10_state *vs) {
 	while (vs->x_skip) {
-		vc10_depack_column(vs);
+		vc10_depackColumn(vs);
 		vs->x_skip--;
 	}
 }
@@ -855,7 +855,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			dst_org = state->surf_addr;
 			w = 0;
 			do {
-				src = vc10_depack_column(state);
+				src = vc10_depackColumn(state);
 				dst = dst_org;
 
 				h = 0;
@@ -891,7 +891,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			do {
 				byte color;
 
-				src = vc10_depack_column(state);
+				src = vc10_depackColumn(state);
 				dst = dst_org;
 
 				h = 0;
@@ -940,7 +940,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				do {
 					byte color;
 
-					src = vc10_depack_column(state);
+					src = vc10_depackColumn(state);
 					dst = dst_org;
 
 					h = 0;
@@ -959,7 +959,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				do {
 					byte color;
 
-					src = vc10_depack_column(state);
+					src = vc10_depackColumn(state);
 					dst = dst_org;
 
 					h = 0;
@@ -1036,7 +1036,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 
 		w = 0;
 		do {
-			mask = vc10_depack_column(state);	/* esi */
+			mask = vc10_depackColumn(state);	/* esi */
 			src = state->surf2_addr + w * 2;	/* ebx */
 			dst = state->surf_addr + w * 2;		/* edi */
 
@@ -1202,7 +1202,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 				dst_org = state->surf_addr;
 				w = 0;
 				do {
-					src = vc10_depack_column(state);
+					src = vc10_depackColumn(state);
 					dst = dst_org;
 
 					h = 0;
@@ -1223,7 +1223,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 				do {
 					byte color;
 
-					src = vc10_depack_column(state);
+					src = vc10_depackColumn(state);
 					dst = dst_org;
 
 					h = 0;
@@ -1442,7 +1442,7 @@ void SimonEngine::vc14_addToSpriteY() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc15_wakeup_id() {
+void SimonEngine::vc15_sync() {
 	VgaSleepStruct *vfs = _vgaSleepStructs, *vfs_tmp;
 	uint16 id = vcReadNextWord();
 	while (vfs->ident != 0) {
@@ -1463,7 +1463,7 @@ void SimonEngine::vc15_wakeup_id() {
 		_vgaWaitFor = 0;
 }
 
-void SimonEngine::vc16_sleep_on_id() {
+void SimonEngine::vc16_waitSync() {
 	VgaSleepStruct *vfs = _vgaSleepStructs;
 	while (vfs->ident)
 		vfs++;
@@ -1792,8 +1792,6 @@ void SimonEngine::vc41() {
 	int16 value = vcReadVar(var) - vcReadNextWord();
 
 	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
-		int16 tmp;
-
 		if (_scrollCount != 0) {
 			if (_scrollCount < 0)
 				goto no_scroll;
@@ -1941,8 +1939,8 @@ void SimonEngine::vc50_clearBit() {
 	setBitFlag(vcReadNextWord(), false);
 }
 
-void SimonEngine::vc51_clear_hitarea_bit_0x40() {
-	clear_hitarea_bit_0x40(vcReadNextWord());
+void SimonEngine::vc51_enableBox() {
+	enableBox(vcReadNextWord());
 }
 
 void SimonEngine::vc52_playSound() {
@@ -1971,12 +1969,12 @@ void SimonEngine::vc52_playSound() {
 	}
 }
 
-void SimonEngine::vc53_no_op() {
+void SimonEngine::vc53_panSFX() {
 	// Start sound effect, panning it with the animation
 	int snd = vcReadNextWord();
 	int xoffs = vcReadNextWord();
 	int vol = vcReadNextWord();
-	debug(0, "STUB: vc53_no_op: snd %d xoffs %d vol %d", snd, xoffs, vol);
+	debug(0, "STUB: vc53_panSFX: snd %d xoffs %d vol %d", snd, xoffs, vol);
 }
 
 void SimonEngine::vc54_no_op() {
@@ -1984,7 +1982,7 @@ void SimonEngine::vc54_no_op() {
 	_vcPtr += 6;
 }
 
-void SimonEngine::vc55_offset_hit_area() {
+void SimonEngine::vc55_moveBox() {
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
 	uint16 id = vcReadNextWord();

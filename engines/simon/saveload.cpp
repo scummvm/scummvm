@@ -163,7 +163,7 @@ void SimonEngine::saveGameDialog(char *buf) {
 		return;
 
 	do {
-		clear_hitarea_bit_0x40(0xd0 + i - 1);
+		enableBox(0xd0 + i - 1);
 	} while (--i);
 }
 
@@ -211,7 +211,7 @@ restart:;
 	if_1:;
 		unk132_result = i;
 
-		set_hitarea_bit_0x40(208 + i);
+		disableBox(208 + i);
 		leaveHitAreaById(208 + i);
 
 		// some code here
@@ -274,7 +274,7 @@ restart:;
 				if (b) {
 					if (i == 205)
 						goto get_out;
-					clear_hitarea_bit_0x40(0xd0 + unk132_result);
+					enableBox(0xd0 + unk132_result);
 					if (_saveLoadFlag) {
 						clearCharacter(_windowArray[5], 8);
 						// move code
@@ -284,7 +284,7 @@ restart:;
 
 				// is_not_b
 				if (!_saveLoadFlag) {
-					clear_hitarea_bit_0x40(0xd0 + unk132_result);
+					enableBox(0xd0 + unk132_result);
 					goto restart;
 				}
 			} while (i >= 0x80 || i == 0);
@@ -404,7 +404,7 @@ start_over_2:;
 
 void SimonEngine::unk_132_helper_3() {
 	for (int i = 208; i != 208 + 6; i++)
-		set_hitarea_bit_0x40(i);
+		disableBox(i);
 }
 
 void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
@@ -476,7 +476,7 @@ loop:;
 		goto loop;
 
 	// Return
-	delete_hitarea(0x7FFF);
+	undefineBox(0x7FFF);
 }
 
 bool SimonEngine::saveGame(uint slot, char *caption) {

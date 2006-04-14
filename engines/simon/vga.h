@@ -135,7 +135,7 @@ struct VC10_state {
 	byte depack_dest[480];
 };
 
-byte *vc10_depack_column(VC10_state *vs);
+byte *vc10_depackColumn(VC10_state *vs);
 
 } // End of namespace Simon
 
