@@ -40,63 +40,57 @@ typedef HashMap<String, int> StringIntMap;
 static StringIntMap *_defaultDirectories;
 static FilesMap *_filesMap;
 
-static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
+static FILE *fopenNoCase(const String &filename, const String &directory, const char *mode) {
 	FILE *file;
-	char buf[512];
-	char *ptr;
-
-	assert(directory);
-	strcpy(buf, directory);
+	String buf(directory);
+	uint i;
 
 #if !defined(__GP32__) && !defined(PALMOS_MODE)
 	// Add a trailing slash, if necessary.
-	if (buf[0] != 0) {
-		const int dirLen = strlen(buf);
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/' && buf[dirLen-1] != '\\')
-			strcat(buf, "/");
+	if (!buf.empty()) {
+		const char c = buf.lastChar();
+		if (c != ':' && c != '/' && c != '\\')
+			buf += '/';
 	}
 #endif
 
 	// Append the filename to the path string
-	const int offsetToFileName = strlen(buf);
-	strcat(buf, filename);
+	const int offsetToFileName = buf.size();
+	buf += filename;
 
 	//
 	// Try to open the file normally
 	//
-	file = fopen(buf, mode);
+	file = fopen(buf.c_str(), mode);
 
 	//
 	// Try again, with file name converted to upper case
 	//
 	if (!file) {
-		ptr = buf + offsetToFileName;
-		while (*ptr) {
-			*ptr = toupper(*ptr);
-			ptr++;
+		
+		for (i = offsetToFileName; i < buf.size(); ++i) {
+			buf[i] = toupper(buf[i]);
 		}
-		file = fopen(buf, mode);
+		file = fopen(buf.c_str(), mode);
 	}
 
 	//
 	// Try again, with file name converted to lower case
 	//
 	if (!file) {
-		ptr = buf + offsetToFileName;
-		while (*ptr) {
-			*ptr = tolower(*ptr);
-			ptr++;
+		for (i = offsetToFileName; i < buf.size(); ++i) {
+			buf[i] = tolower(buf[i]);
 		}
-		file = fopen(buf, mode);
+		file = fopen(buf.c_str(), mode);
 	}
 
 	//
 	// Try again, with file name capitalized
 	//
 	if (!file) {
-		ptr = buf + offsetToFileName;
-		*ptr = toupper(*ptr);
-		file = fopen(buf, mode);
+		i = offsetToFileName;
+		buf[i] = toupper(buf[i]);
+		file = fopen(buf.c_str(), mode);
 	}
 
 #ifdef __amigaos4__
@@ -191,26 +185,28 @@ void File::decRef() {
 }
 
 
-bool File::open(const char *filename, AccessMode mode, const char *directory) {
+bool File::open(const char *f, AccessMode mode, const char *directory) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
-	if (_handle) {
-		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename);
+	if (f == NULL || *f == 0) {
+		error("File::open: No filename was specified!");
 	}
 
-	if (filename == NULL || *filename == 0) {
-		error("File::open: No filename was specified!");
+	if (_handle) {
+		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), f);
 	}
 
 	clearIOFailed();
 
+	String filename(f);
 	String fname(filename);
 
 	fname.toLowercase();
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 	if (mode == kFileWriteMode || directory) {
-		_handle = fopenNoCase(filename, directory ? directory : "", modeStr);
+		String dir(directory ? directory : "");
+		_handle = fopenNoCase(filename, dir, modeStr);
 	} else if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
 		debug(3, "Opening hashed: %s", fname.c_str());
@@ -227,7 +223,7 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 			// Try all default directories
 			StringIntMap::const_iterator x(_defaultDirectories->begin());
 			for (; _handle == NULL && x != _defaultDirectories->end(); ++x) {
-				_handle = fopenNoCase(filename, x->_key.c_str(), modeStr);
+				_handle = fopenNoCase(filename, x->_key, modeStr);
 			}
 		}
 
@@ -235,10 +231,10 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		if (_handle == NULL)
 			_handle = fopenNoCase(filename, "", modeStr);
 
-		// Last last (really) resort: try looking inside the application bundle on MacOS for the lowercase file.
+		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
 #ifdef MACOSX
 		if (!_handle) {
-			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename, strlen(filename), kCFStringEncodingASCII, false);
+			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename.c_str(), filename.size(), kCFStringEncodingASCII, false);
 			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);
 			if (fileUrl) {
 				UInt8 buf[256];
@@ -253,9 +249,9 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 
 	if (_handle == NULL) {
 		if (mode == kFileReadMode)
-			debug(2, "File %s not found", filename);
+			debug(2, "File %s not found", filename.c_str());
 		else
-			debug(2, "File %s not opened", filename);
+			debug(2, "File %s not opened", filename.c_str());
 		return false;
 	}
 
