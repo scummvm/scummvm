@@ -1374,7 +1374,7 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	_variableArray[22] = _feebleRect.bottom;
 	_variableArray[23] = _feebleRect.right;
 
-	debug(1, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
+	debug(5, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
 
 	// Unlike normal rectangles in ScummVM, it seems that in the case of
 	// the destination rectangle the bottom and right coordinates are

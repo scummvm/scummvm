@@ -1910,7 +1910,7 @@ void SimonEngine::o3_mouseOff() {
 
 void SimonEngine::o3_loadSmack() {
 	// 182: load video file
-	debug(1,"Load video file: %s", getStringPtrByID(getNextStringID()));
+	debug(0,"Load video file: %s", getStringPtrByID(getNextStringID()));
 }
 
 void SimonEngine::o3_playSmack() {
