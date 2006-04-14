@@ -26,22 +26,22 @@ namespace Graphics {
 
 void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	// Bresenham's line algorithm, as described by Wikipedia
-	bool steep = ABS(y1 - y0) > ABS(x1 - x0);
+	const bool steep = ABS(y1 - y0) > ABS(x1 - x0);
 
 	if (steep) {
 		SWAP(x0, y0);
 		SWAP(x1, y1);
 	}
 
-	int delta_x = ABS(x1 - x0);
-	int delta_y = ABS(y1 - y0);
-	int err = 0;
-	int delta_err = delta_y;
+	const int delta_x = ABS(x1 - x0);
+	const int delta_y = ABS(y1 - y0);
+	const int delta_err = delta_y;
 	int x = x0;
 	int y = y0;
+	int err = 0;
 
-	int x_step = (x0 < x1) ? 1 : -1;
-	int y_step = (y0 < y1) ? 1 : -1;
+	const int x_step = (x0 < x1) ? 1 : -1;
+	const int y_step = (y0 < y1) ? 1 : -1;
 
 	if (steep)
 		(*plotProc)(y, x, color, data);
