@@ -122,10 +122,6 @@ void ScummEngine::openRoom(const int room) {
 				sprintf(buf, "%s.he0", _baseName.c_str());
 			}
 		} else if (_game.heversion >= 70) {
-			// FIXME: Is it really necessary to keep this sepearet from the HE60
-			// code path? In particular, what values does "diskNumber" have?
-			if (room > 0 && 1 != diskNumber)
-				warning("Tell Fingolfin: room %d but disk %d (base %s)", room, diskNumber, _baseName.c_str());
 			sprintf(buf, "%s.he%d", _baseName.c_str(), room == 0 ? 0 : 1);
 		} else if (_game.heversion >= 60) {
 			sprintf(buf, "%s.he%d", _baseName.c_str(), diskNumber);
