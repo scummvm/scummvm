@@ -315,13 +315,13 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.empty()) {
+		running = launcherDialog(detector, system);
+
 		// Discard any command line options. Those that affect the graphics
 		// mode etc. already have should have been handled by the backend at
 		// this point. And the others (like bootparam etc.) should not
 		// blindly be passed to the first game launched from the launcher.
 		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
-
-		running = launcherDialog(detector, system);
 	}
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
