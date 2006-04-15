@@ -21,13 +21,13 @@
  *
  */
 
-#ifndef COMMON_PLUGINS_H
-#define COMMON_PLUGINS_H
+#ifndef BASE_PLUGINS_H
+#define BASE_PLUGINS_H
 
 #include "common/array.h"
 #include "common/singleton.h"
 #include "common/util.h"
-#include "base/gameDetector.h"	// For GameDescriptor
+#include "base/game.h"
 
 class Engine;
 class FSList;

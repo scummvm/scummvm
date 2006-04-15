@@ -19,8 +19,9 @@
  * $Id$
  */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef BASE_ENGINE_H
+#define BASE_ENGINE_H
+
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"

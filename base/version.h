@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef BASE_VERSION_H
+#define BASE_VERSION_H
 
 extern const char *gScummVMVersion;		// e.g. "0.4.1"
 extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"

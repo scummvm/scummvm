@@ -21,41 +21,14 @@
  *
  */
 
-#ifndef GAMEDETECTOR_H
-#define GAMEDETECTOR_H
+#ifndef BASE_GAMEDETECTOR_H
+#define BASE_GAMEDETECTOR_H
 
 #include "common/str.h"
 #include "common/config-manager.h"
+#include "base/game.h"
 
-class OSystem;
 class Plugin;
-
-struct PlainGameDescriptor {
-	const char *gameid;
-	const char *description;	// TODO: Rename this to "title" or so
-};
-
-struct GameDescriptor {
-	Common::String gameid;
-	Common::String description;	// TODO: Rename this to "title" or so
-	
-	GameDescriptor() {}
-	GameDescriptor(Common::String g, Common::String d) :
-		gameid(g), description(d) {}
-
-	/**
-	 * This template constructor allows to easily convert structs that mimic GameDescriptor
-	 * to a GameDescriptor instance.
-	 *
-	 * Normally, one would just subclass GameDescriptor to get this effect much easier.
-	 * However, subclassing a struct turns it into a non-POD type. One of the
-	 * consequences is that you can't have inline intialized arrays of that type.
-	 * But we heavily rely on those, hence we can't subclass GameDescriptor...
-	 */
-	template <class T>
-	GameDescriptor(const T &g) :
-		gameid(g.gameid), description(g.description) {}
-};
 
 
 class GameDetector {
