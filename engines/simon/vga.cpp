@@ -172,18 +172,12 @@ uint SimonEngine::vcReadNextByte() {
 
 uint SimonEngine::vcReadVar(uint var) {
 	assert(var < 255);
-	if (getGameType() == GType_FF && getBitFlag(82))
-		return (uint16)_variableArray2[var];
-	else
-		return (uint16)_variableArray[var];
+	return (uint16)_variableArrayPtr[var];
 }
 
 void SimonEngine::vcWriteVar(uint var, int16 value) {
 	assert(var < 255);
-	if (getGameType() == GType_FF && getBitFlag(82))
-		_variableArray2[var] = value;
-	else
-		_variableArray[var] = value;
+	_variableArrayPtr[var] = value;
 }
 
 void SimonEngine::vcSkipNextInstruction() {
@@ -1308,9 +1302,8 @@ void SimonEngine::horizontalScroll(VC10_state *state) {
 	_scrollYMax = 0;
 	_scrollImage = state->depack_src;
 	_scrollHeight = state->height;
-	int tmp = vcReadVar(34);
-	if (tmp < 0)
-		state->x = vcReadVar(251);
+	if (_variableArrayPtr[34] < 0)
+		state->x = _variableArrayPtr[251];
 
 	_scrollX = state->x;
 
@@ -1341,9 +1334,8 @@ void SimonEngine::verticalScroll(VC10_state *state) {
 	_scrollYMax = state->height - 480;
 	_scrollImage = state->depack_src;
 	_scrollWidth = state->width;
-	int tmp = vcReadVar(34);
-	if (tmp < 0)
-		state->y = vcReadVar(250);
+	if (_variableArrayPtr[34] < 0)
+		state->y = _variableArrayPtr[250];
 
 	_scrollY = state->y;
 
@@ -1861,7 +1853,7 @@ void SimonEngine::vc47_addToVar() {
 }
 
 void SimonEngine::vc48_setPathFinder() {
-	uint a = (uint16)vcReadVar(12);
+	uint a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 
 	if (getGameType() == GType_FF) {
@@ -1900,8 +1892,8 @@ void SimonEngine::vc48_setPathFinder() {
 		vsp->y = y1;
 		checkScrollY(y1 - y, y1);
 
-		vcWriteVar(11, x1);
-		vcWriteVar(13, pos);
+		_variableArrayPtr[11] = x1;
+		_variableArrayPtr[13] = pos;
 	} else {
 		uint b = (uint16)_variableArray[13];
 		p += b * 2 + 1;
@@ -1909,7 +1901,7 @@ void SimonEngine::vc48_setPathFinder() {
 
 		int step;
 		int y1, y2;
-		int32 *vp;
+		int16 *vp;
 
 		step = 2;
 		if (c < 0) {
@@ -1935,6 +1927,13 @@ void SimonEngine::vc48_setPathFinder() {
 void SimonEngine::setBitFlag(uint bit, bool value) {
 	uint16 *bits = &_bitArray[bit / 16];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
+
+	if (getGameType() == GType_FF && bit == 82) {
+		if (value == true)
+			_variableArrayPtr = _variableArray2;
+		else
+			_variableArrayPtr = _variableArray;
+	}
 }
 
 bool SimonEngine::getBitFlag(uint bit) {
@@ -2375,7 +2374,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 	int var = vcReadNextWord();
 
 	vsp->x += getScale(vsp->y, x);
-	vcWriteVar(var, vsp->x);
+	_variableArrayPtr[var] = vsp->x;
 
 	checkScrollX(x, vsp->x);
 
@@ -2390,7 +2389,7 @@ void SimonEngine::vc77_setScaleYOffs() {
 	int var = vcReadNextWord();
 
 	vsp->y += getScale(vsp->y, y);
-	vcWriteVar(var, vsp->y);
+	_variableArrayPtr[var] = vsp->y;
 
 	if (y != 0) 
 		checkScrollY(y, vsp->y);
@@ -2401,18 +2400,18 @@ void SimonEngine::vc77_setScaleYOffs() {
 void SimonEngine::vc78_computeXY() {
 	VgaSprite *vsp = findCurSprite();
 
-	uint a = (uint16)vcReadVar(12);
-	uint b = (uint16)vcReadVar(13);
+	uint a = (uint16)_variableArrayPtr[12];
+	uint b = (uint16)_variableArrayPtr[13];
 
 	const uint16 *p = _pathFindArray[a - 1];
 	p += b * 2;
 
 	uint16 posx = readUint16Wrapper(p);
-	vcWriteVar(15, posx);
+	_variableArrayPtr[15] = posx;
 	vsp->x = posx;
 
 	uint16 posy = readUint16Wrapper(p + 1);
-	vcWriteVar(16, posy);
+	_variableArrayPtr[16] = posy;
 	vsp->y = posy;
 
 	setBitFlag(85, false);
@@ -2422,17 +2421,17 @@ void SimonEngine::vc78_computeXY() {
 }
 
 void SimonEngine::vc79_computePosNum() {
-	uint a = (uint16)vcReadVar(12);
+	uint a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 	uint pos = 0;
 
-	uint16 y = vcReadVar(16);
+	int16 y = _variableArrayPtr[16];
 	while (y >= readUint16Wrapper(p + 1)) {
 		p += 2;
 		pos++;
 	}
 
-	vcWriteVar(13, pos);
+	_variableArrayPtr[13] = pos;
 }
 
 void SimonEngine::vc80_setOverlayImage() {

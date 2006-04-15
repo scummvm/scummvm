@@ -383,8 +383,9 @@ protected:
 	uint16 _speechIdArray4[40];
 
 	uint16 _bitArray[48];
-	int32 _variableArray[256];
-	int32 _variableArray2[256];
+	int16 _variableArray[256];
+	int16 _variableArray2[256];
+	int16 *_variableArrayPtr;
 
 	WindowBlock *_windowArray[16];
 
