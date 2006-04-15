@@ -3268,10 +3268,12 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			}
 			_skipVgaWait = true;
 		} else {
-			if (_subtitles && _language != Common::HB_ISR) {
+			if (getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) {
 				loadVoice(speech_id);
 				return;
-			} else if (_subtitles && _scriptVar2) {
+			}
+
+			if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 5, 0, 0, 0);
 				waitForSync(205);
 				kill_sprite_simon2(2,5);

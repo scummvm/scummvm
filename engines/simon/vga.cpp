@@ -2217,8 +2217,10 @@ void SimonEngine::vc63_fastFadeIn() {
 }
 
 void SimonEngine::vc64_skipIfSpeechEnded() {
-	if (!_sound->isVoiceActive() || (_subtitles && _language != Common::HB_ISR))
+	if ((getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) ||
+		!_sound->isVoiceActive()) {
 		vcSkipNextInstruction();
+	}
 }
 
 void SimonEngine::vc65_slowFadeIn() {

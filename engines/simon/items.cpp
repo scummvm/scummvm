@@ -1837,7 +1837,18 @@ void SimonEngine::o3_listSaveGames() {
 
 void SimonEngine::o3_checkCD() {
 	// 135: switch CD
-	debug(0, "Switch to CD number %d", readVariable(97));
+	uint disc = readVariable(97);
+
+	if (!strcmp(_gameDescription->extra, "4CD")) {
+		_sound->switchVoiceFile(disc);
+	} else if (!strcmp(_gameDescription->extra, "2CD")) {
+		if (disc == 1 || disc == 2)
+			_sound->switchVoiceFile(1);
+		else if (disc == 3 || disc == 4)
+			_sound->switchVoiceFile(2);
+	}
+
+	debug(0, "Switch to CD number %d", disc);
 }
 
 void SimonEngine::o3_screenTextBox() {

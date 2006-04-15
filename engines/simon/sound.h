@@ -58,6 +58,9 @@ public:
 	Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
 
+	void loadVoiceFile(const GameSpecificSettings *gss);
+	void loadSfxFile(const GameSpecificSettings *gss);
+
 	void readSfxFile(const char *filename);
 	void loadSfxTable(Common::File *gameFile, uint32 base);
 	void readVoiceFile(const char *filename);
@@ -69,6 +72,7 @@ public:
 	// Feeble Files specific
 	void playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient);
 	void playVoiceData(byte *soundData, uint sound);
+	void switchVoiceFile(uint disc);
 
 	bool hasVoice() const;
 	bool isVoiceActive() const;

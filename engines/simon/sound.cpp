@@ -256,8 +256,18 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 	_hasVoiceFile = false;
 	_ambientPlaying = 0;
 
-	// SIMON1CD32 uses separate speech files
-	if (!(_vm->getFeatures() & GF_TALKIE) || (_vm->getGameId() == GID_SIMON1CD32))
+	if (_vm->getFeatures() & GF_TALKIE) {
+		loadVoiceFile(gss);
+
+		if (_vm->getGameType() == GType_SIMON1)
+			loadSfxFile(gss);
+	}
+
+}
+
+void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
+	// Game versions which use separate voice files
+	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32)
 		return;
 
 	File *file = new File();
@@ -320,42 +330,43 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 			_voice = new VocSound(_mixer, file);
 		}
 	}
+}
 
-	if ((_vm->getGameType() == GType_SIMON1) && (_vm->getFeatures() & GF_TALKIE)) {
-		file = new File();
+void Sound::loadSfxFile(const GameSpecificSettings *gss) {
+	File *file = new File();
+
 #ifdef USE_MAD
-		if (!_hasEffectsFile && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
-			file->open(gss->mp3_effects_filename);
-			if (file->isOpen()) {
-				_hasEffectsFile = true;
-				_effects = new MP3Sound(_mixer, file);
-			}
+	if (!_hasEffectsFile && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
+		file->open(gss->mp3_effects_filename);
+		if (file->isOpen()) {
+			_hasEffectsFile = true;
+			_effects = new MP3Sound(_mixer, file);
 		}
+	}
 #endif
 #ifdef USE_VORBIS
-		if (!_hasEffectsFile && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
-			file->open(gss->vorbis_effects_filename);
-			if (file->isOpen()) {
-				_hasEffectsFile = true;
-				_effects = new VorbisSound(_mixer, file);
-			}
+	if (!_hasEffectsFile && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
+		file->open(gss->vorbis_effects_filename);
+		if (file->isOpen()) {
+			_hasEffectsFile = true;
+			_effects = new VorbisSound(_mixer, file);
 		}
+	}
 #endif
 #ifdef USE_FLAC
-		if (!_hasEffectsFile && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
-			file->open(gss->flac_effects_filename);
-			if (file->isOpen()) {
-				_hasEffectsFile = true;
-				_effects = new FlacSound(_mixer, file);
-			}
+	if (!_hasEffectsFile && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
+		file->open(gss->flac_effects_filename);
+		if (file->isOpen()) {
+			_hasEffectsFile = true;
+			_effects = new FlacSound(_mixer, file);
 		}
+	}
 #endif
-		if (!_hasEffectsFile && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
-			file->open(gss->voc_effects_filename);
-			if (file->isOpen()) {
-				_hasEffectsFile = true;
-				_effects = new VocSound(_mixer, file);
-			}
+	if (!_hasEffectsFile && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
+		file->open(gss->voc_effects_filename);
+		if (file->isOpen()) {
+			_hasEffectsFile = true;
+			_effects = new VocSound(_mixer, file);
 		}
 	}
 }
@@ -460,57 +471,6 @@ void Sound::playVoice(uint sound) {
 	}
 }
 
-void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient) {
-	byte flags;
-	int rate;
-
-	if (ambient == true) {
-		if (sound == _ambientPlaying)
-			return;
-
-		_ambientPlaying = sound;
-
-		if (_ambientPaused)
-			return;
-	} else {
-		if (_effectsPaused)
-			return;
-	}
-
-	int size = READ_LE_UINT32(soundData + 4);
-	Common::MemoryReadStream stream(soundData, size);
-	if (!loadWAVFromStream(stream, size, rate, flags)) {
-		error("playSoundData: Not a valid WAV data");
-	}
-
-	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, soundData + stream.pos(), size);
-
-	if (ambient == true) {
-		_mixer->stopHandle(_ambientHandle);
-		_mixer->playRaw(&_ambientHandle, buffer, size, rate, Audio::Mixer::FLAG_LOOP|flags);
-	} else {
-		_mixer->playRaw(&_effectsHandle, buffer, size, rate, flags);
-	}
-}
-
-void Sound::playVoiceData(byte *soundData, uint sound) {
-	byte flags;
-	int rate;
-
-	int size = READ_LE_UINT32(soundData + 4);
-	Common::MemoryReadStream stream(soundData, size);
-	if (!loadWAVFromStream(stream, size, rate, flags)) {
-		error("playSoundData: Not a valid WAV data");
-	}
-
-	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, soundData + stream.pos(), size);
-
-	_mixer->stopHandle(_voiceHandle);
-	_mixer->playRaw(&_voiceHandle, buffer, size, rate, flags);
-}
-
 void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;
@@ -567,6 +527,76 @@ void Sound::ambientPause(bool b) {
 		uint tmp = _ambientPlaying;
 		_ambientPlaying = 0;
 		playAmbient(tmp);
+	}
+}
+
+// Feeble Files specific
+void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient) {
+	byte flags;
+	int rate;
+
+	if (ambient == true) {
+		if (sound == _ambientPlaying)
+			return;
+
+		_ambientPlaying = sound;
+
+		if (_ambientPaused)
+			return;
+	} else {
+		if (_effectsPaused)
+			return;
+	}
+
+	int size = READ_LE_UINT32(soundData + 4);
+	Common::MemoryReadStream stream(soundData, size);
+	if (!loadWAVFromStream(stream, size, rate, flags)) {
+		error("playSoundData: Not a valid WAV data");
+	}
+
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, soundData + stream.pos(), size);
+
+	if (ambient == true) {
+		_mixer->stopHandle(_ambientHandle);
+		_mixer->playRaw(&_ambientHandle, buffer, size, rate, Audio::Mixer::FLAG_LOOP|flags);
+	} else {
+		_mixer->playRaw(&_effectsHandle, buffer, size, rate, flags);
+	}
+}
+
+void Sound::playVoiceData(byte *soundData, uint sound) {
+	byte flags;
+	int rate;
+
+	int size = READ_LE_UINT32(soundData + 4);
+	Common::MemoryReadStream stream(soundData, size);
+	if (!loadWAVFromStream(stream, size, rate, flags)) {
+		error("playSoundData: Not a valid WAV data");
+	}
+
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, soundData + stream.pos(), size);
+
+	_mixer->stopHandle(_voiceHandle);
+	_mixer->playRaw(&_voiceHandle, buffer, size, rate, flags);
+}
+
+void Sound::switchVoiceFile(uint disc) {
+	if (_lastVoiceFile != disc) {
+		stopAll();
+
+		char filename[16];
+		_lastVoiceFile = disc;
+		sprintf(filename, "voices%d.wav",disc);
+		File *file = new File();
+		file->open(filename);
+		if (file->isOpen() == false) {
+			warning("playVoice: Can't load voice file %s", filename);
+			return;
+		}
+		delete _voice;
+		_voice = new WavSound(_mixer, file);
 	}
 }
 
