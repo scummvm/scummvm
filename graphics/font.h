@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef GRAPHICS_FONT_H
+#define GRAPHICS_FONT_H
 
 #include "common/str.h"
 #include "graphics/surface.h"

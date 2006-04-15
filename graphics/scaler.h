@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef COMMON_SCALER_H
-#define COMMON_SCALER_H
+#ifndef GRAPHICS_SCALER_H
+#define GRAPHICS_SCALER_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

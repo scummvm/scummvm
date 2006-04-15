@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef FONTMAN_H
-#define FONTMAN_H
+#ifndef GRAPHICS_FONTMAN_H
+#define GRAPHICS_FONTMAN_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
