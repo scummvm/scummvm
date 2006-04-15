@@ -301,6 +301,8 @@ protected:
 	uint _printCharCurPos, _printCharMaxPos, _printCharPixelCount;
 	uint _numLettersToPrint;
 
+	int _numTextBoxes;
+
 	uint _lastTime;
 	uint _clockStopped, _gameStoppedClock;
 	time_t _timeStore;

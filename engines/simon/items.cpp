@@ -700,7 +700,7 @@ void SimonEngine::o_addTextBox() {
 	int w = getVarOrWord();
 	int h = getVarOrWord();
 	int number = getVarOrByte();
-	if (number < 20)
+	if (number < _numTextBoxes)
 		defineBox(id, x, y, w, h, (number << 8) + 129, 208, _dummyItem2);
 }
 
@@ -708,7 +708,7 @@ void SimonEngine::o_setShortText() {
 	// 66: set item name
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
-	if (var < 20)
+	if (var < _numTextBoxes)
 		_stringIdArray2[var] = stringId;
 }
 
@@ -718,12 +718,12 @@ void SimonEngine::o_setLongText() {
 	uint stringId = getNextStringID();
 	if (getFeatures() & GF_TALKIE) {
 		uint speechId = getNextWord();
-		if (var < 20) {
+		if (var < _numTextBoxes) {
 			_stringIdArray3[var] = stringId;
 			_speechIdArray4[var] = speechId;
 		}
 	} else {
-		if (var < 20) {
+		if (var < _numTextBoxes) {
 			_stringIdArray3[var] = stringId;
 		}
 	}
@@ -1729,7 +1729,7 @@ void SimonEngine::o2_isShortText() {
 	// 188: string2 is
 	uint i = getVarOrByte();
 	uint str = getNextStringID();
-	setScriptCondition(str < 20 && _stringIdArray2[i] == str);
+	setScriptCondition(str < _numTextBoxes && _stringIdArray2[i] == str);
 }
 
 void SimonEngine::o2_clearMarks() {
@@ -1771,7 +1771,7 @@ void SimonEngine::o3_addTextBox() {
 	w = getVarOrWord();
 	h = getVarOrWord();
 	num = getVarOrByte();
-	if (num < 20)
+	if (num < _numTextBoxes)
 		defineBox(id, x, y, w, h, flags + (num << 8), 208, _dummyItem1);
 }
 

@@ -82,7 +82,7 @@ bool SimonEngine::printTextOf(uint a, uint x, uint y) {
 		}
 	}
 
-	if (a >= 20)
+	if (a >= _numTextBoxes)
 		return false;
 
 

@@ -304,6 +304,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
 
+	_numTextBoxes = 0;
+
 	_clockStopped = 0;
 	_gameStoppedClock = 0;
 	_lastTime = 0;
@@ -3501,6 +3503,11 @@ int SimonEngine::go() {
 
 	_lastMusicPlayed = -1;
 	_frameRate = 1;
+
+	if (getGameType() == GType_FF)
+		_numTextBoxes = 40;
+	else
+		_numTextBoxes = 20;
 
 	_startMainScript = false;
 	_continousMainScript = false;
