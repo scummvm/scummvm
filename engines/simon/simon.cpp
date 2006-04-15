@@ -1779,7 +1779,7 @@ void SimonEngine::handleMouseMoved() {
 			goto get_out;
 	}
 
-	setup_hitarea_from_pos(_mouseX, _mouseY, x);
+	boxController(_mouseX, _mouseY, x);
 	_lastHitArea3 = _lastHitArea;
 	if (x == 1 && _lastHitArea == NULL)
 		_lastHitArea3 = (HitArea *) -1;

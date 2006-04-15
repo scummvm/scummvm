@@ -651,7 +651,7 @@ protected:
 
 	uint getWindowNum(WindowBlock *window);
 
-	void setup_hitarea_from_pos(uint x, uint y, uint mode);
+	void boxController(uint x, uint y, uint mode);
 	void displayName(HitArea * ha);
 	void displayBoxStars();
 	void hitarea_stuff();

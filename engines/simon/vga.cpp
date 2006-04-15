@@ -2427,7 +2427,7 @@ void SimonEngine::vc79_computePosNum() {
 	uint pos = 0;
 
 	uint16 y = vcReadVar(16);
-	while(y > readUint16Wrapper(p + 1)) {
+	while (y >= readUint16Wrapper(p + 1)) {
 		p += 2;
 		pos++;
 	}

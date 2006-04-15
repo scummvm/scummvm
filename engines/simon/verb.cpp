@@ -634,7 +634,7 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 	}
 }
 
-void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
+void SimonEngine::boxController(uint x, uint y, uint mode) {
 	HitArea *best_ha;
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
