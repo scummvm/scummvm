@@ -31,7 +31,6 @@
 #include "common/hashmap.h"
 #include "common/config-manager.h"
 #include "base/plugins.h"
-#include "base/gameDetector.h"
 #include "backends/fs/fs.h"
 
 #include "saga/rscfile.h"
@@ -84,8 +83,8 @@ DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
 	return Saga::GAME_detectGames(fslist);
 }
 
-Engine *Engine_SAGA_create(GameDetector *detector, OSystem *syst) {
-	return new Saga::SagaEngine(detector, syst);
+Engine *Engine_SAGA_create(OSystem *syst) {
+	return new Saga::SagaEngine(syst);
 }
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine");

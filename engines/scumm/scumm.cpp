@@ -25,7 +25,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -81,7 +80,7 @@ namespace Scumm {
 ScummEngine *g_scumm = 0;
 
 
-ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
 	: Engine(syst),
 	  _game(gs),
 	  _substResFileName(subst),
@@ -89,8 +88,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const GameSettin
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  gdi(this),
 	  res(this),
-	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
-	  _targetName(detector->_targetName) {
+	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
 
 	// Copy MD5 checksum
 	memcpy(_gameMD5, md5sum, 16);
@@ -677,22 +675,22 @@ ScummEngine::~ScummEngine() {
 	delete _debugger;
 }
 
-ScummEngine_v4::ScummEngine_v4(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v5(detector, syst, gs, md5sum, subst) {
+ScummEngine_v4::ScummEngine_v4(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v5(syst, gs, md5sum, subst) {
 	_resourceHeaderSize = 6;
 }
 
-ScummEngine_v3::ScummEngine_v3(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v4(detector, syst, gs, md5sum, subst) {
+ScummEngine_v3::ScummEngine_v3(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v4(syst, gs, md5sum, subst) {
 }
 
-ScummEngine_v3old::ScummEngine_v3old(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v3(detector, syst, gs, md5sum, subst) {
+ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v3(syst, gs, md5sum, subst) {
 	_resourceHeaderSize = 4;
 }
 
-ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v3old(detector, syst, gs, md5sum, subst) {
+ScummEngine_v2::ScummEngine_v2(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v3old(syst, gs, md5sum, subst) {
 
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
@@ -705,14 +703,14 @@ ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const Game
 	VAR_CLICK_OBJECT = 0xFF;
 }
 
-ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v2(detector, syst, gs, md5sum, subst) {
+ScummEngine_c64::ScummEngine_c64(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v2(syst, gs, md5sum, subst) {
 
 	_currentMode = 0;
 }
 
-ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine(detector, syst, gs, md5sum, subst) {
+ScummEngine_v6::ScummEngine_v6(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine(syst, gs, md5sum, subst) {
 	_blastObjectQueuePos = 0;
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
@@ -733,8 +731,8 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Game
 }
 
 #ifndef DISABLE_HE
-ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v60he(detector, syst, gs, md5sum, subst) {
+ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v60he(syst, gs, md5sum, subst) {
 	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 73))
 		_resExtractor = new MacResExtractor(this);
 	else
@@ -765,16 +763,16 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_storedFlObjects);
 }
 
-ScummEngine_v71he::ScummEngine_v71he(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v70he(detector, syst, gs, md5sum, subst) {
+ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v70he(syst, gs, md5sum, subst) {
 	_auxBlocksNum = 0;
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
 	memset(_auxEntries, 0, sizeof(_auxEntries));
 }
 
-ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v71he(detector, syst, gs, md5sum, subst) {
+ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v71he(syst, gs, md5sum, subst) {
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;
@@ -784,8 +782,8 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_POLYGONS_ONLY = 0xFF;
 }
 
-ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v72he(detector, syst, gs, md5sum, subst) {
+ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v72he(syst, gs, md5sum, subst) {
 	_heSndResId = 0;
 	_curSndId = 0;
 	_sndPtrOffs = 0;
@@ -797,8 +795,8 @@ ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, cons
 	VAR_COLOR_DEPTH = 0xFF;
 }
 
-ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v80he(detector, syst, gs, md5sum, subst) {
+ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v80he(syst, gs, md5sum, subst) {
 	_sprite = new Sprite(this);
 
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
@@ -822,8 +820,8 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 #endif
 
 #ifndef DISABLE_SCUMM_7_8
-ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v6(detector, syst, gs, md5sum, subst) {
+ScummEngine_v7::ScummEngine_v7(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v6(syst, gs, md5sum, subst) {
 	_verbCharset = 0;
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
@@ -836,8 +834,8 @@ ScummEngine_v7::~ScummEngine_v7() {
 	free(_languageIndex);
 }
 
-ScummEngine_v8::ScummEngine_v8(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v7(detector, syst, gs, md5sum, subst) {
+ScummEngine_v8::ScummEngine_v8(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+	: ScummEngine_v7(syst, gs, md5sum, subst) {
 	_objectIDMap = 0;
 }
 
@@ -850,7 +848,7 @@ ScummEngine_v8::~ScummEngine_v8() {
 #pragma mark --- Initialization ---
 #pragma mark -
 
-int ScummEngine::init(GameDetector &detector) {
+int ScummEngine::init() {
 
 	// Initialize backend
 	_system->beginGFXTransaction();
@@ -867,7 +865,7 @@ int ScummEngine::init(GameDetector &detector) {
 			_system->initSize(_screenWidth, _screenHeight, (ConfMan.getBool("force_1x_overlay") ? 1 : 2));
 			defaultTo1XScaler = (_screenWidth > 320);
 		}
-		initCommonGFX(detector, defaultTo1XScaler);
+		initCommonGFX(defaultTo1XScaler);
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.

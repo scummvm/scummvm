@@ -31,7 +31,6 @@
 
 class Engine;
 class FSList;
-class GameDetector;
 class OSystem;
 
 /** List of games. */
@@ -85,7 +84,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
 	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
 
-	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
+	virtual Engine *createInstance(OSystem *syst) const = 0;
 };
 
 
@@ -107,7 +106,7 @@ public:
  * - DetectedGameList Engine_##ID##_detectGames(const FSList &fslist)
  *   -> scans through the given file list (usually the contents of a directory),
  *      and attempts to detects games present in that location.
- * - Engine *Engine_##ID##_create(GameDetector *detector, OSystem *syst)
+ * - Engine *Engine_##ID##_create(OSystem *syst)
  *   -> factory function, create an instance of the Engine class.
  *
  * @todo	add some means to query the plugin API version etc.
@@ -131,7 +130,7 @@ public:
 		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
 		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
 		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
-		PLUGIN_EXPORT Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
+		PLUGIN_EXPORT Engine *PLUGIN_createEngine(OSystem *syst) { return Engine_##ID##_create(syst); } \
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
@@ -146,7 +145,7 @@ class PluginRegistrator {
 	friend class StaticPlugin;
 public:
 	typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
-	typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
+	typedef Engine *(*EngineFactory)(OSystem *syst);
 	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 protected:

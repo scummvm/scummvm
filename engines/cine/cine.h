@@ -58,12 +58,12 @@ class CineEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
 protected:
-	int init(GameDetector & detector);
+	int init();
 	int go();
 	void shutdown();
 
 public:
-	CineEngine(GameDetector *detector, OSystem *syst);
+	CineEngine(OSystem *syst);
 	virtual ~CineEngine();
 	int getGameId() {
 		return _gameId;

@@ -28,7 +28,7 @@
 
 PckTunesCDPlayer::PckTunesCDPlayer(OSystem *sys) {
 	_sys = sys;
-	StrCopy(gameP, ConfMan.getActiveDomain().c_str());
+	StrCopy(gameP, ConfMan.getActiveDomainName().c_str());
 }
 
 bool PckTunesCDPlayer::init() {

@@ -23,7 +23,6 @@
  */
 #include "common/stdafx.h"
 
-#include "base/gameDetector.h"
 
 #include "common/file.h"
 #include "common/config-manager.h"
@@ -58,9 +57,8 @@ namespace Saga {
 
 #define MAX_TIME_DELTA 100
 
-SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
-	: Engine(syst),
-	_targetName(detector->_targetName) {
+SagaEngine::SagaEngine(OSystem *syst)
+	: Engine(syst) {
 
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 
@@ -148,7 +146,7 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int SagaEngine::init(GameDetector &detector) {
+int SagaEngine::init() {
 	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
 	_musicVolume = ConfMan.getInt("music_volume") / 25;
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
@@ -186,7 +184,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	_gfx = new Gfx(this, _system, getDisplayWidth(), getDisplayHeight(), detector);
+	_gfx = new Gfx(this, _system, getDisplayWidth(), getDisplayHeight());
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);

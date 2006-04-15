@@ -21,7 +21,6 @@
  */
 #include "common/stdafx.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
 #include "common/config-manager.h"
@@ -127,7 +126,7 @@ static const PlainGameDescriptor gob_list[] = {
 
 #define MAX_TIME_DELTA 100
 
-GobEngine::GobEngine(GameDetector *detector, OSystem * syst, uint32 features)
+GobEngine::GobEngine(OSystem * syst, uint32 features)
  : Engine(syst) {
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -189,7 +188,7 @@ void GobEngine::shutdown() {
 	_system->quit();
 }
 
-int GobEngine::init(GameDetector &detector) {
+int GobEngine::init() {
 	_game = new Game(this);
 	_snd = new Snd(this);
 	_video = new Video(this);
@@ -223,7 +222,7 @@ int GobEngine::init(GameDetector &detector) {
 		_music = new Music(this);
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, false);
+		initCommonGFX(false);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
@@ -339,7 +338,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
+Engine *Engine_GOB_create(OSystem *syst) {
 	// Detect game features based on MD5
 	uint8 md5sum[16];
 	char md5str[32 + 1];
@@ -358,12 +357,8 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 	// TODO
 	// Fallback. Maybe we will be able to determine game type from game
 	// data contents
-	Common::String realGame;
+	Common::String realGame(ConfMan.get("gameid"));
 	uint32 features;
-	if (ConfMan.hasKey("gameid"))
-		realGame = ConfMan.get("gameid");
-	else
-		realGame = detector->_targetName;
 	if (!scumm_stricmp(realGame.c_str(), "gob2"))
 		features = GF_GOB2;
 	else
@@ -385,7 +380,7 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 	}
 
-	return new GobEngine(detector, syst, features);
+	return new GobEngine(syst, features);
 }
 
 REGISTER_PLUGIN(GOB, "Gob Engine");

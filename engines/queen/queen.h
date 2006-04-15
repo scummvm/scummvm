@@ -25,7 +25,6 @@
 
 #include "base/engine.h"
 
-class GameDetector;
 namespace Common {
 	class InSaveFile;
 }
@@ -136,7 +135,7 @@ protected:
 	void errorString(const char *buf_input, char *buf_output);
 
 	int go();
-	int init(GameDetector &detector);
+	int init();
 
 
 	int _talkSpeed;

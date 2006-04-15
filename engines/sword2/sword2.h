@@ -36,7 +36,6 @@
 #define	MAX_starts	100
 #define	MAX_description	100
 
-class GameDetector;
 class OSystem;
 
 namespace Sword2 {
@@ -121,10 +120,10 @@ private:
 	StartUp _startList[MAX_starts];
 
 public:
-	Sword2Engine(GameDetector *detector, OSystem *syst);
+	Sword2Engine(OSystem *syst);
 	~Sword2Engine();
 	int go();
-	int init(GameDetector &detector);
+	int init();
 
 	void registerDefaultSettings();
 	void readSettings();
@@ -138,7 +137,6 @@ public:
 	bool _quit;
 
 	uint32 _features;
-	Common::String _targetName; // target name for saves
 
 	MemoryManager *_memory;
 	ResourceManager	*_resman;

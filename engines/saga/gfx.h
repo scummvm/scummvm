@@ -134,7 +134,7 @@ class SagaEngine;
 class Gfx {
 public:
 
-	Gfx(SagaEngine *vm, OSystem *system, int width, int height, GameDetector &detector);
+	Gfx(SagaEngine *vm, OSystem *system, int width, int height);
 	~Gfx();
 	Surface *getBackBuffer() {
 		return &_backBuffer;

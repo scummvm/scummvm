@@ -25,7 +25,6 @@
 
 #include "base/engine.h"
 #include "common/util.h"
-#include "base/gameDetector.h"
 #include "sword1/sworddefs.h"
 
 namespace Sword1 {
@@ -71,7 +70,7 @@ struct SystemVars {
 class SwordEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 public:
-	SwordEngine(GameDetector *detector, OSystem *syst);
+	SwordEngine(OSystem *syst);
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
@@ -79,7 +78,7 @@ public:
 	uint32 _features;
 protected:
 	int go();
-	int init(GameDetector &detector);
+	int init();
 private:
 	void delay(int32 amount);
 

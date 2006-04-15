@@ -85,10 +85,10 @@ class GobEngine : public Engine {
 
 protected:
 	int go();
-	int init(GameDetector &detector);
+	int init();
 
 public:
-	GobEngine(GameDetector * detector, OSystem * syst, uint32 features);
+	GobEngine(OSystem *syst, uint32 features);
 	virtual ~GobEngine();
 
 	void shutdown();

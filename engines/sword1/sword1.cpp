@@ -117,8 +117,8 @@ DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_SWORD1_create(GameDetector *detector, OSystem *syst) {
-	return new SwordEngine(detector, syst);
+Engine *Engine_SWORD1_create(OSystem *syst) {
+	return new SwordEngine(syst);
 }
 
 REGISTER_PLUGIN(SWORD1, "Broken Sword");
@@ -131,7 +131,7 @@ void SwordEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
+SwordEngine::SwordEngine(OSystem *syst)
 	: Engine(syst) {
 
 	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
@@ -166,10 +166,10 @@ SwordEngine::~SwordEngine() {
 	delete _resMan;
 }
 
-int SwordEngine::init(GameDetector &detector) {
+int SwordEngine::init() {
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, true);
+		initCommonGFX(true);
 		_system->initSize(640, 480);
 	_system->endGFXTransaction();
 

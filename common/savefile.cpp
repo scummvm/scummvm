@@ -48,7 +48,7 @@ const char *SaveFileManager::getSavePath() const {
 	// Work around a bug (#999122) in the original 0.6.1 release of
 	// ScummVM, which would insert a bad savepath value into config files.
 	if (0 == strcmp(dir, "None")) {
-		ConfMan.removeKey("savepath", ConfMan.getActiveDomain());
+		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
 		ConfMan.flushToDisk();
 		dir = ConfMan.get("savepath").c_str();
 	}

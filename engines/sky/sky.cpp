@@ -24,7 +24,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -111,7 +110,7 @@ DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
+Engine *Engine_SKY_create(OSystem *syst) {
 	return new Sky::SkyEngine(syst);
 }
 
@@ -306,9 +305,9 @@ int SkyEngine::go() {
 	return 0;
 }
 
-int SkyEngine::init(GameDetector &detector) {
+int SkyEngine::init() {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, false);
+		initCommonGFX(false);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 

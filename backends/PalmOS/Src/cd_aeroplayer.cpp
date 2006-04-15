@@ -30,7 +30,7 @@
 
 AeroCDPlayer::AeroCDPlayer(OSystem *sys) {
 	_sys = sys;
-	StrCopy(gameP, ConfMan.getActiveDomain().c_str());
+	StrCopy(gameP, ConfMan.getActiveDomainName().c_str());
 }
 
 bool AeroCDPlayer::init() {

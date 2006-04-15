@@ -28,7 +28,6 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "backends/fs/fs.h"
@@ -111,15 +110,15 @@ DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_CINE_create(GameDetector *detector, OSystem *syst) {
-	return new Cine::CineEngine(detector, syst);
+Engine *Engine_CINE_create(OSystem *syst) {
+	return new Cine::CineEngine(syst);
 }
 
 REGISTER_PLUGIN(CINE, "CINE Engine");
 
 namespace Cine {
 
-CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
+CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
 
 	// Setup mixer
@@ -132,9 +131,12 @@ CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 
 	const Cine::GameSettings *g;
 
+	const char *gameid = ConfMan.get("gameid").c_str();
 	for (g = Cine::cine_settings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, detector->_targetName.c_str()))
+		if (!scumm_stricmp(g->gameid, gameid)) {
 			_gameId = g->id;
+			break;
+		}
 
 	gameType = _gameId;
 }
@@ -146,10 +148,10 @@ void CineEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int CineEngine::init(GameDetector &detector) {
+int CineEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
-	initCommonGFX(detector, false);
+	initCommonGFX(false);
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 

@@ -35,8 +35,6 @@
 #include "simon/sound.h"
 #include "simon/vga.h"
 
-class GameDetector;
-
 namespace Simon {
 
 /* Various other settings */
@@ -1044,7 +1042,7 @@ protected:
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 
-	int init(GameDetector &detector);
+	int init();
 	int go();
 	void openGameFile();
 

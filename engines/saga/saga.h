@@ -573,9 +573,9 @@ class SagaEngine : public Engine {
 
 protected:
 	int go();
-	int init(GameDetector &detector);
+	int init();
 public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
+	SagaEngine(OSystem *syst);
 	virtual ~SagaEngine();
 	void shutDown() { _quit = true; }
 
@@ -666,8 +666,6 @@ public:
 	}
 
  private:
-	Common::String _targetName;
-
 	uint _saveFilesMaxCount;
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];

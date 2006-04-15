@@ -246,7 +246,7 @@ public:
 		MUSIC_INTRO = 0
 	};
 
-	KyraEngine(GameDetector *detector, OSystem *system);
+	KyraEngine(OSystem *system);
 	~KyraEngine();
 	
 	void errorString(const char *buf_input, char *buf_output);
@@ -476,7 +476,7 @@ public:
 protected:
 
 	int go();
-	int init(GameDetector &detector);
+	int init();
 
 	void startup();
 	void mainLoop();
@@ -781,8 +781,6 @@ protected:
 	bool _configSounds;
 	uint8 _configVoice;
 
-	Common::String _targetName;
-	
 	int _curMusicTheme;
 	int _newMusicTheme;
 	int16 _lastMusicCommand;

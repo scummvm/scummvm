@@ -24,7 +24,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -155,7 +154,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_LURE_create(GameDetector *detector, OSystem *system) {
+Engine *Engine_LURE_create(OSystem *system) {
 	return new LureEngine(system);
 }
 
@@ -252,9 +251,9 @@ void LureEngine::detectGame() {
 	}
 }
 
-int LureEngine::init(GameDetector &detector) {
+int LureEngine::init() {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, false);
+		initCommonGFX(false);
 		_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->endGFXTransaction();
 

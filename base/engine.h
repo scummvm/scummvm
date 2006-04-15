@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-class GameDetector;
 class OSystem;
 namespace Audio {
 	class Mixer;
@@ -42,6 +41,7 @@ public:
 	Common::Timer * _timer;
 
 protected:
+	const Common::String _targetName; // target name for saves
 	const Common::String _gameDataPath;
 	Common::SaveFileManager *_saveFileMan;
 
@@ -56,7 +56,7 @@ public:
 	 * Init the engine.
 	 * @return 0 for success, else an error code.
 	 */
-	virtual int init(GameDetector &detector) = 0;
+	virtual int init() = 0;
 
 	/**
 	 * Start the main engine loop.
@@ -69,7 +69,7 @@ public:
 	/** Specific for each engine: prepare error string. */
 	virtual void errorString(const char *buf_input, char *buf_output);
 
-	void initCommonGFX(GameDetector &detector, bool defaultTo1XScaler);
+	void initCommonGFX(bool defaultTo1XScaler);
 
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();

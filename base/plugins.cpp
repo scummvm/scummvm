@@ -23,13 +23,12 @@
 
 #include "common/stdafx.h"
 #include "backends/fs/fs.h"
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "base/engine.h"
 #include "common/util.h"
 
 /** Type of factory functions which make new Engine objects. */
-typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
+typedef Engine *(*EngineFactory)(OSystem *syst);
 
 typedef const char *(*NameFunc)();
 typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
@@ -117,9 +116,9 @@ public:
 
 	const char *getName() const { return _plugin->_name; }
 
-	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
+	Engine *createInstance(OSystem *syst) const {
 		assert(_plugin->_ef);
-		return (*_plugin->_ef)(detector, syst);
+		return (*_plugin->_ef)(syst);
 	}
 
 	GameList getSupportedGames() const { return _plugin->_games; }
@@ -158,9 +157,9 @@ public:
 
 	const char *getName() const					{ return _name.c_str(); }
 
-	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
+	Engine *createInstance(OSystem *syst) const {
 		assert(_ef);
-		return (*_ef)(detector, syst);
+		return (*_ef)(syst);
 	}
 
 	GameList getSupportedGames() const { return _games; }

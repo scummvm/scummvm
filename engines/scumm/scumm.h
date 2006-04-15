@@ -41,7 +41,6 @@ namespace GUI {
 	class Dialog;
 }
 using GUI::Dialog;
-class GameDetector;
 namespace Common {
 	class InSaveFile;
 	class OutSaveFile;
@@ -445,14 +444,14 @@ protected:
 
 public:
 	// Constructor / Destructor
-	ScummEngine(GameDetector *detector, OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 	virtual ~ScummEngine();
 
 	/** Startup function, main loop. */
 	int go();
 
 	// Init functions
-	int init(GameDetector &detector);
+	int init();
 
 	virtual void setupScummVars();
 	virtual void initScummVars();
@@ -739,7 +738,6 @@ public:
 protected:
 	int _resourceHeaderSize;
 	Common::String _baseName;	// This is the name we use for opening resource files
-	Common::String _targetName;	// This is the game the user calls it, so use for saving
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;
 	uint32 *_heV7RoomIntOffsets;

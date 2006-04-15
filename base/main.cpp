@@ -157,7 +157,7 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 	return (dlg.runModal() != -1);
 }
 
-static int runGame(const Plugin *plugin, GameDetector &detector, OSystem &system, const Common::String &edebuglevels) {
+static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
 	if (ConfMan.hasKey("path"))
@@ -166,12 +166,12 @@ static int runGame(const Plugin *plugin, GameDetector &detector, OSystem &system
 		Common::File::addDefaultDirectory(".");
 
 	// Create the game engine
-	Engine *engine = plugin->createInstance(&detector, &system);
+	Engine *engine = plugin->createInstance(&system);
 	if (!engine) {
 		// TODO: Show an error dialog or so?
 		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
 		//alert.runModal();
-		warning("Failed to instantiate engine for target %s", detector._targetName.c_str());
+		warning("Failed to instantiate engine for target %s", ConfMan.getActiveDomainName().c_str());
 		return 0;
 	}
 
@@ -179,13 +179,13 @@ static int runGame(const Plugin *plugin, GameDetector &detector, OSystem &system
 	Common::enableSpecialDebugLevelList(edebuglevels);
 
 	// Set the window caption to the game name
-	Common::String caption(ConfMan.get("description", detector._targetName));
+	Common::String caption(ConfMan.get("description"));
 
 	Common::String desc = GameDetector::findGame(ConfMan.get("gameid")).description;
 	if (caption.empty() && !desc.empty())
 		caption = desc;
 	if (caption.empty())
-		caption = detector._targetName;
+		caption = ConfMan.getActiveDomainName();	// Use the domain (=target) name
 	if (!caption.empty())	{
 		system.setWindowCaption(caption.c_str());
 	}
@@ -208,7 +208,7 @@ static int runGame(const Plugin *plugin, GameDetector &detector, OSystem &system
 	int result;
 
 	// Init the engine (this might change the screen parameters
-	result = engine->init(detector);
+	result = engine->init();
 
 	// Run the game engine if the initialization was successful.
 	if (result == 0) {
@@ -314,7 +314,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	setupDummyPalette(system);
 
 	// Unless a game was specified, show the launcher dialog
-	if (detector._targetName.empty()) {
+	if (ConfMan.getActiveDomainName().empty()) {
 		running = launcherDialog(detector, system);
 
 		// Discard any command line options. Those that affect the graphics
@@ -335,7 +335,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// to save memory
 			PluginManager::instance().unloadPluginsExcept(plugin);
 
-			int result = runGame(plugin, detector, system, specialDebug);
+			int result = runGame(plugin, system, specialDebug);
 			if (result == 0)
 				break;
 

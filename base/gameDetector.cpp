@@ -578,11 +578,10 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 
 
 void GameDetector::setTarget(const String &target) {
-	_targetName = target;
 	ConfMan.setActiveDomain(target);
 
 	// Make sure the gameid is set in the config manager, and that it is lowercase.
-	String gameid(_targetName);
+	String gameid(target);
 	if (ConfMan.hasKey("gameid"))
 		gameid = ConfMan.get("gameid");
 	gameid.toLowercase();
@@ -592,7 +591,7 @@ void GameDetector::setTarget(const String &target) {
 const Plugin *GameDetector::detectMain() {
 	const Plugin *plugin = 0;
 	
-	if (_targetName.empty()) {
+	if (ConfMan.getActiveDomainName().empty()) {
 		warning("No game was specified...");
 		return 0;
 	}
@@ -602,7 +601,7 @@ const Plugin *GameDetector::detectMain() {
 
 	if (plugin == 0) {
 		printf("Failed game detection\n");
-		warning("%s is an invalid target. Use the --list-targets option to list targets", _targetName.c_str());
+		warning("%s is an invalid target. Use the --list-targets option to list targets", ConfMan.getActiveDomainName().c_str());
 		return 0;
 	}
 

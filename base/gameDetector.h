@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "common/config-manager.h"
 
-class GameDetector;
 class OSystem;
 class Plugin;
 
@@ -68,8 +67,6 @@ public:
 	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
 	void processSettings(Common::String &target, Common::StringMap &settings);
 	const Plugin *detectMain();
-
-	String _targetName;
 
 public:
 	static GameDescriptor findGame(const String &gameName, const Plugin **plugin = NULL);

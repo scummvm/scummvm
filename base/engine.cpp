@@ -24,7 +24,6 @@
 #include <malloc.h>
 #endif
 #include "base/engine.h"
-#include "base/gameDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"
@@ -37,7 +36,9 @@
 Engine *g_engine = 0;
 
 Engine::Engine(OSystem *syst)
-	: _system(syst), _gameDataPath(ConfMan.get("path")) {
+	: _system(syst),
+		_gameDataPath(ConfMan.get("path")),
+		_targetName(ConfMan.getActiveDomainName()){
 	g_engine = this;
 	_mixer = new Audio::Mixer();
 
@@ -55,9 +56,9 @@ Engine::~Engine() {
 	g_engine = NULL;
 }
 
-void Engine::initCommonGFX(GameDetector &detector, bool defaultTo1XScaler) {
+void Engine::initCommonGFX(bool defaultTo1XScaler) {
 	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
-	const Common::ConfigManager::Domain *gameDomain = ConfMan.getDomain(detector._targetName);
+	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
 	assert(transientDomain);
 

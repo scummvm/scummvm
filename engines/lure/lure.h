@@ -58,7 +58,7 @@ public:
 	LureEngine(OSystem *system);
 	~LureEngine();
 	
-	virtual int init(GameDetector &detector);
+	virtual int init();
 	virtual int go();
 	virtual void errorString(const char *buf_input, char *buf_output);
 	void quitGame();

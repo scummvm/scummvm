@@ -25,7 +25,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -1618,7 +1617,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
+Engine *Engine_SCUMM_create(OSystem *syst) {
 	Engine *engine;
 	const char *gameid = ConfMan.get("gameid").c_str();
 
@@ -1811,65 +1810,65 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 1:
 	case 2:
 		if (game.id == GID_MANIAC && game.platform == Common::kPlatformC64)
-			engine = new ScummEngine_c64(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_c64(syst, game, md5sum, subst);
 		else
-			engine = new ScummEngine_v2(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v2(syst, game, md5sum, subst);
 		break;
 	case 3:
 		if (game.features & GF_OLD_BUNDLE)
-			engine = new ScummEngine_v3old(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v3old(syst, game, md5sum, subst);
 		else
-			engine = new ScummEngine_v3(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v3(syst, game, md5sum, subst);
 		break;
 	case 4:
-		engine = new ScummEngine_v4(detector, syst, game, md5sum, subst);
+		engine = new ScummEngine_v4(syst, game, md5sum, subst);
 		break;
 	case 5:
-		engine = new ScummEngine_v5(detector, syst, game, md5sum, subst);
+		engine = new ScummEngine_v5(syst, game, md5sum, subst);
 		break;
 	case 6:
 		switch (game.heversion) {
 #ifndef DISABLE_HE
 		case 100:
-			engine = new ScummEngine_v100he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v100he(syst, game, md5sum, subst);
 			break;
 		case 99:
-			engine = new ScummEngine_v99he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v99he(syst, game, md5sum, subst);
 			break;
 		case 98:
 		case 95:
 		case 90:
-			engine = new ScummEngine_v90he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v90he(syst, game, md5sum, subst);
 			break;
 		case 80:
-			engine = new ScummEngine_v80he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v80he(syst, game, md5sum, subst);
 			break;
 		case 73:
 		case 72:
-			engine = new ScummEngine_v72he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v72he(syst, game, md5sum, subst);
 			break;
 		case 71:
-			engine = new ScummEngine_v71he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v71he(syst, game, md5sum, subst);
 			break;
 		case 70:
-			engine = new ScummEngine_v70he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v70he(syst, game, md5sum, subst);
 			break;
 #endif
 #ifndef PALMOS_68K
 		case 61:
-			engine = new ScummEngine_v60he(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v60he(syst, game, md5sum, subst);
 			break;
 #endif
 		default:
-			engine = new ScummEngine_v6(detector, syst, game, md5sum, subst);
+			engine = new ScummEngine_v6(syst, game, md5sum, subst);
 		}
 		break;
 #ifndef DISABLE_SCUMM_7_8
 	case 7:
-		engine = new ScummEngine_v7(detector, syst, game, md5sum, subst);
+		engine = new ScummEngine_v7(syst, game, md5sum, subst);
 		break;
 	case 8:
-		engine = new ScummEngine_v8(detector, syst, game, md5sum, subst);
+		engine = new ScummEngine_v8(syst, game, md5sum, subst);
 		break;
 #endif
 	default:

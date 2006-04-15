@@ -24,7 +24,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -484,7 +483,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
 }
 
-int SimonEngine::init(GameDetector &detector) {
+int SimonEngine::init() {
 
 	// Detect game
 	if (!initGame()) {
@@ -509,7 +508,7 @@ int SimonEngine::init(GameDetector &detector) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, getGameType() == GType_FF);
+		initCommonGFX(getGameType() == GType_FF);
 		_system->initSize(_screenWidth, _screenHeight);
 	_system->endGFXTransaction();
 

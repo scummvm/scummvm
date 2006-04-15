@@ -26,8 +26,6 @@
 #include "common/stdafx.h"
 #include "base/engine.h"
 
-class GameDetector;
-
 namespace Sky {
 
 struct SystemVars {
@@ -98,7 +96,7 @@ protected:
 
 	uint32 _lastSaveTime;
 
-	int init(GameDetector &detector);
+	int init();
 	void initItemList();
 
 	void initVirgin();

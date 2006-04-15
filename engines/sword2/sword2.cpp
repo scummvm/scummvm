@@ -23,7 +23,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -112,15 +111,15 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
-	return new Sword2::Sword2Engine(detector, syst);
+Engine *Engine_SWORD2_create(OSystem *syst) {
+	return new Sword2::Sword2Engine(syst);
 }
 
 REGISTER_PLUGIN(SWORD2, "Broken Sword 2");
 
 namespace Sword2 {
 
-Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst) {
+Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	// Add default file directories
 	Common::File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
 	Common::File::addDefaultDirectory(_gameDataPath + "SWORD2/");
@@ -134,8 +133,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	else
 		_features = 0;
 	
-	_targetName = detector->_targetName;
-
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 
@@ -243,12 +240,12 @@ void Sword2Engine::setupPersistentResources() {
 	_resman->openResource(CUR_PLAYER_ID);
 }
 
-int Sword2Engine::init(GameDetector &detector) {
+int Sword2Engine::init() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, true);
+		initCommonGFX(true);
 		_screen = new Screen(this, 640, 480);
 	_system->endGFXTransaction();
 

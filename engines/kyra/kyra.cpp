@@ -24,7 +24,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -205,15 +204,15 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_KYRA_create(GameDetector *detector, OSystem *system) {
-	return new KyraEngine(detector, system);
+Engine *Engine_KYRA_create(OSystem *system) {
+	return new KyraEngine(system);
 }
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine");
 
 namespace Kyra {
 
-KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
+KyraEngine::KyraEngine(OSystem *system)
 	: Engine(system) {
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
 	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 =
@@ -326,9 +325,9 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	}
 }
 
-int KyraEngine::init(GameDetector &detector) {
+int KyraEngine::init() {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, false);
+		initCommonGFX(false);
 		//for debug reasons (see Screen::updateScreen)
 		//_system->initSize(640, 200);
 		_system->initSize(320, 200);
@@ -506,7 +505,6 @@ int KyraEngine::init(GameDetector &detector) {
 
 	_mousePressFlag = false;
 	
-	 _targetName = detector._targetName;
 	_menuDirectlyToLoad = false;
 	 
 	 _lastMusicCommand = 0;

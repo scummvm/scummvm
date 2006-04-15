@@ -24,7 +24,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -129,7 +128,7 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst) {
+Engine *Engine_QUEEN_create(OSystem *syst) {
 	return new Queen::QueenEngine(syst);
 }
 
@@ -404,9 +403,9 @@ int QueenEngine::go() {
 	return 0;
 }
 
-int QueenEngine::init(GameDetector &detector) {
+int QueenEngine::init() {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, false);
+		initCommonGFX(false);
 		_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->endGFXTransaction();
 

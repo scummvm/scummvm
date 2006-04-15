@@ -24,7 +24,6 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -112,7 +111,7 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 	return Simon::GAME_detectGames(fslist);
 }
 
-Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
+Engine *Engine_SIMON_create(OSystem *syst) {
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	for (const ObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
