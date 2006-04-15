@@ -248,14 +248,15 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("savepath", savePath); // this should be enough...
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
-
-	_plugin = 0;
 }
 
 GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plugin) {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 	GameDescriptor result;
+
+	if (plugin)
+		plugin = 0;
 
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
@@ -590,19 +591,21 @@ void GameDetector::setTarget(const String &target) {
 	//ConfMan.set("gameid", _gameid, Common::ConfigManager::kTransientDomain);
 }
 
-bool GameDetector::detectMain() {
+const Plugin *GameDetector::detectMain() {
+	const Plugin *plugin = 0;
+	
 	if (_targetName.empty()) {
 		warning("No game was specified...");
-		return false;
+		return 0;
 	}
 
 	printf("Looking for %s\n", _gameid.c_str());
-	GameDescriptor game = findGame(_gameid, &_plugin);
+	GameDescriptor game = findGame(_gameid, &plugin);
 
-	if (game.gameid.size() == 0) {
+	if (plugin == 0) {
 		printf("Failed game detection\n");
 		warning("%s is an invalid target. Use the --list-targets option to list targets", _targetName.c_str());
-		return false;
+		return 0;
 	}
 
 	printf("Trying to start game '%s'\n", game.description.c_str());
@@ -620,14 +623,5 @@ bool GameDetector::detectMain() {
 		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
 	}
 
-	return true;
-}
-
-Engine *GameDetector::createEngine(OSystem *sys) {
-	assert(_plugin);
-	return _plugin->createInstance(this, sys);
-}
-
-Audio::Mixer *GameDetector::createMixer() {
-	return new Audio::Mixer();
+	return plugin;
 }

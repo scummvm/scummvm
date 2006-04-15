@@ -39,7 +39,7 @@ Engine *g_engine = 0;
 Engine::Engine(OSystem *syst)
 	: _system(syst), _gameDataPath(ConfMan.get("path")) {
 	g_engine = this;
-	_mixer = GameDetector::createMixer();
+	_mixer = new Audio::Mixer();
 
 	_timer = Common::g_timer;
 

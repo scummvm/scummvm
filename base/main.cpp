@@ -157,7 +157,7 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 	return (dlg.runModal() != -1);
 }
 
-static int runGame(GameDetector &detector, OSystem &system, const Common::String &edebuglevels) {
+static int runGame(const Plugin *plugin, GameDetector &detector, OSystem &system, const Common::String &edebuglevels) {
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
 	if (ConfMan.hasKey("path"))
@@ -166,7 +166,7 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 		Common::File::addDefaultDirectory(".");
 
 	// Create the game engine
-	Engine *engine = detector.createEngine(&system);
+	Engine *engine = plugin->createInstance(&detector, &system);
 	if (!engine) {
 		// TODO: Show an error dialog or so?
 		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
@@ -329,12 +329,13 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// cleanly, so this is now enabled to encourage people to fix bits :)
 	while (running) {
 		// Verify the given game name is a valid supported game
-		if (detector.detectMain()) {
+		const Plugin *plugin = detector.detectMain();
+		if (plugin) {
 			// Unload all plugins not needed for this game,
 			// to save memory
-			PluginManager::instance().unloadPluginsExcept(detector._plugin);
+			PluginManager::instance().unloadPluginsExcept(plugin);
 
-			int result = runGame(detector, system, specialDebug);
+			int result = runGame(plugin, detector, system, specialDebug);
 			if (result == 0)
 				break;
 

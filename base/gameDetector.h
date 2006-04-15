@@ -27,13 +27,9 @@
 #include "common/str.h"
 #include "common/config-manager.h"
 
-class Engine;
 class GameDetector;
 class OSystem;
 class Plugin;
-namespace Audio {
-	class Mixer;
-}
 
 struct PlainGameDescriptor {
 	const char *gameid;
@@ -71,18 +67,12 @@ public:
 
 	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
 	void processSettings(Common::String &target, Common::StringMap &settings);
-	bool detectMain();
+	const Plugin *detectMain();
 
 	String _targetName;
 	String _gameid;
 
-	const Plugin *_plugin;	// TODO: This should be protected
-
 public:
-	Engine *createEngine(OSystem *system);
-
-	static Audio::Mixer *createMixer();
-
 	static GameDescriptor findGame(const String &gameName, const Plugin **plugin = NULL);
 
 //protected:
