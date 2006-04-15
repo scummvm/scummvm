@@ -78,7 +78,8 @@ const char *ConfigManager::kTransientDomain = "__TRANSIENT";
 #pragma mark -
 
 
-ConfigManager::ConfigManager() {
+ConfigManager::ConfigManager()
+ : _activeDomain(0) {
 }
 
 
