@@ -539,18 +539,26 @@ int SimonEngine::init(GameDetector &detector) {
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_musicPaused ^= 1);
 
-	if ((getGameType() == GType_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
-		_speech = 0;
-
-	if ((getGameType() == GType_SIMON1 && _language > 1) || ((getGameType() == GType_SIMON2) && _language == Common::HB_ISR)) {
-		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
-			_subtitles = 0;
-	} else
+	if (getFeatures() & GF_TALKIE) {
+		_speech = !ConfMan.getBool("speech_mute");
 		_subtitles = ConfMan.getBool("subtitles");
 
-	// Make sure either speech or subtitles is enabled
-	if ((getFeatures() & GF_TALKIE) && !_speech && !_subtitles)
-		_subtitles = 1;
+		if (getGameType() == GType_SIMON1) {
+			// English and German versions don't have full subtitles
+			 if (_language == Common::EN_ANY || _language == Common::DE_DEU)
+				_subtitles = false;
+			// Other versions require speech to be enabled
+			else
+				_speech = true;
+		}
+
+		// Default to speech only, if both speech and subtitles disabled
+		if (!_speech && !_subtitles)
+			_speech = true;
+	} else {
+		_speech = false;
+		_subtitles = true;
+	}
 
 	if (ConfMan.hasKey("fade") && ConfMan.getBool("fade") == 0)
 		_fade = 0;
@@ -1911,7 +1919,7 @@ startOver:
 		_lastHitArea3 = NULL;
 
 		for (;;) {
-			if (_keyPressed == 35)
+			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
 				displayBoxStars();
 			processSpecialKeys();
 			if (_lastHitArea3 == (HitArea *) -1)
@@ -3026,14 +3034,17 @@ void SimonEngine::processSpecialKeys() {
 		pause();
 		break;
 	case 't':
-		if ((getGameType() == GType_SIMON2 && getFeatures() & GF_TALKIE) || ( getFeatures() & GF_TALKIE && _language > 1))
+		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
+			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
 			if (_speech)
 				_subtitles ^= 1;
+		}
 		break;
 	case 'v':
-		if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE))
+		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))) {
 			if (_subtitles)
 				_speech ^= 1;
+		}
 	case '+':
 		midi.set_volume(midi.get_volume() + 16);
 		break;
@@ -3503,14 +3514,6 @@ int SimonEngine::go() {
 		_startMainScript = true;
 	if (gDebugLevel == 5)
 		_startVgaScript = true;
-
-	if (getFeatures() & GF_TALKIE) {
-		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		if (getGameType() == GType_SIMON1 && (_language == Common::EN_ANY || _language == Common::DE_DEU))
-			_subtitles = false;
-	} else {
-		_subtitles = true;
-	}
 
 	while (1) {
 		hitarea_stuff();
