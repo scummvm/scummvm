@@ -2764,9 +2764,10 @@ void SimonEngine::timer_proc1() {
 
 	if (_updateScreen) {
 		if (getGameType() == GType_FF) {
-			if (getBitFlag(78) == false) {
+			if (!getBitFlag(78)) {
 				oracleLogo();
-			} else if (getBitFlag(76) == true) {
+			}
+			if (getBitFlag(76)) {
 				swapCharacterLogo();
 			}
 		}
