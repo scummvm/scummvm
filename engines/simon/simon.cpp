@@ -397,8 +397,10 @@ SimonEngine::SimonEngine(OSystem *syst)
 	memset(_speechIdArray4, 0, sizeof(_speechIdArray4));
 
 	memset(_bitArray, 0, sizeof(_bitArray));
+
 	memset(_variableArray, 0, sizeof(_variableArray));
 	memset(_variableArray2, 0, sizeof(_variableArray2));
+	_variableArrayPtr = 0;
 
 	memset(_windowArray, 0, sizeof(_windowArray));
 
@@ -995,8 +997,12 @@ uint SimonEngine::getVarOrByte() {
 uint SimonEngine::getVarOrWord() {
 	uint a = READ_BE_UINT16(_codePtr);
 	_codePtr += 2;
-	if (a >= 30000 && a < 30512)
-		return readVariable(a - 30000);
+	if (a >= 30000 && a < 30512) {
+		if (getGameType() == GType_FF)
+			return (uint16)readVariable(a - 30000);
+		else
+			return readVariable(a - 30000);
+	}
 	return a;
 }
 
@@ -3508,6 +3514,8 @@ int SimonEngine::go() {
 		_numTextBoxes = 40;
 	else
 		_numTextBoxes = 20;
+
+	_variableArrayPtr = _variableArray;
 
 	_startMainScript = false;
 	_continousMainScript = false;
