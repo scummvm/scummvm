@@ -137,7 +137,7 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
 		// Make GUI 640 x 400
-		system.initSize(320, 200, (ConfMan.getBool("force-1x-overlay") ? 1 : 2));
+		system.initSize(320, 200, (ConfMan.getBool("force_1x_overlay") ? 1 : 2));
 	system.endGFXTransaction();
 
 
