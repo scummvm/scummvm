@@ -256,7 +256,7 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	GameDescriptor result;
 
 	if (plugin)
-		plugin = 0;
+		*plugin = 0;
 
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
