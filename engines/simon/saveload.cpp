@@ -214,8 +214,6 @@ restart:;
 		disableBox(208 + i);
 		leaveHitAreaById(208 + i);
 
-		// some code here
-
 		window = _windowArray[5];
 
 		window->textRow = unk132_result;
