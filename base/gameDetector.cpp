@@ -294,7 +294,7 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	DO_OPTION_OPT(shortCmd, longCmd, 0) \
 	if (!option) usage("Option '%s' requires an argument", argv[i]); \
 	char *endptr = 0; \
-	int intValue; intValue = (int)strtol(option, &endptr, 10); \
+	int intValue; intValue = (int)strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
@@ -508,14 +508,7 @@ Common::String GameDetector::parseCommandLine(Common::StringMap &settings, int a
 			END_OPTION
 
 #ifndef DISABLE_SCUMM
-			DO_LONG_OPTION("tempo")
-				// Use the special value '0' for the base in (int)strtol.
-				// Doing that makes it possible to enter hex values
-				// as "0x1234", but also decimal values ("123").
-				int value = (int)strtol(option, 0, 0);
-				char buf[20];
-				snprintf(buf, sizeof(buf), "%d", value);
-				settings["tempo"] = buf;
+			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")
