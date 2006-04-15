@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AUDIOSTREAM_H
-#define AUDIOSTREAM_H
+#ifndef SOUND_AUDIOSTREAM_H
+#define SOUND_AUDIOSTREAM_H
 
 #include "common/stdafx.h"
 #include "common/util.h"

@@ -24,8 +24,8 @@
  */
 
 
-#ifndef FMOPL_H_
-#define FMOPL_H_
+#ifndef SOUND_FMOPL_H
+#define SOUND_FMOPL_H
 
 #include "common/scummsys.h"
 
