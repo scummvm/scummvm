@@ -80,8 +80,8 @@ bundle: scummvm-static
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/gui/themes/default-theme.ini $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/gui/themes/default-theme.zip $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/gui/themes/modern.ini $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/gui/themes/modern.zip $(bundle_name)/Contents/Resources/
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	strip $(bundle_name)/Contents/MacOS/scummvm
@@ -149,8 +149,8 @@ aos4dist: scummvm
 	mkdir -p $(AOS4PATH)
 	strip -R.comment $< -o $(AOS4PATH)/$<
 	cp icons/scummvm.info $(AOS4PATH)/$<.info
-	cp gui/themes/default-theme.ini $(AOS4PATH)
-	cp gui/themes/default-theme.zip $(AOS4PATH)
+	cp gui/themes/modern.ini $(AOS4PATH)
+	cp gui/themes/modern.zip $(AOS4PATH)
 	cp AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp COPYING $(AOS4PATH)/COPYING.txt
 	cp NEWS $(AOS4PATH)/NEWS.txt
