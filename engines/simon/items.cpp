@@ -694,12 +694,12 @@ void SimonEngine::o_msg() {
 
 void SimonEngine::o_addTextBox() {
 	// 65: add hit area
-	int id = getVarOrWord();
-	int x = getVarOrWord();
-	int y = getVarOrWord();
-	int w = getVarOrWord();
-	int h = getVarOrWord();
-	int number = getVarOrByte();
+	uint id = getVarOrWord();
+	uint x = getVarOrWord();
+	uint y = getVarOrWord();
+	uint w = getVarOrWord();
+	uint h = getVarOrWord();
+	uint number = getVarOrByte();
 	if (number < _numTextBoxes)
 		defineBox(id, x, y, w, h, (number << 8) + 129, 208, _dummyItem2);
 }
