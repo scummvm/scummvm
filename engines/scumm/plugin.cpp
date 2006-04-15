@@ -1620,15 +1620,15 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
  */
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
+	const char *gameid = ConfMan.get("gameid").c_str();
 
 	// We start by checking whether the specified game ID is obsolete.
 	// If that is the case, we automatically upgrade the target to use
 	// the correct new game ID (and platform, if specified).
-	const ObsoleteGameID *o = obsoleteGameIDsTable;
-	while (o->from) {
-		if (!scumm_stricmp(detector->_gameid.c_str(), o->from)) {
+	for (const ObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
+		if (!scumm_stricmp(gameid, o->from)) {
 			// Match found, perform upgrade
-			detector->_gameid = o->to;
+			gameid = o->to;
 			ConfMan.set("gameid", o->to);
 
 			if (o->platform != Common::kPlatformUnknown)
@@ -1638,14 +1638,13 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			ConfMan.flushToDisk();
 			break;
 		}
-		o++;
 	}
 
 	// Lookup the game ID in our database. If this lookup fails, then
 	// the game ID is unknown, and we have to abort.
 	const GameSettings *g = gameVariantsTable;
 	while (g->gameid) {
-		if (!scumm_stricmp(detector->_gameid.c_str(), g->gameid))
+		if (!scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
@@ -1655,7 +1654,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	// We now want to calculate the MD5 of the games detection file, so that we
 	// can store it in savegames etc..
-	const char *gameid = g->gameid;
+	gameid = g->gameid;
 	char detectName[256], tempName[256];
 	uint8 md5sum[16];
 	SubstResFileNames subst = { 0, 0, kGenAsIs };

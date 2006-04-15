@@ -134,7 +134,7 @@ void SwordEngine::errorString(const char *buf1, char *buf2) {
 SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
-	if (0 == scumm_stricmp(detector->_gameid.c_str(), "sword1demo"))
+	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;

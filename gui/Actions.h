@@ -37,7 +37,7 @@ class Actions {
 
 public:
 	static Actions* Instance();
-	static void init(const Common::String &gameid);
+	static void init();
 	virtual void initInstanceMain(OSystem *mainSystem);
 	virtual void initInstanceGame();
 	bool initialized();
@@ -65,12 +65,8 @@ public:
 
 	virtual ~Actions();
 
-public:
-	// Since _gameid is const it's safe to let the public read it.
-	const Common::String _gameid;
-
 protected:
-	Actions(const Common::String &gameid);
+	Actions();
 
 protected:
 	static Actions* _instance;

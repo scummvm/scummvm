@@ -70,7 +70,6 @@ public:
 	const Plugin *detectMain();
 
 	String _targetName;
-	String _gameid;
 
 public:
 	static GameDescriptor findGame(const String &gameName, const Plugin **plugin = NULL);

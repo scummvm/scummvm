@@ -113,11 +113,12 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
-	const ObsoleteGameID *o = obsoleteGameIDsTable;
-	while (o->from) {
-		if (!scumm_stricmp(detector->_gameid.c_str(), o->from)) {
-			detector->_gameid = o->to;
+	const char *gameid = ConfMan.get("gameid").c_str();
 
+	for (const ObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
+		if (!scumm_stricmp(gameid, o->from)) {
+			// Match found, perform upgrade
+			gameid = o->to;
 			ConfMan.set("gameid", o->to);
 
 			if (o->platform != Common::kPlatformUnknown)
@@ -127,7 +128,6 @@ Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 			ConfMan.flushToDisk();
 			break;
 		}
-		o++;
 	}
 
 	return new Simon::SimonEngine(syst);

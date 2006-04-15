@@ -129,7 +129,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	Common::File::addDefaultDirectory(_gameDataPath + "sword2/");
 	Common::File::addDefaultDirectory(_gameDataPath + "video/");
 
-	if (0 == scumm_stricmp(detector->_gameid.c_str(), "sword2demo"))
+	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;

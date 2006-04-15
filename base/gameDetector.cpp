@@ -261,7 +261,7 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
-		if (result.gameid.size() > 0) {
+		if (!result.gameid.empty()) {
 			if (plugin)
 				*plugin = *iter;
 			break;
@@ -581,14 +581,12 @@ void GameDetector::setTarget(const String &target) {
 	_targetName = target;
 	ConfMan.setActiveDomain(target);
 
+	// Make sure the gameid is set in the config manager, and that it is lowercase.
+	String gameid(_targetName);
 	if (ConfMan.hasKey("gameid"))
-		_gameid = ConfMan.get("gameid");
-	else
-		_gameid = _targetName;
-	
-	// TODO: In the future, simply insert the gameid into the transient domain.
-	// That way, all code (including backends) can reliably access it.
-	//ConfMan.set("gameid", _gameid, Common::ConfigManager::kTransientDomain);
+		gameid = ConfMan.get("gameid");
+	gameid.toLowercase();
+	ConfMan.set("gameid", gameid);
 }
 
 const Plugin *GameDetector::detectMain() {
@@ -599,8 +597,8 @@ const Plugin *GameDetector::detectMain() {
 		return 0;
 	}
 
-	printf("Looking for %s\n", _gameid.c_str());
-	GameDescriptor game = findGame(_gameid, &plugin);
+	printf("Looking for %s\n", ConfMan.get("gameid").c_str());
+	GameDescriptor game = findGame(ConfMan.get("gameid"), &plugin);
 
 	if (plugin == 0) {
 		printf("Failed game detection\n");

@@ -39,8 +39,8 @@ Actions* Actions::Instance() {
 	return _instance;
 }
 
-Actions::Actions(const Common::String &gameid) :
-	_gameid(gameid), _mapping_active(false), _initialized(false)
+Actions::Actions() :
+	_mapping_active(false), _initialized(false)
 {
 }
 
@@ -49,15 +49,15 @@ Actions::~Actions() {
 }
 
 // call the correct object creator function according to the Factory Pattern
-void Actions::init(const Common::String &gameid) {
+void Actions::init() {
 #ifdef _WIN32_WCE
 	// For WinCE: now use software + Factory pattern to create correct objects
 	if (!CEDevice::isSmartphone())
-		CEActionsPocket::init(gameid);
+		CEActionsPocket::init();
 	else
-		CEActionsSmartphone::init(gameid);
+		CEActionsSmartphone::init();
 #elif defined(__SYMBIAN32__)
-	SymbianActions::init(gameid);
+	SymbianActions::init();
 #endif
 }
 

@@ -60,8 +60,8 @@ const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x
 const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0, VK_RETURN };
 #endif
 
-void CEActionsSmartphone::init(const Common::String &gameid) {
-	_instance = new CEActionsSmartphone(gameid);
+void CEActionsSmartphone::init() {
+	_instance = new CEActionsSmartphone();
 }
 
 
@@ -81,9 +81,8 @@ int CEActionsSmartphone::version() {
 	return SMARTPHONE_ACTION_VERSION;
 }
 
-CEActionsSmartphone::CEActionsSmartphone(const Common::String &gameid) :
-GUI::Actions(gameid)
-{
+CEActionsSmartphone::CEActionsSmartphone()
+: GUI::Actions() {
 	int i;
 
 	for (i=0; i<SMARTPHONE_ACTION_LAST; i++) {
@@ -112,17 +111,18 @@ void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
 }
 
 void CEActionsSmartphone::initInstanceGame() {
-	bool is_simon = (strncmp(_gameid.c_str(), "simon", 5) == 0);
-	bool is_sky = (_gameid == "sky");
-	bool is_queen = (_gameid == "queen");
-	bool is_gob = (strncmp(_gameid.c_str(), "gob", 3) == 0);
-	bool is_ite = ((strncmp(_gameid.c_str(), "ite", 3) == 0) ||
-				  (strncmp(_gameid.c_str(), "ihnm", 4) == 0));
+	String gameid(ConfMan.get("gameid"));
+	bool is_simon = (strncmp(gameid.c_str(), "simon", 5) == 0);
+	bool is_sky = (gameid == "sky");
+	bool is_queen = (gameid == "queen");
+	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
+	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
+				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sky || _gameid == "samnmax" || is_gob)
+	if (is_sky || gameid == "samnmax" || is_gob)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions

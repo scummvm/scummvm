@@ -181,7 +181,7 @@ static int runGame(const Plugin *plugin, GameDetector &detector, OSystem &system
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
-	Common::String desc = GameDetector::findGame(detector._gameid).description;
+	Common::String desc = GameDetector::findGame(ConfMan.get("gameid")).description;
 	if (caption.empty() && !desc.empty())
 		caption = desc;
 	if (caption.empty())
@@ -292,7 +292,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// init keymap support here: we wanna move this somewhere else?
-	GUI::Actions::init(detector._gameid);
+	GUI::Actions::init(ConfMan.get("gameid"));
 #endif
 
 #ifdef PALMOS_68K

@@ -522,7 +522,7 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
 
 void OSystem_WINCE3::get_sample_rate() {
 	// Force at least medium quality FM synthesis for FOTAQ
-	Common::String gameid(GUI::Actions::Instance()->_gameid);
+	Common::String gameid(ConfMan.get("gameid"));
 	if (gameid == "queen") {
 		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) ||
 			(ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
@@ -653,9 +653,9 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 void OSystem_WINCE3::check_mappings() {
 		CEActionsPocket *instance;
 
-		Common::String gameid(GUI::Actions::Instance()->_gameid);
+		Common::String gameid(ConfMan.get("gameid"));
 
-		if (!gameid.size() || GUI_Actions::Instance()->initialized())
+		if (gameid.empty() || GUI_Actions::Instance()->initialized())
 			return;
 
 		GUI_Actions::Instance()->initInstanceGame();
@@ -707,10 +707,10 @@ void OSystem_WINCE3::check_mappings() {
 }
 
 void OSystem_WINCE3::update_game_settings() {
-	Common::String gameid(GUI::Actions::Instance()->_gameid);
+	Common::String gameid(ConfMan.get("gameid"));
 
 	// Finish panel initialization
-	if (!_panelInitialized && gameid.size()) {
+	if (!_panelInitialized && !gameid.empty()) {
 		Panel *panel;
 		_panelInitialized = true;
 		// Add the main panel
