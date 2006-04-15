@@ -76,10 +76,6 @@ public:
 	String _targetName;
 	String _gameid;
 
-	bool _dumpScripts;
-
-	bool _force1xOverlay;
-
 	const Plugin *_plugin;	// TODO: This should be protected
 
 public:

@@ -157,6 +157,12 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
+#if defined(__SYMBIAN32__)
+	ConfMan.registerDefault("force_1x_overlay", true);
+#else
+	ConfMan.registerDefault("force_1x_overlay", false);
+#endif
+
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -182,6 +188,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("boot_param", 0);
+	ConfMan.registerDefault("dump_scripts", false);
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
@@ -242,14 +249,6 @@ GameDetector::GameDetector() {
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
 
-	_dumpScripts = false;
-
-#if defined(__SYMBIAN32__)
-	_force1xOverlay = true;
-#else
-	_force1xOverlay = false;
-#endif
-
 	_plugin = 0;
 }
 
@@ -276,7 +275,8 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 
 // Use this for options which have an *optional* value
 #define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
-	if (isLongCmd ? (!memcmp(s, longCmd"=", sizeof(longCmd"=") - 1)) : (shortCmdLower == shortCmd)) { \
+	if (isLongCmd ? (!memcmp(s+2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
+		s += 2; \
 		if (isLongCmd) \
 			s += sizeof(longCmd"=") - 1; \
 		const char *option = s; \
@@ -300,8 +300,9 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s, longCmd) || !strcmp(s, "no-"longCmd)) : (shortCmdLower == shortCmd)) { \
-		bool boolValue = (shortCmdLower == s[1]); \
+	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-"longCmd)) : (tolower(s[1]) == shortCmd)) { \
+		bool boolValue = islower(s[1]); \
+		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
 			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
@@ -312,7 +313,8 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_OPTION_CMD(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s, longCmd)) : (shortCmdLower == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s+2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
+		s += 2; \
 		if (isLongCmd) \
 			s += sizeof(longCmd) - 1; \
 		if (*s != '\0') goto unknownOption;
@@ -357,9 +359,7 @@ Common::String GameDetector::parseCommandLine(Common::StringMap &settings, int a
 			return s;
 		} else {
 
-			char shortCmdLower = tolower(s[1]);
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
-			s += 2;
 
 			DO_OPTION_CMD('h', "help")
 				printf(HELP_STRING, argv[0]);
@@ -565,17 +565,6 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 		}
 	}
 #endif
-
-
-	if (settings.contains("dump-scripts")) {
-		_dumpScripts = (settings["dump-scripts"] == "true");
-		settings.erase("dump-scripts");	// This option should not be passed to ConfMan.
-	}
-
-	if (settings.contains("force-1x-overlay")) {
-		_force1xOverlay = (settings["force-1x-overlay"] == "true");
-		settings.erase("force-1x-overlay");	// This option should not be passed to ConfMan.
-	}
 
 
 	// Finally, store the command line settings into the config manager.

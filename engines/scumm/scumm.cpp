@@ -536,7 +536,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const GameSettin
 
 	// Read settings from the detector & config manager
 	_debugMode = (gDebugLevel >= 0);
-	_dumpScripts = detector->_dumpScripts;
+	_dumpScripts = ConfMan.getBool("dump_scripts");
 	_bootParam = ConfMan.getInt("boot_param");
 	// Boot params often need debugging switched on to work
 	if (_bootParam)
@@ -859,7 +859,12 @@ int ScummEngine::init(GameDetector &detector) {
 			_system->initSize(Common::kHercW, Common::kHercH, 1);
 			defaultTo1XScaler = true;
 		} else {
-			_system->initSize(_screenWidth, _screenHeight, (detector._force1xOverlay ? 1 : 2));
+			// FIXME: The way we now handle the force_1x_overlay setting implies
+			// that if you start scummvm into the launcher with force_1x_overlay
+			// set to true, it'll get reset to the default value (usually 'false'
+			// except for Symbian) before launching a game.
+			// This may or may not be the desired behavior...
+			_system->initSize(_screenWidth, _screenHeight, (ConfMan.getBool("force_1x_overlay") ? 1 : 2));
 			defaultTo1XScaler = (_screenWidth > 320);
 		}
 		initCommonGFX(detector, defaultTo1XScaler);
