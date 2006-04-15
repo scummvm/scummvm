@@ -375,18 +375,18 @@ protected:
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
 
-	Item *_vcItemArray[20];
-	Item *_itemArray6[20];
+	Item *_objectArray[20];
+	Item *_itemStore[20];
 
-	uint16 _stringIdArray2[20];
-	uint16 _stringIdArray3[20];
-	uint16 _speechIdArray4[20];
+	uint16 _stringIdArray2[40];
+	uint16 _stringIdArray3[40];
+	uint16 _speechIdArray4[40];
 
 	uint16 _bitArray[48];
 	int16 _variableArray[256];
 	int16 _variableArray2[256];
 
-	WindowBlock *_windowArray[8];
+	WindowBlock *_windowArray[16];
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -397,11 +397,11 @@ protected:
 
 	byte _stringReturnBuffer[2][180];
 
-	HitArea _hitAreas[90];
+	HitArea _hitAreas[250];
 
 	VgaPointersEntry _vgaBufferPointers[450];
 	VgaSprite _vgaSprites[180];
-	VgaSleepStruct _vgaSleepStructs[30];
+	VgaSleepStruct _vgaSleepStructs[60];
 
 	const uint16 *_pathFindArray[100];
 
@@ -447,7 +447,7 @@ protected:
 	bool _saveLoadFlag;
 
 	byte _saveLoadType, _saveLoadSlot;
-	char _saveLoadName[32];
+	char _saveLoadName[108];
 
 	int _sdlMouseX, _sdlMouseY;
 
@@ -459,7 +459,7 @@ protected:
 	Common::RandomSource _rnd;
 
 	const byte *_vc10BasePtrOld;
-	byte _hebrew_char_widths[32];
+	byte _hebrewCharWidths[32];
 
 public:
 	SimonEngine(OSystem *syst);

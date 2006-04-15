@@ -396,7 +396,7 @@ void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
 		if (_language == Common::HB_ISR) { //Hebrew
 			if (b >= 64 && b < 91)
-				width = _hebrew_char_widths [b - 64];
+				width = _hebrewCharWidths [b - 64];
 
 			if (window->textLength != 0) {
 				window->textLength--;
@@ -434,7 +434,7 @@ void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 
 		if (_language == Common::HB_ISR) { //Hebrew
 			if (c >= 64 && c < 91)
-				width = _hebrew_char_widths [c - 64];
+				width = _hebrewCharWidths [c - 64];
 			window->textColumnOffset  -= width;
 			if (window->textColumnOffset >= width) {
 				window->textColumn++;

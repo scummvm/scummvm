@@ -388,8 +388,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
-	memset(_vcItemArray, 0, sizeof(_vcItemArray));
-	memset(_itemArray6, 0, sizeof(_itemArray6));
+	memset(_objectArray, 0, sizeof(_objectArray));
+	memset(_itemStore, 0, sizeof(_itemStore));
 
 	memset(_stringIdArray2, 0, sizeof(_stringIdArray2));
 	memset(_stringIdArray3, 0, sizeof(_stringIdArray3));
@@ -462,7 +462,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_sdl_buf_scaled = 0;
 
 	_vc10BasePtrOld = 0;
-	memcpy (_hebrew_char_widths,
+	memcpy (_hebrewCharWidths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
 
@@ -2788,9 +2788,9 @@ void SimonEngine::timer_callback() {
 bool SimonEngine::itemIsSiblingOf(uint16 a) {
 	Item *item;
 
-	CHECK_BOUNDS(a, _vcItemArray);
+	CHECK_BOUNDS(a, _objectArray);
 
-	item = _vcItemArray[a];
+	item = _objectArray[a];
 	if (item == NULL)
 		return true;
 
@@ -2800,11 +2800,11 @@ bool SimonEngine::itemIsSiblingOf(uint16 a) {
 bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {
 	Item *item_a, *item_b;
 
-	CHECK_BOUNDS(a, _vcItemArray);
-	CHECK_BOUNDS(b, _vcItemArray);
+	CHECK_BOUNDS(a, _objectArray);
+	CHECK_BOUNDS(b, _objectArray);
 
-	item_a = _vcItemArray[a];
-	item_b = _vcItemArray[b];
+	item_a = _objectArray[a];
+	item_b = _objectArray[b];
 
 	if (item_a == NULL || item_b == NULL)
 		return true;
@@ -2815,9 +2815,9 @@ bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {
 bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	Item *item;
 
-	CHECK_BOUNDS(a, _vcItemArray);
+	CHECK_BOUNDS(a, _objectArray);
 
-	item = _vcItemArray[a];
+	item = _objectArray[a];
 	if (item == NULL)
 		return true;
 	return item->state == b;

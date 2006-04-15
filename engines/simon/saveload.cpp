@@ -240,7 +240,7 @@ restart:;
 			if (_language == Common::HB_ISR) { //Hebrew
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
-					width = _hebrew_char_widths [name[name_len] - 64];
+					width = _hebrewCharWidths [name[name_len] - 64];
 				window->textLength++;
 				window->textColumnOffset -= width;
 				if (window->textColumnOffset < width) {
@@ -554,7 +554,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 
 	// write the items in array 6
 	for (i = 0; i != 10; i++) {
-		f->writeUint16BE(itemPtrToID(_itemArray6[i]));
+		f->writeUint16BE(itemPtrToID(_itemStore[i]));
 	}
 
 	// Write the bits in array 1 & 2
@@ -684,7 +684,7 @@ bool SimonEngine::loadGame(uint slot) {
 
 	// read the items in array 6
 	for (i = 0; i != 10; i++) {
-		_itemArray6[i] = derefItem(f->readUint16BE());
+		_itemStore[i] = derefItem(f->readUint16BE());
 	}
 
 	// Read the bits in array 1 & 2

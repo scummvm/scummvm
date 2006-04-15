@@ -1018,7 +1018,7 @@ void SimonEngine::o_sync() {
 void SimonEngine::o_defObj() {
 	// 121: set vga item
 	uint slot = getVarOrByte();
-	_vcItemArray[slot] = getNextItemPtr();
+	_objectArray[slot] = getNextItemPtr();
 }
 
 void SimonEngine::o_here() {
@@ -1197,12 +1197,12 @@ void SimonEngine::o_storeItem() {
 	// 151: set array6 to item
 	uint var = getVarOrByte();
 	Item *item = getNextItemPtr();
-	_itemArray6[var] = item;
+	_itemStore[var] = item;
 }
 
 void SimonEngine::o_getItem() {
 	// 152: set m1 to m3 to array 6
-	Item *item = _itemArray6[getVarOrByte()];
+	Item *item = _itemStore[getVarOrByte()];
 	uint var = getVarOrByte();
 	if (var == 1) {
 		_subjectItem = item;
