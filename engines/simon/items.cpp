@@ -1837,7 +1837,7 @@ void SimonEngine::o3_listSaveGames() {
 
 void SimonEngine::o3_checkCD() {
 	// 135: switch CD
-	debug(1, "Switch to CD number %d", readVariable(97));
+	debug(0, "Switch to CD number %d", readVariable(97));
 }
 
 void SimonEngine::o3_screenTextBox() {
@@ -1910,7 +1910,7 @@ void SimonEngine::o3_loadSmack() {
 
 void SimonEngine::o3_playSmack() {
 	// 183: play video
-	debug(1, "Play video");
+	debug(0, "Play video");
 }
 
 void SimonEngine::o3_centreScroll() {

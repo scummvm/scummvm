@@ -170,6 +170,22 @@ uint SimonEngine::vcReadNextByte() {
 	return *_vcPtr++;
 }
 
+uint SimonEngine::vcReadVar(uint var) {
+	assert(var < 255);
+	if (getGameType() == GType_FF && getBitFlag(82))
+		return (uint16)_variableArray2[var];
+	else
+		return (uint16)_variableArray[var];
+}
+
+void SimonEngine::vcWriteVar(uint var, int16 value) {
+	assert(var < 255);
+	if (getGameType() == GType_FF && getBitFlag(82))
+		_variableArray2[var] = value;
+	else
+		_variableArray[var] = value;
+}
+
 void SimonEngine::vcSkipNextInstruction() {
 	static const byte opcodeParamLenSimon1[] = {
 		0, 6, 2, 10, 6, 4, 2, 2,
@@ -1292,8 +1308,8 @@ void SimonEngine::horizontalScroll(VC10_state *state) {
 	_scrollYMax = 0;
 	_scrollImage = state->depack_src;
 	_scrollHeight = state->height;
-	if (_variableArray[34] < 0)
-		state->x = _variableArray[251];
+	if (vcReadVar(34) < 0)
+		state->x = vcReadVar(251);
 
 	_scrollX = state->x;
 
@@ -1324,8 +1340,8 @@ void SimonEngine::verticalScroll(VC10_state *state) {
 	_scrollYMax = state->height - 480;
 	_scrollImage = state->depack_src;
 	_scrollWidth = state->width;
-	if (_variableArray[34] < 0)
-		state->y = _variableArray[250];
+	if (vcReadVar(34) < 0)
+		state->y = vcReadVar(250);
 
 	_scrollY = state->y;
 
@@ -1689,15 +1705,6 @@ void SimonEngine::vc31_setWindow() {
 	_windowNum = vcReadNextWord();
 }
 
-uint SimonEngine::vcReadVar(uint var) {
-	assert(var < 255);
-	return (uint16)_variableArray[var];
-}
-
-void SimonEngine::vcWriteVar(uint var, int16 value) {
-	_variableArray[var] = value;
-}
-
 void SimonEngine::vc32_copyVar() {
 	uint16 a = vcReadVar(vcReadNextWord());
 	vcWriteVar(vcReadNextWord(), a);
@@ -1852,12 +1859,13 @@ void SimonEngine::vc47_addToVar() {
 }
 
 void SimonEngine::vc48_setPathFinder() {
-	uint a = (uint16)_variableArray[12];
+	uint a = (uint16)vcReadVar(12);
 	const uint16 *p = _pathFindArray[a - 1];
 
 	if (getGameType() == GType_FF) {
 		VgaSprite *vsp = findCurSprite();
-		int16 x, x2, y, y1, y2, ydiff;
+		int16 x, y, ydiff;
+		int16 x1, y1, x2, y2;
 		uint pos = 0;
 
 		while (vsp->x >= readUint16Wrapper(p + 2)) {
@@ -1865,6 +1873,7 @@ void SimonEngine::vc48_setPathFinder() {
 			pos++;
 		}
 
+		x1 = readUint16Wrapper(p);
 		y1 = readUint16Wrapper(p + 1);
 		x2 = readUint16Wrapper(p + 2);
 		y2 = readUint16Wrapper(p + 3);
@@ -1889,8 +1898,8 @@ void SimonEngine::vc48_setPathFinder() {
 		vsp->y = y1;
 		checkScrollY(y1 - y, y1);
 
-		_variableArray[11] = readUint16Wrapper(p);
-		_variableArray[13] = pos;
+		vcWriteVar(11, x1);
+		vcWriteVar(13, pos);
 	} else {
 		uint b = (uint16)_variableArray[13];
 		p += b * 2 + 1;
@@ -2362,7 +2371,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 	int var = vcReadNextWord();
 
 	vsp->x += getScale(vsp->y, x);
-	_variableArray[var] = vsp->x;
+	vcWriteVar(var, vsp->x);
 
 	checkScrollX(x, vsp->x);
 
@@ -2377,7 +2386,7 @@ void SimonEngine::vc77_setScaleYOffs() {
 	int var = vcReadNextWord();
 
 	vsp->y += getScale(vsp->y, y);
-	_variableArray[var] = vsp->y;
+	vcWriteVar(var, vsp->y);
 
 	if (y != 0) 
 		checkScrollY(y, vsp->y);
@@ -2388,18 +2397,18 @@ void SimonEngine::vc77_setScaleYOffs() {
 void SimonEngine::vc78_computeXY() {
 	VgaSprite *vsp = findCurSprite();
 
-	uint a = (uint16)_variableArray[12];
-	uint b = (uint16)_variableArray[13];
+	uint a = (uint16)vcReadVar(12);
+	uint b = (uint16)vcReadVar(13);
 
 	const uint16 *p = _pathFindArray[a - 1];
 	p += b * 2;
 
 	uint16 posx = readUint16Wrapper(p);
-	_variableArray[15] = posx;
+	vcWriteVar(15, posx);
 	vsp->x = posx;
 
 	uint16 posy = readUint16Wrapper(p + 1);
-	_variableArray[16] = posy;
+	vcWriteVar(16, posy);
 	vsp->y = posy;
 
 	setBitFlag(85, false);
@@ -2409,17 +2418,17 @@ void SimonEngine::vc78_computeXY() {
 }
 
 void SimonEngine::vc79_computePosNum() {
-	uint a = (uint16)_variableArray[12];
+	uint a = (uint16)vcReadVar(12);
 	const uint16 *p = _pathFindArray[a - 1];
 	uint pos = 0;
 
-	int16 y = _variableArray[16];
+	uint16 y = vcReadVar(16);
 	while(y > readUint16Wrapper(p + 1)) {
 		p += 2;
 		pos++;
 	}
 
-	_variableArray[13] = pos;
+	vcWriteVar(13, pos);
 }
 
 void SimonEngine::vc80_setOverlayImage() {
