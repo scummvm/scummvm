@@ -1909,7 +1909,7 @@ void SimonEngine::vc48_setPathFinder() {
 
 		int step;
 		int y1, y2;
-		int16 *vp;
+		int32 *vp;
 
 		step = 2;
 		if (c < 0) {
