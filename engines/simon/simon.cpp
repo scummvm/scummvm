@@ -234,7 +234,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_copyPartialMode = 0;
 	_speed = 1;
 	_fastMode = 0;
-	_dxUse3Or4ForLock = 0;
+	_useBackGround = 0;
 
 	_debugMode = 0;
 	_pause = 0;
@@ -459,9 +459,9 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_sdlMouseX = 0;
 	_sdlMouseY = 0;
 
-	_sdl_buf_3 = 0;
-	_sdl_buf = 0;
-	_sdl_buf_attached = 0;
+	_backGroundBuf = 0;
+	_frontBuf = 0;
+	_backBuf = 0;
 	_sdl_buf_scaled = 0;
 
 	_vc10BasePtrOld = 0;
@@ -1368,7 +1368,7 @@ Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 			return cur;
 	}
 
-	debug(1,"getSubroutineByID: subroutine %d not found", subroutine_id);
+	debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
 	return NULL;
 }
 
@@ -2273,7 +2273,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
 		} else if (getGameType() == GType_SIMON2) {
-			_dxUse3Or4ForLock = true;
+			_useBackGround = true;
 			_restoreWindow6 = true;
 		}
 	}
@@ -2315,7 +2315,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (getGameType() == GType_SIMON1) {
 		if (vga_res_id == 16300) {
-			dx_clear_attached_from_top(134);
+			clearBackFromTop(134);
 			_usePaletteDelay = true;
 		}
 	} else {
@@ -2346,7 +2346,20 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	_vcPtr = vc_ptr_org;
 
 
-	if (getGameType() == GType_SIMON1) {
+	if (getGameType() == GType_FF) {
+		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
+		fillBackGroundFromBack(_screenHeight);
+		_syncFlag2 = 1;
+	} else if (getGameType() == GType_SIMON2) {
+		if (!_useBackGround) {
+			num_lines = _windowNum == 4 ? 134 : 200;
+			_boxStarHeight = num_lines;
+			fillFrontFromBack(0, 0, _screenWidth, num_lines);
+			fillBackGroundFromBack(num_lines);
+			_syncFlag2 = 1;
+		}
+		_useBackGround = false;
+	} else {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
 		if (_subroutine == 2923 || _subroutine == 2926)
@@ -2354,24 +2367,11 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		else
 			num_lines = _windowNum == 4 ? 134 : 200;
 
-		dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
-		dx_copy_from_attached_to_3(num_lines);
+		fillFrontFromBack(0, 0, _screenWidth, num_lines);
+		fillBackGroundFromBack(num_lines);
 
 		_syncFlag2 = 1;
 		_timer5 = 0;
-	} else {
-		if (!_dxUse3Or4ForLock) {
-			if (getGameType() == GType_FF)
-				num_lines = 480;
-			else
-				num_lines = _windowNum == 4 ? 134 : 200;
-
-			_boxStarHeight = num_lines;
-			dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
-			dx_copy_from_attached_to_3(num_lines);
-			_syncFlag2 = 1;
-		}
-		_dxUse3Or4ForLock = false;
 	}
 
 	_lockWord &= ~0x20;
@@ -2630,7 +2630,7 @@ void SimonEngine::timer_vga_sprites() {
 	}
 
 	if (_drawImagesDebug)
-		memset(_sdl_buf_attached, 0, _screenWidth * _screenHeight);
+		memset(_backBuf, 0, _screenWidth * _screenHeight);
 
 	_updateScreen++;
 	_vcPtr = vc_ptr_org;
@@ -2685,8 +2685,8 @@ void SimonEngine::scrollEvent() {
 		vcWriteVar(251, _scrollX);
 	}
 
-	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
-	memcpy(_sdl_buf_3, _sdl_buf_attached, _scrollHeight * _screenWidth);
+	memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+	memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
 
 	_scrollFlag = 0;
 }
@@ -2758,12 +2758,12 @@ void SimonEngine::timer_proc1() {
 		timer_vga_sprites_2();
 
 	if (_copyPartialMode == 1) {
-		dx_copy_from_2_to_attached(80, 46, 208 - 80, 94 - 46);
+		fillBackFromFront(80, 46, 208 - 80, 94 - 46);
 	}
 
 	if (_copyPartialMode == 2) {
 		// copy partial from attached to 2
-		dx_copy_from_attached_to_2(176, 61, _screenWidth - 176, 134 - 61);
+		fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
 		_copyPartialMode = 0;
 	}
 
@@ -2945,10 +2945,8 @@ void SimonEngine::colorWindow(WindowBlock *window) {
 
 	_lockWord |= 0x8000;
 
-	dst = getFrontBuf();
-
 	if (getGameType() == GType_FF) {
-		dst += _dxSurfacePitch * window->y + window->x;
+		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x;
 
 		for (h = 0; h < window->height; h++) {
 			for (w = 0; w < window->width; w++) {
@@ -2958,7 +2956,7 @@ void SimonEngine::colorWindow(WindowBlock *window) {
 			dst += _screenWidth;
 		}
 	} else {
-		dst += _dxSurfacePitch * window->y + window->x * 8;
+		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x * 8;
 		h = window->height * 8;
 		w = window->width * 8;
 
@@ -3347,7 +3345,7 @@ void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	uint i;
 
 	dst = getFrontBuf();
-	src = _sdl_buf_3;
+	src = _backGroundBuf;
 
 	dst += y * _dxSurfacePitch;
 	src += y * _dxSurfacePitch;
@@ -3362,24 +3360,24 @@ void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 }
 
 void SimonEngine::dx_clear_surfaces(uint num_lines) {
-	memset(_sdl_buf_attached, 0, num_lines * _screenWidth);
+	memset(_backBuf, 0, num_lines * _screenWidth);
 
-	_system->copyRectToScreen(_sdl_buf_attached, _screenWidth, 0, 0, _screenWidth, num_lines);
+	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, num_lines);
 
-	if (_dxUse3Or4ForLock) {
-		memset(_sdl_buf, 0, num_lines * _screenWidth);
-		memset(_sdl_buf_3, 0, num_lines * _screenWidth);
+	if (_useBackGround) {
+		memset(_frontBuf, 0, num_lines * _screenWidth);
+		memset(_backGroundBuf, 0, num_lines * _screenWidth);
 	}
 }
 
-void SimonEngine::dx_clear_attached_from_top(uint lines) {
-	memset(_sdl_buf_attached, 0, lines * _screenWidth);
+void SimonEngine::clearBackFromTop(uint lines) {
+	memset(_backBuf, 0, lines * _screenWidth);
 }
 
-void SimonEngine::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h) {
+void SimonEngine::fillFrontFromBack(uint x, uint y, uint w, uint h) {
 	uint offs = x + y * _screenWidth;
-	byte *s = _sdl_buf_attached + offs;
-	byte *d = _sdl_buf + offs;
+	byte *s = _backBuf + offs;
+	byte *d = _frontBuf + offs;
 
 	do {
 		memcpy(d, s, w);
@@ -3388,10 +3386,10 @@ void SimonEngine::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h) {
 	} while (--h);
 }
 
-void SimonEngine::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h) {
+void SimonEngine::fillBackFromFront(uint x, uint y, uint w, uint h) {
 	uint offs = x + y * _screenWidth;
-	byte *s = _sdl_buf + offs;
-	byte *d = _sdl_buf_attached + offs;
+	byte *s = _frontBuf + offs;
+	byte *d = _backBuf + offs;
 
 	do {
 		memcpy(d, s, w);
@@ -3400,8 +3398,8 @@ void SimonEngine::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h) {
 	} while (--h);
 }
 
-void SimonEngine::dx_copy_from_attached_to_3(uint lines) {
-	memcpy(_sdl_buf_3, _sdl_buf_attached, lines * _screenWidth);
+void SimonEngine::fillBackGroundFromBack(uint lines) {
+	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
 }
 
 void SimonEngine::dx_update_screen_and_palette() {
@@ -3415,10 +3413,10 @@ void SimonEngine::dx_update_screen_and_palette() {
 		}
 	}
 
-	_system->copyRectToScreen(_sdl_buf_attached, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_system->updateScreen();
 
-	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
+	memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
 
 	if (getGameType() == GType_FF && _scrollFlag) {
 		scrollEvent();
@@ -3482,9 +3480,9 @@ int SimonEngine::go() {
 		_dumpFile = stdout;
 
 	// allocate buffers
-	_sdl_buf_3 = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_sdl_buf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_sdl_buf_attached = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_sdl_buf_scaled = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	allocItemHeap();
@@ -3739,12 +3737,17 @@ void SimonEngine::loadMusic(uint music) {
 
 byte *SimonEngine::getFrontBuf() {
 	_dxSurfacePitch = _screenWidth;
-	return _sdl_buf;
+	return _frontBuf;
 }
 
 byte *SimonEngine::getBackBuf() {
 	_dxSurfacePitch = _screenWidth;
-	return _dxUse3Or4ForLock ? _sdl_buf_3 : _sdl_buf_attached;
+	return _useBackGround ? _backGroundBuf : _backBuf;
+}
+
+byte *SimonEngine::getBackGround() {
+	_dxSurfacePitch = _screenWidth;
+	return _backGroundBuf;
 }
 
 byte *SimonEngine::getScaleBuf() {

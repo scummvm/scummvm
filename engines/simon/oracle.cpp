@@ -212,15 +212,18 @@ void SimonEngine::scrollOracleDown() {
 }
 
 void SimonEngine::bltOracleText() {
-	byte *src, *dst;
+	byte *src, *dst1, *dst2;
 	uint16 h;
 
 	src = getFrontBuf() + 103 * _screenWidth + 136;
-	dst = getBackBuf() + 103 * _screenWidth + 136;
+	dst1 = getFrontBuf() + 103 * _screenWidth + 136;
+	dst2 = getBackBuf() + 103 * _screenWidth + 136;
 
 	for (h = 0; h < 104; h++) {
-		memcpy(dst, src, 360);
-		dst += _screenWidth;
+		memcpy(dst1, src, 360);
+		memcpy(dst2, src, 360);
+		dst1 += _screenWidth;
+		dst2 += _screenWidth;
 		src += _screenWidth;
 	}
 }

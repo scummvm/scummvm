@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+
 #include "simon/simon.h"
 #include "simon/intern.h"
 
@@ -1525,11 +1526,13 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 	dst += y * _dxSurfacePitch + x + window->textColumnOffset;
 
 	if (getGameType() == GType_FF) {
+		dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 13;
 		w =  feebleFontSize[chr - 0x20];
 
 		src = feeble_video_font + (chr - 0x20) * 13;
 	} else {
+		dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
 

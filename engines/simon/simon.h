@@ -246,7 +246,7 @@ protected:
 	byte _copyPartialMode;
 	uint _speed;
 	bool _fastMode;
-	bool _dxUse3Or4ForLock;
+	bool _useBackGround;
 
 	uint16 _debugMode;
 	uint16 _language;
@@ -452,9 +452,9 @@ protected:
 
 	int _sdlMouseX, _sdlMouseY;
 
-	byte *_sdl_buf_3;
-	byte *_sdl_buf;
-	byte *_sdl_buf_attached;
+	byte *_backGroundBuf;
+	byte *_frontBuf;
+	byte *_backBuf;
 	byte *_sdl_buf_scaled;
 
 	Common::RandomSource _rnd;
@@ -1037,6 +1037,7 @@ protected:
 
 	byte *getFrontBuf();
 	byte *getBackBuf();
+	byte *getBackGround();
 	byte *getScaleBuf();
 
 	byte *read_vga_from_datfile_2(uint id, uint type);
@@ -1064,10 +1065,10 @@ protected:
 	void dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base);
 	void dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
 
-	void dx_clear_attached_from_top(uint lines);
-	void dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h);
-	void dx_copy_from_attached_to_3(uint lines);
-	void dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h);
+	void clearBackFromTop(uint lines);
+	void fillFrontFromBack(uint x, uint y, uint w, uint h);
+	void fillBackGroundFromBack(uint lines);
+	void fillBackFromFront(uint x, uint y, uint w, uint h);
 
 	void print_char_helper_1(const byte *src, uint len);
 	void print_char_helper_5(WindowBlock *window);

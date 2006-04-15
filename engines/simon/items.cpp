@@ -1972,12 +1972,17 @@ void SimonEngine::o3_restartClock() {
 }
 
 void SimonEngine::o3_setColour() {
-	// 195: set palette colour?
-	uint blue = getVarOrByte();
-	uint green = getVarOrByte();
-	uint red = getVarOrByte();
-	uint color = getVarOrByte();
-	warning("STUB: script opcode 195 (%d, %d, %d, %d)", blue, green, red, color);
+	// 195: set palette colour
+	uint b = getVarOrByte();
+	uint g = getVarOrByte();
+	uint r = getVarOrByte();
+	uint c = getVarOrByte() * 4;
+
+	_palette[c + 0] = _paletteBackup[c + 0] = r;
+	_palette[c + 1] = _paletteBackup[c + 1] = g;
+	_palette[c + 2] = _paletteBackup[c + 2] = b;
+
+	debug(0, "o3_setColour (%d, %d, %d, %d)", c, r, g, b);
 }
 
 void SimonEngine::o3_b3Set() {
