@@ -1285,25 +1285,29 @@ void SimonEngine::o_screenTextMsg() {
 	uint color = getVarOrByte();
 	uint stringId = getNextStringID();
 	const byte *string_ptr = NULL;
-	uint speech_id = 0;
+	uint speechId = 0;
 	TextLocation *tl;
 
 	if (stringId != 0xFFFF)
 		string_ptr = getStringPtrByID(stringId);
 
-	if (getFeatures() & GF_TALKIE)
-		speech_id = (uint16)getNextWord();
+	if (getFeatures() & GF_TALKIE) {
+		if (getGameType() == GType_FF)
+			speechId = (uint16)getVarOrWord();
+		else
+			speechId = (uint16)getNextWord();
+	}
 
 	if (getGameType() == GType_FF)
 		vgaSpriteId = 1;
 
 	tl = getTextLocation(vgaSpriteId);
-	if (_speech && speech_id != 0)
-		playSpeech(speech_id, vgaSpriteId);
-	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speech_id == 0)
+	if (_speech && speechId != 0)
+		playSpeech(speechId, vgaSpriteId);
+	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speechId == 0)
 		kill_sprite_simon2(2, vgaSpriteId + 2);
 
-	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
+	if (string_ptr != NULL && (speechId == 0 || _subtitles))
 		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
 
 }
