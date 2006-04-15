@@ -615,111 +615,6 @@ struct GameFilenamePattern {
 	const char *variant;
 };
 
-Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
-	char buf[128];
-
-	switch (gfp.genMethod) {
-	case kGenDiskNum:
-	case kGenRoomNum:
-		snprintf(buf, sizeof(buf), gfp.pattern, 0);
-		break;
-
-	case kGenHEPC:
-		snprintf(buf, sizeof(buf), "%s.he0", gfp.pattern);
-		break;
-
-	case kGenHEMac:
-		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
-		break;
-
-	case kGenHEMacNoParens:
-		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
-		break;
-
-	default:
-		error("generateFilenameForDetection: Unhandled genMethod");
-	}
-
-	return buf;
-}
-
-#if 0
-Common::String ScummEngine::generateFilename(int room, int diskNumber) {
-	char buf[128];
-
-	if (_game.version == 4) {
-		if (room == 0 || room >= 900) {
-			snprintf(buf, sizeof(buf), "%.3d.lfl", room);
-		} else {
-			snprintf(buf, sizeof(buf), "disk%.2d.lec", diskNumber);
-		}
-	} else {
-		char id = 0;
-
-		switch (_substEntry.genMethod) {
-		case kGenDiskNum:
-			snprintf(buf, sizeof(buf), _substEntry.pattern, diskNumber);
-			break;
-	
-		case kGenRoomNum:
-			snprintf(buf, sizeof(buf), _substEntry.pattern, room);
-			break;
-
-		case kGenHEMac:
-		case kGenHEMacNoParens:
-		case kGenHEPC:
-			// FIXME: Not sure if the following HE section is quite correct...
-			if (_game.heversion >= 98) {
-				int disk = 0;
-				if (_heV7DiskOffsets)
-					disk = _heV7DiskOffsets[room];
-		
-				switch(disk) {
-				case 2:
-					id = 'b';
-					snprintf(buf, sizeof(buf), "%s.(b)", pattern);
-					break;
-				case 1:
-					id = 'a';
-					snprintf(buf, sizeof(buf), "%s.(a)", pattern);
-					break;
-				default:
-					id = '0';
-					snprintf(buf, sizeof(buf), "%s.he0", pattern);
-				}
-			} else if (_game.heversion >= 70) {
-				id = (room == 0) ? '0' : '1';
-			} else {
-				id = diskNumber + '0';
-			}
-			
-			if (_substEntry.genMethod == kGenHEPC) {
-				// For HE >= 98, we already called snprintf above.
-				if (_game.heversion < 98)
-					snprintf(buf, sizeof(buf), "%s.he%c", pattern, id);
-			} else {
-				if (id == '3') { // special case for cursors
-					// For mac they're stored in game binary
-					strncpy(buf, _substEntry.pattern, bufsize);
-				} else {
-					if (subst.genMethod == kGenMac)
-						snprintf(buf, sizeof(buf), "%s (%c)", _substEntry.pattern, id);
-					else
-						snprintf(buf, sizeof(buf), "%s %c", _substEntry.pattern, id);
-				}
-			}
-
-			break;
-
-		default:
-			error("FOO");
-		}
-	}
-
-	return buf;
-}
-#endif
-
 using Common::UNK_LANG;
 
 // The following describes how Fingolfin thinks this table might be used one day;
@@ -1069,7 +964,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ NULL, NULL, kGenUnchanged, UNK_LANG, UNK, 0 }
 };
 
-
 #endif
 
 
@@ -1103,6 +997,179 @@ const MD5Table *findInMD5Table(const char *md5) {
 #endif
 	return (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
 }
+
+#if 0
+Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
+	char buf[128];
+
+	switch (gfp.genMethod) {
+	case kGenDiskNum:
+	case kGenRoomNum:
+		snprintf(buf, sizeof(buf), gfp.pattern, 0);
+		break;
+
+	case kGenHEPC:
+		snprintf(buf, sizeof(buf), "%s.he0", gfp.pattern);
+		break;
+
+	case kGenHEMac:
+		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
+		break;
+
+	case kGenHEMacNoParens:
+		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
+		break;
+
+	default:
+		error("generateFilenameForDetection: Unhandled genMethod");
+	}
+
+	return buf;
+}
+
+#if 0
+Common::String ScummEngine::generateFilename(int room, int diskNumber) {
+	char buf[128];
+
+	if (_game.version == 4) {
+		if (room == 0 || room >= 900) {
+			snprintf(buf, sizeof(buf), "%.3d.lfl", room);
+		} else {
+			snprintf(buf, sizeof(buf), "disk%.2d.lec", diskNumber);
+		}
+	} else {
+		char id = 0;
+
+		switch (_substEntry.genMethod) {
+		case kGenDiskNum:
+			snprintf(buf, sizeof(buf), _substEntry.pattern, diskNumber);
+			break;
+	
+		case kGenRoomNum:
+			snprintf(buf, sizeof(buf), _substEntry.pattern, room);
+			break;
+
+		case kGenHEMac:
+		case kGenHEMacNoParens:
+		case kGenHEPC:
+			// FIXME: Not sure if the following HE section is quite correct...
+			if (_game.heversion >= 98) {
+				int disk = 0;
+				if (_heV7DiskOffsets)
+					disk = _heV7DiskOffsets[room];
+		
+				switch(disk) {
+				case 2:
+					id = 'b';
+					snprintf(buf, sizeof(buf), "%s.(b)", pattern);
+					break;
+				case 1:
+					id = 'a';
+					snprintf(buf, sizeof(buf), "%s.(a)", pattern);
+					break;
+				default:
+					id = '0';
+					snprintf(buf, sizeof(buf), "%s.he0", pattern);
+				}
+			} else if (_game.heversion >= 70) {
+				id = (room == 0) ? '0' : '1';
+			} else {
+				id = diskNumber + '0';
+			}
+			
+			if (_substEntry.genMethod == kGenHEPC) {
+				// For HE >= 98, we already called snprintf above.
+				if (_game.heversion < 98)
+					snprintf(buf, sizeof(buf), "%s.he%c", pattern, id);
+			} else {
+				if (id == '3') { // special case for cursors
+					// For mac they're stored in game binary
+					strncpy(buf, _substEntry.pattern, bufsize);
+				} else {
+					if (subst.genMethod == kGenMac)
+						snprintf(buf, sizeof(buf), "%s (%c)", _substEntry.pattern, id);
+					else
+						snprintf(buf, sizeof(buf), "%s %c", _substEntry.pattern, id);
+				}
+			}
+
+			break;
+
+		default:
+			error("FOO");
+		}
+	}
+
+	return buf;
+}
+#endif
+
+struct DetectorDesc {
+	Common::String path;
+	Common::String md5;
+	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
+	//GameSettings game;
+};
+
+void detectGames(const FSList &fslist) {
+	typedef Common::HashMap<Common::String, DetectorDesc> DescMap;
+	DescMap fileMD5Map;
+	
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (!file->isDirectory()) {
+			DetectorDesc d;
+			d.path = file->path();
+			d.md5Entry = 0;
+			fileMD5Map[file->displayName()] = d;
+		}
+	}
+
+	// Iterate over all filename patterns.
+	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
+		// Generate the detectname corresponding to the gfp.
+		Common::String file(generateFilenameForDetection(*gfp));
+		if (!fileMD5Map.contains(file))
+			continue;
+		
+		// OK, the file is present. Compute the MD5, if it hasn't been done yet.
+		DetectorDesc &d = fileMD5Map[file];
+		if (d.md5.empty()) {
+			uint8 md5sum[16];
+			if (Common::md5_file(d.path.c_str(), md5sum, 0, kMD5FileSizeLimit)) {
+				char md5str[32+1];
+				for (int j = 0; j < 16; j++) {
+					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+				}
+
+				d.md5 = md5str;
+				d.md5Entry = findInMD5Table(md5str);
+
+				if (d.md5Entry) {
+					TODO: Exact match found, handle this
+				}
+			}
+		}
+		
+		// If an exact match for this file has already been found, don't bother 
+		// looking at it anymore.
+		if (d.md5Entry != 0)
+			continue;
+
+		// At this point, the MD5 sum has been computed but is not known.
+		TODO: Look at the file (like in Engine_SCUMM_detectGames) to further
+		narrow down the possibilities... For names that are unique, we don't
+		have to do much more. For non-unique names, we could at least try
+		to determine the SCUMM version to somewhat reduce the list of
+		possible candidates.
+		
+		How to determine whether a detection filename is unique? Well the only
+		names which are *not* unique are 00.LFL and 000.LFL anyway!
+		
+	}
+}
+
+#endif
+
 
 #pragma mark -
 #pragma mark --- Filename substitution ---
