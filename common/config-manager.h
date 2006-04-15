@@ -92,37 +92,64 @@ public:
 	void				loadDefaultConfigFile();
 	void				loadConfigFile(const String &filename);
 
+	/**
+	 * Retrieve the config domain with the given name.
+	 * @param domName	the name of the domain to retrieve
+	 * @return pointer to the domain, or 0 if the domain doesn't exist.
+	 */
+	Domain *			getDomain(const String &domName);
+	const Domain *		getDomain(const String &domName) const;
+
+
+	//
+	// Generic access methods: No domain specified, use the values from the
+	// various domains in the order of their priority.
+	//
+	
 	bool				hasKey(const String &key) const;
-	bool				hasKey(const String &key, const String &dom) const;
+	const String &		get(const String &key) const;
+	void				set(const String &key, const String &value);
 
-	void				removeKey(const String &key, const String &dom);
+#if 1
+	//
+	// Domain specific access methods: Acces *one specific* domain and modify it.
+	// TODO: I'd like to get rid of most of those if possible, or at least reduce
+	// their usage, by using getDomain as often as possible. For example in the
+	// options dialog code...
+	//
 
-	const String &		get(const String &key, const String &dom = String::emptyString) const;
-	int					getInt(const String &key, const String &dom = String::emptyString) const;
-	bool				getBool(const String &key, const String &dom = String::emptyString) const;
+	bool				hasKey(const String &key, const String &domName) const;
+	const String &		get(const String &key, const String &domName) const;
+	void				set(const String &key, const String &value, const String &domName);
 
-	void				set(const String &key, const String &value, const String &dom = String::emptyString);
-	void				set(const String &key, const char *value, const String &dom = String::emptyString);
-	void				set(const String &key, int value, const String &dom = String::emptyString);
-	void				set(const String &key, bool value, const String &dom = String::emptyString);
+	void				removeKey(const String &key, const String &domName);
+#endif
+
+	//
+	// Some additional convenience accessors.
+	//
+	int					getInt(const String &key, const String &domName = String::emptyString) const;
+	bool				getBool(const String &key, const String &domName = String::emptyString) const;
+	void				set(const String &key, int value, const String &domName = String::emptyString);
+	void				set(const String &key, bool value, const String &domName = String::emptyString);
+
 
 	void				registerDefault(const String &key, const String &value);
 	void				registerDefault(const String &key, const char *value);
 	void				registerDefault(const String &key, int value);
 	void				registerDefault(const String &key, bool value);
-//	...
 
 	void				flushToDisk();
 
-	void				setActiveDomain(const String &domain);
-	const String &		getActiveDomain() const { return _activeDomain; }
+	void				setActiveDomain(const String &domName);
+	const String &		getActiveDomain() const { return _activeDomainName; }
 
-//	void				addDomain(const String &name);
-	void				removeGameDomain(const String &name);
+//	void				addDomain(const String &domName);
+	void				removeGameDomain(const String &domName);
 	void				renameGameDomain(const String &oldName, const String &newName);
-	bool				hasGameDomain(const String &domain) const;
+	bool				hasGameDomain(const String &domName) const;
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
-
+	
 /*
 	TODO: Callback/change notification system
 	typedef void (*ConfigCallback)(const ConstString &key, void *refCon);
@@ -140,12 +167,14 @@ private:
 
 	Domain			_transientDomain;
 	DomainMap		_gameDomains;
-	DomainMap		_globalDomains;
+	Domain			_appDomain;
 	Domain			_defaultsDomain;
 
 	StringList		_domainSaveOrder;
 
-	String			_activeDomain;
+	String			_activeDomainName;
+	Domain *		_activeDomain;
+
 	String			_filename;
 };
 

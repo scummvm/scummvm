@@ -602,6 +602,10 @@ void GameDetector::setTarget(const String &target) {
 		_gameid = ConfMan.get("gameid");
 	else
 		_gameid = _targetName;
+	
+	// TODO: In the future, simply insert the gameid into the transient domain.
+	// That way, all code (including backends) can reliably access it.
+	//ConfMan.set("gameid", _gameid, Common::ConfigManager::kTransientDomain);
 }
 
 bool GameDetector::detectMain() {

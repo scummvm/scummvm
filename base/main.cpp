@@ -314,8 +314,15 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	setupDummyPalette(system);
 
 	// Unless a game was specified, show the launcher dialog
-	if (detector._targetName.empty())
+	if (detector._targetName.empty()) {
+		// Discard any command line options. Those that affect the graphics
+		// mode etc. already have should have been handled by the backend at
+		// this point. And the others (like bootparam etc.) should not
+		// blindly be passed to the first game launched from the launcher.
+		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
 		running = launcherDialog(detector, system);
+	}
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
@@ -331,11 +338,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			if (result == 0)
 				break;
 
-			// There are some command-line options that it's
-			// unlikely that we want to preserve now that we're
-			// going to start a different game.
-			ConfMan.removeKey("boot_param", ConfMan.kTransientDomain);
-			ConfMan.removeKey("save_slot", ConfMan.kTransientDomain);
+			// Discard any command line options. It's unlikely that the user
+			// wanted to apply them to *all* games ever launched.
+			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+			
+			// TODO: Reset the game detector fully
 
 			// PluginManager::instance().unloadPlugins();
 			PluginManager::instance().loadPlugins();

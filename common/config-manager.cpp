@@ -54,8 +54,8 @@ static char *rtrim(char *t) {
 	return t;
 }
 
-static bool isValidDomainName(const Common::String &domain) {
-	const char *p = domain.c_str();
+static bool isValidDomainName(const Common::String &domName) {
+	const char *p = domName.c_str();
 	while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
 		p++;
 	return *p == 0;
@@ -68,16 +68,10 @@ namespace Common {
 const String ConfigManager::kApplicationDomain("scummvm");
 const String ConfigManager::kTransientDomain("__TRANSIENT");
 
-const String trueStr("true");
-const String falseStr("false");
-
 #else
 
 const char *ConfigManager::kApplicationDomain = "scummvm";
 const char *ConfigManager::kTransientDomain = "__TRANSIENT";
-
-const char *trueStr = "true";
-const char *falseStr = "false";
 
 #endif
 
@@ -85,8 +79,6 @@ const char *falseStr = "false";
 
 
 ConfigManager::ConfigManager() {
-	// Ensure the global domain(s) are setup.
-	_globalDomains[kApplicationDomain];
 }
 
 
@@ -121,12 +113,9 @@ void ConfigManager::loadDefaultConfigFile() {
 }
 
 void ConfigManager::loadConfigFile(const String &filename) {
-	_globalDomains.clear();
+	_appDomain.clear();
 	_gameDomains.clear();
 	_transientDomain.clear();
-
-	// Ensure the global domain(s) are setup.
-	_globalDomains[kApplicationDomain];
 
 	_filename = filename;
 	_domainSaveOrder.clear();
@@ -181,8 +170,8 @@ void ConfigManager::loadFile(const String &filename) {
 				}
 
 				// Store domain comment
-				if (_globalDomains.contains(domain)) {
-					_globalDomains[domain].setDomainComment(comment);
+				if (domain == kApplicationDomain) {
+					_appDomain.setDomainComment(comment);
 				} else {
 					_gameDomains[domain].setDomainComment(comment);
 				}
@@ -212,8 +201,8 @@ void ConfigManager::loadFile(const String &filename) {
 				set(key, value, domain);
 
 				// Store comment
-				if (_globalDomains.contains(domain)) {
-					_globalDomains[domain].setKVComment(key, comment);
+				if (domain == kApplicationDomain) {
+					_appDomain.setKVComment(key, comment);
 				} else {
 					_gameDomains[domain].setKVComment(key, comment);
 				}
@@ -239,8 +228,8 @@ void ConfigManager::flushToDisk() {
 		// are not present anymore.
 		StringList::const_iterator i;
 		for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
-			if (_globalDomains.contains(*i)) {
-				writeDomain(cfg_file, *i, _globalDomains[*i]);
+			if (kApplicationDomain == *i) {
+				writeDomain(cfg_file, *i, _appDomain);
 			} else if (_gameDomains.contains(*i)) {
 				writeDomain(cfg_file, *i, _gameDomains[*i]);
 			}
@@ -248,13 +237,9 @@ void ConfigManager::flushToDisk() {
 
 		DomainMap::const_iterator d;
 
-		// Now write the global domains which weren't written yet
-		for (d = _globalDomains.begin(); d != _globalDomains.end(); ++d) {
-			if (!_domainSaveOrder.contains(d->_key))
-				writeDomain(cfg_file, d->_key, d->_value);
-		}
-
-		// Finally write the remaining game domains
+		// Now write the domains which haven't been written yet
+		if (!_domainSaveOrder.contains(kApplicationDomain))
+			writeDomain(cfg_file, kApplicationDomain, _appDomain);
 		for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
 			if (!_domainSaveOrder.contains(d->_key))
 				writeDomain(cfg_file, d->_key, d->_value);
@@ -295,91 +280,142 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 	fprintf(file, "\n");
 }
 
+
+#pragma mark -
+
+
+const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) const {
+	assert(!domName.empty());
+	assert(isValidDomainName(domName));
+	
+	if (domName == kTransientDomain)
+		return &_transientDomain;
+	if (domName == kApplicationDomain)
+		return &_appDomain;
+	if (_gameDomains.contains(domName))
+		return &_gameDomains[domName];
+
+	return 0;
+}
+
+ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
+	assert(!domName.empty());
+	assert(isValidDomainName(domName));
+	
+	if (domName == kTransientDomain)
+		return &_transientDomain;
+	if (domName == kApplicationDomain)
+		return &_appDomain;
+	if (_gameDomains.contains(domName))
+		return &_gameDomains[domName];
+
+	return 0;
+}
+
+
 #pragma mark -
 
 
 bool ConfigManager::hasKey(const String &key) const {
 	// Search the domains in the following order:
-	// 1) Transient domain
-	// 2) Active game domain (if any)
-	// 3) All global domains
+	// 1) the transient domain,
+	// 2) the active game domain (if any),
+	// 3) the application domain.
 	// The defaults domain is explicitly *not* checked.
 
 	if (_transientDomain.contains(key))
 		return true;
 
-	if (!_activeDomain.empty() && _gameDomains[_activeDomain].contains(key))
+	if (_activeDomain && _activeDomain->contains(key))
 		return true;
 
-	DomainMap::const_iterator iter;
-	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
-		if (iter->_value.contains(key))
-			return true;
-	}
+	if (_appDomain.contains(key))
+		return true;
 
 	return false;
 }
 
-bool ConfigManager::hasKey(const String &key, const String &dom) const {
-	assert(!dom.empty());
-	assert(isValidDomainName(dom));
+bool ConfigManager::hasKey(const String &key, const String &domName) const {
+	// FIXME: For now we continue to allow empty domName to indicate
+	// "use 'default' domain". This is mainly needed for the SCUMM ConfigDialog
+	// and should be removed ASAP.
+	if (domName.empty())
+		return hasKey(key);
 
-	if (dom == kTransientDomain)
-		return _transientDomain.contains(key);
-	if (_gameDomains.contains(dom))
-		return _gameDomains[dom].contains(key);
-	if (_globalDomains.contains(dom))
-		return _globalDomains[dom].contains(key);
+	const Domain *domain = getDomain(domName);
 
-	return false;
+	if (!domain)
+		return false;
+	return domain->contains(key);
 }
 
-void ConfigManager::removeKey(const String &key, const String &dom) {
-	assert(!dom.empty());
-	assert(isValidDomainName(dom));
+void ConfigManager::removeKey(const String &key, const String &domName) {
+	Domain *domain = getDomain(domName);
 
-	if (dom == kTransientDomain)
-		_transientDomain.erase(key);
-	else if (_gameDomains.contains(dom))
-		_gameDomains[dom].erase(key);
-	else if (_globalDomains.contains(dom))
-		_globalDomains[dom].erase(key);
-	else
-		error("Removing key '%s' from non-existent domain '%s'", key.c_str(), dom.c_str());
+	if (!domain)
+		error("ConfigManager::removeKey(%s, %s) called on non-existent domain",
+					key.c_str(), domName.c_str());
+
+	domain->erase(key);
 }
 
 
 #pragma mark -
 
 
-const String & ConfigManager::get(const String &key, const String &domain) const {
-	assert(isValidDomainName(domain));
-
-	// Search the domains in the following order:
-	// 1) Transient domain
-	// 2) Active game domain (if any)
-	// 3) All global domains
-	// 4) The defaults
-
-	if ((domain.empty() || domain == kTransientDomain) && _transientDomain.contains(key))
+const String & ConfigManager::get(const String &key) const {
+	if (_transientDomain.contains(key))
 		return _transientDomain[key];
+	else if (_activeDomain && _activeDomain->contains(key))
+		return (*_activeDomain)[key];
+	else if (_appDomain.contains(key))
+		return _appDomain[key];
+	else if (_defaultsDomain.contains(key))
+		return _defaultsDomain[key];
 
-	const String &dom = domain.empty() ? _activeDomain : domain;
-
-	if (!dom.empty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
-		return _gameDomains[dom][key];
-
-	DomainMap::const_iterator iter;
-	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
-		if (iter->_value.contains(key))
-			return iter->_value[key];
-	}
-
-	return _defaultsDomain.get(key);
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
+	return String::emptyString;
+#else
+	return ConfMan._emptyString;
+#endif
 }
 
-int ConfigManager::getInt(const String &key, const String &dom) const {
-	String value(get(key, dom));
+const String & ConfigManager::get(const String &key, const String &domName) const {
+	// FIXME: For now we continue to allow empty domName to indicate
+	// "use 'default' domain". This is mainly needed for the SCUMM ConfigDialog
+	// and should be removed ASAP.
+	if (domName.empty())
+		return get(key);
+
+	const Domain *domain = getDomain(domName);
+
+	if (!domain)
+		error("ConfigManager::get(%s,%s) called on non-existent domain",
+								key.c_str(), domName.c_str());
+
+	if (domain->contains(key))
+		return (*domain)[key];
+
+	return _defaultsDomain.get(key);
+
+	if (!domain->contains(key)) {
+#if 1
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
+	return String::emptyString;
+#else
+	return ConfMan._emptyString;
+#endif
+#else
+		error("ConfigManager::get(%s,%s) called on non-existent key",
+					key.c_str(), domName.c_str());
+#endif
+	}
+
+	return (*domain)[key];
+}
+
+int ConfigManager::getInt(const String &key, const String &domName) const {
+	String value(get(key, domName));
 	char *errpos;
 
 	// For now, be tolerant against missing config keys. Strictly spoken, it is
@@ -390,67 +426,91 @@ int ConfigManager::getInt(const String &key, const String &dom) const {
 
 	int ivalue = (int)strtol(value.c_str(), &errpos, 10);
 	if (value.c_str() == errpos)
-		error("Config file buggy: '%s' is not a valid integer", errpos);
+		error("ConfigManager::getInt(%s,%s): '%s' is not a valid integer",
+					key.c_str(), domName.c_str(), errpos);
 
 	return ivalue;
 }
 
-bool ConfigManager::getBool(const String &key, const String &dom) const {
-	String value(get(key, dom));
+bool ConfigManager::getBool(const String &key, const String &domName) const {
+	String value(get(key, domName));
 
-	if ((value == trueStr) || (value == "yes") || (value == "1"))
+	if ((value == "true") || (value == "yes") || (value == "1"))
 		return true;
-	if ((value == falseStr) || (value == "no") || (value == "0"))
+	if ((value == "false") || (value == "no") || (value == "0"))
 		return false;
 
-	error("Config file buggy: '%s' is not a valid bool", value.c_str());
+	error("ConfigManager::getBool(%s,%s): '%s' is not a valid bool",
+				key.c_str(), domName.c_str(), value.c_str());
 }
 
 
 #pragma mark -
 
 
-void ConfigManager::set(const String &key, const String &value, const String &dom) {
-	assert(isValidDomainName(dom));
-	if (dom.empty()) {
-		// Remove the transient domain value
-		_transientDomain.erase(key);
+void ConfigManager::set(const String &key, const String &value) {
+	// Remove the transient domain value, if any.
+	_transientDomain.erase(key);
 
-		if (_activeDomain.empty())
-			_globalDomains[kApplicationDomain][key] = value;
-		else
-			_gameDomains[_activeDomain][key] = value;
+	// Write the new key/value pair into the active domain, resp. into
+	// the application domain if no game domain is active.
+	if (_activeDomain)
+		(*_activeDomain)[key] = value;
+	else
+		_appDomain[key] = value;
+}
 
-	} else {
+void ConfigManager::set(const String &key, const String &value, const String &domName) {
+	// FIXME: For now we continue to allow empty domName to indicate
+	// "use 'default' domain". This is mainly needed for the SCUMM ConfigDialog
+	// and should be removed ASAP.
+	if (domName.empty())
+		return set(key, value);
 
-		if (dom == kTransientDomain)
-			_transientDomain[key] = value;
-		else {
-			if (_globalDomains.contains(dom)) {
-				_globalDomains[dom][key] = value;
-				if (_activeDomain.empty() || !_gameDomains[_activeDomain].contains(key))
-					_transientDomain.erase(key);
-			} else {
-				_gameDomains[dom][key] = value;
-				if (dom == _activeDomain)
-					_transientDomain.erase(key);
-			}
+	Domain *domain = getDomain(domName);
+
+	if (!domain)
+		error("ConfigManager::set(%s,%s,%s) called on non-existent domain",
+					key.c_str(), value.c_str(), domName.c_str());
+
+	(*domain)[key] = value;
+	
+	// TODO/FIXME: We used to erase the given key from the transient domain
+	// here. Do we still want to do that?
+	// It was probably there to simplify the options dialogs code:
+	// Imagine you are editing the current options (via the SCUMM ConfigDialog,
+	// for example). If you edit the game domain for that, but a matching
+	// entry in the transient domain is present, than your changes may not take
+	// effect. So you want to remove the key from the transient domain before
+	// adding it to the active domain.
+	// But doing this here seems rather evil... need to comb the options dialog
+	// code to find out if it's still necessary, and if that's the case, how
+	// to replace it in a clean fashion...
+/*
+	if (domName == kTransientDomain)
+		_transientDomain[key] = value;
+	else {
+		if (domName == kApplicationDomain) {
+			_appDomain[key] = value;
+			if (_activeDomainName.empty() || !_gameDomains[_activeDomainName].contains(key))
+				_transientDomain.erase(key);
+		} else {
+			_gameDomains[domName][key] = value;
+			if (domName == _activeDomainName)
+				_transientDomain.erase(key);
 		}
 	}
+*/
 }
 
-void ConfigManager::set(const String &key, const char *value, const String &dom) {
-	set(key, String(value), dom);
-}
-
-void ConfigManager::set(const String &key, int value, const String &dom) {
+void ConfigManager::set(const String &key, int value, const String &domName) {
 	char tmp[128];
 	snprintf(tmp, sizeof(tmp), "%i", value);
-	set(key, String(tmp), dom);
+	set(key, String(tmp), domName);
 }
 
-void ConfigManager::set(const String &key, bool value, const String &dom) {
-	set(key, value ? trueStr : falseStr, dom);
+void ConfigManager::set(const String &key, bool value, const String &domName) {
+	set(key, String(value ? "true" : "false"), domName);
 }
 
 
@@ -472,24 +532,27 @@ void ConfigManager::registerDefault(const String &key, int value) {
 }
 
 void ConfigManager::registerDefault(const String &key, bool value) {
-	registerDefault(key, value ? trueStr : falseStr);
+	registerDefault(key, value ? "true" : "false");
 }
 
 
 #pragma mark -
 
 
-void ConfigManager::setActiveDomain(const String &domain) {
-	assert(!domain.empty());
-	assert(isValidDomainName(domain));
-	_activeDomain = domain;
-	_gameDomains[domain];
+void ConfigManager::setActiveDomain(const String &domName) {
+	if (domName.empty()) {
+		_activeDomain = 0;
+	} else {
+		assert(isValidDomainName(domName));
+		_activeDomain = & _gameDomains[domName];
+	}
+	_activeDomainName = domName;
 }
 
-void ConfigManager::removeGameDomain(const String &domain) {
-	assert(!domain.empty());
-	assert(isValidDomainName(domain));
-	_gameDomains.erase(domain);
+void ConfigManager::removeGameDomain(const String &domName) {
+	assert(!domName.empty());
+	assert(isValidDomainName(domName));
+	_gameDomains.erase(domName);
 }
 
 void ConfigManager::renameGameDomain(const String &oldName, const String &newName) {
@@ -511,9 +574,9 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 	_gameDomains.erase(oldName);
 }
 
-bool ConfigManager::hasGameDomain(const String &domain) const {
-	assert(!domain.empty());
-	return isValidDomainName(domain) && _gameDomains.contains(domain);
+bool ConfigManager::hasGameDomain(const String &domName) const {
+	assert(!domName.empty());
+	return isValidDomainName(domName) && _gameDomains.contains(domName);
 }
 
 

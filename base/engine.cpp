@@ -56,12 +56,18 @@ Engine::~Engine() {
 }
 
 void Engine::initCommonGFX(GameDetector &detector, bool defaultTo1XScaler) {
+	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
+	const Common::ConfigManager::Domain *gameDomain = ConfMan.getDomain(detector._targetName);
+
+	assert(transientDomain);
+
 	const bool useDefaultGraphicsMode =
-		!ConfMan.hasKey("gfx_mode", Common::ConfigManager::kTransientDomain) &&
+		!transientDomain->contains("gfx_mode") &&
 		(
-		!ConfMan.hasKey("gfx_mode", detector._targetName) ||
-		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "normal") ||
-		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default")
+		!gameDomain ||
+		!gameDomain->contains("gfx_mode") ||
+		!scumm_stricmp(gameDomain->get("gfx_mode").c_str(), "normal") ||
+		!scumm_stricmp(gameDomain->get("gfx_mode").c_str(), "default")
 		);
 
 	// See if the game should default to 1x scaler
@@ -77,12 +83,19 @@ void Engine::initCommonGFX(GameDetector &detector, bool defaultTo1XScaler) {
 		}
 	}
 
+	// Note: The following code deals with the fullscreen / ASR settings. This
+	// is a bit tricky, because there are three ways the user can affect these
+	// settings: Via the config file, via the command line, and via in-game
+	// hotkeys.
+	// Any global or command line settings already have been applied at the time
+	// we get here. Hence we only do something 
+
 	// (De)activate aspect-ratio correction as determined by the config settings
-	if (ConfMan.hasKey("aspect_ratio", detector._targetName))
+	if (gameDomain && gameDomain->contains("aspect_ratio"))
 		_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 
 	// (De)activate fullscreen mode as determined by the config settings
-	if (ConfMan.hasKey("fullscreen", detector._targetName))
+	if (gameDomain && gameDomain->contains("fullscreen"))
 		_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
