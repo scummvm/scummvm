@@ -48,13 +48,13 @@
  * OTHER DEALINGS IN THE SOFTWARE. 
  */
 
+#ifndef COMMON_HASHMAP_H
+#define COMMON_HASHMAP_H
+
 #include "common/stdafx.h"
 #include "common/func.h"
 #include "common/str.h"
 #include "common/util.h"
-
-#ifndef COMMON_HASHMAP_H
-#define COMMON_HASHMAP_H
 
 namespace Common {
 

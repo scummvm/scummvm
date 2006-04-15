@@ -20,6 +20,7 @@
  * $Id$
  *
  */
+
 #ifndef COMMON_ENDIAN_H
 #define COMMON_ENDIAN_H
 
