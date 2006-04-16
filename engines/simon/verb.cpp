@@ -715,7 +715,7 @@ void SimonEngine::displayName(HitArea *ha) {
 			return;
 
 		if (getBitFlag(99))
-			_animatePointer = ((ha->flags & kBFTextBox) != 0);
+			_animatePointer = ((ha->flags & kBFTextBox) == 0);
 		else
 			_animatePointer = 1;
 
@@ -755,7 +755,6 @@ void SimonEngine::invertBox(HitArea *ha, bool state) {
 			_oldMouseAnimMax = _mouseAnimMax;
 			_mouseAnimMax = 2;
 			_mouseCursor = 18;
-
 		}
 	} else {
 		if (getBitFlag(207)) {

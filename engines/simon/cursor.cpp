@@ -230,7 +230,15 @@ void SimonEngine::drawMousePointer() {
 		byte *src, *dst;
 		VgaPointersEntry *vpe = &_vgaBufferPointers[7];
 
-		src = vpe->vgaFile2 + 98 * 8;
+		if (_animatePointer) {
+			_mouseAnim++;
+			if (_mouseAnim == _mouseAnimMax)
+				_mouseAnim = 1;
+		}
+
+		uint cursor = _mouseCursor * 16 + 1 + _mouseAnim;
+		src = vpe->vgaFile2 + cursor * 8;
+
 		uint width = READ_LE_UINT16(src + 6);
 		uint height = READ_LE_UINT16(src + 4) & 0x7FFF;
 		src = vpe->vgaFile2 + readUint32Wrapper(src);
