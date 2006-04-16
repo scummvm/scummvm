@@ -26,7 +26,6 @@
 #include <stdio.h>
 
 #include "base/engine.h"
-#include "base/plugins.h"
 
 #include "common/rect.h"
 #include "common/util.h"
@@ -129,8 +128,6 @@ struct GameDescription {
 	uint32 features;
 	Common::Language language;
 	Common::Platform platform;
-
-	DetectedGame toDetectedGame();
 };
 
 struct GameSpecificSettings;

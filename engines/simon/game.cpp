@@ -1240,11 +1240,11 @@ static GameDescription gameDescriptions[] = {
 	},
 };
 
-DetectedGame GameDescription::toDetectedGame() {
+DetectedGame toDetectedGame(const GameDescription &g) {
 	const char *title;
-	title = simonGames[gameType].description;
-	DetectedGame dg(name, title, language, platform);
-	dg.updateDesc(extra);
+	title = simonGames[g.gameType].description;
+	DetectedGame dg(g.name, title, g.language, g.platform);
+	dg.updateDesc(g.extra);
 	return dg;
 }
 
@@ -1339,7 +1339,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 			}
 		}
 		if (!fileMissing) {
-			debug(2, "Found game: %s", gameDescriptions[i].toDetectedGame().description.c_str());
+			debug(2, "Found game: %s", toDetectedGame(gameDescriptions[i]).description.c_str());
 			matched[matchedCount++] = i;
 		}
 	}
@@ -1366,13 +1366,13 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 		for (i = 0; i < matchedCount; i++) {
 			if ((gameDescriptions[matched[i]].language != language && language != Common::UNK_LANG) ||
 				(gameDescriptions[matched[i]].platform != platform && platform != Common::kPlatformUnknown)) {
-				debug(2, "Purged %s", gameDescriptions[matched[i]].toDetectedGame().description.c_str());
+				debug(2, "Purged %s", toDetectedGame(gameDescriptions[matched[i]]).description.c_str());
 				matched[i] = -1;
 				continue;
 			}
 
 			if (gameDescriptions[matched[i]].filesCount < maxcount) {
-				debug(2, "Purged: %s", gameDescriptions[matched[i]].toDetectedGame().description.c_str());
+				debug(2, "Purged: %s", toDetectedGame(gameDescriptions[matched[i]]).description.c_str());
 				matched[i] = -1;
 			}
 		}
@@ -1420,7 +1420,7 @@ bool SimonEngine::initGame() {
 		error("SimonEngine::loadGame wrong gameNumber");
 	}
 
-	debug(2, "Running %s", gameDescriptions[gameNumber].toDetectedGame().description.c_str());
+	debug(2, "Running %s", toDetectedGame(gameDescriptions[gameNumber]).description.c_str());
 
 	_gameDescription = &gameDescriptions[gameNumber];
 
@@ -1434,7 +1434,7 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	count = detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown, matches);
 
 	for (int i = 0; i < count; i++)
-		detectedGames.push_back(gameDescriptions[matches[i]].toDetectedGame());
+		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]]));
 	free(matches);
 	return detectedGames;
 }

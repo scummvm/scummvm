@@ -28,7 +28,6 @@
 #include "base/engine.h"
 
 #include "common/stream.h"
-#include "base/plugins.h"
 
 #include "saga/gfx.h"
 #include "saga/list.h"
@@ -517,8 +516,6 @@ struct GameDescription {
 	uint32 features;
 	Common::Language language;
 	Common::Platform platform;
-
-	DetectedGame toDetectedGame();
 };
 
 struct SaveFileData {
