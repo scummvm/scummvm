@@ -1144,7 +1144,9 @@ void detectGames(const FSList &fslist) {
 				d.md5Entry = findInMD5Table(md5str);
 
 				if (d.md5Entry) {
+/*
 					TODO: Exact match found, handle this
+*/
 				}
 			}
 		}
@@ -1155,6 +1157,7 @@ void detectGames(const FSList &fslist) {
 			continue;
 
 		// At this point, the MD5 sum has been computed but is not known.
+/*
 		TODO: Look at the file (like in Engine_SCUMM_detectGames) to further
 		narrow down the possibilities... For names that are unique, we don't
 		have to do much more. For non-unique names, we could at least try
@@ -1163,7 +1166,7 @@ void detectGames(const FSList &fslist) {
 		
 		How to determine whether a detection filename is unique? Well the only
 		names which are *not* unique are 00.LFL and 000.LFL anyway!
-		
+*/	
 	}
 }
 
