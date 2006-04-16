@@ -1385,7 +1385,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		// HACK: For now we only consider the first ("default") variant for
 		// gameids that have multiple variants. In a future version of the
 		// detector code, this may change.
-		if (0 == strcmp(lastGameid, g->gameid))
+		if (0 == strcmp(lastGameid, g->gameid) || *(g->gameid) == 0)
 			continue;
 		lastGameid = g->gameid;
 	
