@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: scummsys.h 21500 2006-03-29 15:59:37Z fingolfin $
+ * $Id$
  *
  */
 

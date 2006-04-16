@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: util.h 21036 2006-03-03 14:44:50Z fingolfin $
+ * $Id$
  *
  */
 

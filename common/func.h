@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: map.h 21480 2006-03-28 15:15:45Z fingolfin $
+ * $Id$
  */
 
 #ifndef COMMON_FUNC_H

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: theme.h 21268 2006-03-14 02:19:38Z sev $
+ * $Id$
  */
 
 #include "gui/theme.h"

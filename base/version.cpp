@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: main.cpp 21627 2006-04-05 06:58:18Z sev $
+ * $Id$
  *
  */
 

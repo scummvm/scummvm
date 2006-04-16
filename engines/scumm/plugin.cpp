@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: scumm.cpp 20883 2006-02-25 18:24:55Z fingolfin $
+ * $Id$
  *
  */
 
