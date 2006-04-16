@@ -389,17 +389,9 @@ void Sound::readSfxFile(const char *filename) {
 	file->open(filename);
 
 	if (file->isOpen() == false) {
-		char *filename2;
-		filename2 = (char *)malloc(strlen(filename) + 2);
-		strcpy(filename2, filename);
-		strcat(filename2, ".");
-		file->open(filename2);
-		free(filename2);
-		if (file->isOpen() == false) {
-			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-				warning("readSfxFile: Can't load sfx file %s", filename);
-			return;
-		}
+		if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
+			warning("readSfxFile: Can't load sfx file %s", filename);
+		return;
 	}
 
 	delete _effects;
@@ -425,16 +417,8 @@ void Sound::readVoiceFile(const char *filename) {
 	file->open(filename);
 
 	if (file->isOpen() == false) {
-		char *filename2;
-		filename2 = (char *)malloc(strlen(filename) + 2);
-		strcpy(filename2, filename);
-		strcat(filename2, ".");
-		file->open(filename2);
-		free(filename2);
-		if (file->isOpen() == false) {
-			warning("readVoiceFile: Can't load voice file %s", filename);
-			return;
-		}
+		warning("readVoiceFile: Can't load voice file %s", filename);
+		return;
 	}
 
 	delete _voice;

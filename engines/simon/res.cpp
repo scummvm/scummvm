@@ -201,14 +201,7 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	/* read main gamepc file */
 	in.open(filename);
 	if (in.isOpen() == false) {
-		char *filename2;
-		filename2 = (char *)malloc(strlen(filename) + 2);
-		strcpy(filename2, filename);
-		strcat(filename2, ".");
-		in.open(filename2);
-		free(filename2);
-		if (in.isOpen() == false)
-			error("Can't open gamepc file '%s' or '%s.'", gss->gamepc_filename, gss->gamepc_filename);
+		error("Can't open gamepc file '%s'", gss->gamepc_filename);
 	}
 
 	num_inited_objects = allocGamePcVars(&in);
@@ -227,9 +220,7 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	/* Read list of TABLE resources */
 	in.open("TBLLIST");
 	if (in.isOpen() == false) {
-		in.open("TBLLIST.");
-		if (in.isOpen() == false)
-			error("Can't open table resources file 'TBLLIST' or 'TBLLIST.'");
+		error("Can't open table resources file 'TBLLIST'");
 	}
 
 	file_size = in.size();
