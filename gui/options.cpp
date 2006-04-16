@@ -178,9 +178,15 @@ void OptionsDialog::open() {
 
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
+
+		String soundFont(ConfMan.get("soundfont", _domain));
+		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain))
+			_soundFont->setLabel("None");
+		else
+			_soundFont->setLabel(soundFont);
 	}
 
-
+	// Volume options
 	if (_musicVolumeSlider) {
 		int vol;
 
@@ -246,15 +252,21 @@ void OptionsDialog::close() {
 			}
 		}
 
+		// MIDI options
 		if (_multiMidiCheckbox) {
 			if (_enableMIDISettings) {
 				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
 				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
 				ConfMan.set("enable_gs", _enableGSCheckbox->getState(), _domain);
+
+				String soundFont = _soundFont->getLabel();
+				if (!soundFont.empty() && (soundFont != "None"))
+					ConfMan.set("soundfont", soundFont, _domain);
 			} else {
 				ConfMan.removeKey("multi_midi", _domain);
 				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("enable_gs", _domain);
+				ConfMan.removeKey("soundfont", _domain);
 			}
 		}
 
@@ -513,7 +525,6 @@ void GlobalOptionsDialog::open() {
 	// Set _savePath to the current save path
 	Common::String dir(ConfMan.get("savepath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
-	Common::String soundFont(ConfMan.get("soundfont", _domain));
 
 	if (!dir.empty()) {
 		_savePath->setLabel(dir);
@@ -528,12 +539,6 @@ void GlobalOptionsDialog::open() {
 		_extraPath->setLabel("None");
 	} else {
 		_extraPath->setLabel(extraPath);
-	}
-
-	if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
-		_soundFont->setLabel("None");
-	} else {
-		_soundFont->setLabel(soundFont);
 	}
 #endif
 }
