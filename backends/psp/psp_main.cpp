@@ -29,13 +29,12 @@
 #include <string.h>
 
 #include <common/stdafx.h>
-#include <common/scummsys.h>
+#include <common/system.h>
 #include <base/engine.h>
 #include <base/main.h>
-#include <base/gameDetector.h>
 #include <base/plugins.h>
 
-#include <pspgu.h>
+#include "osys_psp_gu.h"
 #include "./trace.h"
 
 
@@ -122,7 +121,7 @@ int SetupCallbacks(void)
 	return thid;
 }
 
-
+#undef main
 int main(void)
 {
 	//PSPDebugTrace("Init debug screen\n");
@@ -144,7 +143,7 @@ int main(void)
 	static char *argv[] = { "scummvm", "--force-1x-overlay", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
-	g_system = OSystem_PSP_create();
+	g_system = new OSystem_PSP_GU();
 	assert(g_system);
 
 	int res = scummvm_main(argc, argv);
