@@ -1862,7 +1862,8 @@ void SimonEngine::vc48_setPathFinder() {
 		int16 x1, y1, x2, y2;
 		uint pos = 0;
 
-		while (vsp->x >= readUint16Wrapper(p + 2)) {
+		x = vsp->x;
+		while (x >= (int16)readUint16Wrapper(p + 2)) {
 			p += 2;
 			pos++;
 		}
@@ -2426,7 +2427,7 @@ void SimonEngine::vc79_computePosNum() {
 	uint pos = 0;
 
 	int16 y = _variableArrayPtr[16];
-	while (y >= readUint16Wrapper(p + 1)) {
+	while (y >= (int16)readUint16Wrapper(p + 1)) {
 		p += 2;
 		pos++;
 	}
