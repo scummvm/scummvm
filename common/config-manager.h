@@ -146,7 +146,7 @@ public:
 	const Domain *		getActiveDomain() const { return _activeDomain; }
 	const String &		getActiveDomainName() const { return _activeDomainName; }
 
-//	void				addDomain(const String &domName);
+	void				addGameDomain(const String &domName);
 	void				removeGameDomain(const String &domName);
 	void				renameGameDomain(const String &oldName, const String &newName);
 	bool				hasGameDomain(const String &domName) const;

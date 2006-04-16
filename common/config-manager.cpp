@@ -553,6 +553,16 @@ void ConfigManager::setActiveDomain(const String &domName) {
 	_activeDomainName = domName;
 }
 
+void ConfigManager::addGameDomain(const String &domName) {
+	assert(!domName.empty());
+	assert(isValidDomainName(domName));
+
+	// TODO: Do we want to generate an error/warning if a domain with
+	// the given name already exists?
+
+	_gameDomains[domName];
+}
+
 void ConfigManager::removeGameDomain(const String &domName) {
 	assert(!domName.empty());
 	assert(isValidDomainName(domName));

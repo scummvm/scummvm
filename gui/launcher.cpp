@@ -616,8 +616,22 @@ void LauncherDialog::addGame() {
 					suffix++;
 					domain += suffix;
 				}
-				ConfMan.set("description", result.description, domain);
 			}
+
+			// Add the name domain
+			ConfMan.addGameDomain(domain);
+			
+			// TODO: Setting the description field here has the drawback
+			// that the user does never notice when we upgrade our descriptions.
+			// It might be nice ot leave this field empty, and only set it to
+			// a value when the user edits the description string. 
+			// However, at this point, that's impractical. Once we have a method
+			// to query all backends for the proper & full description of a given
+			// game target, we can change this (currently, you can only query
+			// for the generic gameid description; it's not possible to obtain
+			// a description which contains extended information like language, etc.).
+			ConfMan.set("description", result.description, domain);
+
 			ConfMan.set("gameid", result.gameid, domain);
 			ConfMan.set("path", dir.path(), domain);
 
