@@ -618,7 +618,3 @@ bool OSystem_PSP_GU::pollEvent(Event &event) {
 	return false;
 }
 
-OSystem *OSystem_PSP_create() {
-	return new OSystem_PSP_GU();
-}
-

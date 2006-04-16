@@ -22,11 +22,14 @@
  * $Id$
  *
  */
- 
+
+
+#define	USERSPACE_ONLY	//don't use kernel mode features
+
+#ifndef USERSPACE_ONLY
 #include <pspkernel.h>
 #include <pspdebug.h>
-#include <stdlib.h>
-#include <string.h>
+#endif
 
 #include <common/stdafx.h>
 #include <common/system.h>
@@ -37,8 +40,6 @@
 #include "osys_psp_gu.h"
 #include "./trace.h"
 
-
-#define	USERSPACE_ONLY
 
 
 /**
@@ -108,13 +109,9 @@ int CallbackThread(SceSize /*size*/, void *arg) {
 }
 
 /* Sets up the callback thread and returns its thread id */
-int SetupCallbacks(void)
-{
-	int thid = 0;
-
-	thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, THREAD_ATTR_USER, 0);
-	if(thid >= 0)
-	{
+int SetupCallbacks(void) {
+	int thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, THREAD_ATTR_USER, 0);
+	if (thid >= 0) {
 		sceKernelStartThread(thid, 0, 0);
 	}
 
@@ -124,10 +121,6 @@ int SetupCallbacks(void)
 #undef main
 int main(void)
 {
-	//PSPDebugTrace("Init debug screen\n");
-	//pspDebugScreenInit();
-
-	//PSPDebugTrace("Setup callbacks\n");
 	SetupCallbacks();
 
 	//check if the save directory exists

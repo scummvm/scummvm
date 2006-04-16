@@ -636,13 +636,6 @@ void OSystem_PSP::setWindowCaption(const char *caption) {
 void OSystem_PSP::displayMessageOnOSD(const char *msg) {
 }
 
-
-/* moved to psp-gu.cpp */
-/*
-OSystem *OSystem_PSP_create() {
-	return new OSystem_PSP();
-}
-*/
 // Correct pixel format ABBBBBGGGGGRRRRR
 int gBitFormat = 1555;
 

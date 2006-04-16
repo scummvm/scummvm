@@ -28,8 +28,6 @@
 #include "common/rect.h"
 #include "osys_psp.h"
 
-#define min(a,b) (a > b ? b : a)
-
 class OSystem_PSP_GU : public OSystem_PSP
 {
 public:
