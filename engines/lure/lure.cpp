@@ -130,7 +130,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 	uint8 md5sum[16];
 	char md5str[32 + 1];
 
-	if (Common::md5_file(file->path().c_str(), md5sum, NULL, kMD5FileSizeLimit)) {
+	if (Common::md5_file(file->path().c_str(), md5sum, kMD5FileSizeLimit)) {
 		for (int i = 0; i < 16; i++) {
 			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
 		}
@@ -225,7 +225,7 @@ void LureEngine::detectGame() {
 		if (!Common::File::exists(g->checkFile))
 			continue;
 
-		if (Common::md5_file(g->checkFile, md5sum, NULL, kMD5FileSizeLimit)) {
+		if (Common::md5_file(g->checkFile, md5sum, kMD5FileSizeLimit)) {
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j * 2, "%02x", (int)md5sum[j]);
 			}

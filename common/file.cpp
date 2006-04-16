@@ -198,7 +198,6 @@ bool File::open(const String &filename, AccessMode mode, const char *directory) 
 	clearIOFailed();
 
 	String fname(filename);
-
 	fname.toLowercase();
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";

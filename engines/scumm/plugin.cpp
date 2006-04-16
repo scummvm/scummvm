@@ -1134,7 +1134,7 @@ void detectGames(const FSList &fslist) {
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
 			uint8 md5sum[16];
-			if (Common::md5_file(d.path.c_str(), md5sum, 0, kMD5FileSizeLimit)) {
+			if (Common::md5_file(d.path.c_str(), md5sum, kMD5FileSizeLimit)) {
 				char md5str[32+1];
 				for (int j = 0; j < 16; j++) {
 					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -1583,7 +1583,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		uint8 md5sum[16];
 		const char *name = iter->_key.c_str();
 
-		if (Common::md5_file(name, md5sum, 0, kMD5FileSizeLimit)) {
+		if (Common::md5_file(name, md5sum, kMD5FileSizeLimit)) {
 			char md5str[32+1];
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -1738,7 +1738,7 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 	if (!md5) {
 		// Compute the MD5 of the file, and (if we succeeded) store a hex version
 		// of it in gameMD5 (useful to print it to the user in messages).
-		if (Common::md5_file(detectName, md5sum, NULL, kMD5FileSizeLimit)) {
+		if (Common::md5_file(detectName, md5sum, kMD5FileSizeLimit)) {
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5buf + j*2, "%02x", (int)md5sum[j]);
 			}

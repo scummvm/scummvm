@@ -233,7 +233,7 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 	PUT_UINT32(ctx->state[3], digest, 12);
 }
 
-bool md5_file(const char *name, uint8 digest[16], const char *directory, uint32 length) {
+bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 	File f;
 	md5_context ctx;
 	int i;
@@ -241,7 +241,7 @@ bool md5_file(const char *name, uint8 digest[16], const char *directory, uint32 
 	bool restricted = (length != 0);
 	int readlen;
 
-	f.open(name, File::kFileReadMode, directory);
+	f.open(name);
 	if (!f.isOpen()) {
 		warning("md5_file couldn't open '%s'", name);
 		return false;
