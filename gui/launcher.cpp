@@ -763,4 +763,19 @@ void LauncherDialog::updateButtons() {
 	}
 }
 
+void LauncherDialog::handleScreenChanged() {
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
+		GraphicsWidget *logo = new GraphicsWidget(this, "launcher_logo");
+		ThemeNew *th = (ThemeNew *)g_gui.theme();
+		logo->useTransparency(true);
+
+		logo->setGfx(th->getImageSurface(th->kThemeLogo));
+
+		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
+	}
+#endif
+	Dialog::handleScreenChanged();
+}
+
 } // End of namespace GUI

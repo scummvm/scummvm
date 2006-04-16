@@ -50,6 +50,8 @@ protected:
 	GameDetector 	&_detector;
 	BrowserDialog	*_browser;
 
+	virtual void handleScreenChanged();
+
 	void updateListing();
 	void updateButtons();
 

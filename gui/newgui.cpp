@@ -235,7 +235,10 @@ void NewGui::runLoop() {
 				// reinit the whole theme
 				_theme->refresh();
 				_needRedraw = true;
-				activeDialog->handleScreenChanged();
+				// refresh all dialogs
+				for (i = 0; i < _dialogStack.size(); ++i) {
+					activeDialog->handleScreenChanged();
+				}
 				break;
 			}
 		}
