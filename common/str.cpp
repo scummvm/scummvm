@@ -216,6 +216,7 @@ void String::toLowercase() {
 	if (_str == 0 || _len == 0)
 		return;
 
+	ensureCapacity(_len, true);
 	for (int i = 0; i < _len; ++i)
 		_str[i] = tolower(_str[i]);
 }
@@ -224,6 +225,7 @@ void String::toUppercase() {
 	if (_str == 0 || _len == 0)
 		return;
 
+	ensureCapacity(_len, true);
 	for (int i = 0; i < _len; ++i)
 		_str[i] = toupper(_str[i]);
 }
