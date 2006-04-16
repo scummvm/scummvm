@@ -334,18 +334,18 @@ void ScummEngine::processKbd(bool smushMode) {
 		switch(_voiceMode) {
 		case 0:
 			sprintf(buf, "Speech Only");
-			ConfMan.set("speech_mute", false);
-			ConfMan.set("subtitles", false);
+			ConfMan.setBool("speech_mute", false);
+			ConfMan.setBool("subtitles", false);
 			break;
 		case 1:
 			sprintf(buf, "Speech and Subtitles");
-			ConfMan.set("speech_mute", false);
-			ConfMan.set("subtitles", true);
+			ConfMan.setBool("speech_mute", false);
+			ConfMan.setBool("subtitles", true);
 			break;
 		case 2:
 			sprintf(buf, "Subtitles Only");
-			ConfMan.set("speech_mute", true);
-			ConfMan.set("subtitles", true);
+			ConfMan.setBool("speech_mute", true);
+			ConfMan.setBool("subtitles", true);
 			break;
 		}
 
@@ -434,7 +434,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		if (vol > Audio::Mixer::kMaxMixerVolume)
 			vol = Audio::Mixer::kMaxMixerVolume;
 
-		ConfMan.set("music_volume", vol);
+		ConfMan.setInt("music_volume", vol);
 		setupVolumes();
 	} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
 		if (_lastKeyHit == '+' && _defaultTalkDelay > 0)

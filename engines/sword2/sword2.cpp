@@ -216,16 +216,16 @@ void Sword2Engine::readSettings() {
 }
 
 void Sword2Engine::writeSettings() {
-	ConfMan.set("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
-	ConfMan.set("speech_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
-	ConfMan.set("sfx_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
-	ConfMan.set("music_mute", _sound->isMusicMute());
-	ConfMan.set("speech_mute", _sound->isSpeechMute());
-	ConfMan.set("sfx_mute", _sound->isFxMute());
-	ConfMan.set("gfx_details", _screen->getRenderLevel());
-	ConfMan.set("subtitles", getSubtitles());
-	ConfMan.set("object_labels", _mouse->getObjectLabels());
-	ConfMan.set("reverse_stereo", _sound->isReverseStereo());
+	ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+	ConfMan.setInt("speech_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
+	ConfMan.setInt("sfx_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
+	ConfMan.setBool("music_mute", _sound->isMusicMute());
+	ConfMan.setBool("speech_mute", _sound->isSpeechMute());
+	ConfMan.setBool("sfx_mute", _sound->isFxMute());
+	ConfMan.setInt("gfx_details", _screen->getRenderLevel());
+	ConfMan.setBool("subtitles", getSubtitles());
+	ConfMan.setBool("object_labels", _mouse->getObjectLabels());
+	ConfMan.setInt("reverse_stereo", _sound->isReverseStereo());
 
 	ConfMan.flushToDisk();
 }

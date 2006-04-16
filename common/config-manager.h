@@ -130,8 +130,8 @@ public:
 	//
 	int					getInt(const String &key, const String &domName = String::emptyString) const;
 	bool				getBool(const String &key, const String &domName = String::emptyString) const;
-	void				set(const String &key, int value, const String &domName = String::emptyString);
-	void				set(const String &key, bool value, const String &domName = String::emptyString);
+	void				setInt(const String &key, int value, const String &domName = String::emptyString);
+	void				setBool(const String &key, bool value, const String &domName = String::emptyString);
 
 
 	void				registerDefault(const String &key, const String &value);

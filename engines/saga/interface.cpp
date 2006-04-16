@@ -1364,21 +1364,21 @@ void Interface::setOption(PanelButton *panelButton) {
 	case kTextReadingSpeed:
 		if (_vm->getFeatures() & GF_CD_FX) {
 			_vm->_subtitlesEnabled = !_vm->_subtitlesEnabled;
-			ConfMan.set("subtitles", _vm->_subtitlesEnabled);
+			ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		} else {
 			_vm->_readingSpeed = (_vm->_readingSpeed + 1) % 4;
-			ConfMan.set("talkspeed", _vm->_readingSpeed);
+			ConfMan.setInt("talkspeed", _vm->_readingSpeed);
 		}
 		break;
 	case kTextMusic:
 		_vm->_musicVolume = (_vm->_musicVolume + 1) % 11;
 		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
-		ConfMan.set("music_volume", _vm->_musicVolume * 25);
+		ConfMan.setInt("music_volume", _vm->_musicVolume * 25);
 		break;
 	case kTextSound:
 		_vm->_soundVolume = (_vm->_soundVolume + 1) % 11;
 		_vm->_sound->setVolume(_vm->_soundVolume == 10 ? 255 : _vm->_soundVolume * 25);
-		ConfMan.set("sfx_volume", _vm->_soundVolume * 25);
+		ConfMan.setInt("sfx_volume", _vm->_soundVolume * 25);
 		break;
 	}
 }

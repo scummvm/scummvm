@@ -548,12 +548,12 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	if (ConfMan.hasKey("nosubtitles")) {
 		printf("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead\n");
 		if (!ConfMan.hasKey("subtitles"))
-			ConfMan.set("subtitles", !ConfMan.getBool("nosubtitles"));
+			ConfMan.setBool("subtitles", !ConfMan.getBool("nosubtitles"));
 	}
 
 	// Make sure that at least subtitles are enabled
 	if (ConfMan.getBool("speech_mute") && !ConfMan.getBool("subtitles"))
-		ConfMan.set("subtitles", 1);
+		ConfMan.setBool("subtitles", true);
 
 	// TODO Detect subtitle only versions of scumm6 games
 	if (ConfMan.getBool("speech_mute"))

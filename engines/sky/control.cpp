@@ -718,7 +718,7 @@ uint16 Control::toggleFx(ConResource *pButton) {
 		_statusBar->setToText(0x7000 + 86);
 	}
 
-	ConfMan.set("sfx_mute", (SkyEngine::_systemVars.systemFlags & SF_FX_OFF) != 0);
+	ConfMan.setBool("sfx_mute", (SkyEngine::_systemVars.systemFlags & SF_FX_OFF) != 0);
 
 	pButton->drawToScreen(WITH_MASK);
 	buttonControl(pButton);
@@ -742,8 +742,8 @@ uint16 Control::toggleText(void) {
 		_statusBar->setToText(0x7000 + 35); // text only
 	}
 
-	ConfMan.set("subtitles", (flags & SF_ALLOW_TEXT) != 0);
-	ConfMan.set("speech_mute", (flags & SF_ALLOW_SPEECH) == 0);
+	ConfMan.setBool("subtitles", (flags & SF_ALLOW_TEXT) != 0);
+	ConfMan.setBool("speech_mute", (flags & SF_ALLOW_SPEECH) == 0);
 
 	SkyEngine::_systemVars.systemFlags |= flags;
 

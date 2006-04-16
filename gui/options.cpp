@@ -208,8 +208,8 @@ void OptionsDialog::close() {
 	if (getResult()) {
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
-				ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), _domain);
-				ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), _domain);
+				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
+				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 
 				if ((int32)_gfxPopUp->getSelectedTag() >= 0)
 					ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
@@ -226,9 +226,9 @@ void OptionsDialog::close() {
 
 		if (_musicVolumeSlider) {
 			if (_enableVolumeSettings) {
-				ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
-				ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
-				ConfMan.set("speech_volume", _speechVolumeSlider->getValue(), _domain);
+				ConfMan.setInt("music_volume", _musicVolumeSlider->getValue(), _domain);
+				ConfMan.setInt("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
+				ConfMan.setInt("speech_volume", _speechVolumeSlider->getValue(), _domain);
 			} else {
 				ConfMan.removeKey("music_volume", _domain);
 				ConfMan.removeKey("sfx_volume", _domain);
@@ -238,7 +238,7 @@ void OptionsDialog::close() {
 
 		if (_subCheckbox) {
 			if (_enableAudioSettings) {
-				ConfMan.set("subtitles", _subCheckbox->getState(), _domain);
+				ConfMan.setBool("subtitles", _subCheckbox->getState(), _domain);
 				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
 					md++;
@@ -255,9 +255,9 @@ void OptionsDialog::close() {
 		// MIDI options
 		if (_multiMidiCheckbox) {
 			if (_enableMIDISettings) {
-				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
-				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
-				ConfMan.set("enable_gs", _enableGSCheckbox->getState(), _domain);
+				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
+				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
+				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
 
 				String soundFont = _soundFont->getLabel();
 				if (!soundFont.empty() && (soundFont != "None"))

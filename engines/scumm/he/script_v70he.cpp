@@ -990,7 +990,7 @@ void ScummEngine_v70he::o70_writeINI() {
 
 	switch (type) {
 	case 1: // number
-		ConfMan.set((char *)option, value);
+		ConfMan.setInt((char *)option, value);
 		debug(1, "o70_writeINI: Option %s Value %d", option, value);
 		break;
 	case 2: // string

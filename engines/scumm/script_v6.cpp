@@ -2592,7 +2592,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			_saveSound = args[1];
 			break;
 		case 215:
-			ConfMan.set("subtitles", args[1] != 0);
+			ConfMan.setBool("subtitles", args[1] != 0);
 			break;
 		default:
 			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);

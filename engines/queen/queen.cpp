@@ -194,12 +194,12 @@ void QueenEngine::readOptionSettings() {
 }
 
 void QueenEngine::writeOptionSettings() {
-	ConfMan.set("music_volume", _music->volume());
-	ConfMan.set("music_mute", !_sound->musicOn());
-	ConfMan.set("sfx_mute", !_sound->sfxOn());
-	ConfMan.set("talkspeed", _talkSpeed);
-	ConfMan.set("speech_mute", !_sound->speechOn());
-	ConfMan.set("subtitles", _subtitles);
+	ConfMan.setInt("music_volume", _music->volume());
+	ConfMan.setBool("music_mute", !_sound->musicOn());
+	ConfMan.setBool("sfx_mute", !_sound->sfxOn());
+	ConfMan.setInt("talkspeed", _talkSpeed);
+	ConfMan.setBool("speech_mute", !_sound->speechOn());
+	ConfMan.setBool("subtitles", _subtitles);
 	ConfMan.flushToDisk();
 }
 
