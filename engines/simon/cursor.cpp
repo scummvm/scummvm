@@ -229,6 +229,7 @@ void SimonEngine::drawMousePointer() {
 	if (getGameType() == GType_FF) {
 		byte *src, *dst;
 		VgaPointersEntry *vpe = &_vgaBufferPointers[7];
+		uint cursor, image, width, height;
 
 		if (_animatePointer) {
 			_mouseAnim++;
@@ -236,11 +237,19 @@ void SimonEngine::drawMousePointer() {
 				_mouseAnim = 1;
 		}
 
-		uint cursor = _mouseCursor * 16 + 1 + _mouseAnim;
-		src = vpe->vgaFile2 + cursor * 8;
+		cursor = _mouseCursor;
+		if (_animatePointer == 0 && getBitFlag(99)) {
+			cursor = 6;
+			_mouseAnim = 1;
+		} else 	if (getBitFlag(72)) {
+			cursor += 7;
+		}
 
-		uint width = READ_LE_UINT16(src + 6);
-		uint height = READ_LE_UINT16(src + 4) & 0x7FFF;
+		image = cursor * 16 + 1 + _mouseAnim;
+		src = vpe->vgaFile2 + image * 8;
+
+		width = READ_LE_UINT16(src + 6);
+		height = READ_LE_UINT16(src + 4) & 0x7FFF;
 		src = vpe->vgaFile2 + readUint32Wrapper(src);
 
 		dst = (byte *)malloc(width * height);
