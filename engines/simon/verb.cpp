@@ -745,7 +745,7 @@ void SimonEngine::displayName(HitArea *ha) {
 }
 
 void SimonEngine::invertBox(HitArea *ha, bool state) {
-	if (getBitFlag(205) && getBitFlag(206)) {
+	if (getBitFlag(205) || getBitFlag(206)) {
 		if (state != 0) {
 			_mouseAnimMax = _oldMouseAnimMax;
 			_mouseCursor = _oldMouseCursor;
