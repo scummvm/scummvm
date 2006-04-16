@@ -344,6 +344,8 @@ protected:
 	GUI::StaticTextWidget	*_playtime;
 	ScummEngine			*_scumm;
 
+	virtual void handleScreenChanged();
+
 public:
 	SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
 
@@ -506,6 +508,18 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void SaveLoadChooserEx::handleScreenChanged() {
+	int selItem = _list->getSelected();
+	Graphics::Surface *thumb;
+	thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
+	_gfxWidget->setGfx(thumb);
+	if (thumb)
+		thumb->free();
+	delete thumb;
+
+	Dialog::handleScreenChanged();
 }
 
 #pragma mark -
