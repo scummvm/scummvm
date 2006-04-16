@@ -37,7 +37,7 @@
 #define kShadowTr3 64
 #define kShadowTr4 128
 
-#define THEME_VERSION 7
+#define THEME_VERSION 8
 
 using Graphics::Surface;
 

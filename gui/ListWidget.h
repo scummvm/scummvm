@@ -61,12 +61,16 @@ protected:
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;
 
+	int				_hlLeftPadding;
+	int				_hlRightPadding;
+	int				_leftPadding;
+	int				_rightPadding;
+	int				_topPadding;
+	int				_bottomPadding;
+
 public:
-	ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
 	ListWidget(GuiObject *boss, String name);
 	virtual ~ListWidget();
-
-	void init(GuiObject *boss, int w, WidgetSize ws);
 
 	void setList(const StringList& list);
 	const StringList& getList()	const			{ return _list; }

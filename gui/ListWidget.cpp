@@ -29,19 +29,19 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
-	: EditableWidget(boss, x, y, w, h, ws), CommandSender(boss) {
-	init(boss, w, ws);
-}
-
 ListWidget::ListWidget(GuiObject *boss, String name)
 	: EditableWidget(boss, name), CommandSender(boss) {
 	int w = g_gui.evaluator()->getVar(name + ".w");
 
-	init(boss, w, g_gui.getWidgetSize());
-}
+	WidgetSize ws = g_gui.getWidgetSize();
 
-void ListWidget::init(GuiObject *boss, int w, WidgetSize ws) {
+	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
+	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);
+	_topPadding = g_gui.evaluator()->getVar("ListWidget.topPadding", 0);
+	_bottomPadding = g_gui.evaluator()->getVar("ListWidget.bottomPadding", 0);
+	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
+	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
+
 	if (ws == kBigWidgetSize) {
 		_w = w - kBigScrollBarWidth;
 	} else {
@@ -53,7 +53,7 @@ void ListWidget::init(GuiObject *boss, int w, WidgetSize ws) {
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
-	_entriesPerPage = (_h - 2) / kLineHeight;
+	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
@@ -171,7 +171,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 
 
 int ListWidget::findItem(int x, int y) const {
-	return (y - 1) / kLineHeight + _currentPos;
+	return (y - _topPadding) / kLineHeight + _currentPos;
 }
 
 static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
@@ -324,7 +324,7 @@ void ListWidget::drawWidget(bool hilite) {
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + 2 + kLineHeight * i;
+		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = kLineHeight;
 		bool inverted = false;
 
@@ -337,13 +337,15 @@ void ListWidget::drawWidget(bool hilite) {
 		}
 
 		Common::Rect r(getEditRect());
+		int pad = _leftPadding;
 
 		// If in numbering mode, we first print a number prefix
 		if (_numberingMode != kListNumberingOff) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x + 2, y, _x + r.left, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, _leftPadding);
+			pad = 0;
 		}
 
 		int width;
@@ -351,20 +353,20 @@ void ListWidget::drawWidget(bool hilite) {
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
-			width = _w - r.left - 2;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			width = _w - r.left - _hlRightPadding - _leftPadding - _rightPadding;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
 			if (_selectedItem != pos) {
-				width = g_gui.getStringWidth(buffer);
-				if (width > _w - r.left - 2)
-					width = _w - r.left - 2;
+				width = g_gui.getStringWidth(buffer) + pad;
+				if (width > _w - r.left)
+					width = _w - r.left;
 			} else
-				width = _w - r.left - 2;
+				width = _w - r.left - _hlRightPadding;
 			if (width > maxWidth)
 				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
 		}
 
 		_textWidth[i] = width;
@@ -372,7 +374,7 @@ void ListWidget::drawWidget(bool hilite) {
 }
 
 Common::Rect ListWidget::getEditRect() const {
-	Common::Rect r(2, 1, _w - 2 , kLineHeight);
+	Common::Rect r(_hlLeftPadding, 1, _w - _hlLeftPadding - _hlRightPadding, kLineHeight);
 	const int offset = (_selectedItem - _currentPos) * kLineHeight;
 	r.top += offset;
 	r.bottom += offset;
@@ -381,7 +383,7 @@ Common::Rect ListWidget::getEditRect() const {
 		char temp[10];
 		// FIXME: Assumes that all digits have the same width.
 		sprintf(temp, "%2d. ", (_list.size() - 1 + _numberingMode));
-		r.left += g_gui.getStringWidth(temp);
+		r.left += g_gui.getStringWidth(temp) + _leftPadding;
 	}
 
 	return r;

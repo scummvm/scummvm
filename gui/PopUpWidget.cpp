@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "gui/dialog.h"
+#include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/PopUpWidget.h"
 #include "base/engine.h"
@@ -41,6 +42,10 @@ protected:
 	uint32		_openTime;
 	bool		_twoColumns;
 	int			_entriesPerColumn;
+
+	int			_leftPadding;
+	int			_rightPadding;
+
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws = kDefaultWidgetSize);
 
@@ -74,6 +79,9 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
 	_w = _popUpBoss->_w - kLineHeight + 2 - _popUpBoss->_labelWidth;
+
+	_leftPadding = _popUpBoss->_leftPadding;
+	_rightPadding = _popUpBoss->_rightPadding;
 
 	// Perform clipping / switch to scrolling mode if we don't fit on the screen
 	// FIXME - OSystem should send out notification messages when the screen
@@ -323,7 +331,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
 		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? Theme::kStateHighlight : Theme::kStateEnabled,
-								Theme::kTextAlignLeft);
+								Theme::kTextAlignLeft, false, _leftPadding);
 	}
 }
 
@@ -334,18 +342,13 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, WidgetSize ws)
-	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss), _ws(ws), _label(label), _labelWidth(labelWidth) {
-	init();
-}
-
 PopUpWidget::PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
 	_ws = g_gui.getWidgetSize();
-	init();
-}
 
-void PopUpWidget::init() {
+	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
+	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
+
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kPopUpWidget;
@@ -433,7 +436,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 	if (_selectedItem >= 0) {
 		TextAlignment align = (g_gui.getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
 		g_gui.theme()->drawText(Common::Rect(x+2, _y+3, _x+2+w-6, _y+3+g_gui.theme()->getFontHeight()), _entries[_selectedItem].name,
-								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(align));
+								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(align), false, _leftPadding);
 	}
 }
 

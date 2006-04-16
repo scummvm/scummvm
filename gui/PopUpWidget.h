@@ -56,11 +56,11 @@ protected:
 	String			_label;
 	uint			_labelWidth;
 
-public:
-	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth = 0, WidgetSize ws = kDefaultWidgetSize);
-	PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth = 0);
+	int				_leftPadding;
+	int				_rightPadding;
 
-	void init();
+public:
+	PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth = 0);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 

@@ -63,7 +63,11 @@ public:
 	void setVar(const String name, int val) { _vars[name] = val; }
 	void setAlias(const String name, const String val) { _aliases[name] = val; }
 
-	int getVar(String s) { return getVar_(s.c_str()); };
+	int getVar(String s) { return getVar_(s.c_str()); }
+	int getVar(String s, int def) {
+		int val = getVar_(s.c_str());
+		return (val == EVAL_UNDEF_VAR) ? def : val;
+	};
 
 	uint getNumVars() { return _vars.size(); }
 
