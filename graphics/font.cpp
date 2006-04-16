@@ -21,6 +21,8 @@
 
 #include "common/stdafx.h"
 #include "common/stream.h"
+#include "common/file.h"
+#include "common/endian.h"
 #include "graphics/font.h"
 
 namespace Graphics {
@@ -538,7 +540,7 @@ bitmap_t bdf_hexval(unsigned char *buf, int ndx1, int ndx2) {
 	return val;
 }
 
-NewFont *loadFont(Common::SeekableReadStream &stream) {
+NewFont *NewFont::loadFont(Common::SeekableReadStream &stream) {
 	NewFontData *data = bdf_read_font(stream);
 	if (!data)
 		return 0;
@@ -559,12 +561,100 @@ NewFont *loadFont(Common::SeekableReadStream &stream) {
 	return new NewFont(desc, data);
 }
 
-NewFont *loadFont(const byte *src, uint32 size) {
-	Common::MemoryReadStream stream(src, size);
+bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename) {
+	Common::File cacheFile;
+	if (!cacheFile.open(filename, Common::File::kFileWriteMode)) {
+		warning("Couldn't open file '%s' for writing", filename.c_str());
+		return false;
+	}
 
-	NewFontData *data = bdf_read_font(stream);
-	if (!data)
+	cacheFile.writeUint16BE(font.desc.maxwidth);
+	cacheFile.writeUint16BE(font.desc.height);
+	cacheFile.writeUint16BE(font.desc.ascent);
+	cacheFile.writeUint16BE(font.desc.firstchar);
+	cacheFile.writeUint16BE(font.desc.size);
+	cacheFile.writeUint16BE(font.desc.defaultchar);
+	cacheFile.writeUint32BE(font.desc.bits_size);
+
+	for (long i = 0; i < font.desc.bits_size; ++i) {
+		cacheFile.writeUint16BE(font.desc.bits[i]);
+	}
+
+	if (font.desc.offset) {
+		cacheFile.writeByte(1);
+		for (int i = 0; i < font.desc.size; ++i) {
+			cacheFile.writeUint32BE(font.desc.offset[i]);
+		}
+	} else {
+		cacheFile.writeByte(0);
+	}
+
+	if (font.desc.width) {
+		cacheFile.writeByte(1);
+		for (int i = 0; i < font.desc.size; ++i) {
+			cacheFile.writeByte(font.desc.width[i]);
+		}
+	} else {
+		cacheFile.writeByte(0);
+	}
+
+	return !cacheFile.ioFailed();
+}
+
+NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
+	NewFont *font = 0;
+
+	NewFontData *data = (NewFontData *)malloc(sizeof(NewFontData));
+	if (!data) return 0;
+
+	memset(data, 0, sizeof(NewFontData));
+
+	data->maxwidth = stream.readUint16BE();
+	data->height = stream.readUint16BE();
+	data->ascent = stream.readUint16BE();
+	data->firstchar = stream.readUint16BE();
+	data->size = stream.readUint16BE();
+	data->defaultchar = stream.readUint16BE();
+	data->bits_size = stream.readUint32BE();
+
+	data->bits = (bitmap_t*)malloc(sizeof(bitmap_t)*data->bits_size);
+	if (!data->bits) {
+		free(data);
 		return 0;
+	}
+
+	for (long i = 0; i < data->bits_size; ++i) {
+		data->bits[i] = stream.readUint16BE();
+	}
+
+	bool hasOffsetTable = stream.readByte();
+	if (hasOffsetTable) {
+		data->offset = (unsigned long*)malloc(sizeof(unsigned long)*data->size);
+		if (!data->offset) {
+			free(data->bits);
+			free(data);
+			return 0;
+		}
+
+		for (int i = 0; i < data->size; ++i) {
+			data->offset[i] = stream.readUint32BE();
+		}
+	}
+
+	bool hasWidthTable = stream.readByte();
+	if (hasWidthTable) {
+		data->width = (unsigned char*)malloc(sizeof(unsigned char)*data->size);
+		if (!data->width) {
+			free(data->bits);
+			free(data->offset);
+			free(data);
+			return 0;
+		}
+
+		for (int i = 0; i < data->size; ++i) {
+			data->width[i] = stream.readByte();
+		}
+	}
 
 	FontDesc desc;
 	desc.name = data->name;
@@ -579,7 +669,16 @@ NewFont *loadFont(const byte *src, uint32 size) {
 	desc.defaultchar = data->defaultchar;
 	desc.bits_size = data->bits_size;
 
-	return new NewFont(desc, data);
+	font = new NewFont(desc, data);
+	if (!font || stream.ioFailed()) {
+		free(data->bits);
+		free(data->offset);
+		free(data->width);
+		free(data);
+		return 0;
+	}
+
+	return font;
 }
 
 #pragma mark -

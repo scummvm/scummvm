@@ -1341,36 +1341,96 @@ void ThemeNew::deleteFonts() {
 }
 
 const Graphics::Font *ThemeNew::loadFont(const char *filename) {
-	const Graphics::Font *font = 0;
-
+	const Graphics::NewFont *font = 0;
+	Common::String cacheFilename = genCacheFilename(filename);
 	Common::File fontFile;
-	if (fontFile.open(filename)) {
-		font = Graphics::loadFont(fontFile);
+
+	if (cacheFilename != "") {
+		if (fontFile.open(cacheFilename))
+			font = Graphics::NewFont::loadFromCache(fontFile);
+		if (font)
+			return font;
+
+#ifdef USE_ZLIB
+		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+		if (zipFile && unzLocateFile(zipFile, cacheFilename.c_str(), 2) == UNZ_OK) {
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+	
+			font = Graphics::NewFont::loadFromCache(stream);
+	
+			delete [] buffer;
+			buffer = 0;
+		}
+		unzClose(zipFile);
+#endif
 		if (font)
 			return font;
 	}
 
-#ifdef USE_ZLIB
-	unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
-	if (zipFile && unzLocateFile(zipFile, filename, 2) == UNZ_OK) {
-		unz_file_info fileInfo;
-		unzOpenCurrentFile(zipFile);
-		unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-		uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-		assert(buffer);
-		memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-		unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-		unzCloseCurrentFile(zipFile);
-		Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+	printf("normal font open!\n");
+	fflush(stdout);
 
-		font = Graphics::loadFont(stream);
-
-		delete [] buffer;
-		buffer = 0;
+	// normal open
+	if (fontFile.open(filename)) {
+		font = Graphics::NewFont::loadFont(fontFile);
 	}
-	unzClose(zipFile);
+
+#ifdef USE_ZLIB
+	if (!font) {
+		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+		if (zipFile && unzLocateFile(zipFile, filename, 2) == UNZ_OK) {
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+	
+			font = Graphics::NewFont::loadFont(stream);
+	
+			delete [] buffer;
+			buffer = 0;
+		}
+		unzClose(zipFile);
+	}
 #endif
+
+	if (font) {
+		if (cacheFilename != "") {
+			if (!Graphics::NewFont::cacheFontData(*font, cacheFilename)) {
+				warning("Couldn't create cache file for font '%s'", filename);
+			}
+		}
+	}
+
 	return font;
+}
+
+Common::String ThemeNew::genCacheFilename(const char *filename) {
+	Common::String cacheName = filename;
+	for (int i = cacheName.size() - 1; i >= 0; --i) {
+		if (cacheName[i] == '.') {
+			while ((uint)i < cacheName.size() - 1) {
+				cacheName.deleteLastChar();
+			}
+
+			cacheName += "fcc";
+			return cacheName;
+		}
+	}
+
+	return "";
 }
 
 #pragma mark -

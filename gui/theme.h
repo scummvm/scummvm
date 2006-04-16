@@ -364,6 +364,7 @@ private:
 	void setupFonts();
 	void deleteFonts();
 	const Graphics::Font *loadFont(const char *filename);
+	Common::String genCacheFilename(const char *filename);
 	const Graphics::Font *_fonts[kFontStyleMax];
 
 public:

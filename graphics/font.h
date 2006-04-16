@@ -123,10 +123,11 @@ public:
 
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
-};
 
-NewFont *loadFont(Common::SeekableReadStream &stream);
-NewFont *loadFont(const byte *src, uint32 size);
+	static NewFont *loadFont(Common::SeekableReadStream &stream);
+	static bool cacheFontData(const NewFont &font, const Common::String &filename);
+	static NewFont *loadFromCache(Common::SeekableReadStream &stream);
+};
 
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 #	define DEFINE_FONT(n) \
