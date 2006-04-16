@@ -227,7 +227,7 @@ void SimonEngine::drawMousePointer() {
 	//debug(0, "Mouse %d Anim %d Max %d", _mouseCursor, _mouseAnim, _mouseAnimMax);
 
 	if (getGameType() == GType_FF) {
-		byte *src, *dst;
+		byte *src;
 		VgaPointersEntry *vpe = &_vgaBufferPointers[7];
 		uint cursor, image, width, height;
 
@@ -241,7 +241,7 @@ void SimonEngine::drawMousePointer() {
 		if (_animatePointer == 0 && getBitFlag(99)) {
 			cursor = 6;
 			_mouseAnim = 1;
-		} else 	if (getBitFlag(72)) {
+		} else if (getBitFlag(72)) {
 			cursor += 7;
 		}
 
@@ -252,9 +252,7 @@ void SimonEngine::drawMousePointer() {
 		height = READ_LE_UINT16(src + 4) & 0x7FFF;
 		src = vpe->vgaFile2 + readUint32Wrapper(src);
 
-		dst = (byte *)malloc(width * height);
-		memcpy(dst, src, width * height);
-		_system->setMouseCursor(dst, width, height, width / 2, height / 2, 0);
+		_system->setMouseCursor(src, width, height, width / 2, height / 2, 0);
 	} else if (getGameType() == GType_SIMON2) {
 		_system->setMouseCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
 	} else {
