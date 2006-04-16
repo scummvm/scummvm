@@ -40,8 +40,8 @@ struct GameDescriptor {
 		gameid(g), description(d) {}
 
 	/**
-	 * This template constructor allows to easily convert structs that mimic GameDescriptor
-	 * to a GameDescriptor instance.
+	 * This template constructor allows to easily convert structs that mimic
+	 * GameDescriptor to a real GameDescriptor instance.
 	 *
 	 * Normally, one would just subclass GameDescriptor to get this effect much easier.
 	 * However, subclassing a struct turns it into a non-POD type. One of the
