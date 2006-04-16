@@ -551,10 +551,6 @@ void GlobalOptionsDialog::close() {
 		String extraPath = _extraPath->getLabel();
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
-
-		String soundFont = _soundFont->getLabel();
-		if (!soundFont.empty() && (soundFont != "None"))
-			ConfMan.set("soundfont", soundFont, _domain);
 	}
 	OptionsDialog::close();
 }
