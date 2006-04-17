@@ -217,5 +217,34 @@ struct ColorMasks<8888> {
 	};
 };
 
+template<class T>
+uint32 RGBToColor(uint8 r, uint8 g, uint8 b) {
+	return ((r << T::kRedShift) & T::kRedMask) |
+	       ((g << T::kGreenShift) & T::kGreenMask) |
+	       ((b << T::kBlueShift) & T::kBlueMask);
+}
+
+template<class T>
+uint32 ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
+	return ((a << T::kAlphaShift) & T::kAlphaMask) |
+	       ((r << T::kRedShift) & T::kRedMask) |
+	       ((g << T::kGreenShift) & T::kGreenMask) |
+	       ((b << T::kBlueShift) & T::kBlueMask);
+}
+
+template<class T>
+void colorToRGB(uint32 color, uint8 &r, uint8 &g, uint8 &b) {
+	r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
+	g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
+	b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
+}
+
+template<class T>
+void colorToARGB(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
+	a = ((color & T::kAlphaMask) >> T::kAlphaShift) << (8 - T::kAlphaBits);
+	r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
+	g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
+	b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
+}
 
 #endif
