@@ -1033,18 +1033,7 @@ void KyraEngine::seq_playCredits() {
 	uint8 *buffer = 0;
 	uint32 size;
 	
-	if (_features & GF_FLOPPY) {
-		Common::File file;
-		if (file.open("CREDITS.TXT")) {
-			size = file.size();
-			buffer = new uint8[size];
-			file.read(buffer, size);
-			file.close();
-		}
-	} else {
-		buffer = _res->fileData("CREDITS.TXT", &size);	
-	}
-
+	buffer = _res->fileData("CREDITS.TXT", &size);
 	assert(buffer);
 
 	uint8 *nextString = buffer;
