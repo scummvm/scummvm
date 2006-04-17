@@ -73,45 +73,39 @@ uint RGBtoYUVstorage[65536];
 uint *RGBtoYUV = RGBtoYUVstorage;
 uint LUT16to32[65536];
 }
+
+template<class T>
+void InitLUT() {
+	int r, g, b;
+	int Y, u, v;
+	
+	assert(T::kBytesPerPixel == 2);
+
+	for (int color = 0; color < 65536; ++color) {
+		r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
+		g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
+		b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
+		LUT16to32[color] = (r << 16) | (g << 8) | b;
+
+		Y = (r + g + b) >> 2;
+		u = 128 + ((r - b) >> 2);
+		v = 128 + ((-r + 2 * g - b) >> 3);
+		RGBtoYUV[color] = (Y << 16) | (u << 8) | v;
+	}
+}
 #endif
 
-static void InitLUT(uint32 BitFormat);
 
 void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
-	InitLUT(gBitFormat);
-}
-
-void InitLUT(uint32 BitFormat) {
 #ifndef DISABLE_HQ_SCALERS
-	int r, g, b;
-	int Y, u, v;
-	int gInc, gShift;
-
-	for (int i = 0; i < 65536; i++) {
-		LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
-	}
-
-	if (BitFormat == 565) {
-		gInc = 256 >> 6;
-		gShift = 6 - 3;
-	} else {
-		gInc = 256 >> 5;
-		gShift = 5 - 3;
-	}
-
-	for (r = 0; r < 256; r += 8) {
-		for (g = 0; g < 256; g += gInc) {
-			for (b = 0; b < 256; b += 8) {
-				Y = (r + g + b) >> 2;
-				u = 128 + ((r - b) >> 2);
-				v = 128 + ((-r + 2 * g - b) >> 3);
-				RGBtoYUV[ (r << (5 + gShift)) + (g << gShift) + (b >> 3) ] = (Y << 16) + (u << 8) + v;
-			}
-		}
-	}
+	if (gBitFormat == 555)
+		InitLUT<ColorMasks<555> >();
+	if (gBitFormat == 565)
+		InitLUT<ColorMasks<565> >();
 #endif
 }
+
 
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
