@@ -31,6 +31,7 @@ namespace GUI {
 
 class BrowserDialog;
 class ListWidget;
+class GraphicsWidget;
 
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
@@ -46,6 +47,9 @@ protected:
 	Widget			*_startButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;
+#ifndef DISABLE_FANCY_THEMES
+	GraphicsWidget		*_logo;
+#endif
 	StringList		_domains;
 	GameDetector 	&_detector;
 	BrowserDialog	*_browser;

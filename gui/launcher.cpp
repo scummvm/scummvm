@@ -444,13 +444,14 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	_w = screenW;
 	_h = screenH;
 
+	_logo = 0;
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
-		GraphicsWidget *logo = new GraphicsWidget(this, "launcher_logo");
+		_logo = new GraphicsWidget(this, "launcher_logo");
 		ThemeNew *th = (ThemeNew *)g_gui.theme();
-		logo->useTransparency(true);
+		_logo->useTransparency(true);
 
-		logo->setGfx(th->getImageSurface(th->kThemeLogo));
+		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
 
 		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
 	} else
@@ -766,13 +767,14 @@ void LauncherDialog::updateButtons() {
 void LauncherDialog::handleScreenChanged() {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
-		GraphicsWidget *logo = new GraphicsWidget(this, "launcher_logo");
+		if (!_logo)
+			_logo = new GraphicsWidget(this, "launcher_logo");
 		ThemeNew *th = (ThemeNew *)g_gui.theme();
-		logo->useTransparency(true);
+		_logo->useTransparency(true);
 
-		logo->setGfx(th->getImageSurface(th->kThemeLogo));
-
-		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
+		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
+	} else {
+		delete _logo;
 	}
 #endif
 	Dialog::handleScreenChanged();
