@@ -194,7 +194,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_tblList = 0;
 
 	_codePtr = 0;
-	_videoName = 0;
 
 	_localStringtable = 0;
 	_stringIdLocalMin = 1;

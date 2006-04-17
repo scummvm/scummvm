@@ -45,7 +45,7 @@ MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 MoviePlayer::~MoviePlayer() {
 }
 
-bool MoviePlayer::open(const char *filename) {
+bool MoviePlayer::load(const char *filename) {
 	char filename2[100];
 	uint32 tag;
 
@@ -59,13 +59,6 @@ bool MoviePlayer::open(const char *filename) {
 	
 	if (_fd.open(filename2) == false)
 		return false;
-
-	_mixer->stopAll();
-
-	_currentFrame = 0;
-
-	_leftButtonDown = false;
-	_rightButtonDown = false;
 
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
@@ -86,6 +79,24 @@ bool MoviePlayer::open(const char *filename) {
 		error("error allocating frame tables, size %d\n", _frameSize);
 	}
 
+	return true;
+}
+
+void MoviePlayer::play() {
+	uint32 tag;
+
+	if (_fd.isOpen() == false) {
+		debug(0, "MoviePlayer::play: No file loaded");
+		return;
+	}
+
+	_mixer->stopAll();
+
+	_currentFrame = 0;
+
+	_leftButtonDown = false;
+	_rightButtonDown = false;
+
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('WAVE'));
 
@@ -102,7 +113,11 @@ bool MoviePlayer::open(const char *filename) {
 	if (_width != 640 && _height != 480)
 		g_system->clearScreen();
 
-	play();
+	while (_currentFrame < _framesCount) {
+		handleNextFrame();
+		++_currentFrame;
+	}
+
 	close();
 
 	_vm->o_killAnimate();
@@ -112,21 +127,12 @@ bool MoviePlayer::open(const char *filename) {
 	} else {
 		g_system->clearScreen();
 	}
-
-	return true;
 }
 
 void MoviePlayer::close() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
-}
-
-void MoviePlayer::play() {
-	while (_currentFrame < _framesCount) {
-		handleNextFrame();
-		++_currentFrame;
-	}
 }
 
 void MoviePlayer::handleNextFrame() {

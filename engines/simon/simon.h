@@ -208,7 +208,6 @@ protected:
 	byte *_tblList;
 
 	const byte *_codePtr;
-	const byte *_videoName;
 
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
@@ -980,8 +979,8 @@ public:
 	void o3_hyperLinkOff();
 	void o3_checkPaths();
 	void o3_mouseOff();
-	void o3_loadSmack();
-	void o3_playSmack();
+	void o3_loadVideo();
+	void o3_playVideo();
 	void o3_centreScroll();
 	void o3_resetPVCount();
 	void o3_setPathValues();

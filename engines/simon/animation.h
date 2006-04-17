@@ -54,9 +54,9 @@ public:
 	MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer);
 	~MoviePlayer();
 
-	bool open(const char *filename);
-private:
+	bool load(const char *filename);
 	void play();
+private:
 	void close();
 
 	void delay(uint amount);

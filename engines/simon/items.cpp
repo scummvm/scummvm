@@ -332,8 +332,8 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[172] = &SimonEngine::o3_hyperLinkOff;
 		opcode_table[173] = &SimonEngine::o3_checkPaths;
 		opcode_table[181] = &SimonEngine::o3_mouseOff;
-		opcode_table[182] = &SimonEngine::o3_loadSmack;
-		opcode_table[183] = &SimonEngine::o3_playSmack;
+		opcode_table[182] = &SimonEngine::o3_loadVideo;
+		opcode_table[183] = &SimonEngine::o3_playVideo;
 		opcode_table[187] = &SimonEngine::o3_centreScroll;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
@@ -1923,16 +1923,19 @@ void SimonEngine::o3_mouseOff() {
 	clearName();
 }
 
-void SimonEngine::o3_loadSmack() {
+void SimonEngine::o3_loadVideo() {
 	// 182: load video file
-	_videoName = getStringPtrByID(getNextStringID());
+	const byte *filename = getStringPtrByID(getNextStringID());
+	debug(0, "Load video %s", filename);
+
+	if (_moviePlay->load((const char *)filename) == false)
+		warning("Failed to load video file %s", filename);
 }
 
-void SimonEngine::o3_playSmack() {
+void SimonEngine::o3_playVideo() {
 	// 183: play video
-	debug(0, "Play video %s", _videoName);
-
-	_moviePlay->open((const char *)_videoName);
+	debug(0, "Play video");
+	_moviePlay->play();
 }
 
 void SimonEngine::o3_centreScroll() {
