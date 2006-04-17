@@ -685,7 +685,7 @@ void SimonEngine::boxController(uint x, uint y, uint mode) {
 	if (mode != 0 && mode != 3) {
 		_lastHitArea = best_ha;
 		_variableArray[1] = x;
-		_variableArray[2] = y - _scrollY;
+		_variableArray[2] = y;
 	}
 
 	if (best_ha->flags & kBFNoTouchName) {
