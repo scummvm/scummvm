@@ -545,6 +545,7 @@ public:
 	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation generates a 16 bit color value, in the 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @note The alpha component, ranges from 0 (transparent) to 255 (opaque).
 	 * @see colorToRGB
 	 * @see RGBToColor
 	 */
@@ -557,6 +558,7 @@ public:
 	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation takes a 16 bit color value and assumes it to be in 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @note The alpha component, ranges from 0 (transparent) to 255 (opaque).
 	 * @see ARGBToColor
 	 * @see colorToRGB
 	 */
