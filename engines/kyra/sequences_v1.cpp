@@ -1099,9 +1099,8 @@ void KyraEngine::seq_playCredits() {
 	OSystem::Event event;	
 	bool finished = false;
 	int bottom = 201;
-	uint32 startLoop, waitTime;
 	while (!finished) {
-		startLoop = _system->getMillis();
+		uint32 startLoop = _system->getMillis();
 		if (bottom > 175) {
 			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2);
 			bottom = 0;
@@ -1132,10 +1131,12 @@ void KyraEngine::seq_playCredits() {
 				break;
 			}
 		}
-		
-		waitTime = startLoop + _tickLength * 5 - _system->getMillis();
-		if (waitTime > 0)
-			_system->delayMillis(waitTime);	
+
+		uint32 now = _system->getMillis();
+		uint32 nextLoop = startLoop + _tickLength * 5;
+
+		if (nextLoop > now)
+			_system->delayMillis(nextLoop - now);
 	}
 	
 	delete[] buffer;
