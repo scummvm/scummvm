@@ -169,7 +169,6 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	}
 	_system->setPalette(tempPal, start, numColors);
 	if (updateScreen) {
-		_system->updateScreen();
 		_vm->input()->delay(20);
 	}
 }
@@ -957,7 +956,6 @@ void Display::blankScreenEffect1() {
 				--y;
 			}
 			_system->copyRectToScreen(buf, 32, x, y, 32, 32);
-			_system->updateScreen();
 			_vm->input()->delay(10);
 		}
 	}
@@ -986,7 +984,6 @@ void Display::blankScreenEffect2() {
 		memset(p, c, 2);
 		memset(p + SCREEN_W, c, 2);
 		_system->copyRectToScreen(p, SCREEN_W, x, y, 2, 2);
-		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
@@ -1008,7 +1005,6 @@ void Display::blankScreenEffect3() {
 			++i;
 			_system->copyRectToScreen(p, SCREEN_W, x, y, 2, 2);
 		}
-		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }

@@ -132,10 +132,12 @@ void Input::delay(uint amount) {
 			}
 		}
 
+		_system->updateScreen();
+
 		if (amount == 0)
 			break;
 
-		_system->delayMillis((amount > 20) ? 20 : amount);
+		_system->delayMillis((amount > 10) ? 10 : amount);
 	} while (_system->getMillis() < end);
 }
 
