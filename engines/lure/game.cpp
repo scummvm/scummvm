@@ -172,6 +172,7 @@ void Game::execute() {
 			playerChangeRoom();
 		}
 
+		system.updateScreen();
 		system.delayMillis(10);
 	}
 

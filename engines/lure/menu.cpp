@@ -103,7 +103,6 @@ uint8 Menu::execute() {
 	mouse.setCursorNum(CURSOR_ARROW);
 	system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, 
 		FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
-	system.updateScreen();
 
 	_selectedMenu = NULL;
 	_surfaceMenu = NULL;
@@ -143,7 +142,6 @@ uint8 Menu::execute() {
 
 					system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, 
 						FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
-					system.updateScreen();
 				}
 			}
 
@@ -156,6 +154,7 @@ uint8 Menu::execute() {
 			}
 		}
 
+		system.updateScreen();
 		system.delayMillis(10);
 	}
 
