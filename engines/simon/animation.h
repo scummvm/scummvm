@@ -24,8 +24,19 @@
 #define ANIMATION_H
 
 #include "common/file.h"
+#include "common/stream.h"
 
-struct MoviePlayer {
+#include "sound/mixer.h"
+
+namespace Simon {
+
+class SimonEngine;
+
+class MoviePlayer {
+	SimonEngine *_vm;
+
+	Audio::Mixer *_mixer;
+
 	bool _playing;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
@@ -39,15 +50,22 @@ struct MoviePlayer {
 	uint16 _currentFrame;
 	uint32 _frameTicks;
 	
-	bool open(const char *filename);
-	void close();
-	void play();
-	void delay(uint amount);
+public:
+	MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer);
+	~MoviePlayer();
 
+	bool open(const char *filename);
+private:
+	void play();
+	void close();
+
+	void delay(uint amount);
 	void handleNextFrame();
 	void decodeZlib(uint8 *data, int size, int totalSize);
 	void decode0(uint8 *data, int size);
 	void decode2(uint8 *data, int size, int totalSize);
 };
+
+} // End of namespace Simon
 
 #endif

@@ -247,6 +247,7 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 
 	_effectsPaused = false;
 	_ambientPaused = false;
+	_sfx5Paused = false;
 
 	_filenums = 0;
 	_lastVoiceFile = 0;
@@ -254,7 +255,9 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 
 	_hasEffectsFile = false;
 	_hasVoiceFile = false;
+
 	_ambientPlaying = 0;
+	_sfx5Playing = 0;
 
 	if (_vm->getFeatures() & GF_TALKIE) {
 		loadVoiceFile(gss);
@@ -263,6 +266,14 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 			loadSfxFile(gss);
 	}
 
+}
+
+Sound::~Sound() {
+	delete _voice;
+	delete _effects;
+
+	free(_filenums);
+	free(_offsets);
 }
 
 void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
@@ -369,14 +380,6 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 			_effects = new VocSound(_mixer, file);
 		}
 	}
-}
-
-Sound::~Sound() {
-	delete _voice;
-	delete _effects;
-
-	free(_filenums);
-	free(_offsets);
 }
 
 void Sound::readSfxFile(const char *filename) {
@@ -486,7 +489,7 @@ bool Sound::hasVoice() const {
 }
 
 bool Sound::isVoiceActive() const {
-	return _mixer->isSoundHandleActive(_voiceHandle) ;
+	return _mixer->isSoundHandleActive(_voiceHandle);
 }
 
 void Sound::stopVoice() {
@@ -496,10 +499,12 @@ void Sound::stopVoice() {
 void Sound::stopAll() {
 	_mixer->stopAll();
 	_ambientPlaying = 0;
+	_sfx5Playing = 0;
 }
 
 void Sound::effectsPause(bool b) {
 	_effectsPaused = b;
+	_sfx5Paused = b;
 }
 
 void Sound::ambientPause(bool b) {
@@ -515,22 +520,42 @@ void Sound::ambientPause(bool b) {
 }
 
 // Feeble Files specific
-void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient) {
+void Sound::playAmbientData(byte *soundData, uint sound, uint pan, uint vol) {
+	if (sound == _ambientPlaying)
+		return;
+
+	_ambientPlaying = sound;
+
+	if (_ambientPaused)
+		return;
+
+	_mixer->stopHandle(_ambientHandle);
+	playSoundData(&_ambientHandle, soundData, sound, pan, vol, true);
+}
+
+void Sound::playSfxData(byte *soundData, uint sound, uint pan, uint vol) {
+	if (_effectsPaused)
+		return;
+
+	playSoundData(&_effectsHandle, soundData, sound, pan, vol, false);
+}
+
+void Sound::playSfx5Data(byte *soundData, uint sound, uint pan, uint vol) {
+	if (sound == _sfx5Playing)
+		return;
+
+	_sfx5Playing = sound;
+
+	if (_sfx5Paused)
+		return;
+
+	_mixer->stopHandle(_sfx5Handle);
+	playSoundData(&_sfx5Handle, soundData, sound, pan, vol, true);
+}
+
+void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, uint pan, uint vol, bool loop) {
 	byte flags;
 	int rate;
-
-	if (ambient == true) {
-		if (sound == _ambientPlaying)
-			return;
-
-		_ambientPlaying = sound;
-
-		if (_ambientPaused)
-			return;
-	} else {
-		if (_effectsPaused)
-			return;
-	}
 
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
@@ -541,12 +566,10 @@ void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool 
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, soundData + stream.pos(), size);
 
-	if (ambient == true) {
-		_mixer->stopHandle(_ambientHandle);
-		_mixer->playRaw(&_ambientHandle, buffer, size, rate, Audio::Mixer::FLAG_LOOP|flags);
-	} else {
-		_mixer->playRaw(&_effectsHandle, buffer, size, rate, flags);
-	}
+	if (loop == true)
+		flags |= Audio::Mixer::FLAG_LOOP;
+	
+	_mixer->playRaw(handle, buffer, size, rate, flags, sound);
 }
 
 void Sound::playVoiceData(byte *soundData, uint sound) {

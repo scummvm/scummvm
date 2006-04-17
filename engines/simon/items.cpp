@@ -1926,18 +1926,13 @@ void SimonEngine::o3_mouseOff() {
 void SimonEngine::o3_loadSmack() {
 	// 182: load video file
 	_videoName = getStringPtrByID(getNextStringID());
-	debug(0,"Load video file: %s", _videoName);
 }
 
 void SimonEngine::o3_playSmack() {
 	// 183: play video
 	debug(0, "Play video %s", _videoName);
 
-	MoviePlayer p;
-	if (p.open((const char *)_videoName)) {
-		p.play();
-		p.close();
-	}
+	_moviePlay->open((const char *)_videoName);
 }
 
 void SimonEngine::o3_centreScroll() {

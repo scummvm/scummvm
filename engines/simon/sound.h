@@ -41,6 +41,7 @@ private:
 
 	bool _effectsPaused;
 	bool _ambientPaused;
+	bool _sfx5Paused;
 
 	uint16 *_filenums;
 	uint32 *_offsets;
@@ -49,10 +50,12 @@ private:
 	Audio::SoundHandle _voiceHandle;
 	Audio::SoundHandle _effectsHandle;
 	Audio::SoundHandle _ambientHandle;
+	Audio::SoundHandle _sfx5Handle;
 
 	bool _hasEffectsFile;
 	bool _hasVoiceFile;
 	uint _ambientPlaying;
+	uint _sfx5Playing;
 
 public:
 	Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
@@ -70,7 +73,10 @@ public:
 	void playAmbient(uint sound);
 
 	// Feeble Files specific
-	void playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient);
+	void playAmbientData(byte *soundData, uint sound, uint pan, uint vol);
+	void playSfxData(byte *soundData, uint sound, uint pan, uint vol);
+	void playSfx5Data(byte *soundData, uint sound, uint pan, uint vol);
+	void playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, uint pan, uint vol, bool loop);
 	void playVoiceData(byte *soundData, uint sound);
 	void switchVoiceFile(uint disc);
 

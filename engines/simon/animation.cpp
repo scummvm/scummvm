@@ -26,17 +26,28 @@
 #include "common/system.h"
 
 #include "simon/animation.h"
+#include "simon/intern.h"
+#include "simon/simon.h"
+
+#include "sound/wave.h"
+
 
 #ifdef USE_ZLIB
 #include <zlib.h>
 #endif
 
-bool MoviePlayer::open(const char *filename) {
-	bool opened = false;
-	char filename2[100];
+namespace Simon {
 
-	_leftButtonDown = false;
-	_rightButtonDown = false;
+MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
+	: _vm(vm), _mixer(mixer) {
+}
+
+MoviePlayer::~MoviePlayer() {
+}
+
+bool MoviePlayer::open(const char *filename) {
+	char filename2[100];
+	uint32 tag;
 
 	// Change file extension to dxa
 	strcpy(filename2, filename);
@@ -46,38 +57,63 @@ bool MoviePlayer::open(const char *filename) {
 	filename2[len++] = 'x';
 	filename2[len++] = 'a';
 	
-	if (_fd.open(filename2)) {
-		uint32 tag = _fd.readUint32BE();
-		if (tag  == MKID_BE('DEXA')) {
-			_fd.readByte();
-			_framesCount = _fd.readUint16BE();
-			_frameTicks = _fd.readUint32BE();
-			if (_frameTicks > 100) {
-				_frameTicks = 100;
-			}
-			_width = _fd.readUint16BE();
-			_height = _fd.readUint16BE();
-			debug(5, "frames_count %d width %d height %d ticks %d", _framesCount, _width, _height, _frameTicks);
-			_frameSize = _width * _height;
-			_frameBuffer1 = (uint8 *)malloc(_frameSize);
-			_frameBuffer2 = (uint8 *)malloc(_frameSize);
-			if (!_frameBuffer1 || !_frameBuffer2) {
-				error("error allocating frame tables, size %d\n", _frameSize);
-				close();
-			} else {
-				tag = _fd.readUint32BE();
-				if (tag  == MKID_BE('WAVE')) {
-					uint32 size = _fd.readUint32BE();
-					debug(5, "Wave_size = %d", size);
-					// TODO: Preload wave data
-					_fd.seek(size + 23);
-				}
-				_currentFrame = 0;
-				opened = true;
-			}
-		}
+	if (_fd.open(filename2) == false)
+		return false;
+
+	_mixer->stopAll();
+
+	_currentFrame = 0;
+
+	_leftButtonDown = false;
+	_rightButtonDown = false;
+
+	tag = _fd.readUint32BE();
+	assert(tag == MKID_BE('DEXA'));
+
+	_fd.readByte();
+	_framesCount = _fd.readUint16BE();
+	_frameTicks = _fd.readUint32BE();
+	if (_frameTicks > 100) {
+		_frameTicks = 100;
 	}
-	return opened;
+	_width = _fd.readUint16BE();
+	_height = _fd.readUint16BE();
+	debug(5, "frames_count %d width %d height %d ticks %d", _framesCount, _width, _height, _frameTicks);
+	_frameSize = _width * _height;
+	_frameBuffer1 = (uint8 *)malloc(_frameSize);
+	_frameBuffer2 = (uint8 *)malloc(_frameSize);
+	if (!_frameBuffer1 || !_frameBuffer2) {
+		error("error allocating frame tables, size %d\n", _frameSize);
+	}
+
+	tag = _fd.readUint32BE();
+	assert(tag == MKID_BE('WAVE'));
+
+	uint32 size = _fd.readUint32BE();
+	byte *buffer = (byte *)malloc(size);
+	_fd.read(buffer, size);
+
+	// TODO: Audio and video sync.
+	Common::MemoryReadStream stream(buffer, size);
+	AudioStream *sndStream = makeWAVStream(stream);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, sndStream);
+
+	// Resolution is smaller in Amiga verison so always clear screen
+	if (_width != 640 && _height != 480)
+		g_system->clearScreen();
+
+	play();
+	close();
+
+	_vm->o_killAnimate();
+
+	if (_vm->getBitFlag(41)) {
+		// TODO
+	} else {
+		g_system->clearScreen();
+	}
+
+	return true;
 }
 
 void MoviePlayer::close() {
@@ -87,14 +123,10 @@ void MoviePlayer::close() {
 }
 
 void MoviePlayer::play() {
-	g_system->clearScreen();
-
 	while (_currentFrame < _framesCount) {
 		handleNextFrame();
 		++_currentFrame;
 	}
-
-	g_system->clearScreen();
 }
 
 void MoviePlayer::handleNextFrame() {
@@ -214,7 +246,7 @@ void MoviePlayer::delay(uint amount) {
 			}
 		}
 
-		if (_leftButtonDown && _rightButtonDown) {
+		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(40)) {
 			_currentFrame = _framesCount;
 			amount = 0;
 		}
@@ -231,3 +263,5 @@ void MoviePlayer::delay(uint amount) {
 		cur = g_system->getMillis();
 	} while (cur < start + amount);
 }
+
+} // End of namespace Simon

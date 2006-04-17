@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "common/util.h"
 
+#include "simon/animation.h"
 #include "simon/midi.h"
 #include "simon/sound.h"
 #include "simon/vga.h"
@@ -429,6 +430,8 @@ protected:
 	int _numScreenUpdates;
 	int _vgaTickCounter;
 
+	MoviePlayer *_moviePlay;
+
 	Sound *_sound;
 
 	bool _effectsPaused;
@@ -481,7 +484,7 @@ protected:
 	void loadGamePcFile(const char *filename);
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
-	void loadSound(uint sound, uint pan, uint vol, bool ambient);
+	void loadSound(uint sound, uint pan, uint vol, uint type);
 	void loadVoice(uint speechId);
 
 	void palette_fadeout(uint32 *pal_values, uint num);
@@ -710,6 +713,9 @@ protected:
 	void run_vga_script();
 
 public:
+	bool getBitFlag(uint bit);
+	void setBitFlag(uint bit, bool value);
+
 	// Simon1/Simon2 video script opcodes
 	void vc1_fadeOut();
 	void vc2_call();
@@ -1015,9 +1021,6 @@ protected:
 
 	void add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file);
 	VgaSprite *findCurSprite();
-
-	bool getBitFlag(uint bit);
-	void setBitFlag(uint bit, bool value);
 
 	void expire_vga_timers();
 

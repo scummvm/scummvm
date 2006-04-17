@@ -672,7 +672,9 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 	}
 }
 
-void SimonEngine::loadSound(uint sound, uint pan, uint vol, bool ambient) {
+void SimonEngine::loadSound(uint sound, uint pan, uint vol, uint type) {
+	byte *dst;
+
 	if (getFeatures() & GF_ZLIBCOMP) {
 		char filename[15];
 
@@ -688,13 +690,18 @@ void SimonEngine::loadSound(uint sound, uint pan, uint vol, bool ambient) {
 		else
 			sprintf(filename, "effects.wav");
 
-		byte *dst = (byte *)malloc(dstSize);
+		dst = (byte *)malloc(dstSize);
 		decompressData(filename, dst, offset, srcSize, dstSize);
-		_sound->playSoundData(dst, sound, pan, vol, ambient);
 	} else {
-		int offs = READ_LE_UINT32(_curSfxFile + sound * 4);
-		_sound->playSoundData(_curSfxFile + offs, sound, pan, vol, ambient);
+		dst = _curSfxFile + READ_LE_UINT32(_curSfxFile + sound * 4);
 	}
+
+	if (type == 3)
+		_sound->playSfx5Data(dst, sound, pan, vol);
+	else if (type == 2)
+		_sound->playAmbientData(dst, sound, pan, vol);
+	else
+		_sound->playSfxData(dst, sound, pan, vol);
 }
 
 void SimonEngine::loadVoice(uint speechId) {

@@ -434,6 +434,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_numScreenUpdates = 0;
 	_vgaTickCounter = 0;
 
+	_moviePlay = 0;
 	_sound = 0;
 
 	_effectsPaused = false;
@@ -680,8 +681,9 @@ SimonEngine::~SimonEngine() {
 
 	delete [] _windowList;
 
-	delete _sound;
 	delete _debugger;
+	delete _moviePlay;
+	delete _sound;
 }
 
 void SimonEngine::errorString(const char *buf1, char *buf2) {
@@ -3494,8 +3496,9 @@ int SimonEngine::go() {
 
 	setup_vga_file_buf_pointers();
 
-	_sound = new Sound(this, gss, _mixer);
 	_debugger = new Debugger(this);
+	_moviePlay = new MoviePlayer(this, _mixer);
+	_sound = new Sound(this, gss, _mixer);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)

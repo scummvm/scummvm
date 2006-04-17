@@ -1966,13 +1966,16 @@ void SimonEngine::vc52_playSound() {
 	if (getGameType() == GType_FF) {
 		uint16 pan = vcReadNextWord();
 		uint16 vol = vcReadNextWord();
-		loadSound(sound, pan, vol, ambient);
+
+		if (ambient)
+			loadSound(sound, pan, vol, 2);
+		else
+			loadSound(sound, pan, vol, 1);
 	} else if (getGameType() == GType_SIMON2) {
-		if (ambient) {
+		if (ambient)
 			_sound->playAmbient(sound);
-		} else {
+		else
 			_sound->playEffects(sound);
-		}
 	} else if (getFeatures() & GF_TALKIE) {
 		_sound->playEffects(sound);
 	} else if (getGameId() == GID_SIMON1DOS) {
@@ -2468,11 +2471,11 @@ void SimonEngine::vc82_getPathValue() {
 }
 
 void SimonEngine::vc83_playSoundLoop() {
-	// Start looping sound effect
-	int snd = vcReadNextWord();
-	int vol = vcReadNextWord();
-	int pan = vcReadNextWord();
-	debug(0, "STUB: vc83_playSoundLoop: snd %d vol %d pan %d", snd, vol, pan);
+	uint sound = vcReadNextWord();
+	uint vol = vcReadNextWord();
+	uint pan = vcReadNextWord();
+
+	loadSound(sound, pan, vol, 3);
 }
 
 void SimonEngine::vc84_stopSoundLoop() {
