@@ -21,47 +21,20 @@
  *
  */
 
-
-#ifndef COMMON_SCALER_INTERN_H
-#define COMMON_SCALER_INTERN_H
+#ifndef GRAPHICS_SCALER_INTERN_H
+#define GRAPHICS_SCALER_INTERN_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "graphics/colormasks.h"
 
-template<int bitFormat>
-struct ColorMasks {
-};
-
-template<>
-struct ColorMasks<565> {
-	enum {
-		highBits = 0xF7DEF7DE,
-		lowBits = 0x08210821,
-		qhighBits = 0xE79CE79C,
-		qlowBits = 0x18631863,
-		redblueMask = 0xF81F,
-		greenMask = 0x07E0
-	};
-};
-
-template<>
-struct ColorMasks<555> {
-	enum {
-		highBits = 0x7BDE7BDE,
-		lowBits = 0x04210421,
-		qhighBits = 0x739C739C,
-		qlowBits = 0x0C630C63,
-		redblueMask = 0x7C1F,
-		greenMask = 0x03E0
-	};
-};
 
 #define highBits	ColorMasks<bitFormat>::highBits
 #define lowBits		ColorMasks<bitFormat>::lowBits
 #define qhighBits	ColorMasks<bitFormat>::qhighBits
 #define qlowBits	ColorMasks<bitFormat>::qlowBits
-#define redblueMask	ColorMasks<bitFormat>::redblueMask
-#define greenMask	ColorMasks<bitFormat>::greenMask
+#define redblueMask	ColorMasks<bitFormat>::kRedBlueMask
+#define greenMask	ColorMasks<bitFormat>::kGreenMask
 
 
 /**

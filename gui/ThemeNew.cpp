@@ -26,6 +26,7 @@
 
 #include "graphics/imageman.h"
 #include "graphics/imagedec.h"
+#include "graphics/colormasks.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -86,32 +87,6 @@ static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::Stri
 #define getExtraValueFromConfig(x, y, z, a) getValueFromConfig(x, "extra", y, z, a)
 
 namespace GUI {
-// some of this stuff is allready in graphics/scaler/intern.h
-// maybe use the structs in graphics/scaler/intern.h then and add
-// there kBlueMask
-template<int bitFormat>
-struct ColorMasks {
-};
-
-template<>
-struct ColorMasks<555> {
-	enum {
-		kRBMask = 0x7C1F,
-		kRedMask = 0x7C00,
-		kGreenMask = 0x03E0,
-		kBlueMask = 0x001F
-	};
-};
-
-template<>
-struct ColorMasks<565> {
-	enum {
-		kRBMask = 0xF81F,
-		kRedMask = 0xF800,
-		kGreenMask = 0x07E0,
-		kBlueMask = 0x001F
-	};
-};
 
 OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha);
 OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor);
