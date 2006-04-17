@@ -932,7 +932,6 @@ public:
 	void o_b2NotZero();
 	void o_lockZones();
 	void o_unlockZones();
-	void o_screenTextPObj();
 	void o_getPathPosn();
 	void o_scnTxtLongText();
 	void o_mouseOn();
@@ -945,6 +944,7 @@ public:
 	void o1_animate();
 	void o1_stopAnimate();
 	void o1_playTune();
+	void o1_screenTextPObj();
 	void o1_mouseOff();
 	void o1_loadBeard();
 	void o1_unloadBeard();
@@ -957,6 +957,7 @@ public:
 	void o2_animate();
 	void o2_stopAnimate();
 	void o2_playTune();
+	void o2_screenTextPObj();
 	void o2_mouseOff();
 	void o2_isShortText();
 	void o2_clearMarks();
@@ -980,6 +981,7 @@ public:
 	void o3_hyperLinkOn();
 	void o3_hyperLinkOff();
 	void o3_checkPaths();
+	void o3_screenTextPObj();
 	void o3_mouseOff();
 	void o3_loadVideo();
 	void o3_playVideo();

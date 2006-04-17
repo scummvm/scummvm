@@ -255,7 +255,7 @@ void SimonEngine::setupOpcodes() {
 		// 175 - 179
 		&SimonEngine::o_lockZones,
 		&SimonEngine::o_unlockZones,
-		&SimonEngine::o_screenTextPObj,
+		NULL,
 		&SimonEngine::o_getPathPosn,
 		&SimonEngine::o_scnTxtLongText,
 		// 180 - 184
@@ -294,6 +294,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[98] = &SimonEngine::o1_animate;
 		opcode_table[99] = &SimonEngine::o1_stopAnimate;
 		opcode_table[127] = &SimonEngine::o1_playTune;
+		opcode_table[177] = &SimonEngine::o1_screenTextPObj;
 		opcode_table[181] = &SimonEngine::o1_mouseOff;
 		opcode_table[182] = &SimonEngine::o1_loadBeard;
 		opcode_table[183] = &SimonEngine::o1_unloadBeard;
@@ -306,6 +307,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[98] = &SimonEngine::o2_animate;
 		opcode_table[99] = &SimonEngine::o2_stopAnimate;
 		opcode_table[127] = &SimonEngine::o2_playTune;
+		opcode_table[177] = &SimonEngine::o2_screenTextPObj;
 		opcode_table[181] = &SimonEngine::o2_mouseOff;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
@@ -332,6 +334,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[171] = &SimonEngine::o3_hyperLinkOn;
 		opcode_table[172] = &SimonEngine::o3_hyperLinkOff;
 		opcode_table[173] = &SimonEngine::o3_checkPaths;
+		opcode_table[177] = &SimonEngine::o3_screenTextPObj;
 		opcode_table[181] = &SimonEngine::o3_mouseOff;
 		opcode_table[182] = &SimonEngine::o3_loadVideo;
 		opcode_table[183] = &SimonEngine::o3_playVideo;
@@ -1391,7 +1394,7 @@ void SimonEngine::o_unlockZones() {
 	_vgaBufStart = _vgaFileBufOrg;
 }
 
-void SimonEngine::o_screenTextPObj() {
+void SimonEngine::o1_screenTextPObj() {
 	// 177: inventory descriptions
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -1405,59 +1408,7 @@ void SimonEngine::o_screenTextPObj() {
 		tl = getTextLocation(vgaSpriteId);
 	}
 
-	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
-		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
-			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
-
-			if (subObject->objectFlags & kOFNumber) {
-				uint speechIdOffs = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
-
-				if (speechId == 116)
-					speechId = speechIdOffs + 115;
-				if (speechId == 92)
-					speechId = speechIdOffs + 98;
-				if (speechId == 99)
-					speechId = 9;
-				if (speechId == 97) {
-					switch (speechIdOffs) {
-					case 12:
-						speechId = 109;
-						break;
-					case 14:
-						speechId = 108;
-						break;
-					case 18:
-						speechId = 107;
-						break;
-					case 20:
-						speechId = 106;
-						break;
-					case 22:
-						speechId = 105;
-						break;
-					case 28:
-						speechId = 104;
-						break;
-					case 90:
-						speechId = 103;
-						break;
-					case 92:
-						speechId = 102;
-						break;
-					case 100:
-						speechId = 51;
-						break;
-					default:
-						error("o_177: invalid case %d", speechIdOffs);
-					}
-				}
-			}
-
-			if (_speech)
-				playSpeech(speechId, vgaSpriteId);
-		}
-
-	} else if (getFeatures() & GF_TALKIE) {
+	if (getFeatures() & GF_TALKIE) {
 		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
 			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
 			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
@@ -1728,6 +1679,84 @@ void SimonEngine::o2_playTune() {
 		midi.startTrack(track);
 }
 
+void SimonEngine::o2_screenTextPObj() {
+	// 177: inventory descriptions
+	uint vgaSpriteId = getVarOrByte();
+	uint color = getVarOrByte();
+	const char *string_ptr = NULL;
+	TextLocation *tl = NULL;
+	char buf[256];
+
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	if (subObject != NULL && subObject->objectFlags & kOFText) {
+		string_ptr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
+		tl = getTextLocation(vgaSpriteId);
+	}
+
+	if (getFeatures() & GF_TALKIE) {
+		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
+
+			if (subObject->objectFlags & kOFNumber) {
+				uint speechIdOffs = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
+
+				if (speechId == 116)
+					speechId = speechIdOffs + 115;
+				if (speechId == 92)
+					speechId = speechIdOffs + 98;
+				if (speechId == 99)
+					speechId = 9;
+				if (speechId == 97) {
+					switch (speechIdOffs) {
+					case 12:
+						speechId = 109;
+						break;
+					case 14:
+						speechId = 108;
+						break;
+					case 18:
+						speechId = 107;
+						break;
+					case 20:
+						speechId = 106;
+						break;
+					case 22:
+						speechId = 105;
+						break;
+					case 28:
+						speechId = 104;
+						break;
+					case 90:
+						speechId = 103;
+						break;
+					case 92:
+						speechId = 102;
+						break;
+					case 100:
+						speechId = 51;
+						break;
+					default:
+						error("o2_screenTextPObj: invalid case %d", speechIdOffs);
+					}
+				}
+			}
+
+			if (_speech)
+				playSpeech(speechId, vgaSpriteId);
+		}
+
+	}
+
+	if (subObject != NULL && (subObject->objectFlags & kOFText) && _subtitles) {
+		if (subObject->objectFlags & kOFNumber) {
+			sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
+			string_ptr = buf;
+		}
+		if (string_ptr != NULL)
+			printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+	}
+}
+
 void SimonEngine::o2_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
@@ -1946,6 +1975,35 @@ void SimonEngine::o3_checkPaths() {
 	}
 
 	_variableArray2[57] = result;
+}
+
+void SimonEngine::o3_screenTextPObj() {
+	// 177: inventory descriptions
+	uint vgaSpriteId = getVarOrByte();
+	uint color = getVarOrByte();
+	const char *string_ptr = NULL;
+	TextLocation *tl = NULL;
+	char buf[256];
+
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	if (subObject != NULL && subObject->objectFlags & kOFText) {
+		string_ptr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
+		tl = getTextLocation(vgaSpriteId);
+	}
+
+	if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+		uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
+		playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
+	}
+
+	if (subObject != NULL && (subObject->objectFlags & kOFText) && _subtitles) {
+		if (subObject->objectFlags & kOFNumber) {
+			sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
+			string_ptr = buf;
+		}
+		if (string_ptr != NULL)
+			printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+	}
 }
 
 void SimonEngine::o3_mouseOff() {
