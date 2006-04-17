@@ -3483,7 +3483,8 @@ int SimonEngine::go() {
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_sdl_buf_scaled = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	if (getGameType() == GType_FF)
+		_sdl_buf_scaled = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	allocItemHeap();
 	allocTablesHeap();
