@@ -46,6 +46,7 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 
 #define interpolate_1_1		interpolate16_2<bitFormat, 1, 1>
 #define interpolate_3_1		interpolate16_2<bitFormat, 3, 1>
+#define interpolate_6_1_1	interpolate16_3<bitFormat, 6, 1, 1>
 #define interpolate_1_1_1_1	interpolate32_1_1_1_1<bitFormat>
 
 template<int bitFormat>
@@ -204,13 +205,11 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 						product2b = interpolate_1_1(color2, color3);
 					}
 				} else {
-					product2b = product1a = interpolate_1_1(color2, color6);
-					product2b = interpolate_3_1(color3, product2b);
-					product1a = interpolate_3_1(color5, product1a);
+					product2b = interpolate_6_1_1(color3, color2, color6);
+					product1a = interpolate_6_1_1(color5, color2, color6);
 
-					product2a = product1b = interpolate_1_1(color5, color3);
-					product2a = interpolate_3_1(color2, product2a);
-					product1b = interpolate_3_1(color6, product1b);
+					product2a = interpolate_6_1_1(color2, color5, color3);
+					product1b = interpolate_6_1_1(color6, color5, color3);
 				}
 			} else {
 				if (color2 != color6) {
