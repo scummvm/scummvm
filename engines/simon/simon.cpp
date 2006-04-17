@@ -998,10 +998,7 @@ uint SimonEngine::getVarOrWord() {
 	uint a = READ_BE_UINT16(_codePtr);
 	_codePtr += 2;
 	if (a >= 30000 && a < 30512) {
-		if (getGameType() == GType_FF)
-			return (uint16)readVariable(a - 30000);
-		else
-			return readVariable(a - 30000);
+		return readVariable(a - 30000);
 	}
 	return a;
 }
@@ -1079,10 +1076,14 @@ uint SimonEngine::readVariable(uint variable) {
 	if (variable >= 255)
 		error("Variable %d out of range in read", variable);
 
-	if (getGameType() == GType_FF && getBitFlag(83))
-		return _variableArray2[variable];
-	else
-		return _variableArray[variable];
+	if (getGameType() == GType_FF) {
+		if (getBitFlag(83))
+			return (uint16)_variableArray2[variable];
+		else
+			return (uint16)_variableArray[variable];
+	} else {
+			return _variableArray[variable];
+	}
 }
 
 void SimonEngine::writeNextVarContents(uint16 contents) {
@@ -1368,7 +1369,8 @@ Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 			return cur;
 	}
 
-	debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
+	if (subroutine_id != 160)
+		debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
 	return NULL;
 }
 
@@ -1989,7 +1991,7 @@ void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
 	if (getGameType() == GType_SIMON1) {
-		uint subr_id = _variableArray[254];
+		uint subr_id = (uint16)_variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
 			if (sub != NULL) {
@@ -2018,7 +2020,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 	uint subr_id;
 	Subroutine *sub;
 
-	subr_id = _variableArray[249];
+	subr_id = (uint16)_variableArray[249];
 	if (subr_id != 0) {
 		sub = getSubroutineByID(subr_id);
 		if (sub != NULL) {
@@ -2029,7 +2031,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 		_variableArray[249] = 0;
 	}
 
-	subr_id = _variableArray[254];
+	subr_id = (uint16)_variableArray[254];
 	if (subr_id != 0) {
 		sub = getSubroutineByID(subr_id);
 		if (sub != NULL) {
