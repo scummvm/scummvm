@@ -966,6 +966,7 @@ public:
 	void o3_jumpOut();
 	void o3_addTextBox();
 	void o3_printLongText();
+	void o3_addBox();
 	void o3_oracleTextDown();
 	void o3_oracleTextUp();
 	void o3_ifTime();

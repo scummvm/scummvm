@@ -318,6 +318,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[83] = &SimonEngine::o2_rescan;
 		opcode_table[98] = &SimonEngine::o2_animate;
 		opcode_table[99] = &SimonEngine::o2_stopAnimate;
+		opcode_table[107] = &SimonEngine::o3_addBox;
 		opcode_table[122] = &SimonEngine::o3_oracleTextDown;
 		opcode_table[123] = &SimonEngine::o3_oracleTextUp;
 		opcode_table[124] = &SimonEngine::o3_ifTime;
@@ -1789,6 +1790,36 @@ void SimonEngine::o3_printLongText() {
 	int num = getVarOrByte();
 	const char *str = (const char *)getStringPtrByID(_stringIdArray3[num]);
 	printInteractText(num, str);
+}
+
+void SimonEngine::o3_addBox() {
+	// 107: add item hitarea
+	uint flags = 0;
+	uint id = getVarOrWord();
+	uint params = id / 1000;
+	uint x, y, w, h, verb;
+	Item *item;
+
+	id = id % 1000;
+
+	if (params & 1)
+		flags |= kBFInvertTouch;
+	if (params & 2)
+		flags |= kBFNoTouchName;
+	if (params & 4)
+		flags |= kBFBoxItem;
+	if (params & 8)
+		flags |= kBFTextBox;
+	if (params & 16)
+		flags |= 0x10;
+
+	x = getVarOrWord();
+	y = getVarOrWord();
+	w = getVarOrWord();
+	h = getVarOrWord();
+	item = getNextItemPtrStrange();
+	verb = getVarOrWord();
+	defineBox(id, x, y, w, h, flags, verb, item);
 }
 
 void SimonEngine::o3_oracleTextDown() {
