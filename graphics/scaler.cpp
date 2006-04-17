@@ -43,9 +43,8 @@ extern "C" {
 
 #endif
 
-// FIXME/TODO: The following two tables suck up 512 KB.
-// They should at least be allocated on the heap, to reduce the size of the
-// binary.
+// FIXME/TODO: The following two tables suck up 512 KB. This is bad.
+// In addition we never free them...
 //
 // Note: a memory lookup table is *not* necessarily faster than computing
 // these things on the fly, because of its size. Both tables together, plus
@@ -69,9 +68,8 @@ extern "C" {
 // Of course, the above is largely a conjecture, and the actual speed
 // differences are likely to vary a lot between different architectures and
 // CPUs.
-uint RGBtoYUVstorage[65536];
-uint *RGBtoYUV = RGBtoYUVstorage;
-uint LUT16to32[65536];
+uint32 *RGBtoYUV = 0;
+uint32 *LUT16to32 = 0;
 }
 
 template<class T>
@@ -80,6 +78,12 @@ void InitLUT() {
 	int Y, u, v;
 	
 	assert(T::kBytesPerPixel == 2);
+
+	// Allocate the YUV/LUT buffers on the fly if needed.	
+	if (RGBtoYUV == 0)
+		RGBtoYUV = (uint32 *)malloc(65536 * sizeof(uint32));
+	if (LUT16to32 == 0)
+		LUT16to32 = (uint32 *)malloc(65536 * sizeof(uint32));
 
 	for (int color = 0; color < 65536; ++color) {
 		r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
