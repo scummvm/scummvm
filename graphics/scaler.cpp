@@ -75,33 +75,11 @@ uint LUT16to32[65536];
 }
 #endif
 
-static const uint16 dotmatrix_565[16] = {
-	0x01E0, 0x0007, 0x3800, 0x0000,
-	0x39E7, 0x0000, 0x39E7, 0x0000,
-	0x3800, 0x0000, 0x01E0, 0x0007,
-	0x39E7, 0x0000, 0x39E7, 0x0000
-};
-static const uint16 dotmatrix_555[16] = {
-	0x00E0, 0x0007, 0x1C00, 0x0000,
-	0x1CE7, 0x0000, 0x1CE7, 0x0000,
-	0x1C00, 0x0000, 0x00E0, 0x0007,
-	0x1CE7, 0x0000, 0x1CE7, 0x0000
-};
-static const uint16 *dotmatrix;
-
 static void InitLUT(uint32 BitFormat);
 
 void InitScalers(uint32 BitFormat) {
-	if (BitFormat == 565) {
-		dotmatrix = dotmatrix_565;
-	} else if (BitFormat == 555) {
-		dotmatrix = dotmatrix_555;
-	} else {
-		error("Unknown bit format %d", BitFormat);
-	}
-
 	gBitFormat = BitFormat;
-	InitLUT(BitFormat);
+	InitLUT(gBitFormat);
 }
 
 void InitLUT(uint32 BitFormat) {
@@ -288,7 +266,20 @@ void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 }
 MAKE_WRAPPER(TV2x)
 
-static inline uint16 DOT_16(uint16 c, int j, int i) {
+static const uint16 dotmatrix_565[16] = {
+	0x01E0, 0x0007, 0x3800, 0x0000,
+	0x39E7, 0x0000, 0x39E7, 0x0000,
+	0x3800, 0x0000, 0x01E0, 0x0007,
+	0x39E7, 0x0000, 0x39E7, 0x0000
+};
+static const uint16 dotmatrix_555[16] = {
+	0x00E0, 0x0007, 0x1C00, 0x0000,
+	0x1CE7, 0x0000, 0x1CE7, 0x0000,
+	0x1C00, 0x0000, 0x00E0, 0x0007,
+	0x1CE7, 0x0000, 0x1CE7, 0x0000
+};
+
+static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
 	return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
 }
 
@@ -300,6 +291,16 @@ static inline uint16 DOT_16(uint16 c, int j, int i) {
 
 void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
+
+	const uint16 *dotmatrix;
+	if (gBitFormat == 565) {
+		dotmatrix = dotmatrix_565;
+	} else if (gBitFormat == 555) {
+		dotmatrix = dotmatrix_555;
+	} else {
+		error("Unknown bit format %d", gBitFormat);
+	}
+
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
@@ -309,10 +310,10 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 	for (int j = 0, jj = 0; j < height; ++j, jj += 2) {
 		for (int i = 0, ii = 0; i < width; ++i, ii += 2) {
 			uint16 c = *(p + i);
-			*(q + ii) = DOT_16(c, jj, ii);
-			*(q + ii + 1) = DOT_16(c, jj, ii + 1);
-			*(q + ii + nextlineDst) = DOT_16(c, jj + 1, ii);
-			*(q + ii + nextlineDst + 1) = DOT_16(c, jj + 1, ii + 1);
+			*(q + ii) = DOT_16(dotmatrix, c, jj, ii);
+			*(q + ii + 1) = DOT_16(dotmatrix, c, jj, ii + 1);
+			*(q + ii + nextlineDst) = DOT_16(dotmatrix, c, jj + 1, ii);
+			*(q + ii + nextlineDst + 1) = DOT_16(dotmatrix, c, jj + 1, ii + 1);
 		}
 		p += nextlineSrc;
 		q += nextlineDst << 1;
