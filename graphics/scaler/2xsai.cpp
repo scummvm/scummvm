@@ -193,15 +193,13 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 				if (color2 == color6) {
 					product1b = product2a = color2;
 					if ((color1 == color2) || (color6 == colorB2)) {
-						product1a = interpolate32_1_1(color2, color5);
-						product1a = interpolate32_1_1(color2, product1a);
+						product1a = interpolate32_3_1(color2, color5);
 					} else {
 						product1a = interpolate32_1_1(color5, color6);
 					}
 
 					if ((color6 == colorS2) || (color2 == colorA1)) {
-						product2b = interpolate32_1_1(color2, color3);
-						product2b = interpolate32_1_1(color2, product2b);
+						product2b = interpolate32_3_1(color2, color3);
 					} else {
 						product2b = interpolate32_1_1(color2, color3);
 					}
@@ -219,15 +217,13 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 					product2b = product1a = color5;
 
 					if ((colorB1 == color5) || (color3 == colorS1)) {
-						product1b = interpolate32_1_1(color5, color6);
-						product1b = interpolate32_1_1(color5, product1b);
+						product1b = interpolate32_3_1(color5, color6);
 					} else {
 						product1b = interpolate32_1_1(color5, color6);
 					}
 
 					if ((color3 == colorA2) || (color4 == color5)) {
-						product2a = interpolate32_1_1(color5, color2);
-						product2a = interpolate32_1_1(color5, product2a);
+						product2a = interpolate32_3_1(color5, color2);
 					} else {
 						product2a = interpolate32_1_1(color2, color3);
 					}
