@@ -137,6 +137,7 @@ class Debugger;
 
 class SimonEngine : public Engine {
 	friend class Debugger;
+	friend class MoviePlayer;
 
 	void errorString(const char *buf_input, char *buf_output);
 

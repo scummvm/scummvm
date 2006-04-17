@@ -85,6 +85,12 @@ bool MoviePlayer::load(const char *filename) {
 void MoviePlayer::play() {
 	uint32 tag;
 
+	// Load OmniTV video
+	if (_vm->getBitFlag(40)) {
+		_vm->_variableArray[254] = 6747;
+		return;
+	}
+
 	if (_fd.isOpen() == false) {
 		debug(0, "MoviePlayer::play: No file loaded");
 		return;
