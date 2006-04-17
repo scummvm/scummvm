@@ -125,7 +125,7 @@ public:
 
 		/**
 		 * Set to true if the overlay pixel format has an alpha channel.
-		 * This should only be set if it offers at least 5-6 bits of accuracy,
+		 * This should only be set if it offers at least 3-4 bits of accuracy,
 		 * as opposed to a single alpha bit.
 		 */
 		kFeatureOverlaySupportsAlpha
