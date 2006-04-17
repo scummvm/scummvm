@@ -334,7 +334,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o70_seekFilePos),
+		OPCODE(o60_seekFilePos),
 		OPCODE(o60_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
@@ -711,30 +711,6 @@ void ScummEngine_v70he::o70_systemOps() {
 		break;
 	default:
 		error("o70_systemOps invalid case %d", subOp);
-	}
-}
-
-void ScummEngine_v70he::o70_seekFilePos() {
-	int mode, offset, slot;
-	mode = pop();
-	offset = pop();
-	slot = pop();
-
-	if (slot == -1)
-		return;
-
-	switch (mode) {
-	case 1:
-		_hFileTable[slot].seek(offset, SEEK_SET);
-		break;
-	case 2:
-		_hFileTable[slot].seek(offset, SEEK_CUR);
-		break;
-	case 3:
-		_hFileTable[slot].seek(offset, SEEK_END);
-		break;
-	default:
-		error("o70_seekFilePos: default case 0x%x", mode);
 	}
 }
 

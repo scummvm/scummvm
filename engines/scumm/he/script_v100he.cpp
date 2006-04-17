@@ -180,7 +180,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 6C */
 		OPCODE(o72_talkEgo),
 		OPCODE(o6_invalid),
-		OPCODE(o70_seekFilePos),
+		OPCODE(o60_seekFilePos),
 		OPCODE(o6_setBoxFlags),
 		/* 70 */
 		OPCODE(o6_invalid),

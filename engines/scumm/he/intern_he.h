@@ -159,7 +159,6 @@ protected:
 	void o70_resourceRoutines();
 	void o70_systemOps();
 	void o70_kernelSetFunctions();
-	void o70_seekFilePos();
 	void o70_copyString();
 	void o70_getStringWidth();
 	void o70_getStringLen();
