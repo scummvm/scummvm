@@ -55,20 +55,6 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 #if ASPECT_MODE == kFastAndNiceAspectMode
 
-template<int bitFormat>
-static inline uint32 INTERPOLATE_1_1(uint32 A, uint32 B) {
-	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
-}
-
-template<int bitFormat>
-static inline uint32 INTERPOLATE_1_3(uint32 A, uint32 B) {
-	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) * 3;
-	register uint32 y = ((A & qlowBits) + (B & qlowBits) * 3) >> 2;
-
-	y &= qlowBits;
-	return x + y;
-}
-
 template<int bitFormat, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// For efficiency reasons we blit two pixels at a time, so it is important
@@ -90,11 +76,11 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 	uint32 *d = (uint32 *)dst;
 	if (scale == 1) {
 		while (width--) {
-			*d++ = INTERPOLATE_1_3<bitFormat>(*sA++, *sB++);
+			*d++ = interpolate32_3_1<bitFormat>(*sB++, *sA++);
 		}
 	} else {
 		while (width--) {
-			*d++ = INTERPOLATE_1_1<bitFormat>(*sA++, *sB++);
+			*d++ = interpolate32_1_1<bitFormat>(*sB++, *sA++);
 		}
 	}
 }

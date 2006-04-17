@@ -36,7 +36,7 @@ uint16 quadBlockInterpolate(const uint8* src, uint32 srcPitch) {
 	uint16 colorx1y2 = *(((const uint16*)(src + srcPitch)));
 	uint16 colorx2y2 = *(((const uint16*)(src + srcPitch)) + 1);
 
-	return Q_INTERPOLATE<bitFormat>(colorx1y1, colorx2y1, colorx1y2, colorx2y2);
+	return interpolate32_1_1_1_1<bitFormat>(colorx1y1, colorx2y1, colorx1y2, colorx2y2);
 }
 
 template<int bitFormat>
@@ -63,7 +63,7 @@ void createThumbnail_4(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 
 			uint16 downleft = quadBlockInterpolate<bitFormat>(src + srcPitch * 2 + 2 * x, srcPitch);
 			uint16 downright = quadBlockInterpolate<bitFormat>(src + srcPitch * 2 + 2 * (x + 2), srcPitch);
 
-			*((uint16*)dstPtr) = Q_INTERPOLATE<bitFormat>(upleft, upright, downleft, downright);
+			*((uint16*)dstPtr) = interpolate32_1_1_1_1<bitFormat>(upleft, upright, downleft, downright);
 		}
 		dstPtr += (dstPitch - 2 * width / 4);
 		src += 4 * srcPitch;

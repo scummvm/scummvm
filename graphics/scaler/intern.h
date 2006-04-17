@@ -38,14 +38,27 @@
 
 
 /**
- * Interpolate two 16 bit pixel pairs at once with equal weights 1.
+ * Interpolate two 16 bit pixel *pairs* at once with equal weights 1.
  * In particular, A and B can contain two pixels/each in the upper
  * and lower halves.
  */
 template<int bitFormat>
-static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
-
+static inline uint32 interpolate32_1_1(uint32 A, uint32 B) {
 	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
+}
+
+/**
+ * Interpolate two 16 bit pixel *pairs* at once with weights 3 resp. 1.
+ * In particular, A and B can contain two pixels/each in the upper
+ * and lower halves.
+ */
+template<int bitFormat>
+static inline uint32 interpolate32_3_1(uint32 A, uint32 B) {
+	register uint32 x = ((A & qhighBits) >> 2) * 3 + ((B & qhighBits) >> 2);
+	register uint32 y = ((A & qlowBits) * 3 + (B & qlowBits)) >> 2;
+
+	y &= qlowBits;
+	return x + y;
 }
 
 /**
@@ -54,7 +67,7 @@ static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
  * and lower halves.
  */
 template<int bitFormat>
-static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
+static inline uint32 interpolate32_1_1_1_1(uint32 A, uint32 B, uint32 C, uint32 D) {
 	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
 	register uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
 
@@ -66,6 +79,7 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
 /**
  * Interpolate two 16 bit pixels with the weights specified in the template
  * parameters. Used by the hq scaler family.
+ * @note w1 and w2 must sum up to 2, 4, 8 or 16.
  */
 template<int bitFormat, int w1, int w2>
 static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
@@ -76,6 +90,7 @@ static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
 /**
  * Interpolate three 16 bit pixels with the weights specified in the template
  * parameters. Used by the hq scaler family.
+ * @note w1, w2 and w3 must sum up to 2, 4, 8 or 16.
  */
 template<int bitFormat, int w1, int w2, int w3>
 static inline uint16 interpolate16_3(uint16 p1, uint16 p2, uint16 p3) {
