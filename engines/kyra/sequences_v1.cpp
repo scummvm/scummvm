@@ -981,14 +981,16 @@ void KyraEngine::seq_brandonToStone() {
 void KyraEngine::seq_playEnding() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_playEnding()");
 	_screen->hideMouse();
+	_screen->_curPage = 0;
+	_screen->fadeToBlack();
 	loadBitmap("REUNION.CPS", 3, 3, _screen->_currentPalette);
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_curPage = 0;
 	// XXX
 	assert(_homeString);
 	drawSentenceCommand(_homeString[0], 179);
-	_screen->_curPage = 0;
-	_screen->fadeToBlack();
+	memset(_screen->getPalette(0), 0, sizeof(uint8)*768);
+	_screen->setScreenPalette(_screen->getPalette(0));
 	_seq->playSequence(_seq_Reunion, false);
 	_screen->fadeToBlack();
 	_screen->showMouse();
