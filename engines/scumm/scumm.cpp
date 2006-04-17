@@ -1472,7 +1472,6 @@ int ScummEngine::go() {
 	while (!_quit) {
 
 		updatePalette();
-		_system->updateScreen();
 
 		diff -= _system->getMillis();
 		waitForTimer(delta * 15 + diff);
@@ -1503,6 +1502,7 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	while (!_quit) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
+		_system->updateScreen();
 		if (_system->getMillis() >= start_time + msec_delay)
 			break;
 		_system->delayMillis(10);
