@@ -1933,7 +1933,7 @@ void SimonEngine::o3_playSmack() {
 	// 183: play video
 	debug(0, "Play video %s", _videoName);
 
-	DXA_Player p;
+	MoviePlayer p;
 	if (p.open((const char *)_videoName)) {
 		p.play();
 		p.close();

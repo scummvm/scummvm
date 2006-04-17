@@ -20,17 +20,12 @@
  *
  */
 
-#ifndef __DXA_PLAYER_H__
-#define __DXA_PLAYER_H__
+#ifndef ANIMATION_H
+#define ANIMATION_H
 
 #include "common/file.h"
 
-struct DXA_Player {
-	static const uint32 _tagDEXA;
-	static const uint32 _tagFRAM;
-	static const uint32 _tagWAVE;
-	static const uint32 _tagCMAP;
-	
+struct MoviePlayer {
 	bool _playing;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
@@ -55,4 +50,4 @@ struct DXA_Player {
 	void decode2(uint8 *data, int size, int totalSize);
 };
 
-#endif // __DXA_PLAYER_H__
+#endif

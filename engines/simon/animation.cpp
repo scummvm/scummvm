@@ -31,7 +31,7 @@
 #include <zlib.h>
 #endif
 
-bool DXA_Player::open(const char *filename) {
+bool MoviePlayer::open(const char *filename) {
 	bool opened = false;
 	char filename2[100];
 
@@ -80,13 +80,13 @@ bool DXA_Player::open(const char *filename) {
 	return opened;
 }
 
-void DXA_Player::close() {
+void MoviePlayer::close() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
 }
 
-void DXA_Player::play() {
+void MoviePlayer::play() {
 	g_system->clearScreen();
 
 	while (_currentFrame < _framesCount) {
@@ -97,7 +97,7 @@ void DXA_Player::play() {
 	g_system->clearScreen();
 }
 
-void DXA_Player::handleNextFrame() {
+void MoviePlayer::handleNextFrame() {
 	uint32 tag = _fd.readUint32BE();
 	if (tag == MKID_BE('CMAP')) {
 		uint8 rgb[768];
@@ -154,7 +154,7 @@ void DXA_Player::handleNextFrame() {
 	delay(_frameTicks);
 }
 
-void DXA_Player::decodeZlib(uint8 *data, int size, int totalSize) {
+void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
 #ifdef USE_ZLIB
 	uint8 *temp = (uint8 *)malloc(size);
 	if (temp) {
@@ -176,15 +176,15 @@ void DXA_Player::decodeZlib(uint8 *data, int size, int totalSize) {
 #endif
 }
 
-void DXA_Player::decode0(uint8 *data, int size) {
+void MoviePlayer::decode0(uint8 *data, int size) {
 	error("decode0");
 }
 
-void DXA_Player::decode2(uint8 *data, int size, int totalSize) {
+void MoviePlayer::decode2(uint8 *data, int size, int totalSize) {
 	error("decode2");
 }
 
-void DXA_Player::delay(uint amount) {
+void MoviePlayer::delay(uint amount) {
 	OSystem::Event event;
 
 	uint32 start = g_system->getMillis();
