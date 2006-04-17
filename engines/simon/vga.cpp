@@ -1324,8 +1324,6 @@ void SimonEngine::horizontalScroll(VC10_state *state) {
 }
 
 void SimonEngine::verticalScroll(VC10_state *state) {
-	debug(0, "Vertical scrolling not supported");
-
 	const byte *src;
 	byte *dst;
 	int h;
