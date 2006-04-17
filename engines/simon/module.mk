@@ -1,6 +1,7 @@
 MODULE := engines/simon
 
 MODULE_OBJS := \
+	animation.o \
 	charset.o \
 	cursor.o \
 	debug.o \

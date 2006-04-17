@@ -207,6 +207,7 @@ protected:
 	byte *_tblList;
 
 	const byte *_codePtr;
+	const byte *_videoName;
 
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;

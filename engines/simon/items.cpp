@@ -23,6 +23,8 @@
 // Item script opcodes for Simon1/Simon2
 
 #include "common/stdafx.h"
+
+#include "simon/animation.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
 
@@ -1923,12 +1925,19 @@ void SimonEngine::o3_mouseOff() {
 
 void SimonEngine::o3_loadSmack() {
 	// 182: load video file
-	debug(0,"Load video file: %s", getStringPtrByID(getNextStringID()));
+	_videoName = getStringPtrByID(getNextStringID());
+	debug(0,"Load video file: %s", _videoName);
 }
 
 void SimonEngine::o3_playSmack() {
 	// 183: play video
-	debug(0, "Play video");
+	debug(0, "Play video %s", _videoName);
+
+	DXA_Player p;
+	if (p.open((const char *)_videoName)) {
+		p.play();
+		p.close();
+	}
 }
 
 void SimonEngine::o3_centreScroll() {
