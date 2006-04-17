@@ -220,17 +220,17 @@ struct ColorMasks<8888> {
 template<class T>
 uint32 RGBToColor(uint8 r, uint8 g, uint8 b) {
 	return T::kAlphaMask |
-	       ((r << T::kRedShift) & T::kRedMask) |
-	       ((g << T::kGreenShift) & T::kGreenMask) |
-	       ((b << T::kBlueShift) & T::kBlueMask);
+	       (((r << T::kRedShift) >> (8 - T::kRedBits)) & T::kRedMask) |
+	       (((g << T::kGreenShift) >> (8 - T::kGreenBits)) & T::kGreenMask) |
+	       (((b << T::kBlueShift) >> (8 - T::kBlueBits)) & T::kBlueMask);
 }
 
 template<class T>
 uint32 ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
-	return ((a << T::kAlphaShift) & T::kAlphaMask) |
-	       ((r << T::kRedShift) & T::kRedMask) |
-	       ((g << T::kGreenShift) & T::kGreenMask) |
-	       ((b << T::kBlueShift) & T::kBlueMask);
+	return (((a << T::kAlphaShift) >> (8 - T::kAlphaBits)) & T::kAlphaMask) |
+	       (((r << T::kRedShift) >> (8 - T::kRedBits)) & T::kRedMask) |
+	       (((g << T::kGreenShift) >> (8 - T::kGreenBits)) & T::kGreenMask) |
+	       (((b << T::kBlueShift) >> (8 - T::kBlueBits)) & T::kBlueMask);
 }
 
 template<class T>
