@@ -66,7 +66,8 @@ public:
 
 	enum CopyRegionFlags {
 		CR_X_FLIPPED  = 0x01,
-		CR_CLIPPED    = 0x02
+		CR_CLIPPED    = 0x02,
+		CR_NO_P_CHECK = 0x04
 	};
 
 	enum DrawShapeFlags {

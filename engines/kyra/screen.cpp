@@ -312,7 +312,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	if (flags & CR_X_FLIPPED) {
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
-				if (src[i]) {
+				if (src[i] || (flags & CR_NO_P_CHECK)) {
 					dst[w-i] = src[i];
 				}
 			}
@@ -322,7 +322,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	} else {
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
-				if (src[i]) {
+				if (src[i] || (flags & CR_NO_P_CHECK)) {
 					dst[i] = src[i];
 				}
 			}

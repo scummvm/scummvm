@@ -1093,7 +1093,7 @@ void KyraEngine::seq_playCredits() {
 	while (!finished) {
 		uint32 startLoop = _system->getMillis();
 		if (bottom > 175) {
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2);
+			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 			
 			for (int i = 0; i < numStrings; i++) {
@@ -1106,7 +1106,7 @@ void KyraEngine::seq_playCredits() {
 				if (strings[i].y > bottom)
 					bottom = strings[i].y;
 			}
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0);
+			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 		}
 
