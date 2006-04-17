@@ -62,7 +62,6 @@ _build_cine=no
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
-_altivec=auto
 _build_hq_scalers=yes
 _build_scalers=yes
 # more defaults
@@ -400,7 +399,6 @@ for ac_option in $@; do
       --enable-plugins)         _build_plugins=yes ;;
       --enable-mt32emu)         _mt32emu=yes    ;;
       --disable-mt32emu)        _mt32emu=no     ;;
-      --disable-altivec)        _altivec=no     ;;
       --with-fluidsynth-prefix=*)
         arg=`echo $ac_option | cut -d '=' -f 2`
         FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1231,30 +1229,6 @@ fi
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
 test -z "$_mandir" && _mandir="$_prefix/man"
-
-#
-# Check for Altivec, if on MacOS X
-#
-case $_host_os in
-	darwin*)
-		echocheck "Altivec"
-		if test "$_altivec" = auto ; then
-			_altivec=no
-			cat > $TMPC << EOF
-int main(void) { return 0; }
-EOF
-			cc_check $LDFLAGS $CXXFLAGS -maltivec && _altivec=yes
-		fi
-		if test "$_altivec" = yes ; then
-				DEFINES="$DEFINES -DHAS_ALTIVEC"
-				CXXFLAGS="$CXXFLAGS -faltivec"
-				CFLAGS="$CFLAGS -faltivec"
-		fi  
-		echo "$_altivec"
-		rm -f $TMPC $TMPO$EXEEXT
-	;;
-esac
-
 
 #
 # Check which engines ("frontends") are to be built

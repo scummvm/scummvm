@@ -42,35 +42,6 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 
 #else
 
-#ifdef HAS_ALTIVEC
-
-#ifdef __amigaos4__
-#include <proto/exec.h>
-#include <altivec.h>
-static bool isAltiVecAvailable() {
-	uint32 vecUnit;
-	IExec->GetCPUInfo(GCIT_VectorUnit, &vecUnit, TAG_DONE);
-	if (vecUnit == VECTORTYPE_NONE)
-		return false;
-	else
-		return true;
-}
-#else
-
-#include <sys/sysctl.h>
-
-static bool isAltiVecAvailable()  {
-	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
-	int hasVectorUnit = 0;
-	size_t length = sizeof(hasVectorUnit);
-	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0);
-	if ( 0 == error )
-		return hasVectorUnit != 0;
-	return false;
-}
-#endif
-#endif
-
 #define PIXEL00_0	*(q) = w5;
 #define PIXEL00_10	*(q) = interpolate16_2<bitFormat,3,1>(w5, w1);
 #define PIXEL00_11	*(q) = interpolate16_2<bitFormat,3,1>(w5, w4);
@@ -139,33 +110,7 @@ void HQ2x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 #undef bitFormat
 
 
-#ifdef HAS_ALTIVEC
-	#define USE_ALTIVEC	1
-
-	#define bitFormat 565
-	void HQ2x_565_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-		#include "graphics/scaler/hq2x.h"
-	}
-	#undef bitFormat
-
-	#define bitFormat 555
-	void HQ2x_555_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-		#include "graphics/scaler/hq2x.h"
-	}
-	#undef bitFormat
-#endif
-
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-#ifdef HAS_ALTIVEC
-	if (isAltiVecAvailable()) {
-		if (gBitFormat == 565)
-			HQ2x_565_Altivec(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		else
-			HQ2x_555_Altivec(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		return;
-	}
-#endif
-
 	if (gBitFormat == 565)
 		HQ2x_565(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
