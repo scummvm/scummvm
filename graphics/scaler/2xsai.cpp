@@ -44,9 +44,9 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	return rmap[y][x];
 }
 
-#define interpolate32_1_1		interpolate32_1_1<bitFormat>
-#define interpolate32_3_1		interpolate32_3_1<bitFormat>
-#define interpolate32_1_1_1_1	interpolate32_1_1_1_1<bitFormat>
+#define interpolate_1_1		interpolate16_2<bitFormat, 1, 1>
+#define interpolate_3_1		interpolate16_2<bitFormat, 3, 1>
+#define interpolate_1_1_1_1	interpolate32_1_1_1_1<bitFormat>
 
 template<int bitFormat>
 void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
@@ -109,35 +109,35 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 				else if (r < 0)
 					product2b = product1b = color5;
 				else {
-					product2b = product1b = interpolate32_1_1(color5, color6);
+					product2b = product1b = interpolate_1_1(color5, color6);
 				}
 			} else {
 				if (color6 == color3 && color3 == colorA1 && color2 != colorA2 && color3 != colorA0)
-					product2b = interpolate32_3_1(color3, color2);
+					product2b = interpolate_3_1(color3, color2);
 				else if (color5 == color2 && color2 == colorA2 && colorA1 != color3 && color2 != colorA3)
-					product2b = interpolate32_3_1(color2, color3);
+					product2b = interpolate_3_1(color2, color3);
 				else
-					product2b = interpolate32_1_1(color2, color3);
+					product2b = interpolate_1_1(color2, color3);
 
 				if (color6 == color3 && color6 == colorB1 && color5 != colorB2 && color6 != colorB0)
-					product1b = interpolate32_3_1(color6, color5);
+					product1b = interpolate_3_1(color6, color5);
 				else if (color5 == color2 && color5 == colorB2 && colorB1 != color6 && color5 != colorB3)
-					product1b = interpolate32_3_1(color5, color6);
+					product1b = interpolate_3_1(color5, color6);
 				else
-					product1b = interpolate32_1_1(color5, color6);
+					product1b = interpolate_1_1(color5, color6);
 			}
 
 			if (color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
-				product2a = interpolate32_1_1(color2, color5);
+				product2a = interpolate_1_1(color2, color5);
 			else if (color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
-				product2a = interpolate32_1_1(color2, color5);
+				product2a = interpolate_1_1(color2, color5);
 			else
 				product2a = color2;
 
 			if (color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
-				product1a = interpolate32_1_1(color2, color5);
+				product1a = interpolate_1_1(color2, color5);
 			else if (color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
-				product1a = interpolate32_1_1(color2, color5);
+				product1a = interpolate_1_1(color2, color5);
 			else
 				product1a = color5;
 
@@ -193,39 +193,39 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 				if (color2 == color6) {
 					product1b = product2a = color2;
 					if ((color1 == color2) || (color6 == colorB2)) {
-						product1a = interpolate32_3_1(color2, color5);
+						product1a = interpolate_3_1(color2, color5);
 					} else {
-						product1a = interpolate32_1_1(color5, color6);
+						product1a = interpolate_1_1(color5, color6);
 					}
 
 					if ((color6 == colorS2) || (color2 == colorA1)) {
-						product2b = interpolate32_3_1(color2, color3);
+						product2b = interpolate_3_1(color2, color3);
 					} else {
-						product2b = interpolate32_1_1(color2, color3);
+						product2b = interpolate_1_1(color2, color3);
 					}
 				} else {
-					product2b = product1a = interpolate32_1_1(color2, color6);
-					product2b = interpolate32_3_1(color3, product2b);
-					product1a = interpolate32_3_1(color5, product1a);
+					product2b = product1a = interpolate_1_1(color2, color6);
+					product2b = interpolate_3_1(color3, product2b);
+					product1a = interpolate_3_1(color5, product1a);
 
-					product2a = product1b = interpolate32_1_1(color5, color3);
-					product2a = interpolate32_3_1(color2, product2a);
-					product1b = interpolate32_3_1(color6, product1b);
+					product2a = product1b = interpolate_1_1(color5, color3);
+					product2a = interpolate_3_1(color2, product2a);
+					product1b = interpolate_3_1(color6, product1b);
 				}
 			} else {
 				if (color2 != color6) {
 					product2b = product1a = color5;
 
 					if ((colorB1 == color5) || (color3 == colorS1)) {
-						product1b = interpolate32_3_1(color5, color6);
+						product1b = interpolate_3_1(color5, color6);
 					} else {
-						product1b = interpolate32_1_1(color5, color6);
+						product1b = interpolate_1_1(color5, color6);
 					}
 
 					if ((color3 == colorA2) || (color4 == color5)) {
-						product2a = interpolate32_3_1(color5, color2);
+						product2a = interpolate_3_1(color5, color2);
 					} else {
-						product2a = interpolate32_1_1(color2, color3);
+						product2a = interpolate_1_1(color2, color3);
 					}
 				} else {
 					register int r = 0;
@@ -237,10 +237,10 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 
 					if (r > 0) {
 						product1b = product2a = color2;
-						product1a = product2b = interpolate32_1_1(color5, color6);
+						product1a = product2b = interpolate_1_1(color5, color6);
 					} else if (r < 0) {
 						product2b = product1a = color5;
-						product1b = product2a = interpolate32_1_1(color5, color6);
+						product1b = product2a = interpolate_1_1(color5, color6);
 					} else {
 						product2b = product1a = color5;
 						product1b = product2a = color2;
@@ -311,14 +311,14 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 					((colorA == colorC) && (colorA == colorF) && (colorB != colorE) && (colorB == colorJ))) {
 					product = colorA;
 				} else {
-					product = interpolate32_1_1(colorA, colorB);
+					product = interpolate_1_1(colorA, colorB);
 				}
 
 				if (((colorA == colorG) && (colorC == colorO)) ||
 					((colorA == colorB) && (colorA == colorH) && (colorG != colorC)  && (colorC == colorM))) {
 					product1 = colorA;
 				} else {
-					product1 = interpolate32_1_1(colorA, colorC);
+					product1 = interpolate_1_1(colorA, colorC);
 				}
 				product2 = colorA;
 			} else if ((colorB == colorC) && (colorA != colorD)) {
@@ -326,14 +326,14 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 					((colorB == colorE) && (colorB == colorD) && (colorA != colorF) && (colorA == colorI))) {
 					product = colorB;
 				} else {
-					product = interpolate32_1_1(colorA, colorB);
+					product = interpolate_1_1(colorA, colorB);
 				}
 
 				if (((colorC == colorH) && (colorA == colorF)) ||
 					((colorC == colorG) && (colorC == colorD) && (colorA != colorH) && (colorA == colorI))) {
 					product1 = colorC;
 				} else {
-					product1 = interpolate32_1_1(colorA, colorC);
+					product1 = interpolate_1_1(colorA, colorC);
 				}
 				product2 = colorB;
 			} else if ((colorA == colorD) && (colorB == colorC)) {
@@ -344,8 +344,8 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 				} else {
 					register int r = 0;
 
-					product1 = interpolate32_1_1(colorA, colorC);
-					product = interpolate32_1_1(colorA, colorB);
+					product1 = interpolate_1_1(colorA, colorC);
+					product = interpolate_1_1(colorA, colorB);
 
 					r += GetResult(colorA, colorB, colorG, colorE);
 					r -= GetResult(colorB, colorA, colorK, colorF);
@@ -357,11 +357,11 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 					else if (r < 0)
 						product2 = colorB;
 					else {
-						product2 = interpolate32_1_1_1_1(colorA, colorB, colorC, colorD);
+						product2 = interpolate_1_1_1_1(colorA, colorB, colorC, colorD);
 					}
 				}
 			} else {
-				product2 = interpolate32_1_1_1_1(colorA, colorB, colorC, colorD);
+				product2 = interpolate_1_1_1_1(colorA, colorB, colorC, colorD);
 
 				if ((colorA == colorC) && (colorA == colorF)
 						&& (colorB != colorE) && (colorB == colorJ)) {
@@ -370,7 +370,7 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 									 && (colorA != colorF) && (colorA == colorI)) {
 					product = colorB;
 				} else {
-					product = interpolate32_1_1(colorA, colorB);
+					product = interpolate_1_1(colorA, colorB);
 				}
 
 				if ((colorA == colorB) && (colorA == colorH)
@@ -380,7 +380,7 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 									 && (colorA != colorH) && (colorA == colorI)) {
 					product1 = colorC;
 				} else {
-					product1 = interpolate32_1_1(colorA, colorC);
+					product1 = interpolate_1_1(colorA, colorC);
 				}
 			}
 
