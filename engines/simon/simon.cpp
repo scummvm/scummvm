@@ -2643,15 +2643,15 @@ void SimonEngine::scrollEvent() {
 
 	if (_scrollXMax == 0) {
 		if (_scrollFlag < 0) {
-			memmove(dst + 8 * _screenWidth, dst, (_scrollHeight - 8) * _screenWidth);
+			memmove(dst + 8 * _screenWidth, dst, (_scrollWidth - 8) * _screenHeight);
 		} else {
-			memmove(dst, dst + 8 * _screenWidth, (_scrollHeight - 8) * _screenWidth);
+			memmove(dst, dst + 8 * _screenWidth, (_scrollWidth - 8) * _screenHeight);
 		}
 
 		y = _scrollY - 8;
 
 		if (_scrollFlag > 0) {
-			dst += (_scrollHeight - 8) * _screenWidth;
+			dst += (_screenHeight - 8) * _screenWidth;
 			y += 488;
 		}
 
