@@ -219,7 +219,8 @@ struct ColorMasks<8888> {
 
 template<class T>
 uint32 RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return ((r << T::kRedShift) & T::kRedMask) |
+	return T::kAlphaMask |
+	       ((r << T::kRedShift) & T::kRedMask) |
 	       ((g << T::kGreenShift) & T::kGreenMask) |
 	       ((b << T::kBlueShift) & T::kBlueMask);
 }
