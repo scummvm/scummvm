@@ -817,6 +817,9 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			updateKyragemFading();
 		}
 
+		if (_skipFlag && !_abortIntroFlag && !queryGameFlag(0xFE))
+			_skipFlag = false;
+			
 		if (amount > 0 && !_skipFlag) {
 			_system->delayMillis((amount > 10) ? 10 : amount);
 		}

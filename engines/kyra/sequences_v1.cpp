@@ -998,24 +998,148 @@ void KyraEngine::seq_playEnding() {
 void KyraEngine::seq_playCredits() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_playCredits()");
 	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static const char stringTerms[] = { 0x5, 0xd, 0x0};
+	static const int numStrings = 250;
+	
+	struct {
+		int16 x, y;
+		uint8 code;
+		uint8 unk1;
+		Screen::FontId font;
+		uint8 *str;
+	} strings[numStrings];
+	
+	memset(strings, 0, sizeof(strings));
+	
 	_screen->hideMouse();
 	uint32 sz = 0;
 	if (_features & GF_FLOPPY) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, _res->fileData("CREDIT6.FNT", &sz));
 		_screen->loadFont(Screen::FID_CRED8_FNT, _res->fileData("CREDIT8.FNT", &sz));
-	}
-	loadBitmap("CHALET.CPS", 2, 2, _screen->_currentPalette);
+	} else
+		_screen->setFont(Screen::FID_8_FNT);
+	
+	loadBitmap("CHALET.CPS", 4, 4, _screen->_currentPalette);
 	_screen->setScreenPalette(_screen->_currentPalette);
+	
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
-	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = -1;
 	snd_playWanderScoreViaMap(53, 1);
-	// delete
-	_screen->updateScreen();
-	// XXX
-	delay(120 * _tickLength); // wait until user presses escape normally
+
+	uint8 *buffer = 0;
+	uint32 size;
+	
+	if (_features & GF_FLOPPY) {
+		Common::File file;
+		if (file.open("CREDITS.TXT")) {
+			size = file.size();
+			buffer = new uint8[size];
+			file.read(buffer, size);
+			file.close();
+		}
+	} else {
+		buffer = _res->fileData("CREDITS.TXT", &size);	
+	}
+
+	assert(buffer);
+
+	uint8 *nextString = buffer;
+	uint8 *currentString = buffer;
+	int currentY = 200;
+	
+	for (int i = 0; i < numStrings; i++) {
+		if (*nextString == 0)
+			break;
+			
+		currentString = nextString;
+		nextString = (uint8 *)strpbrk((const char *)currentString, stringTerms);
+		if (!nextString)
+			nextString = (uint8 *)strchr((const char *)currentString, 0);
+		
+		strings[i].code = nextString[0];
+		*nextString = 0;
+		if (strings[i].code != 0)
+			nextString++;
+		
+		if (*currentString == 3 || *currentString == 4) {
+			strings[i].unk1 = *currentString;
+			currentString++;
+		}
+		
+		if (*currentString == 1) {
+		   	currentString++;
+			if (_features & GF_FLOPPY)
+				_screen->setFont(Screen::FID_CRED6_FNT);
+		} else {
+			if (*currentString == 2)
+				currentString++;
+			if (_features & GF_FLOPPY)
+				_screen->setFont(Screen::FID_CRED8_FNT);
+		}
+		strings[i].font = _screen->_currentFont;
+
+		if (strings[i].unk1 == 3) 
+			strings[i].x = 157 - _screen->getTextWidth((const char *)currentString);
+		else if (strings[i].unk1 == 4)
+			strings[i].x = 161;
+		else
+			strings[i].x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
+		
+		strings[i].y = currentY;
+		if (strings[i].code != 5)
+			currentY += 10;
+		
+		strings[i].str = currentString;
+	}
+
+	_screen->setCurPage(2);
+
+	OSystem::Event event;	
+	bool finished = false;
+	int bottom = 201;
+	uint32 startLoop, waitTime;
+	while (!finished) {
+		startLoop = _system->getMillis();
+		if (bottom > 175) {
+			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2);
+			bottom = 0;
+			
+			for (int i = 0; i < numStrings; i++) {
+				if (strings[i].y < 200 && strings[i].y > 0) {
+					if (strings[i].font != _screen->_currentFont)
+						_screen->setFont(strings[i].font);
+					_screen->printText((const char *)strings[i].str, strings[i].x, strings[i].y, 15, 0);
+				}
+				strings[i].y--;
+				if (strings[i].y > bottom)
+					bottom = strings[i].y;
+			}
+			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0);
+			_screen->updateScreen();
+		}
+
+		while (_system->pollEvent(event)) {
+			switch (event.type) {
+			case OSystem::EVENT_KEYDOWN:
+				finished = true;
+				break;
+			case OSystem::EVENT_QUIT:
+				quitGame();
+				break;
+			default:
+				break;
+			}
+		}
+		
+		waitTime = startLoop + _tickLength * 5 - _system->getMillis();
+		if (waitTime > 0)
+			_system->delayMillis(waitTime);	
+	}
+	
+	delete[] buffer;
+	
 	_screen->fadeToBlack();
 	_screen->clearCurPage();
 	_screen->showMouse();

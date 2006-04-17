@@ -170,6 +170,7 @@ public:
 	int _curPage;
 	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
+	FontId _currentFont;
 
 	const ScreenDim *_curDim;
 	
@@ -186,7 +187,6 @@ private:
 	uint8 *_saveLoadPage[8];
 	uint8 *_screenPalette;
 	uint8 *_palettes[3];
-	FontId _currentFont;
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];
 	uint8 *_decodeShapeBuffer;
