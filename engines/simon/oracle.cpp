@@ -115,7 +115,7 @@ void SimonEngine::oracleTextUp() {
 			setBitFlag(94, false);
 			bltOracleText();
 		}
-		if (_currentBoxNumber != 600 || !_leftButtonDown)
+		if (_currentBoxNumber != 601 || !_leftButtonDown)
 			break;
 	}
 }
@@ -149,7 +149,7 @@ void SimonEngine::oracleTextDown() {
 			setBitFlag(93, false);
 			bltOracleText();
 		}
-		if (_currentBoxNumber != 601 || !_leftButtonDown)
+		if (_currentBoxNumber != 600 || !_leftButtonDown)
 			break;
 	}
 }
