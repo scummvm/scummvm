@@ -120,6 +120,7 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 		}
 
 	_orderArray = 0;
+	warning("GOB2 Stub! _word_2CC88");
 	_word_2CC88 = -1;
 }
 

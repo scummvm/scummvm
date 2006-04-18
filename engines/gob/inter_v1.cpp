@@ -1736,7 +1736,7 @@ bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 		_vm->_global->_inter_execPtr += 2;
 		return false;
 	}
-	
+
 	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + offset;
 
 	if (counter == cmdCount && retFlag == 2)

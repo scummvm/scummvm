@@ -90,6 +90,7 @@ public:
 	};
 
 	Video(class GobEngine *vm);
+	virtual ~Video() {};
 	int32 getRectSize(int16 width, int16 height, int16 flag, int16 mode);
 	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
 	void freeSurfDesc(SurfaceDesc * surfDesc);
@@ -101,8 +102,7 @@ public:
 	void drawLine(SurfaceDesc * dest, int16 x0, int16 y0, int16 x1, int16 y1,
 				  int16 color);
 	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc * dest);
-	void drawLetter(unsigned char item, int16 x, int16 y, FontDesc * fontDesc, int16 color1,
-					int16 color2, int16 transp, SurfaceDesc * dest);
+	void drawCircle(Video::SurfaceDesc *dest, int16 x, int16 y, int16 radius, int16 color);
 	void clearSurf(SurfaceDesc * dest);
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
 						  int16 transp, SurfaceDesc * dest);
@@ -117,11 +117,32 @@ public:
 	void freeDriver(void);
 	void setHandlers();
 
+	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
+			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest) = 0;
+
 protected:
 	class VideoDriver *_videoDriver;
 	GobEngine *_vm;
 
 	char initDriver(int16 vidMode);
+};
+
+class Video_v1 : public Video {
+public:
+	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
+			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
+
+	Video_v1(GobEngine *vm);
+	virtual ~Video_v1() {};
+};
+
+class Video_v2 : public Video_v1 {
+public:
+	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
+			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
+
+	Video_v2(GobEngine *vm);
+	virtual ~Video_v2() {};
 };
 
 class VideoDriver {

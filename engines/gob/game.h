@@ -31,7 +31,6 @@ class Game {
 public:
 
 #pragma START_PACK_STRUCTS
-#define szGame_TotResItem (4 + 2 + 2 + 2)
 	struct Collision {
 		int16 id;
 		int16 left;
@@ -42,8 +41,10 @@ public:
 		int16 key;
 		int16 funcEnter;
 		int16 funcLeave;
+		int16 field_12; // New in GOB2
 	} GCC_PACK;
 
+#define szGame_TotResItem (4 + 2 + 2 + 2)
 	struct TotResItem {
 		int32 offset;	// if > 0, then offset from end of resource table.
 						// If < 0, then -offset-1 is index in .IM file table
@@ -132,6 +133,7 @@ public:
 	char _curTotFileArray[5][14];
 
 	Game(GobEngine *vm);
+	virtual ~Game() {};
 
 	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight);
 	char *loadTotResource(int16 id);
@@ -144,9 +146,6 @@ public:
 					char handleMouse);
 	int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 						  int16 *pResIndex);
-	void clearCollisions(void);
-	void addNewCollision(int16 val_0, int16 left, int16 top, int16 right, int16 bottom,
-						 int16 flags, int16 key, int16 val_E, int16 val_10);
 	void freeCollision(int16 id);
 
 	void loadSound(int16 slot, char *dataPtr);
@@ -160,9 +159,14 @@ public:
 	void loadTotFile(char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
-	void playTot(int16 skipPlay);
 	void start(void);
 	void totSub(int8 flags, char *newTotFile);
+	char *loadLocTexts(void);
+
+	virtual void playTot(int16 skipPlay) = 0;
+	virtual void clearCollisions(void) = 0;
+	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
+			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave) = 0;
 
 protected:
 
@@ -196,6 +200,28 @@ protected:
 	void pushCollisions(char all);
 	void popCollisions(void);
 	int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
+};
+
+class Game_v1 : public Game {
+public:
+	virtual void playTot(int16 skipPlay);
+	virtual void clearCollisions(void);
+	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
+			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+
+	Game_v1(GobEngine *vm);
+	virtual ~Game_v1() {};
+};
+
+class Game_v2 : public Game_v1 {
+public:
+	virtual void playTot(int16 skipPlay);
+	virtual void clearCollisions(void);
+	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
+			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+
+	Game_v2(GobEngine *vm);
+	virtual ~Game_v2() {};
 };
 
 }				// End of namespace Gob

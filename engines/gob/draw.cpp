@@ -39,6 +39,9 @@
 namespace Gob {
 
 Draw::Draw(GobEngine *vm) : _vm(vm) {
+	int i;
+	int j;
+
 	_fontIndex = 0;
 	_spriteLeft = 0;
 	_spriteTop = 0;
@@ -55,10 +58,8 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_renderFlags = 0;
 	_backDeltaX = 0;
 	_backDeltaY = 0;
-	
-	int i;
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 8; i++)
 		_fonts[i] = 0;
 	
 	_textToPrint = 0;
@@ -66,10 +67,10 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 	for (i = 0; i < 50; i++) {
 		_spritesArray[i] = 0;
-		_sprites1[i] = 0;
-		_sprites2[i] = 0;
-		_sprites3[i] = 0;
-		_spritesWidths[i] = 0;
+		_spritesHeights[i] = 0;
+		for (j = 0; j < 3; j++) {
+			_bigSpritesParts[i][j] = 0;
+		}
 	}
 
 	_invalidatedCount = 0;
@@ -132,6 +133,9 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_palLoadData2[3] = 204;
 
 	_cursorTimeKey = 0;
+
+	warning("GOB2 Stub! _word_2E8E2");
+	_word_2E8E2 = 2;
 }
 
 void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
@@ -435,27 +439,25 @@ void Draw::animateCursor(int16 cursor) {
 }
 
 void Draw::freeSprite(int16 index) {
+	int i;
+
 	// .-- sub_CD84 ---
 	if (_spritesArray[index] == 0)
 		return;
 	_vm->_video->freeSurfDesc(_spritesArray[index]);
 
-//	warning("GOB2 Stub! freeSprite: dword_2EFB4, dword_2EFB8, dword_2EFBC");
-
-	if (_sprites1[index] != 0)
-		_vm->_video->freeSurfDesc(_sprites1[index]);
-	if (_sprites2[index] != 0)
-		_vm->_video->freeSurfDesc(_sprites2[index]);
-	if (_sprites3[index] != 0)
-		_vm->_video->freeSurfDesc(_sprites3[index]);
-
+	for (i = 0; i < 3; i++)
+		if (_bigSpritesParts[index][i] != 0)
+			_vm->_video->freeSurfDesc(_bigSpritesParts[index][i]);
 	// '------
 
 	_spritesArray[index] = 0;
 }
 
-void Draw::adjustCoords(int16 *coord1, int16 *coord2, char adjust) {
-	warning("GOB2 Stub! if (word_2E8E2 == 2) return;");
+void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
+	if (_word_2E8E2 == 2)
+		return;
+
 	if (adjust == 0) {
 		if (coord2 != 0)
 			*coord2 *= 2;
@@ -476,53 +478,250 @@ void Draw::adjustCoords(int16 *coord1, int16 *coord2, char adjust) {
 	}
 }
 
-//			sub_EDFC(0x16, _anim_animAreaWidth, _anim_animAreaHeight, 0);
-void Draw::initBigSprite(int16 index, int16 height, int16 width, int16 flags) {
-	int16 realwidth;
-	int16 widthdiff;
-	Gob::Video::SurfaceDesc **fragment;
+void Draw::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
+	int i;
+	int16 partsheight;
+	int16 remainheight;
+	int8 fragment;
 
 	if (flags != 0)
 		flags = 2;
 
 	// .-- sub_CBD0 ---
 
-	_sprites1[index] = 0;
-	_sprites2[index] = 0;
-	_sprites3[index] = 0;
-	_spritesWidths[index] = width;
+	for (i = 0; i < 3; i++)
+		_bigSpritesParts[index][i] = 0;
+	_spritesHeights[index] = height;
 
 	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 6500) {
-		_spritesWidths[index] = width & 0xFFFE;
-		while (_vm->_video->getRectSize(_spritesWidths[index],
-					height, flags, _vm->_global->_videoMode) > 6500)
-			_spritesWidths[index] -= 2;
+		_spritesHeights[index] = height & 0xFFFE;
+		while (_vm->_video->getRectSize(width, _spritesHeights[index], flags,
+					_vm->_global->_videoMode) > 6500) {
+			_spritesHeights[index] -= 2;
+		}
 
-		realwidth = _spritesWidths[index];
+		partsheight = _spritesHeights[index];
 		_spritesArray[index] =
-			_vm->_video->initSurfDesc(realwidth, height, flags, _vm->_global->_videoMode);
-		
-		fragment = _sprites1 + index;
-		while (realwidth < width) {
-			widthdiff = width - realwidth;
-			if (_spritesWidths[index] >= widthdiff) {
-				*fragment = _vm->_video->initSurfDesc(widthdiff, height, flags, _vm->_global->_videoMode);
-				realwidth = width;
+			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, partsheight, flags);
+		fragment = 0;
+		while (partsheight < height) {
+			remainheight = height - partsheight;
+			if (_spritesHeights[index] >= remainheight) {
+				_bigSpritesParts[index][fragment] =
+					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
+							remainheight, flags);
+				partsheight = height;
+			} else {
+				_bigSpritesParts[index][fragment] =
+					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
+							_spritesHeights[index], flags);
+				partsheight += _spritesHeights[index];
 			}
-			else {
-				*fragment = _vm->_video->initSurfDesc(_spritesWidths[index], height,
-					flags, _vm->_global->_videoMode);
-				realwidth += _spritesWidths[index];
-			}
-			_vm->_video->clearSurf(*fragment++);
+			_vm->_video->clearSurf(_bigSpritesParts[index][fragment]);
+			fragment++;
 		}
 	} else
-		_spritesArray[index] =
-			_vm->_video->initSurfDesc(width, height, flags, _vm->_global->_videoMode);
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
 
 	_vm->_video->clearSurf(_spritesArray[index]);
 	
 	// '------
 }
 
-}				// End of namespace Gob
+void Draw::fillRect(int16 index, int16 left, int16 top, int16 right,
+		int16 bottom, int16 color) {
+	int i;
+	int16 newbottom;
+
+	if (bottom < _spritesHeights[index]) {
+		_vm->_video->fillRect(_spritesArray[index], left, top, right, bottom, color);
+		return;
+	}
+
+	if (top < _spritesHeights[index]) {
+		_vm->_video->fillRect(_spritesArray[index], left, top, right,
+				_spritesHeights[index]-1, color);
+	}
+
+	for (i = 1; i < 4; i++) {
+		if ((_spritesHeights[index] * i) > bottom)
+			continue;
+		if (_bigSpritesParts[index][i-1] == 0)
+			return;
+		newbottom = MIN(bottom - (_spritesHeights[index] * i), (_spritesHeights[index] * i) - 1);
+		_vm->_video->fillRect(_bigSpritesParts[index][i-1], left, 0, right, newbottom, color);
+	}
+}
+
+void Draw::drawSprite(int16 source, int16 dest, int16 left,
+		int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
+	int i;
+	int16 topS;
+	int16 yS;
+	int16 newbottom;
+
+	if (bottom < _spritesHeights[source]) {
+		drawSprite(_spritesArray[source], dest, left, top, right, bottom, x, y, transp);
+		return;
+	}
+
+	topS = top;
+	yS = y;
+
+	if (top < _spritesHeights[source]) {
+		drawSprite(_spritesArray[source], dest, left, top, right,
+				_spritesHeights[source], x, y, transp);
+		yS = y + _spritesHeights[source] - top;
+		topS = _spritesHeights[source];
+	}
+	for (i = 1; i < 4; i++) {
+		if ((_spritesHeights[source] * i) > topS)
+			continue;
+		if ((_spritesHeights[source] * (i+1)) <= topS)
+			continue;
+		if (_bigSpritesParts[source][i-1] == 0)
+			break;
+		newbottom = MIN(bottom - (_spritesHeights[source] * i), _spritesHeights[source] - 1);
+		drawSprite(_bigSpritesParts[source][i-1], dest, left,
+				topS - _spritesHeights[source], right, newbottom, x, yS, transp);
+		yS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
+		topS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
+	}
+}
+
+void Draw::drawSprite(Video::SurfaceDesc * source, int16 dest, int16 left,
+		int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
+	int i;
+	int16 topS;
+	int16 yS;
+	int16 newbottom;
+
+	if ((y + bottom - top) < _spritesHeights[dest]) {
+		_vm->_video->drawSprite(source, _spritesArray[dest], left, top,
+				right, bottom, x, y, transp);
+		return;
+	}
+
+	topS = top;
+	yS = y;
+
+	if (y < _spritesHeights[dest]) {
+		_vm->_video->drawSprite(source, _spritesArray[dest], left, top, right,
+				top + _spritesHeights[dest] - y - 1, x, y, transp);
+		yS = _spritesHeights[dest];
+		topS += _spritesHeights[dest] - y;
+	}
+
+	for (i = 1; i < 4; i++) {
+		if ((_spritesHeights[dest] * i) > yS)
+			continue;
+		if ((_spritesHeights[dest] * (i+1)) <= yS)
+			continue;
+		if (_bigSpritesParts[dest][i-1] == 0)
+			break;
+		newbottom = MIN(bottom, (int16) (topS + _spritesHeights[dest] - 1));
+		_vm->_video->drawSprite(source, _bigSpritesParts[dest][i-1], left, topS,
+				right, newbottom, x, yS - (_spritesHeights[dest] * i), transp);
+		yS += newbottom - topS + 1;
+		topS += newbottom - topS + 1;
+	}
+}
+
+void Draw::drawSprite(int16 source, Video::SurfaceDesc * dest, int16 left,
+		int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
+	int i;
+	int16 topS;
+	int16 yS;
+	int16 newbottom;
+
+	if (bottom < _spritesHeights[source]) {
+		_vm->_video->drawSprite(_spritesArray[source], dest, left, top, right,
+				bottom, x, y, transp);
+		return;
+	}
+
+	topS = top;
+	yS = y;
+
+	if (top < _spritesHeights[source]) {
+		_vm->_video->drawSprite(_spritesArray[source], dest, left, top, right,
+				_spritesHeights[source] - 1, x, y, transp);
+		yS = y + _spritesHeights[source] - top;
+		topS = _spritesHeights[source];
+	}
+
+	for (i = 1; i < 4; i++) {
+		if ((_spritesHeights[source] * i) > topS)
+			continue;
+		if ((_spritesHeights[source] * (i+1)) <= topS)
+			continue;
+		if (_bigSpritesParts[source][i-1] == 0)
+			break;
+		newbottom = MIN(bottom - (_spritesHeights[source] * i), _spritesHeights[source] - 1);
+		_vm->_video->drawSprite(_bigSpritesParts[source][i-1], dest, left,
+				topS - (_spritesHeights[source] * i), right, newbottom, x, y, transp);
+		yS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
+		topS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
+	}
+}
+
+void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
+		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font) {
+	while(*str != '\0') {
+		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
+		if (font->extraData == 0)
+			x += font->itemWidth;
+		else
+			x += *(((char *)font->extraData) + (*str - font->startItem));
+		str++;
+	}
+}
+
+void Draw::printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
+		int16 bottom, char *str, int16 fontIndex, int16 color) {
+	char *storedIP;
+	int i;
+	int length;
+	int16 width;
+	
+	adjustCoords(1, &left, &top);
+	adjustCoords(1, &right, &bottom);
+
+	if (_vm->_game->_totFileData[0x7E] != 0) {
+		storedIP = _vm->_global->_inter_execPtr;
+		_vm->_global->_inter_execPtr = _vm->_game->_totFileData + 0x7E;
+		WRITE_VAR(17, (uint32) arg_0);
+		WRITE_VAR(18, (uint32) left);
+		WRITE_VAR(19, (uint32) top);
+		WRITE_VAR(20, (uint32) right-left+1);
+		WRITE_VAR(21, (uint32) bottom-top+1);
+		_vm->_inter->funcBlock(0);
+		_vm->_global->_inter_execPtr = storedIP;
+	}
+	
+	if (str[0] == '\0')
+		return;
+
+	_transparency = 1;
+	_destSpriteX = left;
+	_destSpriteY = top;
+	_fontIndex = fontIndex;
+	_frontColor = color;
+	_textToPrint = str;
+	width = 0;
+	if (_fonts[fontIndex]->extraData == 0)
+		width = strlen(str) * _fonts[fontIndex]->itemWidth;
+	else {
+		length = strlen(str);
+		for (i = 0; i < length; i++)
+			width +=
+				*(((char*)_fonts[fontIndex]->extraData) + (str[i] - _fonts[_fontIndex]->startItem));
+	}
+
+	adjustCoords(1, &width, 0);
+	_destSpriteX += (right - left + 1 - width) / 2;
+
+	spriteOperation(DRAW_PRINTTEXT);
+}
+
+} // End of namespace Gob

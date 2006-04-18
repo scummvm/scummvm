@@ -58,14 +58,12 @@ public:
 	int16 _renderFlags;
 	int16 _backDeltaX;
 	int16 _backDeltaY;
-	Video::FontDesc *_fonts[4];
+	Video::FontDesc *_fonts[8];
 	char *_textToPrint;
 	int16 _transparency;
 	Video::SurfaceDesc *_spritesArray[50];
-	Video::SurfaceDesc *_sprites1[50];
-	Video::SurfaceDesc *_sprites2[50];
-	Video::SurfaceDesc *_sprites3[50];
-	uint16 _spritesWidths[50];
+	Video::SurfaceDesc *_bigSpritesParts[50][3];
+	uint16 _spritesHeights[50];
 
 	int16 _invalidatedCount;
 	int16 _invalidatedTops[30];
@@ -108,6 +106,8 @@ public:
 	int16 _palLoadData1[4];
 	int16 _palLoadData2[4];
 		
+	int16 _word_2E8E2;
+
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated(void);
 	void setPalette(void);
@@ -117,8 +117,20 @@ public:
 	void animateCursor(int16 cursor);
 
 	void freeSprite(int16 index);
-	void adjustCoords(int16 *coord1, int16 *coord2, char adjust);
-	void initBigSprite(int16 index, int16 height, int16 width, int16 flags);
+	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
+	void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
+	void fillRect(int16 index, int16 left, int16 top, int16 right,
+		int16 bottom, int16 color);
+	void drawSprite(int16 source, int16 dest, int16 left,
+			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
+	void drawSprite(Video::SurfaceDesc * source, int16 dest, int16 left,
+			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
+	void drawSprite(int16 source, Video::SurfaceDesc * dest, int16 left,
+			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
+	void drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
+		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font);
+	void printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
+			int16 bottom, char *str, int16 fontIndex, int16 color);
 
 	virtual void printText(void) = 0;
 	virtual void spriteOperation(int16 operation) = 0;

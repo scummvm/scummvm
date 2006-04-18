@@ -189,9 +189,7 @@ void GobEngine::shutdown() {
 }
 
 int GobEngine::init() {
-	_game = new Game(this);
 	_snd = new Snd(this);
-	_video = new Video(this);
 	_global = new Global(this);
 	_anim = new Anim();
 	_cdrom = new CDROM(this);
@@ -209,12 +207,16 @@ int GobEngine::init() {
 		_parse = new Parse_v1(this);
 		_mult = new Mult_v1(this);
 		_draw = new Draw_v1(this);
+		_game = new Game_v1(this);
+		_video = new Video_v1(this);
 	}
 	else if (_features & Gob::GF_GOB2) {
 		_inter = new Inter_v2(this);
 		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
+		_game = new Game_v2(this);
+		_video = new Video_v2(this);
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");

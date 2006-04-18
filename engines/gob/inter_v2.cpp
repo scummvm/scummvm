@@ -1261,7 +1261,7 @@ void Inter_v2::o2_initMult(void) {
 			delete _vm->_anim->_animSurf;
 	}
 
-	_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 0);
+	_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 
 	warning("===> %d", _vm->_global->_videoMode);
 	if (_vm->_anim->_animSurf == 0) {
@@ -1292,7 +1292,7 @@ void Inter_v2::o2_initMult(void) {
 			return;
 	}
 
-	_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 1);
+	_vm->_draw->adjustCoords(1, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 
 	_vm->_draw->_sourceSurface = 21;
 	_vm->_draw->_destSurface = 22;
@@ -1380,13 +1380,11 @@ void Inter_v2::o2_totSub(void) {
 	if (length & 0x80) {
 		evalExpr(0);
 		strcpy(totFile, _vm->_global->_inter_resStr);
-	} else { // loc_E8CE
-		for (i = 0; i < length; i++) // loc_E8E3
+	} else {
+		for (i = 0; i < length; i++)
 			totFile[i] = *_vm->_global->_inter_execPtr++;
 		totFile[i] = 0;
 	}
-
-	// loc_E910
 
 	_vm->_global->_inter_execPtr++;
 	flags = *_vm->_global->_inter_execPtr;

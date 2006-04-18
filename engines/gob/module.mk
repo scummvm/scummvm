@@ -9,6 +9,8 @@ MODULE_OBJS := \
 	draw_v2.o \
 	driver_vga.o \
 	game.o \
+	game_v1.o \
+	game_v2.o \
 	global.o \
 	gob.o \
 	goblin.o \
@@ -30,7 +32,9 @@ MODULE_OBJS := \
 	sound.o \
 	timer.o \
 	util.o \
-	video.o
+	video.o \
+	video_v1.o \
+	video_v2.o
 
 MODULE_DIRS += \
 	engines/gob

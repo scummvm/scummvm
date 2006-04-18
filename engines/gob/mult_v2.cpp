@@ -57,6 +57,11 @@ void Mult_v2::loadMult(int16 resId) {
 	_multData2 = new Mult_Data;
 	_multDatas[index] = _multData2;
 
+	for (i = 0; i < 10; i++) {
+		_multData2->staticLoaded[i] = 0;
+		_multData2->animLoaded[i] = 0;
+	}
+
 	for (i = 0; i < 4; i++)
 		_multData2->field_124[0][i] = i;
 
@@ -331,7 +336,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				multObj->lastBottom = -1;
 			}
 
-			_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 0);
+			_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 
 			if ((_vm->_global->_videoMode == 0x14) &&
 				((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
@@ -344,16 +349,16 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				_vm->_anim->_animSurf->vidPtr +=
 					(_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2;
 			} else
-				_vm->_draw->initBigSprite(22, _vm->_anim->_areaHeight, _vm->_anim->_areaWidth, 0);
+				_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
 		
-			_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 1);
+			_vm->_draw->adjustCoords(1, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 			_vm->_draw->_sourceSurface = 21;
 			_vm->_draw->_destSurface = 22;
 			_vm->_draw->_destSpriteX = 0;
 			_vm->_draw->_destSpriteY = 0;
 			_vm->_draw->_spriteLeft = 0;
 			_vm->_draw->_spriteTop = 0;
-			_vm->_draw->_spriteRight= 320;
+			_vm->_draw->_spriteRight = 320;
 			_vm->_draw->_spriteBottom = 200;
 			_vm->_draw->_transparency = 0;
 			_vm->_draw->spriteOperation(0);
@@ -986,7 +991,6 @@ void Mult_v2::animate(void) {
 		}
 	}
 
-	warning("GOB2 Stub! _word_2CC88");
 	if (_word_2CC88 >= 0) {
 		for (i = 0; i < orderArrayPos; i++) {
 			animObj1 = _renderData2[orderArray[i]];
@@ -1175,8 +1179,6 @@ void Mult_v2::freeMultKeys(void) {
 	if (_multData2 == 0)
 		return;
 
-	return; 
-
 	// loc_7323
 
 	staticCount = (_multData2->staticCount + 1) && 0x7F;
@@ -1210,7 +1212,6 @@ void Mult_v2::freeMultKeys(void) {
 	}
 	
 	delete[] _multData2->sndKeys;
-	delete[] _multData2->fadePal;
 
 	if (_multData2->somepointer09 != 0)
 		delete[] _multData2->somepointer09;

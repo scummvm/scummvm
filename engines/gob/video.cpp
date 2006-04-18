@@ -293,14 +293,65 @@ void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
 	_videoDriver->putPixel(x, y, color, dest);
 }
 
-void Video::drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, int16 color1,
-	    int16 color2, int16 transp, SurfaceDesc *dest) {
-
-	_videoDriver->drawLetter(item, x, y, fontDesc, color1, color2, transp, dest);
-}
-
 void Video::clearSurf(SurfaceDesc *dest) {
 	Video::fillRect(dest, 0, 0, dest->width - 1, dest->height - 1, 0);
+}
+
+void Video::drawCircle(Video::SurfaceDesc *dest, int16 x, int16 y, int16 radius, int16 color) {
+	int16 si;
+	int16 var_18;
+	int16 var_16;
+	int16 y4;
+	int16 y3;
+	int16 x4;
+	int16 x3;
+	int16 x2;
+	int16 y2;
+	int16 x1;
+	int16 y1;
+	int16 var_4;
+	int16 var_2;
+	
+	var_2 = radius;
+	var_4 = 0;
+	si = -radius;
+	y1 = y;
+	x1 = x + radius;
+	y2 = y + radius;
+	x2 = x;
+	x3 = x - radius;
+	x4 = x;
+	y3 = y;
+	y4 = y - radius;
+	var_16 = 0;
+	var_18 = radius * 2;
+
+	while (var_2 >= var_4) {
+		putPixel(x1, y1, color, dest);
+		putPixel(x2, y2, color, dest);
+		putPixel(x3, y1, color, dest);
+		putPixel(x4, y2, color, dest);
+		putPixel(x1, y3, color, dest);
+		putPixel(x2, y4, color, dest);
+		putPixel(x3, y3, color, dest);
+		putPixel(x4, y4, color, dest);
+		y1++;
+		x2++;
+		x4--;
+		y3--;
+		var_16 += 2;
+		var_4++;
+		si += var_16 + 1;
+		if (si > 0) {
+			x1--;
+			y2--;
+			x3++;
+			y4++;
+			var_18 -= 2;
+			var_2--;
+			si -= var_18 + 1;
+		}
+	}
 }
 
 void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
