@@ -2459,7 +2459,7 @@ void SimonEngine::vc82_getPathValue() {
 
 	uint16 var = vcReadNextWord();
 
-	if (getBitFlag(82) == true) {
+	if (getBitFlag(82)) {
 		val = _pathValues1[_GPVCount1++];
 	} else {
 		val = _pathValues[_GPVCount++];
@@ -2477,8 +2477,7 @@ void SimonEngine::vc83_playSoundLoop() {
 }
 
 void SimonEngine::vc84_stopSoundLoop() {
-	// Stop looping sound effect
-	debug(0, "STUB: vc84_stopSoundLoop");
+	_sound->stopSfx5();
 }
 
 // Scrolling functions for Feeble Files

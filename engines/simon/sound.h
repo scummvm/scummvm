@@ -82,6 +82,7 @@ public:
 
 	bool hasVoice() const;
 	bool isVoiceActive() const;
+	void stopSfx5();
 	void stopVoice();
 	void stopAll();
 	void effectsPause(bool b);

@@ -589,6 +589,11 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 	_mixer->playRaw(&_voiceHandle, buffer, size, rate, flags);
 }
 
+void Sound::stopSfx5() {
+	_sfx5Playing = 0;
+	_mixer->stopHandle(_sfx5Handle);
+}
+
 void Sound::switchVoiceFile(uint disc) {
 	if (_lastVoiceFile != disc) {
 		stopAll();
