@@ -312,8 +312,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
 
-	_base_time = 0;
-
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseXOld = 0;
@@ -1453,7 +1451,9 @@ void SimonEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 
 	time(&cur_time);
 
-	te->time = cur_time + timeout - _base_time;
+	te->time = cur_time + timeout - _gameStoppedClock;
+	if (_clockStopped)
+		te->time -= ((uint32)time(NULL) - _clockStopped);
 	te->subroutine_id = subroutine_id;
 
 	first = _firstTimeStruct;
@@ -1524,8 +1524,11 @@ bool SimonEngine::kickoffTimeEvents() {
 	TimeEvent *te;
 	bool result = false;
 
+	if (_clockStopped)
+		return result;
+
 	time(&cur_time);
-	cur_time -= _base_time;
+	cur_time -= _gameStoppedClock;
 
 	while ((te = _firstTimeStruct) != NULL && te->time <= (uint32)cur_time) {
 		result = true;
@@ -1544,11 +1547,14 @@ void SimonEngine::invokeTimeEvent(TimeEvent *te) {
 	Subroutine *sub;
 
 	_scriptVerb = 0;
+
 	if (_runScriptReturn1)
 		return;
+
 	sub = getSubroutineByID(te->subroutine_id);
 	if (sub != NULL)
 		startSubroutineEx(sub);
+
 	_runScriptReturn1 = false;
 }
 

@@ -327,7 +327,7 @@ restart:;
 get_out:;
 	unk_132_helper_3();
 
-	_base_time = time(NULL) - save_time + _base_time;
+	_gameStoppedClock = time(NULL) - save_time + _gameStoppedClock;
 	_copyPartialMode = 0;
 
 	restoreBlock(94, 208, 46, 80);
@@ -507,7 +507,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 	f->writeUint32BE(i);
 
 	for (te = _firstTimeStruct; te; te = te->next) {
-		f->writeUint32BE(te->time + _base_time);
+		f->writeUint32BE(te->time + _gameStoppedClock);
 		f->writeUint16BE(te->subroutine_id);
 	}
 
