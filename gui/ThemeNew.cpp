@@ -627,11 +627,15 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	if (!_initOk)
 		return;
 
+	Common::Rect r2 = shadowRect(r, kShadowSmall);
+
 	OverlayColor start = _colors[kPopUpWidgetStart], end = _colors[kPopUpWidgetEnd];
 	if (state == kStateHighlight) {
 		start = _colors[kPopUpWidgetHighlightStart];
 		end = _colors[kPopUpWidgetHighlightEnd];
 	}
+
+	drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowSmall);
 
 	drawRectMasked(r, surface(kPopUpWidgetBkgdCorner), surface(kPopUpWidgetBkgdTop), surface(kPopUpWidgetBkgdLeft), surface(kPopUpWidgetBkgd),
 						(state == kStateDisabled) ? -30 : 256, start, end, _gradientFactors[kPopUpWidgetFactor]);
@@ -657,7 +661,7 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 		getFont()->drawString(&_screen, sel, text.left, text.top, text.width(), getColor(state), convertAligment(align), deltax, false);
 	}
 
-	addDirtyRect(r);
+	addDirtyRect(r2);
 }
 
 void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state) {
