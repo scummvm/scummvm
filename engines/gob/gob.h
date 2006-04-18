@@ -88,7 +88,7 @@ protected:
 	int init();
 
 public:
-	GobEngine(OSystem *syst, uint32 features);
+	GobEngine(OSystem *syst, uint32 features, Common::Language lang);
 	virtual ~GobEngine();
 
 	void shutdown();
@@ -96,6 +96,7 @@ public:
 	Common::RandomSource _rnd;
 
 	int32 _features;
+	Common::Language _language;
 	bool _copyProtection;
 
 	Game *_game;

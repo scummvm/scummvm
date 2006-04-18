@@ -329,14 +329,9 @@ void Draw_v2::printText(void) {
 
 		case 10:
 			// loc_12C93
-			warning("GOB2 Stub! Draw_v2::printText: cmd == 10");
-/*
-WTF:
-			mov     ax, word ptr [bp+ptr]
-			xor     dx, dx
-			sub     ax, word ptr _game_totTextData
-			sbb     dx, 0
-*/
+			str[0] = (char)255;
+			*((int16*)(str+1)) = ptr - (char *)_vm->_game->_totTextData;
+			str[3] = 0;
 			ptr++;
 			i = *ptr++;
 			for (i = *ptr++; i > 0; i--) {
