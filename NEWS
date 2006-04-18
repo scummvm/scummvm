@@ -21,6 +21,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  SCUMM:
    - ...
 
+ Broken Sword 1:
+   - Added support for the --save-slot option.
+
  Broken Sword 2:
    - Major rewrite of how game resources are accessed in memory. This
      should fix alignment issues reported on some platforms.
