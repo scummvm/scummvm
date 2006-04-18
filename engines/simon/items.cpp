@@ -1941,12 +1941,12 @@ void SimonEngine::o3_hyperLinkOff() {
 
 void SimonEngine::o3_checkPaths() {
 	// 173 check paths
-	int val, count;
+	int i, val, count;
 	const uint8 *pathVal1 = _pathValues1;
 	bool result = false;
 
 	count = _variableArray2[38];
-	while (count) {
+	for (i = 0; i < count; i++) {
 		val = pathVal1[2];
 		if (val == _variableArray2[50] ||
 			val == _variableArray2[51] ||
@@ -1969,9 +1969,7 @@ void SimonEngine::o3_checkPaths() {
 				result = true;
 				break;
 		}
-
-		count--;
-		pathVal1++;
+		pathVal1 += 4;
 	}
 
 	_variableArray2[57] = result;
