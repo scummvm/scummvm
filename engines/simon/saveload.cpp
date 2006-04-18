@@ -481,6 +481,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
+	uint32 gsc = _gameStoppedClock;
 
 	_lockWord |= 0x100;
 
@@ -506,8 +507,10 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 		i++;
 	f->writeUint32BE(i);
 
+	if (_clockStopped)
+		gsc += ((uint32)time(NULL) - _clockStopped);
 	for (te = _firstTimeStruct; te; te = te->next) {
-		f->writeUint32BE(te->time + _gameStoppedClock);
+		f->writeUint32BE(te->time + gsc);
 		f->writeUint16BE(te->subroutine_id);
 	}
 
