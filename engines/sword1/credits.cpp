@@ -111,7 +111,6 @@ void CreditsPlayer::play(void) {
 	memset(screenBuf, 0, CREDITS_X * BUFSIZE_Y);
 	_system->copyRectToScreen(screenBuf, 640, 0, 0, 640, 480);
 	_system->setPalette(_palette, 0, _palLen);
-	_system->updateScreen();
 
 	// everything's initialized, time to render and show the credits.
 	Audio::SoundHandle bgSound;
@@ -173,7 +172,6 @@ void CreditsPlayer::play(void) {
 	uint8 *revoPal = credFile.fetchFile(REVO_PAL, &_palLen);
 	_palLen /= 3;
 	while ((_mixer->getSoundElapsedTime(bgSound) < LOGO_FADEUP_TIME) && !SwordEngine::_systemVars.engineQuit) {
-		_system->updateScreen();
 		delay(100);
 	}
 	memset(_palette, 0, 256 * 4);
@@ -183,7 +181,6 @@ void CreditsPlayer::play(void) {
 
 	fadePalette(revoPal, true, _palLen);
 	while ((_mixer->getSoundElapsedTime(bgSound) < LOGO_FADEDOWN_TIME) && !SwordEngine::_systemVars.engineQuit) {
-		_system->updateScreen();
 		delay(100);
 	}
 	fadePalette(revoPal, false, _palLen);
@@ -203,7 +200,6 @@ void CreditsPlayer::fadePalette(uint8 *srcPal, bool fadeup, uint16 len) {
 		for (uint16 cnt = 0; cnt < len * 3; cnt++)
 			_palette[(cnt / 3) * 4 + (cnt % 3)] = (srcPal[cnt] * fadeStep) / 12;
 		_system->setPalette(_palette, 0, 256);
-		_system->updateScreen();
 		relDelay += 1000 / 12;
 		delay(relDelay - _system->getMillis());
 	}
@@ -287,6 +283,8 @@ void CreditsPlayer::delay(int msecs) {
 				break;
 			}
 		}
+
+		_system->updateScreen();
 
 		if (msecs > 0)
 			_system->delayMillis(10);

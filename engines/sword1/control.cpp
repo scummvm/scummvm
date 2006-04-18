@@ -206,7 +206,6 @@ void Control::askForCd(void) {
 			renderText(textA, 320, 220, TEXT_CENTER);
 			renderText(_lStrings[STR_INSERT_CD_B], 320, 240, TEXT_CENTER);
 			_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
-			_system->updateScreen();
 		}
 		delay(300);
 		if (_keyPressed) {
@@ -215,7 +214,6 @@ void Control::askForCd(void) {
 				memset(_screenBuf, 0, 640 * 480);
 				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
 				_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
-				_system->updateScreen();
 				delay(2000);
 				refreshText = true;
 			} else {
@@ -314,7 +312,6 @@ uint8 Control::runPanel(void) {
 			fullRefresh = false;
 			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
 		}
-		_system->updateScreen();
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
@@ -629,7 +626,6 @@ bool Control::getConfirm(const uint8 *title) {
 	do {
 		buttons[0]->draw();
 		buttons[1]->draw();
-		_system->updateScreen();
 		delay(1000 / 12);
 		if (_keyPressed == 27)
 			retVal = 2;
@@ -1103,6 +1099,7 @@ void Control::delay(uint32 msecs) {
 			_keyPressed = _keyRepeat;
 		}
 
+		_system->updateScreen();
 		_system->delayMillis(10);
 	} while (_system->getMillis() < endTime);
 }

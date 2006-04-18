@@ -618,6 +618,8 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 			}
 		}
 
+		_system->updateScreen();
+
 		if (amount > 0)
 			_system->delayMillis(10);
 
