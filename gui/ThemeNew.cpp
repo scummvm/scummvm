@@ -628,6 +628,7 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 		return;
 
 	Common::Rect r2 = shadowRect(r, kShadowSmall);
+	restoreBackground(r2);
 
 	OverlayColor start = _colors[kPopUpWidgetStart], end = _colors[kPopUpWidgetEnd];
 	if (state == kStateHighlight) {
