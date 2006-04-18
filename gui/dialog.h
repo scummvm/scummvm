@@ -49,10 +49,11 @@ protected:
 
 private:
 	int		_result;
+	bool	_dimsInactive;
 
 public:
-	Dialog(int x, int y, int w, int h);
-	Dialog(Common::String name);
+	Dialog(int x, int y, int w, int h, bool dimsInactive = true);
+	Dialog(Common::String name, bool dimsInactive = true);
 	virtual ~Dialog();
 
 	virtual int runModal();
@@ -84,6 +85,9 @@ protected:
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
+
+	// Whether dialog dims all underneath dialogs or not when active
+	bool dimsInactive() { return _dimsInactive; }
 };
 
 } // End of namespace GUI

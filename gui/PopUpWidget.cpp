@@ -68,7 +68,7 @@ protected:
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws)
-	: Dialog(0, 0, 16, 16),
+	: Dialog(0, 0, 16, 16, false),
 	_popUpBoss(boss) {
 
 	// Copy the selection index

@@ -139,18 +139,7 @@ void NewGui::runLoop() {
 		didSaveState = true;
 	}
 
-	// small 'HACK': complete gui redraw (needed for new theme inactive dialog color change possibilities)
-	_theme->clearAll();
-
 	int i;
-
-	for (i = 0; i < _dialogStack.size() - 1; ++i) {
-		_theme->closeDialog();
-	}
-	for (i = 0; i < _dialogStack.size() - 1; i++) {
-		_theme->openDialog(false);
-	}
-	_theme->openDialog(true);
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		activeDialog->handleTickle();
@@ -164,7 +153,16 @@ void NewGui::runLoop() {
 				_theme->closeDialog();
 			}
 			for (i = 0; i < _dialogStack.size(); i++) {
-				_theme->openDialog(i == (_dialogStack.size() - 1));
+				// Special treatment when topmost dialog has dimsInactive() set to false
+				// This is the case for PopUpWidget which should not dim a dialog
+				// which it belongs to
+				if ((i == _dialogStack.size() - 2) && !_dialogStack[i + 1]->dimsInactive())
+					_theme->openDialog(true);
+				else if ((i != (_dialogStack.size() - 1)) || !_dialogStack[i]->dimsInactive())
+					_theme->openDialog(false);
+				else
+					_theme->openDialog(true);
+
 				_dialogStack[i]->drawDialog();
 			}
 			_needRedraw = false;

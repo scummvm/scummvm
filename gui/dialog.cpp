@@ -39,15 +39,17 @@ namespace GUI {
  * ...
  */
 
-Dialog::Dialog(int x, int y, int w, int h)
+Dialog::Dialog(int x, int y, int w, int h, bool dimsInactive_)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0) {
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0),
+	  _dimsInactive(dimsInactive_) {
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
-Dialog::Dialog(Common::String name)
+Dialog::Dialog(Common::String name, bool dimsInactive_)
 	: GuiObject(name),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0) {
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0),
+	  _dimsInactive(dimsInactive_) {
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
