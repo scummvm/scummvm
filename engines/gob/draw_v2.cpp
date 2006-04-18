@@ -330,7 +330,7 @@ void Draw_v2::printText(void) {
 		case 10:
 			// loc_12C93
 			str[0] = (char)255;
-			*((int16*)(str+1)) = ptr - (char *)_vm->_game->_totTextData;
+			WRITE_LE_UINT16((uint16*)(str+1), ptr - (char *)_vm->_game->_totTextData);
 			str[3] = 0;
 			ptr++;
 			i = *ptr++;
