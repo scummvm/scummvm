@@ -301,7 +301,7 @@ const char *Theme::_defaultConfigINI =
 "opYoffset=(opYoffset + kLineHeight + 4)\n"
 "grFullscreenCheckbox=gcx opYoffset (kFontHeight + 10 + 96) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
-"grAspectCheckbox=prev.x opYoffset (kFontHeight + 10 + 136) prev.h\n"
+"grAspectCheckbox=prev.x opYoffset (kFontHeight + 10 + 180) prev.h\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
 "\n"
 "[audioControls]\n"
