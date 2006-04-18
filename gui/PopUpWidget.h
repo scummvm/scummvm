@@ -77,6 +77,8 @@ public:
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
+	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 protected:
 	void drawWidget(bool hilite);
 };

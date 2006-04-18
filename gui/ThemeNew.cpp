@@ -637,13 +637,18 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 						(state == kStateDisabled) ? -30 : 256, start, end, _gradientFactors[kPopUpWidgetFactor]);
 
 	const Graphics::Surface *arrow = surface(kWidgetArrow);
-	Common::Rect arrowRect(r.right - 4 - arrow->w, r.top + 4, r.right - 4, r.top + 4 + arrow->h);
+
+	int yOff = r.height() / 2 - arrow->h;
+	if (yOff < 0)
+		yOff = 0;
+
+	Common::Rect arrowRect(r.right - 4 - arrow->w, r.top + yOff, r.right - 4, r.top + yOff + arrow->h);
 	arrowRect.clip(r);
 
 	drawSurface(arrowRect, arrow, false, false, (state == kStateDisabled) ? -30 : 256);
 
-	arrowRect.top += arrow->h + 1;
-	arrowRect.bottom += arrow->h + 1;
+	arrowRect.top += arrow->h;
+	arrowRect.bottom += arrow->h;
 	arrowRect.clip(r);
 	drawSurface(arrowRect, arrow, true, false, (state == kStateDisabled) ? -30 : 256);
 

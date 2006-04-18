@@ -416,7 +416,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 	Common::String sel = "";
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(kTextAlignLeft));
+	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled, g_gui.theme()->convertAligment(kTextAlignLeft));
 }
 
 } // End of namespace GUI
