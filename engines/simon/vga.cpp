@@ -2482,7 +2482,7 @@ void SimonEngine::vc84_stopSoundLoop() {
 }
 
 // Scrolling functions for Feeble Files
-void SimonEngine::checkScrollX(int x, int xpos) {
+void SimonEngine::checkScrollX(int16 x, int16 xpos) {
 	if (_scrollXMax == 0 || getBitFlag(80) || getBitFlag(82) || x == 0)
 		return;
 
@@ -2513,7 +2513,7 @@ void SimonEngine::checkScrollX(int x, int xpos) {
 				return;
 		}
 
-		if ((uint16)(xpos - _scrollX) < 161) {
+		if (xpos - _scrollX < 161) {
 			_scrollCount = -320;
 			if (_scrollX < 320)
 				_scrollCount = -_scrollX;
@@ -2521,7 +2521,7 @@ void SimonEngine::checkScrollX(int x, int xpos) {
 	}
 }
 
-void SimonEngine::checkScrollY(int y, int ypos) {
+void SimonEngine::checkScrollY(int16 y, int16 ypos) {
 	if (_scrollYMax == 0 || getBitFlag(80))
 		return;
 
@@ -2550,7 +2550,7 @@ void SimonEngine::checkScrollY(int y, int ypos) {
 				return;
 		}
 
-		if ((uint16)(ypos - _scrollY) < 100) {
+		if (ypos - _scrollY < 100) {
 			_scrollCount = -240;
 			if (_scrollY < 240)
 				_scrollCount = -_scrollY;

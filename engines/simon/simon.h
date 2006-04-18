@@ -1014,8 +1014,8 @@ protected:
 	void vcSkipNextInstruction();
 
 	int getScale(int y, int x);
-	void checkScrollX(int x, int xpos);
-	void checkScrollY(int y, int ypos);
+	void checkScrollX(int16 x, int16 xpos);
+	void checkScrollY(int16 y, int16 ypos);
 	void centreScroll();
 
 	bool itemIsSiblingOf(uint16 val);

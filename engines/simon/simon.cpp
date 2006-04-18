@@ -2330,6 +2330,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_scrollCount = 0;
 		_scrollFlag = 0;
 		_scrollHeight = 134;
+		_variableArrayPtr = _variableArray;
 		if (_variableArray[34] >= 0) {
 			if (getGameType() == GType_FF)
 				_variableArray[250] = 0;
