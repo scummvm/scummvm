@@ -138,6 +138,7 @@ public:
 	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state = kStateEnabled) = 0;
 	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state = kStateEnabled) = 0;
 	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state = kStateEnabled) = 0;
+	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state = kStateEnabled, kTextAlign align = kTextAlignLeft) = 0;
 	virtual void drawCaret(const Common::Rect &r, bool erase, kState state = kStateEnabled) = 0;
 	virtual void drawLineSeparator(const Common::Rect &r, kState state = kStateEnabled) = 0;
 
@@ -234,6 +235,7 @@ public:
 	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
 private:
@@ -307,6 +309,7 @@ public:
 	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
 	const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
@@ -420,6 +423,11 @@ public:
 		kWidgetSmallBkgd = 38,
 
 		kThemeLogo = 39,
+
+		kPopUpWidgetBkgdCorner = 40,
+		kPopUpWidgetBkgdTop = 41,
+		kPopUpWidgetBkgdLeft = 42,
+		kPopUpWidgetBkgd = 43,
 		
 		kImageHandlesMax
 	};
@@ -490,6 +498,11 @@ private:
 		kScrollbarButtonHighlightEnd = 37,
 		kScrollbarSliderHighlightStart = 38,
 		kScrollbarSliderHighlightEnd = 39,
+
+		kPopUpWidgetStart = 40,
+		kPopUpWidgetEnd = 41,
+		kPopUpWidgetHighlightStart = 42,
+		kPopUpWidgetHighlightEnd = 43,
 		
 		kColorHandlesMax
 	};
@@ -513,6 +526,8 @@ private:
 		
 		kScrollbarFactor = 8,
 		kScrollbarBkgdFactor = 9,
+
+		kPopUpWidgetFactor = 10,
 		
 		kMaxGradientFactors
 	};

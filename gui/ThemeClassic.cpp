@@ -261,6 +261,36 @@ void ThemeClassic::drawSlider(const Common::Rect &r, int width, kState state) {
 	addDirtyRect(r);
 }
 
+void ThemeClassic::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align) {
+	if (!_initOk)
+		return;
+
+	restoreBackground(r);
+
+	box(r.left, r.top, r.width(), r.height());
+
+	Common::Point p0, p1;
+
+	p0 = Common::Point(r.right + 1 - r.height() / 2, r.top + 4);
+	p1 = Common::Point(r.right + 1 - r.height() / 2, r.bottom - 4);
+
+	OverlayColor color = getColor(state);
+
+	// Evil HACK to draw filled triangles
+	// FIXME: The "big" version is pretty ugly.
+	for (; p1.y - p0.y > 1; p0.y++, p0.x--, p1.y--, p1.x++) {
+		_screen.drawLine(p0.x, p0.y, p1.x, p0.y, color);
+		_screen.drawLine(p0.x, p1.y, p1.x, p1.y, color);
+	}
+
+	if (sel != "") {
+		Common::Rect text(r.left + 2, r.top + 3, r.right - 4, r.top + 3 + _font->getFontHeight());
+		_font->drawString(&_screen, sel, text.left, text.top, text.width(), color, convertAligment(align), deltax, false);
+	}
+
+	addDirtyRect(r);
+}
+
 void ThemeClassic::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state) {
 	if (!_initOk)
 		return;

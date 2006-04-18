@@ -38,7 +38,7 @@
 #define kShadowTr3 64
 #define kShadowTr4 128
 
-#define THEME_VERSION 8
+#define THEME_VERSION 9
 
 using Graphics::Surface;
 
@@ -211,6 +211,11 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	_configFile.getKey("button_bkgd", "pixmaps", imageHandlesTable[kButtonBkgd]);
 
 	_configFile.getKey("theme_logo", "pixmaps", imageHandlesTable[kThemeLogo]);
+
+	_configFile.getKey("popupwidget_corner", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdCorner]);
+	_configFile.getKey("popupwidget_top", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdTop]);
+	_configFile.getKey("popupwidget_left", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdLeft]);
+	_configFile.getKey("popupwidget_bkgd", "pixmaps", imageHandlesTable[kPopUpWidgetBkgd]);
 	
 	// load the gradient factors from the config file
 	getFactorFromConfig(_configFile, "main_dialog", _gradientFactors[kMainDialogFactor]);
@@ -229,6 +234,8 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	
 	getFactorFromConfig(_configFile, "scrollbar", _gradientFactors[kScrollbarFactor]);
 	getFactorFromConfig(_configFile, "scrollbar_background", _gradientFactors[kScrollbarBkgdFactor]);
+
+	getFactorFromConfig(_configFile, "popupwidget", _gradientFactors[kPopUpWidgetFactor]);
 	
 	// load values with default values from the config file
 	getExtraValueFromConfig(_configFile, "shadow_left_width", _shadowLeftWidth, 2);
@@ -611,6 +618,38 @@ void ThemeNew::drawSlider(const Common::Rect &r, int width, kState state) {
 	} else {
 		drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
 					(state == kStateDisabled) ? -30 : 256, _colors[kSliderStart], _colors[kSliderEnd], _gradientFactors[kSliderFactor]);
+	}
+
+	addDirtyRect(r);
+}
+
+void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align) {
+	if (!_initOk)
+		return;
+
+	OverlayColor start = _colors[kPopUpWidgetStart], end = _colors[kPopUpWidgetEnd];
+	if (state == kStateHighlight) {
+		start = _colors[kPopUpWidgetHighlightStart];
+		end = _colors[kPopUpWidgetHighlightEnd];
+	}
+
+	drawRectMasked(r, surface(kPopUpWidgetBkgdCorner), surface(kPopUpWidgetBkgdTop), surface(kPopUpWidgetBkgdLeft), surface(kPopUpWidgetBkgd),
+						(state == kStateDisabled) ? -30 : 256, start, end, _gradientFactors[kPopUpWidgetFactor]);
+
+	const Graphics::Surface *arrow = surface(kWidgetArrow);
+	Common::Rect arrowRect(r.right - 4 - arrow->w, r.top + 4, r.right - 4, r.top + 4 + arrow->h);
+	arrowRect.clip(r);
+
+	drawSurface(arrowRect, arrow, false, false, (state == kStateDisabled) ? -30 : 256);
+
+	arrowRect.top += arrow->h + 1;
+	arrowRect.bottom += arrow->h + 1;
+	arrowRect.clip(r);
+	drawSurface(arrowRect, arrow, true, false, (state == kStateDisabled) ? -30 : 256);
+
+	if (sel != "") {
+		Common::Rect text(r.left + 2, r.top + 3, r.right - 4, r.top + 3 + getFont()->getFontHeight());
+		getFont()->drawString(&_screen, sel, text.left, text.top, text.width(), getColor(state), convertAligment(align), deltax, false);
 	}
 
 	addDirtyRect(r);
@@ -1236,6 +1275,11 @@ void ThemeNew::setupColors() {
 	getColorFromConfig(_configFile, "scrollbar_slider_highlight_end", _colors[kScrollbarSliderHighlightEnd]);
 	
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
+
+	getColorFromConfig(_configFile, "popupwidget_start", _colors[kPopUpWidgetStart]);
+	getColorFromConfig(_configFile, "pupupwidget_end", _colors[kPopUpWidgetEnd]);
+	getColorFromConfig(_configFile, "popupwidget_highlight_start", _colors[kPopUpWidgetHighlightStart]);
+	getColorFromConfig(_configFile, "popupwidget_highlight_end", _colors[kPopUpWidgetHighlightEnd]);
 }
 
 #define FONT_NAME_NORMAL "newgui_normal"

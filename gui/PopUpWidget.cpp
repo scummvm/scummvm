@@ -408,36 +408,15 @@ void PopUpWidget::drawWidget(bool hilite) {
 	int x = _x + _labelWidth;
 	int w = _w - _labelWidth;
 
-	// Draw a thin frame around us.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(x, _y, x+w, _y+_h), _hints | THEME_HINT_USE_SHADOW, Theme::kWidgetBackgroundBorderSmall);
-
 	// Draw the label, if any
 	if (_labelWidth > 0)
 		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label,
 								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, Theme::kTextAlignRight);
 
-	// Draw a set of arrows at the right end to signal this is a dropdown/popup
-	/*Common::Point p0, p1;
-
-	p0 = Common::Point(x + w + 1 - _h / 2, _y + 4);
-	p1 = Common::Point(x + w + 1 - _h / 2, _y + _h - 4);
-
-	Graphics::Surface &surf = g_gui.getScreen();
-	OverlayColor color = !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor;
-
-	// Evil HACK to draw filled triangles
-	// FIXME: The "big" version is pretty ugly.
-	for (; p1.y - p0.y > 1; p0.y++, p0.x--, p1.y--, p1.x++) {
-		surf.drawLine(p0.x, p0.y, p1.x, p0.y, color);
-		surf.drawLine(p0.x, p1.y, p1.x, p1.y, color);
-	}*/
-
-	// Draw the selected entry, if any
-	if (_selectedItem >= 0) {
-		TextAlignment align = (g_gui.getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
-		g_gui.theme()->drawText(Common::Rect(x+2, _y+3, _x+2+w-6, _y+3+g_gui.theme()->getFontHeight()), _entries[_selectedItem].name,
-								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(align), false, _leftPadding);
-	}
+	Common::String sel = "";
+	if (_selectedItem >= 0)
+		sel = _entries[_selectedItem].name;
+	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(kTextAlignLeft));
 }
 
 } // End of namespace GUI
