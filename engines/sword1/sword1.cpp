@@ -445,19 +445,23 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 }
 
 int SwordEngine::go() {
-
 	uint16 startPos = ConfMan.getInt("boot_param");
-	if (startPos)
+	if (startPos) {
 		_logic->startPositions(startPos);
-	else {
-		if (_control->savegamesExist()) {
+	} else {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (_control->restoreGameFromFile(saveSlot - 1)) {
+			_control->doRestore();
+		} else if (_control->savegamesExist()) {
 			_systemVars.controlPanelMode = CP_NEWGAME;
 			if (_control->runPanel() == CONTROL_GAME_RESTORED)
 				_control->doRestore();
 			else if (!_systemVars.engineQuit)
 				_logic->startPositions(0);
-		} else // no savegames, start new game.
+		} else {
+			// no savegames, start new game.
 			_logic->startPositions(0);
+		}
 	}
 	_systemVars.controlPanelMode = CP_NORMAL;
 

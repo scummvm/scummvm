@@ -83,11 +83,11 @@ public:
 	void doRestore(void);
 	void askForCd(void);
 	bool savegamesExist(void);
+	bool restoreGameFromFile(uint8 slot);
 private:
 	int displayMessage(const char *altButton, const char *message, ...);
 
 	void saveGameToFile(uint8 slot);
-	bool restoreGameFromFile(uint8 slot);
 	void readSavegameDescriptions(void);
 	void writeSavegameDescriptions(void);
 	void showSavegameNames(void);
