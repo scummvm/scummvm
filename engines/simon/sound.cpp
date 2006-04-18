@@ -136,11 +136,11 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 		error("playSound: Not a valid WAV file");
 	}
 
-	flags |= Audio::Mixer::FLAG_AUTOFREE | wavFlags;
+	flags |= wavFlags;
 
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
-	_mixer->playRaw(handle, buffer, size, rate, flags);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
@@ -151,7 +151,6 @@ void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	int size, rate;
 	byte *buffer = loadVOCFromStream(*_file, size, rate);
-
 	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
@@ -164,7 +163,6 @@ void RawSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	uint size = _file->readUint32BE();
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
-
 	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
@@ -563,13 +561,12 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		error("playSoundData: Not a valid WAV data");
 	}
 
-	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, soundData + stream.pos(), size);
-
 	if (loop == true)
 		flags |= Audio::Mixer::FLAG_LOOP;
 	
-	_mixer->playRaw(handle, buffer, size, rate, flags, sound);
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, soundData + stream.pos(), size);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 void Sound::playVoiceData(byte *soundData, uint sound) {
