@@ -2227,8 +2227,10 @@ void SimonEngine::checkNoOverWrite(byte *end) {
 
 void SimonEngine::checkRunningAnims(byte *end) {
 	VgaSprite *vsp;
-	if (_lockWord & 0x20)
+	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+		(_lockWord & 0x20)) {
 		return;
+	}
 
 	for (vsp = _vgaSprites; vsp->id; vsp++) {
 		checkAnims(vsp->zoneNum, end);
@@ -2276,8 +2278,10 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	_windowNum = mode;
 	_lockWord |= 0x20;
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF) {
+		vc27_resetSprite();
 		vga_res_id &= 0xFFFF;
+	}
 
 	if (vga_res_id == 0) {
 		if (getGameType() == GType_SIMON1) {
