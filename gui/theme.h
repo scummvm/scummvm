@@ -262,6 +262,7 @@ private:
 
 	bool _forceRedraw;
 	bool _initOk;
+	bool _enabled;
 
 	const Graphics::Font *_font;
 	OverlayColor _color, _shadowcolor;
@@ -356,6 +357,7 @@ private:
 
 	bool _initOk;
 	bool _forceRedraw;
+	bool _enabled;
 
 	int _lastUsedBitMask;
 	void resetupGuiRenderer();

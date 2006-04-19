@@ -80,7 +80,7 @@ public:
 
 	WidgetSize getWidgetSize();
 
-
+	void handleScreenChange();
 protected:
 	OSystem			*_system;
 

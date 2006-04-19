@@ -334,5 +334,8 @@ WidgetSize NewGui::getWidgetSize() {
 	return (WidgetSize)(_theme->_evaluator->getVar("widgetSize"));
 }
 
+void NewGui::handleScreenChange() {
+	_theme->refresh();
+}
 
 } // End of namespace GUI

@@ -79,7 +79,8 @@ void ThemeClassic::refresh() {
 	_shadowcolor = _system->RGBToColor(64, 64, 64);
 	_textcolor = _system->RGBToColor(32, 160, 32);
 	_textcolorhi = _system->RGBToColor(0, 255, 0);
-	_system->showOverlay();
+	if (_enabled)
+		_system->showOverlay();
 }
 
 void ThemeClassic::enable() {
@@ -87,10 +88,12 @@ void ThemeClassic::enable() {
 	resetDrawArea();
 	_system->showOverlay();
 	clearAll();
+	_enabled = true;
 }
 
 void ThemeClassic::disable() {
 	_system->hideOverlay();
+	_enabled = false;
 }
 
 void ThemeClassic::openDialog(bool topDialog) {

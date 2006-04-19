@@ -354,7 +354,8 @@ void ThemeNew::deinit() {
 void ThemeNew::refresh() {
 	init();
 	resetupGuiRenderer();
-	_system->showOverlay();
+	if (_enabled)
+		_system->showOverlay();
 }
 
 void ThemeNew::enable() {
@@ -364,12 +365,14 @@ void ThemeNew::enable() {
 	_system->showOverlay();
 	clearAll();
 	setUpCursor();
+	_enabled = true;
 }
 
 void ThemeNew::disable() {
 	_system->hideOverlay();
 	_system->setPalette(_backUpCols, 0, MAX_CURS_COLORS);
 	_needPaletteUpdates = false;
+	_enabled = false;
 }
 
 void ThemeNew::openDialog(bool topDialog) {
