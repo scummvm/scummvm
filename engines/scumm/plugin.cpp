@@ -28,6 +28,7 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/list.h"
 #include "common/md5.h"
 #include "common/system.h"	// Only needed for g_system
 
@@ -1002,36 +1003,10 @@ const MD5Table *findInMD5Table(const char *md5) {
 }
 
 #if 0
-Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
-	char buf[128];
-
-	switch (gfp.genMethod) {
-	case kGenDiskNum:
-	case kGenRoomNum:
-		snprintf(buf, sizeof(buf), gfp.pattern, 0);
-		break;
-
-	case kGenHEPC:
-		snprintf(buf, sizeof(buf), "%s.he0", gfp.pattern);
-		break;
-
-	case kGenHEMac:
-		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
-		break;
-
-	case kGenHEMacNoParens:
-		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
-		break;
-
-	default:
-		error("generateFilenameForDetection: Unhandled genMethod");
-	}
-
-	return buf;
-}
-
-#if 0
-Common::String ScummEngine::generateFilename(int room, int diskNumber) {
+Common::String ScummEngine::generateFilename(const int room) const {
+	// HACK to drive test compiles; of course _substEntry would be a member var of ScummEngine
+	const GameFilenamePattern _substEntry = { "maniac", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 };
+	const int diskNumber = room ? res.roomno[rtRoom][room] : 0;
 	char buf[128];
 
 	if (_game.version == 4) {
@@ -1064,15 +1039,15 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 				switch(disk) {
 				case 2:
 					id = 'b';
-					snprintf(buf, sizeof(buf), "%s.(b)", pattern);
+					snprintf(buf, sizeof(buf), "%s.(b)", _substEntry.pattern);
 					break;
 				case 1:
 					id = 'a';
-					snprintf(buf, sizeof(buf), "%s.(a)", pattern);
+					snprintf(buf, sizeof(buf), "%s.(a)", _substEntry.pattern);
 					break;
 				default:
 					id = '0';
-					snprintf(buf, sizeof(buf), "%s.he0", pattern);
+					snprintf(buf, sizeof(buf), "%s.he0", _substEntry.pattern);
 				}
 			} else if (_game.heversion >= 70) {
 				id = (room == 0) ? '0' : '1';
@@ -1083,13 +1058,13 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 			if (_substEntry.genMethod == kGenHEPC) {
 				// For HE >= 98, we already called snprintf above.
 				if (_game.heversion < 98)
-					snprintf(buf, sizeof(buf), "%s.he%c", pattern, id);
+					snprintf(buf, sizeof(buf), "%s.he%c", _substEntry.pattern, id);
 			} else {
 				if (id == '3') { // special case for cursors
 					// For mac they're stored in game binary
-					strncpy(buf, _substEntry.pattern, bufsize);
+					strncpy(buf, _substEntry.pattern, sizeof(buf));
 				} else {
-					if (subst.genMethod == kGenMac)
+					if (_substEntry.genMethod == kGenHEMac)
 						snprintf(buf, sizeof(buf), "%s (%c)", _substEntry.pattern, id);
 					else
 						snprintf(buf, sizeof(buf), "%s %c", _substEntry.pattern, id);
@@ -1099,7 +1074,7 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 			break;
 
 		default:
-			error("FOO");
+			error("generateFilename: Unsupported genMethod");
 		}
 	}
 
@@ -1107,16 +1082,51 @@ Common::String ScummEngine::generateFilename(int room, int diskNumber) {
 }
 #endif
 
+#if 0
+Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
+	char buf[128];
+
+	switch (gfp.genMethod) {
+	case kGenDiskNum:
+	case kGenRoomNum:
+		snprintf(buf, sizeof(buf), gfp.pattern, 0);
+		break;
+
+	case kGenHEPC:
+		snprintf(buf, sizeof(buf), "%s.he0", gfp.pattern);
+		break;
+
+	case kGenHEMac:
+		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
+		break;
+
+	case kGenHEMacNoParens:
+		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
+		break;
+
+	default:
+		error("generateFilenameForDetection: Unsupported genMethod");
+	}
+
+	return buf;
+}
+
 struct DetectorDesc {
 	Common::String path;
 	Common::String md5;
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
-	//GameSettings game;
 };
 
-void detectGames(const FSList &fslist) {
+
+struct DetectorResult {
+	const GameFilenamePattern *gfp;
+	GameSettings game;
+};
+
+void detectGames(const char *gameid_XXX, const FSList &fslist, Common::List<DetectorResult> &results) {
 	typedef Common::HashMap<Common::String, DetectorDesc> DescMap;
 	DescMap fileMD5Map;
+	const GameSettings *g;
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
@@ -1129,7 +1139,14 @@ void detectGames(const FSList &fslist) {
 
 	// Iterate over all filename patterns.
 	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
-		// Generate the detectname corresponding to the gfp.
+		// If gameid_XXX was specified, we only try to detect that specific game,
+		// so we can just skip over everything with a differing gameid.
+		if (gameid_XXX && scumm_stricmp(gameid_XXX, gfp->gameid))
+			continue;
+	
+		// Generate the detectname corresponding to the gfp. If the file doesn't
+		// exist in the directory we are looking at, we can skip to the next
+		// one immediately.
 		Common::String file(generateFilenameForDetection(*gfp));
 		if (!fileMD5Map.contains(file))
 			continue;
@@ -1148,9 +1165,43 @@ void detectGames(const FSList &fslist) {
 				d.md5Entry = findInMD5Table(md5str);
 
 				if (d.md5Entry) {
-/*
-					TODO: Exact match found, handle this
-*/
+					// Exact match found
+
+					// Sanity check: Make sure the gameids match!
+					if (scumm_stricmp(d.md5Entry->gameid, gfp->gameid)) {
+						error("SCUMM detectGames: MD5 %s implies gameid '%s', but gameid '%s' was expected",
+								md5str, d.md5Entry->gameid, gfp->gameid);
+					}
+
+					DetectorResult dr;
+					dr.game.gameid = 0;
+					dr.gfp = gfp;
+
+					// Compute the precise game settings using gameVariantsTable.
+					for (g = gameVariantsTable; g->gameid; ++g) {
+						if (g->gameid[0] == 0 || !scumm_stricmp(d.md5Entry->gameid, g->gameid)) {
+							// The gameid either matches, or is empty (the latter indicates
+							// a generic entry, used currently for generic HE specifies.
+			
+							if (g->variant == 0 || !scumm_stricmp(d.md5Entry->variant, g->variant)) {
+								// Perfect match found, use it and stop the loop
+								dr.game = *g;
+								dr.game.gameid = gfp->gameid;
+								if (d.md5Entry->platform != Common::kPlatformUnknown) {
+									if (dr.game.platform != Common::kPlatformUnknown && dr.game.platform != d.md5Entry->platform)
+										warning("SCUMM detectGames: Platform values differ for MD5 '%s': %d vs %d (please report to Fingolfin)",
+													md5str, dr.game.platform, d.md5Entry->platform);
+									dr.game.platform = d.md5Entry->platform;
+								}
+								results.push_back(dr);
+								break;
+							}
+						}
+					}
+
+					// Sanity check: We *should* have found a matching gameid / variant at this point.
+					// If not, then there's a bug in our data tables...
+					assert(dr.game.gameid != 0);
 				}
 			}
 		}
@@ -1160,17 +1211,158 @@ void detectGames(const FSList &fslist) {
 		if (d.md5Entry != 0)
 			continue;
 
-		// At this point, the MD5 sum has been computed but is not known.
-/*
-		TODO: Look at the file (like in Engine_SCUMM_detectGames) to further
-		narrow down the possibilities... For names that are unique, we don't
-		have to do much more. For non-unique names, we could at least try
-		to determine the SCUMM version to somewhat reduce the list of
-		possible candidates.
+		// At this point, the MD5 sum has been computed but is not known. We
+		// still do our best to identify the game & variant correctly.
 		
-		How to determine whether a detection filename is unique? Well the only
-		names which are *not* unique are 00.LFL and 000.LFL anyway!
-*/	
+		// First step is to determine the correct gameid. Luckily, in most
+		// cases the filename alone implies the gameid. Currently the only
+		// exceptions are 00.LFL and 000.LFL, for which we add special cases
+		// below.
+		
+		// After that, we may take a peek at the file contents to further
+		// narrow down the list of variants.
+		
+		// TODO: Should we do some sort of caching on the data we read? Like,
+		// keep a copy of the first N bytes ?
+
+		Common::File tmp;
+		if (!tmp.open(d.path.c_str())) {
+			warning("SCUMM detectGames: failed to open '%s' for read access", d.path.c_str());
+			continue;
+		}
+		byte buf[6];
+		tmp.read(buf, 6);
+		
+		if (file == "00.LFL") {
+			// Used in V1, V2, V3 games.
+			
+			if (buf[0] == 0xbc && buf[1] == 0xb9) {
+				// The NES version of MM
+				// TODO
+			} else if (buf[0] == 0xCE && buf[1] == 0xF5) {
+				// Looks like V1.
+
+				// Candidates: maniac classic, zak classic
+
+				// TODO: Maybe we can use the filesize to distinguish these two?
+				// English V1 Zak: 1896 bytes
+				// English V1 MM:  1972 bytes
+
+				// Since it seems unlikely that there are other (official)
+				// variants of these two games around, it should be safe to use
+				// the filesize for detection. In case of an unknown size,
+				// we just generate a warning and skip the file.
+			} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
+				// GF_OLD_BUNDLE: could be V2 or old V3.
+				// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+				/*
+				TODO: Might be possible to distinguish those by the script count.
+				Specifically, my versions of these games have this in their headers:
+	
+				Loom (en; de; en demo; en MAC):
+				_numGlobalObjects 1000
+				_numRooms 100
+				_numCostumes 200
+				_numScripts 200
+				_numSounds 80
+	
+				Indy3EGA (en PC; en Mac; en demo):
+				_numGlobalObjects 1000
+				_numRooms 99
+				_numCostumes 129
+				_numScripts 139
+				_numSounds 84
+	
+				MM (en; de):
+				_numGlobalObjects 780
+				_numRooms 61
+				_numCostumes 40
+				_numScripts 179
+				_numSounds 120
+	
+				Zak (de; en demo):
+				_numGlobalObjects 780
+				_numRooms 61
+				_numCostumes 40
+				_numScripts 155
+				_numSounds 120
+	
+				So, they all have a different number of scripts.
+				*/
+			} else if (buf[4] == '0' && buf[5] == 'R') {
+				// newer V3 game
+				// Candidates: indy3, indy3Towns, zakTowns, loomTowns
+				/*
+				Considering that we know about *all* TOWNS versions,
+				and know their MD5s, we could simply rely on this and
+				if we find something which has an unknown MD5, assume
+				that it is an (so far unknown) version of Indy3.
+	
+				We can combine this with a look at the resource headers:
+	
+				Indy3:
+				_numGlobalObjects 1000
+				_numRooms 99
+				_numCostumes 129
+				_numScripts 139
+				_numSounds 84
+	
+				Indy3Towns, ZakTowns, ZakLoom demo:
+				_numGlobalObjects 1000
+				_numRooms 99
+				_numCostumes 199
+				_numScripts 199
+				_numSounds 199
+	
+				Assuming that all the town variants look like the latter, we can
+				do the check like this:
+				  if (numScripts == 139)
+					assume Indy3
+				  else if (numScripts == 199)
+					assume towns game
+				  else
+					unknown, do not accept it
+				*/
+			} else {
+				// TODO: Unknown file header, deal with it. Maybe an unencrypted
+				// variant...
+				// Anyway, we don't know to deal with the file, so we
+				// just skip it.
+			}
+		} else if (file == "000.LFL") {
+			// Used in V4
+			// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
+			/*
+			For all of them, we have:
+			_numGlobalObjects 1000
+			_numRooms 99
+			_numCostumes 199
+			_numScripts 199
+			_numSounds 199
+			
+			Any good ideas to distinguish those? Maybe by the presence / absence
+			of some files?
+			At least PASS and the monkeyEGA demo differ by 903.LFL missing...
+			And the count of DISK??.LEC files differs depending on what version
+			you have (4 or 8 floppy versions). 
+			loomcd of course shipped on only one "disc".
+			
+			pass: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
+			monkeyEGA:  000.LFL, 901-904.LFL, DISK01-09.LEC
+			monkeyEGA DEMO: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
+			monkeyVGA: 000.LFL, 901-904.LFL, DISK01-04.LEC
+			loomcd: 000.LFL, 901-904.LFL, DISK01.LEC
+			*/
+		} else {
+			// So at this point the gameid is determined, but not necessarily
+			// the variant!
+			
+			// TODO: Add code that does this, at least for the non-HE games.
+			// Note sure how realistic it is to correctly detect HE-game
+			// variants, would require me to look at a sufficiently large
+			// sample collection of HE games (assuming I had the time :).
+			
+		}
 	}
 }
 
@@ -1772,7 +1964,7 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 					md5, elem->gameid, gameid);
 		}
 	
-		// Compute the precise game settings using 'gameVariantsTable'.
+		// Compute the precise game settings using gameVariantsTable.
 		for (g = gameVariantsTable; g->gameid; ++g) {
 			if (g->gameid[0] == 0 || !scumm_stricmp(elem->gameid, g->gameid)) {
 				// The gameid either matches, or is empty (the latter indicates
