@@ -55,7 +55,7 @@ SECTION .text
     mov     edx,[%1]
     cmp     edx,[%2]
     je      %%fin
-    mov     ecx,_RGBtoYUV
+    mov     ecx,[_RGBtoYUV]
     movd    mm1,[ecx+edx*4]
     movq    mm5,mm1
     mov     edx,[%2]
@@ -164,7 +164,7 @@ SECTION .text
 %endmacro
 
 %macro Interp3 2
-    mov        ecx, _LUT16to32
+    mov        ecx, [_LUT16to32]
     movd       mm1, [ecx+eax*4]
     mov        edx, %2
     movd       mm2, [ecx+edx*4]
@@ -183,7 +183,7 @@ SECTION .text
 %endmacro
 
 %macro Interp4 3
-    mov        ecx, _LUT16to32
+    mov        ecx, [_LUT16to32]
     movd       mm1, [ecx+eax*4]
     mov        edx, %2
     movd       mm2, [ecx+edx*4]
@@ -468,7 +468,7 @@ _hq3x_16:
     movzx   edx,ax  
     mov     [w9],edx
 .flags
-    mov     ebx,_RGBtoYUV
+    mov     ebx,[_RGBtoYUV]
     mov     eax,[w5]
     xor     ecx,ecx
     movd    mm5,[ebx+eax*4]
