@@ -144,6 +144,7 @@ void NewGui::runLoop() {
 	}
 
 	int i;
+	bool useStandardCurs = !_theme->ownCursor();
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		activeDialog->handleTickle();
@@ -172,7 +173,8 @@ void NewGui::runLoop() {
 			_needRedraw = false;
 		}
 
-		animateCursor();
+		if (useStandardCurs)
+			animateCursor();
 		_theme->drawAll();
 		_system->updateScreen();
 

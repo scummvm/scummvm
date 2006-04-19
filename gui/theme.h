@@ -106,6 +106,8 @@ public:
 
 	virtual void refresh() = 0;
 
+	virtual bool ownCursor() { return false; }
+
 	virtual void enable() = 0;
 	virtual void disable() = 0;
 
@@ -281,6 +283,8 @@ public:
 
 	void refresh();
 
+	bool ownCursor() { return true; }
+
 	void enable();
 	void disable();
 	
@@ -428,6 +432,8 @@ public:
 		kPopUpWidgetBkgdTop = 41,
 		kPopUpWidgetBkgdLeft = 42,
 		kPopUpWidgetBkgd = 43,
+
+		kGUICursor = 44,
 		
 		kImageHandlesMax
 	};
@@ -440,6 +446,15 @@ private:
 	// cache means input is 16 bpp mode
 	OverlayColor calcLuminance(OverlayColor col);
 	OverlayColor calcDimColor(OverlayColor col);
+
+	void setUpCursor();
+	void createCursor();
+	int _cursorHotspotX, _cursorHotspotY;
+#define MAX_CURS_COLORS 255
+	byte *_cursor;
+	uint _cursorWidth, _cursorHeight;
+	byte _cursorPal[4*MAX_CURS_COLORS];
+	byte _backUpCols[4*MAX_CURS_COLORS];
 
 private:
 	const String *_imageHandles;

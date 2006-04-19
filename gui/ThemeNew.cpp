@@ -38,7 +38,7 @@
 #define kShadowTr3 64
 #define kShadowTr4 128
 
-#define THEME_VERSION 9
+#define THEME_VERSION 10
 
 using Graphics::Surface;
 
@@ -216,6 +216,8 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	_configFile.getKey("popupwidget_top", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdTop]);
 	_configFile.getKey("popupwidget_left", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdLeft]);
 	_configFile.getKey("popupwidget_bkgd", "pixmaps", imageHandlesTable[kPopUpWidgetBkgd]);
+
+	_configFile.getKey("cursor_image", "pixmaps", imageHandlesTable[kGUICursor]);
 	
 	// load the gradient factors from the config file
 	getFactorFromConfig(_configFile, "main_dialog", _gradientFactors[kMainDialogFactor]);
@@ -242,6 +244,9 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	getExtraValueFromConfig(_configFile, "shadow_right_width", _shadowRightWidth, 4);
 	getExtraValueFromConfig(_configFile, "shadow_top_height", _shadowTopHeight, 2);
 	getExtraValueFromConfig(_configFile, "shadow_bottom_height", _shadowBottomHeight, 4);
+
+	getExtraValueFromConfig(_configFile, "cursor_hotspot_x", _cursorHotspotX, 0);
+	getExtraValueFromConfig(_configFile, "cursor_hotspot_y", _cursorHotspotY, 0);
 	
 	// inactive dialog shading stuff
 	_dialogShadingCallback = 0;
@@ -293,12 +298,16 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	}
 	
 	_lastUsedBitMask = gBitFormat;
+
+	// creats the cursor image
+	createCursor();
 }
 
 ThemeNew::~ThemeNew() {
 	deleteFonts();
 	deinit();
 	delete [] _images;
+	delete [] _cursor;
 	_images = 0;
 	if (_imageHandles) {
 		for (int i = 0; i < kImageHandlesMax; ++i) {
@@ -353,10 +362,12 @@ void ThemeNew::enable() {
 	resetDrawArea();
 	_system->showOverlay();
 	clearAll();
+	setUpCursor();
 }
 
 void ThemeNew::disable() {
 	_system->hideOverlay();
+	_system->setPalette(_backUpCols, 0, MAX_CURS_COLORS);
 }
 
 void ThemeNew::openDialog(bool topDialog) {
@@ -1483,6 +1494,65 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
 	b = b * _dimPercentValue >> 8;
 
 	return _system->RGBToColor(r, g, b);
+}
+
+#pragma mark -
+
+void ThemeNew::setUpCursor() {
+	_system->grabPalette(_backUpCols, 0, MAX_CURS_COLORS);
+	_system->setPalette(_cursorPal, 0, MAX_CURS_COLORS);
+
+	_system->setMouseCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY);
+}
+
+void ThemeNew::createCursor() {
+	const Surface *cursor = _images[kGUICursor];
+
+	_cursorWidth = cursor->w;
+	_cursorHeight = cursor->h;
+
+	uint colorsFound = 0;
+	const OverlayColor *src = (const OverlayColor*)cursor->pixels;
+
+	byte *table = new byte[65536];
+	assert(table);
+	memset(table, 0, sizeof(byte)*65536);
+
+	byte r, g, b;
+
+	_system->colorToRGB(_colors[kColorTransparency], r, g, b);
+	uint16 transparency = RGBToColor<ColorMasks<565> >(r, g, b);
+
+	_cursor = new byte[_cursorWidth * _cursorHeight];
+	assert(_cursor);
+	memset(_cursor, 255, sizeof(byte)*_cursorWidth*_cursorHeight);
+
+	for (uint y = 0; y < _cursorHeight; ++y) {
+		for (uint x = 0; x < _cursorWidth; ++x) {
+			_system->colorToRGB(src[x], r, g, b);
+			uint16 col = RGBToColor<ColorMasks<565> >(r, g, b);
+			if (!table[col] && col != transparency) {
+				table[col] = colorsFound++;
+
+				uint index = table[col];
+				_cursorPal[index * 4 + 0] = r;
+				_cursorPal[index * 4 + 1] = g;
+				_cursorPal[index * 4 + 2] = b;
+				_cursorPal[index * 4 + 3] = 0xFF;
+
+				if (colorsFound > MAX_CURS_COLORS)
+					error("Cursor contains too much colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+			}
+
+			if (col != transparency) {
+				uint index = table[col];
+				_cursor[y * _cursorWidth + x] = index;
+			}
+		}
+		src += _cursorWidth;
+	}
+
+	delete [] table;
 }
 
 #pragma mark -
