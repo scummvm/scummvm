@@ -98,6 +98,7 @@ protected:
 
 public:
 	static Widget *findWidgetInChain(Widget *start, int x, int y);
+	static Widget *findWidgetInChain(Widget *start, const char *name);
 
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h);
@@ -105,6 +106,10 @@ public:
 	virtual ~Widget();
 
 	void init();
+	void resize(int x, int y, int w, int h);
+
+	void setNext(Widget *w) { _next = w; }
+	Widget *next() { return _next; }
 
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
@@ -121,6 +126,8 @@ public:
 	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
 	virtual bool handleKeyUp(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
+
+	virtual void handleScreenChanged() { GuiObject::handleScreenChanged(); }
 
 	void draw();
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
@@ -170,6 +177,8 @@ public:
 	const String &getLabel() const		{ return _label; }
 	void setAlign(TextAlignment align);
 	TextAlignment getAlign() const		{ return _align; }
+
+	virtual void handleScreenChanged();
 
 protected:
 	void drawWidget(bool hilite);

@@ -55,6 +55,7 @@ bool ThemeClassic::init() {
 		} else {
 			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		}
+		resetDrawArea();
 	}
 
 	if (isThemeLoadingRequired())

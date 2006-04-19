@@ -84,9 +84,9 @@ AboutDialog::AboutDialog()
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	xOff = g_gui.evaluator()->getVar("aboutXOff");;
-	yOff = g_gui.evaluator()->getVar("aboutYOff");;
-	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");;
+	xOff = g_gui.evaluator()->getVar("aboutXOff");
+	yOff = g_gui.evaluator()->getVar("aboutYOff");
+	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");
 
 	_w = screenW - 2 * outerBorder;
 	_h = screenH - 2 * outerBorder;
@@ -287,6 +287,37 @@ void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 	_modifiers = modifiers;
 	if (ascii && _willClose)
 		close();
+}
+
+void AboutDialog::handleScreenChanged() {
+	Dialog::handleScreenChanged();
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	xOff = g_gui.evaluator()->getVar("aboutXOff");
+	yOff = g_gui.evaluator()->getVar("aboutYOff");
+	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");
+
+	_w = screenW - 2 * outerBorder;
+	_h = screenH - 2 * outerBorder;
+
+	_lineHeight = g_gui.getFontHeight() + 3;
+
+	// Heuristic to compute 'optimal' dialog width
+	int maxW = _w - 2*xOff;
+	_w = 0;
+	for (int i = 0; i < ARRAYSIZE(credits); i++) {
+		int tmp = g_gui.getStringWidth(credits[i] + 5);
+		if ( _w < tmp && tmp <= maxW) {
+			_w = tmp;
+		}
+	}
+	_w += 2*xOff;
+
+	_lineHeight = g_gui.getFontHeight() + 3;
+
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
 }
 
 } // End of namespace GUI

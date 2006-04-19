@@ -49,6 +49,13 @@ void Widget::init() {
 	_hints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
+void Widget::resize(int x, int y, int w, int h) {
+	_x = x;
+	_y = y;
+	_w = w;
+	_h = h;
+}
+
 Widget::~Widget() {
 	delete _next;
 }
@@ -114,6 +121,16 @@ Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 	return w;
 }
 
+Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
+	while (w) {
+		if (w->_name == name) {
+			return w;
+		}
+		w = w->_next;
+	}
+	return 0;
+}
+
 bool Widget::isVisible() const {
 	if (g_gui.evaluator()->getVar(_name + ".visible") == 0)
 		return false;
@@ -171,6 +188,11 @@ void StaticTextWidget::drawWidget(bool hilite) {
 	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label,
 							isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled,
 							g_gui.theme()->convertAligment(_align));
+}
+
+void StaticTextWidget::handleScreenChanged() {
+	Widget::handleScreenChanged();
+	_ws = g_gui.getWidgetSize();
 }
 
 #pragma mark -

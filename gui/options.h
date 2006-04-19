@@ -49,6 +49,8 @@ public:
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
+	virtual void handleScreenChanged();
+
 	enum {
 		kOKCmd					= 'ok  '
 	};

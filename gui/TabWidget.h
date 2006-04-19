@@ -69,6 +69,8 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
+	virtual void handleScreenChanged();
+
 protected:
 	virtual void drawWidget(bool hilite);
 

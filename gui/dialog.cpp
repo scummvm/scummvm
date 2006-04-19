@@ -106,9 +106,12 @@ void Dialog::handleScreenChanged() {
 	_drawingHints |= THEME_HINT_FIRST_DRAW; 
 	Widget *w = _firstWidget;
 	while (w) {
+		w->handleScreenChanged();
 		w->setHints(THEME_HINT_FIRST_DRAW);
 		w = w->_next;
 	}
+
+	GuiObject::handleScreenChanged();
 }
 
 void Dialog::releaseFocus() {
@@ -302,6 +305,28 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
  */
 Widget *Dialog::findWidget(int x, int y) {
 	return Widget::findWidgetInChain(_firstWidget, x, y);
+}
+
+Widget *Dialog::findWidget(const char *name) {
+	return Widget::findWidgetInChain(_firstWidget, name);
+}
+
+void Dialog::deleteWidget(Widget *del) {
+	Widget *w = _firstWidget;
+
+	if (del == _firstWidget) {
+		_firstWidget = _firstWidget->_next;
+		return;
+	}
+
+	w = _firstWidget;
+	while (w) {
+		if (w->_next == del) {
+			w->_next = w->_next->_next;
+			return;
+		}
+		w = w->_next;
+	}
 }
 
 ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {

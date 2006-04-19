@@ -344,10 +344,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
-	_ws = g_gui.getWidgetSize();
-
-	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
+	handleScreenChanged();
 
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	setHints(THEME_HINT_SAVE_BACKGROUND);
@@ -369,6 +366,15 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 		}
 	}
+}
+
+void PopUpWidget::handleScreenChanged() {
+	_ws = g_gui.getWidgetSize();
+
+	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
+	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
+
+	Widget::handleScreenChanged();
 }
 
 void PopUpWidget::appendEntry(const String &entry, uint32 tag) {

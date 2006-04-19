@@ -59,29 +59,33 @@ enum {
 
 // HACK. FIXME. This doesn't belong here. But otherwise it creates compulation problems
 GuiObject::GuiObject(Common::String name) : _firstWidget(0) {
-	if ((_x = g_gui.evaluator()->getVar(name + ".x")) == EVAL_UNDEF_VAR)
-		error("Undefined variable %s.x", name.c_str());
-	if ((_y = g_gui.evaluator()->getVar(name + ".y")) == EVAL_UNDEF_VAR)
-		error("Undefined variable %s.y", name.c_str());
-	_w = g_gui.evaluator()->getVar(name + ".w");
-	_h = g_gui.evaluator()->getVar(name + ".h");
-
-	if(_x < 0)
-		error("Widget <%s> has x < 0", name.c_str());
-	if(_x >= g_system->getOverlayWidth())
-		error("Widget <%s> has x > %d", name.c_str(), g_system->getOverlayWidth());
-	if(_x + _w > g_system->getOverlayWidth())
-		error("Widget <%s> has x + w > %d (%d)", name.c_str(), g_system->getOverlayWidth(), _x + _w);
-	if(_y < 0)
-		error("Widget <%s> has y < 0", name.c_str());
-	if(_y >= g_system->getOverlayWidth())
-		error("Widget <%s> has y > %d", name.c_str(), g_system->getOverlayHeight());
-	if(_y + _h > g_system->getOverlayWidth())
-		error("Widget <%s> has y + h > %d (%d)", name.c_str(), g_system->getOverlayHeight(), _y + _h);
-
 	_name = name;
+	handleScreenChanged();
 }
 
+void GuiObject::handleScreenChanged() {
+	if (_name != "") {
+		if ((_x = g_gui.evaluator()->getVar(_name + ".x")) == EVAL_UNDEF_VAR)
+			error("Undefined variable %s.x", _name.c_str());
+		if ((_y = g_gui.evaluator()->getVar(_name + ".y")) == EVAL_UNDEF_VAR)
+			error("Undefined variable %s.y", _name.c_str());
+		_w = g_gui.evaluator()->getVar(_name + ".w");
+		_h = g_gui.evaluator()->getVar(_name + ".h");
+	
+		if(_x < 0)
+			error("Widget <%s> has x < 0", _name.c_str());
+		if(_x >= g_system->getOverlayWidth())
+			error("Widget <%s> has x > %d", _name.c_str(), g_system->getOverlayWidth());
+		if(_x + _w > g_system->getOverlayWidth())
+			error("Widget <%s> has x + w > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x + _w);
+		if(_y < 0)
+			error("Widget <%s> has y < 0", _name.c_str());
+		if(_y >= g_system->getOverlayWidth())
+			error("Widget <%s> has y > %d", _name.c_str(), g_system->getOverlayHeight());
+		if(_y + _h > g_system->getOverlayWidth())
+			error("Widget <%s> has y + h > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y + _h);
+	}
+}
 
 // Constructor
 NewGui::NewGui() : _needRedraw(false),
@@ -235,7 +239,7 @@ void NewGui::runLoop() {
 				_needRedraw = true;
 				// refresh all dialogs
 				for (i = 0; i < _dialogStack.size(); ++i) {
-					activeDialog->handleScreenChanged();
+					_dialogStack[i]->handleScreenChanged();
 				}
 				break;
 			}

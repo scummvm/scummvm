@@ -62,6 +62,8 @@ protected:
 public:
 	PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth = 0);
 
+	void changeLabelWidth(uint newWidth) { _labelWidth = newWidth; }
+
 	void handleMouseDown(int x, int y, int button, int clickCount);
 
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
@@ -79,6 +81,8 @@ public:
 
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+
+	virtual void handleScreenChanged();
 protected:
 	void drawWidget(bool hilite);
 };

@@ -322,6 +322,7 @@ bool ThemeNew::init() {
 		_initOk = true;
 		clearAll();
 		setupFonts();
+		resetDrawArea();
 	}
 
 	if (isThemeLoadingRequired()) {

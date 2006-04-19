@@ -446,6 +446,19 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
 	_enableVolumeSettings = true;
 }
 
+void OptionsDialog::handleScreenChanged() {
+	Dialog::handleScreenChanged();
+
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+
+	if (_midiPopUp)
+		_midiPopUp->changeLabelWidth(labelWidth);
+	if (_gfxPopUp)
+		_gfxPopUp->changeLabelWidth(labelWidth);
+	if (_renderModePopUp)
+		_renderModePopUp->changeLabelWidth(labelWidth);
+}
+
 #pragma mark -
 
 

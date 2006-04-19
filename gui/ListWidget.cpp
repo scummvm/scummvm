@@ -31,7 +31,7 @@ namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, String name)
 	: EditableWidget(boss, name), CommandSender(boss) {
-	int w = g_gui.evaluator()->getVar(name + ".w");
+	int w = g_gui.evaluator()->getVar(_name + ".w");
 
 	WidgetSize ws = g_gui.getWidgetSize();
 
@@ -47,6 +47,9 @@ ListWidget::ListWidget(GuiObject *boss, String name)
 	} else {
 		_w = w - kNormalScrollBarWidth;
 	}
+	
+	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
+	_scrollBar->setTarget(this);
 
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	setHints(THEME_HINT_SAVE_BACKGROUND);
@@ -56,8 +59,6 @@ ListWidget::ListWidget(GuiObject *boss, String name)
 	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
-	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
-	_scrollBar->setTarget(this);
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -434,6 +435,38 @@ void ListWidget::abortEditMode() {
 	//drawCaret(true);
 	//draw();
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+}
+
+void ListWidget::handleScreenChanged() {
+	Widget::handleScreenChanged();
+
+	int w = g_gui.evaluator()->getVar(_name + ".w");
+
+	WidgetSize ws = g_gui.getWidgetSize();
+
+	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
+	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);
+	_topPadding = g_gui.evaluator()->getVar("ListWidget.topPadding", 0);
+	_bottomPadding = g_gui.evaluator()->getVar("ListWidget.bottomPadding", 0);
+	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
+	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
+
+	if (ws == kBigWidgetSize) {
+		_w = w - kBigScrollBarWidth;
+	} else {
+		_w = w - kNormalScrollBarWidth;
+	}
+
+	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
+
+	delete [] _textWidth;
+	_textWidth = new int[_entriesPerPage];
+
+	for (int i = 0; i < _entriesPerPage; i++)
+		_textWidth[i] = 0;
+
+	_scrollBar->resize(_x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
+	scrollBarRecalc();
 }
 
 } // End of namespace GUI

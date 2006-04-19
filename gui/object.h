@@ -78,6 +78,8 @@ public:
 
 	virtual void	draw() = 0;
 
+	virtual void	handleScreenChanged();
+
 protected:
 	virtual void	releaseFocus() = 0;
 

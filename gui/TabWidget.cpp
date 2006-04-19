@@ -137,6 +137,17 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	return Widget::handleKeyDown(ascii, keycode, modifiers);
 }
 
+void TabWidget::handleScreenChanged() {
+	for (uint i = 0; i < _tabs.size(); ++i) {
+		Widget *w = _tabs[i].firstWidget;
+		while (w) {
+			w->handleScreenChanged();
+			w = w->next();
+		}
+	}
+	Widget::handleScreenChanged();
+}
+
 void TabWidget::drawWidget(bool hilite) {
 	Common::Array<Common::String> tabs;
 	for (int i = 0; i < (int)_tabs.size(); ++i) {

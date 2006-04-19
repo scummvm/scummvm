@@ -767,6 +767,11 @@ void LauncherDialog::updateButtons() {
 void LauncherDialog::handleScreenChanged() {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
+		if (ver) {
+			ver->setLabel(gScummVMVersionDate);
+		}
+
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "launcher_logo");
 		ThemeNew *th = (ThemeNew *)g_gui.theme();
@@ -774,9 +779,23 @@ void LauncherDialog::handleScreenChanged() {
 
 		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
 	} else {
-		delete _logo;
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
+		if (ver) {
+			ver->setLabel(gScummVMFullVersion);
+		}
+
+		if (_logo) {
+			deleteWidget(_logo);
+			_logo->setNext(0);
+			delete _logo;
+			_logo = 0;
+		}
 	}
 #endif
+
+	_w = g_system->getOverlayWidth();
+	_h = g_system->getOverlayHeight();
+
 	Dialog::handleScreenChanged();
 }
 
