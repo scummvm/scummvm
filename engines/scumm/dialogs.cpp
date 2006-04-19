@@ -268,95 +268,11 @@ enum {
 	kOptionsCmd = 'OPTN',
 	kHelpCmd = 'HELP',
 	kAboutCmd = 'ABOU',
-	kQuitCmd = 'QUIT'
+	kQuitCmd = 'QUIT',
+	kChooseCmd = 'CHOS'
 };
 
-class SaveLoadChooser : public GUI::ChooserDialog, public BaseSaveLoadChooser {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	bool _saveMode;
-
-public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	void handleScreenChanged() { ChooserDialog::handleScreenChanged(); }
-	const String &getResultString() const;
-	void setList(const StringList& list) { GUI_ChooserDialog::setList(list); }
-	int runModal() { return GUI_ChooserDialog::runModal(); }
-};
-
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: GUI::ChooserDialog(title, "scummsaveload_", buttonLabel), _saveMode(saveMode) {
-
-	_list->setEditable(saveMode);
-	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
-}
-
-const Common::String &SaveLoadChooser::getResultString() const {
-	return _list->getSelectedString();
-}
-
-void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	int selItem = _list->getSelected();
-	switch (cmd) {
-	case GUI::kListItemActivatedCmd:
-	case GUI::kListItemDoubleClickedCmd:
-		if (selItem >= 0) {
-			if (_saveMode || !getResultString().empty()) {
-				setResult(selItem);
-				close();
-			}
-		}
-		break;
-	case GUI::kListSelectionChangedCmd:
-		if (_saveMode) {
-			_list->startEditMode();
-		}
-		// Disable button if nothing is selected, or (in load mode) if an empty
-		// list item is selected. We allow choosing an empty item in save mode
-		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().empty()));
-		_chooseButton->draw();
-		break;
-	default:
-		GUI_ChooserDialog::handleCommand(sender, cmd, data);
-	}
-}
-
-#pragma mark -
-
-enum {
-	kChooseCmd = 'Chos'
-};
-
-// only for use with >= 640x400 resolutions
-class SaveLoadChooserEx : public GUI::Dialog, public BaseSaveLoadChooser {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	bool _saveMode;
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
-	ScummEngine			*_scumm;
-
-	virtual void handleScreenChanged();
-
-public:
-	SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;
-	void setList(const StringList& list);
-	int runModal();
-};
-
-SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
 	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _scumm(engine) {
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
@@ -368,48 +284,52 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
-	int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
-	int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
+	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
+		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
+		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
 
-	// Add the thumbnail display
-	_gfxWidget = new GUI::GraphicsWidget(this,
-			thumbX, thumbY,
-			kThumbnailWidth + 8,
-			((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
-	_gfxWidget->setFlags(GUI::WIDGET_BORDER);
-
-	int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
-
-	_date = new StaticTextWidget(this,
-					thumbX,
-					height,
-					kThumbnailWidth + 8,
-					kLineHeight,
-					"No date saved",
-					kTextAlignCenter);
-	_date->setFlags(GUI::WIDGET_CLEARBG);
-
-	height += kLineHeight;
-
-	_time = new StaticTextWidget(this,
-					thumbX,
-					height,
-					kThumbnailWidth + 8,
-					kLineHeight,
-					"No time saved",
-					kTextAlignCenter);
-	_time->setFlags(GUI::WIDGET_CLEARBG);
-
-	height += kLineHeight;
-
-	_playtime = new StaticTextWidget(this,
-					thumbX,
-					height,
-					kThumbnailWidth + 8,
-					kLineHeight,
-					"No playtime saved",
-					kTextAlignCenter);
-	_playtime->setFlags(GUI::WIDGET_CLEARBG);
+		// Add the thumbnail display
+		_gfxWidget = new GUI::GraphicsWidget(this,
+				thumbX, thumbY,
+				kThumbnailWidth + 8,
+				((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+		_gfxWidget->setFlags(GUI::WIDGET_BORDER);
+	
+		int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+	
+		_date = new StaticTextWidget(this,
+						thumbX,
+						height,
+						kThumbnailWidth + 8,
+						kLineHeight,
+						"No date saved",
+						kTextAlignCenter);
+	
+		height += kLineHeight;
+	
+		_time = new StaticTextWidget(this,
+						thumbX,
+						height,
+						kThumbnailWidth + 8,
+						kLineHeight,
+						"No time saved",
+						kTextAlignCenter);
+	
+		height += kLineHeight;
+	
+		_playtime = new StaticTextWidget(this,
+						thumbX,
+						height,
+						kThumbnailWidth + 8,
+						kLineHeight,
+						"No playtime saved",
+						kTextAlignCenter);
+	} else {
+		_gfxWidget = 0;
+		_date = 0;
+		_time = 0;
+		_playtime = 0;
+	}
 
 	// Buttons
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
@@ -417,21 +337,25 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 	_chooseButton->setEnabled(false);
 }
 
-const Common::String &SaveLoadChooserEx::getResultString() const {
+SaveLoadChooser::~SaveLoadChooser() {
+}
+
+const Common::String &SaveLoadChooser::getResultString() const {
 	return _list->getSelectedString();
 }
 
-void SaveLoadChooserEx::setList(const StringList& list) {
+void SaveLoadChooser::setList(const StringList& list) {
 	_list->setList(list);
 }
 
-int SaveLoadChooserEx::runModal() {
-	_gfxWidget->setGfx(0);
+int SaveLoadChooser::runModal() {
+	if (_gfxWidget)
+		_gfxWidget->setGfx(0);
 	int ret = Dialog::runModal();
 	return ret;
 }
 
-void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int selItem = _list->getSelected();
 	switch (cmd) {
 	case GUI::kListItemActivatedCmd:
@@ -450,49 +374,8 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		close();
 		break;
 	case GUI::kListSelectionChangedCmd: {
-		Graphics::Surface *thumb;
-		thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
-		_gfxWidget->setGfx(thumb);
-		if (thumb)
-			thumb->free();
-		delete thumb;
-		_gfxWidget->draw();
-
-		InfoStuff infos;
-		memset(&infos, 0, sizeof(InfoStuff));
-		char buffer[32];
-		if (_scumm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
-			snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
-				(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
-				infos.date & 0xFFFF);
-			_date->setLabel(buffer);
-			_date->draw();
-			
-			snprintf(buffer, 32, "Time: %.2d:%.2d",
-				(infos.time >> 8) & 0xFF, infos.time & 0xFF);
-			_time->setLabel(buffer);
-			_time->draw();
-
-			int minutes = infos.playtime / 60;
-			int hours = minutes / 60;
-			minutes %= 60;
-
-			snprintf(buffer, 32, "Playtime: %.2d:%.2d",
-				hours & 0xFF, minutes & 0xFF);
-			_playtime->setLabel(buffer);
-			_playtime->draw();
-		} else {
-			snprintf(buffer, 32, "No date saved");
-			_date->setLabel(buffer);
-			_date->draw();
-			
-			snprintf(buffer, 32, "No time saved");
-			_time->setLabel(buffer);
-			_time->draw();
-
-			snprintf(buffer, 32, "No playtime saved");
-			_playtime->setLabel(buffer);
-			_playtime->draw();
+		if (_gfxWidget) {
+			updateInfos();
 		}
 
 		if (_saveMode) {
@@ -511,28 +394,72 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 
-void SaveLoadChooserEx::handleScreenChanged() {
+void SaveLoadChooser::handleScreenChanged() {
+	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
+		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
+		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
+	
+		// Add the thumbnail display
+		if (!_gfxWidget) {
+			_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 0, 0);
+			_gfxWidget->setFlags(GUI::WIDGET_BORDER);
+		}
+		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth + 8,
+				((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+	
+		int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+
+		if (!_date)
+			_date = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
+		_date->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+	
+		height += kLineHeight;
+
+		if (!_time)
+			_time = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
+		_time->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+	
+		height += kLineHeight;
+
+		if (!_playtime)
+			_playtime = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
+		_playtime->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+	
+		updateInfos();
+	} else {
+		if (_gfxWidget) {
+			deleteWidget(_gfxWidget);
+			_gfxWidget->setNext(0);
+			delete _gfxWidget;
+			_gfxWidget = 0;
+		}
+
+		if (_date) {
+			deleteWidget(_date);
+			_date->setNext(0);
+			delete _date;
+			_date = 0;
+		}
+
+		if (_time) {
+			deleteWidget(_time);
+			_time->setNext(0);
+			delete _time;
+			_time = 0;
+		}
+
+		if (_playtime) {
+			deleteWidget(_playtime);
+			_playtime->setNext(0);
+			delete _playtime;
+			_playtime = 0;
+		}
+	}
+
 	Dialog::handleScreenChanged();
+}
 
-	int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
-	int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
-
-	// Add the thumbnail display
-	_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth + 8,
-			((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
-
-	int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
-
-	_date->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
-
-	height += kLineHeight;
-
-	_time->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
-
-	height += kLineHeight;
-
-	_playtime->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
-
+void SaveLoadChooser::updateInfos() {
 	int selItem = _list->getSelected();
 	Graphics::Surface *thumb;
 	thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
@@ -540,6 +467,44 @@ void SaveLoadChooserEx::handleScreenChanged() {
 	if (thumb)
 		thumb->free();
 	delete thumb;
+	_gfxWidget->draw();
+
+	InfoStuff infos;
+	memset(&infos, 0, sizeof(InfoStuff));
+	char buffer[32];
+	if (_scumm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
+			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
+			infos.date & 0xFFFF);
+		_date->setLabel(buffer);
+		_date->draw();
+
+		snprintf(buffer, 32, "Time: %.2d:%.2d",
+			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
+		_time->setLabel(buffer);
+		_time->draw();
+
+		int minutes = infos.playtime / 60;
+		int hours = minutes / 60;
+		minutes %= 60;
+
+		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
+			hours & 0xFF, minutes & 0xFF);
+		_playtime->setLabel(buffer);
+		_playtime->draw();
+	} else {
+		snprintf(buffer, 32, "No date saved");
+		_date->setLabel(buffer);
+		_date->draw();
+
+		snprintf(buffer, 32, "No time saved");
+		_time->setLabel(buffer);
+		_time->draw();
+
+		snprintf(buffer, 32, "No playtime saved");
+		_playtime->setLabel(buffer);
+		_playtime->draw();
+	}
 }
 
 #pragma mark -
@@ -587,13 +552,8 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm);
 #endif
-	if (scumm->_system->getOverlayWidth() <= 320) {
-		_saveDialog = new SaveLoadChooser("Save game:", "Save", true);
-		_loadDialog = new SaveLoadChooser("Load game:", "Load", false);
-	} else {
-		_saveDialog = new SaveLoadChooserEx("Save game:", "Save", true, scumm);
-		_loadDialog = new SaveLoadChooserEx("Load game:", "Load", false, scumm);
-	}
+	_saveDialog = new SaveLoadChooser("Save game:", "Save", true, scumm);
+	_loadDialog = new SaveLoadChooser("Load game:", "Load", false, scumm);
 }
 
 MainMenuDialog::~MainMenuDialog() {
@@ -638,14 +598,17 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::handleScreenChanged() {
+	ScummDialog::handleScreenChanged();
+
 	_optionsDialog->handleScreenChanged();
 	_aboutDialog->handleScreenChanged();
+
 	_saveDialog->handleScreenChanged();
 	_loadDialog->handleScreenChanged();
+
 #ifndef DISABLE_HELP
 	_helpDialog->handleScreenChanged();
 #endif
-	ScummDialog::handleScreenChanged();
 }
 
 void MainMenuDialog::save() {
@@ -675,6 +638,11 @@ void MainMenuDialog::load() {
 		_vm->requestLoad(idx);
 		close();
 	}
+}
+
+void MainMenuDialog::open() {
+	handleScreenChanged();
+	Dialog::open();
 }
 
 #pragma mark -

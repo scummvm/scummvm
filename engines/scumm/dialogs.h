@@ -33,6 +33,7 @@
 
 namespace GUI {
 	class ListWidget;
+	class CommandSender;
 }
 
 
@@ -53,19 +54,31 @@ protected:
 	const String queryResString(int stringno);
 };
 
-// to have a base for all different Save/Load Choosers
-// currently only for SaveLoadChooser (320x200)
-// and for SaveLoadChooserEx (640x400/640x480)
-class BaseSaveLoadChooser
-{
+class SaveLoadChooser : public GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	bool _saveMode;
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
+	ScummEngine			*_scumm;
+
+	void updateInfos();
 public:
-	virtual ~BaseSaveLoadChooser() {};
+	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
+	~SaveLoadChooser();
 
-	virtual const Common::String &getResultString() const = 0;
-	virtual void setList(const Common::StringList& list) = 0;
-	virtual int runModal() = 0;
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;
+	void setList(const StringList& list);
+	int runModal();
 
-	virtual void handleScreenChanged() = 0;
+	void handleScreenChanged();
+	
 };
 
 class MainMenuDialog : public ScummDialog {
@@ -81,11 +94,12 @@ protected:
 #ifndef DISABLE_HELP
 	GUI::Dialog		*_helpDialog;
 #endif
-	BaseSaveLoadChooser	*_saveDialog;
-	BaseSaveLoadChooser	*_loadDialog;
+	SaveLoadChooser	*_saveDialog;
+	SaveLoadChooser	*_loadDialog;
 
 	void save();
 	void load();
+	void open();
 };
 
 #ifndef DISABLE_HELP
