@@ -84,7 +84,10 @@ void ScummEngine::openRoom(const int room) {
 		return;
 	}
 
-	const int diskNumber = (room == 0 ? 0 : res.roomno[rtRoom][room]);
+	// Load the disk numer / room offs (special case for room 0 exists because
+	// room 0 contains the data which is used to create the roomno / roomoffs
+	// tables -- hence obviously we mustn't use those when loading room 0.
+	const int diskNumber = room ? res.roomno[rtRoom][room] : 0;
 	const int room_offs = room ? res.roomoffs[rtRoom][room] : 0;
 
 	while (room_offs != -1) {
