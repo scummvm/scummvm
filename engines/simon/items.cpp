@@ -2214,8 +2214,13 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 }
 
 void SimonEngine::scriptMouseOn() {
-	if (getGameType() == GType_SIMON2 && getBitFlag(79))
+	if (getGameType() == GType_FF && _mouseCursor != 5) {
+		resetVerbs();
+		_noRightClick = 0;
+	}
+	if (getGameType() == GType_SIMON2 && getBitFlag(79)) {
 		_mouseCursor = 0;
+	}
 	_mouseHideCount = 0;
 }
 
