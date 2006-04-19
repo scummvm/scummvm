@@ -97,6 +97,7 @@ ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system
 _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
+	_needPaletteUpdates = false;
 	memset(&_screen, 0, sizeof(_screen));
 	memset(&_dialog, 0, sizeof(_dialog));
 	memset(&_colors, 0, sizeof(_colors));
@@ -368,6 +369,7 @@ void ThemeNew::enable() {
 void ThemeNew::disable() {
 	_system->hideOverlay();
 	_system->setPalette(_backUpCols, 0, MAX_CURS_COLORS);
+	_needPaletteUpdates = false;
 }
 
 void ThemeNew::openDialog(bool topDialog) {
@@ -406,9 +408,21 @@ void ThemeNew::closeDialog() {
 void ThemeNew::clearAll() {
 	if (!_initOk)
 		return;
+	if (_needPaletteUpdates) {
+		// we need to set the original palette here so the recived overlay looks correct in scumm engine for example
+		_system->setPalette(_backUpCols, 0, MAX_CURS_COLORS);
+		// update screen to finish updating the palette
+		_system->updateScreen();
+	}
+
 	_system->clearOverlay();
 	// FIXME: problem with the 'pitch'
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
+
+	if (_needPaletteUpdates) {
+		// our palette again
+		_system->setPalette(_cursorPal, 0, MAX_CURS_COLORS);
+	}
 }
 
 void ThemeNew::drawAll() {
@@ -1503,6 +1517,7 @@ void ThemeNew::setUpCursor() {
 	_system->setPalette(_cursorPal, 0, MAX_CURS_COLORS);
 
 	_system->setMouseCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY);
+	_needPaletteUpdates = true;
 }
 
 void ThemeNew::createCursor() {

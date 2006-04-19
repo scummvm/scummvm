@@ -452,6 +452,7 @@ private:
 	int _cursorHotspotX, _cursorHotspotY;
 #define MAX_CURS_COLORS 255
 	byte *_cursor;
+	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[4*MAX_CURS_COLORS];
 	byte _backUpCols[4*MAX_CURS_COLORS];
