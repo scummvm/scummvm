@@ -116,7 +116,7 @@ void SimonEngine::quickLoadOrSave() {
 		} else {
 			// Redraw Inventory
 			mouseOff();
-			drawIconArray(2, getItem1Ptr(), 0, 0);
+			drawIconArray(2, me(), 0, 0);
 			mouseOn();
 			// Reset engine?
 			setBitFlag(97, true);

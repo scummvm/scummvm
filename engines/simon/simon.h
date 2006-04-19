@@ -279,7 +279,7 @@ protected:
 	WindowBlock *_textWindow;
 
 	Item *_subjectItem, *_objectItem;
-	Item *_item1;
+	Item *_currentPlayer;
 
 	Item *_hitAreaObjectItem;
 	HitArea *_lastHitArea;
@@ -522,8 +522,8 @@ protected:
 	Item *getNextItemPtr();
 	uint getNextItemID();
 	uint getItem1ID() {return 1;}
-	Item *getItem1Ptr();
-	Item *getItemPtrB();
+	Item *me();
+	Item *actor();
 
 	byte getByte();
 	int getNextWord();

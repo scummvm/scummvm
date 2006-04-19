@@ -280,7 +280,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	_subjectItem = 0;
 	_objectItem = 0;
-	_item1 = 0;
+	_currentPlayer = 0;
 
 	_currentBoxNumber = 0;
 	_iOverflow = 0;
@@ -804,15 +804,15 @@ void SimonEngine::setUserFlag(Item *item, int a, int b) {
 void SimonEngine::createPlayer() {
 	Child *child;
 
-	_item1 = _itemArrayPtr[1];
-	_item1->adjective = -1;
-	_item1->noun = 10000;
+	_currentPlayer = _itemArrayPtr[1];
+	_currentPlayer->adjective = -1;
+	_currentPlayer->noun = 10000;
 
-	child = (Child *)allocateChildBlock(_item1, 3, sizeof(Child));
+	child = (Child *)allocateChildBlock(_currentPlayer, 3, sizeof(Child));
 	if (child == NULL)
 		error("player create failure");
 
-	setUserFlag(_item1, 0, 0);
+	setUserFlag(_currentPlayer, 0, 0);
 }
 
 void SimonEngine::allocateStringTable(int num) {
@@ -1011,11 +1011,11 @@ Item *SimonEngine::getNextItemPtr() {
 	case -3:
 		return _objectItem;
 	case -5:
-		return getItem1Ptr();
+		return me();
 	case -7:
-		return getItemPtrB();
+		return actor();
 	case -9:
-		return derefItem(getItem1Ptr()->parent);
+		return derefItem(me()->parent);
 	default:
 		return derefItem(a);
 	}
@@ -1051,20 +1051,22 @@ uint SimonEngine::getNextItemID() {
 	case -7:
 		return 0;
 	case -9:
-		return getItem1Ptr()->parent;
+		return me()->parent;
 	default:
 		return a;
 	}
 }
 
-Item *SimonEngine::getItem1Ptr() {
-	if (_item1)
-		return _item1;
+Item *SimonEngine::me() {
+	if (_currentPlayer)
+		return _currentPlayer;
 	return _dummyItem1;
 }
 
-Item *SimonEngine::getItemPtrB() {
-	error("getItemPtrB: is this code ever used?");
+Item *SimonEngine::actor() {
+	error("actor: is this code ever used?");
+	//if (_actorPlayer)
+	//	return _actorPlayer;
 	return _dummyItem1;
 }
 
@@ -2080,18 +2082,18 @@ void SimonEngine::handleVerbClicked(uint verb) {
 
 	_objectItem = _hitAreaObjectItem;
 	if (_objectItem == _dummyItem2) {
-		_objectItem = getItem1Ptr();
+		_objectItem = me();
 	}
 	if (_objectItem == _dummyItem3) {
-		_objectItem = derefItem(getItem1Ptr()->parent);
+		_objectItem = derefItem(me()->parent);
 	}
 
 	_subjectItem = _hitAreaSubjectItem;
 	if (_subjectItem == _dummyItem2) {
-		_subjectItem = getItem1Ptr();
+		_subjectItem = me();
 	}
 	if (_subjectItem == _dummyItem3) {
-		_subjectItem = derefItem(getItem1Ptr()->parent);
+		_subjectItem = derefItem(me()->parent);
 	}
 
 	if (_subjectItem) {
@@ -2817,7 +2819,7 @@ bool SimonEngine::itemIsSiblingOf(uint16 a) {
 	if (item == NULL)
 		return true;
 
-	return getItem1Ptr()->parent == item->parent;
+	return me()->parent == item->parent;
 }
 
 bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {

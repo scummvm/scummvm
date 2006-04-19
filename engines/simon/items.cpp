@@ -379,12 +379,12 @@ int SimonEngine::getScriptReturn() {
 
 void SimonEngine::o_at() {
 	// 1: ptrA parent is
-	setScriptCondition(getItem1Ptr()->parent == getNextItemID());
+	setScriptCondition(me()->parent == getNextItemID());
 }
 
 void SimonEngine::o_notAt() {
 	// 2: ptrA parent is not
-	setScriptCondition(getItem1Ptr()->parent != getNextItemID());
+	setScriptCondition(me()->parent != getNextItemID());
 }
 
 void SimonEngine::o_carried() {
@@ -633,7 +633,7 @@ void SimonEngine::o_random() {
 
 void SimonEngine::o_goto() {
 	// 55: set itemA parent
-	setItemParent(getItem1Ptr(), getNextItemPtr());
+	setItemParent(me(), getNextItemPtr());
 }
 
 void SimonEngine::o_oset() {
@@ -1030,7 +1030,7 @@ void SimonEngine::o_defObj() {
 void SimonEngine::o_here() {
 	// 125: item is sibling with item 1
 	Item *item = getNextItemPtr();
-	setScriptCondition(getItem1Ptr()->parent == item->parent);
+	setScriptCondition(me()->parent == item->parent);
 }
 
 void SimonEngine::o_doClassIcons() {
@@ -1340,10 +1340,10 @@ void SimonEngine::o_getDollar2() {
 	_objectItem = _hitAreaObjectItem;
 
 	if (_objectItem == _dummyItem2)
-		_objectItem = getItem1Ptr();
+		_objectItem = me();
 
 	if (_objectItem == _dummyItem3)
-		_objectItem = derefItem(getItem1Ptr()->parent);
+		_objectItem = derefItem(me()->parent);
 
 	if (_objectItem != NULL) {
 		_scriptNoun2 = _objectItem->noun;
@@ -1811,7 +1811,7 @@ void SimonEngine::o3_addTextBox() {
 	h = getVarOrWord();
 	num = getVarOrByte();
 	if (num < _numTextBoxes)
-		defineBox(id, x, y, w, h, flags + (num << 8), 208, _dummyItem1);
+		defineBox(id, x, y, w, h, flags + (num << 8), 208, _dummyItem2);
 }
 
 void SimonEngine::o3_printLongText() {
