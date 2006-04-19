@@ -64,6 +64,8 @@ public:
 	virtual const Common::String &getResultString() const = 0;
 	virtual void setList(const Common::StringList& list) = 0;
 	virtual int runModal() = 0;
+
+	virtual void handleScreenChanged() = 0;
 };
 
 class MainMenuDialog : public ScummDialog {
@@ -71,6 +73,7 @@ public:
 	MainMenuDialog(ScummEngine *scumm);
 	~MainMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleScreenChanged();
 
 protected:
 	GUI::Dialog		*_aboutDialog;

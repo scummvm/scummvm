@@ -281,6 +281,7 @@ public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleScreenChanged() { ChooserDialog::handleScreenChanged(); }
 	const String &getResultString() const;
 	void setList(const StringList& list) { GUI_ChooserDialog::setList(list); }
 	int runModal() { return GUI_ChooserDialog::runModal(); }
@@ -511,6 +512,27 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 }
 
 void SaveLoadChooserEx::handleScreenChanged() {
+	Dialog::handleScreenChanged();
+
+	int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
+	int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
+
+	// Add the thumbnail display
+	_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth + 8,
+			((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+
+	int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+
+	_date->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+
+	height += kLineHeight;
+
+	_time->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+
+	height += kLineHeight;
+
+	_playtime->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+
 	int selItem = _list->getSelected();
 	Graphics::Surface *thumb;
 	thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
@@ -518,8 +540,6 @@ void SaveLoadChooserEx::handleScreenChanged() {
 	if (thumb)
 		thumb->free();
 	delete thumb;
-
-	Dialog::handleScreenChanged();
 }
 
 #pragma mark -
@@ -615,6 +635,17 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	default:
 		ScummDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void MainMenuDialog::handleScreenChanged() {
+	_optionsDialog->handleScreenChanged();
+	_aboutDialog->handleScreenChanged();
+	_saveDialog->handleScreenChanged();
+	_loadDialog->handleScreenChanged();
+#ifndef DISABLE_HELP
+	_helpDialog->handleScreenChanged();
+#endif
+	ScummDialog::handleScreenChanged();
 }
 
 void MainMenuDialog::save() {
