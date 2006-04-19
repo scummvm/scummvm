@@ -59,7 +59,7 @@ const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels) 
 	while (*string != 0) {
 		byte chr = *string;
 		if ((pixels + charWidth[chr]) > maxWidth)
-			break;	
+			break;
 		pixels += charWidth[chr];
 		string++;
 	}
@@ -173,6 +173,17 @@ void SimonEngine::printInteractText(uint16 num, const char *string) {
 	loadSprite(4, 2, num + 6, x, _interactY, 12);
 
 	_interactY += height;
+}
+
+void SimonEngine::sendInteractText(uint16 num, const char *fmt, ...) {
+	va_list arglist;
+	char string[256];
+
+	va_start(arglist, fmt);
+	vsprintf(string, fmt, arglist);
+	va_end(arglist);
+
+	printInteractText(num, string);
 }
 
 void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {

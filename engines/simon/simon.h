@@ -695,6 +695,7 @@ protected:
 	bool printTextOf(uint a, uint x, uint y);
 	bool printNameOf(Item *item, uint x, uint y);
 	void printInteractText(uint16 num, const char *string);
+	void sendInteractText(uint16 num, const char *fmt, ...);
 	void printScreenText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
 
 	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);

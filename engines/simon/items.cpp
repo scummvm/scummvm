@@ -1818,7 +1818,7 @@ void SimonEngine::o3_printLongText() {
 	// 70: show string from array
 	int num = getVarOrByte();
 	const char *str = (const char *)getStringPtrByID(_stringIdArray3[num]);
-	printInteractText(num, str);
+	sendInteractText(num, "%d. %s\n", num, str);
 }
 
 void SimonEngine::o3_addBox() {
