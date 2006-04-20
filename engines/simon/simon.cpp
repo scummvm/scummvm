@@ -2175,15 +2175,15 @@ void SimonEngine::checkNoOverWrite(byte *end) {
 
 	vpe = &_vgaBufferPointers[_noOverWrite];
 
-	if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1End) {
+	if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
 		_rejectBlock = true;
 		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile1End;
-	} else if (_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2End) {
+	} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
 		_rejectBlock = true;
 		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile2End;
-	} else if (_vgaBufFreeStart <= vpe->sfxFile && end >= vpe->sfxFileEnd) {
+	} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
 		_rejectBlock = true;
 		_rejectCount++;
 		_vgaBufFreeStart = vpe->sfxFileEnd;
@@ -2210,9 +2210,9 @@ void SimonEngine::checkZonePtrs(byte *end) {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
-		if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1End ||
-				_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2End ||
-				_vgaBufFreeStart <= vpe->sfxFile && end >= vpe->sfxFileEnd) {
+		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart ||
+				vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart ||
+				vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
 			vpe->vgaFile1 = NULL;
 			vpe->vgaFile1End = NULL;
 			vpe->vgaFile2 = NULL;
@@ -2229,15 +2229,15 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 
 	vpe = &_vgaBufferPointers[a];
 
-	if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1End) {
+	if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
 		_rejectBlock = true;
 		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile1End;
-	} else if (_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2End) {
+	} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
 		_rejectBlock = true;
 		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile2End;
-	} else if (_vgaBufFreeStart <= vpe->sfxFile && end >= vpe->sfxFileEnd) {
+	} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
 		_rejectBlock = true;
 		_rejectCount++;
 		_vgaBufFreeStart = vpe->sfxFileEnd;
