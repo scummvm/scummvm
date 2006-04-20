@@ -2231,15 +2231,12 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 
 	if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
 		_rejectBlock = true;
-		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile1End;
 	} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
 		_rejectBlock = true;
-		_rejectCount++;
 		_vgaBufFreeStart = vpe->vgaFile2End;
 	} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
 		_rejectBlock = true;
-		_rejectCount++;
 		_vgaBufFreeStart = vpe->sfxFileEnd;
 	} else {
 		_rejectBlock = false;
