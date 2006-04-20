@@ -662,7 +662,7 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	}
 #endif
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.ogg", gss->speech_filename, disc);
+		sprintf(filename, "%s%d.wav", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen() == false) {
 			warning("switchVoiceFile: Can't load voice file %s", filename);
