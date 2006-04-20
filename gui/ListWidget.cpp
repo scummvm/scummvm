@@ -375,8 +375,8 @@ void ListWidget::drawWidget(bool hilite) {
 }
 
 Common::Rect ListWidget::getEditRect() const {
-	Common::Rect r(_hlLeftPadding, 1, _w - _hlLeftPadding - _hlRightPadding, kLineHeight);
-	const int offset = (_selectedItem - _currentPos) * kLineHeight;
+	Common::Rect r(_hlLeftPadding, 0, _w - _hlLeftPadding - _hlRightPadding, kLineHeight - 1);
+	const int offset = (_selectedItem - _currentPos) * kLineHeight + _topPadding;
 	r.top += offset;
 	r.bottom += offset;
 
