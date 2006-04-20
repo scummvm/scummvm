@@ -592,19 +592,56 @@ void Sound::stopSfx5() {
 }
 
 void Sound::switchVoiceFile(uint disc) {
-	if (_lastVoiceFile != disc) {
-		stopAll();
+	if (_lastVoiceFile == disc)
+		return;
 
-		char filename[16];
-		_lastVoiceFile = disc;
-		sprintf(filename, "voices%d.wav",disc);
-		File *file = new File();
+	stopAll();
+	delete _voice;
+
+	_hasVoiceFile = false;
+	_lastVoiceFile = disc;
+
+	char filename[16];
+	File *file = new File();
+
+#ifdef USE_FLAC
+	if (!_hasVoiceFile) {
+		sprintf(filename, "voices%d.flac",disc);
+		file->open(filename);
+		if (file->isOpen()) {
+			_hasVoiceFile = true;
+			_voice = new FlacSound(_mixer, file);
+		}
+	}
+#endif
+#ifdef USE_MAD
+	if (!_hasVoiceFile) {
+		sprintf(filename, "voices%d.mp3",disc);
+		file->open(filename);
+		if (file->isOpen()) {
+			_hasVoiceFile = true;
+			_voice = new MP3Sound(_mixer, file);
+		}
+	}
+#endif
+#ifdef USE_VORBIS
+	if (!_hasVoiceFile) {
+		sprintf(filename, "voices%d.ogg",disc);
+		file->open(filename);
+		if (file->isOpen()) {
+			_hasVoiceFile = true;
+			_voice = new VorbisSound(_mixer, file);
+		}
+	}
+#endif
+	if (!_hasVoiceFile) {
+		sprintf(filename, "voices%d.ogg",disc);
 		file->open(filename);
 		if (file->isOpen() == false) {
-			warning("playVoice: Can't load voice file %s", filename);
+			warning("switchVoiceFile: Can't load voice file %s", filename);
 			return;
 		}
-		delete _voice;
+		_hasVoiceFile = true;
 		_voice = new WavSound(_mixer, file);
 	}
 }
