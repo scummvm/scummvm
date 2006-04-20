@@ -40,7 +40,7 @@ FILE *gp_stdin = NULL;
 
 //#define USE_CACHE
 
-#define DEBUG_MAX 4
+#define DEBUG_MAX 5
 char debline[DEBUG_MAX][256];
 static int debnext = 0;
 
@@ -53,21 +53,22 @@ void _dprintf(const char *s, ...) {
 	vsprintf(buf, s, va);
 	va_end(va);
 
-	strcpy(debline[debnext], buf);
+	strcpy(debline[debnext++], buf);
 
-	gp_fillRect(frameBuffer1, 0, 200, 320, 40, 0);
-	
-	for (deb = debnext + 1, deba = 0; deb < DEBUG_MAX; deb++, deba++) {
-		gp_textOut(frameBuffer1, 0, 200 + 8 * deba, debline[deb], 0xFFFF);
-	}
-	for (deb = 0; deb <= debnext; deb++, deba++) {
-		gp_textOut(frameBuffer1, 0, 200 + 8 * deba, debline[deb], 0xFFFF);
-	}
-	debnext++;
 	if (debnext == DEBUG_MAX)
 		debnext = 0;
+	gp_fillRect(frameBuffer1, 0, 243 - (DEBUG_MAX * 8) - 4, 320, (DEBUG_MAX * 10), 0);
+	
+	for (deb = debnext, deba = 0; deb < DEBUG_MAX; deb++, deba++) {
+		//gp_fillRect(frameBuffer1, 0, (243 - (DEBUG_MAX * 8) - 4) + 8 * deba, 320, 8, 0);
+		gp_textOut(frameBuffer1, 0, (240 - (DEBUG_MAX * 8) - 4) + 8 * deba, debline[deb], 0xFFFF);
+	}
+	for (deb = 0; deb < debnext; deb++, deba++) {
+		//gp_fillRect(frameBuffer1, 0, (243 - (DEBUG_MAX * 8) - 4) + 8 * deba, 320, 8, 0);
+		gp_textOut(frameBuffer1, 0, (240 - (DEBUG_MAX * 8) - 4) + 8 * deba, debline[deb], 0xFFFF);
+	}
 		
-	gp_delay(600);
+//	gp_delay(100);
 }
 
 //////////////////
@@ -386,9 +387,25 @@ void gp_free(void *block) {
 //////////////////////////////////////////////////
 // GP32 stuff
 //////////////////////////////////////////////////
+static char usedMemStr[16];
+int gUsedMem = 0;
+
 void *operator new(size_t size) {
 //	printf("BP:operator new(%d)", size);
-	return memset(malloc(size), 0xE7, size);
+
+	void *ptr = memset(malloc(size), 0xE7, size);
+
+#if 0
+	// Check free memory.
+	gUsedMem = ((int)(ptr) + size) - 0xc000000;
+
+	sprintf(usedMemStr, "%8d", gUsedMem);
+	//TODO: draw softkeyboard
+	gp_fillRect(frameBuffer1, 0, 0, 64, 12, 0);
+	gp_textOut(frameBuffer1, 0, 0, usedMemStr, 0xfffff);
+#endif
+	
+	return ptr;
 }
 
 void operator delete(void *ptr) {
@@ -616,7 +633,7 @@ void GPDEBUG(const char *fmt, ...) {
 }
 
 void NP(const char *fmt, ...) {
-//	return;
+	return;
 	char s[256];
 	va_list marker;
 
@@ -629,7 +646,7 @@ void NP(const char *fmt, ...) {
 }
 
 void LP(const char *fmt, ...) {
-//	return;
+	return;
 	char s[256];
 	va_list marker;
 
@@ -642,7 +659,7 @@ void LP(const char *fmt, ...) {
 }
 
 void SP(const char *fmt, ...) {
-//	return;
+	return;
 	char s[256];
 	va_list marker;
 
@@ -655,7 +672,7 @@ void SP(const char *fmt, ...) {
 }
 
 void BP(const char *fmt, ...) {
-//	return;
+	return;
 	char s[256];
 	va_list marker;
 
