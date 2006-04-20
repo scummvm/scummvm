@@ -594,7 +594,7 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 			if (_currentBoxNumber != 0x7FFB || !getBitFlag(89))
 				break;
 			checkUp(window);
-			delay(100);
+			delay(1);
 		}
 		waitForMark(2);
 		checkUp(window);
@@ -621,7 +621,7 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 			if (_currentBoxNumber != 0x7FFC || !getBitFlag(89))
 				break;
 			checkDown(window);
-			delay(100);
+			delay(1);
 		}
 		waitForMark(2);
 		checkDown(window);
