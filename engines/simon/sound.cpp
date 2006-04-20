@@ -279,11 +279,13 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32)
 		return;
 
+	char filename[16];
 	File *file = new File();
 
 #ifdef USE_FLAC
-	if (!_hasVoiceFile && gss->flac_filename && gss->flac_filename[0]) {
-		file->open(gss->flac_filename);
+	if (!_hasVoiceFile) {
+		sprintf(filename, "%s.flac", gss->speech_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
 			_voice = new FlacSound(_mixer, file);
@@ -291,8 +293,9 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	}
 #endif
 #ifdef USE_MAD
-	if (!_hasVoiceFile && gss->mp3_filename && gss->mp3_filename[0]) {
-		file->open(gss->mp3_filename);
+	if (!_hasVoiceFile) {
+		sprintf(filename, "%s.mp3", gss->speech_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
 			_voice = new MP3Sound(_mixer, file);
@@ -300,8 +303,9 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	}
 #endif
 #ifdef USE_VORBIS
-	if (!_hasVoiceFile && gss->vorbis_filename && gss->vorbis_filename[0]) {
-		file->open(gss->vorbis_filename);
+	if (!_hasVoiceFile) {
+		sprintf(filename, "%s.ogg", gss->speech_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
 			_voice = new VorbisSound(_mixer, file);
@@ -325,15 +329,25 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 			_hasVoiceFile = true;
 		}
 	}
-	if (!_hasVoiceFile && gss->wav_filename && gss->wav_filename[0]) {
-		file->open(gss->wav_filename);
+	if (!_hasVoiceFile) {
+		sprintf(filename, "%s.wav", gss->speech_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
 			_voice = new WavSound(_mixer, file);
 		}
 	}
-	if (!_hasVoiceFile && gss->voc_filename && gss->voc_filename[0]) {
-		file->open(gss->voc_filename);
+	if (!_hasVoiceFile) {
+		sprintf(filename, "%s.voc", gss->speech_filename);
+		file->open(filename);
+		if (file->isOpen()) {
+			_hasVoiceFile = true;
+			_voice = new VocSound(_mixer, file);
+		}
+	}
+	if (!_hasVoiceFile) {
+		sprintf(filename, "%s", gss->speech_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
 			_voice = new VocSound(_mixer, file);
@@ -342,11 +356,13 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 }
 
 void Sound::loadSfxFile(const GameSpecificSettings *gss) {
+	char filename[16];
 	File *file = new File();
 
 #ifdef USE_MAD
-	if (!_hasEffectsFile && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
-		file->open(gss->mp3_effects_filename);
+	if (!_hasEffectsFile) {
+		sprintf(filename, "%s.mp3", gss->effects_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
 			_effects = new MP3Sound(_mixer, file);
@@ -354,8 +370,9 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 	}
 #endif
 #ifdef USE_VORBIS
-	if (!_hasEffectsFile && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
-		file->open(gss->vorbis_effects_filename);
+	if (!_hasEffectsFile) {
+		sprintf(filename, "%s.ogg", gss->effects_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
 			_effects = new VorbisSound(_mixer, file);
@@ -363,16 +380,26 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 	}
 #endif
 #ifdef USE_FLAC
-	if (!_hasEffectsFile && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
-		file->open(gss->flac_effects_filename);
+	if (!_hasEffectsFile) {
+		sprintf(filename, "%s.flac", gss->effects_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
 			_effects = new FlacSound(_mixer, file);
 		}
 	}
 #endif
-	if (!_hasEffectsFile && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
-		file->open(gss->voc_effects_filename);
+	if (!_hasEffectsFile) {
+		sprintf(filename, "%s.voc", gss->effects_filename);
+		file->open(filename);
+		if (file->isOpen()) {
+			_hasEffectsFile = true;
+			_effects = new VocSound(_mixer, file);
+		}
+	}
+	if (!_hasEffectsFile) {
+		sprintf(filename, "%s", gss->effects_filename);
+		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
 			_effects = new VocSound(_mixer, file);
@@ -591,7 +618,7 @@ void Sound::stopSfx5() {
 	_mixer->stopHandle(_sfx5Handle);
 }
 
-void Sound::switchVoiceFile(uint disc) {
+void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	if (_lastVoiceFile == disc)
 		return;
 
@@ -606,7 +633,7 @@ void Sound::switchVoiceFile(uint disc) {
 
 #ifdef USE_FLAC
 	if (!_hasVoiceFile) {
-		sprintf(filename, "voices%d.flac",disc);
+		sprintf(filename, "%s%d.flac", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -616,7 +643,7 @@ void Sound::switchVoiceFile(uint disc) {
 #endif
 #ifdef USE_MAD
 	if (!_hasVoiceFile) {
-		sprintf(filename, "voices%d.mp3",disc);
+		sprintf(filename, "%s%d.mp3", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -626,7 +653,7 @@ void Sound::switchVoiceFile(uint disc) {
 #endif
 #ifdef USE_VORBIS
 	if (!_hasVoiceFile) {
-		sprintf(filename, "voices%d.ogg",disc);
+		sprintf(filename, "%s%d.ogg", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -635,7 +662,7 @@ void Sound::switchVoiceFile(uint disc) {
 	}
 #endif
 	if (!_hasVoiceFile) {
-		sprintf(filename, "voices%d.ogg",disc);
+		sprintf(filename, "%s%d.ogg", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen() == false) {
 			warning("switchVoiceFile: Can't load voice file %s", filename);

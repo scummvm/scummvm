@@ -1909,12 +1909,12 @@ void SimonEngine::o3_checkCD() {
 	uint disc = readVariable(97);
 
 	if (!strcmp(_gameDescription->extra, "4CD")) {
-		_sound->switchVoiceFile(disc);
+		_sound->switchVoiceFile(gss, disc);
 	} else if (!strcmp(_gameDescription->extra, "2CD")) {
 		if (disc == 1 || disc == 2)
-			_sound->switchVoiceFile(1);
+			_sound->switchVoiceFile(gss, 1);
 		else if (disc == 3 || disc == 4)
-			_sound->switchVoiceFile(2);
+			_sound->switchVoiceFile(gss, 2);
 	}
 
 	debug(0, "Switch to CD number %d", disc);
