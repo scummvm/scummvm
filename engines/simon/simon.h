@@ -103,7 +103,7 @@ struct VgaSleepStruct {
 };
 
 struct VgaTimerEntry {
-	uint16 delay;
+	int16 delay;
 	const byte *script_pointer;
 	uint16 sprite_id;
 	uint16 cur_vga_file;

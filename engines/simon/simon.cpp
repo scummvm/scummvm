@@ -523,7 +523,6 @@ int SimonEngine::init() {
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
-	VGA_DELAY_BASE = 1;
 	if (getGameType() == GType_FF) {
 		NUM_VIDEO_OP_CODES = 85;
 #ifndef PALMOS_68K
@@ -532,6 +531,7 @@ int SimonEngine::init() {
 		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
 #endif
 		TABLES_MEM_SIZE = 200000;
+		VGA_DELAY_BASE = 5;
 	} else if (getGameType() == GType_SIMON2) {
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
@@ -548,6 +548,7 @@ int SimonEngine::init() {
 		else
 			MUSIC_INDEX_BASE = 1128 / 4;
 		SOUND_INDEX_BASE = 1660 / 4;
+		VGA_DELAY_BASE = 1;
 	} else {
 		TABLE_INDEX_BASE = 1576 / 4;
 		TEXT_INDEX_BASE = 1460 / 4;
@@ -560,6 +561,7 @@ int SimonEngine::init() {
 		TABLES_MEM_SIZE = 50000;
 		MUSIC_INDEX_BASE = 1316 / 4;
 		SOUND_INDEX_BASE = 0;
+		VGA_DELAY_BASE = 1;
 	}
 
 	if (getGameType() == GType_FF) {
@@ -2414,11 +2416,13 @@ void SimonEngine::delete_vga_timer(VgaTimerEntry * vte) {
 
 void SimonEngine::expire_vga_timers() {
 	VgaTimerEntry *vte = _vgaTimerList;
+	uint timer = (getGameType() == GType_FF) ? 5 : 1;
 
 	_vgaTickCounter++;
 
 	while (vte->delay) {
-		if (!--vte->delay) {
+		vte->delay -= timer;
+		if (vte->delay <= 0) {
 			uint16 cur_file = vte->cur_vga_file;
 			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
@@ -2731,16 +2735,23 @@ void SimonEngine::timer_proc1() {
 	_lockWord |= 2;
 
 	if (!(_lockWord & 0x10)) {
-		expire_vga_timers();
-		expire_vga_timers();
-		_syncFlag2 ^= 1;
-		_cepeFlag ^= 1;
-		if (!_cepeFlag)
-			expire_vga_timers();
+		if (getGameType() == GType_FF) {
+			_syncFlag2 ^= 1;
 
-		if (_mouseHideCount != 0 && _syncFlag2) {
-			_lockWord &= ~2;
-			return;
+			if (!_syncFlag2)
+				expire_vga_timers();
+		} else {
+			expire_vga_timers();
+			expire_vga_timers();
+			_syncFlag2 ^= 1;
+			_cepeFlag ^= 1;
+			if (!_cepeFlag)
+				expire_vga_timers();
+
+			if (_mouseHideCount != 0 && _syncFlag2) {
+				_lockWord &= ~2;
+				return;
+			}
 		}
 	}
 

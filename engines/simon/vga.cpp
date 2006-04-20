@@ -1421,10 +1421,12 @@ void SimonEngine::vc12_delay() {
 	VgaSprite *vsp = findCurSprite();
 	uint num;
 
-	if (getGameType() == GType_SIMON1) {
-		num = vcReadVarOrWord();
-	} else {
+	if (getGameType() == GType_FF) {
+		num = vcReadNextByte();
+	} else if (getGameType() == GType_SIMON2) {
 		num = vcReadNextByte() * _frameRate;
+	} else {
+		num = vcReadVarOrWord();
 	}
 
 	// Work around to allow inventory arrows to be
