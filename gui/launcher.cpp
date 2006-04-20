@@ -444,8 +444,8 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	_w = screenW;
 	_h = screenH;
 
-	_logo = 0;
 #ifndef DISABLE_FANCY_THEMES
+	_logo = 0;
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
 		_logo = new GraphicsWidget(this, "launcher_logo");
 		ThemeNew *th = (ThemeNew *)g_gui.theme();
