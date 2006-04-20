@@ -329,11 +329,12 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
 
-	_noOverWrite = 0xFFFF;
 	_paletteColorCount = 0;
 
+	_noOverWrite = 0xFFFF;
 	_rejectCount = 0;
-	_rejectBlock = 0;
+	_rejectBlock = false;
+
 	_fastFadeOutFlag = 0;
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
@@ -2176,7 +2177,7 @@ void SimonEngine::loadZone(uint vga_res) {
 byte *SimonEngine::allocBlock(uint32 size) {
 	byte *block, *blockEnd;
 
-	_rejectCount = false;
+	_rejectCount = 0;
 
 	for (;;) {
 		block = _vgaBufFreeStart;

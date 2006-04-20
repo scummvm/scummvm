@@ -329,13 +329,14 @@ protected:
 	uint16 _scrollUpHitArea;
 	uint16 _scrollDownHitArea;
 
-	uint16 _noOverWrite;
 	volatile uint16 _paletteColorCount;
 
 	int _screenWidth, _screenHeight;
 
+	uint16 _noOverWrite;
 	byte _rejectCount;
 	bool _rejectBlock;
+
 	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
 	bool _exitCutscene;
