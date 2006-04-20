@@ -557,10 +557,11 @@ static bool decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_MATCH
 
 void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
+	uint32 offs, size;
+
 	if (getFeatures() & GF_OLD_BUNDLE) {
 		File in;
 		char filename[15];
-		uint32 size;
 		if (vga_id == 23)
 			vga_id = 112;
 		if (vga_id == 328)
@@ -578,44 +579,47 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 		in.open(filename);
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_1: can't open %s", filename);
-		size = in.size();
 
+		size = in.size();
 		if (getFeatures() & GF_CRUNCHED) {
-			byte *buffer = new byte[size];
-			if (in.read(buffer, size) != size)
+			byte *srcBuffer = (byte *)malloc(size);
+			if (in.read(srcBuffer, size) != size)
 				error("read_vga_from_datfile_1: read failed");
-			decrunchFile(buffer, _vgaBufferPointers[11].vgaFile2, size);
-			delete [] buffer;
+			decrunchFile(srcBuffer, _vgaBufferPointers[11].vgaFile2, size);
+			free(srcBuffer);
 		} else {
 			if (in.read(_vgaBufferPointers[11].vgaFile2, size) != size)
 				error("read_vga_from_datfile_1: read failed");
 		}
 		in.close();
 	} else {
-		uint32 offs_a = _gameOffsetsPtr[vga_id];
-		uint32 size = _gameOffsetsPtr[vga_id + 1] - offs_a;
+		offs = _gameOffsetsPtr[vga_id];
 
-		resfile_read(_vgaBufferPointers[11].vgaFile2, offs_a, size);
+		size = _gameOffsetsPtr[vga_id + 1] - offs;
+		resfile_read(_vgaBufferPointers[11].vgaFile2, offs, size);
 	}
 }
 
-byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
+byte *SimonEngine::loadVGAFile(uint id, uint type, uint &dstSize) {
 	File in;
 	char filename[15];
 	byte *dst = NULL;
+	uint32 file, offs, srcSize;
+	uint extraBuffer = 0;
 
-	// !!! HACK !!!
-	// allocate more space for text to cope with foreign languages that use
-	// up more space than english. I hope 6400 bytes are enough. This number
-	// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
-	int extraBuffer = (id == 5 ? 6400 : 0);
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		// !!! HACK !!!
+		// Allocate more space for text to cope with foreign languages that use
+		// up more space than english. I hope 6400 bytes are enough. This number
+		// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
+		extraBuffer = (id == 5 ? 6400 : 0);
+	}
 
 	if (getFeatures() & GF_ZLIBCOMP) {
-		uint32 file, offset, srcSize, dstSize;
 		if (getPlatform() == Common::kPlatformAmiga) {
-			loadOffsets((const char*)"gfxindex.dat", id / 2 * 3 + type, file, offset, srcSize, dstSize);
+			loadOffsets((const char*)"gfxindex.dat", id / 2 * 3 + type, file, offs, srcSize, dstSize);
 		} else {
-			loadOffsets((const char*)"graphics.vga", id / 2 * 3 + type, file, offset, srcSize, dstSize);
+			loadOffsets((const char*)"graphics.vga", id / 2 * 3 + type, file, offs, srcSize, dstSize);
 		}
 
 		if (getPlatform() == Common::kPlatformAmiga)
@@ -623,11 +627,9 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 		else
 			sprintf(filename, "graphics.vga");
 
-		dst = allocBlock(dstSize);
-		decompressData(filename, dst, offset, srcSize, dstSize);
-		return dst;
+		dst = allocBlock(dstSize + extraBuffer);
+		decompressData(filename, dst, offs, srcSize, dstSize);
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
-		uint32 size;
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
 				sprintf(filename, "%.3d%d.out", id / 2, type);
@@ -642,34 +644,41 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 			if (type == 3) 
 				return NULL;
 			else
-				error("read_vga_from_datfile_2: can't open %s", filename);
+				error("loadVGAFile: can't open %s", filename);
 		}
-		size = in.size();
 
+		dstSize = srcSize = in.size();
 		if (getFeatures() & GF_CRUNCHED) {
-			byte *buffer = new byte[size];
-			if (in.read(buffer, size) != size)
-				error("read_vga_from_datfile_2: read failed");
-			dst = allocBlock (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
-			decrunchFile(buffer, dst, size);
-			delete[] buffer;
+			byte *srcBuffer = (byte *)malloc(srcSize);
+			if (in.read(srcBuffer, srcSize) != srcSize)
+				error("loadVGAFile: read failed");
+
+			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
+			dst = allocBlock (dstSize + extraBuffer);
+			decrunchFile(srcBuffer, dst, srcSize);
+			free(srcBuffer);
 		} else {
-			dst = allocBlock(size + extraBuffer);
-			if (in.read(dst, size) != size)
-				error("read_vga_from_datfile_2: read failed");
+			dst = allocBlock(dstSize + extraBuffer);
+			if (in.read(dst, dstSize) != dstSize)
+				error("loadVGAFile: read failed");
 		}
 		in.close();
-
-		return dst;
 	} else {
-		uint32 offs_a = _gameOffsetsPtr[id];
-		uint32 size = _gameOffsetsPtr[id + 1] - offs_a;
+		offs = _gameOffsetsPtr[id];
 
-		dst = allocBlock(size + extraBuffer);
-		resfile_read(dst, offs_a, size);
-
-		return dst;
+		dstSize = _gameOffsetsPtr[id + 1] - offs;
+		dst = allocBlock(dstSize + extraBuffer);
+		resfile_read(dst, offs, dstSize);
 	}
+
+	dstSize += extraBuffer;
+	return dst;
+}
+
+void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
+	_gameFile->seek(offs, SEEK_SET);
+	if (_gameFile->read(dst, size) != size)
+		error("resfile_read(%d,%d) read failed", offs, size);
 }
 
 void SimonEngine::loadSound(uint sound, uint pan, uint vol, uint type) {

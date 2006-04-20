@@ -75,8 +75,11 @@ struct HitArea {
 
 struct VgaPointersEntry {
 	byte *vgaFile1;
+	byte *vgaFile1End;
 	byte *vgaFile2;
+	byte *vgaFile2End;
 	byte *sfxFile;
+	byte *sfxFileEnd;
 	VgaPointersEntry() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -1043,7 +1046,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	byte *read_vga_from_datfile_2(uint id, uint type);
+	byte *loadVGAFile(uint id, uint type, uint &dstSize);
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 
