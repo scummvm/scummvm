@@ -2632,16 +2632,17 @@ void SimonEngine::scrollEvent() {
 	uint x, y;
 
 	if (_scrollXMax == 0) {
+		uint screenSize = 8 * _screenWidth;
 		if (_scrollFlag < 0) {
-			memmove(dst + 8 * _screenWidth, dst, (_scrollWidth - 8) * _screenHeight);
+			memmove(dst + screenSize, dst, _scrollWidth * _screenHeight - screenSize);
 		} else {
-			memmove(dst, dst + 8 * _screenWidth, (_scrollWidth - 8) * _screenHeight);
+			memmove(dst, dst + screenSize, _scrollWidth * _screenHeight - screenSize);
 		}
 
 		y = _scrollY - 8;
 
 		if (_scrollFlag > 0) {
-			dst += (_screenHeight - 8) * _screenWidth;
+			dst += _screenHeight * _screenWidth - screenSize;
 			y += 488;
 		}
 
