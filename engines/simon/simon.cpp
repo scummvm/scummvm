@@ -3038,6 +3038,10 @@ void SimonEngine::processSpecialKeys() {
 		if (getGameType() == GType_FF && getBitFlag(76))
 			_variableArray[254] = 70;
 		break;
+	case 67: // F9
+		if (getGameType() == GType_FF)
+			setBitFlag(73, !getBitFlag(73));
+		break;
 	case 'p':
 		pause();
 		break;
