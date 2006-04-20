@@ -1457,8 +1457,8 @@ void SimonEngine::o_getPathPosn() {
 		if (!p)
 			continue;
 		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {
-			x_diff = abs((int)(readUint16Wrapper(&p[0]) - x));
-			y_diff = abs((int)(readUint16Wrapper(&p[1]) - 12 - y));
+			x_diff = abs((int16)(readUint16Wrapper(&p[0]) - x));
+			y_diff = abs((int16)(readUint16Wrapper(&p[1]) - 12 - y));
 
 			if (x_diff < y_diff) {
 				x_diff /= 4;
