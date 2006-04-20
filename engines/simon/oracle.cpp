@@ -93,7 +93,6 @@ void SimonEngine::oracleTextUp() {
 
 	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
-
 	while(1) {
 		if (_textWindow->scrollY == _oracleMaxScrollY)
 			break;
@@ -115,8 +114,9 @@ void SimonEngine::oracleTextUp() {
 			setBitFlag(94, false);
 			bltOracleText();
 		}
-		if (_currentBoxNumber != 601 || !_leftButtonDown)
+		if (_currentBoxNumber != 601 || !getBitFlag(89))
 			break;
+		delay(100);
 	}
 }
 
@@ -128,10 +128,10 @@ void SimonEngine::oracleTextDown() {
 
 	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
-
 	while(1) {
 		if (_textWindow->scrollY == 0)
 			break;
+
 		for (i = 0; i < 5; i++) {
 			_newLines = 0;
 			_textWindow->textColumn = 0;
@@ -149,8 +149,9 @@ void SimonEngine::oracleTextDown() {
 			setBitFlag(93, false);
 			bltOracleText();
 		}
-		if (_currentBoxNumber != 600 || !_leftButtonDown)
+		if (_currentBoxNumber != 600 || !getBitFlag(89))
 			break;
+		delay(100);
 	}
 }
 

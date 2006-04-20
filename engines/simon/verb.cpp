@@ -591,10 +591,10 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 		checkUp(window);
 		loadSprite(4, 9, 21, 0 ,0, 0);	
 		while(1) {
-			if (_currentBoxNumber != 0x7FFB || !_leftButtonDown)
+			if (_currentBoxNumber != 0x7FFB || !getBitFlag(89))
 				break;
 			checkUp(window);
-			delay(1);
+			delay(100);
 		}
 		waitForMark(2);
 		checkUp(window);
@@ -618,10 +618,10 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 		checkDown(window);
 		loadSprite(4, 9, 23, 0, 0, 0);	
 		while(1) {
-			if (_currentBoxNumber != 0x7FFC || !_leftButtonDown)
+			if (_currentBoxNumber != 0x7FFC || !getBitFlag(89))
 				break;
 			checkDown(window);
-			delay(1);
+			delay(100);
 		}
 		waitForMark(2);
 		checkDown(window);
