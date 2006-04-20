@@ -1891,7 +1891,9 @@ void SimonEngine::o3_setTime() {
 void SimonEngine::o3_saveUserGame() {
 	// 132: save game
 	_noOracleScroll = 0;
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	saveUserGame(countSaveGames() + 1 - readVariable(55));
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void SimonEngine::o3_loadUserGame() {
