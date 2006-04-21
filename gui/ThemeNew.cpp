@@ -94,7 +94,7 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 #pragma mark -
 
 ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
-_lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
+_lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0), _colors(), _cursor(0), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
 	_needPaletteUpdates = false;
