@@ -84,14 +84,14 @@ void listTargets() {
 
 	ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		String name(iter->_key);
-		String description(iter->_value.get("description"));
+		Common::String name(iter->_key);
+		Common::String description(iter->_value.get("description"));
 
 		if (description.empty()) {
 			// FIXME: At this point, we should check for a "gameid" override
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
-			String gameid(name);
+			Common::String gameid(name);
 			GameDescriptor g = GameDetector::findGame(gameid);
 			if (g.description.size() > 0)
 				description = g.description;
@@ -292,7 +292,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// init keymap support here: we wanna move this somewhere else?
-	GUI::Actions::init(ConfMan.get("gameid"));
+	GUI::Actions::init();
 #endif
 
 #ifdef PALMOS_68K
