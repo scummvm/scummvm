@@ -638,7 +638,7 @@ void SimonEngine::loadSimonVGAFile(uint vga_id) {
 	}
 }
 
-byte *SimonEngine::loadVGAFile(uint id, uint type, uint &dstSize) {
+byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	File in;
 	char filename[15];
 	byte *dst = NULL;

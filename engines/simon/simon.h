@@ -1054,7 +1054,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	byte *loadVGAFile(uint id, uint type, uint &dstSize);
+	byte *loadVGAFile(uint id, uint type, uint32 &dstSize);
 	void loadSimonVGAFile(uint vga_id);
 
 	int init();
