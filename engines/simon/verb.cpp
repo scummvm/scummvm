@@ -193,7 +193,7 @@ void SimonEngine::clearName() {
 	HitArea *ha;
 
 	if (getGameType() == GType_FF) {
-		kill_sprite_simon2(2, 6);
+		stopAnimateSimon2(2, 6);
 		_lastNameOn = NULL;
 		_animatePointer = 0;
 		_mouseAnim = 1;

@@ -107,6 +107,7 @@ struct VgaTimerEntry {
 	const byte *script_pointer;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
+	int32 param;
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -561,11 +562,12 @@ protected:
 	void unlinkItem(Item *item);
 	void linkItem(Item *item, Item *parent);
 
-	void kill_sprite_simon1(uint a);
-	void kill_sprite_simon2(uint a, uint b);
+	void stopAnimateSimon1(uint a);
+	void stopAnimateSimon2(uint a, uint b);
 
 	void changeWindow(uint a);
 	void closeWindow(uint a);
+
 	void enableBox(uint hitarea);
 	void disableBox(uint hitarea);
 	void moveBox(uint hitarea, int x, int y);
@@ -573,6 +575,7 @@ protected:
 	void undefineBox(uint hitarea);
 	void defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr);
 	HitArea *findEmptyHitArea();
+
 	void resetVerbs();
 	void setVerb(HitArea * ha);
 	void hitarea_leave(HitArea * ha, bool state = false);
@@ -631,7 +634,6 @@ protected:
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();
 
-	void clearName();
 	void endCutscene();
 	void runSubroutine101();
 
@@ -649,11 +651,10 @@ protected:
 	void clearWindow(WindowBlock *window);
 	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
-	void read_vga_from_datfile_1(uint vga_id);
-
 	uint getWindowNum(WindowBlock *window);
 
 	void boxController(uint x, uint y, uint mode);
+	void clearName();
 	void displayName(HitArea * ha);
 	void displayBoxStars();
 	void hitarea_stuff();
@@ -677,6 +678,7 @@ protected:
 
 	void loadIconData();	
 	void loadIconFile();
+
 	void processSpecialKeys();
 	void hitarea_stuff_helper();
 
@@ -713,7 +715,7 @@ protected:
 
 	void setup_vga_file_buf_pointers();
 
-	void run_vga_script();
+	void runVgaScript();
 
 public:
 	bool getBitFlag(uint bit);
@@ -1007,8 +1009,6 @@ protected:
 	void horizontalScroll(VC10_state *state);
 	void verticalScroll(VC10_state *state);
 
-	void delete_vga_timer(VgaTimerEntry * vte);
-	void vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vcReadVarOrWord();
 	uint vcReadNextWord();
 	uint vcReadNextByte();
@@ -1025,10 +1025,14 @@ protected:
 	bool itemIsParentOf(uint16 a, uint16 b);
 	bool vc_maybe_skip_proc_1(uint16 a, int16 b);
 
-	void add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file);
-	VgaSprite *findCurSprite();
+	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param = 0);
+	void deleteVgaEvent(VgaTimerEntry * vte);
+	void processVgaEvents();
+	void animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite);
+	void panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param);
+	void scrollEvent();
 
-	void expire_vga_timers();
+	VgaSprite *findCurSprite();
 
 	bool isSpriteLoaded(uint16 id, uint16 zoneNum);
 
@@ -1048,18 +1052,18 @@ protected:
 	byte *getScaleBuf();
 
 	byte *loadVGAFile(uint id, uint type, uint &dstSize);
-
-	void resfile_read(void *dst, uint32 offs, uint32 size);
+	void loadSimonVGAFile(uint vga_id);
 
 	int init();
 	int go();
+
 	void openGameFile();
+	void readGameFile(void *dst, uint32 offs, uint32 size);
 
 	void timer_callback();
 	void timer_proc1();
 
-	void timer_vga_sprites();
-	void timer_vga_sprites_2();
+	void animateSprites();
 
 	void dx_clear_surfaces(uint num_lines);
 	void dx_update_screen_and_palette();
@@ -1103,11 +1107,10 @@ protected:
 	void pause();
 
 	void waitForMark(uint i);
-	void scrollEvent();
+	void scrollScreen();
 
 	void decodeColumn(byte *dst, const byte *src, int height);
 	void decodeRow(byte *dst, const byte *src, int width);
-	void scroll_timeout();
 	void hitarea_stuff_helper_2();
 	void fastFadeIn();
 	void slowFadeIn();

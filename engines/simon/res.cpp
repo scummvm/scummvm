@@ -439,6 +439,44 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 	}
 }
 
+void SimonEngine::openGameFile() {
+	if (!(getFeatures() & GF_OLD_BUNDLE)) {
+		_gameFile = new File();
+		_gameFile->open(gss->gme_filename);
+
+		if (_gameFile->isOpen() == false)
+			error("Can't open game file '%s'", gss->gme_filename);
+
+		uint32 size = _gameFile->readUint32LE();
+
+		_gameOffsetsPtr = (uint32 *)malloc(size);
+		if (_gameOffsetsPtr == NULL)
+			error("out of memory, game offsets");
+
+		readGameFile(_gameOffsetsPtr, 0, size);
+#if defined(SCUMM_BIG_ENDIAN)
+		for (uint r = 0; r < size / 4; r++)
+			_gameOffsetsPtr[r] = FROM_LE_32(_gameOffsetsPtr[r]);
+#endif
+	}
+
+	if (getGameType() == GType_FF)
+		loadIconData();
+	else
+		loadIconFile();
+
+	vc34_setMouseOff();
+
+	runSubroutine101();
+	permitInput();
+}
+
+void SimonEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
+	_gameFile->seek(offs, SEEK_SET);
+	if (_gameFile->read(dst, size) != size)
+		error("readGameFile(%d,%d) read failed", offs, size);
+}
+
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this decruncher is based.
 
@@ -556,7 +594,7 @@ static bool decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
-void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
+void SimonEngine::loadSimonVGAFile(uint vga_id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
@@ -578,25 +616,25 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 
 		in.open(filename);
 		if (in.isOpen() == false)
-			error("read_vga_from_datfile_1: can't open %s", filename);
+			error("loadSimonVGAFile: can't open %s", filename);
 
 		size = in.size();
 		if (getFeatures() & GF_CRUNCHED) {
 			byte *srcBuffer = (byte *)malloc(size);
 			if (in.read(srcBuffer, size) != size)
-				error("read_vga_from_datfile_1: read failed");
+				error("loadSimonVGAFile: read failed");
 			decrunchFile(srcBuffer, _vgaBufferPointers[11].vgaFile2, size);
 			free(srcBuffer);
 		} else {
 			if (in.read(_vgaBufferPointers[11].vgaFile2, size) != size)
-				error("read_vga_from_datfile_1: read failed");
+				error("loadSimonVGAFile: read failed");
 		}
 		in.close();
 	} else {
 		offs = _gameOffsetsPtr[vga_id];
 
 		size = _gameOffsetsPtr[vga_id + 1] - offs;
-		resfile_read(_vgaBufferPointers[11].vgaFile2, offs, size);
+		readGameFile(_vgaBufferPointers[11].vgaFile2, offs, size);
 	}
 }
 
@@ -668,17 +706,11 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint &dstSize) {
 
 		dstSize = _gameOffsetsPtr[id + 1] - offs;
 		dst = allocBlock(dstSize + extraBuffer);
-		resfile_read(dst, offs, dstSize);
+		readGameFile(dst, offs, dstSize);
 	}
 
 	dstSize += extraBuffer;
 	return dst;
-}
-
-void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
-	_gameFile->seek(offs, SEEK_SET);
-	if (_gameFile->read(dst, size) != size)
-		error("resfile_read(%d,%d) read failed", offs, size);
 }
 
 void SimonEngine::loadSound(uint sound, uint pan, uint vol, uint type) {

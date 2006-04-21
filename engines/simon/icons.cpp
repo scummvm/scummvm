@@ -491,7 +491,7 @@ void SimonEngine::defineArrowBoxes(WindowBlock *window) {
 		ha->window = window;
 		ha->verb = 1;
 
-		kill_sprite_simon1(128);
+		stopAnimateSimon1(128);
 		loadSprite(0, 1, 128, 0, 0, 14);
 	}
 }
@@ -575,7 +575,7 @@ void SimonEngine::removeIconArray(uint num) {
 }
 
 void SimonEngine::removeArrows(WindowBlock *window, uint num) {
-	kill_sprite_simon1(128);
+	stopAnimateSimon1(128);
 }
 
 } // End of namespace Simon

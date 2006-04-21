@@ -124,7 +124,7 @@ void SimonEngine::setupVgaOpcodes() {
 }
 
 // Script parser
-void SimonEngine::run_vga_script() {
+void SimonEngine::runVgaScript() {
 	for (;;) {
 		uint opcode;
 
@@ -295,7 +295,7 @@ void SimonEngine::vc2_call() {
 	}
 
 	//dump_vga_script(_vcPtr, res, num);
-	run_vga_script();
+	runVgaScript();
 
 	_curVgaFile1 = old_file_1;
 	_curVgaFile2 = old_file_2;
@@ -402,9 +402,9 @@ void SimonEngine::vc3_loadSprite() {
 	}
 
 	if (getGameType() == GType_FF) {
-		add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
+		addVgaEvent(VGA_DELAY_BASE, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
 	} else {
-		add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
+		addVgaEvent(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
 	}
 
 	_curVgaFile1 = old_file_1;
@@ -1436,7 +1436,7 @@ void SimonEngine::vc12_delay() {
 	else
 		num += VGA_DELAY_BASE;
 
-	add_vga_timer(num, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+	addVgaEvent(num, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
@@ -1457,7 +1457,7 @@ void SimonEngine::vc15_sync() {
 	uint16 id = vcReadNextWord();
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
-			add_vga_timer(VGA_DELAY_BASE, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
+			addVgaEvent(VGA_DELAY_BASE, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
 			vfs_tmp = vfs;
 			do {
 				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
@@ -1780,7 +1780,7 @@ void SimonEngine::vc40() {
 			tmp = _scrollXMax - _scrollX;
 			if (tmp < 20)
 				_scrollCount = tmp;
-			add_vga_timer(6, NULL, 0, 0);	/* special timer */
+			addVgaEvent(6, NULL, 0, 0);	 /* scroll event */
 		}
 	}
 no_scroll:;
@@ -1806,7 +1806,7 @@ void SimonEngine::vc41() {
 			_scrollCount = -20;
 			if (_scrollX < 20)
 				_scrollCount = -_scrollX;
-			add_vga_timer(6, NULL, 0, 0);	/* special timer */
+			addVgaEvent(6, NULL, 0, 0);	 /* scroll event */
 		}
 	}
 no_scroll:;
@@ -1818,7 +1818,7 @@ void SimonEngine::vc42_delayIfNotEQ() {
 	uint val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 
-		add_vga_timer(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
+		addVgaEvent(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
 		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }
@@ -1984,11 +1984,26 @@ void SimonEngine::vc52_playSound() {
 }
 
 void SimonEngine::vc53_panSFX() {
-	// Start sound effect, panning it with the animation
-	int snd = vcReadNextWord();
-	int xoffs = vcReadNextWord();
-	int vol = vcReadNextWord();
-	debug(0, "STUB: vc53_panSFX: snd %d xoffs %d vol %d", snd, xoffs, vol);
+	VgaSprite *vsp = findCurSprite();
+	int32 pan;
+
+	uint16 sound = vcReadNextWord();
+	int16 xoffs = vcReadNextWord();
+	uint16 vol = vcReadNextWord();
+
+	pan = (vsp->x - _scrollX + xoffs) * 8 - 2560;
+	if (pan < -10000)
+		pan = -10000;
+	if (pan > 10000)
+		pan = 10000;
+
+	loadSound(sound, 0, vol, 1);
+
+	if (xoffs != 2)
+		xoffs |= 0x10;
+
+	addVgaEvent(10, NULL, _vgaCurSpriteId, _vgaCurZoneNum, xoffs); /* pan event */
+	debug(0, "vc53_panSFX: snd %d xoffs %d vol %d", sound, xoffs, vol);
 }
 
 void SimonEngine::vc54_no_op() {
@@ -2020,7 +2035,7 @@ void SimonEngine::vc55_moveBox() {
 void SimonEngine::vc56_delay() {
 	uint num = vcReadVarOrWord() * _frameRate;
 
-	add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+	addVgaEvent(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
@@ -2096,7 +2111,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 		vte = _vgaTimerList;
 		while (vte->delay != 0) {
 			if (vte->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vte->cur_vga_file == _vgaCurZoneNum)) {
-				delete_vga_timer(vte);
+				deleteVgaEvent(vte);
 				break;
 			}
 			vte++;
@@ -2109,15 +2124,15 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 }
 
 void SimonEngine::vc60_killSprite() {
-	uint file;
+	uint zoneNum;
 
 	if (getGameType() == GType_SIMON1) {
-		file = _vgaCurZoneNum;
+		zoneNum = _vgaCurZoneNum;
 	} else {
-		file = vcReadNextWord();
+		zoneNum = vcReadNextWord();
 	}
 	uint sprite = vcReadNextWord();
-	vc_kill_sprite(file, sprite);
+	vc_kill_sprite(zoneNum, sprite);
 }
 
 void SimonEngine::vc61_setMaskImage() {

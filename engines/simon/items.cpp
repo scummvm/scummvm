@@ -1311,7 +1311,7 @@ void SimonEngine::o_screenTextMsg() {
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
 	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speechId == 0)
-		kill_sprite_simon2(2, vgaSpriteId + 2);
+		stopAnimateSimon2(2, vgaSpriteId + 2);
 
 	if (string_ptr != NULL && (speechId == 0 || _subtitles))
 		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
@@ -1549,7 +1549,7 @@ void SimonEngine::o1_animate() {
 
 void SimonEngine::o1_stopAnimate() {
 	// 99: kill sprite
-	kill_sprite_simon1(getVarOrWord());
+	stopAnimateSimon1(getVarOrWord());
 }
 
 void SimonEngine::o1_playTune() {
@@ -1583,7 +1583,7 @@ void SimonEngine::o1_loadBeard() {
 	if (_beardLoaded == false) {
 		_beardLoaded = true;
 		_lockWord |= 0x8000;
-		read_vga_from_datfile_1(328);
+		loadSimonVGAFile(328);
 		_lockWord &= ~0x8000;
 	}
 }
@@ -1593,7 +1593,7 @@ void SimonEngine::o1_unloadBeard() {
 	if (_beardLoaded == true) {
 		_beardLoaded = false;
 		_lockWord |= 0x8000;
-		read_vga_from_datfile_1(23);
+		loadSimonVGAFile(23);
 		_lockWord &= ~0x8000;
 	}
 }
@@ -1654,7 +1654,7 @@ void SimonEngine::o2_stopAnimate() {
 	// 99: kill sprite
 	uint a = getVarOrWord();
 	uint b = getVarOrWord();
-	kill_sprite_simon2(a, b);
+	stopAnimateSimon2(a, b);
 }
 
 void SimonEngine::o2_playTune() {
@@ -2274,7 +2274,7 @@ void SimonEngine::setTextColor(uint color) {
 	window->text_color = color;
 }
 
-void SimonEngine::kill_sprite_simon1(uint a) {
+void SimonEngine::stopAnimateSimon1(uint a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
@@ -2282,7 +2282,7 @@ void SimonEngine::kill_sprite_simon1(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::kill_sprite_simon2(uint a, uint b) {
+void SimonEngine::stopAnimateSimon2(uint a, uint b) {
 	uint16 items[2];
 
 	items[0] = to16Wrapper(a);

@@ -1339,7 +1339,7 @@ uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	offs = _gameOffsetsPtr[res];
 	size = _gameOffsetsPtr[res + 1] - offs;
 
-	resfile_read(dst, offs, size);
+	readGameFile(dst, offs, size);
 
 	return size;
 }
@@ -1796,7 +1796,7 @@ void SimonEngine::displayBoxStars() {
 		ha = _hitAreas;
 		count = ARRAYSIZE(_hitAreas);
 
-		timer_vga_sprites();
+		animateSprites();
 
 		do {
 			if (ha->id != 0 && ha->flags & kBFBoxInUse && !(ha->flags & kBFBoxDead)) {
@@ -1866,7 +1866,7 @@ void SimonEngine::displayBoxStars() {
 
 		dx_update_screen_and_palette();
 		delay(100);
-		timer_vga_sprites();
+		animateSprites();
 		dx_update_screen_and_palette();
 		delay(100);
 	}
@@ -1979,7 +1979,6 @@ void SimonEngine::hitarea_stuff_helper() {
 	}
 }
 
-// Simon 2 specific
 void SimonEngine::hitarea_stuff_helper_2() {
 	uint subr_id;
 	Subroutine *sub;
@@ -2334,7 +2333,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	}
 
 	//dump_vga_script(_vcPtr, num, vga_res_id);
-	run_vga_script();
+	runVgaScript();
 	_vcPtr = vc_ptr_org;
 
 
@@ -2399,7 +2398,34 @@ void SimonEngine::fadeToBlack() {
 	memcpy(_palette, _videoBuf1, 1024);
 }
 
-void SimonEngine::delete_vga_timer(VgaTimerEntry * vte) {
+void SimonEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
+	VgaTimerEntry *vte;
+
+	// When Simon talks to the Golum about stew in French version of
+	// Simon the Sorcerer 1 the code_ptr is at wrong location for
+	// sprite 200. This  was a bug in the original game, which
+	// caused several glitches in this scene.
+	// We work around the problem by correcting the code_ptr for sprite
+	// 200 in this scene, if it is wrong.
+	if (getGameType() == GType_SIMON1 && _language == Common::FR_FRA &&
+		(code_ptr - _vgaBufferPointers[curZoneNum].vgaFile1 == 4) && (cur_sprite == 200) && (curZoneNum == 2))
+		code_ptr += 0x66;
+
+	_lockWord |= 1;
+
+	for (vte = _vgaTimerList; vte->delay; vte++) {
+	}
+
+	vte->delay = num;
+	vte->script_pointer = code_ptr;
+	vte->sprite_id = cur_sprite;
+	vte->cur_vga_file = curZoneNum;
+	vte->param = param;
+
+	_lockWord &= ~1;
+}
+
+void SimonEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 	_lockWord |= 1;
 
 	if (vte + 1 <= _nextVgaTimerToProcess) {
@@ -2414,7 +2440,7 @@ void SimonEngine::delete_vga_timer(VgaTimerEntry * vte) {
 	_lockWord &= ~1;
 }
 
-void SimonEngine::expire_vga_timers() {
+void SimonEngine::processVgaEvents() {
 	VgaTimerEntry *vte = _vgaTimerList;
 	uint timer = (getGameType() == GType_FF) ? 5 : 1;
 
@@ -2423,18 +2449,20 @@ void SimonEngine::expire_vga_timers() {
 	while (vte->delay) {
 		vte->delay -= timer;
 		if (vte->delay <= 0) {
-			uint16 cur_file = vte->cur_vga_file;
+			uint16 curZoneNum = vte->cur_vga_file;
 			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
+			int32 param = vte->param;
 
 			_nextVgaTimerToProcess = vte + 1;
-			delete_vga_timer(vte);
+			deleteVgaEvent(vte);
 
-			if ((getGameType() == GType_SIMON2) && script_ptr == NULL) {
-				// special scroll timer
-				scroll_timeout();
+			if (getGameType() == GType_FF && script_ptr == NULL) {
+				panEvent(curZoneNum, cur_sprite, param);
+			} else if (getGameType() == GType_SIMON2 && script_ptr == NULL) {
+				scrollEvent();
 			} else {
-				vcResumeSprite(script_ptr, cur_file, cur_sprite);
+				animateEvent(script_ptr, curZoneNum, cur_sprite);
 			}
 			vte = _nextVgaTimerToProcess;
 		} else {
@@ -2443,8 +2471,46 @@ void SimonEngine::expire_vga_timers() {
 	}
 }
 
-// Simon2 specific
-void SimonEngine::scroll_timeout() {
+void SimonEngine::animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite) {
+	VgaPointersEntry *vpe;
+
+	_vgaCurSpriteId = cur_sprite;
+
+	_vgaCurZoneNum = curZoneNum;
+	_zoneNumber = curZoneNum;
+	vpe = &_vgaBufferPointers[curZoneNum];
+
+	_curVgaFile1 = vpe->vgaFile1;
+	_curVgaFile2 = vpe->vgaFile2;
+	_curSfxFile = vpe->sfxFile;
+
+	_vcPtr = code_ptr;
+
+	runVgaScript();
+}
+
+void SimonEngine::panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param) {
+	_vgaCurSpriteId = cur_sprite;
+	_vgaCurZoneNum = curZoneNum;
+
+	VgaSprite *vsp = findCurSprite();
+
+	param &= 0x10;
+
+	int32 pan = (vsp->x - _scrollX + param) * 8 - 2560;
+	if (pan < -10000)
+		pan = -10000;
+	if (pan > 10000)
+		pan = 10000;
+
+	//setSfxPan(param, pan);
+
+	if (pan != 0)
+		addVgaEvent(10, NULL, _vgaCurSpriteId, _vgaCurZoneNum); /* pan event */
+	debug(0, "panEvent: param %d pan %d", param, pan);
+}
+
+void SimonEngine::scrollEvent() {
 	if (_scrollCount == 0)
 		return;
 
@@ -2475,52 +2541,8 @@ void SimonEngine::scroll_timeout() {
 			}
 		}
 
-		add_vga_timer(6, NULL, 0, 0);
+		addVgaEvent(6, NULL, 0, 0); /* scroll event */
 	}
-}
-
-void SimonEngine::vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
-	VgaPointersEntry *vpe;
-
-	_vgaCurSpriteId = cur_sprite;
-
-	_vgaCurZoneNum = cur_file;
-	_zoneNumber = cur_file;
-	vpe = &_vgaBufferPointers[cur_file];
-
-	_curVgaFile1 = vpe->vgaFile1;
-	_curVgaFile2 = vpe->vgaFile2;
-	_curSfxFile = vpe->sfxFile;
-
-	_vcPtr = code_ptr;
-
-	run_vga_script();
-}
-
-void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file) {
-	VgaTimerEntry *vte;
-
-	// When Simon talks to the Golum about stew in French version of
-	// Simon the Sorcerer 1 the code_ptr is at wrong location for
-	// sprite 200. This  was a bug in the original game, which
-	// caused several glitches in this scene.
-	// We work around the problem by correcting the code_ptr for sprite
-	// 200 in this scene, if it is wrong.
-	if (getGameType() == GType_SIMON1 && _language == Common::FR_FRA &&
-		(code_ptr - _vgaBufferPointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
-		code_ptr += 0x66;
-
-	_lockWord |= 1;
-
-	for (vte = _vgaTimerList; vte->delay; vte++) {
-	}
-
-	vte->delay = num;
-	vte->script_pointer = code_ptr;
-	vte->sprite_id = cur_sprite;
-	vte->cur_vga_file = cur_file;
-
-	_lockWord &= ~1;
 }
 
 void SimonEngine::waitForSync(uint a) {
@@ -2562,17 +2584,17 @@ void SimonEngine::skipSpeech() {
 			_variableArray[103] = 5;
 			loadSprite(4, 2, 13, 0, 0, 0);
 			waitForSync(213);
-			kill_sprite_simon2(2, 1);
+			stopAnimateSimon2(2, 1);
 		} else {
 			_variableArray[100] = 5;
 			loadSprite(4, 1, 30, 0, 0, 0);
 			waitForSync(130);
-			kill_sprite_simon2(2, 1);
+			stopAnimateSimon2(2, 1);
 		}
 	}
 }
 
-void SimonEngine::timer_vga_sprites() {
+void SimonEngine::animateSprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	const byte *vc_ptr_org = _vcPtr;
@@ -2582,10 +2604,10 @@ void SimonEngine::timer_vga_sprites() {
 		_paletteFlag = 1;
 
 	if (getGameType() == GType_FF && _scrollCount) {
-		scroll_timeout();
+		scrollEvent();
 	}
 	if (getGameType() == GType_SIMON2 && _scrollFlag) {
-		scrollEvent();
+		scrollScreen();
 	}
 
 	if (getGameType() == GType_FF && getBitFlag(84)) {
@@ -2606,6 +2628,9 @@ void SimonEngine::timer_vga_sprites() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
+		if (_drawImagesDebug && vsp->image)
+			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
+							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		params[0] = readUint16Wrapper(&vsp->image);
 		params[1] = readUint16Wrapper(&vsp->palette);
 		params[2] = readUint16Wrapper(&vsp->x);
@@ -2630,7 +2655,7 @@ void SimonEngine::timer_vga_sprites() {
 	_vcPtr = vc_ptr_org;
 }
 
-void SimonEngine::scrollEvent() {
+void SimonEngine::scrollScreen() {
 	byte *dst = getFrontBuf();
 	const byte *src;
 	uint x, y;
@@ -2686,44 +2711,6 @@ void SimonEngine::scrollEvent() {
 	_scrollFlag = 0;
 }
 
-void SimonEngine::timer_vga_sprites_2() {
-	VgaSprite *vsp;
-	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10_draw
-
-	if (_paletteFlag == 2)
-		_paletteFlag = 1;
-
-	vsp = _vgaSprites;
-	while (vsp->id != 0) {
-		vsp->windowNum &= 0x7FFF;
-
-		vpe = &_vgaBufferPointers[vsp->zoneNum];
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
-		_windowNum = vsp->windowNum;
-		_vgaCurSpriteId = vsp->id;
-
-		if (vsp->image)
-			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
-							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-		params[4] = readUint16Wrapper(&vsp->flags);
-		_vcPtr = (const byte *)params;
-		vc10_draw();
-
-		vsp++;
-	}
-
-	_updateScreen++;
-	_vcPtr = vc_ptr_org;
-}
-
 void SimonEngine::timer_proc1() {
 	_timer4++;
 
@@ -2739,14 +2726,14 @@ void SimonEngine::timer_proc1() {
 			_syncFlag2 ^= 1;
 
 			if (!_syncFlag2)
-				expire_vga_timers();
+				processVgaEvents();
 		} else {
-			expire_vga_timers();
-			expire_vga_timers();
+			processVgaEvents();
+			processVgaEvents();
 			_syncFlag2 ^= 1;
 			_cepeFlag ^= 1;
 			if (!_cepeFlag)
-				expire_vga_timers();
+				processVgaEvents();
 
 			if (_mouseHideCount != 0 && _syncFlag2) {
 				_lockWord &= ~2;
@@ -2755,16 +2742,13 @@ void SimonEngine::timer_proc1() {
 		}
 	}
 
-	timer_vga_sprites();
-	if (_drawImagesDebug)
-		timer_vga_sprites_2();
+	animateSprites();
 
 	if (_copyPartialMode == 1) {
 		fillBackFromFront(80, 46, 208 - 80, 94 - 46);
 	}
 
 	if (_copyPartialMode == 2) {
-		// copy partial from attached to 2
 		fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
 		_copyPartialMode = 0;
 	}
@@ -3222,7 +3206,7 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 				if (_startVgaScript)
 					dump_vga_script(pp + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
 
-				add_vga_timer(VGA_DELAY_BASE, pp + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, zoneNum);
+				addVgaEvent(VGA_DELAY_BASE, pp + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, zoneNum);
 				break;
 			}
 			p += sizeof(AnimationHeader_Feeble);
@@ -3231,7 +3215,7 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 				if (_startVgaScript)
 					dump_vga_script(pp + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), zoneNum, vgaSpriteId);
 
-				add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, zoneNum);
+				addVgaEvent(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, zoneNum);
 				break;
 			}
 			p += sizeof(AnimationHeader_Simon);
@@ -3262,9 +3246,9 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 204, 0, 0, 0);
 				waitForSync(204);
-				kill_sprite_simon1(204);
+				stopAnimateSimon1(204);
 			}
-			kill_sprite_simon1(vgaSpriteId + 201);
+			stopAnimateSimon1(vgaSpriteId + 201);
 			loadVoice(speech_id);
 			loadSprite(4, 2, vgaSpriteId + 201, 0, 0, 0);
 		}
@@ -3288,46 +3272,14 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 5, 0, 0, 0);
 				waitForSync(205);
-				kill_sprite_simon2(2,5);
+				stopAnimateSimon2(2,5);
 			}
 
-			kill_sprite_simon2(2, vgaSpriteId + 2);
+			stopAnimateSimon2(2, vgaSpriteId + 2);
 			loadVoice(speech_id);
 			loadSprite(4, 2, vgaSpriteId + 2, 0, 0, 0);
 		}
 	}
-}
-
-void SimonEngine::openGameFile() {
-	if (!(getFeatures() & GF_OLD_BUNDLE)) {
-		_gameFile = new File();
-		_gameFile->open(gss->gme_filename);
-
-		if (_gameFile->isOpen() == false)
-			error("Can't open game file '%s'", gss->gme_filename);
-
-		uint32 size = _gameFile->readUint32LE();
-
-		_gameOffsetsPtr = (uint32 *)malloc(size);
-		if (_gameOffsetsPtr == NULL)
-			error("out of memory, game offsets");
-
-		resfile_read(_gameOffsetsPtr, 0, size);
-#if defined(SCUMM_BIG_ENDIAN)
-		for (uint r = 0; r < size / 4; r++)
-			_gameOffsetsPtr[r] = FROM_LE_32(_gameOffsetsPtr[r]);
-#endif
-	}
-
-	if (getGameType() == GType_FF)
-		loadIconData();
-	else
-		loadIconFile();
-
-	vc34_setMouseOff();
-
-	runSubroutine101();
-	permitInput();
 }
 
 void SimonEngine::runSubroutine101() {
@@ -3419,7 +3371,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 	memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
 
 	if (getGameType() == GType_FF && _scrollFlag) {
-		scrollEvent();
+		scrollScreen();
 	}
 
 	if (_paletteColorCount != 0) {
