@@ -2628,9 +2628,6 @@ void SimonEngine::animateSprites() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		if (_drawImagesDebug && vsp->image)
-			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
-							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		params[0] = readUint16Wrapper(&vsp->image);
 		params[1] = readUint16Wrapper(&vsp->palette);
 		params[2] = readUint16Wrapper(&vsp->x);
@@ -2650,6 +2647,44 @@ void SimonEngine::animateSprites() {
 
 	if (_drawImagesDebug)
 		memset(_backBuf, 0, _screenWidth * _screenHeight);
+
+	_updateScreen++;
+	_vcPtr = vc_ptr_org;
+}
+
+void SimonEngine::animateSpritesDebug() {
+	VgaSprite *vsp;
+	VgaPointersEntry *vpe;
+	const byte *vc_ptr_org = _vcPtr;
+	uint16 params[5];							// parameters to vc10_draw
+
+	if (_paletteFlag == 2)
+		_paletteFlag = 1;
+
+	vsp = _vgaSprites;
+	while (vsp->id != 0) {
+		vsp->windowNum &= 0x7FFF;
+
+		vpe = &_vgaBufferPointers[vsp->zoneNum];
+		_curVgaFile1 = vpe->vgaFile1;
+		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
+		_windowNum = vsp->windowNum;
+		_vgaCurSpriteId = vsp->id;
+
+		if (vsp->image)
+			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
+							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
+		params[0] = readUint16Wrapper(&vsp->image);
+		params[1] = readUint16Wrapper(&vsp->palette);
+		params[2] = readUint16Wrapper(&vsp->x);
+		params[3] = readUint16Wrapper(&vsp->y);
+		params[4] = readUint16Wrapper(&vsp->flags);
+		_vcPtr = (const byte *)params;
+		vc10_draw();
+
+		vsp++;
+	}
 
 	_updateScreen++;
 	_vcPtr = vc_ptr_org;
@@ -2743,6 +2778,8 @@ void SimonEngine::timer_proc1() {
 	}
 
 	animateSprites();
+	if (_drawImagesDebug)
+		animateSpritesDebug();
 
 	if (_copyPartialMode == 1) {
 		fillBackFromFront(80, 46, 208 - 80, 94 - 46);

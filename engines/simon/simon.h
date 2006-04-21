@@ -1064,6 +1064,7 @@ protected:
 	void timer_proc1();
 
 	void animateSprites();
+	void animateSpritesDebug();
 
 	void dx_clear_surfaces(uint num_lines);
 	void dx_update_screen_and_palette();
