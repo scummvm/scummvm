@@ -128,7 +128,7 @@ bool Actions::saveMapping() {
 	char tempo[200];
 	int i;
 	tempo[0] = '\0';
-	ConfMan.set("action_mapping_version", version(), domain());
+	ConfMan.setInt("action_mapping_version", version(), domain());
 	for (i=0; i<size(); i++) {
 		char x[10];
 		sprintf(x, "%.4x ", _action_mapping[i]);
