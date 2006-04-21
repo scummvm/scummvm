@@ -36,10 +36,6 @@
 
 extern Common::ConfigManager *g_config;
 
-OSystem *OSystem_SymbianOS_create() {
-	return new OSystem_SDL_Symbian();
-}
-
 namespace Symbian {
 
 // Show a simple Symbian Info win with Msg & exit
@@ -89,16 +85,21 @@ OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 0, 145, 150, 55 },
         { 150, 145, 170, 55 }
 };
-OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0)
-{
-	ConfMan.set("FM_high_quality", false);
+OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
+}
+
+void OSystem_SDL_Symbian::initBackend() {
+	ConfMan.setBool("FM_high_quality", false);
 #ifndef S60 // S60 has low quality as default
-	ConfMan.set("FM_medium_quality", true);
+	ConfMan.setBool("FM_medium_quality", true);
 #else
-	ConfMan.set("FM_medium_quality", false);
+	ConfMan.setBool("FM_medium_quality", false);
 #endif
-	ConfMan.set("joystick_num", 0); // Symbian OS  should have joystick_num set to 0 in the ini file , but uiq devices might refuse opening the joystick
+	ConfMan.setInt("joystick_num", 0); // Symbian OS  should have joystick_num set to 0 in the ini file , but uiq devices might refuse opening the joystick
 	ConfMan.flushToDisk();
+
+	OSystem_SDL::initBackend();
+	
 	// Initialize global key mapping for Smartphones
 	GUI::Actions* actions = GUI::Actions::Instance();
 	actions->initInstanceMain(this);	

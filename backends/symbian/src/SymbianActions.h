@@ -57,7 +57,7 @@ public:
 	bool perform(ActionType action, bool pushed = true);
 	Common::String actionName(ActionType action);
 	int size();
-	static void init(const Common::String &gameid);
+	static void init();
 	void initInstanceMain(OSystem *mainSystem);
 	void initInstanceGame();
 
@@ -68,7 +68,7 @@ public:
 	~SymbianActions();
 
 private:
-	SymbianActions(const Common::String &gameid);
+	SymbianActions();
 	bool _right_click_needed;
 };
 

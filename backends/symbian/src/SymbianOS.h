@@ -37,7 +37,15 @@
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
 	OSystem_SDL_Symbian();
-	~OSystem_SDL_Symbian();
+	virtual ~OSystem_SDL_Symbian();
+
+public:
+	/**
+	 * The following method is called once, from main.cpp, after all
+	 * config data (including command line params etc.) are fully loaded.
+	 */
+	virtual void initBackend();
+
 	int getDefaultGraphicsMode() const;
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(const char *name);

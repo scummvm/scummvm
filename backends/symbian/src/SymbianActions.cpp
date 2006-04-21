@@ -76,7 +76,7 @@ int SymbianActions::size() {
 }
 
 Common::String SymbianActions::domain() {
-	return "symbian";
+	return Common::ConfigManager::kApplicationDomain;
 }
 
 int SymbianActions::version() {
@@ -121,10 +121,10 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 }
 
 void SymbianActions::initInstanceGame() {
-	String gameid(ConfMan.get("gameid"));
+	Common::String gameid(ConfMan.get("gameid"));
 	bool is_simon = (strncmp(gameid.c_str(), "simon", 5) == 0);
-	bool is_sky = (gameid == "sky");
-	bool is_queen = (gameid == "queen");
+	bool is_sky = (strncmp(gameid.c_str(), "sky", 3) == 0);
+	bool is_queen = (strncmp(gameid.c_str(), "queen", 5) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
