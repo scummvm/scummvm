@@ -28,6 +28,9 @@
 
 #include "icons/scummvm.xpm"
 
+#if defined(__SYMBIAN32__)
+#include "SymbianOs.h"
+#endif
 
 #if !defined(_WIN32_WCE) && !defined(__MAEMO__)
 
@@ -85,7 +88,11 @@ int main(int argc, char *argv[]) {
 #endif // defined(__SYMBIAN32__)
 
 	// Create our OSystem instance
+#if defined(__SYMBIAN32__)
+	g_system = new OSystem_SDL_Symbian();
+#else
 	g_system = new OSystem_SDL();
+#endif
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
