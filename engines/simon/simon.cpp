@@ -347,6 +347,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	memset(_speechIdArray4, 0, sizeof(_speechIdArray4));
 
 	memset(_bitArray, 0, sizeof(_bitArray));
+	memset(_bitArrayTwo, 0, sizeof(_bitArrayTwo));
+	memset(_bitArrayThree, 0, sizeof(_bitArrayThree));
 
 	memset(_variableArray, 0, sizeof(_variableArray));
 	memset(_variableArray2, 0, sizeof(_variableArray2));

@@ -384,7 +384,9 @@ protected:
 	uint16 _stringIdArray3[40];
 	uint16 _speechIdArray4[40];
 
-	uint16 _bitArray[48];
+	uint16 _bitArray[16];
+	uint16 _bitArrayTwo[16];
+	uint16 _bitArrayThree[16];
 	int16 _variableArray[256];
 	int16 _variableArray2[256];
 	int16 *_variableArrayPtr;

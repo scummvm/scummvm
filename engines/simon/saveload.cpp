@@ -558,14 +558,18 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 		f->writeUint16BE(itemPtrToID(_itemStore[i]));
 	}
 
-	// Write the bits in array 1 & 2
-	for (i = 0; i != 32; i++)
+	// Write the bits in array 1
+	for (i = 0; i != 16; i++)
 		f->writeUint16BE(_bitArray[i]);
+
+	// Write the bits in array 2
+	for (i = 0; i != 16; i++)
+		f->writeUint16BE(_bitArrayTwo[i]);
 
 	// Write the bits in array 3
 	if (getGameType() == GType_FF) {
-		for (i = 33; i != 48; i++)
-			f->writeUint16BE(_bitArray[i]);
+		for (i = 0; i != 16; i++)
+			f->writeUint16BE(_bitArrayThree[i]);
 	}
 
 	f->flush();
@@ -688,14 +692,18 @@ bool SimonEngine::loadGame(uint slot) {
 		_itemStore[i] = derefItem(f->readUint16BE());
 	}
 
-	// Read the bits in array 1 & 2
-	for (i = 0; i != 32; i++)
+	// Read the bits in array 1
+	for (i = 0; i != 16; i++)
 		_bitArray[i] = f->readUint16BE();
+
+	// Read the bits in array 2
+	for (i = 0; i != 16; i++)
+		_bitArrayTwo[i] = f->readUint16BE();
 
 	// Read the bits in array 3
 	if (getGameType() == GType_FF) {
-		for (i = 33; i != 48; i++)
-			_bitArray[i] = f->readUint16BE();
+		for (i = 0; i != 16; i++)
+			_bitArrayThree[i] = f->readUint16BE();
 	}
 
 	if (f->ioFailed()) {

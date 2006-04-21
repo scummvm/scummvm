@@ -1365,22 +1365,26 @@ void SimonEngine::o_isAdjNoun() {
 
 void SimonEngine::o_b2Set() {
 	// 166: set bit2
-	setBitFlag(256 + getVarOrByte(), true);
+	uint bit = getVarOrByte();
+	_bitArrayTwo[bit / 16] |= (1 << (bit & 15));
 }
 
 void SimonEngine::o_b2Clear() {
 	// 167: clear bit2
-	setBitFlag(256 + getVarOrByte(), false);
+	uint bit = getVarOrByte();
+	_bitArrayTwo[bit / 16] &= ~(1 << (bit & 15));
 }
 
 void SimonEngine::o_b2Zero() {
 	// 168: is bit2 clear
-	setScriptCondition(!getBitFlag(256 + getVarOrByte()));
+	uint bit = getVarOrByte();
+	setScriptCondition((_bitArrayTwo[bit / 16] & (1 << (bit & 15))) == 0);
 }
 
 void SimonEngine::o_b2NotZero() {
 	// 169: is bit2 set
-	setScriptCondition(getBitFlag(256 + getVarOrByte()));
+	uint bit = getVarOrByte();
+	setScriptCondition((_bitArrayTwo[bit / 16] & (1 << (bit & 15))) != 0);
 }
 
 void SimonEngine::o_lockZones() {
@@ -2090,22 +2094,26 @@ void SimonEngine::o3_setColour() {
 
 void SimonEngine::o3_b3Set() {
 	// 196: set bit3
-	setBitFlag(512 + getVarOrByte(), true);
+	uint bit = getVarOrByte();
+	_bitArrayThree[bit / 16] |= (1 << (bit & 15));
 }
 
 void SimonEngine::o3_b3Clear() {
 	// 197: clear bit3
-	setBitFlag(512 + getVarOrByte(), false);
+	uint bit = getVarOrByte();
+	_bitArrayThree[bit / 16] &= ~(1 << (bit & 15));
 }
 
 void SimonEngine::o3_b3Zero() {
 	// 198: is bit3 clear
-	setScriptCondition(!getBitFlag(512 + getVarOrByte()));
+	uint bit = getVarOrByte();
+	setScriptCondition((_bitArrayThree[bit / 16] & (1 << (bit & 15))) == 0);
 }
 
 void SimonEngine::o3_b3NotZero() {
 	// 199: is bit3 set
-	setScriptCondition(getBitFlag(512 + getVarOrByte()));
+	uint bit = getVarOrByte();
+	setScriptCondition((_bitArrayThree[bit / 16] & (1 << (bit & 15))) != 0);
 }
 
 // -----------------------------------------------------------------------
