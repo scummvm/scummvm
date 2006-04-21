@@ -264,7 +264,7 @@ protected:
 	bool _subtitles;
 	bool _fade;
 	bool _vgaVar9;
-	int16 _scriptUnk1;
+	int16 _chanceModifier;
 	bool _restoreWindow6;
 	int _scrollX, _scrollXMax, _scrollWidth;
 	int _scrollY, _scrollYMax, _scrollHeight;
@@ -971,6 +971,7 @@ public:
 	void o2_waitMark();
 
 	// Opcodes, Feeble Files only
+	void o3_chance();
 	void o3_jumpOut();
 	void o3_addTextBox();
 	void o3_printLongText();

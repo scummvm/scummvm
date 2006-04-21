@@ -314,6 +314,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[190] = &SimonEngine::o2_waitMark;
 		break;
 	case GType_FF:
+		opcode_table[23] = &SimonEngine::o3_chance;
 		opcode_table[37] = &SimonEngine::o3_jumpOut;
 		opcode_table[65] = &SimonEngine::o3_addTextBox;
 		opcode_table[70] = &SimonEngine::o3_printLongText;
@@ -475,22 +476,22 @@ void SimonEngine::o_chance() {
 		return;
 	}
 
-	a += _scriptUnk1;
+	a += _chanceModifier;
 
 	if (a <= 0) {
-		_scriptUnk1 = 0;
+		_chanceModifier = 0;
 		setScriptCondition(false);
 	} else if ((uint)_rnd.getRandomNumber(99) < a) {
-		if (_scriptUnk1 <= 0)
-			_scriptUnk1 -= 5;
+		if (_chanceModifier <= 0)
+			_chanceModifier -= 5;
 		else
-			_scriptUnk1 = 0;
+			_chanceModifier = 0;
 		setScriptCondition(true);
 	} else {
-		if (_scriptUnk1 >= 0)
-			_scriptUnk1 += 5;
+		if (_chanceModifier >= 0)
+			_chanceModifier += 5;
 		else
-			_scriptUnk1 = 0;
+			_chanceModifier = 0;
 		setScriptCondition(false);
 	}
 }
@@ -1790,6 +1791,26 @@ void SimonEngine::o2_waitMark() {
 // -----------------------------------------------------------------------
 // Feeble Files Opcodes
 // -----------------------------------------------------------------------
+
+void SimonEngine::o3_chance() {
+	// 23
+	uint a = getVarOrWord();
+
+	if (a == 0) {
+		setScriptCondition(false);
+		return;
+	}
+
+	if (a == 100) {
+		setScriptCondition(true);
+		return;
+	}
+
+	if ((uint)_rnd.getRandomNumber(99) < a)
+		setScriptCondition(true);
+	else
+		setScriptCondition(false);
+}
 
 void SimonEngine::o3_jumpOut() {
 	// 37

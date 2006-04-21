@@ -207,7 +207,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_oldMouseAnimMax = 0;
 
 	_vgaVar9 = 0;
-	_scriptUnk1 = 0;
+	_chanceModifier = 0;
 	_restoreWindow6 = 0;
 	_scrollX = 0;
 	_scrollY = 0;
