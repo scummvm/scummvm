@@ -468,8 +468,10 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	// FIXME: For now we continue to allow empty domName to indicate
 	// "use 'default' domain". This is mainly needed for the SCUMM ConfigDialog
 	// and should be removed ASAP.
-	if (domName.empty())
-		return set(key, value);
+	if (domName.empty()) {
+		set(key, value);
+		return;
+	}
 
 	Domain *domain = getDomain(domName);
 
