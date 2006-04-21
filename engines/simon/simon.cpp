@@ -2611,8 +2611,8 @@ void SimonEngine::animateSprites() {
 	}
 
 	if (getGameType() == GType_FF && getBitFlag(84)) {
-		// TODO
-		warning("Animation by Y value not supported");
+		animateSpritesByY();
+		return;
 	}
 
 	vsp = _vgaSprites;
@@ -2684,6 +2684,81 @@ void SimonEngine::animateSpritesDebug() {
 		vc10_draw();
 
 		vsp++;
+	}
+
+	_updateScreen++;
+	_vcPtr = vc_ptr_org;
+}
+
+void SimonEngine::animateSpritesByY() {
+	VgaSprite *vsp;
+	VgaPointersEntry *vpe;
+	const byte *vc_ptr_org = _vcPtr;
+	uint16 params[5];							// parameters to vc10
+	int16 spriteTable[180][2];
+	
+	byte *src;
+	int height, slot, y;
+	uint i, numSprites = 0;
+
+	vsp = _vgaSprites;
+	while (vsp->id != 0) {
+		if (vsp->flags & kDFScaled) {
+			y = vsp->y;
+		} else {
+			y = vsp->priority;
+			vpe = &_vgaBufferPointers[vsp->zoneNum];
+			src = vpe->vgaFile2 + vsp->image * 8;
+			height = READ_LE_UINT16(src + 4) & 0x7FFF;
+			y += height;
+		}
+
+		spriteTable[numSprites][0] = y;
+		spriteTable[numSprites][1] = numSprites;
+		numSprites++;
+		vsp++;
+	}
+
+	while(1) {
+		y = spriteTable[0][0];
+		slot = spriteTable[0][1];
+
+		for (i = 0; i < numSprites; i++) {
+			if (y >= spriteTable[i][0]) {
+				y = spriteTable[i][0];
+				slot = spriteTable[i][1];
+			}
+		}
+
+		if (y == 9999)
+			break;
+
+		for (i = 0; i < numSprites; i++) {
+			if (slot == spriteTable[i][1]) {
+				spriteTable[i][0] = 9999;
+				break;
+			}
+		}
+
+		vsp = &_vgaSprites[slot];
+		vsp->windowNum &= 0x7FFF;
+
+		vpe = &_vgaBufferPointers[vsp->zoneNum];
+		_curVgaFile1 = vpe->vgaFile1;
+		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
+		_windowNum = vsp->windowNum;
+		_vgaCurSpriteId = vsp->id;
+		_vgaCurSpritePriority = vsp->priority;
+
+		params[0] = readUint16Wrapper(&vsp->image);
+		params[1] = readUint16Wrapper(&vsp->palette);
+		params[2] = readUint16Wrapper(&vsp->x);
+		params[3] = readUint16Wrapper(&vsp->y);
+		*(byte *)(&params[4]) = (byte)vsp->flags;
+
+		_vcPtr = (const byte *)params;
+		vc10_draw();
 	}
 
 	_updateScreen++;
