@@ -211,8 +211,14 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 		// after this one. By default, each buffer is only 9000 bytes
 		// long. A two-line string can very well be more than twice
 		// that size!
-		if (vga_sprite_id != 1)
-			WRITE_LE_UINT16(p + 8, READ_LE_UINT32(p) + width * height);
+		//
+		// The original seems to make an exception for sprite id 1, but
+		// even the first conversation option can be a long line. For
+		// some reason, I cannot reproduce the text corruption with the
+		// original interpreter, though, so maybe we're missing some
+		// detail here. Let's hope it's safe to always adjust the
+		// buffer size anyway.
+		WRITE_LE_UINT16(p + 8, READ_LE_UINT32(p) + width * height);
 	} else {
 		WRITE_BE_UINT16(p + 4, height);
 		WRITE_BE_UINT16(p + 6, width);
