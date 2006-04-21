@@ -1928,13 +1928,6 @@ void SimonEngine::vc48_setPathFinder() {
 void SimonEngine::setBitFlag(uint bit, bool value) {
 	uint16 *bits = &_bitArray[bit / 16];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
-
-	if (getGameType() == GType_FF && bit == 82) {
-		if (value == true)
-			_variableArrayPtr = _variableArray2;
-		else
-			_variableArrayPtr = _variableArray;
-	}
 }
 
 bool SimonEngine::getBitFlag(uint bit) {
@@ -1943,11 +1936,19 @@ bool SimonEngine::getBitFlag(uint bit) {
 }
 
 void SimonEngine::vc49_setBit() {
-	setBitFlag(vcReadNextWord(), true);
+	uint bit = vcReadNextWord();
+	if (getGameType() == GType_FF && bit == 82) {
+		_variableArrayPtr = _variableArray2;
+	}
+	setBitFlag(bit, true);
 }
 
 void SimonEngine::vc50_clearBit() {
-	setBitFlag(vcReadNextWord(), false);
+	uint bit = vcReadNextWord();
+	if (getGameType() == GType_FF && bit == 82) {
+		_variableArrayPtr = _variableArray;
+	}
+	setBitFlag(bit, false);
 }
 
 void SimonEngine::vc51_enableBox() {
