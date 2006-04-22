@@ -164,6 +164,12 @@ public:
 	uint32 getFeatures() const { return _gameDescription->features; }
 	Common::Language getLanguage() const { return _gameDescription->language; }
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
+	const char *getFileName(int type) const { 
+		for (int i = 0; i < _gameDescription->filesCount; i++) {
+			if (_gameDescription->filesDescriptions[i].fileType == type)
+				return _gameDescription->filesDescriptions[i].fileName; 
+		}
+	}
 
 protected:
 	void playSting(uint a);
@@ -486,7 +492,7 @@ protected:
 	void readGamePcText(Common::File *in);
 	void readItemChildren(Common::File *in, Item *item, uint tmp);
 	void readItemFromGamePc(Common::File *in, Item *item);
-	void loadGamePcFile(const char *filename);
+	void loadGamePcFile();
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint sound, uint pan, uint vol, uint type);

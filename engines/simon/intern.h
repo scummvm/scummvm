@@ -145,15 +145,11 @@ struct TimeEvent {
 
 struct GameSpecificSettings {
 #ifndef PALMOS_68K
-	const char *gme_filename;
 	const char *effects_filename;
 	const char *speech_filename;
- 	const char *gamepc_filename;
  #else
-	const char gme_filename[12];
 	const char effects_filename[12];
 	const char speech_filename[12];
-  	const char gamepc_filename[12];
  #endif
 };
 

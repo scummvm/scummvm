@@ -54,61 +54,23 @@ namespace Simon {
 #ifdef PALMOS_68K
 #define PTR(a) a
 static const GameSpecificSettings *simon1_settings;
-static const GameSpecificSettings *simon1acorn_settings;
-static const GameSpecificSettings *simon1amiga_settings;
-static const GameSpecificSettings *simon1demo_settings;
-static const GameSpecificSettings *simon2win_settings;
-static const GameSpecificSettings *simon2dos_settings;
+static const GameSpecificSettings *simon2_settings;
 static const GameSpecificSettings *feeblefiles_settings;
 #else
 #define PTR(a) &a
 static const GameSpecificSettings simon1_settings = {
-	"SIMON.GME",                            // gme_filename
 	"EFFECTS",                              // effects_filename
 	"SIMON",                                // speech_filename
-	"GAMEPC",                               // gamepc_filename
 };
 
-static const GameSpecificSettings simon1acorn_settings = {
-	"DATA",                                 // gme_filename
-	"EFFECTS",                              // effects_filename
-	"SIMON",                                // speech_filename
-	"GAMEBASE",                             // gamepc_filename
-};
-
-static const GameSpecificSettings simon1amiga_settings = {
-	"",                                     // gme_filename
-	"",                                     // effects_filename
-	"",                                     // speech_filename
-	"gameamiga",                            // gamepc_filename
-};
-
-static const GameSpecificSettings simon1demo_settings = {
-	"",                                     // gme_filename
-	"",                                     // effects_filename
-	"",                                     // speech_filename
-	"GDEMO",                                // gamepc_filename
-};
-
-static const GameSpecificSettings simon2win_settings = {
-	"SIMON2.GME",                           // gme_filename
+static const GameSpecificSettings simon2_settings = {
 	"",                                     // effects_filename
 	"SIMON2",                               // speech_filename
-	"GSPTR30",                              // gamepc_filename
-};
-
-static const GameSpecificSettings simon2dos_settings = {
-	"SIMON2.GME",                           // gme_filename
-	"",                                     // effects_filename
-	"",                                     // speech_filename
-	"GAME32",                               // gamepc_filename
 };
 
 static const GameSpecificSettings feeblefiles_settings = {
-	"",		                        // gme_filename
 	"",                                     // effects_filename
 	"VOICES",                               // speech_filename
-	"GAME22",                               // gamepc_filename
 };
 #endif
 
@@ -570,24 +532,13 @@ int SimonEngine::init() {
 		gss = PTR(feeblefiles_settings);
 	} else if (getGameType() == GType_SIMON2) {
 		if (getFeatures() & GF_TALKIE) {
-			gss = PTR(simon2win_settings);
-
 			// Add default file directories
 			File::addDefaultDirectory(_gameDataPath + "voices/");
 			File::addDefaultDirectory(_gameDataPath + "VOICES/");
-		} else {
-			gss = PTR(simon2dos_settings);
 		}
+		gss = PTR(simon2_settings);
 	} else if (getGameType() == GType_SIMON1) {
-		if (getPlatform() == Common::kPlatformAcorn) {
-			gss = PTR(simon1acorn_settings);
-		} else if (getPlatform() == Common::kPlatformAmiga) {
-			gss = PTR(simon1amiga_settings);
-		} else if (getGameId() == GID_SIMON1DEMO) {
-			gss = PTR(simon1demo_settings);
-		} else {
-			gss = PTR(simon1_settings);
-		}
+		gss = PTR(simon1_settings);
 	}
 
 	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
@@ -3568,7 +3519,7 @@ int SimonEngine::go() {
 			_sound->effectsPause(_effectsPaused ^= 1);
 	}
 
-	loadGamePcFile(gss->gamepc_filename);
+	loadGamePcFile();
 
 	addTimeEvent(0, 1);
 	openGameFile();

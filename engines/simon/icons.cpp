@@ -31,16 +31,11 @@ namespace Simon {
 
 void SimonEngine::loadIconFile() {
 	Common::File in;
-	if (getPlatform() == Common::kPlatformAcorn)
-		in.open("ICONDATA");
-	else if (getPlatform() == Common::kPlatformAmiga)
-		in.open("icon.pkd");
-	else
-		in.open("ICON.DAT");
 	uint size;
 
+	in.open(getFileName(GAME_ICONFILE));
 	if (in.isOpen() == false)
-		error("Can't open icons file 'ICON.DAT'");
+		error("Can't open icons file '%s'", getFileName(GAME_ICONFILE));
 
 	size = in.size();
 

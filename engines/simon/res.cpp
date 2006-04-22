@@ -193,15 +193,15 @@ void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, ui
 	in.close();
 }
 
-void SimonEngine::loadGamePcFile(const char *filename) {
+void SimonEngine::loadGamePcFile() {
 	Common::File in;
 	int num_inited_objects;
 	int i, file_size;
 
 	/* read main gamepc file */
-	in.open(filename);
+	in.open(getFileName(GAME_BASEFILE));
 	if (in.isOpen() == false) {
-		error("Can't open gamepc file '%s'", gss->gamepc_filename);
+		error("Can't open gamepc file '%s'", getFileName(GAME_BASEFILE));
 	}
 
 	num_inited_objects = allocGamePcVars(&in);
@@ -218,9 +218,9 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	in.close();
 
 	/* Read list of TABLE resources */
-	in.open("TBLLIST");
+	in.open(getFileName(GAME_TBLFILE));
 	if (in.isOpen() == false) {
-		error("Can't open table resources file 'TBLLIST'");
+		error("Can't open table resources file '%s'", getFileName(GAME_TBLFILE));
 	}
 
 	file_size = in.size();
@@ -240,12 +240,9 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 		return;
 
 	/* Read list of TEXT resources */
-	if (getPlatform() == Common::kPlatformAcorn)
-		in.open("STRIPPED");
-	else
-		in.open("STRIPPED.TXT");
+	in.open(getFileName(GAME_STRFILE));
 	if (in.isOpen() == false)
-		error("Can't open text resources file 'STRIPPED.TXT'");
+		error("Can't open text resources file '%s'", getFileName(GAME_STRFILE));
 
 	file_size = in.size();
 	_strippedTxtMem = (byte *)malloc(file_size);
@@ -442,10 +439,10 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 void SimonEngine::openGameFile() {
 	if (!(getFeatures() & GF_OLD_BUNDLE)) {
 		_gameFile = new File();
-		_gameFile->open(gss->gme_filename);
+		_gameFile->open(getFileName(GAME_GMEFILE));
 
 		if (_gameFile->isOpen() == false)
-			error("Can't open game file '%s'", gss->gme_filename);
+			error("Can't open game file '%s'", getFileName(GAME_GMEFILE));
 
 		uint32 size = _gameFile->readUint32LE();
 
