@@ -139,9 +139,9 @@ void SymbianActions::initInstanceGame() {
 	// Save
 	if (is_simon || is_gob) 
 		_action_enabled[ACTION_SAVE] = false;
-	else if (is_queen) {
+	else if (is_queen || is_ite) {
 		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ or F5??!?
+		_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ and ITE
 	} else if (is_sky) {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(63); 
