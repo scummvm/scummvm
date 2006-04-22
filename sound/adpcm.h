@@ -31,10 +31,11 @@ class AudioStream;
 
 enum typesADPCM {
 	kADPCMOki,
-	kADPCMIma
+	kADPCMMSIma,
+	kADPCMMS
 };
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels = 2, uint32 blockAlign = 0);
+AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate = 22050, int channels = 2, uint32 blockAlign = 0);
 
 
 #endif

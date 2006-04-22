@@ -95,16 +95,16 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	printf("  bitsPerSample: %d\n", bitsPerSample);
 #endif
 
-	if (type != 1 && type != 17) {
-		warning("getWavInfo: only PCM or IMA ADPCM data is supported (type %d)", type);
+	if (type != 1 && type != 2 && type != 17) {
+		warning("getWavInfo: only PCM, MS ADPCM or IMA ADPCM data is supported (type %d)", type);
 		return false;
 	}
 
-	if (blockAlign != numChannels * bitsPerSample / 8) {
+	if (blockAlign != numChannels * bitsPerSample / 8 && type != 2) {
 		debug(0, "getWavInfo: blockAlign is invalid");
 	}
 
-	if (avgBytesPerSec != samplesPerSec * blockAlign) {
+	if (avgBytesPerSec != samplesPerSec * blockAlign && type != 2) {
 		debug(0, "getWavInfo: avgBytesPerSec is invalid");
 	}
 
@@ -116,7 +116,9 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
 		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
-	else if (bitsPerSample == 4 && type == 17)	// IMA ADPCM compressed. We decompress it
+	else if (bitsPerSample == 4 && type == 17)	// MS IMA ADPCM compressed. We decompress it
+		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
+	else if (bitsPerSample == 4 && type == 2)	// MS ADPCM compressed. We decompress it
 		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
@@ -160,12 +162,15 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 	int size, rate;
 	byte flags;
 	uint16 type;
+	int blockAlign;
 
-	if (!loadWAVFromStream(stream, size, rate, flags, &type))
+	if (!loadWAVFromStream(stream, size, rate, flags, &type, &blockAlign))
 		return 0;
 
-	if (type == 17) // IMA ADPCM
-		return makeADPCMStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);
+	if (type == 17) // MS IMA ADPCM
+		return makeADPCMStream(&stream, size, kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);
+	if (type == 2) // MS ADPCM
+		return makeADPCMStream(&stream, size, kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 	byte *data = (byte *)malloc(size);
 	assert(data);

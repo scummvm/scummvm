@@ -419,7 +419,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		if (compType == 17) {
-			AudioStream *voxStream = makeADPCMStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+			AudioStream *voxStream = makeADPCMStream(&stream, size, kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			sound = (char *)malloc(size * 4);
 			size = voxStream->readBuffer((int16*)sound, size * 2);

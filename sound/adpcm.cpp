@@ -38,46 +38,67 @@ private:
 	int _channels;
 	typesADPCM _type;
 	uint32 _blockAlign;
+	uint32 _blockPos;
+	int _blockLen;
+	int _rate;
+
+	struct ADPCMChannelStatus {
+		byte predictor;
+		int16 delta;
+		int16 coeff1;
+		int16 coeff2;
+		int16 sample1;
+		int16 sample2;
+	};
 
 	struct adpcmStatus {
+		// IMA
 		int32 last;
 		int32 stepIndex;
+
+		// MS ADPCM
+		ADPCMChannelStatus ch[2];
 	} _status;
 
 	int16 stepAdjust(byte);
 	int16 decodeOKI(byte);
 	int16 decodeMSIMA(byte);
+	int16 decodeMS(ADPCMChannelStatus *c, byte);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels = 2, uint32 blockAlign = 0);
+	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels = 2, uint32 blockAlign = 0);
 	~ADPCMInputStream() {};
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	int readBufferOKI(int16 *buffer, const int numSamples);
 	int readBufferMSIMA1(int16 *buffer, const int numSamples);
 	int readBufferMSIMA2(int16 *buffer, const int numSamples);
+	int readBufferMS(int channels, int16 *buffer, const int numSamples);
 
 	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
 	bool isStereo() const	{ return false; }
-	int getRate() const	{ return 22050; }
+	int getRate() const	{ return _rate; }
 };
 
 // Routines to convert 12 bit linear samples to the
 // Dialogic or Oki ADPCM coding format aka VOX.
 // See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
-// In addition, also IMA ADPCM is supported. See
-//   <http://www.multimedia.cx/simpleaudio.html>.
+// In addition, also MS IMA ADPCM is supported. See
+//   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels, uint32 blockAlign)
-	: _stream(stream), _channels(channels), _type(type), _blockAlign(blockAlign) {
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign)
+	: _stream(stream), _channels(channels), _type(type), _blockAlign(blockAlign), _rate(rate) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
 	_endpos = stream->pos() + size;
+	_blockPos = _blockLen = 0;
 
-	if (type == kADPCMIma && blockAlign == 0)
-		error("ADPCMInputStream(): blockAlign isn't specifiled for MS ADPCM IMA");
+	if (type == kADPCMMSIma && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for MS IMA ADPCM");
+	if (type == kADPCMMS && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for MS ADPCM");
 }
 
 int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -85,11 +106,14 @@ int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	case kADPCMOki:
 		return readBufferOKI(buffer, numSamples);
 		break;
-	case kADPCMIma:
+	case kADPCMMSIma:
 		if (_channels == 1)
 			return readBufferMSIMA1(buffer, numSamples);
 		else
 			return readBufferMSIMA2(buffer, numSamples);
+		break;
+	case kADPCMMS:
+		return readBufferMS(_channels, buffer, numSamples);
 		break;
 	default:
 		error("Unsupported ADPCM encoding");
@@ -116,22 +140,22 @@ int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
 int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
-	int blockLen;
-	int i;
 
 	assert(numSamples % 2 == 0);
 
 	samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		// read block header
-		_status.last = _stream->readSint16LE();
-		_status.stepIndex = _stream->readSint16LE();
+		if (_blockPos == _blockAlign) {
+			// read block header
+			_status.last = _stream->readSint16LE();
+			_status.stepIndex = _stream->readSint16LE();
+			_blockPos = 4;
+		}
 
-		blockLen = MIN(_endpos - _stream->pos(), _blockAlign - 4);
-
-		for (i = 0; i < blockLen && !_stream->eos() && _stream->pos() < _endpos; i++, samples += 2) {
+		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
+			_blockPos++;
 			buffer[samples] = TO_LE_16(decodeMSIMA(data & 0x0f));
 			buffer[samples + 1] = TO_LE_16(decodeMSIMA((data >> 4) & 0x0f));
 		}
@@ -161,6 +185,61 @@ int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
 	}
 	return samples;
 }
+
+static const int MSADPCMAdaptCoeff1[] = {
+	256, 512, 0, 192, 240, 460, 392
+};
+
+static const int MSADPCMAdaptCoeff2[] = {
+	0, -256, 0, 64, 0, -208, -232
+};
+
+int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSamples) {
+	int samples;
+	byte data;
+	int stereo = channels - 1; // We use it in index
+
+	samples = 0;
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		if (_blockPos == _blockAlign) {
+			// read block header
+			_status.ch[0].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
+			_status.ch[0].coeff1 = MSADPCMAdaptCoeff1[_status.ch[0].predictor];
+			_status.ch[0].coeff2 = MSADPCMAdaptCoeff2[_status.ch[0].predictor];
+			if (stereo) {
+				_status.ch[1].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
+				_status.ch[1].coeff1 = MSADPCMAdaptCoeff1[_status.ch[1].predictor];
+				_status.ch[1].coeff2 = MSADPCMAdaptCoeff2[_status.ch[1].predictor];
+			}
+
+			_status.ch[0].delta = _stream->readSint16LE();
+			if (stereo)
+				_status.ch[1].delta = _stream->readSint16LE();
+
+			buffer[samples++] = _status.ch[0].sample1 = _stream->readSint16LE();
+			if (stereo)
+				buffer[samples++] = _status.ch[1].sample1 = _stream->readSint16LE();
+
+			buffer[samples++] = _status.ch[0].sample2 = _stream->readSint16LE();
+			if (stereo)
+				buffer[samples++] = _status.ch[1].sample2 = _stream->readSint16LE();
+
+			_blockPos = channels * 7;
+		}
+
+
+		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+			data = _stream->readByte();
+			_blockPos++;
+			buffer[samples] = TO_LE_16(decodeMS(&_status.ch[0], (data >> 4) & 0x0f));
+			buffer[samples + 1] = TO_LE_16(decodeMS(&_status.ch[stereo], data & 0x0f));
+		}
+	}
+
+	return samples;
+}
+
 
 // adjust the step for use on the next sample.
 int16 ADPCMInputStream::stepAdjust(byte code) {
@@ -243,6 +322,33 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	return samp;
 }
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels, uint32 blockAlign) {
-	return new ADPCMInputStream(stream, size, type, channels, blockAlign);
+static const int MSADPCMAdaptationTable[] = {
+	230, 230, 230, 230, 307, 409, 512, 614,
+	768, 614, 512, 409, 307, 230, 230, 230
+};
+
+
+int16 ADPCMInputStream::decodeMS(ADPCMChannelStatus *c, byte code) {
+	int32 predictor;
+
+	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
+	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
+
+	if (predictor < -0x8000)
+		predictor = -0x8000;
+	else if (predictor > 0x7fff)
+		predictor = 0x7fff;
+
+	c->sample2 = c->sample1;
+	c->sample1 = predictor;
+	c->delta = (MSADPCMAdaptationTable[(int)code] * c->delta) >> 8;
+
+	if (c->delta < 16)
+		c->delta = 16;
+
+	return (int16)predictor;
+}
+
+AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
+	return new ADPCMInputStream(stream, size, type, rate, channels, blockAlign);
 }
