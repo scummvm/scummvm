@@ -76,7 +76,7 @@ public:
 	void playAmbientData(byte *soundData, uint sound, uint pan, uint vol);
 	void playSfxData(byte *soundData, uint sound, uint pan, uint vol);
 	void playSfx5Data(byte *soundData, uint sound, uint pan, uint vol);
-	void playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, uint pan, uint vol, bool loop);
+	void playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, uint pan = 0, uint vol = 0, bool loop = false);
 	void playVoiceData(byte *soundData, uint sound);
 	void switchVoiceFile(const GameSpecificSettings *gss, uint disc);
 

@@ -25,6 +25,8 @@
 #include "simon/simon.h"
 #include "simon/sound.h"
 
+#include "sound/adpcm.h"
+#include "sound/audiostream.h"
 #include "sound/flac.h"
 #include "sound/mp3.h"
 #include "sound/voc.h"
@@ -578,39 +580,37 @@ void Sound::playSfx5Data(byte *soundData, uint sound, uint pan, uint vol) {
 	playSoundData(&_sfx5Handle, soundData, sound, pan, vol, true);
 }
 
+void Sound::playVoiceData(byte *soundData, uint sound) {
+	_mixer->stopHandle(_voiceHandle);
+	playSoundData(&_voiceHandle, soundData, sound);
+}
+
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, uint pan, uint vol, bool loop) {
-	byte flags;
-	int rate;
+	byte *buffer, flags;
+	uint16 compType;
+	int blockAlign, rate;
 
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
-	if (!loadWAVFromStream(stream, size, rate, flags)) {
+	if (!loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
 		error("playSoundData: Not a valid WAV data");
 	}
 
 	if (loop == true)
 		flags |= Audio::Mixer::FLAG_LOOP;
 	
-	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, soundData + stream.pos(), size);
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
-}
-
-void Sound::playVoiceData(byte *soundData, uint sound) {
-	byte flags;
-	int rate;
-
-	int size = READ_LE_UINT32(soundData + 4);
-	Common::MemoryReadStream stream(soundData, size);
-	if (!loadWAVFromStream(stream, size, rate, flags)) {
-		error("playSoundData: Not a valid WAV data");
+	if (compType == 2) {
+		AudioStream *sndStream = makeADPCMStream(&stream, size, kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		buffer = (byte *)malloc(size * 4);
+		size = sndStream->readBuffer((int16*)buffer, size * 2);
+		size *= 2; // 16bits.
+		delete sndStream;
+	} else {
+		buffer = (byte *)malloc(size);
+		memcpy(buffer, soundData + stream.pos(), size);
 	}
 
-	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, soundData + stream.pos(), size);
-
-	_mixer->stopHandle(_voiceHandle);
-	_mixer->playRaw(&_voiceHandle, buffer, size, rate, flags);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 void Sound::stopSfx5() {
