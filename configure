@@ -780,7 +780,7 @@ else
 			DEFINES="$DEFINES -DUNIX"
 			;;
 		irix*)
-			DEFINES="$DEFINES -DUNIX"
+			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_ranlib=:
 			;;
 		darwin*)
