@@ -92,6 +92,7 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 si
 
 	_status.last = 0;
 	_status.stepIndex = 0;
+	memset(_status.ch, 0, sizeof(_status.ch));
 	_endpos = stream->pos() + size;
 	_blockPos = _blockLen = 0;
 
