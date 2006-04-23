@@ -27,7 +27,7 @@
 
 namespace Scumm {
 
-class ScummFile;
+class BaseScummFile;
 
 class BundleDirCache {
 public:
@@ -80,7 +80,7 @@ private:
 	int _numFiles;
 	int _numCompItems;
 	int _curSample;
-	ScummFile *_file;
+	BaseScummFile *_file;
 	bool _compTableLoaded;
 	int _fileBundleId;
 	byte _compOutput[0x2000];

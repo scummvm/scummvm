@@ -87,7 +87,7 @@ bool BaseChunk::seek(int32 delta, seek_type dir) {
 	return true;
 }
 
-FileChunk::FileChunk(ScummFile *data, int offset) {
+FileChunk::FileChunk(BaseScummFile *data, int offset) {
 	_data = data;
 	_deleteData = false;
 

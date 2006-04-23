@@ -28,7 +28,7 @@
 
 namespace Scumm {
 
-class ScummFile;
+class BaseScummFile;
 
 class Chunk {
 public:
@@ -70,11 +70,11 @@ public:
 
 class FileChunk : public BaseChunk {
 private:
-	ScummFile *_data;
+	BaseScummFile *_data;
 	bool _deleteData;
 	uint32 _offset;
 
-	FileChunk(ScummFile *data, int offset);
+	FileChunk(BaseScummFile *data, int offset);
 public:
 	FileChunk(const Common::String &name, int offset = 0);
 	virtual ~FileChunk();

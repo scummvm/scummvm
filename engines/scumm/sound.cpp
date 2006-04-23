@@ -975,7 +975,7 @@ void Sound::pauseSounds(bool pause) {
 	}
 }
 
-ScummFile *Sound::openSfxFile() {
+BaseScummFile *Sound::openSfxFile() {
 	struct SoundFileExtensions {
 		const char *ext;
 		SoundMode mode;

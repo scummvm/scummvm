@@ -34,7 +34,7 @@ namespace Common {
 namespace Scumm {
 
 class ScummEngine;
-class ScummFile;
+class BaseScummFile;
 
 struct MP3OffsetTable;
 struct SaveLoadEntry;
@@ -71,7 +71,7 @@ protected:
 		int16 flags;
 	} _soundQue2[10];
 
-	ScummFile *_sfxFile;
+	BaseScummFile *_sfxFile;
 	SoundMode _soundMode;
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
@@ -161,7 +161,7 @@ public:
 	void saveLoadWithSerializer(Serializer *ser);
 
 protected:
-	ScummFile *openSfxFile();
+	BaseScummFile *openSfxFile();
 	bool isSfxFinished() const;
 	void processSfxQueues();
 
