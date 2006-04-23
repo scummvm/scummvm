@@ -43,6 +43,15 @@ protected:
 
 	Audio::SoundHandle _heSoundChannels[8];
 
+public: // Used by createSound()
+	struct {
+		int sound;
+		int codeOffs;
+		int priority;
+		int sbngBlock;
+		int soundVars[27];
+	} _heChannel[8];
+
 public:
 	SoundHE(ScummEngine *parent);
 	~SoundHE();
@@ -52,6 +61,7 @@ public:
 
 	virtual int isSoundRunning(int sound) const;
 	virtual void stopSound(int sound);
+	virtual void stopAllSounds();
 	virtual void setupSound();
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);

@@ -157,6 +157,13 @@ void SoundHE::stopSound(int sound) {
 	}
 }
 
+void SoundHE::stopAllSounds() {
+	// Clear sound channels for HE games
+	memset(_heChannel, 0, sizeof(_heChannel));
+
+	Sound::stopAllSounds();
+}
+
 void SoundHE::setupSound() {
 	Sound::setupSound();
 

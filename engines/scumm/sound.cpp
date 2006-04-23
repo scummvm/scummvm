@@ -111,14 +111,12 @@ void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags
 }
 
 void Sound::processSound() {
-	if (_vm->_game.heversion >= 60) {
+	if (_vm->_game.features & GF_DIGI_IMUSE) {
+		processSfxQueues();
+	} else if (_vm->_game.heversion >= 60) {
 		processSoundQueues();
 	} else {
 		processSfxQueues();
-
-		if (_vm->_game.features & GF_DIGI_IMUSE)
-			return;
-
 		processSoundQueues();
 	}
 }
@@ -788,9 +786,6 @@ void Sound::stopAllSounds() {
 		stopCD();
 		stopCDTimer();
 	}
-
-	// Clear sound channels for HE games
-	memset(_heChannel, 0, sizeof(_heChannel));
 
 	// Clear the (secondary) sound queue
 	_soundQue2Pos = 0;

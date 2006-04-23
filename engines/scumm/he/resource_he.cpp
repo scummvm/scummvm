@@ -1821,8 +1821,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 	int i;
 	int chan = -1;
-	for (i = 0; i < ARRAYSIZE(_sound->_heChannel); i++) {
-		if (_sound->_heChannel[i].sound == snd1id)
+	for (i = 0; i < ARRAYSIZE(((SoundHE *)_sound)->_heChannel); i++) {
+		if (((SoundHE *)_sound)->_heChannel[i].sound == snd1id)
 			chan =  i;
 	}
 
@@ -1830,8 +1830,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	sbng2Ptr = heFindResource(MKID_BE('SBNG'), snd2Ptr);
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
-		if (chan != -1 && _sound->_heChannel[chan].codeOffs > 0) {
-			int curOffs = _sound->_heChannel[chan].codeOffs;
+		if (chan != -1 && ((SoundHE *)_sound)->_heChannel[chan].codeOffs > 0) {
+			int curOffs = ((SoundHE *)_sound)->_heChannel[chan].codeOffs;
 
 			src = snd1Ptr + curOffs;
 			dst = sbng1Ptr + 8;
@@ -1850,7 +1850,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			dst = sbng1Ptr + 8;
 		}
 
-		_sound->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
+		((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
 
 		tmp = sbng2Ptr + 8;
 		while ((offs = READ_LE_UINT16(tmp)) != 0) {

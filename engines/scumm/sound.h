@@ -84,15 +84,6 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 
-public: // Used by createSound()
-	struct {
-		int sound;
-		int codeOffs;
-		int priority;
-		int sbngBlock;
-		int soundVars[27];
-	} _heChannel[8];
-
 public:
 	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 
@@ -113,7 +104,7 @@ public:
 	virtual int isSoundRunning(int sound) const;
 	bool isSoundInUse(int sound) const;
 	virtual void stopSound(int sound);
-	void stopAllSounds();
+	virtual void stopAllSounds();
 	void soundKludge(int *list, int num);
 	void talkSound(uint32 a, uint32 b, int mode, int channel = 0);
 	virtual void setupSound();
