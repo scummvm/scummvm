@@ -115,9 +115,9 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 				p++;
 
 			if (*p == '\0')
-				error("Config file buggy: missing ] in line %d", lineno);
+				error("ConfigFile::loadFromStream: missing ] in line %d", lineno);
 			else if (*p != ']')
-				error("Config file buggy: Invalid character '%c' occured in section name in line %d", *p, lineno);
+				error("ConfigFile::loadFromStream: Invalid character '%c' occured in section name in line %d", *p, lineno);
 
 			*p = 0;
 
@@ -141,13 +141,13 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 			// If no section has been set, this config file is invalid!
 			if (section.name.empty()) {
-				error("Config file buggy: Key/value pair found outside a section in line %d", lineno);
+				error("ConfigFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
 			}
 
 			// Split string at '=' into 'key' and 'value'.
 			char *p = strchr(t, '=');
 			if (!p)
-				error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
+				error("ConfigFile::loadFromStream: Junk found in line line %d: '%s'", lineno, t);
 			*p = 0;
 
 			kv.key = rtrim(t);
