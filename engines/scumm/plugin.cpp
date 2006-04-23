@@ -812,7 +812,7 @@ Common::String ScummEngine::generateFilename(const int room) const {
 			
 			if (_filenamePattern.genMethod == kGenHEPC) {
 				// For HE >= 98, we already called snprintf above.
-				if (_game.heversion < 98)
+				if (_game.heversion < 98 || room < 0)
 					snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
 			} else {
 				if (id == '3') { // special case for cursors
