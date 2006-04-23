@@ -635,7 +635,8 @@ protected:
 	int drawShadedBoxCallback(Button *button);
 	void calcCoords(Menu &menu);
 	void initMenu(Menu menu);
-
+	void setGUILabels();
+	
 	Button *initButton(Button *list, Button *newButton);
 	void processButtonList(Button *list);
 	void processButton(Button *button);
@@ -873,7 +874,13 @@ protected:
 	const char * const*_fullFlask;
 	const char * const*_veryClever;
 	const char * const*_homeString;
+	const char * const*_newGameString;
 	
+	const char *_voiceTextString;
+	const char *_textSpeedString;
+	const char *_onString;
+	const char *_offString;
+		
 	int _itemList_Size;
 	int _takenList_Size;
 	int _placedList_Size;
@@ -892,9 +899,16 @@ protected:
 	int _fullFlask_Size;
 	int _veryClever_Size;
 	int _homeString_Size;
+	int _newGameString_Size;
 	
 	const char * const*_characterImageTable;
 	int _characterImageTableSize;
+
+	const char * const*_guiStrings;
+	int _guiStringsSize;
+
+	const char * const*_configStrings;
+	int _configStringsSize;
 	
 	Shape *_defaultShapeTable;
 	int _defaultShapeTableSize;

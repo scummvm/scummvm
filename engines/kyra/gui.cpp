@@ -405,10 +405,95 @@ int KyraEngine::drawShadedBoxCallback(Button *button) {
 	return 0;
 }
 
+void KyraEngine::setGUILabels() {
+	int offset = 0;
+	int walkspeedGarbageOffset = 36;
+	
+	if (_features & GF_TALKIE) {
+		if (_features & GF_ENGLISH) {
+			offset = 52;
+		} else if (_features & GF_GERMAN) {
+			offset = 30;
+		} else if (_features & GF_FRENCH) {
+			offset = 6;
+		}
+		walkspeedGarbageOffset = 48;
+	}
+	
+	assert(offset + 27 < _guiStringsSize);
+		
+	// The Legend of Kyrandia
+	_menu[0].menuName = _guiStrings[0];
+	// Load a Game
+	_menu[0].item[0].itemString = _guiStrings[1];
+	// Save a Game
+	_menu[0].item[1].itemString = _guiStrings[2];
+	// Game controls
+	_menu[0].item[2].itemString = _guiStrings[3];
+	// Quit playing
+	_menu[0].item[3].itemString = _guiStrings[4];
+	// Resume game
+	_menu[0].item[4].itemString = _guiStrings[5];
+
+	// Cancel
+	_menu[2].item[5].itemString = _guiStrings[10];
+	
+	// Enter a description of your saved game:
+	_menu[3].menuName = _guiStrings[11];
+	// Save
+	_menu[3].item[0].itemString = _guiStrings[12];
+	// Cancel
+	_menu[3].item[1].itemString = _guiStrings[10];
+
+	// Rest in peace, Brandon
+	_menu[4].menuName = _guiStrings[13];
+	// Load a game
+	_menu[4].item[0].itemString = _guiStrings[1];
+	// Quit playing
+	_menu[4].item[1].itemString = _guiStrings[4];
+	
+	// Game Controls
+	_menu[5].menuName = _guiStrings[6];
+	// Yes
+	_menu[1].item[0].itemString = _guiStrings[22 + offset];
+	// No
+	_menu[1].item[1].itemString = _guiStrings[23 + offset];
+		
+	// Music is
+	_menu[5].item[0].labelString = _guiStrings[26 + offset];
+	// Sounds are
+	_menu[5].item[1].labelString = _guiStrings[27 + offset];
+	// Walk speed
+	_menu[5].item[2].labelString = &_guiStrings[24 + offset][walkspeedGarbageOffset];
+	// Text speed
+	_menu[5].item[4].labelString = _guiStrings[25 + offset];
+	// Main Menu
+	_menu[5].item[5].itemString = _guiStrings[19 + offset];
+	
+	if (_features & GF_TALKIE) {
+		// Text & Voice
+		_voiceTextString = _guiStrings[28 + offset];
+	}
+	_textSpeedString = _guiStrings[25 + offset];
+	_onString =  _guiStrings[20 + offset];
+	_offString =  _guiStrings[21 + offset];
+}
+
 int KyraEngine::buttonMenuCallback(Button *caller) {
 	_displayMenu = true;
 
-	// XXX setLabels
+	assert(_guiStrings);
+	assert(_configStrings);
+	
+	/*
+	for (int i = 0; i < _guiStringsSize; i++)
+		debug("GUI string %i: %s", i, _guiStrings[i]);
+
+	for (int i = 0; i < _configStringsSize; i++)
+		debug("Config string %i: %s", i, _configStrings[i]);
+	*/
+	
+	setGUILabels();
 	if (_currentCharacter->sceneId == 210 && _deathHandler == 0xFF) {
 		snd_playSoundEffect(0x36);
 		return 0;
@@ -685,8 +770,8 @@ int KyraEngine::gui_saveGameMenu(Button *button) {
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
-	_menu[2].menuName = "Select a position to save to:";
-	_specialSavegameString = "[ EMPTY SLOT ]";
+	_menu[2].menuName = _guiStrings[8]; // Select a position to save to:
+	_specialSavegameString = _guiStrings[9]; // [ EMPTY SLOT ]
 	for (int i = 0; i < 5; i++)
 		_menu[2].item[i].callback = &KyraEngine::gui_saveGame;
 
@@ -729,8 +814,8 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
-	_specialSavegameString = "[ START A NEW GAME ]";
-	_menu[2].menuName = "Which game would you like to reload?";	
+	_specialSavegameString = _newGameString[0]; //[ START A NEW GAME ]
+	_menu[2].menuName = _guiStrings[7]; // Which game would you like to reload?
 	for (int i = 0; i < 5; i++)
 		_menu[2].item[i].callback = &KyraEngine::gui_loadGame;
 
@@ -879,7 +964,7 @@ int KyraEngine::gui_quitPlaying(Button *button) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_quitPlaying()");
 	processMenuButton(button);
 
-	if (gui_quitConfirm("Are you sure you want to quit playing?"))
+	if (gui_quitConfirm(_guiStrings[14])) // Are you sure you want to quit playing?
 		quitGame();
 	else {
 		initMenu(_menu[_toplevelMenu]);
@@ -946,14 +1031,14 @@ int KyraEngine::gui_gameControlsMenu(Button *button) {
 			_menu[5].item[i].width = 94;
 		}
 
-		_menu[5].item[3].labelString = "Voice / Text ";
+		_menu[5].item[3].labelString = _voiceTextString; //"Voice / Text "
 		_menu[5].item[3].callback = &KyraEngine::gui_controlsChangeVoice;
 
 	} else {
 		_menu[5].height = 136;
 		_menu[5].item[5].y = 110;
 		_menu[5].item[4].enabled = 0;
-		_menu[5].item[3].labelString = "Text speed ";
+		_menu[5].item[3].labelString = _textSpeedString; // "Text speed "
 		_menu[5].item[3].callback = &KyraEngine::gui_controlsChangeText;
 	}
 
@@ -985,40 +1070,42 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_setupControls()");
 
 	if (_configMusic)
-		menu.item[0].itemString = "On";
+		menu.item[0].itemString = _onString; //"On"
 	else
-		menu.item[0].itemString = "Off";
+		menu.item[0].itemString = _offString; //"Off"
 
 	if (_configSounds)
-		menu.item[1].itemString = "On";
+		menu.item[1].itemString = _onString; //"On"
 	else
-		menu.item[1].itemString = "Off";
+		menu.item[1].itemString = _offString; //"Off"
 
 
 	switch (_configWalkspeed) {
 		case 0:
-			menu.item[2].itemString = "Slowest";
+			menu.item[2].itemString = _configStrings[0]; //"Slowest"
 			break;
 		case 1:
-			menu.item[2].itemString = "Slow";
+			menu.item[2].itemString = _configStrings[1]; //"Slow"
 			break;
 		case 2:
-			menu.item[2].itemString = "Normal";
+			menu.item[2].itemString = _configStrings[2]; //"Normal"
 			break;
 		case 3:
-			menu.item[2].itemString = "Fast";
+			menu.item[2].itemString = _configStrings[3]; //"Fast"
 			break;
 		case 4:
-			menu.item[2].itemString = "Fastest";
+			menu.item[2].itemString = _configStrings[4]; //"Fastest"
 			break;
 		default:
 			menu.item[2].itemString = "ERROR";
 	}
 
 	int textControl = 3;
+	int clickableOffset = 8;
 	if (_features & GF_TALKIE) {
 		textControl = 4;
-
+		clickableOffset = 11;
+		
 		if (_configVoice == 0)
 			_menu[5].item[4].enabled = 1;
 		else
@@ -1026,13 +1113,13 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 
 		switch (_configVoice) {
 			case 0:
-				menu.item[3].itemString = "Text only";
+				menu.item[3].itemString = _configStrings[5]; //"Text only"
 				break;
 			case 1:
-				menu.item[3].itemString = "Voice & Text";
+				menu.item[3].itemString = _configStrings[6]; //"Voice & Text"
 				break;
 			case 2:
-				menu.item[3].itemString = "Voice only";
+				menu.item[3].itemString = _configStrings[7]; //"Voice only"
 				break;
 			default:
 				menu.item[3].itemString = "ERROR";
@@ -1041,16 +1128,16 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 
 	switch (_configTextspeed) {
 		case 0:
-			menu.item[textControl].itemString = "Slow";
+			menu.item[textControl].itemString = _configStrings[1]; //"Slow"
 			break;
 		case 1:
-			menu.item[textControl].itemString = "Normal";
+			menu.item[textControl].itemString = _configStrings[2]; //"Normal"
 			break;
 		case 2:
-			menu.item[textControl].itemString = "Fast";
+			menu.item[textControl].itemString = _configStrings[3]; //"Fast"
 			break;
 		case 3:
-			menu.item[textControl].itemString = "Clickable";
+			menu.item[textControl].itemString = _configStrings[clickableOffset]; //"Clickable"
 			break;
 		default:
 			menu.item[textControl].itemString = "ERROR";

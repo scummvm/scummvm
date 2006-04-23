@@ -139,7 +139,8 @@ enum kKyraResources {
 	kFullFlaskString,
 
 	kVeryCleverString,
-
+	kNewGameString,
+	
 	kDefaultShapes,
 	kHealing1Shapes,
 	kHealing2Shapes,
@@ -155,6 +156,9 @@ enum kKyraResources {
 
 	kPaletteList,
 
+	kGUIStrings,
+	kConfigStrings,
+	
 	kMaxResIDs
 };
 

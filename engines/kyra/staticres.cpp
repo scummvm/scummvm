@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 11
+#define RESFILE_VERSION 12
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -100,7 +100,12 @@ bool StaticResource::init() {
 		{ kFlaskFullString, kLanguageList, "FLASKFULL." },
 		{ kFullFlaskString, kLanguageList, "FULLFLASK." },
 		{ kVeryCleverString, kLanguageList, "VERYCLEVER." },
+		{ kNewGameString, kLanguageList, "NEWGAME." },
 
+		// GUI strings table
+		{ kGUIStrings, kLanguageList, "GUISTRINGS." },
+		{ kConfigStrings, kLanguageList, "CONFIGSTRINGS." },
+		
 		// ROOM table/filenames
 		{ Kyra::kRoomList, StaticResource::kRoomList, "ROOM-TABLE.ROOM" },
 		{ kRoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
@@ -567,7 +572,8 @@ void KyraEngine::initStaticResource() {
 	_fullFlask = _staticres->loadStrings(kFullFlaskString, _fullFlask_Size);
 	_veryClever = _staticres->loadStrings(kVeryCleverString, _veryClever_Size);
 	_homeString = _staticres->loadStrings(kOutroHomeString, _homeString_Size);
-
+	_newGameString = _staticres->loadStrings(kNewGameString, _newGameString_Size);
+	
 	_healingShapeTable = _staticres->loadShapeTable(kHealing1Shapes, _healingShapeTableSize);
 	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);	
 	_posionDeathShapeTable = _staticres->loadShapeTable(kPoisonDeathShapes, _posionDeathShapeTableSize);
@@ -588,6 +594,9 @@ void KyraEngine::initStaticResource() {
 	
 	_specialPalettes = _staticres->loadPaletteTable(kPaletteList, temp);
 
+	_guiStrings = _staticres->loadStrings(kGUIStrings, _guiStringsSize);
+	_configStrings = _staticres->loadStrings(kConfigStrings, _configStringsSize);
+	
 	// copied static res
 
 	// room list
@@ -1067,30 +1076,30 @@ Button KyraEngine::_menuButtonData[] = {
 };
 
 Menu KyraEngine::_menu[] = {
-	{ -1, -1, 208, 136, 248, 249, 250, "The Legend of Kyrandia", 251, -1, 8, 0, 5, -1, -1, -1, -1, 
+	{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1, 
 		{
-			{1, 0, 0, "Load a Game", -1, -1, 30, 148, 15, 252, 253, 24, 0,
+			{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
 			248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Save this Game", -1, -1, 47, 148, 15, 252, 253, 24, 0,
+			{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
 			248, 249, 250, &KyraEngine::gui_saveGameMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Game Controls", -1, -1, 64, 148, 15, 252, 253, 24, 0,
+			{1, 0, 0, 0, -1, -1, 64, 148, 15, 252, 253, 24, 0,
 			248, 249, 250, &KyraEngine::gui_gameControlsMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Quit playing", -1, -1, 81, 148, 15, 252, 253, 24, 0,
+			{1, 0, 0, 0, -1, -1, 81, 148, 15, 252, 253, 24, 0,
 			248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Resume game", 86, 0, 110, 92, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 86, 0, 110, 92, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_resumeGame, -1, 0, 0, 0, 0, 0}
 		}
 	},
 	{ -1, -1, 288, 56, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1,
 		{
-			{1, 0, 0, "Yes", 24, 0, 30, 72, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 24, 0, 30, 72, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_quitConfirmYes, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "No", 192, 0, 30, 72, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 192, 0, 30, 72, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_quitConfirmNo, -1, 0, 0, 0, 0, 0}
 		}
 	},
@@ -1111,46 +1120,46 @@ Menu KyraEngine::_menu[] = {
 			{1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0,
 			248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Cancel", 184, 0, 134, 88, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 184, 0, 134, 88, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0},
 		}
 	},
-	{ -1, -1, 288, 67, 248, 249, 250, "Enter a description of your saved game:", 251, -1, 8, 0, 3, -1, -1, -1, -1,
+	{ -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 3, -1, -1, -1, -1,
 		{
-			{1, 0, 0, "Save", 24, 0, 44, 72, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 24, 0, 44, 72, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_savegameConfirm, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Cancel", 192, 0, 44, 72, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 192, 0, 44, 72, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
 		}
 	},
-	{ -1, -1, 208, 76, 248, 249, 250, "Rest in peace, Brandon.", 251, -1, 8, 0, 2, -1, -1, -1, -1, 
+	{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1, 
 		{
-			{1, 0, 0, "Load a game", -1, -1, 30, 148, 15, 252, 253, 24, 0,
+			{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
 			248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, "Quit playing", -1, -1, 47, 148, 15, 252, 253, 24, 0,
+			{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
 			248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
 		}
 	},
-	{ -1, -1, 208, 153, 248, 249, 250, "Game Controls", 251, -1, 8, 0, 6, -1, -1, -1, -1, 
+	{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1, 
 		{
 			{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeMusic, -1, "Music is ", 34, 32, 0, 0},
+			248, 249, 250, &KyraEngine::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
 
  			{1, 0, 0, 0, 110, 0, 47, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeSounds, -1, "Sounds are ", 34, 49, 0, 0},
+			248, 249, 250, &KyraEngine::gui_controlsChangeSounds, -1, 0, 34, 49, 0, 0},
 
  			{1, 0, 0, 0, 110, 0, 64, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeWalk, -1, "Walk speed ", 34, 66, 0, 0},
+			248, 249, 250, &KyraEngine::gui_controlsChangeWalk, -1, 0, 34, 66, 0, 0},
 
 			{1, 0, 0, 0, 110, 0, 81, 64, 15, 252, 253, 5, 0,
 			248, 249, 250, 0, -1, 0, 34, 83, 0, 0 },
 
 			{1, 0, 0, 0, 110, 0, 98, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeText, -1, "Text speed ", 34, 100, 0, 0 },
+			248, 249, 250, &KyraEngine::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
 
-			{1, 0, 0, "Main Menu", 64, 0, 127, 92, 15, 252, 253, -1, 255,
+			{1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255,
 			248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, -0, 0, 0, 0, 0}
 		}
 	}
