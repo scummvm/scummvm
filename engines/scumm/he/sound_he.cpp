@@ -282,7 +282,7 @@ void SoundHE::setOverrideFreq(int freq) {
 void SoundHE::setupHEMusicFile() {
 	int i, total_size;
 	Common::File musicFile;
-	Common::String buf(_vm->generateFilename(4));
+	Common::String buf(_vm->generateFilename(-4));
 
 	if (musicFile.open(buf) == true) {
 		musicFile.seek(4, SEEK_SET);
@@ -475,7 +475,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 	if (soundID > _vm->_numSounds) {
 		int music_offs;
 		Common::File musicFile;
-		Common::String buf(_vm->generateFilename(4));
+		Common::String buf(_vm->generateFilename(-4));
 
 		if (musicFile.open(buf) == false) {
 			warning("playHESound: Can't open music file %s", buf.c_str());
@@ -634,6 +634,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	if (ConfMan.getBool("speech_mute"))
 		return;
 
+	assert(_sfxFile);
 	if (!_sfxFile->isOpen()) {
 		error("startHETalkSound: Speech file is not open");
 		return;

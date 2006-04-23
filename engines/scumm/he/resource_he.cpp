@@ -159,7 +159,7 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	fi.file = new Common::File;
 
 	if (_fileName.empty()) { // We are running for the first time
-		_fileName = _vm->generateFilename(3);
+		_fileName = _vm->generateFilename(-3);
 	}
 
 
@@ -1282,7 +1282,7 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 	int size;
 
 	if (_fileName.empty()) { // We are running for the first time
-		_fileName = _vm->generateFilename(3);
+		_fileName = _vm->generateFilename(-3);
 
 		// Some programs write it as .bin. Try that too
 		if (!in.exists(_fileName)) {
@@ -1637,6 +1637,8 @@ void ScummEngine_v70he::readRoomsOffsets() {
 void ScummEngine_v70he::readGlobalObjects() {
 	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
+	assert(_objectStateTable);
+	assert(_objectOwnerTable);
 
 	_fileHandle->read(_objectStateTable, num);
 	_fileHandle->read(_objectOwnerTable, num);

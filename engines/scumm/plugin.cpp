@@ -760,7 +760,7 @@ const MD5Table *findInMD5Table(const char *md5) {
 }
 
 Common::String ScummEngine::generateFilename(const int room) const {
-	const int diskNumber = room ? res.roomno[rtRoom][room] : 0;
+	const int diskNumber = (room > 0) ? res.roomno[rtRoom][room] : 0;
 	char buf[128];
 
 	if (_game.version == 4) {
@@ -784,8 +784,9 @@ Common::String ScummEngine::generateFilename(const int room) const {
 		case kGenHEMac:
 		case kGenHEMacNoParens:
 		case kGenHEPC:
-			// FIXME: Not sure if the following HE section is quite correct...
-			if (_game.heversion >= 98) {
+			if (room < 0) {
+				id = '0' - room;
+			} else if (_game.heversion >= 98) {
 				int disk = 0;
 				if (_heV7DiskOffsets)
 					disk = _heV7DiskOffsets[room];
