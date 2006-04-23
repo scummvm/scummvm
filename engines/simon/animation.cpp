@@ -247,7 +247,7 @@ void MoviePlayer::processFrame() {
 	memcpy(_vm->_frontBuf, _frameBuffer1, _frameSize);
 	_vm->_system->copyRectToScreen(_vm->_frontBuf, _width, x, y, _width, _height);
 
-	if ((_bgSoundStream == NULL) || ((_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
+	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
 		_frameSkipped > _frameRate) {
 		if (_frameSkipped > _frameRate) {
 			warning("force frame %i redraw", _frameNum);
