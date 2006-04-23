@@ -50,6 +50,13 @@
 #include "gui/launcher.h"
 #endif
 
+
+//#define DETECTOR_TESTING_HACK
+
+#ifdef DETECTOR_TESTING_HACK
+#include "backends/fs/fs.h"
+#endif
+
 #ifdef PALMOS_68K
 #include "args.h"
 #endif
@@ -284,6 +291,55 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		listGames();
 		return 0;
 	}
+
+
+#ifdef DETECTOR_TESTING_HACK
+	// HACK: The following code can be used to test the detection code of our
+	// engines. Basically, it loops over all targets, and calls the detector
+	// for the given path. It then prints out the result and also checks
+	// whether the result agrees with the settings of the target.
+	
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		Common::String name(iter->_key);
+		Common::String gameid(iter->_value.get("gameid"));
+		Common::String path(iter->_value.get("path"));
+		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
+				name.c_str(), gameid.c_str(), path.c_str());
+		if (path.empty()) {
+			printf(" ... no path specified, skipping\n");
+			continue;
+		}
+		if (gameid.empty()) {
+			gameid = name;
+		}
+		
+		FilesystemNode dir(path);
+		FSList files = dir.listDir(FilesystemNode::kListAll);
+		DetectedGameList candidates(PluginManager::instance().detectGames(files));
+		
+		if (candidates.empty()) {
+			printf(" FAILURE: No games detected\n");
+		} else if (candidates.size() > 1) {
+			printf(" FAILURE: Multiple games detected\n");
+		} else if (scumm_stricmp(gameid.c_str(), candidates.begin()->gameid.c_str())) {
+			printf(" FAILURE: Wrong gameid detected\n");
+		} else {
+			printf(" SUCCESS: Game was detected correctl\n");
+		}
+		
+		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
+			printf("    gameid '%s', language '%s', platform '%s'\n",
+					x->gameid.c_str(),
+					Common::getLanguageCode(x->language),
+					Common::getPlatformCode(x->platform));
+		}
+	}
+	
+	return 0;
+
+#endif
 	
 
 	// Process the remaining command line settings
