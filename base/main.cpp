@@ -336,8 +336,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		}
 		
 		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
-			printf("    gameid '%s', language '%s', platform '%s'\n",
+			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
 					x->gameid.c_str(),
+					x->description.c_str(),
 					Common::getLanguageCode(x->language),
 					Common::getPlatformCode(x->platform));
 		}
