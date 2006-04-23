@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef SCUMM_SOUND_H
+#define SCUMM_SOUND_H
 
 #include "common/scummsys.h"
 #include "sound/audiostream.h"
@@ -43,12 +43,10 @@ enum {
 	kTalkSoundID = 10000
 };
 
+// TODO: Consider splitting Sound into even more subclasses.
+// E.g. for v1-v4, v5, v6+, ...
 class Sound : public Serializable {
-#ifdef PALMOS_MODE
 public:
-#else
-protected:
-#endif
 	enum SoundMode {
 		kVOCMode,
 		kMP3Mode,
@@ -56,9 +54,7 @@ protected:
 		kFlacMode
 	};
 
-#ifdef PALMOS_MODE
 protected:
-#endif
 	ScummEngine *_vm;
 
 	int16 _soundQuePos, _soundQue[0x100];
@@ -88,14 +84,6 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 
-	struct HEMusic{
-		int32 id;
-		int32 offset;
-		int32 size;
-	};
-	HEMusic *_heMusic;
-	int16 _heMusicTracks;
-
 public: // Used by createSound()
 	struct {
 		int sound;
@@ -107,30 +95,28 @@ public: // Used by createSound()
 
 public:
 	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
-	Audio::SoundHandle _heSoundChannels[8];
 
 	bool _soundsPaused;
 	byte _sfxMode;
 
 public:
 	Sound(ScummEngine *parent);
-	~Sound();
-	void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
-	void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
+	virtual ~Sound();
+	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
+	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 	void processSound();
-	void processSoundQueues();
 
 	void playSound(int soundID);
 	void startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
-	int isSoundRunning(int sound) const;
+	virtual int isSoundRunning(int sound) const;
 	bool isSoundInUse(int sound) const;
-	void stopSound(int sound);
+	virtual void stopSound(int sound);
 	void stopAllSounds();
 	void soundKludge(int *list, int num);
 	void talkSound(uint32 a, uint32 b, int mode, int channel = 0);
-	void setupSound();
+	virtual void setupSound();
 	void pauseSounds(bool pause);
 
 	void startCDTimer();
@@ -142,21 +128,6 @@ public:
 	void updateCD();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
-	// HE specific
-	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
-	int findFreeSoundChannel();
-	int isSoundCodeUsed(int sound);
-	int getSoundPos(int sound);
-	int getSoundVar(int sound, int var);
-	void setSoundVar(int sound, int var, int val);
-	void playHESound(int soundID, int heOffset, int heChannel, int heFlags);
-	void processSoundCode();
-	void processSoundOpcodes(int sound, byte *codePtr, int *soundVars);
-	void setOverrideFreq(int freq);
-	void setupHEMusicFile();
-	void startHETalkSound(uint32 offset);
-	void stopSoundChannel(int chan);
-
 	// Used by the save/load system:
 	void saveLoadWithSerializer(Serializer *ser);
 
@@ -166,6 +137,8 @@ protected:
 	void processSfxQueues();
 
 	bool isSoundInQueue(int sound) const;
+
+	virtual void processSoundQueues();
 };
 
 /**

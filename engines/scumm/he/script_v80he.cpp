@@ -34,7 +34,7 @@
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 
 namespace Scumm {
 
@@ -432,7 +432,7 @@ void ScummEngine_v80he::o80_stringToInt() {
 void ScummEngine_v80he::o80_getSoundVar() {
 	int var = pop();
 	int snd = pop();
-	push(_sound->getSoundVar(snd, var));
+	push(((SoundHE *)_sound)->getSoundVar(snd, var));
 }
 
 void ScummEngine_v80he::o80_localizeArrayToRoom() {

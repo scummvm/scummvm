@@ -31,7 +31,7 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
@@ -1151,7 +1151,7 @@ void ScummEngine_v60he::o60_soundOps() {
 		// Fatty Bear's Birthday surprise uses this when playing the
 		// piano, but only when using one of the digitized instruments.
 		// See also o6_startSound().
-		_sound->setOverrideFreq(arg);
+		((SoundHE *)_sound)->setOverrideFreq(arg);
 		break;
 	default:
 		error("o60_soundOps: default case 0x%x", subOp);

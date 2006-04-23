@@ -33,7 +33,7 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
@@ -1154,8 +1154,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
 			int talkState = 0;
 
-			if (_vm->_sound->isSoundCodeUsed(1))
-				talkState = _vm->_sound->getSoundVar(1, 19);
+			if (((SoundHE *)_vm->_sound)->isSoundCodeUsed(1))
+				talkState = ((SoundHE *)_vm->_sound)->getSoundVar(1, 19);
 			if (talkState == 0)
 				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
 

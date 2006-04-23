@@ -36,7 +36,7 @@
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/verbs.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 
 namespace Scumm {
 
@@ -288,7 +288,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
-				_sound->startHETalkSound(talk_sound_a);
+				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
 			} else {
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 			}
@@ -358,7 +358,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			}
 			value[i] = 0;
 			talk_sound_b = atoi(value);
-			_sound->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -381,7 +381,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			value[i] = 0;
 			talk_sound_a = atoi(value);
 			talk_sound_b = 0;
-			_sound->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
 			break;
 		case 119:
 			_haveMsg = 0xFF;

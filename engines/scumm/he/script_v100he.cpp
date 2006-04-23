@@ -32,7 +32,7 @@
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/util.h"
 
@@ -1714,7 +1714,7 @@ void ScummEngine_v100he::o100_startSound() {
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
-		_sound->setSoundVar(_heSndSoundId, var, value);
+		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
 	case 92:
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);

@@ -78,11 +78,8 @@ Sound::Sound(ScummEngine *parent)
 	_currentCDSound(0),
 	_currentMusic(0),
 	_soundsPaused(false),
-	_sfxMode(0),
-	_heMusic(0),
-	_heMusicTracks(0) {
+	_sfxMode(0) {
 
-	memset(_heChannel, 0, sizeof(_heChannel));
 	memset(_soundQue, 0, sizeof(_soundQue));
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
@@ -91,19 +88,11 @@ Sound::Sound(ScummEngine *parent)
 Sound::~Sound() {
 	stopCDTimer();
 	delete _sfxFile;
-
-	// HE Specific
-	free(_heMusic);
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
-
-	if (heFlags & 16) {
-		playHESound(sound, heOffset, heChannel, heFlags);
-		return;
-	}
 
 	// HE music resources are in separate file
 	if (sound <= _vm->_numSounds)
@@ -113,14 +102,6 @@ void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags)
 }
 
 void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
-	if (_vm->_game.heversion >= 60 && _soundQue2Pos) {
-		int i = _soundQue2Pos;
-		while (i--) {
-			if (_soundQue2[i].sound == sound && !(heFlags & 2))
-				return;
-		}
-	}
-
 	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
 	_soundQue2[_soundQue2Pos].sound = sound;
 	_soundQue2[_soundQue2Pos].offset = heOffset;
@@ -144,37 +125,14 @@ void Sound::processSound() {
 
 void Sound::processSoundQueues() {
 	int i = 0, num;
-	int snd, heOffset, heChannel, heFlags;
+	int snd;
 	int data[16];
 
-	if (_vm->_game.heversion >= 72) {
-		for (i = 0; i <_soundQue2Pos; i++) {
-			snd = _soundQue2[i].sound;
-			heOffset = _soundQue2[i].offset;
-			heChannel = _soundQue2[i].channel;
-			heFlags = _soundQue2[i].flags;
-			if (snd) {
-				if (_vm->_game.heversion>= 60)
-					playHESound(snd, heOffset, heChannel, heFlags);
-				else
-					playSound(snd);
-			}
-		}
-		_soundQue2Pos = 0;
-	} else {
-		while (_soundQue2Pos) {
-			_soundQue2Pos--;
-			snd = _soundQue2[_soundQue2Pos].sound;
-			heOffset = _soundQue2[_soundQue2Pos].offset;
-			heChannel = _soundQue2[_soundQue2Pos].channel;
-			heFlags = _soundQue2[_soundQue2Pos].flags;
-			if (snd) {
-				if (_vm->_game.heversion>= 60)
-					playHESound(snd, heOffset, heChannel, heFlags);
-				else
-					playSound(snd);
-			}
-		}
+	while (_soundQue2Pos) {
+		_soundQue2Pos--;
+		snd = _soundQue2[_soundQue2Pos].sound;
+		if (snd)
+			playSound(snd);
 	}
 
 	while (i < _soundQuePos) {
@@ -726,18 +684,6 @@ int Sound::isSoundRunning(int sound) const {
 	if (sound == _currentCDSound)
 		return pollCD();
 
-	if (_vm->_game.heversion >= 70) {
-		if (sound >= 10000) {
-			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
-		}
-	} else if (_vm->_game.heversion >= 60) {
-		if (sound == -2) {
-			sound = _heChannel[0].sound;
-		} else if (sound == -1) {
-			sound = _currentMusic;
-		}
-	}
-
 	if (_vm->_mixer->isSoundIDActive(sound))
 		return 1;
 
@@ -814,18 +760,6 @@ bool Sound::isSoundInQueue(int sound) const {
 void Sound::stopSound(int sound) {
 	int i;
 
-	if (_vm->_game.heversion >= 70) {
-		if ( sound >= 10000) {
-			stopSoundChannel(sound - 10000);
-		}
-	} else if (_vm->_game.heversion >= 60) {
-		if (sound == -2) {
-			sound = _heChannel[0].sound;
-		} else if (sound == -1) {
-			sound = _currentMusic;
-		}
-	}
-
 	if (sound != 0 && sound == _currentCDSound) {
 		_currentCDSound = 0;
 		stopCD();
@@ -838,16 +772,6 @@ void Sound::stopSound(int sound) {
 	if (_vm->_musicEngine)
 		_vm->_musicEngine->stopSound(sound);
 
-	for (i = 0; i < ARRAYSIZE(_heChannel); i++) {
-		if (_heChannel[i].sound == sound) {
-			_heChannel[i].sound = 0;
-			_heChannel[i].priority = 0;
-			_heChannel[i].sbngBlock = 0;
-			_heChannel[i].codeOffs = 0;
-			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
-		}
-	}
-
 	for (i = 0; i < ARRAYSIZE(_soundQue2); i++) {
 		if (_soundQue2[i].sound == sound) {
 			_soundQue2[i].sound = 0;
@@ -856,12 +780,6 @@ void Sound::stopSound(int sound) {
 			_soundQue2[i].flags = 0;
 		}
 	}
-
-	if (_vm->_game.heversion >= 70 && sound == 1) {
-		_vm->_haveMsg = 3;
-		_vm->_talkDelay = 0;
-	}
-
 }
 
 void Sound::stopAllSounds() {
@@ -937,10 +855,6 @@ void Sound::setupSound() {
 	delete _sfxFile;
 
 	_sfxFile = openSfxFile();
-
-	if (_vm->_game.heversion >= 70) {
-		setupHEMusicFile();
-	}
 
 	if (_vm->_game.id == GID_FT) {
 		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFile->isOpen();

@@ -26,7 +26,7 @@
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/util.h"
 
 #include "common/config-manager.h"
@@ -45,7 +45,125 @@
 
 namespace Scumm {
 
-void Sound::stopSoundChannel(int chan) {
+SoundHE::SoundHE(ScummEngine *parent)
+	:
+	Sound(parent),
+	_heMusic(0),
+	_heMusicTracks(0) {
+
+	memset(_heChannel, 0, sizeof(_heChannel));
+}	
+
+SoundHE::~SoundHE() {
+	free(_heMusic);
+}
+
+void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
+	if (_vm->VAR_LAST_SOUND != 0xFF)
+		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+
+	if (heFlags & 16) {
+		playHESound(sound, heOffset, heChannel, heFlags);
+		return;
+	}
+
+	Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags);
+}
+
+void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
+	int i = _soundQue2Pos;
+	while (i--) {
+		if (_soundQue2[i].sound == sound && !(heFlags & 2))
+			return;
+	}
+	
+	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags);
+}
+
+void SoundHE::processSoundQueues() {
+	int snd, heOffset, heChannel, heFlags;
+
+	if (_vm->_game.heversion >= 72) {
+		for (int i = 0; i <_soundQue2Pos; i++) {
+			snd = _soundQue2[i].sound;
+			heOffset = _soundQue2[i].offset;
+			heChannel = _soundQue2[i].channel;
+			heFlags = _soundQue2[i].flags;
+			if (snd)
+				playHESound(snd, heOffset, heChannel, heFlags);
+		}
+		_soundQue2Pos = 0;
+	} else {
+		while (_soundQue2Pos) {
+			_soundQue2Pos--;
+			snd = _soundQue2[_soundQue2Pos].sound;
+			heOffset = _soundQue2[_soundQue2Pos].offset;
+			heChannel = _soundQue2[_soundQue2Pos].channel;
+			heFlags = _soundQue2[_soundQue2Pos].flags;
+			if (snd)
+				playHESound(snd, heOffset, heChannel, heFlags);
+		}
+	}
+
+	Sound::processSoundQueues();
+}
+
+int SoundHE::isSoundRunning(int sound) const {
+	if (_vm->_game.heversion >= 70) {
+		if (sound >= 10000) {
+			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
+		}
+	} else if (_vm->_game.heversion >= 60) {
+		if (sound == -2) {
+			sound = _heChannel[0].sound;
+		} else if (sound == -1) {
+			sound = _currentMusic;
+		}
+	}
+
+	return Sound::isSoundRunning(sound);
+}
+
+void SoundHE::stopSound(int sound) {
+	if (_vm->_game.heversion >= 70) {
+		if ( sound >= 10000) {
+			stopSoundChannel(sound - 10000);
+		}
+	} else if (_vm->_game.heversion >= 60) {
+		if (sound == -2) {
+			sound = _heChannel[0].sound;
+		} else if (sound == -1) {
+			sound = _currentMusic;
+		}
+	}
+
+	Sound::stopSound(sound);
+
+	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
+		if (_heChannel[i].sound == sound) {
+			_heChannel[i].sound = 0;
+			_heChannel[i].priority = 0;
+			_heChannel[i].sbngBlock = 0;
+			_heChannel[i].codeOffs = 0;
+			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
+		}
+	}
+
+	if (_vm->_game.heversion >= 70 && sound == 1) {
+		_vm->_haveMsg = 3;
+		_vm->_talkDelay = 0;
+	}
+}
+
+void SoundHE::setupSound() {
+	Sound::setupSound();
+
+	if (_vm->_game.heversion >= 70) {
+		setupHEMusicFile();
+	}
+}
+
+void SoundHE::stopSoundChannel(int chan) {
 	if (_heChannel[chan].sound == 1) {
 		_vm->_haveMsg = 3;
 		_vm->_talkDelay = 0;
@@ -69,7 +187,7 @@ void Sound::stopSoundChannel(int chan) {
 	}
 }
 
-int Sound::findFreeSoundChannel() {
+int SoundHE::findFreeSoundChannel() {
 	int chan, min;
 
 	min = _vm->VAR(_vm->VAR_RESERVED_SOUND_CHANNELS);
@@ -90,7 +208,7 @@ int Sound::findFreeSoundChannel() {
 	return min;
 }
 
-int Sound::isSoundCodeUsed(int sound) {
+int SoundHE::isSoundCodeUsed(int sound) {
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
@@ -104,7 +222,7 @@ int Sound::isSoundCodeUsed(int sound) {
 	}
 }
 
-int Sound::getSoundPos(int sound) {
+int SoundHE::getSoundPos(int sound) {
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
@@ -119,7 +237,7 @@ int Sound::getSoundPos(int sound) {
 	}
 }
 
-int Sound::getSoundVar(int sound, int var) {
+int SoundHE::getSoundVar(int sound, int var) {
 	if (_vm->_game.heversion >= 90 && var == 26) {
 		return isSoundCodeUsed(sound);
 	}
@@ -140,7 +258,7 @@ int Sound::getSoundVar(int sound, int var) {
 	}
 }
 
-void Sound::setSoundVar(int sound, int var, int val) {
+void SoundHE::setSoundVar(int sound, int var, int val) {
 	checkRange(25, 0, var, "Illegal sound variable %d");
 
 	int chan = -1;
@@ -155,11 +273,11 @@ void Sound::setSoundVar(int sound, int var, int val) {
 	}
 }
 
-void Sound::setOverrideFreq(int freq) {
+void SoundHE::setOverrideFreq(int freq) {
 	_overrideFreq = freq;
 }
 
-void Sound::setupHEMusicFile() {
+void SoundHE::setupHEMusicFile() {
 	int i, total_size;
 	Common::File musicFile;
 	Common::String buf(_vm->generateFilename(4));
@@ -191,7 +309,7 @@ void Sound::setupHEMusicFile() {
 	}
 }
 
-bool Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
+bool SoundHE::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	int i;
 
 	for (i = 0; i < _heMusicTracks; i++) {
@@ -205,7 +323,7 @@ bool Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	return 0;
 }
 
-void Sound::processSoundCode() {
+void SoundHE::processSoundCode() {
 	byte *codePtr;
 	int chan, tmr, size, time;
 
@@ -252,7 +370,7 @@ void Sound::processSoundCode() {
 	}
 }
 
-void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
+void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 	int arg, opcode, var, val;
 
 	while(READ_LE_UINT16(codePtr) != 0) {
@@ -329,7 +447,7 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 	}
 }
 
-void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
+void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte *ptr, *spoolPtr;
 	int size = -1;
 	int priority, rate;
@@ -507,7 +625,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	}
 }
 
-void Sound::startHETalkSound(uint32 offset) {
+void SoundHE::startHETalkSound(uint32 offset) {
 	byte *ptr;
 	int32 size;
 

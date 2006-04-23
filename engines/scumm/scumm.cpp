@@ -45,6 +45,7 @@
 #include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
@@ -944,7 +945,10 @@ int ScummEngine::init() {
 		_system->openCD(cd_num);
 
 	// Create the sound manager
-	_sound = new Sound(this);
+	if (_game.heversion > 0)
+		_sound = new SoundHE(this);
+	else
+		_sound = new Sound(this);
 
 	// Setup the music engine
 	setupMusic(_game.midi);
@@ -1762,7 +1766,7 @@ load_game:
 	}
 
 	if (_game.heversion >= 80) {
-		_sound->processSoundCode();
+		((SoundHE *)_sound)->processSoundCode();
 	}
 	runAllScripts();
 	checkExecVerbs();

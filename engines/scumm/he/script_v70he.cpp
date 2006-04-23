@@ -33,7 +33,7 @@
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
@@ -438,7 +438,7 @@ void ScummEngine_v70he::o70_startSound() {
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
-		_sound->setSoundVar(_heSndSoundId, var, value);
+		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
 	case 25:
 		value = pop();

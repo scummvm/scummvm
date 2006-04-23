@@ -35,7 +35,7 @@
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
@@ -847,7 +847,7 @@ void ScummEngine_v72he::o72_setTimer() {
 
 void ScummEngine_v72he::o72_getSoundPosition() {
 	int snd = pop();
-	push(_sound->getSoundPos(snd));
+	push(((SoundHE *)_sound)->getSoundPos(snd));
 }
 
 void ScummEngine_v72he::o72_startScript() {

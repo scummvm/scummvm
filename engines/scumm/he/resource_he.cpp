@@ -30,7 +30,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
-#include "scumm/sound.h"
+#include "scumm/he/sound_he.h"
 
 #include "sound/wave.h"
 
@@ -1762,7 +1762,7 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 	int offs, size;
 
 	if (id > _numSounds) {
-		if (!_sound->getHEMusicDetails(id, offs, size)) {
+		if (!((SoundHE *)_sound)->getHEMusicDetails(id, offs, size)) {
 			debug(0, "getSoundResourceSize: musicID %d not found", id);
 			return 0;
 		}
