@@ -941,7 +941,7 @@ BaseScummFile *Sound::openSfxFile() {
 
 	if (!file->isOpen()) {
 		if ((_vm->_game.heversion <= 61 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
-			strncpy(buf, _vm->generateFilename(2).c_str(), sizeof(buf));
+			strncpy(buf, _vm->generateFilename(-2).c_str(), sizeof(buf));
 		} else {
 			sprintf(buf, "%s.tlk", _vm->_filenamePattern.pattern);
 		}
