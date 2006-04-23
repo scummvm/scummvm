@@ -265,7 +265,6 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 		if (_vm->getGameType() == GType_SIMON1)
 			loadSfxFile(gss);
 	}
-
 }
 
 Sound::~Sound() {
@@ -585,7 +584,7 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 	playSoundData(&_voiceHandle, soundData, sound);
 }
 
-void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, uint pan, uint vol, bool loop) {
+void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
 	byte *buffer, flags;
 	uint16 compType;
 	int blockAlign, rate;
@@ -594,6 +593,38 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	Common::MemoryReadStream stream(soundData, size);
 	if (!loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
 		error("playSoundData: Not a valid WAV data");
+	}
+
+	// The Feeble Files originally used DirectSound, which specifies volume
+	// and panning differently than ScummVM does, using a logarithmic scale
+	// rather than a linear one.
+	//
+	// Volume is a value between -10,000 and 0.
+	// Panning is a value between -10,000 and 10,000.
+	//
+	// In both cases, the -10,000 represents -100 dB. When panning, only
+	// one speaker's volume is affected - just like in ScummVM - with
+	// negative values affecting the left speaker, and positive values
+	// affecting the right speaker. Thus -10,000 means the left speaker is
+	// silent.
+
+	int v, p;
+
+	vol = CLIP(vol, -10000, 0);
+	pan = CLIP(pan, -10000, 10000);
+
+	if (vol) {
+		v = (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, (double)vol / 2000.0) + 0.5);
+	} else {
+		v = Audio::Mixer::kMaxChannelVolume;
+	}
+
+	if (pan < 0) {
+		p = (int)(255.0 * pow(10.0, (double)pan / 2000.0) + 127.5);
+	} else if (pan > 0) {
+		p = (int)(255.0 * pow(10.0, (double)pan / -2000.0) - 127.5);
+	} else {
+		p = 0;
 	}
 
 	if (loop == true)
@@ -610,7 +641,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		memcpy(buffer, soundData + stream.pos(), size);
 	}
 
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, -1, v, p);
 }
 
 void Sound::stopSfx5() {

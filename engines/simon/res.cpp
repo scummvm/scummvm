@@ -710,7 +710,7 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	return dst;
 }
 
-void SimonEngine::loadSound(uint sound, uint pan, uint vol, uint type) {
+void SimonEngine::loadSound(uint sound, int pan, int vol, uint type) {
 	byte *dst;
 
 	if (getFeatures() & GF_ZLIBCOMP) {

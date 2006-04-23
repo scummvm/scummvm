@@ -1965,8 +1965,8 @@ void SimonEngine::vc52_playSound() {
 	}
 
 	if (getGameType() == GType_FF) {
-		uint16 pan = vcReadNextWord();
-		uint16 vol = vcReadNextWord();
+		int16 pan = vcReadNextWord();
+		int16 vol = vcReadNextWord();
 
 		if (ambient)
 			loadSound(sound, pan, vol, 2);
@@ -1986,11 +1986,11 @@ void SimonEngine::vc52_playSound() {
 
 void SimonEngine::vc53_panSFX() {
 	VgaSprite *vsp = findCurSprite();
-	int32 pan;
+	int pan;
 
 	uint16 sound = vcReadNextWord();
 	int16 xoffs = vcReadNextWord();
-	uint16 vol = vcReadNextWord();
+	int16 vol = vcReadNextWord();
 
 	pan = (vsp->x - _scrollX + xoffs) * 8 - 2560;
 	if (pan < -10000)
@@ -2488,8 +2488,8 @@ void SimonEngine::vc82_getPathValue() {
 
 void SimonEngine::vc83_playSoundLoop() {
 	uint sound = vcReadNextWord();
-	uint vol = vcReadNextWord();
-	uint pan = vcReadNextWord();
+	int16 vol = vcReadNextWord();
+	int16 pan = vcReadNextWord();
 
 	loadSound(sound, pan, vol, 3);
 }

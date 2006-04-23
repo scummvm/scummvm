@@ -496,7 +496,7 @@ protected:
 	void loadGamePcFile();
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
-	void loadSound(uint sound, uint pan, uint vol, uint type);
+	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
 
 	void palette_fadeout(uint32 *pal_values, uint num);
