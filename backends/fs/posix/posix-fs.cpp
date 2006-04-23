@@ -49,7 +49,7 @@ protected:
 
 public:
 	POSIXFilesystemNode();
-	POSIXFilesystemNode(const String &path);
+	POSIXFilesystemNode(const String &path, bool useStat = false);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -77,7 +77,7 @@ AbstractFilesystemNode *FilesystemNode::getRoot() {
 }
 
 AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
-	return new POSIXFilesystemNode(path);
+	return new POSIXFilesystemNode(path, true);
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
@@ -103,13 +103,21 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 	_isDirectory = true;
 }
 
-POSIXFilesystemNode::POSIXFilesystemNode(const String &p) {
+POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool useStat) {
 	assert(p.size() > 0);
 
 	_path = p;
 	_displayName = lastPathComponent(_path);
 	_isValid = true;
 	_isDirectory = true;
+
+#ifndef __DC__
+	if (useStat) {
+		struct stat st;
+		_isValid = (0 == stat(_path.c_str(), &st));
+		_isDirectory = S_ISDIR(st.st_mode);
+	}
+#endif
 }
 
 FSList POSIXFilesystemNode::listDir(ListMode mode) const {
