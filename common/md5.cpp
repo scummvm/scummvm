@@ -247,6 +247,10 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 		return false;
 	}
 
+#ifdef DISABLE_MD5
+	memset(digest, 0, 16);
+#else
+
 	if (!restricted || sizeof(buf) <= length)
 		readlen = sizeof(buf);
 	else
@@ -266,6 +270,7 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 	}
 
 	md5_finish(&ctx, digest);
+#endif
 	return true;
 }
 
