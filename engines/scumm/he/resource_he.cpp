@@ -42,7 +42,6 @@ namespace Scumm {
 ResExtractor::ResExtractor(ScummEngine_v70he *scumm)
 	: _vm(scumm) {
 
-	_fileName[0] = 0;
 	memset(_cursorCache, 0, sizeof(_cursorCache));
 }
 
@@ -159,21 +158,15 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	fi.memory = NULL;
 	fi.file = new Common::File;
 
-	if (!_fileName[0]) { // We are running for the first time
-		snprintf(_fileName, 256, "%s.he3", _vm->getBaseName());
-
-		if (_vm->_substResFileName.almostGameID != 0) {
-			char buf1[128];
-			_vm->generateSubstResFileName(_fileName, buf1, sizeof(buf1));
-			strcpy(_fileName, buf1);
-		}
+	if (_fileName.empty()) { // We are running for the first time
+		_fileName = _vm->generateFilename(3);
 	}
 
 
 	/* get file size */
 	fi.file->open(_fileName);
 	if (!fi.file->isOpen()) {
-		error("Cannot open file %s", _fileName);
+		error("Cannot open file %s", _fileName.c_str());
 	}
 
 	fi.total_size = fi.file->size();
@@ -1288,38 +1281,36 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 	Common::File in;
 	int size;
 
-	if (!_fileName[0]) // We are running for the first time
-		if (_vm->_substResFileName.almostGameID != 0) {
-			char buf1[128];
+	if (_fileName.empty()) { // We are running for the first time
+		_fileName = _vm->generateFilename(3);
 
-			snprintf(buf1, 128, "%s.he3", _vm->getBaseName());
-			_vm->generateSubstResFileName(buf1, _fileName, sizeof(buf1));
+		// Some programs write it as .bin. Try that too
+		if (!in.exists(_fileName)) {
+			Common::String tmp(_fileName);
+			
+			_fileName += ".bin";
 
-			// Some programs write it as .bin. Try that too
 			if (!in.exists(_fileName)) {
-				strcpy(buf1, _fileName);
-				snprintf(_fileName, 128, "%s.bin", buf1);
-
+				// And finally check if we have dumped resource fork
+				_fileName = tmp;
+				_fileName += ".bin";
 				if (!in.exists(_fileName)) {
-					// And finally check if we have dumped resource fork
-					snprintf(_fileName, 128, "%s.rsrc", buf1);
-					if (!in.exists(_fileName)) {
-						error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc",
-							  buf1, buf1, buf1);
-					}
+					error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc",
+						  tmp.c_str(), tmp.c_str(), tmp.c_str());
 				}
 			}
 		}
+	}
 
 	in.open(_fileName);
 	if (!in.isOpen()) {
-		error("Cannot open file %s", _fileName);
+		error("Cannot open file %s", _fileName.c_str());
 	}
 
 	// we haven't calculated it
 	if (_resOffset == -1) {
 		if (!init(in))
-			error("Resource fork is missing in file '%s'", _fileName);
+			error("Resource fork is missing in file '%s'", _fileName.c_str());
 		in.close();
 		in.open(_fileName);
 	}

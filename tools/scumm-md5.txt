@@ -24,8 +24,8 @@
 #       that their description in the launcher doesn't start with "Zak McKracken"
 #
 maniac	Maniac Mansion
-	d831f7c048574dd9d5d85db2a1468099	en	C64	-	-	-	
-	c4a7f7398ac9ae588940f9912ea5fd8f	de	C64	-	-	-	
+	d831f7c048574dd9d5d85db2a1468099	en	C64	C64	-	-	
+	c4a7f7398ac9ae588940f9912ea5fd8f	de	C64	C64	-	-	
 	7f45ddd6dbfbf8f80c0c0efea4c295bc	en	DOS	V1	V1	-	
 
 	d8d07efcb88f396bee0b402b10c3b1c9	us	NES	NES	-	-	
@@ -39,49 +39,49 @@ maniac	Maniac Mansion
 	3a5ec90d556d4920976c5578bfbfaf79	de	NES	NES	extracted	-	
 	6b5a3fef241e90d4b2e77f1e222773ee	se	NES	NES	extracted	-	
 
-	e781230da44a44e2f0770edb2b3b3633	en	Amiga	-	V2	-	dhewg, Andrea Petrucci
-	ce7733f185b838e248927c7ba1a04204	fr	Amiga	-	V2	-	Tobias Fleischer
-	9bc548e179cdb0767009401c094d0895	de	Amiga	-	V2	-	Norbert Lange
-	a570381b028972d891052ee1e51dc011	en	Atari	-	V2	-	Andreas Bylund
-	dd30a53035393baa5a5e222e716559af	fr	Atari	-	V2	-	Andreas Bylund
-	be83e882b44f2767bc08d4f766ebc347	de	Atari	-	V2	-	Joachim Eberhard
-	15240c59d3681ed53f714f8d925cb2d6	es	Atari	-	V2	-	VooD
-	624cdb93654667c869d204a64af7e57f	en	DOS	-	V2	-	Kirben, Andrea Petrucci
-	b250d0f9cc83f80ced56fe11a4fb057c	en	DOS	-	V2	alt?	Andrea Petrucci
-	114acdc2659a273c220f86ee9edb24c1	fr	DOS	-	V2	-	Nicolas Sauz&egrave;de
-	99a3699f80b8f776efae592b44b9b991	fr	DOS	-	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
-	183d7464902d40d00800e8ee1f04117c	de	DOS	-	V2	-	
-	87f6e8037b7cc996e13474b491a7a98e	it	DOS	-	V2	from DOTT	Andrea Petrucci
-	0d1b69471605201ef2fa9cec1f5f02d2	es	DOS	-	V2	-	abnog, Andrea Petrucci
+	e781230da44a44e2f0770edb2b3b3633	en	Amiga	V2	V2	-	dhewg, Andrea Petrucci
+	ce7733f185b838e248927c7ba1a04204	fr	Amiga	V2	V2	-	Tobias Fleischer
+	9bc548e179cdb0767009401c094d0895	de	Amiga	V2	V2	-	Norbert Lange
+	a570381b028972d891052ee1e51dc011	en	Atari	V2	V2	-	Andreas Bylund
+	dd30a53035393baa5a5e222e716559af	fr	Atari	V2	V2	-	Andreas Bylund
+	be83e882b44f2767bc08d4f766ebc347	de	Atari	V2	V2	-	Joachim Eberhard
+	15240c59d3681ed53f714f8d925cb2d6	es	Atari	V2	V2	-	VooD
+	624cdb93654667c869d204a64af7e57f	en	DOS	V2	V2	-	Kirben, Andrea Petrucci
+	b250d0f9cc83f80ced56fe11a4fb057c	en	DOS	V2	V2	alt?	Andrea Petrucci
+	114acdc2659a273c220f86ee9edb24c1	fr	DOS	V2	V2	-	Nicolas Sauz&egrave;de
+	99a3699f80b8f776efae592b44b9b991	fr	DOS	V2	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
+	183d7464902d40d00800e8ee1f04117c	de	DOS	V2	V2	-	
+	87f6e8037b7cc996e13474b491a7a98e	it	DOS	V2	V2	from DOTT	Andrea Petrucci
+	0d1b69471605201ef2fa9cec1f5f02d2	es	DOS	V2	V2	-	abnog, Andrea Petrucci
 
-	40564ec47da48a67787d1f9bd043902a	en	DOS	-	Demo	non-interactive	
+	40564ec47da48a67787d1f9bd043902a	en	DOS	Demo	Demo	non-interactive	
 
 zak	Zak McKracken and the Alien Mindbenders
-	55d3987641bf229c83bc729210173383	en	C64	-	-	-	
-	4973bbc3899e3826dbf316e1d7271ec7	de	C64	-	-	-	
+	55d3987641bf229c83bc729210173383	en	C64	V1	-	-	
+	4973bbc3899e3826dbf316e1d7271ec7	de	C64	V1	-	-	
 	7020931d5a2be0a49d68e7a1882363e4	en	DOS	V1	V1	-	
 	b23f7cd7c304d7dff08e92a96120d5b4	en	DOS	V1	V1	alt?	Andrea Petrucci
 
-	e94c7cc3686fce406d3c91b5eae5a72d	en	Amiga	-	V2	-	dhweg
-	91469353f7be1b122fa88d23480a1320	fr	Amiga	-	V2	-	Tobias Fleischer
-	6027e9ca9c35746d95dee2068cec17e5	de	Amiga	-	V2	-	Norbert Lange
-	27b3a4224ad63d5b04627595c1c1a025	it	Amiga	-	V2	-	Andrea Petrucci
-	d55eff37c2100f5065cde9de428621fa	en	Atari	-	V2	-	
-	613f64f78ea26c7353b2a5940eb61d6a	fr	Atari	-	V2	-	Andreas Bylund
-	ff05c07990061d97647f059c48c1d05a	de	Atari	-	V2	-	
-	675d71151e9b5a968c8ce46d9fbf4cbf	en	DOS	-	V2	-	Kirben
-	debe337f73d660e951ece7c1f1c81add	en	DOS	-	V2	alt?	Andrea Petrucci
-	52a4bae0746a11d7b1e8554e91a6645c	fr	DOS	-	V2	-	Andrea Petrucci
-	c4787c3e8b5e2dfda90850ee800af00f	fr	DOS	-	V2	alt?	Qvist
-	cdd760228cf1010c2903f37e788ea31c	de	DOS	-	V2	-	Max Horn
-	d06fbe28818fef7bfc45c2cdf0c0849d	de	DOS	-	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
-	1900e501a52fbf55bde6e4196f6d2aa6	it	DOS	-	V2	-	Andrea Petrucci
-	75ba23fff4fd63fa446c02864f2a5a4b	it	DOS	-	V2	alt?	Antti Leimi, Andrea Petrucci
+	e94c7cc3686fce406d3c91b5eae5a72d	en	Amiga	V2	V2	-	dhweg
+	91469353f7be1b122fa88d23480a1320	fr	Amiga	V2	V2	-	Tobias Fleischer
+	6027e9ca9c35746d95dee2068cec17e5	de	Amiga	V2	V2	-	Norbert Lange
+	27b3a4224ad63d5b04627595c1c1a025	it	Amiga	V2	V2	-	Andrea Petrucci
+	d55eff37c2100f5065cde9de428621fa	en	Atari	V2	V2	-	
+	613f64f78ea26c7353b2a5940eb61d6a	fr	Atari	V2	V2	-	Andreas Bylund
+	ff05c07990061d97647f059c48c1d05a	de	Atari	V2	V2	-	
+	675d71151e9b5a968c8ce46d9fbf4cbf	en	DOS	V2	V2	-	Kirben
+	debe337f73d660e951ece7c1f1c81add	en	DOS	V2	V2	alt?	Andrea Petrucci
+	52a4bae0746a11d7b1e8554e91a6645c	fr	DOS	V2	V2	-	Andrea Petrucci
+	c4787c3e8b5e2dfda90850ee800af00f	fr	DOS	V2	V2	alt?	Qvist
+	cdd760228cf1010c2903f37e788ea31c	de	DOS	V2	V2	-	Max Horn
+	d06fbe28818fef7bfc45c2cdf0c0849d	de	DOS	V2	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
+	1900e501a52fbf55bde6e4196f6d2aa6	it	DOS	V2	V2	-	Andrea Petrucci
+	75ba23fff4fd63fa446c02864f2a5a4b	it	DOS	V2	V2	alt?	Antti Leimi, Andrea Petrucci
 
 	2d4536a56e01da4b02eb021e7770afa2	en	FM-TOWNS	FM-TOWNS	-	-	
 	1ca86e2cf9aaa2068738a1e5ba477e60	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 
-	8299d9b8a1b0e7b881bae7a9971dc5e2	en	Atari	-	Demo	non-interactive	
+	8299d9b8a1b0e7b881bae7a9971dc5e2	en	Atari	V2	Demo	non-interactive	
 
 indy3	Indiana Jones and the Last Crusade
 	9c0fee288ad564a7d25ec3e841810d79	en	Amiga	EGA	EGA	-	dhewg
@@ -311,10 +311,10 @@ dig	The Dig
 	cd9c05e755d7bf8e9b9590ad1ebe273e	en	Mac	Demo	Demo	Mac bundle	fingolfin
 
 comi	The Curse of Monkey Island
-	fe60d6b5ff51b0553ac59963123b5777	All	All	-	-	-	
-	861e59ed72a1cd0e6d454f7ee7e2bf3d	ru	All	-	-	-	
+	fe60d6b5ff51b0553ac59963123b5777	All	Windows	-	-	-	
+	861e59ed72a1cd0e6d454f7ee7e2bf3d	ru	Windows	-	-	-	
 
-	8fec68383202d38c0d25e9e3b757c5df	All	All	Demo	Demo	-	
+	8fec68383202d38c0d25e9e3b757c5df	All	Windows	Demo	Demo	-	
 
 baseball	Backyard Baseball
 	cf8d13446ec6cb6222287a925fd47c1d	en	All	-	-	-	sev

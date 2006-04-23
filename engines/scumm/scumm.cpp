@@ -78,10 +78,11 @@ namespace Scumm {
 ScummEngine *g_scumm = 0;
 
 
-ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	: Engine(syst),
-	  _game(gs),
-	  _substResFileName(subst),
+	  _game(dr.game),
+	  _filenamePattern(dr.fp),
+	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  gdi(this),
@@ -89,11 +90,8 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
 
 	// Copy MD5 checksum
-	memcpy(_gameMD5, md5sum, 16);
+	memcpy(_gameMD5, dr.md5sum, 16);
 	
-	// Clean _substResFileNameBundle
-	memset(&_substResFileNameBundle, 0, sizeof(_substResFileNameBundle));
-
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
@@ -146,14 +144,17 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	// This is the case of the NES, C64 and Mac versions of certain games.
 	// Note: All of these can also occur in 'extracted' form, in which case they
 	// are treated like any other SCUMM game.
-	if (_substResFileName.almostGameID && _substResFileName.genMethod == kGenAsIs) {
+	if (_filenamePattern.genMethod == kGenUnchanged) {
 
 		if (_game.platform == Common::kPlatformNES) {
 			// We read data directly from NES ROM instead of extracting it with
 			// external tool
 			assert(_game.id == GID_MANIAC);
 			_fileHandle = new ScummNESFile();
-			_containerFile = _substResFileName.expandedName;
+			_containerFile = _filenamePattern.pattern;
+			
+			_filenamePattern.pattern = "%.2d.LFL";
+			_filenamePattern.genMethod = kGenRoomNum;
 		} else if (_game.platform == Common::kPlatformC64) {
 			// Read data from C64 disk images.
 			const char *tmpBuf1, *tmpBuf2;
@@ -168,6 +169,9 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	
 			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
 			_containerFile = tmpBuf1;
+
+			_filenamePattern.pattern = "%.2d.LFL";
+			_filenamePattern.genMethod = kGenRoomNum;
 		} else if (_game.platform == Common::kPlatformMacintosh) {
 			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
 			// special meta (container) file format to store the actual SCUMM data
@@ -179,13 +183,53 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 			// handling).
 			assert(_game.version >= 5 && _game.heversion == 0);
 			_fileHandle = new ScummFile();
-			_containerFile = _substResFileName.expandedName;
+			_containerFile = _filenamePattern.pattern;
+			
+			
+			// We now have to determine the correct _filenamePattern. To do this
+			// we simply hardcode the possibilites. 
+			const char *p1 = 0, *p2 = 0;
+			switch (_game.id) {
+			case GID_INDY4:
+				p1 = "atlantis.%03d";
+				break;
+			case GID_TENTACLE:
+				p1 = "tentacle.%03d";
+				p2 = "dottdemo.%03d";
+				break;
+			case GID_SAMNMAX:
+				p1 = "samnmax.%03d";
+				p2 = "samdemo.%03d";
+				break;
+			case GID_FT:
+				p1 = "ft.la%d";
+				p2 = "ftdemo.la%d";
+				break;
+			case GID_DIG:
+				p1 = "dig.la%d";
+				break;
+			default:
+				break;
+			}
+
+			// Test which file name to use
+			_filenamePattern.genMethod = kGenDiskNum;
+			if (!_fileHandle->open(_containerFile))
+				error("Couldn't open container file '%s'", _containerFile.c_str());
+
+			if ((_filenamePattern.pattern = p1) && _fileHandle->openSubFile(generateFilename(0))) {
+				// Found regular version
+			} else if ((_filenamePattern.pattern = p2) && _fileHandle->openSubFile(generateFilename(0))) {
+				// Found demo
+				_game.features |= GF_DEMO;
+			} else
+				error("Couldn't find known subfile inside container file '%s'", _containerFile.c_str());
+			
+			_fileHandle->close();
+			
 		} else {
 			error("kGenAsIs used with unsupported platform");
 		}
-		
-		// If a container file is used, we can turn of file name substitution.
-		_substResFileName.almostGameID = 0;
 	} else {
 		// Regular access, no container file involved
 		_fileHandle = new ScummFile();
@@ -537,11 +581,6 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	if (_bootParam)
 		_debugMode = true;
 
-	// Allow the user to override the game name with a custom string.
-	// This allows some game versions to work which use filenames
-	// differing from the regular version(s) of that game.
-	_baseName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.gameid;
-
 	_copyProtection = ConfMan.getBool("copy_protection");
 	if (ConfMan.getBool("demo_mode"))
 		_game.features |= GF_DEMO;
@@ -673,22 +712,22 @@ ScummEngine::~ScummEngine() {
 	delete _debugger;
 }
 
-ScummEngine_v4::ScummEngine_v4(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v5(syst, gs, md5sum, subst) {
+ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v5(syst, dr) {
 	_resourceHeaderSize = 6;
 }
 
-ScummEngine_v3::ScummEngine_v3(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v4(syst, gs, md5sum, subst) {
+ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v4(syst, dr) {
 }
 
-ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v3(syst, gs, md5sum, subst) {
+ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v3(syst, dr) {
 	_resourceHeaderSize = 4;
 }
 
-ScummEngine_v2::ScummEngine_v2(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v3old(syst, gs, md5sum, subst) {
+ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v3old(syst, dr) {
 
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
@@ -701,14 +740,14 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const GameSettings &gs, uint8 md5s
 	VAR_CLICK_OBJECT = 0xFF;
 }
 
-ScummEngine_c64::ScummEngine_c64(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v2(syst, gs, md5sum, subst) {
+ScummEngine_c64::ScummEngine_c64(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v2(syst, dr) {
 
 	_currentMode = 0;
 }
 
-ScummEngine_v6::ScummEngine_v6(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine(syst, gs, md5sum, subst) {
+ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine(syst, dr) {
 	_blastObjectQueuePos = 0;
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
@@ -729,8 +768,8 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const GameSettings &gs, uint8 md5s
 }
 
 #ifndef DISABLE_HE
-ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v60he(syst, gs, md5sum, subst) {
+ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v60he(syst, dr) {
 	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 73))
 		_resExtractor = new MacResExtractor(this);
 	else
@@ -761,16 +800,16 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_storedFlObjects);
 }
 
-ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v70he(syst, gs, md5sum, subst) {
+ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v70he(syst, dr) {
 	_auxBlocksNum = 0;
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
 	memset(_auxEntries, 0, sizeof(_auxEntries));
 }
 
-ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v71he(syst, gs, md5sum, subst) {
+ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v71he(syst, dr) {
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;
@@ -780,8 +819,8 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const GameSettings &gs, uint
 	VAR_POLYGONS_ONLY = 0xFF;
 }
 
-ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v72he(syst, gs, md5sum, subst) {
+ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v72he(syst, dr) {
 	_heSndResId = 0;
 	_curSndId = 0;
 	_sndPtrOffs = 0;
@@ -793,8 +832,8 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const GameSettings &gs, uint
 	VAR_COLOR_DEPTH = 0xFF;
 }
 
-ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v80he(syst, gs, md5sum, subst) {
+ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v80he(syst, dr) {
 	_sprite = new Sprite(this);
 
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
@@ -818,8 +857,8 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 #endif
 
 #ifndef DISABLE_SCUMM_7_8
-ScummEngine_v7::ScummEngine_v7(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v6(syst, gs, md5sum, subst) {
+ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v6(syst, dr) {
 	_verbCharset = 0;
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
@@ -832,8 +871,8 @@ ScummEngine_v7::~ScummEngine_v7() {
 	free(_languageIndex);
 }
 
-ScummEngine_v8::ScummEngine_v8(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
-	: ScummEngine_v7(syst, gs, md5sum, subst) {
+ScummEngine_v8::ScummEngine_v8(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v7(syst, dr) {
 	_objectIDMap = 0;
 }
 
@@ -881,7 +920,6 @@ int ScummEngine::init() {
 	setupMusic(_game.midi);
 
 	// Load localization data, if present
-	_language = Common::parseLanguage(ConfMan.get("language"));
 	loadLanguageBundle();
 
 	// Load CJK font, if present
@@ -1305,19 +1343,10 @@ void ScummEngine_v99he::scummInit() {
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
 
-	byte basename[256];
-	char buf1[128];
-
-	strcpy((char *)basename, _baseName.c_str());
-	if (_substResFileName.almostGameID != 0) {
-		generateSubstResFileName((char *)basename, buf1, sizeof(buf1));
-		strcpy((char *)basename, buf1);
-	}
-
 	// Array 129 is set to base name
-	int len = resStrLen(basename);
+	int len = strlen(_filenamePattern.pattern);
 	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
-	memcpy(ah->data, basename, len);
+	memcpy(ah->data, _filenamePattern.pattern, len);
 }
 #endif
 
@@ -2013,10 +2042,6 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 		_debugger->attach(buf2);
 		_debugger->onFrame();
 	}
-}
-
-void ScummEngine::generateSubstResFileName(const char *filename, char *buf, int bufsize) {
-	applySubstResFileName(_substResFileName, filename, buf, bufsize);
 }
 
 

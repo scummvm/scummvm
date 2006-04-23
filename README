@@ -1224,7 +1224,6 @@ An example config file looks as follows:
 
 The following keywords are recognized:
 
-        basename        string
         path            string   The path to where a game's data files are
         read_only       bool     If true, ScummVM will never try to overwrite
                                  the configuration file.

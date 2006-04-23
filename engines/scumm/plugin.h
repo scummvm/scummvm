@@ -42,22 +42,37 @@ struct GameSettings {
 
 };
 
-enum GenMethods {
-	kGenMac,
-	kGenMacNoParens,
-	kGenPC,
-	kGenAsIs
+enum FilenameGenMethod {
+	kGenDiskNum,
+	kGenRoomNum,
+	kGenHEMac,
+	kGenHEMacNoParens,
+	kGenHEPC,
+	kGenUnchanged
 };
 
-struct SubstResFileNames {
-	const char *almostGameID;
-	const char *expandedName;
-	GenMethods genMethod;
+struct FilenamePattern {
+	const char *pattern;
+	FilenameGenMethod genMethod;
 };
 
+struct GameFilenamePattern {
+	const char *gameid;
+	const char *pattern;
+	FilenameGenMethod genMethod;
+	Common::Language language;
+	Common::Platform platform;
+	const char *variant;
+};
 
-bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize);
-int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index);
+struct DetectorResult {
+	FilenamePattern fp;
+	GameSettings game;
+	Common::Language language;
+	Common::String md5;
+	uint8 md5sum[16];
+	const char *extra;
+};
 
 } // End of namespace Scumm
 

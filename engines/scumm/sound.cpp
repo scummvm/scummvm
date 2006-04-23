@@ -996,7 +996,6 @@ ScummFile *Sound::openSfxFile() {
 	};
 
 	char buf[256];
-	char buf1[128];
 	ScummFile *file = new ScummFile();
 	_offsetTable = NULL;
 
@@ -1004,19 +1003,22 @@ ScummFile *Sound::openSfxFile() {
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 
-	const char *basename[4] = { 0, 0, 0, 0 };
-	basename[0] = _vm->getBaseName();
-	basename[1] = "monster";
+	Common::String basename[2];
 	
-	if (_vm->_substResFileName.almostGameID != 0) {
-		_vm->generateSubstResFileName(basename[0], buf1, sizeof(buf1));
-		basename[2] = buf1;
+	const char *ptr = strchr(_vm->_filenamePattern.pattern, '.');
+	if (ptr) {
+		basename[0] = Common::String(_vm->_filenamePattern.pattern, ptr - _vm->_filenamePattern.pattern + 1);
+	} else {
+		basename[0] = _vm->_filenamePattern.pattern;
+		basename[0] += '.';
 	}
+	basename[1] = "monster.";
 
-	for (int j = 0; basename[j] && !file->isOpen(); ++j) {
+	for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
 		for (int i = 0; extensions[i].ext; ++i) {
-			sprintf(buf, "%s.%s", basename[j], extensions[i].ext);
-			if (_vm->openFile(*file, buf)) {
+			Common::String tmp(basename[j]);
+			tmp += extensions[i].ext;
+			if (_vm->openFile(*file, tmp.c_str())) {
 				_soundMode = extensions[i].mode;
 				break;
 			}
@@ -1025,15 +1027,11 @@ ScummFile *Sound::openSfxFile() {
 
 	if (!file->isOpen()) {
 		if ((_vm->_game.heversion <= 61 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
-			sprintf(buf, "%s.he2", _vm->getBaseName());
+			strncpy(buf, _vm->generateFilename(2).c_str(), sizeof(buf));
 		} else {
-			sprintf(buf, "%s.tlk", _vm->getBaseName());
+			sprintf(buf, "%s.tlk", _vm->_filenamePattern.pattern);
 		}
 
-		if (_vm->_substResFileName.almostGameID != 0) {
-			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
-			strcpy(buf, buf1);
-		}
 		if (file->open(buf) && _vm->_game.heversion <= 73)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;

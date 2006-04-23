@@ -51,7 +51,7 @@ protected:
 	Common::File _hFileTable[17];
 
 public:
-	ScummEngine_v60he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst) : ScummEngine_v6(syst, gs, md5sum, subst) {}
+	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v6(syst, dr) {}
 
 	virtual void scummInit();
 
@@ -116,7 +116,7 @@ protected:
 	bool _skipProcessActors;
 
 public:
-	ScummEngine_v70he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he();
 
 	Wiz *_wiz;
@@ -181,7 +181,7 @@ protected:
 
 class ScummEngine_v71he : public ScummEngine_v70he {
 public:
-	ScummEngine_v71he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
 
 protected:
 	virtual void saveOrLoad(Serializer *s);
@@ -236,7 +236,7 @@ protected:
 	WizParameters _wizParams;
 
 public:
-	ScummEngine_v72he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);
 
 	virtual void scummInit();
 
@@ -347,7 +347,7 @@ protected:
 	int32 _heSndResId, _curSndId, _sndPtrOffs, _sndTmrOffs;
 
 public:
-	ScummEngine_v80he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine_v80he(OSystem *syst, const DetectorResult &dr);
 
 protected:
 	virtual void setupOpcodes();
@@ -420,7 +420,7 @@ protected:
 	int32 _curSpriteGroupId;
 
 public:
-	ScummEngine_v90he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v90he();
 
 	virtual void scummInit();
@@ -517,7 +517,7 @@ protected:
 
 class ScummEngine_v99he : public ScummEngine_v90he {
 public:
-	ScummEngine_v99he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst) : ScummEngine_v90he(syst, gs, md5sum, subst) {}
+	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v90he(syst, dr) {}
 
 	virtual void scummInit();
 
@@ -548,7 +548,7 @@ protected:
 	const OpcodeEntryV100he *_opcodesV100he;
 
 public:
-	ScummEngine_v100he(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst) : ScummEngine_v99he(syst, gs, md5sum, subst) {}
+	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {}
 
 protected:
 	virtual void setupOpcodes();

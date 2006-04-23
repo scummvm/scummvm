@@ -161,15 +161,9 @@ void Sound::setOverrideFreq(int freq) {
 
 void Sound::setupHEMusicFile() {
 	int i, total_size;
-	char buf[32], buf1[128];
 	Common::File musicFile;
+	Common::String buf(_vm->generateFilename(4));
 
-	sprintf(buf, "%s.he4", _vm->getBaseName());
-
-	if (_vm->_substResFileName.almostGameID != 0) {
-		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
-		strcpy(buf, buf1);
-	}
 	if (musicFile.open(buf) == true) {
 		musicFile.seek(4, SEEK_SET);
 		total_size = musicFile.readUint32BE();
@@ -360,17 +354,11 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 	if (soundID > _vm->_numSounds) {
 		int music_offs;
-		char buf[32], buf1[128];
 		Common::File musicFile;
+		Common::String buf(_vm->generateFilename(4));
 
-		sprintf(buf, "%s.he4", _vm->getBaseName());
-
-		if (_vm->_substResFileName.almostGameID != 0) {
-			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
-			strcpy(buf, buf1);
-		}
 		if (musicFile.open(buf) == false) {
-			warning("playHESound: Can't open music file %s", buf);
+			warning("playHESound: Can't open music file %s", buf.c_str());
 			return;
 		}
 		if (!getHEMusicDetails(soundID, music_offs, size)) {

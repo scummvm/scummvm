@@ -150,7 +150,7 @@ public:
 	ResExtractor::CachedCursor *getCachedCursorSlot();
 
 	bool _arg_raw;
-	char _fileName[256];
+	Common::String _fileName;
 	CachedCursor _cursorCache[MAX_CACHED_CURSORS];
 
 	typedef Common::MemoryReadStream MemoryReadStream;

@@ -444,7 +444,7 @@ protected:
 
 public:
 	// Constructor / Destructor
-	ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
+	ScummEngine(OSystem *syst, const DetectorResult &dr);
 	virtual ~ScummEngine();
 
 	/** Startup function, main loop. */
@@ -473,7 +473,6 @@ public:
 
 	// Misc utility functions
 	uint32 _debugFlags;
-	const char *getBaseName() const { return _baseName.c_str(); }
 
 	// Cursor/palette
 	void updateCursor();
@@ -587,9 +586,9 @@ public:
 	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds uses it
 	bool _egoPositioned;	// Used by Actor::putActor, hence public
 
-	void generateSubstResFileName(const char *filename, char *buf, int bufsize);
-	SubstResFileNames _substResFileName;
-	SubstResFileNames _substResFileNameBundle; // Used with Mac bundles
+	FilenamePattern _filenamePattern;
+
+	Common::String generateFilename(const int room) const;
 
 protected:
 	int _keyPressed;
@@ -733,11 +732,10 @@ public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
 
-	bool openFile(BaseScummFile &file, const char *filename, bool resourceFile = false);
+	bool openFile(BaseScummFile &file, const char *filename, bool resourceFile = false);	// TODO: Use Common::String
 
 protected:
 	int _resourceHeaderSize;
-	Common::String _baseName;	// This is the name we use for opening resource files
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;
 	uint32 *_heV7RoomIntOffsets;
@@ -749,8 +747,8 @@ protected:
 	void closeRoom();
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
-	void askForDisk(const char *filename, int disknum);
-	bool openResourceFile(const char *filename, byte encByte);
+	void askForDisk(const char *filename, int disknum);	// TODO: Use Common::String
+	bool openResourceFile(const char *filename, byte encByte);	// TODO: Use Common::String
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	virtual void readResTypeList(int id, const char *name);

@@ -65,8 +65,6 @@ static bool checkTryMedia(BaseScummFile *handle);
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
 	bool result;
-	char buf[128];
-	char buf2[128] = "";
 	byte encByte = 0;
 
 	debugC(DEBUG_GENERAL, "openRoom(%d)", room);
@@ -90,57 +88,19 @@ void ScummEngine::openRoom(const int room) {
 	const int diskNumber = room ? res.roomno[rtRoom][room] : 0;
 	const int room_offs = room ? res.roomoffs[rtRoom][room] : 0;
 
+	// FIXME: Since room_offs is const, clearly the following loop either
+	// is never entered, or loops forever (if it wasn't for the return/error
+	// statements in it, that is). -> This should be cleaned up!
 	while (room_offs != -1) {
 
 		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
 			_fileOffset = res.roomoffs[rtRoom][room];
 			return;
 		}
-
-		/* Either xxx.lfl or monkey.xxx file name */
-		if (_game.version <= 3) {
-			sprintf(buf, "%.2d.lfl", room);
-			// Maniac Mansion demo has .man instead of .lfl
-			if (_game.id == GID_MANIAC)
-				sprintf(buf2, "%.2d.man", room);
-		} else if (_game.version == 4) {
-			if (room == 0 || room >= 900) {
-				sprintf(buf, "%.3d.lfl", room);
-			} else {
-				sprintf(buf, "disk%.2d.lec", diskNumber);
-			}
-		} else if (_game.heversion >= 98) {
-			int disk = 0;
-			if (_heV7DiskOffsets)
-				disk = _heV7DiskOffsets[room];
-
-			switch(disk) {
-			case 2:
-				sprintf(buf, "%s.(b)", _baseName.c_str());
-				break;
-			case 1:
-				sprintf(buf, "%s.(a)", _baseName.c_str());
-				break;
-			default:
-				sprintf(buf, "%s.he0", _baseName.c_str());
-			}
-		} else if (_game.heversion >= 70) {
-			sprintf(buf, "%s.he%d", _baseName.c_str(), room == 0 ? 0 : 1);
-		} else if (_game.heversion >= 60) {
-			sprintf(buf, "%s.he%d", _baseName.c_str(), diskNumber);
-
-		} else if (_game.version >= 7) {
-			sprintf(buf, "%s.la%d", _baseName.c_str(), diskNumber);
-
-			// Used by PC version of Full Throttle demo
-			if (_game.id == GID_FT && (_game.features & GF_DEMO) && _game.platform == Common::kPlatformPC)
-				sprintf(buf2, "%s.%.3d", _baseName.c_str(), diskNumber);
-		} else {
-			sprintf(buf, "%s.%.3d", _baseName.c_str(), diskNumber);
-			if (_game.id == GID_SAMNMAX)
-				sprintf(buf2, "%s.sm%d", _baseName.c_str(), diskNumber);
-		}
 		
+		Common::String filename(generateFilename(room));
+
+		// Determine the encryption, if any.
 		if (_game.features & GF_USE_KEY) {
 			if (_game.version <= 3)
 				encByte = 0xFF;
@@ -154,26 +114,8 @@ void ScummEngine::openRoom(const int room) {
 		if (room > 0 && (_game.version == 8))
 			VAR(VAR_CURRENTDISK) = diskNumber;
 
-		// If we have substitute
-		if (_substResFileName.almostGameID != 0 && !(_game.platform == Common::kPlatformNES || _game.platform == Common::kPlatformC64)) {
-			char tmpBuf[128];
-			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
-			strcpy(buf, tmpBuf);
-			if (buf2[0]) {
-				generateSubstResFileName(buf2, tmpBuf, sizeof(tmpBuf));
-				strcpy(buf2, tmpBuf);
-			}
-		}
-
-		// Try to open the file with name 'buf'. If that fails, try buf2 (if
-		// specified).
-		result = openResourceFile(buf, encByte);
-		if (!result && buf2[0]) {
-			result = openResourceFile(buf2, encByte);
-			// We have .man files so set demo mode
-			if (_game.id == GID_MANIAC)
-				_game.features |= GF_DEMO;
-		}
+		// Try to open the file
+		result = openResourceFile(filename.c_str(), encByte);
 
 		if (result) {
 			if (room == 0)
@@ -185,14 +127,15 @@ void ScummEngine::openRoom(const int room) {
 			if (_fileOffset != 8)
 				return;
 
-			error("Room %d not in %s", room, buf);
+			error("Room %d not in %s", room, filename.c_str());
 			return;
 		}
-		askForDisk(buf, diskNumber);
+		askForDisk(filename.c_str(), diskNumber);
 	}
 
 	do {
-		sprintf(buf, "%.3d.lfl", room);
+		char buf[16];
+		snprintf(buf, sizeof(buf), "%.3d.lfl", room);
 		encByte = 0;
 		if (openResourceFile(buf, encByte))
 			break;
@@ -246,39 +189,11 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resou
 	bool result = false;
 
 	if (!_containerFile.empty()) {
-		char name[128];
-
 		file.close();
 		file.open(_containerFile);
 		assert(file.isOpen());
 
-		strncpy(name, filename, 128);
-
-		// Some Mac demos (i.e. DOTT) have bundled file names different
-		// from target name. dottdemo.000 vs tentacle.000. So we should
-		// substitute those names too
-		if (resourceFile == true) {
-			if (_substResFileNameBundle.almostGameID == 0) {
-				int substLastIndex = 0;
-
-				do {
-					if (file.openSubFile(name))
-						break;
-
-					substLastIndex = findSubstResFileName(_substResFileNameBundle, filename, substLastIndex);
-					applySubstResFileName(_substResFileNameBundle, filename, name, sizeof(name));
-				} while (_substResFileNameBundle.almostGameID != 0);
-
-				if (_substResFileNameBundle.almostGameID != 0) {
-					debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, _substResFileNameBundle.almostGameID);
-				}
-			}
-
-			if (_substResFileNameBundle.almostGameID != 0)
-				applySubstResFileName(_substResFileNameBundle, filename, name, sizeof(name));
-		}
-
-		result = file.openSubFile(name);
+		result = file.openSubFile(filename);
 	}
 
 	if (!result) {

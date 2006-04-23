@@ -186,25 +186,34 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{NULL, NULL, UNK}
 };
 
-// The following table contains information about variants of our various games.
-// We index into it with help of md5table (from scumm-md5.h), to find the correct
-// GameSettings for a given game variant.
+// The following table contains information about variants of our various
+// games. We index into it with help of md5table (from scumm-md5.h), to find
+// the correct GameSettings for a given game variant.
 //
 // The first listed variant is assumed to be the 'default' variant -- i.e. the
 // variant that gets used when no explicit variant code has been specified.
 //
-// Note: Only set 'platform' to a value different from UNK if that game variant
-// really *only* exists for that given platform. In all other cases, the correct
-// platform will be determined via the MD5 table or derived from the filename.
+// Note #1: Only set 'platform' to a value different from UNK if that game
+// variant really *only* exists for that given platform. In all other cases,
+// the correct platform will be determined via the MD5 table or derived from
+// the filename.
+//
+// Note #2: Make sure that all variants for a given gameid are in sequence with
+// no gaps. Some code may rely on this and stop searching the table early as
+// soon as the gameid changes.
+//
+// Note #3: Use 0 (zero) for the variant field *if and only if* the game has
+// only a single unique variant. This is used to help the detector quickly
+// decide whether it has to worry about distinguishing multiple variants or not.
 static const GameSettings gameVariantsTable[] = {
-	// The C64 version of MM is detected via the platform field and hence has no seperate entry in this list
-	{"maniac", "V2",  GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"maniac", "NES", GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"maniac", "V1",  GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"maniac", "C64",  GID_MANIAC, 0, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformC64},
+	{"maniac", "V1",   GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"maniac", "NES",  GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
+	{"maniac", "V2",   GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"maniac", "Demo", GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_DEMO, Common::kPlatformPC},
 
-	// The C64 version of Zak is detected via the platform field and hence has no seperate entry in this list
+	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"zak", "V2",       GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
 	{"indy3", "EGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
@@ -259,58 +268,58 @@ static const GameSettings gameVariantsTable[] = {
 	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 #ifndef DISABLE_HE
-	{"activity", "", GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"activity", 0, GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
-	{"catalog", "", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"freddi", "", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"catalog", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"freddi", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 7.2
-	{"airport", "", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"puttzoo", "", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"airport", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"puttzoo", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Changed o_getResourceSize to cover all resource types
-	{"farm", "", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"jungle", "", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"farm", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"jungle", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
-	{"freddi2", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"pajama", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"putttime", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"freddi2", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"pajama", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"putttime", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
-	{"balloon", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"dog", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"maze", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"socks", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"balloon", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"dog", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"maze", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"socks", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"water", "",      GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"water", "HE 80", GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"water", "HE 99", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	{"baseball", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"thinkerk", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"thinker1", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"freddi3", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"spyfox", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"baseball", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"thinkerk", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"thinker1", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"freddi3", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"spyfox", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
-	{"pajama2", "", GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"chase", "", GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"pajama2", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"chase", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
-	{"lost", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"lost", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"puttrace", "HE 98",   GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"puttrace", "HE 98.5", GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, UNK},
 	{"puttrace", "HE 99",   GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
-	{"bluesabctime", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"soccer", "", GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"bluesabctime", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"soccer", 0, GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Global scripts increased to 2048
 	{"freddi4", "",       GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, UNK},
@@ -369,256 +378,6 @@ static const GameSettings gameVariantsTable[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, UNK}
 };
 
-static const SubstResFileNames substResFileNameTable[] = {
-	// The first few entries for 00.LFL/01.LFL files are here for two reasons:
-	// 1) For the detector to detect these games
-	// 2) Because the ScummEngine constructor distinguishes between extracted
-	//    and non-extracted variants of these C64/NES games by the presence
-	//    or absence of a SubstResFileNames record.
-	// Use 1 will go away with the new detector code. Use 2 needs some more
-	// attention, but most likely should be solved by passing the name of the
-	// "detect file" to the contructor.
-	{ "00.LFL", "Maniac Mansion (E).prg", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (U).prg", kGenAsIs },
-	{ "00.LFL", "Maniac Mansion (G).prg", kGenAsIs },
-	{ "00.LFL", "maniac1.d64", kGenAsIs }, // Do not
-	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
-	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
-	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
-
-	{ "atlantis", "Fate of Atlantis Data", kGenAsIs },
-	{ "atlantis", "fate", kGenPC },
-	{ "atlantis", "playfate", kGenPC },
-	{ "atlantis", "indy4", kGenPC },
-	{ "atlantis", "indydemo", kGenPC },
-	{ "tentacle", "Day of the Tentacle Data", kGenAsIs },
-	{ "tentacle", "dottdemo", kGenPC },
-	{ "tentacle", "Day of the Tentacle Demo Data", kGenAsIs },
-	{ "monkey", "monkey1", kGenPC },
-	{ "monkey", "monkeyk", kGenPC }, // FM-TOWNS Jap
-	{ "monkey", "game", kGenPC }, // SegaCD
-	{ "monkey2", "mi2demo", kGenPC },
-	{ "samnmax", "Sam & Max Data", kGenAsIs },
-	{ "samnmax", "Sam & Max Demo Data", kGenAsIs },
-	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
-	{ "samnmax", "samdemo", kGenPC },
-	{ "samnmax", "snmdemo", kGenPC },
-	{ "samnmax", "snmidemo", kGenPC },
-	{ "samnmax", "sdemo", kGenPC },
-#ifndef DISABLE_SCUMM_7_8
-	{ "dig", "The Dig Data", kGenAsIs },
-	{ "dig", "The Dig Demo Data", kGenAsIs },
-	{ "ft", "Full Throttle Data", kGenAsIs },
-	{ "ft", "Full Throttle Demo Data", kGenAsIs },
-	{ "ft", "Vollgas Data", kGenAsIs },
-	{ "ft", "Vollgas Demo Data", kGenAsIs },
-	{ "ft", "ftdemo", kGenPC },
-#endif
-	{ "fbear", "fbdemo", kGenPC },
-	{ "fbear", "Fatty Bear Demo", kGenMacNoParens },
-	{ "fbear", "Fatty Bear", kGenMacNoParens },
-	{ "puttmoon", "moondemo", kGenPC },
-	{ "puttmoon", "Putt-Putt Moon Demo", kGenMacNoParens },
-	{ "puttmoon", "Putt-Putt Moon", kGenMacNoParens },
-	{ "puttputt", "puttdemo", kGenPC },
-	{ "puttputt", "Putt-Putt's Demo", kGenMacNoParens },
-	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens },
-#ifndef DISABLE_HE
-	{ "airport", "airdemo", kGenPC },
-	{ "airport", "Airport Demo", kGenMac },
-	{ "airport", "The AirPort", kGenMac },
-	{ "balloon", "Balloon-O-Rama", kGenMac },
-	{ "baseball", "BaseBall", kGenMac },
-	{ "baseball2001", "bb2demo", kGenPC },
-	{ "baseball2001", "Baseball 2001 Demo", kGenMac },
-	{ "baseball2001", "Baseball 2001", kGenMac },
-	{ "baseball2001", "baseball 2001", kGenPC },
-	{ "Baseball2003", "Baseball 2003", kGenMac },
-	{ "basketball", "Basketball", kGenMac },
-	{ "bluesabctime", "BluesABCTimeDemo", kGenPC },
-	{ "bluesabctime", "BluesABCTimeDemo", kGenMac },
-	{ "catalog", "catalog2", kGenPC },
-	{ "chase", "Cheese Chase", kGenMac },
-	{ "dog", "Dog on a Stick", kGenMac },
-	{ "farm", "farmdemo", kGenPC },
-	{ "farm", "Farm Demo", kGenMac },
-	{ "football", "FootBall", kGenMac },
-	{ "football", "FootBall Demo", kGenMac },
-	{ "football", "FootBall2002", kGenPC },
-	{ "football", "footdemo", kGenPC },
-	{ "freddi", "freddemo", kGenPC },
-	{ "freddi", "Freddi Demo", kGenMac },
-	{ "freddi", "Freddi Fish", kGenMac },
-	{ "freddi", "FreddiD", kGenPC },
-	{ "freddi2", "ff2-demo", kGenPC },
-	{ "freddi2", "FFHSDemo", kGenMac },
-	{ "freddi2", "FFHSDemo", kGenPC },
-	{ "freddi2", "Freddi Fish 2 Demo", kGenMac },
-	{ "freddi2", "Freddi Fish 2", kGenMac },
-	{ "freddi2", "FreddiCHSH", kGenPC },
-	{ "freddi2", "Fritzi Fisch 2", kGenMac },
-	{ "freddi3", "F3-mdemo", kGenMac },
-	{ "freddi3", "F3-Mdemo", kGenMac },
-	{ "freddi3", "f3-mdemo", kGenPC },
-	{ "freddi3", "FF3-DEMO", kGenPC },
-	{ "freddi3", "Freddi Fish 3", kGenMac },
-	{ "freddi3", "FreddiFGT", kGenPC },
-	{ "freddi3", "FreddiFGT", kGenMac },
-	{ "freddi3", "FreddiSCS", kGenPC },
-	{ "freddi3", "Fritzi3demo", kGenMac },
-	{ "freddi3", "Fritzi3demo", kGenPC },
-	{ "freddi3", "MM3-DEMO", kGenPC },
-	{ "freddi3", "MM3-Demo", kGenMac }, // FR Mac demo
-	{ "freddi4", "f4-demo", kGenPC },
-	{ "freddi4", "ff4demo", kGenPC },
-	{ "freddi4", "Ff4demo", kGenMac },
-	{ "freddi4", "Freddi 4", kGenMac },
-	{ "freddi4", "Freddi 4 Demo", kGenMac },
-	{ "freddi4", "FreddiGS", kGenPC },
-	{ "freddi4", "FreddiGS", kGenMac },
-	{ "freddi4", "FreddiHRBG", kGenPC },
-	{ "freddicove", "FreddiCCC", kGenPC },
-	{ "freddicove", "FreddiCove", kGenMac },
-	{ "freddicove", "FreddiDZZ", kGenPC },
-	{ "freddicove", "ff5demo", kGenPC },
-	{ "freddicove", "FFCoveDemo", kGenPC },
-	{ "freddicove", "FreddiCoveDemo", kGenMac },
-	{ "freddicove", "FF5Demo", kGenMac }, // NL Mac demo
-	{ "FreddisFunShop", "Freddi's FunShop", kGenMac },
-	{ "jungle", "The Jungle", kGenMac },
-	{ "lost", "Lost and Found", kGenMac },
-	{ "lost", "smaller", kGenPC },
-	{ "maze", "Maze Madness", kGenMac},
-	{ "mustard", "Mustard", kGenMac },
-	{ "pajama", "Pyjama Pit", kGenMac },
-	{ "pajama", "Pajama Sam", kGenMac },
-	{ "pajama", "PajamaNHD", kGenPC },
-	{ "pajama", "PJS-DEMO", kGenPC },
-	{ "pajama", "PYJAMA", kGenPC },
-	{ "pajama", "SAMDEMO", kGenPC },
-	{ "pajama", "SAMDEMO", kGenMac }, // FR Mac demo
-	{ "pajama2", "Pajama Sam 2", kGenMac },
-	{ "pajama2", "PajamaTAL", kGenPC },
-	{ "pajama2", "PyjamaDBMN", kGenPC },
-	{ "pajama2", "PyjamaDBMN", kGenMac },
-	{ "pajama2", "Pyjama Pit 2 Demo", kGenMac },
-	{ "pajama2", "PJP2DEMO", kGenPC },
-	{ "pajama2", "PJ2Demo", kGenMac },
-	{ "pajama2", "pj2demo", kGenPC },
-	{ "pajama2", "Pjs2demo", kGenPC },
-	{ "pajama2", "PJ2 Demo", kGenMac }, // NL Mac demo
-	{ "pajama3", "GPJ3Demo", kGenPC },
-	{ "pajama3", "Pajama Sam 3", kGenMac },
-	{ "pajama3", "Pajama Sam 3-Demo", kGenMac },
-	{ "pajama3", "pj3-demo", kGenPC },
-	{ "pajama3", "pj3demo", kGenPC },
-	{ "pajama3", "PJ3Demo", kGenMac },
-	{ "pajama3", "Pajama Sam Demo", kGenMac },
-	{ "pajama3", "PjSamDemo", kGenMac },
-	{ "pajama3", "PjSamDemo", kGenPC },
-	{ "pajama3", "PyjamaSKS", kGenPC },
-	{ "pajama3", "PyjamaSKS", kGenMac },
-	{ "pajama3", "UKPajamaEAT", kGenPC }, // Russian
-	{ "pjgames", "PJGames", kGenMac },
-	{ "puttcircus", "circdemo", kGenPC },
-	{ "puttcircus", "Putt Circus Demo", kGenMac },
-	{ "puttcircus", "Putt Circus", kGenMac },
-	{ "puttrace", "500demo", kGenPC },
-	{ "puttrace", "racedemo", kGenPC },
-	{ "puttrace", "RaceDemo", kGenMac },
-	{ "puttrace", "Rennen", kGenPC },
-	{ "puttrace", "Putt500 demo", kGenMac }, // NL Mac demo
-	{ "puttrace", "Putt Race", kGenMac },
-	{ "puttrace", "ToffRennen", kGenPC },
-	{ "puttrace", "ToffRennen", kGenMac },
-	{ "puttrace", "UKPuttRace", kGenPC }, // Russian
-	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
-	{ "putttime", "PuttPuttTTT", kGenPC },
-	{ "putttime", "PuttPuttTTT", kGenMac },
-	{ "putttime", "PuttTijd", kGenPC },
-	{ "putttime", "Putt Time", kGenMac },
-	{ "putttime", "PuttTTT", kGenMac },
-	{ "putttime", "PuttTTT", kGenPC },
-	{ "putttime", "TIJDDEMO", kGenPC },
-	{ "putttime", "timedemo", kGenPC },
-	{ "putttime", "TimeDemo", kGenMac },
-	{ "putttime", "TEMPDEMO", kGenPC },
-	{ "putttime", "Tempdemo", kGenMac }, // FR Mac demo
-	{ "putttime", "toffzeit", kGenPC }, // German Toeff-Toeff: Reist durch die Zeit
-	{ "putttime", "toffzeit", kGenMac }, // German Toeff-Toeff: Reist durch die Zeit
-	{ "putttime", "ZeitDemo", kGenMac },
-	{ "putttime", "ZEITDEMO", kGenPC },
-	{ "puttzoo", "Puttzoo Demo", kGenMac },
-	{ "puttzoo", "PuttZoo", kGenMac }, 
-
-	{ "puttzoo", "T\xC3\xB6""ff-T\xC3\xB6""ff\xE2\x84\xA2 Zoo Demo", kGenMac },	// German Toeff-Toeff, UTF-8 encoding
-	{ "puttzoo", "T\xF6""ff-T""\xF6""ff\x99 Zoo Demo", kGenMac },	// German Toeff-Toeff, Windows encoding
-
-	{ "puttzoo", "zoodemo", kGenPC },
-	{ "puttzoo", "Zoo Demo", kGenMac },
-	{ "SamsFunShop", "Sam's FunShop", kGenMac },
-	{ "soccer", "Soccer", kGenMac },
-	{ "Soccer2004", "Soccer 2004", kGenMac },
-	{ "socks", "SockWorks", kGenMac },
-	{ "spyfox", "Fuchsdem", kGenMac },
-	{ "spyfox", "FUCHSDEM", kGenPC},
-	{ "spyfox", "FoxDemo", kGenMac },
-	{ "spyfox", "foxdemo", kGenPC},
-	{ "spyfox", "JAMESDEM", kGenPC },
-	{ "spyfox", "Spydemo", kGenMac},
-	{ "spyfox", "Spydemo", kGenPC},
-	{ "spyfox", "SPYFox", kGenMac },
-	{ "spyfox", "SPYFoxDC", kGenPC },
-	{ "spyfox", "SPYFoxDC", kGenMac },
-	{ "spyfox", "SpyFoxDMK", kGenPC },
-	{ "spyfox", "SpyFoxDMK", kGenMac },
-	{ "spyfox", "Spy Fox Demo", kGenMac }, // NL Mac demo
-	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
-	{ "spyfox2", "sf2-demo", kGenPC },
-	{ "spyfox2", "sf2demo", kGenPC },
-	{ "spyfox2", "Sf2demo", kGenMac },
-	{ "spyfox2", "Spy Fox 2 - Demo", kGenMac },
-	{ "spyfox2", "Spy Fox 2", kGenMac },
-	{ "spyfox2", "SpyFoxOR", kGenPC },
-	{ "spyfox2", "SpyFoxOR", kGenMac },
-	{ "spyfox2", "spyfoxsr", kGenPC },
-	{ "spyozon", "sf3-demo", kGenPC },
-	{ "spyozon", "Spy Ozone Demo", kGenMac },
-	{ "spyozon", "SPYFoxOZU", kGenPC },
-	{ "spyozon", "SpyOzon", kGenMac },
-	{ "thinker1", "1grademo", kGenPC },
-	{ "thinker1", "Thinker1", kGenMac },
-	{ "thinkerk", "kinddemo", kGenPC },
-	{ "thinkerk", "KindDemo", kGenMac },
-	{ "thinkerk", "ThinkerK", kGenMac },
-	{ "water", "Water Worries", kGenMac },
-#endif
-	{ NULL, NULL, kGenAsIs }
-};
-
-
-#if 0
-
-enum FilenameGenMethod {
-	kGenDiskNum,
-	kGenRoomNum,
-	kGenHEMac,
-	kGenHEMacNoParens,
-	kGenHEPC,
-	kGenUnchanged
-};
-
-struct GameFilenamePattern {
-	const char *gameid;
-	const char *pattern;
-	FilenameGenMethod genMethod;
-	Common::Language language;
-	Common::Platform platform;
-	const char *variant;
-};
-
 using Common::UNK_LANG;
 
 // The following describes how Fingolfin thinks this table might be used one day;
@@ -635,68 +394,68 @@ using Common::UNK_LANG;
 // Note: Setting variant to 0 means "don't care", while setting it to ""
 // (i.e. an empty string) means "use the default variant".
 static const GameFilenamePattern gameFilenamesTable[] = {
-	{ "maniac", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "maniac", "%.2d.MAN", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, 0 },   // ... and maniac2.d64
+	{ "maniac", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "maniac", "%02d.MAN", kGenRoomNum, UNK_LANG, UNK, "Demo" },
+	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64" },   // ... and maniac2.d64
 	{ "maniac", "Maniac Mansion (E).prg", kGenUnchanged, Common::EN_GRB, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (F).prg", kGenUnchanged, Common::FR_FRA, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (SW).prg", kGenUnchanged, Common::SE_SWE, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (U).prg", kGenUnchanged, Common::EN_USA, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (G).prg", kGenUnchanged, Common::DE_DEU, Common::kPlatformNES, "NES" },
 
-	{ "zak", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "zak", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "zak", "zak1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, 0 },         // ... and zak2.d64
 
-	{ "indy3", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "indy3", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 
-	{ "loom", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "loom", "%.3d.LFL", kGenRoomNum, UNK_LANG, UNK, "VGA" },	// Loom CD
+	{ "loom", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "loom", "%03d.LFL", kGenRoomNum, UNK_LANG, UNK, "VGA" },	// Loom CD
 
-	{ "pass", "%.3d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "pass", "%03d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 
-	{ "monkey", "%.3d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },		// EGA & VGA versions
-	{ "monkey", "monkey.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "monkey", "monkey1.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "monkey", "monkeyk.%.3d", kGenRoomNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" }, // FM-TOWNS Jap
-	{ "monkey", "game.%.3d", kGenRoomNum, UNK_LANG, Common::kPlatformSegaCD, "SEGA" }, // SegaCD
+	{ "monkey", "%03d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },		// EGA & VGA versions
+	{ "monkey", "monkey.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "monkey", "monkey1.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "monkey", "monkeyk.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" }, // FM-TOWNS Jap
+	{ "monkey", "game.%03d", kGenDiskNum, UNK_LANG, Common::kPlatformSegaCD, "SEGA" }, // SegaCD
 
-	{ "monkey2", "monkey2.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "monkey2", "mi2demo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "monkey2", "monkey2.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "monkey2", "mi2demo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 
-	{ "atlantis", "atlantis.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "fate.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "playfate.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "indy4.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "indydemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "atlantis.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "fate.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "playfate.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "indy4.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "indydemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "atlantis", "Fate of Atlantis Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "tentacle", "tentacle.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "tentacle", "dottdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "tentacle", "tentacle.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "tentacle", "dottdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "tentacle", "Day of the Tentacle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "tentacle", "Day of the Tentacle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "samnmax", "samnmax.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "samnmax", "samnmax.sm%d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "samnmax.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "samnmax.sm%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "Sam & Max Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "samnmax", "Sam & Max Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "samnmax", "ramnmax.%.3d", kGenRoomNum, Common::RU_RUS, UNK, 0 }, // Used in some releases of Russian Sam'n'Max
-	{ "samnmax", "samdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "samnmax", "snmdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "samnmax", "snmidemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "samnmax", "sdemo.%.3d", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "ramnmax.%03d", kGenDiskNum, Common::RU_RUS, UNK, 0 }, // Used in some releases of Russian Sam'n'Max
+	{ "samnmax", "samdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "snmdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "snmidemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "sdemo.sm%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 
 #ifndef DISABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "dig", "The Dig Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 
 	{ "ft", "ft.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "ft", "ft.%.3d", kGenDiskNum, UNK_LANG, UNK, 0 },    // Used by PC version of Full Throttle demo
-	{ "ft", "ftdemo.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "ft", "ft.%03d", kGenDiskNum, UNK_LANG, UNK, "Demo" },    // Used by PC version of Full Throttle demo
+	{ "ft", "ftdemo.la%d", kGenDiskNum, UNK_LANG, UNK, "Demo" },
 	{ "ft", "Full Throttle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "ft", "Full Throttle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "ft", "Full Throttle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 	{ "ft", "Vollgas Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "ft", "Vollgas Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "ft", "Vollgas Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 #endif
@@ -968,8 +727,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ NULL, NULL, kGenUnchanged, UNK_LANG, UNK, 0 }
 };
 
-#endif
-
 
 #pragma mark -
 #pragma mark --- Miscellaneous ---
@@ -1002,29 +759,26 @@ const MD5Table *findInMD5Table(const char *md5) {
 	return (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
 }
 
-#if 0
 Common::String ScummEngine::generateFilename(const int room) const {
-	// HACK to drive test compiles; of course _substEntry would be a member var of ScummEngine
-	const GameFilenamePattern _substEntry = { "maniac", "%.2d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 };
 	const int diskNumber = room ? res.roomno[rtRoom][room] : 0;
 	char buf[128];
 
 	if (_game.version == 4) {
 		if (room == 0 || room >= 900) {
-			snprintf(buf, sizeof(buf), "%.3d.lfl", room);
+			snprintf(buf, sizeof(buf), "%03d.lfl", room);
 		} else {
-			snprintf(buf, sizeof(buf), "disk%.2d.lec", diskNumber);
+			snprintf(buf, sizeof(buf), "disk%02d.lec", diskNumber);
 		}
 	} else {
 		char id = 0;
 
-		switch (_substEntry.genMethod) {
+		switch (_filenamePattern.genMethod) {
 		case kGenDiskNum:
-			snprintf(buf, sizeof(buf), _substEntry.pattern, diskNumber);
+			snprintf(buf, sizeof(buf), _filenamePattern.pattern, diskNumber);
 			break;
 	
 		case kGenRoomNum:
-			snprintf(buf, sizeof(buf), _substEntry.pattern, room);
+			snprintf(buf, sizeof(buf), _filenamePattern.pattern, room);
 			break;
 
 		case kGenHEMac:
@@ -1039,15 +793,15 @@ Common::String ScummEngine::generateFilename(const int room) const {
 				switch(disk) {
 				case 2:
 					id = 'b';
-					snprintf(buf, sizeof(buf), "%s.(b)", _substEntry.pattern);
+					snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);
 					break;
 				case 1:
 					id = 'a';
-					snprintf(buf, sizeof(buf), "%s.(a)", _substEntry.pattern);
+					snprintf(buf, sizeof(buf), "%s.(a)", _filenamePattern.pattern);
 					break;
 				default:
 					id = '0';
-					snprintf(buf, sizeof(buf), "%s.he0", _substEntry.pattern);
+					snprintf(buf, sizeof(buf), "%s.he0", _filenamePattern.pattern);
 				}
 			} else if (_game.heversion >= 70) {
 				id = (room == 0) ? '0' : '1';
@@ -1055,22 +809,26 @@ Common::String ScummEngine::generateFilename(const int room) const {
 				id = diskNumber + '0';
 			}
 			
-			if (_substEntry.genMethod == kGenHEPC) {
+			if (_filenamePattern.genMethod == kGenHEPC) {
 				// For HE >= 98, we already called snprintf above.
 				if (_game.heversion < 98)
-					snprintf(buf, sizeof(buf), "%s.he%c", _substEntry.pattern, id);
+					snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
 			} else {
 				if (id == '3') { // special case for cursors
 					// For mac they're stored in game binary
-					strncpy(buf, _substEntry.pattern, sizeof(buf));
+					strncpy(buf, _filenamePattern.pattern, sizeof(buf));
 				} else {
-					if (_substEntry.genMethod == kGenHEMac)
-						snprintf(buf, sizeof(buf), "%s (%c)", _substEntry.pattern, id);
+					if (_filenamePattern.genMethod == kGenHEMac)
+						snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
 					else
-						snprintf(buf, sizeof(buf), "%s %c", _substEntry.pattern, id);
+						snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
 				}
 			}
 
+			break;
+
+		case kGenUnchanged:
+			strncpy(buf, _filenamePattern.pattern, sizeof(buf));
 			break;
 
 		default:
@@ -1080,9 +838,7 @@ Common::String ScummEngine::generateFilename(const int room) const {
 
 	return buf;
 }
-#endif
 
-#if 0
 Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
 	char buf[128];
 
@@ -1104,6 +860,10 @@ Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
 		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
 		break;
 
+	case kGenUnchanged:
+		strncpy(buf, gfp.pattern, sizeof(buf));
+		break;
+
 	default:
 		error("generateFilenameForDetection: Unsupported genMethod");
 	}
@@ -1114,19 +874,15 @@ Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
 struct DetectorDesc {
 	Common::String path;
 	Common::String md5;
+	uint8 md5sum[16];
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
 };
 
-
-struct DetectorResult {
-	const GameFilenamePattern *gfp;
-	GameSettings game;
-};
-
-void detectGames(const char *gameid_XXX, const FSList &fslist, Common::List<DetectorResult> &results) {
-	typedef Common::HashMap<Common::String, DetectorDesc> DescMap;
+void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid_XXX) {
+	typedef Common::HashMap<Common::String, DetectorDesc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DescMap;
 	DescMap fileMD5Map;
 	const GameSettings *g;
+	DetectorResult dr;
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
@@ -1150,8 +906,32 @@ void detectGames(const char *gameid_XXX, const FSList &fslist, Common::List<Dete
 		Common::String file(generateFilenameForDetection(*gfp));
 		if (!fileMD5Map.contains(file))
 			continue;
+
+		// Reset the DetectorResult variable
+		dr.fp.pattern = gfp->pattern;
+		dr.fp.genMethod = gfp->genMethod;
+		dr.game.gameid = 0;
+		dr.language = gfp->language;
+		dr.md5.clear();
+		memset(dr.md5sum, 0, 16);
+		dr.extra = 0;
 		
-		// OK, the file is present. Compute the MD5, if it hasn't been done yet.
+		//  ____            _     _ 
+		// |  _ \ __ _ _ __| |_  / |
+		// | |_) / _` | '__| __| | |
+		// |  __/ (_| | |  | |_  | |
+		// |_|   \__,_|_|   \__| |_|
+		//
+		// PART 1: Trying to find an exact match using MD5.
+		//
+		//
+		// Background: We found a valid detection file. Check if its MD5
+		// checksum occurs in our MD5 table. If it does, try to use that
+		// to find an exact match.
+		//
+		// We only do that if the MD5 hadn't already been computed (since
+		// we may look at some detection files multiple times).
+		//
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
 			uint8 md5sum[16];
@@ -1162,37 +942,33 @@ void detectGames(const char *gameid_XXX, const FSList &fslist, Common::List<Dete
 				}
 
 				d.md5 = md5str;
+				memcpy(d.md5sum, md5sum, 16);
 				d.md5Entry = findInMD5Table(md5str);
+
+				dr.md5 = d.md5;
+				memcpy(dr.md5sum, d.md5sum, 16);
 
 				if (d.md5Entry) {
 					// Exact match found
-
-					// Sanity check: Make sure the gameids match!
-					if (scumm_stricmp(d.md5Entry->gameid, gfp->gameid)) {
-						error("SCUMM detectGames: MD5 %s implies gameid '%s', but gameid '%s' was expected",
-								md5str, d.md5Entry->gameid, gfp->gameid);
-					}
-
-					DetectorResult dr;
-					dr.game.gameid = 0;
-					dr.gfp = gfp;
+					dr.language = d.md5Entry->language;
+					dr.extra = d.md5Entry->extra;
 
 					// Compute the precise game settings using gameVariantsTable.
 					for (g = gameVariantsTable; g->gameid; ++g) {
 						if (g->gameid[0] == 0 || !scumm_stricmp(d.md5Entry->gameid, g->gameid)) {
 							// The gameid either matches, or is empty (the latter indicates
-							// a generic entry, used currently for generic HE specifies.
-			
+							// a generic entry, currently used for some generic HE settings.
 							if (g->variant == 0 || !scumm_stricmp(d.md5Entry->variant, g->variant)) {
 								// Perfect match found, use it and stop the loop
 								dr.game = *g;
-								dr.game.gameid = gfp->gameid;
-								if (d.md5Entry->platform != Common::kPlatformUnknown) {
-									if (dr.game.platform != Common::kPlatformUnknown && dr.game.platform != d.md5Entry->platform)
-										warning("SCUMM detectGames: Platform values differ for MD5 '%s': %d vs %d (please report to Fingolfin)",
+								dr.game.gameid = d.md5Entry->gameid;
+
+								// Sanity check
+								if (dr.game.platform != Common::kPlatformUnknown && dr.game.platform != d.md5Entry->platform)
+									warning("SCUMM detectGames: Platform values differ for MD5 '%s': %d vs %d (please report to Fingolfin)",
 													md5str, dr.game.platform, d.md5Entry->platform);
-									dr.game.platform = d.md5Entry->platform;
-								}
+								dr.game.platform = d.md5Entry->platform;
+								
 								results.push_back(dr);
 								break;
 							}
@@ -1208,255 +984,242 @@ void detectGames(const char *gameid_XXX, const FSList &fslist, Common::List<Dete
 		
 		// If an exact match for this file has already been found, don't bother 
 		// looking at it anymore.
-		if (d.md5Entry != 0)
+		if (d.md5Entry)
 			continue;
 
-		// At this point, the MD5 sum has been computed but is not known. We
-		// still do our best to identify the game & variant correctly.
-		
-		// First step is to determine the correct gameid. Luckily, in most
-		// cases the filename alone implies the gameid. Currently the only
-		// exceptions are 00.LFL and 000.LFL, for which we add special cases
-		// below.
-		
-		// After that, we may take a peek at the file contents to further
-		// narrow down the list of variants.
-		
-		// TODO: Should we do some sort of caching on the data we read? Like,
-		// keep a copy of the first N bytes ?
 
-		Common::File tmp;
-		if (!tmp.open(d.path.c_str())) {
-			warning("SCUMM detectGames: failed to open '%s' for read access", d.path.c_str());
-			continue;
-		}
-		byte buf[6];
-		tmp.read(buf, 6);
+
+		//  ____            _     ____  
+		// |  _ \ __ _ _ __| |_  |___ \ *
+		// | |_) / _` | '__| __|   __) |
+		// |  __/ (_| | |  | |_   / __/ 
+		// |_|   \__,_|_|   \__| |_____|
+		//
+		// PART 2: Fuzzy matching for files with unknown MD5.
+		//
 		
-		if (file == "00.LFL") {
-			// Used in V1, V2, V3 games.
+		
+		// We loop over the game variants matching the gameid associated to
+		// the gfp record. We then try to decide for each whether it could be
+		// appropriate or not.
+		dr.md5 = d.md5;
+		memcpy(dr.md5sum, d.md5sum, 16);
+		for (g = gameVariantsTable; g->gameid; ++g) {
+			// Skip over entries with a different gameid.
+			if (g->gameid[0] == 0 || scumm_stricmp(gfp->gameid, g->gameid))
+				continue;
+
+			dr.game = *g;
+			dr.extra = g->variant; // FIXME: We (ab)use 'variant' for the 'extra' description for now.
+			if (gfp->platform != Common::kPlatformUnknown)
+				dr.game.platform = gfp->platform;
+
+
+			// If a variant has been specified, use that!
+			if (gfp->variant) {
+				if (!scumm_stricmp(gfp->variant, g->variant)) {
+					// perfect match found
+					results.push_back(dr);
+					break;
+				}
+				continue;
+			}
 			
-			if (buf[0] == 0xbc && buf[1] == 0xb9) {
-				// The NES version of MM
-				// TODO
-			} else if (buf[0] == 0xCE && buf[1] == 0xF5) {
-				// Looks like V1.
+			// Next possibility: There exists only a single variant of this
+			// gameid anyway (we know this is the case if g->variant is 0).
+			// Then of course we have no further work to do.
+			if (g->variant == 0) {
+				results.push_back(dr);
+				break;
+			}
+			
+			// At this point, we know that the gameid matches, but no variant
+			// was specified, yet there are multiple ones. So we try our best
+			// to distinguish between the variants.
+			// To do this, we take a close look at the detection file and
+			// try to filter out some cases.
 
-				// Candidates: maniac classic, zak classic
+			Common::File tmp;
+			if (!tmp.open(d.path.c_str())) {
+				warning("SCUMM detectGames: failed to open '%s' for read access", d.path.c_str());
+				continue;
+			}
+			
+			if (file == "00.LFL") {
+				// Used in V1, V2, V3 games.
+				if (g->version > 3)
+					continue;
 
-				// TODO: Maybe we can use the filesize to distinguish these two?
-				// English V1 Zak: 1896 bytes
-				// English V1 MM:  1972 bytes
+				// Read a few bytes to narrow down the game.				
+				byte buf[6];
+				tmp.read(buf, 6);
+				
+				if (buf[0] == 0xbc && buf[1] == 0xb9) {
+					// The NES version of MM
+					if (g->id == GID_MANIAC && g->platform == Common::kPlatformNES) {
+						// perfect match
+						results.push_back(dr);
+						break;
+					}
+				} else if (buf[0] == 0xCE && buf[1] == 0xF5) {
+					// Looks like V1.
+					// Candidates: maniac classic, zak classic
+					
+					if (g->version != 1)
+						continue;
 
-				// Since it seems unlikely that there are other (official)
-				// variants of these two games around, it should be safe to use
-				// the filesize for detection. In case of an unknown size,
-				// we just generate a warning and skip the file.
-			} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
-				// GF_OLD_BUNDLE: could be V2 or old V3.
-				// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+					// TODO: Maybe we can use the filesize to distinguish these two?
+					// English V1 Zak: 1896 bytes
+					// English V1 MM:  1972 bytes
+	
+					// Since it seems unlikely that there are other (official)
+					// variants of these two games around, it should be safe to use
+					// the filesize for detection. In case of an unknown size,
+					// we just generate a warning and skip the file.
+				} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
+					// GF_OLD_BUNDLE: could be V2 or old V3.
+					// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+
+					if (g->version != 2 && g->version != 3  || !(g->features & GF_OLD_BUNDLE))
+						continue;
+
+					/*
+					TODO: Might be possible to distinguish those by the script count.
+					Specifically, my versions of these games have this in their headers:
+		
+					Loom (en; de; en demo; en MAC):
+					_numGlobalObjects 1000
+					_numRooms 100
+					_numCostumes 200
+					_numScripts 200
+					_numSounds 80
+		
+					Indy3EGA (en PC; en Mac; en demo):
+					_numGlobalObjects 1000
+					_numRooms 99
+					_numCostumes 129
+					_numScripts 139
+					_numSounds 84
+		
+					MM (en; de):
+					_numGlobalObjects 780
+					_numRooms 61
+					_numCostumes 40
+					_numScripts 179
+					_numSounds 120
+		
+					Zak (de; en demo):
+					_numGlobalObjects 780
+					_numRooms 61
+					_numCostumes 40
+					_numScripts 155
+					_numSounds 120
+		
+					So, they all have a different number of scripts.
+					*/
+					
+					/* Alternate approach: Distinguish by the presence/absence
+					   of certain files. In the following, '+' means the file
+					   present, '-' means the file is absent.
+
+					   maniac: -58.LFL, -85.LFL, -86.LFL
+					   zak:    +58.LFL, -85.LFL, -86.LFL
+					   indy3:  +58.LFL, +85.LFL, +86.LFL
+					   loom:   +58.LFL, -85.LFL, +86.LFL
+					*/
+					  
+				} else if (buf[4] == '0' && buf[5] == 'R') {
+					// newer V3 game
+					// Candidates: indy3, indy3Towns, zakTowns, loomTowns
+
+					if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
+						continue;
+
+					/*
+					Considering that we know about *all* TOWNS versions,
+					and know their MD5s, we could simply rely on this and
+					if we find something which has an unknown MD5, assume
+					that it is an (so far unknown) version of Indy3.
+		
+					We can combine this with a look at the resource headers:
+		
+					Indy3:
+					_numGlobalObjects 1000
+					_numRooms 99
+					_numCostumes 129
+					_numScripts 139
+					_numSounds 84
+		
+					Indy3Towns, ZakTowns, ZakLoom demo:
+					_numGlobalObjects 1000
+					_numRooms 99
+					_numCostumes 199
+					_numScripts 199
+					_numSounds 199
+		
+					Assuming that all the town variants look like the latter, we can
+					do the check like this:
+					  if (numScripts == 139)
+						assume Indy3
+					  else if (numScripts == 199)
+						assume towns game
+					  else
+						unknown, do not accept it
+					*/
+				} else {
+					// TODO: Unknown file header, deal with it. Maybe an unencrypted
+					// variant...
+					// Anyway, we don't know to deal with the file, so we
+					// just skip it.
+				}
+			} else if (file == "000.LFL") {
+				// Used in V4
+				// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
+
+				if (g->version != 4)
+					continue;
+
 				/*
-				TODO: Might be possible to distinguish those by the script count.
-				Specifically, my versions of these games have this in their headers:
-	
-				Loom (en; de; en demo; en MAC):
-				_numGlobalObjects 1000
-				_numRooms 100
-				_numCostumes 200
-				_numScripts 200
-				_numSounds 80
-	
-				Indy3EGA (en PC; en Mac; en demo):
-				_numGlobalObjects 1000
-				_numRooms 99
-				_numCostumes 129
-				_numScripts 139
-				_numSounds 84
-	
-				MM (en; de):
-				_numGlobalObjects 780
-				_numRooms 61
-				_numCostumes 40
-				_numScripts 179
-				_numSounds 120
-	
-				Zak (de; en demo):
-				_numGlobalObjects 780
-				_numRooms 61
-				_numCostumes 40
-				_numScripts 155
-				_numSounds 120
-	
-				So, they all have a different number of scripts.
-				*/
-			} else if (buf[4] == '0' && buf[5] == 'R') {
-				// newer V3 game
-				// Candidates: indy3, indy3Towns, zakTowns, loomTowns
-				/*
-				Considering that we know about *all* TOWNS versions,
-				and know their MD5s, we could simply rely on this and
-				if we find something which has an unknown MD5, assume
-				that it is an (so far unknown) version of Indy3.
-	
-				We can combine this with a look at the resource headers:
-	
-				Indy3:
-				_numGlobalObjects 1000
-				_numRooms 99
-				_numCostumes 129
-				_numScripts 139
-				_numSounds 84
-	
-				Indy3Towns, ZakTowns, ZakLoom demo:
+				For all of them, we have:
 				_numGlobalObjects 1000
 				_numRooms 99
 				_numCostumes 199
 				_numScripts 199
 				_numSounds 199
-	
-				Assuming that all the town variants look like the latter, we can
-				do the check like this:
-				  if (numScripts == 139)
-					assume Indy3
-				  else if (numScripts == 199)
-					assume towns game
-				  else
-					unknown, do not accept it
+				
+				Any good ideas to distinguish those? Maybe by the presence / absence
+				of some files?
+				At least PASS and the monkeyEGA demo differ by 903.LFL missing...
+				And the count of DISK??.LEC files differs depending on what version
+				you have (4 or 8 floppy versions). 
+				loomcd of course shipped on only one "disc".
+				
+				pass: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
+				monkeyEGA:  000.LFL, 901-904.LFL, DISK01-09.LEC
+				monkeyEGA DEMO: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
+				monkeyVGA: 000.LFL, 901-904.LFL, DISK01-04.LEC
+				loomcd: 000.LFL, 901-904.LFL, DISK01.LEC
 				*/
 			} else {
-				// TODO: Unknown file header, deal with it. Maybe an unencrypted
-				// variant...
-				// Anyway, we don't know to deal with the file, so we
-				// just skip it.
+				// So at this point the gameid is determined, but not necessarily
+				// the variant!
+				
+				// TODO: Add code that handles this, at least for the non-HE games.
+				// Note sure how realistic it is to correctly detect HE-game
+				// variants, would require me to look at a sufficiently large
+				// sample collection of HE games (assuming I had the time :).
+				
+				
+				// TODO: For Mac versions in container file, we can sometimes
+				// distinguish the demo from the regular version by looking
+				// at the content of the container file and then looking for
+				// the *.000 file in there.
 			}
-		} else if (file == "000.LFL") {
-			// Used in V4
-			// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
-			/*
-			For all of them, we have:
-			_numGlobalObjects 1000
-			_numRooms 99
-			_numCostumes 199
-			_numScripts 199
-			_numSounds 199
 			
-			Any good ideas to distinguish those? Maybe by the presence / absence
-			of some files?
-			At least PASS and the monkeyEGA demo differ by 903.LFL missing...
-			And the count of DISK??.LEC files differs depending on what version
-			you have (4 or 8 floppy versions). 
-			loomcd of course shipped on only one "disc".
-			
-			pass: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
-			monkeyEGA:  000.LFL, 901-904.LFL, DISK01-09.LEC
-			monkeyEGA DEMO: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
-			monkeyVGA: 000.LFL, 901-904.LFL, DISK01-04.LEC
-			loomcd: 000.LFL, 901-904.LFL, DISK01.LEC
-			*/
-		} else {
-			// So at this point the gameid is determined, but not necessarily
-			// the variant!
-			
-			// TODO: Add code that does this, at least for the non-HE games.
-			// Note sure how realistic it is to correctly detect HE-game
-			// variants, would require me to look at a sufficiently large
-			// sample collection of HE games (assuming I had the time :).
-			
+			// Add the file to the candidate list
+			results.push_back(dr);
 		}
 	}
-}
-
-#endif
-
-
-#pragma mark -
-#pragma mark --- Filename substitution ---
-#pragma mark -
-
-
-static void applySubstResFileName(const SubstResFileNames &subst, char *buf, int bufsize, const char *ext, char num) {
-	switch (subst.genMethod) {
-	case kGenMac:
-	case kGenMacNoParens:
-		if (num == '3') { // special case for cursors
-			// For mac they're stored in game binary
-			strncpy(buf, subst.expandedName, bufsize);
-		} else {
-			if (subst.genMethod == kGenMac)
-				snprintf(buf, bufsize, "%s (%c)", subst.expandedName, num);
-			else
-				snprintf(buf, bufsize, "%s %c", subst.expandedName, num);
-		}
-		break;
-
-	case kGenPC:
-		if (ext)
-			snprintf(buf, bufsize, "%s%s", subst.expandedName, ext);
-		else
-			strncpy(buf, subst.expandedName, bufsize);
-		break;
-
-	case kGenAsIs:
-		strncpy(buf, subst.expandedName, bufsize);
-		break;
-
-	default:
-		*buf = 0;
-		break;
-	}
-}
-
-bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize) {
-	if (subst.almostGameID == 0)
-		return false;
-
-	size_t len = strlen(filename);
-	assert(len > 0);
-
-	char num = filename[len - 1];
-
-	// In some cases we have .(a) and .(b) extensions
-	if (num == ')')
-		num = filename[len - 2];
-
-	const char *ext = strrchr(filename, '.');
-	if (ext)
-		len = ext - filename;
-
-	if (!scumm_strnicmp(filename, subst.almostGameID, len)) {
-		applySubstResFileName(subst, buf, bufsize, ext, num);
-		return true;
-	}
-
-	return false;
-}
-
-int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index) {
-	if (index < 0)
-		return -1;
-
-	size_t len = strlen(filename);
-	assert(len > 0);
-
-	char num = filename[len - 1];
-
-	// In some cases we have .(a) and .(b) extensions
-	if (num == ')')
-		num = filename[len - 2];
-
-	const char *ext = strrchr(filename, '.');
-	if (ext)
-		len = ext - filename;
-
-	int i;
-	for (i = index; substResFileNameTable[i].almostGameID; i++) {
-		if (!scumm_strnicmp(filename, substResFileNameTable[i].almostGameID, len)) {
-			subst = substResFileNameTable[i];
-			return i+1;
-		}
-	}
-	subst = substResFileNameTable[i];
-	return -1;
 }
 
 } // End of namespace Scumm
@@ -1504,308 +1267,18 @@ GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
 }
 
 
-enum {
-	kDetectNameMethodsCount = 8
-};
-
-static bool generateDetectName(const GameSettings &g, int method, char *detectName) {
-	detectName[0] = '\0';
-
-	switch (method) {
-	case 0:
-		if (g.version <= 3)
-			strcpy(detectName, "00.LFL");
-		break;
-	case 1:
-		// FIXME: The following would normally only allow for V4 games. But 
-		// for loom, there is both a v3 and a v4 version, but due to the way
-		// the detector works at this time, we'll only ever see the v3 variant
-		// here.
-		if (g.version == 3 || g.version == 4)
-			strcpy(detectName, "000.LFL");
-		break;
-	case 2:
-		if (g.version < 4 || g.version > 7)
-			return false;
-		strcpy(detectName, g.gameid);
-		strcat(detectName, ".000");
-		break;
-	case 3:
-		if (g.version >= 7) {
-			strcpy(detectName, g.gameid);
-			strcat(detectName, ".la0");
-		}
-		break;
-	case 4:
-		if (g.heversion != 0) {
-			strcpy(detectName, g.gameid);
-			strcat(detectName, ".he0");
-		}
-		break;
-	case 5:
-		// FIXME: Fingolfin asks: For which games is this case used? 
-		// Please document this. Also: Why was this case missing in
-		// Engine_SCUMM_create ?
-		strcpy(detectName, g.gameid);
-		break;
-	case 6:
-		if (g.id == GID_SAMNMAX) {
-			strcpy(detectName, g.gameid);
-			strcat(detectName, ".sm0");
-		}
-		break;
-	case 7:
-		if (g.id == GID_MANIAC)
-			strcpy(detectName, "00.MAN");
-		break;
-	default:
-		return false;
-	}
-
-	if (!detectName[0])
-		return false;
-
-	return true;
-}
-
 DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const GameSettings *g;
-	char detectName[128];
-	char tempName[128];
-	SubstResFileNames subst = { 0, 0, kGenAsIs };
+	Common::List<DetectorResult> results;
 
-	typedef Common::HashMap<Common::String, bool> StringSet;
-	StringSet fileSet;
-
-	const char *lastGameid = "";
-
-	for (g = gameVariantsTable; g->gameid; ++g) {
-		// HACK: For now we only consider the first ("default") variant for
-		// gameids that have multiple variants. In a future version of the
-		// detector code, this may change.
-		if (0 == strcmp(lastGameid, g->gameid) || *(g->gameid) == 0)
-			continue;
-		lastGameid = g->gameid;
+	detectGames(fslist, results, 0);
 	
-		// Determine the 'detectname' for this game, that is, the name of a
-		// file that *must* be presented if the directory contains the data
-		// for this game. For example, FOA requires atlantis.000
-
-		// TODO: we need to add cache here
-		for (int method = 0; method < kDetectNameMethodsCount; method++) {
-			if (!generateDetectName(*g, method, detectName))
-				continue;
-
-			strcpy(tempName, detectName);
-
-			int substLastIndex = 0;
-
-			do {
-				// Iterate over all files in the given directory
-				for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-					if (!file->isDirectory()) {
-						const char *name = file->displayName().c_str();
-
-						if (0 == scumm_stricmp(detectName, name)) {
-							byte buf[6];
-
-							if (g->version < 4) {
-								// We take a look at the file now, to narrow
-								// down the list of possible candidates a bit further.
-								// E.g. it's trivial to distinguish V1 from V3 games.
-								Common::File tmp;
-								if (!tmp.open(file->path().c_str()))
-									break;
-								tmp.read(buf, 6);
-
-								if (buf[0] == 0xCE && buf[1] == 0xF5) {
-									// Looks like V1. However, we currently do not distinguish between V1 and V2
-									// in the scumm_settings list.
-									if (g->version != 1 && g->version != 2)
-										break;
-
-									// Candidates: maniac clasic, zak classic
-
-									// TODO: Maybe we can use the filesize to distinguish these two?
-									// English V1 Zak: 1896 bytes
-									// English V1 MM:  1972 bytes
-									// It would be interesting if those sizes are the same for other language
-									// variants of these games, or for demos?
-								} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
-									// GF_OLD_BUNDLE: could be V2 or old V3.
-									if (!(g->features & GF_OLD_BUNDLE) || (g->version != 2 && g->version != 3))
-										break;
-									// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
-								/*
-								TODO: Might be possible to distinguish those by the script count.
-								Specifically, my versions of these games have this in their headers:
-
-								Loom (en; de; en demo; en MAC):
-								_numGlobalObjects 1000
-								_numRooms 100
-								_numCostumes 200
-								_numScripts 200
-								_numSounds 80
-
-								Indy3EGA (en PC; en Mac; en demo):
-								_numGlobalObjects 1000
-								_numRooms 99
-								_numCostumes 129
-								_numScripts 139
-								_numSounds 84
-
-								MM (en; de):
-								_numGlobalObjects 780
-								_numRooms 61
-								_numCostumes 40
-								_numScripts 179
-								_numSounds 120
-
-								Zak (de; en demo):
-								_numGlobalObjects 780
-								_numRooms 61
-								_numCostumes 40
-								_numScripts 155
-								_numSounds 120
-
-								So, they all have a different number of scripts.
-								*/
-								} else if (buf[4] == '0' && buf[5] == 'R') {
-									// newer V3 game
-									if (g->version != 3)
-										break;
-									// Candidates: indy3, indy3Towns, zakTowns, loomTowns
-								/*
-								Considering that we know about *all* TOWNS versions,
-								and know their MD5s, we could simply rely on this and
-								if we find something which has an unknown MD5, assume
-								that it is an (so far unknown) version of Indy3.
-
-								We can combine this with a look at the resource headers:
-
-								Indy3:
-								_numGlobalObjects 1000
-								_numRooms 99
-								_numCostumes 129
-								_numScripts 139
-								_numSounds 84
-
-								Indy3Towns, ZakTowns, ZakLoom demo:
-								_numGlobalObjects 1000
-								_numRooms 99
-								_numCostumes 199
-								_numScripts 199
-								_numSounds 199
-
-								Assuming that all the town variants look like the latter, we can
-								do the check like this:
-								  if (numScripts == 139)
-									assume Indy3
-								  else if (numScripts == 199)
-									assume towns game
-								  else
-									unknown, do not accept it
-								*/
-								} else if (buf[4] == 'R' && buf[5] == 'N') {
-									// V4 game
-									if (g->version != 4)
-										break;
-									// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
-								/*
-								For all of them, we have:
-								_numGlobalObjects 1000
-								_numRooms 99
-								_numCostumes 199
-								_numScripts 199
-								_numSounds 199
-								*/
-								} else if (buf[0] == 0xa0 && buf[1] == 0x07 && buf[2] == 0xa5 &&
-										   buf[3] == 0xbc) {
-									// MM NES .prg
-									if (g->id != GID_MANIAC)
-										break;
-								} else if (buf[0] == 0xbc && buf[1] == 0xb9) {
-									// MM NES 00.LFL
-									if (g->id != GID_MANIAC)
-										break;
-								} else if (buf[0] == 0x31 && buf[1] == 0x0a) {
-									// C64 MM & Zak disk1
-									if (g->version != 2)
-										break;
-								} else if (buf[0] == 0xcd && buf[1] == 0xfe) {
-									// C64 MM & Zak 00.LFL
-									if (g->version != 2)
-										break;
-								} else {
-									// This is not a V1-V4 game
-									break;
-								}
-							}
-
-							// Match found, add to list of candidates, then abort inner loop.
-							DetectedGame dg(g->gameid, findDescriptionFromGameID(g->gameid));
-							if (substLastIndex > 0 && // HE Mac versions.
-								(subst.genMethod == kGenMac ||
-								 subst.genMethod == kGenMacNoParens)) {
-								dg.platform = Common::kPlatformMacintosh;
-								fileSet[file->path()] = true;
-							} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
-									   (buf[0] == 0xbc || buf[0] == 0xa0)) {
-								dg.platform = Common::kPlatformNES;
-							} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
-									   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
-										(buf[0] == 0xcd && buf[1] == 0xfe))) {
-								dg.platform = Common::kPlatformC64;
-							} else {
-								fileSet[file->path()] = false;
-							}
-							
-							dg.updateDesc();	// Append the platform, if set, to the description.
-
-							detectedGames.push_back(dg);
-							break;
-						}
-					}
-				}
-
-				substLastIndex = findSubstResFileName(subst, tempName, substLastIndex);
-				applySubstResFileName(subst, tempName, detectName, sizeof(detectName));
-			} while (subst.almostGameID != 0);
-		}
-	}
-
-	// Now, we check the MD5 sums of the 'candidate' files. If we have an exact match,
-	// only return that.
-	bool exactMatch = false;
-	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
-		uint8 md5sum[16];
-		const char *name = iter->_key.c_str();
-
-		if (Common::md5_file(name, md5sum, kMD5FileSizeLimit)) {
-			char md5str[32+1];
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-
-			const MD5Table *elem = findInMD5Table(md5str);
-			if (elem) {
-				if (!exactMatch)
-					detectedGames.clear();	// Clear all the non-exact candidates
-
-				DetectedGame dg(elem->gameid, findDescriptionFromGameID(elem->gameid), elem->language);
-				if (iter->_value == true) // This was HE Mac game
-					dg.platform = Common::kPlatformMacintosh;
-				else
-					dg.platform = elem->platform;
-				dg.updateDesc(elem->extra);	// Append extra information to the description.
-				
-				// Insert the 'enhanced' game data into the candidate list
-				detectedGames.push_back(dg);
-
-				exactMatch = true;
-			}
-		}
+	
+	for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ++x) {
+		DetectedGame dg(x->game.gameid, findDescriptionFromGameID(x->game.gameid),
+				x->language, x->game.platform);
+		dg.updateDesc(x->extra);	// Append additional information, if set, to the description.
+		detectedGames.push_back(dg);
 	}
 
 	return detectedGames;
@@ -1838,236 +1311,131 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 		}
 	}
 
-	// Lookup the game ID in our database. If this lookup fails, then
-	// the game ID is unknown, and we have to abort.
-	const GameSettings *g = gameVariantsTable;
-	while (g->gameid) {
-		if (!scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-	if (!g->gameid) {
-		return 0;
-	}
 
-	// We now want to calculate the MD5 of the games detection file, so that we
-	// can store it in savegames etc..
-	gameid = g->gameid;
-	char detectName[256], tempName[256];
-	uint8 md5sum[16];
-	SubstResFileNames subst = { 0, 0, kGenAsIs };
-	bool found = false;
 
-	GameSettings game = *g;
+	FilesystemNode dir;
+	if (ConfMan.hasKey("path") )
+		dir = FilesystemNode(ConfMan.get("path"));
+	FSList fslist = dir.listDir(FilesystemNode::kListFilesOnly);
+	Common::List<DetectorResult> results;
 
-	// To this end, we first have to figure out what the proper detection file
-	// is (00.LFL, 000.LFL, ...). So we iterate over all possible names,
-	// and once we find a matching file, we assume that's it.
-	for (int method = 0; method < kDetectNameMethodsCount && !found; method++) {
-		if (!generateDetectName(game, method, detectName))
-			continue;
-
-		strcpy(tempName, detectName);
-
-		int substLastIndex = 0;
-		do {
-			// FIXME: Repeatedly calling File::exists like this is a bad idea.
-			// Instead, use the fs.h code to get a list of all files in that 
-			// directory and simply check whether that filename is contained 
-			// in it. 
-			if (Common::File::exists(detectName)) {
-				found = true;
-				break;
-			}
-
-			substLastIndex = findSubstResFileName(subst, tempName, substLastIndex);
-			applySubstResFileName(subst, tempName, detectName, sizeof(detectName));
-		} while (subst.almostGameID != 0);
-
-		if (found) {
-			if (subst.almostGameID != 0)
-				debug(5, "Generated filename substitute: %s -> %s", tempName, detectName);
-			break;
-		}
-	}
+	// Invoke the detector, but fixed to the specified gameid.
+	detectGames(fslist, results, gameid);
 
 	// Unable to locate game data
-	if (!found) {
+	if (results.empty())
 		return 0;
-	}
 
-	// Force game to have Mac platform if needed
-	if (subst.almostGameID) {
-		if (subst.genMethod == kGenMac ||
-			subst.genMethod == kGenMacNoParens)
-			game.platform = Common::kPlatformMacintosh;
-	}
+	DetectorResult res(*(results.begin()));
 
-	// Determine a MD5 checksum which then is used to narrow down the choice
-	// of game variants. 
-	const char *md5 = NULL;
-	char md5buf[33];
-
-	// First, check if the MD5 was overridden with a config file entry.
-	if (ConfMan.hasKey("target_md5")) {
-		assert(ConfMan.get("target_md5").size() == 32);
-		md5 = ConfMan.get("target_md5").c_str();
-	} else {
-		// Next, check if the MD5 was overridden via a target_md5.txt file.
-		Common::File target_md5F;
-		target_md5F.open("target_md5.txt");
-	
-		if (target_md5F.isOpen()) {
-			bool valid = true;
-	
-			target_md5F.readLine(md5buf, 33);
-			for (int j = 0; j < 32 && valid; ++j)
-				if (!((md5buf[j] >= '0' && md5buf[j] <= '9') || 
-					  (md5buf[j] >= 'A' && md5buf[j] <= 'F') ||
-					  (md5buf[j] >= 'a' && md5buf[j] <= 'f')))
-					valid = false;
-	
-			if (valid)
-				md5 = md5buf;
+/*
+	// No unique match found. If a platform override is present, try to
+	// narrow down the list a bit more.
+	if (results.size() > 1 && ConfMan.hasKey("platform")) {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+		for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ) {
+			if (x->game.platform != platform)
+				x = results.erase(x); 
+			else
+				++x;
 		}
 	}
-	
-	// Finally, if no MD5 value has been determined so far, compute it from the
-	// detect file.
-	if (!md5) {
-		// Compute the MD5 of the file, and (if we succeeded) store a hex version
-		// of it in gameMD5 (useful to print it to the user in messages).
-		if (Common::md5_file(detectName, md5sum, kMD5FileSizeLimit)) {
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5buf + j*2, "%02x", (int)md5sum[j]);
-			}
-		}
-		md5 = md5buf;
+*/
+
+	// Still no unique match found -> we just use the first one
+	if (results.size() > 1) {
+		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
 	}
-
-
-
-	// Now look up the MD5 in our lookup table (md5table).
-	const MD5Table *elem = findInMD5Table(md5);
-
-
-	// If a match was found, we use the information obtained from the md5table
-	// to walk through the gameVariantsTable array and find a match there.
-	// Otherwise, we print a warning about the MD5 being unknwon.
-	if (elem) {
-		// The MD5 is known and was found in our md5table.
-		debug(5, "Using MD5 '%s'", md5);
-		
-		// Sanity check: Make sure the gameids match!
-		if (scumm_stricmp(elem->gameid, gameid)) {
-			error("MD5 %s implies gameid '%s', but gameid '%s' was used",
-					md5, elem->gameid, gameid);
-		}
 	
-		// Compute the precise game settings using gameVariantsTable.
-		for (g = gameVariantsTable; g->gameid; ++g) {
-			if (g->gameid[0] == 0 || !scumm_stricmp(elem->gameid, g->gameid)) {
-				// The gameid either matches, or is empty (the latter indicates
-				// a generic entry, used currently for generic HE specifies.
 
-				if (g->variant == 0 || !scumm_stricmp(elem->variant, g->variant)) {
-					// Perfect match found, use it and stop the loop
-					game = *g;
-					game.gameid = gameid;
-					if (elem->platform != Common::kPlatformUnknown) {
-						if (game.platform != Common::kPlatformUnknown && game.platform != elem->platform)
-							warning("Platform values differ for MD5 '%s': %d vs %d (please report to Fingolfin)",
-										md5, game.platform, elem->platform);
-						game.platform = elem->platform;
-					}
-					break;
-				}
-			}
-		}
-	} else {
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
-	}
 
+	// TODO: Do we really still need / want the platform override ?
 
 
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in 
 	// our MD5 database but require a specific platform setting.
 	if (ConfMan.hasKey("platform"))
-		game.platform = Common::parsePlatform(ConfMan.get("platform"));
+		res.game.platform = Common::parsePlatform(ConfMan.get("platform"));
+
+
+	// Language override
+	if (ConfMan.hasKey("language"))
+		res.language = Common::parseLanguage(ConfMan.get("language"));
 
 
 	// V3 FM-TOWNS games *always* should use the corresponding music driver,
 	// anything else makes no sense for them.
-	if (game.platform == Common::kPlatformFMTowns && game.version == 3) {
-		game.midi = MDT_TOWNS;
+	// TODO: Maybe allow the null driver, too?
+	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3) {
+		res.game.midi = MDT_TOWNS;
 	}
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
-	switch (game.version) {
+	switch (res.game.version) {
+	case 0:
+		engine = new ScummEngine_c64(syst, res);
+		break;
 	case 1:
 	case 2:
-		if (game.id == GID_MANIAC && game.platform == Common::kPlatformC64)
-			engine = new ScummEngine_c64(syst, game, md5sum, subst);
-		else
-			engine = new ScummEngine_v2(syst, game, md5sum, subst);
+		engine = new ScummEngine_v2(syst, res);
 		break;
 	case 3:
-		if (game.features & GF_OLD_BUNDLE)
-			engine = new ScummEngine_v3old(syst, game, md5sum, subst);
+		if (res.game.features & GF_OLD_BUNDLE)
+			engine = new ScummEngine_v3old(syst, res);
 		else
-			engine = new ScummEngine_v3(syst, game, md5sum, subst);
+			engine = new ScummEngine_v3(syst, res);
 		break;
 	case 4:
-		engine = new ScummEngine_v4(syst, game, md5sum, subst);
+		engine = new ScummEngine_v4(syst, res);
 		break;
 	case 5:
-		engine = new ScummEngine_v5(syst, game, md5sum, subst);
+		engine = new ScummEngine_v5(syst, res);
 		break;
 	case 6:
-		switch (game.heversion) {
+		switch (res.game.heversion) {
 #ifndef DISABLE_HE
 		case 100:
-			engine = new ScummEngine_v100he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v100he(syst, res);
 			break;
 		case 99:
-			engine = new ScummEngine_v99he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v99he(syst, res);
 			break;
 		case 98:
 		case 95:
 		case 90:
-			engine = new ScummEngine_v90he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v90he(syst, res);
 			break;
 		case 80:
-			engine = new ScummEngine_v80he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v80he(syst, res);
 			break;
 		case 73:
 		case 72:
-			engine = new ScummEngine_v72he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v72he(syst, res);
 			break;
 		case 71:
-			engine = new ScummEngine_v71he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v71he(syst, res);
 			break;
 		case 70:
-			engine = new ScummEngine_v70he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v70he(syst, res);
 			break;
 #endif
 #ifndef PALMOS_68K
 		case 61:
-			engine = new ScummEngine_v60he(syst, game, md5sum, subst);
+			engine = new ScummEngine_v60he(syst, res);
 			break;
 #endif
 		default:
-			engine = new ScummEngine_v6(syst, game, md5sum, subst);
+			engine = new ScummEngine_v6(syst, res);
 		}
 		break;
 #ifndef DISABLE_SCUMM_7_8
 	case 7:
-		engine = new ScummEngine_v7(syst, game, md5sum, subst);
+		engine = new ScummEngine_v7(syst, res);
 		break;
 	case 8:
-		engine = new ScummEngine_v8(syst, game, md5sum, subst);
+		engine = new ScummEngine_v8(syst, res);
 		break;
 #endif
 	default:
