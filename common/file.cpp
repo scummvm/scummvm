@@ -188,7 +188,7 @@ bool File::open(const String &filename, AccessMode mode, const char *directory) 
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
 	if (filename.empty()) {
-		error("File::open: No filename was specified!");
+		error("File::open: No filename was specified");
 	}
 
 	if (_handle) {
