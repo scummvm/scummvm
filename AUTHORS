@@ -160,6 +160,7 @@ Other contributions
   ------------------
      Stuart Caie           - Decoders for Simon 1 Amiga data files
      Paolo Costabel        - PSP port contributions
+     Benjamin Haisch       - Encoder for DXA videos
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
      Kovacs Endre Janos    - Several fixes for Simon1
      Jeroen Janssen        - Numerous readability and bugfix patches
