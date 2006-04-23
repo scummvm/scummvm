@@ -428,7 +428,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
-	memset(_heTimers, 0, sizeof(_heTimers));
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
@@ -796,6 +795,11 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	VAR_TIMEDATE_HOUR = 0xFF;
 	VAR_TIMEDATE_MINUTE = 0xFF;
 	VAR_TIMEDATE_SECOND = 0xFF;
+}
+
+ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
+	: ScummEngine_v6(syst, dr) {
+	memset(_heTimers, 0, sizeof(_heTimers));
 }
 
 #ifndef DISABLE_HE
@@ -1894,13 +1898,13 @@ load_game:
 #pragma mark --- SCUMM ---
 #pragma mark -
 
-int ScummEngine::getHETimer(int timer) {
+int ScummEngine_v60he::getHETimer(int timer) {
 	checkRange(15, 1, timer, "getHETimer: Timer out of range(%d)");
 	int time = _system->getMillis() - _heTimers[timer];
 	return time;
 }
 
-void ScummEngine::setHETimer(int timer) {
+void ScummEngine_v60he::setHETimer(int timer) {
 	checkRange(15, 1, timer, "setHETimer: Timer out of range(%d)");
 	_heTimers[timer] = _system->getMillis();
 }

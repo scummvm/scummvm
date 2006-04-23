@@ -27,6 +27,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/he/sound_he.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/util.h"
 
 #include "common/config-manager.h"
@@ -48,6 +49,7 @@ namespace Scumm {
 SoundHE::SoundHE(ScummEngine *parent)
 	:
 	Sound(parent),
+	_vm((ScummEngine_v60he *)parent),
 	_heMusic(0),
 	_heMusicTracks(0) {
 

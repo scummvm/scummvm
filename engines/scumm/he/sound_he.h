@@ -27,9 +27,13 @@
 
 namespace Scumm {
 
+class ScummEngine_v60he;
+
 class SoundHE : public Sound {
 protected:
-	struct HEMusic{
+	ScummEngine_v60he *_vm;
+
+	struct HEMusic {
 		int32 id;
 		int32 offset;
 		int32 size;

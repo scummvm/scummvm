@@ -48,10 +48,15 @@ protected:
 
 	const OpcodeEntryv60he *_opcodesv60he;
 
+public:
 	Common::File _hFileTable[17];
 
+	int _heTimers[16];
+	int getHETimer(int timer);
+	void setHETimer(int timer);
+
 public:
-	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v6(syst, dr) {}
+	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
 
 	virtual void scummInit();
 

@@ -1127,10 +1127,6 @@ public:
 	byte _HEV7ActorPalette[256];
 	uint8 *_hePalettes;
 
-	int _heTimers[16];
-	int getHETimer(int timer);
-	void setHETimer(int timer);
-
 protected:
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];
