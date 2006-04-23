@@ -332,7 +332,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		} else if (scumm_stricmp(gameid.c_str(), candidates.begin()->gameid.c_str())) {
 			printf(" FAILURE: Wrong gameid detected\n");
 		} else {
-			printf(" SUCCESS: Game was detected correctl\n");
+			printf(" SUCCESS: Game was detected correctly\n");
 		}
 		
 		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
