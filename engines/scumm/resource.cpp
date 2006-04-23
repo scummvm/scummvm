@@ -115,7 +115,7 @@ void ScummEngine::openRoom(const int room) {
 			VAR(VAR_CURRENTDISK) = diskNumber;
 
 		// Try to open the file
-		result = openResourceFile(filename.c_str(), encByte);
+		result = openResourceFile(filename, encByte);
 
 		if (result) {
 			if (room == 0)
@@ -185,7 +185,7 @@ void ScummEngine::readRoomsOffsets() {
 	}
 }
 
-bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resourceFile) {
+bool ScummEngine::openFile(BaseScummFile &file, const Common::String &filename, bool resourceFile) {
 	bool result = false;
 
 	if (!_containerFile.empty()) {
@@ -204,8 +204,8 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resou
 	return result;
 }
 
-bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
-	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
+bool ScummEngine::openResourceFile(const Common::String &filename, byte encByte) {
+	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename.c_str());
 
 	if (openFile(*_fileHandle, filename, true)) {
 		_fileHandle->setEnc(encByte);

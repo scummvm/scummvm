@@ -1018,7 +1018,7 @@ ScummFile *Sound::openSfxFile() {
 		for (int i = 0; extensions[i].ext; ++i) {
 			Common::String tmp(basename[j]);
 			tmp += extensions[i].ext;
-			if (_vm->openFile(*file, tmp.c_str())) {
+			if (_vm->openFile(*file, tmp)) {
 				_soundMode = extensions[i].mode;
 				break;
 			}

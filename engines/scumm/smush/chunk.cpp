@@ -101,7 +101,7 @@ FileChunk::FileChunk(ScummFile *data, int offset) {
 FileChunk::FileChunk(const Common::String &name, int offset) {
 	_data = new ScummFile();
 	_deleteData = true;
-	if (!g_scumm->openFile(*_data, name.c_str()))
+	if (!g_scumm->openFile(*_data, name))
 		error("FileChunk: Unable to open file %s", name.c_str());
 
 	_data->seek(offset, seek_start);

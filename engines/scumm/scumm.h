@@ -732,7 +732,7 @@ public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
 
-	bool openFile(BaseScummFile &file, const char *filename, bool resourceFile = false);	// TODO: Use Common::String
+	bool openFile(BaseScummFile &file, const Common::String &filename, bool resourceFile = false);
 
 protected:
 	int _resourceHeaderSize;
@@ -748,7 +748,7 @@ protected:
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
 	void askForDisk(const char *filename, int disknum);	// TODO: Use Common::String
-	bool openResourceFile(const char *filename, byte encByte);	// TODO: Use Common::String
+	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	virtual void readResTypeList(int id, const char *name);
