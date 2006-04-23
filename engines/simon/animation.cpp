@@ -71,7 +71,7 @@ bool MoviePlayer::load(const char *filename) {
 	}
 	_width = _fd.readUint16BE();
 	_height = _fd.readUint16BE();
-	debug(5, "frames_count %d width %d height %d ticks %d", _framesCount, _width, _height, _frameTicks);
+	debug(0, "frames_count %d width %d height %d ticks %d", _framesCount, _width, _height, _frameTicks);
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
@@ -85,20 +85,20 @@ bool MoviePlayer::load(const char *filename) {
 void MoviePlayer::play() {
 	uint32 tag;
 
-	// Load OmniTV video
-	if (_vm->getBitFlag(40)) {
-		_vm->_variableArray[254] = 6747;
-		return;
-	}
-
 	if (_fd.isOpen() == false) {
-		debug(0, "MoviePlayer::play: No file loaded");
-		return;
+		// Load OmniTV video
+		if (_vm->getBitFlag(40)) {
+			_vm->_variableArray[254] = 6747;
+			return;
+		} else {
+			debug(0, "MoviePlayer::play: No file loaded");
+			return;
+		}
 	}
 
 	_mixer->stopAll();
 
-	_currentFrame = 0;
+	_frameNum = 0;
 
 	_leftButtonDown = false;
 	_rightButtonDown = false;
@@ -110,18 +110,48 @@ void MoviePlayer::play() {
 	byte *buffer = (byte *)malloc(size);
 	_fd.read(buffer, size);
 
-	// TODO: Audio and video sync.
+	_ticks = g_system->getMillis();
+
 	Common::MemoryReadStream stream(buffer, size);
-	AudioStream *sndStream = makeWAVStream(stream);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, sndStream);
+	_bgSoundStream = makeWAVStream(stream);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 
 	// Resolution is smaller in Amiga verison so always clear screen
-	if (_width != 640 && _height != 480)
+	if (_width == 384 && _height == 280)
 		g_system->clearScreen();
 
-	while (_currentFrame < _framesCount) {
-		handleNextFrame();
-		++_currentFrame;
+	while (_frameNum < _framesCount) {
+		decodeFrame();
+		processFrame();
+		g_system->updateScreen();
+		_frameNum++;
+
+		OSystem::Event event;
+		while (g_system->pollEvent(event)) {
+			switch (event.type) {
+			case OSystem::EVENT_LBUTTONDOWN:
+				_leftButtonDown = true;
+				break;
+			case OSystem::EVENT_RBUTTONDOWN:
+				_rightButtonDown = true;
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+				_leftButtonDown = false;
+				break;
+			case OSystem::EVENT_RBUTTONUP:
+				_rightButtonDown = false;
+				break;
+			case OSystem::EVENT_QUIT:
+				g_system->quit();
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(40)) {
+			_frameNum = _framesCount;
+		}
 	}
 
 	close();
@@ -139,63 +169,6 @@ void MoviePlayer::close() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
-}
-
-void MoviePlayer::handleNextFrame() {
-	uint32 tag = _fd.readUint32BE();
-	if (tag == MKID_BE('CMAP')) {
-		uint8 rgb[768];
-		byte palette[1024];
-		byte *p = palette;
-
-		_fd.read(rgb, ARRAYSIZE(rgb));
-		for (int i = 0; i <= 256; i++) {
-			*p++ = rgb[i * 3 + 0];
-			*p++ = rgb[i * 3 + 1];
-			*p++ = rgb[i * 3 + 2];
-			*p++ = 0;
-		}
-		g_system->setPalette(palette, 0, 256);
-	}
-
-	tag = _fd.readUint32BE();
-	if (tag == MKID_BE('FRAM')) {
-		uint8 type = _fd.readByte();
-		uint32 size = _fd.readUint32BE();
-		debug(5, "frame %d type %d size %d", _currentFrame, type, size);
-		_fd.read(_frameBuffer2, size);
-		switch (type) {
-		case 2:
-		case 3:
-			decodeZlib(_frameBuffer2, size, _frameSize);
-			break;
-		case 4:
-		case 5:
-			decode0(_frameBuffer2, size);
-			break;
-		case 6:
-		case 7:
-			decode2(_frameBuffer2, size, _frameSize);
-			break;
-		}
-		if (type == 2 || type == 4 || type == 6) {
-			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
-		} else {
-			for (int j = 0; j < _height; ++j) {
-				for (int i = 0; i < _width; ++i) {
-					const int offs = j * _width + i;
-					_frameBuffer1[offs] ^= _frameBuffer2[offs];
-				}
-			}
-		}
-	}
-
-	if (_width == 640 && _height == 480)
-		g_system->copyRectToScreen(_frameBuffer1, _width, 0, 0, _width, _height);
-	else
-		g_system->copyRectToScreen(_frameBuffer1, _width, 128, 100, _width, _height);
-	g_system->updateScreen();
-	delay(_frameTicks);
 }
 
 void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
@@ -220,60 +193,81 @@ void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
 #endif
 }
 
-void MoviePlayer::decode0(uint8 *data, int size) {
-	error("decode0");
-}
+void MoviePlayer::decodeFrame() {
+	uint32 tag = _fd.readUint32BE();
+	if (tag == MKID_BE('CMAP')) {
+		uint8 rgb[768];
+		byte palette[1024];
+		byte *p = palette;
 
-void MoviePlayer::decode2(uint8 *data, int size, int totalSize) {
-	error("decode2");
-}
+		_fd.read(rgb, ARRAYSIZE(rgb));
+		for (int i = 0; i <= 256; i++) {
+			*p++ = rgb[i * 3 + 0];
+			*p++ = rgb[i * 3 + 1];
+			*p++ = rgb[i * 3 + 2];
+			*p++ = 0;
+		}
+		g_system->setPalette(palette, 0, 256);
+	}
 
-void MoviePlayer::delay(uint amount) {
-	OSystem::Event event;
-
-	uint32 start = g_system->getMillis();
-	uint32 cur = start;
-	uint this_delay;
-
-	do {
-		while (g_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_LBUTTONDOWN:
-				_leftButtonDown = true;
-				break;
-			case OSystem::EVENT_RBUTTONDOWN:
-				_rightButtonDown = true;
-				break;
-			case OSystem::EVENT_LBUTTONUP:
-				_leftButtonDown = false;
-				break;
-			case OSystem::EVENT_RBUTTONUP:
-				_rightButtonDown = false;
-				break;
-			case OSystem::EVENT_QUIT:
-				g_system->quit();
-				break;
-			default:
-				break;
+	tag = _fd.readUint32BE();
+	if (tag == MKID_BE('FRAM')) {
+		uint8 type = _fd.readByte();
+		uint32 size = _fd.readUint32BE();
+		debug(0, "frame %d type %d size %d", _frameNum, type, size);
+		_fd.read(_frameBuffer2, size);
+		switch (type) {
+		case 2:
+		case 3:
+			decodeZlib(_frameBuffer2, size, _frameSize);
+			break;
+		default:
+			error("decodeFrame: Unknown compression type %d", type);
+		}
+		if (type == 2) {
+			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
+		} else {
+			for (int j = 0; j < _height; ++j) {
+				for (int i = 0; i < _width; ++i) {
+					const int offs = j * _width + i;
+					_frameBuffer1[offs] ^= _frameBuffer2[offs];
+				}
 			}
 		}
+	}
+}
 
-		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(40)) {
-			_currentFrame = _framesCount;
-			amount = 0;
+void MoviePlayer::processFrame() {
+	if (_width == 640 && _height == 480)
+		g_system->copyRectToScreen(_frameBuffer1, _width, 0, 0, _width, _height);
+	else
+		g_system->copyRectToScreen(_frameBuffer1, _width, 128, 100, _width, _height);
+
+	// TODO Remove set frame rate, were video files use different rate.
+	if ((_bgSoundStream == NULL) || ((_mixer->getSoundElapsedTime(_bgSound) * 10) / 1000 < _frameNum + 1) ||
+		_frameSkipped > 10) {
+		if (_frameSkipped > 10) {
+			warning("force frame %i redraw", _frameNum);
+			_frameSkipped = 0;
 		}
 
-		if (amount == 0)
-			break;
-
-		{
-			this_delay = 20 * 1;
-			if (this_delay > amount)
-				this_delay = amount;
-			g_system->delayMillis(this_delay);
+		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * 10) / 1000 < _frameNum) {
+				g_system->delayMillis(10);
+			}
+			// In case the background sound ends prematurely, update
+			// _ticks so that we can still fall back on the no-sound
+			// sync case for the subsequent frames.
+			_ticks = g_system->getMillis();
+		} else {
+			_ticks += _frameTicks;
+			while (g_system->getMillis() < _ticks)
+				g_system->delayMillis(10);
 		}
-		cur = g_system->getMillis();
-	} while (cur < start + amount);
+	} else {
+		warning("dropped frame %i", _frameNum);
+		_frameSkipped++;
+	}
 }
 
 } // End of namespace Simon

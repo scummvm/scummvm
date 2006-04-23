@@ -37,6 +37,9 @@ class MoviePlayer {
 
 	Audio::Mixer *_mixer;
 
+	Audio::SoundHandle _bgSound;
+	AudioStream *_bgSoundStream;
+
 	bool _playing;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
@@ -47,8 +50,10 @@ class MoviePlayer {
 	uint16 _height;
 	uint32 _frameSize;
 	uint16 _framesCount;
-	uint16 _currentFrame;
+	uint16 _frameNum;
 	uint32 _frameTicks;
+	uint _frameSkipped;
+	uint32 _ticks;
 	
 public:
 	MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer);
@@ -59,11 +64,9 @@ public:
 private:
 	void close();
 
-	void delay(uint amount);
-	void handleNextFrame();
+	void decodeFrame();
+	void processFrame();
 	void decodeZlib(uint8 *data, int size, int totalSize);
-	void decode0(uint8 *data, int size);
-	void decode2(uint8 *data, int size, int totalSize);
 };
 
 } // End of namespace Simon
