@@ -244,7 +244,7 @@ void MoviePlayer::processFrame() {
 	uint x = (_vm->_screenWidth - _width) / 2;
 	uint y = (_vm->_screenHeight - _height) / 2;
 
-	_vm->_system->copyRectToScreen(_frameBuffer1, _width, x, y, _width, _height);
+	_vm->_system->copyRectToScreen(_vm->_frontBuf, _width, x, y, _width, _height);
 
 	if ((_bgSoundStream == NULL) || ((_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
 		_frameSkipped > _frameRate) {
