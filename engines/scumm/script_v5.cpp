@@ -1340,7 +1340,7 @@ void ScummEngine_v5::o5_isEqual() {
 
 	// HACK: To allow demo script of Maniac Mansion V2
 	// The camera x position is only 100, instead of 180, after game title name scrolls.
-	if (_game.id == GID_MANIAC && _game.version == 2 && _demoMode && isScriptRunning(173) && b == 180)
+	if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO) && isScriptRunning(173) && b == 180)
 		b = 100;
 
 	if (b == a)

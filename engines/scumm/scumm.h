@@ -1154,7 +1154,6 @@ protected:
 	bool _enable_gs;
 	MidiDriverFlags _musicType;
 	bool _copyProtection;
-	bool _demoMode;
 	bool _confirmExit;
 
 public:

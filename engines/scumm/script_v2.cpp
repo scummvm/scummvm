@@ -425,7 +425,7 @@ void ScummEngine_v2::decodeParseString() {
 	if (_game.id == GID_MANIAC && _actorToPrintStrFor == 0xFF) {
 		if (_game.platform == Common::kPlatformC64) {
 			_string[textSlot].color = 14;
-		} else if (_demoMode) {
+		} else if (_game.features & GF_DEMO) {
 			_string[textSlot].color = (_game.version == 2) ? 15 : 1;
 		}
 	}
@@ -711,7 +711,7 @@ void ScummEngine_v2::o2_actorOps() {
 		a->setActorCostume(arg);
 		break;
 	case 5:		// SO_TALK_COLOR
-		if (_game.id == GID_MANIAC && _game.version == 2 && _demoMode && arg == 1)
+		if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO) && arg == 1)
 			a->_talkColor = 15;
 		else
 			a->_talkColor = arg;
@@ -844,11 +844,11 @@ void ScummEngine_v2::o2_verbOps() {
 			vs->hicolor = 1;
 			vs->dimcolor = 1;
 		} else if (_game.version == 1) {
-			vs->color = (_game.id == GID_MANIAC && _demoMode) ? 16 : 5;
+			vs->color = (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) ? 16 : 5;
 			vs->hicolor = 7;
 			vs->dimcolor = 11;
 		} else {
-			vs->color = (_game.id == GID_MANIAC && _demoMode) ? 13 : 2;
+			vs->color = (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) ? 13 : 2;
 			vs->hicolor = 14;
 			vs->dimcolor = 8;
 		}
@@ -1467,7 +1467,7 @@ void ScummEngine_v2::o2_cutscene() {
 	// FIXME allows quotes script (173) to start during introudction of
 	// demo mode of V1 Maniac Mansion. setUserState was halting script
 	// 173 before it started.
-	if (!(_game.id == GID_MANIAC && _demoMode))
+	if (!(_game.id == GID_MANIAC && (_game.features & GF_DEMO)))
 	// Hide inventory, freeze scripts, hide cursor
 	setUserState(15);
 

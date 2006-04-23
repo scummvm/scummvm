@@ -365,7 +365,6 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
 	_copyProtection = false;
-	_demoMode = false;
 	_confirmExit = false;
 	_voiceMode = 0;
 	_talkDelay = 0;
@@ -544,7 +543,8 @@ ScummEngine::ScummEngine(OSystem *syst, const GameSettings &gs, uint8 md5sum[16]
 	_baseName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.gameid;
 
 	_copyProtection = ConfMan.getBool("copy_protection");
-	_demoMode = ConfMan.getBool("demo_mode");
+	if (ConfMan.getBool("demo_mode"))
+		_game.features |= GF_DEMO;
 	if (ConfMan.hasKey("nosubtitles")) {
 		printf("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead\n");
 		if (!ConfMan.hasKey("subtitles"))
@@ -1087,13 +1087,13 @@ void ScummEngine::scummInit() {
 		_actors[i].initActor(1);
 
 		// this is from IDB
-		if ((_game.version == 1) || (_game.id == GID_MANIAC && _demoMode))
+		if ((_game.version == 1) || (_game.id == GID_MANIAC && (_game.features & GF_DEMO)))
 			_actors[i].setActorCostume(i);
 	}
 
 	if (_game.id == GID_MANIAC && _game.version == 1) {
 		setupV1ActorTalkColor();
-	} else if (_game.id == GID_MANIAC && _game.version == 2 && _demoMode) {
+	} else if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO)) {
 		// HACK Some palette changes needed for demo script
 		// in Maniac Mansion (Enhanced)
 		_actors[3].setPalette(3, 1);
@@ -1458,7 +1458,7 @@ int ScummEngine::go() {
 			((ScummEngine_v90he *)this)->_logicHE->beforeBootScript();
 		}
 #endif
-		if (_game.id == GID_MANIAC && _demoMode)
+		if (_game.id == GID_MANIAC && (_game.features & GF_DEMO))
 			runScript(9, 0, 0, args);
 		else
 			runScript(1, 0, 0, args);
@@ -1899,7 +1899,7 @@ void ScummEngine::restart() {
 	int args[16];
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;
-	if (_game.id == GID_MANIAC && _demoMode)
+	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO))
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);

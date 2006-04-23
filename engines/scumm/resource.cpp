@@ -172,7 +172,7 @@ void ScummEngine::openRoom(const int room) {
 			result = openResourceFile(buf2, encByte);
 			// We have .man files so set demo mode
 			if (_game.id == GID_MANIAC)
-				_demoMode = true;
+				_game.features |= GF_DEMO;
 		}
 
 		if (result) {
