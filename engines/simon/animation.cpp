@@ -113,7 +113,7 @@ void MoviePlayer::play() {
 	byte *buffer = (byte *)malloc(size);
 	_fd.read(buffer, size);
 
-	_ticks = g_system->getMillis();
+	_ticks = _vm->_system->getMillis();
 
 	Common::MemoryReadStream stream(buffer, size);
 	_bgSoundStream = makeWAVStream(stream);
@@ -121,16 +121,16 @@ void MoviePlayer::play() {
 
 	// Resolution is smaller in Amiga verison so always clear screen
 	if (_width == 384 && _height == 280)
-		g_system->clearScreen();
+		_vm->dx_clear_surfaces(480);
 
 	while (_frameNum < _framesCount) {
 		decodeFrame();
 		processFrame();
-		g_system->updateScreen();
+		_vm->_system->updateScreen();
 		_frameNum++;
 
 		OSystem::Event event;
-		while (g_system->pollEvent(event)) {
+		while (_vm->_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_LBUTTONDOWN:
 				_leftButtonDown = true;
@@ -145,7 +145,7 @@ void MoviePlayer::play() {
 				_rightButtonDown = false;
 				break;
 			case OSystem::EVENT_QUIT:
-				g_system->quit();
+				_vm->_system->quit();
 				break;
 			default:
 				break;
@@ -162,9 +162,9 @@ void MoviePlayer::play() {
 	_vm->o_killAnimate();
 
 	if (_vm->getBitFlag(41)) {
-		// TODO
+		memcpy(_vm->_backBuf, _vm->_frontBuf, _frameSize);
 	} else {
-		g_system->clearScreen();
+		_vm->dx_clear_surfaces(480);
 	}
 }
 
@@ -210,7 +210,7 @@ void MoviePlayer::decodeFrame() {
 			*p++ = rgb[i * 3 + 2];
 			*p++ = 0;
 		}
-		g_system->setPalette(palette, 0, 256);
+		_vm->_system->setPalette(palette, 0, 256);
 	}
 
 	tag = _fd.readUint32BE();
@@ -241,10 +241,10 @@ void MoviePlayer::decodeFrame() {
 }
 
 void MoviePlayer::processFrame() {
-	if (_width == 640 && _height == 480)
-		g_system->copyRectToScreen(_frameBuffer1, _width, 0, 0, _width, _height);
-	else
-		g_system->copyRectToScreen(_frameBuffer1, _width, 128, 100, _width, _height);
+	uint x = (_vm->_screenWidth - _width) / 2;
+	uint y = (_vm->_screenHeight - _height) / 2;
+
+	_vm->_system->copyRectToScreen(_frameBuffer1, _width, x, y, _width, _height);
 
 	if ((_bgSoundStream == NULL) || ((_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
 		_frameSkipped > _frameRate) {
@@ -255,16 +255,16 @@ void MoviePlayer::processFrame() {
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
 			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum) {
-				g_system->delayMillis(10);
+				_vm->_system->delayMillis(10);
 			}
 			// In case the background sound ends prematurely, update
 			// _ticks so that we can still fall back on the no-sound
 			// sync case for the subsequent frames.
-			_ticks = g_system->getMillis();
+			_ticks = _vm->_system->getMillis();
 		} else {
 			_ticks += _frameTicks;
-			while (g_system->getMillis() < _ticks)
-				g_system->delayMillis(10);
+			while (_vm->_system->getMillis() < _ticks)
+				_vm->_system->delayMillis(10);
 		}
 	} else {
 		warning("dropped frame %i", _frameNum);
