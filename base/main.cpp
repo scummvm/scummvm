@@ -316,6 +316,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		}
 		
 		FilesystemNode dir(path);
+		
+		if (!dir.isValid() || !dir.isDirectory()) {
+			printf(" ... invalid path, skipping\n");
+			continue;
+		}
+		
 		FSList files = dir.listDir(FilesystemNode::kListAll);
 		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 		
