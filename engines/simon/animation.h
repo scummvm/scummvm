@@ -51,6 +51,7 @@ class MoviePlayer {
 	uint32 _frameSize;
 	uint16 _framesCount;
 	uint16 _frameNum;
+	uint32 _frameRate;
 	uint32 _frameTicks;
 	uint _frameSkipped;
 	uint32 _ticks;

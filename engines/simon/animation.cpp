@@ -65,13 +65,16 @@ bool MoviePlayer::load(const char *filename) {
 
 	_fd.readByte();
 	_framesCount = _fd.readUint16BE();
-	_frameTicks = _fd.readUint32BE();
-	if (_frameTicks > 100) {
+	_frameRate = _frameTicks = _fd.readUint32BE();
+
+        if (_frameRate >= 0x80000000)
+                _frameRate = -_frameRate / 1000;
+	if (_frameTicks > 100)
 		_frameTicks = 100;
-	}
+
 	_width = _fd.readUint16BE();
 	_height = _fd.readUint16BE();
-	debug(0, "frames_count %d width %d height %d ticks %d", _framesCount, _width, _height, _frameTicks);
+	debug(0, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _frameRate, _frameTicks);
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
@@ -243,16 +246,15 @@ void MoviePlayer::processFrame() {
 	else
 		g_system->copyRectToScreen(_frameBuffer1, _width, 128, 100, _width, _height);
 
-	// TODO Remove set frame rate, were video files use different rate.
-	if ((_bgSoundStream == NULL) || ((_mixer->getSoundElapsedTime(_bgSound) * 10) / 1000 < _frameNum + 1) ||
-		_frameSkipped > 10) {
-		if (_frameSkipped > 10) {
+	if ((_bgSoundStream == NULL) || ((_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
+		_frameSkipped > _frameRate) {
+		if (_frameSkipped > _frameRate) {
 			warning("force frame %i redraw", _frameNum);
 			_frameSkipped = 0;
 		}
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * 10) / 1000 < _frameNum) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum) {
 				g_system->delayMillis(10);
 			}
 			// In case the background sound ends prematurely, update
