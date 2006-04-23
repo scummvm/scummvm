@@ -268,58 +268,58 @@ static const GameSettings gameVariantsTable[] = {
 	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 #ifndef DISABLE_HE
-	{"activity", 0, GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"activity", "", GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
-	{"catalog", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"freddi", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"catalog", "", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"freddi", "", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 7.2
-	{"airport", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"puttzoo", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"airport", "", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"puttzoo", "", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Changed o_getResourceSize to cover all resource types
-	{"farm", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"jungle", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"farm", "", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"jungle", "", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
-	{"freddi2", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"pajama", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"putttime", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"freddi2", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"pajama", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"putttime", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
-	{"balloon", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"dog", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"maze", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"socks", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"balloon", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"dog", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"maze", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"socks", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"water", "",      GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"water", "HE 80", GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"water", "HE 99", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	{"baseball", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"thinkerk", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"thinker1", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"freddi3", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"spyfox", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"baseball", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"thinkerk", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"thinker1", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"freddi3", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"spyfox", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
-	{"pajama2", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"chase", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"pajama2", "", GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"chase", "", GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
-	{"lost", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"lost", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"puttrace", "HE 98",   GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"puttrace", "HE 98.5", GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, UNK},
 	{"puttrace", "HE 99",   GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
-	{"bluesabctime", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"soccer", 0, GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"bluesabctime", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"soccer", "", GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Global scripts increased to 2048
 	{"freddi4", "",       GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, UNK},
@@ -957,7 +957,7 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 					// Compute the precise game settings using gameVariantsTable.
 					for (g = gameVariantsTable; g->gameid; ++g) {
 						if (g->gameid[0] == 0 || !scumm_stricmp(d.md5Entry->gameid, g->gameid)) {
-							// The gameid either matches, or is empty (the latter indicates
+							// The gameid either matches, or is empty. The latter indicates
 							// a generic entry, currently used for some generic HE settings.
 							if (g->variant == 0 || !scumm_stricmp(d.md5Entry->variant, g->variant)) {
 								// Perfect match found, use it and stop the loop
@@ -1029,6 +1029,8 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 			// Next possibility: There exists only a single variant of this
 			// gameid anyway (we know this is the case if g->variant is 0).
 			// Then of course we have no further work to do.
+			// TODO / FIXME: This does *not* handle the case of the generic
+			// HE variants !!!
 			if (g->variant == 0) {
 				results.push_back(dr);
 				break;
