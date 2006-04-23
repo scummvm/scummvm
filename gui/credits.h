@@ -179,6 +179,8 @@ static const char *credits[] = {
 "\\C\\c2""Decoders for Simon 1 Amiga data files",
 "\\C\\c0""Paolo Costabel",
 "\\C\\c2""PSP port contributions",
+"\\C\\c0""Benjamin Haisch",
+"\\C\\c2""Encoder for DXA videos",
 "\\C\\c0""Janne Huttunen",
 "\\C\\c2""V3 actor mask support, Dig/FT SMUSH audio",
 "\\C\\c0""Kovacs Endre Janos",

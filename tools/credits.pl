@@ -631,6 +631,7 @@ begin_credits("Credits");
 	  begin_persons();
 		  add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
+		  add_person("Benjamin Haisch", "", "Encoder for DXA videos");
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 		  add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");
