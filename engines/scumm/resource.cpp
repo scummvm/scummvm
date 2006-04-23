@@ -1181,13 +1181,16 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 			_shadowPaletteSize = 256;
 			_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 		}
-	}
+	} else
+		error("readMAXS(%d) failed to read MAXS data", blockSize);
 }
 
 void ScummEngine::readGlobalObjects() {
 	int i;
 	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
+	assert(_objectStateTable);
+	assert(_objectOwnerTable);
 
 	_fileHandle->read(_objectOwnerTable, num);
 	for (i = 0; i < num; i++) {
@@ -1209,6 +1212,8 @@ void ScummEngine_v8::readGlobalObjects() {
 	int i;
 	int num = _fileHandle->readUint32LE();
 	assert(num == _numGlobalObjects);
+	assert(_objectStateTable);
+	assert(_objectOwnerTable);
 
 	_objectIDMap = new ObjectNameId[num];
 	_objectIDMapSize = num;
@@ -1233,6 +1238,8 @@ void ScummEngine_v8::readGlobalObjects() {
 void ScummEngine_v7::readGlobalObjects() {
 	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
+	assert(_objectStateTable);
+	assert(_objectOwnerTable);
 
 	_fileHandle->read(_objectStateTable, num);
 	_fileHandle->read(_objectRoomTable, num);
