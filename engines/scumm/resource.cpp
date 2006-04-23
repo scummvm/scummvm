@@ -85,13 +85,15 @@ void ScummEngine::openRoom(const int room) {
 	// Load the disk numer / room offs (special case for room 0 exists because
 	// room 0 contains the data which is used to create the roomno / roomoffs
 	// tables -- hence obviously we mustn't use those when loading room 0.
-	const int diskNumber = room ? res.roomno[rtRoom][room] : 0;
-	const int room_offs = room ? res.roomoffs[rtRoom][room] : 0;
+	const uint32 diskNumber = room ? res.roomno[rtRoom][room] : 0;
+	const uint32 room_offs = room ? res.roomoffs[rtRoom][room] : 0;
 
 	// FIXME: Since room_offs is const, clearly the following loop either
 	// is never entered, or loops forever (if it wasn't for the return/error
 	// statements in it, that is). -> This should be cleaned up!
-	while (room_offs != -1) {
+	// Maybe we should re-enabled the looping properly, to deal with disc
+	// changes in COMI ?
+	while (room_offs != 0xFFFFFFFF) {
 
 		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
 			_fileOffset = res.roomoffs[rtRoom][room];
