@@ -180,8 +180,6 @@ void MoviePlayer::startSound() {
 		_mixer->stopHandle(_bgSound);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 		free(buffer);
-	} else {
-		_fd.seek(-4, SEEK_CUR);
 	}
 }
 
