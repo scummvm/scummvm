@@ -1027,7 +1027,7 @@ protected:
 	void vcWriteVar(uint var, int16 value);
 	void vcSkipNextInstruction();
 
-	int getScale(int y, int x);
+	int getScale(int16 y, int16 x);
 	void checkScrollX(int16 x, int16 xpos);
 	void checkScrollY(int16 y, int16 ypos);
 	void centreScroll();

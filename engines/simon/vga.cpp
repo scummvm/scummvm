@@ -219,14 +219,15 @@ void SimonEngine::vcSkipNextInstruction() {
 		6, 4, 2, 6, 0
 	};
 
+	uint16 opcode;
 	if (getGameType() == GType_FF) {
-		uint opcode = vcReadNextByte();
+		opcode = vcReadNextByte();
 		_vcPtr += opcodeParamLenFeebleFiles[opcode];
 	} else if (getGameType() == GType_SIMON2) {
-		uint opcode = vcReadNextByte();
+		opcode = vcReadNextByte();
 		_vcPtr += opcodeParamLenSimon2[opcode];
 	} else {
-		uint opcode = vcReadNextWord();
+		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenSimon1[opcode];
 	}
 
@@ -414,8 +415,8 @@ void SimonEngine::vc4_fadeIn() {
 }
 
 void SimonEngine::vc5_skip_if_neq() {
-	uint var = vcReadNextWord();
-	uint value = vcReadNextWord();
+	uint16 var = vcReadNextWord();
+	uint16 value = vcReadNextWord();
 	if (vcReadVar(var) != value)
 		vcSkipNextInstruction();
 }
@@ -431,15 +432,15 @@ void SimonEngine::vc7_skip_if_sib_with_a() {
 }
 
 void SimonEngine::vc8_skip_if_parent_is() {
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
+	uint16 a = vcReadNextWord();
+	uint16 b = vcReadNextWord();
 	if (!itemIsParentOf(a, b))
 		vcSkipNextInstruction();
 }
 
 void SimonEngine::vc9_skip_if_unk3_is() {
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
+	uint16 a = vcReadNextWord();
+	uint16 b = vcReadNextWord();
 	if (!vc_maybe_skip_proc_1(a, b))
 		vcSkipNextInstruction();
 }
@@ -1417,7 +1418,7 @@ void SimonEngine::vc11_clearPathFinder() {
 
 void SimonEngine::vc12_delay() {
 	VgaSprite *vsp = findCurSprite();
-	uint num;
+	uint16 num;
 
 	if (getGameType() == GType_FF) {
 		num = vcReadNextByte();
@@ -1485,7 +1486,7 @@ void SimonEngine::vc16_waitSync() {
 }
 
 void SimonEngine::vc17_setPathfinderItem() {
-	uint a = vcReadNextWord();
+	uint16 a = vcReadNextWord();
 	_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
 
 	int end = (getGameType() == GType_FF) ? 9999 : 999;
@@ -1534,8 +1535,8 @@ void SimonEngine::vc21_endRepeat() {
 }
 
 void SimonEngine::vc22_setSpritePalette() {
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
+	uint16 a = vcReadNextWord();
+	uint16 b = vcReadNextWord();
 	uint num = a == 0 ? 32 : 16;
 	uint palSize = 96;
 	byte *palptr, *src;
@@ -1723,8 +1724,8 @@ void SimonEngine::vc35_clearWindow() {
 
 void SimonEngine::vc36_setWindowImage() {
 	_updateScreen = false;
-	uint vga_res = vcReadNextWord();
-	uint windowNum = vcReadNextWord();
+	uint16 vga_res = vcReadNextWord();
+	uint16 windowNum = vcReadNextWord();
 
 	if (getGameType() == GType_FF) {
 		// TODO
@@ -1746,19 +1747,19 @@ void SimonEngine::vc37_addToSpriteY() {
 }
 
 void SimonEngine::vc38_skipIfVarZero() {
-	uint var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 	if (vcReadVar(var) == 0)
 		vcSkipNextInstruction();
 }
 
 void SimonEngine::vc39_setVar() {
-	uint var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 	int16 value = vcReadNextWord();
 	vcWriteVar(var, value);
 }
 
 void SimonEngine::vc40() {
-	uint var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) + vcReadNextWord();
 
 	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
@@ -1787,7 +1788,7 @@ no_scroll:;
 }
 
 void SimonEngine::vc41() {
-	uint var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) - vcReadNextWord();
 
 	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
@@ -1813,7 +1814,7 @@ no_scroll:;
 }
 
 void SimonEngine::vc42_delayIfNotEQ() {
-	uint val = vcReadVar(vcReadNextWord());
+	uint16 val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 
 		addVgaEvent(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
@@ -1846,12 +1847,12 @@ void SimonEngine::vc46_setSpriteY() {
 }
 
 void SimonEngine::vc47_addToVar() {
-	uint var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 	vcWriteVar(var, vcReadVar(var) + vcReadVar(vcReadNextWord()));
 }
 
 void SimonEngine::vc48_setPathFinder() {
-	uint a = (uint16)_variableArrayPtr[12];
+	uint16 a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 
 	if (getGameType() == GType_FF) {
@@ -1934,7 +1935,7 @@ bool SimonEngine::getBitFlag(uint bit) {
 }
 
 void SimonEngine::vc49_setBit() {
-	uint bit = vcReadNextWord();
+	uint16 bit = vcReadNextWord();
 	if (getGameType() == GType_FF && bit == 82) {
 		_variableArrayPtr = _variableArray2;
 	}
@@ -1942,7 +1943,7 @@ void SimonEngine::vc49_setBit() {
 }
 
 void SimonEngine::vc50_clearBit() {
-	uint bit = vcReadNextWord();
+	uint16 bit = vcReadNextWord();
 	if (getGameType() == GType_FF && bit == 82) {
 		_variableArrayPtr = _variableArray;
 	}
@@ -2032,7 +2033,7 @@ void SimonEngine::vc55_moveBox() {
 }
 
 void SimonEngine::vc56_delay() {
-	uint num = vcReadVarOrWord() * _frameRate;
+	uint16 num = vcReadVarOrWord() * _frameRate;
 
 	addVgaEvent(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
@@ -2043,9 +2044,9 @@ void SimonEngine::vc59() {
 		if (!_sound->isVoiceActive())
 			vcSkipNextInstruction();
 	} else {
-		uint file = vcReadNextWord();
-		uint start = vcReadNextWord();
-		uint end = vcReadNextWord() + 1;
+		uint16 file = vcReadNextWord();
+		uint16 start = vcReadNextWord();
+		uint16 end = vcReadNextWord() + 1;
 
 		do {
 			vc_kill_sprite(file, start);
@@ -2054,8 +2055,8 @@ void SimonEngine::vc59() {
 }
 
 void SimonEngine::vc58() {
-	uint sprite = _vgaCurSpriteId;
-	uint file = _vgaCurZoneNum;
+	uint16 sprite = _vgaCurSpriteId;
+	uint16 file = _vgaCurZoneNum;
 	const byte *vc_ptr_org;
 	uint16 tmp;
 
@@ -2123,14 +2124,14 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 }
 
 void SimonEngine::vc60_killSprite() {
-	uint zoneNum;
+	uint16 zoneNum;
 
 	if (getGameType() == GType_SIMON1) {
 		zoneNum = _vgaCurZoneNum;
 	} else {
 		zoneNum = vcReadNextWord();
 	}
-	uint sprite = vcReadNextWord();
+	uint16 sprite = vcReadNextWord();
 	vc_kill_sprite(zoneNum, sprite);
 }
 
@@ -2252,24 +2253,24 @@ void SimonEngine::vc65_slowFadeIn() {
 }
 
 void SimonEngine::vc66_skipIfNotEqual() {
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
+	uint16 a = vcReadNextWord();
+	uint16 b = vcReadNextWord();
 
 	if (vcReadVar(a) != vcReadVar(b))
 		vcSkipNextInstruction();
 }
 
 void SimonEngine::vc67_skipIfGE() {
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
+	uint16 a = vcReadNextWord();
+	uint16 b = vcReadNextWord();
 
 	if (vcReadVar(a) >= vcReadVar(b))
 		vcSkipNextInstruction();
 }
 
 void SimonEngine::vc68_skipIfLE() {
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
+	uint16 a = vcReadNextWord();
+	uint16 b = vcReadNextWord();
 
 	if (vcReadVar(a) <= vcReadVar(b))
 		vcSkipNextInstruction();
@@ -2356,22 +2357,22 @@ void SimonEngine::vc74_clearMark() {
 	_marks &= ~(1 << vcReadNextWord());
 }
 
-int SimonEngine::getScale(int y, int x) {
-	int z;
+int SimonEngine::getScale(int16 y, int16 x) {
+	int16 z;
 
 	if (y > _baseY) {
-		return((int)(x * (1 + ((y - _baseY) * _scale))));
+		return((int16)(x * (1 + ((y - _baseY) * _scale))));
 	} else {	
 		if (x == 0)
 			return(0);
 		if (x < 0) {
-			z = ((int)((x * (1 - ((_baseY - y)* _scale))) - 0.5));
+			z = ((int16)((x * (1 - ((_baseY - y)* _scale))) - 0.5));
 			if (z >- 2)
 				return(-2);
 			return(z);
 		}
 
-		z=((int)((x * (1 - ((_baseY-y) * _scale))) + 0.5));
+		z = ((int16)((x * (1 - ((_baseY - y) * _scale))) + 0.5));
 		if (z < 2)
 			return(2);
 
@@ -2389,7 +2390,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 
 	vsp->image = vcReadNextWord();
 	int16 x = vcReadNextWord();
-	int var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 
 	vsp->x += getScale(vsp->y, x);
 	_variableArrayPtr[var] = vsp->x;
@@ -2404,7 +2405,7 @@ void SimonEngine::vc77_setScaleYOffs() {
 
 	vsp->image = vcReadNextWord();
 	int16 y = vcReadNextWord();
-	int var = vcReadNextWord();
+	uint16 var = vcReadNextWord();
 
 	vsp->y += getScale(vsp->y, y);
 	_variableArrayPtr[var] = vsp->y;
@@ -2418,8 +2419,8 @@ void SimonEngine::vc77_setScaleYOffs() {
 void SimonEngine::vc78_computeXY() {
 	VgaSprite *vsp = findCurSprite();
 
-	uint a = (uint16)_variableArrayPtr[12];
-	uint b = (uint16)_variableArrayPtr[13];
+	uint16 a = (uint16)_variableArrayPtr[12];
+	uint16 b = (uint16)_variableArrayPtr[13];
 
 	const uint16 *p = _pathFindArray[a - 1];
 	p += b * 2;
@@ -2465,8 +2466,8 @@ void SimonEngine::vc80_setOverlayImage() {
 }
 
 void SimonEngine::vc81_setRandom() {
-	uint var = vcReadNextWord();
-	uint value = vcReadNextWord();
+	uint16 var = vcReadNextWord();
+	uint16 value = vcReadNextWord();
 	writeVariable(var, _rnd.getRandomNumber(value - 1));
 }
 
@@ -2485,7 +2486,7 @@ void SimonEngine::vc82_getPathValue() {
 }
 
 void SimonEngine::vc83_playSoundLoop() {
-	uint sound = vcReadNextWord();
+	uint16 sound = vcReadNextWord();
 	int16 vol = vcReadNextWord();
 	int16 pan = vcReadNextWord();
 
