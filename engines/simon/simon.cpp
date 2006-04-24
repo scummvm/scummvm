@@ -2204,7 +2204,7 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 	}
 }
 
-void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
+void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
@@ -2216,7 +2216,6 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (getGameType() == GType_FF) {
 		vc27_resetSprite();
-		vga_res_id &= 0xFFFF;
 	}
 
 	if (vga_res_id == 0) {
@@ -3228,7 +3227,8 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 
 	_lockWord |= 0x40;
 
-	if (isSpriteLoaded(vgaSpriteId, zoneNum)) {
+	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+		isSpriteLoaded(vgaSpriteId, zoneNum)) {
 		_lockWord &= ~0x40;
 		return;
 	}

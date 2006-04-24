@@ -242,15 +242,12 @@ void SimonEngine::vc1_fadeOut() {
 
 void SimonEngine::vc2_call() {
 	VgaPointersEntry *vpe;
-	uint num;
-	uint res;
+	uint16 num, res;
 	byte *old_file_1, *old_file_2;
 	byte *b, *bb;
 	const byte *vc_ptr_org;
 
 	num = vcReadVarOrWord();
-	if (getGameType() == GType_FF)
-		num &= 0xFFFF;
 
 	old_file_1 = _curVgaFile1;
 	old_file_2 = _curVgaFile2;
@@ -325,9 +322,10 @@ void SimonEngine::vc3_loadSprite() {
 	y = vcReadNextWord();			/* 6 */
 	palette = vcReadNextWord();		/* 8 */
 
-	/* 2nd param ignored with simon1 */
-	if (isSpriteLoaded(vgaSpriteId, zoneNum))
+	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+		isSpriteLoaded(vgaSpriteId, zoneNum)) {
 		return;
+	}
 
 	vsp = _vgaSprites;
 	while (vsp->id)

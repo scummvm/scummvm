@@ -699,7 +699,7 @@ protected:
 
 	void handleVerbClicked(uint verb);
 
-	void set_video_mode_internal(uint mode, uint vga_res_id);
+	void set_video_mode_internal(uint16 mode, uint16 vga_res_id);
 
 	void loadZone(uint vga_res);
 
