@@ -29,6 +29,7 @@
 #include "simon/intern.h"
 #include "simon/simon.h"
 
+#include "sound/audiostream.h"
 #include "sound/wave.h"
 
 
@@ -152,7 +153,7 @@ void MoviePlayer::play() {
 			}
 		}
 
-		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(40)) {
+		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(41)) {
 			_frameNum = _framesCount;
 		}
 	}
@@ -172,6 +173,9 @@ void MoviePlayer::close() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
+
+	_mixer->stopHandle(_bgSound);
+	free(_bgSoundStream);
 }
 
 void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
