@@ -203,6 +203,7 @@ protected:
 	Common::File *_gameFile;
 
 	byte *_strippedTxtMem;
+	byte *_textMem;
 	uint _textSize;
 	uint _stringTabNum, _stringTabPos, _stringtab_numalloc;
 	byte **_stringTabPtr;

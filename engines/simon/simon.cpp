@@ -580,6 +580,7 @@ SimonEngine::~SimonEngine() {
 	free(_stringTabPtr);
 	free(_strippedTxtMem);
 	free(_tblList);
+	free(_textMem);
 
 	free(_backGroundBuf);
 	free(_frontBuf);

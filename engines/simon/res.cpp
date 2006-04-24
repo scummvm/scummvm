@@ -253,16 +253,14 @@ void SimonEngine::loadGamePcFile() {
 }
 
 void SimonEngine::readGamePcText(Common::File *in) {
-	byte *text_mem;
-
 	_textSize = in->readUint32BE();
-	text_mem = (byte *)malloc(_textSize);
-	if (text_mem == NULL)
+	_textMem = (byte *)malloc(_textSize);
+	if (_textMem == NULL)
 		error("Out of text memory");
 
-	in->read(text_mem, _textSize);
+	in->read(_textMem, _textSize);
 
-	setupStringTable(text_mem, _stringTabNum);
+	setupStringTable(_textMem, _stringTabNum);
 }
 
 void SimonEngine::readItemFromGamePc(Common::File *in, Item *item) {
