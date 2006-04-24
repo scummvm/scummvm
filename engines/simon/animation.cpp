@@ -148,13 +148,8 @@ void MoviePlayer::play() {
 
 	startSound();
 
-	while (_frameNum < _framesCount) {
+	while (_frameNum < _framesCount)
 		handleNextFrame();
-
-		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(41)) {
-			_frameNum = _framesCount;
-		}
-	}
 
 	close();
 
@@ -165,6 +160,12 @@ void MoviePlayer::play() {
 	} else {
 		_vm->dx_clear_surfaces(480);
 	}
+}
+
+void MoviePlayer::close() {
+	_fd.close();
+	free(_frameBuffer1);
+	free(_frameBuffer2);
 }
 
 void MoviePlayer::startSound() {
@@ -180,12 +181,6 @@ void MoviePlayer::startSound() {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 		free(buffer);
 	}
-}
-
-void MoviePlayer::close() {
-	_fd.close();
-	free(_frameBuffer1);
-	free(_frameBuffer2);
 }
 
 void MoviePlayer::nextFrame() {
