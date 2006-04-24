@@ -2168,24 +2168,6 @@ void SimonEngine::checkRunningAnims(byte *end) {
 	}
 }
 
-void SimonEngine::checkZonePtrs(byte *end) {
-	uint count = ARRAYSIZE(_vgaBufferPointers);
-	VgaPointersEntry *vpe = _vgaBufferPointers;
-	do {
-		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart ||
-				vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart ||
-				vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
-			vpe->vgaFile1 = NULL;
-			vpe->vgaFile1End = NULL;
-			vpe->vgaFile2 = NULL;
-			vpe->vgaFile2End = NULL;
-			vpe->sfxFile = NULL;
-			vpe->sfxFileEnd = NULL;
-		}
-
-	} while (++vpe, --count);
-}
-
 void SimonEngine::checkAnims(uint a, byte *end) {
 	VgaPointersEntry *vpe;
 
@@ -2203,6 +2185,24 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 	} else {
 		_rejectBlock = false;
 	}
+}
+
+void SimonEngine::checkZonePtrs(byte *end) {
+	uint count = ARRAYSIZE(_vgaBufferPointers);
+	VgaPointersEntry *vpe = _vgaBufferPointers;
+	do {
+		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart ||
+				vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart ||
+				vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+			vpe->vgaFile1 = NULL;
+			vpe->vgaFile1End = NULL;
+			vpe->vgaFile2 = NULL;
+			vpe->vgaFile2End = NULL;
+			vpe->sfxFile = NULL;
+			vpe->sfxFileEnd = NULL;
+		}
+
+	} while (++vpe, --count);
 }
 
 void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
@@ -2811,6 +2811,9 @@ void SimonEngine::timer_proc1() {
 			}
 		}
 	}
+
+	if (getGameType() == GType_FF)
+		_moviePlay->nextFrame();
 
 	animateSprites();
 	if (_drawImagesDebug)

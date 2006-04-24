@@ -40,6 +40,7 @@ class MoviePlayer {
 	Audio::SoundHandle _bgSound;
 	AudioStream *_bgSoundStream;
 
+	bool _omniTV;
 	bool _playing;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
@@ -62,11 +63,16 @@ public:
 
 	bool load(const char *filename);
 	void play();
+	void nextFrame();
 private:
+	void playOmniTV();
 	void close();
 
+	void copyFrame(byte *dst, uint x, uint y);
 	void decodeFrame();
+	void handleNextFrame();
 	void processFrame();
+	void startSound();
 	void decodeZlib(uint8 *data, int size, int totalSize);
 };
 

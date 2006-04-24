@@ -41,10 +41,9 @@ namespace Simon {
 
 MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer) {
-	_frameNum = 0;
-	_frameSkipped = 0;
-
+	_omniTV = false;
 	_playing = false;
+
 	_leftButtonDown = false;
 	_rightButtonDown = false;
 
@@ -97,6 +96,7 @@ bool MoviePlayer::load(const char *filename) {
 	_width = _fd.readUint16BE();
 	_height = _fd.readUint16BE();
 	debug(0, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _frameRate, _frameTicks);
+
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
@@ -110,69 +110,45 @@ bool MoviePlayer::load(const char *filename) {
 	return true;
 }
 
-void MoviePlayer::play() {
+void MoviePlayer::playOmniTV() {
+	// Load OmniTV video
 	if (_fd.isOpen() == false) {
-		// Load OmniTV video
-		if (_vm->getBitFlag(40)) {
-			_vm->_variableArray[254] = 6747;
-			return;
-		} else {
-			debug(0, "MoviePlayer::play: No file loaded");
-			return;
-		}
+		_vm->_variableArray[254] = 6747;
+		return;
+	} else {
+		_vm->setBitFlag(42, false);
+		_omniTV = true;
+		startSound();
+		return;
+	}
+}
+
+void MoviePlayer::play() {
+	if (_vm->getBitFlag(40)) {
+		playOmniTV();
+		return;
 	}
 
-	_mixer->stopAll();
+	if (_fd.isOpen() == false) {
+		debug(0, "MoviePlayer::play: No file loaded");
+		return;
+	}
 
 	_leftButtonDown = false;
 	_rightButtonDown = false;
 
-	_ticks = _vm->_system->getMillis();
-
-	uint32 tag = _fd.readUint32BE();
-	if (tag == MKID_BE('WAVE')) {
-		uint32 size = _fd.readUint32BE();
-		byte *buffer = (byte *)malloc(size);
-		_fd.read(buffer, size);
-
-		Common::MemoryReadStream stream(buffer, size);
-		_bgSoundStream = makeWAVStream(stream);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
-		free(buffer);
-	}
+	_mixer->stopAll();
 
 	// Resolution is smaller in Amiga verison so always clear screen
 	if (_width == 384 && _height == 280)
 		_vm->dx_clear_surfaces(480);
 
-	while (_frameNum < _framesCount) {
-		decodeFrame();
-		processFrame();
-		_vm->_system->updateScreen();
-		_frameNum++;
+	_ticks = _vm->_system->getMillis();
 
-		OSystem::Event event;
-		while (_vm->_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_LBUTTONDOWN:
-				_leftButtonDown = true;
-				break;
-			case OSystem::EVENT_RBUTTONDOWN:
-				_rightButtonDown = true;
-				break;
-			case OSystem::EVENT_LBUTTONUP:
-				_leftButtonDown = false;
-				break;
-			case OSystem::EVENT_RBUTTONUP:
-				_rightButtonDown = false;
-				break;
-			case OSystem::EVENT_QUIT:
-				_vm->_system->quit();
-				break;
-			default:
-				break;
-			}
-		}
+	startSound();
+
+	while (_frameNum < _framesCount) {
+		handleNextFrame();
 
 		if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(41)) {
 			_frameNum = _framesCount;
@@ -190,10 +166,100 @@ void MoviePlayer::play() {
 	}
 }
 
+void MoviePlayer::startSound() {
+	uint32 tag = _fd.readUint32BE();
+	if (tag == MKID_BE('WAVE')) {
+		uint32 size = _fd.readUint32BE();
+		byte *buffer = (byte *)malloc(size);
+		_fd.read(buffer, size);
+
+		Common::MemoryReadStream stream(buffer, size);
+		_bgSoundStream = makeWAVStream(stream);
+		_mixer->stopHandle(_bgSound);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		free(buffer);
+	}
+}
+
 void MoviePlayer::close() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
+}
+
+void MoviePlayer::nextFrame() {
+	if (!_omniTV)
+		return;
+
+	// FIXME: Never triggered!
+	if (_vm->getBitFlag(42)) {
+		_omniTV = false;
+		return;
+	}
+
+	if (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum) {
+		copyFrame(_vm->getBackBuf(), 465, 222);
+		return;
+	}
+
+	if (_frameNum < _framesCount) {
+		decodeFrame();
+		copyFrame(_vm->getBackBuf(), 465, 222);
+		_frameNum++;
+	} else {
+		_omniTV = false;
+		close();
+		_vm->_variableArray[254] = 6747;
+	}
+}
+
+void MoviePlayer::handleNextFrame() {
+	decodeFrame();
+	processFrame();
+
+	_vm->_system->updateScreen();
+	_frameNum++;
+
+	OSystem::Event event;
+	while (_vm->_system->pollEvent(event)) {
+		switch (event.type) {
+		case OSystem::EVENT_LBUTTONDOWN:
+			_leftButtonDown = true;
+			break;
+		case OSystem::EVENT_RBUTTONDOWN:
+			_rightButtonDown = true;
+			break;
+		case OSystem::EVENT_LBUTTONUP:
+			_leftButtonDown = false;
+			break;
+		case OSystem::EVENT_RBUTTONUP:
+			_rightButtonDown = false;
+			break;
+		case OSystem::EVENT_QUIT:
+			_vm->_system->quit();
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(41)) {
+		_frameNum = _framesCount;
+	}
+}
+
+void MoviePlayer::copyFrame(byte *dst, uint x, uint y) {
+	uint h = _height;
+	uint w = _width;
+
+	dst += y * _vm->_screenWidth + x;
+	byte *src = _frameBuffer1;
+
+	do {
+		memcpy(dst, src, w);
+		dst += _vm->_screenWidth;
+		src += _width;
+	} while (--h);
 }
 
 void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
@@ -219,7 +285,9 @@ void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
 }
 
 void MoviePlayer::decodeFrame() {
-	uint32 tag = _fd.readUint32BE();
+	uint32 tag;
+
+	tag = _fd.readUint32BE();
 	if (tag == MKID_BE('CMAP')) {
 		uint8 rgb[768];
 		byte palette[1024];
@@ -240,7 +308,9 @@ void MoviePlayer::decodeFrame() {
 		uint8 type = _fd.readByte();
 		uint32 size = _fd.readUint32BE();
 		debug(0, "frame %d type %d size %d", _frameNum, type, size);
+
 		_fd.read(_frameBuffer2, size);
+
 		switch (type) {
 		case 2:
 		case 3:
@@ -263,11 +333,8 @@ void MoviePlayer::decodeFrame() {
 }
 
 void MoviePlayer::processFrame() {
-	uint x = (_vm->_screenWidth - _width) / 2;
-	uint y = (_vm->_screenHeight - _height) / 2;
-
-	memcpy(_vm->_frontBuf, _frameBuffer1, _frameSize);
-	_vm->_system->copyRectToScreen(_vm->_frontBuf, _width, x, y, _width, _height);
+	copyFrame(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2);
+	_vm->_system->copyRectToScreen(_vm->getFrontBuf(), _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 
 	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
 		_frameSkipped > _frameRate) {
