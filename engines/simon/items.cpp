@@ -2040,15 +2040,11 @@ void SimonEngine::o3_mouseOff() {
 void SimonEngine::o3_loadVideo() {
 	// 182: load video file
 	const byte *filename = getStringPtrByID(getNextStringID());
-	debug(0, "Load video %s", filename);
-
-	if (_moviePlay->load((const char *)filename) == false)
-		warning("Failed to load video file %s", filename);
+	_moviePlay->load((const char *)filename);
 }
 
 void SimonEngine::o3_playVideo() {
 	// 183: play video
-	debug(0, "Play video");
 	_moviePlay->play();
 }
 

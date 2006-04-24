@@ -78,8 +78,10 @@ bool MoviePlayer::load(const char *filename) {
 	filename2[len++] = 'x';
 	filename2[len++] = 'a';
 	
-	if (_fd.open(filename2) == false)
+	if (_fd.open(filename2) == false) {
+		warning("Failed to load video file %s", filename2);
 		return false;
+	}
 
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
@@ -130,7 +132,6 @@ void MoviePlayer::play() {
 	}
 
 	if (_fd.isOpen() == false) {
-		debug(0, "MoviePlayer::play: No file loaded");
 		return;
 	}
 
