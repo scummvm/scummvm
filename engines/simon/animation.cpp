@@ -41,6 +41,27 @@ namespace Simon {
 
 MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer) {
+	_frameNum = 0;
+	_frameSkipped = 0;
+
+	_playing = false;
+	_leftButtonDown = false;
+	_rightButtonDown = false;
+
+	_frameBuffer1 = 0;
+	_frameBuffer2 = 0;
+
+	_width = 0;
+	_height = 0;
+
+	_frameSize = 0;
+	_framesCount = 0;
+	_frameNum = 0;
+	_frameRate = 0;
+	_frameTicks = 0;
+	_frameSkipped = 0;
+
+	_ticks = 0;
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -83,6 +104,9 @@ bool MoviePlayer::load(const char *filename) {
 		error("error allocating frame tables, size %d\n", _frameSize);
 	}
 
+	_frameNum = 0;
+	_frameSkipped = 0;
+
 	return true;
 }
 
@@ -99,8 +123,6 @@ void MoviePlayer::play() {
 	}
 
 	_mixer->stopAll();
-
-	_frameNum = 0;
 
 	_leftButtonDown = false;
 	_rightButtonDown = false;
