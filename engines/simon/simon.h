@@ -468,7 +468,7 @@ protected:
 	byte *_backGroundBuf;
 	byte *_frontBuf;
 	byte *_backBuf;
-	byte *_sdl_buf_scaled;
+	byte *_scaleBuf;
 
 	Common::RandomSource _rnd;
 

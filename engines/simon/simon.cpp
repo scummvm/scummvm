@@ -377,7 +377,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_backGroundBuf = 0;
 	_frontBuf = 0;
 	_backBuf = 0;
-	_sdl_buf_scaled = 0;
+	_scaleBuf = 0;
 
 	_vc10BasePtrOld = 0;
 	memcpy (_hebrewCharWidths,
@@ -571,13 +571,20 @@ SimonEngine::~SimonEngine() {
 
 	midi.close();
 
-	free(_stringTabPtr);
-	free(_itemArrayPtr);
 	free(_itemHeapPtr - _itemHeapCurPos);
 	free(_tablesHeapPtr - _tablesHeapCurPos);
-	free(_tblList);
-	free(_iconFilePtr);
+
 	free(_gameOffsetsPtr);
+	free(_iconFilePtr);
+	free(_itemArrayPtr);
+	free(_stringTabPtr);
+	free(_strippedTxtMem);
+	free(_tblList);
+
+	free(_backGroundBuf);
+	free(_frontBuf);
+	free(_backBuf);
+	free(_scaleBuf);
 
 	delete _dummyItem1;
 	delete _dummyItem2;
@@ -3501,7 +3508,7 @@ int SimonEngine::go() {
 	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	if (getGameType() == GType_FF)
-		_sdl_buf_scaled = (byte *)calloc(_screenWidth * _screenHeight, 1);
+		_scaleBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	allocItemHeap();
 	allocTablesHeap();
@@ -3771,7 +3778,7 @@ byte *SimonEngine::getBackGround() {
 
 byte *SimonEngine::getScaleBuf() {
 	_dxSurfacePitch = _screenWidth;
-	return _sdl_buf_scaled;
+	return _scaleBuf;
 }
 
 void SimonEngine::set_volume(int volume) {
