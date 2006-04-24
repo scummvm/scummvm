@@ -87,8 +87,6 @@ bool MoviePlayer::load(const char *filename) {
 }
 
 void MoviePlayer::play() {
-	uint32 tag;
-
 	if (_fd.isOpen() == false) {
 		// Load OmniTV video
 		if (_vm->getBitFlag(40)) {
@@ -107,18 +105,19 @@ void MoviePlayer::play() {
 	_leftButtonDown = false;
 	_rightButtonDown = false;
 
-	tag = _fd.readUint32BE();
-	assert(tag == MKID_BE('WAVE'));
-
-	uint32 size = _fd.readUint32BE();
-	byte *buffer = (byte *)malloc(size);
-	_fd.read(buffer, size);
-
 	_ticks = _vm->_system->getMillis();
 
-	Common::MemoryReadStream stream(buffer, size);
-	_bgSoundStream = makeWAVStream(stream);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+	uint32 tag = _fd.readUint32BE();
+	if (tag == MKID_BE('WAVE')) {
+		uint32 size = _fd.readUint32BE();
+		byte *buffer = (byte *)malloc(size);
+		_fd.read(buffer, size);
+
+		Common::MemoryReadStream stream(buffer, size);
+		_bgSoundStream = makeWAVStream(stream);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		free(buffer);
+	}
 
 	// Resolution is smaller in Amiga verison so always clear screen
 	if (_width == 384 && _height == 280)
@@ -173,9 +172,6 @@ void MoviePlayer::close() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
-
-	_mixer->stopHandle(_bgSound);
-	free(_bgSoundStream);
 }
 
 void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
