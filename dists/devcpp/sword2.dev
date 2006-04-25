@@ -1,7 +1,7 @@
 [Project]
 FileName=sword2.dev
 Name=sword2
-UnitCount=51
+UnitCount=49
 Type=2
 Ver=1
 ObjFiles=
@@ -118,16 +118,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=..\..\engines\sword2\d_draw.cpp
-CompileCpp=1
-Folder=sword2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit9]
 FileName=..\..\engines\sword2\debug.cpp
 CompileCpp=1
 Folder=sword2
@@ -137,7 +127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit10]
+[Unit9]
 FileName=..\..\engines\sword2\debug.h
 CompileCpp=1
 Folder=sword2
@@ -147,7 +137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
+[Unit10]
 FileName=..\..\engines\sword2\defs.h
 CompileCpp=1
 Folder=sword2
@@ -157,7 +147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit12]
+[Unit11]
 FileName=..\..\engines\sword2\events.cpp
 CompileCpp=1
 Folder=sword2
@@ -167,7 +157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit13]
+[Unit12]
 FileName=..\..\engines\sword2\function.cpp
 CompileCpp=1
 Folder=sword2
@@ -177,7 +167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
+[Unit13]
 FileName=..\..\engines\sword2\header.h
 CompileCpp=1
 Folder=sword2
@@ -187,7 +177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit15]
+[Unit14]
 FileName=..\..\engines\sword2\icons.cpp
 CompileCpp=1
 Folder=sword2
@@ -197,7 +187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit15]
 FileName=..\..\engines\sword2\interpreter.cpp
 CompileCpp=1
 Folder=sword2
@@ -207,7 +197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit16]
 FileName=..\..\engines\sword2\interpreter.h
 CompileCpp=1
 Folder=sword2
@@ -217,7 +207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit17]
 FileName=..\..\engines\sword2\layers.cpp
 CompileCpp=1
 Folder=sword2
@@ -227,7 +217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit18]
 FileName=..\..\engines\sword2\logic.cpp
 CompileCpp=1
 Folder=sword2
@@ -237,7 +227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit19]
 FileName=..\..\engines\sword2\logic.h
 CompileCpp=1
 Folder=sword2
@@ -247,7 +237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit20]
 FileName=..\..\engines\sword2\maketext.cpp
 CompileCpp=1
 Folder=sword2
@@ -257,7 +247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit21]
 FileName=..\..\engines\sword2\maketext.h
 CompileCpp=1
 Folder=sword2
@@ -267,7 +257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit22]
 FileName=..\..\engines\sword2\memory.cpp
 CompileCpp=1
 Folder=sword2
@@ -277,7 +267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit23]
 FileName=..\..\engines\sword2\memory.h
 CompileCpp=1
 Folder=sword2
@@ -287,7 +277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit24]
 FileName=..\..\engines\sword2\menu.cpp
 CompileCpp=1
 Folder=sword2
@@ -297,7 +287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit25]
 FileName=..\..\engines\sword2\mouse.cpp
 CompileCpp=1
 Folder=sword2
@@ -307,7 +297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit26]
 FileName=..\..\engines\sword2\mouse.h
 CompileCpp=1
 Folder=sword2
@@ -317,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit27]
 FileName=..\..\engines\sword2\music.cpp
 CompileCpp=1
 Folder=sword2
@@ -327,7 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit28]
 FileName=..\..\engines\sword2\object.h
 CompileCpp=1
 Folder=sword2
@@ -337,7 +327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit29]
 FileName=..\..\engines\sword2\palette.cpp
 CompileCpp=1
 Folder=sword2
@@ -347,7 +337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit30]
 FileName=..\..\engines\sword2\protocol.cpp
 CompileCpp=1
 Folder=sword2
@@ -357,17 +347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
-FileName=..\..\engines\sword2\rdwin.cpp
-CompileCpp=1
-Folder=sword2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit33]
+[Unit31]
 FileName=..\..\engines\sword2\render.cpp
 CompileCpp=1
 Folder=sword2
@@ -377,7 +357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=..\..\engines\sword2\resman.cpp
 CompileCpp=1
 Folder=sword2
@@ -387,7 +367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit33]
 FileName=..\..\engines\sword2\resman.h
 CompileCpp=1
 Folder=sword2
@@ -397,7 +377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=..\..\engines\sword2\router.cpp
 CompileCpp=1
 Folder=sword2
@@ -407,7 +387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit35]
 FileName=..\..\engines\sword2\router.h
 CompileCpp=1
 Folder=sword2
@@ -417,7 +397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit36]
 FileName=..\..\engines\sword2\saveload.cpp
 CompileCpp=1
 Folder=sword2
@@ -427,7 +407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit37]
 FileName=..\..\engines\sword2\saveload.h
 CompileCpp=1
 Folder=sword2
@@ -437,7 +417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit38]
 FileName=..\..\engines\sword2\screen.cpp
 CompileCpp=1
 Folder=sword2
@@ -447,7 +427,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit41]
+[Unit39]
 FileName=..\..\engines\sword2\screen.h
 CompileCpp=1
 Folder=sword2
@@ -457,7 +437,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit42]
+[Unit40]
 FileName=..\..\engines\sword2\scroll.cpp
 CompileCpp=1
 Folder=sword2
@@ -467,7 +447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit43]
+[Unit41]
 FileName=..\..\engines\sword2\sound.cpp
 CompileCpp=1
 Folder=sword2
@@ -477,7 +457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit44]
+[Unit42]
 FileName=..\..\engines\sword2\sound.h
 CompileCpp=1
 Folder=sword2
@@ -487,7 +467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit45]
+[Unit43]
 FileName=..\..\engines\sword2\speech.cpp
 CompileCpp=1
 Folder=sword2
@@ -497,7 +477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit46]
+[Unit44]
 FileName=..\..\engines\sword2\sprite.cpp
 CompileCpp=1
 Folder=sword2
@@ -507,7 +487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit47]
+[Unit45]
 FileName=..\..\engines\sword2\startup.cpp
 CompileCpp=1
 Folder=sword2
@@ -517,7 +497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit48]
+[Unit46]
 FileName=..\..\engines\sword2\sword2.cpp
 CompileCpp=1
 Folder=sword2
@@ -527,8 +507,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit49]
+[Unit47]
 FileName=..\..\engines\sword2\sword2.h
+CompileCpp=1
+Folder=sword2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit48]
+FileName=..\..\engines\sword2\sync.cpp
+CompileCpp=1
+Folder=sword2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit49]
+FileName=..\..\engines\sword2\walker.cpp
 CompileCpp=1
 Folder=sword2
 Compile=1
