@@ -517,6 +517,58 @@ bool Theme::isThemeLoadingRequired() {
 	return true;
 }
 
+bool Theme::sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h) {
+	if (!config.hasKey("skipFor", name))
+		return false;
+
+	String res;
+
+	config.getKey("skipFor", name, res);
+
+	int x, y;
+	int phase = 0;
+	const char *ptr = res.c_str();
+
+	x = y = 0;
+
+	while (ptr && phase != 2) {
+		switch (phase) {
+		case 0:
+			if (*ptr >= '0' && *ptr <= '9') {
+				x = x * 10 + *ptr - '0';
+			} else if (*ptr == 'X') {
+				phase = 1;
+			} else if (*ptr == 'x') {
+				phase = 1;
+			} else {
+				error("Syntax error. Wrong resolution in skipFor in section %s", name);
+			}
+			break;
+		case 1:
+			if (*ptr >= '0' && *ptr <= '9') {
+				x = x * 10 + *ptr - '0';
+			} else if (*ptr == 'Y') {
+				phase = 2;
+			} else {
+				error("Syntax error. Wrong resolution in skipFor in section %s", name);
+			}
+			break;
+		default:
+			break;
+		}
+		
+		ptr++;
+	}
+
+	if (x != w && x)
+		return false;
+
+	if (y != h && y)
+		return false;
+
+	return true;
+}
+
 void Theme::loadTheme(Common::ConfigFile &config, bool reset) {
 	char name[80];
 	int x = g_system->getOverlayWidth(), y = g_system->getOverlayHeight();
@@ -525,19 +577,19 @@ void Theme::loadTheme(Common::ConfigFile &config, bool reset) {
 		_evaluator->reset();
 
 	strcpy(name, "XxY");
-	if (config.hasSection(name))
+	if (config.hasSection(name) && !sectionIsSkipped(config, "XxY", x, y))
 		processResSection(config, name);
 
 	sprintf(name, "%dxY", x);
-	if (config.hasSection(name))
+	if (config.hasSection(name) && !sectionIsSkipped(config, name, x, y))
 		processResSection(config, name);
 
 	sprintf(name, "Xx%d", y);
-	if (config.hasSection(name))
+	if (config.hasSection(name) && !sectionIsSkipped(config, name, x, y))
 		processResSection(config, name);
 
 	sprintf(name, "%dx%d", x, y);
-	if (config.hasSection(name))
+	if (config.hasSection(name) && !sectionIsSkipped(config, name, x, y))
 		processResSection(config, name);
 
 	debug(3, "Number of variables: %d", _evaluator->getNumVars());
