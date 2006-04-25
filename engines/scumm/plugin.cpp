@@ -1186,6 +1186,10 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 				} else
 					continue;
 			} else {
+				// Must be a V5+ game
+				if (g->version < 5)
+					continue;
+
 				// So at this point the gameid is determined, but not necessarily
 				// the variant!
 				
