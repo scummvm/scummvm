@@ -1026,16 +1026,6 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 				continue;
 			}
 			
-			// Next possibility: There exists only a single variant of this
-			// gameid anyway (we know this is the case if g->variant is 0).
-			// Then of course we have no further work to do.
-			// TODO / FIXME: This does *not* handle the case of the generic
-			// HE variants !!!
-			if (g->variant == 0) {
-				results.push_back(dr);
-				break;
-			}
-			
 			// At this point, we know that the gameid matches, but no variant
 			// was specified, yet there are multiple ones. So we try our best
 			// to distinguish between the variants.
@@ -1071,14 +1061,12 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 					if (g->version != 1)
 						continue;
 
-					// TODO: Maybe we can use the filesize to distinguish these two?
-					// English V1 Zak: 1896 bytes
-					// English V1 MM:  1972 bytes
-	
-					// Since it seems unlikely that there are other (official)
-					// variants of these two games around, it should be safe to use
-					// the filesize for detection. In case of an unknown size,
-					// we just generate a warning and skip the file.
+					// Zak has 58.LFL, Maniac doesn't have it.
+					const bool has58LFL = fileMD5Map.contains("58.LFL");
+					if (g->id == GID_MANIAC && !has58LFL) {
+					} else if (g->id == GID_ZAK && has58LFL) {
+					} else
+						continue;
 				} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
 					// GF_OLD_BUNDLE: could be V2 or old V3.
 					// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
@@ -1086,51 +1074,32 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 					if (g->version != 2 && g->version != 3  || !(g->features & GF_OLD_BUNDLE))
 						continue;
 
-					/*
-					TODO: Might be possible to distinguish those by the script count.
-					Specifically, my versions of these games have this in their headers:
-		
-					Loom (en; de; en demo; en MAC):
-					_numGlobalObjects 1000
-					_numRooms 100
-					_numCostumes 200
-					_numScripts 200
-					_numSounds 80
-		
-					Indy3EGA (en PC; en Mac; en demo):
-					_numGlobalObjects 1000
-					_numRooms 99
-					_numCostumes 129
-					_numScripts 139
-					_numSounds 84
-		
-					MM (en; de):
-					_numGlobalObjects 780
-					_numRooms 61
-					_numCostumes 40
-					_numScripts 179
-					_numSounds 120
-		
-					Zak (de; en demo):
-					_numGlobalObjects 780
-					_numRooms 61
-					_numCostumes 40
-					_numScripts 155
-					_numSounds 120
-		
-					So, they all have a different number of scripts.
-					*/
-					
-					/* Alternate approach: Distinguish by the presence/absence
-					   of certain files. In the following, '+' means the file
+					/* We distinguish the games by the presence/absence of
+					   certain files. In the following, '+' means the file
 					   present, '-' means the file is absent.
 
-					   maniac: -58.LFL, -85.LFL, -86.LFL
-					   zak:    +58.LFL, -85.LFL, -86.LFL
-					   indy3:  +58.LFL, +85.LFL, +86.LFL
-					   loom:   +58.LFL, -85.LFL, +86.LFL
+					   maniac:    -58.LFL, -84.LFL,-86.LFL, -98.LFL
+
+					   zak:       +58.LFL, -84.LFL,-86.LFL, -98.LFL
+					   zakdemo:   +58.LFL, -84.LFL,-86.LFL, -98.LFL
+
+					   loom:      +58.LFL, -84.LFL,+86.LFL, -98.LFL
+					   loomdemo:  -58.LFL, +84.LFL,-86.LFL, -98.LFL
+
+					   indy3:     +58.LFL, +84.LFL,+86.LFL, +98.LFL
+					   indy3demo: -58.LFL, +84.LFL,-86.LFL, +98.LFL
 					*/
-					  
+					const bool has58LFL = fileMD5Map.contains("58.LFL");
+					const bool has84LFL = fileMD5Map.contains("84.LFL");
+					const bool has86LFL = fileMD5Map.contains("86.LFL");
+					const bool has98LFL = fileMD5Map.contains("98.LFL");
+
+					if (g->id == GID_INDY3         && has98LFL && has84LFL) {
+					} else if (g->id == GID_ZAK    && !has98LFL && !has86LFL && !has84LFL && has58LFL) {
+					} else if (g->id == GID_MANIAC && !has98LFL && !has86LFL && !has84LFL && !has58LFL) {
+					} else if (g->id == GID_LOOM   && !has98LFL && (has86LFL != has84LFL)) {
+					} else
+						continue;
 				} else if (buf[4] == '0' && buf[5] == 'R') {
 					// newer V3 game
 					// Candidates: indy3, indy3Towns, zakTowns, loomTowns
@@ -1203,6 +1172,19 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 				monkeyVGA: 000.LFL, 901-904.LFL, DISK01-04.LEC
 				loomcd: 000.LFL, 901-904.LFL, DISK01.LEC
 				*/
+
+				const bool has903LFL = fileMD5Map.contains("903.LFL");
+				const bool hasDisk02 = fileMD5Map.contains("DISK02.LEC");
+				
+				// There is not much we can do based on the presence / absence
+				// of files. Only that if 903.LFL is present, it can't be PASS;
+				// and if DISK02.LEC is present, it can't be LoomCD
+				if (g->id == GID_PASS              && !has903LFL && !hasDisk02) {
+				} else if (g->id == GID_LOOM       &&  has903LFL && !hasDisk02) {
+				} else if (g->id == GID_MONKEY_VGA) {
+				} else if (g->id == GID_MONKEY_EGA) {
+				} else
+					continue;
 			} else {
 				// So at this point the gameid is determined, but not necessarily
 				// the variant!
