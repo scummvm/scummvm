@@ -97,7 +97,7 @@ ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system
 _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0), _colors(), _cursor(0), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
-	_needPaletteUpdates = false;
+	_useCursor = false;
 	memset(&_screen, 0, sizeof(_screen));
 	memset(&_dialog, 0, sizeof(_dialog));
 	memset(&_colors, 0, sizeof(_colors));
@@ -301,7 +301,9 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	_lastUsedBitMask = gBitFormat;
 
 	// creats the cursor image
-	createCursor();
+	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
+		createCursor();
+	}
 }
 
 ThemeNew::~ThemeNew() {
@@ -362,16 +364,15 @@ void ThemeNew::enable() {
 	init();
 	resetupGuiRenderer();
 	resetDrawArea();
+	setUpCursor();
 	_system->showOverlay();
 	clearAll();
-	setUpCursor();
 	_enabled = true;
 }
 
 void ThemeNew::disable() {
+	_system->disableCursorPalette(true);
 	_system->hideOverlay();
-	_system->setPalette(_backUpCols, 0, MAX_CURS_COLORS);
-	_needPaletteUpdates = false;
 	_enabled = false;
 }
 
@@ -411,21 +412,9 @@ void ThemeNew::closeDialog() {
 void ThemeNew::clearAll() {
 	if (!_initOk)
 		return;
-	if (_needPaletteUpdates) {
-		// we need to set the original palette here so the recived overlay looks correct in scumm engine for example
-		_system->setPalette(_backUpCols, 0, MAX_CURS_COLORS);
-		// update screen to finish updating the palette
-		_system->updateScreen();
-	}
-
 	_system->clearOverlay();
 	// FIXME: problem with the 'pitch'
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
-
-	if (_needPaletteUpdates) {
-		// our palette again
-		_system->setPalette(_cursorPal, 0, MAX_CURS_COLORS);
-	}
 }
 
 void ThemeNew::drawAll() {
@@ -1516,11 +1505,9 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
 #pragma mark -
 
 void ThemeNew::setUpCursor() {
-	_system->grabPalette(_backUpCols, 0, MAX_CURS_COLORS);
-	_system->setPalette(_cursorPal, 0, MAX_CURS_COLORS);
-
+	_system->setCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 	_system->setMouseCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY);
-	_needPaletteUpdates = true;
+	_system->disableCursorPalette(false);
 }
 
 void ThemeNew::createCursor() {
@@ -1569,7 +1556,8 @@ void ThemeNew::createCursor() {
 		}
 		src += _cursorWidth;
 	}
-
+	
+	_useCursor = true;
 	delete [] table;
 }
 

@@ -285,7 +285,7 @@ public:
 
 	void refresh();
 
-	bool ownCursor() { return true; }
+	bool ownCursor() { return _useCursor; }
 
 	void enable();
 	void disable();
@@ -450,6 +450,7 @@ private:
 	OverlayColor calcLuminance(OverlayColor col);
 	OverlayColor calcDimColor(OverlayColor col);
 
+	bool _useCursor;
 	void setUpCursor();
 	void createCursor();
 	int _cursorHotspotX, _cursorHotspotY;
@@ -458,7 +459,6 @@ private:
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[4*MAX_CURS_COLORS];
-	byte _backUpCols[4*MAX_CURS_COLORS];
 
 private:
 	const String *_imageHandles;
