@@ -56,7 +56,7 @@ MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 	_frameSize = 0;
 	_framesCount = 0;
 	_frameNum = 0;
-	_frameRate = 0;
+	_framesPerSec = 0;
 	_frameTicks = 0;
 	_frameSkipped = 0;
 
@@ -69,6 +69,7 @@ MoviePlayer::~MoviePlayer() {
 bool MoviePlayer::load(const char *filename) {
 	char filename2[100];
 	uint32 tag;
+	int32 frameRate;
 
 	// Change file extension to dxa
 	strcpy(filename2, filename);
@@ -81,7 +82,7 @@ bool MoviePlayer::load(const char *filename) {
 	if (_fd.open(filename2) == false) {
 		warning("Failed to load video file %s", filename2);
 		return false;
-	}
+	} 
 	debug(0, "Playing video %s", filename2);
 
 	_vm->_system->showMouse(false);
@@ -91,16 +92,23 @@ bool MoviePlayer::load(const char *filename) {
 
 	_fd.readByte();
 	_framesCount = _fd.readUint16BE();
-	_frameRate = _frameTicks = _fd.readUint32BE();
+	frameRate = _fd.readUint32BE();
 
-        if (_frameRate >= 0x80000000)
-                _frameRate = -_frameRate / 1000;
-	if (_frameTicks > 100)
-		_frameTicks = 100;
+	if (frameRate > 0)
+		_framesPerSec = 1000 / frameRate;
+	else if (frameRate < 0)
+		_framesPerSec = 100000 / (-frameRate);
+	else
+		_framesPerSec = 10;
+
+        if (frameRate < 0)
+                _frameTicks = -frameRate / 100;
+	else
+		_frameTicks = frameRate;
 
 	_width = _fd.readUint16BE();
 	_height = _fd.readUint16BE();
-	debug(0, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _frameRate, _frameTicks);
+	debug(0, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _framesPerSec, _frameTicks);
 
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
@@ -196,7 +204,7 @@ void MoviePlayer::nextFrame() {
 		return;
 	}
 
-	if (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum) {
+	if (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum) {
 		copyFrame(_vm->getBackBuf(), 465, 222);
 		return;
 	}
@@ -335,15 +343,15 @@ void MoviePlayer::processFrame() {
 	copyFrame(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2);
 	_vm->_system->copyRectToScreen(_vm->getFrontBuf(), _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 
-	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum + 1) ||
-		_frameSkipped > _frameRate) {
-		if (_frameSkipped > _frameRate) {
+	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum + 1) ||
+		_frameSkipped > _framesPerSec) {
+		if (_frameSkipped > _framesPerSec) {
 			warning("force frame %i redraw", _frameNum);
 			_frameSkipped = 0;
 		}
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _frameRate) / 1000 < _frameNum) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum) {
 				_vm->_system->delayMillis(10);
 			}
 			// In case the background sound ends prematurely, update
