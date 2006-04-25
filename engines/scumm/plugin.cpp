@@ -1312,8 +1312,10 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 	detectGames(fslist, results, gameid);
 
 	// Unable to locate game data
-	if (results.empty())
+	if (results.empty()) {
+		warning("ScummEngine: unable to locate game data");
 		return 0;
+	}
 
 	DetectorResult res(*(results.begin()));
 

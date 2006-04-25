@@ -167,10 +167,15 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
-	if (ConfMan.hasKey("path"))
+	if (ConfMan.hasKey("path")) {
+		if (!Common::File::exists(ConfMan.get("path"))) {
+			warning("Game directory does not exist (%s)", ConfMan.get("path").c_str());
+			return 0;
+		}
 		Common::File::addDefaultDirectory(ConfMan.get("path"));
-	else
+	} else {
 		Common::File::addDefaultDirectory(".");
+	}
 
 	// Create the game engine
 	Engine *engine = plugin->createInstance(&system);

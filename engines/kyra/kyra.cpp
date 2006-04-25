@@ -299,7 +299,7 @@ KyraEngine::KyraEngine(OSystem *system)
 	}
 
 	if (!found) {
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 		_features = 0;
 		_game = GI_KYRA1;
 		Common::File test;
@@ -323,6 +323,11 @@ KyraEngine::KyraEngine(OSystem *system)
 			_features |= GF_LNGUNK;
 		}
 	}
+
+	// FIXME: TODO:
+	// Please, deal with a case when _no_ valid game is present
+	// in specified directory. Currently it just asserts() later
+	// in the code which is not nice. [sev]
 }
 
 int KyraEngine::init() {
