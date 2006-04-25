@@ -589,7 +589,7 @@ int KyraEngine::go() {
 		setGameFlag(0xFD);
 		setGameFlag(0xEF);
 		seq_intro();
-		if (_skipIntroFlag &&_abortIntroFlag)
+		if (_skipIntroFlag && _abortIntroFlag)
 			resetGameFlag(0xEF);
 		startup();
 		resetGameFlag(0xEF);
@@ -669,7 +669,7 @@ void KyraEngine::startup() {
 	snd_playTheme(1);
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	
-	if (_abortIntroFlag && _skipFlag) {
+	if (_abortIntroFlag && _skipIntroFlag) {
 		_menuDirectlyToLoad = true;
 		_screen->setMouseCursor(1, 1, _shapes[4]);
 		buttonMenuCallback(0);

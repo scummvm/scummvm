@@ -660,7 +660,7 @@ void KyraEngine::calcCoords(Menu &menu) {
 	assert(menu.nrOfItems < 7);
 
 	int maxOffset = 0;
-	int x1, x2, y1, y2, textX;
+	int x1, x2, y1, y2;	
 	for (int i = 0; i < menu.nrOfItems; i++) {
 		if (menu.item[i].x == -1)
 			menu.item[i].x = (menu.width - menu.item[i].width)/2;
@@ -673,16 +673,13 @@ void KyraEngine::calcCoords(Menu &menu) {
 			y2 = y1 + menu.item[i].height - 1;
 
 			int textWidth = _screen->getTextWidth(menu.item[i].labelString);
-
-			if (menu.item[i].field_12 != -1)
-				textX = x1 + menu.item[i].field_12 + 3;
-			else
-				textX = _text->getCenterStringX(menu.item[i].labelString, x1, x2);
-
+			int menu_x1 = (320 - menu.width) / 2;
+			int textX = menu.item[i].labelX + menu_x1;
 			int offset;
+
 			if (textWidth + textX > x1) {
-				offset = x1 - (textWidth + textX) / 2 + 10;
-				menu.width += offset;
+				offset = (textWidth + textX) - x1;
+				menu.width += offset/2;
 				
 				if (maxOffset < offset)
 					maxOffset = offset;
@@ -692,7 +689,7 @@ void KyraEngine::calcCoords(Menu &menu) {
 
 	if (maxOffset > 0)
 		for (int i = 0; i < menu.nrOfItems; i++)
-			menu.item[i].x += maxOffset * 2;
+			menu.item[i].x += maxOffset - 10;
 			
 	if (menu.width > 310)
 		menu.width = 310;
@@ -1072,11 +1069,11 @@ int KyraEngine::gui_gameControlsMenu(Button *button) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
 	if (_features & GF_TALKIE) {
-		_menu[5].width = 230;
+		//_menu[5].width = 230;
 
 		for (int i = 0; i < 5; i++) {
-			_menu[5].item[i].labelX = 24;
-			_menu[5].item[i].x = 115;
+			//_menu[5].item[i].labelX = 24;
+			//_menu[5].item[i].x = 115;
 			_menu[5].item[i].width = 94;
 		}
 
