@@ -546,18 +546,19 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	return 0;
 }
 
-void KyraEngine::initMenu(Menu menu) {
-	int menu_x2 = menu.width  + menu.x - 1;
-	int menu_y2 = menu.height + menu.y - 1;
-
+void KyraEngine::initMenu(Menu &menu) {
 	_menuButtonList = 0;
 
 	_screen->hideMouse();
-	_screen->fillRect(menu.x + 2, menu.y + 2, menu_x2 - 2, menu_y2 - 2, menu.bgcolor);
-	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2);
 
 	int textX;
 	int textY;
+
+	int menu_x2 = menu.width  + menu.x - 1;
+	int menu_y2 = menu.height + menu.y - 1;
+
+	_screen->fillRect(menu.x + 2, menu.y + 2, menu_x2 - 2, menu_y2 - 2, menu.bgcolor);
+	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2);
 
 	if (menu.field_10 != -1)
 		textX = menu.x;
@@ -569,10 +570,22 @@ void KyraEngine::initMenu(Menu menu) {
 	_text->printText(menu.menuName, textX - 1, textY + 1, 12, 248, 0);
 	_text->printText(menu.menuName, textX, textY, menu.textColor, 0, 0);
 
-	int x1, y1, x2, y2;
+	int x1, y1, x2, y2;	
 	for (int i = 0; i < menu.nrOfItems; i++) {
 		if (!menu.item[i].enabled)
 			continue;
+
+
+		if (menu.item[i].itemString) {
+			int textWidth = _screen->getTextWidth(menu.item[i].itemString) - 18;
+
+			if (menu.item[i].width < textWidth) {
+				menu.item[i].width = textWidth;
+				
+				if ( menu.x + menu.item[i].x + menu.item[i].width > menu_x2)
+					menu.item[i].x -= (menu.x + menu.item[i].x + menu.item[i].width) - menu_x2 + 10;
+			}
+		}	
 
 		x1 = menu.x + menu.item[i].x;
 		y1 = menu.y + menu.item[i].y;
@@ -644,16 +657,52 @@ void KyraEngine::initMenu(Menu menu) {
 }
 
 void KyraEngine::calcCoords(Menu &menu) {
+	assert(menu.nrOfItems < 7);
+
+	int maxOffset = 0;
+	int x1, x2, y1, y2, textX;
+	for (int i = 0; i < menu.nrOfItems; i++) {
+		if (menu.item[i].x == -1)
+			menu.item[i].x = (menu.width - menu.item[i].width)/2;
+
+		if (menu.item[i].labelString) {
+			x1 = (320 - menu.width)/2 + menu.item[i].x;
+			y1 = (200 - menu.height)/2 + menu.item[i].y;
+
+			x2 = x1 + menu.item[i].width - 1;
+			y2 = y1 + menu.item[i].height - 1;
+
+			int textWidth = _screen->getTextWidth(menu.item[i].labelString);
+
+			if (menu.item[i].field_12 != -1)
+				textX = x1 + menu.item[i].field_12 + 3;
+			else
+				textX = _text->getCenterStringX(menu.item[i].labelString, x1, x2);
+
+			int offset;
+			if (textWidth + textX > x1) {
+				offset = x1 - (textWidth + textX) / 2 + 10;
+				menu.width += offset;
+				
+				if (maxOffset < offset)
+					maxOffset = offset;
+			}
+		}
+	}
+
+	if (maxOffset > 0)
+		for (int i = 0; i < menu.nrOfItems; i++)
+			menu.item[i].x += maxOffset * 2;
+			
+	if (menu.width > 310)
+		menu.width = 310;
+		
 	if (menu.x == -1)
 		menu.x = (320 - menu.width)/2;
 
 	if (menu.y == -1)
 		menu.y = (200 - menu.height)/2;
 
-	assert(menu.nrOfItems < 7);
-	for (int i = 0; i < menu.nrOfItems; i++)
-		if (menu.item[i].x == -1)
-			menu.item[i].x = (menu.width - menu.item[i].width)/2;
 }
 
 void KyraEngine::gui_getInput() {

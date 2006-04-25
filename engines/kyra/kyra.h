@@ -634,7 +634,7 @@ protected:
 	int drawBoxCallback(Button *button);
 	int drawShadedBoxCallback(Button *button);
 	void calcCoords(Menu &menu);
-	void initMenu(Menu menu);
+	void initMenu(Menu &menu);
 	void setGUILabels();
 	
 	Button *initButton(Button *list, Button *newButton);
