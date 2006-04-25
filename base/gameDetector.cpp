@@ -382,6 +382,11 @@ Common::String GameDetector::parseCommandLine(Common::StringMap &settings, int a
 			END_OPTION
 
 
+			// HACK FIXME TODO: This switch is intentionally *not* documented!
+			DO_LONG_OPTION_CMD("test-detector")
+				return "test-detector";
+			END_OPTION
+
 
 			DO_OPTION('c', "config")
 			END_OPTION
