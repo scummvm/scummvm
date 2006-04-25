@@ -1676,7 +1676,7 @@ void SimonEngine::vc27_resetSprite() {
 	vcWriteVar(254, 0);
 
 	if (getGameType() == GType_FF)
-		vcWriteVar(42, 1);
+		setBitFlag(42, true);
 
 	_lockWord &= ~8;
 }
