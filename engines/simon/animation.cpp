@@ -82,6 +82,9 @@ bool MoviePlayer::load(const char *filename) {
 		warning("Failed to load video file %s", filename2);
 		return false;
 	}
+	debug(0, "Playing video %s", filename2);
+
+	_vm->_system->showMouse(false);
 
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
@@ -303,7 +306,7 @@ void MoviePlayer::decodeFrame() {
 	if (tag == MKID_BE('FRAM')) {
 		uint8 type = _fd.readByte();
 		uint32 size = _fd.readUint32BE();
-		debug(0, "frame %d type %d size %d", _frameNum, type, size);
+		debug(5, "frame %d type %d size %d", _frameNum, type, size);
 
 		_fd.read(_frameBuffer2, size);
 
