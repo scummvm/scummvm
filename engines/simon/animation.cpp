@@ -198,9 +198,9 @@ void MoviePlayer::nextFrame() {
 	if (!_omniTV)
 		return;
 
-	// FIXME: Never triggered!
 	if (_vm->getBitFlag(42)) {
 		_omniTV = false;
+		close();
 		return;
 	}
 
