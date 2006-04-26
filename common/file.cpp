@@ -263,9 +263,8 @@ bool File::open(const String &filename, AccessMode mode, const char *directory) 
 }
 
 bool File::exists(const String &filename) {
-	// FIXME: Ugly ugly hack!
-	File tmp;
-	return tmp.open(filename, kFileReadMode);
+	FilesystemNode file(filename);
+	return (file.isValid() && !file.isDirectory());
 }
 
 void File::close() {
