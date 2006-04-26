@@ -168,11 +168,13 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
 	if (ConfMan.hasKey("path")) {
-		if (!Common::File::exists(ConfMan.get("path"))) {
-			warning("Game directory does not exist (%s)", ConfMan.get("path").c_str());
+		Common::String path(ConfMan.get("path"));
+		FilesystemNode dir(path);
+		if (!dir.isValid() || !dir.isDirectory()) {
+			warning("Game directory does not exist (%s)", path.c_str());
 			return 0;
 		}
-		Common::File::addDefaultDirectory(ConfMan.get("path"));
+		Common::File::addDefaultDirectory(path);
 	} else {
 		Common::File::addDefaultDirectory(".");
 	}
