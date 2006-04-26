@@ -262,10 +262,10 @@ bool File::open(const String &filename, AccessMode mode, const char *directory) 
 	return true;
 }
 
-bool File::exists(const String &filename, const char *directory) {
+bool File::exists(const String &filename) {
 	// FIXME: Ugly ugly hack!
 	File tmp;
-	return tmp.open(filename, kFileReadMode, directory);
+	return tmp.open(filename, kFileReadMode);
 }
 
 void File::close() {

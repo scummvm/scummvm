@@ -61,7 +61,7 @@ public:
 	void decRef();
 
 	virtual bool open(const String &filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
-	static bool exists(const String &filename, const char *directory = NULL);
+	static bool exists(const String &filename);
 
 	virtual void close();
 	bool isOpen() const;
