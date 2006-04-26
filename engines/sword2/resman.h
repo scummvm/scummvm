@@ -74,6 +74,8 @@ public:
 	ResourceManager(Sword2Engine *vm);	// read in the config file
 	~ResourceManager();
 
+	bool init();
+
 	uint32 getNumResFiles() { return _totalResFiles; }
 	uint32 getNumClusters() { return _totalClusters; }
 	ResourceFile *getResFiles() { return _resFiles; }

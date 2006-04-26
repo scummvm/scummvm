@@ -61,9 +61,30 @@ struct CdInf {
 };
 
 ResourceManager::ResourceManager(Sword2Engine *vm) {
-	uint32 i, j;
-
 	_vm = vm;
+
+	_totalClusters = 0;
+	_resConvTable = NULL;
+	_cacheStart = NULL;
+	_cacheEnd = NULL;
+	_usedMem = 0;
+}
+
+ResourceManager::~ResourceManager() {
+	Resource *res = _cacheStart;
+	while (res) {
+		_vm->_memory->memFree(res->ptr);
+		res = res->next;
+	}
+	for (uint i = 0; i < _totalClusters; i++)
+		free(_resFiles[i].entryTab);
+	free(_resList);
+	free(_resConvTable);
+}
+
+    
+bool ResourceManager::init() {
+	uint32 i, j;
 
 	// Until proven differently, assume we're on CD 1. This is so the start
 	// dialog will be able to play any music at all.
@@ -77,11 +98,10 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	Common::File file;
 
-	_totalClusters = 0;
-	_resConvTable = NULL;
-
-	if (!file.open("resource.inf"))
-		error("Cannot open resource.inf");
+	if (!file.open("resource.inf")) {
+		_vm->GUIErrorMessage("Broken Sword 2: Cannot open resource.inf");
+		return false;
+	}
 
 	// The resource.inf file is a simple text file containing the names of
 	// all the resource files.
@@ -89,15 +109,19 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	while (file.readLine(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
-		if (++_totalClusters >= MAX_res_files)
-			error("Too many entries in resource.inf");
+		if (++_totalClusters >= MAX_res_files) {
+			_vm->GUIErrorMessage("Broken Sword 2: Too many entries in resource.inf");
+			return false;
+		}
 	}
 
 	file.close();
 
 	// Now load in the binary id to res conversion table
-	if (!file.open("resource.tab"))
-		error("Cannot open resource.tab");
+	if (!file.open("resource.tab")) {
+		_vm->GUIErrorMessage("Broken Sword 2: Cannot open resource.tab");
+		return false;
+	}
 
 	// Find how many resources
 	uint32 size = file.size();
@@ -112,13 +136,16 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	if (file.ioFailed()) {
 		file.close();
-		error("Cannot read resource.tab");
+		_vm->GUIErrorMessage("Broken Sword 2: Cannot read resource.tab");
+		return false;
 	}
 
 	file.close();
 
-	if (!file.open("cd.inf"))
-		error("Cannot open cd.inf");
+	if (!file.open("cd.inf")) {
+		_vm->GUIErrorMessage("Broken Sword 2: Cannot open cd.inf");
+		return false;
+	}
 
 	CdInf *cdInf = new CdInf[_totalClusters];
 
@@ -127,8 +154,12 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 		cdInf[i].cd = file.readByte();
 
-		if (file.ioFailed())
-			error("Cannot read cd.inf");
+		if (file.ioFailed()) {
+			delete cdInf;
+			file.close();
+			_vm->GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
+			return false;
+		}
 
 		// It has been reported that there are two different versions
 		// of the cd.inf file: One where all clusters on CD also have
@@ -144,6 +175,18 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 			cdInf[i].cd = 2;
 		else
 			cdInf[i].cd = 0;
+
+		// Any file on "CD 0" may be needed at all times. Verify that
+		// it exists. Any other missing cluster will be requested with
+		// an "insert CD" message. Of course, the file may still vanish
+		// during game-play (oh, that wascally wabbit!) in which case
+		// the resource manager will print a fatal error.
+
+		if (!Common::File::exists((char *)cdInf[i].clusterName)) {
+			_vm->GUIErrorMessage("Broken Sword 2: Cannot find " + Common::String((char *)cdInf[i].clusterName));
+			delete [] cdInf;
+			return false;
+		}
 	}
 
 	file.close();
@@ -154,8 +197,11 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 				break;
 		}
 
-		if (j == _totalClusters)
-			error("%s is not in cd.inf", _resFiles[i].fileName);
+		if (j == _totalClusters) {
+			delete [] cdInf;
+			_vm->GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
+			return false;
+		}
 
 		_resFiles[i].cd = cdInf[j].cd;
 	}
@@ -174,20 +220,8 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 		_resList[i].refCount = 0;
 		_resList[i].prev = _resList[i].next = NULL;
 	}
-	_cacheStart = _cacheEnd = NULL;
-	_usedMem = 0;
-}
 
-ResourceManager::~ResourceManager() {
-	Resource *res = _cacheStart;
-	while (res) {
-		_vm->_memory->memFree(res->ptr);
-		res = res->next;
-	}
-	for (uint i = 0; i < _totalClusters; i++)
-		free(_resFiles[i].entryTab);
-	free(_resList);
-	free(_resConvTable);
+	return true;
 }
 
 /**

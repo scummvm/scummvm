@@ -244,6 +244,15 @@ int Sword2Engine::init() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
+	_debugger = NULL;
+	_sound = NULL;
+	_fontRenderer = NULL;
+	_screen = NULL;
+	_mouse = NULL;
+	_logic = NULL;
+	_resman = NULL;
+	_memory = NULL;
+
 	_system->beginGFXTransaction();
 		initCommonGFX(true);
 		_screen = new Screen(this, 640, 480);
@@ -258,6 +267,10 @@ int Sword2Engine::init() {
 
 	_memory = new MemoryManager(this);
 	_resman = new ResourceManager(this);
+
+	if (!_resman->init())
+		return 1;
+
 	_logic = new Logic(this);
 	_fontRenderer = new FontRenderer(this);
 	_sound = new Sound(this);
