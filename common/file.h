@@ -60,7 +60,7 @@ public:
 	void incRef();
 	void decRef();
 
-	virtual bool open(const String &filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
+	virtual bool open(const String &filename, AccessMode mode = kFileReadMode);
 	static bool exists(const String &filename);
 
 	virtual void close();

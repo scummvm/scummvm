@@ -184,7 +184,7 @@ void File::decRef() {
 }
 
 
-bool File::open(const String &filename, AccessMode mode, const char *directory) {
+bool File::open(const String &filename, AccessMode mode) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
 	if (filename.empty()) {
@@ -201,9 +201,8 @@ bool File::open(const String &filename, AccessMode mode, const char *directory) 
 	fname.toLowercase();
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
-	if (mode == kFileWriteMode || directory) {
-		String dir(directory ? directory : "");
-		_handle = fopenNoCase(filename, dir, modeStr);
+	if (mode == kFileWriteMode) {
+		_handle = fopenNoCase(filename, "", modeStr);
 	} else if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
 		debug(3, "Opening hashed: %s", fname.c_str());
