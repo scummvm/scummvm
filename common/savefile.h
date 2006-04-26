@@ -34,14 +34,7 @@ namespace Common {
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class InSaveFile : public Common::ReadStream {
-public:
-	virtual ~InSaveFile() {}
-
-	/**
-	 * Skip over the specified (positive) amount of bytes in the input stream.
-	 */
-	virtual void skip(uint32 offset) = 0;
+class InSaveFile : public SeekableReadStream {
 };
 
 /**
@@ -49,9 +42,7 @@ public:
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile : public Common::WriteStream {
-public:
-	virtual ~OutSaveFile() {}
+class OutSaveFile : public WriteStream {
 };
 
 /**
@@ -69,20 +60,30 @@ public:
 	/**
 	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename
-	 * @return pointer to a SaveFile object, or NULL if an error occured.
+	 * @return pointer to an OutSaveFile, or NULL if an error occured.
 	 */
 	virtual OutSaveFile *openForSaving(const char *filename) = 0;
 
 	/**
 	 * Open the file with name filename in the given directory for loading.
 	 * @param filename	the filename
-	 * @return pointer to a SaveFile object, or NULL if an error occured.
+	 * @return pointer to an InSaveFile, or NULL if an error occured.
 	 */
 	virtual InSaveFile *openForLoading(const char *filename) = 0;
 
+	/**
+	 * Request a list of available savegames with a given prefix.
+	 * TODO: Document this better!
+	 * TODO: Or even replace it with a better API. For example, one that
+	 * returns a list of strings for all present file names. 
+	 */
 	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num) = 0;
 
-	/** Get the path to the save game directory. */
+	/**
+	 * Get the path to the save game directory.
+	 * Should only be used for error messages, and not to construct file paths
+	 * from it, since that is highl unportable.
+	 */
 	virtual const char *getSavePath() const;
 };
 
@@ -91,9 +92,6 @@ public:
 	virtual OutSaveFile *openForSaving(const char *filename);
 	virtual InSaveFile *openForLoading(const char *filename);
 	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
-
-protected:
-	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
 } // End of namespace Common

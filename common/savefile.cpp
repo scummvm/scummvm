@@ -64,7 +64,7 @@ const char *SaveFileManager::getSavePath() const {
 #endif
 }
 
-class StdioSaveFile : public SaveFile {
+class StdioSaveFile : public InSaveFile, public OutSaveFile {
 private:
 	FILE *fh;
 public:
@@ -83,31 +83,47 @@ public:
 	bool isOpen() const { return fh != 0; }
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
-		return ::fread(dataPtr, 1, dataSize, fh);
+		assert(fh);
+		return fread(dataPtr, 1, dataSize, fh);
 	}
 	uint32 write(const void *dataPtr, uint32 dataSize) {
-		return ::fwrite(dataPtr, 1, dataSize, fh);
+		assert(fh);
+		return fwrite(dataPtr, 1, dataSize, fh);
 	}
 
-	void skip(uint32 offset) {
-		::fseek(fh, offset, SEEK_CUR);
+	uint32 pos() const {
+		assert(fh);
+		return ftell(fh);
+	}
+	uint32 size() const {
+		assert(fh);
+		uint32 oldPos = ftell(fh);
+		fseek(fh, 0, SEEK_END);
+		uint32 length = ftell(fh);
+		fseek(fh, oldPos, SEEK_SET);
+		return length;
+	}
+
+	void seek(int32 offs, int whence = SEEK_SET) {
+		assert(fh);
+		fseek(fh, offs, whence);
 	}
 };
 
 
 #ifdef USE_ZLIB
-class GzipSaveFile : public SaveFile {
+class GzipSaveFile : public InSaveFile, public OutSaveFile {
 private:
 	gzFile fh;
 	bool _ioError;
 public:
 	GzipSaveFile(const char *filename, bool saveOrLoad) {
 		_ioError = false;
-		fh = ::gzopen(filename, (saveOrLoad? "wb" : "rb"));
+		fh = gzopen(filename, (saveOrLoad? "wb" : "rb"));
 	}
 	~GzipSaveFile() {
 		if (fh)
-			::gzclose(fh);
+			gzclose(fh);
 	}
 
 	bool eos() const { return gzeof(fh) != 0; }
@@ -117,12 +133,14 @@ public:
 	bool isOpen() const { return fh != 0; }
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
-		int ret = ::gzread(fh, dataPtr, dataSize);
+		assert(fh);
+		int ret = gzread(fh, dataPtr, dataSize);
 		if (ret <= -1)
 			_ioError = true;
 		return ret;
 	}
 	uint32 write(const void *dataPtr, uint32 dataSize) {
+		assert(fh);
 		// Due to a "bug" in the zlib headers (or maybe I should say,
 		// a bug in the C++ spec? Whatever <g>) we have to be a bit
 		// hackish here and remove the const qualifier.
@@ -130,14 +148,28 @@ public:
 		// which you might think is the same as "const void *" but it
 		// is not - rather it is equal to "void const *" which is the
 		// same as "void *". Hrmpf
-		int ret = ::gzwrite(fh, const_cast<void *>(dataPtr), dataSize);
+		int ret = gzwrite(fh, const_cast<void *>(dataPtr), dataSize);
 		if (ret <= 0)
 			_ioError = true;
 		return ret;
 	}
 
-	void skip(uint32 offset) {
-		::gzseek(fh, offset, SEEK_CUR);
+	uint32 pos() const {
+		assert(fh);
+		return gztell(fh);
+	}
+	uint32 size() const {
+		assert(fh);
+		uint32 oldPos = gztell(fh);
+		gzseek(fh, 0, SEEK_END);
+		uint32 length = gztell(fh);
+		gzseek(fh, oldPos, SEEK_SET);
+		return length;
+	}
+
+	void seek(int32 offs, int whence = SEEK_SET) {
+		assert(fh);
+		gzseek(fh, offs, whence);
 	}
 };
 #endif
@@ -172,25 +204,13 @@ static void join_paths(const char *filename, const char *directory,
 OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	char buf[256];
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
-	return makeSaveFile(buf, true);
-}
 
-InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
-	char buf[256];
-	join_paths(filename, getSavePath(), buf, sizeof(buf));
-	return makeSaveFile(buf, false);
-}
-
-void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
-	memset(marks, true, num * sizeof(bool));
-}
-
-SaveFile *DefaultSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
 #ifdef USE_ZLIB
-	GzipSaveFile *sf = new GzipSaveFile(filename, saveOrLoad);
+	GzipSaveFile *sf = new GzipSaveFile(filename, true);
 #else
-	StdioSaveFile *sf = new StdioSaveFile(filename, saveOrLoad);
+	StdioSaveFile *sf = new StdioSaveFile(filename, true);
 #endif
+
 	if (!sf->isOpen()) {
 		delete sf;
 		sf = 0;
@@ -198,5 +218,25 @@ SaveFile *DefaultSaveFileManager::makeSaveFile(const char *filename, bool saveOr
 	return sf;
 }
 
+InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
+	char buf[256];
+	join_paths(filename, getSavePath(), buf, sizeof(buf));
+
+#ifdef USE_ZLIB
+	GzipSaveFile *sf = new GzipSaveFile(filename, false);
+#else
+	StdioSaveFile *sf = new StdioSaveFile(filename, false);
+#endif
+
+	if (!sf->isOpen()) {
+		delete sf;
+		sf = 0;
+	}
+	return sf;
+}
+
+void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
+	memset(marks, true, num * sizeof(bool));
+}
 
 } // End of namespace Common
