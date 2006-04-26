@@ -263,8 +263,34 @@ bool File::open(const String &filename, AccessMode mode, const char *directory) 
 }
 
 bool File::exists(const String &filename) {
+	// First try to find the file it via a FilesystemNode (in case an absolute
+	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
-	return (file.isValid() && !file.isDirectory());
+	if (file.isValid() && file.isDirectory())
+		return false;
+
+	// Next, try to locate the file by *opening* it in read mode. This has
+	// multiple effects:
+	// 1) It takes _filesMap and _defaultDirectories into consideration -> good
+	// 2) It returns true if and only if File::open is possible on the file -> good
+	// 3) If this method is misused, it could lead to an fopen call on a directory
+	//    -> bad!
+	// 4) It also checks whether we can read the file. This is not 100%
+	//    desirable; after all, even when we can't read it, the file is present.
+	//    Since this method is often used to check whether a file should be
+	//    re-created, that's not nice.
+	//
+	// TODO/FIXME: We should clarify the semantics of this method, and then
+	// maybe should introduce several new methods:
+	//   fileExistsAndReadable
+	//   fileExists
+	//   fileExistsAtPath
+	//   dirExists
+	//   dirExistsAtPath
+	// or maybe only 1-2 methods which take some params :-).
+	
+	File tmp;
+	return tmp.open(filename, kFileReadMode);
 }
 
 void File::close() {
