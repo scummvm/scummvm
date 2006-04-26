@@ -216,7 +216,9 @@ public:
 	virtual uint32 pos() const = 0;
 	virtual uint32 size() const = 0;
 
-	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
+	virtual void seek(int32 offset, int whence = SEEK_SET) = 0;
+	
+	void skip(uint32 offset) { seek(offset, SEEK_CUR); }
 
 	/**
 	 * Read one line of text from a CR or CR/LF terminated plain text file.
