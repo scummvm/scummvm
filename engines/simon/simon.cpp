@@ -31,7 +31,6 @@
 #include "common/system.h"
 
 #include "gui/about.h"
-#include "gui/message.h"
 
 #include "simon/simon.h"
 #include "simon/intern.h"
@@ -404,13 +403,7 @@ int SimonEngine::init() {
 
 	// Detect game
 	if (!initGame()) {
-		_system->beginGFXTransaction();
-			initCommonGFX(false);
-			_system->initSize(320, 200, 2);
-		_system->endGFXTransaction();
-		GUI::MessageDialog dialog("No valid games were found in the specified directory.");
-		dialog.runModal();
-
+		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
 

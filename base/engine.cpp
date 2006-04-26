@@ -248,3 +248,18 @@ void checkHeap() {
 	}
 #endif
 }
+
+void Engine::GUIErrorMessage(const Common::String msg) {
+	_system->setWindowCaption("Error");
+	_system->beginGFXTransaction();
+		initCommonGFX(false);
+		_system->initSize(320, 200, 2);
+	_system->endGFXTransaction();
+
+	GUI::MessageDialog dialog(msg);
+	dialog.runModal();
+}
+
+Engine_Empty::Engine_Empty(OSystem *syst, const Common::String msg) : Engine(syst), _message(msg) {
+}
+
