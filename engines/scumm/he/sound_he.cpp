@@ -123,7 +123,16 @@ int SoundHE::isSoundRunning(int sound) const {
 		}
 	}
 
-	return Sound::isSoundRunning(sound);
+	if (_vm->_mixer->isSoundIDActive(sound))
+		return sound;
+
+	if (isSoundInQueue(sound))
+		return sound;
+
+	if (_vm->_musicEngine &&_vm->_musicEngine->getSoundStatus(sound))
+		return sound;
+
+	return 0;
 }
 
 void SoundHE::stopSound(int sound) {
