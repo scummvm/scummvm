@@ -1637,9 +1637,9 @@ char Control::_quitTexts[16][35] = {
 	"Game over giocatore 1",
 	"SIATE VIGILANTI",
 	"Fim de jogo para o jogador um",
-	"BE VIGILANT"
-	"Game over player one",
 	"BE VIGILANT",
+	"Game over player one",
+	"BE VIGILANT"
 };
 
 uint8 Control::_crossImg[594] = {
