@@ -329,7 +329,7 @@ void Disk::dumpFile(uint16 fileNr) {
 	filePtr = loadFile(fileNr);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 
-	if (!out.exists(buf)) {
+	if (!Common::File::exists(buf)) {
 		if (out.open(buf, Common::File::kFileWriteMode))
 			out.write(filePtr, _lastLoadedFileSize);
 	}
