@@ -313,7 +313,7 @@ protected:
 	uint _numTextBoxes;
 
 	uint _lastTime;
-	uint _clockStopped, _gameStoppedClock;
+	uint32 _clockStopped, _gameStoppedClock;
 	time_t _timeStore;
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
