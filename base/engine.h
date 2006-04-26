@@ -89,8 +89,8 @@ public:
 	Engine_Empty(OSystem *syst, const Common::String msg = "No valid games were found in specified directory.");
 	virtual ~Engine_Empty() {}
 
-	// Displays error message
-	int init() { GUIErrorMessage(_message); return 0; }
+	// Displays error message and do not run go() method
+	int init() { GUIErrorMessage(_message); return 1; }
 
 	// Just indicate that we want return to launcher
 	int go() { return 1; }
