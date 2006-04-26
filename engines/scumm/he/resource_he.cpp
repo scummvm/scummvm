@@ -1285,24 +1285,24 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 		_fileName = _vm->generateFilename(-3);
 
 		// Some programs write it as .bin. Try that too
-		if (!in.exists(_fileName)) {
+		if (!in.open(_fileName)) {
 			Common::String tmp(_fileName);
 			
 			_fileName += ".bin";
 
-			if (!in.exists(_fileName)) {
+			if (!in.open(_fileName)) {
 				// And finally check if we have dumped resource fork
 				_fileName = tmp;
 				_fileName += ".bin";
-				if (!in.exists(_fileName)) {
+				if (!in.open(_fileName)) {
 					error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc",
 						  tmp.c_str(), tmp.c_str(), tmp.c_str());
 				}
 			}
 		}
-	}
+	} else
+		in.open(_fileName);
 
-	in.open(_fileName);
 	if (!in.isOpen()) {
 		error("Cannot open file %s", _fileName.c_str());
 	}
