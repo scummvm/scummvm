@@ -291,7 +291,7 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 	for (uint i = 0; i < numClusters; i++) {
 		const char *locStr[3] = { "HDD", "CD1", "CD2" };
 
-		DebugPrintf("%-20s %d\n", resFiles[i].fileName, locStr[resFiles[i].cd]);
+		DebugPrintf("%-20s %s\n", resFiles[i].fileName, locStr[resFiles[i].cd]);
 	}
 
 	DebugPrintf("%d resources\n", _vm->_resman->getNumResFiles());
