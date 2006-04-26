@@ -30,6 +30,11 @@
 #include "scumm/he/wiz_he.h"
 #endif
 
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Scumm {
 
 #ifndef DISABLE_HE
@@ -49,7 +54,9 @@ protected:
 	const OpcodeEntryv60he *_opcodesv60he;
 
 public:
-	Common::File _hFileTable[17];
+	//Common::File _hFileTable[17];
+	Common::SeekableReadStream *_hInFileTable[17];
+	Common::WriteStream *_hOutFileTable[17];
 
 	int _heTimers[16];
 	int getHETimer(int timer);
@@ -57,6 +64,7 @@ public:
 
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v60he();
 
 	virtual void scummInit();
 

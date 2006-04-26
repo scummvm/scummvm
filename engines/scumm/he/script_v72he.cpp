@@ -1722,7 +1722,7 @@ void ScummEngine_v72he::o72_openFile() {
 
 	slot = -1;
 	for (i = 1; i < 17; i++) {
-		if (_hFileTable[i].isOpen() == false) {
+		if (_hInFileTable[i] == 0 && _hOutFileTable[i] == 0) {
 			slot = i;
 			break;
 		}
@@ -1731,18 +1731,25 @@ void ScummEngine_v72he::o72_openFile() {
 	if (slot != -1) {
 		switch(mode) {
 		case 1:
-			_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode, _saveFileMan->getSavePath());
-			if (_hFileTable[slot].isOpen() == false)
-				_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode, _gameDataPath.c_str());
+			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
+			_hInFileTable[slot] = _saveFileMan->openForLoading((char*)filename + r);
+			if (_hInFileTable[slot] == 0) {
+				Common::File *f = new Common::File();
+				f->open((char*)filename + r, Common::File::kFileReadMode);
+				if (!f->isOpen())
+					delete f;
+				else
+					_hInFileTable[slot] = f;
+			}
 			break;
 		case 2:
-			_hFileTable[slot].open((char*)filename + r, Common::File::kFileWriteMode, _saveFileMan->getSavePath());
+			_hOutFileTable[slot] = _saveFileMan->openForSaving((char*)filename + r);
 			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
 		}
 
-		if (_hFileTable[slot].isOpen() == false)
+		if (_hInFileTable[slot] == 0 && _hOutFileTable[slot] == 0)
 			slot = -1;
 
 	}
@@ -1751,14 +1758,13 @@ void ScummEngine_v72he::o72_openFile() {
 }
 
 int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
+	assert(_hInFileTable[slot]);
 	if (size == 0)
-		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
+		size = _hInFileTable[slot]->size() - _hInFileTable[slot]->pos();
 
 	writeVar(0, 0);
 	ArrayHeader *ah = defineArray(0, kByteArray, 0, 0, 0, size);
-
-	if (_hFileTable[slot].isOpen())
-		_hFileTable[slot].read(ah->data, size + 1);
+	_hInFileTable[slot]->read(ah->data, size + 1);
 
 	return readVar(0);
 }
@@ -1771,17 +1777,20 @@ void ScummEngine_v72he::o72_readFile() {
 	switch (subOp) {
 	case 4:
 		slot = pop();
-		val = _hFileTable[slot].readByte();
+		assert(_hInFileTable[slot]);
+		val = _hInFileTable[slot]->readByte();
 		push(val);
 		break;
 	case 5:
 		slot = pop();
-		val = _hFileTable[slot].readUint16LE();
+		assert(_hInFileTable[slot]);
+		val = _hInFileTable[slot]->readUint16LE();
 		push(val);
 		break;
 	case 6:
 		slot = pop();
-		val = _hFileTable[slot].readUint32LE();
+		assert(_hInFileTable[slot]);
+		val = _hInFileTable[slot]->readUint32LE();
 		push(val);
 		break;
 	case 8:
@@ -1801,7 +1810,8 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
 		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 
-	_hFileTable[slot].write(ah->data, size);
+	assert(_hOutFileTable[slot]);
+	_hOutFileTable[slot]->write(ah->data, size);
 }
 
 void ScummEngine_v72he::o72_writeFile() {
@@ -1809,15 +1819,16 @@ void ScummEngine_v72he::o72_writeFile() {
 	int slot = pop();
 	byte subOp = fetchScriptByte();
 
+	assert(_hOutFileTable[slot]);
 	switch (subOp) {
 	case 4:
-		_hFileTable[slot].writeByte(resID);
+		_hOutFileTable[slot]->writeByte(resID);
 		break;
 	case 5:
-		_hFileTable[slot].writeUint16LE(resID);
+		_hOutFileTable[slot]->writeUint16LE(resID);
 		break;
 	case 6:
-		_hFileTable[slot].writeUint32LE(resID);
+		_hOutFileTable[slot]->writeUint32LE(resID);
 		break;
 	case 8:
 		fetchScriptByte();

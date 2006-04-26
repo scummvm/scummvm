@@ -2308,19 +2308,20 @@ void ScummEngine_v100he::o100_writeFile() {
 
 	byte subOp = fetchScriptByte();
 
+	assert(_hOutFileTable[slot]);
 	switch (subOp) {
 	case 5:
 		fetchScriptByte();
 		writeFileFromArray(slot, resID);
 		break;
 	case 42:
-		_hFileTable[slot].writeUint16LE(resID);
+		_hOutFileTable[slot]->writeUint16LE(resID);
 		break;
 	case 43:
-		_hFileTable[slot].writeUint32LE(resID);
+		_hOutFileTable[slot]->writeUint32LE(resID);
 		break;
 	case 45:
-		_hFileTable[slot].writeByte(resID);
+		_hOutFileTable[slot]->writeByte(resID);
 		break;
 	default:
 		error("o100_writeFile: default case %d", subOp);
@@ -2618,17 +2619,20 @@ void ScummEngine_v100he::o100_readFile() {
 		break;
 	case 42:
 		slot = pop();
-		val = _hFileTable[slot].readUint16LE();
+		assert(_hInFileTable[slot]);
+		val = _hInFileTable[slot]->readUint16LE();
 		push(val);
 		break;
 	case 43:
 		slot = pop();
-		val = _hFileTable[slot].readUint32LE();
+		assert(_hInFileTable[slot]);
+		val = _hInFileTable[slot]->readUint32LE();
 		push(val);
 		break;
 	case 45:
 		slot = pop();
-		val = _hFileTable[slot].readByte();
+		assert(_hInFileTable[slot]);
+		val = _hInFileTable[slot]->readByte();
 		push(val);
 		break;
 	default:

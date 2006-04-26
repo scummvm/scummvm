@@ -799,7 +799,16 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
+	memset(_hInFileTable, 0, sizeof(_hInFileTable));
+	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
 	memset(_heTimers, 0, sizeof(_heTimers));
+}
+
+ScummEngine_v60he::~ScummEngine_v60he() {
+	for (int i = 0; i < 17; ++i) {
+		delete _hInFileTable[i];
+		delete _hOutFileTable[i];
+	}
 }
 
 #ifndef DISABLE_HE

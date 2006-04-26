@@ -985,7 +985,7 @@ void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
 }
 
 void ScummEngine_v60he::o60_openFile() {
-	int mode, len, slot, l, r;
+	int mode, len, slot, i, r;
 	byte filename[100];
 
 	convertMessageToString(_scriptPointer, filename, sizeof(filename));
@@ -1000,9 +1000,9 @@ void ScummEngine_v60he::o60_openFile() {
 
 	mode = pop();
 	slot = -1;
-	for (l = 0; l < 17; l++) {
-		if (_hFileTable[l].isOpen() == false) {
-			slot = l;
+	for (i = 0; i < 17; i++) {
+		if (_hInFileTable[i] == 0 && _hOutFileTable[i] == 0) {
+			slot = i;
 			break;
 		}
 	}
@@ -1010,18 +1010,25 @@ void ScummEngine_v60he::o60_openFile() {
 	if (slot != -1) {
 		switch(mode) {
 		case 1:
-			_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode, _saveFileMan->getSavePath());
-			if (_hFileTable[slot].isOpen() == false)
-				_hFileTable[slot].open((char*)filename + r, Common::File::kFileReadMode);
+			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
+			_hInFileTable[slot] = _saveFileMan->openForLoading((char*)filename + r);
+			if (_hInFileTable[slot] == 0) {
+				Common::File *f = new Common::File();
+				f->open((char*)filename + r, Common::File::kFileReadMode);
+				if (!f->isOpen())
+					delete f;
+				else
+					_hInFileTable[slot] = f;
+			}
 			break;
 		case 2:
-			_hFileTable[slot].open((char*)filename + r, Common::File::kFileWriteMode, _saveFileMan->getSavePath());
+			_hOutFileTable[slot] = _saveFileMan->openForSaving((char*)filename + r);
 			break;
 		default:
 			error("o60_openFile(): wrong open file mode %d", mode);
 		}
 
-		if (_hFileTable[slot].isOpen() == false)
+		if (_hInFileTable[slot] == 0 && _hOutFileTable[slot] == 0)
 			slot = -1;
 
 	}
@@ -1030,8 +1037,12 @@ void ScummEngine_v60he::o60_openFile() {
 
 void ScummEngine_v60he::o60_closeFile() {
 	int slot = pop();
-	if (slot != -1)
-		_hFileTable[slot].close();
+	if (0 <= slot && slot < 17) {
+		delete _hInFileTable[slot];
+		delete _hOutFileTable[slot];
+		_hInFileTable[slot] = 0;
+		_hOutFileTable[slot] = 0;
+	}
 }
 
 void ScummEngine_v60he::o60_deleteFile() {
@@ -1079,13 +1090,13 @@ void ScummEngine_v60he::o60_rename() {
 }
 
 int ScummEngine_v60he::readFileToArray(int slot, int32 size) {
+	assert(_hInFileTable[slot]);
 	if (size == 0)
-		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
+		size = _hInFileTable[slot]->size() - _hInFileTable[slot]->pos();
 
 	writeVar(0, 0);
-
 	ArrayHeader *ah = defineArray(0, kByteArray, 0, size);
-	_hFileTable[slot].read(ah->data, size);
+	_hInFileTable[slot]->read(ah->data, size);
 
 	return readVar(0);
 }
@@ -1099,11 +1110,12 @@ void ScummEngine_v60he::o60_readFile() {
 	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
 		size = -size;
 
+	assert(_hInFileTable[slot]);
 	if (size == -2) {
-		val = _hFileTable[slot].readUint16LE();
+		val = _hInFileTable[slot]->readUint16LE();
 		push(val);
 	} else if (size == -1) {
-		val = _hFileTable[slot].readByte();
+		val = _hInFileTable[slot]->readByte();
 		push(val);
 	} else {
 		val = readFileToArray(slot, size);
@@ -1115,7 +1127,8 @@ void ScummEngine_v60he::writeFileFromArray(int slot, int resID) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
 	int32 size = FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
 
-	_hFileTable[slot].write(ah->data, size);
+	assert(_hOutFileTable[slot]);
+	_hOutFileTable[slot]->write(ah->data, size);
 }
 
 void ScummEngine_v60he::o60_writeFile() {
@@ -1127,10 +1140,11 @@ void ScummEngine_v60he::o60_writeFile() {
 	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
 		size = -size;
 
+	assert(_hOutFileTable[slot]);
 	if (size == -2) {
-		_hFileTable[slot].writeUint16LE(resID);
+		_hOutFileTable[slot]->writeUint16LE(resID);
 	} else if (size == -1) {
-		_hFileTable[slot].writeByte(resID);
+		_hOutFileTable[slot]->writeByte(resID);
 	} else {
 		writeFileFromArray(slot, resID);
 	}
@@ -1183,15 +1197,16 @@ void ScummEngine_v60he::o60_seekFilePos() {
 	if (slot == -1)
 		return;
 
+	assert(_hInFileTable[slot]);
 	switch (mode) {
 	case 1:
-		_hFileTable[slot].seek(offset, SEEK_SET);
+		_hInFileTable[slot]->seek(offset, SEEK_SET);
 		break;
 	case 2:
-		_hFileTable[slot].seek(offset, SEEK_CUR);
+		_hInFileTable[slot]->seek(offset, SEEK_CUR);
 		break;
 	case 3:
-		_hFileTable[slot].seek(offset, SEEK_END);
+		_hInFileTable[slot]->seek(offset, SEEK_END);
 		break;
 	default:
 		error("o60_seekFilePos: default case %d", mode);
@@ -1206,7 +1221,8 @@ void ScummEngine_v60he::o60_readFilePos() {
 		return;
 	}
 
-	push(_hFileTable[slot].pos());
+	assert(_hInFileTable[slot]);
+	push(_hInFileTable[slot]->pos());
 }
 
 void ScummEngine_v60he::o60_redimArray() {
