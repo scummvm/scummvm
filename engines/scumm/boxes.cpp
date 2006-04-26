@@ -177,7 +177,8 @@ int ScummEngine::getScale(int box, int x, int y) {
 	if (!ptr)
 		return 255;
 
-	int slot , scale;
+	int slot = 0;
+	int scale;
 
 	if (_game.version == 8) {
 		// COMI has a separate field for the scale slot...
@@ -187,14 +188,12 @@ int ScummEngine::getScale(int box, int x, int y) {
 		scale = READ_LE_UINT16(&ptr->old.scale);
 		if (scale & 0x8000)
 			slot = (scale & 0x7FFF) + 1;
-		else
-			slot = 0;
 	}
 
 	// Was a scale slot specified? If so, we compute the effective scale
 	// from it, ignoring the box scale.
 	if (slot)
-    scale = getScaleFromSlot(slot, x, y);
+		scale = getScaleFromSlot(slot, x, y);
 
 	return scale;
 }
@@ -289,9 +288,9 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	 * 255. We have to be careful in handling this and some border cases.
 	 *
 	 * Some typical graphs look like these:
-	 *       ---         ---     ---
-	 *      /         ---           \
-	 *  ___/       ---               \___
+	 *       ---         _--     ---
+	 *      /         _--           \
+	 *  ___/       _--               \___
 	 *
 	 * The method used here is to compute the slope of secants fixed at the
 	 * left and right end. For most cases this detects the cut-over points
@@ -336,6 +335,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	// The values of y1 and y2, as well as the scale, can now easily be computed
 	setScaleSlot(slot, 0, lowerIdx, resptr[lowerIdx], 0, upperIdx, resptr[upperIdx]);
 
+#if 0
 	// Compute the variance, for debugging. It shouldn't exceed 1
 	ScaleSlot &s = _scaleSlots[slot-1];
 	int y;
@@ -354,6 +354,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	variance = sum / (200.0 - 1.0);
 	if (variance > 1)
 		debug(1, "scale item %d, variance %f exceeds 1 (room %d)", slot, variance, _currentRoom);
+#endif
 }
 
 void ScummEngine::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
