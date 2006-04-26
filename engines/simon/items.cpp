@@ -332,6 +332,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[134] = &SimonEngine::o3_listSaveGames;
 		opcode_table[135] = &SimonEngine::o3_checkCD;
 		opcode_table[161] = &SimonEngine::o3_screenTextBox;
+		opcode_table[165] = &SimonEngine::o3_isAdjNoun;
 		opcode_table[171] = &SimonEngine::o3_hyperLinkOn;
 		opcode_table[172] = &SimonEngine::o3_hyperLinkOff;
 		opcode_table[173] = &SimonEngine::o3_checkPaths;
@@ -1954,6 +1955,18 @@ void SimonEngine::o3_screenTextBox() {
 	tl->x = getVarOrWord();
 	tl->y = getVarOrWord();
 	tl->width = getVarOrWord();
+}
+
+void SimonEngine::o3_isAdjNoun() {
+	// 165: item unk1 unk2 is
+	Item *item = getNextItemPtr();
+	int16 a = getNextWord(), b = getNextWord();
+	if (item->adjective == a && item->noun == b)
+		setScriptCondition(true);
+	else if (a == -1 && item->noun == b)
+		setScriptCondition(true);
+	else
+		setScriptCondition(false);
 }
 
 void SimonEngine::o3_hyperLinkOn() {

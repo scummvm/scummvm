@@ -994,6 +994,7 @@ public:
 	void o3_listSaveGames();
 	void o3_checkCD();
 	void o3_screenTextBox();
+	void o3_isAdjNoun();
 	void o3_hyperLinkOn();
 	void o3_hyperLinkOff();
 	void o3_checkPaths();
