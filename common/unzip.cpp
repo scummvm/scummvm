@@ -256,12 +256,9 @@ local uLong unzlocal_SearchCentralDir(Common::File &fin)
 	uLong uMaxBack=0xffff; /* maximum size of global comment */
 	uLong uPosFound=0;
 
-	fin.seek(0, SEEK_END);
+	uSizeFile = fin.size();
 	if (fin.ioFailed())
 		return 0;
-
-
-	uSizeFile = fin.pos();
 
 	if (uMaxBack>uSizeFile)
 		uMaxBack = uSizeFile;

@@ -109,8 +109,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendia
 	}
 
 	// only needed for mp3
-	_file->seek(0, SEEK_END);
-	_offsets[res] = _file->pos();
+	_offsets[res] = _file->size();
 }
 
 BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigendian) {
@@ -317,9 +316,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 		// for simon2 mac/amiga, only read index file
 		file->open("voices.idx");
 		if (file->isOpen() == true) {
-			file->seek(0, SEEK_END);
-			int end = file->pos();
-			file->seek(0, SEEK_SET);
+			int end = file->size();
 			_filenums = (uint16 *)malloc((end / 6 + 1) * 2);
 			_offsets = (uint32 *)malloc((end / 6 + 1) * 4);
 
