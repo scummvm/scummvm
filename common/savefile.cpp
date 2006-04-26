@@ -206,9 +206,9 @@ OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
 
 #ifdef USE_ZLIB
-	GzipSaveFile *sf = new GzipSaveFile(filename, true);
+	GzipSaveFile *sf = new GzipSaveFile(buf, true);
 #else
-	StdioSaveFile *sf = new StdioSaveFile(filename, true);
+	StdioSaveFile *sf = new StdioSaveFile(buf, true);
 #endif
 
 	if (!sf->isOpen()) {
@@ -223,9 +223,9 @@ InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
 
 #ifdef USE_ZLIB
-	GzipSaveFile *sf = new GzipSaveFile(filename, false);
+	GzipSaveFile *sf = new GzipSaveFile(buf, false);
 #else
-	StdioSaveFile *sf = new StdioSaveFile(filename, false);
+	StdioSaveFile *sf = new StdioSaveFile(buf, false);
 #endif
 
 	if (!sf->isOpen()) {
