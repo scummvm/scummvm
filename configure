@@ -163,7 +163,8 @@ find_sdlconfig()
 			if test -x "$path_dir/$sdlconfig" ; then
 				_sdlconfig="$path_dir/$sdlconfig"
 				echo $_sdlconfig
-				break
+				# break at first sdl-config found in path
+				break 2
 			fi
 		done
 	done
