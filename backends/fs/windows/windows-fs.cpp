@@ -158,6 +158,10 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 		_isValid = true;
 		_isDirectory = ((fileAttribs & FILE_ATTRIBUTE_DIRECTORY) != 0);
 	}
+	// FIXME: Is the following correct? Should we maybe check for path being
+	// empty and set it to true in this case?
+	// In any case, not setting _isPseudoRoot at all certainly is a bug.
+	_isPseudoRoot = false;
 }
 
 FSList WindowsFilesystemNode::listDir(ListMode mode) const {
