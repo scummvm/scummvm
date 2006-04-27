@@ -1004,7 +1004,7 @@ int ScummEngine::init() {
 #ifndef DISABLE_SCUMM_7_8
 	// Create FT INSANE object
 	if (_game.id == GID_FT)
-		_insane = new Insane((ScummEngine_v6 *)this);
+		_insane = new Insane((ScummEngine_v7 *)this);
 	else
 #endif
 		_insane = 0;
