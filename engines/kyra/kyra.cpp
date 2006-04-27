@@ -329,7 +329,7 @@ int KyraEngine::init() {
 			}
 		}
 	} else {
-		GUIErrorMessage("No version of Kyrandia found in specificed directory.");
+		GUIErrorMessage("No version of Kyrandia found in specified directory.");
 		return -1;
 	}
 
