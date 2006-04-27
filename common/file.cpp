@@ -133,7 +133,7 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 	if (!_filesMap)
 		_filesMap = new FilesMap;
 
-	const FSList fslist(dir.listDir(FilesystemNode::kListAllNoRoot));
+	const FSList fslist(dir.listDir(FilesystemNode::kListAll));
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {

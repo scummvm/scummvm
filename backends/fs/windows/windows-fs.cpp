@@ -169,7 +169,7 @@ FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 
 	FSList myList;
 
-	if (_isPseudoRoot && mode != kListAllNoRoot) {
+	if (_isPseudoRoot) {
 #ifndef _WIN32_WCE
 		// Drives enumeration
 		TCHAR drive_buffer[100];
