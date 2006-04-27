@@ -54,7 +54,7 @@ namespace Scumm {
 
 class Insane {
  public:
-	Insane(ScummEngine_v6 *scumm);
+	Insane(ScummEngine_v7 *scumm);
 	~Insane();
 
 	void setSmushParams(int speed);
