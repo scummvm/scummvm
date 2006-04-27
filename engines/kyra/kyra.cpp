@@ -241,6 +241,97 @@ KyraEngine::KyraEngine(OSystem *system)
 	_drinkAnimationTable = _brandonToWispTable = _magicAnimationTable = _brandonStoneTable = 0;
 	_drinkAnimationTableSize = _brandonToWispTableSize = _magicAnimationTableSize = _brandonStoneTableSize = 0;
 	memset(&_specialPalettes, 0, sizeof(_specialPalettes));
+	_debugger = 0;
+	_sprites = 0;
+	_animator = 0;
+	_screen = 0;
+	_res = 0;
+	_sound = 0;
+	_saveFileMan = 0;
+	_seq = 0;
+	_scriptInterpreter = 0;
+	_text = 0;
+	_npcScriptData = 0;
+	_scriptMain = 0;
+	_scriptClickData = 0;
+	_scriptClick = 0;
+	_characterList = 0;
+	_movFacingTable = 0;
+	memset(_shapes, 0, sizeof(_shapes));
+	_scrollUpButton.process0PtrShape = _scrollUpButton.process1PtrShape = _scrollUpButton.process2PtrShape = 0;
+	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
+	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
+}
+
+int KyraEngine::init() {
+	// Detect game features based on MD5. Again brutally ripped from Gobliins.
+	uint8 md5sum[16];
+	char md5str[32 + 1];
+
+	const GameSettings *g;
+	bool versionFound = false;
+	bool fileFound = false;
+
+	// TODO
+	// Fallback. Maybe we will be able to determine game type from game
+	// data contents
+	_features = 0;
+	memset(md5str, 0, sizeof(md5str));
+	for (g = kyra_games; g->gameid; g++) {
+		if (!Common::File::exists(g->checkFile))
+			continue;
+
+		fileFound = true;
+		
+		if (Common::md5_file(g->checkFile, md5sum, kMD5FileSizeLimit)) {
+			for (int j = 0; j < 16; j++) {
+				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+			}
+		} else
+			continue;
+
+		if (strcmp(g->md5sum, (char *)md5str) == 0) {
+			_features = g->features;
+			_game = g->id;
+
+			if (g->description)
+				g_system->setWindowCaption(g->description);
+
+			versionFound = true;
+			break;
+		}
+	}
+
+	if (fileFound) {
+		if (!versionFound) {
+			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
+			_features = 0;
+			_game = GI_KYRA1;
+			Common::File test;
+			if (test.open("INTRO.VRM")) {
+				_features |= GF_TALKIE;
+			} else {
+				_features |= GF_FLOPPY;
+			}
+		
+			// tries to detect the language
+			const KyraLanguageTable *lang = kyra_languages;
+			for (; lang->file; ++lang) {
+				if (test.open(lang->file)) {
+					_features |= lang->language;
+					versionFound = true;
+					break;
+				}
+			}
+		
+			if (!versionFound) {
+				_features |= GF_LNGUNK;
+			}
+		}
+	} else {
+		GUIErrorMessage("No version of Kyrandia found in specificed directory.");
+		return -1;
+	}
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -263,74 +354,6 @@ KyraEngine::KyraEngine(OSystem *system)
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
 
-	// Detect game features based on MD5. Again brutally ripped from Gobliins.
-	uint8 md5sum[16];
-	char md5str[32 + 1];
-
-	const GameSettings *g;
-	bool found = false;
-
-	// TODO
-	// Fallback. Maybe we will be able to determine game type from game
-	// data contents
-	_features = 0;
-
-	for (g = kyra_games; g->gameid; g++) {
-		if (!Common::File::exists(g->checkFile))
-			continue;
-
-		if (Common::md5_file(g->checkFile, md5sum, kMD5FileSizeLimit)) {
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-		} else
-			continue;
-
-		if (strcmp(g->md5sum, (char *)md5str) == 0) {
-			_features = g->features;
-			_game = g->id;
-
-			if (g->description)
-				g_system->setWindowCaption(g->description);
-
-			found = true;
-			break;
-		}
-	}
-
-	if (!found) {
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
-		_features = 0;
-		_game = GI_KYRA1;
-		Common::File test;
-		if (test.open("INTRO.VRM")) {
-			_features |= GF_TALKIE;
-		} else {
-			_features |= GF_FLOPPY;
-		}
-		
-		// tries to detect the language
-		const KyraLanguageTable *lang = kyra_languages;
-		for (; lang->file; ++lang) {
-			if (test.open(lang->file)) {
-				_features |= lang->language;
-				found = true;
-				break;
-			}
-		}
-		
-		if (!found) {
-			_features |= GF_LNGUNK;
-		}
-	}
-
-	// FIXME: TODO:
-	// Please, deal with a case when _no_ valid game is present
-	// in specified directory. Currently it just asserts() later
-	// in the code which is not nice. [sev]
-}
-
-int KyraEngine::init() {
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
 		//for debug reasons (see Screen::updateScreen)
@@ -521,10 +544,6 @@ int KyraEngine::init() {
 }
 
 KyraEngine::~KyraEngine() {
-	closeFinalWsa();
-	_scriptInterpreter->unloadScript(_npcScriptData);
-	_scriptInterpreter->unloadScript(_scriptClickData);
-
 	delete _debugger;
 	delete _sprites;
 	delete _animator;
@@ -567,8 +586,6 @@ KyraEngine::~KyraEngine() {
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i) {
 		free(_sceneAnimTable[i]);
 	}
-
-	Common::clearAllSpecialDebugLevels();
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
@@ -743,6 +760,12 @@ void KyraEngine::quitGame() {
 		delete _movieObjects[i];
 		_movieObjects[i] = 0;
 	}
+
+	closeFinalWsa();
+	_scriptInterpreter->unloadScript(_npcScriptData);
+	_scriptInterpreter->unloadScript(_scriptClickData);
+
+	Common::clearAllSpecialDebugLevels();
 
 	_system->quit();
 }
