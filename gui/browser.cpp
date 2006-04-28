@@ -26,6 +26,7 @@
 
 #include "backends/fs/fs.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/func.h"
 
@@ -156,11 +157,10 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 }
 
 void BrowserDialog::open() {
-	// If no node has been set, or the last used one is now invalid,
-	// go back to the root/default dir.
-	if (!_node.isValid()) {
+	if (ConfMan.hasKey("browser_lastpath"))
+		_node = FilesystemNode(ConfMan.get("browser_lastpath"));
+	if (!_node.isValid())
 		_node = FilesystemNode();
-	}
 
 	// Alway refresh file list
 	updateListing();
@@ -220,6 +220,9 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void BrowserDialog::updateListing() {
 	// Update the path display
 	_currentPath->setLabel(_node.path());
+	
+	// We memorize the last visited path.
+	ConfMan.set("browser_lastpath", _node.path());
 
 	// Read in the data from the file system
 	if (_isDirBrowser)
