@@ -879,7 +879,7 @@ struct DetectorDesc {
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
 };
 
-void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid_XXX) {
+void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	typedef Common::HashMap<Common::String, DetectorDesc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DescMap;
 	DescMap fileMD5Map;
 	const GameSettings *g;
@@ -896,9 +896,9 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 
 	// Iterate over all filename patterns.
 	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
-		// If gameid_XXX was specified, we only try to detect that specific game,
+		// If a gameid was specified, we only try to detect that specific game,
 		// so we can just skip over everything with a differing gameid.
-		if (gameid_XXX && scumm_stricmp(gameid_XXX, gfp->gameid))
+		if (gameid && scumm_stricmp(gameid, gfp->gameid))
 			continue;
 	
 		// Generate the detectname corresponding to the gfp. If the file doesn't
@@ -1316,7 +1316,7 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 		warning("ScummEngine: unable to locate game data");
 		return new Engine_Empty(syst);
 	}
-
+	
 	DetectorResult res(*(results.begin()));
 
 /*
@@ -1338,6 +1338,14 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
 	}
 	
+	// Print the MD5 of the game; either verbose using printf, in case of an
+	// unknown MD5, or with a medium debug level in case of a known MD5 (for
+	// debugging purposes).
+	if (!findInMD5Table(res.md5.c_str())) {
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", res.md5.c_str());
+	} else {
+		debug(5, "Using MD5 '%s'", res.md5.c_str());
+	}
 
 
 	// TODO: Do we really still need / want the platform override ?
