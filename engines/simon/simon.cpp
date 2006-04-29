@@ -27,15 +27,14 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/md5.h"
 #include "common/system.h"
 
 #include "gui/about.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
-#include "simon/vga.h"
 #include "simon/debugger.h"
+#include "simon/intern.h"
+#include "simon/simon.h"
+#include "simon/vga.h"
 
 #include "sound/mididrv.h"
 #ifdef _WIN32_WCE
@@ -649,40 +648,6 @@ byte *SimonEngine::allocateItem(uint size) {
 	return org;
 }
 
-int SimonEngine::allocGamePcVars(File *in) {
-	uint item_array_size, item_array_inited, stringtable_num;
-	uint32 version;
-	uint i;
-
-	item_array_size = in->readUint32BE();
-	version = in->readUint32BE();
-	item_array_inited = in->readUint32BE();
-	stringtable_num = in->readUint32BE();
-
-	item_array_inited += 2;				// first two items are predefined
-	item_array_size += 2;
-
-	if (version != 0x80)
-		error("Not a runtime database");
-
-	_itemArrayPtr = (Item **)calloc(item_array_size, sizeof(Item *));
-	if (_itemArrayPtr == NULL)
-		error("Out of memory for Item array");
-
-	_itemArraySize = item_array_size;
-	_itemArrayInited = item_array_inited;
-
-	for (i = 1; i < item_array_inited; i++) {
-		_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
-	}
-
-	// The rest is cleared automatically by calloc
-	allocateStringTable(stringtable_num + 10);
-	_stringTabNum = stringtable_num;
-
-	return item_array_inited;
-}
-
 void SimonEngine::setUserFlag(Item *item, int a, int b) {
 	SubUserFlag *subUserFlag;
 
@@ -758,6 +723,10 @@ void SimonEngine::allocTablesHeap() {
 
 void SimonEngine::setItemState(Item *item, int value) {
 	item->state = value;
+}
+
+byte SimonEngine::getByte() {
+	return *_codePtr++;
 }
 
 int SimonEngine::getNextWord() {
@@ -976,32 +945,6 @@ void SimonEngine::linkItem(Item *item, Item *parent) {
 	}
 }
 
-void SimonEngine::playSting(uint a) {
-	if (!midi._enable_sfx)
-		return;
-
-	char filename[15];
-
-	File mus_file;
-	uint16 mus_offset;
-
-	sprintf(filename, "STINGS%i.MUS", _soundFileId);
-	mus_file.open(filename);
-	if (!mus_file.isOpen()) {
-		warning("Can't load sound effect from '%s'", filename);
-		return;
-	}
-
-	mus_file.seek(a * 2, SEEK_SET);
-	mus_offset = mus_file.readUint16LE();
-	if (mus_file.ioFailed())
-		error("Can't read sting %d offset", a);
-
-	mus_file.seek(mus_offset, SEEK_SET);
-	midi.loadSMF(&mus_file, a, true);
-	midi.startTrack(0);
-}
-
 void SimonEngine::setup_cond_c_helper() {
 	HitArea *last;
 	uint id;
@@ -1127,116 +1070,6 @@ void SimonEngine::endCutscene() {
 	_runScriptReturn1 = true;
 }
 
-void SimonEngine::mouseOff() {
-	_mouseHideCount++;
-}
-
-void SimonEngine::mouseOn() {
-	_lockWord |= 1;
-
-	if (_mouseHideCount != 0)
-		_mouseHideCount--;
-
-	_lockWord &= ~1;
-}
-
-void SimonEngine::handleMouseMoved() {
-	uint x;
-
-	if (_mouseHideCount) {
-		_system->showMouse(false);
-		return;
-	}
-
-	_system->showMouse(true);
-	pollMouseXY();
-
-	if (_mouseX <= 0)
-		_mouseX = 0;
-	if (_mouseX >= _screenWidth - 1)
-		_mouseX = _screenWidth - 1;
-
-	if (_mouseY <= 0)
-		_mouseY = 0;
-	if (_mouseY >= _screenHeight - 1)
-		_mouseY = _screenHeight - 1;
-
-	if (_defaultVerb) {
-		uint id = 101;
-		if (_mouseY >= 136)
-			id = 102;
-		if (_defaultVerb != id)
-			resetVerbs();
-	}
-
-	if (getGameType() == GType_FF) {
-		if (getBitFlag(99)) { // Oracle
-			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
-				setBitFlag(98, true);
-			} else {
-				if (getBitFlag(98)) {
-					_variableArray[254] = 63;
-				}
-			}
-		} else if (getBitFlag(88)) { // Close Up
-			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
-				setBitFlag(87, true);
-			} else {
-				if (getBitFlag(87)) {
-					_variableArray[254] = 75;
-				}
-			}
-		}
-
-		if (_rightButtonDown) {
-			_rightButtonDown = 0;
-			setVerb(NULL);
-		}
-	}
-	if (getGameType() == GType_SIMON2) {
-		if (getBitFlag(79)) {
-			if (!_vgaVar9) {
-				if (_mouseX >= 315 || _mouseX < 9)
-					goto get_out2;
-				_vgaVar9 = 1;
-			}
-			if (_scrollCount == 0) {
-				if (_mouseX >= 315) {
-					if (_scrollX != _scrollXMax)
-						_scrollFlag = 1;
-				} else if (_mouseX < 8) {
-					if (_scrollX != 0)
-						_scrollFlag = -1;
-				}
-			}
-		} else {
-		get_out2:;
-			_vgaVar9 = 0;
-		}
-	}
-
-	if (_mouseX != _mouseXOld || _mouseY != _mouseYOld)
-		_needHitAreaRecalc++;
-
-	x = 0;
-	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
-		_leftButtonDown = 0;
-		x = 1;
-	} else {
-		if (_hitarea_unk_3 == 0 && _needHitAreaRecalc == 0)
-			goto get_out;
-	}
-
-	boxController(_mouseX, _mouseY, x);
-	_lastHitArea3 = _lastHitArea;
-	if (x == 1 && _lastHitArea == NULL)
-		_lastHitArea3 = (HitArea *) -1;
-
-get_out:
-	drawMousePointer();
-	_needHitAreaRecalc = 0;
-}
-
 bool SimonEngine::has_item_childflag_0x10(Item *item) {
 	SubObject *child = (SubObject *)findChildOfType(item, 2);
 	return child && (child->objectFlags & kOFIcon) != 0;
@@ -1251,104 +1084,6 @@ uint SimonEngine::itemGetIconNumber(Item *item) {
 
 	offs = getOffsetOfChild2Param(child, 0x10);
 	return child->objectFlagValue[offs];
-}
-
-void SimonEngine::displayBoxStars() {
-	HitArea *ha, *dha;
-	uint count;
-	uint y_, x_;
-	byte *dst;
-	uint b, color;
-
-	_lockWord |= 0x8000;
-
-	if (getGameType() == GType_SIMON2)
-		color = 236;
-	else
-		color = 225;
-
-	uint limit = (getGameType() == GType_SIMON2) ? 200 : 134;
-
-	for (int i = 0; i < 5; i++) {
-		ha = _hitAreas;
-		count = ARRAYSIZE(_hitAreas);
-
-		animateSprites();
-
-		do {
-			if (ha->id != 0 && ha->flags & kBFBoxInUse && !(ha->flags & kBFBoxDead)) {
-
-				dha = _hitAreas;
-				if (ha->flags & kBFTextBox) {
-					while (dha != ha && dha->flags != ha->flags)
-						++dha;
-					if (dha != ha && dha->flags == ha->flags)
-						continue;
-				} else {
-					dha = _hitAreas;
-					while (dha != ha && dha->item_ptr != ha->item_ptr)
-						++dha;
-					if (dha != ha && dha->item_ptr == ha->item_ptr)
-						continue;
-				}
-
-				if (ha->y >= limit || ((getGameType() == GType_SIMON2) && ha->y >= _boxStarHeight))
-					continue;
-
-				y_ = (ha->height / 2) - 4 + ha->y;
-
-				x_ = (ha->width / 2) - 4 + ha->x - (_scrollX * 8);
-
-				if (x_ >= 311)
-					continue;
-
-				dst = getBackBuf();
-
-				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
-
-				b = _dxSurfacePitch;
-				dst[4] = color;
-				dst[b+1] = color;
-				dst[b+4] = color;
-				dst[b+7] = color;
-				b += _dxSurfacePitch;
-				dst[b+2] = color;
-				dst[b+4] = color;
-				dst[b+6] = color;
-				b += _dxSurfacePitch;
-				dst[b+3] = color;
-				dst[b+5] = color;
-				b += _dxSurfacePitch;
-				dst[b] = color;
-				dst[b+1] = color;
-				dst[b+2] = color;
-				dst[b+6] = color;
-				dst[b+7] = color;
-				dst[b+8] = color;
-				b += _dxSurfacePitch;
-				dst[b+3] = color;
-				dst[b+5] = color;
-				b += _dxSurfacePitch;
-				dst[b+2] = color;
-				dst[b+4] = color;
-				dst[b+6] = color;
-				b += _dxSurfacePitch;
-				dst[b+1] = color;
-				dst[b+4] = color;
-				dst[b+7] = color;
-				b += _dxSurfacePitch;
-				dst[b+4] = color;
-			}
-		} while (ha++, --count);
-
-		dx_update_screen_and_palette();
-		delay(100);
-		animateSprites();
-		dx_update_screen_and_palette();
-		delay(100);
-	}
-
-	_lockWord &= ~0x8000;
 }
 
 void SimonEngine::hitarea_stuff() {
@@ -1499,69 +1234,6 @@ void SimonEngine::permitInput() {
 		}
 		_mortalFlag = false;
 	}
-}
-
-void SimonEngine::pollMouseXY() {
-	_mouseX = _sdlMouseX;
-	_mouseY = _sdlMouseY;
-}
-
-void SimonEngine::handleVerbClicked(uint verb) {
-	Subroutine *sub;
-	int result;
-
-	_objectItem = _hitAreaObjectItem;
-	if (_objectItem == _dummyItem2) {
-		_objectItem = me();
-	}
-	if (_objectItem == _dummyItem3) {
-		_objectItem = derefItem(me()->parent);
-	}
-
-	_subjectItem = _hitAreaSubjectItem;
-	if (_subjectItem == _dummyItem2) {
-		_subjectItem = me();
-	}
-	if (_subjectItem == _dummyItem3) {
-		_subjectItem = derefItem(me()->parent);
-	}
-
-	if (_subjectItem) {
-		_scriptNoun1 = _subjectItem->noun;
-		_scriptAdj1 = _subjectItem->adjective;
-	} else {
-		_scriptNoun1 = -1;
-		_scriptAdj1 = -1;
-	}
-
-	if (_objectItem) {
-		_scriptNoun2 = _objectItem->noun;
-		_scriptAdj2 = _objectItem->adjective;
-	} else {
-		_scriptNoun2 = -1;
-		_scriptAdj2 = -1;
-	}
-
-	_scriptVerb = _verbHitArea;
-
-	sub = getSubroutineByID(0);
-	if (sub == NULL)
-		return;
-
-	result = startSubroutine(sub);
-	if (result == -1)
-		showMessageFormat("I don't understand");
-
-	_runScriptReturn1 = false;
-
-	sub = getSubroutineByID(100);
-	if (sub)
-		startSubroutine(sub);
-
-	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
-		_runScriptReturn1 = false;
-
-	permitInput();
 }
 
 TextLocation *SimonEngine::getTextLocation(uint a) {
@@ -1902,315 +1574,6 @@ void SimonEngine::skipSpeech() {
 	}
 }
 
-void SimonEngine::animateSprites() {
-	VgaSprite *vsp;
-	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10
-
-	if (_paletteFlag == 2)
-		_paletteFlag = 1;
-
-	if (getGameType() == GType_FF && _scrollCount) {
-		scrollEvent();
-	}
-	if (getGameType() == GType_SIMON2 && _scrollFlag) {
-		scrollScreen();
-	}
-
-	if (getGameType() == GType_FF && getBitFlag(84)) {
-		animateSpritesByY();
-		return;
-	}
-
-	vsp = _vgaSprites;
-
-	while (vsp->id != 0) {
-		vsp->windowNum &= 0x7FFF;
-
-		vpe = &_vgaBufferPointers[vsp->zoneNum];
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
-		_windowNum = vsp->windowNum;
-		_vgaCurSpriteId = vsp->id;
-		_vgaCurSpritePriority = vsp->priority;
-
-		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-
-		if (getGameType() == GType_SIMON1) {
-			params[4] = READ_BE_UINT16(&vsp->flags);
-		} else {
-			*(byte *)(&params[4]) = (byte)vsp->flags;
-		}
-
-		_vcPtr = (const byte *)params;
-		vc10_draw();
-
-		vsp++;
-	}
-
-	if (_drawImagesDebug)
-		memset(_backBuf, 0, _screenWidth * _screenHeight);
-
-	_updateScreen++;
-	_vcPtr = vc_ptr_org;
-}
-
-void SimonEngine::animateSpritesDebug() {
-	VgaSprite *vsp;
-	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10_draw
-
-	if (_paletteFlag == 2)
-		_paletteFlag = 1;
-
-	vsp = _vgaSprites;
-	while (vsp->id != 0) {
-		vsp->windowNum &= 0x7FFF;
-
-		vpe = &_vgaBufferPointers[vsp->zoneNum];
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
-		_windowNum = vsp->windowNum;
-		_vgaCurSpriteId = vsp->id;
-
-		if (vsp->image)
-			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
-							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-		params[4] = readUint16Wrapper(&vsp->flags);
-		_vcPtr = (const byte *)params;
-		vc10_draw();
-
-		vsp++;
-	}
-
-	_updateScreen++;
-	_vcPtr = vc_ptr_org;
-}
-
-void SimonEngine::animateSpritesByY() {
-	VgaSprite *vsp;
-	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10
-	int16 spriteTable[180][2];
-	
-	byte *src;
-	int height, slot, y;
-	uint i, numSprites = 0;
-
-	vsp = _vgaSprites;
-	while (vsp->id != 0) {
-		if (vsp->flags & kDFScaled) {
-			y = vsp->y;
-		} else if (vsp->flags & kDFMasked) {
-			vpe = &_vgaBufferPointers[vsp->zoneNum];
-			src = vpe->vgaFile2 + vsp->image * 8;
-			height = READ_LE_UINT16(src + 4) & 0x7FFF;
-			y = vsp->y + height;
-		} else {
-			y = vsp->priority;
-		}
-
-		spriteTable[numSprites][0] = y;
-		spriteTable[numSprites][1] = numSprites;
-		numSprites++;
-		vsp++;
-	}
-
-	while(1) {
-		y = spriteTable[0][0];
-		slot = spriteTable[0][1];
-
-		for (i = 0; i < numSprites; i++) {
-			if (y >= spriteTable[i][0]) {
-				y = spriteTable[i][0];
-				slot = spriteTable[i][1];
-			}
-		}
-
-		if (y == 9999)
-			break;
-
-		for (i = 0; i < numSprites; i++) {
-			if (slot == spriteTable[i][1]) {
-				spriteTable[i][0] = 9999;
-				break;
-			}
-		}
-
-		vsp = &_vgaSprites[slot];
-		vsp->windowNum &= 0x7FFF;
-
-		vpe = &_vgaBufferPointers[vsp->zoneNum];
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
-		_windowNum = vsp->windowNum;
-		_vgaCurSpriteId = vsp->id;
-		_vgaCurSpritePriority = vsp->priority;
-
-		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-		*(byte *)(&params[4]) = (byte)vsp->flags;
-
-		_vcPtr = (const byte *)params;
-		vc10_draw();
-	}
-
-	_updateScreen++;
-	_vcPtr = vc_ptr_org;
-}
-
-void SimonEngine::scrollScreen() {
-	byte *dst = getFrontBuf();
-	const byte *src;
-	uint x, y;
-
-	if (_scrollXMax == 0) {
-		uint screenSize = 8 * _screenWidth;
-		if (_scrollFlag < 0) {
-			memmove(dst + screenSize, dst, _scrollWidth * _screenHeight - screenSize);
-		} else {
-			memmove(dst, dst + screenSize, _scrollWidth * _screenHeight - screenSize);
-		}
-
-		y = _scrollY - 8;
-
-		if (_scrollFlag > 0) {
-			dst += _screenHeight * _screenWidth - screenSize;
-			y += 488;
-		}
-
-		src = _scrollImage + y / 2;
-		decodeRow(dst, src + readUint32Wrapper(src), _scrollWidth);
-
-		_scrollY += _scrollFlag;
-		vcWriteVar(250, _scrollY);
-	} else {
-		if (_scrollFlag < 0) {
-			memmove(dst + 8, dst, _screenWidth * _scrollHeight - 8);
-		} else {
-			memmove(dst, dst + 8, _screenWidth * _scrollHeight - 8);
-		}
-
-		x = _scrollX;
-		x -= (getGameType() == GType_FF) ? 8 : 1;
-
-		if (_scrollFlag > 0) {
-			dst += _screenWidth - 8;
-			x += (getGameType() == GType_FF) ? 648 : 41;
-		}
-
-		if (getGameType() == GType_FF)
-			src = _scrollImage + x / 2;
-		else
-			src = _scrollImage + x * 4;
-		decodeColumn(dst, src + readUint32Wrapper(src), _scrollHeight);
-
-		_scrollX += _scrollFlag;
-		vcWriteVar(251, _scrollX);
-	}
-
-	memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-	memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
-
-	_scrollFlag = 0;
-}
-
-void SimonEngine::timer_proc1() {
-	_timer4++;
-
-	if (_lockWord & 0x80E9 || _lockWord & 2)
-		return;
-
-	_syncCount++;
-
-	_lockWord |= 2;
-
-	if (!(_lockWord & 0x10)) {
-		if (getGameType() == GType_FF) {
-			_syncFlag2 ^= 1;
-			if (!_syncFlag2) {
-				processVgaEvents();
-			} else {
-				// Double speed on Oracle
-				if (getBitFlag(99)) {
-					processVgaEvents();
-				} else if (_scrollCount == 0) {
-					_lockWord &= ~2;
-					return;
-				}
-			}
-		} else {
-			processVgaEvents();
-			processVgaEvents();
-			_syncFlag2 ^= 1;
-			_cepeFlag ^= 1;
-			if (!_cepeFlag)
-				processVgaEvents();
-
-			if (_mouseHideCount != 0 && _syncFlag2) {
-				_lockWord &= ~2;
-				return;
-			}
-		}
-	}
-
-	if (getGameType() == GType_FF)
-		_moviePlay->nextFrame();
-
-	animateSprites();
-	if (_drawImagesDebug)
-		animateSpritesDebug();
-
-	if (_copyPartialMode == 1) {
-		fillBackFromFront(80, 46, 208 - 80, 94 - 46);
-	}
-
-	if (_copyPartialMode == 2) {
-		fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
-		_copyPartialMode = 0;
-	}
-
-	if (_updateScreen) {
-		if (getGameType() == GType_FF) {
-			if (!getBitFlag(78)) {
-				oracleLogo();
-			}
-			if (getBitFlag(76)) {
-				swapCharacterLogo();
-			}
-		}
-		handleMouseMoved();
-		dx_update_screen_and_palette();
-		_updateScreen = false;
-	}
-
-	_lockWord &= ~2;
-}
-
-void SimonEngine::timer_callback() {
-	if (_timer5 != 0) {
-		_syncFlag2 = true;
-		_timer5--;
-	} else {
-		timer_proc1();
-	}
-}
-
 Item *SimonEngine::derefItem(uint item) {
 	if (item >= _itemArraySize)
 		error("derefItem: invalid item %d", item);
@@ -2224,26 +1587,6 @@ uint SimonEngine::itemPtrToID(Item *id) {
 			return i;
 	error("itemPtrToID: not found");
 	return 0;
-}
-
-void SimonEngine::delete_hitarea_by_index(uint index) {
-	CHECK_BOUNDS(index, _hitAreas);
-	_hitAreas[index].flags = 0;
-}
-
-VgaSprite *SimonEngine::findCurSprite() {
-	VgaSprite *vsp = _vgaSprites;
-	while (vsp->id) {
-		if (getGameType() == GType_SIMON1) {
-			if (vsp->id == _vgaCurSpriteId)
-				break;
-		} else {
-			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
-				break;
-		}
-		vsp++;
-	}
-	return vsp;
 }
 
 bool SimonEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
@@ -2553,151 +1896,6 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 	}
 }
 
-void SimonEngine::runSubroutine101() {
-	Subroutine *sub;
-
-	sub = getSubroutineByID(101);
-	if (sub != NULL)
-		startSubroutineEx(sub);
-
-	permitInput();
-}
-
-void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
-	byte *dst, *src;
-	uint i;
-
-	dst = getFrontBuf();
-	src = _backGroundBuf;
-
-	dst += y * _dxSurfacePitch;
-	src += y * _dxSurfacePitch;
-
-	while (y < h) {
-		for (i = x; i < w; i++)
-			dst[i] = src[i];
-		y++;
-		dst += _dxSurfacePitch;
-		src += _dxSurfacePitch;
-	}
-}
-
-void SimonEngine::dx_clear_surfaces(uint num_lines) {
-	memset(_backBuf, 0, num_lines * _screenWidth);
-
-	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, num_lines);
-
-	if (_useBackGround) {
-		memset(_frontBuf, 0, num_lines * _screenWidth);
-		memset(_backGroundBuf, 0, num_lines * _screenWidth);
-	}
-}
-
-void SimonEngine::clearBackFromTop(uint lines) {
-	memset(_backBuf, 0, lines * _screenWidth);
-}
-
-void SimonEngine::fillFrontFromBack(uint x, uint y, uint w, uint h) {
-	uint offs = x + y * _screenWidth;
-	byte *s = _backBuf + offs;
-	byte *d = _frontBuf + offs;
-
-	do {
-		memcpy(d, s, w);
-		d += _screenWidth;
-		s += _screenWidth;
-	} while (--h);
-}
-
-void SimonEngine::fillBackFromFront(uint x, uint y, uint w, uint h) {
-	uint offs = x + y * _screenWidth;
-	byte *s = _frontBuf + offs;
-	byte *d = _backBuf + offs;
-
-	do {
-		memcpy(d, s, w);
-		d += _screenWidth;
-		s += _screenWidth;
-	} while (--h);
-}
-
-void SimonEngine::fillBackGroundFromBack(uint lines) {
-	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
-}
-
-void SimonEngine::dx_update_screen_and_palette() {
-	_numScreenUpdates++;
-
-	if (_paletteColorCount == 0 && _paletteFlag == 1) {
-		_paletteFlag = 0;
-		if (memcmp(_palette, _paletteBackup, 1024) != 0) {
-			memcpy(_paletteBackup, _palette, 1024);
-			_system->setPalette(_palette, 0, 256);
-		}
-	}
-
-	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	_system->updateScreen();
-
-	memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-
-	if (getGameType() == GType_FF && _scrollFlag) {
-		scrollScreen();
-	}
-
-	if (_paletteColorCount != 0) {
-		if (getGameType() == GType_SIMON1 && _usePaletteDelay) {
-			delay(100);
-			_usePaletteDelay = false;
-		}
-		fastFadeIn();
-	}
-}
-
-void SimonEngine::fastFadeIn() {
-	if (_paletteColorCount & 0x8000) {
-		slowFadeIn();
-	} else {
-		_paletteFlag = false;
-		memcpy(_paletteBackup, _palette, 1024);
-		_system->setPalette(_palette, 0, _paletteColorCount);
-		_paletteColorCount = 0;
-	}
-}
-
-void SimonEngine::slowFadeIn() {
-	uint8 paletteTmp[768];
-	uint8 *src, *dst;
-	int c, p;
-
-	_paletteColorCount &= 0x7fff;
-	_paletteFlag = false;
-
-	memcpy(_videoBuf1, _palette, 1024); // Difference
-	memset(_videoBuf1, 0, 768);
-
-	memcpy(_paletteBackup, _palette, 768);
-	memcpy(paletteTmp, _palette, 768);
-
-	for (c = 255; c > 0; c -= 4) {
-	  	src = paletteTmp;
- 		dst = _videoBuf1;
-
-		for (p = _paletteColorCount; p !=0 ; p--) {
-			if (*src >= c)
-				*dst = *dst + 4;
-			
-			src++;
-			dst++;
- 		}
- 		_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
-		if (_fade)
-			_system->updateScreen();
- 		delay(5);
- 	}
-	_paletteColorCount = 0;
-}
-
 int SimonEngine::go() {
 	if (!_dumpFile)
 		_dumpFile = stdout;
@@ -2960,32 +2158,34 @@ void SimonEngine::loadMusic(uint music) {
 	}
 }
 
-byte *SimonEngine::getFrontBuf() {
-	_dxSurfacePitch = _screenWidth;
-	return _frontBuf;
-}
+void SimonEngine::playSting(uint a) {
+	if (!midi._enable_sfx)
+		return;
 
-byte *SimonEngine::getBackBuf() {
-	_dxSurfacePitch = _screenWidth;
-	return _useBackGround ? _backGroundBuf : _backBuf;
-}
+	char filename[15];
 
-byte *SimonEngine::getBackGround() {
-	_dxSurfacePitch = _screenWidth;
-	return _backGroundBuf;
-}
+	File mus_file;
+	uint16 mus_offset;
 
-byte *SimonEngine::getScaleBuf() {
-	_dxSurfacePitch = _screenWidth;
-	return _scaleBuf;
+	sprintf(filename, "STINGS%i.MUS", _soundFileId);
+	mus_file.open(filename);
+	if (!mus_file.isOpen()) {
+		warning("Can't load sound effect from '%s'", filename);
+		return;
+	}
+
+	mus_file.seek(a * 2, SEEK_SET);
+	mus_offset = mus_file.readUint16LE();
+	if (mus_file.ioFailed())
+		error("Can't read sting %d offset", a);
+
+	mus_file.seek(mus_offset, SEEK_SET);
+	midi.loadSMF(&mus_file, a, true);
+	midi.startTrack(0);
 }
 
 void SimonEngine::set_volume(int volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-}
-
-byte SimonEngine::getByte() {
-	return *_codePtr++;
 }
 
 } // End of namespace Simon

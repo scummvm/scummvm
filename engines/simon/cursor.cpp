@@ -260,6 +260,121 @@ void SimonEngine::drawMousePointer() {
 	}
 }
 
+void SimonEngine::handleMouseMoved() {
+	uint x;
+
+	if (_mouseHideCount) {
+		_system->showMouse(false);
+		return;
+	}
+
+	_system->showMouse(true);
+	pollMouseXY();
+
+	if (_mouseX <= 0)
+		_mouseX = 0;
+	if (_mouseX >= _screenWidth - 1)
+		_mouseX = _screenWidth - 1;
+
+	if (_mouseY <= 0)
+		_mouseY = 0;
+	if (_mouseY >= _screenHeight - 1)
+		_mouseY = _screenHeight - 1;
+
+	if (_defaultVerb) {
+		uint id = 101;
+		if (_mouseY >= 136)
+			id = 102;
+		if (_defaultVerb != id)
+			resetVerbs();
+	}
+
+	if (getGameType() == GType_FF) {
+		if (getBitFlag(99)) { // Oracle
+			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
+				setBitFlag(98, true);
+			} else {
+				if (getBitFlag(98)) {
+					_variableArray[254] = 63;
+				}
+			}
+		} else if (getBitFlag(88)) { // Close Up
+			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
+				setBitFlag(87, true);
+			} else {
+				if (getBitFlag(87)) {
+					_variableArray[254] = 75;
+				}
+			}
+		}
+
+		if (_rightButtonDown) {
+			_rightButtonDown = 0;
+			setVerb(NULL);
+		}
+	}
+	if (getGameType() == GType_SIMON2) {
+		if (getBitFlag(79)) {
+			if (!_vgaVar9) {
+				if (_mouseX >= 315 || _mouseX < 9)
+					goto get_out2;
+				_vgaVar9 = 1;
+			}
+			if (_scrollCount == 0) {
+				if (_mouseX >= 315) {
+					if (_scrollX != _scrollXMax)
+						_scrollFlag = 1;
+				} else if (_mouseX < 8) {
+					if (_scrollX != 0)
+						_scrollFlag = -1;
+				}
+			}
+		} else {
+		get_out2:;
+			_vgaVar9 = 0;
+		}
+	}
+
+	if (_mouseX != _mouseXOld || _mouseY != _mouseYOld)
+		_needHitAreaRecalc++;
+
+	x = 0;
+	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+		_leftButtonDown = 0;
+		x = 1;
+	} else {
+		if (_hitarea_unk_3 == 0 && _needHitAreaRecalc == 0)
+			goto get_out;
+	}
+
+	boxController(_mouseX, _mouseY, x);
+	_lastHitArea3 = _lastHitArea;
+	if (x == 1 && _lastHitArea == NULL)
+		_lastHitArea3 = (HitArea *) -1;
+
+get_out:
+	drawMousePointer();
+	_needHitAreaRecalc = 0;
+}
+
+void SimonEngine::mouseOff() {
+	_mouseHideCount++;
+}
+
+void SimonEngine::mouseOn() {
+	_lockWord |= 1;
+
+	if (_mouseHideCount != 0)
+		_mouseHideCount--;
+
+	_lockWord &= ~1;
+}
+
+void SimonEngine::pollMouseXY() {
+	_mouseX = _sdlMouseX;
+	_mouseY = _sdlMouseY;
+}
+
 } // End of namespace Simon
 
 #ifdef PALMOS_68K

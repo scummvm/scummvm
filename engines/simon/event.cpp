@@ -287,4 +287,85 @@ void SimonEngine::scrollEvent() {
 	}
 }
 
+void SimonEngine::timer_callback() {
+	if (_timer5 != 0) {
+		_syncFlag2 = true;
+		_timer5--;
+	} else {
+		timer_proc1();
+	}
+}
+
+void SimonEngine::timer_proc1() {
+	_timer4++;
+
+	if (_lockWord & 0x80E9 || _lockWord & 2)
+		return;
+
+	_syncCount++;
+
+	_lockWord |= 2;
+
+	if (!(_lockWord & 0x10)) {
+		if (getGameType() == GType_FF) {
+			_syncFlag2 ^= 1;
+			if (!_syncFlag2) {
+				processVgaEvents();
+			} else {
+				// Double speed on Oracle
+				if (getBitFlag(99)) {
+					processVgaEvents();
+				} else if (_scrollCount == 0) {
+					_lockWord &= ~2;
+					return;
+				}
+			}
+		} else {
+			processVgaEvents();
+			processVgaEvents();
+			_syncFlag2 ^= 1;
+			_cepeFlag ^= 1;
+			if (!_cepeFlag)
+				processVgaEvents();
+
+			if (_mouseHideCount != 0 && _syncFlag2) {
+				_lockWord &= ~2;
+				return;
+			}
+		}
+	}
+
+	if (getGameType() == GType_FF)
+		_moviePlay->nextFrame();
+
+	animateSprites();
+	if (_drawImagesDebug)
+		animateSpritesDebug();
+
+	if (_copyPartialMode == 1) {
+		fillBackFromFront(80, 46, 208 - 80, 94 - 46);
+	}
+
+	if (_copyPartialMode == 2) {
+		fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
+		_copyPartialMode = 0;
+	}
+
+	if (_updateScreen) {
+		if (getGameType() == GType_FF) {
+			if (!getBitFlag(78)) {
+				oracleLogo();
+			}
+			if (getBitFlag(76)) {
+				swapCharacterLogo();
+			}
+		}
+		handleMouseMoved();
+		dx_update_screen_and_palette();
+		_updateScreen = false;
+	}
+
+	_lockWord &= ~2;
+}
+
 } // End of namespace Simon

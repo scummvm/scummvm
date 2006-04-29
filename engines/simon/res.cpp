@@ -193,6 +193,40 @@ void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, ui
 	in.close();
 }
 
+int SimonEngine::allocGamePcVars(File *in) {
+	uint item_array_size, item_array_inited, stringtable_num;
+	uint32 version;
+	uint i;
+
+	item_array_size = in->readUint32BE();
+	version = in->readUint32BE();
+	item_array_inited = in->readUint32BE();
+	stringtable_num = in->readUint32BE();
+
+	item_array_inited += 2;				// first two items are predefined
+	item_array_size += 2;
+
+	if (version != 0x80)
+		error("Not a runtime database");
+
+	_itemArrayPtr = (Item **)calloc(item_array_size, sizeof(Item *));
+	if (_itemArrayPtr == NULL)
+		error("Out of memory for Item array");
+
+	_itemArraySize = item_array_size;
+	_itemArrayInited = item_array_inited;
+
+	for (i = 1; i < item_array_inited; i++) {
+		_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
+	}
+
+	// The rest is cleared automatically by calloc
+	allocateStringTable(stringtable_num + 10);
+	_stringTabNum = stringtable_num;
+
+	return item_array_inited;
+}
+
 void SimonEngine::loadGamePcFile() {
 	Common::File in;
 	int num_inited_objects;

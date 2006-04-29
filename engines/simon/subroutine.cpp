@@ -212,6 +212,16 @@ SubroutineLine *SimonEngine::createSubroutineLine(Subroutine *sub, int where) {
 	return sl;
 }
 
+void SimonEngine::runSubroutine101() {
+	Subroutine *sub;
+
+	sub = getSubroutineByID(101);
+	if (sub != NULL)
+		startSubroutineEx(sub);
+
+	permitInput();
+}
+
 int SimonEngine::startSubroutine(Subroutine *sub) {
 	int result = -1;
 	SubroutineLine *sl;

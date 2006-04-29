@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	cursor.o \
 	debug.o \
 	debugger.o \
+	draw.o \
 	event.o \
 	game.o \
 	icons.o \

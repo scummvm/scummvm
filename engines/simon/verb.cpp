@@ -304,6 +304,64 @@ void SimonEngine::showActionString(const byte *string) {
 		windowPutChar(window, *string);
 }
 
+void SimonEngine::handleVerbClicked(uint verb) {
+	Subroutine *sub;
+	int result;
+
+	_objectItem = _hitAreaObjectItem;
+	if (_objectItem == _dummyItem2) {
+		_objectItem = me();
+	}
+	if (_objectItem == _dummyItem3) {
+		_objectItem = derefItem(me()->parent);
+	}
+
+	_subjectItem = _hitAreaSubjectItem;
+	if (_subjectItem == _dummyItem2) {
+		_subjectItem = me();
+	}
+	if (_subjectItem == _dummyItem3) {
+		_subjectItem = derefItem(me()->parent);
+	}
+
+	if (_subjectItem) {
+		_scriptNoun1 = _subjectItem->noun;
+		_scriptAdj1 = _subjectItem->adjective;
+	} else {
+		_scriptNoun1 = -1;
+		_scriptAdj1 = -1;
+	}
+
+	if (_objectItem) {
+		_scriptNoun2 = _objectItem->noun;
+		_scriptAdj2 = _objectItem->adjective;
+	} else {
+		_scriptNoun2 = -1;
+		_scriptAdj2 = -1;
+	}
+
+	_scriptVerb = _verbHitArea;
+
+	sub = getSubroutineByID(0);
+	if (sub == NULL)
+		return;
+
+	result = startSubroutine(sub);
+	if (result == -1)
+		showMessageFormat("I don't understand");
+
+	_runScriptReturn1 = false;
+
+	sub = getSubroutineByID(100);
+	if (sub)
+		startSubroutine(sub);
+
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
+		_runScriptReturn1 = false;
+
+	permitInput();
+}
+
 void SimonEngine::resetNameWindow() {
 	WindowBlock *window;
 
@@ -338,6 +396,11 @@ HitArea *SimonEngine::findEmptyHitArea() {
 			return ha;
 	} while (ha++, --count);
 	return NULL;
+}
+
+void SimonEngine::delete_hitarea_by_index(uint index) {
+	CHECK_BOUNDS(index, _hitAreas);
+	_hitAreas[index].flags = 0;
 }
 
 void SimonEngine::enableBox(uint hitarea) {

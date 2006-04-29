@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/simon/string.cpp $
- * $Id: string.cpp 22062 2006-04-21 00:18:23Z kirben $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -155,6 +155,25 @@ void SimonEngine::restoreWindow(WindowBlock *window) {
 	}
 
 	_lockWord &= ~0x8000;
+}
+
+void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
+	byte *dst, *src;
+	uint i;
+
+	dst = getFrontBuf();
+	src = _backGroundBuf;
+
+	dst += y * _dxSurfacePitch;
+	src += y * _dxSurfacePitch;
+
+	while (y < h) {
+		for (i = x; i < w; i++)
+			dst[i] = src[i];
+		y++;
+		dst += _dxSurfacePitch;
+		src += _dxSurfacePitch;
+	}
 }
 
 void SimonEngine::windowPutChar(uint a) {

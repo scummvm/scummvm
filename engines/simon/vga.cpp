@@ -190,6 +190,21 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	return item->state == b;
 }
 
+VgaSprite *SimonEngine::findCurSprite() {
+	VgaSprite *vsp = _vgaSprites;
+	while (vsp->id) {
+		if (getGameType() == GType_SIMON1) {
+			if (vsp->id == _vgaCurSpriteId)
+				break;
+		} else {
+			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
+				break;
+		}
+		vsp++;
+	}
+	return vsp;
+}
+
 int SimonEngine::vcReadVarOrWord() {
 	int16 var = vcReadNextWord();
 	if (var < 0)
