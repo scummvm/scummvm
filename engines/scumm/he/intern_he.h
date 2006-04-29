@@ -66,7 +66,7 @@ public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v60he();
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 protected:
 	virtual void setupOpcodes();
@@ -144,7 +144,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 
 	virtual void saveOrLoad(Serializer *s);
 
@@ -251,7 +251,7 @@ protected:
 public:
 	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 protected:
 	virtual void setupOpcodes();
@@ -259,7 +259,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 	virtual void readArrayFromIndexFile();
 
 	virtual byte *getStringAddress(int i);
@@ -368,7 +368,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 
 	virtual void initCharset(int charset);
 
@@ -436,7 +436,7 @@ public:
 	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v90he();
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 	LogicHE *_logicHE;
 	Sprite *_sprite;
@@ -450,7 +450,7 @@ protected:
 	virtual void scummLoop_handleDrawing();
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 
 	virtual void saveOrLoad(Serializer *s);
 
@@ -534,10 +534,10 @@ class ScummEngine_v99he : public ScummEngine_v90he {
 public:
 	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v90he(syst, dr) {}
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 protected:
-	virtual void initScummVars();
+	virtual void resetScummVars();
 
 	virtual void readMAXS(int blockSize);
 

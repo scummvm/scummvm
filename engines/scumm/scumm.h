@@ -457,17 +457,19 @@ public:
 	int init();
 
 protected:
+	virtual void setupScumm();
+	virtual void resetScumm();
+
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 
-	virtual void scummInit();
+	void setupCharsetRenderer();
+	void setupCostumeRenderer();
 
+	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-public:
-	// The following is called by ConfigDialog::close
-	// TODO: Simply move that call to ScummEngine::mainMenuDialog to fix this
-	void setupVolumes();
+	void updateVolumes();
 
 protected:
 	// Scumm main loop & helper functions.
@@ -786,12 +788,16 @@ protected:
 	void convertADResource(int type, int index, byte *ptr, int size);
 	int readSoundResourceSmallHeader(int type, int index);
 	bool isResourceInUse(int type, int i) const;
-	virtual void loadRoomSubBlocks();
-	virtual void initRoomSubBlocks();
-	void clearRoomObjects();
+
+	virtual void setupRoomSubBlocks();
+	virtual void resetRoomSubBlocks();
+
 	void storeFlObject(int slot);
 	void restoreFlObjects();
-	virtual void loadRoomObjects();
+
+	void clearRoomObjects();
+	virtual void resetRoomObjects();
+	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 
 	virtual void readArrayFromIndexFile();
 	virtual void readMAXS(int blockSize) = 0;
@@ -823,7 +829,6 @@ public:
 	uint32 *_classData;
 
 protected:
-	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 	void markObjectRectAsDirty(int obj);
 	void loadFlObject(uint object, uint room);
 	void nukeFlObjects(int min, int max);
@@ -917,7 +922,7 @@ protected:
 	void setActorRedrawFlags();
 	void putActors();
 	void showActors();
-	void setupV1ActorTalkColor();
+	void resetV1ActorTalkColor();
 	void resetActorBgs();
 	virtual void processActors();
 	void processUpperActors();
@@ -1030,13 +1035,17 @@ protected:
 	void actorFollowCamera(int act);
 
 	const byte *getPalettePtr(int palindex, int room);
-	void setupC64Palette();
-	void setupNESPalette();
-	void setupAmigaPalette();
-	void setupHercPalette();
-	void setupCGAPalette();
-	void setupEGAPalette();
-	void setupV1Palette();
+
+	void setC64Palette();
+	void setNESPalette();
+	void setAmigaPalette();
+	void setHercPalette();
+	void setCGAPalette();
+	void setEGAPalette();
+	void setV1Palette();
+
+	void resetPalette();
+
 	void setPalette(int pal);
 	void setRoomPalette(int pal, int room);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
@@ -1053,11 +1062,9 @@ public:
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
-	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
-	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
+	void setShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	void setShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
-
-	void setupCursor();
 
 	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch);
 
@@ -1222,8 +1229,6 @@ protected:
 	int convertVerbMessage(byte *dst, int dstSize, int var);
 	int convertNameMessage(byte *dst, int dstSize, int var);
 	int convertStringMessage(byte *dst, int dstSize, int var);
-
-	virtual void loadLanguageBundle() {}
 
 public:
 	Common::Language _language;	// Accessed by a hack in NutRenderer::loadFont

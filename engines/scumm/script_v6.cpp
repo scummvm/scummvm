@@ -1727,7 +1727,7 @@ void ScummEngine_v6::o6_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		setupShadowPalette(a, b, c, d, e, 0, 256);
+		setShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
 	case 184:		// SO_SAVE_STRING
@@ -2571,10 +2571,10 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			a->setScale((unsigned char)args[2], -1);
 			break;
 		case 108:
-			setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
+			setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
 			break;
 		case 109:
-			setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
+			setShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 			break;
 		case 114:
 			error("o6_kernelSetFunctions: stub114()");
@@ -2634,7 +2634,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			// Case 108 and 109 share the same function
 			if (num != 6)
 				error("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
-			setupShadowPalette(args[3], args[4], args[5], args[1], args[2], 0, 256);
+			setShadowPalette(args[3], args[4], args[5], args[1], args[2], 0, 256);
 			break;
 		case 110:
 			_charset->clearCharsetMask();
@@ -2644,7 +2644,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			a->_shadowMode = args[2] + args[3];
 			break;
 		case 112:									/* palette shift? */
-			setupShadowPalette(args[3], args[4], args[5], args[1], args[2], args[6], args[7]);
+			setShadowPalette(args[3], args[4], args[5], args[1], args[2], args[6], args[7]);
 			break;
 		case 114:
 			// Sam & Max film noir mode

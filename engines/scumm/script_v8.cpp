@@ -1292,10 +1292,10 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 			_quit = true;
 		break;
 	case 108:	// buildPaletteShadow
-		setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
+		setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 109:	// setPaletteShadow
-		setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
+		setShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 118:	// blastShadowObject
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);

@@ -143,12 +143,12 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		return;
 	}
 
-	loadRoomSubBlocks();
-	initRoomSubBlocks();
+	setupRoomSubBlocks();
+	resetRoomSubBlocks();
 
 	initBGBuffers(_roomHeight);
 
-	loadRoomObjects();
+	resetRoomObjects();
 	restoreFlObjects();
 
 	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {
@@ -225,7 +225,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
  * late on.
  * So it is possible to call this after loading a savegame.
  */
-void ScummEngine::loadRoomSubBlocks() {
+void ScummEngine::setupRoomSubBlocks() {
 	int i;
 	const byte *ptr;
 	byte *roomptr, *searchptr, *roomResPtr = 0;
@@ -449,7 +449,7 @@ void ScummEngine::loadRoomSubBlocks() {
  * All of the things setup in here can be modified later on by scripts.
  * So it is not appropriate to call it after loading a savegame.
  */
-void ScummEngine::initRoomSubBlocks() {
+void ScummEngine::resetRoomSubBlocks() {
 	int i;
 	const byte *ptr;
 	byte *roomptr;
@@ -561,7 +561,7 @@ void ScummEngine::initRoomSubBlocks() {
 }
 
 
-void ScummEngine_v3old::loadRoomSubBlocks() {
+void ScummEngine_v3old::setupRoomSubBlocks() {
 	const byte *ptr;
 	byte *roomptr, *searchptr = 0;
 	const RoomHeader *rmhd;
@@ -697,7 +697,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	gdi.roomChanged(roomptr, _IM00_offs, 255);
 }
 
-void ScummEngine_v3old::initRoomSubBlocks() {
+void ScummEngine_v3old::resetRoomSubBlocks() {
 	int i;
 	const byte *ptr;
 	byte *roomptr;

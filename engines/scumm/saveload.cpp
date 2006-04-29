@@ -257,7 +257,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 				res.nukeResource(i, j);
 			}
 
-	initScummVars();
+	resetScummVars();
 
 	if (_game.features & GF_OLD_BUNDLE)
 		loadCharset(0); // FIXME - HACK ?
@@ -270,7 +270,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	delete in;
 
 	// Update volume settings
-	setupVolumes();
+	updateVolumes();
 
 	// Init NES costume data
 	if (_game.platform == Common::kPlatformNES) {
@@ -331,53 +331,14 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		}
 	}
 
-	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
-	// they handle their palette pretty much like the more recent games
-	// anyway. There was a time, though, when re-initializing was necessary
-	// for backwards compatibility, and it may still prove useful if we
-	// ever add options for using different 16-colour palettes.
-	if (_game.version == 1) {
-		if (_game.platform == Common::kPlatformC64) {
-			setupC64Palette();
-		} else if (_game.platform == Common::kPlatformNES) {
-			setupNESPalette();
-		} else {
-			setupV1Palette();
-		}
-	} else if (_game.features & GF_16COLOR) {
-		switch (_renderMode) {
-		case Common::kRenderEGA:
-			setupEGAPalette();
-			break;
-
-		case Common::kRenderAmiga:
-			setupAmigaPalette();
-			break;
-
-		case Common::kRenderCGA:
-			setupCGAPalette();
-			break;
-
-		case Common::kRenderHercA:
-		case Common::kRenderHercG:
-			setupHercPalette();
-			break;
-
-		default:
-			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
-				setupAmigaPalette();
-			else
-				setupEGAPalette();
-		}
-	} else
-		setDirtyColors(0, 255);
-
+	// Reset the palette.
+	resetPalette();
 
 	if (hdr.ver < VER(35) && _game.id == GID_MANIAC && _game.version == 1)
-		setupV1ActorTalkColor();
+		resetV1ActorTalkColor();
 
 	// Load the static room data
-	loadRoomSubBlocks();
+	setupRoomSubBlocks();
 
 	if (!(_game.features & GF_NEW_CAMERA)) {
 		camera._last.x = camera._cur.x;

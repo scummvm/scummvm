@@ -955,6 +955,25 @@ int ScummEngine::init() {
 		initCommonGFX(defaultTo1XScaler);
 	_system->endGFXTransaction();
 
+	setupScumm();
+
+	readIndexFile();
+
+	resetScumm();
+	resetScummVars();
+
+	if (_imuse) {
+		_imuse->setBase(res.address[rtSound]);
+	}
+
+	if (_game.version >= 5)
+		_sound->setupSound();
+
+	return 0;
+}
+
+
+void ScummEngine::setupScumm() {
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS) {
 		checkCD();
@@ -980,33 +999,10 @@ int ScummEngine::init() {
 	loadCJKFont();
 
 	// Create the charset renderer
-	if (_game.platform == Common::kPlatformNES)
-		_charset = new CharsetRendererNES(this);
-	else if (_game.version <= 2)
-		_charset = new CharsetRendererV2(this, _language);
-	else if (_game.version == 3)
-		_charset = new CharsetRendererV3(this);
-#ifndef DISABLE_SCUMM_7_8
-	else if (_game.version == 8)
-		_charset = new CharsetRendererNut(this);
-#endif
-	else
-		_charset = new CharsetRendererClassic(this);
+	setupCharsetRenderer();
 
 	// Create the costume renderer
-	if (_game.features & GF_NEW_COSTUMES) {
-		_costumeRenderer = new AkosRenderer(this);
-		_costumeLoader = new AkosCostumeLoader(this);
-	} else if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
-		_costumeRenderer = new C64CostumeRenderer(this);
-		_costumeLoader = new C64CostumeLoader(this);
-	} else if (_game.platform == Common::kPlatformNES) {
-		_costumeRenderer = new NESCostumeRenderer(this);
-		_costumeLoader = new NESCostumeLoader(this);
-	} else {
-		_costumeRenderer = new ClassicCostumeRenderer(this);
-		_costumeLoader = new ClassicCostumeLoader(this);
-	}
+	setupCostumeRenderer();
 
 #ifndef DISABLE_SCUMM_7_8
 	// Create FT INSANE object
@@ -1058,8 +1054,6 @@ int ScummEngine::init() {
 		_bootParam = -1;
 	}
 
-	readIndexFile();
-
 #ifdef PALMOS_68K
 	if (_game.features & GF_NEW_COSTUMES)
 		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
@@ -1076,16 +1070,6 @@ int ScummEngine::init() {
 #endif
 	res._minHeapThreshold = 400000;
 
-	scummInit();
-	initScummVars();
-
-	if (_imuse) {
-		_imuse->setBase(res.address[rtSound]);
-	}
-
-	if (_game.version >= 5)
-		_sound->setupSound();
-
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	Graphics::initfonts();
 #endif
@@ -1093,15 +1077,44 @@ int ScummEngine::init() {
 	// Create debugger
 	if (!_debugger)
 		_debugger = new ScummDebugger(this);
-
-	return 0;
 }
 
-void ScummEngine::scummInit() {
+void ScummEngine::setupCharsetRenderer() {
+	if (_game.platform == Common::kPlatformNES)
+		_charset = new CharsetRendererNES(this);
+	else if (_game.version <= 2)
+		_charset = new CharsetRendererV2(this, _language);
+	else if (_game.version == 3)
+		_charset = new CharsetRendererV3(this);
+#ifndef DISABLE_SCUMM_7_8
+	else if (_game.version == 8)
+		_charset = new CharsetRendererNut(this);
+#endif
+	else
+		_charset = new CharsetRendererClassic(this);
+}
+
+void ScummEngine::setupCostumeRenderer() {
+	if (_game.features & GF_NEW_COSTUMES) {
+		_costumeRenderer = new AkosRenderer(this);
+		_costumeLoader = new AkosCostumeLoader(this);
+	} else if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+		_costumeRenderer = new C64CostumeRenderer(this);
+		_costumeLoader = new C64CostumeLoader(this);
+	} else if (_game.platform == Common::kPlatformNES) {
+		_costumeRenderer = new NESCostumeRenderer(this);
+		_costumeLoader = new NESCostumeLoader(this);
+	} else {
+		_costumeRenderer = new ClassicCostumeRenderer(this);
+		_costumeLoader = new ClassicCostumeLoader(this);
+	}
+}
+
+void ScummEngine::resetScumm() {
 	int i;
 
 	_tempMusic = 0;
-	debug(9, "scummInit");
+	debug(9, "resetScumm");
 
 	if ((_game.id == GID_MANIAC) && (_game.version == 1) && !(_game.platform == Common::kPlatformNES)) {
 		if (_game.platform == Common::kPlatformC64)
@@ -1118,47 +1131,12 @@ void ScummEngine::scummInit() {
 
 	for (i = 0; i < 256; i++)
 		_roomPalette[i] = i;
+
+	resetPalette();
 	if (_game.version == 1) {
-		// Use 17 color table for v1 games to allow
-		// correct color for inventory and sentence
-		// line
-		// Original games used some kind of dynamic
-		// color table remapping between rooms
-		if (_game.platform == Common::kPlatformC64) {
-			setupC64Palette();
-		} else if (_game.platform == Common::kPlatformNES) {
-			setupNESPalette();
-		} else {
-			setupV1Palette();
-		}
 	} else if (_game.features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
-
-		switch (_renderMode) {
-		case Common::kRenderEGA:
-			setupEGAPalette();
-			break;
-
-		case Common::kRenderAmiga:
-			setupAmigaPalette();
-			break;
-
-		case Common::kRenderCGA:
-			setupCGAPalette();
-			break;
-
-		case Common::kRenderHercA:
-		case Common::kRenderHercG:
-			setupHercPalette();
-			break;
-
-		default:
-			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
-				setupAmigaPalette();
-			else
-				setupEGAPalette();
-		}
 	}
 
 	if (_game.version >= 4 && _game.version <= 7)
@@ -1168,7 +1146,7 @@ void ScummEngine::scummInit() {
 		loadCharset(0);
 
 	setShake(0);
-	setupCursor();
+	_cursor.animate = 1;
 
 	// Allocate and Initialize actors
 	Actor::initActorClass(this);
@@ -1184,7 +1162,7 @@ void ScummEngine::scummInit() {
 	}
 
 	if (_game.id == GID_MANIAC && _game.version == 1) {
-		setupV1ActorTalkColor();
+		resetV1ActorTalkColor();
 	} else if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO)) {
 		// HACK Some palette changes needed for demo script
 		// in Maniac Mansion (Enhanced)
@@ -1293,13 +1271,13 @@ void ScummEngine::scummInit() {
 	_lastSaveTime = _system->getMillis();
 }
 
-void ScummEngine_c64::scummInit() {
-	ScummEngine_v2::scummInit();
+void ScummEngine_c64::resetScumm() {
+	ScummEngine_v2::resetScumm();
 	initC64Verbs();
 }
 
-void ScummEngine_v2::scummInit() {
-	ScummEngine::scummInit();
+void ScummEngine_v2::resetScumm() {
+	ScummEngine::resetScumm();
 
 	if (_game.platform == Common::kPlatformNES) {
 		initNESMouseOver();
@@ -1315,8 +1293,8 @@ void ScummEngine_v2::scummInit() {
 	_inventoryOffset = 0;
 }
 
-void ScummEngine_v4::scummInit() {
-	ScummEngine::scummInit();
+void ScummEngine_v4::resetScumm() {
+	ScummEngine::resetScumm();
 
 	// WORKAROUND for bug in boot script of Loom (CD)
 	// The boot script sets the characters of string 21, 
@@ -1326,13 +1304,13 @@ void ScummEngine_v4::scummInit() {
 	}
 }
 
-void ScummEngine_v6::scummInit() {
-	ScummEngine::scummInit();
+void ScummEngine_v6::resetScumm() {
+	ScummEngine::resetScumm();
 	setDefaultCursor();
 }
 
-void ScummEngine_v60he::scummInit() {
-	ScummEngine_v6::scummInit();
+void ScummEngine_v60he::resetScumm() {
+	ScummEngine_v6::resetScumm();
 
 	// HACK cursor hotspot is wrong
 	// Original games used
@@ -1342,15 +1320,15 @@ void ScummEngine_v60he::scummInit() {
 }
 
 #ifndef DISABLE_HE
-void ScummEngine_v72he::scummInit() {
-	ScummEngine_v60he::scummInit();
+void ScummEngine_v72he::resetScumm() {
+	ScummEngine_v60he::resetScumm();
 
 	_stringLength = 1;
 	memset(_stringBuffer, 0, sizeof(_stringBuffer));
 }
 
-void ScummEngine_v90he::scummInit() {
-	ScummEngine_v72he::scummInit();
+void ScummEngine_v90he::resetScumm() {
+	ScummEngine_v72he::resetScumm();
 
 	_heObject = 0;
 	_heObjectNum = 0;
@@ -1384,8 +1362,8 @@ void ScummEngine_v90he::scummInit() {
 	}
 }
 
-void ScummEngine_v99he::scummInit() {
-	ScummEngine_v90he::scummInit();
+void ScummEngine_v99he::resetScumm() {
+	ScummEngine_v90he::resetScumm();
 
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
@@ -1493,10 +1471,10 @@ void ScummEngine::setupMusic(int midi) {
 		}
 	}
 
-	setupVolumes();
+	updateVolumes();
 }
 
-void ScummEngine::setupVolumes() {
+void ScummEngine::updateVolumes() {
 
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
@@ -2006,8 +1984,8 @@ void ScummEngine::restart() {
 	readIndexFile();
 
 	// Reinit scumm variables
-	scummInit();
-	initScummVars();
+	resetScumm();
+	resetScummVars();
 
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
@@ -2078,6 +2056,7 @@ void ScummEngine::mainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
+	updateVolumes();
 }
 
 void ScummEngine::confirmExitDialog() {

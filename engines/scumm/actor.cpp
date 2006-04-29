@@ -862,7 +862,7 @@ static const int v1MMActorTalkColor[25] = {
 	1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7
 };
 
-void ScummEngine::setupV1ActorTalkColor() {
+void ScummEngine::resetV1ActorTalkColor() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {

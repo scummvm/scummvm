@@ -543,7 +543,7 @@ void ScummEngine::restoreFlObjects() {
 	_numStoredFlObjects = 0;
 }
 
-void ScummEngine::loadRoomObjects() {
+void ScummEngine::resetRoomObjects() {
 	int i, j;
 	ObjectData *od;
 	const byte *ptr;
@@ -611,13 +611,13 @@ void ScummEngine::loadRoomObjects() {
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
-			setupRoomObject(&_objs[i], room);
+			resetRoomObject(&_objs[i], room);
 	}
 
 	CHECK_HEAP
 }
 
-void ScummEngine_v3old::loadRoomObjects() {
+void ScummEngine_v3old::resetRoomObjects() {
 	int i;
 	ObjectData *od;
 	const byte *room, *ptr;
@@ -648,7 +648,7 @@ void ScummEngine_v3old::loadRoomObjects() {
 			od->OBIMoffset = READ_LE_UINT16(ptr);
 
 		od->OBCDoffset = READ_LE_UINT16(ptr + 2 * _numObjectsInRoom);
-		setupRoomObject(od, room);
+		resetRoomObject(od, room);
 
 		ptr += 2;
 
@@ -662,7 +662,7 @@ void ScummEngine_v3old::loadRoomObjects() {
 	CHECK_HEAP
 }
 
-void ScummEngine_v4::loadRoomObjects() {
+void ScummEngine_v4::resetRoomObjects() {
 	int i, j;
 	ObjectData *od;
 	const byte *ptr;
@@ -711,14 +711,14 @@ void ScummEngine_v4::loadRoomObjects() {
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr && !_objs[i].fl_object_index) {
-			setupRoomObject(&_objs[i], room);
+			resetRoomObject(&_objs[i], room);
 		}
 	}
 
 	CHECK_HEAP
 }
 
-void ScummEngine_c64::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+void ScummEngine_c64::resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	assert(room);
 	const byte *ptr = room + od->OBCDoffset;
 	ptr -= 2;
@@ -742,7 +742,7 @@ void ScummEngine_c64::setupRoomObject(ObjectData *od, const byte *room, const by
 	od->height = *(ptr + 14) & 0xf8;
 }
 
-void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+void ScummEngine_v4::resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	assert(room);
 	const byte *ptr = room + od->OBCDoffset;
 
@@ -775,7 +775,7 @@ void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byt
 	}
 }
 
-void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	const CodeHeader *cdhd = NULL;
 	const ImageHeader *imhd = NULL;
 
@@ -1784,7 +1784,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 		res.unlock(rtRoomScripts, room);
 
 	// Setup local object flags
-	setupRoomObject(od, flob, flob);
+	resetRoomObject(od, flob, flob);
 
 	od->fl_object_index = slot;
 }

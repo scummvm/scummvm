@@ -536,7 +536,7 @@ void ScummEngine_v8::setupScummVars() {
 }
 #endif
 
-void ScummEngine_c64::initScummVars() {
+void ScummEngine_c64::resetScummVars() {
 	_activeInventory = 0;
 	_activeObject = 0;
 	_activeVerb = 13;
@@ -547,7 +547,7 @@ void ScummEngine_c64::initScummVars() {
 	_currentLights = LIGHTMODE_actor_use_base_palette | LIGHTMODE_actor_use_colors | LIGHTMODE_room_lights_on;
 }
 
-void ScummEngine_v2::initScummVars() {
+void ScummEngine_v2::resetScummVars() {
 	// This needs to be at least greater than 40 to get the more
 	// elaborate version of the EGA Zak into. I don't know where
 	// else it makes any difference.
@@ -555,8 +555,8 @@ void ScummEngine_v2::initScummVars() {
 		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
 }
 
-void ScummEngine_v5::initScummVars() {
-	ScummEngine::initScummVars();
+void ScummEngine_v5::resetScummVars() {
+	ScummEngine::resetScummVars();
 
 	if (_game.version >= 4 && _game.version <= 5)
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
@@ -569,8 +569,8 @@ void ScummEngine_v5::initScummVars() {
 }
 
 #ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v7::initScummVars() {
-	ScummEngine::initScummVars();
+void ScummEngine_v7::resetScummVars() {
+	ScummEngine::resetScummVars();
 
 	if (_game.version != 8) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
@@ -581,8 +581,8 @@ void ScummEngine_v7::initScummVars() {
 	VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 }
 
-void ScummEngine_v8::initScummVars() {
-	ScummEngine_v7::initScummVars();
+void ScummEngine_v8::resetScummVars() {
+	ScummEngine_v7::resetScummVars();
 
 	// FIXME: How do we deal with non-cd installs?
 	VAR(VAR_CURRENTDISK) = 1;
@@ -624,8 +624,8 @@ void ScummEngine_v8::initScummVars() {
 #endif
 
 #ifndef DISABLE_HE
-void ScummEngine_v70he::initScummVars() {
-	ScummEngine::initScummVars();
+void ScummEngine_v70he::resetScummVars() {
+	ScummEngine::resetScummVars();
 
 	if (VAR_MACHINE_SPEED != 0xFF)
 		VAR(VAR_MACHINE_SPEED) = 13;
@@ -635,8 +635,8 @@ void ScummEngine_v70he::initScummVars() {
 	VAR(VAR_TALK_CHANNEL) = 2;
 }
 
-void ScummEngine_v72he::initScummVars() {
-	ScummEngine_v70he::initScummVars();
+void ScummEngine_v72he::resetScummVars() {
+	ScummEngine_v70he::resetScummVars();
 
 	VAR(VAR_VIDEO_PERFORMANCE) = 26;
 
@@ -649,8 +649,8 @@ void ScummEngine_v72he::initScummVars() {
 	VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 }
 
-void ScummEngine_v80he::initScummVars() {
-	ScummEngine_v72he::initScummVars();
+void ScummEngine_v80he::resetScummVars() {
+	ScummEngine_v72he::resetScummVars();
 
 	if (_game.platform == Common::kPlatformMacintosh) {
 		VAR(VAR_PLATFORM) = 2;
@@ -662,8 +662,8 @@ void ScummEngine_v80he::initScummVars() {
 	VAR(VAR_COLOR_DEPTH) = 256;
 }
 
-void ScummEngine_v90he::initScummVars() {
-	ScummEngine_v80he::initScummVars();
+void ScummEngine_v90he::resetScummVars() {
+	ScummEngine_v80he::resetScummVars();
 
 	VAR(VAR_SCRIPT_CYCLE) = 1;
 	VAR(VAR_NUM_SCRIPT_CYCLES) = 1;
@@ -680,15 +680,15 @@ void ScummEngine_v90he::initScummVars() {
 	}
 }
 
-void ScummEngine_v99he::initScummVars() {
-	ScummEngine_v90he::initScummVars();
+void ScummEngine_v99he::resetScummVars() {
+	ScummEngine_v90he::resetScummVars();
 
 	VAR(VAR_NUM_PALETTES) = _numPalettes;
 	VAR(VAR_NUM_UNK) = _numUnk;
 }
 #endif
 
-void ScummEngine::initScummVars() {
+void ScummEngine::resetScummVars() {
 	if (_game.heversion < 70 && _game.version <= 6) {
 		switch (_musicType) {
 		case MDT_NONE:

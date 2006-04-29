@@ -748,8 +748,6 @@ void ConfigDialog::close() {
 	}
 
 	GUI_OptionsDialog::close();
-
-	_vm->setupVolumes();
 }
 
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

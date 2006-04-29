@@ -31,7 +31,45 @@
 
 namespace Scumm {
 
-void ScummEngine::setupC64Palette() {
+void ScummEngine::resetPalette() {
+	if (_game.version == 1) {
+		if (_game.platform == Common::kPlatformC64) {
+			setC64Palette();
+		} else if (_game.platform == Common::kPlatformNES) {
+			setNESPalette();
+		} else {
+			setV1Palette();
+		}
+	} else if (_game.features & GF_16COLOR) {
+		switch (_renderMode) {
+		case Common::kRenderEGA:
+			setEGAPalette();
+			break;
+
+		case Common::kRenderAmiga:
+			setAmigaPalette();
+			break;
+
+		case Common::kRenderCGA:
+			setCGAPalette();
+			break;
+
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			setHercPalette();
+			break;
+
+		default:
+			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
+				setAmigaPalette();
+			else
+				setEGAPalette();
+		}
+	} else
+		setDirtyColors(0, 255);
+}
+
+void ScummEngine::setC64Palette() {
 	setPalColor( 0, 0x00, 0x00, 0x00);
 	setPalColor( 1, 0xFD, 0xFE, 0xFC);
 	setPalColor( 2, 0xBE, 0x1A, 0x24);
@@ -49,10 +87,13 @@ void ScummEngine::setupC64Palette() {
 	setPalColor(14, 0x5F, 0x53, 0xFE);
 	setPalColor(15, 0xA4, 0xA7, 0xA2);
 
+	// Use 17 color table for v1 games to allow correct color for inventory and
+	// sentence line Original games used some kind of dynamic color table
+	// remapping between rooms.
 	setPalColor(16, 255,  85, 255);
 }
 
-void ScummEngine::setupNESPalette() {
+void ScummEngine::setNESPalette() {
 	setPalColor(0x00,0x24,0x24,0x24); // 0x1D
 	setPalColor(0x01,0x00,0x24,0x92);
 	setPalColor(0x02,0x00,0x00,0xDB);
@@ -122,7 +163,7 @@ void ScummEngine::setupNESPalette() {
 	setPalColor(0x3F,0x00,0x00,0x00);
 }
 
-void ScummEngine::setupAmigaPalette() {
+void ScummEngine::setAmigaPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 187);
 	setPalColor( 2,   0, 187,   0);
@@ -141,7 +182,7 @@ void ScummEngine::setupAmigaPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
-void ScummEngine::setupHercPalette() {
+void ScummEngine::setHercPalette() {
 	setPalColor( 0,   0,   0,   0);
 
 	if (_renderMode == Common::kRenderHercA)
@@ -155,7 +196,7 @@ void ScummEngine::setupHercPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
-void ScummEngine::setupCGAPalette() {
+void ScummEngine::setCGAPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0, 168, 168);
 	setPalColor( 2, 168,   0, 168);
@@ -167,7 +208,7 @@ void ScummEngine::setupCGAPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
-void ScummEngine::setupEGAPalette() {
+void ScummEngine::setEGAPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 170);
 	setPalColor( 2,   0, 170,   0);
@@ -186,7 +227,7 @@ void ScummEngine::setupEGAPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
-void ScummEngine::setupV1Palette() {
+void ScummEngine::setV1Palette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1, 255, 255, 255);
 	setPalColor( 2, 170,   0,   0);
@@ -530,16 +571,16 @@ void ScummEngine::palManipulate() {
 	_palManipCounter--;
 }
 
-void ScummEngine::setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor) {
+void ScummEngine::setShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	byte *table;
 	int i;
 	byte *curpal;
 
 	if (slot < 0 || slot >= NUM_SHADOW_PALETTE)
-		error("setupShadowPalette: invalid slot %d", slot);
+		error("setShadowPalette: invalid slot %d", slot);
 
 	if (startColor < 0 || startColor > 255 || endColor < 0 || startColor > 255 || endColor < startColor)
-		error("setupShadowPalette: invalid range from %d to %d", startColor, endColor);
+		error("setShadowPalette: invalid range from %d to %d", startColor, endColor);
 
 	table = _shadowPalette + slot * 256;
 	for (i = 0; i < 256; i++)
@@ -560,7 +601,7 @@ static inline uint colorWeight(int red, int green, int blue) {
 	return 3 * red * red + 6 * green * green + 2 * blue * blue;
 }
 
-void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
+void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
 	const byte *basepal = getPalettePtr(_curPalIndex, _roomResource);
 	const byte *compareptr;
 	const byte *pal = basepal + start * 3;
@@ -569,7 +610,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 
 	// This is an implementation based on the original games code.
 	//
-	// The four known rooms where setupShadowPalette is used in atlantis are:
+	// The four known rooms where setShadowPalette is used in atlantis are:
 	//
 	// 1) FOA Room 53: subway departing Knossos for Atlantis.
 	// 2) FOA Room 48: subway crashing into the Atlantis entrance area

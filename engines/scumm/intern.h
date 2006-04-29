@@ -67,7 +67,7 @@ protected:
 	virtual void scummLoop_handleActors();
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 	virtual void decodeParseString();
 
 	virtual void saveOrLoad(Serializer *s);
@@ -206,16 +206,16 @@ class ScummEngine_v4 : public ScummEngine_v5 {
 public:
 	ScummEngine_v4(OSystem *syst, const DetectorResult &dr);
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 protected:
 	virtual void readIndexFile();
 	virtual void loadCharset(int no);
-	virtual void loadRoomObjects();
+	virtual void resetRoomObjects();
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();
 
-	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 };
 
 /**
@@ -240,9 +240,9 @@ public:
 protected:
 	virtual void readResTypeList(int id, const char *name);
 	virtual void readIndexFile();
-	virtual void loadRoomSubBlocks();
-	virtual void initRoomSubBlocks();
-	virtual void loadRoomObjects();
+	virtual void setupRoomSubBlocks();
+	virtual void resetRoomSubBlocks();
+	virtual void resetRoomObjects();
 };
 
 /**
@@ -270,7 +270,7 @@ protected:
 public:
 	ScummEngine_v2(OSystem *syst, const DetectorResult &dr);
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 	void checkV2MouseOver(Common::Point pos);
 	void checkV2Inventory(int x, int y);
@@ -282,7 +282,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 	virtual void decodeParseString();
 
 	virtual void readIndexFile();
@@ -416,17 +416,17 @@ protected:
 public:
 	ScummEngine_c64(OSystem *syst, const DetectorResult &dr);
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 protected:
-	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 	virtual void decodeParseString();
 
 	virtual void saveOrLoad(Serializer *s);
@@ -568,7 +568,7 @@ protected:
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
 
-	virtual void scummInit();
+	virtual void resetScumm();
 
 protected:
 	virtual void setupOpcodes();
@@ -838,7 +838,7 @@ protected:
 	virtual void scummLoop_handleDrawing();
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 
 	virtual void akos_processQueue();
 
@@ -890,7 +890,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-	virtual void initScummVars();
+	virtual void resetScummVars();
 	virtual void decodeParseString(int m, int n);
 	virtual void readArrayFromIndexFile();
 

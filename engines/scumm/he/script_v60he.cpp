@@ -548,7 +548,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		b = pop();
 		a = pop();
 		if (_game.heversion == 60)
-			setupShadowPalette(a, b, c, d, e, 0, 256);
+			setShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
 	case 186:		// SO_ROOM_TRANSFORM
