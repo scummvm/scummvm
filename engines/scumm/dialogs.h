@@ -27,6 +27,7 @@
 #include "gui/options.h"
 #include "gui/widget.h"
 
+#include "scumm/plugin.h"
 #ifndef DISABLE_HELP
 #include "scumm/help.h"
 #endif
@@ -43,15 +44,10 @@ class ScummEngine;
 
 class ScummDialog : public GUI::Dialog {
 public:
-	ScummDialog(ScummEngine *scumm, Common::String name);
+	ScummDialog(Common::String name);
 
 protected:
 	typedef Common::String String;
-
-	ScummEngine *_vm;
-
-	// Query a string from the resources
-	const String queryResString(int stringno);
 };
 
 class SaveLoadChooser : public GUI::Dialog {
@@ -65,7 +61,7 @@ protected:
 	GUI::StaticTextWidget	*_date;
 	GUI::StaticTextWidget	*_time;
 	GUI::StaticTextWidget	*_playtime;
-	ScummEngine			*_scumm;
+	ScummEngine			*_vm;
 
 	void updateInfos();
 public:
@@ -89,6 +85,8 @@ public:
 	virtual void handleScreenChanged();
 
 protected:
+	ScummEngine		*_vm;
+
 	GUI::Dialog		*_aboutDialog;
 	GUI::Dialog		*_optionsDialog;
 #ifndef DISABLE_HELP
@@ -106,7 +104,7 @@ protected:
 
 class HelpDialog : public ScummDialog {
 public:
-	HelpDialog(ScummEngine *scumm);
+	HelpDialog(const GameSettings &game);
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
@@ -121,6 +119,8 @@ protected:
 
 	int _page;
 	int _numPages;
+	
+	const GameSettings _game;
 
 	void displayKeyBindings();
 };
@@ -129,13 +129,12 @@ protected:
 
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
-	ScummEngine *_vm;
 #ifdef SMALL_SCREEN_DEVICE
 	GUI::Dialog		*_keysDialog;
 #endif
 
 public:
-	ConfigDialog(ScummEngine *scumm);
+	ConfigDialog();
 	~ConfigDialog();
 
 	virtual void open();
@@ -154,6 +153,9 @@ protected:
  * click closed the dialog).
  */
 class InfoDialog : public ScummDialog {
+protected:
+	ScummEngine		*_vm;
+
 public:
 	// arbitrary message
 	InfoDialog(ScummEngine *scumm, const String& message);
@@ -171,6 +173,9 @@ public:
 
 protected:
 	void setInfoText (const String& message);
+
+	// Query a string from the resources
+	const String queryResString(int stringno);
 };
 
 /**

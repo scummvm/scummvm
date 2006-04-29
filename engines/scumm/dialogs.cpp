@@ -212,49 +212,9 @@ static ResString string_map_table_v345[] = {
 
 #pragma mark -
 
-ScummDialog::ScummDialog(ScummEngine *scumm, String name)
-	: GUI::Dialog(name), _vm(scumm) {
+ScummDialog::ScummDialog(String name)
+	: GUI::Dialog(name) {
 _drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
-}
-
-const Common::String ScummDialog::queryResString(int stringno) {
-	byte buf[256];
-	byte *result;
-
-	if (stringno == 0)
-		return String();
-
-	if (_vm->_game.version == 8)
-		result = (byte *)string_map_table_v8[stringno - 1].string;
-	else if (_vm->_game.version == 7)
-		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
-	else if (_vm->_game.version == 6)
-		result = _vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
-	else if (_vm->_game.version >= 3)
-		result = _vm->getStringAddress(string_map_table_v345[stringno - 1].num);
-	else
-		return string_map_table_v345[stringno - 1].string;
-
-	if (result && *result == '/') {
-		_vm->translateText(result, buf);
-		result = buf;
-	}
-
-	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
-		return string_map_table_v345[stringno - 1].string;
-	}
-
-	// Convert to a proper string (take care of FF codes)
-	byte chr;
-	String tmp;
-	while ((chr = *result++)) {
-		if (chr == 0xFF) {
-			result += 3;
-		} else if (chr != '@') {
-			tmp += chr;
-		}
-	}
-	return tmp;
 }
 
 #pragma mark -
@@ -273,7 +233,7 @@ enum {
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
-	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _scumm(engine) {
+	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -292,10 +252,10 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 		_gfxWidget = new GUI::GraphicsWidget(this,
 				thumbX, thumbY,
 				kThumbnailWidth + 8,
-				((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+				((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
 		_gfxWidget->setFlags(GUI::WIDGET_BORDER);
 	
-		int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+		int height = thumbY + ((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
 	
 		_date = new StaticTextWidget(this,
 						thumbX,
@@ -405,9 +365,9 @@ void SaveLoadChooser::handleScreenChanged() {
 			_gfxWidget->setFlags(GUI::WIDGET_BORDER);
 		}
 		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth + 8,
-				((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+				((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
 	
-		int height = thumbY + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+		int height = thumbY + ((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
 
 		if (!_date)
 			_date = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
@@ -462,7 +422,7 @@ void SaveLoadChooser::handleScreenChanged() {
 void SaveLoadChooser::updateInfos() {
 	int selItem = _list->getSelected();
 	Graphics::Surface *thumb;
-	thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
+	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
 	_gfxWidget->setGfx(thumb);
 	if (thumb)
 		thumb->free();
@@ -472,7 +432,7 @@ void SaveLoadChooser::updateInfos() {
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
 	char buffer[32];
-	if (_scumm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+	if (_vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
 		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
 			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
 			infos.date & 0xFFFF);
@@ -529,7 +489,7 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 }
 
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, "scummmain") {
+	: ScummDialog("scummmain"), _vm(scumm) {
 
 	new GUI::ButtonWidget(this, "scummmain_resume", "Resume", kPlayCmd, 'P');
 
@@ -548,9 +508,9 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	// Create the sub dialog(s)
 	//
 	_aboutDialog = new GUI::AboutDialog();
-	_optionsDialog = new ConfigDialog(scumm);
+	_optionsDialog = new ConfigDialog();
 #ifndef DISABLE_HELP
-	_helpDialog = new HelpDialog(scumm);
+	_helpDialog = new HelpDialog(scumm->_game);
 #endif
 	_saveDialog = new SaveLoadChooser("Save game:", "Save", true, scumm);
 	_loadDialog = new SaveLoadChooser("Load game:", "Load", false, scumm);
@@ -680,8 +640,8 @@ enum {
 // These changes will achieve two things at once: Allow us to get rid of using
 //  "" as value for the domain, and in fact provide a somewhat better user 
 // experience at the same time.
-ConfigDialog::ConfigDialog(ScummEngine *scumm)
-	: GUI::OptionsDialog("", "scummconfig"), _vm(scumm) {
+ConfigDialog::ConfigDialog()
+	: GUI::OptionsDialog("", "scummconfig") {
 
 	//
 	// Sound controllers
@@ -760,8 +720,8 @@ enum {
 	kPrevCmd = 'PREV'
 };
 
-HelpDialog::HelpDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, "scummhelp") {
+HelpDialog::HelpDialog(const GameSettings &game)
+	: ScummDialog("scummhelp"), _game(game) {
 	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
 
 	int lineHeight = g_gui.getFontHeight();
@@ -782,7 +742,7 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 	}
 
 	_page = 1;
-	_numPages = ScummHelp::numPages(scumm->_game.id);
+	_numPages = ScummHelp::numPages(game.id);
 
 	_prevButton = new GUI::ButtonWidget(this, "scummhelp_prev", "Previous", kPrevCmd, 'P');
 	_nextButton = new GUI::ButtonWidget(this, "scummhelp_next", "Next", kNextCmd, 'N');
@@ -796,7 +756,7 @@ void HelpDialog::displayKeyBindings() {
 
 	String titleStr, *keyStr, *dscStr;
 
-	ScummHelp::updateStrings(_vm->_game.id, _vm->_game.version, _vm->_game.platform, _page, titleStr, keyStr, dscStr);
+	ScummHelp::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
@@ -843,12 +803,12 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 #pragma mark -
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
-: ScummDialog(scumm, "scummDummyDialog") { // dummy x and w
-	setInfoText(queryResString (res));
+: ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
+	setInfoText(queryResString(res));
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
-: ScummDialog(scumm, "scummDummyDialog") { // dummy x and w
+: ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
 	setInfoText(message);
 }
 
@@ -865,6 +825,46 @@ void InfoDialog::setInfoText(const String& message) {
 	_y = (screenH - height) / 2;
 
 	new StaticTextWidget(this, 4, 4, _w - 8, _h, message, kTextAlignCenter);
+}
+
+const Common::String InfoDialog::queryResString(int stringno) {
+	byte buf[256];
+	byte *result;
+
+	if (stringno == 0)
+		return String();
+
+	if (_vm->_game.version == 8)
+		result = (byte *)string_map_table_v8[stringno - 1].string;
+	else if (_vm->_game.version == 7)
+		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
+	else if (_vm->_game.version == 6)
+		result = _vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+	else if (_vm->_game.version >= 3)
+		result = _vm->getStringAddress(string_map_table_v345[stringno - 1].num);
+	else
+		return string_map_table_v345[stringno - 1].string;
+
+	if (result && *result == '/') {
+		_vm->translateText(result, buf);
+		result = buf;
+	}
+
+	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
+		return string_map_table_v345[stringno - 1].string;
+	}
+
+	// Convert to a proper string (take care of FF codes)
+	byte chr;
+	String tmp;
+	while ((chr = *result++)) {
+		if (chr == 0xFF) {
+			result += 3;
+		} else if (chr != '@') {
+			tmp += chr;
+		}
+	}
+	return tmp;
 }
 
 #pragma mark -
