@@ -1634,40 +1634,8 @@ int ScummEngine::scummLoop(int delta) {
 		CHARSET_1();
 
 	processKbd(false);
-
-	if (_game.features & GF_NEW_CAMERA) {
-		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
-		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
-	} else if (_game.version <= 2) {
-		VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
-	} else {
-		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
-	}
-	if (_game.version <= 7)
-		VAR(VAR_HAVE_MSG) = _haveMsg;
-
-	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
-		// TODO
-	} else if (_game.version <= 2) {
-		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
-		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
-
-		// Adjust mouse coordinates as narrow rooms in NES are centered
-		if (_game.platform == Common::kPlatformNES && _NESStartStrip > 0) {
-			VAR(VAR_VIRT_MOUSE_X) -= 2;
-			if (VAR(VAR_VIRT_MOUSE_X) < 0)
-				VAR(VAR_VIRT_MOUSE_X) = 0;
-		}
-	} else {
-		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x;
-		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
-		VAR(VAR_MOUSE_X) = _mouse.x;
-		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if (VAR_DEBUGMODE != 0xFF) {
-			// This is NOT for the Mac version of Indy3/Loom
-			VAR(VAR_DEBUGMODE) = _debugMode;
-		}
-	}
+	
+	scummLoop_updateScummVars();
 
 	if (_game.features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
@@ -1699,50 +1667,9 @@ int ScummEngine::scummLoop(int delta) {
 
 	if (VAR_GAME_LOADED != 0xFF)
 		VAR(VAR_GAME_LOADED) = 0;
-	if (_saveLoadFlag) {
 load_game:
-		bool success;
-		const char *errMsg = 0;
-		char filename[256];
+	scummLoop_handleSaveLoad();
 
-		if (_saveLoadFlag == 1) {
-			success = saveState(_saveLoadSlot, _saveTemporaryState);
-			if (!success)
-				errMsg = "Failed to save game state to file:\n\n%s";
-
-			// Ender: Disabled for small_header games, as can overwrite game
-			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
-			// because of odd timing issue with scripts and the variable reset
-			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER) && _game.version < 8)
-				VAR(VAR_GAME_LOADED) = 201;
-		} else {
-			success = loadState(_saveLoadSlot, _saveTemporaryState);
-			if (!success)
-				errMsg = "Failed to load game state from file:\n\n%s";
-
-			// Ender: Disabled for small_header games, as can overwrite game
-			//  variables (eg, Zak256 cashcard values).
-			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER))
-				VAR(VAR_GAME_LOADED) = 203;
-		}
-
-		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
-		if (!success) {
-			displayMessage(0, errMsg, filename);
-		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
-			// Display "Save successful" message, except for auto saves
-			char buf[256];
-			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename);
-
-			GUI::TimedMessageDialog dialog(buf, 1500);
-			runDialog(dialog);
-		}
-		if (success && _saveLoadFlag != 1)
-			clearClickedStatus();
-
-		_saveLoadFlag = 0;
-		_lastSaveTime = _system->getMillis();
-	}
 
 	if (_completeScreenRedraw) {
 		_charset->clearCharsetMask();
@@ -1751,19 +1678,19 @@ load_game:
 		// HACK as in game save stuff isn't supported currently
 		if (_game.id == GID_LOOM) {
 			int args[16];
-			uint value;
+			uint var;
 			memset(args, 0, sizeof(args));
 			args[0] = 2;
 
 			if (_game.platform == Common::kPlatformMacintosh)
-				value = 105;
+				var = 105;
 			else if (_game.version == 4)	// 256 color CD version
-				value = 150;
+				var = 150;
 			else
- 				value = 100;
+ 				var = 100;
 			byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
 			// if verbs should be shown restore them
-			if (VAR(value) == 2)
+			if (VAR(var) == 2)
 				runScript(restoreScript, 0, 0, args);
 		} else if (_game.version > 3) {
 			for (int i = 0; i < _numVerbs; i++)
@@ -1807,48 +1734,13 @@ load_game:
 		if (_game.version > 3)
 			CHARSET_1();
 
-		if (camera._cur.x != camera._last.x || _bgNeedsRedraw || _fullRedraw
-				|| ((_game.features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
-			redrawBGAreas();
-		}
+		scummLoop_handleDrawing();
 
-		processDrawQue();
-
-		if (_game.heversion >= 99)
-			_fullRedraw = false;
-
-		// Full Throttle always redraws verbs and draws verbs before actors
-		if (_game.version >= 7)
-			redrawVerbs();
-
-#ifndef DISABLE_HE
-		if (_game.heversion >= 90) {
-			((ScummEngine_v90he *)this)->_sprite->resetBackground();
-			((ScummEngine_v90he *)this)->_sprite->sortActiveSprites();
-		}
-#endif
-
-		setActorRedrawFlags();
-		resetActorBgs();
-
-		if (!(getCurrentLights() & LIGHTMODE_room_lights_on) &&
-		      getCurrentLights() & LIGHTMODE_flashlight_on) {
-			drawFlashlight();
-			setActorRedrawFlags();
-		}
-
-		processActors();
+		scummLoop_handleActors();
 
 		_fullRedraw = false;
 
-		if (_game.version >= 4 && _game.heversion <= 61)
-			cyclePalette();
-		palManipulate();
-		if (_doEffect) {
-			_doEffect = false;
-			fadeIn(_newEffect);
-			clearClickedStatus();
-		}
+		scummLoop_handleEffects();
 
 		if (VAR_MAIN_SCRIPT != 0xFF && VAR(VAR_MAIN_SCRIPT) != 0) {
 			runScript(VAR(VAR_MAIN_SCRIPT), 0, 0, 0);
@@ -1860,22 +1752,13 @@ load_game:
 		// Render everything to the screen.
 		drawDirtyScreenParts();
 
+		// FIXME / TODO: Try to move the following to scummLoop_handleSound or
+		// scummLoop_handleActors (but watch out for regressions!)
 		if (_game.version <= 5)
 			playActorSounds();
 	}
 
-	_sound->processSound();
-
-#ifndef DISABLE_SCUMM_7_8
-	if (_imuseDigital) {
-		_imuseDigital->flushTracks();
-		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
-			_imuseDigital->refreshScripts();
-	}
-	if (_smixer) {
-		_smixer->flush();
-	}
-#endif
+	scummLoop_handleSound();
 
 	camera._last = camera._cur;
 
@@ -1902,6 +1785,154 @@ load_game:
 	return (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 
 }
+
+void ScummEngine::scummLoop_updateScummVars() {
+	if (_game.features & GF_NEW_CAMERA) {
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+	} else if (_game.version <= 2) {
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
+	} else {
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+	}
+	if (_game.version <= 7)
+		VAR(VAR_HAVE_MSG) = _haveMsg;
+
+	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+		// TODO
+	} else if (_game.version <= 2) {
+		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
+
+		// Adjust mouse coordinates as narrow rooms in NES are centered
+		if (_game.platform == Common::kPlatformNES && _NESStartStrip > 0) {
+			VAR(VAR_VIRT_MOUSE_X) -= 2;
+			if (VAR(VAR_VIRT_MOUSE_X) < 0)
+				VAR(VAR_VIRT_MOUSE_X) = 0;
+		}
+	} else {
+		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
+		VAR(VAR_MOUSE_X) = _mouse.x;
+		VAR(VAR_MOUSE_Y) = _mouse.y;
+		if (VAR_DEBUGMODE != 0xFF) {
+			// This is NOT for the Mac version of Indy3/Loom
+			VAR(VAR_DEBUGMODE) = _debugMode;
+		}
+	}
+}
+
+void ScummEngine::scummLoop_handleSaveLoad() {
+	if (_saveLoadFlag) {
+		bool success;
+		const char *errMsg = 0;
+		char filename[256];
+
+		if (_saveLoadFlag == 1) {
+			success = saveState(_saveLoadSlot, _saveTemporaryState);
+			if (!success)
+				errMsg = "Failed to save game state to file:\n\n%s";
+
+			// Ender: Disabled for small_header games, as can overwrite game
+			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
+			// because of odd timing issue with scripts and the variable reset
+			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER) && _game.version < 8)
+				VAR(VAR_GAME_LOADED) = 201;
+		} else {
+			success = loadState(_saveLoadSlot, _saveTemporaryState);
+			if (!success)
+				errMsg = "Failed to load game state from file:\n\n%s";
+
+			// Ender: Disabled for small_header games, as can overwrite game
+			//  variables (eg, Zak256 cashcard values).
+			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER))
+				VAR(VAR_GAME_LOADED) = 203;
+		}
+
+		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
+		if (!success) {
+			displayMessage(0, errMsg, filename);
+		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
+			// Display "Save successful" message, except for auto saves
+			char buf[256];
+			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename);
+
+			GUI::TimedMessageDialog dialog(buf, 1500);
+			runDialog(dialog);
+		}
+		if (success && _saveLoadFlag != 1)
+			clearClickedStatus();
+
+		_saveLoadFlag = 0;
+		_lastSaveTime = _system->getMillis();
+	}
+}
+
+void ScummEngine::scummLoop_handleDrawing() {
+	// FIXME / TODO: Do we really have to check for GF_NEW_CAMERA?
+	// Since old games simply don't use the y coord, we should be able to safely
+	// use "camera._cur != camera._last" here...
+	if (camera._cur.x != camera._last.x || _bgNeedsRedraw || _fullRedraw
+			|| ((_game.features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
+		redrawBGAreas();
+	}
+
+	processDrawQue();
+
+	if (_game.heversion >= 99)
+		_fullRedraw = false;
+
+	// Full Throttle always redraws verbs and draws verbs before actors
+	if (_game.version >= 7)
+		redrawVerbs();
+
+#ifndef DISABLE_HE
+	if (_game.heversion >= 90) {
+		((ScummEngine_v90he *)this)->_sprite->resetBackground();
+		((ScummEngine_v90he *)this)->_sprite->sortActiveSprites();
+	}
+#endif
+}
+
+void ScummEngine::scummLoop_handleActors() {
+	setActorRedrawFlags();
+	resetActorBgs();
+
+	if (!(getCurrentLights() & LIGHTMODE_room_lights_on) &&
+		  getCurrentLights() & LIGHTMODE_flashlight_on) {
+		drawFlashlight();
+		setActorRedrawFlags();
+	}
+
+	processActors();
+}
+
+void ScummEngine::scummLoop_handleEffects() {
+	if (_game.version >= 4 && _game.heversion <= 61)
+		cyclePalette();
+	palManipulate();
+	if (_doEffect) {
+		_doEffect = false;
+		fadeIn(_newEffect);
+		clearClickedStatus();
+	}
+}
+
+void ScummEngine::scummLoop_handleSound() {
+	_sound->processSound();
+
+#ifndef DISABLE_SCUMM_7_8
+	if (_imuseDigital) {
+		_imuseDigital->flushTracks();
+		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
+			_imuseDigital->refreshScripts();
+	}
+	if (_smixer) {
+		_smixer->flush();
+	}
+#endif
+}
+
 
 #pragma mark -
 #pragma mark --- SCUMM ---

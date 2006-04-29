@@ -439,6 +439,9 @@ public:
 	/** Central resource data. */
 	ResourceManager res;
 
+	// Misc utility functions
+	uint32 _debugFlags;	// Used by the debugger
+
 protected:
 	VirtualMachineState vm;
 
@@ -453,6 +456,7 @@ public:
 	// Init functions
 	int init();
 
+protected:
 	virtual void setupScummVars();
 	virtual void initScummVars();
 
@@ -460,19 +464,28 @@ public:
 
 	void loadCJKFont();
 	void setupMusic(int midi);
+public:
+	// The following is called by ConfigDialog::close
+	// TODO: Simply move that call to ScummEngine::mainMenuDialog to fix this
 	void setupVolumes();
 
-	// Scumm main loop
+protected:
+	// Scumm main loop & helper functions.
 	int scummLoop(int delta);
+	virtual void scummLoop_updateScummVars();
+	virtual void scummLoop_handleSaveLoad();
+	virtual void scummLoop_handleDrawing();
+	virtual void scummLoop_handleActors();
+	virtual void scummLoop_handleEffects();
+	virtual void scummLoop_handleSound();
 
 	// Event handling
-	void parseEvents();
+public:
+	void parseEvents();	// Used by IMuseDigital::startSound
+protected:
 	void waitForTimer(int msec_delay);
 	void processKbd(bool smushMode);
 	void clearClickedStatus();
-
-	// Misc utility functions
-	uint32 _debugFlags;
 
 	// Cursor/palette
 	void updateCursor();
@@ -486,8 +499,9 @@ public:
 	bool _smushVideoShouldFinish;
 	/** This flag is a hack to allow the pause dialog to pause SMUSH playback, too. */
 	bool _smushPaused;
+public:
 	/** This flag tells IMuseDigital that INSANE is running. */
-	bool _insaneRunning;
+	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
 
 protected:
 	Insane *_insane;
