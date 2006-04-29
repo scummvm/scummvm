@@ -21,8 +21,10 @@
  */
 
 #include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/debugger.cpp"
+
 #include "simon/debugger.h"
 #include "simon/simon.h"
 

@@ -24,11 +24,10 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "simon/animation.h"
 #include "simon/simon.h"
-#include "simon/intern.h"
-
-#include "common/system.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);

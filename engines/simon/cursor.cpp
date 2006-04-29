@@ -22,9 +22,9 @@
 
 #include "common/stdafx.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
 #include "common/system.h"
+
+#include "simon/simon.h"
 
 namespace Simon {
 

@@ -25,7 +25,6 @@
 #include "common/file.h"
 
 #include "simon/simon.h"
-#include "simon/intern.h"
 
 namespace Simon {
 

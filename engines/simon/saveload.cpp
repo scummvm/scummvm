@@ -22,14 +22,14 @@
 
 #include "common/stdafx.h"
 
+#include "common/savefile.h"
+#include "common/system.h"
+
 #include "gui/about.h"
 #include "gui/message.h"
 
 #include "simon/simon.h"
 #include "simon/intern.h"
-
-#include "common/savefile.h"
-#include "common/system.h"
 
 namespace Simon {
 

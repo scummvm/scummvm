@@ -22,11 +22,13 @@
 
 
 #include "common/stdafx.h"
-#include "common/scummsys.h"
-#include "common/system.h"
+
 #include "common/file.h"
-#include "sound/mixer.h"
+#include "common/system.h"
+
 #include "simon/simon.h"
+
+#include "sound/mixer.h"
 
 namespace Simon {
 

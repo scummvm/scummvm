@@ -31,8 +31,6 @@
 #include "common/md5.h"
 
 #include "simon/simon.h"
-#include "simon/intern.h"
-
 
 namespace Simon {
 static DetectedGameList GAME_detectGames(const FSList &fslist);

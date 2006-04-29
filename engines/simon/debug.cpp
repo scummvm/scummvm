@@ -22,9 +22,10 @@
 
 // Simon debug functions
 #include "common/stdafx.h"
+
+#include "simon/debug.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
-#include "simon/debug.h"
 #include "simon/vga.h"
 
 #include <sys/stat.h>
