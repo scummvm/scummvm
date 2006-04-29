@@ -281,12 +281,16 @@ void Game::handleClick() {
 			fields.setField(NEW_ROOM_NUMBER, oldRoomNumber);
 			fields.setField(OLD_ROOM_NUMBER, 0);
 		}
-	} else if (res.getTalkState() != TALK_NONE) {
+	} else if ((room.cursorState() == CS_TALKING) ||
+			   (res.getTalkState() != TALK_NONE)) {
 		// Currently talking, so let it's tick proc handle it
 	} else if (mouse.y() < MENUBAR_Y_SIZE) {
 		uint8 response = Menu::getReference().execute();
 		if (response != MENUITEM_NONE)
 			handleMenuResponse(response);
+	} else if ((room.cursorState() == CS_SEQUENCE) ||
+			   (room.cursorState() == CS_UNKNOWN)) { 
+		// No action necessary
 	} else {
 		if (mouse.lButton())
 			handleLeftClick();
@@ -303,7 +307,7 @@ void Game::handleRightClickMenu() {
 	HotspotData *hotspot;
 	Action action;
 	uint32 actions;
-	uint16 itemId;
+	uint16 itemId = 0xffff;
 
 	if (room.hotspotId() != 0) {
 		// Get hotspot actions
@@ -353,23 +357,9 @@ void Game::handleRightClickMenu() {
 		}
 	}
 
-	// Set fields used by the script interpreter
-	fields.setField(CHARACTER_HOTSPOT_ID, PLAYER_ID);
-	if (hotspot) {
-		fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
-		if ((action != USE) && (action != GIVE)) {
-			fields.setField(USE_HOTSPOT_ID, 0xffff);
-		} 
-	}
-
 	if (action != NONE) {
-		res.setCurrentAction(action);
-		room.update();
-		Screen::getReference().update();
-		player->doAction(action, hotspot);
-
-		if (action != TALK_TO)
-			res.setCurrentAction(NONE);
+		player->stopWalking();
+		doAction(action, (hotspot != NULL) ? hotspot->hotspotId : NULL, itemId);
 	}
 }
 
@@ -377,22 +367,17 @@ void Game::handleLeftClick() {
 	Room &room = Room::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Resources &res = Resources::getReference();
-	ValueTableData &fields = res.fieldList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+
+	room.setCursorState(CS_NONE);
+	player->stopWalking();
+	player->setDestHotspot(0);
+	player->setActionCtr(0);
 
 	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {	
 		// Handle look at hotspot
-		HotspotData *hs = res.getHotspot(room.hotspotId());
+		doAction(LOOK_AT, room.hotspotId(), 0xffff);
 
-		fields.setField(CHARACTER_HOTSPOT_ID, PLAYER_ID);
-		fields.setField(ACTIVE_HOTSPOT_ID, hs->hotspotId);
-		fields.setField(USE_HOTSPOT_ID, 0xffff);
-
-		res.setCurrentAction(LOOK_AT);
-		room.update();
-		Screen::getReference().update();
-		player->doAction(LOOK_AT, hs);
-		res.setCurrentAction(NONE);
 	} else if (room.destRoomNumber() != 0) {
 		// Walk to another room
 		RoomExitCoordinateData &exitData = 
@@ -404,6 +389,21 @@ void Game::handleLeftClick() {
 		// Walking within room
 		player->walkTo(mouse.x(), mouse.y(), 0);
 	}
+}
+
+void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	ValueTableData &fields = res.fieldList();
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+
+	fields.setField(CHARACTER_HOTSPOT_ID, PLAYER_ID);
+	fields.setField(ACTIVE_HOTSPOT_ID, hotspotId);
+	fields.setField(USE_HOTSPOT_ID, usedId);
+
+	res.setCurrentAction(action);
+	room.setCursorState(CS_ACTION);
+	player->setCurrentAction(DISPATCH_ACTION, action, hotspotId, usedId);
 }
 
 void Game::doShowCredits() {

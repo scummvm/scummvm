@@ -43,6 +43,7 @@ private:
 	void handleClick();
 	void handleRightClickMenu();
 	void handleLeftClick();
+	void doAction(Action action, uint16 hotspotId, uint16 usedId);
 
 	void playerChangeRoom();
 public:

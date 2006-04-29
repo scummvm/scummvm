@@ -71,6 +71,7 @@ private:
 	CurrentAction _action;
 	Action _hotspotAction;
 	uint16 _hotspotId;
+	uint16 _usedId;
 public:
 	CurrentActionEntry(CurrentAction newAction) { _action = newAction; }
 	CurrentActionEntry(CurrentAction newAction, Action hsAction, uint16 id) { 
@@ -78,10 +79,17 @@ public:
 		_hotspotAction = hsAction;
 		_hotspotId = id;
 	}
+	CurrentActionEntry(CurrentAction newAction, Action hsAction, uint16 id, uint16 uId) { 
+		_action = newAction; 
+		_hotspotAction = hsAction;
+		_hotspotId = id;
+		_usedId = uId;
+	}
 
 	CurrentAction action() { return _action; }
 	Action hotspotAction() { return _hotspotAction; }
 	uint16 hotspotId() { return _hotspotId; }
+	uint16 usedId() { return _usedId; }
 };
 
 class CurrentActionStack {
@@ -95,8 +103,20 @@ public:
 	CurrentActionEntry &top() { return **_actions.begin(); }
 	CurrentAction action() { return isEmpty() ? NO_ACTION : top().action(); }
 	void pop() { _actions.erase(_actions.begin()); }
-	void add(CurrentAction newAction) {
+	void addBack(CurrentAction newAction) {
 		_actions.push_back(new CurrentActionEntry(newAction));
+	}
+	void addBack(CurrentAction newAction, Action hsAction, uint16 id) {
+		_actions.push_back(new CurrentActionEntry(newAction, hsAction, id));
+	}
+	void addFront(CurrentAction newAction) {
+		_actions.push_front(new CurrentActionEntry(newAction));
+	}
+	void addFront(CurrentAction newAction, Action hsAction, uint16 id) {
+		_actions.push_front(new CurrentActionEntry(newAction, hsAction, id));
+	}
+	void addFront(CurrentAction newAction, Action hsAction, uint16 id, uint16 usedId) {
+		_actions.push_front(new CurrentActionEntry(newAction, hsAction, id, usedId));
 	}
 };
 
@@ -156,7 +176,7 @@ public:
 	int &stepCtr() { return _stepCtr; }
 };
 
-enum HotspotPrecheckResult {PC_0, PC_1, PC_2, PC_INITIAL, PC_4};
+enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, PC_EXCESS};
 
 class Hotspot {
 private:
@@ -183,12 +203,12 @@ private:
 	bool _persistant;
 	HotspotOverrideData *_override;
 	bool _skipFlag;
-	bool _pathfindCovered;
 
 	CurrentActionStack _currentActions;
 	PathFinder _pathFinder;
 
 	uint16 _frameCtr;
+	uint8 _actionCtr;
 	int16 _destX, _destY;
 	uint16 _destHotspotId;
 
@@ -200,6 +220,7 @@ private:
 	HotspotPrecheckResult actionPrecheck2(HotspotData *hotspot);
 	void actionPrecheck3(HotspotData *hotspot);
 	bool characterWalkingCheck(HotspotData *hotspot);
+	bool doorCloseCheck(uint16 doorId);
 
 	// Action set
 	void doGet(HotspotData *hotspot);
@@ -213,11 +234,12 @@ private:
 	void doTell(HotspotData *hotspot);
 	void doLook();
 	void doLookAt(HotspotData *hotspot);
+	void doLookThrough(HotspotData *hotspot);
 	void doAsk(HotspotData *hotspot);
-	void doDrink();
+	void doDrink(HotspotData *hotspot);
 	void doStatus();
 	void doBribe(HotspotData *hotspot);
-	void doExamine();
+	void doExamine(HotspotData *hotspot);
 	void doSimple(HotspotData *hotspot, Action action);
 public:
 	Hotspot(HotspotData *res);
@@ -283,7 +305,7 @@ public:
 
 	// Walking
 	void walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot = 0);
-	void stopWalking() { _currentActions.clear(); }
+	void stopWalking();
 	void setDirection(Direction dir);
 	void faceHotspot(HotspotData *hotspot);
 	void setOccupied(bool occupiedFlag);
@@ -291,12 +313,22 @@ public:
 
 	// Actions
 	void doAction(Action action, HotspotData *hotspot);
-	void setCurrentAction(CurrentAction currAction) { _currentActions.add(currAction); }
+	void setCurrentAction(CurrentAction currAction) { 
+		_currentActions.addFront(currAction); 
+	}
+	void setCurrentAction(CurrentAction currAction, Action hsAction, uint16 id) { 
+		_currentActions.addFront(currAction, hsAction, id); 
+	}
+	void setCurrentAction(CurrentAction currAction, Action hsAction, uint16 id, uint16 usedId) { 
+		_currentActions.addFront(currAction, hsAction, id, usedId);
+	}
 	CurrentActionStack &currentActions() { return _currentActions; }
 	PathFinder &pathFinder() { return _pathFinder; }
 	uint16 frameCtr() { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
 	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }
+	uint8 actionCtr() { return _actionCtr; }
+	void setActionCtr(uint8 v) { _actionCtr = v; }
 };
 
 typedef ManagedList<Hotspot *> HotspotList;
