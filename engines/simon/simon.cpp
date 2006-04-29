@@ -2795,9 +2795,17 @@ void SimonEngine::timer_proc1() {
 	if (!(_lockWord & 0x10)) {
 		if (getGameType() == GType_FF) {
 			_syncFlag2 ^= 1;
-
-			if (!_syncFlag2)
+			if (!_syncFlag2) {
 				processVgaEvents();
+			} else {
+				// Double speed on Oracle
+				if (getBitFlag(99)) {
+					processVgaEvents();
+				} else if (_scrollCount == 0) {
+					_lockWord &= ~2;
+					return;
+				}
+			}
 		} else {
 			processVgaEvents();
 			processVgaEvents();
