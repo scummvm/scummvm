@@ -204,8 +204,10 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_KYRA_create(OSystem *system) {
-	return new KyraEngine(system);
+PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	*engine = new KyraEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine");

@@ -361,7 +361,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_GOB_create(OSystem *syst) {
+PluginError Engine_GOB_create(OSystem *syst, Engine **engine) {
 	// Detect game features based on MD5
 	uint8 md5sum[16];
 	char md5str[32 + 1];
@@ -403,7 +403,9 @@ Engine *Engine_GOB_create(OSystem *syst) {
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 	}
 
-	return new GobEngine(syst, features, g->lang);
+	assert(engine);
+	*engine = new GobEngine(syst, features, g->lang);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(GOB, "Gob Engine");

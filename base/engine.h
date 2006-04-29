@@ -75,33 +75,12 @@ public:
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
 
-	/* Indicate if an autosave should be performed */
+	/* Indicate if an autosave should be performed. */
 	bool shouldPerformAutoSave(int lastSaveTime);
 
-	/** Initialized graphics and shows error message */
+	/** Initialized graphics and shows error message. */
 	void GUIErrorMessage(const Common::String msg);
 };
-
-// Used when no valid game was found in the directory
-// Just pops up an error message and returns to launcher
-class Engine_Empty : public Engine {
-public:
-	Engine_Empty(OSystem *syst, const Common::String msg = "No valid games were found in specified directory.");
-	virtual ~Engine_Empty() {}
-
-	// Displays error message and do not run go() method
-	int init() { GUIErrorMessage(_message); return 1; }
-
-	// Just indicate that we want return to launcher
-	int go() { return 1; }
-
-	void errorString(char *buf_input, char *buf_output) {}
-
-private:
-	Common::String _message;
-};
-
-
 
 extern Engine *g_engine;
 

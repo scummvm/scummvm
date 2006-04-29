@@ -154,8 +154,10 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_LURE_create(OSystem *system) {
-	return new LureEngine(system);
+PluginError Engine_LURE_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	*engine = new LureEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine");

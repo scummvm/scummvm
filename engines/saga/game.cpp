@@ -83,8 +83,10 @@ DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
 	return Saga::GAME_detectGames(fslist);
 }
 
-Engine *Engine_SAGA_create(OSystem *syst) {
-	return new Saga::SagaEngine(syst);
+PluginError Engine_SAGA_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	*engine = new Saga::SagaEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine");

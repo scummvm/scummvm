@@ -180,9 +180,11 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	}
 
 	// Create the game engine
-	Engine *engine = plugin->createInstance(&system);
-	if (!engine) {
+	Engine *engine = 0;
+	PluginError err = plugin->createInstance(&system, &engine);
+	if (!engine || err != kNoError) {
 		// TODO: Show an error dialog or so?
+		// TODO: Also take 'err' into consideration...
 		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
 		//alert.runModal();
 		warning("Failed to instantiate engine for target %s", ConfMan.getActiveDomainName().c_str());

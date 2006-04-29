@@ -1278,8 +1278,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-Engine *Engine_SCUMM_create(OSystem *syst) {
-	Engine *engine;
+PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
+	assert(syst);
+	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	// We start by checking whether the specified game ID is obsolete.
@@ -1313,8 +1314,8 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 
 	// Unable to locate game data
 	if (results.empty()) {
-		warning("ScummEngine: unable to locate game data");
-		return new Engine_Empty(syst);
+		warning("ScummEngine: unable to locate game data at path '%s'", dir.path().c_str());
+		return kNoGameDataFoundError;
 	}
 	
 	DetectorResult res(*(results.begin()));
@@ -1374,74 +1375,74 @@ Engine *Engine_SCUMM_create(OSystem *syst) {
 	// instantiate the appropriate game engine. Hooray!
 	switch (res.game.version) {
 	case 0:
-		engine = new ScummEngine_c64(syst, res);
+		*engine = new ScummEngine_c64(syst, res);
 		break;
 	case 1:
 	case 2:
-		engine = new ScummEngine_v2(syst, res);
+		*engine = new ScummEngine_v2(syst, res);
 		break;
 	case 3:
 		if (res.game.features & GF_OLD_BUNDLE)
-			engine = new ScummEngine_v3old(syst, res);
+			*engine = new ScummEngine_v3old(syst, res);
 		else
-			engine = new ScummEngine_v3(syst, res);
+			*engine = new ScummEngine_v3(syst, res);
 		break;
 	case 4:
-		engine = new ScummEngine_v4(syst, res);
+		*engine = new ScummEngine_v4(syst, res);
 		break;
 	case 5:
-		engine = new ScummEngine_v5(syst, res);
+		*engine = new ScummEngine_v5(syst, res);
 		break;
 	case 6:
 		switch (res.game.heversion) {
 #ifndef DISABLE_HE
 		case 100:
-			engine = new ScummEngine_v100he(syst, res);
+			*engine = new ScummEngine_v100he(syst, res);
 			break;
 		case 99:
-			engine = new ScummEngine_v99he(syst, res);
+			*engine = new ScummEngine_v99he(syst, res);
 			break;
 		case 98:
 		case 95:
 		case 90:
-			engine = new ScummEngine_v90he(syst, res);
+			*engine = new ScummEngine_v90he(syst, res);
 			break;
 		case 80:
-			engine = new ScummEngine_v80he(syst, res);
+			*engine = new ScummEngine_v80he(syst, res);
 			break;
 		case 73:
 		case 72:
-			engine = new ScummEngine_v72he(syst, res);
+			*engine = new ScummEngine_v72he(syst, res);
 			break;
 		case 71:
-			engine = new ScummEngine_v71he(syst, res);
+			*engine = new ScummEngine_v71he(syst, res);
 			break;
 		case 70:
-			engine = new ScummEngine_v70he(syst, res);
+			*engine = new ScummEngine_v70he(syst, res);
 			break;
 #endif
 #ifndef PALMOS_68K
 		case 61:
-			engine = new ScummEngine_v60he(syst, res);
+			*engine = new ScummEngine_v60he(syst, res);
 			break;
 #endif
 		default:
-			engine = new ScummEngine_v6(syst, res);
+			*engine = new ScummEngine_v6(syst, res);
 		}
 		break;
 #ifndef DISABLE_SCUMM_7_8
 	case 7:
-		engine = new ScummEngine_v7(syst, res);
+		*engine = new ScummEngine_v7(syst, res);
 		break;
 	case 8:
-		engine = new ScummEngine_v8(syst, res);
+		*engine = new ScummEngine_v8(syst, res);
 		break;
 #endif
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
 
-	return engine;
+	return kNoError;
 }
 
 REGISTER_PLUGIN(SCUMM, "Scumm Engine");

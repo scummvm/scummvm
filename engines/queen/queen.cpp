@@ -128,8 +128,10 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_QUEEN_create(OSystem *syst) {
-	return new Queen::QueenEngine(syst);
+PluginError Engine_QUEEN_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	*engine = new Queen::QueenEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen");

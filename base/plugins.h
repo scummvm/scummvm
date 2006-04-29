@@ -66,6 +66,20 @@ typedef Common::Array<DetectedGame> DetectedGameList;
 
 
 /**
+ * Error codes which mayb be reported by plugins under various circumstances.
+ * @todo Turn this into a global 'ErrorCode' enum used by all of ScummVM ?
+ */
+enum PluginError {
+	kNoError = 0,	// No error occured
+	kInvalidPathError,
+	kNoGameDataFoundError,
+	kUnsupportedGameidError,
+	
+	kUnknownError		// Catch-all error, used if no other error code matches
+};
+
+
+/**
  * Abstract base class for the plugin system.
  * Subclasses for this can be used to wrap both static and dynamic
  * plugins.
@@ -84,7 +98,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
 	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
 
-	virtual Engine *createInstance(OSystem *syst) const = 0;
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
 };
 
 
@@ -106,7 +120,7 @@ public:
  * - DetectedGameList Engine_##ID##_detectGames(const FSList &fslist)
  *   -> scans through the given file list (usually the contents of a directory),
  *      and attempts to detects games present in that location.
- * - Engine *Engine_##ID##_create(OSystem *syst)
+ * - PluginError Engine_##ID##_create(OSystem *syst, Engine **engine)
  *   -> factory function, create an instance of the Engine class.
  *
  * @todo	add some means to query the plugin API version etc.
@@ -130,7 +144,7 @@ public:
 		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
 		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
 		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
-		PLUGIN_EXPORT Engine *PLUGIN_createEngine(OSystem *syst) { return Engine_##ID##_create(syst); } \
+		PLUGIN_EXPORT PluginError PLUGIN_createEngine(OSystem *syst, Engine **engine) { return Engine_##ID##_create(syst, engine); } \
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
@@ -145,7 +159,7 @@ class PluginRegistrator {
 	friend class StaticPlugin;
 public:
 	typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
-	typedef Engine *(*EngineFactory)(OSystem *syst);
+	typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
 	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 protected:

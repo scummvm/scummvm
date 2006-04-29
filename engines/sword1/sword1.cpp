@@ -117,8 +117,10 @@ DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_SWORD1_create(OSystem *syst) {
-	return new SwordEngine(syst);
+PluginError Engine_SWORD1_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	*engine = new SwordEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(SWORD1, "Broken Sword");

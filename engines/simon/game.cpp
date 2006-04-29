@@ -111,7 +111,7 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 	return Simon::GAME_detectGames(fslist);
 }
 
-Engine *Engine_SIMON_create(OSystem *syst) {
+PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	for (const ObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
@@ -129,7 +129,9 @@ Engine *Engine_SIMON_create(OSystem *syst) {
 		}
 	}
 
-	return new Simon::SimonEngine(syst);
+	assert(engine);
+	*engine = new Simon::SimonEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(SIMON, "Simon the Sorcerer");

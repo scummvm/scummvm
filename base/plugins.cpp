@@ -28,7 +28,7 @@
 #include "common/util.h"
 
 /** Type of factory functions which make new Engine objects. */
-typedef Engine *(*EngineFactory)(OSystem *syst);
+typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
 
 typedef const char *(*NameFunc)();
 typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
@@ -116,9 +116,9 @@ public:
 
 	const char *getName() const { return _plugin->_name; }
 
-	Engine *createInstance(OSystem *syst) const {
+	PluginError createInstance(OSystem *syst, Engine **engine) const {
 		assert(_plugin->_ef);
-		return (*_plugin->_ef)(syst);
+		return (*_plugin->_ef)(syst, engine);
 	}
 
 	GameList getSupportedGames() const { return _plugin->_games; }
@@ -157,9 +157,9 @@ public:
 
 	const char *getName() const					{ return _name.c_str(); }
 
-	Engine *createInstance(OSystem *syst) const {
+	PluginError createInstance(OSystem *syst, Engine **engine) const {
 		assert(_ef);
-		return (*_ef)(syst);
+		return (*_ef)(syst, engine);
 	}
 
 	GameList getSupportedGames() const { return _games; }

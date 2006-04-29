@@ -259,7 +259,3 @@ void Engine::GUIErrorMessage(const Common::String msg) {
 	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
 }
-
-Engine_Empty::Engine_Empty(OSystem *syst, const Common::String msg) : Engine(syst), _message(msg) {
-}
-

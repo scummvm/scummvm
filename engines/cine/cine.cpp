@@ -110,8 +110,10 @@ DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-Engine *Engine_CINE_create(OSystem *syst) {
-	return new Cine::CineEngine(syst);
+PluginError Engine_CINE_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	*engine = new Cine::CineEngine(syst);
+	return kNoError;
 }
 
 REGISTER_PLUGIN(CINE, "CINE Engine");
