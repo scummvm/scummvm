@@ -790,7 +790,6 @@ void ScummEngine::redrawBGAreas() {
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw || diff != 0) {
 			_bgNeedsRedraw = false;
-			_flashlight.isDrawn = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
 	}
@@ -1090,7 +1089,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	}
 }
 
-void ScummEngine::drawFlashlight() {
+void ScummEngine_v5::drawFlashlight() {
 	int i, j, x, y;
 	VirtScreen *vs = &virtscr[kMainVirtScreen];
 

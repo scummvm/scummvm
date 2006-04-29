@@ -49,6 +49,13 @@ protected:
 	uint16 _cursorImages[4][17];
 	byte _cursorHotspots[2 * 4];
 
+	struct {
+		int x, y, w, h;
+		byte *buffer;
+		uint16 xStrips, yStrips;
+		bool isDrawn;
+	} _flashlight;
+
 public:
 	ScummEngine_v5(OSystem *syst, const DetectorResult &dr);
 
@@ -56,6 +63,8 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+
+	virtual void scummLoop_handleActors();
 
 	virtual void setupScummVars();
 	virtual void initScummVars();
@@ -78,6 +87,8 @@ protected:
 	void setBuiltinCursor(int index);
 	void redefineBuiltinCursorFromChar(int index, int chr);
 	void redefineBuiltinCursorHotspot(int index, int x, int y);
+
+	void drawFlashlight();
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
@@ -564,6 +575,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void scummLoop_handleActors();
+
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
 	virtual void readArrayFromIndexFile();
@@ -821,6 +834,9 @@ public:
 	void clearSubtitleQueue();
 
 protected:
+	virtual void scummLoop_handleSound();
+	virtual void scummLoop_handleDrawing();
+
 	virtual void setupScummVars();
 	virtual void initScummVars();
 

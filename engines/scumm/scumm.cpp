@@ -371,7 +371,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_doEffect = false;
 	_currentLights = 0;
-	memset(&_flashlight, 0, sizeof(_flashlight));
 	_bompActorPalettePtr = NULL;
 	_shakeEnabled = false;
 	_shakeFrame = 0;
@@ -740,6 +739,12 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 		memcpy(_cursorImages[i], default_cursor_images[i], 32);
 	}
 	memcpy(_cursorHotspots, default_cursor_hotspots, 8);
+
+	// Setup flashlight
+	memset(&_flashlight, 0, sizeof(_flashlight));
+	_flashlight.xStrips = 7;
+	_flashlight.yStrips = 7;
+	_flashlight.buffer = NULL;
 }
 
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
@@ -1228,13 +1233,6 @@ void ScummEngine::scummInit() {
 
 	virtscr[0].xstart = 0;
 
-	if (_game.version <= 5) {
-		// Setup light
-		_flashlight.xStrips = 7;
-		_flashlight.yStrips = 7;
-		_flashlight.buffer = NULL;
-	}
-
 	_mouse.x = 104;
 	_mouse.y = 56;
 
@@ -1554,7 +1552,7 @@ int ScummEngine::go() {
 		diff = _system->getMillis();
 		delta = scummLoop(delta);
 
-		if (delta < 1)	// Ensure we don't get into a loop
+		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
 
 		if (_quit) {
@@ -1869,32 +1867,44 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine::scummLoop_handleDrawing() {
-	// FIXME / TODO: Do we really have to check for GF_NEW_CAMERA?
-	// Since old games simply don't use the y coord, we should be able to safely
-	// use "camera._cur != camera._last" here...
-	if (camera._cur.x != camera._last.x || _bgNeedsRedraw || _fullRedraw
-			|| ((_game.features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
+	if (camera._cur != camera._last || _bgNeedsRedraw || _fullRedraw) {
 		redrawBGAreas();
 	}
 
 	processDrawQue();
+}
 
-	if (_game.heversion >= 99)
-		_fullRedraw = false;
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v7::scummLoop_handleDrawing() {
+	ScummEngine_v6::scummLoop_handleDrawing();
 
 	// Full Throttle always redraws verbs and draws verbs before actors
 	if (_game.version >= 7)
 		redrawVerbs();
+}
+#endif
 
 #ifndef DISABLE_HE
+void ScummEngine_v90he::scummLoop_handleDrawing() {
+	ScummEngine_v80he::scummLoop_handleDrawing();
+
+	if (_game.heversion >= 99)
+		_fullRedraw = false;
+
 	if (_game.heversion >= 90) {
-		((ScummEngine_v90he *)this)->_sprite->resetBackground();
-		((ScummEngine_v90he *)this)->_sprite->sortActiveSprites();
+		_sprite->resetBackground();
+		_sprite->sortActiveSprites();
 	}
+}
 #endif
+
+void ScummEngine_v6::scummLoop_handleActors() {
+	setActorRedrawFlags();
+	resetActorBgs();
+	processActors();
 }
 
-void ScummEngine::scummLoop_handleActors() {
+void ScummEngine_v5::scummLoop_handleActors() {
 	setActorRedrawFlags();
 	resetActorBgs();
 
@@ -1920,8 +1930,11 @@ void ScummEngine::scummLoop_handleEffects() {
 
 void ScummEngine::scummLoop_handleSound() {
 	_sound->processSound();
+}
 
 #ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v7::scummLoop_handleSound() {
+	ScummEngine_v6::scummLoop_handleSound();
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
 		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
@@ -1930,8 +1943,8 @@ void ScummEngine::scummLoop_handleSound() {
 	if (_smixer) {
 		_smixer->flush();
 	}
-#endif
 }
+#endif
 
 
 #pragma mark -

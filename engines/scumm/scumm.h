@@ -475,7 +475,7 @@ protected:
 	virtual void scummLoop_updateScummVars();
 	virtual void scummLoop_handleSaveLoad();
 	virtual void scummLoop_handleDrawing();
-	virtual void scummLoop_handleActors();
+	virtual void scummLoop_handleActors() = 0;
 	virtual void scummLoop_handleEffects();
 	virtual void scummLoop_handleSound();
 
@@ -997,13 +997,6 @@ protected:
 
 	byte *_scrollBuffer;
 
-	struct {
-		int x, y, w, h;
-		byte *buffer;
-		uint16 xStrips, yStrips;
-		bool isDrawn;
-	} _flashlight;
-
 public:
 	bool isLightOn() const;
 
@@ -1088,8 +1081,6 @@ public:
 	byte *getMaskBuffer(int x, int y, int z);
 
 protected:
-	void drawFlashlight();
-
 	void fadeIn(int effect);
 	void fadeOut(int effect);
 
