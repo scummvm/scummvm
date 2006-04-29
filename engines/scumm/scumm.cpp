@@ -434,7 +434,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	//
 	// Init all VARS to 0xFF
 	//
-	VAR_LANGUAGE = 0xFF;
 	VAR_KEYPRESS = 0xFF;
 	VAR_SYNC = 0xFF;
 	VAR_EGO = 0xFF;
@@ -923,6 +922,8 @@ ScummEngine_v7::~ScummEngine_v7() {
 ScummEngine_v8::ScummEngine_v8(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v7(syst, dr) {
 	_objectIDMap = 0;
+
+	VAR_LANGUAGE = 0xFF;
 }
 
 ScummEngine_v8::~ScummEngine_v8() {
@@ -955,12 +956,13 @@ int ScummEngine::init() {
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.
-	if (_game.features & GF_AUDIOTRACKS)
+	if (_game.features & GF_AUDIOTRACKS) {
 		checkCD();
-
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0 && (_game.features & GF_AUDIOTRACKS))
-		_system->openCD(cd_num);
+	
+		int cd_num = ConfMan.getInt("cdrom");
+		if (cd_num >= 0)
+			_system->openCD(cd_num);
+	}
 
 	// Create the sound manager
 	if (_game.heversion > 0)

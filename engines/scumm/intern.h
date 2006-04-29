@@ -890,6 +890,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void initScummVars();
 	virtual void decodeParseString(int m, int n);
 	virtual void readArrayFromIndexFile();
 
@@ -940,6 +941,7 @@ protected:
 
 	void o8_getStringWidth();
 
+	byte VAR_LANGUAGE;
 };
 
 #endif

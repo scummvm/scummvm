@@ -312,11 +312,7 @@ void ScummEngine::processKbd(bool smushMode) {
 #ifdef _WIN32_WCE
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
-		if (smushMode) {
-			_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
-		}
-		else
-		if (vm.cutScenePtr[vm.cutSceneStackPointer])
+		if (smushMode || vm.cutScenePtr[vm.cutSceneStackPointer])
 			_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 		else
 		// Skip talk

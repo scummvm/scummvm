@@ -1243,7 +1243,6 @@ protected:
 public:
 
 	/* Scumm Vars */
-	byte VAR_LANGUAGE;
 	byte VAR_KEYPRESS;
 	byte VAR_SYNC;
 	byte VAR_EGO;
