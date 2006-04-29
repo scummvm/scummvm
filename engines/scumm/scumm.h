@@ -947,21 +947,7 @@ public:
 	// Generic costume code
 	bool isCostumeInUse(int i) const;
 
-	// Akos Class
-	struct {
-		int16 cmd;
-		int16 actor;
-		int16 param1;
-		int16 param2;
-	} _akosQueue[32];
-	int16 _akosQueuePos;
-
 	Common::Rect _actorClipOverride;
-
-	bool akos_increaseAnims(const byte *akos, Actor *a);
-	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
-	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
-	virtual void akos_processQueue();
 
 protected:
 	/* Should be in Graphics class? */

@@ -1014,6 +1014,10 @@ void ScummEngine::processActors() {
 			a->animateCostume();
 		}
 	}
+}
+
+void ScummEngine_v6::processActors() {
+	ScummEngine::processActors();
 
 	if (_game.features & GF_NEW_COSTUMES)
 		akos_processQueue();
@@ -1024,7 +1028,7 @@ void ScummEngine_v71he::processActors() {
 	preProcessAuxQueue();
 
 	if (!_skipProcessActors)
-		ScummEngine::processActors();
+		ScummEngine_v6::processActors();
 
 	_fullRedraw = false;
 
@@ -1038,7 +1042,7 @@ void ScummEngine_v90he::processActors() {
 	_sprite->processImages(true);
 
 	if (!_skipProcessActors)
-		ScummEngine::processActors();
+		ScummEngine_v6::processActors();
 
 	_fullRedraw = false;
 
@@ -1240,7 +1244,7 @@ void Actor::animateLimb(int limb, int f) {
 
 		while (f--) {
 			if (_cost.active[limb] != 0)
-				_vm->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
+				((ScummEngine_v6 *)_vm)->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
 		}
 
 //		_needRedraw = true;

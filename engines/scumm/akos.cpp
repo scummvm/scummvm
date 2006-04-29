@@ -1334,10 +1334,10 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 }
 
 byte AkosCostumeLoader::increaseAnims(Actor *a) {
-	return _vm->akos_increaseAnims(_akos, a);
+	return ((ScummEngine_v6 *)_vm)->akos_increaseAnims(_akos, a);
 }
 
-bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {
+bool ScummEngine_v6::akos_increaseAnims(const byte *akos, Actor *a) {
 	const byte *aksq, *akfo;
 	int i;
 	uint size;
@@ -1360,7 +1360,7 @@ bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {
 #define GUW(o) READ_LE_UINT16(aksq+curpos+(o))
 #define GB(o) aksq[curpos+(o)]
 
-bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16 *akfo, int numakfo) {
+bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16 *akfo, int numakfo) {
 	byte active;
 	uint old_curpos, curpos, end;
 	uint code;
@@ -1721,7 +1721,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		return curpos != old_curpos;
 }
 
-void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
+void ScummEngine_v6::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
 	_akosQueuePos++;
 	checkRange(31, 0, _akosQueuePos, "akos_queCommand overflow");
 
@@ -1731,7 +1731,7 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	_akosQueue[_akosQueuePos].param2 = param_2;
 }
 
-void ScummEngine::akos_processQueue() {
+void ScummEngine_v6::akos_processQueue() {
 	byte cmd;
 	int actor, param_1, param_2;
 

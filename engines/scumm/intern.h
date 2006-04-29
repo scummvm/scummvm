@@ -564,6 +564,15 @@ protected:
 	int _blastTextQueuePos;
 	BlastText _blastTextQueue[50];
 
+	// Akos Class
+	struct {
+		int16 cmd;
+		int16 actor;
+		int16 param1;
+		int16 param2;
+	} _akosQueue[32];
+	int16 _akosQueuePos;
+
 
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
@@ -620,6 +629,14 @@ protected:
 
 	virtual void clearDrawQueues();
 
+public:
+	bool akos_increaseAnims(const byte *akos, Actor *a);
+	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
+protected:
+	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+	virtual void akos_processQueue();
+
+	virtual void processActors();
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();

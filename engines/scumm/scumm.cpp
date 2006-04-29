@@ -428,9 +428,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_skipDrawObject = 0;
 
-	memset(_akosQueue, 0, sizeof(_akosQueue));
-	_akosQueuePos = 0;
-
 	//
 	// Init all VARS to 0xFF
 	//
@@ -788,6 +785,9 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	memset(_blastTextQueue, 0, sizeof(_blastTextQueue));
 
 	_smushFrameRate = 0;
+
+	memset(_akosQueue, 0, sizeof(_akosQueue));
+	_akosQueuePos = 0;
 
 	VAR_VIDEONAME = 0xFF;
 	VAR_RANDOM_NR = 0xFF;
