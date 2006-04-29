@@ -80,7 +80,7 @@ enum Action {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 4
+#define LURE_DAT_MINOR 5
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
@@ -173,8 +173,7 @@ enum Action {
 #define TALK_HEADER_RESOURCE_ID 0x3f10
 #define TALK_DATA_RESOURCE_ID 0x3f11
 #define ROOM_PATHS_RESOURCE_ID 0x3f12
-#define HOTSPOT_PROXIMITY_RESOURCE_ID 0x3f13
-#define EXIT_COORDINATES_RESOURCE_ID 0x3f14
+#define EXIT_COORDINATES_RESOURCE_ID 0x3f13
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
@@ -182,16 +181,18 @@ enum Action {
 // Miscellaneous resources
 #define CREDITS_RESOURCE_ID 0x7800
 #define NAMES_RESOURCE_ID 9
+#define NOONE_ID 0x3E7
 #define PLAYER_ID 0x3E8
 #define RATPOUCH_ID 0x3E9
 #define SKORL_ID 0x3EA
+#define FIRST_NONCHARACTER_ID 0x408
 #define SACK_ID 0x40D
 #define TRANSFORM_ID 0x425
 
 #define START_NONVISUAL_HOTSPOT_ID 0x7530
 
 // Milliseconds delay between game frames
-#define GAME_FRAME_DELAY 100
+#define GAME_FRAME_DELAY 80
 
 // Tick proc constants
 #define TALK_TICK_PROC_ID 0x8ABD
