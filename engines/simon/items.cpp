@@ -1312,8 +1312,10 @@ void SimonEngine::o_screenTextMsg() {
 	tl = getTextLocation(vgaSpriteId);
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
-	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speechId == 0)
+	if (((getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) || getGameType() == GType_FF) &&
+		speechId == 0) {
 		stopAnimateSimon2(2, vgaSpriteId + 2);
+	}
 
 	if (string_ptr != NULL && (speechId == 0 || _subtitles))
 		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
