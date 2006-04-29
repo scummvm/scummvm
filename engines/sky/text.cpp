@@ -343,7 +343,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	if (textNr) {
 		uint8 *blockPtr = textDataPtr + blockNr + READ_LE_UINT16(textDataPtr);
 		do {
-			uint8 skipBytes = *blockPtr++;
+			uint16 skipBytes = *blockPtr++;
 			if (skipBytes & 0x80) {
 				skipBytes &= 0x7F;
 				skipBytes <<= 3;
