@@ -1978,6 +1978,9 @@ void ScummEngine::restart() {
 		clearOwnerOf(i);
 
 	// Reallocate arrays
+	// FIXME: This should already be called by readIndexFile.
+	// FIXME: regardless of that, allocateArrays and allocResTypeData leaks
+	// heavily, which should be fixed.
 	allocateArrays();
 
 	// Reread index (reset objectstate etc)
