@@ -359,7 +359,7 @@ void Game::handleRightClickMenu() {
 
 	if (action != NONE) {
 		player->stopWalking();
-		doAction(action, (hotspot != NULL) ? hotspot->hotspotId : NULL, itemId);
+		doAction(action, (hotspot != NULL) ? hotspot->hotspotId : 0, itemId);
 	}
 }
 
