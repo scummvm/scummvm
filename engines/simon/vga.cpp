@@ -971,7 +971,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 
 			if (state->flags & kDFMasked) {
-				if (getBitFlag(81) == false) {
+				if (!getBitFlag(81)) {
 					if (state->x  > _feebleRect.right)
 						return;
 					if (state->y > _feebleRect.bottom)

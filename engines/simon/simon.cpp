@@ -2517,7 +2517,7 @@ void SimonEngine::waitForSync(uint a) {
 
 void SimonEngine::skipSpeech() {
 	_sound->stopVoice();
-	if (getBitFlag(28) == false) {
+	if (!getBitFlag(28)) {
 		setBitFlag(14, true);
 		if (getGameType() == GType_FF) {
 			_variableArray[103] = 5;
