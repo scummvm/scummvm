@@ -118,10 +118,9 @@ bool RoomPathsData::isOccupied(int x, int y) {
 }
 
 void RoomPathsData::setOccupied(int x, int y, int width) {
-	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (x >= ROOM_PATHS_HEIGHT))
+	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (y >= ROOM_PATHS_HEIGHT))
 		return;
-
-	byte *p = &_data[y * 5 + (x % 8)];
+	byte *p = &_data[y * 5 + (x / 8)];
 	byte bitMask = 0x80 >> (x % 8);
 
 	for (int bitCtr = 0; bitCtr < width; ++bitCtr) {
@@ -135,14 +134,13 @@ void RoomPathsData::setOccupied(int x, int y, int width) {
 }
 
 void RoomPathsData::clearOccupied(int x, int y, int width) {
-	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (x >= ROOM_PATHS_HEIGHT))
+	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (y >= ROOM_PATHS_HEIGHT))
 		return;
-
-	byte *p = &_data[y * 5 + (x % 8)];
+	byte *p = &_data[y * 5 + (x / 8)];
 	byte bitMask = 0x80 >> (x % 8);
 
 	for (int bitCtr = 0; bitCtr < width; ++bitCtr) {
-		*p &= !bitMask;
+		*p &= ~bitMask;
 		bitMask >>= 1;
 		if (bitMask == 0) {
 			++p;
@@ -274,6 +272,8 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	widthCopy = READ_LE_UINT16(&rec->widthCopy);
 	heightCopy = READ_LE_UINT16(&rec->heightCopy);
 	yCorrection = READ_LE_UINT16(&rec->yCorrection);
+	walkX = READ_LE_INT16(&rec->walkX);
+	walkY = READ_LE_UINT16(&rec->walkY);
 	talkX = rec->talkX;
 	talkY = rec->talkY;
 	colourOffset = READ_LE_UINT16(&rec->colourOffset);
@@ -479,25 +479,6 @@ void SequenceDelayList::tick() {
 			return;
 		}
 	}
-}
-
-// The following class holds the proximity data for hotspots that is used
-// to determine whether a character needs to walk to a hotspot or not
-
-HotspotProximityData::HotspotProximityData(HotspotProximityResource *rec) {
-	hotspotId = FROM_LE_16(rec->hotspotId);
-	x = FROM_LE_16(rec->x);
-	y = FROM_LE_16(rec->y);
-}
-
-HotspotProximityData *HotspotProximityList::getHotspot(uint16 hotspotId) {
-	iterator i;
-	for (i = begin(); i != end(); ++i) {
-		HotspotProximityData *rec = *i;
-		if (rec->hotspotId == hotspotId) return rec;
-	}
-
-	return NULL;
 }
 
 // Field list and miscellaneous variables

@@ -73,6 +73,8 @@ struct HotspotResource {
 	uint16 widthCopy;
 	uint16 heightCopy;
 	uint16 yCorrection;
+	int16 walkX;
+	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
 	uint16 colourOffset;
@@ -175,12 +177,6 @@ struct TalkResponseResource {
 	uint16 sequenceId1;
 	uint16 sequenceId2;
 	uint16 sequenceId3;
-} GCC_PACK;
-
-struct HotspotProximityResource {
-	uint16 hotspotId;
-	uint16 x;
-	uint16 y;
 } GCC_PACK;
 
 struct RoomExitCoordinateResource {
@@ -378,6 +374,8 @@ public:
 	uint16 widthCopy;
 	uint16 heightCopy;
 	uint16 yCorrection;
+	int16 walkX;
+	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
 	uint16 colourOffset;
@@ -385,9 +383,10 @@ public:
 	uint16 sequenceOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
-
+	
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
+	Direction nonVisualDirection() { return (Direction) scriptLoadFlag; }
 };
 
 typedef ManagedList<HotspotData *> HotspotDataList;
@@ -514,25 +513,6 @@ public:
 	void tick();
 };
 
-class HotspotProximityData {
-public:
-	HotspotProximityData(HotspotProximityResource *rec);
-
-	uint16 hotspotId;
-	uint16 x;
-	uint16 y;
-};
-
-class HotspotProximityList: public ManagedList<HotspotProximityData *> {
-public:
-	HotspotProximityData *getHotspot(uint16 hotspotId);
-};
-
-struct PlayerNewPosition {
-	Point position;
-	uint16 roomNumber;
-};
-
 // The following class holds the field list used by the script engine as 
 // well as miscellaneous fields used by the game.                          
 
@@ -553,6 +533,11 @@ enum FieldName {
 	BOTTLE_FILLED = 18,
 	TALK_INDEX = 19,
 	SACK_CUT = 20
+};
+
+struct PlayerNewPosition {
+	Point position;
+	uint16 roomNumber;
 };
 
 class ValueTableData {
