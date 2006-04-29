@@ -25,7 +25,151 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+using Common::File;
+
 namespace Simon {
+
+const byte *SimonEngine::getStringPtrByID(uint stringId) {
+	const byte *string_ptr;
+	byte *dst;
+
+	_freeStringSlot ^= 1;
+
+	if (stringId < 0x8000) {
+		string_ptr = _stringTabPtr[stringId];
+	} else {
+		string_ptr = getLocalStringByID(stringId);
+	}
+
+	dst = _stringReturnBuffer[_freeStringSlot];
+	strcpy((char *)dst, (const char *)string_ptr);
+	return dst;
+}
+
+const byte *SimonEngine::getLocalStringByID(uint stringId) {
+	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
+		loadTextIntoMem(stringId);
+	}
+	return _localStringtable[stringId - _stringIdLocalMin];
+}
+
+void SimonEngine::allocateStringTable(int num) {
+	_stringTabPtr = (byte **)calloc(num, sizeof(byte *));
+	_stringTabPos = 0;
+	_stringtab_numalloc = num;
+}
+
+void SimonEngine::setupStringTable(byte *mem, int num) {
+	int i = 0;
+	for (;;) {
+		_stringTabPtr[i++] = mem;
+		if (--num == 0)
+			break;
+		for (; *mem; mem++);
+		mem++;
+	}
+
+	_stringTabPos = i;
+}
+
+void SimonEngine::setupLocalStringTable(byte *mem, int num) {
+	int i = 0;
+	for (;;) {
+		_localStringtable[i++] = mem;
+		if (--num == 0)
+			break;
+		for (; *mem; mem++);
+		mem++;
+	}
+}
+
+uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
+	if (getFeatures() & GF_OLD_BUNDLE)
+		return loadTextFile_simon1(filename, dst);
+	else
+		return loadTextFile_gme(filename, dst);
+}
+
+uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
+	File fo;
+	fo.open(filename);
+	uint32 size;
+
+	if (fo.isOpen() == false)
+		error("loadTextFile: Can't open '%s'", filename);
+
+	size = fo.size();
+
+	if (fo.read(dst, size) != size)
+		error("loadTextFile: fread failed");
+	fo.close();
+
+	return size;
+}
+
+uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
+	uint res;
+	uint32 offs;
+	uint32 size;
+
+	res = atoi(filename + 4) + TEXT_INDEX_BASE - 1;
+	offs = _gameOffsetsPtr[res];
+	size = _gameOffsetsPtr[res + 1] - offs;
+
+	readGameFile(dst, offs, size);
+
+	return size;
+}
+
+void SimonEngine::loadTextIntoMem(uint stringId) {
+	byte *p;
+	char filename[30];
+	int i;
+	uint base_min = 0x8000, base_max, size;
+
+	_tablesHeapPtr = _tablesheapPtrNew;
+	_tablesHeapCurPos = _tablesHeapCurPosNew;
+
+	p = _strippedTxtMem;
+
+	// get filename
+	while (*p) {
+		for (i = 0; *p; p++, i++)
+			filename[i] = *p;
+		filename[i] = 0;
+		p++;
+
+		base_max = (p[0] * 256) | p[1];
+		p += 2;
+
+		if (stringId < base_max) {
+			_stringIdLocalMin = base_min;
+			_stringIdLocalMax = base_max;
+
+			_localStringtable = (byte **)_tablesHeapPtr;
+
+			size = (base_max - base_min + 1) * sizeof(byte *);
+			_tablesHeapPtr += size;
+			_tablesHeapCurPos += size;
+
+			size = loadTextFile(filename, _tablesHeapPtr);
+
+			setupLocalStringTable(_tablesHeapPtr, base_max - base_min + 1);
+
+			_tablesHeapPtr += size;
+			_tablesHeapCurPos += size;
+
+			if (_tablesHeapCurPos > _tablesHeapSize) {
+				error("loadTextIntoMem: Out of table memory");
+			}
+			return;
+		}
+
+		base_min = base_max;
+	}
+
+	error("loadTextIntoMem: didn't find %d", stringId);
+}
 
 static const byte charWidth[226] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

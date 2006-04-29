@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	cursor.o \
 	debug.o \
 	debugger.o \
+	event.o \
 	game.o \
 	icons.o \
 	items.o \
@@ -17,8 +18,10 @@ MODULE_OBJS := \
 	simon.o \
 	sound.o \
 	string.o \
+	subroutine.o \
 	verb.o \
 	vga.o \
+	window.o \
 
 MODULE_DIRS += \
 	engines/simon
