@@ -44,6 +44,8 @@
 using Common::File;
 
 
+namespace Audio {
+
 static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
 
 #pragma mark -
@@ -134,7 +136,7 @@ static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
 	f->curr_pos = f->file->pos() - f->start;
 
 #ifdef __SYMBIAN32__
-    // For symbian we now store the last read position and then close the file
+	// For symbian we now store the last read position and then close the file
 	if (f->file) {
 		f->file->close();
 	}
@@ -208,7 +210,7 @@ bool VorbisTrackInfo::openTrack() {
 #ifndef __SYMBIAN32__
 		_file->incRef();
 #endif	
-    }
+	}
 
 	return err;
 }
@@ -233,7 +235,7 @@ void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int 
 	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #endif
 #else
-    ov_time_seek(&_ov_file, startFrame / 75.0);
+	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
 
 	AudioStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
@@ -392,7 +394,7 @@ AudioStream *makeVorbisStream(File *file, uint32 size) {
 #else
 	f->file = file;
 #endif
-    f->start = file->pos();
+	f->start = file->pos();
 	f->len = size;
 	f->curr_pos = 0;
 
@@ -400,12 +402,16 @@ AudioStream *makeVorbisStream(File *file, uint32 size) {
 		warning("Invalid file format");
 		delete ov_file;
 		delete f;
-        return 0;
-        } else {
+		return 0;
+	} else {
 #ifndef __SYMBIAN32__
 		file->incRef();
 #endif
 		return new VorbisInputStream(ov_file, 0, true);
-		}
 	}
-#endif
+}
+
+
+} // End of namespace Audio
+
+#endif // #ifdef USE_VORBIS

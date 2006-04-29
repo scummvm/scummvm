@@ -43,9 +43,9 @@
 
 namespace Sword2 {
 
-static AudioStream *makeCLUStream(Common::File *fp, int size);
+static Audio::AudioStream *makeCLUStream(Common::File *fp, int size);
 
-static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
+static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
 	debug(3, "Playing %s from CD %d", base, cd);
 
 	if (!fh->file.isOpen()) {
@@ -139,15 +139,15 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 		return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
-		return makeMP3Stream(&fh->file, enc_len);
+		return Audio::makeMP3Stream(&fh->file, enc_len);
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		return makeVorbisStream(&fh->file, enc_len);
+		return Audio::makeVorbisStream(&fh->file, enc_len);
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		return makeFlacStream(&fh->file, enc_len);
+		return Audio::makeFlacStream(&fh->file, enc_len);
 #endif
 	default:
 		return NULL;
@@ -232,7 +232,7 @@ void CLUInputStream::refill() {
 	_bufferEnd = out;
 }
 
-AudioStream *makeCLUStream(Common::File *file, int size) {
+Audio::AudioStream *makeCLUStream(Common::File *file, int size) {
 	return new CLUInputStream(file, size);
 }
 
@@ -718,7 +718,7 @@ uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
 
 	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
 
-	AudioStream *input = getAudioStream(fh, "speech", cd, speechId, &numSamples);
+	Audio::AudioStream *input = getAudioStream(fh, "speech", cd, speechId, &numSamples);
 
 	if (!input)
 		return 0;
@@ -762,7 +762,7 @@ int32 Sound::playCompSpeech(uint32 speechId, uint8 vol, int8 pan) {
 	int cd = _vm->_resman->getCD();
 	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
 
-	AudioStream *input = getAudioStream(fh, "speech", cd, speechId, NULL);
+	Audio::AudioStream *input = getAudioStream(fh, "speech", cd, speechId, NULL);
 
 	if (!input)
 		return RDERR_INVALIDID;

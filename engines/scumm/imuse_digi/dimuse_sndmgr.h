@@ -85,7 +85,7 @@ public:
 		int type;
 		int volGroupId;
 		int disk;
-		AudioStream *compressedStream;
+		Audio::AudioStream *compressedStream;
 		bool compressed;
 		char lastFileName[24];
 	};

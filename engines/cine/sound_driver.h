@@ -79,7 +79,7 @@ struct AdlibSoundInstrument {
 	byte amDepth;
 };
 	
-class AdlibSoundDriver : public SoundDriver, AudioStream {
+class AdlibSoundDriver : public SoundDriver, Audio::AudioStream {
 public:
 	AdlibSoundDriver(Audio::Mixer *mixer);
 	virtual ~AdlibSoundDriver();

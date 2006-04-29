@@ -43,7 +43,7 @@ static const int NUMCHANS = 4;
 /**
  * Scumm NES sound/music driver.
  */
-class Player_NES : public AudioStream, public MusicEngine {
+class Player_NES : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_NES(ScummEngine *scumm);
 	virtual ~Player_NES();

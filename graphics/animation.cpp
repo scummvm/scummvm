@@ -155,8 +155,8 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 #endif
 }
 
-AudioStream *BaseAnimationState::createAudioStream(const char *name, void *arg) {
-	return AudioStream::openStreamFile(name);
+Audio::AudioStream *BaseAnimationState::createAudioStream(const char *name, void *arg) {
+	return Audio::AudioStream::openStreamFile(name);
 }
 
 bool BaseAnimationState::decodeFrame() {

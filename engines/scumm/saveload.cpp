@@ -871,7 +871,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// as AudioCDManager::Status::playing, and MSVC6 has
 	// a fit with that. This typedef simplifies the notation
 	// to something MSVC6 can grasp.
-	typedef AudioCDManager::Status AudioCDManager_Status;
+	typedef Audio::AudioCDManager::Status AudioCDManager_Status;
 	const SaveLoadEntry audioCDEntries[] = {
 		MKLINE(AudioCDManager_Status, playing, sleUint32, VER(24)),
 		MKLINE(AudioCDManager_Status, track, sleInt32, VER(24)),
@@ -1140,7 +1140,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Save/load the Audio CD status
 	//
 	if (s->getVersion() >= VER(24)) {
-		AudioCDManager::Status info;
+		Audio::AudioCDManager::Status info;
 		if (s->isSaving())
 			info = AudioCD.getStatus();
 		s->saveLoadArrayOf(&info, 1, sizeof(info), audioCDEntries);

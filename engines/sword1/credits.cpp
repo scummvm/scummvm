@@ -86,7 +86,7 @@ bool spaceInBuf(uint16 blitSta, uint16 blitEnd, uint16 renderDest) {
 }
 
 void CreditsPlayer::play(void) {
-	AudioStream *bgSoundStream = AudioStream::openStreamFile("credits");
+	Audio::AudioStream *bgSoundStream = Audio::AudioStream::openStreamFile("credits");
 	if (bgSoundStream == NULL) {
 		warning("\"credits.ogg\" not found, skipping credits sequence");
 		return;

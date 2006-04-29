@@ -207,7 +207,7 @@ bool MP3Sound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
 	if (f) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, makeMP3Stream(f, size));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
 		return true;
 	}
 	return false;
@@ -219,7 +219,7 @@ bool OGGSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
 	if (f) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, makeVorbisStream(f, size));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
 		return true;
 	}
 	return false;
@@ -231,7 +231,7 @@ bool FLACSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
 	if (f) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, makeFlacStream(f, size));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
 		return true;
 	}
 	return false;

@@ -272,10 +272,10 @@ void Sound::playSound(int soundID) {
 		// We'd have to add the 'Creative Voice File' header for this, though,
 		// or make readVOCFromMemory() less strict.
 
-		VocBlockHeader &voc_block_hdr = *(VocBlockHeader *)ptr;
+		Audio::VocBlockHeader &voc_block_hdr = *(Audio::VocBlockHeader *)ptr;
 		assert(voc_block_hdr.blocktype == 1);
 		size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
-		rate = getSampleRateFromVOCRate(voc_block_hdr.sr);
+		rate = Audio::getSampleRateFromVOCRate(voc_block_hdr.sr);
 		assert(voc_block_hdr.pack == 0);
 
 		// Allocate a sound buffer, copy the data into it, and play
@@ -600,29 +600,29 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 	}
 
 	if (!_soundsPaused && _vm->_mixer->isReady()) {
-		AudioStream *input = NULL;
+		Audio::AudioStream *input = NULL;
 
 		switch (_soundMode) {
 		case kMP3Mode:
 	#ifdef USE_MAD
 			assert(size > 0);
-			input = makeMP3Stream(_sfxFile, size);
+			input = Audio::makeMP3Stream(_sfxFile, size);
 	#endif
 			break;
 		case kVorbisMode:
 	#ifdef USE_VORBIS
 			assert(size > 0);
-			input = makeVorbisStream(_sfxFile, size);
+			input = Audio::makeVorbisStream(_sfxFile, size);
 	#endif
 			break;
 		case kFlacMode:
 	#ifdef USE_FLAC
 			assert(size > 0);
-			input = makeFlacStream(_sfxFile, size);
+			input = Audio::makeFlacStream(_sfxFile, size);
 	#endif
 			break;
 		default:
-			input = makeVOCStream(*_sfxFile);
+			input = Audio::makeVOCStream(*_sfxFile);
 		}
 
 		if (!input) {

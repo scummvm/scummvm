@@ -137,7 +137,7 @@ private:
 	MidiParser *xmidiParser;
 	MidiParser *smfParser;
 
-	DigitalTrackInfo *_track;
+	Audio::DigitalTrackInfo *_track;
 
 	byte *_midiMusicData;
 

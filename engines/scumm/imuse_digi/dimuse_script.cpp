@@ -208,7 +208,7 @@ void IMuseDigital::refreshScripts() {
 	}
 }
 
-void IMuseDigital::startVoice(int soundId, AudioStream *input) {
+void IMuseDigital::startVoice(int soundId, Audio::AudioStream *input) {
 	debug(5, "startVoiceStream(%d)", soundId);
 	startSound(soundId, "", 0, IMUSE_VOLGRP_VOICE, input, 0, 127, 127);
 }

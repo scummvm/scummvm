@@ -31,6 +31,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
+namespace Audio {
+
 struct TrackFormat {
 	/** Decodername */
 	const char* decoderName;
@@ -165,3 +167,5 @@ int AudioCDManager::getCachedTrack(int track) {
 	debug(2, "Track %d not available in compressed format", track);
 	return -1;
 }
+
+} // End of namespace Audio

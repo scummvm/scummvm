@@ -41,18 +41,18 @@ namespace Saga {
 #define BUFFER_SIZE 4096
 
 struct TrackFormat {
-	DigitalTrackInfo* (*openTrackFunction)(int);
+	Audio::DigitalTrackInfo* (*openTrackFunction)(int);
 };
 
 static const TrackFormat TRACK_FORMATS[] = {
 #ifdef USE_FLAC
-	{ getFlacTrack },
+	{ Audio::getFlacTrack },
 #endif
 #ifdef USE_VORBIS
-	{ getVorbisTrack },
+	{ Audio::getVorbisTrack },
 #endif
 #ifdef USE_MAD
-	{ getMP3Track },
+	{ Audio::getMP3Track },
 #endif
 
 	{ NULL } // Terminator
@@ -63,7 +63,7 @@ static const TrackFormat TRACK_FORMATS[] = {
 // Sword 2, to make it easier to add support for compressed music... but I'll
 // worry about that later.
 
-class RAWInputStream : public AudioStream {
+class RAWInputStream : public Audio::AudioStream {
 private:
 	ResourceContext *_context;
 	Common::File *_file;
@@ -374,7 +374,7 @@ bool Music::isPlaying() {
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
-	AudioStream *audioStream = NULL;
+	Audio::AudioStream *audioStream = NULL;
 	MidiParser *parser;
 	ResourceContext *context;
 	byte *resourceData;

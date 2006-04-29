@@ -33,7 +33,7 @@ namespace Gob {
 
 class GobEngine;
 
-class Music : public AudioStream {
+class Music : public Audio::AudioStream {
 public:
 	Music(GobEngine *vm);
 	~Music();

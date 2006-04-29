@@ -71,7 +71,7 @@ void Sound::voicePlay(const char *file) {
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
 		_mixer->stopHandle(_vocHandle);
-		_currentVocFile = makeVOCStream(vocStream);
+		_currentVocFile = Audio::makeVOCStream(vocStream);
 	}
 
 	if (_currentVocFile)
@@ -476,13 +476,13 @@ void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
 
 const Sound::SpeechCodecs Sound::_supportedCodes[] = {
 #ifdef USE_MAD
-	{ ".VO3", makeMP3Stream },
+	{ ".VO3", Audio::makeMP3Stream },
 #endif // USE_MAD
 #ifdef USE_VORBIS
-	{ ".VOG", makeVorbisStream },
+	{ ".VOG", Audio::makeVorbisStream },
 #endif // USE_VORBIS
 #ifdef USE_FLAC
-	{ ".VOF", makeFlacStream },
+	{ ".VOF", Audio::makeFlacStream },
 #endif // USE_FLAC
 	{ 0, 0 }
 };

@@ -37,6 +37,8 @@
 using Common::File;
 
 
+namespace Audio {
+
 #pragma mark -
 #pragma mark --- Flac stream ---
 #pragma mark -
@@ -848,5 +850,7 @@ AudioStream *makeFlacStream(File *file, uint32 length)
 	return NULL;
 }
 
+
+} // End of namespace Audio
 
 #endif // #ifdef USE_FLAC

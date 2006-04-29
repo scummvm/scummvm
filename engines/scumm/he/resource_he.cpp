@@ -1777,7 +1777,7 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 			size = READ_BE_UINT32(ptr + 4);
 			Common::MemoryReadStream stream(ptr, size);
 
-			if (!loadWAVFromStream(stream, size, rate, flags)) {
+			if (!Audio::loadWAVFromStream(stream, size, rate, flags)) {
 				error("getSoundResourceSize: Not a valid WAV file");
 			}
 		} else {

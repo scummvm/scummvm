@@ -26,7 +26,7 @@
 
 #define FIXP_SHIFT 16
 
-class MidiDriver_Emulated : public AudioStream, public MidiDriver {
+class MidiDriver_Emulated : public Audio::AudioStream, public MidiDriver {
 protected:
 	bool _isOpen;
 	Audio::Mixer *_mixer;

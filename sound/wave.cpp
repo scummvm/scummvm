@@ -29,6 +29,8 @@
 #include "sound/wave.h"
 #include "sound/adpcm.h"
 
+namespace Audio {
+
 bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_) {
 	const uint32 initialPos = stream.pos();
 	byte buf[4+1];
@@ -181,3 +183,5 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 
 	return makeLinearInputStream(rate, flags, data, size, 0, 0);
 }
+
+} // End of namespace Audio

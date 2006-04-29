@@ -30,9 +30,8 @@
 #include "sound/mixer.h"
 #include "kyra/kyra.h"
 
-class AudioStream;
-
 namespace Audio {
+class AudioStream;
 class Mixer;
 class SoundHandle;
 } // end of namespace Audio
@@ -68,13 +67,13 @@ protected:
 	Audio::Mixer *_mixer;
 
 private:
-	AudioStream *_currentVocFile;
+	Audio::AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
 	Common::File _compressHandle;
 
 	struct SpeechCodecs {
 		const char *fileext;
-		AudioStream *(*streamFunc)(Common::File*, uint32);
+		Audio::AudioStream *(*streamFunc)(Common::File*, uint32);
 	};
 
 	static const SpeechCodecs _supportedCodes[];

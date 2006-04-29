@@ -26,7 +26,9 @@
 #include "common/scummsys.h"
 #include "sound/mixer.h"
 
-class AudioStream;
+namespace Audio {
+	class AudioStream;
+}
 
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
@@ -91,7 +93,7 @@ protected:
 	Common::File *_mpegFile;
 
 	Audio::SoundHandle _bgSound;
-	AudioStream *_bgSoundStream;
+	Audio::AudioStream *_bgSoundStream;
 
 #ifdef BACKEND_8BIT
 	int _palNum;
@@ -132,7 +134,7 @@ public:
 protected:
 	bool checkPaletteSwitch();
 	virtual void drawYUV(int width, int height, byte *const *dat) = 0;
-	virtual AudioStream *createAudioStream(const char *name, void *arg);
+	virtual Audio::AudioStream *createAudioStream(const char *name, void *arg);
 
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);

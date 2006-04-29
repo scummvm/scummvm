@@ -33,7 +33,7 @@ namespace Audio {
 
 namespace Sky {
 
-class AdlibMusic : public AudioStream, public MusicBase {
+class AdlibMusic : public Audio::AudioStream, public MusicBase {
 public:
 	AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk);
 	~AdlibMusic(void);

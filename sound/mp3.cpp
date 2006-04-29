@@ -36,6 +36,8 @@
 using Common::File;
 
 
+namespace Audio {
+
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
 #pragma mark -
@@ -487,4 +489,6 @@ DigitalTrackInfo *getMP3Track(int track) {
 }
 
 
-#endif
+} // End of namespace Audio
+
+#endif // #ifdef USE_MAD

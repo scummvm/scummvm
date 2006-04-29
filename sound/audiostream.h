@@ -28,6 +28,8 @@
 #include "common/scummsys.h"
 
 
+namespace Audio {
+
 /**
  * Generic input stream for the resampling code.
  */
@@ -116,11 +118,10 @@ AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32
 // us to go with the macro approach. So far this is
 // the only template function that MSVC6 seemed to
 // compile incorrectly. Knock on wood.
-#define READSAMPLE(is16Bit, isUnsigned, ptr) \
-	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
-
 #define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
 	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
+
+} // End of namespace Audio
 
 #endif

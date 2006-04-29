@@ -80,7 +80,7 @@ private:
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		Audio::SoundHandle handle;
 		AppendableAudioStream *stream;
-		AudioStream *stream2;
+		Audio::AudioStream *stream2;
 
 		Track();
 	};
@@ -106,7 +106,7 @@ private:
 	void callback();
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
-	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
+	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority);
 	void selectVolumeGroup(int soundId, int volGroupId);
 
 	int32 getPosInMs(int soundId);
@@ -135,7 +135,7 @@ public:
 
 	void setAudioNames(int32 num, char *names);
 
-	void startVoice(int soundId, AudioStream *input);
+	void startVoice(int soundId, Audio::AudioStream *input);
 	void startVoice(int soundId, const char *soundName);
 	void startMusic(int soundId, int volume);
 	void startMusic(const char *soundName, int soundId, int hookId, int volume);

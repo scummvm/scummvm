@@ -29,12 +29,12 @@
 #include "common/mutex.h"
 
 
-class AudioStream;
 class OSystem;
 
 
 namespace Audio {
 
+class AudioStream;
 class Channel;
 class Mixer;
 

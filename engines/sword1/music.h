@@ -44,7 +44,7 @@ enum MusicMode {
 	MusicVorbis
 };
 
-class WaveAudioStream : public AudioStream {
+class WaveAudioStream : public Audio::AudioStream {
 public:
 	WaveAudioStream(Common::File *source, uint32 pSize);
 	virtual ~WaveAudioStream();
@@ -61,15 +61,15 @@ private:
 	uint16	 _bitsPerSample;
 };
 
-class MusicHandle : public AudioStream {
+class MusicHandle : public Audio::AudioStream {
 private:
 	Common::File _file;
 	bool _looping;
 	int32 _fading;
 	int32 _fadeSamples;
 	MusicMode _musicMode;
-	AudioStream *_audioSource;
-	AudioStream *createAudioSource(void);
+	Audio::AudioStream *_audioSource;
+	Audio::AudioStream *createAudioSource(void);
 public:
 	MusicHandle() : _looping(false), _fading(0), _audioSource(NULL) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
@@ -85,7 +85,7 @@ public:
 	int getRate() const;
 };
 
-class Music : public AudioStream {
+class Music : public Audio::AudioStream {
 public:
 	Music(Audio::Mixer *pMixer);
 	~Music();

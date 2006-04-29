@@ -76,7 +76,7 @@ struct channel_data {
  * This simulates the pc speaker sound, which is driven  by the 8253 (square
  * wave generator) and a low-band filter.
  */
-class Player_V2 : public AudioStream, public MusicEngine {
+class Player_V2 : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_V2(ScummEngine *scumm, bool pcjr);
 	virtual ~Player_V2();

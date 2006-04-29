@@ -76,7 +76,7 @@ private:
 #endif
 
 protected:
-	virtual AudioStream *createAudioStream(const char *name, void *arg);
+	virtual Audio::AudioStream *createAudioStream(const char *name, void *arg);
 };
 
 class MoviePlayer {
@@ -98,15 +98,15 @@ private:
 };
 
 struct FileQueue {
-	AudioStream *stream;
+	Audio::AudioStream *stream;
 	FileQueue *next;
 };
 
-class SplittedAudioStream : public AudioStream {
+class SplittedAudioStream : public Audio::AudioStream {
 public:
 	SplittedAudioStream(void);
 	~SplittedAudioStream(void);
-	void appendStream(AudioStream *stream);
+	void appendStream(Audio::AudioStream *stream);
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	virtual bool isStereo(void) const;
 	virtual bool endOfData(void) const;

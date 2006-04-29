@@ -27,8 +27,12 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
-class AudioStream;
 namespace Common { class ReadStream; }
+
+namespace Audio {
+
+class AudioStream;
+
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -80,5 +84,7 @@ extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate)
  * This function uses loadVOCFromStream() internally.
  */
 AudioStream *makeVOCStream(Common::ReadStream &stream);
+
+} // End of namespace Audio
 
 #endif

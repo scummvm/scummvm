@@ -187,7 +187,7 @@ void MoviePlayer::startSound() {
 		_fd.read(buffer, size);
 
 		Common::MemoryReadStream stream(buffer, size);
-		_bgSoundStream = makeWAVStream(stream);
+		_bgSoundStream = Audio::makeWAVStream(stream);
 		_mixer->stopHandle(_bgSound);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 		free(buffer);

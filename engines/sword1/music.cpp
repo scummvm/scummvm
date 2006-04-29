@@ -47,7 +47,7 @@ WaveAudioStream::WaveAudioStream(Common::File *source, uint32 pSize) {
 	_sourceFile = source;
 	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
 	_sourceFile->incRef();
-	if (_sourceFile->isOpen() && loadWAVFromStream(*_sourceFile, size, rate, flags)) {
+	if (_sourceFile->isOpen() && Audio::loadWAVFromStream(*_sourceFile, size, rate, flags)) {
 		_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
 		_rate = rate;
 		if (pSize && (int)pSize < size)
@@ -107,16 +107,16 @@ bool WaveAudioStream::endOfData(void) const {
 // These functions are only called from Music, so I'm just going to
 // assume that if locking is needed it has already been taken care of.
 
-AudioStream *MusicHandle::createAudioSource(void) {
+Audio::AudioStream *MusicHandle::createAudioSource(void) {
 	_file.seek(0);
 	switch (_musicMode) {
 #ifdef USE_MAD
 	case MusicMp3:
-		return makeMP3Stream(&_file, _file.size());
+		return Audio::makeMP3Stream(&_file, _file.size());
 #endif
 #ifdef USE_VORBIS
 	case MusicVorbis:
-		return makeVorbisStream(&_file, _file.size());
+		return Audio::makeVorbisStream(&_file, _file.size());
 #endif
 	case MusicWave:
 		return makeWaveStream(&_file, 0);

@@ -163,7 +163,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 					int time_constant = ptr[offset];
 					offset += 2;
 					len -= 2;
-					sound->freq = getSampleRateFromVOCRate(time_constant);
+					sound->freq = Audio::getSampleRateFromVOCRate(time_constant);
 					sound->region[sound->numRegions].offset = offset;
 					sound->region[sound->numRegions].length = len;
 					sound->numRegions++;
@@ -614,11 +614,11 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 			if (!soundHandle->compressedStream) {
 #ifdef USE_VORBIS
 				if (oggMode)
-					soundHandle->compressedStream = makeVorbisStream(cmpFile, len);
+					soundHandle->compressedStream = Audio::makeVorbisStream(cmpFile, len);
 #endif
 #ifdef USE_MAD
 				if (!oggMode)
-					soundHandle->compressedStream = makeMP3Stream(cmpFile, len);
+					soundHandle->compressedStream = Audio::makeMP3Stream(cmpFile, len);
 #endif
 				assert(soundHandle->compressedStream);
 			}

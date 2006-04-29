@@ -28,11 +28,14 @@
 
 #ifdef USE_MAD
 
-class AudioStream;
-class DigitalTrackInfo;
 namespace Common {
 	class File;
 }
+
+namespace Audio {
+
+class AudioStream;
+class DigitalTrackInfo;
 
 DigitalTrackInfo *getMP3Track(int track);
 
@@ -44,6 +47,7 @@ DigitalTrackInfo *getMP3Track(int track);
  */
 AudioStream *makeMP3Stream(Common::File *file, uint32 size);
 
-#endif
+} // End of namespace Audio
 
-#endif
+#endif // #ifdef USE_MAD
+#endif // #ifndef SOUND_MP3_H

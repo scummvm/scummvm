@@ -265,7 +265,7 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 	int rate, size;
 	byte flags;
 
-	if (!loadWAVFromStream(stream, size, rate, flags)) {
+	if (!Audio::loadWAVFromStream(stream, size, rate, flags)) {
 		warning("playFX: Not a valid WAV file");
 		return RDERR_INVALIDWAV;
 	}

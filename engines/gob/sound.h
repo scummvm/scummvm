@@ -66,7 +66,7 @@ public:
 protected:
 	// TODO: This is a very primitive square wave generator. The only thing is
 	//       has in common with the PC speaker is that it sounds terrible.
-	class SquareWaveStream : public AudioStream {
+	class SquareWaveStream : public Audio::AudioStream {
 	private:
 		uint _rate;
 		bool _beepForever;

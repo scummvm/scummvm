@@ -28,6 +28,8 @@
 #include "sound/audiostream.h"
 
 
+namespace Audio {
+
 // TODO: Switch from a SeekableReadStream to a plain ReadStream. This requires
 // some internal refactoring but is definitely possible and will increase the
 // flexibility of this code.
@@ -353,3 +355,5 @@ int16 ADPCMInputStream::decodeMS(ADPCMChannelStatus *c, byte code) {
 AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
 	return new ADPCMInputStream(stream, size, type, rate, channels, blockAlign);
 }
+
+} // End of namespace Audio

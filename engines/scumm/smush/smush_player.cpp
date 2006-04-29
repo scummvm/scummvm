@@ -1270,7 +1270,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (_compressedFile.isOpen()) {
 		int size = _compressedFile.size();
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, makeMP3Stream(&_compressedFile, size));
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(&_compressedFile, size));
 		return;
 	}
 #endif
@@ -1281,7 +1281,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (_compressedFile.isOpen()) {
 		int size = _compressedFile.size();
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, makeVorbisStream(&_compressedFile, size));
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(&_compressedFile, size));
 		return;
 	}
 #endif

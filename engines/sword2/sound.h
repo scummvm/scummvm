@@ -79,7 +79,7 @@ enum {
 	RDSE_SPEAKING			= 0
 };
 
-class CLUInputStream : public AudioStream {
+class CLUInputStream : public Audio::AudioStream {
 private:
 	Common::File *_file;
 	bool _firstTime;
@@ -118,12 +118,12 @@ struct SoundFileHandle {
 	volatile bool inUse;
 };
 
-class MusicInputStream : public AudioStream {
+class MusicInputStream : public Audio::AudioStream {
 private:
 	int _cd;
 	SoundFileHandle *_fh;
 	uint32 _musicId;
-	AudioStream *_decoder;
+	Audio::AudioStream *_decoder;
 	int16 _buffer[BUFFER_SIZE];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
@@ -165,7 +165,7 @@ public:
 	int32 getTimeRemaining();
 };
 
-class Sound : public AudioStream {
+class Sound : public Audio::AudioStream {
 private:
 	Sword2Engine *_vm;
 

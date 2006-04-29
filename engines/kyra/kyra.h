@@ -26,8 +26,6 @@
 #include "base/engine.h"
 #include "common/rect.h"
 
-class AudioStream;
-
 namespace Kyra {
 
 class Movie;

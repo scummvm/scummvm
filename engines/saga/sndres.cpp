@@ -137,7 +137,7 @@ void SndRes::playVoice(uint32 resourceId) {
 
 bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader) {
 	byte *soundResource;
-	AudioStream *voxStream;
+	Audio::AudioStream *voxStream;
 	size_t soundResourceLength;
 	bool result = false;
 	GameSoundTypes resourceType;
@@ -217,7 +217,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.buffer = NULL;
 			free(soundResource);
 		} else {
-			voxStream = makeADPCMStream(&readS, soundResourceLength, kADPCMOki);
+			voxStream = Audio::makeADPCMStream(&readS, soundResourceLength, Audio::kADPCMOki);
 			buffer.buffer = (byte *)malloc(buffer.size);
 			voxSize = voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
 			if (voxSize != soundResourceLength * 2) {
@@ -228,7 +228,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		result = true;
 		break;
 	case kSoundVOC:
-		data = loadVOCFromStream(readS, size, rate);
+		data = Audio::loadVOCFromStream(readS, size, rate);
 		if (data) {
 			buffer.frequency = rate;
 			buffer.sampleBits = 8;
@@ -246,7 +246,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		free(soundResource);
 		break;
 	case kSoundWAV:
-		if (loadWAVFromStream(readS, size, rate, flags)) {
+		if (Audio::loadWAVFromStream(readS, size, rate, flags)) {
 			buffer.frequency = rate;
 			buffer.sampleBits = 16;
 			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);

@@ -28,6 +28,9 @@
 #include "common/singleton.h"
 #include "sound/mixer.h"
 
+
+namespace Audio {
+
 class DigitalTrackInfo {
 public:
 	virtual bool error() = 0;
@@ -82,6 +85,8 @@ private:
 };
 
 /** Shortcut for accessing the audio CD manager. */
-#define AudioCD		AudioCDManager::instance()
+#define AudioCD		Audio::AudioCDManager::instance()
+
+} // End of namespace Audio
 
 #endif

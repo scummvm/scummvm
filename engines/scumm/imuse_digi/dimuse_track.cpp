@@ -67,7 +67,7 @@ int IMuseDigital::allocSlot(int priority) {
 	return trackId;
 }
 
-void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority) {
+void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority) {
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 
 	int l = allocSlot(priority);

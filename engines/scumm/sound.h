@@ -136,7 +136,7 @@ protected:
  * An audio stream to which additional data can be appended on-the-fly.
  * Used by SMUSH and iMuseDigital.
  */
-class AppendableAudioStream : public AudioStream {
+class AppendableAudioStream : public Audio::AudioStream {
 public:
 	virtual void append(const byte *data, uint32 len) = 0;
 	virtual void finish() = 0;

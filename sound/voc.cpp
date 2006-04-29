@@ -31,6 +31,8 @@
 #include "sound/voc.h"
 
 
+namespace Audio {
+
 int getSampleRateFromVOCRate(int vocSR) {
 	if (vocSR == 0xa5 || vocSR == 0xa6) {
 		return 11025;
@@ -140,3 +142,5 @@ AudioStream *makeVOCStream(Common::ReadStream &stream) {
 	return makeLinearInputStream(rate, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, data, size, 0, 0);
 }
 
+
+} // End of namespace Audio

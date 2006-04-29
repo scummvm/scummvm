@@ -133,7 +133,7 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	byte wavFlags;
 	int size, rate;
-	if (!loadWAVFromStream(*_file, size, rate, wavFlags)) {
+	if (!Audio::loadWAVFromStream(*_file, size, rate, wavFlags)) {
 		error("playSound: Not a valid WAV file");
 	}
 
@@ -151,7 +151,7 @@ void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	_file->seek(_offsets[sound], SEEK_SET);
 
 	int size, rate;
-	byte *buffer = loadVOCFromStream(*_file, size, rate);
+	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
 	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
@@ -187,7 +187,7 @@ void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, makeMP3Stream(_file, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeMP3Stream(_file, size));
 }
 #endif
 
@@ -211,7 +211,7 @@ void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, makeVorbisStream(_file, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeVorbisStream(_file, size));
 }
 #endif
 
@@ -235,7 +235,7 @@ void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, makeFlacStream(_file, size));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeFlacStream(_file, size));
 }
 #endif
 
@@ -588,7 +588,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
-	if (!loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
+	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
 		error("playSoundData: Not a valid WAV data");
 	}
 
@@ -628,7 +628,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		flags |= Audio::Mixer::FLAG_LOOP;
 	
 	if (compType == 2) {
-		AudioStream *sndStream = makeADPCMStream(&stream, size, kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 		buffer = (byte *)malloc(size * 4);
 		size = sndStream->readBuffer((int16*)buffer, size * 2);
 		size *= 2; // 16bits.

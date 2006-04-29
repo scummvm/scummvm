@@ -38,7 +38,7 @@ class MoviePlayer {
 	Audio::Mixer *_mixer;
 
 	Audio::SoundHandle _bgSound;
-	AudioStream *_bgSoundStream;
+	Audio::AudioStream *_bgSoundStream;
 
 	bool _omniTV;
 	bool _playing;

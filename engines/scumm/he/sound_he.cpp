@@ -538,12 +538,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream stream(ptr, size);
 
-		if (!loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
+		if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
 			error("playHESound: Not a valid WAV file (%d)", soundID);
 		}
 
 		if (compType == 17) {
-			AudioStream *voxStream = makeADPCMStream(&stream, size, kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			sound = (char *)malloc(size * 4);
 			size = voxStream->readBuffer((int16*)sound, size * 2);

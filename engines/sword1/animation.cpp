@@ -74,11 +74,11 @@ bool AnimationState::soundFinished(void) {
 	return !_snd->isSoundHandleActive(_bgSound);
 }
 
-AudioStream *AnimationState::createAudioStream(const char *name, void *arg) {
+Audio::AudioStream *AnimationState::createAudioStream(const char *name, void *arg) {
 	if (arg)
-		return (AudioStream*)arg;
+		return (Audio::AudioStream*)arg;
 	else
-		return AudioStream::openStreamFile(name);
+		return Audio::AudioStream::openStreamFile(name);
 }
 
 MoviePlayer::MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys)
@@ -103,7 +103,7 @@ MoviePlayer::~MoviePlayer(void) {
 void MoviePlayer::play(uint32 id) {
 #if defined(USE_MPEG2) && defined(USE_VORBIS)
 	AnimationState *anim = new AnimationState(_scr, _snd, _sys);
-	AudioStream *stream = NULL;
+	Audio::AudioStream *stream = NULL;
 	if (SwordEngine::_systemVars.cutscenePackVersion == 1) {
 		if ((id == SEQ_INTRO) || (id == SEQ_FINALE) || (id == SEQ_HISTORY) || (id == SEQ_FERRARI)) {
 			// these sequences are language specific
@@ -120,7 +120,7 @@ void MoviePlayer::play(uint32 id) {
 				for (uint32 segCnt = 0; segCnt < numSegs; segCnt++) {
 					oggSource->seek( header[SwordEngine::_systemVars.language * 2 + 0 + segCnt * 14]);
 					uint32 segSize = header[SwordEngine::_systemVars.language * 2 + 1 + segCnt * 14];
-					AudioStream *apStream = makeVorbisStream(oggSource, segSize);
+					Audio::AudioStream *apStream = Audio::makeVorbisStream(oggSource, segSize);
 					if (!apStream)
 						error("Can't create Vorbis Stream from file %s", sndName);
 					sStream->appendStream(apStream);
@@ -240,7 +240,7 @@ int SplittedAudioStream::getRate(void) const {
 		return 22050;
 }
 
-void SplittedAudioStream::appendStream(AudioStream *stream) {
+void SplittedAudioStream::appendStream(Audio::AudioStream *stream) {
 	FileQueue **que = &_queue;
 	while (*que)
 		que = &((*que)->next);

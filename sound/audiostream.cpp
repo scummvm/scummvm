@@ -31,6 +31,9 @@
 #include "sound/vorbis.h"
 #include "sound/flac.h"
 
+
+namespace Audio {
+
 struct StreamFileFormat {
 	/** Decodername */
 	const char* decoderName;
@@ -209,3 +212,6 @@ AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32
 		}
 	}
 }
+
+
+} // End of namespace Audio

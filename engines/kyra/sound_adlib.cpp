@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-class AdlibDriver : public AudioStream {
+class AdlibDriver : public Audio::AudioStream {
 public:
 	AdlibDriver(Audio::Mixer *mixer);
 	~AdlibDriver();

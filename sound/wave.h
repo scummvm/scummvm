@@ -26,8 +26,11 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
-class AudioStream;
 namespace Common { class SeekableReadStream; }
+
+namespace Audio {
+
+class AudioStream;
 
 /**
  * Try to load a WAVE from the given seekable stream. Returns true if
@@ -46,5 +49,7 @@ extern bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int
  * This function uses loadWAVFromStream() internally.
  */
 AudioStream *makeWAVStream(Common::SeekableReadStream &stream);
+
+} // End of namespace Audio
 
 #endif

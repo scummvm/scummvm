@@ -36,7 +36,7 @@ namespace Scumm {
 /**
  * Generic Amiga MOD mixer - provides a 60Hz 'update' routine.
  */
-class Player_MOD : public AudioStream {
+class Player_MOD : public Audio::AudioStream {
 public:
 	Player_MOD(ScummEngine *scumm);
 	virtual ~Player_MOD();
@@ -73,7 +73,7 @@ private:
 		int8 pan;
 		uint16 freq;
 		Audio::RateConverter *converter;
-		AudioStream *input;
+		Audio::AudioStream *input;
 	};
 
 	Audio::Mixer *_mixer;

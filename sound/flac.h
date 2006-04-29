@@ -28,11 +28,14 @@
 
 #ifdef USE_FLAC
 
-class AudioStream;
-class DigitalTrackInfo;
 namespace Common {
 	class File;
 }
+
+namespace Audio {
+
+class AudioStream;
+class DigitalTrackInfo;
 
 DigitalTrackInfo *getFlacTrack(int track);
 
@@ -43,6 +46,8 @@ DigitalTrackInfo *getFlacTrack(int track);
  * factory function, and specify the appropriate size.
  */
 AudioStream *makeFlacStream(Common::File *file, uint32 size);
+
+} // End of namespace Audio
 
 #endif // #ifdef USE_FLAC
 #endif // #ifndef SOUND_FLAC_H

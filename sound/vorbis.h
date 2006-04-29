@@ -28,11 +28,14 @@
 
 #ifdef USE_VORBIS
 
-class AudioStream;
-class DigitalTrackInfo;
 namespace Common {
 	class File;
 }
+
+namespace Audio {
+
+class AudioStream;
+class DigitalTrackInfo;
 
 DigitalTrackInfo *getVorbisTrack(int track);
 
@@ -44,6 +47,7 @@ DigitalTrackInfo *getVorbisTrack(int track);
  */
 AudioStream *makeVorbisStream(Common::File *file, uint32 size);
 
-#endif
+} // End of namespace Audio
 
-#endif
+#endif // #ifdef USE_VORBIS
+#endif // #ifndef SOUND_VORBIS_H
