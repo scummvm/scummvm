@@ -658,7 +658,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
-	"WW|PLAY_TUNE",
+	"WWB|PLAY_TUNE",
 	/* 128 */
 	"W|WAIT_END_TUNE",
 	"W|IF_END_TUNE",
@@ -900,7 +900,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
-	"WW|PLAY_TUNE",
+	"WWB|PLAY_TUNE",
 	/* 128 */
 	"W|WAIT_END_TUNE",
 	"W|IF_END_TUNE",
@@ -1142,7 +1142,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
-	"WW|PLAY_TUNE",
+	"WWB|PLAY_TUNE",
 	/* 128 */
 	"W|WAIT_END_TUNE",
 	"W|IF_END_TUNE",
