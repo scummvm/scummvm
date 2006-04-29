@@ -733,18 +733,7 @@ void ConfigDialog::close() {
 	if (getResult()) {
 		// Subtitles
 		ConfMan.setBool("subtitles", _subtitlesCheckbox->getState(), _domain);
-
-		// Sync with current setting
-		if (!_speechCheckbox->getState()) {
-			ConfMan.setBool("speech_mute", true, _domain);
-			_vm->_voiceMode = 2;
-		} else {
-			ConfMan.setBool("speech_mute", false, _domain);
-			_vm->_voiceMode = _subtitlesCheckbox->getState();
-		}
-
-		if (_vm->_game.version >= 7)
-			_vm->VAR(_vm->VAR_VOICE_MODE) = _vm->_voiceMode;
+		ConfMan.setBool("speech_mute", !_speechCheckbox->getState(), _domain);
 	}
 
 	GUI_OptionsDialog::close();

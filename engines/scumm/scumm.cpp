@@ -1471,10 +1471,10 @@ void ScummEngine::setupMusic(int midi) {
 		}
 	}
 
-	updateVolumes();
+	updateSoundSettings();
 }
 
-void ScummEngine::updateVolumes() {
+void ScummEngine::updateSoundSettings() {
 
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
@@ -1488,6 +1488,15 @@ void ScummEngine::updateVolumes() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+
+
+	if (ConfMan.getBool("speech_mute"))
+		_voiceMode = 2;
+	else
+		_voiceMode = ConfMan.getBool("subtitles");
+
+	if (VAR_VOICE_MODE != 0xFF)
+		VAR(VAR_VOICE_MODE) = _voiceMode;
 }
 
 
@@ -2059,7 +2068,7 @@ void ScummEngine::mainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
-	updateVolumes();
+	updateSoundSettings();
 }
 
 void ScummEngine::confirmExitDialog() {

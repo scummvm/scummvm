@@ -270,7 +270,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	delete in;
 
 	// Update volume settings
-	updateVolumes();
+	updateSoundSettings();
 
 	// Init NES costume data
 	if (_game.platform == Common::kPlatformNES) {

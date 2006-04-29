@@ -469,7 +469,7 @@ protected:
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-	void updateVolumes();
+	void updateSoundSettings();
 
 protected:
 	// Scumm main loop & helper functions.

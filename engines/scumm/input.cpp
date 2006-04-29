@@ -435,7 +435,7 @@ void ScummEngine::processKbd(bool smushMode) {
 			vol = Audio::Mixer::kMaxMixerVolume;
 
 		ConfMan.setInt("music_volume", vol);
-		updateVolumes();
+		updateSoundSettings();
 	} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
 		if (_lastKeyHit == '+' && _defaultTalkDelay > 0)
 			_defaultTalkDelay--;
