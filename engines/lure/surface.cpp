@@ -388,8 +388,10 @@ Surface *Surface::getScreen(uint16 resourceId) {
 void Dialog::show(const char *text) {
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
+	Room &room = Room::getReference();
 	mouse.cursorOff();
 
+	room.update();
 	Surface *s = Surface::newDialog(INFO_DIALOG_WIDTH, text);
 	s->copyToScreen(INFO_DIALOG_X, INFO_DIALOG_Y);
 
@@ -435,6 +437,7 @@ void Dialog::showMessage(uint16 messageId, uint16 characterId) {
 		if (READ_LE_UINT16(v) == messageId) break;
 		++v;
 	}
+
 	// default response if a specific response not found
 	if (idVal == 0xffff) idVal = 0x8c4; 
 	
@@ -462,8 +465,9 @@ void Dialog::showMessage(uint16 messageId, uint16 characterId) {
 		Dialog::show(idVal);
 		
 	} else if (idVal != 0) {
-		/* still to be decoded */
-
+		// Handle message as a talking dialog
+		// TODO: show talk dialog
+		warning("Dialog style for message #%d not yet implemented", idVal);
 	}
 }
 
