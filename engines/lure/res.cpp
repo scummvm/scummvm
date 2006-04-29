@@ -254,17 +254,6 @@ void Resources::reloadData() {
 	}
 	delete mb;
 
-	// Load a list of hotspot proximities
-	mb = d.getEntry(HOTSPOT_PROXIMITY_RESOURCE_ID);
-	HotspotProximityResource *proxRec = (HotspotProximityResource *) mb->data();
-	while (FROM_LE_16(proxRec->hotspotId) != 0xffff) {
-		HotspotProximityData *newEntry = new HotspotProximityData(proxRec);
-		_proximityList.push_back(newEntry);
-		++joinRec;
-		++proxRec;
-	}
-	delete mb;
-
 	// Load in the list of room exit coordinates
 	mb = d.getEntry(EXIT_COORDINATES_RESOURCE_ID);
 	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();	
