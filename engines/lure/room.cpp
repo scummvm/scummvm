@@ -83,6 +83,8 @@ Room::Room(): _screen(Screen::getReference()) {
 	_showInfo = false;
 	_isExit = false;
 	_destRoomNumber = 0;
+//****DEBUG****
+	memset(tempLayer, 0, DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT * 2);
 }
 
 Room::~Room() {
@@ -194,18 +196,19 @@ void Room::checkRoomHotspots() {
 		_hotspotId = 0;
 		_hotspotNameId = 0;
 		_hotspot = NULL;
+		_destRoomNumber = 0;
 	} else {
 		_hotspotNameId = entry->nameId;
 		_hotspot = entry;
 		_hotspotId = entry->hotspotId;
 		_isExit = false;
-		_destRoomNumber = 0;
 	}
 }
 
 uint8 Room::checkRoomExits() {
 	Mouse &m = Mouse::getReference();
 	Resources &res = Resources::getReference();
+	_destRoomNumber = 0;
 
 	RoomExitHotspotList &exits = _roomData->exitHotspots;
 	if (exits.empty()) return CURSOR_ARROW;
@@ -422,16 +425,19 @@ void Room::update() {
 		} else {
 			char buffer[MAX_DESC_SIZE];
 			strcpy(buffer, res.getCurrentActionStr());
-			strcat(buffer, " ");
 
-			if (usedId != 0xffff) {
-				uint16 nameId = res.getHotspot(usedId)->nameId;
-				strings.getString(nameId, buffer + strlen(buffer), NULL, NULL);
-				if (action == GIVE) strcat(buffer, " to ");
-				else strcat(buffer, " on ");
+			if (action != STATUS) {
+				strcat(buffer, " ");
+
+				if (usedId != 0xffff) {
+					uint16 nameId = res.getHotspot(usedId)->nameId;
+					strings.getString(nameId, buffer + strlen(buffer), NULL, NULL);
+					if (action == GIVE) strcat(buffer, " to ");
+					else strcat(buffer, " on ");
+				}
+
+				strcat(buffer, _hotspotName);
 			}
-
-			strcat(buffer, _hotspotName);
 			s.writeString(0, 0, buffer, false, DIALOG_WHITE_COLOUR);
 		}
 	}
@@ -449,9 +455,9 @@ void Room::update() {
 				uint16 v = tempLayer[(yctr + 1) * DECODED_PATHS_WIDTH + xctr + 1];
 				if ((v != 0) && (v < 100)) {
 					sprintf(buffer, "%d", v % 10);
-					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
-				} else if (v == 0xffff) {
-//				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
+//					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
+//				} else if (v == 0xffff) {
+				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
 					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
 				}
 			}
@@ -507,13 +513,20 @@ void Room::checkCursor() {
 	uint16 oldHotspotId = _hotspotId;
 	uint16 currentCursor = mouse.getCursorNum();
 	uint16 newCursor = currentCursor;
+	CurrentAction playerAction = res.getActiveHotspot(PLAYER_ID)->currentActions().action();
 
-	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END)) {
+	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END) &&
+		((playerAction == START_WALKING) || (playerAction == PROCESSING_PATH))) {
+		// Animate the clock when processing the player path
 		++newCursor;
 		if (newCursor == CURSOR_CROSS) newCursor = CURSOR_TIME_START;
 	} else if (checkInTalkDialog()) {
 		newCursor = CURSOR_TALK;
 	} else if (res.getTalkData()) {
+		newCursor = CURSOR_ARROW;
+	} else if (_cursorState == CS_UNKNOWN) {
+		newCursor = CURSOR_CAMERA;
+	} else if (_cursorState == CS_TALKING) {
 		newCursor = CURSOR_ARROW;
 	} else if (mouse.y() < MENUBAR_Y_SIZE) {
 		// If viewing a room remotely, then don't change to the menu cursor
@@ -521,6 +534,10 @@ void Room::checkCursor() {
 		if (oldRoomNumber != 0) return;
 		
 		newCursor = CURSOR_MENUBAR;
+	} else if (_cursorState != CS_NONE) {
+		// Currently in a special mode
+//		checkRoomHotspots();
+		newCursor = CURSOR_CAMERA;
 	} else {
 		// Check for a highlighted hotspot
 		checkRoomHotspots();

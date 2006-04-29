@@ -51,6 +51,8 @@ public:
 	}
 };
 
+enum CursorState {CS_NONE, CS_ACTION, CS_SEQUENCE, CS_TALKING, CS_UNKNOWN};
+
 class Room {
 private:
 	RoomData *_roomData;
@@ -69,6 +71,7 @@ private:
 	bool _cells[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
 	TalkDialog *_talkDialog;
 	int16 _talkDialogX, _talkDialogY;
+	CursorState _cursorState;
 
 	void checkRoomHotspots();
 	uint8 checkRoomExits();
@@ -98,8 +101,10 @@ public:
 	HotspotData &hotspot() { return *_hotspot; }
 	uint16 descId() { return _descId; }
 	bool showInfo() { return _showInfo; }
+	CursorState cursorState() { return _cursorState; }
 	void setShowInfo(bool value) { _showInfo = value; }
 	void setTalkDialog(uint16 characterId, uint16 descId);
+	void setCursorState(CursorState state) { _cursorState = state; }
 	bool checkInTalkDialog();
 };
 
