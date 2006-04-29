@@ -2665,12 +2665,13 @@ void SimonEngine::animateSpritesByY() {
 	while (vsp->id != 0) {
 		if (vsp->flags & kDFScaled) {
 			y = vsp->y;
-		} else {
-			y = vsp->priority;
+		} else if (vsp->flags & kDFMasked) {
 			vpe = &_vgaBufferPointers[vsp->zoneNum];
 			src = vpe->vgaFile2 + vsp->image * 8;
 			height = READ_LE_UINT16(src + 4) & 0x7FFF;
-			y += height;
+			y = vsp->y + height;
+		} else {
+			y = vsp->priority;
 		}
 
 		spriteTable[numSprites][0] = y;
