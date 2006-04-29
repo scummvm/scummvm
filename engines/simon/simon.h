@@ -602,7 +602,6 @@ protected:
 	void scriptMouseOn();
 	void scriptMouseOff();
 	void unfreezeBottom();
-	void fadeToBlack();
 
 	TextLocation *getTextLocation(uint a);
 	void setup_cond_c_helper();

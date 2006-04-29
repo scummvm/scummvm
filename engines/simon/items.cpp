@@ -1618,7 +1618,24 @@ void SimonEngine::o1_loadStrings() {
 
 void SimonEngine::o1_specialFade() {
 	// 187: fade to black
-	fadeToBlack();
+	uint i;
+
+	memcpy(_videoBuf1, _paletteBackup, 1024);
+
+	i = NUM_PALETTE_FADEOUT;
+	do {
+		palette_fadeout((uint32 *)_videoBuf1, 32);
+		palette_fadeout((uint32 *)_videoBuf1 + 32 + 16, 144);
+		palette_fadeout((uint32 *)_videoBuf1 + 32 + 16 + 144 + 16, 48);
+
+		_system->setPalette(_videoBuf1, 0, 256);
+		if (_fade)
+			_system->updateScreen();
+		delay(5);
+	} while (--i);
+
+	memcpy(_paletteBackup, _videoBuf1, 1024);
+	memcpy(_palette, _videoBuf1, 1024);
 }
 
 // -----------------------------------------------------------------------

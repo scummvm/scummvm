@@ -2337,27 +2337,6 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	}
 }
 
-void SimonEngine::fadeToBlack() {
-	uint i;
-
-	memcpy(_videoBuf1, _paletteBackup, 1024);
-
-	i = NUM_PALETTE_FADEOUT;
-	do {
-		palette_fadeout((uint32 *)_videoBuf1, 32);
-		palette_fadeout((uint32 *)_videoBuf1 + 32 + 16, 144);
-		palette_fadeout((uint32 *)_videoBuf1 + 32 + 16 + 144 + 16, 48);
-
-		_system->setPalette(_videoBuf1, 0, 256);
-		if (_fade)
-			_system->updateScreen();
-		delay(5);
-	} while (--i);
-
-	memcpy(_paletteBackup, _videoBuf1, 1024);
-	memcpy(_palette, _videoBuf1, 1024);
-}
-
 void SimonEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
 	VgaTimerEntry *vte;
 
@@ -2861,44 +2840,6 @@ void SimonEngine::timer_callback() {
 	} else {
 		timer_proc1();
 	}
-}
-
-bool SimonEngine::itemIsSiblingOf(uint16 a) {
-	Item *item;
-
-	CHECK_BOUNDS(a, _objectArray);
-
-	item = _objectArray[a];
-	if (item == NULL)
-		return true;
-
-	return me()->parent == item->parent;
-}
-
-bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {
-	Item *item_a, *item_b;
-
-	CHECK_BOUNDS(a, _objectArray);
-	CHECK_BOUNDS(b, _objectArray);
-
-	item_a = _objectArray[a];
-	item_b = _objectArray[b];
-
-	if (item_a == NULL || item_b == NULL)
-		return true;
-
-	return derefItem(item_a->parent) == item_b;
-}
-
-bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
-	Item *item;
-
-	CHECK_BOUNDS(a, _objectArray);
-
-	item = _objectArray[a];
-	if (item == NULL)
-		return true;
-	return item->state == b;
 }
 
 void SimonEngine::closeWindow(uint a) {
