@@ -33,7 +33,7 @@
  * Note: it would be very nice if we could instead of (or in addition to) the
  * build date present a date which corresponds to the date our source files
  * were last changed. To understand the difference, imagine that a user
- * makes a checkout of CVS on January 1, then after a week compiles it
+ * makes a checkout on January 1, then after a week compiles it
  * (e.g. after doing a 'make clean'). The build date then will say January 8
  * even though the files were last changed on January 1.
  *
@@ -42,28 +42,18 @@
  * It's clear that such a "last changed" date would be much more useful to us
  * for feedback purposes. After all, when somebody files a bug report, we
  * don't care about the build date, we want to know which date their checkout
- * was made. This is even more important now since anon CVS lags a few
- * days behind developer CVS.
+ * was made.
  *
  * So, how could we implement this? At least on unix systems, a special script
- * could do it. Basically, that script would run over all .cpp/.h files and
- * parse the CVS 'Header' keyword we have in our file headers.
- * That line contains a date/time in GMT. Now, the script just has to collect
- * all these times and find the latest. This time then would be inserted into
- * a header file or so (common/date.h ?) which engine.cpp then could
- * include and put into a global variable analog to gScummVMBuildDate.
+ * could do it. Basically, that script could parse the output of "svn info" to
+ * determine the revision of the checkout, and insert that information somehow
+ * into the build process (e.g. by generating a tiny header file, analog to
+ * internal_version.h, maybe called svn_rev.h or so.
  *
- * Drawback: scanning all source/header files will be rather slow. Also, this
- * only works on systems which can run powerful enough scripts (so I guess
- * Visual C++ would be out of the game here? don't know VC enough to be sure).
- *
- * Another approach would be to somehow get CVS to update a global file
- * (e.g. LAST_CHANGED) whenever any checkins are made. That would be
- * faster and work w/o much "logic" on the client side, in particular no
- * scripts have to be run. The problem with this is that I am not even
- * sure it's actually possible! Modifying files during commit time is trivial
- * to setup, but I have no idea if/how one can also change files which are not
- * currently being commit'ed.
+ * Drawback: This only works on systems which can run suitable scripts as part
+ * of the build proces (so I guess Visual C++ would be out of the game here?
+ * I don't know VC enough to be sure). And of course it must be robust enough
+ * to properly work in exports (i.e. release tar balls etc.).
  */
 const char *gScummVMVersion = SCUMMVM_VERSION;
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
