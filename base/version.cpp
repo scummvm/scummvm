@@ -45,10 +45,10 @@
  * was made.
  *
  * So, how could we implement this? At least on unix systems, a special script
- * could do it. Basically, that script could parse the output of "svn info" to
- * determine the revision of the checkout, and insert that information somehow
- * into the build process (e.g. by generating a tiny header file, analog to
- * internal_version.h, maybe called svn_rev.h or so.
+ * could do it. Basically, that script could parse the output of "svn info" or
+ * "svnversion" to determine the revision of the checkout, and insert that
+ * information somehow into the build process (e.g. by generating a tiny
+ * header file, analog to internal_version.h, maybe called svn_rev.h or so.)
  *
  * Drawback: This only works on systems which can run suitable scripts as part
  * of the build proces (so I guess Visual C++ would be out of the game here?
