@@ -195,6 +195,7 @@ bool File::open(const String &filename, AccessMode mode) {
 		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
 	}
 
+	_name.clear();
 	clearIOFailed();
 
 	String fname(filename);
@@ -261,6 +262,40 @@ bool File::open(const String &filename, AccessMode mode) {
 	return true;
 }
 
+bool File::open(const FilesystemNode &node, AccessMode mode) {
+	assert(mode == kFileReadMode || mode == kFileWriteMode);
+	String filename(node.displayName());
+
+	if (_handle) {
+		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
+	}
+
+	clearIOFailed();
+	_name.clear();
+
+	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
+
+
+	_handle = fopen(node.path().c_str(), modeStr);
+
+
+	if (_handle == NULL) {
+		if (mode == kFileReadMode)
+			debug(2, "File %s not found", filename.c_str());
+		else
+			debug(2, "File %s not opened", filename.c_str());
+		return false;
+	}
+
+	_name = filename;
+
+#ifdef DEBUG_FILE_REFCOUNT
+	warning("File::open on file '%s'", _name.c_str());
+#endif
+
+	return true;
+}
+
 bool File::exists(const String &filename) {
 	// First try to find the file it via a FilesystemNode (in case an absolute
 	// path was passed). But we only use this to filter out directories.
@@ -296,6 +331,7 @@ void File::close() {
 	if (_handle)
 		fclose(_handle);
 	_handle = NULL;
+	_name.clear();
 }
 
 bool File::isOpen() const {

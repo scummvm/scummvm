@@ -28,6 +28,8 @@
 #include "common/str.h"
 #include "common/stream.h"
 
+class FilesystemNode;
+
 namespace Common {
 
 class File : public SeekableReadStream, public WriteStream {
@@ -61,6 +63,7 @@ public:
 	void decRef();
 
 	virtual bool open(const String &filename, AccessMode mode = kFileReadMode);
+	virtual bool open(const FilesystemNode &node, AccessMode mode = kFileReadMode);
 	static bool exists(const String &filename);
 
 	virtual void close();
