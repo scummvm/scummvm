@@ -578,7 +578,6 @@ void ScummEngine_v7::resetScummVars() {
 	}
 
 	VAR(VAR_DEFAULT_TALK_DELAY) = 60;
-	VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 }
 
 void ScummEngine_v8::resetScummVars() {
