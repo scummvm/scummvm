@@ -169,7 +169,10 @@ void MoviePlayer::play() {
 	if (_vm->getBitFlag(41)) {
 		memcpy(_vm->_backBuf, _vm->_frontBuf, _frameSize);
 	} else {
+		uint8 palette[1024];
+		memset(palette, 0, sizeof(palette));
 		_vm->dx_clear_surfaces(480);
+		_vm->_system->setPalette(palette, 0, 256);
 	}
 
 	_vm->_fastFadeOutFlag = true;
