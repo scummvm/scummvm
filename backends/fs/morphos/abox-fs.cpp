@@ -53,6 +53,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 		static  FSList listRoot();
 		virtual AbstractFilesystemNode *parent() const;
+		virtual AbstractFilesystemNode *child(const String &name) const;
 };
 
 
@@ -210,6 +211,10 @@ AbstractFilesystemNode *ABoxFilesystemNode::parent() const
 	}
 
 	return node;
+}
+
+AbstractFilesystemNode *ABoxFilesystemNode::child(const String &name) const {
+	TODO
 }
 
 FSList ABoxFilesystemNode::listRoot()

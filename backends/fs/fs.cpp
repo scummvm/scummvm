@@ -84,6 +84,9 @@ FilesystemNode &FilesystemNode::operator  =(const FilesystemNode &node) {
 }
 
 FilesystemNode FilesystemNode::getParent() const {
+	if (_realNode == 0)
+		return *this;
+
 	AbstractFilesystemNode *node = _realNode->parent();
 	if (node == 0) {
 		return *this;
@@ -92,22 +95,39 @@ FilesystemNode FilesystemNode::getParent() const {
 	}
 }
 
+FilesystemNode FilesystemNode::getChild(const String &name) const {
+	if (_realNode == 0)
+		return *this;
+
+	assert(_realNode->isDirectory());
+	AbstractFilesystemNode *node = _realNode->child(name);
+	return AbstractFilesystemNode::wrap(node);
+}
+
+FSList FilesystemNode::listDir(ListMode mode) const {
+	assert(_realNode);
+	assert(_realNode->isDirectory());
+	return _realNode->listDir(mode);
+}
+
 Common::String FilesystemNode::displayName() const {
+	assert(_realNode);
 	return _realNode->displayName();
 }
 
 bool FilesystemNode::isValid() const {
+	if (_realNode == 0)
+		return false;
 	return _realNode->isValid();
 }
 
 bool FilesystemNode::isDirectory() const {
+	if (_realNode == 0)
+		return false;
 	return _realNode->isDirectory();
 }
 
 Common::String FilesystemNode::path() const {
+	assert(_realNode);
 	return _realNode->path();
-}
-
-FSList FilesystemNode::listDir(ListMode mode) const {
-	return _realNode->listDir(mode);
 }

@@ -71,6 +71,7 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 		virtual FSList listVolumes(void) const;
 		virtual AbstractFilesystemNode *parent() const;
+		virtual AbstractFilesystemNode *child(const String &name) const;
 };
 
 AbstractFilesystemNode *FilesystemNode::getRoot() {
@@ -321,6 +322,10 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 
 	LEAVE();
 	return node;
+}
+
+AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &name) const {
+	TODO
 }
 
 FSList AmigaOSFilesystemNode::listVolumes(void)	const {

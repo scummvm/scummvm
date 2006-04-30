@@ -51,6 +51,7 @@ public:
 
 	virtual FSList listDir(ListMode) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
 
 private:
 	static char *toAscii(TCHAR *x);
@@ -226,6 +227,10 @@ AbstractFilesystemNode *WindowsFilesystemNode::parent() const {
 		p->_isPseudoRoot = false;
 	}
 	return p;
+}
+
+AbstractFilesystemNode *WindowsFilesystemNode::child(const String &name) const {
+	TODO
 }
 
 #endif // WIN32

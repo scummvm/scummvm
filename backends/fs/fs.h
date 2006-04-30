@@ -81,6 +81,13 @@ protected:
 	virtual AbstractFilesystemNode *parent() const = 0;
 
 	/**
+	 * The child node with the given name. If no child with this name
+	 * exists, returns 0. Will never be called on a node which is not
+	 * a directory node.
+	 */
+	virtual AbstractFilesystemNode *child(const String &name) const = 0;
+
+	/**
 	 * This method is a rather ugly hack which is used internally by the
 	 * actual node implementions to wrap up raw nodes inside FilesystemNode
 	 * objects. We probably want to get rid of this eventually and replace it
@@ -104,29 +111,45 @@ public:
 	virtual ~AbstractFilesystemNode() {}
 
 	/**
-	 * Return display name, used by e.g. the GUI to present the file in the file browser.
+	 * Return a human readable string for this node, usable for display (e.g.
+	 * in the GUI code). Do *not* rely on it being usable for anything else,
+	 * like constructing paths!
 	 * @return the display name
 	 */
 	virtual String displayName() const = 0;
 
 	/**
-	 * Is this node valid (i.e. referring to an actual FS object)?
+	 * Is this node valid? Returns true if the file/directory pointed
+	 * to by this node exists, false otherwise.
+	 *
+	 * @todo Maybe rename this to exists() ? Or maybe even distinguish between
+	 * the two? E.g. a path may be non-existant but valid, while another might
+	 * be completely invalid). But do we ever need to make that distinction?
 	 */
 	virtual bool isValid() const = 0;
 
 	/**
-	 * Is this node a directory or not?
+	 * Is this node pointing to a directory?
+	 * @todo Currently we assume that a valid node that is not a directory
+	 * automatically is a file (ignoring things like symlinks). That might
+	 * actually be OK... but we could still add an isFile method. Or even replace
+	 * isValid and isDirectory by a getType() method that can return values like
+	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
 	virtual bool isDirectory() const = 0;
 
 	/**
-	 * A path representation suitable for use with fopen()
+	 * Return a string representation of the file which can be passed to fopen(),
+	 * and is suitable for archiving (i.e. writing to the config file).
+	 * This will usually be a 'path' (hence the name of the method), but can
+	 * be anything that fulfilly the above criterions.
 	 */
 	virtual String path() const = 0;
 
 	/**
-	 * List the content of this directory node.
-	 * If this node is not a directory, throw an exception or call error().
+	 * Return a list of child nodes of this directory node. If called
+	 * on a node that does not represent a directory, an error is triggered.
+	 * @todo Rename this to listChildren.
 	 */
 	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const = 0;
 
@@ -189,27 +212,43 @@ private:
 
 
 public:
+	/**
+	 * Create a new FilesystemNode refering to the specified path. This is
+	 * the counterpart to the path() method.
+	 */
+	FilesystemNode(const String &path);
+
+
 	FilesystemNode();
 	FilesystemNode(const FilesystemNode &node);
-	FilesystemNode(const String &path);
 	~FilesystemNode();
 
 	FilesystemNode &operator  =(const FilesystemNode &node);
 
+	/**
+	 * Get the parent node of this node. If this node has no parent node,
+	 * then it returns a duplicate of this node.
+	 */
 	FilesystemNode getParent() const;
 
+	/**
+	 * Fetch a child node of this node, with the given name. Only valid for
+	 * directory nodes (an assertion is triggered otherwise). If no no child
+	 * node with the given name exists, an invalid node is returned.
+	 */
+	FilesystemNode getChild(const String &name) const;
 
+	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 	virtual String displayName() const;
 	virtual bool isValid() const;
 	virtual bool isDirectory() const;
 	virtual String path() const;
 
-	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
-
 protected:
 	void decRefCount();
 
 	virtual AbstractFilesystemNode *parent() const { return 0; }
+	virtual AbstractFilesystemNode *child(const String &name) const { return 0; }
 };
 
 

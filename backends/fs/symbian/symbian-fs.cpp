@@ -52,6 +52,7 @@ public:
 
 	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
 };
 
 
@@ -196,6 +197,10 @@ AbstractFilesystemNode *SymbianFilesystemNode::parent() const {
 		p=new SymbianFilesystemNode(true);
 	}
 	return p;
+}
+
+AbstractFilesystemNode *SymbianFilesystemNode::child(const String &name) const {
+	TODO
 }
 
 #endif // defined(__SYMBIAN32__)

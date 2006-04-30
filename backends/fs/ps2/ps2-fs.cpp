@@ -45,6 +45,8 @@ public:
 
 	virtual FSList listDir(ListMode) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
+
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
 };
 
@@ -135,3 +137,7 @@ AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
 	return p;
 }
 
+
+AbstractFilesystemNode *Ps2FilesystemNode::child(const String &name) const {
+	TODO
+}

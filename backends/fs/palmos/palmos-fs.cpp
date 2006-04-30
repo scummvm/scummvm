@@ -50,6 +50,7 @@ public:
 
 	virtual FSList listDir(ListMode) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
 
 private:
 	static void addFile (FSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
@@ -168,6 +169,11 @@ AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
 		p->_isPseudoRoot =(p->_path == "/");
 	}
 	return p;
+}
+
+
+AbstractFilesystemNode *PalmOSFilesystemNode::child(const String &name) const {
+	TODO
 }
 
 #endif // PALMOS_MODE

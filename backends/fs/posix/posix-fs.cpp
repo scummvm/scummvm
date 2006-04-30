@@ -49,7 +49,7 @@ protected:
 
 public:
 	POSIXFilesystemNode();
-	POSIXFilesystemNode(const String &path, bool useStat = false);
+	POSIXFilesystemNode(const String &path, bool verify = false);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -58,6 +58,7 @@ public:
 
 	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
 };
 
 
@@ -103,7 +104,7 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 	_isDirectory = true;
 }
 
-POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool useStat) {
+POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 	assert(p.size() > 0);
 
 	_path = p;
@@ -111,13 +112,21 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool useStat) {
 	_isValid = true;
 	_isDirectory = true;
 
-#ifndef __DC__
-	if (useStat) {
+	if (verify) {
+#ifdef __DC__
+		FIXME;
+		/*
+		FIXME: Is there really no way to at least verify the path is valid?
+		Or is it too slow, or what? Please clarify with a comment here.
+		(Of course we could just fopen here, but that wouldn't be able to deal
+		with directories...
+		*/
+#else
 		struct stat st;
 		_isValid = (0 == stat(_path.c_str(), &st));
 		_isDirectory = S_ISDIR(st.st_mode);
-	}
 #endif
+	}
 }
 
 FSList POSIXFilesystemNode::listDir(ListMode mode) const {
@@ -196,6 +205,19 @@ AbstractFilesystemNode *POSIXFilesystemNode::parent() const {
 	const char *end = lastPathComponent(_path);
 
 	POSIXFilesystemNode *p = new POSIXFilesystemNode(String(start, end - start));
+
+	return p;
+}
+
+AbstractFilesystemNode *POSIXFilesystemNode::child(const String &name) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
+	assert(_isDirectory);
+	String newPath(_path);
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += name;
+	POSIXFilesystemNode *p = new POSIXFilesystemNode(newPath, true);
 
 	return p;
 }
