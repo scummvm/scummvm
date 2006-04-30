@@ -80,7 +80,7 @@ enum Action {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 5
+#define LURE_DAT_MINOR 6
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
