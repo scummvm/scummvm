@@ -1318,36 +1318,36 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		return kNoGameDataFoundError;
 	}
 	
-	DetectorResult res(*(results.begin()));
-
-/*
 	// No unique match found. If a platform override is present, try to
 	// narrow down the list a bit more.
 	if (results.size() > 1 && ConfMan.hasKey("platform")) {
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
 		for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ) {
-			if (x->game.platform != platform)
+			if (x->game.platform != platform) {
 				x = results.erase(x); 
-			else
+			} else {
 				++x;
+			}
 		}
 	}
-*/
 
 	// Still no unique match found -> we just use the first one
 	if (results.size() > 1) {
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
 	}
 	
+
+	DetectorResult res(*(results.begin()));
+	debug(1, "Using gameid %s, variant %s, extra %s", res.game.gameid, res.game.variant, res.extra);
+
 	// Print the MD5 of the game; either verbose using printf, in case of an
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", res.md5.c_str());
 	} else {
-		debug(5, "Using MD5 '%s'", res.md5.c_str());
+		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
-
 
 	// TODO: Do we really still need / want the platform override ?
 
