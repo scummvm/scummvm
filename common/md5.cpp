@@ -235,11 +235,6 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 
 bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 	File f;
-	md5_context ctx;
-	int i;
-	unsigned char buf[1000];
-	bool restricted = (length != 0);
-	int readlen;
 
 	f.open(name);
 	if (!f.isOpen()) {
@@ -250,6 +245,11 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 #ifdef DISABLE_MD5
 	memset(digest, 0, 16);
 #else
+	md5_context ctx;
+	int i;
+	unsigned char buf[1000];
+	bool restricted = (length != 0);
+	int readlen;
 
 	if (!restricted || sizeof(buf) <= length)
 		readlen = sizeof(buf);
