@@ -325,6 +325,8 @@ protected:
 	byte _mouseCursor, _mouseAnim, _mouseAnimMax;
 	byte _oldMouseCursor, _oldMouseAnimMax;
 	uint _mouseHideCount;
+	int _mouseCountX, _mouseCountY;
+	bool _mouseToggle;
 
 	byte _leftButtonDown;
 	byte _rightButtonDown;
@@ -672,6 +674,10 @@ protected:
 	void handleMouseMoved();
 	void pollMouseXY();
 	void drawMousePointer();
+	void drawMousePointer_FF();
+	void drawMouse(byte *dst, int pitch, byte *src, int srcw, int width, int height);
+	void drawMousePart(byte *dst, int pitch, int image, int offs);
+
 
 	void defineArrowBoxes(WindowBlock *window);
 	void removeArrows(WindowBlock *window, uint num);

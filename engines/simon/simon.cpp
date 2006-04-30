@@ -31,7 +31,6 @@
 #include "gui/about.h"
 
 #include "simon/debugger.h"
-#include "simon/intern.h"
 #include "simon/simon.h"
 #include "simon/vga.h"
 
@@ -164,6 +163,9 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_mouseAnimMax = 0;
 	_oldMouseCursor = 0;
 	_oldMouseAnimMax = 0;
+	_mouseCountX = 0;
+	_mouseCountY = 0;
+	_mouseToggle = false;
 
 	_vgaVar9 = 0;
 	_chanceModifier = 0;

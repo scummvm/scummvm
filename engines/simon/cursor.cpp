@@ -224,36 +224,7 @@ static const byte _simon2_cursors[10][256] = {
 };
 
 void SimonEngine::drawMousePointer() {
-	//debug(0, "Mouse %d Anim %d Max %d", _mouseCursor, _mouseAnim, _mouseAnimMax);
-
-	if (getGameType() == GType_FF) {
-		byte *src;
-		VgaPointersEntry *vpe = &_vgaBufferPointers[7];
-		uint cursor, image, width, height;
-
-		if (_animatePointer) {
-			_mouseAnim++;
-			if (_mouseAnim == _mouseAnimMax)
-				_mouseAnim = 1;
-		}
-
-		cursor = _mouseCursor;
-		if (_animatePointer == 0 && getBitFlag(99)) {
-			cursor = 6;
-			_mouseAnim = 1;
-		} else if (getBitFlag(72)) {
-			cursor += 7;
-		}
-
-		image = cursor * 16 + 1 + _mouseAnim;
-		src = vpe->vgaFile2 + image * 8;
-
-		width = READ_LE_UINT16(src + 6);
-		height = READ_LE_UINT16(src + 4) & 0x7FFF;
-		src = vpe->vgaFile2 + readUint32Wrapper(src);
-
-		_system->setMouseCursor(src, width, height, width / 2, height / 2, 0);
-	} else if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		_system->setMouseCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
 	} else {
 		_system->setMouseCursor(_simon1_cursor, 16, 16, 0, 0);
@@ -353,7 +324,11 @@ void SimonEngine::handleMouseMoved() {
 		_lastHitArea3 = (HitArea *) -1;
 
 get_out:
-	drawMousePointer();
+	if (getGameType() == GType_FF)
+		drawMousePointer_FF();
+	else
+		drawMousePointer();
+
 	_needHitAreaRecalc = 0;
 }
 
@@ -373,6 +348,197 @@ void SimonEngine::mouseOn() {
 void SimonEngine::pollMouseXY() {
 	_mouseX = _sdlMouseX;
 	_mouseY = _sdlMouseY;
+}
+
+// Feeble Files specific
+const byte _mouseOffs[] = {
+	6,0,15,21,16,21,14,21,15,21,16,21,16,21,16,21,15,21,15,21,15,21,14,21,12,21,12,21,12,21,12,21,
+	6,2,10,12,9,12,8,11,7,10,6,9,4,8,3,7,1,7,0,6,3,7,4,8,6,9,7,10,8,11,9,12,
+	0,0,0,0,0,0,0,0,0,1,0,3,0,3,0,4,1,4,1,3,2,3,2,2,1,3,0,4,0,3,0,0,
+
+	0,0,5,16,4,19,2,21,1,21,1,21,1,21,1,18,3,9,6,2,6,0,3,6,4,12,4,13,4,13,4,14,
+	0,0,6,13,5,15,4,16,3,19,2,19,2,19,2,18,1,16,4,10,7,3,7,0,4,2,4,6,0,0,0,0,
+
+	0,0,7,0,7,1,8,1,11,1,13,1,9,1,6,1,6,0,6,0,6,0,7,0,11,0,13,0,9,0,7,0,
+
+	0,0,7,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+
+// SAM icons
+	0,0,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,
+	0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+	0,0,5,5,5,5,5,5,5,5,5,4,1,1,2,2,3,3,5,5,7,6,9,8,11,10,14,13,16,16,0,0,
+	0,0,4,3,5,2,4,2,4,3,5,3,5,2,4,2,4,3,5,3,5,2,4,3,4,3,5,3,5,2,4,2,
+
+// Asteroid Map icons
+	0,0,3,0,4,1,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,3,0,4,1,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,8,0,7,0,8,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+// Other icons
+	0,0,9,9,9,10,8,11,7,11,7,11,8,11,9,10,9,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,7,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,7,3,4,3,2,4,0,5,0,7,0,7,0,5,2,4,4,3,7,3,0,0,0,0,0,0,0,0,0,0,
+	0,0,12,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+// Vent icons
+	0,0,8,3,7,3,6,3,5,3,4,3,3,3,2,3,1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,2,3,3,3,4,3,8,3,10,3,12,3,14,3,17,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,3,14,4,12,5,10,6,9,7,8,7,7,8,6,9,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,2,3,3,2,3,4,3,4,3,5,3,4,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+
+	0,0,7,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,9,9,9,10,8,11,7,11,7,11,8,11,9,10,9,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
+// TODO: Convert to our mouse code in system
+void SimonEngine::drawMousePointer_FF() {
+	byte *dst;
+	uint curCursor;
+	int image, offs;
+	int pitch;
+
+	dst = getBackBuf();
+	pitch = _screenWidth;
+
+	if (_animatePointer != 0) {
+		if (getBitFlag(99)) {
+			_mouseToggle ^= 1;
+			if (_mouseToggle != 0)
+				_mouseAnim++;
+		} else {
+			_mouseAnim++;
+		}
+		if (_mouseAnim == _mouseAnimMax)
+			_mouseAnim = 1;
+	}
+
+	_mouseCountY = 40;
+	_mouseCountX = 40;
+
+	if (_mouseY < 19)
+		_mouseCountY -= 19 - _mouseY;
+	else
+		dst += (((_mouseY - 19) * (pitch / 16)) & 0xffff) * 16;
+
+	if (_mouseX < 38)
+		_mouseCountX -= 38 - _mouseX;
+	else
+		dst += _mouseX - 38;
+
+	if (_mouseCountY == 40) {
+		_mouseCountY = 499 - _mouseY;
+		if (_mouseCountY > 40)
+			_mouseCountY = 40;
+	}
+
+	if (_mouseCountX == 40) {
+		_mouseCountX = 659 - _mouseX;
+		if (_mouseCountX > 40)
+			_mouseCountX = 40;
+	}
+
+	curCursor = _mouseCursor;
+	if (_animatePointer == 0 && getBitFlag(99)) {
+		_mouseAnim = 1;
+		curCursor = 6;	
+	} else if (_mouseCursor != 5 && getBitFlag(72)) {
+		curCursor += 7;
+	}
+
+	image = curCursor * 16 + 1;
+	offs = curCursor * 32;
+	drawMousePart(dst, pitch, image, offs);
+
+	image = curCursor * 16 + 1 + _mouseAnim;
+	offs = curCursor * 32 + _mouseAnim * 2;
+	drawMousePart(dst, pitch, image, offs);
+}
+
+void SimonEngine::drawMousePart(byte *dst, int pitch, int image, int offs) {
+	VgaPointersEntry *vpe = &_vgaBufferPointers[7];
+	byte *src;
+	int x, y, width, height;
+	int tmp, srcw;
+
+	x = _mouseOffs[offs];
+	y = _mouseOffs[offs + 1];
+
+	dst += y * pitch + x;
+
+	src = vpe->vgaFile2 + image * 8;
+	srcw = width = READ_LE_UINT16(src + 6);
+	height = READ_LE_UINT16(src + 4);
+
+	src = vpe->vgaFile2 + readUint32Wrapper(src);
+
+	if (_mouseCountX != 40) {
+		if (_mouseX >= 600) {
+			tmp = _mouseOffs[offs] + width - _mouseCountX;
+			if (tmp >= 0) {
+				width -= tmp;
+				if (width <= 0)
+					return;
+			}
+		} else {
+			if (_mouseOffs[offs] + _mouseCountX >= 40) {
+				dst -= 40 - _mouseCountX;
+			} else {
+				dst -= _mouseOffs[offs];
+				tmp = -(_mouseOffs[offs] + _mouseCountX - 40);
+				width -= tmp;
+				if (width <= 0)
+					return;
+				src += tmp;
+			}
+		}
+	}
+
+	if (_mouseCountY != 40) {
+		if (_mouseY >= 200) {
+			tmp = _mouseOffs[offs + 1] + height - _mouseCountY;
+			if (tmp >= 0) {
+				height  -= tmp;
+				if (height <= 0)
+					return;
+			}
+		} else {
+			tmp = _mouseOffs[offs + 1] + _mouseCountY;
+			if (tmp >= 40) {
+				tmp = 40 - _mouseCountY;
+				while (tmp--)
+					dst -= pitch;
+			} else {
+				tmp = _mouseOffs[offs + 1];
+				while (tmp--)
+					dst -= pitch;
+				tmp = -(_mouseOffs[offs + 1] + _mouseCountY - 40);
+				height -= tmp;
+				if (height <= 0)
+					return;
+				while (tmp--)
+					src += srcw;
+			}
+		}
+	}
+
+	drawMouse(dst, pitch, src, srcw, width, height);
+}
+
+void SimonEngine::drawMouse(byte *dst, int pitch, byte *src, int srcw, int width, int height) {
+	int h, w;
+
+	for (h = 0; h < height; h++) {
+		for (w = 0; w < width; w++) {
+			if (src[w] != 0)
+				dst[w] = src[w];
+
+		}
+		src += srcw;
+		dst += pitch;
+	}
 }
 
 } // End of namespace Simon
