@@ -969,6 +969,8 @@ int ScummEngine::init() {
 	if (_game.version >= 5)
 		_sound->setupSound();
 
+	updateSoundSettings();
+
 	return 0;
 }
 
@@ -1470,8 +1472,6 @@ void ScummEngine::setupMusic(int midi) {
 				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
 		}
 	}
-
-	updateSoundSettings();
 }
 
 void ScummEngine::updateSoundSettings() {
