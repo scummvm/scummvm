@@ -674,7 +674,7 @@ protected:
 	void pollMouseXY();
 	void drawMousePointer();
 	void drawMousePointer_FF();
-	void drawMousePart(byte *dst, int pitch, int image, int offs, int &width, int &height);
+	void drawMousePart(byte *dst, int pitch, int image, int offs, int &hotSpotX, int &hotSpotY);
 
 	void defineArrowBoxes(WindowBlock *window);
 	void removeArrows(WindowBlock *window, uint num);
