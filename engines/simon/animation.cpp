@@ -171,6 +171,8 @@ void MoviePlayer::play() {
 	} else {
 		_vm->dx_clear_surfaces(480);
 	}
+
+	_vm->_fastFadeOutFlag = true;
 }
 
 void MoviePlayer::close() {
