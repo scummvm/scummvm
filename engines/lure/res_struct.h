@@ -82,6 +82,7 @@ struct HotspotResource {
 	uint16 sequenceOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
+	uint16 tickSequenceOffset;
 } GCC_PACK;
 
 struct HotspotAnimResource {
@@ -383,6 +384,7 @@ public:
 	uint16 sequenceOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
+	uint16 tickSequenceOffset;
 	
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }

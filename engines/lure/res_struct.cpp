@@ -281,6 +281,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 	tickProcOffset = READ_LE_UINT16(&rec->tickProcOffset);
 	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
+	tickSequenceOffset = READ_LE_UINT16(&rec->tickSequenceOffset);
 }
 
 // Hotspot override data
