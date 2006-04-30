@@ -33,7 +33,6 @@ namespace Audio {
 
 class DigitalTrackInfo {
 public:
-	virtual bool error() = 0;
 	virtual void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) = 0;
 	virtual ~DigitalTrackInfo() { }
 };

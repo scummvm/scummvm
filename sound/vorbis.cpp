@@ -48,25 +48,6 @@ namespace Audio {
 
 static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
 
-#pragma mark -
-#pragma mark --- Ogg Vorbis Audio CD emulation ---
-#pragma mark -
-
-class VorbisTrackInfo : public DigitalTrackInfo {
-private:
-	File *_file;
-	OggVorbis_File _ov_file;
-	bool _error_flag;
-
-public:
-	VorbisTrackInfo(File *file);
-	~VorbisTrackInfo();
-	bool openTrack();
-	bool error() { return _error_flag; }
-	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
-};
-
-
 // These are wrapper functions to allow using a File object to
 // provide data to the OggVorbis_File object.
 
@@ -161,6 +142,25 @@ static long tell_wrap(void *datasource) {
 
 static ov_callbacks g_File_wrap = {
 	read_wrap, seek_wrap, close_wrap, tell_wrap
+};
+
+
+#pragma mark -
+#pragma mark --- Ogg Vorbis Audio CD emulation ---
+#pragma mark -
+
+class VorbisTrackInfo : public DigitalTrackInfo {
+private:
+	File *_file;
+	OggVorbis_File _ov_file;
+	bool _error_flag;
+
+public:
+	VorbisTrackInfo(File *file);
+	~VorbisTrackInfo();
+	bool openTrack();
+	bool error() { return _error_flag; }
+	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
 
 
