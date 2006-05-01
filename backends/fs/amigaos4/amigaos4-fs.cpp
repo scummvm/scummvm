@@ -114,10 +114,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 	}
 
 	_sDisplayName = String(str + offset, len);
-
 	_pFileLock = 0;
-
-	// Check whether it is a directory, and whether the file actually exists
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
@@ -126,22 +123,25 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 		return;
 	}
 
+	// Check whether the node exists and if it is a directory
 	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
-			if (fib->fib_EntryType > 0)
+			if (FIB_IS_DRAWER(fib)) {
 				_bIsDirectory = true;
-			else
-				_bIsDirectory = false;
-
-			if (_bIsDirectory) {
-				if (fib->fib_EntryType != ST_ROOT)
-					_sPath += "/";
-
 				_pFileLock = IDOS->DupLock(pLock);
 				_bIsValid = (_pFileLock != 0);
+
+				// Add a trailing slash if it is needed
+				const char c = _sPath.lastChar();
+				if (c != '/' && c != ':')
+					_sPath += '/';
+
 			}
-			else _bIsValid = true;
+			else {
+				_bIsDirectory = false;
+				_bIsValid = true;
+			}			 
 		}
 	}
 
@@ -184,19 +184,19 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	}
 
 	if (IDOS->Examine(pLock, fib) != DOSFALSE) {
-		if (fib->fib_EntryType > 0)
+		if (FIB_IS_DRAWER(fib)) {
 			_bIsDirectory = true;
-		else
-			_bIsDirectory = false;
-
-		if (_bIsDirectory) {
-			if (fib->fib_EntryType != ST_ROOT)
-				_sPath += "/";
-
 			_pFileLock = IDOS->DupLock(pLock);
-			_bIsValid = (_pFileLock != 0);
+			_bIsValid = _pFileLock != 0;
+
+			const char c = _sPath.lastChar();
+			if (c != '/' && c != ':')
+				_sPath += '/';
 		}
-		else _bIsValid = true;
+		else {
+			_bIsDirectory = false;
+			_bIsValid = true;
+		}		 
 	}
 
 	IDOS->FreeDosObject(DOS_FIB, fib);
@@ -325,7 +325,12 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 }
 
 AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &name) const {
-	TODO
+	assert(_bIsDirectory);
+	String newPath(_sPath);
+	if (_sPath.lastChar() != '/')
+		newPath += '/';
+	newPath += name;
+	return new AmigaOSFilesystemNode(newPath);
 }
 
 FSList AmigaOSFilesystemNode::listVolumes(void)	const {
