@@ -230,7 +230,19 @@ AbstractFilesystemNode *WindowsFilesystemNode::parent() const {
 }
 
 AbstractFilesystemNode *WindowsFilesystemNode::child(const String &name) const {
-	TODO
+	assert(_isDirectory);
+	String newPath(_path);
+	if (_path.lastChar() != '\\')
+		newPath += '\\';
+	newPath += name;
+
+	// Check whether the directory actually exists
+	DWORD fileAttribs = GetFileAttributes(toUnicode(newPath.c_str()));
+	if (fileAttribs == 0xffffffff)
+		return 0;
+
+	WindowsFilesystemNode *p = new WindowsFilesystemNode(newPath);
+	return p;
 }
 
 #endif // WIN32
