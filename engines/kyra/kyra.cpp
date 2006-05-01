@@ -106,7 +106,9 @@ static const GameSettings kyra_games[] = {
 // Keep list of different supported games
 static const PlainGameDescriptor kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
+#ifdef ENABLE_KYRA2
 	{ "kyra2", "The Hand of Fate" },
+#endif
 	{ 0, 0 }
 };
 
