@@ -29,6 +29,7 @@
 #include <dirent.h>
 #include <eikenv.h>
 #include <f32file.h>
+#include <bautils.h>
 
 /*
  * Implementation of the ScummVM file system API based on POSIX.
@@ -200,7 +201,23 @@ AbstractFilesystemNode *SymbianFilesystemNode::parent() const {
 }
 
 AbstractFilesystemNode *SymbianFilesystemNode::child(const String &name) const {
-	TODO
+	assert(_isDirectory);
+	String newPath(_path);
+
+	if (_path.lastChar() != '\\')
+		newPath += '\\';
+	newPath += name;
+
+	TPtrC8 ptr((const unsigned char*) newPath.c_str(), newPath.size());
+	TFileName fname;
+	fname.Copy(ptr);
+	TBool isFolder = EFalse;
+	BaflUtils::IsFolder(CEikonEnv::Static()->FsSession(), fname, isFolder);
+	if(!isFolder)
+		return 0;
+
+	SymbianFilesystemNode *p = new SymbianFilesystemNode(newPath);
+	return p;
 }
 
 #endif // defined(__SYMBIAN32__)

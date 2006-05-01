@@ -52,13 +52,13 @@ const Common::String actionNames[] = {
 };
 
 #ifdef UIQ
-static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0x11a, 0x11b, SDLK_MENU, SDLK_PAGEDOWN, 0, 0,SDLK_PAGEUP,0,0};
+static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_PAGEDOWN, 0, 0,SDLK_PAGEUP,0,0};
 #elif defined (S60)
 const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9',0,0,0,0,0};
 #elif defined (S90)
 const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0,0,0,0,0};
 #else
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0x11a, 0x11b, SDLK_MENU, SDLK_ESCAPE, 0, 0,0,0,0,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0,0,0,0,0};
 #endif
 
 // creator function according to Factory Pattern
