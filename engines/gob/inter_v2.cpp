@@ -492,7 +492,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_speakerOff),
 		/* 24 */
 		OPCODE(o1_putPixel),
-		OPCODE(o1_goblinFunc),
+		OPCODE(o2_goblinFunc),
 		OPCODE(o1_createSprite),
 		OPCODE(o2_freeSprite),
 		/* 28 */
@@ -1006,6 +1006,35 @@ void Inter_v2::loadMult(void) {
 	}
 
 	warning("GOB2 Stub! Inter_v2::loadMult()");
+}
+
+bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 cmd;
+	int16 word_2F9C0;
+	int16 word_2F9BE;
+	int16 word_2F9BC;
+	int16 word_2F9BA;
+	char *dword_2F9B6;
+	char *dword_2F9B2;
+
+	cmd = load16();
+	_vm->_global->_inter_execPtr += 2;
+
+	if (cmd == 100) {
+		word_2F9C0 = VAR(load16());
+		word_2F9BE = VAR(load16());
+		dword_2F9B6 = _vm->_global->_inter_variables + (load16() >> 2);
+		dword_2F9B2 = _vm->_global->_inter_variables + (load16() >> 2);
+		word_2F9BC = VAR(load16());
+		word_2F9BA = VAR(load16());
+		warning("GOB2 Stub! sub_19BD3()");
+	} else if (cmd != 101) {
+		_vm->_global->_inter_execPtr -= 2;
+		cmd = load16();
+		_vm->_global->_inter_execPtr += cmd << 1;
+	}
+
+	return false;
 }
 
 bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) {

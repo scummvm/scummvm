@@ -37,7 +37,7 @@ Parse::Parse(GobEngine *vm) : _vm(vm) {
 }
 
 int32 Parse::encodePtr(char *ptr, int type) {
-	int32 offset;
+	int32 offset = 0;
 
 	switch (type) {
 	case kExecPtr:

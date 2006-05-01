@@ -127,6 +127,7 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 		if (descPtr->vidPtr != 0)
 			delete[] descPtr->vidPtr;
 		vidMem = new byte[320 * 200];
+		memset(vidMem, 0, 64000);
 	} else {
 		if (flags & DISABLE_SPR_ALLOC) {
 			descPtr = new SurfaceDesc;
@@ -135,6 +136,7 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 		} else {
 			descPtr = new SurfaceDesc;
 			descPtr->vidPtr = new byte[sprSize];
+			memset(descPtr->vidPtr, 0, sprSize);
 			vidMem = descPtr->vidPtr;
 		}
 	}
