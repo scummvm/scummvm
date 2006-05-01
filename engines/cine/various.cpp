@@ -219,7 +219,7 @@ void initLanguage(Common::Language lang) {
 		"C'est inutile",
 		"Vous avez mieux \x85 faire",
 		"Allons, ne perdons pas de temps",
-		"\x87""a ne me semble pas être une bonne id\x82""e",
+		"\x87""a ne me semble pas \x88tre une bonne id\x82""e",
 		// UTILISER
 		"Je ne vois pas pourquoi je ferais cela.",
 		"C'est absolument sans effets",
