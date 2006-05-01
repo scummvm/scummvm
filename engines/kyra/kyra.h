@@ -60,7 +60,8 @@ enum {
 };
 
 enum {
-	GI_KYRA1 = 0
+	GI_KYRA1 = 0,
+	GI_KYRA2 = 1
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
@@ -983,6 +984,20 @@ protected:
 	static const uint16 _amuletY[];
 	static const uint16 _amuletX2[];
 	static const uint16 _amuletY2[];
+};
+
+class KyraEngine_v1 : public KyraEngine {
+	public:
+		KyraEngine_v1(OSystem *system);
+		~KyraEngine_v1();
+};
+
+class KyraEngine_v2 : public KyraEngine {
+	public:
+		KyraEngine_v2(OSystem *system);
+		~KyraEngine_v2();
+	
+	int go();
 };
 
 } // End of namespace Kyra

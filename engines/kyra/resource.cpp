@@ -92,15 +92,39 @@ Resource::Resource(KyraEngine *engine) {
 		"CHAPTER1.VRM", 0
 	};
 
+	static const char *kyra2CDFilelist[] = {
+		"ALLEY.PAK", "COST3_SH.PAK", "DINOD.PAK", "GARDEN.PAK", "INJAIL2.PAK", "MISC_EMC.PAK", "PHONE_B.PAK",
+		"STATION.PAK", "VOLCANO.PAK", "VOLC_L.PAK", "ALTAR.PAK", "COST4_SH.PAK", "DOCK.PAK", "GEARS.PAK",
+		"INSHOP.PAK", "MYSTRM.PAK," "PHONE_C.PAK", "STREET.PAK", "VOLC_A.PAK", "VOLC_M.PAK", "ANCHOR.PAK", 
+		"COST5_SH.PAK", "DOOR.PAK", "GEARS2.PAK", "INSTORE.PAK", "NEST.PAK", "PHONE_D.PAK", "SULFUR.PAK",
+		"VOLC_B.PAK", "VOLC_N.PAK", "AUDIO.PAK", "COST6_SH.PAK", "DRIVERS.PAK", "GEARS3.PAK", "INTRODRV.PAK",
+		"ONBOAT.PAK", "QUICK.PAK", "TALKENG.PAK", "VOLC_C.PAK", "VOLC_O.PAK", "BRIDGE.PAK", "COST7_SH.PAK",
+		"FALL.PAK", "GNARL.PAK", "INTROGEN.PAK", "OTHER.PAK", "RAINA.PAK", "TALKFRE.PAK", "VOLC_D.PAK",
+		"VOLC_P.PAK", "CAULDRON.PAK", "COST8_SH.PAK", "FATE.PAK", "HANOI.PAK", "INTROTLK.PAK", "OUTCAVE.PAK",
+		"RAINB.PAK", "TALKGER.PAK", "VOLC_E.PAK", "WHARF.PAK", "CELLAR.PAK", "COST9_SH.PAK", "FERRY.PAK",
+		"HOLE.PAK", "INTROVOC.PAK", "OUTCAVE2.PAK", "RAT.PAK", "TAVERN.PAK", "VOLC_F.PAK", "WHEEL.PAK",
+		"CLEARNG.PAK", "CRICKET.PAK", "FIGHT.PAK", "INCAVE.PAK", "ISLE.PAK", "OUTFARM.PAK", "ROAD.PAK",
+		"TIMBER.PAK", "VOLC_G.PAK", "CLIFF.PAK", "CROC.PAK", "FISHER.PAK", "INGATE.PAK", "JUNGLE.PAK",
+		"OUTGATE.PAK", "ROPE.PAK", "TRAM.PAK", "VOLC_H.PAK", "CLOSE.PAK", "DINOA.PAK", "FLOAT.PAK", "INHERB.PAK",
+		"MARKHME.PAK", "OUTHERB.PAK", "SCORCH.PAK", "TREE.PAK", "VOLC_I.PAK", "COST1_SH.PAK", "DINOB.PAK",
+		"FLYTRAP.PAK", "INHOME.PAK", "MEADOW.PAK", "OUTHOME.PAK", "SKULL.PAK", "TREE2.PAK", "VOLC_J.PAK",
+		"COST2_SH.PAK", "DINOC.PAK", "FOOT.PAK", "INJAIL.PAK", "MISC_CPS.PAK", "PHONE_A.PAK", "SKY.PAK", "VOC.PAK",
+		"VOLC_K.PAK", 0
+	};
 	const char **usedFilelist = 0;
 
-	/*if (_engine->features() & GF_AMIGA)
-		usedFilelist = kyra1AmigaFilelist;
-	else*/ if (_engine->features() & GF_FLOPPY)
-		usedFilelist = kyra1Filelist;
-	else if (_engine->features() & GF_TALKIE)
-		usedFilelist = kyra1CDFilelist;
-	else
+	if (_engine->game() == GI_KYRA1) {
+		/*if (_engine->features() & GF_AMIGA)
+			usedFilelist = kyra1AmigaFilelist;
+			else*/ if (_engine->features() & GF_FLOPPY)
+				usedFilelist = kyra1Filelist;
+			else if (_engine->features() & GF_TALKIE)
+				usedFilelist = kyra1CDFilelist;
+	} else {
+		usedFilelist = kyra2CDFilelist;
+	}
+		
+	if (!usedFilelist)
 		error("no filelist found for this game");
 
 	for (uint32 tmp = 0; usedFilelist[tmp]; ++tmp) {

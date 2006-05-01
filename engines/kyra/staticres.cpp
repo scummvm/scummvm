@@ -139,6 +139,8 @@ bool StaticResource::init() {
 	if (_engine->game() == GI_KYRA1) {
 		_builtIn = 0;
 		_filenameTable = kyra1StaticRes;
+	} else if (_engine->game() == GI_KYRA2) {
+		return true;
 	} else {
 		error("unknown game ID");
 	}

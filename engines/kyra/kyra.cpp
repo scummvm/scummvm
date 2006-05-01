@@ -51,6 +51,8 @@
 
 namespace Kyra {
 
+#undef ENABLE_KYRA2
+
 enum {
 	// We only compute MD5 of the first megabyte of our data files.
 	kMD5FileSizeLimit = 1024 * 1024
@@ -93,12 +95,18 @@ static const GameSettings kyra_games[] = {
 										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
 	{ "kyra1", "The Legend of Kyrandia Demo",	GI_KYRA1, GF_DEMO | GF_ENGLISH,
 										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
+#ifdef ENABLE_KYRA2
+	{ "kyra2", "The Hand of Fate",				GI_KYRA2, GF_ENGLISH,
+										"28cbad1c5bf06b2d3825ae57d760d032", "FATE.PAK" },
+#endif
+										
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
 // Keep list of different supported games
 static const PlainGameDescriptor kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
+	{ "kyra2", "The Hand of Fate" },
 	{ 0, 0 }
 };
 
@@ -206,7 +214,15 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 
 PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
-	*engine = new KyraEngine(syst);
+	const char *gameid = ConfMan.get("gameid").c_str();
+
+	if (!scumm_stricmp("kyra1", gameid)) {
+		*engine = new KyraEngine_v1(syst);
+	} else if (!scumm_stricmp("kyra2", gameid)) {
+		*engine = new KyraEngine_v2(syst);
+	} else
+		error("Kyra engine created with invalid gameid.");
+	
 	return kNoError;
 }
 
@@ -263,6 +279,14 @@ KyraEngine::KyraEngine(OSystem *system)
 	_scrollUpButton.process0PtrShape = _scrollUpButton.process1PtrShape = _scrollUpButton.process2PtrShape = 0;
 	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
+}
+
+KyraEngine_v1::KyraEngine_v1(OSystem *system)
+	:KyraEngine(system) {
+}
+
+KyraEngine_v2::KyraEngine_v2(OSystem *system)
+	:KyraEngine(system) {
 }
 
 int KyraEngine::init() {
@@ -590,6 +614,14 @@ KyraEngine::~KyraEngine() {
 	}
 }
 
+KyraEngine_v1::~KyraEngine_v1() {
+
+}
+
+KyraEngine_v2::~KyraEngine_v2() {
+
+}
+
 void KyraEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
@@ -620,6 +652,17 @@ int KyraEngine::go() {
 		mainLoop();
 	}
 	quitGame();
+	return 0;
+}
+
+int KyraEngine_v2::go() {
+	// Kyra2 goes here :)
+	loadPalette("palette.col", _screen->_currentPalette);
+	_screen->setScreenPalette(_screen->_currentPalette);
+	loadBitmap("_playfld.cps", 0, 0, 0);
+	_screen->updateScreen();
+	waitForEvent();
+	_system->quit();
 	return 0;
 }
 
