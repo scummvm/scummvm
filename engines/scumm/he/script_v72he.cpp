@@ -1710,15 +1710,14 @@ void ScummEngine_v72he::o72_jumpToScript() {
 
 void ScummEngine_v72he::o72_openFile() {
 	int mode, slot, i;
-	byte filename[256];
+	byte buffer[256];
 
 	mode = pop();
-	copyScriptString(filename, sizeof(filename));
+	copyScriptString(buffer, sizeof(buffer));
+	debug(1, "Original filename %s", buffer);
 
-	debug(1,"Original filename %s", filename);
-
-	int r = convertFilePath(filename);
-	debug(1,"Final filename to %s", filename + r);
+	const char *filename = (char *)buffer + convertFilePath(buffer);
+	debug(1, "Final filename to %s", filename);
 
 	slot = -1;
 	for (i = 1; i < 17; i++) {
@@ -1732,10 +1731,10 @@ void ScummEngine_v72he::o72_openFile() {
 		switch(mode) {
 		case 1:
 			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
-			_hInFileTable[slot] = _saveFileMan->openForLoading((char*)filename + r);
+			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			if (_hInFileTable[slot] == 0) {
 				Common::File *f = new Common::File();
-				f->open((char*)filename + r, Common::File::kFileReadMode);
+				f->open(filename, Common::File::kFileReadMode);
 				if (!f->isOpen())
 					delete f;
 				else
@@ -1743,7 +1742,7 @@ void ScummEngine_v72he::o72_openFile() {
 			}
 			break;
 		case 2:
-			_hOutFileTable[slot] = _saveFileMan->openForSaving((char*)filename + r);
+			_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
 			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);

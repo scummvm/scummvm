@@ -1302,12 +1302,12 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	}
 
 
-
 	FilesystemNode dir;
 	if (ConfMan.hasKey("path") )
 		dir = FilesystemNode(ConfMan.get("path"));
 	FSList fslist = dir.listDir(FilesystemNode::kListFilesOnly);
 	Common::List<DetectorResult> results;
+
 
 	// Invoke the detector, but fixed to the specified gameid.
 	detectGames(fslist, results, gameid);

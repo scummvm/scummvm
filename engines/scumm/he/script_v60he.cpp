@@ -433,9 +433,12 @@ int ScummEngine_v60he::convertFilePath(byte *dst, bool setFilePath) {
 
 	if (setFilePath) {
 		char filePath[256];
-		sprintf(filePath, "%s", dst + r);
+		strncpy(filePath, (char *)dst + r, sizeof(filePath));
 		if (!Common::File::exists(filePath)) {
-			sprintf(filePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
+			// FIXME: Using getSavePath() to generate filepaths used with
+			// File::open is not portable!
+			strncpy(filePath, _saveFileMan->getSavePath(), sizeof(filePath));
+			strncat(filePath, (char *)dst + r, sizeof(filePath));
 		}
 		strcpy((char *)dst, filePath);
 		debug(1, "convertFilePath: filePath is %s", dst);
@@ -986,17 +989,20 @@ void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
 
 void ScummEngine_v60he::o60_openFile() {
 	int mode, len, slot, i, r;
-	byte filename[100];
+	byte buffer[100];
+	const char *filename;
 
-	convertMessageToString(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
+	for (r = strlen((char*)buffer); r != 0; r--) {
+		if (buffer[r - 1] == '\\')
 			break;
 	}
+	
+	filename = (char *)buffer + r;
 
 	mode = pop();
 	slot = -1;
@@ -1011,10 +1017,10 @@ void ScummEngine_v60he::o60_openFile() {
 		switch(mode) {
 		case 1:
 			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
-			_hInFileTable[slot] = _saveFileMan->openForLoading((char*)filename + r);
+			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			if (_hInFileTable[slot] == 0) {
 				Common::File *f = new Common::File();
-				f->open((char*)filename + r, Common::File::kFileReadMode);
+				f->open(filename, Common::File::kFileReadMode);
 				if (!f->isOpen())
 					delete f;
 				else
@@ -1022,7 +1028,7 @@ void ScummEngine_v60he::o60_openFile() {
 			}
 			break;
 		case 2:
-			_hOutFileTable[slot] = _saveFileMan->openForSaving((char*)filename + r);
+			_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
 			break;
 		default:
 			error("o60_openFile(): wrong open file mode %d", mode);
