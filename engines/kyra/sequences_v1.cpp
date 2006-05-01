@@ -902,9 +902,19 @@ int KyraEngine::seq_playEnd() {
 		_screen->_curPage = 0;
 		_beadStateVar = 0;
 		_malcolmFlag = 0;
-		// wired stuff with _unkEndSeqVar2 which needs timer handling
+		_unkEndSeqVar2 = _system->getMillis() + 600 * _tickLength;
 		_screen->copyRegion(312, 0, 312, 0, 8, 136, 0, 2);
 	}
+	
+	// TODO: better handling. This timer shouldn't count when the menu is open or something.
+	if (_unkEndSeqVar2 != -1) {
+		if (_system->getMillis() > (uint32)_unkEndSeqVar2) {
+			_unkEndSeqVar2 = -1;
+			if (!_malcolmFlag)
+				_malcolmFlag = 1;
+		}
+	}
+	
 	if (handleMalcolmFlag()) {
 		_beadStateVar = 0;
 		_malcolmFlag = 12;
@@ -1335,14 +1345,15 @@ int KyraEngine::handleBeadState() {
 			if (beadState1.x != -1 && _endSequenceBackUpRect) {
 				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-			} else {
-				beadState1.x = -1;
-				beadState1.tableIndex = 0;
-				timer1 = 0;
-				timer2 = 0;
-				_lastDisplayedPanPage = 0;
-				return 1;
 			}
+			
+			beadState1.x = -1;
+			beadState1.tableIndex = 0;
+			timer1 = 0;
+			timer2 = 0;
+			_lastDisplayedPanPage = 0;
+			return 1;
+			break;
 		
 		case 1:
 			if (beadState1.x != -1) {
