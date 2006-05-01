@@ -203,40 +203,37 @@ void initLanguage(Common::Language lang) {
 		"Absolutely Not!"
 	};
 
+	// \x82 == é, \x85 == à, \x87 == ç, \x88 == ê
 	static const char *failureMessages_FR[] = {
-		// FIXME: I've replaced some French characters with question
-		// marks, simply because I have no idea what characters they
-		// really are.
-
 		// EXAMINER
 		"Je ne vois rien de special.",
-		"Il n'y a rien d'intèrressant.",
-		"Cela prèsente peu d'intèr?ts.",		// FIXME
+		"Il n'y a rien d'int\x82ressant.",
+		"Cela pr\x82sente peu d'int\x82r\x88ts.",
 		"Vous ne trouvez rien.",
 		// PRENDRE
 		"Je ne peux pas prendre cela.",
 		"Cela me semble difficile",
-		"Je ne vois pas ce qu'il y a ? prendre",	// FIXME
-		"j'ai du mal ? vous suivre.",			// FIXME
+		"Je ne vois pas ce qu'il y a \x85 prendre",
+		"j'ai du mal \x85 vous suivre.",
 		// INVENTAIRE (???)
 		"C'est inutile",
-		"Vous avez mieux ? faire",			// FIXME
-		"Allons , ne perdons pas de temps",
-		"?a ne me semble pas ?tre une bonne idèe",	// FIXME
+		"Vous avez mieux \x85 faire",
+		"Allons, ne perdons pas de temps",
+		"\x87""a ne me semble pas être une bonne id\x82""e",
 		// UTILISER
 		"Je ne vois pas pourquoi je ferais cela.",
 		"C'est absolument sans effets",
-		"Cela n'amenerait ? rien",			// FIXME
+		"Cela n'amenerait \x85 rien",
 		"Essayez de trouver autre chose.",
 		// ACTIONNER
 		"Ca ne marche pas",
 		"Supposons que vous essayez et n'en parlons plus.",
 		"Rien n'y fait.",
-		"Vous avez mieux ? faire.",			// FIXME
+		"Vous avez mieux \x85 faire.",
 		// PARLER
-		"Vous lui parlez . Sans rèponse.",
+		"Vous lui parlez . Sans r\x82ponse.",
 		"Plus d'actes et moins de Paroles !",
-		"Je serais bien surpris si vous obteniez une rèponse.",
+		"Je serais bien surpris si vous obteniez une r\x82ponse.",
 		"Un mur de silence ..."
 	};
 
@@ -764,7 +761,7 @@ int16 makeLoad(char *saveName) {
 		refreshAnimData[i] = (fHandle->readByte() != 0);
 	}
 
-	// TODO: handle screen params (realy required ?)
+	// TODO: handle screen params (really required ?)
 	fHandle->readUint16BE();
 	fHandle->readUint16BE();
 	fHandle->readUint16BE();
