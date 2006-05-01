@@ -196,7 +196,7 @@ private:
 	 */
 	static AbstractFilesystemNode *getRoot();
 
-	/*
+	/**
 	 * Construct a node based on a path; the path is in the same format as it
 	 * would be for calls to fopen().
 	 *
