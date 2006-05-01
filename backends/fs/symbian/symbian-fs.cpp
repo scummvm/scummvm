@@ -88,6 +88,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	if (path.size() == 0)
 		_isPseudoRoot = true;
+	else
+		_isPseudoRoot = false;
+
 	_path = path;
 	const char *dsplName = NULL, *pos = path.c_str();
 	// FIXME -- why is this code scanning for a slash '/' when the rest of
