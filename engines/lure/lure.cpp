@@ -262,7 +262,7 @@ int LureEngine::init() {
 	detectGame();
 
 	_sys = new System(_system);
-	_disk = new Disk(_gameDataPath);
+	_disk = new Disk();
 	_resources = new Resources();
 	_strings = new StringData();
 	_screen = new Screen(*_system);

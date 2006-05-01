@@ -37,8 +37,7 @@ Disk &Disk::getReference() {
 	return *int_disk;
 }
 
-Disk::Disk(const Common::String &gameDataPath) {
-	_gameDataPath = gameDataPath;
+Disk::Disk() {
 	_fileNum = 0xff;
 	_fileHandle = NULL;
 	int_disk = this;
@@ -63,7 +62,7 @@ uint8 Disk::indexOf(uint16 id, bool suppressError) {
 	}
 	
 	if (suppressError) return 0xff;
-	error("Could not find entry Id #%d in file %sdisk%d.vga", id, _gameDataPath.c_str(), _fileNum);
+	error("Could not find entry Id #%d in file disk%d.vga", id, _fileNum);
 }
 
 void Disk::openFile(uint8 fileNum) {
@@ -89,7 +88,7 @@ void Disk::openFile(uint8 fileNum) {
 
 	_fileHandle->open(sFilename);
 	if (!_fileHandle->isOpen())
-		error("Could not open %s%s", _gameDataPath.c_str(), sFilename);
+		error("Could not open %s", sFilename);
 
 	// Validate the header
 	char buffer[7];
@@ -98,16 +97,16 @@ void Disk::openFile(uint8 fileNum) {
 	bytesRead = _fileHandle->read(buffer, 6);
 	buffer[6] = '\0';
 	if (strcmp(buffer, HEADER_IDENT_STRING) != 0)
-		error("The file %s%s was not a valid VGA file", _gameDataPath.c_str(), sFilename);
+		error("The file %s was not a valid VGA file", sFilename);
 
 	uint16 fileFileNum = _fileHandle->readUint16BE();
 	if (fileFileNum != _fileNum)
-		error("The file %s%s was not the correct file number", _gameDataPath.c_str(), sFilename);
+		error("The file %s was not the correct file number", sFilename);
 
 	// Read in the header entries
 	uint32 headerSize = sizeof(FileEntry) * NUM_ENTRIES_IN_HEADER;
 	if (_fileHandle->read(_entries, headerSize) != headerSize)
-		error("The file %s%s had a corrupted header", _gameDataPath.c_str(), sFilename);
+		error("The file %s had a corrupted header", sFilename);
 
 #ifdef SCUMM_BIG_ENDIAN
 	// Process the read in header list to convert to big endian

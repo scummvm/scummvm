@@ -38,7 +38,7 @@ namespace Sky {
 
 class Disk {
 public:
-	Disk(const Common::String &gameDataPath);
+	Disk();
 	~Disk(void);
 
 	uint8 *loadFile(uint16 fileNr);

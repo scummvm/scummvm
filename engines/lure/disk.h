@@ -41,14 +41,13 @@ namespace Lure {
 
 class Disk {
 private:
-	Common::String _gameDataPath;
 	uint8 _fileNum;
 	Common::File *_fileHandle;
 	FileEntry _entries[NUM_ENTRIES_IN_HEADER];
 
 	uint8 indexOf(uint16 id, bool suppressError = false);
 public:
-	Disk(const Common::String &gameDataPath);
+	Disk();
 	~Disk();
 	static Disk &getReference();
 

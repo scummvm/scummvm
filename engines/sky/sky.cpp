@@ -323,7 +323,7 @@ int SkyEngine::init() {
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_floppyIntro = ConfMan.getBool("alt_intro");
 
-	_skyDisk = new Disk(_gameDataPath);
+	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
 
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();

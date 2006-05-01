@@ -35,13 +35,13 @@ namespace Sky {
 static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
-Disk::Disk(const Common::String &gameDataPath) {
+Disk::Disk() {
 	_dataDiskHandle = new Common::File();
 	_dnrHandle = new Common::File();
 
 	_dnrHandle->open(dinnerFilename);
 	if (!_dnrHandle->isOpen())
-		error("Could not open %s%s", gameDataPath.c_str(), dinnerFilename);
+		error("Could not open %s", dinnerFilename);
 
 	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr"); //even though it was opened correctly?!
@@ -54,7 +54,7 @@ Disk::Disk(const Common::String &gameDataPath) {
 
 	_dataDiskHandle->open(dataFilename);
 	if (!_dataDiskHandle->isOpen())
-		error("Error opening %s%s", gameDataPath.c_str(), dataFilename);
+		error("Error opening %s", dataFilename);
 
 	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
 
