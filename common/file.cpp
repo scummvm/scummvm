@@ -107,12 +107,28 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 }
 
 void File::addDefaultDirectory(const String &directory) {
-	addDefaultDirectoryRecursive(directory, 1);
+	FilesystemNode dir(directory);
+	addDefaultDirectoryRecursive(dir, 1);
 }
 
 void File::addDefaultDirectoryRecursive(const String &directory, int level) {
+	FilesystemNode dir(directory);
+	addDefaultDirectoryRecursive(dir, level);
+}
+
+void File::addDefaultDirectory(const FilesystemNode &directory) {
+	addDefaultDirectoryRecursive(directory, 1);
+}
+
+void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
 	if (level <= 0)
 		return;
+
+	// Abort if this isn't a directory!
+	if (!dir.isDirectory())
+		return;
+	
+	const String &directory(dir.path());
 
 	if (!_defaultDirectories)
 		_defaultDirectories = new StringIntMap;
@@ -120,12 +136,6 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 	// Do not add directories multiple times, unless this time they are added
 	// with a bigger depth.
 	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
-		return;
-
-	FilesystemNode dir(directory.c_str());
-
-	// ... and abort if this isn't a directory!
-	if (!dir.isDirectory())
 		return;
 
 	(*_defaultDirectories)[directory] = level;
