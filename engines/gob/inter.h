@@ -62,6 +62,7 @@ public:
 	void renewTimeInVars(void);
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
 	virtual int16 loadSound(int16 slot) = 0;
+	virtual void storeMouse(void) = 0;
 
 	Inter(GobEngine *vm);
 	virtual ~Inter() {};
@@ -84,6 +85,7 @@ public:
 	Inter_v1(GobEngine *vm);
 	virtual ~Inter_v1() {};
 	virtual int16 loadSound(int16 slot);
+	virtual void storeMouse(void);
 
 protected:
 	typedef void (Inter_v1::*OpcodeDrawProcV1)(void);
@@ -274,6 +276,7 @@ public:
 	Inter_v2(GobEngine *vm);
 	virtual ~Inter_v2() {};
 	virtual int16 loadSound(int16 search);
+	virtual void storeMouse(void);
 
 protected:
 	typedef void (Inter_v2::*OpcodeDrawProcV2)(void);
@@ -324,6 +327,7 @@ protected:
 	void o2_freeLIC(void);
 	void o2_getCDTrackPos(void);
 	void o2_playMult(void);
+	void o2_initCursor(void);
 };
 
 }				// End of namespace Gob

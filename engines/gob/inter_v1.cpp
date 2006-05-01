@@ -2758,4 +2758,10 @@ void Inter_v1::loadMult(void) {
 	}
 }
 
+void Inter_v1::storeMouse(void) {
+	WRITE_VAR(2, _vm->_global->_inter_mouseX);
+	WRITE_VAR(3, _vm->_global->_inter_mouseY);
+	WRITE_VAR(4, _vm->_game->_mouseButtons);
+}
+
 } // End of namespace Gob

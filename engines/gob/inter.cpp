@@ -206,9 +206,7 @@ void Inter::funcBlock(int16 retFlag) {
 void Inter::storeKey(int16 key) {
 	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
 
-	WRITE_VAR(2, _vm->_global->_inter_mouseX);
-	WRITE_VAR(3, _vm->_global->_inter_mouseY);
-	WRITE_VAR(4, _vm->_game->_mouseButtons);
+	storeMouse();
 	WRITE_VAR(1, _vm->_snd->_playingSound);
 
 	if (key == 0x4800)

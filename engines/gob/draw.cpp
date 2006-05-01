@@ -493,10 +493,10 @@ void Draw::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
 		_bigSpritesParts[index][i] = 0;
 	_spritesHeights[index] = height;
 
-	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 6500) {
+	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 65000) {
 		_spritesHeights[index] = height & 0xFFFE;
 		while (_vm->_video->getRectSize(width, _spritesHeights[index], flags,
-					_vm->_global->_videoMode) > 6500) {
+					_vm->_global->_videoMode) > 65000) {
 			_spritesHeights[index] -= 2;
 		}
 
@@ -521,10 +521,10 @@ void Draw::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
 			fragment++;
 		}
 	} else
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+		_spritesArray[index] =
+			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
 
 	_vm->_video->clearSurf(_spritesArray[index]);
-	
 	// '------
 }
 

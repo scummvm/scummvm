@@ -15,6 +15,8 @@ MODULE_OBJS := \
 	gob.o \
 	goblin.o \
 	init.o \
+	init_v1.o \
+	init_v2.o \
 	inter.o \
 	inter_v1.o \
 	inter_v2.o \

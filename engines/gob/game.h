@@ -24,6 +24,7 @@
 #define GOB_GAME_H
 
 #include "gob/sound.h"
+#include "gob/video.h"
 
 namespace Gob {
 
@@ -97,7 +98,7 @@ public:
 
 	TotResTable *_totResourceTable;
 	Collision *_collisionAreas;
-	Collision *_collStack[3];
+	Collision *_collStack[5];
 
 	TotTextTable *_totTextData;
 
@@ -142,10 +143,6 @@ public:
 
 	void capturePop(char doDraw);
 	void freeSoundSlot(int16 slot);
-	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
-					char handleMouse);
-	int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
-						  int16 *pResIndex);
 	void freeCollision(int16 id);
 
 	void loadSound(int16 slot, char *dataPtr);
@@ -155,7 +152,6 @@ public:
 					InputDesc * inpDesc);
 	int16 adjustKey(int16 key);
 	void collisionsBlock(void);
-	void prepareStart(void);
 	void loadTotFile(char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
@@ -167,7 +163,20 @@ public:
 	virtual void clearCollisions(void) = 0;
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave) = 0;
+	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
+					char handleMouse) = 0;
+	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
+						  int16 *pResIndex) = 0;
+	virtual void prepareStart(void) = 0;
 
+	int8 _byte_2FC9B;
+	int16 _word_2FC9C;
+	int16 _word_2FC9E;
+	int16 _word_2E51F;
+	Video::SurfaceDesc *_off_2E51B;
+	Video::SurfaceDesc *_off_2E517;
+	void sub_ADD2(void);
+	void sub_BB28(void);
 protected:
 
 	int16 _lastCollKey;
@@ -185,7 +194,7 @@ protected:
 	char _curImaFile[18];
 
 	int16 _collStackSize;
-	int16 _collStackElemSizes[3];
+	int16 _collStackElemSizes[5];
 
 	char _shouldPushColls;
 
@@ -197,9 +206,14 @@ protected:
 
 	GobEngine *_vm;
 		
-	void pushCollisions(char all);
-	void popCollisions(void);
 	int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
+	void setCollisions(void);
+	void collSub(int16 offset);
+	void collAreaSub(int16 index, int8 enter);
+	int16 openLocTextFile(char *locTextFile, int language);
+
+	virtual void pushCollisions(char all) = 0;
+	virtual void popCollisions(void) = 0;
 };
 
 class Game_v1 : public Game {
@@ -208,9 +222,18 @@ public:
 	virtual void clearCollisions(void);
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
+					char handleMouse);
+	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
+						  int16 *pResIndex);
+	virtual void prepareStart(void);
 
 	Game_v1(GobEngine *vm);
 	virtual ~Game_v1() {};
+
+protected:
+	virtual void pushCollisions(char all);
+	virtual void popCollisions(void);
 };
 
 class Game_v2 : public Game_v1 {
@@ -219,9 +242,26 @@ public:
 	virtual void clearCollisions(void);
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
+					char handleMouse);
+	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
+						  int16 *pResIndex);
+	virtual void prepareStart(void);
 
 	Game_v2(GobEngine *vm);
 	virtual ~Game_v2() {};
+
+protected:
+	struct CollLast {
+		int16 key;
+		int16 id;
+		int16 areaIndex;
+	};
+
+	CollLast _collLasts[5];
+
+	virtual void pushCollisions(char all);
+	virtual void popCollisions(void);
 };
 
 }				// End of namespace Gob

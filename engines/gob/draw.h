@@ -96,6 +96,7 @@ public:
 	int16 _cursorYDeltaVar;
 
 	Video::SurfaceDesc *_cursorSprites;
+	Video::SurfaceDesc *_cursorSpritesBack;
 	Video::SurfaceDesc *_cursorBack;
 	int16 _cursorAnim;
 	int8 _cursorAnimLow[40];

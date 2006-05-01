@@ -131,7 +131,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
-		OPCODE(o1_initCursor),
+		OPCODE(o2_initCursor),
 		/* 08 */
 		OPCODE(o1_initCursorAnim),
 		OPCODE(o1_clearCursorAnim),
@@ -720,12 +720,74 @@ void Inter_v2::o2_stub0x56(void) {
 }
 
 void Inter_v2::o2_stub0x80(void) {
-	_vm->_global->_inter_execPtr += 2;
+	int16 start;
+	int16 videoMode;
+	int16 width;
+	int16 height;
 
-	int16 expr1 = _vm->_parse->parseValExpr();
-	int16 expr2 = _vm->_parse->parseValExpr();
+	start = load16();
 
-	warning("STUB: Gob2 drawOperation 0x80 (%d %d)", expr1, expr2);
+	videoMode = start & 0xFF;
+	start = (start >> 8) & 0xFF;
+
+	width = _vm->_parse->parseValExpr();
+	height = _vm->_parse->parseValExpr();
+
+	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
+		return;
+
+	if (videoMode == 0x14) {
+		videoMode = 0x13;
+		_vm->_video->_extraMode = true;
+	}
+	else
+		_vm->_video->_extraMode = false;
+	
+	_vm->_game->sub_BB28();
+	_vm->_util->clearPalette();
+	memset(_vm->_global->_redPalette, 0, 256);
+	memset(_vm->_global->_greenPalette, 0, 256);
+	memset(_vm->_global->_bluePalette, 0, 256);
+	warning("GOB2 Stub! _vid_setStubDriver");
+
+	if (videoMode == 0x10) {
+		_vm->_global->_videoMode = 0x12;
+		_vm->_video->initPrimary(0xE);
+		_vm->_global->_videoMode = 0x10;
+		warning("GOB2 Stub! Set VGA CRT Maximum Scan Line to 0");
+		_vm->_draw->_frontSurface->height = 400;
+	} else {
+		_vm->_global->_videoMode = videoMode;
+		_vm->_video->initPrimary(videoMode);
+	}
+	WRITE_VAR(15, _vm->_global->_videoMode);
+
+	_vm->_global->_setAllPalette = 1;
+
+	if ((width != -1) && _vm->_video->_extraMode) {
+		_vm->_game->_byte_2FC9B = 1;
+/*		if (width > 960)
+			width = 960;
+		_vm->_draw->_frontSurface->width = width;
+		_vm->_draw->_frontSurface->height = height;
+		warning("GOB2 Stub! _vid_setVirtRes(_vm->_draw->_frontSurface);");
+		_vm->_global->_mouseMaxCol = width;
+		_vm->_global->_mouseMaxRow = height;*/
+	}
+
+	_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
+	_vm->_util->clearPalette();
+
+	if (start == 0)
+		_vm->_game->_word_2E51F = 0;
+	else
+		_vm->_game->_word_2E51F = _vm->_global->_primaryHeight - start;
+	_vm->_game->sub_ADD2();
+
+	if (_vm->_game->_off_2E51B != 0) {
+		warning("GOB2 Stub! _vid_setSplit(_vm->_global->_primaryHeight - start);");
+		warning("GOB2 Stub! _vid_setPixelShift(0, start);");
+	}
 }
 
 int16 Inter_v2::loadSound(int16 search) {
@@ -1263,7 +1325,6 @@ void Inter_v2::o2_initMult(void) {
 
 	_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 
-	warning("===> %d", _vm->_global->_videoMode);
 	if (_vm->_anim->_animSurf == 0) {
 		if (_vm->_global->_videoMode == 18) {
 			_vm->_anim->_animSurf = new Video::SurfaceDesc;
@@ -1368,6 +1429,63 @@ void Inter_v2::o2_playMult(void) {
 	_vm->_mult->playMult(VAR(57), -1, checkEscape & 0x1, 0);
 }
 
+void Inter_v2::o2_initCursor(void) {
+	int16 width;
+	int16 height;
+	int16 count;
+	int16 i;
+
+	_vm->_draw->_cursorXDeltaVar = _vm->_parse->parseVarIndex() / 4;
+	_vm->_draw->_cursorYDeltaVar = _vm->_parse->parseVarIndex() / 4;
+
+	width = load16();
+	if (width < 16)
+		width = 16;
+
+	height = load16();
+	if (height < 16)
+		height = 16;
+
+	_vm->_draw->adjustCoords(0, &width, &height);
+
+	count = load16();
+	if (count < 2)
+		count = 2;
+
+	if (width != _vm->_draw->_cursorWidth || height != _vm->_draw->_cursorHeight ||
+	    _vm->_draw->_cursorSprites->width != width * count) {
+
+		_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
+		_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
+
+		_vm->_draw->_cursorWidth = width;
+		_vm->_draw->_cursorHeight = height;
+
+		if (count < 0x80)
+			_vm->_draw->_transparentCursor = 1;
+		else
+			_vm->_draw->_transparentCursor = 0;
+
+		if (count > 0x80)
+			count -= 0x80;
+
+		_vm->_draw->_cursorSprites =
+		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth * count,
+		    _vm->_draw->_cursorHeight, 2);
+		_vm->_draw->_spritesArray[23] = _vm->_draw->_cursorSprites;
+
+		_vm->_draw->_cursorBack =
+		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth,
+		    _vm->_draw->_cursorHeight, 0);
+		for (i = 0; i < 40; i++) {
+			_vm->_draw->_cursorAnimLow[i] = -1;
+			_vm->_draw->_cursorAnimDelays[i] = 0;
+			_vm->_draw->_cursorAnimHigh[i] = 0;
+		}
+		_vm->_draw->_cursorAnimLow[1] = 0;
+	}
+}
+
 void Inter_v2::o2_totSub(void) {
 	char totFile[14];
 	int flags;
@@ -1389,6 +1507,19 @@ void Inter_v2::o2_totSub(void) {
 	_vm->_global->_inter_execPtr++;
 	flags = *_vm->_global->_inter_execPtr;
 	_vm->_game->totSub(flags, totFile);
+}
+
+void Inter_v2::storeMouse(void) {
+	int16 x;
+	int16 y;
+
+	x = _vm->_global->_inter_mouseX;
+	y = _vm->_global->_inter_mouseY;
+	_vm->_draw->adjustCoords(1, &x, &y);
+
+	WRITE_VAR(2, x);
+	WRITE_VAR(3, y);
+	WRITE_VAR(4, _vm->_game->_mouseButtons);
 }
 
 } // End of namespace Gob

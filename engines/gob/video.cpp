@@ -27,6 +27,7 @@
 #include "gob/global.h"
 #include "gob/video.h"
 #include "gob/dataio.h"
+#include "gob/draw.h"
 
 #include "gob/driver_vga.h"
 
@@ -35,15 +36,7 @@ namespace Gob {
 /* NOT IMPLEMENTED */
 
 Video::Video(GobEngine *vm) : _vm(vm) {
-}
-
-//XXX: Use this function to update the screen for now.
-//     This should be moved to a better location later on.
-void Video::waitRetrace(int16) {
-	if (_vm->_global->_pPrimarySurfDesc) {
-		g_system->copyRectToScreen(_vm->_global->_pPrimarySurfDesc->vidPtr, 320, 0, 0, 320, 200);
-		g_system->updateScreen();
-	}
+	_extraMode = false;
 }
 
 char Video::initDriver(int16 vidMode) {
@@ -85,71 +78,6 @@ int32 Video::getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 		break;
 	}
 	return size;
-}
-
-Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
-	int8 flagsAnd2;
-	byte *vidMem = 0;
-	int32 sprSize;
-	int16 someFlags = 1;
-	SurfaceDesc *descPtr;
-
-	if (flags != PRIMARY_SURFACE)
-		_vm->_global->_sprAllocated++;
-
-	if (flags & RETURN_PRIMARY)
-		return _vm->_global->_pPrimarySurfDesc;
-
-	if (vidMode != 0x13)
-		error("Video::initSurfDesc: Only VGA 0x13 mode is supported!");
-
-	if ((flags & PRIMARY_SURFACE) == 0)
-		vidMode += 0x80;
-
-	if (flags & 2)
-		flagsAnd2 = 1;
-	else
-		flagsAnd2 = 0;
-
-	if (flags & PRIMARY_SURFACE) {
-		_vm->_global->_primaryWidth = width;
-		_vm->_global->_mouseMaxCol = width;
-		_vm->_global->_primaryHeight = height;
-		_vm->_global->_mouseMaxRow = height;
-		sprSize = 0;
-	} else {
-		sprSize = Video::getRectSize(width, height, flagsAnd2, vidMode);
-		if (flagsAnd2)
-			someFlags += 0x80;
-	}
-	if (flags & PRIMARY_SURFACE) {
-		descPtr = _vm->_global->_pPrimarySurfDesc;
-		delete[] descPtr->vidPtr;
-		assert(descPtr);
-		vidMem = new byte[320 * 200];
-	} else {
-		if (flags & DISABLE_SPR_ALLOC) {
-			descPtr = new SurfaceDesc;
-			// this case causes vidPtr to be set to invalid memory
-			assert(false);
-		} else {
-			descPtr = new SurfaceDesc;
-			descPtr->vidPtr = new byte[sprSize];
-			vidMem = descPtr->vidPtr;
-		}
-	}
-	if (descPtr == 0)
-		return 0;
-
-	descPtr->width = width;
-	descPtr->height = height;
-	descPtr->flag = someFlags;
-	descPtr->vidMode = vidMode;
-	descPtr->vidPtr = vidMem;
-
-	descPtr->reserved1 = 0;
-	descPtr->reserved2 = 0;
-	return descPtr;
 }
 
 void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
@@ -454,7 +382,7 @@ void Video::initPrimary(int16 mode) {
 		Video::initDriver(mode);
 
 	if (mode != 3) {
-		Video::initSurfDesc(mode, 320, 200, PRIMARY_SURFACE);
+		initSurfDesc(mode, 320, 200, PRIMARY_SURFACE);
 
 		if (_vm->_global->_dontSetPalette)
 			return;

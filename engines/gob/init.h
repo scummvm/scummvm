@@ -23,16 +23,19 @@
 #ifndef GOB_INIT_H
 #define GOB_INIT_H
 
+#include "gob/video.h"
+
 namespace Gob {
 
 class Init {
 public:
 	void findBestCfg(void);
-	void soundVideo(int32 smallHeapSize, int16 flag);
-
 	void initGame(char *totFile);
 
+	virtual void soundVideo(int32 smallHeapSize, int16 flag) = 0;
+
 	Init(GobEngine *vm);
+	virtual ~Init() {};
 
 protected:
 	Video::PalDesc *_palDesc;
@@ -40,6 +43,22 @@ protected:
 	GobEngine *_vm;
 
 	void cleanup(void);
+};
+
+class Init_v1 : public Init {
+public:
+	virtual void soundVideo(int32 smallHeapSize, int16 flag);
+
+	Init_v1(GobEngine *vm);
+	virtual ~Init_v1() {};
+};
+
+class Init_v2 : public Init_v1 {
+public:
+	virtual void soundVideo(int32 smallHeapSize, int16 flag);
+
+	Init_v2(GobEngine *vm);
+	virtual ~Init_v2() {};
 };
 
 }				// End of namespace Gob

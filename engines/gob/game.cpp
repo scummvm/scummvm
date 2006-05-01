@@ -59,7 +59,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_collStackSize = 0;
 	int i;
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 5; i++) {
 		_collStack[i] = 0;
 		_collStackElemSizes[i] = 0;
 	}
@@ -103,6 +103,14 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 		_variablesArray[i] = 0;
 		_curTotFileArray[i][0] = 0;
 	}
+
+	warning("GOB2 Stub! _byte_2FC9B, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517");
+	_byte_2FC9B = 0;
+	_word_2FC9C = 0;
+	_word_2FC9E = 0;
+	_word_2E51F = 0;
+	_off_2E51B = 0;
+	_off_2E517 = 0;
 }
 
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
@@ -198,49 +206,6 @@ void Game::freeCollision(int16 id) {
 		if (_collisionAreas[i].id == id)
 			_collisionAreas[i].left = -1;
 	}
-}
-
-void Game::pushCollisions(char all) {
-	Collision *srcPtr;
-	Collision *destPtr;
-	int16 size;
-
-	debugC(1, DEBUG_COLLISIONS, "pushCollisions");
-	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1;
-	    srcPtr++) {
-		if (all || (srcPtr->id & 0x8000))
-			size++;
-	}
-
-	destPtr = new Collision[size];
-	_collStack[_collStackSize] = destPtr;
-	_collStackElemSizes[_collStackSize] = size;
-	_collStackSize++;
-
-	for (srcPtr = _collisionAreas; srcPtr->left != -1; srcPtr++) {
-		if (all || (srcPtr->id & 0x8000)) {
-			memcpy(destPtr, srcPtr, sizeof(Collision));
-			srcPtr->left = -1;
-			destPtr++;
-		}
-	}
-}
-
-void Game::popCollisions(void) {
-	Collision *destPtr;
-	Collision *srcPtr;
-
-	debugC(1, DEBUG_COLLISIONS, "popCollision");
-
-	_collStackSize--;
-	for (destPtr = _collisionAreas; destPtr->left != -1; destPtr++);
-
-	srcPtr = _collStack[_collStackSize];
-	memcpy(destPtr, srcPtr,
-	    _collStackElemSizes[_collStackSize] *
-	    sizeof(Collision));
-
-	free(_collStack[_collStackSize]);
 }
 
 int16 Game::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
@@ -405,255 +370,6 @@ void Game::freeSoundSlot(int16 slot) {
 		_soundFromExt[slot] = 0;
 	}
 
-}
-
-int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handleMouse) {
-	_vm->_util->processInput();
-
-	if (VAR(58) != 0) {
-		if (_vm->_mult->_frameStart != (int)VAR(58) - 1)
-			_vm->_mult->_frameStart++;
-		else
-			_vm->_mult->_frameStart = 0;
-
-		_vm->_mult->playMult(_vm->_mult->_frameStart + VAR(57), _vm->_mult->_frameStart + VAR(57), 1,
-		    handleMouse);
-	}
-
-	if (_vm->_inter->_soundEndTimeKey != 0
-	    && _vm->_util->getTimeKey() >= _vm->_inter->_soundEndTimeKey) {
-		_vm->_snd->stopSound(_vm->_inter->_soundStopVal);
-		_vm->_inter->_soundEndTimeKey = 0;
-	}
-
-	if (_vm->_global->_useMouse == 0)
-		error("checkKeys: Can't work without mouse!");
-
-	_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
-
-	if (*pButtons == 3)
-		*pButtons = 0;
-
-	return _vm->_util->checkKey();
-}
-
-int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
-	    int16 *pResIndex) {
-	char *savedIP;
-	int16 resIndex;
-	int16 key;
-	int16 oldIndex;
-	int16 oldId;
-	uint32 timeKey;
-
-	if (deltaTime >= -1) {
-		_lastCollKey = 0;
-		_lastCollAreaIndex = 0;
-		_lastCollId = 0;
-	}
-
-	if (pResId != 0)
-		*pResId = 0;
-
-	resIndex = 0;
-
-	if (_vm->_draw->_cursorIndex == -1 && handleMouse != 0
-	    && _lastCollKey == 0) {
-		_lastCollKey =
-		    checkMousePoint(1, &_lastCollId,
-		    &_lastCollAreaIndex);
-
-		if (_lastCollKey != 0 && (_lastCollId & 0x8000) != 0) {
-			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = (char *)_totFileData +
-			    _collisionAreas[_lastCollAreaIndex].funcEnter;
-
-			_vm->_inter->funcBlock(0);
-			_vm->_global->_inter_execPtr = savedIP;
-		}
-	}
-
-	if (handleMouse != 0)
-		_vm->_draw->animateCursor(-1);
-
-	timeKey = _vm->_util->getTimeKey();
-	while (1) {
-		if (_vm->_inter->_terminate) {
-			if (handleMouse)
-				_vm->_draw->blitCursor();
-			return 0;
-		}
-
-		if (_vm->_draw->_noInvalidated == 0) {
-			if (handleMouse)
-				_vm->_draw->animateCursor(-1);
-			else
-				_vm->_draw->blitInvalidated();
-		}
-
-		// NOTE: the original asm does the below checkKeys call
-		// _before_ this check. However, that can cause keypresses to get lost
-		// since there's a return statement in this check.
-		// Additionally, I added a 'deltaTime == -1' check there, since
-		// when this function is called with deltaTime == -1 in inputArea,
-		// and the return value is then discarded.
-		if (deltaTime < 0) {
-			uint32 curtime = _vm->_util->getTimeKey();
-			if (deltaTime == -1 || curtime + deltaTime > timeKey) {
-				if (pResId != 0)
-					*pResId = 0;
-
-				if (pResIndex != 0)
-					*pResIndex = 0;
-
-				return 0;
-			}
-		}
-
-		key = checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY,
-							 &_mouseButtons, handleMouse);
-
-		if (handleMouse == 0 && _mouseButtons != 0) {
-			_vm->_util->waitMouseRelease(0);
-			key = 3;
-		}
-
-		if (key != 0) {
-
-			if (handleMouse == 1)
-				_vm->_draw->blitCursor();
-
-			if (pResId != 0)
-				*pResId = 0;
-
-			if (pResIndex != 0)
-				*pResIndex = 0;
-
-			if (_lastCollKey != 0 &&
-			    _collisionAreas[_lastCollAreaIndex].funcLeave != 0) {
-				savedIP = _vm->_global->_inter_execPtr;
-				_vm->_global->_inter_execPtr = (char *)_totFileData +
-				    _collisionAreas[_lastCollAreaIndex].funcLeave;
-
-				_vm->_inter->funcBlock(0);
-				_vm->_global->_inter_execPtr = savedIP;
-			}
-
-			_lastCollKey = 0;
-			if (key != 0)
-				return key;
-		}
-
-		if (handleMouse != 0) {
-			if (_mouseButtons != 0) {
-				oldIndex = 0;
-
-				_vm->_draw->animateCursor(2);
-				if (deltaTime <= 0) {
-					if (handleMouse == 1)
-						_vm->_util->waitMouseRelease(1);
-				} else if (deltaTime > 0) {
-					_vm->_util->delay(deltaTime);
-				}
-
-				_vm->_draw->animateCursor(-1);
-				if (pResId != 0)
-					*pResId = 0;
-
-				key = checkMousePoint(0, pResId, &resIndex);
-
-				if (pResIndex != 0)
-					*pResIndex = resIndex;
-
-				if (key != 0 || (pResId != 0 && *pResId != 0)) {
-					if (handleMouse == 1 && (deltaTime <= 0
-						|| _mouseButtons == 0))
-						_vm->_draw->blitCursor();
-
-					if (_lastCollKey != 0 &&
-						_collisionAreas[_lastCollAreaIndex].funcLeave != 0) {
-						savedIP = _vm->_global->_inter_execPtr;
-						_vm->_global->_inter_execPtr =
-						    (char *)_totFileData +
-						    _collisionAreas[_lastCollAreaIndex].funcLeave;
-
-						_vm->_inter->funcBlock(0);
-						_vm->_global->_inter_execPtr = savedIP;
-					}
-					_lastCollKey = 0;
-					return key;
-				}
-
-				if (_lastCollKey != 0 &&
-				    _collisionAreas[_lastCollAreaIndex].funcLeave != 0) {
-					savedIP = _vm->_global->_inter_execPtr;
-					_vm->_global->_inter_execPtr =
-					    (char *)_totFileData +
-					    _collisionAreas[_lastCollAreaIndex].funcLeave;
-
-					_vm->_inter->funcBlock(0);
-					_vm->_global->_inter_execPtr = savedIP;
-				}
-
-				_lastCollKey =
-				    checkMousePoint(1, &_lastCollId,
-				    &_lastCollAreaIndex);
-
-				if (_lastCollKey != 0
-				    && (_lastCollId & 0x8000) != 0) {
-					savedIP = _vm->_global->_inter_execPtr;
-					_vm->_global->_inter_execPtr =
-					    (char *)_totFileData +
-					    _collisionAreas[_lastCollAreaIndex].funcEnter;
-
-					_vm->_inter->funcBlock(0);
-					_vm->_global->_inter_execPtr = savedIP;
-				}
-			} else {
-
-				if (handleMouse != 0 &&
-				    (_vm->_global->_inter_mouseX != _vm->_draw->_cursorX
-					|| _vm->_global->_inter_mouseY != _vm->_draw->_cursorY)) {
-					oldIndex = _lastCollAreaIndex;
-					oldId = _lastCollId;
-
-					key =
-					    checkMousePoint(1,
-					    &_lastCollId,
-					    &_lastCollAreaIndex);
-
-					if (key != _lastCollKey) {
-						if (_lastCollKey != 0
-						    && (oldId & 0x8000) != 0) {
-							savedIP = _vm->_global->_inter_execPtr;
-							_vm->_global->_inter_execPtr = (char *)_totFileData +
-							    _collisionAreas[oldIndex].funcLeave;
-
-							_vm->_inter->funcBlock(0);
-							_vm->_global->_inter_execPtr = savedIP;
-						}
-
-						_lastCollKey = key;
-						if (_lastCollKey != 0 && (_lastCollId & 0x8000) != 0) {
-							savedIP = _vm->_global->_inter_execPtr;
-							_vm->_global->_inter_execPtr = (char *)_totFileData +
-							    _collisionAreas[_lastCollAreaIndex].funcEnter;
-
-							_vm->_inter->funcBlock(0);
-							_vm->_global->_inter_execPtr = savedIP;
-						}
-					}
-				}
-			}
-		}
-
-		if (handleMouse != 0)
-			_vm->_draw->animateCursor(-1);
-
-		_vm->_util->delay(10);
-
-		_vm->_snd->loopSounds();
-	}
 }
 
 int16 Game::inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 backColor,
@@ -1575,54 +1291,6 @@ void Game::collisionsBlock(void) {
 	_vm->_global->_inter_execPtr = savedIP;
 }
 
-void Game::prepareStart(void) {
-	int16 i;
-
-	clearCollisions();
-
-	_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
-	_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
-
-	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-
-	_vm->_draw->_backSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
-
-	_vm->_video->fillRect(_vm->_draw->_backSurface, 0, 0, 319, 199, 1);
-	_vm->_draw->_frontSurface = _vm->_global->_pPrimarySurfDesc;
-	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0, 319, 199, 1);
-
-	_vm->_util->setMousePos(152, 92);
-
-	_vm->_draw->_cursorX = 152;
-	_vm->_global->_inter_mouseX = 152;
-
-	_vm->_draw->_cursorY = 92;
-	_vm->_global->_inter_mouseY = 92;
-	_vm->_draw->_invalidatedCount = 0;
-	_vm->_draw->_noInvalidated = 1;
-	_vm->_draw->_applyPal = 0;
-	_vm->_draw->_paletteCleared = 0;
-	_vm->_draw->_cursorWidth = 16;
-	_vm->_draw->_cursorHeight = 16;
-	_vm->_draw->_transparentCursor = 1;
-
-	for (i = 0; i < 40; i++) {
-		_vm->_draw->_cursorAnimLow[i] = -1;
-		_vm->_draw->_cursorAnimDelays[i] = 0;
-		_vm->_draw->_cursorAnimHigh[i] = 0;
-	}
-
-	_vm->_draw->_cursorAnimLow[1] = 0;
-	_vm->_draw->_cursorSprites = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 32, 16, 2);
-	_vm->_draw->_cursorBack = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, 0);
-	_vm->_draw->_renderFlags = 0;
-	_vm->_draw->_backDeltaX = 0;
-	_vm->_draw->_backDeltaY = 0;
-
-	_startTimeKey = _vm->_util->getTimeKey();
-}
-
 void Game::loadTotFile(char *path) {
 	int16 handle;
 
@@ -1746,7 +1414,7 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;
 
-	warning("GOB2 Stub! sub_18072");
+	popCollisions();
 
 	if ((flags & 1) && (_vm->_global->_inter_variables != 0))
 		delete[] _vm->_global->_inter_variables;
@@ -1769,13 +1437,15 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	strcat(_curExtFile, ".EXT");
 }
 
-char *Game::loadLocTexts(void) {
-	char locTextFile[20];
-	int16 handle;
+int16 Game::openLocTextFile(char *locTextFile, int language) {
+	int n;
 
-	strcpy(locTextFile, _curTotFile);
-	locTextFile[strlen(locTextFile) - 4] = 0;
-	switch (_vm->_global->_language) {
+	n = strlen(locTextFile);
+	if (n < 4)
+		return -1;
+
+	locTextFile[n - 4] = 0;
+	switch (language) {
 	case 0:
 		strcat(locTextFile, ".dat");
 		break;
@@ -1804,13 +1474,164 @@ char *Game::loadLocTexts(void) {
 		strcat(locTextFile, ".ang");
 		break;
 	}
+	return _vm->_dataio->openData(locTextFile);
+}
 
-	handle = _vm->_dataio->openData(locTextFile);
+char *Game::loadLocTexts(void) {
+	char locTextFile[20];
+	int16 handle;
+	int i;
+
+	strcpy(locTextFile, _curTotFile);
+
+	handle = openLocTextFile(locTextFile, _vm->_global->_language);
+	if ((handle < 0) && !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot")) {
+		warning("Your game version doesn't support the requested language, using the first one available");
+		for (i = 0; i < 10; i++) {
+			handle = openLocTextFile(locTextFile, i);
+			if (handle >= 0)
+				_vm->_global->_language = i;
+		}
+	}
+
 	if (handle >= 0) {
 		_vm->_dataio->closeData(handle);
 		return _vm->_dataio->getData(locTextFile);
 	}
 	return 0;
+}
+
+void Game::setCollisions(void) {
+	char *savedIP;
+	int16 left;
+	int16 top;
+	int16 width;
+	int16 height;
+	Collision *collArea;
+
+	for (collArea = _collisionAreas; collArea->left != -1; collArea++) {
+		if (((collArea->id & 0xC000) != 0x8000) || (collArea->field_12 == 0))
+			continue;
+
+		savedIP = _vm->_global->_inter_execPtr;
+		_vm->_global->_inter_execPtr = _totFileData + collArea->field_12;
+		left = _vm->_parse->parseValExpr();
+		top = _vm->_parse->parseValExpr();
+		width = _vm->_parse->parseValExpr();
+		height = _vm->_parse->parseValExpr();
+		if ((_vm->_draw->_renderFlags != 8) && (left != -1)) {
+			left += _vm->_draw->_backDeltaX;
+			top += _vm->_draw->_backDeltaY;
+		}
+		if (_vm->_draw->_word_2E8E2 != 2) {
+			_vm->_draw->adjustCoords(0, &left, &top);
+			if ((collArea->flags & 0x0F) < 3)
+				_vm->_draw->adjustCoords(2, &width, &height);
+			else {
+				height &= 0xFFFE;
+				_vm->_draw->adjustCoords(2, 0, &height);
+			}
+		}
+		collArea->left = left;
+		collArea->top = top;
+		collArea->right = left + width - 1;
+		collArea->bottom = top + height - 1;
+		_vm->_global->_inter_execPtr = savedIP;
+	}
+}
+
+void Game::collSub(int16 offset) {
+	char *savedIP;
+	int16 collStackSize;
+
+	savedIP = _vm->_global->_inter_execPtr;
+	_vm->_global->_inter_execPtr = _totFileData + offset;
+
+	_shouldPushColls = 1;
+	collStackSize = _collStackSize;
+
+	_vm->_inter->funcBlock(0);
+
+	if (collStackSize != _collStackSize)
+		popCollisions();
+
+	_shouldPushColls = 0;
+	_vm->_global->_inter_execPtr = savedIP;
+	setCollisions();
+}
+
+void Game::collAreaSub(int16 index, int8 enter) {
+	uint16 collId;
+
+	collId = _collisionAreas[index].id & 0xF000;
+
+	if ((collId == 0xA000) || (collId == 0x9000))
+		WRITE_VAR(17, collId);
+	else if (enter == 0)
+		WRITE_VAR(17, -(collId & 0x0FFF));
+	else
+		WRITE_VAR(17, collId & 0x0FFF);
+	
+	if (enter != 0) {
+		if (_collisionAreas[index].funcEnter != 0)
+			collSub(_collisionAreas[index].funcEnter);
+	} else {
+		if (_collisionAreas[index].funcLeave != 0)
+			collSub(_collisionAreas[index].funcLeave);
+	}
+}
+
+void Game::sub_ADD2(void) {
+	_word_2FC9C = 0;
+	_word_2FC9E = 0;
+
+	if (_word_2E51F != 0) {
+		_off_2E51B = new Video::SurfaceDesc;
+		memcpy(_off_2E51B, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
+		_off_2E51B->height = _vm->_global->_primaryHeight - _word_2E51F;
+		_vm->_draw->_frontSurface->height -= _off_2E51B->height;
+		_vm->_draw->_frontSurface->vidPtr =
+			_off_2E51B->vidPtr + ((_off_2E51B->width * _off_2E51B->height) / 4);
+
+		_off_2E517 = new Video::SurfaceDesc;
+		memcpy(_off_2E517, _off_2E51B, sizeof(Video::SurfaceDesc));
+		_off_2E517->width = _vm->_global->_primaryWidth;
+		_off_2E517->vidPtr = _vm->_draw->_frontSurface->vidPtr +
+			((_vm->_draw->_frontSurface->width * _vm->_draw->_frontSurface->height ) / 4);
+	}
+	_vm->_draw->initBigSprite(21, 320, 200, 0);
+	_vm->_draw->_backSurface = _vm->_draw->_spritesArray[21];
+	_vm->_video->clearSurf(_vm->_draw->_backSurface);
+	
+	_vm->_draw->initBigSprite(23, 32, 16, 2);
+	// TODO: That assignment is not in the original assembly, why?
+	_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[23];
+	_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
+	_vm->_draw->_cursorBack = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, 0);
+
+	_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
+	_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
+
+/*	if (_word_2E51F != 0) {
+		dword_2F92D = _off_2E51B;
+		dword_2F931 = _off_2E517;
+	}*/
+}
+
+void Game::sub_BB28(void) {
+	_vm->_draw->freeSprite(23);
+	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
+	if (_off_2E51B != 0) {
+		memcpy(_vm->_draw->_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
+		_vm->_draw->_frontSurface->width = 320;
+		_vm->_draw->_frontSurface->height = 200;
+		delete _off_2E51B;
+		delete _off_2E517;
+		_off_2E51B = 0;
+		_off_2E517 = 0;
+	}
+	if (_vm->_draw->_frontSurface != _vm->_draw->_backSurface)
+		_vm->_draw->freeSprite(21);
 }
 
 } // End of namespace Gob

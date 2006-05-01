@@ -25,11 +25,22 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
+#include "gob/global.h"
 #include "gob/video.h"
+#include "gob/draw.h"
 
 namespace Gob {
 
 Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
+}
+
+//XXX: Use this function to update the screen for now.
+//     This should be moved to a better location later on.
+void Video_v2::waitRetrace(int16) {
+	if (_vm->_draw->_frontSurface) {
+		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr, 320, 0, 0, 320, 200);
+		g_system->updateScreen();
+	}
 }
 
 void Video_v2::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc, int16 color1,
@@ -69,6 +80,76 @@ void Video_v2::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc, int1
 	dest->vidMode &= 0x7F;
 	_videoDriver->drawLetter((unsigned char) item, x, y, fontDesc, color1, color2, transp, dest);
 	dest->vidMode = videoMode;
+}
+
+Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
+	int8 flagsAnd2;
+	byte *vidMem = 0;
+	int32 sprSize;
+	int16 someFlags = 1;
+	SurfaceDesc *descPtr;
+
+	if (flags != PRIMARY_SURFACE)
+		_vm->_global->_sprAllocated++;
+
+	if (flags & RETURN_PRIMARY)
+		return _vm->_draw->_frontSurface;
+
+	if (vidMode != 0x13)
+		error("Video::initSurfDesc: Only VGA 0x13 mode is supported!");
+
+	if ((flags & PRIMARY_SURFACE) == 0)
+		vidMode += 0x80;
+
+	if (flags & 2)
+		flagsAnd2 = 1;
+	else
+		flagsAnd2 = 0;
+
+	width = (width + 7) & 0xFFF8;
+
+	if (flags & PRIMARY_SURFACE) {
+		_vm->_global->_primaryWidth = width;
+		_vm->_global->_mouseMaxCol = width;
+		_vm->_global->_primaryHeight = height;
+		_vm->_global->_mouseMaxRow = height;
+		sprSize = 0;
+	} else {
+		vidMem = 0;
+		sprSize = Video::getRectSize(width, height, flagsAnd2, vidMode);
+		someFlags = 4;
+		if (flagsAnd2)
+			someFlags += 0x80;
+	}
+	if (flags & PRIMARY_SURFACE) {
+		descPtr = _vm->_draw->_frontSurface;
+		assert(descPtr);
+		if (descPtr->vidPtr != 0)
+			delete[] descPtr->vidPtr;
+		vidMem = new byte[320 * 200];
+	} else {
+		if (flags & DISABLE_SPR_ALLOC) {
+			descPtr = new SurfaceDesc;
+			// this case causes vidPtr to be set to invalid memory
+			assert(false);
+		} else {
+			descPtr = new SurfaceDesc;
+			descPtr->vidPtr = new byte[sprSize];
+			vidMem = descPtr->vidPtr;
+		}
+	}
+	if (descPtr == 0)
+		return 0;
+
+	descPtr->width = width;
+	descPtr->height = height;
+	descPtr->flag = someFlags;
+	descPtr->vidMode = vidMode;
+	descPtr->vidPtr = vidMem;
+
+	descPtr->reserved1 = 0;
+	descPtr->reserved2 = 0;
+	return descPtr;
 }
 
 } // End of namespace Gob

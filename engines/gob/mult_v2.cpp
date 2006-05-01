@@ -244,7 +244,7 @@ void Mult_v2::loadMult(int16 resId) {
 		if (_vm->_game->_totFileData[0x29] >= 51) {
 			size = (int16)READ_LE_UINT16(_dataPtr);
 			_multData2->somepointer10 = new char[size * 20];
-			memcpy(_multData2->somepointer09 /*WTF???*/, _dataPtr+2, size * 20);
+			memcpy(_multData2->somepointer09 /*???*/, _dataPtr+2, size * 20);
 			_dataPtr += size * 20 + 2;
 			size = _vm->_inter->load16();
 			if (size > 0) {
@@ -900,7 +900,7 @@ void Mult_v2::animate(void) {
 
 		animObj1->someFlag = 0;
 		// TODO: the region around off_2CE67 is messed up
-		// Should be some heigh value so that MIN() works
+		// Should be some high value so that MIN() works
 		animObj1->somethingTop = off_2CE67; // seg011:0AA7
 		animObj1->somethingLeft = off_2CE67;
 		animObj1->somethingBottom = 0;

@@ -89,10 +89,11 @@ public:
 		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
 	};
 
+	bool _extraMode;
+
 	Video(class GobEngine *vm);
 	virtual ~Video() {};
 	int32 getRectSize(int16 width, int16 height, int16 flag, int16 mode);
-	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
 	void freeSurfDesc(SurfaceDesc * surfDesc);
 	int16 clampValue(int16 val, int16 max);
 	void drawSprite(SurfaceDesc * source, SurfaceDesc * dest, int16 left,
@@ -113,12 +114,13 @@ public:
 	void initPrimary(int16 mode);
 	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight, int16 x,
 							int16 y, int16 transp, SurfaceDesc * destDesc);
-	void waitRetrace(int16);
 	void freeDriver(void);
 	void setHandlers();
 
 	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest) = 0;
+	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) = 0;
+	virtual void waitRetrace(int16) = 0;
 
 protected:
 	class VideoDriver *_videoDriver;
@@ -131,6 +133,8 @@ class Video_v1 : public Video {
 public:
 	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
+	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
+	virtual void waitRetrace(int16);
 
 	Video_v1(GobEngine *vm);
 	virtual ~Video_v1() {};
@@ -140,6 +144,8 @@ class Video_v2 : public Video_v1 {
 public:
 	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
+	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
+	virtual void waitRetrace(int16);
 
 	Video_v2(GobEngine *vm);
 	virtual ~Video_v2() {};

@@ -197,7 +197,6 @@ int GobEngine::init() {
 	_cdrom = new CDROM(this);
 	_dataio = new DataIO(this);
 	_goblin = new Goblin(this);
-	_init = new Init(this);
 	_map = new Map(this);
 	_pack = new Pack();
 	_palanim = new PalAnim(this);
@@ -211,6 +210,7 @@ int GobEngine::init() {
 		_draw = new Draw_v1(this);
 		_game = new Game_v1(this);
 		_video = new Video_v1(this);
+		_init = new Init_v1(this);
 	}
 	else if (_features & Gob::GF_GOB2) {
 		_inter = new Inter_v2(this);
@@ -219,6 +219,7 @@ int GobEngine::init() {
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
 		_video = new Video_v2(this);
+		_init = new Init_v2(this);
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");

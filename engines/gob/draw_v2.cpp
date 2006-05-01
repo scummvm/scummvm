@@ -425,7 +425,6 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 i;
 	int16 x;
 	int16 y;
-	int16 perLine;
 	Video::SurfaceDesc *sourceSurf;
 	Video::SurfaceDesc *destSurf;
 	bool deltaveto;
@@ -440,7 +439,6 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 destSurface;
 	int16 sourceSurface;
 // .---
-	Video::SurfaceDesc *off_2E51B = 0;
 	int8 word_2F2D2 = -1;
 // '---
 
@@ -483,8 +481,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 	destSurface = _destSurface;
 	sourceSurface = _sourceSurface;
 
-//	warning("GOB2 Stub! off_2E51B");
-	if (off_2E51B != 0) {
+//	warning("GOB2 Stub! _off_2E51B");
+	if (_vm->_game->_off_2E51B != 0) {
 		if ((_frontSurface->height <= _destSpriteY) &&
 				((_destSurface == 20) || (_destSurface == 21))) {
 			_destSpriteY -= _frontSurface->height;
@@ -494,7 +492,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 				_spriteBottom -= _frontSurface->height;
 			}
 			if (_destSurface == 21)
-				invalidateRect(0, _frontSurface->height, 319, _frontSurface->height+off_2E51B->height-1);
+				invalidateRect(0, _frontSurface->height, 319, _frontSurface->height+_vm->_game->_off_2E51B->height-1);
 			destSurface += 4;
 		}
 		if ((_frontSurface->height <= _spriteTop) && (operation == DRAW_BLITSURF)
@@ -731,22 +729,39 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWBAR:
-		_vm->_video->drawLine(_spritesArray[_destSurface],
-		    _destSpriteX, _spriteBottom,
-		    _spriteRight, _spriteBottom, _frontColor);
+		if (_word_2E8E2 != 2) {
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_destSpriteX, _spriteBottom - 1,
+					_spriteRight, _spriteBottom, _frontColor);
 
-		_vm->_video->drawLine(_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
-		    _destSpriteX, _spriteBottom, _frontColor);
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_destSpriteX + 1, _spriteBottom, _frontColor);
 
-		_vm->_video->drawLine(_spritesArray[_destSurface],
-		    _spriteRight, _destSpriteY,
-		    _spriteRight, _spriteBottom, _frontColor);
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_spriteRight - 1, _destSpriteY,
+					_spriteRight, _spriteBottom, _frontColor);
 
-		_vm->_video->drawLine(_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
-		    _spriteRight, _destSpriteY, _frontColor);
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_spriteRight, _destSpriteY + 1, _frontColor);
+		} else {
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_destSpriteX, _spriteBottom,
+					_spriteRight, _spriteBottom, _frontColor);
 
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_destSpriteX, _spriteBottom, _frontColor);
+
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_spriteRight, _destSpriteY,
+					_spriteRight, _spriteBottom, _frontColor);
+
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_spriteRight, _destSpriteY, _frontColor);
+		}
 		if (_destSurface == 21) {
 			invalidateRect(_destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom);
@@ -754,7 +769,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_CLEARRECT:
-		if (_backColor < 16) {
+		if ((_backColor != 16) && (_backColor != 144)) {
 			_vm->_video->fillRect(_spritesArray[_destSurface],
 			    _destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
@@ -776,35 +791,21 @@ void Draw_v2::spriteOperation(int16 operation) {
 			    _spriteRight, _spriteBottom);
 		}
 		break;
+	}
 
-		perLine =
-		    _spritesArray[(int16)_fontToSprite[_fontIndex].
-		    sprite]->width / _fontToSprite[_fontIndex].width;
+	_spriteLeft = spriteLeft;
+	_spriteTop = spriteTop;
+	_spriteRight = spriteRight;
+	_spriteLeft = spriteBottom;
+	_destSpriteX = destSpriteX;
+	_destSpriteY = destSpriteY;
+	_destSurface = destSurface;
+	_sourceSurface = sourceSurface;
 
-		y = (_letterToPrint -
-		    _fontToSprite[_fontIndex].base) / perLine *
-		    _fontToSprite[_fontIndex].height;
-
-		x = (_letterToPrint -
-		    _fontToSprite[_fontIndex].base) % perLine *
-		    _fontToSprite[_fontIndex].width;
-
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _destSpriteX +
-			    _fontToSprite[_fontIndex].width,
-			    _destSpriteY +
-			    _fontToSprite[_fontIndex].height);
-		}
-
-		_vm->_video->drawSprite(_spritesArray[(int16)_fontToSprite
-			[_fontIndex].sprite],
-		    _spritesArray[_destSurface], x, y,
-		    x + _fontToSprite[_fontIndex].width,
-		    y + _fontToSprite[_fontIndex].height,
-		    _destSpriteX, _destSpriteY, _transparency);
-
-		break;
+	if (operation == DRAW_PRINTTEXT) {
+		len = _fonts[_fontIndex]->itemWidth;
+		adjustCoords(1, &len, 0);
+		_destSpriteX += len * strlen(_textToPrint);
 	}
 
 	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaveto) {
