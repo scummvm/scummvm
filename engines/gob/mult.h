@@ -196,6 +196,7 @@ public:
 	void initAll(void);
 
 	virtual void setMultData(uint16 multindex) = 0;
+	virtual void multSub(uint16 multindex) = 0;
 	virtual void loadMult(int16 resId) = 0;
 	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				  char handleMouse) = 0;
@@ -226,6 +227,7 @@ public:
 	virtual ~Mult_v1() {};
 
 	virtual void setMultData(uint16 multindex);
+	virtual void multSub(uint16 multindex);
 	virtual void loadMult(int16 resId);
 	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				  char handleMouse);
@@ -307,6 +309,7 @@ public:
 	virtual ~Mult_v2() {};
 
 	virtual void setMultData(uint16 multindex);
+	virtual void multSub(uint16 multindex);
 	virtual void loadMult(int16 resId);
 	virtual void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				  char handleMouse);

@@ -207,6 +207,10 @@ void Mult_v1::setMultData(uint16 multindex) {
 	error("Switching mults not supported for Gob1");
 }
 
+void Mult_v1::multSub(uint16 multindex) {
+	error("Switching mults not supported for Gob1");
+}
+
 void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 	    char handleMouse) {
 	char stopNoClear;

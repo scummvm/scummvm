@@ -146,7 +146,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_loadAnim),
 		OPCODE(o1_freeAnim),
 		OPCODE(o1_updateAnim),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_multSub),
 		/* 14 */
 		OPCODE(o2_initMult),
 		OPCODE(o1_multFreeMult),
@@ -225,10 +225,10 @@ void Inter_v2::setupOpcodes(void) {
 		/* 50 */
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x52),
+		OPCODE(o2_stub0x53),
 		/* 54 */
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x54),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_stub0x56),
 		{NULL, ""},
@@ -560,7 +560,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_setType),
 		/* 08 */
 		OPCODE(o1_setNoTick),
-		OPCODE(o1_setPickable),
+		OPCODE(o2_setPickable),
 		OPCODE(o1_setXPos),
 		OPCODE(o1_setYPos),
 		/* 0C */
@@ -645,7 +645,7 @@ void Inter_v2::setupOpcodes(void) {
 }
 
 void Inter_v2::executeDrawOpcode(byte i) {
-	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d (%s)", i, getOpcodeDrawDesc(i));
+	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcV2 op = _opcodesDrawV2[i].proc;
 
@@ -656,7 +656,7 @@ void Inter_v2::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
+	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -673,7 +673,7 @@ bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 }
 
 void Inter_v2::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
+	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcV2 op = NULL;
 
@@ -708,6 +708,33 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
 	return "";
+}
+
+void Inter_v2::o2_stub0x52(void) {
+	int16 expr1 = _vm->_parse->parseValExpr();
+	int16 expr2 = _vm->_parse->parseValExpr();
+	int16 expr3 = _vm->_parse->parseValExpr();
+
+	warning("STUB: Gob2 drawOperation 0x52 (%d %d %d)", expr1, expr2, expr3);
+}
+
+void Inter_v2::o2_stub0x53(void) {
+	int16 var1 = _vm->_parse->parseVarIndex() >> 2;
+	int16 var2 = _vm->_parse->parseVarIndex() >> 2;
+	int16 index = _vm->_parse->parseValExpr();
+
+	warning("STUB: Gob2 drawOperation 0x53 (%d %d %d)", var1, var2, index);
+
+//	WRITE_VAR(var1, _vm->_mult->_objects[index].field_1A);
+//	WRITE_VAR(var2, _vm->_mult->_objects[index].field_1B);
+}
+
+void Inter_v2::o2_stub0x54(void) {
+	int16 index = _vm->_parse->parseValExpr();
+
+	warning("STUB: Gob2 drawOperation 0x54 (%d)", index);
+
+//	_vm->_mult->_objects[index].pAnimData->field_12 = 4;
 }
 
 void Inter_v2::o2_stub0x56(void) {
@@ -940,6 +967,10 @@ int16 Inter_v2::loadSound(int16 search) {
 	return;
 
 	_vm->_game->loadSound(slot, dataPtr);*/
+}
+
+void Inter_v2::o2_multSub(void) {
+	_vm->_mult->multSub(_vm->_parse->parseValExpr());
 }
 
 void Inter_v2::o2_renderStatic(void) {
@@ -1520,6 +1551,10 @@ void Inter_v2::storeMouse(void) {
 	WRITE_VAR(2, x);
 	WRITE_VAR(3, y);
 	WRITE_VAR(4, _vm->_game->_mouseButtons);
+}
+
+void Inter_v2::o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
+	warning("GOB2 Stub! o2_setPickable");
 }
 
 } // End of namespace Gob

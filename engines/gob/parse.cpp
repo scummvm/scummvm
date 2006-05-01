@@ -160,6 +160,9 @@ void Parse::printExpr(char stopToken) {
 	char saved = 0;
 	static char *savedPos = 0;
 
+	// TODO: There seems to be a problem here, GOB2 runs into an endless loop
+	return;
+
 	if (savedPos == 0) {
 		savedPos = _vm->_global->_inter_execPtr;
 		saved = 1;

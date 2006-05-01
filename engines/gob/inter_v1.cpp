@@ -1647,7 +1647,7 @@ void Inter_v1::o1_freeFontToSprite(void) {
 }
 
 void Inter_v1::executeDrawOpcode(byte i) {
-	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d (%s)", i, getOpcodeDrawDesc(i));
+	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcV1 op = _opcodesDrawV1[i].proc;
 
@@ -1658,7 +1658,7 @@ void Inter_v1::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
+	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -1675,7 +1675,7 @@ bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 }
 
 void Inter_v1::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
+	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcV1 op = NULL;
 

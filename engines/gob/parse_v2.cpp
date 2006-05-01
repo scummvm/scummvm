@@ -365,6 +365,8 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 	int16 stkPos;
 	int16 brackStart;
 
+	memset(operStack, 0, 20);
+
 	stkPos = -1;
 	operPtr = (char *)(operStack - 1);
 	valPtr = values - 1;

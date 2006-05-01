@@ -310,6 +310,9 @@ protected:
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
 	void o2_totSub(void);
+	void o2_stub0x52(void);
+	void o2_stub0x53(void);
+	void o2_stub0x54(void);
 	void o2_stub0x56(void);
 	void o2_stub0x80(void);
 	void o2_renderStatic(void);
@@ -318,6 +321,7 @@ protected:
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadSound(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_multSub(void);
 	void o2_setRenderFlags(void);
 	void o2_initMult(void);
 	void o2_loadCurLayer(void);
@@ -328,6 +332,7 @@ protected:
 	void o2_getCDTrackPos(void);
 	void o2_playMult(void);
 	void o2_initCursor(void);
+	void o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };
 
 }				// End of namespace Gob

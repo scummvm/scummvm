@@ -33,6 +33,7 @@
 #include "gob/anim.h"
 #include "gob/draw.h"
 #include "gob/palanim.h"
+#include "gob/parse.h"
 
 namespace Gob {
 
@@ -274,6 +275,57 @@ void Mult_v2::setMultData(uint16 multindex) {
 
 	debugC(4, DEBUG_GAMEFLOW, "Switching to mult %d", multindex);
 	_multData2 = _multDatas[multindex];
+}
+
+void Mult_v2::multSub(uint16 multindex) {
+	uint16 flags;
+	int16 expr;
+	int i;
+	int16 di;
+
+	flags = multindex;
+	multindex = (multindex >> 12) & 0xF;
+
+	if (multindex > 7)
+		error("Multindex out of range");
+
+	debugC(4, DEBUG_GAMEFLOW, "Sub mult %d", multindex);
+	_multData2 = _multDatas[multindex];
+
+	if (_multData2 == 0) {
+		_vm->_parse->parseValExpr();
+		_vm->_parse->parseValExpr();
+		_vm->_parse->parseValExpr();
+		_vm->_parse->parseValExpr();
+		return;
+	}
+
+	if (flags & 0x200)
+		di = 3;
+	else if (flags & 0x100)
+		di = 2;
+	else if (flags & 0x80)
+		di = 1;
+	else
+		di = 0;
+
+	if (flags & 0x400) {
+		flags = 0x400;
+		_multData2->field_156 = -1;
+	} else {
+		_multData2->field_156 = 1;
+		flags &= 0x7F;
+	}
+
+	_multData2->field_124[di][0] = flags;
+	for (i = 1; i < 4; i++) {
+		_multData2->field_124[di][i] = _vm->_parse->parseValExpr();
+	}
+	expr = _vm->_parse->parseValExpr();
+	_multData2->animKeysIndices1[di] = expr;
+	_multData2->animKeysIndices2[di] = expr;
+	// loc_5D0E
+	warning("GOB2 Stub! Mult_v2::multSub()");
 }
 
 void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
