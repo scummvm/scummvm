@@ -505,8 +505,7 @@ void SimonEngine::drawMousePart(byte *dst, int pitch, int image, int offs) {
 					return;
 			}
 		} else {
-			tmp = _mouseOffs[offs + 1] + _mouseCountY;
-			if (tmp >= 40) {
+			if (_mouseOffs[offs + 1] + _mouseCountY >= 40) {
 				tmp = 40 - _mouseCountY;
 				while (tmp--)
 					dst -= pitch;
