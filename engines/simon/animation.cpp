@@ -73,8 +73,7 @@ bool MoviePlayer::load(const char *filename) {
 
 	// Change file extension to dxa
 	strcpy(filename2, filename);
-	int len = strlen(filename2) - 4;
-	filename2[len++] = '.';
+	int len = strlen(filename2) - 3;
 	filename2[len++] = 'd';
 	filename2[len++] = 'x';
 	filename2[len++] = 'a';
@@ -235,6 +234,12 @@ void MoviePlayer::handleNextFrame() {
 	OSystem::Event event;
 	while (_vm->_system->pollEvent(event)) {
 		switch (event.type) {
+		case OSystem::EVENT_KEYDOWN:
+			if (event.kbd.ascii == 27) {
+				_leftButtonDown = true;
+				_rightButtonDown = true;
+			}
+			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			_leftButtonDown = true;
 			break;
