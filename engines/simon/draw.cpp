@@ -103,7 +103,7 @@ void SimonEngine::animateSprites() {
 	if (_drawImagesDebug)
 		memset(_backBuf, 0, _screenWidth * _screenHeight);
 
-	_updateScreen++;
+	_updateScreen = true;
 	_vcPtr = vc_ptr_org;
 }
 
@@ -141,7 +141,7 @@ void SimonEngine::animateSpritesDebug() {
 		vsp++;
 	}
 
-	_updateScreen++;
+	_updateScreen = true;
 	_vcPtr = vc_ptr_org;
 }
 
@@ -217,7 +217,7 @@ void SimonEngine::animateSpritesByY() {
 		vc10_draw();
 	}
 
-	_updateScreen++;
+	_updateScreen = true;
 	_vcPtr = vc_ptr_org;
 }
 

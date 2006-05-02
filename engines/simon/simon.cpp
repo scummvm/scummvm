@@ -136,7 +136,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_beardLoaded = 0;
 	_hitarea_unk_3 = 0;
 	_mortalFlag = 0;
-	_updateScreen = 0;
+	_updateScreen = false;
 	_usePaletteDelay = 0;
 	_syncFlag2 = 0;
 	_inCallBack = 0;

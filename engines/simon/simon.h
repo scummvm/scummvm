@@ -23,8 +23,6 @@
 #ifndef SIMON_H
 #define SIMON_H
 
-#include <stdio.h>
-
 #include "base/engine.h"
 
 #include "common/rect.h"
@@ -249,7 +247,7 @@ protected:
 	bool _beardLoaded;
 	bool _hitarea_unk_3;
 	bool _mortalFlag;
-	byte _updateScreen;
+	bool _updateScreen;
 	bool _usePaletteDelay;
 	bool _syncFlag2;
 	bool _inCallBack;
