@@ -114,12 +114,12 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 
 	if (verify) {
 #ifdef __DC__
-		FIXME;
 		/*
-		FIXME: Is there really no way to at least verify the path is valid?
-		Or is it too slow, or what? Please clarify with a comment here.
-		(Of course we could just fopen here, but that wouldn't be able to deal
-		with directories...
+		FIXME: Why should I need to add a lot of code
+		just to figure out if a path exists / is a directory here?  
+		We should know what we want it to be, and when open / listDir
+		is called it will become apparent if it isn't.  Just
+		checking for the sake of checking seems bogus to me.
 		*/
 #else
 		struct stat st;
