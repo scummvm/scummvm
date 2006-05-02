@@ -220,14 +220,15 @@ bool readSaveGame(char *&buffer, int &size, const char *filename)
 class InVMSave : public Common::InSaveFile {
 private:
   char *buffer;
-  int pos, size;
+  int _pos, _size;
 
   uint32 read(void *buf, uint32 cnt);
   void skip(uint32 offset);
+  void seek(int32 offs, int whence);
 
 public:
   InVMSave()
-    : pos(0), buffer(NULL)
+    : _pos(0), buffer(NULL)
   { }
 
   ~InVMSave()
@@ -236,21 +237,23 @@ public:
       delete[] buffer;
   }
 
-  bool eos() const { return pos >= size; }
+  bool eos() const { return _pos >= _size; }
+  uint32 pos() const { return _pos; }
+  uint32 size() const { return _size; }
 
   bool readSaveGame(const char *filename)
-  { return ::readSaveGame(buffer, size, filename); }
+  { return ::readSaveGame(buffer, _size, filename); }
 
   void tryUncompress()
   {
-    if(size > 0 && buffer[0] != 'S') {
+    if(_size > 0 && buffer[0] != 'S') {
       // Data does not start with "SCVM".  Maybe compressed?
       char *expbuf = new char[MAX_SAVE_SIZE];
       unsigned long destlen = MAX_SAVE_SIZE;
-      if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, size)) {
+      if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, _size)) {
 	delete[] buffer;
 	buffer = expbuf;
-	size = destlen;
+	_size = destlen;
       } else delete[] expbuf;
     }
   }
@@ -339,22 +342,41 @@ OutVMSave::~OutVMSave()
 uint32 InVMSave::read(void *buf, uint32 cnt)
 {
   int nbyt = cnt;
-  if (pos + nbyt > size) {
-    cnt = (size - pos);
+  if (_pos + nbyt > _size) {
+    cnt = (_size - _pos);
     nbyt = cnt;
   }
   if (nbyt)
-    memcpy(buf, buffer + pos, nbyt);
-  pos += nbyt;
+    memcpy(buf, buffer + _pos, nbyt);
+  _pos += nbyt;
   return cnt;
 }
 
 void InVMSave::skip(uint32 offset)
 {
   int nbyt = offset;
-  if (pos + nbyt > size)
-    nbyt = (size - pos);
-  pos += nbyt;
+  if (_pos + nbyt > _size)
+    nbyt = (_size - _pos);
+  _pos += nbyt;
+}
+
+void InVMSave::seek(int32 offs, int whence)
+{
+  switch(whence) {
+  case SEEK_SET:
+    _pos = offs;
+    break;
+  case SEEK_CUR:
+    _pos += offs;
+    break;
+  case SEEK_END:
+    _pos = _size + offs;
+    break;
+  }
+  if(_pos < 0)
+    _pos = 0;
+  else if(_pos > _size)
+    _pos = _size;
 }
 
 uint32 OutVMSave::write(const void *buf, uint32 cnt)
