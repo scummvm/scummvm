@@ -256,7 +256,7 @@ static const GameSettings gameVariantsTable[] = {
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"puttmoon", 0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"puttmoon", "", GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"funpack",  0, GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"fbpack",   0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
