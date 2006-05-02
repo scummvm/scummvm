@@ -19,7 +19,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      line for 640x480 games.
 
  SCUMM:
-   - ...
+   - Rewrote the detection code, for improved accuracy and better support of
+     fan translations. It should now work much better on games with unknown MD5.
 
  Broken Sword 1:
    - Added support for the --save-slot option.
