@@ -393,15 +393,9 @@ const byte _mouseOffs[] = {
 	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-// TODO: Convert to our mouse code in system
 void SimonEngine::drawMousePointer_FF() {
-	byte *dst;
-	uint curCursor;
+	uint cursor;
 	int image, offs;
-	int pitch;
-
-	dst = getBackBuf();
-	pitch = _screenWidth;
 
 	if (_animatePointer != 0) {
 		if (getBitFlag(99)) {
@@ -415,128 +409,56 @@ void SimonEngine::drawMousePointer_FF() {
 			_mouseAnim = 1;
 	}
 
-	_mouseCountY = 40;
-	_mouseCountX = 40;
+	cursor = _mouseCursor;
 
-	if (_mouseY < 19)
-		_mouseCountY -= 19 - _mouseY;
-	else
-		dst += (((_mouseY - 19) * (pitch / 16)) & 0xffff) * 16;
-
-	if (_mouseX < 19)
-		_mouseCountX -= 19 - _mouseX;
-	else
-		dst += _mouseX - 19;
-
-	if (_mouseCountY == 40) {
-		_mouseCountY = 499 - _mouseY;
-		if (_mouseCountY > 40)
-			_mouseCountY = 40;
-	}
-
-	if (_mouseCountX == 40) {
-		_mouseCountX = 659 - _mouseX;
-		if (_mouseCountX > 40)
-			_mouseCountX = 40;
-	}
-
-	curCursor = _mouseCursor;
 	if (_animatePointer == 0 && getBitFlag(99)) {
 		_mouseAnim = 1;
-		curCursor = 6;	
+		cursor = 6;	
 	} else if (_mouseCursor != 5 && getBitFlag(72)) {
-		curCursor += 7;
+		cursor += 7;
 	}
 
-	image = curCursor * 16 + 1;
-	offs = curCursor * 32;
-	drawMousePart(dst, pitch, image, offs);
+	if (cursor != _currentMouseCursor || _mouseAnim != _currentMouseAnim) {
+		_currentMouseCursor = cursor;
+		_currentMouseAnim = _mouseAnim;
 
-	image = curCursor * 16 + 1 + _mouseAnim;
-	offs = curCursor * 32 + _mouseAnim * 2;
-	drawMousePart(dst, pitch, image, offs);
+		memset(_mouseData, 0, sizeof(_mouseData));
+
+		image = cursor * 16 + 1;
+		offs = cursor * 32;
+		drawMousePart(image, _mouseOffs[offs], _mouseOffs[offs + 1]);
+
+		image = cursor * 16 + 1 + _mouseAnim;
+		offs = cursor * 32 + _mouseAnim * 2;
+		drawMousePart(image, _mouseOffs[offs], _mouseOffs[offs + 1]);
+
+		_system->setMouseCursor(_mouseData, kMaxCursorWidth, kMaxCursorHeight, 19, 19, 0);
+	}
 }
 
-void SimonEngine::drawMousePart(byte *dst, int pitch, int image, int offs) {
+void SimonEngine::drawMousePart(int image, byte x, byte y) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[7];
 	byte *src;
-	int x, y, width, height;
-	int tmp, srcw;
+	int width, height;
 
-	x = _mouseOffs[offs];
-	y = _mouseOffs[offs + 1];
-
-	dst += y * pitch + x;
+	byte *dst = _mouseData + y * kMaxCursorWidth + x;
 
 	src = vpe->vgaFile2 + image * 8;
-	srcw = width = READ_LE_UINT16(src + 6);
+	width = READ_LE_UINT16(src + 6);
 	height = READ_LE_UINT16(src + 4);
 
-	src = vpe->vgaFile2 + readUint32Wrapper(src);
+	src = vpe->vgaFile2 + READ_LE_UINT32(src);
 
-	if (_mouseCountX != 40) {
-		if (_mouseX >= 600) {
-			tmp = _mouseOffs[offs] + width - _mouseCountX;
-			if (tmp >= 0) {
-				width -= tmp;
-				if (width <= 0)
-					return;
-			}
-		} else {
-			if (_mouseOffs[offs] + _mouseCountX >= 40) {
-				dst -= 40 - _mouseCountX;
-			} else {
-				dst -= _mouseOffs[offs];
-				tmp = -(_mouseOffs[offs] + _mouseCountX - 40);
-				width -= tmp;
-				if (width <= 0)
-					return;
-				src += tmp;
-			}
-		}
-	}
+	assert(width + x <= kMaxCursorWidth);
+	assert(height + y <= kMaxCursorWidth);
 
-	if (_mouseCountY != 40) {
-		if (_mouseY >= 200) {
-			tmp = _mouseOffs[offs + 1] + height - _mouseCountY;
-			if (tmp >= 0) {
-				height  -= tmp;
-				if (height <= 0)
-					return;
-			}
-		} else {
-			if (_mouseOffs[offs + 1] + _mouseCountY >= 40) {
-				tmp = 40 - _mouseCountY;
-				while (tmp--)
-					dst -= pitch;
-			} else {
-				tmp = _mouseOffs[offs + 1];
-				while (tmp--)
-					dst -= pitch;
-				tmp = -(_mouseOffs[offs + 1] + _mouseCountY - 40);
-				height -= tmp;
-				if (height <= 0)
-					return;
-				while (tmp--)
-					src += srcw;
-			}
-		}
-	}
-
-	drawMouse(dst, pitch, src, srcw, width, height);
-}
-
-void SimonEngine::drawMouse(byte *dst, int pitch, byte *src, int srcw, int width, int height) {
-	int h, w;
-
-	for (h = 0; h < height; h++) {
-		for (w = 0; w < width; w++) {
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
 			if (src[w] != 0)
 				dst[w] = src[w];
-
 		}
-		src += srcw;
-		dst += pitch;
+		src += width;
+		dst += kMaxCursorWidth;
 	}
 }
 

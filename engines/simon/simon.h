@@ -321,11 +321,17 @@ protected:
 	int _mouseX, _mouseY;
 	int _mouseXOld, _mouseYOld;
 
+	enum {
+	    kMaxCursorWidth = 40,
+	    kMaxCursorHeight = 40
+	};
+
+	byte _mouseData[kMaxCursorWidth * kMaxCursorHeight];
 	byte _animatePointer;
 	byte _mouseCursor, _mouseAnim, _mouseAnimMax;
+	byte _currentMouseCursor, _currentMouseAnim;
 	byte _oldMouseCursor, _oldMouseAnimMax;
 	uint _mouseHideCount;
-	int _mouseCountX, _mouseCountY;
 	bool _mouseToggle;
 
 	byte _leftButtonDown;
@@ -675,9 +681,7 @@ protected:
 	void pollMouseXY();
 	void drawMousePointer();
 	void drawMousePointer_FF();
-	void drawMouse(byte *dst, int pitch, byte *src, int srcw, int width, int height);
-	void drawMousePart(byte *dst, int pitch, int image, int offs);
-
+	void drawMousePart(int image, byte x, byte y);
 
 	void defineArrowBoxes(WindowBlock *window);
 	void removeArrows(WindowBlock *window, uint num);

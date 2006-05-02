@@ -163,6 +163,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_mouseAnim = 0;
 	_mouseAnimMax = 0;
 	_oldMouseCursor = 0;
+	_currentMouseCursor = 255;
+	_currentMouseAnim = 255;
 	_oldMouseAnimMax = 0;
 
 	_vgaVar9 = 0;
