@@ -540,7 +540,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi2", "Freddi Fish 2 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "Freddi Fish 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "FreddiCHSH", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddi2", "Fritzi Fisch 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "freddi2", "Fritzi Fisch 2", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 
 	{ "freddi3", "freddi3", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "F3-mdemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -548,13 +548,13 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "f3-mdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "FF3-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "Freddi Fish 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi3", "FreddiFGT", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "FreddiFGT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi3", "FreddiFGT", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi3", "FreddiFGT", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "FreddiSCS", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "Fritzi3demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
-	{ "freddi3", "Fritzi3demo", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
-	{ "freddi3", "MM3-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddi3", "MM3-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "freddi3", "Fritzi3demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "freddi3", "Fritzi3demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi3", "MM3-DEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "freddi3", "MM3-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
 	{ "freddi4", "freddi4", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "f4-demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -562,8 +562,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "Ff4demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "Freddi 4", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "Freddi 4 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddi4", "FreddiGS", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddi4", "FreddiGS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi4", "FreddiGS", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi4", "FreddiGS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "FreddiHRBG", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -573,7 +573,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddicove", "ff5demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCoveDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "FF5Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "freddicove", "FF5Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "FreddisFunShop", "FreddisFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "FreddisFunShop", "Freddi's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -597,8 +597,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama", "PajamaNHD", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama", "PJS-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama", "PYJAMA", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "SAMDEMO", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "pajama", "SAMDEMO", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "pajama", "SAMDEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "pajama", "SAMDEMO", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
 	{ "pajama2", "pajama2", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "Pajama Sam 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -610,7 +610,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "PJ2Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "pj2demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "Pjs2demo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "GPJ3Demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -622,9 +622,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama3", "Pajama Sam Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "PjSamDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "PjSamDemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "PyjamaSKS", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "pajama3", "PyjamaSKS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "pajama3", "UKPajamaEAT", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "pajama3", "PyjamaSKS", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "pajama3", "PyjamaSKS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "UKPajamaEAT", kGenHEPC, Common::RU_RUS, UNK, 0 },
 
 	{ "pjgames", "pjgames", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pjgames", "PJGames", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -635,14 +635,14 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttcircus", "Putt Circus", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "puttrace", "500demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttrace", "500demo", kGenHEPC, Common::NL_NLD, UNK, 0 },
 	{ "puttrace", "racedemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttrace", "RaceDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttrace", "Rennen", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
-	{ "puttrace", "Putt500 demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
+	{ "puttrace", "Rennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "puttrace", "Putt500 demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "Putt Race", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttrace", "ToffRennen", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
-	{ "puttrace", "ToffRennen", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "puttrace", "ToffRennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "puttrace", "ToffRennen", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
 
 	{ "PuttsFunShop", "PuttsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -658,12 +658,12 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "putttime", "TIJDDEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "putttime", "timedemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "putttime", "TimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "putttime", "TEMPDEMO", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a french version?
-	{ "putttime", "Tempdemo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "putttime", "TEMPDEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "putttime", "Tempdemo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "toffzeit", kGenHEPC, Common::DE_DEU, UNK, 0 }, // German Toeff-Toeff: Reist durch die Zeit
 	{ "putttime", "toffzeit", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 }, // German Toeff-Toeff: Reist durch die Zeit
-	{ "putttime", "ZeitDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
-	{ "putttime", "ZEITDEMO", kGenHEPC, UNK_LANG, UNK, 0 },	// FIXME: Is this a german version?
+	{ "putttime", "ZeitDemo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "putttime", "ZEITDEMO", kGenHEPC, Common::DE_DEU, UNK, 0 },
 
 	{ "puttzoo", "puttzoo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Puttzoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -686,11 +686,11 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "socks", "SockWorks", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "spyfox", "spyfox", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "Fuchsdem", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },	// FIXME: Is this a german version?
+	{ "spyfox", "Fuchsdem", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "FUCHSDEM", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox", "FoxDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "foxdemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "spyfox", "JAMESDEM", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "JAMESDEM", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyfox", "Spydemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "Spydemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox", "SPYFox", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -698,8 +698,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox", "SPYFoxDC", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "SpyFoxDMK", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox", "SpyFoxDMK", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "Spy Fox Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 }, // NL Mac demo
-	{ "spyfox", "JR-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, // FR Mac demo
+	{ "spyfox", "Spy Fox Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
+	{ "spyfox", "JR-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
 	{ "spyfox2", "spyfox2", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox2", "sf2-demo", kGenHEPC, UNK_LANG, UNK, 0 },
