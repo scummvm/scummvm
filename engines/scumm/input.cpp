@@ -174,11 +174,11 @@ void ScummEngine::parseEvents() {
 		// checking the gameid
 
 		case OSystem::EVENT_WHEELDOWN:
-			_keyPressed = 55;
+			_keyPressed = 'a';
 			break;
 
 		case OSystem::EVENT_WHEELUP:
-			_keyPressed = 54;
+			_keyPressed = 'q';
 			break;
 
 		case OSystem::EVENT_SCREEN_CHANGED:
