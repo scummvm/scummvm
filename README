@@ -162,6 +162,7 @@ Other Games:
      The Legend of Kyrandia                      [kyra1]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
+     The Feeble Files                            [feeble]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -372,6 +373,9 @@ the section on Reporting Bugs.
           - Only default language (English) in data files is supported
             in Amiga and Macintosh versions.
 
+     The Feeble Files:
+          - Subtitles are often imcomplete, they were always disabled in the
+            original game.
 
 4.0) Supported Platforms:
 ---- --------------------

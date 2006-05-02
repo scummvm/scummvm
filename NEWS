@@ -5,6 +5,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
      part of the series is supported.
+   - Added support for The Feeble Files
    - lure engine - TODO, fill in this gap!!!
    - cine engine - TODO, fill in this gap!!!
    - ...
