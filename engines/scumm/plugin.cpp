@@ -416,7 +416,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "monkey", "%03d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },		// EGA & VGA versions
 	{ "monkey", "monkey.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "monkey", "monkey1.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "monkey", "monkeyk.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" }, // FM-TOWNS Jap
+	{ "monkey", "monkeyk.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" },
 	{ "monkey", "game.%03d", kGenDiskNum, UNK_LANG, Common::kPlatformSegaCD, "SEGA" }, // SegaCD
 
 	{ "monkey2", "monkey2.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
@@ -425,8 +425,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "atlantis", "atlantis.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "atlantis", "fate.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "atlantis", "playfate.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "indy4.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "indydemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "atlantis", "indy4.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" },
+	{ "atlantis", "indydemo.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" },
 	{ "atlantis", "Fate of Atlantis Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "tentacle", "tentacle.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
@@ -442,7 +442,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "samnmax", "samdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "snmdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "snmidemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "samnmax", "sdemo.sm%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "samnmax", "sdemo.sm%d", kGenDiskNum, Common::DE_DEU, UNK, 0 },
 
 #ifndef DISABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
@@ -454,8 +454,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "ft", "ftdemo.la%d", kGenDiskNum, UNK_LANG, UNK, "Demo" },
 	{ "ft", "Full Throttle Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "ft", "Full Throttle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
-	{ "ft", "Vollgas Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "ft", "Vollgas Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
+	{ "ft", "Vollgas Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "ft", "Vollgas Demo Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, "Demo" },
 
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 #endif
@@ -479,12 +479,12 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttputt", "Putt-Putt Parade", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 #ifndef DISABLE_HE
+	{ "activity", "activity", kGenHEPC, UNK_LANG, UNK, 0 },
+
 	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
-	{ "activity", "activity", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
