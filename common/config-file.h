@@ -99,8 +99,10 @@ public:
 	void	clear();
 
 	bool	loadFromFile(const String &filename);
+	bool	loadFromSaveFile(const char *filename);
 	bool	loadFromStream(SeekableReadStream &stream);
 	bool	saveToFile(const String &filename);
+	bool	saveToSaveFile(const char *filename);
 	bool	saveToStream(WriteStream &stream);
 
 	bool	hasSection(const String &section) const;

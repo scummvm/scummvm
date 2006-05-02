@@ -399,10 +399,10 @@ const char *ScummEngine_v60he::getOpcodeDesc(byte i) {
 	return _opcodesv60he[i].desc;
 }
 
-int ScummEngine_v60he::convertFilePath(byte *dst, bool setFilePath) {
+int ScummEngine_v60he::convertFilePath(byte *dst) {
 	debug(1, "convertFilePath: original filePath is %s", dst);
 
-	int len = resStrLen(dst) + 1;
+	int len = resStrLen(dst);
 	if (dst[0] == ':') {
 		// Switch all : to / for portablity
 		int j = 0;
@@ -431,19 +431,7 @@ int ScummEngine_v60he::convertFilePath(byte *dst, bool setFilePath) {
 		}
 	}
 
-	if (setFilePath) {
-		char filePath[256];
-		strncpy(filePath, (char *)dst + r, sizeof(filePath));
-		if (!Common::File::exists(filePath)) {
-			// FIXME: Using getSavePath() to generate filepaths used with
-			// File::open is not portable!
-			strncpy(filePath, _saveFileMan->getSavePath(), sizeof(filePath));
-			strncat(filePath, (char *)dst + r, sizeof(filePath));
-		}
-		strcpy((char *)dst, filePath);
-		debug(1, "convertFilePath: filePath is %s", dst);
-	}
-
+	debug(1, "convertFilePath: converted filePath is %s", dst + r);
 	return r;
 }
 

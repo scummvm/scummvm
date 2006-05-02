@@ -24,6 +24,8 @@
 
 #include "common/config-file.h"
 #include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "common/util.h"
 
 #define MAXLINELEN 256
@@ -72,6 +74,18 @@ bool ConfigFile::loadFromFile(const String &filename) {
 		return loadFromStream(file);
 	else
 		return false;
+}
+
+bool ConfigFile::loadFromSaveFile(const char *filename) {
+	SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SeekableReadStream *loadFile;
+
+	if (!(loadFile = saveFileMan->openForLoading(filename)))
+		return false;
+
+	bool status = loadFromStream(*loadFile);
+	delete loadFile;
+	return status;
 }
 
 bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
@@ -176,6 +190,18 @@ bool ConfigFile::saveToFile(const String &filename) {
 		return false;
 }
 
+bool ConfigFile::saveToSaveFile(const char *filename) {
+	SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	WriteStream *saveFile;
+
+	if (!(saveFile = saveFileMan->openForSaving(filename)))
+		return false;
+
+	bool status = saveToStream(*saveFile);
+	delete saveFile;
+	return status;
+}
+
 bool ConfigFile::saveToStream(WriteStream &stream) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		// Write out the section comment, if any
@@ -203,6 +229,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 		}
 	}
 
+	stream.flush();
 	return !stream.ioFailed();
 }
 

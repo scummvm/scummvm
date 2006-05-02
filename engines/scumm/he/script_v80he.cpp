@@ -449,15 +449,18 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	byte option[128], section[128], filename[256];
 	ArrayHeader *ah;
 	Common::String entry;
-	int len;
+	int len, r;
 
 	copyScriptString(option, sizeof(option));
 	copyScriptString(section, sizeof(section));
 	copyScriptString(filename, sizeof(filename));
-	convertFilePath(filename, true);
+	r = convertFilePath(filename);
 
 	Common::ConfigFile ConfFile;
-	ConfFile.loadFromFile((const char *)filename);
+	if (!strcmp((char *)filename + r, "map.ini"))
+		ConfFile.loadFromFile((const char *)filename + r);
+	else
+		ConfFile.loadFromSaveFile((const char *)filename + r);
 
 	byte subOp = fetchScriptByte();
 
@@ -487,7 +490,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 
 void ScummEngine_v80he::o80_writeConfigFile() {
 	byte filename[256], section[256], option[256], string[1024];
-	int value;
+	int r, value;
 
 	byte subOp = fetchScriptByte();
 
@@ -499,7 +502,6 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
-		convertFilePath(filename, true);
 		break;
 	case 77: // HE 100
 	case 7: // string
@@ -507,16 +509,18 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
-		convertFilePath(filename, true);
 		break;
 	default:
 		error("o80_writeConfigFile: default type %d", subOp);
 	}
 
+	r = convertFilePath(filename);
+
 	Common::ConfigFile ConfFile;
-	ConfFile.loadFromFile((const char *)filename);
+	ConfFile.loadFromSaveFile((const char *)filename + r);
 	ConfFile.setKey((char *)option, (char *)section, (char *)string);
-	ConfFile.saveToFile((const char *)filename);
+	ConfFile.saveToSaveFile((const char *)filename + r);
+
 	debug(1,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 }
 
