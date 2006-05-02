@@ -423,10 +423,10 @@ void SimonEngine::drawMousePointer_FF() {
 	else
 		dst += (((_mouseY - 19) * (pitch / 16)) & 0xffff) * 16;
 
-	if (_mouseX < 38)
-		_mouseCountX -= 38 - _mouseX;
+	if (_mouseX < 19)
+		_mouseCountX -= 19 - _mouseX;
 	else
-		dst += _mouseX - 38;
+		dst += _mouseX - 19;
 
 	if (_mouseCountY == 40) {
 		_mouseCountY = 499 - _mouseY;
