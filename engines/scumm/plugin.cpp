@@ -268,7 +268,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 #ifndef DISABLE_HE
-	{"activity", "", GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"activity", 0, GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
@@ -465,6 +465,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "fbear", "Fatty Bear Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "fbear", "Fatty Bear", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
+	{ "fbpack", "fbpack", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "funpack", "funpack", kGenHEPC, UNK_LANG, UNK, 0 },
+
 	{ "puttmoon", "puttmoon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttmoon", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttmoon", "Putt-Putt Moon Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -480,6 +483,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "activity", "activity", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
