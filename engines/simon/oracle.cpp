@@ -344,7 +344,7 @@ void SimonEngine::listSaveGames(int n) {
 				j--;
 			}
 
-			if (!(in = _saveFileMan->openForLoading(gen_savename(j))))
+			if (!(in = _saveFileMan->openForLoading(genSaveName(j))))
 				break;
 			in->read(b, 100);
 			delete in;
@@ -376,7 +376,7 @@ void SimonEngine::saveUserGame(int slot) {
 	window->textRow = (slot + 1 - window->scrollY) * 15;
 	window->textColumn = 26;
 
-	if ((in = _saveFileMan->openForLoading(gen_savename(readVariable(55))))) {
+	if ((in = _saveFileMan->openForLoading(genSaveName(readVariable(55))))) {
 		in->read(name, 100);
 		delete in;
 	}

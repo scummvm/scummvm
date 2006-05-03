@@ -1187,7 +1187,7 @@ void SimonEngine::o_setDollar() {
 
 void SimonEngine::o_isBox() {
 	// 142: is hitarea 0x40 clear
-	setScriptCondition(is_hitarea_0x40_clear(getVarOrWord()));
+	setScriptCondition(isBoxDead(getVarOrWord()));
 }
 
 void SimonEngine::o_doTable() {
@@ -1625,9 +1625,9 @@ void SimonEngine::o1_specialFade() {
 
 	i = NUM_PALETTE_FADEOUT;
 	do {
-		palette_fadeout((uint32 *)_videoBuf1, 32);
-		palette_fadeout((uint32 *)_videoBuf1 + 32 + 16, 144);
-		palette_fadeout((uint32 *)_videoBuf1 + 32 + 16 + 144 + 16, 48);
+		paletteFadeOut((uint32 *)_videoBuf1, 32);
+		paletteFadeOut((uint32 *)_videoBuf1 + 32 + 16, 144);
+		paletteFadeOut((uint32 *)_videoBuf1 + 32 + 16 + 144 + 16, 48);
 
 		_system->setPalette(_videoBuf1, 0, 256);
 		if (_fade)

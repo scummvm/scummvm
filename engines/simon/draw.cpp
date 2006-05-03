@@ -344,6 +344,9 @@ void SimonEngine::scrollScreen() {
 
 		_scrollY += _scrollFlag;
 		vcWriteVar(250, _scrollY);
+
+		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+		memcpy(_backGroundBuf, _backBuf, _screenHeight * _scrollWidth);
 	} else {
 		if (_scrollFlag < 0) {
 			memmove(dst + 8, dst, _screenWidth * _scrollHeight - 8);
@@ -367,10 +370,10 @@ void SimonEngine::scrollScreen() {
 
 		_scrollX += _scrollFlag;
 		vcWriteVar(251, _scrollX);
-	}
 
-	memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-	memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+		memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+	}
 
 	_scrollFlag = 0;
 }

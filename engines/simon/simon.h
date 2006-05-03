@@ -506,7 +506,7 @@ protected:
 	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
 
-	void palette_fadeout(uint32 *pal_values, uint num);
+	void paletteFadeOut(uint32 *pal_values, uint num);
 	
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);
@@ -581,13 +581,10 @@ protected:
 	void stopAnimateSimon1(uint a);
 	void stopAnimateSimon2(uint a, uint b);
 
-	void changeWindow(uint a);
-	void closeWindow(uint a);
-
 	void enableBox(uint hitarea);
 	void disableBox(uint hitarea);
 	void moveBox(uint hitarea, int x, int y);
-	bool is_hitarea_0x40_clear(uint hitarea);
+	bool isBoxDead(uint hitarea);
 	void undefineBox(uint hitarea);
 	void defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr);
 	HitArea *findEmptyHitArea();
@@ -597,16 +594,14 @@ protected:
 	void hitarea_leave(HitArea * ha, bool state = false);
 	void leaveHitAreaById(uint hitarea_id);
 
-	void waitForSync(uint a);
-	void skipSpeech();
 	void sendSync(uint a);
-	void freezeBottom();
-	void killAllTimers();
+	void waitForSync(uint a);
 
 	uint getOffsetOfChild2Param(SubObject *child, uint prop);
 	void setTextColor(uint color);
 	void scriptMouseOn();
 	void scriptMouseOff();
+	void freezeBottom();
 	void unfreezeBottom();
 
 	TextLocation *getTextLocation(uint a);
@@ -648,6 +643,7 @@ protected:
 
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();
+	void killAllTimers();
 
 	void endCutscene();
 	void runSubroutine101();
@@ -657,23 +653,23 @@ protected:
 	void inventoryUp(WindowBlock *window);
 	void inventoryDown(WindowBlock *window);
 
-	void resetNameWindow();
-	void printVerbOf(uint hitarea_id);
-	HitArea *findBox(uint hitarea_id);
-
-	void showActionString(const byte *string);
-	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
-	void clearWindow(WindowBlock *window);
-	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
-
+	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 	uint getWindowNum(WindowBlock *window);
+	void clearWindow(WindowBlock *window);
+	void changeWindow(uint a);
+	void closeWindow(uint a);
+	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 
+	HitArea *findBox(uint hitarea_id);
 	void boxController(uint x, uint y, uint mode);
+	void handleVerbClicked(uint verb);
 	void clearName();
 	void displayName(HitArea * ha);
+	void resetNameWindow();
 	void displayBoxStars();
 	void hitarea_stuff();
-	void invertBox(HitArea *ha, bool state);
+	void invertBox_FF(HitArea *ha, bool state);
+	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
 	void handleMouseMoved();
 	void pollMouseXY();
@@ -705,21 +701,22 @@ protected:
 	void showmessage_helper_3(uint a, uint b);
 	void showmessage_print_char(byte chr);
 
-	void handleVerbClicked(uint verb);
-
 	void set_video_mode_internal(uint16 mode, uint16 vga_res_id);
 
 	void loadZone(uint vga_res);
 
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
 	void playSpeech(uint speech_id, uint vga_sprite_id);
-	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
+	void skipSpeech();
 
-	bool printTextOf(uint a, uint x, uint y);
 	bool printNameOf(Item *item, uint x, uint y);
-	void printInteractText(uint16 num, const char *string);
-	void sendInteractText(uint16 num, const char *fmt, ...);
+	bool printTextOf(uint a, uint x, uint y);
+	void printVerbOf(uint hitarea_id);
+	void showActionString(const byte *string);
+
 	void printScreenText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
+	void sendInteractText(uint16 num, const char *fmt, ...);
+	void printInteractText(uint16 num, const char *string);
 
 	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
@@ -729,8 +726,7 @@ protected:
 	void checkRunningAnims(byte *end);
 	void checkAnims(uint a, byte *end);
 	void checkZonePtrs(byte *end);
-
-	void setup_vga_file_buf_pointers();
+	void setZoneBuffers();
 
 	void runVgaScript();
 
@@ -1152,9 +1148,7 @@ protected:
 	int countSaveGames();
 	int displaySaveGameList(int curpos, bool load, char *dst);
 
-	void show_it(void *buf);
-
-	char *gen_savename(int slot);
+	char *genSaveName(int slot);
 };
 
 } // End of namespace Simon

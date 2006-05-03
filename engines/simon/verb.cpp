@@ -443,7 +443,7 @@ void SimonEngine::undefineBox(uint hitarea) {
 	}
 }
 
-bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
+bool SimonEngine::isBoxDead(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
 	if (ha == NULL)
 		return false;
@@ -560,13 +560,13 @@ void SimonEngine::setVerb(HitArea *ha) {
 		if (getGameType() == GType_SIMON1) {
 			if (tmp != NULL) {
 				tmp->flags |= kBFInvertTouch;
-				video_toggle_colors(tmp, 0xd5, 0xd0, 0xd5, 0xA);
+				invertBox(tmp, 213, 208, 213, 10);
 			}
 
 			if (ha->flags & kBFBoxSelected)
-				video_toggle_colors(ha, 0xda, 0xd5, 0xd5, 5);
+				invertBox(ha, 218, 213, 213, 5);
 			else
-				video_toggle_colors(ha, 0xdf, 0xda, 0xda, 0xA);
+				invertBox(ha, 223, 218, 218, 10);
 
 			ha->flags &= ~(kBFBoxSelected + kBFInvertTouch);
 		} else {
@@ -581,11 +581,11 @@ void SimonEngine::setVerb(HitArea *ha) {
 
 void SimonEngine::hitarea_leave(HitArea *ha, bool state) {
 	if (getGameType() == GType_FF) {
-		invertBox(ha, state);
+		invertBox_FF(ha, state);
 	} else if (getGameType() == GType_SIMON2) {
-		video_toggle_colors(ha, 0xe7, 0xe5, 0xe6, 1);
+		invertBox(ha, 231, 229, 230, 1);
 	} else {
-		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
+		invertBox(ha, 223, 213, 218, 5);
 	}
 }
 
@@ -601,7 +601,7 @@ void SimonEngine::checkUp(WindowBlock *window) {
 	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[31] > 52)) {
 		k = (((_variableArray[31] / 52) - 2) % 3);
 		j = k * 6;
-		if (!is_hitarea_0x40_clear(j + 201)) {
+		if (!isBoxDead(j + 201)) {
 			uint index = getWindowNum(window);
 			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 			loadSprite(4, 9, k + 34, 0, 0, 0);	
@@ -610,7 +610,7 @@ void SimonEngine::checkUp(WindowBlock *window) {
 	if ((_variableArray[31] - _variableArray[30]) == 76) {
 		k = ((_variableArray[31] / 52) % 3);
 		j = k * 6;
-		if (is_hitarea_0x40_clear(j + 201)) {
+		if (isBoxDead(j + 201)) {
 			loadSprite(4, 9, k + 31, 0, 0, 0);
 			undefineBox(j + 201);
 			undefineBox(j + 202);
@@ -637,7 +637,7 @@ void SimonEngine::checkDown(WindowBlock *window) {
 	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[30] > 52)) {
 		k = (((_variableArray[31] / 52) + 1) % 3);
 		j = k * 6;
-		if (is_hitarea_0x40_clear(j + 201)) {
+		if (isBoxDead(j + 201)) {
 			loadSprite(4, 9, k + 28, 0, 0, 0);
 			undefineBox(j + 201);
 			undefineBox(j + 202);
@@ -810,7 +810,7 @@ void SimonEngine::displayName(HitArea *ha) {
 		_lastNameOn = ha;
 }
 
-void SimonEngine::invertBox(HitArea *ha, bool state) {
+void SimonEngine::invertBox_FF(HitArea *ha, bool state) {
 	if (getBitFlag(205) || getBitFlag(206)) {
 		if (state != 0) {
 			_mouseAnimMax = _oldMouseAnimMax;
@@ -851,6 +851,44 @@ void SimonEngine::invertBox(HitArea *ha, bool state) {
 			}
 		}
 	}
+}
+
+void SimonEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
+	byte *src, color;
+	int w, h, i;
+
+	_lockWord |= 0x8000;
+	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
+
+	_hitarea_unk_3 = true;
+
+	w = ha->width;
+	h = ha->height;
+
+	// Works around bug in original Simon the Sorcerer 2
+	// Animations continue in background when load/save dialog is open
+	// often causing the savegame name highlighter to be cut short
+	if (!(h > 0 && w > 0 && ha->x + w <= _screenWidth && ha->y + h <= _screenHeight)) {
+		debug(1,"Invalid coordinates in invertBox (%d,%d,%d,%d)", ha->x, ha->y, ha->width, ha->height);
+		_lockWord &= ~0x8000;
+		return;
+	}
+
+	do {
+		for (i = 0; i != w; ++i) {
+			color = src[i];
+			if (a >= color && b < color) {
+				if (c >= color)
+					color += d;
+				else
+					color -= d;
+				src[i] = color;
+			}
+		}
+		src += _dxSurfacePitch;
+	} while (--h);
+
+	_lockWord &= ~0x8000;
 }
 
 } // End of namespace Simon

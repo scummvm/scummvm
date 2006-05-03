@@ -616,7 +616,7 @@ void SimonEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-void SimonEngine::palette_fadeout(uint32 *pal_values, uint num) {
+void SimonEngine::paletteFadeOut(uint32 *pal_values, uint num) {
 	byte *p = (byte *)pal_values;
 
 	do {
@@ -1276,6 +1276,18 @@ void SimonEngine::loadZone(uint vga_res) {
 	}
 }
 
+void SimonEngine::setZoneBuffers() {
+	byte *alloced;
+
+	alloced = (byte *)malloc(VGA_MEM_SIZE);
+
+	_vgaBufFreeStart = alloced;
+	_vgaBufStart = alloced;
+	_vgaFileBufOrg = alloced;
+	_vgaFileBufOrg2 = alloced;
+	_vgaBufEnd = alloced + VGA_MEM_SIZE;
+}
+
 byte *SimonEngine::allocBlock(uint32 size) {
 	byte *block, *blockEnd;
 
@@ -1301,18 +1313,6 @@ byte *SimonEngine::allocBlock(uint32 size) {
 			return block;
 		}
 	}
-}
-
-void SimonEngine::setup_vga_file_buf_pointers() {
-	byte *alloced;
-
-	alloced = (byte *)malloc(VGA_MEM_SIZE);
-
-	_vgaBufFreeStart = alloced;
-	_vgaBufStart = alloced;
-	_vgaFileBufOrg = alloced;
-	_vgaFileBufOrg2 = alloced;
-	_vgaBufEnd = alloced + VGA_MEM_SIZE;
 }
 
 void SimonEngine::checkNoOverWrite(byte *end) {
@@ -1726,42 +1726,6 @@ void SimonEngine::pause() {
 
 }
 
-void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d) {
-	byte *src, color;
-	int w, h, i;
-
-	_lockWord |= 0x8000;
-	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
-
-	w = ha->width;
-	h = ha->height;
-
-	// Works around bug in original Simon the Sorcerer 2
-	// Animations continue in background when load/save dialog is open
-	// often causing the savegame name highlighter to be cut short
-	if (!(h > 0 && w > 0 && ha->x + w <= _screenWidth && ha->y + h <= _screenHeight)) {
-		debug(1,"Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width, ha->height);
-		_lockWord &= ~0x8000;
-		return;
-	}
-
-	do {
-		for (i = 0; i != w; ++i) {
-			color = src[i];
-			if (a >= color && b < color) {
-				if (c >= color)
-					color += d;
-				else
-					color -= d;
-				src[i] = color;
-			}
-		}
-		src += _dxSurfacePitch;
-	} while (--h);
-
-	_lockWord &= ~0x8000;
-}
-
 void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
@@ -1911,7 +1875,7 @@ int SimonEngine::go() {
 	allocItemHeap();
 	allocTablesHeap();
 
-	setup_vga_file_buf_pointers();
+	setZoneBuffers();
 
 	_debugger = new Debugger(this);
 	_moviePlay = new MoviePlayer(this, _mixer);

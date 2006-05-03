@@ -38,13 +38,13 @@ int SimonEngine::countSaveGames() {
 	uint i = 1;
 	bool marks[256];
 
-	char *prefix = gen_savename(999);
+	char *prefix = genSaveName(999);
 	prefix[strlen(prefix)-3] = '\0';
 	_saveFileMan->listSavefiles(prefix, marks, 256);
 
 	while (i < 256) {
 		if (marks[i] &&
-		    (f = _saveFileMan->openForLoading(gen_savename(i)))) {
+		    (f = _saveFileMan->openForLoading(genSaveName(i)))) {
 			i++;
 			delete f;
 		} else
@@ -64,7 +64,7 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 	slot = curpos;
 
 	while (curpos + 6 > slot) {
-		if (!(in = _saveFileMan->openForLoading(gen_savename(slot))))
+		if (!(in = _saveFileMan->openForLoading(genSaveName(slot))))
 			break;
 
 		in->read(dst, 18);
@@ -88,7 +88,7 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			if ((in = _saveFileMan->openForLoading(gen_savename(slot)))) {
+			if ((in = _saveFileMan->openForLoading(genSaveName(slot)))) {
 				slot++;
 				delete in;
 			}
@@ -107,7 +107,7 @@ void SimonEngine::quickLoadOrSave() {
 	bool success;
 	char buf[50];
 
-	char *filename = gen_savename(_saveLoadSlot);
+	char *filename = genSaveName(_saveLoadSlot);
 	if (_saveLoadType == 2) {
 		Subroutine *sub;
 		success = loadGame(_saveLoadSlot);
@@ -486,7 +486,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 
 	_lockWord |= 0x100;
 
-	f = _saveFileMan->openForSaving(gen_savename(slot));
+	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
 		_lockWord &= ~0x100;
 		return false;
@@ -583,7 +583,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 	return result;
 }
 
-char *SimonEngine::gen_savename(int slot) {
+char *SimonEngine::genSaveName(int slot) {
 	static char buf[15];
 
 	if (getGameType() == GType_FF) {
@@ -606,7 +606,7 @@ bool SimonEngine::loadGame(uint slot) {
 
 	_lockWord |= 0x100;
 
-	f = _saveFileMan->openForLoading(gen_savename(slot));
+	f = _saveFileMan->openForLoading(genSaveName(slot));
 	if (f == NULL) {
 		_lockWord &= ~0x100;
 		return false;
