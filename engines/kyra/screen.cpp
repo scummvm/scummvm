@@ -1829,8 +1829,8 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	_system->showMouse(true);
 	free(cursor);
 
-	return;
-
+	// makes sure that the cursor is drawn
+	updateScreen();
 }
 
 void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
