@@ -225,10 +225,8 @@ void BrowserDialog::updateListing() {
 	ConfMan.set("browser_lastpath", _node.path());
 
 	// Read in the data from the file system
-	if (_isDirBrowser)
-		_nodeContent = _node.listDir(FilesystemNode::kListDirectoriesOnly);
-	else
-		_nodeContent = _node.listDir(FilesystemNode::kListAll);
+	_node.listDir(_nodeContent, _isDirBrowser ? FilesystemNode::kListDirectoriesOnly
+	                                          : FilesystemNode::kListAll);
 	Common::sort(_nodeContent.begin(), _nodeContent.end());
 
 	// Populate the ListWidget
