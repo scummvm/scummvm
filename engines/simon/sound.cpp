@@ -256,7 +256,6 @@ Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mix
 	_hasVoiceFile = false;
 
 	_ambientPlaying = 0;
-	_sfx5Playing = 0;
 
 	if (_vm->getFeatures() & GF_TALKIE) {
 		loadVoiceFile(gss);
@@ -522,7 +521,6 @@ void Sound::stopVoice() {
 void Sound::stopAll() {
 	_mixer->stopAll();
 	_ambientPlaying = 0;
-	_sfx5Playing = 0;
 }
 
 void Sound::effectsPause(bool b) {
@@ -564,11 +562,6 @@ void Sound::playSfxData(byte *soundData, uint sound, uint pan, uint vol) {
 }
 
 void Sound::playSfx5Data(byte *soundData, uint sound, uint pan, uint vol) {
-	if (sound == _sfx5Playing)
-		return;
-
-	_sfx5Playing = sound;
-
 	if (_sfx5Paused)
 		return;
 
@@ -642,7 +635,6 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 }
 
 void Sound::stopSfx5() {
-	_sfx5Playing = 0;
 	_mixer->stopHandle(_sfx5Handle);
 }
 

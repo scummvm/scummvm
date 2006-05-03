@@ -55,7 +55,6 @@ private:
 	bool _hasEffectsFile;
 	bool _hasVoiceFile;
 	uint _ambientPlaying;
-	uint _sfx5Playing;
 
 public:
 	Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
