@@ -126,7 +126,7 @@ Common::Language convertKyraLang(uint32 features) {
 	return Common::UNK_LANG;
 }
 
-Common::Platform converKyraPlatform(uint32 features) {
+Common::Platform convertKyraPlatform(uint32 features) {
 	if (features & GF_AUDIOCD) {
 		return Common::kPlatformFMTowns;
 	} else if (features & GF_AMIGA) {
@@ -211,7 +211,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		// TODO: cleanup
 		for (g = kyra1_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				DetectedGame dg(*g, convertKyraLang(g->features), converKyraPlatform(g->features));
+				DetectedGame dg(*g, convertKyraLang(g->features), convertKyraPlatform(g->features));
 				dg.updateDesc(getKyraVersion(g->features));
 
 				detectedGames.push_back(dg);
@@ -220,7 +220,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 
 		for (g = kyra2_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				DetectedGame dg(*g, convertKyraLang(g->features), converKyraPlatform(g->features));
+				DetectedGame dg(*g, convertKyraLang(g->features), convertKyraPlatform(g->features));
 				dg.updateDesc(getKyraVersion(g->features));
 
 				detectedGames.push_back(dg);
