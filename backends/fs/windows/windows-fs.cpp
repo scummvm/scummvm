@@ -237,7 +237,7 @@ AbstractFilesystemNode *WindowsFilesystemNode::child(const String &name) const {
 
 	// Check whether the directory actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(newPath.c_str()));
-	if (fileAttribs != FILE_ATTRIBUTE_DIRECTORY || fileAttribs == INVALID_FILE_ATTRIBUTES)
+	if (fileAttribs == INVALID_FILE_ATTRIBUTES)
 		return 0;
 
 	WindowsFilesystemNode *p = new WindowsFilesystemNode(newPath);
