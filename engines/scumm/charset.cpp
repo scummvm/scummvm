@@ -269,13 +269,6 @@ int CharsetRendererCommon::getFontHeight() {
 		return _fontHeight;
 }
 
-int CharsetRendererV3::getFontHeight() {
-	if (_vm->_useCJKMode)
-		return MAX(_vm->_2byteHeight + 1, _fontHeight);
-	else
-		return _fontHeight;
-}
-
 // do spacing for variable width old-style font
 int CharsetRendererClassic::getCharWidth(byte chr) {
 	if (chr >= 0x80 && _vm->_useCJKMode)

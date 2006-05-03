@@ -164,7 +164,6 @@ public:
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 	void setCurID(byte id);
 	void setColor(byte color);
-	int getFontHeight();
 	int getCharWidth(byte chr);
 };
 
