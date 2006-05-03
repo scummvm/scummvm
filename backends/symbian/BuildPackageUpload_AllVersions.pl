@@ -16,6 +16,22 @@ $SDK_BuildDirs{'S60v3'}	= "S60v3";
 $SDK_BuildDirs{'S80'}	= "S80";
 $SDK_BuildDirs{'S90'}	= "S90";
 
+$SDK_TargetName{'UIQ2'}	= "armi";
+$SDK_TargetName{'UIQ3'}	= "gcce";
+$SDK_TargetName{'S60v1'}= "armi";
+$SDK_TargetName{'S60v2'}= "armi";
+$SDK_TargetName{'S60v3'}= "gcce";
+$SDK_TargetName{'S80'}	= "armi";
+$SDK_TargetName{'S90'}	= "armi";
+
+$SDK_TargetDir{'UIQ2'}	= "armi";
+$SDK_TargetDir{'UIQ3'}	= "armv5";
+$SDK_TargetDir{'S60v1'}	= "armi";
+$SDK_TargetDir{'S60v2'}	= "armi";
+$SDK_TargetDir{'S60v3'}	= "armv5";
+$SDK_TargetDir{'S80'}	= "armi";
+$SDK_TargetDir{'S90'}	= "armi";
+
 $build_dir = getcwd();
 $output_dir = "$build_dir/Packages";
 chdir("../../");
@@ -236,8 +252,10 @@ print "       SumthinWicked wishes you a ridiculously good and optimally happy d
 sub DoLibrary
 {
 	my ($SDK, $Library, $Path) = @_;
+	my $TargetName = $SDK_TargetName{$SDK};
+	my $TargetDir  = $SDK_TargetDir{$SDK};
 	my $Target = "$SDK - $Library";
-	my $TargetFilePath = $SDK_RootDirs{$SDK}."\\epoc32\\release\\armi\\urel\\$Library";
+	my $TargetFilePath = $SDK_RootDirs{$SDK}."\\epoc32\\release\\$TargetDir\\urel\\$Library";
 	#my $TargetIntermediatePath = uc($SDK_RootDirs{$SDK}."\\EPOC32\\BUILD\\".substr($Path, 3));
 	# does this remove too much?
 	my $TargetIntermediatePath = uc($SDK_RootDirs{$SDK}."\\EPOC32\\BUILD\\");
@@ -268,8 +286,8 @@ my $header = "
 	PrintMessage("Cleaning for $Target") if (!$ReallyQuiet);
 	system("bldmake bldfiles > NUL 2> NUL");
 	PrintErrorMessage("'bldmake bldfiles' exited with value " . ($? >> 8)) if ($? >> 8);
-	system("abld clean armi urel > NUL 2> NUL");
-	PrintErrorMessage("'abld clean armi urel' exited with value " . ($? >> 8)) if ($? >> 8);	
+	system("abld clean $TargetName urel > NUL 2> NUL");
+	PrintErrorMessage("'abld clean $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);	
 	# remove file so we are sure that after .lib generation we have a fresh copy!
 	if (-e $TargetFilePath) { unlink($TargetFilePath) or PrintErrorMessage("Removing $TargetFilePath"); }
 	
@@ -280,10 +298,10 @@ my $header = "
 
 	my $OldSize = (-s $build_log_err);
 	$Redirection = ($RedirectSTDERR ? "2>> $build_log_err" : "");
-	system("abld build armi urel $Redirection >> $build_log_out");
+	system("abld build $TargetName urel $Redirection >> $build_log_out");
 	$OK = 0 if ($? >> 8);
 #	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err));
-	PrintErrorMessage("'abld build armi urel' exited with value " . ($? >> 8)) if ($? >> 8);
+	PrintErrorMessage("'abld build $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);
 	return 0 if (!$OK); # ABLD always returns ok :( grr	
 	PrintMessage("Done.") if (!$ReallyQuiet);
 
@@ -300,7 +318,7 @@ my $header = "
 	}
 	else
 	{
-		PrintErrorMessage("'abld build armi urel' apparently failed.");
+		PrintErrorMessage("'abld build $TargetName urel' apparently failed.");
 		if ($HaltOnError)
  		{
 			PrintErrorMessage("Halting on error as requested!");
@@ -410,6 +428,8 @@ sub PrepVariation()
 sub BuildVariation()
 {
 	my ($SDK, $Variation, $Package, $MacroBlock) = @_;
+	my $TargetName = $SDK_TargetName{$SDK};
+	my $TargetDir  = $SDK_TargetDir{$SDK};
 	my $OK = 1;
 	
 	my $dir = $build_dir."/".$SDK_BuildDirs{$SDK};
@@ -425,16 +445,16 @@ sub BuildVariation()
 	# remove some files so we are sure that after .sis package generation we have a fresh copy!
 	my $UnlinkFile = "$output_dir/$Package";
 	if (-e $UnlinkFile) { unlink($UnlinkFile) or PrintErrorMessage("Removing $UnlinkFile"); }
-	$UnlinkFile = $SDK_RootDirs{$SDK}."/epoc32/release/armi/urel/ScummVM.app";
+	$UnlinkFile = $SDK_RootDirs{$SDK}."/epoc32/release/$TargetDir/urel/ScummVM.app";
 	if (-e $UnlinkFile) { unlink($UnlinkFile) or PrintErrorMessage("Removing $UnlinkFile"); }
-	$UnlinkFile = $SDK_RootDirs{$SDK}."/epoc32/release/armi/urel/ScummVM.exe";
+	$UnlinkFile = $SDK_RootDirs{$SDK}."/epoc32/release/$TargetDir/urel/ScummVM.exe";
 	if (-e $UnlinkFile) { unlink($UnlinkFile) or PrintErrorMessage("Removing $UnlinkFile"); }
 
 	system("bldmake bldfiles 2> NUL > NUL");
 	PrintErrorMessage("'bldmake bldfiles' exited with value " . ($? >> 8)) if ($? >> 8);
 
-	system("abld clean armi urel 2> NUL > NUL");
-	PrintErrorMessage("'abld clean armi urel' exited with value " . ($? >> 8)) if ($? >> 8);	
+	system("abld clean $TargetName urel 2> NUL > NUL");
+	PrintErrorMessage("'abld clean $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);	
 	
 	my $Redirection = "OUT:file, ERR:".($RedirectSTDERR ? "file" : "screen");
 	my $Message = "Building $Package ($Redirection)";
@@ -443,10 +463,10 @@ sub BuildVariation()
 
 	my $OldSize = (-s $build_log_err);
 	$Redirection = ($RedirectSTDERR ? "2>> $build_log_err" : "");
-	system("abld build armi urel $Redirection >> $build_log_out");
+	system("abld build $TargetName urel $Redirection >> $build_log_out");
 	$OK = 0 if ($? >> 8);
 	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err) && !$ReallyQuiet);
-	PrintErrorMessage("'abld build armi urel' exited with value " . ($? >> 8)) if ($? >> 8);
+	PrintErrorMessage("'abld build $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);
 	return 0 if (!$OK); # ABLD always returns ok :( grr	
 	PrintMessage("Done.") if (!$ReallyQuiet);
 
