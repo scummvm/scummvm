@@ -425,12 +425,12 @@ protected:
 	const uint16 *_pathFindArray[100];
 
 	uint8 _pathValues[400];
-	uint8 _PVCount;
-	uint8 _GPVCount;
+	uint16 _PVCount;
+	uint16 _GPVCount;
 
 	uint8 _pathValues1[400];
-	uint8 _PVCount1;
-	uint8 _GPVCount1;
+	uint16 _PVCount1;
+	uint16 _GPVCount1;
 
 	uint8 _paletteBackup[1024];
 	uint8 _palette[1024];
