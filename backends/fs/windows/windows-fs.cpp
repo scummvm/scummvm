@@ -153,7 +153,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	// Check whether it is a directory, and whether the file actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
 
-	if (fileAttribs == 0xffffffff) {
+	if (fileAttribs == INVALID_FILE_ATTRIBUTES) {
 		_isValid = false;
 		_isDirectory = false;
 	} else {
@@ -239,7 +239,7 @@ AbstractFilesystemNode *WindowsFilesystemNode::child(const String &name) const {
 
 	// Check whether the directory actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(newPath.c_str()));
-	if (fileAttribs == 0xffffffff)
+	if (fileAttribs != FILE_ATTRIBUTE_DIRECTORY || fileAttribs == INVALID_FILE_ATTRIBUTES)
 		return 0;
 
 	WindowsFilesystemNode *p = new WindowsFilesystemNode(newPath);
