@@ -151,8 +151,9 @@ void MoviePlayer::play() {
 	_mixer->stopAll();
 
 	// Resolution is smaller in Amiga verison so always clear screen
-	if (_width == 384 && _height == 280)
-		_vm->dx_clear_surfaces(480);
+	if (_width == 384 && _height == 280) {
+		memset(_vm->_frontBuf, 0, _vm->_screenHeight * _vm->_screenWidth);
+	}
 
 	_ticks = _vm->_system->getMillis();
 
