@@ -1318,14 +1318,18 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	}
 
 
+	FSList fslist;
 	FilesystemNode dir;
 	if (ConfMan.hasKey("path") )
 		dir = FilesystemNode(ConfMan.get("path"));
-	FSList fslist = dir.listDir(FilesystemNode::kListFilesOnly);
-	Common::List<DetectorResult> results;
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("ScummEngine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
 
 
 	// Invoke the detector, but fixed to the specified gameid.
+	Common::List<DetectorResult> results;
 	detectGames(fslist, results, gameid);
 
 	// Unable to locate game data

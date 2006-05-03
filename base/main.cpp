@@ -271,15 +271,13 @@ static void runDetectorTest() {
 		}
 		
 		FilesystemNode dir(path);
-		
-		if (!dir.isValid() || !dir.isDirectory()) {
+		FSList files;
+		if (!dir.listDir(files, FilesystemNode::kListAll)) {
 			printf(" ... invalid path, skipping\n");
 			continue;
 		}
-		
-		FSList files = dir.listDir(FilesystemNode::kListAll);
-		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 
+		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 		bool gameidDiffers = false;
 		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
 			gameidDiffers |= scumm_stricmp(gameid.c_str(), x->gameid.c_str());

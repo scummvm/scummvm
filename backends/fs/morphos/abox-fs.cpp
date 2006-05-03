@@ -51,7 +51,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		virtual bool isDirectory() const { return _isDirectory; }
 		virtual String path() const { return _path; }
 
-		virtual AbstractFSList listDir(ListMode mode) const;
+		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 		static  AbstractFSList listRoot();
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
@@ -129,10 +129,8 @@ ABoxFilesystemNode::~ABoxFilesystemNode()
 	}
 }
 
-AbstractFSList ABoxFilesystemNode::listDir(ListMode mode) const
+bool ABoxFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 {
-	AbstractFSList myList;
-
 	if (!_isValid)
 		error("listDir() called on invalid node");
 
@@ -142,7 +140,8 @@ AbstractFSList ABoxFilesystemNode::listDir(ListMode mode) const
 	if (_lock == NULL)
 	{
 		/* This is the root node */
-		return listRoot();
+		myList = listRoot();
+		return true;
 	}
 
 	/* "Normal" file system directory */
@@ -151,7 +150,7 @@ AbstractFSList ABoxFilesystemNode::listDir(ListMode mode) const
 	if (fib == NULL)
 	{
 		warning("Failed to allocate memory for FileInfoBlock");
-		return myList;
+		return false;
 	}
 
 	if (Examine(_lock, fib) != DOSFALSE)
@@ -189,7 +188,7 @@ AbstractFSList ABoxFilesystemNode::listDir(ListMode mode) const
 
 	FreeDosObject(DOS_FIB, fib);
 
-	return myList;
+	return tree;
 }
 
 AbstractFilesystemNode *ABoxFilesystemNode::parent() const

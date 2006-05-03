@@ -69,7 +69,7 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual bool isDirectory() const { return _bIsDirectory; };
 		virtual String path() const { return _sPath; };
 
-		virtual AbstractFSList listDir(ListMode mode) const;
+		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 		virtual AbstractFSList listVolumes(void) const;
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
@@ -222,27 +222,26 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 	LEAVE();
 }
 
-AbstractFSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
+bool AmigaOSFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	ENTER();
-
-	AbstractFSList myList;
 
 	if (!_bIsValid) {
 		debug(6, "Invalid node");
 		LEAVE();
-		return myList; // Empty list
+		return false; // Empty list
 	}
 
 	if (!_bIsDirectory) {
 		debug(6, "Not a directory");
 		LEAVE();
-		return myList; // Empty list
+		return false; // Empty list
 	}
 
 	if (_pFileLock == 0) {
 		debug(6, "Root node");
 		LEAVE();
-		return listVolumes();
+		myList = listVolumes();
+		return true;
 	}
 
 	struct ExAllControl *eac = (struct ExAllControl *)IDOS->AllocDosObject(DOS_EXALLCONTROL, 0);
@@ -293,7 +292,7 @@ AbstractFSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 	}
 
 	LEAVE();
-	return myList;
+	return true;
 }
 
 AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {

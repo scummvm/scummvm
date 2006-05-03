@@ -57,7 +57,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual AbstractFSList listDir(ListMode mode) const;
+	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 };
@@ -136,15 +136,14 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 	}
 }
 
-AbstractFSList POSIXFilesystemNode::listDir(ListMode mode) const {
+bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
 	DIR *dirp = opendir(_path.c_str());
 
 	struct dirent *dp;
-	AbstractFSList myList;
 
 	if (dirp == NULL)
-		return myList;
+		return false;
 
 	// ... loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
@@ -201,7 +200,7 @@ AbstractFSList POSIXFilesystemNode::listDir(ListMode mode) const {
 		myList.push_back(new POSIXFilesystemNode(entry));
 	}
 	closedir(dirp);
-	return myList;
+	return true;
 }
 
 AbstractFilesystemNode *POSIXFilesystemNode::parent() const {

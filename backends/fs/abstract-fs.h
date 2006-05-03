@@ -88,7 +88,7 @@ public:
 	virtual bool isValid() const = 0;
 	virtual bool isDirectory() const = 0;
 	virtual String path() const = 0;
-	virtual AbstractFSList listDir(ListMode mode) const = 0;
+	virtual bool listDir(AbstractFSList &list, ListMode mode) const = 0;
 
 
 	/* TODO:

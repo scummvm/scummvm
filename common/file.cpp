@@ -124,27 +124,26 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
 	if (level <= 0)
 		return;
 
-	// Abort if this isn't a directory!
-	if (!dir.isDirectory())
+	FSList fslist;
+	if (!dir.listDir(fslist, FilesystemNode::kListAll)) {
+		// Failed listing the contents of this node, so it is either not a 
+		// directory, or just doesn't exist at all.
 		return;
-	
-	const String &directory(dir.path());
+	}
 
 	if (!_defaultDirectories)
 		_defaultDirectories = new StringIntMap;
 
 	// Do not add directories multiple times, unless this time they are added
 	// with a bigger depth.
+	const String &directory(dir.path());
 	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
 		return;
-
 	(*_defaultDirectories)[directory] = level;
 
 	if (!_filesMap)
 		_filesMap = new FilesMap;
 
-	const FSList fslist(dir.listDir(FilesystemNode::kListAll));
-	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
 			addDefaultDirectoryRecursive(file->path(), level - 1);

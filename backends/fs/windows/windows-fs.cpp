@@ -50,7 +50,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual AbstractFSList listDir(ListMode) const;
+	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 
@@ -163,10 +163,8 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	_isPseudoRoot = false;
 }
 
-AbstractFSList WindowsFilesystemNode::listDir(ListMode mode) const {
+bool WindowsFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
-
-	AbstractFSList myList;
 
 	if (_isPseudoRoot) {
 #ifndef _WIN32_WCE
@@ -200,7 +198,7 @@ AbstractFSList WindowsFilesystemNode::listDir(ListMode mode) const {
 
 		handle = FindFirstFile(toUnicode(searchPath), &desc);
 		if (handle == INVALID_HANDLE_VALUE)
-			return myList;
+			return false;
 		addFile(myList, mode, _path.c_str(), &desc);
 		while (FindNextFile(handle, &desc))
 			addFile(myList, mode, _path.c_str(), &desc);
@@ -208,7 +206,7 @@ AbstractFSList WindowsFilesystemNode::listDir(ListMode mode) const {
 		FindClose(handle);
 	}
 
-	return myList;
+	return true;
 }
 
 AbstractFilesystemNode *WindowsFilesystemNode::parent() const {

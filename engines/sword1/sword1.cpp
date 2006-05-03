@@ -90,8 +90,11 @@ void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 					filesFound[cnt] = true;
 		} else {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
-				if (scumm_stricmp(file->displayName().c_str(), g_dirNames[cnt]) == 0)
-					Sword1CheckDirectory(file->listDir(FilesystemNode::kListFilesOnly), filesFound);
+				if (scumm_stricmp(file->displayName().c_str(), g_dirNames[cnt]) == 0) {
+					FSList fslist2;
+					if (file->listDir(fslist2, FilesystemNode::kListFilesOnly))
+						Sword1CheckDirectory(fslist2, filesFound);
+				}
 		}
 	}
 }

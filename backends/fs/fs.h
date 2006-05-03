@@ -106,11 +106,12 @@ public:
 	FilesystemNode getChild(const String &name) const;
 
 	/**
-	 * Return a list of child nodes of this directory node. If called
-	 * on a node that does not represent a directory, an error is triggered.
+	 * Return a list of child nodes of this directory node. If called on a node
+	 * that does not represent a directory, false is returned.
+	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
 	 * @todo Rename this to listChildren or getChildren.
 	 */
-	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+	virtual bool listDir(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.

@@ -48,7 +48,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual AbstractFSList listDir(ListMode) const;
+	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 
@@ -116,8 +116,7 @@ PalmOSFilesystemNode::PalmOSFilesystemNode(const PalmOSFilesystemNode &node) {
 	_path = node._path;
 }
 
-AbstractFSList PalmOSFilesystemNode::listDir(ListMode mode) const {
-	AbstractFSList myList;
+bool PalmOSFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	Err e;
 	Char nameP[256];
 	FileInfoType desc;
@@ -129,7 +128,7 @@ AbstractFSList PalmOSFilesystemNode::listDir(ListMode mode) const {
 	e = VFSFileOpen(gVars->VFS.volRefNum, _path.c_str(), vfsModeRead, &handle);
 
 	if (e)
-		return myList;
+		return false;
 	
 	while(dirIterator != expIteratorStop) {
 		e = VFSDirEntryEnumerate(handle, &dirIterator, &desc);
@@ -140,7 +139,7 @@ AbstractFSList PalmOSFilesystemNode::listDir(ListMode mode) const {
 
 	VFSFileClose(handle);
 
-	return myList;
+	return true;
 }
 
 const char *lastPathComponent(const Common::String &str) {

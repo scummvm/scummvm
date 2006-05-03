@@ -99,17 +99,21 @@ FilesystemNode FilesystemNode::getChild(const String &name) const {
 	return FilesystemNode(node);
 }
 
-FSList FilesystemNode::listDir(ListMode mode) const {
-	assert(_realNode);
-	assert(_realNode->isDirectory());
-	AbstractFSList inList(_realNode->listDir(mode));
-	FSList outList;
+bool FilesystemNode::listDir(FSList &fslist, ListMode mode) const {
+	if (!_realNode || !_realNode->isDirectory())
+		return false;
+
+	AbstractFSList tmp;
 	
-	for (AbstractFSList::iterator i = inList.begin(); i != inList.end(); ++i) {
-		outList.push_back(FilesystemNode(*i));
+	if (!_realNode->listDir(tmp, mode))
+		return false;
+	
+	fslist.clear();
+	for (AbstractFSList::iterator i = tmp.begin(); i != tmp.end(); ++i) {
+		fslist.push_back(FilesystemNode(*i));
 	}
 	
-	return outList;
+	return true;
 }
 
 Common::String FilesystemNode::displayName() const {
