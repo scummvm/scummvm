@@ -41,7 +41,7 @@ FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
 
 FilesystemNode::FilesystemNode() {
 	if (_rootNode == 0) {
-		_rootNode = getRoot();
+		_rootNode = AbstractFilesystemNode::getRoot();
 		_rootRefCount = new int(1);
 	}
 	_realNode = _rootNode;
@@ -56,7 +56,7 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 }
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
-	_realNode = getNodeForPath(p);
+	_realNode = AbstractFilesystemNode::getNodeForPath(p);
 	_refCount = new int(1);
 }
 

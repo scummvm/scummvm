@@ -78,11 +78,11 @@ void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base
 	list.push_back(wrap(new PalmOSFilesystemNode(entry)));
 }
 
-AbstractFilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new PalmOSFilesystemNode();
 }
 
-AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
 	return new PalmOSFilesystemNode(path);
 }
 

@@ -120,11 +120,11 @@ void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *bas
 	list.push_back(wrap(new WindowsFilesystemNode(entry)));
 }
 
-AbstractFilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new WindowsFilesystemNode();
 }
 
-AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
 	return new WindowsFilesystemNode(path);
 }
 

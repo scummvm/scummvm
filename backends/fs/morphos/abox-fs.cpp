@@ -58,7 +58,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 };
 
 
-AbstractFilesystemNode *FilesystemNode::getRoot()
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot()
 {
 	return new ABoxFilesystemNode();
 }

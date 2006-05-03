@@ -52,11 +52,11 @@ public:
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
 };
 
-AbstractFilesystemNode *FilesystemNode::getRoot(void) {
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot(void) {
 	return new Ps2FilesystemNode();
 }
 
-AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
 	return new Ps2FilesystemNode(path);
 }
 

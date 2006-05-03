@@ -75,11 +75,11 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual AbstractFilesystemNode *child(const String &name) const;
 };
 
-AbstractFilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new AmigaOSFilesystemNode();
 }
 
-AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String	&path) {
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String	&path) {
 	return new AmigaOSFilesystemNode(path);
 }
 
