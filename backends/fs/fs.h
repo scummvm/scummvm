@@ -122,16 +122,6 @@ public:
 	virtual String displayName() const;
 
 	/**
-	 * Is this node valid? Returns true if the file/directory pointed
-	 * to by this node exists, false otherwise.
-	 *
-	 * @todo Maybe rename this to exists() ? Or maybe even distinguish between
-	 * the two? E.g. a path may be non-existant but valid, while another might
-	 * be completely invalid). But do we ever need to make that distinction?
-	 */
-	virtual bool isValid() const;
-
-	/**
 	 * Is this node pointing to a directory?
 	 * @todo Currently we assume that a valid node that is not a directory
 	 * automatically is a file (ignoring things like symlinks). That might

@@ -121,12 +121,6 @@ Common::String FilesystemNode::displayName() const {
 	return _realNode->displayName();
 }
 
-bool FilesystemNode::isValid() const {
-	if (_realNode == 0)
-		return false;
-	return _realNode->isValid();
-}
-
 bool FilesystemNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;

@@ -309,7 +309,7 @@ bool File::exists(const String &filename) {
 	// First try to find the file it via a FilesystemNode (in case an absolute
 	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
-	if (file.isValid() && file.isDirectory())
+	if (file.isDirectory())
 		return false;
 
 	// Next, try to locate the file by *opening* it in read mode. This has

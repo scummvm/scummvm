@@ -85,7 +85,6 @@ public:
 	virtual ~AbstractFilesystemNode() {}
 
 	virtual String displayName() const = 0;
-	virtual bool isValid() const = 0;
 	virtual bool isDirectory() const = 0;
 	virtual String path() const = 0;
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const = 0;

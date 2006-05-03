@@ -170,7 +170,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	if (ConfMan.hasKey("path")) {
 		Common::String path(ConfMan.get("path"));
 		FilesystemNode dir(path);
-		if (!dir.isValid() || !dir.isDirectory()) {
+		if (!dir.isDirectory()) {
 			warning("Game directory does not exist (%s)", path.c_str());
 			return 0;
 		}
