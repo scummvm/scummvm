@@ -2276,7 +2276,7 @@ void SimonEngine::vc62_fastFadeOut() {
 
 void SimonEngine::vc63_fastFadeIn() {
 	if (getGameType() == GType_FF) {
-			_paletteColorCount = 256;
+		_paletteColorCount = 256;
 	} else {
 		_paletteColorCount = 208;
 		if (_windowNum != 4) {
