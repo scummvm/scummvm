@@ -462,21 +462,20 @@ void SimonEngine::fastFadeIn() {
 }
 
 void SimonEngine::slowFadeIn() {
-	uint8 paletteTmp[768];
 	uint8 *src, *dst;
 	int c, p;
 
 	_paletteColorCount &= 0x7fff;
 	_paletteFlag = false;
 
-	memcpy(_videoBuf1, _palette, 1024); // Difference
+	memcpy(_videoBuf1, _palette, 768);
 	memset(_videoBuf1, 0, 768);
 
 	memcpy(_paletteBackup, _palette, 768);
-	memcpy(paletteTmp, _palette, 768);
+	memcpy(_videoBuf1 + 768, _palette, 768);
 
-	for (c = 255; c > 0; c -= 4) {
-	  	src = paletteTmp;
+	for (c = 255; c >= 0; c -= 4) {
+	  	src = _videoBuf1 + 768;
  		dst = _videoBuf1;
 
 		for (p = _paletteColorCount; p !=0 ; p--) {
