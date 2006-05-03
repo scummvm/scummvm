@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	gui.o \
 	items.o \
 	kyra.o \
+	plugin.o \
 	resource.o \
 	saveload.o \
 	scene.o \
