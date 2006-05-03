@@ -750,6 +750,8 @@ void KyraEngine::loadButtonShapes() {
 }
 
 void KyraEngine::loadMainScreen(int page) {
+	_screen->clearPage(page);
+
 	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
 		loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if(_features & GF_FRENCH)
@@ -765,6 +767,7 @@ void KyraEngine::loadMainScreen(int page) {
 	
 	uint8 *_pageSrc = _screen->getPagePtr(page);
 	uint8 *_pageDst = _screen->getPagePtr(0);
+
 	memcpy(_pageDst, _pageSrc, 320*200);
 }
 

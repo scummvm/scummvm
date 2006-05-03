@@ -32,6 +32,44 @@ namespace Kyra {
 
 Screen::Screen(KyraEngine *vm, OSystem *system)
 	: _system(system), _vm(vm) {
+}
+
+Screen::~Screen() {
+	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
+		free(_pagePtrs[pageNum]);
+		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
+	}
+	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
+		delete[] _fonts[f].fontData;
+		_fonts[f].fontData = NULL;
+	}
+	free(_currentPalette);
+	free(_screenPalette);
+	free(_decodeShapeBuffer);
+	free(_animBlockPtr);
+	for (int i = 0; i < 3; ++i) {
+		free(_palettes[i]);
+	}
+	delete [] _bitBlitRects;
+	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
+		delete [] _saveLoadPage[i];
+		_saveLoadPage[i] = 0;
+	}
+
+	free(_unkPtr1);
+	free(_unkPtr2);
+}
+
+bool Screen::init() {
+	debugC(9, kDebugLevelScreen, "Screen::init()");
+
+	_system->beginGFXTransaction();
+		_vm->initCommonGFX(false);
+		//for debug reasons (see Screen::updateScreen)
+		//_system->initSize(640, 200);
+		_system->initSize(320, 200);
+	_system->endGFXTransaction();
+
 	_curPage = 0;
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
 		uint8 *pagePtr = (uint8 *)malloc(SCREEN_PAGE_SIZE);
@@ -78,32 +116,8 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	memset(_unkPtr1, 0, getRectSize(1, 144));
 	_unkPtr2 = (uint8*)malloc(getRectSize(1, 144));
 	memset(_unkPtr2, 0, getRectSize(1, 144));
-}
 
-Screen::~Screen() {
-	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
-		free(_pagePtrs[pageNum]);
-		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
-	}
-	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
-		delete[] _fonts[f].fontData;
-		_fonts[f].fontData = NULL;
-	}
-	free(_currentPalette);
-	free(_screenPalette);
-	free(_decodeShapeBuffer);
-	free(_animBlockPtr);
-	for (int i = 0; i < 3; ++i) {
-		free(_palettes[i]);
-	}
-	delete [] _bitBlitRects;
-	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
-		delete [] _saveLoadPage[i];
-		_saveLoadPage[i] = 0;
-	}
-
-	free(_unkPtr1);
-	free(_unkPtr2);
+	return true;
 }
 
 void Screen::updateScreen() {

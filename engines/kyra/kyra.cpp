@@ -287,11 +287,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system)
 	:KyraEngine(system) {
 }
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system)
-	:KyraEngine(system) {
-}
-
-int KyraEngine::init() {
+int KyraEngine_v1::setupGameFlags() {
 	// Detect game features based on MD5. Again brutally ripped from Gobliins.
 	uint8 md5sum[16];
 	char md5str[32 + 1];
@@ -361,6 +357,18 @@ int KyraEngine::init() {
 		return -1;
 	}
 
+	return 0;
+}
+
+KyraEngine_v2::KyraEngine_v2(OSystem *system)
+	:KyraEngine(system) {
+}
+
+int KyraEngine::init() {
+	if (setupGameFlags()) {
+		return -1;
+	}
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -381,13 +389,6 @@ int KyraEngine::init() {
 	Common::addSpecialDebugLevel(kDebugLevelGUI, "GUI", "GUI debug level");
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
-
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		//for debug reasons (see Screen::updateScreen)
-		//_system->initSize(640, 200);
-		_system->initSize(320, 200);
-	_system->endGFXTransaction();
 
 	// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
@@ -432,6 +433,7 @@ int KyraEngine::init() {
 	assert(_res);
 	_screen = new Screen(this, _system);
 	assert(_screen);
+	assert(_screen->init());
 	_sprites = new Sprites(this, _system);
 	assert(_sprites);
 	_seq = new SeqPlayer(this, _system);
@@ -442,6 +444,7 @@ int KyraEngine::init() {
 	assert(*_animator);
 	_text = new TextDisplayer(_screen);
 	assert(_text);
+
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	assert(_staticres->init());

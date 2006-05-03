@@ -89,6 +89,8 @@ public:
 	Screen(KyraEngine *vm, OSystem *system);
 	~Screen();
 
+	bool init();
+
 	void updateScreen();
 	uint8 *getPagePtr(int pageNum);
 	void clearPage(int pageNum);

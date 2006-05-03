@@ -397,16 +397,24 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	debugC(9, kDebugLevelMain, "KyraEngine::loadBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
 	uint32 fileSize;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
-	assert(srcData);
+
+	if (!srcData) {
+		warning("coudln't load bitmap: '%s'", filename);
+		return;
+	}
+
 	uint8 compType = srcData[2];
 	uint32 imgSize = READ_LE_UINT32(srcData + 4);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
+
 	if (palData && palSize) {
 		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
 		memcpy(palData, srcData + 10, palSize);		
 	}
+
 	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = _screen->getPagePtr(dstPage);
+
 	switch (compType) {
 	case 0:
 		memcpy(dstData, srcPtr, imgSize);
@@ -421,7 +429,8 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 		error("Unhandled bitmap compression %d", compType);
 		break;
 	}
-	delete[] srcData;
+
+	delete [] srcData;
 }
 
 } // end of namespace Kyra

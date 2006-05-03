@@ -247,6 +247,8 @@ public:
 
 	KyraEngine(OSystem *system);
 	~KyraEngine();
+
+	virtual int setupGameFlags() = 0;
 	
 	void errorString(const char *buf_input, char *buf_output);
 
@@ -987,15 +989,19 @@ protected:
 };
 
 class KyraEngine_v1 : public KyraEngine {
-	public:
-		KyraEngine_v1(OSystem *system);
-		~KyraEngine_v1();
+public:
+	KyraEngine_v1(OSystem *system);
+	~KyraEngine_v1();
+
+	int setupGameFlags();
 };
 
 class KyraEngine_v2 : public KyraEngine {
-	public:
-		KyraEngine_v2(OSystem *system);
-		~KyraEngine_v2();
+public:
+	KyraEngine_v2(OSystem *system);
+	~KyraEngine_v2();
+
+	int setupGameFlags() { return 0; }
 	
 	int go();
 };
