@@ -755,7 +755,7 @@ static int compareMD5Table(const void *a, const void *b) {
 	return strcmp(key, elem->md5);
 }
 
-const MD5Table *findInMD5Table(const char *md5) {
+static const MD5Table *findInMD5Table(const char *md5) {
 #ifdef PALMOS_68K
 	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
 #else
@@ -845,7 +845,7 @@ Common::String ScummEngine::generateFilename(const int room) const {
 	return buf;
 }
 
-Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
+static Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
 	char buf[128];
 
 	switch (gfp.genMethod) {
@@ -884,8 +884,11 @@ struct DetectorDesc {
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
 };
 
-void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
-	typedef Common::HashMap<Common::String, DetectorDesc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DescMap;
+typedef Common::HashMap<Common::String, DetectorDesc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DescMap;
+
+static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Common::String &file);
+
+static void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
 	const GameSettings *g;
 	DetectorResult dr;
@@ -994,7 +997,6 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 			continue;
 
 
-
 		//  ____            _     ____  
 		// |  _ \ __ _ _ __| |_  |___ \ *
 		// | |_) / _` | '__| __|   __) |
@@ -1031,190 +1033,199 @@ void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, co
 				continue;
 			}
 			
-			// At this point, we know that the gameid matches, but no variant
-			// was specified, yet there are multiple ones. So we try our best
-			// to distinguish between the variants.
-			// To do this, we take a close look at the detection file and
-			// try to filter out some cases.
-
-			Common::File tmp;
-			if (!tmp.open(d.path.c_str())) {
-				warning("SCUMM detectGames: failed to open '%s' for read access", d.path.c_str());
-				continue;
-			}
 			
-			if (file == "00.LFL") {
-				// Used in V1, V2, V3 games.
-				if (g->version > 3)
-					continue;
-
-				// Read a few bytes to narrow down the game.				
-				byte buf[6];
-				tmp.read(buf, 6);
-				
-				if (buf[0] == 0xbc && buf[1] == 0xb9) {
-					// The NES version of MM
-					if (g->id == GID_MANIAC && g->platform == Common::kPlatformNES) {
-						// perfect match
-						results.push_back(dr);
-						break;
-					}
-				} else if (buf[0] == 0xCE && buf[1] == 0xF5) {
-					// Looks like V1.
-					// Candidates: maniac classic, zak classic
-					
-					if (g->version != 1)
-						continue;
-
-					// Zak has 58.LFL, Maniac doesn't have it.
-					const bool has58LFL = fileMD5Map.contains("58.LFL");
-					if (g->id == GID_MANIAC && !has58LFL) {
-					} else if (g->id == GID_ZAK && has58LFL) {
-					} else
-						continue;
-				} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
-					// GF_OLD_BUNDLE: could be V2 or old V3.
-					// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
-
-					if (g->version != 2 && g->version != 3  || !(g->features & GF_OLD_BUNDLE))
-						continue;
-
-					/* We distinguish the games by the presence/absence of
-					   certain files. In the following, '+' means the file
-					   present, '-' means the file is absent.
-
-					   maniac:    -58.LFL, -84.LFL,-86.LFL, -98.LFL
-
-					   zak:       +58.LFL, -84.LFL,-86.LFL, -98.LFL
-					   zakdemo:   +58.LFL, -84.LFL,-86.LFL, -98.LFL
-
-					   loom:      +58.LFL, -84.LFL,+86.LFL, -98.LFL
-					   loomdemo:  -58.LFL, +84.LFL,-86.LFL, -98.LFL
-
-					   indy3:     +58.LFL, +84.LFL,+86.LFL, +98.LFL
-					   indy3demo: -58.LFL, +84.LFL,-86.LFL, +98.LFL
-					*/
-					const bool has58LFL = fileMD5Map.contains("58.LFL");
-					const bool has84LFL = fileMD5Map.contains("84.LFL");
-					const bool has86LFL = fileMD5Map.contains("86.LFL");
-					const bool has98LFL = fileMD5Map.contains("98.LFL");
-
-					if (g->id == GID_INDY3         && has98LFL && has84LFL) {
-					} else if (g->id == GID_ZAK    && !has98LFL && !has86LFL && !has84LFL && has58LFL) {
-					} else if (g->id == GID_MANIAC && !has98LFL && !has86LFL && !has84LFL && !has58LFL) {
-					} else if (g->id == GID_LOOM   && !has98LFL && (has86LFL != has84LFL)) {
-					} else
-						continue;
-				} else if (buf[4] == '0' && buf[5] == 'R') {
-					// newer V3 game
-					// Candidates: indy3, indy3Towns, zakTowns, loomTowns
-
-					if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
-						continue;
-
-					/*
-					Considering that we know about *all* TOWNS versions,
-					and know their MD5s, we could simply rely on this and
-					if we find something which has an unknown MD5, assume
-					that it is an (so far unknown) version of Indy3.
-		
-					We can combine this with a look at the resource headers:
-		
-					Indy3:
-					_numGlobalObjects 1000
-					_numRooms 99
-					_numCostumes 129
-					_numScripts 139
-					_numSounds 84
-		
-					Indy3Towns, ZakTowns, ZakLoom demo:
-					_numGlobalObjects 1000
-					_numRooms 99
-					_numCostumes 199
-					_numScripts 199
-					_numSounds 199
-		
-					Assuming that all the town variants look like the latter, we can
-					do the check like this:
-					  if (numScripts == 139)
-						assume Indy3
-					  else if (numScripts == 199)
-						assume towns game
-					  else
-						unknown, do not accept it
-					*/
-				} else {
-					// TODO: Unknown file header, deal with it. Maybe an unencrypted
-					// variant...
-					// Anyway, we don't know to deal with the file, so we
-					// just skip it.
-				}
-			} else if (file == "000.LFL") {
-				// Used in V4
-				// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
-
-				if (g->version != 4)
-					continue;
-
-				/*
-				For all of them, we have:
-				_numGlobalObjects 1000
-				_numRooms 99
-				_numCostumes 199
-				_numScripts 199
-				_numSounds 199
-				
-				Any good ideas to distinguish those? Maybe by the presence / absence
-				of some files?
-				At least PASS and the monkeyEGA demo differ by 903.LFL missing...
-				And the count of DISK??.LEC files differs depending on what version
-				you have (4 or 8 floppy versions). 
-				loomcd of course shipped on only one "disc".
-				
-				pass: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
-				monkeyEGA:  000.LFL, 901-904.LFL, DISK01-09.LEC
-				monkeyEGA DEMO: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
-				monkeyVGA: 000.LFL, 901-904.LFL, DISK01-04.LEC
-				loomcd: 000.LFL, 901-904.LFL, DISK01.LEC
-				*/
-
-				const bool has903LFL = fileMD5Map.contains("903.LFL");
-				const bool hasDisk02 = fileMD5Map.contains("DISK02.LEC");
-				
-				// There is not much we can do based on the presence / absence
-				// of files. Only that if 903.LFL is present, it can't be PASS;
-				// and if DISK02.LEC is present, it can't be LoomCD
-				if (g->id == GID_PASS              && !has903LFL && !hasDisk02) {
-				} else if (g->id == GID_LOOM       &&  has903LFL && !hasDisk02) {
-				} else if (g->id == GID_MONKEY_VGA) {
-				} else if (g->id == GID_MONKEY_EGA) {
-				} else
-					continue;
-			} else {
-				// Must be a V5+ game
-				if (g->version < 5)
-					continue;
-
-				// So at this point the gameid is determined, but not necessarily
-				// the variant!
-				
-				// TODO: Add code that handles this, at least for the non-HE games.
-				// Note sure how realistic it is to correctly detect HE-game
-				// variants, would require me to look at a sufficiently large
-				// sample collection of HE games (assuming I had the time :).
-				
-				
-				// TODO: For Mac versions in container file, we can sometimes
-				// distinguish the demo from the regular version by looking
-				// at the content of the container file and then looking for
-				// the *.000 file in there.
-			}
-			
-			// Add the file to the candidate list
-			results.push_back(dr);
+			// Add the game/variant to the candidates list if it is consistent
+			// with the file(s) we are seeing.
+			if (testGame(g, fileMD5Map, file))
+				results.push_back(dr);
 		}
 	}
 }
+
+static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Common::String &file) {
+	const DetectorDesc &d = fileMD5Map[file];
+
+	// At this point, we know that the gameid matches, but no variant
+	// was specified, yet there are multiple ones. So we try our best
+	// to distinguish between the variants.
+	// To do this, we take a close look at the detection file and
+	// try to filter out some cases.
+
+	Common::File tmp;
+	if (!tmp.open(d.path.c_str())) {
+		warning("SCUMM detectGames: failed to open '%s' for read access", d.path.c_str());
+		return false;
+	}
+	
+	if (file == "00.LFL") {
+		// Used in V1, V2, V3 games.
+		if (g->version > 3)
+			return false;
+
+		// Read a few bytes to narrow down the game.				
+		byte buf[6];
+		tmp.read(buf, 6);
+		
+		if (buf[0] == 0xbc && buf[1] == 0xb9) {
+			// The NES version of MM
+			if (g->id == GID_MANIAC && g->platform == Common::kPlatformNES) {
+				// perfect match
+				return true;
+			}
+		} else if (buf[0] == 0xCE && buf[1] == 0xF5) {
+			// Looks like V1.
+			// Candidates: maniac classic, zak classic
+			
+			if (g->version != 1)
+				return false;
+
+			// Zak has 58.LFL, Maniac doesn't have it.
+			const bool has58LFL = fileMD5Map.contains("58.LFL");
+			if (g->id == GID_MANIAC && !has58LFL) {
+			} else if (g->id == GID_ZAK && has58LFL) {
+			} else
+				return false;
+		} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
+			// GF_OLD_BUNDLE: could be V2 or old V3.
+			// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+
+			if (g->version != 2 && g->version != 3  || !(g->features & GF_OLD_BUNDLE))
+				return false;
+
+			/* We distinguish the games by the presence/absence of
+			   certain files. In the following, '+' means the file
+			   present, '-' means the file is absent.
+
+			   maniac:    -58.LFL, -84.LFL,-86.LFL, -98.LFL
+
+			   zak:       +58.LFL, -84.LFL,-86.LFL, -98.LFL
+			   zakdemo:   +58.LFL, -84.LFL,-86.LFL, -98.LFL
+
+			   loom:      +58.LFL, -84.LFL,+86.LFL, -98.LFL
+			   loomdemo:  -58.LFL, +84.LFL,-86.LFL, -98.LFL
+
+			   indy3:     +58.LFL, +84.LFL,+86.LFL, +98.LFL
+			   indy3demo: -58.LFL, +84.LFL,-86.LFL, +98.LFL
+			*/
+			const bool has58LFL = fileMD5Map.contains("58.LFL");
+			const bool has84LFL = fileMD5Map.contains("84.LFL");
+			const bool has86LFL = fileMD5Map.contains("86.LFL");
+			const bool has98LFL = fileMD5Map.contains("98.LFL");
+
+			if (g->id == GID_INDY3         && has98LFL && has84LFL) {
+			} else if (g->id == GID_ZAK    && !has98LFL && !has86LFL && !has84LFL && has58LFL) {
+			} else if (g->id == GID_MANIAC && !has98LFL && !has86LFL && !has84LFL && !has58LFL) {
+			} else if (g->id == GID_LOOM   && !has98LFL && (has86LFL != has84LFL)) {
+			} else
+				return false;
+		} else if (buf[4] == '0' && buf[5] == 'R') {
+			// newer V3 game
+			// Candidates: indy3, indy3Towns, zakTowns, loomTowns
+
+			if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
+				return false;
+
+			/*
+			Considering that we know about *all* TOWNS versions,
+			and know their MD5s, we could simply rely on this and
+			if we find something which has an unknown MD5, assume
+			that it is an (so far unknown) version of Indy3.
+
+			We can combine this with a look at the resource headers:
+
+			Indy3:
+			_numGlobalObjects 1000
+			_numRooms 99
+			_numCostumes 129
+			_numScripts 139
+			_numSounds 84
+
+			Indy3Towns, ZakTowns, ZakLoom demo:
+			_numGlobalObjects 1000
+			_numRooms 99
+			_numCostumes 199
+			_numScripts 199
+			_numSounds 199
+
+			Assuming that all the town variants look like the latter, we can
+			do the check like this:
+			  if (numScripts == 139)
+				assume Indy3
+			  else if (numScripts == 199)
+				assume towns game
+			  else
+				unknown, do not accept it
+			*/
+		} else {
+			// TODO: Unknown file header, deal with it. Maybe an unencrypted
+			// variant...
+			// Anyway, we don't know to deal with the file, so we
+			// just skip it.
+		}
+	} else if (file == "000.LFL") {
+		// Used in V4
+		// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
+
+		if (g->version != 4)
+			return false;
+
+		/*
+		For all of them, we have:
+		_numGlobalObjects 1000
+		_numRooms 99
+		_numCostumes 199
+		_numScripts 199
+		_numSounds 199
+		
+		Any good ideas to distinguish those? Maybe by the presence / absence
+		of some files?
+		At least PASS and the monkeyEGA demo differ by 903.LFL missing...
+		And the count of DISK??.LEC files differs depending on what version
+		you have (4 or 8 floppy versions). 
+		loomcd of course shipped on only one "disc".
+		
+		pass: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
+		monkeyEGA:  000.LFL, 901-904.LFL, DISK01-09.LEC
+		monkeyEGA DEMO: 000.LFL, 901.LFL, 902.LFL, 904.LFL, disk01.lec
+		monkeyVGA: 000.LFL, 901-904.LFL, DISK01-04.LEC
+		loomcd: 000.LFL, 901-904.LFL, DISK01.LEC
+		*/
+
+		const bool has903LFL = fileMD5Map.contains("903.LFL");
+		const bool hasDisk02 = fileMD5Map.contains("DISK02.LEC");
+		
+		// There is not much we can do based on the presence / absence
+		// of files. Only that if 903.LFL is present, it can't be PASS;
+		// and if DISK02.LEC is present, it can't be LoomCD
+		if (g->id == GID_PASS              && !has903LFL && !hasDisk02) {
+		} else if (g->id == GID_LOOM       &&  has903LFL && !hasDisk02) {
+		} else if (g->id == GID_MONKEY_VGA) {
+		} else if (g->id == GID_MONKEY_EGA) {
+		} else
+			return false;
+	} else {
+		// Must be a V5+ game
+		if (g->version < 5)
+			return false;
+
+		// So at this point the gameid is determined, but not necessarily
+		// the variant!
+		
+		// TODO: Add code that handles this, at least for the non-HE games.
+		// Note sure how realistic it is to correctly detect HE-game
+		// variants, would require me to look at a sufficiently large
+		// sample collection of HE games (assuming I had the time :).
+		
+		
+		// TODO: For Mac versions in container file, we can sometimes
+		// distinguish the demo from the regular version by looking
+		// at the content of the container file and then looking for
+		// the *.000 file in there.
+	}
+
+	return true;
+}
+
 
 } // End of namespace Scumm
 
