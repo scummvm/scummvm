@@ -34,6 +34,10 @@ typedef Common::Array<AbstractFilesystemNode *>	AbstractFSList;
 /**
  * Abstract file system node. Private subclasses implement the actual
  * functionality.
+ *
+ * Most of the methods correspond directly to methods in class FilesystemNode,
+ * so if they are not documented here, look there for more information about
+ * the semantics.
  */
 class AbstractFilesystemNode {
 protected:
@@ -80,47 +84,10 @@ protected:
 public:
 	virtual ~AbstractFilesystemNode() {}
 
-	/**
-	 * Return a human readable string for this node, usable for display (e.g.
-	 * in the GUI code). Do *not* rely on it being usable for anything else,
-	 * like constructing paths!
-	 * @return the display name
-	 */
 	virtual String displayName() const = 0;
-
-	/**
-	 * Is this node valid? Returns true if the file/directory pointed
-	 * to by this node exists, false otherwise.
-	 *
-	 * @todo Maybe rename this to exists() ? Or maybe even distinguish between
-	 * the two? E.g. a path may be non-existant but valid, while another might
-	 * be completely invalid). But do we ever need to make that distinction?
-	 */
 	virtual bool isValid() const = 0;
-
-	/**
-	 * Is this node pointing to a directory?
-	 * @todo Currently we assume that a valid node that is not a directory
-	 * automatically is a file (ignoring things like symlinks). That might
-	 * actually be OK... but we could still add an isFile method. Or even replace
-	 * isValid and isDirectory by a getType() method that can return values like
-	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
-	 */
 	virtual bool isDirectory() const = 0;
-
-	/**
-	 * Return a string representation of the file which can be passed to fopen(),
-	 * and is suitable for archiving (i.e. writing to the config file).
-	 * This will usually be a 'path' (hence the name of the method), but can
-	 * be anything that fulfilly the above criterions.
-	 */
 	virtual String path() const = 0;
-
-	/**
-	 * Return a list of child nodes of this directory node. If called
-	 * on a node that does not represent a directory, an error is triggered.
-	 * @todo Rename this to listChildren.
-	 */
 	virtual AbstractFSList listDir(ListMode mode) const = 0;
 
 

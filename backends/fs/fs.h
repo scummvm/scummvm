@@ -22,9 +22,24 @@
 #ifndef BACKENDS_FS_H
 #define BACKENDS_FS_H
 
+#include "common/array.h"
+#include "common/str.h"
+
+class FilesystemNode;
+class AbstractFilesystemNode;
+
+
+/**
+ * List of multiple file system nodes. E.g. the contents of a given directory.
+ * This is subclass instead of just a typedef so that we can use forward
+ * declarations of it in other places.
+ */
+class FSList : public Common::Array<FilesystemNode> {};
+
+
 /*
- * The API described in this header is meant to allow for file system browsing in a
- * portable fashions. To this ends, multiple or single roots have to be supported
+ * FilesystemNode provides an abstraction for file pathes, allowing for portable
+ * file system browsing. To this ends, multiple or single roots have to be supported
  * (compare Unix with a single root, Windows with multiple roots C:, D:, ...).
  *
  * To this end, we abstract away from paths; implementations can be based on
@@ -45,28 +60,6 @@
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
  */
-
-/*
- * TODO - Instead of starting with getRoot(), we should rather add a getDefaultDir()
- * call that on Unix might return the current dir or the users home dir...
- * i.e. the root dir is usually not the best starting point for browsing.
- */
-
-#include "common/array.h"
-#include "common/str.h"
-
-class FilesystemNode;
-class AbstractFilesystemNode;
-
-
-/**
- * List of multiple file system nodes. E.g. the contents of a given directory.
- * This is subclass instead of just a typedef so that we can use forward
- * declarations of it in other places.
- */
-class FSList : public Common::Array<FilesystemNode> {};
-
-
 class FilesystemNode {
 	typedef Common::String String;
 private:
@@ -87,7 +80,7 @@ public:
 
 
 	/**
-	 * Create a new FilesystemNode refering to the specified path. This is
+	 * Create a new FilesystemNode referring to the specified path. This is
 	 * the counterpart to the path() method.
 	 */
 	FilesystemNode(const String &path);
@@ -112,10 +105,47 @@ public:
 	 */
 	FilesystemNode getChild(const String &name) const;
 
+	/**
+	 * Return a list of child nodes of this directory node. If called
+	 * on a node that does not represent a directory, an error is triggered.
+	 * @todo Rename this to listChildren or getChildren.
+	 */
 	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+
+	/**
+	 * Return a human readable string for this node, usable for display (e.g.
+	 * in the GUI code). Do *not* rely on it being usable for anything else,
+	 * like constructing paths!
+	 * @return the display name
+	 */
 	virtual String displayName() const;
+
+	/**
+	 * Is this node valid? Returns true if the file/directory pointed
+	 * to by this node exists, false otherwise.
+	 *
+	 * @todo Maybe rename this to exists() ? Or maybe even distinguish between
+	 * the two? E.g. a path may be non-existant but valid, while another might
+	 * be completely invalid). But do we ever need to make that distinction?
+	 */
 	virtual bool isValid() const;
+
+	/**
+	 * Is this node pointing to a directory?
+	 * @todo Currently we assume that a valid node that is not a directory
+	 * automatically is a file (ignoring things like symlinks). That might
+	 * actually be OK... but we could still add an isFile method. Or even replace
+	 * isValid and isDirectory by a getType() method that can return values like
+	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
+	 */
 	virtual bool isDirectory() const;
+
+	/**
+	 * Return a string representation of the file which can be passed to fopen(),
+	 * and is suitable for archiving (i.e. writing to the config file).
+	 * This will usually be a 'path' (hence the name of the method), but can
+	 * be anything that fulfilly the above criterions.
+	 */
 	virtual String path() const;
 
 	/**
