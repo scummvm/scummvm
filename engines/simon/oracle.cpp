@@ -79,10 +79,8 @@ void SimonEngine::linksDown() {
 void SimonEngine::scrollOracle() {
 	int i;
 
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 5; i++)
 		scrollOracleUp();
-		bltOracleText();
-	}
 }
 
 void SimonEngine::oracleTextUp() {
@@ -112,7 +110,6 @@ void SimonEngine::oracleTextUp() {
 			if(sub)
 				startSubroutineEx(sub);
 			setBitFlag(94, false);
-			bltOracleText();
 		}
 		if (_currentBoxNumber != 601 || !getBitFlag(89))
 			break;
@@ -147,7 +144,6 @@ void SimonEngine::oracleTextDown() {
 			if (sub)
 				startSubroutineEx(sub);
 			setBitFlag(93, false);
-			bltOracleText();
 		}
 		if (_currentBoxNumber != 600 || !getBitFlag(89))
 			break;
@@ -209,23 +205,6 @@ void SimonEngine::scrollOracleDown() {
 		}
 		dst -= _screenWidth;
 		src -= _screenWidth;
-	}
-}
-
-void SimonEngine::bltOracleText() {
-	byte *src, *dst1, *dst2;
-	uint16 h;
-
-	src = getFrontBuf() + 103 * _screenWidth + 136;
-	dst1 = getFrontBuf() + 103 * _screenWidth + 136;
-	dst2 = getBackBuf() + 103 * _screenWidth + 136;
-
-	for (h = 0; h < 104; h++) {
-		memcpy(dst1, src, 360);
-		memcpy(dst2, src, 360);
-		dst1 += _screenWidth;
-		dst2 += _screenWidth;
-		src += _screenWidth;
 	}
 }
 

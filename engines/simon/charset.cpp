@@ -1534,17 +1534,14 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 
 	_lockWord |= 0x8000;
 
-	dst = getFrontBuf();
-	dst += y * _dxSurfacePitch + x + window->textColumnOffset;
+	dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
 
 	if (getGameType() == GType_FF) {
-		dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 13;
 		w =  feebleFontSize[chr - 0x20];
 
 		src = feeble_video_font + (chr - 0x20) * 13;
 	} else {
-		dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
 
@@ -1584,8 +1581,15 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 		int8 b = *src++;
 		i = 0;
 		do {
-			if (b < 0)
-				dst[i] = color;
+			if (b < 0) {
+				if (getGameType() == GType_FF) {
+					if (dst[i] == 0)
+						dst[i] = color;
+				} else {
+					dst[i] = color;
+				}
+			}
+
 			b <<= 1;
 		} while (++i != w);
 		dst += _dxSurfacePitch;

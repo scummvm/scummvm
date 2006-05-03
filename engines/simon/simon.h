@@ -618,7 +618,6 @@ protected:
 	void saveUserGame(int slot);
 	void windowBackSpace(WindowBlock *window);
 
-	void bltOracleText();
 	void oracleLogo();
 	void scrollOracle();
 	void scrollOracleUp();
