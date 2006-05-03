@@ -37,6 +37,7 @@
 #include "common/util.h"
 
 #include "base/engine.h"
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 
 #define ENTER() /* debug(6, "Enter") */
@@ -68,7 +69,7 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual bool isDirectory() const { return _bIsDirectory; };
 		virtual String path() const { return _sPath; };
 
-		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+		virtual FSList listDir(ListMode mode) const;
 		virtual FSList listVolumes(void) const;
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
@@ -263,9 +264,9 @@ FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 
 				struct ExAllData *ead = data;
 				do {
-					if ((mode == kListAll) ||
-						(EAD_IS_DRAWER(ead) && (mode == kListDirectoriesOnly)) ||
-						(EAD_IS_FILE(ead) && (mode == kListFilesOnly))) {
+					if ((mode == FilesystemNode::kListAll) ||
+						(EAD_IS_DRAWER(ead) && (mode == FilesystemNode::kListDirectoriesOnly)) ||
+						(EAD_IS_FILE(ead) && (mode == FilesystemNode::kListFilesOnly))) {
 						String full_path = _sPath;
 						full_path += (char*)ead->ed_Name;
 

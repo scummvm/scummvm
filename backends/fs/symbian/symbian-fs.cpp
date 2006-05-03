@@ -24,6 +24,7 @@
 
 #if defined (__SYMBIAN32__) 
 #include "common/stdafx.h"
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 
 #include <dirent.h>
@@ -51,7 +52,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+	virtual FSList listDir(ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 };
@@ -166,8 +167,8 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 				entry._isDirectory = fileentry.IsDir();
 				
 				// Honor the chosen mode
-				if ((mode == kListFilesOnly && entry._isDirectory) ||
-					(mode == kListDirectoriesOnly && !entry._isDirectory))
+				if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+					(mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 					continue;
 				
 				if (entry._isDirectory)

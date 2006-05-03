@@ -62,8 +62,8 @@ void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base
 
 	isDirectory = (find_data->attributes & vfsFileAttrDirectory);
 
-	if ((!isDirectory && mode == kListDirectoriesOnly) ||
-		(isDirectory && mode == kListFilesOnly))
+	if ((!isDirectory && mode == FilesystemNode::kListDirectoriesOnly) ||
+		(isDirectory && mode == FilesystemNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;

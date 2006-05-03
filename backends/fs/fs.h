@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef FS_H
-#define FS_H
+#ifndef BACKENDS_FS_H
+#define BACKENDS_FS_H
 
 /*
  * The API described in this header is meant to allow for file system browsing in a
@@ -56,6 +56,7 @@
 #include "common/str.h"
 
 class FilesystemNode;
+class AbstractFilesystemNode;
 
 
 /**
@@ -66,119 +67,7 @@ class FilesystemNode;
 class FSList : public Common::Array<FilesystemNode> {};
 
 
-/**
- * File system node.
- */
-class AbstractFilesystemNode {
-protected:
-	friend class FilesystemNode;
-	typedef Common::String String;
-
-	/**
-	 * The parent node of this directory.
-	 * The parent of the root is the root itself.
-	 */
-	virtual AbstractFilesystemNode *parent() const = 0;
-
-	/**
-	 * The child node with the given name. If no child with this name
-	 * exists, returns 0. Will never be called on a node which is not
-	 * a directory node.
-	 */
-	virtual AbstractFilesystemNode *child(const String &name) const = 0;
-
-	/**
-	 * This method is a rather ugly hack which is used internally by the
-	 * actual node implementions to wrap up raw nodes inside FilesystemNode
-	 * objects. We probably want to get rid of this eventually and replace it
-	 * with a cleaner / more elegant solution, but for now it works.
-	 * @note This takes over ownership of node. Do not delete it yourself,
-	 *       else you'll get ugly crashes. You've been warned!
-	 */
-	static FilesystemNode wrap(AbstractFilesystemNode *node);
-
-public:
-
-	/**
-	 * Flag to tell listDir() which kind of files to list.
-	 */
-	typedef enum {
-		kListFilesOnly = 1,
-		kListDirectoriesOnly = 2,
-		kListAll = 3
-	} ListMode;
-
-	virtual ~AbstractFilesystemNode() {}
-
-	/**
-	 * Return a human readable string for this node, usable for display (e.g.
-	 * in the GUI code). Do *not* rely on it being usable for anything else,
-	 * like constructing paths!
-	 * @return the display name
-	 */
-	virtual String displayName() const = 0;
-
-	/**
-	 * Is this node valid? Returns true if the file/directory pointed
-	 * to by this node exists, false otherwise.
-	 *
-	 * @todo Maybe rename this to exists() ? Or maybe even distinguish between
-	 * the two? E.g. a path may be non-existant but valid, while another might
-	 * be completely invalid). But do we ever need to make that distinction?
-	 */
-	virtual bool isValid() const = 0;
-
-	/**
-	 * Is this node pointing to a directory?
-	 * @todo Currently we assume that a valid node that is not a directory
-	 * automatically is a file (ignoring things like symlinks). That might
-	 * actually be OK... but we could still add an isFile method. Or even replace
-	 * isValid and isDirectory by a getType() method that can return values like
-	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
-	 */
-	virtual bool isDirectory() const = 0;
-
-	/**
-	 * Return a string representation of the file which can be passed to fopen(),
-	 * and is suitable for archiving (i.e. writing to the config file).
-	 * This will usually be a 'path' (hence the name of the method), but can
-	 * be anything that fulfilly the above criterions.
-	 */
-	virtual String path() const = 0;
-
-	/**
-	 * Return a list of child nodes of this directory node. If called
-	 * on a node that does not represent a directory, an error is triggered.
-	 * @todo Rename this to listChildren.
-	 */
-	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const = 0;
-
-	/**
-	 * Compare the name of this node to the name of another. Directories
-	 * go before normal files.
-	 */
-	virtual bool operator< (const AbstractFilesystemNode& node) const
-	{
-		if (isDirectory() && !node.isDirectory())
-			return true;
-		if (!isDirectory() && node.isDirectory())
-			return false;
-		return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
-	}
-
-
-	/* TODO:
-	bool exists();
-
-	bool isDirectory();
-	bool isFile();
-
-	bool isReadable();
-	bool isWriteable();
-	*/
-};
-
-class FilesystemNode : public AbstractFilesystemNode {
+class FilesystemNode {
 	friend class AbstractFilesystemNode;
 
 	typedef Common::String String;
@@ -213,6 +102,16 @@ private:
 
 public:
 	/**
+	 * Flag to tell listDir() which kind of files to list.
+	 */
+	enum ListMode {
+		kListFilesOnly = 1,
+		kListDirectoriesOnly = 2,
+		kListAll = 3
+	};
+
+
+	/**
 	 * Create a new FilesystemNode refering to the specified path. This is
 	 * the counterpart to the path() method.
 	 */
@@ -221,7 +120,7 @@ public:
 
 	FilesystemNode();
 	FilesystemNode(const FilesystemNode &node);
-	~FilesystemNode();
+	virtual ~FilesystemNode();
 
 	FilesystemNode &operator  =(const FilesystemNode &node);
 
@@ -244,11 +143,14 @@ public:
 	virtual bool isDirectory() const;
 	virtual String path() const;
 
+	/**
+	 * Compare the name of this node to the name of another. Directories
+	 * go before normal files.
+	 */
+	bool operator< (const FilesystemNode& node) const;
+
 protected:
 	void decRefCount();
-
-	virtual AbstractFilesystemNode *parent() const { return 0; }
-	virtual AbstractFilesystemNode *child(const String &name) const { return 0; }
 };
 
 

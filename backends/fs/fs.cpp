@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 #include "common/util.h"
 
@@ -48,8 +49,7 @@ FilesystemNode::FilesystemNode() {
 	++(*_refCount);
 }
 
-FilesystemNode::FilesystemNode(const FilesystemNode &node)
-	: AbstractFilesystemNode() {
+FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 	_realNode = node._realNode;
 	_refCount = node._refCount;
 	++(*_refCount);
@@ -130,4 +130,14 @@ bool FilesystemNode::isDirectory() const {
 Common::String FilesystemNode::path() const {
 	assert(_realNode);
 	return _realNode->path();
+}
+
+
+bool FilesystemNode::operator< (const FilesystemNode& node) const
+{
+	if (isDirectory() && !node.isDirectory())
+		return true;
+	if (!isDirectory() && node.isDirectory())
+		return false;
+	return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
 }

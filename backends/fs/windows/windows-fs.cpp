@@ -22,6 +22,7 @@
 #ifdef WIN32
 
 #include "common/stdafx.h"
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -103,8 +104,8 @@ void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *bas
 
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
-	if ((!isDirectory && mode == kListDirectoriesOnly) ||
-		(isDirectory && mode == kListFilesOnly))
+	if ((!isDirectory && mode == FilesystemNode::kListDirectoriesOnly) ||
+		(isDirectory && mode == FilesystemNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;

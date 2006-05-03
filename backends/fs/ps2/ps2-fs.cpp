@@ -19,6 +19,8 @@
  * $Id$
  */
 
+#include "common/stdafx.h"
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 #include <kernel.h>
 #include <stdio.h>
@@ -88,10 +90,10 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 	sprintf(listDir, "%s/", _path.c_str() + 5);
 
 	switch(mode) {
-		case kListFilesOnly:
+		case FilesystemNode::kListFilesOnly:
 			files = CDVD_GetDir(listDir, NULL, CDVD_GET_FILES_ONLY, tocEntries, MAX_LIST_ENTRIES, NULL);
 			break;
-		case kListDirectoriesOnly:
+		case FilesystemNode::kListDirectoriesOnly:
 			files = CDVD_GetDir(listDir, NULL, CDVD_GET_DIRS_ONLY, tocEntries, MAX_LIST_ENTRIES, NULL);
 			break;
 		default:

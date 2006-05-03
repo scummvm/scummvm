@@ -26,6 +26,7 @@
 #include <stdio.h>
 
 #include "base/engine.h"
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 
 /*
@@ -50,7 +51,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		virtual bool isDirectory() const { return _isDirectory; }
 		virtual String path() const { return _path; }
 
-		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
+		virtual FSList listDir(ListMode mode) const;
 		static  FSList listRoot();
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
@@ -161,8 +162,8 @@ FSList ABoxFilesystemNode::listDir(ListMode mode) const
 			String full_path;
 			BPTR lock;
 
-			if ((fib->fib_EntryType > 0 && (mode & kListDirectoriesOnly)) ||
-				 (fib->fib_EntryType < 0 && (mode & kListFilesOnly)))
+			if ((fib->fib_EntryType > 0 && (mode & FilesystemNode::kListDirectoriesOnly)) ||
+				 (fib->fib_EntryType < 0 && (mode & FilesystemNode::kListFilesOnly)))
 			{
 				full_path = _path;
 				full_path += fib->fib_FileName;
