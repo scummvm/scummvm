@@ -68,8 +68,6 @@ class FSList : public Common::Array<FilesystemNode> {};
 
 
 class FilesystemNode {
-	friend class AbstractFilesystemNode;
-
 	typedef Common::String String;
 private:
 	AbstractFilesystemNode *_realNode;

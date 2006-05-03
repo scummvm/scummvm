@@ -69,8 +69,8 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual bool isDirectory() const { return _bIsDirectory; };
 		virtual String path() const { return _sPath; };
 
-		virtual FSList listDir(ListMode mode) const;
-		virtual FSList listVolumes(void) const;
+		virtual AbstractFSList listDir(ListMode mode) const;
+		virtual AbstractFSList listVolumes(void) const;
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
 };
@@ -222,10 +222,10 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 	LEAVE();
 }
 
-FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
+AbstractFSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 	ENTER();
 
-	FSList myList;
+	AbstractFSList myList;
 
 	if (!_bIsValid) {
 		debug(6, "Invalid node");
@@ -275,7 +275,7 @@ FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 							AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(lock, (char *)ead->ed_Name);
 							if (entry) {
 								if (entry->isValid())
-								    myList.push_back(wrap(entry));
+								    myList.push_back(entry);
 								else
 									delete entry;
 							}
@@ -334,10 +334,10 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &name) const {
 	return new AmigaOSFilesystemNode(newPath);
 }
 
-FSList AmigaOSFilesystemNode::listVolumes(void)	const {
+AbstractFSList AmigaOSFilesystemNode::listVolumes(void)	const {
 	ENTER();
 
-	FSList myList;
+	AbstractFSList myList;
 
 	const uint32 kLockFlags = LDF_READ | LDF_VOLUMES;
 	char name[MAXPATHLEN];
@@ -367,7 +367,7 @@ FSList AmigaOSFilesystemNode::listVolumes(void)	const {
 				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, name);
 				if (entry) {
 					if (entry->isValid())
-						myList.push_back(wrap(entry));
+						myList.push_back(entry);
 					else
 						delete entry;
 				}

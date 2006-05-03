@@ -45,7 +45,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode) const;
+	virtual AbstractFSList listDir(ListMode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 
@@ -79,10 +79,10 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
 	_isDirectory = true;
 }
 
-FSList Ps2FilesystemNode::listDir(ListMode mode) const {
+AbstractFSList Ps2FilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
-	FSList myList;
+	AbstractFSList myList;
 
 	struct TocEntry tocEntries[MAX_LIST_ENTRIES];
 	int files;
@@ -112,7 +112,7 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 			dirEntry._path += tocEntries[fCnt].filename;
 
 			dirEntry._displayName = tocEntries[fCnt].filename;
-			myList.push_back(wrap(new Ps2FilesystemNode(dirEntry)));
+			myList.push_back(new Ps2FilesystemNode(dirEntry));
 		}
 	}
 	return myList;

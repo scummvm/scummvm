@@ -51,8 +51,8 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		virtual bool isDirectory() const { return _isDirectory; }
 		virtual String path() const { return _path; }
 
-		virtual FSList listDir(ListMode mode) const;
-		static  FSList listRoot();
+		virtual AbstractFSList listDir(ListMode mode) const;
+		static  AbstractFSList listRoot();
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
 };
@@ -129,9 +129,9 @@ ABoxFilesystemNode::~ABoxFilesystemNode()
 	}
 }
 
-FSList ABoxFilesystemNode::listDir(ListMode mode) const
+AbstractFSList ABoxFilesystemNode::listDir(ListMode mode) const
 {
-	FSList myList;
+	AbstractFSList myList;
 
 	if (!_isValid)
 		error("listDir() called on invalid node");
@@ -174,7 +174,7 @@ FSList ABoxFilesystemNode::listDir(ListMode mode) const
 					if (entry)
 					{
 						if (entry->isValid())
-							myList.push_back(wrap(entry));
+							myList.push_back(entry);
 						else
 							delete entry;
 					}
@@ -218,9 +218,9 @@ AbstractFilesystemNode *ABoxFilesystemNode::child(const String &name) const {
 	TODO
 }
 
-FSList ABoxFilesystemNode::listRoot()
+AbstractFSList ABoxFilesystemNode::listRoot()
 {
-	FSList myList;
+	AbstractFSList myList;
 	DosList *dosList;
 	CONST ULONG lockDosListFlags = LDF_READ | LDF_VOLUMES;
 	char name[256];
@@ -255,7 +255,7 @@ FSList ABoxFilesystemNode::listRoot()
 				if (entry)
 				{
 					if (entry->isValid())
-						myList.push_back(wrap(entry));
+						myList.push_back(entry);
 					else
 						delete entry;
 				}

@@ -22,9 +22,14 @@
 #ifndef BACKENDS_ABSTRACT_FS_H
 #define BACKENDS_ABSTRACT_FS_H
 
+#include "common/array.h"
 #include "common/str.h"
 
 #include "backends/fs/fs.h"
+
+class AbstractFilesystemNode;
+
+typedef Common::Array<AbstractFilesystemNode *>	AbstractFSList;
 
 /**
  * Abstract file system node. Private subclasses implement the actual
@@ -48,16 +53,6 @@ protected:
 	 * a directory node.
 	 */
 	virtual AbstractFilesystemNode *child(const String &name) const = 0;
-
-	/**
-	 * This method is a rather ugly hack which is used internally by the
-	 * actual node implementions to wrap up raw nodes inside FilesystemNode
-	 * objects. We probably want to get rid of this eventually and replace it
-	 * with a cleaner / more elegant solution, but for now it works.
-	 * @note This takes over ownership of node. Do not delete it yourself,
-	 *       else you'll get ugly crashes. You've been warned!
-	 */
-	static FilesystemNode wrap(AbstractFilesystemNode *node);
 
 	/**
 	 * Returns a special node representing the FS root. The starting point for
@@ -126,7 +121,7 @@ public:
 	 * on a node that does not represent a directory, an error is triggered.
 	 * @todo Rename this to listChildren.
 	 */
-	virtual FSList listDir(ListMode mode) const = 0;
+	virtual AbstractFSList listDir(ListMode mode) const = 0;
 
 
 	/* TODO:

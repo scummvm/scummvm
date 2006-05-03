@@ -48,15 +48,15 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode) const;
+	virtual AbstractFSList listDir(ListMode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 
 private:
-	static void addFile (FSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
+	static void addFile (AbstractFSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
 };
 
-void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base, FileInfoType* find_data) {
+void PalmOSFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, FileInfoType* find_data) {
 	PalmOSFilesystemNode entry;
 	bool isDirectory;
 
@@ -75,7 +75,7 @@ void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base
 
 	entry._isValid = true;	
 	entry._isPseudoRoot = false;
-	list.push_back(wrap(new PalmOSFilesystemNode(entry)));
+	list.push_back(new PalmOSFilesystemNode(entry));
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
@@ -116,8 +116,8 @@ PalmOSFilesystemNode::PalmOSFilesystemNode(const PalmOSFilesystemNode &node) {
 	_path = node._path;
 }
 
-FSList PalmOSFilesystemNode::listDir(ListMode mode) const {
-	FSList myList;
+AbstractFSList PalmOSFilesystemNode::listDir(ListMode mode) const {
+	AbstractFSList myList;
 	Err e;
 	Char nameP[256];
 	FileInfoType desc;

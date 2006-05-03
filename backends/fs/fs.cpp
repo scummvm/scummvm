@@ -29,11 +29,6 @@
 static AbstractFilesystemNode *_rootNode = 0;
 static int *_rootRefCount = 0;
 
-FilesystemNode AbstractFilesystemNode::wrap(AbstractFilesystemNode *node) {
-	FilesystemNode wrapper(node);
-	return wrapper;
-}
-
 FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
 	_realNode = realNode;
 	_refCount = new int(1);
@@ -91,7 +86,7 @@ FilesystemNode FilesystemNode::getParent() const {
 	if (node == 0) {
 		return *this;
 	} else {
-		return AbstractFilesystemNode::wrap(node);
+		return FilesystemNode(node);
 	}
 }
 
@@ -101,13 +96,20 @@ FilesystemNode FilesystemNode::getChild(const String &name) const {
 
 	assert(_realNode->isDirectory());
 	AbstractFilesystemNode *node = _realNode->child(name);
-	return AbstractFilesystemNode::wrap(node);
+	return FilesystemNode(node);
 }
 
 FSList FilesystemNode::listDir(ListMode mode) const {
 	assert(_realNode);
 	assert(_realNode->isDirectory());
-	return _realNode->listDir(mode);
+	AbstractFSList inList(_realNode->listDir(mode));
+	FSList outList;
+	
+	for (AbstractFSList::iterator i = inList.begin(); i != inList.end(); ++i) {
+		outList.push_back(FilesystemNode(*i));
+	}
+	
+	return outList;
 }
 
 Common::String FilesystemNode::displayName() const {

@@ -50,14 +50,14 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode) const;
+	virtual AbstractFSList listDir(ListMode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 
 private:
 	static char *toAscii(TCHAR *x);
 	static const TCHAR* toUnicode(const char *x);
-	static void addFile (FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
+	static void addFile (AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
 
@@ -93,7 +93,7 @@ const TCHAR* WindowsFilesystemNode::toUnicode(const char *x) {
 #endif
 }
 
-void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
@@ -117,7 +117,7 @@ void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *bas
 	entry._isValid = true;
 	entry._isPseudoRoot = false;
 
-	list.push_back(wrap(new WindowsFilesystemNode(entry)));
+	list.push_back(new WindowsFilesystemNode(entry));
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
@@ -163,10 +163,10 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	_isPseudoRoot = false;
 }
 
-FSList WindowsFilesystemNode::listDir(ListMode mode) const {
+AbstractFSList WindowsFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
-	FSList myList;
+	AbstractFSList myList;
 
 	if (_isPseudoRoot) {
 #ifndef _WIN32_WCE
@@ -186,7 +186,7 @@ FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 				entry._isValid = true;
 				entry._isPseudoRoot = false;
 				entry._path = toAscii(current_drive);
-				myList.push_back(wrap(new WindowsFilesystemNode(entry)));
+				myList.push_back(new WindowsFilesystemNode(entry));
 		}
 #endif
 	}

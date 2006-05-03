@@ -52,7 +52,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode mode) const;
+	virtual AbstractFSList listDir(ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *child(const String &name) const;
 };
@@ -105,9 +105,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	_isDirectory = true;
 }
 
-FSList SymbianFilesystemNode::listDir(ListMode mode) const {
+AbstractFSList SymbianFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
-	FSList myList;
+	AbstractFSList myList;
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
@@ -144,7 +144,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 			entry._isValid = true;
 			entry._isPseudoRoot = false;
 			entry._path = path;
-			myList.push_back(wrap(new SymbianFilesystemNode(entry)));
+			myList.push_back(new SymbianFilesystemNode(entry));
 		}
 	} else {
 		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
@@ -173,7 +173,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 				
 				if (entry._isDirectory)
 					entry._path += "\\";
-				myList.push_back(wrap(new SymbianFilesystemNode(entry)));
+				myList.push_back(new SymbianFilesystemNode(entry));
 			}
 			CleanupStack::PopAndDestroy(dirPtr);
 		}
