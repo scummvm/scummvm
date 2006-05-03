@@ -226,9 +226,9 @@ void BrowserDialog::updateListing() {
 
 	// Read in the data from the file system
 	if (_isDirBrowser)
-		_nodeContent = _node.listDir(AbstractFilesystemNode::kListDirectoriesOnly);
+		_nodeContent = _node.listDir(FilesystemNode::kListDirectoriesOnly);
 	else
-		_nodeContent = _node.listDir(AbstractFilesystemNode::kListAll);
+		_nodeContent = _node.listDir(FilesystemNode::kListAll);
 	Common::sort(_nodeContent.begin(), _nodeContent.end());
 
 	// Populate the ListWidget
