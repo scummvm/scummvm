@@ -2520,7 +2520,8 @@ void SimonEngine::vc80_setOverlayImage() {
 void SimonEngine::vc81_setRandom() {
 	uint16 var = vcReadNextWord();
 	uint16 value = vcReadNextWord();
-	writeVariable(var, _rnd.getRandomNumber(value - 1));
+
+	_variableArray[var] = _rnd.getRandomNumber(value - 1);
 }
 
 void SimonEngine::vc82_getPathValue() {
@@ -2534,7 +2535,7 @@ void SimonEngine::vc82_getPathValue() {
 		val = _pathValues[_GPVCount++];
 	}
 
-	writeVariable(var, val);
+	vcWriteVar(var, val);
 }
 
 void SimonEngine::vc83_playSoundLoop() {
