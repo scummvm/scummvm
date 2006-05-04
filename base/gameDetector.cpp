@@ -169,6 +169,10 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("sfx_volume", 192);
 	ConfMan.registerDefault("speech_volume", 192);
 
+	ConfMan.registerDefault("music_mute", false);
+	ConfMan.registerDefault("sfx_mute", false);
+	ConfMan.registerDefault("speech_mute", false);
+
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
@@ -184,8 +188,6 @@ GameDetector::GameDetector() {
 //	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
-	ConfMan.registerDefault("speech_mute", false);
-	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("dump_scripts", false);
