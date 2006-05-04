@@ -367,7 +367,7 @@ void SimonEngine::vc2_call() {
 
 void SimonEngine::vc3_loadSprite() {
 	uint16 windowNum, zoneNum, palette, x, y, vgaSpriteId;
-	uint16 res;
+	uint16 count, res;
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -423,16 +423,26 @@ void SimonEngine::vc3_loadSprite() {
 	pp = _curVgaFile1;
 	if (getGameType() == GType_FF) {
 		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
+		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
 		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
 
-		while (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) != vgaSpriteId)
+		while (count--) {
+			if (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId)
+				break;
 			p += sizeof(AnimationHeader_Feeble);
+		}
+		assert(READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId);
 	} else {
 		p = pp + READ_BE_UINT16(&((VgaFileHeader_Simon *) pp)->hdr2_start);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationCount);
 		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationTable);
 
-		while (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) != vgaSpriteId)
+		while (count--) {
+			if (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId)
+				break;
 			p += sizeof(AnimationHeader_Simon);
+		}
+		assert(READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId);
 	}
 
 #ifdef DUMP_FILE_NR
