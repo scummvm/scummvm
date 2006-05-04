@@ -224,7 +224,7 @@ int DCLauncherDialog::runModal()
     ConfMan.set("path", dir, base);
 
   // Set the target.
-  _detector.setTarget(base);
+  GameDetector::setTarget(base);
 
   return 0;
 }

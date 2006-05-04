@@ -72,7 +72,7 @@ public:
 };
 
 
-CELauncherDialog::CELauncherDialog(GameDetector &detector) : GUI::LauncherDialog(detector) {
+CELauncherDialog::CELauncherDialog() : GUI::LauncherDialog() {
 }
 
 void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

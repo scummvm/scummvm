@@ -434,8 +434,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 #pragma mark -
 
-LauncherDialog::LauncherDialog(GameDetector &detector)
-	: Dialog(0, 0, 320, 200), _detector(detector) {
+LauncherDialog::LauncherDialog()
+	: Dialog(0, 0, 320, 200) {
 	_drawingHints |= THEME_HINT_MAIN_DIALOG;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -737,7 +737,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		assert(item >= 0);
-		_detector.setTarget(_domains[item]);
+		GameDetector::setTarget(_domains[item]);
 		close();
 		break;
 	case kListSelectionChangedCmd:

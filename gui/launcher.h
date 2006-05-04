@@ -25,8 +25,6 @@
 #include "gui/dialog.h"
 #include "common/str.h"
 
-class GameDetector;
-
 namespace GUI {
 
 class BrowserDialog;
@@ -37,7 +35,7 @@ class LauncherDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	LauncherDialog(GameDetector &detector);
+	LauncherDialog();
 	~LauncherDialog();
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
@@ -51,7 +49,6 @@ protected:
 	GraphicsWidget		*_logo;
 #endif
 	StringList		_domains;
-	GameDetector 	&_detector;
 	BrowserDialog	*_browser;
 
 	virtual void handleScreenChanged();

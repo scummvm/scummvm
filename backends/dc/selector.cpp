@@ -24,7 +24,6 @@
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <base/engine.h>
-#include <base/gameDetector.h>
 #include <base/plugins.h>
 #include <backends/fs/fs.h>
 #include "dc.h"

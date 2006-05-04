@@ -38,14 +38,14 @@ public:
 	GameDetector();
 
 	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
-	void processSettings(Common::String &target, Common::StringMap &settings);
-	const Plugin *detectMain();
+	static void processSettings(Common::String &target, Common::StringMap &settings);
+	static const Plugin *detectMain();
 
 public:
 	static GameDescriptor findGame(const String &gameName, const Plugin **plugin = NULL);
 
 //protected:
-	void setTarget(const String &name);	// TODO: This should be protected
+	static void setTarget(const String &name);	// TODO: This should be protected
 };
 
 #endif

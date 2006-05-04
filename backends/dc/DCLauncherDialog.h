@@ -22,11 +22,8 @@
  */
 
 class DCLauncherDialog {
- private:
-  GameDetector &_detector;
-
  public:
-  DCLauncherDialog(GameDetector &d) : _detector(d) {}
+  DCLauncherDialog() {}
   int runModal();
 };
 

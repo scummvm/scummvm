@@ -25,14 +25,13 @@
 
 #include "backends/fs/fs.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "gui/launcher.h"
 
 class CELauncherDialog : public GUI::LauncherDialog {
 public:
-	CELauncherDialog(GameDetector &detector);
+	CELauncherDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 protected:
 	void addGame();

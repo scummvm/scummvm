@@ -137,7 +137,7 @@ static void setupDummyPalette(OSystem &system) {
 	system.setPalette(dummy_palette, 0, 16);
 }
 
-static bool launcherDialog(GameDetector &detector, OSystem &system) {
+static bool launcherDialog(OSystem &system) {
 
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
@@ -155,11 +155,11 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 	setupDummyPalette(system);
 
 #if defined(_WIN32_WCE)
-	CELauncherDialog dlg(detector);
+	CELauncherDialog dlg;
 #elif defined(__DC__)
-	DCLauncherDialog dlg(detector);
+	DCLauncherDialog dlg;
 #else
-	GUI::LauncherDialog dlg(detector);
+	GUI::LauncherDialog dlg;
 #endif
 	return (dlg.runModal() != -1);
 }
@@ -380,8 +380,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	
 
 	// Process the remaining command line settings
-	GameDetector detector;
-	detector.processSettings(command, settings);
+	GameDetector::processSettings(command, settings);
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// init keymap support here: we wanna move this somewhere else?
@@ -408,7 +407,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Unless a game was specified, show the launcher dialog
 	if (ConfMan.getActiveDomainName().empty()) {
-		running = launcherDialog(detector, system);
+		running = launcherDialog(system);
 
 		// Discard any command line options. Those that affect the graphics
 		// mode etc. already have should have been handled by the backend at
@@ -422,7 +421,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// cleanly, so this is now enabled to encourage people to fix bits :)
 	while (running) {
 		// Verify the given game name is a valid supported game
-		const Plugin *plugin = detector.detectMain();
+		const Plugin *plugin = GameDetector::detectMain();
 		if (plugin) {
 			// Unload all plugins not needed for this game,
 			// to save memory
@@ -442,7 +441,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			PluginManager::instance().loadPlugins();
 		}
 
-		running = launcherDialog(detector, system);
+		running = launcherDialog(system);
 	}
 
 	// Deinit the timer
