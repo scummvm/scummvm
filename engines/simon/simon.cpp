@@ -1559,8 +1559,8 @@ void SimonEngine::waitForSync(uint a) {
 	_exitCutscene = false;
 	_rightButtonDown = false;
 	while (_vgaWaitFor != 0) {
-		if (_rightButtonDown && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
-			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
+		if (_rightButtonDown) {
+			if (_vgaWaitFor == 200 && !getBitFlag(14)) {
 				skipSpeech();
 				break;
 			}
@@ -1591,11 +1591,16 @@ void SimonEngine::skipSpeech() {
 			loadSprite(4, 2, 13, 0, 0, 0);
 			waitForSync(213);
 			stopAnimateSimon2(2, 1);
-		} else {
+		} else if (getGameType() == GType_SIMON2) {
 			_variableArray[100] = 5;
 			loadSprite(4, 1, 30, 0, 0, 0);
 			waitForSync(130);
 			stopAnimateSimon2(2, 1);
+		} else {
+			_variableArray[100] = 15;
+			loadSprite(4, 1, 130, 0, 0, 0);
+			waitForSync(130);
+			stopAnimateSimon1(1);
 		}
 	}
 }
@@ -2021,10 +2026,7 @@ void SimonEngine::delay(uint amount) {
 			case OSystem::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)
 					setBitFlag(92, false);
-				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
-					_rightButtonDown++;
-				else
-					_exitCutscene = true;
+				_rightButtonDown++;
 				break;
 			case OSystem::EVENT_QUIT:
 				shutdown();
