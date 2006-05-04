@@ -43,6 +43,7 @@ static LanguageTypes languages[] = {
 	{ GF_FRENCH, "FRE" },
 	{ GF_GERMAN, "GER" },
 	{ GF_SPANISH, "SPA" },
+	{ GF_ITALIAN, "ITA" },
 	{ 0, 0 }
 };
 
@@ -752,16 +753,18 @@ void KyraEngine::loadButtonShapes() {
 void KyraEngine::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
-	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
+	if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
+		loadBitmap("MAIN15.CPS", page, page, 0);
+	else if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
 		loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if(_features & GF_FRENCH)
 		loadBitmap("MAIN_FRE.CPS", page, page, 0);
 	else if(_features & GF_GERMAN)
 		loadBitmap("MAIN_GER.CPS", page, page, 0);
-	else if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
-		loadBitmap("MAIN15.CPS", page, page, 0);
 	else if (_features & GF_SPANISH)
 		loadBitmap("MAIN_SPA.CPS", page, page, 0);
+	else if (_features & GF_ITALIAN)
+		loadBitmap("MAIN_ITA.CPS", page, page, 0);
 	else
 		warning("no main graphics file found");
 	

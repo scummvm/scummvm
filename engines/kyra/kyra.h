@@ -54,6 +54,7 @@ enum {
 	GF_FRENCH	= 1 <<  5,
 	GF_GERMAN	= 1 <<  6,
 	GF_SPANISH	= 1 <<  7,
+	GF_ITALIAN	= 1 <<  8,
 	// other languages here
 	GF_LNGUNK	= 1 << 16,
 	GF_AMIGA	= 1 << 17	// this is no special version flag yet!

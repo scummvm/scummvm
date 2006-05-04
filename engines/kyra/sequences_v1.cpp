@@ -192,6 +192,8 @@ void KyraEngine::seq_introStory() {
 		loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
 	} else if (_features & GF_SPANISH) {
 		loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
+	} else if (_features & GF_ITALIAN) {
+		loadBitmap("TEXT_ITA.CPS", 3, 3, 0);
 	} else {
 		warning("no story graphics file found");
 	}
