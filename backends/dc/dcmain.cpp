@@ -24,7 +24,7 @@
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <base/engine.h>
-#include <base/gameDetector.h>
+#include <base/game.h>
 #include <base/main.h>
 #include <base/plugins.h>
 #include "dc.h"
@@ -224,7 +224,7 @@ int DCLauncherDialog::runModal()
     ConfMan.set("path", dir, base);
 
   // Set the target.
-  GameDetector::setTarget(base);
+  Base::setTarget(base);
 
   return 0;
 }

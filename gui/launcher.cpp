@@ -24,7 +24,7 @@
 #include "backends/fs/fs.h"
 
 #include "base/engine.h"
-#include "base/gameDetector.h"
+#include "base/game.h"
 #include "base/plugins.h"
 #include "base/version.h"
 
@@ -538,7 +538,7 @@ void LauncherDialog::updateListing() {
 		if (gameid.empty())
 			gameid = iter->_key;
 		if (description.empty()) {
-			GameDescriptor g = GameDetector::findGame(gameid);
+			GameDescriptor g = Base::findGame(gameid);
 			if (!g.description.empty())
 				description = g.description;
 		}
@@ -696,7 +696,7 @@ void LauncherDialog::editGame(int item) {
 	String gameId(ConfMan.get("gameid", _domains[item]));
 	if (gameId.empty())
 		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId).description);
+	EditGameDialog editDialog(_domains[item], Base::findGame(gameId).description);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 
@@ -737,7 +737,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		assert(item >= 0);
-		GameDetector::setTarget(_domains[item]);
+		Base::setTarget(_domains[item]);
 		close();
 		break;
 	case kListSelectionChangedCmd:

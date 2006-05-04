@@ -53,4 +53,18 @@ struct GameDescriptor {
 		gameid(g.gameid), description(g.description) {}
 };
 
+
+class Plugin;
+
+namespace Base {
+
+// TODO: Find a better place for this function.
+GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL);
+
+// TODO: Find a better place for this function.
+void setTarget(const Common::String &name);
+
+} // End of namespace Base
+
+
 #endif

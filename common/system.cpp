@@ -25,8 +25,6 @@
 
 #include "backends/intern.h"
 
-#include "base/gameDetector.h"
-
 #include "gui/message.h"
 
 #include "common/config-manager.h"

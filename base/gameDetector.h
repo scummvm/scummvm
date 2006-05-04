@@ -28,24 +28,11 @@
 #include "common/config-manager.h"
 #include "base/game.h"
 
-class Plugin;
-
-
 class GameDetector {
-	typedef Common::String String;
-
 public:
 	static void registerDefaults();
-	
 	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
 	static void processSettings(Common::String &target, Common::StringMap &settings);
-	static const Plugin *detectMain();
-
-public:
-	static GameDescriptor findGame(const String &gameName, const Plugin **plugin = NULL);
-
-//protected:
-	static void setTarget(const String &name);	// TODO: This should be protected
 };
 
 #endif

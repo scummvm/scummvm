@@ -252,26 +252,6 @@ void GameDetector::registerDefaults() {
 #endif // #ifdef DEFAULT_SAVE_PATH
 }
 
-GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plugin) {
-	// Find the GameDescriptor for this target
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-	GameDescriptor result;
-
-	if (plugin)
-		*plugin = 0;
-
-	PluginList::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (*iter)->findGame(gameName.c_str());
-		if (!result.gameid.empty()) {
-			if (plugin)
-				*plugin = *iter;
-			break;
-		}
-	}
-	return result;
-}
-
 //
 // Various macros used by the command line parser.
 //
@@ -545,8 +525,8 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!target.empty()) {
-		if (ConfMan.hasGameDomain(target) || findGame(target).gameid.size() > 0) {
-			setTarget(target);
+		if (ConfMan.hasGameDomain(target) || Base::findGame(target).gameid.size() > 0) {
+			Base::setTarget(target);
 		} else {
 			usage("Unrecognized game target '%s'", target.c_str());
 		}
@@ -570,62 +550,15 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
-		String key(x->_key);
-		String value(x->_value);
+		Common::String key(x->_key);
+		Common::String value(x->_value);
 
 		// Replace any "-" in the key by "_" (e.g. change "save-slot" to "save_slot").
-		for (String::iterator c = key.begin(); c != key.end(); ++c)
+		for (Common::String::iterator c = key.begin(); c != key.end(); ++c)
 			if (*c == '-')
 				*c = '_';
 		
 		// Store it into ConfMan.
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
-}
-
-
-void GameDetector::setTarget(const String &target) {
-	ConfMan.setActiveDomain(target);
-
-	// Make sure the gameid is set in the config manager, and that it is lowercase.
-	String gameid(target);
-	if (ConfMan.hasKey("gameid"))
-		gameid = ConfMan.get("gameid");
-	gameid.toLowercase();
-	ConfMan.set("gameid", gameid);
-}
-
-const Plugin *GameDetector::detectMain() {
-	const Plugin *plugin = 0;
-	
-	if (ConfMan.getActiveDomainName().empty()) {
-		warning("No game was specified...");
-		return 0;
-	}
-
-	printf("Looking for %s\n", ConfMan.get("gameid").c_str());
-	GameDescriptor game = findGame(ConfMan.get("gameid"), &plugin);
-
-	if (plugin == 0) {
-		printf("Failed game detection\n");
-		warning("%s is an invalid target. Use the --list-targets option to list targets", ConfMan.getActiveDomainName().c_str());
-		return 0;
-	}
-
-	printf("Trying to start game '%s'\n", game.description.c_str());
-
-	String gameDataPath(ConfMan.get("path"));
-	if (gameDataPath.empty()) {
-		warning("No path was provided. Assuming the data files are in the current directory");
-		gameDataPath = "./";
-	} else if (gameDataPath.lastChar() != '/'
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-					&& gameDataPath.lastChar() != ':'
-#endif
-					&& gameDataPath.lastChar() != '\\') {
-		gameDataPath += '/';
-		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
-	}
-
-	return plugin;
 }

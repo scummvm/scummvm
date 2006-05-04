@@ -65,6 +65,45 @@
 #include "gui/Actions.h"
 #endif
 
+
+namespace Base {
+
+// TODO: Find a better place for this function.
+GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
+	// Find the GameDescriptor for this target
+	const PluginList &plugins = PluginManager::instance().getPlugins();
+	GameDescriptor result;
+
+	if (plugin)
+		*plugin = 0;
+
+	PluginList::const_iterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		result = (*iter)->findGame(gameName.c_str());
+		if (!result.gameid.empty()) {
+			if (plugin)
+				*plugin = *iter;
+			break;
+		}
+	}
+	return result;
+}
+
+// TODO: Find a better place for this function.
+void setTarget(const Common::String &target) {
+	ConfMan.setActiveDomain(target);
+
+	// Make sure the gameid is set in the config manager, and that it is lowercase.
+	Common::String gameid(target);
+	if (ConfMan.hasKey("gameid"))
+		gameid = ConfMan.get("gameid");
+	gameid.toLowercase();
+	ConfMan.set("gameid", gameid);
+}
+
+} // End of namespace Base
+
+
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
 void listGames() {
 	const PluginList &plugins = PluginManager::instance().getPlugins();
@@ -99,7 +138,7 @@ void listTargets() {
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
 			Common::String gameid(name);
-			GameDescriptor g = GameDetector::findGame(gameid);
+			GameDescriptor g = Base::findGame(gameid);
 			if (g.description.size() > 0)
 				description = g.description;
 		}
@@ -164,6 +203,41 @@ static bool launcherDialog(OSystem &system) {
 	return (dlg.runModal() != -1);
 }
 
+static const Plugin *detectMain() {
+	const Plugin *plugin = 0;
+	
+	if (ConfMan.getActiveDomainName().empty()) {
+		warning("No game was specified...");
+		return 0;
+	}
+
+	printf("Looking for %s\n", ConfMan.get("gameid").c_str());
+	GameDescriptor game = Base::findGame(ConfMan.get("gameid"), &plugin);
+
+	if (plugin == 0) {
+		printf("Failed game detection\n");
+		warning("%s is an invalid target. Use the --list-targets option to list targets", ConfMan.getActiveDomainName().c_str());
+		return 0;
+	}
+
+	printf("Trying to start game '%s'\n", game.description.c_str());
+
+	Common::String gameDataPath(ConfMan.get("path"));
+	if (gameDataPath.empty()) {
+		warning("No path was provided. Assuming the data files are in the current directory");
+		gameDataPath = "./";
+	} else if (gameDataPath.lastChar() != '/'
+#if defined(__MORPHOS__) || defined(__amigaos4__)
+					&& gameDataPath.lastChar() != ':'
+#endif
+					&& gameDataPath.lastChar() != '\\') {
+		gameDataPath += '/';
+		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
+	}
+
+	return plugin;
+}
+
 static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
@@ -197,7 +271,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
-	Common::String desc = GameDetector::findGame(ConfMan.get("gameid")).description;
+	Common::String desc = Base::findGame(ConfMan.get("gameid")).description;
 	if (caption.empty() && !desc.empty())
 		caption = desc;
 	if (caption.empty())
@@ -424,7 +498,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// cleanly, so this is now enabled to encourage people to fix bits :)
 	while (running) {
 		// Verify the given game name is a valid supported game
-		const Plugin *plugin = GameDetector::detectMain();
+		const Plugin *plugin = detectMain();
 		if (plugin) {
 			// Unload all plugins not needed for this game,
 			// to save memory
