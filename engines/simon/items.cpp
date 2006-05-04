@@ -1630,7 +1630,6 @@ void SimonEngine::o1_specialFade() {
 		paletteFadeOut((uint32 *)_videoBuf1 + 32 + 16 + 144 + 16, 48);
 
 		_system->setPalette(_videoBuf1, 0, 256);
-		_system->updateScreen();
 		delay(5);
 	} while (--i);
 

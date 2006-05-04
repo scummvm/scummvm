@@ -484,7 +484,6 @@ void SimonEngine::slowFadeIn() {
 			dst++;
  		}
  		_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
-		_system->updateScreen();
  		delay(5);
  	}
 	_paletteColorCount = 0;

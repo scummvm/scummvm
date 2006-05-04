@@ -2020,6 +2020,8 @@ void SimonEngine::delay(uint amount) {
 			}
 		}
 
+		_system->updateScreen();
+
 		if (amount == 0)
 			break;
 

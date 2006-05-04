@@ -2217,7 +2217,6 @@ void SimonEngine::vc62_fastFadeOut() {
 		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
 			paletteFadeOut((uint32 *)_videoBuf1, _videoNumPalColors);
 			_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
-			_system->updateScreen();
 			delay(5);
 		}
 
