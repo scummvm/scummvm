@@ -53,6 +53,7 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon1acorn", "simon1", Common::kPlatformAcorn},
 	{"simon1amiga", "simon1", Common::kPlatformAmiga},
 	{"simon1cd32", "simon1", Common::kPlatformAmiga},
+	{"simon1demo", "simon1", Common::kPlatformPC},
 	{"simon1dos", "simon1", Common::kPlatformPC},
 	{"simon1talkie", "simon1", Common::kPlatformPC},
 	{"simon1win", "simon1", Common::kPlatformWindows},
