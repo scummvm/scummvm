@@ -14439,7 +14439,7 @@ SOURCE=..\..\..\scumm\scumm.cpp
 
 NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\backends\fs\fs.h"\
-	"..\..\..\scumm\base\gameDetector.h"\
+	"..\..\..\scumm\base\options.h"\
 	"..\..\..\scumm\base\plugins.h"\
 	"..\..\..\scumm\common\config-manager.h"\
 	"..\..\..\scumm\common\md5.h"\
@@ -14478,7 +14478,7 @@ NODEP_CPP_SCUMM=\
 
 NODEP_CPP_SCUMM=\
 	"..\..\..\scumm\backends\fs\fs.h"\
-	"..\..\..\scumm\base\gameDetector.h"\
+	"..\..\..\scumm\base\options.h"\
 	"..\..\..\scumm\base\plugins.h"\
 	"..\..\..\scumm\common\config-manager.h"\
 	"..\..\..\scumm\common\md5.h"\
@@ -14521,7 +14521,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -14613,7 +14613,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -14713,7 +14713,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -14804,7 +14804,7 @@ DEP_CPP_SCUMM=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

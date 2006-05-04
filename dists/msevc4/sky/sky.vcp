@@ -3348,7 +3348,7 @@ SOURCE=..\..\..\sky\sky.cpp
 
 NODEP_CPP_SKY_C=\
 	"..\..\..\sky\backends\fs\fs.h"\
-	"..\..\..\sky\base\gameDetector.h"\
+	"..\..\..\sky\base\options.h"\
 	"..\..\..\sky\base\plugins.h"\
 	"..\..\..\sky\common\config-manager.h"\
 	"..\..\..\sky\common\file.h"\
@@ -3380,7 +3380,7 @@ NODEP_CPP_SKY_C=\
 
 NODEP_CPP_SKY_C=\
 	"..\..\..\sky\backends\fs\fs.h"\
-	"..\..\..\sky\base\gameDetector.h"\
+	"..\..\..\sky\base\options.h"\
 	"..\..\..\sky\base\plugins.h"\
 	"..\..\..\sky\common\config-manager.h"\
 	"..\..\..\sky\common\file.h"\
@@ -3416,7 +3416,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -3474,7 +3474,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -3541,7 +3541,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -3599,7 +3599,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

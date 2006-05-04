@@ -2100,7 +2100,7 @@ SOURCE=..\..\..\simon\simon.cpp
 
 NODEP_CPP_SIMON=\
 	"..\..\..\simon\backends\fs\fs.h"\
-	"..\..\..\simon\base\gameDetector.h"\
+	"..\..\..\simon\base\options.h"\
 	"..\..\..\simon\base\plugins.h"\
 	"..\..\..\simon\common\config-manager.h"\
 	"..\..\..\simon\common\file.h"\
@@ -2123,7 +2123,7 @@ NODEP_CPP_SIMON=\
 
 NODEP_CPP_SIMON=\
 	"..\..\..\simon\backends\fs\fs.h"\
-	"..\..\..\simon\base\gameDetector.h"\
+	"..\..\..\simon\base\options.h"\
 	"..\..\..\simon\base\plugins.h"\
 	"..\..\..\simon\common\config-manager.h"\
 	"..\..\..\simon\common\file.h"\
@@ -2150,7 +2150,7 @@ DEP_CPP_SIMON=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -2205,7 +2205,7 @@ DEP_CPP_SIMON=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -2269,7 +2269,7 @@ DEP_CPP_SIMON=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -2324,7 +2324,7 @@ DEP_CPP_SIMON=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

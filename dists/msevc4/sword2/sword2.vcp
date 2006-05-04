@@ -6360,7 +6360,7 @@ SOURCE=..\..\..\sword2\sword2.cpp
 
 NODEP_CPP_SWORD=\
 	"..\..\..\sword2\backends\fs\fs.h"\
-	"..\..\..\sword2\base\gameDetector.h"\
+	"..\..\..\sword2\base\options.h"\
 	"..\..\..\sword2\base\plugins.h"\
 	"..\..\..\sword2\common\config-manager.h"\
 	"..\..\..\sword2\common\file.h"\
@@ -6383,7 +6383,7 @@ NODEP_CPP_SWORD=\
 
 NODEP_CPP_SWORD=\
 	"..\..\..\sword2\backends\fs\fs.h"\
-	"..\..\..\sword2\base\gameDetector.h"\
+	"..\..\..\sword2\base\options.h"\
 	"..\..\..\sword2\base\plugins.h"\
 	"..\..\..\sword2\common\config-manager.h"\
 	"..\..\..\sword2\common\file.h"\
@@ -6410,7 +6410,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -6462,7 +6462,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -6523,7 +6523,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -6575,7 +6575,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

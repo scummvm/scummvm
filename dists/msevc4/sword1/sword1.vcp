@@ -355,7 +355,7 @@ DEP_CPP_ANIMA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -396,7 +396,7 @@ DEP_CPP_ANIMA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -447,7 +447,7 @@ DEP_CPP_ANIMA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -488,7 +488,7 @@ DEP_CPP_ANIMA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -586,7 +586,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -636,7 +636,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -695,7 +695,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -745,7 +745,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -834,7 +834,7 @@ DEP_CPP_CREDI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -868,7 +868,7 @@ DEP_CPP_CREDI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -911,7 +911,7 @@ DEP_CPP_CREDI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -945,7 +945,7 @@ DEP_CPP_CREDI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -1268,7 +1268,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -1323,7 +1323,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -1388,7 +1388,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -1443,7 +1443,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2223,7 +2223,7 @@ DEP_CPP_OBJEC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2254,7 +2254,7 @@ DEP_CPP_OBJEC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2294,7 +2294,7 @@ DEP_CPP_OBJEC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2325,7 +2325,7 @@ DEP_CPP_OBJEC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2783,7 +2783,7 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2828,7 +2828,7 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2883,7 +2883,7 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -2928,7 +2928,7 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3012,7 +3012,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3049,7 +3049,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3095,7 +3095,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3132,7 +3132,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3214,7 +3214,7 @@ DEP_CPP_STATI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3255,7 +3255,7 @@ DEP_CPP_STATI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3305,7 +3305,7 @@ DEP_CPP_STATI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3346,7 +3346,7 @@ DEP_CPP_STATI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -3445,7 +3445,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -3505,7 +3505,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -3574,7 +3574,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -3634,7 +3634,7 @@ DEP_CPP_SWORD=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

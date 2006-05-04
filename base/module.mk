@@ -2,8 +2,8 @@ MODULE := base
 
 MODULE_OBJS := \
 	engine.o \
-	gameDetector.o \
 	main.o \
+	options.o \
 	plugins.o \
 	version.o
 

@@ -2734,7 +2734,7 @@ SOURCE=..\..\..\queen\queen.cpp
 
 NODEP_CPP_QUEEN=\
 	"..\..\..\queen\backends\fs\fs.h"\
-	"..\..\..\queen\base\gameDetector.h"\
+	"..\..\..\queen\base\options.h"\
 	"..\..\..\queen\base\plugins.h"\
 	"..\..\..\queen\common\config-manager.h"\
 	"..\..\..\queen\common\file.h"\
@@ -2763,7 +2763,7 @@ NODEP_CPP_QUEEN=\
 
 NODEP_CPP_QUEEN=\
 	"..\..\..\queen\backends\fs\fs.h"\
-	"..\..\..\queen\base\gameDetector.h"\
+	"..\..\..\queen\base\options.h"\
 	"..\..\..\queen\base\plugins.h"\
 	"..\..\..\queen\common\config-manager.h"\
 	"..\..\..\queen\common\file.h"\
@@ -2796,7 +2796,7 @@ DEP_CPP_QUEEN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -2851,7 +2851,7 @@ DEP_CPP_QUEEN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -2913,7 +2913,7 @@ DEP_CPP_QUEEN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -2970,7 +2970,7 @@ DEP_CPP_QUEEN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

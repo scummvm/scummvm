@@ -70,7 +70,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=..\..\base\gameDetector.h
+FileName=..\..\base\options.h
 CompileCpp=1
 Folder=base
 Compile=1
@@ -1908,7 +1908,7 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit9]
-FileName=..\..\base\gameDetector.cpp
+FileName=..\..\base\options.cpp
 CompileCpp=1
 Folder=base
 Compile=1

@@ -3048,7 +3048,7 @@ SOURCE=..\..\..\common\system.cpp
 
 NODEP_CPP_SYSTE=\
 	"..\..\..\common\backends\intern.h"\
-	"..\..\..\common\base\gameDetector.h"\
+	"..\..\..\common\base\options.h"\
 	"..\..\..\common\common\config-manager.h"\
 	"..\..\..\common\common\savefile.h"\
 	"..\..\..\common\common\stdafx.h"\
@@ -3061,7 +3061,7 @@ NODEP_CPP_SYSTE=\
 
 NODEP_CPP_SYSTE=\
 	"..\..\..\common\backends\intern.h"\
-	"..\..\..\common\base\gameDetector.h"\
+	"..\..\..\common\base\options.h"\
 	"..\..\..\common\common\config-manager.h"\
 	"..\..\..\common\common\savefile.h"\
 	"..\..\..\common\common\stdafx.h"\
@@ -3077,7 +3077,7 @@ DEP_CPP_SYSTE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -3113,7 +3113,7 @@ DEP_CPP_SYSTE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -3158,7 +3158,7 @@ DEP_CPP_SYSTE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -3194,7 +3194,7 @@ DEP_CPP_SYSTE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -6341,7 +6341,7 @@ DEP_CPP_ACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -6406,7 +6406,7 @@ DEP_CPP_ACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -6500,7 +6500,7 @@ DEP_CPP_ACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -6564,7 +6564,7 @@ DEP_CPP_ACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -7818,7 +7818,7 @@ DEP_CPP_KEYSD=\
 	"..\..\..\backends\wince\CEDevice.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\mutex.h"\
@@ -7858,7 +7858,7 @@ DEP_CPP_KEYSD=\
 	"..\..\..\backends\wince\CEDevice.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\mutex.h"\
@@ -7912,7 +7912,7 @@ DEP_CPP_KEYSD=\
 	"..\..\..\backends\wince\CEDevice.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\mutex.h"\
@@ -7951,7 +7951,7 @@ DEP_CPP_KEYSD=\
 	"..\..\..\backends\wince\CEDevice.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\mutex.h"\
@@ -7999,7 +7999,7 @@ SOURCE=..\..\..\gui\launcher.cpp
 NODEP_CPP_LAUNC=\
 	"..\..\..\gui\backends\fs\fs.h"\
 	"..\..\..\gui\base\engine.h"\
-	"..\..\..\gui\base\gameDetector.h"\
+	"..\..\..\gui\base\options.h"\
 	"..\..\..\gui\base\plugins.h"\
 	"..\..\..\gui\base\version.h"\
 	"..\..\..\gui\common\config-manager.h"\
@@ -8025,7 +8025,7 @@ NODEP_CPP_LAUNC=\
 NODEP_CPP_LAUNC=\
 	"..\..\..\gui\backends\fs\fs.h"\
 	"..\..\..\gui\base\engine.h"\
-	"..\..\..\gui\base\gameDetector.h"\
+	"..\..\..\gui\base\options.h"\
 	"..\..\..\gui\base\plugins.h"\
 	"..\..\..\gui\base\version.h"\
 	"..\..\..\gui\common\config-manager.h"\
@@ -8054,7 +8054,7 @@ DEP_CPP_LAUNC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -8108,7 +8108,7 @@ DEP_CPP_LAUNC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -8171,7 +8171,7 @@ DEP_CPP_LAUNC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -8225,7 +8225,7 @@ DEP_CPP_LAUNC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -12778,7 +12778,7 @@ DEP_CPP_ITEMA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -12836,7 +12836,7 @@ DEP_CPP_ITEMA=\
 	"..\..\..\backends\wince\CEgui\Toolbar.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\map.h"\
@@ -12915,7 +12915,7 @@ DEP_CPP_ITEMA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -14591,7 +14591,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -14619,7 +14619,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
@@ -14662,7 +14662,7 @@ DEP_CPP_CEACT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -14747,7 +14747,7 @@ DEP_CPP_CEACT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -14817,7 +14817,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -14882,7 +14882,7 @@ DEP_CPP_CEACT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -14949,7 +14949,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -15000,7 +15000,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -15051,7 +15051,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -15102,7 +15102,7 @@ DEP_CPP_CEACT=\
 NODEP_CPP_CEACT=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -15192,7 +15192,7 @@ DEP_CPP_CEACTI=\
 NODEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -15223,7 +15223,7 @@ DEP_CPP_CEACTI=\
 NODEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
@@ -15264,7 +15264,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -15346,7 +15346,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -15429,7 +15429,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -15504,7 +15504,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -15584,7 +15584,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -15659,7 +15659,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -15733,7 +15733,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -15787,7 +15787,7 @@ DEP_CPP_CEACTI=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -15868,7 +15868,7 @@ DEP_CPP_CEACTIO=\
 NODEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -15899,7 +15899,7 @@ DEP_CPP_CEACTIO=\
 NODEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
@@ -15940,7 +15940,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -16023,7 +16023,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -16106,7 +16106,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -16182,7 +16182,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -16263,7 +16263,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -16339,7 +16339,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -16414,7 +16414,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -16468,7 +16468,7 @@ DEP_CPP_CEACTIO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -16992,7 +16992,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17023,7 +17023,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
 	"..\..\..\backends\wince\common\scaler.h"\
@@ -17061,7 +17061,7 @@ DEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -17142,7 +17142,7 @@ DEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\list.h"\
@@ -17210,7 +17210,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17272,7 +17272,7 @@ DEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -17339,7 +17339,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17390,7 +17390,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17441,7 +17441,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17492,7 +17492,7 @@ DEP_CPP_CEKEY=\
 NODEP_CPP_CEKEY=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17578,7 +17578,7 @@ DEP_CPP_CELAU=\
 NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\fs\fs.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
 	"..\..\..\backends\wince\gui\browser.h"\
@@ -17601,7 +17601,7 @@ NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -17644,7 +17644,7 @@ DEP_CPP_CELAU=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -17728,7 +17728,7 @@ DEP_CPP_CELAU=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -17796,7 +17796,7 @@ DEP_CPP_CELAU=\
 NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\fs\fs.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
 	"..\..\..\backends\wince\gui\browser.h"\
@@ -17829,7 +17829,7 @@ DEP_CPP_CELAU=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -17896,7 +17896,7 @@ DEP_CPP_CELAU=\
 NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\fs\fs.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
 	"..\..\..\backends\wince\gui\browser.h"\
@@ -17913,7 +17913,7 @@ DEP_CPP_CELAU=\
 NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\fs\fs.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
 	"..\..\..\backends\wince\gui\browser.h"\
@@ -17930,7 +17930,7 @@ DEP_CPP_CELAU=\
 NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\fs\fs.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
 	"..\..\..\backends\wince\gui\browser.h"\
@@ -17947,7 +17947,7 @@ DEP_CPP_CELAU=\
 NODEP_CPP_CELAU=\
 	"..\..\..\backends\wince\backends\fs\fs.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\common\config-manager.h"\
 	"..\..\..\backends\wince\gui\browser.h"\
@@ -18247,7 +18247,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
@@ -18280,7 +18280,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEgui.h"\
 	"..\..\..\backends\wince\CEkeys.h"\
@@ -18331,7 +18331,7 @@ DEP_CPP_WINCE=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -18431,7 +18431,7 @@ DEP_CPP_WINCE=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -18518,7 +18518,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
@@ -18598,7 +18598,7 @@ DEP_CPP_WINCE=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\backends\wince\wince-sdl.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -18681,7 +18681,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
@@ -18745,7 +18745,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
@@ -18809,7 +18809,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
@@ -18873,7 +18873,7 @@ NODEP_CPP_WINCE=\
 	"..\..\..\backends\wince\backends\intern.h"\
 	"..\..\..\backends\wince\backends\sdl\sdl-common.h"\
 	"..\..\..\backends\wince\base\engine.h"\
-	"..\..\..\backends\wince\base\gameDetector.h"\
+	"..\..\..\backends\wince\base\options.h"\
 	"..\..\..\backends\wince\base\plugins.h"\
 	"..\..\..\backends\wince\CEActions.h"\
 	"..\..\..\backends\wince\CEgui.h"\
@@ -20501,7 +20501,7 @@ SOURCE=..\..\..\base\engine.cpp
 
 NODEP_CPP_ENGIN=\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\common\config-manager.h"\
 	"..\..\..\base\common\file.h"\
 	"..\..\..\base\common\savefile.h"\
@@ -20516,7 +20516,7 @@ NODEP_CPP_ENGIN=\
 
 NODEP_CPP_ENGIN=\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\common\config-manager.h"\
 	"..\..\..\base\common\file.h"\
 	"..\..\..\base\common\savefile.h"\
@@ -20533,7 +20533,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -20566,7 +20566,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
@@ -20606,7 +20606,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -20635,7 +20635,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
@@ -20667,7 +20667,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -20696,7 +20696,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -20725,7 +20725,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -20754,7 +20754,7 @@ DEP_CPP_ENGIN=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -20786,13 +20786,13 @@ SOURCE=..\..\..\base\engine.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\base\gameDetector.cpp
+SOURCE=..\..\..\base\options.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 (WCE emulator) Release"
 
 NODEP_CPP_GAMED=\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\base\plugins.h"\
 	"..\..\..\base\base\version.h"\
 	"..\..\..\base\common\config-manager.h"\
@@ -20807,7 +20807,7 @@ NODEP_CPP_GAMED=\
 
 NODEP_CPP_GAMED=\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\base\plugins.h"\
 	"..\..\..\base\base\version.h"\
 	"..\..\..\base\common\config-manager.h"\
@@ -20824,7 +20824,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -20858,7 +20858,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -20893,7 +20893,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -20923,7 +20923,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -20958,7 +20958,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -20988,7 +20988,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21018,7 +21018,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21048,7 +21048,7 @@ DEP_CPP_GAMED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21077,7 +21077,7 @@ NODEP_CPP_GAMED=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\base\gameDetector.h
+SOURCE=..\..\..\base\options.h
 # End Source File
 # Begin Source File
 
@@ -21091,7 +21091,7 @@ NODEP_CPP_MAIN_=\
 	"..\..\..\base\backends\dc\DCLauncherDialog.h"\
 	"..\..\..\base\backends\wince\CELauncherDialog.h"\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\base\plugins.h"\
 	"..\..\..\base\base\version.h"\
 	"..\..\..\base\common\config-manager.h"\
@@ -21114,7 +21114,7 @@ NODEP_CPP_MAIN_=\
 	"..\..\..\base\backends\dc\DCLauncherDialog.h"\
 	"..\..\..\base\backends\wince\CELauncherDialog.h"\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\base\plugins.h"\
 	"..\..\..\base\base\version.h"\
 	"..\..\..\base\common\config-manager.h"\
@@ -21138,7 +21138,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -21205,7 +21205,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -21277,7 +21277,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21335,7 +21335,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\base\version.h"\
 	"..\..\..\common\array.h"\
@@ -21401,7 +21401,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21459,7 +21459,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21517,7 +21517,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21575,7 +21575,7 @@ DEP_CPP_MAIN_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\list.h"\
@@ -21637,7 +21637,7 @@ SOURCE=..\..\..\base\plugins.cpp
 NODEP_CPP_PLUGI=\
 	"..\..\..\base\backends\fs\fs.h"\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\base\plugins.h"\
 	"..\..\..\base\common\stdafx.h"\
 	"..\..\..\base\common\util.h"\
@@ -21649,7 +21649,7 @@ NODEP_CPP_PLUGI=\
 NODEP_CPP_PLUGI=\
 	"..\..\..\base\backends\fs\fs.h"\
 	"..\..\..\base\base\engine.h"\
-	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\options.h"\
 	"..\..\..\base\base\plugins.h"\
 	"..\..\..\base\common\stdafx.h"\
 	"..\..\..\base\common\util.h"\
@@ -21663,7 +21663,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\rect.h"\
@@ -21692,7 +21692,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
@@ -21718,7 +21718,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
@@ -21743,7 +21743,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\rect.h"\
@@ -21772,7 +21772,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
@@ -21797,7 +21797,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
@@ -21822,7 +21822,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
@@ -21847,7 +21847,7 @@ DEP_CPP_PLUGI=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\

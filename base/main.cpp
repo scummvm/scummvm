@@ -31,7 +31,7 @@
 
 #include "common/stdafx.h"
 #include "base/engine.h"
-#include "base/gameDetector.h"
+#include "base/options.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/config-manager.h"

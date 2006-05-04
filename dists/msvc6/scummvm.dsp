@@ -162,11 +162,11 @@ SOURCE=..\..\base\engine.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\base\gameDetector.cpp
+SOURCE=..\..\base\options.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\base\gameDetector.h
+SOURCE=..\..\base\options.h
 # End Source File
 # Begin Source File
 

@@ -892,7 +892,7 @@ SOURCE=..\..\..\gob\gob.cpp
 
 NODEP_CPP_GOB_C=\
 	"..\..\..\gob\backends\fs\fs.h"\
-	"..\..\..\gob\base\gameDetector.h"\
+	"..\..\..\gob\base\options.h"\
 	"..\..\..\gob\base\plugins.h"\
 	"..\..\..\gob\common\md5.h"\
 	"..\..\..\gob\common\stdafx.h"\
@@ -907,7 +907,7 @@ NODEP_CPP_GOB_C=\
 
 NODEP_CPP_GOB_C=\
 	"..\..\..\gob\backends\fs\fs.h"\
-	"..\..\..\gob\base\gameDetector.h"\
+	"..\..\..\gob\base\options.h"\
 	"..\..\..\gob\base\plugins.h"\
 	"..\..\..\gob\common\md5.h"\
 	"..\..\..\gob\common\stdafx.h"\
@@ -926,7 +926,7 @@ DEP_CPP_GOB_C=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
@@ -968,7 +968,7 @@ DEP_CPP_GOB_C=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\options.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\

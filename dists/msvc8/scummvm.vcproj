@@ -207,11 +207,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\base\gameDetector.cpp"
+				RelativePath="..\..\base\options.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\base\gameDetector.h"
+				RelativePath="..\..\base\options.h"
 				>
 			</File>
 			<File
