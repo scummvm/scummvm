@@ -687,10 +687,6 @@ other games.
         Escape                 - Skips cutscenes
         Space                  - Skips current line of text
 
-    The Legend of Kyrandia:
-        Ctrl 0-9 and Alt 0-9   - Load and save game state
-        Ctrl-d                 - Starts the debugger
-
     Simon the Sorcerer 1 & 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
@@ -706,6 +702,21 @@ other games.
         v                      - Switch between subtitles only and
                                  combined speech & subtitles
                                  [Simon the Sorcerer 2 only]
+
+    The Feeble Files
+        Ctrl-d                 - Starts the debugger
+        F7                     - Switch characters
+        F9                     - Hitbox names on/off
+        s                      - Sound effects on/off
+        b                      - Background sounds on/off
+        p                      - Pauses
+        t                      - Switch between speech and subtitles
+        v                      - Switch between subtitles only and
+                                 combined speech & subtitles
+
+    The Legend of Kyrandia:
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-d                 - Starts the debugger
 
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
