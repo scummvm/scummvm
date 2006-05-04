@@ -399,11 +399,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	OSystem &system = *g_system;
 	
 	// Register config manager defaults
-	GameDetector::registerDefaults();
+	Base::registerDefaults();
 
 	// Parse the command line
 	Common::StringMap settings;
-	command = GameDetector::parseCommandLine(settings, argc, argv);
+	command = Base::parseCommandLine(settings, argc, argv);
 
 	// Load the config file (possibly overriden via command line):
 	if (settings.contains("config")) {
@@ -457,7 +457,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	
 
 	// Process the remaining command line settings
-	GameDetector::processSettings(command, settings);
+	Base::processSettings(command, settings);
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// init keymap support here: we wanna move this somewhere else?

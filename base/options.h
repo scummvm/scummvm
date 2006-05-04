@@ -21,18 +21,18 @@
  *
  */
 
-#ifndef BASE_GAMEDETECTOR_H
-#define BASE_GAMEDETECTOR_H
+#ifndef BASE_OPTIONS_H
+#define BASE_OPTIONS_H
 
 #include "common/str.h"
 #include "common/config-manager.h"
-#include "base/game.h"
 
-class GameDetector {
-public:
-	static void registerDefaults();
-	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
-	static void processSettings(Common::String &target, Common::StringMap &settings);
-};
+namespace Base {
+
+void registerDefaults();
+Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
+void processSettings(Common::String &target, Common::StringMap &settings);
+
+} // End of namespace Base
 
 #endif

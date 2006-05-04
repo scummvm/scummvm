@@ -48,6 +48,8 @@
 #define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
+namespace Base {
+
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
@@ -150,7 +152,7 @@ static void usage(const char *s, ...) {
 	exit(1);
 }
 
-void GameDetector::registerDefaults() {
+void registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
@@ -315,7 +317,7 @@ void GameDetector::registerDefaults() {
 	}
 
 
-Common::String GameDetector::parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
 	const char *s, *s2;
 	
 	// argv[0] contains the name of the executable.
@@ -519,7 +521,7 @@ unknownOption:
 }
 
 
-void GameDetector::processSettings(Common::String &target, Common::StringMap &settings) {
+void processSettings(Common::String &target, Common::StringMap &settings) {
 
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
@@ -562,3 +564,5 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
 }
+
+} // End of namespace Base
