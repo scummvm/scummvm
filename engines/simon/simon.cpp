@@ -1891,6 +1891,12 @@ int SimonEngine::go() {
 
 	vc34_setMouseOff();
 
+	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
+		getGameType() == GType_FF) {
+		_moviePlay->load((const char *)"epic.dxa");
+		_moviePlay->play();
+	}
+
 	runSubroutine101();
 	permitInput();
 
