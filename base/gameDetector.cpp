@@ -150,7 +150,7 @@ static void usage(const char *s, ...) {
 	exit(1);
 }
 
-GameDetector::GameDetector() {
+void GameDetector::registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);

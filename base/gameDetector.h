@@ -35,8 +35,8 @@ class GameDetector {
 	typedef Common::String String;
 
 public:
-	GameDetector();
-
+	static void registerDefaults();
+	
 	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
 	static void processSettings(Common::String &target, Common::StringMap &settings);
 	static const Plugin *detectMain();

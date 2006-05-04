@@ -323,6 +323,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Verify that the backend has been initialized (i.e. g_system has been set).
 	assert(g_system);
 	OSystem &system = *g_system;
+	
+	// Register config manager defaults
+	GameDetector::registerDefaults();
 
 	// Parse the command line
 	Common::StringMap settings;
