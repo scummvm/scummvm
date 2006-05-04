@@ -329,8 +329,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 	
 	// argv[0] contains the name of the executable.
 	if (argv && argv[0]) {
-		s = strchr(argv[0], '/');
-		s_appName = s ? s : argv[0];
+		s = strrchr(argv[0], '/');
+		s_appName = s ? (s+1) : argv[0];
 	}
 
 	// We store all command line settings into a string map.
