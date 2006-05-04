@@ -357,8 +357,6 @@ get_out:;
 	do {
 		delay(10);
 	} while (i == _timer4);
-
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 int SimonEngine::unk_132_helper(bool *b, char *buf) {
