@@ -311,7 +311,7 @@ void PluginManager::loadPlugins() {
 	// Scan for all plugins in this directory
 	FilesystemNode dir(PLUGIN_DIRECTORY);
 	FSList files;
-	if (dir.listDir(files, FilesystemNode::kListFilesOnly)) {
+	if (!dir.listDir(files, FilesystemNode::kListFilesOnly)) {
 		error("Couldn't open plugin directory '%s'", PLUGIN_DIRECTORY);
 	}
 
