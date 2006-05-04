@@ -297,7 +297,7 @@ void SimonEngine::vc1_fadeOut() {
 
 void SimonEngine::vc2_call() {
 	VgaPointersEntry *vpe;
-	uint16 num, res;
+	uint16 count, num, res;
 	byte *old_file_1, *old_file_2;
 	byte *b, *bb;
 	const byte *vc_ptr_org;
@@ -326,16 +326,26 @@ void SimonEngine::vc2_call() {
 	bb = _curVgaFile1;
 	if (getGameType() == GType_FF) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
+		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
-		while (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) != num)
+		while (count--) {
+			if (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == num)
+				break;
 			b += sizeof(ImageHeader_Feeble);
+		}
+		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == num);
 	} else {
 		b = bb + READ_BE_UINT16(&((VgaFileHeader_Simon *) bb)->hdr2_start);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageCount);
 		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageTable);
 
-		while (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) != num)
+		while (count--) {
+			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == num)
+				break;
 			b += sizeof(ImageHeader_Simon);
+		}
+		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == num);
 	}
 
 	vc_ptr_org = _vcPtr;

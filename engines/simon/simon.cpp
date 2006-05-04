@@ -1414,7 +1414,7 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
-	// uint16 count;
+	uint16 count;
 	const byte *vc_ptr_org;
 
 	_windowNum = mode;
@@ -1454,18 +1454,27 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 
 	if (getGameType() == GType_FF) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
-		//count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
+		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
-		while (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) != vga_res_id)
+		while (count--) {
+			if (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id)
+				break;
 			b += sizeof(ImageHeader_Feeble);
+		}
+		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id);
+
 	} else {
 		b = bb + READ_BE_UINT16(&((VgaFileHeader_Simon *) bb)->hdr2_start);
-		//count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageCount);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageCount);
 		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageTable);
 
-		while (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) != vga_res_id)
+		while (count--) {
+			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id)
+				break;
 			b += sizeof(ImageHeader_Simon);
+		}
+		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id);
 	}
 
 	if (getGameType() == GType_SIMON1) {
