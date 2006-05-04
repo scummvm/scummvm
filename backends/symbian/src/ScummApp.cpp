@@ -73,7 +73,7 @@ CApaApplication* NewApplication() {
 	return new CScummApp;
 }
 
-#if defined (UIQ3) || defined (__SERIES60_30__)
+#if defined (UIQ3) || defined (S60V3)
 #include <eikstart.h>
 // E32Main() contains the program's start up code, the entry point for an EXE.
 GLDEF_C TInt E32Main() {
@@ -83,7 +83,7 @@ GLDEF_C TInt E32Main() {
 
 #endif // EPOC_AS_APP
 
-#if !defined (UIQ3) && !defined (__SERIES60_30__)
+#if !defined (UIQ3) && !defined (S60V3)
 GLDEF_C  TInt E32Dll(TDllReason) {
 	return KErrNone;
 }

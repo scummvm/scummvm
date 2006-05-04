@@ -23,10 +23,10 @@
 "\s60v3\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
-""-"C:\shared\ScummVM\scummvm.ini",FILENULL
-""-"C:\shared\ScummVM\scummvm.stdout.txt",FILENULL
-""-"C:\shared\ScummVM\scummvm.stderr.txt",FILENULL
-""-"C:\shared\ScummVM\sdl.ini",FILENULL
+""-"c:\private\A0000657\scummvm.ini",FILENULL
+""-"c:\private\A0000657\scummvm.stdout.txt",FILENULL
+""-"c:\private\A0000657\scummvm.stderr.txt",FILENULL
+""-"c:\private\A0000657\sdl.ini",FILENULL
 
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
 ; It will remove the config file, std***.txt files & dirs on uninstall.
