@@ -422,8 +422,6 @@ void SimonEngine::fillBackGroundFromBack(uint lines) {
 }
 
 void SimonEngine::dx_update_screen_and_palette() {
-	_numScreenUpdates++;
-
 	if (_paletteColorCount == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
 		if (memcmp(_palette, _paletteBackup, 1024) != 0) {
@@ -486,8 +484,7 @@ void SimonEngine::slowFadeIn() {
 			dst++;
  		}
  		_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
-		if (_fade)
-			_system->updateScreen();
+		_system->updateScreen();
  		delay(5);
  	}
 	_paletteColorCount = 0;

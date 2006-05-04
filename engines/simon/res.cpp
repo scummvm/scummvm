@@ -487,16 +487,6 @@ void SimonEngine::openGameFile() {
 			_gameOffsetsPtr[r] = FROM_LE_32(_gameOffsetsPtr[r]);
 #endif
 	}
-
-	if (getGameType() == GType_FF)
-		loadIconData();
-	else
-		loadIconFile();
-
-	vc34_setMouseOff();
-
-	runSubroutine101();
-	permitInput();
 }
 
 void SimonEngine::readGameFile(void *dst, uint32 offs, uint32 size) {

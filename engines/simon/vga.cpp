@@ -143,7 +143,7 @@ void SimonEngine::runVgaScript() {
 			opcode = *_vcPtr++;
 		}
 
-		if (opcode >= NUM_VIDEO_OP_CODES)
+		if (opcode >= _numVideoOpcodes)
 			error("Invalid VGA opcode '%d' encountered", opcode);
 
 		if (opcode == 0)
@@ -455,9 +455,9 @@ void SimonEngine::vc3_loadSprite() {
 	}
 
 	if (getGameType() == GType_FF) {
-		addVgaEvent(VGA_DELAY_BASE, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
+		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
 	} else {
-		addVgaEvent(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
+		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
 	}
 
 	_curVgaFile1 = old_file_1;
@@ -1487,7 +1487,7 @@ void SimonEngine::vc12_delay() {
 	if ((getGameType() == GType_SIMON1) && vsp->id == 128)
 		num = 0;
 	else
-		num += VGA_DELAY_BASE;
+		num += _vgaBaseDelay;
 
 	addVgaEvent(num, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
@@ -1510,7 +1510,7 @@ void SimonEngine::vc15_sync() {
 	uint16 id = vcReadNextWord();
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
-			addVgaEvent(VGA_DELAY_BASE, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
+			addVgaEvent(_vgaBaseDelay, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
 			vfs_tmp = vfs;
 			do {
 				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
@@ -2087,7 +2087,7 @@ void SimonEngine::vc55_moveBox() {
 void SimonEngine::vc56_delay() {
 	uint16 num = vcReadVarOrWord() * _frameRate;
 
-	addVgaEvent(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+	addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
@@ -2217,8 +2217,7 @@ void SimonEngine::vc62_fastFadeOut() {
 		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
 			paletteFadeOut((uint32 *)_videoBuf1, _videoNumPalColors);
 			_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
-			if (_fade)
-				_system->updateScreen();
+			_system->updateScreen();
 			delay(5);
 		}
 

@@ -380,14 +380,14 @@ void SimonEngine::saveUserGame(int slot) {
 		windowBackSpace(_windowArray[3]);
 
 		if (_keyPressed == 27) {
-			writeVariable(55, _keyPressed);
+			_variableArray[55] = _keyPressed;
 			break;
 		}
 		if (_keyPressed == 10 || _keyPressed == 13) {
 			if (!saveGame(readVariable(55), name))
-				writeVariable(55, 0xFFFF);
+				_variableArray[55] = 0xFFFF;
 			else
-				writeVariable(55, 0);
+				_variableArray[55] = 0;
 			break;
 		}
 		if (_keyPressed == 8 && len != 0) {

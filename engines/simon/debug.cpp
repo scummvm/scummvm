@@ -185,7 +185,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			opcode = *src++;
 		}
 
-		if (opcode >= NUM_VIDEO_OP_CODES) {
+		if (opcode >= _numVideoOpcodes) {
 			error("Invalid opcode %x\n", opcode);
 			return;
 		}

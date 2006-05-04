@@ -112,7 +112,7 @@ uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	uint32 offs;
 	uint32 size;
 
-	res = atoi(filename + 4) + TEXT_INDEX_BASE - 1;
+	res = atoi(filename + 4) + _textIndexBase - 1;
 	offs = _gameOffsetsPtr[res];
 	size = _gameOffsetsPtr[res + 1] - offs;
 

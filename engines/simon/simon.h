@@ -179,14 +179,14 @@ protected:
 
 	uint32 *_gameOffsetsPtr;
 
-	uint VGA_DELAY_BASE;
-	uint TABLE_INDEX_BASE;
-	uint TEXT_INDEX_BASE;
-	uint NUM_VIDEO_OP_CODES;
-	uint VGA_MEM_SIZE;
-	uint TABLES_MEM_SIZE;
-	uint MUSIC_INDEX_BASE;
-	uint SOUND_INDEX_BASE;
+	uint _vgaBaseDelay;
+	uint _tableIndexBase;
+	uint _textIndexBase;
+	uint _numVideoOpcodes;
+	uint _vgaMemSize;
+	uint _tableMemSize;
+	uint _musicIndexBase;
+	uint _soundIndexBase;
 	const GameSpecificSettings *gss;
 
 	byte _keyPressed;
@@ -253,7 +253,6 @@ protected:
 	bool _inCallBack;
 	bool _cepeFlag;
 	byte _copyPartialMode;
-	uint _speed;
 	bool _fastMode;
 	bool _useBackGround;
 
@@ -268,7 +267,6 @@ protected:
 	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
-	bool _fade;
 	bool _vgaVar9;
 	int16 _chanceModifier;
 	bool _restoreWindow6;
@@ -446,7 +444,6 @@ protected:
 	MidiPlayer midi;
 	bool _native_mt32;
 
-	int _numScreenUpdates;
 	int _vgaTickCounter;
 
 	MoviePlayer *_moviePlay;

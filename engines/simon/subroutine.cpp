@@ -91,7 +91,7 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 	uint res;
 	uint32 offs;
 
-	res = atoi(filename + 6) + TABLE_INDEX_BASE - 1;
+	res = atoi(filename + 6) + _tableIndexBase - 1;
 	offs = _gameOffsetsPtr[res];
 
 	_gameFile->seek(offs, SEEK_SET);
@@ -138,7 +138,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				if (getGameType() == GType_FF) {
 					// TODO
 				} else if (getGameType() == GType_SIMON2) {
-					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
+					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + _soundIndexBase]);
 				} else if (getPlatform() == Common::kPlatformWindows) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
