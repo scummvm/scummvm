@@ -587,10 +587,15 @@ char *SimonEngine::genSaveName(int slot) {
 	static char buf[15];
 
 	if (getGameType() == GType_FF) {
-		if (slot == 999)
-			sprintf(buf, "save.%.3d", slot);
-		else
+		// Restart
+		if (slot == 999) {
+			if (getPlatform() == Common::kPlatformWindows)
+				sprintf(buf, "save.%.3d", slot);
+			else
+				sprintf(buf, "setup");
+		} else {
 			sprintf(buf, "feeble.%.3d", slot);
+		}
 	} else if (getGameType() == GType_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
 	} else {
