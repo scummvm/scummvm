@@ -98,6 +98,27 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 	return slot - curpos;
 }
 
+char *SimonEngine::genSaveName(int slot) {
+	static char buf[15];
+
+	if (getGameType() == GType_FF) {
+		if (slot == 999) {
+			// Restart state
+			if (getPlatform() == Common::kPlatformWindows)
+				sprintf(buf, "save.%.3d", slot);
+			else
+				sprintf(buf, "setup");
+		} else {
+			sprintf(buf, "feeble.%.3d", slot);
+		}
+	} else if (getGameType() == GType_SIMON2) {
+		sprintf(buf, "simon2.%.3d", slot);
+	} else {
+		sprintf(buf, "simon1.%.3d", slot);
+	}
+	return buf;
+}
+
 void SimonEngine::quickLoadOrSave() {
 	// The demo of Simon 1 (DOS Floppy) is missing too many segments
 	// and the Feeble Files doesn't always allow a load or save
@@ -478,7 +499,7 @@ loop:;
 }
 
 bool SimonEngine::saveGame(uint slot, char *caption) {
-	Common::OutSaveFile *f;
+	Common::WriteStream *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
 	uint32 curTime = 0;
@@ -488,6 +509,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
+		warning("saveGame: Failed to save slot %d", slot);
 		_lockWord &= ~0x100;
 		return false;
 	}
@@ -583,36 +605,28 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 	return result;
 }
 
-char *SimonEngine::genSaveName(int slot) {
-	static char buf[15];
-
-	if (getGameType() == GType_FF) {
-		// Restart
-		if (slot == 999) {
-			if (getPlatform() == Common::kPlatformWindows)
-				sprintf(buf, "save.%.3d", slot);
-			else
-				sprintf(buf, "setup");
-		} else {
-			sprintf(buf, "feeble.%.3d", slot);
-		}
-	} else if (getGameType() == GType_SIMON2) {
-		sprintf(buf, "simon2.%.3d", slot);
-	} else {
-		sprintf(buf, "simon1.%.3d", slot);
-	}
-	return buf;
-}
-
 bool SimonEngine::loadGame(uint slot) {
 	char ident[100];
-	Common::InSaveFile *f;
+	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
 
 	_lockWord |= 0x100;
 
-	f = _saveFileMan->openForLoading(genSaveName(slot));
+	if (getGameType() == GType_FF && slot == 999) {
+		// Load restart state
+		Common::File *file = new Common::File();
+		file->open(genSaveName(slot), Common::File::kFileReadMode);
+		if (!file->isOpen()) {
+			delete file;
+		} else {
+			f = file;
+		}
+	} else {
+		f = _saveFileMan->openForLoading(genSaveName(slot));
+	}
+
 	if (f == NULL) {
+		warning("loadGame: Failed to load slot %d", slot);
 		_lockWord &= ~0x100;
 		return false;
 	}
