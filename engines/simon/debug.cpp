@@ -56,30 +56,30 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 	}
 	while (*st != '|')
 		st++;
-	fprintf(_dumpFile, "%s ", st + 1);
+	printf("%s ", st + 1);
 
 	for (;;) {
 		switch (*s++) {
 		case 'x':
-			fprintf(_dumpFile, "\n");
+			printf("\n");
 			return NULL;
 		case '|':
-			fprintf(_dumpFile, "\n");
+			printf("\n");
 			return p;
 		case 'B':{
 				byte b = *p++;
 				if (b == 255)
-					fprintf(_dumpFile, "[%d] ", *p++);
+					printf("[%d] ", *p++);
 				else
-					fprintf(_dumpFile, "%d ", b);
+					printf("%d ", b);
 				break;
 			}
 		case 'V':{
 				byte b = *p++;
 				if (b == 255)
-					fprintf(_dumpFile, "[[%d]] ", *p++);
+					printf("[[%d]] ", *p++);
 				else
-					fprintf(_dumpFile, "[%d] ", b);
+					printf("[%d] ", b);
 				break;
 			}
 
@@ -87,16 +87,16 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 				int n = (int16)((p[0] << 8) | p[1]);
 				p += 2;
 				if (n >= 30000 && n < 30512)
-					fprintf(_dumpFile, "[%d] ", n - 30000);
+					printf("[%d] ", n - 30000);
 				else
-					fprintf(_dumpFile, "%d ", n);
+					printf("%d ", n);
 				break;
 			}
 
 		case 'w':{
 				int n = (int16)((p[0] << 8) | p[1]);
 				p += 2;
-				fprintf(_dumpFile, "%d ", n);
+				printf("%d ", n);
 				break;
 			}
 
@@ -104,22 +104,22 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 				int n = (int16)((p[0] << 8) | p[1]);;
 				p += 2;
 				if (n == -1)
-					fprintf(_dumpFile, "ITEM_M1 ");
+					printf("ITEM_M1 ");
 				else if (n == -3)
-					fprintf(_dumpFile, "ITEM_M3 ");
+					printf("ITEM_M3 ");
 				else if (n == -5)
-					fprintf(_dumpFile, "ITEM_1 ");
+					printf("ITEM_1 ");
 				else if (n == -7)
-					fprintf(_dumpFile, "ITEM_0 ");
+					printf("ITEM_0 ");
 				else if (n == -9)
-					fprintf(_dumpFile, "ITEM_A_PARENT ");
+					printf("ITEM_A_PARENT ");
 				else
-					fprintf(_dumpFile, "<%d> ", n);
+					printf("<%d> ", n);
 				break;
 			}
 
 		case 'J':{
-				fprintf(_dumpFile, "-> ");
+				printf("-> ");
 			}
 			break;
 
@@ -127,9 +127,9 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 				uint n = ((p[0] << 8) | p[1]);
 				p += 2;
 				if (n != 0xFFFF)
-					fprintf(_dumpFile, "\"%s\"(%d) ", getStringPtrByID(n), n);
+					printf("\"%s\"(%d) ", getStringPtrByID(n), n);
 				else
-					fprintf(_dumpFile, "NULL_STRING ");
+					printf("NULL_STRING ");
 			}
 			break;
 		}
@@ -143,7 +143,7 @@ void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 
 	p = (byte *)sl + SUBROUTINE_LINE_SMALL_SIZE;
 	if (sub->id == 0) {
-		fprintf(_dumpFile, "; verb=%d, noun1=%d, noun2=%d\n", sl->verb, sl->noun1, sl->noun2);
+		printf("; verb=%d, noun1=%d, noun2=%d\n", sl->verb, sl->noun1, sl->noun2);
 		p = (byte *)sl + SUBROUTINE_LINE_BIG_SIZE;
 	}
 
@@ -157,13 +157,12 @@ void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 void SimonEngine::dumpSubroutine(Subroutine *sub) {
 	SubroutineLine *sl;
 
-	fprintf(_dumpFile, "\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
+	printf("\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
 	sl = (SubroutineLine *)((byte *)sub + sub->first);
 	for (; (byte *)sl != (byte *)sub; sl = (SubroutineLine *)((byte *)sub + sl->next)) {
 		dumpSubroutineLine(sl, sub);
 	}
-	fprintf(_dumpFile, "\nEND ******************************************\n");
-	fflush(_dumpFile);
+	printf("\nEND ******************************************\n");
 }
 
 void SimonEngine::dumpSubroutines() {
@@ -200,32 +199,32 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 
 		while (*strn != '|')
 			strn++;
-		fprintf(_dumpFile, "%.2d: %s ", opcode, strn + 1);
+		printf("%.2d: %s ", opcode, strn + 1);
 
 		int end = (getGameType() == GType_FF) ? 9999 : 999;
 		for (; *str != '|'; str++) {
 			switch (*str) {
 			case 'x':
-				fprintf(_dumpFile, "\n");
+				printf("\n");
 				return;
 			case 'b':
-				fprintf(_dumpFile, "%d ", *src++);
+				printf("%d ", *src++);
 				break;
 			case 'd':
-				fprintf(_dumpFile, "%d ", (int16)readUint16Wrapper(src));
+				printf("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'v':
-				fprintf(_dumpFile, "[%d] ", readUint16Wrapper(src));
+				printf("[%d] ", readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'i':
-				fprintf(_dumpFile, "%d ", (int16)readUint16Wrapper(src));
+				printf("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'q':
 				while (readUint16Wrapper(src) != end) {
-					fprintf(_dumpFile, "(%d,%d) ", readUint16Wrapper(src),
+					printf("(%d,%d) ", readUint16Wrapper(src),
 									readUint16Wrapper(src + 2));
 					src += 4;
 				}
@@ -236,43 +235,36 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			}
 		}
 
-		fprintf(_dumpFile, "\n");
+		printf("\n");
 	} while (!one_opcode_only);
 }
 
 void SimonEngine::dump_vga_file(const byte *vga) {
-	{
-		const byte *pp;
-		const byte *p;
-		int count;
+	const byte *pp;
+	const byte *p;
+	int count;
 
-		pp = vga;
-		p = pp + READ_BE_UINT16(&((const VgaFileHeader_Simon *) pp)->hdr2_start);
-		count = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationCount);
-		p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationTable);
-		while (--count >= 0) {
-			int id = READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->id);
+	pp = vga;
+	p = pp + READ_BE_UINT16(&((const VgaFileHeader_Simon *) pp)->hdr2_start);
+	count = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationCount);
+	p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationTable);
+	while (--count >= 0) {
+		int id = READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->scriptOffs), id / 100, id);
-			p += sizeof(AnimationHeader_Simon);
-		}
+		dump_vga_script_always(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->scriptOffs), id / 100, id);
+		p += sizeof(AnimationHeader_Simon);
 	}
 
-	{
-		const byte *bb, *b;
-		int c;
+	pp = vga;
+	p = pp + READ_BE_UINT16(&((const VgaFileHeader_Simon *) pp)->hdr2_start);
+	count = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->imageCount);
+	p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->imageTable);
 
-		bb = vga;
-		b = bb + READ_BE_UINT16(&((const VgaFileHeader_Simon *) bb)->hdr2_start);
-		c = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) b)->imageCount);
-		b = bb + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) b)->imageTable);
+	while (--count >= 0) {
+		int id = READ_BE_UINT16(&((const ImageHeader_Simon *) p)->id);
 
-		while (--c >= 0) {
-			int id = READ_BE_UINT16(&((const ImageHeader_Simon *) b)->id);
-
-			dump_vga_script_always(vga + READ_BE_UINT16(&((const ImageHeader_Simon *) b)->scriptOffs), id / 100, id);
-			b += sizeof(ImageHeader_Simon);
-		}
+		dump_vga_script_always(vga + READ_BE_UINT16(&((const ImageHeader_Simon *) p)->scriptOffs), id / 100, id);
+		p += sizeof(ImageHeader_Simon);
 	}
 }
 
@@ -416,13 +408,11 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 	const byte *p2;
 	byte pal[768];
 
-	{
-		memset(pal, 0, sizeof(pal));
-		pal_load(pal, vga1, 2, 0);
-		pal_load(pal, vga1, 3, 1);
-		pal_load(pal, vga1, 4, 2);
-		pal_load(pal, vga1, 5, 3);
-	}
+	memset(pal, 0, sizeof(pal));
+	pal_load(pal, vga1, 2, 0);
+	pal_load(pal, vga1, 3, 1);
+	pal_load(pal, vga1, 4, 2);
+	pal_load(pal, vga1, 5, 3);
 
 	int width, height, flags;
 
@@ -441,28 +431,26 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 		height = p2[5];
 		flags = p2[4];
 
-		fprintf(_dumpFile, "Image %d. Width=%d, Height=%d, Flags=0x%X\n", i, width, height, flags);
-		fflush(_dumpFile);
+		printf("Image %d. Width=%d, Height=%d, Flags=0x%X\n", i, width, height, flags);
 
 		/* dump bitmap */
-		{
-			char buf[40];
+		char buf[40];
 #if defined(MACOS_CARBON)
-			sprintf(buf, ":dumps:Res%d_Image%d.bmp", res, i);
+		sprintf(buf, ":dumps:Res%d_Image%d.bmp", res, i);
 #else
-			sprintf(buf, "dumps/Res%d_Image%d.bmp", res, i);
+		sprintf(buf, "dumps/Res%d_Image%d.bmp", res, i);
 #endif
 
-			dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
-		}
+		dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
+
 	}
 }
 
 void SimonEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
-	fprintf(_dumpFile, "; address=%x, vgafile=%d  vgasprite=%d\n",
+	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
 					ptr - _vgaBufferPointers[res].vgaFile1, res, sprite_id);
 	dump_video_script(ptr, false);
-	fprintf(_dumpFile, "; end\n");
+	printf("; end\n");
 }
 
 void SimonEngine::dump_vga_script(const byte *ptr, uint res, uint sprite_id) {

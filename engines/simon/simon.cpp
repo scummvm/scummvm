@@ -351,8 +351,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_ambientPaused = false;
 	_musicPaused = false;
 
-	_dumpFile = 0;
-
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
@@ -462,8 +460,6 @@ int SimonEngine::init() {
 
 	_currentMouseCursor = 255;
 	_currentMouseAnim = 255;
-
-	_dumpFile = stdout;
 
 	_frameRate = 1;
 

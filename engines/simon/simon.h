@@ -456,8 +456,6 @@ protected:
 
 	Debugger *_debugger;
 
-	FILE *_dumpFile;
-
 	int _saveLoadRowCurPos;
 	int _numSaveGameRows;
 	bool _saveDialogFlag;

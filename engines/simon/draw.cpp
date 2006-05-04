@@ -128,7 +128,7 @@ void SimonEngine::animateSpritesDebug() {
 		_vgaCurSpriteId = vsp->id;
 
 		if (vsp->image)
-			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
+			printf("id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		params[0] = readUint16Wrapper(&vsp->image);
 		params[1] = readUint16Wrapper(&vsp->palette);

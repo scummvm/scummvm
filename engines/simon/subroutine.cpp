@@ -257,7 +257,7 @@ int SimonEngine::startSubroutine(Subroutine *sub) {
 				_codePtr += 8;
 
 			if (_continousMainScript)
-				fprintf(_dumpFile, "; %d\n", sub->id);
+				printf("; %d\n", sub->id);
 			result = runScript();
 			if (result != 0) {
 				/* result -10 means restart subroutine */
