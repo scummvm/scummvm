@@ -31,7 +31,7 @@ namespace Base {
 
 void registerDefaults();
 Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
-void processSettings(Common::String &target, Common::StringMap &settings);
+bool processSettings(Common::String &command, Common::StringMap &settings);
 
 } // End of namespace Base
 

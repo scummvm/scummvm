@@ -48,6 +48,12 @@
 #define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
+#define DETECTOR_TESTING_HACK
+
+#ifdef DETECTOR_TESTING_HACK
+#include "backends/fs/fs.h"
+#endif
+
 namespace Base {
 
 static const char USAGE_STRING[] =
@@ -297,19 +303,20 @@ void registerDefaults() {
 		settings[longCmd] = option;
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
-#define DO_OPTION_CMD(shortCmd, longCmd) \
+#define DO_COMMAND(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s+2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
 		if (isLongCmd) \
 			s += sizeof(longCmd) - 1; \
-		if (*s != '\0') goto unknownOption;
+		if (*s != '\0') goto unknownOption; \
+		return longCmd;
 
 
-#define DO_LONG_OPTION_OPT(longCmd, d) 	DO_OPTION_OPT(0, longCmd, d)
-#define DO_LONG_OPTION(longCmd) 		DO_OPTION(0, longCmd)
-#define DO_LONG_OPTION_INT(longCmd) 	DO_OPTION_INT(0, longCmd)
-#define DO_LONG_OPTION_BOOL(longCmd) 	DO_OPTION_BOOL(0, longCmd)
-#define DO_LONG_OPTION_CMD(longCmd) 	DO_OPTION_CMD(0, longCmd)
+#define DO_LONG_OPTION_OPT(longCmd, d)  DO_OPTION_OPT(0, longCmd, d)
+#define DO_LONG_OPTION(longCmd)         DO_OPTION(0, longCmd)
+#define DO_LONG_OPTION_INT(longCmd)     DO_OPTION_INT(0, longCmd)
+#define DO_LONG_OPTION_BOOL(longCmd)    DO_OPTION_BOOL(0, longCmd)
+#define DO_LONG_COMMAND(longCmd)        DO_COMMAND(0, longCmd)
 
 // End an option handler
 #define END_OPTION \
@@ -346,29 +353,20 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 
-			DO_OPTION_CMD('h', "help")
-				printf(HELP_STRING, argv[0]);
-				exit(0);
+			DO_COMMAND('h', "help")
 			END_OPTION
 
-			DO_OPTION_CMD('v', "version")
-				printf("%s\n", gScummVMFullVersion);
-				printf("Features compiled in: %s\n", gScummVMFeatures);
-				exit(0);
+			DO_COMMAND('v', "version")
 			END_OPTION
 
-			DO_OPTION_CMD('t', "list-targets")
-				return "list-targets";
+			DO_COMMAND('t', "list-targets")
 			END_OPTION
 
-			DO_OPTION_CMD('z', "list-games")
-				return "list-games";
+			DO_COMMAND('z', "list-games")
 			END_OPTION
 
-
-			// HACK FIXME TODO: This switch is intentionally *not* documented!
-			DO_LONG_OPTION_CMD("test-detector")
-				return "test-detector";
+			// HACK FIXME TODO: This command is intentionally *not* documented!
+			DO_LONG_COMMAND("test-detector")
 			END_OPTION
 
 
@@ -520,17 +518,156 @@ unknownOption:
 	return Common::String::emptyString;
 }
 
+/** List all supported game IDs, i.e. all games which any loaded plugin supports. */
+static void listGames() {
+	const PluginList &plugins = PluginManager::instance().getPlugins();
 
-void processSettings(Common::String &target, Common::StringMap &settings) {
+	printf("Game ID              Full Title                                            \n"
+	       "-------------------- ------------------------------------------------------\n");
+
+	PluginList::const_iterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		GameList list = (*iter)->getSupportedGames();
+		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
+			printf("%-20s %s\n", v->gameid.c_str(), v->description.c_str());
+		}
+	}
+}
+
+/** List all targets which are configured in the config file. */
+static void listTargets() {
+	using namespace Common;
+	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+
+	printf("Target               Description                                           \n"
+	       "-------------------- ------------------------------------------------------\n");
+
+	ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		Common::String name(iter->_key);
+		Common::String description(iter->_value.get("description"));
+
+		if (description.empty()) {
+			// FIXME: At this point, we should check for a "gameid" override
+			// to find the proper desc. In fact, the platform probably should
+			// be taken into account, too.
+			Common::String gameid(name);
+			GameDescriptor g = Base::findGame(gameid);
+			if (g.description.size() > 0)
+				description = g.description;
+		}
+
+		printf("%-20s %s\n", name.c_str(), description.c_str());
+	}
+}
+
+#ifdef DETECTOR_TESTING_HACK
+static void runDetectorTest() {
+	// HACK: The following code can be used to test the detection code of our
+	// engines. Basically, it loops over all targets, and calls the detector
+	// for the given path. It then prints out the result and also checks
+	// whether the result agrees with the settings of the target.
+	
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	int success = 0, failure = 0;
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		Common::String name(iter->_key);
+		Common::String gameid(iter->_value.get("gameid"));
+		Common::String path(iter->_value.get("path"));
+		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
+				name.c_str(), gameid.c_str(), path.c_str());
+		if (path.empty()) {
+			printf(" ... no path specified, skipping\n");
+			continue;
+		}
+		if (gameid.empty()) {
+			gameid = name;
+		}
+		
+		FilesystemNode dir(path);
+		FSList files;
+		if (!dir.listDir(files, FilesystemNode::kListAll)) {
+			printf(" ... invalid path, skipping\n");
+			continue;
+		}
+
+		DetectedGameList candidates(PluginManager::instance().detectGames(files));
+		bool gameidDiffers = false;
+		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
+			gameidDiffers |= scumm_stricmp(gameid.c_str(), x->gameid.c_str());
+		}
+		
+		if (candidates.empty()) {
+			printf(" FAILURE: No games detected\n");
+			failure++;
+		} else if (candidates.size() > 1) {
+			if (gameidDiffers) {
+				printf(" FAILURE: Multiple games detected, some/all with wrong gameid\n");
+			} else {
+				printf(" FAILURE: Multiple games detected, but all have the same gameid\n");
+			}
+			failure++;
+		} else if (gameidDiffers) {
+			printf(" FAILURE: Wrong gameid detected\n");
+			failure++;
+		} else {
+			printf(" SUCCESS: Game was detected correctly\n");
+			success++;
+		}
+		
+		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
+			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
+					x->gameid.c_str(),
+					x->description.c_str(),
+					Common::getLanguageCode(x->language),
+					Common::getPlatformCode(x->platform));
+		}
+	}
+	int total = domains.size();
+	printf("Detector test run: %d fail, %d success, %d skipped, out of %d\n",
+			failure, success, total - failure - success, total);
+}
+#endif
+
+bool processSettings(Common::String &command, Common::StringMap &settings) {
+
+	// Handle commands passed via the command line (like --list-targets and
+	// --list-games). This must be done after the config file and the plugins
+	// have been loaded.
+	// FIXME: The way are are doing this is rather arbitrary at this time.
+	// E.g. --version and --help are very similar, but are still handled
+	// inside parseCommandLine. This should be unified.
+	if (command == "list-targets") {
+		listTargets();
+		return false;
+	} else if (command == "list-games") {
+		listGames();
+		return false;
+	} else if (command == "version") {
+		printf("%s\n", gScummVMFullVersion);
+		printf("Features compiled in: %s\n", gScummVMFeatures);
+		return false;
+	} else if (command == "help") {
+		printf(HELP_STRING, s_appName.c_str());
+		return false;
+	}
+#ifdef DETECTOR_TESTING_HACK
+	else if (command == "test-detector") {
+		runDetectorTest();
+		return false;
+	}
+#endif
+
 
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
-	if (!target.empty()) {
-		if (ConfMan.hasGameDomain(target) || Base::findGame(target).gameid.size() > 0) {
-			Base::setTarget(target);
+	if (!command.empty()) {
+		if (ConfMan.hasGameDomain(command) || Base::findGame(command).gameid.size() > 0) {
+			Base::setTarget(command);
 		} else {
-			usage("Unrecognized game target '%s'", target.c_str());
+			usage("Unrecognized game target '%s'", command.c_str());
 		}
 	}
 	
@@ -563,6 +700,8 @@ void processSettings(Common::String &target, Common::StringMap &settings) {
 		// Store it into ConfMan.
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
+
+	return true;
 }
 
 } // End of namespace Base

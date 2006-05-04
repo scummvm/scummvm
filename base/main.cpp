@@ -30,6 +30,7 @@
  */
 
 #include "common/stdafx.h"
+#include "backends/fs/fs.h"
 #include "base/engine.h"
 #include "base/options.h"
 #include "base/plugins.h"
@@ -50,12 +51,6 @@
 #include "gui/launcher.h"
 #endif
 
-
-#define DETECTOR_TESTING_HACK
-
-#ifdef DETECTOR_TESTING_HACK
-#include "backends/fs/fs.h"
-#endif
 
 #ifdef PALMOS_68K
 #include "args.h"
@@ -103,49 +98,6 @@ void setTarget(const Common::String &target) {
 
 } // End of namespace Base
 
-
-/** List all supported game IDs, i.e. all games which any loaded plugin supports. */
-void listGames() {
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-
-	printf("Game ID              Full Title                                            \n"
-	       "-------------------- ------------------------------------------------------\n");
-
-	PluginList::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (*iter)->getSupportedGames();
-		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameid.c_str(), v->description.c_str());
-		}
-	}
-}
-
-/** List all targets which are configured in the config file. */
-void listTargets() {
-	using namespace Common;
-	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-
-	printf("Target               Description                                           \n"
-	       "-------------------- ------------------------------------------------------\n");
-
-	ConfigManager::DomainMap::const_iterator iter = domains.begin();
-	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		Common::String name(iter->_key);
-		Common::String description(iter->_value.get("description"));
-
-		if (description.empty()) {
-			// FIXME: At this point, we should check for a "gameid" override
-			// to find the proper desc. In fact, the platform probably should
-			// be taken into account, too.
-			Common::String gameid(name);
-			GameDescriptor g = Base::findGame(gameid);
-			if (g.description.size() > 0)
-				description = g.description;
-		}
-
-		printf("%-20s %s\n", name.c_str(), description.c_str());
-	}
-}
 
 static void setupDummyPalette(OSystem &system) {
 	// FIXME - mouse cursors are currently always set via 8 bit data.
@@ -320,75 +272,6 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	return result;
 }
 
-#ifdef DETECTOR_TESTING_HACK
-static void runDetectorTest() {
-	// HACK: The following code can be used to test the detection code of our
-	// engines. Basically, it loops over all targets, and calls the detector
-	// for the given path. It then prints out the result and also checks
-	// whether the result agrees with the settings of the target.
-	
-	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	Common::ConfigManager::DomainMap::const_iterator iter = domains.begin();
-	int success = 0, failure = 0;
-	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		Common::String name(iter->_key);
-		Common::String gameid(iter->_value.get("gameid"));
-		Common::String path(iter->_value.get("path"));
-		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
-				name.c_str(), gameid.c_str(), path.c_str());
-		if (path.empty()) {
-			printf(" ... no path specified, skipping\n");
-			continue;
-		}
-		if (gameid.empty()) {
-			gameid = name;
-		}
-		
-		FilesystemNode dir(path);
-		FSList files;
-		if (!dir.listDir(files, FilesystemNode::kListAll)) {
-			printf(" ... invalid path, skipping\n");
-			continue;
-		}
-
-		DetectedGameList candidates(PluginManager::instance().detectGames(files));
-		bool gameidDiffers = false;
-		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= scumm_stricmp(gameid.c_str(), x->gameid.c_str());
-		}
-		
-		if (candidates.empty()) {
-			printf(" FAILURE: No games detected\n");
-			failure++;
-		} else if (candidates.size() > 1) {
-			if (gameidDiffers) {
-				printf(" FAILURE: Multiple games detected, some/all with wrong gameid\n");
-			} else {
-				printf(" FAILURE: Multiple games detected, but all have the same gameid\n");
-			}
-			failure++;
-		} else if (gameidDiffers) {
-			printf(" FAILURE: Wrong gameid detected\n");
-			failure++;
-		} else {
-			printf(" SUCCESS: Game was detected correctly\n");
-			success++;
-		}
-		
-		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
-			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
-					x->gameid.c_str(),
-					x->description.c_str(),
-					Common::getLanguageCode(x->language),
-					Common::getPlatformCode(x->platform));
-		}
-	}
-	int total = domains.size();
-	printf("Detector test run: %d fail, %d success, %d skipped, out of %d\n",
-			failure, success, total - failure - success, total);
-}
-#endif
-
 extern "C" int scummvm_main(int argc, char *argv[]) {
 	Common::String specialDebug;
 	Common::String command;
@@ -432,32 +315,10 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
 	
-	
-	// Handle commands passed via the command line (like --list-targets and
-	// --list-games). This must be done after the config file and the plugins
-	// have been loaded.
-	// FIXME: The way are are doing this is rather arbitrary at this time.
-	// E.g. --version and --help are very similar, but are still handled
-	// inside parseCommandLine. This should be unified.
-	if (command == "list-targets") {
-		listTargets();
+	// Process the remaining command line settings. Must be done after the
+	// config file and the plugins have been loaded.
+	if (!Base::processSettings(command, settings))
 		return 0;
-	} else if (command == "list-games") {
-		listGames();
-		return 0;
-	}
-
-
-#ifdef DETECTOR_TESTING_HACK
-	else if (command == "test-detector") {
-		runDetectorTest();
-		return 0;
-	}
-#endif
-	
-
-	// Process the remaining command line settings
-	Base::processSettings(command, settings);
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// init keymap support here: we wanna move this somewhere else?
