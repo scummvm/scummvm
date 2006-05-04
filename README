@@ -1305,9 +1305,7 @@ Flight of the Amazon Queen adds the following non-standard keywords:
 
 Simon the Sorcerer 1 & 2 add the following non-standard keywords:
 
-        fade            bool     If true, fade effect is enabled
         music_mute      bool     If true, music is muted
-        slow_down       number   Makes games slower (1- 10)
         sfx_mute        bool     If true, sound effects are muted
                                  [Simon the Sorcerer 2 only]
 
