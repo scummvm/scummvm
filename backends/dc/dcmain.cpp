@@ -219,8 +219,9 @@ int DCLauncherDialog::runModal()
     exit(0);
 
   // Set the game path.
+  ConfMan.addGameDomain(base);
   if(dir != NULL)
-    ConfMan.set("path", dir, Common::ConfigManager::kTransientDomain);
+    ConfMan.set("path", dir, base);
 
   // Set the target.
   _detector.setTarget(base);
