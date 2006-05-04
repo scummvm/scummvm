@@ -159,7 +159,7 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 void BrowserDialog::open() {
 	if (ConfMan.hasKey("browser_lastpath"))
 		_node = FilesystemNode(ConfMan.get("browser_lastpath"));
-	if (!_node.isValid())
+	if (!_node.isDirectory())
 		_node = FilesystemNode();
 
 	// Alway refresh file list
