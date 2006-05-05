@@ -160,7 +160,7 @@ static const Plugin *detectMain() {
 
 	if (plugin == 0) {
 		printf("Failed game detection\n");
-		warning("%s is an invalid target. Use the --list-targets option to list targets", ConfMan.getActiveDomainName().c_str());
+		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 		return 0;
 	}
 
