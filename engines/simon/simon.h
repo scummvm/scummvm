@@ -500,7 +500,7 @@ protected:
 	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
 
-	void paletteFadeOut(byte *palPtr, uint num, uint size = 8);
+	void paletteFadeOut(byte *palPtr, uint num, uint size);
 	
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);
