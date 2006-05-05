@@ -328,7 +328,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
 	// Init keymap support.
-	// FIXME: Fingolfin asks: why is this not in your OSystem::initBackend method???
+	// FIXME: Fingolfin seez: Now that we don't use a detector anymore, this 
+	// could and should be moved to your OSystem::initBackend() method :-)
 	GUI::Actions::init();
 #endif
 
