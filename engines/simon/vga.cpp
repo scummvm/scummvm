@@ -1737,7 +1737,7 @@ void SimonEngine::vc27_resetSprite() {
 
 	vte = _vgaTimerList;
 	while (vte->delay) {
-		if ((getGameType() == GType_SIMON1) && vsp->id == 128) {
+		if ((getGameType() == GType_SIMON1) && vte->sprite_id == 128) {
 			vte++;
 		} else {
 			vte2 = vte;
