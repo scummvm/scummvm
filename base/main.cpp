@@ -377,7 +377,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// wanted to apply them to *all* games ever launched.
 			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 			
-			// TODO: Reset the game detector fully
+			// TODO: Unset the active config domain
 
 			// PluginManager::instance().unloadPlugins();
 			PluginManager::instance().loadPlugins();
