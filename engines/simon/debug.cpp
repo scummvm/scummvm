@@ -380,7 +380,7 @@ void SimonEngine::dump_single_bitmap(int file, int image, const byte *offs, int 
 		return;
 #endif
 
-	dump_bitmap(buf, offs, w, h, 0, _palette, base);
+	dump_bitmap(buf, offs, w, h, 0, _displayPalette, base);
 }
 
 void pal_load(byte *pal, const byte *vga1, int a, int b) {

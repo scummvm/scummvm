@@ -301,7 +301,7 @@ void SimonEngine::vc2_call() {
 	uint16 count, num, res;
 	byte *old_file_1, *old_file_2;
 	byte *b, *bb;
-	const byte *vc_ptr_org;
+	const byte *vcPtrOrg;
 
 	num = vcReadVarOrWord();
 
@@ -349,7 +349,7 @@ void SimonEngine::vc2_call() {
 		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == num);
 	}
 
-	vc_ptr_org = _vcPtr;
+	vcPtrOrg = _vcPtr;
 
 	if (getGameType() == GType_FF) {
 		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
@@ -363,7 +363,7 @@ void SimonEngine::vc2_call() {
 	_curVgaFile1 = old_file_1;
 	_curVgaFile2 = old_file_2;
 
-	_vcPtr = vc_ptr_org;
+	_vcPtr = vcPtrOrg;
 }
 
 void SimonEngine::vc3_loadSprite() {
@@ -1622,7 +1622,7 @@ void SimonEngine::vc22_setSpritePalette() {
 		palSize = 768;
 	}
 
-	palptr = &_palette[(a * 64)];
+	palptr = &_displayPalette[(a * 64)];
 	src = _curVgaFile1 + 6 + b * palSize;
 
 	do {
@@ -2130,7 +2130,7 @@ void SimonEngine::vc59() {
 void SimonEngine::vc58() {
 	uint16 sprite = _vgaCurSpriteId;
 	uint16 file = _vgaCurZoneNum;
-	const byte *vc_ptr_org;
+	const byte *vcPtrOrg;
 	uint16 tmp;
 
 	_vgaCurZoneNum = vcReadNextWord();
@@ -2138,11 +2138,11 @@ void SimonEngine::vc58() {
 
 	tmp = to16Wrapper(vcReadNextWord());
 
-	vc_ptr_org = _vcPtr;
+	vcPtrOrg = _vcPtr;
 	_vcPtr = (byte *)&tmp;
 	vc23_setSpritePriority();
 
-	_vcPtr = vc_ptr_org;
+	_vcPtr = vcPtrOrg;
 	_vgaCurSpriteId = sprite;
 	_vgaCurZoneNum = file;
 }
@@ -2156,11 +2156,11 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
 	VgaTimerEntry *vte;
-	const byte *vc_ptr_org;
+	const byte *vcPtrOrg;
 
 	old_sprite_id = _vgaCurSpriteId;
 	old_cur_file_id = _vgaCurZoneNum;
-	vc_ptr_org = _vcPtr;
+	vcPtrOrg = _vcPtr;
 
 	_vgaCurZoneNum = file;
 	_vgaCurSpriteId = sprite;
@@ -2193,7 +2193,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 	_vgaCurZoneNum = old_cur_file_id;
 	_vgaCurSpriteId = old_sprite_id;
-	_vcPtr = vc_ptr_org;
+	_vcPtr = vcPtrOrg;
 }
 
 void SimonEngine::vc60_killSprite() {
@@ -2221,23 +2221,32 @@ void SimonEngine::vc61_setMaskImage() {
 }
 
 void SimonEngine::vc62_fastFadeOut() {
-	uint i;
-
 	vc29_stopAllSounds();
 
 	if (!_fastFadeOutFlag) {
+		uint i, fadeSize, fadeCount;
+
 		_fastFadeOutFlag = true;
 
-		_videoNumPalColors = 256;
+		_fastFadeCount = 256;
 		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			if (_windowNum == 4)
-				_videoNumPalColors = 208;
+				_fastFadeCount = 208;
 		}
 
-		memcpy(_videoBuf1, _paletteBackup, _videoNumPalColors * 4);
-		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
-			paletteFadeOut((uint32 *)_videoBuf1, _videoNumPalColors);
-			_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
+		memcpy(_videoBuf1, _currentPalette, _fastFadeCount * 4);
+
+		if (getGameType() == GType_FF && !getBitFlag(75)) {
+			fadeCount = 32;
+			fadeSize = 8;
+		} else {
+			fadeCount = 4;
+			fadeSize = 64;
+		}
+
+		for (i = fadeCount; i != 0; --i) {
+			paletteFadeOut(_videoBuf1, _fastFadeCount, fadeSize);
+			_system->setPalette(_videoBuf1, 0, _fastFadeCount);
 			delay(5);
 		}
 
@@ -2245,7 +2254,7 @@ void SimonEngine::vc62_fastFadeOut() {
 			uint16 params[5];						/* parameters to vc10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
-			const byte *vc_ptr_org = _vcPtr;
+			const byte *vcPtrOrg = _vcPtr;
 
 			vsp = _vgaSprites;
 			while (vsp->id != 0) {
@@ -2274,7 +2283,7 @@ void SimonEngine::vc62_fastFadeOut() {
 				}
 				vsp++;
 			}
-			_vcPtr = vc_ptr_org;
+			_vcPtr = vcPtrOrg;
 		}
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
@@ -2295,11 +2304,11 @@ void SimonEngine::vc62_fastFadeOut() {
 
 void SimonEngine::vc63_fastFadeIn() {
 	if (getGameType() == GType_FF) {
-		_paletteColorCount = 256;
+		_fastFadeInFlag = 256;
 	} else {
-		_paletteColorCount = 208;
+		_fastFadeInFlag = 208;
 		if (_windowNum != 4) {
-			_paletteColorCount = 256;
+			_fastFadeInFlag = 256;
 		}
 	}
 	_fastFadeOutFlag = false;
@@ -2313,13 +2322,13 @@ void SimonEngine::vc64_skipIfSpeechEnded() {
 }
 
 void SimonEngine::vc65_slowFadeIn() {
-	_paletteColorCount = 624;
-	_videoNumPalColors = 208;
+	_fastFadeInFlag = 624;
+	_fastFadeCount = 208;
 	if (_windowNum != 4) {
-		_paletteColorCount = 768;
-		_videoNumPalColors = 256;
+		_fastFadeInFlag = 768;
+		_fastFadeCount = 256;
 	}
-	_paletteColorCount |= 0x8000;
+	_fastFadeInFlag |= 0x8000;
 	_fastFadeOutFlag = false;
 }
 

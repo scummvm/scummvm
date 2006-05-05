@@ -65,12 +65,6 @@ struct Item {
 	Item() { memset(this, 0, sizeof(*this)); }
 };
 
-struct Subroutine {
-	uint16 id;								/* subroutine ID */
-	uint16 first;								/* offset from subroutine start to first subroutine line */
-	Subroutine *next;							/* next subroutine in linked list */
-};
-
 struct IconEntry {
 	Item *item;
 	uint16 boxCode;
@@ -100,35 +94,15 @@ struct WindowBlock {
 // the actual x-coordinate is: textColumn * 8 + textColumnOffset
 // the actual y-coordinate is: textRow * 8
 
-
-enum BoxFlags {
-	kBFTextBox        = 0x1,
-	kBFBoxSelected    = 0x2,
-	kBFNoTouchName    = 0x4,
-	kBFInvertTouch    = 0x8,
-	kBFDragBox        = 0x10, // Simon 1/2
-	kBFHyperBox       = 0x10, // Feeble Files
-	kBFBoxInUse       = 0x20,
-	kBFBoxDead        = 0x40,
-	kBFBoxItem        = 0x80
-};
-
-enum SubObjectFlags {
-	kOFText           = 0x1,
-	kOFSize           = 0x2,
-	kOFWeight         = 0x4,
-	kOFVolume         = 0x8,
-	kOFIcon           = 0x10,
-	kOFKeyColor1      = 0x20,
-	kOFKeyColor2      = 0x40,
-	kOFMenu           = 0x80,
-	kOFNumber         = 0x100,
-	kOFVoice          = 0x200
-};
-
 enum {
 	SUBROUTINE_LINE_SMALL_SIZE = 2,
 	SUBROUTINE_LINE_BIG_SIZE = 8
+};
+
+struct Subroutine {
+	uint16 id;								/* subroutine ID */
+	uint16 first;								/* offset from subroutine start to first subroutine line */
+	Subroutine *next;							/* next subroutine in linked list */
 };
 
 struct SubroutineLine {
@@ -154,7 +128,30 @@ struct GameSpecificSettings {
  #endif
 };
 
-} // End of namespace Simon
+enum BoxFlags {
+	kBFTextBox        = 0x1,
+	kBFBoxSelected    = 0x2,
+	kBFNoTouchName    = 0x4,
+	kBFInvertTouch    = 0x8,
+	kBFDragBox        = 0x10, // Simon 1/2
+	kBFHyperBox       = 0x10, // Feeble Files
+	kBFBoxInUse       = 0x20,
+	kBFBoxDead        = 0x40,
+	kBFBoxItem        = 0x80
+};
+
+enum SubObjectFlags {
+	kOFText           = 0x1,
+	kOFSize           = 0x2,
+	kOFWeight         = 0x4,
+	kOFVolume         = 0x8,
+	kOFIcon           = 0x10,
+	kOFKeyColor1      = 0x20,
+	kOFKeyColor2      = 0x40,
+	kOFMenu           = 0x80,
+	kOFNumber         = 0x100,
+	kOFVoice          = 0x200
+};
 
 enum GameFeatures {
 	GF_TALKIE     = 1 << 0,
@@ -231,5 +228,7 @@ enum GameIds {
 	GID_FEEBLEFILES_4CD,
 	GID_FEEBLEFILES_DE
 };
+
+} // End of namespace Simon
 
 #endif

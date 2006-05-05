@@ -241,7 +241,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
 
-	_paletteColorCount = 0;
+	_fastFadeInFlag = 0;
 
 	_noOverWrite = 0;
 	_rejectCount = 0;
@@ -259,7 +259,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_showPreposition = 0;
 	_showMessageFlag = 0;
 
-	_videoNumPalColors = 0;
+	_fastFadeCount = 0;
 
 	_vgaSpriteChanged = 0;
 
@@ -334,8 +334,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_PVCount1 = 0;
 	_GPVCount1 = 0;
 
-	memset(_paletteBackup, 0, sizeof(_paletteBackup));
-	memset(_palette, 0, sizeof(_palette));
+	memset(_currentPalette, 0, sizeof(_currentPalette));
+	memset(_displayPalette, 0, sizeof(_displayPalette));
 
 	memset(_videoBuf1, 0, sizeof(_videoBuf1));
 
@@ -629,20 +629,20 @@ void SimonEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-void SimonEngine::paletteFadeOut(uint32 *pal_values, uint num) {
-	byte *p = (byte *)pal_values;
+void SimonEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
+	byte *p = palPtr;
 
 	do {
-		if (p[0] >= 8)
-			p[0] -= 8;
+		if (p[0] >= size)
+			p[0] -= size;
 		else
 			p[0] = 0;
-		if (p[1] >= 8)
-			p[1] -= 8;
+		if (p[1] >= size)
+			p[1] -= size;
 		else
 			p[1] = 0;
-		if (p[2] >= 8)
-			p[2] -= 8;
+		if (p[2] >= size)
+			p[2] -= size;
 		else
 			p[2] = 0;
 		p += 4;
@@ -1541,7 +1541,7 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	if (getGameType() == GType_SIMON1) {
 		if (_unkPalFlag) {
 			_unkPalFlag = false;
-			while (_paletteColorCount != 0) {
+			while (_fastFadeInFlag != 0) {
 				delay(10);
 			}
 		}

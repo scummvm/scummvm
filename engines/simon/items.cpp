@@ -1622,20 +1622,18 @@ void SimonEngine::o1_specialFade() {
 	// 187: fade to black
 	uint i;
 
-	memcpy(_videoBuf1, _paletteBackup, 1024);
+	memcpy(_videoBuf1, _currentPalette, 1024);
 
-	i = NUM_PALETTE_FADEOUT;
-	do {
-		paletteFadeOut((uint32 *)_videoBuf1, 32);
-		paletteFadeOut((uint32 *)_videoBuf1 + 32 + 16, 144);
-		paletteFadeOut((uint32 *)_videoBuf1 + 32 + 16 + 144 + 16, 48);
-
+	for (i = 32; i != 0; --i) {
+		paletteFadeOut(_videoBuf1, 32, 4);
+		paletteFadeOut(_videoBuf1 + 64, 144, 4);
+		paletteFadeOut(_videoBuf1 + 128, 48, 4);
 		_system->setPalette(_videoBuf1, 0, 256);
 		delay(5);
-	} while (--i);
+	}
 
-	memcpy(_paletteBackup, _videoBuf1, 1024);
-	memcpy(_palette, _videoBuf1, 1024);
+	memcpy(_currentPalette, _videoBuf1, 1024);
+	memcpy(_displayPalette, _videoBuf1, 1024);
 }
 
 // -----------------------------------------------------------------------
@@ -2132,9 +2130,9 @@ void SimonEngine::o3_setColour() {
 	uint g = getVarOrByte();
 	uint b = getVarOrByte();
 
-	_palette[c + 0] = r;
-	_palette[c + 1] = g;
-	_palette[c + 2] = b;
+	_displayPalette[c + 0] = r;
+	_displayPalette[c + 1] = g;
+	_displayPalette[c + 2] = b;
 
 	_paletteFlag = 2;
 }

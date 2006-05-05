@@ -423,11 +423,11 @@ void SimonEngine::fillBackGroundFromBack(uint lines) {
 }
 
 void SimonEngine::dx_update_screen_and_palette() {
-	if (_paletteColorCount == 0 && _paletteFlag == 1) {
+	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
-		if (memcmp(_palette, _paletteBackup, 1024) != 0) {
-			memcpy(_paletteBackup, _palette, 1024);
-			_system->setPalette(_palette, 0, 256);
+		if (memcmp(_displayPalette, _currentPalette, 1024)) {
+			memcpy(_currentPalette, _displayPalette, 1024);
+			_system->setPalette(_displayPalette, 0, 256);
 		}
 	}
 
@@ -440,7 +440,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 		scrollScreen();
 	}
 
-	if (_paletteColorCount != 0) {
+	if (_fastFadeInFlag) {
 		if (getGameType() == GType_SIMON1 && _usePaletteDelay) {
 			delay(100);
 			_usePaletteDelay = false;
@@ -450,13 +450,13 @@ void SimonEngine::dx_update_screen_and_palette() {
 }
 
 void SimonEngine::fastFadeIn() {
-	if (_paletteColorCount & 0x8000) {
+	if (_fastFadeInFlag & 0x8000) {
 		slowFadeIn();
 	} else {
 		_paletteFlag = false;
-		memcpy(_paletteBackup, _palette, 1024);
-		_system->setPalette(_palette, 0, _paletteColorCount);
-		_paletteColorCount = 0;
+		memcpy(_currentPalette, _displayPalette, 1024);
+		_system->setPalette(_displayPalette, 0, _fastFadeInFlag);
+		_fastFadeInFlag = 0;
 	}
 }
 
@@ -464,30 +464,28 @@ void SimonEngine::slowFadeIn() {
 	uint8 *src, *dst;
 	int c, p;
 
-	_paletteColorCount &= 0x7fff;
+	_fastFadeInFlag &= 0x7fff;
 	_paletteFlag = false;
 
-	memcpy(_videoBuf1, _palette, 768);
 	memset(_videoBuf1, 0, 768);
-
-	memcpy(_paletteBackup, _palette, 768);
-	memcpy(_videoBuf1 + 768, _palette, 768);
+	memcpy(_currentPalette, _displayPalette, 768);
+	memcpy(_videoBuf1 + 768, _displayPalette, 768);
 
 	for (c = 255; c >= 0; c -= 4) {
 	  	src = _videoBuf1 + 768;
  		dst = _videoBuf1;
 
-		for (p = _paletteColorCount; p !=0 ; p--) {
+		for (p = _fastFadeInFlag; p !=0 ; p--) {
 			if (*src >= c)
 				*dst = *dst + 4;
 			
 			src++;
 			dst++;
  		}
- 		_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
+ 		_system->setPalette(_videoBuf1, 0, _fastFadeCount);
  		delay(5);
  	}
-	_paletteColorCount = 0;
+	_fastFadeInFlag = 0;
 }
 
 } // End of namespace Simon

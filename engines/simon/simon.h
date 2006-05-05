@@ -43,7 +43,6 @@ namespace Simon {
 uint fileReadItemID(Common::File *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
-#define NUM_PALETTE_FADEOUT 32
 
 struct Child;
 struct SubObject;
@@ -343,7 +342,11 @@ protected:
 	uint16 _scrollUpHitArea;
 	uint16 _scrollDownHitArea;
 
-	volatile uint16 _paletteColorCount;
+	bool _fastFadeOutFlag;
+	bool _unkPalFlag;
+	byte _paletteFlag;
+	uint _fastFadeCount;
+	volatile uint16 _fastFadeInFlag;
 
 	int _screenWidth, _screenHeight;
 
@@ -351,10 +354,7 @@ protected:
 	byte _rejectCount;
 	bool _rejectBlock;
 
-	bool _fastFadeOutFlag;
-	bool _unkPalFlag;
 	bool _exitCutscene;
-	byte _paletteFlag;
 
 	uint _soundFileId;
 	int16 _lastMusicPlayed;
@@ -362,8 +362,6 @@ protected:
 
 	bool _showPreposition;
 	bool _showMessageFlag;
-
-	uint _videoNumPalColors;
 
 	uint _vgaSpriteChanged;
 
@@ -431,8 +429,8 @@ protected:
 	uint16 _PVCount1;
 	uint16 _GPVCount1;
 
-	uint8 _paletteBackup[1024];
-	uint8 _palette[1024];
+	uint8 _currentPalette[1024];
+	uint8 _displayPalette[1024];
 
 	byte _videoBuf1[3000];
 
@@ -502,7 +500,7 @@ protected:
 	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
 
-	void paletteFadeOut(uint32 *pal_values, uint num);
+	void paletteFadeOut(byte *palPtr, uint num, uint size = 8);
 	
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);
