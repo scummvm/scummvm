@@ -665,7 +665,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
 		if (ConfMan.hasGameDomain(command) || Base::findGame(command).gameid.size() > 0) {
-			Base::setTarget(command);
+			ConfMan.setActiveDomain(command);
 		} else {
 			usage("Unrecognized game target '%s'", command.c_str());
 		}

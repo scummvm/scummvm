@@ -737,7 +737,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		assert(item >= 0);
-		Base::setTarget(_domains[item]);
+		ConfMan.setActiveDomain(_domains[item]);
 		close();
 		break;
 	case kListSelectionChangedCmd:

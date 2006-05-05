@@ -84,18 +84,6 @@ GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
 	return result;
 }
 
-// TODO: Find a better place for this function.
-void setTarget(const Common::String &target) {
-	ConfMan.setActiveDomain(target);
-
-	// Make sure the gameid is set in the config manager, and that it is lowercase.
-	Common::String gameid(target);
-	if (ConfMan.hasKey("gameid"))
-		gameid = ConfMan.get("gameid");
-	gameid.toLowercase();
-	ConfMan.set("gameid", gameid);
-}
-
 } // End of namespace Base
 
 
@@ -157,14 +145,18 @@ static bool launcherDialog(OSystem &system) {
 
 static const Plugin *detectMain() {
 	const Plugin *plugin = 0;
-	
-	if (ConfMan.getActiveDomainName().empty()) {
-		warning("No game was specified...");
-		return 0;
-	}
 
-	printf("Looking for %s\n", ConfMan.get("gameid").c_str());
-	GameDescriptor game = Base::findGame(ConfMan.get("gameid"), &plugin);
+	// Make sure the gameid is set in the config manager, and that it is lowercase.
+	Common::String gameid(ConfMan.getActiveDomainName());
+	assert(!gameid.empty());
+	if (ConfMan.hasKey("gameid"))
+		gameid = ConfMan.get("gameid");
+	gameid.toLowercase();
+	ConfMan.set("gameid", gameid);
+
+	// Query the plugins and find one that will handle the specified gameid
+	printf("Looking for %s\n", gameid.c_str());
+	GameDescriptor game = Base::findGame(gameid, &plugin);
 
 	if (plugin == 0) {
 		printf("Failed game detection\n");
@@ -177,7 +169,6 @@ static const Plugin *detectMain() {
 	Common::String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.empty()) {
 		warning("No path was provided. Assuming the data files are in the current directory");
-		gameDataPath = "./";
 	} else if (gameDataPath.lastChar() != '/'
 #if defined(__MORPHOS__) || defined(__amigaos4__)
 					&& gameDataPath.lastChar() != ':'
@@ -275,7 +266,6 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 extern "C" int scummvm_main(int argc, char *argv[]) {
 	Common::String specialDebug;
 	Common::String command;
-	bool running = true;
 
 	// Verify that the backend has been initialized (i.e. g_system has been set).
 	assert(g_system);
@@ -348,8 +338,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	setupDummyPalette(system);
 
 	// Unless a game was specified, show the launcher dialog
-	if (ConfMan.getActiveDomainName().empty()) {
-		running = launcherDialog(system);
+	if (0 == ConfMan.getActiveDomain()) {
+		launcherDialog(system);
 
 		// Discard any command line options. Those that affect the graphics
 		// mode etc. already have should have been handled by the backend at
@@ -361,7 +351,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)
-	while (running) {
+	while (0 != ConfMan.getActiveDomain()) {
 		// Verify the given game name is a valid supported game
 		const Plugin *plugin = detectMain();
 		if (plugin) {
@@ -377,13 +367,14 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// wanted to apply them to *all* games ever launched.
 			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 			
-			// TODO: Unset the active config domain
+			// Clear the active config domain
+			ConfMan.setActiveDomain("");
 
 			// PluginManager::instance().unloadPlugins();
 			PluginManager::instance().loadPlugins();
 		}
 
-		running = launcherDialog(system);
+		launcherDialog(system);
 	}
 
 	// Deinit the timer
