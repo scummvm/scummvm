@@ -517,6 +517,7 @@ SamsFunShop	Pajama Sam's One-Stop Fun Shop
 
 socks	Pajama Sam's Sock Works
 	5e8fb66971a60e523e5afbc4c129c0e8	en	All	HE 80	-	-	Kirben
+	8de13897f0121c79d29a2377159f9ad0	en	Windows	HE 80	-	-	Aziraphale Jasra
 	19263586f749a560c1adf8b3393a9593	ru	Windows	HE 80	-	-	sev
 
 puttrace	Putt-Putt Enters the Race
