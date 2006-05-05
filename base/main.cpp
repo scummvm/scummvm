@@ -302,6 +302,10 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
+
+	// Load and setup the debuglevel and the debug flags. We do this at the
+	// soonest possible moment to ensure debug output starts early on, if 
+	// requested.
 	if (settings.contains("debuglevel")) {
 		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
@@ -309,13 +313,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	} else if (ConfMan.hasKey("debuglevel"))
 		gDebugLevel = ConfMan.getInt("debuglevel");
 
-	// Look for special debug flags
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
 	}
 
-	// Load the plugins
+	// Load the plugins.
 	PluginManager::instance().loadPlugins();
 	
 	// Process the remaining command line settings. Must be done after the
@@ -324,7 +327,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		return 0;
 
 #if defined(__SYMBIAN32__) || defined(_WIN32_WCE)
-	// init keymap support here: we wanna move this somewhere else?
+	// Init keymap support.
+	// FIXME: Fingolfin asks: why is this not in your OSystem::initBackend method???
 	GUI::Actions::init();
 #endif
 
