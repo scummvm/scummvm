@@ -420,6 +420,7 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if (_game.version >= 4 && _game.version <= 6) {
+		// Do nothing while the camera is moving
 		if ((camera._dest.x / 8) != (camera._cur.x / 8) || camera._cur.x != camera._last.x)
 			return;
 	}
@@ -480,7 +481,10 @@ void ScummEngine::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if ((_game.version <= 6 && _haveMsg == 1) || (_game.version == 7 && _haveMsg != 1) || (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
+	if ((_game.version <= 6 && _haveMsg == 1) ||
+	    (_game.version == 7 && _haveMsg != 1) ||
+	    (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
+
 		if (_game.heversion >= 60) {
 			if (_sound->isSoundRunning(1) == 0)
 				stopTalk();
@@ -612,11 +616,11 @@ void ScummEngine::CHARSET_1() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 		// Handle line overflow for V3
-		if (_game.version == 3 && _charset->_nextLeft > _screenWidth) {
+		if (_game.version == 3 && _charset->_nextLeft >= _screenWidth) {
 			_charset->_nextLeft = _screenWidth;
 		}
 		// Handle line breaks for V1-V2
-		if (_game.version <= 2 && _charset->_nextLeft > _screenWidth) {
+		if (_game.version <= 2 && _charset->_nextLeft >= _screenWidth) {
 			goto newLine;
 		}
 	}
