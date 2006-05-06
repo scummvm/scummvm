@@ -207,6 +207,8 @@ void MoviePlayer::startSound() {
 		if (_sequenceNum) {
 			Common::File in;
 
+			_fd.seek(size, SEEK_CUR);
+
 			in.open((const char *)"audio.wav");
 			if (in.isOpen() == false) {
 				error("Can't read offset file 'audio.wav'");
@@ -220,8 +222,6 @@ void MoviePlayer::startSound() {
 			in.seek(offset, SEEK_SET);
 			in.read(buffer, size);
 			in.close();
-
-			_fd.seek(size, SEEK_CUR);
 		} else {
 			buffer = (byte *)malloc(size);
 			_fd.read(buffer, size);
