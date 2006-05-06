@@ -295,28 +295,6 @@ int OSystem_NULL::getOutputSampleRate() const
 	return 22050;
 }
 
-bool OSystem_NULL::openCD(int drive)
-{
-	return false;
-}
-
-bool OSystem_NULL::pollCD()
-{
-	return false;
-}
-
-void OSystem_NULL::playCD(int track, int num_loops, int start_frame, int duration)
-{
-}
-
-void OSystem_NULL::stopCD()
-{
-}
-
-void OSystem_NULL::updateCD()
-{
-}
-
 void OSystem_NULL::quit()
 {
 }

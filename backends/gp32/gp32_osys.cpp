@@ -712,28 +712,6 @@ int OSystem_GP32::getOutputSampleRate() const {
 	return _samplesPerSec;
 }
 
-bool OSystem_GP32::openCD(int drive) {
-	NP("OSys::openCD()");
-	return true;
-}
-
-bool OSystem_GP32::pollCD() {
-	NP("OSys::pollCD()");
-	return true;
-}
-
-void OSystem_GP32::playCD(int track, int num_loops, int start_frame, int duration) {
-	NP("OSys::playCD()");
-}
-
-void OSystem_GP32::stopCD() {
-	NP("OSys::stopCD()");
-}
-
-void OSystem_GP32::updateCD() {
-	NP("OSys::updateCD()");
-}
-
 void OSystem_GP32::quit() {
 	NP("OSys::quit()");
 	clearSoundCallback();

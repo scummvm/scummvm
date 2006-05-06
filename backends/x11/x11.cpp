@@ -743,23 +743,6 @@ int OSystem_X11::getOutputSampleRate() const {
 	return SAMPLES_PER_SEC;
 }
 
-bool OSystem_X11::openCD(int drive) {
-	return false;
-}
-
-bool OSystem_X11::pollCD() {
-	return false;
-}
-
-void OSystem_X11::playCD(int track, int num_loops, int start_frame, int duration) {
-}
-
-void OSystem_X11::stopCD() {
-}
-
-void OSystem_X11::updateCD() {
-}
-
 void OSystem_X11::delayMillis(uint msecs) {
 	usleep(msecs * 1000);
 }

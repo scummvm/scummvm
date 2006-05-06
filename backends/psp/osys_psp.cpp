@@ -606,23 +606,6 @@ int OSystem_PSP::getOutputSampleRate() const {
 	return _samplesPerSec; 
 }
 
-bool OSystem_PSP::openCD(int drive) {
-	return false;
-}
-
-bool OSystem_PSP::pollCD() {
-	return false;
-}
-
-void OSystem_PSP::playCD(int track, int num_loops, int start_frame, int duration) {
-}
-
-void OSystem_PSP::stopCD() {
-}
-
-void OSystem_PSP::updateCD() {
-}
-
 void OSystem_PSP::quit() {
 	clearSoundCallback();
 	SDL_Quit();

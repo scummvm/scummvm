@@ -235,12 +235,6 @@ public:
 	virtual void clearSoundCallback() = 0;
 	int getOutputSampleRate() const { return _samplesPerSec; }
 
-	bool openCD(int drive) { return false;};
-	bool pollCD() { return false;};
-	void playCD(int track, int num_loops, int start_frame, int duration) {};
-	void stopCD() {};
-	void updateCD() {};
-	
 	void quit();
 	virtual void setWindowCaption(const char *caption) = 0;
 	

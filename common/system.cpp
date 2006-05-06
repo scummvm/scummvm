@@ -64,3 +64,22 @@ void OSystem::displayMessageOnOSD(const char *msg) {
 Common::SaveFileManager *OSystem::getSavefileManager() {
 	return new Common::DefaultSaveFileManager();
 }
+
+
+bool OSystem::openCD(int drive) {
+	return false;
+}
+
+bool OSystem::pollCD() {
+	return false;
+}
+
+void OSystem::playCD(int track, int num_loops, int start_frame, int duration) {
+}
+
+void OSystem::stopCD() {
+}
+
+void OSystem::updateCD() {
+}
+

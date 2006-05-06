@@ -98,22 +98,6 @@ public:
 	// callback will be played using this rate.
 	int getOutputSampleRate() const;
 
-	// Initialise the specified CD drive for audio playback.
-	bool openCD(int drive);
-
-	// Poll cdrom status
-	// Returns true if cd audio is playing
-	bool pollCD();
-
-	// Play cdrom audio track
-	void playCD(int track, int num_loops, int start_frame, int duration);
-
-	// Stop cdrom audio track
-	void stopCD();
-
-	// Update cdrom audio status
-	void updateCD();
-
 	// Quit
 	void quit();
 

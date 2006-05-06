@@ -859,6 +859,7 @@ public:
 	/**
 	 * @name Audio CD
 	 * The methods in this group deal with Audio CD playback.
+	 * The default implementation simply does nothing.
 	 */
 	//@{
 
@@ -866,13 +867,13 @@ public:
 	 * Initialise the specified CD drive for audio playback.
 	 * @return true if the CD drive was inited succesfully
 	 */
-	virtual bool openCD(int drive) = 0;
+	virtual bool openCD(int drive);
 
 	/**
 	 * Poll CD status.
 	 * @return true if CD audio is playing
 	 */
-	virtual bool pollCD() = 0;
+	virtual bool pollCD();
 
 	/**
 	 * Start audio CD playback.
@@ -881,17 +882,17 @@ public:
 	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
 	 * @param duration		the number of frames to play.
 	 */
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) = 0;
+	virtual void playCD(int track, int num_loops, int start_frame, int duration);
 
 	/**
 	 * Stop audio CD playback.
 	 */
-	virtual void stopCD() = 0;
+	virtual void stopCD();
 
 	/**
 	 * Update cdrom audio status.
 	 */
-	virtual void updateCD() = 0;
+	virtual void updateCD();
 
 	//@}
 
