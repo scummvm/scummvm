@@ -93,7 +93,7 @@ bool MoviePlayer::load(const char *filename) {
 		_vm->_language != Common::EN_ANY) {
 		_sequenceNum = 0;
 		for (i = 0; i < 90; i++) {
-			if (!stricmp(filename2, _sequenceList[i]))
+			if (!scumm_stricmp(filename2, _sequenceList[i]))
 				_sequenceNum = i;
 		}
 	}
