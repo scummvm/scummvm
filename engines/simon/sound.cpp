@@ -287,7 +287,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 
 #ifdef USE_FLAC
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s.flac", gss->speech_filename);
+		sprintf(filename, "%s.fla", gss->speech_filename);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -657,7 +657,7 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 
 #ifdef USE_FLAC
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.flac", gss->speech_filename, disc);
+		sprintf(filename, "%s%d.fla", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
