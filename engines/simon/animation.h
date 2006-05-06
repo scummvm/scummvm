@@ -58,6 +58,8 @@ class MoviePlayer {
 	uint32 _frameTicks;
 	uint32 _ticks;
 	
+	static const char *_sequenceList[90];
+	uint8 _sequenceNum;
 public:
 	MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer);
 	~MoviePlayer();

@@ -61,6 +61,7 @@ MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 	_frameTicks = 0;
 	_frameSkipped = 0;
 
+	_sequenceNum = 0;
 	_ticks = 0;
 }
 
@@ -71,6 +72,7 @@ bool MoviePlayer::load(const char *filename) {
 	char filename2[100];
 	uint32 tag;
 	int32 frameRate;
+	uint i;
 
 	// Change file extension to dxa
 	strcpy(filename2, filename);
@@ -86,6 +88,15 @@ bool MoviePlayer::load(const char *filename) {
 	debug(0, "Playing video %s", filename2);
 
 	_vm->_system->showMouse(false);
+
+	if ((_vm->getPlatform() == Common::kPlatformAmiga || _vm->getPlatform() == Common::kPlatformMacintosh) &&
+		_vm->_language != Common::EN_ANY) {
+		_sequenceNum = 0;
+		for (i = 0; i < 90; i++) {
+			if (!stricmp(filename2, _sequenceList[i]))
+				_sequenceNum = i;
+		}
+	}
 
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
@@ -186,11 +197,35 @@ void MoviePlayer::close() {
 }
 
 void MoviePlayer::startSound() {
-	uint32 tag = _fd.readUint32BE();
+	byte *buffer;
+	uint32 offset, size, tag;
+
+	tag = _fd.readUint32BE();
 	if (tag == MKID_BE('WAVE')) {
-		uint32 size = _fd.readUint32BE();
-		byte *buffer = (byte *)malloc(size);
-		_fd.read(buffer, size);
+		size = _fd.readUint32BE();
+
+		if (_sequenceNum) {
+			Common::File in;
+
+			in.open((const char *)"audio.wav");
+			if (in.isOpen() == false) {
+				error("Can't read offset file 'audio.wav'");
+			}
+
+			in.seek(_sequenceNum * 8, SEEK_SET);
+			offset = in.readUint32LE();
+			size = in.readUint32LE();
+
+			buffer = (byte *)malloc(size);
+			in.seek(offset, SEEK_SET);
+			in.read(buffer, size);
+			in.close();
+
+			_fd.seek(size, SEEK_CUR);
+		} else {
+			buffer = (byte *)malloc(size);
+			_fd.read(buffer, size);
+		}
 
 		Common::MemoryReadStream stream(buffer, size);
 		_bgSoundStream = Audio::makeWAVStream(stream);
@@ -380,5 +415,98 @@ void MoviePlayer::processFrame() {
 		_frameSkipped++;
 	}
 }
+
+const char * MoviePlayer::_sequenceList[90] = {
+	"agent32.dxa",
+	"Airlock.dxa",
+	"Badluck.dxa",
+	"bentalk1.dxa",
+	"bentalk2.dxa",
+	"bentalk3.dxa",
+	"BigFight.dxa",
+	"BLOWLAB.dxa",
+	"breakdown.dxa",
+	"bridge.dxa",
+	"button2.dxa",
+	"cargo.dxa",
+	"COACH.dxa",
+	"Colatalk.dxa",
+	"cygnus2.dxa",
+	"dream.dxa",
+	"escape2.dxa",
+	"FASALL.dxa",
+	"fbikewurb.dxa",
+	"feebdel.dxa",
+	"Feebohno.dxa",
+	"feebpump.dxa",
+	"feefone1.dxa",
+	"feefone2.dxa",
+	"founder2.dxa",
+	"founder3.dxa",
+	"founder4.dxa",
+	"fxmadsam.dxa",
+	"fxwakeup.dxa",
+	"gate.dxa",
+	"Get Car.dxa",
+	"getaxe.dxa",
+	"getlift.dxa",
+	"icetrench.dxa",
+	"intomb1.dxa",
+	"intomb2.dxa",
+	"Jackpot.dxa",
+	"knockout.dxa",
+	"labocto.dxa",
+	"longfeeb.dxa",
+	"Mainmin.dxa",
+	"maznat.dxa",
+	"meetsquid.dxa",
+	"mflirt.dxa",
+	"mfxHappy.dxa",
+	"Mix_Feeb1.dxa",
+	"Mix_Feeb2.dxa",
+	"Mix_Feeb3.dxa",
+	"Mix_Guardscn.dxa",
+	"Mlights1.dxa",
+	"MLights2.dxa",
+	"MProtest.dxa",
+	"mudman.dxa",
+	"munlock.dxa",
+	"MUS5P2.dxa",
+	"MUSOSP1.dxa",
+	"Omenter.dxa",
+	"Omnicofe.dxa",
+	"OUTMIN~1.dxa",
+	"Readbook.dxa",
+	"Rebelhq.dxa",
+	"RebelHQ2.dxa",
+	"Reedin.dxa",
+	"rescue1.dxa",
+	"rescue2.dxa",
+	"samcar.dxa",
+	"Samdead.dxa",
+	"scanner.dxa",
+	"Sleepy.dxa",
+	"spitbrai.dxa",
+	"statue1.dxa",
+	"statue2.dxa",
+	"sva1.dxa",
+	"sva2.dxa",
+	"Teeter.dxa",
+	"Temple2.dxa",
+	"Temple3.dxa",
+	"Temple4.dxa",
+	"Temple5.dxa",
+	"Temple6.dxa",
+	"Temple7.dxa",
+	"Temple8.dxa",
+	"Tic-tac2.dxa",
+	"torture.dxa",
+	"transmit.dxa",
+	"Typey.dxa",
+	"ventfall.dxa",
+	"ventoff.dxa",
+	"wasting.dxa",
+	"wurbatak.dxa",
+};
 
 } // End of namespace Simon
