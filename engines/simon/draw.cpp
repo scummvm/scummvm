@@ -467,20 +467,23 @@ void SimonEngine::slowFadeIn() {
 	_fastFadeInFlag &= 0x7fff;
 	_paletteFlag = false;
 
-	memset(_videoBuf1, 0, 768);
-	memcpy(_currentPalette, _displayPalette, 768);
-	memcpy(_videoBuf1 + 768, _displayPalette, 768);
+	memset(_videoBuf1, 0, 1024);
+	memcpy(_currentPalette, _displayPalette, 1024);
+	memcpy(_videoBuf1 + 1024, _displayPalette, 1024);
 
 	for (c = 255; c >= 0; c -= 4) {
-	  	src = _videoBuf1 + 768;
+	  	src = _videoBuf1 + 1024;
  		dst = _videoBuf1;
 
-		for (p = _fastFadeInFlag; p !=0 ; p--) {
-			if (*src >= c)
-				*dst = *dst + 4;
-			
-			src++;
-			dst++;
+		for (p = _fastFadeInFlag; p !=0 ; p -= 3) {
+			if (src[0] >= c)
+				dst[0] += 4;
+			if (src[1] >= c)
+				dst[1] += 4;
+			if (src[2] >= c)
+				dst[2] += 4;
+			src += 4;
+			dst += 4;
  		}
  		_system->setPalette(_videoBuf1, 0, _fastFadeCount);
  		delay(5);
