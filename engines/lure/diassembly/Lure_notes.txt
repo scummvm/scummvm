@@ -117,6 +117,12 @@ character_reset_direction - Rounds off the given character's position, and sets
     Input:  si = Character hotspot record
             di = Character animation slot
 
+character_set_random_dest - Chooses a random destination for a given character,
+              within a rectangle specified in the room data
+    Input:  si = Character hotspot record
+            di = Character animation slot
+            bx = Offset to a current action record within the character hotspot 
+
 character_start_walking - Starts the character walking towards a given position
     Input:  si = Character hotspot record
             cx = Destination X
@@ -666,6 +672,58 @@ word_wrap_string - Applies carriage returns in-sequence to a passed string to
           ensure it fits into a given dialog area
   Input:
 
+NPC Script Methods
+==================
+NPC schedules are set up by having a single ACTION_DISPATCH current action in
+the NPC's hotspot record (at offset 63h), with a support record pointer
+pointing to the start of a sequence of instructions using action numbers
+greater than that of all standard actions. As part of the handling of these
+"high number" instructions is an incrementing of the offset for the support
+data so that the NPC instructions are handled sequentially.
+
+The table below lists the special methods list. Each entry is represented in
+the support data table by a word for the action's value, followed by any
+support data as indicated by the method. 
+
+Index Method
+===== =======
+  28  npc_set_hotspot5e(uint16 roomNumber, uint16 hs5e)
+      Sets both the current room number on the hotspot's current action entry,
+      as well as word offset 5eh in the character's hotspot record
+  29  npc_unknown_1()
+      ???
+  30  npc_execute_script_proc(uint16 offset)
+      Causes the execution of the script at the given offset
+  31  npc_unknown_2()
+      Sets the currently unknown words at hs[42h] and hs[44h], and calls a
+      method to scan for an entry for the hotspot in the hotspot action list
+  32  npc_set_random_dest()
+      Sets the character's destination position randomly within the area
+      rectangle specified for the room
+  33  npc_walking_check(uint16 hotspotId)
+      Ensures that the given hotspot is in the same room as the character,
+      and if so, makes a walking check which starts the character walking if
+      the hotspot is not within reach proximity
+  34  npc_set_support_offset(uint16 offsetId)
+      Sets the offset for support data in the current action. So it can, for
+      example, reset an NPC back to the start of it's script
+  35  npc_set_support_offset_conditional(uint16 sequenceOffset, uint16 offsetId)
+      Executes the given script, and if the return is non-zero, then sets the
+      current action's support data offset to the given offset. If not, the
+      support data offset, moves on to the following record
+  36  npc_dispatch_action(uint16 hotspotId, uint16 offsetId)
+      Handles the execution of an action, including standard action prechecks
+  37  npc_unknown_3(uint16 v1, uint16 v2, uint16 v3, uint16 v4)
+      ???
+  38  npc_unknown_4(uint16 unused, uint16 v)
+      Sets hs[42h] = v
+  39  npc_start_talking(uint16 messageId, uint16 destCharId???)
+      This method, I think, causes the character to say the specified message
+      to the given destination character
+  40  npc_jump_to_address(uint16 offset)
+      Jumps execution to the specified address in the game's code segment
+
+
 Misc Notes
 ============
 VGA Files
@@ -749,6 +807,7 @@ For the room list, the format of the room records pointed to are as below:
             13h    2    The current tick time counter is stored here when a
                         room is exited
             17h    1    ???
+            18h    1    Index into table of 8 byte entries starting at ds:2EB1h
             19h    2    X start for defining valid horizontal areas where hotspots
                         can be highlighted
             1Bh    2    X end, or 0 to indicate no end
@@ -837,16 +896,15 @@ The format of hotspots are as follows:
            2Dh     2    Script Id of a hotspot the character is to use
            2Fh     2    Hotspot Id of a hotspot the character is to use
            33h     2    ??? Talk data record
-           35h     1    Some kind of x offset (perhaps for centroid?)
-           36h     1    Some kind of y offset
+           35h     1    x offset within character for speech bubble
+           36h     1    y offset within character for speech bubble
            37h     2    ???
            39h     2    Stores the hotspot Id of the character being talked to
            3Ch     2    Stores the String Id of a response
            42h     2    ??? Copy of selected hotspot
            44h     1    ??? 0 or 2 for further actions in player_tick_proc
                         ??? Copy of low byte of selected hotspot
-           45h     2    Hotspot Script Id to use. I'm not yet sure why a
-                        different field that 2Dh/2Fh to use
+           45h     2    Hotspot Script Id to execute each tick for NPCs
            47h     2    Hotspot Id to use.
            49h     1    Flags whether the hotspot has currently got the cells
                         of the pathfinding (walkable areas) layer that it's
@@ -897,6 +955,7 @@ The possible commands are listed below:
          Support data:
            word value = action to perform
            word value = hotspot Id of selected hotspot
+           word value = used hotspot Id
          [03] = Room Number
 
     03 = Execute Script
