@@ -1469,7 +1469,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			// identical results, though I didn't try it and right now I don't know
 			// any spots where I can test this...
 			if (!ignoreCharsetMask)
-				warning("This might be broken -- please report where you encountered this to Fingolfin");
+				error("This might be broken -- please report where you encountered this to Fingolfin");
 
 			// Perform some clipping
 			int w = MIN(width, dstSurface.w - _left);
