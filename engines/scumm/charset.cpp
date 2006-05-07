@@ -1220,10 +1220,13 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		height = _vm->_2byteHeight;
 	} else {
 		charPtr = _fontPtr + chr * 8;
-//		width = height = 8;
 		width = getCharWidth(chr);
 		height = 8;
 	}
+
+	// Clip at the right side (to avoid drawing "outside" the screen bounds).
+	if (_left + origWidth > _right + 1)
+		return;
 
 	origWidth = width;
 	origHeight = height;
