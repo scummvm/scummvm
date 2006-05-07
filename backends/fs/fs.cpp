@@ -37,6 +37,7 @@ FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
 FilesystemNode::FilesystemNode() {
 	if (_rootNode == 0) {
 		_rootNode = AbstractFilesystemNode::getRoot();
+		assert(_rootNode);
 		_rootRefCount = new int(1);
 	}
 	_realNode = _rootNode;
@@ -60,8 +61,9 @@ FilesystemNode::~FilesystemNode() {
 }
 
 void FilesystemNode::decRefCount() {
+	assert(*_refCount > 0);
 	--(*_refCount);
-	if (*_refCount <= 0) {
+	if (*_refCount == 0) {
 		delete _refCount;
 		delete _realNode;
 	}
