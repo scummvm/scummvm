@@ -567,6 +567,15 @@ void ScummEngine::CHARSET_1() {
 			continue;
 		}
 
+		// Handle line overflow for V3. See also bug #1306269.
+		if (_game.version == 3 && _charset->_nextLeft >= _screenWidth) {
+			_charset->_nextLeft = _screenWidth;
+		}
+		// Handle line breaks for V1-V2
+		if (_game.version <= 2 && _charset->_nextLeft >= _screenWidth) {
+			goto newLine;
+		}
+
 		_charset->_left = _charset->_nextLeft;
 		_charset->_top = _charset->_nextTop;
 
@@ -614,14 +623,6 @@ void ScummEngine::CHARSET_1() {
 			VAR(VAR_CHARCOUNT)++;
 		} else {
 			_talkDelay += (int)VAR(VAR_CHARINC);
-		}
-		// Handle line overflow for V3
-		if (_game.version == 3 && _charset->_nextLeft >= _screenWidth) {
-			_charset->_nextLeft = _screenWidth;
-		}
-		// Handle line breaks for V1-V2
-		if (_game.version <= 2 && _charset->_nextLeft >= _screenWidth) {
-			goto newLine;
 		}
 	}
 
