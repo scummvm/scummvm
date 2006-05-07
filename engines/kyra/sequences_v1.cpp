@@ -1040,7 +1040,8 @@ void KyraEngine::seq_playCredits() {
 	_screen->clearCurPage();
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = -1;
-	snd_playWanderScoreViaMap(53, 1);
+	// we don't need that one for midi or adlib
+	//snd_playWanderScoreViaMap(53, 1);
 
 	uint8 *buffer = 0;
 	uint32 size;
