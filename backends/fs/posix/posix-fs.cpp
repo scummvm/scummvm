@@ -131,7 +131,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 #else
 		struct stat st;
 		_isValid = (0 == stat(_path.c_str(), &st));
-		_isDirectory = S_ISDIR(st.st_mode);
+		_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
 #endif
 	}
 }
@@ -166,19 +166,21 @@ bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 		// add this #elif case, which tries to use stat() instead.
 		struct stat st;
 		entry._isValid = (0 == stat(entry._path.c_str(), &st));
-		entry._isDirectory = S_ISDIR(st.st_mode);
+		entry._isDirectory = entry._isValid ? S_ISDIR(st.st_mode) : false;
 #else
 		if (dp->d_type == DT_UNKNOWN) {
 			// Fall back to stat()
 			struct stat st;
 			entry._isValid = (0 == stat(entry._path.c_str(), &st));
-			entry._isDirectory = S_ISDIR(st.st_mode);
+			entry._isDirectory = entry._isValid ? S_ISDIR(st.st_mode) : false;
 		} else {
 			entry._isValid = (dp->d_type == DT_DIR) || (dp->d_type == DT_REG) || (dp->d_type == DT_LNK);
 			if (dp->d_type == DT_LNK) {
 				struct stat st;
-				stat(entry._path.c_str(), &st);
-				entry._isDirectory = S_ISDIR(st.st_mode);
+				if (stat(entry._path.c_str(), &st) == 0)
+					entry._isDirectory = S_ISDIR(st.st_mode);
+				else
+					entry._isDirectory = false;
 			} else {
 				entry._isDirectory = (dp->d_type == DT_DIR);
 			}
