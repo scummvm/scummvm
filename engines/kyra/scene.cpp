@@ -64,35 +64,35 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	}*/
 	
 	switch (_currentCharacter->sceneId) {
-		case 1:
-			if (sceneId == 0) {
-				moveCharacterToPos(0, 0, _currentCharacter->x1, 84);
-				unkVar1 = 0;
-			}
+	case 1:
+		if (sceneId == 0) {
+			moveCharacterToPos(0, 0, _currentCharacter->x1, 84);
+			unkVar1 = 0;
+		}
 		break;
-		
-		case 3:
-			if (sceneId == 2) {
-				moveCharacterToPos(0, 6, 155, _currentCharacter->y1);
-				unkVar1 = 0;
-			}
+
+	case 3:
+		if (sceneId == 2) {
+			moveCharacterToPos(0, 6, 155, _currentCharacter->y1);
+			unkVar1 = 0;
+		}
 		break;
-		
-		case 26:
-			if (sceneId == 27) {
-				moveCharacterToPos(0, 6, 155, _currentCharacter->y1);
-				unkVar1 = 0;
-			}
+
+	case 26:
+		if (sceneId == 27) {
+			moveCharacterToPos(0, 6, 155, _currentCharacter->y1);
+			unkVar1 = 0;
+		}
 		break;
-		
-		case 44:
-			if (sceneId == 45) {
-				moveCharacterToPos(0, 2, 192, _currentCharacter->y1);
-				unkVar1 = 0;
-			}
+
+	case 44:
+		if (sceneId == 45) {
+			moveCharacterToPos(0, 2, 192, _currentCharacter->y1);
+			unkVar1 = 0;
+		}
 		break;
-		
-		default:
+
+	default:
 		break;
 	}
 	
@@ -100,23 +100,23 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 		int xpos = _currentCharacter->x1;
 		int ypos = _currentCharacter->y1;
 		switch (facing) {
-			case 0:
-				ypos = _currentCharacter->y1 - 6;
+		case 0:
+			ypos = _currentCharacter->y1 - 6;
 			break;
-			
-			case 2:
-				xpos = 336;
+
+		case 2:
+			xpos = 336;
 			break;
-			
-			case 4:
-				ypos = 143;
+
+		case 4:
+			ypos = 143;
 			break;
-			
-			case 6:
-				xpos = -16;
+
+		case 6:
+			xpos = -16;
 			break;
-			
-			default:
+
+		default:
 			break;
 		}
 		
@@ -248,40 +248,40 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 	disableTimer(18);
 	uint32 nextFrame = 0;
 	switch (facing) {
-		case 0:
-			while (ypos < ch->y1) {
-				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
-				setCharacterPositionWithUpdate(character);
-				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
-			}
-			break;
+	case 0:
+		while (ypos < ch->y1) {
+			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			setCharacterPositionWithUpdate(character);
+			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+		}
+		break;
 		
-		case 2:	
-			while (ch->x1 < xpos) {
-				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
-				setCharacterPositionWithUpdate(character);
-				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
-			}
-			break;
+	case 2:	
+		while (ch->x1 < xpos) {
+			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			setCharacterPositionWithUpdate(character);
+			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+		}
+		break;
 		
-		case 4:
-			while (ypos > ch->y1) {
-				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
-				setCharacterPositionWithUpdate(character);
-				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
-			}
-			break;
+	case 4:
+		while (ypos > ch->y1) {
+			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			setCharacterPositionWithUpdate(character);
+			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+		}
+		break;
 		
-		case 6:
-			while (ch->x1 > xpos) {
-				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
-				setCharacterPositionWithUpdate(character);
-				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
-			}
-			break;
+	case 6:
+		while (ch->x1 > xpos) {
+			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			setCharacterPositionWithUpdate(character);
+			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+		}
+		break;
 		
-		default:
-			break;
+	default:
+		break;
 	}
 	enableTimer(19);
 	enableTimer(14);
@@ -418,36 +418,22 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 int KyraEngine::getOppositeFacingDirection(int dir) {
 	debugC(9, kDebugLevelMain, "KyraEngine::getOppositeFacingDirection(%d)", dir);
 	switch (dir) {
-		case 0:
-			return 2;
-			break;
-			
-		case 1:
-			return 1;
-			break;
-			
-		case 3:
-			return 7;
-			break;
-			
-		case 4:
-			return 6;
-			break;
-			
-		case 5:
-			return 5;
-			break;
-			
-		case 6:
-			return 4;
-			break;
-			
-		case 7:
-			return 3;
-			break;
-			
-		default:
-			break;
+	case 0:
+		return 2;
+	case 1:
+		return 1;
+	case 3:
+		return 7;
+	case 4:
+		return 6;
+	case 5:
+		return 5;
+	case 6:
+		return 4;
+	case 7:
+		return 3;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -506,32 +492,32 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 	int16 xpos = 0, ypos = 0;
 	
 	if (_brandonPosX == -1 && _brandonPosY == -1) {
-		switch (facing+1) {
-			case 0:
-				xpos = ypos = -1;
+		switch (facing + 1) {
+		case 0:
+			xpos = ypos = -1;
 			break;
-			
-			case 1: case 2: case 8:
-				xpos = _sceneExits.southXPos;
-				ypos = _sceneExits.southYPos;
-				break;
-			
-			case 3:
-				xpos = _sceneExits.westXPos;
-				ypos = _sceneExits.westYPos;
-				break;
-			
-			case 4: case 5: case 6:
-				xpos = _sceneExits.northXPos;
-				ypos = _sceneExits.northYPos;
-				break;
-			
-			case 7:
-				xpos = _sceneExits.eastXPos;
-				ypos = _sceneExits.eastYPos;
-				break;
-			
-			default:
+
+		case 1: case 2: case 8:
+			xpos = _sceneExits.southXPos;
+			ypos = _sceneExits.southYPos;
+			break;
+
+		case 3:
+			xpos = _sceneExits.westXPos;
+			ypos = _sceneExits.westYPos;
+			break;
+
+		case 4: case 5: case 6:
+			xpos = _sceneExits.northXPos;
+			ypos = _sceneExits.northYPos;
+			break;
+
+		case 7:
+			xpos = _sceneExits.eastXPos;
+			ypos = _sceneExits.eastYPos;
+			break;
+
+		default:
 			break;
 		}
 		
@@ -559,68 +545,68 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 	int16 ypos2 = 0;
 	if (_brandonPosX > -1 && _brandonPosY > -1) {
 		switch (_currentCharacter->sceneId) {
-			case 1:
-				_currentCharacter->x1 = xpos;
-				_currentCharacter->x2 = xpos;
-				_currentCharacter->y1 = ypos;
-				_currentCharacter->y2 = ypos;
-				facing = 4;
-				xpos2 = 192;
-				ypos2 = 104;
-				setFacing = 0;
-				unk1 = 1;
-				break;
-				
-			case 3:
-				_currentCharacter->x1 = xpos;
-				_currentCharacter->x2 = xpos;
-				_currentCharacter->y1 = ypos;
-				_currentCharacter->y2 = ypos;
-				facing = 2;
-				xpos2 = 204;
-				ypos2 = 94;
-				setFacing = 0;
-				unk1 = 1;
-				break;
-				
-			case 26:
-				_currentCharacter->x1 = xpos;
-				_currentCharacter->x2 = xpos;
-				_currentCharacter->y1 = ypos;
-				_currentCharacter->y2 = ypos;
-				facing = 2;
-				xpos2 = 192;
-				ypos2 = 128;
-				setFacing = 0;
-				unk1 = 1;
-				break;
-				
-			case 44:
-				_currentCharacter->x1 = xpos;
-				_currentCharacter->x2 = xpos;
-				_currentCharacter->y1 = ypos;
-				_currentCharacter->y2 = ypos;
-				facing = 6;
-				xpos2 = 156;
-				ypos2 = 96;
-				setFacing = 0;
-				unk1 = 1;
-				break;
-				
-			case 37:
-				_currentCharacter->x1 = xpos;
-				_currentCharacter->x2 = xpos;
-				_currentCharacter->y1 = ypos;
-				_currentCharacter->y2 = ypos;
-				facing = 2;
-				xpos2 = 148;
-				ypos2 = 114;
-				setFacing = 0;
-				unk1 = 1;
-				break;
-				
-			default:
-				break;
+		case 1:
+			_currentCharacter->x1 = xpos;
+			_currentCharacter->x2 = xpos;
+			_currentCharacter->y1 = ypos;
+			_currentCharacter->y2 = ypos;
+			facing = 4;
+			xpos2 = 192;
+			ypos2 = 104;
+			setFacing = 0;
+			unk1 = 1;
+			break;
+
+		case 3:
+			_currentCharacter->x1 = xpos;
+			_currentCharacter->x2 = xpos;
+			_currentCharacter->y1 = ypos;
+			_currentCharacter->y2 = ypos;
+			facing = 2;
+			xpos2 = 204;
+			ypos2 = 94;
+			setFacing = 0;
+			unk1 = 1;
+			break;
+
+		case 26:
+			_currentCharacter->x1 = xpos;
+			_currentCharacter->x2 = xpos;
+			_currentCharacter->y1 = ypos;
+			_currentCharacter->y2 = ypos;
+			facing = 2;
+			xpos2 = 192;
+			ypos2 = 128;
+			setFacing = 0;
+			unk1 = 1;
+			break;
+
+		case 44:
+			_currentCharacter->x1 = xpos;
+			_currentCharacter->x2 = xpos;
+			_currentCharacter->y1 = ypos;
+			_currentCharacter->y2 = ypos;
+			facing = 6;
+			xpos2 = 156;
+			ypos2 = 96;
+			setFacing = 0;
+			unk1 = 1;
+			break;
+
+		case 37:
+			_currentCharacter->x1 = xpos;
+			_currentCharacter->x2 = xpos;
+			_currentCharacter->y1 = ypos;
+			_currentCharacter->y2 = ypos;
+			facing = 2;
+			xpos2 = 148;
+			ypos2 = 114;
+			setFacing = 0;
+			unk1 = 1;
+			break;
+
+		default:
+			break;
 		}
 	}
 	
@@ -630,24 +616,24 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 		ypos2 = ypos;
 		xpos2 = xpos;
 		switch (facing) {
-			case 0:
-				ypos = 142;
-				break;
-				
-			case 2:
-				xpos = -16;
-				break;
-				
-			case 4:
-				ypos = (uint8)(_northExitHeight & 0xFF) - 4;
-				break;
-				
-			case 6:
-				xpos = 336;
-				break;
-				
-			default:
-				break;
+		case 0:
+			ypos = 142;
+			break;
+
+		case 2:
+			xpos = -16;
+			break;
+
+		case 4:
+			ypos = (uint8)(_northExitHeight & 0xFF) - 4;
+			break;
+
+		case 6:
+			xpos = 336;
+			break;
+
+		default:
+			break;
 		}
 	}
 	
@@ -961,21 +947,21 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		}
 		bool forceContinue = false;
 		switch (*table) {
-			case 0: case 1: case 2:
-			case 3: case 4: case 5:
-			case 6: case 7:
-				_currentCharacter->facing = getOppositeFacingDirection(*table);
-				break;
-			
-			case 8:
-				forceContinue = true;
-				running = false;
-				break;
-			
-			default:
-				++table;
-				forceContinue = true;
-				break;
+		case 0: case 1: case 2:
+		case 3: case 4: case 5:
+		case 6: case 7:
+			_currentCharacter->facing = getOppositeFacingDirection(*table);
+			break;
+
+		case 8:
+			forceContinue = true;
+			running = false;
+			break;
+
+		default:
+			++table;
+			forceContinue = true;
+			break;
 		}
 		
 		returnValue = changeScene(_currentCharacter->facing);
@@ -1068,24 +1054,24 @@ int KyraEngine::changeScene(int facing) {
 			int unk2 = ptr[9];
 			if (sceneId == 0xFFFF) {
 				switch (facing) {
-					case 0:
-						sceneId = _roomTable[_currentCharacter->sceneId].northExit;
-						break;
-						
-					case 2:
-						sceneId = _roomTable[_currentCharacter->sceneId].eastExit;
-						break;
-					
-					case 4:
-						sceneId = _roomTable[_currentCharacter->sceneId].southExit;
-						break;
-						
-					case 6:
-						sceneId = _roomTable[_currentCharacter->sceneId].westExit;
-						break;
-						
-					default:
-						break;
+				case 0:
+					sceneId = _roomTable[_currentCharacter->sceneId].northExit;
+					break;
+
+				case 2:
+					sceneId = _roomTable[_currentCharacter->sceneId].eastExit;
+					break;
+
+				case 4:
+					sceneId = _roomTable[_currentCharacter->sceneId].southExit;
+					break;
+
+				case 6:
+					sceneId = _roomTable[_currentCharacter->sceneId].westExit;
+					break;
+
+				default:
+					break;
 				}
 			}
 			
@@ -1126,21 +1112,21 @@ int KyraEngine::changeScene(int facing) {
 	
 	uint16 sceneId = 0xFFFF;
 	switch (facing) {
-		case 0:
-			sceneId = _roomTable[_currentCharacter->sceneId].northExit;
-			break;
-		
-		case 2:
-			sceneId = _roomTable[_currentCharacter->sceneId].eastExit;
-			break;
-		
-		case 4:
-			sceneId = _roomTable[_currentCharacter->sceneId].southExit;
-			break;
-		
-		default:
-			sceneId = _roomTable[_currentCharacter->sceneId].westExit;
-			break;
+	case 0:
+		sceneId = _roomTable[_currentCharacter->sceneId].northExit;
+		break;
+
+	case 2:
+		sceneId = _roomTable[_currentCharacter->sceneId].eastExit;
+		break;
+
+	case 4:
+		sceneId = _roomTable[_currentCharacter->sceneId].southExit;
+		break;
+
+	default:
+		sceneId = _roomTable[_currentCharacter->sceneId].westExit;
+		break;
 	}
 	
 	if (sceneId == 0xFFFF)

@@ -156,64 +156,64 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	
 	_unkAmuletVar = 1;
 	switch (jewel-1) {
-		case 0:
-			if (_brandonStatusBit & 1) {
-				seq_brandonHealing2();
-			} else if (_brandonStatusBit == 0) {
-				seq_brandonHealing();
-				assert(_healingTip);
-				if (_features & GF_TALKIE) {
-					snd_voiceWaitForFinish();
-					snd_playVoiceFile(2003);
-				}
-				characterSays(_healingTip[0], 0, -2);
-			}
-			break;
-		
-		case 1:
-			seq_makeBrandonInv();
-			break;
-		
-		case 2:
-			if (_brandonStatusBit & 1) {
-				assert(_wispJewelStrings);
-				if (_features & GF_TALKIE) {
-					snd_voiceWaitForFinish();
-					snd_playVoiceFile(2004);
-				}
-				characterSays(_wispJewelStrings[0], 0, -2);
-			} else {
-				if (_brandonStatusBit & 2) {
-					// XXX
-					seq_makeBrandonNormal2();
-					// XXX
-				} else {
-					// do not check for item in hand again as in the original since some strings are missing
-					// in the cd version
-					if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
-						snd_playWanderScoreViaMap(1, 0);
-						seq_makeBrandonWisp();
-						snd_playWanderScoreViaMap(17, 0);
-					} else {
-						seq_makeBrandonWisp();
-					}
-					setGameFlag(0x9E);
-				}
-			}
-			break;
-		
-		case 3:
-			seq_dispelMagicAnimation();
-			assert(_magicJewelString);
+	case 0:
+		if (_brandonStatusBit & 1) {
+			seq_brandonHealing2();
+		} else if (_brandonStatusBit == 0) {
+			seq_brandonHealing();
+			assert(_healingTip);
 			if (_features & GF_TALKIE) {
 				snd_voiceWaitForFinish();
-				snd_playVoiceFile(2007);
+				snd_playVoiceFile(2003);
 			}
-			characterSays(_magicJewelString[0], 0, -2);
-			break;
+			characterSays(_healingTip[0], 0, -2);
+		}
+		break;
 		
-		default:
-			break;
+	case 1:
+		seq_makeBrandonInv();
+		break;
+
+	case 2:
+		if (_brandonStatusBit & 1) {
+			assert(_wispJewelStrings);
+			if (_features & GF_TALKIE) {
+				snd_voiceWaitForFinish();
+				snd_playVoiceFile(2004);
+			}
+			characterSays(_wispJewelStrings[0], 0, -2);
+		} else {
+			if (_brandonStatusBit & 2) {
+				// XXX
+				seq_makeBrandonNormal2();
+				// XXX
+			} else {
+				// do not check for item in hand again as in the original since some strings are missing
+				// in the cd version
+				if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+					snd_playWanderScoreViaMap(1, 0);
+					seq_makeBrandonWisp();
+					snd_playWanderScoreViaMap(17, 0);
+				} else {
+					seq_makeBrandonWisp();
+				}
+				setGameFlag(0x9E);
+			}
+		}
+		break;
+
+	case 3:
+		seq_dispelMagicAnimation();
+		assert(_magicJewelString);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(2007);
+		}
+		characterSays(_magicJewelString[0], 0, -2);
+		break;
+		
+	default:
+		break;
 	}
 	_unkAmuletVar = 0;
 	// XXX clearKyrandiaButtonIO (!used before every return in this function!)
@@ -709,36 +709,36 @@ void KyraEngine::gui_getInput() {
 	_mouseWheel = 0;
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
-			case OSystem::EVENT_QUIT:
-				quitGame();
-				break;
-			case OSystem::EVENT_LBUTTONDOWN:
-				_mousePressFlag = true;
-				break;
-			case OSystem::EVENT_LBUTTONUP:
-				_mousePressFlag = false;
-				break;
-			case OSystem::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-				_system->updateScreen();
-				break;
-			case OSystem::EVENT_WHEELUP:
-				_mouseWheel = -1;
-				break;
-			case OSystem::EVENT_WHEELDOWN:
-				_mouseWheel = 1;
-				break;
-			case OSystem::EVENT_KEYDOWN:
-				_keyboardEvent.pending = true;
-				_keyboardEvent.repeat = now + 400;
-				_keyboardEvent.ascii = event.kbd.ascii;
-				break;
-			case OSystem::EVENT_KEYUP:
-				_keyboardEvent.repeat = 0;
-				break;
-			default:
-				break;
+		case OSystem::EVENT_QUIT:
+			quitGame();
+			break;
+		case OSystem::EVENT_LBUTTONDOWN:
+			_mousePressFlag = true;
+			break;
+		case OSystem::EVENT_LBUTTONUP:
+			_mousePressFlag = false;
+			break;
+		case OSystem::EVENT_MOUSEMOVE:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			_system->updateScreen();
+			break;
+		case OSystem::EVENT_WHEELUP:
+			_mouseWheel = -1;
+			break;
+		case OSystem::EVENT_WHEELDOWN:
+			_mouseWheel = 1;
+			break;
+		case OSystem::EVENT_KEYDOWN:
+			_keyboardEvent.pending = true;
+			_keyboardEvent.repeat = now + 400;
+			_keyboardEvent.ascii = event.kbd.ascii;
+			break;
+		case OSystem::EVENT_KEYUP:
+			_keyboardEvent.repeat = 0;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -1127,23 +1127,24 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 
 
 	switch (_configWalkspeed) {
-		case 0:
-			menu.item[2].itemString = _configStrings[0]; //"Slowest"
-			break;
-		case 1:
-			menu.item[2].itemString = _configStrings[1]; //"Slow"
-			break;
-		case 2:
-			menu.item[2].itemString = _configStrings[2]; //"Normal"
-			break;
-		case 3:
-			menu.item[2].itemString = _configStrings[3]; //"Fast"
-			break;
-		case 4:
-			menu.item[2].itemString = _configStrings[4]; //"Fastest"
-			break;
-		default:
-			menu.item[2].itemString = "ERROR";
+	case 0:
+		menu.item[2].itemString = _configStrings[0]; //"Slowest"
+		break;
+	case 1:
+		menu.item[2].itemString = _configStrings[1]; //"Slow"
+		break;
+	case 2:
+		menu.item[2].itemString = _configStrings[2]; //"Normal"
+		break;
+	case 3:
+		menu.item[2].itemString = _configStrings[3]; //"Fast"
+		break;
+	case 4:
+		menu.item[2].itemString = _configStrings[4]; //"Fastest"
+		break;
+	default:
+		menu.item[2].itemString = "ERROR";
+		break;
 	}
 
 	int textControl = 3;
@@ -1158,35 +1159,37 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 			_menu[5].item[4].enabled = 0;
 
 		switch (_configVoice) {
-			case 0:
-				menu.item[3].itemString = _configStrings[5]; //"Text only"
-				break;
-			case 1:
-				menu.item[3].itemString = _configStrings[6]; //"Voice & Text"
-				break;
-			case 2:
-				menu.item[3].itemString = _configStrings[7]; //"Voice only"
-				break;
-			default:
-				menu.item[3].itemString = "ERROR";
+		case 0:
+			menu.item[3].itemString = _configStrings[5]; //"Text only"
+			break;
+		case 1:
+			menu.item[3].itemString = _configStrings[6]; //"Voice & Text"
+			break;
+		case 2:
+			menu.item[3].itemString = _configStrings[7]; //"Voice only"
+			break;
+		default:
+			menu.item[3].itemString = "ERROR";
+			break;
 		}
 	}
 
 	switch (_configTextspeed) {
-		case 0:
-			menu.item[textControl].itemString = _configStrings[1]; //"Slow"
-			break;
-		case 1:
-			menu.item[textControl].itemString = _configStrings[2]; //"Normal"
-			break;
-		case 2:
-			menu.item[textControl].itemString = _configStrings[3]; //"Fast"
-			break;
-		case 3:
-			menu.item[textControl].itemString = _configStrings[clickableOffset]; //"Clickable"
-			break;
-		default:
-			menu.item[textControl].itemString = "ERROR";
+	case 0:
+		menu.item[textControl].itemString = _configStrings[1]; //"Slow"
+		break;
+	case 1:
+		menu.item[textControl].itemString = _configStrings[2]; //"Normal"
+		break;
+	case 2:
+		menu.item[textControl].itemString = _configStrings[3]; //"Fast"
+		break;
+	case 3:
+		menu.item[textControl].itemString = _configStrings[clickableOffset]; //"Clickable"
+		break;
+	default:
+		menu.item[textControl].itemString = "ERROR";
+		break;
 	}
 
 

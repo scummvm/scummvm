@@ -47,11 +47,15 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 
 	if (_configVoice == 0 && chatDuration != -1) {
 		switch (_configTextspeed) {
-			case 0: chatDuration *= 2;
-					break;
-			case 2: chatDuration /= 4;
-					break;
-			case 3: chatDuration = -1;
+		case 0:
+			chatDuration *= 2;
+			break;
+		case 2:
+			chatDuration /= 4;
+			break;
+		case 3:
+			chatDuration = -1;
+			break;
 		}
 	}
 
@@ -110,6 +114,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
+				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				runLoop = false;
 				break;

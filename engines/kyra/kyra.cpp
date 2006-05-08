@@ -935,36 +935,36 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 	if (_mouseX >= _entranceMouseCursorTracks[0] && _mouseY >= _entranceMouseCursorTracks[1]
 		&& _mouseX <= _entranceMouseCursorTracks[2] && _mouseY <= _entranceMouseCursorTracks[3]) {
 		switch (_entranceMouseCursorTracks[4]) {
-			case 0:
-				newMouseState = -6;
-				shape = 2;
-				newX = 5;
-				newY = 1;
-				break;
-			
-			case 2:
-				newMouseState = -5;
-				shape = 3;
-				newX = 7;
-				newY = 5;
-				break;
-			
-			case 4:
-				newMouseState = -4;
-				shape = 4;
-				newX = 5;
-				newY = 7;
-				break;
-			
-			case 6:
-				newMouseState = -3;
-				shape = 5;
-				newX = 1;
-				newY = 5;
-				break;
-			
-			default:
-				break;
+		case 0:
+			newMouseState = -6;
+			shape = 2;
+			newX = 5;
+			newY = 1;
+			break;
+
+		case 2:
+			newMouseState = -5;
+			shape = 3;
+			newX = 7;
+			newY = 5;
+			break;
+
+		case 4:
+			newMouseState = -4;
+			shape = 4;
+			newX = 5;
+			newY = 7;
+			break;
+
+		case 6:
+			newMouseState = -3;
+			shape = 5;
+			newX = 1;
+			newY = 5;
+			break;
+
+		default:
+			break;
 		}
 	}
 	

@@ -301,24 +301,24 @@ int KyraEngine::cmd_sceneToDirection(ScriptState *script) {
 	Room *curRoom = &_roomTable[stackPos(0)];
 	uint16 returnValue = 0xFFFF;
 	switch (stackPos(1)) {
-		case 0:
-			returnValue = curRoom->northExit;
-			break;
-		
-		case 2:
-			returnValue = curRoom->eastExit;
-			break;
-		
-		case 4:
-			returnValue = curRoom->southExit;
-			break;
-		
-		case 6:
-			returnValue = curRoom->westExit;
-			break;
-		
-		default:
-			break;
+	case 0:
+		returnValue = curRoom->northExit;
+		break;
+
+	case 2:
+		returnValue = curRoom->eastExit;
+		break;
+
+	case 4:
+		returnValue = curRoom->southExit;
+		break;
+
+	case 6:
+		returnValue = curRoom->westExit;
+		break;
+
+	default:
+		break;
 	}
 	if (returnValue == 0xFFFF)
 		return -1;
@@ -991,46 +991,46 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 	while (running) {
 		bool forceContinue = false;
 		switch (*curPos) {
-			case 0:
-				_characterList[character].facing = 2;
-				break;
-				
-			case 1:
-				_characterList[character].facing = 1;
-				break;
-				
-			case 2:
-				_characterList[character].facing = 0;
-				break;
-				
-			case 3:
-				_characterList[character].facing = 7;
-				break;
-				
-			case 4:
-				_characterList[character].facing = 6;
-				break;
-				
-			case 5:
-				_characterList[character].facing = 5;
-				break;
-				
-			case 6:
-				_characterList[character].facing = 4;
-				break;
-				
-			case 7:
-				_characterList[character].facing = 3;
-				break;
-				
-			case 8:
-				running = 0;
-				break;
-				
-			default:
-				++curPos;
-				forceContinue = true;
-				break;
+		case 0:
+			_characterList[character].facing = 2;
+			break;
+
+		case 1:
+			_characterList[character].facing = 1;
+			break;
+
+		case 2:
+			_characterList[character].facing = 0;
+			break;
+
+		case 3:
+			_characterList[character].facing = 7;
+			break;
+
+		case 4:
+			_characterList[character].facing = 6;
+			break;
+
+		case 5:
+			_characterList[character].facing = 5;
+			break;
+
+		case 6:
+			_characterList[character].facing = 4;
+			break;
+
+		case 7:
+			_characterList[character].facing = 3;
+			break;
+
+		case 8:
+			running = 0;
+			break;
+
+		default:
+			++curPos;
+			forceContinue = true;
+			break;
 		}
 		
 		if (forceContinue || !running) {
@@ -1194,26 +1194,26 @@ int KyraEngine::cmd_setFireberryGlowPalette(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "cmd_setFireberryGlowPalette(%p) (%d)", (const void *)script, stackPos(0));
 	int palIndex = 0;
 	switch (stackPos(0)) {
-		case 0x1E:
-			palIndex = 9;
-			break;
-			
-		case 0x1F:
-			palIndex = 10;
-			break;
-		
-		case 0x20:
-			palIndex = 11;
-			break;
-		
-		case 0x21:
-		case -1:
-			palIndex = 12;
-			break;
-			
-		default:
-			palIndex = 8;
-			break;
+	case 0x1E:
+		palIndex = 9;
+		break;
+
+	case 0x1F:
+		palIndex = 10;
+		break;
+
+	case 0x20:
+		palIndex = 11;
+		break;
+
+	case 0x21:
+	case -1:
+		palIndex = 12;
+		break;
+
+	default:
+		palIndex = 8;
+		break;
 	}
 	if (_brandonStatusBit & 2) {
 		if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&

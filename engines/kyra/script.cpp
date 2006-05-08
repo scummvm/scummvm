@@ -309,19 +309,19 @@ void ScriptHelper::c1_setRetValue(ScriptState* script) {
 
 void ScriptHelper::c1_pushRetOrPos(ScriptState* script) {
 	switch (_parameter) {
-		case 0:
-			script->stack[--script->sp] = script->retValue;
+	case 0:
+		script->stack[--script->sp] = script->retValue;
 		break;
-		
-		case 1:
-			script->stack[--script->sp] = (script->ip - script->dataPtr->data) / 2 + 1;
-			script->stack[--script->sp] = script->bp;
-			script->bp = script->sp + 2;
+
+	case 1:
+		script->stack[--script->sp] = (script->ip - script->dataPtr->data) / 2 + 1;
+		script->stack[--script->sp] = script->bp;
+		script->bp = script->sp + 2;
 		break;
-		
-		default:
-			_continue = false;
-			script->ip = 0;
+
+	default:
+		_continue = false;
+		script->ip = 0;
 		break;
 	}
 }
@@ -344,23 +344,23 @@ void ScriptHelper::c1_pushBPAdd(ScriptState* script) {
 
 void ScriptHelper::c1_popRetOrPos(ScriptState* script) {
 	switch (_parameter) {
-		case 0:
-			script->retValue = script->stack[script->sp++];
+	case 0:
+		script->retValue = script->stack[script->sp++];
 		break;
-		
-		case 1:
-			if (script->sp >= 60) {
-				_continue = false;
-				script->ip = 0;
-			} else {
-				script->bp = script->stack[script->sp++];
-				script->ip = script->dataPtr->data + (script->stack[script->sp++] << 1);
-			}
-		break;
-		
-		default:
+
+	case 1:
+		if (script->sp >= 60) {
 			_continue = false;
 			script->ip = 0;
+		} else {
+			script->bp = script->stack[script->sp++];
+			script->ip = script->dataPtr->data + (script->stack[script->sp++] << 1);
+		}
+		break;
+
+	default:
+		_continue = false;
+		script->ip = 0;
 		break;
 	}
 }
@@ -404,24 +404,24 @@ void ScriptHelper::c1_ifNotJmp(ScriptState* script) {
 void ScriptHelper::c1_negate(ScriptState* script) {
 	int16 value = script->stack[script->sp];
 	switch (_parameter) {
-		case 0:
-			if (!value) {
-				script->stack[script->sp] = 1;
-			} else {
-				script->stack[script->sp] = 0;
-			}
+	case 0:
+		if (!value) {
+			script->stack[script->sp] = 1;
+		} else {
+			script->stack[script->sp] = 0;
+		}
 		break;
-		
-		case 1:
-			script->stack[script->sp] = -value;
+
+	case 1:
+		script->stack[script->sp] = -value;
 		break;
-		
-		case 2:
-			script->stack[script->sp] = ~value;
+
+	case 2:
+		script->stack[script->sp] = ~value;
 		break;
-		
-		default:
-			_continue = false;
+
+	default:
+		_continue = false;
 		break;
 	}
 }
@@ -434,113 +434,113 @@ void ScriptHelper::c1_eval(ScriptState* script) {
 	int16 val2 = script->stack[script->sp++];
 	
 	switch (_parameter) {
-		case 0:
-			if (!val2 || !val1) {
-				ret = 0;
-			} else {
-				ret = 1;
-			}
+	case 0:
+		if (!val2 || !val1) {
+			ret = 0;
+		} else {
+			ret = 1;
+		}
 		break;
-		
-		case 1:
-			if (val2 || val1) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 1:
+		if (val2 || val1) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 2:
-			if (val1 == val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 2:
+		if (val1 == val2) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 3:
-			if (val1 != val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 3:
+		if (val1 != val2) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 4:
-			if (val1 > val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 4:
+		if (val1 > val2) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 5:
-			if (val1 >= val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 5:
+		if (val1 >= val2) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 6:
-			if (val1 < val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 6:
+		if (val1 < val2) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 7:
-			if (val1 <= val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
+
+	case 7:
+		if (val1 <= val2) {
+			ret = 1;
+		} else {
+			ret = 0;
+		}
 		break;
-		
-		case 8:
-			ret = val1 + val2;
+
+	case 8:
+		ret = val1 + val2;
 		break;
-		
-		case 9:
-			ret = val2 - val1;
+
+	case 9:
+		ret = val2 - val1;
 		break;
-		
-		case 10:
-			ret = val1 * val2;
+
+	case 10:
+		ret = val1 * val2;
 		break;
-		
-		case 11:
-			ret = val2 / val1;
+
+	case 11:
+		ret = val2 / val1;
 		break;
-		
-		case 12:
-			ret = val2 >> val1;
+
+	case 12:
+		ret = val2 >> val1;
 		break;
-		
-		case 13:
-			ret = val2 << val1;
+
+	case 13:
+		ret = val2 << val1;
 		break;
-		
-		case 14:
-			ret = val1 & val2;
+
+	case 14:
+		ret = val1 & val2;
 		break;
-		
-		case 15:
-			ret = val1 | val2;
+
+	case 15:
+		ret = val1 | val2;
 		break;
-		
-		case 16:
-			ret = val2 % val1;
+
+	case 16:
+		ret = val2 % val1;
 		break;
-		
-		case 17:
-			ret = val1 ^ val2;
+
+	case 17:
+		ret = val1 ^ val2;
 		break;
-		
-		default:
-			warning("Unknown evaluate func: %d", _parameter);
-			error = true;
+
+	default:
+		warning("Unknown evaluate func: %d", _parameter);
+		error = true;
 		break;
 	}
 	

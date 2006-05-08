@@ -254,21 +254,21 @@ void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int dra
 		
 		const uint16 *opcodes = 0;
 		switch (jewel - 1) {
-			case 0:
-				opcodes = specialJewelTable1;
-				break;
+		case 0:
+			opcodes = specialJewelTable1;
+			break;
 				
-			case 1:
-				opcodes = specialJewelTable2;
-				break;
+		case 1:
+			opcodes = specialJewelTable2;
+			break;
 				
-			case 2:
-				opcodes = specialJewelTable3;
-				break;
+		case 2:
+			opcodes = specialJewelTable3;
+			break;
 				
-			case 3:
-				opcodes = specialJewelTable4;
-				break;
+		case 3:
+			opcodes = specialJewelTable4;
+			break;
 		}
 		
 		if (opcodes) {
@@ -793,44 +793,44 @@ void KyraEngine::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 	uint8 red, green, blue;
 	
 	switch (item) {
-		case 60:
-		case 61:
-			red = 63;
-			green = blue = 6;
-			break;
-		case 62:
-		case 63:
-			red = green = 0;
-			blue = 67;
-			break;
-		case 64:
-		case 65:
-			red = 84;
-			green = 78;
-			blue = 14;
-			break;
-		case 66:
-			red = blue = 0;
-			green = 48;
-			break;
-		case 67:
-			red = 100;
-			green = 48;
-			blue = 23;
-			break;
-		case 68:
-			red = 73;
-			green = 0;
-			blue = 89;
-			break;
-		case 69:
-			red = green = 73;
-			blue = 86;
-			break;
-		default:
-			red = 33;
-			green = 66;
-			blue = 100;
+	case 60:
+	case 61:
+		red = 63;
+		green = blue = 6;
+		break;
+	case 62:
+	case 63:
+		red = green = 0;
+		blue = 67;
+		break;
+	case 64:
+	case 65:
+		red = 84;
+		green = 78;
+		blue = 14;
+		break;
+	case 66:
+		red = blue = 0;
+		green = 48;
+		break;
+	case 67:
+		red = 100;
+		green = 48;
+		blue = 23;
+		break;
+	case 68:
+		red = 73;
+		green = 0;
+		blue = 89;
+		break;
+	case 69:
+		red = green = 73;
+		blue = 86;
+		break;
+	default:
+		red = 33;
+		green = 66;
+		blue = 100;
 	}
 	red   = (uint8)((double)red   * 0.63);
 	green = (uint8)((double)green * 0.63);
@@ -1162,107 +1162,79 @@ int KyraEngine::handleMalcolmFlag() {
 	static uint32 timer2 = 0;
 	
 	switch (_malcolmFlag) {
-		case 1:
-			frame = 0;
-			_malcolmFlag = 2;
-			timer2 = 0;
-		case 2:
+	case 1:
+		frame = 0;
+		_malcolmFlag = 2;
+		timer2 = 0;
+	case 2:
+		if (_system->getMillis() >= timer2) {
+			_finalA->_x = 8;
+			_finalA->_y = 46;
+			_finalA->_drawPage = 0;
+			_finalA->displayFrame(frame);
+			_screen->updateScreen();
+			timer2 = _system->getMillis() + 8 * _tickLength;
+			++frame;
+			if (frame > 13) {
+				_malcolmFlag = 3;
+				timer1 = _system->getMillis() + 180 * _tickLength;
+			}
+		}
+		break;
+		
+	case 3:
+		if (_system->getMillis() < timer1) {
 			if (_system->getMillis() >= timer2) {
+				frame = _rnd.getRandomNumberRng(14, 17);
 				_finalA->_x = 8;
 				_finalA->_y = 46;
 				_finalA->_drawPage = 0;
 				_finalA->displayFrame(frame);
 				_screen->updateScreen();
 				timer2 = _system->getMillis() + 8 * _tickLength;
-				++frame;
-				if (frame > 13) {
-					_malcolmFlag = 3;
-					timer1 = _system->getMillis() + 180 * _tickLength;
-				}
 			}
-			break;
+		} else {
+			_malcolmFlag = 4;
+			frame = 18;
+		}
+		break;
 		
-		case 3:
-			if (_system->getMillis() < timer1) {
-				if (_system->getMillis() >= timer2) {
-					frame = _rnd.getRandomNumberRng(14, 17);
-					_finalA->_x = 8;
-					_finalA->_y = 46;
-					_finalA->_drawPage = 0;
-					_finalA->displayFrame(frame);
-					_screen->updateScreen();
-					timer2 = _system->getMillis() + 8 * _tickLength;
-				}
-			} else {
-				_malcolmFlag = 4;
-				frame = 18;
+	case 4:
+		if (_system->getMillis() >= timer2) {
+			_finalA->_x = 8;
+			_finalA->_y = 46;
+			_finalA->_drawPage = 0;
+			_finalA->displayFrame(frame);
+			_screen->updateScreen();
+			timer2 = _system->getMillis() + 8 * _tickLength;
+			++frame;
+			if (frame > 25) {
+				frame = 26;
+				_malcolmFlag = 5;
+				_beadStateVar = 1;
 			}
-			break;
+		}
+		break;
 		
-		case 4:
-			if (_system->getMillis() >= timer2) {
-				_finalA->_x = 8;
-				_finalA->_y = 46;
-				_finalA->_drawPage = 0;
-				_finalA->displayFrame(frame);
-				_screen->updateScreen();
-				timer2 = _system->getMillis() + 8 * _tickLength;
-				++frame;
-				if (frame > 25) {
-					frame = 26;
-					_malcolmFlag = 5;
-					_beadStateVar = 1;
-				}
+	case 5:
+		if (_system->getMillis() >= timer2) {
+			_finalA->_x = 8;
+			_finalA->_y = 46;
+			_finalA->_drawPage = 0;
+			_finalA->displayFrame(frame);
+			_screen->updateScreen();
+			timer2 = _system->getMillis() + 8 * _tickLength;
+			++frame;
+			if (frame > 31) {
+				frame = 32;
+				_malcolmFlag = 6;
 			}
-			break;
-		
-		case 5:
-			if (_system->getMillis() >= timer2) {
-				_finalA->_x = 8;
-				_finalA->_y = 46;
-				_finalA->_drawPage = 0;
-				_finalA->displayFrame(frame);
-				_screen->updateScreen();
-				timer2 = _system->getMillis() + 8 * _tickLength;
-				++frame;
-				if (frame > 31) {
-					frame = 32;
-					_malcolmFlag = 6;
-				}
-			}
-			break;
+		}
+		break;
 			
-		case 6:
-			if (_unkEndSeqVar4) {
-				if (frame <= 33 && _system->getMillis() >= timer2) {
-					_finalA->_x = 8;
-					_finalA->_y = 46;
-					_finalA->_drawPage = 0;
-					_finalA->displayFrame(frame);
-					_screen->updateScreen();
-					timer2 = _system->getMillis() + 8 * _tickLength;
-					++frame;
-					if (frame > 33) {
-						_malcolmFlag = 7;
-						frame = 32;
-						_unkEndSeqVar5 = 0;
-					}
-				}
-			}
-			break;
-		
-		case 7:
-			if (_unkEndSeqVar5 == 1) {
-				_malcolmFlag = 8;
-				frame = 34;
-			} else if (_unkEndSeqVar5 == 2) {
-				_malcolmFlag = 3;
-				timer1 = _system->getMillis() + 180 * _tickLength;
-			}
-			break;
-		
-		case 8:
-			if (_system->getMillis() >= timer2) {
+	case 6:
+		if (_unkEndSeqVar4) {
+			if (frame <= 33 && _system->getMillis() >= timer2) {
 				_finalA->_x = 8;
 				_finalA->_y = 46;
 				_finalA->_drawPage = 0;
@@ -1270,53 +1242,80 @@ int KyraEngine::handleMalcolmFlag() {
 				_screen->updateScreen();
 				timer2 = _system->getMillis() + 8 * _tickLength;
 				++frame;
-				if (frame > 37) {
-					_malcolmFlag = 0;
-					_deathHandler = 8;
-					return 1;
+				if (frame > 33) {
+					_malcolmFlag = 7;
+					frame = 32;
+					_unkEndSeqVar5 = 0;
 				}
 			}
-			break;
+		}
+		break;
 		
-		case 9:
-			snd_playSoundEffect(12);
-			snd_playSoundEffect(12);
-			_finalC->_x = 16;
-			_finalC->_y = 50;
-			_finalC->_drawPage = 0;
-			for (int i = 0; i < 18; ++i) {
-				timer2 = _system->getMillis() + 4 * _tickLength;
-				_finalC->displayFrame(i);
-				_screen->updateScreen();
-				while (_system->getMillis() < timer2) {}
+	case 7:
+		if (_unkEndSeqVar5 == 1) {
+			_malcolmFlag = 8;
+			frame = 34;
+		} else if (_unkEndSeqVar5 == 2) {
+			_malcolmFlag = 3;
+			timer1 = _system->getMillis() + 180 * _tickLength;
+		}
+		break;
+
+	case 8:
+		if (_system->getMillis() >= timer2) {
+			_finalA->_x = 8;
+			_finalA->_y = 46;
+			_finalA->_drawPage = 0;
+			_finalA->displayFrame(frame);
+			_screen->updateScreen();
+			timer2 = _system->getMillis() + 8 * _tickLength;
+			++frame;
+			if (frame > 37) {
+				_malcolmFlag = 0;
+				_deathHandler = 8;
+				return 1;
 			}
-			snd_playWanderScoreViaMap(51, 1);
-			delay(60*_tickLength);
-			_malcolmFlag = 0;
-			return 1;
-			break;
+		}
+		break;
 		
-		case 10:
-			if (!_beadStateVar) {
-				handleBeadState();
-				_screen->bitBlitRects();
-				assert(_veryClever);
-				_text->printTalkTextMessage(_veryClever[0], 60, 31, 5, 0, 2);
-				timer2 = _system->getMillis() + 180 * _tickLength;
-				_malcolmFlag = 11;
-			}
-			break;
+	case 9:
+		snd_playSoundEffect(12);
+		snd_playSoundEffect(12);
+		_finalC->_x = 16;
+		_finalC->_y = 50;
+		_finalC->_drawPage = 0;
+		for (int i = 0; i < 18; ++i) {
+			timer2 = _system->getMillis() + 4 * _tickLength;
+			_finalC->displayFrame(i);
+			_screen->updateScreen();
+			while (_system->getMillis() < timer2) {}
+		}
+		snd_playWanderScoreViaMap(51, 1);
+		delay(60 * _tickLength);
+		_malcolmFlag = 0;
+		return 1;
 		
-		case 11:
-			if (_system->getMillis() >= timer2) {
-				_text->restoreTalkTextMessageBkgd(2, 0);
-				_malcolmFlag = 3;
-				timer1 = _system->getMillis() + 180 * _tickLength;
-			}
-			break;
+	case 10:
+		if (!_beadStateVar) {
+			handleBeadState();
+			_screen->bitBlitRects();
+			assert(_veryClever);
+			_text->printTalkTextMessage(_veryClever[0], 60, 31, 5, 0, 2);
+			timer2 = _system->getMillis() + 180 * _tickLength;
+			_malcolmFlag = 11;
+		}
+		break;
 		
-		default:
-			break;
+	case 11:
+		if (_system->getMillis() >= timer2) {
+			_text->restoreTalkTextMessageBkgd(2, 0);
+			_malcolmFlag = 3;
+			timer1 = _system->getMillis() + 180 * _tickLength;
+		}
+		break;
+		
+	default:
+		break;
 	}
 	
 	return 0;
@@ -1344,197 +1343,197 @@ int KyraEngine::handleBeadState() {
 	};
 	
 	switch (_beadStateVar) {
-		case 0:
-			if (beadState1.x != -1 && _endSequenceBackUpRect) {
+	case 0:
+		if (beadState1.x != -1 && _endSequenceBackUpRect) {
+			_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+		}
+			
+		beadState1.x = -1;
+		beadState1.tableIndex = 0;
+		timer1 = 0;
+		timer2 = 0;
+		_lastDisplayedPanPage = 0;
+		return 1;
+		break;
+		
+	case 1:
+		if (beadState1.x != -1) {
+			if (_endSequenceBackUpRect) {
 				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 			}
-			
 			beadState1.x = -1;
 			beadState1.tableIndex = 0;
-			timer1 = 0;
-			timer2 = 0;
-			_lastDisplayedPanPage = 0;
-			return 1;
-			break;
+		}
+		_beadStateVar = 2;
+		break;
 		
-		case 1:
-			if (beadState1.x != -1) {
-				if (_endSequenceBackUpRect) {
+	case 2:
+		if (_system->getMillis() >= timer1) {
+			int x = 0, y = 0;
+			timer1 = _system->getMillis() + 4 * _tickLength;
+			if (beadState1.x == -1) {
+				assert(_panPagesTable);
+				beadState1.width2 = _animator->fetchAnimWidth(_panPagesTable[19], 256);
+				beadState1.width = ((beadState1.width2 + 7) >> 3) + 1;
+				beadState1.height = _animator->fetchAnimHeight(_panPagesTable[19], 256);
+				if (!_endSequenceBackUpRect) {
+					_endSequenceBackUpRect = new uint8[(beadState1.width * beadState1.height) << 3];
+					assert(_endSequenceBackUpRect);
+					memset(_endSequenceBackUpRect, 0, ((beadState1.width * beadState1.height) << 3) * sizeof(uint8));
+				}
+				x = beadState1.x = 60;
+				y = beadState1.y = 40;
+				initBeadState(x, y, x, 25, 8, &beadState2);
+			} else {
+				if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
+					_beadStateVar = 3;
+					timer2 = _system->getMillis() + 240 * _tickLength;
+					_unkEndSeqVar4 = 0;
+					beadState1.dstX = beadState1.x;
+					beadState1.dstY = beadState1.y;
+					return 0;
+				} else {
 					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+					beadState1.x = x;
+					beadState1.y = y;
 				}
-				beadState1.x = -1;
+			}
+			_screen->copyCurPageBlock(x >> 3, y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
+			if (_lastDisplayedPanPage > 17)
+				_lastDisplayedPanPage = 0;
+			_screen->addBitBlitRect(x, y, beadState1.width2, beadState1.height);
+		}
+		break;
+		
+	case 3:
+		if (_system->getMillis() >= timer1) {
+			timer1 = _system->getMillis() + 4 * _tickLength;
+			_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+			beadState1.x = beadState1.dstX + table1[beadState1.tableIndex];
+			beadState1.y = beadState1.dstY + table2[beadState1.tableIndex];
+			_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], beadState1.x, beadState1.y, 0, 0);
+			if (_lastDisplayedPanPage >= 17) {
+				_lastDisplayedPanPage = 0;
+			}
+			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+			++beadState1.tableIndex;
+			if (beadState1.tableIndex > 24) {
 				beadState1.tableIndex = 0;
+				_unkEndSeqVar4 = 1;
 			}
-			_beadStateVar = 2;
-			break;
-		
-		case 2:
-			if (_system->getMillis() >= timer1) {
-				int x = 0, y = 0;
-				timer1 = _system->getMillis() + 4 * _tickLength;
-				if (beadState1.x == -1) {
-					assert(_panPagesTable);
-					beadState1.width2 = _animator->fetchAnimWidth(_panPagesTable[19], 256);
-					beadState1.width = ((beadState1.width2 + 7) >> 3) + 1;
-					beadState1.height = _animator->fetchAnimHeight(_panPagesTable[19], 256);
-					if (!_endSequenceBackUpRect) {
-						_endSequenceBackUpRect = new uint8[(beadState1.width * beadState1.height) << 3];
-						assert(_endSequenceBackUpRect);
-						memset(_endSequenceBackUpRect, 0, ((beadState1.width * beadState1.height) << 3) * sizeof(uint8));
-					}
-					x = beadState1.x = 60;
-					y = beadState1.y = 40;
-					initBeadState(x, y, x, 25, 8, &beadState2);
+			if (_system->getMillis() > timer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
+				snd_playSoundEffect(0x0B);
+				if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&
+					(_brandonStatusBit & 0x20)) {
+					beadState1.unk8 = 290;
+					beadState1.unk9 = 40;
+					_beadStateVar = 5;
 				} else {
-					if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
-						_beadStateVar = 3;
-						timer2 = _system->getMillis() + 240 * _tickLength;
-						_unkEndSeqVar4 = 0;
-						beadState1.dstX = beadState1.x;
-						beadState1.dstY = beadState1.y;
-						return 0;
-					} else {
-						_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-						_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-						beadState1.x = x;
-						beadState1.y = y;
-					}
+					_beadStateVar = 4;
+					beadState1.unk8 = _currentCharacter->x1 - 4;
+					beadState1.unk9 = _currentCharacter->y1 - 30;
 				}
-				_screen->copyCurPageBlock(x >> 3, y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
-				if (_lastDisplayedPanPage > 17)
-					_lastDisplayedPanPage = 0;
-				_screen->addBitBlitRect(x, y, beadState1.width2, beadState1.height);
+					
+				if (_text->printed()) {
+					_text->restoreTalkTextMessageBkgd(2, 0);
+				}
+				initBeadState(beadState1.x, beadState1.y, beadState1.unk8, beadState1.unk9, 6, &beadState2);
+				_lastDisplayedPanPage = 18;
 			}
-			break;
-		
-		case 3:
-			if (_system->getMillis() >= timer1) {
-				timer1 = _system->getMillis() + 4 * _tickLength;
+		}
+		break;
+			
+	case 4:
+		if (_system->getMillis() >= timer1) {
+			int x = 0, y = 0;
+			timer1 = _system->getMillis();
+			if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
+				if (_brandonStatusBit & 20) {
+					_unkEndSeqVar5 = 2;
+					_beadStateVar = 6;
+				} else {
+					snd_playWanderScoreViaMap(52, 1);
+					snd_playSoundEffect(0x0C);
+					_unkEndSeqVar5 = 1;
+					_beadStateVar = 0;
+				}
+			} else {
 				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-				beadState1.x = beadState1.dstX + table1[beadState1.tableIndex];
-				beadState1.y = beadState1.dstY + table2[beadState1.tableIndex];
+				beadState1.x = x;
+				beadState1.y = y;
 				_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], beadState1.x, beadState1.y, 0, 0);
-				if (_lastDisplayedPanPage >= 17) {
+				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
+				if (_lastDisplayedPanPage > 17) {
 					_lastDisplayedPanPage = 0;
 				}
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-				++beadState1.tableIndex;
-				if (beadState1.tableIndex > 24) {
+			}
+		}
+		break;
+		
+	case 5:
+		if (_system->getMillis() >= timer1) {
+			timer1 = _system->getMillis();
+			int x = 0, y = 0;
+			if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
+				if (beadState1.dstX == 290) {
+					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+					uint32 nextRun = 0;
+					_finalB->_x = 224;
+					_finalB->_y = 8;
+					_finalB->_drawPage = 0;
+					for (int i = 0; i < 8; ++i) {
+						nextRun = _system->getMillis() + _tickLength;
+						_finalB->displayFrame(i);
+						_screen->updateScreen();
+						while (_system->getMillis() < nextRun) {}
+					}
+					snd_playSoundEffect(0x0D);
+					for (int i = 7; i >= 0; --i) {
+						nextRun = _system->getMillis() + _tickLength;
+						_finalB->displayFrame(i);
+						_screen->updateScreen();
+						while (_system->getMillis() < nextRun) {}
+					}
+					initBeadState(beadState1.x, beadState1.y, 63, 60, 6, &beadState2);
+				} else {
+					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+					beadState1.x = -1;
 					beadState1.tableIndex = 0;
-					_unkEndSeqVar4 = 1;
+					_beadStateVar = 0;
+					_malcolmFlag = 9;
 				}
-				if (_system->getMillis() > timer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
-					snd_playSoundEffect(0x0B);
-					if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&
-						(_brandonStatusBit & 0x20)) {
-						beadState1.unk8 = 290;
-						beadState1.unk9 = 40;
-						_beadStateVar = 5;
-					} else {
-						_beadStateVar = 4;
-						beadState1.unk8 = _currentCharacter->x1 - 4;
-						beadState1.unk9 = _currentCharacter->y1 - 30;
-					}
-					
-					if (_text->printed()) {
-						_text->restoreTalkTextMessageBkgd(2, 0);
-					}
-					initBeadState(beadState1.x, beadState1.y, beadState1.unk8, beadState1.unk9, 6, &beadState2);
-					_lastDisplayedPanPage = 18;
+			} else {
+				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+				beadState1.x = x;
+				beadState1.y = y;
+				_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
+				if (_lastDisplayedPanPage > 17) {
+					_lastDisplayedPanPage = 0;
 				}
+				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 			}
-			break;
-			
-		case 4:
-			if (_system->getMillis() >= timer1) {
-				int x = 0, y = 0;
-				timer1 = _system->getMillis();
-				if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
-					if (_brandonStatusBit & 20) {
-						_unkEndSeqVar5 = 2;
-						_beadStateVar = 6;
-					} else {
-						snd_playWanderScoreViaMap(52, 1);
-						snd_playSoundEffect(0x0C);
-						_unkEndSeqVar5 = 1;
-						_beadStateVar = 0;
-					}
-				} else {
-					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-					beadState1.x = x;
-					beadState1.y = y;
-					_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-					_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
-					if (_lastDisplayedPanPage > 17) {
-						_lastDisplayedPanPage = 0;
-					}
-					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-				}
-			}
-			break;
+		}
+		break;
 		
-		case 5:
-			if (_system->getMillis() >= timer1) {
-				timer1 = _system->getMillis();
-				int x = 0, y = 0;
-				if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
-					if (beadState1.dstX == 290) {
-						_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-						uint32 nextRun = 0;
-						_finalB->_x = 224;
-						_finalB->_y = 8;
-						_finalB->_drawPage = 0;
-						for (int i = 0; i < 8; ++i) {
-							nextRun = _system->getMillis() + _tickLength;
-							_finalB->displayFrame(i);
-							_screen->updateScreen();
-							while (_system->getMillis() < nextRun) {}
-						}
-						snd_playSoundEffect(0x0D);
-						for (int i = 7; i >= 0; --i) {
-							nextRun = _system->getMillis() + _tickLength;
-							_finalB->displayFrame(i);
-							_screen->updateScreen();
-							while (_system->getMillis() < nextRun) {}
-						}
-						initBeadState(beadState1.x, beadState1.y, 63, 60, 6, &beadState2);
-					} else {
-						_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-						_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-						beadState1.x = -1;
-						beadState1.tableIndex = 0;
-						_beadStateVar = 0;
-						_malcolmFlag = 9;
-					}
-				} else {
-					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-					beadState1.x = x;
-					beadState1.y = y;
-					_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
-					_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
-					if (_lastDisplayedPanPage > 17) {
-						_lastDisplayedPanPage = 0;
-					}
-					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-				}
-			}
-			break;
+	case 6:
+		_screen->drawShape(2, _panPagesTable[19], beadState1.x, beadState1.y, 0, 0);
+		_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+		_beadStateVar = 0;
+		break;
 		
-		case 6:
-			_screen->drawShape(2, _panPagesTable[19], beadState1.x, beadState1.y, 0, 0);
-			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
-			_beadStateVar = 0;
-			break;
-		
-		default:
-			break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1665,50 +1664,50 @@ void KyraEngine::updateKyragemFading() {
 	_screen->setScreenPalette(_screen->_currentPalette);
 	_animator->_updateScreen = true;
 	switch (_kyragemFadingState.nextOperation) {
-		case 0:
-			--_kyragemFadingState.bOffset;
-			if (_kyragemFadingState.bOffset >= 1)
-				return;
-			_kyragemFadingState.nextOperation = 1;
-			break;
+	case 0:
+		--_kyragemFadingState.bOffset;
+		if (_kyragemFadingState.bOffset >= 1)
+			return;
+		_kyragemFadingState.nextOperation = 1;
+		break;
 
-		case 1:
-			++_kyragemFadingState.rOffset;
-			if (_kyragemFadingState.rOffset < 19)
-				return;
-			_kyragemFadingState.nextOperation = 2;
-			break;
+	case 1:
+		++_kyragemFadingState.rOffset;
+		if (_kyragemFadingState.rOffset < 19)
+			return;
+		_kyragemFadingState.nextOperation = 2;
+		break;
 
-		case 2:
-			--_kyragemFadingState.gOffset;
-			if (_kyragemFadingState.gOffset >= 1)
-				return;
-			_kyragemFadingState.nextOperation = 3;
-			break;
+	case 2:
+		--_kyragemFadingState.gOffset;
+		if (_kyragemFadingState.gOffset >= 1)
+			return;
+		_kyragemFadingState.nextOperation = 3;
+		break;
 		
-		case 3:
-			++_kyragemFadingState.bOffset;
-			if (_kyragemFadingState.bOffset < 19)
-				return;
-			_kyragemFadingState.nextOperation = 4;
-			break;
+	case 3:
+		++_kyragemFadingState.bOffset;
+		if (_kyragemFadingState.bOffset < 19)
+			return;
+		_kyragemFadingState.nextOperation = 4;
+		break;
 		
-		case 4:
-			--_kyragemFadingState.rOffset;
-			if (_kyragemFadingState.rOffset >= 1)
-				return;
-			_kyragemFadingState.nextOperation = 5;
-			break;
+	case 4:
+		--_kyragemFadingState.rOffset;
+		if (_kyragemFadingState.rOffset >= 1)
+			return;
+		_kyragemFadingState.nextOperation = 5;
+		break;
 		
-		case 5:
-			++_kyragemFadingState.gOffset;
-			if (_kyragemFadingState.gOffset < 19)
-				return;
-			_kyragemFadingState.nextOperation = 0;
-			break;
+	case 5:
+		++_kyragemFadingState.gOffset;
+		if (_kyragemFadingState.gOffset < 19)
+			return;
+		_kyragemFadingState.nextOperation = 0;
+		break;
 			
-		default:
-			break;
+	default:
+		break;
 	}
 	
 	_kyragemFadingState.timerCount = _system->getMillis() + 120 * _tickLength;
@@ -1765,18 +1764,18 @@ void KyraEngine::drawJewelsFadeOutEnd(int jewel) {
 	debugC(9, kDebugLevelMain, "KyraEngine::drawJewelsFadeOutEnd(%d)", jewel);
 	static const uint16 jewelTable[] = { 0x153, 0x158, 0x15D, 0x162, 0x148, 0xFFFF };
 	int newDelay = 0;
-	switch (jewel-1) {
-		case 2:
-			if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
-				newDelay = 18900;
-			} else {
-				newDelay = 8100;
-			}
-			break;
+	switch (jewel - 1) {
+	case 2:
+		if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+			newDelay = 18900;
+		} else {
+			newDelay = 8100;
+		}
+		break;
 			
-		default:
-			newDelay = 3600;
-			break;
+	default:
+		newDelay = 3600;
+		break;
 	}
 	setGameFlag(0xF1);
 	setTimerCountdown(19, newDelay);

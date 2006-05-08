@@ -136,24 +136,24 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 		bool placeItem = false;
 		
 		switch (nameIndex) {
-			case 0:  case 1:   case 2:   case 3:
-			case 4:  case 5:   case 6:   case 11:
-			case 12: case 16:  case 17:  case 20:
-			case 22: case 23:  case 25:  case 26:
-			case 27: case 31:  case 33:  case 34:
-			case 36: case 37:  case 58:  case 59:
-			case 60: case 61:  case 83:  case 84:
-			case 85: case 104: case 105: case 106:
-				placeItem = true;
+		case 0:  case 1:   case 2:   case 3:
+		case 4:  case 5:   case 6:   case 11:
+		case 12: case 16:  case 17:  case 20:
+		case 22: case 23:  case 25:  case 26:
+		case 27: case 31:  case 33:  case 34:
+		case 36: case 37:  case 58:  case 59:
+		case 60: case 61:  case 83:  case 84:
+		case 85: case 104: case 105: case 106:
+			placeItem = true;
 			break;
 			
-			case 51:
-				if (room != 46) {
-					placeItem = true;
-					break;
-				}		
-			default:
-				placeItem = false;
+		case 51:
+			if (room != 46) {
+				placeItem = true;
+				break;
+			}		
+		default:
+			placeItem = false;
 			break;
 		}
 		
