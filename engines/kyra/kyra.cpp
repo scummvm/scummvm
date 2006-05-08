@@ -698,6 +698,8 @@ void KyraEngine::delayWithTicks(int ticks) {
 		}
 		if (_skipFlag)
 			break;
+		if (nextTime - _system->getMillis() >= 10)
+			delay(10);
 	}
 }
 
