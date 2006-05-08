@@ -964,17 +964,17 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			uint8 color = shapeBuffer[j * shapeWidth + xpos];
 			if (color != 0) {
 				switch (ppc) {
-					case 0:
-						*dst = color;
-						break;
+				case 0:
+					*dst = color;
+					break;
 
-					case 1:
-						for (int i = 0; i < tableLoopCount; ++i) {
-							color = table[color];
-						}
-						break;
-						
-					case 2: {
+				case 1:
+					for (int i = 0; i < tableLoopCount; ++i) {
+						color = table[color];
+					}
+					break;
+
+				case 2: {
 						int temp = drawShapeVar4 + drawShapeVar5;
 						if (temp & 0xFF00) {
 							drawShapeVar4 = temp & 0xFF;
@@ -984,28 +984,29 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						} else {
 							drawShapeVar4 = temp;
 						}
-					}	break;
-					
-					case 7:
-					case 3:
-						color = *dst;
-						for (int i = 0; i < tableLoopCount; ++i) {
-							color = table[color];
-						}
-						break;
-						
-					case 4:
-						color = table2[color];
-						break;
-						
-					case 5:
-						color = table2[color];
-						for (int i = 0; i < tableLoopCount; ++i) {
-							color = table[color];
-						}
-						break;
-						
-					case 6: {
+					}
+					break;
+
+				case 7:
+				case 3:
+					color = *dst;
+					for (int i = 0; i < tableLoopCount; ++i) {
+						color = table[color];
+					}
+					break;
+
+				case 4:
+					color = table2[color];
+					break;
+
+				case 5:
+					color = table2[color];
+					for (int i = 0; i < tableLoopCount; ++i) {
+						color = table[color];
+					}
+					break;
+
+				case 6: {
 						int temp = drawShapeVar4 + drawShapeVar5;
 						if (temp & 0xFF00) {
 							drawShapeVar4 = temp & 0xFF;
@@ -1016,9 +1017,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 							drawShapeVar4 = temp;
 							color = table2[color];
 						}
-					}	break;
-						
-					case 8: {
+					}
+					break;
+
+				case 8: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1026,9 +1028,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						}
-					}	break;
-					
-					case 9: {
+					}
+					break;
+
+				case 9: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1040,9 +1043,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 								color = table[color];
 							}
 						}
-					}	break;
-					
-					case 10: {
+					}
+					break;
+
+				case 10: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1059,10 +1063,11 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 							}
 							drawShapeVar4 = temp & 0xFF;
 						}
-					}	break;
+					}
+					break;
 					
-					case 15:
-					case 11: {
+				case 15:
+				case 11: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1075,9 +1080,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 								color = table[color];
 							}
 						}
-					}	break;
-					
-					case 12: {
+					}
+					break;
+
+				case 12: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1087,9 +1093,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						} else {
 							color = table2[color];
 						}
-					}	break;
-					
-					case 13: {
+					}
+					break;
+
+				case 13: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1102,9 +1109,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 								color = table[color];
 							}
 						}
-					}	break;
-					
-					case 14: {
+					}
+					break;
+
+				case 14: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1124,17 +1132,19 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 								color = table2[color];
 							}
 						}
-					}	break;
-					
-					case 16: {
+					}
+					break;
+
+				case 16: {
 						uint8 newColor = table3[color];
 						if (!(newColor & 0x80)) {
 							color = *dst;
 							color = table4[color + (newColor << 8)];
 						}
-					}	break;
+					}
+					break;
 					
-					case 17: {
+				case 17: {
 						for (int i = 0; i < tableLoopCount; ++i) {
 							color = table[color];
 						}
@@ -1143,9 +1153,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 							color = *dst;
 							color = table4[color + (newColor << 8)];
 						}
-					}	break;
-					
-					case 18: {
+					}
+					break;
+
+				case 18: {
 						int temp = drawShapeVar4 + drawShapeVar5;
 						if (temp & 0xFF00) {
 							drawShapeVar4 = temp & 0xFF;
@@ -1160,10 +1171,11 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						} else {
 							drawShapeVar4 = temp;
 						}
-					}	break;
-					
-					case 23:
-					case 19: {
+					}
+					break;
+
+				case 23:
+				case 19: {
 						color = *dst;
 						for (int i = 0; i < tableLoopCount; ++i) {
 							color = table[color];
@@ -1173,18 +1185,20 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 							color = *dst;
 							color = table4[color + (newColor << 8)];
 						}
-					}	break;
+					}
+					break;
 					
-					case 20: {
+				case 20: {
 						color = table2[color];
 						uint8 newColor = table3[color];
 						if (!(newColor & 0x80)) {
 							color = *dst;
 							color = table4[color + (newColor << 8)];
 						}
-					}	break;
+					}
+					break;
 					
-					case 21: {
+				case 21: {
 						color = table2[color];
 						for (int i = 0; i < tableLoopCount; ++i) {
 							color = table[color];
@@ -1194,9 +1208,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 							color = *dst;
 							color = table4[color + (newColor << 8)];
 						}
-					}	break;
+					}
+					break;
 					
-					case 22: {
+				case 22: {
 						int temp = drawShapeVar4 + drawShapeVar5;
 						if (temp & 0xFF00) {
 							drawShapeVar4 = temp & 0xFF;
@@ -1217,9 +1232,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 								color = table4[color + (newColor << 8)];
 							}
 						}
-					}	break;
+					}
+					break;
 					
-					case 24: {
+				case 24: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
@@ -1232,11 +1248,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 							color = *dst;
 							color = table4[color + (newColor << 8)];
 						}
-					}	break;
-					
-					default:
-						warning("unhandled ppc: %d", ppc);
-						break;
+					}
+					break;
+
+				default:
+					warning("unhandled ppc: %d", ppc);
+					break;
 				}
 				*dst = color;
 			}

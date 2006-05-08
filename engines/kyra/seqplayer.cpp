@@ -346,13 +346,14 @@ void SeqPlayer::s1_copyRegionSpecial() {
 		_screen->copyRegion(152, 56, 152, 56, 48, 48, 2, 0);
 		break;
 	case 4: {
-		_screen->_charWidth = -2;
-		const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
-		const int y = 179;
-		_screen->setTextColorMap(colorMap);
-		_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
-		_screen->printText(copyStr, x, y, 0xF, 0xC);
-	}	break;
+			_screen->_charWidth = -2;
+			const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
+			const int y = 179;
+			_screen->setTextColorMap(colorMap);
+			_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
+			_screen->printText(copyStr, x, y, 0xF, 0xC);
+		}
+		break;
 	case 5:
 		_screen->_curPage = 2;
 		break;

@@ -831,6 +831,7 @@ void KyraEngine::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 		red = 33;
 		green = 66;
 		blue = 100;
+		break;
 	}
 	red   = (uint8)((double)red   * 0.63);
 	green = (uint8)((double)green * 0.63);
@@ -1355,7 +1356,6 @@ int KyraEngine::handleBeadState() {
 		timer2 = 0;
 		_lastDisplayedPanPage = 0;
 		return 1;
-		break;
 		
 	case 1:
 		if (beadState1.x != -1) {
