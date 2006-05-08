@@ -218,7 +218,7 @@ void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
 		_screen->updateScreen();
 		y += 2;
 		height -= 2;
-		while (_system->getMillis() < nextTime) {}
+		delayUntil(nextTime);
 	}	
 	_screen->restoreRect1(xpos, ypos);
 	_screen->resetShapeHeight(_shapes[220+_itemInHand]);
@@ -560,10 +560,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 			uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 			_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
 			_screen->updateScreen();
-			while (_system->getMillis() < nextTime) {
-				if ((nextTime - _system->getMillis()) >= 10)
-					delay(10);
-			}
+			delayUntil(nextTime);
 		}
 		
 		bool skip = false;
@@ -603,10 +600,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 				uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 				_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
 				_screen->updateScreen();
-				while (_system->getMillis() < nextTime) {
-					if ((nextTime - _system->getMillis()) >= 10)
-						delay(10);
-				}
+				delayUntil(nextTime);
 			}
 			_screen->restoreRect0(drawX, drawY);
 		} else {
@@ -659,10 +653,7 @@ void KyraEngine::itemSpecialFX1(int x, int y, int item) {
 		uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 		_screen->drawShape(0, shape, x, startY, 0, 0);
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if ((nextTime - _system->getMillis()) >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	_screen->restoreRect0(x, y);
 	_screen->showMouse();
@@ -683,10 +674,7 @@ void KyraEngine::itemSpecialFX2(int x, int y, int item) {
 		uint32 nextTime = _system->getMillis() + 3 * _tickLength;
 		_screen->drawShape(0, _shapes[4+i], x, y + yAdd, 0, 0);
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if ((nextTime - _system->getMillis()) >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	
 	for (int i = 204; i >= 201; --i) {
@@ -695,10 +683,7 @@ void KyraEngine::itemSpecialFX2(int x, int y, int item) {
 		_screen->drawShape(0, _shapes[220+item], x, y, 0, 0);
 		_screen->drawShape(0, _shapes[4+i], x, y + yAdd, 0, 0);
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if ((nextTime - _system->getMillis()) >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	_screen->restoreRect0(x, y);
 }
@@ -755,10 +740,7 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		}
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if (nextTime - _system->getMillis() >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	
 	if (itemPos != -1) {
@@ -777,10 +759,7 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		}
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if (nextTime - _system->getMillis() >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	_screen->restoreRect1(x, y);
 	if (itemPos == -1) {
@@ -843,10 +822,7 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		}
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if (nextTime - _system->getMillis() >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	
 	for (int shape = _magicMouseItemStartFrame2[animIndex]; shape <= _magicMouseItemEndFrame2[animIndex]; ++shape) {
@@ -858,10 +834,7 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		}
 		_screen->updateScreen();
-		while (_system->getMillis() < nextTime) {
-			if (nextTime - _system->getMillis() >= 10)
-				delay(10);
-		}
+		delayUntil(nextTime);
 	}
 	_screen->restoreRect1(x, y);
 	if (itemPos == -1) {

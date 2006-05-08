@@ -561,6 +561,15 @@ void KyraEngine::quitGame() {
 	_system->quit();
 }
 
+void KyraEngine::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
+	while (_system->getMillis() < timestamp) {
+		if (updateTimers)
+			updateGameTimers();
+		if (timestamp - _system->getMillis() >= 10)
+			delay(10, update, isMainLoop);
+	}
+}
+
 void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 	OSystem::Event event;
 	char saveLoadSlot[20];

@@ -948,10 +948,10 @@ int KyraEngine::seq_playEnd() {
 			_finalA->open("finald.wsa", 1, 0);
 			_finalA->_x = _finalA->_y = 8;
 			_finalA->_drawPage = 0;
-			while (_system->getMillis() < nextTime) {}
+			delayUntil(nextTime);
 			snd_playSoundEffect(0x40);
 			for (int i = 0; i < 22; ++i) {
-				while (_system->getMillis() < nextTime) {}
+				delayUntil(nextTime);
 				if (i == 4) {
 					snd_playSoundEffect(0x3E);
 				} else if (i == 20) {
@@ -1292,7 +1292,7 @@ int KyraEngine::handleMalcolmFlag() {
 			timer2 = _system->getMillis() + 4 * _tickLength;
 			_finalC->displayFrame(i);
 			_screen->updateScreen();
-			while (_system->getMillis() < timer2) {}
+			delayUntil(timer2);
 		}
 		snd_playWanderScoreViaMap(51, 1);
 		delay(60 * _tickLength);
@@ -1496,14 +1496,14 @@ int KyraEngine::handleBeadState() {
 						nextRun = _system->getMillis() + _tickLength;
 						_finalB->displayFrame(i);
 						_screen->updateScreen();
-						while (_system->getMillis() < nextRun) {}
+						delayUntil(nextRun);
 					}
 					snd_playSoundEffect(0x0D);
 					for (int i = 7; i >= 0; --i) {
 						nextRun = _system->getMillis() + _tickLength;
 						_finalB->displayFrame(i);
 						_screen->updateScreen();
-						while (_system->getMillis() < nextRun) {}
+						delayUntil(nextRun);
 					}
 					initBeadState(beadState1.x, beadState1.y, 63, 60, 6, &beadState2);
 				} else {

@@ -252,7 +252,7 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 		while (ypos < ch->y1) {
 			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
-			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+			delayUntil(nextFrame, true);
 		}
 		break;
 		
@@ -260,7 +260,7 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 		while (ch->x1 < xpos) {
 			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
-			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+			delayUntil(nextFrame, true);
 		}
 		break;
 		
@@ -268,7 +268,7 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 		while (ypos > ch->y1) {
 			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
-			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+			delayUntil(nextFrame, true);
 		}
 		break;
 		
@@ -276,7 +276,7 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 		while (ch->x1 > xpos) {
 			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
-			while (_system->getMillis() < nextFrame) { updateGameTimers(); }
+			delayUntil(nextFrame, true);
 		}
 		break;
 		

@@ -286,7 +286,8 @@ public:
 	const uint8 * const*palTable2() { return &_specialPalettes[29]; }
 
 	bool seq_skipSequence() const;
-	void delay(uint32 millis, bool update = false, bool mainLoop = false);
+	void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
+	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
 	void quitGame();
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
