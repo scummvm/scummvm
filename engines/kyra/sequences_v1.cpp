@@ -1560,8 +1560,8 @@ void KyraEngine::initBeadState(int x, int y, int x2, int y2, int unk, BeadState 
 		unk2 = -1;
 	}
 	
-	xDiff = abs(xDiff);
-	yDiff = abs(yDiff);
+	xDiff = ABS(xDiff);
+	yDiff = ABS(yDiff);
 	
 	ptr->y = 0;
 	ptr->x = 0;
@@ -1600,11 +1600,11 @@ int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 		}
 	}
 	
-	int temp = abs(x - ptr->dstX);
+	int temp = ABS(x - ptr->dstX);
 	if (ptr->unk9 > temp) {
 		xPos = ptr->dstX;
 	}
-	temp = abs(y - ptr->dstY);
+	temp = ABS(y - ptr->dstY);
 	if (ptr->unk9 > temp) {
 		yPos = ptr->dstY;
 	}

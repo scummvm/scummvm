@@ -348,7 +348,7 @@ void Hotspot::faceHotspot(HotspotData *hotspot) {
 		int xp = x() - hotspot->startX;
 		int yp = y() + heightCopy() - (hotspot->startY + hotspot->heightCopy);
 
-		if (abs(yp) >= abs(xp)) {
+		if (ABS(yp) >= ABS(xp)) {
 			if (yp < 0) setDirection(DOWN);
 			else setDirection(UP);
 		} else {
@@ -529,8 +529,8 @@ bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
 			// Special handling for walking
 //			if (((xp >> 3) != (x() >> 3)) ||
 //				((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
-			if ((abs(xp - x()) > 8) || 
-				(abs(yp - (y() + heightCopy())) > 8)) {
+			if ((ABS(xp - x()) > 8) || 
+				(ABS(yp - (y() + heightCopy())) > 8)) {
 				walkTo(xp, yp);
 				return true;
 			} else {
@@ -541,8 +541,8 @@ bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
 
 	// Default walking handling
 	// TODO: ANIM[27h] = 1 if hotspot has walk co-ordinates
-	if ((abs(x() - xp) >= 8) ||
-		(abs(y() + heightCopy() - yp - 1) >= 19)) {
+	if ((ABS(x() - xp) >= 8) ||
+		(ABS(y() + heightCopy() - yp - 1) >= 19)) {
 		walkTo(xp, yp);
 		return true;
 	}

@@ -2808,8 +2808,8 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 	int errterm;
 	int i;
 
-	delta.x = abs(point2.x - point1.x);
-	delta.y = abs(point2.y - point1.y);
+	delta.x = ABS(point2.x - point1.x);
+	delta.y = ABS(point2.y - point1.y);
 	point = point1;
 	s1 = integerCompare(point2.x, point1.x);
 	s2 = integerCompare(point2.y, point1.y);
