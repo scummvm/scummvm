@@ -486,6 +486,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
+	{ "artdemo", "artdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "artdemo", "Blues-ArtTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
 	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
@@ -507,6 +510,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "bluesabctime", "bluesabctime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "BluesBirthdayDemo", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "BluesBirthdayDemo", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -673,11 +679,16 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "zoodemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
+	{ "readdemo", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readdemo", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
 	{ "SamsFunShop", "SamsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "SamsFunShop", "Sam's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "soccer", "soccer", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "soccer", "Soccer", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "SoccerMLS", "SoccerMLS", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "Soccer2004", "Soccer2004", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "Soccer2004", "Soccer 2004", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
