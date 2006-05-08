@@ -155,6 +155,9 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 }
 
 void MoviePlayer::close() {
+	if (_fd.isOpen() == false)
+		return;
+
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
