@@ -52,6 +52,8 @@ uint16 var3;
 uint16 var4;
 uint16 var5;
 
+int16 buildObjectListCommand(void);
+
 // TODO: This could/should be a field in the AnimData struct, but as long as it
 // is marked as packed I don't dare add anything to it without knowing more
 // about how it's used. (It's quite possible that it no longer needs to be
@@ -1207,8 +1209,83 @@ const int16 canUseOnItemTable[] = {
 commandeType objectListCommand[20];
 int16 objListTab[20];
 
-int16 processInventory(int16 x, int16 y) {
-	return 0;
+void makeTextEntry(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width) {
+	byte color = 2;
+	byte color2;
+	int16 paramY = (height * 9) + 10;
+	int16 currentX;
+	int16 currentY;
+	int16 i;
+	uint16 j;
+
+	if (X + width > 319) {
+		X = 319 - width;
+	}
+
+	if (Y + paramY > 199) {
+		Y = 199 - paramY;
+	}
+
+	color2 = defaultMenuBoxColor2;
+
+	hideMouse();
+	blitRawScreen(page1Raw);
+
+	gfxDrawPlainBoxRaw(X, Y, X + width, Y + 4, color2, page1Raw);
+
+	currentX = X + 4;
+	currentY = Y + 4;
+
+	for (i = 0; i < height; i++) {
+		gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 9, color2, page1Raw);
+		currentX = X + 4;
+
+		for (j = 0; j < strlen(commandList[i]); j++) {
+			byte currentChar = commandList[i][j];
+
+			if (currentChar == ' ') {
+				currentX += 5;
+			} else {
+				byte characterWidth = fontParamTable[currentChar].characterWidth;
+
+				if (characterWidth) {
+					byte characterIdx = fontParamTable[currentChar].characterIdx;
+					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
+					currentX += characterWidth + 1;
+				}
+			}
+		}
+
+		currentY += 9;
+	}
+
+	gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 4, color2, page1Raw);	// bottom part
+	gfxDrawLine(X + 1, Y + 1, X + width - 1, Y + 1, 0, page1Raw);	// top
+	gfxDrawLine(X + 1, currentY + 3, X + width - 1, currentY + 3, 0, page1Raw);	// bottom
+	gfxDrawLine(X + 1, Y + 1, X + 1, currentY + 3, 0, page1Raw);	// left
+	gfxDrawLine(X + width - 1, Y + 1, X + width - 1, currentY + 3, 0, page1Raw);	// left
+
+	gfxDrawLine(X, Y, X + width, Y, color, page1Raw);
+	gfxDrawLine(X, currentY + 4, X + width, currentY + 4, color, page1Raw);
+	gfxDrawLine(X, Y, X, currentY + 4, color, page1Raw);
+	gfxDrawLine(X + width, Y, X + width, currentY + 4, color, page1Raw);
+
+	blitRawScreen(page1Raw);
+}
+
+void processInventory(int16 x, int16 y) {
+	int16 listSize = buildObjectListCommand();
+	uint16 button;
+
+	if (!listSize)
+		return;
+
+	makeTextEntry(objectListCommand, listSize, x, y, 140);
+
+	do {
+		manageEvents();
+		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
+	} while (!button);
 }
 
 int16 buildObjectListCommand(void) {
@@ -1343,7 +1420,7 @@ void makeCommandLine(void) {
 	} else {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
-			//processInventory(x, y + 8);
+			processInventory(x, y + 8);
 			playerCommand = -1;
 			commandVar1 = 0;
 			strcpy(commandBuffer, "");
