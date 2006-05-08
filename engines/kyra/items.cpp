@@ -150,8 +150,11 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 		case 51:
 			if (room != 46) {
 				placeItem = true;
-				break;
+			} else {
+				placeItem = false;
 			}		
+			break;
+
 		default:
 			placeItem = false;
 			break;
