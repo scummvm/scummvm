@@ -886,6 +886,12 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	_moviePlay = new MoviePlayer(this);
 	_sprite = new Sprite(this);
 
+	memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
+	_videoParams.status = 0;
+	_videoParams.flags = 0;
+	_videoParams.unk2 = 0;
+	_videoParams.wizResNum = 0;
+
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
 	VAR_NUM_SPRITES = 0xFF;
 	VAR_NUM_PALETTES = 0xFF;
