@@ -543,7 +543,7 @@ void ScummEngine_v90he::o90_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
-			if (_videoParams.flags == 2) {
+			if (_videoParams.flags & 2) {
 				int result = _moviePlay->load((const char *)_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
 				VAR(119) = result;
 			} else {
@@ -639,8 +639,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 5:
 		_wizParams.processFlags |= kWPFClipBox | 0x100;
 		_wizParams.processMode = 2;
-		_wizParams.box.bottom = pop();
-		_wizParams.box.right = pop();
+		_wizParams.box.bottom = pop() + 1;
+		_wizParams.box.right = pop() + 1;
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
 		_wizParams.compType = pop();
