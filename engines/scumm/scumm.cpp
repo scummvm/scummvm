@@ -43,6 +43,7 @@
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/insane/insane.h"
 #include "scumm/intern.h"
+#include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
@@ -882,6 +883,7 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v80he(syst, dr) {
+	_moviePlay = new MoviePlayer(this);
 	_sprite = new Sprite(this);
 
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
@@ -894,6 +896,7 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v90he::~ScummEngine_v90he() {
+	delete _moviePlay;
 	delete _sprite;
 	if (_game.heversion >= 98) {
 		delete _logicHE;
@@ -1581,6 +1584,9 @@ int ScummEngine::scummLoop(int delta) {
 	_rnd.getRandomNumber(2);
 
 #ifndef DISABLE_HE
+	if (_game.heversion >= 90) {
+		((ScummEngine_v90he *)this)->_moviePlay->handleNextFrame();
+	}
 	if (_game.heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->startOfFrame();
 	}

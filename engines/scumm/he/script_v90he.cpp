@@ -25,6 +25,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/object.h"
@@ -515,6 +516,7 @@ void ScummEngine_v90he::o90_videoOps() {
 	int status = fetchScriptByte();
 	int subOp = status - 49;
 
+	debug(0, "o90_videoOps stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
@@ -542,21 +544,20 @@ void ScummEngine_v90he::o90_videoOps() {
 				_videoParams.flags = 4;
 
 			if (_videoParams.flags == 2) {
-				// result = startVideo(_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
-				// VAR(119) = result;
+				int result = _moviePlay->load((const char *)_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
+				VAR(119) = result;
 			} else {
-				// result = startVideo(_videoParams.filename, _videoParams.flags);
-				// VAR(119) = result;
+				int result = _moviePlay->load((const char *)_videoParams.filename, _videoParams.flags);
+				VAR(119) = result;
 			}
 		} else if (_videoParams.status == 165) {
 			// Stop video
+			_moviePlay->close();
 		}
 		break;
 	default:
 		error("o90_videoOps: unhandled case %d", subOp);
 	}
-
-	debug(1, "o90_videoOps stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getVideoData() {
@@ -564,32 +565,36 @@ void ScummEngine_v90he::o90_getVideoData() {
 	byte subOp = fetchScriptByte();
 	subOp -= 32;
 
+	debug(0, "o90_getVideoData stub (%d)", subOp);
 	switch (subOp) {
 	case 0:		// Get width
 		pop();
+		push(_moviePlay->getWidth());
 		break;
 	case 1:		// Get height
 		pop();
+		push(_moviePlay->getHeight());
 		break;
 	case 4:		// Get frame count
 		pop();
+		push(_moviePlay->getFrameCount());
 		break;
 	case 20:	// Get current frame
 		pop();
+		push(_moviePlay->getCurFrame());
 		break;
 	case 31:	// Get image number
 		pop();
+		push(_moviePlay->getImageNum());
 		break;
 	case 107:	// Get statistics
 		pop();
 		pop();
+		push(0);
 		break;
 	default:
 		error("o90_getVideoData: unhandled case %d", subOp);
 	}
-
-	push(-1);
-	debug(1, "o90_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_wizImageOps() {

@@ -163,7 +163,7 @@ public:
 	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
 	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
 
-	void createWizEmptyImage(const WizParameters *params);
+	void createWizEmptyImage(int resNum, int x1, int y1, int width, int height);
 	void fillWizRect(const WizParameters *params);
 	void fillWizLine(const WizParameters *params);
 	void fillWizPixel(const WizParameters *params);

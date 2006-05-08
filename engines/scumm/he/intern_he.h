@@ -40,6 +40,7 @@ namespace Scumm {
 #ifndef DISABLE_HE
 class ResExtractor;
 class LogicHE;
+class MoviePlayer;
 class Sprite;
 #endif
 
@@ -402,6 +403,7 @@ protected:
 
 class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
+	friend class MoviePlayer;
 	friend class Sprite;
 
 protected:
@@ -439,6 +441,7 @@ public:
 	virtual void resetScumm();
 
 	LogicHE *_logicHE;
+	MoviePlayer *_moviePlay;
 	Sprite *_sprite;
 
 protected:

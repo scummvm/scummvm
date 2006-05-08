@@ -1617,21 +1617,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	}
 }
 
-void Wiz::createWizEmptyImage(const WizParameters *params) {
-	int img_w = 640;
-	if (params->processFlags & kWPFUseDefImgWidth) {
-		img_w = params->resDefImgW;
-	}
-	int img_h = 480;
-	if (params->processFlags & kWPFUseDefImgHeight) {
-		img_h = params->resDefImgH;
-	}
-	int img_x = 0;
-	int img_y = 0;
-	if (params->processFlags & 1) {
-		img_x = params->img.x1;
-		img_y = params->img.y1;
-	}
+void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int img_h) {
 	const uint16 flags = 0xB;
 	int res_size = 0x1C;
 	if (flags & 1) {
@@ -1651,7 +1637,7 @@ void Wiz::createWizEmptyImage(const WizParameters *params) {
 	} else {
 		palPtr = _vm->_currentPalette;
 	}
-	uint8 *res_data = _vm->res.createResource(rtImage, params->img.resNum, res_size);
+	uint8 *res_data = _vm->res.createResource(rtImage, resNum, res_size);
 	if (!res_data) {
 		_vm->VAR(119) = -1;
 	} else {
@@ -1685,7 +1671,7 @@ void Wiz::createWizEmptyImage(const WizParameters *params) {
 		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
 		WRITE_BE_UINT32(res_data, 8 + img_w * img_h); res_data += 4;
 	}
-	_vm->res.setModified(rtImage, params->img.resNum);
+	_vm->res.setModified(rtImage, resNum);
 }
 
 void Wiz::fillWizRect(const WizParameters *params) {
@@ -1971,8 +1957,23 @@ void Wiz::processWizImage(const WizParameters *params) {
 		// TODO: Capture polygon
 		_vm->res.setModified(rtImage, params->img.resNum);
 		break;
-	case 8:
-		createWizEmptyImage(params);
+	case 8: {
+			int img_w = 640;
+			if (params->processFlags & kWPFUseDefImgWidth) {
+				img_w = params->resDefImgW;
+			}
+			int img_h = 480;
+			if (params->processFlags & kWPFUseDefImgHeight) {
+				img_h = params->resDefImgH;
+			}
+			int img_x = 0;
+			int img_y = 0;
+			if (params->processFlags & 1) {
+				img_x = params->img.x1;
+				img_y = params->img.y1;
+			}
+			createWizEmptyImage(params->img.resNum, img_x, img_y, img_w, img_h);
+		}
 		break;
 	case 9:
 		fillWizRect(params);
