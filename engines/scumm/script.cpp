@@ -606,7 +606,7 @@ void ScummEngine::writeVar(uint var, int value) {
 			if (_game.heversion <= 73 && vm.slot[_currentScript].number == 1)
 				return;
 			assert(value == 0 || value == 1);
-			ConfMan.setBool("subtitles", value);
+			ConfMan.setBool("subtitles", (value != 0));
 		}
 		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
 			// Ignore default setting in HE60-71 games

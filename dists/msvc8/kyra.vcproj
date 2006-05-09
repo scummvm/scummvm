@@ -191,6 +191,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\plugin.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\resource.cpp"
 			>
 		</File>

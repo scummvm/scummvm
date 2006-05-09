@@ -3,7 +3,7 @@ MODULE := base
 MODULE_OBJS := \
 	engine.o \
 	main.o \
-	options.o \
+	commandLine.o \
 	plugins.o \
 	version.o
 

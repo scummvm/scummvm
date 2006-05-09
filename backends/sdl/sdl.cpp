@@ -35,7 +35,7 @@
 #if !defined(_WIN32_WCE) && !defined(__MAEMO__)
 
 #if defined (WIN32)
-int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 	return main(__argc, __argv);
 }
@@ -101,7 +101,6 @@ int main(int argc, char *argv[]) {
 	return res;
 }
 #endif
-
 
 void OSystem_SDL::initBackend() {
 	assert(!_inited);

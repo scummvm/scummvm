@@ -32,7 +32,7 @@
 #include "common/stdafx.h"
 #include "backends/fs/fs.h"
 #include "base/engine.h"
-#include "base/options.h"
+#include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/config-manager.h"

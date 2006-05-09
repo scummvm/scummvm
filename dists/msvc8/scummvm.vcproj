@@ -70,10 +70,10 @@
 				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib lure_debug/lure.lib cine_debug/cine.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="libc.lib"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
-				SubSystem="1"
+				SubSystem="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -161,7 +161,7 @@
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="false"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -199,6 +199,14 @@
 			Name="base"
 			>
 			<File
+				RelativePath="..\..\base\commandLine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\base\commandLine.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\base\engine.cpp"
 				>
 			</File>
@@ -207,15 +215,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\base\options.cpp"
+				RelativePath="..\..\base\game.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\base\options.h"
+				RelativePath="..\..\base\internal_version.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\base\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\base\main.h"
 				>
 			</File>
 			<File
@@ -224,6 +236,10 @@
 			</File>
 			<File
 				RelativePath="..\..\base\plugins.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\base\version.cpp"
 				>
 			</File>
 			<File
@@ -275,11 +291,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\list.h"
+				RelativePath="..\..\common\hashmap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\map.h"
+				RelativePath="..\..\common\hashmap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\list.h"
 				>
 			</File>
 			<File
@@ -814,6 +834,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\eval.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\eval.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\Key.cpp"
 				>
 			</File>
@@ -890,11 +918,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\theme-config.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\theme.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\gui\theme.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeClassic.cpp"
 				>
 			</File>
 			<File

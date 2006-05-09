@@ -311,6 +311,14 @@
 			Name="he"
 			>
 			<File
+				RelativePath="..\..\engines\scumm\he\animation_he.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\animation_he.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\he\floodfill_he.cpp"
 				>
 			</File>
@@ -416,6 +424,18 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\imuse\instrument.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp"
 				>
 			</File>
 		</Filter>

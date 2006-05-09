@@ -1201,7 +1201,7 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 
 void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	// Indy3 / Zak256 / Loom
-	int width, height, origWidth, origHeight;
+	int width, height, origWidth = 0, origHeight;
 	VirtScreen *vs;
 	byte *charPtr, *dst;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;

@@ -31,6 +31,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
+DECLARE_SINGLETON(Audio::AudioCDManager);
+
 namespace Audio {
 
 struct TrackFormat {
@@ -60,8 +62,6 @@ static const TrackFormat TRACK_FORMATS[] = {
 	{ NULL, NULL } // Terminator
 };
 
-
-DECLARE_SINGLETON(AudioCDManager);
 
 AudioCDManager::AudioCDManager() {
 	memset(&_cd, 0, sizeof(_cd));

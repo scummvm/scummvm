@@ -172,8 +172,8 @@ NewFontData* bdf_read_font(Common::SeekableReadStream &fp) {
 
 /* read bdf font header information, return 0 on error*/
 int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
-	int encoding;
-	int nchars, maxwidth;
+	int encoding = 0;
+	int nchars = 0, maxwidth;
 	int firstchar = 65535;
 	int lastchar = -1;
 	char buf[256];
@@ -308,8 +308,8 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 	long ofs = 0;
 	int maxwidth = 0;
-	int i, k, encoding, width;
-	int bbw, bbh, bbx, bby;
+	int i, k, encoding = 0, width = 0;
+	int bbw, bbh = 0, bbx = 0, bby = 0;
 	int proportional = 0;
 	int encodetable = 0;
 	long l;
@@ -627,7 +627,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 		data->bits[i] = stream.readUint16BE();
 	}
 
-	bool hasOffsetTable = stream.readByte();
+	bool hasOffsetTable = (stream.readByte() != 0);
 	if (hasOffsetTable) {
 		data->offset = (unsigned long*)malloc(sizeof(unsigned long)*data->size);
 		if (!data->offset) {
@@ -641,7 +641,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	bool hasWidthTable = stream.readByte();
+	bool hasWidthTable = (stream.readByte() != 0);
 	if (hasWidthTable) {
 		data->width = (unsigned char*)malloc(sizeof(unsigned char)*data->size);
 		if (!data->width) {

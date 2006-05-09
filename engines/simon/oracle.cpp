@@ -386,7 +386,7 @@ void SimonEngine::saveUserGame(int slot) {
 		}
 		if (_keyPressed == 10 || _keyPressed == 13) {
 			if (!saveGame(readVariable(55), name))
-				_variableArray[55] = 0xFFFF;
+				_variableArray[55] = (int16)0xFFFF;
 			else
 				_variableArray[55] = 0;
 			break;
