@@ -207,7 +207,8 @@ static int findGames(Game *games, int max)
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.path().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
-    FSList files, fslist = dirs[curr_dir++].node.listDir(FilesystemNode::kListAll);
+    FSList files, fslist;
+    dirs[curr_dir++].node.listDir(fslist, FilesystemNode::kListAll);
     for (FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {
