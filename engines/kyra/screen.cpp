@@ -63,6 +63,9 @@ Screen::~Screen() {
 bool Screen::init() {
 	debugC(9, kDebugLevelScreen, "Screen::init()");
 
+	// enable this for now
+	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
 	_system->beginGFXTransaction();
 		_vm->initCommonGFX(false);
 		//for debug reasons (see Screen::updateScreen)
