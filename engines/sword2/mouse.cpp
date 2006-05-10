@@ -1439,10 +1439,6 @@ void Mouse::unpauseGame() {
 		setLuggage(_realLuggageItem);
 }
 
-// This is the maximum mouse cursor size in the SDL backend
-#define MAX_MOUSE_W     80
-#define MAX_MOUSE_H     80
-
 #define MOUSEFLASHFRAME 6
 
 void Mouse::decompressMouse(byte *decomp, byte *comp, uint8 frame, int width, int height, int pitch, int xOff, int yOff) {
@@ -1473,8 +1469,6 @@ void Mouse::decompressMouse(byte *decomp, byte *comp, uint8 frame, int width, in
 }
 
 void Mouse::drawMouse() {
-	byte mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
-
 	if (!_mouseAnim.data && !_luggageAnim.data)
 		return;
 
@@ -1517,23 +1511,10 @@ void Mouse::drawMouse() {
 	assert(deltaX >= 0);
 	assert(deltaY >= 0);
 
-	// HACK for maximum cursor size. (The SDL backend imposes this
-	// restriction)
-
-	if (mouse_width + deltaX > MAX_MOUSE_W)
-		deltaX = 80 - mouse_width;
-	if (mouse_height + deltaY > MAX_MOUSE_H)
-		deltaY = 80 - mouse_height;
-
 	mouse_width += deltaX;
 	mouse_height += deltaY;
 
-	if ((uint32)(mouse_width * mouse_height) > sizeof(mouseData)) {
-		warning("Mouse cursor too large");
-		return;
-	}
-
-	memset(mouseData, 0, mouse_width * mouse_height);
+	byte *mouseData = (byte *)calloc(mouse_height, mouse_width);
 
 	if (_luggageAnim.data)
 		decompressMouse(mouseData, _luggageAnim.data, 0,
@@ -1545,6 +1526,8 @@ void Mouse::drawMouse() {
 			_mouseAnim.mousew, _mouseAnim.mouseh, mouse_width);
 
 	_vm->_system->setMouseCursor(mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y, 0);
+
+	free(mouseData);
 }
 
 /**
