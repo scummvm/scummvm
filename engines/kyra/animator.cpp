@@ -196,7 +196,7 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	int temp;
 	
 	temp = x + width;
-	if (temp >= 40) {
+	if (temp >= 39) {
 		x = 39 - width;
 	}
 	temp = y + height;
@@ -211,6 +211,18 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 		// isn't updated on the front buffer in that special scene, so we update
 		// the frontbuffer (screen page 0) too if the object get's redrawn this time
 		if (obj->refreshFlag) {
+			// do not overwrite the interface
+			if (x <= 1) {
+				width--;
+				x = 1;
+			} else if (x >= 39) {
+				x = 39 - width;
+			}
+			if (y <= 8) {
+				y = 8;
+			} else if (y >= 136) {
+				y = 136 - height;
+			}
 			_screen->copyBlockToPage(0, x << 3, y, width << 3, height, obj->background);
 		}
 	} else {
