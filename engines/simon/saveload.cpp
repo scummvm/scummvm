@@ -384,7 +384,7 @@ start_over_2:;
 			}
 			goto start_over;
 		}
-		delay(100);
+		delay(10);
 	} while (_lastHitArea3 == 0);
 
 	ha = _lastHitArea;
