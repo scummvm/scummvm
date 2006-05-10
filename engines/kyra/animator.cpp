@@ -206,6 +206,13 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 
 	if (restore) {
 		_screen->copyBlockToPage(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
+		// workaround for bug # 1477364 ("KYRA1: Water dripping freezes")
+		// the problem is that the restored area to the 'backbuffer' (screen page 2)
+		// isn't updated on the front buffer in that special scene, so we update
+		// the frontbuffer (screen page 0) too if the object get's redrawn this time
+		if (obj->refreshFlag) {
+			_screen->copyBlockToPage(0, x << 3, y, width << 3, height, obj->background);
+		}
 	} else {
 		_screen->copyRegionToBuffer(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
 	}
