@@ -363,7 +363,7 @@ void Hotspot::faceHotspot(HotspotData *hotspot) {
 	}
 }
 
-// Sets or clears the hotspot as occupying an area in it's room's pathfinding data
+// Sets or clears the hotspot as occupying an area in its room's pathfinding data
 
 void Hotspot::setOccupied(bool occupiedFlag) {
 	int xp = x() >> 3;
@@ -1456,7 +1456,7 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			res.deactivateHotspot(h.hotspotId());
 			res.activateHotspot(0x41C);
 
-			// Enable the fire and activate it's animation
+			// Enable the fire and activate its animation
 			HotspotData *fire = res.getHotspot(0x418);
 			fire->flags |= 0x80;
 			fire->loadOffset = 0x7172; 

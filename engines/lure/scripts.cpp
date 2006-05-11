@@ -335,7 +335,7 @@ void Script::addActions(uint16 hotspotId, uint16 actions, uint16 v3) {
 	hotspot->actions |= actions;
 }
 
-// Checks the status of the cell door, and starts music depending on it's state
+// Checks the status of the cell door, and starts music depending on its state
 
 void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
 	// In the original game, this method checks to see if the cell door

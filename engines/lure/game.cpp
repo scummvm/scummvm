@@ -283,7 +283,7 @@ void Game::handleClick() {
 		}
 	} else if ((room.cursorState() == CS_TALKING) ||
 			   (res.getTalkState() != TALK_NONE)) {
-		// Currently talking, so let it's tick proc handle it
+		// Currently talking, so let its tick proc handle it
 	} else if (mouse.y() < MENUBAR_Y_SIZE) {
 		uint8 response = Menu::getReference().execute();
 		if (response != MENUITEM_NONE)
