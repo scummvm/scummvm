@@ -34,10 +34,13 @@
 #include "gob/dataio.h"
 #include "gob/cdrom.h"
 #include "gob/music.h"
+#include "gob/mult.h"
 
 namespace Gob {
 
 Goblin::Goblin(GobEngine *vm) : _vm(vm) {
+	int i;
+
 	_goesAtTarget = 0;
 	_readyToAct = 0;
 	_gobAction = 0;
@@ -68,7 +71,7 @@ Goblin::Goblin(GobEngine *vm) : _vm(vm) {
 
 	_noPick = 0;
 	_objList = 0;
-	int i;
+
 	for (i = 0; i < 4; i++)
 		_goblins[i] = 0;
 	_currentGoblin = 0;
@@ -144,6 +147,19 @@ Goblin::Goblin(GobEngine *vm) : _vm(vm) {
 	}
 	_objCount = 0;
 	_gobsCount = 0;
+
+	_soundSlotsCount = 0;
+	for (i = 0; i < 60; i++)
+		_soundSlots[i] = -1;
+
+	warning("GOB2 Stub! _word_2F9C0, _word_2F9BE, _word_2F9BC, _word_2F9BA, _dword_2F9B6, _dword_2F9B2");
+	_word_2F9C0 = 0;
+	_word_2F9BE = 0;
+	_word_2F9BC = 0;
+	_word_2F9BA = 0;
+	_dword_2F9B6 = 0;
+	_dword_2F9B2 = 0;
+	_dword_2F2A4 = 0;
 }
 
 char Goblin::rotateState(int16 from, int16 to) {
@@ -491,52 +507,6 @@ void Goblin::animateObjects(void) {
 			}
 			objDesc->toRedraw = 1;
 		}
-	}
-}
-
-void Goblin::placeObject(Gob_Object *objDesc, char animated) {
-	int16 layer;
-
-	if (objDesc->stateMach[objDesc->state][0] != 0) {
-		objDesc->animation =
-		    objDesc->stateMach[objDesc->state][0]->animation;
-
-		objDesc->noTick = 0;
-		objDesc->toRedraw = 1;
-		objDesc->doAnim = animated;
-
-		objDesc->maxTick = 1;
-		objDesc->tick = 1;
-		objDesc->curFrame = 0;
-		objDesc->type = 0;
-		objDesc->actionStartState = 0;
-		objDesc->nextState = -1;
-		objDesc->multState = -1;
-		objDesc->stateColumn = 0;
-		objDesc->curLookDir = 0;
-		objDesc->visible = 1;
-		objDesc->pickable = 0;
-		objDesc->unk14 = 0;
-
-		objDesc->relaxTime = _vm->_util->getRandom(30);
-
-		layer = objDesc->stateMach[objDesc->state][0]->layer;
-		_vm->_scenery->updateAnim(layer, 0, objDesc->animation, 0,
-		    objDesc->xPos, objDesc->yPos, 0);
-
-		objDesc->order = _vm->_scenery->_toRedrawBottom / 24 + 3;
-
-		objDesc->left = objDesc->xPos;
-		objDesc->right = objDesc->xPos;
-		objDesc->dirtyLeft = objDesc->xPos;
-		objDesc->dirtyRight = objDesc->xPos;
-
-		objDesc->top = objDesc->yPos;
-		objDesc->bottom = objDesc->yPos;
-		objDesc->dirtyTop = objDesc->yPos;
-		objDesc->dirtyBottom = objDesc->yPos;
-
-		_vm->_util->listInsertBack(_objList, objDesc);
 	}
 }
 
@@ -1816,63 +1786,6 @@ int16 Goblin::doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 	return gobIndex;
 }
 
-void Goblin::freeObjects(void) {
-	int16 i;
-	int16 state;
-	int16 col;
-
-	for (i = 0; i < 16; i++) {
-		if (_soundData[i] == 0)
-			continue;
-
-		_vm->_snd->freeSoundDesc(_soundData[i]);
-		_soundData[i] = 0;
-	}
-
-	for (i = 0; i < 4; i++) {
-		if (_goblins[i] == 0)
-			continue;
-
-		_goblins[i]->stateMach = _goblins[i]->realStateMach;
-
-		for (state = 0; state < 40; state++) {
-			for (col = 0; col < 6; col++) {
-				delete _goblins[i]->stateMach[state][col];
-				_goblins[i]->stateMach[state][col] = 0;
-			}
-		}
-
-		if (i == 3) {
-			for (state = 40; state < 70; state++) {
-				delete _goblins[3]->stateMach[state][0];
-				_goblins[3]->stateMach[state][0] = 0;
-			}
-		}
-
-		delete[] _goblins[i]->stateMach;
-		delete _goblins[i];
-		_goblins[i] = 0;
-	}
-
-	for (i = 0; i < 20; i++) {
-		if (_objects[i] == 0)
-			continue;
-
-		_objects[i]->stateMach = _objects[i]->realStateMach;
-
-		for (state = 0; state < 40; state++) {
-			for (col = 0; col < 6; col++) {
-				delete _objects[i]->stateMach[state][col];
-				_objects[i]->stateMach[state][col] = 0;
-			}
-		}
-
-		delete[] _objects[i]->stateMach;
-		delete _objects[i];
-		_objects[i] = 0;
-	}
-}
-
 void Goblin::zeroObjects(void) {
 	int16 i;
 
@@ -1906,10 +1819,10 @@ void Goblin::loadObjects(char *source) {
 	_vm->_map->loadMapObjects(source);
 
 	for (i = 0; i < _gobsCount; i++)
-		placeObject(_goblins[i], 0);
+		placeObject(_goblins[i], 0, 0, 0, 0, 0);
 
 	for (i = 0; i < _objCount; i++) {
-		placeObject(_objects[i], 1);
+		placeObject(_objects[i], 1, 0, 0, 0, 0);
 	}
 
 	initVarPointers();
@@ -2375,6 +2288,170 @@ int16 Goblin::treatItem(int16 action) {
 		saveGobDataToVars(_gobPositions[_currentGoblin].x,
 		    _gobPositions[_currentGoblin].y, 0);
 		return _destActionItem;
+	}
+}
+
+void Goblin::sub_19BD3(void) {
+	Mult::Mult_Object *obj0;
+	Mult::Mult_Object *obj1;
+	Mult::Mult_AnimData *anim0;
+	Mult::Mult_AnimData *anim1;
+	int16 varVal;
+	int16 var_2;
+	int16 var_4;
+	int16 var_6;
+	int16 var_8;
+	int16 var_A;
+	int16 var_C;
+	int16 di;
+	int16 si;
+
+	obj0 = &(_vm->_mult->_objects[0]);
+	obj1 = &(_vm->_mult->_objects[1]);
+	anim0 = obj0->pAnimData;
+	anim1 = obj1->pAnimData;
+
+	si = anim0->state;
+	di = anim1->state;
+
+	if (anim0->someFlag == 0) {
+		if ((_word_2F9BC == 0) && (anim0->isStatic == 0)) {
+			if ((VAR(_dword_2F9B6) == 0) && (si == 28)) {
+				si = _vm->_util->getRandom(3) + 24;
+				warning("GOB2 Stub! sub_195C7(0, si);");
+				WRITE_VAR(_dword_2F9B6, 100);
+			} else
+				WRITE_VAR(_dword_2F9B6, VAR(_dword_2F9B6) - 1);
+		}
+		if ((si == 8) || (si == 9) || (si == 29))
+			anim0->field_10 = 6;
+	}
+	if (anim1->someFlag == 0) {
+		if((_word_2F9BA == 0) && (anim1->isStatic == 0)) {
+			if ((VAR(_dword_2F9B2) == 0) && (di == 28)) {
+				di = _vm->_util->getRandom(3) + 24;
+				warning("GOB2 Stub! sub_195C7(1, di);");
+				WRITE_VAR(_dword_2F9B2, 100);
+			} else
+				WRITE_VAR(_dword_2F9B2, VAR(_dword_2F9B2) - 1);
+		}
+		if ((di == 8) || (di == 9) || (di == 29))
+			anim1->field_10 = 6;
+	}
+
+	if ((anim0->someFlag == 1) && (anim0->isStatic == 0) &&
+			((anim0->state == 28) || (anim0->state == 29)))
+		anim0->field_10 = 0;
+	if ((anim1->someFlag == 1) && (anim1->isStatic == 0) &&
+			((anim1->state == 28) || (anim1->state == 29)))
+		anim1->field_10 = 0;
+
+	if (VAR(18) != ((uint32) -1)) {
+		if (anim0->layer == 44)
+			anim0->field_10 = 4;
+		else if(anim0->layer == 45)
+			anim0->field_10 = 0;
+		if (anim0->someFlag == 0)
+			anim0->field_10 = 6;
+	}
+	if (VAR(19) != ((uint32) -1)) {
+		if (anim1->layer == 48)
+			anim1->field_10 = 4;
+		else if(anim1->layer == 49)
+			anim1->field_10 = 0;
+		if (anim1->someFlag == 0)
+			anim1->field_10 = 6;
+	}
+
+	if ((anim0->layer == 45) && (anim0->field_10 == 4) && (anim0->field_12 == 5) &&
+			(VAR(18) == ((uint32) -1)) && (_word_2F9C0 == 0)) {
+		warning("GOB2 Stub! sub_195C7(0, 19);");
+	}
+	if ((anim0->layer == 44) && (anim0->field_10 == 0) && (anim0->field_12 == 5) &&
+			(VAR(18) == ((uint32) -1)) && (_word_2F9C0 == 0)) {
+		warning("GOB2 Stub! sub_195C7(0, 16);");
+	}
+	if ((anim1->layer == 49) && (anim1->field_10 == 4) && (anim1->field_12 == 5) &&
+			(VAR(19) == ((uint32) -1)) && (_word_2F9BE == 0)) {
+		warning("GOB2 Stub! sub_195C7(1, 19);");
+	}
+	if ((anim1->layer == 48) && (anim1->field_10 == 0) && (anim1->field_12 == 5) &&
+			(VAR(19) == ((uint32) -1)) && (_word_2F9BE == 0)) {
+		warning("GOB2 Stub! sub_195C7(1, 16);");
+	}
+
+	var_2 = obj0->goblinX;
+	var_4 = obj1->goblinX;
+	var_6 = obj0->goblinY;
+	var_8 = obj1->goblinY;
+	di = anim0->field_13;
+	si = anim0->field_14;
+	var_A = anim1->field_13;
+	var_C = anim1->field_14;
+
+	varVal = _vm->_util->readVariableByte(_dword_2F2A4 + var_6 * 40 + var_2);
+	if ((varVal > 17) && (varVal < 21))
+		warning("GOB2 Stub! sub_195C7(anim0);");
+	varVal = _vm->_util->readVariableByte(_dword_2F2A4 + var_8 * 40 + var_4);
+	if ((varVal > 17) && (varVal < 21))
+		warning("GOB2 Stub! sub_19B45(anim1);");
+
+	if ((di < 0) || (di > 39) || (si < 0) || (si > 39))
+		return;
+
+	if (var_6 > si) {
+		if (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di) > 17) {
+			do {
+				si--;
+			} while (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di) > 17);
+			si++;
+			if (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di - 1) == 0) {
+				if (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di + 1) != 0)
+					di++;
+			} else
+				di--;
+			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
+		}
+	} else {
+		if (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di) > 17) {
+			do {
+				si++;
+			} while (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di) > 17);
+			si--;
+			if (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di - 1) == 0) {
+				if (_vm->_util->readVariableByte(_dword_2F2A4 + si * 40 + di + 1) != 0)
+					di++;
+			} else
+				di--;
+			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
+		}
+	}
+	if (var_8 > var_C) {
+		if (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) > 17) {
+			do {
+				var_C--;
+			} while (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) > 17);
+			var_C++;
+			if (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) == 0) {
+				if (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) != 0)
+					var_A++;
+			} else
+				var_A--;
+			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
+		}
+	} else {
+		if (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) > 17) {
+			do {
+				var_C++;
+			} while (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) > 17);
+			var_C--;
+			if (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) == 0) {
+				if (_vm->_util->readVariableByte(_dword_2F2A4 + var_C * 40 + var_A) != 0)
+					var_A++;
+			} else
+				var_A--;
+			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
+		}
 	}
 }
 

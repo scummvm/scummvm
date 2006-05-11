@@ -14,6 +14,8 @@ MODULE_OBJS := \
 	global.o \
 	gob.o \
 	goblin.o \
+	goblin_v1.o \
+	goblin_v2.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \
@@ -21,6 +23,8 @@ MODULE_OBJS := \
 	inter_v1.o \
 	inter_v2.o \
 	map.o \
+	map_v1.o \
+	map_v2.o \
 	mult.o \
 	mult_v1.o \
 	mult_v2.o \

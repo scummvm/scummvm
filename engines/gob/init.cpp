@@ -144,7 +144,7 @@ memBlocks	= word ptr -2*/
 	_palDesc->unused2 = _vm->_draw->_unusedPalette2;
 	_vm->_video->setFullPalette(_palDesc);
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 8; i++)
 		_vm->_draw->_fonts[i] = 0;
 
 	handle = _vm->_dataio->openData("intro.inf");
@@ -167,7 +167,7 @@ memBlocks	= word ptr -2*/
 		infEnd = infBuf + _vm->_dataio->getDataSize("intro.inf");
 
 		for (i = 0; i < 4; i++, infPtr++) {
-			for (j = 0; *infPtr >= ' ' && infPtr != infEnd;
+			for (j = 0; infPtr < infEnd && *infPtr >= ' ';
 			    j++, infPtr++)
 				buffer[j] = *infPtr;
 

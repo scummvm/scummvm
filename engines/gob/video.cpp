@@ -285,7 +285,7 @@ void Video::drawCircle(Video::SurfaceDesc *dest, int16 x, int16 y, int16 radius,
 void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
 	    int16 transp, SurfaceDesc *dest) {
 
-	if (Video::spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
+	if (spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
 		return;
 
 	if ((dest->vidMode & 0x7f) != 0x13)
@@ -389,135 +389,6 @@ void Video::initPrimary(int16 mode) {
 
 		Video::setFullPalette(_vm->_global->_pPaletteDesc);
 	}
-}
-
-char Video::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, SurfaceDesc *destDesc) {
-	SurfaceDesc sourceDesc;
-	byte *memBuffer;
-	byte *srcPtr;
-	byte *destPtr;
-	byte *linePtr;
-	byte temp;
-	uint16 sourceLeft;
-	int16 curWidth;
-	int16 curHeight;
-	int16 offset;
-	int16 counter2;
-	uint16 cmdVar;
-	int16 bufPos;
-	int16 strLen;
-
-	if (!destDesc)
-		return 1;
-
-	if ((destDesc->vidMode & 0x7f) != 0x13)
-		error("Video::spriteUncompressor: Video mode 0x%x is not supported!",
-		    destDesc->vidMode & 0x7f);
-
-	if (sprBuf[0] != 1)
-		return 0;
-
-	if (sprBuf[1] != 2)
-		return 0;
-
-	if (sprBuf[2] == 2) {
-		sourceDesc.width = srcWidth;
-		sourceDesc.height = srcHeight;
-		sourceDesc.vidMode = 0x93;
-		sourceDesc.vidPtr = sprBuf + 3;
-		Video::drawSprite(&sourceDesc, destDesc, 0, 0, srcWidth - 1,
-		    srcHeight - 1, x, y, transp);
-		return 1;
-	} else {
-		memBuffer = new byte[4114];
-		if (memBuffer == 0)
-			return 0;
-
-		srcPtr = sprBuf + 3;
-		sourceLeft = READ_LE_UINT16(srcPtr);
-
-		destPtr = destDesc->vidPtr + destDesc->width * y + x;
-
-		curWidth = 0;
-		curHeight = 0;
-
-		linePtr = destPtr;
-		srcPtr += 4;
-
-		for (offset = 0; offset < 4078; offset++)
-			memBuffer[offset] = 0x20;
-
-		cmdVar = 0;
-		bufPos = 4078;
-		while (1) {
-			cmdVar >>= 1;
-			if ((cmdVar & 0x100) == 0) {
-				cmdVar = *srcPtr | 0xff00;
-				srcPtr++;
-			}
-			if ((cmdVar & 1) != 0) {
-				temp = *srcPtr++;
-				if (temp != 0 || transp == 0)
-					*destPtr = temp;
-				destPtr++;
-				curWidth++;
-				if (curWidth >= srcWidth) {
-					curWidth = 0;
-					linePtr += destDesc->width;
-					destPtr = linePtr;
-					curHeight++;
-					if (curHeight >= srcHeight)
-						break;
-				}
-				sourceLeft--;
-				if (sourceLeft == 0)
-					break;
-
-				memBuffer[bufPos] = temp;
-				bufPos++;
-				bufPos %= 4096;
-			} else {
-				offset = *srcPtr;
-				srcPtr++;
-				offset |= (*srcPtr & 0xf0) << 4;
-				strLen = (*srcPtr & 0x0f) + 3;
-				srcPtr++;
-
-				for (counter2 = 0; counter2 < strLen;
-				    counter2++) {
-					temp =
-					    memBuffer[(offset +
-						counter2) % 4096];
-					if (temp != 0 || transp == 0)
-						*destPtr = temp;
-					destPtr++;
-
-					curWidth++;
-					if (curWidth >= srcWidth) {
-						curWidth = 0;
-						linePtr += destDesc->width;
-						destPtr = linePtr;
-						curHeight++;
-						if (curHeight >= srcHeight) {
-							delete[] memBuffer;
-							return 1;
-						}
-					}
-					sourceLeft--;
-					if (sourceLeft == 0) {
-						delete[] memBuffer;
-						return 1;
-					}
-					memBuffer[bufPos] = temp;
-					bufPos++;
-					bufPos %= 4096;
-				}
-			}
-		}
-	}
-	delete[] memBuffer;
-	return 1;
 }
 
 void Video::setHandlers() { _vm->_global->_setAllPalette = 1; }

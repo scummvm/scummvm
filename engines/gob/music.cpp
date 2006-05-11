@@ -81,7 +81,7 @@ Music::Music(GobEngine *vm) : _vm(vm) {
 	_first = true;
 	_ended = false;
 	_playing = false;
-	_looping = true;
+	_repCount = -1;
 	_samplesTillPoll = 0;
 
 	setFreqs();
@@ -94,21 +94,24 @@ Music::~Music(void) {
 }
 
 void Music::premixerCall(int16 *buf, uint len) {
+	_mutex.lock();
 	if (!_playing) {
 		memset(buf, 0, 2 * len * sizeof(int16));
+		_mutex.unlock();
 		return;
 	}
 	else {
 		if (_first) {
 			memset(buf, 0, 2 * len * sizeof(int16));
 			pollMusic();
+			_mutex.unlock();
 			return;
 		}
 		else {
 			uint32 render;
 			int16 *data = buf;
 			uint datalen = len;
-			while (datalen) {
+			while (datalen && _playing) {
 				if (_samplesTillPoll) {
 					render = (datalen > _samplesTillPoll) ? (_samplesTillPoll) : (datalen);
 					datalen -= render;
@@ -129,7 +132,11 @@ void Music::premixerCall(int16 *buf, uint len) {
 			_ended = false;
 			_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 			_samplesTillPoll = 0;
-			if (_looping) {
+			if (_repCount == -1) {
+				reset();
+				setVoices();
+			} else if (_repCount > 0) {
+				_repCount--;
 				reset();
 				setVoices();
 			}
@@ -141,6 +148,7 @@ void Music::premixerCall(int16 *buf, uint len) {
 			buf[2 * i] = buf[2 * i + 1] = buf[i];
 		}
 	}
+	_mutex.unlock();
 }
 
 void Music::writeOPL(byte reg, byte val) {
@@ -175,6 +183,10 @@ void Music::setFreqs(void) {
 }
 
 void Music::reset() {
+	OPLResetChip(_opl);
+	_samplesTillPoll = 0;
+
+	setFreqs();
 	// Set frequencies and octave to 0; notes off
 	for (int i = 0; i < 9; i++) {
 		writeOPL(0xA0 | i, 0);
@@ -299,7 +311,7 @@ void Music::pollMusic(void) {
 	byte volume;
 	uint16 tempo;
 
-	if (_playPos > (_data + _dataSize)) {
+	if ((_playPos > (_data + _dataSize)) && (_dataSize != (uint32) -1)) {
 		_ended = true;
 		return;
 	}
@@ -355,7 +367,7 @@ void Music::pollMusic(void) {
 			break;
 		default:
 			warning("Unknown command in ADL, stopping playback");
-			_looping = false;
+			_repCount = 0;
 			_ended = true;
 			break;
 	}
@@ -425,6 +437,18 @@ bool Music::loadMusic(const char *filename) {
 	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 	
 	return true;
+}
+
+void Music::loadFromMemory(byte *data) {
+	_playing = false;
+	_repCount = 0;
+
+	_dataSize = (uint32) -1;
+	_data = data;
+
+	reset();
+	setVoices();
+	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 }
 
 void Music::unloadMusic(void) {

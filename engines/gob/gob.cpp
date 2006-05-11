@@ -196,8 +196,6 @@ int GobEngine::init() {
 	_anim = new Anim();
 	_cdrom = new CDROM(this);
 	_dataio = new DataIO(this);
-	_goblin = new Goblin(this);
-	_map = new Map(this);
 	_pack = new Pack();
 	_palanim = new PalAnim(this);
 	_scenery = new Scenery(this);
@@ -211,6 +209,8 @@ int GobEngine::init() {
 		_game = new Game_v1(this);
 		_video = new Video_v1(this);
 		_init = new Init_v1(this);
+		_map = new Map_v1(this);
+		_goblin = new Goblin_v1(this);
 	}
 	else if (_features & Gob::GF_GOB2) {
 		_inter = new Inter_v2(this);
@@ -220,10 +220,12 @@ int GobEngine::init() {
 		_game = new Game_v2(this);
 		_video = new Video_v2(this);
 		_init = new Init_v2(this);
+		_map = new Map_v2(this);
+		_goblin = new Goblin_v2(this);
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
-	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1))
+	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2))
 		_music = new Music(this);
 
 	_system->beginGFXTransaction();

@@ -154,4 +154,153 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 	return descPtr;
 }
 
+char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+	    int16 x, int16 y, int16 transp, SurfaceDesc *destDesc) {
+	SurfaceDesc sourceDesc;
+	byte *memBuffer;
+	byte *srcPtr;
+	byte *destPtr;
+	byte *linePtr;
+	byte temp;
+	uint32 sourceLeft;
+	int16 curWidth;
+	int16 curHeight;
+	int16 offset;
+	int16 counter2;
+	uint16 cmdVar;
+	int16 bufPos;
+	int16 strLen;
+
+	if (!destDesc)
+		return 1;
+
+	if ((destDesc->vidMode & 0x7f) != 0x13)
+		error("Video::spriteUncompressor: Video mode 0x%x is not supported!",
+		    destDesc->vidMode & 0x7f);
+
+	if (sprBuf[0] != 1)
+		return 0;
+
+	if (sprBuf[1] != 2)
+		return 0;
+
+	if (sprBuf[2] == 2) {
+		sourceDesc.width = srcWidth;
+		sourceDesc.height = srcHeight;
+		sourceDesc.vidMode = 0x93;
+		sourceDesc.vidPtr = sprBuf + 3;
+		Video::drawSprite(&sourceDesc, destDesc, 0, 0, srcWidth - 1,
+		    srcHeight - 1, x, y, transp);
+		return 1;
+	} else if (sprBuf[2] == 1) {
+		memBuffer = new byte[4370];
+		if (memBuffer == 0)
+			return 0;
+
+		srcPtr = sprBuf + 3;
+		sourceLeft = READ_LE_UINT32(srcPtr);
+
+		// TODO: Needed until wide/scrolling surfaces are supported...
+		if ((x + srcWidth) >= destDesc->width)
+			x = 0;
+		if ((y + srcHeight) >= destDesc->height)
+			y = 0;
+
+		destPtr = destDesc->vidPtr + destDesc->width * y + x;
+
+		curWidth = 0;
+		curHeight = 0;
+
+		linePtr = destPtr;
+		srcPtr += 4;
+
+		int16 var_2E = 0;
+		int16 var_2F;
+		if ((READ_LE_UINT16(srcPtr + 2) == 0x5678) && (READ_LE_UINT16(srcPtr) != 0x1234)) {
+			srcPtr += 4;
+			bufPos = 273;
+			var_2F = 18;
+		} else {
+			var_2F = 100;
+			bufPos = 4078;
+		}
+		if (transp == 0)
+			var_2E = 300;
+		else
+			var_2E = 0;
+
+		cmdVar = 0;
+		while (1) {
+			cmdVar >>= 1;
+			if ((cmdVar & 0x100) == 0) {
+				cmdVar = *srcPtr | 0xff00;
+				srcPtr++;
+			}
+			if ((cmdVar & 1) != 0) {
+				temp = *srcPtr++;
+				if (temp != var_2E)
+					*destPtr = temp;
+				destPtr++;
+				curWidth++;
+				if (curWidth >= srcWidth) {
+					curWidth = 0;
+					linePtr += destDesc->width;
+					destPtr = linePtr;
+					curHeight++;
+					if (curHeight >= srcHeight)
+						break;
+				}
+				sourceLeft--;
+				memBuffer[bufPos] = temp;
+				bufPos++;
+				bufPos %= 4096;
+				if (sourceLeft == 0)
+					break;
+			} else {
+				offset = *srcPtr++;
+				offset |= (*srcPtr & 0xf0) << 4;
+				strLen = (*srcPtr & 0x0f) + 3;
+				*srcPtr++;
+				if (strLen == var_2F)
+					strLen = *srcPtr++ + 18;
+
+				for (counter2 = 0; counter2 < strLen;
+				    counter2++) {
+					temp = memBuffer[(offset + counter2) % 4096];
+					if (temp != var_2E)
+						*destPtr = temp;
+					destPtr++;
+
+					curWidth++;
+					if (curWidth >= srcWidth) {
+						curWidth = 0;
+						linePtr += destDesc->width;
+						destPtr = linePtr;
+						curHeight++;
+						if (curHeight >= srcHeight) {
+							delete[] memBuffer;
+							return 1;
+						}
+					}
+					memBuffer[bufPos] = temp;
+					bufPos++;
+					bufPos %= 4096;
+				}
+				// loc_1D4E4
+
+				if (strLen < (int32) sourceLeft)
+					sourceLeft--;
+				else {
+					delete[] memBuffer;
+					return 1;
+				}
+			}
+		}
+	} else
+		return 0;
+
+	delete[] memBuffer;
+	return 1;
+}
+
 } // End of namespace Gob

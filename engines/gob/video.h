@@ -112,8 +112,6 @@ public:
 	void setPalette(PalDesc * palDesc);
 	void setFullPalette(PalDesc * palDesc);
 	void initPrimary(int16 mode);
-	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight, int16 x,
-							int16 y, int16 transp, SurfaceDesc * destDesc);
 	void freeDriver(void);
 	void setHandlers();
 
@@ -121,6 +119,8 @@ public:
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest) = 0;
 	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) = 0;
 	virtual void waitRetrace(int16) = 0;
+	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc) = 0;
 
 protected:
 	class VideoDriver *_videoDriver;
@@ -135,6 +135,8 @@ public:
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
 	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
 	virtual void waitRetrace(int16);
+	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc);
 
 	Video_v1(GobEngine *vm);
 	virtual ~Video_v1() {};
@@ -146,6 +148,8 @@ public:
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
 	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
 	virtual void waitRetrace(int16);
+	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc);
 
 	Video_v2(GobEngine *vm);
 	virtual ~Video_v2() {};

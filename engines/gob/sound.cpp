@@ -24,6 +24,8 @@
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/sound.h"
+#include "gob/game.h"
+#include "gob/util.h"
 
 namespace Gob {
 
@@ -93,7 +95,14 @@ void Snd::speakerOff(void) {
 }
 
 void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
-	assert(frequency > 0);
+	if (frequency == 0)
+		frequency = sndDesc->frequency;
+
+	if (frequency <= 0) {
+		warning("Attempted to play a sample with a frequency of %d", frequency);
+		return;
+	}
+//	assert(frequency > 0);
 
 	if (!_vm->_mixer->isSoundHandleActive(sndDesc->handle)) {
 		_vm->_mixer->playRaw(&sndDesc->handle, sndDesc->data, sndDesc->size, frequency, 0);

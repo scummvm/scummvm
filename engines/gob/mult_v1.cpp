@@ -305,7 +305,7 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		doPalAnim();
 
 		stop = doFadeAnim(stop);
-		stop = doSoundAnim(stop);
+		stop = doSoundAnim(stop, _frame);
 
 		if (_frame >= endFrame)
 			stopNoClear = 1;
@@ -597,11 +597,11 @@ char Mult_v1::doFadeAnim(char stop) {
 	return stop;
 }
 
-char Mult_v1::doSoundAnim(char stop) {
+char Mult_v1::doSoundAnim(char stop, int16 frame) {
 	Mult_SndKey *sndKey;
 	for (_index = 0; _index < _sndKeysCount; _index++) {
 		sndKey = &_sndKeys[_index];
-		if (sndKey->frame != _frame)
+		if (sndKey->frame != frame)
 			continue;
 
 		if (sndKey->cmd != -1) {

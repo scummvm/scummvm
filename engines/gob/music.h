@@ -26,6 +26,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
+#include "common/mutex.h"
 
 #include "gob/gob.h"
 
@@ -38,14 +39,17 @@ public:
 	Music(GobEngine *vm);
 	~Music();
 
+	void lock() { _mutex.lock(); }
+	void unlock() { _mutex.unlock(); }
 	bool playing() { return _playing; }
-	bool getLooping() { return _looping; }
-	void setLooping(bool looping) { _looping = looping; }
+	bool getRepeating(void) { return _repCount; }
+	void setRepeating (int32 repCount) { _repCount = repCount; }
 	void startPlay(void);
-	void stopPlay(void) { _playing = false; }
+	void stopPlay(void) { _mutex.lock(); _playing = false; _mutex.unlock(); }
 	void playTrack(const char *trackname);
 	void playBgMusic(void);
 	bool loadMusic(const char *filename);
+	void loadFromMemory(byte *data);
 	void unloadMusic(void);
 
 // AudioStream API
@@ -74,10 +78,11 @@ protected:
 	bool _notOn[11];
 	byte _pollNotes[16];
 	uint32 _samplesTillPoll;
+	int32 _repCount;
 	bool _playing;
 	bool _first;
 	bool _ended;
-	bool _looping;
+	Common::Mutex _mutex;
 	GobEngine *_vm;
 
 	void premixerCall(int16 *buf, uint len);

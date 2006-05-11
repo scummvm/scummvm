@@ -25,6 +25,7 @@
 
 #include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/goblin.h"
 
 namespace Gob {
 
@@ -49,7 +50,15 @@ public:
 		int8 somethingLayer;     // New in GOB2
 		int8 somethingFrame;     // New in GOB2
 		int8 someFlag;           // New in GOB2
+		int8 state;              // New in GOB2
+		int8 field_E;            // New in GOB2
 		int8 field_F;            // New in GOB2
+		int8 field_10;           // New in GOB2
+		int8 field_12;           // New in GOB2
+		int8 field_13;           // New in GOB2
+		int8 field_14;           // New in GOB2
+		int8 field_15;           // New in GOB2
+		int8 field_17;           // New in GOB2
 	} GCC_PACK;
 
 	struct Mult_Object {
@@ -61,11 +70,18 @@ public:
 		int16 lastRight;
 		int16 lastTop;
 		int16 lastBottom;
-		int8 someFlag;         // New in GOB2
-		int16 somethingLeft;   // New in GOB2
-		int16 somethingTop;    // New in GOB2
-		int16 somethingRight;  // New in GOB2
-		int16 somethingBottom; // New in GOB2
+		int8 someFlag;                     // New in GOB2
+		int16 somethingLeft;               // New in GOB2
+		int16 somethingTop;                // New in GOB2
+		int16 somethingRight;              // New in GOB2
+		int16 somethingBottom;             // New in GOB2
+		int8 goblinX;                      // New in GOB2
+		int8 goblinY;                      // New in GOB2
+		int8 field_1C;                     // New in GOB2
+		int8 field_1D;                     // New in GOB2
+		int8 field_1E;                     // New in GOB2
+		int8 field_1F;                     // New in GOB2
+		Goblin::Gob2_State **goblinStates; // New in GOB2
 	};
 
 	struct Mult_StaticKey {
@@ -186,7 +202,11 @@ public:
 
 	int8 *_orderArray;
 
-	int16 _word_2CC88;
+	uint16 _word_2F2B1;
+	uint16 _word_2F2AF;
+	uint16 _word_2CC86;
+	uint16 _word_2F22A;
+	uint16 _word_2CC84;
 
 	void zeroMultData(void);
 	void checkFreeMult(void);
@@ -218,7 +238,7 @@ protected:
 	virtual char prepPalAnim(char stop) = 0;
 	virtual void doPalAnim(void) = 0;
 	virtual char doFadeAnim(char stop) = 0;
-	virtual char doSoundAnim(char stop) = 0;
+	virtual char doSoundAnim(char stop, int16 frame) = 0;
 };
 
 class Mult_v1 : public Mult {
@@ -243,7 +263,7 @@ protected:
 	virtual char prepPalAnim(char stop);
 	virtual void doPalAnim(void);
 	virtual char doFadeAnim(char stop);
-	virtual char doSoundAnim(char stop);
+	virtual char doSoundAnim(char stop, int16 frame);
 };
 
 class Mult_v2 : public Mult_v1 {
@@ -325,7 +345,7 @@ protected:
 	virtual char prepPalAnim(char stop);
 	virtual void doPalAnim(void);
 	virtual char doFadeAnim(char stop);
-	virtual char doSoundAnim(char stop);
+	virtual char doSoundAnim(char stop, int16 frame);
 
 	void sub_62DD(int16 index);
 	void sub_6A35(void);

@@ -754,9 +754,9 @@ bool Inter_v1::o1_printText(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 bool Inter_v1::o1_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_animPalDir = load16();
-	_animPalLowIndex = _vm->_parse->parseValExpr();
-	_animPalHighIndex = _vm->_parse->parseValExpr();
+	_animPalDir[0] = load16();
+	_animPalLowIndex[0] = _vm->_parse->parseValExpr();
+	_animPalHighIndex[0] = _vm->_parse->parseValExpr();
 	return false;
 }
 
@@ -1199,6 +1199,7 @@ bool Inter_v1::o1_playComposition(char &cmdCount, int16 &counter, int16 &retFlag
 }
 
 bool Inter_v1::o1_stopSound(char &cmdCount, int16 &counter, int16 &retFlag) {
+	_vm->_music->stopPlay();
 	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
 	_soundEndTimeKey = 0;
 	return false;
@@ -2762,6 +2763,34 @@ void Inter_v1::storeMouse(void) {
 	WRITE_VAR(2, _vm->_global->_inter_mouseX);
 	WRITE_VAR(3, _vm->_global->_inter_mouseY);
 	WRITE_VAR(4, _vm->_game->_mouseButtons);
+}
+
+void Inter_v1::animPalette(void) {
+	int16 i;
+	Video::Color col;
+
+	if (_animPalDir[0] == 0)
+		return;
+
+	_vm->_video->waitRetrace(_vm->_global->_videoMode);
+
+	if (_animPalDir[0] == -1) {
+		col = _vm->_draw->_vgaSmallPalette[_animPalLowIndex[0]];
+
+		for (i = _animPalLowIndex[0]; i < _animPalHighIndex[0]; i++)
+			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i + 1];
+
+		_vm->_draw->_vgaSmallPalette[_animPalHighIndex[0]] = col;
+	} else {
+		col = _vm->_draw->_vgaSmallPalette[_animPalHighIndex[0]];
+		for (i = _animPalHighIndex[0]; i > _animPalLowIndex[0]; i--)
+			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i - 1];
+
+		_vm->_draw->_vgaSmallPalette[_animPalLowIndex[0]] = col;
+	}
+
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
+	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
 } // End of namespace Gob

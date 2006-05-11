@@ -110,7 +110,9 @@ public:
 
 	int16 _extHandle;
 
-	Snd::SoundDesc *_soundSamples[20];
+	Snd::SoundDesc *_soundSamples[60];
+	int16 _soundIds[60];
+	int8 _soundTypes[60];
 
 	char _totToLoad[20];
 
@@ -157,7 +159,9 @@ public:
 	void loadImFile(void);
 	void start(void);
 	void totSub(int8 flags, char *newTotFile);
+	void switchTotSub(int16 index, int16 skipPlay);
 	char *loadLocTexts(void);
+	Snd::SoundDesc *loadSND(const char *path, int8 arg_4);
 
 	virtual void playTot(int16 skipPlay) = 0;
 	virtual void clearCollisions(void) = 0;

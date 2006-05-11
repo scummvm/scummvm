@@ -40,11 +40,18 @@
 namespace Gob {
 
 Inter::Inter(GobEngine *vm) : _vm(vm) {
+	int i;
+
 	_terminate = false;
 	_breakFlag = false;
-	_animPalLowIndex = 0;
-	_animPalHighIndex = 0;
-	_animPalDir = 0;
+	
+	for (i = 0; i < 8; i++)
+	{
+		_animPalLowIndex[i] = 0;
+		_animPalHighIndex[i] = 0;
+		_animPalDir[i] = 0;
+	}
+
 	_soundEndTimeKey = 0;
 	_soundStopVal = 0;
 	_breakFromLevel = 0;
@@ -94,34 +101,6 @@ char Inter::evalBoolResult() {
 		return 1;
 	else
 		return 0;
-}
-
-void Inter::animPalette(void) {
-	int16 i;
-	Video::Color col;
-
-	if (_animPalDir == 0)
-		return;
-
-	_vm->_video->waitRetrace(_vm->_global->_videoMode);
-
-	if (_animPalDir == -1) {
-		col = _vm->_draw->_vgaSmallPalette[_animPalLowIndex];
-
-		for (i = _animPalLowIndex; i < _animPalHighIndex; i++)
-			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i + 1];
-
-		_vm->_draw->_vgaSmallPalette[_animPalHighIndex] = col;
-	} else {
-		col = _vm->_draw->_vgaSmallPalette[_animPalHighIndex];
-		for (i = _animPalHighIndex; i > _animPalLowIndex; i--)
-			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i - 1];
-
-		_vm->_draw->_vgaSmallPalette[_animPalLowIndex] = col;
-	}
-
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
-	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
 void Inter::funcBlock(int16 retFlag) {
@@ -305,7 +284,7 @@ void Inter::initControlVars(void) {
 
 	_breakFlag = false;
 	_terminate = false;
-	_animPalDir = 0;
+	_animPalDir[0] = 0;
 	_soundEndTimeKey = 0;
 }
 

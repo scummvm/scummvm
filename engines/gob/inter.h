@@ -37,9 +37,9 @@ namespace Gob {
 
 class Inter {
 public:
-	int16 _animPalLowIndex;
-	int16 _animPalHighIndex;
-	int16 _animPalDir;
+	int16 _animPalLowIndex[8];
+	int16 _animPalHighIndex[8];
+	int16 _animPalDir[8];
 	uint32 _soundEndTimeKey;
 	int16 _soundStopVal;
 	char _terminate;
@@ -53,7 +53,6 @@ public:
 
 	char evalExpr(int16 *pRes);
 	char evalBoolResult(void);
-	void animPalette(void);
 	void funcBlock(int16 retFlag);
 	void storeKey(int16 key);
 	void checkSwitchTable(char **ppExec);
@@ -78,6 +77,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j) = 0;
 	virtual const char *getOpcodeGoblinDesc(int i) = 0;
 	virtual void loadMult(void) = 0;
+	virtual void animPalette(void) = 0;
 };
 
 class Inter_v1 : public Inter {
@@ -116,6 +116,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 	virtual void loadMult(void);
+	virtual void animPalette(void);
 
 	void o1_loadMult(void);
 	void o1_playMult(void);
@@ -307,21 +308,30 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 	virtual void loadMult(void);
+	virtual void animPalette(void);
 
-	void o2_drawStub(void) { warning("Gob2 stub"); }
+	void o2_drawStub(void) { error("Gob2 stub"); }
 	void o2_totSub(void);
+	void o2_switchTotSub(void);
 	void o2_stub0x52(void);
-	void o2_stub0x53(void);
 	void o2_stub0x54(void);
-	void o2_stub0x56(void);
 	void o2_stub0x80(void);
+	void o2_stub0x82(void);
+	void o2_stub0x83(void);
+	void o2_stub0x85(void);
 	void o2_renderStatic(void);
+	bool o2_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadSound(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_loadMapObjects(void);
+	void o2_freeGoblins(void);
+	void o2_writeGoblinPos(void);
+	void o2_placeGoblin(void);
 	void o2_multSub(void);
 	void o2_setRenderFlags(void);
 	void o2_initMult(void);

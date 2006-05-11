@@ -46,6 +46,12 @@ public:
 		int16 sndFrame;		// +Eh
 	} GCC_PACK;
 
+	struct Gob2_State {
+		int16 animation;
+		int16 layer;
+		int16 field_4;
+	};
+
 	typedef Gob_State *Gob_PState;
 
 	typedef Gob_PState Gob_StateLine[6];
@@ -177,19 +183,28 @@ public:
 	int16 _positionedGob;
 	char _noPick;
 
+	// GOB2:
+	int16 _soundSlotsCount;
+	int16 _soundSlots[60];
+	int16 _word_2F9C0;
+	int16 _word_2F9BE;
+	int16 _word_2F9BC;
+	int16 _word_2F9BA;
+	int16 _dword_2F9B6; // index into the variables array
+	int16 _dword_2F9B2; // index into the variables array
+	char *_dword_2F2A4; // index into the variables array
+
 	// Functions
 	char rotateState(int16 from, int16 to);
 	void playSound(Snd::SoundDesc * snd, int16 repCount, int16 freq);
 	void drawObjects(void);
 	void animateObjects(void);
-	void placeObject(Gob_Object * objDesc, char animated);
 	int16 getObjMaxFrame(Gob_Object * obj);
 	int16 objIntersected(Gob_Object * obj1, Gob_Object * obj2);
 	void setMultStates(Gob_Object * gobDesc);
 	int16 nextLayer(Gob_Object * gobDesc);
 	void showBoredom(int16 gobIndex);
 	void switchGoblin(int16 index);
-	void freeObjects(void);
 	void zeroObjects(void);
 	void freeAllObjects(void);
 	void loadObjects(char *source);
@@ -203,7 +218,14 @@ public:
 	int16 treatItem(int16 action);
 	int16 doMove(Gob_Object *gobDesc, int16 cont, int16 action);
 
+	void sub_19BD3(void);
+
+	virtual void placeObject(Gob_Object * objDesc, char animated,
+			int16 index, int16 x, int16 y, int16 state) = 0;
+	virtual void freeObjects(void) = 0;
+
 	Goblin(GobEngine *vm);
+	virtual ~Goblin() {};
 
 protected:
 	int16 _rotStates[4][4];
@@ -224,6 +246,26 @@ protected:
 	void moveTreatRopeStairs(Gob_Object *gobDesc);
 	void movePathFind(Gob_Object *gobDesc, int16 nextAct);
 	void moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount);
+};
+
+class Goblin_v1 : public Goblin {
+public:
+	virtual void placeObject(Gob_Object * objDesc, char animated,
+			int16 index, int16 x, int16 y, int16 state);
+	virtual void freeObjects(void);
+
+	Goblin_v1(GobEngine *vm);
+	virtual ~Goblin_v1() {};
+};
+
+class Goblin_v2 : public Goblin_v1 {
+public:
+	virtual void placeObject(Gob_Object * objDesc, char animated,
+			int16 index, int16 x, int16 y, int16 state);
+	virtual void freeObjects(void);
+
+	Goblin_v2(GobEngine *vm);
+	virtual ~Goblin_v2() {};
 };
 
 }				// End of namespace Gob

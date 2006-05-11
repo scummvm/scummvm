@@ -85,11 +85,13 @@ public:
 	int16 checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
 	void optimizePoints(void);
 	void loadItemToObject(void);
-	void loadMapObjects(char *avjFile);
 	void loadDataFromAvo(char *dest, int16 size);
 	void loadMapsInitGobs(void);
 
+	virtual void loadMapObjects(char *avjFile) = 0;
+
 	Map(GobEngine *vm);
+	virtual ~Map() {};
 
 protected:
 	char *_avoDataPtr;
@@ -97,6 +99,22 @@ protected:
 
 	int16 findNearestWayPoint(int16 x, int16 y);
 	uint16 loadFromAvo_LE_UINT16();
+};
+
+class Map_v1 : public Map {
+public:
+	virtual void loadMapObjects(char *avjFile);
+
+	Map_v1(GobEngine *vm);
+	virtual ~Map_v1() {};
+};
+
+class Map_v2 : public Map_v1 {
+public:
+	virtual void loadMapObjects(char *avjFile);
+
+	Map_v2(GobEngine *vm);
+	virtual ~Map_v2() {};
 };
 
 }				// End of namespace Gob

@@ -45,7 +45,7 @@ public:
 
 	typedef void (*CleanupFuncPtr) (int16);
 
-	SoundDesc *_loopingSounds[5]; // Should be enough
+	SoundDesc *_loopingSounds[10]; // Should be enough
 	char _playingSound;
 	CleanupFuncPtr _cleanupFunc;
 

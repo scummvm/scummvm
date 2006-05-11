@@ -238,8 +238,9 @@ void Game_v2::playTot(int16 skipPlay) {
 			}
 			_vm->_snd->stopSound(0);
 
-			for (i = 0; i < 20; i++)
-				freeSoundSlot(i);
+			for (i = 0; i < 60; i++)
+				if ((_soundTypes[i] & 8) == 0)
+					freeSoundSlot(i);
 
 			if (_totToLoad[0] == 0)
 				break;

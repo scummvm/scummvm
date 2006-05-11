@@ -64,8 +64,11 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 		_collStackElemSizes[i] = 0;
 	}
 
-	for (i = 0; i < 20; i++)
+	for (i = 0; i < 60; i++) {
 		_soundSamples[i] = 0;
+		_soundIds[i] = 0;
+		_soundTypes[i] = 0;
+	}
 
 	_curTotFile[0] = 0;
 	_curExtFile[0] = 0;
@@ -1372,8 +1375,6 @@ void Game::start(void) {
 void Game::totSub(int8 flags, char *newTotFile) {
 	int8 curBackupPos;
 
-	warning("totSub(%d, \"%s\");", flags, newTotFile);
-
 	if (_backupedCount >= 5)
 		return;
 
@@ -1432,6 +1433,74 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	_imFileData = _imFileDataArray[_backupedCount];
 	_vm->_global->_inter_variables = _variablesArray[_backupedCount];
 	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
+	strcpy(_curExtFile, _curTotFile);
+	_curExtFile[strlen(_curExtFile)-4] = '\0';
+	strcat(_curExtFile, ".EXT");
+}
+
+void Game::switchTotSub(int16 index, int16 skipPlay) {
+	int16 backupedCount;
+	int16 curBackupPos;
+
+	if ((_backupedCount - index) < 1)
+		return;
+
+	curBackupPos = _curBackupPos;
+	backupedCount = _backupedCount;
+	if (_curBackupPos == _backupedCount) {
+		_cursorXDeltaArray[_backupedCount] = _vm->_draw->_cursorXDeltaVar;
+		_cursorYDeltaArray[_backupedCount] = _vm->_draw->_cursorYDeltaVar;
+		_totTextDataArray[_backupedCount] = _totTextData;
+		_totFileDataArray[_backupedCount] = _totFileData;
+		_totResourceTableArray[_backupedCount] = _totResourceTable;
+		_extTableArray[_backupedCount] = _extTable;
+		_extHandleArray[_backupedCount] = _extHandle;
+		_imFileDataArray[_backupedCount] = _imFileData;
+		_variablesArray[_backupedCount] = _vm->_global->_inter_variables;
+		strcpy(_curTotFileArray[_backupedCount], _curTotFile);
+		_backupedCount++;
+	}
+	_curBackupPos -= index;
+	if (index >= 0)
+		_curBackupPos--;
+
+	_vm->_draw->_cursorXDeltaVar = _cursorXDeltaArray[_curBackupPos];
+	_vm->_draw->_cursorYDeltaVar = _cursorYDeltaArray[_curBackupPos];
+	_totTextData = _totTextDataArray[_curBackupPos];
+	_totFileData = _totFileDataArray[_curBackupPos];
+	_totResourceTable = _totResourceTableArray[_curBackupPos];
+	_extTable = _extTableArray[_curBackupPos];
+	_extHandle = _extHandleArray[_curBackupPos];
+	_imFileData = _imFileDataArray[_curBackupPos];
+	_vm->_global->_inter_variables = _variablesArray[_curBackupPos];
+	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
+	strcpy(_curExtFile, _curTotFile);
+	_curExtFile[strlen(_curExtFile)-4] = '\0';
+	strcat(_curExtFile, ".EXT");
+
+	if (_vm->_inter->_terminate != 0)
+		return;
+
+	_vm->_game->pushCollisions(0);
+	_vm->_game->playTot(skipPlay);
+
+	if (_vm->_inter->_terminate != 2)
+		_vm->_inter->_terminate = 0;
+
+	_vm->_game->popCollisions();
+
+	_curBackupPos = curBackupPos;
+	_backupedCount = backupedCount;
+	_vm->_draw->_cursorXDeltaVar = _cursorXDeltaArray[_curBackupPos];
+	_vm->_draw->_cursorYDeltaVar = _cursorYDeltaArray[_curBackupPos];
+	_totTextData = _totTextDataArray[_curBackupPos];
+	_totFileData = _totFileDataArray[_curBackupPos];
+	_totResourceTable = _totResourceTableArray[_curBackupPos];
+	_extTable = _extTableArray[_curBackupPos];
+	_extHandle = _extHandleArray[_curBackupPos];
+	_imFileData = _imFileDataArray[_curBackupPos];
+	_vm->_global->_inter_variables = _variablesArray[_curBackupPos];
+	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
 	strcpy(_curExtFile, _curTotFile);
 	_curExtFile[strlen(_curExtFile)-4] = '\0';
 	strcat(_curExtFile, ".EXT");
@@ -1632,6 +1701,51 @@ void Game::sub_BB28(void) {
 	}
 	if (_vm->_draw->_frontSurface != _vm->_draw->_backSurface)
 		_vm->_draw->freeSprite(21);
+}
+
+Snd::SoundDesc *Game::loadSND(const char *path, int8 arg_4) {
+	Snd::SoundDesc *soundDesc;
+	int32 dsize;
+	char *data;
+	char *dataPtr;
+
+	soundDesc = new Snd::SoundDesc;
+
+	data = _vm->_dataio->getData(path);
+	if (data == 0) {
+		delete soundDesc;
+		return 0;
+	}
+	soundDesc->data = data;
+	soundDesc->flag = *data & 0x7F;
+	if (*data == 0)
+		soundDesc->flag = 8;
+	dataPtr = data + 4;
+
+	WRITE_LE_UINT16(dataPtr, READ_BE_UINT16(dataPtr));
+
+	WRITE_LE_UINT32(data, (READ_LE_UINT32(data) >> 24) + ((READ_LE_UINT16(data) & 0xFF00) << 8) + ((READ_LE_UINT16(data + 2) & 0xFF) >> 8));
+
+	soundDesc->size = READ_LE_UINT32(data);
+	dsize = _vm->_dataio->getDataSize(path) - 6;
+	if (dsize > soundDesc->size)
+		soundDesc->size = dsize;
+
+	soundDesc->frequency = READ_LE_UINT16(dataPtr);
+	soundDesc->data += 6;
+	soundDesc->timerTicks = 1193180 / READ_LE_UINT16(dataPtr);
+
+	if (arg_4 & 2)
+		arg_4 |= 1;
+	if ((soundDesc->frequency < 4700) && (arg_4 & 1))
+		arg_4 &= 0xFE;
+
+	if (arg_4 & 1) {
+		if ((_vm->_global->_soundFlags & BLASTER_FLAG) || (_vm->_global->_soundFlags & PROAUDIO_FLAG)) {
+		}
+	}
+
+	return soundDesc;
 }
 
 } // End of namespace Gob

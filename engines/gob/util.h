@@ -24,6 +24,7 @@
 #define GOB_UTIL_H
 
 #include "gob/video.h"
+#include "gob/global.h"
 
 namespace Gob {
 
@@ -86,6 +87,23 @@ public:
 	static const char trStr1[];
 	static const char trStr2[];
 	static const char trStr3[];
+
+	inline uint8 readVariableByte(char *address) {
+		int16 whichVar = address - _vm->_global->_inter_variables;
+		int16 whichVarByte = whichVar % 4;
+
+		whichVar >>= 2;
+		return ((VAR(whichVar) >> 8 * (3-whichVarByte)) & 0xFF);
+	}
+	inline void writeVariableByte(char *address, uint8 value) {
+		int16 whichVar = address - _vm->_global->_inter_variables;
+		int16 whichVarByte = whichVar % 4;
+
+		whichVar >>= 2;
+		VAR(whichVar) &= ~(0xFF << 8 * (3-whichVarByte));
+		VAR(whichVar) |= ((uint32) value) << 8 * (3-whichVarByte);
+	}
+
 	Util(GobEngine *vm);
 
 protected:

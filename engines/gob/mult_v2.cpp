@@ -34,6 +34,7 @@
 #include "gob/draw.h"
 #include "gob/palanim.h"
 #include "gob/parse.h"
+#include "gob/music.h"
 
 namespace Gob {
 
@@ -56,6 +57,17 @@ void Mult_v2::loadMult(int16 resId) {
 	index = (resId & 0x8000) ? *_vm->_global->_inter_execPtr++ : 0;
 
 	_multData2 = new Mult_Data;
+
+	// ---.
+	for (i = 0; i < 4; i++) {
+		_multData2->field_157[i] = 0;
+		for (j = 0; j < 4; j++) {
+			_multData2->field_15F[i][j] = 0;
+			_multData2->field_17F[i][j] = 0;
+		}
+	}
+	// ---'
+
 	_multDatas[index] = _multData2;
 
 	for (i = 0; i < 10; i++) {
@@ -361,6 +373,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_objCount = 4;
 
 			_objects = new Mult_Object[_objCount];
+
 			_orderArray = new int8[_objCount];
 			_renderData = new int16[9 * _objCount];
 			_renderData2 = new Mult_Object*[_objCount];
@@ -369,6 +382,14 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animArrayY = new int32[_objCount];
 
 			_animArrayData = new Mult_AnimData[_objCount];
+			// TODO: Delete that after the code that initializes these fields exists!
+			int i;
+			for (i = 0; i < _objCount; i++) {
+				_animArrayData[i].field_13 = 0;
+				_animArrayData[i].field_14 = 0;
+				_animArrayData[i].field_17 = 0;
+			}
+			// ---'
 
 			for (_counter = 0; _counter < _objCount; _counter++) {
 				multObj = &_objects[_counter];
@@ -427,6 +448,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 	}
 
 	do {
+		_vm->_snd->loopSounds();
 		stop = 1;
 
 		if (VAR(58) == 0) {
@@ -449,7 +471,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		doPalAnim();
 
 		stop = doFadeAnim(stop);
-		stop = doSoundAnim(stop);
+		stop = doSoundAnim(stop, _frame);
 
 		if (_frame >= endFrame)
 			stopNoClear = 1;
@@ -771,23 +793,18 @@ char Mult_v2::doFadeAnim(char stop) {
 	return stop;
 }
 
-char Mult_v2::doSoundAnim(char stop) {
+char Mult_v2::doSoundAnim(char stop, int16 frame) {
 	Mult_SndKey *sndKey;
 	for (_index = 0; _index < _multData2->sndKeysCount; _index++) {
 		sndKey = &_multData2->sndKeys[_index];
-		if (sndKey->frame != _frame)
+		if (sndKey->frame != frame)
 			continue;
 
 		if (sndKey->cmd != -1) {
-			if (sndKey->cmd == 1) {
+			if ((sndKey->cmd == 1) || (sndKey->cmd == 4)) {
 				_vm->_snd->stopSound(0);
-				stop = 0;
-				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
-				    sndKey->freq, sndKey->channel);
-
-			} else if (sndKey->cmd == 4) {
-				_vm->_snd->stopSound(0);
-				stop = 0;
+				if (_vm->_game->_soundSamples[sndKey->soundIndex] == 0)
+					continue;
 				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
 				    sndKey->freq, sndKey->channel);
 			}
@@ -817,6 +834,8 @@ void Mult_v2::sub_62DD(int16 index) {
 	for (i = 0; i < 4; i++) {
 		if (_multData2->field_124[index][i] != -1) {
 			for (j = _multData2->field_15F[index][i]; j < _multData2->animKeysCount[i]; j++) {
+				if ((i >= 4) || (j >= _multData2->animKeysCount[i]))
+					continue;
 				animKey = &_multData2->animKeys[i][j];
 				if (animKey->frame > frame)
 					break;
@@ -894,6 +913,43 @@ void Mult_v2::sub_62DD(int16 index) {
 			warning("GOB2 Stub! sub_1CBF8(arg0, arg1, arg2, arg3);");
 		}
 	}
+	
+	doSoundAnim(0, frame);
+
+	if (_multData2->field_156 == 1) { // loc_6809
+		frame++;
+		if (_multData2->field_157[index] == (frame-1)) {
+			_multData2->somepointer05indices[0] = -1;
+			_multData2->somepointer05indices[1] = -1;
+			_multData2->somepointer05indices[2] = -1;
+			_multData2->somepointer05indices[3] = -1;
+			frame = -1;
+			for (i = 0; i < 4; i++) {
+				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
+					continue;
+				_objects[_multData2->field_124[index][i]].pAnimData->animType =
+					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
+			}
+		}
+	} else { // loc_68F3
+		frame--;
+		if (_multData2->field_157[index] == (frame+1)) {
+			_multData2->somepointer05indices[0] = -1;
+			_multData2->somepointer05indices[1] = -1;
+			_multData2->somepointer05indices[2] = -1;
+			_multData2->somepointer05indices[3] = -1;
+			frame = -1;
+			for (i = 0; i < 4; i++) {
+				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
+					continue;
+				_objects[_multData2->field_124[index][i]].pAnimData->animType =
+					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
+			}
+		}
+	}
+	// loc_6A06
+	_multData2->animKeysIndices1[index] = frame;
+	WRITE_VAR(18 + index, frame);
 }
 
 void Mult_v2::sub_6A35(void) {
@@ -1043,7 +1099,7 @@ void Mult_v2::animate(void) {
 		}
 	}
 
-	if (_word_2CC88 >= 0) {
+	if (_vm->_goblin->_gobsCount >= 0) {
 		for (i = 0; i < orderArrayPos; i++) {
 			animObj1 = _renderData2[orderArray[i]];
 			for (j = i+1; j < orderArrayPos; j++) {
@@ -1135,7 +1191,7 @@ void Mult_v2::animate(void) {
 
 		if (animData1->maxTick == animObj1->tick) {
 			animObj1->tick = 0;
-			if ((animData1->animType < 100) || (_word_2CC88 < 0)) {
+			if ((animData1->animType < 100) || (_vm->_goblin->_gobsCount < 0)) {
 				if (animData1->animType == 4) {
 					animData1->frame = 0;
 					animData1->isPaused = 1;
@@ -1217,8 +1273,18 @@ void Mult_v2::animate(void) {
 
 void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 	    int16 channel) {
-	warning("GOB2 Stub! Mult_v2::playSound()");
-//	_vm->_snd->playSample(soundDesc, repCount, freq);
+	warning("PlaySound(%p, %d, %d, %d), %d", (void *) soundDesc, repCount, freq, channel, soundDesc->frequency);
+	if (soundDesc->frequency >= 0) {
+		if (soundDesc->frequency == freq)
+			_vm->_snd->playSample(soundDesc, repCount, -channel);
+		else
+			_vm->_snd->playSample(soundDesc, repCount, freq);
+	} else {
+		if (soundDesc->frequency == -freq)
+			_vm->_snd->playSample(soundDesc, repCount, -channel);
+		else
+			_vm->_snd->playSample(soundDesc, repCount, freq);
+	}
 }
 
 void Mult_v2::freeMultKeys(void) {

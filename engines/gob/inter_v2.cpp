@@ -37,6 +37,8 @@
 #include "gob/cdrom.h"
 #include "gob/palanim.h"
 #include "gob/anim.h"
+#include "gob/music.h"
+#include "gob/map.h"
 
 namespace Gob {
 
@@ -204,7 +206,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		/* 40 */
 		OPCODE(o2_totSub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_switchTotSub),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
 		/* 44 */
@@ -223,14 +225,14 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 50 */
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_loadMapObjects),
+		OPCODE(o2_freeGoblins),
 		OPCODE(o2_stub0x52),
-		OPCODE(o2_stub0x53),
+		OPCODE(o2_writeGoblinPos),
 		/* 54 */
 		OPCODE(o2_stub0x54),
 		OPCODE(o2_drawStub),
-		OPCODE(o2_stub0x56),
+		OPCODE(o2_placeGoblin),
 		{NULL, ""},
 		/* 58 */
 		{NULL, ""},
@@ -285,11 +287,11 @@ void Inter_v2::setupOpcodes(void) {
 		/* 80 */
 		OPCODE(o2_stub0x80),
 		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x82),
+		OPCODE(o2_stub0x83),
 		/* 84 */
 		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x85),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
 		/* 88 */
@@ -474,7 +476,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_keyFunc),
 		OPCODE(o1_capturePush),
 		OPCODE(o1_capturePop),
-		OPCODE(o1_animPalInit),
+		OPCODE(o2_animPalInit),
 		/* 18 */
 		{NULL, ""},
 		{NULL, ""},
@@ -516,7 +518,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_invalidate),
 		OPCODE(o1_setBackDelta),
 		/* 38 */
-		OPCODE(o1_playSound),
+		OPCODE(o2_playSound),
 		OPCODE(o1_stopSound),
 		OPCODE(o2_loadSound),
 		OPCODE(o1_freeSoundSlot),
@@ -718,32 +720,12 @@ void Inter_v2::o2_stub0x52(void) {
 	warning("STUB: Gob2 drawOperation 0x52 (%d %d %d)", expr1, expr2, expr3);
 }
 
-void Inter_v2::o2_stub0x53(void) {
-	int16 var1 = _vm->_parse->parseVarIndex() >> 2;
-	int16 var2 = _vm->_parse->parseVarIndex() >> 2;
-	int16 index = _vm->_parse->parseValExpr();
-
-	warning("STUB: Gob2 drawOperation 0x53 (%d %d %d)", var1, var2, index);
-
-//	WRITE_VAR(var1, _vm->_mult->_objects[index].field_1A);
-//	WRITE_VAR(var2, _vm->_mult->_objects[index].field_1B);
-}
-
 void Inter_v2::o2_stub0x54(void) {
 	int16 index = _vm->_parse->parseValExpr();
 
 	warning("STUB: Gob2 drawOperation 0x54 (%d)", index);
 
 //	_vm->_mult->_objects[index].pAnimData->field_12 = 4;
-}
-
-void Inter_v2::o2_stub0x56(void) {
-	int16 expr1 = _vm->_parse->parseValExpr();
-	int16 expr2 = _vm->_parse->parseValExpr();
-	int16 expr3 = _vm->_parse->parseValExpr();
-	int16 expr4 = _vm->_parse->parseValExpr();
-
-	warning("STUB: Gob2 drawOperation 0x56 (%d %d %d %d)", expr1, expr2, expr3, expr4);
 }
 
 void Inter_v2::o2_stub0x80(void) {
@@ -817,156 +799,194 @@ void Inter_v2::o2_stub0x80(void) {
 	}
 }
 
-int16 Inter_v2::loadSound(int16 search) {
-	int16 id;
-	int16 slot;
-/*	int i;
-	int8 var_7;
-	char *pointer;
-	char sndfile[14];
+void Inter_v2::o2_stub0x82(void) {
+	int16 expr;
 
-	char *dword_2EBF0[60];
-	int16 word_2EAFE[60];
-	int8 byte_2EB8A[60];
+	expr = _vm->_parse->parseValExpr();
 
-	for (i = 0; i < 60; i++)
-		dword_2EBF0[i] = 0;*/
-
-	warning("STUB: loadSound()");
-
-	slot = 0;
-	if (search == 0) {
-		slot = _vm->_parse->parseValExpr();
+	if (expr == -1) {
+		if (_vm->_game->_byte_2FC9B != 0)
+			_vm->_game->_byte_2FC9B = 1;
+		_vm->_parse->parseValExpr();
+		WRITE_VAR(2, _vm->_game->_word_2FC9E);
+		WRITE_VAR(3, _vm->_game->_word_2FC9C);
+	} else {
+		_vm->_game->_word_2FC9E = expr;
+		_vm->_game->_word_2FC9C = _vm->_parse->parseValExpr();
 	}
-	id = load16();
+/*	if (_vm->_game->_off_2E51B != 0)
+		warning("GOB2 Stub! _vid_setPixelShift(_vm->_game->_word_2FC9E, _vm->_game->_word_2FC9C + 200 - _vm->_game->_word_2E51F)");
+	else
+		warning("GOB2 Stub! _vid_setPixelShift(_vm->_game->_word_2FC9E, _vm->_game->_word_2FC9C);");*/
+}
 
-//	warning("==> %d %d", slot, id);
+// some sub
+void Inter_v2::o2_stub0x83(void) {
+	char dest[128];
+	int16 expr1;
+	int16 expr2;
+	int16 expr3;
+	int16 expr4;
+	int16 expr5;
+	int16 expr6;
+	int16 expr7;
+	int16 expr8;
 
-	if (id == -1)
-		_vm->_global->_inter_execPtr += 9;
+	evalExpr(0);
+	strcpy(dest, _vm->_global->_inter_resStr);
+	expr1 = _vm->_parse->parseValExpr();
+	expr2 = _vm->_parse->parseValExpr();
+	expr3 = _vm->_parse->parseValExpr();
+	expr4 = _vm->_parse->parseValExpr();
+	expr5 = _vm->_parse->parseValExpr();
+	expr6 = _vm->_parse->parseValExpr();
+	expr7 = _vm->_parse->parseValExpr();
+	expr8 = _vm->_parse->parseValExpr();
+	
+	warning("STUB: Gob2 drawOperation 0x83 (\"%s\" %d %d %d %d %d %d %d %d)", dest, expr1, expr2, expr3, expr4, expr5, expr6, expr7, expr8);
+}
 
-	return slot;
+void Inter_v2::o2_stub0x85(void) {
+	char dest[32];
 
-/*	var_7 = 0;
+	evalExpr(0);
+	strcpy(dest, _vm->_global->_inter_resStr);
+	strcat(dest, ".ITK");
+
+	warning("STUB: Gob2 drawOperation 0x85 (\"%s\")", dest);
+	_vm->_dataio->openDataFile(dest);
+}
+
+int16 Inter_v2::loadSound(int16 search) {
+	int16 id; // si
+	int16 slot; // di
+	int32 i;
+	bool isADL;
+	char sndfile[14];
+	char *extData;
+	char *dataPtr;
+	Snd::SoundDesc *soundDesc;
+
+	memset(sndfile, 0, 14 * sizeof(char));
+
+	isADL = false;
 	if (search == 0) {
 		slot = _vm->_parse->parseValExpr();
 		if (slot < 0) {
-			var_7 = 1;
+			isADL = true;
 			slot = -slot;
 		}
 		id = load16();
-	}
-	else {
-		// loc_961D
+	} else {
 		id = load16();
 
 		for (slot = 0; slot < 60; slot++)
-			if ((dword_2EBF0[slot] != 0) && (word_2EAFE[slot] = id))
+			if ((_vm->_game->_soundSamples[slot] != 0) && (_vm->_game->_soundIds[slot] == id))
 				return slot | 0x8000;
 
 		for (slot = 59; slot >= 0; slot--)
-			if (dword_2EBF0[slot] == 0) break;
-
+			if (_vm->_game->_soundSamples[slot] == 0) break;
 	}
-
-	if (dword_2EBF0[slot] != 0)
+	
+	if (_vm->_game->_soundSamples[slot] != 0)
 		_vm->_game->freeSoundSlot(slot);
 
-	word_2EAFE[slot] = id;
+	_vm->_game->_soundIds[slot] = id;
 
-	if (id == -1) {
+	if (id == -1) { // loc_969D
 		strcpy(sndfile, _vm->_global->_inter_execPtr);
 		_vm->_global->_inter_execPtr += 9;
-		if (var_7 == 0) {
-			// loc_96EB
+		if (!isADL) {
 			strcat(sndfile, ".SND");
-//			dword_2EBF0[slot] = sub_1F5D0(sndfile);
-		}
-		else {
+			_vm->_game->_soundSamples[slot] = _vm->_game->loadSND(sndfile, 3);
+		} else {
 			strcat(sndfile, ".ADL");
-			dword_2EBF0[slot] = _vm->_dataio->getData(sndfile);
+			// TODO: This is very ugly
+			_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) _vm->_dataio->getData(sndfile);
 		}
-		byte_2EB8A[slot] = 2;
-		// loc_969D
-	}
-	else {
-		// loc_9735
-		if (id >= 30000) {
-			// loc_973E
-			if ((var_7 == 0) &&
-			   (_vm->_global->_soundFlags & 0x14) &&
-			   (_vm->_game->_totFileData[0x29] >= 51)) {
-				// loc_9763
-				if (_vm->_global->_soundFlags & 0x14) {
-				// loc_976E
-//					var_E = new char[16];
-					if (_vm->_inter->_terminate)
-						return slot;
-					pointer = _vm->_game->loadExtData(id, NULL, NULL);
-					if (pointer == NULL) {
-//						delete[] var_E;
-						return slot;
-					}
-					// loc_97C5
-//					var_E->pointer = pointer+6;
-//					var_E->0x0C = pointer[4] << 8 + pointer[5];
-					// ...
-//					dword_2EBF0[slot] = var_E;
-					delete[] pointer;
+		_vm->_game->_soundTypes[slot] = 2;
+	} else { // loc_9735
+		if (id >= 30000) { // loc_973E
+			if (!isADL && (_vm->_game->_totFileData[0x29] >= 51)) { // loc_9763
+				if (_vm->_inter->_terminate != 0)
+					return slot;
+				soundDesc = new Snd::SoundDesc;
+				extData = _vm->_game->loadExtData(id, 0, 0);
+				if (extData == 0) {
+					delete soundDesc;
 					return slot;
 				}
-				else {
-					// loc_9A59
+				soundDesc->data = extData + 6;
+				soundDesc->frequency = (extData[4] << 8) + extData[5];
+				soundDesc->size = (extData[1] << 16) + (extData[2] << 8) + extData[3];
+				soundDesc->flag = 0;
+				if (soundDesc->frequency < 4700)
+					soundDesc->frequency = 4700;
+				soundDesc->frequency = -soundDesc->frequency;
+				for (i = 0, dataPtr = soundDesc->data; i < soundDesc->size; i++, dataPtr++)
+					*dataPtr ^= 0x80;
+				_vm->_game->_soundTypes[slot] = 4;
+				_vm->_game->_soundSamples[slot] = soundDesc;
+			} else { // loc_99BC
+				extData = _vm->_game->loadExtData(id, 0, 0);
+				if (extData == 0)
 					return slot;
-				}
+				_vm->_game->_soundTypes[slot] = 1;
+				if (!isADL)
+					_vm->_game->loadSound(slot, extData);
+				else
+					// TODO: This is very ugly
+					_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 			}
-			else {
-				// loc_99BC
-				pointer = _vm->_game->loadExtData(id, NULL, NULL);
-				// ...
-				delete[] pointer;
-				return slot;
-			}
-		}
-		else {
-			// loc_9A13
-//			pointer = _vm->_game->loadTotResource(id);
-			return slot;
+		} else { // loc_9A13
+			extData = _vm->_game->loadTotResource(id);
+			if (!isADL)
+				_vm->_game->loadSound(slot, extData);
+			else
+				// TODO: This is very ugly
+				_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 		}
 	}
+	// loc_9A4E
 
-	if (var_7 != 0)
-		byte_2EB8A[slot] |= 8;
+	if (isADL)
+		_vm->_game->_soundTypes[slot] |= 8;
 
-	if (dword_2EBF0[slot])
-		delete[] dword_2EBF0[slot];
+	return slot;
+}
 
-	return slot;*/
-	
-/*	char *dataPtr;
-	int16 id;
+void Inter_v2::o2_loadMapObjects(void) {
+	_vm->_map->loadMapObjects(0);
+}
 
-	if (slot == -1)
-		slot = _vm->_parse->parseValExpr();
+void Inter_v2::o2_freeGoblins(void) {
+	_vm->_goblin->freeObjects();
+}
 
-	id = load16();
-	if (id == -1) {
-		_vm->_global->_inter_execPtr += 9;
-		return;
-	}
+void Inter_v2::o2_placeGoblin(void) {
+	int16 index;
+	int16 x;
+	int16 y;
+	int16 state;
 
-	if (id >= 30000) {
-		dataPtr = _vm->_game->loadExtData(id, 0, 0);
-		_vm->_game->_soundFromExt[slot] = 1;
-	} else {
-		dataPtr = _vm->_game->loadTotResource(id);
-		_vm->_game->_soundFromExt[slot] = 0;
-	}
+	index = _vm->_parse->parseValExpr();
+	x = _vm->_parse->parseValExpr();
+	y = _vm->_parse->parseValExpr();
+	state = _vm->_parse->parseValExpr();
 
-	warning("STUB: loadSound()");
-	return;
+	_vm->_goblin->placeObject(0, 0, index, x, y, state);
+}
 
-	_vm->_game->loadSound(slot, dataPtr);*/
+void Inter_v2::o2_writeGoblinPos(void) {
+	int16 var1;
+	int16 var2;
+	int16 index;
+
+	var1 = _vm->_parse->parseVarIndex() >> 2;
+	var2 = _vm->_parse->parseVarIndex() >> 2;
+	index = _vm->_parse->parseValExpr();
+	WRITE_VAR(var1, _vm->_mult->_objects[index].goblinX);
+	WRITE_VAR(var2, _vm->_mult->_objects[index].goblinY);
 }
 
 void Inter_v2::o2_multSub(void) {
@@ -984,9 +1004,12 @@ void Inter_v2::o2_renderStatic(void) {
 
 void Inter_v2::loadMult(void) {
 	int16 val;
-	int16 objIndex;
+	int16 objIndex; // si
 	int16 i;
+	int16 animation;
 	char *lmultData;
+	Mult::Mult_Object *obj;
+	Mult::Mult_AnimData *objAnim;
 
 	debugC(4, DEBUG_GAMEFLOW, "Inter_v2::loadMult(): Loading...");
 
@@ -998,36 +1021,142 @@ void Inter_v2::loadMult(void) {
 
 	lmultData = (char *)_vm->_mult->_objects[objIndex].pAnimData;
 	for (i = 0; i < 11; i++) {
-		if (*_vm->_global->_inter_execPtr != 99) {
-			val = _vm->_parse->parseValExpr();
-			lmultData[i] = val;
-		} else
+		if (*_vm->_global->_inter_execPtr != 99)
+			lmultData[i] = _vm->_parse->parseValExpr();
+		else
 			_vm->_global->_inter_execPtr++;
 	}
 
-	warning("GOB2 Stub! Inter_v2::loadMult()");
+	if (_vm->_mult->_objects[objIndex].pAnimData->animType == 100) {
+		if (_vm->_goblin->_gobsCount >= 0) {
+			obj = &_vm->_mult->_objects[objIndex];
+			objAnim = obj->pAnimData;
+
+			val = *obj->pPosX % 256;
+			obj->field_1C = val;
+			obj->field_1E = val;
+			obj->goblinX = val;
+			val = *obj->pPosY % 256;
+			obj->field_1D = val;
+			obj->field_1F = val;
+			obj->goblinY = val;
+			*obj->pPosX *= _vm->_mult->_word_2F2B1;
+			objAnim->field_15 = objAnim->unknown;
+			objAnim->field_E = -1;
+			objAnim->field_F = -1;
+			objAnim->field_12 = 0;
+			objAnim->state = objAnim->layer;
+			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
+			objAnim->animation = obj->goblinStates[objAnim->state][0].animation;
+			animation = objAnim->animation;
+			_vm->_scenery->updateAnim(objAnim->state, 0, 0, 0, *obj->pPosX, *obj->pPosY, 0);
+			if (_vm->_mult->_word_2CC86 == 0) {
+				*obj->pPosY = (obj->goblinY + 1) * _vm->_mult->_word_2F2AF; //- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop)
+			} else {
+				*obj->pPosY = (obj->goblinY + 1) * _vm->_mult->_word_2F2AF; //- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (obj->goblinY + 1) / 2;
+			}
+			*obj->pPosX = obj->goblinX * _vm->_mult->_word_2F2B1;
+		}
+	}
+	if (_vm->_mult->_objects[objIndex].pAnimData->animType == 101) {
+		if (_vm->_goblin->_gobsCount >= 0) {
+			obj = &_vm->_mult->_objects[objIndex];
+			objAnim = obj->pAnimData;
+
+			objAnim->field_E = -1;
+			objAnim->field_F = -1;
+			objAnim->state = objAnim->layer;
+			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
+			objAnim->animation = obj->goblinStates[objAnim->state][0].animation;
+			if ((*obj->pPosX == 1000) && (*obj->pPosY == 1000)) {
+				*obj->pPosX = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state]->posX;
+				*obj->pPosY = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state]->posY;
+			}
+			_vm->_scenery->updateAnim(objAnim->state, 0, objAnim->animation, 0, *obj->pPosX, *obj->pPosY, 0);
+		}
+	}
+}
+
+bool Inter_v2::o2_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 index;
+
+	index = load16();
+	if (index > 0) {
+		index--;
+		_animPalLowIndex[index] = _vm->_parse->parseValExpr();
+		_animPalHighIndex[index] = _vm->_parse->parseValExpr();
+		_animPalDir[index] = 1;
+	} else if (index == 0) {
+		memset(_animPalDir, 0, 8 * sizeof(int16));
+		_vm->_parse->parseValExpr();
+		_vm->_parse->parseValExpr();
+	} else {
+		index = -index - 1;
+		_animPalLowIndex[index] = _vm->_parse->parseValExpr();
+		_animPalHighIndex[index] = _vm->_parse->parseValExpr();
+		_animPalDir[index] = -1;
+	}
+	return false;
+}
+
+bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 frequency;
+	int16 freq2;
+	int16 repCount; // di
+	int16 index; // si
+
+	index = _vm->_parse->parseValExpr();
+	repCount = _vm->_parse->parseValExpr();
+	frequency = _vm->_parse->parseValExpr();
+
+	_soundEndTimeKey = 0;
+	if (_vm->_game->_soundSamples[index] == 0)
+		return false;
+
+	if (repCount < 0) {
+		if (_vm->_global->_soundFlags < 2)
+			return false;
+
+		repCount = -repCount;
+		_soundEndTimeKey = _vm->_util->getTimeKey();
+
+		if (frequency == 0)
+			freq2 = _vm->_game->_soundSamples[index]->frequency;
+		else
+			freq2 = frequency;
+		_soundStopVal =
+		    (10 * (_vm->_game->_soundSamples[index]->size / 2)) / freq2;
+		_soundEndTimeKey +=
+		    ((_vm->_game->_soundSamples[index]->size * repCount -
+			_vm->_game->_soundSamples[index]->size / 2) * 1000) / freq2;
+	}
+	// loc_E2F3
+	if (_vm->_game->_soundTypes[index] & 8) {
+		_vm->_music->loadFromMemory((byte *) _vm->_game->_soundSamples[index]);
+		_vm->_music->setRepeating(repCount - 1);
+		_vm->_music->startPlay();
+	} else {
+		_vm->_snd->stopSound(0);
+		_vm->_snd->playSample(_vm->_game->_soundSamples[index], repCount, frequency);
+	}
+
+	return false;
 }
 
 bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 cmd;
-	int16 word_2F9C0;
-	int16 word_2F9BE;
-	int16 word_2F9BC;
-	int16 word_2F9BA;
-	char *dword_2F9B6;
-	char *dword_2F9B2;
 
 	cmd = load16();
 	_vm->_global->_inter_execPtr += 2;
 
 	if (cmd == 100) {
-		word_2F9C0 = VAR(load16());
-		word_2F9BE = VAR(load16());
-		dword_2F9B6 = _vm->_global->_inter_variables + (load16() >> 2);
-		dword_2F9B2 = _vm->_global->_inter_variables + (load16() >> 2);
-		word_2F9BC = VAR(load16());
-		word_2F9BA = VAR(load16());
-		warning("GOB2 Stub! sub_19BD3()");
+		_vm->_goblin->_word_2F9C0 = VAR(load16());
+		_vm->_goblin->_word_2F9BE = VAR(load16());
+		_vm->_goblin->_dword_2F9B6 = load16();
+		_vm->_goblin->_dword_2F9B2 = load16();
+		_vm->_goblin->_word_2F9BC = VAR(load16());
+		_vm->_goblin->_word_2F9BA = VAR(load16());
+		_vm->_goblin->sub_19BD3();
 	} else if (cmd != 101) {
 		_vm->_global->_inter_execPtr -= 2;
 		cmd = load16();
@@ -1569,6 +1698,16 @@ void Inter_v2::o2_totSub(void) {
 	_vm->_game->totSub(flags, totFile);
 }
 
+void Inter_v2::o2_switchTotSub(void) {
+	int16 index;
+	int16 skipPlay;
+
+	index = load16();
+	skipPlay = load16();
+
+	_vm->_game->switchTotSub(index, skipPlay);
+}
+
 void Inter_v2::storeMouse(void) {
 	int16 x;
 	int16 y;
@@ -1584,6 +1723,42 @@ void Inter_v2::storeMouse(void) {
 
 void Inter_v2::o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
 	warning("GOB2 Stub! o2_setPickable");
+}
+
+void Inter_v2::animPalette(void) {
+	int16 i;
+	int16 j;
+	Video::Color col;
+	bool first;
+
+	first = true;
+	for (j = 0; j < 8; j ++) {
+		if (_animPalDir[j] == 0)
+			continue;
+
+		if (first) {
+			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			first = false;
+		}
+
+		if (_animPalDir[j] == -1) {
+			col = _vm->_global->_pPaletteDesc->vgaPal[_animPalLowIndex[j]];
+
+			for (i = _animPalLowIndex[j]; i < _animPalHighIndex[j]; i++)
+				_vm->_draw->_vgaPalette[i] = _vm->_global->_pPaletteDesc->vgaPal[i];
+
+			_vm->_global->_pPaletteDesc->vgaPal[_animPalHighIndex[j]] = col;
+		} else {
+			col = _vm->_global->_pPaletteDesc->vgaPal[_animPalHighIndex[j]];
+			for (i = _animPalHighIndex[j]; i > _animPalLowIndex[j]; i--)
+				_vm->_draw->_vgaPalette[i] = _vm->_global->_pPaletteDesc->vgaPal[i];
+
+			_vm->_global->_pPaletteDesc->vgaPal[_animPalLowIndex[j]] = col;
+		}
+		_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
+	}
+	if (!first)
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
 } // End of namespace Gob
