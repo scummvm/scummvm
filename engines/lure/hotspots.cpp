@@ -308,7 +308,7 @@ void Hotspot::stopWalking() {
 	_actionCtr = 0;
 	_currentActions.clear();
 	Room::getReference().setCursorState(CS_NONE);
-	Resources::getReference().setCurrentAction(NONE);
+	setCurrentAction(NO_ACTION);
 }
 
 void Hotspot::setDirection(Direction dir) {
