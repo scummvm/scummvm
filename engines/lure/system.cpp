@@ -35,7 +35,7 @@ System::~System() {
 }
 
 OSystem &System::getReference() {
-    return *int_system;
+	return *int_system;
 }
 
 } // end of namespace Lure

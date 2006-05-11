@@ -208,7 +208,7 @@ void Game::doDebugMenu() {
 
 	case 2:
 		// Show active hotspots
-        showActiveHotspots();
+		showActiveHotspots();
 		break;
 
 	case 3:

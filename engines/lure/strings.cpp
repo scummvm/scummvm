@@ -30,7 +30,7 @@ namespace Lure {
 StringData *int_strings = NULL;
 
 StringData::StringData() {
-    int_strings = this;
+	int_strings = this;
 
 	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr) _chars[ctr] = NULL;
 	_numChars = 0;

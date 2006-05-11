@@ -421,7 +421,7 @@ void Dialog::show(uint16 stringId) {
 
 void Dialog::showMessage(uint16 messageId, uint16 characterId) {
 	MemoryBlock *data = Resources::getReference().messagesData();
-    uint16 *v = (uint16 *) data->data();
+	uint16 *v = (uint16 *) data->data();
 	uint16 v2, idVal;
 	messageId &= 0x7fff;
 
