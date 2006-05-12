@@ -53,10 +53,14 @@ protected:
 
 	/**
 	 * The child node with the given name. If no child with this name
-	 * exists, returns 0. Will never be called on a node which is not
-	 * a directory node.
+	 * exists, returns 0. When called on a non-directory node, it should
+	 * handle this gracefully by returning 0.
+	 *
+	 * @note Handling calls on non-dir nodes gracefully makes it possible to
+	 * switch to a lazy type detection scheme in the future.
 	 */
 	virtual AbstractFilesystemNode *child(const String &name) const = 0;
+
 
 	/**
 	 * Returns a special node representing the FS root. The starting point for
@@ -70,7 +74,9 @@ protected:
 	 * Construct a node based on a path; the path is in the same format as it
 	 * would be for calls to fopen().
 	 *
-	 * I.e. getNodeForPath(oldNode.path()) should create a new node identical to oldNode.
+	 * Furthermore getNodeForPath(oldNode.path()) should create a new node
+	 * identical to oldNode. Hence, we can use the "path" value for persistent
+	 * storage e.g. in the config file.
 	 *
 	 * @TODO: This is of course a place where non-portable code easily will sneak
 	 *        in, because the format of the path used here is not well-defined.
