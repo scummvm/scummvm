@@ -36,9 +36,9 @@ namespace Simon {
 
 struct MusicInfo {
 	MidiParser *parser;
-	byte * data;
-	byte   num_songs;         // For Type 1 SMF resources
-	byte * songs[16];         // For Type 1 SMF resources
+	byte *data;
+	byte num_songs;           // For Type 1 SMF resources
+	byte *songs[16];          // For Type 1 SMF resources
 	uint32 song_sizes[16];    // For Type 1 SMF resources
 
 	MidiChannel *channel[16]; // Dynamic remapping of channels to resolve conflicts
@@ -47,9 +47,9 @@ struct MusicInfo {
 	MusicInfo() { clear(); }
 	void clear() {
 		parser = 0; data = 0; num_songs = 0;
-		memset (songs, 0, sizeof (songs));
-		memset (song_sizes, 0, sizeof (song_sizes));
-		memset (channel, 0, sizeof (channel));
+		memset(songs, 0, sizeof(songs));
+		memset(song_sizes, 0, sizeof(song_sizes));
+		memset(channel, 0, sizeof(channel));
 	}
 };
 
@@ -75,35 +75,35 @@ protected:
 	bool _loopQueuedTrack;
 
 protected:
-	static void onTimer (void *data);
+	static void onTimer(void *data);
 	void clearConstructs();
-	void clearConstructs (MusicInfo &info);
+	void clearConstructs(MusicInfo &info);
 	void resetVolumeTable();
 
 public:
 	bool _enable_sfx;
 
 public:
-	MidiPlayer (OSystem *system);
+	MidiPlayer(OSystem *system);
 	virtual ~MidiPlayer();
 
-	void loadSMF (Common::File *in, int song, bool sfx = false);
-	void loadMultipleSMF (Common::File *in, bool sfx = false);
-	void loadXMIDI (Common::File *in, bool sfx = false);
-	void loadS1D (Common::File *in, bool sfx = false);
+	void loadSMF(Common::File *in, int song, bool sfx = false);
+	void loadMultipleSMF(Common::File *in, bool sfx = false);
+	void loadXMIDI(Common::File *in, bool sfx = false);
+	void loadS1D(Common::File *in, bool sfx = false);
 
-	void mapMT32toGM (bool map);
-	void setLoop (bool loop);
+	void mapMT32toGM(bool map);
+	void setLoop(bool loop);
 	void startTrack(int track);
-	void queueTrack (int track, bool loop);
-	bool isPlaying (bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
+	void queueTrack(int track, bool loop);
+	bool isPlaying(bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
 
 	void stop();
-	void pause (bool b);
+	void pause(bool b);
 
 	int  get_volume() { return _masterVolume; }
-	void set_volume (int volume);
-	void set_driver (MidiDriver *md);
+	void set_volume(int volume);
+	void set_driver(MidiDriver *md);
 
 public:
 	// MidiDriver interface implementation
@@ -111,12 +111,12 @@ public:
 	void close();
 	void send(uint32 b);
 
-	void metaEvent (byte type, byte *data, uint16 length);
+	void metaEvent(byte type, byte *data, uint16 length);
 	void setPassThrough(bool b)		{ _passThrough = b; }
 
 	// Timing functions - MidiDriver now operates timers
-	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
-	uint32 getBaseTempo (void) { return _driver ? _driver->getBaseTempo() : 0; }
+	void setTimerCallback(void *timer_param, void (*timer_proc) (void *)) { }
+	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
 
 	// Channel allocation functions
 	MidiChannel *allocateChannel() { return 0; }
