@@ -36,7 +36,7 @@ protected:
 	String _path;
 
 public:
-	GP32FilesystemNode(void);
+	GP32FilesystemNode();
 	GP32FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
@@ -48,15 +48,19 @@ public:
 	virtual AbstractFilesystemNode *parent() const;
 };
 
-AbstractFilesystemNode *FilesystemNode::getRoot(void) {
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new GP32FilesystemNode();
 }
 
-AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
 	return new GP32FilesystemNode(path);
 }
 
-GP32FilesystemNode::GP32FilesystemNode(void) {
+GP32FilesystemNode::GP32FilesystemNode() {
 	_isDirectory = true;
 	_isRoot = true;
 	_displayName = "GP32 Root";

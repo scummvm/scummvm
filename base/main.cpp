@@ -164,11 +164,15 @@ static const Plugin *detectMain() {
 		return 0;
 	}
 
+	// FIXME: Do we really need this one? 
 	printf("Trying to start game '%s'\n", game.description.c_str());
 
+	return plugin;
+}
+
+static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	Common::String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.empty()) {
-		warning("No path was provided. Assuming the data files are in the current directory");
 	} else if (gameDataPath.lastChar() != '/'
 #if defined(__MORPHOS__) || defined(__amigaos4__)
 					&& gameDataPath.lastChar() != ':'
@@ -178,10 +182,6 @@ static const Plugin *detectMain() {
 		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
 	}
 
-	return plugin;
-}
-
-static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
 	if (ConfMan.hasKey("path")) {
@@ -193,6 +193,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 		}
 		Common::File::addDefaultDirectory(path);
 	} else {
+		warning("No path was provided. Assuming the data files are in the current directory");
 		Common::File::addDefaultDirectory(".");
 	}
 

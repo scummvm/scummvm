@@ -70,10 +70,14 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual String path() const { return _sPath; };
 
 		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-		virtual AbstractFSList listVolumes(void) const;
+		virtual AbstractFSList listVolumes() const;
 		virtual AbstractFilesystemNode *parent() const;
 		virtual AbstractFilesystemNode *child(const String &name) const;
 };
+
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
 
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new AmigaOSFilesystemNode();
@@ -333,7 +337,7 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &name) const {
 	return new AmigaOSFilesystemNode(newPath);
 }
 
-AbstractFSList AmigaOSFilesystemNode::listVolumes(void)	const {
+AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 	ENTER();
 
 	AbstractFSList myList;

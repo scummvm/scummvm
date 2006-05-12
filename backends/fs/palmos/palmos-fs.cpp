@@ -78,6 +78,10 @@ void PalmOSFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const ch
 	list.push_back(new PalmOSFilesystemNode(entry));
 }
 
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new PalmOSFilesystemNode();
 }

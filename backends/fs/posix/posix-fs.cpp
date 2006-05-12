@@ -50,7 +50,7 @@ protected:
 
 public:
 	POSIXFilesystemNode();
-	POSIXFilesystemNode(const String &path, bool verify = false);
+	POSIXFilesystemNode(const String &path, bool verify);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -72,6 +72,12 @@ static const char *lastPathComponent(const Common::String &str) {
 	}
 
 	return cur + 1;
+}
+
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	char buf[MAXPATHLEN];
+	getcwd(buf, MAXPATHLEN);
+	return new POSIXFilesystemNode(buf, true);
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
@@ -156,7 +162,7 @@ bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 			newPath += '/';
 		newPath += dp->d_name;
 
-		POSIXFilesystemNode entry(newPath);
+		POSIXFilesystemNode entry(newPath, false);
 
 #ifdef __DC__
 		entry._isDirectory = dp->d_size < 0;
@@ -212,7 +218,7 @@ AbstractFilesystemNode *POSIXFilesystemNode::parent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 
-	POSIXFilesystemNode *p = new POSIXFilesystemNode(String(start, end - start));
+	POSIXFilesystemNode *p = new POSIXFilesystemNode(String(start, end - start), false);
 
 	return p;
 }

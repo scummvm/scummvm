@@ -37,7 +37,7 @@ protected:
 	String _path;
 
 public:
-	Ps2FilesystemNode(void);
+	Ps2FilesystemNode();
 	Ps2FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
@@ -52,7 +52,11 @@ public:
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
 };
 
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot(void) {
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new Ps2FilesystemNode();
 }
 
@@ -60,7 +64,7 @@ AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &pat
 	return new Ps2FilesystemNode(path);
 }
 
-Ps2FilesystemNode::Ps2FilesystemNode(void) {
+Ps2FilesystemNode::Ps2FilesystemNode() {
 	_isDirectory = true;
 	_isRoot = true;
 	_displayName = "CD Root";

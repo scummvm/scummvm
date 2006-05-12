@@ -71,6 +71,15 @@ protected:
 	static AbstractFilesystemNode *getRoot();
 
 	/**
+	 * Returns a node representing the "current directory". If your system does
+	 * not support this concept, you can either try to emulate it or
+	 * simply return some "sensible" default directory node, e.g. the same
+	 * value as getRoot() returns.
+	 */
+	static AbstractFilesystemNode *getCurrentDirectory();
+
+
+	/**
 	 * Construct a node based on a path; the path is in the same format as it
 	 * would be for calls to fopen().
 	 *
@@ -92,6 +101,11 @@ public:
 
 	virtual String displayName() const = 0;
 	virtual bool isDirectory() const = 0;
+	
+	/**
+	 * Return the 'path' of the current node, usable in fopen(). See also
+	 * the static getNodeForPath() method.
+	 */
 	virtual String path() const = 0;
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const = 0;
 

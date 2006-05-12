@@ -58,6 +58,10 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 };
 
 
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot()
 {
 	return new ABoxFilesystemNode();

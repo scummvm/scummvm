@@ -55,7 +55,11 @@ public:
 	virtual AbstractFilesystemNode *parent() const;
 };
 
-AbstractFilesystemNode *FilesystemNode::getRoot() {
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
+AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new PSPFilesystemNode();
 }
 
@@ -76,7 +80,7 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p)
 }
 
 
-AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) 
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) 
 {
 	return new PSPFilesystemNode(path);
 }

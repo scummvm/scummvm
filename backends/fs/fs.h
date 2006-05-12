@@ -78,18 +78,37 @@ public:
 		kListAll = 3
 	};
 
+	/**
+	 * Create a new invalid FilesystemNode. In other words, isValid() for that
+	 * node returns false, and if you try to get it's path, an assert is
+	 * triggered.
+	 */
+	FilesystemNode();
 
 	/**
 	 * Create a new FilesystemNode referring to the specified path. This is
 	 * the counterpart to the path() method.
+	 *
+	 * If path is empty or equals ".", then a node representing the "current
+	 * directory" will be created. If that is not possible (since e.g. the
+	 * operating system doesn't support the concept), some other directory is
+	 * used (usually the root directory).
 	 */
 	FilesystemNode(const String &path);
 
-
-	FilesystemNode();
+	/**
+	 * Copy constructor.
+	 */
 	FilesystemNode(const FilesystemNode &node);
+	
+	/**
+	 * Destructor.
+	 */
 	virtual ~FilesystemNode();
 
+	/**
+	 * Copy operator.
+	 */
 	FilesystemNode &operator  =(const FilesystemNode &node);
 
 	/**

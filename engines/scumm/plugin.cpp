@@ -1330,9 +1330,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 
 
 	FSList fslist;
-	FilesystemNode dir;
-	if (ConfMan.hasKey("path") )
-		dir = FilesystemNode(ConfMan.get("path"));
+	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
 		warning("ScummEngine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;

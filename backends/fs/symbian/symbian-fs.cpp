@@ -69,6 +69,10 @@ static const char *lastPathComponent(const Common::String &str) {
 	return cur + 1;
 }
 
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new SymbianFilesystemNode(true);
 }

@@ -120,6 +120,10 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 	list.push_back(new WindowsFilesystemNode(entry));
 }
 
+AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
+	return AbstractFilesystemNode::getRoot();
+}
+
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
 	return new WindowsFilesystemNode();
 }
