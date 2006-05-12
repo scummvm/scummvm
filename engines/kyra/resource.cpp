@@ -111,6 +111,12 @@ Resource::Resource(KyraEngine *engine) {
 		"COST2_SH.PAK", "DINOC.PAK", "FOOT.PAK", "INJAIL.PAK", "MISC_CPS.PAK", "PHONE_A.PAK", "SKY.PAK", "VOC.PAK",
 		"VOLC_K.PAK", 0
 	};
+	
+	static const char *kyra3Filelist[] = {
+		// enough for now
+		"ONETIME.PAK", 0
+	};
+	
 	const char **usedFilelist = 0;
 
 	if (_engine->game() == GI_KYRA1) {
@@ -120,8 +126,11 @@ Resource::Resource(KyraEngine *engine) {
 				usedFilelist = kyra1Filelist;
 			else if (_engine->features() & GF_TALKIE)
 				usedFilelist = kyra1CDFilelist;
-	} else {
+	} else if (_engine->game() == GI_KYRA2) {
+		// TODO: add kyra2 floppy file list
 		usedFilelist = kyra2CDFilelist;
+	} else if (_engine->game() == GI_KYRA3) {
+		usedFilelist = kyra3Filelist;
 	}
 		
 	if (!usedFilelist)
@@ -143,9 +152,11 @@ Resource::Resource(KyraEngine *engine) {
 		}
 	}
 
-	// we're loading KYRA.DAT here too
-	if (!loadPakFile("KYRA.DAT")) {
-		error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
+	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
+	if (_engine->game() == GI_KYRA1) {
+		if (!loadPakFile("KYRA.DAT")) {
+			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
+		}
 	}
 }
 

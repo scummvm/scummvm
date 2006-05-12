@@ -56,13 +56,14 @@ enum {
 	GF_SPANISH	= 1 <<  7,
 	GF_ITALIAN	= 1 <<  8,
 	// other languages here
-	GF_LNGUNK	= 1 << 16,
+	GF_LNGUNK	= 1 << 16,	// also used for multi language in kyra3
 	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
 };
 
 enum {
 	GI_KYRA1 = 0,
-	GI_KYRA2 = 1
+	GI_KYRA2 = 1,
+	GI_KYRA3 = 2
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
@@ -1007,6 +1008,19 @@ public:
 	
 	int go();
 };
+
+#ifdef ENABLE_KYRA3
+// maybe overload KyraEngine_v2 later
+class KyraEngine_v3 : public KyraEngine {
+public:
+	KyraEngine_v3(OSystem *system);
+	~KyraEngine_v3();
+
+	int setupGameFlags() { return 0; }
+	
+	int go();
+};
+#endif
 
 } // End of namespace Kyra
 

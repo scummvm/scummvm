@@ -396,6 +396,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_vibratoAndAMDepthBits = _curRegOffset = 0;
 
 	_lastProcessed = _flagTrigger = _curChannel = _rhythmSectionBits = 0;
+	_soundsPlaying = 0;
 	_rnd = 0x1234;
 
 	_tempo = 0;

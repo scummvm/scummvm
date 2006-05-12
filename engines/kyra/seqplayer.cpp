@@ -51,12 +51,16 @@ SeqPlayer::SeqPlayer(KyraEngine* vm, OSystem* system) {
 
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i)
 		_handShapes[i] = 0;
+	for (int i = 0; i < ARRAYSIZE(_seqMovies); ++i)
+		_seqMovies[i].movie = 0;
 }
 
 SeqPlayer::~SeqPlayer() {
 	freeHandShapes();
 
 	for (int i = 0; i < ARRAYSIZE(_seqMovies); ++i) {
+		if (!_seqMovies[i].movie)
+			continue;
 		_seqMovies[i].movie->close();
 		delete _seqMovies[i].movie;
 		_seqMovies[i].movie = 0;
