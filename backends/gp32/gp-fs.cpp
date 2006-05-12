@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 
 class GP32FilesystemNode : public AbstractFilesystemNode {
@@ -36,7 +37,6 @@ protected:
 
 public:
 	GP32FilesystemNode(void);
-	GP32FilesystemNode(const GP32FilesystemNode *node);
 	GP32FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
@@ -44,9 +44,8 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode) const;
+	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *clone() const { return new GP32FilesystemNode(this); }
 };
 
 AbstractFilesystemNode *FilesystemNode::getRoot(void) {
@@ -82,19 +81,11 @@ GP32FilesystemNode::GP32FilesystemNode(const String &path) {
 	_isDirectory = true;
 }
 
-GP32FilesystemNode::GP32FilesystemNode(const GP32FilesystemNode *node) {
-	_displayName = node->_displayName;
-	_isDirectory = node->_isDirectory;
-	_path = node->_path;
-	_isRoot = node->_isRoot;
-}
-
-FSList GP32FilesystemNode::listDir(ListMode mode) const {
+bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
 
 	GPDIRENTRY dirEntry;
 	uint32 read;
-	FSList myList;
 
 	if (mode == AbstractFilesystemNode::kListAll)
 		LP("listDir(kListAll)");
@@ -124,12 +115,12 @@ FSList GP32FilesystemNode::listDir(ListMode mode) const {
 
 		if (entry._isDirectory)
 			entry._path += "\\";
-		myList.push_back(wrap(new GP32FilesystemNode(&entry)));
+		myList.push_back(new GP32FilesystemNode(entry));
 	}
 
 	BP("Dir... %s", listDir.c_str());
 
-	return myList;
+	return true;
 }
 /*
 AbstractFilesystemNode *GP32FilesystemNode::parent() const {

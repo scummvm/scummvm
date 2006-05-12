@@ -25,6 +25,7 @@
 #ifdef __PSP__
 #include "base/engine.h"
 
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,14 +45,13 @@ protected:
 public:
 	PSPFilesystemNode();
 	PSPFilesystemNode(const String &path);
-	PSPFilesystemNode(const PSPFilesystemNode *node);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList listDir(ListMode) const;
+	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 };
 
@@ -76,25 +76,16 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p)
 }
 
 
-PSPFilesystemNode::PSPFilesystemNode(const PSPFilesystemNode *node) {
-	_displayName = node->_displayName;
-	_isDirectory = node->_isDirectory;
-	_isValid = node->_isValid;
-	_isPseudoRoot = node->_isPseudoRoot;
-	_path = node->_path;
-}
-
 AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) 
 {
 	return new PSPFilesystemNode(path);
 }
 
 
-FSList PSPFilesystemNode::listDir(ListMode mode) const {
+bool PSPFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
 
 	int dfd;
-	FSList myList;
 	
     dfd = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
@@ -122,12 +113,13 @@ FSList PSPFilesystemNode::listDir(ListMode mode) const {
                 (mode == kListDirectoriesOnly && !entry._isDirectory))
                     continue;
             
-            myList.push_back(wrap(new PSPFilesystemNode(&entry)));
+            myList.push_back(new PSPFilesystemNode(entry));
         }
-        sceIoDclose(dfd);   
+        sceIoDclose(dfd);
+        return true;
+	} else {
+		return false;
 	}
-
-	return myList;
 }
 
 const char *lastPathComponent(const Common::String &str) {
