@@ -126,7 +126,6 @@ void Insane::initvars(void) {
 	_keyboardDisable = 0;
 	_needSceneSwitch = false;
 	_idx2Exceeded = 0;
-	_lastKey = 0;
 	_tiresRustle = false;
 	_keybOldDx = 0;
 	_keybOldDy = 0;
@@ -1400,10 +1399,6 @@ bool Insane::smush_eitherNotStartNewFrame(void) {
 		} else
 			return true;
 	}
-}
-
-int32 Insane::getLastKey(bool arg_0) {
-	return _vm->_lastKeyHit;
 }
 
 bool Insane::smlayer_actorNeedRedraw(int actornum, int actnum) {

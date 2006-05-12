@@ -106,7 +106,6 @@ class Insane {
 	int16 _keyboardDisable;
 	bool _needSceneSwitch;
 	int32 _idx2Exceeded;
-	int32 _lastKey;
 	bool _beenCheated;
 	bool _tiresRustle;
 	int _keybOldDx;
@@ -416,7 +415,6 @@ class Insane {
 								 int32 step2, int32 setupsan1);
 	void smush_setFrameSteps(int32 step1, int32 step2);
 	void smush_setupSanFile(const char *filename, int32 offset, int32 contFrame);
-	int32 getLastKey(bool arg_0);
 	void drawSpeedyActor(int32 arg_0);
 	void actor11Reaction(int32 buttons);
 	void actor12Reaction(int32 buttons);

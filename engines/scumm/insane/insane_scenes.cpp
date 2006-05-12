@@ -831,8 +831,6 @@ void Insane::procPreRendering(void) {
 			_keyboardDisable = 0;
 		}
 	}
-
-	_lastKey = getLastKey(1);
 }
 
 void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1002,7 +1000,6 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 	if (needMore)
 		postCaseMore(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 
-	_lastKey = 0;
 	_tiresRustle = false;
 }
 
