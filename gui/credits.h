@@ -221,6 +221,8 @@ static const char *credits[] = {
 "\\C\\c2""For the original MT-32 emulator",
 "\\C\\c0""Kevin Carnes",
 "\\C\\c2""For Scumm16, the basis of ScummVM's older gfx codecs",
+"\\C\\c0""Patrick Combet",
+"\\C\\c2""For the original Gobliiins ADL player",
 "\\C\\c0""Ivan Dubrov",
 "\\C\\c2""For contributing the initial version of the Gobliiins engine",
 "\\C\\c0""Joachim Eberhard",
