@@ -145,11 +145,13 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 
 void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 	// First check if we have a recognized game in the current directory
-	FSList files = node.listDir(FilesystemNode::kListFilesOnly);
+	FSList files;
+	node.listDir(files, FilesystemNode::kListFilesOnly);
 	DetectedGameList candidates(PluginManager::instance().detectGames(files));
 	addCandidate(node.path(), candidates);
 	// Then recurse on the subdirectories
-	FSList dirs = node.listDir(FilesystemNode::kListDirectoriesOnly);
+	FSList dirs;
+	node.listDir(dirs, FilesystemNode::kListDirectoriesOnly);
 	for (FSList::const_iterator currentDir = dirs.begin(); currentDir != dirs.end(); ++currentDir)
 		automaticScanDirectory(*currentDir);
 
