@@ -142,7 +142,6 @@ AbstractFilesystemNode *PSPFilesystemNode::parent() const {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
 
-		p = new PSPFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
