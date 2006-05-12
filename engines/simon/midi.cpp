@@ -110,6 +110,12 @@ void MidiPlayer::send(uint32 b) {
 		// has already been allocated.
 		if (!_current->channel[b & 0x0F])
 			return;
+	} else if ((b & 0xFFF0) == 0x79B0) {
+		// A minimum implementation of "All controllers off" should set
+		// the volume to 100. We have to make sure that volume is
+		// re-adjusted by the master volume afterwards. This happens in
+		// Simon 1, on eating the mushroom to turn back to normal size.
+		_current->volume[channel] = 100;
 	}
 
 	if (!_current->channel[channel])
@@ -118,6 +124,8 @@ void MidiPlayer::send(uint32 b) {
 		if (channel == 9)
 			_current->channel[9]->volume(_current->volume[9] * _masterVolume / 255);
 		_current->channel[channel]->send(b);
+		if ((b & 0xFFF0) == 0x79B0)
+			_current->channel[channel]->volume(_current->volume[channel] * _masterVolume / 255);
 	}
 }
 
