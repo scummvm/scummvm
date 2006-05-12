@@ -1622,12 +1622,12 @@ void SimonEngine::o1_specialFade() {
 	// 187: fade to black
 	uint i;
 
-	memcpy(_videoBuf1, _currentPalette, 1024);
+	memcpy(_videoBuf1, _currentPalette, 4 * 256);
 
 	for (i = 32; i != 0; --i) {
-		paletteFadeOut(_videoBuf1, 32, 4);
-		paletteFadeOut(_videoBuf1 + 64, 144, 4);
-		paletteFadeOut(_videoBuf1 + 128, 48, 4);
+		paletteFadeOut(_videoBuf1, 32, 8);
+		paletteFadeOut(_videoBuf1 + 4 * 48, 144, 8);
+		paletteFadeOut(_videoBuf1 + 4 * 208, 48, 8);
 		_system->setPalette(_videoBuf1, 0, 256);
 		delay(5);
 	}
