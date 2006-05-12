@@ -218,16 +218,16 @@ public:
 
 	// Control Change messages
 	virtual void controlChange(byte control, byte value) = 0;
-	virtual void modulationWheel(byte value) { controlChange (1, value); }
-	virtual void volume(byte value) { controlChange (7, value); }
-	virtual void panPosition(byte value) { controlChange (10, value); }
+	virtual void modulationWheel(byte value) { controlChange(1, value); }
+	virtual void volume(byte value) { controlChange(7, value); }
+	virtual void panPosition(byte value) { controlChange(10, value); }
 	virtual void pitchBendFactor(byte value) = 0;
-	virtual void detune(byte value) { controlChange (17, value); }
+	virtual void detune(byte value) { controlChange(17, value); }
 	virtual void priority(byte value) { }
-	virtual void sustain(bool value) { controlChange (64, value ? 1 : 0); }
-	virtual void effectLevel(byte value) { controlChange (91, value); }
-	virtual void chorusLevel(byte value) { controlChange (93, value); }
-	virtual void allNotesOff() { controlChange (123, 0); }
+	virtual void sustain(bool value) { controlChange(64, value ? 1 : 0); }
+	virtual void effectLevel(byte value) { controlChange(91, value); }
+	virtual void chorusLevel(byte value) { controlChange(93, value); }
+	virtual void allNotesOff() { controlChange(123, 0); }
 
 	// SysEx messages
 	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;

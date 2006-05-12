@@ -46,23 +46,23 @@ public:
 	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
 
-	void send (uint32 b);
+	void send(uint32 b);
 
 	// Regular messages
-	void noteOff (byte note);
-	void noteOn (byte note, byte velocity);
-	void programChange (byte program);
-	void pitchBend (int16 bend);
+	void noteOff(byte note);
+	void noteOn(byte note, byte velocity);
+	void programChange(byte program);
+	void pitchBend(int16 bend);
 
 	// Control Change messages
-	void controlChange (byte control, byte value);
-	void pitchBendFactor (byte value);
+	void controlChange(byte control, byte value);
+	void pitchBendFactor(byte value);
 
 	// SysEx messages
-	void sysEx_customInstrument (uint32 type, const byte *instr);
+	void sysEx_customInstrument(uint32 type, const byte *instr);
 
 	// Only to be called by the owner
-	void init (MidiDriver *owner, byte channel);
+	void init(MidiDriver *owner, byte channel);
 	bool allocate();
 };
 
@@ -70,7 +70,7 @@ public:
 
 class MidiDriver_MPU401 : public MidiDriver {
 private:
-	MidiChannel_MPU401 _midi_channels [16];
+	MidiChannel_MPU401 _midi_channels[16];
 	Common::Timer::TimerProc _timer_proc;
 	uint16 _channel_mask;
 
@@ -83,7 +83,7 @@ public:
 	uint32 property(int prop, uint32 param);
 
 	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
+	MidiChannel *getPercussionChannel() { return &_midi_channels[9]; }
 };
 
 

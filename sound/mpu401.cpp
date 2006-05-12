@@ -40,11 +40,11 @@ MidiDriver *MidiChannel_MPU401::device() {
 	return _owner;
 }
 
-void MidiChannel_MPU401::send (uint32 b) {
+void MidiChannel_MPU401::send(uint32 b) {
 	_owner->send (b & 0xFFFFFFF0 | (_channel & 0xF));
 }
 
-void MidiChannel_MPU401::noteOff (byte note) {
+void MidiChannel_MPU401::noteOff(byte note) {
 	_owner->send(note << 8 | 0x80 | _channel);
 }
 
@@ -81,20 +81,20 @@ const char *MidiDriver::getErrorName(int error_code) {
 		"Driver already open"
 	};
 
-	if ((uint) error_code >= ARRAYSIZE(midi_errors))
+	if ((uint)error_code >= ARRAYSIZE(midi_errors))
 		return "Unknown Error";
 	return midi_errors[error_code];
 }
 
 MidiDriver_MPU401::MidiDriver_MPU401() :
 	MidiDriver(),
-	_timer_proc (0),
-	_channel_mask (0xFFFF) // Permit all 16 channels by default
+	_timer_proc(0),
+	_channel_mask(0xFFFF) // Permit all 16 channels by default
 {
 
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
-		_midi_channels [i].init (this, i);
+		_midi_channels[i].init(this, i);
 	}
 }
 
@@ -106,7 +106,7 @@ void MidiDriver_MPU401::close() {
 		send (0x7B << 8 | 0xB0 | i);
 }
 
-uint32 MidiDriver_MPU401::property (int prop, uint32 param) {
+uint32 MidiDriver_MPU401::property(int prop, uint32 param) {
 	switch (prop) {
 		case PROP_CHANNEL_MASK:
 			_channel_mask = param & 0xFFFF;
