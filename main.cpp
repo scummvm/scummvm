@@ -119,19 +119,18 @@ int main(int argc, char *argv[]) {
 			int level;
 			
 			sscanf(argv[i], "%*[^=]%*1s%s", debugtxt);
-			for(j=0;j<strlen(debugtxt);j++) {
-				if(!isdigit(debugtxt[j]))
+			for (j = 0;j < strlen(debugtxt); j++) {
+				if (!isdigit(debugtxt[j]))
 					numeric = false;
 			}
-			if(numeric) {
+			if (numeric) {
 				sscanf(debugtxt, "%d", &level);
-				if(level < 0 || level > DEBUG_ALL)
+				if (level < 0 || level > DEBUG_ALL)
 					goto needshelp;
 			} else {
 				level = -1;
-				for(j=0;j<=DEBUG_ALL;j++)
-				{
-					if(!strcasecmp(debugtxt, debug_levels[j])) {
+				for (j = 0; j <= DEBUG_ALL; j++) {
+					if (!strcasecmp(debugtxt, debug_levels[j])) {
 						level = j;
 						break;
 					}
@@ -152,7 +151,7 @@ needshelp:
 			printf("\t-[no]fullscreen\t\tEnable/disable fullscreen mode at startup\n");
 			printf("\t-[no]soft\t\tEnable/disable software renderer\n");
 			printf("\t-debug=[level]\t\tSet debug to [level], valid levels:\n");
-			for(j=0;j<=DEBUG_ALL;j++)
+			for (j = 0;j <= DEBUG_ALL; j++)
 				printf("\t\t%-8s (%d): %s.\n", debug_levels[j], j, debug_descriptions[j]);
 			exit(-1);
 		}
