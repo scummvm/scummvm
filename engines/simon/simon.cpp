@@ -1339,20 +1339,31 @@ void SimonEngine::checkNoOverWrite(byte *end) {
 
 	vpe = &_vgaBufferPointers[_noOverWrite];
 
-	if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
-		_rejectBlock = true;
-		_rejectCount++;
-		_vgaBufFreeStart = vpe->vgaFile1End;
-	} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
-		_rejectBlock = true;
-		_rejectCount++;
-		_vgaBufFreeStart = vpe->vgaFile2End;
-	} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
-		_rejectBlock = true;
-		_rejectCount++;
-		_vgaBufFreeStart = vpe->sfxFileEnd;
+	if (getGameType() == GType_FF) {
+		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
+			_rejectBlock = true;
+			_rejectCount++;
+			_vgaBufFreeStart = vpe->vgaFile1End;
+		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
+			_rejectBlock = true;
+			_rejectCount++;
+			_vgaBufFreeStart = vpe->vgaFile2End;
+		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+			_rejectBlock = true;
+			_rejectCount++;
+			_vgaBufFreeStart = vpe->sfxFileEnd;
+		} else {
+			_rejectBlock = false;
+		}
 	} else {
-		_rejectBlock = false;
+		if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
+			_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+			_rejectBlock = true;
+			_rejectCount++;
+			_vgaBufFreeStart = vpe->vgaFile1 + 0x5000;
+		} else {
+			_rejectBlock = false;
+		}
 	}
 }
 
@@ -1375,17 +1386,27 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 
 	vpe = &_vgaBufferPointers[a];
 
-	if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
-		_rejectBlock = true;
-		_vgaBufFreeStart = vpe->vgaFile1End;
-	} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
-		_rejectBlock = true;
-		_vgaBufFreeStart = vpe->vgaFile2End;
-	} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
-		_rejectBlock = true;
-		_vgaBufFreeStart = vpe->sfxFileEnd;
+	if (getGameType() == GType_FF) {
+		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
+			_rejectBlock = true;
+			_vgaBufFreeStart = vpe->vgaFile1End;
+		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
+			_rejectBlock = true;
+			_vgaBufFreeStart = vpe->vgaFile2End;
+		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+			_rejectBlock = true;
+			_vgaBufFreeStart = vpe->sfxFileEnd;
+		} else {
+			_rejectBlock = false;
+		}
 	} else {
-		_rejectBlock = false;
+		if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
+				_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+			_rejectBlock = true;
+			_vgaBufFreeStart = vpe->vgaFile1 + 0x5000;
+		} else {
+			_rejectBlock = false;
+		}
 	}
 }
 
@@ -1393,17 +1414,24 @@ void SimonEngine::checkZonePtrs(byte *end) {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
-		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart ||
-				vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart ||
-				vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
-			vpe->vgaFile1 = NULL;
-			vpe->vgaFile1End = NULL;
-			vpe->vgaFile2 = NULL;
-			vpe->vgaFile2End = NULL;
-			vpe->sfxFile = NULL;
-			vpe->sfxFileEnd = NULL;
+		if (getGameType() == GType_FF) {
+			if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart ||
+					vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart ||
+					vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+				vpe->vgaFile1 = NULL;
+				vpe->vgaFile1End = NULL;
+				vpe->vgaFile2 = NULL;
+				vpe->vgaFile2End = NULL;
+				vpe->sfxFile = NULL;
+				vpe->sfxFileEnd = NULL;
+			}
+		} else {
+			if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
+					_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+				vpe->vgaFile1 = NULL;
+				vpe->vgaFile2 = NULL;
+			}
 		}
-
 	} while (++vpe, --count);
 }
 
