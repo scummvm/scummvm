@@ -2442,7 +2442,7 @@ static void BlastText() {
          
 	if (lua_istable(tableObj))
 		getTextObjectParams(textObject, tableObj);
-         
+
 	while (TextObjectExists((char *)text.c_str()) != NULL)
 		text += TEXT_NULL;
 
