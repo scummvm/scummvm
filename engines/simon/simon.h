@@ -351,7 +351,6 @@ protected:
 	int _screenWidth, _screenHeight;
 
 	uint16 _noOverWrite;
-	byte _rejectCount;
 	bool _rejectBlock;
 
 	bool _exitCutscene;
@@ -365,8 +364,9 @@ protected:
 
 	uint _vgaSpriteChanged;
 
-	byte *_vgaBufFreeStart, *_vgaBufEnd, *_vgaBufStart;
-	byte *_vgaFileBufOrg, *_vgaFileBufOrg2;
+	byte *_vgaMemPtr, *_vgaMemEnd, *_vgaMemBase;
+	byte *_vgaFrozenBase, *_vgaRealBase;
+	byte *_zoneBuffers;
 
 	byte *_curVgaFile1;
 	byte *_curVgaFile2;

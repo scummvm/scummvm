@@ -244,7 +244,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_fastFadeInFlag = 0;
 
 	_noOverWrite = 0;
-	_rejectCount = 0;
 	_rejectBlock = false;
 
 	_fastFadeOutFlag = 0;
@@ -263,11 +262,12 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	_vgaSpriteChanged = 0;
 
-	_vgaBufFreeStart = 0;
-	_vgaBufEnd = 0;
-	_vgaBufStart = 0;
-	_vgaFileBufOrg = 0;
-	_vgaFileBufOrg2 = 0;
+	_vgaMemPtr = 0;
+	_vgaMemEnd = 0;
+	_vgaMemBase = 0;
+	_vgaFrozenBase = 0;
+	_vgaRealBase = 0;
+	_zoneBuffers = 0;
 
 	_curVgaFile1 = 0;
 	_curVgaFile2 = 0;
@@ -478,7 +478,7 @@ int SimonEngine::init() {
 		_numTextBoxes = 40;
 		_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
-		_vgaMemSize = 7500000;
+		_vgaMemSize = 7000000;
 #else
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
@@ -1290,29 +1290,25 @@ void SimonEngine::loadZone(uint vga_res) {
 }
 
 void SimonEngine::setZoneBuffers() {
-	byte *alloced;
+	_zoneBuffers = (byte *)malloc(_vgaMemSize);
 
-	alloced = (byte *)malloc(_vgaMemSize);
-
-	_vgaBufFreeStart = alloced;
-	_vgaBufStart = alloced;
-	_vgaFileBufOrg = alloced;
-	_vgaFileBufOrg2 = alloced;
-	_vgaBufEnd = alloced + _vgaMemSize;
+	_vgaMemPtr = _zoneBuffers;
+	_vgaMemBase = _zoneBuffers;
+	_vgaFrozenBase = _zoneBuffers;
+	_vgaRealBase = _zoneBuffers;
+	_vgaMemEnd = _zoneBuffers + _vgaMemSize;
 }
 
 byte *SimonEngine::allocBlock(uint32 size) {
 	byte *block, *blockEnd;
+	int i;
 
-	_rejectCount = 0;
-
-	for (;;) {
-		block = _vgaBufFreeStart;
-
+	for (i = 0; i < _vgaMemSize / size; i++) {
+		block = _vgaMemPtr;
 		blockEnd = block + size;
 
-		if (blockEnd >= _vgaBufEnd) {
-			_vgaBufFreeStart = _vgaBufStart;
+		if (blockEnd >= _vgaMemEnd) {
+			_vgaMemPtr = _vgaMemBase;
 		} else {
 			_rejectBlock = false;
 			checkNoOverWrite(blockEnd);
@@ -1322,10 +1318,12 @@ byte *SimonEngine::allocBlock(uint32 size) {
 			if (_rejectBlock)
 				continue;
 			checkZonePtrs(blockEnd);
-			_vgaBufFreeStart = blockEnd;
+			_vgaMemPtr = blockEnd;
 			return block;
 		}
 	}
+
+	error("allocBlock: Couldn't find free block");
 }
 
 void SimonEngine::checkNoOverWrite(byte *end) {
@@ -1334,33 +1332,26 @@ void SimonEngine::checkNoOverWrite(byte *end) {
 	if (_noOverWrite == 0xFFFF)
 		return;
 
-	if (_rejectCount == 2)
-		error("checkNoOverWrite: _rejectCount == 2");
-
 	vpe = &_vgaBufferPointers[_noOverWrite];
 
 	if (getGameType() == GType_FF) {
-		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
+		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaMemPtr) {
 			_rejectBlock = true;
-			_rejectCount++;
-			_vgaBufFreeStart = vpe->vgaFile1End;
-		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
+			_vgaMemPtr = vpe->vgaFile1End;
+		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaMemPtr) {
 			_rejectBlock = true;
-			_rejectCount++;
-			_vgaBufFreeStart = vpe->vgaFile2End;
-		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+			_vgaMemPtr = vpe->vgaFile2End;
+		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaMemPtr) {
 			_rejectBlock = true;
-			_rejectCount++;
-			_vgaBufFreeStart = vpe->sfxFileEnd;
+			_vgaMemPtr = vpe->sfxFileEnd;
 		} else {
 			_rejectBlock = false;
 		}
 	} else {
-		if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
-			_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+		if (_vgaMemPtr <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
+			_vgaMemPtr <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
 			_rejectBlock = true;
-			_rejectCount++;
-			_vgaBufFreeStart = vpe->vgaFile1 + 0x5000;
+			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 		} else {
 			_rejectBlock = false;
 		}
@@ -1387,23 +1378,23 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 	vpe = &_vgaBufferPointers[a];
 
 	if (getGameType() == GType_FF) {
-		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart) {
+		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaMemPtr) {
 			_rejectBlock = true;
-			_vgaBufFreeStart = vpe->vgaFile1End;
-		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart) {
+			_vgaMemPtr = vpe->vgaFile1End;
+		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaMemPtr) {
 			_rejectBlock = true;
-			_vgaBufFreeStart = vpe->vgaFile2End;
-		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+			_vgaMemPtr = vpe->vgaFile2End;
+		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaMemPtr) {
 			_rejectBlock = true;
-			_vgaBufFreeStart = vpe->sfxFileEnd;
+			_vgaMemPtr = vpe->sfxFileEnd;
 		} else {
 			_rejectBlock = false;
 		}
 	} else {
-		if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
-				_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+		if (_vgaMemPtr <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
+				_vgaMemPtr <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
 			_rejectBlock = true;
-			_vgaBufFreeStart = vpe->vgaFile1 + 0x5000;
+			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 		} else {
 			_rejectBlock = false;
 		}
@@ -1415,9 +1406,9 @@ void SimonEngine::checkZonePtrs(byte *end) {
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
 		if (getGameType() == GType_FF) {
-			if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaBufFreeStart ||
-					vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaBufFreeStart ||
-					vpe->sfxFile < end && vpe->sfxFileEnd > _vgaBufFreeStart) {
+			if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaMemPtr ||
+					vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaMemPtr ||
+					vpe->sfxFile < end && vpe->sfxFileEnd > _vgaMemPtr) {
 				vpe->vgaFile1 = NULL;
 				vpe->vgaFile1End = NULL;
 				vpe->vgaFile2 = NULL;
@@ -1426,8 +1417,8 @@ void SimonEngine::checkZonePtrs(byte *end) {
 				vpe->sfxFileEnd = NULL;
 			}
 		} else {
-			if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
-					_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+			if (_vgaMemPtr <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
+					_vgaMemPtr <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
 				vpe->vgaFile1 = NULL;
 				vpe->vgaFile2 = NULL;
 			}
@@ -1958,6 +1949,7 @@ void SimonEngine::shutdown() {
 	free(_itemHeapPtr - _itemHeapCurPos);
 	free(_tablesHeapPtr - _tablesHeapCurPos);
 	free(_tblList);
+	free(_zoneBuffers);
 	free(_iconFilePtr);
 	free(_gameOffsetsPtr);
 

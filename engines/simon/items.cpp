@@ -1393,13 +1393,13 @@ void SimonEngine::o_b2NotZero() {
 
 void SimonEngine::o_lockZones() {
 	// 175: vga pointer op 1
-	_vgaBufStart = _vgaBufFreeStart;
+	_vgaMemBase = _vgaMemPtr;
 }
 
 void SimonEngine::o_unlockZones() {
 	// 176: vga pointer op 2
-	_vgaBufFreeStart = _vgaFileBufOrg;
-	_vgaBufStart = _vgaFileBufOrg;
+	_vgaMemPtr = _vgaFrozenBase;
+	_vgaMemBase = _vgaFrozenBase;
 }
 
 void SimonEngine::o1_screenTextPObj() {
@@ -2233,14 +2233,14 @@ void SimonEngine::waitForMark(uint i) {
 }
 
 void SimonEngine::freezeBottom() {
-	_vgaBufStart = _vgaBufFreeStart;
-	_vgaFileBufOrg = _vgaBufFreeStart;
+	_vgaMemBase = _vgaMemPtr;
+	_vgaFrozenBase = _vgaMemPtr;
 }
 
 void SimonEngine::unfreezeBottom() {
-	_vgaBufFreeStart = _vgaFileBufOrg2;
-	_vgaBufStart = _vgaFileBufOrg2;
-	_vgaFileBufOrg = _vgaFileBufOrg2;
+	_vgaMemPtr = _vgaRealBase;
+	_vgaMemBase = _vgaRealBase;
+	_vgaFrozenBase = _vgaRealBase;
 }
 
 void SimonEngine::sendSync(uint a) {
