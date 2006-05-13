@@ -608,7 +608,7 @@ void MainMenuDialog::open() {
 #pragma mark -
 
 enum {
-	kOKCmd					= 'ok  '
+	kOKCmd = 'ok  '
 };
 
 enum {
@@ -653,8 +653,8 @@ ConfigDialog::ConfigDialog()
 	// Some misc options
 	//
 
-	_subtitlesCheckbox = new GUI::CheckboxWidget(this, "scummconfig_subtitlesCheckbox", "Show subtitles", 0, 'S');
-	_speechCheckbox = new GUI::CheckboxWidget(this, "scummconfig_speechCheckbox", "Enable speech", 0, 'E');
+	// SCUMM has a talkspeed range of 0-9
+	addSubtitleControls(this, "scummconfig_", 9);
 
 	//
 	// Add the buttons
@@ -683,19 +683,9 @@ ConfigDialog::~ConfigDialog() {
 
 void ConfigDialog::open() {
 	GUI_OptionsDialog::open();
-
-	// update checkboxes, too
-	_subtitlesCheckbox->setState(ConfMan.getBool("subtitles", _domain));
-	_speechCheckbox->setState(!ConfMan.getBool("speech_mute", _domain));
 }
 
 void ConfigDialog::close() {
-	if (getResult()) {
-		// Subtitles
-		ConfMan.setBool("subtitles", _subtitlesCheckbox->getState(), _domain);
-		ConfMan.setBool("speech_mute", !_speechCheckbox->getState(), _domain);
-	}
-
 	GUI_OptionsDialog::close();
 }
 
@@ -927,8 +917,9 @@ void ValueDisplayDialog::drawDialog() {
 }
 
 void ValueDisplayDialog::handleTickle() {
-	if (getMillis() > _timer)
+	if (getMillis() > _timer) {
 		close();
+	}
 }
 
 void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {

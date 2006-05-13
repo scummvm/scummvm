@@ -189,7 +189,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		_platformPopUp->appendEntry(p->description, p->id);
 	}
 
+	//
 	// 2) The 'Path' tab
+	//
 	tab->addTab("Paths");
 
 	// These buttons have to be extra wide, or the text will be truncated
@@ -230,6 +232,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_globalAudioOverride = new CheckboxWidget(tab, "gameoptions_audioCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
 
 	addAudioControls(tab, "gameoptions_");
+	addSubtitleControls(tab, "gameoptions_");
 
 	//
 	// 5) The MIDI tab
@@ -248,7 +251,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
 	addVolumeControls(tab, "gameoptions_");
-
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -271,7 +273,8 @@ void EditGameDialog::open() {
 	_globalGraphicsOverride->setState(e);
 
 	e = ConfMan.hasKey("music_driver", _domain) ||
-		ConfMan.hasKey("subtitles", _domain);
+		ConfMan.hasKey("subtitles", _domain) ||
+		ConfMan.hasKey("talkspeed", _domain);
 	_globalAudioOverride->setState(e);
 
 	e = ConfMan.hasKey("multi_midi", _domain) ||
@@ -346,6 +349,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
+		setSubtitleSettingsState(data != 0);
 		draw();
 		break;
 	case kCmdGlobalMIDIOverride:
@@ -356,7 +360,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setVolumeSettingsState(data != 0);
 		draw();
 		break;
-
 	case kCmdChooseSoundFontCmd: {
 		BrowserDialog browser("Select SoundFont", false);
 

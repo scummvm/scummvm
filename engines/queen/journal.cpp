@@ -310,7 +310,7 @@ void Journal::handleMouseDown(int x, int y) {
 			enterYesNoPanelMode(zoneNum, TXT_GIVE_UP);
 			break;
 		case ZN_TEXT_SPEED:
-			 val = (x - 136) * QueenEngine::MAX_TEXT_SPEED / (266 - 136);
+			val = (x - 136) * QueenEngine::MAX_TEXT_SPEED / (266 - 136);
 			_vm->talkSpeed(val);
 			drawConfigPanel();
 			break;

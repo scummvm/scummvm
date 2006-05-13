@@ -186,7 +186,7 @@ void QueenEngine::readOptionSettings() {
 	_music->setVolume(ConfMan.getInt("music_volume"));
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
 	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
-	_talkSpeed = ConfMan.getInt("talkspeed");
+	_talkSpeed = (ConfMan.getInt("talkspeed") * (MAX_TEXT_SPEED - MIN_TEXT_SPEED) + 255 / 2) / 255 + MIN_TEXT_SPEED;
 	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
 	_subtitles = ConfMan.getBool("subtitles");
 	checkOptionSettings();
@@ -196,7 +196,7 @@ void QueenEngine::writeOptionSettings() {
 	ConfMan.setInt("music_volume", _music->volume());
 	ConfMan.setBool("music_mute", !_sound->musicOn());
 	ConfMan.setBool("sfx_mute", !_sound->sfxOn());
-	ConfMan.setInt("talkspeed", _talkSpeed);
+	ConfMan.setInt("talkspeed", ((_talkSpeed - MIN_TEXT_SPEED) * 255 + (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 2) / (MAX_TEXT_SPEED - MIN_TEXT_SPEED));
 	ConfMan.setBool("speech_mute", !_sound->speechOn());
 	ConfMan.setBool("subtitles", _subtitles);
 	ConfMan.flushToDisk();
@@ -444,6 +444,7 @@ int QueenEngine::init() {
 
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
+	//_talkspeedScale = (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 255.0;
 
 	registerDefaultSettings();
 	readOptionSettings();

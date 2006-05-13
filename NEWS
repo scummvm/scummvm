@@ -18,10 +18,12 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Restructured our source tree partially.
    - Fixed a bug that prevented you from overriding the scaler from the command
      line for 640x480 games.
+   - Added subtitle configuration controls to the Launcher options dialogs.
 
  SCUMM:
    - Rewrote the detection code, for improved accuracy and better support of
      fan translations. It should now work much better on games with unknown MD5.
+   - Added subtitle configuration controls to the options dialog.
 
  Broken Sword 1:
    - Added support for the --save-slot option.

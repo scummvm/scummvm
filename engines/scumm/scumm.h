@@ -470,6 +470,8 @@ protected:
 	void loadCJKFont();
 	void setupMusic(int midi);
 	void updateSoundSettings();
+	void setTalkspeed(int talkspeed);
+	int getTalkspeed();
 
 protected:
 	// Scumm main loop & helper functions.

@@ -66,11 +66,15 @@ protected:
 	void addAudioControls(GuiObject *boss, String prefix);
 	void addMIDIControls(GuiObject *boss, String prefix);
 	void addVolumeControls(GuiObject *boss, String prefix);
+	// The default value is the launcher's non-scaled talkspeed value. When SCUMM uses the widget,
+	// it uses its own scale
+	void addSubtitleControls(GuiObject *boss, String prefix, int maxSliderVal = 255);
 
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
+	void setSubtitleSettingsState(bool enabled);
 
 private:
 	//
@@ -87,7 +91,6 @@ private:
 	//
 	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
-	CheckboxWidget *_subCheckbox;
 
 	//
 	// MIDI controls
@@ -96,18 +99,34 @@ private:
 	CheckboxWidget *_multiMidiCheckbox;
 	CheckboxWidget *_mt32Checkbox;
 	CheckboxWidget *_enableGSCheckbox;
+	
+	//
+	// Subtitle controls
+	//
+	int getSubtitleMode(bool subtitles, bool speech_mute);
+	bool _enableSubtitleSettings;
+	StaticTextWidget *_subToggleDesc;
+	ButtonWidget *_subToggleButton;
+	int _subMode;
+	static const char *_subModeDesc[];
+	StaticTextWidget *_subSpeedDesc;
+	SliderWidget *_subSpeedSlider;
+	StaticTextWidget *_subSpeedLabel;
 
 	//
 	// Volume controls
 	//
 	bool _enableVolumeSettings;
 
+	StaticTextWidget *_musicVolumeDesc;
 	SliderWidget *_musicVolumeSlider;
 	StaticTextWidget *_musicVolumeLabel;
 
+	StaticTextWidget *_sfxVolumeDesc;
 	SliderWidget *_sfxVolumeSlider;
 	StaticTextWidget *_sfxVolumeLabel;
 
+	StaticTextWidget *_speechVolumeDesc;
 	SliderWidget *_speechVolumeSlider;
 	StaticTextWidget *_speechVolumeLabel;
 };

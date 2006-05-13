@@ -499,6 +499,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	VAR_SOUNDPARAM3 = 0xFF;
 	VAR_MOUSEPRESENT = 0xFF;
 	VAR_MEMORY_PERFORMANCE = 0xFF;
+
+	if (ConfMan.hasKey("talkspeed")) {
+		_defaultTalkDelay = 9 - getTalkspeed();
+		VAR_CHARINC = _defaultTalkDelay;
+	}
+
 	VAR_VIDEO_PERFORMANCE = 0xFF;
 	VAR_ROOM_FLAG = 0xFF;
 	VAR_GAME_LOADED = 0xFF;
@@ -1498,7 +1504,6 @@ void ScummEngine::updateSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 
-
 	if (ConfMan.getBool("speech_mute"))
 		_voiceMode = 2;
 	else
@@ -1506,8 +1511,31 @@ void ScummEngine::updateSoundSettings() {
 
 	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = _voiceMode;
+
+	_defaultTalkDelay = 9 - getTalkspeed();
+	VAR(VAR_CHARINC) = _defaultTalkDelay;
 }
 
+void ScummEngine::setTalkspeed(int talkspeed) {
+	/*if (talkspeed != 0)
+		if (talkspeed == 9)
+			talkspeed = 255;
+		else
+			talkspeed = (int)(talkspeed * 255.0 / 9.0 + 0.5);*/
+	ConfMan.setInt("talkspeed", (talkspeed * 255 + 9 / 2) / 9);
+}
+
+int ScummEngine::getTalkspeed() {
+	/*int talkspeed = ConfMan.getInt("talkspeed");
+
+	if (talkspeed != 0)
+		if (talkspeed == 255)
+			talkspeed = 9;
+		else
+			talkspeed = (int)(talkspeed * 9.0 / 255.0 + 0.5);
+	return talkspeed;*/
+	return (ConfMan.getInt("talkspeed") * 9 + 255 / 2) / 255;
+}
 
 
 #pragma mark -

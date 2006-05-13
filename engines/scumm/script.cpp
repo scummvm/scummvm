@@ -617,7 +617,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
-			uint talkspeed = ConfMan.getInt("talkspeed");
+			uint talkspeed = getTalkspeed();
 			if (talkspeed <= 9)
 				VAR(VAR_CHARINC) = talkspeed;
 		} else {

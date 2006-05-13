@@ -55,11 +55,13 @@ namespace GUI {
 // - music & graphics driver (but see also the comments on EditGameDialog
 //   for some techincal difficulties with this)
 // - default volumes (sfx/speech/music)
-// - aspect ratio, language, platform, subtitles, debug mode/level, cd drive, joystick, multi midi, native mt32
+// - aspect ratio, language, platform, debug mode/level, cd drive, joystick, multi midi, native mt32
 
 enum {
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
+	kSubtitleToggle			= 'sttg',
+	kSubtitleSpeedChanged	= 'stsc',
 	kSpeechVolumeChanged	= 'vcvc',
 	kChooseSoundFontCmd		= 'chsf',
 	kChooseSaveDirCmd		= 'chos',
@@ -83,6 +85,12 @@ OptionsDialog::OptionsDialog(const String &domain, String name)
 	init();
 }
 
+const char *OptionsDialog::_subModeDesc[] = {
+	"Speech Only",
+	"Speech and Subtitles",
+	"Subtitles Only"
+};
+
 void OptionsDialog::init() {
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
@@ -90,19 +98,26 @@ void OptionsDialog::init() {
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
-	_subCheckbox = 0;
 	_midiPopUp = 0;
 	_enableMIDISettings = false;
 	_multiMidiCheckbox = 0;
 	_mt32Checkbox = 0;
 	_enableGSCheckbox = 0;
 	_enableVolumeSettings = false;
+	_musicVolumeDesc = 0;
 	_musicVolumeSlider = 0;
 	_musicVolumeLabel = 0;
+	_sfxVolumeDesc = 0;
 	_sfxVolumeSlider = 0;
 	_sfxVolumeLabel = 0;
+	_speechVolumeDesc = 0;
 	_speechVolumeSlider = 0;
 	_speechVolumeLabel = 0;
+	_subToggleDesc = 0;
+	_subToggleButton = 0;
+	_subSpeedDesc = 0;
+	_subSpeedSlider = 0;
+	_subSpeedLabel = 0;
 }
 
 void OptionsDialog::open() {
@@ -111,6 +126,7 @@ void OptionsDialog::open() {
 	// Reset result value
 	setResult(0);
 
+	// Graphic options
 	if (_fullscreenCheckbox) {
 		_gfxPopUp->setSelected(0);
 
@@ -150,7 +166,8 @@ void OptionsDialog::open() {
 #endif
 	}
 
-	if (_subCheckbox) {
+	// Audio options
+	if (_midiPopUp) {
 		// Music driver
 		const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 		int i = 0;
@@ -163,9 +180,6 @@ void OptionsDialog::open() {
 			md++;
 		}
 		_midiPopUp->setSelected(md->name ? i : 0);
-
-		// Subtitles setting
-		_subCheckbox->setState(ConfMan.getBool("subtitles", _domain));
 	}
 
 	if (_multiMidiCheckbox) {
@@ -202,10 +216,27 @@ void OptionsDialog::open() {
 		_speechVolumeSlider->setValue(vol);
 		_speechVolumeLabel->setValue(vol);
 	}
+
+	// Subtitle options
+	if (_subToggleButton) {
+		int speed;
+		int sliderMaxValue = _subSpeedSlider->getMaxValue();
+
+		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute"));
+		_subToggleButton->setLabel(_subModeDesc[_subMode]);
+
+		// Engines that reuse the subtitle speed widget set their own max value.
+		// Scale the config value accordingly (see addSubtitleControls)
+		speed = (ConfMan.getInt("talkspeed", _domain) * sliderMaxValue + 255 / 2) / 255;
+		_subSpeedSlider->setValue(speed);
+		_subSpeedLabel->setValue(speed);
+	}
 }
 
 void OptionsDialog::close() {
 	if (getResult()) {
+
+		// Graphic options
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
@@ -224,6 +255,7 @@ void OptionsDialog::close() {
 			}
 		}
 
+		// Volume options
 		if (_musicVolumeSlider) {
 			if (_enableVolumeSettings) {
 				ConfMan.setInt("music_volume", _musicVolumeSlider->getValue(), _domain);
@@ -236,9 +268,9 @@ void OptionsDialog::close() {
 			}
 		}
 
-		if (_subCheckbox) {
+		// Audio options
+		if (_midiPopUp) {
 			if (_enableAudioSettings) {
-				ConfMan.setBool("subtitles", _subCheckbox->getState(), _domain);
 				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
 					md++;
@@ -248,7 +280,6 @@ void OptionsDialog::close() {
 					ConfMan.removeKey("music_driver", _domain);
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
-				ConfMan.removeKey("subtitles", _domain);
 			}
 		}
 
@@ -267,6 +298,42 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("enable_gs", _domain);
 				ConfMan.removeKey("soundfont", _domain);
+			}
+		}
+
+		// Subtitle options
+		if (_subToggleButton) {
+			if (_enableSubtitleSettings) {
+				bool subtitles, speech_mute;
+				int talkspeed;
+				int sliderMaxValue = _subSpeedSlider->getMaxValue();
+
+				switch (_subMode) {
+				case 0:
+					subtitles = speech_mute = false;
+					break;
+				case 1:
+					subtitles = true;
+					speech_mute = false;
+					break;
+				case 2:
+				default:
+					subtitles = speech_mute = true;
+					break;
+				}
+
+				ConfMan.setBool("subtitles", subtitles, _domain); 
+				ConfMan.setBool("speech_mute", speech_mute, _domain);
+
+				// Engines that reuse the subtitle speed widget set their own max value.
+				// Scale the config value accordingly (see addSubtitleControls)
+				talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
+				ConfMan.setInt("talkspeed", talkspeed, _domain);
+
+			} else {
+				ConfMan.removeKey("subtitles", _domain);
+				ConfMan.removeKey("talkspeed", _domain);
+				ConfMan.removeKey("speech_mute", _domain);
 			}
 		}
 
@@ -290,6 +357,22 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kSpeechVolumeChanged:
 		_speechVolumeLabel->setValue(_speechVolumeSlider->getValue());
 		_speechVolumeLabel->draw();
+		break;
+	case kSubtitleToggle:
+		if (_subMode < 2)
+			_subMode++;
+		else
+			_subMode = 0;	
+
+		_subToggleButton->setLabel(_subModeDesc[_subMode]);
+		_subToggleButton->draw();
+		_subSpeedDesc->draw();
+		_subSpeedSlider->draw();
+		_subSpeedLabel->draw();
+		break;
+	case kSubtitleSpeedChanged:
+		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
+		_subSpeedLabel->draw();
 		break;
 	case kOKCmd:
 		setResult(1);
@@ -315,7 +398,6 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
 	_midiPopUp->setEnabled(enabled);
-	_subCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
@@ -331,12 +413,25 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_enableVolumeSettings = enabled;
 
+	_musicVolumeDesc->setEnabled(enabled);
 	_musicVolumeSlider->setEnabled(enabled);
 	_musicVolumeLabel->setEnabled(enabled);
+	_sfxVolumeDesc->setEnabled(enabled);
 	_sfxVolumeSlider->setEnabled(enabled);
 	_sfxVolumeLabel->setEnabled(enabled);
+	_speechVolumeDesc->setEnabled(enabled);
 	_speechVolumeSlider->setEnabled(enabled);
 	_speechVolumeLabel->setEnabled(enabled);
+}
+
+void OptionsDialog::setSubtitleSettingsState(bool enabled) {
+	_enableSubtitleSettings = enabled;
+
+	_subToggleButton->setEnabled(enabled);
+	_subToggleDesc->setEnabled(enabled);
+	_subSpeedDesc->setEnabled(enabled);
+	_subSpeedSlider->setEnabled(enabled);
+	_subSpeedLabel->setEnabled(enabled);
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, String prefix) {
@@ -391,9 +486,6 @@ void OptionsDialog::addAudioControls(GuiObject *boss, String prefix) {
 		md++;
 	}
 
-	// Subtitles on/off
-	_subCheckbox = new CheckboxWidget(boss, prefix + "auSubtitlesCheckbox", "Display subtitles", 0, 0);
-
 	_enableAudioSettings = true;
 }
 
@@ -414,29 +506,41 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, String prefix) {
 	_enableMIDISettings = true;
 }
 
+// The function has an extra slider range parameter, since both the launcher and SCUMM engine
+// make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
+void OptionsDialog::addSubtitleControls(GuiObject *boss, String prefix, int maxSliderVal) {
+
+	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", "Text and Speech:");
+	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle, 0);
+
+	// Subtitle speed
+	_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", "Subtitle speed:");
+	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", kSubtitleSpeedChanged);
+	_subSpeedLabel = new StaticTextWidget(boss, prefix + "subSubtitleSpeedLabel", "100%");
+	_subSpeedSlider->setMinValue(0); _subSpeedSlider->setMaxValue(maxSliderVal);
+	_subSpeedLabel->setFlags(WIDGET_CLEARBG);
+
+	_enableSubtitleSettings = true;
+}
+
 void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
-	const char *slider_labels[] = {
-		"Music volume:",
-		"SFX volume:",
-		"Speech volume:"
-	};
 
 	// Volume controllers
-	new StaticTextWidget(boss, prefix + "vcMusicText", slider_labels[0]);
+	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", "Music volume:");
 	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%");
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	new StaticTextWidget(boss, prefix + "vcSfxText", slider_labels[1]);
+	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", "SFX volume:");
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%");
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	new StaticTextWidget(boss, prefix + "vcSpeechText" , slider_labels[2]);
+	_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , "Speech volume:");
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%");
 	_speechVolumeSlider->setMinValue(0);
@@ -444,6 +548,18 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableVolumeSettings = true;
+}
+
+int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
+	if (!subtitles && !speech_mute) // Speech only
+		return 0;
+	else if (subtitles && !speech_mute) // Speech and subtitles
+		return 1;
+	else if (subtitles && speech_mute) // Subtitles only
+		return 2;
+	else 
+		warning("Wrong configuration: Both subtitles and speech are off. Assuming subtitles only");
+	return 2;
 }
 
 void OptionsDialog::handleScreenChanged() {
@@ -481,6 +597,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	tab->addTab("Audio");
 	addAudioControls(tab, "globaloptions_");
 	addVolumeControls(tab, "globaloptions_");
+	addSubtitleControls(tab, "globaloptions_");
+
 	// TODO: cd drive setting
 
 	//

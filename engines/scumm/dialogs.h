@@ -140,10 +140,6 @@ public:
 	virtual void open();
 	virtual void close();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-
-protected:
-	GUI::CheckboxWidget *_subtitlesCheckbox;
-	GUI::CheckboxWidget *_speechCheckbox;
 };
 
 /**
