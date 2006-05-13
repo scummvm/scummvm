@@ -160,7 +160,7 @@ void BrowserDialog::open() {
 	if (ConfMan.hasKey("browser_lastpath"))
 		_node = FilesystemNode(ConfMan.get("browser_lastpath"));
 	if (!_node.isDirectory())
-		_node = FilesystemNode();
+		_node = FilesystemNode(".");
 
 	// Alway refresh file list
 	updateListing();
