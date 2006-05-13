@@ -44,7 +44,7 @@
 bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
 enDebugLevels debugLevel = DEBUG_NONE;
 
-#if defined (WIN32)
+#if defined (WIN32) && !defined (_MSC_VER)
 int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
     return main(__argc, __argv);
 }
