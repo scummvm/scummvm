@@ -29,8 +29,7 @@
 
 // Constructor. Should create/open a saved game
 SaveGame::SaveGame(char *filename, bool saving) :
-	_saving(saving), _currentSection(0)
-{
+		_saving(saving) {
 	if (_saving) {
 		uint32 tag = SAVEGAME_HEADERTAG;
 		uint32 version = SAVEGAME_VERSION;
@@ -64,58 +63,31 @@ SaveGame::~SaveGame() {
 	gzclose(_fileHandle);
 }
 
-uint32 SaveGame::beginSection(uint32 sectionTag) {
-	if (_currentSection != 0)
-		error("Tried to begin a new save game section with ending old section!");
-	_currentSection = sectionTag;
-	_sectionSize = 0;
-	_sectionBuffer = (char *) malloc(_sectionSize);
-	if (!_saving) {
-		uint32 tag = 0;
-		
-		while (tag != sectionTag) {
-			free(_sectionBuffer);
-			gzread(_fileHandle, &tag, sizeof(uint32));
-			if (tag == SAVEGAME_FOOTERTAG)
-				error("Unable to find requested section of savegame!");
-			gzread(_fileHandle, &_sectionSize, sizeof(uint32));
-			_sectionBuffer = (char *) malloc(_sectionSize);
-			gzread(_fileHandle, _sectionBuffer, _sectionSize);
-		}
-	}
-	_sectionPtr = 0;
-	return _sectionSize;
-}
-
-void SaveGame::endSection() {
-	if (_currentSection == 0)
-		error("Tried to end a save game section without starting a section!");
-	if(_saving) {
-		gzwrite(_fileHandle, &_currentSection, sizeof(uint32));
-		gzwrite(_fileHandle, &_sectionSize, sizeof(uint32));
-		gzwrite(_fileHandle, _sectionBuffer, _sectionSize);
-	}
-	free(_sectionBuffer);
-	_currentSection = 0;
-}
-
-void SaveGame::readBlock(void *data, int size) {
+int SaveGame::read(void *data, int size) {
 	if (_saving)
 		error("SaveGame::readBlock called when storing a savegame!");
-	if (_currentSection == 0)
-		error("Tried to read a block without starting a section!");
-	memcpy(data, &_sectionBuffer[_sectionPtr], size);
-	_sectionPtr += size;
+	return gzread(_fileHandle, data, size);
 }
 
-void SaveGame::writeBlock(void *data, int size) {
+int SaveGame::checkTag(uint32 tag) {
+	uint32 readTag;
+	int res = read(&readTag, 4);
+	assert(res == 4);
+	if (readTag != tag) {
+		error("SaveGame::readAndCheck: Wrong tag. Expected: %d", tag);
+	}
+
+	return res;
+}
+
+int SaveGame::write(void *data, int size) {
 	if (!_saving)
 		error("SaveGame::writeBlock called when restoring a savegame!");
-	if (_currentSection == 0)
-		error("Tried to write a block without starting a section!");
-	_sectionBuffer = (char *) realloc(_sectionBuffer, _sectionSize + size);
-	if (_sectionBuffer == NULL)
-		error("Failed to allocate space for buffer!");
-	memcpy(&_sectionBuffer[_sectionSize], data, size);
-	_sectionSize += size;
+	return gzwrite(_fileHandle, data, size);
+}
+
+int SaveGame::writeTag(uint32 tag) {
+	int res = write(&tag, 4);
+	assert(res == 4);
+	return res;
 }

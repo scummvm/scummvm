@@ -29,6 +29,7 @@
 #include "primitives.h"
 #include "font.h"
 #include "lua.h"
+#include "savegame.h"
 
 #include <cstdlib>
 #include <list>
@@ -155,10 +156,13 @@ public:
 	void savegameSave();
 	void savegameRestore();
 	void savegameCallback();
-
+	static void savegameGzread(void *data, int size);
+	static void savegameGzwrite(void *data, int size);
+        
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
 	char *_savegameFileName;
+	gzFile _savegameFileHandle;
 	SaveGame *_savedState;
 
 	Engine();

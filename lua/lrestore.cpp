@@ -106,68 +106,51 @@ static void recreateObj(TObject *obj) {
 	}
 }
 
-void restoreObjectValue(lua_Type *objectType, void *objectValue, SaveGame *savedState) {
-	int length;
-	savedState->readBlock(objectType, sizeof(lua_Type));
-	savedState->readBlock(&length, sizeof(int));
-	savedState->readBlock(objectValue, length);
-}
-
-void lua_Restore(SaveGame *savedState) {
+void lua_Restore(SaveRestoreFunc restoreFunc) {
 	printf("lua_Restore() started.\n");
 
 	lua_close();
 	L = luaM_new(lua_State);
 	lua_resetglobals();
 
-	savedState->beginSection('LUAS');
-	savedState->readBlock(&arrayStringsCount, sizeof(int));
-	savedState->readBlock(&arrayClosuresCount, sizeof(int));
-	savedState->readBlock(&arrayHashTablesCount, sizeof(int));
-	savedState->readBlock(&arrayProtoFuncsCount, sizeof(int));
+	restoreFunc(&arrayStringsCount, sizeof(int));
+	restoreFunc(&arrayClosuresCount, sizeof(int));
+	restoreFunc(&arrayHashTablesCount, sizeof(int));
+	restoreFunc(&arrayProtoFuncsCount, sizeof(int));
 	int rootGlobalCount;
-	savedState->readBlock(&rootGlobalCount, sizeof(int));
+	restoreFunc(&rootGlobalCount, sizeof(int));
 
 	arrayStrings = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayStringsCount);
 	ArrayIDObj *arraysObj = arrayStrings;
 	int maxStringsLength;
-	savedState->readBlock(&maxStringsLength, sizeof(int));
+	restoreFunc(&maxStringsLength, sizeof(int));
 	char *tempStringBuffer = (char *)luaM_malloc(maxStringsLength);
 
 	int i;
 	for (i = 0; i < arrayStringsCount; i++) {
+		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
 		int constIndex;
+		restoreFunc(&constIndex, sizeof(int));
 		lua_Type tag;
+		restoreFunc(&tag, sizeof(int));
 		void *value;
-		
-		// Restore the string object
-		savedState->readBlock(&arraysObj->idObj, sizeof(TaggedString *));
-		// Restore the constant index
-		savedState->readBlock(&constIndex, sizeof(int));
-		// Restore the object value
-		restoreObjectValue(&tag, &value, savedState);
-		
+		restoreFunc(&value, sizeof(void *));
+
 		TaggedString *tempString;
 		if (constIndex != -1) {
 			long length;
-			// Restore the string length
-			savedState->readBlock(&length, sizeof(long));
-			if (length == 0) {
-				tempString = luaS_newlstr("", 0);
-			} else {
-				// Restore the string value
-				savedState->readBlock(tempStringBuffer, length);
-				tempString = luaS_newlstr(tempStringBuffer, length);
-			}
+			restoreFunc(&length, sizeof(long));
+			restoreFunc(tempStringBuffer, length);
+			tempString = luaS_newlstr(tempStringBuffer, length);
 			tempString->u.s.globalval.ttype = tag;
-			tempString->u.s.globalval.value.ts = (TaggedString *) value;
+			tempString->u.s.globalval.value.ts = (TaggedString *)value;
 		} else {
 			if (tag == 0)
 				tempString = luaS_createudata(value, LUA_ANYTAG);
 			else
 				tempString = luaS_createudata(value, tag);
 			if (restoreCallback != NULL) {
-				tempString->u.s.globalval.value.ts = (TaggedString *)restoreCallback(tempString->u.s.globalval.ttype, (long)tempString->u.s.globalval.value.ts, savedState);
+				tempString->u.s.globalval.value.ts = (TaggedString *)restoreCallback(tempString->u.s.globalval.ttype, (long)tempString->u.s.globalval.value.ts, restoreFunc);
 			}
 		}
 		tempString->constindex = constIndex;
@@ -181,15 +164,16 @@ void lua_Restore(SaveGame *savedState) {
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayClosuresCount);
 	arrayClosures = arraysObj;
 	for (i = 0; i < arrayClosuresCount; i++) {
-		savedState->readBlock(&arraysObj->idObj, sizeof(Closure *));
+		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
 		int countElements;
-		savedState->readBlock(&countElements, sizeof(int));
+		restoreFunc(&countElements, sizeof(int));
 		tempClosure = (Closure *)luaM_malloc((countElements * sizeof(TObject)) + sizeof(Closure));
 		luaO_insertlist(&L->rootcl, (GCnode *)tempClosure);
 
 		tempClosure->nelems = countElements;
 		for (l = 0; l <= tempClosure->nelems; l++) {
-			restoreObjectValue(&tempClosure->consts[l].ttype, &tempClosure->consts[l].value, savedState);
+			restoreFunc(&tempClosure->consts[l].ttype, sizeof(lua_Type));
+			restoreFunc(&tempClosure->consts[l].value, sizeof(Value));
 		}
 		arraysObj->object = tempClosure;
 		arraysObj++;
@@ -199,17 +183,19 @@ void lua_Restore(SaveGame *savedState) {
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayHashTablesCount);
 	arrayHashTables = arraysObj;
 	for (i = 0; i < arrayHashTablesCount; i++) {
-		savedState->readBlock(&arraysObj->idObj, sizeof(Hash *));
+		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
 		tempHash = luaM_new(Hash);
-		savedState->readBlock(&tempHash->nhash, sizeof(unsigned int));
-		savedState->readBlock(&tempHash->nuse, sizeof(int));
-		savedState->readBlock(&tempHash->htag, sizeof(int));
+		restoreFunc(&tempHash->nhash, sizeof(int));
+		restoreFunc(&tempHash->nuse, sizeof(int));
+		restoreFunc(&tempHash->htag, sizeof(int));
 		tempHash->node = hashnodecreate(tempHash->nhash);
 		luaO_insertlist(&L->roottable, (GCnode *)tempHash);
 
 		for (l = 0; l < tempHash->nuse; l++) {
-			restoreObjectValue(&tempHash->node[l].ref.ttype, &tempHash->node[l].ref.value, savedState);
-			restoreObjectValue(&tempHash->node[l].val.ttype, &tempHash->node[l].val.value, savedState);
+			restoreFunc(&tempHash->node[l].ref.ttype, sizeof(lua_Type));
+			restoreFunc(&tempHash->node[l].ref.value, sizeof(Value));
+			restoreFunc(&tempHash->node[l].val.ttype, sizeof(lua_Type));
+			restoreFunc(&tempHash->node[l].val.value, sizeof(Value));
 		}
 		arraysObj->object = tempHash;
 		arraysObj++;
@@ -219,20 +205,21 @@ void lua_Restore(SaveGame *savedState) {
 	arrayProtoFuncs = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayProtoFuncsCount);
 	arraysObj = arrayProtoFuncs;
 	for (i = 0; i < arrayProtoFuncsCount; i++) {
-		savedState->readBlock(&arraysObj->idObj, sizeof(TProtoFunc *));
+		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
 		tempProtoFunc = luaM_new(TProtoFunc);
 		luaO_insertlist(&L->rootproto, (GCnode *)tempProtoFunc);
-		savedState->readBlock(&tempProtoFunc->fileName, sizeof(TaggedString *));
-		savedState->readBlock(&tempProtoFunc->lineDefined, sizeof(unsigned int));
-		savedState->readBlock(&tempProtoFunc->nconsts, sizeof(unsigned int));
+		restoreFunc(&tempProtoFunc->fileName, sizeof(TaggedString *));
+		restoreFunc(&tempProtoFunc->lineDefined, sizeof(int));
+		restoreFunc(&tempProtoFunc->nconsts, sizeof(int));
 		tempProtoFunc->consts = (TObject *)luaM_malloc(tempProtoFunc->nconsts * sizeof(TObject));
 
 		for (l = 0; l < tempProtoFunc->nconsts; l++) {
-			restoreObjectValue(&tempProtoFunc->consts[l].ttype, &tempProtoFunc->consts[l].value, savedState);
+			restoreFunc(&tempProtoFunc->consts[l].ttype, sizeof(lua_Type));
+			restoreFunc(&tempProtoFunc->consts[l].value, sizeof(Value));
 		}
 
 		int countVariables;
-		savedState->readBlock(&countVariables, sizeof(int));
+		restoreFunc(&countVariables, sizeof(int));
 		if (countVariables != 0) {
 			tempProtoFunc->locvars = (LocVar *)luaM_malloc(countVariables * sizeof(LocVar));
 		} else {
@@ -240,14 +227,14 @@ void lua_Restore(SaveGame *savedState) {
 		}
 
 		for (l = 0; l < countVariables; l++) {
-			savedState->readBlock(&tempProtoFunc->locvars[l].varname, sizeof(TaggedString *));
-			savedState->readBlock(&tempProtoFunc->locvars[l].line, sizeof(int));
+			restoreFunc(&tempProtoFunc->locvars[l].varname, sizeof(TaggedString *));
+			restoreFunc(&tempProtoFunc->locvars[l].line, sizeof(int));
 		}
 
 		int codeSize;
-		savedState->readBlock(&codeSize, sizeof(int));
+		restoreFunc(&codeSize, sizeof(int));
 		tempProtoFunc->code = (lua_Byte *)luaM_malloc(codeSize);
-		savedState->readBlock(tempProtoFunc->code, codeSize);
+		restoreFunc(tempProtoFunc->code, codeSize);
 		arraysObj->object = tempProtoFunc;
 		arraysObj++;
 	}
@@ -318,7 +305,7 @@ void lua_Restore(SaveGame *savedState) {
 		TObject tempObj;
 		TaggedString *tempString = NULL;
 		tempObj.ttype = LUA_T_STRING;
-		savedState->readBlock(&tempObj.value, sizeof(TaggedString *));
+		restoreFunc(&tempObj.value, sizeof(TaggedString *));
 		recreateObj(&tempObj);
  		tempString = (TaggedString *)tempObj.value.ts;
 		assert(tempString);
@@ -327,44 +314,47 @@ void lua_Restore(SaveGame *savedState) {
 	}
 	tempListString->head.next = NULL;
 
-	restoreObjectValue(&L->errorim.ttype, &L->errorim.value, savedState);
+	restoreFunc(&L->errorim.ttype, sizeof(lua_Type));
+	restoreFunc(&L->errorim.value, sizeof(Value));
 	recreateObj(&L->errorim);
 
-	savedState->readBlock(&L->IMtable_size, sizeof(int));
+	restoreFunc(&L->IMtable_size, sizeof(int));
 	L->IMtable = (IM *)luaM_malloc(L->IMtable_size * sizeof(IM));
 	for (i = 0; i < L->IMtable_size; i++) {
 		IM *im = &L->IMtable[i];
 		for (l = 0; l < IM_N; l++) {
-			restoreObjectValue(&im->int_method[l].ttype, &im->int_method[l].value, savedState);
+			restoreFunc(&im->int_method[l].ttype, sizeof(lua_Type));
+			restoreFunc(&im->int_method[l].value, sizeof(Value));
 			recreateObj(&im->int_method[l]);
 		}
 	}
 
-	savedState->readBlock(&L->last_tag, sizeof(int));
-	savedState->readBlock(&L->refSize, sizeof(int));
+	restoreFunc(&L->last_tag, sizeof(int));
+	restoreFunc(&L->refSize, sizeof(int));
 	L->refArray = (ref *)luaM_malloc(L->refSize * sizeof(ref));
 	for (i = 0; i < L->refSize; i++) {
-		restoreObjectValue(&L->refArray[i].o.ttype, &L->refArray[i].o.value, savedState);
+		restoreFunc(&L->refArray[i].o.ttype, sizeof(lua_Type));
+		restoreFunc(&L->refArray[i].o.value, sizeof(Value));
 		recreateObj(&L->refArray[i].o);
-		savedState->readBlock(&L->refArray[i].status, sizeof(Status));
+		restoreFunc(&L->refArray[i].status, sizeof(Status));
 	}
 
-	savedState->readBlock(&L->GCthreshold, sizeof(unsigned long));
-	savedState->readBlock(&L->nblocks, sizeof(unsigned long));
+	restoreFunc(&L->GCthreshold, sizeof(unsigned long));
+	restoreFunc(&L->nblocks, sizeof(unsigned long));
 
-	savedState->readBlock(&L->Mbuffsize, sizeof(int));
+	restoreFunc(&L->Mbuffsize, sizeof(int));
 	L->Mbuffer = (char *)luaM_malloc(L->Mbuffsize);
-	savedState->readBlock(L->Mbuffer, L->Mbuffsize);
+	restoreFunc(L->Mbuffer, L->Mbuffsize);
 	int MbaseOffset;
-	savedState->readBlock(&MbaseOffset, sizeof(int));
+	restoreFunc(&MbaseOffset, sizeof(int));
 	L->Mbuffbase = MbaseOffset + L->Mbuffer;
-	savedState->readBlock(&L->Mbuffnext, sizeof(int));
+	restoreFunc(&L->Mbuffnext, sizeof(int));
 
-	savedState->readBlock(&globalTaskSerialId, sizeof(int));
+	restoreFunc(&globalTaskSerialId, sizeof(int));
 
 	int countTasks;
 	lua_Task *tempTask = NULL;
-	savedState->readBlock(&countTasks, sizeof(int));
+	restoreFunc(&countTasks, sizeof(int));
 	lua_Task *prevTask = L->root_task;
 	for (l = 0; l < countTasks; l++) {
 		tempTask = luaM_new(lua_Task);
@@ -373,31 +363,32 @@ void lua_Restore(SaveGame *savedState) {
 		prevTask = tempTask;
 
 		int stackLastSize;
-		savedState->readBlock(&stackLastSize, sizeof(int));
+		restoreFunc(&stackLastSize, sizeof(int));
 		tempTask->stack.stack = (TObject *)luaM_malloc(stackLastSize * sizeof(TObject));
 		tempTask->stack.last = tempTask->stack.stack + stackLastSize - 1;
 
 		int stackTopSize;
-		savedState->readBlock(&stackTopSize, sizeof(int));
+		restoreFunc(&stackTopSize, sizeof(int));
 		tempTask->stack.top = tempTask->stack.stack + stackTopSize;
 		for (i = 0; i < stackTopSize; i++) {
-			restoreObjectValue(&tempTask->stack.stack[i].ttype, &tempTask->stack.stack[i].value, savedState);
+			restoreFunc(&tempTask->stack.stack[i].ttype, sizeof(lua_Type));
+			restoreFunc(&tempTask->stack.stack[i].value, sizeof(Value));
 			recreateObj(&tempTask->stack.stack[i]);
 		}
 
-		savedState->readBlock(&tempTask->Cstack.base, sizeof(StkId));
-		savedState->readBlock(&tempTask->Cstack.lua2C, sizeof(StkId));
-		savedState->readBlock(&tempTask->Cstack.num, sizeof(int));
+		restoreFunc(&tempTask->Cstack.base, sizeof(StkId));
+		restoreFunc(&tempTask->Cstack.lua2C, sizeof(StkId));
+		restoreFunc(&tempTask->Cstack.num, sizeof(int));
 
-		savedState->readBlock(&tempTask->numCblocks, sizeof(int));
+		restoreFunc(&tempTask->numCblocks, sizeof(int));
 		for (i = 0; i < tempTask->numCblocks; i++) {
-			savedState->readBlock(&tempTask->Cblocks[i].base,	sizeof(StkId));
-			savedState->readBlock(&tempTask->Cblocks[i].lua2C, sizeof(StkId));
-			savedState->readBlock(&tempTask->Cblocks[i].num, sizeof(int));
+			restoreFunc(&tempTask->Cblocks[i].base,	sizeof(StkId));
+			restoreFunc(&tempTask->Cblocks[i].lua2C, sizeof(StkId));
+			restoreFunc(&tempTask->Cblocks[i].num, sizeof(int));
 		}
 
 		int pcOffset, taskCi;
-		savedState->readBlock(&tempTask->base_ci_size, sizeof(int));
+		restoreFunc(&tempTask->base_ci_size, sizeof(int));
 		tempTask->base_ci = (CallInfo *)luaM_malloc(tempTask->base_ci_size * sizeof(CallInfo));
 		memset(tempTask->base_ci, 0, sizeof(CallInfo) * tempTask->base_ci_size);
 		CallInfo *tempCi = tempTask->base_ci;
@@ -405,35 +396,35 @@ void lua_Restore(SaveGame *savedState) {
 		for (i = 0; i < countCi; i++) {
 			TObject tempObj;
 			tempObj.ttype = LUA_T_CLOSURE;
-			savedState->readBlock(&tempObj.value, sizeof(Closure *));
+			restoreFunc(&tempObj.value, sizeof(Closure *));
 			recreateObj(&tempObj);
 			tempCi->c = (Closure *)tempObj.value.cl;
 			tempObj.ttype = LUA_T_PROTO;
-			savedState->readBlock(&tempObj.value, sizeof(TProtoFunc *));
+			restoreFunc(&tempObj.value, sizeof(TProtoFunc *));
 			recreateObj(&tempObj);
 			tempCi->tf = (TProtoFunc *)tempObj.value.tf;
 
-			savedState->readBlock(&pcOffset, sizeof(int));
+			restoreFunc(&pcOffset, sizeof(int));
 			if (pcOffset != 0)
 				tempCi->pc = tempCi->tf->code + pcOffset;
 			else
 				tempCi->pc = NULL;
 
-			savedState->readBlock(&tempCi->base, sizeof(StkId));
-			savedState->readBlock(&tempCi->nResults, sizeof(int));
+			restoreFunc(&tempCi->base, sizeof(StkId));
+			restoreFunc(&tempCi->nResults, sizeof(int));
 			tempCi++;
 		}
-		savedState->readBlock(&taskCi, sizeof(int));
+		restoreFunc(&taskCi, sizeof(int));
 		tempTask->ci = tempTask->base_ci + taskCi;
 		tempTask->end_ci = tempTask->base_ci + countCi;
 
 		int Mbasepos;
-		savedState->readBlock(&Mbasepos, sizeof(int));
+		restoreFunc(&Mbasepos, sizeof(int));
 		tempTask->Mbuffbase = Mbasepos + tempTask->Mbuffer;
-		savedState->readBlock(&tempTask->Mbuffnext, sizeof(int));
+		restoreFunc(&tempTask->Mbuffnext, sizeof(int));
 
-		savedState->readBlock(&tempTask->Tstate, sizeof(TaskState));
-		savedState->readBlock(&tempTask->id, sizeof(int));
+		restoreFunc(&tempTask->Tstate, sizeof(TaskState));
+		restoreFunc(&tempTask->id, sizeof(int));
 	}
 	L->last_task = tempTask;
 
@@ -451,6 +442,5 @@ void lua_Restore(SaveGame *savedState) {
 	arrayProtoFuncs = NULL;
 	arrayStrings = NULL;
 
-	savedState->endSection();
 	printf("lua_Restore() finished.\n");
 }

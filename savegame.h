@@ -24,25 +24,24 @@
 #define SAVEGAME_H
 
 #include "debug.h"
+#include "lua.h"
 #include <zlib.h>
 
 class SaveGame {
 public:
 	SaveGame(char *filename, bool saving);
 	~SaveGame();
-	
-	uint32 beginSection(uint32 sectionTag);
-	void endSection();
-	void readBlock(void *data, int size);
-	void writeBlock(void *data, int size);
+
+	int read(void *data, int size);
+	int checkTag(uint32 tag);
+	int write(void *data, int size);
+	int writeTag(uint32 tag);
+	gzFile fileHandle() { return _fileHandle; }
 
 protected:
 	bool _saving;
 	gzFile _fileHandle;
-	uint32 _currentSection;
-	uint32 _sectionSize;
-	uint32 _sectionPtr;
-	char *_sectionBuffer;
+
 };
 
 #endif
