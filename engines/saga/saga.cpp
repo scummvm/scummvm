@@ -51,7 +51,7 @@
 #include "saga/music.h"
 #include "saga/palanim.h"
 #include "saga/objectmap.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 
 namespace Saga {
 

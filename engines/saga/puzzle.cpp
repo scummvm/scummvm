@@ -28,7 +28,7 @@
 #include "saga/sprite.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 
 #include "common/system.h"
 #include "common/timer.h"

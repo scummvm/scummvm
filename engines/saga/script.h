@@ -58,43 +58,6 @@ enum AddressTypes {
 	kAddressIndex      = 7	// index from id*/
 };
 
-enum VerbTypeIds {
-	kVerbITENone = 0,
-	kVerbITEPickUp = 1,
-	kVerbITELookAt = 2,
-	kVerbITEWalkTo = 3,
-	kVerbITETalkTo = 4,
-	kVerbITEOpen = 5,
-	kVerbITEClose = 6,
-	kVerbITEGive = 7,
-	kVerbITEUse = 8,
-	kVerbITEOptions = 9,
-	kVerbITEEnter = 10,
-	kVerbITELeave = 11,
-	kVerbITEBegin = 12,
-	kVerbITEWalkOnly = 13,
-	kVerbITELookOnly = 14,
-
-
-	kVerbIHNMNone = 0,
-	kVerbIHNMWalk = 1,
-	kVerbIHNMLookAt = 2,
-	kVerbIHNMTake = 3,
-	kVerbIHNMUse = 4,
-	kVerbIHNMTalkTo = 5,
-	kVerbIHNMSwallow = 6,
-	kVerbIHNMGive = 7,
-	kVerbIHNMPush = 8,
-	kVerbIHNMOptions = 9,
-	kVerbIHNMEnter = 10,
-	kVerbIHNMLeave = 11,
-	kVerbIHNMBegin = 12,
-	kVerbIHNMWalkOnly = 13,
-	kVerbIHNMLookOnly = 14,
-
-	kVerbTypeIdsMax = kVerbITELookOnly + 1
-};
-
 enum VerbTypes {
 	kVerbNone,
 	kVerbWalkTo,

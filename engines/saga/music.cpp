@@ -24,7 +24,7 @@
 #include "saga/saga.h"
 
 #include "saga/rscfile.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 #include "saga/music.h"
 #include "saga/stream.h"
 #include "sound/audiostream.h"

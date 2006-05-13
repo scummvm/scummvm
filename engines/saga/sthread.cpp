@@ -34,7 +34,7 @@
 
 #include "saga/stream.h"
 #include "saga/scene.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 
 namespace Saga {
 

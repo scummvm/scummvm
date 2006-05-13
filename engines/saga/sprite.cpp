@@ -27,7 +27,7 @@
 
 #include "saga/gfx.h"
 #include "saga/scene.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/font.h"
 

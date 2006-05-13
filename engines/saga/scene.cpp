@@ -43,7 +43,7 @@
 #include "saga/stream.h"
 #include "saga/actor.h"
 #include "saga/rscfile.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 
 #include "graphics/ilbm.h"
 #include "common/util.h"

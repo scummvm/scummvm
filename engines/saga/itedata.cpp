@@ -25,7 +25,7 @@
 // Actor and Object data tables
 #include "saga/saga.h"
 #include "saga/itedata.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 #include "saga/sndres.h"
 
 namespace Saga {

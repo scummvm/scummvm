@@ -36,7 +36,7 @@
 #include "saga/isomap.h"
 #include "saga/music.h"
 #include "saga/render.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 #include "saga/scene.h"
 #include "saga/script.h"
 

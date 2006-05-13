@@ -27,7 +27,7 @@
 #include "saga/saga.h"
 
 #include "saga/itedata.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"

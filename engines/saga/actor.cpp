@@ -33,7 +33,7 @@
 #include "saga/isomap.h"
 #include "saga/itedata.h"
 #include "saga/objectmap.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/script.h"
 #include "saga/sndres.h"

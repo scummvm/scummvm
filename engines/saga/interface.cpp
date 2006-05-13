@@ -41,7 +41,7 @@
 #include "saga/sound.h"
 #include "saga/sprite.h"
 #include "saga/rscfile.h"
-#include "saga/resnames.h"
+#include "saga/sagaresnames.h"
 
 #include "saga/interface.h"
 
