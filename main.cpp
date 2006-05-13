@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
 						break;
 					}
 				}
-				if(level == -1)
+				if (level == -1)
 					goto needshelp;
 			}
 			debugLevel = (enDebugLevels) level;
