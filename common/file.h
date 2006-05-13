@@ -53,10 +53,10 @@ public:
 	};
 
 	static void addDefaultDirectory(const String &directory);
-	static void addDefaultDirectoryRecursive(const String &directory, int level = 4);
+	static void addDefaultDirectoryRecursive(const String &directory, int level = 4, const String &prefix = "");
 
 	static void addDefaultDirectory(const FilesystemNode &directory);
-	static void addDefaultDirectoryRecursive(const FilesystemNode &directory, int level = 4);
+	static void addDefaultDirectoryRecursive(const FilesystemNode &directory, int level = 4, const String &prefix = "");
 
 	static void resetDefaultDirectories();
 	

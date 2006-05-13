@@ -111,16 +111,16 @@ void File::addDefaultDirectory(const String &directory) {
 	addDefaultDirectoryRecursive(dir, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const String &directory, int level) {
+void File::addDefaultDirectoryRecursive(const String &directory, int level, const String &prefix) {
 	FilesystemNode dir(directory);
-	addDefaultDirectoryRecursive(dir, level);
+	addDefaultDirectoryRecursive(dir, level, prefix);
 }
 
 void File::addDefaultDirectory(const FilesystemNode &directory) {
 	addDefaultDirectoryRecursive(directory, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
+void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, const String &prefix) {
 	if (level <= 0)
 		return;
 
@@ -146,12 +146,14 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->path(), level - 1);
+			addDefaultDirectoryRecursive(file->path(), level - 1, prefix + file->displayName() + "/");
 		} else {
-			String lfn = file->displayName();
+			String lfn(prefix);
+			lfn += file->displayName();
 			lfn.toLowercase();
-			if (!_filesMap->contains(lfn))
+			if (!_filesMap->contains(lfn)) {
 				(*_filesMap)[lfn] = file->path();
+			}
 		}
 	}
 }
