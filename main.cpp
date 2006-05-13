@@ -178,7 +178,7 @@ needshelp:
 	Bitmap *splash_bm = NULL;
 	if (!(g_flags & GF_DEMO))
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
-	if(splash_bm != NULL)
+	if (splash_bm != NULL)
 		splash_bm->ref();
 
 	SDL_Event event;
@@ -236,37 +236,22 @@ void quit() {
 		delete g_registry;
 		g_registry = NULL;
 	}
-	if (g_smush) {
-		delete g_smush;
-		g_smush = NULL;
-	}
-	if (g_imuse) {
-		delete g_imuse;
-		g_imuse = NULL;
-	}
-	if (g_localizer) {
-		delete g_localizer;
-		g_localizer = NULL;
-	}
-	if (g_engine) {
-		delete g_engine;
-		g_engine = NULL;
-	}
-	if (g_resourceloader) {
-		delete g_resourceloader;
-		g_resourceloader = NULL;
-	}
-	if (g_timer) {
-		delete g_timer;
-		g_timer = NULL;
-	}
-	if (g_mixer) {
-		delete g_mixer;
-		g_mixer = NULL;
-	}
-	if (g_driver) {
-		delete g_driver;
-		g_driver = NULL;
-	}
+	delete g_smush;
+	g_smush = NULL;
+	delete g_imuse;
+	g_imuse = NULL;
+	delete g_localizer;
+	g_localizer = NULL;
+	delete g_engine;
+	g_engine = NULL;
+	delete g_resourceloader;
+	g_resourceloader = NULL;
+	delete g_timer;
+	g_timer = NULL;
+	delete g_mixer;
+	g_mixer = NULL;
+	delete g_driver;
+	g_driver = NULL;
+
 	SDL_Quit();
 }
