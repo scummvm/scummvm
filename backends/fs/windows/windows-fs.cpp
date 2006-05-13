@@ -121,7 +121,9 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return new WindowsFilesystemNode((const char *)".");
+	char path[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, path);
+	return new WindowsFilesystemNode(path);
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
