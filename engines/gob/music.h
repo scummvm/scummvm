@@ -42,7 +42,7 @@ public:
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
 	bool playing() { return _playing; }
-	bool getRepeating(void) { return _repCount; }
+	bool getRepeating(void) { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
 	void startPlay(void);
 	void stopPlay(void) { _mutex.lock(); _playing = false; _mutex.unlock(); }

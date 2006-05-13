@@ -292,7 +292,7 @@ void registerDefaults() {
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-"longCmd)) : (tolower(s[1]) == shortCmd)) { \
-		bool boolValue = islower(s[1]); \
+		bool boolValue = (islower(s[1]) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
@@ -595,7 +595,7 @@ static void runDetectorTest() {
 		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 		bool gameidDiffers = false;
 		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= scumm_stricmp(gameid.c_str(), x->gameid.c_str());
+			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid.c_str()) != 0);
 		}
 		
 		if (candidates.empty()) {

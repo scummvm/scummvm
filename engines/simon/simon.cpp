@@ -1301,7 +1301,7 @@ void SimonEngine::setZoneBuffers() {
 
 byte *SimonEngine::allocBlock(uint32 size) {
 	byte *block, *blockEnd;
-	int i;
+	uint i;
 
 	for (i = 0; i < _vgaMemSize / size; i++) {
 		block = _vgaMemPtr;

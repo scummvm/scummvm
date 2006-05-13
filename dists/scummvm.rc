@@ -1,9 +1,9 @@
 #include "winresrc.h"
 
-#if defined(_MSC_VER) 
-IDI_ICON               ICON    DISCARDABLE     "../../icons/scummvm.ico"
-#else
+#if defined (__MINGW32__)
 IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
+#else
+IDI_ICON               ICON    DISCARDABLE     "../../icons/scummvm.ico"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
