@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sdl.lib zdll.lib OpenGL32.Lib GLU32.Lib"
+				AdditionalDependencies="sdl.lib zlib.lib OpenGL32.Lib GLU32.Lib"
 				LinkIncremental="2"
 				GenerateManifest="false"
 				ManifestFile=""
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sdl.lib zdll.lib OpenGL32.Lib GLU32.Lib"
+				AdditionalDependencies="sdl.lib zlib.lib OpenGL32.Lib GLU32.Lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
