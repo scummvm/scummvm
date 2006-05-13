@@ -3101,8 +3101,7 @@ static void debugFunction(char *debugMessage, const char *funcName) {
 	bool stubFn = strcmp(debugMessage, "WARNING: Stub function") == 0;
 	FILE *output;
 	
-	if (!stubFn && debugLevel != DEBUG_FUNC
-	 && debugLevel != DEBUG_ALL)
+	if (!stubFn && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
 		return;
 	
 	if (stubFn)
