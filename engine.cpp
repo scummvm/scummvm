@@ -109,14 +109,13 @@ Engine::Engine() :
 	printLineDefaults.justify = 2;
 }
 
-Engine::~Engine()
-{
+Engine::~Engine() {
 	delete[] _controlsEnabled;
-	for(SceneListType::const_iterator i = _scenes.begin();
-	    i != _scenes.end(); i++)
+
+	for (SceneListType::const_iterator i = _scenes.begin(); i != _scenes.end(); i++)
 		delete (*i);
-	for(ActorListType::const_iterator i = _actors.begin();
-	    i != _actors.end(); i++)
+
+	for (ActorListType::const_iterator i = _actors.begin(); i != _actors.end(); i++)
 		delete (*i);
 }
 
