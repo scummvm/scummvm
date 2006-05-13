@@ -32,12 +32,6 @@ public:
 	SaveGame(char *filename, bool saving);
 	~SaveGame();
 
-//	int read(void *data, int size);
-//	int checkTag(uint32 tag);
-//	int write(void *data, int size);
-//	int writeTag(uint32 tag);
-//	gzFile fileHandle() { return _fileHandle; }
-
 	uint32 beginSection(uint32 sectionTag);
 	void endSection();
 	void read(void *data, int size);
