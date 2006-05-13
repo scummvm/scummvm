@@ -1098,6 +1098,15 @@ e03ed1474ec14de78359970e0457a820 FF4DEMO.HE0
 15c9746d2d612d2693ec7e509c4e9fb5 FF4DEMO.HE2
 9470cd17e5e301f33876477f14992f29 ff4demo.he4
 
+(Kellogg cereals pack)
+bc20db254834452db602728f90e9a6d4 FreddiMini.(a)
+d1286487c342ac81b28f3e1b90a2b7f3 FreddiMini.D32
+03d3b18ee3fd68114e2a687c871e38d5 FreddiMini.HE0
+cb52cbabfa8e91b76a0c6d76ded339c6 FreddiMini.exe
+38189191a5824dd54377f0dbd4779046 FreddiMini.he2
+9470cd17e5e301f33876477f14992f29 FreddiMini.he4
+
+
 (freddicove hfs cd)
 Joachim
 b8ae37c647509afe5a406cab82e8f789 FreddiCove
@@ -2457,6 +2466,14 @@ Kirben
 (putttime demo dutch)
 adutchguy
 ???
+
+(Kellogg cereals pack)
+a6d982141c88f167cf4ec5dc684e2684 PuttMini.(a)
+d1286487c342ac81b28f3e1b90a2b7f3 PuttMini.D32
+0a6d7b81b850ed4a77811c60c9b5c555 PuttMini.HE0
+a75403b5e853d7cc65cde2ec358ca5ba PuttMini.exe
+ddcb5d9f71edc07982db401776c2d79e PuttMini.he2
+72339e5cf3f2902ad78e58c05bfcf7bb PuttMini.he4
 
 (balloon cd hfs)
 Kirben

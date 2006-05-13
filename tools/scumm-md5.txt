@@ -418,6 +418,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	7c2e76087027eeee9c8f8985f93a1cc5	en	All	-	Demo	-	khalek
 	c25755b08a8d0d47695e05f1e2111bfc	us	All	-	Demo	-	sev
 	ebd324dcf06a4c49e1ba5c231eee1060	us	All	HE 99	Demo	-	sev
+	03d3b18ee3fd68114e2a687c871e38d5	us	Windows	HE 99	Demo	-	eriktorbjorn
 	688328c5bdc4c8ec4145688dfa077bf2	de	All	HE 99	Demo	-	Joachim Eberhard
 	16effd200aa6b8abe9c569c3e578814d	nl	Windows	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	nl	Windows	HE 99	Demo	-	adutchguy
@@ -583,6 +584,7 @@ PuttTime	Putt-Putt Travels Through Time
 
 	0ab19be9e2a3f6938226638b2a3744fe	us	All	HE 100	Demo	-	khalek
 	4e5867848ee61bc30d157e2c94eee9b4	us	All	HE 90	Demo	-	khalek, sev
+	0a6d7b81b850ed4a77811c60c9b5c555	us	Windows	HE 99	Demo	-	eriktorbjorn	
 	59d5cfcc5e672a6e07baae01328b918b	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	de	All	HE 90	Demo	-	Joachim Eberhard
 	6b19d0e25cbf720d05822379b8b90ed9	nl	Windows	HE 90	Demo	-	adutchguy

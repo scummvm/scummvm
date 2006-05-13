@@ -571,6 +571,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "FreddiGS", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "freddi4", "FreddiGS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "FreddiHRBG", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "FreddiMini", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -670,6 +671,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "putttime", "toffzeit", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 }, // German Toeff-Toeff: Reist durch die Zeit
 	{ "putttime", "ZeitDemo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "ZEITDEMO", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "putttime", "PuttMini", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "puttzoo", "puttzoo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Puttzoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
