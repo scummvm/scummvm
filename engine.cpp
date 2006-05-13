@@ -456,12 +456,12 @@ void Engine::mainLoop() {
 	}
 }
 
-void Engine::savegameGzread(void *data, int size) {
-	gzread(g_engine->_savegameFileHandle, data, size);
+void Engine::savegameRead(void *data, int size) {
+	g_engine->_savedState->read(data, size);
 }
 
-void Engine::savegameGzwrite(void *data, int size) {
-	gzwrite(g_engine->_savegameFileHandle, data, size);
+void Engine::savegameWrite(void *data, int size) {
+	g_engine->_savedState->write(data, size);
 }
 
 void Engine::savegameRestore() {
@@ -474,7 +474,6 @@ void Engine::savegameRestore() {
 		strcpy(filename, _savegameFileName);
 	}
 	_savedState = new SaveGame(filename, false);
-	_savegameFileHandle = _savedState->fileHandle();
 
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
@@ -494,7 +493,9 @@ void Engine::savegameRestore() {
 	//Primitive_Restore(_savedState);
 	//Smush_Restore(_savedState);
 	g_imuse->restoreState(_savedState);
-	lua_Restore(savegameGzread);
+	_savedState->beginSection('LUAS');
+	lua_Restore(savegameRead);
+	_savedState->endSection();
 	//  unlock resources
 	delete _savedState;
 
@@ -515,7 +516,6 @@ void Engine::savegameSave() {
 		strcpy(filename, _savegameFileName);
 	}
 	_savedState = new SaveGame(filename, true);
-	_savegameFileHandle = _savedState->fileHandle();
 
 	g_imuse->pause(true);
 	g_smush->pause(true);
@@ -531,7 +531,9 @@ void Engine::savegameSave() {
 	//Primitive_Save(_savedState);
 	//Smush_Save(_savedState);
 	g_imuse->saveState(_savedState);
-	lua_Save(savegameGzwrite);
+	_savedState->beginSection('LUAS');
+	lua_Save(savegameWrite);
+	_savedState->endSection();
 
 	delete _savedState;
 

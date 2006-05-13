@@ -2816,7 +2816,7 @@ static void StoreSaveGameImage(SaveGame *savedState) {
 	g_engine->updateDisplayScene();
 	screenshot = g_driver->getScreenshot(width, height);
 	g_engine->setMode(mode);
-	savedState->writeTag('SIMG');
+	savedState->beginSection('SIMG');
 	if (screenshot) {
 		int size = screenshot->width() * screenshot->height() * sizeof(uint16);
 		screenshot->setNumber(0);
@@ -2826,6 +2826,7 @@ static void StoreSaveGameImage(SaveGame *savedState) {
 	} else {
 		error("Unable to store screenshot!");
 	}
+	savedState->endSection();
 	printf("StoreSaveGameImage() finished.\n");
 }
 
@@ -2843,7 +2844,7 @@ static void GetSaveGameImage() {
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
 	SaveGame *savedState = new SaveGame(filename, false);
-	dataSize = savedState->checkTag('SIMG');
+	dataSize = savedState->beginSection('SIMG');
 	data = (char *)malloc(dataSize);
 	savedState->read(data, dataSize);
 	screenshot = new Bitmap(data, width, height, "screenshot");
@@ -2854,6 +2855,7 @@ static void GetSaveGameImage() {
 		lua_pushnil();
 		error("Could not restore screenshot from file!");
 	}
+	savedState->endSection();
 	printf("GetSaveGameImage() finished.\n");
 }
 
@@ -2870,7 +2872,7 @@ static void SubmitSaveGameData() {
 	savedState = g_engine->savedState();
 	if (savedState == NULL)
 		error("Cannot obtain saved game!");
-	savedState->writeTag('SUBS');
+	savedState->beginSection('SUBS');
 	count = 0;
 	for (;;) {
 		lua_pushobject(table);
@@ -2884,6 +2886,7 @@ static void SubmitSaveGameData() {
 		savedState->write(&len, sizeof(int));
 		savedState->write(str, len);
 	}
+	savedState->endSection();
 	printf("SubmitSaveGameData() finished.\n");
 	StoreSaveGameImage(savedState);
 }
@@ -2897,7 +2900,7 @@ static void GetSaveGameData() {
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
 	SaveGame *savedState = new SaveGame(filename, false);
-	dataSize = savedState->checkTag('SUBS');
+	dataSize = savedState->beginSection('SUBS');
 
 	result = lua_createtable();
 
@@ -2920,6 +2923,7 @@ static void GetSaveGameData() {
 	}
 	lua_pushobject(result);
 
+	savedState->endSection();
 	delete savedState;
 	printf("GetSaveGameData() finished.\n");
 }

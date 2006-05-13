@@ -32,16 +32,24 @@ public:
 	SaveGame(char *filename, bool saving);
 	~SaveGame();
 
-	int read(void *data, int size);
-	int checkTag(uint32 tag);
-	int write(void *data, int size);
-	int writeTag(uint32 tag);
-	gzFile fileHandle() { return _fileHandle; }
+//	int read(void *data, int size);
+//	int checkTag(uint32 tag);
+//	int write(void *data, int size);
+//	int writeTag(uint32 tag);
+//	gzFile fileHandle() { return _fileHandle; }
+
+	uint32 beginSection(uint32 sectionTag);
+	void endSection();
+	void read(void *data, int size);
+	void write(void *data, int size);
 
 protected:
 	bool _saving;
 	gzFile _fileHandle;
-
+	uint32 _currentSection;
+	uint32 _sectionSize;
+	uint32 _sectionPtr;
+	char *_sectionBuffer;
 };
 
 #endif
