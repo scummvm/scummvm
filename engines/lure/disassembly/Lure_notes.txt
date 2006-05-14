@@ -1,0 +1,1422 @@
+Methods
+=======
+action_dispatch - Dispatches an action for being handled
+   Input:  si = Hotspot record
+           bx = ???
+
+add_sequence_delay - Adds in a sequence to be executed after a given delay
+              of tick procs
+  Input:  bx = Sequence offset
+          cx = Number of ticks delay
+          dl = ???
+
+animation_draw - Wrapper for the [add_animation_proc] lookup method for
+             drawing an animation onto the screen
+     Input:  ax = Animation index in animation table
+             bx = Frame number
+
+animation_decode - Decodes the data for an animation into compressed nibble
+                      format
+     Input:  bx = Pointer to data: [bx] = animation disk resource id
+
+animation_decode_inner - Handles the decoding of an animation disk resource
+     Input:  dx:si = Start of data following header
+             es = Output for decoded resource
+    Output:  di = size of decoded data
+
+animation_find_slot - Finds the first free animation slot in memory. If no slots
+                      are free, the returned pointer points to the last slot
+    Output:  di = Returns a pointer to the free slto   
+
+animation_load/animation_load_2 - Makes a hotspot 'active' by loading it into
+           the active hotspot list (aka. the animation list).
+     Input:  load   =>  bx = resource Id
+             load_2 =>  si = offset of hotspot record
+
+Seems to load a single animation entry into the runtime
+             location for animations.
+
+animation_load_entry - Not sure if this method is just for loading animations; it
+                  does some checks, and if passed, then takes the word at offset
+                  9h in the resource and jumps to that location. In calls I've
+                  seen so far, this is 7167h, which then calls animation_load 
+     Input:  bx = Resource Id for animation entry
+
+animation_load_entry_2 - Alternate form of the animation load
+     Input:  si = Animation resource
+
+animation_resolve_segment - Resolves the segment at which an animation begins,
+     taking care of preparing the data for the animation
+     Input:  bx = pointer to animation entry
+    Output:  ax = segment
+             CF = If set, skip the animation
+
+animation_set_entry - Sets the details for an animation slot entry
+     Input:  ax = Decoded animation segment
+             bx = Offset of animation record
+             dl = Colour offset for animation
+
+animation_tick - Every frame calls the defined handler proc for any active
+             hotspots (ie. that are loaded into the animation list)
+
+animation_unload/animation_unload_2 - Removes a hotspot from the active hotspot
+        list. Both are almost the same except animation_unload additionally
+        sets field 0Bh of the hotspot (the offset in the animation list where
+        a hotspot is loaded) to zero.
+
+char_face_up/char_face_down/char_face_left/char_face_right - Faces the character
+              represented by a given hotspot in the given direction
+     Input:  si = Hotspot record
+             di = Animation slot
+
+character_change_room - Changes the current room for a given character
+     Input:  current_hotspot = Character hotspot Id
+             dx = New room number
+             cx = New X position
+             bx = New Y position
+
+character_check_room_change - Checks whether the given character is within the
+              bounds of a room exit, and if so, handles moving the player to
+              the new room
+    Input:  si = Character hotspot Id
+            di = Chracter animation slot
+
+character_face_hotspot - Makes a given character face a given hotspot
+    Input:  di = Character animation slot
+            si = Hotspot record being used
+
+character_face_hotspot_2 - Makes a given character face a given hotspot
+    Input:  ax = Character Id
+            bx = Hotspot Id of object being used
+
+character_find_impinging_chars - Scans through the animation list for any
+              characters whose position is impinging that of the given character
+    Input:  di = Character animation slot
+
+character_pathfind_clear - Checks the pathfinding set flag for the given hotspot,
+              and if it set (ie. the hotspot has it's covering cells in the
+              pathfinding layer for the room set), then clears the flag and
+              clears the accompanying pathfinding cells
+     Input:  ax = Character Id
+             bx = Destination X
+             cx = Destination Y
+             
+
+character_pathfind - Handles pathfinding a segment of a walking path to a
+              given destination
+    Input:  ax = character Id
+            bx = Dest X Pos
+            cx = Dest Y Pos
+            dl = Hotspot[4Ch]
+   Output:  bx = Pointer to list of walking segments that gets built
+            ax = 1 => end of pathfinding reached, 0 => pathfinding still needed
+
+character_reset_direction - Rounds off the given character's position, and sets
+              their current frame to the default frame for the character's
+              current direction
+    Input:  si = Character hotspot record
+            di = Character animation slot
+
+character_set_random_dest - Chooses a random destination for a given character,
+              within a rectangle specified in the room data
+    Input:  si = Character hotspot record
+            di = Character animation slot
+            bx = Offset to a current action record within the character hotspot 
+
+character_start_walking - Starts the character walking towards a given position
+    Input:  si = Character hotspot record
+            cx = Destination X
+            dx = Destination Y
+
+character_translate_movements - Translates a set of instructions of movement
+              instructions into a set of offsets to movement records
+              (containing frame number sequence and position changes) for each
+              direction, followed by the number of steps to go in that direction
+    Input:  si = Hotspot offset
+            dx = Offset to a sequence of source movement data to process,
+                 which consist of a repeating set of number of steps followed
+                 by a direction number. It ends with a step count of 0ffffh
+   Output:  Hotspot[HS_MOVEMENT_SRC_OFFSET] => translated movement data
+
+character_update_frame - Handles updating a character's current frame in a
+           movement sequence each tick.
+  Output:  ax = 1 => for end of the path finding list (ie. at destination),
+                0 => Some walking still remaining
+
+character_walking_check - Scans through a list for X/Y proximity for different
+              hotspots, and if the character is not within proximity, starts
+              the character walking to it
+     Input:  si = character hotspot record
+             di = character animation slot,
+             bx = used object hotspot record
+    Output:  ax => 1 = No movement was required, 0 = Wakling has started
+
+characters_impinging_check - Checks to see if the given character is close enough
+              to the player
+     Input:  bx = First character hotspot record
+             si = Second character hotspot record
+    Output:  ax = 1 -> Characters are close together, 0 -> Characters are not
+
+check_for_impinging_characters - Scans through the animation list for any
+              animations that are impinging the specified character
+     Input:  si = Character hotspot record
+    Output:  ZF = Set => Character found, Clear => No character found
+             bx = animation slot of found character
+
+check_keypress - Non-blocking method to return the next pending keypress, if any
+    Output:  zero-flag = if set, indicates no key was pending
+             al = character
+
+clear_layer_rects - Clears the data structure storing the status of each 32x32
+              rect in each layer of a room
+
+confirm_quit - Displays a dialog asking the user whether they want to quit
+    Output:  ZF = If set, indicates the user wants to quit
+
+copy_rectangle - Copys a 32x32 rectangular area from a source buffer to a
+              destination buffer
+   Input:  ds:si = Position of rectangle in source screen buffer
+           es:di = Position to place rectangle in destination screen buffer
+  Output:  dx = If non-zero, indicates that at least one pixel was non-zero
+
+copy_protection_check - Performs the copy protection check. Note that in the
+     English version of the game supplied by Revolution, this has been cracked.
+     This is 
+
+decode_character - Decodes a character from a compressed bit-stream of text
+     Input:  DL = current bit position for read is set
+             DS:SI = current byte to read data from
+    Output:  AL = output byte
+
+decode_file_entry -  Decodes a file resource, normally a graphics screen
+  Input: dx = source data segment
+         es = destination segment (for example, A000h for direct to screen)
+
+ Output: es:0 holds decoded data
+         dx = first segment beyond the end of the decoded data
+
+decode_string - Decodes a string resource from a compressed bit-stream
+     Input:  es:di = output buffer for string
+             ax = Id for string
+
+decode_string_init - Initialises a source pointer for decoding a compressed
+                     bit-stream string
+     Input:  ax = Id for string
+    Output:  ds:si = address of compressed string
+             dl = Starting bit position for reading string
+
+
+decode_and_fade_in_display - Decodes the data for a given screen, and then fades it into
+                  view by using the defined fade in proc for the given video mode
+  Input: [buffer_segment1] = Loaded entry data
+
+display_dialog - Displays a dialog with a given String Id's text
+  Input:  bx = String resource Id
+
+display_message - Displays a message to the user
+             ax = messagae index in table of messages
+             dh = 0=>non fatal error, 1=>fatal error
+                  If a fatal error, function does not return
+
+display_message_dialog - Uses the message segment data to look up the
+              specific response to an action for a specific character
+   Input:  cx = character Id
+           ??
+
+display_message_dialog_3 - Uses the message segment data to look up the
+              specific response to an action for a specific character
+   Input:  ax = Message Id. Commonly stored in the sequence field for
+                hotspot actions, and identified by the high bit being set
+           si = Character hotspot record
+           di = Player animation slot
+
+door_close_check - Checks the passed hotspot, which is one half of a doorway,
+              to make sure there's no character within it, preventing closing
+   Input:  bx = Hotspot offset
+  Output:  al = 1 => Door can close, 0 => Door can't close
+
+draw_dialog_frame - Draws the frame for a dialog in an off-screen buffer
+   Input:  es:di = Destination buffer
+              bx = Horizontal size of dialog - 16
+              dx = Vertical size of dialog - 18
+
+flag_covered_cells - Marks any of the 32x32 rectangles making up the screen
+              that are covered by the given hotspot as being enabled. This
+              is used for optmisation that extra layers only add for areas
+              that may need to cover hotspots
+   Input:  di = animation slot
+
+
+floating_dialog_mouse_check - Checks to see if a floating talk dialog is present,
+              the text has completed, and the mouse is inside it.
+  Output:  floating_dialog_close_flag: 1=conditions met, 0=not met
+           al=1, ZF=clear -> conditions not met, al=0, ZF=set -> not met
+
+get_entry_size - Returns the size of the specified resource in paragraphs.
+        Input:  ax = Resource Id
+       Output:  dx = number of paragraphs
+
+get_room_resource_pointer/2  - Gets a pointer to a data block of information for
+              a given hotspot or room
+         Input:   bx = Id for _pointer, ax = Id for _pointer2
+         Output:  si = pointer to data block
+
+get_room_resource_pointer3/4 -  Gets a pointer to the header entry for a given
+              hotspot or room
+         Input:   bx = Id for _pointer3, ax = Id for _pointer4
+         Output:  si = pointer to header entry
+
+hotspot_action_precheck - Does the common prechecking for hotspot actions,
+              such as whether the player needs to walk to it or not
+     Input:  ax = Hotspot Id to be used
+             si = Character hotspot record
+             di = Character animation slot
+    Output:  al = 3 => Player is starting to walk to hotspot
+
+hotspot_get_action_sequence - Returns a script offset for the given action on
+              a hotspot
+   Input: bx = Hotspot record
+  Output: ax = Sequence offset if found, or 0 otherwise
+          zf = clear if a sequence offset was found
+
+hotscript_script_execute - Executes a given hotspot's script
+    Input:  si = pointer to hotspot resource
+            di = pointer to animation slot
+
+hotspot_disable - Disables a hotspot from being highlightable
+    Input:  bx = Hotspot Id
+
+hotspot_enable - Enables a hotspot that was previously disabled
+    Input:  bx = Hotspot Id
+
+hotspots_load - Loads any hotspots registered for the current room into the
+             animation list, automatically checking to prevent duplicates from
+             being added.
+
+hotspots_unload - Unloads all hotspots from the animation list that don't have
+             the special hotspot Id of 0ffffh   
+
+increment_action_offset - Moves the current action offset for the given
+              character to the next record position
+    Input:  si = Character hotspot record
+
+install_palette - Installs a sub-palette of 64 entries from a set of palettes,
+                  each of which is 64*3 bytes long
+          Input:  ax = index of sub-palette in list of sub-palettes
+                  palette_segment = Segment set of palettes was loaded into
+
+is_roomexit_hotspot - Checks whether the given hotspot Id is in the list of
+              of room exit hotspots
+   Input:  si = Pointer to list of hotspots
+           ax = 0 if hotspot found, 1 if not
+
+load_pic_with_animation - Loads up a picture that has animation data after it,
+             as well as the following resource, which contains the animation
+             line segment offsets and lengths
+     Input:  AX = Id of the resource
+
+menu_create_popmenu - Creates a popup menu in an off-screen buffer
+
+menu_make_selections - Shows a dialog with an arbitrary list of selections.
+             Returns the selectd item index, or ffffh for no selection made
+     Input:  dx/ax = bitset for actions to display
+    Output:  ax = selected item Id
+
+menu_make_selections_select - Does the actual display of a right-click menu
+             and make the selection
+    Output:  ax = selected Id
+
+menubar_copy_to_screen - Copies the data from an off-screen buffer onto
+             the secreen
+
+menubar_clear_menu - Clears the data segment occupied by the menubar
+
+menubar_create_menu - Creates a drop down menu for display
+     Input:  SI = Pointer to data table describing menu
+
+menuitem_show_credits - Shows the game credits
+
+mouse_wait - Goes in a loop of resetting the game palette until a held down
+             mouse button is released
+
+open_file - opens up a .vga data file (if not already open), validates that
+            it's file number is correct, and loads the entry table into memory
+     Input: [file_handle]
+
+open_file2 - sets the default drive to the specified drive and then calls
+             the open_file method
+     Input:  al=drive number
+
+pathfind_clear_covered_cells - Clears the cells covered by the base of a given
+              animation from being occupied in the path finding data block. This
+              prevents characters from walking through each other
+     Input:  di = Animation slot
+
+pathfind_flag_covered_cells - Flags the cells covered by the base of a given
+              animation as occupied in the path finding data block. This
+              prevents characters from walking through each other
+     Input:  di = Animation slot
+
+pathfind_get_cell - Returns the byte and bit index for the given animation's
+              position in the pathfinding data block for the room
+     Input:  di = Animation slot
+    Output:  bx = Byte offset in path finding data block
+             ax = Bit mask indicating which bit
+             cx = Number of bits covering the width of the animation
+             ZF = If set, animation is not onscreen
+
+pathfind_populate_cells - Helper method used by character_pathfind to populate
+              a decompressed array indicating which areas of a room are walkable
+              with incrementing numbers emnating from the destination. This is
+              later used to figure out a walkable path by going from cell to
+              cell in order of decrementing index to get from source to dest
+
+pathfind_scan_line - Support method for the character_pathfind, and is used to
+              scan in a given direction
+     Input:  bp = Starting position
+             bx = Destination position
+             cx = Number of loops
+             di = Change amount for each loop
+             dl = max value for comparison
+     Output: bx = New destination position
+             dl = New maximum
+
+pathfind_return_to_sp - Creates a breaking point during processing of the
+             character_pathfind method such that the next time character_pathfind
+             is called, it will pick up after the call to pathfind_return_to_sp 
+
+pause_for_input - Waits until either a key or a mouse button is pressed
+
+player_inc_inventory_items - Checks if the specified hotspot is the player,
+              and if so, increments the counter for the number of inventory
+              items the player currently has
+   Input: si = Character hotspot record
+
+popmenu_populate_list - Populates the contents of the list used to define
+             what is displayed in the right-click popup menu
+     Input:  dx:ax = Bitset indicating which actions should be displayed, in
+             order of their placement in the action list
+
+protection_cycle_characters - Cycles through a single frame in the list of
+         possible characters in the copy protection check and displays them
+         on screen.
+
+protection_draw_characters - A wrapper method for drawing both of the
+         current characters to the screen
+   Input:  ax = frame number for left card animation
+           bx = frame number for right card animation
+
+random - Returns a pseudo-random number
+  Output:  ax = Random value
+
+read_and_validate_header - Reads in the header of the .vga file and validates
+             that it's valid
+
+read_bit - Reads in a specified bit from ds:si, and shifts the bit mask one bit
+           to the right, resetting it back to 80h (and incrementing SI) if the
+           set bit was 1h
+    Input:  dl = Current bitmask
+            ds:si = data source
+   Output:  dl = New bitmask position
+            al = and'ed value from ds:si
+            ZF = Set if the bit was turned on in the value
+            SI = If dl was 1h at input, then SI = SI+1 else SI=SI
+
+read_screen - Reads in the specified screen resource, and optionally a palette
+              if the screen is the first layer to be processed for a given room
+   Input:  ax = Screen Id
+
+read_entry - Outer method for reading an entry - finds and reads in the entry
+             with the specified Id
+     Input:  ax = Id of entry (bits 15-16 are file # 0 - 3), rest are Id bits
+             cx:dx = buffer for entry
+    Output:  dx = first segment following end of read in data
+
+read_entry_into_buffer - Another outer method for reading an entry - reads the
+             specified entry into [buffer_segment]:80h
+     Input:  ax = Id of entry
+     Output: dx = first segment following end of read in data
+
+read_file_entry - Reads in an entry from the file
+     Input:  es:dx - Output buffer to store data in
+             bx = File start position in 20h block increments
+             cx = Size of entry to read in
+             bp = If bp=1, file size is actually 8000h plus the size in CX
+
+read_into_buffer/read_into_buffer_2 - reads entry into the buffer space, and
+             then increments the pointer so future reads will be read at a
+             point beyond the loaded entry
+    Output:  ax = segment of loaded entry
+             dx = segment following end of loaded entry
+
+read_palette - Reads in the palette from the specified Id resource
+     Input:  ax = Id of entry (which is passed onto read_entry)
+
+read_screen - Reads and decodes a screen into data_segment2. It may also
+             be taking care of adding in any animations
+     Input:  ax = room/id number
+
+replace_vga_palette - Replaces two sections of the loaded palette with a
+              preset alternate set: 60 entries starting at palette index #129,
+              and 8 entries at palette index #220
+
+room_add_animations - Adds the player and any room animations to the off-screen
+        buffer data_segment2
+
+room_check_cursors - Checks the position of the mouse within the current room
+          to see whether the cursor needs to change (such as for moving over
+          a hotspot) or on the menubar area
+
+room_check_hotspots - Compares the mouse position against given hotspot lists?
+  Input:  dx = room number
+          di = offset of info table
+          bp = Starting offset number for table
+
+room_check_x_extents - Checks whether a given hotspot's position is within
+              the clipping x range for the room
+   Input:  si = Hotspot
+  Output:  ax = 0 = Hotspot within valid range, 1 = otherwise
+
+room_exit_get_coordinates - Gets the walking coordinates for the exit from
+              a given room into a secondary room
+   Input:  ax = Starting room
+           bx = Destination room
+  Output:  cx = X-coordinate
+           dx = Y-coordinate
+           ax = 
+
+room_exit_hs_get_pointer - Scans through a list of room exit hotspots that
+              connect to each other.
+   Input:  ax = Hotspot Id
+  Output:  si = Record Id for room exit hotspot join
+           bx = 2 or 8, representing whether the hotspot was #1 or #2 in the record
+
+room_exit_play_sound - Plays a sound for a room exit opening or closing if the
+              player is in the same room
+   Input:  si = Room exit join record
+           bx = Index of active hotspot in join record
+           cx = 1 for door closing, 0 for door opening
+
+room_handle_click - Checks to see if the mouse has been clicked, and if so,
+           handles the various things that can be done, such as closing floating
+           dialogs, showing the right-click menu, etc.
+
+room_load_layers - Reads in the layers associated with a room
+
+room_show_rightclick_menu - Shows the right-click menu. If the mouse is over a
+            hotspot, it gives that item's action menu. Otherwise, it gives the
+            default room Look/Status menu. The method returns when an item is
+            selected
+   Output:  ????
+
+screen_fade_in - Fades in an already loaded screen, by using the defined fade in
+                 routine in the video methods lookup table
+
+screen_fade_out - Fades out the screen, by using the defined fade out routine
+                  in the video methods lookup table
+
+screen_set_palette - Sets the default game palette, using the defined lookup method
+
+set_upper_vga_palette - Sets the last 16 palette entries of the VGA palette to a
+                        predefined set of colours
+
+sequence_execute - Outer execution method for handling a sequence of script instructions.
+     Input: ax = Pointer to script set. See tables section for instruction formats
+    Output: ax = sequence result value
+            zf = set if the result value is zero
+
+sequence_execute_inner - Inner handling method for script instructions
+     Input:  si = Pointer to script set
+
+show_introduction - Shows the introduction sequence
+
+show_arrow_cursor - Shows the arrow cursor
+
+show_disk_cursor  - Shows the disk cursor
+
+show_startup - Shows the starting screens of the game, and then calls the
+               show_introduction method to show the animated introduction sequence
+
+skorl_knockout - Runs the animation sequence of a Skorl knocking out the player
+
+sleep - Sleeps for a given number of clock cycles (each being 1/18th of a second)
+     Input:  ax = number of cycles [Note: I think it's from the start of the
+                  game or the last time the method was called]
+
+sleep_with_kbd_mouse_break - Pause with breakout by keypress and mouse
+     Input:  ax = timeout in cy cles
+    Output:  carry = breakout occurred
+             zero  = if set, indicates Escape was pressed
+
+sub_107 - Gets a ax (0 or 3) and bx pointer used later in a call to sub_132
+              to get a sequence offset
+   Input:  ax = Hotspot Id
+
+talk_add_voice_animation - Adds an animation entry of a talk bubble, which
+              gets displayed above a designated character
+   Input:  di = Hotspot slot
+
+talk_clear_line - Clears the talk line at a specified index. Each talk line
+              occupies 8 lines
+   Input:  ax = Index of talk line to clear
+
+talk_dialog_init - Initialises a talk dialog for display
+   Input:  si = Name of character speaking
+           di = Speaking text
+           data_433 = Character hotspot Id
+
+talk_setup_3 - Sets the necessary flags to display a talk dialog
+   Input:  al = 1 (??? blocking talk dialog [you can't move until it's closed])
+           cx = Hotspot Id of character talking to
+           dx = Talk text string Id
+           si = Hotspot record for character doing talking
+
+talk_toggle_line_highlight - Toggles the highlight on a line being displayed
+              to allow the user to select a talk option
+   Input:  ax = Index of talk line
+
+toggle_menu_highlight - Toggles the highlighting of a menu name in the
+          off-screen copy of a menu
+  Input:  DI = X Pixel start position on screen
+          BX = Width in pixels of area
+          data_segment2 = segment of off-screen menubar copy
+
+validate_header - Validates the header of the loaded file
+             ah = bits 6-7 is file number
+
+vga_fade_in - Fades in a given graphic screen by cycling each palette index
+              from black to the destination RGB value in increments of one
+
+wait_for_video_port - Pauses until the video port indicates that it's ready
+                      to rceeive data
+
+word_wrap_string - Word wraps the passed string to a given maximum width
+              by
+   Input:  di = Text to process
+
+
+Lookup Method Table
+===================
+This is a set of procs lookup list that is set to different methods for EGA
+and VGA methods
+
+add_animation_proc - Adds an animation or character frame onto the screen.
+     Input:  es:si = source pixel data location 
+             bx = Offset of data for animation (see tables later for animation format)
+
+copy_screen_proc - Copys a screen from [misc_segment]:0 to the screen. Also sets
+     up bp:si and dx:bx in preparation for an animation. Coupled with
+     load_pic_with_animation that loads a resource with animation data
+     Input:  misc_segment - Specifies the segment holding the screen data
+    Output:  bp:si - Address of the first byte following the end of the data
+             dx:bx - Address of first byte following decoded data segment data
+
+display_character_proc - Copys a specified character to a graphic buffer
+     Input:  al = ASCII character
+          es:di = Position within screen of character start
+             bp = segment of font, which starts at the space character (32), and
+                  each character takes up 8 bytes. Each byte represents one line,
+                  with each bit representing whether a pixel is on or off
+             dh = Colour to create character as
+
+draw_talk_dialog_proc - Draws the frame for a talk dialog
+     Input:  es:di = Buffer to store drawn dialog in
+             
+
+menu_items_proc - Haven't investigated this method yet. It does get used by
+             the right-click popup menu to display the items   
+
+pic_decode_proc - Handles the RLE decoding of a picture onto the screen
+     Input:  dx:bx = Set of copy slice lengths and screen inc amounts in a repeating
+                     sequence. Each value can be 1 non-zero byte, or a zero byte
+                     followed by a two byte length
+             bp:si = Raw data for transfer to the screen. The data block pointed
+                     to by dx:bx tells how wide each line slice will be
+    Output:  dx:bx = First byte after end of length/inc data
+             bp:si = First byte after end of transfer data block
+
+read_screen - Reads in a screen with the given Id, decodes it, and also loads
+              in a palette with the given Id - 1
+     Input:   ax = resource Id of the screen
+
+read_screen_alt - Reads in a screen with the given Id, decodes it, and also
+              loads in a palette with the given Id - 1
+     Input:   ax = resource Id of the screen
+
+remove_area_proc - Restores the area of screen previously hidden by a menu
+     Input:  di = x start position
+             bx = width
+
+segment_screen_proc - Segments the screen into 32x32 rectangles, and sets up
+              an array of incrementing rectangle numbers for rectangles that
+              have pixels in them
+   Input:  es:di = pointer to decoded screen
+           bx = buffer to store status of each screen rectangle
+           cl = layer number (0 to 3) [Note: layer is only used to see if it's
+                layer 0 background.. for the background all rectangles are
+                considered "filled in"]
+
+set_palette_proc - Sets the palette to the default palette
+
+show_screen_proc - Responsible for displaying a screen from data_segment2 to the
+             screen specified in [screen_start_seg]. It uses an array specified
+             by display_mask to specify 10x6 sets of 32x32 rectangles for whether
+             to display each rectangle on the screen.
+
+toggle_menu_highlight_proc - Toggles the highlighting of a menu header
+  Input:  DI = X Pixel start position on screen
+          BX = Width in pixels of area
+          data_segment2 = segment of off-screen menubar copy
+
+word_wrap_string - Applies carriage returns in-sequence to a passed string to
+          ensure it fits into a given dialog area
+  Input:
+
+NPC Script Methods
+==================
+NPC schedules are set up by having a single ACTION_DISPATCH current action in
+the NPC's hotspot record (at offset 63h), with a support record pointer
+pointing to the start of a sequence of instructions using action numbers
+greater than that of all standard actions. As part of the handling of these
+"high number" instructions is an incrementing of the offset for the support
+data so that the NPC instructions are handled sequentially.
+
+The table below lists the special methods list. Each entry is represented in
+the support data table by a word for the action's value, followed by any
+support data as indicated by the method. 
+
+Index Method
+===== =======
+  28  npc_set_hotspot5e(uint16 roomNumber, uint16 hs5e)
+      Sets both the current room number on the hotspot's current action entry,
+      as well as word offset 5eh in the character's hotspot record
+  29  npc_unknown_1()
+      ???
+  30  npc_execute_script_proc(uint16 offset)
+      Causes the execution of the script at the given offset
+  31  npc_unknown_2()
+      Sets the currently unknown words at hs[42h] and hs[44h], and calls a
+      method to scan for an entry for the hotspot in the hotspot action list
+  32  npc_set_random_dest()
+      Sets the character's destination position randomly within the area
+      rectangle specified for the room
+  33  npc_walking_check(uint16 hotspotId)
+      Ensures that the given hotspot is in the same room as the character,
+      and if so, makes a walking check which starts the character walking if
+      the hotspot is not within reach proximity
+  34  npc_set_support_offset(uint16 offsetId)
+      Sets the offset for support data in the current action. So it can, for
+      example, reset an NPC back to the start of it's script
+  35  npc_set_support_offset_conditional(uint16 sequenceOffset, uint16 offsetId)
+      Executes the given script, and if the return is non-zero, then sets the
+      current action's support data offset to the given offset. If not, the
+      support data offset, moves on to the following record
+  36  npc_dispatch_action(uint16 hotspotId, uint16 offsetId)
+      Handles the execution of an action, including standard action prechecks
+  37  npc_unknown_3(uint16 v1, uint16 v2, uint16 v3, uint16 v4)
+      ???
+  38  npc_unknown_4(uint16 unused, uint16 v)
+      Sets hs[42h] = v
+  39  npc_start_talking(uint16 messageId, uint16 destCharId???)
+      This method, I think, causes the character to say the specified message
+      to the given destination character
+  40  npc_jump_to_address(uint16 offset)
+      Jumps execution to the specified address in the game's code segment
+
+
+Misc Notes
+============
+VGA Files
+---------
+* Entries with a length of 294h are palettes
+* At least entry Id #48, #49 are MIDI music with a MThd block
+* Entry Id #10, #15 are code blocks for playing music
+* Entry Id #50 is a set of sub-palettes.. a sub palette contains palette entries
+  for the first 64 palette entries (each 3 bytes). This entry contains 5 sub-palettes
+
+VGA File Mapping
+================
+This isn't complete; just some resource Ids I noted down for future reference:
+
+$0001 - Set of 26 16x16 cursors, each taking up 256 bytes
+$0004 - Font set: starting with space character, each character taking 8 bytes
+$0005 - Menubar
+$000A - Music handler code block
+$0010 - Strings resource (compressed - see decode_string & decode_string_init)
+$0018 - Revolution title screen
+$0019 - Revolution title palette
+$001A - Virgin games title screen
+$001B - Virgin games title palette
+$001C - Lure of the Temptress title screen
+$001D - Lure of the Temptress title palette 
+$001E - Virtual Threatre title screen
+$001F - Virtual Threatre title palette
+$0021 - Palette for final introduction screen
+$0022 - Animation for final screen
+$0032 - Another copy of the menubar
+
+$0040 - Animation for introduction sequence
+$0041 - Animation for introduction sequence
+$0042 - Animation for introduction sequence
+$0043 - Animation for introduction sequence
+$0044 - Animation for introduction sequence
+$0045 - Animation for introduction sequence
+$0046 - Animation for introduction sequence
+$0047 - Animation for introduction sequence
+$0048 - Animation for introduction sequence
+$0049 - Animation for introduction sequence
+
+$4100 - First screen, first layer
+$7900 - Restart/Restore screen
+
+
+
+Data Structure Notes
+====================
+There are four main lists embedded in the executable, each of which
+represents a different range of Ids. Each entry consists of 9 bytes
+[see get_room_resource_pointer]. The first two bytes represents an
+offset to the specific data for the room.
+
+       Resource data:
+         Offset  Size   Meaning
+         ------  ----   -------
+             0h    2    Offset for the resource entry - either room or hotspot data
+                        An entry of 0ffffh means the end of the list
+             2h    2    For the room list, it's the room number, for the hotspot
+                        lists, it's the string Id for the hotspot name
+             4h    2    For rooms, the string Id for room description, for
+                        hotspots it's the look at description Id
+             6h    2    Alternate look at description for hotspots. I think
+                        this only comes into player for takable items to give
+                        the description when it hasn't yet been picked up
+             8h    1    ???
+
+For the room list, the format of the room records pointed to are as below:
+
+       Room data:
+         Offset  Size   Meaning
+         ------  ----   -------
+             6h    2    Offset for a list of offsets to pixel blocks for the
+                        room
+             8h    1    Number of layers in room
+             9h    8    List of resource Id's for room. Either equal to number
+                        of layers, or # layers + 1 for rooms with extra overlay
+                        (such as image of cell bars when looking through into cell)
+            11h    2    Sequence offset for room, or ffffh for none
+            13h    2    The current tick time counter is stored here when a
+                        room is exited
+            17h    1    ???
+            18h    1    Index into table of 8 byte entries starting at ds:2EB1h
+            19h    2    X start for defining valid horizontal areas where hotspots
+                        can be highlighted
+            1Bh    2    X end, or 0 to indicate no end
+            1Dh    ??   Start of room change script. See below:
+
+The room data record is ended by zero or more room change records, followed by
+an ending ffffh value. The format of each record is as follows:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0     2    X start
+             2     2    X end
+             4     2    Y start
+             6     2    Y end
+             8     2    Sequence offset. If the value is ffffh, then the following
+                        four fields come into play. Note that this means that
+                        the record can be one of two sizes, dependant on the
+                        value of this field
+             Ah    1    New room character direction:
+                        80h=up, 40h=down, 20h=left, 10h=right
+             Bh    1    New room number
+             Ch    2    New room X position
+             Eh    2    New room Y position
+
+The format of hotspots are as follows:
+
+       Hotspot tables:
+         Offset  Size   Meaning
+         ------  ----   -------
+            0h     4    Bitset for available actions
+            3h     1    Flags: Meaning unknown, but the following actions apply:
+                           bit 7 = skip checking bit 6
+                           bit 6 = Skip over entry
+                           bit 5 = Skip over entry
+            4h     2    Offset for actions table
+            6h     2    Room number for hotspot. For hotspots that can be
+                        inventory items, this can also be the Hotspot Id of
+                        the character holdign the item.
+            8h     1    Script flag - a non-zero value indicates that the value
+                        at offset 9h is a script offset to execute. Otherwise,
+                        the offset is treated as a code subroutine, and jumped to
+                        Also used by non-visual hotspots to indicate the direction
+                        to face the character in when an action is performed on
+                        the hotspot
+            9h     2    Script sequence to execute, or offset for loading
+                        routine for hotspot. So far I'm aware of two code routines:
+                           7167h = stub method that calls animation_load
+                           3afeh = copy protection check
+            Bh     2    Stores offset of animation slot entry the resouce has
+                        been loaded into
+            Dh     2    X start position + 80h
+            Fh     2    Y start position + 80h
+           11h     2    Width of hotspot
+           13h     2    Height of hotspot
+           15h     1    Animation's layer. Animations are added in to a scene in
+                        order of layer 3, layer 1, then layer 2. Animations in
+                        layer 1 are added in order of the hotspot's bottom row
+           16h     1    ??? Flags byte?
+           17h     2    Tick handler proc offset
+           19h     2    Copy of hotspot width
+           1Bh     2    Copy of hotspot height
+           1Dh     2    Y correction. Currently only known use is as a Y
+                        correction factor when checking if a character is in
+                        an exit region
+           1fh     2    Timeout decrement value for frame change
+           21h     2    Pointer to memory containing disk resource Id for the
+                        pixel data for the hotspot's animation (or possibly
+                        static image)
+           23h     1    Colour offset start for source pixel data
+           24h     2    Offset for data in scripts2_seg, used in
+                        hotspot_script_execute. Also seems to be used by
+                        characters (including the player) as a table offset
+                        containing data for movement sequence
+           26h     2    Step counter - used as in incrementor when a character
+                        is moving in a direction to determine when they have
+                        reached the requisite number of steps required before
+                        moving to the next direction in a path-finding sequence
+           28h     2    Frame offset - used as a pointer within the movement
+                        frames for a given direction to quickly retrieve the
+                        position change and frame number in a walking sequence -
+                        used along with offset 26h to handling walking
+           2Ah     1    A counter used to determine the number of times the
+                        action precheck method has been called within the
+                        handling of an action
+           2Bh     2    ???
+           2Dh     2    Script Id of a hotspot the character is to use
+           2Fh     2    Hotspot Id of a hotspot the character is to use
+           33h     2    ??? Talk data record
+           35h     1    x offset within character for speech bubble
+           36h     1    y offset within character for speech bubble
+           37h     2    ???
+           39h     2    Stores the hotspot Id of the character being talked to
+           3Ch     2    Stores the String Id of a response
+           42h     2    ??? Copy of selected hotspot
+           44h     1    ??? 0 or 2 for further actions in player_tick_proc
+                        ??? Copy of low byte of selected hotspot
+           45h     2    Hotspot Script Id to execute each tick for NPCs
+           47h     2    Hotspot Id to use.
+           49h     1    Flags whether the hotspot has currently got the cells
+                        of the pathfinding (walkable areas) layer that it's
+                        base occupies as covered
+           4Ch     1    Only known use so far is in character pathfinding, where
+                        if 0, introduces a jz $+2 delay at one point, that is not
+                        even inside of a loop. This flag may thus be an artefact
+                        of early code that was no longer used in the final build
+           50h     2    Character direction: 80h=up, 40h=down, 20h=left, 10h=right
+           52h     2    Hotspot Id for selected hotspot
+           54h     2    X ending position for character + 80h - 10h
+           56h     2    Y ending position for character + 80h
+           5Ah     2    For player and other characters indicates the
+                        assigned offset in the data segment to load the
+                        details of movement frames. Note that this gets copied
+                        to offset 24h for use at runtime.
+           60h     1    ???
+           61h     2    Index into the table starting at 63h of the hotspot
+           63h     3*?  First slot for pending player actions. Each slot
+                        consists of three bytes: a single byte command Id, and
+                        an offset to a support data record.
+
+Movement sequence
+=================
+When a character has to move, sub_90 is 
+
+
+Character actions
+=================
+Character hotspots have a buffer for a set of current actions. Each record
+of this list consists of 5 bytes, with the following format:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0      1   Currenat atcion
+             1      2   Pointer to support data structure
+             3      2   ?? May be room number action occurs in
+
+The possible commands are listed below:
+
+  Command
+  -------
+    01 = Start walking
+         Support data:
+           word value = 0
+
+    02 = Dispatch action*
+         Support data:
+           word value = action to perform
+           word value = hotspot Id of selected hotspot
+           word value = used hotspot Id
+         [03] = Room Number
+
+    03 = Execute Script
+
+    04 = Processing walking path
+
+    05 = Walking in progress
+
+
+* Note that actions (both looking at a hotspot and all other actions) are
+handled by doing an initial dispatch of the action, then a standard walk sequence,
+and finally dispatching the action again when the player is at the appropriate
+proximity to the hotspot
+
+
+Actions Table
+=============
+The actions table offset points to a list that indicates any actions for the
+hotspot that have script sequences attached to them. The table has the following
+format:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0     2    Number of items in the list
+            --------- repeated:
+             2     1    Action number
+             3     2    Sequence offset
+            ---------
+
+Animation Resources
+===================         
+The raw data for animations is stored in disk resources. They have the following
+format:
+
+       - A single word containing the number of header entries
+       - A table of words of the previously given number, each representing
+         the number of nibbles in the uncompressed data (ie. number of bytes * 2).
+         Note that the pixel data starts at offset 40h of the uncompressed data,
+         as the first 40h bytes are used by the decompression process.
+
+
+In addition to the four hotspot lists, there is a master hotspot list, which
+contains co-ordinate overrides for some of the hotspots:
+
+       Hotspot data:
+         Offset  Size   Meaning
+         ------  ----   -------
+             0     2    Id for hotspot to override
+             2     2    X start
+             4     2    X end
+             6     2    Y start
+             8     2    Y end
+
+
+The animation list is made up of a set of animation entry slots, of which there
+are 45 entries, each 29h bytes big, and can be loaded dynamically at runtime
+from hotspot entries. FURTHER NOTE: Animation list may be a bit of a misnaming
+of it - a better name may be "active hotspots" list, since entries in the list
+aren't necessarily animated.
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0h    2    X start position + 80h
+             2h    2    Y start position + 80h
+             4h    2    Width of animation
+             6h    2    Height of animation
+             8h    2    Pointer to the start of the current frame for the animation.
+             Ah    2    Storage for caching of animation start segment. This is
+                        filled out at runtime the first time the animation is to
+                        be displayed at runtime
+             Ch    1    Animation's layer. Animations are added in to a scene in
+                        order of layer 3, layer 1, then layer 2. Animations in
+                        layer 1 are added in order of the hotspot's bottom row
+             Dh    1    ??? Flags byte?
+             Eh    2    Room number for animation
+            10h    1    ?? Flag for whether to keep animation active between rooms?
+                        Loader defaults it to 1, but loads using 7167h afterwards
+                        sets this back to zero
+            11h    2    Tick handler proc offset - called every frame for hotspots
+                        loaded into the animation table where [0Ch] is non-zero
+            13h    2    Copy of the animation width - this and the height copy are
+                        used in some areas to, for example, vary the strict
+                        Y ordering of objects in a scene (for example, Ratpouch
+                        has a larger height copy to make him appear on top of
+                        the rack rather than behind it).
+            15h    2    Copy of the animation height
+            17h    2    Y correction. Currently only known use is as a Y
+                        correction factor when checking if a character is in
+                        an exit region
+            19h    2    Offset of the original resource record used to load this
+                        animation entry.
+            1Bh    2    Hotspot Id of the entry. Can also be 0ffffh, which seems
+                        to be a special code for the player (don't know yet if
+                        it's used elsewhere as well)
+            1Dh    1    If non-zero, hotspots in layer 1 will be skipped
+            1Eh    2    So far it's only known use is to store the hotspot Id
+                        of the character the special 'voice' animation is
+                        associated with
+            22h    2    Related to direction handling: 0 for up/down,
+                        4 for left/right
+            24h    2    So far it's only known use is as a countdown timer
+                        for closing the special "voice" animation shown on
+                        top of characters when they're speaking
+            26h    1    Character direction: 0=up, 1=down, 2=left, 3=right
+            27h    1    ??? Set to 1 by animation loader 1
+            28h    1    Colour offset start for source pixel data
+            4Ah    2    ??? Countdown of some form; changed by the action
+                        countdown list
+
+The animation list is built up at runtime one entry at a time from hotspot
+resources specified in an instruction sequence. The first sequence executed is
+at 23FCh, and is part of the game startup, and the initial resoruce Id is #3e8,
+which equates to 6cefh.
+
+
+Animation disk resource records
+-------------------------------
+The animation disk resource record has the following format:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0h    2    Disk resoucre Id of the animation pixels to use
+             2h    1    Flags. Known values:
+                        Bit  Description
+                        ---  -----------
+                          2  If set, takes the first word of the decoded data
+                             as the frame offset. I think this used elsewhere
+                             as well - this flag may indicate an animation that
+                             contains an offset table for the frames, rather than
+                             the standard form, where all frames are the same size
+             3h    2    Cached copy of loaded pixel data segment
+             7h    2    Frame size for decoded animation data
+             9h    2    Offset for -Y movement records
+             Bh    2    Offset for +Y movement records
+             Dh    2    Offset for -X movement records
+             Fh    2    Offset for +X movement records
+            11h    1    Starting up direction frame number
+            12h    1    Starting down direction frame number
+            13h    1    Starting left direction frame number
+            14h    1    Starting right direction frame number
+
+A movement record represents data needed for a single frame of a character's
+movement. It is represented as a set of 6 byte records of the format listed
+below. The end of the set of the set of records is represented by 0ffffh.
+
+         Offset  Size   Meaning
+         ------  ----   -------
+              0    2    Frame number to display
+              2    2    16-bit signed integer representing the change in the
+                        X position
+              4    2    16-bit signed integer representing the change in the
+                        Y position
+
+
+W2      description
+--      -----------
+ 1      * Store offset from PIXEL+0Dh, then word (W1+3)>>2
+ 2      * Store offset from PIXEL+0Fh, then word (W1+3)>>2
+ 3      * Store offset from PIXEL+0Bh, then word (W1+1)>>1
+ 4      * Store offset from PIXEL+09h, then word (W1+1)>>1
+
+
+
+
+Room Exits
+----------
+A table of the offsets of the room exit records for each room is stored at
+room_exits_table. An offset of zero for a particular room indicates there are
+no exits.
+
+The exits for a given room are a series of one or more records of 14 bytes each,
+with a word value of 0 following the final entry. The structure of a record is
+described below. Note that all co-ordinates are expressed with an offset of 80h.
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0h    2    X start of exit area rectangle
+             2h    2    X end of exit area rectangle
+             4h    2    Y start of exit area rectangle
+             6h    2    Y end of exit area rectangle
+             8h    2    Cursor number to use
+             Ah    2    Hotspot Id associated with exit. This can be, for example,
+                        2711h for the hotspot Id of the Cell Door in the first room.
+                        For exits which are always unblocked, the Id will be 0.
+             Ch    2    Destination room number
+
+There is also a table of room exit hotspots. This contains records containing
+all room exit hospots, with the table set up with the hotspots that are joined
+together (such as either side of the cell door in room #1 and #2) appearing in
+the same record. Each record is 17 bytes long, and the format is as follows:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             0h    2    First hotspot Id of the pair
+             2h    1    Current frame number for hotspot #1
+             3h    1    Ending frame number for hotspot #1
+             4h    1    Sound for hotspot #1 opening
+             5h    1    Sound for hotspot #1 closing
+             6h    2    Second hotspot Id of the pair
+             8h    1    Current frame number for hotspot #2
+             9h    1    Ending frame number for hotspot #1
+             Ah    1    Sound for hotspot #1 opening
+             Bh    1    Sound for hotspot #2 closing
+             Ch    1    If zero, then exit is currently active. Non-zero
+                        indicates that the exit is blocked
+             Dh    2    Pointer to first hotspot's record
+             Fh    2    Pointer to second hotspot's record
+
+
+Sequence Table
+==============
+Lure of the Temptress uses a simple scripting set for performing various operations.
+A set of instructions consist of a starting byte that contains the 'opcode' number
+in bits 1 to 7, whilst bit 0, if set, indicates whether the following two bytes
+should be loaded into dx (used as a general purpose register).
+
+Note that logical operations treat 0 as true, and 1 as false as far as the
+interpreter is concerned for calls to conditional jumps after a logical test.
+Because of this non-typical logical state representation, I'm still in the
+process of validating that all the test opcodes are correct.
+
+The following commands are available (the values represent the value in bits 1-7):
+
+Opcode    Description
+------    -----------
+  00h     Restore SP - Restores SP to what it was when the sequence started
+          (ie. useful for breaking out of any subsequences that were being executed)
+  01h     Add - Pops two values off the stack, adds them, and pushes the result
+  02h     Subtract - Pops two values off the stack, subtracts the most recently
+            pushed value from the second most recent value, and then pushes
+            the result back onto the stack
+  03h     Multiply - Pops two values off the stack, multiplies them, and pushes
+            the result back onto the stack. Any overflow is also stored in DX
+  04h     Divide - Pops two values off the stack and divides the second most
+            recently pushed value by the most recent value, and pushes the
+            result back on the stack. DX stores any remainder
+  05h     Not equals - Pops two values off the stack, and if they're not equal
+            pushes 0 back onto the stack. If equal, pushes 1
+  06h     Equals - Pops two values off the stack, and if they're equal pushes
+            0 back onto the stack. If not equal, pushes 1
+  07h     Greater - Checks to see if the most recently pushed value is greater
+            than the second most recent pushed value, and if so pops both of
+            them off the stack and pushes a 1 back onto the stack
+  08h     Smaller - Checks to see if the most recently pushed value is less
+            than the second most recent pushed value, and if so pops both of
+            them off the stack and pushes a 1 back onto the stack
+  09h     Smaller2 - Identical to Smaller, but uses 'Js' check instead of 'Jc'
+  0Ah     Greater2 - Identical to Greater, but uses 'Js' check instead of 'Jc'
+  0Bh     And - Pops two values off the stack, ANDs them, and pushes the result
+  0Ch     Or - Pops two values off the stack, ORs them, and pushes the result
+  0Dh     Logical And - Pops the two top values off the stack, and pushes back
+            1 if both of them are non-zero, otherwise 0
+  0Eh     Logical Or - Pops the two top values off the stack, and pushes back
+            1 if either of them are non-zero, otherwise 0
+  0Fh     Get Field - Gets a field within the data segment. DX specifies field
+                      offset from the room_number_2 field, and the value is
+                      pushed onto the stack
+  10h     Set Field - Sets a field within the data segment. DX specifies field
+                      offset from the room_number_2 field, and the top value
+                      on the stack is popped to set the field value
+  11h     Push value - Pushes the value of DX onto the stack
+  12h     Subroutine - Treats the value in DX as a pointer to a subroutine of
+            sequence instructions. The subroutine is processed, and when done,
+            the outer sequence resumes execution again.
+  13h     Call Method - Calls a method number DX in the sequence method list.
+                        If there any any values on the stack, they get popped
+                        into bx, cx, and dx respectively.
+  14h     Sequence end - ends the script sequence
+  15h     Conditional Jump - Pops the top value off the stack, and if it's
+            zero, adds the value in DX to the current sequence instructor pointer.
+            Note that DX is 16-bit signed, allowing for both negative and
+            postivie jumps
+  16h     Jump - Adds the value in DX to the current sequence instructor pointer.
+            Note that DX is 16-bit signed, allowing for both negative and
+            postivie jumps
+  17h     Restore SP - Restores SP to what it was when the sequence started
+  18h     Restore SP - Restores SP to what it was when the sequence started
+  19h     Random - Places a random number between 0 to 255 in DX
+
+Method List
+-----------
+The Call Method opcode (13h) can call methods, popping up to three values from
+the stack if available, storing them in bx, cx, and dx respectively. 
+
+Sequence Delay Table
+--------------------
+The sequence_delay_table has 40 slots of 7 bytes each that can contain a
+sequence that shouldn't be exceed until a ceratin time has been exceeded.
+Each slot consists of the following data:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+             2     4    Timer counter value at which point sequence should be
+                        executed. When an entry is initially added to the list,
+                        the delay amount is added to the current timer value
+             4     2    Sequence offset to execute
+             6     1    ???
+
+
+Hotspot Scripts
+===============
+Sub_37 is a handler method called by the tick handler code for many animations.
+The word at offset 24h of a hotspot entry specifies an offset into seg_c of the
+executable. Starting at the given offset in the segment, data is read in one
+word at a time.
+
+Value     Description
+-----     -----------
+fff6h     Set bitset actions based on next 2 words
+fff7h     Reads bx=next word, then calls sub_258
+fff8h     Reads bx=next word, cx=next word. If cx is either 0 or equal to the
+          current room number, then calls sub_247
+fff9h     Sets the pixel data record for the hotspot
+fffah     Jump to executing the sequence at the offset given by the following word
+fffbh     Sets the dimensions of the animation. The next word is shifted left
+          by 4 bits and stored as the width. The following word is stored as
+          the height (both values are only set in the animation slot)
+fffch     Ends the execution and deactivates the animation
+fffdh     
+fffeh     Sets the start position of the hotspot - the next following word
+          specifies the X start, and the one after that is the Y start
+ffffh     Reads in the next word and sets the timeout counter of the hotspot.
+          The offset 24h entry of the hotspot is also updated to point to the
+          next following word
+
+others    Set animation frame. If the animation disk resource flags byte has
+          bit 2 clear, the frame is calculated by multiplying the opcode word's
+          value by the frame size (at offset 7 of the pixel resource record).
+          If bit 2 is set, the frame is set by getting the offset from the
+          decoded data's offset table. In either case, once the offset is set,
+          execution of the script stops.
+
+
+Room List
+=========
+ 1 = THE CELL
+ 2 = THE OUTER CELL
+ 3 = THE GUARD ROOM
+ 4 = THE TORTURE ROOM
+ 7 = THE SEWER OUTLET
+ 8 = Alley
+ 9 = CASTLE GATE
+10 = APOTHECARY LANE
+11 = Alley
+12 = MAPIE COURTYARD
+13 = CASTLE WALL
+14 = MIDDLE STREET
+15 = WEREGATE
+17 = WEST STREET
+18 = SMITHY STREET
+19 = THE MARKET PLACE
+20 = BLACKFRIARS ROW
+21 = Alley
+22 = Alley
+23 = Alley
+24 = Alley
+25 = Alley
+27 = Alley
+28 = THE FORGE
+29 = THE SEVERED ARMS
+30 = TAIDGH'S HOUSE
+31 = THE TOWN HALL
+32 = MAGPIE TAVERN
+34 = APOTHECARY WORKSHOP
+35 = THE VILLAGE SHOP
+36 = MONK'S LODGE
+38 = Cave
+39 = Cave
+40 = Cave
+41 = Cavern
+42 = ?
+43 = ?
+44 = ?
+45 = ?
+46 = ?
+47 = ?
+48 = ?
+3081 = Cave
+
+
+393Ch - loading character movement list
+---------------------------------------
+30h, 1, 0, 6feh, a18h, 0
+
+Handling:
+
+If next word (W1) is 0, end decoding. Otherwise, read following word (W2)
+and handle as per table below (PIXEL represents the pixel data record):
+
+Talking records
+===============
+A character can specify a current talking record at offset 33h of it's hotspot
+record. If the field is empty, then the main talk list talk_table is used to
+get the starting talking record for a given character. The table consists of
+a series of four byte entries: the first word gives the hotspot Id, the second
+gives the offset of the talking record list for that character.
+
+The actual talking record contains a set of further offsets for talking records;
+the current value of talk_record_index specifies which entry is loaded. There
+is also a check to see if the hotspot name of the character being talked to is
+17Ah "Stranger", in which case the first entry in the list is used.
+
+The talk data record set pointed to by the above offset has the following
+format:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+            0h     2    Offset for a list of sequence Ids for handling results
+            ----- following is a set of 6 byte records for talk lines -----
+            0h     2    Precheck sequence offset - and with 3fffh to get actual
+                        offset - if the result of execution is 0, then the talk
+                        entry isn't added to the list.
+                        High bit of word, if set, will cause the looping of
+                        talk entry lines to end after processing the record.
+                        Additionally, a value of 0ffffh ends the set of records
+            2h     2    String resource for talk question, anded with 0x3fffh.
+                        The two high bits are flags described in the next entry
+            3h     1    Flags - If both bit 7 and bit 6 are set, then the
+                        entry is skipped
+            4h     2    Post sequence offset - when the high bit is set, the
+                        sequence number in the remaining bits is executed, and
+                        the result number used as a lookup (discussed below).
+                        Otherwise, the value is directly used as a lookup index
+
+Once an entry has been clicked on, the result index (either from running the
+post sequence Id or directly from the field value itself) is used as an index
+into the results. The results structure is a set of 6 byte entries with the
+following structure:
+
+         Offset  Size   Meaning
+         ------  ----   -------
+            0h     2    Pre sequence offset - If it is non-zero, then the sequence
+                        is executed. If the result is not the special value 1092h,
+                        then the result is treated as a new response index,
+                        which is used instead of the current one
+            2h     2    Response String Id - specifies the response spoken by
+                        the character to the player
+            4h     2    Post sequence offset - A value of 0ffffh indicates the
+                        conversation is ended. If the high bit is set, then
+                        the conversation continues. Otherwise, the given script
+                        offset is executed, and the conversation ended if the
+                        result is 0ffffh.
+                        The remaining bits can specify a starting offset in the
+                        talk entry list to start from next time.
+
+
+
+Hotspot Action List
+-------------------
+The hotspot action list provides a list of hotspots in a "countdown" state..
+every cycle a countdown variable is decremented for each hotspot entry in
+the list, and is used to set offset 4Ah of a given hotspot record. When a
+countdown counter reaches zero, the entry is removed from the list.
+
+I currently know that it's got something to do with talking to characters,
+but I haven't yet figured out what precisely word 4Ah of a hotspot record
+controls.
+
+         Offset  Size   Meaning
+         ------  ----   -------
+            0h     2    Hotspot Id of the source talker
+            2h     2    Hotspot Id of the destination talker
+            4h     2    Countdown counter
+            6h     2    Hotspot record offset for destination talker
