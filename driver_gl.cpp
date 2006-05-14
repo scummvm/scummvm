@@ -742,11 +742,10 @@ Bitmap *DriverGL::getScreenshot(int w, int h) {
 			uint8 r = (pixel & 0xFF0000) >> 16;
 			uint8 g = (pixel & 0x00FF00) >> 8;
 			uint8 b = (pixel & 0x0000FF);
-			uint32 color = (r + g + b) / 3;
 			int pos = step / w;
 			int wpos = step - pos * w;
 			// source is upside down, flip appropriately while storing
-			buffer[h * w - (pos * w + w - wpos)] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+			buffer[h * w - (pos * w + w - wpos)] = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 			step++;
 		}
 	}
