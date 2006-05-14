@@ -379,7 +379,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 
 		_string[1].ypos = _mouseOverBoxesV2[i].rect.top + vs->topline;
 		_string[1].xpos = _mouseOverBoxesV2[i].rect.left;
-
+		_string[1].right = _mouseOverBoxesV2[i].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[i].color;
 
 		const byte *tmp = getObjOrActorName(obj);
@@ -399,6 +399,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 	if (_inventoryOffset > 0) {
 		_string[1].xpos = _mouseOverBoxesV2[kInventoryUpArrow].rect.left;
 		_string[1].ypos = _mouseOverBoxesV2[kInventoryUpArrow].rect.top + vs->topline;
+		_string[1].right = _mouseOverBoxesV2[kInventoryUpArrow].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[kInventoryUpArrow].color;
 		if (_game.platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7E");
@@ -410,6 +411,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
 		_string[1].xpos = _mouseOverBoxesV2[kInventoryDownArrow].rect.left;
 		_string[1].ypos = _mouseOverBoxesV2[kInventoryDownArrow].rect.top + vs->topline;
+		_string[1].right = _mouseOverBoxesV2[kInventoryDownArrow].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[kInventoryDownArrow].color;
 		if (_game.platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7F");
