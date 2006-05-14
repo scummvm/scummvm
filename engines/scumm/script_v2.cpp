@@ -415,10 +415,7 @@ void ScummEngine_v2::decodeParseString() {
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
-	if (_game.platform == Common::kPlatformNES)
-		_string[textSlot].right = 256;
-	else
-		_string[textSlot].right = 320;
+	_string[textSlot].right = _screenWidth - 1;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
@@ -1069,7 +1066,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	int i = 0, len = 0;
 
 	// Maximum length of printable characters
-	int maxChars = (_game.platform == Common::kPlatformNES) ? 60: 40;
+	int maxChars = (_game.platform == Common::kPlatformNES) ? 60 : 40;
 	while (*ptr) {
 		if (*ptr != '@')
 			len++;
@@ -1090,12 +1087,12 @@ void ScummEngine_v2::o2_drawSentence() {
 		sentenceline.top = virtscr[kVerbVirtScreen].topline;
 		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 16;
 		sentenceline.left = 16;
-		sentenceline.right = 255;
+		sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
 	} else {
 		sentenceline.top = virtscr[kVerbVirtScreen].topline;
 		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
 		sentenceline.left = 0;
-		sentenceline.right = 319;
+		sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
 	}
 	restoreBG(sentenceline);
 
@@ -1585,12 +1582,11 @@ void ScummEngine_v2::setUserState(byte state) {
 	Common::Rect rect;
 	rect.top = virtscr[kVerbVirtScreen].topline;
 	rect.bottom = virtscr[kVerbVirtScreen].topline + 8 * 88;
+	rect.right = virtscr[kVerbVirtScreen].w - 1;
 	if (_game.platform == Common::kPlatformNES) {
 		rect.left = 16;
-		rect.right = 255;
 	} else {
 		rect.left = 0;
-		rect.right = 319;
 	}
 	restoreBG(rect);
 

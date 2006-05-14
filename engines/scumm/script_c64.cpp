@@ -416,7 +416,7 @@ void ScummEngine_c64::decodeParseString() {
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
-	_string[textSlot].right = 320;
+	_string[textSlot].right = _screenWidth - 1;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
@@ -555,7 +555,7 @@ void ScummEngine_c64::drawSentence() {
 	sentenceline.top = virtscr[kVerbVirtScreen].topline;
 	sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
 	sentenceline.left = 0;
-	sentenceline.right = 319;
+	sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
 	restoreBG(sentenceline);
 
 	drawString(2, (byte*)string);
