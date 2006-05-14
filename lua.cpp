@@ -1502,40 +1502,35 @@ static void LocalizeString() {
 
 static void SayLine() {
 	int pan = 64, param_number = 2;
-	char msgId[32], *str = NULL;
+	char msgId[32];
+	std::string msg = "";
 	lua_Object param2;
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
-	act = check_actor(1);
 	param2 = lua_getparam(param_number++);
+	act = check_actor(1);
 	if (!lua_isnil(param2)) {
 		do {
 			if (lua_isstring(param2)) {
 				char *tmpstr = lua_getstring(param2);
-				
-				// Fix so Police Chief Bogen's text is interpretted correctly,
-				// Bogen has a second text item that's just "1" which previously
-				// over-wrote the actual message
-				if (tmpstr[0] == '/' && tmpstr[strlen(tmpstr)-1] == '/') {
-					parseMsgText(tmpstr, msgId);
-					str = tmpstr;
-				}
+				msg = parseMsgText(tmpstr, msgId);
 			} else if (lua_isnumber(param2)) {
 				pan = 64;
 			} else if (lua_istable(param2)) {
+				warning("SayLine() param is table");
 			} else {
 				error("SayLine() unknown type of param");
 			}
 			param2 = lua_getparam(param_number++);
 		} while (!lua_isnil(param2));
-		if (str == NULL) {
+		if (msg.empty()) {
 			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 				warning("SayLine: Did not find a message ID!");
 			stubWarning("ERROR: SayLine");
 			return;
 		}
-		act->sayLine(str, msgId);
+		act->sayLine(msg.c_str(), msgId);
 	}
 }
 
