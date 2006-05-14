@@ -3012,9 +3012,6 @@ static void Display() {
 	if (g_engine->getFlipEnable()) {
 		g_driver->flipBuffer();
 	}
-	// refreshDrawMode ensures that the blinking cursor
-	// for the "text entry" renders correctly
-	//g_engine->refreshDrawMode();  -- disabled above hack
 }
 
 static void EngineDisplay() {
