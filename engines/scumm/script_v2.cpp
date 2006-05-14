@@ -1055,6 +1055,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[kVerbVirtScreen].topline;
 	_string[2].xpos = 0;
+	_string[2].right = virtscr[kVerbVirtScreen].w - 1;
 	if (_game.platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
