@@ -500,11 +500,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	VAR_MOUSEPRESENT = 0xFF;
 	VAR_MEMORY_PERFORMANCE = 0xFF;
 
-	if (ConfMan.hasKey("talkspeed")) {
-		_defaultTalkDelay = 9 - getTalkspeed();
-		VAR_CHARINC = _defaultTalkDelay;
-	}
-
 	VAR_VIDEO_PERFORMANCE = 0xFF;
 	VAR_ROOM_FLAG = 0xFF;
 	VAR_GAME_LOADED = 0xFF;
