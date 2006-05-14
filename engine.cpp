@@ -505,6 +505,30 @@ void Engine::savegameRestore() {
 	printf("Engine::savegameRestore() finished.\n");
 }
 
+void Engine::storeSaveGameImage(SaveGame *savedState) {
+	int width = 250, height = 188;
+	Bitmap *screenshot;
+
+	printf("Engine::StoreSaveGameImage() started.\n");
+
+	int mode = g_engine->getMode();
+	g_engine->setMode(ENGINE_MODE_NORMAL);
+	g_engine->updateDisplayScene();
+	screenshot = g_driver->getScreenshot(width, height);
+	g_engine->setMode(mode);
+	savedState->beginSection('SIMG');
+	if (screenshot) {
+		int size = screenshot->width() * screenshot->height() * sizeof(uint16);
+		screenshot->setNumber(0);
+		char *data = screenshot->getData();
+		savedState->write(data, size);
+	} else {
+		error("Unable to store screenshot!");
+	}
+	savedState->endSection();
+	printf("Engine::StoreSaveGameImage() finished.\n");
+}
+
 void Engine::savegameSave() {
 	printf("Engine::savegameSave() started.\n");
 	_savegameSaveRequest = false;
@@ -515,6 +539,8 @@ void Engine::savegameSave() {
 		strcpy(filename, _savegameFileName);
 	}
 	_savedState = new SaveGame(filename, true);
+
+	storeSaveGameImage(_savedState);
 
 	g_imuse->pause(true);
 	g_smush->pause(true);

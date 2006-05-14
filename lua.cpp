@@ -2800,37 +2800,6 @@ static void ScreenShot() {
 }
 
 /*
- * Store a screenshot into a savegame file
- *
- */
-static void StoreSaveGameImage(SaveGame *savedState) {
-	int width = 250, height = 188;
-	Bitmap *screenshot;
-	
-	printf("StoreSaveGameImage() started.\n");
-	
-	DEBUG_FUNCTION();
-
-	int mode = g_engine->getMode();
-	g_engine->setMode(ENGINE_MODE_NORMAL);
-	g_engine->updateDisplayScene();
-	screenshot = g_driver->getScreenshot(width, height);
-	g_engine->setMode(mode);
-	savedState->beginSection('SIMG');
-	if (screenshot) {
-		int size = screenshot->width() * screenshot->height() * sizeof(uint16);
-		screenshot->setNumber(0);
-		char *data = screenshot->getData();
-		
-		savedState->write(data, size);
-	} else {
-		error("Unable to store screenshot!");
-	}
-	savedState->endSection();
-	printf("StoreSaveGameImage() finished.\n");
-}
-
-/*
  * Restore a screenshot from a savegame file
  *
  */
@@ -2888,7 +2857,6 @@ static void SubmitSaveGameData() {
 	}
 	savedState->endSection();
 	printf("SubmitSaveGameData() finished.\n");
-	StoreSaveGameImage(savedState);
 }
 
 static void GetSaveGameData() {

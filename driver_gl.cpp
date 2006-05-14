@@ -720,22 +720,33 @@ void DriverGL::destroyTextBitmap(TextObjectHandle *handle) {
 Bitmap *DriverGL::getScreenshot(int w, int h) {
 	uint16 *buffer = new uint16[w * h];
 	uint32 *src = (uint32 *)_storedDisplay;
-	float step_x = _screenWidth * 1.0f / w;
-	float step_y = _screenHeight * 1.0f / h;
 
 	int step = 0;
+	for (int y = 0; y <= 479; y++) {
+		for (int x = 0; x <= 639; x++) {
+			uint32 pixel = *(src + y * 640 + x);
+			uint8 r = (pixel & 0xFF0000);
+			uint8 g = (pixel & 0x00FF00);
+			uint8 b = (pixel & 0x0000FF);
+			uint32 color = (r + g + b) / 3;
+			src[step++] = ((color << 24) | (color << 16) | (color << 8) | color);
+		}
+	}
+
+	float step_x = _screenWidth * 1.0f / w;
+	float step_y = _screenHeight * 1.0f / h;
+	step = 0;
 	for (float y = 0; y < 479; y += step_y) {
 		for (float x = 0; x < 639; x += step_x) {
 			uint32 pixel = *(src + (int)y * _screenWidth + (int)x);
-
 			uint8 r = (pixel & 0xFF0000) >> 16;
 			uint8 g = (pixel & 0x00FF00) >> 8;
 			uint8 b = (pixel & 0x0000FF);
 			uint32 color = (r + g + b) / 3;
-			int pos = step/w;
-			int wpos = step-pos*w;
+			int pos = step / w;
+			int wpos = step - pos * w;
 			// source is upside down, flip appropriately while storing
-			buffer[h*w - (pos*w+w-wpos)] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+			buffer[h * w - (pos * w + w - wpos)] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
 			step++;
 		}
 	}
@@ -785,7 +796,7 @@ void DriverGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	int y = _screenHeight - yReal;
 	
 	// collect the requested area and generate the dimmed version
-	glReadPixels(x, y-h, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glReadPixels(x, y - h, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	for (int ly = 0; ly < h; ly++) {
 		for (int lx = 0; lx < w; lx++) {
 			uint32 pixel = data[ly * w + lx];
@@ -808,7 +819,7 @@ void DriverGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	glDepthMask(GL_FALSE);
 
 	// Set the raster position and draw the bitmap
-	glRasterPos2i(x, yReal+h);
+	glRasterPos2i(x, yReal + h);
 	glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	glDepthMask(GL_TRUE);

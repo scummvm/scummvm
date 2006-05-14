@@ -490,17 +490,25 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	uint16 *src = (uint16 *)_storedDisplay;
 	assert(buffer);
 
-	float step_x = 640.0 / w;
-	float step_y = 480.0 / h;
 	int step = 0;
-	for (float y = 0; y < 479; y += step_y) {
-		for (float x = 0; x < 639; x += step_x) {
-			uint16 pixel = *(src + (int)y * 640 + (int)x);
+	for (int y = 0; y <= 479; y++) {
+		for (int x = 0; x <= 639; x++) {
+			uint16 pixel = *(src + y * 640 + x);
 			uint8 r = (pixel & 0xF800) >> 8;
 			uint8 g = (pixel & 0x07E0) >> 3;
 			uint8 b = (pixel & 0x001F) << 3;
 			uint32 color = (r + g + b) / 3;
-			buffer[step++] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+			src[step++] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+		}
+	}
+
+	float step_x = 640.0 / w;
+	float step_y = 480.0 / h;
+	step = 0;
+	for (float y = 0; y < 479; y += step_y) {
+		for (float x = 0; x < 639; x += step_x) {
+			uint16 pixel = *(src + (int)y * 640 + (int)x);
+			buffer[step++] = pixel;
 		}
 	}
 

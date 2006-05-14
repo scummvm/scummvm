@@ -158,6 +158,7 @@ public:
 	void savegameCallback();
 	static void savegameRead(void *data, int size);
 	static void savegameWrite(void *data, int size);
+	void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
