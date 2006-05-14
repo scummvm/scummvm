@@ -2477,8 +2477,10 @@ static void GetSpeechMode() {
 }
 
 static void StartFullscreenMovie() {
-	/*bool mode = getbool(2);*/
+	bool mode = getbool(2);
 	DEBUG_FUNCTION();
+	warning("StartFullscreenMovie() mode: %d", (int)mode);
+
 	// Clean out any text objects on the display before running the
 	// movie, otherwise things like Bruno's "Nice bathrobe." will stay
 	// on-screen the whole movie
@@ -2489,10 +2491,12 @@ static void StartFullscreenMovie() {
 }
 
 static void StartMovie() {
-	/*bool mode = getbool(2);*/
+	bool mode = getbool(2);
 	int x = 0, y = 0;
 
 	DEBUG_FUNCTION();
+	warning("StartMovie() mode: %d", (int)mode);
+
 	if (!lua_isnil(lua_getparam(3)))
 		x = check_int(3);
 
