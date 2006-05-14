@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.06a-CVS
-(C) 2003-2006 The ScummVM-Residual team             Last Updated: 2 Apr 2006
+(C) 2003-2006 The ScummVM-Residual team             Last Updated: 14 May 2006
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -49,11 +49,16 @@ Residual understands command-line options:
 It runs really slow when using -zbuffer!
 ----------------------------------------
 A large portion of older cards (Such as 3dfx cards, Radeon 7500 and earlier,
-Matrox G4xx series cards, etc) do not have a fast glDrawPixels implementation.
+Matrox G4xx series cards, etc) and newer cards too (Radeon X800 GTO
+with Windows drivers) do not have a fast glDrawPixels implementation.
 
 Unix users may be able to achieve playable framerates by using Mesa 5.0 or
 above, but people unable to upgrade or Windows users must use software
 renderer (-soft).
+
+Black screen while menu dialogs on Radeon with Windows!
+-------------------------------------------------------
+Turn off force fullscene antialiasing in OpenGL gfx driver options.
 
 What is the state of Residual? 
 ------------------------------- 
