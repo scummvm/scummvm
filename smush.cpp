@@ -35,7 +35,7 @@
 #include <zlib.h>
 
 #define SMUSH_LOOPMOVIE(x)		(x & 0x000001)
-#define SMUSH_ALTSPEED(x)			(x & 0x000004)
+#define SMUSH_ALTSPEED(x)		(x & 0x000004)
 
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
@@ -199,11 +199,9 @@ void Smush::handleFrame() {
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('Wave')) {
 			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
-
 			if (decompressed_size < 0)
 				handleWave(frame + pos + 8 + 4 + 8, READ_BE_UINT32(frame + pos + 8 + 8));
 			else
-
 				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
@@ -297,7 +295,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	// does not quite do it.
 	// TODO: Find out what needs to go on here.
 	if (SMUSH_ALTSPEED(flags)) {
-		printf("Bad time: %d, suggested: %d\n", _speed, 2*_speed);
+		printf("Bad time: %d, suggested: %d\n", _speed, 2 * _speed);
 		_speed = 66667;
 	}
 	_videoLooping = SMUSH_LOOPMOVIE(flags);
@@ -424,7 +422,7 @@ bool zlibFile::open(const char *filename) {
 	if ((flags & 0x02) != 0) // CRC
 		fread(_inBuf, 2, sizeof(char), _handle);
 
-	memset(_inBuf, 0, BUFFER_SIZE-1);			// Zero buffer (debug)
+	memset(_inBuf, 0, BUFFER_SIZE - 1); // Zero buffer (debug)
 	_stream.zalloc = NULL;
 	_stream.zfree = NULL;
 	_stream.opaque = Z_NULL;
