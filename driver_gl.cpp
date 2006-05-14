@@ -148,7 +148,7 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
 	}
 	glEnd();
 	// Done with transparency-capable objects
-  glDisable( GL_ALPHA_TEST );
+	glDisable(GL_ALPHA_TEST);
 }
 
 void DriverGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
