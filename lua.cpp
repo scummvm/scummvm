@@ -2043,13 +2043,14 @@ static void luaFileFindNext() {
 	if (g_searchFile) {
 #ifdef _WIN32
 		if (g_firstFind) {
-			found = true;
 			g_firstFind = false;
+			found = true;
+		} else {
+			do {
+				if (FindNextFile(g_searchFile, &g_find_file_data) != 0)
+					found = true;
+			} while (found && (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY));
 		}
-		while (found && (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-			if (FindNextFile(g_searchFile, &g_find_file_data) == 0)
-				found = true;
-		};
 #else
 		do {
 			de = readdir(g_searchFile);
