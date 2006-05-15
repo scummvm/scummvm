@@ -111,11 +111,17 @@ void MidiPlayer::send(uint32 b) {
 		if (!_current->channel[b & 0x0F])
 			return;
 	} else if ((b & 0xFFF0) == 0x79B0) {
-		// A minimum implementation of "All controllers off" should set
-		// the volume to 100. We have to make sure that volume is
-		// re-adjusted by the master volume afterwards. This happens in
-		// Simon 1, on eating the mushroom to turn back to normal size.
-		_current->volume[channel] = 100;
+		// "Reset All Controllers". There seems to be some confusion
+		// about what this message should do to the volume controller.
+		// See http://www.midi.org/about-midi/rp15.shtml for more
+		// information.
+		//
+		// If I understand it correctly, the current standard indicates
+		// that the volume should be reset, but the next revision will
+		// exclude it. On my system, both ALSA and FluidSynth seem to
+		// reset it, while Adlib does not. Let's follow the majority.
+
+		_current->volume[channel] = 127;
 	}
 
 	if (!_current->channel[channel])
@@ -124,8 +130,15 @@ void MidiPlayer::send(uint32 b) {
 		if (channel == 9)
 			_current->channel[9]->volume(_current->volume[9] * _masterVolume / 255);
 		_current->channel[channel]->send(b);
-		if ((b & 0xFFF0) == 0x79B0)
+		if ((b & 0xFFF0) == 0x79B0) {
+			// We have received a "Reset All Controllers" message
+			// and passed it on to the MIDI driver. This may or may
+			// not have affected the volume controller. To ensure
+			// consistent behaviour, explicitly set the volume to
+			// what we think it should be.
+
 			_current->channel[channel]->volume(_current->volume[channel] * _masterVolume / 255);
+		}
 	}
 }
 
