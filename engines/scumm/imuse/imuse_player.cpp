@@ -369,7 +369,13 @@ void Player::sysEx(const byte *p, uint16 len) {
 			// FM-TOWNS custom instrument definition
 			_midi->sysEx_customInstrument(p[0], 'EUP ', p + 1);
 		} else {
-			error("Unknown SysEx manufacturer 0x%02X", (int)a);
+			// SysEx manufacturer 0x97 has been spotted in the
+			// Monkey Island 2 Adlib music, so don't make this a
+			// fatal error. See bug #1481383.
+			if (a == 0)
+				warning("Unknown SysEx manufacturer 0x00 0x%02X 0x%02X", p[0], p[1]);
+			else
+				warning("Unknown SysEx manufacturer 0x%02X", (int)a);
 		}
 		return;
 	}
