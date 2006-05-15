@@ -802,26 +802,6 @@ void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride,
 /* opengl 1.2 polygon offset */
 void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 
-/* not implemented, just added to compile  */
-  /*
-inline void tglPointSize(float) {}
-inline void tglLineWidth(float) {}
-inline void tglDeleteLists(int, int) {}
-inline void tglDepthFunc(int) {}
-inline void tglBlendFunc(int, int) {}
-inline void tglTexEnvf(int, int, int) {}
-inline void tglOrtho(float,float,float,float,float,float){}
-inline void tglVertex2i(int,int) {}
-inline void tglDepthMask(int) {}
-inline void tglFogi(int, int) {}
-inline void tglFogfv(int, const float*) {}
-inline void tglFogf(int, float) {}
-inline void tglRasterPos2f(float, float) {}
-inline void tglPolygonStipple(void*) {}
-inline void tglTexParameterf(int, int, int) {};
-  */
-/* non compatible functions */
-
 void tglDebug(int mode);
 
 void tglInit(void *zbuffer);

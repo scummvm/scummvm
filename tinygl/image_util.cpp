@@ -18,22 +18,6 @@ void gl_convertRGB_to_5R6G5B(unsigned short *pixmap,unsigned char *rgb,
   }
 }
 
-void gl_convertRGB_to_8A8R8G8B(unsigned int *pixmap, unsigned char *rgb,
-                               int xsize, int ysize)
-{
-    int i,n;
-    unsigned char *p;
-    
-    p=rgb;
-    n=xsize*ysize;
-    for(i=0;i<n;i++) {
-        pixmap[i]=(((unsigned int)p[0])<<16) | 
-            (((unsigned int)p[1])<<8) | 
-            (((unsigned int)p[2])); 
-        p+=3;
-    }
-}
-
 /*
  * linear interpolation with xf,yf normalized to 2^16
  */
