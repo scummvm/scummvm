@@ -116,7 +116,7 @@ void SeqPlayer::s1_wsaOpen() {
 	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;
 	if (!_seqMovies[wsaObj].movie)
 		_seqMovies[wsaObj].movie = _vm->createWSAMovie();
-	_seqMovies[wsaObj].movie->_drawPage = _seqMovies[wsaObj].page;
+	_seqMovies[wsaObj].movie->setDrawPage(_seqMovies[wsaObj].page);
 	_seqMovies[wsaObj].movie->open(_vm->seqWSATable()[wsaObj], offscreenDecode, 0);
 	_seqMovies[wsaObj].frame = 0;
 	_seqMovies[wsaObj].numFrames = _seqMovies[wsaObj].movie->frames() - 1;
@@ -137,8 +137,8 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
 	assert(_seqMovies[wsaObj].movie);
-	_seqMovies[wsaObj].movie->_x = _seqMovies[wsaObj].pos.x;
-	_seqMovies[wsaObj].movie->_y = _seqMovies[wsaObj].pos.y;
+	_seqMovies[wsaObj].movie->setX(_seqMovies[wsaObj].pos.x);
+	_seqMovies[wsaObj].movie->setY(_seqMovies[wsaObj].pos.y);
 	_seqMovies[wsaObj].movie->displayFrame(frame);
 	_seqMovies[wsaObj].frame = frame;
 }

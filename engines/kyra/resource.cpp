@@ -114,7 +114,7 @@ Resource::Resource(KyraEngine *engine) {
 	
 	static const char *kyra3Filelist[] = {
 		// enough for now
-		"ONETIME.PAK", 0
+		"MISC_EMC.PAK", "MISC_CPS.PAK", "OTHER.PAK", "ONETIME.PAK", 0
 	};
 	
 	const char **usedFilelist = 0;

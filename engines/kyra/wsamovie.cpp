@@ -204,4 +204,82 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, 0);
 	}
 }
+
+#pragma mark -
+
+WSAMovieV3::WSAMovieV3(KyraEngine_v3 *vm) : WSAMovieV1(vm), _vm3(vm), _xAdd(0), _yAdd(0) {}
+
+void WSAMovieV3::open(const char *filename, int unk1, uint8 *palBuf) {
+	debugC(9, kDebugLevelMovie, "WSAMovieV3::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
+	close();
+
+	uint32 flags = 0;
+	uint32 fileSize;
+	uint8 *p = _vm->resource()->fileData(filename, &fileSize);
+	if (!p) {
+		warning("couldn't load wsa file: '%s'", filename);
+		return;
+	}
+	
+	const uint8 *wsaData = p;
+	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
+	_xAdd = (int16)(READ_LE_UINT16(wsaData)); wsaData += 2;
+	_yAdd = (int16)(READ_LE_UINT16(wsaData)); wsaData += 2;
+	_width = READ_LE_UINT16(wsaData); wsaData += 2;
+	_height = READ_LE_UINT16(wsaData); wsaData += 2;
+	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
+	_offscreenBuffer = NULL;
+	_flags = 0;
+	flags = READ_LE_UINT16(wsaData); wsaData += 2;
+	
+	uint32 offsPal = 0;
+	if (flags & 1) {
+		offsPal = 0x300;
+		_flags |= WF_HAS_PALETTE;
+		if (palBuf) {
+			memcpy(palBuf, wsaData + 8 + ((_numFrames << 2) & 0xFFFF), 0x300);
+		}
+	}
+	
+	if (!(unk1 & 2)) {
+		_flags |= WF_OFFSCREEN_DECODE;
+		const int offscreenBufferSize = _width * _height;
+		_offscreenBuffer = new uint8[offscreenBufferSize];
+		memset(_offscreenBuffer, 0, offscreenBufferSize);
+	}
+
+	if (_numFrames & 0x8000) {
+		warning("Unhandled wsa flags 0x80");
+		_flags |= 0x80;
+		_numFrames &= 0x7FFF;
+	}
+	_currentFrame = _numFrames;
+
+	_deltaBuffer = new uint8[_deltaBufferSize];
+	memset(_deltaBuffer, 0, _deltaBufferSize);
+	
+	// read frame offsets
+	_frameOffsTable = new uint32[_numFrames + 2];
+	_frameOffsTable[0] = 0;
+	uint32 frameDataOffs = READ_LE_UINT32(wsaData); wsaData += 4;
+	for (int i = 1; i < _numFrames + 2; ++i) {
+		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
+		wsaData += 4;
+	}
+	
+	// skip palette
+	wsaData += offsPal;
+	
+	// read frame data
+	const int frameDataSize = p + fileSize - wsaData;
+	_frameData = new uint8[frameDataSize];
+	memcpy(_frameData, wsaData, frameDataSize);
+	
+	// decode first frame
+	Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
+	
+	delete [] p;
+	_opened = true;
+}
+
 } // end of namespace Kyra

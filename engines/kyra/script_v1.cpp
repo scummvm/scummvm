@@ -447,9 +447,9 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 	int worldUpdate = stackPos(4);
 	int wsaFrame = 0;
 	
-	_movieObjects[wsaIndex]->_x = xpos;
-	_movieObjects[wsaIndex]->_y = ypos;
-	_movieObjects[wsaIndex]->_drawPage = 0;
+	_movieObjects[wsaIndex]->setX(xpos);
+	_movieObjects[wsaIndex]->setY(ypos);
+	_movieObjects[wsaIndex]->setDrawPage(0);
 	while (running) {
 		_movieObjects[wsaIndex]->displayFrame(wsaFrame++);
 		_animator->_updateScreen = true;
@@ -482,9 +482,9 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	int waitTime = stackPos(3);
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
-	_movieObjects[wsaIndex]->_x = xpos;
-	_movieObjects[wsaIndex]->_y = ypos;
-	_movieObjects[wsaIndex]->_drawPage = 0;
+	_movieObjects[wsaIndex]->setX(xpos);
+	_movieObjects[wsaIndex]->setY(ypos);
+	_movieObjects[wsaIndex]->setDrawPage(0);
 	_movieObjects[wsaIndex]->displayFrame(frame);
 	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
@@ -525,9 +525,9 @@ int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
 	int endFrame = stackPos(4);
 	int wsaIndex = stackPos(5);
 	_screen->hideMouse();
-	_movieObjects[wsaIndex]->_x = xpos;
-	_movieObjects[wsaIndex]->_y = ypos;
-	_movieObjects[wsaIndex]->_drawPage = 0;
+	_movieObjects[wsaIndex]->setX(xpos);
+	_movieObjects[wsaIndex]->setY(ypos);
+	_movieObjects[wsaIndex]->setDrawPage(0);
 	for (; startFrame <= endFrame; ++startFrame) {
 		uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
 		_movieObjects[wsaIndex]->displayFrame(startFrame);
@@ -722,9 +722,9 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	
 	_screen->hideMouse();
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-	_movieObjects[wsaIndex]->_x = xpos;
-	_movieObjects[wsaIndex]->_y = ypos;
-	_movieObjects[wsaIndex]->_drawPage = 2;
+	_movieObjects[wsaIndex]->setX(xpos);
+	_movieObjects[wsaIndex]->setY(ypos);
+	_movieObjects[wsaIndex]->setDrawPage(2);
 	_movieObjects[wsaIndex]->displayFrame(frame);
 	_animator->_updateScreen = true;
 	while (_system->getMillis() < continueTime) {
@@ -753,9 +753,9 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
 
-	_movieObjects[wsaIndex]->_x = xpos;
-	_movieObjects[wsaIndex]->_y = ypos;
-	_movieObjects[wsaIndex]->_drawPage = 0;
+	_movieObjects[wsaIndex]->setX(xpos);
+	_movieObjects[wsaIndex]->setY(ypos);
+	_movieObjects[wsaIndex]->setDrawPage(0);
 
 	int curTime = 0;
 	_screen->hideMouse();
@@ -1244,9 +1244,9 @@ int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "cmd_makeAmuletAppear(%p) ()", (const void *)script);
 	WSAMovieV1 amulet(this);
 	amulet.open("AMULET.WSA", 1, 0);
-	amulet._drawPage = 0;
-	amulet._x = 224;
-	amulet._y = 152;
+	amulet.setX(224);
+	amulet.setY(152);
+	amulet.setDrawPage(0);
 	if (amulet.opened()) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();

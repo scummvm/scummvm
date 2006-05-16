@@ -261,7 +261,7 @@ public:
 	Sound *sound() { return _sound; }
 	StaticResource *staticres() { return _staticres; }
 	uint32 tickLength() const { return _tickLength; }
-	Movie *createWSAMovie();
+	virtual Movie *createWSAMovie();
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
@@ -479,8 +479,8 @@ public:
 
 protected:
 
-	int go();
-	int init();
+	virtual int go();
+	virtual int init();
 
 	void startup();
 	void mainLoop();
@@ -1015,6 +1015,8 @@ class KyraEngine_v3 : public KyraEngine {
 public:
 	KyraEngine_v3(OSystem *system);
 	~KyraEngine_v3();
+	
+	Movie *createWSAMovie();
 
 	int setupGameFlags() { return 0; }
 	

@@ -95,6 +95,7 @@ KyraEngine::KyraEngine(OSystem *system)
 	_scrollUpButton.process0PtrShape = _scrollUpButton.process1PtrShape = _scrollUpButton.process2PtrShape = 0;
 	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
+	_features = 0;
 }
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system)
@@ -189,6 +190,7 @@ int KyraEngine::init() {
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	assert(_staticres->init());
+	
 	initStaticResource();
 	
 	_paletteChanged = 1;
@@ -306,8 +308,8 @@ int KyraEngine::init() {
 	_mousePressFlag = false;
 	
 	_menuDirectlyToLoad = false;
-	 
-	 _lastMusicCommand = 0;
+
+	_lastMusicCommand = 0;
 
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);

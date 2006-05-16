@@ -306,7 +306,8 @@ const StaticResource::FileType *StaticResource::getFiletype(int type) {
 
 const void *StaticResource::getData(int id, int requesttype, int &size) {
 	const void *ptr = 0;
-	int type = -1;
+	int type = -1;	
+	size = 0;
 
 	if (checkResList(id, type, ptr, size)) {
 		if (type == requesttype)
@@ -606,6 +607,8 @@ void KyraEngine::initStaticResource() {
 	const Room *tempRoomList = _staticres->loadRoomTable(kRoomList, _roomTableSize);
 
 	if (_roomTableSize > 0) {
+		printf("%d\n", _roomTableSize);
+		fflush(stdout);
 		_roomTable = new Room[_roomTableSize];
 		assert(_roomTable);
 

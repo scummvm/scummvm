@@ -42,11 +42,15 @@ public:
 
 	virtual void displayFrame(int frameNum) = 0;
 
-	int _x, _y;
-	int _drawPage;
+	virtual void setX(int x) { _x = x; }
+	virtual void setY(int y) { _y = y; }
+	virtual void setDrawPage(int page) { _drawPage = page; }
 protected:
 	KyraEngine *_vm;
 	bool _opened;
+	
+	int _x, _y;
+	int _drawPage;
 };
 
 class WSAMovieV1 : public Movie {
@@ -80,6 +84,26 @@ protected:
 	uint32 *_frameOffsTable;
 	uint8 *_frameData;
 };
+
+#ifdef ENABLE_KYRA3
+class KyraEngine_v3;
+
+class WSAMovieV3 : public WSAMovieV1 {
+public:
+	WSAMovieV3(KyraEngine_v3 *vm);
+	
+	void open(const char *filename, int unk1, uint8 *palette);
+	
+	void setX(int x) { _x = x + _xAdd; }
+	void setY(int y) { _y = y + _yAdd; }
+protected:
+	KyraEngine_v3 *_vm3;
+	
+	int16 _xAdd;
+	int16 _yAdd;
+};
+#endif
+
 } // end of namespace Kyra
 
 #endif

@@ -34,6 +34,10 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 KyraEngine_v3::~KyraEngine_v3() {
 }
 
+Movie *KyraEngine_v3::createWSAMovie() {
+	return new WSAMovieV3(this);
+}
+
 int KyraEngine_v3::go() {
 	_screen->_curPage = 0;
 	_screen->clearPage(0);
@@ -42,8 +46,9 @@ int KyraEngine_v3::go() {
 	assert(pal);
 	memset(pal, 0, sizeof(byte)*768);
 	
-	/*Movie *logo = createWSAMovie();
+	Movie *logo = createWSAMovie();
 	logo->open("REVENGE.WSA", 1, pal);
+	assert(logo->opened());
 	
 	pal[0] = pal[1] = pal[2] = 0;
 	
@@ -51,14 +56,21 @@ int KyraEngine_v3::go() {
 	
 	// XXX
 	
-	logo->_x = logo->_y = 0;
-	logo->_drawPage = 0;
+	logo->setX(0); logo->setY(0);
+	logo->setDrawPage(0);
 	for (int i = 0; i < 64; ++i) {
 		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 		logo->displayFrame(i);
 		_screen->updateScreen();
 		delayUntil(nextRun);
-	}*/
+	}
+	
+	for (int i = 64; i >= 29; --i) {
+		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
+		logo->displayFrame(i);
+		_screen->updateScreen();
+		delayUntil(nextRun);
+	}
 	
 	delete [] pal;
 

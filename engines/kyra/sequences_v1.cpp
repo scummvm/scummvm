@@ -946,8 +946,8 @@ int KyraEngine::seq_playEnd() {
 			_finalA = new WSAMovieV1(this);
 			assert(_finalA);
 			_finalA->open("finald.wsa", 1, 0);
-			_finalA->_x = _finalA->_y = 8;
-			_finalA->_drawPage = 0;
+			_finalA->setX(8); _finalA->setY(8);
+			_finalA->setDrawPage(0);
 			delayUntil(nextTime);
 			snd_playSoundEffect(0x40);
 			for (int i = 0; i < 22; ++i) {
@@ -1172,9 +1172,9 @@ int KyraEngine::handleMalcolmFlag() {
 
 	case 2:
 		if (_system->getMillis() >= timer2) {
-			_finalA->_x = 8;
-			_finalA->_y = 46;
-			_finalA->_drawPage = 0;
+			_finalA->setX(8);
+			_finalA->setY(46);
+			_finalA->setDrawPage(0);
 			_finalA->displayFrame(frame);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
@@ -1190,9 +1190,9 @@ int KyraEngine::handleMalcolmFlag() {
 		if (_system->getMillis() < timer1) {
 			if (_system->getMillis() >= timer2) {
 				frame = _rnd.getRandomNumberRng(14, 17);
-				_finalA->_x = 8;
-				_finalA->_y = 46;
-				_finalA->_drawPage = 0;
+				_finalA->setX(8);
+				_finalA->setY(46);
+				_finalA->setDrawPage(0);
 				_finalA->displayFrame(frame);
 				_screen->updateScreen();
 				timer2 = _system->getMillis() + 8 * _tickLength;
@@ -1205,9 +1205,9 @@ int KyraEngine::handleMalcolmFlag() {
 		
 	case 4:
 		if (_system->getMillis() >= timer2) {
-			_finalA->_x = 8;
-			_finalA->_y = 46;
-			_finalA->_drawPage = 0;
+			_finalA->setX(8);
+			_finalA->setY(46);
+			_finalA->setDrawPage(0);
 			_finalA->displayFrame(frame);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
@@ -1222,9 +1222,9 @@ int KyraEngine::handleMalcolmFlag() {
 		
 	case 5:
 		if (_system->getMillis() >= timer2) {
-			_finalA->_x = 8;
-			_finalA->_y = 46;
-			_finalA->_drawPage = 0;
+			_finalA->setX(8);
+			_finalA->setY(46);
+			_finalA->setDrawPage(0);
 			_finalA->displayFrame(frame);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
@@ -1239,9 +1239,9 @@ int KyraEngine::handleMalcolmFlag() {
 	case 6:
 		if (_unkEndSeqVar4) {
 			if (frame <= 33 && _system->getMillis() >= timer2) {
-				_finalA->_x = 8;
-				_finalA->_y = 46;
-				_finalA->_drawPage = 0;
+				_finalA->setX(8);
+				_finalA->setY(46);
+				_finalA->setDrawPage(0);
 				_finalA->displayFrame(frame);
 				_screen->updateScreen();
 				timer2 = _system->getMillis() + 8 * _tickLength;
@@ -1267,9 +1267,9 @@ int KyraEngine::handleMalcolmFlag() {
 
 	case 8:
 		if (_system->getMillis() >= timer2) {
-			_finalA->_x = 8;
-			_finalA->_y = 46;
-			_finalA->_drawPage = 0;
+			_finalA->setX(8);
+			_finalA->setY(46);
+			_finalA->setDrawPage(0);
 			_finalA->displayFrame(frame);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
@@ -1285,9 +1285,9 @@ int KyraEngine::handleMalcolmFlag() {
 	case 9:
 		snd_playSoundEffect(12);
 		snd_playSoundEffect(12);
-		_finalC->_x = 16;
-		_finalC->_y = 50;
-		_finalC->_drawPage = 0;
+		_finalC->setX(16);
+		_finalC->setY(50);
+		_finalC->setDrawPage(0);
 		for (int i = 0; i < 18; ++i) {
 			timer2 = _system->getMillis() + 4 * _tickLength;
 			_finalC->displayFrame(i);
@@ -1489,9 +1489,9 @@ int KyraEngine::handleBeadState() {
 				if (beadState1.dstX == 290) {
 					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 					uint32 nextRun = 0;
-					_finalB->_x = 224;
-					_finalB->_y = 8;
-					_finalB->_drawPage = 0;
+					_finalB->setX(224);
+					_finalB->setY(8);
+					_finalB->setDrawPage(0);
 					for (int i = 0; i < 8; ++i) {
 						nextRun = _system->getMillis() + _tickLength;
 						_finalB->displayFrame(i);
