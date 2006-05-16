@@ -8,3 +8,5 @@ The changes made from the original version of TinyGL 0.4 are:
 * Added 't/T' prefix to prevent OpenGl names duplication.
 * Added light shading texture mapping mode.
 * Removed not needed code.
+* Introduced second 32-bit z-buffer for 3d objects only,
+  and keeped 16-bit only for static z-buffer bitmaps.

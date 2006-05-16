@@ -6,15 +6,17 @@
 void ZB_plot(ZBuffer * zb, ZBufferPoint * p)
 {
     unsigned short *pz;
+    unsigned long *pz_2;
     PIXEL *pp;
     int zz;
 
     pz = zb->zbuf + (p->y * zb->xsize + p->x);
+    pz_2 = zb->zbuf2 + (p->y * zb->xsize + p->x);
     pp = (PIXEL *) ((char *) zb->pbuf + zb->linesize * p->y + p->x * PSZB);
     zz = p->z >> ZB_POINT_Z_FRAC_BITS;
-    if (ZCMP(zz, *pz)) {
-	*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
-	*pz = zz;
+    if ((ZCMP(zz, *pz)) && (ZCMP(p->z, *pz_2)) ) {
+		*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
+		*pz_2 = p->z;
     }
 }
 

@@ -10,6 +10,7 @@
 #endif
 #ifdef INTERP_Z
     register unsigned short *pz;
+    register unsigned long *pz_2;
     int zinc;
     register int z, zz;
 #endif
@@ -24,6 +25,7 @@
     pp = (PIXEL *) ((char *) zb->pbuf + zb->linesize * p1->y + p1->x * PSZB);
 #ifdef INTERP_Z
     pz = zb->zbuf + (p1->y * sx + p1->x);
+    pz_2 = zb->zbuf2 + (p1->y * sx + p1->x);
     z = p1->z;
 #endif
 
@@ -48,9 +50,9 @@
 #define PUTPIXEL() 				\
   {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
-    if (ZCMP(zz,*pz))  { 			\
+    if ((ZCMP(zz,*pz)) && (ZCMP(z,*pz_2)))  { 			\
       RGBPIXEL;	\
-      *pz=zz; 					\
+      *pz_2=z; 					\
     }						\
   }
 #else /* INTERP_Z */
@@ -73,8 +75,8 @@
         PUTPIXEL();\
         ZZ(z+=zinc);\
         RGB(r+=rinc;g+=ginc;b+=binc);\
-        if (a>0) { pp=(PIXEL *)((char *)pp + pp_inc_1); ZZ(pz+=(inc_1));  a-=dx; }\
-	else { pp=(PIXEL *)((char *)pp + pp_inc_2); ZZ(pz+=(inc_2)); a+=dy; }\
+        if (a>0) { pp=(PIXEL *)((char *)pp + pp_inc_1); ZZ(pz+=(inc_1)); ZZ(pz_2+=(inc_1)); a-=dx; }\
+	else { pp=(PIXEL *)((char *)pp + pp_inc_2); ZZ(pz+=(inc_2)); ZZ(pz_2+=(inc_2)); a+=dy; }\
     } while (--n >= 0);
 
 /* fin macro */

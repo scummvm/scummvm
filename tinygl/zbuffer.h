@@ -43,6 +43,7 @@ typedef struct {
     int mode;
     
     unsigned short *zbuf;
+    unsigned long *zbuf2;
     PIXEL *pbuf;
     int frame_buffer_allocated;
     

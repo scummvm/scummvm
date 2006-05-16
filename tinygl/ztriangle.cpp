@@ -18,9 +18,9 @@ void ZB_fillTriangleFlat(ZBuffer *zb,
 #define PUT_PIXEL(_a)				\
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
-    if (ZCMP(zz,pz[_a])) {				\
+    if ((ZCMP(zz,pz[_a])) && (ZCMP(z,pz_2[_a]))) {				\
       pp[_a]=color;				\
-      pz[_a]=zz;				\
+      pz_2[_a]=z;				\
     }						\
     z+=dzdx;					\
 }
@@ -54,10 +54,10 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
 #define PUT_PIXEL(_a)				\
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
-    if (ZCMP(zz,pz[_a])) {				\
+    if ((ZCMP(zz,pz[_a])) && (ZCMP(z,pz_2[_a]))) {				\
       tmp=rgb & 0xF81F07E0;			\
       pp[_a]=tmp | (tmp >> 16);			\
-      pz[_a]=zz;				\
+      pz_2[_a]=z;				\
     }						\
     z+=dzdx;					\
     rgb=(rgb+drgbdx) & ( ~ 0x00200800);		\
@@ -66,12 +66,14 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
 #define DRAW_LINE()							   \
 {									   \
   register unsigned short *pz;					   \
+  register unsigned long *pz_2;					   \
   register PIXEL *pp;					   \
   register unsigned int tmp,z,zz,rgb,drgbdx;				   \
   register int n;							   \
   n=(x2 >> 16) - x1;							   \
   pp=pp1+x1;								   \
   pz=pz1+x1;								   \
+  pz_2=pz2+x1;								   \
   z=z1;									   \
   rgb=(r1 << 16) & 0xFFC00000;						   \
   rgb|=(g1 >> 5) & 0x000007FF;						   \
@@ -83,12 +85,14 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
     PUT_PIXEL(2);							   \
     PUT_PIXEL(3);							   \
     pz+=4;								   \
+    pz_2+=4;								   \
     pp+=4;								   \
     n-=4;								   \
   }									   \
   while (n>=0) {							   \
     PUT_PIXEL(0);							   \
     pz+=1;								   \
+    pz_2+=1;								   \
     pp+=1;								   \
     n-=1;								   \
   }									   \
@@ -118,9 +122,9 @@ void ZB_fillTriangleMapping(ZBuffer *zb,
 #define PUT_PIXEL(_a)				\
 {						\
    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
-     if (ZCMP(zz,pz[_a])) {				\
+     if ((ZCMP(zz,pz[_a])) && (ZCMP(z,pz_2[_a]))) {				\
        pp[_a]=texture[((t & 0x3FC00000) | s) >> 14];	\
-       pz[_a]=zz;				\
+       pz_2[_a]=z;				\
     }						\
     z+=dzdx;					\
     s+=dsdx;					\
@@ -143,6 +147,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   ZBufferPoint *t,*pr1,*pr2,*l1,*l2;
   float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
   unsigned short *pz1;
+  unsigned long *pz2;
   PIXEL *pp1;
   int part,update_left,update_right;
 
@@ -245,6 +250,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 
   pp1 = (PIXEL *) ((char *) zb->pbuf + zb->linesize * p0->y);
   pz1 = zb->zbuf + p0->y * zb->xsize;
+  pz2 = zb->zbuf2 + p0->y * zb->xsize;
 
 {
   texture=zb->current_texture;
@@ -350,6 +356,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 
 {
   register unsigned short *pz;
+  register unsigned long *pz_2;
   register PIXEL *pp;
   register unsigned int s,t,z,zz,rgb,drgbdx;
   register int n,dsdx,dtdx;
@@ -359,6 +366,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   zinv=(float)(1.0 / fz);
   pp=(PIXEL *)((char *)pp1 + x1 * PSZB);
   pz=pz1+x1;
+  pz_2=pz2+x1;
   z=z1;
   sz=sz1;
   tz=tz1;
@@ -381,7 +389,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 	for (int _a = 0; _a < 8; _a++)
 {
    zz=z >> ZB_POINT_Z_FRAC_BITS;
-     if (ZCMP(zz,pz[_a])) {
+     if ((ZCMP(zz,pz[_a])) && (ZCMP(z,pz_2[_a]))) {
        tmp=rgb & 0xF81F07E0;
 	   unsigned int light = tmp | (tmp >> 16);
        PIXEL pixel = *(PIXEL *)((char *)texture+
@@ -397,7 +405,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
        c_b = (c_b * l_b) / 256;
        pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3);
        pp[_a]=pixel;
-       pz[_a]=zz;
+       pz_2[_a]=z;
     }
     z+=dzdx;
     s+=dsdx;
@@ -406,6 +414,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 }
 
 	pz+=NB_INTERP;
+	pz_2+=NB_INTERP;
     pp=(PIXEL *)((char *)pp + NB_INTERP * PSZB);
     n-=NB_INTERP;
     sz+=ndszdx;
@@ -423,7 +432,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   while (n>=0) {
 {
    zz=z >> ZB_POINT_Z_FRAC_BITS;
-     if (ZCMP(zz,pz[0])) {
+     if ((ZCMP(zz,pz[0])) && (ZCMP(z,pz_2[0]))) {
        tmp=rgb & 0xF81F07E0;
 	   unsigned int light = tmp | (tmp >> 16);
        PIXEL pixel = *(PIXEL *)((char *)texture+
@@ -439,7 +448,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
        c_b = (c_b * l_b) / 256;
        pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3);
        pp[0]=pixel;
-       pz[0]=zz;
+       pz_2[0]=z;
     }
     z+=dzdx;
     s+=dsdx;
@@ -447,6 +456,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
     rgb=(rgb+drgbdx) & ( ~ 0x00200800);
 }
     pz+=1;
+    pz_2+=1;
     pp=(PIXEL *)((char *)pp + PSZB);
     n-=1;
   }
@@ -485,6 +495,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
       /* screen coordinates */
       pp1=(PIXEL *)((char *)pp1 + zb->linesize);
       pz1+=zb->xsize;
+      pz2+=zb->xsize;
     }
   }
 }

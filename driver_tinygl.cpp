@@ -159,6 +159,7 @@ void DriverTinyGL::positionCamera(Vector3d pos, Vector3d interest) {
 void DriverTinyGL::clearScreen() {
 	memset(_zb->pbuf, 0, 640 * 480 * 2);
 	memset(_zb->zbuf, 0, 640 * 480 * 2);
+	memset(_zb->zbuf2, 0, 640 * 480 * 4);
 }
 
 void DriverTinyGL::flipBuffer() {
