@@ -1,16 +1,16 @@
+
 #include "tinygl/zgl.h"
 
-void glGetIntegerv(int pname,int *params)
-{
-  GLContext *c=gl_get_context();
+void glGetIntegerv(int pname,int *params) {
+	GLContext *c=gl_get_context();
 
-  switch(pname) {
-  case TGL_VIEWPORT:
-    params[0]=c->viewport.xmin;
-    params[1]=c->viewport.ymin;
-    params[2]=c->viewport.xsize;
-    params[3]=c->viewport.ysize;
-    break;
+	switch(pname) {
+	case TGL_VIEWPORT:
+		params[0]=c->viewport.xmin;
+		params[1]=c->viewport.ymin;
+		params[2]=c->viewport.xsize;
+		params[3]=c->viewport.ysize;
+		break;
   case TGL_MAX_MODELVIEW_STACK_DEPTH:
     *params = MAX_MODELVIEW_STACK_DEPTH;
     break;

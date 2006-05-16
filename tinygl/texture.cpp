@@ -1,43 +1,42 @@
-/*
- * Texture Manager
- */
+
+// Texture Manager
 
 #include "tinygl/zgl.h"
 
-static GLTexture *find_texture(GLContext *c,int h)
-{
-  GLTexture *t;
+static GLTexture *find_texture(GLContext *c, int h) {
+	GLTexture *t;
 
-  t=c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
-  while (t!=NULL) {
-    if (t->handle == h) return t;
-    t=t->next;
-  }
-  return NULL;
+	t = c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
+	while (t != NULL) {
+		if (t->handle == h)
+			return t;
+		t = t->next;
+	}
+	return NULL;
 }
 
-static void free_texture(GLContext *c,int h)
-{
-  GLTexture *t,**ht;
-  GLImage *im;
-  int i;
+static void free_texture(GLContext *c, int h) {
+	GLTexture *t, **ht;
+	GLImage *im;
+	int i;
 
-  t=find_texture(c,h);
-  if (t->prev==NULL) {
-    ht=&c->shared_state.texture_hash_table
-      [t->handle % TEXTURE_HASH_TABLE_SIZE];
-    *ht=t->next;
-  } else {
-    t->prev->next=t->next;
-  }
-  if (t->next!=NULL) t->next->prev=t->prev;
+	t = find_texture(c, h);
+	if (t->prev == NULL) {
+		ht = &c->shared_state.texture_hash_table[t->handle % TEXTURE_HASH_TABLE_SIZE];
+		*ht = t->next;
+	} else {
+		t->prev->next = t->next;
+	}
+	if (t->next != NULL)
+		t->next->prev = t->prev;
 
-  for(i=0;i<MAX_TEXTURE_LEVELS;i++) {
-    im=&t->images[i];
-    if (im->pixmap != NULL) gl_free(im->pixmap);
-  }
+	for (i = 0; i < MAX_TEXTURE_LEVELS; i++) {
+		im = &t->images[i];
+		if (im->pixmap != NULL)
+			gl_free(im->pixmap);
+	}
 
-  gl_free(t);
+	gl_free(t);
 }
 
 GLTexture *alloc_texture(GLContext *c,int h)

@@ -309,13 +309,13 @@ void glInitTextures(GLContext *c);
 void glEndTextures(GLContext *c);
 GLTexture *alloc_texture(GLContext *c,int h);
 
-/* image_util.c */
-void gl_convertRGB_to_5R6G5B(unsigned short *pixmap,unsigned char *rgb,
-                             int xsize,int ysize);
-void gl_resizeImage(unsigned char *dest,int xsize_dest,int ysize_dest,
-                    unsigned char *src,int xsize_src,int ysize_src);
-void gl_resizeImageNoInterpolate(unsigned char *dest,int xsize_dest,int ysize_dest,
-                                 unsigned char *src,int xsize_src,int ysize_src);
+// image_util.c
+void gl_convertRGB_to_5R6G5B(unsigned short *pixmap, unsigned char *rgb,
+                             int xsize, int ysize);
+void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
+                    unsigned char *src, int xsize_src, int ysize_src);
+void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
+                                 unsigned char *src, int xsize_src, int ysize_src);
 
 GLContext *gl_get_context(void);
 
@@ -325,41 +325,31 @@ void gl_fatal_error(char *format, ...);
 #define PI 3.14159265358979323846
 #endif
 
-/* specular buffer "api" */
-GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, 
-                              const float shininess);
+// specular buffer "api"
+GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
 
 #ifdef DEBUG
-
 #define dprintf fprintf
-
 #else
-
 #define dprintf
-
 #endif
 
-/* glopXXX functions */
+// glopXXX functions
 
-#define ADD_OP(a,b,c) void glop ## a (GLContext *,TGLParam *);
+#define ADD_OP(a,b,c) void glop ## a (GLContext *, TGLParam *);
 #include "opinfo.h"
 
-/* this clip epsilon is needed to avoid some rounding errors after
-   several clipping stages */
+// this clip epsilon is needed to avoid some rounding errors after
+// several clipping stages
 
 #define CLIP_EPSILON (1E-5)
 
-static inline int gl_clipcode(float x,float y,float z,float w1)
-{
-  float w;
+static inline int gl_clipcode(float x, float y, float z, float w1) {
+	float w;
 
-  w=(float)(w1 * (1.0 + CLIP_EPSILON));
-  return (x<-w) |
-    ((x>w)<<1) |
-    ((y<-w)<<2) |
-    ((y>w)<<3) |
-    ((z<-w)<<4) | 
-    ((z>w)<<5) ;
+	w = (float)(w1 * (1.0 + CLIP_EPSILON));
+	return (x < -w) | ((x > w) << 1) | ((y < -w) << 2) |
+			((y > w) << 3) | ((z < -w) << 4) | ((z > w) << 5);
 }
 
-#endif /* _tgl_zgl_h_ */
+#endif // _tgl_zgl_h_
