@@ -207,6 +207,7 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
+#ifdef ENABLE_KYRA3
 WSAMovieV3::WSAMovieV3(KyraEngine_v3 *vm) : WSAMovieV1(vm), _vm3(vm), _xAdd(0), _yAdd(0) {}
 
 void WSAMovieV3::open(const char *filename, int unk1, uint8 *palBuf) {
@@ -281,5 +282,6 @@ void WSAMovieV3::open(const char *filename, int unk1, uint8 *palBuf) {
 	delete [] p;
 	_opened = true;
 }
+#endif
 
 } // end of namespace Kyra
