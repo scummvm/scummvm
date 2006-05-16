@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="residual"
 	ProjectGUID="{44D38F29-303D-4E3D-AF45-B96523BF1F9F}"
+	RootNamespace="residual"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -65,6 +66,7 @@
 				LinkIncremental="2"
 				GenerateManifest="false"
 				ManifestFile=""
+				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -585,14 +587,6 @@
 			</File>
 			<File
 				RelativePath="..\..\tinygl\zbuffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tinygl\zdither.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tinygl\zfeatures.h"
 				>
 			</File>
 			<File

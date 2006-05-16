@@ -90,7 +90,6 @@ TINYGL_OBJS =\
 	tinygl/texture.o \
 	tinygl/vertex.o \
 	tinygl/zbuffer.o \
-	tinygl/zdither.o \
 	tinygl/zline.o \
 	tinygl/zmath.o \
 	tinygl/ztriangle.o

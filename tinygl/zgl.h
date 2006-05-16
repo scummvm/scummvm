@@ -8,7 +8,6 @@
 #include "tinygl/gl.h"
 #include "tinygl/zbuffer.h"
 #include "tinygl/zmath.h"
-#include "tinygl/zfeatures.h"
 
 #define DEBUG
 /* #define NDEBUG */
