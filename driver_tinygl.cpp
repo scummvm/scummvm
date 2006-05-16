@@ -110,7 +110,7 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 
 	SDL_WM_SetCaption("Residual: Software 3D Renderer", "Residual");
 
-	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, 0, NULL, NULL, _screen->pixels);
+	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, _screen->pixels);
 	tglInit(_zb);
 
 	_storedDisplay = new byte[640 * 480 * 2];
