@@ -32,8 +32,6 @@
 
 using namespace Kyra;
 
-#undef ENABLE_KYRA2
-
 enum {
 	// We only compute MD5 of the first megabyte of our data files.
 	kMD5FileSizeLimit = 1024 * 1024
@@ -87,30 +85,22 @@ const GameSettings kyra1_games[] = {
 };
 
 const GameSettings kyra2_games[] = {
-#ifdef ENABLE_KYRA2
 	{ "kyra2", "The Hand of Fate",				GI_KYRA2, GF_ENGLISH,	// CD version? Floppy version?
 										"28cbad1c5bf06b2d3825ae57d760d032", "FATE.PAK" },
-#endif
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
 const GameSettings kyra3_games[] = {
-#ifdef ENABLE_KYRA3
 	{ "kyra3", "The Legend of Kyrandia: Book Three",
 	GI_KYRA3, GF_LNGUNK, "3833ff312757b8e6147f464cca0a6587", "ONETIME.PAK" },
-#endif
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
 // Keep list of different supported games
 const PlainGameDescriptor kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
-#ifdef ENABLE_KYRA2
 	{ "kyra2", "The Hand of Fate" },
-#endif
-#ifdef ENABLE_KYRA3
 	{ "kyra3", "The Legend of Kyrandia: Book Three" },
-#endif
 	{ 0, 0 }
 };
 
@@ -276,10 +266,8 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 		*engine = new KyraEngine_v1(syst);
 	} else if (!scumm_stricmp("kyra2", gameid)) {
 		*engine = new KyraEngine_v2(syst);
-#ifdef ENABLE_KYRA3
 	} else if (!scumm_stricmp("kyra3", gameid)) {
 		*engine = new KyraEngine_v3(syst);
-#endif
 	} else
 		error("Kyra engine created with invalid gameid.");
 	

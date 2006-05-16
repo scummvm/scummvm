@@ -85,9 +85,9 @@ protected:
 	uint8 *_frameData;
 };
 
-#ifdef ENABLE_KYRA3
 class KyraEngine_v3;
 
+// it could be possible that Kyrandia2 uses exactly the same format
 class WSAMovieV3 : public WSAMovieV1 {
 public:
 	WSAMovieV3(KyraEngine_v3 *vm);
@@ -102,7 +102,6 @@ protected:
 	int16 _xAdd;
 	int16 _yAdd;
 };
-#endif
 
 } // end of namespace Kyra
 

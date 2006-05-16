@@ -20,7 +20,6 @@
  *
  */
 
-#ifdef ENABLE_KYRA3
 #include "kyra/kyra.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
@@ -77,4 +76,3 @@ int KyraEngine_v3::go() {
 	return 0;
 }
 }
-#endif // ENABLE_KYRA3

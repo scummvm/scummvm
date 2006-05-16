@@ -1009,8 +1009,7 @@ public:
 	int go();
 };
 
-#ifdef ENABLE_KYRA3
-// maybe overload KyraEngine_v2 later
+// maybe subclass KyraEngine_v2 later
 class KyraEngine_v3 : public KyraEngine {
 public:
 	KyraEngine_v3(OSystem *system);
@@ -1022,7 +1021,6 @@ public:
 	
 	int go();
 };
-#endif
 
 } // End of namespace Kyra
 
