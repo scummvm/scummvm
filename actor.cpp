@@ -404,9 +404,12 @@ void Actor::pushCostume(const char *name) {
 }
 
 void Actor::setColormap(const char *map) {
-	Costume *cost = _costumeStack.back();
-	
-	cost->setColormap((char *) map);
+	if (!_costumeStack.empty()) {
+		Costume *cost = _costumeStack.back();
+		cost->setColormap((char *) map);
+	} else {
+		warning("Actor::setColormap: No costumes");
+	}
 }
 
 void Actor::setCostume(const char *name) {

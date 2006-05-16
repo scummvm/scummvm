@@ -24,6 +24,7 @@
 #define BITMAP_H
 
 #include "resource.h"
+#include "debug.h"
 
 #include <cstring>
 
@@ -36,7 +37,7 @@ public:
 	void draw() const;
 
 	// Set which image in an animated bitmap to use
-	void setNumber(int n) { _currImage = n; }
+	void setNumber(int n) { if ((n - 1) >= _numImages) warning("Bitmap::setNumber: no anim image: %d", n); else _currImage = n; }
 
 	int numImages() const { return _numImages; }
 	int currentImage() const { return _currImage; }
