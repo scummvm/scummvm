@@ -443,7 +443,7 @@ void ScummEngine::processKbd(bool smushMode) {
 			_defaultTalkDelay++;
 
 		// Display the talk speed
-		ValueDisplayDialog dlg("Text speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
+		ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
 		_defaultTalkDelay = 9 - runDialog(dlg);
 		
 		// Save the new talkspeed value to ConfMan
