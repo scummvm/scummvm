@@ -1017,7 +1017,7 @@ public:
 	
 	Movie *createWSAMovie();
 
-	int setupGameFlags() { return 0; }
+	int setupGameFlags() { _game = GI_KYRA3; return 0; }
 	
 	int go();
 };
