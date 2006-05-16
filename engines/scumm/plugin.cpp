@@ -1375,7 +1375,8 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", res.md5.c_str());
+		printf("Unknown MD5 (%s)! If this is an official version of the game (and not e.g. a fan made translation), "
+		       "please report the details (language, platform, etc.) of this game to the ScummVM team\n", res.md5.c_str());
 	} else {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
