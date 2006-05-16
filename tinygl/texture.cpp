@@ -146,7 +146,9 @@ void glopTexImage2D(GLContext *c,TGLParam *p)
   if (width != 256 || height != 256) {
     pixels1 = (unsigned char *)gl_malloc(256 * 256 * 3);
     /* no interpolation is done here to respect the original image aliasing ! */
-    gl_resizeImageNoInterpolate(pixels1,256,256,(unsigned char *)pixels,width,height);
+    //gl_resizeImageNoInterpolate(pixels1,256,256,(unsigned char *)pixels,width,height);
+    // used interpolation anyway, it look much better :) --- aquadran
+	gl_resizeImage(pixels1,256,256,(unsigned char *)pixels,width,height);
     do_free=1;
     width=256;
     height=256;
