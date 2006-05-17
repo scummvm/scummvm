@@ -30,6 +30,7 @@ namespace Kyra {
 
 class Movie;
 class Sound;
+class SoundDigital;
 class SeqPlayer;
 class Resource;
 class PAKFile;
@@ -1016,10 +1017,23 @@ public:
 	~KyraEngine_v3();
 	
 	Movie *createWSAMovie();
+	
+	SoundDigital *soundDigital() { return _soundDigital; }
 
 	int setupGameFlags() { _game = GI_KYRA3; return 0; }
 	
 	int go();
+private:
+	int init();
+
+	SoundDigital *_soundDigital;
+	
+	// sound specific
+private:
+	void playMenuAudioFile();
+	
+	int _musicSoundChannel;
+	const char *_menuAudioFile;
 };
 
 } // End of namespace Kyra

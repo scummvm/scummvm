@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/file.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
@@ -209,6 +210,28 @@ public:
 	void beginFadeOut() { _music->beginFadeOut(); }
 private:
 	Sound *_music, *_sfx;
+};
+
+#define SOUND_STREAMS 4
+
+class SoundDigital {
+public:
+	SoundDigital(KyraEngine *vm, Audio::Mixer *mixer);
+	~SoundDigital();
+
+	bool init();
+	
+	int playSound(Common::File *fileHandle, int channel = -1);
+	bool isPlaying(int channel);
+	void stopSound(int channel);
+private:
+	KyraEngine *_vm;
+	Audio::Mixer *_mixer;
+
+	struct Sound {
+		Common::File *fileHandle;
+		Audio::SoundHandle handle;
+	} _sounds[SOUND_STREAMS];
 };
 
 } // end of namespace Kyra

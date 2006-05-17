@@ -52,6 +52,7 @@ void Sound::voicePlay(const char *file) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, _supportedCodes[i].fileext);
 
+		_compressHandle.close();
 		_engine->resource()->fileHandle(filenamebuffer, &fileSize, _compressHandle);
 		if (!_compressHandle.isOpen())
 			continue;

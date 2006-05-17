@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	seqplayer.o \
 	sequences_v1.o \
 	sound_adlib.o \
+	sound_digital.o \
 	sound.o \
 	sprites.o \
 	staticres.o \
