@@ -68,7 +68,7 @@ public:
 
 private:
 	enum {
-		NUM_CHANNELS = 16
+		NUM_CHANNELS = 32
 	};
 
 	MutexRef _mutex;
