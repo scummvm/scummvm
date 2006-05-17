@@ -72,20 +72,31 @@ int KyraEngine_v3::go() {
 	
 	logo->setX(0); logo->setY(0);
 	logo->setDrawPage(0);
-	for (int i = 0; i < 64; ++i) {
+
+	for (int i = 0; i < 29; ++i) {
 		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 		logo->displayFrame(i);
 		_screen->updateScreen();
 		playMenuAudioFile();
 		delayUntil(nextRun);
 	}
+
+	while (1) {
+		for (int i = 29; i < 64; ++i) {
+			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
+			logo->displayFrame(i);
+			_screen->updateScreen();
+			playMenuAudioFile();
+			delayUntil(nextRun);
+		}
 	
-	for (int i = 64; i >= 29; --i) {
-		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-		logo->displayFrame(i);
-		_screen->updateScreen();
-		playMenuAudioFile();
-		delayUntil(nextRun);
+		for (int i = 64; i >= 29; --i) {
+			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
+			logo->displayFrame(i);
+			_screen->updateScreen();
+			playMenuAudioFile();
+			delayUntil(nextRun);
+		}
 	}
 	
 	delete [] pal;
