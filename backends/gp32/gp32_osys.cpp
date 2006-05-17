@@ -98,7 +98,7 @@ int OSystem_GP32::getGraphicsMode() const {
 	return -1;
 }
 
-void OSystem_GP32::initSize(uint width, uint height, int overlayScale) {
+void OSystem_GP32::initSize(uint width, uint height) {
 	NP("OSys::initSize()");
 
 	if (width == _screenWidth && height == _screenHeight)

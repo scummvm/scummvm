@@ -67,7 +67,7 @@ private:
 	
 	virtual const GraphicsMode *int_getSupportedGraphicsModes() const;
 	virtual void int_updateScreen() = 0;
-	virtual void int_initSize(uint w, uint h, int overlayScale) = 0;
+	virtual void int_initSize(uint w, uint h) = 0;
 	virtual void int_setShakePos(int shakeOffset) { }
 
 	virtual void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b) { }
@@ -195,7 +195,7 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
 
-	void initSize(uint w, uint h, int overlayScale);
+	void initSize(uint w, uint h);
 	int16 getWidth() { return _screenWidth; }
 	int16 getHeight() { return _screenHeight; }
 

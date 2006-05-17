@@ -306,11 +306,8 @@ public:
 	 *
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
-	 * @param overlayScale	optional: the scale to be used for the overlay, if different
-	 *						from the default scale (default is -1, which means the
-	 *						overlay uses the same scale)
 	 */
-	virtual void initSize(uint width, uint height, int overlayScale = -1) = 0;
+	virtual void initSize(uint width, uint height) = 0;
 
 	/**
 	 * Begin a new GFX transaction, which is a sequence of GFX mode changes.

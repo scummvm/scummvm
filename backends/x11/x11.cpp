@@ -340,8 +340,8 @@ uint32 OSystem_X11::getMillis() {
 	                ((current_time.tv_usec - _start_time.tv_usec) / 1000));
 }
 
-void OSystem_X11::initSize(uint w, uint h, int overlaySize) {
-	//debug("initSize(%i, %i, %i)", w, h, overlaySize);
+void OSystem_X11::initSize(uint w, uint h) {
+	//debug("initSize(%i, %i)", w, h);
 	static XShmSegmentInfo shminfo;
 
 	if (((uint)_fb_width != w) || ((uint)_fb_height != w)) {

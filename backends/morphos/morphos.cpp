@@ -1456,7 +1456,7 @@ void OSystem_MorphOS::clearSoundCallback()
 	}
 }
 
-void OSystem_MorphOS::initSize(uint w, uint h, int overlayScale)
+void OSystem_MorphOS::initSize(uint w, uint h)
 {
 	if (ScummBuffer)
 	{

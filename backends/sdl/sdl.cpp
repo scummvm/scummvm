@@ -175,7 +175,7 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _overlayWidth(0), _overlayHeight(0),
-	_overlayVisible(false), _overlayScale(1),
+	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),
 	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirtyChecksums(0),

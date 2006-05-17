@@ -48,6 +48,9 @@ void AnimationState::setPalette(byte *pal) {
 #endif
 
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
+	_frameWidth = width;
+	_frameHeight = height;
+
 #ifdef BACKEND_8BIT
 	_scr->plotYUV(_lut, width, height, dat);
 #else
@@ -57,7 +60,13 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 
 void AnimationState::updateScreen(void) {
 #ifndef BACKEND_8BIT
-	_sys->copyRectToOverlay(_overlay, _movieWidth, 0, 40, _movieWidth, _movieHeight);
+	int width = _movieScale * _frameWidth;
+	int height = _movieScale * _frameHeight;
+	int pitch = _movieScale * _movieWidth;
+	int x = _movieScale * ((_movieWidth - _frameWidth) / 2);
+	int y = _movieScale * ((_movieHeight - _frameHeight) / 2);
+
+	_sys->copyRectToOverlay(_overlay + y * pitch + x, pitch, x, y + _movieScale * 40, width, height);
 #endif
 	_sys->updateScreen();
 }

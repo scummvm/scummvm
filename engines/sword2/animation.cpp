@@ -53,27 +53,47 @@ void AnimationState::setPalette(byte *pal) {
 #else
 
 void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
-	OverlayColor *dst = _overlay + RENDERWIDE * s->y + s->x;
-
-	// FIXME: These aren't the "right" colours, but look good to me.
+	OverlayColor *dst = _overlay + _movieScale * _movieWidth * _movieScale * s->y + _movieScale * s->x;
 
 	OverlayColor pen = _sys->RGBToColor(255, 255, 255);
 	OverlayColor border = _sys->RGBToColor(0, 0, 0);
 
+	// TODO: Use the AdvMame scalers for the text? Pre-scale it?
+
 	for (int y = 0; y < s->h; y++) {
+		OverlayColor *ptr = dst;
+
 		for (int x = 0; x < s->w; x++) {
 			switch (src[x]) {
 			case 1:
-				dst[x] = border;
+				*ptr++ = border;
+				if (_movieScale > 1) {
+					*ptr++ = border;
+					if (_movieScale > 2)
+						*ptr++ = border;
+				}
 				break;
 			case 255:
-				dst[x] = pen;
+				*ptr++ = pen;
+				if (_movieScale > 1) {
+					*ptr++ = pen;
+					if (_movieScale > 2)
+						*ptr++ = pen;
+				}
 				break;
 			default:
+				ptr += _movieScale;
 				break;
 			}
 		}
-		dst += RENDERWIDE;
+
+		if (_movieScale > 1) {
+			memcpy(dst + _movieScale * _movieWidth, dst, _movieScale * s->w * sizeof(OverlayColor));
+			if (_movieScale > 2)
+				memcpy(dst + 2 * _movieScale * _movieWidth, dst, _movieScale * s->w * sizeof(OverlayColor));
+		}
+
+		dst += _movieScale * _movieScale * _movieWidth;
 		src += s->w;
 	}
 }
@@ -81,28 +101,46 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 #endif
 
 void AnimationState::clearScreen() {
+	_frameWidth = _movieWidth;
+	_frameHeight = _movieHeight;
+
 #ifdef BACKEND_8BIT
 	memset(_vm->_screen->getScreen(), 0, _movieWidth * _movieHeight);
 #else
 	OverlayColor black = _sys->RGBToColor(0, 0, 0);
 
-	for (int i = 0; i < _movieWidth * _movieHeight; i++)
+	for (int i = 0; i < _movieScale * _movieWidth * _movieScale * _movieHeight; i++)
 		_overlay[i] = black;
 #endif
 }
 
 void AnimationState::updateScreen() {
+	int x, y;
+
+	x = (_movieWidth - _frameWidth) / 2;
+	y = (_movieHeight - _frameHeight) / 2;
+
 #ifdef BACKEND_8BIT
-	byte *buf = _vm->_screen->getScreen() + ((480 - _movieHeight) / 2) * RENDERWIDE + (640 - _movieWidth) / 2;
+	byte *buf = _vm->_screen->getScreen() + y * RENDERWIDE + x;
 
 	_vm->_system->copyRectToScreen(buf, _movieWidth, (640 - _movieWidth) / 2, (480 - _movieHeight) / 2, _movieWidth, _movieHeight);
 #else
-	_sys->copyRectToOverlay(_overlay, _movieWidth, 0, 0, _movieWidth, _movieHeight);
+	int width = _movieScale * _frameWidth;
+	int height = _movieScale * _frameHeight;
+	int pitch = _movieScale * _movieWidth;
+
+	x *= _movieScale;
+	y *= _movieScale;
+
+	_sys->copyRectToOverlay(_overlay + y * pitch + x, pitch, x, y, width, height);
 #endif
 	_vm->_system->updateScreen();
 }
 
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
+	_frameWidth = width;
+	_frameHeight = height;
+
 #ifdef BACKEND_8BIT
 	_vm->_screen->plotYUV(_lut, width, height, dat);
 #else

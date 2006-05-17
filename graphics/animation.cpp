@@ -34,6 +34,15 @@ namespace Graphics {
 BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height)
 	: _movieWidth(width), _movieHeight(height), _snd(snd), _sys(sys) {
 #ifndef BACKEND_8BIT
+	const int screenW = _sys->getOverlayWidth();
+	const int screenH = _sys->getOverlayHeight();
+
+	_movieScale = MIN(screenW / _movieWidth, screenH / _movieHeight);
+
+	assert (_movieScale >= 1);
+	if (_movieScale > 3)
+		_movieScale = 3;
+
 	_colorTab = NULL;
 	_rgbToPix = NULL;
 	_bitFormat = 0;
@@ -116,7 +125,7 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 	_lutCalcNum = (BITDEPTH + _palettes[_palNum].end + 2) / (_palettes[_palNum].end + 2);
 #else
 	buildLookup();
-	_overlay = (OverlayColor*)calloc(_movieWidth * _movieHeight, sizeof(OverlayColor));
+	_overlay = (OverlayColor*)calloc(_movieScale * _movieWidth * _movieScale * _movieHeight, sizeof(OverlayColor));
 	_sys->showOverlay();
 #endif
 
@@ -422,7 +431,21 @@ void BaseAnimationState::buildLookup() {
 }
 
 void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
-	OverlayColor *ptr = _overlay + (_movieHeight - height) / 2 * _movieWidth + (_movieWidth - width) / 2;
+	switch (_movieScale) {
+	case 1:
+		plotYUV1x(width, height, dat);
+		break;
+	case 2:
+		plotYUV2x(width, height, dat);
+		break;
+	case 3:
+		plotYUV3x(width, height, dat);
+		break;
+	}
+}
+
+void BaseAnimationState::plotYUV1x(int width, int height, byte *const *dat) {
+	OverlayColor *ptr = _overlay + _movieWidth * (_movieHeight - height) / 2 + (_movieWidth - width) / 2;
 
 	byte *lum = dat[0];
 	byte *cr = dat[2];
@@ -440,6 +463,9 @@ void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 	int x, y;
 
 	for (y = 0; y < height; y += 2) {
+		OverlayColor *r1 = row1;
+		OverlayColor *r2 = row2;
+
 		for (x = 0; x < width; x += 2) {
 			register byte L;
 
@@ -450,26 +476,160 @@ void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 			++cb;
 
 			L = *lum++;
-			*row1++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
-			L = *lum++;
-			*row1++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
+			*r1++ = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
 
+			L = *lum++;
+			*r1++ = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			
 			// Now, do second row.
 
 			L = *lum2++;
-			*row2++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
-			L = *lum2++;
-			*row2++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
-		}
+			*r2++ = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
 
-		// These values are at the start of the next line, (due
-		// to the ++'s above), but they need to be at the start
-		// of the line after that.
+			L = *lum2++;
+			*r2++ = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+		}
 
 		lum  += width;
 		lum2 += width;
-		row1 += (2 * _movieWidth - width);
-		row2 += (2 * _movieWidth - width);
+		row1 += 2 * _movieWidth;
+		row2 += 2 * _movieWidth;
+	}
+}
+
+void BaseAnimationState::plotYUV2x(int width, int height, byte *const *dat) {
+	OverlayColor *ptr = _overlay + 2 * _movieWidth * (_movieHeight - height) + _movieWidth - width;
+
+	byte *lum = dat[0];
+	byte *cr = dat[2];
+	byte *cb = dat[1];
+
+	byte *lum2 = lum + width;
+
+	int16 cr_r;
+	int16 crb_g;
+	int16 cb_b;
+
+	OverlayColor *row1 = ptr;
+	OverlayColor *row2 = ptr + 2 * 2 * _movieWidth;
+
+	int x, y;
+
+	for (y = 0; y < height; y += 2) {
+		OverlayColor *r1 = row1;
+		OverlayColor *r2 = row2;
+
+		for (x = 0; x < width; x += 2) {
+			register byte L;
+			register OverlayColor C;
+
+			cr_r  = 0 * 768 + 256 + _colorTab[*cr + 0 * 256];
+			crb_g = 1 * 768 + 256 + _colorTab[*cr + 1 * 256] + _colorTab[*cb + 2 * 256];
+			cb_b  = 2 * 768 + 256 + _colorTab[*cb + 3 * 256];
+			++cr;
+			++cb;
+
+			L = *lum++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r1++ = C;
+			*r1++ = C;
+
+			L = *lum++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r1++ = C;
+			*r1++ = C;
+			
+			// Now, do second row.
+
+			L = *lum2++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r2++ = C;
+			*r2++ = C;
+
+			L = *lum2++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r2++ = C;
+			*r2++ = C;
+		}
+
+		memcpy(row1 + 2 * _movieWidth, row1, 2 * _movieWidth * sizeof(OverlayColor));
+		memcpy(row2 + 2 * _movieWidth, row2, 2 * _movieWidth * sizeof(OverlayColor));
+
+		lum  += width;
+		lum2 += width;
+		row1 += 4 * 2 * _movieWidth;
+		row2 += 4 * 2 * _movieWidth;
+	}
+}
+
+void BaseAnimationState::plotYUV3x(int width, int height, byte *const *dat) {
+	OverlayColor *ptr = _overlay + (3 * (_movieHeight - height) / 2) * 3 * _movieWidth + 3 * (_movieWidth - width ) / 2;
+
+	byte *lum = dat[0];
+	byte *cr = dat[2];
+	byte *cb = dat[1];
+
+	byte *lum2 = lum + width;
+
+	int16 cr_r;
+	int16 crb_g;
+	int16 cb_b;
+
+	OverlayColor *row1 = ptr;
+	OverlayColor *row2 = ptr + 3 * 3 * _movieWidth;
+
+	int x, y;
+
+	for (y = 0; y < height; y += 2) {
+		OverlayColor *r1 = row1;
+		OverlayColor *r2 = row2;
+
+		for (x = 0; x < width; x += 2) {
+			register byte L;
+			register OverlayColor C;
+
+			cr_r  = 0 * 768 + 256 + _colorTab[*cr + 0 * 256];
+			crb_g = 1 * 768 + 256 + _colorTab[*cr + 1 * 256] + _colorTab[*cb + 2 * 256];
+			cb_b  = 2 * 768 + 256 + _colorTab[*cb + 3 * 256];
+			++cr;
+			++cb;
+
+			L = *lum++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r1++ = C;
+			*r1++ = C;
+			*r1++ = C;
+
+			L = *lum++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r1++ = C;
+			*r1++ = C;
+			*r1++ = C;
+			
+			// Now, do second row.
+
+			L = *lum2++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r2++ = C;
+			*r2++ = C;
+			*r2++ = C;
+
+			L = *lum2++;
+			C = _rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b];
+			*r2++ = C;
+			*r2++ = C;
+			*r2++ = C;
+		}
+
+		memcpy(row1 + 3 * _movieWidth, row1, 3 * _movieWidth * sizeof(OverlayColor));
+		memcpy(row1 + 2 * 3 * _movieWidth, row1, 3 * _movieWidth * sizeof(OverlayColor));
+		memcpy(row2 + 3 * _movieWidth, row2, 3 * _movieWidth * sizeof(OverlayColor));
+		memcpy(row2 + 2 * 3 * _movieWidth, row2, 3 * _movieWidth * sizeof(OverlayColor));
+
+		lum  += width;
+		lum2 += width;
+		row1 += 6 * 3 * _movieWidth;
+		row2 += 6 * 3 * _movieWidth;
 	}
 }
 

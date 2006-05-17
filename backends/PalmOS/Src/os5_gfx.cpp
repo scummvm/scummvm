@@ -33,7 +33,7 @@
 
 #include "oscalls.h"
 
-void OSystem_PalmOS5::int_initSize(uint w, uint h, int overlayScale) {
+void OSystem_PalmOS5::int_initSize(uint w, uint h) {
 }
 
 WinHandle OSystem_PalmOS5::alloc_screen(Coord w, Coord h) {

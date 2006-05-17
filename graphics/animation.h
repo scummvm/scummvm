@@ -78,6 +78,10 @@ protected:
 	const int _movieWidth;
 	const int _movieHeight;
 
+#ifndef BACKEND_8BIT
+	int _movieScale;
+#endif
+
 	Audio::Mixer *_snd;
 	OSystem *_sys;
 
@@ -141,6 +145,9 @@ protected:
 	virtual void setPalette(byte *pal) = 0;
 #else
 	void plotYUV(int width, int height, byte *const *dat);
+	void plotYUV1x(int width, int height, byte *const *dat);
+	void plotYUV2x(int width, int height, byte *const *dat);
+	void plotYUV3x(int width, int height, byte *const *dat);
 #endif
 };
 

@@ -40,7 +40,7 @@ public:
 	OSystem_PSP_GU();
 	~OSystem_PSP_GU();
 	void updateScreen();
-	void initSize(uint width, uint height, int overlayScale);
+	void initSize(uint width, uint height);
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);

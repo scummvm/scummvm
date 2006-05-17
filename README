@@ -494,7 +494,6 @@ arguments -- see the next section.
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,
                            hercAmber, amiga)
-  --force-1x-overlay       Make inner GUI 320x200
 
   --alt-intro              Use alternative intro for CD versions of Beneath a
                            Steel Sky and Flight of the Amazon Queen

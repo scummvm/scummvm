@@ -112,7 +112,7 @@ private:
 
 	virtual void int_initBackend();
 	virtual void int_updateScreen();
-	virtual void int_initSize(uint w, uint h, int overlayScale);
+	virtual void int_initSize(uint w, uint h);
 
 	virtual void unload_gfx_mode();
 	virtual void load_gfx_mode();

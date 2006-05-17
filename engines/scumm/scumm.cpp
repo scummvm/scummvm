@@ -951,7 +951,7 @@ int ScummEngine::init() {
 	_system->beginGFXTransaction();
 		bool defaultTo1XScaler = false;
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			_system->initSize(Common::kHercW, Common::kHercH, 1);
+			_system->initSize(Common::kHercW, Common::kHercH);
 			defaultTo1XScaler = true;
 		} else {
 			// FIXME: The way we now handle the force_1x_overlay setting implies
@@ -959,7 +959,7 @@ int ScummEngine::init() {
 			// set to true, it'll get reset to the default value (usually 'false'
 			// except for Symbian) before launching a game.
 			// This may or may not be the desired behavior...
-			_system->initSize(_screenWidth, _screenHeight, (ConfMan.getBool("force_1x_overlay") ? 1 : 2));
+			_system->initSize(_screenWidth, _screenHeight);
 			defaultTo1XScaler = (_screenWidth > 320);
 		}
 		initCommonGFX(defaultTo1XScaler);

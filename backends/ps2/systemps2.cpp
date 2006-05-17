@@ -416,7 +416,7 @@ void OSystem_PS2::loadModules(void) {
 	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ");
 }
 
-void OSystem_PS2::initSize(uint width, uint height, int overscale) {
+void OSystem_PS2::initSize(uint width, uint height) {
 	printf("initializing new size: (%d/%d)...", width, height);
 	_screen->newScreenSize(width, height);
 	_screen->setMouseXy(width / 2, height / 2);

@@ -118,8 +118,7 @@ void OSystem_SDL::endGFXTransaction(void) {
 		setGraphicsMode(_transactionDetails.mode);
 
 	if (_transactionDetails.sizeChanged)
-		initSize(_transactionDetails.w, _transactionDetails.h,
-				 _transactionDetails.overlayScale);
+		initSize(_transactionDetails.w, _transactionDetails.h);
 
 	if (_transactionDetails.arChanged)
 		setAspectRatioCorrection(_transactionDetails.ar);
@@ -211,19 +210,6 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 
-#ifndef DISABLE_SCALERS
-	// Do not let switch to lesser than overlay size resolutions
-	if (_screenWidth * newScaleFactor < _overlayWidth) {
-		if (_scaleFactor == 1) { // Force 2x mode
-			mode = GFX_DOUBLESIZE;
-			newScaleFactor = 2;
-			newScalerProc = Normal2x;
-			_scaleFactor = 2;
-		} else
-			return false;
-	}
-#endif
-
 	_mode = mode;
 	_scalerProc = newScalerProc;
 
@@ -286,35 +272,24 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _mode;
 }
 
-void OSystem_SDL::initSize(uint w, uint h, int overlayScale) {
+void OSystem_SDL::initSize(uint w, uint h) {
 #ifdef DISABLE_SCALERS
 	overlayScale = 1;
 #endif
 
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight &&
-		 (int)overlayScale == _overlayScale &&
 		_transactionMode != kTransactionCommit)
 		return;
 
 	_screenWidth = w;
 	_screenHeight = h;
 
-	if (overlayScale != -1) {
-		_overlayScale = overlayScale;
-		if (w != 320 && w != 256) // 256 is for MM NES
-			_overlayScale = 1;
-
-		_overlayWidth = w * _overlayScale;
-		_overlayHeight = h * _overlayScale;
-	}
-
 	_cksumNum = (_screenWidth * _screenHeight / (8 * 8));
 
 	if (_transactionMode == kTransactionActive) {
 		_transactionDetails.w = w;
 		_transactionDetails.h = h;
-		_transactionDetails.overlayScale = _overlayScale;
 		_transactionDetails.sizeChanged = true;
 
 		_transactionDetails.needUnload = true;
@@ -339,8 +314,14 @@ void OSystem_SDL::loadGFXMode() {
 	_forceFull = true;
 	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
+	_overlayWidth = _screenWidth * _scaleFactor;
+	_overlayHeight = _screenHeight * _scaleFactor;
+
 	if (_screenHeight != 200)
 		_adjustAspectRatio = false;
+
+	if (_adjustAspectRatio)
+		_overlayHeight = real2Aspect(_overlayHeight);
 
 	//
 	// Create the surface that contains the 8 bit game data
@@ -529,7 +510,7 @@ void OSystem_SDL::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
-	int scale1, scale2;
+	int scale1;
 
 #if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
@@ -540,7 +521,7 @@ void OSystem_SDL::internUpdateScreen() {
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
 
-		if (_adjustAspectRatio)
+		if (_adjustAspectRatio && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwscreen, &blackrect, 0);
@@ -589,16 +570,14 @@ void OSystem_SDL::internUpdateScreen() {
 		height = _screenHeight;
 		scalerProc = _scalerProc;
 		scale1 = _scaleFactor;
-		scale2 = 1;
 	} else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
 		width = _overlayWidth;
 		height = _overlayHeight;
-		scalerProc = scalersMagn[_overlayScale - 1][_scaleFactor - 1];
+		scalerProc = Normal1x;
 
-		scale1 = _scaleFactor;
-		scale2 = _overlayScale;
+		scale1 = 1;
 	}
 
 	// Force a full redraw if requested
@@ -647,7 +626,7 @@ void OSystem_SDL::internUpdateScreen() {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
 				register int orig_dst_y = 0;
-				register int rx1 = r->x * scale1 / scale2;
+				register int rx1 = r->x * scale1;
 
 				if (dst_y < height) {
 					dst_h = r->h;
@@ -655,16 +634,10 @@ void OSystem_SDL::internUpdateScreen() {
 						dst_h = height - dst_y;
 
 					orig_dst_y = dst_y;
-					dst_y = dst_y * scale1 / scale2;
+					dst_y = dst_y * scale1;
 
-					if (_adjustAspectRatio)
+					if (_adjustAspectRatio && !_overlayVisible)
 						dst_y = real2Aspect(dst_y);
-
-					if (scale1 == 3 && scale2 == 2 && _overlayVisible) {
-						if (r->y % 2)
-							r->y--;
-						dst_y -= dst_y % 3;
-					}
 
 					assert(scalerProc != NULL);
 					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
@@ -673,12 +646,12 @@ void OSystem_SDL::internUpdateScreen() {
 
 				r->x = rx1;
 				r->y = dst_y;
-				r->w = r->w * scale1 / scale2;
-				r->h = dst_h * scale1 / scale2;
+				r->w = r->w * scale1;
+				r->h = dst_h * scale1;
 
 #ifndef DISABLE_SCALERS
-				if (_adjustAspectRatio && orig_dst_y < height)
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1 / scale2);
+				if (_adjustAspectRatio && orig_dst_y < height && !_overlayVisible)
+					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 #endif
 			}
 			SDL_UnlockSurface(srcSurf);
@@ -943,12 +916,8 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	}
 
 #ifndef DISABLE_SCALERS
-	if (_adjustAspectRatio) {
+	if (_adjustAspectRatio && !_overlayVisible) {
 		makeRectStretchable(x, y, w, h);
-		if (_scaleFactor == 3 && _overlayScale == 2 && _overlayVisible) {
-			if (y % 2)
-				y++;
-		}
 	}
 #endif
 
@@ -1126,8 +1095,8 @@ void OSystem_SDL::showOverlay() {
 
 	// Since resolution could change, put mouse to adjusted position
 	// Fixes bug #1349059
-	x = _mouseCurState.x * _overlayScale;
-	y = _mouseCurState.y * _overlayScale;
+	x = _mouseCurState.x;
+	y = _mouseCurState.y;
 
 	warpMouse(x, y);
 
@@ -1146,8 +1115,8 @@ void OSystem_SDL::hideOverlay() {
 
 	// Since resolution could change, put mouse to adjusted position
 	// Fixes bug #1349059
-	x = _mouseCurState.x / _overlayScale;
-	y = _mouseCurState.y / _overlayScale;
+	x = _mouseCurState.x;
+	y = _mouseCurState.y;
 
 	warpMouse(x, y);
 
@@ -1175,15 +1144,12 @@ void OSystem_SDL::clearOverlay() {
 
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
-	if (_overlayScale == _scaleFactor) {
-		_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2,
-					_tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
-	} else {
-		// Quality is degraded here. It is possible to run one-less scaler here, but is it
-		// really needed? Quality will anyway be degraded because of 1.5x scaler.
-		(scalersMagn[0][_overlayScale - 1])((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2,
-					  _tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
-	}
+	_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch, 
+	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
+
+	if (_adjustAspectRatio)
+		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch, 
+						_overlayWidth, _screenHeight * _scaleFactor, 0, 0, 0);
 	SDL_UnlockSurface(_tmpscreen);
 	SDL_UnlockSurface(_overlayscreen);
 
@@ -1287,14 +1253,13 @@ void OSystem_SDL::setMousePos(int x, int y) {
 }
 
 void OSystem_SDL::warpMouse(int x, int y) {
+	int y1 = y;
+
 	if (_adjustAspectRatio)
-		y = real2Aspect(y);
+		y1 = real2Aspect(y);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (_overlayVisible)
-			SDL_WarpMouse(x * _scaleFactor / _overlayScale, y * _scaleFactor / _overlayScale);
-		else
-			SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
+		SDL_WarpMouse(x * _scaleFactor, y1 * _scaleFactor);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -1485,7 +1450,7 @@ void OSystem_SDL::toggleMouseGrab() {
 
 void OSystem_SDL::undrawMouse() {
 	const int x = _mouseBackup.x;
-	const int y = _adjustAspectRatio ? aspect2Real(_mouseBackup.y) : _mouseBackup.y;
+	const int y = (_adjustAspectRatio && !_overlayVisible) ? aspect2Real(_mouseBackup.y) : _mouseBackup.y;
 
 	// When we switch bigger overlay off mouse jumps. Argh!
 	// This is intended to prevent undrawing offscreen mouse
@@ -1493,9 +1458,8 @@ void OSystem_SDL::undrawMouse() {
 		return;
 	}
 
-	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
+	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
 		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
-	}
 }
 
 void OSystem_SDL::drawMouse() {
@@ -1503,106 +1467,73 @@ void OSystem_SDL::drawMouse() {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
   		return;
 	}
-
+  
 	SDL_Rect src, dst;
-	int scale1, scale2;
+	bool useCursorScaling;
+	int scale;
 	int width, height;
 
 	if (!_overlayVisible) {
-		scale1 = _scaleFactor;
-		scale2 = 1;
+		scale = _scaleFactor;
 		width = _screenWidth;
 		height = _screenHeight;
 	} else {
-		scale1 = _scaleFactor;
-		scale2 = _overlayScale;
+		scale = 1;
 		width = _overlayWidth;
 		height = _overlayHeight;
 	}
 
-	// Note: _mouseCurState is in *virtual* coordinates. That means if initSize
-	// was used to set a 320x200 game screen, then _mouseCurState is bounded
-	// by that; if the overlay is visible, then it is bounded by the overlay
-	// size (typically 640x400).
-	//
-	// _mouseBackup is stored in "virtual" coordinates, too.
-	//
-	// On the other hand, _mouseSurface was scaled to screen coordinates in
-	// OSystem_SDL::blitCursor(), including aspect ratio corection. Its
-	// scaling is determined by _scaleFactor, but *not* by whatever value
-	// _overlayScale has.
-	// Atop of that, it was scaled by _cursorTargetScale.
-	// That means, we have to scale it by "scale2".
-	//
-	// TODO/FIXME: Clean up and fix this code, see also bug #1185275.
+	useCursorScaling = (_scaleFactor > _cursorTargetScale);
 
-	const bool useScaling = (_scaleFactor > _cursorTargetScale);
-
-	dst.x = _mouseCurState.x - _mouseHotspotX * scale2 / _cursorTargetScale;
-	dst.y = _mouseCurState.y - _mouseHotspotY * scale2 / _cursorTargetScale;
+	if (useCursorScaling) {
+		dst.x = _mouseCurState.x - _mouseHotspotX * scale / _cursorTargetScale;
+		dst.y = _mouseCurState.y - _mouseHotspotY * scale / _cursorTargetScale;
+	} else {
+		dst.x = _mouseCurState.x - _mouseHotspotX;
+		dst.y = _mouseCurState.y - _mouseHotspotY;
+	}
 
 	dst.w = _mouseCurState.hW;
 	dst.h = _mouseCurState.hH;
 	src.x = src.y = 0;
 
 	// clip the mouse rect, and adjust the src pointer accordingly
+	int dx, dy;
+  
 	if (dst.x < 0) {
-		const int dx = useScaling ? dst.x * scale1 / scale2 / _cursorTargetScale : dst.x;
+		dx = useCursorScaling ? dst.x * scale / _cursorTargetScale : dst.x;
 		dst.w += dx;
 		src.x -= dx;
 		dst.x = 0;
 	}
 	if (dst.y < 0) {
-		const int dy = useScaling ? dst.y * scale1 / scale2 / _cursorTargetScale : dst.y;
+		dy = useCursorScaling ? dst.y * scale / _cursorTargetScale : dst.y;
 		dst.h += dy;
 		src.y -= dy;
 		dst.y = 0;
 	}
 
   	// Quick check to see if anything has to be drawn at all
-	if (dst.w <= 0 || dst.h <= 0 || dst.x >= width || dst.y >= height)
+	if (dst.w <= 0 || dst.h <= 0)
   		return;
-
+  
 	src.w = dst.w;
 	src.h = dst.h;
-
-	// Patch #1258912 "GUI: SDL mouse dirty rects too big"
-	//
-	// At this point, dst.w and dst.h appear to be the correct values to
-	// assign to src.w and src.h above, but they are NOT the actual
-	// width and height of the mouse in virtual coordinates required for
-	// the dirty rects.  If left uncorrected, the w and h values are 1.5x
-	// too large for 3x scalers when the overlay is visible, and 2x/3x too
-	// large for 2x/3x scalers when the overlay is not visible, resulting
-	// in dirty rects that are from 2.25x to 9x too large depending on the
-	// combination of scales.
-	if (!_overlayVisible) {
-		dst.w = _mouseCurState.w;
-		dst.h = _mouseCurState.h;
-	} else {
-		dst.w = _mouseCurState.w * _overlayScale;
-		dst.h = _mouseCurState.h * _overlayScale;
-	}
-
-	if (_adjustAspectRatio)
+  
+	if (_adjustAspectRatio && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
-
-	// special case for 1o5x scaler to prevent backgound shaking
-	if (scale1 == 3 && scale2 == 2) {
-		if (dst.x % 2)
-			dst.x--;
-		if (dst.y % 2)
-			dst.y--;
-	}
-
-	_mouseBackup = dst;
-
-	dst.x = dst.x * scale1 / scale2;
-	dst.y = (dst.y + _currentShakePos) * scale1 / scale2;
+  
+	_mouseBackup.x = dst.x;
+	_mouseBackup.y = dst.y;
+	_mouseBackup.w = dst.w;
+	_mouseBackup.h = dst.h;
+  
+	dst.x *= scale;
+	dst.y *= scale;
 
 	if (SDL_BlitSurface(_mouseSurface, &src, _hwscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
-
+  
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 

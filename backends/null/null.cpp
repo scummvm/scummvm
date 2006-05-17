@@ -46,7 +46,7 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	virtual int getGraphicsMode() const;
-	virtual void initSize(uint width, uint height, int overlayScale);
+	virtual void initSize(uint width, uint height);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -164,7 +164,7 @@ int OSystem_NULL::getGraphicsMode() const
 	return -1;
 }
 
-void OSystem_NULL::initSize(uint width, uint height, int overlayScale)
+void OSystem_NULL::initSize(uint width, uint height)
 {
 }
 

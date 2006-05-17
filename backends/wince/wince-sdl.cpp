@@ -756,7 +756,7 @@ void OSystem_WINCE3::update_game_settings() {
 	get_sample_rate();
 }
 
-void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
+void OSystem_WINCE3::initSize(uint w, uint h) {
 
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
@@ -765,7 +765,6 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 		case kTransactionActive:
 			_transactionDetails.w = w;
 			_transactionDetails.h = h;
-			_transactionDetails.overlayScale = overlayScale;
 			_transactionDetails.sizeChanged = true;
 			_transactionDetails.needUnload = true;
 			return;
@@ -789,8 +788,7 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 	if (w != _screenWidth || h != _screenHeight)
 		_scalersChanged = false;
 
-	//OSystem_SDL::initSize(w, h, overlayScale);
-	OSystem_SDL::initSize(w, h, 1);
+	OSystem_SDL::initSize(w, h);
 
 	if (_scalersChanged) {
 		unloadGFXMode();

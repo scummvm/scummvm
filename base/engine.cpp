@@ -253,7 +253,7 @@ void Engine::GUIErrorMessage(const Common::String msg) {
 	_system->setWindowCaption("Error");
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
-		_system->initSize(320, 200, 2);
+		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
 	GUI::MessageDialog dialog(msg);

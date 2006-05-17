@@ -76,14 +76,9 @@ void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 	if (!_overlayVisible) {
 		event.mouse.x /= _scaleFactor;
 		event.mouse.y /= _scaleFactor;
-	} else {
-		event.mouse.x = event.mouse.x / _scaleFactor * _overlayScale;
-		event.mouse.y = event.mouse.y / _scaleFactor * _overlayScale;
+		if (_adjustAspectRatio)
+			event.mouse.y = aspect2Real(event.mouse.y);
 	}
-
-	// Optionally perform aspect ratio adjusting
-	if (_adjustAspectRatio)
-		event.mouse.y = aspect2Real(event.mouse.y);
 }
 
 void OSystem_SDL::handleKbdMouse() {

@@ -66,7 +66,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	virtual void initSize(uint w, uint h, int overlayScale); // overloaded by CE backend
+	virtual void initSize(uint w, uint h); // overloaded by CE backend
 
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
@@ -158,10 +158,6 @@ public:
 	virtual int16 getWidth();
 	virtual int16 getOverlayHeight()  { return _overlayHeight; }
 	virtual int16 getOverlayWidth()   { return _overlayWidth; }
-	virtual int screenToOverlayX(int x) { return x * _overlayScale; }
-	virtual int screenToOverlayY(int y) { return y * _overlayScale; }
-	virtual int overlayToScreenX(int x) { return x / _overlayScale; }
-	virtual int overlayToScreenY(int y) { return y / _overlayScale; }
 
 	// Methods that convert RGB to/from colors suitable for the overlay.
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
@@ -214,7 +210,6 @@ protected:
 	// overlay
 	SDL_Surface *_overlayscreen;
 	int _overlayWidth, _overlayHeight;
-	int _overlayScale;
 	bool _overlayVisible;
 
 	// Audio
@@ -241,7 +236,6 @@ protected:
 		bool modeChanged;
 		int w;
 		int h;
-		int overlayScale;
 		bool sizeChanged;
 		bool fs;
 		bool fsChanged;

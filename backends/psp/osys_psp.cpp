@@ -120,18 +120,17 @@ int OSystem_PSP::getGraphicsMode() const
 	return -1;
 }
 
-void OSystem_PSP::initSize(uint width, uint height, int overlayScale) {
+void OSystem_PSP::initSize(uint width, uint height) {
 	_screenWidth = width;
 	_screenHeight = height;
 	_offscreen = (byte *)malloc(width * height);
 
-	if(overlayScale == -1)
-		overlayScale = 1;
-	
-	_overlayScale = overlayScale;
-	_overlayBuffer = (OverlayColor *)malloc(width * overlayScale * height * overlayScale * sizeof(OverlayColor));
+	// TODO: Fixme. This is not neede anymore
+	_overlayScale = 1;
+
+	_overlayBuffer = (OverlayColor *)malloc(width * height * sizeof(OverlayColor));
 	bzero(_offscreen, width * height);
-	bzero(_overlayBuffer, width * overlayScale * height * overlayScale);
+	bzero(_overlayBuffer, width * height);
 
 	_mouseVisible = false;
 }

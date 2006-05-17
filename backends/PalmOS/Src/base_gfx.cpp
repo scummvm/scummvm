@@ -76,7 +76,7 @@ bool OSystem_PalmBase::setGraphicsMode(int mode) {
  *
  */
 
-void OSystem_PalmBase::initSize(uint w, uint h, int overlayScale) {
+void OSystem_PalmBase::initSize(uint w, uint h) {
 	_screenWidth	= w;
 	_screenHeight	= h;
 
@@ -88,7 +88,7 @@ void OSystem_PalmBase::initSize(uint w, uint h, int overlayScale) {
 	load_gfx_mode();
 
 	warpMouse(200, 150);
-	int_initSize(w, h, overlayScale);
+	int_initSize(w, h);
 }
 
 /*

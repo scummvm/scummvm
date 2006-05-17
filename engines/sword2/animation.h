@@ -45,6 +45,9 @@ class AnimationState : public ::Graphics::BaseAnimationState {
 private:
 	Sword2Engine *_vm;
 
+	int _frameWidth;
+	int _frameHeight;
+
 public:
 	AnimationState(Sword2Engine *vm);
 	~AnimationState();

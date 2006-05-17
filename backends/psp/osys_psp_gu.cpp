@@ -132,20 +132,19 @@ OSystem_PSP_GU::~OSystem_PSP_GU()
 	 sceGuTerm();
 }
 
-void OSystem_PSP_GU::initSize(uint width, uint height, int overlayScale) {
+void OSystem_PSP_GU::initSize(uint width, uint height) {
 	PSPDebugTrace("initSize\n");
 	_screenWidth = width;
 	_screenHeight = height;
 //	_offscreen = (byte *)offscreen256;
 	_overlayBuffer = (OverlayColor *)0x44000000 + PSP_FRAME_SIZE;
 
-	if(overlayScale == -1 || width == 640)
-		overlayScale = 1;
-	
-	_overlayScale = overlayScale;
-	_offscreen = (unsigned byte *)_overlayBuffer+_screenWidth*_screenHeight*_overlayScale*_overlayScale*sizeof(OverlayColor);
+	// FIXME: This is not needed anymore
+	_overlayScale = 1;
+
+	_offscreen = (unsigned byte *)_overlayBuffer+_screenWidth*_screenHeight*sizeof(OverlayColor);
 	bzero(_offscreen, width * height);
-	bzero(_overlayBuffer, width * overlayScale * height * overlayScale);
+	bzero(_overlayBuffer, width * height);
 	_kbdClut[0] = 0xffff;
 	_kbdClut[246] = 0x4ccc;
 	_kbdClut[247] = 0x0000;

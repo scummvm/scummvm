@@ -45,7 +45,7 @@ class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(void);
 	virtual ~OSystem_PS2(void);
-	virtual void initSize(uint width, uint height, int overScale = -1);
+	virtual void initSize(uint width, uint height);
 
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
