@@ -180,7 +180,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 				return 0;
 			}
 			
-			int16 curSample = 0;
+			int16 curSample = 0x80;
 			byte code = 0;
 			int8 count = 0;
 			uint16 input = 0;
