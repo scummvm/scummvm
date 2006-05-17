@@ -77,7 +77,6 @@ int KyraEngine_v3::go() {
 		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 		logo->displayFrame(i);
 		_screen->updateScreen();
-		playMenuAudioFile();
 		delayUntil(nextRun);
 	}
 
@@ -86,7 +85,6 @@ int KyraEngine_v3::go() {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			logo->displayFrame(i);
 			_screen->updateScreen();
-			playMenuAudioFile();
 			delayUntil(nextRun);
 		}
 	
@@ -94,7 +92,6 @@ int KyraEngine_v3::go() {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			logo->displayFrame(i);
 			_screen->updateScreen();
-			playMenuAudioFile();
 			delayUntil(nextRun);
 		}
 	}
@@ -105,13 +102,11 @@ int KyraEngine_v3::go() {
 }
 
 void KyraEngine_v3::playMenuAudioFile() {
-	if (!_soundDigital->isPlaying(_musicSoundChannel)) {
-		Common::File *handle = new Common::File();
-		uint32 temp = 0;
-		_res->fileHandle(_menuAudioFile, &temp, *handle);
-		if (handle->isOpen()) {
-			_musicSoundChannel = _soundDigital->playSound(handle, -1);
-		}
+	Common::File *handle = new Common::File();
+	uint32 temp = 0;
+	_res->fileHandle(_menuAudioFile, &temp, *handle);
+	if (handle->isOpen()) {
+		_musicSoundChannel = _soundDigital->playSound(handle, true, -1);
 	}
 }
 }

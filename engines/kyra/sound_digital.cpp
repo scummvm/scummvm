@@ -33,7 +33,7 @@ namespace Kyra {
 // FIXME: sound 'stutters' a bit, maybe a problem while converting int8 samples to int16?
 class AUDStream : public Audio::AudioStream {
 public:
-	AUDStream(Common::File *file);
+	AUDStream(Common::File *file, bool loop = false);
 	~AUDStream();
 	
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -44,6 +44,8 @@ public:
 	int getRate() const { return _rate; }
 private:
 	Common::File *_file;
+	bool _loop;
+	uint32 _loopStart;
 	bool _endOfData;
 	int _rate;
 	uint _processedSize;
@@ -70,13 +72,14 @@ const int8 AUDStream::WSTable4Bit[] = {
 	 0,  1,  2,  3,  4,  5,  6,  8
 };
 
-AUDStream::AUDStream(Common::File *file) : _file(0), _endOfData(true), _rate(0),
+AUDStream::AUDStream(Common::File *file, bool loop) : _file(0), _endOfData(true), _rate(0),
 	_processedSize(0), _totalSize(0), _bytesLeft(0), _outBuffer(0),
 	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
 #if defined(__SYMBIAN32__)
 	// Symbian can't share filehandles between different threads.
-	// So create a new file  and seek that to the other filehandles position
-	_file= new File;
+	// So create a new file and seek that to the other filehandle's
+	// position
+	_file = new File;
 	_file->open(file->name());
 	_file->seek(file->pos());
 #else
@@ -86,9 +89,12 @@ AUDStream::AUDStream(Common::File *file) : _file(0), _endOfData(true), _rate(0),
 	
 	_rate = _file->readUint16LE();
 	_totalSize = _file->readUint32LE();
+	_loop = loop;
 	// TODO?: add checks
 	int flags = _file->readByte();	// flags
 	int type = _file->readByte();	// type
+
+	_loopStart = file->pos();
 	
 	if (type == 1 && !flags) {
 		_endOfData = false;
@@ -134,10 +140,13 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 	// if no bytes of the old chunk are left, read the next one
 	if (_bytesLeft <= 0) {
 		if (_processedSize >= _totalSize) {
-			// TODO: Eventually, we're probably going to need the
-			//       ability to loop the sound. Add this here?
-			_endOfData = true;
-			return 0;
+			if (_loop) {
+				_file->seek(_loopStart);
+				_processedSize = 0;
+			} else {
+				_endOfData = true;
+				return 0;
+			}
 		}
 
 		uint16 size = _file->readUint16LE();
@@ -287,7 +296,7 @@ bool SoundDigital::init() {
 	return true;
 }
 
-int SoundDigital::playSound(Common::File *fileHandle, int channel) {
+int SoundDigital::playSound(Common::File *fileHandle, bool loop, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < SOUND_STREAMS) {
 		stopSound(channel);
@@ -306,7 +315,7 @@ int SoundDigital::playSound(Common::File *fileHandle, int channel) {
 		}
 	}
 	
-	Audio::AudioStream *stream = new AUDStream(fileHandle);
+	Audio::AudioStream *stream = new AUDStream(fileHandle, loop);
 	if (stream->endOfData()) {
 		delete stream;
 		delete fileHandle;

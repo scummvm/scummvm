@@ -221,7 +221,7 @@ public:
 
 	bool init();
 	
-	int playSound(Common::File *fileHandle, int channel = -1);
+	int playSound(Common::File *fileHandle, bool loop = false, int channel = -1);
 	bool isPlaying(int channel);
 	void stopSound(int channel);
 private:
