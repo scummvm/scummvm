@@ -133,7 +133,9 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 	// if no bytes of the old chunk are left, read the next one
 	if (_bytesLeft <= 0) {
-		if (_processedSize > _totalSize) {
+		if (_processedSize >= _totalSize) {
+			// TODO: Eventually, we're probably going to need the
+			//       ability to loop the sound. Add this here?
 			_endOfData = true;
 			return 0;
 		}

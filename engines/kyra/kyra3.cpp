@@ -90,7 +90,7 @@ int KyraEngine_v3::go() {
 			delayUntil(nextRun);
 		}
 	
-		for (int i = 64; i >= 29; --i) {
+		for (int i = 64; i > 29; --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			logo->displayFrame(i);
 			_screen->updateScreen();
