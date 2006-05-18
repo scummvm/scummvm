@@ -57,6 +57,7 @@ protected:
 	Chunk::type _type;
 	uint32 _size;
 	uint32 _curPos;
+	Common::String _name;
 
 	BaseChunk();
 

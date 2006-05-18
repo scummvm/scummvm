@@ -44,7 +44,8 @@ const char *Chunk::ChunkString(Chunk::type t) {
 BaseChunk::BaseChunk() :
 	_type(0),
 	_size(0),
-	_curPos(0) {
+	_curPos(0),
+	_name("") {
 }
 
 bool BaseChunk::eof() const {
@@ -81,7 +82,11 @@ bool BaseChunk::seek(int32 delta, seek_type dir) {
 		_curPos = (uint32)(_size + delta);
 		break;
 	}
+
 	if (_curPos > _size) {
+		if (g_scumm->_insaneRunning) {
+			warning("Looks like you compressed file %s in wrong way. It has FLU index which was not updated", _name.c_str());
+		}
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
 	}
 	return true;
@@ -109,6 +114,7 @@ FileChunk::FileChunk(const Common::String &name, int offset) {
 	_size = _data->readUint32BE();
 	_offset = _data->pos();
 	_curPos = 0;
+	_name = name;
 }
 
 FileChunk::~FileChunk() {
