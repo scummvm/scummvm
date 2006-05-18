@@ -1005,7 +1005,7 @@ public:
 	KyraEngine_v2(OSystem *system);
 	~KyraEngine_v2();
 
-	int setupGameFlags() { return 0; }
+	int setupGameFlags() { _game = GI_KYRA2; return 0; }
 	
 	int go();
 };
