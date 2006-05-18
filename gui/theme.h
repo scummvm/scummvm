@@ -454,6 +454,7 @@ private:
 	void setUpCursor();
 	void createCursor();
 	int _cursorHotspotX, _cursorHotspotY;
+	int _cursorTargetScale;
 #define MAX_CURS_COLORS 255
 	byte *_cursor;
 	bool _needPaletteUpdates;

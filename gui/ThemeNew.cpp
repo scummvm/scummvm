@@ -38,7 +38,7 @@
 #define kShadowTr3 64
 #define kShadowTr4 128
 
-#define THEME_VERSION 10
+#define THEME_VERSION 11
 
 using Graphics::Surface;
 
@@ -248,6 +248,8 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 
 	getExtraValueFromConfig(_configFile, "cursor_hotspot_x", _cursorHotspotX, 0);
 	getExtraValueFromConfig(_configFile, "cursor_hotspot_y", _cursorHotspotY, 0);
+
+	getExtraValueFromConfig(_configFile, "cursor_targetScale", _cursorTargetScale, 1);
 	
 	// inactive dialog shading stuff
 	_dialogShadingCallback = 0;
@@ -300,7 +302,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	
 	_lastUsedBitMask = gBitFormat;
 
-	// creats the cursor image
+	// creates cursor image
 	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
 		createCursor();
 	}
@@ -334,6 +336,7 @@ bool ThemeNew::init() {
 		_initOk = true;
 		clearAll();
 		setupFonts();
+		setUpCursor();
 		resetDrawArea();
 	}
 
@@ -1506,7 +1509,7 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
 
 void ThemeNew::setUpCursor() {
 	_system->setCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
-	_system->setMouseCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY);
+	_system->setMouseCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 	_system->disableCursorPalette(false);
 }
 
