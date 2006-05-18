@@ -133,7 +133,7 @@ public:
 
 	bool init(const char *name, void *audioArg = NULL);
 	bool decodeFrame();
-	void screenChanged();
+	void handleScreenChanged();
 	void updateScreen();
 
 #ifndef BACKEND_8BIT

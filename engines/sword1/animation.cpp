@@ -141,7 +141,7 @@ void MoviePlayer::play(uint32 id) {
 			while (_sys->pollEvent(event)) {
 				switch (event.type) {
 				case OSystem::EVENT_SCREEN_CHANGED:
-					anim->screenChanged();
+					anim->handleScreenChanged();
 					break;
 				case OSystem::EVENT_KEYDOWN:
 					if (event.kbd.keycode == 27) {

@@ -255,7 +255,7 @@ bool BaseAnimationState::checkPaletteSwitch() {
 	return false;
 }
 
-void BaseAnimationState::screenChanged() {
+void BaseAnimationState::handleScreenChanged() {
 #ifndef BACKEND_8BIT
 	const int screenW = _sys->getOverlayWidth();
 	const int screenH = _sys->getOverlayHeight();
