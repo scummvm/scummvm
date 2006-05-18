@@ -242,8 +242,16 @@ void OptionsDialog::close() {
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 
-				if ((int32)_gfxPopUp->getSelectedTag() >= 0)
-					ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
+				if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
+					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+
+					while (gm->name) {
+						if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
+							ConfMan.set("gfx_mode", gm->name, _domain);
+							break;
+						}
+					}
+				}
 
 				if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 					ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
