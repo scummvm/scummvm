@@ -1011,6 +1011,8 @@ public:
 };
 
 // maybe subclass KyraEngine_v2 later
+class WSAMovieV3;
+
 class KyraEngine_v3 : public KyraEngine {
 public:
 	KyraEngine_v3(OSystem *system);
@@ -1036,6 +1038,12 @@ private:
 	
 	int _musicSoundChannel;
 	const char *_menuAudioFile;
+	
+	// gui/menu specific
+private:
+	static const char *_mainMenuStrings[];
+	int handleMainMenu(WSAMovieV3 *logo);
+	void drawMainMenu(const char * const *strings, int unk1);
 };
 
 } // End of namespace Kyra

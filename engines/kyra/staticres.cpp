@@ -791,6 +791,15 @@ const ScreenDim Screen::_screenDimTable[] = {
 
 const int Screen::_screenDimTableCount = ARRAYSIZE(_screenDimTable);
 
+const ScreenDim Screen::_screenDimTableK3[] = {
+	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
+	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
+	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
+	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
+};
+
+const int Screen::_screenDimTableCountK3 = ARRAYSIZE(_screenDimTableK3);
+
 // CD Version *could* use an different opcodeTable
 #define Opcode(x) &KyraEngine::x
 KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
@@ -1195,4 +1204,22 @@ const uint16 KyraEngine::_amuletY[] = { 170, 170, 159, 181 };
 
 const uint16 KyraEngine::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
 const uint16 KyraEngine::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
+
+// kyra 3 static res
+const char *KyraEngine_v3::_mainMenuStrings[] = {
+	"Start a new game",
+	"Introduction",
+	"Load a game",
+	"Exit the game",
+	"Nouvelle Partie",
+	"Introduction",
+	"Charger une partie",
+	"Quitter le jeu",
+	"Neues Spiel starten",
+	"Intro",
+	"Spielstand laden",
+	"Spiel beenden",
+	0
+};
+
 } // End of namespace Kyra

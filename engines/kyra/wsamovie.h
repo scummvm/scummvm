@@ -101,6 +101,12 @@ public:
 	
 	void setX(int x) { _x = x + _xAdd; }
 	void setY(int y) { _y = y + _yAdd; }
+	
+	int xAdd() const { return _xAdd; }
+	int yAdd() const { return _yAdd; }
+	
+	int width() const { return _width; }
+	int height() const { return _height; }
 protected:
 	KyraEngine_v3 *_vm3;
 	
@@ -115,15 +121,16 @@ public:
 	VQAMovie(KyraEngine *vm, OSystem *system);
 	~VQAMovie();
 
+	// Only the first parameter is used.
+	void open(const char *filename, int offscreen, uint8 *palette);
+	void close();
+
 	int frames() { return _opened ? _header.numFrames : -1; }
 
+	// should not be used (maybe don't use Movie as a baseclass then?)
 	void displayFrame(int frameNum);
 
-	// Only the first parameter is used.
-	virtual void open(const char *filename, int offscreen, uint8 *palette);
-	void close();
 	void play();
-
 protected:
 	OSystem *_system;
 

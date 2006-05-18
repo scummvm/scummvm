@@ -35,6 +35,7 @@
 #include "sound/mixer.h"
 #include "kyra/sound.h"
 #include "kyra/wsamovie.h"
+#include "kyra/screen.h"
 
 namespace Kyra {
 
@@ -43,8 +44,7 @@ VQAMovie::VQAMovie(KyraEngine *vm, OSystem *system) : Movie(vm) {
 }
 
 VQAMovie::~VQAMovie() {
-	if (_opened)
-		close();
+	close();
 }
 
 void VQAMovie::initBuffers() {
@@ -613,7 +613,7 @@ void VQAMovie::displayFrame(int frameNum) {
 		_partialCodeBookSize = 0;
 	}
 
-	_system->copyRectToScreen(_frame, _header.width, _x, _y, _header.width, _header.height);
+	_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _header.width, _header.height, _frame);
 }
 
 void VQAMovie::play() {
@@ -712,7 +712,7 @@ void VQAMovie::play() {
 			_system->delayMillis(10);
 		}
 
-		_system->updateScreen();
+		_vm->screen()->updateScreen();
 	}
 
 	// TODO: Wait for the sound to finish?

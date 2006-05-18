@@ -120,6 +120,7 @@ public:
 	void setTextColor(const uint8 *cmap, int a, int b);
 	void loadFont(FontId fontId, uint8 *fontData);
 	FontId setFont(FontId fontId);
+	int getFontHeight() const;
 	int getCharWidth(uint8 c) const;
 	int getTextWidth(const char *str) const;
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
@@ -179,6 +180,10 @@ public:
 	
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+
+	// maybe subclass screen for kyra3
+	static const ScreenDim _screenDimTableK3[];
+	static const int _screenDimTableCountK3;
 private:
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();

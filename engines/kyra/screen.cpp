@@ -608,6 +608,10 @@ Screen::FontId Screen::setFont(FontId fontId) {
 	return prev;
 }
 
+int Screen::getFontHeight() const {
+	return (int)(_fonts[_currentFont].charBoxHeight);
+}
+
 int Screen::getCharWidth(uint8 c) const {
 	debugC(9, kDebugLevelScreen, "Screen::getCharWidth('%c')", c);
 	return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
@@ -744,8 +748,13 @@ void Screen::drawChar(uint8 c, int x, int y) {
 
 void Screen::setScreenDim(int dim) {
 	debugC(9, kDebugLevelScreen, "setScreenDim(%d)", dim);
-	assert(dim < _screenDimTableCount);
-	_curDim = &_screenDimTable[dim];
+	if (_vm->game() != GI_KYRA3) {
+		assert(dim < _screenDimTableCount);
+		_curDim = &_screenDimTable[dim];
+	} else {
+		assert(dim < _screenDimTableCountK3);
+		_curDim = &_screenDimTableK3[dim];
+	}
 	// XXX
 }
 
