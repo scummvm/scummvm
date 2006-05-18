@@ -114,29 +114,6 @@ void AnimationState::clearScreen() {
 #endif
 }
 
-void AnimationState::updateScreen() {
-	int x, y;
-
-	x = (_movieWidth - _frameWidth) / 2;
-	y = (_movieHeight - _frameHeight) / 2;
-
-#ifdef BACKEND_8BIT
-	byte *buf = _vm->_screen->getScreen() + y * RENDERWIDE + x;
-
-	_vm->_system->copyRectToScreen(buf, _movieWidth, (640 - _movieWidth) / 2, (480 - _movieHeight) / 2, _movieWidth, _movieHeight);
-#else
-	int width = _movieScale * _frameWidth;
-	int height = _movieScale * _frameHeight;
-	int pitch = _movieScale * _movieWidth;
-
-	x *= _movieScale;
-	y *= _movieScale;
-
-	_sys->copyRectToOverlay(_overlay + y * pitch + x, pitch, x, y, width, height);
-#endif
-	_vm->_system->updateScreen();
-}
-
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 	_frameWidth = width;
 	_frameHeight = height;
@@ -350,11 +327,9 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		OSystem::Event event;
 		while (_sys->pollEvent(event)) {
 			switch (event.type) {
-#ifndef BACKEND_8BIT
 			case OSystem::EVENT_SCREEN_CHANGED:
-				anim->buildLookup();
+				anim->screenChanged();
 				break;
-#endif
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 27)
 					skipCutscene = true;

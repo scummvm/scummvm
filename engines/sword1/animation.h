@@ -61,13 +61,9 @@ class AnimationState : public Graphics::BaseAnimationState {
 private:
 	Screen *_scr;
 
-	int _frameWidth;
-	int _frameHeight;
-
 public:
 	AnimationState(Screen *scr, Audio::Mixer *snd, OSystem *sys);
 	~AnimationState();
-	void updateScreen();
 	OverlayColor *giveRgbBuffer(void);
 	bool soundFinished();
 

@@ -58,19 +58,6 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #endif
 }
 
-void AnimationState::updateScreen(void) {
-#ifndef BACKEND_8BIT
-	int width = _movieScale * _frameWidth;
-	int height = _movieScale * _frameHeight;
-	int pitch = _movieScale * _movieWidth;
-	int x = _movieScale * ((_movieWidth - _frameWidth) / 2);
-	int y = _movieScale * ((_movieHeight - _frameHeight) / 2);
-
-	_sys->copyRectToOverlay(_overlay + y * pitch + x, pitch, x, y + _movieScale * 40, width, height);
-#endif
-	_sys->updateScreen();
-}
-
 OverlayColor *AnimationState::giveRgbBuffer(void) {
 #ifdef BACKEND_8BIT
 	return NULL;
@@ -153,11 +140,9 @@ void MoviePlayer::play(uint32 id) {
 			OSystem::Event event;
 			while (_sys->pollEvent(event)) {
 				switch (event.type) {
-#ifndef BACKEND_8BIT
 				case OSystem::EVENT_SCREEN_CHANGED:
-					anim->buildLookup();
+					anim->screenChanged();
 					break;
-#endif
 				case OSystem::EVENT_KEYDOWN:
 					if (event.kbd.keycode == 27) {
 						delete anim;

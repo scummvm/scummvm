@@ -78,6 +78,9 @@ protected:
 	const int _movieWidth;
 	const int _movieHeight;
 
+	int _frameWidth;
+	int _frameHeight;
+
 #ifndef BACKEND_8BIT
 	int _movieScale;
 #endif
@@ -130,6 +133,8 @@ public:
 
 	bool init(const char *name, void *audioArg = NULL);
 	bool decodeFrame();
+	void screenChanged();
+	void updateScreen();
 
 #ifndef BACKEND_8BIT
 	void buildLookup();

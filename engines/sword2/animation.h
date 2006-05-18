@@ -45,9 +45,6 @@ class AnimationState : public ::Graphics::BaseAnimationState {
 private:
 	Sword2Engine *_vm;
 
-	int _frameWidth;
-	int _frameHeight;
-
 public:
 	AnimationState(Sword2Engine *vm);
 	~AnimationState();
@@ -57,7 +54,6 @@ public:
 #endif
 
 	void clearScreen();
-	void updateScreen();
 
 private:
 	void drawYUV(int width, int height, byte *const *dat);

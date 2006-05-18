@@ -39,7 +39,7 @@ BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int widt
 
 	_movieScale = MIN(screenW / _movieWidth, screenH / _movieHeight);
 
-	assert (_movieScale >= 1);
+	assert(_movieScale >= 1);
 	if (_movieScale > 3)
 		_movieScale = 3;
 
@@ -125,7 +125,7 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 	_lutCalcNum = (BITDEPTH + _palettes[_palNum].end + 2) / (_palettes[_palNum].end + 2);
 #else
 	buildLookup();
-	_overlay = (OverlayColor*)calloc(_movieScale * _movieWidth * _movieScale * _movieHeight, sizeof(OverlayColor));
+	_overlay = (OverlayColor *)calloc(_movieScale * _movieWidth * _movieScale * _movieHeight, sizeof(OverlayColor));
 	_sys->showOverlay();
 #endif
 
@@ -253,6 +253,34 @@ bool BaseAnimationState::checkPaletteSwitch() {
 #endif
 
 	return false;
+}
+
+void BaseAnimationState::screenChanged() {
+#ifndef BACKEND_8BIT
+	const int screenW = _sys->getOverlayWidth();
+	const int screenH = _sys->getOverlayHeight();
+
+	int newScale = MIN(screenW / _movieWidth, screenH / _movieHeight);
+
+	assert(newScale >= 1);
+	if (newScale > 3)
+		newScale = 3;
+
+	if (newScale != _movieScale) {
+		// HACK: Since frames generally do not cover the entire screen,
+		//       We need to undraw the old frame. This is a very hacky
+		//       way of doing that.
+		OverlayColor *buf = (OverlayColor *)calloc(screenW * screenH, sizeof(OverlayColor));
+		_sys->copyRectToOverlay(buf, screenW, 0, 0, screenW, screenH);
+		free(buf);
+
+		free(_overlay);
+		_movieScale = newScale;
+		_overlay = (OverlayColor *)calloc(_movieScale * _movieWidth * _movieScale * _movieHeight, sizeof(OverlayColor));
+	}
+
+	buildLookup();
+#endif
 }
 
 #ifdef BACKEND_8BIT
@@ -445,7 +473,7 @@ void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 }
 
 void BaseAnimationState::plotYUV1x(int width, int height, byte *const *dat) {
-	OverlayColor *ptr = _overlay + _movieWidth * (_movieHeight - height) / 2 + (_movieWidth - width) / 2;
+	OverlayColor *ptr = _overlay;
 
 	byte *lum = dat[0];
 	byte *cr = dat[2];
@@ -498,7 +526,7 @@ void BaseAnimationState::plotYUV1x(int width, int height, byte *const *dat) {
 }
 
 void BaseAnimationState::plotYUV2x(int width, int height, byte *const *dat) {
-	OverlayColor *ptr = _overlay + 2 * _movieWidth * (_movieHeight - height) + _movieWidth - width;
+	OverlayColor *ptr = _overlay;
 
 	byte *lum = dat[0];
 	byte *cr = dat[2];
@@ -563,7 +591,7 @@ void BaseAnimationState::plotYUV2x(int width, int height, byte *const *dat) {
 }
 
 void BaseAnimationState::plotYUV3x(int width, int height, byte *const *dat) {
-	OverlayColor *ptr = _overlay + (3 * (_movieHeight - height) / 2) * 3 * _movieWidth + 3 * (_movieWidth - width ) / 2;
+	OverlayColor *ptr = _overlay;
 
 	byte *lum = dat[0];
 	byte *cr = dat[2];
@@ -631,6 +659,23 @@ void BaseAnimationState::plotYUV3x(int width, int height, byte *const *dat) {
 		row1 += 6 * 3 * _movieWidth;
 		row2 += 6 * 3 * _movieWidth;
 	}
+}
+
+void BaseAnimationState::updateScreen() {
+#ifndef BACKEND_8BIT
+	int width = _movieScale * _frameWidth;
+	int height = _movieScale * _frameHeight;
+	int pitch = _movieScale * _movieWidth;
+
+	const int screenW = _sys->getOverlayWidth();
+	const int screenH = _sys->getOverlayHeight();
+
+	int x = (screenW - _movieScale * _frameWidth) / 2;
+	int y = (screenH - _movieScale * _frameHeight) / 2;
+
+	_sys->copyRectToOverlay(_overlay, pitch, x, y, width, height);
+#endif
+	_sys->updateScreen();
 }
 
 #endif
