@@ -607,8 +607,6 @@ void KyraEngine::initStaticResource() {
 	const Room *tempRoomList = _staticres->loadRoomTable(kRoomList, _roomTableSize);
 
 	if (_roomTableSize > 0) {
-		printf("%d\n", _roomTableSize);
-		fflush(stdout);
 		_roomTable = new Room[_roomTableSize];
 		assert(_roomTable);
 
