@@ -34,6 +34,9 @@ protected:
 
 	String		_backupString;
 
+	int				_leftPadding;
+	int				_rightPadding;
+
 public:
 	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize);
 	EditTextWidget(GuiObject *boss, String name, const String &text);
@@ -43,6 +46,8 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 
 	virtual bool wantsFocus() { return true; }
+
+	virtual void handleScreenChanged();
 
 protected:
 	void drawWidget(bool hilite);

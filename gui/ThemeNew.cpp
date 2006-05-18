@@ -37,8 +37,9 @@
 #define kShadowTr2 32
 #define kShadowTr3 64
 #define kShadowTr4 128
+#define kShadowTr5 192
 
-#define THEME_VERSION 11
+#define THEME_VERSION 12
 
 using Graphics::Surface;
 
@@ -218,6 +219,11 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	_configFile.getKey("popupwidget_left", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdLeft]);
 	_configFile.getKey("popupwidget_bkgd", "pixmaps", imageHandlesTable[kPopUpWidgetBkgd]);
 
+	_configFile.getKey("edittext_bkgd_corner", "pixmaps", imageHandlesTable[kEditTextBkgdCorner]);
+	_configFile.getKey("edittext_bkgd_top", "pixmaps", imageHandlesTable[kEditTextBkgdTop]);
+	_configFile.getKey("edittext_bkgd_left", "pixmaps", imageHandlesTable[kEditTextBkgdLeft]);
+	_configFile.getKey("edittext_bkgd", "pixmaps", imageHandlesTable[kEditTextBkgd]);
+
 	_configFile.getKey("cursor_image", "pixmaps", imageHandlesTable[kGUICursor]);
 	
 	// load the gradient factors from the config file
@@ -239,6 +245,8 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	getFactorFromConfig(_configFile, "scrollbar_background", _gradientFactors[kScrollbarBkgdFactor]);
 
 	getFactorFromConfig(_configFile, "popupwidget", _gradientFactors[kPopUpWidgetFactor]);
+
+	getFactorFromConfig(_configFile, "edittext", _gradientFactors[kEditTextFactor]);
 	
 	// load values with default values from the config file
 	getExtraValueFromConfig(_configFile, "shadow_left_width", _shadowLeftWidth, 2);
@@ -508,32 +516,55 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 		restoreBackground((hints & THEME_HINT_USE_SHADOW) ? r2 : r);
 		return;
 	}
-	
-	if (background == kWidgetBackgroundBorderSmall) {
-		if ((hints & THEME_HINT_USE_SHADOW)) {
-			r2 = shadowRect(r, kShadowSmall);
-			restoreBackground(r2);
-			// shadow
-			drawShadow(r, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft),
-						surface(kWidgetSmallBkgd), kShadowSmall);
-		}
 
-		drawRectMasked(r, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
-						(state == kStateDisabled) ? -30 : 256, _colors[kWidgetBackgroundSmallStart], _colors[kWidgetBackgroundSmallEnd],
-						_gradientFactors[kWidgetSmallFactor]);
-	} else {
-		if ((hints & THEME_HINT_USE_SHADOW)) {
-			r2 = shadowRect(r, kShadowFull);
-			restoreBackground(r2);
-			// shadow
-			drawShadow(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-						kShadowFull);
-		}
+	kImageHandles corner, top, left, bkgd;
+	kShadowStyles shadow;
+	kColorHandles start, end;
+	kGradientFactors factor;
 
-		drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-						(state == kStateDisabled) ? -30 : 256, _colors[kWidgetBackgroundStart], _colors[kWidgetBackgroundEnd],
-						_gradientFactors[kWidgetFactor]);
+	switch (background) {
+	case kWidgetBackgroundBorderSmall:
+		corner = kWidgetSmallBkgdCorner;
+		top = kWidgetSmallBkgdTop;
+		left = kWidgetSmallBkgdLeft;
+		bkgd = kWidgetSmallBkgd;
+		shadow = kShadowSmall;
+		start = kWidgetBackgroundSmallStart;
+		end = kWidgetBackgroundSmallEnd;
+		factor = kWidgetSmallFactor;
+		break;
+	case kWidgetBackgroundEditText:
+		corner = kEditTextBkgdCorner;
+		top = kEditTextBkgdTop;
+		left = kEditTextBkgdLeft;
+		bkgd = kEditTextBkgd;
+		shadow = kShadowEmboss;
+		start = kEditTextBackgroundStart;
+		end = kEditTextBackgroundEnd;
+		factor = kEditTextFactor;
+		break;
+	default:
+		corner = kWidgetBkgdCorner;
+		top = kWidgetBkgdTop;
+		left = kWidgetBkgdLeft;
+		bkgd = kWidgetBkgd;
+		shadow = kShadowFull;
+		start = kWidgetBackgroundStart;
+		end = kWidgetBackgroundEnd;
+		factor = kWidgetFactor;
+		break;
 	}
+
+	if ((hints & THEME_HINT_USE_SHADOW)) {
+		r2 = shadowRect(r, shadow);
+		restoreBackground(r2);
+		// shadow
+		drawShadow(r, surface(corner), surface(top), surface(left), surface(bkgd), shadow);
+	}
+
+	drawRectMasked(r, surface(corner), surface(top), surface(left), surface(bkgd),
+				   (state == kStateDisabled) ? -30 : 256, _colors[start], _colors[end],
+				   _gradientFactors[factor]);
 
 	addDirtyRect((hints & THEME_HINT_USE_SHADOW) ? r2 : r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
@@ -1047,6 +1078,14 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
 		};
 
+	case kShadowEmboss: {
+		Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right, r.bottom);
+		Common::Rect r4(r.left - _shadowLeftWidth/2+1, r.top - _shadowTopHeight/2+1, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
+
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr5, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr1, skipLastRow);
+		};
+
 	default:
 		break;
 	}
@@ -1307,9 +1346,12 @@ void ThemeNew::setupColors() {
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
 
 	getColorFromConfig(_configFile, "popupwidget_start", _colors[kPopUpWidgetStart]);
-	getColorFromConfig(_configFile, "pupupwidget_end", _colors[kPopUpWidgetEnd]);
+	getColorFromConfig(_configFile, "popupwidget_end", _colors[kPopUpWidgetEnd]);
 	getColorFromConfig(_configFile, "popupwidget_highlight_start", _colors[kPopUpWidgetHighlightStart]);
 	getColorFromConfig(_configFile, "popupwidget_highlight_end", _colors[kPopUpWidgetHighlightEnd]);
+
+	getColorFromConfig(_configFile, "edittext_background_start", _colors[kEditTextBackgroundStart]);
+	getColorFromConfig(_configFile, "edittext_background_end", _colors[kEditTextBackgroundEnd]);
 }
 
 #define FONT_NAME_NORMAL "newgui_normal"

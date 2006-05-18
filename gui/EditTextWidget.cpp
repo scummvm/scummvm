@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "gui/EditTextWidget.h"
 #include "gui/dialog.h"
+#include "gui/eval.h"
 #include "gui/newgui.h"
 
 namespace GUI {
@@ -32,20 +33,31 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	_type = kEditTextWidget;
 
 	setEditString(text);
+
+	handleScreenChanged();
 }
 
 EditTextWidget::EditTextWidget(GuiObject *boss, String name, const String &text)
 	: EditableWidget(boss, name) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
+	_hints |= THEME_HINT_USE_SHADOW;
 
 	setEditString(text);
+
+	handleScreenChanged();
 }
 
 void EditTextWidget::setEditString(const String &str) {
 	EditableWidget::setEditString(str);
 	_backupString = str;
 }
+
+void EditTextWidget::handleScreenChanged() {
+	_leftPadding = g_gui.evaluator()->getVar("EditTextWidget.leftPadding", 0);
+	_rightPadding = g_gui.evaluator()->getVar("EditTextWidget.rightPadding", 0);
+}
+
 
 void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	// First remove caret
@@ -68,15 +80,15 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 
 void EditTextWidget::drawWidget(bool hilite) {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundEditText);
 
 	// Draw the text
 	adjustOffset();
-	g_gui.theme()->drawText(Common::Rect(_x+2,_y+2, _x+getEditRect().width()-2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false, Theme::kFontStyleNormal);
+	g_gui.theme()->drawText(Common::Rect(_x+2 + _leftPadding,_y+2, _x+getEditRect().width()-2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false, Theme::kFontStyleNormal);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {
-	Common::Rect r(2, 1, _w - 2, _h);
+	Common::Rect r(2 + _leftPadding, 1, _w - 2 - _leftPadding, _h);
 
 	return r;
 }

@@ -77,7 +77,8 @@ public:
 		kWidgetBackgroundNo,
 		kWidgetBackgroundPlain,
 		kWidgetBackgroundBorder,
-		kWidgetBackgroundBorderSmall
+		kWidgetBackgroundBorderSmall,
+		kWidgetBackgroundEditText
 	};
 
 	enum kState {
@@ -337,7 +338,8 @@ private:
 		kShadowFull = 0,
 		kShadowSmall = 1,
 		kShadowButton = 2,
-		kShadowSlider = 3
+		kShadowSlider = 3,
+		kShadowEmboss = 4
 	};
 
 	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);
@@ -436,7 +438,12 @@ public:
 		kPopUpWidgetBkgdLeft = 42,
 		kPopUpWidgetBkgd = 43,
 
-		kGUICursor = 44,
+		kEditTextBkgdCorner = 44,
+		kEditTextBkgdTop = 45,
+		kEditTextBkgdLeft = 46,
+		kEditTextBkgd = 47,
+
+		kGUICursor = 48,
 		
 		kImageHandlesMax
 	};
@@ -524,6 +531,9 @@ private:
 		kPopUpWidgetHighlightStart = 42,
 		kPopUpWidgetHighlightEnd = 43,
 		
+		kEditTextBackgroundStart = 44,
+		kEditTextBackgroundEnd = 45,
+
 		kColorHandlesMax
 	};
 	
@@ -548,6 +558,8 @@ private:
 		kScrollbarBkgdFactor = 9,
 
 		kPopUpWidgetFactor = 10,
+		
+		kEditTextFactor = 11,
 		
 		kMaxGradientFactors
 	};
