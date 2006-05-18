@@ -250,6 +250,7 @@ void OptionsDialog::close() {
 							ConfMan.set("gfx_mode", gm->name, _domain);
 							break;
 						}
+						gm++;
 					}
 				}
 
