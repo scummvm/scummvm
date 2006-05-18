@@ -64,6 +64,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	_vm = vm;
 
 	_totalClusters = 0;
+	_resList = NULL;
 	_resConvTable = NULL;
 	_cacheStart = NULL;
 	_cacheEnd = NULL;
