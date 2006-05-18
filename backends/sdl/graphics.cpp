@@ -1367,7 +1367,7 @@ void OSystem_SDL::blitCursor() {
 		hH = hH1 = h * _scaleFactor / _cursorTargetScale;
   	}
 
-	if (_adjustAspectRatio) {
+	if (_adjustAspectRatio && _cursorTargetScale == 1) {
 		hH = real2Aspect(hH - 1) + 1;
 	}
 
@@ -1411,7 +1411,7 @@ void OSystem_SDL::blitCursor() {
 		_mouseCurState.w, _mouseCurState.h);
 
 #ifndef DISABLE_SCALERS
-	if (_adjustAspectRatio)
+	if (_adjustAspectRatio && _cursorTargetScale == 1)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, hW, hH1, 0, 0, 0);
 #endif
 

@@ -336,7 +336,6 @@ bool ThemeNew::init() {
 		_initOk = true;
 		clearAll();
 		setupFonts();
-		setUpCursor();
 		resetDrawArea();
 	}
 
