@@ -154,6 +154,7 @@ class InfoDialog : public ScummDialog {
 protected:
 	ScummEngine		*_vm;
 	String _message;
+	GUI::StaticTextWidget *_text;
 
 public:
 	// arbitrary message

@@ -820,6 +820,9 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 void InfoDialog::setInfoText(const String& message) {
 	_message = message;
 
+	// Width and height are dummy
+	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
+
 	handleScreenChanged();
 }
 
@@ -835,7 +838,7 @@ void InfoDialog::handleScreenChanged() {
 	_x = (screenW - width) / 2;
 	_y = (screenH - height) / 2;
 
-	new StaticTextWidget(this, 4, 4, _w - 8, _h, _message, kTextAlignCenter);
+	_text->setSize(_w - 8, _h);
 }
 
 const Common::String InfoDialog::queryResString(int stringno) {
