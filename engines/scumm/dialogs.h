@@ -107,6 +107,8 @@ public:
 	HelpDialog(const GameSettings &game);
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
+	virtual void handleScreenChanged();
+
 protected:
 	typedef Common::String String;
 
@@ -151,6 +153,7 @@ public:
 class InfoDialog : public ScummDialog {
 protected:
 	ScummEngine		*_vm;
+	String _message;
 
 public:
 	// arbitrary message
@@ -166,6 +169,8 @@ public:
 		setResult(ascii);
 		close();
 	}
+
+	virtual void handleScreenChanged();
 
 protected:
 	void setInfoText (const String& message);

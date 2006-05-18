@@ -712,11 +712,32 @@ enum {
 
 HelpDialog::HelpDialog(const GameSettings &game)
 	: ScummDialog("scummhelp"), _game(game) {
+	_title = new StaticTextWidget(this, "scummhelp_title", "");
+
+	_page = 1;
+
+	_numPages = ScummHelp::numPages(_game.id);
+
+	_prevButton = new GUI::ButtonWidget(this, "scummhelp_prev", "Previous", kPrevCmd, 'P');
+	_nextButton = new GUI::ButtonWidget(this, "scummhelp_next", "Next", kNextCmd, 'N');
+	new GUI::ButtonWidget(this, "scummhelp_close", "Close", kCloseCmd, 'C');
+	_prevButton->clearFlags(WIDGET_ENABLED);
+
+	// Dummy entries
+	for (int i = 0; i < HELP_NUM_LINES; i++) {
+		_key[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", kTextAlignLeft);
+		_dsc[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", kTextAlignLeft);
+	}
+
+}
+
+void HelpDialog::handleScreenChanged() {
+	ScummDialog::handleScreenChanged();
+
 	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
 
 	int lineHeight = g_gui.getFontHeight();
 
-	_title = new StaticTextWidget(this, "scummhelp_title", "");
 	int keyX = g_gui.evaluator()->getVar("scummhelp_key.x");
 	int keyYoff = g_gui.evaluator()->getVar("scummhelp_key.yoffset");
 	int keyW = g_gui.evaluator()->getVar("scummhelp_key.w");
@@ -727,17 +748,11 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	int dscH = g_gui.evaluator()->getVar("scummhelp_dsc.h");
 
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i] = new StaticTextWidget(this, keyX, keyYoff + lineHeight * (i + 2), keyW, keyH, "", kTextAlignLeft);
-		_dsc[i] = new StaticTextWidget(this, dscX, dscYoff + lineHeight * (i + 2), dscW, dscH, "", kTextAlignLeft);
+		_key[i]->setPos(keyX, keyYoff + lineHeight * (i + 2));
+		_key[i]->setSize(keyW, keyH);
+		_dsc[i]->setPos(dscX, dscYoff + lineHeight * (i + 2));
+		_dsc[i]->setSize(dscW, dscH);
 	}
-
-	_page = 1;
-	_numPages = ScummHelp::numPages(game.id);
-
-	_prevButton = new GUI::ButtonWidget(this, "scummhelp_prev", "Previous", kPrevCmd, 'P');
-	_nextButton = new GUI::ButtonWidget(this, "scummhelp_next", "Next", kNextCmd, 'N');
-	new GUI::ButtonWidget(this, "scummhelp_close", "Close", kCloseCmd, 'C');
-	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	displayKeyBindings();
 }
@@ -803,10 +818,16 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 }
 
 void InfoDialog::setInfoText(const String& message) {
+	_message = message;
+
+	handleScreenChanged();
+}
+
+void InfoDialog::handleScreenChanged() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	int width = g_gui.getStringWidth(message) + 16;
+	int width = g_gui.getStringWidth(_message) + 16;
 	int height = g_gui.getFontHeight() + 8;
 
 	_w = width;
@@ -814,7 +835,7 @@ void InfoDialog::setInfoText(const String& message) {
 	_x = (screenW - width) / 2;
 	_y = (screenH - height) / 2;
 
-	new StaticTextWidget(this, 4, 4, _w - 8, _h, message, kTextAlignCenter);
+	new StaticTextWidget(this, 4, 4, _w - 8, _h, _message, kTextAlignCenter);
 }
 
 const Common::String InfoDialog::queryResString(int stringno) {

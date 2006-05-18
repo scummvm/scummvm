@@ -114,8 +114,8 @@ public:
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
 
-//	virtual void setPos(int x, int y);
-//	virtual void setSize(int w, int h);
+	virtual void setPos(int x, int y) { _x = x; _y = y; }
+	virtual void setSize(int w, int h) { _w = w; _h = h; }
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {}
 	virtual void handleMouseUp(int x, int y, int button, int clickCount) {}
