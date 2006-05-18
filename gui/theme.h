@@ -338,8 +338,7 @@ private:
 		kShadowFull = 0,
 		kShadowSmall = 1,
 		kShadowButton = 2,
-		kShadowSlider = 3,
-		kShadowEmboss = 4
+		kShadowEmboss = 3
 	};
 
 	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);

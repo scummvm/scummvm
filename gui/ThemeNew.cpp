@@ -512,11 +512,6 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 
 	Common::Rect r2;
 	
-	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
-		restoreBackground((hints & THEME_HINT_USE_SHADOW) ? r2 : r);
-		return;
-	}
-
 	kImageHandles corner, top, left, bkgd;
 	kShadowStyles shadow;
 	kColorHandles start, end;
@@ -553,6 +548,11 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 		end = kWidgetBackgroundEnd;
 		factor = kWidgetFactor;
 		break;
+	}
+
+	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
+		restoreBackground((hints & THEME_HINT_USE_SHADOW) ? r2 : r);
+		return;
 	}
 
 	if ((hints & THEME_HINT_USE_SHADOW)) {
@@ -644,25 +644,26 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawSlider(const Common::Rect &r, int width, kState state) {
+void ThemeNew::drawSlider(const Common::Rect &rr, int width, kState state) {
 	if (!_initOk)
 		return;
 
-	drawRectMasked(r, surface(kSliderBkgdCorner), surface(kSliderBkgdTop), surface(kSliderBkgdLeft), surface(kSliderBkgd), 256,
-					_colors[kSliderBackgroundStart], _colors[kSliderBackgroundEnd], _gradientFactors[kSliderBackground]);
+	Common::Rect r = rr;
+
+	r.left++;
+	r.right++;
+
+	drawWidgetBackground(r, THEME_HINT_USE_SHADOW, kWidgetBackgroundEditText, kStateEnabled);
 
 	Common::Rect r2 = r;
-	r2.left = r.left + 2;
-	r2.top = r.top + 2;
-	r2.bottom = r.bottom - 2;
+	r2.left = r.left;
+	r2.top = r.top;
+	r2.bottom = r.bottom;
 	r2.right = r2.left + width;
-	if (r2.right > r.right - 2) {
-		r2.right = r.right - 2;
+	if (r2.right > r.right) {
+		r2.right = r.right;
 	}
 	
-	// shadow
-	drawShadow(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd), kShadowSlider);
-
 	if (state == kStateHighlight) {
 		drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
 					256, _colors[kSliderHighStart], _colors[kSliderHighEnd], _gradientFactors[kSliderFactor]);
@@ -1033,6 +1034,10 @@ Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 		return Common::Rect(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
 		break;
 
+	case kShadowEmboss:
+		return Common::Rect(r.left - 1, r.top - 1, r.right + 1, r.bottom + 1);
+		break;
+
 	default:
 		return Common::Rect(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
 		break;
@@ -1070,17 +1075,9 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr4, skipLastRow);
 		} break;
 
-	case kShadowSlider: {
-		Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
-		Common::Rect r4(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
-
-		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr2, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
-		};
-
 	case kShadowEmboss: {
-		Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right, r.bottom);
-		Common::Rect r4(r.left - _shadowLeftWidth/2+1, r.top - _shadowTopHeight/2+1, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
+		Common::Rect r2(r.left - 1, r.top - 1, r.right, r.bottom);
+		Common::Rect r4(r.left + 1, r.top + 1, r.right + 1, r.bottom + 1);
 
 		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr5, skipLastRow);
 		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr1, skipLastRow);
