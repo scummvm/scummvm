@@ -79,7 +79,7 @@ private:
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		Audio::SoundHandle handle;
-		AppendableAudioStream *stream;
+		Audio::AppendableAudioStream *stream;
 		Audio::AudioStream *stream2;
 
 		Track();

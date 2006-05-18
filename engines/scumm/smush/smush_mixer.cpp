@@ -129,7 +129,7 @@ bool SmushMixer::handleFrame() {
 
 				if (_mixer->isReady()) {
 					if (!_channels[i].stream) {
-						_channels[i].stream = makeAppendableAudioStream(rate, flags, 500000);
+						_channels[i].stream = Audio::makeAppendableAudioStream(rate, flags, 500000);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);

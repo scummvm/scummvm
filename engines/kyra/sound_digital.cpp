@@ -30,7 +30,7 @@ namespace Kyra {
 // this code is based on
 
 // TODO: cleanup of whole AUDStream
-// FIXME: sound 'stutters' a bit, maybe a problem while converting int8 samples to int16?
+
 class AUDStream : public Audio::AudioStream {
 public:
 	AUDStream(Common::File *file, bool loop = false);

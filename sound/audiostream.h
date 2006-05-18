@@ -112,6 +112,18 @@ public:
 
 AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 
+/**
+ * An audio stream to which additional data can be appended on-the-fly.
+ * Used by SMUSH, iMuseDigital, and the Kyrandia 3 VQA player.
+ */
+class AppendableAudioStream : public Audio::AudioStream {
+public:
+	virtual void append(const byte *data, uint32 len) = 0;
+	virtual void finish() = 0;
+};
+
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
+
 
 // This used to be an inline template function, but
 // buggy template function handling in MSVC6 forced

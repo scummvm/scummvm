@@ -109,4 +109,19 @@ void KyraEngine_v3::playMenuAudioFile() {
 		_musicSoundChannel = _soundDigital->playSound(handle, true, -1);
 	}
 }
+
+void KyraEngine_v3::playVQA(const char *filename) {
+	VQAMovie vqa(this, _system);
+
+	// TODO: Save the palette
+
+	vqa.open(filename, 0, NULL);
+	if (vqa.opened()) {
+		vqa.play();
+		vqa.close();
+	}
+
+	// TODO: Restore the palette
 }
+
+} // end of namespace Kyra

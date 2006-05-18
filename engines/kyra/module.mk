@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	staticres.o \
 	text.o \
 	timer.o \
+	vqa.o \
 	wsamovie.o
 
 MODULE_DIRS += \

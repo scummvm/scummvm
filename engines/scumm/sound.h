@@ -132,18 +132,6 @@ protected:
 	virtual void processSoundQueues();
 };
 
-/**
- * An audio stream to which additional data can be appended on-the-fly.
- * Used by SMUSH and iMuseDigital.
- */
-class AppendableAudioStream : public Audio::AudioStream {
-public:
-	virtual void append(const byte *data, uint32 len) = 0;
-	virtual void finish() = 0;
-};
-
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
-
 
 } // End of namespace Scumm
 

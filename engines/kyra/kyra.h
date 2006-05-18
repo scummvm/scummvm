@@ -1023,6 +1023,8 @@ public:
 	int setupGameFlags() { _game = GI_KYRA3; return 0; }
 	
 	int go();
+
+	void playVQA(const char *filename);
 private:
 	int init();
 

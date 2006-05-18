@@ -62,7 +62,7 @@ private:
 	int32 _frame;
 
 	Audio::SoundHandle _IACTchannel;
-	AppendableAudioStream *_IACTstream;
+	Audio::AppendableAudioStream *_IACTstream;
 
 	Audio::SoundHandle _compressedFileSoundHandle;
 	bool _compressedFileMode;
