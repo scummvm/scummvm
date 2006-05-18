@@ -133,7 +133,7 @@ int main(void)
 		sceIoDclose(fd);
 	}
 
-	static char *argv[] = { "scummvm", "--force-1x-overlay", NULL };
+	static char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
 	g_system = new OSystem_PSP_GU();

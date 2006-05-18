@@ -116,7 +116,6 @@ static const char HELP_STRING[] =
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
 	"                           hercAmber, amiga)\n"
-	"  --force-1x-overlay       Make inner GUI 320x200\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
@@ -165,12 +164,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
-#if defined(__SYMBIAN32__)
-	ConfMan.registerDefault("force_1x_overlay", true);
-#else
-	ConfMan.registerDefault("force_1x_overlay", false);
-#endif
-
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -474,9 +467,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 				int renderMode = Common::parseRenderMode(option);
 				if (renderMode == Common::kRenderDefault)
 					usage("Unrecognized render mode '%s'", option);
-			END_OPTION
-
-			DO_LONG_OPTION_BOOL("force-1x-overlay")
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")

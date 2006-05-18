@@ -954,11 +954,6 @@ int ScummEngine::init() {
 			_system->initSize(Common::kHercW, Common::kHercH);
 			defaultTo1XScaler = true;
 		} else {
-			// FIXME: The way we now handle the force_1x_overlay setting implies
-			// that if you start scummvm into the launcher with force_1x_overlay
-			// set to true, it'll get reset to the default value (usually 'false'
-			// except for Symbian) before launching a game.
-			// This may or may not be the desired behavior...
 			_system->initSize(_screenWidth, _screenHeight);
 			defaultTo1XScaler = (_screenWidth > 320);
 		}
