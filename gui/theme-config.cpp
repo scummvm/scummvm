@@ -288,6 +288,7 @@ const char *Theme::_defaultConfigINI =
 "scummsaveload=8 8 (w - 2 * 8) (h - 16)\n"
 "set_parent=scummsaveload\n"
 "scummsaveload_title=10 2 (parent.w - 2 * 10 - 180) kLineHeight\n"
+"scummsaveload_title.align=kTextAlignCenter\n"
 "scummsaveload_list=10 18 prev.w (parent.h - 17 - buttonHeight - 8 - self.y)\n"
 "scummsaveload_thumbnail=(parent.w - (kThumbnailWidth + 22)) 18\n"
 "scummsaveload_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n"
