@@ -52,6 +52,7 @@ void EditTextWidget::setEditString(const String &str) {
 }
 
 void EditTextWidget::handleScreenChanged() {
+	EditableWidget::handleScreenChanged();
 	_leftPadding = g_gui.evaluator()->getVar("EditTextWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("EditTextWidget.rightPadding", 0);
 }
