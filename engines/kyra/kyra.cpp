@@ -175,7 +175,8 @@ int KyraEngine::init() {
 	assert(_res);
 	_screen = new Screen(this, _system);
 	assert(_screen);
-	assert(_screen->init());
+	if (!_screen->init())
+		error("_screen->init() failed");
 	_sprites = new Sprites(this, _system);
 	assert(_sprites);
 	_seq = new SeqPlayer(this, _system);
@@ -189,7 +190,8 @@ int KyraEngine::init() {
 
 	_staticres = new StaticResource(this);
 	assert(_staticres);
-	assert(_staticres->init());
+	if (!_staticres->init())
+		error("_staticres->init() failed");
 	
 	initStaticResource();
 	

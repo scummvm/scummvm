@@ -48,7 +48,8 @@ int KyraEngine_v3::init() {
 	
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
-	assert(_soundDigital->init());
+	if (!_soundDigital->init())
+		error("_soundDigital->init() failed");
 	
 	uint32 sz;
 	_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
