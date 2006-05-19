@@ -25,12 +25,19 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      fan translations. It should now work much better on games with unknown MD5.
    - Added subtitle configuration controls to the options dialog.
 
+ Simon
+   - Lots of long-overdue cleanups and re-structuring were made to accomodate
+     for The Feeble Files.
+   - Fixed a rare MIDI bug that would cause a channel to change volume without
+     adjusting it to the master volume.
+
  Broken Sword 1:
    - Added support for the --save-slot option.
 
  Broken Sword 2:
    - Major rewrite of how game resources are accessed in memory. This
      should fix alignment issues reported on some platforms.
+   - Missing data files are handled more gracefully.
 
 0.8.2 (2006-02-08)
  General:
