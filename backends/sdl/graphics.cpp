@@ -858,22 +858,12 @@ bool OSystem_SDL::grabRawScreen(Graphics::Surface *surf) {
 	return true;
 }
 
-void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
+void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
 	if (_forceFull)
 		return;
 
 	if (_numDirtyRects == NUM_DIRTY_RECT) {
 		_forceFull = true;
-		return;
-	}
-
-	SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
-
-	if (mouseRect) {
-		r->x = x;
-		r->y = y;
-		r->w = w;
-		r->h = h;
 		return;
 	}
 
@@ -921,10 +911,14 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	}
 #endif
 
-	r->x = x;
-	r->y = y;
-	r->w = w;
-	r->h = h;
+	if (w > 0 && h > 0) {
+		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
+
+		r->x = x;
+		r->y = y;
+		r->w = w;
+		r->h = h;
+	}
 }
 
 
@@ -1450,7 +1444,7 @@ void OSystem_SDL::toggleMouseGrab() {
 
 void OSystem_SDL::undrawMouse() {
 	const int x = _mouseBackup.x;
-	const int y = (_adjustAspectRatio && !_overlayVisible) ? aspect2Real(_mouseBackup.y) : _mouseBackup.y;
+	const int y = _mouseBackup.y;
 
 	// When we switch bigger overlay off mouse jumps. Argh!
 	// This is intended to prevent undrawing offscreen mouse
@@ -1468,7 +1462,7 @@ void OSystem_SDL::drawMouse() {
   		return;
 	}
   
-	SDL_Rect src, dst;
+	SDL_Rect dst;
 	bool useCursorScaling;
 	int scale;
 	int width, height;
@@ -1483,58 +1477,47 @@ void OSystem_SDL::drawMouse() {
 		height = _overlayHeight;
 	}
 
-	useCursorScaling = (_scaleFactor > _cursorTargetScale);
+	useCursorScaling = (scale >= _cursorTargetScale);
 
 	if (useCursorScaling) {
-		dst.x = _mouseCurState.x - _mouseHotspotX * scale / _cursorTargetScale;
-		dst.y = _mouseCurState.y - _mouseHotspotY * scale / _cursorTargetScale;
+		dst.x = _mouseCurState.x - _mouseHotspotX / _cursorTargetScale;
+		dst.y = _mouseCurState.y - _mouseHotspotY / _cursorTargetScale;
 	} else {
 		dst.x = _mouseCurState.x - _mouseHotspotX;
 		dst.y = _mouseCurState.y - _mouseHotspotY;
 	}
 
-	dst.w = _mouseCurState.hW;
-	dst.h = _mouseCurState.hH;
-	src.x = src.y = 0;
+	dst.w = _mouseCurState.w;
+	dst.h = _mouseCurState.h;
 
-	// clip the mouse rect, and adjust the src pointer accordingly
-	int dx, dy;
-  
-	if (dst.x < 0) {
-		dx = useCursorScaling ? dst.x * scale / _cursorTargetScale : dst.x;
-		dst.w += dx;
-		src.x -= dx;
-		dst.x = 0;
-	}
-	if (dst.y < 0) {
-		dy = useCursorScaling ? dst.y * scale / _cursorTargetScale : dst.y;
-		dst.h += dy;
-		src.y -= dy;
-		dst.y = 0;
-	}
+	// Note that addDirtyRect() will perform any necessary clipping
 
-  	// Quick check to see if anything has to be drawn at all
-	if (dst.w <= 0 || dst.h <= 0)
-  		return;
-  
-	src.w = dst.w;
-	src.h = dst.h;
-  
-	if (_adjustAspectRatio && !_overlayVisible)
-		dst.y = real2Aspect(dst.y);
-  
 	_mouseBackup.x = dst.x;
 	_mouseBackup.y = dst.y;
 	_mouseBackup.w = dst.w;
 	_mouseBackup.h = dst.h;
+
+	addDirtyRect(_mouseBackup.x, _mouseBackup.y, _mouseBackup.w, _mouseBackup.h);
+
+	// We draw the pre-scaled cursor image, so now we need to adjust for
+	// scaling, shake position and aspect ratio correction manually.
+
+	if (!_overlayVisible) {
+		dst.y += _currentShakePos;
+	}
+
+	if (_adjustAspectRatio && !_overlayVisible)
+		dst.y = real2Aspect(dst.y);
   
 	dst.x *= scale;
 	dst.y *= scale;
+	dst.w = _mouseCurState.hW;
+	dst.h = _mouseCurState.hH;
 
-	if (SDL_BlitSurface(_mouseSurface, &src, _hwscreen, &dst) != 0)
+	// Note that SDL_BlitSurface() will perform any clipping necessary
+
+	if (SDL_BlitSurface(_mouseSurface, NULL, _hwscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
-  
-	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
 #pragma mark -
