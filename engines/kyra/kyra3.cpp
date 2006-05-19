@@ -136,8 +136,10 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	_screen->setScreenDim(3);
 	_screen->copyCurPageBlock(_screen->_curDim->sx, _screen->_curDim->sy, _screen->_curDim->w, _screen->_curDim->h, _screen->getPagePtr(3));
 
-	int left = _screen->_curDim->sx << 3; int top = _screen->_curDim->sy;
-	int right = left + (_screen->_curDim->w << 3); int bottom = top + _screen->_curDim->h;
+//	int left = _screen->_curDim->sx << 3;
+//	int top = _screen->_curDim->sy;
+//	int right = left + (_screen->_curDim->w << 3);
+//	int bottom = top + _screen->_curDim->h;
 
 	// XXX
 	// gui_unk1(left, top, right, bottom, 1, 0);
@@ -187,6 +189,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 }
 
 void KyraEngine_v3::drawMainMenu(const char * const *strings, int unk1) {
+#if 0
 	static const uint16 _menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0xFF, 0x00, 0x01, 0x02, 0x03 };
 	
 	int left = _screen->_curDim->sx << 3; int top = _screen->_curDim->sy;
@@ -198,6 +201,7 @@ void KyraEngine_v3::drawMainMenu(const char * const *strings, int unk1) {
 		int curY = top + i * _screen->getFontHeight();
 		// XXX
 	}
+#endif
 }
 
 void KyraEngine_v3::playVQA(const char *filename) {
