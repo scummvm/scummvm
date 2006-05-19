@@ -32,9 +32,8 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
 
-	setEditString(text);
-
 	handleScreenChanged();
+	setEditString(text);
 }
 
 EditTextWidget::EditTextWidget(GuiObject *boss, String name, const String &text)
@@ -43,9 +42,8 @@ EditTextWidget::EditTextWidget(GuiObject *boss, String name, const String &text)
 	_type = kEditTextWidget;
 	_hints |= THEME_HINT_USE_SHADOW;
 
-	setEditString(text);
-
 	handleScreenChanged();
+	setEditString(text);
 }
 
 void EditTextWidget::setEditString(const String &str) {
