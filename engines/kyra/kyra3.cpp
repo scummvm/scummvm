@@ -36,6 +36,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
+	delete _soundDigital;
 }
 
 Movie *KyraEngine_v3::createWSAMovie() {

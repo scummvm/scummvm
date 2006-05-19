@@ -363,11 +363,12 @@ KyraEngine::~KyraEngine() {
 }
 
 KyraEngine_v1::~KyraEngine_v1() {
+	// FIXME: I am leaking badly!
 
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
-
+	// FIXME: I am leaking badly!
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
@@ -399,7 +400,7 @@ int KyraEngine::go() {
 		resetGameFlag(0xEF);
 		mainLoop();
 	}
-	quitGame();
+	quitGame();	// FIXME: You shouldn't quit here, just return to the caller!
 	return 0;
 }
 
@@ -546,6 +547,7 @@ void KyraEngine::mainLoop() {
 }
 
 void KyraEngine::quitGame() {
+	// FIXME: The code of this method should probably be moved to the destructor.
 	debugC(9, kDebugLevelMain, "KyraEngine::quitGame()");
 
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
@@ -560,6 +562,7 @@ void KyraEngine::quitGame() {
 
 	Common::clearAllSpecialDebugLevels();
 
+	// FIXME: Do not use OSystem::quit() unless you have to !
 	_system->quit();
 }
 
