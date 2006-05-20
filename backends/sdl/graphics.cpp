@@ -1487,8 +1487,13 @@ void OSystem_SDL::drawMouse() {
 		dst.y = _mouseCurState.y - _mouseHotspotY;
 	}
 
-	dst.w = _mouseCurState.w;
-	dst.h = _mouseCurState.h;
+	if (_overlayVisible) {
+		dst.w = _mouseCurState.hW;
+		dst.h = _mouseCurState.hH;
+	} else {
+		dst.w = _mouseCurState.w;
+		dst.h = _mouseCurState.h;
+	}
 
 	// Note that addDirtyRect() will perform any necessary clipping
 
