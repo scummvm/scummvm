@@ -181,7 +181,7 @@ OSystem_SDL::OSystem_SDL()
 	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirtyChecksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _mouseHotspotX(0), _mouseHotspotY(0), _cursorTargetScale(1),
-	_cursorHasOwnPalette(false), _cursorPaletteDisabled(true),
+	_cursorPaletteDisabled(true),
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),

@@ -1031,7 +1031,7 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 		_paletteDirtyEnd = start + num;
 
 	// Some games blink cursors with palette
-	if (!_overlayVisible && (!_cursorHasOwnPalette || _cursorPaletteDisabled))
+	if (_cursorPaletteDisabled)
 		blitCursor();
 }
 
@@ -1048,6 +1048,7 @@ void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
+    printf("setCursorPalette\n");
 	assert(colors);
 	const byte *b = colors;
 	uint i;
@@ -1059,7 +1060,6 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 		b += 4;
 	}
 
-	_cursorHasOwnPalette = true;
 	_cursorPaletteDisabled = false;
 
 	blitCursor();
@@ -1333,10 +1333,10 @@ void OSystem_SDL::blitCursor() {
 
 	SDL_Color *palette;
 
-	if (_cursorHasOwnPalette && !_cursorPaletteDisabled)
-		palette = _cursorPalette;
-	else
+	if (_cursorPaletteDisabled)
 		palette = _currentPalette;
+	else
+		palette = _cursorPalette;
 	
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
