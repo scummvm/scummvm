@@ -32,6 +32,7 @@ static bool g_initialized = false;
 
 PaletteManager::PaletteManager() {
 	if (!g_initialized) {
+		g_initialized = true;
 		_cursorPaletteStack.clear();
 	}
 }
