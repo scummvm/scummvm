@@ -273,10 +273,6 @@ int OSystem_SDL::getGraphicsMode() const {
 }
 
 void OSystem_SDL::initSize(uint w, uint h) {
-#ifdef DISABLE_SCALERS
-	overlayScale = 1;
-#endif
-
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight &&
 		_transactionMode != kTransactionCommit)
