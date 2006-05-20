@@ -46,6 +46,14 @@ protected:
 	/** The name of this file, for debugging. */
 	String _name;
 
+private:
+	// Disallow copying File objects. There is not strict reason for this,
+	// except that so far we never had real need for such a feature, and
+	// code that accidentally copied File objects tended to break in strange
+	// ways.
+	File(const File &f);
+	File &operator  =(const File &f);
+
 public:
 	enum AccessMode {
 		kFileReadMode = 1,
@@ -63,6 +71,7 @@ public:
 
 	File();
 	virtual ~File();
+
 
 	void incRef();
 	void decRef();
