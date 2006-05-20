@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "graphics/paletteman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 #include "gui/eval.h"
@@ -154,7 +155,7 @@ void NewGui::runLoop() {
 			 87,  87,  87, 0
 		};
 
-		_system->setCursorPalette(palette, 0, 4);
+		PaletteMan.pushCursorPalette(palette, 0, 4);
 	}
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
@@ -272,6 +273,8 @@ void NewGui::runLoop() {
 	}
 
 	_theme->closeDialog();
+	if (useStandardCurs)
+		PaletteMan.popCursorPalette();
 
 	if (didSaveState) {
 		restoreState();

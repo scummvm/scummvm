@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	ilbm.o \
 	imagedec.o \
 	imageman.o \
+	paletteman.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail.o \

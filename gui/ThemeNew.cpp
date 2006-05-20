@@ -27,6 +27,7 @@
 #include "graphics/imageman.h"
 #include "graphics/imagedec.h"
 #include "graphics/colormasks.h"
+#include "graphics/paletteman.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -383,6 +384,7 @@ void ThemeNew::enable() {
 void ThemeNew::disable() {
 	_system->disableCursorPalette(true);
 	_system->hideOverlay();
+	PaletteMan.popCursorPalette();
 	_enabled = false;
 }
 
@@ -1546,9 +1548,8 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
 #pragma mark -
 
 void ThemeNew::setUpCursor() {
-	_system->setCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+	PaletteMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 	_system->setMouseCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
-	_system->disableCursorPalette(false);
 }
 
 void ThemeNew::createCursor() {
