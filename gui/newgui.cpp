@@ -146,6 +146,17 @@ void NewGui::runLoop() {
 	int i;
 	bool useStandardCurs = !_theme->ownCursor();
 
+	if (useStandardCurs) {
+		const byte palette[] = {
+			255, 255, 255, 0,
+			255, 255, 255, 0,
+			171, 171, 171, 0,
+			 87,  87,  87, 0
+		};
+
+		_system->setCursorPalette(palette, 0, 4);
+	}
+
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		activeDialog->handleTickle();
 
@@ -305,21 +316,17 @@ void NewGui::closeTopDialog() {
 	_needRedraw = true;
 }
 
-//
-// Draw the mouse cursor (animated). This is mostly ripped from the cursor code in gfx.cpp
-// We could plug in a different cursor here if we like to.
-//
+// Draw the mouse cursor (animated). This is pretty much the same as in old
+// SCUMM games, but the code no longer resembles what we have in cursor.cpp
+// very much. We could plug in a different cursor here if we like to.
+
 void NewGui::animateCursor() {
 	int time = _system->getMillis();
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
-		const byte colors[4] = { 15, 15, 7, 8 };
-		const byte color = colors[_cursorAnimateCounter];
-		int i;
-
-		for (i = 0; i < 15; i++) {
+		for (int i = 0; i < 15; i++) {
 			if ((i < 6) || (i > 8)) {
-				_cursor[16 * 7 + i] = color;
-				_cursor[16 * i + 7] = color;
+				_cursor[16 * 7 + i] = _cursorAnimateCounter;
+				_cursor[16 * i + 7] = _cursorAnimateCounter;
 			}
 		}
 
