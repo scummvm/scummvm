@@ -1048,7 +1048,6 @@ void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
-    printf("setCursorPalette\n");
 	assert(colors);
 	const byte *b = colors;
 	uint i;
