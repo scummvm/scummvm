@@ -1062,8 +1062,7 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursorHasOwnPalette = true;
 	_cursorPaletteDisabled = false;
 
-	if (!_overlayVisible)
-		blitCursor();
+	blitCursor();
 }
 
 void OSystem_SDL::setShakePos(int shake_pos) {
@@ -1332,18 +1331,19 @@ void OSystem_SDL::blitCursor() {
 	// Draw from [1,1] since AdvMame2x adds artefact at 0,0
 	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2;
 
+	SDL_Color *palette;
+
+	if (_cursorHasOwnPalette && !_cursorPaletteDisabled)
+		palette = _cursorPalette;
+	else
+		palette = _currentPalette;
+	
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			color = *srcPtr;
 			if (color != _mouseKeyColor) {	// transparent, don't draw
-				if (_cursorHasOwnPalette && !_overlayVisible && !_cursorPaletteDisabled)
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-								   _cursorPalette[color].r, _cursorPalette[color].g,
-															   _cursorPalette[color].b);
-				else
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-								   _currentPalette[color].r, _currentPalette[color].g,
-												   				_currentPalette[color].b);
+				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+					palette[color].r, palette[color].g, palette[color].b);
 			}
 			dstPtr += 2;
 			srcPtr++;
