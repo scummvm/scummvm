@@ -1310,13 +1310,13 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 
 	// we haven't calculated it
 	if (_resOffset == -1) {
-		if (!init(in))
+		if (!init(&in))
 			error("Resource fork is missing in file '%s'", _fileName.c_str());
 		in.close();
 		in.open(_fileName);
 	}
 
-	*buf = getResource(in, "crsr", 1000 + id, &size);
+	*buf = getResource(&in, "crsr", 1000 + id, &size);
 
 	in.close();
 
@@ -1335,14 +1335,14 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 #define MBI_RFLEN 87
 #define MAXNAMELEN 63
 
-bool MacResExtractor::init(Common::File in) {
+bool MacResExtractor::init(Common::File *in) {
 	byte infoHeader[MBI_INFOHDR];
 	int32 data_size, rsrc_size;
 	int32 data_size_pad, rsrc_size_pad;
 	int filelen;
 
-	filelen = in.size();
-	in.read(infoHeader, MBI_INFOHDR);
+	filelen = in->size();
+	in->read(infoHeader, MBI_INFOHDR);
 
 	// Maybe we have MacBinary?
 	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
@@ -1365,12 +1365,12 @@ bool MacResExtractor::init(Common::File in) {
 	if (_resOffset == -1) // MacBinary check is failed
 		_resOffset = 0; // Maybe we have dumped fork?
 
-	in.seek(_resOffset);
+	in->seek(_resOffset);
 
-	_dataOffset = in.readUint32BE() + _resOffset;
-	_mapOffset = in.readUint32BE() + _resOffset;
-	_dataLength = in.readUint32BE();
-	_mapLength = in.readUint32BE();
+	_dataOffset = in->readUint32BE() + _resOffset;
+	_mapOffset = in->readUint32BE() + _resOffset;
+	_dataLength = in->readUint32BE();
+	_mapLength = in->readUint32BE();
 
 	// do sanity check
 	if (_dataOffset >= filelen || _mapOffset >= filelen ||
@@ -1387,8 +1387,8 @@ bool MacResExtractor::init(Common::File in) {
 	return true;
 }
 
-byte *MacResExtractor::getResource(Common::File in, const char *typeID, int16 resID, int *size) {
-	int	i;
+byte *MacResExtractor::getResource(Common::File *in, const char *typeID, int16 resID, int *size) {
+	int i;
 	int typeNum = -1;
 	int resNum = -1;
 	byte *buf;
@@ -1412,37 +1412,37 @@ byte *MacResExtractor::getResource(Common::File in, const char *typeID, int16 re
 	if (resNum == -1)
 		return NULL;
 
-	in.seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
+	in->seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
 
-	len = in.readUint32BE();
+	len = in->readUint32BE();
 	buf = (byte *)malloc(len);
 
-	in.read(buf, len);
+	in->read(buf, len);
 
 	*size = len;
 
 	return buf;
 }
 
-void MacResExtractor::readMap(Common::File in) {
+void MacResExtractor::readMap(Common::File *in) {
 	int	i, j, len;
 
-	in.seek(_mapOffset + 22);
+	in->seek(_mapOffset + 22);
 
-	_resMap.resAttr = in.readUint16BE();
-	_resMap.typeOffset = in.readUint16BE();
-	_resMap.nameOffset = in.readUint16BE();
-	_resMap.numTypes = in.readUint16BE();
+	_resMap.resAttr = in->readUint16BE();
+	_resMap.typeOffset = in->readUint16BE();
+	_resMap.nameOffset = in->readUint16BE();
+	_resMap.numTypes = in->readUint16BE();
 	_resMap.numTypes++;
 
-	in.seek(_mapOffset + _resMap.typeOffset + 2);
+	in->seek(_mapOffset + _resMap.typeOffset + 2);
 	_resTypes = new ResType[_resMap.numTypes];
 
 	for (i = 0; i < _resMap.numTypes; i++) {
-		in.read(_resTypes[i].id, 4);
+		in->read(_resTypes[i].id, 4);
 		_resTypes[i].id[4] = 0;
-		_resTypes[i].items = in.readUint16BE();
-		_resTypes[i].offset = in.readUint16BE();
+		_resTypes[i].items = in->readUint16BE();
+		_resTypes[i].offset = in->readUint16BE();
 		_resTypes[i].items++;
 	}
 
@@ -1450,15 +1450,15 @@ void MacResExtractor::readMap(Common::File in) {
 
 	for (i = 0; i < _resMap.numTypes; i++) {
 		_resLists[i] = new Resource[_resTypes[i].items];
-		in.seek(_resTypes[i].offset + _mapOffset + _resMap.typeOffset);
+		in->seek(_resTypes[i].offset + _mapOffset + _resMap.typeOffset);
 
 		for (j = 0; j < _resTypes[i].items; j++) {
 			ResPtr resPtr = _resLists[i] + j;
 
-			resPtr->id = in.readUint16BE();
-			resPtr->nameOffset = in.readUint16BE();
-			resPtr->dataOffset = in.readUint32BE();
-			in.readUint32BE();
+			resPtr->id = in->readUint16BE();
+			resPtr->nameOffset = in->readUint16BE();
+			resPtr->dataOffset = in->readUint32BE();
+			in->readUint32BE();
 			resPtr->name = 0;
 
 			resPtr->attr = resPtr->dataOffset >> 24;
@@ -1467,12 +1467,12 @@ void MacResExtractor::readMap(Common::File in) {
 
 		for (j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1) {
-				in.seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
+				in->seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
 
-				len = in.readByte();
+				len = in->readByte();
 				_resLists[i][j].name = new byte[len + 1];
 				_resLists[i][j].name[len] = 0;
-				in.read(_resLists[i][j].name, len);
+				in->read(_resLists[i][j].name, len);
 			}
 		}
 	}

@@ -511,9 +511,9 @@ public:
 
 private:
 	int extractResource(int id, byte **buf);
-	bool init(Common::File in);
-	void readMap(Common::File in);
-	byte *getResource(Common::File in, const char *typeID, int16 resID, int *size);
+	bool init(Common::File *in);
+	void readMap(Common::File *in);
+	byte *getResource(Common::File *in, const char *typeID, int16 resID, int *size);
 	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
 			 int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize);
 
