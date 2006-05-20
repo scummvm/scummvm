@@ -249,7 +249,7 @@ public:
 	};
 
 	KyraEngine(OSystem *system);
-	~KyraEngine();
+	virtual ~KyraEngine();
 
 	virtual int setupGameFlags() = 0;
 	
