@@ -1135,9 +1135,11 @@ void OSystem_SDL::clearOverlay() {
 	_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch, 
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
 
+#ifndef DISABLE_SCALERS
 	if (_adjustAspectRatio)
 		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch, 
 						_overlayWidth, _screenHeight * _scaleFactor, 0, 0, 0);
+#endif
 	SDL_UnlockSurface(_tmpscreen);
 	SDL_UnlockSurface(_overlayscreen);
 
