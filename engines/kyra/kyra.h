@@ -1028,7 +1028,7 @@ public:
 	
 	int go();
 
-	void playVQA(const char *filename);
+	void playVQA(const char *name);
 private:
 	int init();
 

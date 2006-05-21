@@ -146,8 +146,8 @@ int KyraEngine_v3::go() {
 	return 0;
 }
 
-void KyraEngine_v3::playVQA(const char *filename) {
-	debugC(9, kDebugLevelMain, "KyraEngine::playVQA('%s')", filename);
+void KyraEngine_v3::playVQA(const char *name) {
+	debugC(9, kDebugLevelMain, "KyraEngine::playVQA('%s')", name);
 	VQAMovie vqa(this, _system);
 
 	uint8 pal[768];
@@ -155,9 +155,13 @@ void KyraEngine_v3::playVQA(const char *filename) {
 	if (_screen->_curPage == 0)
 		_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
 
+	char filename[20];
+	int size = 0;		// TODO: Movie size is 0, 1 or 2.
+
+	snprintf(filename, sizeof(filename), "%s%d.VQA", name, size);
+
 	vqa.open(filename, 0, NULL);
 	if (vqa.opened()) {
-		vqa.setX(0); vqa.setY(0);
 		vqa.setDrawPage(0);
 		vqa.play();
 		vqa.close();

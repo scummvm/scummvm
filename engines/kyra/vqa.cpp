@@ -312,8 +312,8 @@ void VQAMovie::open(const char *filename, int dummy1, uint8 *dummy2) {
 				}
 			}
 
-			setX((320 - _header.width) / 2);
-			setY((200 - _header.height) / 2);
+			setX((_system->getWidth() - _header.width) / 2);
+			setY((_system->getHeight() - _header.height) / 2);
 
 			// HACK: I've only seen 8-bit mono audio in Kyra 3
 
