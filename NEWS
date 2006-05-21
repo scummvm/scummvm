@@ -6,7 +6,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added kyra engine (for the Kyrandia series). Currently only the first
      part of the series is supported.
    - Added support for The Feeble Files
-   - lure engine - TODO, fill in this gap!!!
+   - lure engine - Player can now perform many actions, and a basic 
+     implementation of NPC schedules will shortly be available
    - cine engine - TODO, fill in this gap!!!
    - ...
 
