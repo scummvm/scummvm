@@ -34,13 +34,16 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "kyra/sound.h"
-#include "kyra/wsamovie.h"
 #include "kyra/screen.h"
+#include "kyra/vqa.h"
 
 namespace Kyra {
 
-VQAMovie::VQAMovie(KyraEngine *vm, OSystem *system) : Movie(vm) {
+VQAMovie::VQAMovie(KyraEngine *vm, OSystem *system) {
 	_system = system;
+	_vm = vm;
+	_opened = false;
+	_x = _y = _drawPage = -1;
 }
 
 VQAMovie::~VQAMovie() {
@@ -246,7 +249,7 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 	}
 }
 
-void VQAMovie::open(const char *filename, int dummy1, uint8 *dummy2) {
+void VQAMovie::open(const char *filename) {
 	debugC(9, kDebugLevelMovie, "VQAMovie::open('%s')", filename);
 	close();
 
@@ -312,8 +315,8 @@ void VQAMovie::open(const char *filename, int dummy1, uint8 *dummy2) {
 				}
 			}
 
-			setX((_system->getWidth() - _header.width) / 2);
-			setY((_system->getHeight() - _header.height) / 2);
+			setX((Screen::SCREEN_W - _header.width) / 2);
+			setY((Screen::SCREEN_H - _header.height) / 2);
 
 			// HACK: I've only seen 8-bit mono audio in Kyra 3
 

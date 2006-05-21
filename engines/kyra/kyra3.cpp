@@ -25,6 +25,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/text.h"
+#include "kyra/vqa.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -160,7 +161,7 @@ void KyraEngine_v3::playVQA(const char *name) {
 
 	snprintf(filename, sizeof(filename), "%s%d.VQA", name, size);
 
-	vqa.open(filename, 0, NULL);
+	vqa.open(filename);
 	if (vqa.opened()) {
 		vqa.setDrawPage(0);
 		vqa.play();
