@@ -284,7 +284,9 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 #pragma mark -
 
-SoundDigital::SoundDigital(KyraEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {}
+SoundDigital::SoundDigital(KyraEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {
+	memset(_sounds, 0, sizeof(_sounds));
+}
 
 SoundDigital::~SoundDigital() {
 	for (int i = 0; i < SOUND_STREAMS; ++i) {

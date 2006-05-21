@@ -1024,7 +1024,7 @@ public:
 	
 	SoundDigital *soundDigital() { return _soundDigital; }
 
-	int setupGameFlags() { _game = GI_KYRA3; return 0; }
+	int setupGameFlags();
 	
 	int go();
 
@@ -1033,6 +1033,8 @@ private:
 	int init();
 
 	SoundDigital *_soundDigital;
+	
+	int _lang;
 	
 	// sound specific
 private:
@@ -1045,7 +1047,7 @@ private:
 private:
 	static const char *_mainMenuStrings[];
 	int handleMainMenu(WSAMovieV3 *logo);
-	void drawMainMenu(const char * const *strings, int unk1);
+	void drawMainMenu(const char * const *strings);
 	void drawMainBox(int x, int y, int w, int h, int fill);
 	
 	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);

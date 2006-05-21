@@ -27,6 +27,7 @@
 #include "kyra/text.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Kyra {
 KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
@@ -37,6 +38,35 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 
 KyraEngine_v3::~KyraEngine_v3() {
 	delete _soundDigital;
+}
+
+int KyraEngine_v3::setupGameFlags() {
+	_game = GI_KYRA3;
+	_lang = 0;
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+
+	switch (lang) {
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+		_lang = 0;
+		break;
+
+	case Common::FR_FRA:
+		_lang = 1;
+		break;
+
+	case Common::DE_DEU:
+		_lang = 2;
+		break;
+
+	default:
+		warning("unsupported language, switching back to English");
+		_lang = 0;
+		break;
+	}
+
+	return 0;
 }
 
 Movie *KyraEngine_v3::createWSAMovie() {
@@ -159,7 +189,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	memset(colorMap, 0, sizeof(colorMap));
 	_screen->setTextColorMap(colorMap);
 	
-	const char * const *strings = &_mainMenuStrings[/*_lang*4*/0];
+	const char * const *strings = &_mainMenuStrings[_lang << 2];
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	int charWidthBackUp = _screen->_charWidth;
 	
@@ -177,9 +207,10 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	int curFrame = 29, frameAdd = 1;
 	uint32 nextRun = 0;
 	
-	drawMainMenu(strings, 0xFFFF);
+	drawMainMenu(strings);
+	_system->warpMouse(300, 180);
 	
-	while (command == -1) {
+	while (command == -1 && !_quitFlag) {
 		// yes 2 * _tickLength here not 3 * like in the first draw
 		nextRun = _system->getMillis() + 2 * _tickLength;
 		logo->displayFrame(curFrame);
@@ -204,6 +235,9 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 		}
 	}
 	
+	if (_quitFlag)
+		command = -1;
+	
 	_screen->copyBlockToPage(_screen->_curPage, _screen->_curDim->sx, _screen->_curDim->sy, _screen->_curDim->w, _screen->_curDim->h, _screen->getPagePtr(3));
 	_screen->_charWidth = charWidthBackUp;
 	_screen->setFont(oldFont);
@@ -217,8 +251,8 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	return command;
 }
 
-void KyraEngine_v3::drawMainMenu(const char * const *strings, int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile(%p, %d)", (const void*)strings, unk1);
+void KyraEngine_v3::drawMainMenu(const char * const *strings) {
+	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile(%p)", (const void*)strings);
 	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
 	
 	int top = _screen->_curDim->sy;
