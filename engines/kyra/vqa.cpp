@@ -26,8 +26,7 @@
 // The benchl.vqa movie (or whatever it is) is not supported. It does not have
 // a FINF chunk.
 //
-// The jung2.vqa movie does not work. The offset to the first frame is strange,
-// so we don't find the palette.
+// The jung2.vqa movie does work, but only thanks to a grotesque hack.
 
 #include "common/stdafx.h"
 #include "common/system.h"
@@ -367,6 +366,39 @@ void VQAMovie::open(const char *filename) {
 			for (int i = 0; i < _header.numFrames; i++) {
 				_frameInfo[i] = 2 * _file.readUint32LE();
 			}
+
+			// HACK: This flag is set in jung2.vqa, and its
+			// purpose, if it has one, is unknown. It can't be a
+			// general purpose flag, because in large movies the
+			// frame offsets can be large enough to set this flag.
+			//
+			// At least in my copy of Kyrandia 3, _frameInfo[0] is
+			// 0x81000098, and the desired index is 0x4716. So the
+			// value should be 0x80004716, but I don't want to
+			// hard-code it. Instead, scan the file for the offset
+			// to the first VQFR chunk.
+
+			if (_frameInfo[0] & 0x01000000) {
+				uint32 oldPos = _file.pos();
+
+				while (1) {
+					uint32 scanTag = readTag();
+					uint32 scanSize = _file.readUint32BE();
+
+					if (_file.eof())
+						break;
+
+					if (scanTag == MKID_BE('VQFR')) {
+						_frameInfo[0] = (_file.pos() - 8) | 0x80000000;
+						break;
+					}
+
+					_file.seek(scanSize, SEEK_CUR);
+				}
+
+				_file.seek(oldPos);
+			}
+
 			break;
 
 		default:
