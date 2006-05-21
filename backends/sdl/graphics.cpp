@@ -1454,7 +1454,7 @@ void OSystem_SDL::undrawMouse() {
 }
 
 void OSystem_SDL::drawMouse() {
-	if (!_mouseVisible) {
+	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
   		return;
 	}
