@@ -42,6 +42,8 @@ public:
 	 * @param colors	the new palette data, in interleaved RGB format
 	 * @param start		the first palette entry to be updated
 	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note If num is zero, the cursor palette is disabled.
 	 */
 	void pushCursorPalette(const byte *colors, uint start, uint num);
 
@@ -54,11 +56,14 @@ public:
 
 	/**
 	 * Replace the current cursor palette on the stack. If the stack is
-	 * empty, the palette is pushed instead.
+	 * empty, the palette is pushed instead. It's a slightly more optimized
+	 * way of popping the old palette before pushing the new one.
 	 *
 	 * @param colors	the new palette data, in interleaved RGB format
 	 * @param start		the first palette entry to be updated
 	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note If num is zero, the cursor palette is disabled.
 	 */
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
@@ -67,18 +72,26 @@ private:
 	PaletteManager();
 
 	struct Palette {
-		byte *colors;
-		uint start;
-		uint num;
+		byte *_colors;
+		uint _start;
+		uint _num;
+		uint _size;
 
-		Palette() {
-			colors = NULL;
-			start = 0;
-			num = 0;
+		Palette(const byte *colors, uint start, uint num) {
+			_start = start;
+			_num = num;
+			_size = 4 * num;
+
+			if (num) {
+				_colors = new byte[_size];
+				memcpy(_colors, colors, _size);
+			} else {
+				_colors = NULL;
+			}
 		}
 
 		~Palette() {
-			delete [] colors;
+			delete [] _colors;
 		}
 	};
 

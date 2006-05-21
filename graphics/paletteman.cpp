@@ -41,15 +41,13 @@ void PaletteManager::pushCursorPalette(const byte *colors, uint start, uint num)
 	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return;
 
-	Palette *pal = new Palette;
-
-	pal->colors = new byte[4 * num];
-	pal->start = start;
-	pal->num = num;
-	memcpy(pal->colors, colors, 4 * num);
-
+	Palette *pal = new Palette(colors, start, num);
 	_cursorPaletteStack.push(pal);
-	g_system->setCursorPalette(colors, start, num);
+
+	if (num)
+		g_system->setCursorPalette(colors, start, num);
+	else
+		g_system->disableCursorPalette(true);
 }
 
 void PaletteManager::popCursorPalette() {
@@ -70,7 +68,11 @@ void PaletteManager::popCursorPalette() {
 	}
 
 	pal = _cursorPaletteStack.top();
-	g_system->setCursorPalette(pal->colors, pal->start, pal->num);
+
+	if (pal->_num)
+		g_system->setCursorPalette(pal->_colors, pal->_start, pal->_num);
+	else
+		g_system->disableCursorPalette(true);
 }
 
 void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint num) {
@@ -82,16 +84,24 @@ void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint n
 		return;
 	}
 
-	Palette *pal = _cursorPaletteStack.pop();
+	Palette *pal = _cursorPaletteStack.top();
 
-	delete pal->colors;
-	pal->colors = new byte[4 * num];
-	pal->start = start;
-	pal->num = num;
-	memcpy(pal->colors, colors, 4 * num);
+	if (pal->_size < 4 * num) {
+		delete pal->_colors;
+		pal->_colors = new byte[4 * num];
+	} else {
+		pal->_size = 4 * num;
+	}
 
-	_cursorPaletteStack.push(pal);
-	g_system->setCursorPalette(pal->colors, pal->start, pal->num);
+	pal->_start = start;
+	pal->_num = num;
+
+	if (num) {
+		memcpy(pal->_colors, colors, 4 * num);
+		g_system->setCursorPalette(pal->_colors, pal->_start, pal->_num);
+	} else {
+		g_system->disableCursorPalette(true);
+	}
 }
 
 } // End of namespace Graphics
