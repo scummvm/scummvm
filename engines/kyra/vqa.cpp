@@ -26,7 +26,7 @@
 // The benchl.vqa movie (or whatever it is) is not supported. It does not have
 // a FINF chunk.
 //
-// The junk2.vqa movie does not work. The offset to the first frame is strange,
+// The jung2.vqa movie does not work. The offset to the first frame is strange,
 // so we don't find the palette.
 
 #include "common/stdafx.h"
