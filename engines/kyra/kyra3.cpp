@@ -116,6 +116,27 @@ int KyraEngine_v3::go() {
 	return 0;
 }
 
+void KyraEngine_v3::playVQA(const char *filename) {
+	VQAMovie vqa(this, _system);
+
+	uint8 pal[768];
+	memcpy(pal, _screen->_currentPalette, sizeof(pal));
+	if (_screen->_curPage == 0)
+		_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
+
+	vqa.open(filename, 0, NULL);
+	if (vqa.opened()) {
+		vqa.setX(0); vqa.setY(0);
+		vqa.setDrawPage(0);
+		vqa.play();
+		vqa.close();
+	}
+
+	if (_screen->_curPage == 0)
+		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screen->getPagePtr(3));
+	_screen->setScreenPalette(pal);
+}
+
 void KyraEngine_v3::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
@@ -131,6 +152,10 @@ void KyraEngine_v3::playMenuAudioFile() {
 int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	int command = -1;
 	
+	uint8 colorMap[16];
+	memset(colorMap, 0, sizeof(colorMap));
+	_screen->setTextColorMap(colorMap);
+	
 	const char * const *strings = &_mainMenuStrings[/*_lang*4*/0];
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	int charWidthBackUp = _screen->_charWidth;
@@ -138,14 +163,13 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	_screen->setScreenDim(3);
 	_screen->copyCurPageBlock(_screen->_curDim->sx, _screen->_curDim->sy, _screen->_curDim->w, _screen->_curDim->h, _screen->getPagePtr(3));
 
-//	int left = _screen->_curDim->sx << 3;
-//	int top = _screen->_curDim->sy;
-//	int right = left + (_screen->_curDim->w << 3);
-//	int bottom = top + _screen->_curDim->h;
+	int x = _screen->_curDim->sx << 3;
+	int y = _screen->_curDim->sy;
+	int width = _screen->_curDim->w << 3;
+	int height =  _screen->_curDim->h;
 
-	// XXX
-	// gui_unk1(left, top, right, bottom, 1, 0);
-	// gui_unk1(left + 1, top + 1, right - 1, bottom - 1, 0, 0);
+	drawMainBox(x, y, width, height, 1);
+	drawMainBox(x + 1, y + 1, width - 2, height - 2, 0);
 	
 	int curFrame = 29, frameAdd = 1;
 	uint32 nextRun = 0;
@@ -191,40 +215,59 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 }
 
 void KyraEngine_v3::drawMainMenu(const char * const *strings, int unk1) {
-#if 0
-	static const uint16 _menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0xFF, 0x00, 0x01, 0x02, 0x03 };
+	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
 	
-	int left = _screen->_curDim->sx << 3; int top = _screen->_curDim->sy;
-	int width = _screen->_curDim->w << 3; int height = _screen->_curDim->h;
+	int top = _screen->_curDim->sy;
+	top += menuTable[1];
 	
-	top += _menuTable[1];
-	
-	for (int i = 0; i < _menuTable[3]; ++i) {
+	for (int i = 0; i < menuTable[3]; ++i) {
 		int curY = top + i * _screen->getFontHeight();
-		// XXX
+		gui_printString(strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, menuTable[5], 0, 5);
 	}
-#endif
 }
 
-void KyraEngine_v3::playVQA(const char *filename) {
-	VQAMovie vqa(this, _system);
+void KyraEngine_v3::drawMainBox(int x, int y, int w, int h, int fill) {
+	static const uint8 colorTable[] = { 0x16, 0x19, 0x1A, 0x16 };
+	--w; --h;
 
-	uint8 pal[768];
-	memcpy(pal, _screen->_currentPalette, sizeof(pal));
-	if (_screen->_curPage == 0)
-		_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
-
-	vqa.open(filename, 0, NULL);
-	if (vqa.opened()) {
-		vqa.setX(0); vqa.setY(0);
-		vqa.setDrawPage(0);
-		vqa.play();
-		vqa.close();
+	if (fill) {
+		_screen->fillRect(x, y, x+w, y+h, colorTable[0]);
 	}
+	
+	_screen->drawClippedLine(x, y+h, x+w, y+h, colorTable[1]);
+	_screen->drawClippedLine(x+w, y, x+w, y+h, colorTable[1]);
+	_screen->drawClippedLine(x, y, x+w, y, colorTable[2]);
+	_screen->drawClippedLine(x, y, x, y+h, colorTable[2]);
+	
+	_screen->drawPixel(x, y+h, colorTable[3]);
+	_screen->drawPixel(x+w, y, colorTable[3]);
+}
 
-	if (_screen->_curPage == 0)
-		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screen->getPagePtr(3));
-	_screen->setScreenPalette(pal);
+void KyraEngine_v3::gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...) {
+	if (!string)
+		return;
+	
+	// XXX
+	
+	if (flags & 1) {
+		x -= _screen->getTextWidth(string) >> 1;
+	}
+	
+	if (flags & 2) {
+		x -= _screen->getTextWidth(string);
+	}
+	
+	if (flags & 4) {
+		_screen->printText(string, x - 1, y, 240, col2);
+		_screen->printText(string, x, y + 1, 240, col2);
+	}
+	
+	if (flags & 8) {
+		_screen->printText(string, x - 1, y, 227, col2);
+		_screen->printText(string, x, y + 1, 227, col2);
+	}
+	
+	_screen->printText(string, x, y, col1, col2);
 }
 
 } // end of namespace Kyra

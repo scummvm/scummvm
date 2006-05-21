@@ -47,7 +47,7 @@ struct ScreenDim {
 struct Font {
 	uint8 *fontData;
 	uint8 *charWidthTable;
-	uint16 charBoxHeight;
+	uint16 charSizeOffset;
 	uint16 charBitmapOffset;
 	uint16 charWidthTableOffset;
 	uint16 charHeightTableOffset;
@@ -115,12 +115,14 @@ public:
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
 	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
+	void drawPixel(int x, int y, int color, int pageNum = -1);
 	void setAnimBlockPtr(int size);
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);
 	void loadFont(FontId fontId, uint8 *fontData);
 	FontId setFont(FontId fontId);
 	int getFontHeight() const;
+	int getFontWidth() const;
 	int getCharWidth(uint8 c) const;
 	int getTextWidth(const char *str) const;
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
