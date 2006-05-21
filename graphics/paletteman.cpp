@@ -49,7 +49,6 @@ void PaletteManager::pushCursorPalette(const byte *colors, uint start, uint num)
 	memcpy(pal->colors, colors, 4 * num);
 
 	_cursorPaletteStack.push(pal);
-
 	g_system->setCursorPalette(colors, start, num);
 }
 
@@ -89,6 +88,10 @@ void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint n
 	pal->colors = new byte[4 * num];
 	pal->start = start;
 	pal->num = num;
+	memcpy(pal->colors, colors, 4 * num);
+
+	_cursorPaletteStack.push(pal);
+	g_system->setCursorPalette(pal->colors, pal->start, pal->num);
 }
 
 } // End of namespace Graphics
