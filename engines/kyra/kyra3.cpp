@@ -117,6 +117,7 @@ int KyraEngine_v3::go() {
 }
 
 void KyraEngine_v3::playVQA(const char *filename) {
+	debugC(9, kDebugLevelMain, "KyraEngine::playVQA('%s')", filename);
 	VQAMovie vqa(this, _system);
 
 	uint8 pal[768];
@@ -138,6 +139,7 @@ void KyraEngine_v3::playVQA(const char *filename) {
 }
 
 void KyraEngine_v3::playMenuAudioFile() {
+	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile()");
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
@@ -150,6 +152,7 @@ void KyraEngine_v3::playMenuAudioFile() {
 }
 
 int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
+	debugC(9, kDebugLevelMain, "KyraEngine::handleMainMenu(%p)", (const void*)logo);
 	int command = -1;
 	
 	uint8 colorMap[16];
@@ -215,6 +218,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 }
 
 void KyraEngine_v3::drawMainMenu(const char * const *strings, int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile(%p, %d)", (const void*)strings, unk1);
 	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
 	
 	int top = _screen->_curDim->sy;
@@ -227,6 +231,7 @@ void KyraEngine_v3::drawMainMenu(const char * const *strings, int unk1) {
 }
 
 void KyraEngine_v3::drawMainBox(int x, int y, int w, int h, int fill) {
+	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile(%d, %d, %d, %d, %d)", x, y, w, h, fill);
 	static const uint8 colorTable[] = { 0x16, 0x19, 0x1A, 0x16 };
 	--w; --h;
 
@@ -243,11 +248,16 @@ void KyraEngine_v3::drawMainBox(int x, int y, int w, int h, int fill) {
 	_screen->drawPixel(x+w, y, colorTable[3]);
 }
 
-void KyraEngine_v3::gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...) {
-	if (!string)
+void KyraEngine_v3::gui_printString(const char *format, int x, int y, int col1, int col2, int flags, ...) {
+	debugC(9, kDebugLevelMain, "KyraEngine::gui_printString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
+	if (!format)
 		return;
 	
-	// XXX
+	char string[512];
+	va_list vaList;
+	va_start(vaList, flags);
+	vsprintf(string, format, vaList);
+	va_end(vaList);
 	
 	if (flags & 1) {
 		x -= _screen->getTextWidth(string) >> 1;
