@@ -108,7 +108,6 @@ protected:
 	uint32 _numVectorPointers;
 	uint16 *_vectorPointers;
 
-	byte _palette[3 * 256];
 	byte *_frame;
 
 	Audio::AppendableAudioStream *_stream;

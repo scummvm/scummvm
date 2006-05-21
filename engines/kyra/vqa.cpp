@@ -463,7 +463,6 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 		byte *inbuf, *outbuf;
 		uint32 insize, outsize;
-		byte *pal;
 		uint32 end;
 
 		switch (tag) {
@@ -532,32 +531,13 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 				case MKID_BE('CPL0'):	// Palette
 					assert(size <= 3 * 256);
-
-					inbuf = (byte *)allocBuffer(0, size);
-					pal = _palette;
-					_file.read(inbuf, size);
-
-					for (i = 0; i < size / 3; i++) {
-						*pal++ = *inbuf++;
-						*pal++ = *inbuf++;
-						*pal++ = *inbuf++;
-					}
-
+					_file.read(_vm->screen()->_currentPalette, size);
 					break;
 
 				case MKID_BE('CPLZ'):	// Palette
 					inbuf = (byte *)allocBuffer(0, size);
-					outbuf = (byte *)allocBuffer(1, 3 * 256);
-					pal = _palette;
 					_file.read(inbuf, size);
-					size = decodeFormat80(inbuf, outbuf);
-
-					for (i = 0; i < size / 3; i++) {
-						*pal++ = *outbuf++;
-						*pal++ = *outbuf++;
-						*pal++ = *outbuf++;
-					}
-
+					size = decodeFormat80(inbuf, _vm->screen()->_currentPalette);
 					break;
 
 				case MKID_BE('VPT0'):	// Frame data
@@ -600,7 +580,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 	// The frame has been decoded
 
 	if (_frameInfo[frameNum] & 0x80000000) {
-		_vm->screen()->setScreenPalette(_palette);
+		_vm->screen()->setScreenPalette(_vm->screen()->_currentPalette);
 	}
 
 	int blockPitch = _header.width / _header.blockW;
