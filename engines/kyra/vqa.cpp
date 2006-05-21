@@ -511,10 +511,9 @@ void VQAMovie::displayFrame(int frameNum) {
 					_file.read(inbuf, size);
 
 					for (i = 0; i < size / 3; i++) {
-						*pal++ = 4 * (0x3F & *inbuf++);
-						*pal++ = 4 * (0x3F & *inbuf++);
-						*pal++ = 4 * (0x3F & *inbuf++);
-						*pal++ = 0;
+						*pal++ = *inbuf++;
+						*pal++ = *inbuf++;
+						*pal++ = *inbuf++;
 					}
 
 					break;
@@ -527,10 +526,9 @@ void VQAMovie::displayFrame(int frameNum) {
 					size = decodeFormat80(inbuf, outbuf);
 
 					for (i = 0; i < size / 3; i++) {
-						*pal++ = 4 * (0x3F & *outbuf++);
-						*pal++ = 4 * (0x3F & *outbuf++);
-						*pal++ = 4 * (0x3F & *outbuf++);
-						*pal++ = 0;
+						*pal++ = *outbuf++;
+						*pal++ = *outbuf++;
+						*pal++ = *outbuf++;
 					}
 
 					break;
@@ -575,7 +573,7 @@ void VQAMovie::displayFrame(int frameNum) {
 	// The frame has been decoded
 
 	if (_frameInfo[frameNum] & 0x80000000) {
-		_system->setPalette(_palette, 0, 256);
+		_vm->screen()->setScreenPalette(_palette);
 	}
 
 	int blockPitch = _header.width / _header.blockW;

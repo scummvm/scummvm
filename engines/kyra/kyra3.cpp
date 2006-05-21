@@ -163,9 +163,11 @@ void KyraEngine_v3::playVQA(const char *name) {
 
 	vqa.open(filename);
 	if (vqa.opened()) {
+		_screen->hideMouse();
 		vqa.setDrawPage(0);
 		vqa.play();
 		vqa.close();
+		_screen->showMouse();
 	}
 
 	if (_screen->_curPage == 0)
