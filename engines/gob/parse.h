@@ -48,6 +48,8 @@ protected:
 
 	int32 encodePtr(char *ptr, int type);
 	char *decodePtr(int32 n);
+
+	void printExpr_internal(char stopToken);
 };
 
 class Parse_v1 : public Parse {
