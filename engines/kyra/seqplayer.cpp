@@ -595,7 +595,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	memset(_seqMovies, 0, sizeof(_seqMovies));
 
 	_screen->_curPage = 0;
-	while (!_seqQuitFlag) {
+	while (!_seqQuitFlag && !_vm->quit()) {
 		if (skipSeq && _vm->seq_skipSequence()) {
 			while (1) {
 				uint8 code = *_seqData;

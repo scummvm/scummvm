@@ -157,6 +157,9 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, Kyra
 }
 
 void ScriptHelper::unloadScript(ScriptData *data) {
+	if (!data)
+		return;
+
 	if (data->mustBeFreed) {
 		delete [] data->text;
 		delete [] data->ordr;
@@ -188,7 +191,7 @@ bool ScriptHelper::startScript(ScriptState *script, int function) {
 }
 
 bool ScriptHelper::validScript(ScriptState *script) {
-	if (!script->ip || !script->dataPtr)
+	if (!script->ip || !script->dataPtr || _vm->quit())
 		return false;
 	return true;
 }

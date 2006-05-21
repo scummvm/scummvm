@@ -271,6 +271,8 @@ public:
 	Character *currentCharacter() { return _currentCharacter; }
 	Character *characterList() { return _characterList; }
 	uint16 brandonStatus() { return _brandonStatusBit; }
+	
+	bool quit() const { return _quitFlag; }
 
 	int _paletteChanged;
 	Common::RandomSource _rnd;

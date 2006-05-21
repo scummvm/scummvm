@@ -703,7 +703,7 @@ void VQAMovie::play() {
 					break;
 				case OSystem::EVENT_QUIT:
 					_vm->quitGame();
-					break;
+					return;
 				default:
 					break;
 				}

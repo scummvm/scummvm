@@ -1131,6 +1131,7 @@ void KyraEngine::seq_playCredits() {
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
+				finished = true;
 				break;
 			default:
 				break;

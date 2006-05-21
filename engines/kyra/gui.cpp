@@ -529,7 +529,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 		processAllMenuButtons();
 	}
 
-	while (_displayMenu) {
+	while (_displayMenu && !_quitFlag) {
 		gui_processHighlights(_menu[_toplevelMenu]);
 		processButtonList(_menuButtonList);
 		gui_getInput();
@@ -830,7 +830,7 @@ int KyraEngine::gui_saveGameMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu) {
+	while (_displaySubMenu && !_quitFlag) {
 		gui_getInput();
 		gui_processHighlights(_menu[2]);
 		processButtonList(_menuButtonList);
@@ -874,7 +874,7 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu) {
+	while (_displaySubMenu && !_quitFlag) {
 		gui_getInput();
 		gui_processHighlights(_menu[2]);
 		processButtonList(_menuButtonList);
@@ -958,7 +958,7 @@ int KyraEngine::gui_saveGame(Button *button) {
 	}
 	gui_redrawTextfield();
 
-	while (_displaySubMenu) {
+	while (_displaySubMenu && !_quitFlag) {
 		gui_getInput();
 		gui_updateSavegameString();
 		gui_processHighlights(_menu[3]);
@@ -1032,7 +1032,7 @@ bool KyraEngine::gui_quitConfirm(const char *str) {
 	_displaySubMenu = true;
 	_cancelSubMenu = true;
 
-	while (_displaySubMenu) {
+	while (_displaySubMenu && !_quitFlag) {
 		gui_getInput();
 		gui_processHighlights(_menu[1]);
 		processButtonList(_menuButtonList);
@@ -1096,7 +1096,7 @@ int KyraEngine::gui_gameControlsMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu) {
+	while (_displaySubMenu && !_quitFlag) {
 		gui_getInput();
 		gui_processHighlights(_menu[5]);
 		processButtonList(_menuButtonList);

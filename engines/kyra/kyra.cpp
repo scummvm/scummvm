@@ -92,6 +92,11 @@ KyraEngine::KyraEngine(OSystem *system)
 	_characterList = 0;
 	_movFacingTable = 0;
 	memset(_shapes, 0, sizeof(_shapes));
+	memset(_movieObjects, 0, sizeof(_movieObjects));
+	_finalA = _finalB = _finalC = 0;
+	_endSequenceBackUpRect = 0;
+	memset(_panPagesTable, 0, sizeof(_panPagesTable));
+	_npcScriptData = _scriptClickData = 0;
 	_scrollUpButton.process0PtrShape = _scrollUpButton.process1PtrShape = _scrollUpButton.process2PtrShape = 0;
 	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
@@ -99,11 +104,11 @@ KyraEngine::KyraEngine(OSystem *system)
 }
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system)
-	:KyraEngine(system) {
+	: KyraEngine(system) {
 }
 
 KyraEngine_v2::KyraEngine_v2(OSystem *system)
-	:KyraEngine(system) {
+	: KyraEngine(system) {
 }
 
 int KyraEngine::init() {
@@ -320,6 +325,21 @@ int KyraEngine::init() {
 }
 
 KyraEngine::~KyraEngine() {
+	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
+		if (_movieObjects[i])
+			_movieObjects[i]->close();
+		delete _movieObjects[i];
+		_movieObjects[i] = 0;
+	}
+
+	closeFinalWsa();
+	if (_scriptInterpreter) {
+		_scriptInterpreter->unloadScript(_npcScriptData);
+		_scriptInterpreter->unloadScript(_scriptClickData);
+	}
+
+	Common::clearAllSpecialDebugLevels();
+
 	delete _debugger;
 	delete _sprites;
 	delete _animator;
@@ -351,12 +371,12 @@ KyraEngine::~KyraEngine() {
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
 			free(_shapes[i]);
-			_shapes[i] = 0;
 			for (int i2 = 0; i2 < ARRAYSIZE(_shapes); i2++) {
 				if (_shapes[i2] == _shapes[i] && i2 != i) {
 					_shapes[i2] = 0;
 				}
 			}
+			_shapes[i] = 0;
 		}
 	}
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i) {
@@ -396,13 +416,14 @@ int KyraEngine::go() {
 		setGameFlag(0xFD);
 		setGameFlag(0xEF);
 		seq_intro();
+		if (_quitFlag)
+			return 0;
 		if (_skipIntroFlag && _abortIntroFlag)
 			resetGameFlag(0xEF);
 		startup();
 		resetGameFlag(0xEF);
 		mainLoop();
 	}
-	quitGame();	// FIXME: You shouldn't quit here, just return to the caller!
 	return 0;
 }
 
@@ -413,7 +434,6 @@ int KyraEngine_v2::go() {
 	loadBitmap("_playfld.cps", 0, 0, 0);
 	_screen->updateScreen();
 	waitForEvent();
-	_system->quit();
 	return 0;
 }
 
@@ -549,23 +569,9 @@ void KyraEngine::mainLoop() {
 }
 
 void KyraEngine::quitGame() {
-	// FIXME: The code of this method should probably be moved to the destructor.
 	debugC(9, kDebugLevelMain, "KyraEngine::quitGame()");
-
-	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
-		_movieObjects[i]->close();
-		delete _movieObjects[i];
-		_movieObjects[i] = 0;
-	}
-
-	closeFinalWsa();
-	_scriptInterpreter->unloadScript(_npcScriptData);
-	_scriptInterpreter->unloadScript(_scriptClickData);
-
-	Common::clearAllSpecialDebugLevels();
-
-	// FIXME: Do not use OSystem::quit() unless you have to !
-	_system->quit();
+	_quitFlag = true;
+	// Nothing to do here
 }
 
 void KyraEngine::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {

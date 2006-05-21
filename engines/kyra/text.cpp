@@ -114,6 +114,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
+				runLoop = false;
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				runLoop = false;
