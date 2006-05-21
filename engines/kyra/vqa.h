@@ -94,7 +94,7 @@ protected:
 	int decodeFormat80(byte *inbuf, byte *outbuf);
 	void decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsize);
 
-	void displayFrame(int frameNum);
+	void displayFrame(uint frameNum);
 
 	Common::File _file;
 
@@ -112,7 +112,7 @@ protected:
 	byte *_frame;
 
 	Audio::AppendableAudioStream *_stream;
-	Audio::SoundHandle *_sound;
+	Audio::SoundHandle _sound;
 
 	uint32 readTag();
 };

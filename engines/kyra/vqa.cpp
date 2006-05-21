@@ -341,9 +341,7 @@ void VQAMovie::open(const char *filename) {
 			if (_header.flags & 1) {
 				// A 2-second buffer ought to be enough
 				_stream = Audio::makeAppendableAudioStream(_header.freq, Audio::Mixer::FLAG_UNSIGNED, 2 * _header.freq * _header.channels);
-				_sound = new Audio::SoundHandle;
 			} else {
-				_sound = NULL;
 				_stream = NULL;
 			}
 
@@ -422,11 +420,8 @@ void VQAMovie::close() {
 		delete [] _partialCodeBook;
 		delete [] _vectorPointers;
 
-		if (_sound) {
-			_vm->_mixer->stopHandle(*_sound);
-			delete _sound;
-			_stream = NULL;
-			_sound = NULL;
+		if (_vm->_mixer->isSoundHandleActive(_sound)) {
+			_vm->_mixer->stopHandle(_sound);
 		}
 
 		_frameInfo = NULL;
@@ -445,7 +440,7 @@ void VQAMovie::close() {
 	}
 }
 
-void VQAMovie::displayFrame(int frameNum) {
+void VQAMovie::displayFrame(uint frameNum) {
 	debugC(9, kDebugLevelMovie, "VQAMovie::displayFrame(%d)", frameNum);
 	if (frameNum >= _header.numFrames || !_opened)
 		return;
@@ -717,15 +712,25 @@ void VQAMovie::play() {
 		}
 	}
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, _sound, _stream);
+	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
 
-	for (int i = 0; i < _header.numFrames; i++) {
+	for (uint i = 0; i < _header.numFrames; i++) {
 		displayFrame(i);
 
-		// TODO: We ought to sync this to how much sound we've played.
 		// TODO: Implement frame skipping?
 
-		while (_system->getMillis() < startTick + (i * 1000) / _header.frameRate) {
+		while (1) {
+			uint32 elapsedTime;
+
+			if (_vm->_mixer->isSoundHandleActive(_sound)) {
+				elapsedTime = _vm->_mixer->getSoundElapsedTime(_sound);
+			} else {
+				elapsedTime = _system->getMillis() - startTick;
+			}
+
+			if (elapsedTime >= (i * 1000) / _header.frameRate)
+				break;
+
 			OSystem::Event event;
 
 			while (_system->pollEvent(event)) {
