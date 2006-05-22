@@ -151,28 +151,27 @@ void KyraEngine_v3::playVQA(const char *name) {
 	debugC(9, kDebugLevelMain, "KyraEngine::playVQA('%s')", name);
 	VQAMovie vqa(this, _system);
 
-	uint8 pal[768];
-	memcpy(pal, _screen->_currentPalette, sizeof(pal));
-	if (_screen->_curPage == 0)
-		_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
-
 	char filename[20];
 	int size = 0;		// TODO: Movie size is 0, 1 or 2.
 
 	snprintf(filename, sizeof(filename), "%s%d.VQA", name, size);
 
-	vqa.open(filename);
-	if (vqa.opened()) {
+	if (vqa.open(filename)) {
+		uint8 pal[768];
+		memcpy(pal, _screen->_currentPalette, sizeof(pal));
+		if (_screen->_curPage == 0)
+			_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
+
 		_screen->hideMouse();
 		vqa.setDrawPage(0);
 		vqa.play();
 		vqa.close();
 		_screen->showMouse();
-	}
 
-	if (_screen->_curPage == 0)
-		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screen->getPagePtr(3));
-	_screen->setScreenPalette(pal);
+		if (_screen->_curPage == 0)
+			_screen->copyBlockToPage(0, 0, 0, 320, 200, _screen->getPagePtr(3));
+		_screen->setScreenPalette(pal);
+	}
 }
 
 void KyraEngine_v3::playMenuAudioFile() {

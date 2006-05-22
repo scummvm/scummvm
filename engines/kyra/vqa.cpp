@@ -248,16 +248,16 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 	}
 }
 
-void VQAMovie::open(const char *filename) {
+bool VQAMovie::open(const char *filename) {
 	debugC(9, kDebugLevelMovie, "VQAMovie::open('%s')", filename);
 	close();
 
 	if (!_file.open(filename))
-		return;
+		return false;
 
 	if (_file.readUint32BE() != MKID_BE('FORM')) {
 		warning("VQAMovie::open: Cannot find `FORM' tag");
-		return;
+		return false;
 	}
 
 	// For now, we ignore the size of the FORM chunk.
@@ -265,7 +265,7 @@ void VQAMovie::open(const char *filename) {
 
 	if (_file.readUint32BE() != MKID_BE('WVQA')) {
 		warning("WQAMovie::open: Cannot find `WVQA' tag");
-		return;
+		return false;
 	}
 
 	bool foundHeader = false;
@@ -351,12 +351,12 @@ void VQAMovie::open(const char *filename) {
 		case MKID_BE('FINF'):	// Frame info
 			if (!foundHeader) {
 				warning("VQAMovie::open: Found `FINF' before `VQHD'");
-				return;
+				return false;
 			}
 
 			if (size != 4 * (uint32)_header.numFrames) {
 				warning("VQAMovie::open: Expected size %d for `FINF' chunk, but got %d", 4 * _header.numFrames, size);
-				return;
+				return false;
 			}
 
 			foundFrameInfo = true;
@@ -409,6 +409,7 @@ void VQAMovie::open(const char *filename) {
 	initBuffers();
 
 	_opened = true;
+	return true;
 }
 
 void VQAMovie::close() {

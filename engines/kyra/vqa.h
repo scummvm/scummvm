@@ -45,7 +45,7 @@ public:
 
 	void setDrawPage(int page) { _drawPage = page; }
 
-	void open(const char *filename);
+	bool open(const char *filename);
 	void close();
 	void play();
 
