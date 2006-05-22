@@ -258,7 +258,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 }
 
 void KyraEngine_v3::drawMainMenu(const char * const *strings) {
-	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile(%p)", (const void*)strings);
+	debugC(9, kDebugLevelMain, "KyraEngine::drawMainMenu(%p)", (const void*)strings);
 	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
 	
 	int top = _screen->_curDim->sy;
@@ -271,7 +271,7 @@ void KyraEngine_v3::drawMainMenu(const char * const *strings) {
 }
 
 void KyraEngine_v3::drawMainBox(int x, int y, int w, int h, int fill) {
-	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile(%d, %d, %d, %d, %d)", x, y, w, h, fill);
+	debugC(9, kDebugLevelMain, "KyraEngine::drawMainBox(%d, %d, %d, %d, %d)", x, y, w, h, fill);
 	static const uint8 colorTable[] = { 0x16, 0x19, 0x1A, 0x16 };
 	--w; --h;
 
