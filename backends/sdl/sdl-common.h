@@ -24,13 +24,14 @@
 #ifndef SDL_COMMON_H
 #define SDL_COMMON_H
 
+#include <SDL.h>
+
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "backends/intern.h"
 
-#include <SDL.h>
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
