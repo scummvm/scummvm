@@ -368,6 +368,9 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_CINE
 	LINK_PLUGIN(CINE)
 	#endif
+	#ifndef DISABLE_CINE
+	LINK_PLUGIN(AGI)
+	#endif
 
 #endif
 }

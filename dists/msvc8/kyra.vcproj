@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="kyra"
 	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
+	RootNamespace="kyra"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -191,6 +192,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\kyra3.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\plugin.cpp"
 			>
 		</File>
@@ -255,6 +260,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_digital.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sprites.cpp"
 			>
 		</File>
@@ -276,6 +285,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\timer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\vqa.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\vqa.h"
 			>
 		</File>
 		<File

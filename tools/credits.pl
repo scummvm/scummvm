@@ -459,6 +459,11 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
+	  begin_section("AGI");
+		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
 	  begin_section("BASS");	# Beneath a Steel Sky
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
 		  add_person("Oliver Kiehl", "olki", "");
@@ -669,6 +674,7 @@ begin_credits("Credits");
 	  add_person("", "Jezar", "For his freeverb filter implementation");
 	  add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
 	  add_person("", "lloyd", "For deep tech details about C64 Zak &amp; MM");
+	  add_person("Sarien Team", "", "Original AGI engine code");
 	  add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 	  add_person("", "Tristan", "For additional work on the original MT-32 emulator");
     end_persons();

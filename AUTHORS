@@ -24,6 +24,10 @@ ScummVM Team
        Gregory Montoir      
        Eugene Sandulenko    
 
+    AGI:
+       Pawel Kolodziejski   
+       Eugene Sandulenko    
+
     BASS:
        Robert Goeffringmann 
        Oliver Kiehl         
@@ -193,6 +197,7 @@ Special thanks to
    Jezar            - For his freeverb filter implementation
    Jim Leiterman    - Various info on his FM-TOWNS/Marty SCUMM ports
    lloyd            - For deep tech details about C64 Zak & MM
+   Sarien Team      - Original AGI engine code
    Jimmi Thogersen  - For ScummRev, and much obscure code/documentation
    Tristan          - For additional work on the original MT-32 emulator
 
