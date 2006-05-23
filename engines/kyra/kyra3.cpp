@@ -158,7 +158,7 @@ void KyraEngine_v3::playVQA(const char *name) {
 
 	if (vqa.open(filename)) {
 		uint8 pal[768];
-		memcpy(pal, _screen->_currentPalette, sizeof(pal));
+		memcpy(pal, _screen->getPalette(0), sizeof(pal));
 		if (_screen->_curPage == 0)
 			_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
 
