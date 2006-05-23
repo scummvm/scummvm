@@ -57,7 +57,7 @@ void _dprintf(const char *s, ...) {
 
 	if (debnext == DEBUG_MAX)
 		debnext = 0;
-	gp_fillRect(frameBuffer1, 0, 243 - (DEBUG_MAX * 8) - 4, 320, (DEBUG_MAX * 10), 0);
+	gp_fillRect(frameBuffer1, 0, 243 - (DEBUG_MAX * 8) - 4, 320, (DEBUG_MAX * 8), 0);
 	
 	for (deb = debnext, deba = 0; deb < DEBUG_MAX; deb++, deba++) {
 		//gp_fillRect(frameBuffer1, 0, (243 - (DEBUG_MAX * 8) - 4) + 8 * deba, 320, 8, 0);
@@ -73,80 +73,17 @@ void _dprintf(const char *s, ...) {
 
 //////////////////
 //File functions
-// FOR LATER USE
-/*
-#define SM_PATH_SIZE		256
 
-const char smRootPath[] = "gp:\\";
-char smCurrentPath[SM_PATH_SIZE] = "gp:\\";		// must end with '\'
-
-int smMakePath(const char *path, char *smPath) {
-  // copy root or current directory
-  {
-    const char *p;
-    if ((*path == '/') || (*path == '\\'))
-    {
-      path++;
-      p = smRootPath;
-    }
-    else
-      p = smCurrentPath;
-    while (*p) *smPath++ = *p++;
-  }
-
-  // add filenames/directories. remove "." & ".."
-  do
-  {
-    switch (*path)
-    {
-    case 0:
-    case '/':
-    case '\\':
-      if (*(smPath-1) == '\\')
-      {
-        // already ends with '\'
-      }
-      else if ((*(smPath-1) == '.') && (*(smPath-2) == '\\'))
-      {
-        smPath--;	// remove '.' and end with '\'
-      }
-      else if ((*(smPath-1) == '.') && (*(smPath-2) == '.') && (*(smPath-3) == '\\'))
-      {
-        smPath -= 3;	// remove "\.."
-        if (*(smPath-1) == ':') *smPath++ = '\\';	// "dev0:" -> "dev0:\"
-        else while (*(smPath-1) != '\\') smPath--;	// remove one directory and end with '\'
-      }
-      else
-      {
-        *smPath++ = '\\';	// just add '\'
-      }
-      break;
-
-    default:
-      *smPath++ = *path;
-      break;
-    }
-  }
-  while (*path++);
-  
-  *smPath = '\\';
-
-//  *--smPath = 0;	// remove last '\' and null-terminate
-  *smPath = 0;	// remove last '\' and null-terminate
-
-  return 0;
-}
-*/
 GPFILE *gp_fopen(const char *fileName, const char *openMode) {
 	//FIXME: allocation, mode, malloc -> new
 	uint32 mode;
 	GPFILE *file;
 	ERR_CODE err;
-	char s[256];
+	char tempPath[256];
 
 	if (!strchr(fileName, '.')) {
-		sprintf(s, "%s.", fileName);
-		fileName = s;
+		sprintf(tempPath, "%s.", fileName);
+		fileName = tempPath;
 	}
 
 	file = (GPFILE *)malloc(sizeof(GPFILE));
@@ -388,14 +325,21 @@ void gp_free(void *block) {
 // GP32 stuff
 //////////////////////////////////////////////////
 static char usedMemStr[16];
-int gUsedMem = 0;
+int gUsedMem = 1024 * 1024;
+
+//#define CLEAN_MEMORY_WITH_0xE7
+//#define CHECK_FREE_MEMORY
 
 void *operator new(size_t size) {
 //	printf("BP:operator new(%d)", size);
+	void *ptr = malloc(size);
 
-	void *ptr = memset(malloc(size), 0xE7, size);
-
-#if 0
+#if defined(CLEAN_MEMORY_WITH_0xE7)
+	if(ptr != NULL) {
+		memset(ptr, 0xE7, size);
+	}
+#endif
+#if defined(CHECK_FREE_MEMORY)
 	// Check free memory.
 	gUsedMem = ((int)(ptr) + size) - 0xc000000;
 
@@ -404,7 +348,7 @@ void *operator new(size_t size) {
 	gp_fillRect(frameBuffer1, 0, 0, 64, 12, 0);
 	gp_textOut(frameBuffer1, 0, 0, usedMemStr, 0xfffff);
 #endif
-	
+
 	return ptr;
 }
 

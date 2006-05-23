@@ -46,7 +46,63 @@ public:
 
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
 };
+
+#define MAX_PATH_SIZE 256
+
+const char gpRootPath[] = "gp:\\";
+//char gpCurrentPath[MAX_PATH_SIZE] = "gp:\\";		// must end with '\'
+
+int gpMakePath(const char *path, char *convPath) {
+	// copy root or current directory
+	const char *p;
+	if ((*path == '/') || (*path == '\\')) {
+		path++;
+		p = gpRootPath;
+		while (*p)
+			*convPath++ = *p++;
+	}// else
+	//	p = gpCurrentPath;
+
+	//while (*p)
+	//	*convPath++ = *p++;
+
+	// add filenames/directories. remove "." & "..", replace "/" with "\"
+	do {
+		switch (*path) {
+		case 0:
+		case '/':
+		case '\\':
+			if (*(convPath - 1) == '\\') {
+				// already ends with '\'
+			} else if ((*(convPath - 2) == '\\') && (*(convPath - 1) == '.')) {
+				convPath--;	// remove '.' and end with '\'
+			} else if ((*(convPath - 3) == '\\') && (*(convPath - 2) == '.') && (*(convPath - 1) == '.')) {
+				convPath -= 3;	// remove "\.."
+				if (*(convPath - 1) == ':')
+					*convPath++ = '\\';	// "gp:" -> "gp:\"
+				else
+					while (*(convPath - 1) != '\\')
+						convPath--;	// remove one directory and end with '\'
+			} else {
+				*convPath++ = '\\';	// just add '\'
+			}
+			break;
+
+		default:
+			*convPath++ = *path;
+			break;
+		}
+	} while (*path++);
+
+	*convPath = '\\';
+
+	//  *--convPath = 0;	// remove last '\' and null-terminate
+	*convPath = 0;	// remove last '\' and null-terminate
+
+	return 0;
+}
 
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
 	return AbstractFilesystemNode::getRoot();
@@ -68,13 +124,19 @@ GP32FilesystemNode::GP32FilesystemNode() {
 }
 
 GP32FilesystemNode::GP32FilesystemNode(const String &path) {
-	_path = path;
-	const char *dsplName = NULL, *pos = path.c_str();
+	const char *dsplName = NULL, *pos = NULL;
+	char convPath[256];
+
+	gpMakePath(path.c_str(), convPath);
+
+	_path = convPath;
+
+	pos = convPath;
 	while (*pos)
 		if (*pos++ == '\\')
 			dsplName = pos;
-			
-	BP("path name: %s", path.c_str());
+
+	BP("FS: path name: %s", path.c_str());
 
 	if (strcmp(path.c_str(), "gp:\\") == 0) {
 		_isRoot = true;
@@ -89,9 +151,13 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
 
 	GPDIRENTRY dirEntry;
+	GPFILEATTR attr;
+
+	GP32FilesystemNode entry;
+
 	uint32 read;
 
-	if (mode == AbstractFilesystemNode::kListAll)
+	if (mode == FilesystemNode::kListAll)
 		LP("listDir(kListAll)");
 	else
 		LP("listDir(kListDirectoriesOnly)");
@@ -102,19 +168,16 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	while (GpDirEnumList(listDir.c_str(), startIdx++, 1, &dirEntry, &read)  == SM_OK) {
 		if (dirEntry.name[0] == '.')
 			continue;
-		GP32FilesystemNode entry;
 		entry._displayName = dirEntry.name;
 		entry._path = _path;
 		entry._path += dirEntry.name;
 
-		GPFILEATTR attr;
-		String fileName(entry._path);
-		GpFileAttr(fileName.c_str(), &attr);
-		entry._isDirectory = attr.attr & (1<<4);
+		GpFileAttr(entry._path.c_str(), &attr);
+		entry._isDirectory = attr.attr & (1 << 4);
 
 		// Honor the chosen mode
-		if ((mode == kListFilesOnly && entry._isDirectory) ||
-			(mode == kListDirectoriesOnly && !entry._isDirectory))
+		if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+			(mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		if (entry._isDirectory)
@@ -126,58 +189,45 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 
 	return true;
 }
-/*
-AbstractFilesystemNode *GP32FilesystemNode::parent() const {
-	if (_isRoot)
-		return new GP32FilesystemNode(this);
-
-	GP32FilesystemNode *p = new GP32FilesystemNode();
-
-	const char *slash = NULL;
-	const char *cnt = _path.c_str();
-
-	while (*cnt) {
-		if (*cnt == '\\')
-			slash = cnt;
-		cnt++;
-	}
-
-	p->_path = String(_path.c_str(), slash - _path.c_str());
-	p->_isDirectory = true;
-	p->_displayName = slash + 1;
-	return p;
-}
-*/
 
 const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
-	while (cur > start && *cur != '\\') { //ph0x
+	while (cur > start && *cur != '\\') {
 		--cur;
 	}
 
-	return cur+1;
+	return cur + 1;
 }
 
 AbstractFilesystemNode *GP32FilesystemNode::parent() const {
+	if(_isRoot)
+		return 0;
 
 	GP32FilesystemNode *p = new GP32FilesystemNode();
-
-	// Root node is its own parent. Still we can't just return this
-	// as the GUI code will call delete on the old node.
-	if (_path != "gp:\\") {
+	if (_path.size() > 4) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
 
-		p->_path = Common::String(start, end - start);
+		p->_path = String(start, end - start);
+		p->_isDirectory = true;
 		p->_displayName = lastPathComponent(p->_path);
-		p->_isRoot = true;
-	} else {
 		p->_isRoot = false;
-		p->_path = _path;
-		p->_displayName = _displayName;
 	}
-	p->_isDirectory = true;
+
+	return p;
+}
+
+AbstractFilesystemNode *GP32FilesystemNode::child(const String &name) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
+	assert(_isDirectory);
+	String newPath(_path);
+	if (_path.lastChar() != '\\')
+		newPath += '\\';
+	newPath += name;
+	GP32FilesystemNode *p = new GP32FilesystemNode(newPath);
+
 	return p;
 }

@@ -136,12 +136,12 @@ void OSystem_GP32::initSize(uint width, uint height) {
 }
 
 int16 OSystem_GP32::getHeight() {
-	NP("OSys::getHeight()");
+	//NP("OSys::getHeight()");
 	return _screenHeight;
 }
 
 int16 OSystem_GP32::getWidth() {
-	NP("OSys::getWidth()");
+	//NP("OSys::getWidth()");
 	return _screenWidth;
 }
 
@@ -209,6 +209,7 @@ void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 void OSystem_GP32::updateScreen() {
 	uint16 *buffer;
 	//TODO: adjust shakePos
+	NP("updateScreen");
 
 	// draw gamescreen
 	buffer = &_tmpScreen[240 - _screenHeight];
@@ -244,13 +245,12 @@ void OSystem_GP32::updateScreen() {
 						gpd_drawPixel16(_tmpScreen, mX + x, mY + y, _currentPalette[_mouseBuf[y * _mouseWidth + x]]);
 			}
 		}
-		
-	//TODO: draw softkeyboard
 
-	gp_flipScreen();
-	_hwScreen = frameBuffer1;
-	_tmpScreen = frameBuffer2;
-	//memcpy(_hwScreen, _tmpScreen, LCD_WIDTH * LCD_HEIGHT * sizeof(uint16));
+	//TODO: draw softkeyboard
+	//gp_flipScreen();
+	//_hwScreen = frameBuffer1;
+	//_tmpScreen = frameBuffer2;
+	memcpy(_hwScreen, _tmpScreen, LCD_WIDTH * LCD_HEIGHT * sizeof(uint16));
 }
 
 void OSystem_GP32::setShakePos(int shakeOffset) {
@@ -258,11 +258,13 @@ void OSystem_GP32::setShakePos(int shakeOffset) {
 }
 
 void OSystem_GP32::showOverlay() {
+	NP("OSys::showOverlay()");
 	_overlayVisible = true;
 	clearOverlay();
 }
 
 void OSystem_GP32::hideOverlay() {
+	NP("OSys::hideOverlay()");
 	_overlayVisible = false;
 	clearOverlay();
 	_forceFull = true;
@@ -295,6 +297,7 @@ void OSystem_GP32::grabOverlay(OverlayColor *buf, int pitch)
 }
 
 void OSystem_GP32::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+	NP("OSys::copyRectToOverlay()");
 	OverlayColor *dst = (OverlayColor *)_overlayBuffer + y * _overlayWidth + x;
 	do {
 		memcpy(dst, buf, w * sizeof(uint16));
@@ -304,12 +307,12 @@ void OSystem_GP32::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, 
 }
 
 int16 OSystem_GP32::getOverlayHeight() {
-	NP("OSys::getOverlayHeight()");
+	//NP("OSys::getOverlayHeight()");
 	return getHeight();
 }
 
 int16 OSystem_GP32::getOverlayWidth() {
-	NP("OSys::getOverlayWidth()");
+	//NP("OSys::getOverlayWidth()");
 	return getWidth();
 }
 
@@ -343,7 +346,7 @@ void OSystem_GP32::warpMouse(int x, int y) {
 }
 
 void OSystem_GP32::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
-	//NP("OSys::setMouseCursor()");
+	NP("OSys::setMouseCursor()");
 	_mouseWidth = w;
 	_mouseHeight = h;
 
@@ -443,6 +446,7 @@ void OSystem_GP32::fillMouseEvent(Event &event, int x, int y) {
 }
 
 bool OSystem_GP32::pollEvent(Event &event) {
+	NP("OSys::pollEvent()");
 	GP32BtnEvent ev;
 
 	handleKbdMouse();
@@ -629,20 +633,20 @@ void OSystem_GP32::setTimerCallback(TimerProc callback, int interval) {
 }
 
 OSystem::MutexRef OSystem_GP32::createMutex() {
-	NP("OSys::createMutex()");
+//	NP("OSys::createMutex()");
 	return NULL;
 }
 
 void OSystem_GP32::lockMutex(MutexRef mutex) {
-	NP("OSys::lockMutex()");
+//	NP("OSys::lockMutex()");
 }
 
 void OSystem_GP32::unlockMutex(MutexRef mutex) {
-	NP("OSys::unlockMutex()");
+//	NP("OSys::unlockMutex()");
 }
 
 void OSystem_GP32::deleteMutex(MutexRef mutex) {
-	NP("OSys::deleteMutex()");
+//	NP("OSys::deleteMutex()");
 }
 
 bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
@@ -650,8 +654,8 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 
 	GPSOUNDBUF gpSoundBuf;
 
-	ConfMan.set("FM_medium_quality", (g_vars.fmQuality == FM_QUALITY_MED));
-	ConfMan.set("FM_high_quality", (g_vars.fmQuality == FM_QUALITY_HI));
+	ConfMan.setBool("FM_medium_quality", (g_vars.fmQuality == FM_QUALITY_MED));
+	ConfMan.setBool("FM_high_quality", (g_vars.fmQuality == FM_QUALITY_HI));
 	//ConfMan.set("output_rate", (int)g_vars.sampleRate);
 
 	if (ConfMan.hasKey("output_rate"))

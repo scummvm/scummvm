@@ -52,7 +52,7 @@ void writeConfigVars() {
 	g_vars.fmQuality = currentSetting[2];
 	g_vars.sampleRate = sampleTable[currentSetting[3]];
 
-	if (!file.open("scummvm.cfg", Common::File::kFileWriteMode, "gp:\\gpetc\\")) {
+	if (!file.open("gp:\\gpetc\\scummvm.cfg", Common::File::kFileWriteMode)) {
 		return;
 	}
 	file.writeByte(currentSetting[0]);
@@ -64,14 +64,14 @@ void writeConfigVars() {
 
 void readConfigVars() {
 	Common::File file;
-	if (!file.exists("scummvm.cfg", "gp:\\gpetc\\")) {
+	if (!file.exists("gp:\\gpetc\\scummvm.cfg")) {
 		currentSetting[0] = 2;
 		currentSetting[1] = 5;
 		currentSetting[2] = 1;
 		currentSetting[3] = 1;
 		writeConfigVars();
 	} else {
-		if (!file.open("scummvm.cfg", Common::File::kFileReadMode, "gp:\\gpetc\\")) {
+		if (!file.open("gp:\\gpetc\\scummvm.cfg", Common::File::kFileReadMode)) {
 			return;
 		}
 		currentSetting[0] = file.readByte();

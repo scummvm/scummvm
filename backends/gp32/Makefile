@@ -28,7 +28,7 @@ CFLAGS =	-marm -march=armv4t -mtune=arm920 -mapcs \
 			-mno-thumb-interwork \
 			-I$(GPSDK)/include \
 			-g \
-			-O2 \
+			-O \
 			-fomit-frame-pointer
 #			-ffast-math \
 #			-fshort-double
