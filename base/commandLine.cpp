@@ -639,7 +639,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return false;
 	} else if (command == "help") {
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 		printf(HELP_STRING, s_appName.c_str());
+#else
+		printf(HELP_STRING, s_appName);
+#endif
 		return false;
 	}
 #ifdef DETECTOR_TESTING_HACK
