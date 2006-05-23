@@ -83,6 +83,8 @@ Room::Room(): _screen(Screen::getReference()) {
 	_showInfo = false;
 	_isExit = false;
 	_destRoomNumber = 0;
+	_cursorState = CS_NONE;
+
 //****DEBUG****
 	memset(tempLayer, 0, DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT * 2);
 }
@@ -356,6 +358,7 @@ void Room::update() {
 	// Handle first layer (layer 3)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
 		Hotspot &h = *i.operator*();
+
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 3)) {
 			flagCoveredCells(h);
 			addAnimation(h);
@@ -382,6 +385,7 @@ void Room::update() {
 	}
 	for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
 		Hotspot &h = *iTemp.operator*();
+
 		flagCoveredCells(h);
 		addAnimation(h);
 		addLayers(h);
@@ -390,6 +394,7 @@ void Room::update() {
 	// Handle third layer (layer 2)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
 		Hotspot &h = *i.operator*();
+
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 2)) {
 			flagCoveredCells(h);
 			addAnimation(h);
@@ -424,14 +429,20 @@ void Room::update() {
 			s.writeString(0, 0, _hotspotName, false, DIALOG_TEXT_COLOUR);
 		} else {
 			char buffer[MAX_DESC_SIZE];
-			strcpy(buffer, res.getCurrentActionStr());
+			const char *actionStr = res.getCurrentActionStr();
+			strcpy(buffer, actionStr);
 
 			if (action != STATUS) {
 				strcat(buffer, " ");
 
-				if (usedId != 0xffff) {
-					uint16 nameId = res.getHotspot(usedId)->nameId;
-					strings.getString(nameId, buffer + strlen(buffer), NULL, NULL);
+				if ((usedId != 0xffff) && (usedId != 0)) {
+					HotspotData *usedHotspot = res.getHotspot(usedId);
+
+					if (usedHotspot != NULL) 
+						strings.getString(usedHotspot->nameId, buffer + strlen(buffer), NULL, NULL);
+					else
+						strcat(buffer, "???");
+
 					if (action == GIVE) strcat(buffer, " to ");
 					else strcat(buffer, " on ");
 				}
