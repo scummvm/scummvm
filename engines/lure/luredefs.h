@@ -44,6 +44,7 @@ enum {
 };
 
 enum Action {
+	NONE = 0,
 	GET = 1,
 	DROP = 0,
 	PUSH = 3,
@@ -69,7 +70,19 @@ enum Action {
 	RETURN = 23,
 	BRIBE = 24,
 	EXAMINE = 25,
-	NONE = 0xffff
+	NPC_SET_ROOM_AND_OFFSET = 28, 
+	NPC_UNKNOWN1 = 29, 
+	NPC_EXEC_SCRIPT = 30, 
+	NPC_UNKNOWN2 = 31,
+	NPC_SET_RAND_DEST = 32, 
+	NPC_WALKING_CHECK = 33, 
+	NPC_SET_SUPPORT_OFFSET = 34,
+	NPC_SUPPORT_OFFSET_COND = 35, 
+	NPC_DISPATCH_ACTION = 36, 
+	NPC_UNKNOWN3 = 37,
+	NPC_UNKNOWN4 = 38, 
+	NPC_START_TALKING = 39, 
+	NPC_JUMP_ADDRESS = 40
 };
 
 // Basic game dimensions
@@ -80,7 +93,7 @@ enum Action {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 6
+#define LURE_DAT_MINOR 7
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
@@ -89,8 +102,12 @@ enum Action {
 // Palette colour increment amouns for palette fade in/outs
 #define PALETTE_FADE_INC_SIZE 4
 
+// Palette and animation for Skorl catching player
+#define SKORL_CATCH_PALETTE_ID 0x4060
+#define SKORL_CATCH_ANIM_ID 0x4061
+
 // Specifies the maximum buffer sized allocated for decoding animation data
-#define MAX_ANIM_DECODER_BUFFER_SIZE 200000
+#define MAX_ANIM_DECODER_BUFFER_SIZE 300000
 
 #define MAX_DESC_SIZE 1024
 #define MAX_HOTSPOT_NAME_SIZE 80
@@ -160,20 +177,22 @@ enum Action {
 #define DIALOG_RESOURCE_ID 0x3f03
 #define TALK_DIALOG_RESOURCE_ID 0x3f04
 #define ROOM_DATA_RESOURCE_ID 0x3f05
-#define HOTSPOT_DATA_RESOURCE_ID 0x3f06
-#define HOTSPOT_OVERRIDE_DATA_RESOURCE_ID 0x3f07
-#define ROOM_EXITS_RESOURCE_ID 0x3f08
-#define ROOM_EXIT_JOINS_RESOURCE_ID 0x3f09
-#define ANIM_DATA_RESOURCE_ID 0x3f0a
-#define SCRIPT_DATA_RESOURCE_ID 0x3f0b
-#define SCRIPT2_DATA_RESOURCE_ID 0x3f0c
-#define HOTSPOT_SCRIPT_LIST_RESOURCE_ID 0x3f0d
-#define	MESSAGES_LIST_RESOURCE_ID 0x3f0e
-#define ACTION_LIST_RESOURCE_ID 0x3f0f
-#define TALK_HEADER_RESOURCE_ID 0x3f10
-#define TALK_DATA_RESOURCE_ID 0x3f11
-#define ROOM_PATHS_RESOURCE_ID 0x3f12
-#define EXIT_COORDINATES_RESOURCE_ID 0x3f13
+#define NPC_SCHEDULES_RESOURCE_ID 0x3f06
+#define HOTSPOT_DATA_RESOURCE_ID 0x3f07
+#define HOTSPOT_OVERRIDE_DATA_RESOURCE_ID 0x3f08
+#define ROOM_EXITS_RESOURCE_ID 0x3f09
+#define ROOM_EXIT_JOINS_RESOURCE_ID 0x3f0a
+#define ANIM_DATA_RESOURCE_ID 0x3f0b
+#define SCRIPT_DATA_RESOURCE_ID 0x3f0c
+#define SCRIPT2_DATA_RESOURCE_ID 0x3f0d
+#define HOTSPOT_SCRIPT_LIST_RESOURCE_ID 0x3f0e
+#define	MESSAGES_LIST_RESOURCE_ID 0x3f0f
+#define ACTION_LIST_RESOURCE_ID 0x3f10
+#define TALK_HEADER_RESOURCE_ID 0x3f11
+#define TALK_DATA_RESOURCE_ID 0x3f12
+#define ROOM_PATHS_RESOURCE_ID 0x3f13
+#define EXIT_COORDINATES_RESOURCE_ID 0x3f14
+#define EXIT_HOTSPOT_ID_LIST 0x3f15
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
@@ -214,6 +233,10 @@ enum Action {
 
 // Pixel record flags
 #define PIXELFLAG_HAS_TABLE 4
+
+// Constants used to reference entries in the reworked support data entry lists
+#define RETURN_SUPPORT_ID 0x100
+#define EXIT_BLOCKED_SUPPORT_ID 0x200
 
 } // End of namespace Lure
 
