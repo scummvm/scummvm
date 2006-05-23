@@ -40,7 +40,7 @@ Resources::Resources() {
 }
 
 Resources::~Resources() {
-	// Delete any unremoved active hotspots
+	// Free up any loaded data
 	freeData();
 }
 
@@ -52,6 +52,8 @@ void Resources::freeData() {
 	_animData.clear();
 	_exitJoins.clear();
 	_delayList.clear();
+	_charSchedules.clear();
+	_indexedRoomExitHospots.clear();
 
 	delete _paletteSubset;
 	delete _scriptData;
@@ -59,6 +61,8 @@ void Resources::freeData() {
 	free(_hotspotScriptData);
 	delete _messagesData;
 	delete _cursors;
+	delete _charOffsets;
+	delete _playerSupportRecord;
 }
 
 struct AnimRecordTemp {
@@ -70,7 +74,7 @@ void Resources::reloadData() {
 	Disk &d = Disk::getReference();
 	MemoryBlock *mb, *paths;
 	uint16 *offset, offsetVal;
-	uint16 recordId;
+	uint16 recordId, startOffset;
 	int ctr;
 
 	// Get the palette subset data
@@ -264,6 +268,35 @@ void Resources::reloadData() {
 	}
 	delete mb;
 
+	// Load the set of NPC schedules
+	mb = d.getEntry(NPC_SCHEDULES_RESOURCE_ID);
+
+	// Load the lookup list of support data indexes used in the script engine
+	numCharOffsets = 0;
+	offset = (uint16 *) mb->data();
+	while (READ_LE_UINT16(offset++) != 0xffff) ++numCharOffsets;
+	_charOffsets = new uint16[numCharOffsets];
+	offset = (uint16 *) mb->data();
+	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset) 
+		_charOffsets[ctr] = READ_LE_UINT16(offset);
+
+	// Loop through loading the schedules
+	ctr = 0;
+	while ((startOffset = READ_LE_UINT16(++offset)) != 0xffff) {
+		CharacterScheduleResource *res = (CharacterScheduleResource *) (mb->data() + startOffset);
+		CharacterScheduleSet *newEntry = new CharacterScheduleSet(res, ++ctr);
+		_charSchedules.push_back(newEntry);
+	}
+	delete mb;
+
+	// Load the list of room exit hotspot Ids
+	mb = d.getEntry(EXIT_HOTSPOT_ID_LIST);
+	RoomExitIndexedHotspotResource *indexedRec = (RoomExitIndexedHotspotResource *) mb->data();
+	while (indexedRec->roomNumber != 0) {
+		_indexedRoomExitHospots.push_back(new RoomExitIndexedHotspotData(indexedRec));
+		indexedRec++;
+	}
+
 	// Initialise delay list
 	_delayList.clear();
 
@@ -274,6 +307,7 @@ void Resources::reloadData() {
 	_messagesData = d.getEntry(MESSAGES_LIST_RESOURCE_ID);
 	_talkDialogData = d.getEntry(TALK_DIALOG_RESOURCE_ID);
 
+	_playerSupportRecord = new CharacterScheduleEntry();
 	_activeTalkData = NULL;
 	_currentAction = NONE;
 	_talkState = TALK_NONE;
@@ -460,9 +494,7 @@ void Resources::activateHotspot(uint16 hotspotId) {
 
 		if (loadFlag) {
 			Hotspot *hotspot = addHotspot(hotspotId);
-//			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
-			// DEBUG - for now only keep certain hotspots active
-			hotspot->setPersistant((res->hotspotId >= 0x3e8) && (res->hotspotId <= 0x3ea));
+			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
 		}
 	}
 }

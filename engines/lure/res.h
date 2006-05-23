@@ -58,9 +58,17 @@ private:
 	TalkHeaderList _talkHeaders;
 	TalkDataList _talkData;
 	SequenceDelayList _delayList;
+public: //**DEBUG**
 	Action _currentAction;
+private:
 	MemoryBlock *_talkDialogData;
 	RoomExitCoordinatesList _coordinateList;
+	CharacterScheduleList _charSchedules;
+	RoomExitIndexedHotspotList _indexedRoomExitHospots;
+
+	int numCharOffsets;
+	uint16 *_charOffsets;
+	CharacterScheduleEntry *_playerSupportRecord;
 
 	TalkData *_activeTalkData;
 	TalkState _talkState;
@@ -107,6 +115,16 @@ public:
 	SequenceDelayList &delayList() { return _delayList; }
 	MemoryBlock &getTalkDialogData() { return *_talkDialogData; }
 	RoomExitCoordinatesList &coordinateList() { return _coordinateList; }
+	CharacterScheduleList &charSchedules() { return _charSchedules; }
+	RoomExitIndexedHotspotList &exitHotspots() { return _indexedRoomExitHospots; }
+	uint16 getCharOffset(int index) { 
+		if (index >= numCharOffsets) 
+			error("Invalid index %d passed to script engine support data offset list", index);
+		if (index == 1)
+			error("support data list index #1 was referenced - special handlng TODO");
+		return _charOffsets[index]; 
+	}
+	CharacterScheduleEntry *playerSupportRecord() { return _playerSupportRecord; }
 	void copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y);
 
 	uint16 numInventoryItems();
@@ -124,8 +142,11 @@ public:
 
 	void setCurrentAction(Action action) { _currentAction = action; }
 	Action getCurrentAction() { return _currentAction; }
-	const char *getCurrentActionStr() { return actionList[_currentAction]; }
-
+	const char *getCurrentActionStr() { 
+		if (_currentAction > EXAMINE) 
+			error("Invalid current action %d", _currentAction);
+		return actionList[_currentAction]; 
+	}
 	void activateHotspot(uint16 hotspotId);
 	Hotspot *addHotspot(uint16 hotspotId);
 	void addHotspot(Hotspot *hotspot);
