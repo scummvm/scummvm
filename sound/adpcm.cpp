@@ -108,16 +108,13 @@ int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	switch (_type) {
 	case kADPCMOki:
 		return readBufferOKI(buffer, numSamples);
-		break;
 	case kADPCMMSIma:
 		if (_channels == 1)
 			return readBufferMSIMA1(buffer, numSamples);
 		else
 			return readBufferMSIMA2(buffer, numSamples);
-		break;
 	case kADPCMMS:
 		return readBufferMS(_channels, buffer, numSamples);
-		break;
 	default:
 		error("Unsupported ADPCM encoding");
 		break;
