@@ -87,6 +87,8 @@ public:
 	static void playSound(uint16 v1, uint16 v2, uint16 v3);
 	static void displayDialog(uint16 stringId, uint16 v2, uint16 v3);
 	static void remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3);
+	static void checkCellDoor(uint16 v1, uint16 v2, uint16 v3);
+	static void playMusic(uint16 musicNum, uint16 v2, uint16 v3);
 	static void getDoorBlocked(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void isSkorlInCell(uint16 v1, uint16 v2, uint16 v3);
 	static void setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 v3);
@@ -102,13 +104,14 @@ public:
 	static void doorClose(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal);
 	static void doorOpen(uint16 hotspotId, uint16 v2, uint16 v3);
+	static void setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3);
+	static void setSupportData(uint16 hotspotId, uint16 index, uint16 v3);
 	static void givePlayerItem(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
 	static void setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3);
 	static void getNumGroats(uint16 v1, uint16 v2, uint16 v3);
 	static void animationLoad(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void addActions(uint16 hotspotId, uint16 actions, uint16 v3);
-	static void checkCellDoor(uint16 v1, uint16 v2, uint16 v3);
 };
 
 class HotspotScript {

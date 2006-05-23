@@ -100,7 +100,7 @@ void Script::setActionsOffset(uint16 hotspotId, uint16 offset, uint16 v3) {
 	HotspotData *hotspot = res.getHotspot(hotspotId);
 	
 	if (!res.getHotspotActions(offset))
-		warning("Hotspot %d set to invalid actions offset %d",
+		warning("Hotspot %xh set to invalid actions offset %d",
 			hotspotId, offset);
 	
 	hotspot->actionsOffset = offset;
@@ -157,6 +157,19 @@ void Script::remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3) {
 		player->roomNumber());
 }
 
+// Checks the status of the cell door, and starts music depending on it's state
+
+void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
+	// In the original game, this method checks to see if the cell door
+	// is currently open, if it is, starts a music sequence. 
+	// TODO: Implement starting music if cell door is open
+}
+
+void Script::playMusic(uint16 musicNum, uint16 v2, uint16 v3) {
+	// TODO: Play a given music
+	warning("TODO: Play music #%d", musicNum);
+}
+
 // Gets the current blocked state for the given door and stores it in the
 // general value field
 
@@ -182,17 +195,16 @@ void Script::setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 
 	Resources &r = Resources::getReference();
 	uint16 offset = r.getHotspotScript(scriptIndex);
 
-	HotspotData *rsc = r.getHotspot(charId);
-	rsc->sequenceOffset = offset;
-
 	Hotspot *hs = r.getActiveHotspot(charId);
-	hs->setCurrentAction(EXEC_HOTSPOT_SCRIPT);
+	hs->setScript(offset);
+	hs->currentActions().top().setAction(EXEC_HOTSPOT_SCRIPT);
+	hs->setOccupied(true);
 }
 
 // Decrements the number of inventory itemst he player has
 
 void Script::decrInventoryItems(uint16 v1, uint16 v2, uint16 v3) {
-	// module currently doesn't use a static counter for the number of
+	// module doesn't use a static counter for the number of
 	// inventory items, so don't do anything
 }
 
@@ -292,6 +304,30 @@ void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 unknown
 	Dialog::showMessage(messageId, characterId);
 }
 
+// Creates a new dispatch action with the given support data entry
+
+void Script::setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
+	Resources &res = Resources::getReference();
+	uint16 dataId = res.getCharOffset(index);
+	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
+
+	Hotspot *h = res.getActiveHotspot(hotspotId);
+	h->currentActions().addFront(DISPATCH_ACTION, entry, h->roomNumber());
+}
+
+// Replaces the existing current action with a new dispatch data entry
+
+void Script::setSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
+	Resources &res = Resources::getReference();
+	uint16 dataId = res.getCharOffset(index);
+
+	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
+	Hotspot *h = res.getActiveHotspot(hotspotId);
+
+	h->currentActions().pop();
+	h->currentActions().addFront(DISPATCH_ACTION, entry, h->roomNumber());
+}
+
 // Assign the given hotspot item to the player's inventory
 
 void Script::givePlayerItem(uint16 hotspotId, uint16 v2, uint16 v3) {
@@ -335,13 +371,6 @@ void Script::addActions(uint16 hotspotId, uint16 actions, uint16 v3) {
 	hotspot->actions |= actions;
 }
 
-// Checks the status of the cell door, and starts music depending on its state
-
-void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
-	// In the original game, this method checks to see if the cell door
-	// is currently open, if it is, starts a music sequence. 
-	// TODO: Implement starting music if cell door is open
-}
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
 
@@ -364,6 +393,7 @@ SequenceMethodRecord scriptMethods[] = {
 	{16, Script::displayDialog},
 	{18, Script::remoteRoomViewSetup},
 	{20, Script::checkCellDoor},
+	{21, Script::playMusic},
 	{22, Script::getDoorBlocked},
 	{23, Script::isSkorlInCell},
 	{27, Script::setBlockingHotspotScript},
@@ -379,6 +409,8 @@ SequenceMethodRecord scriptMethods[] = {
 	{42, Script::doorClose},
 	{44, Script::doorOpen},
 	{47, Script::displayMessage},
+	{48, Script::setNewSupportData},
+	{49, Script::setSupportData},
 	{50, Script::givePlayerItem},
 	{51, Script::decreaseNumGroats},
 	{54, Script::setVillageSkorlTickProc},
@@ -593,6 +625,7 @@ bool HotspotScript::execute(Hotspot *h)
 
 	while (!breakFlag) {
 		opcode = nextVal(scriptData, offset);
+
 		switch (opcode) {
 		case S2_OPCODE_TIMEOUT:
 			param1 = nextVal(scriptData, offset);
