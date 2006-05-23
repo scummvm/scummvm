@@ -35,9 +35,12 @@
 
 namespace Lure {
 
+enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2};
+
 class Game {
 private:
 	bool _slowSpeedFlag, _soundFlag;
+	uint8 _state;
 
 	void handleMenuResponse(uint8 selection);
 	void handleClick();
@@ -52,6 +55,7 @@ public:
 
 	void nextFrame();
 	void execute();
+	void setState(uint8 flags) { _state = flags; }
 
 	// Menu item support methods
 	void doDebugMenu();

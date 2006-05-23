@@ -28,6 +28,7 @@
 #include "lure/debug-methods.h"
 #include "lure/scripts.h"
 #include "lure/res_struct.h"
+#include "lure/animseq.h"
 
 namespace Lure {
 
@@ -45,12 +46,13 @@ Game::Game() {
 
 void Game::nextFrame() {
 	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
 	Room &room = Room::getReference();
 	HotspotList::iterator i;
 
 	room.checkCursor();
 	room.update();
-
+	
 	// Call the tick method for each hotspot - this is somewaht complicated
 	// by the fact that a tick proc can unload both itself and/or others,
 	// so we first get a list of the Ids, and call the tick proc for each 
@@ -65,8 +67,10 @@ void Game::nextFrame() {
 
 	for (int idCtr = 0; idCtr < idSize; ++idCtr) {
 		Hotspot *hotspot = res.getActiveHotspot(idList[idCtr]);
-		if (hotspot)
+		if (hotspot) {
+			fields.setField(CHARACTER_HOTSPOT_ID, hotspot->hotspotId());
 			hotspot->tick();
+		}
 	}
 
 	delete[] idList;
@@ -102,78 +106,95 @@ void Game::execute() {
 	mouse.cursorOn();
 	
 	while (!events.quitFlag) {
-		// If time for next frame, allow everything to update
-		if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
-			timerVal = system.getMillis();
-			nextFrame();			
-		}
-		res.delayList().tick();
+		while (!events.quitFlag && (_state == 0)) {
+			// If time for next frame, allow everything to update
+			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
+				timerVal = system.getMillis();
+				nextFrame();			
+			}
+			res.delayList().tick();
 
-		while (events.pollEvent()) {
-			if (events.type() == OSystem::EVENT_KEYDOWN) {
-				uint16 roomNum = r.roomNumber();
-
-#ifdef LURE_DEBUG
-				if (events.event().kbd.keycode == 282) {
-					doDebugMenu();
-					continue;
-				}
-#endif
-
-				switch (events.event().kbd.ascii) {
-				case 27:
-					events.quitFlag = true;
-					break;
+			while (events.pollEvent()) {
+				if (events.type() == OSystem::EVENT_KEYDOWN) {
+					uint16 roomNum = r.roomNumber();
 
 #ifdef LURE_DEBUG
-				case '+':
-					while (++roomNum <= 51) 
-						if (res.getRoom(roomNum) != NULL) break; 
-					if (roomNum == 52) roomNum = 1;
-
-					r.leaveRoom();
-					r.setRoomNumber(roomNum);
-					break;
-
-				case '-':
-					if (roomNum == 1) roomNum = 55;
-					while (res.getRoom(--roomNum) == NULL) ;
-
-					r.leaveRoom();
-					r.setRoomNumber(roomNum);
-					break;
-
-				case '*':
-					res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-						r.roomNumber());
-					break;
+					if (events.event().kbd.keycode == 282) {
+						doDebugMenu();
+						continue;
+					}
 #endif
-				default:
-					break;
+					switch (events.event().kbd.ascii) {
+					case 27:
+						events.quitFlag = true;
+						break;
+
+#ifdef LURE_DEBUG
+					case '+':
+						while (++roomNum <= 51) 
+							if (res.getRoom(roomNum) != NULL) break; 
+						if (roomNum == 52) roomNum = 1;
+
+						r.leaveRoom();
+						r.setRoomNumber(roomNum);
+						break;
+
+					case '-':
+						if (roomNum == 1) roomNum = 55;
+						while (res.getRoom(--roomNum) == NULL) ;
+
+						r.leaveRoom();
+						r.setRoomNumber(roomNum);
+						break;
+
+					case '*':
+						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
+							r.roomNumber());
+						break;
+#endif
+					default:
+						break;
+					}
 				}
+
+				if ((events.type() == OSystem::EVENT_LBUTTONDOWN) ||
+					(events.type() == OSystem::EVENT_RBUTTONDOWN)) 
+					handleClick();
 			}
 
-			if ((events.type() == OSystem::EVENT_LBUTTONDOWN) ||
-				(events.type() == OSystem::EVENT_RBUTTONDOWN)) 
-				handleClick();
+			uint16 destRoom;
+			destRoom = fields.getField(NEW_ROOM_NUMBER);
+			if (destRoom != 0) {
+				// Need to change the current room
+				bool remoteFlag = fields.getField(OLD_ROOM_NUMBER) != 0;
+				r.setRoomNumber(destRoom, remoteFlag);
+				fields.setField(NEW_ROOM_NUMBER, 0);
+			}
+
+			destRoom = fields.playerNewPos().roomNumber;
+			if (destRoom != 0) {
+				playerChangeRoom();
+			}
+
+			system.updateScreen();
+			system.delayMillis(10);
 		}
 
-		uint16 destRoom;
-		destRoom = fields.getField(NEW_ROOM_NUMBER);
-		if (destRoom != 0) {
-			// Need to change the current room
-			bool remoteFlag = fields.getField(OLD_ROOM_NUMBER) != 0;
-			r.setRoomNumber(destRoom, remoteFlag);
-			fields.setField(NEW_ROOM_NUMBER, 0);
+		// If Skorl catches player, show the catching animation
+		if ((_state & GS_CAUGHT) != 0) {
+			Palette palette(SKORL_CATCH_PALETTE_ID);
+			AnimationSequence *anim = new AnimationSequence(screen, system, 
+				SKORL_CATCH_ANIM_ID, palette, false);
+			mouse.cursorOff();
+			anim->show();
+			mouse.cursorOn();
 		}
 
-		destRoom = fields.playerNewPos().roomNumber;
-		if (destRoom != 0) {
-			playerChangeRoom();
+		// If the Restart/Restore dialog is needed, show it
+		if ((_state & GS_RESTORE_RESTART) != 0) {
+			// TODO: Restore/Restart dialog - for now, simply flag for exit
+			events.quitFlag = true;
 		}
-
-		system.updateScreen();
-		system.delayMillis(10);
 	}
 
 	r.leaveRoom();
@@ -399,11 +420,15 @@ void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 
 	fields.setField(CHARACTER_HOTSPOT_ID, PLAYER_ID);
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspotId);
-	fields.setField(USE_HOTSPOT_ID, usedId);
+//	fields.setField(USE_HOTSPOT_ID, usedId);
 
 	res.setCurrentAction(action);
 	room.setCursorState(CS_ACTION);
-	player->setCurrentAction(DISPATCH_ACTION, action, hotspotId, usedId);
+
+	// Set the action
+	CharacterScheduleEntry *rec = res.playerSupportRecord();
+	rec->setDetails(action, hotspotId, usedId);
+	player->currentActions().addFront(DISPATCH_ACTION, rec, player->roomNumber());
 }
 
 void Game::doShowCredits() {
