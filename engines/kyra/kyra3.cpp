@@ -111,14 +111,14 @@ int KyraEngine_v3::go() {
 	logo->setX(0); logo->setY(0);
 	logo->setDrawPage(0);
 
-	for (int i = 0; i < 64; ++i) {
+	for (int i = 0; i < 64 && !_quitFlag; ++i) {
 		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 		logo->displayFrame(i);
 		_screen->updateScreen();
 		delayUntil(nextRun);
 	}
 
-	for (int i = 64; i > 29; --i) {
+	for (int i = 64; i > 29 && !_quitFlag; --i) {
 		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 		logo->displayFrame(i);
 		_screen->updateScreen();
