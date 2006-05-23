@@ -33,6 +33,10 @@ const char *actionList[] = {NULL, "Get", NULL, "Push", "Pull", "Operate", "Open"
 	"Look", "Look at", "Look through", "Ask", NULL, "Drink", "Status",
 	"Go to", "Return", "Bribe", "Examine"};
 
+int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
+	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
+	0, 1, 1, 1, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
+
 // Room data holding class
 
 RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
@@ -48,6 +52,10 @@ RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) {
 
 	clippingXStart = READ_LE_UINT16(&rec->clippingXStart);
 	clippingXEnd = READ_LE_UINT16(&rec->clippingXEnd);
+	walkBounds.left = READ_LE_INT16(&rec->walkBounds.xs);
+	walkBounds.right = READ_LE_INT16(&rec->walkBounds.xe);
+	walkBounds.top = READ_LE_INT16(&rec->walkBounds.ys);
+	walkBounds.bottom = READ_LE_INT16(&rec->walkBounds.ye);
 }
 
 // Room exit hotspot area holding class
@@ -282,6 +290,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	tickProcOffset = READ_LE_UINT16(&rec->tickProcOffset);
 	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
 	tickSequenceOffset = READ_LE_UINT16(&rec->tickSequenceOffset);
+	npcSchedule = READ_LE_UINT16(&rec->npcSchedule);
 }
 
 // Hotspot override data
@@ -430,12 +439,13 @@ TalkEntryData *TalkData::getResponse(int index) {
 
 RoomExitCoordinates::RoomExitCoordinates(RoomExitCoordinateEntryResource *rec) {
 	int ctr;
+
 	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ENTRIES; ++ctr) {
+		uint16 tempY = FROM_LE_16(rec->entries[ctr].y);
 		_entries[ctr].x = FROM_LE_16(rec->entries[ctr].x);
-		_entries[ctr].y = FROM_LE_16(rec->entries[ctr].y);
-		uint16 v = FROM_LE_16(rec->entries[ctr].roomNumber);
-		_entries[ctr].roomNumber = v & 0xfff;
-		_entries[ctr].unknown = v >> 12;
+		_entries[ctr].y = tempY & 0xfff;
+		_entries[ctr].roomNumber = FROM_LE_16(rec->entries[ctr].roomNumber);
+		_entries[ctr].hotspotIndexId = (tempY >> 12) << 4;
 	}
 
 	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ROOMS; ++ctr) 
@@ -482,6 +492,161 @@ void SequenceDelayList::tick() {
 	}
 }
 
+// The following classes hold the NPC schedule classes
+
+CharacterScheduleEntry::CharacterScheduleEntry(Action theAction, ...) {
+	_parent = NULL;
+	_action = theAction;
+
+	va_list u_Arg;
+	va_start(u_Arg, theAction);
+
+	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr) 
+		_params[paramCtr] = (uint16) va_arg(u_Arg, int);
+
+	va_end(u_Arg);
+}
+
+CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
+		CharacterScheduleResource *&rec) {
+	_parent = parentSet;
+
+	if ((rec->action == 0) || (rec->action > NPC_JUMP_ADDRESS))
+		error("Invalid action encountered reading NPC schedule");
+
+	_action = (Action) rec->action;
+	for (int index = 0; index < actionNumParams[_action]; ++index) 
+		_params[index] = FROM_LE_16(rec->params[index]);
+
+	rec = (CharacterScheduleResource *) ((byte *) rec + 
+		(actionNumParams[_action] + 1) * sizeof(uint16));
+}
+
+int CharacterScheduleEntry::numParams() { 
+	return actionNumParams[_action]; 
+}
+
+uint16 CharacterScheduleEntry::param(int index) {
+	if ((index < 0) || (index >= numParams()))
+		error("Invalid parameter index %d on handling action %d", index, _action);
+	return _params[index];
+}
+
+void CharacterScheduleEntry::setDetails(Action theAction, ...) {
+	_action = theAction;
+
+	va_list list;
+	va_start(list, theAction);
+
+	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr) 
+		_params[paramCtr] = (uint16) va_arg(list, int);
+
+	va_end(list);
+}
+
+CharacterScheduleEntry *CharacterScheduleEntry::next() {
+	if (_parent) {
+		CharacterScheduleSet::iterator i;
+		for (i = _parent->begin(); i != _parent->end(); ++i) {
+			if (*i == this) {
+				++i;
+				CharacterScheduleEntry *result = (i == _parent->end()) ? NULL : *i;
+				return result;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+uint16 CharacterScheduleEntry::id() {
+	return parent()->getId(this);
+}
+
+CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId) {
+	// Load up all the entries in the schedule
+
+	while (rec->action != 0) {
+		CharacterScheduleEntry *r = new CharacterScheduleEntry(this, rec);
+		push_back(r);
+	}
+
+	_id = setId;
+}
+
+// Given a support data entry identifier, locates that entry in the list of data sets
+
+CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterScheduleSet *currentSet) {
+	// Respond to the special no entry with no record
+	if (id == 0xffff) return NULL;
+
+	// Handle jumps within a current set versus external jumps
+	if ((id >> 10) == 0) {
+		// Jump within current set
+		if (currentSet == NULL)
+			error("Local support data jump encountered outside of a support data sequence");
+	} else {
+		// Inter-set jump - locate the appropriate set
+		int index = (id >> 10) - 1;
+
+		iterator i = begin();
+		while ((i != end()) && (index > 0)) {
+			++i;
+			--index;
+		}
+
+		if (i == end()) 
+			error("Invalid index %d specified for support data set", id >> 8);
+		currentSet = *i;
+	}
+
+	// Get the indexed instruction in the specified set
+	int instructionIndex = id & 0x3ff;
+	CharacterScheduleSet::iterator i = currentSet->begin();
+	while ((i != currentSet->end()) && (instructionIndex > 0)) {
+		++i;
+		--instructionIndex;
+	}
+	if (i == currentSet->end())
+		error("Invalid index %d specified within support data set", id & 0x3ff);
+
+	return *i;
+}
+
+uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
+	// Return an Id for the entry based on the id of the set combined with the 
+	// index of the specific entry
+	uint16 result = _id << 10;
+
+	iterator i;
+	for (i = begin(); i != end(); ++i, ++result) 
+		if (*i == rec) break;
+	if (i == end())
+		error("Parent child relationship missing in character schedule set");
+	return result;
+}
+
+// This class handles an indexed hotspot entry - which is used by the NPC code to
+// determine whether exiting a room to another given room has an exit hotspot or not
+
+RoomExitIndexedHotspotData::RoomExitIndexedHotspotData(RoomExitIndexedHotspotResource *rec) {
+	roomNumber = rec->roomNumber;
+	hotspotIndex = rec->hotspotIndex;
+	hotspotId = FROM_LE_16(rec->hotspotId);
+}
+
+uint16 RoomExitIndexedHotspotList::getHotspot(uint16 roomNumber, uint8 hotspotIndexId) {
+	iterator i;
+	for (i = begin(); i != end(); ++i) {
+		RoomExitIndexedHotspotData *entry = *i;
+		if ((entry->roomNumber == roomNumber) && (entry->hotspotIndex == hotspotIndexId))
+			return entry->hotspotId;
+	}
+
+	// No hotspot
+	return 0xffff;
+}
+
 // Field list and miscellaneous variables
 
 ValueTableData::ValueTableData() {
@@ -501,8 +666,8 @@ bool ValueTableData::isKnownField(uint16 fieldIndex) {
 uint16 ValueTableData::getField(uint16 fieldIndex) {
 	if (fieldIndex > NUM_VALUE_FIELDS)
 		error("Invalid field index specified %d", fieldIndex);
-	if (!isKnownField(fieldIndex))
-		warning("Unknown field index %d in GET_FIELD opcode", fieldIndex);
+//	if (!isKnownField(fieldIndex))
+//		warning("Unknown field index %d in GET_FIELD opcode", fieldIndex);
 	return _fieldList[fieldIndex];
 }
 
@@ -514,8 +679,8 @@ void ValueTableData::setField(uint16 fieldIndex, uint16 value) {
 	if (fieldIndex > NUM_VALUE_FIELDS)
 		error("Invalid field index specified %d", fieldIndex);
 	_fieldList[fieldIndex] = value;
-	if (!isKnownField(fieldIndex))
-		warning("Unknown field index %d in SET_FIELD opcode", fieldIndex);
+//	if (!isKnownField(fieldIndex))
+//		warning("Unknown field index %d in SET_FIELD opcode", fieldIndex);
 }
 
 void ValueTableData::setField(FieldName fieldName, uint16 value) {

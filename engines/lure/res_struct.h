@@ -83,6 +83,7 @@ struct HotspotResource {
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;
+	uint16 npcSchedule;
 } GCC_PACK;
 
 struct HotspotAnimResource {
@@ -105,6 +106,10 @@ struct MovementResource {
 	int16 yChange;
 } GCC_PACK;
 
+struct RoomRect {
+	int16 xs, xe;
+	int16 ys, ye;
+};
 
 struct RoomResource {
 	uint16 roomNumber;
@@ -114,6 +119,7 @@ struct RoomResource {
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
+	RoomRect walkBounds;
 	uint16 numExits;
 } GCC_PACK;
 
@@ -193,6 +199,19 @@ struct RoomExitCoordinateEntryResource {
 	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 	uint8 roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
 } GCC_PACK;
+
+#define MAX_SCHEDULE_ENTRY_PARAMS 5
+
+struct CharacterScheduleResource {
+	uint16 action;
+	uint16 params[MAX_SCHEDULE_ENTRY_PARAMS];
+};
+
+struct RoomExitIndexedHotspotResource {
+	uint8 roomNumber;
+	uint8 hotspotIndex;
+	uint16 hotspotId;
+};
 
 #if !defined(__GNUC__)
 #pragma END_PACK_STRUCTS
@@ -305,6 +324,7 @@ public:
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
+	Common::Rect walkBounds;
 	RoomExitHotspotList exitHotspots;
 	RoomExitList exits;
 	RoomPathsData paths;
@@ -385,7 +405,8 @@ public:
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;
-	
+	uint16 npcSchedule;	
+
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
 	Direction nonVisualDirection() { return (Direction) scriptLoadFlag; }
@@ -481,7 +502,7 @@ struct RoomExitCoordinateData {
 	int16 x;
 	int16 y;
 	uint16 roomNumber;
-	byte unknown;
+	byte hotspotIndexId;
 };
 
 class RoomExitCoordinates {
@@ -496,6 +517,20 @@ public:
 class RoomExitCoordinatesList: public ManagedList<RoomExitCoordinates *> {
 public:
 	RoomExitCoordinates &getEntry(uint16 roomNumber);
+};
+
+class RoomExitIndexedHotspotData {
+public:
+	RoomExitIndexedHotspotData(RoomExitIndexedHotspotResource *rec);
+
+	uint16 roomNumber;
+	uint8 hotspotIndex;
+	uint16 hotspotId;
+};
+
+class RoomExitIndexedHotspotList: public ManagedList<RoomExitIndexedHotspotData *> {
+public:
+	uint16 getHotspot(uint16 roomNumber, uint8 hotspotIndexId);
 };
 
 // The following classes hold any sequence offsets that are being delayed
@@ -514,6 +549,48 @@ public:
 	void addSequence(uint16 delay, uint16 seqOffset);
 	void tick();
 };
+
+// The following classes holds the data for NPC schedules
+
+extern int actionNumParams[NPC_JUMP_ADDRESS+1];
+
+class CharacterScheduleSet;
+
+class CharacterScheduleEntry {
+private:
+	CharacterScheduleSet *_parent;
+	Action _action;
+	uint16 _params[MAX_SCHEDULE_ENTRY_PARAMS];
+public:
+	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
+	CharacterScheduleEntry(Action theAction, ...);
+	CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
+		CharacterScheduleResource *&rec);
+
+	Action action() { return _action; }
+	int numParams();
+	uint16 param(int index);
+	void setDetails(Action theAction, ...);
+	CharacterScheduleEntry *next();
+	CharacterScheduleSet *parent() { return _parent; }
+	uint16 id();
+};
+
+class CharacterScheduleSet: public ManagedList<CharacterScheduleEntry *> {
+private:
+	uint16 _id;
+public:
+	CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId); 
+	uint16 getId(CharacterScheduleEntry *rec);
+	uint16 id() { return _id; }
+};
+
+class CharacterScheduleList: public ManagedList<CharacterScheduleSet *> {
+public:
+	CharacterScheduleEntry *getEntry(uint16 id, CharacterScheduleSet *currentSet = NULL);
+};
+
+typedef List<uint16> CharacterScheduleOffsets;
 
 // The following class holds the field list used by the script engine as 
 // well as miscellaneous fields used by the game.                          
