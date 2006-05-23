@@ -30,10 +30,13 @@
 #include "lure/strings.h"
 #include "lure/res_struct.h"
 #include "lure/events.h"
+#include "lure/game.h"
 
 namespace Lure {
 
 Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
+	Resources &resources = Resources::getReference();
+
 	_data = res;
 	_anim = NULL;
 	_frames = NULL;
@@ -60,16 +63,23 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_actions = res->actions;
 	_colourOffset = res->colourOffset;
 
-	_override = Resources::getReference().getHotspotOverride(res->hotspotId);
+	_override = resources.getHotspotOverride(res->hotspotId);
 
 	if (_data->animRecordId != 0)
 		setAnimation(_data->animRecordId);
-
 	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcOffset);
+
 	_frameCtr = 0;
 	_skipFlag = false;
 	_charRectY = 0;
 	_actionCtr = 0;
+	_blockedOffset = 0;
+	_exitCtr = 0;
+
+	if (_data->npcSchedule != 0) {
+		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(_data->npcSchedule);
+		_currentActions.addFront(DISPATCH_ACTION, entry, _roomNumber);
+	}
 }
 
 // Special constructor used to create a voice hotspot
@@ -84,6 +94,8 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_override = NULL;
 	_colourOffset = 0;
 	_destHotspotId = character->hotspotId();
+	_blockedOffset = 0;
+	_exitCtr = 0;
 
 	switch (objType) {
 	case VOICE_ANIM_ID:
@@ -210,34 +222,39 @@ void Hotspot::copyTo(Surface *dest) {
 	Rect r(_frameNumber * hWidth, 0, (_frameNumber + 1) * hWidth - 1, 
 		hHeight - 1);
 
-	if (yPos < 0) {
-		if (yPos + hHeight <= 0) 
-			// Completely off screen, so don't display
-			return;
-
-		// Reduce the source rectangle to only the on-screen portion
-		r.top = -yPos;
-		yPos = 0;
-	}
-
+	// Handle clipping for X position
 	if (xPos < 0) {
 		if (xPos + hWidth <= 0)
 			// Completely off screen, so don't display
 			return;
 
 		// Reduce the source rectangle to only the on-screen portion
-		r.left = -xPos;
+		r.left += -xPos;
 		xPos = 0;
 	}
-
-	if (xPos >= FULL_SCREEN_WIDTH) 
+	else if (xPos >= FULL_SCREEN_WIDTH) 
 		return;
 	else if (xPos + hWidth > FULL_SCREEN_WIDTH)
-		r.right = (_frameNumber * hWidth) + (FULL_SCREEN_WIDTH - xPos) - 1;
-	if (yPos >= FULL_SCREEN_HEIGHT)
+		r.right = r.left + (FULL_SCREEN_WIDTH - xPos - 1);
+
+	// Handle clipping for Y position
+	if (yPos < 0) {
+		if (yPos + hHeight <= 0) 
+			// Completely off screen, so don't display
+			return;
+
+		// Reduce the source rectangle to only the on-screen portion
+		r.top += -yPos;
+		yPos = 0;
+	}
+	else if (yPos >= FULL_SCREEN_HEIGHT)
 		return;
 	else if (yPos + hHeight > FULL_SCREEN_HEIGHT)
-		r.bottom = FULL_SCREEN_HEIGHT - yPos - 1;
+		r.bottom = r.top + (FULL_SCREEN_HEIGHT - yPos - 1);
+
+	// Final check to make sure there is anything to display
+	if ((r.top >= r.bottom) || (r.left >= r.right))
+		return;
 
 	_frames->copyTo(dest, r, (uint16) xPos, (uint16) yPos, _colourOffset);
 }
@@ -300,7 +317,7 @@ void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
 	_destX = endPosX;
 	_destY = endPosY;
 	_destHotspotId = destHotspot;
-	setCurrentAction(START_WALKING);
+	_currentActions.addFront(START_WALKING, _roomNumber);
 }
 
 void Hotspot::stopWalking() {
@@ -308,7 +325,16 @@ void Hotspot::stopWalking() {
 	_actionCtr = 0;
 	_currentActions.clear();
 	Room::getReference().setCursorState(CS_NONE);
-	setCurrentAction(NO_ACTION);
+}
+
+void Hotspot::endAction() {
+	// TODO: voiceCtr = 0
+	_actionCtr = 0;
+	if (_hotspotId == PLAYER_ID)
+		Room::getReference().setCursorState(CS_NONE);
+
+	if (_currentActions.top().hasSupportData()) 
+		_currentActions.top().setSupportData(_currentActions.top().supportData().next());
 }
 
 void Hotspot::setDirection(Direction dir) {
@@ -518,7 +544,11 @@ void Hotspot::actionPrecheck3(HotspotData *hotspot) {
 bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
 	int16 xp, yp;
 
-	if ((hotspot->walkX == 0) && (hotspot->walkY == 0)) {
+	if (hotspot == NULL) {
+		// DEBUG for now - hardcoded value for 3E7h (NULL)
+		xp = 78; yp = 162;
+	}
+	else if ((hotspot->walkX == 0) && (hotspot->walkY == 0)) {
 		// The hotspot doesn't have any walk co-ordinates
 		xp = hotspot->startX;
 		yp = hotspot->startY + hotspot->heightCopy - 4;
@@ -602,68 +632,72 @@ bool Hotspot::doorCloseCheck(uint16 doorId) {
 
 /*-------------------------------------------------------------------------*/
 
+typedef void (Hotspot::*ActionProcPtr)(HotspotData *hotspot);
+
+void Hotspot::doAction() {
+	CurrentActionEntry &entry = _currentActions.top();
+	HotspotData *hotspot = NULL;
+
+	if (!entry.hasSupportData() || (entry.supportData().action() == NONE)) {
+		doAction(NONE, NULL);
+	} else {
+		if (entry.supportData().numParams() > 0)
+			hotspot = Resources::getReference().getHotspot(entry.supportData().param(0));
+		doAction(entry.supportData().action(), hotspot);
+	}
+}
+
 void Hotspot::doAction(Action action, HotspotData *hotspot) {
-	switch (action) {
-	case GET:
-		doGet(hotspot);
-		break;
-	case PUSH:
-	case PULL:
-	case OPERATE:
-		doOperate(hotspot, action);
-		break;
-	case OPEN:
-		doOpen(hotspot);
-		break;
-	case CLOSE:
-		doClose(hotspot);
-		break;
-	case LOCK:
-		doLockUnlock(hotspot);
-		break;
-	case UNLOCK:
-		doLockUnlock(hotspot);
-		break;
-	case USE:
-		doUse(hotspot);
-		break;
-	case GIVE:
-		doGive(hotspot);
-		break;
-	case TALK_TO:
-		doTalkTo(hotspot);
-		break;
-	case TELL:
-		doTell(hotspot);
-		break;
-	case LOOK:
-		doLook();
-		break;
-	case LOOK_AT:
-		doLookAt(hotspot);
-		break;
-	case LOOK_THROUGH:
-		doLookThrough(hotspot);
-		break;
-	case ASK:
-		doAsk(hotspot);
-		break;
-	case DRINK:
-		doDrink(hotspot);
-		break;
-	case STATUS:
-		doStatus();
-		break;
-	case BRIBE:
-		doBribe(hotspot);
-		break;
-	case EXAMINE:
-		doExamine(hotspot);
-		break;
-	default:
-		doSimple(hotspot, action);
-		break;
-	}	
+	ActionProcPtr actionProcList[NPC_JUMP_ADDRESS + 1] = {
+		&Hotspot::doNothing, 
+		&Hotspot::doGet, 
+		NULL, 
+		&Hotspot::doOperate, 
+		&Hotspot::doOperate, 
+		&Hotspot::doOperate, 
+		&Hotspot::doOpen, 
+		&Hotspot::doClose,
+		&Hotspot::doLockUnlock, 
+		&Hotspot::doLockUnlock, 
+		&Hotspot::doUse, 
+		&Hotspot::doGive, 
+		&Hotspot::doTalkTo, 
+		&Hotspot::doTell, 
+		NULL,
+		&Hotspot::doLook, 
+		&Hotspot::doLookAt, 
+		&Hotspot::doLookThrough, 
+		&Hotspot::doAsk, 
+		NULL, 
+		&Hotspot::doDrink,
+		&Hotspot::doStatus, 
+		&Hotspot::doGoto, 
+		&Hotspot::doReturn, 
+		&Hotspot::doBribe, 
+		&Hotspot::doExamine, 
+		NULL, NULL,
+		&Hotspot::npcSetRoomAndBlockedOffset, 
+		&Hotspot::npcUnknown1, 
+		&Hotspot::npcExecScript, 
+		&Hotspot::npcUnknown2, 
+		&Hotspot::npcSetRandomDest,
+		&Hotspot::npcWalkingCheck, 
+		&Hotspot::npcSetSupportOffset,
+		&Hotspot::npcSupportOffsetConditional,
+		&Hotspot::npcDispatchAction, 
+		&Hotspot::npcUnknown3, 
+		&Hotspot::npcUnknown4, 
+		&Hotspot::npcStartTalking,
+		&Hotspot::npcJumpAddress};
+
+	(this->*actionProcList[action])(hotspot);
+}
+
+void Hotspot::doNothing(HotspotData *hotspot) {
+	_currentActions.pop();
+	if (hotspotId() == PLAYER_ID) {
+		Room::getReference().setCursorState(CS_NONE);
+	}
 }
 
 void Hotspot::doGet(HotspotData *hotspot) {
@@ -671,13 +705,13 @@ void Hotspot::doGet(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 
 	if (result == PC_INITIAL) return;
-	else if (result !=PC_EXECUTE) {
-		stopWalking();
+	else if (result != PC_EXECUTE) {
+		endAction();
 		return;
 	}
 
 	faceHotspot(hotspot);
-	stopWalking();
+	endAction();
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, GET);
 	if (sequenceOffset >= 0x8000) {
@@ -706,22 +740,22 @@ void Hotspot::doGet(HotspotData *hotspot) {
 	}
 }
 
-void Hotspot::doOperate(HotspotData *hotspot, Action action) {
+void Hotspot::doOperate(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
+	Action action = _currentActions.top().supportData().action();
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 
 	_actionCtr = 0;
 	faceHotspot(hotspot);
-	stopWalking();
+	endAction();
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, action);
-
 	if (sequenceOffset >= 0x8000) {
 		Dialog::showMessage(sequenceOffset, hotspotId());
 	} else {
@@ -740,7 +774,7 @@ void Hotspot::doOpen(HotspotData *hotspot) {
 		if (!joinRec->blocked) {
 			// Room exit is already open
 			Dialog::showMessage(4, hotspotId());
-			stopWalking();
+			endAction();
 			return;
 		}
 	}
@@ -748,16 +782,15 @@ void Hotspot::doOpen(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 
 	faceHotspot(hotspot);
 	_actionCtr = 0;
-	stopWalking();
+	endAction();
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, OPEN);
-
 	if (sequenceOffset >= 0x8000) {
 		// Message to display
 		Dialog::showMessage(sequenceOffset, hotspotId());
@@ -769,7 +802,8 @@ void Hotspot::doOpen(HotspotData *hotspot) {
 
 		if (sequenceOffset == 1) return;
 		if (sequenceOffset != 0) {
-			// TODO: HS[60h] check
+			if (_exitCtr != 0) 
+				_exitCtr = 4;
 			Dialog::showMessage(sequenceOffset, hotspotId());
 			return;
 		}
@@ -794,7 +828,7 @@ void Hotspot::doClose(HotspotData *hotspot) {
 		if (joinRec->blocked) {
 			// Room exit is already closed/blocked
 			Dialog::showMessage(3, hotspotId());
-			stopWalking();
+			endAction();
 			return;
 		}
 	}
@@ -802,16 +836,15 @@ void Hotspot::doClose(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 
 	faceHotspot(hotspot);
 	_actionCtr = 0;
-	stopWalking();
+	endAction();
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, CLOSE);
-
 	if (sequenceOffset >= 0x8000) {
 		// Message to display
 		Dialog::showMessage(sequenceOffset, hotspotId());
@@ -841,7 +874,7 @@ void Hotspot::doClose(HotspotData *hotspot) {
 
 void Hotspot::doUse(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().usedId();
+	uint16 usedId = _currentActions.top().supportData().param(1);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	ValueTableData &fields = res.fieldList();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
@@ -849,7 +882,7 @@ void Hotspot::doUse(HotspotData *hotspot) {
 
 	if (usedHotspot->roomNumber != hotspotId()) {
 		// Item to be used is not in character's inventory - say "What???"
-		stopWalking();
+		endAction();
 		Dialog::showMessage(0xF, hotspotId());
 		return;
 	}
@@ -857,12 +890,12 @@ void Hotspot::doUse(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 
 	faceHotspot(hotspot);
-	stopWalking();
+	endAction();
 
 	// TODO: If character=3E9h, HS[-1]=28h, HS[1Fh]=50h
 
@@ -881,7 +914,7 @@ void Hotspot::doUse(HotspotData *hotspot) {
 
 void Hotspot::doGive(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().usedId();
+	uint16 usedId = _currentActions.top().supportData().param(1);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	ValueTableData &fields = res.fieldList();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
@@ -889,7 +922,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 
 	if (usedHotspot->roomNumber != hotspotId()) {
 		// Item to be used is not in character's inventory - say "What???"
-		stopWalking();
+		endAction();
 		Dialog::showMessage(0xF, hotspotId());
 		return;
 	}
@@ -897,12 +930,12 @@ void Hotspot::doGive(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 
 	faceHotspot(hotspot);
-	stopWalking();
+	endAction();
 
 	if ((hotspotId() != 0x412) || (usedId != 0x2710)) 
 		Dialog::showMessage(7, hotspotId());
@@ -927,7 +960,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 
 void Hotspot::doTalkTo(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().usedId();
+	uint16 usedId = _currentActions.top().supportData().param(1);
 	ValueTableData &fields = res.fieldList();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
 	fields.setField(USE_HOTSPOT_ID, usedId);
@@ -938,13 +971,13 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 		HotspotPrecheckResult result = actionPrecheck(hotspot);
 		if (result == PC_INITIAL) return;
 		else if (result != PC_EXECUTE) {
-			stopWalking();
+			endAction();
 			return;
 		}
 	}
 
 	faceHotspot(hotspot);
-	stopWalking();
+	endAction();
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, TALK_TO);
 
@@ -957,7 +990,7 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 		uint16 result = Script::execute(sequenceOffset);
 
 		if (result != 0) {
-			stopWalking();
+			endAction();
 			return;
 		}
 	}
@@ -970,8 +1003,8 @@ void Hotspot::doTell(HotspotData *hotspot) {
 	// TODO
 }
 
-void Hotspot::doLook() {
-	stopWalking();
+void Hotspot::doLook(HotspotData *hotspot) {
+	endAction();
 	Dialog::show(Room::getReference().descId());
 }
 
@@ -992,7 +1025,7 @@ void Hotspot::doLookAt(HotspotData *hotspot) {
 			HotspotPrecheckResult result = actionPrecheck(hotspot);
 			if (result == PC_INITIAL) return;
 			else if (result != PC_EXECUTE) {
-				stopWalking();
+				endAction();
 				return;
 			}
 		}
@@ -1000,7 +1033,7 @@ void Hotspot::doLookAt(HotspotData *hotspot) {
 
 	faceHotspot(hotspot);
 	_actionCtr = 0;
-	stopWalking();
+	endAction();
 
 	if (sequenceOffset >= 0x8000) {
 		Dialog::showMessage(sequenceOffset, hotspotId());
@@ -1029,7 +1062,7 @@ void Hotspot::doLookThrough(HotspotData *hotspot) {
 			HotspotPrecheckResult result = actionPrecheck(hotspot);
 			if (result == PC_INITIAL) return;
 			else if (result != PC_EXECUTE) {
-				stopWalking();
+				endAction();
 				return;
 			}
 		}
@@ -1037,7 +1070,7 @@ void Hotspot::doLookThrough(HotspotData *hotspot) {
 
 	faceHotspot(hotspot);
 	_actionCtr = 0;
-	stopWalking();
+	endAction();
 
 	if (sequenceOffset >= 0x8000) {
 		Dialog::showMessage(sequenceOffset, hotspotId());
@@ -1068,7 +1101,7 @@ void Hotspot::doDrink(HotspotData *hotspot) {
 		return;
 	}
 
-	stopWalking();
+	endAction();
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, DRINK);
 
 	if (sequenceOffset >= 0x8000) {
@@ -1089,16 +1122,15 @@ void Hotspot::doDrink(HotspotData *hotspot) {
 // doStatus
 // Handle the status window
 
-void Hotspot::doStatus() {
+void Hotspot::doStatus(HotspotData *hotspot) {
 	char buffer[MAX_DESC_SIZE];
 	uint16 numItems = 0;
 	StringData &strings = StringData::getReference();
 	Resources &resources = Resources::getReference();
 	Room &room = Room::getReference();
-warning("status0 %d %d", room.cursorState(), resources.getCurrentAction());
 	
 	room.update();
-	stopWalking();
+	endAction();
 
 	strings.getString(room.roomNumber(), buffer, NULL, NULL);
 	strcat(buffer, "\n\nYou are carrying ");
@@ -1115,7 +1147,7 @@ warning("status0 %d %d", room.cursorState(), resources.getCurrentAction());
 			strings.getString(rec->nameId, buffer + strlen(buffer), NULL, NULL);
 		}
 	}
-warning("status1 %d", room.cursorState());
+
 	// If there were no items, add in the word 'nothing'
 	if (numItems == 0) strcat(buffer, "nothing.");
 
@@ -1130,14 +1162,27 @@ warning("status1 %d", room.cursorState());
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 	mouse.cursorOff();
-warning("status2 %d", room.cursorState());
+
 	Surface *s = Surface::newDialog(INFO_DIALOG_WIDTH, buffer);
 	s->copyToScreen(INFO_DIALOG_X, (FULL_SCREEN_HEIGHT-s->height())/2);
-warning("status3");
+
 	Events::getReference().waitForPress();
-warning("status4");
 	screen.update();
 	mouse.cursorOn();
+}
+
+// doGoto
+// Sets the room for the character to go to
+
+void Hotspot::doGoto(HotspotData *hotspot) {
+	_exitCtr = 0;
+	_blockedOffset = 0;
+	_currentActions.top().setRoomNumber(_currentActions.top().supportData().param(0));
+	endAction();
+}
+
+void Hotspot::doReturn(HotspotData *hotspot) {
+	error("Not yet implemented");
 }
 
 uint16 bribe_hotspot_list[] = {0x421, 0x879, 0x3E9, 0x8C7, 0x429, 0x8D1,
@@ -1152,7 +1197,7 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 	
@@ -1171,7 +1216,7 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 	// TODO: call to talk_setup
 	faceHotspot(hotspot);
 	_actionCtr = 0;
-	stopWalking();
+	endAction();
 
 	sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, BRIBE);
 	if (sequenceOffset != 0) {
@@ -1188,7 +1233,7 @@ void Hotspot::doExamine(HotspotData *hotspot) {
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
-	stopWalking();
+	endAction();
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, EXAMINE);
 
 	if (sequenceOffset >= 0x8000) {
@@ -1204,7 +1249,7 @@ void Hotspot::doExamine(HotspotData *hotspot) {
 }
 
 void Hotspot::doLockUnlock(HotspotData *hotspot) {
-	Action action = _currentActions.top().hotspotAction();
+	Action action = _currentActions.top().supportData().action();
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
@@ -1213,12 +1258,12 @@ void Hotspot::doLockUnlock(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_INITIAL) return;
 	else if (result != PC_EXECUTE) {
-		stopWalking();
+		endAction();
 		return;
 	}
 
 	faceHotspot(hotspot);
-	stopWalking();
+	endAction();
 	
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, action);
 
@@ -1230,16 +1275,120 @@ void Hotspot::doLockUnlock(HotspotData *hotspot) {
 	}
 }
 
-void Hotspot::doSimple(HotspotData *hotspot, Action action) {
-	Resources &res = Resources::getReference();
-	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, action);
+void Hotspot::npcSetRoomAndBlockedOffset(HotspotData *hotspot) {
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	_exitCtr = 0;
 
-	if (sequenceOffset >= 0x8000) {
-		Dialog::showMessage(sequenceOffset, hotspotId());
-	} else if (sequenceOffset != 0) {
-		Script::execute(sequenceOffset);
+	_blockedOffset = entry.param(1);
+	_currentActions.top().setRoomNumber(entry.param(0));
+	endAction();
+}
+
+void Hotspot::npcUnknown1(HotspotData *hotspot) {
+	error("Not yet implemented");
+}
+
+void Hotspot::npcExecScript(HotspotData *hotspot) {
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	uint16 offset = entry.param(0);
+	endAction();
+	Script::execute(offset);
+}
+
+void Hotspot::npcUnknown2(HotspotData *hotspot) {
+	warning("npcUnknown2 - Not yet implemented");
+	endAction();
+}
+
+void Hotspot::npcSetRandomDest(HotspotData *hotspot) {
+	endAction();
+	Support::setRandomDest(*this);
+}
+
+void Hotspot::npcWalkingCheck(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	uint16 hId = entry.param(0);
+
+	endAction();
+	fields.setField(USE_HOTSPOT_ID, hId);
+	fields.setField(ACTIVE_HOTSPOT_ID, hId);
+
+	if ((hId < PLAYER_ID) || (hotspot->roomNumber == _roomNumber)) {
+		characterWalkingCheck(hotspot);
 	}
 }
+
+void Hotspot::npcSetSupportOffset(HotspotData *hotspot) {
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	uint16 entryId = entry.param(0);
+
+	CharacterScheduleEntry *newEntry = Resources::getReference().
+		charSchedules().getEntry(entryId, entry.parent());
+	_currentActions.top().setSupportData(newEntry);
+}
+
+void Hotspot::npcSupportOffsetConditional(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry *newEntry;
+	uint16 scriptOffset = entry.param(0);
+	uint16 entryId = entry.param(1);
+
+	if (Script::execute(scriptOffset) == 0) {
+		// Not succeeded, get next entry
+		newEntry = entry.next();
+	} else {
+		// Get entry specified by parameter 1
+		newEntry = res.charSchedules().getEntry(entryId, entry.parent());
+	}
+
+	_currentActions.top().setSupportData(newEntry);
+	HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : 
+		res.getHotspot(newEntry->param(0));
+	doAction(newEntry->action(), hotspotData);
+}
+
+void Hotspot::npcDispatchAction(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+
+	fields.setField(USE_HOTSPOT_ID, entry.param(0));
+	fields.setField(ACTIVE_HOTSPOT_ID, entry.param(0));
+
+	HotspotPrecheckResult result = actionPrecheck(hotspot);
+	if (result == PC_EXECUTE) {
+		endAction();
+	} else if (result != PC_INITIAL) {
+		CharacterScheduleEntry *newEntry = Resources::getReference().
+			charSchedules().getEntry(entry.param(0), entry.parent());
+		_currentActions.top().setSupportData(newEntry);
+		
+		HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : 
+			res.getHotspot(newEntry->param(0));
+		doAction(newEntry->action(), hotspotData);
+	}
+}
+
+void Hotspot::npcUnknown3(HotspotData *hotspot) {
+	error("npcUnknown3: Not yet implemented");
+}
+
+void Hotspot::npcUnknown4(HotspotData *hotspot) {
+	error("npcUnknown4: Not yet implemented");
+}
+
+void Hotspot::npcStartTalking(HotspotData *hotspot) {
+	error("npcStartTalking: Not yet implemented");
+}
+
+void Hotspot::npcJumpAddress(HotspotData *hotspot) {
+	error("npcJumpAddress: Not yet implemented");
+}
+
+/*------------------------------------------------------------------------*/
 
 void Hotspot::startTalk(HotspotData *charHotspot) {
 	Resources &res = Resources::getReference();
@@ -1278,6 +1427,8 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return roomExitAnimHandler;
 	case PLAYER_TICK_PROC_ID:
 		return playerAnimHandler;
+	case 0x7EFA:
+		return skorlAnimHandler;
 	case 0x7F69:
 		return droppingTorchAnimHandler;
 	case 0x8009:
@@ -1303,7 +1454,122 @@ void HotspotTickHandlers::standardAnimHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
+	Resources &res = Resources::getReference();
+	RoomPathsData &paths = Resources::getReference().getRoom(h.roomNumber())->paths;
+	PathFinder &pathFinder = h.pathFinder();
+	CurrentActionStack &actions = h.currentActions();
+	uint16 impingingList[MAX_NUM_IMPINGING];
+	int numImpinging;
+	int index;
 
+	// TODO: handle talk dialogs countdown if necessary
+
+	// If a frame countdown is in progress, then decrement and exit
+	if (h.frameCtr() > 0) {
+		h.decrFrameCtr();
+		return;
+	}
+
+	numImpinging = Support::findIntersectingCharacters(h, impingingList);
+	if (h.skipFlag()) {
+		if (numImpinging > 0) {
+			index = 0;
+			while ((index < numImpinging) && (impingingList[index] != PLAYER_ID))
+				++index;
+			
+			if (index != numImpinging) {
+				// Character has bumped into player
+				// TODO: Figure out handling code
+				error("Unimplemented - character bumping into player");
+			}
+			return;
+		}
+		
+		h.setSkipFlag(false);
+	}
+
+	// TODO: Handling of any set Tick Script Offset, as well as certain other
+	// as of yet unknown hotspot flags
+
+	CurrentAction action = actions.action();
+
+	switch (action) {
+	case NO_ACTION:
+		// TODO: HS[44h]=2, update movement
+		break;
+
+	case DISPATCH_ACTION:
+		// Dispatch an action
+		if (actions.top().roomNumber() == 0)
+			actions.top().setRoomNumber(h.roomNumber());
+		if (actions.top().roomNumber() == h.roomNumber()) {
+			// NPC in correct room for action
+			h.setSkipFlag(false);
+			h.doAction();
+		} else {
+			// NPC in wrong room for action
+			npcRoomChange(h);
+		}
+		break;
+
+	case EXEC_HOTSPOT_SCRIPT:
+		// A hotspot script is in progress for the player, so don't interrupt
+		if (h.executeScript()) {
+			// Script is finished
+			actions.top().setAction(DISPATCH_ACTION);
+		}
+		break;
+
+	case START_WALKING:
+		// Start the player walking to the given destination
+		
+		h.setOccupied(false);  
+		pathFinder.reset(paths);
+		h.currentActions().top().setAction(PROCESSING_PATH);
+
+		// Deliberate fall through to processing walking path
+
+	case PROCESSING_PATH:
+		// TODO: Call to sub_105
+		if (!pathFinder.process()) break;
+
+		// Pathfinding is now complete 
+		actions.top().setAction(WALKING);
+
+		// TODO: Lots of checks to unknown hotspot fields
+		break;
+
+	case WALKING:
+		// The character is currently moving
+		// If the character is walking to an exit hotspot, make sure it's still open
+		if ((h.destHotspotId() != 0) && (h.destHotspotId() != 0xffff)) {
+			// Player is walking to a room exit hotspot
+			RoomExitJoinData *joinRec = res.getExitJoin(h.destHotspotId());
+			if (joinRec->blocked) {
+				// Exit now blocked, so stop walking
+				actions.top().setAction(DISPATCH_ACTION);
+				h.setOccupied(true);
+				break;
+			}
+		}
+
+		// TODO: Call to sub_41, exit if returns true
+
+		h.setOccupied(false);
+		bool result = h.walkingStep();
+
+		if (result) 
+			// Walking done
+			h.currentActions().top().setAction(DISPATCH_ACTION);
+
+		if (h.destHotspotId() != 0) {
+			// Walking to an exit, check for any required room change
+			Support::checkRoomChange(h);
+		}
+
+		h.setOccupied(true);
+		break;
+	}
 }
 
 void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
@@ -1378,9 +1644,16 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	case DISPATCH_ACTION:
 		// Dispatch an action
 		h.setDestHotspot(0);
-		hsAction = actions.top().hotspotAction();
-		hotspotId = actions.top().hotspotId();
-		hotspot = (hotspotId == 0) ? NULL : res.getHotspot(hotspotId);
+
+		if (actions.top().hasSupportData()) {
+			hsAction = actions.top().supportData().action();
+			hotspotId = actions.top().supportData().param(0);
+			hotspot = res.getHotspot(hotspotId);
+		} else {
+			hsAction = NONE;
+			hotspot = NULL;
+		}
+
 		h.doAction(hsAction, hotspot);
 		break;
 
@@ -1401,7 +1674,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 
 		// Set current action to processing walking path
 		actions.pop();
-		h.setCurrentAction(PROCESSING_PATH);
+		h.currentActions().addFront(PROCESSING_PATH, h.roomNumber());
 		// Deliberate fall through to processing walking path
 
 	case PROCESSING_PATH:
@@ -1411,13 +1684,13 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		actions.pop();
 
 		if (pathFinder.isEmpty()) {
-			mouse.setCursorNum(CURSOR_ARROW);
+		mouse.setCursorNum(CURSOR_ARROW);
 			break;
 		}
 
 		if (mouse.getCursorNum() != CURSOR_CAMERA)
 			mouse.setCursorNum(CURSOR_ARROW);
-		h.setCurrentAction(WALKING);
+		h.currentActions().addFront(WALKING, h.roomNumber());
 		h.setPosition(h.x(), h.y() & 0xFFF8);
 		
 		// Deliberate fall through to walking
@@ -1443,6 +1716,24 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		Support::checkRoomChange(h);
 		break;
 	}
+}
+
+void HotspotTickHandlers::skorlAnimHandler(Hotspot &h) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	HotspotData *player = res.getHotspot(PLAYER_ID);
+
+	if ((fields.getField(11) != 0) && !h.skipFlag() && 
+		(h.roomNumber() == player->roomNumber)) {
+		// TODO: Need extra check on data_669
+
+		if (Support::charactersIntersecting(h.resource(), player)) {
+			// Skorl has caught the player
+			Game::getReference().setState(GS_RESTORE_RESTART | GS_CAUGHT);
+		}
+	}
+
+	standardCharacterAnimHandler(h);
 }
 
 void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
@@ -1660,6 +1951,84 @@ void HotspotTickHandlers::headAnimationHandler(Hotspot &h) {
 	}
 
 	h.setFrameNumber(frameNumber);
+}
+
+/*-------------------------------------------------------------------------*/
+
+// support method for the standard character tick proc routine - it gets called
+// when the character is in the wrong room designated for an action, and is
+// responsible for starting the character walking to the correct exit
+
+void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
+	Resources &res = Resources::getReference();
+
+	// Increment number of times an exit has been attempted
+	h.setExitCtr(h.exitCtr() + 1);
+	if (h.exitCtr() >= 5) {
+		// Failed to exit room too many times
+		h.setExitCtr(0);
+		if (h.currentActions().size() > 1) {
+			// Pending items on stack
+			// TODO: Check on HS[4Eh]
+			if (h.currentActions().top().supportData().id() != RETURN_SUPPORT_ID) {
+				h.currentActions().top().supportData().setDetails(RETURN, 0);
+			}
+
+			h.currentActions().top().setRoomNumber(h.roomNumber());
+
+		} else if (h.blockedOffset() != 0) {
+			// Only current action on stack - and there is a block handler 
+			CharacterScheduleEntry *entry = res.charSchedules().getEntry(h.blockedOffset());
+			h.currentActions().top().setSupportData(entry);
+			h.currentActions().top().setRoomNumber(h.roomNumber());
+		}
+
+		return;
+	}
+
+	// Get room exit coordinates
+	RoomExitCoordinateData &exitData = res.coordinateList().getEntry(
+		h.roomNumber()).getData(h.currentActions().top().roomNumber());
+	
+	if (h.hotspotId() != RATPOUCH_ID) {
+		// Count up the number of characters in the room
+		HotspotList &list = res.activeHotspots();
+		HotspotList::iterator i;
+		int numCharacters = 0;
+
+		for (i = list.begin(); i != list.end(); ++i) {
+			if ((h.roomNumber() == (exitData.roomNumber & 0xff)) && (h.layer() != 0) &&
+				(h.hotspotId() >= PLAYER_ID) && (h.hotspotId() < FIRST_NONCHARACTER_ID)) 
+				++numCharacters;
+		}
+
+		if (numCharacters >= 4) {
+error("npcChangeRoom - too many characters - yet to be tested");
+			uint16 dataId = res.getCharOffset(0);
+			CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
+			h.currentActions().addFront(DISPATCH_ACTION, entry, h.roomNumber());
+			
+			return;
+		}
+	}
+
+	h.setDestPosition(exitData.x, exitData.y);
+	h.setDestHotspot(res.exitHotspots().getHotspot(h.roomNumber(), exitData.hotspotIndexId));
+
+	if (h.destHotspotId() != 0xffff) {
+		RoomExitJoinData *joinRec = res.getExitJoin(h.destHotspotId());
+
+		if (joinRec->blocked) {
+			// The room exit is blocked - so add an opening action
+			CharacterScheduleEntry &entry = h.npcSupportData();
+			entry.setDetails(OPEN, h.destHotspotId());
+			h.currentActions().addFront(DISPATCH_ACTION, &entry, h.roomNumber());
+			return;
+		}
+	}
+
+	// No exit hotspot, or it has one that's not blocked. So start the walking
+	h.currentActions().top().setAction(START_WALKING);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1918,6 +2287,15 @@ final_step:
 	return true;
 }
 
+void PathFinder::list() {
+	printf("Pathfinder::list\n");
+	ManagedList<WalkingActionEntry *>::iterator i;
+	for (i = _list.begin(); i != _list.end(); ++i) {
+		WalkingActionEntry *e = *i;
+		printf("Direction=%d, numSteps=%d\n", e->direction(), e->numSteps());
+	}
+}
+
 void PathFinder::processCell(uint16 *p) {
 	// Only process cells that are still empty
 	if (*p == 0) {
@@ -2022,6 +2400,33 @@ void PathFinder::initVars() {
 	_countdownCtr -= 700;
 }
 
+// Current action stack class
+
+void CurrentActionStack::list() {
+	ManagedList<CurrentActionEntry *>::iterator i;
+
+	printf("CurrentActionStack::list num_actions=%d\n", size());
+
+	for (i = _actions.begin(); i != _actions.end(); ++i) {
+		CurrentActionEntry *entry = *i;
+		printf("style=%d room#=%d", entry->action(), entry->roomNumber());
+		if (entry->hasSupportData()) {
+			CharacterScheduleEntry &rec = entry->supportData();
+
+			printf(", action=%d params=", rec.action());
+			if (rec.numParams() == 0) 
+				printf("none");
+			else {
+				for (int ctr = 0; ctr < rec.numParams(); ++ctr) {
+					if (ctr != 0) printf(", ");
+					printf("%d", rec.param(ctr));
+				}
+			}
+		}
+		printf("\n");
+	}
+}
+
 /*-------------------------------------------------------------------------*/
 /* Support methods                                                         */
 /*                                                                         */
@@ -2046,16 +2451,17 @@ int Support::findIntersectingCharacters(Hotspot &h, uint16 *charList) {
 		
 		// Check for basic reasons to skip checking the animation
 		if ((h.hotspotId() == hotspot.hotspotId()) || (hotspot.layer() == 0) ||
-			(h.roomNumber() != hotspot.roomNumber()) || (h.hotspotId() >= FIRST_NONCHARACTER_ID) ||
-			h.skipFlag()) continue;
+			(h.roomNumber() != hotspot.roomNumber()) || 
+			(hotspot.hotspotId() >= FIRST_NONCHARACTER_ID) ||
+			hotspot.skipFlag()) continue;
 		// TODO: See why si+ANIM_HOTSPOT_OFFSET compared aganst di+ANIM_VOICE_CTR
 
-		if ((hotspot.x() > r.right) || (hotspot.x() + hotspot.widthCopy() >= r.left) ||
-			(hotspot.y() + hotspot.heightCopy() + hotspot.charRectY() < r.top) ||
+		if ((hotspot.x() > r.right) || (hotspot.x() + hotspot.widthCopy() <= r.left) ||
+			(hotspot.y() + hotspot.heightCopy() + hotspot.charRectY() > r.bottom) ||
 			(hotspot.y() + hotspot.heightCopy() - hotspot.charRectY() 
-			- hotspot.yCorrection() >= r.bottom)) 
+			- hotspot.yCorrection() <= r.top)) 
 			continue;
-		
+	
 		// Add hotspot Id to list
 		if (numImpinging == MAX_NUM_IMPINGING)
 			error("Exceeded maximum allowable number of impinging characters");
@@ -2094,7 +2500,8 @@ void Support::checkRoomChange(Hotspot &h) {
 
 void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber, 
 								  int16 newX, int16 newY, Direction dir) {
-	ValueTableData &fields = Resources::getReference().fieldList();
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
 
 	if (h.hotspotId() == PLAYER_ID) {
 		// Room change code for the player
@@ -2108,18 +2515,42 @@ void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber,
 		// TODO: Call sub_136, and if !ZF reset new room number back to 0 
 	} else {
 		// Any other character changing room
+
 		if (checkForIntersectingCharacter(h)) {
-			// Character is blocked, so abort room change
-			h.currentActions().clear();
+			// Character is blocked, so add a handler for handling it
+			uint16 dataId = res.getCharOffset(0);
+			CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
+			h.currentActions().addFront(DISPATCH_ACTION, entry, h.roomNumber());
 		} else {
 			// Handle character room change
 			h.setRoomNumber(roomNumber);
-			h.setPosition((newX & 0xfff8) || 5, (newY - h.heightCopy()) & 0xfff8);
+			h.setPosition((newX & 0xfff8) | 5, (newY - h.heightCopy()) & 0xfff8);
 			h.setSkipFlag(true);
 			h.setDirection(dir);
 
-			h.currentActions().pop();
+			h.setExitCtr(0);
+			h.currentActions().top().setAction(DISPATCH_ACTION);
 		}
+	}
+}
+
+void Support::setRandomDest(Hotspot &h) {
+	Resources &res = Resources::getReference();
+	RoomData *roomData = res.getRoom(h.roomNumber());
+	Common::Rect &rect = roomData->walkBounds;
+	Common::RandomSource _rnd;
+	int tryCtr = 0;
+	int16 xp, yp;
+
+	h.currentActions().top().setAction(DISPATCH_ACTION);
+	
+	while (tryCtr ++ <= 20) {
+		xp = rect.left + _rnd.getRandomNumber(rect.right - rect.left);
+		yp = rect.left + _rnd.getRandomNumber(rect.right - rect.left);
+		h.setDestPosition(xp, yp);
+
+		if (!roomData->paths.isOccupied(xp, yp) && !roomData->paths.isOccupied(xp, yp)) 
+			break;
 	}
 }
 

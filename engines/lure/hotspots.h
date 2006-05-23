@@ -41,6 +41,7 @@ public:
 	static void checkRoomChange(Hotspot &h);
 	static void characterChangeRoom(Hotspot &h, uint16 roomNumber, 
 								  int16 newX, int16 newY, Direction dir);
+	static void setRandomDest(Hotspot &h);
 	static bool charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2);
 };
 
@@ -48,12 +49,16 @@ typedef void(*HandlerMethodPtr)(Hotspot &h);
 
 class HotspotTickHandlers {
 private:
+	// Support methods
+	static void npcRoomChange(Hotspot &h);
+
 	// Handler methods
 	static void defaultHandler(Hotspot &h);
 	static void standardAnimHandler(Hotspot &h);
 	static void standardCharacterAnimHandler(Hotspot &h);
 	static void roomExitAnimHandler(Hotspot &h);
 	static void playerAnimHandler(Hotspot &h);
+	static void skorlAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
@@ -69,27 +74,30 @@ enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRI
 class CurrentActionEntry {
 private:
 	CurrentAction _action;
-	Action _hotspotAction;
-	uint16 _hotspotId;
-	uint16 _usedId;
+	CharacterScheduleEntry *_supportData;
+	uint16 _roomNumber;
 public:
-	CurrentActionEntry(CurrentAction newAction) { _action = newAction; }
-	CurrentActionEntry(CurrentAction newAction, Action hsAction, uint16 id) { 
+	CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
 		_action = newAction; 
-		_hotspotAction = hsAction;
-		_hotspotId = id;
+		_supportData = NULL; 
+		_roomNumber = roomNum;
 	}
-	CurrentActionEntry(CurrentAction newAction, Action hsAction, uint16 id, uint16 uId) { 
+	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
 		_action = newAction; 
-		_hotspotAction = hsAction;
-		_hotspotId = id;
-		_usedId = uId;
+		_supportData = data; 
+		_roomNumber = roomNum;
 	}
 
 	CurrentAction action() { return _action; }
-	Action hotspotAction() { return _hotspotAction; }
-	uint16 hotspotId() { return _hotspotId; }
-	uint16 usedId() { return _usedId; }
+	CharacterScheduleEntry &supportData() { 
+		if (!_supportData) error("Access made to non-defined action support record");
+		return *_supportData;
+	}
+	bool hasSupportData() { return _supportData != NULL; }
+	uint16 roomNumber() { return _roomNumber; }
+	void setAction(CurrentAction newAction) { _action = newAction; }
+	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
+	void setSupportData(CharacterScheduleEntry *newRec) { _supportData = newRec; }
 };
 
 class CurrentActionStack {
@@ -103,20 +111,20 @@ public:
 	CurrentActionEntry &top() { return **_actions.begin(); }
 	CurrentAction action() { return isEmpty() ? NO_ACTION : top().action(); }
 	void pop() { _actions.erase(_actions.begin()); }
-	void addBack(CurrentAction newAction) {
-		_actions.push_back(new CurrentActionEntry(newAction));
+	int size() { return _actions.size(); }
+	void list();
+
+	void addBack(CurrentAction newAction, uint16 roomNum) {
+		_actions.push_back(new CurrentActionEntry(newAction, roomNum));
 	}
-	void addBack(CurrentAction newAction, Action hsAction, uint16 id) {
-		_actions.push_back(new CurrentActionEntry(newAction, hsAction, id));
+	void addBack(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
+		_actions.push_back(new CurrentActionEntry(newAction, rec, roomNum));
 	}
-	void addFront(CurrentAction newAction) {
-		_actions.push_front(new CurrentActionEntry(newAction));
+	void addFront(CurrentAction newAction, uint16 roomNum) {
+		_actions.push_front(new CurrentActionEntry(newAction, roomNum));
 	}
-	void addFront(CurrentAction newAction, Action hsAction, uint16 id) {
-		_actions.push_front(new CurrentActionEntry(newAction, hsAction, id));
-	}
-	void addFront(CurrentAction newAction, Action hsAction, uint16 id, uint16 usedId) {
-		_actions.push_front(new CurrentActionEntry(newAction, hsAction, id, usedId));
+	void addFront(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
+		_actions.push_front(new CurrentActionEntry(newAction, rec, roomNum));
 	}
 };
 
@@ -169,6 +177,7 @@ public:
 	PathFinder(Hotspot *h);
 	void reset(RoomPathsData &src);
 	bool process();
+	void list();
 
 	void pop() { _list.erase(_list.begin()); }
 	WalkingActionEntry &top() { return **_list.begin(); }
@@ -182,7 +191,9 @@ class Hotspot {
 private:
 	HotspotData *_data;
 	HotspotAnimData *_anim;
+public:
 	HandlerMethodPtr _tickHandler;
+private:
 	Surface *_frames;
 	uint16 _hotspotId;
 	uint16 _roomNumber;
@@ -203,14 +214,16 @@ private:
 	bool _persistant;
 	HotspotOverrideData *_override;
 	bool _skipFlag;
-
 	CurrentActionStack _currentActions;
+	CharacterScheduleEntry _npcSupportData;
 	PathFinder _pathFinder;
 
 	uint16 _frameCtr;
 	uint8 _actionCtr;
 	int16 _destX, _destY;
 	uint16 _destHotspotId;
+	uint16 _blockedOffset;
+	uint8 _exitCtr;
 
 	// Support methods
 	void startTalk(HotspotData *charHotspot);
@@ -223,8 +236,9 @@ private:
 	bool doorCloseCheck(uint16 doorId);
 
 	// Action set
+	void doNothing(HotspotData *hotspot);
 	void doGet(HotspotData *hotspot);
-	void doOperate(HotspotData *hotspot, Action action);
+	void doOperate(HotspotData *hotspot);
 	void doOpen(HotspotData *hotspot);
 	void doClose(HotspotData *hotspot);
 	void doLockUnlock(HotspotData *hotspot);
@@ -232,15 +246,29 @@ private:
 	void doGive(HotspotData *hotspot);
 	void doTalkTo(HotspotData *hotspot);
 	void doTell(HotspotData *hotspot);
-	void doLook();
+	void doLook(HotspotData *hotspot);
 	void doLookAt(HotspotData *hotspot);
 	void doLookThrough(HotspotData *hotspot);
 	void doAsk(HotspotData *hotspot);
 	void doDrink(HotspotData *hotspot);
-	void doStatus();
+	void doStatus(HotspotData *hotspot);
+	void doGoto(HotspotData *hotspot);
+	void doReturn(HotspotData *hotspot);
 	void doBribe(HotspotData *hotspot);
 	void doExamine(HotspotData *hotspot);
-	void doSimple(HotspotData *hotspot, Action action);
+	void npcSetRoomAndBlockedOffset(HotspotData *hotspot);
+	void npcUnknown1(HotspotData *hotspot); 
+	void npcExecScript(HotspotData *hotspot); 
+	void npcUnknown2(HotspotData *hotspot); 
+	void npcSetRandomDest(HotspotData *hotspot);
+	void npcWalkingCheck(HotspotData *hotspot); 
+	void npcSetSupportOffset(HotspotData *hotspot); 
+	void npcSupportOffsetConditional(HotspotData *hotspot);
+	void npcDispatchAction(HotspotData *hotspot); 
+	void npcUnknown3(HotspotData *hotspot); 
+	void npcUnknown4(HotspotData *hotspot); 
+	void npcStartTalking(HotspotData *hotspot);
+	void npcJumpAddress(HotspotData *hotspot);
 public:
 	Hotspot(HotspotData *res);
 	Hotspot(Hotspot *character, uint16 objType);
@@ -265,6 +293,8 @@ public:
 	int8 talkX() { return _talkX; }
 	int8 talkY() { return _talkY; }
 	uint16 destHotspotId() { return _destHotspotId; }
+	uint16 blockedOffset() { return _blockedOffset; }
+	uint8 exitCtr() { return _exitCtr; }
 	uint16 width() { return _width; }
 	uint16 height() { return _height; }
 	uint16 widthCopy() { return _widthCopy; }
@@ -289,6 +319,7 @@ public:
 	void setPosition(int16 newX, int16 newY);
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
+	void setExitCtr(uint8 value) { _exitCtr = value; }
 	void setSize(uint16 newWidth, uint16 newHeight);
 	void setScript(uint16 offset) {
 		_sequenceOffset = offset;
@@ -306,23 +337,17 @@ public:
 	// Walking
 	void walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot = 0);
 	void stopWalking();
+	void endAction();
 	void setDirection(Direction dir);
 	void faceHotspot(HotspotData *hotspot);
 	void setOccupied(bool occupiedFlag);
 	bool walkingStep();
 
 	// Actions
+	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
-	void setCurrentAction(CurrentAction currAction) { 
-		_currentActions.addFront(currAction); 
-	}
-	void setCurrentAction(CurrentAction currAction, Action hsAction, uint16 id) { 
-		_currentActions.addFront(currAction, hsAction, id); 
-	}
-	void setCurrentAction(CurrentAction currAction, Action hsAction, uint16 id, uint16 usedId) { 
-		_currentActions.addFront(currAction, hsAction, id, usedId);
-	}
 	CurrentActionStack &currentActions() { return _currentActions; }
+	CharacterScheduleEntry &npcSupportData() { return _npcSupportData; }
 	PathFinder &pathFinder() { return _pathFinder; }
 	uint16 frameCtr() { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
