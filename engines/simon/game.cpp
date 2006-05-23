@@ -325,6 +325,14 @@ static GameFileDescription SIMON1WIN_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
+static GameFileDescription SIMON1WIN_RU_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"4536a706412b36d628f12142bfa97af0"},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
+	{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc"},
+	{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2"},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
+};
+
 static GameFileDescription SIMON1WIN_DE_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"48b1f3499e2e0d731047f4d481ff7817"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
@@ -859,6 +867,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON1WIN_GameFiles,
 		GF_TALKIE,
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+	},
+
+	// Simon the Sorcerer 1 - English Windows CD with Russian patch
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1WIN_RU,
+		"CD",
+		ARRAYSIZE(SIMON1WIN_RU_GameFiles),
+		SIMON1WIN_RU_GameFiles,
+		GF_TALKIE,
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 	},
 
