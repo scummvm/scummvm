@@ -73,3 +73,9 @@ else
 MODULES += engines/cine
 endif
 
+ifdef DISABLE_AGI
+DEFINES += -DDISABLE_AGI
+else 
+MODULES += engines/agi
+endif
+
