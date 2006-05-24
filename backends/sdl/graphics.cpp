@@ -907,6 +907,11 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
 	}
 #endif
 
+	if (w == width && h == height) {
+		_forceFull = true;
+		return;
+	}
+
 	if (w > 0 && h > 0) {
 		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
 
