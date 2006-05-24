@@ -152,7 +152,8 @@ public:
 	}
 
 	int getRate() const {
-		return _sampleRate;
+		// FIXME: Ideally, we should use _sampleRate.
+		return 22050;
 	}
 
 private:
