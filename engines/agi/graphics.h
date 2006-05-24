@@ -42,7 +42,6 @@ extern uint8 palette[];
 extern uint8 layer1_data[];
 extern uint8 layer2_data[];
 
-void gfx_putpixels(int x, int y, int w, uint8 * p);
 void gfx_putblock(int x1, int y1, int x2, int y2);
 
 void put_text_character(int, int, int, unsigned int, int, int);

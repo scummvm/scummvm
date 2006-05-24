@@ -151,7 +151,7 @@ static void put_pixels(const int x, const int y, const int w, uint8 *p) {
 	uint8 *b, *c = NULL;
 
 	if (console.y <= y) {
-		gfx_putpixels(x, y, w, p);
+		memcpy(screen + x + y * 320, p, w);
 		return;
 	}
 
@@ -162,7 +162,7 @@ static void put_pixels(const int x, const int y, const int w, uint8 *p) {
 		*b++ = *c ? *c : *p + 16;
 	}
 
-	gfx_putpixels(x, y, w, _b);
+	memcpy(screen + x + y * 320, p, w);
 }
 
 static void init_console() {
@@ -432,11 +432,6 @@ void gfx_set_palette() {
 		pal[i * 4 + 3] = 0;
 	}
 	g_system->setPalette(pal, 0, 32);
-}
-
-void gfx_putpixels(int x, int y, int w, uint8 *p) {
-	uint8 *p0 = screen + x + y * 320;
-	memcpy(p0, p, w);
 }
 
 /* put a block onto the screen */
