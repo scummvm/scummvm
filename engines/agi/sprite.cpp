@@ -452,10 +452,10 @@ static void free_list(struct list_head *head) {
  * sprites of the given list have moved.
  */
 static void commit_sprites(struct list_head *head) {
-	struct list_head *h;
+	struct list_head *pos;
 
-	list_for_each(h, head, next) {
-		struct sprite *s = list_entry(h, struct sprite, list);
+	list_for_each(pos, head, next) {
+		struct sprite *s = list_entry(pos, struct sprite, list);
 		int x1, y1, x2, y2, w, h;
 
 		w = (s->v->cel_data->width > s->v->cel_data_2->width) ?

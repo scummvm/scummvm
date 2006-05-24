@@ -873,14 +873,14 @@ static void draw_picture() {
 /**
  *
  */
-uint8 *convert_v3_pic(uint8 *data, uint32 len) {
+uint8 *convert_v3_pic(uint8 *src, uint32 len) {
 	uint8 d, old = 0, x, *in, *xdata, *out, mode = 0;
 	uint32 i, ulen;
 
 	xdata = (uint8 *) malloc(len + len / 2);
 
 	out = xdata;
-	in = data;
+	in = src;
 
 	for (i = ulen = 0; i < len; i++, ulen++) {
 		d = *in++;
@@ -908,7 +908,7 @@ uint8 *convert_v3_pic(uint8 *data, uint32 len) {
 		old = d;
 	}
 
-	free(data);
+	free(src);
 	xdata = (uint8 *)realloc(xdata, ulen);
 
 	return xdata;

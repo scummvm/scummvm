@@ -410,7 +410,7 @@ int test_if_code(int lognum) {
 
 #ifdef USE_CONSOLE
 	if (debug_.enabled && (debug_.logic0 || lognum))
-		debug_console(lognum, 0xFF, retval ? (char *)"=true" : (char *)"=false");
+		debug_console(lognum, 0xFF, retval ? "=true" : "=false");
 #endif
 
 	return retval;

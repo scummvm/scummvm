@@ -31,7 +31,7 @@ namespace Agi {
 
 struct agi_logicnames {
 #ifdef USE_CONSOLE		/* ifndef NO_DEBUG */
-	char *name;
+	const char *name;
 #endif
 	uint16 num_args;
 	uint16 arg_mask;
@@ -41,7 +41,7 @@ extern struct agi_logicnames logic_names_test[];
 extern struct agi_logicnames logic_names_cmd[];
 extern struct agi_logicnames logic_names_if[];
 
-void debug_console(int, int, char *);
+void debug_console(int, int, const char *);
 int test_if_code(int);
 void new_room(int);
 void execute_agi_command(uint8, uint8 *);

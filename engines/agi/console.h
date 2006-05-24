@@ -64,7 +64,7 @@ int console_init(void);
 void console_cycle(void);
 void console_lock(void);
 void console_prompt(void);
-void report(char *, ...);
+void report(const char *, ...);
 
 }                             // End of namespace Agi
 

@@ -427,7 +427,7 @@ static void ccmd_cont() {
 /*
  * Register console commands
  */
-static void console_cmd(char *cmd, char *dsc, void (*handler) (void)) {
+static void console_cmd(const char *cmd, const char *dsc, void (*handler) (void)) {
 	assert(num_ccmd < MAX_CCMD);
 
 	strcpy(ccmd_list[num_ccmd].cmd, cmd);
@@ -537,7 +537,7 @@ static void build_console_layer() {
 	build_console_lines(console.max_y / 10);
 }
 
-void report(char *message, ...) {
+void report(const char *message, ...) {
 	char x[512], y[512], z[64], *msg, *n;
 	va_list args;
 	int i, s, len;
@@ -547,9 +547,9 @@ void report(char *message, ...) {
 
 	va_start(args, message);
 #ifdef HAVE_VSNPRINTF
-	vsnprintf(y, 510, (char *)message, args);
+	vsnprintf(y, 510, message, args);
 #else
-	vsprintf(y, (char *)message, args);
+	vsprintf(y, message, args);
 #endif
 	va_end(args);
 
@@ -822,7 +822,7 @@ void console_lock() {
 
 void *debug;
 
-void report(char *message, ...) {
+void report(const char *message, ...) {
 	/* dummy */
 }
 

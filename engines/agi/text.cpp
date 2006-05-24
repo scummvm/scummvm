@@ -30,7 +30,7 @@
 
 namespace Agi {
 
-static void print_text2(int l, char *msg, int foff, int xoff, int yoff,
+static void print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 						int len, int fg, int bg) {
 	int x1, y1;
 	int maxx, minx, ofoff;
@@ -113,7 +113,7 @@ static void print_text2(int l, char *msg, int foff, int xoff, int yoff,
 
 /* len is in characters, not pixels!!
  */
-static void blit_textbox(char *p, int y, int x, int len) {
+static void blit_textbox(const char *p, int y, int x, int len) {
 	/* if x | y = -1, then centre the box */
 	int xoff, yoff, lin, h, w;
 	char *msg, *m;
@@ -189,7 +189,7 @@ static void erase_textbox() {
 /**
  * Print text in the AGI engine screen.
  */
-void print_text(char *msg, int f, int x, int y, int len, int fg, int bg) {
+void print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
 	f *= CHAR_COLS;
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
@@ -201,7 +201,7 @@ void print_text(char *msg, int f, int x, int y, int len, int fg, int bg) {
 /**
  * Print text in the AGI engine console.
  */
-void print_text_console(char *msg, int x, int y, int len, int fg, int bg) {
+void print_text_console(const char *msg, int x, int y, int len, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= 10;
 
@@ -290,7 +290,7 @@ void close_window() {
  * centered in the screen and waits until a key is pressed.
  * @param p The text to be displayed
  */
-int message_box(char *s) {
+int message_box(const char *s) {
 	int k;
 
 	erase_both();
@@ -310,7 +310,7 @@ int message_box(char *s) {
  * @param p The text to be displayed
  * @param b NULL-terminated list of button labels
  */
-int selection_box(char *m, char **b) {
+int selection_box(const char *m, const char **b) {
 	int x, y, i, s;
 	int key, active = 0;
 	int rc = -1;
@@ -451,7 +451,7 @@ int print(char *p, int lin, int col, int len) {
 /**
  *
  */
-static void print_status(char *message, ...) {
+static void print_status(const char *message, ...) {
 	char x[42];
 	va_list args;
 
@@ -484,7 +484,7 @@ static char *safe_strcat(char *s, const char *t) {
  * @param n  logic number
  */
 #define MAX_LEN 768
-char *agi_sprintf(char *s) {
+char *agi_sprintf(const char *s) {
 	static char y[MAX_LEN];
 	char x[MAX_LEN];
 	char z[16], *p;

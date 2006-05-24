@@ -124,7 +124,7 @@ void replay_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
 
 /* */
 
-static char *strSig = "AGI:";
+static const char *strSig = "AGI:";
 
 static void write_uint8(Common::File *f, int8 val) {
 	f->write(&val, 1);
@@ -162,7 +162,7 @@ static int16 read_sint16(Common::File *f) {
 	return (int16) ((buf[0] << 8) | buf[1]);
 }
 
-static void write_string(Common::File *f, char *s) {
+static void write_string(Common::File *f, const char *s) {
 	write_sint16(f, (int16) strlen(s));
 	f->write(s, strlen(s));
 }
@@ -173,7 +173,7 @@ static void read_string(Common::File *f, char *s) {
 	s[size] = (char)0;
 }
 
-static void write_bytes(Common::File *f, char *s, int16 size) {
+static void write_bytes(Common::File *f, const char *s, int16 size) {
 	f->write(s, size);
 }
 
@@ -187,7 +187,7 @@ static void read_bytes(Common::File *f, char *s, int16 size) {
  */
 #define SAVEGAME_VERSION 1
 
-int save_game(char *s, char *d) {
+int save_game(char *s, const char *d) {
 	int16 i;
 	struct image_stack_element *ptr = image_stack;
 	Common::File f;
@@ -659,7 +659,7 @@ int savegame_simple() {
 int savegame_dialog() {
 	char path[MAX_PATH];
 	char *desc;
-	char *buttons[] = { "Do as I say!", "I regret", NULL };
+	const char *buttons[] = { "Do as I say!", "I regret", NULL };
 	char dstr[200];
 	int rc, slot = 0;
 	int hm, vm, hp, vp;	/* box margins */

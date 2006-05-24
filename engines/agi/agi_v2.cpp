@@ -34,8 +34,8 @@ static int agi_v2_deinit(void);
 static int agi_v2_detect_game();
 static int agi_v2_load_resource(int, int);
 static int agi_v2_unload_resource(int, int);
-static int agi_v2_load_objects(char *);
-static int agi_v2_load_words(char *);
+static int agi_v2_load_objects(const char *);
+static int agi_v2_load_words(const char *);
 
 struct agi_loader agi_v2 = {
 	2,
@@ -60,17 +60,15 @@ static int agi_v2_detect_game() {
 	return v2id_game();
 }
 
-static int agi_v2_load_dir(struct agi_dir *agid, char *fname) {
+static int agi_v2_load_dir(struct agi_dir *agid, const char *fname) {
 	Common::File fp;
 	uint8 *mem;
 	uint32 flen;
-	unsigned int i;
-	char *path;
+	uint i;
 
-	path = fname;
-	report("Loading directory: %s\n", path);
+	report("Loading directory: %s\n", fname);
 
-	if ((!fp.open(path))) {
+	if (!fp.open(fname)) {
 		return err_BadFileOpen;
 	}
 
@@ -298,11 +296,11 @@ int agi_v2_load_resource(int t, int n) {
 	return ec;
 }
 
-static int agi_v2_load_objects(char *fname) {
+static int agi_v2_load_objects(const char *fname) {
 	return load_objects(fname);
 }
 
-static int agi_v2_load_words(char *fname) {
+static int agi_v2_load_words(const char *fname) {
 	return load_words(fname);
 }
 

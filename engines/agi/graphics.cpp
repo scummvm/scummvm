@@ -338,7 +338,7 @@ void print_character(int x, int y, char c, int fg, int bg) {
  * @param a  set if the button has focus
  * @param p  set if the button is pressed
  */
-void draw_button(int x, int y, char *s, int a, int p) {
+void draw_button(int x, int y, const char *s, int a, int p) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 
@@ -360,7 +360,7 @@ void draw_button(int x, int y, char *s, int a, int p) {
 	flush_block(x1, y1, x2, y2);
 }
 
-int test_button(int x, int y, char *s) {
+int test_button(int x, int y, const char *s) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 

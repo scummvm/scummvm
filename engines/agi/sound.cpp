@@ -702,14 +702,12 @@ void unload_instruments() {
 #endif				/* USE_IIGS_SOUND */
 
 static void fill_audio(void *udata, int16 * stream, uint len) {
-	int16 *origData = stream;
 	len <<= 2;
-	uint origLen = len;
 
 	uint32 p = 0;
 	static uint32 n = 0, s = 0;
 
-	debugC(5, kDebugLevelSound, "(%p, %p, %d)", udata, stream, len);
+	debugC(5, kDebugLevelSound, "(%p, %p, %d)", (void *)udata, (void *)stream, len);
 	memcpy(stream, (uint8 *) buffer + s, p = n);
 	for (n = 0, len -= p; n < len; p += n, len -= n) {
 		play_sound();

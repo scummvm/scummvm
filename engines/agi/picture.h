@@ -40,7 +40,7 @@ struct agi_picture {
 int decode_picture(int, int);
 int unload_picture(int);
 void show_pic(void);
-uint8 *convert_v3_pic(uint8 *data, uint32 len);
+uint8 *convert_v3_pic(uint8 *src, uint32 len);
 
 }                             // End of namespace Agi
 

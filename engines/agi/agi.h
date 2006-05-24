@@ -479,8 +479,8 @@ struct agi_loader {
 	int (*detect_game) ();
 	int (*load_resource) (int, int);
 	int (*unload_resource) (int, int);
-	int (*load_objects) (char *);
-	int (*load_words) (char *);
+	int (*load_objects) (const char *);
+	int (*load_words) (const char *);
 };
 
 extern struct agi_game game;
@@ -497,14 +497,14 @@ void agi_unload_resources(void);
 
 /* words */
 int show_words(void);
-int load_words(char *);
+int load_words(const char *);
 void unload_words(void);
 int find_word(char *word, int *flen);
 void dictionary_words(char *);
 
 /* objects */
 int show_objects(void);
-int load_objects(char *fname);
+int load_objects(const char *fname);
 int alloc_objects(int);
 void unload_objects(void);
 char *object_name(unsigned int);

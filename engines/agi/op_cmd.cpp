@@ -866,7 +866,7 @@ cmd(set_game_id) {
 
 cmd(pause) {
 	int tmp = game.clock_enabled;
-	char *b[] = { "Continue", NULL };
+	const char *b[] = { "Continue", NULL };
 
 	game.clock_enabled = false;
 	selection_box("  Game is paused.  \n\n\n", b);
@@ -958,7 +958,7 @@ cmd(status) {
 }
 
 cmd(quit) {
-	char *buttons[] = { "Quit", "Continue", NULL };
+	const char *buttons[] = { "Quit", "Continue", NULL };
 
 	stop_sound();
 	if (p0) {
@@ -972,7 +972,7 @@ cmd(quit) {
 }
 
 cmd(restart_game) {
-	char *buttons[] = { "Restart", "Continue", NULL };
+	const char *buttons[] = { "Restart", "Continue", NULL };
 	int sel;
 
 	stop_sound();

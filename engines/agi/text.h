@@ -29,15 +29,15 @@
 
 namespace Agi {
 
-int message_box(char *);
-int selection_box(char *, char **);
+int message_box(const char *);
+int selection_box(const char *, const char **);
 void close_window(void);
 void draw_window(int, int, int, int);
-void print_text(char *, int, int, int, int, int, int);
-void print_text_console(char *, int, int, int, int, int);
+void print_text(const char *, int, int, int, int, int, int);
+void print_text_console(const char *, int, int, int, int, int);
 int print(char *, int, int, int);
 char *word_wrap_string(char *, int *);
-char *agi_sprintf(char *);
+char *agi_sprintf(const char *);
 void write_status(void);
 void write_prompt(void);
 void clear_lines(int, int, int);

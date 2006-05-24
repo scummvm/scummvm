@@ -310,13 +310,12 @@ int v2id_game() {
 	uint32 len, c, crc;
 	uint8 *buff;
 	Common::File fp;
-	char *fn[] = { "viewdir", "logdir", "picdir", "snddir", "words.tok", "object", "" };
+	const char *fn[] = { "viewdir", "logdir", "picdir", "snddir", "words.tok", "object", "" };
 
 	buff = (uint8 *)malloc(8192);
 
 	for (crc = y = 0; fn[y][0]; y++) {
-		char *path = fn[y];
-		if (fp.open(path)) {
+		if (fp.open(fn[y])) {
 			for (len = 1; len > 0;) {
 				memset(buff, 0, 8192);
 				len = fp.read(buff, 8000);
@@ -350,14 +349,13 @@ int v3id_game() {
 	uint32 len, c, crc;
 	uint8 *buff;
 	Common::File fp;
-	char *fn[] = { "words.tok", "object", "" };
+	const char *fn[] = { "words.tok", "object", "" };
 	Common::String path;
 
 	buff = (uint8 *)malloc(8192);
 
 	for (crc = 0, y = 0; fn[y][0] != 0x0; y++) {
-		path = fn[y];
-		if (fp.open(path)) {
+		if (fp.open(fn[y])) {
 			len = 1;
 			while (len > 0) {
 				memset(buff, 0, 8192);

@@ -44,21 +44,18 @@ static char *my_strndup(char *src, int n) {
 	return tmp;
 }
 
-int load_words(char *fname) {
+int load_words(const char *fname) {
 	Common::File fp;
 	uint32 flen;
 	uint8 *mem = NULL;
-	char *path = NULL;
 
 	words = NULL;
 
-	path = fname;
-
-	if (!fp.open(path)) {
-		report("Warning: can't open %s\n", path);
+	if (!fp.open(fname)) {
+		report("Warning: can't open %s\n", fname);
 		return err_OK /*err_BadFileOpen */ ;
 	}
-	report("Loading dictionary: %s\n", path);
+	report("Loading dictionary: %s\n", fname);
 
 	fp.seek(0, SEEK_END);
 	flen = fp.pos();

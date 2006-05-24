@@ -38,8 +38,8 @@ static int agi_v3_deinit(void);
 static int agi_v3_detect_game();
 static int agi_v3_load_resource(int, int);
 static int agi_v3_unload_resource(int, int);
-static int agi_v3_load_objects(char *);
-static int agi_v3_load_words(char *);
+static int agi_v3_load_objects(const char *);
+static int agi_v3_load_words(const char *);
 
 struct agi_loader agi_v3 = {
 	3,
@@ -220,7 +220,7 @@ uint8 *agi_v3_load_vol_res(struct agi_dir *agid) {
 	Common::File fp;
 	Common::String path;
 
-	debugC(3, kDebugLevelResources, "(%p)", agid);
+	debugC(3, kDebugLevelResources, "(%p)", (void *)agid);
 	sprintf(x, "vol.%i", agid->volume);
 	path = Common::String(game.name) + x;
 
@@ -378,11 +378,11 @@ int agi_v3_load_resource(int t, int n) {
 	return ec;
 }
 
-static int agi_v3_load_objects(char *fname) {
+static int agi_v3_load_objects(const char *fname) {
 	return load_objects(fname);
 }
 
-static int agi_v3_load_words(char *fname) {
+static int agi_v3_load_words(const char *fname) {
 	return load_words(fname);
 }
 

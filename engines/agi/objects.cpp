@@ -92,20 +92,18 @@ int decode_objects(uint8 *mem, uint32 flen) {
 
 }
 
-int load_objects(char *fname) {
+int load_objects(const char *fname) {
 	Common::File fp;
 	uint32 flen;
 	uint8 *mem;
-	char *path;
 
 	objects = NULL;
 	game.num_objects = 0;
 
 	debugC(5, kDebugLevelResources, "(fname = %s)", fname);
-	path = fname;
-	report("Loading objects: %s\n", path);
+	report("Loading objects: %s\n", fname);
 
-	if (!fp.open(path))
+	if (!fp.open(fname))
 		return err_BadFileOpen;
 
 	fp.seek(0, SEEK_END);
