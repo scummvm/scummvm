@@ -706,7 +706,6 @@ void Screen::drawChar(uint8 c, int x, int y) {
 	}
 	uint8 charH0 = *(fnt->fontData + fnt->charSizeOffset + 4);
 	if (charH0 + y > SCREEN_H) {
-		printf("charH0 + y: %d + %d: %d ('%c')\n", charH0, y, charH0 + y, c);
 		return;
 	}
 	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
