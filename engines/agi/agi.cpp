@@ -459,8 +459,6 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 
 	rnd = new Common::RandomSource();
 
-	_console = new Console(this);
-
 	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");
 	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprites debugging");
@@ -480,6 +478,8 @@ void AgiEngine::initialize() {
 	opt.gamerun = GAMERUN_RUNGAME;
 	opt.hires = true;
 	opt.soundemu = SOUND_EMU_NONE;
+
+	_console = new Console(this);
 
 	init_machine();
 
