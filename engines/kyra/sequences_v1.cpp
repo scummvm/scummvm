@@ -1487,7 +1487,7 @@ int KyraEngine::handleBeadState() {
 			timer1 = _system->getMillis();
 			int x = 0, y = 0;
 			if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
-				if (beadState1.dstX == 290) {
+				if (beadState2.dstX == 290) {
 					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 					uint32 nextRun = 0;
 					_finalB->setX(224);
