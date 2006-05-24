@@ -276,11 +276,9 @@ uint32 match_crc(uint32 crc, char *name, int len) {
 					case 'a':
 						opt.agds = true;
 						break;
-#ifdef USE_MOUSE
 					case 'm':
 						opt.agimouse = true;
 						break;
-#endif
 					}
 				}
 				t++;

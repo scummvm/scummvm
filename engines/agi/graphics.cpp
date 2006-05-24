@@ -360,7 +360,6 @@ void draw_button(int x, int y, char *s, int a, int p) {
 	flush_block(x1, y1, x2, y2);
 }
 
-#ifdef USE_MOUSE
 int test_button(int x, int y, char *s) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
@@ -375,7 +374,6 @@ int test_button(int x, int y, char *s) {
 
 	return false;
 }
-#endif
 
 void put_block(int x1, int y1, int x2, int y2) {
 	gfx_putblock(x1, y1, x2, y2);

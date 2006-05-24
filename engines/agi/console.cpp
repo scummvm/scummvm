@@ -674,12 +674,10 @@ int console_keyhandler(int k) {
 	int16 y1, y2;
 	char m[2];
 
-#ifdef USE_MOUSE
 	/* Right button switches console on/off */
 	if (!opt.agimouse)	/* AGI Mouse uses right button */
 		if (k == BUTTON_RIGHT)
 			k = CONSOLE_ACTIVATE_KEY;
-#endif
 
 	if (!console.active) {
 		if (k == CONSOLE_ACTIVATE_KEY) {
@@ -709,11 +707,9 @@ int console_keyhandler(int k) {
 	if (y2 < 0)
 		y2 = 0;
 
-#ifdef USE_MOUSE
 	/* Ignore left button in console */
 	if (k == BUTTON_LEFT)
 		return true;
-#endif
 
 	/* this code breaks scrolling up, maybe it shoud only be executed
 	 * in the default case?

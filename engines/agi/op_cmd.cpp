@@ -1183,13 +1183,11 @@ cmd(print_at_v) {
 }
 
 cmd(push_script) {
-#ifdef USE_MOUSE
 	if (opt.agimouse) {
 		game.vars[27] = mouse.button;
 		game.vars[28] = mouse.x / 2;
 		game.vars[29] = mouse.y;
 	} else
-#endif
 		report("push.script\n");
 }
 
@@ -1210,16 +1208,13 @@ cmd(set_pri_base) {
 }
 
 cmd(mouse_posn) {
-#ifdef USE_MOUSE
 	_v[p0] = WIN_TO_PIC_X(mouse.x);
 	_v[p1] = WIN_TO_PIC_Y(mouse.y);
-#endif
 }
 
 cmd(shake_screen) {
 	int i;
 
-#ifdef USE_MOUSE
 	/* AGI Mouse 1.1 uses shake.screen values between 100 and 109 to
 	 * set the palette.
 	 */
@@ -1227,7 +1222,6 @@ cmd(shake_screen) {
 		report("not implemented: AGI Mouse palettes\n");
 		return;
 	} else
-#endif
 		shake_start();
 
 	commit_both();		/* Fixes SQ1 demo */

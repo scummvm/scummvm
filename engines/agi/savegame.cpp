@@ -623,10 +623,8 @@ static int select_slot() {
 			case KEY_ESCAPE:
 				rc = -1;
 				goto getout;
-#ifdef USE_MOUSE
 			case BUTTON_LEFT:
 				break;
-#endif
 			case KEY_DOWN:
 				active++;
 				active %= NUM_SLOTS;

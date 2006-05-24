@@ -67,10 +67,8 @@ namespace Agi {
 #define KEY_HOME	0x4700	/* Home */
 #define KEY_END		0x4f00	/* End * */
 
-#ifdef USE_MOUSE
 #define BUTTON_LEFT	0xF101	/* Left mouse button */
 #define BUTTON_RIGHT	0xF202	/* Right mouse button */
-#endif
 
 #define KEY_SCAN(k)	(k >> 8)
 #define KEY_ASCII(k)	(k & 0xff)

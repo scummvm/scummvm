@@ -146,7 +146,6 @@ static void new_menu_selected(int i) {
 	draw_menu_option(i);
 }
 
-#ifdef USE_MOUSE
 static int mouse_over_text(unsigned int line, unsigned int col, char *s) {
 	if (mouse.x < col * CHAR_COLS)
 		return false;
@@ -162,7 +161,6 @@ static int mouse_over_text(unsigned int line, unsigned int col, char *s) {
 
 	return true;
 }
-#endif
 
 static int h_index;
 static int v_index;
@@ -312,7 +310,6 @@ int menu_keyhandler(int key) {
 		game.clock_enabled = false;
 		draw_menu_bar();
 	}
-#ifdef USE_MOUSE
 	/*
 	 * Mouse handling
 	 */
@@ -396,7 +393,6 @@ int menu_keyhandler(int key) {
 			goto exit_menu;
 		}
 	}
-#endif				/* USE_MOUSE */
 
 	if (!menu_active) {
 		if (h_cur_menu >= 0) {

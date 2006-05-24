@@ -50,7 +50,6 @@ typedef signed int Err;
 #define USE_PCM_SOUND
 #define USE_IIGS_SOUND
 #define USE_HIRES
-#define USE_MOUSE
 #define AGDS_SUPPORT
 
 #define	TITLE		"AGI engine"
@@ -191,13 +190,11 @@ struct game_id_list {
 	char *switches;
 };
 
-#ifdef USE_MOUSE
 struct mouse {
 	int button;
 	unsigned int x;
 	unsigned int y;
 };
-#endif
 
 /**
  * Command-line options.
@@ -221,9 +218,7 @@ struct agi_options {
 	int hires;		/**< use hi-res pictures */
 #endif
 	int soundemu;		/**< sound emulation mode */
-#ifdef USE_MOUSE
 	int agimouse;		/**< AGI Mouse 1.0 emulation */
-#endif
 };
 
 extern struct agi_options opt;
@@ -237,9 +232,7 @@ extern volatile uint32 msg_box_secs2;
 extern struct agi_debug debug_;
 #endif
 
-#ifdef USE_MOUSE
 extern struct mouse mouse;
-#endif
 
 int console_keyhandler(int);
 int console_init(void);
