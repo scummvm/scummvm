@@ -348,8 +348,7 @@ void draw_button(int x, int y, char *s, int a, int p) {
 	y2 = y + CHAR_LINES + 2;
 
 	while (*s) {
-		put_text_character(0, x + (!!p), y + (!!p), *s++,
-		    a ? 15 : 0, a ? 0 : 15);
+		put_text_character(0, x + (!!p), y + (!!p), *s++, a ? 15 : 0, a ? 0 : 15);
 		x += CHAR_COLS;
 	}
 
@@ -371,8 +370,7 @@ int test_button(int x, int y, char *s) {
 	x2 = x + CHAR_COLS * len + 2;
 	y2 = y + CHAR_LINES + 2;
 
-	if ((int)mouse.x >= x1 && (int)mouse.y >= y1
-	    && (int)mouse.x <= x2 && (int)mouse.y <= y2)
+	if ((int)mouse.x >= x1 && (int)mouse.y >= y1 && (int)mouse.x <= x2 && (int)mouse.y <= y2)
 		return true;
 
 	return false;
