@@ -214,7 +214,6 @@ static void process_events() {
 			if (key)
 				key_enqueue(key);
 			break;
-			break;
 		default:
 			break;
 		}
