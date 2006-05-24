@@ -25,25 +25,11 @@
 #ifndef AGI_CONSOLE_H
 #define AGI_CONSOLE_H
 
+#include "common/debugger.h"
+
 namespace Agi {
 
-#ifdef USE_CONSOLE
-
-#define CONSOLE_LINES_BUFFER    80
-#define CONSOLE_LINE_SIZE	(GFX_WIDTH / 8)
-#define	CONSOLE_ACTIVATE_KEY	'`'
-#define CONSOLE_SWITCH_KEY	'~'
-
-struct agi_console {
-	int active;
-	int input_active;
-	int index;
-	int y;
-	int max_y;
-	int first_line;
-	int count;
-	char *line[CONSOLE_LINES_BUFFER];
-};
+class AgiEngine;
 
 struct agi_debug {
 	int enabled;
@@ -55,16 +41,37 @@ struct agi_debug {
 	int ignoretriggers;
 };
 
-extern struct agi_console console;
+class Console : public Common::Debugger<Console> {
+public:
+	Console(AgiEngine *vm);
+	virtual ~Console(void);
 
-#endif				/* USE_CONSOLE */
+protected:
+	virtual void preEnter();
+	virtual void postEnter();
 
-int console_keyhandler(int);
-int console_init(void);
-void console_cycle(void);
-void console_lock(void);
-void console_prompt(void);
-void report(const char *, ...);
+private:
+	bool Cmd_Exit(int argc, const char **argv);
+	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_SetVar(int argc, const char **argv);
+	bool Cmd_SetFlag(int argc, const char **argv);
+	bool Cmd_SetObj(int argc, const char **argv);
+	bool Cmd_RunOpcode(int argc, const char **argv);
+	bool Cmd_Crc(int argc, const char **argv);
+	bool Cmd_Agiver(int argc, const char **argv);
+	bool Cmd_Flags(int argc, const char **argv);
+	bool Cmd_Vars(int argc, const char **argv);
+	bool Cmd_Objs(int argc, const char **argv);
+	bool Cmd_Opcode(int argc, const char **argv);
+	bool Cmd_Logic0(int argc, const char **argv);
+	bool Cmd_Trigger(int argc, const char **argv);
+	bool Cmd_Step(int argc, const char **argv);
+	bool Cmd_Debug(int argc, const char **argv);
+	bool Cmd_Cont(int argc, const char **argv);
+
+private:
+	AgiEngine *_vm;
+};
 
 }                             // End of namespace Agi
 

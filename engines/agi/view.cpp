@@ -367,28 +367,10 @@ void update_viewtable() {
 	}
 
 	if (i) {
-#ifdef USE_CONSOLE
-		/* To correctly update sprites when we use the console
-		 * we must work with all sprites.
-		 */
-		if (console.y > 0) {
-			erase_both();
-			update_position();
-			blit_both();
-			commit_both();
-		} else
-#endif
-			/* If we're not using the console, updating only
-			 * the active sprites lets us save some CPU cycles.
-			 * This is how the original Sierra AGI works.
-			 */
-		{
-			erase_upd_sprites();
-			update_position();
-			blit_upd_sprites();
-			commit_upd_sprites();
-		}
-
+		erase_upd_sprites();
+		update_position();
+		blit_upd_sprites();
+		commit_upd_sprites();
 		game.view_table[0].flags &= ~(ON_WATER | ON_LAND);
 	}
 }

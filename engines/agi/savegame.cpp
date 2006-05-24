@@ -614,29 +614,26 @@ static int select_slot() {
 
 		poll_timer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
-		if (!console_keyhandler(key)) {
-			switch (key) {
-			case KEY_ENTER:
-				rc = active;
-				strncpy(game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
-				goto press;
-			case KEY_ESCAPE:
-				rc = -1;
-				goto getout;
-			case BUTTON_LEFT:
-				break;
-			case KEY_DOWN:
-				active++;
-				active %= NUM_SLOTS;
-				break;
-			case KEY_UP:
-				active--;
-				if (active < 0)
-					active = NUM_SLOTS - 1;
-				break;
-			}
+		switch (key) {
+		case KEY_ENTER:
+			rc = active;
+			strncpy(game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
+			goto press;
+		case KEY_ESCAPE:
+			rc = -1;
+			goto getout;
+		case BUTTON_LEFT:
+			break;
+		case KEY_DOWN:
+			active++;
+			active %= NUM_SLOTS;
+			break;
+		case KEY_UP:
+			active--;
+			if (active < 0)
+				active = NUM_SLOTS - 1;
+			break;
 		}
-		console_cycle();
 	}
 
 press:

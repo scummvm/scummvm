@@ -595,7 +595,6 @@ cmd(overlay_pic) {
 }
 
 cmd(show_pri_screen) {
-#ifdef USE_CONSOLE
 	debug_.priority = 1;
 	erase_both();
 	show_pic();
@@ -605,7 +604,6 @@ cmd(show_pri_screen) {
 	erase_both();
 	show_pic();
 	blit_both();
-#endif
 }
 
 cmd(animate_obj) {
@@ -1137,10 +1135,6 @@ cmd(clear_text_rect) {
 
 cmd(toggle_monitor) {
 	report("toggle.monitor\n");
-	opt.hires = !opt.hires;
-	erase_both();
-	show_pic();
-	blit_both();
 }
 
 cmd(echo_line) {
@@ -1443,7 +1437,6 @@ int run_logic(int n) {
 
 	timer_hack = 0;
 	while (ip < game.logics[n].size && !game.quit_prog_now) {
-#ifdef USE_CONSOLE
 		if (debug_.enabled) {
 			if (debug_.steps > 0) {
 				if (debug_.logic0 || n) {
@@ -1452,15 +1445,12 @@ int run_logic(int n) {
 				}
 			} else {
 				blit_both();
-				console_prompt();
 				do {
 					main_cycle();
 				} while (!debug_.steps && debug_.enabled);
-				console_lock();
 				erase_both();
 			}
 		}
-#endif
 
 		switch (op = *(code + ip++)) {
 		case 0xff:	/* if (open/close) */
@@ -1496,9 +1486,7 @@ int run_logic(int n) {
 }
 
 void execute_agi_command(uint8 op, uint8 *p) {
-#ifdef USE_CONSOLE
 	debugC(2, kDebugLevelScripts, "%s %d %d %d", logic_names_cmd[op].name, p[0], p[1], p[2]);
-#endif
 	agi_command[op] (p);
 }
 

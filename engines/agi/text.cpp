@@ -356,30 +356,27 @@ int selection_box(const char *m, const char **b) {
 
 		poll_timer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
-		if (!console_keyhandler(key)) {
-			switch (key) {
-			case KEY_ENTER:
-				rc = active;
-				goto press;
-			case KEY_ESCAPE:
-				rc = -1;
-				goto getout;
-			case BUTTON_LEFT:
-				for (i = 0; b[i]; i++) {
-					if (test_button(bx[i], by[i], b[i])) {
-						rc = active = i;
-						goto press;
-					}
+		switch (key) {
+		case KEY_ENTER:
+			rc = active;
+			goto press;
+		case KEY_ESCAPE:
+			rc = -1;
+			goto getout;
+		case BUTTON_LEFT:
+			for (i = 0; b[i]; i++) {
+				if (test_button(bx[i], by[i], b[i])) {
+					rc = active = i;
+					goto press;
 				}
-				break;
-			case 0x09:	/* Tab */
-				debugC(3, kDebugLevelText, "Focus change");
-				active++;
-				active %= i;
-				break;
 			}
+			break;
+		case 0x09:	/* Tab */
+			debugC(3, kDebugLevelText, "Focus change");
+			active++;
+			active %= i;
+			break;
 		}
-		console_cycle();
 	}
 
       press:
@@ -573,7 +570,6 @@ char *agi_sprintf(const char *s) {
 void write_status() {
 	char x[64];
 
-#ifdef USE_CONSOLE
 	if (debug_.statusline) {
 		print_status("%3d(%03d) %3d,%3d(%3d,%3d)               ",
 				getvar(0), getvar(1), game.view_table[0].x_pos,
@@ -581,7 +577,6 @@ void write_status() {
 				WIN_TO_PIC_Y(mouse.y));
 		return;
 	}
-#endif				/* USE_CONSOLE */
 
 	if (!game.status_line) {
 		int l = game.line_status;

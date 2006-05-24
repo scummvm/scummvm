@@ -44,7 +44,6 @@ typedef signed int Err;
  */
 #define VERSION __DATE__ " " __TIME__
 
-#define USE_CONSOLE
 //#define USE_IIGS_SOUND
 
 #define	TITLE		"AGI engine"
@@ -217,17 +216,9 @@ extern volatile uint32 clock_ticks;
 extern volatile uint32 clock_count;
 extern volatile uint32 msg_box_secs2;
 
-#ifdef USE_CONSOLE
 extern struct agi_debug debug_;
-#endif
-
 extern struct mouse mouse;
 
-int console_keyhandler(int);
-int console_init(void);
-void console_cycle(void);
-void console_lock(void);
-void console_prompt(void);
 #define report printf
 
 enum GameId {

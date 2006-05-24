@@ -38,9 +38,6 @@ namespace Agi {
 #endif
 
 static uint8 *agi_screen;
-#ifdef USE_CONSOLE
-static uint8 *console_screen;
-#endif
 
 static unsigned char *screen;
 
@@ -136,54 +133,6 @@ static struct update_block update = {
  *  Layer 1:  160x168   ==================  AGI screen
  */
 
-#ifdef USE_CONSOLE
-
-/**
- * Draws a row of pixels in the output device framebuffer.
- * This function adds the console layer using transparent colors if
- * appropriate.
- */
-static void put_pixels(const int x, const int y, const int w, uint8 *p) {
-	int i;
-	uint8 _b[GFX_WIDTH] = { 0 };
-	uint8 *b, *c = NULL;
-
-	if (console.y <= y) {
-		memcpy(screen + x + y * 320, p, w);
-		return;
-	}
-
-	b = &_b[0];
-	c = &console_screen[x + (y + GFX_HEIGHT - 1 - console.y) * GFX_WIDTH];
-
-	for (i = 0; i < w; i++, c++, p++) {
-		*b++ = *c ? *c : *p + 16;
-	}
-
-	memcpy(screen + x + y * 320, _b, w);
-}
-
-static void init_console() {
-	int i;
-
-	/* Console */
-	console.line[0] = (char *)calloc(CONSOLE_LINES_BUFFER, CONSOLE_LINE_SIZE + 1);
-	for (i = 1; i < CONSOLE_LINES_BUFFER; i++)
-		console.line[i] = console.line[i - 1] + CONSOLE_LINE_SIZE + 1;
-}
-
-#else
-
-static void put_pixels(const int x, const int y, const int w, uint8 *p) {
-	gfx->put_pixels(x, y, w, p);
-}
-
-static void init_console()
-{
-}
-
-#endif				/* USE_CONSOLE */
-
 #define SHAKE_MAG 3
 static uint8 *shake_h, *shake_v;
 
@@ -251,14 +200,7 @@ void put_text_character(int l, int x, int y, unsigned int c, int fg, int bg) {
 			xx = x + x1;
 			yy = y + y1;
 			cc = (*p & (1 << (7 - x1))) ? fg : bg;
-#ifdef USE_CONSOLE
-			if (l) {
-				console_screen[xx + yy * GFX_WIDTH] = cc;
-			} else
-#endif
-			{
-				agi_screen[xx + yy * GFX_WIDTH] = cc;
-			}
+			agi_screen[xx + yy * GFX_WIDTH] = cc;
 		}
 
 		p++;
@@ -464,17 +406,8 @@ int init_video() {
 	else
 		init_palette(new_palette);
 
-	init_console();
-
 	if ((agi_screen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL)
 		return err_NotEnoughMemory;
-
-#ifdef USE_CONSOLE
-	if ((console_screen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL) {
-		free(agi_screen);
-		return err_NotEnoughMemory;
-	}
-#endif
 
 	gfx_set_palette();
 
@@ -506,9 +439,6 @@ int init_video() {
  */
 int deinit_video() {
 	free(agi_screen);
-#ifdef USE_CONSOLE
-	free(console_screen);
-#endif
 
 	return err_OK;
 }
@@ -541,19 +471,15 @@ void put_pixels_a(int x, int y, int n, uint8 *p) {
 	if (opt.cgaemu) {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = (cga_map[(*p & 0xf0) >> 4] << 4) | cga_map[*p & 0x0f];
-#ifdef USE_CONSOLE
 			if (debug_.priority)
 				q >>= 4;
-#endif
 			*(uint16 *)&agi_screen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	} else {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = ((uint16) * p << 8) | *p;
-#ifdef USE_CONSOLE
 			if (debug_.priority)
 				q >>= 4;
-#endif
 			*(uint16 *)&agi_screen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	}
@@ -563,10 +489,8 @@ void put_pixels_hires(int x, int y, int n, uint8 *p) {
 	//y += CHAR_LINES;
 	for (; n--; p++, x++) {
 		uint8 q = *p;
-#ifdef USE_CONSOLE
 		if (debug_.priority)
 			q >>= 4;
-#endif
 		agi_screen[x + y * GFX_WIDTH] = q & 0x0f;
 	}
 }
@@ -633,7 +557,7 @@ void flush_block(int x1, int y1, int x2, int y2) {
 	w = x2 - x1 + 1;
 
 	for (y = y1; y <= y2; y++) {
-		put_pixels(x1, y, w, p0);
+		memcpy(screen + 320 * y + x1, p0, w);
 		p0 += GFX_WIDTH;
 	}
 }
@@ -674,17 +598,6 @@ void clear_screen(int c) {
 	memset(agi_screen, c, GFX_WIDTH * GFX_HEIGHT);
 	flush_screen();
 }
-
-#ifdef USE_CONSOLE
-/**
- * Clear the console screen.
- * This function clears the top n lines of the console screen.
- * @param n number of lines to clear (in pixels)
- */
-void clear_console_screen(int n) {
-	memset(console_screen + n * GFX_WIDTH, 0, (GFX_HEIGHT - n) * GFX_WIDTH);
-}
-#endif
 
 /**
  * Save a block of the AGI engine screen

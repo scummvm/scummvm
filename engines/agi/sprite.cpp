@@ -497,11 +497,6 @@ static void commit_sprites(struct list_head *head) {
 		s->v->y_pos2 = s->v->y_pos;
 		s->v->flags &= ~DIDNT_MOVE;
 	}
-
-#ifdef USE_CONSOLE
-	if (debug_.statusline)
-		write_status();
-#endif
 }
 
 /**

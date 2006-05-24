@@ -217,7 +217,6 @@ int main_cycle() {
 		game.vars[29] = mouse.y;
 	}
 
-#ifdef USE_CONSOLE
 	if (key == KEY_PRIORITY) {
 		erase_both();
 		debug_.priority = !debug_.priority;
@@ -232,7 +231,6 @@ int main_cycle() {
 		write_status();
 		key = 0;
 	}
-#endif
 
 	/* Click-to-walk mouse interface */
 	if (game.player_control && v->flags & ADJ_EGO_XY) {
@@ -244,55 +242,45 @@ int main_cycle() {
 
 	kascii = KEY_ASCII(key);
 
-	if (!console_keyhandler(key)) {
-		if (kascii)
-			setvar(V_key, kascii);
-		process_key:
-		switch (game.input_mode) {
-		case INPUT_NORMAL:
-			if (!handle_controller(key)) {
-				if (key == 0 || !game.input_enabled)
-					break;
-				handle_keys(key);
+	if (kascii)
+		setvar(V_key, kascii);
+	process_key:
+	switch (game.input_mode) {
+	case INPUT_NORMAL:
+		if (!handle_controller(key)) {
+			if (key == 0 || !game.input_enabled)
+				break;
+			handle_keys(key);
 
-				/* if ESC pressed, activate menu before
-				 * accept.input from the interpreter cycle
-				 * sets the input mode to normal again
-				 * (closes: #540856)
-				 */
-				if (key == KEY_ESCAPE) {
-					key = 0;
-					goto process_key;
-				}
-
-				/* commented out to close bug #438872
-				 * if (key) game.keypress = key;
-				 */
+			/* if ESC pressed, activate menu before
+			 * accept.input from the interpreter cycle
+			 * sets the input mode to normal again
+			 * (closes: #540856)
+			 */
+			if (key == KEY_ESCAPE) {
+				key = 0;
+				goto process_key;
 			}
-			break;
-		case INPUT_GETSTRING:
-			handle_controller(key);
-			handle_getstring(key);
-			setvar(V_key, 0);	/* clear ENTER key */
-			break;
-		case INPUT_MENU:
-			menu_keyhandler(key);
-			console_cycle();
-			return false;
-		case INPUT_NONE:
-			handle_controller(key);
-			if (key)
-				game.keypress = key;
-			break;
-		}
-	} else {
-		if (game.input_mode == INPUT_MENU) {
-			console_cycle();
-			return false;
-		}
-	}
 
-	console_cycle();
+			/* commented out to close bug #438872
+			 * if (key) game.keypress = key;
+			 */
+		}
+		break;
+	case INPUT_GETSTRING:
+		handle_controller(key);
+		handle_getstring(key);
+		setvar(V_key, 0);	/* clear ENTER key */
+		break;
+	case INPUT_MENU:
+		menu_keyhandler(key);
+		return false;
+	case INPUT_NONE:
+		handle_controller(key);
+		if (key)
+			game.keypress = key;
+		break;
+	}
 
 	if (game.msg_box_ticks > 0)
 		game.msg_box_ticks--;
@@ -326,11 +314,6 @@ static int play_game() {
 		report("Using AGI Mouse 1.0 protocol\n");
 
 	report("Running AGI script.\n");
-
-#ifdef USE_CONSOLE
-	console.count = 5;
-	console_prompt();
-#endif
 
 	setflag(F_entered_cli, false);
 	setflag(F_said_accepted_input, false);

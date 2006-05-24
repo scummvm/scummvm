@@ -65,6 +65,8 @@ static volatile uint32 tick_timer = 0;
 static int key_control = 0;
 static int key_alt = 0;
 
+static Console *_console;
+
 #define KEY_QUEUE_SIZE 16
 
 static int key_queue[KEY_QUEUE_SIZE];
@@ -187,7 +189,7 @@ static void process_events() {
 				key = 0x4300;
 				break;
 			case 291:
-				key = 0x4400;
+				_console->attach();
 				break;
 			case 292:
 				key = KEY_STATUSLN;
@@ -234,6 +236,8 @@ void agi_timer_low() {
 
 	while ((dm = tick_timer - m) < 5) {
 		process_events();
+		if (_console->isAttached())
+			_console->onFrame();
 		g_system->delayMillis(10);
 		g_system->updateScreen();
 	}
@@ -455,6 +459,8 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 
 	rnd = new Common::RandomSource();
 
+	_console = new Console(this);
+
 	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");
 	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprites debugging");
@@ -491,8 +497,6 @@ void AgiEngine::initialize() {
 	tick_timer = 0;
 	Common::g_timer->installTimerProc((Common::Timer::TimerProc) agi_timer_function_low, 10 * 1000, NULL);
 
-	console_init();
-
 	game.ver = -1;		/* Don't display the conf file warning */
 
 	debugC(2, kDebugLevelMain, "Detect game");
@@ -518,6 +522,7 @@ AgiEngine::~AgiEngine() {
 	free(game.sbuf);
 	deinit_machine();
 	delete rnd;
+	delete _console;
 }
 
 void AgiEngine::errorString(const char *buf1, char *buf2) {
@@ -543,7 +548,6 @@ int AgiEngine::go() {
 
 	report(" \nAGI engine " VERSION " is ready.\n");
 	if (game.state < STATE_LOADED) {
-		console_prompt();
 		do {
 			main_cycle();
 		} while (game.state < STATE_RUNNING);

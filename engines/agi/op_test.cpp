@@ -227,10 +227,8 @@ int test_if_code(int lognum) {
 	uint8 p[16] = { 0 };
 
 	while (retval && !game.quit_prog_now) {
-#ifdef USE_CONSOLE
 		if (debug_.enabled && (debug_.logic0 || lognum))
 			debug_console(lognum, lTEST_MODE, NULL);
-#endif
 
 		last_ip = ip;
 		op = *(code + ip++);
@@ -408,10 +406,8 @@ int test_if_code(int lognum) {
 		ip += READ_LE_UINT16(code + ip) + 2;
 	}
 
-#ifdef USE_CONSOLE
 	if (debug_.enabled && (debug_.logic0 || lognum))
 		debug_console(lognum, 0xFF, retval ? "=true" : "=false");
-#endif
 
 	return retval;
 }

@@ -36,11 +36,7 @@ namespace Agi {
 #undef _L
 #endif
 
-#ifdef USE_CONSOLE
 #define _L(a,b,c) { a, b, c }
-#else
-#define _L(a,b,c) { b, c }
-#endif
 
 struct agi_logicnames logic_names_test[] = {
 	_L("", 0, 0x00),
@@ -270,8 +266,6 @@ struct agi_logicnames logic_names_cmd[] = {
 	_L(NULL, 0, 0x00)
 };
 
-#ifdef USE_CONSOLE
-
 void debug_console(int lognum, int mode, const char *str) {
 	struct agi_logicnames *x;
 	uint8 a, c, z;
@@ -341,13 +335,5 @@ void debug_console(int lognum, int mode, const char *str) {
 
 	report("\n");
 }
-
-#else
-
-void debug_console(int lognum, int mode, char *str) {
-	/* dummy */
-}
-
-#endif				/* USE_CONSOLE */
 
 }                             // End of namespace Agi

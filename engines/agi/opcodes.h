@@ -30,9 +30,7 @@
 namespace Agi {
 
 struct agi_logicnames {
-#ifdef USE_CONSOLE		/* ifndef NO_DEBUG */
 	const char *name;
-#endif
 	uint16 num_args;
 	uint16 arg_mask;
 };

@@ -136,9 +136,7 @@ static int check_priority(struct vt_entry *v) {
 
 		if (pri == 2) {	/* trigger */
 			debugC(4, kDebugLevelSprites, "stepped on trigger");
-#ifdef USE_CONSOLE
 			if (!debug_.ignoretriggers)
-#endif
 				trigger = 1;
 		}
 	}

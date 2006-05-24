@@ -34,10 +34,6 @@ namespace Agi {
 
 char last_sentence[40];
 
-#ifdef USE_CONSOLE
-extern struct agi_console console;
-#endif
-
 /* FIXME */
 extern int open_dialogue;
 
@@ -349,11 +345,8 @@ int wait_key() {
 	while (42) {
 		poll_timer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
-		if (!console_keyhandler(key)) {
-			if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
-				break;
-		}
-		console_cycle();
+		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
+			break;
 	}
 	return key;
 }
@@ -370,9 +363,8 @@ int wait_any_key() {
 	while (42) {
 		poll_timer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
-		if (!console_keyhandler(key) && key)
+		if (key)
 			break;
-		console_cycle();
 	}
 	return key;
 }
