@@ -160,7 +160,7 @@ static void put_pixels(const int x, const int y, const int w, uint8 *p) {
 		*b++ = *c ? *c : *p + 16;
 	}
 
-	memcpy(screen + x + y * 320, p, w);
+	memcpy(screen + x + y * 320, _b, w);
 }
 
 static void init_console() {
