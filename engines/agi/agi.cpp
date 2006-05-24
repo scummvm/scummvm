@@ -110,12 +110,14 @@ static void process_events() {
 			mouse.button = 0;
 			break;
 		case OSystem::EVENT_KEYDOWN:
+			key_control = 0;
+			key_alt = 0;
 			if (event.kbd.flags == OSystem::KBD_CTRL) {
-				key_control |= 1;
+				key_control = 1;
 				key = 0;
 				break;
 			} else if (event.kbd.flags == OSystem::KBD_ALT) {
-				key_alt |= 1;
+				key_alt = 1;
 				key = 0;
 				break;
 			} else if (event.kbd.flags == OSystem::KBD_SHIFT) {
@@ -201,7 +203,7 @@ static void process_events() {
 				key = KEY_ENTER;
 				break;
 			default:
-				if (!isalpha(key))
+				if (key < 256 && !isalpha(key))
 					break;
 				if (key_control)
 					key = (key & ~0x20) - 0x40;
@@ -212,19 +214,6 @@ static void process_events() {
 			if (key)
 				key_enqueue(key);
 			break;
-		case OSystem::EVENT_KEYUP:
-			if (event.kbd.flags == OSystem::KBD_CTRL) {
-				key_control &= ~1;
-				key = 0;
-				break;
-			} else if (event.kbd.flags == OSystem::KBD_ALT) {
-				key_alt &= ~1;
-				key = 0;
-				break;
-			} else if (event.kbd.flags == OSystem::KBD_SHIFT) {
-				key = 0;
-				break;
-			}
 			break;
 		default:
 			break;
