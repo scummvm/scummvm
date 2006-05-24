@@ -439,10 +439,7 @@ void gfx_putblock(int x1, int y1, int x2, int y2) {
 	if (y2 >= GFX_HEIGHT)
 		y2 = GFX_HEIGHT - 1;
 
-	// force full update until fix wrong partial updates
-	g_system->copyRectToScreen(screen, 320, 0, 0, 320, 200);
-	//g_system->copyRectToScreen(screen, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-	//g_system->updateScreen();
+	g_system->copyRectToScreen(screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
 static const byte mouseCursorArrow[] = {
