@@ -652,7 +652,9 @@ void SoundHE::startHETalkSound(uint32 offset) {
 
 	assert(_sfxFile);
 	if (!_sfxFile->isOpen()) {
-		error("startHETalkSound: Speech file is not open");
+		// This happens in the Pajama Sam's Lost & Found demo, on the
+		// main menu screen, so don't make it a fatal error.
+		warning("startHETalkSound: Speech file is not open");
 		return;
 	}
 
