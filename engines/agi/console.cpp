@@ -148,7 +148,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 			p[3] = argv[5] ? (char)strtoul(argv[5], NULL, 0) : 0;
 			p[4] = argv[6] ? (char)strtoul(argv[6], NULL, 0) : 0;
 
-			debugC(5, kDebugLevelMain, "Opcode: %s %d %d %d", logic_names_cmd[i].name, argv[1], argv[2], argv[3]);
+			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", logic_names_cmd[i].name, argv[1], argv[2], argv[3]);
 
 			execute_agi_command(i, p);
 
