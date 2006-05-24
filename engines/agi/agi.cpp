@@ -467,6 +467,16 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 
 	rnd = new Common::RandomSource();
 
+	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
+	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");
+	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprites debugging");
+	Common::addSpecialDebugLevel(kDebugLevelInventory, "Inventory", "Inventory debugging");
+	Common::addSpecialDebugLevel(kDebugLevelInput, "Input", "Input events debugging");
+	Common::addSpecialDebugLevel(kDebugLevelMenu, "Menu", "Menu debugging");
+	Common::addSpecialDebugLevel(kDebugLevelScripts, "Scrpits", "Scripts debugging");
+	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debugging");
+	Common::addSpecialDebugLevel(kDebugLevelText, "Text", "Text output debugging");
+
 	game.clock_enabled = false;
 	game.state = STATE_INIT;
 }
@@ -538,16 +548,6 @@ int AgiEngine::init() {
 	initCommonGFX(false);
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
-
-	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
-	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");
-	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprites debugging");
-	Common::addSpecialDebugLevel(kDebugLevelInventory, "Inventory", "Inventory debugging");
-	Common::addSpecialDebugLevel(kDebugLevelInput, "Input", "Input events debugging");
-	Common::addSpecialDebugLevel(kDebugLevelMenu, "Menu", "Menu debugging");
-	Common::addSpecialDebugLevel(kDebugLevelScripts, "Scrpits", "Scripts debugging");
-	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debugging");
-	Common::addSpecialDebugLevel(kDebugLevelText, "Text", "Text output debugging");
 
 	initialize();
 
