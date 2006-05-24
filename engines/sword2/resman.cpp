@@ -183,7 +183,7 @@ bool ResourceManager::init() {
 		// during game-play (oh, that wascally wabbit!) in which case
 		// the resource manager will print a fatal error.
 
-		if (!Common::File::exists((char *)cdInf[i].clusterName)) {
+		if (cdInf[i].cd == 0 && !Common::File::exists((char *)cdInf[i].clusterName)) {
 			_vm->GUIErrorMessage("Broken Sword 2: Cannot find " + Common::String((char *)cdInf[i].clusterName));
 			delete [] cdInf;
 			return false;
