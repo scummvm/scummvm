@@ -507,7 +507,7 @@ int show_objects(void);
 int load_objects(const char *fname);
 int alloc_objects(int);
 void unload_objects(void);
-char *object_name(unsigned int);
+const char *object_name(unsigned int);
 int object_get_location(unsigned int);
 void object_set_location(unsigned int, int);
 

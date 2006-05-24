@@ -149,7 +149,7 @@ int object_get_location(unsigned int n) {
 	return objects[n].location;
 }
 
-char *object_name(unsigned int n) {
+const char *object_name(unsigned int n) {
 	if (n >= game.num_objects) {
 		report("Error: Can't access object %d.\n", n);
 		return "";
