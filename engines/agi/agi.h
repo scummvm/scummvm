@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_H
-#define __AGI_H
+#ifndef AGI_H
+#define AGI_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
@@ -42,7 +42,6 @@ typedef signed int Err;
 /*
  * Version and other definitions
  */
-#define INLINE __inline
 #define VERSION __DATE__ " " __TIME__
 
 #define USE_CONSOLE
@@ -523,4 +522,4 @@ int agi_is_keypress_low();
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_H */
+#endif				/* AGI_H */

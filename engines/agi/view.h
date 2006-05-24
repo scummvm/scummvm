@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_VIEW_H
-#define __AGI_VIEW_H
+#ifndef AGI_VIEW_H
+#define AGI_VIEW_H
 
 namespace Agi {
 
@@ -139,4 +139,4 @@ void draw_obj(int);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_VIEW_H */
+#endif				/* AGI_VIEW_H */

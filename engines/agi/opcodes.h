@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_OPCODES_H
-#define __AGI_OPCODES_H
+#ifndef AGI_OPCODES_H
+#define AGI_OPCODES_H
 
 #include "agi/agi.h"
 
@@ -52,4 +52,4 @@ void patch_logic(int);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_OPCODES_H */
+#endif				/* AGI_OPCODES_H */

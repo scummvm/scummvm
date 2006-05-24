@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_TEXT_H
-#define __AGI_TEXT_H
+#ifndef AGI_TEXT_H
+#define AGI_TEXT_H
 
 #include "agi/agi.h"
 
@@ -45,4 +45,4 @@ void flush_lines(int, int);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_TEXT_H */
+#endif				/* AGI_TEXT_H */

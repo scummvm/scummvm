@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_LOGIC_H
-#define __AGI_LOGIC_H
+#ifndef AGI_LOGIC_H
+#define AGI_LOGIC_H
 
 #include "agi/agi.h"
 
@@ -46,4 +46,4 @@ void unload_logic(int);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_LOGIC_H */
+#endif				/* AGI_LOGIC_H */

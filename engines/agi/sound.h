@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_SOUND_H
-#define __AGI_SOUND_H
+#ifndef AGI_SOUND_H
+#define AGI_SOUND_H
 
 #include "agi/agi.h"
 
@@ -110,12 +110,11 @@ void deinit_sound(void);
 void start_sound(int, int);
 void stop_sound(void);
 uint32 mix_sound(void);
-void __init_sound(void);
 int load_instruments(char *fname);
 
 extern struct sound_driver *snd;
 
-#endif				/* __AGI_SOUND_H */
+#endif				/* AGI_SOUND_H */
 
 } // End of namespace Agi
 

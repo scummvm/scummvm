@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_GRAPHICS_H
-#define __AGI_GRAPHICS_H
+#ifndef AGI_GRAPHICS_H
+#define AGI_GRAPHICS_H
 
 #include "common/stdafx.h"
 
@@ -80,4 +80,4 @@ void poll_timer(void);
 
 } // End of namespace Agi
 
-#endif				/* __AGI_GRAPHICS_H */
+#endif				/* AGI_GRAPHICS_H */

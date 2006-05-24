@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_KEYBOARD_H
-#define __AGI_KEYBOARD_H
+#ifndef AGI_KEYBOARD_H
+#define AGI_KEYBOARD_H
 
 #include "common/stdafx.h"
 
@@ -89,4 +89,4 @@ int wait_any_key(void);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_KEYBOARD_H */
+#endif				/* AGI_KEYBOARD_H */

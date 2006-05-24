@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_CONSOLE_H
-#define __AGI_CONSOLE_H
+#ifndef AGI_CONSOLE_H
+#define AGI_CONSOLE_H
 
 namespace Agi {
 
@@ -68,4 +68,4 @@ void report(char *, ...);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_CONSOLE_H */
+#endif				/* AGI_CONSOLE_H */

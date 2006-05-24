@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_SPRITE_H
-#define __AGI_SPRITE_H
+#ifndef AGI_SPRITE_H
+#define AGI_SPRITE_H
 
 namespace Agi {
 
@@ -44,4 +44,4 @@ void commit_block(int, int, int, int);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_SPRITE_H */
+#endif				/* AGI_SPRITE_H */

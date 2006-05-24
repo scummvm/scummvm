@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_PICTURE_H
-#define __AGI_PICTURE_H
+#ifndef AGI_PICTURE_H
+#define AGI_PICTURE_H
 
 #include "agi/agi.h"
 
@@ -44,4 +44,4 @@ uint8 *convert_v3_pic(uint8 *data, uint32 len);
 
 }                             // End of namespace Agi
 
-#endif				/* __AGI_PICTURE_H */
+#endif				/* AGI_PICTURE_H */

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_SAVEGAME_H
-#define __AGI_SAVEGAME_H
+#ifndef AGI_SAVEGAME_H
+#define AGI_SAVEGAME_H
 
 #include "agi/agi.h"
 
@@ -47,4 +47,4 @@ void release_image_stack(void);
 
 }                             // End of namespace Agi
 
-#endif
+#endif				/* AGI_SAVEGAME_H */

@@ -22,12 +22,13 @@
  *
  */
 
-#ifndef __AGI_LZW_H
-#define __AGI_LZW_H
+#ifndef AGI_LZW_H
+#define AGI_LZW_H
 
 namespace Agi {
 
 void LZW_expand(uint8 *, uint8 *, int32);
 
 }				// End of namespace Agi
-#endif
+
+#endif				/* AGI_LZW_H */

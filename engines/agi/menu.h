@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __AGI_MENU_H
-#define __AGI_MENU_H
+#ifndef AGI_MENU_H
+#define AGI_MENU_H
 
 namespace Agi {
 
@@ -43,4 +43,5 @@ int menu_keyhandler(int);
 void menu_enable_all(void);
 
 }                             // End of namespace Agi
-#endif
+
+#endif				/* AGI_MENU_H */
