@@ -103,7 +103,6 @@ extern struct sound_driver sound_dummy;
 static void stop_note(int i);
 static void play_note(int i, int freq, int vol);
 
-#ifdef USE_PCM_SOUND
 
 int16 *snd_buffer;
 static int16 *waveform;
@@ -140,8 +139,6 @@ static int16 waveform_mac[WAVEFORM_SIZE] = {
 	-99, -141, -156, -170, -174, -177, -178, -179,
 	-175, -172, -165, -159, -137, -114, -67, -19
 };
-
-#endif				/* USE_PCM_SOUND */
 
 #ifdef USE_IIGS_SOUND
 
@@ -266,10 +263,8 @@ void start_sound(int resnum, int flag) {
 				chn[i].flags |= AGI_SOUND_ENVELOPE;
 				chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 			}
-#ifdef USE_PCM_SOUND
 			chn[i].ins = waveform;
 			chn[i].size = WAVEFORM_SIZE;
-#endif
 			chn[i].ptr = (struct agi_note *)(song + (song[i << 1] | (song[(i << 1) + 1] << 8)));
 			chn[i].timer = 0;
 			chn[i].vol = 0;
@@ -278,9 +273,7 @@ void start_sound(int resnum, int flag) {
 		break;
 	}
 
-#ifdef USE_PCM_SOUND
 	memset(snd_buffer, 0, BUFFER_SIZE << 1);
-#endif
 	endflag = flag;
 
 	/* Nat Budin reports that the flag should be reset when sound starts
@@ -314,13 +307,10 @@ static int16 *buffer;
 int init_sound() {
 	int r = -1;
 
-#ifdef USE_PCM_SOUND
 	buffer = snd_buffer = (int16 *) calloc(2, BUFFER_SIZE);
-#endif
 
 	env = false;
 
-#ifdef USE_PCM_SOUND
 	switch (opt.soundemu) {
 	case SOUND_EMU_NONE:
 		waveform = waveform_ramp;
@@ -334,7 +324,6 @@ int init_sound() {
 		waveform = waveform_mac;
 		break;
 	}
-#endif
 
 	report("Initializing sound:\n");
 
@@ -356,9 +345,7 @@ void deinit_sound(void) {
 	debugC(3, kDebugLevelSound, "()");
 	if (snd)
 		snd->deinit();
-#ifdef USE_PCM_SOUND
 	free(snd_buffer);
-#endif
 }
 
 static void stop_note(int i) {
@@ -384,10 +371,7 @@ static void play_note(int i, int freq, int vol) {
 	else if (vol && opt.soundemu == SOUND_EMU_PC)
 		vol = 160;
 
-#ifdef USE_PCM_SOUND
 	chn[i].phase = 0;
-#endif
-
 	chn[i].freq = freq;
 	chn[i].vol = vol;
 	chn[i].env = 0x10000;
@@ -545,8 +529,6 @@ void play_sound() {
 		endflag = -1;
 	}
 }
-
-#ifdef USE_PCM_SOUND
 
 uint32 mix_sound(void) {
 	register int i, p;
@@ -767,6 +749,4 @@ AGIMusic::~AGIMusic(void) {
 
 AGIMusic *g_agi_music;
 
-#endif				/* USE_PCM_SOUND */
-
-}                             // End of namespace Agi
+} // End of namespace Agi

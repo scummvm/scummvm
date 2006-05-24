@@ -472,9 +472,7 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 void AgiEngine::initialize() {
 	memset(&opt, 0, sizeof(struct agi_options));
 	opt.gamerun = GAMERUN_RUNGAME;
-#ifdef USE_HIRES
 	opt.hires = true;
-#endif
 	opt.soundemu = SOUND_EMU_NONE;
 
 	init_machine();
@@ -485,9 +483,7 @@ void AgiEngine::initialize() {
 	*game.name = 0;
 
 	game.sbuf = (uint8 *) calloc(_WIDTH, _HEIGHT);
-#ifdef USE_HIRES
 	game.hires = (uint8 *) calloc(_WIDTH * 2, _HEIGHT);
-#endif
 
 	init_sprites();
 	init_video();
@@ -518,9 +514,7 @@ AgiEngine::~AgiEngine() {
 	deinit_sound();
 	deinit_video();
 	deinit_sprites();
-#ifdef USE_HIRES
 	free(game.hires);
-#endif
 	free(game.sbuf);
 	deinit_machine();
 	delete rnd;

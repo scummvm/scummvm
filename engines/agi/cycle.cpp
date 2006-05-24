@@ -375,10 +375,8 @@ static int play_game() {
 int run_game() {
 	int i, ec = err_OK;
 
-#ifdef USE_HIRES
 	if (opt.cgaemu)
 		opt.hires = 0;
-#endif
 
 	for (i = 0; i < MAX_DIRS; i++)
 		memset(&game.ev_keyp[i], 0, sizeof(struct agi_event));

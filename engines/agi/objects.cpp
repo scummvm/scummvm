@@ -61,13 +61,8 @@ int decode_objects(uint8 *mem, uint32 flen) {
 	 * byte 3 = number of animated objects. this is ignored.. ??
 	 */
 	if (READ_LE_UINT16(mem) / padsize >= 256) {
-#ifdef AGDS_SUPPORT
 		/* die with no error! AGDS game needs not to die to work!! :( */
 		return err_OK;
-#else
-		/* no AGDS support, die with error */
-		return err_BadResource;
-#endif
 	}
 
 	game.num_objects = READ_LE_UINT16(mem) / padsize;

@@ -88,11 +88,7 @@ static void put_virt_pixel(int x, int y, int res) {
 	if (x < 0 || y < 0 || x >= width || y >= _HEIGHT)
 		return;
 
-	p =
-#ifdef USE_HIRES
-	    res > 1 ? &game.hires[y * width + x] :
-#endif
-	    &game.sbuf[y * width + x];
+	p = res > 1 ? &game.hires[y * width + x] : &game.sbuf[y * width + x];
 
 	if (pri_on)
 		*p = (pri_colour << 4) | (*p & 0x0f);
@@ -154,10 +150,8 @@ static void draw_line(int x1, int y1, int x2, int y2, int res) {
 
 		for (; y1 <= y2; y1++) {
 			put_virt_pixel(x1, y1, res);
-#ifdef USE_HIRES
 			if (res > 1)
 				fix_pixel_bothsides(x1, y1);
-#endif
 		}
 
 		return;
@@ -171,20 +165,16 @@ static void draw_line(int x1, int y1, int x2, int y2, int res) {
 			x1 = x2;
 			x2 = x;
 		}
-#ifdef USE_HIRES
 		if (res > 1)
 			fix_pixel_bothsides(x1, y1);
-#endif
 
 		for (; x1 <= x2; x1++)
 			put_virt_pixel(x1, y1, res);
 
-#ifdef USE_HIRES
 		if (res > 1) {
 			put_virt_pixel(x1, y1, res);
 			fix_pixel_bothsides(x1, y1);
 		}
-#endif
 
 		return;
 	}
@@ -219,10 +209,8 @@ static void draw_line(int x1, int y1, int x2, int y2, int res) {
 	}
 
 	put_virt_pixel(x, y, res);
-#ifdef USE_HIRES
 	if (res > 1)
 		fix_pixel_bothsides(x, y);
-#endif
 
 	do {
 		errorY += deltaY;
@@ -238,19 +226,15 @@ static void draw_line(int x1, int y1, int x2, int y2, int res) {
 		}
 
 		put_virt_pixel(x, y, res);
-#ifdef USE_HIRES
 		if (res > 1)
 			fix_pixel_bothsides(x, y);
-#endif
 		i--;
 	} while (i > 0);
 
-#ifdef USE_HIRES
 	if (res > 1) {
 		put_virt_pixel(x, y, res);
 		fix_pixel_bothsides(x, y);
 	}
-#endif
 }
 
 /**
@@ -484,7 +468,6 @@ static void fill() {
 static int plot_pattern_point(int x, int y, int bitpos, int res) {
 	if (pat_code & 0x20) {
 		if ((splatter_map[bitpos >> 3] >> (7 - (bitpos & 7))) & 1) {
-#ifdef USE_HIRES
 			if (res > 1) {
 				/* extra randomness in hi-res brush fill
 				 */
@@ -492,9 +475,7 @@ static int plot_pattern_point(int x, int y, int bitpos, int res) {
 					put_virt_pixel(x * 2, y, 2);
 				if (!rnd->getRandomNumber(3))
 					put_virt_pixel(x * 2 + 1, y, 2);
-			} else
-#endif
-			{
+			} else {
 				put_virt_pixel(x, y, 1);
 			}
 		}
@@ -502,16 +483,13 @@ static int plot_pattern_point(int x, int y, int bitpos, int res) {
 		if (bitpos == 0xff)
 			bitpos = 0;
 	} else {
-#ifdef USE_HIRES
 		if (res > 1) {
 			/* double width pixels make MUMG and others
 			 * look nicer
 			 */
 			put_virt_pixel(x * 2, y, 2);
 			put_virt_pixel(x * 2 + 1, y, 2);
-		} else
-#endif
-		{
+		} else {
 			put_virt_pixel(x, y, 1);
 		}
 	}
@@ -570,8 +548,6 @@ static void plot_brush(int res) {
 
 	foffs--;
 }
-
-#ifdef USE_HIRES
 
 static void fix_pixel_bothsides(int x, int y) {
 	uint8 *p, *s;
@@ -780,14 +756,10 @@ void fix_hires_picture() {
 	}
 }
 
-#endif				/* USE_HIRES */
-
 static void draw_picture() {
 	uint8 act;
 	int drawing;
-#ifdef USE_HIRES
 	int save_foffs;
-#endif
 
 	pat_code = 0;
 	pat_num = 0;
@@ -799,11 +771,7 @@ static void draw_picture() {
 
 	debugC(8, kDebugLevelMain, "Drawing picture");
 	for (drawing = 1; drawing && foffs < flen;) {
-
-#ifdef USE_HIRES
 		save_foffs = foffs;
-#endif
-
 		act = next_byte;
 		switch (act) {
 		case 0xf0:	/* set colour on screen */
@@ -849,7 +817,6 @@ static void draw_picture() {
 			break;
 		}
 
-#ifdef USE_HIRES
 		foffs = save_foffs;
 
 		act = next_byte;
@@ -896,7 +863,6 @@ static void draw_picture() {
 			drawing = 0;
 			break;
 		}
-#endif
 	}
 }
 
@@ -971,16 +937,12 @@ int decode_picture(int n, int clear) {
 
 	if (clear) {
 		memset(game.sbuf, 0x4f, _WIDTH * _HEIGHT);
-#ifdef USE_HIRES
 		memset(game.hires, 0x4f, _WIDTH * 2 * _HEIGHT);
-#endif
 	}
 
 	draw_picture();
 
-#ifdef USE_HIRES
 	fix_hires_picture();
-#endif
 
 	if (clear)
 		clear_image_stack();
@@ -1014,12 +976,10 @@ void show_pic() {
 	int offset;
 
 	debugC(8, kDebugLevelMain, "Show picture!");
-#ifdef USE_HIRES
 	if (opt.hires) {
 		show_hires_pic();
 		return;
 	}
-#endif
 
 	i = 0;
 	offset = game.line_min_print * CHAR_LINES;

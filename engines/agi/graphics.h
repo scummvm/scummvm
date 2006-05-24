@@ -72,9 +72,7 @@ void init_palette(uint8 *);
 
 void put_pixel(int, int, int);
 
-#ifdef USE_HIRES
 void put_pixels_hires(int x, int y, int n, uint8 * p);
-#endif
 int keypress(void);
 int get_key(void);
 void print_character(int, int, char, int, int);

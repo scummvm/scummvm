@@ -45,9 +45,7 @@ struct sprite {
 	int16 x_size;			/**< width of the sprite */
 	int16 y_size;			/**< height of the sprite */
 	uint8 *buffer;			/**< buffer to store background data */
-#ifdef USE_HIRES
 	uint8 *hires;			/**< buffer for hi-res background */
-#endif
 };
 
 /*
@@ -55,12 +53,8 @@ struct sprite {
  */
 #undef ALLOC_DEBUG
 
-#ifdef USE_HIRES
 #define POOL_SIZE 68000		/* Gold Rush mine room needs > 50000 */
 	/* Speeder bike challenge needs > 67000 */
-#else
-#define POOL_SIZE 25000
-#endif
 static uint8 *sprite_pool;
 static uint8 *pool_top;
 
@@ -139,7 +133,6 @@ static void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int 
 	}
 }
 
-#ifdef USE_HIRES
 
 #define X_FACT 2		/* Horizontal hires factor */
 
@@ -175,8 +168,6 @@ static int blit_hires_cel(int x, int y, int spr, struct view_cel *c) {
 	return hidden;
 }
 
-#endif
-
 static int blit_cel(int x, int y, int spr, struct view_cel *c) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
@@ -192,10 +183,8 @@ static int blit_cel(int x, int y, int spr, struct view_cel *c) {
 	if (x >= _WIDTH)
 		x = _WIDTH - 1;
 
-#ifdef USE_HIRES
 	if (opt.hires)
 		blit_hires_cel(x, y, spr, c);
-#endif
 
 	q = c->data;
 	t = c->transparency;
@@ -228,9 +217,7 @@ static void objs_savearea(struct sprite *s) {
 	int16 x_pos = s->x_pos, y_pos = s->y_pos;
 	int16 x_size = s->x_size, y_size = s->y_size;
 	uint8 *p0, *q;
-#ifdef USE_HIRES
 	uint8 *h0, *k;
-#endif
 
 	if (x_pos + x_size > _WIDTH)
 		x_size = _WIDTH - x_pos;
@@ -253,19 +240,15 @@ static void objs_savearea(struct sprite *s) {
 
 	p0 = &game.sbuf[x_pos + y_pos * _WIDTH];
 	q = s->buffer;
-#ifdef USE_HIRES
 	h0 = &game.hires[(x_pos + y_pos * _WIDTH) * 2];
 	k = s->hires;
-#endif
 	for (y = 0; y < y_size; y++) {
 		memcpy(q, p0, x_size);
 		q += x_size;
 		p0 += _WIDTH;
-#ifdef USE_HIRES
 		memcpy(k, h0, x_size * 2);
 		k += x_size * 2;
 		h0 += _WIDTH * 2;
-#endif
 	}
 }
 
@@ -274,9 +257,7 @@ static void objs_restorearea(struct sprite *s) {
 	int16 x_pos = s->x_pos, y_pos = s->y_pos;
 	int16 x_size = s->x_size, y_size = s->y_size;
 	uint8 *p0, *q;
-#ifdef USE_HIRES
 	uint8 *h0, *k;
-#endif
 
 	if (x_pos + x_size > _WIDTH)
 		x_size = _WIDTH - x_pos;
@@ -299,24 +280,20 @@ static void objs_restorearea(struct sprite *s) {
 
 	p0 = &game.sbuf[x_pos + y_pos * _WIDTH];
 	q = s->buffer;
-#ifdef USE_HIRES
 	h0 = &game.hires[(x_pos + y_pos * _WIDTH) * 2];
 	k = s->hires;
-#endif
 	offset = game.line_min_print * CHAR_LINES;
 	for (y = 0; y < y_size; y++) {
 		memcpy(p0, q, x_size);
 		put_pixels_a(x_pos, y_pos + y + offset, x_size, p0);
 		q += x_size;
 		p0 += _WIDTH;
-#ifdef USE_HIRES
 		memcpy(h0, k, x_size * 2);
 		if (opt.hires) {
 			put_pixels_hires(x_pos * 2, y_pos + y + offset, x_size * 2, h0);
 		}
 		k += x_size * 2;
 		h0 += _WIDTH * 2;
-#endif
 	}
 }
 
@@ -382,9 +359,7 @@ static struct sprite *new_sprite(struct vt_entry *v) {
 	s->x_size = v->x_size;
 	s->y_size = v->y_size;
 	s->buffer = (uint8 *) pool_alloc(s->x_size * s->y_size);
-#ifdef USE_HIRES
 	s->hires = (uint8 *) pool_alloc(s->x_size * s->y_size * 2);
-#endif
 	v->s = s;		/* link view table entry to this sprite */
 
 	return s;
@@ -466,9 +441,7 @@ static void free_list(struct list_head *head) {
 	list_for_each(h, head, prev) {
 		s = list_entry(h, struct sprite, list);
 		list_del(h);
-#ifdef USE_HIRES
 		pool_release(s->hires);
-#endif
 		pool_release(s->buffer);
 		pool_release(s);
 	}
@@ -783,9 +756,7 @@ void show_obj(int n) {
 	s.x_size = c->width;
 	s.y_size = c->height;
 	s.buffer = (uint8 *)malloc(s.x_size * s.y_size);
-#ifdef USE_HIRES
 	s.hires = (uint8 *)malloc(s.x_size * s.y_size * 2);
-#endif
 
 	objs_savearea(&s);
 	blit_cel(x1, y1, s.x_size, c);
@@ -797,17 +768,13 @@ void show_obj(int n) {
 	free(s.buffer);
 
 	/* Added to fix a memory leak --Vasyl */
-#ifdef USE_HIRES
 	free(s.hires);
-#endif
 }
 
 void commit_block(int x1, int y1, int x2, int y2) {
 	int i, w, offset;
 	uint8 *q;
-#ifdef USE_HIRES
 	uint8 *h;
-#endif
 
 	if (!game.picture_shown)
 		return;
@@ -834,19 +801,15 @@ void commit_block(int x1, int y1, int x2, int y2) {
 
 	w = x2 - x1 + 1;
 	q = &game.sbuf[x1 + _WIDTH * y1];
-#ifdef USE_HIRES
 	h = &game.hires[(x1 + _WIDTH * y1) * 2];
-#endif
 	offset = game.line_min_print * CHAR_LINES;
 	for (i = y1; i <= y2; i++) {
 		put_pixels_a(x1, i + offset, w, q);
 		q += _WIDTH;
-#ifdef USE_HIRES
 		if (opt.hires) {
 			put_pixels_hires(x1 * 2, i + offset, w * 2, h);
 		}
 		h += _WIDTH * 2;
-#endif
 	}
 
 	flush_block_a(x1, y1 + offset, x2, y2 + offset);

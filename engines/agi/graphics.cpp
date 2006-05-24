@@ -562,8 +562,6 @@ void put_pixels_a(int x, int y, int n, uint8 *p) {
 	}
 }
 
-#ifdef USE_HIRES
-
 void put_pixels_hires(int x, int y, int n, uint8 *p) {
 	//y += CHAR_LINES;
 	for (; n--; p++, x++) {
@@ -575,8 +573,6 @@ void put_pixels_hires(int x, int y, int n, uint8 *p) {
 		agi_screen[x + y * GFX_WIDTH] = q & 0x0f;
 	}
 }
-
-#endif
 
 /**
  * Schedule blocks for blitting on the output device.

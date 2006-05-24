@@ -279,8 +279,6 @@ static void ccmd_exec() {
 }
 #endif
 
-#ifdef USE_HIRES
-
 static void ccmd_hires() {
 	if (_pn != 1 || (strcmp(_p1, "on") && strcmp(_p1, "off"))) {
 		report("Usage: hires on|off\n");
@@ -293,8 +291,6 @@ static void ccmd_hires() {
 	blit_both();
 	return;
 }
-
-#endif
 
 static void ccmd_agiver() {
 	int ver, maj, min;
@@ -505,9 +501,7 @@ int console_init() {
 #endif
 	console_cmd("flags", "Dump all AGI flags", ccmd_flags);
 	console_cmd("help", "List available commands", ccmd_help);
-#ifdef USE_HIRES
 	console_cmd("hires", "Turn hi-res mode on/off", ccmd_hires);
-#endif
 	console_cmd("logic0", "Turn logic 0 debugging on/off", ccmd_logic0);
 	console_cmd("objs", "List all objects and locations", ccmd_objs);
 	console_cmd("opcode", "Turn opcodes on/off in debug", ccmd_opcode);

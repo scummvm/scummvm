@@ -1137,12 +1137,10 @@ cmd(clear_text_rect) {
 
 cmd(toggle_monitor) {
 	report("toggle.monitor\n");
-#ifdef USE_HIRES
 	opt.hires = !opt.hires;
 	erase_both();
 	show_pic();
 	blit_both();
-#endif
 }
 
 cmd(echo_line) {

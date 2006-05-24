@@ -45,12 +45,8 @@ typedef signed int Err;
 #define INLINE __inline
 #define VERSION __DATE__ " " __TIME__
 
-/* Default features -- can be overriden in portdefs.h */
 #define USE_CONSOLE
-#define USE_PCM_SOUND
-#define USE_IIGS_SOUND
-#define USE_HIRES
-#define AGDS_SUPPORT
+//#define USE_IIGS_SOUND
 
 #define	TITLE		"AGI engine"
 
@@ -81,10 +77,6 @@ typedef signed int Err;
 
 #ifndef INLINE
 #define INLINE
-#endif
-
-#ifndef USE_PCM_SOUND
-#undef USE_IIGS_SOUND
 #endif
 
 #define	MSG_BOX_COLOUR	0x0f	/* White */
@@ -214,9 +206,7 @@ struct agi_options {
 	int nosound;		/**< disable sound */
 	int egapal;		/**< use PC EGA palette */
 	int cgaemu;		/**< use PC CGA emulation */
-#ifdef USE_HIRES
 	int hires;		/**< use hi-res pictures */
-#endif
 	int soundemu;		/**< sound emulation mode */
 	int agimouse;		/**< AGI Mouse 1.0 emulation */
 };
@@ -443,9 +433,7 @@ struct agi_game {
 	unsigned int color_fg;
 	unsigned int color_bg;
 	uint8 *sbuf;			/**< 160x168 AGI screen buffer */
-#ifdef USE_HIRES
 	uint8 *hires;			/**< 320x168 hi-res buffer */
-#endif
 
 	/* player command line */
 	struct agi_word ego_words[MAX_WORDS];

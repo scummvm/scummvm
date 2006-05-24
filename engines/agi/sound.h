@@ -84,11 +84,9 @@ struct channel_info {
 #define AGI_SOUND_4CHN		0x0008
 	uint32 type;
 	struct agi_note *ptr;
-#ifdef USE_PCM_SOUND
 	int16 *ins;
 	int32 size;
 	uint32 phase;
-#endif
 #define AGI_SOUND_LOOP		0x0001
 #define AGI_SOUND_ENVELOPE	0x0002
 	uint32 flags;
@@ -119,9 +117,7 @@ extern struct sound_driver *snd;
 
 #endif				/* __AGI_SOUND_H */
 
-#ifdef USE_PCM_SOUND
-
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 #include "sound/audiostream.h"
 
@@ -163,6 +159,4 @@ private:
 	void premixerCall(int16 * buf, uint len);
 };
 
-}                             // End of namespace Agi
-
-#endif
+} // End of namespace Agi

@@ -247,7 +247,7 @@ int save_game(char *s, char *d) {
 	write_sint16(&f, (int16)game.color_fg);
 	write_sint16(&f, (int16)game.color_bg);
 
-	/* game.hires (#ifdef USE_HIRES) */
+	/* game.hires */
 	/* game.sbuf */
 	/* game.ego_words */
 	/* game.num_ego_words */
@@ -423,7 +423,7 @@ int load_game(char *s) {
 	game.color_fg = read_sint16(&f);
 	game.color_bg = read_sint16(&f);
 
-	/* game.hires (#ifdef USE_HIRES) - rebuilt from image stack */
+	/* game.hires - rebuilt from image stack */
 	/* game.sbuf - rebuilt from image stack */
 
 	/* game.ego_words - fixed by clean_input */
