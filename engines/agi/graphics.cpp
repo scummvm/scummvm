@@ -122,8 +122,6 @@ static struct update_block update = {
 	MAX_INT, MAX_INT, 0, 0
 };
 
-struct gfx_driver *gfx;		/* graphics driver */
-
 /*
  *  Layer 4:  640x480?  ==================  User display
  *                              ^
