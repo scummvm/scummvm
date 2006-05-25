@@ -137,6 +137,8 @@ int decode_view(int);
 void add_to_pic(int, int, int, int, int, int, int);
 void draw_obj(int);
 
+bool is_ego_view(const vt_entry *v);
+
 }                             // End of namespace Agi
 
 #endif				/* AGI_VIEW_H */

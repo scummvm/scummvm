@@ -375,4 +375,9 @@ void update_viewtable() {
 	}
 }
 
+bool is_ego_view(const vt_entry* v)
+{
+	return v == game.view_table;
+}
+
 }                             // End of namespace Agi

@@ -59,7 +59,7 @@ static void changepos(struct vt_entry *v) {
 	} else {
 		v->flags |= MOTION;
 		v->direction = 0;
-		if /*_is_ego_view*/ (v)
+		if (is_ego_view(v))
 			game.vars[V_ego_dir] = 0;
 	}
 }
@@ -72,7 +72,7 @@ static void motion_wander(struct vt_entry *v) {
 
 	v->direction = rnd->getRandomNumber(8);
 
-	if /*_is_ego_view */ (v) {
+	if (is_ego_view(v)) {
 		game.vars[V_ego_dir] = v->direction;
 		while (v->parm1 < 6) {
 			v->parm1 = rnd->getRandomNumber(50);	/* huh? */
@@ -146,7 +146,7 @@ static void motion_moveobj(struct vt_entry *v) {
 	v->direction = get_direction(v->x_pos, v->y_pos, v->parm1, v->parm2, v->step_size);
 
 	/* Update V6 if ego */
-	if (v == game.view_table)
+	if (is_ego_view(v))
 		game.vars[V_ego_dir] = v->direction;
 
 	if (v->direction == 0)
@@ -200,7 +200,7 @@ void in_destination(struct vt_entry *v) {
 		setflag(v->parm4, true);
 	}
 	v->motion = MOTION_NORMAL;
-	if (v == game.view_table)
+	if (is_ego_view(v))
 		game.player_control = true;
 }
 

@@ -242,7 +242,7 @@ void update_position() {
 		}
 
 		if (border != 0) {
-			if (v == game.view_table) {
+			if (is_ego_view(v)) {
 				game.vars[V_border_touch_ego] = border;
 			} else {
 				game.vars[V_border_code] = v->entry;
