@@ -1447,7 +1447,7 @@ int KyraEngine::handleBeadState() {
 				if (_text->printed()) {
 					_text->restoreTalkTextMessageBkgd(2, 0);
 				}
-				initBeadState(beadState1.x, beadState1.y, beadState1.unk8, beadState1.unk9, 6, &beadState2);
+				initBeadState(beadState1.x, beadState1.y, beadState1.unk8, beadState1.unk9, 12, &beadState2);
 				_lastDisplayedPanPage = 18;
 			}
 		}
@@ -1456,7 +1456,7 @@ int KyraEngine::handleBeadState() {
 	case 4:
 		if (_system->getMillis() >= timer1) {
 			int x = 0, y = 0;
-			timer1 = _system->getMillis();
+			timer1 = _system->getMillis() + _tickLength;
 			if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
 				if (_brandonStatusBit & 20) {
 					_unkEndSeqVar5 = 2;
@@ -1484,7 +1484,7 @@ int KyraEngine::handleBeadState() {
 		
 	case 5:
 		if (_system->getMillis() >= timer1) {
-			timer1 = _system->getMillis();
+			timer1 = _system->getMillis() + _tickLength;
 			int x = 0, y = 0;
 			if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
 				if (beadState2.dstX == 290) {
@@ -1506,7 +1506,7 @@ int KyraEngine::handleBeadState() {
 						_screen->updateScreen();
 						delayUntil(nextRun);
 					}
-					initBeadState(beadState1.x, beadState1.y, 63, 60, 6, &beadState2);
+					initBeadState(beadState1.x, beadState1.y, 63, 60, 12, &beadState2);
 				} else {
 					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
