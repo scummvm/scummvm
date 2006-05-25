@@ -85,12 +85,13 @@ void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint n
 	}
 
 	Palette *pal = _cursorPaletteStack.top();
+	uint size = 4 * num;
 
-	if (pal->_size < 4 * num) {
+	if (pal->_size < size) {
+		// Could not re-use the old buffer. Create a new one.
 		delete pal->_colors;
-		pal->_colors = new byte[4 * num];
-	} else {
-		pal->_size = 4 * num;
+		pal->_colors = new byte[size];
+		pal->_size = size;
 	}
 
 	pal->_start = start;
