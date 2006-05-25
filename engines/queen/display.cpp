@@ -22,8 +22,10 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
-#include "queen/display.h"
 
+#include "graphics/cursorman.h"
+
+#include "queen/display.h"
 #include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
@@ -780,11 +782,11 @@ void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 }
 
 void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h) {
-	_system->setMouseCursor(buf, w, h, 1, 1, 0);
+	CursorMan.replaceCursor(buf, w, h, 1, 1, 0);
 }
 
 void Display::showMouseCursor(bool show) {
-	_system->showMouse(show);
+	CursorMan.showMouse(show);
 }
 
 void Display::initFont() {

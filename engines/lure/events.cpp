@@ -20,6 +20,8 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "lure/events.h"
 #include "lure/system.h"
 #include "lure/res.h"
@@ -70,11 +72,11 @@ void Mouse::handleEvent(OSystem::Event event) {
 
 
 void Mouse::cursorOn() {
-	System::getReference().showMouse(true);
+	CursorMan.showMouse(true);
 }
 
 void Mouse::cursorOff() {
-	System::getReference().showMouse(false);
+	CursorMan.showMouse(false);
 }
 
 void Mouse::setCursorNum(uint8 cursorNum) {
@@ -89,11 +91,10 @@ void Mouse::setCursorNum(uint8 cursorNum) {
 
 void Mouse::setCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
 	Resources &res = Resources::getReference();
-	OSystem &system = System::getReference();
 
 	_cursorNum = cursorNum;
 	byte *cursorAddr = res.getCursor(cursorNum);
-	system.setMouseCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
+	CursorMan.replaceCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
 }
 
 void Mouse::setPosition(int newX, int newY) {

@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "sky/disk.h"
 #include "sky/logic.h"
 #include "sky/mouse.h"
@@ -191,11 +192,11 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	uint16 mouseWidth = ((struct dataFileHeader *)_miceData)->s_width;
 	uint16 mouseHeight = ((struct dataFileHeader *)_miceData)->s_height;
 
-	_system->setMouseCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY, 0);
+	CursorMan.replaceCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY, 0);
 	if (frameNum == MOUSE_BLANK)
-		_system->showMouse(false);
+		CursorMan.showMouse(false);
 	else
-		_system->showMouse(true);
+		CursorMan.showMouse(true);
 }
 
 void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {

@@ -107,7 +107,6 @@ protected:
 	} _lastClick;
 
 	// mouse cursor state
-	bool		_oldCursorMode;
 	int		_cursorAnimateCounter;
 	int		_cursorAnimateTimer;
 	byte		_cursor[2048];

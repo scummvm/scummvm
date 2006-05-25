@@ -32,6 +32,8 @@
 
 #include "backends/fs/fs.h"
 
+#include "graphics/cursorman.h"
+
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
@@ -171,7 +173,7 @@ int CineEngine::init() {
 }
 
 int CineEngine::go() {
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 
 	mainLoop(1);
 

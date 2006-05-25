@@ -30,6 +30,8 @@
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "graphics/cursorman.h"
+
 #include "scumm/bomp.h"
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
@@ -1304,7 +1306,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	_palDirtyMax = -1;
 
 	// Hide mouse
-	bool oldMouseState = _vm->_system->showMouse(false);
+	bool oldMouseState = CursorMan.showMouse(false);
 
 	// Load the video
 	_seekFile = filename;
@@ -1379,7 +1381,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	release();
 
 	// Reset mouse state
-	_vm->_system->showMouse(oldMouseState);
+	CursorMan.showMouse(oldMouseState);
 }
 
 } // End of namespace Scumm

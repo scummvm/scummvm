@@ -33,6 +33,7 @@
 #include "saga/stream.h"
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 
 namespace Saga {
 
@@ -392,7 +393,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 }
 
 void Gfx::showCursor(bool state) {
-	g_system->showMouse(state);
+	CursorMan.showMouse(state);
 }
 
 void Gfx::setCursor(CursorType cursorType) {
@@ -411,7 +412,7 @@ void Gfx::setCursor(CursorType cursorType) {
 			0, 0, 0, A, 0, 0, 0,
 		};
 
-		_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
+		CursorMan.replaceCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
 	} else {
 		uint32 resourceId;
 
@@ -450,7 +451,7 @@ void Gfx::setCursor(CursorType cursorType) {
 		}
 
 		// Note: Hard-coded hotspot
-		_system->setMouseCursor(image, width, height, 15, 15, 0);
+		CursorMan.replaceCursor(image, width, height, 15, 15, 0);
 
 		free(image);
 		free(resource);

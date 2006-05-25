@@ -25,6 +25,8 @@
 
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
+
 #include "simon/simon.h"
 
 namespace Simon {
@@ -226,9 +228,9 @@ static const byte _simon2_cursors[10][256] = {
 
 void SimonEngine::drawMousePointer() {
 	if (getGameType() == GType_SIMON2) {
-		_system->setMouseCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
+		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
 	} else {
-		_system->setMouseCursor(_simon1_cursor, 16, 16, 0, 0);
+		CursorMan.replaceCursor(_simon1_cursor, 16, 16, 0, 0);
 	}
 }
 
@@ -236,11 +238,11 @@ void SimonEngine::handleMouseMoved() {
 	uint x;
 
 	if (_mouseHideCount) {
-		_system->showMouse(false);
+		CursorMan.showMouse(false);
 		return;
 	}
 
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 	pollMouseXY();
 
 	if (_mouseX <= 0)
@@ -433,7 +435,7 @@ void SimonEngine::drawMousePointer_FF() {
 		offs = cursor * 32 + _mouseAnim * 2;
 		drawMousePart(image, _mouseOffs[offs], _mouseOffs[offs + 1]);
 
-		_system->setMouseCursor(_mouseData, kMaxCursorWidth, kMaxCursorHeight, 19, 19, 0);
+		CursorMan.replaceCursor(_mouseData, kMaxCursorWidth, kMaxCursorHeight, 19, 19, 0);
 	}
 }
 

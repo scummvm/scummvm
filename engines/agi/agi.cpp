@@ -31,6 +31,8 @@
 
 #include "backends/fs/fs.h"
 
+#include "graphics/cursorman.h"
+
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
@@ -547,7 +549,7 @@ int AgiEngine::init() {
 }
 
 int AgiEngine::go() {
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 
 	report(" \nAGI engine " VERSION " is ready.\n");
 	if (game.state < STATE_LOADED) {

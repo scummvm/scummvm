@@ -24,6 +24,8 @@
 
 #include "common/stdafx.h"
 
+#include "graphics/cursorman.h"
+
 #include "agi/agi.h"
 #include "agi/graphics.h"
 
@@ -428,7 +430,7 @@ int init_video() {
 		}
 		++src;
 	}
-	g_system->setMouseCursor(mouseCursor, 16, 16, 1, 1);
+	CursorMan.replaceCursor(mouseCursor, 16, 16, 1, 1);
 
 	return err_OK;
 }

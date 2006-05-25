@@ -27,6 +27,8 @@
 
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
+
 namespace Cine {
 
 byte *screenBuffer;
@@ -116,7 +118,7 @@ void setMouseCursor(int cursor) {
 			}
 			++src;
 		}
-		g_system->setMouseCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
+		CursorMan.replaceCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
 		currentMouseCursor = cursor;
 	}
 }

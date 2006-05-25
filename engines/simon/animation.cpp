@@ -26,6 +26,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
+
 #include "simon/animation.h"
 #include "simon/intern.h"
 #include "simon/simon.h"
@@ -87,7 +89,7 @@ bool MoviePlayer::load(const char *filename) {
 	} 
 	debug(0, "Playing video %s", filename2);
 
-	_vm->_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	if ((_vm->getPlatform() == Common::kPlatformAmiga || _vm->getPlatform() == Common::kPlatformMacintosh) &&
 		_vm->_language != Common::EN_ANY) {

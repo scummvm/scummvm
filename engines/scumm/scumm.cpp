@@ -32,6 +32,8 @@
 #include "gui/message.h"
 #include "gui/newgui.h"
 
+#include "graphics/cursorman.h"
+
 #include "scumm/akos.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
@@ -1787,7 +1789,7 @@ load_game:
 	animateCursor();
 
 	/* show or hide mouse */
-	_system->showMouse(_cursor.state > 0);
+	CursorMan.showMouse(_cursor.state > 0);
 
 #ifndef DISABLE_HE
 	if (_game.heversion >= 90) {

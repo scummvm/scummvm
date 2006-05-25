@@ -22,6 +22,8 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
+
 #include "sword2/sword2.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"
@@ -1525,7 +1527,7 @@ void Mouse::drawMouse() {
 		decompressMouse(mouseData, _mouseAnim.data, _mouseFrame,
 			_mouseAnim.mousew, _mouseAnim.mouseh, mouse_width);
 
-	_vm->_system->setMouseCursor(mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y, 0);
+	CursorMan.replaceCursor(mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y, 0);
 
 	free(mouseData);
 }
@@ -1585,12 +1587,12 @@ int32 Mouse::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 		animateMouse();
 		drawMouse();
 
-		_vm->_system->showMouse(true);
+		CursorMan.showMouse(true);
 	} else {
 		if (_luggageAnim.data)
 			drawMouse();
 		else
-			_vm->_system->showMouse(false);
+			CursorMan.showMouse(false);
 	}
 
 	return RD_OK;
@@ -1626,12 +1628,12 @@ int32 Mouse::setLuggageAnim(byte *ma, int32 size) {
 		animateMouse();
 		drawMouse();
 
-		_vm->_system->showMouse(true);
+		CursorMan.showMouse(true);
 	} else {
 		if (_mouseAnim.data)
 			drawMouse();
 		else
-			_vm->_system->showMouse(false);
+			CursorMan.showMouse(false);
 	}
 
 	return RD_OK;

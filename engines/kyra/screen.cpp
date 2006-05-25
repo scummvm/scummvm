@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "kyra/screen.h"
 #include "kyra/kyra.h"
 
@@ -1834,7 +1835,7 @@ int Screen::getRectSize(int x, int y) {
 void Screen::hideMouse() {
 	debugC(9, kDebugLevelScreen, "Screen::hideMouse()");
 	++_mouseLockCount;
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 }
 
 void Screen::showMouse() {
@@ -1845,7 +1846,7 @@ void Screen::showMouse() {
 		//       that the mouse cursor won't do a little dance catching
 		//       up with the mouse movements when entering a new room.
 		_vm->delay(0);
-		_system->showMouse(true);
+		CursorMan.showMouse(true);
 	}
 
 	if (_mouseLockCount > 0)
@@ -1879,10 +1880,10 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 	copyRegionToBuffer(8, 0, 0, mouseWidth, mouseHeight, cursor);
-	_system->setMouseCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
-	_system->showMouse(true);
+	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
+	CursorMan.showMouse(true);
 	free(cursor);
 
 	// makes sure that the cursor is drawn

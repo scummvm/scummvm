@@ -24,6 +24,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
+
 #include "sword1/mouse.h"
 #include "sword1/menu.h"
 #include "sword1/screen.h"
@@ -63,7 +65,7 @@ void Mouse::initialize(void) {
 	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse
 		_resMan->resOpen(MSE_POINTER + cnt); // cursors in memory all the time
 
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 	createPointer(0, 0);
 }
 
@@ -251,10 +253,10 @@ void Mouse::setPointer(uint32 resId, uint32 rate) {
 	createPointer(resId, _currentLuggageId);
 
 	if ((resId == 0) || (!(Logic::_scriptVars[MOUSE_STATUS] & 1) && (!_mouseOverride))) {
-		_system->showMouse(false);
+		CursorMan.showMouse(false);
 	} else {
 		animate();
-		_system->showMouse(true);
+		CursorMan.showMouse(true);
 	}
 }
 
@@ -269,7 +271,7 @@ void Mouse::animate(void) {
 		_frame = (_frame + 1) % _currentPtr->numFrames;
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
-		_system->setMouseCursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY);
+		CursorMan.replaceCursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY);
 	}
 }
 

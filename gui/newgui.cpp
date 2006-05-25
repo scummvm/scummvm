@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
@@ -156,6 +157,7 @@ void NewGui::runLoop() {
 		};
 
 		PaletteMan.pushCursorPalette(palette, 0, 4);
+		CursorMan.pushCursor(NULL, 0, 0, 0, 0);
 	}
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
@@ -286,8 +288,6 @@ void NewGui::runLoop() {
 
 void NewGui::saveState() {
 	// Backup old cursor
-	_oldCursorMode = _system->showMouse(true);
-
 	_currentKeyDown.keycode = 0;
 	_lastClick.x = _lastClick.y = 0;
 	_lastClick.time = 0;
@@ -297,7 +297,7 @@ void NewGui::saveState() {
 }
 
 void NewGui::restoreState() {
-	_system->showMouse(_oldCursorMode);
+	CursorMan.popCursor();
 
 	_system->updateScreen();
 
@@ -333,7 +333,7 @@ void NewGui::animateCursor() {
 			}
 		}
 
-		_system->setMouseCursor(_cursor, 16, 16, 7, 7);
+		CursorMan.replaceCursor(_cursor, 16, 16, 7, 7);
 
 		_cursorAnimateTimer = time;
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
