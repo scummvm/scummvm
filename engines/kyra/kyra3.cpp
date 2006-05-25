@@ -284,8 +284,8 @@ void KyraEngine_v3::drawMainBox(int x, int y, int w, int h, int fill) {
 	_screen->drawClippedLine(x, y, x+w, y, colorTable[2]);
 	_screen->drawClippedLine(x, y, x, y+h, colorTable[2]);
 	
-	_screen->drawPixel(x, y+h, colorTable[3]);
-	_screen->drawPixel(x+w, y, colorTable[3]);
+	_screen->setPagePixel(_screen->_curPage, x, y+h, colorTable[3]);
+	_screen->setPagePixel(_screen->_curPage, x+w, y, colorTable[3]);
 }
 
 void KyraEngine_v3::gui_printString(const char *format, int x, int y, int col1, int col2, int flags, ...) {

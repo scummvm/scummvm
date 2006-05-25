@@ -575,7 +575,7 @@ void KyraEngine::quitGame() {
 }
 
 void KyraEngine::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp) {
+	while (_system->getMillis() < timestamp && !_quitFlag) {
 		if (updateTimers)
 			updateGameTimers();
 		if (timestamp - _system->getMillis() >= 10)
@@ -661,10 +661,10 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		if (_skipFlag && !_abortIntroFlag && !queryGameFlag(0xFE))
 			_skipFlag = false;
 			
-		if (amount > 0 && !_skipFlag) {
+		if (amount > 0 && !_skipFlag && !_quitFlag) {
 			_system->delayMillis((amount > 10) ? 10 : amount);
 		}
-	} while (!_skipFlag && _system->getMillis() < start + amount);
+	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
 	
 }
 

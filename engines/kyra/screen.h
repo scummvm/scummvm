@@ -115,7 +115,6 @@ public:
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
 	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
-	void drawPixel(int x, int y, int color, int pageNum = -1);
 	void setAnimBlockPtr(int size);
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);

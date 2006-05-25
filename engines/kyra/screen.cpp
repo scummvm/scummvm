@@ -494,12 +494,6 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 	drawClippedLine(x1, y2, x2, y2, color);
 }
 
-void Screen::drawPixel(int x, int y, int color, int pageNum) {
-	debugC(9, kDebugLevelScreen, "Screen::drawPixel(%i, %i, %i, %i)", x, y, color, pageNum);
-	uint8 *dst = getPagePtr((pageNum != -1) ? pageNum : 0) + y * SCREEN_W + x;
-	*dst = color;
-}
-
 void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
 	debugC(9, kDebugLevelScreen, "Screen::drawShadedBox(%i, %i, %i, %i, %i, %i)", x1, y1, x2, y2, color1, color2);
 	assert(x1 > 0 && y1 > 0);
