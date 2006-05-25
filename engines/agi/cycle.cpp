@@ -361,7 +361,7 @@ static int play_game() {
 int run_game() {
 	int i, ec = err_OK;
 
-	if (opt.cgaemu)
+	if (opt.renderMode == Common::kRenderCGA)
 		opt.hires = 0;
 
 	for (i = 0; i < MAX_DIRS; i++)

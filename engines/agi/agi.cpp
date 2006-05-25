@@ -479,6 +479,9 @@ void AgiEngine::initialize() {
 	opt.hires = true;
 	opt.soundemu = SOUND_EMU_NONE;
 
+	if (ConfMan.hasKey("render_mode"))
+		opt.renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+
 	_console = new Console(this);
 
 	init_machine();

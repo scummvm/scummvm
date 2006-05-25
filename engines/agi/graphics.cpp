@@ -382,6 +382,7 @@ void gfx_putblock(int x1, int y1, int x2, int y2) {
 		y2 = GFX_HEIGHT - 1;
 
 	g_system->copyRectToScreen(screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+	//g_system->copyRectToScreen(screen, 320, 0, 0, 320, 200);
 }
 
 static const byte mouseCursorArrow[] = {
@@ -401,7 +402,7 @@ static const byte mouseCursorArrow[] = {
  * @see deinit_video()
  */
 int init_video() {
-	if (opt.egapal)
+	if (opt.renderMode == Common::kRenderEGA)
 		init_palette(ega_palette);
 	else
 		init_palette(new_palette);
@@ -468,7 +469,7 @@ int deinit_machine() {
  * @param p pointer to the row start in the AGI screen
  */
 void put_pixels_a(int x, int y, int n, uint8 *p) {
-	if (opt.cgaemu) {
+	if (opt.renderMode == Common::kRenderCGA) {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = (cga_map[(*p & 0xf0) >> 4] << 4) | cga_map[*p & 0x0f];
 			if (debug_.priority)

@@ -202,8 +202,7 @@ struct agi_options {
 	int amiga;		/**< enable Amiga mode */
 	int fullscreen;		/**< use full screen mode if available */
 	int nosound;		/**< disable sound */
-	int egapal;		/**< use PC EGA palette */
-	int cgaemu;		/**< use PC CGA emulation */
+	Common::RenderMode renderMode;
 	int hires;		/**< use hi-res pictures */
 	int soundemu;		/**< sound emulation mode */
 	int agimouse;		/**< AGI Mouse 1.0 emulation */
