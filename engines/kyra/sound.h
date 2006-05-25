@@ -39,6 +39,8 @@ class SoundHandle;
 
 namespace Kyra {
 
+class AUDStream;
+
 class Sound {
 public:
 	Sound(KyraEngine *engine, Audio::Mixer *mixer);
@@ -221,9 +223,10 @@ public:
 
 	bool init();
 	
-	int playSound(Common::File *fileHandle, bool loop = false, int channel = -1);
+	int playSound(Common::File *fileHandle, bool loop = false, bool fadeIn = false, int channel = -1);
 	bool isPlaying(int channel);
 	void stopSound(int channel);
+	void beginFadeOut(int channel);
 private:
 	KyraEngine *_vm;
 	Audio::Mixer *_mixer;
@@ -231,6 +234,7 @@ private:
 	struct Sound {
 		Common::File *fileHandle;
 		Audio::SoundHandle handle;
+		AUDStream *stream;
 	} _sounds[SOUND_STREAMS];
 };
 

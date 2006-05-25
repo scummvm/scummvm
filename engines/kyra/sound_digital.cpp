@@ -42,6 +42,9 @@ public:
 	bool endOfData() const { return _endOfData; }
 	
 	int getRate() const { return _rate; }
+
+	void beginFadeIn();
+	void beginFadeOut();
 private:
 	Common::File *_file;
 	bool _loop;
@@ -53,12 +56,16 @@ private:
 	
 	int _bytesLeft;
 	
-	uint8 *_outBuffer;
+	byte *_outBuffer;
 	int _outBufferOffset;
 	uint _outBufferSize;
 	
-	uint8 *_inBuffer;
+	byte *_inBuffer;
 	uint _inBufferSize;
+
+	int32 _fadeSamples;
+	int32 _fadeCount;
+	int _fading;
 	
 	int readChunk(int16 *buffer, const int maxSamples);
 	
@@ -90,6 +97,13 @@ AUDStream::AUDStream(Common::File *file, bool loop) : _file(0), _endOfData(true)
 	_rate = _file->readUint16LE();
 	_totalSize = _file->readUint32LE();
 	_loop = loop;
+
+	// TODO: Find the correct number of samples for a fade-in/out. Should
+	//       probably take the same amount of time as a palette fade.
+
+	_fadeSamples = 2 * getRate();
+	_fading = 0;
+
 	// TODO?: add checks
 	int flags = _file->readByte();	// flags
 	int type = _file->readByte();	// type
@@ -111,6 +125,18 @@ AUDStream::~AUDStream() {
 #ifdef __SYMBIAN32__
 	delete _file;
 #endif
+}
+
+void AUDStream::beginFadeIn() {
+	if (_fading == 0)
+		_fadeCount = 0;
+	_fading = 1;
+}
+
+void AUDStream::beginFadeOut() {
+	if (_fading == 0)
+		_fadeCount = _fadeSamples;
+	_fading = -1;
 }
 
 int AUDStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -273,11 +299,33 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 		samplesProcessed += samples;
 		_bytesLeft -= samples;
 
+		// To help avoid overflows for long fade times, we divide both
+		// _fadeSamples and _fadeCount when calculating the new sample.
+
+		int32 div = _fadeSamples / 256;
+
 		while (samples--) {
-			int16 sample = (int8)_outBuffer[_outBufferOffset++];
-			*buffer++ = (sample << 8) ^ 0x8000;
+			int16 sample = (_outBuffer[_outBufferOffset++] << 8) ^ 0x8000;
+
+			if (_fading) {
+				sample = (sample * (_fadeCount / 256)) / div;
+				_fadeCount += _fading;
+
+				if (_fadeCount < 0) {
+					_fadeCount = 0;
+					_endOfData = true;
+				} else if (_fadeCount > _fadeSamples) {
+					_fadeCount = _fadeSamples;
+					_fading = 0;
+				}
+			}
+
+			*buffer++ = sample;
 		}
 	}
+
+	if (_fading < 0 && _fadeCount == 0)
+		_fading = false;
 
 	return samplesProcessed;
 }
@@ -298,15 +346,15 @@ bool SoundDigital::init() {
 	return true;
 }
 
-int SoundDigital::playSound(Common::File *fileHandle, bool loop, int channel) {
+int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < SOUND_STREAMS) {
 		stopSound(channel);
 		use = &_sounds[channel];
 	} else {
-		for (int i = 0; i < SOUND_STREAMS; ++i) {
-			if (!_sounds[i].fileHandle) {
-				use = &_sounds[i];
+		for (channel = 0; channel < SOUND_STREAMS; ++channel) {
+			if (!_sounds[channel].fileHandle) {
+				use = &_sounds[channel];
 				break;
 			}
 		}
@@ -317,16 +365,19 @@ int SoundDigital::playSound(Common::File *fileHandle, bool loop, int channel) {
 		}
 	}
 	
-	Audio::AudioStream *stream = new AUDStream(fileHandle, loop);
-	if (stream->endOfData()) {
-		delete stream;
+	use->stream = new AUDStream(fileHandle, loop);
+	if (use->stream->endOfData()) {
+		delete use->stream;
 		delete fileHandle;
 
 		return -1;
 	}
+
+	if (fadeIn)
+		use->stream->beginFadeIn();
 	
 	// TODO: set correct sound type from channel id
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &use->handle, stream);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &use->handle, use->stream);
 	use->fileHandle = fileHandle;
 	
 	return use - _sounds;
@@ -348,7 +399,13 @@ void SoundDigital::stopSound(int channel) {
 	
 	if (_sounds[channel].fileHandle) {
 		delete _sounds[channel].fileHandle;
-		_sounds[channel].fileHandle = 0;			
+		_sounds[channel].fileHandle = 0;
+	}
+}
+
+void SoundDigital::beginFadeOut(int channel) {
+	if (isPlaying(channel)) {
+		_sounds[channel].stream->beginFadeOut();
 	}
 }
 

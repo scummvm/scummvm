@@ -183,7 +183,7 @@ void KyraEngine_v3::playMenuAudioFile() {
 	uint32 temp = 0;
 	_res->fileHandle(_menuAudioFile, &temp, *handle);
 	if (handle->isOpen()) {
-		_musicSoundChannel = _soundDigital->playSound(handle, true, -1);
+		_musicSoundChannel = _soundDigital->playSound(handle, true);
 	}
 }
 
