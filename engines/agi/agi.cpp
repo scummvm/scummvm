@@ -465,7 +465,7 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugLevelInventory, "Inventory", "Inventory debugging");
 	Common::addSpecialDebugLevel(kDebugLevelInput, "Input", "Input events debugging");
 	Common::addSpecialDebugLevel(kDebugLevelMenu, "Menu", "Menu debugging");
-	Common::addSpecialDebugLevel(kDebugLevelScripts, "Scrpits", "Scripts debugging");
+	Common::addSpecialDebugLevel(kDebugLevelScripts, "Scripts", "Scripts debugging");
 	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debugging");
 	Common::addSpecialDebugLevel(kDebugLevelText, "Text", "Text output debugging");
 

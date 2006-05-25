@@ -1474,6 +1474,8 @@ int run_logic(int n) {
 			num = logic_names_cmd[op].num_args;
 			memmove(p, code + ip, num);
 			memset(p + num, 0, CMD_BSIZE - num);
+
+			debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logic_names_cmd[op].name, p[0], p[1], p[2]);
 			agi_command[op] (p);
 			ip += num;
 		}
@@ -1486,8 +1488,8 @@ int run_logic(int n) {
 }
 
 void execute_agi_command(uint8 op, uint8 *p) {
-	debugC(2, kDebugLevelScripts, "%s %d %d %d", logic_names_cmd[op].name, p[0], p[1], p[2]);
+	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logic_names_cmd[op].name, p[0], p[1], p[2]);
 	agi_command[op] (p);
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi
