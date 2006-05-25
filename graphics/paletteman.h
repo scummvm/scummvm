@@ -72,7 +72,7 @@ private:
 	PaletteManager();
 
 	struct Palette {
-		byte *_colors;
+		byte *_data;
 		uint _start;
 		uint _num;
 		uint _size;
@@ -83,15 +83,15 @@ private:
 			_size = 4 * num;
 
 			if (num) {
-				_colors = new byte[_size];
-				memcpy(_colors, colors, _size);
+				_data = new byte[_size];
+				memcpy(_data, colors, _size);
 			} else {
-				_colors = NULL;
+				_data = NULL;
 			}
 		}
 
 		~Palette() {
-			delete [] _colors;
+			delete [] _data;
 		}
 	};
 

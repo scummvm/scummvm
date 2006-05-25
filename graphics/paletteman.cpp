@@ -57,9 +57,7 @@ void PaletteManager::popCursorPalette() {
 	if (_cursorPaletteStack.empty())
 		return;
 
-	Palette *pal;
-
-	pal = _cursorPaletteStack.pop();
+	Palette *pal = _cursorPaletteStack.pop();
 	delete pal;
 
 	if (_cursorPaletteStack.empty()) {
@@ -70,7 +68,7 @@ void PaletteManager::popCursorPalette() {
 	pal = _cursorPaletteStack.top();
 
 	if (pal->_num)
-		g_system->setCursorPalette(pal->_colors, pal->_start, pal->_num);
+		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	else
 		g_system->disableCursorPalette(true);
 }
@@ -89,8 +87,8 @@ void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint n
 
 	if (pal->_size < size) {
 		// Could not re-use the old buffer. Create a new one.
-		delete pal->_colors;
-		pal->_colors = new byte[size];
+		delete pal->_data;
+		pal->_data = new byte[size];
 		pal->_size = size;
 	}
 
@@ -98,8 +96,8 @@ void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint n
 	pal->_num = num;
 
 	if (num) {
-		memcpy(pal->_colors, colors, 4 * num);
-		g_system->setCursorPalette(pal->_colors, pal->_start, pal->_num);
+		memcpy(pal->_data, colors, 4 * num);
+		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	} else {
 		g_system->disableCursorPalette(true);
 	}
