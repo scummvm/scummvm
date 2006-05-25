@@ -1473,7 +1473,6 @@ void OSystem_SDL::drawMouse() {
 	}
   
 	SDL_Rect dst;
-	bool useCursorScaling;
 	int scale;
 	int width, height;
 
