@@ -634,6 +634,7 @@ static int select_slot() {
 				active = NUM_SLOTS - 1;
 			break;
 		}
+		do_update();
 	}
 
 press:

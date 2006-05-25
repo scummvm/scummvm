@@ -377,6 +377,7 @@ int selection_box(const char *m, const char **b) {
 			active %= i;
 			break;
 		}
+		do_update();
 	}
 
       press:

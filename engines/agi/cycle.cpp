@@ -274,6 +274,7 @@ int main_cycle() {
 		break;
 	case INPUT_MENU:
 		menu_keyhandler(key);
+		do_update();
 		return false;
 	case INPUT_NONE:
 		handle_controller(key);
@@ -281,6 +282,8 @@ int main_cycle() {
 			game.keypress = key;
 		break;
 	}
+
+	do_update();
 
 	if (game.msg_box_ticks > 0)
 		game.msg_box_ticks--;

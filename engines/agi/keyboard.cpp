@@ -347,6 +347,7 @@ int wait_key() {
 		key = do_poll_keyboard();
 		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
 			break;
+		do_update();
 	}
 	return key;
 }
@@ -365,6 +366,7 @@ int wait_any_key() {
 		key = do_poll_keyboard();
 		if (key)
 			break;
+		do_update();
 	}
 	return key;
 }
