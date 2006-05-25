@@ -61,7 +61,7 @@ typedef signed int Err;
 #define	MAX_FLAGS	(256 >> 3)
 #define MAX_VIEWTABLE	255	/* KQ3 uses o255! */
 #define MAX_WORDS	20
-#define	MAX_STRINGS	24	/* MAX_STRINGS + 1 used for get.num */
+#define	MAX_STRINGS	24		/* MAX_STRINGS + 1 used for get.num */
 #define MAX_STRINGLEN	40
 #ifndef MAX_PATH
 #define MAX_PATH	260
@@ -80,11 +80,11 @@ typedef signed int Err;
 #define	MSG_BOX_COLOUR	0x0f	/* White */
 #define MSG_BOX_TEXT	0x00	/* Black */
 #define MSG_BOX_LINE	0x04	/* Red */
-#define STATUS_FG	0x00	/* Black */
-#define	STATUS_BG	0x0f	/* White */
-#define PATCH_LOGIC		/* disable copy protection on some games */
+#define STATUS_FG	0x00		/* Black */
+#define	STATUS_BG	0x0f		/* White */
+#define PATCH_LOGIC				/* disable copy protection on some games */
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 /* AGI resources */
 #include "agi/console.h"
@@ -198,12 +198,11 @@ struct agi_options {
 #define GAMERUN_CRC	5
 	int gamerun;		/**< game run mode*/
 	int emuversion;		/**< AGI version to emulate */
-	int agds;		/**< enable AGDS mode */
-	int amiga;		/**< enable Amiga mode */
-	int fullscreen;		/**< use full screen mode if available */
+	int agds;			/**< enable AGDS mode */
+	int amiga;			/**< enable Amiga mode */
 	int nosound;		/**< disable sound */
 	Common::RenderMode renderMode;
-	int hires;		/**< use hi-res pictures */
+	int hires;			/**< use hi-res pictures */
 	int soundemu;		/**< sound emulation mode */
 	int agimouse;		/**< AGI Mouse 1.0 emulation */
 };
@@ -227,7 +226,7 @@ enum GameId {
 extern Common::RandomSource * rnd;
 extern const char *_savePath;
 
-class AgiEngine:public::Engine {
+class AgiEngine : public ::Engine {
 	int _gameId;
 
 	void errorString(const char *buf_input, char *buf_output);
@@ -357,61 +356,47 @@ struct agi_game {
 #define STATE_RUNNING	0x02
 	int state;		/**< state of the interpreter */
 
-	char name[8];		/**< lead in id (e.g. `GR' for goldrush) */
+	char name[8];	/**< lead in id (e.g. `GR' for goldrush) */
 	char id[8];		/**< game id */
 	uint32 crc;		/**< game CRC */
 
 	/* game flags and variables */
-	uint8 flags[MAX_FLAGS];
-				/**< 256 1-bit flags */
-	uint8 vars[MAX_VARS];
-				/**< 256 variables */
+	uint8 flags[MAX_FLAGS]; /**< 256 1-bit flags */
+	uint8 vars[MAX_VARS];   /**< 256 variables */
 
 	/* internal variables */
-	int horizon;		/**< horizon y coordinate */
-	int line_status;	/**< line number to put status on */
-	int line_user_input;
-				/**< line to put user input on */
-	int line_min_print;
-				/**< num lines to print on */
-	int cursor_pos;		/**< column where the input cursor is */
-	uint8 input_buffer[40];
-				/**< buffer for user input */
-	uint8 echo_buffer[40];
-				/**< buffer for echo.line */
+	int horizon;			/**< horizon y coordinate */
+	int line_status;		/**< line number to put status on */
+	int line_user_input;	/**< line to put user input on */
+	int line_min_print;		/**< num lines to print on */
+	int cursor_pos;			/**< column where the input cursor is */
+	uint8 input_buffer[40]; /**< buffer for user input */
+	uint8 echo_buffer[40]; 	/**< buffer for echo.line */
 	int keypress;
 #define INPUT_NORMAL	0x01
 #define INPUT_GETSTRING	0x02
 #define INPUT_MENU	0x03
 #define INPUT_NONE	0x04
-	int input_mode;		/**< keyboard input mode */
-	int input_enabled;
-				/**< keyboard input enabled */
-	int lognum;		/**< current logic number */
+	int input_mode;			/**< keyboard input mode */
+	int input_enabled;		/**< keyboard input enabled */
+	int lognum;				/**< current logic number */
 
 	/* internal flags */
-	int player_control;
-				/**< player is in control */
-	int quit_prog_now;
-				/**< quit now */
-	int status_line;	/**< status line on/off */
-	int clock_enabled;
-				/**< clock is on/off */
-	int exit_all_logics;
-				/**< break cycle after new.room */
-	int picture_shown;
-				/**< show.pic has been issued */
-	int has_prompt;		/**< input prompt has been printed */
+	int player_control;		/**< player is in control */
+	int quit_prog_now;		/**< quit now */
+	int status_line;		/**< status line on/off */
+	int clock_enabled;		/**< clock is on/off */
+	int exit_all_logics;	/**< break cycle after new.room */
+	int picture_shown;		/**< show.pic has been issued */
+	int has_prompt;			/**< input prompt has been printed */
 #define ID_AGDS		0x00000001
 #define ID_AMIGA	0x00000002
-	int game_flags;		/**< agi options flags */
+	int game_flags;			/**< agi options flags */
 
-	uint8 pri_table[_HEIGHT];
-					/**< priority table */
+	uint8 pri_table[_HEIGHT];/**< priority table */
 
 	/* windows */
-	uint32 msg_box_ticks;
-				/**< timed message box tick counter */
+	uint32 msg_box_ticks;	/**< timed message box tick counter */
 	struct agi_block block;
 	struct agi_block window;
 	int has_window;
@@ -430,10 +415,8 @@ struct agi_game {
 
 	unsigned int num_objects;
 
-	struct agi_event ev_keyp[MAX_DIRS];
-						/**< keyboard keypress events */
-	char strings[MAX_STRINGS + 1][MAX_STRINGLEN];
-							/**< strings */
+	struct agi_event ev_keyp[MAX_DIRS];  /**< keyboard keypress events */
+	char strings[MAX_STRINGS + 1][MAX_STRINGLEN]; /**< strings */
 
 	/* directory entries for resources */
 	struct agi_dir dir_logic[MAX_DIRS];
@@ -442,20 +425,17 @@ struct agi_game {
 	struct agi_dir dir_sound[MAX_DIRS];
 
 	/* resources */
-	struct agi_picture pictures[MAX_DIRS];
-						/**< AGI picture resources */
-	struct agi_logic logics[MAX_DIRS];
-						/**< AGI logic resources */
-	struct agi_view views[MAX_DIRS];	/**< AGI view resources */
-	struct agi_sound sounds[MAX_DIRS];
-						/**< AGI sound resources */
+	struct agi_picture pictures[MAX_DIRS]; 	/**< AGI picture resources */
+	struct agi_logic logics[MAX_DIRS];		/**< AGI logic resources */
+	struct agi_view views[MAX_DIRS];		/**< AGI view resources */
+	struct agi_sound sounds[MAX_DIRS];		/**< AGI sound resources */
 
 	/* view table */
 	struct vt_entry view_table[MAX_VIEWTABLE];
 
-	int32 ver;				/**< detected game version */
+	int32 ver;								/**< detected game version */
 
-	int simple_save;			/**< select simple savegames */
+	int simple_save;						/**< select simple savegames */
 };
 
 /**
@@ -510,6 +490,6 @@ void agi_timer_low();
 int agi_get_keypress_low();
 int agi_is_keypress_low();
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
-#endif				/* AGI_H */
+#endif // AGI_H
