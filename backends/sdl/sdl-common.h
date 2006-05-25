@@ -293,8 +293,10 @@ protected:
 	};
 
 	struct MousePos {
-		int16 x, y, w, h, hW, hH;
-		MousePos() : x(0), y(0), w(0), h(0), hW(0), hH(0) {}
+		int16 x, y, w, h, hotX, hotY, hW, hH, hHotX, hHotY;
+		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0),
+		             hW(0), hH(0), hHotX(0), hHotY(0)
+			{ }
 	};
 
 	// mouse
@@ -304,8 +306,6 @@ protected:
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
-	int16 _mouseHotspotX;
-	int16 _mouseHotspotY;
 	byte _mouseKeyColor;
 	int _cursorTargetScale;
 	bool _cursorPaletteDisabled;

@@ -1271,8 +1271,8 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	if (w == 0 || h == 0)
 		return;
 
-	_mouseHotspotX = hotspot_x;
-	_mouseHotspotY = hotspot_y;
+	_mouseCurState.hotX = hotspot_x;
+	_mouseCurState.hotY = hotspot_y;
 
 	_mouseKeyColor = keycolor;
 
@@ -1353,18 +1353,26 @@ void OSystem_SDL::blitCursor() {
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
   	}
 
-	int hW, hH, hH1;
+	int hW, hH;
 
 	if (_cursorTargetScale >= _scaleFactor) {
 		hW = w;
-		hH = hH1 = h;
+		hH = h;
+		_mouseCurState.hHotX = _mouseCurState.hotX;
+		_mouseCurState.hHotY = _mouseCurState.hotY;
 	} else {
 		hW = w * _scaleFactor / _cursorTargetScale;
-		hH = hH1 = h * _scaleFactor / _cursorTargetScale;
+		hH = h * _scaleFactor / _cursorTargetScale;
+		_mouseCurState.hHotX = _mouseCurState.hotX * _scaleFactor /
+			_cursorTargetScale;
+		_mouseCurState.hHotY = _mouseCurState.hotY * _scaleFactor /
+			_cursorTargetScale;
   	}
 
+	int hH1 = hH; // store original to pass to aspect-correction function later
 	if (_adjustAspectRatio && _cursorTargetScale == 1) {
 		hH = real2Aspect(hH - 1) + 1;
+		_mouseCurState.hHotY = real2Aspect(_mouseCurState.hHotY);
 	}
 
 	if (_mouseCurState.hW != hW || _mouseCurState.hH != hH) {
@@ -1473,20 +1481,14 @@ void OSystem_SDL::drawMouse() {
 		scale = _scaleFactor;
 		width = _screenWidth;
 		height = _screenHeight;
+		dst.x = _mouseCurState.x - _mouseCurState.hotX;
+		dst.y = _mouseCurState.y - _mouseCurState.hotY;
 	} else {
 		scale = 1;
 		width = _overlayWidth;
 		height = _overlayHeight;
-	}
-
-	useCursorScaling = (scale >= _cursorTargetScale);
-
-	if (useCursorScaling) {
-		dst.x = _mouseCurState.x - _mouseHotspotX / _cursorTargetScale;
-		dst.y = _mouseCurState.y - _mouseHotspotY / _cursorTargetScale;
-	} else {
-		dst.x = _mouseCurState.x - _mouseHotspotX;
-		dst.y = _mouseCurState.y - _mouseHotspotY;
+		dst.x = _mouseCurState.x - _mouseCurState.hHotX;
+		dst.y = _mouseCurState.y - _mouseCurState.hHotY;
 	}
 
 	if (_overlayVisible) {
