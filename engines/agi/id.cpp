@@ -242,11 +242,12 @@ uint32 match_crc(uint32 crc, char *name, int len) {
 		if (c)
 			*c = 0;
 
-		/* Remove spaces at end of line */
+		/* Remove spaces/tabs at end of line */
 		if (strlen(buf)) {
-			for (c = buf + strlen(buf) - 1;
-			    *c == ' ' || *c == '\t'; *c-- = 0) {
-			}
+			int i;
+			for (i = strlen(buf) - 1;
+				 i >= 0 && (buf[i] == ' ' || buf[i] == '\t');
+				 buf[i--] = 0) { }
 		}
 
 		t = strtok(buf, " \t\r\n");
