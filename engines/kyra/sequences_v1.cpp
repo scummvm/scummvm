@@ -993,6 +993,8 @@ void KyraEngine::seq_brandonToStone() {
 
 void KyraEngine::seq_playEnding() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_playEnding()");
+	if (_quitFlag)
+		return;
 	_screen->hideMouse();
 	_screen->_curPage = 0;
 	_screen->fadeToBlack();

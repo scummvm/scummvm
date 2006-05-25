@@ -218,7 +218,7 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 		delayInc += delay;
 	}
 	int delayAcc = 0;
-	while (1) {
+	while (!_vm->quit()) {
 		delayAcc += delayInc;
 		bool needRefresh = false;
 		for (int i = 0; i < 768; ++i) {
@@ -249,6 +249,11 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 		//_system->delayMillis((delayAcc >> 8) * 1000 / 60);
 		_vm->delay((delayAcc >> 8) * 1000 / 60);
 		delayAcc &= 0xFF;
+	}
+
+	if (_vm->quit()) {
+		setScreenPalette(palData);
+		_system->updateScreen();
 	}
 }
 
@@ -448,7 +453,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 
 	int32 start, now;
 	int wait;
-	for (y = 0; y < h; ++y) {
+	for (y = 0; y < h && !_vm->quit(); ++y) {
 		start = (int32)_system->getMillis();
 		int y_cur = y;
 		for (x = 0; x < w; ++x) {
@@ -469,6 +474,10 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 		if (wait > 0) {
 			_vm->delay(wait);
 		}
+	}
+	if (_vm->quit()) {
+		copyRegion(sx, sy, sx, sy, w, h, srcPage, dstPage);
+		_system->updateScreen();
 	}
 }
 
