@@ -251,7 +251,6 @@ void Mouse::setPointer(uint32 resId, uint32 rate) {
 	createPointer(resId, _currentLuggageId);
 
 	if ((resId == 0) || (!(Logic::_scriptVars[MOUSE_STATUS] & 1) && (!_mouseOverride))) {
-		_system->setMouseCursor(NULL, 0, 0, 0, 0);
 		_system->showMouse(false);
 	} else {
 		animate();
