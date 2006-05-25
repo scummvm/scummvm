@@ -48,6 +48,8 @@ bool CursorManager::showMouse(bool visible) {
 		return false;
 
 	_cursorStack.top()->_visible = visible;
+
+	// Should work, even if there's just a dummy cursor on the stack.
 	return g_system->showMouse(visible);
 }
 

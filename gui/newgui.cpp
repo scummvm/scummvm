@@ -158,6 +158,7 @@ void NewGui::runLoop() {
 
 		PaletteMan.pushCursorPalette(palette, 0, 4);
 		CursorMan.pushCursor(NULL, 0, 0, 0, 0);
+		CursorMan.showMouse(true);
 	}
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {

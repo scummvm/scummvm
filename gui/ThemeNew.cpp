@@ -1551,6 +1551,7 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
 void ThemeNew::setUpCursor() {
 	PaletteMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 	CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+	CursorMan.showMouse(true);
 }
 
 void ThemeNew::createCursor() {
