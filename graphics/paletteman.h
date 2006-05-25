@@ -101,7 +101,7 @@ private:
 
 } // End of namespace Graphics
 
-/** Shortcut for accessing the font manager. */
+/** Shortcut for accessing the palette manager. */
 #define PaletteMan	(Graphics::PaletteManager::instance())
 
 #endif
