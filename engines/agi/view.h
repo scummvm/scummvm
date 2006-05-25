@@ -119,17 +119,17 @@ struct vt_entry {
 
 /* Motion */
 void check_all_motions(void);
-void move_obj(struct vt_entry *);
-void in_destination(struct vt_entry *);
+void move_obj(vt_entry *);
+void in_destination(vt_entry *);
 void fix_position(int);
 void update_position(void);
 
 /* View table management */
-void set_cel(struct vt_entry *, int);
-void set_loop(struct vt_entry *, int);
-void set_view(struct vt_entry *, int);
-void start_update(struct vt_entry *);
-void stop_update(struct vt_entry *);
+void set_cel(vt_entry *, int);
+void set_loop(vt_entry *, int);
+void set_view(vt_entry *, int);
+void start_update(vt_entry *);
+void stop_update(vt_entry *);
 void update_viewtable(void);
 
 void unload_view(int);

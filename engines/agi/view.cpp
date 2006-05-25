@@ -27,9 +27,9 @@
 
 namespace Agi {
 
-static void _set_cel(struct vt_entry *v, int n) {
-	struct view_loop *current_vl;
-	struct view_cel *current_vc;
+static void _set_cel(vt_entry *v, int n) {
+	view_loop *current_vl;
+	view_cel *current_vc;
 
 	v->current_cel = n;
 
@@ -51,8 +51,8 @@ static void _set_cel(struct vt_entry *v, int n) {
 	v->y_size = current_vc->height;
 }
 
-static void _set_loop(struct vt_entry *v, int n) {
-	struct view_loop *current_vl;
+static void _set_loop(vt_entry *v, int n) {
+	view_loop *current_vl;
 	debugC(7, kDebugLevelResources, "vt entry #%d, loop = %d", v->entry, n);
 
 	/* Added to avoid crash when leaving the arcade machine in MH1
@@ -74,7 +74,7 @@ static void _set_loop(struct vt_entry *v, int n) {
 	v->loop_data = &game.views[v->current_view].loop[n];
 }
 
-static void update_view(struct vt_entry *v) {
+static void update_view(vt_entry *v) {
 	int cel, last_cel;
 
 	if (v->flags & DONTUPDATE) {
@@ -137,8 +137,8 @@ int decode_view(int n) {
 	int loop, cel;
 	uint8 *v, *lptr;
 	uint16 lofs, cofs;
-	struct view_loop *vl;
-	struct view_cel *vc;
+	view_loop *vl;
+	view_cel *vc;
 
 	debugC(5, kDebugLevelResources, "decode_view(%d)", n);
 	v = game.views[n].rdata;
@@ -153,7 +153,7 @@ int decode_view(int n) {
 
 	/* allocate memory for all views */
 	game.views[n].loop = (view_loop *)
-			calloc(game.views[n].num_loops, sizeof(struct view_loop));
+			calloc(game.views[n].num_loops, sizeof(view_loop));
 
 	if (game.views[n].loop == NULL)
 		return err_NotEnoughMemory;
@@ -167,7 +167,7 @@ int decode_view(int n) {
 
 		vl->num_cels = *(v + lofs);
 		debugC(6, kDebugLevelResources, "view %d, num_cels = %d", n, vl->num_cels);
-		vl->cel = (view_cel *) calloc(vl->num_cels, sizeof(struct view_cel));
+		vl->cel = (view_cel *) calloc(vl->num_cels, sizeof(view_cel));
 		if (vl->cel == NULL) {
 			free(game.views[n].loop);
 			game.views[n].num_loops = 0;
@@ -231,7 +231,7 @@ void unload_view(int n) {
  * @param v pointer to view table entry
  * @param n number of cel
  */
-void set_cel(struct vt_entry *v, int n) {
+void set_cel(vt_entry *v, int n) {
 	assert(v->view_data != NULL);
 	assert(v->num_cels >= n);
 
@@ -257,7 +257,7 @@ void set_cel(struct vt_entry *v, int n) {
  * @param v pointer to view table entry
  * @param n number of loop
  */
-void set_loop(struct vt_entry *v, int n) {
+void set_loop(vt_entry *v, int n) {
 	assert(v->view_data != NULL);
 	assert(v->num_loops >= n);
 	_set_loop(v, n);
@@ -269,7 +269,7 @@ void set_loop(struct vt_entry *v, int n) {
  * @param v pointer to view table entry
  * @param n number of AGI view resource
  */
-void set_view(struct vt_entry *v, int n) {
+void set_view(vt_entry *v, int n) {
 	v->view_data = &game.views[n];
 	v->current_view = n;
 	v->num_loops = v->view_data->num_loops;
@@ -280,7 +280,7 @@ void set_view(struct vt_entry *v, int n) {
  * Set the view table entry as updating.
  * @param v pointer to view table entry
  */
-void start_update(struct vt_entry *v) {
+void start_update(vt_entry *v) {
 	if (~v->flags & UPDATE) {
 		erase_both();
 		v->flags |= UPDATE;
@@ -292,7 +292,7 @@ void start_update(struct vt_entry *v) {
  * Set the view table entry as non-updating.
  * @param v pointer to view table entry
  */
-void stop_update(struct vt_entry *v) {
+void stop_update(vt_entry *v) {
 	if (v->flags & UPDATE) {
 		erase_both();
 		v->flags &= ~UPDATE;
@@ -317,7 +317,7 @@ static int loop_table_4[] = {
  * to update the view table entries and blit the sprites.
  */
 void update_viewtable() {
-	struct vt_entry *v;
+	vt_entry *v;
 	int i, loop;
 
 	i = 0;
@@ -375,8 +375,7 @@ void update_viewtable() {
 	}
 }
 
-bool is_ego_view(const vt_entry* v)
-{
+bool is_ego_view(const vt_entry* v) {
 	return v == game.view_table;
 }
 
