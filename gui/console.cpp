@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "gui/console.h"
 #include "gui/ScrollBarWidget.h"
+#include "gui/eval.h"
 
 #include "base/engine.h"
 #include "base/version.h"
@@ -88,8 +89,12 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 void ConsoleDialog::init() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	int f = g_gui.evaluator()->getVar("Console.font");
+
+	if (f == EVAL_UNDEF_VAR)
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	else
+		_font = g_gui.theme()->getFont((Theme::kFontStyle)f);
 
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * screenW);

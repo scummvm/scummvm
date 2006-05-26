@@ -99,6 +99,9 @@ public:
 		kFontStyleBold = 0,	// standard font
 		kFontStyleNormal = 1,
 		kFontStyleItalic = 2,
+		kFontStyleFixedNormal = 3,
+		kFontStyleFixedBold = 4,
+		kFontStyleFixedItalic = 5,
 		kFontStyleMax
 	};
 
@@ -377,6 +380,9 @@ private:
 	const Graphics::Font *loadFont(const char *filename);
 	Common::String genCacheFilename(const char *filename);
 	const Graphics::Font *_fonts[kFontStyleMax];
+
+private:
+	void setupFont(String key, String name, kFontStyle style);
 
 public:
 	enum kImageHandles {

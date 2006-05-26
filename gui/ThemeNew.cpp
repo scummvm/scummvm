@@ -1357,59 +1357,38 @@ void ThemeNew::setupColors() {
 #define FONT_NAME_NORMAL "newgui_normal"
 #define FONT_NAME_BOLD "newgui_bold"
 #define FONT_NAME_ITALIC "newgui_italic"
+#define FONT_NAME_FIXED_NORMAL "newgui_fixed_normal"
+#define FONT_NAME_FIXED_BOLD "newgui_fixed_bold"
+#define FONT_NAME_FIXED_ITALIC "newgui_fixed_italic"
+
+void ThemeNew::setupFont(String key, String name, kFontStyle style) {
+	if (_configFile.hasKey(key, "extra")) {
+		_fonts[style] = FontMan.getFontByName(name);
+
+		if (!_fonts[style]) {
+			Common::String temp;
+			_configFile.getKey(key, "extra", temp);
+
+			_fonts[style] = loadFont(temp.c_str());
+			if (!_fonts[style])
+				error("Couldn't load %s font '%s'", key.c_str(), temp.c_str());
+
+			FontMan.assignFontToName(name, _fonts[style]);
+		}
+	} else {
+		_fonts[style] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+}
 
 void ThemeNew::setupFonts() {
 	if (_screen.w >= 400 && _screen.h >= 300) {
-		if (_configFile.hasKey("fontfile_bold", "extra")) {
-			_fonts[kFontStyleBold] = FontMan.getFontByName(FONT_NAME_BOLD);
+		setupFont("fontfile_bold", FONT_NAME_BOLD, kFontStyleBold);
+		setupFont("fontfile_normal", FONT_NAME_NORMAL, kFontStyleNormal);
+		setupFont("fontfile_italic", FONT_NAME_ITALIC, kFontStyleItalic);
 
-			if (!_fonts[kFontStyleBold]) {
-				Common::String temp;
-				_configFile.getKey("fontfile_bold", "extra", temp);
-
-				_fonts[kFontStyleBold] = loadFont(temp.c_str());
-				if (!_fonts[kFontStyleBold])
-					error("Couldn't load bold font '%s'", temp.c_str());
-
-				FontMan.assignFontToName(FONT_NAME_BOLD, _fonts[kFontStyleBold]);
-			}
-		} else {
-			_fonts[kFontStyleBold] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		}
-
-		if (_configFile.hasKey("fontfile_normal", "extra")) {
-			_fonts[kFontStyleNormal] = FontMan.getFontByName(FONT_NAME_NORMAL);
-
-			if (!_fonts[kFontStyleNormal]) {
-				Common::String temp;
-				_configFile.getKey("fontfile_normal", "extra", temp);
-
-				_fonts[kFontStyleNormal] = loadFont(temp.c_str());
-				if (!_fonts[kFontStyleNormal])
-					error("Couldn't load normal font '%s'", temp.c_str());
-
-				FontMan.assignFontToName(FONT_NAME_NORMAL, _fonts[kFontStyleNormal]);
-			}
-		} else {
-			_fonts[kFontStyleNormal] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		}
-
-		if (_configFile.hasKey("fontfile_italic", "extra")) {
-			_fonts[kFontStyleItalic] = FontMan.getFontByName(FONT_NAME_ITALIC);
-
-			if (!_fonts[kFontStyleItalic]) {
-				Common::String temp;
-				_configFile.getKey("fontfile_italic", "extra", temp);
-
-				_fonts[kFontStyleNormal] = loadFont(temp.c_str());
-				if (!_fonts[kFontStyleItalic])
-					error("Couldn't load italic font '%s'", temp.c_str());
-
-				FontMan.assignFontToName(FONT_NAME_ITALIC, _fonts[kFontStyleItalic]);
-			}
-		} else {
-			_fonts[kFontStyleItalic] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		}
+		setupFont("fontfile_fixed_bold", FONT_NAME_FIXED_BOLD, kFontStyleFixedBold);
+		setupFont("fontfile_fixed_normal", FONT_NAME_FIXED_NORMAL, kFontStyleFixedNormal);
+		setupFont("fontfile_fixed_italic", FONT_NAME_FIXED_ITALIC, kFontStyleFixedItalic);
 	} else {
 		_fonts[kFontStyleBold] = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		_fonts[kFontStyleNormal] = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);

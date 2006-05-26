@@ -254,6 +254,10 @@ static const BuiltinConsts builtinConsts[] = {
 	{"kFontStyleNormal", Theme::kFontStyleNormal},
 	{"kFontStyleItalic", Theme::kFontStyleItalic},
 
+	{"kFontStyleFixedBold", Theme::kFontStyleFixedBold},
+	{"kFontStyleFixedNormal", Theme::kFontStyleFixedNormal},
+	{"kFontStyleFixedItalic", Theme::kFontStyleFixedItalic},
+
 	{"false", 0},
 	{"true", 1},
 	{NULL, 0}
