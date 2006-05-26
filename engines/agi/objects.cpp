@@ -127,9 +127,12 @@ void unload_objects() {
 	unsigned int i;
 
 	if (objects != NULL) {
-		for (i = 0; i < game.num_objects; i++)
+		for (i = 0; i < game.num_objects; i++) {
 			free(objects[i].name);
+			objects[i].name = NULL;
+		}
 		free(objects);
+		objects = NULL;
 	}
 }
 
