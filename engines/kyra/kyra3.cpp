@@ -218,6 +218,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	
 	drawMainMenu(strings);
 	_system->warpMouse(300, 180);
+	_screen->showMouse();
 	
 	while (command == -1 && !_quitFlag) {
 		// yes 2 * _tickLength here not 3 * like in the first draw
