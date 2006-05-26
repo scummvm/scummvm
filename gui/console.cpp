@@ -56,6 +56,11 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 	// Reset the line buffer
 	memset(_buffer, ' ', kBufferSize);
+
+	// Dummy
+	_scrollBar = new ScrollBarWidget(this, 0, 0, 5, 10);
+	_scrollBar->setTarget(this);
+
 	init();
 
 	_currentPos = 0;
@@ -101,14 +106,14 @@ void ConsoleDialog::init() {
 	_h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
 	_h = _h * kConsoleLineHeight + 2;
 
-	// Add scrollbar
+	// Set scrollbar dimensions
 	int scrollBarWidth;
 	if (g_gui.getWidgetSize() == kBigWidgetSize)
 		scrollBarWidth = kBigScrollBarWidth;
 	else
 		scrollBarWidth = kNormalScrollBarWidth;
-	_scrollBar = new ScrollBarWidget(this, _w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
-	_scrollBar->setTarget(this);
+	_scrollBar->setPos(_w - scrollBarWidth - 1, 0);
+	_scrollBar->setSize(scrollBarWidth, _h);
 
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 
