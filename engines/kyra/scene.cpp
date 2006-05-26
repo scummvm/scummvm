@@ -993,11 +993,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		
 		nextFrame = getTimerDelay(5) * _tickLength + _system->getMillis();
 		while (_system->getMillis() < nextFrame) {
-			_sprites->updateSceneAnims();
-			updateMousePointer();
 			updateGameTimers();
-			_animator->updateAllObjectShapes();
-			updateTextFade();
 			if (_currentCharacter->sceneId == 210) {
 				updateKyragemFading();
 				if (seq_playEnd() || _beadStateVar == 4 || _beadStateVar == 5) {
@@ -1007,7 +1003,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 				}
 			}
 			if ((nextFrame - _system->getMillis()) >= 10)
-				delay(10);
+				delay(10, true);
 		}
 	}
 	

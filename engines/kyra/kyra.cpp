@@ -652,6 +652,8 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		if (update) {
 			_sprites->updateSceneAnims();
 			_animator->updateAllObjectShapes();
+			updateTextFade();
+			updateMousePointer();
 		}
 
 		if (_currentCharacter && _currentCharacter->sceneId == 210 && update) {
