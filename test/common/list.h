@@ -103,4 +103,47 @@ class ListTestSuite : public CxxTest::TestSuite
 		++iter;
 		TS_ASSERT( iter == container.end() );
 	}
+
+	void test_reverse( void )
+	{
+		Common::List<int> container;
+		Common::List<int>::iterator iter;
+
+		// Fill the container with some random data
+		container.push_back(17);
+		container.push_back(33);
+		container.push_back(-11);
+
+		iter = container.reverse_begin();
+		TS_ASSERT( iter != container.end() );
+
+
+		TS_ASSERT( *iter == -11 );
+		--iter;
+		TS_ASSERT( iter != container.end() );
+
+		TS_ASSERT( *iter == 33 );
+		--iter;
+		TS_ASSERT( iter != container.end() );
+
+		TS_ASSERT( *iter == 17 );
+		--iter;
+		TS_ASSERT( iter == container.end() );
+
+		iter = container.reverse_begin();
+
+		iter = container.reverse_erase(iter);
+		TS_ASSERT( iter != container.end() );
+		TS_ASSERT( *iter == 33 );
+
+		iter = container.reverse_erase(iter);
+		TS_ASSERT( iter != container.end() );
+		TS_ASSERT( *iter == 17 );
+
+		iter = container.reverse_erase(iter);
+		TS_ASSERT( iter == container.end() );
+
+		TS_ASSERT( container.begin() == container.end() );
+		TS_ASSERT( container.reverse_begin() == container.end() );
+	}
 };

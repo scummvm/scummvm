@@ -174,6 +174,18 @@ public:
 		return iterator(next);
 	}
 
+	iterator reverse_erase(iterator pos) {
+		assert(pos != end());
+
+		NodeBase *next = pos._node->_next;
+		NodeBase *prev = pos._node->_prev;
+		Node<T> *node = static_cast<Node<T> *>(pos._node);
+		prev->_next = next;
+		next->_prev = prev;
+		delete node;
+		return iterator(prev);
+	}
+
 	iterator erase(iterator first, iterator last) {
 		while (first != last)
 			erase(first++);
@@ -229,12 +241,20 @@ public:
 		return iterator(_anchor->_next);
 	}
 
+	iterator		reverse_begin() {
+		return iterator(_anchor->_prev);
+	}
+
 	iterator		end() {
 		return iterator(_anchor);
 	}
 
 	const_iterator	begin() const {
 		return const_iterator(_anchor->_next);
+	}
+
+	const_iterator	reverse_begin() const {
+		return const_iterator(_anchor->_prev);
 	}
 
 	const_iterator	end() const {
