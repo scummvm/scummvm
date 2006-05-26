@@ -188,8 +188,9 @@ void KyraEngine::loadGame(const char *fileName) {
 		_configVoice = in->readByte();
 	}
 
+	loadMainScreen(8);
+
 	if (queryGameFlag(0x2D)) {
-		loadMainScreen(8);
 		loadBitmap("AMULET3.CPS", 10, 10, 0);
 		if (!queryGameFlag(0xF1)) {
 			for (int i = 0x55; i <= 0x5A; ++i) {
@@ -199,15 +200,12 @@ void KyraEngine::loadGame(const char *fileName) {
 			}
 		}
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 10, 8);
-		uint8 *_pageSrc = _screen->getPagePtr(8);
-		uint8 *_pageDst = _screen->getPagePtr(0);
-		memcpy(_pageDst, _pageSrc, 320*200);
-	} else {
-		loadMainScreen(8);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 0);
 	}
 	
 	createMouseItem(_itemInHand);
 	_animator->setBrandonAnimSeqSize(3, 48);
+	redrawInventory(0);
 	_animator->_noDrawShapesFlag = 1;
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	_animator->_noDrawShapesFlag = 0;
@@ -220,7 +218,6 @@ void KyraEngine::loadGame(const char *fileName) {
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
-	redrawInventory(0);
 	
 	_abortWalkFlag = true;
 	_abortWalkFlag2 = false;
