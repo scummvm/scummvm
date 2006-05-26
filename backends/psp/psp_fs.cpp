@@ -27,8 +27,10 @@
 
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs.h"
-#include <stdio.h>
-#include <stdlib.h>
+
+#include <sys/stat.h>
+#include <unistd.h>
+
 
 /*
  * Implementation of the ScummVM file system API based on PSPSDK API.
@@ -45,6 +47,7 @@ protected:
 public:
 	PSPFilesystemNode();
 	PSPFilesystemNode(const String &path);
+	PSPFilesystemNode(const Common::String &p, bool verify);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -53,6 +56,7 @@ public:
 
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
+	virtual AbstractFilesystemNode *child(const String &name) const;
 };
 
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
@@ -71,17 +75,29 @@ PSPFilesystemNode::PSPFilesystemNode() {
 	_isPseudoRoot = true;
 }
 
-PSPFilesystemNode::PSPFilesystemNode(const Common::String &p)
-{
+PSPFilesystemNode::PSPFilesystemNode(const Common::String &p) {
 	_displayName = p;
 	_isValid = true;
 	_isDirectory = true;
 	_path = p;
 }
 
+PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
+	assert(p.size() > 0);
+        
+	_path = p;
+	_displayName = _path;
+	_isValid = true;
+	_isDirectory = true;
 
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) 
-{
+	if (verify) {
+		struct stat st; 
+		_isValid = (0 == stat(_path.c_str(), &st));
+		_isDirectory = S_ISDIR(st.st_mode);
+	}       
+}
+
+AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
 	return new PSPFilesystemNode(path);
 }
 
@@ -89,38 +105,38 @@ AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &pat
 bool PSPFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
 
-	int dfd;
-	
-    dfd = sceIoDopen(_path.c_str());
+	int dfd  = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
-        SceIoDirent dir;	   
-        memset(&dir, 0, sizeof(dir));
+		SceIoDirent dir;	   
+		memset(&dir, 0, sizeof(dir));
 	   
-        while (sceIoDread(dfd, &dir) > 0) {
-            // Skip 'invisible files
-            if (dir.d_name[0] == '.') 
-                continue;
+		while (sceIoDread(dfd, &dir) > 0) {
+			// Skip 'invisible files
+			if (dir.d_name[0] == '.') 
+				continue;
                
-            PSPFilesystemNode entry;
+			PSPFilesystemNode entry;
             
-            entry._isValid = true;
-            entry._isPseudoRoot = false;
-            entry._displayName = dir.d_name;
-            entry._path = _path;
-            entry._path += dir.d_name;
-            entry._isDirectory = dir.d_stat.st_attr & FIO_SO_IFDIR;
-            if (entry._isDirectory)
-                entry._path += "/";
+			entry._isValid = true;
+			entry._isPseudoRoot = false;
+			entry._displayName = dir.d_name;
+			entry._path = _path;
+			entry._path += dir.d_name;
+			entry._isDirectory = dir.d_stat.st_attr & FIO_SO_IFDIR;
+			
+			if (entry._isDirectory)
+				entry._path += "/";
             
-            // Honor the chosen mode
-            if ((mode == kListFilesOnly && entry._isDirectory) ||
-                (mode == kListDirectoriesOnly && !entry._isDirectory))
-                    continue;
+			// Honor the chosen mode
+			if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+			   (mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+				continue;
             
-            myList.push_back(new PSPFilesystemNode(entry));
-        }
-        sceIoDclose(dfd);
-        return true;
+			myList.push_back(new PSPFilesystemNode(entry));
+		}
+
+		sceIoDclose(dfd);
+		return true;
 	} else {
 		return false;
 	}
@@ -152,6 +168,19 @@ AbstractFilesystemNode *PSPFilesystemNode::parent() const {
 		p->_displayName = lastPathComponent(p->_path);
 		p->_isPseudoRoot = false;
 	}
+	return p;
+}
+
+AbstractFilesystemNode *PSPFilesystemNode::child(const String &name) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
+	assert(_isDirectory);
+	String newPath(_path);
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += name;
+	PSPFilesystemNode *p = new PSPFilesystemNode(newPath, true);
+
 	return p;
 }
 
