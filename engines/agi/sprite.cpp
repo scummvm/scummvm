@@ -433,16 +433,14 @@ static void build_nonupd_blitlist() {
  * Clear the given sprite list.
  */
 static void free_list(SpriteList& l) {
-	SpriteList::iterator i;
-	for (i = l.end(); i != l.begin();) {
-		--i;
-		sprite* s = *i;
+	SpriteList::iterator iter;
+	for (iter = l.reverse_begin(); iter != l.end(); ) {
+		sprite* s = *iter;
 		pool_release(s->hires);
 		pool_release(s->buffer);
 		pool_release(s);
+		iter = l.reverse_erase(iter);
 	}
-
-	l.clear();
 }
 
 /**
@@ -450,9 +448,9 @@ static void free_list(SpriteList& l) {
  * sprites of the given list have moved.
  */
 static void commit_sprites(SpriteList& l) {
-	SpriteList::iterator i;
-	for (i = l.begin(); i != l.end(); ++i) {
-		sprite *s = *i;
+	SpriteList::iterator iter;
+	for (iter = l.begin(); iter != l.end(); ++iter) {
+		sprite *s = *iter;
 		int x1, y1, x2, y2, w, h;
 
 		w = (s->v->cel_data->width > s->v->cel_data_2->width) ?
@@ -500,10 +498,9 @@ static void commit_sprites(SpriteList& l) {
  * Erase all sprites in the given list.
  */
 static void erase_sprites(SpriteList& l) {
-	SpriteList::iterator i;
-	for (i = l.end(); i != l.begin(); ) {
-		--i;
-		sprite *s = *i;
+	SpriteList::iterator iter;
+	for (iter = l.reverse_begin(); iter != l.end(); --iter) {
+		sprite *s = *iter;
 		objs_restorearea(s);
 	}
 
@@ -515,9 +512,9 @@ static void erase_sprites(SpriteList& l) {
  */
 static void blit_sprites(SpriteList& l) {
 	int hidden;
-	SpriteList::iterator i;
-	for (i = l.begin(); i != l.end(); ++i) {
-		sprite *s = *i;
+	SpriteList::iterator iter;
+	for (iter = l.begin(); iter != l.end(); ++iter) {
+		sprite *s = *iter;
 		objs_savearea(s);
 		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
 		hidden = blit_cel(s->x_pos, s->y_pos, s->v->priority, s->v->cel_data);
