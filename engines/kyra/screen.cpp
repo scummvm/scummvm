@@ -1842,10 +1842,6 @@ void Screen::showMouse() {
 	debugC(9, kDebugLevelScreen, "Screen::showMouse()");
 
 	if (_mouseLockCount == 1) {
-		// HACK: Flush the event queue before showing the mouse, so
-		//       that the mouse cursor won't do a little dance catching
-		//       up with the mouse movements when entering a new room.
-		_vm->delay(0);
 		CursorMan.showMouse(true);
 	}
 
