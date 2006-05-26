@@ -112,8 +112,7 @@ void ConsoleDialog::init() {
 		scrollBarWidth = kBigScrollBarWidth;
 	else
 		scrollBarWidth = kNormalScrollBarWidth;
-	_scrollBar->setPos(_w - scrollBarWidth - 1, 0);
-	_scrollBar->setSize(scrollBarWidth, _h);
+	_scrollBar->resize(_w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
 
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 

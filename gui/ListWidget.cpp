@@ -31,7 +31,6 @@ namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, String name)
 	: EditableWidget(boss, name), CommandSender(boss) {
-	int w = g_gui.evaluator()->getVar(_name + ".w");
 
 	WidgetSize ws = g_gui.getWidgetSize();
 
@@ -42,13 +41,14 @@ ListWidget::ListWidget(GuiObject *boss, String name)
 	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
 
+	int scrollBarWidth;
 	if (ws == kBigWidgetSize) {
-		_w = w - kBigScrollBarWidth;
+		scrollBarWidth =  kBigScrollBarWidth;
 	} else {
-		_w = w - kNormalScrollBarWidth;
+		scrollBarWidth = kNormalScrollBarWidth;
 	}
 	
-	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
+	_scrollBar = new ScrollBarWidget(this, _w - scrollBarWidth, 0, scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
@@ -451,10 +451,11 @@ void ListWidget::handleScreenChanged() {
 	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
 
+	int scrollBarWidth;
 	if (ws == kBigWidgetSize) {
-		_w = w - kBigScrollBarWidth;
+		scrollBarWidth =  kBigScrollBarWidth;
 	} else {
-		_w = w - kNormalScrollBarWidth;
+		scrollBarWidth = kNormalScrollBarWidth;
 	}
 
 	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
@@ -465,7 +466,7 @@ void ListWidget::handleScreenChanged() {
 	for (int i = 0; i < _entriesPerPage; i++)
 		_textWidth[i] = 0;
 
-	_scrollBar->resize(_x + _w, _y, (ws == kBigWidgetSize ? kBigScrollBarWidth : kNormalScrollBarWidth), _h);
+	_scrollBar->resize(_w - scrollBarWidth, 0, scrollBarWidth, _h);
 	scrollBarRecalc();
 }
 

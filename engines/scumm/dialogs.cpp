@@ -748,10 +748,8 @@ void HelpDialog::handleScreenChanged() {
 	int dscH = g_gui.evaluator()->getVar("scummhelp_dsc.h");
 
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i]->setPos(keyX, keyYoff + lineHeight * (i + 2));
-		_key[i]->setSize(keyW, keyH);
-		_dsc[i]->setPos(dscX, dscYoff + lineHeight * (i + 2));
-		_dsc[i]->setSize(dscW, dscH);
+		_key[i]->resize(keyX, keyYoff + lineHeight * (i + 2), keyW, keyH);
+		_dsc[i]->resize(dscX, dscYoff + lineHeight * (i + 2), dscW, dscH);
 	}
 
 	displayKeyBindings();
