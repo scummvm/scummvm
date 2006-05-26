@@ -59,7 +59,7 @@ ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 
 TARGET = scummvm-psp
 OBJS := psp_main.o \
-	psp_fs.o \
+	../fs/psp/psp_fs.o \
 	osys_psp.o \
 	osys_psp_gu.o \
 	kbd_ss_c.o \
