@@ -31,6 +31,7 @@ namespace GUI {
 
 enum {
 	kBufferSize	= 32768,
+	kLineWidth = 128,
 	kLineBufferSize = 256,
 
 	kHistorySize = 20
@@ -49,7 +50,7 @@ protected:
 	char	_buffer[kBufferSize];
 	int		_linesInBuffer;
 
-	int		_lineWidth;
+	int		_pageWidth;
 	int		_linesPerPage;
 
 	int		_currentPos;
@@ -122,6 +123,8 @@ protected:
 	inline char &buffer(int idx) {
 		return _buffer[idx % kBufferSize];
 	}
+
+	void init();
 
 	void drawCaret(bool erase);
 	void putcharIntern(int c);

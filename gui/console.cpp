@@ -53,6 +53,39 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	: Dialog(0, 0, 1, 1),
 	_widthPercent(widthPercent), _heightPercent(heightPercent) {
 
+	// Reset the line buffer
+	memset(_buffer, ' ', kBufferSize);
+	init();
+
+	_currentPos = 0;
+	_scrollLine = _linesPerPage - 1;
+	_firstLineInBuffer = 0;
+
+	_caretVisible = false;
+	_caretTime = 0;
+
+	_slideMode = kNoSlideMode;
+	_slideTime = 0;
+
+	_promptStartPos = _promptEndPos = -1;
+
+	// Init callback
+	_callbackProc = 0;
+	_callbackRefCon = 0;
+
+	// Init History
+	_historyIndex = 0;
+	_historyLine = 0;
+	_historySize = 0;
+	for (int i = 0; i < kHistorySize; i++)
+		_history[i][0] = '\0';
+
+	// Display greetings & prompt
+	print(gScummVMFullVersion);
+	print("\nConsole is ready\n");
+}
+
+void ConsoleDialog::init() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 	
@@ -72,41 +105,11 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	_scrollBar = new ScrollBarWidget(this, _w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	// Reset the line buffer
-	_lineWidth = (_w - scrollBarWidth - 2) / kConsoleCharWidth;
-	_linesPerPage = (_h - 2) / kConsoleLineHeight;
-	memset(_buffer, ' ', kBufferSize);
-	_linesInBuffer = kBufferSize / _lineWidth;
-
-	_currentPos = 0;
-	_scrollLine = _linesPerPage - 1;
-	_firstLineInBuffer = 0;
-
-	_caretVisible = false;
-	_caretTime = 0;
-
-	_slideMode = kNoSlideMode;
-	_slideTime = 0;
-
-
-	// Init callback
-	_callbackProc = 0;
-	_callbackRefCon = 0;
-
-	// Init History
-	_historyIndex = 0;
-	_historyLine = 0;
-	_historySize = 0;
-	for (int i = 0; i < kHistorySize; i++)
-		_history[i][0] = '\0';
-
-	_promptStartPos = _promptEndPos = -1;
-
-	// Display greetings & prompt
-	print(gScummVMFullVersion);
-	print("\nConsole is ready\n");
-	
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
+
+	_pageWidth = (_w - scrollBarWidth - 2) / kConsoleCharWidth;
+	_linesPerPage = (_h - 2) / kConsoleLineHeight;
+	_linesInBuffer = kBufferSize / kLineWidth;
 }
 
 void ConsoleDialog::slideUpAndClose() {
@@ -123,6 +126,17 @@ void ConsoleDialog::open() {
 	// visible screen area, then shift it down in handleTickle() over a
 	// certain period of time.
 	
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+	
+	// Calculate the real width/height (rounded to char/line multiples)
+	uint16 w = (uint16)(_widthPercent * screenW);
+	uint16 h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
+	h = h * kConsoleLineHeight + 2;
+
+	if (_w != w || _h != h)
+		init();
+
 	_drawingHints |= THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 
 	_y = -_h;
@@ -144,6 +158,7 @@ void ConsoleDialog::drawDialog() {
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
 	int y = _y + 2;
+	int limit = MIN(_pageWidth, (int)kLineWidth);
 
 	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
 	// FIXME: for the old theme the frame around the console vanishes
@@ -152,12 +167,12 @@ void ConsoleDialog::drawDialog() {
 
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
-		for (int column = 0; column < _lineWidth; column++) {
+		for (int column = 0; column < limit; column++) {
 #if 0
 			int l = (start + line) % _linesInBuffer;
-			byte c = buffer(l * _lineWidth + column);
+			byte c = buffer(l * kLineWidth + column);
 #else
-			byte c = buffer((start + line) * _lineWidth + column);
+			byte c = buffer((start + line) * kLineWidth + column);
 #endif
 			g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
 			x += kConsoleCharWidth;
@@ -170,6 +185,13 @@ void ConsoleDialog::drawDialog() {
 }
 
 void ConsoleDialog::handleScreenChanged() {
+	init();
+
+	_scrollLine = _promptEndPos / kLineWidth;
+	if (_scrollLine < _linesPerPage - 1)
+		_scrollLine = _linesPerPage - 1;
+	updateScrollBuffer();
+
 	Dialog::handleScreenChanged();
 	draw();
 }
@@ -313,8 +335,8 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	case 256 + 25:	// pagedown
 		if (modifiers == OSystem::KBD_SHIFT) {
 			_scrollLine += _linesPerPage - 1;
-			if (_scrollLine > _promptEndPos / _lineWidth) {
-				_scrollLine = _promptEndPos / _lineWidth;
+			if (_scrollLine > _promptEndPos / kLineWidth) {
+				_scrollLine = _promptEndPos / kLineWidth;
 				if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
 					_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			}
@@ -333,7 +355,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		break;
 	case 256 + 23:	// end
 		if (modifiers == OSystem::KBD_SHIFT) {
-			_scrollLine = _promptEndPos / _lineWidth;
+			_scrollLine = _promptEndPos / kLineWidth;
 			if (_scrollLine < _linesPerPage - 1)
 				_scrollLine = _linesPerPage - 1;
 			updateScrollBuffer();
@@ -373,8 +395,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 }
 
-void ConsoleDialog::insertIntoPrompt(const char* str)
-{
+void ConsoleDialog::insertIntoPrompt(const char* str) {
 	unsigned int l = strlen(str);
 	for (int i = _promptEndPos - 1; i >= _currentPos; i--)
 		buffer(i + l) = buffer(i);
@@ -508,10 +529,10 @@ void ConsoleDialog::historyScroll(int direction) {
 }
 
 void ConsoleDialog::nextLine() {
-	int line = _currentPos / _lineWidth;
+	int line = _currentPos / kLineWidth;
 	if (line == _scrollLine)
 		_scrollLine++;
-	_currentPos = (line + 1) * _lineWidth;
+	_currentPos = (line + 1) * kLineWidth;
 
 	updateScrollBuffer();
 }
@@ -521,12 +542,12 @@ void ConsoleDialog::nextLine() {
 // a new line is added
 void ConsoleDialog::updateScrollBuffer() {
 	int lastchar = MAX(_promptEndPos, _currentPos);
-	int line = lastchar / _lineWidth;
+	int line = lastchar / kLineWidth;
 	int numlines = (line < _linesInBuffer) ? line + 1 : _linesInBuffer;
 	int firstline = line - numlines + 1;
 	if (firstline > _firstLineInBuffer) {
 		// clear old line from buffer
-		for (int i = lastchar; i < (line+1) * _lineWidth; ++i)
+		for (int i = lastchar; i < (line+1) * kLineWidth; ++i)
 			buffer(i) = ' ';
 		_firstLineInBuffer = firstline;
 	}
@@ -578,7 +599,7 @@ void ConsoleDialog::putcharIntern(int c) {
 	else {
 		buffer(_currentPos) = (char)c;
 		_currentPos++;
-		if ((_scrollLine + 1) * _lineWidth == _currentPos) {
+		if ((_scrollLine + 1) * kLineWidth == _currentPos) {
 			_scrollLine++;
 			updateScrollBuffer();
 		}
@@ -597,7 +618,7 @@ void ConsoleDialog::print(const char *str) {
 
 void ConsoleDialog::drawCaret(bool erase) {
 	// TODO: use code from EditableWidget::drawCaret here
-	int line = _currentPos / _lineWidth;
+	int line = _currentPos / kLineWidth;
 	int displayLine = line - _scrollLine + _linesPerPage - 1;
 
 	// Only draw caret if visible
@@ -606,7 +627,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 		return;
 	}
 
-	int x = _x + 1 + (_currentPos % _lineWidth) * kConsoleCharWidth;
+	int x = _x + 1 + (_currentPos % kLineWidth) * kConsoleCharWidth;
 	int y = _y + displayLine * kConsoleLineHeight;
 
 	_caretVisible = !erase;
@@ -614,7 +635,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 }
 
 void ConsoleDialog::scrollToCurrent() {
-	int line = _promptEndPos / _lineWidth;
+	int line = _promptEndPos / kLineWidth;
 
 	if (line + _linesPerPage <= _scrollLine) {
 		// TODO - this should only occur for loong edit lines, though
