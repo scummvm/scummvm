@@ -202,6 +202,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	int charWidthBackUp = _screen->_charWidth;
 	
+	_screen->_charWidth = -2;
 	_screen->setScreenDim(3);
 	_screen->copyCurPageBlock(_screen->_curDim->sx, _screen->_curDim->sy, _screen->_curDim->w, _screen->_curDim->h, _screen->getPagePtr(3));
 
