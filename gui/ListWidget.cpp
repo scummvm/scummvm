@@ -440,8 +440,6 @@ void ListWidget::abortEditMode() {
 void ListWidget::handleScreenChanged() {
 	Widget::handleScreenChanged();
 
-	int w = g_gui.evaluator()->getVar(_name + ".w");
-
 	WidgetSize ws = g_gui.getWidgetSize();
 
 	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
