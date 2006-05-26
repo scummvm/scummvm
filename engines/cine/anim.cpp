@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "cine/cine.h"
 #include "cine/anim.h"
@@ -404,14 +405,28 @@ void loadMsk(const char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	ptr = dataPtr;
+	Common::MemoryReadStream readS(dataPtr, 0x16);
 
-	memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
-	ptr += sizeof(animHeaderStruct);
+	animHeader.field_0 = readS.readByte();
+	animHeader.field_1 = readS.readByte();
+	animHeader.field_2 = readS.readByte();
+	animHeader.field_3 = readS.readByte();
+	animHeader.frameWidth = readS.readUint16BE();
+	animHeader.frameHeight = readS.readUint16BE();
+	animHeader.field_8 = readS.readByte();
+	animHeader.field_9 = readS.readByte();
+	animHeader.field_A = readS.readByte();
+	animHeader.field_B = readS.readByte();
+	animHeader.field_C = readS.readByte();
+	animHeader.field_D = readS.readByte();
+	animHeader.numFrames = readS.readUint16BE();
+	animHeader.field_10 = readS.readByte();
+	animHeader.field_11 = readS.readByte();
+	animHeader.field_12 = readS.readByte();
+	animHeader.field_13 = readS.readByte();
+	animHeader.field_14 = readS.readUint16BE();
 
-	animHeader.frameWidth = TO_BE_16(animHeader.frameWidth);
-	animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
-	animHeader.numFrames = TO_BE_16(animHeader.numFrames);
+	ptr = dataPtr + 0x16;
 
 	for (i = 0; i < animHeader.numFrames; i++) {
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 1);
@@ -439,14 +454,28 @@ void loadAni(const char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	ptr = dataPtr;
+	Common::MemoryReadStream readS(dataPtr, 0x16);
 
-	memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
-	ptr += sizeof(animHeaderStruct);
+	animHeader.field_0 = readS.readByte();
+	animHeader.field_1 = readS.readByte();
+	animHeader.field_2 = readS.readByte();
+	animHeader.field_3 = readS.readByte();
+	animHeader.frameWidth = readS.readUint16BE();
+	animHeader.frameHeight = readS.readUint16BE();
+	animHeader.field_8 = readS.readByte();
+	animHeader.field_9 = readS.readByte();
+	animHeader.field_A = readS.readByte();
+	animHeader.field_B = readS.readByte();
+	animHeader.field_C = readS.readByte();
+	animHeader.field_D = readS.readByte();
+	animHeader.numFrames = readS.readUint16BE();
+	animHeader.field_10 = readS.readByte();
+	animHeader.field_11 = readS.readByte();
+	animHeader.field_12 = readS.readByte();
+	animHeader.field_13 = readS.readByte();
+	animHeader.field_14 = readS.readUint16BE();
 
-	animHeader.frameWidth = TO_BE_16(animHeader.frameWidth);
-	animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
-	animHeader.numFrames = TO_BE_16(animHeader.numFrames);
+	ptr = dataPtr + 0x16;
 
 	transparentColor = getAnimTransparentColor(resourceName);
 
@@ -631,13 +660,17 @@ void loadSet(const char *resourceName) {
 		int16 typeParam;
 		byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
-		memcpy(&header2, ptr, 0x10);
-		ptr += 0x10;
+		Common::MemoryReadStream readS(ptr, 0x10);
 
-		header2.field_0 = TO_BE_32(header2.field_0);
-		header2.width = TO_BE_16(header2.width);
-		header2.height = TO_BE_16(header2.height);
-		header2.type = TO_BE_16(header2.type);
+		header2.field_0 = readS.readUint32BE();
+		header2.width = readS.readUint16BE();
+		header2.height = readS.readUint16BE();
+		header2.type = readS.readUint16BE();
+		header2.field_A = readS.readUint16BE();
+		header2.field_C = readS.readUint16BE();
+		header2.field_E = readS.readUint16BE();
+
+		ptr += 0x10;
 
 		fullSize = header2.width * header2.height;
 
@@ -714,13 +747,17 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 		int16 typeParam;
 		byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
-		memcpy(&header2, ptr, 0x10);
-		ptr += 0x10;
+		Common::MemoryReadStream readS(ptr, 0x10);
 
-		header2.field_0 = TO_BE_32(header2.field_0);
-		header2.width = TO_BE_16(header2.width);
-		header2.height = TO_BE_16(header2.height);
-		header2.type = TO_BE_16(header2.type);
+		header2.field_0 = readS.readUint32BE();
+		header2.width = readS.readUint16BE();
+		header2.height = readS.readUint16BE();
+		header2.type = readS.readUint16BE();
+		header2.field_A = readS.readUint16BE();
+		header2.field_C = readS.readUint16BE();
+		header2.field_E = readS.readUint16BE();
+
+		ptr += 0x10;
 
 		fullSize = header2.width * header2.height;
 
@@ -855,7 +892,7 @@ void loadResourcesFromSave() {
 
 	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim++) {
 		AnimData *currentPtr = &animDataTable[currentAnim];
-		if (refreshAnimData[currentAnim] && currentPtr->fileIdx != -1) {
+		if (currentPtr->refresh && currentPtr->fileIdx != -1) {
 			int8 isMask = 0;
 			int8 isSpl = 0;
 			int16 foundFileIdx;
@@ -892,12 +929,28 @@ void loadResourcesFromSave() {
 				animHeader.numFrames = 1;
 				isMask = -1;
 			} else {
-				memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
-				ptr += sizeof(animHeaderStruct);
+				Common::MemoryReadStream readS(ptr, 0x22);
 
-				animHeader.frameWidth = TO_BE_16(animHeader.frameWidth);
-				animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
-				animHeader.numFrames = TO_BE_16(animHeader.numFrames);
+				animHeader.field_0 = readS.readByte();
+				animHeader.field_1 = readS.readByte();
+				animHeader.field_2 = readS.readByte();
+				animHeader.field_3 = readS.readByte();
+				animHeader.frameWidth = readS.readUint16BE();
+				animHeader.frameHeight = readS.readUint16BE();
+				animHeader.field_8 = readS.readByte();
+				animHeader.field_9 = readS.readByte();
+				animHeader.field_A = readS.readByte();
+				animHeader.field_B = readS.readByte();
+				animHeader.field_C = readS.readByte();
+				animHeader.field_D = readS.readByte();
+				animHeader.numFrames = readS.readUint16BE();
+				animHeader.field_10 = readS.readByte();
+				animHeader.field_11 = readS.readByte();
+				animHeader.field_12 = readS.readByte();
+				animHeader.field_13 = readS.readByte();
+				animHeader.field_14 = readS.readUint16BE();
+
+				ptr += 0x16;
 			}
 
 			{

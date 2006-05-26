@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"
@@ -58,10 +59,10 @@ byte loadCt(const char *ctName) {
 
 		assert(strstr(ctName, ".NEO"));
 
-		memcpy(header, ptr, 32);
+		Common::MemoryReadStream readS(ptr, 32);
 
 		for (int i = 0; i < 16; i++) {
-			header[i] = TO_BE_16(header[i]);
+			header[i] = readS.readUint16BE();
 		}
 
 		gfxConvertSpriteToRaw(page3Raw, ptr + 0x80, 160, 200);

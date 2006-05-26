@@ -193,8 +193,7 @@ void readFromPart(int16 idx, byte *dataPtr) {
 byte *readBundleFile(int16 foundFileIdx) {
 	byte *dataPtr;
 
-	dataPtr = (byte *) malloc(partBuffer[foundFileIdx].unpackedSize);
-	memset(dataPtr, 0, partBuffer[foundFileIdx].unpackedSize);
+	dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
 
 	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
 		byte *unpackBuffer;

@@ -54,13 +54,6 @@ uint16 var5;
 
 int16 buildObjectListCommand(void);
 
-// TODO: This could/should be a field in the AnimData struct, but as long as it
-// is marked as packed I don't dare add anything to it without knowing more
-// about how it's used. (It's quite possible that it no longer needs to be
-// packed.)
-
-bool refreshAnimData[NUM_MAX_ANIMDATA];
-
 void drawString(const char *string, byte param) {
 }
 
@@ -760,7 +753,7 @@ int16 makeLoad(char *saveName) {
 		animDataTable[i].fileIdx = fHandle->readSint16BE();
 		animDataTable[i].frameIdx = fHandle->readSint16BE();
 		fHandle->read(animDataTable[i].name, 10);
-		refreshAnimData[i] = (fHandle->readByte() != 0);
+		animDataTable[i].refresh = (fHandle->readByte() != 0);
 	}
 
 	// TODO: handle screen params (really required ?)
