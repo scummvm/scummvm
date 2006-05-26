@@ -23,11 +23,11 @@
  */
 
 #include "agi/agi.h"
-#include "agi/list.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
 #include "agi/text.h"
 #include "agi/savegame.h"
+#include "common/list.h"
 
 namespace Agi {
 
@@ -38,8 +38,7 @@ namespace Agi {
  * circular lists, one for updating and other for non-updating sprites.
  */
 struct sprite {
-	struct list_head list;
-	struct vt_entry *v;		/**< pointer to view table entry */
+	vt_entry *v;		/**< pointer to view table entry */
 	int16 x_pos;			/**< x coordinate of the sprite */
 	int16 y_pos;			/**< y coordinate of the sprite */
 	int16 x_size;			/**< width of the sprite */
@@ -78,6 +77,9 @@ static void *pool_alloc(int size) {
 	return x;
 }
 
+/* Note: it's critical that pool_release() is called in the exact
+         reverse order of pool_alloc()
+*/
 static void pool_release(void *s) {
 	pool_top = (uint8 *)s;
 }
@@ -136,7 +138,7 @@ static void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int 
 
 #define X_FACT 2		/* Horizontal hires factor */
 
-static int blit_hires_cel(int x, int y, int spr, struct view_cel *c) {
+static int blit_hires_cel(int x, int y, int spr, view_cel *c) {
 	uint8 *q = NULL;
 	uint8 *h0, *h, *end;
 	int i, j, t, m, col;
@@ -168,7 +170,7 @@ static int blit_hires_cel(int x, int y, int spr, struct view_cel *c) {
 	return hidden;
 }
 
-static int blit_cel(int x, int y, int spr, struct view_cel *c) {
+static int blit_cel(int x, int y, int spr, view_cel *c) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
 	int hidden = true;
@@ -212,7 +214,7 @@ static int blit_cel(int x, int y, int spr, struct view_cel *c) {
 	return hidden;
 }
 
-static void objs_savearea(struct sprite *s) {
+static void objs_savearea(sprite *s) {
 	int y;
 	int16 x_pos = s->x_pos, y_pos = s->y_pos;
 	int16 x_size = s->x_size, y_size = s->y_size;
@@ -252,7 +254,7 @@ static void objs_savearea(struct sprite *s) {
 	}
 }
 
-static void objs_restorearea(struct sprite *s) {
+static void objs_restorearea(sprite *s) {
 	int y, offset;
 	int16 x_pos = s->x_pos, y_pos = s->y_pos;
 	int16 x_size = s->x_size, y_size = s->y_size;
@@ -301,13 +303,15 @@ static void objs_restorearea(struct sprite *s) {
  * Sprite management functions
  */
 
-static LIST_HEAD(spr_upd_head);
-static LIST_HEAD(spr_nonupd_head);
+typedef Common::List<sprite*> SpriteList;
+
+static SpriteList spr_upd;
+static SpriteList spr_nonupd;
 
 /**
  * Condition to determine whether a sprite will be in the 'updating' list.
  */
-static int test_updating(struct vt_entry *v) {
+static int test_updating(vt_entry *v) {
 	/* Sanity check (see bug #779302) */
 	if (~game.dir_view[v->current_view].flags & RES_LOADED)
 		return 0;
@@ -318,7 +322,7 @@ static int test_updating(struct vt_entry *v) {
 /**
  * Condition to determine whether a sprite will be in the 'non-updating' list.
  */
-static int test_not_updating(struct vt_entry *v) {
+static int test_not_updating(vt_entry *v) {
 	/* Sanity check (see bug #779302) */
 	if (~game.dir_view[v->current_view].flags & RES_LOADED)
 		return 0;
@@ -346,10 +350,9 @@ static INLINE int prio_to_y(int p) {
 /**
  * Create and initialize a new sprite structure.
  */
-static struct sprite *new_sprite(struct vt_entry *v) {
-	struct sprite *s;
-
-	s = (struct sprite *)pool_alloc(sizeof(struct sprite));
+static sprite *new_sprite(vt_entry *v) {
+	sprite *s;
+	s = (sprite *)pool_alloc(sizeof(sprite));
 	if (s == NULL)
 		return NULL;
 
@@ -368,21 +371,18 @@ static struct sprite *new_sprite(struct vt_entry *v) {
 /**
  * Insert sprite in the specified sprite list.
  */
-static void spr_addlist(struct list_head *head, struct vt_entry *v) {
-	struct sprite *s;
-
-	s = new_sprite(v);
-	list_add_tail(&s->list, head);
+static void spr_addlist(SpriteList& l, vt_entry *v) {
+	sprite *s = new_sprite(v);
+	l.push_back(s);
 }
 
 /**
  * Sort sprites from lower y values to build a sprite list.
  */
-static struct list_head *build_list(struct list_head *head,
-									int (*test) (struct vt_entry *)) {
+static void build_list(SpriteList& l, int (*test) (vt_entry *)) {
 	int i, j, k;
-	struct vt_entry *v;
-	struct vt_entry *entry[0x100];
+	vt_entry *v;
+	vt_entry *entry[0x100];
 	int y_val[0x100];
 	int min_y = 0xff, min_index = 0;
 
@@ -411,51 +411,48 @@ static struct list_head *build_list(struct list_head *head,
 		}
 
 		y_val[min_index] = 0xff;
-		spr_addlist(head, entry[min_index]);
+		spr_addlist(l, entry[min_index]);
 	}
-
-	return head;
 }
 
 /**
  * Build list of updating sprites.
  */
-static struct list_head *build_upd_blitlist() {
-	return build_list(&spr_upd_head, test_updating);
+static void build_upd_blitlist() {
+	build_list(spr_upd, test_updating);
 }
 
 /**
  * Build list of non-updating sprites.
  */
-static struct list_head *build_nonupd_blitlist() {
-	return build_list(&spr_nonupd_head, test_not_updating);
+static void build_nonupd_blitlist() {
+	build_list(spr_nonupd, test_not_updating);
 }
 
 /**
  * Clear the given sprite list.
  */
-static void free_list(struct list_head *head) {
-	struct list_head *h;
-	struct sprite *s;
-
-	list_for_each(h, head, prev) {
-		s = list_entry(h, struct sprite, list);
-		list_del(h);
+static void free_list(SpriteList& l) {
+	SpriteList::iterator i;
+	for (i = l.end(); i != l.begin();) {
+		--i;
+		sprite* s = *i;
 		pool_release(s->hires);
 		pool_release(s->buffer);
 		pool_release(s);
 	}
+
+	l.clear();
 }
 
 /**
  * Copy sprites from the pic buffer to the screen buffer, and check if
  * sprites of the given list have moved.
  */
-static void commit_sprites(struct list_head *head) {
-	struct list_head *pos;
-
-	list_for_each(pos, head, next) {
-		struct sprite *s = list_entry(pos, struct sprite, list);
+static void commit_sprites(SpriteList& l) {
+	SpriteList::iterator i;
+	for (i = l.begin(); i != l.end(); ++i) {
+		sprite *s = *i;
 		int x1, y1, x2, y2, w, h;
 
 		w = (s->v->cel_data->width > s->v->cel_data_2->width) ?
@@ -502,26 +499,25 @@ static void commit_sprites(struct list_head *head) {
 /**
  * Erase all sprites in the given list.
  */
-static void erase_sprites(struct list_head *head) {
-	struct list_head *h;
-
-	list_for_each(h, head, prev) {
-		struct sprite *s = list_entry(h, struct sprite, list);
+static void erase_sprites(SpriteList& l) {
+	SpriteList::iterator i;
+	for (i = l.end(); i != l.begin(); ) {
+		--i;
+		sprite *s = *i;
 		objs_restorearea(s);
 	}
 
-	free_list(head);
+	free_list(l);
 }
 
 /**
  * Blit all sprites in the given list.
  */
-static void blit_sprites(struct list_head *head) {
-	struct list_head *h = NULL;
+static void blit_sprites(SpriteList& l) {
 	int hidden;
-
-	list_for_each(h, head, next) {
-		struct sprite *s = list_entry(h, struct sprite, list);
+	SpriteList::iterator i;
+	for (i = l.begin(); i != l.end(); ++i) {
+		sprite *s = *i;
 		objs_savearea(s);
 		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
 		hidden = blit_cel(s->x_pos, s->y_pos, s->v->priority, s->v->cel_data);
@@ -536,11 +532,11 @@ static void blit_sprites(struct list_head *head) {
  */
 
 void commit_upd_sprites() {
-	commit_sprites(&spr_upd_head);
+	commit_sprites(spr_upd);
 }
 
 void commit_nonupd_sprites() {
-	commit_sprites(&spr_nonupd_head);
+	commit_sprites(spr_nonupd);
 }
 
 /* check moves in both lists */
@@ -559,7 +555,7 @@ void commit_both() {
  * @see erase_both()
  */
 void erase_upd_sprites() {
-	erase_sprites(&spr_upd_head);
+	erase_sprites(spr_upd);
 }
 
 /**
@@ -572,7 +568,7 @@ void erase_upd_sprites() {
  * @see erase_both()
  */
 void erase_nonupd_sprites() {
-	erase_sprites(&spr_nonupd_head);
+	erase_sprites(spr_nonupd);
 }
 
 /**
@@ -599,7 +595,8 @@ void erase_both() {
  */
 void blit_upd_sprites() {
 	debugC(7, kDebugLevelSprites, "blit updating");
-	blit_sprites(build_upd_blitlist());
+	build_upd_blitlist();
+	blit_sprites(spr_upd);
 }
 
 /**
@@ -612,7 +609,8 @@ void blit_upd_sprites() {
  */
 void blit_nonupd_sprites() {
 	debugC(7, kDebugLevelSprites, "blit non-updating");
-	blit_sprites(build_nonupd_blitlist());
+	build_nonupd_blitlist();
+	blit_sprites(spr_nonupd);
 }
 
 /**
@@ -642,7 +640,7 @@ void blit_both() {
  * @param mar   if < 4, create a margin around the the base of the cel
  */
 void add_to_pic(int view, int loop, int cel, int x, int y, int pri, int mar) {
-	struct view_cel *c = NULL;
+	view_cel *c = NULL;
 	int x1, y1, x2, y2, y3;
 	uint8 *p1, *p2;
 
@@ -733,8 +731,8 @@ void add_to_pic(int view, int loop, int cel, int x, int y, int pri, int mar) {
  * @param n  Number of the object to show
  */
 void show_obj(int n) {
-	struct view_cel *c;
-	struct sprite s;
+	view_cel *c;
+	sprite s;
 	int x1, y1, x2, y2;
 
 	agi_load_resource(rVIEW, n);
