@@ -388,10 +388,8 @@ void SimonEngine::vc3_loadSprite() {
 	y = vcReadNextWord();			/* 6 */
 	palette = vcReadNextWord();		/* 8 */
 
-	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-		isSpriteLoaded(vgaSpriteId, zoneNum)) {
+	if (isSpriteLoaded(vgaSpriteId, zoneNum))
 		return;
-	}
 
 	vsp = _vgaSprites;
 	while (vsp->id)

@@ -1780,8 +1780,7 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 
 	_lockWord |= 0x40;
 
-	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-		isSpriteLoaded(vgaSpriteId, zoneNum)) {
+	if (isSpriteLoaded(vgaSpriteId, zoneNum)) {
 		_lockWord &= ~0x40;
 		return;
 	}
