@@ -191,6 +191,11 @@ void AboutDialog::drawDialog() {
 	//       in the right way. Should be even faster...
 	const int firstLine = _scrollPos / _lineHeight;
 	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
+	// FIXME: There's some confusion here about the meaning of 'yOff'.
+	//        The setDrawArea call above makes it possible to render text
+	//        vertically from _y to _y+_h, while the line below assumes text
+	//        is drawn from _y+yOff down. This causes leftover pixels
+	//        the top while scrolling.
 	int y = _y + yOff - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
