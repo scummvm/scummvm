@@ -830,13 +830,15 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	}
 	
 	r2 = r;
+	r2.left += 1;
+	r2.right -= 1;
 	r2.top += sliderY;
-	r2.bottom = r2.top + sliderHeight;
+	r2.bottom = r2.top + sliderHeight - 1;
 	
 	drawShadow(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd), kShadowSmall);
 
-	r2.left += 2;
-	r2.right -= 2;	
+	r2.left += 1;
+	r2.right -= 1;
 
 	r2.bottom = r2.top + sliderHeight / 2 + surface(kScrollbarCorner)->h + 4;
 	drawRectMasked(r2, surface(kScrollbarCorner), surface(kScrollbarTop), surface(kScrollbarLeft), surface(kScrollbarBkgd), 256,
