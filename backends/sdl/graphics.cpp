@@ -854,7 +854,7 @@ bool OSystem_SDL::grabRawScreen(Graphics::Surface *surf) {
 	return true;
 }
 
-void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
+void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool realCoordinates) {
 	if (_forceFull)
 		return;
 
@@ -865,7 +865,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
 
 	int height, width;
 
-	if (!_overlayVisible) {
+	if (!_overlayVisible && !realCoordinates) {
 		width = _screenWidth;
 		height = _screenHeight;
 	} else {
@@ -875,7 +875,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
 
 	// Extend the dirty region by 1 pixel for scalers
 	// that "smear" the screen, e.g. 2xSAI
-	if (_modeFlags & DF_UPDATE_EXPAND_1_PIXEL) {
+	if ((_modeFlags & DF_UPDATE_EXPAND_1_PIXEL) && !realCoordinates) {
 		x--;
 		y--;
 		w+=2;
@@ -902,7 +902,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
 	}
 
 #ifndef DISABLE_SCALERS
-	if (_adjustAspectRatio && !_overlayVisible) {
+	if (_adjustAspectRatio && !_overlayVisible && !realCoordinates) {
 		makeRectStretchable(x, y, w, h);
 	}
 #endif
@@ -1479,7 +1479,7 @@ void OSystem_SDL::drawMouse() {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
   		return;
 	}
-  
+
 	SDL_Rect dst;
 	int scale;
 	int width, height;
@@ -1502,14 +1502,13 @@ void OSystem_SDL::drawMouse() {
 		dst.h = _mouseCurState.hH;
 	}
 
-	// Note that addDirtyRect() will perform any necessary clipping
+	// The mouse is undrawn using virtual coordinates, i.e. they may be
+	// scaled and aspect-ratio corrected.
 
 	_mouseBackup.x = dst.x;
 	_mouseBackup.y = dst.y;
 	_mouseBackup.w = dst.w;
 	_mouseBackup.h = dst.h;
-
-	addDirtyRect(_mouseBackup.x, _mouseBackup.y, _mouseBackup.w, _mouseBackup.h);
 
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
@@ -1526,10 +1525,16 @@ void OSystem_SDL::drawMouse() {
 	dst.w = _mouseCurState.hW;
 	dst.h = _mouseCurState.hH;
 
-	// Note that SDL_BlitSurface() will perform any clipping necessary
+	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
+	// clipping necessary
 
 	if (SDL_BlitSurface(_mouseSurface, NULL, _hwscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
+
+	// The screen will be updated using real surface coordinates, i.e.
+	// they will not be scaled or aspect-ratio corrected.
+
+	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
 #pragma mark -

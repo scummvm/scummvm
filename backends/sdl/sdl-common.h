@@ -339,7 +339,7 @@ protected:
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
 
-	virtual void addDirtyRect(int x, int y, int w, int h); // overloaded by CE backend
+	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false); // overloaded by CE backend
 
 	virtual void drawMouse(); // overloaded by CE backend
 	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
