@@ -89,7 +89,7 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	uint size = w * h;
 
 	if (cur->_size < size) {
-		delete cur->_data;
+		delete[] cur->_data;
 		cur->_data = new byte[size];
 		cur->_size = size;
 	}
