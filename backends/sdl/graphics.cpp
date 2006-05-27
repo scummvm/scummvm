@@ -1088,8 +1088,11 @@ void OSystem_SDL::showOverlay() {
 
 	// Since resolution could change, put mouse to adjusted position
 	// Fixes bug #1349059
-	x = _mouseCurState.x;
-	y = _mouseCurState.y;
+	x = _mouseCurState.x * _scaleFactor;
+	if (_adjustAspectRatio)
+		y = real2Aspect(_mouseCurState.y) * _scaleFactor;
+	else
+		y = _mouseCurState.y * _scaleFactor;
 
 	warpMouse(x, y);
 
@@ -1108,8 +1111,10 @@ void OSystem_SDL::hideOverlay() {
 
 	// Since resolution could change, put mouse to adjusted position
 	// Fixes bug #1349059
-	x = _mouseCurState.x;
-	y = _mouseCurState.y;
+	x = _mouseCurState.x / _scaleFactor;
+	y = _mouseCurState.y / _scaleFactor;
+	if (_adjustAspectRatio)
+		y = aspect2Real(y);
 
 	warpMouse(x, y);
 
@@ -1250,11 +1255,14 @@ void OSystem_SDL::setMousePos(int x, int y) {
 void OSystem_SDL::warpMouse(int x, int y) {
 	int y1 = y;
 
-	if (_adjustAspectRatio)
+	if (_adjustAspectRatio && !_overlayVisible)
 		y1 = real2Aspect(y);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		SDL_WarpMouse(x * _scaleFactor, y1 * _scaleFactor);
+		if (!_overlayVisible) 
+			SDL_WarpMouse(x * _scaleFactor, y1 * _scaleFactor);
+		else
+			SDL_WarpMouse(x, y1);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -1482,20 +1490,16 @@ void OSystem_SDL::drawMouse() {
 		height = _screenHeight;
 		dst.x = _mouseCurState.x - _mouseCurState.hotX;
 		dst.y = _mouseCurState.y - _mouseCurState.hotY;
+		dst.w = _mouseCurState.w;
+		dst.h = _mouseCurState.h;
 	} else {
 		scale = 1;
 		width = _overlayWidth;
 		height = _overlayHeight;
 		dst.x = _mouseCurState.x - _mouseCurState.hHotX;
 		dst.y = _mouseCurState.y - _mouseCurState.hHotY;
-	}
-
-	if (_overlayVisible) {
 		dst.w = _mouseCurState.hW;
 		dst.h = _mouseCurState.hH;
-	} else {
-		dst.w = _mouseCurState.w;
-		dst.h = _mouseCurState.h;
 	}
 
 	// Note that addDirtyRect() will perform any necessary clipping
