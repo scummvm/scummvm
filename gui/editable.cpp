@@ -56,7 +56,7 @@ void EditableWidget::setEditString(const String &str) {
 	_editString = str;
 	_caretPos = _editString.size();
 
-	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()), _font);
+	_editScrollOffset = g_gui.getStringWidth(_editString, _font) - getEditRect().width();
 	if (_editScrollOffset < 0)
 		_editScrollOffset = 0;
 }
