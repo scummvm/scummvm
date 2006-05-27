@@ -35,6 +35,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
+	_selectedMenuItem = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -271,7 +272,8 @@ void KyraEngine_v3::drawMainMenu(const char * const *strings) {
 	
 	for (int i = 0; i < menuTable[3]; ++i) {
 		int curY = top + i * _screen->getFontHeight();
-		gui_printString(strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, menuTable[5], 0, 5);
+		int color = (i == _selectedMenuItem) ? menuTable[6] : menuTable[5];
+		gui_printString(strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5);
 	}
 }
 
