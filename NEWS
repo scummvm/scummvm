@@ -1,15 +1,11 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.??
+0.9.0 (2006-??-??)
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
      part of the series is supported.
    - Added support for The Feeble Files
-   - lure engine - Player can now perform many actions, and a basic 
-     implementation of NPC schedules will shortly be available
-   - cine engine - TODO, fill in this gap!!!
-   - ...
 
  New Ports:
    - ...
@@ -20,6 +16,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed a bug that prevented you from overriding the scaler from the command
      line for 640x480 games.
    - Added subtitle configuration controls to the Launcher options dialogs.
+   - GUI was completely redesigned and now is themeable.
 
  SCUMM:
    - Rewrote the detection code, for improved accuracy and better support of
