@@ -876,7 +876,7 @@ void ThemeNew::drawCaret(const Common::Rect &r, bool erase, kState state) {
 
 	restoreBackground(r);
 	if (!erase) {
-		_screen.vLine(r.left, r.top, r.bottom, _colors[kCaretColor]);
+		_screen.vLine(r.left, r.top, r.bottom-1, _colors[kCaretColor]);
 	} else if (r.top >= 0) {
 		// FIXME: hack to restore the caret background correctly
 		const OverlayColor search = _colors[kTextInvertedBackground];
@@ -893,7 +893,7 @@ void ThemeNew::drawCaret(const Common::Rect &r, bool erase, kState state) {
 			src += _screen.w;
 		}
 		if (drawInvBackground) {
-			_screen.vLine(r.left, r.top, r.bottom, search);
+			_screen.vLine(r.left, r.top, r.bottom-1, search);
 		}
 	}
 	addDirtyRect(r);

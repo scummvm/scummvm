@@ -89,7 +89,7 @@ void EditTextWidget::drawWidget(bool hilite) {
 }
 
 Common::Rect EditTextWidget::getEditRect() const {
-	Common::Rect r(2 + _leftPadding, 1, _w - 2 - _leftPadding - _rightPadding, _h);
+	Common::Rect r(2 + _leftPadding, 1, _w - 2 - _leftPadding - _rightPadding, _h-1);
 
 	return r;
 }
