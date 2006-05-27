@@ -78,6 +78,13 @@ ListWidget::~ListWidget() {
 	delete[] _textWidth;
 }
 
+Widget *ListWidget::findWidget(int x, int y) {
+	if (x >= _w - _scrollBarWidth)
+		return _scrollBar;
+
+	return this;
+}
+
 void ListWidget::setSelected(int item) {
 	assert(item >= -1 && item < (int)_list.size());
 
@@ -137,11 +144,6 @@ void ListWidget::handleTickle() {
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
-
-	if (x >= _w - _scrollBarWidth) {
-		_scrollBar->handleMouseDown(x, y, button, clickCount);
-		return;
-	}
 
 	// First check whether the selection changed
 	int newSelectedItem;

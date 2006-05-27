@@ -73,6 +73,8 @@ public:
 	ListWidget(GuiObject *boss, String name);
 	virtual ~ListWidget();
 
+	virtual Widget *findWidget(int x, int y);
+
 	void setList(const StringList& list);
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
