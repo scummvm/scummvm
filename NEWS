@@ -22,6 +22,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Rewrote the detection code, for improved accuracy and better support of
      fan translations. It should now work much better on games with unknown MD5.
    - Added subtitle configuration controls to the options dialog.
+   - Fixed graphical glitches in several HE games.
+   - Fixed palette glitches in Big Thinkers 1st Grade.
+   - Fixed songs in the kitchen of Pajama Sam 1.
 
  Simon
    - Lots of long-overdue cleanups and re-structuring were made to accomodate
