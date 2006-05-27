@@ -441,7 +441,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "samnmax", "Sam & Max Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "samnmax", "ramnmax.%03d", kGenDiskNum, Common::RU_RUS, UNK, 0 }, // Used in some releases of Russian Sam'n'Max
 	{ "samnmax", "samdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "samnmax", "samdemo.sm%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "snmdemo.sm%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "snmidemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "sdemo.sm%d", kGenDiskNum, Common::DE_DEU, UNK, 0 },
