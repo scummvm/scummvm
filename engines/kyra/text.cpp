@@ -38,7 +38,6 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 	bool runLoop = true;
 	uint8 currPage;
 	OSystem::Event event;
-	int16 delayTime;
 
 	//while( towns_isEscKeyPressed() )
 		//towns_getKey();
@@ -106,30 +105,35 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1)
 			break;
 
-		while (_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode == '.')
-					_skipFlag = true;
-				break;
-			case OSystem::EVENT_QUIT:
-				quitGame();
-				runLoop = false;
-				break;
-			case OSystem::EVENT_LBUTTONDOWN:
-				runLoop = false;
-				break;
-			default:
-				break;
+		uint32 nextTime = loopStart + _gameSpeed;
+		
+		while (_system->getMillis() < nextTime) {
+			while (_system->pollEvent(event)) {
+				switch (event.type) {
+				case OSystem::EVENT_KEYDOWN:
+					if (event.kbd.keycode == '.')
+						_skipFlag = true;
+					break;
+				case OSystem::EVENT_QUIT:
+					quitGame();
+					runLoop = false;
+					break;
+				case OSystem::EVENT_LBUTTONDOWN:
+					runLoop = false;
+					break;
+				default:
+					break;
+				}
+			}
+		
+			if (nextTime - _system->getMillis() >= 10) {
+				_system->delayMillis(10);
+				_system->updateScreen();
 			}
 		}
-		
+
 		if (_skipFlag)
 			runLoop = false;
-
-		delayTime = (loopStart + _gameSpeed) - _system->getMillis();
-		if (delayTime > 0)
-			_system->delayMillis(delayTime);
 	}
 
 	enableTimer(14);
