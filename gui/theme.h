@@ -55,8 +55,11 @@ enum {
 	// Indicates special colorfade
 	THEME_HINT_SPECIAL_COLOR = 1 << 3,
 	
+	// Indicates no colorfade
+	THEME_HINT_PLAIN_COLOR = 1 << 4,
+	
 	// Indictaes that a shadows should be drawn around the background
-	THEME_HINT_USE_SHADOW = 1 << 4
+	THEME_HINT_USE_SHADOW = 1 << 5
 };
 
 
@@ -147,6 +150,9 @@ public:
 	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state = kStateEnabled, kTextAlign align = kTextAlignLeft) = 0;
 	virtual void drawCaret(const Common::Rect &r, bool erase, kState state = kStateEnabled) = 0;
 	virtual void drawLineSeparator(const Common::Rect &r, kState state = kStateEnabled) = 0;
+
+	virtual void restoreBackground(Common::Rect r, bool special = false) = 0;
+	virtual bool addDirtyRect(Common::Rect r, bool save = false, bool special = false) = 0;
 
 	Graphics::TextAlignment convertAligment(kTextAlign align) const {
 		switch (align) {
@@ -245,10 +251,10 @@ public:
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
-private:
-	void restoreBackground(Common::Rect r);
-	bool addDirtyRect(Common::Rect r, bool save = false);
+	void restoreBackground(Common::Rect r, bool special = false);
+	bool addDirtyRect(Common::Rect r, bool save = false, bool special = false);
 
+private:
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool skipLastRow = false);
 	void box(int x, int y, int width, int height);
 
@@ -324,9 +330,10 @@ public:
 	void drawLineSeparator(const Common::Rect &r, kState state);
 	const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
 
-private:
+	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
 
+private:
 	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
 	void drawRect(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 				const Graphics::Surface *left, const Graphics::Surface *fill, int alpha, bool skipLastRow = false);
@@ -341,7 +348,8 @@ private:
 		kShadowFull = 0,
 		kShadowSmall = 1,
 		kShadowButton = 2,
-		kShadowEmboss = 3
+		kShadowEmboss = 3,
+		kShadowPopUp = 4
 	};
 
 	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);
@@ -368,7 +376,6 @@ private:
 	void resetupGuiRenderer();
 	void setupColors();
 
-	void restoreBackground(Common::Rect r, bool special = false);
 	OverlayColor getColor(kState state);
 
 	struct DialogState {

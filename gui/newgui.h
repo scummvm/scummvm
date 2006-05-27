@@ -81,6 +81,9 @@ public:
 	WidgetSize getWidgetSize();
 
 	void handleScreenChange();
+
+	void clearDragWidget();
+
 protected:
 	OSystem			*_system;
 

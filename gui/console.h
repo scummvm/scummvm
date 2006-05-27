@@ -90,6 +90,11 @@ protected:
 
 	float _widthPercent, _heightPercent;
 
+	int	_leftPadding;
+	int	_rightPadding;
+	int	_topPadding;
+	int	_bottomPadding;
+
 	void slideUpAndClose();
 
 public:
@@ -126,6 +131,9 @@ protected:
 
 	void init();
 
+	int pos2line(int pos) { return (pos - (_scrollLine - _linesPerPage + 1) * kLineWidth) / kLineWidth; }
+
+	void drawLine(int line, bool restoreBg = true);
 	void drawCaret(bool erase);
 	void putcharIntern(int c);
 	void insertIntoPrompt(const char *str);

@@ -67,6 +67,7 @@ protected:
 	int				_rightPadding;
 	int				_topPadding;
 	int				_bottomPadding;
+	int				_scrollBarWidth;
 
 public:
 	ListWidget(GuiObject *boss, String name);

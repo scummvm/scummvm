@@ -61,6 +61,7 @@ protected:
 	GUI::StaticTextWidget	*_date;
 	GUI::StaticTextWidget	*_time;
 	GUI::StaticTextWidget	*_playtime;
+	GUI::ContainerWidget	*_container;
 	ScummEngine			*_vm;
 
 	void updateInfos();

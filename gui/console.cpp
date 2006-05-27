@@ -101,6 +101,11 @@ void ConsoleDialog::init() {
 	else
 		_font = g_gui.theme()->getFont((Theme::kFontStyle)f);
 
+	_leftPadding = g_gui.evaluator()->getVar("Console.leftPadding", 0);
+	_rightPadding = g_gui.evaluator()->getVar("Console.rightPadding", 0);
+	_topPadding = g_gui.evaluator()->getVar("Console.topPadding", 0);
+	_bottomPadding = g_gui.evaluator()->getVar("Console.bottomPadding", 0);
+
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * screenW);
 	_h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
@@ -116,8 +121,8 @@ void ConsoleDialog::init() {
 
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 
-	_pageWidth = (_w - scrollBarWidth - 2) / kConsoleCharWidth;
-	_linesPerPage = (_h - 2) / kConsoleLineHeight;
+	_pageWidth = (_w - scrollBarWidth - 2 - _leftPadding - _topPadding - scrollBarWidth) / kConsoleCharWidth;
+	_linesPerPage = (_h - 2 - _topPadding - _bottomPadding) / kConsoleLineHeight;
 	_linesInBuffer = kBufferSize / kLineWidth;
 }
 
@@ -164,33 +169,42 @@ void ConsoleDialog::close() {
 }
 
 void ConsoleDialog::drawDialog() {
-	// Draw text
-	int start = _scrollLine - _linesPerPage + 1;
-	int y = _y + 2;
-	int limit = MIN(_pageWidth, (int)kLineWidth);
-
 	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
 	// FIXME: for the old theme the frame around the console vanishes
 	// when any action is processed if we enable this
 	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
 
-	for (int line = 0; line < _linesPerPage; line++) {
-		int x = _x + 1;
-		for (int column = 0; column < limit; column++) {
-#if 0
-			int l = (start + line) % _linesInBuffer;
-			byte c = buffer(l * kLineWidth + column);
-#else
-			byte c = buffer((start + line) * kLineWidth + column);
-#endif
-			g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
-			x += kConsoleCharWidth;
-		}
-		y += kConsoleLineHeight;
-	}
+	for (int line = 0; line < _linesPerPage; line++)
+		drawLine(line, false);
 
 	// Draw the scrollbar
 	_scrollBar->draw();
+}
+
+void ConsoleDialog::drawLine(int line, bool restoreBg) {
+	int x = _x + 1 + _leftPadding;
+	int start = _scrollLine - _linesPerPage + 1;
+	int y = _y + 2 + _topPadding;
+	int limit = MIN(_pageWidth, (int)kLineWidth);
+
+	y += line * kConsoleLineHeight;
+
+	if (restoreBg) {
+		Common::Rect r(_x, y - 2, _x + _pageWidth * kConsoleCharWidth, y+kConsoleLineHeight);
+		g_gui.theme()->restoreBackground(r);
+		g_gui.theme()->addDirtyRect(r);
+	}
+
+	for (int column = 0; column < limit; column++) {
+#if 0
+		int l = (start + line) % _linesInBuffer;
+		byte c = buffer(l * kLineWidth + column);
+#else
+		byte c = buffer((start + line) * kLineWidth + column);
+#endif
+		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
+		x += kConsoleCharWidth;
+	}
 }
 
 void ConsoleDialog::handleScreenChanged() {
@@ -301,7 +315,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			killChar();
 		}
 		scrollToCurrent();
-		draw();	// FIXME - not nice to redraw the full console just for one char!
+		drawLine(pos2line(_currentPos));
 		break;
 	case 9: // tab
 	{
@@ -321,7 +335,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 					drawCaret(true);
 				insertIntoPrompt(completion);
 				scrollToCurrent();
-				draw();
+				drawLine(pos2line(_currentPos));
 				delete[] completion;
 			}
 			delete[] str;
@@ -330,7 +344,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 	case 127:
 		killChar();
-		draw();
+		drawLine(pos2line(_currentPos));
 		break;
 	case 256 + 24:	// pageup
 		if (modifiers == OSystem::KBD_SHIFT) {
@@ -382,12 +396,12 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	case 275:	// cursor right
 		if (_currentPos < _promptEndPos)
 			_currentPos++;
-		draw();
+		drawLine(pos2line(_currentPos));
 		break;
 	case 276:	// cursor left
 		if (_currentPos > _promptStartPos)
 			_currentPos--;
-		draw();
+		drawLine(pos2line(_currentPos));
 		break;
 	default:
 		if (ascii == '~' || ascii == '#') {
@@ -599,7 +613,7 @@ void ConsoleDialog::putchar(int c) {
 		drawCaret(true);
 
 	putcharIntern(c);
-	draw();	// FIXME - not nice to redraw the full console just for one char!
+	drawLine(pos2line(_currentPos));
 }
 
 void ConsoleDialog::putcharIntern(int c) {
@@ -636,11 +650,11 @@ void ConsoleDialog::drawCaret(bool erase) {
 		return;
 	}
 
-	int x = _x + 1 + (_currentPos % kLineWidth) * kConsoleCharWidth;
-	int y = _y + displayLine * kConsoleLineHeight;
+	int x = _x + 1 + _leftPadding + (_currentPos % kLineWidth) * kConsoleCharWidth;
+	int y = _y + _topPadding + displayLine * kConsoleLineHeight;
 
 	_caretVisible = !erase;
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), erase);
+	g_gui.theme()->drawCaret(Common::Rect(x, y, x+1, y+kConsoleLineHeight), erase);
 }
 
 void ConsoleDialog::scrollToCurrent() {

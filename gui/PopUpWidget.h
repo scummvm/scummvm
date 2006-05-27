@@ -58,6 +58,7 @@ protected:
 
 	int				_leftPadding;
 	int				_rightPadding;
+	int				_labelSpacing;
 
 public:
 	PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth = 0);

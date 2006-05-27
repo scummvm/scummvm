@@ -75,10 +75,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 	_selection = _popUpBoss->_selectedItem;
 
 	// Calculate real popup dimensions
-	_x = _popUpBoss->getAbsX() + _popUpBoss->_labelWidth;
+	_x = _popUpBoss->getAbsX() + _popUpBoss->_labelWidth + _popUpBoss->_labelSpacing;
 	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
-	_w = _popUpBoss->_w - kLineHeight + 2 - _popUpBoss->_labelWidth;
+	_w = _popUpBoss->_w - kLineHeight + 2 - _popUpBoss->_labelWidth - _popUpBoss->_labelSpacing;
 
 	_leftPadding = _popUpBoss->_leftPadding;
 	_rightPadding = _popUpBoss->_rightPadding;
@@ -365,6 +365,7 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 			_selectedItem = newSel;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 		}
+		g_gui.clearDragWidget();
 	}
 }
 
@@ -373,6 +374,7 @@ void PopUpWidget::handleScreenChanged() {
 
 	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
+	_labelSpacing = g_gui.evaluator()->getVar("PopUpWidget.labelSpacing", 0);
 
 	Widget::handleScreenChanged();
 }
@@ -411,8 +413,8 @@ void PopUpWidget::setSelectedTag(uint32 tag) {
 }
 
 void PopUpWidget::drawWidget(bool hilite) {
-	int x = _x + _labelWidth;
-	int w = _w - _labelWidth;
+	int x = _x + _labelWidth + _labelSpacing;
+	int w = _w - _labelWidth - _labelSpacing;
 
 	// Draw the label, if any
 	if (_labelWidth > 0)

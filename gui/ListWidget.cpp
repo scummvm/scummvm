@@ -41,18 +41,17 @@ ListWidget::ListWidget(GuiObject *boss, String name)
 	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
 
-	int scrollBarWidth;
 	if (ws == kBigWidgetSize) {
-		scrollBarWidth =  kBigScrollBarWidth;
+		_scrollBarWidth =  kBigScrollBarWidth;
 	} else {
-		scrollBarWidth = kNormalScrollBarWidth;
+		_scrollBarWidth = kNormalScrollBarWidth;
 	}
 	
-	_scrollBar = new ScrollBarWidget(this, _w - scrollBarWidth, 0, scrollBarWidth, _h);
+	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
-	setHints(THEME_HINT_SAVE_BACKGROUND);
+	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -138,6 +137,11 @@ void ListWidget::handleTickle() {
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
+
+	if (x >= _w - _scrollBarWidth) {
+		_scrollBar->handleMouseDown(x, y, button, clickCount);
+		return;
+	}
 
 	// First check whether the selection changed
 	int newSelectedItem;
@@ -345,7 +349,7 @@ void ListWidget::drawWidget(bool hilite) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, _leftPadding);
+			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, _leftPadding);
 			pad = 0;
 		}
 
@@ -354,8 +358,8 @@ void ListWidget::drawWidget(bool hilite) {
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
-			width = _w - r.left - _hlRightPadding - _leftPadding - _rightPadding;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
+			width = _w - r.left - _hlRightPadding - _leftPadding;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
@@ -367,7 +371,7 @@ void ListWidget::drawWidget(bool hilite) {
 				width = _w - r.left - _hlRightPadding;
 			if (width > maxWidth)
 				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
 		}
 
 		_textWidth[i] = width;
@@ -449,11 +453,10 @@ void ListWidget::handleScreenChanged() {
 	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
 
-	int scrollBarWidth;
 	if (ws == kBigWidgetSize) {
-		scrollBarWidth =  kBigScrollBarWidth;
+		_scrollBarWidth =  kBigScrollBarWidth;
 	} else {
-		scrollBarWidth = kNormalScrollBarWidth;
+		_scrollBarWidth = kNormalScrollBarWidth;
 	}
 
 	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
@@ -464,7 +467,7 @@ void ListWidget::handleScreenChanged() {
 	for (int i = 0; i < _entriesPerPage; i++)
 		_textWidth[i] = 0;
 
-	_scrollBar->resize(_w - scrollBarWidth, 0, scrollBarWidth, _h);
+	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	scrollBarRecalc();
 }
 

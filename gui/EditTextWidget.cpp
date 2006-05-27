@@ -55,6 +55,8 @@ void EditTextWidget::handleScreenChanged() {
 	EditableWidget::handleScreenChanged();
 	_leftPadding = g_gui.evaluator()->getVar("EditTextWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("EditTextWidget.rightPadding", 0);
+
+	_font = (Theme::kFontStyle)g_gui.evaluator()->getVar("EditTextWidget.font", Theme::kFontStyleNormal);
 }
 
 
@@ -83,11 +85,11 @@ void EditTextWidget::drawWidget(bool hilite) {
 
 	// Draw the text
 	adjustOffset();
-	g_gui.theme()->drawText(Common::Rect(_x+2 + _leftPadding,_y+2, _x+getEditRect().width()-2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false, Theme::kFontStyleNormal);
+	g_gui.theme()->drawText(Common::Rect(_x+2+ _leftPadding,_y+2, _x+_leftPadding+getEditRect().width()+2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false, _font);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {
-	Common::Rect r(2 + _leftPadding, 1, _w - 2 - _leftPadding, _h);
+	Common::Rect r(2 + _leftPadding, 1, _w - 2 - _leftPadding - _rightPadding, _h);
 
 	return r;
 }

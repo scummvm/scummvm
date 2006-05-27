@@ -35,13 +35,15 @@
 
 #include "common/unzip.h"
 
+#define kShadowTr0 8
 #define kShadowTr1 16
 #define kShadowTr2 32
 #define kShadowTr3 64
+#define kShadowTr35 96
 #define kShadowTr4 128
 #define kShadowTr5 192
 
-#define THEME_VERSION 12
+#define THEME_VERSION 13
 
 using Graphics::Surface;
 
@@ -471,6 +473,11 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 
 		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
 			256, _colors[kMainDialogStart], _colors[kMainDialogEnd], _gradientFactors[kDialogSpecialFactor]);
+	} else if (hints & THEME_HINT_PLAIN_COLOR) {
+		drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowFull);
+
+		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
+			256, _colors[kDialogEnd], _colors[kDialogEnd], _gradientFactors[kDialogFactor]);
 	} else {
 		drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowFull);
 
@@ -547,7 +554,10 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 		left = kWidgetBkgdLeft;
 		bkgd = kWidgetBkgd;
 		shadow = kShadowFull;
-		start = kWidgetBackgroundStart;
+		if (hints & THEME_HINT_PLAIN_COLOR)
+			start = kWidgetBackgroundEnd;
+		else
+			start = kWidgetBackgroundStart;
 		end = kWidgetBackgroundEnd;
 		factor = kWidgetFactor;
 		break;
@@ -661,12 +671,13 @@ void ThemeNew::drawSlider(const Common::Rect &rr, int width, kState state) {
 	Common::Rect r2 = r;
 	r2.left = r.left;
 	r2.top = r.top;
-	r2.bottom = r.bottom;
-	r2.right = r2.left + width;
+	r2.bottom = r.bottom-1;
+	r2.right = r2.left + width-1;
 	if (r2.right > r.right) {
 		r2.right = r.right;
 	}
 	
+	drawShadow(r2, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd), kShadowButton);
 	if (state == kStateHighlight) {
 		drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
 					256, _colors[kSliderHighStart], _colors[kSliderHighEnd], _gradientFactors[kSliderFactor]);
@@ -691,7 +702,7 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 		end = _colors[kPopUpWidgetHighlightEnd];
 	}
 
-	drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowSmall);
+	drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowPopUp);
 
 	drawRectMasked(r, surface(kPopUpWidgetBkgdCorner), surface(kPopUpWidgetBkgdTop), surface(kPopUpWidgetBkgdLeft), surface(kPopUpWidgetBkgd),
 						(state == kStateDisabled) ? -30 : 256, start, end, _gradientFactors[kPopUpWidgetFactor]);
@@ -1034,11 +1045,19 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 	switch (shadowStyle) {
 	case kShadowButton:
-		return Common::Rect(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+		return Common::Rect(r.left - 1, r.top - 1, r.right + 1, r.bottom + 1);
 		break;
 
 	case kShadowEmboss:
 		return Common::Rect(r.left - 1, r.top - 1, r.right + 1, r.bottom + 1);
+		break;
+
+	case kShadowPopUp:
+		return Common::Rect(r.left - 1, r.top - 1, r.right + 3, r.bottom + 3);
+		break;
+
+	case kShadowFull:
+		return Common::Rect(r.left - 2, r.top - 2, r.right + 4, r.bottom + 4);
 		break;
 
 	default:
@@ -1053,13 +1072,16 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 						const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow) {
 	switch (shadowStyle) {
 	case kShadowFull: {
-		Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
-		Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
-		Common::Rect r4(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2-1, r.bottom + _shadowBottomHeight/2-1);
+		Common::Rect r2(r.left-1, r.top-1, r.right + 4, r.bottom + 4);
+		Common::Rect r3(r.left, r.top+1, r.right + 3, r.bottom + 3);
+		Common::Rect r4(r.left, r.top+1, r.right + 2, r.bottom + 2);
+		Common::Rect r5(r.left, r.top, r.right + 1, r.bottom + 1);
 
-		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr1, skipLastRow);
-		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr2, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr0, skipLastRow);
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr1, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		drawShadowRect(r5, r, corner, top, left, fill, kShadowTr3, skipLastRow);
+		//drawShadowRect(r5, r, corner, top, left, fill, kShadowTr35, skipLastRow);
 		} break;
 
 	case kShadowSmall: {
@@ -1071,11 +1093,11 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 		} break;
 
 	case kShadowButton: {
-		Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
-		Common::Rect r3(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+		Common::Rect r2(r.left-1, r.top - 1, r.right, r.bottom);
+		Common::Rect r4(r.left, r.top, r.right + 1, r.bottom + 1);
 
-		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr2, skipLastRow);
-		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr4, skipLastRow);
+		drawShadowRect(r2, r, corner, top, left, fill, -kShadowTr35-256, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr4, skipLastRow);
 		} break;
 
 	case kShadowEmboss: {
@@ -1084,7 +1106,19 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 
 		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr5, skipLastRow);
 		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr1, skipLastRow);
-		};
+		} break;
+
+	case kShadowPopUp: {
+		Common::Rect r2(r.left, r.top, r.right + 3, r.bottom + 3);
+		Common::Rect r25(r.left-1, r.top-1, r.right + 2, r.bottom + 2);
+		Common::Rect r3(r.left - 1, r.top-1, r.right, r.bottom);
+		Common::Rect r4(r.left, r.top, r.right + 1, r.bottom + 1);
+
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr1, skipLastRow);
+		drawShadowRect(r25, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
+		drawShadowRect(r3, r, corner, top, left, fill, -kShadowTr35-256, skipLastRow);
+		} break;
 
 	default:
 		break;
@@ -1228,7 +1262,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		} else {
 			blitSurface(NORMAL_OFFSET, NO_EFFECT);
 		}
-	} else if (alpha < 0) {
+	} else if (alpha < 0 && alpha >= -256) {
 		int backUp = _dimPercentValue;
 		_dimPercentValue = 256 * (100 - (-alpha)) / 100;
 
@@ -1595,11 +1629,28 @@ inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int 
 	return output;
 }
 
+template<class T>
+inline OverlayColor getColorAlphaImp2(OverlayColor col1, OverlayColor col2, int alpha) {
+	OverlayColor output = 0;
+	output |= ((alpha * ((~col1 & T::kRedMask) - (col2 & T::kRedMask)) >> 8) + (col2 & T::kRedMask)) & T::kRedMask;
+	output |= ((alpha * ((~col1 & T::kGreenMask) - (col2 & T::kGreenMask)) >> 8) + (col2 & T::kGreenMask)) & T::kGreenMask;
+	output |= ((alpha * ((~col1 & T::kBlueMask) - (col2 & T::kBlueMask)) >> 8) + (col2 & T::kBlueMask)) & T::kBlueMask;
+	return output;
+}
+
 OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
-	if (gBitFormat == 565) {
-		return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
+	if (alpha > 0) {
+		if (gBitFormat == 565) {
+			return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
+		} else {
+			return getColorAlphaImpl<ColorMasks<555> >(col1, col2, alpha);
+		}
 	} else {
-		return getColorAlphaImpl<ColorMasks<555> >(col1, col2, alpha);
+		if (gBitFormat == 565) {
+			return getColorAlphaImp2<ColorMasks<565> >(col1, col2, -alpha - 256);
+		} else {
+			return getColorAlphaImp2<ColorMasks<555> >(col1, col2, -alpha - 256);
+		}
 	}
 }
 

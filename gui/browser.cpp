@@ -150,6 +150,8 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
+	_fileList->setHints(THEME_HINT_PLAIN_COLOR);
+
 	// Buttons
 	new ButtonWidget(this, "browser_up", "Go up", kGoUpCmd, 0);
 	new ButtonWidget(this, "browser_cancel", "Cancel", kCloseCmd, 0);

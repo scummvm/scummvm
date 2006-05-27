@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/rect.h"
 #include "gui/widget.h"
+#include "gui/newgui.h"
 
 namespace GUI {
 
@@ -45,6 +46,8 @@ protected:
 	bool		_caretInverse;
 
 	int			_editScrollOffset;
+
+	Theme::kFontStyle  _font;
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kNormalWidgetSize);
@@ -69,6 +72,8 @@ protected:
 	void drawCaret(bool erase);
 	bool setCaretPos(int newPos);
 	bool adjustOffset();
+
+	void setFontStyle(Theme::kFontStyle font) { _font = font; }
 
 	virtual bool tryInsertChar(char c, int pos);
 };

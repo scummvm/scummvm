@@ -58,7 +58,8 @@ enum {
 	kScrollBarWidget	= 'SCRB',
 	kPopUpWidget		= 'POPU',
 	kTabWidget			= 'TABW',
-	kGraphicsWidget		= 'GFXW'
+	kGraphicsWidget		= 'GFXW',
+	kContainerWidget	= 'CTNR'
 };
 
 enum {
@@ -277,6 +278,16 @@ protected:
 
 	Graphics::Surface _gfx;
 	bool _transparency;
+};
+
+/* ContainerWidget */
+class ContainerWidget : public Widget {
+public:
+	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
+	ContainerWidget(GuiObject *boss, Common::String name);
+
+protected:
+	void drawWidget(bool hilite);
 };
 
 } // End of namespace GUI

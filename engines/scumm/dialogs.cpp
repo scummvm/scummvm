@@ -244,57 +244,21 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
-	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
-		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
-		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 
-		// Add the thumbnail display
-		_gfxWidget = new GUI::GraphicsWidget(this,
-				thumbX, thumbY,
-				kThumbnailWidth + 8,
-				((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
-		_gfxWidget->setFlags(GUI::WIDGET_BORDER);
+	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	
-		int height = thumbY + ((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
-	
-		_date = new StaticTextWidget(this,
-						thumbX,
-						height,
-						kThumbnailWidth + 8,
-						kLineHeight,
-						"No date saved",
-						kTextAlignCenter);
-	
-		height += kLineHeight;
-	
-		_time = new StaticTextWidget(this,
-						thumbX,
-						height,
-						kThumbnailWidth + 8,
-						kLineHeight,
-						"No time saved",
-						kTextAlignCenter);
-	
-		height += kLineHeight;
-	
-		_playtime = new StaticTextWidget(this,
-						thumbX,
-						height,
-						kThumbnailWidth + 8,
-						kLineHeight,
-						"No playtime saved",
-						kTextAlignCenter);
-	} else {
-		_gfxWidget = 0;
-		_date = 0;
-		_time = 0;
-		_playtime = 0;
-	}
+	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
+	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
+	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
 
 	// Buttons
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
+
+	handleScreenChanged();
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -358,62 +322,40 @@ void SaveLoadChooser::handleScreenChanged() {
 	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
 		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
 		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
+		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
+		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
+		int thumbH = ((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+
+		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
 	
 		// Add the thumbnail display
-		if (!_gfxWidget) {
-			_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 0, 0);
-			_gfxWidget->setFlags(GUI::WIDGET_BORDER);
-		}
-		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth + 8,
-				((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
+		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
 	
-		int height = thumbY + ((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+		int height = thumbY + thumbH + kLineHeight;
 
-		if (!_date)
-			_date = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
-		_date->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+		_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
 	
 		height += kLineHeight;
 
-		if (!_time)
-			_time = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
-		_time->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+		_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
 	
 		height += kLineHeight;
 
-		if (!_playtime)
-			_playtime = new StaticTextWidget(this, 0, 0, 0, 0, "", kTextAlignCenter);
-		_playtime->resize(thumbX, height, kThumbnailWidth + 8, kLineHeight);
+		_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
 	
+		_container->clearFlags(GUI::WIDGET_INVISIBLE);
+		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
+		_date->clearFlags(GUI::WIDGET_INVISIBLE);
+		_time->clearFlags(GUI::WIDGET_INVISIBLE);
+		_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
+
 		updateInfos();
 	} else {
-		if (_gfxWidget) {
-			deleteWidget(_gfxWidget);
-			_gfxWidget->setNext(0);
-			delete _gfxWidget;
-			_gfxWidget = 0;
-		}
-
-		if (_date) {
-			deleteWidget(_date);
-			_date->setNext(0);
-			delete _date;
-			_date = 0;
-		}
-
-		if (_time) {
-			deleteWidget(_time);
-			_time->setNext(0);
-			delete _time;
-			_time = 0;
-		}
-
-		if (_playtime) {
-			deleteWidget(_playtime);
-			_playtime->setNext(0);
-			delete _playtime;
-			_playtime = 0;
-		}
+		_container->setFlags(GUI::WIDGET_INVISIBLE);
+		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+		_date->setFlags(GUI::WIDGET_INVISIBLE);
+		_time->setFlags(GUI::WIDGET_INVISIBLE);
+		_playtime->setFlags(GUI::WIDGET_INVISIBLE);
 	}
 
 	Dialog::handleScreenChanged();

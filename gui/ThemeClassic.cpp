@@ -451,7 +451,7 @@ void ThemeClassic::drawLineSeparator(const Common::Rect &r, kState state) {
 
 // intern drawing
 
-void ThemeClassic::restoreBackground(Common::Rect r) {
+void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 	r.clip(_screen.w, _screen.h);
 	r.clip(_drawArea);
 #ifndef OLDGUI_TRANSPARENCY
@@ -478,7 +478,7 @@ void ThemeClassic::restoreBackground(Common::Rect r) {
 #endif
 }
 
-bool ThemeClassic::addDirtyRect(Common::Rect r, bool save) {
+bool ThemeClassic::addDirtyRect(Common::Rect r, bool save, bool special) {
 	// TODO: implement proper dirty rect handling
 	// FIXME: problem with the 'pitch'
 	r.clip(_screen.w, _screen.h);

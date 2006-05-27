@@ -356,4 +356,20 @@ void GraphicsWidget::drawWidget(bool hilite) {
 	}
 }
 
+#pragma mark -
+
+ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) : Widget(boss, x, y, w, h) {
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	_type = kContainerWidget;
+}
+
+ContainerWidget::ContainerWidget(GuiObject *boss, String name) : Widget(boss, name) {
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	_type = kContainerWidget;
+}
+
+void ContainerWidget::drawWidget(bool hilite) {
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
+}
+
 } // End of namespace GUI

@@ -959,6 +959,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\cursorman.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\cursorman.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\font.cpp"
 				>
 			</File>

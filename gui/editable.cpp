@@ -43,6 +43,8 @@ void EditableWidget::init() {
 	_caretInverse = false;
 
 	_editScrollOffset = 0;
+
+	_font = Theme::kFontStyleBold;
 }
 
 EditableWidget::~EditableWidget() {
@@ -54,7 +56,7 @@ void EditableWidget::setEditString(const String &str) {
 	_editString = str;
 	_caretPos = _editString.size();
 
-	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()));
+	_editScrollOffset = (g_gui.getStringWidth(_editString) - (getEditRect().width()), _font);
 	if (_editScrollOffset < 0)
 		_editScrollOffset = 0;
 }
@@ -109,11 +111,13 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
 		}
+		dirty = true;
 		break;
 	case 256 + 19:	// right arrow
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
 		}
+		dirty = true;
 		break;
 	case 256 + 22:	// home
 		dirty = setCaretPos(0);
@@ -139,7 +143,7 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 int EditableWidget::getCaretOffset() const {
 	int caretpos = 0;
 	for (int i = 0; i < _caretPos; i++)
-		caretpos += g_gui.getCharWidth(_editString[i]);
+		caretpos += g_gui.getCharWidth(_editString[i], _font);
 
 	caretpos -= _editScrollOffset;
 
@@ -191,7 +195,7 @@ bool EditableWidget::adjustOffset() {
 		_editScrollOffset -= (editWidth - caretpos);
 		return true;
 	} else if (_editScrollOffset > 0) {
-		const int strWidth = g_gui.getStringWidth(_editString);
+		const int strWidth = g_gui.getStringWidth(_editString, _font);
 		if (strWidth - _editScrollOffset < editWidth) {
 			// scroll right
 			_editScrollOffset = (strWidth - editWidth);
