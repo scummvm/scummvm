@@ -162,8 +162,6 @@ void NewGui::runLoop() {
 	}
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
-		activeDialog->handleTickle();
-
 		if (_needRedraw) {
 			// Restore the overlay to its initial state, then draw all dialogs.
 			// This is necessary to get the blending right.
@@ -187,6 +185,11 @@ void NewGui::runLoop() {
 			}
 			_needRedraw = false;
 		}
+
+		// Don't "tickle" the dialog until the theme has had a chance
+		// to re-allocate buffers in case of a scaler change.
+
+		activeDialog->handleTickle();
 
 		if (useStandardCurs)
 			animateCursor();
