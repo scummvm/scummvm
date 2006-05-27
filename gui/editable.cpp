@@ -80,6 +80,7 @@ void EditableWidget::handleTickle() {
 bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	bool handled = true;
 	bool dirty = false;
+	bool forcecaret = false;
 
 	// First remove caret
 	if (_caretVisible)
@@ -102,33 +103,40 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			_editString.deleteChar(_caretPos);
 			dirty = true;
 		}
+		forcecaret = true;
 		break;
 	case 127:	// delete
 		_editString.deleteChar(_caretPos);
+		forcecaret = true;
 		dirty = true;
 		break;
 	case 256 + 20:	// left arrow
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
 		}
+		forcecaret = true;
 		dirty = true;
 		break;
 	case 256 + 19:	// right arrow
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
 		}
+		forcecaret = true;
 		dirty = true;
 		break;
 	case 256 + 22:	// home
 		dirty = setCaretPos(0);
+		forcecaret = true;
 		break;
 	case 256 + 23:	// end
 		dirty = setCaretPos(_editString.size());
+		forcecaret = true;
 		break;
 	default:
 		if (tryInsertChar((char)ascii, _caretPos)) {
 			_caretPos++;
 			dirty = true;
+			forcecaret = true;
 		} else {
 			handled = false;
 		}
@@ -136,6 +144,9 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 	if (dirty)
 		draw();
+
+	if (forcecaret)
+		makeCaretVisible();
 
 	return handled;
 }
@@ -207,5 +218,10 @@ bool EditableWidget::adjustOffset() {
 	return false;
 }
 
+void EditableWidget::makeCaretVisible() {
+	_caretTime = getMillis() + kCaretBlinkTime;
+	_caretVisible = true;
+	drawCaret(false);
+}
 
 } // End of namespace GUI

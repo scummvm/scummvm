@@ -72,6 +72,7 @@ protected:
 	void drawCaret(bool erase);
 	bool setCaretPos(int newPos);
 	bool adjustOffset();
+	void makeCaretVisible();
 
 	void setFontStyle(Theme::kFontStyle font) { _font = font; }
 
