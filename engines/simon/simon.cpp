@@ -86,6 +86,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_gameFile = 0;
 
 	_strippedTxtMem = 0;
+	_textMem = 0;
 	_textSize = 0;
 	_stringTabNum = 0;
 	_stringTabPos = 0;
