@@ -87,7 +87,7 @@ void PaletteManager::replaceCursorPalette(const byte *colors, uint start, uint n
 
 	if (pal->_size < size) {
 		// Could not re-use the old buffer. Create a new one.
-		delete pal->_data;
+		delete[] pal->_data;
 		pal->_data = new byte[size];
 		pal->_size = size;
 	}
