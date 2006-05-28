@@ -26,10 +26,91 @@
 #include "kyra/text.h"
 #include "kyra/animator.h"
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
 namespace Kyra {
+
+void KyraEngine::registerDefaultSettings() {
+	// Most settings already have sensible defaults. This one, however, is
+	// specific to the Kyra engine.
+	ConfMan.registerDefault("walkspeed", 2);
+}
+
+void KyraEngine::readSettings() {
+	int talkspeed = ConfMan.getInt("talkspeed");
+
+	// The default talk speed is 60. This should be mapped to "Normal".
+
+	if (talkspeed == 0)
+		_configTextspeed = 3;	// Clickable
+	if (talkspeed <= 50)
+		_configTextspeed = 0;	// Slow
+	else if (talkspeed <= 150)
+		_configTextspeed = 1;	// Normal
+	else
+		_configTextspeed = 2;	// Fast
+
+	_configWalkspeed = ConfMan.getInt("walkspeed");
+	_configMusic = ConfMan.getBool("music_mute") ? 0 : 1;
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
+
+	bool speechMute = ConfMan.getBool("speech_mute");
+	bool subtitles = ConfMan.getBool("subtitles");
+
+	if (!speechMute && subtitles)
+		_configVoice = 2;	// Voice & Text
+	else if (!speechMute && !subtitles)
+		_configVoice = 1;	// Voice only
+	else
+		_configVoice = 0;	// Text only
+}
+
+void KyraEngine::writeSettings() {
+	bool speechMute, subtitles;
+	int talkspeed;
+
+	switch (_configTextspeed) {
+	case 0:		// Slow
+		talkspeed = 1;
+		break;
+	case 1:		// Normal
+		talkspeed = 60;
+		break;
+	case 2:		// Fast
+		talkspeed = 255;
+		break;
+	default:	// Clickable
+		talkspeed = 0;
+		break;
+	}
+
+	ConfMan.setInt("talkspeed", talkspeed);
+	ConfMan.setInt("walkspeed", _configWalkspeed);
+	ConfMan.setBool("music_mute", _configMusic == 0);
+	ConfMan.setBool("sfx_mute", _configSounds == 0);
+
+	switch (_configVoice) {
+	case 0:		// Text only
+		speechMute = true;
+		subtitles = true;
+		break;
+	case 1:		// Voice only
+		speechMute = false;
+		subtitles = false;
+		break;
+	default:	// Voice & Text
+		speechMute = false;
+		subtitles = true;
+		break;
+	}
+
+	ConfMan.setBool("speech_mute", speechMute);
+	ConfMan.setBool("subtitles", subtitles);
+
+	ConfMan.flushToDisk();
+}
 
 void KyraEngine::initMainButtonList() {
 	_haveScrollButtons = false;
@@ -385,7 +466,6 @@ void KyraEngine::processMenuButton(Button *button) {
 	button->flags2 &= 0xfb;
 
 	processButton(button);
-
 }
 
 int KyraEngine::drawBoxCallback(Button *button) {
@@ -1071,6 +1151,8 @@ int KyraEngine::gui_quitConfirmNo(Button *button) {
 int KyraEngine::gui_gameControlsMenu(Button *button) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_gameControlsMenu()");
 
+	readSettings();
+
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
@@ -1169,10 +1251,10 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 			menu.item[3].itemString = _configStrings[5]; //"Text only"
 			break;
 		case 1:
-			menu.item[3].itemString = _configStrings[6]; //"Voice & Text"
+			menu.item[3].itemString = _configStrings[6]; //"Voice only"
 			break;
 		case 2:
-			menu.item[3].itemString = _configStrings[7]; //"Voice only"
+			menu.item[3].itemString = _configStrings[7]; //"Voice & Text"
 			break;
 		default:
 			menu.item[3].itemString = "ERROR";
@@ -1246,6 +1328,12 @@ int KyraEngine::gui_controlsChangeVoice(Button *button) {
 	_configVoice = ++_configVoice % 3;
 	gui_setupControls(_menu[5]);
 	return 0;
+}
+
+int KyraEngine::gui_controlsApply(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsApply()");
+	writeSettings();
+	return gui_cancelSubMenu(button);
 }
 
 int KyraEngine::gui_scrollUp(Button *button) {

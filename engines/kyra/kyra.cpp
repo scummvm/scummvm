@@ -274,11 +274,8 @@ int KyraEngine::init() {
 	assert(_movFacingTable);
 	_movFacingTable[0] = 8;
 
-	_configTextspeed = 1;
-	_configWalkspeed = 2;
-	_configMusic = true;
-	_configSounds = true;
-	_configVoice = 1;
+	registerDefaultSettings();
+	readSettings();
 
 	_skipFlag = false;
 

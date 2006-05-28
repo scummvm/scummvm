@@ -1178,7 +1178,7 @@ Menu KyraEngine::_menu[] = {
 			248, 249, 250, &KyraEngine::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
 
 			{1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, -0, 0, 0, 0, 0}
+			248, 249, 250, &KyraEngine::gui_controlsApply, -1, -0, 0, 0, 0, 0}
 		}
 	}
 };

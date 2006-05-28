@@ -295,6 +295,10 @@ public:
 	void quitGame();
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
+	void registerDefaultSettings();
+	void readSettings();
+	void writeSettings();
+
 	void snd_playTheme(int file, int track = 0);
 	void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
@@ -675,6 +679,7 @@ protected:
 	int gui_controlsChangeWalk(Button *button);
 	int gui_controlsChangeText(Button *button);
 	int gui_controlsChangeVoice(Button *button);
+	int gui_controlsApply(Button *button);
 
 	bool gui_quitConfirm(const char *str);
 	void gui_getInput();

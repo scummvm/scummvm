@@ -1319,6 +1319,10 @@ Simon the Sorcerer 1 & 2 add the following non-standard keywords:
         sfx_mute        bool     If true, sound effects are muted
                                  [Simon the Sorcerer 2 only]
 
+The Legend of Kyrandia adds the following non-standard keyword:
+
+        walkspeed       int      The walk speed (0-4)
+
 9.0) Compiling:
 ---- ----------
 You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and

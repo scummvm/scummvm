@@ -30,7 +30,7 @@
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 
-#define CURRENT_VERSION 4
+#define CURRENT_VERSION 5
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
@@ -179,13 +179,16 @@ void KyraEngine::loadGame(const char *fileName) {
 		if (_lastMusicCommand != -1)
 			snd_playWanderScoreViaMap(_lastMusicCommand, 1);
 	}
+
+	// Version 4 stored settings in the savegame. As of version 5, they are
+	// handled by the config manager.
 	
-	if (version >= 4) {
-		_configTextspeed = in->readByte();
-		_configWalkspeed = in->readByte();
-		_configMusic = in->readByte() != 0;
-		_configSounds = in->readByte() != 0;
-		_configVoice = in->readByte();
+	if (version == 4) {
+		in->readByte(); // Text speed
+		in->readByte(); // Walk speed
+		in->readByte(); // Music
+		in->readByte(); // Sound
+		in->readByte(); // Voice
 	}
 
 	loadMainScreen(8);
@@ -316,12 +319,6 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint16BE(0xFFFF);
 	
 	out->writeSint16BE(_lastMusicCommand);
-
-	out->writeByte(_configTextspeed);
-	out->writeByte(_configWalkspeed);
-	out->writeByte(_configMusic);
-	out->writeByte(_configSounds);
-	out->writeByte(_configVoice);
 
 	out->flush();
 
