@@ -174,23 +174,24 @@ void ScummEngine_v2::readIndexFile() {
 	switch (magic) {
 		case 0x0100:
 			printf("Enhanced V2 game detected\n");
+			assert(_game.version == 2);
 			readEnhancedIndexFile();
 			break;
 		case 0x0A31:
 			printf("Classic V1 game detected\n");
-			_game.version = 1;
+			assert(_game.version == 1);
 			readClassicIndexFile();
 			break;
 		case 0x4643:
 			if (!(_game.platform == Common::kPlatformNES))
 				error("Use maniac target");
 			printf("NES V1 game detected\n");
-			_game.version = 1;
+			assert(_game.version == 1);
 			readClassicIndexFile();
 			break;
 		case 0x132:
 			printf("C64 V1 game detected\n");
-			_game.version = 1;
+			assert(_game.version == 1);
 			readClassicIndexFile();
 			break;
 		default:
