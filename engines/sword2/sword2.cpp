@@ -197,7 +197,6 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 
 void Sword2Engine::registerDefaultSettings() {
 	ConfMan.registerDefault("gfx_details", 2);
-	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("reverse_stereo", false);
 }
 
