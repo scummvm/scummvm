@@ -1288,6 +1288,11 @@ void ScummEngine_c64::resetScumm() {
 void ScummEngine_v2::resetScumm() {
 	ScummEngine::resetScumm();
 
+	// To detect V1 demo of Maniac Mansion
+	if (_game.id == GID_MANIAC && !strcmp(_filenamePattern.pattern, "%02d.MAN")) {
+		_game.features |= GF_DEMO;
+	}
+
 	if (_game.platform == Common::kPlatformNES) {
 		initNESMouseOver();
 		_switchRoomEffect2 = _switchRoomEffect = 6;

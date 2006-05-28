@@ -27,6 +27,8 @@ maniac	Maniac Mansion
 	d831f7c048574dd9d5d85db2a1468099	en	C64	C64	-	-	
 	c4a7f7398ac9ae588940f9912ea5fd8f	de	C64	C64	-	-	
 
+	7f45ddd6dbfbf8f80c0c0efea4c295bc	en	DOS	V1	V1	-
+
 	d8d07efcb88f396bee0b402b10c3b1c9	us	NES	NES	-	-	
 	3905799e081b80a61d4460b7b733c206	gb	NES	NES	-	-	
 	81bbfa181184cb494e7a81dcfa94fbd9	fr	NES	NES	-	-	
@@ -53,8 +55,7 @@ maniac	Maniac Mansion
 	87f6e8037b7cc996e13474b491a7a98e	it	DOS	V2	V2	from DOTT	Andrea Petrucci
 	0d1b69471605201ef2fa9cec1f5f02d2	es	DOS	V2	V2	-	abnog, Andrea Petrucci
 
-	7f45ddd6dbfbf8f80c0c0efea4c295bc	en	DOS	V1 Demo	Demo	non-interactive	
-	40564ec47da48a67787d1f9bd043902a	en	DOS	V2 Demo	Demo	non-interactive	
+	40564ec47da48a67787d1f9bd043902a	en	DOS	Demo	Demo	non-interactive	
 
 zak	Zak McKracken and the Alien Mindbenders
 	55d3987641bf229c83bc729210173383	en	C64	V1	-	-	
