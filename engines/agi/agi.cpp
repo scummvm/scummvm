@@ -131,28 +131,39 @@ static void process_events() {
 
 			switch (key = event.kbd.keycode) {
 			case 256 + 20:	// left arrow
+			case 260:	// key pad 4
 				key = KEY_LEFT;
 				break;
 			case 256 + 19:	// right arrow
+			case 262:	// key pad 6
 				key = KEY_RIGHT;
 				break;
 			case 256 + 17:	// up arrow
+			case 264:	// key pad 8
 				key = KEY_UP;
 				break;
 			case 256 + 18:	// down arrow
+			case 258:	// key pad 2
 				key = KEY_DOWN;
 				break;
 			case 256 + 24:	// page up
+			case 265:	// key pad 9
 				key = KEY_UP_RIGHT;
 				break;
 			case 256 + 25:	// page down
+			case 259:	// key pad 3
 				key = KEY_DOWN_RIGHT;
 				break;
 			case 256 + 22:	// home
+			case 263:	// key pad 7
 				key = KEY_UP_LEFT;
 				break;
 			case 256 + 23:	// end
+			case 257:	// key pad 1
 				key = KEY_DOWN_LEFT;
+				break;
+			case 261:	// key pad 5
+				key = KEY_STATIONARY;
 				break;
 			case '+':
 				key = '+';
