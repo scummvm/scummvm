@@ -31,6 +31,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define	ROOT_PATH	"ms0:/"
+
 
 /*
  * Implementation of the ScummVM file system API based on PSPSDK API.
@@ -41,7 +43,6 @@ protected:
 	String _displayName;
 	bool _isDirectory;
 	bool _isValid;
-	bool _isPseudoRoot;
 	String _path;
 	
 public:
@@ -70,8 +71,7 @@ PSPFilesystemNode::PSPFilesystemNode() {
 	_isDirectory = true;
 	_displayName = "Root";
 	_isValid = true;
-	_path = "ms0:/";
-	_isPseudoRoot = true;
+	_path = ROOT_PATH;
 }
 
 PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
@@ -110,7 +110,6 @@ bool PSPFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 			PSPFilesystemNode entry;
             
 			entry._isValid = true;
-			entry._isPseudoRoot = false;
 			entry._displayName = dir.d_name;
 			entry._path = _path;
 			entry._path += dir.d_name;
@@ -146,20 +145,16 @@ const char *lastPathComponent(const Common::String &str) {
 }
 
 AbstractFilesystemNode *PSPFilesystemNode::parent() const {
-	assert(_isValid || _isPseudoRoot);
-	if (_isPseudoRoot)
+	assert(_isValid);
+	
+	if (_path == ROOT_PATH)
 		return 0;
-	PSPFilesystemNode *p = new PSPFilesystemNode();
-	if (_path.size() > 5) {
-		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
-
-		p->_path = String(start, end - start);
-		p->_isValid = true;
-		p->_isDirectory = true;
-		p->_displayName = lastPathComponent(p->_path);
-		p->_isPseudoRoot = false;
-	}
+	
+	const char *start = _path.c_str();
+	const char *end = lastPathComponent(_path);
+	
+	PSPFilesystemNode *p = new PSPFilesystemNode(String(start, end - start), false);
+	
 	return p;
 }
 
