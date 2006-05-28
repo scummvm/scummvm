@@ -107,7 +107,7 @@ uint16 Font::getCharIndex(unsigned char c)
 	}
 
 	for (uint i = 0; i < _numChars; ++i) {
-	if (_charIndex[i] == c2)
+		if (_charIndex[i] == c2)
 			return i;
 	}
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
