@@ -98,6 +98,7 @@ bool Screen::init() {
 			memset(_palettes[i], 0, 768);
 		}
 	}
+	setScreenPalette(_currentPalette);
 	_curDim = &_screenDimTable[0];
 	_charWidth = 0;
 	_charOffset = 0;
