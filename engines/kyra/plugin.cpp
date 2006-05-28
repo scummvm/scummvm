@@ -105,12 +105,15 @@ const PlainGameDescriptor kyra_list[] = {
 };
 
 const Kyra1LanguageTable kyra1_languages[] = {
-	{ "MAIN15.CPS", GF_ENGLISH, Common::EN_ANY },
-	{ "MAIN_ENG.CPS", GF_ENGLISH, Common::EN_ANY },
 	{ "MAIN_FRE.CPS", GF_FRENCH, Common::FR_FRA },
 	{ "MAIN_GER.CPS", GF_GERMAN, Common::DE_DEU },
 	{ "MAIN_SPA.CPS", GF_SPANISH, Common::ES_ESP },
 	{ "MAIN_ITA.CPS", GF_ITALIAN, Common::IT_ITA },
+
+	// default language
+	{ "MAIN15.CPS", GF_ENGLISH, Common::EN_ANY },
+	{ "MAIN_ENG.CPS", GF_ENGLISH, Common::EN_ANY },
+
 	{ 0, 0, Common::UNK_LANG }
 };
 
