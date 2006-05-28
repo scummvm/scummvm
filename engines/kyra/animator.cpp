@@ -210,7 +210,7 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 		// the problem is that the restored area to the 'backbuffer' (screen page 2)
 		// isn't updated on the front buffer in that special scene, so we update
 		// the frontbuffer (screen page 0) too if the object get's redrawn this time
-		if (obj->refreshFlag) {
+		if (obj->refreshFlag && _vm->getScene() == 109) {
 			// do not overwrite the interface
 			if (x <= 1) {
 				width--;

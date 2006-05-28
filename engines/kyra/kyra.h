@@ -271,7 +271,10 @@ public:
 	Character *currentCharacter() { return _currentCharacter; }
 	Character *characterList() { return _characterList; }
 	uint16 brandonStatus() { return _brandonStatusBit; }
-	
+
+	// TODO: remove me with workaround in animator.cpp l209
+	uint16 getScene() { return _currentRoom; }
+
 	bool quit() const { return _quitFlag; }
 
 	int _paletteChanged;
