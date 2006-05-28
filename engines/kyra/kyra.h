@@ -301,6 +301,9 @@ public:
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
 
+	bool speechEnabled();
+	bool textEnabled();
+	
 	void drawSentenceCommand(const char *sentence, int unk1);
 	void updateSentenceCommand(const char *str1, const char *str2, int unk1);
 	void updateTextFade();

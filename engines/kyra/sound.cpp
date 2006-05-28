@@ -403,6 +403,15 @@ void SoundMidiPC::beginFadeOut() {
 
 #pragma mark -
 
+
+bool KyraEngine::speechEnabled() {
+	return _features & GF_TALKIE && (_configVoice == 1 || _configVoice == 2);
+}
+
+bool KyraEngine::textEnabled() {
+	return _features & GF_FLOPPY || (_configVoice == 0 || _configVoice == 2);
+}
+
 void KyraEngine::snd_playTheme(int file, int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
 	assert(file < _musicFilesCount);

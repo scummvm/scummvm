@@ -337,16 +337,18 @@ void KyraEngine::seq_brandonHealing2() {
 	freeShapes123();
 	_screen->showMouse();
 	assert(_poisonGone);
-	if (_features & GF_TALKIE) {
+	if (speechEnabled()) {
 		snd_voiceWaitForFinish();
 		snd_playVoiceFile(2010);
 	}
-	characterSays(_poisonGone[0], 0, -2);
-	if (_features & GF_TALKIE) {
+	if (textEnabled())
+		characterSays(_poisonGone[0], 0, -2);
+	if (speechEnabled()) {
 		snd_voiceWaitForFinish();
 		snd_playVoiceFile(2011);
 	}
-	characterSays(_poisonGone[1], 0, -2);
+	if (textEnabled())
+		characterSays(_poisonGone[1], 0, -2);
 }
 
 void KyraEngine::seq_poisonDeathNow(int now) {
@@ -359,30 +361,34 @@ void KyraEngine::seq_poisonDeathNow(int now) {
 	if (_poisonDeathCounter >= 2) {
 		snd_playWanderScoreViaMap(1, 1);
 		assert(_thePoison);
-		if (_features & GF_TALKIE) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(7000);
 		}
-		characterSays(_thePoison[0], 0, -2);
-		if (_features & GF_TALKIE) {
+		if (textEnabled())
+			characterSays(_thePoison[0], 0, -2);
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(7001);
 		}
-		characterSays(_thePoison[1], 0, -2);
+		if (textEnabled())
+			characterSays(_thePoison[1], 0, -2);
 		seq_poisonDeathNowAnim();
 		_deathHandler = 3;
 	} else {
 		assert(_thePoison);
-		if (_features & GF_TALKIE) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(7002);
 		}
-		characterSays(_thePoison[2], 0, -2);
-		if (_features & GF_TALKIE) {
+		if (textEnabled())
+			characterSays(_thePoison[2], 0, -2);
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(7004);
 		}
-		characterSays(_thePoison[3], 0, -2);
+		if (textEnabled())
+			characterSays(_thePoison[3], 0, -2);
 	}
 }
 
@@ -474,18 +480,20 @@ void KyraEngine::seq_playFluteAnimation() {
 	
 	if (soundType == 1) {
 		assert(_fluteString);
-		if (_features & GF_TALKIE) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(1000);
 		}
-		characterSays(_fluteString[0], 0, -2);
+		if (textEnabled())
+			characterSays(_fluteString[0], 0, -2);
 	} else if (soundType == 2) {
 		assert(_fluteString);
-		if (_features & GF_TALKIE) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(1001);
 		}
-		characterSays(_fluteString[1], 0, -2);
+		if (textEnabled())
+			characterSays(_fluteString[1], 0, -2);
 	}
 }
 
@@ -756,11 +764,12 @@ void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
 	
 	if (item >= 60 && item <= 77) {
 		assert(_flaskFull);
-		if (_features & GF_TALKIE) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(8006);
 		}
-		characterSays(_flaskFull[0], 0, -2);
+		if (textEnabled())
+			characterSays(_flaskFull[0], 0, -2);
 	} else if (item == 78) {
 		assert(type >= 0 && type < ARRAYSIZE(flaskTable1));
 		newItem = flaskTable1[type];
@@ -778,7 +787,7 @@ void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
 	_itemInHand = newItem;
 	assert(_fullFlask);
 	assert(type < _fullFlask_Size && type >= 0);
-	if (_features & GF_TALKIE) {
+	if (speechEnabled()) {
 		snd_voiceWaitForFinish();
 		static const uint16 voiceEntries[] = {
 			0x1F40, 0x1F41, 0x1F42, 0x1F45
@@ -786,7 +795,8 @@ void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
 		assert(type < ARRAYSIZE(voiceEntries));
 		snd_playVoiceFile(voiceEntries[type]);
 	}
-	characterSays(_fullFlask[type], 0, -2);
+	if (textEnabled())
+		characterSays(_fullFlask[type], 0, -2);
 }
 
 void KyraEngine::seq_playDrinkPotionAnim(int item, int unk2, int flags) {

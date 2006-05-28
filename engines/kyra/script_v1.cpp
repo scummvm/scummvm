@@ -45,11 +45,11 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 	_skipFlag = false;
 	if (_features & GF_TALKIE) {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_characterSays(%p) (%d, '%s', %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
-		if (_configVoice == 1 || _configVoice == 2) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(stackPos(0));
 		}
-		if (_configVoice == 0 || _configVoice == 2)
+		if (textEnabled())
 			characterSays(stackPosString(1), stackPos(2), stackPos(3));
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_characterSays(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
@@ -618,12 +618,12 @@ int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 	if (_features & GF_TALKIE) {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_customPrintTalkString(%p) (%d, '%s', %d, %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
 
-		if (_configVoice == 1 || _configVoice == 2) {
+		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(stackPos(0));
 		}
 		_skipFlag = false;
-		if (_configVoice == 0 || _configVoice == 2)
+		if (textEnabled())
 			_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_customPrintTalkString(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
