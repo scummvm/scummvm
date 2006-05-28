@@ -783,7 +783,8 @@ void DriverGL::copyStoredToDisplay() {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glRasterPos2i(0, _screenHeight);
+	glRasterPos2i(0, _screenHeight - 1);
+	glBitmap(0, 0, 0, 0, 0, -1, NULL);
 	glDrawPixels(_screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, _storedDisplay);
 
 	glDepthMask(GL_TRUE);
