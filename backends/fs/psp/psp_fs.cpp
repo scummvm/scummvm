@@ -46,7 +46,6 @@ protected:
 	
 public:
 	PSPFilesystemNode();
-	PSPFilesystemNode(const String &path);
 	PSPFilesystemNode(const Common::String &p, bool verify);
 
 	virtual String displayName() const { return _displayName; }
@@ -75,13 +74,6 @@ PSPFilesystemNode::PSPFilesystemNode() {
 	_isPseudoRoot = true;
 }
 
-PSPFilesystemNode::PSPFilesystemNode(const Common::String &p) {
-	_displayName = p;
-	_isValid = true;
-	_isDirectory = true;
-	_path = p;
-}
-
 PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	assert(p.size() > 0);
         
@@ -98,7 +90,7 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new PSPFilesystemNode(path);
+	return new PSPFilesystemNode(path, true);
 }
 
 
