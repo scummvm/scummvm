@@ -1,4 +1,4 @@
-/* Residual - Virtual machine to run LucasArts' 3D adventure games
+﻿/* Residual - Virtual machine to run LucasArts' 3D adventure games
  * Copyright (C) 2003-2006 The ScummVM-Residual Team (www.scummvm.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -101,8 +101,13 @@ uint16 Font::getCharIndex(unsigned char c)
 	// for the first time and he says "Buenos Días" the
 	// 'í' character will either show up as a different
 	// character or it crashes the game.
+
+	if (_charIndex[c2] == c2) {
+		return c2;
+	}
+
 	for (uint i = 0; i < _numChars; ++i) {
-	  if (_charIndex[i] == c2)
+	if (_charIndex[i] == c2)
 			return i;
 	}
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
