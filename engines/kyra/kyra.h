@@ -776,7 +776,6 @@ protected:
 	SceneExits _sceneExits;
 	uint16 _currentRoom;
 	int _scenePhasingFlag;
-	uint8 *_maskBuffer;
 	
 	int _sceneChangeState;
 	int _loopFlag2;

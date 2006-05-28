@@ -138,8 +138,6 @@ public:
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
-	uint8 *getMaskBuffer() { return getPagePtr(5); }
-
 	void shakeScreen(int times);
 
 	int getRectSize(int x, int y);

@@ -451,7 +451,6 @@ void KyraEngine::startup() {
 		setCharactersPositions(i);
 	_animator->setCharactersHeight();
 	resetBrandonPoisonFlags();
-	_maskBuffer = _screen->getMaskBuffer();
 	_screen->_curPage = 0;
 	// XXX
 	for (int i = 0; i < 0x0C; ++i) {
