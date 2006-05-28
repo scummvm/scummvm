@@ -32,10 +32,6 @@ namespace Kyra {
 Resource::Resource(KyraEngine *engine) {
 	_engine = engine;
 
-	// No PAK files in the demo version
-	if (_engine->features() & GF_DEMO)
-		return;
-
 	// prefetches all PAK Files
 
 	// ugly a hardcoded list
@@ -132,6 +128,17 @@ Resource::Resource(KyraEngine *engine) {
 	} else if (_engine->game() == GI_KYRA3) {
 		usedFilelist = kyra3Filelist;
 	}
+
+	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
+	if (_engine->game() == GI_KYRA1) {
+		if (!loadPakFile("KYRA.DAT")) {
+			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
+		}
+	}
+	
+	// We only need kyra.dat for the demo.
+	if (_engine->features() & GF_DEMO)
+		return;
 		
 	if (!usedFilelist)
 		error("no filelist found for this game");
@@ -149,13 +156,6 @@ Resource::Resource(KyraEngine *engine) {
 		} else {
 			delete file;
 			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
-		}
-	}
-
-	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
-	if (_engine->game() == GI_KYRA1) {
-		if (!loadPakFile("KYRA.DAT")) {
-			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
 		}
 	}
 }
