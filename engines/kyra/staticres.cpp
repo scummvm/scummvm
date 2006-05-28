@@ -802,207 +802,211 @@ const int Screen::_screenDimTableCountK3 = ARRAYSIZE(_screenDimTableK3);
 
 // CD Version *could* use an different opcodeTable
 #define Opcode(x) &KyraEngine::x
-KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
-	// 0x00
-	Opcode(cmd_magicInMouseItem),
-	Opcode(cmd_characterSays),
-	Opcode(cmd_pauseTicks),
-	Opcode(cmd_drawSceneAnimShape),
-	// 0x04
-	Opcode(cmd_queryGameFlag),
-	Opcode(cmd_setGameFlag),
-	Opcode(cmd_resetGameFlag),
-	Opcode(cmd_runNPCScript),
-	// 0x08
-	Opcode(cmd_setSpecialExitList),
-	Opcode(cmd_blockInWalkableRegion),
-	Opcode(cmd_blockOutWalkableRegion),
-	Opcode(cmd_walkPlayerToPoint),
-	// 0x0c
-	Opcode(cmd_dropItemInScene),
-	Opcode(cmd_drawAnimShapeIntoScene),
-	Opcode(cmd_createMouseItem),
-	Opcode(cmd_savePageToDisk),
-	// 0x10
-	Opcode(cmd_sceneAnimOn),
-	Opcode(cmd_sceneAnimOff),
-	Opcode(cmd_getElapsedSeconds),
-	Opcode(cmd_mouseIsPointer),
-	// 0x14
-	Opcode(cmd_destroyMouseItem),
-	Opcode(cmd_runSceneAnimUntilDone),
-	Opcode(cmd_fadeSpecialPalette),
-	Opcode(cmd_playAdlibSound),
-	// 0x18
-	Opcode(cmd_playAdlibScore),
-	Opcode(cmd_phaseInSameScene),
-	Opcode(cmd_setScenePhasingFlag),
-	Opcode(cmd_resetScenePhasingFlag),
-	// 0x1c
-	Opcode(cmd_queryScenePhasingFlag),
-	Opcode(cmd_sceneToDirection),
-	Opcode(cmd_setBirthstoneGem),
-	Opcode(cmd_placeItemInGenericMapScene),
-	// 0x20
-	Opcode(cmd_setBrandonStatusBit),
-	Opcode(cmd_pauseSeconds),
-	Opcode(cmd_getCharactersLocation),
-	Opcode(cmd_runNPCSubscript),
-	// 0x24
-	Opcode(cmd_magicOutMouseItem),
-	Opcode(cmd_internalAnimOn),
-	Opcode(cmd_forceBrandonToNormal),
-	Opcode(cmd_poisonDeathNow),
-	// 0x28
-	Opcode(cmd_setScaleMode),
-	Opcode(cmd_openWSAFile),
-	Opcode(cmd_closeWSAFile),
-	Opcode(cmd_runWSAFromBeginningToEnd),
-	// 0x2c
-	Opcode(cmd_displayWSAFrame),
-	Opcode(cmd_enterNewScene),
-	Opcode(cmd_setSpecialEnterXAndY),
-	Opcode(cmd_runWSAFrames),
-	// 0x30
-	Opcode(cmd_popBrandonIntoScene),
-	Opcode(cmd_restoreAllObjectBackgrounds),
-	Opcode(cmd_setCustomPaletteRange),
-	Opcode(cmd_loadPageFromDisk),
-	// 0x34
-	Opcode(cmd_customPrintTalkString),
-	Opcode(cmd_restoreCustomPrintBackground),
-	Opcode(cmd_hideMouse),
-	Opcode(cmd_showMouse),
-	// 0x38
-	Opcode(cmd_getCharacterX),
-	Opcode(cmd_getCharacterY),
-	Opcode(cmd_changeCharactersFacing),
-	Opcode(cmd_copyWSARegion),
-	// 0x3c
-	Opcode(cmd_printText),
-	Opcode(cmd_random),
-	Opcode(cmd_loadSoundFile),
-	Opcode(cmd_displayWSAFrameOnHidPage),
-	// 0x40
-	Opcode(cmd_displayWSASequentialFrames),
-	Opcode(cmd_drawCharacterStanding),
-	Opcode(cmd_internalAnimOff),
-	Opcode(cmd_changeCharactersXAndY),
-	// 0x44
-	Opcode(cmd_clearSceneAnimatorBeacon),
-	Opcode(cmd_querySceneAnimatorBeacon),
-	Opcode(cmd_refreshSceneAnimator),
-	Opcode(cmd_placeItemInOffScene),
-	// 0x48
-	Opcode(cmd_wipeDownMouseItem),
-	Opcode(cmd_placeCharacterInOtherScene),
-	Opcode(cmd_getKey),
-	Opcode(cmd_specificItemInInventory),
-	// 0x4c
-	Opcode(cmd_popMobileNPCIntoScene),
-	Opcode(cmd_mobileCharacterInScene),
-	Opcode(cmd_hideMobileCharacter),
-	Opcode(cmd_unhideMobileCharacter),
-	// 0x50
-	Opcode(cmd_setCharactersLocation),
-	Opcode(cmd_walkCharacterToPoint),
-	Opcode(cmd_specialEventDisplayBrynnsNote),
-	Opcode(cmd_specialEventRemoveBrynnsNote),
-	// 0x54
-	Opcode(cmd_setLogicPage),
-	Opcode(cmd_fatPrint),
-	Opcode(cmd_preserveAllObjectBackgrounds),
-	Opcode(cmd_updateSceneAnimations),
-	// 0x58
-	Opcode(cmd_sceneAnimationActive),
-	Opcode(cmd_setCharactersMovementDelay),
-	Opcode(cmd_getCharactersFacing),
-	Opcode(cmd_bkgdScrollSceneAndMasksRight),
-	// 0x5c
-	Opcode(cmd_dispelMagicAnimation),
-	Opcode(cmd_findBrightestFireberry),
-	Opcode(cmd_setFireberryGlowPalette),
-	Opcode(cmd_setDeathHandlerFlag),
-	// 0x60
-	Opcode(cmd_drinkPotionAnimation),
-	Opcode(cmd_makeAmuletAppear),
-	Opcode(cmd_drawItemShapeIntoScene),
-	Opcode(cmd_setCharactersCurrentFrame),
-	// 0x64
-	Opcode(cmd_waitForConfirmationMouseClick),
-	Opcode(cmd_pageFlip),
-	Opcode(cmd_setSceneFile),
-	Opcode(cmd_getItemInMarbleVase),
-	// 0x68
-	Opcode(cmd_setItemInMarbleVase),
-	Opcode(cmd_addItemToInventory),
-	Opcode(cmd_intPrint),
-	Opcode(cmd_shakeScreen),
-	// 0x6c
-	Opcode(cmd_createAmuletJewel),
-	Opcode(cmd_setSceneAnimCurrXY),
-	Opcode(cmd_poisonBrandonAndRemaps),
-	Opcode(cmd_fillFlaskWithWater),
-	// 0x70
-	Opcode(cmd_getCharactersMovementDelay),
-	Opcode(cmd_getBirthstoneGem),
-	Opcode(cmd_queryBrandonStatusBit),
-	Opcode(cmd_playFluteAnimation),
-	// 0x74
-	Opcode(cmd_playWinterScrollSequence),
-	Opcode(cmd_getIdolGem),
-	Opcode(cmd_setIdolGem),
-	Opcode(cmd_totalItemsInScene),
-	// 0x78
-	Opcode(cmd_restoreBrandonsMovementDelay),
-	Opcode(cmd_setMousePos),
-	Opcode(cmd_getMouseState),
-	Opcode(cmd_setEntranceMouseCursorTrack),
-	// 0x7c
-	Opcode(cmd_itemAppearsOnGround),
-	Opcode(cmd_setNoDrawShapesFlag),
-	Opcode(cmd_fadeEntirePalette),
-	Opcode(cmd_itemOnGroundHere),
-	// 0x80
-	Opcode(cmd_queryCauldronState),
-	Opcode(cmd_setCauldronState),
-	Opcode(cmd_queryCrystalState),
-	Opcode(cmd_setCrystalState),
-	// 0x84
-	Opcode(cmd_setPaletteRange),
-	Opcode(cmd_shrinkBrandonDown),
-	Opcode(cmd_growBrandonUp),
-	Opcode(cmd_setBrandonScaleXAndY),
-	// 0x88
-	Opcode(cmd_resetScaleMode),
-	Opcode(cmd_getScaleDepthTableValue),
-	Opcode(cmd_setScaleDepthTableValue),
-	Opcode(cmd_message),
-	// 0x8c
-	Opcode(cmd_checkClickOnNPC),
-	Opcode(cmd_getFoyerItem),
-	Opcode(cmd_setFoyerItem),
-	Opcode(cmd_setNoItemDropRegion),
-	// 0x90
-	Opcode(cmd_walkMalcolmOn),
-	Opcode(cmd_passiveProtection),
-	Opcode(cmd_setPlayingLoop),
-	Opcode(cmd_brandonToStoneSequence),
-	// 0x94
-	Opcode(cmd_brandonHealingSequence),
-	Opcode(cmd_protectCommandLine),
-	Opcode(cmd_pauseMusicSeconds),
-	Opcode(cmd_resetMaskRegion),
-	// 0x98
-	Opcode(cmd_setPaletteChangeFlag),
-	Opcode(cmd_fillRect),
-	Opcode(cmd_vocUnload),
-	Opcode(cmd_vocLoad),
-	Opcode(cmd_dummy)
-};
-#undef Opcode
 
-const int KyraEngine::_opcodeTableSize = ARRAYSIZE(_opcodeTable);
+void KyraEngine::setupOpcodeTable() {
+	static OpcodeProc opcodeTable[] = {
+		// 0x00
+		Opcode(cmd_magicInMouseItem),
+		Opcode(cmd_characterSays),
+		Opcode(cmd_pauseTicks),
+		Opcode(cmd_drawSceneAnimShape),
+		// 0x04
+		Opcode(cmd_queryGameFlag),
+		Opcode(cmd_setGameFlag),
+		Opcode(cmd_resetGameFlag),
+		Opcode(cmd_runNPCScript),
+		// 0x08
+		Opcode(cmd_setSpecialExitList),
+		Opcode(cmd_blockInWalkableRegion),
+		Opcode(cmd_blockOutWalkableRegion),
+		Opcode(cmd_walkPlayerToPoint),
+		// 0x0c
+		Opcode(cmd_dropItemInScene),
+		Opcode(cmd_drawAnimShapeIntoScene),
+		Opcode(cmd_createMouseItem),
+		Opcode(cmd_savePageToDisk),
+		// 0x10
+		Opcode(cmd_sceneAnimOn),
+		Opcode(cmd_sceneAnimOff),
+		Opcode(cmd_getElapsedSeconds),
+		Opcode(cmd_mouseIsPointer),
+		// 0x14
+		Opcode(cmd_destroyMouseItem),
+		Opcode(cmd_runSceneAnimUntilDone),
+		Opcode(cmd_fadeSpecialPalette),
+		Opcode(cmd_playAdlibSound),
+		// 0x18
+		Opcode(cmd_playAdlibScore),
+		Opcode(cmd_phaseInSameScene),
+		Opcode(cmd_setScenePhasingFlag),
+		Opcode(cmd_resetScenePhasingFlag),
+		// 0x1c
+		Opcode(cmd_queryScenePhasingFlag),
+		Opcode(cmd_sceneToDirection),
+		Opcode(cmd_setBirthstoneGem),
+		Opcode(cmd_placeItemInGenericMapScene),
+		// 0x20
+		Opcode(cmd_setBrandonStatusBit),
+		Opcode(cmd_pauseSeconds),
+		Opcode(cmd_getCharactersLocation),
+		Opcode(cmd_runNPCSubscript),
+		// 0x24
+		Opcode(cmd_magicOutMouseItem),
+		Opcode(cmd_internalAnimOn),
+		Opcode(cmd_forceBrandonToNormal),
+		Opcode(cmd_poisonDeathNow),
+		// 0x28
+		Opcode(cmd_setScaleMode),
+		Opcode(cmd_openWSAFile),
+		Opcode(cmd_closeWSAFile),
+		Opcode(cmd_runWSAFromBeginningToEnd),
+		// 0x2c
+		Opcode(cmd_displayWSAFrame),
+		Opcode(cmd_enterNewScene),
+		Opcode(cmd_setSpecialEnterXAndY),
+		Opcode(cmd_runWSAFrames),
+		// 0x30
+		Opcode(cmd_popBrandonIntoScene),
+		Opcode(cmd_restoreAllObjectBackgrounds),
+		Opcode(cmd_setCustomPaletteRange),
+		Opcode(cmd_loadPageFromDisk),
+		// 0x34
+		Opcode(cmd_customPrintTalkString),
+		Opcode(cmd_restoreCustomPrintBackground),
+		Opcode(cmd_hideMouse),
+		Opcode(cmd_showMouse),
+		// 0x38
+		Opcode(cmd_getCharacterX),
+		Opcode(cmd_getCharacterY),
+		Opcode(cmd_changeCharactersFacing),
+		Opcode(cmd_copyWSARegion),
+		// 0x3c
+		Opcode(cmd_printText),
+		Opcode(cmd_random),
+		Opcode(cmd_loadSoundFile),
+		Opcode(cmd_displayWSAFrameOnHidPage),
+		// 0x40
+		Opcode(cmd_displayWSASequentialFrames),
+		Opcode(cmd_drawCharacterStanding),
+		Opcode(cmd_internalAnimOff),
+		Opcode(cmd_changeCharactersXAndY),
+		// 0x44
+		Opcode(cmd_clearSceneAnimatorBeacon),
+		Opcode(cmd_querySceneAnimatorBeacon),
+		Opcode(cmd_refreshSceneAnimator),
+		Opcode(cmd_placeItemInOffScene),
+		// 0x48
+		Opcode(cmd_wipeDownMouseItem),
+		Opcode(cmd_placeCharacterInOtherScene),
+		Opcode(cmd_getKey),
+		Opcode(cmd_specificItemInInventory),
+		// 0x4c
+		Opcode(cmd_popMobileNPCIntoScene),
+		Opcode(cmd_mobileCharacterInScene),
+		Opcode(cmd_hideMobileCharacter),
+		Opcode(cmd_unhideMobileCharacter),
+		// 0x50
+		Opcode(cmd_setCharactersLocation),
+		Opcode(cmd_walkCharacterToPoint),
+		Opcode(cmd_specialEventDisplayBrynnsNote),
+		Opcode(cmd_specialEventRemoveBrynnsNote),
+		// 0x54
+		Opcode(cmd_setLogicPage),
+		Opcode(cmd_fatPrint),
+		Opcode(cmd_preserveAllObjectBackgrounds),
+		Opcode(cmd_updateSceneAnimations),
+		// 0x58
+		Opcode(cmd_sceneAnimationActive),
+		Opcode(cmd_setCharactersMovementDelay),
+		Opcode(cmd_getCharactersFacing),
+		Opcode(cmd_bkgdScrollSceneAndMasksRight),
+		// 0x5c
+		Opcode(cmd_dispelMagicAnimation),
+		Opcode(cmd_findBrightestFireberry),
+		Opcode(cmd_setFireberryGlowPalette),
+		Opcode(cmd_setDeathHandlerFlag),
+		// 0x60
+		Opcode(cmd_drinkPotionAnimation),
+		Opcode(cmd_makeAmuletAppear),
+		Opcode(cmd_drawItemShapeIntoScene),
+		Opcode(cmd_setCharactersCurrentFrame),
+		// 0x64
+		Opcode(cmd_waitForConfirmationMouseClick),
+		Opcode(cmd_pageFlip),
+		Opcode(cmd_setSceneFile),
+		Opcode(cmd_getItemInMarbleVase),
+		// 0x68
+		Opcode(cmd_setItemInMarbleVase),
+		Opcode(cmd_addItemToInventory),
+		Opcode(cmd_intPrint),
+		Opcode(cmd_shakeScreen),
+		// 0x6c
+		Opcode(cmd_createAmuletJewel),
+		Opcode(cmd_setSceneAnimCurrXY),
+		Opcode(cmd_poisonBrandonAndRemaps),
+		Opcode(cmd_fillFlaskWithWater),
+		// 0x70
+		Opcode(cmd_getCharactersMovementDelay),
+		Opcode(cmd_getBirthstoneGem),
+		Opcode(cmd_queryBrandonStatusBit),
+		Opcode(cmd_playFluteAnimation),
+		// 0x74
+		Opcode(cmd_playWinterScrollSequence),
+		Opcode(cmd_getIdolGem),
+		Opcode(cmd_setIdolGem),
+		Opcode(cmd_totalItemsInScene),
+		// 0x78
+		Opcode(cmd_restoreBrandonsMovementDelay),
+		Opcode(cmd_setMousePos),
+		Opcode(cmd_getMouseState),
+		Opcode(cmd_setEntranceMouseCursorTrack),
+		// 0x7c
+		Opcode(cmd_itemAppearsOnGround),
+		Opcode(cmd_setNoDrawShapesFlag),
+		Opcode(cmd_fadeEntirePalette),
+		Opcode(cmd_itemOnGroundHere),
+		// 0x80
+		Opcode(cmd_queryCauldronState),
+		Opcode(cmd_setCauldronState),
+		Opcode(cmd_queryCrystalState),
+		Opcode(cmd_setCrystalState),
+		// 0x84
+		Opcode(cmd_setPaletteRange),
+		Opcode(cmd_shrinkBrandonDown),
+		Opcode(cmd_growBrandonUp),
+		Opcode(cmd_setBrandonScaleXAndY),
+		// 0x88
+		Opcode(cmd_resetScaleMode),
+		Opcode(cmd_getScaleDepthTableValue),
+		Opcode(cmd_setScaleDepthTableValue),
+		Opcode(cmd_message),
+		// 0x8c
+		Opcode(cmd_checkClickOnNPC),
+		Opcode(cmd_getFoyerItem),
+		Opcode(cmd_setFoyerItem),
+		Opcode(cmd_setNoItemDropRegion),
+		// 0x90
+		Opcode(cmd_walkMalcolmOn),
+		Opcode(cmd_passiveProtection),
+		Opcode(cmd_setPlayingLoop),
+		Opcode(cmd_brandonToStoneSequence),
+		// 0x94
+		Opcode(cmd_brandonHealingSequence),
+		Opcode(cmd_protectCommandLine),
+		Opcode(cmd_pauseMusicSeconds),
+		Opcode(cmd_resetMaskRegion),
+		// 0x98
+		Opcode(cmd_setPaletteChangeFlag),
+		Opcode(cmd_fillRect),
+		Opcode(cmd_vocUnload),
+		Opcode(cmd_vocLoad),
+		Opcode(cmd_dummy)
+	};
+	
+	_opcodeTable = opcodeTable;
+	_opcodeTableSize = ARRAYSIZE(opcodeTable);
+}
+#undef Opcode
 
 const char *KyraEngine::_musicFiles[] = {
 	"INTRO",

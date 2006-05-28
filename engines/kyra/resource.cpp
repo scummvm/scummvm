@@ -445,4 +445,3 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 }
 
 } // end of namespace Kyra
-

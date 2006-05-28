@@ -607,8 +607,9 @@ protected:
 	void seq_playCredits();
 	void updateKyragemFading();
 	
-	static OpcodeProc _opcodeTable[];
-	static const int _opcodeTableSize;
+	void setupOpcodeTable();
+	OpcodeProc *_opcodeTable;
+	int _opcodeTableSize;
 	
 	void waitForEvent();
 	void loadPalette(const char *filename, uint8 *palData);

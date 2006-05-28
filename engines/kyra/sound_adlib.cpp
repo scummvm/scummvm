@@ -81,8 +81,9 @@ private:
 		const char *name;
 	};
 
-	static const OpcodeEntry _opcodeList[];
-	static const int _opcodesEntries;
+	void setupOpcodeList();
+	const OpcodeEntry *_opcodeList;
+	int _opcodesEntries;
 
 	int snd_ret0x100(va_list &list);
 	int snd_ret0x1983(va_list &list);
@@ -228,8 +229,10 @@ private:
 		POpcode function;
 		const char *name;
 	};
-	static const ParserOpcode _parserOpcodeTable[];
-	static const int _parserOpcodeTableSize;
+	
+	void setupParserOpcodeTable();
+	const ParserOpcode *_parserOpcodeTable;
+	int _parserOpcodeTableSize;
 
 	int update_setRepeat(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_checkRepeat(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -384,6 +387,9 @@ private:
 };
 
 AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
+	setupOpcodeList();
+	setupParserOpcodeTable();
+
 	_mixer = mixer;
 
 	_flags = 0;
@@ -1811,145 +1817,153 @@ int AdlibDriver::updateCallback56(uint8 *&dataptr, Channel &channel, uint8 value
 // static res
 
 #define COMMAND(x) { &AdlibDriver::x, #x }
-const AdlibDriver::OpcodeEntry AdlibDriver::_opcodeList[] = {
-	COMMAND(snd_ret0x100),
-	COMMAND(snd_ret0x1983),
-	COMMAND(snd_initDriver),
-	COMMAND(snd_deinitDriver),
-	COMMAND(snd_setSoundData),
-	COMMAND(snd_unkOpcode1),
-	COMMAND(snd_startSong),
-	COMMAND(snd_unkOpcode2),
-	COMMAND(snd_unkOpcode3),
-	COMMAND(snd_readByte),
-	COMMAND(snd_writeByte),
-	COMMAND(snd_getSoundTrigger),
-	COMMAND(snd_unkOpcode4),
-	COMMAND(snd_dummy),
-	COMMAND(snd_getNullvar4),
-	COMMAND(snd_setNullvar3),
-	COMMAND(snd_setFlag),
-	COMMAND(snd_clearFlag)
-};
 
-const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
-	// 0
-	COMMAND(update_setRepeat),
-	COMMAND(update_checkRepeat),
-	COMMAND(update_setupProgram),
-	COMMAND(update_setNoteSpacing),
+void AdlibDriver::setupOpcodeList() {
+	static const OpcodeEntry opcodeList[] = {
+		COMMAND(snd_ret0x100),
+		COMMAND(snd_ret0x1983),
+		COMMAND(snd_initDriver),
+		COMMAND(snd_deinitDriver),
+		COMMAND(snd_setSoundData),
+		COMMAND(snd_unkOpcode1),
+		COMMAND(snd_startSong),
+		COMMAND(snd_unkOpcode2),
+		COMMAND(snd_unkOpcode3),
+		COMMAND(snd_readByte),
+		COMMAND(snd_writeByte),
+		COMMAND(snd_getSoundTrigger),
+		COMMAND(snd_unkOpcode4),
+		COMMAND(snd_dummy),
+		COMMAND(snd_getNullvar4),
+		COMMAND(snd_setNullvar3),
+		COMMAND(snd_setFlag),
+		COMMAND(snd_clearFlag)
+	};
+	
+	_opcodeList = opcodeList;
+	_opcodesEntries = ARRAYSIZE(opcodeList);
+}
 
-	// 4
-	COMMAND(update_jump),
-	COMMAND(update_jumpToSubroutine),
-	COMMAND(update_returnFromSubroutine),
-	COMMAND(update_setBaseOctave),
+void AdlibDriver::setupParserOpcodeTable() {
+	static const ParserOpcode parserOpcodeTable[] = {
+		// 0
+		COMMAND(update_setRepeat),
+		COMMAND(update_checkRepeat),
+		COMMAND(update_setupProgram),
+		COMMAND(update_setNoteSpacing),
 
-	// 8
-	COMMAND(update_stopChannel),
-	COMMAND(update_playRest),
-	COMMAND(update_writeAdlib),
-	COMMAND(update_setupNoteAndDuration),
+		// 4
+		COMMAND(update_jump),
+		COMMAND(update_jumpToSubroutine),
+		COMMAND(update_returnFromSubroutine),
+		COMMAND(update_setBaseOctave),
 
-	// 12
-	COMMAND(update_setBaseNote),
-	COMMAND(update_setupSecondaryEffect1),
-	COMMAND(update_stopOtherChannel),
-	COMMAND(update_waitForEndOfProgram),
+		// 8
+		COMMAND(update_stopChannel),
+		COMMAND(update_playRest),
+		COMMAND(update_writeAdlib),
+		COMMAND(update_setupNoteAndDuration),
 
-	// 16
-	COMMAND(update_setupInstrument),
-	COMMAND(update_setupPrimaryEffect1),
-	COMMAND(update_removePrimaryEffect1),
-	COMMAND(update_setBaseFreq),
+		// 12
+		COMMAND(update_setBaseNote),
+		COMMAND(update_setupSecondaryEffect1),
+		COMMAND(update_stopOtherChannel),
+		COMMAND(update_waitForEndOfProgram),
 
-	// 20
-	COMMAND(update_stopChannel),
-	COMMAND(update_setupPrimaryEffect2),
-	COMMAND(update_stopChannel),
-	COMMAND(update_stopChannel),
+		// 16
+		COMMAND(update_setupInstrument),
+		COMMAND(update_setupPrimaryEffect1),
+		COMMAND(update_removePrimaryEffect1),
+		COMMAND(update_setBaseFreq),
 
-	// 24
-	COMMAND(update_stopChannel),
-	COMMAND(update_stopChannel),
-	COMMAND(update_setPriority),
-	COMMAND(update_stopChannel),
+		// 20
+		COMMAND(update_stopChannel),
+		COMMAND(update_setupPrimaryEffect2),
+		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel),
 
-	// 28
-	COMMAND(updateCallback23),
-	COMMAND(updateCallback24),
-	COMMAND(update_setExtraLevel1),
-	COMMAND(update_stopChannel),
+		// 24
+		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel),
+		COMMAND(update_setPriority),
+		COMMAND(update_stopChannel),
 
-	// 32
-	COMMAND(update_setupDuration),
-	COMMAND(update_playNote),
-	COMMAND(update_stopChannel),
-	COMMAND(update_stopChannel),
+		// 28
+		COMMAND(updateCallback23),
+		COMMAND(updateCallback24),
+		COMMAND(update_setExtraLevel1),
+		COMMAND(update_stopChannel),
 
-	// 36
-	COMMAND(update_setFractionalNoteSpacing),
-	COMMAND(update_stopChannel),
-	COMMAND(update_setTempo),
-	COMMAND(update_removeSecondaryEffect1),
+		// 32
+		COMMAND(update_setupDuration),
+		COMMAND(update_playNote),
+		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel),
 
-	// 40
-	COMMAND(update_stopChannel),
-	COMMAND(update_setChannelTempo),
-	COMMAND(update_stopChannel),
-	COMMAND(update_setExtraLevel3),
+		// 36
+		COMMAND(update_setFractionalNoteSpacing),
+		COMMAND(update_stopChannel),
+		COMMAND(update_setTempo),
+		COMMAND(update_removeSecondaryEffect1),
 
-	// 44
-	COMMAND(update_setExtraLevel2),
-	COMMAND(update_changeExtraLevel2),
-	COMMAND(update_setAMDepth),
-	COMMAND(update_setVibratoDepth),
+		// 40
+		COMMAND(update_stopChannel),
+		COMMAND(update_setChannelTempo),
+		COMMAND(update_stopChannel),
+		COMMAND(update_setExtraLevel3),
 
-	// 48
-	COMMAND(update_changeExtraLevel1),
-	COMMAND(update_stopChannel),
-	COMMAND(update_stopChannel),
-	COMMAND(updateCallback38),
+		// 44
+		COMMAND(update_setExtraLevel2),
+		COMMAND(update_changeExtraLevel2),
+		COMMAND(update_setAMDepth),
+		COMMAND(update_setVibratoDepth),
 
-	// 52
-	COMMAND(update_stopChannel),
-	COMMAND(updateCallback39),
-	COMMAND(update_removePrimaryEffect2),
-	COMMAND(update_stopChannel),
+		// 48
+		COMMAND(update_changeExtraLevel1),
+		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel),
+		COMMAND(updateCallback38),
 
-	// 56
-	COMMAND(update_stopChannel),
-	COMMAND(updateCallback41),
-	COMMAND(update_resetToGlobalTempo),
-	COMMAND(update_nop1),
+		// 52
+		COMMAND(update_stopChannel),
+		COMMAND(updateCallback39),
+		COMMAND(update_removePrimaryEffect2),
+		COMMAND(update_stopChannel),
 
-	// 60
-	COMMAND(update_setDurationRandomness),
-	COMMAND(update_changeChannelTempo),
-	COMMAND(update_stopChannel),
-	COMMAND(updateCallback46),
+		// 56
+		COMMAND(update_stopChannel),
+		COMMAND(updateCallback41),
+		COMMAND(update_resetToGlobalTempo),
+		COMMAND(update_nop1),
 
-	// 64
-	COMMAND(update_nop2),
-	COMMAND(update_setupRhythmSection),
-	COMMAND(update_playRhythmSection),
-	COMMAND(update_removeRhythmSection),
+		// 60
+		COMMAND(update_setDurationRandomness),
+		COMMAND(update_changeChannelTempo),
+		COMMAND(update_stopChannel),
+		COMMAND(updateCallback46),
 
-	// 68
-	COMMAND(updateCallback51),
-	COMMAND(updateCallback52),
-	COMMAND(updateCallback53),
-	COMMAND(update_setSoundTrigger),
+		// 64
+		COMMAND(update_nop2),
+		COMMAND(update_setupRhythmSection),
+		COMMAND(update_playRhythmSection),
+		COMMAND(update_removeRhythmSection),
 
-	// 72
-	COMMAND(update_setTempoReset),
-	COMMAND(updateCallback56),
-	COMMAND(update_stopChannel)
+		// 68
+		COMMAND(updateCallback51),
+		COMMAND(updateCallback52),
+		COMMAND(updateCallback53),
+		COMMAND(update_setSoundTrigger),
+
+		// 72
+		COMMAND(update_setTempoReset),
+		COMMAND(updateCallback56),
+		COMMAND(update_stopChannel)
+	};
+	
+	_parserOpcodeTable = parserOpcodeTable;
+	_parserOpcodeTableSize = ARRAYSIZE(parserOpcodeTable);
 };
 #undef COMMAND
-
-const int AdlibDriver::_opcodesEntries = ARRAYSIZE(AdlibDriver::_opcodeList);
-const int AdlibDriver::_parserOpcodeTableSize = ARRAYSIZE(AdlibDriver::_parserOpcodeTable);
 
 // This table holds the register offset for operator 1 for each of the nine
 // channels. To get the register offset for operator 2, simply add 3.
@@ -2294,4 +2308,3 @@ void SoundAdlibPC::unk2() {
 }
 
 } // end of namespace Kyra
-
