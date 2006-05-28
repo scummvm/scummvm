@@ -30,6 +30,9 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
+// TODO: Temporary, to get the mouse cursor mock-up working
+#include "graphics/cursorman.h"
+
 namespace Kyra {
 KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_soundDigital = 0;
@@ -131,6 +134,8 @@ int KyraEngine_v3::go() {
 		break;
 	
 	case 1:
+		playVQA("K3INTRO");
+		// TODO: Restart the menu animation
 		break;
 	
 	case 2:
@@ -223,8 +228,41 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	uint32 nextRun = 0;
 	
 	drawMainMenu(strings);
+
+#define A 0x00
+#define B 0xFF
+#define C 0x7F
+
+	// TODO: This is just a mock-up of the real mouse cursor.
+	const byte cursorImage[] = {
+		A, A, C, C, C, C, C, C, C, C,
+		A, B, A, C, C, C, C, C, C, C,
+		A, B, B, A, C, C, C, C, C, C,
+		A, B, B, B, A, C, C, C, C, C,
+		A, B, B, B, B, A, C, C, C, C,
+		A, B, B, B, B, B, A, C, C, C,
+		A, B, B, B, B, B, B, A, C, C,
+		A, B, B, B, B, B, B, B, A, C,
+		A, B, B, B, B, B, B, B, B, A,
+		C, A, A, A, B, B, B, A, A, C,
+		C, C, C, C, A, B, B, B, A, C,
+		C, C, C, C, C, A, B, B, B, A,
+		C, C, C, C, C, C, A, A, A, C
+	};
+
 	_system->warpMouse(300, 180);
+	CursorMan.replaceCursor(cursorImage, 10, 13, 1, 1, C);
+	_screen->hideMouse();	// HACK to get _mouseLockCount to 1.
 	_screen->showMouse();
+
+#undef A
+#undef B
+#undef C
+
+	int fh = _screen->getFontHeight();
+	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
+
+	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
 	
 	while (command == -1 && !_quitFlag) {
 		// yes 2 * _tickLength here not 3 * like in the first draw
@@ -248,6 +286,26 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 			_screen->updateScreen();
 			if ((int32)nextRun - (int32)_system->getMillis() >= 10)
 				delay(10);
+		}
+
+		if (menuRect.contains(mouseX(), mouseY())) {
+			int item = (mouseY() - menuRect.top) / fh;
+
+			if (item != _selectedMenuItem) {
+				gui_printString(strings[_selectedMenuItem], textPos, menuRect.top + _selectedMenuItem * fh, 0x80, 0, 5);
+				gui_printString(strings[item], textPos, menuRect.top + item * fh, 0xFF, 0, 5);
+
+				_selectedMenuItem = item;
+			}
+
+			if (_mousePressFlag) {
+				// TODO: Flash the text
+				command = item;
+
+				// TODO: For now, only the intro is supported
+				if (command != 1)
+					command = -1;
+			}
 		}
 	}
 	
