@@ -991,6 +991,13 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 													md5str, dr.game.platform, d.md5Entry->platform);
 								dr.game.platform = d.md5Entry->platform;
 								
+								// HACK: Special case to distinguish the V1 demo from the full version
+								// (since they have identical MD5):
+								if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
+									dr.game.features |= GF_DEMO;
+									dr.extra = "V1 Demo";
+								}
+								
 								results.push_back(dr);
 								break;
 							}
