@@ -116,6 +116,12 @@ static void process_events() {
 		case OSystem::EVENT_KEYDOWN:
 			key_control = 0;
 			key_alt = 0;
+
+			if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'd') {
+				_console->attach();
+				break;
+			}
+
 			if (event.kbd.flags == OSystem::KBD_CTRL) {
 				key_control = 1;
 				key = 0;
@@ -202,7 +208,7 @@ static void process_events() {
 				key = 0x4300;
 				break;
 			case 291:
-				_console->attach();
+				key = 0x4400;
 				break;
 			case 292:
 				key = KEY_STATUSLN;
