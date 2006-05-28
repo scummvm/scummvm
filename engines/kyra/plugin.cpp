@@ -80,7 +80,7 @@ const GameSettings kyra1_games[] = {
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_FRENCH | GF_TALKIE, 
 										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
 	{ "kyra1", "The Legend of Kyrandia Demo",	GI_KYRA1, GF_DEMO | GF_ENGLISH,
-										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },										
+										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
