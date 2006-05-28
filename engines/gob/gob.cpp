@@ -88,6 +88,7 @@ static const GameSettings gob_games[] = {
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::FR_FRA, "abb5f762f9979d4253002de20f6e7b56"},
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_GRB, "9b6de65d811c08eebf50391b84fcba92"},
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_USA, "54d59c200e3823ad0af11a605a6fd06a"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128"},
 	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "b6d47494bf88398ae59c1b5656cafce4"},
 	// CD 1.000.
 	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "02bf538fd8003b8da23a3546299c3df4"},
