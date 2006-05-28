@@ -768,11 +768,8 @@ void KyraEngine::loadMainScreen(int page) {
 		loadBitmap("MAIN_ITA.CPS", page, page, 0);
 	else
 		warning("no main graphics file found");
-	
-	uint8 *_pageSrc = _screen->getPagePtr(page);
-	uint8 *_pageDst = _screen->getPagePtr(0);
 
-	memcpy(_pageDst, _pageSrc, 320*200);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }
 
 const ScreenDim Screen::_screenDimTable[] = {
@@ -800,9 +797,7 @@ const ScreenDim Screen::_screenDimTableK3[] = {
 
 const int Screen::_screenDimTableCountK3 = ARRAYSIZE(_screenDimTableK3);
 
-// CD Version *could* use an different opcodeTable
 #define Opcode(x) &KyraEngine::x
-
 void KyraEngine::setupOpcodeTable() {
 	static OpcodeProc opcodeTable[] = {
 		// 0x00
@@ -1085,8 +1080,6 @@ Button *KyraEngine::_buttonDataListPtr[] = {
 
 Button KyraEngine::_scrollUpButton =  {0, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
 Button KyraEngine::_scrollDownButton = {0, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
-
-
 
 Button KyraEngine::_menuButtonData[] = {
 	{ 0, 0x0c, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
