@@ -85,7 +85,6 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#define CHECK_HEAP
 	#define SYSTEM_LITTLE_ENDIAN
 
-	#define FORCEINLINE inline
 	#define NORETURN __attribute__((__noreturn__))
 	#define GCC_PACK __attribute__((packed))
 	#define _HEAPOK 0
