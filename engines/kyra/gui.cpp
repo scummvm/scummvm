@@ -677,19 +677,19 @@ void KyraEngine::calcCoords(Menu &menu) {
 			int textX = menu.item[i].labelX + menu_x1;
 			int offset;
 
-			if (textWidth + textX > x1) {
-				offset = (textWidth + textX) - x1;
-				menu.width += offset/2;
-				
+			if (textWidth/2 + textX >= x1) {
+				offset = ((textWidth + textX) - x1) / 2;
 				if (maxOffset < offset)
 					maxOffset = offset;
 			}
 		}
 	}
 
-	if (maxOffset > 0)
+	if (maxOffset > 0) {
 		for (int i = 0; i < menu.nrOfItems; i++)
-			menu.item[i].x += maxOffset - 10;
+			menu.item[i].x += maxOffset + 20;
+		menu.width += maxOffset + 20;	
+	}
 			
 	if (menu.width > 310)
 		menu.width = 310;
