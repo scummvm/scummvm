@@ -494,6 +494,7 @@ int KyraEngine::drawShadedBoxCallback(Button *button) {
 void KyraEngine::setGUILabels() {
 	int offset = 0;
 	int walkspeedGarbageOffset = 36;
+	int menuLabelGarbageOffset = 0;
 	
 	if (_features & GF_TALKIE) {
 		if (_features & GF_ENGLISH) {
@@ -504,6 +505,9 @@ void KyraEngine::setGUILabels() {
 			offset = 6;
 		}
 		walkspeedGarbageOffset = 48;
+	} else if (_features & GF_SPANISH) {
+		offset = -4;
+		menuLabelGarbageOffset = 72;
 	}
 	
 	assert(offset + 27 < _guiStringsSize);
@@ -554,7 +558,7 @@ void KyraEngine::setGUILabels() {
 	// Text speed
 	_menu[5].item[4].labelString = _guiStrings[25 + offset];
 	// Main Menu
-	_menu[5].item[5].itemString = _guiStrings[19 + offset];
+	_menu[5].item[5].itemString = &_guiStrings[19 + offset][menuLabelGarbageOffset];
 	
 	if (_features & GF_TALKIE) {
 		// Text & Voice
