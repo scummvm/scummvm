@@ -430,7 +430,7 @@ int KyraEngine_v2::go() {
 	// Kyra2 goes here :)
 	loadPalette("palette.col", _screen->_currentPalette);
 	_screen->setScreenPalette(_screen->_currentPalette);
-	loadBitmap("_playfld.cps", 0, 0, 0);
+	_screen->loadBitmap("_playfld.cps", 0, 0, 0);
 	_screen->updateScreen();
 	waitForEvent();
 	return 0;
@@ -451,7 +451,7 @@ void KyraEngine::startup() {
 		setCharactersPositions(i);
 	_animator->setCharactersHeight();
 	resetBrandonPoisonFlags();
-	_maskBuffer = _screen->getPagePtr(5);
+	_maskBuffer = _screen->getMaskBuffer();
 	_screen->_curPage = 0;
 	// XXX
 	for (int i = 0; i < 0x0C; ++i) {
@@ -736,7 +736,7 @@ void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags
 		uint8 newImage = shapeTable[i-123].imageIndex;
 		if (newImage != curImage && newImage != 0xFF) {
 			assert(_characterImageTable);
-			loadBitmap(_characterImageTable[newImage], 8, 8, 0);
+			_screen->loadBitmap(_characterImageTable[newImage], 8, 8, 0);
 			curImage = newImage;
 		}
 		_shapes[4+i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, shapeFlags);

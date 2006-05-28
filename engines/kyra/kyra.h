@@ -296,7 +296,6 @@ public:
 	void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
 	void quitGame();
-	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void registerDefaultSettings();
 	void readSettings();

@@ -1962,7 +1962,7 @@ void AdlibDriver::setupParserOpcodeTable() {
 	
 	_parserOpcodeTable = parserOpcodeTable;
 	_parserOpcodeTableSize = ARRAYSIZE(parserOpcodeTable);
-};
+}
 #undef COMMAND
 
 // This table holds the register offset for operator 1 for each of the nine

@@ -130,7 +130,7 @@ void WSAMovieV1::displayFrame(int frameNum) {
 	if (_flags & WF_OFFSCREEN_DECODE) {
 		dst = _offscreenBuffer;
 	} else {
-		dst = _vm->screen()->getPagePtr(_drawPage) + _y * Screen::SCREEN_W + _x;
+		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
 	}
 		
 	if (_currentFrame == _numFrames) {

@@ -40,19 +40,19 @@ void KyraEngine::seq_demo() {
 
 	snd_playTheme(MUSIC_INTRO, 2);
 
-	loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
+	_screen->loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
-	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
+	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	delay(60 * _tickLength);
 	_screen->fadeToBlack();
 
 	_screen->clearPage(0);
-	loadBitmap("TOP.CPS", 7, 7, NULL);
-	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
+	_screen->loadBitmap("TOP.CPS", 7, 7, NULL);
+	_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
-	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
+	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	
 	_seq->playSequence(_seq_WestwoodLogo, true);
@@ -75,10 +75,10 @@ void KyraEngine::seq_demo() {
 	_seq->playSequence(_seq_Demo4, true);
 
 	_screen->clearPage(0);
-	loadBitmap("FINAL.CPS", 7, 7, _screen->_currentPalette);
+	_screen->loadBitmap("FINAL.CPS", 7, 7, _screen->_currentPalette);
 	_screen->_curPage = 0;
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
-	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
+	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	delay(60 * _tickLength);
 	_screen->fadeToBlack();
@@ -127,12 +127,12 @@ void KyraEngine::seq_intro() {
 void KyraEngine::seq_introLogos() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_introLogos()");
 	_screen->clearPage(0);
-	loadBitmap("TOP.CPS", 7, 7, NULL);
-	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
+	_screen->loadBitmap("TOP.CPS", 7, 7, NULL);
+	_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
 	_screen->_curPage = 0;
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
-	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
+	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	
 	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag)) {
@@ -186,15 +186,15 @@ void KyraEngine::seq_introStory() {
 	if (_features & GF_TALKIE) {
 		return;
 	} else if (_features & GF_ENGLISH) {
-		loadBitmap("TEXT.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT.CPS", 3, 3, 0);
 	} else if (_features & GF_GERMAN) {
-		loadBitmap("TEXT_GER.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
 	} else if (_features & GF_FRENCH) {
-		loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
 	} else if (_features & GF_SPANISH) {
-		loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
 	} else if (_features & GF_ITALIAN) {
-		loadBitmap("TEXT_ITA.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, 0);
 	} else {
 		warning("no story graphics file found");
 	}
@@ -950,7 +950,7 @@ int KyraEngine::seq_playEnd() {
 			_screen->hideMouse();
 			_screen->fadeSpecialPalette(32, 228, 20, 60);
 			delay(60 * _tickLength);
-			loadBitmap("GEMHEAL.CPS", 3, 3, _screen->_currentPalette);
+			_screen->loadBitmap("GEMHEAL.CPS", 3, 3, _screen->_currentPalette);
 			_screen->setScreenPalette(_screen->_currentPalette);
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, 1, 0);
 			uint32 nextTime = _system->getMillis() + 120 * _tickLength;
@@ -1009,7 +1009,7 @@ void KyraEngine::seq_playEnding() {
 	_screen->hideMouse();
 	_screen->_curPage = 0;
 	_screen->fadeToBlack();
-	loadBitmap("REUNION.CPS", 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap("REUNION.CPS", 3, 3, _screen->_currentPalette);
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_curPage = 0;
 	// XXX
@@ -1047,7 +1047,7 @@ void KyraEngine::seq_playCredits() {
 	} else
 		_screen->setFont(Screen::FID_8_FNT);
 	
-	loadBitmap("CHALET.CPS", 4, 4, _screen->_currentPalette);
+	_screen->loadBitmap("CHALET.CPS", 4, 4, _screen->_currentPalette);
 	_screen->setScreenPalette(_screen->_currentPalette);
 	
 	_screen->setCurPage(0);
@@ -1632,7 +1632,7 @@ int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 
 void KyraEngine::setupPanPages() {
 	debugC(9, kDebugLevelMain, "KyraEngine::setupPanPages()");
-	loadBitmap("bead.cps", 3, 3, 0);
+	_screen->loadBitmap("BEAD.CPS", 3, 3, 0);
 	for (int i = 0; i <= 19; ++i) {
 		_panPagesTable[i] = _seq->setPanPages(3, i);
 	}

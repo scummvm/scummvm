@@ -92,7 +92,8 @@ public:
 	bool init();
 
 	void updateScreen();
-	uint8 *getPagePtr(int pageNum);
+	const uint8 *getCPagePtr(int pageNum) const;
+	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
 	void clearPage(int pageNum);
 	int setCurPage(int pageNum);
 	void clearCurPage();
@@ -135,6 +136,9 @@ public:
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int noXor);
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
+	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
+
+	uint8 *getMaskBuffer() { return getPagePtr(5); }
 
 	void shakeScreen(int times);
 
@@ -186,6 +190,8 @@ public:
 	static const ScreenDim _screenDimTableK3[];
 	static const int _screenDimTableCountK3;
 private:
+	uint8 *getPagePtr(int pageNum);
+
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();
 	void copyMouseToScreen();

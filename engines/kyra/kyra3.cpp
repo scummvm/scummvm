@@ -161,7 +161,7 @@ void KyraEngine_v3::playVQA(const char *name) {
 		uint8 pal[768];
 		memcpy(pal, _screen->getPalette(0), sizeof(pal));
 		if (_screen->_curPage == 0)
-			_screen->copyCurPageBlock(0, 0, 320, 200, _screen->getPagePtr(3));
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 3);
 
 		_screen->hideMouse();
 		_soundDigital->beginFadeOut(_musicSoundChannel);
@@ -173,7 +173,7 @@ void KyraEngine_v3::playVQA(const char *name) {
 		_screen->showMouse();
 
 		if (_screen->_curPage == 0)
-			_screen->copyBlockToPage(0, 0, 0, 320, 200, _screen->getPagePtr(3));
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
 		_screen->setScreenPalette(pal);
 	}
 }
@@ -205,7 +205,11 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	
 	_screen->_charWidth = -2;
 	_screen->setScreenDim(3);
-	_screen->copyCurPageBlock(_screen->_curDim->sx, _screen->_curDim->sy, _screen->_curDim->w, _screen->_curDim->h, _screen->getPagePtr(3));
+	int backUpX = _screen->_curDim->sx;
+	int backUpY = _screen->_curDim->sy;
+	int backUpWidth = _screen->_curDim->w;
+	int backUpHeight = _screen->_curDim->h;
+	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 0, 3);
 
 	int x = _screen->_curDim->sx << 3;
 	int y = _screen->_curDim->sy;
@@ -250,7 +254,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	if (_quitFlag)
 		command = -1;
 	
-	_screen->copyBlockToPage(_screen->_curPage, _screen->_curDim->sx, _screen->_curDim->sy, _screen->_curDim->w, _screen->_curDim->h, _screen->getPagePtr(3));
+	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
 	_screen->_charWidth = charWidthBackUp;
 	_screen->setFont(oldFont);
 	

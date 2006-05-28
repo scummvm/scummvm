@@ -26,6 +26,7 @@
 #include "graphics/cursorman.h"
 #include "kyra/screen.h"
 #include "kyra/kyra.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
@@ -135,7 +136,21 @@ void Screen::updateScreen() {
 uint8 *Screen::getPagePtr(int pageNum) {
 	debugC(9, kDebugLevelScreen, "Screen::getPagePtr(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
+	// if pageNum == 0 wholeScreenDirty
 	return _pagePtrs[pageNum];
+}
+
+const uint8 *Screen::getCPagePtr(int pageNum) const {
+	debugC(9, kDebugLevelScreen, "Screen::getCPagePtr(%d)", pageNum);
+	assert(pageNum < SCREEN_PAGE_NUM);
+	return _pagePtrs[pageNum];
+}
+
+uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
+	debugC(9, kDebugLevelScreen, "Screen::getPageRect(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
+	assert(pageNum < SCREEN_PAGE_NUM);
+	// if pageNum == 0 rectDirty(x, y, w, h)
+	return _pagePtrs[pageNum] + y * SCREEN_W + x;
 }
 
 void Screen::clearPage(int pageNum) {
@@ -2159,6 +2174,46 @@ void Screen::shakeScreen(int times) {
 		_system->setShakePos(0);
 		_system->updateScreen();
 	}
+}
+
+void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
+	debugC(9, kDebugLevelScreen, "KyraEngine::loadBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
+	uint32 fileSize;
+	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
+
+	if (!srcData) {
+		warning("coudln't load bitmap: '%s'", filename);
+		return;
+	}
+
+	uint8 compType = srcData[2];
+	uint32 imgSize = READ_LE_UINT32(srcData + 4);
+	uint16 palSize = READ_LE_UINT16(srcData + 8);
+
+	if (palData && palSize) {
+		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
+		memcpy(palData, srcData + 10, palSize);		
+	}
+
+	uint8 *srcPtr = srcData + 10 + palSize;
+	uint8 *dstData = getPagePtr(dstPage);
+
+	switch (compType) {
+	case 0:
+		memcpy(dstData, srcPtr, imgSize);
+		break;
+	case 3:
+		Screen::decodeFrame3(srcPtr, dstData, imgSize);
+		break;
+	case 4:
+		Screen::decodeFrame4(srcPtr, dstData, imgSize);
+		break;
+	default:
+		error("Unhandled bitmap compression %d", compType);
+		break;
+	}
+
+	delete [] srcData;
 }
 
 } // End of namespace Kyra

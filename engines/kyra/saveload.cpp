@@ -194,7 +194,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	loadMainScreen(8);
 
 	if (queryGameFlag(0x2D)) {
-		loadBitmap("AMULET3.CPS", 10, 10, 0);
+		_screen->loadBitmap("AMULET3.CPS", 10, 10, 0);
 		if (!queryGameFlag(0xF1)) {
 			for (int i = 0x55; i <= 0x5A; ++i) {
 				if (queryGameFlag(i)) {

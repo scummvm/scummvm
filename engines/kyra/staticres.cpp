@@ -631,7 +631,7 @@ void KyraEngine::initStaticResource() {
 }
 
 void KyraEngine::loadMouseShapes() {
-	loadBitmap("MOUSE.CPS", 3, 3, 0);
+	_screen->loadBitmap("MOUSE.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 	_shapes[4] = _screen->encodeShape(0, 0, 8, 10, 0);
 	_shapes[5] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
@@ -659,7 +659,7 @@ void KyraEngine::loadCharacterShapes() {
 		}
 		if (shape->imageIndex != curImage) {
 			assert(shape->imageIndex < _characterImageTableSize);
-			loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
+			_screen->loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
 			curImage = shape->imageIndex;
 		}
 		_shapes[i+7+4] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
@@ -668,7 +668,7 @@ void KyraEngine::loadCharacterShapes() {
 }
 
 void KyraEngine::loadSpecialEffectShapes() {
-	loadBitmap("EFFECTS.CPS", 3, 3, 0);
+	_screen->loadBitmap("EFFECTS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
  
 	int currShape; 
@@ -688,7 +688,7 @@ void KyraEngine::loadSpecialEffectShapes() {
 void KyraEngine::loadItems() {
 	int shape;
 
-	loadBitmap("JEWELS3.CPS", 3, 3, 0);
+	_screen->loadBitmap("JEWELS3.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 
 	_shapes[327] = 0;
@@ -715,7 +715,7 @@ void KyraEngine::loadItems() {
 		_shapes[4 + shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
 
 
-	loadBitmap("ITEMS.CPS", 3, 3, 0);
+	_screen->loadBitmap("ITEMS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 
 	for (int i = 0; i < 107; i++) {
@@ -740,7 +740,7 @@ void KyraEngine::loadItems() {
 }
 
 void KyraEngine::loadButtonShapes() {
-	loadBitmap("BUTTONS2.CPS", 3, 3, 0);
+	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 	_scrollUpButton.process0PtrShape = _screen->encodeShape(0, 0, 24, 14, 1);
 	_scrollUpButton.process1PtrShape = _screen->encodeShape(24, 0, 24, 14, 1);
@@ -755,17 +755,17 @@ void KyraEngine::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
 	if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
-		loadBitmap("MAIN15.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN15.CPS", page, page, 0);
 	else if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
-		loadBitmap("MAIN_ENG.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if(_features & GF_FRENCH)
-		loadBitmap("MAIN_FRE.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
 	else if(_features & GF_GERMAN)
-		loadBitmap("MAIN_GER.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_GER.CPS", page, page, 0);
 	else if (_features & GF_SPANISH)
-		loadBitmap("MAIN_SPA.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_SPA.CPS", page, page, 0);
 	else if (_features & GF_ITALIAN)
-		loadBitmap("MAIN_ITA.CPS", page, page, 0);
+		_screen->loadBitmap("MAIN_ITA.CPS", page, page, 0);
 	else
 		warning("no main graphics file found");
 

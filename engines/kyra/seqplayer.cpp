@@ -70,7 +70,7 @@ SeqPlayer::~SeqPlayer() {
 uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 	debugC( 9, kDebugLevelSequence, "SeqPlayer::setPanPages(%d, %d)", pageNum, shape);
 	uint8 *panPage = 0;
-	const uint8 *data = _screen->getPagePtr(pageNum);
+	const uint8 *data = _screen->getCPagePtr(pageNum);
 	uint16 numShapes = READ_LE_UINT16(data);
 	if (shape < numShapes) {
 		uint32 offs = 0;
@@ -93,7 +93,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 
 void SeqPlayer::makeHandShapes() {
 	debugC( 9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
-	_vm->loadBitmap("WRITING.CPS", 3, 3, 0);
+	_screen->loadBitmap("WRITING.CPS", 3, 3, 0);
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		if (_handShapes[i])
 			free(_handShapes[i]);
@@ -243,7 +243,7 @@ void SeqPlayer::s1_loadPalette() {
 
 void SeqPlayer::s1_loadBitmap() {
 	uint8 cpsNum = *_seqData++;
-	_vm->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, 0);
+	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, 0);
 }
 
 void SeqPlayer::s1_fadeToBlack() {

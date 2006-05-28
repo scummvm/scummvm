@@ -446,7 +446,7 @@ void KyraEngine::loadSceneMSC() {
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".MSC");
 	_screen->fillRect(0, 0, 319, 199, 0, 5);
-	loadBitmap(fileNameBuffer, 3, 5, 0);
+	_screen->loadBitmap(fileNameBuffer, 3, 5, 0);
 }
 
 void KyraEngine::startSceneScript(int brandonAlive) {
@@ -457,7 +457,7 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	char fileNameBuffer[32];
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".CPS");
-	loadBitmap(fileNameBuffer, 3, 3, 0);
+	_screen->loadBitmap(fileNameBuffer, 3, 3, 0);
 	_sprites->loadSceneShapes();
 	_exitListPtr = 0;
 
