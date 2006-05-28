@@ -64,7 +64,8 @@ public:
 	void voicePlay(const char *file);
 	void voiceUnload() {}
 	bool voiceIsPlaying();
-
+	void voiceStop();
+	
 protected:
 	KyraEngine *_engine;
 	Audio::Mixer *_mixer;

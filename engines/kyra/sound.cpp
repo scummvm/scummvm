@@ -81,6 +81,10 @@ void Sound::voicePlay(const char *file) {
 	fileSize = 0;
 }
 
+void Sound::voiceStop() {
+	_mixer->stopHandle(_vocHandle);
+}
+
 bool Sound::voiceIsPlaying() {
 	return _mixer->isSoundHandleActive(_vocHandle);
 }

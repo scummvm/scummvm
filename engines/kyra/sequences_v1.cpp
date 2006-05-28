@@ -118,6 +118,7 @@ void KyraEngine::seq_intro() {
 	delay(30 * _tickLength);
 	_seq->setCopyViewOffs(false);
 	_sound->haltTrack();
+	_sound->voiceStop();
 	if (_features & GF_TALKIE) {
 		_res->unloadPakFile("INTRO.VRM");
 	}
