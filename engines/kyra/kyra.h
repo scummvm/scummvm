@@ -1052,13 +1052,12 @@ private:
 	
 	int _musicSoundChannel;
 	const char *_menuAudioFile;
-	int _selectedMenuItem;
 	
 	// gui/menu specific
 private:
 	static const char *_mainMenuStrings[];
 	int handleMainMenu(WSAMovieV3 *logo);
-	void drawMainMenu(const char * const *strings);
+	void drawMainMenu(const char * const *strings, int select);
 	void drawMainBox(int x, int y, int w, int h, int fill);
 	
 	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);

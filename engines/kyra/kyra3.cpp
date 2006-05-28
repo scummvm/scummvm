@@ -38,7 +38,6 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
-	_selectedMenuItem = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -226,8 +225,10 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	
 	int curFrame = 29, frameAdd = 1;
 	uint32 nextRun = 0;
+
+	int selected = 0;
 	
-	drawMainMenu(strings);
+	drawMainMenu(strings, selected);
 
 #define A 0x00
 #define B 0xFF
@@ -291,11 +292,11 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 		if (menuRect.contains(mouseX(), mouseY())) {
 			int item = (mouseY() - menuRect.top) / fh;
 
-			if (item != _selectedMenuItem) {
-				gui_printString(strings[_selectedMenuItem], textPos, menuRect.top + _selectedMenuItem * fh, 0x80, 0, 5);
+			if (item != selected) {
+				gui_printString(strings[selected], textPos, menuRect.top + selected * fh, 0x80, 0, 5);
 				gui_printString(strings[item], textPos, menuRect.top + item * fh, 0xFF, 0, 5);
 
-				_selectedMenuItem = item;
+				selected = item;
 			}
 
 			if (_mousePressFlag) {
@@ -325,7 +326,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	return command;
 }
 
-void KyraEngine_v3::drawMainMenu(const char * const *strings) {
+void KyraEngine_v3::drawMainMenu(const char * const *strings, int select) {
 	debugC(9, kDebugLevelMain, "KyraEngine::drawMainMenu(%p)", (const void*)strings);
 	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
 	
@@ -334,7 +335,7 @@ void KyraEngine_v3::drawMainMenu(const char * const *strings) {
 	
 	for (int i = 0; i < menuTable[3]; ++i) {
 		int curY = top + i * _screen->getFontHeight();
-		int color = (i == _selectedMenuItem) ? menuTable[6] : menuTable[5];
+		int color = (i == select) ? menuTable[6] : menuTable[5];
 		gui_printString(strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5);
 	}
 }
