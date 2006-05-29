@@ -34,6 +34,10 @@
 
 namespace Agi {
 
+Menu* menu;
+
+// TODO: add constructor/destructor for agi_menu, agi_menu_option
+
 struct agi_menu_option {
 	int enabled;			/**< option is enabled or disabled */
 	int event;			/**< menu event */
@@ -41,8 +45,6 @@ struct agi_menu_option {
 	char *text;			/**< text of menu option */
 };
 
-typedef Common::List<agi_menu_option*> MenuOptionList;
-	
 struct agi_menu {
 	MenuOptionList down;		/**< list head for menu options */
 	int index;			/**< number of menu in menubar */
@@ -53,14 +55,7 @@ struct agi_menu {
 	char *text;			/**< menu name */
 };
 
-typedef Common::List<agi_menu*> MenuList;
-
-static MenuList menubar;
-
-static int h_cur_menu;
-static int v_cur_menu;
-
-static agi_menu *get_menu(int i) {
+agi_menu *Menu::get_menu(int i) {
 	MenuList::iterator iter;
 	for (iter = menubar.begin(); iter != menubar.end(); ++iter) {
 		agi_menu *m = *iter;
@@ -70,7 +65,7 @@ static agi_menu *get_menu(int i) {
 	return NULL;
 }
 
-static agi_menu_option *get_menu_option(int i, int j) {
+agi_menu_option *Menu::get_menu_option(int i, int j) {
 	agi_menu *m = get_menu(i);
 	MenuOptionList::iterator iter;
 	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
@@ -82,7 +77,7 @@ static agi_menu_option *get_menu_option(int i, int j) {
 	return NULL;
 }
 
-static void draw_menu_bar() {
+void Menu::draw_menu_bar() {
 	clear_lines(0, 0, MENU_BG);
 	flush_lines(0, 0);
 
@@ -94,7 +89,7 @@ static void draw_menu_bar() {
 
 }
 
-static void draw_menu_hilite(int cur_menu) {
+void Menu::draw_menu_hilite(int cur_menu) {
 	agi_menu *m = get_menu(cur_menu);
 	debugC(6, kDebugLevelMenu, "[%s]", m->text);
 	print_text(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
@@ -102,7 +97,7 @@ static void draw_menu_hilite(int cur_menu) {
 }
 
 /* draw box and pulldowns. */
-static void draw_menu_option(int h_menu) {
+void Menu::draw_menu_option(int h_menu) {
 	/* find which vertical menu it is */
 	agi_menu *m = get_menu(h_menu);
 
@@ -117,7 +112,7 @@ static void draw_menu_option(int h_menu) {
 	}
 }
 
-static void draw_menu_option_hilite(int h_menu, int v_menu) {
+void Menu::draw_menu_option_hilite(int h_menu, int v_menu) {
 	agi_menu *m = get_menu(h_menu);
 	agi_menu_option *d = get_menu_option(h_menu, v_menu);
 
@@ -125,14 +120,14 @@ static void draw_menu_option_hilite(int h_menu, int v_menu) {
 			MENU_BG, d->enabled ? MENU_FG : MENU_DISABLED);
 }
 
-static void new_menu_selected(int i) {
+void Menu::new_menu_selected(int i) {
 	show_pic();
 	draw_menu_bar();
 	draw_menu_hilite(i);
 	draw_menu_option(i);
 }
 
-static int mouse_over_text(unsigned int line, unsigned int col, char *s) {
+bool Menu::mouse_over_text(unsigned int line, unsigned int col, char *s) {
 	if (mouse.x < col * CHAR_COLS)
 		return false;
 
@@ -147,12 +142,6 @@ static int mouse_over_text(unsigned int line, unsigned int col, char *s) {
 
 	return true;
 }
-
-static int h_index;
-static int v_index;
-static int h_col;
-static int h_max_menu;
-static int v_max_menu[10];
 
 #if 0
 static void add_about_option() {
@@ -176,14 +165,14 @@ static void add_about_option() {
  * Public functions
  */
 
-void menu_init() {
+Menu::Menu() {
 	h_index = 0;
 	h_col = 1;
 	h_cur_menu = 0;
 	v_cur_menu = 0;
 }
 
-void menu_deinit() {
+Menu::~Menu() {
 	MenuList::iterator iterh;
 	for (iterh = menubar.reverse_begin(); iterh != menubar.end(); ) {
 		agi_menu *m = *iterh;
@@ -202,7 +191,7 @@ void menu_deinit() {
 	}
 }
 
-void menu_add(char *s) {
+void Menu::add(char *s) {
 	agi_menu *m = new agi_menu;
 	m->text = strdup(s);
 	while (m->text[strlen(m->text) - 1] == ' ')
@@ -221,7 +210,7 @@ void menu_add(char *s) {
 	menubar.push_back(m);
 }
 
-void menu_add_item(char *s, int code) {
+void Menu::add_item(char *s, int code) {
 	int l;
 
 	agi_menu_option* d = new agi_menu_option;
@@ -249,7 +238,7 @@ void menu_add_item(char *s, int code) {
 	m->down.push_back(d);
 }
 
-void menu_submit() {
+void Menu::submit() {
 	debugC(3, kDebugLevelMenu, "Submitting menu");
 
 	/* add_about_option (); */
@@ -269,7 +258,7 @@ void menu_submit() {
 	}
 }
 
-int menu_keyhandler(int key) {
+bool Menu::keyhandler(int key) {
 	static int clock_val;
 	static int menu_active = false;
 	static int button_used = 0;
@@ -435,7 +424,7 @@ exit_menu:
 	return true;
 }
 
-void menu_set_item(int event, int state) {
+void Menu::set_item(int event, int state) {
 	/* scan all menus for event number # */
 
 	debugC(6, kDebugLevelMenu, "event = %d, state = %d", event, state);
@@ -453,7 +442,7 @@ void menu_set_item(int event, int state) {
 	}
 }
 
-void menu_enable_all() {
+void Menu::enable_all() {
 	MenuList::iterator iterh;
 	for (iterh = menubar.begin(); iterh != menubar.end(); ++iterh) {
 		agi_menu *m = *iterh;

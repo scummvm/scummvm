@@ -732,7 +732,7 @@ int loadgame_simple() {
 	if ((rc = load_game(path)) == err_OK) {
 		message_box("Game restored.");
 		game.exit_all_logics = 1;
-		menu_enable_all();
+		menu->enable_all();
 	} else {
 		message_box("Error restoring game.");
 	}
@@ -775,7 +775,7 @@ int loadgame_dialog() {
 	if ((rc = load_game(path)) == err_OK) {
 		message_box("Game restored.");
 		game.exit_all_logics = 1;
-		menu_enable_all();
+		menu->enable_all();
 	} else {
 		message_box("Error restoring game.");
 	}

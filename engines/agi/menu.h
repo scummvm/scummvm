@@ -25,6 +25,8 @@
 #ifndef AGI_MENU_H
 #define AGI_MENU_H
 
+#include "common/list.h"
+
 namespace Agi {
 
 #define MENU_BG		0x0f	/* White */
@@ -33,14 +35,47 @@ namespace Agi {
 #define MENU_FG		0x00	/* Black */
 #define MENU_LINE	0x00	/* Black */
 
-void menu_init(void);
-void menu_deinit(void);
-void menu_add(char *);
-void menu_add_item(char *, int);
-void menu_submit(void);
-void menu_set_item(int, int);
-int menu_keyhandler(int);
-void menu_enable_all(void);
+struct agi_menu;	
+struct agi_menu_option;
+typedef Common::List<agi_menu*> MenuList;
+typedef Common::List<agi_menu_option*> MenuOptionList;
+
+class Menu {
+public:
+	Menu();
+	~Menu();
+
+	void add(char *s);
+	void add_item(char *s, int code);
+	void submit();
+	void set_item(int event, int state);
+	bool keyhandler(int key);
+	void enable_all();
+
+private:
+	MenuList menubar;
+
+	int h_cur_menu;
+	int v_cur_menu;
+
+	int h_index;
+	int v_index;
+	int h_col;
+	int h_max_menu;
+	int v_max_menu[10];
+
+	agi_menu* get_menu(int i);
+	agi_menu_option *get_menu_option(int i, int j);
+	void draw_menu_bar();
+	void draw_menu_hilite(int cur_menu);
+	void draw_menu_option(int h_menu);
+	void draw_menu_option_hilite(int h_menu, int v_menu);
+	void new_menu_selected(int i);
+	bool mouse_over_text(unsigned int line, unsigned int col, char *s);
+	
+};
+
+extern Menu* menu;
 
 }                             // End of namespace Agi
 

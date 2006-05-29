@@ -314,7 +314,7 @@ int agi_init() {
 
 	init_words();
 
-	menu_init();
+	menu = new Menu();
 	init_pri_table();
 
 	/* clear string buffer */

@@ -273,7 +273,7 @@ int main_cycle() {
 		setvar(V_key, 0);	/* clear ENTER key */
 		break;
 	case INPUT_MENU:
-		menu_keyhandler(key);
+		menu->keyhandler(key);
 		do_update();
 		return false;
 	case INPUT_NONE:
@@ -391,7 +391,8 @@ int run_game() {
 		agi_deinit();
 	} while (ec == err_RestartGame);
 
-	menu_deinit();
+	delete menu;
+	menu = 0;
 
 	release_image_stack();
 

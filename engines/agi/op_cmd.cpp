@@ -420,15 +420,15 @@ cmd(menu_input) {
 }
 
 cmd(enable_item) {
-	menu_set_item(p0, true);
+	menu->set_item(p0, true);
 }
 
 cmd(disable_item) {
-	menu_set_item(p0, false);
+	menu->set_item(p0, false);
 }
 
 cmd(submit_menu) {
-	menu_submit();
+	menu->submit();
 }
 
 cmd(set_scan_start) {
@@ -874,13 +874,13 @@ cmd(pause) {
 cmd(set_menu) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, cur_logic->num_texts);
 	if (cur_logic->texts != NULL && p0 < cur_logic->num_texts)
-		menu_add(cur_logic->texts[p0 - 1]);
+		menu->add(cur_logic->texts[p0 - 1]);
 }
 
 cmd(set_menu_item) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, cur_logic->num_texts);
 	if (cur_logic->texts != NULL && p0 <= cur_logic->num_texts)
-		menu_add_item(cur_logic->texts[p0 - 1], p1);
+		menu->add_item(cur_logic->texts[p0 - 1], p1);
 }
 
 cmd(version) {
@@ -980,7 +980,7 @@ cmd(restart_game) {
 	if (sel == 0) {
 		game.quit_prog_now = 0xff;
 		setflag(F_restart_game, true);
-		menu_enable_all();
+		menu->enable_all();
 	}
 }
 
