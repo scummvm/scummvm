@@ -273,12 +273,14 @@ public:
 	void setGfx(int w, int h, int r, int g, int b);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
+	void useThemeTransparency(bool enable) { _transparency = enable; }
 
 protected:
 	void drawWidget(bool hilite);
 
 	Graphics::Surface _gfx;
 	int _alpha;
+	bool _transparency;
 };
 
 /* ContainerWidget */

@@ -43,7 +43,7 @@
 #define kShadowTr4 128
 #define kShadowTr5 192
 
-#define THEME_VERSION 13
+#define THEME_VERSION 14
 
 using Graphics::Surface;
 
@@ -624,7 +624,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha) {
+void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha, bool themeTrans) {
 	if (!_initOk)
 		return;
 
@@ -639,7 +639,31 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 	if (alpha != 256)
 		restoreBackground(rect);
 
-	drawSurface(rect, &surface, false, false, alpha);
+	if (themeTrans)
+		drawSurface(rect, &surface, false, false, alpha);
+	else {
+		OverlayColor *dst = (OverlayColor*)_screen.getBasePtr(rect.left, rect.top);
+		const OverlayColor *src = (OverlayColor*)surface.pixels;
+
+		int h = rect.height();
+		if (alpha == 256) {
+			while (h--) {
+				memcpy(dst, src, surface.pitch);
+				dst += _screen.w;
+				src += surface.w;
+			}
+		} else {
+			int w = rect.width();
+			while (h--) {
+				for (int i = 0; i < w; ++i) {
+					*dst = getColorAlpha(*src, *dst, alpha);
+				}
+				dst += _screen.w;
+				src += surface.w;
+			}
+		}
+	}
+
 	addDirtyRect(rect);
 }
 

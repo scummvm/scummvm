@@ -219,7 +219,7 @@ void ThemeClassic::drawButton(const Common::Rect &r, const Common::String &str, 
 	addDirtyRect(r);
 }
 
-void ThemeClassic::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha) {
+void ThemeClassic::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha, bool themeTrans) {
 	if (!_initOk)
 		return;
 
