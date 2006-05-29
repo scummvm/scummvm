@@ -192,12 +192,10 @@ void ThemeClassic::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWi
 		box(r.left, r.top, r.width(), r.height(), _color, _shadowcolor);
 		break;
 
-	case kWidgetBackgroundPlain:
-	case kWidgetBackgroundBorderSmall:
-		box(r.left, r.top, r.width(), r.height());
-		break;
-
+	//case kWidgetBackgroundPlain:
+	//case kWidgetBackgroundBorderSmall:
 	default:
+		box(r.left, r.top, r.width(), r.height());
 		break;
 	};
 
