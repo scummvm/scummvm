@@ -535,7 +535,7 @@ void Room::checkCursor() {
 		newCursor = CURSOR_TALK;
 	} else if (res.getTalkData()) {
 		newCursor = CURSOR_ARROW;
-	} else if (_cursorState == CS_UNKNOWN) {
+	} else if (_cursorState == CS_BUMPED) {
 		newCursor = CURSOR_CAMERA;
 	} else if (_cursorState == CS_TALKING) {
 		newCursor = CURSOR_ARROW;
@@ -547,7 +547,7 @@ void Room::checkCursor() {
 		newCursor = CURSOR_MENUBAR;
 	} else if (_cursorState != CS_NONE) {
 		// Currently in a special mode
-//		checkRoomHotspots();
+		checkRoomHotspots();
 		newCursor = CURSOR_CAMERA;
 	} else {
 		// Check for a highlighted hotspot

@@ -310,7 +310,7 @@ void Game::handleClick() {
 		if (response != MENUITEM_NONE)
 			handleMenuResponse(response);
 	} else if ((room.cursorState() == CS_SEQUENCE) ||
-			   (room.cursorState() == CS_UNKNOWN)) { 
+			   (room.cursorState() == CS_BUMPED)) { 
 		// No action necessary
 	} else {
 		if (mouse.lButton())

@@ -373,6 +373,9 @@ public:
 	HotspotActionList *getActions(uint16 recordId);
 };
 
+enum CharacterMode {CHARMODE_NONE, CHARMODE_1, CHARMODE_IDLE, CHARMODE_PAUSED,
+	CHARMODE_4, CHARMODE_5, CHARMODE_6, CHARMODE_7};
+
 class HotspotData {
 public:
 	HotspotData(HotspotResource *rec);
@@ -405,7 +408,11 @@ public:
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;
-	uint16 npcSchedule;	
+	uint16 npcSchedule;
+
+	uint16 delayCtr;
+	CharacterMode characterMode;
+	bool coveredFlag;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }

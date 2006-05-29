@@ -291,6 +291,11 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
 	tickSequenceOffset = READ_LE_UINT16(&rec->tickSequenceOffset);
 	npcSchedule = READ_LE_UINT16(&rec->npcSchedule);
+
+	// Initialise dynamic fields
+	delayCtr = 0; 
+	characterMode = CHARMODE_NONE;
+	coveredFlag = false;
 }
 
 // Hotspot override data

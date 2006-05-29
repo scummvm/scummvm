@@ -41,8 +41,8 @@ public:
 	static void checkRoomChange(Hotspot &h);
 	static void characterChangeRoom(Hotspot &h, uint16 roomNumber, 
 								  int16 newX, int16 newY, Direction dir);
-	static void setRandomDest(Hotspot &h);
 	static bool charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2);
+	static bool isCharacterInList(uint16 *lst, int numEntries, uint16 charId);
 };
 
 typedef void(*HandlerMethodPtr)(Hotspot &h);
@@ -172,9 +172,9 @@ private:
 	void addBack(Direction dir, int steps) { 
 		_list.push_back(new WalkingActionEntry(dir, steps)); 
 	}
-	void clear() { _list.clear(); }
 public:
 	PathFinder(Hotspot *h);
+	void clear();
 	void reset(RoomPathsData &src);
 	bool process();
 	void list();
@@ -183,9 +183,12 @@ public:
 	WalkingActionEntry &top() { return **_list.begin(); }
 	bool isEmpty() { return _list.empty(); }
 	int &stepCtr() { return _stepCtr; }
+	PathFinderResult result() { return _result; }
 };
 
 enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, PC_EXCESS};
+
+enum BlockedState {BS_NONE, BS_INITIAL, BS_UNKNOWN};
 
 class Hotspot {
 private:
@@ -224,6 +227,8 @@ private:
 	uint16 _destHotspotId;
 	uint16 _blockedOffset;
 	uint8 _exitCtr;
+	BlockedState _blockedState;
+	bool _unknownFlag;
 
 	// Support methods
 	void startTalk(HotspotData *charHotspot);
@@ -234,6 +239,7 @@ private:
 	void actionPrecheck3(HotspotData *hotspot);
 	bool characterWalkingCheck(HotspotData *hotspot);
 	bool doorCloseCheck(uint16 doorId);
+	void resetDirection();
 
 	// Action set
 	void doNothing(HotspotData *hotspot);
@@ -295,6 +301,8 @@ public:
 	uint16 destHotspotId() { return _destHotspotId; }
 	uint16 blockedOffset() { return _blockedOffset; }
 	uint8 exitCtr() { return _exitCtr; }
+	BlockedState blockedState() { return _blockedState; }
+	bool unknownFlag() { return _unknownFlag; }
 	uint16 width() { return _width; }
 	uint16 height() { return _height; }
 	uint16 widthCopy() { return _widthCopy; }
@@ -320,14 +328,33 @@ public:
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
+	void setBlockedState(BlockedState newState) { _blockedState = newState; }
+	void setUnknownFlag(bool value) { _unknownFlag = value; }
 	void setSize(uint16 newWidth, uint16 newHeight);
 	void setScript(uint16 offset) {
+		assert(_data != NULL);
 		_sequenceOffset = offset;
 		_data->sequenceOffset = offset; 
 	}
 	void setActions(uint32 newActions) { _actions = newActions; }
 	void setCharRectY(uint16 value) { _charRectY = value; }
 	void setSkipFlag(bool value) { _skipFlag = value; }
+	CharacterMode characterMode() {
+		assert(_data != NULL);
+		return _data->characterMode;
+	}
+	void setCharacterMode(CharacterMode value) {
+		assert(_data != NULL);
+		_data->characterMode = value;
+	}
+	uint16 delayCtr() { 
+		assert(_data != NULL);
+		return _data->delayCtr;
+	}
+	void setDelayCtr(uint16 value) { 
+		assert(_data != NULL);
+		_data->delayCtr = value;
+	}
 
 	void copyTo(Surface *dest);
 	bool executeScript();
@@ -340,8 +367,12 @@ public:
 	void endAction();
 	void setDirection(Direction dir);
 	void faceHotspot(HotspotData *hotspot);
+	void setRandomDest();
 	void setOccupied(bool occupiedFlag);
 	bool walkingStep();
+	void updateMovement();
+	void updateMovement2(CharacterMode value);
+	void resetPosition();
 
 	// Actions
 	void doAction();

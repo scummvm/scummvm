@@ -51,7 +51,7 @@ public:
 	}
 };
 
-enum CursorState {CS_NONE, CS_ACTION, CS_SEQUENCE, CS_TALKING, CS_UNKNOWN};
+enum CursorState {CS_NONE, CS_ACTION, CS_SEQUENCE, CS_TALKING, CS_BUMPED};
 
 class Room {
 private:

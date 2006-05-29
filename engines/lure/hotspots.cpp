@@ -75,6 +75,8 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_actionCtr = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
+	_blockedState = BS_NONE;
+	_unknownFlag = false;
 
 	if (_data->npcSchedule != 0) {
 		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(_data->npcSchedule);
@@ -96,6 +98,8 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_destHotspotId = character->hotspotId();
 	_blockedOffset = 0;
 	_exitCtr = 0;
+	_blockedState = BS_NONE;
+	_unknownFlag = false;
 
 	switch (objType) {
 	case VOICE_ANIM_ID:
@@ -389,6 +393,31 @@ void Hotspot::faceHotspot(HotspotData *hotspot) {
 	}
 }
 
+// Sets a character walking to a random destination position
+
+void Hotspot::setRandomDest() {
+	Resources &res = Resources::getReference();
+	RoomData *roomData = res.getRoom(roomNumber());
+	Common::Rect &rect = roomData->walkBounds;
+	Common::RandomSource _rnd;
+	int tryCtr = 0;
+	int16 xp, yp;
+
+	if (_currentActions.isEmpty())
+		_currentActions.addFront(START_WALKING, roomNumber());
+	else
+		_currentActions.top().setAction(START_WALKING);
+	
+	while (tryCtr ++ <= 20) {
+		xp = rect.left + _rnd.getRandomNumber(rect.right - rect.left);
+		yp = rect.left + _rnd.getRandomNumber(rect.right - rect.left);
+		setDestPosition(xp, yp);
+
+		if (!roomData->paths.isOccupied(xp, yp) && !roomData->paths.isOccupied(xp, yp)) 
+			break;
+	}
+}
+
 // Sets or clears the hotspot as occupying an area in its room's pathfinding data
 
 void Hotspot::setOccupied(bool occupiedFlag) {
@@ -462,6 +491,30 @@ bool Hotspot::walkingStep() {
 
 	++_pathFinder.stepCtr();
 	return false;
+}
+
+void Hotspot::updateMovement() {
+	assert(_data != NULL);
+	if (_currentActions.action() == EXEC_HOTSPOT_SCRIPT) {
+		if (_data->coveredFlag) {
+			// Reset position and direction
+			resetPosition();
+		} else {
+			// Make sure the cell occupied by character is covered
+			_data->coveredFlag = true;
+			setOccupied(true);
+		}
+	}
+}
+
+void Hotspot::updateMovement2(CharacterMode value) {
+	setCharacterMode(value);
+	updateMovement();
+}
+
+void Hotspot::resetPosition() {
+	setPosition(x() & 0xf8 | 5, y());
+	setDirection(direction());
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1302,7 +1355,7 @@ void Hotspot::npcUnknown2(HotspotData *hotspot) {
 
 void Hotspot::npcSetRandomDest(HotspotData *hotspot) {
 	endAction();
-	Support::setRandomDest(*this);
+	setRandomDest();
 }
 
 void Hotspot::npcWalkingCheck(HotspotData *hotspot) {
@@ -1373,19 +1426,23 @@ void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 }
 
 void Hotspot::npcUnknown3(HotspotData *hotspot) {
-	error("npcUnknown3: Not yet implemented");
+	warning("npcUnknown3: Not yet implemented");
+	endAction();
 }
 
 void Hotspot::npcUnknown4(HotspotData *hotspot) {
-	error("npcUnknown4: Not yet implemented");
+	warning("npcUnknown4: Not yet implemented");
+	endAction();
 }
 
 void Hotspot::npcStartTalking(HotspotData *hotspot) {
-	error("npcStartTalking: Not yet implemented");
+	warning("npcStartTalking: Not yet implemented");
+	endAction();
 }
 
 void Hotspot::npcJumpAddress(HotspotData *hotspot) {
-	error("npcJumpAddress: Not yet implemented");
+	warning("npcJumpAddress: Not yet implemented");
+	endAction();
 }
 
 /*------------------------------------------------------------------------*/
@@ -1460,7 +1517,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	CurrentActionStack &actions = h.currentActions();
 	uint16 impingingList[MAX_NUM_IMPINGING];
 	int numImpinging;
-	int index;
+	bool bumpedPlayer;
 
 	// TODO: handle talk dialogs countdown if necessary
 
@@ -1471,25 +1528,73 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	}
 
 	numImpinging = Support::findIntersectingCharacters(h, impingingList);
+	bumpedPlayer = (numImpinging == 0) ? false :
+		Support::isCharacterInList(impingingList, numImpinging, PLAYER_ID);
+
+	// Check for character having just changed room
 	if (h.skipFlag()) {
 		if (numImpinging > 0) {
-			index = 0;
-			while ((index < numImpinging) && (impingingList[index] != PLAYER_ID))
-				++index;
-			
-			if (index != numImpinging) {
-				// Character has bumped into player
-				// TODO: Figure out handling code
-				error("Unimplemented - character bumping into player");
+			// Scan to check if the character has bumped into player
+			Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+
+			if (bumpedPlayer && (player->characterMode() == CHARMODE_IDLE)) {
+				// Signal the player to move out of the way automatically
+				player->setBlockedState(BS_INITIAL);
+				player->setDestHotspot(0);
+
+				Room::getReference().setCursorState(CS_BUMPED);
+				player->setRandomDest();
+			} else {
+				// Signal the character to pause briefly to allow bumped
+				// character time to start moving out of the way
+				h.setDelayCtr(10);
+				h.setCharacterMode(CHARMODE_PAUSED);
 			}
 			return;
 		}
-		
+
 		h.setSkipFlag(false);
 	}
 
 	// TODO: Handling of any set Tick Script Offset, as well as certain other
 	// as of yet unknown hotspot flags
+
+	if (h.characterMode() != CHARMODE_NONE) {
+		if (h.characterMode() == CHARMODE_6) {
+			// TODO: Figure out what mode 6 is
+			h.updateMovement();
+			if (bumpedPlayer) return;
+
+		} else {
+			// All other character modes
+			if (h.delayCtr() > 0) {
+				// There is some countdown left to do
+				bool decrementFlag = true; //TODO: = HS[50h] == 0
+
+				if (!decrementFlag) {
+					HotspotData *hotspot = res.getHotspot(0); // TODO: HS[50h]
+					decrementFlag = (hotspot->roomNumber != h.roomNumber()) ? false :
+						Support::charactersIntersecting(hotspot, h.resource());
+				}			
+
+				if (decrementFlag) {
+					h.setDelayCtr(h.delayCtr() - 1);
+					return;
+				}
+			}
+		}
+
+		// TODO: HS[50h]=0
+		CharacterMode currentMode = h.characterMode();
+		h.setCharacterMode(CHARMODE_NONE);
+		h.pathFinder().clear();
+
+		if ((currentMode == CHARMODE_4) || (currentMode == CHARMODE_7)) {
+			// TODO: HS[33h]=0
+			Dialog::showMessage(1, h.hotspotId());
+		}
+		return;
+	}
 
 	CurrentAction action = actions.action();
 
@@ -1639,6 +1744,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	case NO_ACTION:
 		// Make sure there is no longer any destination
 		h.setDestHotspot(0);
+		h.updateMovement2(CHARMODE_IDLE);
 		break;
 
 	case DISPATCH_ACTION:
@@ -1678,9 +1784,17 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		// Deliberate fall through to processing walking path
 
 	case PROCESSING_PATH:
+		h.setCharacterMode(CHARMODE_NONE);
 		if (!pathFinder.process()) break;
 
 		// Pathfinding is now complete 
+/*
+		if ((pathFinder.result() != PF_OK) && (h.unknownFlag() ||
+			(pathFinder.result() != PF_DEST_OCCUPIED))) {
+			// TODO: occupiedFlag
+			
+		}
+*/
 		actions.pop();
 
 		if (pathFinder.isEmpty()) {
@@ -1709,6 +1823,9 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 
 		if (h.walkingStep()) {
 			// Walking done
+			Room &room = Room::getReference();
+			if (room.cursorState() == CS_BUMPED)
+				room.setCursorState(CS_NONE);
 			h.currentActions().pop();
 		}
 	
@@ -2003,7 +2120,7 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 		}
 
 		if (numCharacters >= 4) {
-error("npcChangeRoom - too many characters - yet to be tested");
+warning("XYZZY npcChangeRoom - too many characters - yet to be tested");
 			uint16 dataId = res.getCharOffset(0);
 			CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
 			h.currentActions().addFront(DISPATCH_ACTION, entry, h.roomNumber());
@@ -2062,12 +2179,16 @@ PathFinder::PathFinder(Hotspot *h) {
 	_stepCtr = 0; 
 }
 
-void PathFinder::reset(RoomPathsData &src) {
+void PathFinder::clear() {
 	_stepCtr = 0;
 	_list.clear();
-	src.decompress(_layer, _hotspot->widthCopy());
 	_inProgress = false;
 	_countdownCtr = PATHFIND_COUNTDOWN;
+}
+
+void PathFinder::reset(RoomPathsData &src) {
+	clear();
+	src.decompress(_layer, _hotspot->widthCopy());
 }
 
 // Does the next stage of processing to figure out a path to take to a given
@@ -2439,6 +2560,7 @@ int Support::findIntersectingCharacters(Hotspot &h, uint16 *charList) {
 	int numImpinging = 0;
 	Resources &res = Resources::getReference();
 	Rect r;
+	uint16 hotspotY;
 
 	r.left = h.x();
 	r.right = h.x() + h.widthCopy();
@@ -2456,12 +2578,13 @@ int Support::findIntersectingCharacters(Hotspot &h, uint16 *charList) {
 			hotspot.skipFlag()) continue;
 		// TODO: See why si+ANIM_HOTSPOT_OFFSET compared aganst di+ANIM_VOICE_CTR
 
+		hotspotY = hotspot.y() + hotspot.heightCopy();
+
 		if ((hotspot.x() > r.right) || (hotspot.x() + hotspot.widthCopy() <= r.left) ||
-			(hotspot.y() + hotspot.heightCopy() + hotspot.charRectY() > r.bottom) ||
-			(hotspot.y() + hotspot.heightCopy() - hotspot.charRectY() 
-			- hotspot.yCorrection() <= r.top)) 
+			(hotspotY + hotspot.charRectY() < r.top) ||
+			(hotspotY - hotspot.charRectY() - hotspot.yCorrection() >= r.bottom))
 			continue;
-	
+
 		// Add hotspot Id to list
 		if (numImpinging == MAX_NUM_IMPINGING)
 			error("Exceeded maximum allowable number of impinging characters");
@@ -2534,26 +2657,6 @@ void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber,
 	}
 }
 
-void Support::setRandomDest(Hotspot &h) {
-	Resources &res = Resources::getReference();
-	RoomData *roomData = res.getRoom(h.roomNumber());
-	Common::Rect &rect = roomData->walkBounds;
-	Common::RandomSource _rnd;
-	int tryCtr = 0;
-	int16 xp, yp;
-
-	h.currentActions().top().setAction(DISPATCH_ACTION);
-	
-	while (tryCtr ++ <= 20) {
-		xp = rect.left + _rnd.getRandomNumber(rect.right - rect.left);
-		yp = rect.left + _rnd.getRandomNumber(rect.right - rect.left);
-		h.setDestPosition(xp, yp);
-
-		if (!roomData->paths.isOccupied(xp, yp) && !roomData->paths.isOccupied(xp, yp)) 
-			break;
-	}
-}
-
 bool Support::charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2) {
 	return !((hotspot1->startX + hotspot1->widthCopy + 4 < hotspot2->startX) ||
 		(hotspot2->startX + hotspot2->widthCopy + 4 < hotspot1->startX) ||
@@ -2561,6 +2664,12 @@ bool Support::charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot
 			hotspot1->startY + hotspot1->heightCopy + 2) ||
 		(hotspot2->startY + hotspot2->heightCopy + 2 < 
 			hotspot1->startY + hotspot1->heightCopy - hotspot1->yCorrection - 2));
+}
+
+bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
+	while (numEntries-- > 0) 
+		if (*lst++ == charId) return true;
+	return false;
 }
 
 } // end of namespace Lure
