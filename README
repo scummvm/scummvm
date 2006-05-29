@@ -129,6 +129,7 @@ ScummVM-Residual Team:
 Contributors:
  Daniel Schepler                    Initial engine codebase, LUA support
  Vincent Hamm                       Various engine code
+ Christian 'mannythegnome' Neumair  Various optimisation patches
  Lionel 'bbrox' Ulmer               OpenGL optimisations
  Ori 'salty-horse' Avtalion         Lipsync, LAF support
  Andrea 'Yak Bizzarro' Corna        Improved font support
