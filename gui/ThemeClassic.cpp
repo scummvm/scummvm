@@ -26,7 +26,7 @@ ThemeClassic::ThemeClassic(OSystem *system) : Theme() {
 	_system = system;
 	_initOk = false;
 	memset(&_screen, 0, sizeof(_screen));
-#ifdef OLDGUI_TRANSPARENCY
+#ifndef CT_NO_TRANSPARENCY
 	memset(&_dialog, 0, sizeof(_dialog));
 #endif
 	_font = 0;
@@ -97,7 +97,7 @@ void ThemeClassic::disable() {
 }
 
 void ThemeClassic::openDialog(bool topDialog) {
-#ifdef OLDGUI_TRANSPARENCY
+#ifndef CT_NO_TRANSPARENCY
 	if (!_dialog) {
 		_dialog = new DialogState;
 		assert(_dialog);
@@ -110,7 +110,7 @@ void ThemeClassic::openDialog(bool topDialog) {
 }
 
 void ThemeClassic::closeDialog() {
-#ifdef OLDGUI_TRANSPARENCY
+#ifndef CT_NO_TRANSPARENCY
 	if (_dialog) {
 		_dialog->screen.free();
 		delete _dialog;
@@ -143,11 +143,13 @@ void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, kSt
 		return;
 	
 	restoreBackground(r);
-	
+
+#ifndef CT_NO_TRANSPARENCY
 	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		addDirtyRect(r);
 		return;
 	}
+#endif
 
 	box(r.left, r.top, r.width(), r.height(), _color, _shadowcolor);
 	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
@@ -181,11 +183,13 @@ void ThemeClassic::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWi
 		return;
 
 	restoreBackground(r);
-	
+
+#ifndef CT_NO_TRANSPARENCY
 	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		addDirtyRect(r);
 		return;
 	}
+#endif
 
 	switch (background) {
 	case kWidgetBackgroundBorder:
@@ -452,7 +456,7 @@ void ThemeClassic::drawLineSeparator(const Common::Rect &r, kState state) {
 void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 	r.clip(_screen.w, _screen.h);
 	r.clip(_drawArea);
-#ifndef OLDGUI_TRANSPARENCY
+#ifdef CT_NO_TRANSPARENCY
 	_screen.fillRect(r, _bgcolor);
 #else
 	if (_dialog) {
@@ -482,7 +486,7 @@ bool ThemeClassic::addDirtyRect(Common::Rect r, bool save, bool special) {
 	r.clip(_screen.w, _screen.h);
 	r.clip(_drawArea);
 	_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(r.left, r.top), _screen.w, r.left, r.top, r.width(), r.height());
-#ifdef OLDGUI_TRANSPARENCY
+#ifndef CT_NO_TRANSPARENCY
 	if (_dialog && save) {
 		if (_dialog->screen.pixels) {
 			OverlayColor *dst = (OverlayColor*)_dialog->screen.getBasePtr(r.left, r.top);
@@ -544,7 +548,7 @@ OverlayColor ThemeClassic::getColor(kState state) {
 	return usedColor;
 }
 
-#ifdef OLDGUI_TRANSPARENCY
+#ifndef CT_NO_TRANSPARENCY
 void ThemeClassic::blendScreenToDialog() {
 	Common::Rect rect(0, 0, _screen.w, _screen.h);
 

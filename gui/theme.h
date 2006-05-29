@@ -206,7 +206,8 @@ private:
 	int _loadedThemeX, _loadedThemeY;
 };
 
-#define OLDGUI_TRANSPARENCY
+// enable this to disable transparency support for the classic theme
+//#define CT_NO_TRANSPARENCY
 
 class ThemeClassic : public Theme {
 public:
@@ -263,7 +264,7 @@ private:
 	OSystem *_system;
 	Graphics::Surface _screen;
 
-#ifdef OLDGUI_TRANSPARENCY
+#ifndef CT_NO_TRANSPARENCY
 	struct DialogState {
 		Graphics::Surface screen;
 	} *_dialog;
