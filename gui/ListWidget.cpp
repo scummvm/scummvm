@@ -471,6 +471,7 @@ void ListWidget::handleScreenChanged() {
 
 	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	scrollBarRecalc();
+	scrollToCurrent();
 }
 
 } // End of namespace GUI
