@@ -349,6 +349,9 @@ void SaveLoadChooser::handleScreenChanged() {
 		_time->clearFlags(GUI::WIDGET_INVISIBLE);
 		_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
 
+		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
+		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
+		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
 		updateInfos();
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
@@ -365,9 +368,15 @@ void SaveLoadChooser::updateInfos() {
 	int selItem = _list->getSelected();
 	Graphics::Surface *thumb;
 	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
-	_gfxWidget->setGfx(thumb);
-	if (thumb)
+
+	if (thumb) {
+		_gfxWidget->setGfx(thumb);
+		_gfxWidget->useAlpha(256);
 		thumb->free();
+	} else {
+		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	}
+
 	delete thumb;
 	_gfxWidget->draw();
 

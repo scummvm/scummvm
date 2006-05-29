@@ -64,6 +64,8 @@ protected:
 	GUI::ContainerWidget	*_container;
 	ScummEngine			*_vm;
 
+	uint8 _fillR, _fillG, _fillB;
+
 	void updateInfos();
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
