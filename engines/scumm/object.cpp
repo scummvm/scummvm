@@ -338,7 +338,7 @@ int ScummEngine::findObject(int x, int y) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 
-		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+		if (_game.version == 0) {
 			if (_objs[i].flags == 0 && _objs[i].state & 0x2)
 				continue;
 		} else {
@@ -642,7 +642,7 @@ void ScummEngine_v3old::resetRoomObjects() {
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
 
-		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && READ_LE_UINT16(ptr) == defaultPtr)
+		if (_game.version == 0 && READ_LE_UINT16(ptr) == defaultPtr)
 			od->OBIMoffset = 0;
 		else
 			od->OBIMoffset = READ_LE_UINT16(ptr);
@@ -994,7 +994,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
-	if (obj < _numActors && !(_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC))
+	if (obj < _numActors && _game.version >= 1)
 		return derefActor(obj, "getObjOrActorName")->getActorName();
 
 	for (i = 0; i < _numNewNames; i++) {
@@ -1011,7 +1011,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	if (_game.features & GF_SMALL_HEADER) {
 		byte offset = 0;
 
-		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC)
+		if (_game.version == 0)
 			offset = *(objptr + 13);
 		else if (_game.version <= 2)
 			offset = *(objptr + 14);
@@ -1098,7 +1098,7 @@ const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 	const byte *ptr;
 
 	// For objects without image in C64 version of Maniac Mansion
-	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && od.OBIMoffset == 0)
+	if (_game.version == 0 && od.OBIMoffset == 0)
 		return NULL;
 
 	if (od.fl_object_index) {

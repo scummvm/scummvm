@@ -156,7 +156,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	objptr = getOBCDFromObject(obj);
 	assert(objptr);
 
-	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC)
+	if (_game.version == 0)
 		verbptr = objptr + 14;
 	else if (_game.version <= 2)
 		verbptr = objptr + 15;

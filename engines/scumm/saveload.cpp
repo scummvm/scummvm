@@ -334,7 +334,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Reset the palette.
 	resetPalette();
 
-	if (hdr.ver < VER(35) && _game.id == GID_MANIAC && _game.version == 1)
+	if (hdr.ver < VER(35) && _game.id == GID_MANIAC && _game.version <= 1)
 		resetV1ActorTalkColor();
 
 	// Load the static room data

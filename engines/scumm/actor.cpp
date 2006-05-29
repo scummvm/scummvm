@@ -831,14 +831,14 @@ void Actor::showActor() {
 // an internal variable. Emulate this to prevent overwriting script vars...
 // Maniac NES (V1), however, DOES have a ScummVar for VAR_TALK_ACTOR
 int ScummEngine::getTalkingActor() {
-	if (_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES))
+	if (_game.id == GID_MANIAC && _game.version <= 1 && !(_game.platform == Common::kPlatformNES))
 		return _V1TalkingActor;
 	else
 		return VAR(VAR_TALK_ACTOR);
 }
 
 void ScummEngine::setTalkingActor(int value) {
-	if (_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES))
+	if (_game.id == GID_MANIAC && _game.version <= 1 && !(_game.platform == Common::kPlatformNES))
 		_V1TalkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;
@@ -1549,7 +1549,7 @@ void Actor::setActorCostume(int c) {
 
 
 	// V1 zak uses palette[] as a dynamic costume color array.
-	if (_vm->_game.version == 1)
+	if (_vm->_game.version <= 1)
 		return;
 
 	if (_vm->_game.features & GF_NEW_COSTUMES) {

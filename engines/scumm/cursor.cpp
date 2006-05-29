@@ -367,7 +367,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	if (_game.version == 1)
+	if (_game.version <= 1)
 		color = default_v1_cursor_colors[idx];
 	else
 		color = default_cursor_colors[idx];

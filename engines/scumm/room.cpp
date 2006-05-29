@@ -197,7 +197,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	_egoPositioned = false;
 	runEntryScript();
-	if ((_game.version <= 2) && !(_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)) {
+	if (_game.version >= 1 && _game.version <= 2) {
 		runScript(5, 0, 0, 0);
 	} else if (_game.version >= 5 && _game.version <= 6) {
 		if (a && !_egoPositioned) {
@@ -582,7 +582,7 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 	//
 	rmhd = (const RoomHeader *)(roomptr + 4);
 
-	if (_game.version == 1) {
+	if (_game.version <= 1) {
 		if (_game.platform == Common::kPlatformNES) {
 			_roomWidth = READ_LE_UINT16(&(rmhd->old.width)) * 8;
 			_roomHeight = READ_LE_UINT16(&(rmhd->old.height)) * 8;
@@ -605,7 +605,7 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 	//
 	// Find the room image data
 	//
-	if (_game.version == 1) {
+	if (_game.version <= 1) {
 		_IM00_offs = 0;
 	} else {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
@@ -708,7 +708,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
 
 	// Reset room color for V1 zak
-	if (_game.version == 1)
+	if (_game.version <= 1)
 		_roomPalette[0] = 0;
 
 	//
@@ -725,7 +725,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 		byte numOfBoxes = 0;
 		int size;
 
-		if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+		if (_game.version == 0) {
 			// Count number of boxes
 			while (*ptr != 0xFF) {
 				numOfBoxes++;
@@ -750,7 +750,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 		}
 
 		ptr += size;
-		if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+		if (_game.version == 0) {
 			const byte *tmp = ptr;
 			size = 0;
 

@@ -608,7 +608,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	}
 
 	// Do some render mode restirctions
-	if (_game.version == 1)
+	if (_game.version <= 1)
 		_renderMode = Common::kRenderDefault;
 
 	switch (_renderMode) {
@@ -1107,7 +1107,7 @@ void ScummEngine::setupCostumeRenderer() {
 	if (_game.features & GF_NEW_COSTUMES) {
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
-	} else if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+	} else if (_game.version == 0) {
 		_costumeRenderer = new C64CostumeRenderer(this);
 		_costumeLoader = new C64CostumeLoader(this);
 	} else if (_game.platform == Common::kPlatformNES) {
@@ -1125,11 +1125,10 @@ void ScummEngine::resetScumm() {
 	_tempMusic = 0;
 	debug(9, "resetScumm");
 
-	if ((_game.id == GID_MANIAC) && (_game.version == 1) && !(_game.platform == Common::kPlatformNES)) {
-		if (_game.platform == Common::kPlatformC64)
-			initScreens(8, 144);
-		else
-			initScreens(16, 152);
+	if (_game.version == 0) {
+		initScreens(8, 144);
+	} else if ((_game.id == GID_MANIAC) && (_game.version <= 1) && !(_game.platform == Common::kPlatformNES)) {
+		initScreens(16, 152);
 	} else if (_game.version >= 7 || _game.heversion >= 71) {
 		initScreens(0, _screenHeight);
 	} else {
@@ -1166,11 +1165,11 @@ void ScummEngine::resetScumm() {
 		_actors[i].initActor(1);
 
 		// this is from IDB
-		if ((_game.version == 1) || (_game.id == GID_MANIAC && (_game.features & GF_DEMO)))
+		if ((_game.version <= 1) || (_game.id == GID_MANIAC && (_game.features & GF_DEMO)))
 			_actors[i].setActorCostume(i);
 	}
 
-	if (_game.id == GID_MANIAC && _game.version == 1) {
+	if (_game.id == GID_MANIAC && _game.version <= 1) {
 		resetV1ActorTalkColor();
 	} else if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO)) {
 		// HACK Some palette changes needed for demo script
@@ -1818,9 +1817,16 @@ void ScummEngine::scummLoop_updateScummVars() {
 	if (_game.version <= 7)
 		VAR(VAR_HAVE_MSG) = _haveMsg;
 
-	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
-		// TODO
-	} else if (_game.version <= 2) {
+	if (_game.version >= 3) {
+		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
+		VAR(VAR_MOUSE_X) = _mouse.x;
+		VAR(VAR_MOUSE_Y) = _mouse.y;
+		if (VAR_DEBUGMODE != 0xFF) {
+			// This is NOT for the Mac version of Indy3/Loom
+			VAR(VAR_DEBUGMODE) = _debugMode;
+		}
+	} else if (_game.version >= 1) {
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
 
@@ -1829,15 +1835,6 @@ void ScummEngine::scummLoop_updateScummVars() {
 			VAR(VAR_VIRT_MOUSE_X) -= 2;
 			if (VAR(VAR_VIRT_MOUSE_X) < 0)
 				VAR(VAR_VIRT_MOUSE_X) = 0;
-		}
-	} else {
-		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x;
-		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
-		VAR(VAR_MOUSE_X) = _mouse.x;
-		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if (VAR_DEBUGMODE != 0xFF) {
-			// This is NOT for the Mac version of Indy3/Loom
-			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
 }

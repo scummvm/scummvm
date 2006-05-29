@@ -1110,7 +1110,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 	byte slot = (a & 0x1F) + 1;
 	byte result = 0;
 
-	if ((_game.id == GID_MANIAC) && (_game.version == 1)) {
+	if ((_game.id == GID_MANIAC) && (_game.version <= 1)) {
 		// Convert older load/save screen
 		// 1 Load
 		// 2 Save

@@ -222,7 +222,7 @@ void Gdi::init() {
 }
 
 void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
-	if (_vm->_game.version == 1) {
+	if (_vm->_game.version <= 1) {
 		if (_vm->_game.platform == Common::kPlatformNES) {
 			decodeNESGfx(roomptr);
 		} else {
@@ -1404,7 +1404,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	_objectMode = (flag & dbObjectMode) == dbObjectMode;
 	
-	if (_objectMode && _vm->_game.version == 1) {
+	if (_objectMode && _vm->_game.version <= 1) {
 		if (_vm->_game.platform == Common::kPlatformNES) {
 			decodeNESObject(ptr, x, y, width, height);
 		} else {
@@ -1484,7 +1484,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		else
 			dstPtr = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
 
-		if (_vm->_game.version == 1) {
+		if (_vm->_game.version <= 1) {
 			if (_vm->_game.platform == Common::kPlatformNES) {
 				mask_ptr = getMaskBuffer(x + k, y, 1);
 				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
@@ -1535,7 +1535,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
 			transpStrip = true;
 
-		if (_vm->_game.version == 1) {
+		if (_vm->_game.version <= 1) {
 			mask_ptr = getMaskBuffer(x + k, y, 1);
 			if (_vm->_game.platform == Common::kPlatformNES) {
 				drawStripNESMask(mask_ptr, stripnr, y, height);

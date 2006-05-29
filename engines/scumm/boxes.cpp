@@ -110,7 +110,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
-	else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+	else if (_game.version == 0)
 		return ptr->c64.mask;
 	else if (_game.version <= 2)
 		return ptr->v2.mask;
@@ -144,7 +144,7 @@ byte ScummEngine::getBoxFlags(int box) {
 		return 0;
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.flags);
-	else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+	else if (_game.version == 0)
 		return 0;
 	else if (_game.version <= 2)
 		return ptr->v2.flags;
@@ -406,7 +406,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	    box--;
 
 	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+	if (_game.version == 0)
 		return (Box *)(ptr + box * SIZEOF_BOX_C64 + 1);
 	else if (_game.version <= 2)
 		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
@@ -516,7 +516,7 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ul, box->ur);
 			SWAP(box->ll, box->lr);
 		}
-	} else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+	} else if (_game.version == 0) {
 		box->ul.x = bp->c64.x1 * 8;
 		box->ul.y = bp->c64.y1 * 2;
 		box->ur.x = bp->c64.x2 * 8;
@@ -745,7 +745,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 
 	boxm = getBoxMatrixBaseAddr();
 
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+	if (_game.version == 0) {
 		// Skip up to the matrix data for box 'from'
 		for (i = 0; i < from; i++) {
 			while (*boxm != 0xFF)

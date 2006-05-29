@@ -332,7 +332,7 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 
 	if (object > 0) {
-		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+		if (_game.version == 0) {
 			if (_activeInventory != object) {
 				_activeInventory = object;
 			} else if (_activeVerb != 3 && _activeVerb != 13) {

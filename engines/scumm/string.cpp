@@ -553,7 +553,7 @@ void ScummEngine::CHARSET_1() {
 				_charset->_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 			}
 
-			if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+			if (_game.version == 0) {
 				break;
 			} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 				_charset->_nextTop += _string[0].height;
