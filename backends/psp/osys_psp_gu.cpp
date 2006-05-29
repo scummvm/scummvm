@@ -136,15 +136,16 @@ void OSystem_PSP_GU::initSize(uint width, uint height) {
 	PSPDebugTrace("initSize\n");
 	_screenWidth = width;
 	_screenHeight = height;
+
+	_overlayWidth = width;	//PSP_SCREEN_WIDTH
+	_overlayHeight = height; //PSP_SCREEN_HEIGHT
+
 //	_offscreen = (byte *)offscreen256;
 	_overlayBuffer = (OverlayColor *)0x44000000 + PSP_FRAME_SIZE;
 
-	// FIXME: This is not needed anymore
-	_overlayScale = 1;
-
-	_offscreen = (unsigned byte *)_overlayBuffer+_screenWidth*_screenHeight*sizeof(OverlayColor);
+	_offscreen = (unsigned byte *)_overlayBuffer + _overlayWidth * _overlayHeight * sizeof(OverlayColor);
 	bzero(_offscreen, width * height);
-	bzero(_overlayBuffer, width * height);
+	clearOverlay();
 	_kbdClut[0] = 0xffff;
 	_kbdClut[246] = 0x4ccc;
 	_kbdClut[247] = 0x0000;
@@ -341,21 +342,22 @@ OSystem_PSP_GU::updateScreen()
 		vertices[0].x = 0; vertices[0].y = 0; vertices[0].z = 0;
 		vertices[1].x = PSP_SCREEN_WIDTH; vertices[1].y = PSP_SCREEN_HEIGHT; vertices[1].z = 0;
 		vertices[0].u = 0.5; vertices[0].v = 0.5;
-		vertices[1].u = _screenWidth*_overlayScale-0.5; vertices[1].v = _screenHeight*_overlayScale-0.5;
+		vertices[1].u = _overlayWidth-0.5; vertices[1].v = _overlayHeight-0.5;
 		sceGuTexMode(GU_PSM_5551, 0, 0, 0); // 16-bit image
 		sceGuAlphaFunc(GU_GREATER,0,0xff);
 		sceGuEnable(GU_ALPHA_TEST);
-		if(_overlayScale==2 || _screenWidth == 640)
-			sceGuTexImage(0, 512, 512, _screenWidth*_overlayScale, _overlayBuffer);
+		if (_overlayWidth == 640)
+			sceGuTexImage(0, 512, 512, _overlayWidth, _overlayBuffer);
 		else
-			sceGuTexImage(0, 512, 256, _screenWidth*_overlayScale, _overlayBuffer);
+			sceGuTexImage(0, 512, 256, _overlayWidth, _overlayBuffer);
+
 		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA); 
 		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
 		// need to render twice for textures > 512
-		if(_overlayScale==2 || _screenWidth == 640)
+		if( _overlayWidth == 640)
 		{
-			sceGuTexImage(0, 512, 512, _screenWidth*_overlayScale, _overlayBuffer+512);
-			vertices[0].u = 512 + 0.5; vertices[1].v = _screenHeight * _overlayScale - 0.5;
+			sceGuTexImage(0, 512, 512, _overlayWidth, _overlayBuffer+512);
+			vertices[0].u = 512 + 0.5; vertices[1].v = _overlayHeight - 0.5;
 			vertices[0].x = PSP_SCREEN_WIDTH*512/640; vertices[0].y = 0; vertices[0].z = 0;
 			sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
 		}
@@ -384,8 +386,8 @@ OSystem_PSP_GU::updateScreen()
 		{
 			float scalex, scaley;
 
-			scalex = (float)PSP_SCREEN_WIDTH/(_screenWidth*_overlayScale);
-			scaley = (float)PSP_SCREEN_HEIGHT/(_screenHeight*_overlayScale);
+			scalex = (float)PSP_SCREEN_WIDTH/_overlayWidth;
+			scaley = (float)PSP_SCREEN_HEIGHT/_overlayHeight;
 
 			vertices[0].x = mX*scalex; vertices[0].y = mY*scaley; vertices[0].z = 0;
 			vertices[1].x = vertices[0].x+_mouseWidth*scalex; vertices[1].y = vertices[0].y + _mouseHeight*scaley; vertices[0].z = 0;

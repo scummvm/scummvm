@@ -45,7 +45,8 @@ public:
 protected:
 	uint16	_screenWidth;
 	uint16	_screenHeight;
-	uint16	_overlayScale;
+	uint16  _overlayWidth;
+	uint16  _overlayHeight;
 	byte	*_offscreen;
 	OverlayColor  *_overlayBuffer;
 	uint16  _palette[256];
@@ -81,8 +82,8 @@ public:
 	bool setGraphicsMode(const char *name);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height);
-	virtual int16 getHeight();
 	virtual int16 getWidth();
+	virtual int16 getHeight();
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();

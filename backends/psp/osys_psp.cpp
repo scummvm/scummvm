@@ -59,7 +59,7 @@ const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 };
 
 
-OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0) {
+OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0) {
 
 	memset(_palette, 0, sizeof(_palette));
 
@@ -121,26 +121,23 @@ int OSystem_PSP::getGraphicsMode() const
 }
 
 void OSystem_PSP::initSize(uint width, uint height) {
-	_screenWidth = width;
-	_screenHeight = height;
+	_overlayWidth = _screenWidth = width;
+	_overlayHeight = _screenHeight = height;
 	_offscreen = (byte *)malloc(width * height);
 
-	// TODO: Fixme. This is not neede anymore
-	_overlayScale = 1;
-
-	_overlayBuffer = (OverlayColor *)malloc(width * height * sizeof(OverlayColor));
+	_overlayBuffer = (OverlayColor *)malloc(_overlayWidth * _overlayHeight * sizeof(OverlayColor));
 	bzero(_offscreen, width * height);
-	bzero(_overlayBuffer, width * height);
+	clearOverlay();
 
 	_mouseVisible = false;
 }
 
-int16 OSystem_PSP::getHeight() {
-	return _screenHeight;
-}
-
 int16 OSystem_PSP::getWidth() {
 	return _screenWidth;
+}
+
+int16 OSystem_PSP::getHeight() {
+	return _screenHeight;
 }
 
 void OSystem_PSP::setPalette(const byte *colors, uint start, uint num) {
@@ -203,10 +200,10 @@ void OSystem_PSP::updateScreen() {
 	}
 
 	if(_overlayVisible) {
-		for (int i = 0; i < _screenHeight * _overlayScale; ++i) {
-			for (int j = 0; j < _screenWidth * _overlayScale; ++j) {
+		for (int i = 0; i < _screenHeight; ++i) {
+			for (int j = 0; j < _screenWidth; ++j) {
 
-				OverlayColor pixel = _overlayBuffer[(i * _screenWidth +j)];
+				OverlayColor pixel = _overlayBuffer[(i * _overlayWidth +j)];
 
 				if(pixel & 0x8000)
 					putPixel(xStart + j, yStart + i, pixel);
@@ -257,14 +254,14 @@ void OSystem_PSP::hideOverlay ()
 void OSystem_PSP::clearOverlay ()
 {
 	PSPDebugTrace("clearOverlay\n");
-	bzero(_overlayBuffer, _screenWidth * _overlayScale * _screenHeight * _overlayScale * sizeof(OverlayColor));
+	bzero(_overlayBuffer, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
 }
 
 void OSystem_PSP::grabOverlay (OverlayColor *buf, int pitch)
 {
 }
 
-void OSystem_PSP::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h)
+void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h)
 {
 	PSPDebugTrace("copyRectToOverlay\n");
 	
@@ -281,38 +278,38 @@ void OSystem_PSP::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, 
 		y = 0;
 	}
 
-	if (w > _screenWidth*_overlayScale - x) {
-		w = _screenWidth*_overlayScale - x;
+	if (w > _overlayWidth - x) {
+		w = _overlayWidth - x;
 	}
 
-	if (h > _screenHeight*_overlayScale - y) {
-		h = _screenHeight*_overlayScale - y;
+	if (h > _overlayHeight - y) {
+		h = _overlayHeight - y;
 	}
 
 	if (w <= 0 || h <= 0)
 		return;
 
 	
-	OverlayColor *dst = _overlayBuffer +( y * _screenWidth * _overlayScale + x);
+	OverlayColor *dst = _overlayBuffer + (y * _overlayWidth + x);
 	if (_screenWidth == pitch && pitch == w) {
-		memcpy(dst, buf, h * _overlayScale * w * _overlayScale * sizeof(OverlayColor));
+		memcpy(dst, buf, h * w * sizeof(OverlayColor));
 	} else {
 		do {
-			memcpy(dst, buf, w * _overlayScale * sizeof(OverlayColor));
+			memcpy(dst, buf, w * sizeof(OverlayColor));
 			buf += pitch;
-			dst += _screenWidth * _overlayScale;
+			dst += _overlayWidth;
 		} while (--h);
 	}
 }
 
-int16 OSystem_PSP::getOverlayHeight()
-{
-	return getHeight() * _overlayScale;
-}
-
 int16 OSystem_PSP::getOverlayWidth()
 {
-	return getWidth() * _overlayScale;
+	return _overlayWidth;
+}
+
+int16 OSystem_PSP::getOverlayHeight()
+{
+	return _overlayHeight;
 }
 
 OverlayColor OSystem_PSP::RGBToColor(uint8 r, uint8 g, uint8 b)
@@ -496,16 +493,16 @@ bool OSystem_PSP::pollEvent(Event &event) {
 							newY -= -analogStepAmountY - (-analogStepAmountY - 1);
 			}
 			else {
-				newX += analogStepAmountX >> ((_screenWidth == 640 || (_overlayVisible && _overlayScale > 1)) ? 2 : 3);
-				newY += analogStepAmountY >> ((_screenWidth == 640 || (_overlayVisible && _overlayScale > 1)) ? 2 : 3);
+				newX += analogStepAmountX >> ((_screenWidth == 640) ? 2 : 3);
+				newY += analogStepAmountY >> ((_screenWidth == 640) ? 2 : 3);
 			}
 
 			if (newX < 0) newX = 0;
 			if (newY < 0) newY = 0;
 			if(_overlayVisible)
 			{
-				if (newX >= _screenWidth*_overlayScale) newX = _screenWidth*_overlayScale - 1;
-				if (newY >= _screenHeight*_overlayScale) newY = _screenHeight*_overlayScale - 1;		
+				if (newX >= _overlayWidth) newX = _overlayWidth - 1;
+				if (newY >= _overlayHeight) newY = _overlayHeight - 1;		
 			}
 			else
 			{
