@@ -420,9 +420,8 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
 		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
-			uint talkspeed = getTalkspeed();
-			if (talkspeed <= 9)
-				VAR(VAR_CHARINC) = talkspeed;
+			_defaultTalkDelay = 9 - getTalkspeed();
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
 		} else
 			_scummVars[var] = value;
 
