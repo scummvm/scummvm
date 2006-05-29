@@ -452,7 +452,6 @@ LauncherDialog::LauncherDialog()
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
 		_logo = new GraphicsWidget(this, "launcher_logo");
 		ThemeNew *th = (ThemeNew *)g_gui.theme();
-		_logo->useTransparency(true);
 
 		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
 
@@ -782,7 +781,6 @@ void LauncherDialog::handleScreenChanged() {
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "launcher_logo");
 		ThemeNew *th = (ThemeNew *)g_gui.theme();
-		_logo->useTransparency(true);
 
 		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
 	} else {

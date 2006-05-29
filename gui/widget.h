@@ -271,13 +271,13 @@ public:
 
 	void setGfx(const Graphics::Surface *gfx);
 
-	void useTransparency(bool state) { _transparency = state; }
+	void useAlpha(int alpha) { _alpha = alpha; }
 
 protected:
 	void drawWidget(bool hilite);
 
 	Graphics::Surface _gfx;
-	bool _transparency;
+	int _alpha;
 };
 
 /* ContainerWidget */

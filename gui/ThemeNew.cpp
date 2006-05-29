@@ -624,7 +624,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, bool transparency) {
+void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha) {
 	if (!_initOk)
 		return;
 
@@ -636,25 +636,12 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 	
 	assert(surface.bytesPerPixel == sizeof(OverlayColor));
 
-	if (transparency) {
-		drawSurface(rect, &surface, false, false, 256);
-		addDirtyRect(r);
-		return;
-	}
+	if (alpha != 256)
+		restoreBackground(rect);
 
-	OverlayColor *src = (OverlayColor *)surface.pixels;
-	OverlayColor *dst = (OverlayColor *)_screen.getBasePtr(rect.left, rect.top);
-
-	int w = rect.width();
-	int h = rect.height();
-
-	while (h--) {
-		memcpy(dst, src, surface.pitch);
-		src += w;
-		// FIXME: this should be pitch
-		dst += _screen.w;
-	}
-	addDirtyRect(r);
+	drawSurface(rect, &surface, false, false, alpha);
+	addDirtyRect(rect);
+	return;
 }
 
 void ThemeNew::drawSlider(const Common::Rect &rr, int width, kState state) {

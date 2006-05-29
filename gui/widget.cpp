@@ -316,7 +316,7 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h), _gfx(), _transparency(false) {
+	: Widget(boss, x, y, w, h), _gfx(), _alpha(256) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kGraphicsWidget;
 	// HACK: Don't save the background. We want to be sure that redrawing
@@ -326,7 +326,7 @@ GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, String name)
-	: Widget(boss, name), _gfx(), _transparency(false) {
+	: Widget(boss, name), _gfx(), _alpha(256) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kGraphicsWidget;
 	// HACK: Don't save the background. We want to be sure that redrawing
@@ -352,7 +352,7 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 
 void GraphicsWidget::drawWidget(bool hilite) {
 	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
-		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, Theme::kStateEnabled,  _transparency);
+		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, Theme::kStateEnabled,  _alpha);
 	}
 }
 
