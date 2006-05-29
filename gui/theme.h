@@ -466,7 +466,6 @@ private:
 	typedef OverlayColor (ThemeNew::*InactiveDialogCallback)(OverlayColor col);	
 	InactiveDialogCallback _dialogShadingCallback;
 	
-	// cache means input is 16 bpp mode
 	OverlayColor calcLuminance(OverlayColor col);
 	OverlayColor calcDimColor(OverlayColor col);
 
