@@ -80,43 +80,35 @@ OSystem_PSP::~OSystem_PSP() {
 	if (_mouseBuf)	free(_mouseBuf);
 }
 
-bool OSystem_PSP::hasFeature(Feature f)
-{
+bool OSystem_PSP::hasFeature(Feature f) {
 	return false;
 }
 
-void OSystem_PSP::setFeatureState(Feature f, bool enable)
-{
+void OSystem_PSP::setFeatureState(Feature f, bool enable) {
 }
 
-bool OSystem_PSP::getFeatureState(Feature f)
-{
+bool OSystem_PSP::getFeatureState(Feature f) {
 	return false;
 }
 
-const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const
-{
+const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
 
-int OSystem_PSP::getDefaultGraphicsMode() const
-{
+int OSystem_PSP::getDefaultGraphicsMode() const {
 	return -1;
 }
 
-bool OSystem_PSP::setGraphicsMode(int mode)
-{
+bool OSystem_PSP::setGraphicsMode(int mode) {
 	return true;
 }
 
-bool OSystem_PSP::setGraphicsMode(const char *name)
-{
+bool OSystem_PSP::setGraphicsMode(const char *name) {
 	return true;
 }
 
-int OSystem_PSP::getGraphicsMode() const
-{
+int OSystem_PSP::getGraphicsMode() const {
 	return -1;
 }
 
@@ -240,29 +232,24 @@ void OSystem_PSP::setShakePos(int shakeOffset) {
 	_shakePos = shakeOffset;
 }
 
-void OSystem_PSP::showOverlay ()
-{
+void OSystem_PSP::showOverlay() {
 	_overlayVisible = true;
 }
 
-void OSystem_PSP::hideOverlay ()
-{
+void OSystem_PSP::hideOverlay() {
 	PSPDebugTrace("OSystem_PSP::hideOverlay called\n");
 	_overlayVisible = false;
 }
 
-void OSystem_PSP::clearOverlay ()
-{
+void OSystem_PSP::clearOverlay() {
 	PSPDebugTrace("clearOverlay\n");
 	bzero(_overlayBuffer, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
 }
 
-void OSystem_PSP::grabOverlay (OverlayColor *buf, int pitch)
-{
+void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
-void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	PSPDebugTrace("copyRectToOverlay\n");
 	
 	//Clip the coordinates
@@ -302,30 +289,25 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	}
 }
 
-int16 OSystem_PSP::getOverlayWidth()
-{
+int16 OSystem_PSP::getOverlayWidth() {
 	return _overlayWidth;
 }
 
-int16 OSystem_PSP::getOverlayHeight()
-{
+int16 OSystem_PSP::getOverlayHeight() {
 	return _overlayHeight;
 }
 
-OverlayColor OSystem_PSP::RGBToColor(uint8 r, uint8 g, uint8 b)
-{
+OverlayColor OSystem_PSP::RGBToColor(uint8 r, uint8 g, uint8 b) {
 	return (((r >> 3) & 0x1F) | (((g >> 3) & 0x1F) << 5) | (((b >> 3) & 0x1F) << 10 ) ) | 0x8000;
 }
 
-void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
-{
+void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 		r = ((color & 0x1F) << 3);
 		g = (((color >> 5) & 0x1F) << 3);
 		b = (((color >> 10) & 0x1F) << 3);
 }
 	
-OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) 
-{
+OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
 	OverlayColor color = RGBToColor(r, g, b);
 
 	if(a == 255)
@@ -334,8 +316,7 @@ OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b)
 	return color;
 }
 
-void OSystem_PSP::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) 
-{
+void OSystem_PSP::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
 		colorToRGB(color, r, g, b);
 		if(color & 0x8000)
 			a = 255;
@@ -343,13 +324,11 @@ void OSystem_PSP::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, 
 			a = 0;
 }
 
-void OSystem_PSP::grabPalette(byte *colors, uint start, uint num)
-{
+void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
 	uint i;
 	uint16 color;
 
-	for(i=start; i < start+num; i++)
-	{
+	for (i = start; i < start + num; i++) {
 		color = _palette[i];
 		*colors++ = ((color & 0x1F) << 3);
 		*colors++ = (((color >> 5) & 0x1F) << 3);
@@ -530,7 +509,6 @@ uint32 OSystem_PSP::getMillis() {
 }
 
 void OSystem_PSP::delayMillis(uint msecs) {	
-	sceKernelDelayThread(1);        // Sleep thread for 1 millionth of a second to allow callback threads to run
 	SDL_Delay(msecs);
 }
 
