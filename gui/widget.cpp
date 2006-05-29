@@ -350,6 +350,25 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	memcpy(_gfx.pixels, gfx->pixels, gfx->h * gfx->pitch);
 }
 
+void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
+	if (w == -1)
+		w = _w;
+	if (h == -1)
+		h = _h;
+
+	_gfx.free();
+	_gfx.create(w, h, sizeof(OverlayColor));
+
+	OverlayColor *dst = (OverlayColor*)_gfx.pixels;
+	// TODO: get rid of g_system usage
+	OverlayColor fillCol = g_system->RGBToColor(r, g, b);
+	while (h--) {
+		for (int i = 0; i < w; ++i) {
+			*dst++ = fillCol;
+		}
+	}
+}
+
 void GraphicsWidget::drawWidget(bool hilite) {
 	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
 		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, Theme::kStateEnabled,  _alpha);

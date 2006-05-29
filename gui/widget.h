@@ -270,6 +270,7 @@ public:
 	~GraphicsWidget();
 
 	void setGfx(const Graphics::Surface *gfx);
+	void setGfx(int w, int h, int r, int g, int b);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 
