@@ -1617,29 +1617,32 @@ inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int 
 	return output;
 }
 
-template<class T>
+// broken implementation!
+/*template<class T>
 inline OverlayColor getColorAlphaImp2(OverlayColor col1, OverlayColor col2, int alpha) {
 	OverlayColor output = 0;
 	output |= ((alpha * ((~col1 & T::kRedMask) - (col2 & T::kRedMask)) >> 8) + (col2 & T::kRedMask)) & T::kRedMask;
 	output |= ((alpha * ((~col1 & T::kGreenMask) - (col2 & T::kGreenMask)) >> 8) + (col2 & T::kGreenMask)) & T::kGreenMask;
 	output |= ((alpha * ((~col1 & T::kBlueMask) - (col2 & T::kBlueMask)) >> 8) + (col2 & T::kBlueMask)) & T::kBlueMask;
 	return output;
-}
+}*/
 
 OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
-	if (alpha >= 0) {
+	// disbale alpha >= 0 check for now, since we are using calcDimColor in drawSurfaceMasked for negative
+	// alpha values at the moment until getColorAlphaImp2 is fixed
+	//if (alpha >= 0) {
 		if (gBitFormat == 565) {
 			return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
 		} else {
 			return getColorAlphaImpl<ColorMasks<555> >(col1, col2, alpha);
 		}
-	} else {
+	/*} else {
 		if (gBitFormat == 565) {
 			return getColorAlphaImp2<ColorMasks<565> >(col1, col2, -alpha - 256);
 		} else {
 			return getColorAlphaImp2<ColorMasks<555> >(col1, col2, -alpha - 256);
 		}
-	}
+	}*/
 }
 
 template<class T>
