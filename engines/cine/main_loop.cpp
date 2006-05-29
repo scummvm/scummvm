@@ -127,7 +127,13 @@ void manageEvents(int count) {
 	int i;
 
 	for (i = 0; i < count; i++) {
-		g_system->updateScreen();
+		//FIXME(?): Maybe there's a better way to "fix" this?
+		//
+		//Since not all backends/ports can update the screen 
+		//100 times per second, only update the screen every
+		//other frame (1000 / 2 * 10 i.e. 50 times per second max.)
+		if (i % 2)
+			g_system->updateScreen();
 		g_system->delayMillis(10);
 		manageEvents(0);
 	}
