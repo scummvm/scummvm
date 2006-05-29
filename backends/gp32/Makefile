@@ -170,6 +170,7 @@ DISABLE_CINE = 1
 # Disable for ALL release builds.
 DISABLE_SAGA = 1
 DISABLE_KYRA = 1
+DISABLE_AGI = 1
 
 # The engines below are not supported on the GP32 port so there is
 # no point compiling support into the binary.
