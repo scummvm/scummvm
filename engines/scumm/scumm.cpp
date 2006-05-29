@@ -966,6 +966,9 @@ int ScummEngine::init() {
 
 	readIndexFile();
 
+	// Create the debugger now that _numVariables has been set
+	_debugger = new ScummDebugger(this);
+
 	resetScumm();
 	resetScummVars();
 
@@ -1082,10 +1085,6 @@ void ScummEngine::setupScumm() {
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	Graphics::initfonts();
 #endif
-
-	// Create debugger
-	if (!_debugger)
-		_debugger = new ScummDebugger(this);
 }
 
 void ScummEngine::setupCharsetRenderer() {
