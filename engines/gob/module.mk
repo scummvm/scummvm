@@ -35,6 +35,8 @@ MODULE_OBJS := \
 	parse_v1.o \
 	parse_v2.o \
 	scenery.o \
+	scenery_v1.o \
+	scenery_v2.o \
 	sound.o \
 	timer.o \
 	util.o \

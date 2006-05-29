@@ -62,6 +62,7 @@ public:
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
 	virtual int16 loadSound(int16 slot) = 0;
 	virtual void storeMouse(void) = 0;
+	virtual void animPalette(void) = 0;
 
 	Inter(GobEngine *vm);
 	virtual ~Inter() {};
@@ -77,7 +78,6 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j) = 0;
 	virtual const char *getOpcodeGoblinDesc(int i) = 0;
 	virtual void loadMult(void) = 0;
-	virtual void animPalette(void) = 0;
 };
 
 class Inter_v1 : public Inter {
@@ -86,6 +86,7 @@ public:
 	virtual ~Inter_v1() {};
 	virtual int16 loadSound(int16 slot);
 	virtual void storeMouse(void);
+	virtual void animPalette(void);
 
 protected:
 	typedef void (Inter_v1::*OpcodeDrawProcV1)(void);
@@ -116,7 +117,6 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 	virtual void loadMult(void);
-	virtual void animPalette(void);
 
 	void o1_loadMult(void);
 	void o1_playMult(void);
@@ -278,6 +278,7 @@ public:
 	virtual ~Inter_v2() {};
 	virtual int16 loadSound(int16 search);
 	virtual void storeMouse(void);
+	virtual void animPalette(void);
 
 protected:
 	typedef void (Inter_v2::*OpcodeDrawProcV2)(void);
@@ -308,16 +309,13 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 	virtual void loadMult(void);
-	virtual void animPalette(void);
 
 	void o2_drawStub(void) { error("Gob2 stub"); }
 	void o2_totSub(void);
 	void o2_switchTotSub(void);
-	void o2_stub0x52(void);
 	void o2_stub0x54(void);
 	void o2_stub0x80(void);
 	void o2_stub0x82(void);
-	void o2_stub0x83(void);
 	void o2_stub0x85(void);
 	void o2_renderStatic(void);
 	bool o2_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag);
@@ -332,6 +330,7 @@ protected:
 	void o2_freeGoblins(void);
 	void o2_writeGoblinPos(void);
 	void o2_placeGoblin(void);
+	void o2_moveGoblin(void);
 	void o2_multSub(void);
 	void o2_setRenderFlags(void);
 	void o2_initMult(void);
@@ -343,6 +342,7 @@ protected:
 	void o2_getCDTrackPos(void);
 	void o2_playMult(void);
 	void o2_initCursor(void);
+	void o2_playImd(void);
 	void o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };
 

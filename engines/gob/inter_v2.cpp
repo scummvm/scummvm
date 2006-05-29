@@ -227,7 +227,7 @@ void Inter_v2::setupOpcodes(void) {
 		/* 50 */
 		OPCODE(o2_loadMapObjects),
 		OPCODE(o2_freeGoblins),
-		OPCODE(o2_stub0x52),
+		OPCODE(o2_moveGoblin),
 		OPCODE(o2_writeGoblinPos),
 		/* 54 */
 		OPCODE(o2_stub0x54),
@@ -288,7 +288,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o2_stub0x80),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_stub0x82),
-		OPCODE(o2_stub0x83),
+		OPCODE(o2_playImd),
 		/* 84 */
 		OPCODE(o2_drawStub),
 		OPCODE(o2_stub0x85),
@@ -712,20 +712,10 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 	return "";
 }
 
-void Inter_v2::o2_stub0x52(void) {
-	int16 expr1 = _vm->_parse->parseValExpr();
-	int16 expr2 = _vm->_parse->parseValExpr();
-	int16 expr3 = _vm->_parse->parseValExpr();
-
-	warning("STUB: Gob2 drawOperation 0x52 (%d %d %d)", expr1, expr2, expr3);
-}
-
 void Inter_v2::o2_stub0x54(void) {
 	int16 index = _vm->_parse->parseValExpr();
 
-	warning("STUB: Gob2 drawOperation 0x54 (%d)", index);
-
-//	_vm->_mult->_objects[index].pAnimData->field_12 = 4;
+	_vm->_mult->_objects[index].pAnimData->field_12 = 4;
 }
 
 void Inter_v2::o2_stub0x80(void) {
@@ -757,7 +747,7 @@ void Inter_v2::o2_stub0x80(void) {
 	memset(_vm->_global->_redPalette, 0, 256);
 	memset(_vm->_global->_greenPalette, 0, 256);
 	memset(_vm->_global->_bluePalette, 0, 256);
-	warning("GOB2 Stub! _vid_setStubDriver");
+//	warning("GOB2 Stub! _vid_setStubDriver");
 
 	if (videoMode == 0x10) {
 		_vm->_global->_videoMode = 0x12;
@@ -818,32 +808,6 @@ void Inter_v2::o2_stub0x82(void) {
 		warning("GOB2 Stub! _vid_setPixelShift(_vm->_game->_word_2FC9E, _vm->_game->_word_2FC9C + 200 - _vm->_game->_word_2E51F)");
 	else
 		warning("GOB2 Stub! _vid_setPixelShift(_vm->_game->_word_2FC9E, _vm->_game->_word_2FC9C);");*/
-}
-
-// some sub
-void Inter_v2::o2_stub0x83(void) {
-	char dest[128];
-	int16 expr1;
-	int16 expr2;
-	int16 expr3;
-	int16 expr4;
-	int16 expr5;
-	int16 expr6;
-	int16 expr7;
-	int16 expr8;
-
-	evalExpr(0);
-	strcpy(dest, _vm->_global->_inter_resStr);
-	expr1 = _vm->_parse->parseValExpr();
-	expr2 = _vm->_parse->parseValExpr();
-	expr3 = _vm->_parse->parseValExpr();
-	expr4 = _vm->_parse->parseValExpr();
-	expr5 = _vm->_parse->parseValExpr();
-	expr6 = _vm->_parse->parseValExpr();
-	expr7 = _vm->_parse->parseValExpr();
-	expr8 = _vm->_parse->parseValExpr();
-	
-	warning("STUB: Gob2 drawOperation 0x83 (\"%s\" %d %d %d %d %d %d %d %d)", dest, expr1, expr2, expr3, expr4, expr5, expr6, expr7, expr8);
 }
 
 void Inter_v2::o2_stub0x85(void) {
@@ -977,6 +941,28 @@ void Inter_v2::o2_placeGoblin(void) {
 	_vm->_goblin->placeObject(0, 0, index, x, y, state);
 }
 
+void Inter_v2::o2_moveGoblin(void) {
+	Mult::Mult_Object *obj;
+	Mult::Mult_AnimData *objAnim;
+	int16 destX = _vm->_parse->parseValExpr();
+	int16 destY = _vm->_parse->parseValExpr();
+	int16 index = _vm->_parse->parseValExpr();
+
+	obj = &_vm->_mult->_objects[index];
+	objAnim = obj->pAnimData;
+
+	obj->gobDestX = destX;
+	obj->gobDestY = destY;
+	objAnim->field_13 = destX;
+	objAnim->field_14 = destY;
+	if (objAnim->someFlag != 0) {
+		if ((destX == -1) && (destY == -1)) {
+			warning("STUB: Gob2 drawOperation moveGoblin (%d %d %d), someFlag: %d", destX, destY, index, objAnim->someFlag);
+		}
+	}
+	_vm->_goblin->initiateMove(index);
+}
+
 void Inter_v2::o2_writeGoblinPos(void) {
 	int16 var1;
 	int16 var2;
@@ -1033,14 +1019,14 @@ void Inter_v2::loadMult(void) {
 			objAnim = obj->pAnimData;
 
 			val = *obj->pPosX % 256;
-			obj->field_1C = val;
-			obj->field_1E = val;
+			obj->destX = val;
+			obj->gobDestX = val;
 			obj->goblinX = val;
 			val = *obj->pPosY % 256;
-			obj->field_1D = val;
-			obj->field_1F = val;
+			obj->destY = val;
+			obj->gobDestY = val;
 			obj->goblinY = val;
-			*obj->pPosX *= _vm->_mult->_word_2F2B1;
+			*obj->pPosX *= _vm->_map->_tilesWidth;
 			objAnim->field_15 = objAnim->unknown;
 			objAnim->field_E = -1;
 			objAnim->field_F = -1;
@@ -1050,12 +1036,14 @@ void Inter_v2::loadMult(void) {
 			objAnim->animation = obj->goblinStates[objAnim->state][0].animation;
 			animation = objAnim->animation;
 			_vm->_scenery->updateAnim(objAnim->state, 0, 0, 0, *obj->pPosX, *obj->pPosY, 0);
-			if (_vm->_mult->_word_2CC86 == 0) {
-				*obj->pPosY = (obj->goblinY + 1) * _vm->_mult->_word_2F2AF; //- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop)
+			if (!_vm->_map->_bigTiles) {
+				*obj->pPosY = (obj->goblinY + 1) * _vm->_map->_tilesHeight
+					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 			} else {
-				*obj->pPosY = (obj->goblinY + 1) * _vm->_mult->_word_2F2AF; //- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (obj->goblinY + 1) / 2;
+				*obj->pPosY = ((obj->goblinY + 1) / 2) * _vm->_map->_tilesHeight
+					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 			}
-			*obj->pPosX = obj->goblinX * _vm->_mult->_word_2F2B1;
+			*obj->pPosX = obj->goblinX * _vm->_map->_tilesWidth;
 		}
 	}
 	if (_vm->_mult->_objects[objIndex].pAnimData->animType == 101) {
@@ -1673,6 +1661,53 @@ void Inter_v2::o2_initCursor(void) {
 		}
 		_vm->_draw->_cursorAnimLow[1] = 0;
 	}
+}
+
+void Inter_v2::o2_playImd(void) {
+	char imd[128];
+	int i;
+	int16 x;
+	int16 y;
+	int16 startFrame; // di
+	int16 lastFrame; // si
+	int16 breakKey;
+	int16 flags;
+	int16 expr7;
+	int16 expr8;
+
+	evalExpr(0);
+	_vm->_global->_inter_resStr[8] = 0;
+	strcpy(imd, _vm->_global->_inter_resStr);
+	x = _vm->_parse->parseValExpr();
+	y = _vm->_parse->parseValExpr();
+	startFrame = _vm->_parse->parseValExpr();
+	lastFrame = _vm->_parse->parseValExpr();
+	breakKey = _vm->_parse->parseValExpr();
+	flags = _vm->_parse->parseValExpr();
+	expr7 = _vm->_parse->parseValExpr();
+	expr8 = _vm->_parse->parseValExpr();
+	
+	if (_vm->_game->openImd(imd, x, y, startFrame, flags) == 0)
+		return;
+
+	int16 var_C;
+
+	var_C = lastFrame;
+	if (lastFrame < 0)
+		lastFrame = _vm->_game->_imdFile->framesCount - 1;
+	for (i = startFrame; i <= lastFrame; i++) {
+		_vm->_game->playImd(i, 1 << (flags & 0x3F), expr7, expr8, 0, lastFrame);
+		WRITE_VAR(11, i);
+		if (breakKey != 0) {
+			_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
+					&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
+			storeKey(_vm->_util->checkKey());
+			if (VAR(0) == (unsigned) breakKey)
+				return;
+		}
+	}
+	if (var_C == -1)
+		_vm->_game->closeImd();
 }
 
 void Inter_v2::o2_totSub(void) {

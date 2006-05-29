@@ -33,6 +33,7 @@
 #include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/mult.h"
+#include "gob/scenery.h"
 
 namespace Gob {
 
@@ -43,11 +44,11 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	int i;
 	int j;
 	int k;
+	uint8 wayPointsCount;
 	int16 var;
 	int16 id;
-	int16 numChunks;
-	int16 chunkLength;
-	int16 offVar;
+	int16 mapHeight;
+	int16 mapWidth;
 	int16 offData;
 	int16 tmp;
 	int16 numData;
@@ -61,17 +62,13 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	char statesMask[102];
 	Goblin::Gob2_State *statesPtr;
 
-	uint8 var_9;
-	uint8 byte_2F2AA;
-	byte *off_2F2AB;
-
 	var = _vm->_parse->parseVarIndex();
 	variables = _vm->_global->_inter_variables + var;
 
 	id = _vm->_inter->load16();
 
 	if (id == -1) {
-		_vm->_goblin->_dword_2F2A4 = _vm->_global->_inter_variables + var;
+		_passMap = (int8 *)(_vm->_global->_inter_variables + var);
 		return;
 	}
 
@@ -79,51 +76,53 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	dataPtr = extData;
 
 	if (*dataPtr++ == 3) {
-		_vm->_mult->_word_2F22A = 640;
-		_vm->_mult->_word_2CC84 = 65;
+		_vm->_map->_screenWidth = 640;
+		_vm->_map->_passWidth = 65;
 	} else {
-		_vm->_mult->_word_2F22A = 320;
-		_vm->_mult->_word_2CC84 = 40;
+		_vm->_map->_screenWidth = 320;
+		_vm->_map->_passWidth = 40;
 	}
-	byte_2F2AA = *dataPtr++;
-	_vm->_mult->_word_2F2B1 = READ_LE_UINT16(dataPtr);
+	_wayPointsCount = *dataPtr++;
+	_vm->_map->_tilesWidth = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
-	_vm->_mult->_word_2F2AF = READ_LE_UINT16(dataPtr);
+	_vm->_map->_tilesHeight = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
-	_vm->_mult->_word_2CC86 = _vm->_mult->_word_2F2AF & 0xFF00 ? 0 : 1;
-	_vm->_mult->_word_2F2AF &= 0xFF;
+	_vm->_map->_bigTiles = !(_vm->_map->_tilesHeight & 0xFF00);
+	_vm->_map->_tilesHeight &= 0xFF;
+
+	_mapWidth = _vm->_map->_screenWidth / _vm->_map->_tilesWidth;
+	_mapHeight = 200 / _vm->_map->_tilesHeight;
 
 	dataPtrBak = dataPtr;
-	dataPtr += (_vm->_mult->_word_2F22A / _vm->_mult->_word_2F2B1) * (200 / _vm->_mult->_word_2F2AF);
+	dataPtr += _mapWidth * _mapHeight;
 
-	if (*extData == 1) {
-		byte_2F2AA = 40;
-		var_9 = 40;
-	} else {
-		if (byte_2F2AA == 0) {
-			var_9 = 1;
-		} else {
-			var_9 = byte_2F2AA;
-		}
+	if (*extData == 1)
+		wayPointsCount = _wayPointsCount = 40;
+	else
+		wayPointsCount = _wayPointsCount == 0 ? 1 : _wayPointsCount;
+
+	_wayPoints = new Point[wayPointsCount];
+	for (i = 0; i < wayPointsCount; i++) {
+		_wayPoints[i].x = -1;
+		_wayPoints[i].y = -1;
+		_wayPoints[i].field_2 = -1;
 	}
-
-	off_2F2AB = new byte[3 * var_9];
-	memset(off_2F2AB, -1, 3 * var_9);
-	memcpy(off_2F2AB, dataPtr, 3 * byte_2F2AA);
-	dataPtr += 3 * byte_2F2AA;
+	for (i = 0; i < _wayPointsCount; i++) {
+		_wayPoints[i].x = *dataPtr++;
+		_wayPoints[i].y = *dataPtr++;
+		_wayPoints[i].field_2 = *dataPtr++;
+	}
 
 	// In the original asm, this writes byte-wise into the variables-array
 	if (variables != _vm->_global->_inter_variables) {
-		_vm->_goblin->_dword_2F2A4 = variables;
-		numChunks = 200 / _vm->_mult->_word_2F2AF;
-		chunkLength = _vm->_mult->_word_2F22A / _vm->_mult->_word_2F2B1;
-		for (i = 0; i < numChunks; i++) {
-			offVar = _vm->_mult->_word_2CC84 * i;
-			offData = (chunkLength * i);
-			for (j = 0; j < chunkLength; j++) {
-				_vm->_util->writeVariableByte(_vm->_goblin->_dword_2F2A4 + offVar + j,
-						*(dataPtrBak + offData + j));
+		_passMap = (int8 *) variables;
+		mapHeight = 200 / _vm->_map->_tilesHeight;
+		mapWidth = _vm->_map->_screenWidth / _vm->_map->_tilesWidth;
+		for (i = 0; i < mapHeight; i++) {
+			offData = (mapWidth * i);
+			for (j = 0; j < mapWidth; j++) {
+				setPass(j, i, *(dataPtrBak + offData + j), _vm->_map->_passWidth);
 			}
 		}
 	}
@@ -187,6 +186,44 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	_vm->_goblin->_soundSlotsCount = _vm->_inter->load16();
 	for (i = 0; i < _vm->_goblin->_soundSlotsCount; i++)
 		_vm->_goblin->_soundSlots[i] = _vm->_inter->loadSound(1);
+}
+
+void Map_v2::findNearestToGob(int16 index) {
+	Mult::Mult_Object *obj = &_vm->_mult->_objects[index];
+	int16 wayPoint = findNearestWayPoint(obj->goblinX, obj->goblinY);
+
+	if (wayPoint != -1)
+		obj->nearestWayPoint = wayPoint;
+}
+
+void Map_v2::findNearestToDest(int16 index) {
+	Mult::Mult_Object *obj = &_vm->_mult->_objects[index];
+	int16 wayPoint = findNearestWayPoint(obj->destX, obj->destY);
+
+	if (wayPoint != -1)
+		obj->nearestDest = wayPoint;
+}
+
+void Map_v2::optimizePoints(int16 index, int16 x, int16 y) {
+	Mult::Mult_Object *obj;
+	int i;
+	
+	int16 var_2;
+
+	obj = &_vm->_mult->_objects[index];
+
+	if (obj->nearestWayPoint < obj->nearestDest) {
+		var_2 = obj->nearestWayPoint;
+		for (i = obj->nearestWayPoint; i <= obj->nearestDest; i++) {
+			if (checkDirectPath(index, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
+				obj->nearestWayPoint = i;
+		}
+	} else {
+		for (i = obj->nearestWayPoint; i >= obj->nearestDest && _wayPoints[i].field_2 != 1; i--) {
+			if (checkDirectPath(index, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
+				obj->nearestWayPoint = i;
+		}
+	}
 }
 
 } // End of namespace Gob

@@ -304,8 +304,8 @@ void Inter::renewTimeInVars(void) {
 }
 
 void Inter::manipulateMap(int16 xPos, int16 yPos, int16 item) {
-	for (int16 y = 0; y < Map::kMapHeight; y++) {
-		for (int16 x = 0; x < Map::kMapWidth; x++) {
+	for (int16 y = 0; y < _vm->_map->_mapHeight; y++) {
+		for (int16 x = 0; x < _vm->_map->_mapWidth; x++) {
 			if ((_vm->_map->_itemsMap[y][x] & 0xff) == item) {
 				_vm->_map->_itemsMap[y][x] &= 0xff00;
 			} else if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8)
@@ -315,7 +315,7 @@ void Inter::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		}
 	}
 
-	if (xPos < Map::kMapWidth - 1) {
+	if (xPos < _vm->_map->_mapWidth - 1) {
 		if (yPos > 0) {
 			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
 					(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
@@ -415,28 +415,28 @@ void Inter::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 	if (item < 0 || item >= 20)
 		return;
 
-	if (xPos > 1 && _vm->_map->_passMap[yPos][xPos - 2] == 1) {
+	if (xPos > 1 && _vm->_map->getPass(xPos - 2, yPos) == 1) {
 		_vm->_map->_itemPoses[item].x = xPos - 2;
 		_vm->_map->_itemPoses[item].y = yPos;
 		_vm->_map->_itemPoses[item].orient = 4;
 		return;
 	}
 
-	if (xPos < Map::kMapWidth - 2 && _vm->_map->_passMap[yPos][xPos + 2] == 1) {
+	if (xPos < _vm->_map->_mapWidth - 2 && _vm->_map->getPass(xPos + 2, yPos) == 1) {
 		_vm->_map->_itemPoses[item].x = xPos + 2;
 		_vm->_map->_itemPoses[item].y = yPos;
 		_vm->_map->_itemPoses[item].orient = 0;
 		return;
 	}
 
-	if (xPos < Map::kMapWidth - 1 && _vm->_map->_passMap[yPos][xPos + 1] == 1) {
+	if (xPos < _vm->_map->_mapWidth - 1 && _vm->_map->getPass(xPos + 1, yPos) == 1) {
 		_vm->_map->_itemPoses[item].x = xPos + 1;
 		_vm->_map->_itemPoses[item].y = yPos;
 		_vm->_map->_itemPoses[item].orient = 0;
 		return;
 	}
 
-	if (xPos > 0 && _vm->_map->_passMap[yPos][xPos - 1] == 1) {
+	if (xPos > 0 && _vm->_map->getPass(xPos - 1, yPos) == 1) {
 		_vm->_map->_itemPoses[item].x = xPos - 1;
 		_vm->_map->_itemPoses[item].y = yPos;
 		_vm->_map->_itemPoses[item].orient = 4;

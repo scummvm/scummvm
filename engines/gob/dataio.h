@@ -55,6 +55,7 @@ public:
 	int16 openData(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
 	int32 readData(int16 handle, char *buf, int16 size);
 	void seekData(int16 handle, int32 pos, int16 from);
+	int32 getPos(int16 handle);
 	int32 getDataSize(const char *name);
 	char *getData(const char *path);
 	char *getSmallData(const char *path);

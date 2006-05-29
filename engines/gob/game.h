@@ -94,6 +94,37 @@ public:
 		int16 frontColor;
 		char *ptr;
 	} GCC_PACK;
+
+	struct ImdCoord {
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+	} GCC_PACK;
+
+	struct Imd {
+		int16 fileHandle;
+		int16 verMin;
+		int16 framesCount;
+		int16 x;
+		int16 y;
+		int16 width;
+		int16 height;
+		int16 field_E;
+		int16 curFrame;
+		Video::Color *palette;
+		Video::SurfaceDesc *surfDesc;
+		int32 *framesPos;
+		int32 firstFramePos;
+		int16 stdX;
+		int16 stdY;
+		int16 stdWidth;
+		int16 stdHeight;
+		int32 filePos;
+		ImdCoord *frameCoords;
+		int32 frameDataSize;
+		int32 vidBufferSize;
+	} GCC_PACK;
 #pragma END_PACK_STRUCTS
 
 	TotResTable *_totResourceTable;
@@ -135,6 +166,18 @@ public:
 	char *_variablesArray[5];
 	char _curTotFileArray[5][14];
 
+	Imd *_imdFile;
+	char _curImdFile[15];
+	int16 _imdX;
+	int16 _imdY;
+	int16 _imdFrameDataSize;
+	int16 _imdVidBufferSize;
+	byte *_imdFrameData;
+	byte *_imdVidBuffer;
+	int8 _byte_2FC82;
+	int8 _byte_2FC83;
+	byte *_word_2FC80;
+
 	Game(GobEngine *vm);
 	virtual ~Game() {};
 
@@ -163,6 +206,18 @@ public:
 	char *loadLocTexts(void);
 	Snd::SoundDesc *loadSND(const char *path, int8 arg_4);
 
+	Imd *loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int8 flags);
+	int8 openImd(const char *path, int16 x, int16 y, int16 repeat, int16 flags);
+	void closeImd(void);
+	void finishImd(Imd *imdPtr);
+	void setImdXY(Imd *imdPtr, int16 x, int16 y);
+	void playImd(int16 arg_0, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg_8, int16 arg_A);
+	int16 viewImd(Game::Imd *imdPtr, int16 arg_4);
+	void imdDrawFrame(Imd *imdPtr, int16 arg_4, int16 arg_6, int16 arg_8);
+	void imdRenderFrame(Imd *imdPtr);
+	void imdFrameUncompressor(byte *dest, byte *src);
+	int16 sub_2C825(Imd *imdPtr);
+
 	virtual void playTot(int16 skipPlay) = 0;
 	virtual void clearCollisions(void) = 0;
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
@@ -177,10 +232,12 @@ public:
 	int16 _word_2FC9C;
 	int16 _word_2FC9E;
 	int16 _word_2E51F;
+	int32 _dword_2F2B6;
 	Video::SurfaceDesc *_off_2E51B;
 	Video::SurfaceDesc *_off_2E517;
 	void sub_ADD2(void);
 	void sub_BB28(void);
+
 protected:
 
 	int16 _lastCollKey;

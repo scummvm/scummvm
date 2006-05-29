@@ -23,6 +23,8 @@
 #ifndef GOB_ANIM_H
 #define GOB_ANIM_H
 
+#include "gob/video.h"
+
 namespace Gob {
 
 class Anim {

@@ -23,6 +23,7 @@
 #ifndef GOB_MULT_H
 #define GOB_MULT_H
 
+#include "gob/gob.h"
 #include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/goblin.h"
@@ -77,10 +78,12 @@ public:
 		int16 somethingBottom;             // New in GOB2
 		int8 goblinX;                      // New in GOB2
 		int8 goblinY;                      // New in GOB2
-		int8 field_1C;                     // New in GOB2
-		int8 field_1D;                     // New in GOB2
-		int8 field_1E;                     // New in GOB2
-		int8 field_1F;                     // New in GOB2
+		int8 destX;                        // New in GOB2
+		int8 destY;                        // New in GOB2
+		int8 gobDestX;                     // New in GOB2
+		int8 gobDestY;                     // New in GOB2
+		int8 nearestWayPoint;              // New in GOB2
+		int8 nearestDest;                  // New in GOB2
 		Goblin::Gob2_State **goblinStates; // New in GOB2
 	};
 
@@ -201,12 +204,6 @@ public:
 	Mult_SndKey *_sndKeys;
 
 	int8 *_orderArray;
-
-	uint16 _word_2F2B1;
-	uint16 _word_2F2AF;
-	uint16 _word_2CC86;
-	uint16 _word_2F22A;
-	uint16 _word_2CC84;
 
 	void zeroMultData(void);
 	void checkFreeMult(void);

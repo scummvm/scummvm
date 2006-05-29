@@ -23,6 +23,7 @@
 #ifndef GOB_GOBLIN_H
 #define GOB_GOBLIN_H
 
+#include "gob/gob.h"
 #include "gob/util.h"
 #include "gob/sound.h"
 
@@ -192,7 +193,6 @@ public:
 	int16 _word_2F9BA;
 	int16 _dword_2F9B6; // index into the variables array
 	int16 _dword_2F9B2; // index into the variables array
-	char *_dword_2F2A4; // index into the variables array
 
 	// Functions
 	char rotateState(int16 from, int16 to);
@@ -223,6 +223,7 @@ public:
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state) = 0;
 	virtual void freeObjects(void) = 0;
+	virtual void initiateMove(int16 index) = 0;
 
 	Goblin(GobEngine *vm);
 	virtual ~Goblin() {};
@@ -238,7 +239,6 @@ protected:
 	void adjustTarget(void);
 	void targetDummyItem(Gob_Object *gobDesc);
 	void targetItem(void);
-	void initiateMove(void);
 	void moveFindItem(int16 posX, int16 posY);
 	void moveCheckSelect(int16 framesCount, Gob_Object * gobDesc, int16 *pGobIndex, int16 *nextAct);
 	void moveInitStep(int16 framesCount, int16 action, int16 cont,
@@ -253,6 +253,7 @@ public:
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects(void);
+	virtual void initiateMove(int16 index);
 
 	Goblin_v1(GobEngine *vm);
 	virtual ~Goblin_v1() {};
@@ -263,6 +264,7 @@ public:
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects(void);
+	virtual void initiateMove(int16 index);
 
 	Goblin_v2(GobEngine *vm);
 	virtual ~Goblin_v2() {};

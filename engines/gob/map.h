@@ -23,6 +23,8 @@
 #ifndef GOB_MAP_H
 #define GOB_MAP_H
 
+#include "gob/util.h"
+
 namespace Gob {
 
 // The same numeric values are also used for the arrow keys.
@@ -39,16 +41,13 @@ public:
 		kDirS  = 0x5000,
 		kDirSE = 0x5100
 	};
-	enum {
-		kMapWidth  = 26,
-		kMapHeight = 28
-	};
 
 #pragma START_PACK_STRUCTS
 
 	struct Point {
 		int16 x;
 		int16 y;
+		int16 field_2; // Gob2
 	} GCC_PACK;
 
 #define szMap_ItemPos 3
@@ -61,13 +60,22 @@ public:
 
 #pragma END_PACK_STRUCTS
 
-	int8 _passMap[kMapHeight][kMapWidth];	// [y][x]
-	int16 _itemsMap[kMapHeight][kMapWidth];	// [y][x]
-	Point _wayPoints[40];
+	int16 _mapWidth;
+	int16 _mapHeight;
+	int16 _screenWidth;
+	int16 _tilesWidth;
+	int16 _tilesHeight;
+	int16 _passWidth;
+	bool _bigTiles;
+
+	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
+	int16 **_itemsMap;	// [y][x]
+	int16 _wayPointsCount;
+	Point *_wayPoints;
 	int16 _nearestWayPoint;
 	int16 _nearestDest;
 
-   	int16 _curGoblinX;
+	int16 _curGoblinX;
 	int16 _curGoblinY;
 	int16 _destX;
 	int16 _destY;
@@ -79,16 +87,19 @@ public:
 	void placeItem(int16 x, int16 y, int16 id);
 
 	int16 getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
-	void findNearestToGob(void);
-	void findNearestToDest(void);
-	int16 checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1);
+	int16 checkDirectPath(int16 index, int16 x0, int16 y0, int16 x1, int16 y1);
 	int16 checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
-	void optimizePoints(void);
 	void loadItemToObject(void);
 	void loadDataFromAvo(char *dest, int16 size);
 	void loadMapsInitGobs(void);
 
+	virtual int8 getPass(int x, int y, int heightOff = -1) = 0;
+	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) = 0;
+
 	virtual void loadMapObjects(char *avjFile) = 0;
+	virtual void findNearestToGob(int16 index) = 0;
+	virtual void findNearestToDest(int16 index) = 0;
+	virtual void optimizePoints(int16 index, int16 x, int16 y) = 0;
 
 	Map(GobEngine *vm);
 	virtual ~Map() {};
@@ -104,14 +115,40 @@ protected:
 class Map_v1 : public Map {
 public:
 	virtual void loadMapObjects(char *avjFile);
+	virtual void optimizePoints(int16 index, int16 x, int16 y);
+	virtual void findNearestToGob(int16 index);
+	virtual void findNearestToDest(int16 index);
+
+	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
+		return _passMap[y * _mapWidth + x];
+	}
+	
+	virtual inline void setPass(int x, int y, int8 pass, int heightOff = -1) {
+		_passMap[y * _mapWidth + x] = pass;
+	}
 
 	Map_v1(GobEngine *vm);
-	virtual ~Map_v1() {};
+	virtual ~Map_v1();
 };
 
 class Map_v2 : public Map_v1 {
 public:
 	virtual void loadMapObjects(char *avjFile);
+	virtual void optimizePoints(int16 index, int16 x, int16 y);
+	virtual void findNearestToGob(int16 index);
+	virtual void findNearestToDest(int16 index);
+
+	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
+		if (heightOff == -1)
+			heightOff = _passWidth;
+		return _vm->_util->readVariableByte((char *) (_passMap + y * heightOff + x));
+	}
+	
+	virtual inline void setPass(int x, int y, int8 pass, int heightOff = -1) {
+		if (heightOff == -1)
+			heightOff = _passWidth;
+		_vm->_util->writeVariableByte((char *) (_passMap + y * heightOff + x) , pass);
+	}
 
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2() {};

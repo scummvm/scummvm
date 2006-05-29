@@ -1485,7 +1485,20 @@ void Inter_v1::o1_freeAnim(void) {
 }
 
 void Inter_v1::o1_updateAnim(void) {
-	_vm->_scenery->interUpdateAnim();
+	int16 deltaX;
+	int16 deltaY;
+	int16 flags;
+	int16 frame;
+	int16 layer;
+	int16 animation;
+
+	evalExpr(&deltaX);
+	evalExpr(&deltaY);
+	evalExpr(&animation);
+	evalExpr(&layer);
+	evalExpr(&frame);
+	flags = load16();
+	_vm->_scenery->updateAnim(layer, frame, animation, flags, deltaX, deltaY, 1);
 }
 
 void Inter_v1::o1_initMult(void) {
@@ -2230,7 +2243,7 @@ void Inter_v1::o1_setPassMap(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Obj
 	int16 xPos = load16();
 	int16 yPos = load16();
 	int16 val = load16();
-	_vm->_map->_passMap[yPos][xPos] = val;
+	_vm->_map->setPass(xPos, yPos, val);
 }
 
 void Inter_v1::o1_setGoblinPosH(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {

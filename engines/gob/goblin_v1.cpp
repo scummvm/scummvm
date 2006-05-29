@@ -27,6 +27,7 @@
 #include "gob/gob.h"
 #include "gob/goblin.h"
 #include "gob/scenery.h"
+#include "gob/map.h"
 
 namespace Gob {
 
@@ -134,6 +135,26 @@ void Goblin_v1::placeObject(Gob_Object *objDesc, char animated,
 		objDesc->dirtyBottom = objDesc->yPos;
 
 		_vm->_util->listInsertBack(_objList, objDesc);
+	}
+}
+
+void Goblin_v1::initiateMove(int16 index) {
+	_vm->_map->findNearestToDest(0);
+	_vm->_map->findNearestToGob(0);
+	_vm->_map->optimizePoints(0, 0, 0);
+
+	_pathExistence = _vm->_map->checkDirectPath(0, _vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+	    _pressedMapX, _pressedMapY);
+
+	if (_pathExistence == 3) {
+		if (_vm->_map->checkLongPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+			_pressedMapX, _pressedMapY,
+			_vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
+			_pathExistence = 0;
+		} else {
+			_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
+			_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+		}
 	}
 }
 

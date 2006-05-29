@@ -816,6 +816,7 @@ char Mult_v2::doSoundAnim(char stop, int16 frame) {
 	return stop;
 }
 
+// "deplaceheros"
 void Mult_v2::sub_62DD(int16 index) {
 	Mult_Object *animObj;
 	Mult_AnimKey *animKey;
@@ -952,6 +953,7 @@ void Mult_v2::sub_62DD(int16 index) {
 	WRITE_VAR(18 + index, frame);
 }
 
+// "avancerperso"
 void Mult_v2::sub_6A35(void) {
 	int i;
 	int j;
@@ -1273,7 +1275,6 @@ void Mult_v2::animate(void) {
 
 void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 	    int16 channel) {
-	warning("PlaySound(%p, %d, %d, %d), %d", (void *) soundDesc, repCount, freq, channel, soundDesc->frequency);
 	if (soundDesc->frequency >= 0) {
 		if (soundDesc->frequency == freq)
 			_vm->_snd->playSample(soundDesc, repCount, -channel);
@@ -1292,12 +1293,8 @@ void Mult_v2::freeMultKeys(void) {
 	char animCount;
 	char staticCount;
 
-	warning("GOB2 Stub! Mult_v2::freeMultKeys()");
-
 	if (_multData2 == 0)
 		return;
-
-	// loc_7323
 
 	staticCount = (_multData2->staticCount + 1) && 0x7F;
 	animCount = _multData2->animCount + 1;

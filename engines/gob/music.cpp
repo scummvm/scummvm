@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2006 The ScummVM project
- * Original ADL-Player source Copyright (C) 2004 by Dorian Gray
+ * Original ADL-Player source Copyright (C) 2004 by Patrick Combet aka Dorian Gray
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -337,6 +337,12 @@ void Music::pollMusic(void) {
 			setVolume(channel, *(_playPos++));
 			setKey(channel, note, true, false);
 			break;
+		case 0x10:
+			warning("GOB2 Stub! ADL command 0x10");
+			break;
+		case 0x50:
+			warning("GOB2 Stub! ADL command 0x50");
+			break;
 		// Note on
 		case 0x90:
 			note = *(_playPos++);
@@ -364,16 +370,22 @@ void Music::pollMusic(void) {
 			break;
 		// Special
 		case 0xF0:
+			switch (instr & 0x0F) {
+			case 0xF: // End instruction
+				_ended = true;
+				break;
+			default:
+				warning("Unknown special command in ADL, stopping playback: %X", instr & 0x0F);
+				_repCount = 0;
+				_ended = true;
+				break;
+			}
 			break;
 		default:
-			warning("Unknown command in ADL, stopping playback");
+			warning("Unknown command in ADL, stopping playback: %X", instr & 0xF0);
 			_repCount = 0;
 			_ended = true;
 			break;
-	}
-	// End instruction
-	if (instr == 0xFF) {
-		_ended = true;
 	}
 
 	// Temporization

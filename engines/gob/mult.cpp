@@ -120,12 +120,6 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 		}
 
 	_orderArray = 0;
-	warning("GOB2 Stub! _word_2F2B1, _word_2F2AF, _word_2CC86, _word_2F22A, _word_2CC84");
-	_word_2F2B1 = 0;
-	_word_2F2AF = 0;
-	_word_2CC86 = 0;
-	_word_2F22A = 0;
-	_word_2CC84 = 0;
 }
 
 void Mult::interGetObjAnimSize(void) {

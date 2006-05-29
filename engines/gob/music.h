@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2006 The ScummVM project
- * Original ADL-Player source Copyright (C) 2004 by Dorian Gray
+ * Original ADL-Player source Copyright (C) 2004 by Patrick Combet aka Dorian Gray
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #define GOB_MUSIC_H
 
 #include "sound/audiostream.h"
+#include "sound/mixer.h"
 #include "sound/fmopl.h"
 #include "common/mutex.h"
 
@@ -37,20 +38,20 @@ class GobEngine;
 class Music : public Audio::AudioStream {
 public:
 	Music(GobEngine *vm);
-	~Music();
+	virtual ~Music();
 
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
 	bool playing() { return _playing; }
 	bool getRepeating(void) { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
-	void startPlay(void);
-	void stopPlay(void) { _mutex.lock(); _playing = false; _mutex.unlock(); }
-	void playTrack(const char *trackname);
-	void playBgMusic(void);
-	bool loadMusic(const char *filename);
-	void loadFromMemory(byte *data);
-	void unloadMusic(void);
+	virtual void startPlay(void);
+	virtual void stopPlay(void) { _mutex.lock(); _playing = false; _mutex.unlock(); }
+	virtual void playTrack(const char *trackname);
+	virtual void playBgMusic(void);
+	virtual bool loadMusic(const char *filename);
+	virtual void loadFromMemory(byte *data);
+	virtual void unloadMusic(void);
 
 // AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -94,6 +95,24 @@ protected:
 	void setKey(byte voice, byte note, bool on, bool spec);
 	void setVolume(byte voice, byte volume);
 	void pollMusic(void);
+};
+
+class Music_Dummy: public Music {
+public:
+	Music_Dummy(GobEngine *vm) : Music(vm) {
+		_vm->_mixer->setupPremix(0);
+		OPLDestroy(_opl);
+	}
+
+	virtual void startPlay(void) {};
+	virtual void stopPlay(void) {};
+	virtual void playTrack(const char *trackname) {};
+	virtual void playBgMusic(void) {};
+	virtual bool loadMusic(const char *filename) { return true; };
+	virtual void loadFromMemory(byte *data) {};
+	virtual void unloadMusic(void) {};
+
+	virtual ~Music_Dummy() {};
 };
 
 } // End of namespace Gob

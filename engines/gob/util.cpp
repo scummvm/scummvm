@@ -246,6 +246,7 @@ void Util::setFrameRate(int16 rate) {
 
 	_vm->_global->_frameWaitTime = 1000 / rate;
 	_vm->_global->_startFrameTime = getTimeKey();
+	_vm->_game->_dword_2F2B6 = 0;
 }
 
 void Util::waitEndFrame() {
@@ -256,12 +257,15 @@ void Util::waitEndFrame() {
 	time = getTimeKey() - _vm->_global->_startFrameTime;
 	if (time > 1000 || time < 0) {
 		_vm->_global->_startFrameTime = getTimeKey();
+		_vm->_game->_dword_2F2B6 = 0;
 		return;
 	}
 	if (_vm->_global->_frameWaitTime - time > 0) {
-		delay(_vm->_global->_frameWaitTime - time);
+		_vm->_game->_dword_2F2B6 = 0;
+		delay(_vm->_global->_frameWaitTime - _vm->_game->_dword_2F2B6 - time);
 	}
 	_vm->_global->_startFrameTime = getTimeKey();
+	_vm->_game->_dword_2F2B6 = time - _vm->_global->_frameWaitTime;
 }
 
 int16 joy_getState() {

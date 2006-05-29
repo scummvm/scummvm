@@ -119,6 +119,8 @@ public:
 
 	int16 _animTop;
 	int16 _animLeft;
+	int16 _animBottom;
+	int16 _animRight;
 
 	int16 *_pCaptureCounter;
 
@@ -129,16 +131,35 @@ public:
 	void renderStatic(int16 scenery, int16 layer);
 	void updateStatic(int16 orderFrom);
 	int16 loadAnim(char search);
-	void updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
-					int16 drawDeltaX, int16 drawDeltaY, char doDraw);
 	void freeAnim(int16 animation);
-	void interUpdateAnim(void);
 	void interStoreParams(void);
 
+	virtual void updateAnim(int16 layer, int16 frame, int16 animation,
+			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw) = 0;
+
 	Scenery(GobEngine *vm);
+	virtual ~Scenery() {};
 
 protected:
 	GobEngine *_vm;
+};
+
+class Scenery_v1 : public Scenery {
+public:
+	virtual void updateAnim(int16 layer, int16 frame, int16 animation,
+			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
+
+	Scenery_v1(GobEngine *vm);
+	virtual ~Scenery_v1() {};
+};
+
+class Scenery_v2 : public Scenery_v1 {
+public:
+	virtual void updateAnim(int16 layer, int16 frame, int16 animation,
+			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
+
+	Scenery_v2(GobEngine *vm);
+	virtual ~Scenery_v2() {};
 };
 
 }				// End of namespace Gob

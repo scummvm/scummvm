@@ -99,7 +99,7 @@ void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
 		frequency = sndDesc->frequency;
 
 	if (frequency <= 0) {
-		warning("Attempted to play a sample with a frequency of %d", frequency);
+		warning("Attempted to play a sample with a frequency of %d (sndDesc->freq = %d)", frequency, sndDesc->frequency);
 		return;
 	}
 //	assert(frequency > 0);

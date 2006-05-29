@@ -199,7 +199,6 @@ int GobEngine::init() {
 	_dataio = new DataIO(this);
 	_pack = new Pack();
 	_palanim = new PalAnim(this);
-	_scenery = new Scenery(this);
 	_gtimer = new GTimer();
 	_util = new Util(this);
 	if (_features & Gob::GF_GOB1) {
@@ -212,6 +211,7 @@ int GobEngine::init() {
 		_init = new Init_v1(this);
 		_map = new Map_v1(this);
 		_goblin = new Goblin_v1(this);
+		_scenery = new Scenery_v1(this);
 	}
 	else if (_features & Gob::GF_GOB2) {
 		_inter = new Inter_v2(this);
@@ -223,11 +223,16 @@ int GobEngine::init() {
 		_init = new Init_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
+		_scenery = new Scenery_v2(this);
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
-	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2))
-		_music = new Music(this);
+	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2)) {
+		if (ConfMan.get("music_driver") == "null")
+			_music = new Music_Dummy(this);
+		else
+			_music = new Music(this);
+	}
 
 	_system->beginGFXTransaction();
 		initCommonGFX(false);

@@ -29,10 +29,39 @@
 #include "gob/dataio.h"
 #include "gob/goblin.h"
 #include "gob/sound.h"
+#include "gob/scenery.h"
+#include "gob/mult.h"
 
 namespace Gob {
 
 Map_v1::Map_v1(GobEngine *vm) : Map(vm) {
+	int i;
+	int j;
+
+	_mapWidth = 26;
+	_mapHeight = 28;
+
+	_passMap = new int8[_mapHeight * _mapWidth];
+	_itemsMap = new int16*[_mapHeight];
+	for (i = 0; i < _mapHeight; i++) {
+		_itemsMap[i] = new int16[_mapWidth];
+		for (j = 0; j < _mapWidth; j++) {
+			setPass(j, i, 0);
+			_itemsMap[i][j] = 0;
+		}
+	}
+
+	_wayPointsCount = 40;
+	_wayPoints = new Point[40];
+	for (i = 0; i < 40; i++) {
+		_wayPoints[i].x = 0;
+		_wayPoints[i].y = 0;
+		_wayPoints[i].field_2 = 0;
+	}
+}
+
+Map_v1::~Map_v1() {
+	delete[] _passMap;
 }
 
 void Map_v1::loadMapObjects(char *avjFile) {
@@ -66,10 +95,10 @@ void Map_v1::loadMapObjects(char *avjFile) {
 		_vm->_dataio->closeData(handle);
 		_avoDataPtr = _vm->_dataio->getData(avoName);
 		dataBuf = _avoDataPtr;
-		loadDataFromAvo((char *)_passMap, kMapHeight * kMapWidth);
+		loadDataFromAvo((char *)_passMap, _mapHeight * _mapWidth);
 
-		for (y = 0; y < kMapHeight; y++) {
-			for (x = 0; x < kMapWidth; x++) {
+		for (y = 0; y < _mapHeight; y++) {
+			for (x = 0; x < _mapWidth; x++) {
 				loadDataFromAvo(&item, 1);
 				_itemsMap[y][x] = item;
 			}
@@ -341,6 +370,38 @@ void Map_v1::loadMapObjects(char *avjFile) {
 		_vm->_dataio->closeData(handle);
 		_vm->_goblin->_soundData[i] = _vm->_snd->loadSoundData(sndNames[i]);
 	}
+}
+
+void Map_v1::optimizePoints(int16 index, int16 x, int16 y) {
+	int16 i;
+
+	if (_nearestWayPoint < _nearestDest) {
+		for (i = _nearestWayPoint; i <= _nearestDest; i++) {
+			if (checkDirectPath(-1, _curGoblinX, _curGoblinY,
+				_wayPoints[i].x, _wayPoints[i].y) == 1)
+				_nearestWayPoint = i;
+		}
+	} else if (_nearestWayPoint > _nearestDest) {
+		for (i = _nearestWayPoint; i >= _nearestDest; i--) {
+			if (checkDirectPath(-1, _curGoblinX, _curGoblinY,
+				_wayPoints[i].x, _wayPoints[i].y) == 1)
+				_nearestWayPoint = i;
+		}
+	}
+}
+
+void Map_v1::findNearestToGob(int16 index) {
+	int16 wayPoint = findNearestWayPoint(_curGoblinX, _curGoblinY);
+
+	if (wayPoint != -1)
+		_nearestWayPoint = wayPoint;
+}
+
+void Map_v1::findNearestToDest(int16 index) {
+	int16 wayPoint = findNearestWayPoint(_destX, _destY);
+
+	if (wayPoint != -1)
+		_nearestDest = wayPoint;
 }
 
 } // End of namespace Gob

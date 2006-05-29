@@ -29,6 +29,7 @@
 #include "gob/mult.h"
 #include "gob/game.h"
 #include "gob/scenery.h"
+#include "gob/map.h"
 
 namespace Gob {
 
@@ -74,11 +75,13 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 		objAnim->newCycle = 0;
 		_vm->_scenery->updateAnim(objAnim->layer, 0, objAnim->animation, 0,
 				*obj->pPosX, *obj->pPosY, 0);
-		if (_vm->_mult->_word_2CC86 == 0)
-			*obj->pPosY = (y + 1) * _vm->_mult->_word_2F2AF; // - (_vm->_scenery->_animBottom - _vm->scenery->_animTop);
+		if (!_vm->_map->_bigTiles)
+			*obj->pPosY = (y + 1) * _vm->_map->_tilesHeight
+				- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 		else
-			*obj->pPosY = ((y + 1) / 2) * _vm->_mult->_word_2F2AF; //- (_vm->_scenery->_animBottom - _vm->scenery->_animTop);
-		*obj->pPosX = x * _vm->_mult->_word_2F2B1;
+			*obj->pPosY = ((y + 1) / 2) * _vm->_map->_tilesHeight
+				- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+		*obj->pPosX = x * _vm->_map->_tilesWidth;
 	} else {
 		if (obj->goblinStates[state] != 0) {
 			layer = obj->goblinStates[state][0].layer;
@@ -91,14 +94,32 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 			objAnim->isStatic = 0;
 			objAnim->newCycle = _vm->_scenery->_animations[animation].layers[layer]->framesCount;
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
-			if (_vm->_mult->_word_2CC86 == 0)
-				*obj->pPosY = (y + 1) * _vm->_mult->_word_2F2AF; // - (_vm->_scenery->_animBottom - _vm->scenery->_animTop);
+			if (!_vm->_map->_bigTiles)
+				*obj->pPosY = (y + 1) * _vm->_map->_tilesHeight
+					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 			else
-				*obj->pPosY = ((y + 1) / 2) * _vm->_mult->_word_2F2AF; //- (_vm->_scenery->_animBottom - _vm->scenery->_animTop);
-			*obj->pPosX = x * _vm->_mult->_word_2F2B1;
-			warning("GOB2 Stub! sub_FE1D(obj");
+				*obj->pPosY = ((y + 1) / 2) * _vm->_map->_tilesHeight
+					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+			*obj->pPosX = x * _vm->_map->_tilesWidth;
+			initiateMove(index);
 		} else
-			warning("GOB2 Stub! sub_FE1D(obj");
+			initiateMove(index);
+	}
+}
+
+void Goblin_v2::initiateMove(int16 index) {
+	Mult::Mult_Object *obj = &_vm->_mult->_objects[index];
+
+	obj->destX = obj->gobDestX;
+	obj->destY = obj->gobDestY;
+	_vm->_map->findNearestToDest(index);
+	_vm->_map->findNearestToGob(index);
+	_vm->_map->optimizePoints(index, obj->goblinX, obj->goblinY);
+	obj->pAnimData->field_12 = _vm->_map->checkDirectPath(index,
+			obj->goblinX, obj->goblinY, obj->gobDestX, obj->gobDestY);
+	if (obj->pAnimData->field_12 == 3) {
+		obj->destX = _vm->_map->_wayPoints[obj->nearestWayPoint].x;
+		obj->destY = _vm->_map->_wayPoints[obj->nearestWayPoint].y;
 	}
 }
 

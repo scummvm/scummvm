@@ -317,6 +317,10 @@ void DataIO::seekData(int16 handle, int32 pos, int16 from) {
 	file_getHandle(handle)->seek(pos, from);
 }
 
+int32 DataIO::getPos(int16 handle) {
+	return file_getHandle(handle)->pos();
+}
+
 int32 DataIO::getDataSize(const char *name) {
 	char buf[128];
 	int32 chunkSz;

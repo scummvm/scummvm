@@ -39,6 +39,7 @@
 #include "gob/goblin.h"
 #include "gob/cdrom.h"
 #include "gob/music.h"
+#include "gob/palanim.h"
 
 namespace Gob {
 
@@ -107,13 +108,28 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 		_curTotFileArray[i][0] = 0;
 	}
 
-	warning("GOB2 Stub! _byte_2FC9B, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517");
+	_imdFile = 0;
+	_curImdFile[0] = 0;
+	_imdX = 0;
+	_imdY = 0;
+	_imdFrameDataSize = 0;
+	_imdVidBufferSize = 0;
+	_imdFrameData = 0;
+	_imdVidBuffer = 0;
+
+	warning("GOB2 Stub! _byte_2FC82, _byte_2FC83, _word_2FC80");
+	_byte_2FC82 = 0;
+	_byte_2FC83 = 0;
+	_word_2FC80 = 0;
+
+	warning("GOB2 Stub! _byte_2FC9B, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517, _dword_2F2B6");
 	_byte_2FC9B = 0;
 	_word_2FC9C = 0;
 	_word_2FC9E = 0;
 	_word_2E51F = 0;
 	_off_2E51B = 0;
 	_off_2E517 = 0;
+	_dword_2F2B6 = 0;
 }
 
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
@@ -1650,6 +1666,7 @@ void Game::collAreaSub(int16 index, int8 enter) {
 	}
 }
 
+// "DEVinitscreen"
 void Game::sub_ADD2(void) {
 	_word_2FC9C = 0;
 	_word_2FC9E = 0;
@@ -1687,6 +1704,7 @@ void Game::sub_ADD2(void) {
 	}*/
 }
 
+// "DEVclosescreen"
 void Game::sub_BB28(void) {
 	_vm->_draw->freeSprite(23);
 	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
@@ -1746,6 +1764,834 @@ Snd::SoundDesc *Game::loadSND(const char *path, int8 arg_4) {
 	}
 
 	return soundDesc;
+}
+
+int8 Game::openImd(const char *path, int16 x, int16 y, int16 repeat, int16 flags) {
+	int i;
+	int j;
+	const char *src;
+	byte *vidMem;
+	Video::SurfaceDesc *surfDesc;
+
+	if (path[0] != 0) {
+		if (_imdFile == 0)
+			_curImdFile[0] = 0;
+
+		src = strrchr(path, '\\');
+		src = src == 0 ? path : src+1;
+
+		if (strcmp(_curImdFile, src) != 0) {
+			closeImd();
+			_imdFile = loadImdFile(path, 0, 2);
+			if (_imdFile == 0)
+				return 0;
+
+			_imdX = _imdFile->x;
+			_imdY = _imdFile->y;
+			strcpy(_curImdFile, src);
+			_imdFrameData = new byte[_imdFrameDataSize + 1000];
+			_imdVidBuffer = new byte[_imdVidBufferSize + 1000];
+			memset(_imdFrameData, 0, _imdFrameDataSize + 1000);
+			memset(_imdVidBuffer, 0, _imdVidBufferSize + 1000);
+
+			if (_vm->_video->_extraMode) {
+				_byte_2FC83 = (flags & 0x80) ? 1 : 0;
+				if (!(_imdFile->field_E & 0x100) || (_imdFile->field_E & 0x2000)) {
+					setImdXY(_imdFile, 0, 0);
+					_imdFile->surfDesc =
+						_vm->_video->initSurfDesc(0x13, _imdFile->width, _imdFile->height, 0);
+				} else {
+					if (_byte_2FC82 == 0)
+						_imdFile->surfDesc = _vm->_draw->_spritesArray[21];
+					else
+						_imdFile->surfDesc = _vm->_draw->_spritesArray[20];
+					if ((x != -1) || (y != -1)) {
+						_imdX = x != -1 ? x : _imdX;
+						_imdY = y != -1 ? y : _imdY;
+						setImdXY(_imdFile, _imdX, _imdY);
+					}
+				}
+				if (flags & 0x40) {
+					_imdX = x != -1 ? x : _imdX;
+					_imdY = y != -1 ? y : _imdY;
+					if (_vm->_video->_extraMode && ((_imdFile->surfDesc->vidMode & 0x7F) == 0x13)) {
+						surfDesc = _vm->_video->initSurfDesc(0x13, _imdFile->width, _imdFile->height, 0);
+						_vm->_video->drawSprite(_vm->_draw->_spritesArray[21], surfDesc, _imdX, _imdY,
+								_imdX + _imdFile->width - 1, _imdY + _imdFile->height - 1, 0, 0, 0);
+						vidMem = _imdFile->surfDesc->vidPtr;
+						for (i = 0; i < _imdFile->height; i++)
+							for (j = 0; j < _imdFile->width; j++, vidMem++) {
+								*(vidMem) = *(surfDesc->vidPtr
+										+ (j / 4)
+										+ (surfDesc->width / 4 * i)
+										+ (surfDesc->reserved2 * (j & 3)));
+							}
+						_vm->_video->freeSurfDesc(surfDesc);
+					}
+				}
+			} else {
+				if ((x != -1) || (y != -1)) {
+					_imdX = x != -1 ? x : _imdX;
+					_imdY = y != -1 ? y : _imdY;
+					setImdXY(_imdFile, _imdX, _imdY);
+				}
+				_byte_2FC83 = (flags & 0x80) ? 1 : 0;
+				if (_byte_2FC83 == 0)
+					_imdFile->surfDesc = _vm->_draw->_spritesArray[21];
+				else
+					_imdFile->surfDesc = _vm->_draw->_spritesArray[20];
+			}
+		}
+	}
+
+	if (_imdFile == 0)
+		return 0;
+
+	if (repeat == -1) {
+		closeImd();
+		return 0;
+	}
+
+	_imdX = x != -1 ? x : _imdX;
+	_imdY = y != -1 ? y : _imdY;
+
+	WRITE_VAR(7, _imdFile->framesCount);
+
+	return 1;
+}
+
+void Game::closeImd(void) {
+	if (_imdFile == 0)
+		return;
+
+	if ((_imdFile->surfDesc != _vm->_draw->_spritesArray[20]) &&
+			(_imdFile->surfDesc != _vm->_draw->_spritesArray[21]))
+		_vm->_video->freeSurfDesc(_imdFile->surfDesc);
+
+	finishImd(_imdFile);
+
+	delete[] _imdFrameData;
+	delete[] _imdVidBuffer;
+	_imdFrameData = 0;
+	_imdVidBuffer = 0;
+
+	_imdFile = 0;
+}
+
+void Game::finishImd(Game::Imd *imdPtr) {
+	if (imdPtr == 0)
+		return;
+
+/*
+	if (dword_31345 != 0) {
+		_vm->_sound->stopSound(0);
+		dword_31345 = 0;
+		delete off_31461;
+		byte_31344 = 0;
+	}
+*/
+
+	_vm->_dataio->closeData(imdPtr->fileHandle);
+
+	if (imdPtr->frameCoords != 0)
+		delete[] imdPtr->frameCoords;
+	if (imdPtr->palette != 0)
+		delete[] imdPtr->palette;
+	if (imdPtr->framesPos != 0)
+		delete[] imdPtr->framesPos;
+
+	delete imdPtr;
+	imdPtr = 0;
+}
+
+// flagsBit: 0 = read and set palette
+//           1 = read palette
+Game::Imd *Game::loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int8 flags) {
+	int i;
+	Imd *imdPtr;
+	int16 handle;
+	int16 setAllPalBak;
+	char buf[18];
+	Video::Color *palBak;
+
+	int32 byte_31449 = 0;
+	int32 byte_3144D = 0;
+
+	buf[0] = 0;
+	strcpy(buf, path);
+	strcat(buf, ".IMD");
+
+	handle = _vm->_dataio->openData(buf);
+
+	if (handle < 0) {
+		warning("Can't open IMD \"%s\"", buf);
+		return 0;
+	}
+
+	imdPtr = new Imd;
+	memset(imdPtr, 0, sizeof(Imd));
+
+	imdPtr->palette = 0;
+
+	_vm->_dataio->readData(handle, buf, 18);
+
+	// "fileHandle" holds the major version while loading
+	imdPtr->fileHandle = READ_LE_UINT16(buf);
+	imdPtr->verMin = READ_LE_UINT16(buf + 2);
+	imdPtr->framesCount = READ_LE_UINT16(buf + 4);
+	imdPtr->x = READ_LE_UINT16(buf + 6);
+	imdPtr->y = READ_LE_UINT16(buf + 8);
+	imdPtr->width = READ_LE_UINT16(buf + 10);
+	imdPtr->height = READ_LE_UINT16(buf + 12);
+	imdPtr->field_E = READ_LE_UINT16(buf + 14);
+	imdPtr->curFrame = READ_LE_UINT16(buf + 16);
+
+	if (imdPtr->fileHandle != 0)
+		imdPtr->verMin = 0;
+
+	if ((imdPtr->verMin & 0xFF) < 2) {
+		warning("IMD version incorrect (%d,%d)", imdPtr->fileHandle, imdPtr->verMin);
+		_vm->_dataio->closeData(handle);
+		delete imdPtr;
+		return 0;
+	}
+
+	imdPtr->surfDesc = surfDesc;
+	imdPtr->framesPos = 0;
+	imdPtr->firstFramePos = imdPtr->curFrame;
+	
+	if (flags & 3) {
+		imdPtr->palette = new Video::Color[256];
+		_vm->_dataio->readData(handle, (char *) imdPtr->palette, 768);
+	} else {
+		_vm->_dataio->seekData(handle, 768, 1);
+		imdPtr->palette = 0;
+	}
+	if ((flags & 3) == 1) {
+		palBak = _vm->_global->_pPaletteDesc->vgaPal;
+		setAllPalBak = _vm->_global->_setAllPalette;
+		_vm->_global->_pPaletteDesc->vgaPal = imdPtr->palette;
+		_vm->_global->_setAllPalette = 1;
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+		_vm->_global->_setAllPalette = setAllPalBak;
+		_vm->_global->_pPaletteDesc->vgaPal = palBak;
+	}
+
+	if ((imdPtr->verMin & 0xFF) >= 3) {
+		_vm->_dataio->readData(handle, buf, 2);
+		imdPtr->stdX = READ_LE_UINT16(buf);
+		if (imdPtr->stdX > 1) {
+			warning("IMD ListI incorrect (%d)", imdPtr->stdX);
+			_vm->_dataio->closeData(handle);
+			delete imdPtr;
+			return 0;
+		}
+		if(imdPtr->stdX != 0) {
+			_vm->_dataio->readData(handle, buf, 8);
+			imdPtr->stdX = READ_LE_UINT16(buf);
+			imdPtr->stdY = READ_LE_UINT16(buf + 2);
+			imdPtr->stdWidth = READ_LE_UINT16(buf + 4);
+			imdPtr->stdHeight = READ_LE_UINT16(buf + 6);
+		} else
+			imdPtr->stdX = -1;
+	} else
+		imdPtr->stdX = -1;
+
+	if ((imdPtr->verMin & 0xFF) >= 4) {
+		_vm->_dataio->readData(handle, buf, 4);
+		byte_31449 = READ_LE_UINT32(buf);
+		imdPtr->framesPos = byte_31449 == 0 ? 0 : new int32[imdPtr->framesCount];
+	} else
+		imdPtr->framesPos = 0;
+
+	if (imdPtr->verMin & 0x8000) {
+		_vm->_dataio->readData(handle, buf, 4);
+		byte_3144D = READ_LE_UINT32(buf);
+	}
+
+	if (imdPtr->verMin & 0x4000) {
+		// loc_29C4F
+		error("GOB2 Stub! loadImdFile, imdPtr->verMin & 0x4000");
+		// Sound stuff, I presume...
+	}
+
+	if (imdPtr->verMin & 0x2000) {
+		_vm->_dataio->readData(handle, buf, 4);
+		imdPtr->frameDataSize = READ_LE_UINT16(buf);
+		imdPtr->vidBufferSize = READ_LE_UINT16(buf + 2);
+	} else {
+		imdPtr->frameDataSize = imdPtr->width * imdPtr->height + 1000;
+		imdPtr->vidBufferSize = imdPtr->width * imdPtr->height + 1000;
+	}
+
+	if (imdPtr->framesPos != 0) {
+		_vm->_dataio->seekData(handle, byte_31449, 0);
+		for (i = 0; i < imdPtr->framesCount; i++) {
+			_vm->_dataio->readData(handle, buf, 4);
+			imdPtr->framesPos[i] = READ_LE_UINT32(buf);
+		}
+	}
+
+	if (imdPtr->verMin & 0x8000) {
+		_vm->_dataio->seekData(handle, byte_3144D, 0);
+		imdPtr->frameCoords = new ImdCoord[imdPtr->framesCount];
+		for (i = 0; i < imdPtr->framesCount; i++) {
+			_vm->_dataio->readData(handle, buf, 8);
+			imdPtr->frameCoords[i].left = READ_LE_UINT16(buf);
+			imdPtr->frameCoords[i].top = READ_LE_UINT16(buf + 2);
+			imdPtr->frameCoords[i].right = READ_LE_UINT16(buf + 4);
+			imdPtr->frameCoords[i].bottom = READ_LE_UINT16(buf + 6);
+		}
+	} else
+		imdPtr->frameCoords = 0;
+
+	_vm->_dataio->seekData(handle, imdPtr->firstFramePos, 0);
+	imdPtr->curFrame = 0;
+	imdPtr->fileHandle = handle;
+	imdPtr->filePos = imdPtr->firstFramePos;
+	_imdFrameDataSize = imdPtr->frameDataSize;
+	_imdVidBufferSize = imdPtr->vidBufferSize;
+	if (flags & 0x80) {
+		imdPtr->verMin |= 0x1000;
+		warning("GOB2 Stub! loadImdFile(), flags & 0x80");
+	}
+
+	return imdPtr;
+}
+
+void Game::setImdXY(Game::Imd *imdPtr, int16 x, int16 y) {
+	int i;
+
+	if (imdPtr->stdX != -1) {
+		imdPtr->stdX = imdPtr->stdX - imdPtr->x + x;
+		imdPtr->stdY = imdPtr->stdY - imdPtr->y + y;
+	}
+	
+	if (imdPtr->frameCoords != 0) {
+		for (i = 0; i < imdPtr->framesCount; i++) {
+			imdPtr->frameCoords[i].left -= imdPtr->frameCoords[i].left - imdPtr->x + x;
+			imdPtr->frameCoords[i].top -= imdPtr->frameCoords[i].top - imdPtr->y + y;
+			imdPtr->frameCoords[i].right -= imdPtr->frameCoords[i].right - imdPtr->x + x;
+			imdPtr->frameCoords[i].bottom -= imdPtr->frameCoords[i].bottom - imdPtr->y + y;
+		}
+	}
+
+	imdPtr->x = x;
+	imdPtr->y = y;
+}
+
+void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg_8, int16 lastFrame) {
+	int16 var_1;
+	int16 var_4 = 0;
+	byte *vidMemBak;
+	Video::SurfaceDesc *surfDescBak;
+	Video::SurfaceDesc frontSurfBak;
+
+	int8 byte_31344 = 0;
+
+	if ((frame < 0) || (frame > lastFrame))
+		return;
+
+	if ((frame == arg_8) || ((frame == lastFrame) && (arg_2 == 8))) { // loc_1C3F0
+		var_1 = 1;
+		_vm->_draw->_applyPal = 0;
+		if (arg_2 >= 4) {
+			if (arg_4 != -1)
+				memcpy( ((char *) (_vm->_global->_pPaletteDesc->vgaPal)) + arg_4 * 3,
+						((char *) (_imdFile->palette)) + arg_4 * 3, (arg_6 - arg_4 + 1) * 3);
+			else
+				memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal, (char *) _imdFile->palette, 768);
+		}
+	} else
+		var_1 = 0;
+
+	if ((var_1 == 1) && (arg_2 == 8) && (_byte_2FC83 != 0))
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
+	if (_vm->_video->_extraMode && (_imdFile->surfDesc->vidMode == 0x13)) {
+		if ((_byte_2FC82 != 0) && (_word_2FC80 == _vm->_draw->_spritesArray[20]->vidPtr)) {
+			vidMemBak = _vm->_draw->_spritesArray[20]->vidPtr;
+			_vm->_draw->_spritesArray[20]->vidPtr = _vm->_draw->_spritesArray[21]->vidPtr;
+			var_4 = viewImd(_imdFile, frame);
+			_vm->_draw->_spritesArray[20]->vidPtr = vidMemBak;
+		} else
+			var_4 = viewImd(_imdFile, frame);
+		if (_byte_2FC82 == 0) {
+			if ((_imdFile->frameCoords == 0) || (_imdFile->frameCoords[frame].left == -1))
+				_vm->_draw->invalidateRect(_imdX, _imdY,
+						_imdX + _imdFile->width - 1, _imdY + _imdFile->height - 1);
+			else
+				_vm->_draw->invalidateRect(_imdFile->frameCoords[frame].left,
+						_imdFile->frameCoords[frame].top, _imdFile->frameCoords[frame].right,
+						_imdFile->frameCoords[frame].bottom);
+		}
+	} else {
+		if ((_imdFile->field_E & 0x100) && (_vm->_video->_extraMode) &&
+				(_byte_2FC82 != 0) && (sub_2C825(_imdFile) & 0x8000) && (_byte_2FC83 == 0)) {
+			surfDescBak = _imdFile->surfDesc;
+			if (_word_2FC80 == _vm->_draw->_spritesArray[20]->vidPtr)
+				_imdFile->surfDesc = _vm->_draw->_spritesArray[21];
+			else
+				_imdFile->surfDesc = _vm->_draw->_spritesArray[20];
+			setImdXY(_imdFile, _imdX, _imdY);
+			var_4 = viewImd(_imdFile, frame);
+			_imdFile->surfDesc = surfDescBak;
+			setImdXY(_imdFile, 0, 0);
+		} else {
+			var_4 = viewImd(_imdFile, frame);
+			if (!(var_4 & 0x800)) {
+				if (_byte_2FC83 == 0) {
+					if (_vm->_video->_extraMode) {
+						if (_byte_2FC82 == 0) {
+							memcpy((char *) &frontSurfBak, (char *) &_vm->_draw->_frontSurface,
+									sizeof(Video::SurfaceDesc));
+							memcpy((char *) &_vm->_draw->_frontSurface, (char *) &_vm->_draw->_spritesArray[21],
+									sizeof(Video::SurfaceDesc));
+							imdDrawFrame(_imdFile, frame, _imdX, _imdY);
+							memcpy((char *) &_vm->_draw->_frontSurface, (char *) &frontSurfBak,
+									sizeof(Video::SurfaceDesc));
+							if ((_imdFile->frameCoords == 0) || (_imdFile->frameCoords[frame].left == -1))
+								_vm->_draw->invalidateRect(_imdX, _imdY, _imdX + _imdFile->width - 1,
+										_imdY + _imdFile->height - 1);
+							else
+								_vm->_draw->invalidateRect(_imdFile->frameCoords[frame].left,
+										_imdFile->frameCoords[frame].top, _imdFile->frameCoords[frame].right,
+										_imdFile->frameCoords[frame].bottom);
+						} else {
+							if (_word_2FC80 == _vm->_draw->_spritesArray[20]->vidPtr) { // loc_1C68D
+								memcpy((char *) &frontSurfBak, (char *) &_vm->_draw->_frontSurface,
+										sizeof(Video::SurfaceDesc));
+								memcpy((char *) &_vm->_draw->_frontSurface, (char *) &_vm->_draw->_spritesArray[21],
+										sizeof(Video::SurfaceDesc));
+								imdDrawFrame(_imdFile, frame, _imdX, _imdY);
+								memcpy((char *) &_vm->_draw->_frontSurface, (char *) &frontSurfBak,
+										sizeof(Video::SurfaceDesc));
+							} else
+								imdDrawFrame(_imdFile, frame, _imdX, _imdY);
+						}
+					} else {
+						if ((_imdFile->frameCoords == 0) || (_imdFile->frameCoords[frame].left == -1))
+							_vm->_draw->invalidateRect(_imdX, _imdY, _imdX + _imdFile->width - 1,
+									_imdY + _imdFile->height - 1);
+						else
+							_vm->_draw->invalidateRect(_imdFile->frameCoords[frame].left,
+									_imdFile->frameCoords[frame].top, _imdFile->frameCoords[frame].right,
+									_imdFile->frameCoords[frame].bottom);
+					}
+				} else
+					if (_vm->_video->_extraMode)
+						imdDrawFrame(_imdFile, frame, _imdX, _imdY);
+			}
+		}
+	}
+
+	if ((var_1 != 0) && (arg_2 == 16)) {
+		if ((_vm->_draw->_spritesArray[20] != _vm->_draw->_spritesArray[21]) && (_byte_2FC83 == 0))
+			_vm->_video->drawSprite(_vm->_draw->_spritesArray[21],
+					_vm->_draw->_spritesArray[20], 0, 0,
+					_vm->_draw->_spritesArray[21]->width - 1,
+					_vm->_draw->_spritesArray[21]->height - 1, 0, 0, 0);
+		_vm->_palanim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+		_vm->_draw->_noInvalidated = 1;
+	}
+	if ((var_1 != 0) && (arg_2 == 8) && (_byte_2FC83 == 0))
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
+	if (!(var_4 & 0x800)) {
+		if (_vm->_draw->_cursorIndex == -1) {
+			if (_byte_2FC82 != 0) {
+				if (_word_2FC80 == _vm->_draw->_spritesArray[20]->vidPtr)
+					_word_2FC80 = _vm->_draw->_spritesArray[21]->vidPtr;
+				else
+					_word_2FC80 = _vm->_draw->_spritesArray[20]->vidPtr;
+				warning("GOB2 Stub! sub_1BC3A(_word_2FC80);");
+			} else
+				_vm->_draw->blitInvalidated();
+		} else
+			_vm->_draw->animateCursor(-1);
+	}
+
+	if ((var_1 != 0) && ((arg_2 == 2) || (arg_2 == 4)))
+		_vm->_palanim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+
+	// To allow quitting, etc. during IMDs
+	_vm->_util->processInput();
+
+	if (byte_31344 != 2) {
+		if (var_4 & 0x800) {
+			if (_dword_2F2B6 == 0)
+				_vm->_util->delay(30);
+			else {
+				_dword_2F2B6 -= 30;
+				if (_dword_2F2B6 < 0)
+					_dword_2F2B6 = 0;
+			}
+		} else
+			_vm->_util->waitEndFrame();
+	}
+	_vm->_inter->animPalette();
+}
+
+int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
+	int16 x;
+	int16 y;
+	int16 width;
+	int16 height;
+	int16 retVal;
+	uint32 tmp;
+	char buf[4];
+
+	int8 var_4;
+	int32 var_12 = 0;
+
+	// .---
+	int16 word_31451 = 0;
+	int8 byte_31344 = 0;
+	int8 byte_2DA60 = 0;
+	int16 word_2DA61 = -1;
+	// '---
+
+	word_31451 = 0;
+
+	if (imdPtr == 0)
+		return 0x8000;
+
+	retVal = 0;
+	var_4 = 0;
+
+	if (frame != imdPtr->curFrame) {
+		retVal |= 0x2000;
+		if (frame == 0)
+			imdPtr->filePos = imdPtr->firstFramePos;
+		else if (frame == 1) {
+			imdPtr->filePos = imdPtr->firstFramePos;
+			_vm->_dataio->seekData(imdPtr->fileHandle, imdPtr->filePos, 0);
+			_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
+			tmp = READ_LE_UINT16(buf);
+			imdPtr->filePos += tmp + 4;
+		} else if (imdPtr->framesPos != 0)
+			imdPtr->filePos = imdPtr->framesPos[frame];
+		else
+			error("Image %d innaccessible in IMD", frame);
+		imdPtr->curFrame = frame;
+		_vm->_dataio->seekData(imdPtr->fileHandle, imdPtr->filePos, 0);
+	}
+
+	x = imdPtr->x;
+	y = imdPtr->y;
+	width = imdPtr->width;
+	height = imdPtr->height;
+
+	do {
+		if (frame != 0) {
+			if (imdPtr->stdX != -1) {
+				imdPtr->x = imdPtr->stdX;
+				imdPtr->y = imdPtr->stdY;
+				imdPtr->width = imdPtr->stdWidth;
+				imdPtr->height = imdPtr->stdHeight;
+				retVal |= 0x1000;
+			}
+			if ((imdPtr->frameCoords != 0) && (imdPtr->frameCoords[frame].left != -1)) {
+				var_4 |= 0x400;
+				imdPtr->x = imdPtr->frameCoords[frame].left;
+				imdPtr->y = imdPtr->frameCoords[frame].top;
+				imdPtr->width = imdPtr->frameCoords[frame].right - imdPtr->x + 1;
+				imdPtr->height = imdPtr->frameCoords[frame].bottom - imdPtr->y + 1;
+			}
+		}
+
+		_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
+		tmp = READ_LE_UINT16(buf);
+
+		imdPtr->filePos += 2;
+
+		if ((tmp & 0xFFF8) == 0xFFF0) {
+			if (tmp == 0xFFF0) {
+				_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
+				tmp = READ_LE_UINT16(buf);
+				if (var_4 == 0)
+					word_31451 = tmp;
+				_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
+				tmp = READ_LE_UINT16(buf);
+				imdPtr->filePos += 4;
+			} else if (tmp == 0xFFF1) {
+				retVal = 0x8000;
+				continue;
+			} else if (tmp == 0xFFF2) {
+				_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
+				tmp = READ_LE_UINT16(buf);
+				imdPtr->filePos += 2;
+				_vm->_dataio->seekData(imdPtr->fileHandle, tmp, 1);
+				imdPtr->filePos += tmp;
+				retVal = 0x8000;
+				continue;
+			} else if (tmp == 0xFFF3) {
+				_vm->_dataio->readData(imdPtr->fileHandle, buf, 4);
+				tmp = READ_LE_UINT32(buf);
+				imdPtr->filePos += 4;
+				_vm->_dataio->seekData(imdPtr->fileHandle, tmp, 1);
+				imdPtr->filePos += tmp;
+				retVal = 0x8000;
+				continue;
+			}
+		}
+		if (byte_31344 != 0) {
+			if ((var_4 == 0) && (_vm->_global->_soundFlags & 0x14) && (byte_31344 == 2)) { // loc_2A503
+				var_12 = _vm->_util->getTimeKey();
+				warning("GOB2 Stub! viewImd, IMD sound stuff");
+			}
+		}
+		var_4 = 0;
+		if (tmp == 0xFFFD) {
+			_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
+			frame = READ_LE_UINT16(buf);
+			if ((imdPtr->framesPos != 0) && (byte_2DA60 == 0)) {
+				word_2DA61 = frame;
+				imdPtr->filePos = imdPtr->framesPos[frame];
+				_vm->_dataio->seekData(imdPtr->fileHandle, imdPtr->filePos, 0);
+				var_4 = 1;
+				retVal |= 0x200;
+				imdPtr->curFrame = frame;
+			} else
+				imdPtr->filePos += 2;
+			continue;
+		}
+		if (tmp != 0) {
+			imdPtr->filePos += tmp + 2;
+			if (byte_2DA60 != 0) {
+				_vm->_dataio->seekData(imdPtr->fileHandle, tmp + 2, 1);
+			} else {
+				_vm->_dataio->readData(imdPtr->fileHandle, (char *) _imdFrameData, tmp + 2);
+				retVal |= *_imdFrameData;
+				if (imdPtr->surfDesc == 0)
+					continue;
+				if (!(_vm->_video->_extraMode && (imdPtr->surfDesc->vidMode == 0x13))) // MODIFIED... NOT!
+					imdRenderFrame(imdPtr);
+				else
+					warning("GOB2 Stub! viedImd, sub_2C69A(imdPtr);");
+			}
+		} else
+			retVal |= 0x800;
+	} while(var_4 != 0);
+
+	if (byte_2DA60 != 0) {
+		byte_2DA60 = 0;
+		retVal |= 0x100;
+	}
+
+	imdPtr->x = x;
+	imdPtr->y = y;
+	imdPtr->width = width;
+	imdPtr->height = height;
+	imdPtr->curFrame++;
+	
+	return retVal;
+}
+
+void Game::imdDrawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y) {
+	// In the original asm, "sub_2C348" is called instead of Video::drawSprite();
+	// it basically just blits.
+
+	if (frame == 0)
+		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface, 0, 0,
+				imdPtr->width - 1, imdPtr->height - 1, x, y, 1);
+	else if ((imdPtr->frameCoords != 0) && (imdPtr->frameCoords[frame].left != -1))
+		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface,
+				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top,
+				imdPtr->frameCoords[frame].right, imdPtr->frameCoords[frame].bottom,
+				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top, 1);
+	else if (imdPtr->stdX != -1)
+		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface,
+				imdPtr->stdX, imdPtr->stdY, imdPtr->stdX + imdPtr->stdWidth - 1,
+				imdPtr->stdY + imdPtr->stdHeight - 1, x + imdPtr->stdX,
+				y + imdPtr->stdY, 1);
+	else
+		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface, 0, 0,
+				imdPtr->width - 1, imdPtr->height - 1, x, y, 1);
+}
+
+void Game::imdRenderFrame(Imd *imdPtr) {
+	int i;
+	int16 imdX;
+	int16 imdY;
+	int16 imdW;
+	int16 imdH;
+	int16 sW;
+	uint16 pixCount, pixWritten;
+	uint8 type;
+	byte *imdVidMem;
+	byte *imdVidMemBak;
+	byte *dataPtr = 0;
+	byte *srcPtr = 0;
+	byte *srcPtrBak = 0;
+
+	dataPtr = (byte *) _imdFrameData;
+	imdX = imdPtr->x;
+	imdY = imdPtr->y;
+	imdW = imdPtr->width;
+	imdH = imdPtr->height;
+	sW = imdPtr->surfDesc->width;
+	imdVidMem = imdPtr->surfDesc->vidPtr + sW * imdY + imdX;
+
+	type = *dataPtr++;
+	srcPtr = dataPtr;
+
+	if (type & 0x10) {
+		type ^= 0x10;
+		dataPtr++; // => 0x3C8       |_ palette
+		dataPtr += 48; // => 0x3C9   |  stuff
+	}
+
+	srcPtr = dataPtr;
+	if (type & 0x80) {
+		srcPtr = (byte *) _imdVidBuffer;
+		type &= 0x7F;
+		if ((type == 2) && (imdW == sW)) {
+			imdFrameUncompressor(imdVidMem, dataPtr);
+			return;
+		} else
+			imdFrameUncompressor(srcPtr, dataPtr);
+	}
+
+	if (type == 2) {
+		for (i = 0; i < imdH; i++) {
+			memcpy(imdVidMem, srcPtr, imdW);
+			srcPtr += imdW;
+			imdVidMem += sW;
+		}
+	} else if (type == 1) {
+		imdVidMemBak = imdVidMem;
+		for (i = 0; i < imdH; i++) {
+			pixWritten = 0;
+			while (pixWritten < imdW) {
+				pixCount = *srcPtr++;
+				if (pixCount & 0x80) {
+					pixCount = (pixCount & 0x7F) + 1;
+					// Just to be safe
+					pixCount = (pixWritten + pixCount) > imdW ? imdW - pixWritten : pixCount;
+					pixWritten += pixCount;
+					memcpy(imdVidMem, srcPtr, pixCount);
+					imdVidMem += pixCount;
+					srcPtr += pixCount;
+				} else {
+					pixCount = (pixCount + 1) % 256;
+					pixWritten += pixCount;
+					imdVidMem += pixCount;
+				}
+			}
+			imdVidMemBak += sW;
+			imdVidMem = imdVidMemBak;
+		}
+	} else if (type == 0x42) { // loc_2AFC4
+		warning("=> type == 0x42");
+	} else if ((type & 0xF) == 2) { // loc_2AFEC
+		warning("=> (type & 0xF) == 2");
+	} else { // loc_2B021
+		srcPtrBak = srcPtr;
+		for (i = 0; i < imdH; i += 2) {
+			pixWritten = 0;
+			while (pixWritten < imdW) {
+				pixCount = *srcPtr++;
+				if (pixCount & 0x80) {
+					pixCount = (pixCount & 0x7F) + 1;
+					// Just to be safe
+					pixCount = (pixWritten + pixCount) > imdW ? imdW - pixWritten : pixCount;
+					pixWritten += pixCount;
+					memcpy(imdVidMem, srcPtr, pixCount);
+					memcpy(imdVidMem + sW, srcPtr, pixCount);
+					imdVidMem += pixCount;
+					srcPtr += pixCount;
+				} else {
+					pixCount = (pixCount + 1) % 256;
+					pixWritten += pixCount;
+					imdVidMem += pixCount;
+				}
+			}
+			srcPtrBak += sW + sW;
+			srcPtr = srcPtrBak;
+		}
+	}
+}
+
+void Game::imdFrameUncompressor(byte *dest, byte *src) {
+	int i;
+	byte buf[4370];
+	int16 chunkLength;
+	int16 frameLength;
+	uint16 bufPos1;
+	uint16 bufPos2;
+	uint16 tmp;
+	uint8 chunkBitField;
+	uint8 chunkCount;
+	bool mode;
+
+	memset(buf, 0, sizeof(buf));
+
+	frameLength = READ_LE_UINT16(src);
+	src += 4;
+	bufPos1 = 4078;
+	mode = 0; // 275h (jnz +2)
+	if ((READ_LE_UINT16(src) == 0x1234) && (READ_LE_UINT16(src + 2) == 0x5678)) {
+		src += 4;
+		bufPos1 = 273;
+		mode = 1; // 123Ch (cmp al, 12h)
+	}
+	chunkCount = 1;
+	chunkBitField = 0;
+
+	while(frameLength > 0) {
+		chunkCount--;
+		if (chunkCount == 0) {
+			tmp = *src++;
+			chunkCount = 8;
+			chunkBitField = tmp;
+		}
+		if (chunkBitField % 2) {
+			chunkBitField >>= 1;
+			buf[bufPos1] = *src;
+			*dest++ = *src++;
+			bufPos1 = (bufPos1 + 1) % 4096;
+			frameLength--;
+			continue;
+		}
+		chunkBitField >>= 1;
+
+		tmp = READ_LE_UINT16(src);
+		src += 2;
+		chunkLength = ((tmp & 0xF00) >> 8) + 3;
+
+		if ((mode && ((chunkLength & 0xFF) == 0x12)) || (!mode && (chunkLength == 0)))
+			chunkLength = *src++ + 0x12;
+
+		bufPos2 = (tmp & 0xFF) + ((tmp >> 4) & 0x0F00);
+		if (((tmp + chunkLength) >= 4096) || ((chunkLength + bufPos1) >= 4096)) {
+			for (i = 0; i < chunkLength; i++, dest++) {
+				*dest = buf[bufPos2];
+				buf[bufPos1] = buf[bufPos2];
+				bufPos1 = (bufPos1 + 1) % 4096;
+				bufPos2 = (bufPos2 + 1) % 4096;
+			}
+			frameLength -= chunkLength;
+		} else if (((tmp + chunkLength) < bufPos1) || ((chunkLength + bufPos1) < bufPos2)) {
+			memcpy(dest, buf + bufPos2, chunkLength);
+			dest += chunkLength;
+			memmove(buf + bufPos1, buf + bufPos2, chunkLength);
+			bufPos1 += chunkLength;
+			bufPos2 += chunkLength;
+			frameLength -= chunkLength;
+		} else {
+			for (i = 0; i < chunkLength; i++, dest++, bufPos1++, bufPos2++) {
+				*dest = buf[bufPos2];
+				buf[bufPos1] = buf[bufPos2];
+			}
+			frameLength -= chunkLength;
+		}
+	}
+}
+
+int16 Game::sub_2C825(Imd *imdPtr) {
+	warning("GOB2 Stub! sub_2C825()");
+	return 0;
 }
 
 } // End of namespace Gob
