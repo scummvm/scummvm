@@ -641,7 +641,6 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 
 	drawSurface(rect, &surface, false, false, alpha);
 	addDirtyRect(rect);
-	return;
 }
 
 void ThemeNew::drawSlider(const Common::Rect &rr, int width, kState state) {
@@ -1628,7 +1627,7 @@ inline OverlayColor getColorAlphaImp2(OverlayColor col1, OverlayColor col2, int 
 }
 
 OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
-	if (alpha > 0) {
+	if (alpha >= 0) {
 		if (gBitFormat == 565) {
 			return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
 		} else {
