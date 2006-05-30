@@ -291,10 +291,13 @@ void EditGameDialog::open() {
 
 	const Common::LanguageDescription *l = Common::g_languages;
 	const Common::Language lang = Common::parseLanguage(ConfMan.get("language", _domain));
+
 	sel = 0;
-	for (i = 0; l->code; ++l, ++i) {
-		if (lang == l->id)
-			sel = i + 2;
+	if (ConfMan.hasKey("language", _domain)) {
+		for (i = 0; l->code; ++l, ++i) {
+			if (lang == l->id)
+				sel = i + 2;
+		}
 	}
 	_langPopUp->setSelected(sel);
 
