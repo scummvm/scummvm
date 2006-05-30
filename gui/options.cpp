@@ -610,8 +610,11 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab("Audio");
 	addAudioControls(tab, "globaloptions_");
-	addVolumeControls(tab, "globaloptions_");
 	addSubtitleControls(tab, "globaloptions_");
+
+
+	tab->addTab("Volume");
+	addVolumeControls(tab, "globaloptions_");
 
 	// TODO: cd drive setting
 

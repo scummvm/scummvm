@@ -235,22 +235,22 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addSubtitleControls(tab, "gameoptions_");
 
 	//
-	// 5) The MIDI tab
-	//
-	tab->addTab("MIDI");
-
-	_globalMIDIOverride = new CheckboxWidget(tab, "gameoptions_midiCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
-
-	addMIDIControls(tab, "gameoptions_");
-
-	//
-	// 6) The volume tab
+	// 5) The volume tab
 	//
 	tab->addTab("Volume");
 
 	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
 	addVolumeControls(tab, "gameoptions_");
+
+	//
+	// 6) The MIDI tab
+	//
+	tab->addTab("MIDI");
+
+	_globalMIDIOverride = new CheckboxWidget(tab, "gameoptions_midiCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+
+	addMIDIControls(tab, "gameoptions_");
 
 	// Activate the first tab
 	tab->setActiveTab(0);
