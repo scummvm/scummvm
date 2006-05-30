@@ -13,15 +13,15 @@ Table of Contents:
  * 2.1 Reporting Bugs
 3.0) Supported Games
  * 3.1 Copy Protection
- * 3.2 Simon the Sorcerer notes
- * 3.3 Broken Sword notes
- * 3.4 Flight of the Amazon Queen notes
- * 3.5 Beneath a Steel Sky notes
- * 3.6 Inherit the Earth
- * 3.7 Gobliiins
- * 3.8 The Legend of Kyrandia notes
- * 3.9 Maniac Mansion NES notes
- * 3.10 Commodore64 games notes
+ * 3.2 Commodore64 games notes
+ * 3.3 Maniac Mansion NES notes
+ * 3.4 Beneath a Steel Sky notes
+ * 3.5 Broken Sword notes
+ * 3.6 Flight of the Amazon Queen notes
+ * 3.7 Gobliiins notes
+ * 3.8 Inherit the Earth: Quest for the Orb notes
+ * 3.9 Simon the Sorcerer notes
+ * 3.10 The Legend of Kyrandia notes
  * 3.11 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
@@ -50,12 +50,13 @@ Table of Contents:
 ScummVM is a collection of interpreters, capable of emulating several
 adventure game engines. ScummVM mainly supports games created using
 SCUMM (Script Creation Utility for Maniac Mansion), used in various
-LucasArts games such as Monkey Island, Day of the Tentacle, and others.
+LucasArts games such as Monkey Island and numerous Humongous Entertainment
+games.
 
 ScummVM also contains interpreters for several non-SCUMM games. Currently
 these are Beneath a Steel Sky, Broken Sword 1 & 2, Flight of the Amazon Queen,
-Gobliiins, Inherit the Earth, Simon the Sorcerer 1 & 2 and The Legend of
-Kyrandia.
+Gobliiins, Inherit the Earth: Quest for the Orb, Simon the Sorcerer 1 & 2,
+The Feeble Files and The Legend of Kyrandia.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -116,42 +117,6 @@ SCUMM Games by LucasArts:
      The Dig                                     [dig]
      The Curse of Monkey Island                  [comi]
 
-SCUMM Games by Humongous Entertainment:
-     Backyard Football                                          [football]
-     Big Thinkers Kindergarten                                  [thinkerk]
-     Fatty Bear's Birthday Surprise                             [fbear]
-     Fatty Bear's Fun Pack                                      [fbpack]
-     Freddi Fish 1: The Case of the Missing Kelp Seeds          [freddi]
-     Freddi Fish 2: The Case of the Haunted Schoolhouse         [freddi2]
-     Freddi Fish 3: The Case of the Stolen Conch Shell          [freddi3]
-     Freddi Fish 4: The Case of the Hogfish Rustlers
-         of Briny Gulch                                         [freddi4]
-     Freddi Fish and Luther's Maze Madness                      [maze]
-     Freddi Fish and Luther's Water Worries                     [water]
-     Let's Explore the Airport with Buzzy                       [airport]
-     Let's Explore the Farm with Buzzy                          [farm]
-     Let's Explore the Jungle with Buzzy                        [jungle]
-     Pajama Sam 1: No Need to Hide When It's Dark Outside       [pajama]
-     Pajama Sam 2: Thunder and Lightning Aren't so Frightening  [pajama2]
-     Pajama Sam 3: You Are What You Eat
-         From Your Head to Your Feet                            [pajama3]
-     Pajama Sam's Lost & Found                                  [lost]
-     Pajama Sam's Sock Works                                    [socks]
-     Putt-Putt Enters the Race                                  [puttrace]
-     Putt-Putt Goes to the Moon                                 [puttmoon]
-     Putt-Putt Joins the Circus                                 [puttcircus]
-     Putt-Putt Joins the Parade                                 [puttputt]
-     Putt-Putt Saves the Zoo                                    [puttzoo]
-     Putt-Putt Travels Through Time                             [putttime]
-     Putt-Putt and Pep's Balloon-O-Rama                         [balloon]
-     Putt-Putt and Pep's Dog on a Stick                         [dog]
-     Putt-Putt & Fatty Bear's Activity Pack                     [activity]
-     Putt-Putt's Fun Pack                                       [funpack]
-     SPY Fox 1: Dry Cereal                                      [spyfox]
-     SPY Fox 2: Some Assembly Required                          [spyfox2]
-     SPY Fox in Cheese Chase                                    [chase]
-     SPY Fox in Hold the Mustard                                [mustard]
-
 Other Games:
      Beneath a Steel Sky                         [sky]
      Broken Sword 1: The Shadow of the Templars  [sword1]
@@ -164,6 +129,48 @@ Other Games:
      The Feeble Files                            [feeble]
      The Legend of Kyrandia                      [kyra1]
 
+SCUMM Games by Humongous Entertainment:
+     Backyard Football                           [football]
+     Big Thinkers First Grade                    [thinker1]
+     Big Thinkers Kindergarten                   [thinkerk]
+     Fatty Bear's Birthday Surprise              [fbear]
+     Fatty Bear's Fun Pack                       [fbpack]
+     Freddi Fish 1: The Case of the Missing
+         Kelp Seeds                              [freddi]
+     Freddi Fish 2: The Case of the Haunted
+         Schoolhouse                             [freddi2]
+     Freddi Fish 3: The Case of the Stolen
+         Conch Shell                             [freddi3]
+     Freddi Fish 4: The Case of the Hogfish
+         Rustlers of Briny Gulch                 [freddi4]
+     Freddi Fish and Luther's Maze Madness       [maze]
+     Freddi Fish and Luther's Water Worries      [water]
+     Let's Explore the Airport with Buzzy        [airport]
+     Let's Explore the Farm with Buzzy           [farm]
+     Let's Explore the Jungle with Buzzy         [jungle]
+     Pajama Sam 1: No Need to Hide When It's
+         Dark Outside                            [pajama]
+     Pajama Sam 2: Thunder and Lightning
+         Aren't so Frightening                   [pajama2]
+     Pajama Sam 3: You Are What You Eat
+         From Your Head to Your Feet             [pajama3]
+     Pajama Sam's Lost & Found                   [lost]
+     Pajama Sam's Sock Works                     [socks]
+     Putt-Putt Enters the Race                   [puttrace]
+     Putt-Putt Goes to the Moon                  [puttmoon]
+     Putt-Putt Joins the Circus                  [puttcircus]
+     Putt-Putt Joins the Parade                  [puttputt]
+     Putt-Putt Saves the Zoo                     [puttzoo]
+     Putt-Putt Travels Through Time              [putttime]
+     Putt-Putt and Pep's Balloon-O-Rama          [balloon]
+     Putt-Putt and Pep's Dog on a Stick          [dog]
+     Putt-Putt & Fatty Bear's Activity Pack      [activity]
+     Putt-Putt's Fun Pack                        [funpack]
+     SPY Fox 1: Dry Cereal                       [spyfox]
+     SPY Fox 2: Some Assembly Required           [spyfox2]
+     SPY Fox in Cheese Chase                     [chase]
+     SPY Fox in Hold the Mustard                 [mustard]
+
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
@@ -171,12 +178,11 @@ compatibility chart.
 
      Backyard Baseball                           [baseball]
      Backyard Soccer                             [soccer]
-     Big Thinkers First Grade                    [thinker1]
      SPY Fox 3: Operation Ozone                  [spyozon]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
-     Other Humongous Entertainment titles
+     Other Humongous Entertainment games
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
@@ -192,35 +198,69 @@ bypasses them. There is no way for us to tell the difference between legitimate
 and pirated data files, so for the games where we know the original interpreter
 may have been cracked ScummVM will always have to bypass the copy protection.
 
-Wyrmkeep Entertainment kindly let us skip protection in floppy version of
-Inherit the Earth since it was disabled in all CD releases of the game.
-
-At the time of writing, that includes the following games:
-
-Indiana Jones & the Last Crusade (EGA)
-Indiana Jones & the Last Crusade (FM-TOWNS version)
-Inherit the Earth (floppy version)
-Loom (16 color floppy version)
-Maniac Mansion
-Monkey Island 1 (EGA)
-Monkey Island 1 (VGA)
-Monkey Island 2
-Zak McKracken (EGA)
-Zak McKracken (FM-TOWNS version)
-
-Beneath a Steel Sky (bypassed with permission from Revolution)
-Inherit the Earth: Quest for the Orb
-
 In some cases ScummVM will still show the copy protection screen. Try entering
 any answer. Chances are that it will work.
 
-3.2) Simon the Sorcerer 1 and 2 notes:
----- ---------------------------------
-If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
-then you will find the Windows version in the main directory of the CD
-and the DOS version in the DOS directory of the CD.
+ScummVM will skip copy protection in the following games:
 
-3.3) Broken Sword notes
+Maniac Mansion
+Zak McKracken and the Alien Mindbenders
+Indiana Jones and the Last Crusade (EGA)
+Loom (EGA)
+The Secret of Monkey Island (EGA)
+The Secret of Monkey Island (VGA)
+Monkey Island 2: LeChuck's Revenge
+
+Beneath a Steel Sky bypassed with kind permission from Revolution Software.
+
+Inherit the Earth: Quest for the Orb (Floppy version) bypassed with kind
+permission from Wyrmkeep Entertainment, since it was bypassed in all CD
+releases of the game.
+
+3.2) Commodore64 games notes
+---- -----------------------
+Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
+playable. Either use extract_mm_c64 (but then game will not be autodetected)
+or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
+respectively. If you add the game manually, make sure that platform is set to
+Commodore64.
+
+3.3) Maniac Mansion NES notes
+---- ------------------------
+Supported versions are English USA (U), French (F), German (G), Swedish (SW)
+and European (E).
+ScummVM requires just the PRG section to run and not the whole ROM.
+
+In order to get the game working, you will have to strip out the first
+16 bytes from the ROM you are trying to work with. Any hex editor will work
+as long as you are able to copy/paste.  After you open the ROM with the
+hex editor, copy everything from second row (17th byte) to the end. After
+you do this, paste it to a new hex file. Name the new file
+"Maniac Mansion (XX).prg" while XX stands for the version you are working
+with (E, F, G, SW, or U).  The final size should be exactly 262144 bytes.
+
+If you add the game manually make sure that the platform is set to NES.
+
+Most common mistakes which prevents the game from running:
+
+  o Bad file
+  o ROM extracted with the 0.7.0 tools
+  o You try to feed ScummVM with the FULL rom and not just the PRG section.
+
+Also it is possible to extract the separate LFL files from the PRG section.
+Use the extract_mm_nes utility from the tools package.
+
+3.4) Beneath a Steel Sky notes
+---- -------------------------
+As of ScummVM 0.8.0 you need the additional 'SKY.CPT' file to run Beneath a
+Steel Sky.
+
+This file is available on the 'Compatibility' page of the ScummVM
+website, you can place it in either the directory containing the other
+game datafiles (SKY.DNR, SKY.DSK), in your extrapath, or in the directory
+where your ScummVM executable resides.
+
+3.5) Broken Sword notes
 ---- ------------------
 Broken Sword 1 and 2 both come with in-game cutscenes compressed using
 RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
@@ -236,12 +276,13 @@ The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to harddisk or reburning
 customised versions of the game CDs.
 
-3.4) Flight of the Amazon Queen notes
+3.6) Flight of the Amazon Queen notes
 ---- --------------------------------
-In order to use a non-freeware version of Flight of the Amazon Queen (i.e.
-your own), you will need to have the 'queen.tbl' file (available from the
+In order to use a non-freeware version of Flight of the Amazon Queen (from
+original CD), you will need to place the 'queen.tbl' file (available from the
 Compatibility page on our website) in either the directory containing the
-'queen.1' datafile or in the directory where your ScummVM executable resides.
+'queen.1' game datafile, in your extrapath, or in the directory where your
+ScummVM executable resides.
 
 Alternatively, you can use the 'compress_queen' tool from the Tools module to
 'rebuild' your FOTAQ datafile to include the table for that specific version,
@@ -249,21 +290,19 @@ and thus removing the run-time dependency on the 'queen.tbl' file.
 This tool also allows you to compress the speech and sound effects with MP3,
 OGG or FLAC.
 
-3.5) Beneath a Steel Sky notes
----- -------------------------
-As of ScummVM 0.8.0 you need the additional SKY.CPT file to run Beneath a
-Steel Sky.
+3.7) Gobliiins notes
+---- ---------------
+The CD version of Gobliiins contains one big audio track which you need to rip
+(See the section on using compressed audiofiles) and copy into the game
+directory if you want to have music and not have the CD in the drive
+all the time.
 
-This file is available on the 'Compatibility' page of the ScummVM
-website, you can place it in either the directory containing the other
-datafiles (SKY.DNR, SKY.DSK) or in your extrapath.
-
-3.6) Inherit the Earth notes
+3.8) Inherit the Earth: Quest for the Orb notes
 ---- -----------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will need to
 copy over data from the CD to your hard drive. If you're on a PC then consult:
 
-  http://www.scummvm.org/documentation.php?view=maccd-howto
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 Although it primarily talks about SCUMM games, it mentions the "HFVExplorer"
 utility which you need to extract the files.
@@ -275,49 +314,16 @@ same directory as the game data which is stored in:
 For old Mac OS9 release you will need to copy files in MacBinary format,
 i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
 
-3.7) Gobliiins notes
----- ---------------
-The CD version of Gobliiins contains one big audio track which you need to rip
-(See the section on using compressed audiofiles) and copy into the game
-directory if you want to have music and not have the CD in the drive
-all the time.
+3.9) Simon the Sorcerer 1 and 2 notes:
+---- ---------------------------------
+If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
+then you will find the Windows version in the main directory of the CD
+and the DOS version in the DOS directory of the CD.
 
-3.8) The Legend of Kyrandia notes
+3.10) The Legend of Kyrandia notes
 ---- ----------------------------
 To run The Legend of Kyrandia under ScummVM you need the kyra.dat file,
 which can be found in the Downloads section of the ScummVM website.
-
-3.9) Maniac Mansion NES notes
----- ------------------------
-Supported versions are English USA (E), French (F), German (G), Swedish (SW)
-and European (U). ScummVM requires just PRG section to run and not whole ROM.
-
-In order to get the game working, you will have to strip out the first
-16 bytes from the ROM you are trying to work with. Any hex editor will work
-as long as you are able to copy/paste.  After you open the ROM with the
-hex editor, copy everything from second row (17th byte) to the end. After
-you do this, paste it to a new hex file. Give the new file name
-"Maniac Mansion (XX).prg" where XX depends on version you are  working
-with (E, F, G, SW, or U).  The final size should be exactly 262144 bytes.
-
-If you add game manually make sure that platform is set to NES.
-
-Most common mistakes which prevent game from running:
-
-  o Bad file
-  o ROM extracted with the 0.7.0 tools
-  o You try to feed ScummVM with the FULL rom and not just the PRG section.
-
-Also it is possible to extract separate LFL files from PRG section. Use
-extract_mm_nes utility from tools package.
-
-3.10) Commodore64 games notes
----- -----------------------
-Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
-playable. Either use extract_mm_c64 (but then game will not be autodetected)
-or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
-respectively. If you add the game manually, make sure that platform is set to
-Commodore64.
 
 3.11) Known Problems
 ---- ---------------
@@ -327,7 +333,7 @@ listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
      CD Audio Games:
-          - When playing games that use CD Audio (Towns variants, Loom CD, etc),
+          - When playing games that use CD Audio (FM-TOWNS games, Loom CD, etc)
             users of Microsoft Windows 2000/XP may experience random crashes.
             This is due to a long-standing Windows bug, resulting in corrupt
             game files being read from the CD. Please copy the game data to
@@ -335,12 +341,12 @@ the section on Reporting Bugs.
 
      FM-TOWNS versions:
           - The Kanji versions require the FM-TOWNS Font ROM
-
-     Humongous Entertainment games:
-          - No support for printing images
+          - There are some major bugs using the Kanji Fonts with
+            The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
+            and Indiana Jones and the Fate of Atlantis
 
      Loom (EGA):
-     Monkey Island 1 (EGA):
+     The Secret of Monkey Island (EGA):
           - MIDI support requires the Roland update from LucasArts
 
      Beneath a Steel Sky:
@@ -359,7 +365,7 @@ the section on Reporting Bugs.
      Flight of the Amazon Queen
           - Amiga versions aren't supported
 
-     Inherit the Earth
+     Inherit the Earth: Quest for the Orb
           - Amiga CD version isn't supported
 
      Simon the Sorcerer 1:
@@ -376,6 +382,9 @@ the section on Reporting Bugs.
      The Feeble Files:
           - Subtitles are often imcomplete, they were always disabled in the
             original game.
+
+     Humongous Entertainment games:
+          - No support for printing images
 
 4.0) Supported Platforms:
 ---- --------------------
@@ -530,7 +539,8 @@ Examples:
 5.2) Language options:
 ---- -----------------
 ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
-Curse of Monkey Island, Beneath a Steel Sky, and Simon the Sorcerer 1 & 2.
+The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1 and
+Simon the Sorcerer 1 & 2.
 
 Maniac Mansion and Zak McKracken
         en  - English (default)
@@ -544,7 +554,7 @@ The Dig
         zh  - Chinese
         kr  - Korean
 
-Curse of Monkey Island
+The Curse of Monkey Island
         en  - English (default)
         de  - German
         fr  - French
@@ -733,6 +743,10 @@ However, there are various free tools on the net which allow reading such HFS
 volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
 other Unix-like operating systems).
 
+See also:
+
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+
 Secondly, most of the newer games shipped only with a  single data file on the
 Macintosh. You used to have to manually convert that data file, but this is no
 longer necessary, as ScummVM can now open and understand the format natively.
@@ -869,9 +883,9 @@ as sampled waves. This is the default mode for most games, and offers the
 best compatibility between machines and games.
 
 
-7.2) Playing sound with FluildSynth MIDI emulation:
+7.2) Playing sound with FluidSynth MIDI emulation:
 ---- ----------------------------------------------
-If ScummVM was build with libfluildsynth support it will be able to play MIDI
+If ScummVM was build with libfluidsynth support it will be able to play MIDI
 music through the FluidSynth driver. You will have to specify a SoundFont to
 use, however.
 
@@ -897,7 +911,8 @@ must provide original MT-32 ROMs to make it work:
 MT32_PCM.ROM     - IC21 (512KB)
 MT32_CONTROL.ROM - IC26 (32KB) and IC27 (32KB), interleaved byte-wise
 
-Place these ROMs in the game directory or a directory specified by extrapath.
+Place these ROMs in the game directory, in your extrapath, or in the directory
+where your ScummVM executable resides.
 
 You don't need to specify --native-mt32 with this driver, as it automatically
 gets turned on.
