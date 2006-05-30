@@ -115,7 +115,14 @@ int OSystem_PSP::getGraphicsMode() const {
 void OSystem_PSP::initSize(uint width, uint height) {
 	_overlayWidth = _screenWidth = width;
 	_overlayHeight = _screenHeight = height;
+
+	if (_offscreen)
+		free(_offscreen);
+	
 	_offscreen = (byte *)malloc(width * height);
+
+	if (_overlayBuffer)
+		free(_overlayBuffer);
 
 	_overlayBuffer = (OverlayColor *)malloc(_overlayWidth * _overlayHeight * sizeof(OverlayColor));
 	bzero(_offscreen, width * height);
