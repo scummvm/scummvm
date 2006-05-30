@@ -97,8 +97,18 @@ ScummVM Team
 
   Other subsystems
   ----------------
-     Jerome Fisher         - MT-32 emulator
-     Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+    Infrastructure:
+       Max Horn              - Backend & Engine APIs, file API, sound mixer,
+                               audiostreams, data structures, etc.
+       Eugene Sandulenko    
+
+    GUI:
+       Eugene Sandulenko    
+       Johannes Schickel    
+
+    Miscellaneous:
+       Jerome Fisher         - MT-32 emulator
+       Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
 
   Website (content)
   -----------------

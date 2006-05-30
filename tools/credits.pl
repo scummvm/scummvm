@@ -550,10 +550,20 @@ begin_credits("Credits");
     end_section();
 
     begin_section("Other subsystems");
-	  begin_persons();
+	  begin_section("Infrastructure");
+		  add_person('Max Horn', 'Fingolfin', "Backend & Engine APIs, file API, sound mixer, audiostreams, data structures, etc.");
+		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
+	  begin_section("GUI");
+		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("Johannes Schickel", "LordHoto", "");
+	  end_section();
+
+	  begin_section("Miscellaneous");
 		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
-	  end_persons();
+	  end_section();
     end_section();
 
     begin_section("Website (content)");
