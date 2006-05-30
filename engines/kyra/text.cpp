@@ -267,7 +267,7 @@ void KyraEngine::characterSays(const char *chatStr, int8 charNum, int8 chatDurat
 	int lineNum = _text->buildMessageSubstrings(processedString);
 
 	int16 yPos = _characterList[charNum].y1;
-	yPos -= _scaleTable[charNum] * _characterList[charNum].height;
+	yPos -= ((_scaleTable[yPos] * _characterList[charNum].height) >> 8);
 	yPos -= 8;
 	yPos -= lineNum * 10;
 
