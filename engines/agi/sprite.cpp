@@ -30,6 +30,22 @@
 
 namespace Agi {
 
+/**
+ * Sprite structure.
+ * This structure holds information on visible and priority data of
+ * a rectangular area of the AGI screen. Sprites are chained in two
+ * circular lists, one for updating and other for non-updating sprites.
+ */
+struct sprite {
+	vt_entry *v;		/**< pointer to view table entry */
+	int16 x_pos;			/**< x coordinate of the sprite */
+	int16 y_pos;			/**< y coordinate of the sprite */
+	int16 x_size;			/**< width of the sprite */
+	int16 y_size;			/**< height of the sprite */
+	uint8 *buffer;			/**< buffer to store background data */
+	uint8 *hires;			/**< buffer for hi-res background */
+};
+
 SpritesMan *_sprites;
 
 /*
@@ -37,7 +53,9 @@ SpritesMan *_sprites;
  */
 #undef ALLOC_DEBUG
 
+
 #define POOL_SIZE 68000		/* Gold Rush mine room needs > 50000 */
+	/* Speeder bike challenge needs > 67000 */
 
 void *SpritesMan::pool_alloc(int size) {
 	uint8 *x;
@@ -285,10 +303,10 @@ void SpritesMan::objs_restorearea(sprite *s) {
 /**
  * Condition to determine whether a sprite will be in the 'updating' list.
  */
-int SpritesMan::test_updating(vt_entry *v) {
+static bool test_updating(vt_entry *v) {
 	/* Sanity check (see bug #779302) */
 	if (~game.dir_view[v->current_view].flags & RES_LOADED)
-		return 0;
+		return false;
 
 	return (v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | UPDATE | DRAWN);
 }
@@ -296,10 +314,10 @@ int SpritesMan::test_updating(vt_entry *v) {
 /**
  * Condition to determine whether a sprite will be in the 'non-updating' list.
  */
-int SpritesMan::test_not_updating(vt_entry *v) {
+static bool test_not_updating(vt_entry *v) {
 	/* Sanity check (see bug #779302) */
 	if (~game.dir_view[v->current_view].flags & RES_LOADED)
-		return 0;
+		return false;
 
 	return (v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | DRAWN);
 }
@@ -353,7 +371,7 @@ void SpritesMan::spr_addlist(SpriteList& l, vt_entry *v) {
 /**
  * Sort sprites from lower y values to build a sprite list.
  */
-void SpritesMan::build_list(SpriteList& l, int (SpritesMan::*test) (vt_entry *)) {
+void SpritesMan::build_list(SpriteList& l, bool (*test) (vt_entry *)) {
 	int i, j, k;
 	vt_entry *v;
 	vt_entry *entry[0x100];
@@ -365,7 +383,7 @@ void SpritesMan::build_list(SpriteList& l, int (SpritesMan::*test) (vt_entry *))
 	 */
 	i = 0;
 	for (v = game.view_table; v < &game.view_table[MAX_VIEWTABLE]; v++) {
-		if ((this->*(test))(v)) {
+		if ((*test)(v)) {
 			entry[i] = v;
 			y_val[i] = v->flags & FIXED_PRIORITY ? prio_to_y(v->priority) : v->y_pos;
 			i++;
