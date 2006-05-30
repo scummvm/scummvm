@@ -400,11 +400,11 @@ cmd(status_line_off) {
 }
 
 cmd(show_obj) {
-	show_obj(p0);
+	_sprites->show_obj(p0);
 }
 
 cmd(show_obj_v) {
-	show_obj(_v[p0]);
+	_sprites->show_obj(_v[p0]);
 }
 
 cmd(sound) {
@@ -558,9 +558,9 @@ cmd(call_f) {
 
 cmd(draw_pic) {
 	debugC(6, kDebugLevelScripts, "=== draw pic %d ===", _v[p0]);
-	erase_both();
+	_sprites->erase_both();
 	decode_picture(_v[p0], true);
-	blit_both();
+	_sprites->blit_both();
 	game.picture_shown = 0;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", _v[p0]);
 }
@@ -575,9 +575,9 @@ cmd(show_pic) {
 }
 
 cmd(load_pic) {
-	erase_both();
+	_sprites->erase_both();
 	agi_load_resource(rPICTURE, _v[p0]);
-	blit_both();
+	_sprites->blit_both();
 }
 
 cmd(discard_pic) {
@@ -587,23 +587,23 @@ cmd(discard_pic) {
 
 cmd(overlay_pic) {
 	debugC(6, kDebugLevelScripts, "--- overlay pic ---");
-	erase_both();
+	_sprites->erase_both();
 	decode_picture(_v[p0], false);
-	blit_both();
+	_sprites->blit_both();
 	game.picture_shown = 0;
-	commit_both();
+	_sprites->commit_both();
 }
 
 cmd(show_pri_screen) {
 	debug_.priority = 1;
-	erase_both();
+	_sprites->erase_both();
 	show_pic();
-	blit_both();
+	_sprites->blit_both();
 	wait_key();
 	debug_.priority = 0;
-	erase_both();
+	_sprites->erase_both();
 	show_pic();
-	blit_both();
+	_sprites->blit_both();
 }
 
 cmd(animate_obj) {
@@ -641,16 +641,16 @@ cmd(draw) {
 	vt.x_pos2 = vt.x_pos;
 	vt.y_pos2 = vt.y_pos;
 	vt.cel_data_2 = vt.cel_data;
-	erase_upd_sprites();
+	_sprites->erase_upd_sprites();
 	vt.flags |= DRAWN;
 
 	if (agi_get_release() <= 0x2440)	/* See bug #546562 */
 		vt.flags |= ANIMATED;
 
-	blit_upd_sprites();
+	_sprites->blit_upd_sprites();
 	vt.flags &= ~DONTUPDATE;
 
-	commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
+	_sprites->commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
 
 	debugC(4, kDebugLevelScripts, "vt entry #%d flags = %02x", p0, vt.flags);
 }
@@ -659,17 +659,17 @@ cmd(erase) {
 	if (~vt.flags & DRAWN)
 		return;
 
-	erase_upd_sprites();
+	_sprites->erase_upd_sprites();
 	if (vt.flags & UPDATE) {
 		vt.flags &= ~DRAWN;
 	} else {
-		erase_nonupd_sprites();
+		_sprites->erase_nonupd_sprites();
 		vt.flags &= ~DRAWN;
-		blit_nonupd_sprites();
+		_sprites->blit_nonupd_sprites();
 	}
-	blit_upd_sprites();
+	_sprites->blit_upd_sprites();
 
-	commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
+	_sprites->commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
 }
 
 cmd(position) {
@@ -721,17 +721,17 @@ cmd(reposition_to_f) {
 }
 
 cmd(add_to_pic) {
-	add_to_pic(p0, p1, p2, p3, p4, p5, p6);
+	_sprites->add_to_pic(p0, p1, p2, p3, p4, p5, p6);
 }
 
 cmd(add_to_pic_f) {
-	add_to_pic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
+	_sprites->add_to_pic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
 }
 
 cmd(force_update) {
-	erase_both();
-	blit_both();
-	commit_both();
+	_sprites->erase_both();
+	_sprites->blit_both();
+	_sprites->commit_both();
 }
 
 cmd(reverse_loop) {
@@ -1216,7 +1216,7 @@ cmd(shake_screen) {
 	} else
 		shake_start();
 
-	commit_both();		/* Fixes SQ1 demo */
+	_sprites->commit_both();		/* Fixes SQ1 demo */
 	for (i = 4 * p0; i; i--) {
 		shake_screen(i & 1);
 		flush_block(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
@@ -1444,11 +1444,11 @@ int run_logic(int n) {
 					debug_.steps--;
 				}
 			} else {
-				blit_both();
+				_sprites->blit_both();
 				do {
 					main_cycle();
 				} while (!debug_.steps && debug_.enabled);
-				erase_both();
+				_sprites->erase_both();
 			}
 		}
 

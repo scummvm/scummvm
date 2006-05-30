@@ -25,22 +25,83 @@
 #ifndef AGI_SPRITE_H
 #define AGI_SPRITE_H
 
+#include "common/list.h"
+
 namespace Agi {
 
-int init_sprites(void);
-void deinit_sprites(void);
-void erase_upd_sprites(void);
-void erase_nonupd_sprites(void);
-void erase_both(void);
-void blit_upd_sprites(void);
-void blit_nonupd_sprites(void);
-void blit_both(void);
-void commit_upd_sprites(void);
-void commit_nonupd_sprites(void);
-void commit_both(void);
-void add_to_pic(int, int, int, int, int, int, int);
-void show_obj(int);
-void commit_block(int, int, int, int);
+/**
+ * Sprite structure.
+ * This structure holds information on visible and priority data of
+ * a rectangular area of the AGI screen. Sprites are chained in two
+ * circular lists, one for updating and other for non-updating sprites.
+ */
+struct sprite {
+	vt_entry *v;		/**< pointer to view table entry */
+	int16 x_pos;			/**< x coordinate of the sprite */
+	int16 y_pos;			/**< y coordinate of the sprite */
+	int16 x_size;			/**< width of the sprite */
+	int16 y_size;			/**< height of the sprite */
+	uint8 *buffer;			/**< buffer to store background data */
+	uint8 *hires;			/**< buffer for hi-res background */
+};
+
+typedef Common::List<sprite*> SpriteList;
+
+class SpritesMan {
+private:
+	/* Speeder bike challenge needs > 67000 */
+	uint8 *sprite_pool;
+	uint8 *pool_top;
+
+	/*
+	 * Sprite management functions
+	 */
+
+	SpriteList spr_upd;
+	SpriteList spr_nonupd;
+
+	void *pool_alloc(int size);
+	void pool_release(void *s);
+	void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden);
+	int blit_hires_cel(int x, int y, int spr, view_cel *c);
+	int blit_cel(int x, int y, int spr, view_cel *c);
+	void objs_savearea(sprite *s);
+	void objs_restorearea(sprite *s);
+	int test_updating(vt_entry *v);
+	int test_not_updating(vt_entry *v);
+	
+	FORCEINLINE int prio_to_y(int p);
+	sprite *new_sprite(vt_entry *v);
+	void spr_addlist(SpriteList& l, vt_entry *v);
+	void build_list(SpriteList& l, int (SpritesMan::*test) (vt_entry *));
+	void build_upd_blitlist();
+	void build_nonupd_blitlist();
+	void free_list(SpriteList& l);
+	void commit_sprites(SpriteList& l);
+	void erase_sprites(SpriteList& l);
+	void blit_sprites(SpriteList& l);	
+	
+public:
+	SpritesMan();
+	~SpritesMan();
+
+	int init_sprites(void);
+	void deinit_sprites(void);
+	void erase_upd_sprites(void);
+	void erase_nonupd_sprites(void);
+	void erase_both(void);
+	void blit_upd_sprites(void);
+	void blit_nonupd_sprites(void);
+	void blit_both(void);
+	void commit_upd_sprites(void);
+	void commit_nonupd_sprites(void);
+	void commit_both(void);
+	void add_to_pic(int, int, int, int, int, int, int);
+	void show_obj(int);
+	void commit_block(int, int, int, int);
+};
+
+extern SpritesMan *_sprites;
 
 }                             // End of namespace Agi
 

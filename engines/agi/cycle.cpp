@@ -218,11 +218,11 @@ int main_cycle() {
 	}
 
 	if (key == KEY_PRIORITY) {
-		erase_both();
+		_sprites->erase_both();
 		debug_.priority = !debug_.priority;
 		show_pic();
-		blit_both();
-		commit_both();
+		_sprites->blit_both();
+		_sprites->commit_both();
 		key = 0;
 	}
 

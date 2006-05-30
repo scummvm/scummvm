@@ -117,7 +117,7 @@ void replay_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
 		break;
 	case ADD_VIEW:
 		agi_load_resource(rVIEW, p1);
-		add_to_pic(p1, p2, p3, p4, p5, p6, p7);
+		_sprites->add_to_pic(p1, p2, p3, p4, p5, p6, p7);
 		break;
 	}
 }
@@ -544,7 +544,7 @@ int load_game(char *s) {
 		v->s = NULL;	/* not sure if it is used... */
 	}
 
-	erase_both();
+	_sprites->erase_both();
 
 	/* Clear input line */
 	clear_screen(0);
@@ -566,9 +566,9 @@ int load_game(char *s) {
 	game.has_prompt = 0;	/* force input line repaint if necessary */
 	clean_input();
 
-	erase_both();
-	blit_both();
-	commit_both();
+	_sprites->erase_both();
+	_sprites->blit_both();
+	_sprites->commit_both();
 	show_pic();
 	do_update();
 
@@ -725,7 +725,7 @@ int loadgame_simple() {
 
 	sprintf(path, "%s/%05X_%s_%02d.sav", _savePath, game.crc, game.id, 0);
 
-	erase_both();
+	_sprites->erase_both();
 	stop_sound();
 	close_window();
 
@@ -754,7 +754,7 @@ int loadgame_dialog() {
 
 	sprintf(path, "%s/%05X_%s_%02d.sav", _savePath, game.crc, game.id, slot);
 
-	erase_both();
+	_sprites->erase_both();
 	stop_sound();
 
 	draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);

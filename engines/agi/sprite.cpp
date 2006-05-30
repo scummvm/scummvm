@@ -27,25 +27,10 @@
 #include "agi/graphics.h"
 #include "agi/text.h"
 #include "agi/savegame.h"
-#include "common/list.h"
 
 namespace Agi {
 
-/**
- * Sprite structure.
- * This structure holds information on visible and priority data of
- * a rectangular area of the AGI screen. Sprites are chained in two
- * circular lists, one for updating and other for non-updating sprites.
- */
-struct sprite {
-	vt_entry *v;		/**< pointer to view table entry */
-	int16 x_pos;			/**< x coordinate of the sprite */
-	int16 y_pos;			/**< y coordinate of the sprite */
-	int16 x_size;			/**< width of the sprite */
-	int16 y_size;			/**< height of the sprite */
-	uint8 *buffer;			/**< buffer to store background data */
-	uint8 *hires;			/**< buffer for hi-res background */
-};
+SpritesMan *_sprites;
 
 /*
  * Sprite pool replaces dynamic allocation
@@ -53,11 +38,8 @@ struct sprite {
 #undef ALLOC_DEBUG
 
 #define POOL_SIZE 68000		/* Gold Rush mine room needs > 50000 */
-	/* Speeder bike challenge needs > 67000 */
-static uint8 *sprite_pool;
-static uint8 *pool_top;
 
-static void *pool_alloc(int size) {
+void *SpritesMan::pool_alloc(int size) {
 	uint8 *x;
 
 	/* Adjust size to 32-bit boundary to prevent data misalignment
@@ -80,7 +62,7 @@ static void *pool_alloc(int size) {
 /* Note: it's critical that pool_release() is called in the exact
          reverse order of pool_alloc()
 */
-static void pool_release(void *s) {
+void SpritesMan::pool_release(void *s) {
 	pool_top = (uint8 *)s;
 }
 
@@ -90,7 +72,7 @@ static void pool_release(void *s) {
 
 /* Blit one pixel considering the priorities */
 
-static void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden) {
+void SpritesMan::blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden) {
 	int epr = 0, pr = 0;	/* effective and real priorities */
 
 	/* CM: priority 15 overrides control lines and is ignored when
@@ -138,7 +120,7 @@ static void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int 
 
 #define X_FACT 2		/* Horizontal hires factor */
 
-static int blit_hires_cel(int x, int y, int spr, view_cel *c) {
+int SpritesMan::blit_hires_cel(int x, int y, int spr, view_cel *c) {
 	uint8 *q = NULL;
 	uint8 *h0, *h, *end;
 	int i, j, t, m, col;
@@ -170,7 +152,7 @@ static int blit_hires_cel(int x, int y, int spr, view_cel *c) {
 	return hidden;
 }
 
-static int blit_cel(int x, int y, int spr, view_cel *c) {
+int SpritesMan::blit_cel(int x, int y, int spr, view_cel *c) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
 	int hidden = true;
@@ -214,7 +196,7 @@ static int blit_cel(int x, int y, int spr, view_cel *c) {
 	return hidden;
 }
 
-static void objs_savearea(sprite *s) {
+void SpritesMan::objs_savearea(sprite *s) {
 	int y;
 	int16 x_pos = s->x_pos, y_pos = s->y_pos;
 	int16 x_size = s->x_size, y_size = s->y_size;
@@ -254,7 +236,7 @@ static void objs_savearea(sprite *s) {
 	}
 }
 
-static void objs_restorearea(sprite *s) {
+void SpritesMan::objs_restorearea(sprite *s) {
 	int y, offset;
 	int16 x_pos = s->x_pos, y_pos = s->y_pos;
 	int16 x_size = s->x_size, y_size = s->y_size;
@@ -299,19 +281,11 @@ static void objs_restorearea(sprite *s) {
 	}
 }
 
-/*
- * Sprite management functions
- */
-
-typedef Common::List<sprite*> SpriteList;
-
-static SpriteList spr_upd;
-static SpriteList spr_nonupd;
 
 /**
  * Condition to determine whether a sprite will be in the 'updating' list.
  */
-static int test_updating(vt_entry *v) {
+int SpritesMan::test_updating(vt_entry *v) {
 	/* Sanity check (see bug #779302) */
 	if (~game.dir_view[v->current_view].flags & RES_LOADED)
 		return 0;
@@ -322,7 +296,7 @@ static int test_updating(vt_entry *v) {
 /**
  * Condition to determine whether a sprite will be in the 'non-updating' list.
  */
-static int test_not_updating(vt_entry *v) {
+int SpritesMan::test_not_updating(vt_entry *v) {
 	/* Sanity check (see bug #779302) */
 	if (~game.dir_view[v->current_view].flags & RES_LOADED)
 		return 0;
@@ -333,7 +307,7 @@ static int test_not_updating(vt_entry *v) {
 /**
  * Convert sprite priority to y value.
  */
-static INLINE int prio_to_y(int p) {
+INLINE int SpritesMan::prio_to_y(int p) {
 	int i;
 
 	if (p == 0)
@@ -350,7 +324,7 @@ static INLINE int prio_to_y(int p) {
 /**
  * Create and initialize a new sprite structure.
  */
-static sprite *new_sprite(vt_entry *v) {
+sprite *SpritesMan::new_sprite(vt_entry *v) {
 	sprite *s;
 	s = (sprite *)pool_alloc(sizeof(sprite));
 	if (s == NULL)
@@ -371,7 +345,7 @@ static sprite *new_sprite(vt_entry *v) {
 /**
  * Insert sprite in the specified sprite list.
  */
-static void spr_addlist(SpriteList& l, vt_entry *v) {
+void SpritesMan::spr_addlist(SpriteList& l, vt_entry *v) {
 	sprite *s = new_sprite(v);
 	l.push_back(s);
 }
@@ -379,7 +353,7 @@ static void spr_addlist(SpriteList& l, vt_entry *v) {
 /**
  * Sort sprites from lower y values to build a sprite list.
  */
-static void build_list(SpriteList& l, int (*test) (vt_entry *)) {
+void SpritesMan::build_list(SpriteList& l, int (SpritesMan::*test) (vt_entry *)) {
 	int i, j, k;
 	vt_entry *v;
 	vt_entry *entry[0x100];
@@ -391,7 +365,7 @@ static void build_list(SpriteList& l, int (*test) (vt_entry *)) {
 	 */
 	i = 0;
 	for (v = game.view_table; v < &game.view_table[MAX_VIEWTABLE]; v++) {
-		if (test(v)) {
+		if ((this->*(test))(v)) {
 			entry[i] = v;
 			y_val[i] = v->flags & FIXED_PRIORITY ? prio_to_y(v->priority) : v->y_pos;
 			i++;
@@ -418,21 +392,21 @@ static void build_list(SpriteList& l, int (*test) (vt_entry *)) {
 /**
  * Build list of updating sprites.
  */
-static void build_upd_blitlist() {
+void SpritesMan::build_upd_blitlist() {
 	build_list(spr_upd, test_updating);
 }
 
 /**
  * Build list of non-updating sprites.
  */
-static void build_nonupd_blitlist() {
+void SpritesMan::build_nonupd_blitlist() {
 	build_list(spr_nonupd, test_not_updating);
 }
 
 /**
  * Clear the given sprite list.
  */
-static void free_list(SpriteList& l) {
+void SpritesMan::free_list(SpriteList& l) {
 	SpriteList::iterator iter;
 	for (iter = l.reverse_begin(); iter != l.end(); ) {
 		sprite* s = *iter;
@@ -447,7 +421,7 @@ static void free_list(SpriteList& l) {
  * Copy sprites from the pic buffer to the screen buffer, and check if
  * sprites of the given list have moved.
  */
-static void commit_sprites(SpriteList& l) {
+void SpritesMan::commit_sprites(SpriteList& l) {
 	SpriteList::iterator iter;
 	for (iter = l.begin(); iter != l.end(); ++iter) {
 		sprite *s = *iter;
@@ -497,7 +471,7 @@ static void commit_sprites(SpriteList& l) {
 /**
  * Erase all sprites in the given list.
  */
-static void erase_sprites(SpriteList& l) {
+void SpritesMan::erase_sprites(SpriteList& l) {
 	SpriteList::iterator iter;
 	for (iter = l.reverse_begin(); iter != l.end(); --iter) {
 		sprite *s = *iter;
@@ -510,7 +484,7 @@ static void erase_sprites(SpriteList& l) {
 /**
  * Blit all sprites in the given list.
  */
-static void blit_sprites(SpriteList& l) {
+void SpritesMan::blit_sprites(SpriteList& l) {
 	int hidden;
 	SpriteList::iterator iter;
 	for (iter = l.begin(); iter != l.end(); ++iter) {
@@ -528,16 +502,16 @@ static void blit_sprites(SpriteList& l) {
  * Public functions
  */
 
-void commit_upd_sprites() {
+void SpritesMan::commit_upd_sprites() {
 	commit_sprites(spr_upd);
 }
 
-void commit_nonupd_sprites() {
+void SpritesMan::commit_nonupd_sprites() {
 	commit_sprites(spr_nonupd);
 }
 
 /* check moves in both lists */
-void commit_both() {
+void SpritesMan::commit_both() {
 	commit_upd_sprites();
 	commit_nonupd_sprites();
 }
@@ -551,7 +525,7 @@ void commit_both() {
  * @see erase_nonupd_sprites()
  * @see erase_both()
  */
-void erase_upd_sprites() {
+void SpritesMan::erase_upd_sprites() {
 	erase_sprites(spr_upd);
 }
 
@@ -564,7 +538,7 @@ void erase_upd_sprites() {
  * @see erase_upd_sprites()
  * @see erase_both()
  */
-void erase_nonupd_sprites() {
+void SpritesMan::erase_nonupd_sprites() {
 	erase_sprites(spr_nonupd);
 }
 
@@ -577,7 +551,7 @@ void erase_nonupd_sprites() {
  * @see erase_upd_sprites()
  * @see erase_nonupd_sprites()
  */
-void erase_both() {
+void SpritesMan::erase_both() {
 	erase_upd_sprites();
 	erase_nonupd_sprites();
 }
@@ -590,7 +564,7 @@ void erase_both() {
  * @see blit_nonupd_sprites()
  * @see blit_both()
  */
-void blit_upd_sprites() {
+void SpritesMan::blit_upd_sprites() {
 	debugC(7, kDebugLevelSprites, "blit updating");
 	build_upd_blitlist();
 	blit_sprites(spr_upd);
@@ -604,7 +578,7 @@ void blit_upd_sprites() {
  * @see blit_upd_sprites()
  * @see blit_both()
  */
-void blit_nonupd_sprites() {
+void SpritesMan::blit_nonupd_sprites() {
 	debugC(7, kDebugLevelSprites, "blit non-updating");
 	build_nonupd_blitlist();
 	blit_sprites(spr_nonupd);
@@ -618,7 +592,7 @@ void blit_nonupd_sprites() {
  * @see blit_upd_sprites()
  * @see blit_nonupd_sprites()
  */
-void blit_both() {
+void SpritesMan::blit_both() {
 	blit_nonupd_sprites();
 	blit_upd_sprites();
 }
@@ -636,7 +610,7 @@ void blit_both() {
  * @param pri   priority to use
  * @param mar   if < 4, create a margin around the the base of the cel
  */
-void add_to_pic(int view, int loop, int cel, int x, int y, int pri, int mar) {
+void SpritesMan::add_to_pic(int view, int loop, int cel, int x, int y, int pri, int mar) {
 	view_cel *c = NULL;
 	int x1, y1, x2, y2, y3;
 	uint8 *p1, *p2;
@@ -727,7 +701,7 @@ void add_to_pic(int view, int loop, int cel, int x, int y, int pri, int mar) {
  * a message box with the object description.
  * @param n  Number of the object to show
  */
-void show_obj(int n) {
+void SpritesMan::show_obj(int n) {
 	view_cel *c;
 	sprite s;
 	int x1, y1, x2, y2;
@@ -761,7 +735,7 @@ void show_obj(int n) {
 	free(s.hires);
 }
 
-void commit_block(int x1, int y1, int x2, int y2) {
+void SpritesMan::commit_block(int x1, int y1, int x2, int y2) {
 	int i, w, offset;
 	uint8 *q;
 	uint8 *h;
@@ -805,16 +779,17 @@ void commit_block(int x1, int y1, int x2, int y2) {
 	flush_block_a(x1, y1 + offset, x2, y2 + offset);
 }
 
-int init_sprites() {
-	if ((sprite_pool = (uint8 *)malloc(POOL_SIZE)) == NULL)
-		return err_NotEnoughMemory;
+SpritesMan::SpritesMan() {
+//	if ((sprite_pool = (uint8 *)malloc(POOL_SIZE)) == NULL)
+//		return err_NotEnoughMemory;
 
+	sprite_pool = (uint8 *)malloc(POOL_SIZE);
 	pool_top = sprite_pool;
 
-	return err_OK;
+//	return err_OK;
 }
 
-void deinit_sprites() {
+SpritesMan::~SpritesMan() {
 	free(sprite_pool);
 }
 

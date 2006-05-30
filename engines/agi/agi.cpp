@@ -513,7 +513,7 @@ void AgiEngine::initialize() {
 	game.sbuf = (uint8 *) calloc(_WIDTH, _HEIGHT);
 	game.hires = (uint8 *) calloc(_WIDTH * 2, _HEIGHT);
 
-	init_sprites();
+	_sprites = new SpritesMan;
 	init_video();
 
 	tick_timer = 0;
@@ -539,7 +539,7 @@ AgiEngine::~AgiEngine() {
 	delete g_agi_music;
 	deinit_sound();
 	deinit_video();
-	deinit_sprites();
+	delete _sprites;
 	free(game.hires);
 	free(game.sbuf);
 	deinit_machine();

@@ -277,10 +277,10 @@ char *word_wrap_string(char *str, int *len) {
  */
 void close_window() {
 	debugC(4, kDebugLevelText, "close window");
-	erase_both();
+	_sprites->erase_both();
 	erase_textbox();	/* remove window, if any */
-	blit_both();
-	commit_both();		/* redraw sprites */
+	_sprites->blit_both();
+	_sprites->commit_both();		/* redraw sprites */
 	game.has_window = false;
 }
 
@@ -293,9 +293,9 @@ void close_window() {
 int message_box(const char *s) {
 	int k;
 
-	erase_both();
+	_sprites->erase_both();
 	blit_textbox(s, -1, -1, -1);
-	blit_both();
+	_sprites->blit_both();
 	k = wait_key();
 	debugC(4, kDebugLevelText, "wait_key returned %02x", k);
 	close_window();
@@ -316,7 +316,7 @@ int selection_box(const char *m, const char **b) {
 	int rc = -1;
 	int bx[5], by[5];
 
-	erase_both();
+	_sprites->erase_both();
 	blit_textbox(m, -1, -1, -1);
 
 	x = game.window.x1 + 5 * CHAR_COLS / 2;
@@ -342,7 +342,7 @@ int selection_box(const char *m, const char **b) {
 		x += CHAR_COLS * strlen(b[i]) + s;
 	}
 
-	blit_both();
+	_sprites->blit_both();
 
 	/* clear key queue */
 	while (keypress()) {

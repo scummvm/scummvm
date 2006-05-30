@@ -212,9 +212,9 @@ void unload_view(int n) {
 		return;
 
 	/* Rebuild sprite list, see bug #779302 */
-	erase_both();
-	blit_both();
-	commit_both();
+	_sprites->erase_both();
+	_sprites->blit_both();
+	_sprites->commit_both();
 
 	/* free all the loops */
 	for (x = 0; x < game.views[n].num_loops; x++)
@@ -282,9 +282,9 @@ void set_view(vt_entry *v, int n) {
  */
 void start_update(vt_entry *v) {
 	if (~v->flags & UPDATE) {
-		erase_both();
+		_sprites->erase_both();
 		v->flags |= UPDATE;
-		blit_both();
+		_sprites->blit_both();
 	}
 }
 
@@ -294,9 +294,9 @@ void start_update(vt_entry *v) {
  */
 void stop_update(vt_entry *v) {
 	if (v->flags & UPDATE) {
-		erase_both();
+		_sprites->erase_both();
 		v->flags &= ~UPDATE;
-		blit_both();
+		_sprites->blit_both();
 	}
 }
 
@@ -367,10 +367,10 @@ void update_viewtable() {
 	}
 
 	if (i) {
-		erase_upd_sprites();
+		_sprites->erase_upd_sprites();
 		update_position();
-		blit_upd_sprites();
-		commit_upd_sprites();
+		_sprites->blit_upd_sprites();
+		_sprites->commit_upd_sprites();
 		game.view_table[0].flags &= ~(ON_WATER | ON_LAND);
 	}
 }
