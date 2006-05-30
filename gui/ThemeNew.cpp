@@ -1427,7 +1427,7 @@ void ThemeNew::setupFont(String key, String name, kFontStyle style) {
 }
 
 void ThemeNew::setupFonts() {
-	if (_screen.w >= 400 && _screen.h >= 300) {
+	if (_screen.w >= 400 && _screen.h >= 270) {
 		setupFont("fontfile_bold", FONT_NAME_BOLD, kFontStyleBold);
 		setupFont("fontfile_normal", FONT_NAME_NORMAL, kFontStyleNormal);
 		setupFont("fontfile_italic", FONT_NAME_ITALIC, kFontStyleItalic);
