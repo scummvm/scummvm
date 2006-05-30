@@ -508,7 +508,7 @@ const char * MoviePlayer::_sequenceList[90] = {
 	"ventfall.dxa",
 	"ventoff.dxa",
 	"wasting.dxa",
-	"wurbatak.dxa",
+	"wurbatak.dxa"
 };
 
 } // End of namespace Simon
