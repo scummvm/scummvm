@@ -247,6 +247,14 @@ void OSystem_PSP::clearOverlay() {
 }
 
 void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
+	int h = _overlayHeight;
+	OverlayColor *src = _overlayBuffer;
+
+	do {
+		memcpy(buf, src, _overlayWidth * sizeof(OverlayColor));
+		src += _overlayWidth;
+		buf += pitch;
+	} while (--h);
 }
 
 void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
@@ -278,7 +286,7 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 
 	
 	OverlayColor *dst = _overlayBuffer + (y * _overlayWidth + x);
-	if (_screenWidth == pitch && pitch == w) {
+	if (_overlayWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
 	} else {
 		do {
