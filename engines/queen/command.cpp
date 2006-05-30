@@ -203,6 +203,29 @@ void Command::executeCurrentAction() {
 	for (i = 1; i <= comMax; ++i) {
 
 		comId = matchingCmds[i - 1];
+
+		// WORKAROUND bug #1497280: This command is triggered in room 56 (the
+		// room with two waterfalls in the maze part of the game) if the user
+		// tries to walk through the left waterfall (object 423).
+		//
+		// Normally, this would move Joe to room 101 on the upper level and
+		// start a cutscene. Joe would notice that Yan has been trapped (on
+		// the lower level of the same room). The problem would then appear :
+		// Joe is stuck behind the waterfall due to a walkbox issue. We could
+		// fix the walkbox issue, but then Joe would walk through the waterfall
+		// which wouldn't look that nice, graphically.
+		//		
+		// Since this command isn't necessary to complete the game and doesn't
+		// really makes sense here, we just skip it for now. The same cutscene
+		// is already played in command 648, so the user don't miss anything
+		// from the story/experience pov.
+		//
+		// Note: this happens with the original engine, too.
+
+		if (comId == 649) {
+			continue;
+		}
+				
 		com = &_cmdList[comId];
 
 		// check the Gamestates and set them if necessary
