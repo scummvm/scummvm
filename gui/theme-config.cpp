@@ -62,6 +62,10 @@ const char *Theme::_defaultConfigINI =
 "scummsaveload_choose=(prev.x2 + 10) prev.y prev.w prev.h\n"
 "scummsaveload_extinfo.visible=false\n"
 "\n"
+"# MM NES resolution\n"
+"[256x240]\n"
+"useAsIs=320xY\n"
+"\n"
 "[XxY]\n"
 "def_widgetSize=kBigWidgetSize\n"
 "def_buttonWidth=kBigButtonWidth\n"
@@ -493,6 +497,14 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 			processResSection(config, iterk->value, true);
 			continue;
 		}
+		if (iterk->key == "useAsIs") {
+			if (iterk->value == name)
+				error("Theme section [%s]: cannot use itself", name.c_str());
+			if (!config.hasSection(name))
+				error("Undefined use of section [%s]", name.c_str());
+			processResSection(config, iterk->value);
+			continue;
+		}
 		if (iterk->key == "useWithPrefix") {
 			const char *temp = iterk->value.c_str();
             const char *pos = strrchr(temp, ' ');
@@ -555,7 +567,7 @@ bool Theme::sectionIsSkipped(Common::ConfigFile &config, const char *name, int w
 
 	x = y = 0;
 
-	while (ptr && phase != 2) {
+	while (phase != 3) {
 		switch (phase) {
 		case 0:
 			if (*ptr >= '0' && *ptr <= '9') {
@@ -570,11 +582,30 @@ bool Theme::sectionIsSkipped(Common::ConfigFile &config, const char *name, int w
 			break;
 		case 1:
 			if (*ptr >= '0' && *ptr <= '9') {
-				x = x * 10 + *ptr - '0';
-			} else if (*ptr == 'Y') {
+				y = y * 10 + *ptr - '0';
+			} else if (*ptr == 'Y' || !*ptr || *ptr == ',') {
 				phase = 2;
+
+				if ((x == w || x == 0) && (y == h || y == 0))
+					return true;
+				if (!*ptr)
+					return false;
+				if (*ptr == ',') {
+					phase = x = y = 0;
+				}
 			} else {
 				error("Syntax error. Wrong resolution in skipFor in section %s", name);
+			}
+			break;
+		case 2:
+			if (*ptr == ',') {
+				phase = x = y = 0;
+			} else if (!*ptr) {
+				if ((x == w || x == 0) && (y == h || y == 0))
+					return true;
+				return false;
+			} else {
+				error ("Syntax error. Wrong resolution in skipFor in section %s", name);
 			}
 			break;
 		default:
@@ -584,13 +615,7 @@ bool Theme::sectionIsSkipped(Common::ConfigFile &config, const char *name, int w
 		ptr++;
 	}
 
-	if (x != w && x)
-		return false;
-
-	if (y != h && y)
-		return false;
-
-	return true;
+	return false;
 }
 
 void Theme::loadTheme(Common::ConfigFile &config, bool reset) {
