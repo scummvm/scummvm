@@ -34,7 +34,11 @@ tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
 	$(CC) -Wall -o $@ $<
 
 #
-# Rules to explicitly rebuild the credits / MD5 tables
+# Rules to explicitly rebuild the credits / MD5 tables.
+# The rules for the files in the "web" resp. "docs" modules
+# assume that you are invoking "make" from within a complete
+# checkout of the ScummVM repository. Of course if that is not the
+# case, then you have to modify those paths...
 #
 
 credits:
@@ -47,7 +51,7 @@ credits:
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > engines/scumm/scumm-md5.h
-	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../web/docs/md5.inc
+	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../../web/trunk/docs/md5.inc
 
 
 #
