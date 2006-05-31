@@ -25,7 +25,7 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
  : Widget(boss, x, y, w, h) {
 	init();
 }

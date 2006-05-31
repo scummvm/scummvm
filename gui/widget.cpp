@@ -143,7 +143,6 @@ bool Widget::isVisible() const {
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align)
 	: Widget(boss, x, y, w, h), _align(align) {
-	_ws = g_gui.getWidgetSize();
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
@@ -151,7 +150,6 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, String name, const String &text)
 	: Widget(boss, name) {
-	_ws = g_gui.getWidgetSize();
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
@@ -188,11 +186,6 @@ void StaticTextWidget::drawWidget(bool hilite) {
 	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label,
 							isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled,
 							g_gui.theme()->convertAligment(_align));
-}
-
-void StaticTextWidget::handleScreenChanged() {
-	Widget::handleScreenChanged();
-	_ws = g_gui.getWidgetSize();
 }
 
 #pragma mark -

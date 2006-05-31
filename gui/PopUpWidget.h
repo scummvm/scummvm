@@ -49,7 +49,6 @@ class PopUpWidget : public Widget, public CommandSender {
 	};
 	typedef Common::Array<Entry> EntryList;
 protected:
-	WidgetSize		_ws;
 	EntryList		_entries;
 	int				_selectedItem;
 

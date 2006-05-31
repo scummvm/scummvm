@@ -36,14 +36,13 @@ enum {
 	kTabPadding = 3
 };
 
-TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
-	: Widget(boss, x, y, w, h), _ws(ws) {
+TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
+	: Widget(boss, x, y, w, h) {
 	init();
 }
 
 TabWidget::TabWidget(GuiObject *boss, String name)
 	: Widget(boss, name) {
-	_ws = g_gui.getWidgetSize();
 	init();
 }
 
@@ -54,7 +53,7 @@ void TabWidget::init() {
 
 	_tabWidth = 40;
 
-	if (_ws == kBigWidgetSize) {
+	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		_tabHeight = kBigTabHeight;
 	} else {
 		_tabHeight = kTabHeight;
@@ -145,13 +144,12 @@ void TabWidget::handleScreenChanged() {
 			w = w->next();
 		}
 	}
-	Widget::handleScreenChanged();
-	_ws = g_gui.getWidgetSize();
-	if (_ws == kBigWidgetSize) {
+	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		_tabHeight = kBigTabHeight;
 	} else {
 		_tabHeight = kTabHeight;
 	}
+	Widget::handleScreenChanged();
 }
 
 void TabWidget::drawWidget(bool hilite) {

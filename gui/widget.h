@@ -169,7 +169,6 @@ protected:
 
 	String					_label;
 	TextAlignment			_align;
-	WidgetSize				_ws;
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
 	StaticTextWidget(GuiObject *boss, String name, const String &text);
@@ -178,8 +177,6 @@ public:
 	const String &getLabel() const		{ return _label; }
 	void setAlign(TextAlignment align);
 	TextAlignment getAlign() const		{ return _align; }
-
-	virtual void handleScreenChanged();
 
 protected:
 	void drawWidget(bool hilite);

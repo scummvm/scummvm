@@ -38,7 +38,7 @@ protected:
 	int				_rightPadding;
 
 public:
-	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize);
+	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text);
 	EditTextWidget(GuiObject *boss, String name, const String &text);
 
 	void setEditString(const String &str);

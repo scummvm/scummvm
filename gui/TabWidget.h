@@ -40,10 +40,9 @@ protected:
 	TabList _tabs;
 	int _tabWidth;
 	int _tabHeight;
-	WidgetSize _ws;
 
 public:
-	TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
+	TabWidget(GuiObject *boss, int x, int y, int w, int h);
 	TabWidget(GuiObject *boss, String name);
 	~TabWidget();
 

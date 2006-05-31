@@ -47,7 +47,7 @@ protected:
 	int			_rightPadding;
 
 public:
-	PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws = kDefaultWidgetSize);
+	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
 
 	void drawDialog();
 
@@ -67,7 +67,7 @@ protected:
 	void moveDown();
 };
 
-PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws)
+PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(0, 0, 16, 16, false),
 	_popUpBoss(boss) {
 
@@ -359,7 +359,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, String name, const String &label, uint
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	if (isEnabled()) {
-		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY(), _ws);
+		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY());
 		int newSel = popupDialog.runModal();
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
@@ -370,8 +370,6 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void PopUpWidget::handleScreenChanged() {
-	_ws = g_gui.getWidgetSize();
-
 	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
 	_labelSpacing = g_gui.evaluator()->getVar("PopUpWidget.labelSpacing", 0);

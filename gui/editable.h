@@ -50,7 +50,7 @@ protected:
 	Theme::kFontStyle  _font;
 
 public:
-	EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kNormalWidgetSize);
+	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
 	EditableWidget(GuiObject *boss, String name);
 	virtual ~EditableWidget();
 
