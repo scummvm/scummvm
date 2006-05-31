@@ -2319,13 +2319,14 @@ bool PathFinder::process() {
 	}
 
 	// ****DEBUG****
-	for (int ctr = 0; ctr < DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT; ++ctr)
+	int ctr;
+	for (ctr = 0; ctr < DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT; ++ctr)
 		Room::getReference().tempLayer[ctr] = _layer[ctr];
 
 	// Determine the walk path by working backwards from the destination, adding in the 
 	// walking steps in reverse order until source is reached
-
-	for (int stageCtr = 0; stageCtr < 3; ++stageCtr) {
+	int stageCtr;
+	for (stageCtr = 0; stageCtr < 3; ++stageCtr) {
 		altFlag = stageCtr == 1;
 		pCurrent = _pDest;
 

@@ -55,12 +55,12 @@ public:
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
 	void copyTo(Surface *dest, uint16 x, uint16 y);
-	void copyTo(Surface *dest, const Rect &srcBounds, uint16 destX, uint16 destY,
+	void copyTo(Surface *dest, const Common::Rect &srcBounds, uint16 destX, uint16 destY,
 		int transparentColour = -1);
 	void copyFrom(MemoryBlock *src) { _data->copyFrom(src); }
 	void copyFrom(MemoryBlock *src, uint32 destOffset);
 	void empty() { _data->empty(); }
-	void fillRect(const Rect &r, uint8 colour);
+	void fillRect(const Common::Rect &r, uint8 colour);
 	void createDialog(bool blackFlag = false);
 	void copyToScreen(uint16 x, uint16 y);
 	void centerOnScreen();
