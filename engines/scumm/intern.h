@@ -822,7 +822,7 @@ public:
 		int32 offset;
 	};
 	
-	int _verbCharset;
+	int _verbCharset, _verbLineSpacing;
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;

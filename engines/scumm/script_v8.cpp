@@ -719,10 +719,9 @@ void ScummEngine_v8::o8_cursorCommand() {
 	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
 		setCursorTransparency(pop());
 		break;
-	case 0xE7: {	// SO_CHARSET_SET
+	case 0xE7: 		// SO_CHARSET_SET
 		_verbCharset = pop();
 		break;
-	}
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
@@ -1147,12 +1146,7 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->charset_nr = pop();
 		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
-		// FIXME - TODO
-		// Note: it seems that var596 stores the "line spacing". It is used by various
-		// scripts that place verbs for that.
-		// Also, var595 contains the vertical position at which to start placing verbs (330)
-		a = pop();
-		debug(0, "SO_VERB_LINE_SPACING %d: not yet implemented", a);
+		_verbLineSpacing = pop();
 		break;
 	default:
 		error("o8_verbops: default case 0x%x", subOp);
@@ -1466,7 +1460,7 @@ void ScummEngine_v8::o8_getStringWidth() {
 	msg = transBuf;
 
 	// Temporary set the specified charset id
-	_charset->setCurID(_string[charset].charset);
+	_charset->setCurID(charset);
 	// Determine the strings width
 	width = _charset->getStringWidth(0, msg);
 	// Revert to old font

@@ -687,25 +687,50 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		while (*msg == 0xFF)
 			msg += 4;
 
-		enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
-
 		// Set the specified charset id
+		int oldID = _charset->getCurID();
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
 		vs->curRect.right = 0;
 		vs->curRect.bottom = 0;
-		while (*msg) {
-			const int charWidth = _charset->getCharWidth(*msg);
-			const int charHeight = _charset->getCharHeight(*msg);
+		const byte *msg2 = msg;
+		while (*msg2) {
+			const int charWidth = _charset->getCharWidth(*msg2);
+			const int charHeight = _charset->getCharHeight(*msg2);
 			vs->curRect.right += charWidth;
 			if (vs->curRect.bottom < charHeight)
 				vs->curRect.bottom = charHeight;
-			msg++;
+			msg2++;
 		}
 		vs->curRect.right += vs->curRect.left;
 		vs->curRect.bottom += vs->curRect.top;
 		vs->oldRect = vs->curRect;
+
+		const int maxWidth = _screenWidth - vs->curRect.left;
+		if (_charset->getStringWidth(0, buf) > maxWidth && _game.version == 8) {
+			byte tmpBuf[384];
+			memcpy(tmpBuf, msg, 384);
+
+			int len = resStrLen(tmpBuf) - 1;
+			while (len >= 0) {
+				if (tmpBuf[len] == ' ') {
+					tmpBuf[len] = 0;
+					if (_charset->getStringWidth(0, tmpBuf) <= maxWidth) {
+						break;
+					}
+				}
+				--len;
+			}
+			enqueueText(tmpBuf, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
+			if (len >= 0) {
+				enqueueText(&msg[len + 1], vs->curRect.left, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
+				vs->curRect.bottom += _verbLineSpacing;
+			}
+		} else {
+			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
+		}
+		_charset->setCurID(oldID);
 	}
 }
 #endif

@@ -920,6 +920,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
 	_verbCharset = 0;
+	_verbLineSpacing = 10;
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;

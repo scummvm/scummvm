@@ -1197,6 +1197,8 @@ void ScummEngine_v7::saveOrLoad(Serializer *s) {
 
 	const SaveLoadEntry V7Entries[] = {
 		MKLINE(ScummEngine_v7, _subtitleQueuePos, sleInt32, VER(61)),
+		MKLINE(ScummEngine_v7, _verbCharset, sleInt32, VER(68)),
+		MKLINE(ScummEngine_v7, _verbLineSpacing, sleInt32, VER(68)),
 		MKEND()
 	};
 
