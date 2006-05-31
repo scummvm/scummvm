@@ -247,7 +247,7 @@ void registerDefaults() {
 	if (stat(savePath, &sb) == -1)
 		if (errno == ENOENT)// create the dir if it does not exist
 			if (mkdir(savePath, 0755) != 0)
-				error("mkdir for '%s' failed!", savePath);
+				warning("mkdir for '%s' failed!", savePath);
 	ConfMan.registerDefault("savepath", savePath); // this should be enough...
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
