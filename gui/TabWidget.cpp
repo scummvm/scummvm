@@ -146,6 +146,12 @@ void TabWidget::handleScreenChanged() {
 		}
 	}
 	Widget::handleScreenChanged();
+	_ws = g_gui.getWidgetSize();
+	if (_ws == kBigWidgetSize) {
+		_tabHeight = kBigTabHeight;
+	} else {
+		_tabHeight = kTabHeight;
+	}
 }
 
 void TabWidget::drawWidget(bool hilite) {
