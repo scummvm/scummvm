@@ -752,7 +752,7 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			;;
-		arm-linux)
+		arm-linux|arm-*-linux-gnueabi)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
