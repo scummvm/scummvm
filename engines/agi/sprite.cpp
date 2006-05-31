@@ -682,6 +682,9 @@ void SpritesMan::add_to_pic(int view, int loop, int cel, int x, int y, int pri, 
 		 */
 		y3 = (y2 / 12) * 12 + 1;
 
+		// don't let box extend below y.
+		if (y3 > y2) y3 = y2;
+
 		p1 = &game.sbuf[x1 + y3 * _WIDTH];
 		p2 = &game.sbuf[x2 + y3 * _WIDTH];
 
