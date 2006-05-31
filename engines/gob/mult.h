@@ -323,7 +323,7 @@ public:
 	Mult_Data *_multDatas[8];
 
 	Mult_v2(GobEngine *vm);
-	virtual ~Mult_v2() {};
+	virtual ~Mult_v2();
 
 	virtual void setMultData(uint16 multindex);
 	virtual void multSub(uint16 multindex);

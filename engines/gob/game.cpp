@@ -132,6 +132,28 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_dword_2F2B6 = 0;
 }
 
+Game::~Game() {
+	if (_imdFile) {
+		if (_imdFile->palette)
+			delete[] _imdFile->palette;
+		if (_imdFile->surfDesc &&
+				(_imdFile->surfDesc != _vm->_draw->_spritesArray[20]) &&
+				(_imdFile->surfDesc != _vm->_draw->_spritesArray[21]))
+			_vm->_video->freeSurfDesc(_imdFile->surfDesc);
+		if (_imdFile->framesPos)
+			delete[] _imdFile->framesPos;
+		if (_imdFile->frameCoords)
+			delete[] _imdFile->frameCoords;
+		delete _imdFile;
+	}
+	if (_imdFrameData)
+		delete[] _imdFrameData;
+	if (_imdVidBuffer)
+		delete[] _imdVidBuffer;
+	if (_word_2FC80)
+		delete[] _word_2FC80;
+}
+
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 	int16 commonHandle;
 	int16 itemsCount;
@@ -376,7 +398,7 @@ void Game::freeSoundSlot(int16 slot) {
 	if (slot == -1)
 		slot = _vm->_parse->parseValExpr();
 
-	if (_soundSamples[slot] == 0)
+	if ((slot < 0) || (slot >= 60) || (_soundSamples[slot] == 0))
 		return;
 
 	char* data = _soundSamples[slot]->data;
@@ -1221,7 +1243,7 @@ void Game::collisionsBlock(void) {
 		WRITE_VAR(16, 0);
 		_activeCollResId = 0;
 	}
-	while (_activeCollResId == 0 && !_vm->_inter->_terminate);
+	while (_activeCollResId == 0 && !_vm->_inter->_terminate && !_vm->_quitRequested);
 
 	if (((uint16)_activeCollResId & ~0x8000) == collResId) {
 		_collStackPos = 0;
@@ -2216,6 +2238,8 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 
 	// To allow quitting, etc. during IMDs
 	_vm->_util->processInput();
+	if (_vm->_quitRequested) 
+		return;
 
 	if (byte_31344 != 2) {
 		if (var_4 & 0x800) {

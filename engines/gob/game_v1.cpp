@@ -72,7 +72,7 @@ void Game_v1::playTot(int16 skipPlay) {
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay == 0) {
-		while (1) {
+		while (!_vm->_quitRequested) {
 			for (i = 0; i < 4; i++) {
 				_vm->_draw->_fontToSprite[i].sprite = -1;
 				_vm->_draw->_fontToSprite[i].base = -1;

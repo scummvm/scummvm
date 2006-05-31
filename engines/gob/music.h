@@ -83,6 +83,7 @@ protected:
 	bool _playing;
 	bool _first;
 	bool _ended;
+	bool _needFree;
 	Common::Mutex _mutex;
 	GobEngine *_vm;
 

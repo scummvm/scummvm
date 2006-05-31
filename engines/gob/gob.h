@@ -98,6 +98,7 @@ public:
 	int32 _features;
 	Common::Language _language;
 	bool _copyProtection;
+	bool _quitRequested;
 
 	Game *_game;
 	Snd *_snd;

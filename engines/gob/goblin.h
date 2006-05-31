@@ -226,7 +226,7 @@ public:
 	virtual void initiateMove(int16 index) = 0;
 
 	Goblin(GobEngine *vm);
-	virtual ~Goblin() {};
+	virtual ~Goblin();
 
 protected:
 	int16 _rotStates[4][4];

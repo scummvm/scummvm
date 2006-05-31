@@ -865,7 +865,7 @@ int16 Inter_v2::loadSound(int16 search) {
 			_vm->_game->_soundSamples[slot] = _vm->_game->loadSND(sndfile, 3);
 		} else {
 			strcat(sndfile, ".ADL");
-			// TODO: This is very ugly
+			// TODO: This is very ugly (and doesn't work with Snd::freeSoundDesc())
 			_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) _vm->_dataio->getData(sndfile);
 		}
 		_vm->_game->_soundTypes[slot] = 2;
@@ -899,7 +899,7 @@ int16 Inter_v2::loadSound(int16 search) {
 				if (!isADL)
 					_vm->_game->loadSound(slot, extData);
 				else
-					// TODO: This is very ugly
+					// TODO: This is very ugly (and doesn't work with Snd::freeSoundDesc())
 					_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 			}
 		} else { // loc_9A13
@@ -907,7 +907,7 @@ int16 Inter_v2::loadSound(int16 search) {
 			if (!isADL)
 				_vm->_game->loadSound(slot, extData);
 			else
-				// TODO: This is very ugly
+				// TODO: This is very ugly (and doesn't work with Snd::freeSoundDesc())
 				_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 		}
 	}
@@ -1466,11 +1466,15 @@ void Inter_v2::o2_initMult(void) {
 
 	if (_vm->_mult->_objects == 0) {
 		_vm->_mult->_renderData2 = new Mult::Mult_Object*[_vm->_mult->_objCount];
+		memset(_vm->_mult->_renderData2, 0, _vm->_mult->_objCount * sizeof(Mult::Mult_Object*));
 		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
+		memset(_vm->_mult->_renderData, 0, _vm->_mult->_objCount * 9 * sizeof(int16));
 		if (_vm->_inter->_terminate)
 			return;
 		_vm->_mult->_orderArray = new int8[_vm->_mult->_objCount];
+		memset(_vm->_mult->_orderArray, 0, _vm->_mult->_objCount * sizeof(int8));
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
+		memset(_vm->_mult->_objects, 0, _vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (i = 0; i < _vm->_mult->_objCount; i++) {
 			_vm->_mult->_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);

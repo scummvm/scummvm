@@ -143,7 +143,7 @@ void Goblin_v1::initiateMove(int16 index) {
 	_vm->_map->findNearestToGob(0);
 	_vm->_map->optimizePoints(0, 0, 0);
 
-	_pathExistence = _vm->_map->checkDirectPath(0, _vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+	_pathExistence = _vm->_map->checkDirectPath(-1, _vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
 	    _pressedMapX, _pressedMapY);
 
 	if (_pathExistence == 3) {

@@ -161,6 +161,45 @@ Goblin::Goblin(GobEngine *vm) : _vm(vm) {
 	_dword_2F9B2 = 0;
 }
 
+Goblin::~Goblin() {
+	int i, state, col;
+
+	if (_objList)
+		_vm->_util->deleteList(_objList);
+
+	for (i = 0; i < 4; i++) {
+		if (_goblins[i]) {
+			if (_goblins[i]->stateMach) {
+				for (state = 0; state < (i == 3 ? 70 : 40); state++)
+					for (col = 0; col < 6; col++)
+						if (_goblins[i]->stateMach[state][col])
+							delete _goblins[i]->stateMach[state][col];
+				delete _goblins[i]->stateMach;
+			}
+			delete _goblins[i];
+		}
+	}
+	for (i = 0; i < 20; i++) {
+		if (_objects[i]) {
+			if (_objects[i]->stateMach) {
+				for (state = 0; state < 40; state++)
+					for (col = 0; col < 6; col++)
+						if (_objects[i]->stateMach[state][col])
+							delete _objects[i]->stateMach[state][col];
+				delete _objects[i]->stateMach;
+			}
+			delete _objects[i];
+		}
+	}
+
+	for (i = 0; i < 16; i++)
+		if (_soundData[i]) {
+			if (_soundData[i]->data)
+				delete[] _soundData[i]->data;
+			delete _soundData[i];
+		}
+}
+
 char Goblin::rotateState(int16 from, int16 to) {
 	return _rotStates[from / 2][to / 2];
 }

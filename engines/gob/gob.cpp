@@ -141,6 +141,7 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang)
 	_features = features;
 	_language = lang;
 	_copyProtection = ConfMan.getBool("copy_protection");
+	_quitRequested = false;
 
 	Common::addSpecialDebugLevel(DEBUG_FUNCOP, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(DEBUG_DRAWOP, "DrawOpcodes", "Script DrawOpcodes debug level");
@@ -173,7 +174,6 @@ GobEngine::~GobEngine() {
 	delete _scenery;
 	delete _gtimer;
 	delete _util;
-	delete _inter;
 	delete _music;
 }
 
@@ -188,7 +188,7 @@ int GobEngine::go() {
 }
 
 void GobEngine::shutdown() {
-	_system->quit();
+	_quitRequested = true;
 }
 
 int GobEngine::init() {

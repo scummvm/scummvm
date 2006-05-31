@@ -1421,7 +1421,7 @@ bool Inter_v1::o1_repeatUntil(char &cmdCount, int16 &counter, int16 &retFlag) {
 		funcBlock(1);
 		_vm->_global->_inter_execPtr = blockPtr + size + 1;
 		flag = evalBoolResult();
-	} while (flag == 0 && !_breakFlag && !_terminate);
+	} while (flag == 0 && !_breakFlag && !_terminate && !_vm->_quitRequested);
 
 	_nestLevel[0]--;
 
@@ -1457,7 +1457,7 @@ bool Inter_v1::o1_whileDo(char &cmdCount, int16 &counter, int16 &retFlag) {
 			_vm->_global->_inter_execPtr += size;
 		}
 
-		if (_breakFlag || _terminate) {
+		if (_breakFlag || _terminate || _vm->_quitRequested) {
 			_vm->_global->_inter_execPtr = blockPtr;
 			_vm->_global->_inter_execPtr += size;
 			break;
@@ -1525,7 +1525,9 @@ void Inter_v1::o1_initMult(void) {
 
 	if (_vm->_mult->_objects == 0) {
 		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
+		memset(_vm->_mult->_renderData, 0, _vm->_mult->_objCount * 9 * sizeof(int16));
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
+		memset(_vm->_mult->_objects, 0, _vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (i = 0; i < _vm->_mult->_objCount; i++) {
 			_vm->_mult->_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);

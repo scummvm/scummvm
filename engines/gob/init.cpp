@@ -81,12 +81,10 @@ void Init::cleanup(void) {
 	_vm->_dataio->closeDataFile();
 
 	if (_vm->_global->_sprAllocated != 0)
-		error("cleanup: Error! Allocated sprites left: %d",
-		    _vm->_global->_sprAllocated);
+		warning("cleanup: Allocated sprites left: %d", _vm->_global->_sprAllocated);
 
 	_vm->_snd->stopSound(0);
 	_vm->_util->keyboard_release();
-	g_system->quit();
 }
 
 void Init::initGame(char *totName) {

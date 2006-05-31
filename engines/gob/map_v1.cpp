@@ -61,7 +61,20 @@ Map_v1::Map_v1(GobEngine *vm) : Map(vm) {
 }
 
 Map_v1::~Map_v1() {
-	delete[] _passMap;
+	int i;
+
+	_mapWidth = 26;
+	_mapHeight = 28;
+
+	if (_passMap)
+		delete[] _passMap;
+	if (_itemsMap) {
+		for (i = 0; i < _mapHeight; i++)
+			delete[] _itemsMap[i];
+		delete[] _itemsMap;
+	}
+	if (_wayPoints)
+		delete[] _wayPoints;
 }
 
 void Map_v1::loadMapObjects(char *avjFile) {
@@ -157,10 +170,14 @@ void Map_v1::loadMapObjects(char *avjFile) {
 		_vm->_goblin->_goblins[i]->state = READ_LE_UINT16(savedPtr2);
 		savedPtr2 += 2;
 
-		if (i == 3)
+		if (i == 3) {
 			_vm->_goblin->_goblins[i]->stateMach = new Goblin::Gob_StateLine[70];
-		else
+			memset(_vm->_goblin->_goblins[i]->stateMach, 0, 70 * sizeof(Goblin::Gob_StateLine));
+		}
+		else {
 			_vm->_goblin->_goblins[i]->stateMach = new Goblin::Gob_StateLine[40];
+			memset(_vm->_goblin->_goblins[i]->stateMach, 0, 40 * sizeof(Goblin::Gob_StateLine));
+		}
 
 		uint32* tempstatedata = new uint32[40*6];
 		for (state = 0; state < 40; ++state) {

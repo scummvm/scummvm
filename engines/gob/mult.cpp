@@ -145,9 +145,11 @@ void Mult::freeMult(void) {
 
 	delete[] _objects;
 	delete[] _renderData;
+	delete[] _orderArray;
 
 	_objects = 0;
 	_renderData = 0;
+	_orderArray = 0;
 	_vm->_anim->_animSurf = 0;
 }
 

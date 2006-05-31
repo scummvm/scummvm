@@ -37,9 +37,13 @@ namespace Gob {
 
 Video::Video(GobEngine *vm) : _vm(vm) {
 	_extraMode = false;
+	_videoDriver = 0;
 }
 
 char Video::initDriver(int16 vidMode) {
+	if (_videoDriver)
+		return 1;
+
 	warning("STUB: Video::initDriver");
 
 	// FIXME: Finish all this stuff :)
@@ -81,6 +85,9 @@ int32 Video::getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 }
 
 void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
+	if (surfDesc == 0)
+		return;
+
 	delete[] surfDesc->vidPtr;
 	// GOB2: surfDesc != _vm->_draw->_frontSurface (since _frontSurface is set
 	// to _pPrimarySurfDesc in Game::prepareStart(), is there a difference?)

@@ -26,6 +26,7 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/inter.h"
 
 namespace Gob {
 
@@ -162,7 +163,7 @@ void Util::processInput() {
 		case OSystem::EVENT_KEYUP:
 			break;
 		case OSystem::EVENT_QUIT:
-			g_system->quit();
+			_vm->_quitRequested = true;
 			break;
 		default:
 			break;

@@ -44,6 +44,21 @@ Mult_v2::Mult_v2(GobEngine *vm) : Mult_v1(vm) {
 	for (i = 0; i < 8; i++) _multDatas[i] = 0;
 }
 
+Mult_v2::~Mult_v2() {
+	int i;
+
+	freeMultKeys();
+	for (i = 0; i < 8; i++) {
+		_multData2 = _multDatas[i];
+		freeMultKeys();
+	}
+
+	if (_orderArray)
+		delete[] _orderArray;
+	if (_renderData2)
+		delete[] _renderData2;
+}
+
 void Mult_v2::loadMult(int16 resId) {
 	int16 i, j;
 	int8 index;
@@ -57,6 +72,7 @@ void Mult_v2::loadMult(int16 resId) {
 	index = (resId & 0x8000) ? *_vm->_global->_inter_execPtr++ : 0;
 
 	_multData2 = new Mult_Data;
+	memset(_multData2, 0, sizeof(Mult_Data));
 
 	// ---.
 	for (i = 0; i < 4; i++) {
@@ -372,11 +388,24 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_vm->_anim->_areaHeight = 200;
 			_objCount = 4;
 
+			if (_objects)
+				delete[] _objects;
+			if (_orderArray)
+				delete[] _orderArray;
+			if (_renderData)
+				delete[] _renderData;
+			if (_renderData2)
+				delete[] _renderData2;
+
 			_objects = new Mult_Object[_objCount];
+			memset(_objects, 0, _objCount * sizeof(Mult_Object));
 
 			_orderArray = new int8[_objCount];
+			memset(_orderArray, 0, _objCount * sizeof(int8));
 			_renderData = new int16[9 * _objCount];
+			memset(_renderData, 0, _objCount * 9 * sizeof(int16));
 			_renderData2 = new Mult_Object*[_objCount];
+			memset(_renderData2, 0, _objCount * sizeof(Mult_Object*));
 
 			_animArrayX = new int32[_objCount];
 			_animArrayY = new int32[_objCount];
@@ -485,7 +514,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		_frame++;
 		_vm->_util->waitEndFrame();
-	} while (stop == 0 && stopNoClear == 0);
+	} while (stop == 0 && stopNoClear == 0 && !_vm->_quitRequested);
 
 	if (stopNoClear == 0) {
 		if (_animDataAllocated) {
@@ -503,6 +532,9 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 			delete[] _animArrayData;
 			_animArrayData = 0;
+
+			delete[] _orderArray;
+			_orderArray = 0;
 
 			if (_vm->_anim->_animSurf)
 				_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
@@ -1347,6 +1379,10 @@ void Mult_v2::freeMultKeys(void) {
 
 		_animDataAllocated = 0;
 	}
+
+	for (i = 0; i < 8; i++)
+		if (_multDatas[i] == _multData2)
+			_multDatas[i] = 0;
 
 	delete _multData2;
 	_multData2 = 0;

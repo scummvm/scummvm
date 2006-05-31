@@ -72,7 +72,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay == 0) {
-		while (1) {
+		while (!_vm->_quitRequested) {
 			for (i = 0; i < 4; i++) {
 				_vm->_draw->_fontToSprite[i].sprite = -1;
 				_vm->_draw->_fontToSprite[i].base = -1;
@@ -422,7 +422,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 
 	timeKey = _vm->_util->getTimeKey();
 	while (1) {
-		if (_vm->_inter->_terminate) {
+		if (_vm->_inter->_terminate || _vm->_quitRequested) {
 			if (handleMouse)
 				_vm->_draw->blitCursor();
 			return 0;

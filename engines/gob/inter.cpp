@@ -168,6 +168,9 @@ void Inter::funcBlock(int16 retFlag) {
 		if (executeFuncOpcode(cmd2, cmd, cmdCount, counter, retFlag))
 			return;
 
+		if (_vm->_quitRequested)
+			break;
+
 		if (_breakFlag) {
 			if (retFlag != 2)
 				break;
@@ -263,7 +266,7 @@ void Inter::checkSwitchTable(char **ppExec) {
 
 void Inter::callSub(int16 retFlag) {
 	int16 block;
-	while (_vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->_totFileData) {
+	while (!_vm->_quitRequested && _vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->_totFileData) {
 		block = *_vm->_global->_inter_execPtr;
 		if (block == 1) {
 			funcBlock(retFlag);

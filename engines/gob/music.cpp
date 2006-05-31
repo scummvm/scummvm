@@ -72,6 +72,8 @@ const unsigned char Music::_volRegNums[] = {
 };
 
 Music::Music(GobEngine *vm) : _vm(vm) {
+	int i;
+
 	_data = 0;
 	_playPos = 0;
 	_dataSize = 0;
@@ -81,15 +83,20 @@ Music::Music(GobEngine *vm) : _vm(vm) {
 	_first = true;
 	_ended = false;
 	_playing = false;
+	_needFree = false;
 	_repCount = -1;
 	_samplesTillPoll = 0;
+
+	for (i = 0; i < 16; i ++)
+		_pollNotes[i] = 0;
 
 	setFreqs();
 }
 
 Music::~Music(void) {
-	if (_data);
-		delete _data;
+	OPLDestroy(_opl);
+	if (_data && _needFree)
+		delete[] _data;
 	_vm->_mixer->setupPremix(0);
 }
 
@@ -439,6 +446,7 @@ bool Music::loadMusic(const char *filename) {
 	if (!song.isOpen())
 		return false;
 
+	_needFree = true;
 	_dataSize = song.size();
 	_data = new byte[_dataSize];
 	song.read(_data, _dataSize);
@@ -452,7 +460,7 @@ bool Music::loadMusic(const char *filename) {
 }
 
 void Music::loadFromMemory(byte *data) {
-	_playing = false;
+	unloadMusic();
 	_repCount = 0;
 
 	_dataSize = (uint32) -1;
@@ -466,8 +474,10 @@ void Music::loadFromMemory(byte *data) {
 void Music::unloadMusic(void) {
 	_playing = false;
 
-	if (_data)
-		delete _data;
+	if (_data && _needFree)
+		delete[] _data;
+
+	_needFree = false;
 }
 
 } // End of namespace Gob

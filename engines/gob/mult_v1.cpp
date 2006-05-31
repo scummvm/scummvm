@@ -244,12 +244,15 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_objCount = 4;
 
 			_objects = new Mult_Object[_objCount];
+			memset(_objects, 0, _objCount * sizeof(Mult_Object));
 			_renderData = new int16[9 * _objCount];
+			memset(_renderData, 0, _objCount * 9 * sizeof(int16));
 
 			_animArrayX = new int32[_objCount];
 			_animArrayY = new int32[_objCount];
 
 			_animArrayData = new Mult_AnimData[_objCount];
+			memset(_animArrayData, 0, _objCount * sizeof(Mult_AnimData));
 
 			for (_counter = 0; _counter < _objCount; _counter++) {
 				multObj = &_objects[_counter];
@@ -319,7 +322,7 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		_frame++;
 		_vm->_util->waitEndFrame();
-	} while (stop == 0 && stopNoClear == 0);
+	} while (stop == 0 && stopNoClear == 0 && !_vm->_quitRequested);
 
 	if (stopNoClear == 0) {
 		if (_animDataAllocated) {

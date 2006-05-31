@@ -179,7 +179,7 @@ public:
 	byte *_word_2FC80;
 
 	Game(GobEngine *vm);
-	virtual ~Game() {};
+	virtual ~Game();
 
 	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight);
 	char *loadTotResource(int16 id);
