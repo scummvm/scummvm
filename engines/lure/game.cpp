@@ -93,6 +93,8 @@ void Game::execute() {
 	//_screen.resetPalette();
 	screen.setPaletteEmpty();
 
+	setState(0);
+
 	Script::execute(STARTUP_SCRIPT);
 
 	// Load the first room

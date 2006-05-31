@@ -61,7 +61,7 @@ void Resources::freeData() {
 	free(_hotspotScriptData);
 	delete _messagesData;
 	delete _cursors;
-	delete _charOffsets;
+	delete [] _charOffsets;
 	delete _playerSupportRecord;
 }
 
