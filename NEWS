@@ -20,11 +20,15 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Rewrote the detection code, for improved accuracy and better support of
-     fan translations. It should now work much better on games with unknown MD5.
+     fan translations. It should now work much better on games with unknown
+     MD5.
    - Added subtitle configuration controls to the options dialog.
    - Fixed graphical glitches in several HE games.
    - Fixed palette glitches in Big Thinkers 1st Grade.
    - Fixed songs in the kitchen of Pajama Sam 1.
+
+ SAGA
+   - Fixed sound distortion in the Inherit the Earth demo.
 
  Simon
    - Lots of long-overdue cleanups and re-structuring were made to accomodate
@@ -339,18 +343,21 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
    - Added INSANE support for Full Throttle 'action sequences'
-   - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
+   - Added option to choose between Adlib, PCjr and PC Speaker in earlier
+     games.
    - Added Adlib support for indy3ega and loom (ega)
    - Added MIDI support for loom (ega), monkeyega and monkeyvga.
    - Added sound effects support for indy3/monkeyega/monkeyvga/pass
    - Added FM Towns targets for Loom and Indy3
    - Rewrote in-game menu (F5) to be easier to use
    - Improved FM Towns SFX support (YM2612 emulation, looping)
-   - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
+   - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported
+     and completable
    - Rewrote Digital iMUSE music system
    - Several Analog iMUSE music system bugs fixed
    - Improved music/sound for various Amiga versions
-   - Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound files
+   - Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound
+     files
    - Keyboard fighting in Fate of Atlantis now works
    - Keyboard support for cannon battle in Curse of Monkey Island
    - Keyboard support for derby scene in Full Throttle
@@ -368,14 +375,17 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
   the top part of the screen by linking to a bugfixed version of SDL
 
 0.5.0 (2003-08-02)
-- Enhanced versions of Maniac Mansion and Zak McKracken are now supported and completable
+- Enhanced versions of Maniac Mansion and Zak McKracken are now supported and
+  completable
 - Beneath A Steel Sky is now supported and completable
 - Added support for Amiga version of Monkey Island 1
 - Initial unplayable support for V1 version of Maniac Mansion/Zak McKracken
-- Curse of Monkey Island (COMI) support for playing from CD improved on Mac OS X
+- Curse of Monkey Island (COMI) support for playing from CD improved on Mac
+  OS X
 - Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
 - Rewritten iMUSE engine, and many Music fixes (exp. Monkey Island 2)
-- Support for music in Humongous games and simon2dos/simon2talkie (XMIDI format)
+- Support for music in Humongous games and simon2dos/simon2talkie (XMIDI
+  format)
 - Support for music in simon1demo (Proprietary format)
 - Complete music support for Simon the Sorcerer 2
 - Improved music and sound support in Zak256
@@ -396,7 +406,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - Many Simon the Sorcerer 1 & 2 improvements and fixes
 - Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything. 
 - Even more pre-alpha support for V2 SCUMM games (Maniac Mansion and Zak)
-- Preliminary support for early Humongous Entertainment titles (very experimental)
+- Preliminary support for early Humongous Entertainment titles (very
+  experimental)
 - New debug console and several GUI/Launcher enhancements
 - New Save/Load code (easier to expand while retaining compatibility)
 - DreamCast port now works with new games added for 0.3.0b
