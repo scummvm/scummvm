@@ -174,7 +174,7 @@ Goblin::~Goblin() {
 					for (col = 0; col < 6; col++)
 						if (_goblins[i]->stateMach[state][col])
 							delete _goblins[i]->stateMach[state][col];
-				delete _goblins[i]->stateMach;
+				delete []_goblins[i]->stateMach;
 			}
 			delete _goblins[i];
 		}
@@ -186,7 +186,7 @@ Goblin::~Goblin() {
 					for (col = 0; col < 6; col++)
 						if (_objects[i]->stateMach[state][col])
 							delete _objects[i]->stateMach[state][col];
-				delete _objects[i]->stateMach;
+				delete []_objects[i]->stateMach;
 			}
 			delete _objects[i];
 		}
