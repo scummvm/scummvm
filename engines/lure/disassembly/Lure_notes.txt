@@ -100,7 +100,7 @@ character_pathfind_clear - Checks the pathfinding set flag for the given hotspot
      Input:  ax = Character Id
              bx = Destination X
              cx = Destination Y
-             
+
 
 character_pathfind - Handles pathfinding a segment of a walking path to a
               given destination
@@ -109,8 +109,12 @@ character_pathfind - Handles pathfinding a segment of a walking path to a
             cx = Dest Y Pos
             dl = Hotspot[4Ch]
    Output:  bx = Pointer to list of walking segments that gets built
-            ax = 1 => end of pathfinding reached, 0 => pathfinding still needed
-
+            ax = 0 => pathfinding still needed
+                 1 => end of pathfinding reached (destination clear)
+                 2 => end of pathfinding reached (destination blocked)
+                 3 => end of pathfinding reached (no path to dest)
+                 4 => end of pathfinding reached (no walking possible)
+                 
 character_reset_direction - Rounds off the given character's position, and sets
               their current frame to the default frame for the character's
               current direction
@@ -148,7 +152,7 @@ character_walking_check - Scans through a list for X/Y proximity for different
               the character walking to it
      Input:  si = character hotspot record
              di = character animation slot,
-             bx = used object hotspot record
+             bx = Pointer to current action record (
     Output:  ax => 1 = No movement was required, 0 = Wakling has started
 
 characters_impinging_check - Checks to see if the given character is close enough
@@ -483,7 +487,7 @@ room_exit_get_coordinates - Gets the walking coordinates for the exit from
            bx = Destination room
   Output:  cx = X-coordinate
            dx = Y-coordinate
-           ax = 
+           ax = Next room number 
 
 room_exit_hs_get_pointer - Scans through a list of room exit hotspots that
               connect to each other.
@@ -559,6 +563,10 @@ talk_add_voice_animation - Adds an animation entry of a talk bubble, which
 talk_clear_line - Clears the talk line at a specified index. Each talk line
               occupies 8 lines
    Input:  ax = Index of talk line to clear
+
+talk_countdown_handler - Handles the counting down of conversation dialogs
+   Input:  si = Character hotspot
+           bx = Pointer to a current action record for character
 
 talk_dialog_init - Initialises a talk dialog for display
    Input:  si = Name of character speaking
