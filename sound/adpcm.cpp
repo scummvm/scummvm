@@ -266,9 +266,9 @@ int16 ADPCMInputStream::decodeOKI(byte code) {
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
-    // Clip the values to +/- 2^11 (supposed to be 12 bits)
-	if (samp > 2048)
-		samp = 2048;
+	// Clip the values to +/- 2^11 (supposed to be 12 bits)
+	if (samp > 2047)
+		samp = 2047;
 	if (samp < -2048)
 		samp = -2048;
 
