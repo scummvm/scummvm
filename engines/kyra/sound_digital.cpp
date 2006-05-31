@@ -86,7 +86,7 @@ AUDStream::AUDStream(Common::File *file, bool loop) : _file(0), _endOfData(true)
 	// Symbian can't share filehandles between different threads.
 	// So create a new file and seek that to the other filehandle's
 	// position
-	_file = new File;
+	_file = new Common::File;
 	_file->open(file->name());
 	_file->seek(file->pos());
 #else
