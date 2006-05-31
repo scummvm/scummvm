@@ -85,7 +85,7 @@ endif
 
 ifndef DISABLE_HE
 MODULE_OBJS += \
-	he/animation_he.o\
+	he/animation_he.o \
 	he/floodfill_he.o \
 	he/logic_he.o \
 	he/palette_he.o \
