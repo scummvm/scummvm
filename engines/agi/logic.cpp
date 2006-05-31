@@ -68,7 +68,7 @@ int decode_logic(int n) {
 
 	/* allocate list of pointers to point into our data */
 
-	game.logics[n].texts = (char **)calloc(1 + game.logics[n].num_texts, sizeof(char *));
+	game.logics[n].texts = (const char **)calloc(1 + game.logics[n].num_texts, sizeof(char *));
 
 	/* cover header info */
 	m0 += mstart + 3;
@@ -77,7 +77,7 @@ int decode_logic(int n) {
 		/* move list of strings into list to make real pointers */
 		for (mc = 0; mc < game.logics[n].num_texts; mc++) {
 			mend = READ_LE_UINT16(m0 + mc * 2);
-			game.logics[n].texts[mc] = mend ? (char *)m0 + mend - 2 : (char *)"";
+			game.logics[n].texts[mc] = mend ? (const char *)m0 + mend - 2 : (const char *)"";
 		}
 		/* set loaded flag now its all completly loaded */
 		game.dir_logic[n].flags |= RES_LOADED;

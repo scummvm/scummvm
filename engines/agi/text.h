@@ -35,7 +35,7 @@ void close_window(void);
 void draw_window(int, int, int, int);
 void print_text(const char *, int, int, int, int, int, int);
 void print_text_console(const char *, int, int, int, int, int);
-int print(char *, int, int, int);
+int print(const char *, int, int, int);
 char *word_wrap_string(char *, int *);
 char *agi_sprintf(const char *);
 void write_status(void);

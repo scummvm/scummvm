@@ -38,7 +38,7 @@ struct agi_logic {
 	int sIP;		/**< saved IP */
 	int cIP;		/**< current IP */
 	int num_texts;		/**< number of messages */
-	char **texts;		/**< message list */
+	const char **texts;		/**< message list */
 };
 
 int decode_logic(int);

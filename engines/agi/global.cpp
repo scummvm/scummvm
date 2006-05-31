@@ -29,14 +29,14 @@
 namespace Agi {
 
 int getflag(int n) {
-	uint8 *set = (uint8 *) & game.flags;
+	uint8 *set = (uint8 *) &game.flags;
 
 	set += n >> 3;
 	return (*set & (1 << (n & 0x07))) != 0;
 }
 
 void setflag(int n, int v) {
-	uint8 *set = (uint8 *) & game.flags;
+	uint8 *set = (uint8 *) &game.flags;
 
 	set += n >> 3;
 	if (v)
@@ -61,10 +61,10 @@ int getvar(int var) {
 }
 
 void decrypt(uint8 *mem, int len) {
-	uint8 *key;
+	const uint8 *key;
 	int i;
 
-	key = opt.agds ? (uint8 *)CRYPT_KEY_AGDS : (uint8 *)CRYPT_KEY_SIERRA;
+	key = opt.agds ? (const uint8 *)CRYPT_KEY_AGDS : (const uint8 *)CRYPT_KEY_SIERRA;
 
 	for (i = 0; i < len; i++)
 		*(mem + i) ^= *(key + (i % 11));

@@ -191,7 +191,7 @@ Menu::~Menu() {
 	}
 }
 
-void Menu::add(char *s) {
+void Menu::add(const char *s) {
 	agi_menu *m = new agi_menu;
 	m->text = strdup(s);
 	while (m->text[strlen(m->text) - 1] == ' ')
@@ -210,7 +210,7 @@ void Menu::add(char *s) {
 	menubar.push_back(m);
 }
 
-void Menu::add_item(char *s, int code) {
+void Menu::add_item(const char *s, int code) {
 	int l;
 
 	agi_menu_option* d = new agi_menu_option;

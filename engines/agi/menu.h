@@ -45,8 +45,8 @@ public:
 	Menu();
 	~Menu();
 
-	void add(char *s);
-	void add_item(char *s, int code);
+	void add(const char *s);
+	void add_item(const char *s, int code);
 	void submit();
 	void set_item(int event, int state);
 	bool keyhandler(int key);

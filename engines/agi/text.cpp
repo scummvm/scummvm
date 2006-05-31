@@ -36,7 +36,7 @@ static void print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 	int maxx, minx, ofoff;
 	int update;
 	/* Note: Must be unsigned to use AGDS cyrillic characters! */
-	unsigned char *m;
+	const unsigned char *m;
 
 	/* kludge! */
 	update = 1;
@@ -57,7 +57,7 @@ static void print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 		minx = GFX_WIDTH;
 		ofoff = foff;
 
-		for (m = (unsigned char *)msg, x1 = y1 = 0; *m; m++) {
+		for (m = (const unsigned char *)msg, x1 = y1 = 0; *m; m++) {
 
 			if (*m >= 0x20 || *m == 1 || *m == 2 || *m == 3) {
 				/* FIXME */
@@ -393,7 +393,7 @@ int selection_box(const char *m, const char **b) {
 /**
  *
  */
-int print(char *p, int lin, int col, int len) {
+int print(const char *p, int lin, int col, int len) {
 	if (p == NULL)
 		return 0;
 
