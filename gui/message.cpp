@@ -41,15 +41,12 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	GUI::WidgetSize ws;
 	int buttonWidth, buttonHeight;
 
-	if (screenW >= 400 && screenH >= 300) {
-		ws = GUI::kBigWidgetSize;
+	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		buttonWidth = kBigButtonWidth;
 		buttonHeight = kBigButtonHeight;
 	} else {
-		ws = GUI::kNormalWidgetSize;
 		buttonWidth = kButtonWidth;
 		buttonHeight = kButtonHeight;
 	}
@@ -96,10 +93,10 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	}
 
 	if (defaultButton)
-		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n', ws);	// Confirm dialog
+		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n');	// Confirm dialog
 
 	if (altButton)
-		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27', ws);	// Cancel dialog
+		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27');	// Cancel dialog
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

@@ -444,8 +444,6 @@ void ListWidget::abortEditMode() {
 void ListWidget::handleScreenChanged() {
 	Widget::handleScreenChanged();
 
-	WidgetSize ws = g_gui.getWidgetSize();
-
 	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);
 	_topPadding = g_gui.evaluator()->getVar("ListWidget.topPadding", 0);
@@ -453,7 +451,7 @@ void ListWidget::handleScreenChanged() {
 	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
 
-	if (ws == kBigWidgetSize) {
+	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		_scrollBarWidth =  kBigScrollBarWidth;
 	} else {
 		_scrollBarWidth = kNormalScrollBarWidth;

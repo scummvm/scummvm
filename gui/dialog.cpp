@@ -329,14 +329,18 @@ void Dialog::deleteWidget(Widget *del) {
 	}
 }
 
-ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
-	int w = kButtonWidth;
-	int h = kButtonHeight;
-	if (ws == kBigWidgetSize) {
+ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
+	int w, h;
+
+	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		w = kBigButtonWidth;
 		h = kBigButtonHeight;
+	} else {
+		w = kButtonWidth;
+		h = kButtonHeight;
 	}
-	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
+
+	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey);
 }
 
 uint32 GuiObject::getMillis() {

@@ -189,7 +189,7 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 	ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
@@ -208,7 +208,7 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 	CheckboxWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);

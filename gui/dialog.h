@@ -84,7 +84,7 @@ protected:
 	Widget *findWidget(const char *name);
 	void deleteWidget(Widget *widget);
 
-	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws = kDefaultWidgetSize);
+	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey);
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
