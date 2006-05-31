@@ -21,8 +21,9 @@ Table of Contents:
  * 3.7 Gobliiins notes
  * 3.8 Inherit the Earth: Quest for the Orb notes
  * 3.9 Simon the Sorcerer notes
- * 3.10 The Legend of Kyrandia notes
- * 3.11 Known Problems
+ * 3.10 The Feeble Files notes
+ * 3.11 The Legend of Kyrandia notes
+ * 3.12 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -298,7 +299,7 @@ directory if you want to have music and not have the CD in the drive
 all the time.
 
 3.8) Inherit the Earth: Quest for the Orb notes
----- -----------------------
+---- ------------------------------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will need to
 copy over data from the CD to your hard drive. If you're on a PC then consult:
 
@@ -311,22 +312,34 @@ same directory as the game data which is stored in:
 
   Inherit the Earth.app/Contents/Resources
 
-For old Mac OS9 release you will need to copy files in MacBinary format,
-i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
+For old Mac OS9 release you will need to copy files in MacBinary format, i.e.
+they should have both resource and data forks. Just copy all 'ITE *' files.
 
-3.9) Simon the Sorcerer 1 and 2 notes:
----- ---------------------------------
+3.9) Simon the Sorcerer 1 and 2 notes
+---- --------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of the CD
 and the DOS version in the DOS directory of the CD.
 
-3.10) The Legend of Kyrandia notes
----- ----------------------------
+3.10) The Feeble Files notes
+----- ----------------------
+If you have the Windows version of The Feeble Files, there are two things to
+note. First of all, more than 300 files, most of them necessary for the game to
+run, are stored in a file called data1.cab. ScummVM does not know how to unpack
+this file, so you will probably have to let the original installer do it.
+
+Secondly, the game uses Smacker cutscenes extensively. For reasons described
+above, we cannot support these directly. They have to be re-encoded to DXA,
+which is the format used for the Macintosh and Amiga cutscenes. See the tools
+README for further details about this.
+
+3.11) The Legend of Kyrandia notes
+----- ----------------------------
 To run The Legend of Kyrandia under ScummVM you need the kyra.dat file,
 which can be found in the Downloads section of the ScummVM website.
 
-3.11) Known Problems
----- ---------------
+3.12) Known Problems
+----- --------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
