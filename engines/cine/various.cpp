@@ -2379,8 +2379,8 @@ void backupOverlayPage(void) {
 	}
 }
 
-uint16 computeMessageLength(byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
-	byte *localPtr = ptr;
+uint16 computeMessageLength(const byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
+	const byte *localPtr = ptr;
 
 	uint16 var_2 = 0;
 	uint16 localLineResult = 0;
@@ -2588,7 +2588,7 @@ void drawFailureMessage(byte cmd) {
 
 		messagePtr += messageLength;
 
-		messageLength = computeMessageLength((byte *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
+		messageLength = computeMessageLength((const byte *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
 
 		endOfMessagePtr = messagePtr + messageLength;
 
