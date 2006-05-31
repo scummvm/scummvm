@@ -97,11 +97,14 @@ void OSystem_SDL_Symbian::initBackend() {
 #endif
 	ConfMan.setInt("joystick_num", 0); // Symbian OS  should have joystick_num set to 0 in the ini file , but uiq devices might refuse opening the joystick
 	ConfMan.flushToDisk();
+	
+	GUI::Actions::init();
 
 	OSystem_SDL::initBackend();
 	
 	// Initialize global key mapping for Smartphones
 	GUI::Actions* actions = GUI::Actions::Instance();
+
 	actions->initInstanceMain(this);	
 	actions->loadMapping();
 	initZones();
