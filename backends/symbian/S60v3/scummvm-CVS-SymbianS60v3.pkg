@@ -1,7 +1,8 @@
 ;;;
 ;;; ScummVM .PKG file for .SIS gegeration
 ;;;
-
+;Language - standard language definitions
+&EN
 
 ; List of localised vendor names - one per language. At least one must be provided (English [EN]).
 ; List must correspond to list of languages specified elsewhere in the .pkg
@@ -13,7 +14,7 @@
 #{"ScummVM S60v3"},(0xA0000657),0,90,0
 
 ; Platform type
-(0x101F6F88), 0, 0, 0, {"Series60ProductID"}
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
 
 ; Launcher, Application, AIF & Resource file
 "\s60v3\epoc32\release\gcce\urel\ScummVM.exe"-		"!:\sys\bin\ScummVM.exe"

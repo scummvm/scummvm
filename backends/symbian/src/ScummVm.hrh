@@ -22,7 +22,7 @@
 
 #ifndef ScummHRH
 #define ScummHRH
-#if defined (UIQ3) || defined (__SERIES60_30__)
+#if defined (UIQ3) || defined (S60V3)
 #define ScummUid 0xA0000657
 #else
 #define ScummUid 0x101f9b57

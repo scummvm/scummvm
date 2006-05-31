@@ -65,7 +65,7 @@ _asm {
 #ifdef EPOC_AS_APP
 
 // this function is called automatically by the SymbianOS to deliver the new CApaApplication object
-#if !defined (UIQ3)
+#if !defined (UIQ3) && !defined (S60V3)
 EXPORT_C 
 #endif
 CApaApplication* NewApplication() {

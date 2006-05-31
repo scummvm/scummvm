@@ -99,3 +99,8 @@ LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 LIBRARY qikctl.lib bafl.lib
+
+START WINS
+WIN32_LIBRARY	lldiv.obj llmul.obj llshl.obj
+END
+
