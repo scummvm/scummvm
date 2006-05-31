@@ -933,12 +933,14 @@ void Goblin::targetItem(void) {
 				}
 			}
 
-			if ((_vm->_map->_itemsMap[_pressedMapY +
-				    1][_pressedMapX]) ==
-			    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX])) {
-				_pressedMapY++;
-				_vm->_map->_destY = _pressedMapY;
-				_gobDestY = _pressedMapY;
+			if (_pressedMapY < (_vm->_map->_mapHeight-1)) {
+				if ((_vm->_map->_itemsMap[_pressedMapY +
+							1][_pressedMapX]) ==
+						(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX])) {
+					_pressedMapY++;
+					_vm->_map->_destY = _pressedMapY;
+					_gobDestY = _pressedMapY;
+				}
 			}
 
 		}
@@ -1024,8 +1026,8 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 			break;
 		}
 
-		_pressedMapX = posX / 12;
-		_pressedMapY = posY / 6;
+		_pressedMapX = MIN(posX / 12, 25);
+		_pressedMapY = MIN(posY / 6, 27);
 
 		if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0
 		    && i < 20) {
