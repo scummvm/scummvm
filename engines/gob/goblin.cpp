@@ -1026,8 +1026,8 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 			break;
 		}
 
-		_pressedMapX = MIN(posX / 12, 25);
-		_pressedMapY = MIN(posY / 6, 27);
+		_pressedMapX = MIN(posX / 12, _vm->_map->_mapWidth - 1);
+		_pressedMapY = MIN(posY / 6, _vm->_map->_mapHeight - 1);
 
 		if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0
 		    && i < 20) {
