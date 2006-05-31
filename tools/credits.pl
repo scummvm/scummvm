@@ -633,12 +633,14 @@ begin_credits("Credits");
 	  end_section();
 	end_section();
 
-	begin_section("Website (design)");
+	begin_section("Websites (design)");
 	  begin_persons();
 		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
 		  add_person("David Jensen", "Tyst", "SVG logo conversion");
 		  add_person("Jean Marc", "", 'ScummVM logo');
+		  add_person("", "Raina", 'ScummVM forum buttons');
+		  add_person("Clemens Steinhuber", "", 'ScummVM forum theme');
 	  end_persons();
 	end_section();
 
