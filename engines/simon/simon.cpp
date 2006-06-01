@@ -281,7 +281,10 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_frameRate = 0;
 
 	_zoneNumber = 0;
+
 	_vgaWaitFor = 0;
+	_lastVgaWaitFor = 0;
+
 	_vgaCurZoneNum = 0;
 	_vgaCurSpriteId = 0;
 	_vgaCurSpritePriority = 0;
@@ -1571,6 +1574,15 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 void SimonEngine::waitForSync(uint a) {
 	const uint maxCount = (getGameType() == GType_SIMON1) ? 500 : 1000;
 
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
+		if (a != 200) {
+			uint16 tmp = _lastVgaWaitFor;
+			_lastVgaWaitFor = 0;
+			if (tmp == a)
+				return;
+		}
+	}
+
 	_vgaWaitFor = a;
 	_syncCount = 0;
 	_exitCutscene = false;
@@ -1778,6 +1790,9 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
 	uint count;
+
+	if (vgaSpriteId >= 400)
+		_lastVgaWaitFor = 0;
 
 	_lockWord |= 0x40;
 

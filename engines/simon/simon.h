@@ -377,8 +377,8 @@ protected:
 	uint16 _frameRate;
 
 	uint16 _zoneNumber;
-	uint16 _vgaWaitFor, _vgaCurZoneNum;
-	uint16 _vgaCurSpriteId;
+	uint16 _vgaWaitFor, _lastVgaWaitFor;
+	uint16 _vgaCurSpriteId, _vgaCurZoneNum;
 	uint16 _vgaCurSpritePriority;
 
 	int16 _baseY;

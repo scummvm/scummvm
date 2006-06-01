@@ -1540,6 +1540,7 @@ void SimonEngine::vc15_sync() {
 		}
 	}
 
+	_lastVgaWaitFor = id;
 	/* clear a wait event */
 	if (id == _vgaWaitFor)
 		_vgaWaitFor = 0;
@@ -1712,6 +1713,8 @@ void SimonEngine::vc27_resetSprite() {
 	VgaTimerEntry *vte, *vte2;
 
 	_lockWord |= 8;
+
+	_lastVgaWaitFor = 0;
 
 	memset(&bak, 0, sizeof(bak));
 
