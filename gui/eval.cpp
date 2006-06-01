@@ -289,11 +289,15 @@ int Eval::getVar_(const char *s, bool includeAliases) {
 		return val;
 
 	String var = String(s);
-	if (includeAliases && _aliases.contains(var))
-		var = _aliases[var];
+	if (includeAliases) {
+		AliasesMap::const_iterator itera = _aliases.find(var);
+		if (itera != _aliases.end())
+			var = itera->_value;
+	}
 
-	if (_vars.contains(var))
-		return _vars[var];
+	VariablesMap::const_iterator iterv = _vars.find(var);
+	if (iterv != _vars.end())
+		return iterv->_value;
 
 	return EVAL_UNDEF_VAR;
 }
