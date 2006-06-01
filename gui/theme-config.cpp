@@ -412,15 +412,16 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 	int start = 0;
 	uint i;
 	int value;
-	const char *postfixes[] = {"x", "y", "w", "h"};
+	const char *postfixes[] = {".x", ".y", ".w", ".h"};
 	int npostfix = 0;
+	String prefixedname(prefix + name);
 
 	// Make self.BLAH work
 	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
 		String from, to;
 
-		from = String("self.") + postfixes[i];
-		to = prefix + name + "." + postfixes[i];
+		from = String("self") + postfixes[i];
+		to = prefixedname + postfixes[i];
 
 		_evaluator->setAlias(from, to);
 		_evaluator->setVar(to, EVAL_UNDEF_VAR);
@@ -428,8 +429,8 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 
 	for (i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) && level == 0) {
-			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + "." + postfixes[npostfix], start);
-			_evaluator->setVar(prefix + name + "." + postfixes[npostfix++], value);
+			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
+			_evaluator->setVar(prefixedname + postfixes[npostfix++], value);
 			start = i + 1;
 		}
 		if (str[i] == '(')
@@ -448,24 +449,24 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 		error("Missing ')' in section: [%s] expression: \"%s\" start is at: %d",
 			  section.c_str(), name.c_str(), start);
 
-	value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + "." + postfixes[npostfix], start);
+	value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
 
 	// process VAR=VALUE construct
 	if (npostfix == 0)
 		_evaluator->setVar(name, value);
 	else
-		_evaluator->setVar(prefix + name + "." + postfixes[npostfix], value);
+		_evaluator->setVar(prefixedname + postfixes[npostfix], value);
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
-		_evaluator->setVar(prefix + name + ".x2", 
-			_evaluator->getVar(prefix + name + ".x") + _evaluator->getVar(prefix + name + ".w"));
-		_evaluator->setVar(prefix + name + ".y2", 
-			_evaluator->getVar(prefix +name + ".y") + _evaluator->getVar(prefix + name + ".h"));
+		_evaluator->setVar(prefixedname + ".x2", 
+			_evaluator->getVar(prefixedname + ".x") + _evaluator->getVar(prefixedname + ".w"));
+		_evaluator->setVar(prefixedname + ".y2", 
+			_evaluator->getVar(prefixedname + ".y") + _evaluator->getVar(prefixedname + ".h"));
 	}
 
 	if (npostfix != 0)
-		setSpecialAlias("prev", prefix + name);
+		setSpecialAlias("prev", prefixedname);
 }
 
 
