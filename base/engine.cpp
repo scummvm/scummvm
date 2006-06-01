@@ -20,7 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#if defined(WIN32)
+#if defined(WIN32) && !defined (__SYMBIAN32__)
 #include <malloc.h>
 #endif
 #include "base/engine.h"
@@ -101,7 +101,7 @@ void Engine::initCommonGFX(bool defaultTo1XScaler) {
 }
 
 void Engine::checkCD() {
-#if defined (WIN32) && !defined(_WIN32_WCE)
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.
@@ -242,7 +242,7 @@ void CDECL warning(const char *s, ...) {
 }
 
 void checkHeap() {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__SYMBIAN32__)
 	if (_heapchk() != _HEAPOK) {
 		error("Heap is invalid!");
 	}

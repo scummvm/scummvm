@@ -135,7 +135,7 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined (__SYMBIAN32__))
 static Common::String s_appName("scummvm");
 #else
 static const char *s_appName = "scummvm";
@@ -151,7 +151,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined (__SYMBIAN32__))
 	printf(USAGE_STRING, s_appName.c_str(), buf, s_appName.c_str(), s_appName.c_str());
 #endif
 	exit(1);
@@ -584,7 +584,8 @@ static void runDetectorTest() {
 
 		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 		bool gameidDiffers = false;
-		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
+		DetectedGameList::iterator x;
+		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid.c_str()) != 0);
 		}
 		
@@ -606,7 +607,7 @@ static void runDetectorTest() {
 			success++;
 		}
 		
-		for (DetectedGameList::iterator x = candidates.begin(); x != candidates.end(); ++x) {
+		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
 					x->gameid.c_str(),
 					x->description.c_str(),
@@ -639,7 +640,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return false;
 	} else if (command == "help") {
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined(__SYMBIAN32__))
 		printf(HELP_STRING, s_appName.c_str());
 #else
 		printf(HELP_STRING, s_appName);
