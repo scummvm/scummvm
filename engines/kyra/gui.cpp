@@ -65,6 +65,8 @@ void KyraEngine::readSettings() {
 		_configVoice = 1;	// Voice only
 	else
 		_configVoice = 0;	// Text only
+
+	setWalkspeed(_configWalkspeed);
 }
 
 void KyraEngine::writeSettings() {

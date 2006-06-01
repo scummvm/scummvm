@@ -234,6 +234,10 @@ void KyraEngine::loadGame(const char *fileName) {
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", saveName);
 
+	// We didn't explicitly set the walk speed, but it's saved as part of
+	// the _timers array, so we need to re-sync it with _configWalkspeed.
+	setWalkspeed(_configWalkspeed);
+
 	delete in;
 }
 
