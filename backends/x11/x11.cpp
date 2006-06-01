@@ -27,7 +27,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/util.h"
-
+#include "base/main.h"
 #include "backends/intern.h"
 
 #include <stdio.h>
