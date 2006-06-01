@@ -18,5 +18,41 @@ RESOURCE LOCALISABLE_APP_INFO
 			icon_file = "\\Resource\\Apps\\ScummVM.mbm";
 			}
 		};
+
+	view_list = 
+		{ 
+		VIEW_DATA 
+		{ 
+		uid = 0x10000001; 
+		screen_mode = 0; 
+		caption_and_icon = CAPTION_AND_ICON_INFO 
+		{ 	
+		}; 
+		}, 
+		VIEW_DATA 
+		{ 
+		uid = 0x10000001;
+		screen_mode = EQikScreenModeLandscape; 
+		caption_and_icon = CAPTION_AND_ICON_INFO 
+		{ 
+		}; 
+		}, 
+		VIEW_DATA 
+		{ 
+		uid = 0x10000001; 
+		screen_mode = EQikScreenModeSmallPortrait; 
+		caption_and_icon = CAPTION_AND_ICON_INFO 
+		{ 
+		}; 
+		},
+		VIEW_DATA 
+		{ 
+		uid = 0x10000001; 
+		screen_mode = EQikScreenModeSmallLandscape; 
+		caption_and_icon = CAPTION_AND_ICON_INFO 
+		{ 
+		}; 
+		}
+	   };
 	}
 
