@@ -401,12 +401,11 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 	in->read(p->data, size);
 
 	if (!memcmp(p->data, "GMF\x1", 4)) {
-		// BTW, here's what we know about the GMF header,
-		// the 7 bytes preceding the actual MIDI events.
+		// The GMF header
 		// 3 BYTES: 'GMF'
-		// 1 BYTE : Always seems to be 0x01
-		// 1 BYTE : Always seems to be 0x00
-		// 1 BYTE : Ranges from 0x02 to 0x08 (always 0x02 for SFX, though)
+		// 1 BYTE : Major version
+		// 1 BYTE : Minor version
+		// 1 BYTE : Ticks (Ranges from 2 - 8, always 2 for SFX)
 		// 1 BYTE : Loop control. 0 = no loop, 1 = loop
 		if (!sfx) {
 			// According to bug #1004919 calling setLoop() from
