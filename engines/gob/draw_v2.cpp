@@ -709,9 +709,12 @@ void Draw_v2::spriteOperation(int16 operation) {
 			}
 		} else {
 			for (i = 0; i < len; i++) {
-				ratio = _spritesArray[_fontToSprite[_fontIndex].sprite]->width / _fontToSprite[_fontIndex].width;
-				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio) * _fontToSprite[_fontIndex].height;
-				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio) * _fontToSprite[_fontIndex].width;
+				ratio = _spritesArray[_fontToSprite[_fontIndex].sprite]->width
+					/ _fontToSprite[_fontIndex].width;
+				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio)
+					* _fontToSprite[_fontIndex].height;
+				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
+					* _fontToSprite[_fontIndex].width;
 				_vm->_video->drawSprite(_spritesArray[_fontToSprite[_fontIndex].sprite],
 						_spritesArray[_destSurface], x, y,
 						x + _fontToSprite[_fontIndex].width - 1,

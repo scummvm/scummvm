@@ -317,7 +317,8 @@ protected:
 	void o2_stub0x80(void);
 	void o2_stub0x82(void);
 	void o2_stub0x85(void);
-	void o2_renderStatic(void);
+	bool o2_stopSound(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_createSprite(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag);
@@ -326,6 +327,8 @@ protected:
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadSound(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_loadFontToSprite(void);
+	void o2_renderStatic(void);
 	void o2_loadMapObjects(void);
 	void o2_freeGoblins(void);
 	void o2_writeGoblinPos(void);

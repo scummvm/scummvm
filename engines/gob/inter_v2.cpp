@@ -185,7 +185,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 30 */
-		OPCODE(o1_loadFontToSprite),
+		OPCODE(o2_loadFontToSprite),
 		OPCODE(o1_freeFontToSprite),
 		{NULL, ""},
 		{NULL, ""},
@@ -495,7 +495,7 @@ void Inter_v2::setupOpcodes(void) {
 		/* 24 */
 		OPCODE(o1_putPixel),
 		OPCODE(o2_goblinFunc),
-		OPCODE(o1_createSprite),
+		OPCODE(o2_createSprite),
 		OPCODE(o2_freeSprite),
 		/* 28 */
 		{NULL, ""},
@@ -519,7 +519,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_setBackDelta),
 		/* 38 */
 		OPCODE(o2_playSound),
-		OPCODE(o1_stopSound),
+		OPCODE(o2_stopSound),
 		OPCODE(o2_loadSound),
 		OPCODE(o1_freeSoundSlot),
 		/* 3C */
@@ -919,6 +919,19 @@ int16 Inter_v2::loadSound(int16 search) {
 	return slot;
 }
 
+void Inter_v2::o2_loadFontToSprite(void) {
+	int16 i = load16();
+
+	_vm->_draw->_fontToSprite[i].sprite = *_vm->_global->_inter_execPtr;
+	_vm->_global->_inter_execPtr += 2;
+	_vm->_draw->_fontToSprite[i].base = *_vm->_global->_inter_execPtr;
+	_vm->_global->_inter_execPtr += 2;
+	_vm->_draw->_fontToSprite[i].width = *_vm->_global->_inter_execPtr;
+	_vm->_global->_inter_execPtr += 2;
+	_vm->_draw->_fontToSprite[i].height = *_vm->_global->_inter_execPtr;
+	_vm->_global->_inter_execPtr += 2;
+}
+
 void Inter_v2::o2_loadMapObjects(void) {
 	_vm->_map->loadMapObjects(0);
 }
@@ -1063,6 +1076,30 @@ void Inter_v2::loadMult(void) {
 			_vm->_scenery->updateAnim(objAnim->state, 0, objAnim->animation, 0, *obj->pPosX, *obj->pPosY, 0);
 		}
 	}
+}
+
+bool Inter_v2::o2_stopSound(char &cmdCount, int16 &counter, int16 &retFlag) {
+	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
+	_soundEndTimeKey = 0;
+	return false;
+}
+
+bool Inter_v2::o2_createSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 index;
+	int16 height;
+	int16 width;
+	int16 flag;
+
+	index = load16();
+	width = load16();
+	height = load16();
+
+	_vm->_draw->adjustCoords(0, &width, &height);
+
+	flag = load16();
+
+	_vm->_draw->initBigSprite(index, width, height, flag);
+	return false;
 }
 
 bool Inter_v2::o2_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag) {
