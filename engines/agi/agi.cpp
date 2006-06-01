@@ -122,18 +122,11 @@ static void process_events() {
 				break;
 			}
 
-			if (event.kbd.flags == OSystem::KBD_CTRL) {
+			if (event.kbd.flags & OSystem::KBD_CTRL)
 				key_control = 1;
-				key = 0;
-				break;
-			} else if (event.kbd.flags == OSystem::KBD_ALT) {
+			
+			if (event.kbd.flags & OSystem::KBD_ALT)
 				key_alt = 1;
-				key = 0;
-				break;
-			} else if (event.kbd.flags == OSystem::KBD_SHIFT) {
-				key = 0;
-				break;
-			}
 
 			switch (key = event.kbd.keycode) {
 			case 256 + 20:	// left arrow
@@ -224,12 +217,16 @@ static void process_events() {
 				key = KEY_ENTER;
 				break;
 			default:
-				if (key < 256 && !isalpha(key))
+				if (key < 256 && !isalpha(key)) {
+					key = event.kbd.ascii;
 					break;
+				}
 				if (key_control)
 					key = (key & ~0x20) - 0x40;
 				else if (key_alt)
 					key = scancode_table[(key & ~0x20) - 0x41] << 8;
+				else if (event.kbd.flags & OSystem::KBD_SHIFT)
+					key = event.kbd.ascii;
 				break;
 			}
 			if (key)
