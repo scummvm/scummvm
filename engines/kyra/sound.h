@@ -61,12 +61,20 @@ public:
 
 	virtual void beginFadeOut() = 0;
 
+	void enableMusic(bool enable) { _musicEnabled = enable; }
+	bool musicEnabled() const { return _musicEnabled; }
+	void enableSFX(bool enable) { _sfxEnabled = enable; }
+	bool sfxEnabled() const { return _sfxEnabled; }
+
 	void voicePlay(const char *file);
 	void voiceUnload() {}
 	bool voiceIsPlaying();
 	void voiceStop();
 	
 protected:
+	bool _musicEnabled;
+	bool _sfxEnabled;
+
 	KyraEngine *_engine;
 	Audio::Mixer *_mixer;
 
@@ -105,6 +113,8 @@ public:
 	
 	void beginFadeOut();
 private:
+	void play(uint8 track);
+
 	void loadSoundFile(const char *file);
 
 	void unk1();

@@ -2196,7 +2196,8 @@ void SoundAdlibPC::loadMusicFile(const char *file) {
 }
 
 void SoundAdlibPC::playTrack(uint8 track) {
-	playSoundEffect(track);
+	if (_musicEnabled)
+		play(track);
 }
 
 void SoundAdlibPC::haltTrack() {
@@ -2206,6 +2207,11 @@ void SoundAdlibPC::haltTrack() {
 }
 
 void SoundAdlibPC::playSoundEffect(uint8 track) {
+	if (_sfxEnabled)
+		play(track);
+}
+
+void SoundAdlibPC::play(uint8 track) {
 	uint8 soundId = _trackEntries[track];
 	if ((int8)soundId == -1 || !_soundDataPtr)
 		return;

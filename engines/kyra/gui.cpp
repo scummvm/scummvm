@@ -25,6 +25,7 @@
 #include "kyra/script.h"
 #include "kyra/text.h"
 #include "kyra/animator.h"
+#include "kyra/sound.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -55,6 +56,9 @@ void KyraEngine::readSettings() {
 	_configWalkspeed = ConfMan.getInt("walkspeed");
 	_configMusic = ConfMan.getBool("music_mute") ? 0 : 1;
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
+
+	_sound->enableMusic(_configMusic);
+	_sound->enableSFX(_configSounds);
 
 	bool speechMute = ConfMan.getBool("speech_mute");
 	bool subtitles = ConfMan.getBool("subtitles");
@@ -107,6 +111,12 @@ void KyraEngine::writeSettings() {
 		subtitles = true;
 		break;
 	}
+
+	if (!_configMusic)
+		_sound->beginFadeOut();
+
+	_sound->enableMusic(_configMusic);
+	_sound->enableSFX(_configSounds);
 
 	ConfMan.setBool("speech_mute", speechMute);
 	ConfMan.setBool("subtitles", subtitles);

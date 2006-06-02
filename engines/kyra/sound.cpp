@@ -36,7 +36,8 @@
 namespace Kyra {
 
 Sound::Sound(KyraEngine *engine, Audio::Mixer *mixer)
-	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle() {
+	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
+	_musicEnabled(true), _sfxEnabled(false) {
 }
 
 Sound::~Sound() {
@@ -363,7 +364,7 @@ void SoundMidiPC::onTimer(void *refCon) {
 }
 
 void SoundMidiPC::playTrack(uint8 track) {
-	if (_parser && (track != 0 || _nativeMT32)) {
+	if (_parser && (track != 0 || _nativeMT32) && _musicEnabled) {
 		_isPlaying = true;
 		_fadeMusicOut = false;
 		_fadeStartTime = 0;
@@ -387,7 +388,7 @@ void SoundMidiPC::haltTrack() {
 }
 
 void SoundMidiPC::playSoundEffect(uint8 track) {
-	if (_soundEffect) {
+	if (_soundEffect && _sfxEnabled) {
 		_sfxIsPlaying = true;
 		_soundEffect->setTrack(track);
 		_soundEffect->jumpToTick(0);
