@@ -414,14 +414,15 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 	int value;
 	const char *postfixes[] = {".x", ".y", ".w", ".h"};
 	int npostfix = 0;
-	String prefixedname(prefix + name);
+	const String prefixedname(prefix + name);
 
 	// Make self.BLAH work
 	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
-		String from, to;
+		String from("self");
+		String to(prefixedname);
 
-		from = String("self") + postfixes[i];
-		to = prefixedname + postfixes[i];
+		from += postfixes[i];
+		to += postfixes[i];
 
 		_evaluator->setAlias(from, to);
 		_evaluator->setVar(to, EVAL_UNDEF_VAR);
