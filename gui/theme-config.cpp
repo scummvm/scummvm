@@ -412,19 +412,18 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 	int start = 0;
 	uint i;
 	int value;
+	const char *selfpostfixes[] = {"self.x", "self.y", "self.w", "self.h"};
 	const char *postfixes[] = {".x", ".y", ".w", ".h"};
 	int npostfix = 0;
 	const String prefixedname(prefix + name);
 
 	// Make self.BLAH work
 	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
-		String from("self");
 		String to(prefixedname);
 
-		from += postfixes[i];
 		to += postfixes[i];
 
-		_evaluator->setAlias(from, to);
+		_evaluator->setAlias(selfpostfixes[i], to);
 		_evaluator->setVar(to, EVAL_UNDEF_VAR);
 	}
 
