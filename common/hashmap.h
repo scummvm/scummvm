@@ -56,7 +56,7 @@
 #include "common/str.h"
 #include "common/util.h"
 
-namespace Common {
+namespace Common { 
 
 typedef Common::String String;
 
@@ -71,6 +71,30 @@ struct Hash<String> {
 	}
 };
 
+template <>
+struct Hash<const char *> {
+	uint operator()(const char *s) const {
+		return hashit(s);
+	}
+};
+
+// data structure used by HashMap internally to keep
+// track of what's mapped to what.
+template <class Key, class Val>
+struct BaseNode {
+	Key _key;
+	Val _value;
+	BaseNode() {}
+	BaseNode(const Key &key) : _key(key) {}
+};
+	
+template <class Val>
+struct BaseNode<const char *, Val> {
+	char *_key;
+	Val _value;
+	BaseNode() {assert(0);}
+	BaseNode(const char *key) { printf("%s\n", key); _key = (char *)malloc(strlen(key)+1); strcpy(_key, key); }
+};
 
 // The table sizes ideally are primes. We use a helper function to find
 // suitable table sizes.
@@ -95,23 +119,14 @@ uint nextTableSize(uint x);
  * triggered instead. Hence if you are not sure whether a key is contained in
  * the map, use contains() first to check for its presence.
  */ 
-template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
+template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key>, class BaseNodeFunc = BaseNode<Key, Val> >
 class HashMap {
 private:
 #if defined (_WIN32_WCE) || defined (_MSC_VER) || defined (__SYMBIAN32__) || defined (PALMOS_MODE)
 //FIXME evc4, msvc6,msvc7 & GCC 2.9x doesn't like it as private member
 public:
 #endif
-	// data structure used by HashMap internally to keep
-	// track of what's mapped to what.
-	struct BaseNode {
-		Key _key;
-		Val _value;
-		BaseNode() {}
-		BaseNode(const Key &key) : _key(key) {}
-	};
-	
-	BaseNode **_arr;	// hashtable of size arrsize.
+	BaseNodeFunc **_arr;	// hashtable of size arrsize.
 	uint _arrsize, _nele;
 	
 	HashFunc _hash;
@@ -126,16 +141,16 @@ public:
 
 public:
 	class const_iterator {
-		typedef const HashMap<Key, Val, HashFunc, EqualFunc> * hashmap_t;
-		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
+		typedef const HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc> * hashmap_t;
+		friend class HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>;
 	protected:
 		hashmap_t _hashmap;
 		uint _idx;
 		const_iterator(uint idx, hashmap_t hashmap) : _idx(idx), _hashmap(hashmap) {}
 
-		const BaseNode *deref() const {
+		const BaseNodeFunc *deref() const {
 			assert(_hashmap != 0);
-			BaseNode *node = _hashmap->_arr[_idx];
+			BaseNodeFunc *node = _hashmap->_arr[_idx];
 			assert(node != 0);
 			return node;
 		}
@@ -143,8 +158,8 @@ public:
 	public:
 		const_iterator() : _idx(0), _hashmap(0) {}
 
-		const BaseNode &operator *() const { return *deref(); }
-		const BaseNode *operator->() const { return deref(); }
+		const BaseNodeFunc &operator *() const { return *deref(); }
+		const BaseNodeFunc *operator->() const { return deref(); }
 		bool operator ==(const const_iterator &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
 		bool operator !=(const const_iterator &iter) const { return !(*this == iter); }
 		const_iterator operator ++() {
@@ -193,6 +208,13 @@ public:
 		return end();
 	}
 	
+	const_iterator	find(const char *key) const {
+		uint ctr = lookup(key);
+		if (_arr[ctr])
+			return const_iterator(ctr, this);
+		return end();
+	}
+	
 	
 	// TODO: insert() method?
 
@@ -204,12 +226,12 @@ public:
 //-------------------------------------------------------
 // HashMap functions
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::HashMap() {
 	_arrsize = nextTableSize(0);
-	_arr = new BaseNode *[_arrsize];
+	_arr = new BaseNodeFunc *[_arrsize];
 	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(BaseNode *));
+	memset(_arr, 0, _arrsize * sizeof(BaseNodeFunc *));
 
 	_nele = 0;
 	
@@ -219,8 +241,8 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
 #endif
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::~HashMap() {
 	uint ctr;
 
 	for (ctr = 0; ctr < _arrsize; ctr++)
@@ -230,8 +252,8 @@ HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 	delete[] _arr;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::clear(bool shrinkArray) {
 	for (uint ctr = 0; ctr < _arrsize; ctr++) {
 		if (_arr[ctr] != NULL) {
 			delete _arr[ctr];
@@ -243,18 +265,18 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 		delete[] _arr;
 
 		_arrsize = nextTableSize(0);
-		_arr = new BaseNode *[_arrsize];
+		_arr = new BaseNodeFunc *[_arrsize];
 		assert(_arr != NULL);
-		memset(_arr, 0, _arrsize * sizeof(BaseNode *));
+		memset(_arr, 0, _arrsize * sizeof(BaseNodeFunc *));
 	}
 
 	_nele = 0;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::expand_array(uint newsize) {
 	assert(newsize > _arrsize);
-	BaseNode **old_arr;
+	BaseNodeFunc **old_arr;
 	uint old_arrsize, old_nele, ctr, dex;
 
 	old_nele = _nele;
@@ -263,9 +285,9 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 
 	// allocate a new array 
 	_arrsize = newsize;
-	_arr = new BaseNode *[_arrsize];
+	_arr = new BaseNodeFunc *[_arrsize];
 	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(BaseNode *));
+	memset(_arr, 0, _arrsize * sizeof(BaseNodeFunc *));
 
 	_nele = 0;
 
@@ -295,8 +317,8 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	return;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+int HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::lookup(const Key &key) const {
 	uint ctr = _hash(key) % _arrsize;
 
 	while (_arr[ctr] != NULL && !_equal(_arr[ctr]->_key, key)) {
@@ -317,18 +339,18 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	return ctr;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+bool HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::contains(const Key &key) const {
 	uint ctr = lookup(key);
 	return (_arr[ctr] != NULL);
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+Val &HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::operator [](const Key &key) {
 	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
-		_arr[ctr] = new BaseNode(key);
+		_arr[ctr] = new BaseNodeFunc(key);
 		_nele++;
 
 		// Keep the load factor below 75%.
@@ -341,20 +363,20 @@ Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
 	return _arr[ctr]->_value;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+const Val &HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::operator [](const Key &key) const {
 	return queryVal(key);
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-const Val &HashMap<Key, Val, HashFunc, EqualFunc>::queryVal(const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+const Val &HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::queryVal(const Key &key) const {
 	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->_value;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-size_t HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
+template <class Key, class Val, class HashFunc, class EqualFunc, class BaseNodeFunc>
+size_t HashMap<Key, Val, HashFunc, EqualFunc, BaseNodeFunc>::erase(const Key &key) {
 	// This is based on code in the Wikipedia article on Hash tables.
 	uint i = lookup(key);
 	if (_arr[i] == NULL)
