@@ -2389,7 +2389,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 				retVal |= *_imdFrameData;
 				if (imdPtr->surfDesc == 0)
 					continue;
-				if (!(_vm->_video->_extraMode && (imdPtr->surfDesc->vidMode == 0x13))) // MODIFIED... NOT!
+				if (!(_vm->_video->_extraMode && (imdPtr->surfDesc->vidMode == 0x13)))
 					imdRenderFrame(imdPtr);
 				else
 					warning("GOB2 Stub! viedImd, sub_2C69A(imdPtr);");
@@ -2431,7 +2431,7 @@ void Game::imdDrawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y) {
 				y + imdPtr->stdY, 1);
 	else
 		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface, 0, 0,
-				imdPtr->width - 1, imdPtr->height - 1, x, y, 1);
+				imdPtr->width - 1, imdPtr->height - 1, x, y, 0);
 }
 
 void Game::imdRenderFrame(Imd *imdPtr) {

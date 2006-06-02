@@ -41,6 +41,7 @@ namespace Gob {
 Mult_v2::Mult_v2(GobEngine *vm) : Mult_v1(vm) {
 	int i;
 
+	_multData2 = 0;
 	for (i = 0; i < 8; i++) _multDatas[i] = 0;
 }
 
