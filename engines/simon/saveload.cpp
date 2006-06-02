@@ -197,16 +197,25 @@ void SimonEngine::saveGameDialog(char *buf) {
 	} while (--i);
 }
 
+
+const byte hebrewKeyTable[96] = {
+	32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 90, 45, 85, 47, 48, 49, 50,
+	51, 52, 53, 54, 55, 56, 57, 83, 83, 90, 61, 85, 63, 35, 89, 80, 65, 66, 87,
+	75, 82, 73, 79, 71, 76, 74, 86, 78, 77, 84, 47, 88, 67, 64, 69, 68, 44, 81,
+	72, 70, 91, 92, 93, 94, 95, 96, 89, 80, 65, 66, 87, 75, 82, 73, 79, 71, 76,
+	74, 86, 78, 77, 84, 47, 88, 67, 64, 69, 68, 44, 81, 72, 70,
+	123, 124, 125, 126, 127,
+};
+
 void SimonEngine::saveOrLoadDialog(bool load) {
 	time_t save_time;
 	int number_of_savegames;
-	int i;
-	int unk132_result;
+	int i, name_len, unk132_result;
 	WindowBlock *window;
 	char *name;
-	int name_len;
 	bool b;
 	char buf[108];
+	int maxChar = (_language == Common::HB_ISR) ? 155: 128;
 
 	_saveOrLoad = load;
 
@@ -302,7 +311,7 @@ restart:;
 				if (b) {
 					if (i == 205)
 						goto get_out;
-					enableBox(0xd0 + unk132_result);
+					enableBox(208 + unk132_result);
 					if (_saveLoadFlag) {
 						clearCharacter(_windowArray[5], 8);
 						// move code
@@ -312,10 +321,17 @@ restart:;
 
 				// is_not_b
 				if (!_saveLoadFlag) {
-					enableBox(0xd0 + unk132_result);
+					enableBox(208 + unk132_result);
 					goto restart;
 				}
-			} while (i >= 0x80 || i == 0);
+			} while (i >= maxChar || i == 0);
+
+			if (_language == Common::HB_ISR) {
+				if (i >= 128)
+					i -= 64;
+				else if (i >= 32)
+					i = hebrewKeyTable[i - 32];
+			}
 
 			// after_do_2
 			clearCharacter(_windowArray[5], 8);
