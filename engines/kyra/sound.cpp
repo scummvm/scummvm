@@ -37,7 +37,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine *engine, Audio::Mixer *mixer)
 	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
-	_musicEnabled(true), _sfxEnabled(false) {
+	_musicEnabled(true), _sfxEnabled(true) {
 }
 
 Sound::~Sound() {
