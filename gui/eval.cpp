@@ -288,11 +288,11 @@ int Eval::getVar_(const char *s, bool includeAliases) {
 	if (val != EVAL_UNDEF_VAR)
 		return val;
 
-	String var = String(s);
+	const char *var = s;
 	if (includeAliases) {
-		AliasesMap::const_iterator itera = _aliases.find(var);
+		AliasesMap::const_iterator itera = _aliases.find(s);
 		if (itera != _aliases.end())
-			var = itera->_value;
+			var = itera->_value.c_str();
 	}
 
 	VariablesMap::const_iterator iterv = _vars.find(var);
@@ -302,16 +302,12 @@ int Eval::getVar_(const char *s, bool includeAliases) {
 	return EVAL_UNDEF_VAR;
 }
 
-void Eval::setAlias(const String &section, const String name, const String value) {
-	String var = String(&(name.c_str()[4]));
-
-	_aliases[var] = value;
+void Eval::setAlias(const String &section, const char *name, const String value) {
+	_aliases[name + 4] = value;
 }
 
-void Eval::setVar(const String &section, const String name, const String value) {
-	String var = String(&(name.c_str()[4]));
-
-	_vars[var] = eval(value, section, name, 0);
+void Eval::setVar(const String &section, const char *name, const String value) {
+	_vars[name + 4] = eval(value, section, name, 0);
 }
 
 void Eval::reset() {

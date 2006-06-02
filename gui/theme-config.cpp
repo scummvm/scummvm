@@ -424,13 +424,13 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 		to += postfixes[i];
 
 		_evaluator->setAlias(selfpostfixes[i], to);
-		_evaluator->setVar(to, EVAL_UNDEF_VAR);
+		_evaluator->setVar(to.c_str(), EVAL_UNDEF_VAR);
 	}
 
 	for (i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) && level == 0) {
 			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
-			_evaluator->setVar(prefixedname + postfixes[npostfix++], value);
+			_evaluator->setVar((prefixedname + postfixes[npostfix++]).c_str(), value);
 			start = i + 1;
 		}
 		if (str[i] == '(')
@@ -453,15 +453,15 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 
 	// process VAR=VALUE construct
 	if (npostfix == 0)
-		_evaluator->setVar(name, value);
+		_evaluator->setVar(name.c_str(), value);
 	else
-		_evaluator->setVar(prefixedname + postfixes[npostfix], value);
+		_evaluator->setVar((prefixedname + postfixes[npostfix]).c_str(), value);
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
-		_evaluator->setVar(prefixedname + ".x2", 
+		_evaluator->setVar((prefixedname + ".x2").c_str(), 
 			_evaluator->getVar(prefixedname + ".x") + _evaluator->getVar(prefixedname + ".w"));
-		_evaluator->setVar(prefixedname + ".y2", 
+		_evaluator->setVar((prefixedname + ".y2").c_str(), 
 			_evaluator->getVar(prefixedname + ".y") + _evaluator->getVar(prefixedname + ".h"));
 	}
 
@@ -482,12 +482,12 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 			continue;
 		}
 		if (iterk->key.hasPrefix("set_")) {
-			_evaluator->setAlias(name, iterk->key, prefix + iterk->value);
+			_evaluator->setAlias(name, iterk->key.c_str(), prefix + iterk->value);
 			continue;
 		}
 		if (iterk->key.hasPrefix("def_")) {
 			if (!skipDefs)
-				_evaluator->setVar(name, prefix + iterk->key, iterk->value);
+				_evaluator->setVar(name, (prefix + iterk->key).c_str(), iterk->value);
 			continue;
 		}
 		if (iterk->key == "use") {
@@ -529,16 +529,16 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 }
 
 void Theme::setSpecialAlias(const String alias, const String &name) {
-	const char *postfixes[] = {"x", "y", "w", "h", "x2", "y2"};
+	const char *postfixes[] = {".x", ".y", ".w", ".h", ".x2", ".y2"};
 	int i;
 
 	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
 		String from, to;
 
-		from = alias + "." + postfixes[i];
-		to = name + "." + postfixes[i];
+		from = alias + postfixes[i];
+		to = name + postfixes[i];
 
-		_evaluator->setAlias(from, to);
+		_evaluator->setAlias(from.c_str(), to);
 	}
 }
 

@@ -55,13 +55,13 @@ public:
 	~Eval();
 
 	int eval(const String &input, const String &section, const String &name, int startpos);
-	void setAlias(const String &section, const String name, const String value);
-	void setVar(const String &section, const String name, const String value);
+	void setAlias(const String &section, const char *name, const String value);
+	void setVar(const String &section, const char *name, const String value);
 
 	void setParent(const String name);
 
-	void setVar(const String name, int val) { _vars[name] = val; }
-	void setAlias(const String name, const String val) { _aliases[name] = val; }
+	void setVar(const char *name, int val) { _vars[name] = val; }
+	void setAlias(const char *name, const String val) { _aliases[name] = val; }
 
 	int getVar(String s) { return getVar_(s.c_str()); }
 	int getVar(String s, int def) {
@@ -73,8 +73,13 @@ public:
 
 	void reset();
 
-	typedef HashMap<String, int> VariablesMap;
-	typedef HashMap<String, String> AliasesMap;
+	struct CharStar_EqualTo {
+		bool operator()(const char *x, const char *y) const { return strcmp(x, y) == 0; }
+	};
+
+	//typedef HashMap<String, int> VariablesMap;
+	typedef HashMap<const char *, int, Common::Hash<const char *>, CharStar_EqualTo> VariablesMap;
+	typedef HashMap<const char *, String, Common::Hash<const char *>, CharStar_EqualTo> AliasesMap;
 
 private:
 	void getToken();
