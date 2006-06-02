@@ -449,19 +449,67 @@ void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
 
 void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 	HitArea *ha;
-	const char *string, *string2;
+	const char *string1, *string2;
 
 	if (save_error) {
-		string = "\r       Save failed.";
-		string2 = "\r       Disk error.";
+		switch (_language) {
+		case Common::PL_POL:
+			string1 = "\r      Blad zapisu.    ";
+			string2 = "\rBlad dysku.                       ";
+			break;
+		case Common::ES_ESP:
+			string1 = "\r     Error al salvar";
+			string2 = "\r  Intenta con otro disco";
+			break;
+		case Common::IT_ITA:
+			string1 = "\r  Salvataggio non riuscito";
+			string2 = "\r    Prova un\39altro disco";
+			break;
+		case Common::FR_FRA:
+			string1 = "\r    Echec sauvegarde";
+			string2 = "\rEssayez une autre disquette";
+			break;
+		case Common::DE_DEU:
+			string1 = "\r  Sicherung erfolglos.";
+			string2 = "\rVersuche eine andere     Diskette.";
+			break;
+		default:
+			string1 = "\r       Save failed.";
+			string2 = "\r       Disk error.";
+			break;
+		}
 	} else {
-		string = "\r       Load failed.";
-		string2 = "\r     File not found.";
+		switch (_language) {
+		case Common::PL_POL:
+			string1 = "\r   Blad odczytu.    ";
+			string2 = "\r  Nie znaleziono pliku.";
+			break;
+		case Common::ES_ESP:
+			string1 = "\r     Error al cargar";
+			string2 = "\r  Archivo no encontrado";
+			break;
+		case Common::IT_ITA:
+			string1 = "\r  Caricamento non riuscito";
+			string2 = "\r      File non trovato";
+			break;
+		case Common::FR_FRA:
+			string1 = "\r    Echec chargement";
+			string2 = "\r  Fichier introuvable";
+			break;
+		case Common::DE_DEU:
+			string1 = "\r    Laden erfolglos.";
+			string2 = "\r  Datei nicht gefunden.";
+			break;
+		default:
+			string1 = "\r       Load failed.";
+			string2 = "\r     File not found.";
+			break;
+		}
 	}
 
 	windowPutChar(window, 0xC);
-	for (; *string; string++)
-		windowPutChar(window, *string);
+	for (; *string1; string1++)
+		windowPutChar(window, *string1);
 	for (; *string2; string2++)
 		windowPutChar(window, *string2);
 
@@ -469,13 +517,13 @@ void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 	window->textRow = window->height - 1;
 	window->textLength = 0;
 
-	string = "[ OK ]";
-	for (; *string; string++)
-		windowPutChar(window, *string);
+	string1 = "[ OK ]";
+	for (; *string1; string1++)
+		windowPutChar(window, *string1);
 
 	ha = findEmptyHitArea();
-	ha->x = ((window->width >> 1) + (window->x - 3)) * 8;
-	ha->y = (window->height << 3) + window->y - 8;
+	ha->x = ((window->width / 2) + (window->x - 3)) * 8;
+	ha->y = (window->height * 8) + window->y - 8;
 	ha->width = 48;
 	ha->height = 8;
 	ha->flags = kBFBoxInUse;

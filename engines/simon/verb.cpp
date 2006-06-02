@@ -34,12 +34,10 @@ static const char *const russian_verb_names[] = {
 	"Qnotrft< pa",
 	"Nt_r[t<",
 	"Ecjdat<",
-
 	"Q=fst<",
 	"C^]t<",
 	"Ha_r[t<",
 	"Isqom<^ocat<",
-
 	"Docorjt<",
 	"Qp]t<",
 	"Neft<",
@@ -51,12 +49,10 @@ static const char *const hebrew_verb_names[] = {
 	"DQZKL RL",
 	"TZG",
 	"DFF",
-
 	"@KEL",
 	"DXM",
 	"QBEX",
 	"DYZNY",
-
 	"CAX @L",
 	"DQX",
 	"LAY",
@@ -68,12 +64,10 @@ static const char *const spanish_verb_names[] = {
 	"Mirar",
 	"Abrir",
 	"Mover",
-
 	"Consumir",
 	"Coger",
 	"Cerrar",
 	"Usar",
-
 	"Hablar",
 	"Quitar",
 	"Llevar",
@@ -85,12 +79,10 @@ static const char *const italian_verb_names[] = {
 	"Osserva",
 	"Apri",
 	"Sposta",
-
 	"Mangia",
 	"Raccogli",
 	"Chiudi",
 	"Usa",
-
 	"Parla a",
 	"Togli",
 	"Indossa",
@@ -102,12 +94,10 @@ static const char *const french_verb_names[] = {
 	"Regarder",
 	"Ouvrir",
 	"D/placer",
-
 	"Consommer",
 	"Prendre",
 	"Fermer",
 	"Utiliser",
-
 	"Parler ;",
 	"Enlever",
 	"Mettre",
@@ -119,12 +109,10 @@ static const char *const german_verb_names[] = {
 	"Schau an",
 	";ffne",
 	"Bewege",
-
 	"Verzehre",
 	"Nimm",
 	"Schlie+e",
 	"Benutze",
-
 	"Rede mit",
 	"Entferne",
 	"Trage",
@@ -136,12 +124,10 @@ static const char *const english_verb_names[] = {
 	"Look at",
 	"Open",
 	"Move",
-
 	"Consume",
 	"Pick up",
 	"Close",
 	"Use",
-
 	"Talk to",
 	"Remove",
 	"Wear",
