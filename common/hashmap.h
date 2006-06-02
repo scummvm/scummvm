@@ -94,6 +94,7 @@ struct BaseNode<const char *, Val> {
 	Val _value;
 	BaseNode() {assert(0);}
 	BaseNode(const char *key) { _key = (char *)malloc(strlen(key)+1); strcpy(_key, key); }
+	~BaseNode() { free(_key); }
 };
 
 // The table sizes ideally are primes. We use a helper function to find
