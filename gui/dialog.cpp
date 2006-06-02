@@ -312,6 +312,13 @@ Widget *Dialog::findWidget(const char *name) {
 }
 
 void Dialog::deleteWidget(Widget *del) {
+	if (del == _mouseWidget)
+		_mouseWidget = NULL;
+	if (del == _focusedWidget)
+		_focusedWidget = NULL;
+	if (del == _dragWidget)
+		_dragWidget = NULL;
+
 	Widget *w = _firstWidget;
 
 	if (del == _firstWidget) {
