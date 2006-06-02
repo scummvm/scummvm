@@ -1071,14 +1071,14 @@ void SimonEngine::o_setAdjNoun() {
 void SimonEngine::o_saveUserGame() {
 	// 132: save game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	saveOrLoadDialog(false);
+	userGame(false);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void SimonEngine::o_loadUserGame() {
 	// 133: load game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	saveOrLoadDialog(true);
+	userGame(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 

@@ -364,7 +364,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_numSaveGameRows = 0;
 	_saveDialogFlag = false;
 	_saveOrLoad = false;
-	_saveLoadFlag = false;
+	_saveLoadEdit = false;
 
 	_hyperLink = 0;
 	_interactY = 0;

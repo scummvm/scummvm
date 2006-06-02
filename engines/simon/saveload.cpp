@@ -173,10 +173,10 @@ void SimonEngine::quickLoadOrSave() {
 	_saveLoadType = 0;
 }
 
-void SimonEngine::saveGameDialog(char *buf) {
+void SimonEngine::listSaveGames(char *buf) {
 	int i;
 
-	unk_132_helper_3();
+	disableFileBoxes();
 
 	i = displaySaveGameList(_saveLoadRowCurPos, _saveOrLoad, buf);
 
@@ -193,7 +193,7 @@ void SimonEngine::saveGameDialog(char *buf) {
 		return;
 
 	do {
-		enableBox(0xd0 + i - 1);
+		enableBox(208 + i - 1);
 	} while (--i);
 }
 
@@ -207,10 +207,10 @@ const byte hebrewKeyTable[96] = {
 	123, 124, 125, 126, 127,
 };
 
-void SimonEngine::saveOrLoadDialog(bool load) {
+void SimonEngine::userGame(bool load) {
 	time_t save_time;
 	int number_of_savegames;
-	int i, name_len, unk132_result;
+	int i, name_len, result;
 	WindowBlock *window;
 	char *name;
 	bool b;
@@ -236,11 +236,11 @@ void SimonEngine::saveOrLoadDialog(bool load) {
 	if (!load)
 		_saveLoadRowCurPos = number_of_savegames;
 
-	_saveLoadFlag = false;
+	_saveLoadEdit = false;
 
 restart:;
 	do {
-		i = unk_132_helper(&b, buf);
+		i = userGameGetKey(&b, buf);
 	} while (!b);
 
 	if (i == 205)
@@ -248,22 +248,21 @@ restart:;
 	if (!load) {
 		// if_1
 	if_1:;
-		unk132_result = i;
+		result = i;
 
 		disableBox(208 + i);
 		leaveHitAreaById(208 + i);
 
 		window = _windowArray[5];
 
-		window->textRow = unk132_result;
+		window->textRow = result;
 
+		// init x offset with a 2 character savegame number + a period (18 pix)
 		if (_language == Common::HB_ISR) {
-			// init x offset with a 2 character savegame number + a period (18 pix)
 			window->textColumn = 3;
 			window->textColumnOffset = 6;
 			window->textLength = 3;
 		} else {
-			// init x offset with a 2 character savegame number + a period (18 pix)
 			window->textColumn = 2;
 			window->textColumnOffset = 2;
 			window->textLength = 3;
@@ -302,26 +301,25 @@ restart:;
 		for (;;) {
 			windowPutChar(window, 0x7f);
 
-			_saveLoadFlag = true;
+			_saveLoadEdit = true;
 
 			// do_2
 			do {
-				i = unk_132_helper(&b, buf);
+				i = userGameGetKey(&b, buf);
 
 				if (b) {
 					if (i == 205)
 						goto get_out;
-					enableBox(208 + unk132_result);
-					if (_saveLoadFlag) {
-						clearCharacter(_windowArray[5], 8);
-						// move code
+					enableBox(208 + result);
+					if (_saveLoadEdit) {
+						userGameBackSpace(_windowArray[5], 8);
 					}
 					goto if_1;
 				}
 
 				// is_not_b
-				if (!_saveLoadFlag) {
-					enableBox(208 + unk132_result);
+				if (!_saveLoadEdit) {
+					enableBox(208 + result);
 					goto restart;
 				}
 			} while (i >= maxChar || i == 0);
@@ -334,7 +332,7 @@ restart:;
 			}
 
 			// after_do_2
-			clearCharacter(_windowArray[5], 8);
+			userGameBackSpace(_windowArray[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
@@ -353,7 +351,7 @@ restart:;
 
 					name[name_len] = 0;
 
-					clearCharacter(_windowArray[5], x, m);
+					userGameBackSpace(_windowArray[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
@@ -363,7 +361,7 @@ restart:;
 		}
 
 		// do_save
-		if (!saveGame(_saveLoadRowCurPos + unk132_result, buf + unk132_result * 18))
+		if (!saveGame(_saveLoadRowCurPos + result, buf + result * 18))
 			fileError(_windowArray[5], true);
 	} else {
 		if (!loadGame(_saveLoadRowCurPos + i))
@@ -371,7 +369,7 @@ restart:;
 	}
 
 get_out:;
-	unk_132_helper_3();
+	disableFileBoxes();
 
 	_gameStoppedClock = time(NULL) - save_time + _gameStoppedClock;
 	_copyPartialMode = 0;
@@ -384,72 +382,64 @@ get_out:;
 	} while (i == _timer4);
 }
 
-int SimonEngine::unk_132_helper(bool *b, char *buf) {
+int SimonEngine::userGameGetKey(bool *b, char *buf) {
 	HitArea *ha;
 	*b = true;
 
-	if (!_saveLoadFlag) {
-	strange_jump:;
-		_saveLoadFlag = false;
-		saveGameDialog(buf);
+	if (!_saveLoadEdit) {
+		listSaveGames(buf);
 	}
 
-start_over:;
 	_keyPressed = 0;
 
-start_over_2:;
-	_lastHitArea = _lastHitArea3 = 0;
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
 
-	do {
-		if (_keyPressed != 0) {
-			if (_saveLoadFlag) {
+		do {
+			if (_saveLoadEdit && _keyPressed != 0) {
 				*b = false;
 				return _keyPressed;
 			}
-			goto start_over;
+			delay(10);
+		} while (_lastHitArea3 == 0);
+
+		ha = _lastHitArea;
+
+		if (ha == NULL || ha->id < 205) {
+		} else if (ha->id == 205) {
+			return ha->id;
+		} else if (ha->id == 206) {
+			if (_saveLoadRowCurPos != 1) {
+				if (_saveLoadRowCurPos < 7)
+					_saveLoadRowCurPos = 1;
+				else
+					_saveLoadRowCurPos -= 6;
+
+				_saveLoadEdit = false;
+				listSaveGames(buf);
+			}
+		} else if (ha->id == 207) {
+			if (_saveDialogFlag) {
+				_saveLoadRowCurPos += 6;
+				if (_saveLoadRowCurPos >= _numSaveGameRows)
+					_saveLoadRowCurPos = _numSaveGameRows;
+
+				_saveLoadEdit = false;
+				listSaveGames(buf);
+			}
+		} else if (ha->id < 214) {
+			return ha->id - 208;
 		}
-		delay(10);
-	} while (_lastHitArea3 == 0);
-
-	ha = _lastHitArea;
-
-	if (ha == NULL || ha->id < 205)
-		goto start_over_2;
-
-	if (ha->id == 205)
-		return ha->id;
-
-	if (ha->id == 206) {
-		if (_saveLoadRowCurPos == 1)
-			goto start_over_2;
-		if (_saveLoadRowCurPos < 7)
-			_saveLoadRowCurPos = 1;
-		else
-			_saveLoadRowCurPos -= 6;
-
-		goto strange_jump;
 	}
-
-	if (ha->id == 207) {
-		if (!_saveDialogFlag)
-			goto start_over_2;
-		_saveLoadRowCurPos += 6;
-		if (_saveLoadRowCurPos >= _numSaveGameRows)
-			_saveLoadRowCurPos = _numSaveGameRows;
-		goto strange_jump;
-	}
-
-	if (ha->id >= 214)
-		goto start_over_2;
-	return ha->id - 208;
 }
 
-void SimonEngine::unk_132_helper_3() {
-	for (int i = 208; i != 208 + 6; i++)
+void SimonEngine::disableFileBoxes() {
+	for (int i = 208; i != 214; i++)
 		disableBox(i);
 }
 
-void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
+void SimonEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 	byte old_text;
 
 	windowPutChar(window, x, b);
@@ -462,7 +452,6 @@ void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
 		x += 120;
 		if (x != 128)
 			x = 129;
-
 	}
 
 	windowPutChar(window, x);

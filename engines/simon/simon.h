@@ -459,7 +459,7 @@ protected:
 	int _numSaveGameRows;
 	bool _saveDialogFlag;
 	bool _saveOrLoad;
-	bool _saveLoadFlag;
+	bool _saveLoadEdit;
 
 	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[108];
@@ -1131,11 +1131,11 @@ protected:
 
 	void set_volume(int volume);
 
-	void saveOrLoadDialog(bool load);
-	void unk_132_helper_3();
-	int unk_132_helper(bool *b, char *buf);
-	void clearCharacter(WindowBlock *window, int x, byte b = 0);
-	void saveGameDialog(char *buf);
+	void userGame(bool load);
+	void disableFileBoxes();
+	int userGameGetKey(bool *b, char *buf);
+	void userGameBackSpace(WindowBlock *window, int x, byte b = 0);
+	void listSaveGames(char *buf);
 	void fileError(WindowBlock *window, bool save_error);
 
 	int countSaveGames();
