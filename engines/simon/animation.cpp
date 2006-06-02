@@ -63,6 +63,8 @@ MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 	_frameTicks = 0;
 	_frameSkipped = 0;
 
+	memset(baseName, 0, sizeof(baseName));
+
 	_sequenceNum = 0;
 	_ticks = 0;
 }
@@ -76,12 +78,15 @@ bool MoviePlayer::load(const char *filename) {
 	int32 frameRate;
 	uint i;
 
+	int baseLen = strlen(filename) - 4;
+	memset(baseName, 0, sizeof(baseName));
+	memcpy(baseName, filename, baseLen);
+
 	// Change file extension to dxa
 	strcpy(filename2, filename);
-	int len = strlen(filename2) - 3;
-	filename2[len++] = 'd';
-	filename2[len++] = 'x';
-	filename2[len++] = 'a';
+	filename2[baseLen + 1] = 'd';
+	filename2[baseLen + 2] = 'x';
+	filename2[baseLen + 3] = 'a';
 	
 	if (_fd.open(filename2) == false) {
 		warning("Failed to load video file %s", filename2);
@@ -234,6 +239,12 @@ void MoviePlayer::startSound() {
 		_mixer->stopHandle(_bgSound);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 		free(buffer);
+	} else {
+		_bgSoundStream = Audio::AudioStream::openStreamFile(baseName);
+		if (_bgSoundStream != NULL) {
+			_mixer->stopHandle(_bgSound);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		}
 	}
 }
 
