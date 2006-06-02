@@ -32,8 +32,8 @@ const String String::emptyString;
 const char *String::emptyString = "";
 #endif
 
-String::String(const char *str, int len)
- : _str(0), _len(0) {
+String::String(const char *str, int len, int capacity)
+: _str(0), _len(0) {
 
 	_refCount = new int(1);
 
@@ -42,6 +42,9 @@ String::String(const char *str, int len)
 			_capacity = _len = len;
 		else
 			_capacity = _len = strlen(str);
+
+		_capacity = MAX(capacity, _capacity);
+
 		_str = (char *)calloc(1, _capacity+1);
 		memcpy(_str, str, _len);
 		_str[_len] = 0;
