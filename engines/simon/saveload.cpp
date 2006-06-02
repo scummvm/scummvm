@@ -60,7 +60,7 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 
 	showMessageFormat("\xC");
 
-	memset(dst, 0, 18 * 6);
+	memset(dst, 0, 108);
 
 	slot = curpos;
 
@@ -70,10 +70,18 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 
 		in->read(dst, 18);
 		delete in;
+
 		last_slot = slot;
-		if (slot < 10)
+		if (slot < 10) {
 			showMessageFormat(" ");
-		showMessageFormat("%d", slot);
+		} else if (_language == Common::HB_ISR) {
+			last_slot = (slot % 10) * 10;
+			last_slot += slot / 10;
+		}
+
+		if (_language == Common::HB_ISR && !(slot % 10))
+			showMessageFormat("0");
+		showMessageFormat("%d", last_slot);
 		showMessageFormat(".%s\n", dst);
 		dst += 18;
 		slot++;
@@ -240,7 +248,7 @@ restart:;
 
 		window->textRow = unk132_result;
 
-		if (_language == Common::HB_ISR) { //Hebrew
+		if (_language == Common::HB_ISR) {
 			// init x offset with a 2 character savegame number + a period (18 pix)
 			window->textColumn = 3;
 			window->textColumnOffset = 6;
@@ -257,7 +265,7 @@ restart:;
 		// now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			if (_language == Common::HB_ISR) { //Hebrew
+			if (_language == Common::HB_ISR) {
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
 					width = _hebrewCharWidths [name[name_len] - 64];
@@ -322,7 +330,7 @@ restart:;
 					name_len--;
 					m = name[name_len];
 
-					if (_language == Common::HB_ISR) //Hebrew
+					if (_language == Common::HB_ISR)
 						x = 8;
 					else
 						x = (name[name_len] == 'i' || name[name_len] == 'l') ? 1 : 8;
@@ -432,7 +440,7 @@ void SimonEngine::clearCharacter(WindowBlock *window, int x, byte b) {
 	old_text = window->text_color;
 	window->text_color = window->fill_color;
 
-	if (_language == Common::HB_ISR) { //Hebrew
+	if (_language == Common::HB_ISR) {
 		x = 128;
 	} else {
 		x += 120;

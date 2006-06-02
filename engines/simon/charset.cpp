@@ -408,7 +408,7 @@ void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	} else if (c == 13 || c == 10) {
 		video_putchar_newline(window);
 	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
-		if (_language == Common::HB_ISR) { //Hebrew
+		if (_language == Common::HB_ISR) {
 			if (b >= 64 && b < 91)
 				width = _hebrewCharWidths [b - 64];
 
@@ -446,13 +446,13 @@ void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 			window->textRow--;
 		}
 
-		if (_language == Common::HB_ISR) { //Hebrew
+		if (_language == Common::HB_ISR) {
 			if (c >= 64 && c < 91)
 				width = _hebrewCharWidths [c - 64];
-			window->textColumnOffset  -= width;
+			window->textColumnOffset -= width;
 			if (window->textColumnOffset >= width) {
-				window->textColumn++;
 				window->textColumnOffset += 8;
+				window->textColumn++;
 			}
 			video_putchar_drawchar(window, (window->width + window->x - window->textColumn) * 8, window->textRow * 8 + window->y, c);
 			window->textLength++;
