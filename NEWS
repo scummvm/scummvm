@@ -31,10 +31,12 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed sound distortion in the Inherit the Earth demo.
 
  Simon
+   - Improved Hebrew support
    - Lots of long-overdue cleanups and re-structuring were made to accomodate
      for The Feeble Files.
    - Fixed a rare MIDI bug that would cause a channel to change volume without
      adjusting it to the master volume.
+   - Fixed delay after introduction of Simon the Sorcerer 1 demo (With speech)
 
  Broken Sword 1:
    - Added support for the --save-slot option.
