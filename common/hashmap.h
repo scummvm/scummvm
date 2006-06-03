@@ -202,20 +202,20 @@ public:
 		return const_iterator((uint)-1, this);
 	}
 	
-	const_iterator	find(const String &key) const {
+	const_iterator	find(const Key &key) const {
 		uint ctr = lookup(key);
 		if (_arr[ctr])
 			return const_iterator(ctr, this);
 		return end();
 	}
-	
+/*	
 	const_iterator	find(const char *key) const {
 		uint ctr = lookup(key);
 		if (_arr[ctr])
 			return const_iterator(ctr, this);
 		return end();
 	}
-	
+*/
 	
 	// TODO: insert() method?
 
