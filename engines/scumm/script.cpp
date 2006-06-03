@@ -616,9 +616,13 @@ void ScummEngine::writeVar(uint var, int value) {
 			ConfMan.setBool("subtitles", !value);
 		}
 
-		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
-			_defaultTalkDelay = getTalkspeed();
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
+		if (var == VAR_CHARINC) {
+			if (ConfMan.hasKey("talkspeed")) {
+				VAR(VAR_CHARINC) = getTalkspeed();
+			} else {
+				// Save the new talkspeed value to ConfMan
+				setTalkspeed(_defaultTalkDelay);
+			}
 		} else {
 			_scummVars[var] = value;
 		}

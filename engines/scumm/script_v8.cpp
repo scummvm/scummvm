@@ -419,11 +419,17 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
-		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
-			_defaultTalkDelay = getTalkspeed();
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
-		} else
+		if (var == VAR_CHARINC) {
+			if (ConfMan.hasKey("talkspeed")) {
+				_defaultTalkDelay = getTalkspeed();
+				VAR(VAR_CHARINC) = _defaultTalkDelay;
+			} else {
+				// Save the new talkspeed value to ConfMan
+				setTalkspeed(_defaultTalkDelay);
+			}
+		} else {
 			_scummVars[var] = value;
+		}
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)

@@ -447,7 +447,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		_defaultTalkDelay = 9 - runDialog(dlg);
 		
 		// Save the new talkspeed value to ConfMan
-		setTalkspeed(9 - _defaultTalkDelay);
+		setTalkspeed(_defaultTalkDelay);
 
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
