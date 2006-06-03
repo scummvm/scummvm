@@ -22,6 +22,8 @@
  */
 
 #include "common/file.h"
+#include "common/stdafx.h"
+#include "common/endian.h"
 
 #include "gob/music.h"
 #include "gob/gob.h"
@@ -213,13 +215,20 @@ void Music::setVoices() {
 }
 
 void Music::setVoice(byte voice, byte instr, bool set) {
-	unsigned short *strct;
+	int i;
+	int j;
+	uint16 strct[27];
 	byte channel;
+	byte *dataPtr;
 
 	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
 	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
-	for (int i = 0; i < 2; i++) {
-		strct = (unsigned short*)(_data + 3 + instr * 0x38 + i * 0x1A);
+	for (i = 0; i < 2; i++) {
+		dataPtr = _data + 3 + instr * 0x38 + i * 0x1A;
+		for (j = 0; j < 27; j++) {
+			strct[j] = READ_LE_UINT16(dataPtr);
+			dataPtr += 2;
+		}
 		channel = _operators[voice] + i * 3;
 		writeOPL(0xBD, 0x00);
 		writeOPL(0x08, 0x00);
