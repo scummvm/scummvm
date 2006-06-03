@@ -36,28 +36,26 @@ namespace Kyra {
 // standard Package format for Kyrandia games
 class PAKFile {
 	struct PakChunk {
-		char _name[32];
+		Common::String _name;
 		uint32 _start;
 		uint32 _size;
 	};
 
 public:
-
-	PAKFile(const Common::String &file, bool isAmiga = false);
+	PAKFile(const char *file, bool isAmiga = false);
 	~PAKFile();
 
-	uint8* getFile(const char *file);
+	uint8 *getFile(const char *file);
 	bool getFileHandle(const char *file, Common::File &filehandle);
 	uint32 getFileSize(const char *file);
 
-	bool isValid(void) const { return (_filename != 0); }
+	bool isValid(void) const { return !(_filename.empty()); }
 	bool isOpen(void) const { return _open; }
 
 private:
-
 	bool _open;
 	bool _isAmiga;
-	char *_filename;
+	Common::String _filename;
 	Common::List<PakChunk> _files; // the entries
 };
 
@@ -66,9 +64,9 @@ public:
 	Resource(KyraEngine *engine);
 	~Resource();
 	
-	bool loadPakFile(const char *filename);
-	void unloadPakFile(const char *filename);
-	bool isInPakList(const char *filename);
+	bool loadPakFile(const Common::String &filename);
+	void unloadPakFile(const Common::String &filename);
+	bool isInPakList(const Common::String &filename);
 
 	uint8* fileData(const char *file, uint32 *size);
 	// it gives back a file handle (used for the speech player)
@@ -77,12 +75,18 @@ public:
 	bool fileHandle(const char *file, uint32 *size, Common::File &filehandle);
 
 protected:
-	struct PakFileEntry {
+	class PakFileEntry {
+	public:
+		PakFileEntry(PAKFile *file, const Common::String str) : _file(file), _filename(str) {}
+		PakFileEntry(const PakFileEntry &c) : _file(c._file), _filename(c._filename) {}
+
 		PAKFile *_file;
-		char _filename[32];
+		const Common::String _filename;
+	private:
+		PakFileEntry &operator =(const PakFileEntry &c) { return *this; }
 	};
 
-	KyraEngine* _engine;
+	KyraEngine *_engine;
 	Common::List<PakFileEntry> _pakfiles;
 };
 
