@@ -292,7 +292,7 @@ void Resources::reloadData() {
 	// Load the list of room exit hotspot Ids
 	mb = d.getEntry(EXIT_HOTSPOT_ID_LIST);
 	RoomExitIndexedHotspotResource *indexedRec = (RoomExitIndexedHotspotResource *) mb->data();
-	while (indexedRec->roomNumber != 0) {
+	while (READ_LE_UINT16(indexedRec) != 0xffff) {
 		_indexedRoomExitHospots.push_back(new RoomExitIndexedHotspotData(indexedRec));
 		indexedRec++;
 	}
