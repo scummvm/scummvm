@@ -265,7 +265,7 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 
 ///////////////////////////////////////////
 // Pak file manager
-#define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
+#define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
 PAKFile::PAKFile(const Common::String& file, bool isAmiga) {
 	_filename = 0;
 	_isAmiga = isAmiga;
@@ -297,15 +297,14 @@ PAKFile::PAKFile(const Common::String& file, bool isAmiga) {
 	pos += 4;
 
 	while (pos < filesize) {
-		PakChunk* chunk = new PakChunk;
-		assert(chunk);
+		PakChunk chunk;
 
 		// saves the name
-		chunk->_name = new char[strlen((const char*)buffer + pos) + 1];
-		assert(chunk->_name);
-		strcpy(chunk->_name, (const char*)buffer + pos);
-		pos += strlen(chunk->_name) + 1;
-		if (!(*chunk->_name))
+		int strLen = strlen((const char*)buffer + pos) + 1;
+		assert(ARRAYSIZE(chunk._name) > strLen);
+		strncpy(chunk._name, (const char*)buffer + pos, ARRAYSIZE(chunk._name));
+		pos += strlen(chunk._name) + 1;
+		if (!(*chunk._name))
 			break;
 
 		if (!_isAmiga) {
@@ -319,8 +318,8 @@ PAKFile::PAKFile(const Common::String& file, bool isAmiga) {
 			endoffset = filesize;
 		}
 
-		chunk->_start = startoffset;
-		chunk->_size = endoffset - startoffset;
+		chunk._start = startoffset;
+		chunk._size = endoffset - startoffset;
 
 		_files.push_back(chunk);
 
@@ -342,26 +341,21 @@ PAKFile::~PAKFile() {
 	_filename = 0;
 	_open = false;
 
-	for (PAKFile_Iterate) {
-		delete [] (*start)->_name;
-		(*start)->_name = 0;
-		delete *start;
-		*start = 0;
-	}
+	_files.clear();
 }
 
 uint8 *PAKFile::getFile(const char *file) {
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp((*start)->_name, file)) {
+		if (!scumm_stricmp(start->_name, file)) {
 			Common::File pakfile;
 			if (!pakfile.open(_filename)) {
 				debug(3, "couldn't open pakfile '%s'\n", _filename);
 				return 0;
 			}
-			pakfile.seek((*start)->_start);
-			uint8 *buffer = new uint8[(*start)->_size];
+			pakfile.seek(start->_start);
+			uint8 *buffer = new uint8[start->_size];
 			assert(buffer);
-			pakfile.read(buffer, (*start)->_size);
+			pakfile.read(buffer, start->_size);
 			return buffer;
 		}
 	}
@@ -372,12 +366,12 @@ bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
 	filehandle.close();
 
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp((*start)->_name, file)) {
+		if (!scumm_stricmp(start->_name, file)) {
 			if (!filehandle.open(_filename)) {
 				debug(3, "couldn't open pakfile '%s'\n", _filename);
 				return 0;
 			}
-			filehandle.seek((*start)->_start);
+			filehandle.seek(start->_start);
 			return true;
 		}
 	}
@@ -386,8 +380,8 @@ bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
 
 uint32 PAKFile::getFileSize(const char* file) {
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp((*start)->_name, file))
-			return (*start)->_size;
+		if (!scumm_stricmp(start->_name, file))
+			return start->_size;
 	}
 	return 0;
 }

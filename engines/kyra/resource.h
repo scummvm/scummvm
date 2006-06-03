@@ -36,7 +36,7 @@ namespace Kyra {
 // standard Package format for Kyrandia games
 class PAKFile {
 	struct PakChunk {
-		char* _name;
+		char _name[32];
 		uint32 _start;
 		uint32 _size;
 	};
@@ -58,7 +58,7 @@ private:
 	bool _open;
 	bool _isAmiga;
 	char *_filename;
-	Common::List<PakChunk*> _files; // the entries
+	Common::List<PakChunk> _files; // the entries
 };
 
 class Resource {
