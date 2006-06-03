@@ -22,7 +22,9 @@
 #if defined(PALMOS_MODE)
 
 #include "common/stdafx.h"
-#include "fs/fs.h"
+#include "backends/fs/abstract-fs.h"
+#include "backends/fs/fs.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -40,8 +42,7 @@ protected:
 	
 public:
 	PalmOSFilesystemNode();
-	PalmOSFilesystemNode(const PalmOSFilesystemNode &node);
-	PalmOSFilesystemNode(const String &path);
+	PalmOSFilesystemNode(const String &p);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -56,25 +57,37 @@ private:
 	static void addFile (AbstractFSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
 };
 
+static const char *lastPathComponent(const Common::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+
+	while (cur > start && *cur != '/')
+		--cur;
+
+	return cur + 1;
+}
+
 void PalmOSFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, FileInfoType* find_data) {
 	PalmOSFilesystemNode entry;
-	bool isDirectory;
+	bool isDir;
 
-	isDirectory = (find_data->attributes & vfsFileAttrDirectory);
+	isDir = (find_data->attributes & vfsFileAttrDirectory);
 
-	if ((!isDirectory && mode == FilesystemNode::kListDirectoriesOnly) ||
-		(isDirectory && mode == FilesystemNode::kListFilesOnly))
+	if ((!isDir && mode == FilesystemNode::kListDirectoriesOnly) ||
+		(isDir && mode == FilesystemNode::kListFilesOnly))
 		return;
 
-	entry._isDirectory = isDirectory;
+	entry._isDirectory = isDir;
 	entry._displayName = find_data->nameP;
 	entry._path = base;
 	entry._path += find_data->nameP;
+
 	if (entry._isDirectory)
 		entry._path += "/";
 
 	entry._isValid = true;	
 	entry._isPseudoRoot = false;
+
 	list.push_back(new PalmOSFilesystemNode(entry));
 }
 
@@ -96,28 +109,30 @@ PalmOSFilesystemNode::PalmOSFilesystemNode() {
 	_displayName = "Root";
 	_isValid = true;
 	_path = "/";
-	_isPseudoRoot = true;
+	_isPseudoRoot = false;
 }
 
-PalmOSFilesystemNode::PalmOSFilesystemNode(const String &path) {
-	if (path.size() == 0)
-		_isPseudoRoot = true;
-	_path = path;
-	const char *dsplName = NULL, *pos = path.c_str();
-	while (*pos)
-		if (*pos++ == '/')
-			dsplName = pos;
-	_displayName = String(dsplName);
-	_isValid = true;
-	_isDirectory = true;
-}
+PalmOSFilesystemNode::PalmOSFilesystemNode(const String &p) {
+	_path = p;
+	_displayName = lastPathComponent(p);
 
-PalmOSFilesystemNode::PalmOSFilesystemNode(const PalmOSFilesystemNode &node) {
-	_displayName = node._displayName;
-	_isDirectory = node._isDirectory;
-	_isValid = node._isValid;
-	_isPseudoRoot = node._isPseudoRoot;
-	_path = node._path;
+	UInt32 attr;
+	FileRef handle;
+	Err e = VFSFileOpen(gVars->VFS.volRefNum, _path.c_str(), vfsModeRead, &handle);
+	if (!e) {
+		e = VFSFileGetAttributes(handle, &attr);
+		VFSFileClose(handle);
+	}
+
+	if (e) {
+		_isValid = false;
+		_isDirectory = false;
+
+	} else {
+		_isValid = true;
+		_isDirectory = (attr & vfsFileAttrDirectory);
+	}
+	_isPseudoRoot = false;
 }
 
 bool PalmOSFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
@@ -146,16 +161,6 @@ bool PalmOSFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const 
 	return true;
 }
 
-const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur > start && *cur != '/') {
-		--cur;
-	}
-
-	return cur+1;
-}
 
 AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
 	PalmOSFilesystemNode *p = 0;
@@ -176,7 +181,27 @@ AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
 
 
 AbstractFilesystemNode *PalmOSFilesystemNode::child(const String &name) const {
-	TODO
+	assert(_isDirectory);
+	String newPath(_path);
+
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += name;
+
+	FileRef handle;
+	UInt32 attr;
+	Err e = VFSFileOpen(gVars->VFS.volRefNum, newPath.c_str(), vfsModeRead, &handle);
+	if (e)
+		return 0;
+	
+	e = VFSFileGetAttributes(handle, &attr);
+	VFSFileClose(handle);
+
+	if (e || !(attr & vfsFileAttrDirectory))
+		return 0;
+
+	PalmOSFilesystemNode *p = new PalmOSFilesystemNode(newPath);
+	return p;
 }
 
 #endif // PALMOS_MODE
