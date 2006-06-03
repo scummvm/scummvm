@@ -70,7 +70,7 @@ OSystem_PalmBase::OSystem_PalmBase() {
 
 void OSystem_PalmBase::initBackend() {
 	if (gVars->autoSave != -1)
-		ConfMan.set("autosave_period", gVars->autoSave);
+		ConfMan.setInt("autosave_period", gVars->autoSave);
 
 	_keyMouse.bitUp		= keyBitPageUp;
 	_keyMouse.bitDown	= keyBitPageDown;

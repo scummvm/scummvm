@@ -68,8 +68,8 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 
 	if (!_sound.active) {
 		if (gVars->fmQuality != FM_QUALITY_INI) {
-			ConfMan.set("FM_medium_quality", (gVars->fmQuality == FM_QUALITY_MED));
-			ConfMan.set("FM_high_quality", (gVars->fmQuality == FM_QUALITY_HI));
+			ConfMan.setBool("FM_medium_quality", (gVars->fmQuality == FM_QUALITY_MED));
+			ConfMan.setBool("FM_high_quality", (gVars->fmQuality == FM_QUALITY_HI));
 		}
 
 #if defined (COMPILE_OS5)
