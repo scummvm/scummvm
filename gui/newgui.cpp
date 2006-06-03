@@ -131,6 +131,31 @@ NewGui::NewGui() : _needRedraw(false),
 	_theme->resetDrawArea();
 }
 
+void NewGui::redraw() {
+	int i;
+
+	// Restore the overlay to its initial state, then draw all dialogs.
+	// This is necessary to get the blending right.
+	_theme->clearAll();
+
+	for (i = 0; i < _dialogStack.size(); ++i) {
+		_theme->closeDialog();
+	}
+	for (i = 0; i < _dialogStack.size(); i++) {
+		// Special treatment when topmost dialog has dimsInactive() set to false
+		// This is the case for PopUpWidget which should not dim a dialog
+		// which it belongs to
+		if ((i == _dialogStack.size() - 2) && !_dialogStack[i + 1]->dimsInactive())
+			_theme->openDialog(true);
+		else if ((i != (_dialogStack.size() - 1)) || !_dialogStack[i]->dimsInactive())
+			_theme->openDialog(false);
+		else
+			_theme->openDialog(true);
+
+		_dialogStack[i]->drawDialog();
+	}
+}
+
 void NewGui::runLoop() {
 	Dialog *activeDialog = _dialogStack.top();
 	bool didSaveState = false;
@@ -145,7 +170,6 @@ void NewGui::runLoop() {
 		didSaveState = true;
 	}
 
-	int i;
 	bool useStandardCurs = !_theme->ownCursor();
 
 	if (useStandardCurs) {
@@ -163,26 +187,7 @@ void NewGui::runLoop() {
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		if (_needRedraw) {
-			// Restore the overlay to its initial state, then draw all dialogs.
-			// This is necessary to get the blending right.
-			_theme->clearAll();
-
-			for (i = 0; i < _dialogStack.size(); ++i) {
-				_theme->closeDialog();
-			}
-			for (i = 0; i < _dialogStack.size(); i++) {
-				// Special treatment when topmost dialog has dimsInactive() set to false
-				// This is the case for PopUpWidget which should not dim a dialog
-				// which it belongs to
-				if ((i == _dialogStack.size() - 2) && !_dialogStack[i + 1]->dimsInactive())
-					_theme->openDialog(true);
-				else if ((i != (_dialogStack.size() - 1)) || !_dialogStack[i]->dimsInactive())
-					_theme->openDialog(false);
-				else
-					_theme->openDialog(true);
-
-				_dialogStack[i]->drawDialog();
-			}
+			redraw();
 			_needRedraw = false;
 		}
 
@@ -256,11 +261,14 @@ void NewGui::runLoop() {
 			case OSystem::EVENT_SCREEN_CHANGED:
 				// reinit the whole theme
 				_theme->refresh();
-				_needRedraw = true;
 				// refresh all dialogs
-				for (i = 0; i < _dialogStack.size(); ++i) {
+				for (int i = 0; i < _dialogStack.size(); ++i) {
 					_dialogStack[i]->handleScreenChanged();
 				}
+				// We need to redraw immediately. Otherwise
+				// some other event may cause a widget to be
+				// redrawn before redraw() has been called.
+				redraw();
 				break;
 			}
 		}

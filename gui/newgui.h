@@ -120,6 +120,8 @@ protected:
 	void openDialog(Dialog *dialog);
 	void closeTopDialog();
 
+	void redraw();
+
 	void loop();
 
 	void animateCursor();
