@@ -400,6 +400,8 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 	p->data = (byte *)calloc(size + 4, 1);
 	in->read(p->data, size);
 
+	uint32 timerRate = _driver->getBaseTempo();
+
 	if (!memcmp(p->data, "GMF\x1", 4)) {
 		// The GMF header
 		// 3 BYTES: 'GMF'
@@ -408,6 +410,20 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 		// 1 BYTE : Ticks (Ranges from 2 - 8, always 2 for SFX)
 		// 1 BYTE : Loop control. 0 = no loop, 1 = loop
 		if (!sfx) {
+			// In the original, the ticks value indicated how many
+			// times the music timer was called before it actually
+			// did something. The larger the value the slower the
+			// music.
+			//
+			// We, on the other hand, have a timer rate which is
+			// used to control by how much the music advances on
+			// each onTimer() call. The larger the value, the
+			// faster the music.
+			//
+			// It seems that 4 corresponds to our base tempo, so
+			// this should be the right way to calculate it.
+			timerRate = (4 * _driver->getBaseTempo()) / p->data[5];
+
 			// According to bug #1004919 calling setLoop() from
 			// within a lock causes a lockup, though I have no
 			// idea when this actually happens.
@@ -418,7 +434,7 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 	MidiParser *parser = MidiParser::createParser_SMF();
 	parser->property(MidiParser::mpMalformedPitchBends, 1);
 	parser->setMidiDriver(this);
-	parser->setTimerRate(_driver->getBaseTempo());
+	parser->setTimerRate(timerRate);
 	if (!parser->loadMusic(p->data, size)) {
 		printf("Error reading track!\n");
 		delete parser;
@@ -443,6 +459,7 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 	// treat them as separate tracks -- for the
 	// purpose of jumps, anyway.
 	Common::StackLock lock(_mutex);
+printf("loadMultipleSMF\n");
 
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
