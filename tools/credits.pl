@@ -713,6 +713,10 @@ begin_credits("Credits");
   "that it is today. Feel free to drop us a line and tell us what you ".
   "think, guys!");
 
+  add_paragraph(
+  "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
+  "sharing the source code of The Feeble Files with us.");
+
   end_section();
 
 end_credits();
