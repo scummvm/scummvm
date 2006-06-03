@@ -184,7 +184,8 @@ static bool loadIcon(Game &game, Dir *dirs, int num_dirs)
 
 static void makeDefIcon(Icon &icon)
 {
-  icon.load(NULL, 0);
+#include "deficon.h"
+  icon.load(scummvm_icon, sizeof(scummvm_icon));
 }
 
 static bool uniqueGame(const char *base, const char *dir, Game *games, int cnt)
