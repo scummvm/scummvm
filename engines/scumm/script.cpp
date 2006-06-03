@@ -617,7 +617,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
-			_defaultTalkDelay = 9 - getTalkspeed();
+			_defaultTalkDelay = getTalkspeed();
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 		} else {
 			_scummVars[var] = value;

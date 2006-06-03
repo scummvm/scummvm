@@ -1503,7 +1503,7 @@ void ScummEngine::updateSoundSettings() {
 	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = _voiceMode;
 
-	_defaultTalkDelay = 9 - getTalkspeed();
+	_defaultTalkDelay = getTalkspeed();
 	if (VAR_CHARINC != 0xFF)
 		VAR(VAR_CHARINC) = _defaultTalkDelay;
 }
