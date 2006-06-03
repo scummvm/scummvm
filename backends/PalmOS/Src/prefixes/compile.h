@@ -40,6 +40,7 @@
 #define DISABLE_GOB 
 #define DISABLE_LURE
 #define DISABLE_CINE
+#define DISABLE_AGI
 
 #define DISABLE_HQ_SCALERS
 
