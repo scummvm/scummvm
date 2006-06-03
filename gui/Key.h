@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KEY_H
-#define KEY_H
+#ifndef GUI_KEY_H
+#define GUI_KEY_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

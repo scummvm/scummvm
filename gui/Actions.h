@@ -20,16 +20,15 @@
  *
  */
 
-#ifndef ACTIONS_H
-#define ACTIONS_H
+#ifndef GUI_ACTIONS_H
+#define GUI_ACTIONS_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "gui/Key.h"
-namespace GUI {
 
-#define MAX_ACTIONS 20
+namespace GUI {
 
 typedef int ActionType;
 
@@ -69,6 +68,10 @@ protected:
 	Actions();
 
 protected:
+	enum {
+		MAX_ACTIONS = 20
+	};
+	
 	static Actions* _instance;
 	OSystem *_mainSystem;
 	Key _key_action[MAX_ACTIONS + 1];
