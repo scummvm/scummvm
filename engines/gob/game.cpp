@@ -2549,8 +2549,6 @@ void Game::imdFrameUncompressor(byte *dest, byte *src) {
 	uint8 chunkCount;
 	bool mode;
 
-	memset(buf, 0, sizeof(buf));
-
 	frameLength = READ_LE_UINT16(src);
 	src += 4;
 	bufPos1 = 4078;
@@ -2560,6 +2558,7 @@ void Game::imdFrameUncompressor(byte *dest, byte *src) {
 		bufPos1 = 273;
 		mode = 1; // 123Ch (cmp al, 12h)
 	}
+	memset(buf, 32, bufPos1);
 	chunkCount = 1;
 	chunkBitField = 0;
 
