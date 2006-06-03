@@ -27,7 +27,7 @@
 
 #include "modulesrsc.h"
 
-const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
+const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved";
 
 void PalmFatalError(const Char *err) {
 	WinSetDrawWindow(WinGetDisplayWindow());

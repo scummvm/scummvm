@@ -46,9 +46,22 @@ public:
 
 	uint32 read(void *buf, uint32 size);
 	uint32 write(const void *buf, uint32 size);
-	
-	void skip(uint32 offset) {
-		::fseek(fh, offset, SEEK_CUR);
+
+	uint32 pos() const {
+		assert(fh);
+		return ftell(fh);
+	}
+	uint32 size() const {
+		assert(fh);
+		uint32 oldPos = ftell(fh);
+		fseek(fh, 0, SEEK_END);
+		uint32 length = ftell(fh);
+		fseek(fh, oldPos, SEEK_SET);
+		return length;
+	}
+	void seek(int32 offs, int whence = SEEK_SET) {
+		assert(fh);
+		fseek(fh, offs, whence);
 	}
 };
 
@@ -90,6 +103,7 @@ Common::SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool s
 	char buf[256];
 
 	strncpy(buf, getSavePath(), sizeof(buf));
+	strncat(buf, "/", 1);
 	strncat(buf, filename, sizeof(buf));
 
 	return makeSaveFile(buf, saveOrLoad);
