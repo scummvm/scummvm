@@ -624,6 +624,10 @@ begin_credits("Credits");
 		  add_person("Robert Kelsen", "", "");
 	  end_section();
 
+	  begin_section("Solaris x86");
+		  add_person("Laurent Blume", "laurent", "");
+	  end_section();
+
 	  begin_section("Win32");
 		  add_person("Travis Howell", "Kirben", "");
 	  end_section();
