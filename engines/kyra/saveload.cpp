@@ -244,6 +244,7 @@ void KyraEngine::loadGame(const char *fileName) {
 void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	debugC(9, kDebugLevelMain, "saveGame('%s', '%s')", fileName, saveName);
 	Common::OutSaveFile *out;
+	if (_quitFlag) return;
 
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		warning("Can't create file '%s', game not saved", fileName);
