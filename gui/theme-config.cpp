@@ -407,7 +407,7 @@ const char *Theme::_defaultConfigINI =
 
 using Common::String;
 
-void Theme::processSingleLine(const String &section, const String prefix, const String name, const String str) {
+void Theme::processSingleLine(const String &section, const String &prefix, const String &name, const String &str) {
 	int level = 0;
 	int start = 0;
 	uint i;
@@ -470,7 +470,7 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 }
 
 
-void Theme::processResSection(Common::ConfigFile &config, String name, bool skipDefs, const String prefix) {
+void Theme::processResSection(Common::ConfigFile &config, const String &name, bool skipDefs, const String &prefix) {
 	debug(3, "Reading section: [%s]", name.c_str());
 
 	const Common::ConfigFile::SectionKeyList &keys = config.getKeys(name);
@@ -509,13 +509,12 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 		if (iterk->key == "useWithPrefix") {
 			const char *temp = iterk->value.c_str();
             const char *pos = strrchr(temp, ' ');
-			String n, pref;
 
 			if (pos == NULL)
 				error("2 arguments required for useWithPrefix keyword");
 
-			n = String(temp, strchr(temp, ' ') - temp);
-			pref = String(pos + 1);
+			String n(temp, strchr(temp, ' ') - temp);
+			String pref(pos + 1);
 
 			if (n == name)
 				error("Theme section [%s]: cannot use itself", n.c_str());
@@ -528,15 +527,13 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 	}
 }
 
-void Theme::setSpecialAlias(const String alias, const String &name) {
+void Theme::setSpecialAlias(const String &alias, const String &name) {
 	const char *postfixes[] = {".x", ".y", ".w", ".h", ".x2", ".y2"};
 	int i;
 
 	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
-		String from, to;
-
-		from = alias + postfixes[i];
-		to = name + postfixes[i];
+		String from(alias + postfixes[i]);
+		String to(name + postfixes[i]);
 
 		_evaluator->setAlias(from.c_str(), to);
 	}

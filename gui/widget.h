@@ -103,7 +103,7 @@ public:
 
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h);
-	Widget(GuiObject *boss, Common::String name);
+	Widget(GuiObject *boss, const Common::String &name);
 	virtual ~Widget();
 
 	void init();
@@ -171,7 +171,7 @@ protected:
 	TextAlignment			_align;
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
-	StaticTextWidget(GuiObject *boss, String name, const String &text);
+	StaticTextWidget(GuiObject *boss, const String &name, const String &text);
 	void setValue(int value);
 	void setLabel(const String &label);
 	const String &getLabel() const		{ return _label; }
@@ -190,7 +190,7 @@ protected:
 	uint8	_hotkey;
 public:
 	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, const String &name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
@@ -209,7 +209,7 @@ protected:
 	bool	_state;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	CheckboxWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, const String &name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
@@ -233,7 +233,7 @@ protected:
 	uint	_labelWidth;
 public:
 	SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
-	SliderWidget(GuiObject *boss, Common::String name, uint32 cmd = 0);
+	SliderWidget(GuiObject *boss, const Common::String &name, uint32 cmd = 0);
 
 	void setCmd(uint32 cmd)		{ _cmd = cmd; }
 	uint32 getCmd() const		{ return _cmd; }
@@ -263,7 +263,7 @@ protected:
 class GraphicsWidget : public Widget {
 public:
 	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h);
-	GraphicsWidget(GuiObject *boss, Common::String name);
+	GraphicsWidget(GuiObject *boss, const Common::String &name);
 	~GraphicsWidget();
 
 	void setGfx(const Graphics::Surface *gfx);
@@ -284,7 +284,7 @@ protected:
 class ContainerWidget : public Widget {
 public:
 	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
-	ContainerWidget(GuiObject *boss, Common::String name);
+	ContainerWidget(GuiObject *boss, const Common::String &name);
 
 protected:
 	void drawWidget(bool hilite);

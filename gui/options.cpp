@@ -80,7 +80,7 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	init();
 }
 
-OptionsDialog::OptionsDialog(const String &domain, String name)
+OptionsDialog::OptionsDialog(const String &domain, const String &name)
 	: Dialog(name), _domain(domain) {
 	init();
 }
@@ -132,7 +132,7 @@ void OptionsDialog::open() {
 
 		if (ConfMan.hasKey("gfx_mode", _domain)) {
 			const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-			String gfxMode = ConfMan.get("gfx_mode", _domain);
+			String gfxMode(ConfMan.get("gfx_mode", _domain));
 			int gfxCount = 1;
 			while (gm->name) {
 				gfxCount++;
@@ -304,7 +304,7 @@ void OptionsDialog::close() {
 				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
 				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
 
-				String soundFont = _soundFont->getLabel();
+				String soundFont(_soundFont->getLabel());
 				if (!soundFont.empty() && (soundFont != "None"))
 					ConfMan.set("soundfont", soundFont, _domain);
 			} else {
@@ -448,7 +448,7 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedLabel->setEnabled(enabled);
 }
 
-void OptionsDialog::addGraphicControls(GuiObject *boss, String prefix) {
+void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
@@ -487,7 +487,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, String prefix) {
 	_enableGraphicSettings = true;
 }
 
-void OptionsDialog::addAudioControls(GuiObject *boss, String prefix) {
+void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// The MIDI mode popup & a label
@@ -503,7 +503,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, String prefix) {
 	_enableAudioSettings = true;
 }
 
-void OptionsDialog::addMIDIControls(GuiObject *boss, String prefix) {
+void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
@@ -522,7 +522,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, String prefix) {
 
 // The function has an extra slider range parameter, since both the launcher and SCUMM engine
 // make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
-void OptionsDialog::addSubtitleControls(GuiObject *boss, String prefix, int maxSliderVal) {
+void OptionsDialog::addSubtitleControls(GuiObject *boss, const String &prefix, int maxSliderVal) {
 
 	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", "Text and Speech:");
 	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle, 0);
@@ -537,7 +537,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, String prefix, int maxS
 	_enableSubtitleSettings = true;
 }
 
-void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
+void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
 
 	// Volume controllers
 	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", "Music volume:");
@@ -703,7 +703,7 @@ void GlobalOptionsDialog::close() {
 		// Savepath
 		ConfMan.set("savepath", _savePath->getLabel(), _domain);
 
-		String extraPath = _extraPath->getLabel();
+		String extraPath(_extraPath->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
 	}

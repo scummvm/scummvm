@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(GuiObject *boss, String name)
+ListWidget::ListWidget(GuiObject *boss, const String &name)
 	: EditableWidget(boss, name), CommandSender(boss) {
 
 	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);

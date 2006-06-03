@@ -60,7 +60,7 @@ protected:
 	int				_labelSpacing;
 
 public:
-	PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth = 0);
+	PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth = 0);
 
 	void changeLabelWidth(uint newWidth) { _labelWidth = newWidth; }
 

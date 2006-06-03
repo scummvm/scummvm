@@ -36,7 +36,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	setEditString(text);
 }
 
-EditTextWidget::EditTextWidget(GuiObject *boss, String name, const String &text)
+EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text)
 	: EditableWidget(boss, name) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;

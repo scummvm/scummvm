@@ -60,7 +60,7 @@ enum {
 #endif
 
 // HACK. FIXME. This doesn't belong here. But otherwise it creates compulation problems
-GuiObject::GuiObject(Common::String name) : _firstWidget(0) {
+GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
 	_name = name;
 	handleScreenChanged();
 }
@@ -103,7 +103,7 @@ NewGui::NewGui() : _needRedraw(false),
 
 #ifndef DISABLE_FANCY_THEMES
 	ConfMan.registerDefault("gui_theme", "default");
-	Common::String style = ConfMan.get("gui_theme");
+	Common::String style(ConfMan.get("gui_theme"));
 	// The default theme for now is the 'modern' theme.
 	if (scumm_stricmp(style.c_str(), "default") == 0)
 		style = "modern";

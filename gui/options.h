@@ -41,7 +41,7 @@ class OptionsDialog : public Dialog {
 	typedef Common::String String;
 public:
 	OptionsDialog(const String &domain, int x, int y, int w, int h);
-	OptionsDialog(const String &domain, String name);
+	OptionsDialog(const String &domain, const String &name);
 
 	void init();
 
@@ -62,13 +62,13 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 
-	void addGraphicControls(GuiObject *boss, String prefix);
-	void addAudioControls(GuiObject *boss, String prefix);
-	void addMIDIControls(GuiObject *boss, String prefix);
-	void addVolumeControls(GuiObject *boss, String prefix);
+	void addGraphicControls(GuiObject *boss, const String &prefix);
+	void addAudioControls(GuiObject *boss, const String &prefix);
+	void addMIDIControls(GuiObject *boss, const String &prefix);
+	void addVolumeControls(GuiObject *boss, const String &prefix);
 	// The default value is the launcher's non-scaled talkspeed value. When SCUMM uses the widget,
 	// it uses its own scale
-	void addSubtitleControls(GuiObject *boss, String prefix, int maxSliderVal = 255);
+	void addSubtitleControls(GuiObject *boss, const String &prefix, int maxSliderVal = 255);
 
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);

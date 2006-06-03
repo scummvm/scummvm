@@ -55,16 +55,16 @@ public:
 	~Eval();
 
 	int eval(const String &input, const String &section, const String &name, int startpos);
-	void setAlias(const String &section, const char *name, const String value);
-	void setVar(const String &section, const char *name, const String value);
+	void setAlias(const String &section, const char *name, const String &value);
+	void setVar(const String &section, const char *name, const String &value);
 
-	void setParent(const String name);
+	void setParent(const String &name);
 
 	void setVar(const char *name, int val) { _vars[name] = val; }
-	void setAlias(const char *name, const String val) { _aliases[name] = val; }
+	void setAlias(const char *name, const String &val) { _aliases[name] = val; }
 
-	int getVar(String s) { return getVar_(s.c_str()); }
-	int getVar(String s, int def) {
+	int getVar(const String &s) { return getVar_(s.c_str()); }
+	int getVar(const String &s, int def) {
 		int val = getVar_(s.c_str());
 		return (val == EVAL_UNDEF_VAR) ? def : val;
 	};

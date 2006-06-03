@@ -51,7 +51,7 @@ protected:
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
-	EditableWidget(GuiObject *boss, String name);
+	EditableWidget(GuiObject *boss, const String &name);
 	virtual ~EditableWidget();
 
 	void init();

@@ -70,7 +70,7 @@ protected:
 	int				_scrollBarWidth;
 
 public:
-	ListWidget(GuiObject *boss, String name);
+	ListWidget(GuiObject *boss, const String &name);
 	virtual ~ListWidget();
 
 	virtual Widget *findWidget(int x, int y);

@@ -41,7 +41,7 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	init();
 }
 
-TabWidget::TabWidget(GuiObject *boss, String name)
+TabWidget::TabWidget(GuiObject *boss, const String &name)
 	: Widget(boss, name) {
 	init();
 }

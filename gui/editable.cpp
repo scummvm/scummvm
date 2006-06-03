@@ -30,7 +30,7 @@ EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, String name)
+EditableWidget::EditableWidget(GuiObject *boss, const String &name)
  : Widget(boss, name) {
 	init();
 }

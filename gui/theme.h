@@ -186,9 +186,9 @@ public:
 		return kTextAlignCenter;
 	}
 
-	void processResSection(Common::ConfigFile &config, String name, bool skipDefs = false, const String prefix = "");
-	void processSingleLine(const String &section, const String prefix, const String name, const String str);
-	void setSpecialAlias(const String alias, const String &name);
+	void processResSection(Common::ConfigFile &config, const String &name, bool skipDefs = false, const String &prefix = "");
+	void processSingleLine(const String &section, const String &prefix, const String &name, const String &str);
+	void setSpecialAlias(const String &alias, const String &name);
 
 	bool isThemeLoadingRequired();
 	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
@@ -288,7 +288,7 @@ private:
 class ThemeNew : public Theme {
 	typedef Common::String String;
 public:
-	ThemeNew(OSystem *system, String stylefile);
+	ThemeNew(OSystem *system, const String &stylefile);
 	virtual ~ThemeNew();
 
 	bool init();
@@ -390,7 +390,7 @@ private:
 	const Graphics::Font *_fonts[kFontStyleMax];
 
 private:
-	void setupFont(String key, String name, kFontStyle style);
+	void setupFont(const String &key, const String &name, kFontStyle style);
 
 public:
 	enum kImageHandles {

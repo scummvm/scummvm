@@ -81,7 +81,7 @@ enum {
  */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, String name, const String &text)
+	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text)
 		: EditTextWidget(boss, name, text) {
 	}
 
@@ -323,15 +323,15 @@ void EditGameDialog::close() {
 		else
 			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
-		String gamePath = _gamePathWidget->getLabel();
+		String gamePath(_gamePathWidget->getLabel());
 		if (!gamePath.empty())
 			ConfMan.set("path", gamePath, _domain);
 
-		String extraPath = _extraPathWidget->getLabel();
+		String extraPath(_extraPathWidget->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
 
-		String savePath = _savePathWidget->getLabel();
+		String savePath(_savePathWidget->getLabel());
 		if (!savePath.empty() && (savePath != "Default"))
 			ConfMan.set("savepath", savePath, _domain);
 
@@ -491,7 +491,7 @@ LauncherDialog::LauncherDialog()
 	updateListing();
 
 	// Restore last selection
-	String last = ConfMan.get(String("lastselectedgame"), ConfigManager::kApplicationDomain);
+	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
 	selectGame(last);
 
 	// En-/disable the buttons depending on the list selection
@@ -522,9 +522,9 @@ void LauncherDialog::close() {
 	// Save last selection
 	const int sel = _list->getSelected();
 	if (sel >= 0)
-		ConfMan.set(String("lastselectedgame"), _domains[sel], ConfigManager::kApplicationDomain);
+		ConfMan.set("lastselectedgame", _domains[sel], ConfigManager::kApplicationDomain);
 	else
-		ConfMan.removeKey(String("lastselectedgame"), ConfigManager::kApplicationDomain);
+		ConfMan.removeKey("lastselectedgame", ConfigManager::kApplicationDomain);
 
 	ConfMan.flushToDisk();
 	Dialog::close();

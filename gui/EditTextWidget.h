@@ -39,7 +39,7 @@ protected:
 
 public:
 	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text);
-	EditTextWidget(GuiObject *boss, String name, const String &text);
+	EditTextWidget(GuiObject *boss, const String &name, const String &text);
 
 	void setEditString(const String &str);
 

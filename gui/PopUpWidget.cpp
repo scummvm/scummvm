@@ -324,7 +324,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		w = _w - 2;
 	}
 
-	Common::String &name = _popUpBoss->_entries[entry].name;
+	Common::String &name(_popUpBoss->_entries[entry].name);
 
 	if (name.size() == 0) {
 		// Draw a separator
@@ -342,7 +342,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth)
+PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
 	handleScreenChanged();
 
@@ -419,7 +419,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label,
 								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, Theme::kTextAlignRight);
 
-	Common::String sel = "";
+	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
 	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled, g_gui.theme()->convertAligment(kTextAlignLeft));

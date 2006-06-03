@@ -302,11 +302,11 @@ int Eval::getVar_(const char *s, bool includeAliases) {
 	return EVAL_UNDEF_VAR;
 }
 
-void Eval::setAlias(const String &section, const char *name, const String value) {
+void Eval::setAlias(const String &section, const char *name, const String &value) {
 	_aliases[name + 4] = value;
 }
 
-void Eval::setVar(const String &section, const char *name, const String value) {
+void Eval::setVar(const String &section, const char *name, const String &value) {
 	_vars[name + 4] = eval(value, section, name, 0);
 }
 

@@ -98,7 +98,7 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 
 #pragma mark -
 
-ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
+ThemeNew::ThemeNew(OSystem *system, const Common::String &stylefile) : Theme(), _system(system), _screen(), _initOk(false),
 _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0), _colors(), _cursor(0), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
@@ -155,7 +155,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 #endif
 	}
 
-	Common::String temp = "";
+	Common::String temp;
 	_configFile.getKey("version", "theme", temp);
 	if (atoi(temp.c_str()) != THEME_VERSION) {
 		// TODO: improve this detection and handle it nicer
@@ -1407,7 +1407,7 @@ void ThemeNew::setupColors() {
 #define FONT_NAME_FIXED_BOLD "newgui_fixed_bold"
 #define FONT_NAME_FIXED_ITALIC "newgui_fixed_italic"
 
-void ThemeNew::setupFont(String key, String name, kFontStyle style) {
+void ThemeNew::setupFont(const String &key, const String &name, kFontStyle style) {
 	if (_configFile.hasKey(key, "extra")) {
 		_fonts[style] = FontMan.getFontByName(name);
 
@@ -1534,7 +1534,7 @@ const Graphics::Font *ThemeNew::loadFont(const char *filename) {
 }
 
 Common::String ThemeNew::genCacheFilename(const char *filename) {
-	Common::String cacheName = filename;
+	Common::String cacheName(filename);
 	for (int i = cacheName.size() - 1; i >= 0; --i) {
 		if (cacheName[i] == '.') {
 			while ((uint)i < cacheName.size() - 1) {

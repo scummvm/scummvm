@@ -43,7 +43,7 @@ protected:
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
-	TabWidget(GuiObject *boss, String name);
+	TabWidget(GuiObject *boss, const String &name);
 	~TabWidget();
 
 	void init();
