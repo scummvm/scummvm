@@ -508,6 +508,7 @@ void KyraEngine::startup() {
 	if (_abortIntroFlag && _skipIntroFlag) {
 		_menuDirectlyToLoad = true;
 		_screen->setMouseCursor(1, 1, _shapes[4]);
+		_screen->showMouse();
 		buttonMenuCallback(0);
 		_menuDirectlyToLoad = false;
 	} else

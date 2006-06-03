@@ -110,7 +110,8 @@ bool Screen::init() {
 	_decodeShapeBufferSize = 0;
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
-	_mouseLockCount = 0;
+	_mouseLockCount = 1;
+	CursorMan.showMouse(false);
 	
 	_bitBlitRects = new Rect[BITBLIT_RECTS];
 	assert(_bitBlitRects);
