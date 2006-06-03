@@ -53,7 +53,11 @@ void AnimationState::setPalette(byte *pal) {
 #else
 
 void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
-	OverlayColor *dst = _overlay + _movieScale * _movieWidth * _movieScale * s->y + _movieScale * s->x;
+	int moviePitch = _movieScale * _movieWidth;
+	int textX = _movieScale * s->x;
+	int textY = _movieScale * (_frameHeight - s->h - 12);
+
+	OverlayColor *dst = _overlay + textY * moviePitch + textX;
 
 	OverlayColor pen = _sys->RGBToColor(255, 255, 255);
 	OverlayColor border = _sys->RGBToColor(0, 0, 0);
@@ -88,12 +92,12 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 		}
 
 		if (_movieScale > 1) {
-			memcpy(dst + _movieScale * _movieWidth, dst, _movieScale * s->w * sizeof(OverlayColor));
+			memcpy(dst + moviePitch, dst, _movieScale * s->w * sizeof(OverlayColor));
 			if (_movieScale > 2)
-				memcpy(dst + 2 * _movieScale * _movieWidth, dst, _movieScale * s->w * sizeof(OverlayColor));
+				memcpy(dst + 2 * moviePitch, dst, _movieScale * s->w * sizeof(OverlayColor));
 		}
 
-		dst += _movieScale * _movieScale * _movieWidth;
+		dst += _movieScale * moviePitch;
 		src += s->w;
 	}
 }
@@ -101,9 +105,6 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 #endif
 
 void AnimationState::clearScreen() {
-	_frameWidth = _movieWidth;
-	_frameHeight = _movieHeight;
-
 #ifdef BACKEND_8BIT
 	memset(_vm->_screen->getScreen(), 0, _movieWidth * _movieHeight);
 #else
@@ -273,6 +274,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 
 	if (!anim->init(filename)) {
 		delete anim;
+		anim = NULL;
 		// Missing Files? Use the old 'Narration Only' hack
 		playDummy(filename, text, leadOut, leadOutLen);
 		return;
@@ -317,6 +319,10 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 			if (textVisible)
 				drawTextObject(anim, text[textCounter]);
 		}
+
+#ifdef BACKEND_8BIT
+		_sys->copyRectToScreen(_vm->_screen->getScreen(), 640, 0, 0, 640, 480);
+#endif
 
 		anim->updateScreen();
 		frameCounter++;
@@ -390,6 +396,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	_vm->_screen->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
 	delete anim;
+	anim = NULL;
 }
 
 /**

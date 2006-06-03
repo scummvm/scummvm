@@ -32,7 +32,7 @@
 namespace Graphics {
 
 BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height)
-	: _movieWidth(width), _movieHeight(height), _snd(snd), _sys(sys) {
+	: _movieWidth(width), _movieHeight(height), _frameWidth(width), _frameHeight(height), _snd(snd), _sys(sys) {
 #ifndef BACKEND_8BIT
 	const int screenW = _sys->getOverlayWidth();
 	const int screenH = _sys->getOverlayHeight();
@@ -661,6 +661,8 @@ void BaseAnimationState::plotYUV3x(int width, int height, byte *const *dat) {
 	}
 }
 
+#endif
+
 void BaseAnimationState::updateScreen() {
 #ifndef BACKEND_8BIT
 	int width = _movieScale * _frameWidth;
@@ -677,7 +679,5 @@ void BaseAnimationState::updateScreen() {
 #endif
 	_sys->updateScreen();
 }
-
-#endif
 
 } // End of namespace Graphics
