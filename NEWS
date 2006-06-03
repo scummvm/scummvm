@@ -37,6 +37,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed a rare MIDI bug that would cause a channel to change volume without
      adjusting it to the master volume.
    - Fixed delay after introduction of Simon the Sorcerer 1 demo (With speech)
+   - Fixed music tempo in DOS version of Simon the Sorcerer 1.
 
  Broken Sword 1:
    - Added support for the --save-slot option.
