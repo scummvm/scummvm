@@ -19,7 +19,7 @@
  * $Id$
  */
 
-#if defined(UNIX) || defined(__DC__)
+#if defined(UNIX)
 
 #include "common/stdafx.h"
 
@@ -31,9 +31,7 @@
 #endif
 #include <sys/param.h>
 #include <sys/stat.h>
-#ifndef __DC__
 #include <dirent.h>
-#endif
 #include <stdio.h>
 #include <unistd.h>
 
@@ -126,19 +124,9 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 	_isDirectory = true;
 
 	if (verify) {
-#ifdef __DC__
-		/*
-		FIXME: Why should I need to add a lot of code
-		just to figure out if a path exists / is a directory here?  
-		We should know what we want it to be, and when open / listDir
-		is called it will become apparent if it isn't.  Just
-		checking for the sake of checking seems bogus to me.
-		*/
-#else
 		struct stat st;
 		_isValid = (0 == stat(_path.c_str(), &st));
 		_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
-#endif
 	}
 }
 
@@ -164,9 +152,7 @@ bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 
 		POSIXFilesystemNode entry(newPath, false);
 
-#ifdef __DC__
-		entry._isDirectory = dp->d_size < 0;
-#elif defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
+#if defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
 		// TODO: d_type is not part of POSIX, so it might not be supported
 		// on some of our targets. For those systems where it isn't supported,
 		// add this #elif case, which tries to use stat() instead.
