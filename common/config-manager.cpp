@@ -214,6 +214,7 @@ void ConfigManager::loadFile(const String &filename) {
 }
 
 void ConfigManager::flushToDisk() {
+#ifndef __DC__
 	FILE *cfg_file;
 
 // TODO
@@ -248,6 +249,7 @@ void ConfigManager::flushToDisk() {
 
 		fclose(cfg_file);
 	}
+#endif // !__DC__
 }
 
 void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &domain) {
