@@ -48,9 +48,11 @@ SCUMMVM.BIN : scummvm.bin
 	scramble $< $@
 
 plugin_dist :
-	find . -name '*.plg' | while read p; do \
+	for p in plugins/*.plg; do \
 	  sh-elf-strip -g -o "`basename \"$$p\" | tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
 
 dist : SCUMMVM.BIN plugins plugin_dist
 
+spotless : distclean
+	$(RM) SCUMMVM.BIN scummvm.bin *.PLG
