@@ -78,7 +78,7 @@ typedef int (*_compare_function)(const void*, const void*);
 
 void				qsort	(void * table_base, UInt32 num_members, UInt32 member_size, _compare_function compare_members);
 long int			strtol	(const char *nptr, char **endptr, int base);
-unsigned longint	strtoul	(const char *nptr, char **endptr,int base);
+unsigned long int	strtoul	(const char *nptr, char **endptr,int base);
 #endif
 
 #ifdef __cplusplus
