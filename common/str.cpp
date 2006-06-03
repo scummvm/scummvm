@@ -34,20 +34,31 @@ const String String::emptyString;
 const char *String::emptyString = "";
 #endif
 
-String::String(const char *str, int len, int capacity)
-: _str(0), _len(0) {
+static int computeCapacity(int len) {
+	// By default, for the capacity we use the nearest multiple of 32
+	// that leaves at least 16 chars of extra space (in case the string
+	// grows a bit).
+	// Finally, we subtract 1 to compensate for the trailing zero byte.
+	len += 16;
+	return (len + 32 - 1) & ~0x1F - 1;
+}
 
-	_refCount = new int(1);
+String::String(const char *str, int len, int capacity)
+: _str(0), _len(0), _refCount(0) {
+
+	incRefCount();
 
 	if (str && *str && len != 0) {
 		if (len > 0)
-			_capacity = _len = len;
+			_len = len;
 		else
-			_capacity = _len = strlen(str);
+			_len = strlen(str);
 
-		_capacity = MAX(capacity, _capacity);
+		_capacity = computeCapacity(_len);
+		if (_capacity < capacity)
+			_capacity = capacity;
 
-		_str = (char *)calloc(1, _capacity+1);
+		_str = (char *)malloc(_capacity+1);
 		memcpy(_str, str, _len);
 		_str[_len] = 0;
 	} else {
@@ -57,21 +68,25 @@ String::String(const char *str, int len, int capacity)
 }
 
 String::String(const String &str)
- : _str(0), _len(0) {
+ : _str(str._str), _len(str._len), _refCount(str._refCount), _capacity(str._capacity) {
 
-	++(*str._refCount);
-
-	_refCount = str._refCount;
-	_capacity = str._capacity;
-	_len = str._len;
-	_str = str._str;
+	incRefCount();
 }
 
 String::~String() {
 	decRefCount();
 }
 
+void String::incRefCount() const {
+	if (_refCount == 0) {
+		_refCount = new int(1);
+	} else {
+		++(*_refCount);
+	}
+}
+
 void String::decRefCount() {
+	assert(_refCount);
 	--(*_refCount);
 	if (*_refCount <= 0) {
 		delete _refCount;
@@ -88,8 +103,9 @@ String& String::operator  =(const char *str) {
 		memcpy(_str, str, _len + 1);
 	} else if (_len > 0) {
 		decRefCount();
+		_refCount = 0;
+		incRefCount();
 
-		_refCount = new int(1);
 		_capacity = 0;
 		_len = 0;
 		_str = 0;
@@ -98,8 +114,7 @@ String& String::operator  =(const char *str) {
 }
 
 String &String::operator  =(const String &str) {
-	++(*str._refCount);
-
+	str.incRefCount();
 	decRefCount();
 
 	_refCount = str._refCount;
@@ -197,8 +212,9 @@ void String::deleteChar(int p) {
 void String::clear() {
 	if (_capacity) {
 		decRefCount();
+		_refCount = 0;
+		incRefCount();
 
-		_refCount = new int(1);
 		_capacity = 0;
 		_len = 0;
 		_str = 0;
@@ -241,8 +257,13 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 	if (new_len <= _capacity && *_refCount == 1)
 		return;
 
-	int newCapacity = (new_len <= _capacity) ? _capacity : new_len + 32;
-	char *newStr = (char *)calloc(1, newCapacity+1);
+	int newCapacity = computeCapacity(new_len);
+
+	// FIXME: We never shrink the capacity here. Is that really a good idea?
+	if (newCapacity < _capacity)
+		newCapacity = _capacity;
+
+	char *newStr = (char *)malloc(newCapacity+1);
 
 	if (keep_old && _str)
 		memcpy(newStr, _str, _len + 1);
@@ -250,8 +271,9 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 		_len = 0;
 
 	decRefCount();
+	_refCount = 0;
+	incRefCount();
 
-	_refCount = new int(1);
 	_capacity = newCapacity;
 	_str = newStr;
 }

@@ -32,10 +32,10 @@ namespace Common {
 
 class String {
 protected:
-	char	*_str;
-	int 	_len;
-	int 	*_refCount;
-	int 	_capacity;
+	char		*_str;
+	int 		_len;
+	mutable int *_refCount;
+	int 		_capacity;
 
 public:
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
@@ -44,7 +44,7 @@ public:
 	static const char *emptyString;
 #endif
 
-	String() : _str(0), _len(0), _capacity(0) { _refCount = new int(1); }
+	String() : _str(0), _len(0), _refCount(0), _capacity(0) { incRefCount(); }
 	String(const char *str, int len = -1, int capacity = 16);
 	String(const String &str);
 	virtual ~String();
@@ -114,6 +114,7 @@ public:
 
 protected:
 	void ensureCapacity(int new_len, bool keep_old);
+	void incRefCount() const;
 	void decRefCount();
 };
 
