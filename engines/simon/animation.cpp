@@ -73,7 +73,7 @@ MoviePlayer::~MoviePlayer() {
 }
 
 bool MoviePlayer::load(const char *filename) {
-	char filename2[100];
+	char videoName[20];
 	uint32 tag;
 	int32 frameRate;
 	uint i;
@@ -83,16 +83,28 @@ bool MoviePlayer::load(const char *filename) {
 	memcpy(baseName, filename, baseLen);
 
 	// Change file extension to dxa
-	strcpy(filename2, filename);
-	filename2[baseLen + 1] = 'd';
-	filename2[baseLen + 2] = 'x';
-	filename2[baseLen + 3] = 'a';
+	sprintf(videoName, "%s.dxa", baseName);
 	
-	if (_fd.open(filename2) == false) {
-		warning("Failed to load video file %s", filename2);
-		return false;
-	} 
-	debug(0, "Playing video %s", filename2);
+	if (_fd.open(videoName) == false) {
+		// Check short filename to work around
+		// bug in a German Windows 2CD version.
+		if (baseLen >= 8) {
+			char shortName[20];
+			memset(shortName, 0, sizeof(shortName));
+			memcpy(shortName, filename, 6);
+			sprintf(shortName, "%s~1.dxa", shortName);
+	
+			if (_fd.open(shortName) == false) {
+				error("Failed to load video file %s or %s", videoName, shortName);
+			} else {
+				debug(0, "Playing video %s", shortName);
+			}
+		} else {
+			error("Failed to load video file %s", videoName);
+		}
+	} else {
+		debug(0, "Playing video %s", videoName);
+	}
 
 	CursorMan.showMouse(false);
 
@@ -100,7 +112,7 @@ bool MoviePlayer::load(const char *filename) {
 		_vm->_language != Common::EN_ANY) {
 		_sequenceNum = 0;
 		for (i = 0; i < 90; i++) {
-			if (!scumm_stricmp(filename2, _sequenceList[i]))
+			if (!scumm_stricmp(videoName, _sequenceList[i]))
 				_sequenceNum = i;
 		}
 	}
@@ -155,7 +167,7 @@ void MoviePlayer::playOmniTV() {
 }
 
 void MoviePlayer::play() {
-	if (_vm->getBitFlag(40)) {
+	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getBitFlag(40)) {
 		playOmniTV();
 		return;
 	}
