@@ -253,7 +253,6 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 
 	_system->warpMouse(300, 180);
 	CursorMan.replaceCursor(cursorImage, 10, 13, 1, 1, C);
-	_screen->hideMouse();	// HACK to get _mouseLockCount to 1.
 	_screen->showMouse();
 
 #undef A
