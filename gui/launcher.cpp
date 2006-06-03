@@ -779,6 +779,7 @@ void LauncherDialog::handleScreenChanged() {
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
 		if (ver) {
+			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
 			ver->setLabel(gScummVMVersionDate);
 		}
 
@@ -791,6 +792,7 @@ void LauncherDialog::handleScreenChanged() {
 	} else {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
 		if (ver) {
+			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
 			ver->setLabel(gScummVMFullVersion);
 		}
 
