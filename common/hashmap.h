@@ -58,8 +58,6 @@
 
 namespace Common { 
 
-typedef Common::String String;
-
 uint hashit(const char *str);
 uint hashit_lower(const char *str);	// Generate a hash based on the lowercase version of the string
 
