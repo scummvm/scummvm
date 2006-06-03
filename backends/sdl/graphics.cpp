@@ -310,6 +310,9 @@ void OSystem_SDL::loadGFXMode() {
 	_forceFull = true;
 	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
+	int hwW, hwH;
+
+#ifndef __MAEMO__
 	_overlayWidth = _screenWidth * _scaleFactor;
 	_overlayHeight = _screenHeight * _scaleFactor;
 
@@ -318,6 +321,13 @@ void OSystem_SDL::loadGFXMode() {
 
 	if (_adjustAspectRatio)
 		_overlayHeight = real2Aspect(_overlayHeight);
+
+	hwW = _screenWidth * _scaleFactor;
+	hwH = effectiveScreenHeight();
+#else
+	hwW = _overlayWidth;
+	hwH = _overlayHeight;
+#endif
 
 	//
 	// Create the surface that contains the 8 bit game data
@@ -330,7 +340,7 @@ void OSystem_SDL::loadGFXMode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, effectiveScreenHeight(), 16,
+	_hwscreen = SDL_SetVideoMode(hwW, hwH, 16,
 		_fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (_hwscreen == NULL) {
@@ -703,7 +713,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 			return;
 		}
 
-#if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
+#if (defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)) || defined(__MAEMO__)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// before SDL 1.2.6 it always returned -1 (which would indicate a
 		// successful switch). So we simply don't call it at all and use

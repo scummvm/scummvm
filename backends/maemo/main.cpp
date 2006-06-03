@@ -28,7 +28,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_syswm.h>
 
-#include "backends/sdl/sdl-common.h"
+#include "backends/maemo/maemo-sdl.h"
 #include "base/main.h"
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 
 	set_doubling(0);
 
-	g_system = new OSystem_SDL();
+	g_system = new OSystem_MAEMO();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
