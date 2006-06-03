@@ -202,7 +202,7 @@ static int findGames(Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
-  dirs[0].node = FilesystemNode();
+  dirs[0].node = FilesystemNode("");
   while(curr_game < max && curr_dir < num_dirs) {
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.path().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
