@@ -67,7 +67,7 @@ void _dprintf(const char *s, ...) {
 		//gp_fillRect(frameBuffer1, 0, (243 - (DEBUG_MAX * 8) - 4) + 8 * deba, 320, 8, 0);
 		gp_textOut(frameBuffer1, 0, (240 - (DEBUG_MAX * 8) - 4) + 8 * deba, debline[deb], 0xFFFF);
 	}
-		
+
 //	gp_delay(100);
 }
 
@@ -328,33 +328,41 @@ static char usedMemStr[16];
 int gUsedMem = 1024 * 1024;
 
 //#define CLEAN_MEMORY_WITH_0xE7
-//#define CHECK_FREE_MEMORY
+//#define CHECK_USED_MEMORY
+#define CHECK_NEW_TIME
 
 void *operator new(size_t size) {
+#if defined(CHECK_NEW_TIME)
+	static int ftick;
+	ftick = GpTickCountGet();
+#endif
 //	printf("BP:operator new(%d)", size);
-	void *ptr = malloc(size);
+	void *ptr = gp_malloc(size);
 
 #if defined(CLEAN_MEMORY_WITH_0xE7)
 	if(ptr != NULL) {
-		memset(ptr, 0xE7, size);
+		gp_memset(ptr, 0xE7, size);
 	}
 #endif
-#if defined(CHECK_FREE_MEMORY)
+#if defined(CHECK_USED_MEMORY)
 	// Check free memory.
 	gUsedMem = ((int)(ptr) + size) - 0xc000000;
 
 	sprintf(usedMemStr, "%8d", gUsedMem);
-	//TODO: draw softkeyboard
 	gp_fillRect(frameBuffer1, 0, 0, 64, 12, 0);
 	gp_textOut(frameBuffer1, 0, 0, usedMemStr, 0xfffff);
 #endif
-
+#if defined(CHECK_NEW_TIME)
+	sprintf(usedMemStr, "%2d", GpTickCountGet() - ftick);
+	gp_fillRect(frameBuffer1, 72, 0, 24, 12, 0);
+	gp_textOut(frameBuffer1, 72, 0, usedMemStr, 0xfffff);
+#endif
 	return ptr;
 }
 
 void operator delete(void *ptr) {
 //	printf("operator delete(%x)", ptr);
-	free(ptr);
+	gp_free(ptr);
 }
 
 ////////////////////
@@ -400,7 +408,7 @@ char *gp_strdup(const char *str) {
         if (!str)
                 return NULL;
 
-        if (memory = (char *)malloc(strlen(str) + 1))
+        if (memory = (char *)gp_malloc(strlen(str) + 1))
                 return gp_strcpy(memory, str);
 
         return NULL;

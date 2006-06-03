@@ -66,9 +66,10 @@ void GpMain(void *arg) {
 	gp_setCpuSpeed(g_vars.cpuSpeed);
 
 	// FOR DEBUG PURPOSE!
-	int argc = 1;
+	//int argc = 4;
 	//char *argv[] = { "scummvm", "-enull", "-pgp:\\game\\dott\\", "tentacle" };
-	char *argv[] = { "scummvm", "-d9" };
+	//int argc = 2;
+	//char *argv[] = { "scummvm", "-d5" };
 
 	extern OSystem *OSystem_GP32_create();
 	g_system = OSystem_GP32_create();
