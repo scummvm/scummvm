@@ -289,14 +289,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("m", "Lower right item");
 			ADD_BIND("o", "Scroll list up");
 			ADD_BIND("l", "Scroll list down");
-			if (gameId == GID_ZAK) {
-				ADD_LINE;
-				ADD_TEXT("Switching characters:");
-				ADD_BIND("F1", "Zak");
-				ADD_BIND("F2", "Annie");
-				ADD_BIND("F3", "Melissa");
-				ADD_BIND("F4", "Leslie");
-			}
 		}
 		break;
 	case 5:
