@@ -421,15 +421,14 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 
 		if (var == VAR_CHARINC) {
 			if (ConfMan.hasKey("talkspeed")) {
-				_defaultTalkDelay = getTalkspeed();
-				VAR(VAR_CHARINC) = _defaultTalkDelay;
+				value = getTalkspeed();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkspeed(_defaultTalkDelay);
+				setTalkspeed(value);
 			}
-		} else {
-			_scummVars[var] = value;
 		}
+
+		_scummVars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
