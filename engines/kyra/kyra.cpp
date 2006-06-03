@@ -664,6 +664,10 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		if (amount > 0 && !_skipFlag && !_quitFlag) {
 			_system->delayMillis((amount > 10) ? 10 : amount);
 		}
+
+		if (_skipFlag) {
+			_sound->voiceStop();
+		}
 	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
 	
 }
