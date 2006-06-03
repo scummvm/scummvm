@@ -381,6 +381,9 @@ Int32 printf(const Char *format, ...) { // DONE
 	return numBytesWritten;
 }
 
+/* needed with 68k mode only, already defined in ARM MSL */
+#ifdef PALMOS_68K
+
 Int32 sprintf(Char* s, const Char* formatStr, ...) {
 	Int16 count;
 	va_list va;
@@ -571,12 +574,12 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 				mod++;
 
 			// prepare new format
-#if !defined(PALMOS_ARM)
+//#if !defined(PALMOS_ARM)
 			if (*mod == 'c') {
 				StrCopy(tmp, "`c`%c%c");
 
 			} else
-#endif
+//#endif
 			if (*mod == 'p') {
 				StrCopy(tmp, "%08lX");			// %x = %08X in palmos
 
@@ -635,11 +638,13 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 	
 	// Copy result in a temp buffer to process last formats
 	StrVPrintF(result, format, argParam);
-#if !defined(PALMOS_ARM)
+//#if !defined(PALMOS_ARM)
 	StrProcC_(result, 256);
-#endif
+//#endif
 	StrProcXO(result, 256, tmp);
 	StrCopy(s, result);
 	
 	return StrLen(s);
 }
+
+#endif

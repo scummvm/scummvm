@@ -27,21 +27,7 @@
 #define memNewChunkFlagAllowLarge	0x1000 
 SysAppInfoPtr SysGetAppInfo(SysAppInfoPtr *uiAppPP, SysAppInfoPtr *actionCodeAppPP) SYS_TRAP(sysTrapSysGetAppInfo);
 
-void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *)) {
-#ifdef PALMOS_68K
-	Int32 position;
-	if (SysBinarySearch(base, nmemb, size, (SearchFuncPtr)compar, key, 0, &position, true))
-		return (void *)((UInt32)base + size * position);
-#else
-	int i;
-	for (i = 0; i < nmemb; i++) 
-		if (compar(key, (void*)((UInt32)base + size * i)) == 0)
-			return (void*)((UInt32)base + size * i);
-#endif
-
-	return NULL;
-}
-
+#ifdef PALMOS68K
 long strtol(const char *s, char **endptr, int base) {
 	// WARNING : only base = 10 supported
 	long val = StrAToI(s);
@@ -56,6 +42,7 @@ long strtol(const char *s, char **endptr, int base) {
 
 	return val;
 }
+#endif
 
 MemPtr __malloc(UInt32 size) {
 	MemPtr newP = NULL;

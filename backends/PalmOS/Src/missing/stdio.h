@@ -32,7 +32,8 @@
 extern "C" {
 #endif
 
-typedef void (*LedProc)(Boolean show);
+typedef void	(*LedProc)(Boolean show);
+typedef UInt32	size_t;
 
 typedef struct {
 	FileRef fileRef;
@@ -41,56 +42,59 @@ typedef struct {
 	UInt16 mode, err;
 } FILE;
 
-extern FILE	gStdioOutput;
-typedef UInt32 size_t;
-
-#ifdef stdin
 #undef stdin
 #undef stdout
 #undef stderr
-#endif
-
-#ifdef SEEK_SET
-#undef SEEK_SET
-#undef SEEK_CUR
-#undef SEEK_END
-#endif
 
 #define stdin		0
 #define stdout		(&gStdioOutput)
 #define stderr		(&gStdioOutput)
 
-#define clearerr(a)
-#define fflush(a)
-#define vsnprintf(a,b,c,d)	vsprintf(a,c,d)
-#define getc(a)				fgetc(a)
+#undef SEEK_SET
+#undef SEEK_CUR
+#undef SEEK_END
 
 #define	SEEK_SET			vfsOriginBeginning 
 #define	SEEK_CUR			vfsOriginCurrent  
 #define	SEEK_END			vfsOriginEnd
 
-
-UInt16		fclose	(FILE *stream);
-UInt16		feof	(FILE *stream);
-UInt16		ferror	(FILE *stream);
-Char *		fgets	(Char *s, UInt32 n, FILE *stream);
-Int16		fgetc	(FILE *stream);
-FILE *		fopen	(const Char *filename, const Char *type);
-UInt32		fread	(void *ptr, UInt32 size, UInt32 nitems, FILE *stream);
-UInt32		fwrite	(const void *ptr, UInt32 size, UInt32 nitems, FILE *stream);
-Int16		fseek	(FILE *stream, Int32 offset, Int32 whence);
-Int32		ftell	(FILE *stream);
-
-Int32	fprintf	(FILE *stream, const Char *formatStr, ...);
-Int32	printf	(const Char* formatStr, ...);
-Int32	sprintf	(Char* s, const Char* formatStr, ...);
-Int32	snprintf(Char* s, UInt32 len, const Char* formatStr, ...);
-Int32	vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam);
+extern FILE	gStdioOutput;
 
 void	StdioInit			(UInt16 volRefNum, const Char *output);
 void	StdioSetLedProc		(LedProc ledProc);
 void	StdioSetCacheSize	(UInt32 s);
 void	StdioRelease		();
+
+/* missing functions in 68k MSL (some are defined in ARM) */
+#define		clearerr(a)
+#define		fflush(a)
+#define		getc(a)				fgetc(a)
+#define		vsnprintf(a,b,c,d)	vsprintf(a,c,d)
+
+UInt16		 fclose	(FILE *stream);
+UInt16		 feof	(FILE *stream);
+UInt16		 ferror	(FILE *stream);
+Char		*fgets	(Char *s, UInt32 n, FILE *stream);
+Int16		 fgetc	(FILE *stream);
+FILE		*fopen	(const Char *filename, const Char *type);
+UInt32		 fread	(void *ptr, UInt32 size, UInt32 nitems, FILE *stream);
+UInt32		 fwrite	(const void *ptr, UInt32 size, UInt32 nitems, FILE *stream);
+Int16		 fseek	(FILE *stream, Int32 offset, Int32 whence);
+Int32		 ftell	(FILE *stream);
+
+Int32		 fprintf	(FILE *stream, const Char *formatStr, ...);
+Int32		 printf		(const Char* formatStr, ...);
+Int32		 sprintf	(Char* s, const Char* formatStr, ...);
+Int32		 snprintf	(Char* s, UInt32 len, const Char* formatStr, ...);
+Int32		 vsprintf	(Char* s, const Char* formatStr, _Palm_va_list argParam);
+
+/* ARM MSL only */
+#ifdef PALMOS_ARM
+#undef vsnprintf
+
+int			 vsnprintf	(char *str, size_t size, const char *format, va_list ap); 
+int			 sscanf		( char * buffer, const char * format, ...); 
+#endif
 
 #ifdef __cplusplus
 }

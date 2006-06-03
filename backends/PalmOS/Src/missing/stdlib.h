@@ -35,6 +35,7 @@
 extern "C" {
 #endif
 
+/* malloc stuff */
 #if defined(COMPILE_ZODIAC)
 #	define malloc	MemPtrNew
 #elif defined(COMPILE_OS5) && defined(PALMOS_ARM)
@@ -43,33 +44,42 @@ extern "C" {
 #	define malloc	MemGluePtrNew
 #endif
 
+/* custom exit (true exit !) */
 extern ErrJumpBuf stdlib_errJumpBuf;
-
 #define DO_EXIT( code ) \
 	if (ErrSetJump(stdlib_errJumpBuf) == 0) { code }
-	
+
+/* mapped to system functions */	
 #define atoi				StrAToI
 #define atol				StrAToI
 #define abs(a)				((a) < 0 ? -(a) : (a))
-
-#ifdef PALMOS_68K
-#	define qsort(a,b,c,d)		SysQSort((a), (b), (c), (CmpFuncPtr)(&d), 0);
-#else
-	typedef int (*_compare_function)(const void*, const void*);
-	void qsort(void * table_base, UInt32 num_members, UInt32 member_size, _compare_function compare_members);
-#endif
-
+#define qsort(a,b,c,d)		SysQSort((a), (b), (c), (CmpFuncPtr)(&d), 0);
 #define rand()				SysRandom(0)
 #define abort()
 #define strtoul(a,b,c)		((unsigned long)strtol(a,b,c))
 
-void	*bsearch	(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *));
 MemPtr	__malloc	(UInt32);
 MemPtr	 calloc		(UInt32 nelem, UInt32 elsize);
 void	 exit		(Int16 status);
 Err		 free		(MemPtr memP);
 MemPtr	 realloc	(MemPtr oldP, UInt32 size);
 long	 strtol		(const char *s, char **endptr, int base);
+
+/* already defined in MSL */
+void	*bsearch	(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *));
+
+/* ARM MSL only */
+#ifdef PALMOS_ARM
+#undef qsort
+#undef strtol
+#undef strtoul
+
+typedef int (*_compare_function)(const void*, const void*);
+
+void				qsort	(void * table_base, UInt32 num_members, UInt32 member_size, _compare_function compare_members);
+long int			strtol	(const char *nptr, char **endptr, int base);
+unsigned longint	strtoul	(const char *nptr, char **endptr,int base);
+#endif
 
 #ifdef __cplusplus
 }

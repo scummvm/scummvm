@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef STRING_H
-#define STRING_H
+#ifndef PALM_STRING_H
+#define PALM_STRING_H
 
 #include "palmversion.h"
 
@@ -31,6 +31,7 @@
 extern "C" {
 #endif
 
+/* mapped to system functions */
 #define memcmp			MemCmp
 #define memcpy			MemMove
 #define memmove			MemMove
@@ -47,15 +48,16 @@ extern "C" {
 #define strncmp			StrNCompare
 #define strstr			StrStr
 
-
+/* missing functions in 68k MSL */
 void 	*memchr		(const void *s, int c, UInt32 n);
+Char 	*strdup		(const Char *strSource);
+
+/* already defined in MSL */
 Char 	*strtok		(Char *str, const Char *sep);
 Char 	*strrchr	(const Char *s, int c);
-Char 	*strdup		(const Char *strSource);
 Char 	*strpbrk	(const Char *s1, const Char *s2);
-UInt32	 strspn		(const char *s1, const char *s2);
-
-#define StrTok			strtok
+UInt32	 strspn		(const Char *s1, const Char *s2);
+UInt32	 strcspn	(const Char *s1, const Char *s2);
 
 #ifdef __cplusplus
 }
