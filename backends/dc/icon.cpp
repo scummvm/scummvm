@@ -143,7 +143,7 @@ bool Icon::load_image2(const void *data, int len)
   if(len < 40)
     return false;
   memcpy(&hdr, data, 40);
-  if(hdr.size != 40 || hdr.sizeimg<=0 || hdr.w<0 || hdr.h<0 ||
+  if(hdr.size != 40 || /* hdr.sizeimg<=0 || */ hdr.w<0 || hdr.h<0 ||
      hdr.bitcnt<0 || hdr.used<0)
     return false;
   if(!hdr.used)
