@@ -1504,7 +1504,28 @@ int KyraEngine::cmd_setNoDrawShapesFlag(ScriptState *script) {
 }
 
 int KyraEngine::cmd_fadeEntirePalette(ScriptState *script) {
-	warning("STUB: cmd_fadeEntirePalette");
+	debugC(3, kDebugLevelScriptFuncs, "cmd_fadeEntirePalette(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	int cmd = stackPos(0);
+	uint8 *fadePal = 0;
+	if (cmd == 0) {
+		fadePal = _screen->getPalette(2);
+		uint8 *screenPal = _screen->getPalette(0);
+		uint8 *backUpPal = _screen->getPalette(3);
+		
+		memcpy(backUpPal, screenPal, sizeof(uint8)*768);
+		memset(fadePal, 0, sizeof(uint8)*768);
+	} else if (cmd == 1) {
+		//fadePal = _screen->getPalette(3);
+		warning("unimplemented cmd_fadeEntirePalette function");
+		return 0;
+	} else if (cmd == 2) {
+		// HACK
+		uint8 *clearPal = _screen->getPalette(0);
+		fadePal = _screen->getPalette(1);		
+		memset(clearPal, 0, sizeof(uint8)*768);
+	}
+	
+	_screen->fadePalette(fadePal, stackPos(1));
 	return 0;
 }
 

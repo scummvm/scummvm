@@ -49,7 +49,7 @@ Screen::~Screen() {
 	free(_screenPalette);
 	free(_decodeShapeBuffer);
 	free(_animBlockPtr);
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
 		free(_palettes[i]);
 	}
 	delete [] _bitBlitRects;
@@ -92,7 +92,7 @@ bool Screen::init() {
 	if (_screenPalette) {
 		memset(_screenPalette, 0, 768);
 	}
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
 		_palettes[i] = (uint8 *)malloc(768);
 		if (_palettes[i]) {
 			memset(_palettes[i], 0, 768);
@@ -1928,7 +1928,7 @@ void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 
 uint8 *Screen::getPalette(int num) {
 	debugC(9, kDebugLevelScreen, "Screen::getPalette(%d)", num);
-	assert(num >= 0 && num < 4);
+	assert(num >= 0 && num < ARRAYSIZE(_palettes)+1);
 	if (num == 0) {
 		return _screenPalette;
 	}

@@ -460,8 +460,6 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	_screen->loadBitmap(fileNameBuffer, 3, 3, 0);
 	_sprites->loadSceneShapes();
 	_exitListPtr = 0;
-
-	_screen->setScreenPalette(_screen->_currentPalette);
 	
 	_scaleMode = 1;	
 	for (int i = 0; i < 145; ++i) {
