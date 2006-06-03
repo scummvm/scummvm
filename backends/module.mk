@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	fs/morphos/abox-fs.o \
 	fs/windows/windows-fs.o \
 	fs/amigaos4/amigaos4-fs.o \
+	fs/dc/dc-fs.o \
 	midi/alsa.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
@@ -21,6 +22,7 @@ MODULE_DIRS += \
 	backends/fs/morphos \
 	backends/fs/windows \
 	backends/fs/amigaos4 \
+	backends/fs/dc \
 	backends/midi
 
 # Include common rules 
