@@ -90,7 +90,7 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
 
 void OSystem_SDL_Symbian::initBackend() {
 	ConfMan.setBool("FM_high_quality", false);
-#ifndef S60 // S60 has low quality as default
+#if !defined(S60) || defined(S60V3) // S60 has low quality as default
 	ConfMan.setBool("FM_medium_quality", true);
 #else
 	ConfMan.setBool("FM_medium_quality", false);
