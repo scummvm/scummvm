@@ -6,6 +6,7 @@ For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://www.scummvm.org/
 
+
 Table of Contents:
 ------------------
 1.0) About
@@ -40,11 +41,12 @@ Table of Contents:
  * 7.3 MT-32 emulation
  * 7.4 MIDI emulation
  * 7.5 Native MIDI support
- * 7.6 UNIX native & ALSA sequencer support
- * 7.7 Using compressed audiofiles (MP3, Ogg Vorbis, Flac)
+ * 7.6 UNIX native and ALSA sequencer support
+ * 7.7 Using compressed audio files (MP3, Ogg Vorbis, Flac)
  * 7.8 Output sample rate
 8.0) Configuration Files
 9.0) Compiling
+
 
 1.0) About:
 ---- ------
@@ -55,9 +57,9 @@ LucasArts games such as Monkey Island and numerous Humongous Entertainment
 games.
 
 ScummVM also contains interpreters for several non-SCUMM games. Currently
-these are Beneath a Steel Sky, Broken Sword 1 & 2, Flight of the Amazon Queen,
-Gobliiins, Inherit the Earth: Quest for the Orb, Simon the Sorcerer 1 & 2,
-The Feeble Files and The Legend of Kyrandia.
+these are Beneath a Steel Sky, Broken Sword 1 and 2, Flight of the
+Amazon Queen, Gobliiins, Inherit the Earth: Quest for the Orb,
+Simon the Sorcerer 1 and 2, The Feeble Files and The Legend of Kyrandia.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -67,6 +69,7 @@ If you enjoy ScummVM feel free to donate using the PayPal button on the
 ScummVM homepage. This will help us buy utilities needed to develop ScummVM
 easier and quicker. If you cannot donate, help and contribute a patch!
 
+
 2.0) Contacting:
 ---- ----------
 The easiest way to contact the ScummVM team is by submitting bug reports or
@@ -75,13 +78,16 @@ mailing list, or chat with us on IRC (#scummvm on irc.freenode.net)
 Please do not ask us to support an unsupported game -- read the FAQ on our
 web site first.
 
+
 2.1) Reporting Bugs:
 ---- ---------------
 To report a bug, please create a SourceForge account and follow the bugs
 link from our homepage. Please make sure the bug is reproducible, and
-still occurs in the latest daily build/current SVN version. Also check
-the known bugs list (below) and compatibility listing for that game, to
-ensure the issue is not already known.
+still occurs in the latest SVN/Daily build version. Also check the known
+problems list (below) and the compatibility list on our website for that
+game, to ensure the issue is not already known:
+
+  http://www.scummvm.org/compatibility_stable.php
 
 Also do not report bugs on games that are not listed as being completable
 in the 'Supported Games' section, or compatibility list. We -know- those
@@ -93,16 +99,17 @@ Please include the following information:
         - Language of game (English, German, ...)
         - Version of game (talkie, floppy, ...)
         - Platform and Compiler (Win32, Linux, FreeBSD, ...)
-        - Attach a save game if possible
+        - Attach a savegame if possible
         - If this bug only occurred recently, please note the last
           version without the bug, and the first version including
           the bug. That way we can fix it quicker by looking at the
           changes made.
 
+
 3.0) Supported Games:
 ---- ----------------
 At the moment the following games have been reported to work, and should
-be playable to the end.
+be playable to the end:
 
 SCUMM Games by LucasArts:
      Maniac Mansion                              [maniac]
@@ -181,14 +188,15 @@ compatibility chart.
      Big Thinkers First Grade                    [thinker1]
      SPY Fox 3: Operation Ozone                  [spyozon]
 
-The following games are SCUMM engine, but NOT supported by ScummVM (yet).
+The following games are SCUMM engine, but NOT supported by ScummVM (yet):
 
      Other Humongous Entertainment games
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
-file a bug report (instructions on submitting bug reports are below) if you
+file a bug report (instructions on submitting bug reports are above) if you
 encounter such a bug in a 'supported' game.
+
 
 3.1) Copy Protection:
 ---- ----------------
@@ -218,25 +226,28 @@ Inherit the Earth: Quest for the Orb (Floppy version) bypassed with kind
 permission from Wyrmkeep Entertainment, since it was bypassed in all CD
 releases of the game.
 
+
 3.2) Commodore64 games notes
 ---- -----------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
-playable. Either use extract_mm_c64 (but then game will not be autodetected)
-or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
-respectively. If you add the game manually, make sure that platform is set to
+playable. Either use extract_mm_c64 from the tools package (but then the
+game will not be autodetected by ScummVM) or name the D64 disks as
+"maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64" respectively.
+If you add the game manually, make sure that the platform is set to
 Commodore64.
+
 
 3.3) Maniac Mansion NES notes
 ---- ------------------------
-Supported versions are English USA (U), French (F), German (G), Swedish (SW)
-and European (E).
+Supported versions are English GB (E), French (F), German (G), Swedish (SW)
+and English US (U).
 ScummVM requires just the PRG section to run and not the whole ROM.
 
 In order to get the game working, you will have to strip out the first
 16 bytes from the ROM you are trying to work with. Any hex editor will work
 as long as you are able to copy/paste.  After you open the ROM with the
-hex editor, copy everything from second row (17th byte) to the end. After
-you do this, paste it to a new hex file. Name the new file
+hex editor, copy everything from the second row (17th byte) to the end.
+After you do this, paste it to a new hex file. Name the new file
 "Maniac Mansion (XX).prg" while XX stands for the version you are working
 with (E, F, G, SW, or U).  The final size should be exactly 262144 bytes.
 
@@ -246,20 +257,22 @@ Most common mistakes which prevents the game from running:
 
   o Bad file
   o ROM extracted with the 0.7.0 tools
-  o You try to feed ScummVM with the FULL rom and not just the PRG section.
+  o You try to feed ScummVM with the FULL ROM and not just the PRG section.
 
-Also it is possible to extract the separate LFL files from the PRG section.
-Use the extract_mm_nes utility from the tools package.
+It is also possible to extract the separate LFL files from the PRG section.
+To do so use the extract_mm_nes utility from the tools package.
+
 
 3.4) Beneath a Steel Sky notes
 ---- -------------------------
-As of ScummVM 0.8.0 you need the additional 'SKY.CPT' file to run Beneath a
-Steel Sky.
+Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to run
+Beneath a Steel Sky.
 
 This file is available on the 'Compatibility' page of the ScummVM
 website, you can place it in either the directory containing the other
-game datafiles (SKY.DNR, SKY.DSK), in your extrapath, or in the directory
+game data files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory
 where your ScummVM executable resides.
+
 
 3.5) Broken Sword notes
 ---- ------------------
@@ -267,36 +280,41 @@ Broken Sword 1 and 2 both come with in-game cutscenes compressed using
 RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
 the older legacy versions of this format to us, and have requested we not
 reverse engineer it, Revolution Software has kindly allowed us to provide
-re-encoded Broken Sword cutscenes for download on our website.
+re-encoded Broken Sword cutscenes for download on our website:
+
+  http://www.scummvm.org/downloads.php
 
 These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
 Viewing these cutscenes thus requires a version of ScummVM compiled
 with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
 
 The cutscenes should be placed in the main game data directory. Note that
-currently this requires either copying the game to harddisk or reburning
+currently this requires either copying the game to hard disk or reburning
 customised versions of the game CDs.
+
 
 3.6) Flight of the Amazon Queen notes
 ---- --------------------------------
 In order to use a non-freeware version of Flight of the Amazon Queen (from
 original CD), you will need to place the 'queen.tbl' file (available from the
 Compatibility page on our website) in either the directory containing the
-'queen.1' game datafile, in your extrapath, or in the directory where your
+'queen.1' game data file, in your extrapath, or in the directory where your
 ScummVM executable resides.
 
-Alternatively, you can use the 'compress_queen' tool from the Tools module to
-'rebuild' your FOTAQ datafile to include the table for that specific version,
+Alternatively, you can use the 'compress_queen' tool from the tools package to
+'rebuild' your FOTAQ data file to include the table for that specific version,
 and thus removing the run-time dependency on the 'queen.tbl' file.
 This tool also allows you to compress the speech and sound effects with MP3,
 OGG or FLAC.
 
+
 3.7) Gobliiins notes
 ---- ---------------
 The CD version of Gobliiins contains one big audio track which you need to rip
-(See the section on using compressed audiofiles) and copy into the game
-directory if you want to have music and not have the CD in the drive
+(See the section on using compressed audio files) and copy into the game
+directory if you want to have in-game music without the CD in the drive
 all the time.
+
 
 3.8) Inherit the Earth: Quest for the Orb notes
 ---- ------------------------------------------
@@ -312,14 +330,16 @@ same directory as the game data which is stored in:
 
   Inherit the Earth.app/Contents/Resources
 
-For old Mac OS9 release you will need to copy files in MacBinary format, i.e.
-they should have both resource and data forks. Just copy all 'ITE *' files.
+For the old Mac OS 9 release you need to copy the files in MacBinary format,
+as they should include both resource and data forks. Copy all 'ITE *' files.
+
 
 3.9) Simon the Sorcerer 1 and 2 notes
 ---- --------------------------------
-If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
-then you will find the Windows version in the main directory of the CD
-and the DOS version in the DOS directory of the CD.
+If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you will
+find the Windows version in the main directory of the CD and the DOS version
+in the DOS directory of the CD.
+
 
 3.10) The Feeble Files notes
 ----- ----------------------
@@ -333,17 +353,19 @@ above, we cannot support these directly. They have to be re-encoded to DXA,
 which is the format used for the Macintosh and Amiga cutscenes. See the tools
 README for further details about this.
 
+
 3.11) The Legend of Kyrandia notes
 ----- ----------------------------
-To run The Legend of Kyrandia under ScummVM you need the kyra.dat file,
-which can be found in the Downloads section of the ScummVM website.
+To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat' file,
+which can be found in the downloads section of the ScummVM website.
+
 
 3.12) Known Problems
 ----- --------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatibility table on the web site, please see
-the section on Reporting Bugs.
+listed here, nor in the compatibility list on the web site, please see
+the section on reporting bugs.
 
      CD Audio Games:
           - When playing games that use CD Audio (FM-TOWNS games, Loom CD, etc)
@@ -354,7 +376,8 @@ the section on Reporting Bugs.
 
      FM-TOWNS versions:
           - The Kanji versions require the FM-TOWNS Font ROM
-          - There are some major graphics glitches using the Kanji Fonts with
+          - ScummVM will crash randomly when using the FM-TOWNS Font ROM for
+            the Kanji versions of the following games:
             The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
             and Indiana Jones and the Fate of Atlantis
 
@@ -365,7 +388,7 @@ the section on Reporting Bugs.
      Beneath a Steel Sky:
           - Amiga versions aren't supported
           - Floppy demos aren't supported
-          - Not a bug: CD version is missing speech for some dialog, this is
+          - Not a bug: CD version is missing speech for some dialogs, this is
             normal.
 
      Broken Sword 1:
@@ -383,13 +406,13 @@ the section on Reporting Bugs.
 
      Simon the Sorcerer 1:
           - Amiga versions aren't supported
-          - Subtitles aren't available in the English and German CD versions,
-            they are missing the majority of subtitles.
+          - Subtitles aren't available in the English and German CD versions
+            as they are missing the majority of subtitles.
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
             cut off early, this is a limitation of the original game.
-          - Only default language (English) in data files is supported
+          - Only default language (English) of data files is supported
             in Amiga and Macintosh versions.
 
      The Feeble Files:
@@ -398,6 +421,7 @@ the section on Reporting Bugs.
 
      Humongous Entertainment games:
           - No support for printing images
+
 
 4.0) Supported Platforms:
 ---- --------------------
@@ -421,8 +445,8 @@ Supported platforms include (but are not limited to):
         RISC OS
         Symbian
 
-The Dreamcast port does not support Curse of Monkey Island, nor The Dig.
-The PalmOS port does not support Curse of Monkey Island, Beneath a Steel
+The Dreamcast port does not support The Curse of Monkey Island, nor The Dig.
+The PalmOS port does not support The Curse of Monkey Island, Beneath a Steel
 Sky, nor either Simon the Sorcerer 1 or 2. The Dig will only work on some
 Palm devices (those with a large dynamic heap).
 
@@ -448,11 +472,11 @@ Use at your own risk!
 
 5.0) Running ScummVM:
 ---- ----------------
-Before you run the engine, you need to put the game's datafiles in a
+Before you run the engine, you need to put the game's data files in a
 directory. The filenames must not be in mixed case on *nix systems
 (for example, these are valid names: "monkey2.000", "MONKEY2.000", while
 this is a bad one: "Monkey2.000"). If you use a game with speech, the file
-monster.sou must reside in the same directory as the datafiles.
+monster.sou must reside in the same directory as the data files.
 
 Please note that by default, ScummVM will save games in the directory
 it is executed from, so you should refrain from running it from more than
@@ -460,11 +484,12 @@ one location. Further information, including how to specify a specific save
 directory to avoid this issue, are in section 6.0.
 
 ScummVM can be launched directly by running the executable. In this case,
-the in-built launcher will activate. From this, you can add games (click
+the built-in launcher will activate. From this, you can add games (click
 'Add Game'), or launch games which have already been configured.
 
 ScummVM can also be launched into a game directly using Command Line
 arguments -- see the next section.
+
 
 5.1) Command Line Options:
 ---- ---------------------
@@ -482,7 +507,7 @@ arguments -- see the next section.
 
   -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
-  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)
+  -x, --save-slot[=NUM]    Savegame slot to load (default: autosave)
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
@@ -534,7 +559,8 @@ configuration file.
 The short game name ('game target') you see at the end of the command
 line is very important. A short list is contained at the top of this
 file. You can also get the current list of games and game names at:
-        http://www.scummvm.org/compatibility.php
+
+  http://www.scummvm.org/compatibility_stable.php
 
 Examples:
  * Win32:
@@ -549,11 +575,12 @@ Examples:
   Running Full Throttle from CD, fullscreen and with subtitles enabled:
    /path/to/scummvm -f -n -p/cdrom/resource/ ft
 
+
 5.2) Language options:
 ---- -----------------
 ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
 The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1 and
-Simon the Sorcerer 1 & 2.
+Simon the Sorcerer 1 and 2.
 
 Maniac Mansion and Zak McKracken
         en  - English (default)
@@ -580,7 +607,7 @@ The Curse of Monkey Island
 
 Beneath a Steel Sky
         gb  - English (Great Britain) (default)
-        en  - English USA
+        en  - English (USA)
         de  - German
         fr  - French
         it  - Italian
@@ -597,7 +624,7 @@ Broken Sword 1
         pt  - Portuguese
         cz  - Czech
 
-Simon the Sorcerer 1 & 2
+Simon the Sorcerer 1 and 2
         en  - English (default)
         de  - German
         fr  - French
@@ -623,9 +650,9 @@ They are:
         1x         - No filtering, no scaling. Fastest.
         2x         - No filtering, factor 2x (default for non 640x480 games).
         3x         - No filtering, factor 3x.
-        2xsai      - 2xsai filter, factor 2x.
-        super2xsai - Enhanced 2xsai filtering, factor 2x.
-        supereagle - Less blurry than 2xsai, but slower. Factor 2x.
+        2xsai      - 2xSAI filter, factor 2x.
+        super2xsai - Enhanced 2xSAI filtering, factor 2x.
+        supereagle - Less blurry than 2xSAI, but slower. Factor 2x.
         advmame2x  - Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
         advmame3x  - Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
         hq2x       - Very nice high quality filter but slow. Factor 2x.
@@ -645,12 +672,13 @@ Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
-Note #3: The FM-TOWNS version of Zak uses an original resolution of 320x240 -
-hence for this game scalers will scale to 640x480 or 960x720.
+Note #3: The FM-TOWNS version of Zak McKracken uses an original resolution
+of 320x240, hence for this game scalers will scale to 640x480 or 960x720.
+
 
 5.4) Hot Keys:
 ---- ---------
-ScummVM supports various in game hotkeys. They differ between the SCUMM and
+ScummVM supports various in game hotkeys. They differ between SCUMM games and
 other games.
 
     Common:
@@ -709,7 +737,7 @@ other games.
         Escape                 - Skips cutscenes
         Space                  - Skips current line of text
 
-    Simon the Sorcerer 1 & 2:
+    Simon the Sorcerer 1 and 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
         F1 - F3                - Text speed, faster - slower
@@ -722,7 +750,7 @@ other games.
         p                      - Pauses
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
-                                 combined speech & subtitles
+                                 combined speech and subtitles
                                  [Simon the Sorcerer 2 only]
 
     The Feeble Files
@@ -734,7 +762,7 @@ other games.
         p                      - Pauses
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
-                                 combined speech & subtitles
+                                 combined speech and subtitles
 
     The Legend of Kyrandia:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
@@ -744,6 +772,7 @@ Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
+
 
 5.5) Using data files from Macintosh game versions:
 ---- ----------------------------------------------
@@ -756,20 +785,21 @@ However, there are various free tools on the net which allow reading such HFS
 volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
 other Unix-like operating systems).
 
-See also:
-
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
-
 Secondly, most of the newer games shipped only with a  single data file on the
 Macintosh. You used to have to manually convert that data file, but this is no
 longer necessary, as ScummVM can now open and understand the format natively.
 
+See also:
+
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+
+
 5.6) Multi-CD Games:
 ---- ---------------
-In general, ScummVM does not deal very well with multi-CD games. This is
+In general, ScummVM does not deal very well with Multi-CD games. This is
 because ScummVM assumes everything about a game can be found in one directory.
 Even if ScummVM does make some provisions for asking the user to change CD, the
-original games usually install a small number of files to hard disk. Unless
+original games usually install a small number of files to the hard disk. Unless
 these files can be found on all the CDs, ScummVM will be in trouble.
 
 Fortunately, ScummVM has no problems running the games entirely from hard disk,
@@ -789,6 +819,7 @@ The instructions for the Broken Sword games are for the Sold-Out Software
 versions, which are the ones you are probably most likely to find in stores
 now.
 
+
 5.6.1) The Curse of Monkey Island:
 ------ ---------------------------
 For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
@@ -798,6 +829,7 @@ doesn't matter which one of them you use.
 In addition, you'll need a resource subdirectory with all of the files from the
 resource subdirectories on both CDs. Some of the files appear on both CDs, but
 again they're identical.
+
 
 5.6.2) Broken Sword 1:
 ------ ---------------
@@ -813,6 +845,12 @@ that it makes little difference.
 
 ScummVM does not support the original cutscene files, so there is no need to
 copy them.
+
+Revolution Software has kindly allowed us to provide re-encoded Broken Sword
+cutscenes for download on our website:
+
+  http://www.scummvm.org/downloads.php
+
 
 5.6.3) Broken Sword 2:
 ------ ---------------
@@ -830,6 +868,12 @@ sword2 directory on CD 1.
 ScummVM does not support the original cutscene files, so there is no need to
 copy them.
 
+Revolution Software has kindly allowed us to provide re-encoded Broken Sword
+cutscenes for download on our website:
+
+  http://www.scummvm.org/downloads.php
+
+
 6.0) Savegames:
 ---- ----------
 Savegames are by default put in the current directory on some platforms and
@@ -842,7 +886,7 @@ The platforms that currently have a different default directory are:
         Other unices: $HOME/.scummvm/
 
 You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
-put save games. Don't forget the trailing directory separator. Also be aware
+put savegames. Don't forget the trailing directory separator. Also be aware
 that saved games may break between ScummVM releases.
 
 Bash (Unix) example:
@@ -850,6 +894,7 @@ Bash (Unix) example:
 
 Windows example:
         set SCUMMVM_SAVEPATH=C:\saved_games\
+
 
 6.1) Autosaves:
 ---- ----------
@@ -886,7 +931,7 @@ choices of output, depending on your operating system and configuration.
 To select a sound driver, pass its name via the '-e' option to scummvm,
 for example:
 
-    scummvm -e adlib monkey2
+    scummvm -eadlib monkey2
 
 
 7.1) Playing sound with Adlib emulation:
@@ -1148,6 +1193,7 @@ For Flac add --flac and optional parameters, i.e.
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game directory. You can safely remove the old file.
 
+
 7.7.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
 The compress_sword1 tool from the scummvm-tools package can encode music and
@@ -1270,7 +1316,7 @@ The following keywords are recognized:
         read_only       bool     If true, ScummVM will never try to overwrite
                                  the configuration file.
         autosave_period number   The seconds between autosaving (default: 300)
-        save_slot       number   The save game number to load on startup.
+        save_slot       number   The savegame number to load on startup.
         savepath        string   The path to where a game will store its
                                  savegames.
         versioninfo     string   The version of the ScummVM that created the
@@ -1341,7 +1387,7 @@ Flight of the Amazon Queen adds the following non-standard keywords:
         music_mute      bool     If true, music is muted
         sfx_mute        bool     If true, sound effects are muted
 
-Simon the Sorcerer 1 & 2 add the following non-standard keywords:
+Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
         music_mute      bool     If true, music is muted
         sfx_mute        bool     If true, sound effects are muted
@@ -1350,6 +1396,7 @@ Simon the Sorcerer 1 & 2 add the following non-standard keywords:
 The Legend of Kyrandia adds the following non-standard keyword:
 
         walkspeed       int      The walk speed (0-4)
+
 
 9.0) Compiling:
 ---- ----------
@@ -1428,6 +1475,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Check 'config.mak' file and if everything seems to fine:
         * Run 'make'.
         * Cross-compiling with Linux may be as easy.
+
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
