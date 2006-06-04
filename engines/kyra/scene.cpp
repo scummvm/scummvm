@@ -837,7 +837,6 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 	} else {
 		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	}
-	_screen->updateScreen();
 	if (_unkScreenVar1 && _paletteChanged) {
 		if (!queryGameFlag(0xA0)) {
 			// XXX Palette stuff
@@ -846,6 +845,8 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 			// XXX Palette stuff
 		}
 	}
+	// really call this here?
+	_screen->updateScreen();
 
 	if (!_scriptInterpreter->startScript(_scriptClick, 2))
 		error("Could not start script function 2 of scene script");
