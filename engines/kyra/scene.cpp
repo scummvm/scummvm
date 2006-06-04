@@ -831,14 +831,21 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 }
 
 void KyraEngine::initSceneScreen(int brandonAlive) {
-	// XXX (Pointless?) Palette stuff
+	// XXX Palette stuff
 	if (_unkScreenVar2 == 1) {
 		_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
 	} else {
 		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	}
 	_screen->updateScreen();
-	// XXX More (pointless?) palette stuff
+	if (_unkScreenVar1 && _paletteChanged) {
+		if (!queryGameFlag(0xA0)) {
+			// XXX Palette stuff
+			_screen->setScreenPalette(_screen->_currentPalette);
+		} else {
+			// XXX Palette stuff
+		}
+	}
 
 	if (!_scriptInterpreter->startScript(_scriptClick, 2))
 		error("Could not start script function 2 of scene script");
