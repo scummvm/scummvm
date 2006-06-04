@@ -265,10 +265,12 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 
 	char *newStr = (char *)malloc(newCapacity+1);
 
-	if (keep_old && _str)
+	if (keep_old && _str) {
 		memcpy(newStr, _str, _len + 1);
-	else
+	} else {
 		_len = 0;
+		newStr[0] = 0;
+	}
 
 	decRefCount();
 	_refCount = 0;
