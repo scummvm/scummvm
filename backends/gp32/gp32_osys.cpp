@@ -42,7 +42,9 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 OSystem_GP32::OSystem_GP32() :
 		_screenWidth(0), _screenHeight(0), _gameScreen(NULL), _hwScreen(NULL),
 		_overlayVisible(false), _forceFull(false), _adjustAspectRatio(false),
-		/*_paletteDirtyStart(0), _paletteDirtyEnd(0),*/ _mouseBuf(NULL) {
+		/*_paletteDirtyStart(0), _paletteDirtyEnd(0),*/
+		_mouseBuf(NULL), _mouseHeight(0), _mouseWidth(0), _mouseKeyColor(0),
+		_mouseHotspotX(0), _mouseHotspotY(0) {
 	NP("OSys::OSystem_GP32()");
 	// allocate palette storage
 	memset(_currentPalette, 0, 256 * sizeof(uint16));
@@ -209,7 +211,6 @@ void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 void OSystem_GP32::updateScreen() {
 	uint16 *buffer;
 	//TODO: adjust shakePos
-	NP("updateScreen");
 
 	// draw gamescreen
 	buffer = &_tmpScreen[240 - _screenHeight];
@@ -291,19 +292,56 @@ void OSystem_GP32::clearOverlay() {
 	_forceFull = true;
 }
 
-void OSystem_GP32::grabOverlay(OverlayColor *buf, int pitch)
-{
+void OSystem_GP32::grabOverlay(OverlayColor *buf, int pitch) {
 	NP("OSys::grabOverlay()");
+	int h = _overlayHeight;
+	OverlayColor *src = _overlayBuffer;
+
+	do {
+		memcpy(buf, src, _overlayWidth * sizeof(OverlayColor));
+		src += _overlayWidth;
+		buf += pitch;
+	} while (--h);
 }
 
 void OSystem_GP32::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	NP("OSys::copyRectToOverlay()");
-	OverlayColor *dst = (OverlayColor *)_overlayBuffer + y * _overlayWidth + x;
-	do {
-		memcpy(dst, buf, w * sizeof(uint16));
-		dst += _overlayWidth;
-		buf += pitch;
-	} while (--h);
+
+	//Clip the coordinates
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y;
+		buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _overlayWidth - x) {
+		w = _overlayWidth - x;
+	}
+
+	if (h > _overlayHeight - y) {
+		h = _overlayHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return;
+
+	
+	OverlayColor *dst = _overlayBuffer + y * _overlayWidth + x;
+	if (_overlayWidth == pitch && pitch == w) {
+		memcpy(dst, buf, h * w * sizeof(OverlayColor));
+	} else {
+		do {
+			memcpy(dst, buf, w * sizeof(OverlayColor));
+			buf += pitch;
+			dst += _overlayWidth;
+		} while (--h);
+	}
 }
 
 int16 OSystem_GP32::getOverlayHeight() {
