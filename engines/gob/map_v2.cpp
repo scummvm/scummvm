@@ -59,7 +59,7 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	char *dataPtr;
 	char *dataPtrBak;
 	char *dataPtrBak2;
-	char statesMask[102];
+	int8 statesMask[102];
 	Goblin::Gob2_State *statesPtr;
 
 	var = _vm->_parse->parseVarIndex();
@@ -168,13 +168,13 @@ void Map_v2::loadMapObjects(char *avjFile) {
 				_vm->_mult->_objects[i].goblinStates[state][0].field_4 = numData;
 				for (k = 0; k < numData; k++) {
 					dataPtr++;
-					_vm->_mult->_objects[i].goblinStates[state][k].animation = *dataPtr << 8;
+					_vm->_mult->_objects[i].goblinStates[state][k].animation = *((byte *) dataPtr) << 8;
 					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].animation += *dataPtr;
+					_vm->_mult->_objects[i].goblinStates[state][k].animation += *((byte *) dataPtr);
 					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].layer = *dataPtr << 8;
+					_vm->_mult->_objects[i].goblinStates[state][k].layer = *((byte *) dataPtr) << 8;
 					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].layer += *dataPtr;
+					_vm->_mult->_objects[i].goblinStates[state][k].layer += *((byte *) dataPtr);
 					_vm->_mult->_objects[i].goblinStates[state][k].field_4 = READ_LE_UINT16(dataPtr);
 					dataPtr += 2;
 					statesPtr++;

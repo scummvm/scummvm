@@ -178,12 +178,12 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 				break;
 
 			case 21:
-				*valPtr = *_vm->_global->_inter_execPtr++;
+				*valPtr = *((int8 *) _vm->_global->_inter_execPtr++);
 				break;
 
 			case 23:
 			case 24:
-				*valPtr = *(uint16*)(_vm->_global->_inter_variables + _vm->_inter->load16() * 4);
+				*valPtr = VAR(_vm->_inter->load16());
 				break;
 
 			case 25:
@@ -435,7 +435,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 
 			case 21:
 				*operPtr = 20;
-				*valPtr = *_vm->_global->_inter_execPtr++;
+				*valPtr = *((int8 *) _vm->_global->_inter_execPtr++);
 				break;
 
 			case 22:
@@ -445,13 +445,9 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 				break;
 
 			case 23:
-				*operPtr = 20;
-				*valPtr = VAR(_vm->_inter->load16());
-				break;
-
 			case 24:
 				*operPtr = 20;
-				*valPtr = *(uint16*)(_vm->_global->_inter_variables + _vm->_inter->load16() * 4);
+				*valPtr = VAR(_vm->_inter->load16());
 				break;
 
 			case 25:

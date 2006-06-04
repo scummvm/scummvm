@@ -144,13 +144,13 @@ public:
 	Snd::SoundDesc *_soundSamples[60];
 	int16 _soundIds[60];
 	int8 _soundTypes[60];
+	char _soundFromExt[60];
+	bool _soundADL[60];
 
 	char _totToLoad[20];
 
 	int32 _startTimeKey;
 	int16 _mouseButtons;
-
-	char _soundFromExt[20];
 
 	// For totSub()
 	int8 _backupedCount;

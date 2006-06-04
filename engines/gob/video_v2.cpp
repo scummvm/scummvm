@@ -229,6 +229,8 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		else
 			var_2E = 0;
 
+		memset(memBuffer, 32, bufPos);
+
 		cmdVar = 0;
 		while (1) {
 			cmdVar >>= 1;

@@ -389,6 +389,8 @@ void Music::pollMusic(void) {
 			switch (instr & 0x0F) {
 			case 0xF: // End instruction
 				_ended = true;
+				_samplesTillPoll = 0;
+				return;
 				break;
 			default:
 				warning("Unknown special command in ADL, stopping playback: %X", instr & 0x0F);

@@ -938,6 +938,7 @@ bool Inter_v1::o1_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 dataVar;
 	int16 offset;
 	int16 handle;
+	char buf[4];
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -956,7 +957,11 @@ bool Inter_v1::o1_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 		else
 			_vm->_dataio->seekData(handle, offset, 0);
 
-		retSize = _vm->_dataio->readData(handle, _vm->_global->_inter_variables + dataVar, size);
+		if (((dataVar >> 2) == 59) && (size == 4)) {
+			retSize = _vm->_dataio->readData(handle, buf, 4);
+			WRITE_VAR(59, READ_LE_UINT32(buf));
+		} else
+			retSize = _vm->_dataio->readData(handle, _vm->_global->_inter_variables + dataVar, size);
 		_vm->_dataio->closeData(handle);
 
 		if (retSize == size)

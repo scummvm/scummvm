@@ -856,6 +856,7 @@ int16 Inter_v2::loadSound(int16 search) {
 		_vm->_game->freeSoundSlot(slot);
 
 	_vm->_game->_soundIds[slot] = id;
+	_vm->_game->_soundADL[slot] = isADL;
 
 	if (id == -1) { // loc_969D
 		strcpy(sndfile, _vm->_global->_inter_execPtr);
@@ -865,7 +866,7 @@ int16 Inter_v2::loadSound(int16 search) {
 			_vm->_game->_soundSamples[slot] = _vm->_game->loadSND(sndfile, 3);
 		} else {
 			strcat(sndfile, ".ADL");
-			// TODO: This is very ugly (and doesn't work with Snd::freeSoundDesc())
+			// TODO: This is very ugly
 			_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) _vm->_dataio->getData(sndfile);
 		}
 		_vm->_game->_soundTypes[slot] = 2;
@@ -899,7 +900,7 @@ int16 Inter_v2::loadSound(int16 search) {
 				if (!isADL)
 					_vm->_game->loadSound(slot, extData);
 				else
-					// TODO: This is very ugly (and doesn't work with Snd::freeSoundDesc())
+					// TODO: This is very ugly
 					_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 			}
 		} else { // loc_9A13
@@ -907,7 +908,7 @@ int16 Inter_v2::loadSound(int16 search) {
 			if (!isADL)
 				_vm->_game->loadSound(slot, extData);
 			else
-				// TODO: This is very ugly (and doesn't work with Snd::freeSoundDesc())
+				// TODO: This is very ugly
 				_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 		}
 	}
@@ -1753,12 +1754,12 @@ void Inter_v2::o2_playImd(void) {
 
 void Inter_v2::o2_totSub(void) {
 	char totFile[14];
+	byte length;
 	int flags;
-	int length;
 	int i;
 
 	length = *_vm->_global->_inter_execPtr++;
-	if (length > 13)
+	if ((length & 0x7F) > 13)
 		error("Length in o2_totSub is greater than 13 (%d)", length);
 	if (length & 0x80) {
 		evalExpr(0);

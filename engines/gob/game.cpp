@@ -69,6 +69,8 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 		_soundSamples[i] = 0;
 		_soundIds[i] = 0;
 		_soundTypes[i] = 0;
+		_soundFromExt[i] = 0;
+		_soundADL[i] = false;
 	}
 
 	_curTotFile[0] = 0;
@@ -89,7 +91,6 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 
 	_tempStr[0] = 0;
 	_curImaFile[0] = 0;
-	_soundFromExt[0] = 0;
 	_collStr[0] = 0;
 
 	_backupedCount = 0;
@@ -401,16 +402,20 @@ void Game::freeSoundSlot(int16 slot) {
 	if ((slot < 0) || (slot >= 60) || (_soundSamples[slot] == 0))
 		return;
 
-	char* data = _soundSamples[slot]->data;
+	if (_soundADL[slot]) {
+		_vm->_music->stopPlay();
+		delete[] ((char *) _soundSamples[slot]);
+	} else {
+		char* data = _soundSamples[slot]->data;
 
-	_vm->_snd->freeSoundDesc(_soundSamples[slot], false);
-	_soundSamples[slot] = 0;
+		_vm->_snd->freeSoundDesc(_soundSamples[slot], false);
+		_soundSamples[slot] = 0;
 
-	if (_soundFromExt[slot] == 1) {
-		delete[] (data - 6);
-		_soundFromExt[slot] = 0;
+		if (_soundFromExt[slot] == 1) {
+			delete[] (data - 6);
+			_soundFromExt[slot] = 0;
+		}
 	}
-
 }
 
 int16 Game::inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 backColor,
