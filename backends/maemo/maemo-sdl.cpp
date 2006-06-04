@@ -25,7 +25,7 @@
 
 
 void OSystem_MAEMO::loadGFXMode() {
-	if (_fullscreen || _screenHeight > 400) {
+	if (_fullscreen || effectiveScreenHeight() > 400) {
 		_overlayWidth = 800;
 		_overlayHeight = 480;
 
