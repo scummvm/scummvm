@@ -1371,38 +1371,63 @@ void OSystem_SDL::blitCursor() {
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
   	}
 
-	int hW, hH;
+	int rW, rH;
 
 	if (_cursorTargetScale >= _scaleFactor) {
-		hW = w;
-		hH = h;
-		_mouseCurState.hHotX = _mouseCurState.hotX;
-		_mouseCurState.hHotY = _mouseCurState.hotY;
+		// The cursor target scale is greater or equal to the scale at
+		// which the rest of the screen is drawn. We do not downscale
+		// the cursor image, we draw it at its original size. It will
+		// appear too large on screen.
+
+		rW = w;
+		rH = h;
+		_mouseCurState.rHotX = _mouseCurState.hotX;
+		_mouseCurState.rHotY = _mouseCurState.hotY;
+
+		// The virtual dimensions may be larger than the original.
+
+		_mouseCurState.vW = w * _cursorTargetScale / _scaleFactor;
+		_mouseCurState.vH = h * _cursorTargetScale / _scaleFactor;
+		_mouseCurState.vHotX = _mouseCurState.hotX * _cursorTargetScale /
+			_scaleFactor;
+		_mouseCurState.vHotY = _mouseCurState.hotY * _cursorTargetScale /
+			_scaleFactor;
 	} else {
-		hW = w * _scaleFactor / _cursorTargetScale;
-		hH = h * _scaleFactor / _cursorTargetScale;
-		_mouseCurState.hHotX = _mouseCurState.hotX * _scaleFactor /
+		// The cursor target scale is smaller than the scale at which
+		// the rest of the screen is drawn. We scale up the cursor
+		// image to make it appear correct.
+
+		rW = w * _scaleFactor / _cursorTargetScale;
+		rH = h * _scaleFactor / _cursorTargetScale;
+		_mouseCurState.rHotX = _mouseCurState.hotX * _scaleFactor /
 			_cursorTargetScale;
-		_mouseCurState.hHotY = _mouseCurState.hotY * _scaleFactor /
+		_mouseCurState.rHotY = _mouseCurState.hotY * _scaleFactor /
 			_cursorTargetScale;
+
+		// The virtual dimensions will be the same as the original.
+
+		_mouseCurState.vW = w;
+		_mouseCurState.vH = h;
+		_mouseCurState.vHotX = _mouseCurState.hotX;
+		_mouseCurState.vHotY = _mouseCurState.hotY;
   	}
 
-	int hH1 = hH; // store original to pass to aspect-correction function later
+	int rH1 = rH; // store original to pass to aspect-correction function later
 	if (_adjustAspectRatio && _cursorTargetScale == 1) {
-		hH = real2Aspect(hH - 1) + 1;
-		_mouseCurState.hHotY = real2Aspect(_mouseCurState.hHotY);
+		rH = real2Aspect(rH - 1) + 1;
+		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
 	}
 
-	if (_mouseCurState.hW != hW || _mouseCurState.hH != hH) {
-		_mouseCurState.hW = hW;
-		_mouseCurState.hH = hH;
+	if (_mouseCurState.rW != rW || _mouseCurState.rH != rH) {
+		_mouseCurState.rW = rW;
+		_mouseCurState.rH = rH;
 
 		if (_mouseSurface)
 			SDL_FreeSurface(_mouseSurface);
 
 		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.hW,
-						_mouseCurState.hH,
+						_mouseCurState.rW,
+						_mouseCurState.rH,
 						16,
 						_hwscreen->format->Rmask,
 						_hwscreen->format->Gmask,
@@ -1434,7 +1459,7 @@ void OSystem_SDL::blitCursor() {
 
 #ifndef DISABLE_SCALERS
 	if (_adjustAspectRatio && _cursorTargetScale == 1)
-		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, hW, hH1, 0, 0, 0);
+		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
 #endif
 
 	SDL_UnlockSurface(_mouseSurface);
@@ -1493,30 +1518,34 @@ void OSystem_SDL::drawMouse() {
 	SDL_Rect dst;
 	int scale;
 	int width, height;
+	int hotX, hotY;
+
+	dst.x = _mouseCurState.x;
+	dst.y = _mouseCurState.y;
 
 	if (!_overlayVisible) {
 		scale = _scaleFactor;
 		width = _screenWidth;
 		height = _screenHeight;
-		dst.x = _mouseCurState.x - _mouseCurState.hotX;
-		dst.y = _mouseCurState.y - _mouseCurState.hotY;
-		dst.w = _mouseCurState.w;
-		dst.h = _mouseCurState.h;
+		dst.w = _mouseCurState.vW;
+		dst.h = _mouseCurState.vH;
+		hotX = _mouseCurState.vHotX;
+		hotY = _mouseCurState.vHotY;
 	} else {
 		scale = 1;
 		width = _overlayWidth;
 		height = _overlayHeight;
-		dst.x = _mouseCurState.x - _mouseCurState.hHotX;
-		dst.y = _mouseCurState.y - _mouseCurState.hHotY;
-		dst.w = _mouseCurState.hW;
-		dst.h = _mouseCurState.hH;
+		dst.w = _mouseCurState.rW;
+		dst.h = _mouseCurState.rH;
+		hotX = _mouseCurState.rHotX;
+		hotY = _mouseCurState.rHotY;
 	}
 
 	// The mouse is undrawn using virtual coordinates, i.e. they may be
 	// scaled and aspect-ratio corrected.
 
-	_mouseBackup.x = dst.x;
-	_mouseBackup.y = dst.y;
+	_mouseBackup.x = dst.x - hotX;
+	_mouseBackup.y = dst.y - hotY;
 	_mouseBackup.w = dst.w;
 	_mouseBackup.h = dst.h;
 
@@ -1530,10 +1559,10 @@ void OSystem_SDL::drawMouse() {
 	if (_adjustAspectRatio && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
   
-	dst.x *= scale;
-	dst.y *= scale;
-	dst.w = _mouseCurState.hW;
-	dst.h = _mouseCurState.hH;
+	dst.x = scale * dst.x - _mouseCurState.rHotX;
+	dst.y = scale * dst.y - _mouseCurState.rHotY;
+	dst.w = _mouseCurState.rW;
+	dst.h = _mouseCurState.rH;
 
 	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
 	// clipping necessary
