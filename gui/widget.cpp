@@ -299,11 +299,11 @@ void SliderWidget::drawWidget(bool hilite) {
 }
 
 int SliderWidget::valueToPos(int value) {
-	return ((_w - 4) * (value - _valueMin) / (_valueMax - _valueMin));
+	return (_w * (value - _valueMin) / (_valueMax - _valueMin));
 }
 
 int SliderWidget::posToValue(int pos) {
-	return (pos) * (_valueMax - _valueMin) / (_w - 4) + _valueMin;
+	return (pos) * (_valueMax - _valueMin) / _w + _valueMin;
 }
 
 #pragma mark -
