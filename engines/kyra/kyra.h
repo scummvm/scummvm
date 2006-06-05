@@ -983,15 +983,17 @@ protected:
 	static const uint16 _itemPosX[];
 	static const uint8 _itemPosY[];
 	
-	static Button _buttonData[];
-	static Button *_buttonDataListPtr[];
+	void setupButtonData();
+	Button *_buttonData;
+	Button **_buttonDataListPtr;
 	static Button _menuButtonData[];
 	static Button _scrollUpButton;
 	static Button _scrollDownButton;
 
 	bool _haveScrollButtons;
 
-	static Menu _menu[];
+	void setupMenu();
+	Menu *_menu;
 
 	static const uint8 _magicMouseItemStartFrame[];
 	static const uint8 _magicMouseItemEndFrame[];
@@ -1052,6 +1054,7 @@ private:
 	
 	int _musicSoundChannel;
 	const char *_menuAudioFile;
+	int _selectedMenuItem;
 	
 	// gui/menu specific
 private:

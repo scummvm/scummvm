@@ -1042,41 +1042,46 @@ const uint8 KyraEngine::_itemPosY[] = {
 	160, 160, 160, 160, 160, 181, 181, 181, 181, 181
 };
 
-Button KyraEngine::_buttonData[] = {
-	{ 0, 0x02, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x01, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x009, 0xA4, 0x36, 0x1E, /*XXX,*/ 0, &KyraEngine::buttonMenuCallback/*, XXX*/ },
-	{ 0, 0x03, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x04, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x05, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x06, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x07, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x08, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x09, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x0A, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x0B, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
-	{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
-	{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
-	{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ }
-};
+void KyraEngine::setupButtonData() {
+	static Button buttonData[] = {
+		{ 0, 0x02, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x01, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x009, 0xA4, 0x36, 0x1E, /*XXX,*/ 0, &KyraEngine::buttonMenuCallback/*, XXX*/ },
+		{ 0, 0x03, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x04, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x05, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x06, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x07, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x08, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x09, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x0A, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x0B, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
+		{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
+		{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
+		{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ }
+	};
 
-Button *KyraEngine::_buttonDataListPtr[] = {
-	&_buttonData[1],
-	&_buttonData[2],
-	&_buttonData[3],
-	&_buttonData[4],
-	&_buttonData[5],
-	&_buttonData[6],
-	&_buttonData[7],
-	&_buttonData[8],
-	&_buttonData[9],
-	&_buttonData[10],
-	&_buttonData[11],
-	&_buttonData[12],
-	&_buttonData[13],
-	&_buttonData[14],
-	0
-};
+	static Button *buttonDataListPtr[] = {
+		&buttonData[1],
+		&buttonData[2],
+		&buttonData[3],
+		&buttonData[4],
+		&buttonData[5],
+		&buttonData[6],
+		&buttonData[7],
+		&buttonData[8],
+		&buttonData[9],
+		&buttonData[10],
+		&buttonData[11],
+		&buttonData[12],
+		&buttonData[13],
+		&buttonData[14],
+		0
+	};
+	
+	_buttonData = buttonData;
+	_buttonDataListPtr = buttonDataListPtr;
+}
 
 Button KyraEngine::_scrollUpButton =  {0, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
 Button KyraEngine::_scrollDownButton = {0, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
@@ -1090,95 +1095,99 @@ Button KyraEngine::_menuButtonData[] = {
 	{ 0, 0x11, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ }
 };
 
-Menu KyraEngine::_menu[] = {
-	{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1, 
-		{
-			{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
-			248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
+void KyraEngine::setupMenu() {
+	static Menu menu[] = {
+		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1, 
+			{
+				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
+				248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
-			248, 249, 250, &KyraEngine::gui_saveGameMenu, -1, 0, 0, 0, 0, 0},
+				{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
+				248, 249, 250, &KyraEngine::gui_saveGameMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, 0, -1, -1, 64, 148, 15, 252, 253, 24, 0,
-			248, 249, 250, &KyraEngine::gui_gameControlsMenu, -1, 0, 0, 0, 0, 0},
+				{1, 0, 0, 0, -1, -1, 64, 148, 15, 252, 253, 24, 0,
+				248, 249, 250, &KyraEngine::gui_gameControlsMenu, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, 0, -1, -1, 81, 148, 15, 252, 253, 24, 0,
-			248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0},
+				{1, 0, 0, 0, -1, -1, 81, 148, 15, 252, 253, 24, 0,
+				248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0},
 
-			{1, 0, 0, 0, 86, 0, 110, 92, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_resumeGame, -1, 0, 0, 0, 0, 0}
+				{1, 0, 0, 0, 86, 0, 110, 92, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_resumeGame, -1, 0, 0, 0, 0, 0}
+			}
+		},
+		{ -1, -1, 288, 56, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1,
+			{
+				{1, 0, 0, 0, 24, 0, 30, 72, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_quitConfirmYes, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, 192, 0, 30, 72, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_quitConfirmNo, -1, 0, 0, 0, 0, 0}
+			}
+		},
+		{ -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124,
+			{
+				{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0, 
+				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0, 
+				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0, 
+				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0, 
+				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0,
+				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, 184, 0, 134, 88, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0},
+			}
+		},
+		{ -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 3, -1, -1, -1, -1,
+			{
+				{1, 0, 0, 0, 24, 0, 44, 72, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_savegameConfirm, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, 192, 0, 44, 72, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
+			}
+		},
+		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1, 
+			{
+				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
+				248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
+
+				{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
+				248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
+			}
+		},
+		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1, 
+			{
+				{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
+				248, 249, 250, &KyraEngine::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
+
+	 			{1, 0, 0, 0, 110, 0, 47, 64, 15, 252, 253, 5, 0,
+				248, 249, 250, &KyraEngine::gui_controlsChangeSounds, -1, 0, 34, 49, 0, 0},
+
+	 			{1, 0, 0, 0, 110, 0, 64, 64, 15, 252, 253, 5, 0,
+				248, 249, 250, &KyraEngine::gui_controlsChangeWalk, -1, 0, 34, 66, 0, 0},
+
+				{1, 0, 0, 0, 110, 0, 81, 64, 15, 252, 253, 5, 0,
+				248, 249, 250, 0, -1, 0, 34, 83, 0, 0 },
+
+				{1, 0, 0, 0, 110, 0, 98, 64, 15, 252, 253, 5, 0,
+				248, 249, 250, &KyraEngine::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
+
+				{1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255,
+				248, 249, 250, &KyraEngine::gui_controlsApply, -1, -0, 0, 0, 0, 0}
+			}
 		}
-	},
-	{ -1, -1, 288, 56, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1,
-		{
-			{1, 0, 0, 0, 24, 0, 30, 72, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_quitConfirmYes, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, 192, 0, 30, 72, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_quitConfirmNo, -1, 0, 0, 0, 0, 0}
-		}
-	},
-	{ -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124,
-		{
-			{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0, 
-			248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0, 
-			248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0, 
-			248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0, 
-			248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0,
-			248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, 184, 0, 134, 88, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0},
-		}
-	},
-	{ -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 3, -1, -1, -1, -1,
-		{
-			{1, 0, 0, 0, 24, 0, 44, 72, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_savegameConfirm, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, 192, 0, 44, 72, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
-		}
-	},
-	{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1, 
-		{
-			{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
-			248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
-
-			{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
-			248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
-		}
-	},
-	{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1, 
-		{
-			{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
-
- 			{1, 0, 0, 0, 110, 0, 47, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeSounds, -1, 0, 34, 49, 0, 0},
-
- 			{1, 0, 0, 0, 110, 0, 64, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeWalk, -1, 0, 34, 66, 0, 0},
-
-			{1, 0, 0, 0, 110, 0, 81, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, 0, -1, 0, 34, 83, 0, 0 },
-
-			{1, 0, 0, 0, 110, 0, 98, 64, 15, 252, 253, 5, 0,
-			248, 249, 250, &KyraEngine::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
-
-			{1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255,
-			248, 249, 250, &KyraEngine::gui_controlsApply, -1, -0, 0, 0, 0, 0}
-		}
-	}
-};
+	};
+	
+	_menu = menu;
+}
 
 const uint8 KyraEngine::_magicMouseItemStartFrame[] = {
 	0xAD, 0xB7, 0xBE, 0x00
