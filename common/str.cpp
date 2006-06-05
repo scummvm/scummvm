@@ -46,8 +46,6 @@ static int computeCapacity(int len) {
 String::String(const char *str, int len, int capacity)
 : _str(0), _len(0), _refCount(0) {
 
-	incRefCount();
-
 	if (str && *str && len != 0) {
 		if (len > 0)
 			_len = len;
@@ -68,9 +66,14 @@ String::String(const char *str, int len, int capacity)
 }
 
 String::String(const String &str)
- : _str(str._str), _len(str._len), _refCount(str._refCount), _capacity(str._capacity) {
+ : _str(str._str), _len(str._len), _refCount(0), _capacity(str._capacity) {
 
-	incRefCount();
+	if (_str != 0) {
+		// If the string we are copying is non-empty, we increment its
+		// refcount.
+		str.incRefCount();
+		_refCount = str._refCount;
+	}
 }
 
 String::~String() {
@@ -79,18 +82,21 @@ String::~String() {
 
 void String::incRefCount() const {
 	if (_refCount == 0) {
-		_refCount = new int(1);
+		_refCount = new int(2);
 	} else {
 		++(*_refCount);
 	}
 }
 
 void String::decRefCount() {
-	assert(_refCount);
-	--(*_refCount);
-	if (*_refCount <= 0) {
+	if (_refCount) {
+		--(*_refCount);
+	}
+	if (!_refCount || *_refCount <= 0) {
 		delete _refCount;
+		_refCount = 0;
 		free(_str);
+		_str = 0;
 	}
 }
 
@@ -103,9 +109,8 @@ String& String::operator  =(const char *str) {
 		memcpy(_str, str, _len + 1);
 	} else if (_len > 0) {
 		decRefCount();
-		_refCount = 0;
-		incRefCount();
 
+		_refCount = 0;
 		_capacity = 0;
 		_len = 0;
 		_str = 0;
@@ -212,9 +217,8 @@ void String::deleteChar(int p) {
 void String::clear() {
 	if (_capacity) {
 		decRefCount();
-		_refCount = 0;
-		incRefCount();
 
+		_refCount = 0;
 		_capacity = 0;
 		_len = 0;
 		_str = 0;
@@ -254,7 +258,7 @@ void String::toUppercase() {
 void String::ensureCapacity(int new_len, bool keep_old) {
 	// If there is not enough space, or if we are not the only owner
 	// of the current data, then we have to reallocate it.
-	if (new_len <= _capacity && *_refCount == 1)
+	if (new_len <= _capacity && (_refCount == 0 || *_refCount == 1))
 		return;
 
 	int newCapacity = computeCapacity(new_len);
@@ -273,9 +277,8 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 	}
 
 	decRefCount();
-	_refCount = 0;
-	incRefCount();
 
+	_refCount = 0;
 	_capacity = newCapacity;
 	_str = newStr;
 }

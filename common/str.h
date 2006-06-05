@@ -44,7 +44,7 @@ public:
 	static const char *emptyString;
 #endif
 
-	String() : _str(0), _len(0), _refCount(0), _capacity(0) { incRefCount(); }
+	String() : _str(0), _len(0), _refCount(0), _capacity(0) {}
 	String(const char *str, int len = -1, int capacity = 16);
 	String(const String &str);
 	virtual ~String();
