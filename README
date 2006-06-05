@@ -16,23 +16,24 @@ Table of Contents:
  * 3.1 Copy Protection
  * 3.2 Commodore64 games notes
  * 3.3 Maniac Mansion NES notes
- * 3.4 Beneath a Steel Sky notes
- * 3.5 Broken Sword notes
- * 3.6 Flight of the Amazon Queen notes
- * 3.7 Gobliiins notes
- * 3.8 Inherit the Earth: Quest for the Orb notes
- * 3.9 Simon the Sorcerer notes
- * 3.10 The Feeble Files notes
- * 3.11 The Legend of Kyrandia notes
- * 3.12 Known Problems
+ * 3.4 Macintosh games notes
+ * 3.5 Multi-CD games notes
+ * 3.6 The Curse of Monkey Island notes
+ * 3.7 Broken Sword notes
+ * 3.8 Beneath a Steel Sky notes
+ * 3.9 Flight of the Amazon Queen notes
+ * 3.10 Gobliiins notes
+ * 3.11 Inherit the Earth: Quest for the Orb notes
+ * 3.12 Simon the Sorcerer notes
+ * 3.13 The Feeble Files notes
+ * 3.14 The Legend of Kyrandia notes
+ * 3.15 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
  * 5.2 Language Options
  * 5.3 Graphics Filters
  * 5.4 Hotkeys
- * 5.5 Using Macintosh games
- * 5.6 Multi-CD Games
 6.0) Savegames
  * 6.1 Autosaves
 7.0) Music and Sound
@@ -227,8 +228,8 @@ permission from Wyrmkeep Entertainment, since it was bypassed in all CD
 releases of the game.
 
 
-3.2) Commodore64 games notes
----- -----------------------
+3.2) Commodore64 games notes:
+---- ------------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Either use extract_mm_c64 from the tools package (but then the
 game will not be autodetected by ScummVM) or name the D64 disks as
@@ -237,8 +238,8 @@ If you add the game manually, make sure that the platform is set to
 Commodore64.
 
 
-3.3) Maniac Mansion NES notes
----- ------------------------
+3.3) Maniac Mansion NES notes:
+---- -------------------------
 Supported versions are English GB (E), French (F), German (G), Swedish (SW)
 and English US (U).
 ScummVM requires just the PRG section to run and not the whole ROM.
@@ -263,19 +264,61 @@ It is also possible to extract the separate LFL files from the PRG section.
 To do so use the extract_mm_nes utility from the tools package.
 
 
-3.4) Beneath a Steel Sky notes
----- -------------------------
-Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to run
-Beneath a Steel Sky.
+3.4) Macintosh games notes:
+---- ----------------------
+All LucasArts SCUMM based adventures except COMI also exist in versions for the
+Macintosh. ScummVM can use most (all?) of them, however, in some cases some
+additional work is required. First off, if you are not using a Macintosh for
+this, accessing the CD/floppy data might be tricky, since the mac uses a
+special disk format called HFS which other systems usually do not support.
+However, there are various free tools on the net which allow reading such HFS
+volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
+other Unix-like operating systems).
 
-This file is available on the 'Compatibility' page of the ScummVM
-website, you can place it in either the directory containing the other
-game data files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory
-where your ScummVM executable resides.
+Secondly, most of the newer games shipped only with a  single data file on the
+Macintosh. You used to have to manually convert that data file, but this is no
+longer necessary, as ScummVM can now open and understand the format natively.
+
+See also:
+
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 
-3.5) Broken Sword notes
----- ------------------
+3.5) Multi-CD games notes:
+---- ---------------------
+In general, ScummVM does not deal very well with Multi-CD games. This is
+because ScummVM assumes everything about a game can be found in one directory.
+Even if ScummVM does make some provisions for asking the user to change CD, the
+original games usually install a small number of files to the hard disk. Unless
+these files can be found on all the CDs, ScummVM will be in trouble.
+
+Fortunately, ScummVM has no problems running the games entirely from hard disk,
+if you create a directory with the correct combination of files. Usually, when
+a file appears on more than one CD you can pick either of them.
+
+These instructions are written for the PC versions (which in some case is the
+only version) of the games. Windows and DOS use case-insensitive file systems,
+so if one CD has a file called MONKEY.DAT and another has a file called
+monkey.dat, they are the same files. These instructions give file names in all
+lower-case names, even if that's not always how they appear on the CDs. In
+fact, on case-sensitive file systems you will have to make sure that all
+filenames use either all upper- or all lower-case letters for ScummVM to be
+able to find the files.
+
+
+3.6) The Curse of Monkey Island notes:
+---- ---------------------------------
+For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
+comi.la0 file can be found on either CD, but since they are identical it
+doesn't matter which one of them you use.
+
+In addition, you'll need a resource subdirectory with all of the files from the
+resource subdirectories on both CDs. Some of the files appear on both CDs, but
+again they're identical.
+
+
+3.7) Broken Sword notes:
+---- -------------------
 Broken Sword 1 and 2 both come with in-game cutscenes compressed using
 RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
 the older legacy versions of this format to us, and have requested we not
@@ -292,9 +335,57 @@ The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or reburning
 customised versions of the game CDs.
 
+The instructions for the Broken Sword games are for the Sold-Out Software
+versions, which are the ones you are probably most likely to find in stores
+now.
 
-3.6) Flight of the Amazon Queen notes
----- --------------------------------
+
+3.7.1) Broken Sword 1:
+------ ---------------
+For this game, you'll need all of the files from the clusters directories on
+both CDs. You will also need the speech.clu files from the speech directories,
+but since they are not identical you'll need to rename them speech1.clu and
+speech2.clu for CD 1 and 2 respectively.
+
+In addition, you will need a music subdirectory with all of the files from the
+music subdirectories on both CDs. Some of these files appear on both CDs, but
+in these cases they are either identical or, in one case, so nearly identical
+that it makes little difference.
+
+ScummVM does not support the original cutscene files, so there is no need to
+copy them.
+
+
+3.7.2) Broken Sword 2:
+------ ---------------
+For this game, you'll need all of the files from the clusters directories on
+both CDs. (Actually, a few of them may not be strictly necessary, but the ones
+that I'm uncertain about are all fairly small.) You will need to rename the
+speech.clu and music.clu files speech1.clu, speech2.clu, music1.clu and
+music2.clu so that ScummVM can tell which ones are from CD 1 and which ones are
+from CD 2. Any other files that appear in both cluster directories are
+identical. Use whichever you like.
+
+In addition, you will need the cd.bin, cd.inf and startup.inf files from the
+sword2 directory on CD 1.
+
+ScummVM does not support the original cutscene files, so there is no need to
+copy them.
+
+
+3.8) Beneath a Steel Sky notes:
+---- --------------------------
+Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to run
+Beneath a Steel Sky.
+
+This file is available on the 'Compatibility' page of the ScummVM
+website, you can place it in either the directory containing the other
+game data files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory
+where your ScummVM executable resides.
+
+
+3.9) Flight of the Amazon Queen notes:
+---- ---------------------------------
 In order to use a non-freeware version of Flight of the Amazon Queen (from
 original CD), you will need to place the 'queen.tbl' file (available from the
 Compatibility page on our website) in either the directory containing the
@@ -308,16 +399,16 @@ This tool also allows you to compress the speech and sound effects with MP3,
 OGG or FLAC.
 
 
-3.7) Gobliiins notes
----- ---------------
+3.10) Gobliiins notes:
+----- ----------------
 The CD version of Gobliiins contains one big audio track which you need to rip
 (See the section on using compressed audio files) and copy into the game
 directory if you want to have in-game music without the CD in the drive
 all the time.
 
 
-3.8) Inherit the Earth: Quest for the Orb notes
----- ------------------------------------------
+3.11) Inherit the Earth: Quest for the Orb notes:
+----- -------------------------------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will need to
 copy over data from the CD to your hard drive. If you're on a PC then consult:
 
@@ -334,15 +425,15 @@ For the old Mac OS 9 release you need to copy the files in MacBinary format,
 as they should include both resource and data forks. Copy all 'ITE *' files.
 
 
-3.9) Simon the Sorcerer 1 and 2 notes
----- --------------------------------
+3.12) Simon the Sorcerer 1 and 2 notes:
+----- ---------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you will
 find the Windows version in the main directory of the CD and the DOS version
 in the DOS directory of the CD.
 
 
-3.10) The Feeble Files notes
------ ----------------------
+3.13) The Feeble Files notes:
+----- -----------------------
 If you have the Windows version of The Feeble Files, there are two things to
 note. First of all, more than 300 files, most of them necessary for the game to
 run, are stored in a file called data1.cab. ScummVM does not know how to unpack
@@ -354,14 +445,14 @@ which is the format used for the Macintosh and Amiga cutscenes. See the tools
 README for further details about this.
 
 
-3.11) The Legend of Kyrandia notes
------ ----------------------------
+3.14) The Legend of Kyrandia notes:
+----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat' file,
 which can be found in the downloads section of the ScummVM website.
 
 
-3.12) Known Problems
------ --------------
+3.15) Known Problems:
+----- ---------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility list on the web site, please see
@@ -772,106 +863,6 @@ Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
-
-
-5.5) Using data files from Macintosh game versions:
----- ----------------------------------------------
-All LucasArts SCUMM based adventures except COMI also exist in versions for the
-Macintosh. ScummVM can use most (all?) of them, however, in some cases some
-additional work is required. First off, if you are not using a Macintosh for
-this, accessing the CD/floppy data might be tricky, since the mac uses a
-special disk format called HFS which other systems usually do not support.
-However, there are various free tools on the net which allow reading such HFS
-volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
-other Unix-like operating systems).
-
-Secondly, most of the newer games shipped only with a  single data file on the
-Macintosh. You used to have to manually convert that data file, but this is no
-longer necessary, as ScummVM can now open and understand the format natively.
-
-See also:
-
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
-
-
-5.6) Multi-CD Games:
----- ---------------
-In general, ScummVM does not deal very well with Multi-CD games. This is
-because ScummVM assumes everything about a game can be found in one directory.
-Even if ScummVM does make some provisions for asking the user to change CD, the
-original games usually install a small number of files to the hard disk. Unless
-these files can be found on all the CDs, ScummVM will be in trouble.
-
-Fortunately, ScummVM has no problems running the games entirely from hard disk,
-if you create a directory with the correct combination of files. Usually, when
-a file appears on more than one CD you can pick either of them.
-
-These instructions are written for the PC versions (which in some case is the
-only version) of the games. Windows and DOS use case-insensitive file systems,
-so if one CD has a file called MONKEY.DAT and another has a file called
-monkey.dat, they are the same files. These instructions give file names in all
-lower-case names, even if that's not always how they appear on the CDs. In
-fact, on case-sensitive file systems you will have to make sure that all
-filenames use either all upper- or all lower-case letters for ScummVM to be
-able to find the files.
-
-The instructions for the Broken Sword games are for the Sold-Out Software
-versions, which are the ones you are probably most likely to find in stores
-now.
-
-
-5.6.1) The Curse of Monkey Island:
------- ---------------------------
-For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
-comi.la0 file can be found on either CD, but since they are identical it
-doesn't matter which one of them you use.
-
-In addition, you'll need a resource subdirectory with all of the files from the
-resource subdirectories on both CDs. Some of the files appear on both CDs, but
-again they're identical.
-
-
-5.6.2) Broken Sword 1:
------- ---------------
-For this game, you'll need all of the files from the clusters directories on
-both CDs. You will also need the speech.clu files from the speech directories,
-but since they are not identical you'll need to rename them speech1.clu and
-speech2.clu for CD 1 and 2 respectively.
-
-In addition, you will need a music subdirectory with all of the files from the
-music subdirectories on both CDs. Some of these files appear on both CDs, but
-in these cases they are either identical or, in one case, so nearly identical
-that it makes little difference.
-
-ScummVM does not support the original cutscene files, so there is no need to
-copy them.
-
-Revolution Software has kindly allowed us to provide re-encoded Broken Sword
-cutscenes for download on our website:
-
-  http://www.scummvm.org/downloads.php
-
-
-5.6.3) Broken Sword 2:
------- ---------------
-For this game, you'll need all of the files from the clusters directories on
-both CDs. (Actually, a few of them may not be strictly necessary, but the ones
-that I'm uncertain about are all fairly small.) You will need to rename the
-speech.clu and music.clu files speech1.clu, speech2.clu, music1.clu and
-music2.clu so that ScummVM can tell which ones are from CD 1 and which ones are
-from CD 2. Any other files that appear in both cluster directories are
-identical. Use whichever you like.
-
-In addition, you will need the cd.bin, cd.inf and startup.inf files from the
-sword2 directory on CD 1.
-
-ScummVM does not support the original cutscene files, so there is no need to
-copy them.
-
-Revolution Software has kindly allowed us to provide re-encoded Broken Sword
-cutscenes for download on our website:
-
-  http://www.scummvm.org/downloads.php
 
 
 6.0) Savegames:
