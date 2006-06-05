@@ -123,6 +123,13 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
 	char path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, path);
+
+	// Add a trailing slash, if necessary.
+	if (path[0] != 0) {
+		if (path[strlen(path) - 1] != '\\')
+			strcat(path, "\\");
+	}
+
 	return new WindowsFilesystemNode(path);
 }
 
