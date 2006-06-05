@@ -551,7 +551,7 @@ begin_credits("Credits");
 
     begin_section("Other subsystems");
 	  begin_section("Infrastructure");
-		  add_person('Max Horn', 'Fingolfin', "Backend & Engine APIs, file API, sound mixer, audiostreams, data structures, etc.");
+		  add_person('Max Horn', 'Fingolfin', "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc.");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
