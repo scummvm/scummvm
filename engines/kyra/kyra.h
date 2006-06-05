@@ -1054,8 +1054,7 @@ private:
 	
 	int _musicSoundChannel;
 	const char *_menuAudioFile;
-	int _selectedMenuItem;
-	
+
 	// gui/menu specific
 private:
 	static const char *_mainMenuStrings[];
