@@ -622,7 +622,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	72ac6bc980d5101c2142189d746bd62f	ru	Windows	HE 99	-	-	sev
 
 	53e94115b55dd51d4b8ff0871aa1df1e	en	All	-	Demo	-	khalek, sev
-	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	en	All	-	Demo	-	khalek
+	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	en	All	HE 100	Demo	-	khalek
 	fbdd947d21e8f5bac6d6f7a316af1c5a	en	All	-	Demo	-	sev
 	ba888e6831517597859e91aa173f945c	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	de	All	-	Demo	-	Joachim Eberhard
