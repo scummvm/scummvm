@@ -69,7 +69,8 @@ static Err GamUpdateList() {
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_353 ||
+				if (version == itemVersion_354 ||
+					version == itemVersion_353 ||
 					version == itemVersion_352 ||
 					version == itemVersion_351 ||
 					version == itemVersion_350 ||
@@ -186,6 +187,10 @@ static Err GamUpdateList() {
 						if (version <= itemVersion_353)
 							gitCur.musicInfo.sound.drvMusic++;
 
+						if (version <= itemVersion_354)
+							if (gitCur.engine >= ENGINE_AGI)	// newly added engine
+								gitCur.engine++;
+
 						if (gitCur.musicInfo.volume.palm > 100)
 							gitCur.musicInfo.volume.palm = 50;
 
@@ -274,6 +279,9 @@ static Err GamUpdateList() {
 						// to V3.5.1
 						if (gitCur.platform >= 9)
 							gitCur.platform++;
+							
+						//to V3.5.3
+						gitCur.musicInfo.sound.drvMusic++;
 
 						// -----
 						gitCur.engine = ENGINE_SCUMM;
@@ -314,7 +322,7 @@ static Err GamUpdateList() {
 						gitCur.loadSlot = git0.loadSlot;
 						gitCur.bootValue = git0.bootValue;
 						gitCur.talkValue = git0.talkValue;
-						gitCur.platform = 0;	// default to amiga
+						gitCur.platform = 2;	// default to amiga
 						gitCur.language = git0.language;
 
 						gitCur.musicInfo.volume.palm = 50;
