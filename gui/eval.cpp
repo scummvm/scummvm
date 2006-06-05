@@ -30,6 +30,21 @@
 
 namespace GUI {
 
+enum TokenTypes {
+	tDelimiter,
+	tVariable,
+	tNumber,
+	tString
+};
+
+enum EvalErrors {
+	eSyntaxError,
+	eExtraBracket,
+	eUnclosedBracket,
+	eBadExpr,
+	eUndefVar
+};
+
 static bool isdelim(char c) {
 	if (strchr(" ;,+-<>/*%^=()", c) || c == 9 || c == '\n' || !c)
 		return true;
@@ -300,10 +315,6 @@ int Eval::getVar_(const char *s, bool includeAliases) {
 		return iterv->_value;
 
 	return EVAL_UNDEF_VAR;
-}
-
-void Eval::setAlias(const String &section, const char *name, const String &value) {
-	_aliases[name + 4] = value;
 }
 
 void Eval::setVar(const String &section, const char *name, const String &value) {

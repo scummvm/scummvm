@@ -22,7 +22,6 @@
 #ifndef DISABLE_FANCY_THEMES
 
 #include "gui/theme.h"
-#include "gui/eval.h"
 
 #include "graphics/imageman.h"
 #include "graphics/imagedec.h"

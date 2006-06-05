@@ -156,7 +156,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const String &name, const St
 
 	_align = (Graphics::TextAlignment)g_gui.evaluator()->getVar(name + ".align");
 
-	if (_align == EVAL_UNDEF_VAR)
+	if (_align == (int)EVAL_UNDEF_VAR)
 		_align = kTextAlignLeft;
 }
 

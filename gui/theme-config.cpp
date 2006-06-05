@@ -482,7 +482,7 @@ void Theme::processResSection(Common::ConfigFile &config, const String &name, bo
 			continue;
 		}
 		if (iterk->key.hasPrefix("set_")) {
-			_evaluator->setAlias(name, iterk->key.c_str(), prefix + iterk->value);
+			_evaluator->setAlias(iterk->key.c_str() + 4, prefix + iterk->value);
 			continue;
 		}
 		if (iterk->key.hasPrefix("def_")) {

@@ -32,21 +32,8 @@ namespace GUI {
 using Common::String;
 using Common::HashMap;
 
-#define EVAL_UNDEF_VAR -13375
-
-enum tokenTypes {
-	tDelimiter,
-	tVariable,
-	tNumber,
-	tString
-};
-
-enum evalErrors {
-	eSyntaxError,
-	eExtraBracket,
-	eUnclosedBracket,
-	eBadExpr,
-	eUndefVar
+enum {
+	EVAL_UNDEF_VAR = -13375
 };
 
 class Eval {
@@ -55,7 +42,6 @@ public:
 	~Eval();
 
 	int eval(const String &input, const String &section, const String &name, int startpos);
-	void setAlias(const String &section, const char *name, const String &value);
 	void setVar(const String &section, const char *name, const String &value);
 
 	void setParent(const String &name);
