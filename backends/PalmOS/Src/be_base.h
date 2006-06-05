@@ -49,6 +49,8 @@ enum {
 #define kDrawBatLow		3020
 #define kDrawFight		3030
 
+#define computeMsecs(x) ((SysTicksPerSecond() * x) / 1000)
+
 typedef struct {
 	UInt32 duration, nextExpiry;
 	Boolean active;
@@ -131,7 +133,7 @@ protected:
 	Boolean _overlayVisible;
 	Boolean _redawOSD, _setPalette;
 
-	UInt32 _keyMouseMask;
+	UInt32 _keyMouseMask, _keyMouseRepeat, _keyMouseDelay;
 	struct {
 		UInt32 bitUp;
 		UInt32 bitDown;
@@ -140,7 +142,7 @@ protected:
 		UInt32 bitButLeft;
 		Boolean hasMore;
 	} _keyMouse;
-
+	
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	MousePos _mouseCurState;

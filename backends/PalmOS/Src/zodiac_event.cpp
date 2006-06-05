@@ -71,7 +71,6 @@ bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 			setFeatureState(kFeatureAspectRatioCorrection, 0);
 			return false; // not a key
 
-		case vchrRockerCenter:
 		case vchrActionLeft:
 			_lastKey = kKeyMouseLButton;
 			event.type = EVENT_LBUTTONDOWN;

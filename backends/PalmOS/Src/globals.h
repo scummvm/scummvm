@@ -92,6 +92,7 @@ typedef struct {
 	Boolean stdPalette;
 	Boolean filter;
 	Boolean stylusClick;
+	Boolean arrowKeys;
 	UInt8 init;
 	UInt8 palmVolume;
 	UInt8 fmQuality;

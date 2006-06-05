@@ -437,6 +437,7 @@ Boolean StartScummVM() {
 	gVars->stylusClick		= gPrefs->stylusClick;
 	gVars->autoSave			= (gPrefs->autoSave ? gPrefs->autoSavePeriod : -1);
 	gVars->advancedMode		= gPrefs->advancedMode;
+	gVars->arrowKeys		= gPrefs->arrowKeys;
 
 	// user params
 	HWR_RSTALL();

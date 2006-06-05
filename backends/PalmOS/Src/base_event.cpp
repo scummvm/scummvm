@@ -96,30 +96,68 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 		keyCurrentState = KeyCurrentState();
 		// check_hard_keys();
 
-		if ((keyCurrentState & _keyMouseMask)) {
-			Int8 sx = 0;
-			Int8 sy = 0;
+		if (!(keyCurrentState & _keyMouseMask)) {
+			_lastKeyRepeat = 0;
+		} else {
+			if (getMillis() >= (_keyMouseRepeat + _keyMouseDelay)) {
+				_keyMouseRepeat = getMillis();
 
-			if (keyCurrentState & _keyMouse.bitUp)
-				sy = -1;
-			else if (keyCurrentState & _keyMouse.bitDown)
-				sy = +1;
-				
-			if (keyCurrentState & _keyMouse.bitLeft)
-				sx = -1;
-			else if (keyCurrentState & _keyMouse.bitRight)
-				sx = +1;					
+				if (gVars->arrowKeys) {				
+					if (keyCurrentState & _keyMouse.bitUp)
+						event.kbd.keycode = 273;
+					else if (keyCurrentState & _keyMouse.bitDown)
+						event.kbd.keycode = 274;
+					else if (keyCurrentState & _keyMouse.bitLeft)
+						event.kbd.keycode = 276;
+					else if (keyCurrentState & _keyMouse.bitRight)
+						event.kbd.keycode = 275;
+					else if (keyCurrentState & _keyMouse.bitButLeft)
+						event.kbd.keycode = chrLineFeed;
 
-			simulate_mouse(event, sx, sy, &x, &y);
-			warpMouse(x, y);
-			updateScreen();
-	//		updateCD();
-			event.type = EVENT_MOUSEMOVE;
-			event.mouse.x = x;
-			event.mouse.y = y;
+					event.type = EVENT_KEYDOWN;
+					event.kbd.ascii = event.kbd.keycode;
+					event.kbd.flags = 0;
 
-			_lastKey = kKeyMouseMove;
-			return true;
+				} else {
+					Int8 sx = 0;
+					Int8 sy = 0;
+
+					if (keyCurrentState & _keyMouse.bitUp)
+						sy = -1;
+					else if (keyCurrentState & _keyMouse.bitDown)
+						sy = +1;
+						
+					if (keyCurrentState & _keyMouse.bitLeft)
+						sx = -1;
+					else if (keyCurrentState & _keyMouse.bitRight)
+						sx = +1;
+
+					if (sx || sy) {
+						simulate_mouse(event, sx, sy, &x, &y);
+						event.type = EVENT_MOUSEMOVE;
+						_lastKey = kKeyMouseMove;
+
+					} else {			
+						x = _mouseCurState.x;
+						y = _mouseCurState.y;
+
+						if (keyCurrentState & _keyMouse.bitButLeft) {
+							event.type = EVENT_LBUTTONDOWN;
+							_lastKey = kKeyMouseLButton;
+
+						} else if (_lastKey == kKeyMouseLButton) {
+							event.type = EVENT_LBUTTONUP;
+							_lastKey = kKeyNone;
+						}
+					}
+
+					event.mouse.x = x;
+					event.mouse.y = y;
+					warpMouse(x, y);
+		//			updateCD();
+				}
+				return true;
+			}
 		}
 
 		if (ev.eType == keyDownEvent) {

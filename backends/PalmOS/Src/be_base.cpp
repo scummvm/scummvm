@@ -66,6 +66,9 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	MemSet(&_mouseOldState, sizeof(_mouseOldState), 0);
 	MemSet(&_timer, sizeof(TimerType), 0);
 	MemSet(&_sound, sizeof(SoundType), 0);
+	
+	_keyMouseRepeat = 0;
+	_keyMouseDelay = (gVars->arrowKeys) ? computeMsecs(125) : computeMsecs(25);
 }
 
 void OSystem_PalmBase::initBackend() {
@@ -88,7 +91,7 @@ uint32 OSystem_PalmBase::getMillis() {
 }
 
 void OSystem_PalmBase::delayMillis(uint msecs) {
-	Int32 delay = (SysTicksPerSecond() * msecs) / 1000;
+	Int32 delay = computeMsecs(msecs);
 
 	if (delay > 0)
 		SysTaskDelay(delay);

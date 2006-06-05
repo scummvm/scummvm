@@ -52,14 +52,10 @@ void OSystem_PalmBase::simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coo
 	Int16 y = _mouseCurState.y;
 	Int16 slow;
 
-	if (_lastKey != kKeyNone) {
-		_lastKeyRepeat++;
+	_lastKeyRepeat++;
 
-		if (_lastKeyRepeat > 16)
-			_lastKeyRepeat = 16;
-	}
-	else
-		_lastKeyRepeat = 0;
+	if (_lastKeyRepeat > 32)
+		_lastKeyRepeat = 32;
 
 	slow = (iHoriz && iVert) ? 2 : 1;
 

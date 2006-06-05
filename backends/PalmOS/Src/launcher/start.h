@@ -43,6 +43,7 @@ typedef	struct {
 	Boolean exitLauncher;
 	Boolean goLCD;
 	Boolean stylusClick;
+	Boolean arrowKeys;
 
 	UInt16 listPosition;
 	UInt16 autoSavePeriod;
