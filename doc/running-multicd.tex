@@ -1,69 +1,35 @@
 
-\subsection{Multi-CD Games}
-In general, ScummVM does not deal very well with multi-CD games. This
-is because ScummVM assumes everything about a game can be found in one
-directory. Even if ScummVM does make some provisions for asking the
-user to change CD, the original games usually install a small number
-of files to hard disk. Unless these files can be found on all the CDs,
-ScummVM will be in trouble.
-
-Fortunately, ScummVM has no problems running the games entirely from
-hard disk, if you create a directory with the correct combination of
-files. Usually, when a file appears on more than one CD you can pick
-either of them.
-
-These instructions are written for the PC versions (which in some case
-is the only version) of the games. Windows and DOS use
-case-insensitive file systems, so if one CD has a file called
-MONKEY.DAT and another has a file called monkey.dat, they are the same
-files. These instructions give file names in all lower-case names,
-even if that's not always how they appear on the CDs. In fact, on
-case-sensitive file systems you will have to make sure that all
-filenames use either all upper- or all lower-case letters for ScummVM
-to be able to find the files.
-
-The instructions for the Broken Sword games are for the Sold-Out
-Software versions, which are the ones you are probably most likely to
-find in stores now.
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme.tex"
+%%% End: 
 
 
-\subsubsection{The Curse of Monkey Island}
-For this game, you'll need the comi.la0, comi.la1 and comi.la2 files.
-The comi.la0 file can be found on either CD, but since they are
-identical it doesn't matter which one of them you use.
+\subsection{Multi-CD games notes}
+In general, ScummVM does not deal very well with Multi-CD games. This is
+because ScummVM assumes everything about a game can be found in one directory.
+Even if ScummVM does make some provisions for asking the user to change CD, the
+original games usually install a small number of files to the hard disk. Unless
+these files can be found on all the CDs, ScummVM will be in trouble.
 
-In addition, you'll need a resource subdirectory with all of the files
-from the resource subdirectories on both CDs. Some of the files appear
-on both CDs, but again they're identical.
+Fortunately, ScummVM has no problems running the games entirely from hard disk,
+if you create a directory with the correct combination of files. Usually, when
+a file appears on more than one CD you can pick either of them.
 
-\subsubsection{Broken Sword 1}
-For this game, you'll need all of the files from the clusters
-directories on both CDs. You will also need the speech.clu files from
-the speech directories, but since they are not identical you'll need
-to rename them speech1.clu and speech2.clu for CD 1 and 2
-respectively.
+These instructions are written for the PC versions (which in some case is the
+only version) of the games. Windows and DOS use case-insensitive file systems,
+so if one CD has a file called MONKEY.DAT and another has a file called
+monkey.dat, they are the same files. These instructions give file names in all
+lower-case names, even if that's not always how they appear on the CDs. In
+fact, on case-sensitive file systems you will have to make sure that all
+filenames use either all upper- or all lower-case letters for ScummVM to be
+able to find the files.
 
-In addition, you will need a music subdirectory with all of the files
-from the music subdirectories on both CDs. Some of these files appear
-on both CDs, but in these cases they are either identical or, in one
-case, so nearly identical that it makes little difference.
+\subsubsection{The Curse of Monkey Island notes}
+For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
+comi.la0 file can be found on either CD, but since they are identical it
+doesn't matter which one of them you use.
 
-ScummVM does not support the original cutscene files, so there is no
-need to copy them.
-
-\subsubsection{Broken Sword 2}
-
-For this game, you'll need all of the files from the clusters
-directories on both CDs. (Actually, a few of them may not be strictly
-necessary, but the ones that I'm uncertain about are all fairly
-small.) You will need to rename the speech.clu and music.clu files
-speech1.clu, speech2.clu, music1.clu and music2.clu so that ScummVM
-can tell which ones are from CD 1 and which ones are from CD 2. Any
-other files that appear in both cluster directories are identical. Use
-whichever you like.
-
-In addition, you will need the cd.bin, cd.inf and startup.inf files
-from the sword2 directory on CD 1.
-
-ScummVM does not support the original cutscene files, so there is no
-need to copy them.
+In addition, you'll need a resource subdirectory with all of the files from the
+resource subdirectories on both CDs. Some of the files appear on both CDs, but
+again they're identical.
