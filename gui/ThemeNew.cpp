@@ -522,10 +522,10 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetB
 
 	Common::Rect r2;
 	
-	kImageHandles corner, top, left, bkgd;
-	kShadowStyles shadow;
-	kColorHandles start, end;
-	kGradientFactors factor;
+	ImageHandles corner, top, left, bkgd;
+	ShadowStyles shadow;
+	ColorHandles start, end;
+	GradientFactors factor;
 
 	switch (background) {
 	case kWidgetBackgroundBorderSmall:

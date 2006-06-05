@@ -345,7 +345,7 @@ private:
 	void drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha,
 							OverlayColor start, OverlayColor end, uint factor = 1);
 
-	enum kShadowStyles {
+	enum ShadowStyles {
 		kShadowFull = 0,
 		kShadowSmall = 1,
 		kShadowButton = 2,
@@ -393,7 +393,7 @@ private:
 	void setupFont(const String &key, const String &name, FontStyle style);
 
 public:
-	enum kImageHandles {
+	enum ImageHandles {
 		kDialogBkgdCorner = 0,
 		kDialogBkgdTop = 1,
 		kDialogBkgdLeft = 2,
@@ -484,7 +484,7 @@ private:
 	const String *_imageHandles;
 	const Graphics::Surface **_images;
 	
-	enum kColorHandles {
+	enum ColorHandles {
 		kMainDialogStart = 0,
 		kMainDialogEnd = 1,
 		
@@ -551,7 +551,7 @@ private:
 	
 	OverlayColor _colors[kColorHandlesMax];
 	
-	enum kGradientFactors {
+	enum GradientFactors {
 		kMainDialogFactor = 0,
 		kDialogFactor = 1,
 		kDialogSpecialFactor = 2,
