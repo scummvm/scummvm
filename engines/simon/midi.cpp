@@ -458,7 +458,6 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 	// treat them as separate tracks -- for the
 	// purpose of jumps, anyway.
 	Common::StackLock lock(_mutex);
-printf("loadMultipleSMF\n");
 
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
