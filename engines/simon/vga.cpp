@@ -671,7 +671,6 @@ static uint16 _video_windows[128] = {
 	0, 0, 20, 134
 };
 
-/* simon2 specific */
 void SimonEngine::decodeColumn(byte *dst, const byte *src, int height) {
 	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
@@ -1158,109 +1157,68 @@ void SimonEngine::drawImages(VC10_state *state) {
 		byte *dst;
 		uint h, i;
 
-		if (!(state->flags & kDFCompressed)) {
-			src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
-			dst = state->surf_addr;
-
-			state->draw_width *= 2;
-
-			if (state->flags & kDFNonTrans) {
-				/* no transparency */
-				h = state->draw_height;
-				do {
-					memcpy(dst, src, state->draw_width);
-					dst += _screenWidth;
-					src += state->width * 16;
-				} while (--h);
-			} else {
-				/* transparency */
-				h = state->draw_height;
-				do {
-					for (i = 0; i != state->draw_width; i++)
-						if (src[i])
-							dst[i] = src[i];
-					dst += _screenWidth;
-					src += state->width * 16;
-				} while (--h);
-			}
-
-		} else {
+		if (state->flags & kDFCompressed) {
 			byte *dst_org = state->surf_addr;
 			src = state->depack_src;
 			/* AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD EEEEEEEE
 			 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
 			 */
 
-			if (state->flags & kDFNonTrans) {
-				/* no transparency */
+			do {
+				uint count = state->draw_width / 4;
+
+				dst = dst_org;
 				do {
-					uint count = state->draw_width / 4;
+					uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
+					byte color;
 
-					dst = dst_org;
-					do {
-						uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
+					color = (byte)((bits >> (32 - 5)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[0] = color;
+					color = (byte)((bits >> (32 - 10)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[1] = color;
+					color = (byte)((bits >> (32 - 15)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[2] = color;
+					color = (byte)((bits >> (32 - 20)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[3] = color;
+					color = (byte)((bits >> (32 - 25)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[4] = color;
+					color = (byte)((bits >> (32 - 30)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[5] = color;
 
-						dst[0] = (byte)((bits >> (32 - 5)) & 31);
-						dst[1] = (byte)((bits >> (32 - 10)) & 31);
-						dst[2] = (byte)((bits >> (32 - 15)) & 31);
-						dst[3] = (byte)((bits >> (32 - 20)) & 31);
-						dst[4] = (byte)((bits >> (32 - 25)) & 31);
-						dst[5] = (byte)((bits >> (32 - 30)) & 31);
+					bits = (bits << 8) | src[4];
 
-						bits = (bits << 8) | src[4];
+					color = (byte)((bits >> (40 - 35)) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[6] = color;
+					color = (byte)((bits) & 31);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[7] = color;
 
-						dst[6] = (byte)((bits >> (40 - 35)) & 31);
-						dst[7] = (byte)((bits) & 31);
+					dst += 8;
+					src += 5;
+				} while (--count);
+				dst_org += _screenWidth;
+			} while (--state->draw_height);
+		} else {
+			src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+			dst = state->surf_addr;
 
-						dst += 8;
-						src += 5;
-					} while (--count);
-					dst_org += _screenWidth;
-				} while (--state->draw_height);
-			} else {
-				/* transparency */
-				do {
-					uint count = state->draw_width / 4;
+			state->draw_width *= 2;
 
-					dst = dst_org;
-					do {
-						uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
-						byte tmp;
-
-						tmp = (byte)((bits >> (32 - 5)) & 31);
-						if (tmp)
-							dst[0] = tmp;
-						tmp = (byte)((bits >> (32 - 10)) & 31);
-						if (tmp)
-							dst[1] = tmp;
-						tmp = (byte)((bits >> (32 - 15)) & 31);
-						if (tmp)
-							dst[2] = tmp;
-						tmp = (byte)((bits >> (32 - 20)) & 31);
-						if (tmp)
-							dst[3] = tmp;
-						tmp = (byte)((bits >> (32 - 25)) & 31);
-						if (tmp)
-							dst[4] = tmp;
-						tmp = (byte)((bits >> (32 - 30)) & 31);
-						if (tmp)
-							dst[5] = tmp;
-
-						bits = (bits << 8) | src[4];
-
-						tmp = (byte)((bits >> (40 - 35)) & 31);
-						if (tmp)
-							dst[6] = tmp;
-						tmp = (byte)((bits) & 31);
-						if (tmp)
-							dst[7] = tmp;
-
-						dst += 8;
-						src += 5;
-					} while (--count);
-					dst_org += _screenWidth;
-				} while (--state->draw_height);
-			}
+			h = state->draw_height;
+			do {
+				for (i = 0; i != state->draw_width; i++)
+					if ((state->flags & kDFNonTrans) || src[i])
+						dst[i] = src[i];
+				dst += _screenWidth;
+				src += state->width * 16;
+			} while (--h);
 		}
 		/* vc10_helper_4 */
 	} else {
@@ -1280,48 +1238,30 @@ void SimonEngine::drawImages(VC10_state *state) {
 
 			vc10_skip_cols(state);
 
-			if (state->flags & kDFNonTrans) {
-				dst_org = state->surf_addr;
-				w = 0;
-				do {
-					src = vc10_depackColumn(state);
-					dst = dst_org;
-
-					h = 0;
-					do {
-						dst[0] = (*src / 16) | state->palette;
-						dst[1] = (*src & 15) | state->palette;
-						dst += _screenWidth;
-						src++;
-					} while (++h != state->draw_height);
-					dst_org += 2;
-				} while (++w != state->draw_width);
-			} else {
-				dst_org = state->surf_addr;
-				if (state->flags & 0x40) {		/* reached */
-					dst_org += vcReadVar(252);
-				}
-				w = 0;
-				do {
-					byte color;
-
-					src = vc10_depackColumn(state);
-					dst = dst_org;
-
-					h = 0;
-					do {
-						color = (*src / 16);
-						if (color)
-							dst[0] = color | state->palette;
-						color = (*src & 15);
-						if (color)
-							dst[1] = color | state->palette;
-						dst += _screenWidth;
-						src++;
-					} while (++h != state->draw_height);
-					dst_org += 2;
-				} while (++w != state->draw_width);
+			dst_org = state->surf_addr;
+			if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
+				dst_org += vcReadVar(252);
 			}
+			w = 0;
+			do {
+				byte color;
+
+				src = vc10_depackColumn(state);
+				dst = dst_org;
+
+				h = 0;
+				do {
+					color = (*src / 16);
+					if ((state->flags & kDFNonTrans) || color != 0)
+						dst[0] = color | state->palette;
+					color = (*src & 15);
+					if ((state->flags & kDFNonTrans) || color != 0)
+						dst[1] = color | state->palette;
+					dst += _screenWidth;
+					src++;
+				} while (++h != state->draw_height);
+				dst_org += 2;
+			} while (++w != state->draw_width);
 			/* vc10_helper_6 */
 		} else {
 			const byte *src;
@@ -1331,32 +1271,19 @@ void SimonEngine::drawImages(VC10_state *state) {
 			src = state->depack_src + (state->width * state->y_skip) * 8;
 			dst = state->surf_addr;
 			state->x_skip *= 4;
-			if (state->flags & kDFNonTrans) {
-				do {
-					for (count = 0; count != state->draw_width; count++) {
-						dst[count * 2] = (src[count + state->x_skip] / 16) | state->palette;
-						dst[count * 2 + 1] = (src[count + state->x_skip] & 15) | state->palette;
-					}
-					dst += _screenWidth;
-					src += state->width * 8;
-				} while (--state->draw_height);
-			} else {
-				do {
-					for (count = 0; count != state->draw_width; count++) {
-						byte color;
-						color = (src[count + state->x_skip] / 16);
-						if (color)
-							dst[count * 2] = color | state->palette;
-						color = (src[count + state->x_skip] & 15);
-						if (color)
-							dst[count * 2 + 1] = color | state->palette;
-					}
-					dst += _screenWidth;
-					src += state->width * 8;
-				} while (--state->draw_height);
-
-			}
-
+			do {
+				for (count = 0; count != state->draw_width; count++) {
+					byte color;
+					color = (src[count + state->x_skip] / 16);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[count * 2] = color | state->palette;
+					color = (src[count + state->x_skip] & 15);
+					if ((state->flags & kDFNonTrans) || color)
+						dst[count * 2 + 1] = color | state->palette;
+				}
+				dst += _screenWidth;
+				src += state->width * 8;
+			} while (--state->draw_height);
 			/* vc10_helper_7 */
 		}
 	}
