@@ -431,8 +431,8 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	21abe302e1b1e2b66d6f5c12e241ebfd	ru	Windows	unenc	Unencrypted	-	sev
 	4ce2d5b355964bbcb5e5ce73236ef868	ru	Windows	HE 100	-	-	sev
 
-	6b257bb2827dd894b8109a50a1a18b5a	nl	All	-	Demo	-	Kirben, sev
-	45082a5c9f42ba14dacfe1fdeeba819d	en	All	-	Demo	-	sev
+	6b257bb2827dd894b8109a50a1a18b5a	nl	All	HE 100	Demo	-	Kirben, sev
+	45082a5c9f42ba14dacfe1fdeeba819d	en	All	HE 100	Demo	-	sev
 
 maze	Freddi Fish and Luther's Maze Madness
 	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	HE 100	Updated	-	Kirben
