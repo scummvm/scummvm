@@ -80,19 +80,24 @@ static void PalmOSTabSave() {
 		gPrefs->advancedMode = CtlGetValue(cckP[3]);
 	}
 
+	if (!OPTIONS_TST(kOptDeviceARM)) {
+		cckP[2] = (ControlType *)GetObjectPtr(TabMiscPalmOSStdPaletteCheckbox);
+		gPrefs->stdPalette = CtlGetValue(cckP[2]);
+	}
+
 	cckP[0] = (ControlType *)GetObjectPtr(TabMiscPalmOSVibratorCheckbox);
 	cckP[1] = (ControlType *)GetObjectPtr(TabMiscPalmOSNoAutoOffCheckbox);
-	cckP[2] = (ControlType *)GetObjectPtr(TabMiscPalmOSStdPaletteCheckbox);
 	cckP[4] = (ControlType *)GetObjectPtr(TabMiscPalmOSLargerStackCheckbox);
 	cckP[5] = (ControlType *)GetObjectPtr(TabMiscPalmOSExitLauncherCheckbox);
 	cckP[6] = (ControlType *)GetObjectPtr(TabMiscPalmOSStylusClickCheckbox);
+	cckP[7] = (ControlType *)GetObjectPtr(TabMiscPalmOSArrowCheckbox);
 
 	gPrefs->vibrator = CtlGetValue(cckP[0]);
 	gPrefs->autoOff = !CtlGetValue(cckP[1]);
-	gPrefs->stdPalette = CtlGetValue(cckP[2]);
 	gPrefs->setStack = CtlGetValue(cckP[4]);
 	gPrefs->exitLauncher = CtlGetValue(cckP[5]);
 	gPrefs->stylusClick = !CtlGetValue(cckP[6]);
+	gPrefs->arrowKeys = CtlGetValue(cckP[7]);
 }
 
 static void ExtsTabSave() {
@@ -143,12 +148,15 @@ static void PalmOSTabInit() {
 	if (OPTIONS_TST(kOptDeviceARM) && !OPTIONS_TST(kOptDeviceZodiac))
 		CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSAdvancedCheckbox), gPrefs->advancedMode);
 
+	if (!OPTIONS_TST(kOptDeviceARM))
+		CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSStdPaletteCheckbox), gPrefs->stdPalette);
+
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSExitLauncherCheckbox), gPrefs->exitLauncher);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSLargerStackCheckbox), gPrefs->setStack);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSVibratorCheckbox), gPrefs->vibrator);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSNoAutoOffCheckbox), !gPrefs->autoOff);
-	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSStdPaletteCheckbox), gPrefs->stdPalette);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSStylusClickCheckbox), !gPrefs->stylusClick);
+	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSArrowCheckbox), gPrefs->arrowKeys);
 }
 
 static void ExtsTabInit() {
@@ -182,9 +190,12 @@ static void MiscFormInit() {
 	TabAddContent(&frmP, tabP, "ScummVM", TabMiscScummVMForm);
 	TabAddContent(&frmP, tabP, "More ...", TabMiscExtsForm);
 
-	if (!OPTIONS_TST(kOptDeviceARM) || OPTIONS_TST(kOptDeviceZodiac)) {
+	if (!OPTIONS_TST(kOptDeviceARM) || OPTIONS_TST(kOptDeviceZodiac))
 		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSAdvancedCheckbox));
-	}
+
+	if (OPTIONS_TST(kOptDeviceARM))
+		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSStdPaletteCheckbox));
+
 	if (!OPTIONS_TST(kOptGoLcdAPI)) {
 		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscExtsGolcdCheckbox));
 		// move lightspeed
