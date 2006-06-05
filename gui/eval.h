@@ -42,11 +42,11 @@ public:
 	~Eval();
 
 	int eval(const String &input, const String &section, const String &name, int startpos);
-	void setVar(const String &section, const char *name, const String &value);
+	void setVar(const String &section, const String &name, const String &value);
 
 	void setParent(const String &name);
 
-	void setVar(const char *name, int val) { _vars[name] = val; }
+	void setVar(const String &name, int val) { _vars[name.c_str()] = val; }
 	void setAlias(const char *name, const String &val) { _aliases[name] = val; }
 
 	int getVar(const String &s) { return getVar_(s.c_str()); }

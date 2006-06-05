@@ -51,11 +51,10 @@ extern int gBitFormat;
 
 static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::String &value, OverlayColor &color) {
 	Common::String temp;
-	if (!cfg.hasKey(value, "colors")) {
+	if (!cfg.getKey(value, "colors", temp)) {
 		color = g_system->RGBToColor(0, 0, 0);
 		return;
 	}
-	cfg.getKey(value, "colors", temp);
 
 	int rgb[3], pos = 0;
 	const char *colors = temp.c_str();
@@ -68,23 +67,21 @@ static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::Stri
 }
 
 static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::String &section, const Common::String &value, uint &val, uint defaultVal) {
-	if (!cfg.hasKey(value, section)) {
-		val = defaultVal;
-		return;
-	}
 	Common::String temp;
-	cfg.getKey(value, section, temp);
-	val = atoi(temp.c_str());
+	if (!cfg.getKey(value, section, temp)) {
+		val = defaultVal;
+	} else {
+		val = atoi(temp.c_str());
+	}
 }
 
 static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::String &section, const Common::String &value, int &val, int defaultVal) {
-	if (!cfg.hasKey(value, section)) {
-		val = defaultVal;
-		return;
-	}
 	Common::String temp;
-	cfg.getKey(value, section, temp);
-	val = atoi(temp.c_str());
+	if (!cfg.getKey(value, section, temp)) {
+		val = defaultVal;
+	} else {
+		val = atoi(temp.c_str());
+	}
 }
 
 #define getFactorFromConfig(x, y, z) getValueFromConfig(x, "gradients", y, z, 1)
@@ -732,7 +729,7 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	arrowRect.clip(r);
 	drawSurface(arrowRect, arrow, true, false, (state == kStateDisabled) ? -30 : 256);
 
-	if (sel != "") {
+	if (!sel.empty()) {
 		Common::Rect text(r.left + 2, r.top + 3, r.right - 4, r.top + 3 + getFont()->getFontHeight());
 		getFont()->drawString(&_screen, sel, text.left, text.top, text.width(), getColor(state), convertAligment(align), deltax, false);
 	}

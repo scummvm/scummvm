@@ -424,13 +424,13 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 		to += postfixes[i];
 
 		_evaluator->setAlias(selfpostfixes[i], to);
-		_evaluator->setVar(to.c_str(), EVAL_UNDEF_VAR);
+		_evaluator->setVar(to, EVAL_UNDEF_VAR);
 	}
 
 	for (i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) && level == 0) {
 			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
-			_evaluator->setVar((prefixedname + postfixes[npostfix++]).c_str(), value);
+			_evaluator->setVar(prefixedname + postfixes[npostfix++], value);
 			start = i + 1;
 		}
 		if (str[i] == '(')
@@ -453,15 +453,15 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 
 	// process VAR=VALUE construct
 	if (npostfix == 0)
-		_evaluator->setVar(name.c_str(), value);
+		_evaluator->setVar(name, value);
 	else
-		_evaluator->setVar((prefixedname + postfixes[npostfix]).c_str(), value);
+		_evaluator->setVar(prefixedname + postfixes[npostfix], value);
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
-		_evaluator->setVar((prefixedname + ".x2").c_str(), 
+		_evaluator->setVar(prefixedname + ".x2", 
 			_evaluator->getVar(prefixedname + ".x") + _evaluator->getVar(prefixedname + ".w"));
-		_evaluator->setVar((prefixedname + ".y2").c_str(), 
+		_evaluator->setVar(prefixedname + ".y2", 
 			_evaluator->getVar(prefixedname + ".y") + _evaluator->getVar(prefixedname + ".h"));
 	}
 
@@ -487,7 +487,7 @@ void Theme::processResSection(Common::ConfigFile &config, const String &name, bo
 		}
 		if (iterk->key.hasPrefix("def_")) {
 			if (!skipDefs)
-				_evaluator->setVar(name, (prefix + iterk->key).c_str(), iterk->value);
+				_evaluator->setVar(name, prefix + iterk->key, iterk->value);
 			continue;
 		}
 		if (iterk->key == "use") {

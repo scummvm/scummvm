@@ -317,8 +317,8 @@ int Eval::getVar_(const char *s, bool includeAliases) {
 	return EVAL_UNDEF_VAR;
 }
 
-void Eval::setVar(const String &section, const char *name, const String &value) {
-	_vars[name + 4] = eval(value, section, name, 0);
+void Eval::setVar(const String &section, const String &name, const String &value) {
+	_vars[name.c_str() + 4] = eval(value, section, name, 0);
 }
 
 void Eval::reset() {
