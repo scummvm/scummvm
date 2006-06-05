@@ -56,7 +56,7 @@ void EditTextWidget::handleScreenChanged() {
 	_leftPadding = g_gui.evaluator()->getVar("EditTextWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("EditTextWidget.rightPadding", 0);
 
-	_font = (Theme::kFontStyle)g_gui.evaluator()->getVar("EditTextWidget.font", Theme::kFontStyleNormal);
+	_font = (Theme::FontStyle)g_gui.evaluator()->getVar("EditTextWidget.font", Theme::kFontStyleNormal);
 }
 
 

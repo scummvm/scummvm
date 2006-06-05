@@ -185,7 +185,7 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 	if (_draggingPart != kNoPart)
 		_part = _draggingPart;
 
-	Theme::kScrollbarState state = Theme::kScrollbarStateNo;
+	Theme::ScrollbarState state = Theme::kScrollbarStateNo;
 	if (_numEntries <= _entriesPerPage) {
 		state = Theme::kScrollbarStateSinglePage;
 	} else if (_part == kUpArrowPart) {

@@ -455,7 +455,7 @@ void ThemeNew::resetDrawArea() {
 
 #define surface(x) (_images[x])
  
-void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState state) {
+void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, State state) {
 	if (!_initOk)
 		return;
 
@@ -488,7 +488,7 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 	addDirtyRect(r2, (hints & THEME_HINT_SAVE_BACKGROUND) != 0, true);
 }
 
-void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font) {
+void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!_initOk)
 		return;
 	Common::Rect r2(r.left, r.top, r.right, r.top+getFontHeight(font));
@@ -508,7 +508,7 @@ void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state) {
+void ThemeNew::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state) {
 	if (!_initOk)
 		return;
 	restoreBackground(r);
@@ -516,7 +516,7 @@ void ThemeNew::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *fo
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state) {
+void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state) {
 	if (!_initOk)
 		return;
 
@@ -582,7 +582,7 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 	addDirtyRect((hints & THEME_HINT_USE_SHADOW) ? r2 : r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
-void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kState state) {
+void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, State state) {
 	if (!_initOk)
 		return;
 	
@@ -624,7 +624,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha, bool themeTrans) {
+void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans) {
 	if (!_initOk)
 		return;
 
@@ -667,7 +667,7 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 	addDirtyRect(rect);
 }
 
-void ThemeNew::drawSlider(const Common::Rect &rr, int width, kState state) {
+void ThemeNew::drawSlider(const Common::Rect &rr, int width, State state) {
 	if (!_initOk)
 		return;
 
@@ -699,7 +699,7 @@ void ThemeNew::drawSlider(const Common::Rect &rr, int width, kState state) {
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align) {
+void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align) {
 	if (!_initOk)
 		return;
 
@@ -741,7 +741,7 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state) {
+void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state) {
 	if (!_initOk)
 		return;
 	Common::Rect r2 = r;
@@ -759,7 +759,7 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state) {
+void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, State state) {
 	if (!_initOk)
 		return;
 
@@ -794,7 +794,7 @@ void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState scrollState, kState state) {
+void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, State state) {
 	if (!_initOk)
 		return;
 	const int UP_DOWN_BOX_HEIGHT = r.width() + 1;
@@ -882,7 +882,7 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawCaret(const Common::Rect &r, bool erase, kState state) {
+void ThemeNew::drawCaret(const Common::Rect &r, bool erase, State state) {
 	if (!_initOk)
 		return;
 
@@ -911,7 +911,7 @@ void ThemeNew::drawCaret(const Common::Rect &r, bool erase, kState state) {
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawLineSeparator(const Common::Rect &r, kState state) {
+void ThemeNew::drawLineSeparator(const Common::Rect &r, State state) {
 	if (!_initOk)
 		return;
 	_screen.hLine(r.left - 1, r.top + r.height() / 2, r.right, _system->RGBToColor(0, 0, 0));
@@ -1302,7 +1302,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 #undef NO_EFFECT
 }
 
-OverlayColor ThemeNew::getColor(kState state) {
+OverlayColor ThemeNew::getColor(State state) {
 	switch (state) {
 	case kStateDisabled:
 		return _colors[kColorStateDisabled];
@@ -1407,7 +1407,7 @@ void ThemeNew::setupColors() {
 #define FONT_NAME_FIXED_BOLD "newgui_fixed_bold"
 #define FONT_NAME_FIXED_ITALIC "newgui_fixed_italic"
 
-void ThemeNew::setupFont(const String &key, const String &name, kFontStyle style) {
+void ThemeNew::setupFont(const String &key, const String &name, FontStyle style) {
 	if (_configFile.hasKey(key, "extra")) {
 		_fonts[style] = FontMan.getFontByName(name);
 

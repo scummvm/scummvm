@@ -73,10 +73,10 @@ public:
 	Theme *theme() { return _theme; }
 	Eval *evaluator() { return _theme->_evaluator; }
 
-	const Graphics::Font &getFont(Theme::kFontStyle style = Theme::kFontStyleBold) const { return *(_theme->getFont(style)); }
-	int getFontHeight(Theme::kFontStyle style = Theme::kFontStyleBold) const { return _theme->getFontHeight(style); }
-	int getStringWidth(const Common::String &str, Theme::kFontStyle style = Theme::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
-	int getCharWidth(byte c, Theme::kFontStyle style = Theme::kFontStyleBold) const { return _theme->getCharWidth(c, style); }
+	const Graphics::Font &getFont(Theme::FontStyle style = Theme::kFontStyleBold) const { return *(_theme->getFont(style)); }
+	int getFontHeight(Theme::FontStyle style = Theme::kFontStyleBold) const { return _theme->getFontHeight(style); }
+	int getStringWidth(const Common::String &str, Theme::FontStyle style = Theme::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
+	int getCharWidth(byte c, Theme::FontStyle style = Theme::kFontStyleBold) const { return _theme->getCharWidth(c, style); }
 
 	WidgetSize getWidgetSize();
 

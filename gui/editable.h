@@ -47,7 +47,7 @@ protected:
 
 	int			_editScrollOffset;
 
-	Theme::kFontStyle  _font;
+	Theme::FontStyle  _font;
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -74,7 +74,7 @@ protected:
 	bool adjustOffset();
 	void makeCaretVisible();
 
-	void setFontStyle(Theme::kFontStyle font) { _font = font; }
+	void setFontStyle(Theme::FontStyle font) { _font = font; }
 
 	virtual bool tryInsertChar(char c, int pos);
 };

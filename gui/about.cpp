@@ -200,8 +200,8 @@ void AboutDialog::drawDialog() {
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
-		Theme::kTextAlign align = Theme::kTextAlignCenter;
-		Theme::kState state = Theme::kStateEnabled;
+		Theme::TextAlign align = Theme::kTextAlignCenter;
+		Theme::State state = Theme::kStateEnabled;
 		while (str[0] == '\\') {
 			switch (str[1]) {
 			case 'C':

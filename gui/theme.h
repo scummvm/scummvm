@@ -70,13 +70,13 @@ public:
 		
 	virtual ~Theme();
 
-	enum kTextAlign {
+	enum TextAlign {
 		kTextAlignLeft,
 		kTextAlignCenter,
 		kTextAlignRight
 	};
 
-	enum kWidgetBackground {
+	enum WidgetBackground {
 		kWidgetBackgroundNo,
 		kWidgetBackgroundPlain,
 		kWidgetBackgroundBorder,
@@ -84,13 +84,13 @@ public:
 		kWidgetBackgroundEditText
 	};
 
-	enum kState {
+	enum State {
 		kStateDisabled,
 		kStateEnabled,
 		kStateHighlight
 	};
 
-	enum kScrollbarState {
+	enum ScrollbarState {
 		kScrollbarStateNo,
 		kScrollbarStateUp,
 		kScrollbarStateDown,
@@ -98,7 +98,7 @@ public:
 		kScrollbarStateSinglePage
 	};
 
-	enum kFontStyle {
+	enum FontStyle {
 		kFontStyleBold = 0,	// standard font
 		kFontStyleNormal = 1,
 		kFontStyleItalic = 2,
@@ -130,31 +130,31 @@ public:
 	
 	virtual const Common::ConfigFile &getConfigFile() { return _configFile; }
 
-	virtual const Graphics::Font *getFont(kFontStyle font = kFontStyleBold) const = 0;
-	virtual int getFontHeight(kFontStyle font = kFontStyleBold) const = 0;
-	virtual int getStringWidth(const Common::String &str, kFontStyle font = kFontStyleBold) const = 0;
-	virtual int getCharWidth(byte c, kFontStyle font = kFontStyleBold) const = 0;
+	virtual const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const = 0;
+	virtual int getFontHeight(FontStyle font = kFontStyleBold) const = 0;
+	virtual int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const = 0;
+	virtual int getCharWidth(byte c, FontStyle font = kFontStyleBold) const = 0;
 
-	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state = kStateEnabled) = 0;
-	virtual void drawText(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled, kTextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, kFontStyle font = kFontStyleBold) = 0;
+	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, State state = kStateEnabled) = 0;
+	virtual void drawText(const Common::Rect &r, const Common::String &str, State state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold) = 0;
 	// this should ONLY be used by the debugger until we get a nicer solution
-	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state = kStateEnabled) = 0;
+	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state = kStateEnabled) = 0;
 
-	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background = kWidgetBackgroundPlain, kState state = kStateEnabled) = 0;
-	virtual void drawButton(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled) = 0;
-	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state = kStateEnabled, int alpha = 256, bool themeTrans = false) = 0;
-	virtual void drawSlider(const Common::Rect &r, int width, kState state = kStateEnabled) = 0;
-	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state = kStateEnabled) = 0;
-	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state = kStateEnabled) = 0;
-	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state = kStateEnabled) = 0;
-	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state = kStateEnabled, kTextAlign align = kTextAlignLeft) = 0;
-	virtual void drawCaret(const Common::Rect &r, bool erase, kState state = kStateEnabled) = 0;
-	virtual void drawLineSeparator(const Common::Rect &r, kState state = kStateEnabled) = 0;
+	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, State state = kStateEnabled) = 0;
+	virtual void drawButton(const Common::Rect &r, const Common::String &str, State state = kStateEnabled) = 0;
+	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state = kStateEnabled, int alpha = 256, bool themeTrans = false) = 0;
+	virtual void drawSlider(const Common::Rect &r, int width, State state = kStateEnabled) = 0;
+	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state = kStateEnabled) = 0;
+	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, State state = kStateEnabled) = 0;
+	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state = kStateEnabled) = 0;
+	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state = kStateEnabled, TextAlign align = kTextAlignLeft) = 0;
+	virtual void drawCaret(const Common::Rect &r, bool erase, State state = kStateEnabled) = 0;
+	virtual void drawLineSeparator(const Common::Rect &r, State state = kStateEnabled) = 0;
 
 	virtual void restoreBackground(Common::Rect r, bool special = false) = 0;
 	virtual bool addDirtyRect(Common::Rect r, bool save = false, bool special = false) = 0;
 
-	Graphics::TextAlignment convertAligment(kTextAlign align) const {
+	Graphics::TextAlignment convertAligment(TextAlign align) const {
 		switch (align) {
 		case kTextAlignLeft:
 			return Graphics::kTextAlignLeft;
@@ -170,7 +170,7 @@ public:
 		return Graphics::kTextAlignCenter;
 	};
 	
-	kTextAlign convertAligment(Graphics::TextAlignment align) const {
+	TextAlign convertAligment(Graphics::TextAlignment align) const {
 		switch (align) {
 		case Graphics::kTextAlignLeft:
 			return kTextAlignLeft;
@@ -233,25 +233,25 @@ public:
 
 	typedef Common::String String;
 
-	const Graphics::Font *getFont(kFontStyle font) const { return _font; }
-	int getFontHeight(kFontStyle font = kFontStyleBold) const { if (_initOk) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const String &str, kFontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
-	int getCharWidth(byte c, kFontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
+	const Graphics::Font *getFont(FontStyle font) const { return _font; }
+	int getFontHeight(FontStyle font = kFontStyleBold) const { if (_initOk) return _font->getFontHeight(); return 0; }
+	int getStringWidth(const String &str, FontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
+	int getCharWidth(byte c, FontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
-	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
-	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font);
-	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, State state);
+	void drawText(const Common::Rect &r, const String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
 
-	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
-	void drawButton(const Common::Rect &r, const String &str, kState state);
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha, bool themeTrans);
-	void drawSlider(const Common::Rect &r, int width, kState state);
-	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
-	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
-	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align);
-	void drawCaret(const Common::Rect &r, bool erase, kState state);
-	void drawLineSeparator(const Common::Rect &r, kState state);
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
+	void drawButton(const Common::Rect &r, const String &str, State state);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
+	void drawSlider(const Common::Rect &r, int width, State state);
+	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, State state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, State state);
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
+	void drawCaret(const Common::Rect &r, bool erase, State state);
+	void drawLineSeparator(const Common::Rect &r, State state);
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool save = false, bool special = false);
 
@@ -259,7 +259,7 @@ private:
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool skipLastRow = false);
 	void box(int x, int y, int width, int height);
 
-	OverlayColor getColor(kState state);
+	OverlayColor getColor(State state);
 
 	OSystem *_system;
 	Graphics::Surface _screen;
@@ -310,25 +310,25 @@ public:
 	void setDrawArea(const Common::Rect &r);
 	void resetDrawArea();
 
-	const Graphics::Font *getFont(kFontStyle font = kFontStyleBold) const { return _fonts[font]; }
-	int getFontHeight(kFontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getFontHeight(); return 0; }
-	int getStringWidth(const String &str, kFontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getStringWidth(str); return 0; }
-	int getCharWidth(byte c, kFontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getCharWidth(c); return 0; }
+	const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const { return _fonts[font]; }
+	int getFontHeight(FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getFontHeight(); return 0; }
+	int getStringWidth(const String &str, FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getStringWidth(str); return 0; }
+	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getCharWidth(c); return 0; }
 
-	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
-	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis, kFontStyle font);
-	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, State state);
+	void drawText(const Common::Rect &r, const String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
 
-	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
-	void drawButton(const Common::Rect &r, const String &str, kState state);
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, int alpha, bool themeTrans);
-	void drawSlider(const Common::Rect &r, int width, kState state);
-	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
-	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
-	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, kState state, kTextAlign align);
-	void drawCaret(const Common::Rect &r, bool erase, kState state);
-	void drawLineSeparator(const Common::Rect &r, kState state);
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
+	void drawButton(const Common::Rect &r, const String &str, State state);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
+	void drawSlider(const Common::Rect &r, int width, State state);
+	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, State state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, State state);
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
+	void drawCaret(const Common::Rect &r, bool erase, State state);
+	void drawLineSeparator(const Common::Rect &r, State state);
 	const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
 
 	void restoreBackground(Common::Rect r, bool special = false);
@@ -377,7 +377,7 @@ private:
 	void resetupGuiRenderer();
 	void setupColors();
 
-	OverlayColor getColor(kState state);
+	OverlayColor getColor(State state);
 
 	struct DialogState {
 		Graphics::Surface screen;
@@ -390,7 +390,7 @@ private:
 	const Graphics::Font *_fonts[kFontStyleMax];
 
 private:
-	void setupFont(const String &key, const String &name, kFontStyle style);
+	void setupFont(const String &key, const String &name, FontStyle style);
 
 public:
 	enum kImageHandles {

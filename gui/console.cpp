@@ -99,7 +99,7 @@ void ConsoleDialog::init() {
 	if (f == EVAL_UNDEF_VAR)
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	else
-		_font = g_gui.theme()->getFont((Theme::kFontStyle)f);
+		_font = g_gui.theme()->getFont((Theme::FontStyle)f);
 
 	_leftPadding = g_gui.evaluator()->getVar("Console.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("Console.rightPadding", 0);
