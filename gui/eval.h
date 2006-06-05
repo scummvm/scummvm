@@ -49,11 +49,14 @@ public:
 	void setVar(const String &name, int val) { _vars[name.c_str()] = val; }
 	void setAlias(const char *name, const String &val) { _aliases[name] = val; }
 
-	int getVar(const String &s) { return getVar_(s.c_str()); }
-	int getVar(const String &s, int def) {
-		int val = getVar_(s.c_str());
+	int getVar(const char *s) { return getVar_(s); }
+	int getVar(const char *s, int def) {
+		int val = getVar_(s);
 		return (val == EVAL_UNDEF_VAR) ? def : val;
-	};
+	}
+
+	int getVar(const String &s) { return getVar(s.c_str()); }
+	int getVar(const String &s, int def) { return getVar(s.c_str(), def); }
 
 	uint getNumVars() { return _vars.size(); }
 
