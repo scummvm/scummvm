@@ -484,6 +484,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	a095e33061606d231ff37dca4c64c8ac	de	All	HE 99	-	-	Joachim Eberhard
 	4fa6870d9bc8c313b65d54b1da5a1891	nl	Windows	-	-	-	joostp
 	898eaa21f79cf8d4f08db856244689ff	en	Windows	HE 99	-	-	Joachim Eberhard
+	4aa93cb30e485b728504ba3a693f12bf	ru	Windows	HE 100	-	-	sev
 
 	d7ab7cd6105546016e6a0d46fb36b964	en	All	HE 100	Demo	-	khalek
 	f237bf8a5ef9af78b2a6a4f3901da341	en	All	-	Demo	-	khalek, sev
@@ -517,6 +518,7 @@ pjgames	Pajama Sam: Games to Play On Any Day
 lost	Pajama Sam's Lost & Found
 	a561d2e2413cc1c71d5a1bf87bf493ea	en	All	HE 100	Updated	-	Kirben
 	ed361270102e355afe5236954216aba2	en	All	-	-	-	Kirben
+	69ffe29185b8d71f09f6199f8b2a87cb	ru	Windows	HE 100	-	-	sev
 	a2bb6aa0537402c1b3c2ea899ccef64b	en	Windows	HE 99	Demo	-	Kirben
 
 SamsFunShop	Pajama Sam's One-Stop Fun Shop
