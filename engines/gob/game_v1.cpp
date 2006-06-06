@@ -80,7 +80,7 @@ void Game_v1::playTot(int16 skipPlay) {
 				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
-			if(_vm->_features & GF_MAC)
+			if (_vm->_features & GF_MAC)
 				_vm->_music->stopPlay();
 			else
 				_vm->_cdrom->stopPlaying();

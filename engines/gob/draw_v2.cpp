@@ -144,7 +144,7 @@ void Draw_v2::printText(void) {
 		if ((_vm->_game->_totFileData[0x29] < 0x32) && (*ptr2 > 3) && (*ptr2 < 32))
 			*ptr2 = 32;
 
-		switch(*ptr2) {
+		switch (*ptr2) {
 		case 1:
 			break;
 
@@ -202,7 +202,7 @@ void Draw_v2::printText(void) {
 	_backColor = 0;
 	_transparency = 1;
 	
-	while(true) {
+	while (true) {
 		if ((*ptr >= 1) && ((*ptr <= 7) || (*ptr == 10)) && (strPos != 0)) {
 			str[MAX(strPos, strPos2)] = 0;
 			strPosBak = strPos;
@@ -352,7 +352,7 @@ void Draw_v2::printText(void) {
 			if (cmd == 0) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 				sprintf(buf, "%d",  VAR_OFFSET(val));
-			} else if(cmd == 1) {
+			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 				strcpy(buf, _vm->_global->_inter_variables + val);
 			} else {

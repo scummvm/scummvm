@@ -404,7 +404,10 @@ void Game::freeSoundSlot(int16 slot) {
 
 	if (_soundADL[slot]) {
 		_vm->_music->stopPlay();
-		delete[] ((char *) _soundSamples[slot]);
+		if (_soundFromExt[slot] == 1) {
+			delete[] ((char *) _soundSamples[slot]);
+			_soundFromExt[slot] = 0;
+		}
 	} else {
 		char* data = _soundSamples[slot]->data;
 
@@ -2013,7 +2016,7 @@ Game::Imd *Game::loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int
 			delete imdPtr;
 			return 0;
 		}
-		if(imdPtr->stdX != 0) {
+		if (imdPtr->stdX != 0) {
 			_vm->_dataio->readData(handle, buf, 8);
 			imdPtr->stdX = READ_LE_UINT16(buf);
 			imdPtr->stdY = READ_LE_UINT16(buf + 2);
@@ -2401,7 +2404,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 			}
 		} else
 			retVal |= 0x800;
-	} while(var_4 != 0);
+	} while (var_4 != 0);
 
 	if (byte_2DA60 != 0) {
 		byte_2DA60 = 0;
@@ -2567,7 +2570,7 @@ void Game::imdFrameUncompressor(byte *dest, byte *src) {
 	chunkCount = 1;
 	chunkBitField = 0;
 
-	while(frameLength > 0) {
+	while (frameLength > 0) {
 		chunkCount--;
 		if (chunkCount == 0) {
 			tmp = *src++;

@@ -80,7 +80,7 @@ void Game_v2::playTot(int16 skipPlay) {
 				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
-			if(_vm->_features & GF_MAC)
+			if (_vm->_features & GF_MAC)
 				_vm->_music->stopPlay();
 			else
 				_vm->_cdrom->stopPlaying();
@@ -481,14 +481,14 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 					cursorRight = _vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth;
 					if (cursorRight > (_word_2FC9E + sWidth))
 						_word_2FC9E = MIN(cursorRight - sWidth, width - sWidth);
-				} else if(_vm->_global->_inter_mouseX < _word_2FC9E)
+				} else if (_vm->_global->_inter_mouseX < _word_2FC9E)
 					_word_2FC9E = _vm->_global->_inter_mouseX;
 				height = _vm->_draw->_frontSurface->height;
 				if ((height > sHeight) && (_vm->_global->_inter_mouseY >= _word_2FC9C)) {
 					cursorBottom = _vm->_global->_inter_mouseY + _vm->_draw->_cursorHeight;
 					if (cursorBottom > (_word_2FC9C + sHeight))
 						_word_2FC9C = MIN(cursorBottom - sHeight, height - sHeight);
-				} else if(_vm->_global->_inter_mouseY < _word_2FC9C)
+				} else if (_vm->_global->_inter_mouseY < _word_2FC9C)
 					_word_2FC9C = _vm->_global->_inter_mouseY;
 				if ((oldWord_2FC9E != _word_2FC9E) || (oldWord_2FC9C != _word_2FC9C)) {
 					if (_byte_2FC9B == 0) {
@@ -499,7 +499,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 							if ((_vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth) >
 									(_word_2FC9E + sWidth))
 								_vm->_global->_inter_mouseX = _word_2FC9E + sWidth - _vm->_draw->_cursorWidth;
-						} else if(_vm->_global->_inter_mouseX < oldWord_2FC9E)
+						} else if (_vm->_global->_inter_mouseX < oldWord_2FC9E)
 							_vm->_global->_inter_mouseX = oldWord_2FC9E;
 
 						if ((_vm->_draw->_frontSurface->height > sHeight) && 
@@ -507,7 +507,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 							if ((_vm->_global->_inter_mouseY + _vm->_draw->_cursorHeight) >
 									(_word_2FC9C + sHeight))
 								_vm->_global->_inter_mouseY = _word_2FC9C + sHeight - _vm->_draw->_cursorHeight;
-						} else if(_vm->_global->_inter_mouseY < oldWord_2FC9E)
+						} else if (_vm->_global->_inter_mouseY < oldWord_2FC9E)
 							_vm->_global->_inter_mouseY = _word_2FC9C;
 					} else {
 						if (oldWord_2FC9E > _word_2FC9E) {

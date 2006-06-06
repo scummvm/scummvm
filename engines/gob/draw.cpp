@@ -667,7 +667,7 @@ void Draw::drawSprite(int16 source, Video::SurfaceDesc * dest, int16 left,
 
 void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font) {
-	while(*str != '\0') {
+	while (*str != '\0') {
 		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
 		if (font->extraData == 0)
 			x += font->itemWidth;

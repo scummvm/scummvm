@@ -1236,7 +1236,7 @@ void Mult_v2::animate(void) {
 						animData1->frame++;
 					if (animData1->frame >=
 							_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->framesCount) {
-						switch(animData1->animType) {
+						switch (animData1->animType) {
 						case 0:
 							animData1->frame = 0;
 							break;

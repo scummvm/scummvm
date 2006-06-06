@@ -1821,6 +1821,7 @@ void Goblin::zeroObjects(void) {
 
 void Goblin::freeAllObjects(void) {
 	_vm->_util->deleteList(_objList);
+	_objList = 0;
 	freeObjects();
 }
 
@@ -2347,7 +2348,7 @@ void Goblin::sub_19BD3(void) {
 			anim0->field_10 = 6;
 	}
 	if (anim1->someFlag == 0) {
-		if((_word_2F9BA == 0) && (anim1->isStatic == 0)) {
+		if ((_word_2F9BA == 0) && (anim1->isStatic == 0)) {
 			if ((VAR(_dword_2F9B2) == 0) && (di == 28)) {
 				di = _vm->_util->getRandom(3) + 24;
 				warning("GOB2 Stub! sub_195C7(1, di);");
@@ -2369,7 +2370,7 @@ void Goblin::sub_19BD3(void) {
 	if (VAR(18) != ((uint32) -1)) {
 		if (anim0->layer == 44)
 			anim0->field_10 = 4;
-		else if(anim0->layer == 45)
+		else if (anim0->layer == 45)
 			anim0->field_10 = 0;
 		if (anim0->someFlag == 0)
 			anim0->field_10 = 6;
@@ -2377,7 +2378,7 @@ void Goblin::sub_19BD3(void) {
 	if (VAR(19) != ((uint32) -1)) {
 		if (anim1->layer == 48)
 			anim1->field_10 = 4;
-		else if(anim1->layer == 49)
+		else if (anim1->layer == 49)
 			anim1->field_10 = 0;
 		if (anim1->someFlag == 0)
 			anim1->field_10 = 6;

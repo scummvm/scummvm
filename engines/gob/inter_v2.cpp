@@ -1253,7 +1253,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	cmd = *_vm->_global->_inter_execPtr++;
 
-	switch(cmd & 0x7f) {
+	switch (cmd & 0x7f) {
 	case 48:
 		if ((_vm->_global->_videoMode < 0x32) || (_vm->_global->_videoMode > 0x63)) {
 			_vm->_global->_inter_execPtr += 48;
@@ -1325,7 +1325,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 		int dl = 0;
 		for (i = 2; i < 18; i++) {
 			dl = 1;
-			if(_vm->_global->_inter_execPtr[i] != 0)
+			if (_vm->_global->_inter_execPtr[i] != 0)
 				dl = 0;
 		}
 		if (dl != 0) {
