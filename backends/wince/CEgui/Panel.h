@@ -26,14 +26,15 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/map.h"
+#include "common/hashmap.h"
 #include "common/str.h"
+#include "common/config-manager.h"
 
 #include "PanelItem.h"
 #include "Toolbar.h"
 
 using Common::String;
-using Common::Map;
+using Common::HashMap;
 
 namespace CEGUI {
 
@@ -52,7 +53,7 @@ namespace CEGUI {
 			  return scumm_stricmp(x.c_str(), y.c_str()); }
         };
 
-		typedef Map<String, PanelItem*, IgnoreCaseComparator> ItemMap;
+		typedef HashMap<String, PanelItem*, Common::IgnoreCase_Hash , IgnoreCaseComparator> ItemMap;
 
 		ItemMap _itemsMap;
 		int _interleave;

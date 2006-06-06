@@ -27,12 +27,13 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/str.h"
-#include "common/map.h"
+#include "common/hashmap.h"
+#include "common/config-manager.h"
 
 #include "Toolbar.h"
 
 using Common::String;
-using Common::Map;
+using Common::HashMap;
 
 namespace CEGUI {
 
@@ -59,7 +60,7 @@ namespace CEGUI {
 			  return scumm_stricmp(x.c_str(), y.c_str()); }
         };
 
-		Map<String, Toolbar*, IgnoreCaseComparator> _toolbarMap;
+		HashMap<String, Toolbar*, Common::IgnoreCase_Hash, IgnoreCaseComparator> _toolbarMap;
 		String _current;
 		Toolbar *_active;
 		int _offset;

@@ -60,7 +60,7 @@ class CEActionsSmartphone : public GUI::Actions {
 		bool perform(GUI::ActionType action, bool pushed = true);
 		String actionName(GUI::ActionType action);
 		int size();
-		static void init(const Common::String &gameid);
+		static void init();
 		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 
@@ -70,7 +70,7 @@ class CEActionsSmartphone : public GUI::Actions {
 
 		~CEActionsSmartphone();
 	private:
-		CEActionsSmartphone(const Common::String &gameid);
+		CEActionsSmartphone();
 		bool _right_click_needed;
 		OSystem_WINCE3 *_CESystem;
 	};

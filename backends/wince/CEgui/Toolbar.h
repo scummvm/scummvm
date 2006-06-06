@@ -27,7 +27,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "common/map.h"
+//#include "common/map.h"
 #include "common/str.h"
 
 #include "GUIElement.h"

@@ -26,7 +26,7 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/scaler.h"
+#include "graphics/scaler.h"
 #include "backends/intern.h"
 #include "backends/sdl/sdl-common.h"
 
@@ -49,6 +49,8 @@ public:
 	void internUpdateScreen();
 
 	void initSize(uint w, uint h);
+
+	void initBackend();
 
 	// Overloaded from SDL_Common (toolbar handling)
 	bool pollEvent(Event &event);
@@ -191,7 +193,7 @@ private:
 	long _tapTime;
 
 	// Mouse
-
+	int	_mouseHotspotX, _mouseHotspotY;
 	byte *_mouseBackupOld;
 
 	// Smartphone specific variables

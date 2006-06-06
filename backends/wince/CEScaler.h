@@ -26,8 +26,8 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/scaler.h"
-#include "common/scaler/intern.h"
+#include "graphics/scaler.h"
+#include "graphics/scaler/intern.h"
 
 DECLARE_SCALER(PocketPCPortrait);
 DECLARE_SCALER(PocketPCHalf);

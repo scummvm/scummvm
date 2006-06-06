@@ -287,6 +287,11 @@ char *getcwd(char *buffer, int maxlen)
 	return cwd;
 }
 
+void GetCurrentDirectory(int len, char *buf)
+{
+	getcwd(buf,len);
+};
+
 /* Limited implementation of time.h. time_t formula is possibly incorrect. */
 time_t time(time_t* res)
 {

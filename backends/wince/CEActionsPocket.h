@@ -61,7 +61,7 @@ class CEActionsPocket : public GUI::Actions {
 		String actionName(GUI::ActionType action);
 		int size();
 
-		static void init(const Common::String &gameid);
+		static void init();
 		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 

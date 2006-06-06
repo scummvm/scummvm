@@ -31,7 +31,6 @@ namespace CEGUI {
 
 
 	bool ToolbarHandler::add(const String &name, const Toolbar &toolbar) {
-		_toolbarMap.addKey(name);
 		_toolbarMap[name] = (Toolbar*)&toolbar;
 
 		if (!_active) {

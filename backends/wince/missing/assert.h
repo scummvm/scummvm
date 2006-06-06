@@ -1,6 +1,7 @@
 /* Header is not present in Windows CE SDK */
 
-#include "common/util.h"
+// defined in common/util.h
+void CDECL _declspec(noreturn) error(const char *s, ...);
 
 #define assert(e) ((e) ? 0 : (::error("Assertion failed " #e " (%s, %d)", __FILE__, __LINE__)))
 

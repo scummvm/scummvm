@@ -19,7 +19,7 @@
  * $Id$
  *
  */
-#include "common/scaler/intern.h"
+#include "graphics/scaler/intern.h"
 #include "common/stdafx.h"
 #include "CEScaler.h"
 

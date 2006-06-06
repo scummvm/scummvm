@@ -42,18 +42,18 @@ enum {
 
 CEKeysDialog::CEKeysDialog(const Common::String &title)
 	: GUI::Dialog(30, 20, 260, 160) {
-	addButton(this, 160, 20, "Map", kMapCmd, 'M', GUI::kDefaultWidgetSize);						// Map
-	addButton(this, 160, 40, "OK", kOKCmd, 'O', GUI::kDefaultWidgetSize);						// OK
-	addButton(this, 160, 60, "Cancel", kCloseCmd, 'C', GUI::kDefaultWidgetSize);				// Cancel
-
-	_actionsList = new ListWidget(this, 10, 20, 140, 90);
-	_actionsList->setNumberingMode(kListNumberingZero);
+	addButton(this, 160, 20, "Map", kMapCmd, 'M');						// Map
+	addButton(this, 160, 40, "OK", kOKCmd, 'O');						// OK
+	addButton(this, 160, 60, "Cancel", kCloseCmd, 'C');				// Cancel
 
 	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, title, kTextAlignCenter);
 	_keyMapping = new StaticTextWidget(this, 10, 140, 240, 16, "", kTextAlignCenter);
 
 	_actionTitle->setFlags(WIDGET_CLEARBG);
 	_keyMapping->setFlags(WIDGET_CLEARBG);
+
+	_actionsList = new ListWidget(this, "Actions List");
+	_actionsList->setNumberingMode(kListNumberingZero);
 
 	// Get actions names
 	Common::StringList l;

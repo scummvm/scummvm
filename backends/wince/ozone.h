@@ -26,6 +26,7 @@
 #define FORMAT_555 2
 #define FORMAT_OTHER 3
 
+#if defined(_WIN32_WCE) && _WIN32_WCE <= 300
 typedef struct _RawFrameBufferInfo
 {
    WORD wFormat;
@@ -36,4 +37,4 @@ typedef struct _RawFrameBufferInfo
    int  cxPixels;
    int  cyPixels;
 } RawFrameBufferInfo;
-
+#endif

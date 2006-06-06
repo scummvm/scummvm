@@ -49,7 +49,11 @@
 #include "CEException.h"
 
 #ifdef USE_VORBIS
+#ifndef USE_TREMOR
 #include <vorbis/vorbisfile.h>
+#else
+#include <tremor/ivorbisfile.h>
+#endif
 #endif
 
 using namespace CEGUI;
@@ -129,6 +133,10 @@ int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
+OSystem *OSystem_WINCE3_create() {
+	return new OSystem_WINCE3();
+}
+
 int SDL_main(int argc, char **argv) {
 	CEDevice::init();
 	OSystem_WINCE3::initScreenInfos();
@@ -143,18 +151,22 @@ int SDL_main(int argc, char **argv) {
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
 
-	int rest = 0;
+	int res = 0;
 
+#ifndef DEBUG
 	__try {
+#endif
 		g_system = OSystem_WINCE3_create();
 		assert(g_system);
 
 		// Invoke the actual ScummVM main entry point:
 		res = scummvm_main(argc, argv);
 		g_system->quit();	// TODO: Consider removing / replacing this!
+#ifndef DEBUG
 	}
 	__except (handleException(GetExceptionInformation())) {
 	}
+#endif
 
 	return res;
 }
@@ -181,6 +193,11 @@ void drawError(char *error) {
 }
 
 // ********************************************************************************************
+
+void OSystem_WINCE3::initBackend()
+{
+	//GUI::Actions::init();
+}
 
 int OSystem_WINCE3::getScreenWidth() {
 	return _platformScreenWidth;
@@ -210,10 +227,6 @@ bool OSystem_WINCE3::isOzone() {
 // ********************************************************************************************
 
 
-OSystem *OSystem_WINCE3_create() {
-	return new OSystem_WINCE3();
-}
-
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
 	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
@@ -229,6 +242,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	}
 	create_toolbar();
 	// Initialize global key mapping for Smartphones
+	GUI::Actions::init();
 	GUI_Actions::Instance()->initInstanceMain(this);
 	GUI_Actions::Instance()->loadMapping();
 
@@ -364,7 +378,7 @@ void OSystem_WINCE3::loadSmartphoneConfigurationElement(String element, int &val
 	value = ConfMan.getInt(element, "smartphone");
 	if (!value) {
 		value = defaultValue;
-		ConfMan.set(element, value, "smartphone");
+		ConfMan.setInt(element, value, "smartphone");
 	}
 }
 
@@ -526,12 +540,12 @@ void OSystem_WINCE3::get_sample_rate() {
 	if (gameid == "queen") {
 		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) ||
 			(ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
-			ConfMan.set("FM_medium_quality", true);
+			ConfMan.setBool("FM_medium_quality", true);
 			ConfMan.flushToDisk();
 		}
 	}
 	// See if the output frequency is forced by the game
-	if ((gameid == "ft" ||
+	if (gameid == "ft" ||
 		gameid == "dig" ||
 		gameid == "comi" ||
 		gameid == "queen" ||
@@ -748,7 +762,7 @@ void OSystem_WINCE3::update_game_settings() {
 
 		// Set Smush Force Redraw rate for Full Throttle
 		if (!ConfMan.hasKey("Smush_force_redraw")) {
-			ConfMan.set("Smush_force_redraw", 30);
+			ConfMan.setInt("Smush_force_redraw", 30);
 			ConfMan.flushToDisk();
 		}
 	}
@@ -785,8 +799,11 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 			_toolbarHandler.setOffset(400);
 	}
 
-	if (w != _screenWidth || h != _screenHeight)
+	if (w != (uint) _screenWidth || h != (uint) _screenHeight)
 		_scalersChanged = false;
+
+	_overlayWidth = w;
+	_overlayHeight = h;
 
 	OSystem_SDL::initSize(w, h);
 
@@ -1965,7 +1982,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					internUpdateScreen();
 				if (_newOrientation != _orientationLandscape && _mode == GFX_NORMAL) {
 					_orientationLandscape = _newOrientation;
-					ConfMan.set("landscape", _orientationLandscape);
+					ConfMan.setBool("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
 					setGraphicsMode(GFX_NORMAL);
 					hotswapGFXMode();

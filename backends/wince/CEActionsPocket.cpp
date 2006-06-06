@@ -54,8 +54,8 @@ const String pocketActionNames[] = {
 	"Bind Keys"
 };
 
-void CEActionsPocket::init(const Common::String &gameid) {
-	_instance = new CEActionsPocket(gameid);
+void CEActionsPocket::init() {
+	_instance = new CEActionsPocket(ConfMan.get("gameid"));
 }
 
 
@@ -68,7 +68,7 @@ int CEActionsPocket::size() {
 }
 
 String CEActionsPocket::domain() {
-	return "pocketpc";
+	return "scummvm";
 }
 
 int CEActionsPocket::version() {
@@ -76,7 +76,7 @@ int CEActionsPocket::version() {
 }
 
 CEActionsPocket::CEActionsPocket(const Common::String &gameid) :
-GUI::Actions(gameid)
+GUI::Actions()
 {
 	int i;
 
