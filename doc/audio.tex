@@ -1,10 +1,12 @@
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "readme"
+%%% TeX-master: "readme.tex"
 %%% End: 
 
+
 \section{Music and Sound} \label{sect-music-and-sound}
+
 By default, on most operating systems, ScummVM will automatically use Adlib
 emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
@@ -31,8 +33,9 @@ choices of output, depending on your operating system and configuration.
 To select a sound driver, pass its name via the '-e' option to scummvm,
 for example:
 \begin{verbatim}
-   scummvm -e adlib monkey2
+   scummvm -eadlib monkey2
 \end{verbatim}
+
 
 \input {audio-adlib.tex}
 \input {audio-fluidsynth.tex}

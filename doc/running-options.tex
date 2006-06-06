@@ -1,3 +1,10 @@
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme.tex"
+%%% End: 
+
+
 \subsection{Command Line Options}
 
 Usage: scummvm [OPTIONS]... [GAME]\\
@@ -13,7 +20,7 @@ Usage: scummvm [OPTIONS]... [GAME]\\
 \\
   -c, --config=CONFIG     &Use alternate configuration file\\
   -p, --path=PATH         &Path to where the game is installed\\
-  -x, --save-slot[=NUM]   &Save game slot to load (default: autosave)\\
+  -x, --save-slot[=NUM]   &Savegame slot to load (default: autosave)\\
   -f, --fullscreen        &Force full-screen mode\\
   -F, --no-fullscreen     &Force windowed mode\\
   -g, --gfx-mode=MODE     &Select graphics scaler (see also section \ref{sect-gfx-filters})\\
@@ -21,9 +28,9 @@ Usage: scummvm [OPTIONS]... [GAME]\\
   -q, --language=LANG     &Select language (see also section \ref{sect-languages})\\
   -m, --music-volume=NUM  &Set the music volume, 0-255 (default: 192)\\
   -s, --sfx-volume=NUM    &Set the sfx volume, 0-255 (default: 192)\\
-  -r, --speech-volume=NUM  &Set the voice volume, 0-255 (default: 192)\\
-  --midi-gain             &Set the gain for MIDI playback, 0-1000 (default:\\
-                          &100) (only supported by some MIDI drivers)\\
+  -r, --speech-volume=NUM &Set the voice volume, 0-255 (default: 192)\\
+  --midi-gain             &Set the gain for MIDI playback, 0-1000 (default: 100)\\
+                          &(only supported by some MIDI drivers)\\
   -n, --subtitles         &Enable subtitles (use with games that have voice)\\
   -b, --boot-param=NUM    &Pass number to the boot script (boot param)\\
   -d, --debuglevel=NUM    &Set debug verbosity level\\
@@ -35,7 +42,7 @@ Usage: scummvm [OPTIONS]... [GAME]\\
   --joystick[=NUM]        &Enable input with joystick (default: 0 = first\\
                           &joystick)\\
   --platform=WORD         &Specify version of game (allowed values: 3do, acorn,\\
-                          &amiga, atari, c64, fmtowns, nes, mac, pc, segacd,\\
+                          &amiga, atari, c64, fmtowns, mac, nes, pc, segacd,\\
                           &windows)\\
   --savepath=PATH         &Path to where savegames are stored\\
   --multi-midi            &Enable combination of Adlib and native MIDI\\
@@ -67,7 +74,7 @@ line is very important. A short list is contained at the top of this
 file. You can also get the current list of games and game names at:
 
 \begin{center}
-  \url{http://www.scummvm.org/compatibility.php}
+  \url{http://www.scummvm.org/compatibility_stable.php}
 \end{center}
 
 Examples:
@@ -91,7 +98,3 @@ C:\Games\scummvm.exe -f -n -pD:\resource\ ft
 /path/to/scummvm -f -n -p/cdrom/resource/ ft
 \end{verbatim}
 \end{itemize}
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "readme"
-%%% End: 

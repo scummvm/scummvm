@@ -1,19 +1,21 @@
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "readme"
+%%% TeX-master: "readme.tex"
 %%% End: 
+
 
 \subsection{Playing sound with MT-32 emulation}
 
 Some games which contain MIDI music data also have improved tracks designed
-for MT-32 sound module. ScummVM can now emulate this card, however you should
-provide original MT-32 ROMs to make it work.
+for the MT-32 sound module. ScummVM can now emulate this device, however you
+must provide original MT-32 ROMs to make it work:
 
 MT32\_PCM.ROM     - IC21 (512KB)
 MT32\_CONTROL.ROM - IC26 (32KB) and IC27 (32KB), interleaved byte-wise
 
-Place these ROMs in the game directory or a directory specified by extrapath.
+Place these ROMs in the game directory, in your extrapath, or in the directory
+where your ScummVM executable resides.
 
 You don't need to specify --native-mt32 with this driver, as it automatically
 gets turned on.

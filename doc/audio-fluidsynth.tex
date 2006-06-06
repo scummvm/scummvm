@@ -1,18 +1,19 @@
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "readme"
+%%% TeX-master: "readme.tex"
 %%% End: 
+
 
 \subsection{Playing sound with FluidSynth MIDI emulation}
 
-If ScummVM was build with libfluildsynth support it will be able to play MIDI
+If ScummVM was build with libfluidsynth support it will be able to play MIDI
 music through the FluidSynth driver. You will have to specify a SoundFont to
 use, however.
 
 Since the default output volume from FluidSynth can be fairly low, ScummVM will
 set the gain by default to get a stronger signal. This can be further adjusted
-using the --midi-gain command-line option, or the ``midi\_gain'' config file
+using the --midi-gain command-line option, or the "midi\_gain" config file
 setting.
 
 The setting can take any value from 0 through 1000, with the default being 100.
