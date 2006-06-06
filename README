@@ -1319,8 +1319,8 @@ The following keywords are recognized:
         description     string   The description of the game as it will appear
                                  in the launcher.
 
-        language        string   Specify language (en, de, fr, it, pt, es, jp,
-                                 zh, kr,se, gb, hb, cz, ru)
+        language        string   Specify language (en, us, de, fr, it, pt, es, jp,
+                                 zh, kr, se, gb, hb, cz, ru)
         speech_mute     bool     If true, speech is muted
         subtitles       bool     Set to true to enable subtitles.
         talkspeed       number   Text speed
