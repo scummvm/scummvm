@@ -108,7 +108,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "Baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
 	{ "BluesABCTime", "Blue's ABC Time" },
-	{ "BluesBirthdayDemo", "Blue's Birthday Adventure (Demo)" },
+	{ "BluesBirthday", "Blue's Birthday Adventure" },
 	{ "catalog", "Humongous Interactive Catalog" },
 	{ "chase", "SPY Fox in Cheese Chase" },
 	{ "dog", "Putt-Putt and Pep's Dog on a Stick" },
@@ -155,6 +155,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
  */
 static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"bluesabctimedemo", "bluesabctime", UNK},
+	{"BluesBirthdayDemo", "BluesBirthday", UNK},
 	{"comidemo", "comi", UNK},
 	{"digdemo", "dig", UNK},
 	{"digdemoMac", "dig", Common::kPlatformMacintosh},
@@ -319,6 +320,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttrace", "HE 99",   GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"bluesabctime", "", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"BluesBirthday", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"soccer", "", GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Global scripts increased to 2048
@@ -355,7 +357,6 @@ static const GameSettings gameVariantsTable[] = {
 	{"Soccer2004", 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 
 	// Uses smacker in external files, for testing only
-	{"BluesBirthdayDemo", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"artdemo", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 	{"readdemo", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 
@@ -511,8 +512,10 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "BluesBirthdayDemo", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "BluesBirthdayDemo", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "BluesBirthday", "Blue'sBirthday-Yellow", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
