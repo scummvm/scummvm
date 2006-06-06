@@ -30,21 +30,6 @@
 
 namespace GUI {
 
-enum TokenTypes {
-	tDelimiter,
-	tVariable,
-	tNumber,
-	tString
-};
-
-enum EvalErrors {
-	eSyntaxError,
-	eExtraBracket,
-	eUnclosedBracket,
-	eBadExpr,
-	eUndefVar
-};
-
 static bool isdelim(char c) {
 	if (strchr(" ;,+-<>/*%^=()", c) || c == 9 || c == '\n' || !c)
 		return true;
@@ -74,6 +59,9 @@ int Eval::eval(const String &input, const String &section, const String &name, i
 	_pos = 0;
 
 	getToken();
+
+	if (_tokenType == tString)
+		return EVAL_STRING_VAR;
 
 	if (!*_token)
 		exprError(eBadExpr);
@@ -191,7 +179,7 @@ void Eval::unary(char op, int *r) {
 void Eval::getToken() {
 	char *temp;
 
-	_tokenType = 0;
+	_tokenType = tNone;
 	temp = _token;
 
 	if (_input[_pos] == 0) {
@@ -201,6 +189,21 @@ void Eval::getToken() {
 	}
 	while (isspace(_input[_pos]))
 		_pos++;
+
+	if (_input[_pos] == '"') {
+		_pos++;
+		while(_input[_pos] != '"' && _input[_pos] != '\n')
+			*temp++ = _input[_pos++];
+
+		if(_input[_pos] == '\n')
+			exprError(eMissingQuote);
+
+		_pos++;
+		*temp = 0;
+
+		_tokenType = tString;
+		return;
+	}
 
 	if (isdigit(_input[_pos])) {
 		while (!isdelim(_input[_pos]))
@@ -219,7 +222,6 @@ void Eval::getToken() {
 		return;
 	}
 
-	
 	if (!_tokenType && isdelim(_input[_pos])) {
 		*temp++ = _input[_pos++];
 		*temp = 0;
@@ -227,13 +229,14 @@ void Eval::getToken() {
 	}
 }
 
-void Eval::exprError(int err) {
+void Eval::exprError(EvalErrors err) {
 	static const char *errors[] = {
 		"Syntax error",
 		"Extra ')'",
 		"Missing ')'",
 		"Bad expression",
-		"Undefined variable"
+		"Undefined variable",
+		"Missing '\"'"
 	};
 
 	error("%s in section [%s] expression: \"%s\" start is at: %d near token '%s'",
@@ -272,6 +275,10 @@ static const BuiltinConsts builtinConsts[] = {
 	{"kFontStyleFixedBold", Theme::kFontStyleFixedBold},
 	{"kFontStyleFixedNormal", Theme::kFontStyleFixedNormal},
 	{"kFontStyleFixedItalic", Theme::kFontStyleFixedItalic},
+
+	{"kShadingNone", Theme::kShadingNone},
+	{"kShadingDim", Theme::kShadingDim},
+	{"kShadingLuminance", Theme::kShadingLuminance},
 
 	{"false", 0},
 	{"true", 1},

@@ -451,6 +451,9 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 
 	value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
 
+	if (value == EVAL_STRING_VAR)
+		_evaluator->setStringVar(prefixedname, _evaluator->lastToken());
+
 	// process VAR=VALUE construct
 	if (npostfix == 0)
 		_evaluator->setVar(name, value);
@@ -463,6 +466,8 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 			_evaluator->getVar(prefixedname + ".x") + _evaluator->getVar(prefixedname + ".w"));
 		_evaluator->setVar(prefixedname + ".y2", 
 			_evaluator->getVar(prefixedname + ".y") + _evaluator->getVar(prefixedname + ".h"));
+	} else if (npostfix == 2) { // Specify shortcuts for R G B
+		setRGBAlias(prefixedname);
 	}
 
 	if (npostfix != 0)
@@ -536,6 +541,19 @@ void Theme::setSpecialAlias(const String &alias, const String &name) {
 		String to(name + postfixes[i]);
 
 		_evaluator->setAlias(from.c_str(), to);
+	}
+}
+
+void Theme::setRGBAlias(const String &name) {
+	const char *frompostfixes[] = {".x", ".y", ".w"};
+	const char *topostfixes[] = {".r", ".g", ".b"};
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(frompostfixes); i++) {
+		String from(name + frompostfixes[i]);
+		String to(name + topostfixes[i]);
+
+		_evaluator->setAlias(to.c_str(), from);
 	}
 }
 

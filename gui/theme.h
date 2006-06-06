@@ -108,6 +108,12 @@ public:
 		kFontStyleMax
 	};
 
+	enum ShadingStyle {
+		kShadingNone,
+		kShadingDim,
+		kShadingLuminance
+	};
+
 	virtual bool init() = 0;
 	virtual void deinit() = 0;
 
@@ -189,6 +195,7 @@ public:
 	void processResSection(Common::ConfigFile &config, const String &name, bool skipDefs = false, const String &prefix = "");
 	void processSingleLine(const String &section, const String &prefix, const String &name, const String &str);
 	void setSpecialAlias(const String &alias, const String &name);
+	void setRGBAlias(const String &name);
 
 	bool isThemeLoadingRequired();
 	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
@@ -391,6 +398,8 @@ private:
 
 private:
 	void setupFont(const String &key, const String &name, FontStyle style);
+	void processExtraValues();
+	void getColorFromConfig(const String &value, OverlayColor &color);
 
 public:
 	enum ImageHandles {

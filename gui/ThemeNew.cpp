@@ -22,6 +22,7 @@
 #ifndef DISABLE_FANCY_THEMES
 
 #include "gui/theme.h"
+#include "gui/eval.h"
 
 #include "graphics/imageman.h"
 #include "graphics/imagedec.h"
@@ -42,50 +43,12 @@
 #define kShadowTr4 128
 #define kShadowTr5 192
 
-#define THEME_VERSION 14
+#define THEME_VERSION 15
 
 using Graphics::Surface;
 
 /** Specifies the currently active 16bit pixel format, 555 or 565. */
 extern int gBitFormat;
-
-static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::String &value, OverlayColor &color) {
-	Common::String temp;
-	if (!cfg.getKey(value, "colors", temp)) {
-		color = g_system->RGBToColor(0, 0, 0);
-		return;
-	}
-
-	int rgb[3], pos = 0;
-	const char *colors = temp.c_str();
-
-	for (int cnt = 0; cnt < 3; cnt++) {
-		rgb[cnt] = atoi(colors + pos);
-		pos = strchr(colors + pos, ' ') - colors + 1;
-	}
-	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
-}
-
-static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::String &section, const Common::String &value, uint &val, uint defaultVal) {
-	Common::String temp;
-	if (!cfg.getKey(value, section, temp)) {
-		val = defaultVal;
-	} else {
-		val = atoi(temp.c_str());
-	}
-}
-
-static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::String &section, const Common::String &value, int &val, int defaultVal) {
-	Common::String temp;
-	if (!cfg.getKey(value, section, temp)) {
-		val = defaultVal;
-	} else {
-		val = atoi(temp.c_str());
-	}
-}
-
-#define getFactorFromConfig(x, y, z) getValueFromConfig(x, "gradients", y, z, 1)
-#define getExtraValueFromConfig(x, y, z, a) getValueFromConfig(x, "extra", y, z, a)
 
 namespace GUI {
 
@@ -158,162 +121,11 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 		warning("Theme config uses a different version (you have: '%s', needed is: '%d')", temp.c_str(), THEME_VERSION);
 		return;
 	}
-	
-	static Common::String imageHandlesTable[kImageHandlesMax];
 
-	// load the pixmap filenames from the config file
-	_configFile.getKey("dialog_corner", "pixmaps", imageHandlesTable[kDialogBkgdCorner]);
-	_configFile.getKey("dialog_top", "pixmaps", imageHandlesTable[kDialogBkgdTop]);
-	_configFile.getKey("dialog_left", "pixmaps", imageHandlesTable[kDialogBkgdLeft]);
-	_configFile.getKey("dialog_bkgd", "pixmaps", imageHandlesTable[kDialogBkgd]);
-	
-	_configFile.getKey("widget_corner", "pixmaps", imageHandlesTable[kWidgetBkgdCorner]);
-	_configFile.getKey("widget_top", "pixmaps", imageHandlesTable[kWidgetBkgdTop]);
-	_configFile.getKey("widget_left", "pixmaps", imageHandlesTable[kWidgetBkgdLeft]);
-	_configFile.getKey("widget_bkgd", "pixmaps", imageHandlesTable[kWidgetBkgd]);
-	
-	_configFile.getKey("widget_small_corner", "pixmaps", imageHandlesTable[kWidgetSmallBkgdCorner]);
-	_configFile.getKey("widget_small_top", "pixmaps", imageHandlesTable[kWidgetSmallBkgdTop]);
-	_configFile.getKey("widget_small_left", "pixmaps", imageHandlesTable[kWidgetSmallBkgdLeft]);
-	_configFile.getKey("widget_small_bkgd", "pixmaps", imageHandlesTable[kWidgetSmallBkgd]);
-	
-	_configFile.getKey("checkbox_empty", "pixmaps", imageHandlesTable[kCheckboxEmpty]);
-	_configFile.getKey("checkbox_checked", "pixmaps", imageHandlesTable[kCheckboxChecked]);
-	
-	_configFile.getKey("widget_arrow", "pixmaps", imageHandlesTable[kWidgetArrow]);
-	
-	_configFile.getKey("tab_corner", "pixmaps", imageHandlesTable[kTabBkgdCorner]);
-	_configFile.getKey("tab_top", "pixmaps", imageHandlesTable[kTabBkgdTop]);
-	_configFile.getKey("tab_left", "pixmaps", imageHandlesTable[kTabBkgdLeft]);
-	_configFile.getKey("tab_bkgd", "pixmaps", imageHandlesTable[kTabBkgd]);
-	
-	_configFile.getKey("slider_bkgd_corner", "pixmaps", imageHandlesTable[kSliderBkgdCorner]);
-	_configFile.getKey("slider_bkgd_top", "pixmaps", imageHandlesTable[kSliderBkgdTop]);
-	_configFile.getKey("slider_bkgd_left", "pixmaps", imageHandlesTable[kSliderBkgdLeft]);
-	_configFile.getKey("slider_bkgd_bkgd", "pixmaps", imageHandlesTable[kSliderBkgd]);
-	
-	_configFile.getKey("slider_corner", "pixmaps", imageHandlesTable[kSliderCorner]);
-	_configFile.getKey("slider_top", "pixmaps", imageHandlesTable[kSliderTop]);
-	_configFile.getKey("slider_left", "pixmaps", imageHandlesTable[kSliderLeft]);
-	_configFile.getKey("slider_bkgd", "pixmaps", imageHandlesTable[kSlider]);
-	
-	_configFile.getKey("scrollbar_bkgd_corner", "pixmaps", imageHandlesTable[kScrollbarBkgdCorner]);
-	_configFile.getKey("scrollbar_bkgd_top", "pixmaps", imageHandlesTable[kScrollbarBkgdTop]);
-	_configFile.getKey("scrollbar_bkgd_left", "pixmaps", imageHandlesTable[kScrollbarBkgdLeft]);
-	_configFile.getKey("scrollbar_bkgd_bkgd", "pixmaps", imageHandlesTable[kScrollbarBkgd]);
-	
-	_configFile.getKey("scrollbar_corner", "pixmaps", imageHandlesTable[kScrollbarCorner]);
-	_configFile.getKey("scrollbar_top", "pixmaps", imageHandlesTable[kScrollbarTop]);
-	_configFile.getKey("scrollbar_left", "pixmaps", imageHandlesTable[kScrollbarLeft]);
-	_configFile.getKey("scrollbar_bkgd", "pixmaps", imageHandlesTable[kScrollbar]);
-	
-	_configFile.getKey("button_corner", "pixmaps", imageHandlesTable[kButtonBkgdCorner]);
-	_configFile.getKey("button_top", "pixmaps", imageHandlesTable[kButtonBkgdTop]);
-	_configFile.getKey("button_left", "pixmaps", imageHandlesTable[kButtonBkgdLeft]);
-	_configFile.getKey("button_bkgd", "pixmaps", imageHandlesTable[kButtonBkgd]);
-
-	_configFile.getKey("theme_logo", "pixmaps", imageHandlesTable[kThemeLogo]);
-
-	_configFile.getKey("popupwidget_corner", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdCorner]);
-	_configFile.getKey("popupwidget_top", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdTop]);
-	_configFile.getKey("popupwidget_left", "pixmaps", imageHandlesTable[kPopUpWidgetBkgdLeft]);
-	_configFile.getKey("popupwidget_bkgd", "pixmaps", imageHandlesTable[kPopUpWidgetBkgd]);
-
-	_configFile.getKey("edittext_bkgd_corner", "pixmaps", imageHandlesTable[kEditTextBkgdCorner]);
-	_configFile.getKey("edittext_bkgd_top", "pixmaps", imageHandlesTable[kEditTextBkgdTop]);
-	_configFile.getKey("edittext_bkgd_left", "pixmaps", imageHandlesTable[kEditTextBkgdLeft]);
-	_configFile.getKey("edittext_bkgd", "pixmaps", imageHandlesTable[kEditTextBkgd]);
-
-	_configFile.getKey("cursor_image", "pixmaps", imageHandlesTable[kGUICursor]);
-	
-	// load the gradient factors from the config file
-	getFactorFromConfig(_configFile, "main_dialog", _gradientFactors[kMainDialogFactor]);
-	getFactorFromConfig(_configFile, "dialog", _gradientFactors[kDialogFactor]);
-	getFactorFromConfig(_configFile, "dialog_special", _gradientFactors[kDialogSpecialFactor]);
-	
-	getFactorFromConfig(_configFile, "widget_small", _gradientFactors[kWidgetSmallFactor]);
-	getFactorFromConfig(_configFile, "widget", _gradientFactors[kWidgetFactor]);
-	
-	getFactorFromConfig(_configFile, "button", _gradientFactors[kButtonFactor]);
-	
-	getFactorFromConfig(_configFile, "slider", _gradientFactors[kSliderFactor]);
-	getFactorFromConfig(_configFile, "silder_bkgd", _gradientFactors[kSliderBackground]);
-	
-	getFactorFromConfig(_configFile, "tab", _gradientFactors[kTabFactor]);
-	
-	getFactorFromConfig(_configFile, "scrollbar", _gradientFactors[kScrollbarFactor]);
-	getFactorFromConfig(_configFile, "scrollbar_background", _gradientFactors[kScrollbarBkgdFactor]);
-
-	getFactorFromConfig(_configFile, "popupwidget", _gradientFactors[kPopUpWidgetFactor]);
-
-	getFactorFromConfig(_configFile, "edittext", _gradientFactors[kEditTextFactor]);
-	
-	// load values with default values from the config file
-	getExtraValueFromConfig(_configFile, "shadow_left_width", _shadowLeftWidth, 2);
-	getExtraValueFromConfig(_configFile, "shadow_right_width", _shadowRightWidth, 4);
-	getExtraValueFromConfig(_configFile, "shadow_top_height", _shadowTopHeight, 2);
-	getExtraValueFromConfig(_configFile, "shadow_bottom_height", _shadowBottomHeight, 4);
-
-	getExtraValueFromConfig(_configFile, "cursor_hotspot_x", _cursorHotspotX, 0);
-	getExtraValueFromConfig(_configFile, "cursor_hotspot_y", _cursorHotspotY, 0);
-
-	getExtraValueFromConfig(_configFile, "cursor_targetScale", _cursorTargetScale, 1);
-	
-	// inactive dialog shading stuff
-	_dialogShadingCallback = 0;
-	
-	if (_configFile.hasKey("inactive_dialog_shading", "extra")) {
-		_configFile.getKey("inactive_dialog_shading", "extra", temp);
-		if (temp == "no_effect") {
-			// nothing
-		} else if (temp == "luminance") {
-			_dialogShadingCallback = &ThemeNew::calcLuminance;
-			// don't cache colors for the luminance effect
-			//createCacheTable = true;
-		} else if (temp == "dim") {
-			if (!_configFile.hasKey("shading_dim_percent", "extra")) {
-				warning("no 'shading_dim_percent' specified");
-			} else {
-				getValueFromConfig(_configFile, "extra", "shading_dim_percent", _dimPercentValue, -1);
-				
-				if (_dimPercentValue < 0) {
-					_dimPercentValue = 0;
-				} else if (_dimPercentValue > 100) {
-					_dimPercentValue = 100;
-				}
-				
-				if (_dimPercentValue != 0) {
-					_dimPercentValue = 256 * (100 - _dimPercentValue) / 100;
-					_dialogShadingCallback = &ThemeNew::calcDimColor;
-				}
-			}
-		} else {
-			warning("no valid 'inactive_dialog_shading' specified");
-		}
-	}
-
-	// load up all fonts
-	setupFonts();
-	
-	// load the colors from the config file
-	setupColors();
-
-	_imageHandles = imageHandlesTable;
-
-	_images = new const Graphics::Surface*[ARRAYSIZE(imageHandlesTable)];
+	_images = new const Graphics::Surface*[kImageHandlesMax];
 	assert(_images);
 
-	for (int i = 0; i < kImageHandlesMax; ++i) {
-		ImageMan.registerSurface(_imageHandles[i], 0);
-		_images[i] = ImageMan.getSurface(_imageHandles[i]);
-	}
-	
 	_lastUsedBitMask = gBitFormat;
-
-	// creates cursor image
-	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
-		createCursor();
-	}
 }
 
 ThemeNew::~ThemeNew() {
@@ -332,11 +144,6 @@ ThemeNew::~ThemeNew() {
 bool ThemeNew::init() {
 	if (!_images)
 		return false;
-	for (int i = 0; i < kImageHandlesMax; ++i) {
-		if (!_images[i]) {
-			return false;
-		}
-	}
 
 	deinit();
 	_screen.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
@@ -350,8 +157,16 @@ bool ThemeNew::init() {
 	if (isThemeLoadingRequired()) {
 		loadTheme(_defaultConfig);
 		loadTheme(_configFile, false); // Don't reset
+
+		processExtraValues();
 	}
 	
+	for (int i = 0; i < kImageHandlesMax; ++i) {
+		if (!_images[i]) {
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -1331,69 +1146,69 @@ void ThemeNew::resetupGuiRenderer() {
 		ImageMan.registerSurface(_imageHandles[i], 0);
 		_images[i] = ImageMan.getSurface(_imageHandles[i]);
 	}
-	
+
 	setupColors();
 }
 
 void ThemeNew::setupColors() {
 	// load the colors from the config file
-	getColorFromConfig(_configFile, "main_dialog_start", _colors[kMainDialogStart]);
-	getColorFromConfig(_configFile, "main_dialog_end", _colors[kMainDialogEnd]);
-	
-	getColorFromConfig(_configFile, "dialog_start", _colors[kDialogStart]);
-	getColorFromConfig(_configFile, "dialog_end", _colors[kDialogEnd]);
-	
-	getColorFromConfig(_configFile, "color_state_disabled", _colors[kColorStateDisabled]);
-	getColorFromConfig(_configFile, "color_state_highlight", _colors[kColorStateHighlight]);
-	getColorFromConfig(_configFile, "color_state_enabled", _colors[kColorStateEnabled]);
-	getColorFromConfig(_configFile, "color_transparency", _colors[kColorTransparency]);
-	
-	getColorFromConfig(_configFile, "text_inverted_background", _colors[kTextInvertedBackground]);
-	getColorFromConfig(_configFile, "text_inverted_color", _colors[kTextInvertedColor]);
-	
-	getColorFromConfig(_configFile, "widget_bkgd_start", _colors[kWidgetBackgroundStart]);
-	getColorFromConfig(_configFile, "widget_bkgd_end", _colors[kWidgetBackgroundEnd]);
-	getColorFromConfig(_configFile, "widget_bkgd_small_start", _colors[kWidgetBackgroundSmallStart]);
-	getColorFromConfig(_configFile, "widget_bkgd_small_end", _colors[kWidgetBackgroundSmallEnd]);
-	
-	getColorFromConfig(_configFile, "button_bkgd_start", _colors[kButtonBackgroundStart]);
-	getColorFromConfig(_configFile, "button_bkgd_end", _colors[kButtonBackgroundEnd]);
-	getColorFromConfig(_configFile, "button_bkgd_highlight_start", _colors[kButtonBackgroundHighlightStart]);
-	getColorFromConfig(_configFile, "button_bkgd_highlight_end", _colors[kButtonBackgroundHighlightEnd]);
-	getColorFromConfig(_configFile, "button_text_enabled", _colors[kButtonTextEnabled]);
-	getColorFromConfig(_configFile, "button_text_disabled", _colors[kButtonTextDisabled]);
-	getColorFromConfig(_configFile, "button_text_highlight", _colors[kButtonTextHighlight]);
-	
-	getColorFromConfig(_configFile, "slider_background_start", _colors[kSliderBackgroundStart]);
-	getColorFromConfig(_configFile, "slider_background_end", _colors[kSliderBackgroundEnd]);
-	getColorFromConfig(_configFile, "slider_start", _colors[kSliderStart]);
-	getColorFromConfig(_configFile, "slider_end", _colors[kSliderEnd]);	
-	getColorFromConfig(_configFile, "slider_highlight_start", _colors[kSliderHighStart]);
-	getColorFromConfig(_configFile, "slider_highlight_end", _colors[kSliderHighEnd]);
-	
-	getColorFromConfig(_configFile, "tab_background_start", _colors[kTabBackgroundStart]);
-	getColorFromConfig(_configFile, "tab_background_end", _colors[kTabBackgroundEnd]);
-	
-	getColorFromConfig(_configFile, "scrollbar_background_start", _colors[kScrollbarBackgroundStart]);
-	getColorFromConfig(_configFile, "scrollbar_background_end", _colors[kScrollbarBackgroundEnd]);
-	getColorFromConfig(_configFile, "scrollbar_button_start", _colors[kScrollbarButtonStart]);
-	getColorFromConfig(_configFile, "scrollbar_button_end", _colors[kScrollbarButtonEnd]);
-	getColorFromConfig(_configFile, "scrollbar_slider_start", _colors[kScrollbarSliderStart]);
-	getColorFromConfig(_configFile, "scrollbar_slider_end", _colors[kScrollbarSliderEnd]);
-	getColorFromConfig(_configFile, "scrollbar_button_highlight_start", _colors[kScrollbarButtonHighlightStart]);
-	getColorFromConfig(_configFile, "scrollbar_button_highlight_end", _colors[kScrollbarButtonHighlightEnd]);
-	getColorFromConfig(_configFile, "scrollbar_slider_highlight_start", _colors[kScrollbarSliderHighlightStart]);
-	getColorFromConfig(_configFile, "scrollbar_slider_highlight_end", _colors[kScrollbarSliderHighlightEnd]);
-	
-	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
+	getColorFromConfig("main_dialog_start", _colors[kMainDialogStart]);
+	getColorFromConfig("main_dialog_end", _colors[kMainDialogEnd]);
 
-	getColorFromConfig(_configFile, "popupwidget_start", _colors[kPopUpWidgetStart]);
-	getColorFromConfig(_configFile, "popupwidget_end", _colors[kPopUpWidgetEnd]);
-	getColorFromConfig(_configFile, "popupwidget_highlight_start", _colors[kPopUpWidgetHighlightStart]);
-	getColorFromConfig(_configFile, "popupwidget_highlight_end", _colors[kPopUpWidgetHighlightEnd]);
+	getColorFromConfig("dialog_start", _colors[kDialogStart]);
+	getColorFromConfig("dialog_end", _colors[kDialogEnd]);
 
-	getColorFromConfig(_configFile, "edittext_background_start", _colors[kEditTextBackgroundStart]);
-	getColorFromConfig(_configFile, "edittext_background_end", _colors[kEditTextBackgroundEnd]);
+	getColorFromConfig("color_state_disabled", _colors[kColorStateDisabled]);
+	getColorFromConfig("color_state_highlight", _colors[kColorStateHighlight]);
+	getColorFromConfig("color_state_enabled", _colors[kColorStateEnabled]);
+	getColorFromConfig("color_transparency", _colors[kColorTransparency]);
+
+	getColorFromConfig("text_inverted_background", _colors[kTextInvertedBackground]);
+	getColorFromConfig("text_inverted_color", _colors[kTextInvertedColor]);
+
+	getColorFromConfig("widget_bkgd_start", _colors[kWidgetBackgroundStart]);
+	getColorFromConfig("widget_bkgd_end", _colors[kWidgetBackgroundEnd]);
+	getColorFromConfig("widget_bkgd_small_start", _colors[kWidgetBackgroundSmallStart]);
+	getColorFromConfig("widget_bkgd_small_end", _colors[kWidgetBackgroundSmallEnd]);
+
+	getColorFromConfig("button_bkgd_start", _colors[kButtonBackgroundStart]);
+	getColorFromConfig("button_bkgd_end", _colors[kButtonBackgroundEnd]);
+	getColorFromConfig("button_bkgd_highlight_start", _colors[kButtonBackgroundHighlightStart]);
+	getColorFromConfig("button_bkgd_highlight_end", _colors[kButtonBackgroundHighlightEnd]);
+	getColorFromConfig("button_text_enabled", _colors[kButtonTextEnabled]);
+	getColorFromConfig("button_text_disabled", _colors[kButtonTextDisabled]);
+	getColorFromConfig("button_text_highlight", _colors[kButtonTextHighlight]);
+
+	getColorFromConfig("slider_background_start", _colors[kSliderBackgroundStart]);
+	getColorFromConfig("slider_background_end", _colors[kSliderBackgroundEnd]);
+	getColorFromConfig("slider_start", _colors[kSliderStart]);
+	getColorFromConfig("slider_end", _colors[kSliderEnd]);	
+	getColorFromConfig("slider_highlight_start", _colors[kSliderHighStart]);
+	getColorFromConfig("slider_highlight_end", _colors[kSliderHighEnd]);
+
+	getColorFromConfig("tab_background_start", _colors[kTabBackgroundStart]);
+	getColorFromConfig("tab_background_end", _colors[kTabBackgroundEnd]);
+
+	getColorFromConfig("scrollbar_background_start", _colors[kScrollbarBackgroundStart]);
+	getColorFromConfig("scrollbar_background_end", _colors[kScrollbarBackgroundEnd]);
+	getColorFromConfig("scrollbar_button_start", _colors[kScrollbarButtonStart]);
+	getColorFromConfig("scrollbar_button_end", _colors[kScrollbarButtonEnd]);
+	getColorFromConfig("scrollbar_slider_start", _colors[kScrollbarSliderStart]);
+	getColorFromConfig("scrollbar_slider_end", _colors[kScrollbarSliderEnd]);
+	getColorFromConfig("scrollbar_button_highlight_start", _colors[kScrollbarButtonHighlightStart]);
+	getColorFromConfig("scrollbar_button_highlight_end", _colors[kScrollbarButtonHighlightEnd]);
+	getColorFromConfig("scrollbar_slider_highlight_start", _colors[kScrollbarSliderHighlightStart]);
+	getColorFromConfig("scrollbar_slider_highlight_end", _colors[kScrollbarSliderHighlightEnd]);
+
+	getColorFromConfig("caret_color", _colors[kCaretColor]);
+
+	getColorFromConfig("popupwidget_start", _colors[kPopUpWidgetStart]);
+	getColorFromConfig("popupwidget_end", _colors[kPopUpWidgetEnd]);
+	getColorFromConfig("popupwidget_highlight_start", _colors[kPopUpWidgetHighlightStart]);
+	getColorFromConfig("popupwidget_highlight_end", _colors[kPopUpWidgetHighlightEnd]);
+
+	getColorFromConfig("edittext_background_start", _colors[kEditTextBackgroundStart]);
+	getColorFromConfig("edittext_background_end", _colors[kEditTextBackgroundEnd]);
 }
 
 #define FONT_NAME_NORMAL "newgui_normal"
@@ -1404,12 +1219,11 @@ void ThemeNew::setupColors() {
 #define FONT_NAME_FIXED_ITALIC "newgui_fixed_italic"
 
 void ThemeNew::setupFont(const String &key, const String &name, FontStyle style) {
-	if (_configFile.hasKey(key, "extra")) {
+	if (_evaluator->getVar(key) == EVAL_STRING_VAR) {
 		_fonts[style] = FontMan.getFontByName(name);
 
 		if (!_fonts[style]) {
-			Common::String temp;
-			_configFile.getKey(key, "extra", temp);
+			Common::String temp(_evaluator->getStringVar(key.c_str()));
 
 			_fonts[style] = loadFont(temp.c_str());
 			if (!_fonts[style])
@@ -1543,6 +1357,169 @@ Common::String ThemeNew::genCacheFilename(const char *filename) {
 	}
 
 	return "";
+}
+
+#pragma mark -
+
+void ThemeNew::getColorFromConfig(const String &value, OverlayColor &color) {
+	const char *postfixes[] = {".r", ".g", ".b"};
+	int rgb[3];
+
+	for (int cnt = 0; cnt < 3; cnt++)
+		rgb[cnt] = _evaluator->getVar(value + postfixes[cnt], 0);
+
+	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
+}
+
+void ThemeNew::processExtraValues() {
+	static Common::String imageHandlesTable[kImageHandlesMax];
+
+	// load the pixmap filenames from the config file
+	imageHandlesTable[kDialogBkgdCorner] = _evaluator->getStringVar("pix_dialog_corner");
+	imageHandlesTable[kDialogBkgdTop] = _evaluator->getStringVar("pix_dialog_top");
+	imageHandlesTable[kDialogBkgdLeft] = _evaluator->getStringVar("pix_dialog_left");
+	imageHandlesTable[kDialogBkgd] = _evaluator->getStringVar("pix_dialog_bkgd");
+
+	imageHandlesTable[kWidgetBkgdCorner] = _evaluator->getStringVar("pix_widget_corner");
+	imageHandlesTable[kWidgetBkgdTop] = _evaluator->getStringVar("pix_widget_top");
+	imageHandlesTable[kWidgetBkgdLeft] = _evaluator->getStringVar("pix_widget_left");
+	imageHandlesTable[kWidgetBkgd] = _evaluator->getStringVar("pix_widget_bkgd");
+
+	imageHandlesTable[kWidgetSmallBkgdCorner] = _evaluator->getStringVar("pix_widget_small_corner");
+	imageHandlesTable[kWidgetSmallBkgdTop] = _evaluator->getStringVar("pix_widget_small_top");
+	imageHandlesTable[kWidgetSmallBkgdLeft] = _evaluator->getStringVar("pix_widget_small_left");
+	imageHandlesTable[kWidgetSmallBkgd] = _evaluator->getStringVar("pix_widget_small_bkgd");
+
+	imageHandlesTable[kCheckboxEmpty] = _evaluator->getStringVar("pix_checkbox_empty");
+	imageHandlesTable[kCheckboxChecked] = _evaluator->getStringVar("pix_checkbox_checked");
+
+	imageHandlesTable[kWidgetArrow] = _evaluator->getStringVar("pix_widget_arrow");
+
+	imageHandlesTable[kTabBkgdCorner] = _evaluator->getStringVar("pix_tab_corner");
+	imageHandlesTable[kTabBkgdTop] = _evaluator->getStringVar("pix_tab_top");
+	imageHandlesTable[kTabBkgdLeft] = _evaluator->getStringVar("pix_tab_left");
+	imageHandlesTable[kTabBkgd] = _evaluator->getStringVar("pix_tab_bkgd");
+
+	imageHandlesTable[kSliderBkgdCorner] = _evaluator->getStringVar("pix_slider_bkgd_corner");
+	imageHandlesTable[kSliderBkgdTop] = _evaluator->getStringVar("pix_slider_bkgd_top");
+	imageHandlesTable[kSliderBkgdLeft] = _evaluator->getStringVar("pix_slider_bkgd_left");
+	imageHandlesTable[kSliderBkgd] = _evaluator->getStringVar("pix_slider_bkgd_bkgd");
+
+	imageHandlesTable[kSliderCorner] = _evaluator->getStringVar("pix_slider_corner");
+	imageHandlesTable[kSliderTop] = _evaluator->getStringVar("pix_slider_top");
+	imageHandlesTable[kSliderLeft] = _evaluator->getStringVar("pix_slider_left");
+	imageHandlesTable[kSlider] = _evaluator->getStringVar("pix_slider_bkgd");
+
+	imageHandlesTable[kScrollbarBkgdCorner] = _evaluator->getStringVar("pix_scrollbar_bkgd_corner");
+	imageHandlesTable[kScrollbarBkgdTop] = _evaluator->getStringVar("pix_scrollbar_bkgd_top");
+	imageHandlesTable[kScrollbarBkgdLeft] = _evaluator->getStringVar("pix_scrollbar_bkgd_left");
+	imageHandlesTable[kScrollbarBkgd] = _evaluator->getStringVar("pix_scrollbar_bkgd_bkgd");
+
+	imageHandlesTable[kScrollbarCorner] = _evaluator->getStringVar("pix_scrollbar_corner");
+	imageHandlesTable[kScrollbarTop] = _evaluator->getStringVar("pix_scrollbar_top");
+	imageHandlesTable[kScrollbarLeft] = _evaluator->getStringVar("pix_scrollbar_left");
+	imageHandlesTable[kScrollbar] = _evaluator->getStringVar("pix_scrollbar_bkgd");
+
+	imageHandlesTable[kButtonBkgdCorner] = _evaluator->getStringVar("pix_button_corner");
+	imageHandlesTable[kButtonBkgdTop] = _evaluator->getStringVar("pix_button_top");
+	imageHandlesTable[kButtonBkgdLeft] = _evaluator->getStringVar("pix_button_left");
+	imageHandlesTable[kButtonBkgd] = _evaluator->getStringVar("pix_button_bkgd");
+
+	imageHandlesTable[kThemeLogo] = _evaluator->getStringVar("pix_theme_logo");
+
+	imageHandlesTable[kPopUpWidgetBkgdCorner] = _evaluator->getStringVar("pix_popupwidget_corner");
+	imageHandlesTable[kPopUpWidgetBkgdTop] = _evaluator->getStringVar("pix_popupwidget_top");
+	imageHandlesTable[kPopUpWidgetBkgdLeft] = _evaluator->getStringVar("pix_popupwidget_left");
+	imageHandlesTable[kPopUpWidgetBkgd] = _evaluator->getStringVar("pix_popupwidget_bkgd");
+
+	imageHandlesTable[kEditTextBkgdCorner] = _evaluator->getStringVar("pix_edittext_bkgd_corner");
+	imageHandlesTable[kEditTextBkgdTop] = _evaluator->getStringVar("pix_edittext_bkgd_top");
+	imageHandlesTable[kEditTextBkgdLeft] = _evaluator->getStringVar("pix_edittext_bkgd_left");
+	imageHandlesTable[kEditTextBkgd] = _evaluator->getStringVar("pix_edittext_bkgd");
+
+	imageHandlesTable[kGUICursor] = _evaluator->getStringVar("pix_cursor_image");
+
+	_imageHandles = imageHandlesTable;
+
+	for (int i = 0; i < kImageHandlesMax; ++i) {
+		ImageMan.registerSurface(_imageHandles[i], 0);
+		_images[i] = ImageMan.getSurface(_imageHandles[i]);
+	}
+
+	// load the gradient factors from the config file
+	_gradientFactors[kMainDialogFactor] = _evaluator->getVar("gradient_dialog_main", 1);
+	_gradientFactors[kDialogFactor] = _evaluator->getVar("gradient_dialog", 1);
+	_gradientFactors[kDialogSpecialFactor] = _evaluator->getVar("gradient_dialog_special", 1);
+
+	_gradientFactors[kWidgetSmallFactor] = _evaluator->getVar("gradient_widget_small", 1);
+	_gradientFactors[kWidgetFactor] = _evaluator->getVar("gradient_widget", 1);
+
+	_gradientFactors[kButtonFactor] = _evaluator->getVar("gradient_button", 1);
+
+	_gradientFactors[kSliderFactor] = _evaluator->getVar("gradient_slider", 1);
+	_gradientFactors[kSliderBackground] = _evaluator->getVar("gradient_silder_bkgd", 1);
+
+	_gradientFactors[kTabFactor] = _evaluator->getVar("gradient_tab", 1);
+
+	_gradientFactors[kScrollbarFactor] = _evaluator->getVar("gradient_scrollbar", 1);
+	_gradientFactors[kScrollbarBkgdFactor] = _evaluator->getVar("gradient_scrollbar_background", 1);
+
+	_gradientFactors[kPopUpWidgetFactor] = _evaluator->getVar("gradient_popupwidget", 1);
+
+	_gradientFactors[kEditTextFactor] = _evaluator->getVar("gradient_edittext", 1);
+	
+	// load values with default values from the config file
+	_shadowLeftWidth = _evaluator->getVar("shadow_left_width", 2);
+	_shadowRightWidth = _evaluator->getVar("shadow_right_width", 4);
+	_shadowTopHeight = _evaluator->getVar("shadow_top_height", 2);
+	_shadowBottomHeight = _evaluator->getVar("shadow_bottom_height", 4);
+
+	_cursorHotspotX = _evaluator->getVar("cursor_hotspot_x", 0);
+	_cursorHotspotY = _evaluator->getVar("cursor_hotspot_y", 0);
+
+	_cursorTargetScale = _evaluator->getVar("cursor_targetScale", 1);
+	
+	// inactive dialog shading stuff
+	
+	ShadingStyle shading = (ShadingStyle)_evaluator->getVar("inactive_dialog_shading", kShadingNone);
+
+	switch (shading) {
+	case kShadingNone:
+		_dialogShadingCallback = 0;
+		break;
+
+	case kShadingLuminance:
+		_dialogShadingCallback = &ThemeNew::calcLuminance;
+		// don't cache colors for the luminance effect
+		//createCacheTable = true;
+		break;
+
+	case kShadingDim:
+		_dimPercentValue = _evaluator->getVar("shading_dim_percent", -1);
+
+		if (_dimPercentValue < 0) {
+			_dimPercentValue = 0;
+		} else if (_dimPercentValue > 100) {
+			_dimPercentValue = 100;
+		}
+				
+		if (_dimPercentValue != 0) {
+			_dimPercentValue = 256 * (100 - _dimPercentValue) / 100;
+			_dialogShadingCallback = &ThemeNew::calcDimColor;
+		}
+		break;
+
+	default:
+			warning("no valid 'inactive_dialog_shading' specified");
+	}
+
+	// load the colors from the config file
+	setupColors();
+
+	// creates cursor image
+	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
+		createCursor();
+	}
 }
 
 #pragma mark -
