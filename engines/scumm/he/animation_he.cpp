@@ -23,8 +23,6 @@
 
 #include "common/stdafx.h"
 
-#include "common/rect.h"
-
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 
@@ -87,7 +85,7 @@ int MoviePlayer::getImageNum() {
 }
 
 int MoviePlayer::load(const char *filename, int flags, int image) {
-	char filename2[100];
+	char videoName[100];
 	uint32 tag;
 	int32 frameRate;
 
@@ -96,17 +94,17 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	}
 
 	// Change file extension to dxa
-	strcpy(filename2, filename);
-	int len = strlen(filename2) - 3;
-	filename2[len++] = 'd';
-	filename2[len++] = 'x';
-	filename2[len++] = 'a';
+	strcpy(videoName, filename);
+	int len = strlen(videoName) - 3;
+	videoName[len++] = 'd';
+	videoName[len++] = 'x';
+	videoName[len++] = 'a';
 	
-	if (_fd.open(filename2) == false) {
-		warning("Failed to load video file %s", filename2);
+	if (_fd.open(videoName) == false) {
+		warning("Failed to load video file %s", videoName);
 		return -1;
 	} 
-	debug(0, "Playing video %s", filename2);
+	debug(1, "Playing video %s", videoName);
 
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
@@ -132,8 +130,6 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 
 	// Skip sound tag
 	_fd.readUint32BE();
-
-	debug(0, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _framesPerSec, _frameTicks);
 
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
@@ -249,7 +245,6 @@ void MoviePlayer::decodeFrame() {
 	if (tag == MKID_BE('FRAM')) {
 		uint8 type = _fd.readByte();
 		uint32 size = _fd.readUint32BE();
-		debug(0, "frame %d type %d size %d", _frameNum, type, size);
 
 		_fd.read(_frameBuffer2, size);
 

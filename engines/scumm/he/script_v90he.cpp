@@ -516,7 +516,6 @@ void ScummEngine_v90he::o90_videoOps() {
 	int status = fetchScriptByte();
 	int subOp = status - 49;
 
-	debug(0, "o90_videoOps stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
@@ -565,7 +564,6 @@ void ScummEngine_v90he::o90_getVideoData() {
 	byte subOp = fetchScriptByte();
 	subOp -= 32;
 
-	debug(0, "o90_getVideoData stub (%d)", subOp);
 	switch (subOp) {
 	case 0:		// Get width
 		pop();
@@ -588,8 +586,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 		push(_moviePlay->getImageNum());
 		break;
 	case 107:	// Get statistics
-		pop();
-		pop();
+		debug(0, "o90_getVideoData: subOp 107 stub (%d, %d)", pop(), pop());
 		push(0);
 		break;
 	default:
