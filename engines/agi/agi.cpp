@@ -493,7 +493,19 @@ void AgiEngine::initialize() {
 	memset(&opt, 0, sizeof(struct agi_options));
 	opt.gamerun = GAMERUN_RUNGAME;
 	opt.hires = true;
-	opt.soundemu = SOUND_EMU_NONE;
+
+	// TODO: Some sound emulation modes do not fit our current music
+	//       drivers, and I'm not sure what they are. For now, they might
+	//       as well be called "PC Speaker" and "Not PC Speaker".
+
+	switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
+	case MD_PCSPK:
+		opt.soundemu = SOUND_EMU_PC;
+		break;
+	default:
+		opt.soundemu = SOUND_EMU_NONE;
+		break;
+	}
 
 	if (ConfMan.hasKey("render_mode"))
 		opt.renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
