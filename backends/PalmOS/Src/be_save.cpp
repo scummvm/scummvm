@@ -102,9 +102,9 @@ protected:
 Common::SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	char buf[256];
 
-	strncpy(buf, getSavePath(), sizeof(buf));
-	strncat(buf, "/", 1);
-	strncat(buf, filename, sizeof(buf));
+	strcpy(buf, getSavePath());
+	strcat(buf, "/");
+	strcat(buf, filename);
 
 	return makeSaveFile(buf, saveOrLoad);
 }
