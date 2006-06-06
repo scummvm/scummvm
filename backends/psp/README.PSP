@@ -1,4 +1,4 @@
-ScummVM-PSP 0.9.0CVS README 
+ScummVM-PSP 0.9.0SVN README 
 ===========================
 
 Installation
@@ -62,7 +62,7 @@ A:  Possibly.
     When you encounter such a bug, please use the "Bug Tracker" you find linked
     on the ScummVM website, and mention all relevant info (i.e. that you're
     using the PSP version, which ScummVM version it is, if the problem exists
-    in a recent PC CVS version, a detailed description of the problem,
+    in a recent PC SVN version, a detailed description of the problem,
     and if at all possible a nearby savegame), this will make it much easier
     for us to reproduce (and hopefully fix) the problem.
 
