@@ -35,16 +35,16 @@ struct InstrumentExtra {
 };
 
 struct AdlibInstrument {
-	byte flags_1;
-	byte oplvl_1;
-	byte atdec_1;
-	byte sustrel_1;
-	byte waveform_1;
-	byte flags_2;
-	byte oplvl_2;
-	byte atdec_2;
-	byte sustrel_2;
-	byte waveform_2;
+	byte mod_characteristic;
+	byte mod_scalingOutputLevel;
+	byte mod_attackDecay;
+	byte mod_sustainRelease;
+	byte mod_waveformSelect;
+	byte car_characteristic;
+	byte car_scalingOutputLevel;
+	byte car_attackDecay;
+	byte car_sustainRelease;
+	byte car_waveformSelect;
 	byte feedback;
 	byte flags_a;
 	InstrumentExtra extra_a;
@@ -225,7 +225,7 @@ static const AdlibSetParams adlib_setparam_table[] = {
 	{0x60, 0, 15, 15},  // decay rate
 	{0x80, 4, 240, 15}, // sustain level
 	{0x80, 0, 15, 15},  // release rate
-	{0xE0, 0, 3, 0},    // waveform select
+	{0xE0, 0, 3, 0},    // waveformSelect select
 	{0x20, 7, 128, 0},  // amp mod
 	{0x20, 6, 64, 0},   // vib
 	{0x20, 5, 32, 0},   // eg typ
@@ -1340,17 +1340,17 @@ void MidiDriver_ADLIB::mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte
 		voice->_duration *= 63;
 
 	if (!_game_SmallHeader)
-		vol_1 = (instr->oplvl_1 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_1 >> 2];
+		vol_1 = (instr->mod_scalingOutputLevel & 0x3F) + lookup_table[velocity >> 1][instr->mod_waveformSelect >> 2];
 	else
-		vol_1 = 0x3f - (instr->oplvl_1 & 0x3F);
+		vol_1 = 0x3f - (instr->mod_scalingOutputLevel & 0x3F);
 	if (vol_1 > 0x3F)
 		vol_1 = 0x3F;
 	voice->_vol_1 = vol_1;
 
 	if (!_game_SmallHeader)
-		vol_2 = (instr->oplvl_2 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_2 >> 2];
+		vol_2 = (instr->car_scalingOutputLevel & 0x3F) + lookup_table[velocity >> 1][instr->car_waveformSelect >> 2];
 	else
-		vol_2 = 0x3f - (instr->oplvl_2 & 0x3F);
+		vol_2 = 0x3f - (instr->car_scalingOutputLevel & 0x3F);
 	if (vol_2 > 0x3F)
 		vol_2 = 0x3F;
 	voice->_vol_2 = vol_2;
@@ -1385,18 +1385,18 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdlibInstrument *instr, byt
 	assert(chan >= 0 && chan < 9);
 
 	port = channel_mappings[chan];
-	adlib_write(port + 0x20, instr->flags_1);
-	adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
-	adlib_write(port + 0x60, 0xff & (~instr->atdec_1));
-	adlib_write(port + 0x80, 0xff & (~instr->sustrel_1));
-	adlib_write(port + 0xE0, instr->waveform_1);
+	adlib_write(port + 0x20, instr->mod_characteristic);
+	adlib_write(port + 0x40, (instr->mod_scalingOutputLevel | 0x3F) - vol_1 );
+	adlib_write(port + 0x60, 0xff & (~instr->mod_attackDecay));
+	adlib_write(port + 0x80, 0xff & (~instr->mod_sustainRelease));
+	adlib_write(port + 0xE0, instr->mod_waveformSelect);
 
 	port = channel_mappings_2[chan];
-	adlib_write(port + 0x20, instr->flags_2);
-	adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2 );
-	adlib_write(port + 0x60, 0xff & (~instr->atdec_2));
-	adlib_write(port + 0x80, 0xff & (~instr->sustrel_2));
-	adlib_write(port + 0xE0, instr->waveform_2);
+	adlib_write(port + 0x20, instr->car_characteristic);
+	adlib_write(port + 0x40, (instr->car_scalingOutputLevel | 0x3F) - vol_2 );
+	adlib_write(port + 0x60, 0xff & (~instr->car_attackDecay));
+	adlib_write(port + 0x80, 0xff & (~instr->car_sustainRelease));
+	adlib_write(port + 0xE0, instr->car_waveformSelect);
 
 	adlib_write((byte)chan + 0xC0, instr->feedback);
 }
