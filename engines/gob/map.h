@@ -24,6 +24,7 @@
 #define GOB_MAP_H
 
 #include "gob/util.h"
+#include "gob/mult.h"
 
 namespace Gob {
 
@@ -87,7 +88,7 @@ public:
 	void placeItem(int16 x, int16 y, int16 id);
 
 	int16 getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
-	int16 checkDirectPath(int16 index, int16 x0, int16 y0, int16 x1, int16 y1);
+	int16 checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1, int16 y1);
 	int16 checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
 	void loadItemToObject(void);
 	void loadDataFromAvo(char *dest, int16 size);
@@ -97,9 +98,9 @@ public:
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) = 0;
 
 	virtual void loadMapObjects(char *avjFile) = 0;
-	virtual void findNearestToGob(int16 index) = 0;
-	virtual void findNearestToDest(int16 index) = 0;
-	virtual void optimizePoints(int16 index, int16 x, int16 y) = 0;
+	virtual void findNearestToGob(Mult::Mult_Object *obj) = 0;
+	virtual void findNearestToDest(Mult::Mult_Object *obj) = 0;
+	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
 
 	Map(GobEngine *vm);
 	virtual ~Map() {};
@@ -115,9 +116,9 @@ protected:
 class Map_v1 : public Map {
 public:
 	virtual void loadMapObjects(char *avjFile);
-	virtual void optimizePoints(int16 index, int16 x, int16 y);
-	virtual void findNearestToGob(int16 index);
-	virtual void findNearestToDest(int16 index);
+	virtual void findNearestToGob(Mult::Mult_Object *obj);
+	virtual void findNearestToDest(Mult::Mult_Object *obj);
+	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
 
 	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
 		return _passMap[y * _mapWidth + x];
@@ -134,9 +135,9 @@ public:
 class Map_v2 : public Map_v1 {
 public:
 	virtual void loadMapObjects(char *avjFile);
-	virtual void optimizePoints(int16 index, int16 x, int16 y);
-	virtual void findNearestToGob(int16 index);
-	virtual void findNearestToDest(int16 index);
+	virtual void findNearestToGob(Mult::Mult_Object *obj);
+	virtual void findNearestToDest(Mult::Mult_Object *obj);
+	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
 
 	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
 		if (heightOff == -1)

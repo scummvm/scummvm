@@ -715,7 +715,7 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 void Inter_v2::o2_stub0x54(void) {
 	int16 index = _vm->_parse->parseValExpr();
 
-	_vm->_mult->_objects[index].pAnimData->field_12 = 4;
+	_vm->_mult->_objects[index].pAnimData->pathExistence = 4;
 }
 
 void Inter_v2::o2_stub0x80(void) {
@@ -958,9 +958,24 @@ void Inter_v2::o2_placeGoblin(void) {
 void Inter_v2::o2_moveGoblin(void) {
 	Mult::Mult_Object *obj;
 	Mult::Mult_AnimData *objAnim;
-	int16 destX = _vm->_parse->parseValExpr();
-	int16 destY = _vm->_parse->parseValExpr();
-	int16 index = _vm->_parse->parseValExpr();
+	int16 destX;
+	int16 destY;
+	int16 index;
+	int16 mouseX;
+	int16 mouseY;
+	int16 gobDestX;
+	int16 gobDestY;
+	int16 mapWidth;
+	int16 mapHeight;
+	int16 di;
+	int16 si;
+	int16 var_1E;
+	int16 var_20;
+	int i;
+
+	destX = _vm->_parse->parseValExpr();
+	destY = _vm->_parse->parseValExpr();
+	index = _vm->_parse->parseValExpr();
 
 	obj = &_vm->_mult->_objects[index];
 	objAnim = obj->pAnimData;
@@ -971,10 +986,89 @@ void Inter_v2::o2_moveGoblin(void) {
 	objAnim->field_14 = destY;
 	if (objAnim->someFlag != 0) {
 		if ((destX == -1) && (destY == -1)) {
-			warning("STUB: Gob2 drawOperation moveGoblin (%d %d %d), someFlag: %d", destX, destY, index, objAnim->someFlag);
+			mouseX = _vm->_global->_inter_mouseX;
+			mouseY = _vm->_global->_inter_mouseY;
+			if (_vm->_map->_bigTiles)
+				mouseY += ((_vm->_global->_inter_mouseX / _vm->_map->_tilesHeight) + 1) / 2;
+			obj->gobDestX = mouseX / _vm->_map->_tilesWidth;
+			obj->gobDestY = mouseY / _vm->_map->_tilesHeight;
+			gobDestX = obj->gobDestX;
+			gobDestY = obj->gobDestY;
+			if (_vm->_map->getPass(obj->gobDestX, obj->gobDestY) == 0) {
+				mapWidth = _vm->_map->_screenWidth / _vm->_map->_tilesWidth;
+				mapHeight = 200 / _vm->_map->_tilesHeight;
+				var_20 = 0;
+				di = -1;
+				si = -1;
+
+				for (i = 1; i <= gobDestX; i++)
+					if (_vm->_map->getPass(gobDestX - i, gobDestY) != 0)
+						break;
+				if (i <= gobDestX)
+					di = ((i - 1) * _vm->_map->_tilesWidth) + (mouseX % _vm->_map->_tilesWidth) + 1;
+				var_1E = i;
+
+				for (i = 1; (gobDestX + i) < mapWidth; i++)
+					if (_vm->_map->getPass(gobDestX + i, gobDestY) != 0)
+						break;
+				if ((gobDestX + i) < mapWidth)
+					si = (i * _vm->_map->_tilesWidth) - (mouseX % _vm->_map->_tilesWidth);
+
+				if ((si != -1) && ((di == -1) || (di > si))) {
+					di = si;
+					var_20 = 1;
+					var_1E = i;
+				}
+				si = -1;
+
+				for (i = 1; (gobDestY + i) < mapHeight; i++)
+					if (_vm->_map->getPass(gobDestX, gobDestY + i) != 0)
+						break;
+				if ((gobDestY + i) < mapHeight)
+					si = (i * _vm->_map->_tilesHeight) - (mouseY % _vm->_map->_tilesHeight);
+
+				if ((si != -1) && ((di == -1) || (di > si))) {
+					di = si;
+					var_20 = 2;
+					var_1E = i;
+				}
+				si = -1;
+
+				for (i = 1; i <= gobDestY; i++)
+					if (_vm->_map->getPass(gobDestX, gobDestY - i) != 0)
+						break;
+				if (i <= gobDestY)
+					si = ((i - 1) * _vm->_map->_tilesHeight) + (mouseY % _vm->_map->_tilesHeight) + 1;
+
+				if ((si != -1) && ((di == -1) || (di > si))) {
+					var_20 = 3;
+					var_1E = i;
+				}
+
+				if (var_20 == 0)
+					gobDestX -= var_1E;
+				else if (var_20 == 1)
+					gobDestX += var_1E;
+				else if (var_20 == 2)
+					gobDestY += var_1E;
+				else if (var_20 == 3)
+					gobDestY -= var_1E;
+			}
+			obj->gobDestX = gobDestX;
+			obj->gobDestY = gobDestY;
+			objAnim->field_13 = gobDestX;
+			objAnim->field_14 = gobDestY;
+			if (objAnim->field_13 == -1) {
+				objAnim->field_13 = obj->goblinX;
+				obj->gobDestX = obj->goblinX;
+			}
+			if (objAnim->field_14 == -1) {
+				objAnim->field_14 = obj->goblinY;
+				obj->gobDestY = obj->goblinY;
+			}
 		}
 	}
-	_vm->_goblin->initiateMove(index);
+	_vm->_goblin->initiateMove(obj);
 }
 
 void Inter_v2::o2_writeGoblinPos(void) {
@@ -1042,9 +1136,9 @@ void Inter_v2::loadMult(void) {
 			obj->goblinY = val;
 			*obj->pPosX *= _vm->_map->_tilesWidth;
 			objAnim->field_15 = objAnim->unknown;
-			objAnim->field_E = -1;
+			objAnim->nextState = -1;
 			objAnim->field_F = -1;
-			objAnim->field_12 = 0;
+			objAnim->pathExistence = 0;
 			objAnim->state = objAnim->layer;
 			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
 			objAnim->animation = obj->goblinStates[objAnim->state][0].animation;
@@ -1065,7 +1159,7 @@ void Inter_v2::loadMult(void) {
 			obj = &_vm->_mult->_objects[objIndex];
 			objAnim = obj->pAnimData;
 
-			objAnim->field_E = -1;
+			objAnim->nextState = -1;
 			objAnim->field_F = -1;
 			objAnim->state = objAnim->layer;
 			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;

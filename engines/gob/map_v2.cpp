@@ -60,7 +60,7 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	char *dataPtrBak;
 	char *dataPtrBak2;
 	int8 statesMask[102];
-	Goblin::Gob2_State *statesPtr;
+	Mult::Mult_GobState *statesPtr;
 
 	var = _vm->_parse->parseVarIndex();
 	variables = _vm->_global->_inter_variables + var;
@@ -138,8 +138,8 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	_vm->_goblin->_gobsCount = tmp;
 	for (i = 0; i < _vm->_goblin->_gobsCount; i++) {
 		memset(statesMask, -1, 101);
-		_vm->_mult->_objects[i].goblinStates = new Goblin::Gob2_State*[101];
-		memset(_vm->_mult->_objects[i].goblinStates, 0, 101 * sizeof(Goblin::Gob2_State *));
+		_vm->_mult->_objects[i].goblinStates = new Mult::Mult_GobState*[101];
+		memset(_vm->_mult->_objects[i].goblinStates, 0, 101 * sizeof(Mult::Mult_GobState *));
 		memcpy(statesMask, dataPtr, 100);
 		dataPtr += 100;
 		dataPtrBak2 = dataPtr;
@@ -153,7 +153,7 @@ void Map_v2::loadMapObjects(char *avjFile) {
 				dataPtr += numData * 9;
 			}
 		}
-		statesPtr = new Goblin::Gob2_State[statesCount];
+		statesPtr = new Mult::Mult_GobState[statesCount];
 		_vm->_mult->_objects[i].goblinStates[0] = statesPtr;
 		dataPtr = dataPtrBak2;
 		for (j = 0; j < 100; j++) {
@@ -165,18 +165,17 @@ void Map_v2::loadMapObjects(char *avjFile) {
 				_vm->_mult->_objects[i].goblinStates[state][0].layer = READ_LE_UINT16(dataPtr);
 				dataPtr += 2;
 				numData = *dataPtr++;
-				_vm->_mult->_objects[i].goblinStates[state][0].field_4 = numData;
-				for (k = 0; k < numData; k++) {
+				_vm->_mult->_objects[i].goblinStates[state][0].dataCount = numData;
+				for (k = 1; k <= numData; k++) {
 					dataPtr++;
-					_vm->_mult->_objects[i].goblinStates[state][k].animation = *((byte *) dataPtr) << 8;
+					_vm->_mult->_objects[i].goblinStates[state][k].sndItem = *dataPtr;
 					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].animation += *((byte *) dataPtr);
+					_vm->_mult->_objects[i].goblinStates[state][k].sndFrame = *dataPtr;
 					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].layer = *((byte *) dataPtr) << 8;
+					_vm->_mult->_objects[i].goblinStates[state][k].freq = READ_LE_UINT16(dataPtr);
 					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].layer += *((byte *) dataPtr);
-					_vm->_mult->_objects[i].goblinStates[state][k].field_4 = READ_LE_UINT16(dataPtr);
-					dataPtr += 2;
+					_vm->_mult->_objects[i].goblinStates[state][k].repCount = *dataPtr++;
+					_vm->_mult->_objects[i].goblinStates[state][k].speaker = *dataPtr++;
 					statesPtr++;
 				}
 			}
@@ -188,39 +187,33 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		_vm->_goblin->_soundSlots[i] = _vm->_inter->loadSound(1);
 }
 
-void Map_v2::findNearestToGob(int16 index) {
-	Mult::Mult_Object *obj = &_vm->_mult->_objects[index];
+void Map_v2::findNearestToGob(Mult::Mult_Object *obj) {
 	int16 wayPoint = findNearestWayPoint(obj->goblinX, obj->goblinY);
 
 	if (wayPoint != -1)
 		obj->nearestWayPoint = wayPoint;
 }
 
-void Map_v2::findNearestToDest(int16 index) {
-	Mult::Mult_Object *obj = &_vm->_mult->_objects[index];
+void Map_v2::findNearestToDest(Mult::Mult_Object *obj) {
 	int16 wayPoint = findNearestWayPoint(obj->destX, obj->destY);
 
 	if (wayPoint != -1)
 		obj->nearestDest = wayPoint;
 }
 
-void Map_v2::optimizePoints(int16 index, int16 x, int16 y) {
-	Mult::Mult_Object *obj;
+void Map_v2::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 	int i;
-	
 	int16 var_2;
-
-	obj = &_vm->_mult->_objects[index];
 
 	if (obj->nearestWayPoint < obj->nearestDest) {
 		var_2 = obj->nearestWayPoint;
 		for (i = obj->nearestWayPoint; i <= obj->nearestDest; i++) {
-			if (checkDirectPath(index, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
+			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}
 	} else {
 		for (i = obj->nearestWayPoint; i >= obj->nearestDest && _wayPoints[i].field_2 != 1; i--) {
-			if (checkDirectPath(index, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
+			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}
 	}

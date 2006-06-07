@@ -389,32 +389,32 @@ void Map_v1::loadMapObjects(char *avjFile) {
 	}
 }
 
-void Map_v1::optimizePoints(int16 index, int16 x, int16 y) {
+void Map_v1::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 	int16 i;
 
 	if (_nearestWayPoint < _nearestDest) {
 		for (i = _nearestWayPoint; i <= _nearestDest; i++) {
-			if (checkDirectPath(-1, _curGoblinX, _curGoblinY,
+			if (checkDirectPath(0, _curGoblinX, _curGoblinY,
 				_wayPoints[i].x, _wayPoints[i].y) == 1)
 				_nearestWayPoint = i;
 		}
 	} else if (_nearestWayPoint > _nearestDest) {
 		for (i = _nearestWayPoint; i >= _nearestDest; i--) {
-			if (checkDirectPath(-1, _curGoblinX, _curGoblinY,
+			if (checkDirectPath(0, _curGoblinX, _curGoblinY,
 				_wayPoints[i].x, _wayPoints[i].y) == 1)
 				_nearestWayPoint = i;
 		}
 	}
 }
 
-void Map_v1::findNearestToGob(int16 index) {
+void Map_v1::findNearestToGob(Mult::Mult_Object *obj) {
 	int16 wayPoint = findNearestWayPoint(_curGoblinX, _curGoblinY);
 
 	if (wayPoint != -1)
 		_nearestWayPoint = wayPoint;
 }
 
-void Map_v1::findNearestToDest(int16 index) {
+void Map_v1::findNearestToDest(Mult::Mult_Object *obj) {
 	int16 wayPoint = findNearestWayPoint(_destX, _destY);
 
 	if (wayPoint != -1)

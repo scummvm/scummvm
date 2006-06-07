@@ -35,6 +35,7 @@
 #include "gob/palanim.h"
 #include "gob/parse.h"
 #include "gob/music.h"
+#include "gob/map.h"
 
 namespace Gob {
 
@@ -309,7 +310,9 @@ void Mult_v2::setMultData(uint16 multindex) {
 void Mult_v2::multSub(uint16 multindex) {
 	uint16 flags;
 	int16 expr;
+	int16 textFrame;
 	int i;
+	int j;
 	int16 di;
 
 	flags = multindex;
@@ -353,7 +356,56 @@ void Mult_v2::multSub(uint16 multindex) {
 	expr = _vm->_parse->parseValExpr();
 	_multData2->animKeysIndices1[di] = expr;
 	_multData2->animKeysIndices2[di] = expr;
-	// loc_5D0E
+	
+	WRITE_VAR(18 + di, expr);
+	if (expr == -1) { // loc_5D0E
+		if (_objects)
+			for (i = 0; i < 4; i++)
+				if ((_multData2->field_124[di][i] != -1) && (_multData2->field_124[di][i] != 1024))
+					_objects[_multData2->field_124[di][i]].pAnimData->animType =
+						_objects[_multData2->field_124[di][i]].pAnimData->field_17;
+	} else { // loc_5DDC
+		if (_multData2->field_156 == 1) {
+			_multData2->field_157[di] = 32000;
+			for (i = 0; i < _multData2->textKeysCount; i++) {
+				textFrame = _multData2->textKeys[i].frame;
+				if ((textFrame > _multData2->animKeysIndices2[di]) &&
+						(textFrame < _multData2->field_157[di])) {
+					_multData2->field_157[di] = textFrame;
+				}
+			}
+		} else {
+			_multData2->field_157[di] = 0;
+			for (i = 0; i < _multData2->textKeysCount; i++) {
+				textFrame = _multData2->textKeys[i].frame;
+				if ((textFrame < _multData2->animKeysIndices2[di]) &&
+						(textFrame > _multData2->field_157[di])) {
+					_multData2->field_157[di] = textFrame;
+				}
+			}
+		}
+		if (_objects) {
+			for (i = 0; i < 4; i++) {
+				if ((_multData2->field_124[di][i] != -1) && (_multData2->field_124[di][i] != 1024))
+					_objects[_multData2->field_124[di][i]].pAnimData->field_17 =
+						_objects[_multData2->field_124[di][i]].pAnimData->animType;
+			}
+		}
+		// loc_5FCF
+		for (i = 0; i < 4; i++ /* var_C += 2, var_E += 4*/) {
+			_multData2->field_15F[di][i] = 0;
+			for (j = 0; j < _multData2->animKeysCount[i]; j++) {
+				if (_multData2->animKeys[i][j].frame >= _multData2->animKeysIndices2[di])
+					_multData2->field_15F[di][i] = j;
+			}
+		}
+		if (_multData2->field_156 == -1) { // loc_60CF
+			warning("Mult_v2::multSub(), somepointer05 and somepointer05indices");
+		}
+		// loc_6187
+		warning("Mult_v2::multSub(), somepointer05");
+	}
+
 	warning("GOB2 Stub! Mult_v2::multSub()");
 }
 
@@ -412,14 +464,6 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animArrayY = new int32[_objCount];
 
 			_animArrayData = new Mult_AnimData[_objCount];
-			// TODO: Delete that after the code that initializes these fields exists!
-			int i;
-			for (i = 0; i < _objCount; i++) {
-				_animArrayData[i].field_13 = 0;
-				_animArrayData[i].field_14 = 0;
-				_animArrayData[i].field_17 = 0;
-			}
-			// ---'
 
 			for (_counter = 0; _counter < _objCount; _counter++) {
 				multObj = &_objects[_counter];
@@ -1277,9 +1321,9 @@ void Mult_v2::animate(void) {
 				}
 			}
 			else if (animData1->animType == 100)
-				warning("GOB2 Stub! sub_10C87(animObj1);");
+				_vm->_goblin->moveAdvance(animObj1, 0, 0, 0);
 			else if (animData1->animType == 101)
-				warning("GOB2 Stub! sub_11984(animObj1);");
+				_vm->_goblin->sub_11984(animObj1);
 		} else
 			animObj1->tick++;
 	}

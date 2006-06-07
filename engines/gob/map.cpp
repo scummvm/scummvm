@@ -248,12 +248,8 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 	return lnearestWayPoint;
 }
 
-int16 Map::checkDirectPath(int16 index, int16 x0, int16 y0, int16 x1, int16 y1) {
-	Mult::Mult_Object *obj = 0;
+int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1, int16 y1) {
 	uint16 dir;
-
-	if ((index >= 0) && (index < _vm->_mult->_objCount))
-		obj = &_vm->_mult->_objects[index];
 
 	while (1) {
 		dir = getDirection(x0, y0, x1, y1);
@@ -329,7 +325,7 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 			nextLink = 1;
 
 		if (nextLink != 0) {
-			if (checkDirectPath(-1, x0, y0, x1, y1) == 1)
+			if (checkDirectPath(0, x0, y0, x1, y1) == 1)
 				return 1;
 
 			nextLink = 0;
@@ -348,7 +344,7 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 		}
 		if (i0 == i1 && _wayPoints[i0].x == x0
 		    && _wayPoints[i0].y == y0) {
-			if (checkDirectPath(-1, x0, y0, x1, y1) == 1)
+			if (checkDirectPath(0, x0, y0, x1, y1) == 1)
 				return 1;
 			return 0;
 		}

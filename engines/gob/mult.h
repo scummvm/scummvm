@@ -26,7 +26,6 @@
 #include "gob/gob.h"
 #include "gob/sound.h"
 #include "gob/video.h"
-#include "gob/goblin.h"
 
 namespace Gob {
 
@@ -52,15 +51,27 @@ public:
 		int8 somethingFrame;     // New in GOB2
 		int8 someFlag;           // New in GOB2
 		int8 state;              // New in GOB2
-		int8 field_E;            // New in GOB2
+		int8 nextState;          // New in GOB2
 		int8 field_F;            // New in GOB2
-		int8 field_10;           // New in GOB2
-		int8 field_12;           // New in GOB2
+		int8 curLookDir;         // New in GOB2
+		int8 pathExistence;      // New in GOB2
 		int8 field_13;           // New in GOB2
 		int8 field_14;           // New in GOB2
 		int8 field_15;           // New in GOB2
+		int8 field_16;           // New in GOB2
 		int8 field_17;           // New in GOB2
 	} GCC_PACK;
+
+	struct Mult_GobState {
+		int16 animation; // .
+		int16 layer;     // |- [0]
+		int16 dataCount; // '
+		int8 sndItem;    // .
+		uint8 sndFrame;  // |
+		int16 freq;      // |- [1+]
+		int8 repCount;   // |
+		uint8 speaker;   // '
+	};
 
 	struct Mult_Object {
 		int32 *pPosX;
@@ -71,20 +82,20 @@ public:
 		int16 lastRight;
 		int16 lastTop;
 		int16 lastBottom;
-		int8 someFlag;                     // New in GOB2
-		int16 somethingLeft;               // New in GOB2
-		int16 somethingTop;                // New in GOB2
-		int16 somethingRight;              // New in GOB2
-		int16 somethingBottom;             // New in GOB2
-		int8 goblinX;                      // New in GOB2
-		int8 goblinY;                      // New in GOB2
-		int8 destX;                        // New in GOB2
-		int8 destY;                        // New in GOB2
-		int8 gobDestX;                     // New in GOB2
-		int8 gobDestY;                     // New in GOB2
-		int8 nearestWayPoint;              // New in GOB2
-		int8 nearestDest;                  // New in GOB2
-		Goblin::Gob2_State **goblinStates; // New in GOB2
+		int8 someFlag;                      // New in GOB2
+		int16 somethingLeft;                // New in GOB2
+		int16 somethingTop;                 // New in GOB2
+		int16 somethingRight;               // New in GOB2
+		int16 somethingBottom;              // New in GOB2
+		int8 goblinX;                       // New in GOB2
+		int8 goblinY;                       // New in GOB2
+		int8 destX;                         // New in GOB2
+		int8 destY;                         // New in GOB2
+		int8 gobDestX;                      // New in GOB2
+		int8 gobDestY;                      // New in GOB2
+		int8 nearestWayPoint;               // New in GOB2
+		int8 nearestDest;                   // New in GOB2
+		Mult::Mult_GobState **goblinStates; // New in GOB2
 	};
 
 	struct Mult_StaticKey {
@@ -346,6 +357,7 @@ protected:
 
 	void sub_62DD(int16 index);
 	void sub_6A35(void);
+	void sub_10C87(Mult_Object *obj);
 };
 
 }				// End of namespace Gob

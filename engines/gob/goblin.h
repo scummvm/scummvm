@@ -26,6 +26,7 @@
 #include "gob/gob.h"
 #include "gob/util.h"
 #include "gob/sound.h"
+#include "gob/mult.h"
 
 namespace Gob {
 
@@ -34,6 +35,7 @@ namespace Gob {
 #define TYPE_MOBILE		3
 
 class Goblin {
+
 public:
 #pragma START_PACK_STRUCTS
 	struct Gob_State {
@@ -46,12 +48,6 @@ public:
 		int16 repCount;	// +Ch high/low byte - repeat count
 		int16 sndFrame;		// +Eh
 	} GCC_PACK;
-
-	struct Gob2_State {
-		int16 animation;
-		int16 layer;
-		int16 field_4;
-	};
 
 	typedef Gob_State *Gob_PState;
 
@@ -219,11 +215,15 @@ public:
 	int16 doMove(Gob_Object *gobDesc, int16 cont, int16 action);
 
 	void sub_19BD3(void);
+	void sub_195C7(int16 index, int16 state);
+	void sub_11984(Mult::Mult_Object *obj);
 
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state) = 0;
 	virtual void freeObjects(void) = 0;
-	virtual void initiateMove(int16 index) = 0;
+	virtual void initiateMove(Mult::Mult_Object *obj) = 0;
+	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
+			int16 nextAct, int16 framesCount) = 0;
 
 	Goblin(GobEngine *vm);
 	virtual ~Goblin();
@@ -244,8 +244,9 @@ protected:
 	void moveInitStep(int16 framesCount, int16 action, int16 cont,
 					  Gob_Object *gobDesc, int16 *pGobIndex, int16 *pNextAct);
 	void moveTreatRopeStairs(Gob_Object *gobDesc);
-	void movePathFind(Gob_Object *gobDesc, int16 nextAct);
-	void moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount);
+	void playSounds(Mult::Mult_Object *obj);
+
+	virtual void movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct) = 0;
 };
 
 class Goblin_v1 : public Goblin {
@@ -253,10 +254,15 @@ public:
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects(void);
-	virtual void initiateMove(int16 index);
+	virtual void initiateMove(Mult::Mult_Object *obj);
+	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
+			int16 nextAct, int16 framesCount);
 
 	Goblin_v1(GobEngine *vm);
 	virtual ~Goblin_v1() {};
+
+protected:
+	virtual void movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct);
 };
 
 class Goblin_v2 : public Goblin_v1 {
@@ -264,10 +270,15 @@ public:
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects(void);
-	virtual void initiateMove(int16 index);
+	virtual void initiateMove(Mult::Mult_Object *obj);
+	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
+			int16 nextAct, int16 framesCount);
 
 	Goblin_v2(GobEngine *vm);
 	virtual ~Goblin_v2() {};
+
+protected:
+	virtual void movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct);
 };
 
 }				// End of namespace Gob
