@@ -150,7 +150,6 @@ bool ThemeNew::init() {
 	if (_screen.pixels) {
 		_initOk = true;
 		clearAll();
-		setupFonts();
 		resetDrawArea();
 	}
 
@@ -161,6 +160,8 @@ bool ThemeNew::init() {
 		processExtraValues();
 	}
 	
+	setupFonts();
+
 	for (int i = 0; i < kImageHandlesMax; ++i) {
 		if (!_images[i]) {
 			return false;
