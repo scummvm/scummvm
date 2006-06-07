@@ -52,8 +52,6 @@ int AsyncFio::open(const char *name, int ioMode) {
 	fileXioOpen(name, ioMode, DEFAULT_MODE);
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
-	if (res < -2)
-		printf("File %s error: %d (mode %d)\n", name, res, ioMode);
 	return res;
 }
 
@@ -142,6 +140,26 @@ void AsyncFio::dclose(int fd) {
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	assert(res == 0);
 	SignalSema(_ioSema);
+}
+
+int AsyncFio::mount(const char *mountpoint, const char *mountstring, int flag) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioMount(mountpoint, mountstring, flag);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
+}
+
+int AsyncFio::umount(const char *mountpoint) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioUmount(mountpoint);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
 }
 
 int AsyncFio::sync(int fd) {

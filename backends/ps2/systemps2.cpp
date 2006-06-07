@@ -31,16 +31,15 @@
 #include <assert.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
-#include <osd_config.h>
 #include "common/scummsys.h"
 #include "../intern.h"
 #include "base/engine.h"
-#include "base/main.h"
 #include "backends/ps2/systemps2.h"
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/ps2input.h"
+#include "backends/ps2/irxboot.h"
 #include <sjpcm.h>
-#include <cdvd_rpc.h>
+#include <libhdd.h>
 #include "backends/ps2/savefile.h"
 #include "common/file.h"
 #include "backends/ps2/sysdefs.h"
@@ -49,28 +48,27 @@
 #include "backends/ps2/cd.h"
 #include <sio.h>
 #include <fileXio_rpc.h>
+#include "backends/ps2/asyncfio.h"
+#include "eecodyvdfs.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"
+
+// asm("mfc0	%0, $9\n" : "=r"(tickStart));
+
+extern void *_gp;
 
 #define TIMER_STACK_SIZE (1024 * 32)
 #define SOUND_STACK_SIZE (1024 * 32)
 #define SMP_PER_BLOCK 800
-#define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
 #define BUS_CLOCK 147456000 // bus clock, a little less than 150 mhz
 #define CLK_DIVIS 5760	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (100 times)
-
-#ifdef USE_PS2LINK
-#define IRX_PREFIX "host:"
-#define IRX_SUFFIX
-#else
-#define IRX_PREFIX "cdrom0:\\"
-#define IRX_SUFFIX ";1"
-#endif
 
 static int g_TimerThreadSema = -1, g_SoundThreadSema = -1;
 static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
 static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
-static volatile uint32 msecCount = 0;
+volatile uint32 msecCount = 0;
+
+OSystem_PS2 *g_systemPs2;
 
 int gBitFormat = 555;
 
@@ -79,6 +77,8 @@ int gBitFormat = 555;
 namespace Graphics {
 	extern const NewFont g_sysfont;
 };
+
+extern AsyncFio fio;
 
 void sioprintf(const char *zFormat, ...) {
 	va_list ap;
@@ -91,23 +91,10 @@ void sioprintf(const char *zFormat, ...) {
 	sio_puts(resStr);
 }
 
+extern "C" int scummvm_main(int argc, char *argv[]);
+
 extern "C" int main(int argc, char *argv[]) {
 	SifInitRpc(0);
-#ifndef USE_PS2LINK // reset the IOP if this is a CD build
-	cdvdInit(CDVD_EXIT);
-	cdvdExit();
-	SifExitIopHeap();
-	SifLoadFileExit();
-	SifExitRpc();
-	sio_puts("Resetting IOP.");
-	SifIopReset("rom0:UDNL rom0:EELOADCNF",0);
-	while (!SifIopSync())
-		;
-	sio_puts("IOP synced.");
-	SifInitRpc(0);
-	SifLoadFileInit();
-	cdvdInit(CDVD_INIT_NOWAIT);
-#endif
 
 	ee_thread_t thisThread;
 	int tid = GetThreadId();
@@ -127,15 +114,10 @@ extern "C" int main(int argc, char *argv[]) {
 	}
 
 	sioprintf("Creating system");
-	/* The OSystem has to be created before we enter ScummVM's main.
-	   It sets up the memory card, etc. */
-	g_system = new OSystem_PS2();
-	assert(g_system);
+	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
 
 	sioprintf("init done. starting ScummVM.");
-	int res = scummvm_main(argc, argv);
-	g_system->quit();	// TODO: Consider removing / replacing this!
-	return res;
+	return scummvm_main(argc, argv);
 }
 
 s32 timerInterruptHandler(s32 cause) {
@@ -170,7 +152,84 @@ void systemSoundThread(OSystem_PS2 *system) {
 	system->soundThread();
 }
 
-OSystem_PS2::OSystem_PS2(void) {
+void gluePowerOffCallback(void *system) {
+	((OSystem_PS2*)system)->powerOffCallback();
+}
+
+void mass_connect_cb(void *pkt, void *system) {
+	((OSystem_PS2*)system)->setUsbMassConnected(true);
+}
+
+void mass_disconnect_cb(void *pkt, void *system) {
+	((OSystem_PS2*)system)->setUsbMassConnected(false);
+}
+
+void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
+
+	_usbMassLoaded = _useMouse = _useKbd = _useHdd = false;
+
+	int res = 0, rv = 0;
+	for (int i = 0; i < numModules; i++) {
+		if (modules[i].loc == IRX_FILE) {
+			res = SifLoadModule(modules[i].path, modules[i].argSize, modules[i].args);
+			sioprintf("Module \"%s\": %d", modules[i].path, res);
+			if (res < 0) {
+				msgPrintf(FOREVER, "\"%s\"\nnot found: %d", modules[i].path, res);
+				delayMillis(5000);
+				quit();
+			}
+		} else if (modules[i].loc == IRX_BUFFER) {
+			if (modules[i].errorCode == 0) {
+				res = SifExecModuleBuffer(modules[i].buffer, modules[i].size, modules[i].argSize, modules[i].args, &rv);
+				sioprintf("Module \"%s\": EE=%d, IOP=%d", modules[i].path, res, rv);
+				if ((res >= 0) && (rv >= 0)) {
+					switch (modules[i].fileRef->purpose) {
+						case MASS_DRIVER:
+							_usbMassLoaded = true;
+							break;
+						case MOUSE_DRIVER:
+							_useMouse = true;
+							break;
+						case KBD_DRIVER:
+							_useKbd = true;
+							break;
+						case HDD_DRIVER:
+							_useHdd = true;
+							break;
+						default:
+							break;
+					}
+				}
+			} else
+				sioprintf("Module \"%s\" wasn't found: %d", modules[i].path, modules[i].errorCode);
+			
+			if ((modules[i].errorCode < 0) || (res < 0) || (rv < 0)) {
+				if (!(modules[i].fileRef->flags & OPTIONAL)) {
+					if (modules[i].errorCode < 0)
+						msgPrintf(FOREVER, "\"%s\"\nnot found: %d", modules[i].path, modules[i].errorCode);
+					else
+						msgPrintf(FOREVER, "Couldn't start\n\"%s\"\nEE=%d IOP=%d", modules[i].path, res, rv);
+					delayMillis(5000);
+					quit();
+				}
+			}
+			
+			if (modules[i].buffer);
+				free(modules[i].buffer);
+		} else {
+			sioprintf("module %d of %d damaged, loc %d, path %s", i, numModules, modules[i].loc, modules[i].path);
+		}
+		free(modules[i].path);
+	}
+	free(modules);
+	sioprintf("done");
+	sioprintf("UsbMass: %sloaded", _usbMassLoaded ? "" : "not ");
+	sioprintf("Mouse:   %sloaded", _useMouse ? "" : "not ");
+	sioprintf("Kbd:     %sloaded", _useKbd ? "" : "not ");
+	sioprintf("Hdd:     %sloaded", _useHdd ? "" : "not ");
+}
+
+OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_soundStack = _timerStack = NULL;
 	_scummTimerProc = NULL;
 	_scummSoundProc = NULL;
@@ -178,6 +237,7 @@ OSystem_PS2::OSystem_PS2(void) {
 	_printY = 0;
 	_msgClearTime = 0;
 	_systemQuit = false;
+	_usbMassConnected = false;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
@@ -186,24 +246,53 @@ OSystem_PS2::OSystem_PS2(void) {
 
 	_screen->wantAnim(true);
 
-	sioprintf("Loading IOP modules...");
-	loadModules();
+	char irxPath[256];
+	_bootDevice = detectBootPath(elfPath, irxPath);
+
+	IrxReference *modules;
+	int numModules = loadIrxModules(_bootDevice, irxPath, &modules);
+
+	if (_bootDevice != HOST) {
+		sio_puts("Resetting IOP.");
+		cdvdInit(CDVD_EXIT);
+		cdvdExit();
+		SifExitIopHeap();
+		SifLoadFileExit();
+		SifExitRpc();
+		SifIopReset("rom0:UDNL rom0:EELOADCNF", 0);
+		while (!SifIopSync())
+			;
+		sio_puts("IOP synced.");
+		SifInitRpc(0);
+		SifLoadFileInit();
+		cdvdInit(CDVD_INIT_WAIT);
+	}
+	startIrxModules(numModules, modules);
 
 	int res;
-	if ((res = SjPCM_Init(0)) < 0) {
-		msgPrintf(FOREVER, "SjPCM Bind failed: %d", res);
-		quit();
-	}
-
-	if ((res = CDVD_Init()) != 0) {
-		msgPrintf(FOREVER, "CDVD Init failed: %d", res);
-		quit();
-	}
-	
 	if ((res = fileXioInit()) < 0) {
 		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
 		quit();
 	}
+
+	if ((res = initCdvdFs()) < 0) {
+		msgPrintf(FOREVER, "CoDyVDfs bind failed: %d", res);
+		quit();
+	}
+
+	if ((res = SjPCM_Init(0)) < 0) {
+		msgPrintf(FOREVER, "SjPCM Bind failed: %d\n", res);
+		quit();
+	}
+
+	if (_useHdd) {
+		if ((hddCheckPresent() < 0) || (hddCheckFormatted() < 0))
+			_useHdd = false;
+
+		hddPreparePoweroff();
+		hddSetUserPoweroffCallback(gluePowerOffCallback, this);
+	}
+
 	fileXioSetBlockMode(FXIO_NOWAIT);
 
 	_mouseVisible = false;
@@ -211,14 +300,18 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("reading RTC");
 	readRtcTime();
 
+	if (_useHdd) {
+		if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
+			printf("Successfully mounted!\n");
+		else
+			_useHdd = false;
+	}
+
 	sioprintf("Starting SavefileManager");
 	_saveManager = new Ps2SaveFileManager(this, _screen);
 
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
-
-#ifdef _REC_MUTEX_
-	_mutex = new Ps2Mutex[MAX_MUTEXES];
 
 	ee_sema_t newSema;
 	newSema.init_count = 1;
@@ -228,7 +321,7 @@ OSystem_PS2::OSystem_PS2(void) {
 		_mutex[i].sema = -1;
 		_mutex[i].count = _mutex[i].owner = 0;
 	}
-#endif
+
 	_screen->wantAnim(false);
 	_screen->clearScreen();
 }
@@ -257,15 +350,14 @@ void OSystem_PS2::initTimer(void) {
 	timerThread.stack            = _timerStack;
 	timerThread.stack_size       = TIMER_STACK_SIZE;
 	timerThread.func             = (void *)systemTimerThread;
-	//timerThread.gp_reg         = _gp; // _gp is always NULL.. broken linkfile?
-	asm("move %0, $gp\n": "=r"(timerThread.gp_reg));
+	timerThread.gp_reg			 = &_gp;
 
 	// soundthread's priority is higher than main- and timerthread
 	soundThread.initial_priority = thisThread.current_priority - 2;
 	soundThread.stack            = _soundStack;
 	soundThread.stack_size       = SOUND_STACK_SIZE;
 	soundThread.func             = (void *)systemSoundThread;
-	asm("move %0, $gp\n": "=r"(soundThread.gp_reg));
+	soundThread.gp_reg			 = &_gp;
 
 	_timerTid = CreateThread(&timerThread);
 	_soundTid = CreateThread(&soundThread);
@@ -290,6 +382,11 @@ void OSystem_PS2::initTimer(void) {
 	T0_COUNT = 0;
 	T0_COMP = CLK_DIVIS; // (BUS_CLOCK / 256) / CLK_DIVIS = 100
 	T0_MODE = TIMER_MODE( 2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
+
+	DI();
+	SifAddCmdHandler(0x12, mass_connect_cb, this);
+	SifAddCmdHandler(0x13, mass_disconnect_cb, this);
+	EI();
 }
 
 void OSystem_PS2::timerThread(void) {
@@ -307,12 +404,12 @@ void OSystem_PS2::soundThread(void) {
 	soundSema.max_count = 1;
 	_soundSema = CreateSema(&soundSema);
 	assert(_soundSema >= 0);
-
 	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
 	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
 
 	int bufferedSamples = 0;
 	int cycles = 0;
+
 	while (!_systemQuit) {
 		WaitSema(g_SoundThreadSema);
 
@@ -324,7 +421,7 @@ void OSystem_PS2::soundThread(void) {
 
 		WaitSema(_soundSema);
 		if (_scummSoundProc) {
-			if (bufferedSamples <= 4 * SMP_PER_BLOCK) {
+			if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
 				// we have to produce more samples, call sound mixer
 				// the scratchpad at 0x70000000 is used as temporary soundbuffer
 				_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
@@ -366,7 +463,7 @@ void OSystem_PS2::soundThread(void) {
 				SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
 				bufferedSamples += SMP_PER_BLOCK;
 			}
-		}
+		} 
 		SignalSema(_soundSema);
 	}
 	free(soundBufL);
@@ -374,7 +471,7 @@ void OSystem_PS2::soundThread(void) {
 	ExitThread();
 }
 
-const char *irxModules[] = {
+/*const char *irxModules[] = {
 	"rom0:SIO2MAN",
 	"rom0:MCMAN",
 	"rom0:MCSERV",
@@ -384,14 +481,16 @@ const char *irxModules[] = {
 	IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX,
 #endif
 	IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX,
-	IRX_PREFIX "CDVD.IRX" IRX_SUFFIX,
-	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX
-};
+	IRX_PREFIX "CODYVDFS.IRX" IRX_SUFFIX,
+	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX,
+};*/
 
 void OSystem_PS2::loadModules(void) {
 
-	_useMouse = _useKbd = false;
-
+	//_usbMassConnected = _usbMassLoaded = _useMouse = _useKbd = _useHdd = false;
+	//static char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
+	//static char pfsarg[] = "-m" "\0" "2" "\0" "-o" "\0" "16" "\0" "-n" "\0" "40" /*"\0" "-debug"*/;
+#if 0
 	int res;
 	for (int i = 0; i < ARRAYSIZE(irxModules); i++) {
 		if ((res = SifLoadModule(irxModules[i], 0, NULL)) < 0) {
@@ -412,8 +511,46 @@ void OSystem_PS2::loadModules(void) {
 			sioprintf("Cannot load module: RPCKBD.IRX (%d)", res);
 		else
 			_useKbd = true;
+		if ((res = SifLoadModule(IRX_PREFIX "USB_MASS.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+			sioprintf("Cannot load module: USB_MASS.IRX (%d)", res);
+		else
+			_usbMassLoaded = true;
 	}
-	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ");
+
+	if ((res = fileXioInit()) < 0) {
+		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
+		quit();
+	}
+	
+	if ((res = SifLoadModule(IRX_PREFIX "PS2DEV9.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: PS2DEV9.IRX (%d)", res);
+	else if ((res = SifLoadModule(IRX_PREFIX "PS2ATAD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: PS2ATAD.IRX (%d)", res);
+	else if ((res = SifLoadModule(IRX_PREFIX "PS2HDD.IRX" IRX_SUFFIX, sizeof(hddarg), hddarg)) < 0)
+		sioprintf("Cannot load module: PS2HDD.IRX (%d)", res);
+	else if ((res = SifLoadModule(IRX_PREFIX "PS2FS.IRX" IRX_SUFFIX, sizeof(pfsarg), pfsarg)) < 0)
+		sioprintf("Cannot load module: PS2FS.IRX (%d)", res);
+	else {
+		if ((res = SifLoadModule(IRX_PREFIX "POWEROFF.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+			sioprintf("Cannot load module: POWEROFF.IRX (%d)", res);
+		if ((hddCheckPresent() >= 0) && (hddCheckFormatted() >= 0))
+			_useHdd = true;
+	}
+
+	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, UsbMass %sloaded, HDD %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _usbMassLoaded ? "" : "not ", _useHdd ? "" : "not ");
+#endif
+}
+
+bool OSystem_PS2::hddPresent(void) {
+	return _useHdd;
+}
+
+void OSystem_PS2::setUsbMassConnected(bool stat) {
+	_usbMassConnected = stat;
+}
+
+bool OSystem_PS2::usbMassPresent(void) {
+	return _usbMassConnected;
 }
 
 void OSystem_PS2::initSize(uint width, uint height) {
@@ -492,7 +629,6 @@ bool OSystem_PS2::setSoundCallback(SoundProc proc, void *param) {
 	WaitSema(_soundSema);
     _scummSoundProc = proc;
 	_scummSoundParam = param;
-	SjPCM_Play();
 	SignalSema(_soundSema);
 	return true;
 }
@@ -501,98 +637,12 @@ void OSystem_PS2::clearSoundCallback(void) {
 	WaitSema(_soundSema);
 	_scummSoundProc = NULL;
 	_scummSoundParam = NULL;
-	SjPCM_Pause();
 	SignalSema(_soundSema);
 }
 
 Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
 	return _saveManager;
 }
-
-#ifndef _REC_MUTEX_
-OSystem::MutexRef OSystem_PS2::createMutex(void) {
-	ee_sema_t newSema;
-	newSema.init_count = 1;
-	newSema.max_count = 1;
-	int resSema = CreateSema(&newSema);
-	if (resSema < 0)
-		printf("createMutex: unable to create Semaphore.\n");
-	return (MutexRef)resSema;
-}
-
-void OSystem_PS2::lockMutex(MutexRef mutex) {
-	WaitSema((int)mutex);
-}
-
-void OSystem_PS2::unlockMutex(MutexRef mutex) {
-	SignalSema((int)mutex);
-}
-
-void OSystem_PS2::deleteMutex(MutexRef mutex) {
-	DeleteSema((int)mutex);
-}
-#else
-OSystem::MutexRef OSystem_PS2::createMutex(void) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *mutex = NULL;
-	for (int i = 0; i < MAX_MUTEXES; i++)
-		if (_mutex[i].sema < 0) {
-			mutex = _mutex + i;
-			break;
-		}
-	if (mutex) {
-		ee_sema_t newSema;
-		newSema.init_count = 1;
-		newSema.max_count = 1;
-		mutex->sema = CreateSema(&newSema);
-		mutex->owner = mutex->count = 0;
-	} else
-		printf("OSystem_PS2::createMutex: ran out of Mutex slots!\n");
-	SignalSema(_mutexSema);
-	return (OSystem::MutexRef)mutex;
-}
-
-void OSystem_PS2::lockMutex(MutexRef mutex) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
-	int tid = GetThreadId();
-	assert(tid != 0);
-	if (sysMutex->owner && (sysMutex->owner == tid))
-		sysMutex->count++;
-	else {
-		SignalSema(_mutexSema);
-		WaitSema(sysMutex->sema);
-		WaitSema(_mutexSema);
-		sysMutex->owner = tid;
-		sysMutex->count = 0;
-	}
-	SignalSema(_mutexSema);
-}
-
-void OSystem_PS2::unlockMutex(MutexRef mutex) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
-	int tid = GetThreadId();
-	if (sysMutex->owner && sysMutex->count && (sysMutex->owner == tid))
-		sysMutex->count--;
-	else {
-		assert(sysMutex->count == 0);
-		SignalSema(sysMutex->sema);
-		sysMutex->owner = 0;
-	}
-	SignalSema(_mutexSema);
-}
-
-void OSystem_PS2::deleteMutex(MutexRef mutex) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
-	if (sysMutex->owner || sysMutex->count)
-		printf("WARNING: Deleting LOCKED mutex!\n");
-	DeleteSema(sysMutex->sema);
-	sysMutex->sema = -1;
-	SignalSema(_mutexSema);
-}
-#endif
 
 void OSystem_PS2::setShakePos(int shakeOffset) {
 	_screen->setShakePos(shakeOffset);
@@ -612,6 +662,23 @@ void OSystem_PS2::warpMouse(int x, int y) {
 
 void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 	_screen->setMouseOverlay(buf, w, h, hotspot_x, hotspot_y, keycolor);
+}
+
+bool OSystem_PS2::openCD(int drive) {
+	return false;
+}
+
+bool OSystem_PS2::pollCD(void) {
+	return false;
+}
+
+void OSystem_PS2::playCD(int track, int num_loops, int start_frame, int duration) {
+}
+
+void OSystem_PS2::stopCD(void) {
+}
+
+void OSystem_PS2::updateCD(void) {
 }
 
 void OSystem_PS2::showOverlay(void) {
@@ -726,8 +793,29 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 	_msgClearTime = millis + getMillis();
 }
 
+void OSystem_PS2::powerOffCallback(void) {
+	sioprintf("powerOffCallback");
+	_saveManager->quit();
+	if (_useHdd) {
+		sioprintf("umount");
+		fio.umount("pfs0:");
+	}
+	sioprintf("fxio");
+	// enable blocking FXIO so libhdd will correctly close drive, etc.
+	fileXioSetBlockMode(FXIO_WAIT);
+	sioprintf("done");
+}
+
 void OSystem_PS2::quit(void) {
+#ifdef USE_PS2LINK
+	printf("OSystem_PS2::quit\n");
+	SleepThread();
+#endif
 	sioprintf("OSystem_PS2::quit");
+	if (_useHdd) {
+		driveStandby();
+		fio.umount("pfs0:");
+	}
 	clearSoundCallback();
 	setTimerCallback(NULL, 0);
 	_screen->wantAnim(false);
@@ -749,108 +837,31 @@ void OSystem_PS2::quit(void) {
 
 	padEnd(); // stop pad library
 	cdvdInit(CDVD_EXIT);
-	cdvdExit();
-	SifExitIopHeap();
-	SifLoadFileExit();
+	sioprintf("resetting iop");
+	SifIopReset(NULL, 0);
 	SifExitRpc();
+	while (!SifIopSync());
+    SifInitRpc(0);
+	cdvdExit();
+	SifExitRpc();
+	FlushCache(0);
+	SifLoadFileExit();
+	sioprintf("Restarting ScummVM");
 	LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
 }
 
-static uint32 g_timeSecs;
-static int	  g_day, g_month, g_year;
-static uint32 g_lastTimeCheck;
-
-void buildNewDate(int dayDiff) {
-	static int daysPerMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-	if (((g_year % 4) == 0) && (((g_year % 100) != 0) || ((g_year % 1000) == 0)))
-		daysPerMonth[1] = 29;
+void OSystem_PS2::makeConfigPath(char *dest) {
+	FILE *handle;
+	strcpy(dest, "cdfs:/ScummVM.ini");
+	handle = ps2_fopen(dest, "r");
+	if (_usbMassConnected && !handle) {
+		strcpy(dest, "mass:/ScummVM.ini");
+		handle = ps2_fopen(dest, "r");
+	}
+	if (handle)
+		ps2_fclose(handle);
 	else
-		daysPerMonth[1] = 28;
-
-	if (dayDiff == -1) {
-		g_day--;
-		if (g_day == 0) {
-			g_month--;
-			if (g_month == 0) {
-				g_year--;
-				g_month = 12;
-			}
-			g_day = daysPerMonth[g_month - 1];
-		}
-	} else if (dayDiff == 1) {
-		g_day++;
-		if (g_day > daysPerMonth[g_month - 1]) {
-			g_day = 1;
-			g_month++;
-			if (g_month > 12) {
-				g_month = 1;
-				g_year++;
-			}
-		}
-	}
+		strcpy(dest, "mc0:ScummVM/scummvm.ini");
 }
 
-#define SECONDS_PER_DAY (24 * 60 * 60)
-
-void OSystem_PS2::readRtcTime(void) {
-	struct CdClock cdClock;
-	CDVD_ReadClock(&cdClock);
-	g_lastTimeCheck = msecCount;
-
-	if (cdClock.stat) {
-		msgPrintf(5000, "Unable to read RTC time, EC: %d\n", cdClock.stat);
-		g_day = g_month = 1;
-		g_year = 0;
-		g_timeSecs = 0;
-	} else {
-		int gmtOfs = configGetTimezone();
-		if (configIsDaylightSavingEnabled())
-			gmtOfs += 60;
-
-		int timeSecs = (FROM_BCD(cdClock.hour) * 60 + FROM_BCD(cdClock.minute)) * 60 + FROM_BCD(cdClock.second);
-		timeSecs -= 9 * 60 * 60; // minus 9 hours, JST -> GMT conversion
-		timeSecs += gmtOfs * 60; // GMT -> timezone the user selected
-
-		g_day = FROM_BCD(cdClock.day);
-		g_month = FROM_BCD(cdClock.month);
-		g_year = FROM_BCD(cdClock.year);
-
-		if (timeSecs < 0) {
-			buildNewDate(-1);
-			timeSecs += SECONDS_PER_DAY;
-		} else if (timeSecs >= SECONDS_PER_DAY) {
-			buildNewDate(+1);
-			timeSecs -= SECONDS_PER_DAY;
-		}
-		g_timeSecs = (uint32)timeSecs;
-	}
-
-	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60,
-		g_day, g_month, g_year + 2000);
-}
-
-extern time_t time(time_t *p) {
-	return (time_t)g_timeSecs;
-}
-
-extern struct tm *localtime(const time_t *p) {
-	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
-	if (currentSecs >= SECONDS_PER_DAY) {
-		buildNewDate(+1);
-		g_lastTimeCheck += SECONDS_PER_DAY * 1000;
-		currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
-	}
-
-	static struct tm retStruct;
-	memset(&retStruct, 0, sizeof(retStruct));
-
-	retStruct.tm_hour = currentSecs / (60 * 60);
-	retStruct.tm_min  = (currentSecs / 60) % 60;
-	retStruct.tm_sec  = currentSecs % 60;
-	retStruct.tm_year = g_year + 100;
-	retStruct.tm_mday = g_day;
-	retStruct.tm_mon  = g_month - 1;
-	// tm_wday, tm_yday and tm_isdst are zero for now
-    return &retStruct;
-}
 

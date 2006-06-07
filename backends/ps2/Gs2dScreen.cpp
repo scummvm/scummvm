@@ -31,6 +31,8 @@
 #include "GsDefs.h"
 #include "graphics/surface.h"
 
+extern void *_gp;
+
 enum Buffers {
 	SCREEN = 0,
 	MOUSE,
@@ -61,7 +63,7 @@ static bool g_RunAnim = false;
 static GsVertex kFullScreen[2];
 static TexVertex kMouseTex[2] = {
 	{ SCALE(1), SCALE(1) },
-	{ SCALE(M_SIZE), SCALE(M_SIZE) }
+	{ SCALE(M_SIZE - 1), SCALE(M_SIZE - 1) }
 };
 static TexVertex kPrintTex[2] = {
 	{ SCALE(1), SCALE(1) },
@@ -137,17 +139,17 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	if (tvMode == TV_DONT_CARE) {
 		if (PAL_NTSC_FLAG == 'E')
-			_videoMode = TV_NTSC;
-		else
 			_videoMode = TV_PAL;
+		else
+			_videoMode = TV_NTSC;
 	} else
 		_videoMode = tvMode;
 
 	printf("Setting up %s mode\n", (_videoMode == TV_PAL) ? "PAL" : "NTSC");
-
+	
     // set screen size, 640x544 for pal, 640x448 for ntsc
 	_tvWidth = 640;
-	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448); // PAL => 512?
+	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448);
 	kFullScreen[0].z = kFullScreen[1].z = 0;
 	kFullScreen[0].x = ORIGIN_X;
 	kFullScreen[0].y = ORIGIN_Y;
@@ -226,10 +228,10 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	_animStack = malloc(ANIM_STACK_SIZE);
 	animThread.initial_priority = thisThread.current_priority - 3;
-	animThread.stack = _animStack;
+	animThread.stack	  = _animStack;
 	animThread.stack_size = ANIM_STACK_SIZE;
-	animThread.func = (void *)runAnimThread;
-	asm("move %0, $gp\n": "=r"(animThread.gp_reg));
+	animThread.func		  = (void *)runAnimThread;
+	animThread.gp_reg	  = &_gp;
 
 	_animTid = CreateThread(&animThread);
 	assert(_animTid >= 0);

@@ -27,7 +27,7 @@
 
 // Gs2dScreen defines:
 
-#define PAL_NTSC_FLAG		(*((uint8*)0x1FC80000))
+#define PAL_NTSC_FLAG		(*(volatile uint8*)0x1FC7FF52)
 
 #define GS_PMODE			*((volatile uint64*)0x12000000)
 #define GS_CSR				*((volatile uint64*)0x12001000)

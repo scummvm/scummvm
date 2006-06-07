@@ -29,21 +29,21 @@
 class Gs2dScreen;
 class Ps2Input;
 class Ps2SaveFileManager;
+struct IrxReference;
 
-#define _REC_MUTEX_
+extern void sioprintf(const char *zFormat, ...);
 
-#ifdef _REC_MUTEX_
-#define MAX_MUTEXES 32
+#define MAX_MUTEXES 16
+
 struct Ps2Mutex {
 	int sema;
 	int owner;
 	int count;
 };
-#endif
 
 class OSystem_PS2 : public OSystem {
 public:
-	OSystem_PS2(void);
+	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
 	virtual void initSize(uint width, uint height);
 
@@ -76,6 +76,12 @@ public:
 	virtual void clearSoundCallback();
 	virtual int  getOutputSampleRate(void) const;
 
+	virtual bool openCD(int drive);
+	virtual bool pollCD();
+	virtual void playCD(int track, int num_loops, int start_frame, int duration);
+	virtual void stopCD();
+	virtual void updateCD();
+
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);
@@ -97,8 +103,16 @@ public:
 	void timerThread(void);
 	void soundThread(void);
 	void msgPrintf(int millis, char *format, ...);
+	void makeConfigPath(char *dest);
+
+	void powerOffCallback(void);
+	bool hddPresent(void);
+	bool usbMassPresent(void);
+	void setUsbMassConnected(bool stat);
 
 private:
+	void startIrxModules(int numModules, IrxReference *modules);
+
 	volatile OSystem::TimerProc _scummTimerProc;
 	volatile OSystem::SoundProc _scummSoundProc;
 	void *_scummSoundParam;
@@ -109,7 +123,7 @@ private:
 
 	void loadModules(void);
 	bool _mouseVisible;
-	bool _useMouse, _useKbd;
+	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _usbMassConnected;
 
 	Ps2SaveFileManager *_saveManager;
 
@@ -118,15 +132,17 @@ private:
 	uint16		_oldMouseX, _oldMouseY;
 	uint32		_msgClearTime;
 	uint16		_printY;
-#ifdef _REC_MUTEX_
+
 	int			_mutexSema;
-	Ps2Mutex	*_mutex;
-#endif
+	Ps2Mutex	_mutex[MAX_MUTEXES];
+
 	uint8		*_timerStack, *_soundStack;
 	int			_timerTid, _soundTid;
 	int			_intrId;
 	volatile bool _systemQuit;
 	static const GraphicsMode _graphicsMode;
+
+	int			_bootDevice;
 };
 
 #endif // SYSTEMPS2_H

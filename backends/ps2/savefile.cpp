@@ -33,6 +33,8 @@
 #include "backends/ps2/systemps2.h"
 #include "common/scummsys.h"
 
+extern void *_gp;
+
 #define UCL_MAGIC 0x314C4355
 
 #define PORT 0
@@ -53,6 +55,7 @@ public:
 	int mkDir(const char *name);
 	int getDir(const char *name, unsigned int mode, int max, void *dest);    
 	int getInfo(int *type, int *free, int *format);
+	int remove(const char *name);
 private:
 	int _sema;
 	int _port, _slot;
@@ -130,6 +133,15 @@ int McAccess::mkDir(const char *name) {
 	return res;
 }
 
+int McAccess::remove(const char *name) {
+	int res;
+	WaitSema(_sema);
+	mcDelete(_port, _slot, name);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
 int McAccess::getDir(const char *name, unsigned int mode, int max, void *dest) {
 	int res;
 	WaitSema(_sema);
@@ -154,7 +166,7 @@ public:
 	virtual ~UclOutSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
 	virtual void flush(void);
-	virtual bool ioFailed(void);
+	virtual bool ioFailed(void) const;
 	virtual void clearIOFailed(void);
 private:
 	OSystem_PS2 *_system;
@@ -164,6 +176,7 @@ private:
 	uint8 *_buf;
 	uint32 _bufSize, _bufPos;
 	bool _ioFailed, _wasFlushed;
+	char _fileName[128];
 };
 
 class UclInSaveFile : public Common::InSaveFile {
@@ -172,9 +185,13 @@ public:
 	virtual ~UclInSaveFile(void);
 	virtual bool eos(void) const;
 	virtual uint32 read(void *ptr, uint32 size);
-	virtual bool ioFailed(void);
+	virtual bool ioFailed(void) const;
 	virtual void clearIOFailed(void);
 	virtual void skip(uint32 offset);
+
+	virtual uint32 pos(void) const;
+	virtual uint32 size(void) const;
+	virtual void seek(int pos, int whence = SEEK_SET);
 private:
 	Gs2dScreen *_screen;
 	McAccess *_mc;
@@ -271,9 +288,9 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 	saveThread.initial_priority = thisThread.current_priority + 1;
 	saveThread.stack_size = 8 * 1024;
 	_autoSaveStack = malloc(saveThread.stack_size);	
-	saveThread.stack = _autoSaveStack;
-	saveThread.func = (void *)runSaveThread;
-	asm("move %0, $gp\n": "=r"(saveThread.gp_reg));
+	saveThread.stack  = _autoSaveStack;
+	saveThread.func   = (void *)runSaveThread;
+	saveThread.gp_reg = &_gp;
 
 	_autoSaveTid = CreateThread(&saveThread);
 	assert(_autoSaveTid >= 0);
@@ -560,14 +577,13 @@ void Ps2SaveFileManager::quit(void) {
 	_systemQuit = true;
 	ee_thread_t statSave, statThis;
 	ReferThreadStatus(GetThreadId(), &statThis);
-	int res = ChangeThreadPriority(_autoSaveTid, statThis.current_priority - 1);
-	sioprintf("SaveThread prio res: %d", res);
+	ChangeThreadPriority(_autoSaveTid, statThis.current_priority - 1);
 
 	do {	// wait until thread called ExitThread()
 		SignalSema(_autoSaveSignal);
 		ReferThreadStatus(_autoSaveTid, &statSave);
 	} while (statSave.status != 0x10);
-	sioprintf("wait done");
+
 	DeleteThread(_autoSaveTid);
     free(_autoSaveStack);
 }
@@ -613,7 +629,7 @@ UclInSaveFile::~UclInSaveFile(void) {
 	_screen->wantAnim(false);
 }
 
-bool UclInSaveFile::ioFailed(void) {
+bool UclInSaveFile::ioFailed(void) const {
 	return _ioFailed;
 }
 
@@ -623,6 +639,33 @@ void UclInSaveFile::clearIOFailed(void) {
 
 bool UclInSaveFile::eos(void) const {
 	return _bufPos == _bufSize;
+}
+
+uint32 UclInSaveFile::pos(void) const {
+	return _bufPos;
+}
+
+uint32 UclInSaveFile::size(void) const {
+	return _bufSize;
+}
+
+void UclInSaveFile::seek(int pos, int whence) {
+	int destPos;
+	switch (whence) {
+		case SEEK_SET:
+			destPos = pos;
+			break;
+		case SEEK_CUR:
+			destPos = _bufPos + pos;
+			break;
+		case SEEK_END:
+			destPos = _bufSize + pos;
+			break;
+		default:
+			return;
+	}
+	if ((destPos >= 0) && (destPos <= (int)_bufSize))
+		_bufPos = (uint32)destPos;
 }
 
 uint32 UclInSaveFile::read(void *ptr, uint32 size) {
@@ -660,6 +703,7 @@ UclOutSaveFile::UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dSc
 		_bufSize = 65536;
 		_buf = (uint8*)malloc(_bufSize);
 		_ioFailed = false;
+		strcpy(_fileName, filename);
 	} else {
 		_ioFailed = true;
 		_bufSize = 0;
@@ -686,7 +730,7 @@ UclOutSaveFile::~UclOutSaveFile(void) {
 	_screen->wantAnim(false);
 }
 
-bool UclOutSaveFile::ioFailed(void) {
+bool UclOutSaveFile::ioFailed(void) const {
 	return _ioFailed;
 }
 
@@ -695,7 +739,7 @@ void UclOutSaveFile::clearIOFailed(void) {
 }
 
 void UclOutSaveFile::flush(void) {
-	int res = 0;
+	int res;
 
 	if (_bufPos) {
 		if (_wasFlushed) {
@@ -712,17 +756,30 @@ void UclOutSaveFile::flush(void) {
 			res = ucl_nrv2e_99_compress(_buf, _bufPos, compBuf + 8, &compSize, NULL, 10, NULL, NULL);
 			if (res >= 0) {
 				res = _mc->write(_fd, compBuf, compSize + 8);
-				if (res != (int)compSize + 8)
+				if (res != (int)compSize + 8) {
+					printf("flush: write failed, %d != %d\n", res, compSize + 8);
 					res = -1;
+				}
 			} else
 				printf("Unable to compress %d bytes of savedata, errorcode %d\n", _bufPos, res);
 			free(compBuf);
 			_bufPos = 0;
 		}
-	}
-	if (res < 0) {
-		_ioFailed = true;
-		printf("UclOutSaveFile::flush failed!\n");
+
+		if (res < 0) {
+			_ioFailed = true;
+			printf("UclOutSaveFile::flush failed!\n");
+			if (_fd >= 0) {
+				// the file is broken; delete it
+				_mc->close(_fd);
+				res = _mc->remove(_fileName);
+				if (res == 0)
+					printf("File %s: remove ok\n", _fileName);
+				else
+					printf("File %s: remove error %d\n", _fileName, res);
+				_fd = -1;
+			}
+		}
 	}
 }
 

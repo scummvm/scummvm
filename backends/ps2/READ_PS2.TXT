@@ -1,53 +1,62 @@
-ScummVM-PS2 Readme
-==================
+ScummVM-PS2 0.8.2 Readme
+========================
 
-You need a Playstation2 with a modchip of your choice in order to run ScummVM.
+You need a PlayStation 2 with a modchip of your choice in order to run ScummVM.
 
-ScummVM expects the game data on the CD-R, other devices like USB sticks
- and HDD are currently unsupported.
+ScummVM expects the game data on CD-R/DVD-R, on the Harddisk or on a USB mass
+ storage device.
 
-In order to use a USB Mouse and USB Keyboard, you need Sony's USB driver,
- the USBD.IRX.  Copy it from a PS2 game that supports USB devices, like
- Eye Toy or Singstar. 
-The demo disc that came with my PS2 also had it.
- Put it into the directory in which you extracted the .zip file.
-You can also use ScummVM without the USB driver but you can only use the
- Gamepad in that case.
+ It tries to mount the HDD partition hdd0:+ScummVM on startup and basically
+ treats it in the same way as the DVD drive.
+ Creating the partition and putting the datafiles there is up to you.
+
+ Not all USB mass storage devices are supported, but the most common ones should
+  work. If you attach a device and it gets recognized, it will show up together
+  with the CD/DVD drive and HDD in the "Add Game" dialog.
+
+ Most USB Mice and Keyboards should work, too. I have a Logitech MX500 mouse that
+  doesn't work, all the other devices I tried worked fine.
 
 
 Creating a CD-R using CD-Tool
 =============================
+
 Copy any games you want on the CD over into the directory where you extracted
  the ZIP file. Don't copy any files directly into the directory of the
  ScummVM.ELF, those files are ignored. Instead, have each game in its own
  directory.
-File- and directorynames should be DOS 8+3, if they aren't, they'll get
- renamed.
 
-If you run windows, just double click the make_iso.bat.
-Wait while it creates the ISO image and burn it with Nero
-or any other CD writing software.
+ File- and directorynames should be DOS 8+3, if they aren't, they'll get
+  renamed.
 
-For Linux or Mac OS X binaries check http://www.nobis-crew.org/cd-tool/
+ If you run windows, just double click the make_iso.bat.
+  Wait while it creates the ISO image and burn it with Nero
+  or any other CD writing software.
 
-Unfortunately, writing DVD images with cd-tool is currently broken and will
- crash when it reaches the 2GB limit. This problem will probably be fixed in
- the nearer future.
+ For Linux or Mac OS X binaries check http://www.nobis-crew.org/cd-tool/
+
+ Unfortunately, writing DVD images with cd-tool is currently broken.
+  This problem will probably be fixed in the nearer future.
+
+
+If you want to create a CD/DVD without CD-Tool, make sure to put the ELF,
+ the SYSTEM.CNF and all the IRXs into the CD/DVD's root directory.
 
 
 Notes
 =====
-- CD swapping doesn't work, unfortunately. So you should have all games
-   on the CD you booted from.
-- Curse of Monkey Island is unsupported. iMuse digital crashes often, 
-   especially during Sea battles.
-- Zlib is unsupported, so compressed SAN files won't work.
+- The Curse of Monkey Island only works correctly from HDD.
+   Playing it from CD/DVD will initially seem to work, but you will
+   experience random crashes.
+- Compressed SAN files need a lot of CPU power, probably because of zlib,
+   and are constantly out of sync. Uncompressed SANs play fine though, so
+   compress_san is NOT recommended.
 - The cd/dvd drive is a bottleneck, that's why you should compress the games
-   with MP3 or Ogg/Vorbis using compress_scumm_sou / compress_scumm_bun /
-   compress_sword1 / compress_sword2 etc, but *not* compress_san as it
-   requires zlib. Besides, uncompressed SAN files play fine.
+   with MP3 using compress_scumm_sou / compress_scumm_bun / compress_sword1 /
+   compress_sword2 etc, but NOT compress_san.
 - I haven't had time to implement a virtual keyboard. If you don't have a USB
    keyboard, you can only enter '1's using the Select button.
+   (for copy protection screens as well as savegame names)
 - When you see '1's and '0's flying across your screen, it means ScummVM is
    accessing the Memory Card. Don't switch off or reset the console in that
    case, and don't remove the Memory Card either :P
@@ -66,3 +75,8 @@ Cross                -   Left mouse button
 Circle               -   Right mouse button
 Left analog stick    -   Mouse. Disabled when USB mouse is detected.
 
+
+
+Changes since 0.8.0 RC3
+=======================
+- USB Mass support was added
