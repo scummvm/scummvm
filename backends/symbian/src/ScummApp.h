@@ -37,7 +37,13 @@ class CScummApp : public CSDLApp {
 public:
 	CScummApp();
 	~CScummApp();
-
+#if defined (UIQ3)
+	/**
+	 * Returns the resource id to be used to declare the views supported by this UIQ3 app
+	 * @return TInt, resource id
+	 */
+	TInt ViewResourceId();
+#endif
 	TUid AppDllUid() const;
 #if defined (EPOC_AS_APP) && !defined (UIQ3) && !defined (S60V3)
 	TECompXL    iECompXL;

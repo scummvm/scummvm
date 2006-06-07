@@ -95,6 +95,17 @@ CScummApp::CScummApp() {
 CScummApp::~CScummApp() {
 }
 
+#if defined (UIQ3)
+#include <scummvm.rsg>
+/**
+ * Returns the resource id to be used to declare the views supported by this UIQ3 app
+ * @return TInt, resource id
+ */
+TInt CScummApp::ViewResourceId() {
+	return R_SDL_VIEW_UI_CONFIGURATIONS;
+}
+#endif
+
 /**
  *   Responsible for returning the unique UID of this application
  * @return unique UID for this application in a TUid
