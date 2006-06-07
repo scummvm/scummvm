@@ -13,7 +13,7 @@
 ; UID is the app's UID
 #{"ScummVM S60v3"},(0xA0000657),0,90,0
 
-; Platform type
+;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
 
 ; Launcher, Application, AIF & Resource file
