@@ -466,6 +466,15 @@ void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 
 	if (save_error) {
 		switch (_language) {
+		case Common::RU_RUS:
+			if (getGameType() == GType_SIMON2) {
+				string1 = "\r   Mf sowrap+fts+.";
+				string2 = "\r  Nzjb#a ejs#a.";
+			} else {
+				string1 = "\r   Mf sowrap]fts].";
+				string2 = "\r   Nzjb_a ejs_a.";
+			}
+			break;
 		case Common::PL_POL:
 			string1 = "\r      Blad zapisu.    ";
 			string2 = "\rBlad dysku.                       ";
@@ -493,6 +502,15 @@ void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 		}
 	} else {
 		switch (_language) {
+		case Common::RU_RUS:
+			if (getGameType() == GType_SIMON2) {
+				string1 = "\r  Mf ^adruhafts+.";
+				string2 = "\r   Takm pf pakefp.";
+			} else {
+				string1 = "\r   Mf ^adruhafts].";
+				string2 = "\r   Takm pf pakefp.";
+			}
+			break;
 		case Common::PL_POL:
 			string1 = "\r   Blad odczytu.    ";
 			string2 = "\r  Nie znaleziono pliku.";
