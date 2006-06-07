@@ -160,8 +160,6 @@ bool ThemeNew::init() {
 		processExtraValues();
 	}
 	
-	setupFonts();
-
 	for (int i = 0; i < kImageHandlesMax; ++i) {
 		if (!_images[i]) {
 			return false;
@@ -1513,6 +1511,8 @@ void ThemeNew::processExtraValues() {
 	default:
 			warning("no valid 'inactive_dialog_shading' specified");
 	}
+
+	setupFonts();
 
 	// load the colors from the config file
 	setupColors();
