@@ -141,7 +141,9 @@ void SagaEngine::fillSaveList() {
 				in->read(_saveHeader.name, sizeof(_saveHeader.name));
 
 				if (_saveHeader.type != MKID_BE('SAGA')) {
-					error("SagaEngine::load wrong format");
+					warning("SagaEngine::load wrong save %s format", name);
+					i++;
+					continue;
 				}
 				strcpy(_saveFiles[_saveFilesCount].name, _saveHeader.name);
 				_saveFiles[_saveFilesCount].slotNumber = i;
