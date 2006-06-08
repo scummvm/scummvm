@@ -256,8 +256,6 @@
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
-	#include "backends/ps2/fileio.h"
-
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)
 	#define fflush(a)			ps2_fflush(a)
@@ -412,6 +410,17 @@
 #else
 	// 15/16 bit color mode everywhere else...
 	typedef int16 OverlayColor;
+#endif
+
+#ifdef __PLAYSTATION2__
+	// for libmpeg2...
+	typedef uint8				uint8_t;
+	typedef uint32				uint32_t;
+
+	// for those replaced fopen/fread/etc functions
+	typedef unsigned long		uint64;
+	typedef signed long			int64;
+	#include "backends/ps2/fileio.h"
 #endif
 
 
