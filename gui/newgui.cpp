@@ -53,13 +53,7 @@ enum {
 	kKeyRepeatSustainDelay = 100
 };
 
-#if defined(__SYMBIAN32__) // Testing: could be removed? Just making sure that an CVS update doesn't break my code :P
-#define USE_AUTO_SCALING	false
-#else
-#define USE_AUTO_SCALING	false
-#endif
-
-// HACK. FIXME. This doesn't belong here. But otherwise it creates compulation problems
+// HACK. FIXME. This doesn't belong here. But otherwise it creates compilation problems
 GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
 	_name = name;
 	handleScreenChanged();
