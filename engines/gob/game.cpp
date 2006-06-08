@@ -2286,7 +2286,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 	word_31451 = 0;
 
 	if (imdPtr == 0)
-		return 0x8000;
+		return (int16)0x8000;
 
 	retVal = 0;
 	var_4 = 0;
@@ -2347,7 +2347,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 				tmp = READ_LE_UINT16(buf);
 				imdPtr->filePos += 4;
 			} else if (tmp == 0xFFF1) {
-				retVal = 0x8000;
+				retVal = (int16)0x8000;
 				continue;
 			} else if (tmp == 0xFFF2) {
 				_vm->_dataio->readData(imdPtr->fileHandle, buf, 2);
@@ -2355,7 +2355,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 				imdPtr->filePos += 2;
 				_vm->_dataio->seekData(imdPtr->fileHandle, tmp, 1);
 				imdPtr->filePos += tmp;
-				retVal = 0x8000;
+				retVal = (int16)0x8000;
 				continue;
 			} else if (tmp == 0xFFF3) {
 				_vm->_dataio->readData(imdPtr->fileHandle, buf, 4);
@@ -2363,7 +2363,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 				imdPtr->filePos += 4;
 				_vm->_dataio->seekData(imdPtr->fileHandle, tmp, 1);
 				imdPtr->filePos += tmp;
-				retVal = 0x8000;
+				retVal = (int16)0x8000;
 				continue;
 			}
 		}

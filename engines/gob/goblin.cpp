@@ -1773,7 +1773,7 @@ void Goblin::playSounds(Mult::Mult_Object *obj) {
 	animData = obj->pAnimData;
 
 	for (i = 1; i <= obj->goblinStates[animData->state][0].dataCount; i++) {
-		speaker = obj->goblinStates[animData->state][i].speaker;
+		speaker = obj->goblinStates[animData->state][i].speaker != 0;
 		if ((obj->goblinStates[animData->state][i].sndItem != -1) || (speaker == 1)) {
 			frame = obj->goblinStates[animData->state][i].sndFrame;
 			repCount = obj->goblinStates[animData->state][i].repCount;
