@@ -1074,7 +1074,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)&#x0D;&#x0A;"
+							CommandLine="nasm.exe -O1 -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
@@ -1104,7 +1104,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)&#x0D;&#x0A;"
+							CommandLine="nasm.exe -O1 -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>

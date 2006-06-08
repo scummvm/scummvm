@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -114,7 +114,7 @@
 				Optimization="3"
 				InlineFunctionExpansion="2"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				ExceptionHandling="1"
