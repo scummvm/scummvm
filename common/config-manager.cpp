@@ -29,6 +29,10 @@
 
 DECLARE_SINGLETON(Common::ConfigManager);
 
+#ifdef __PLAYSTATION2__
+#include "backends/ps2/systemps2.h"
+#endif
+
 #if defined(UNIX)
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
@@ -98,7 +102,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(__PLAYSTATION2__)
-		strcpy(configFile, "mc0:ScummVM/" DEFAULT_CONFIG_FILE);
+		((OSystem_PS2*)g_system)->makeConfigPath(configFile);
 	#elif defined(__PSP__)
 		strcpy(configFile, "ms0:/" DEFAULT_CONFIG_FILE);
 	#elif defined (__SYMBIAN32__)

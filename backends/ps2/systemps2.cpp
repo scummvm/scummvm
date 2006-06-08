@@ -471,76 +471,6 @@ void OSystem_PS2::soundThread(void) {
 	ExitThread();
 }
 
-/*const char *irxModules[] = {
-	"rom0:SIO2MAN",
-	"rom0:MCMAN",
-	"rom0:MCSERV",
-	"rom0:PADMAN",
-	"rom0:LIBSD",
-#ifndef USE_PS2LINK
-	IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX,
-#endif
-	IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX,
-	IRX_PREFIX "CODYVDFS.IRX" IRX_SUFFIX,
-	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX,
-};*/
-
-void OSystem_PS2::loadModules(void) {
-
-	//_usbMassConnected = _usbMassLoaded = _useMouse = _useKbd = _useHdd = false;
-	//static char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
-	//static char pfsarg[] = "-m" "\0" "2" "\0" "-o" "\0" "16" "\0" "-n" "\0" "40" /*"\0" "-debug"*/;
-#if 0
-	int res;
-	for (int i = 0; i < ARRAYSIZE(irxModules); i++) {
-		if ((res = SifLoadModule(irxModules[i], 0, NULL)) < 0) {
-			msgPrintf(FOREVER, "Unable to load module %s, Error %d", irxModules[i], res);
-			_screen->wantAnim(false);
-			updateScreen();
-			SleepThread();
-		}
-	}
-
-	// now try to load optional IRXs
-	if ((res = SifLoadModule(IRX_PREFIX "USBD.IRX" IRX_SUFFIX, 0, NULL)) >= 0) {
-		if ((res = SifLoadModule(IRX_PREFIX "PS2MOUSE.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: PS2MOUSE.IRX (%d)", res);
-		else
-			_useMouse = true;
-		if ((res = SifLoadModule(IRX_PREFIX "RPCKBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: RPCKBD.IRX (%d)", res);
-		else
-			_useKbd = true;
-		if ((res = SifLoadModule(IRX_PREFIX "USB_MASS.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: USB_MASS.IRX (%d)", res);
-		else
-			_usbMassLoaded = true;
-	}
-
-	if ((res = fileXioInit()) < 0) {
-		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
-		quit();
-	}
-	
-	if ((res = SifLoadModule(IRX_PREFIX "PS2DEV9.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: PS2DEV9.IRX (%d)", res);
-	else if ((res = SifLoadModule(IRX_PREFIX "PS2ATAD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: PS2ATAD.IRX (%d)", res);
-	else if ((res = SifLoadModule(IRX_PREFIX "PS2HDD.IRX" IRX_SUFFIX, sizeof(hddarg), hddarg)) < 0)
-		sioprintf("Cannot load module: PS2HDD.IRX (%d)", res);
-	else if ((res = SifLoadModule(IRX_PREFIX "PS2FS.IRX" IRX_SUFFIX, sizeof(pfsarg), pfsarg)) < 0)
-		sioprintf("Cannot load module: PS2FS.IRX (%d)", res);
-	else {
-		if ((res = SifLoadModule(IRX_PREFIX "POWEROFF.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: POWEROFF.IRX (%d)", res);
-		if ((hddCheckPresent() >= 0) && (hddCheckFormatted() >= 0))
-			_useHdd = true;
-	}
-
-	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, UsbMass %sloaded, HDD %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _usbMassLoaded ? "" : "not ", _useHdd ? "" : "not ");
-#endif
-}
-
 bool OSystem_PS2::hddPresent(void) {
 	return _useHdd;
 }
@@ -807,47 +737,48 @@ void OSystem_PS2::powerOffCallback(void) {
 }
 
 void OSystem_PS2::quit(void) {
-#ifdef USE_PS2LINK
-	printf("OSystem_PS2::quit\n");
-	SleepThread();
-#endif
-	sioprintf("OSystem_PS2::quit");
-	if (_useHdd) {
-		driveStandby();
-		fio.umount("pfs0:");
+	if (_bootDevice == HOST) {
+		printf("OSystem_PS2::quit\n");
+		SleepThread();
+	} else {
+		sioprintf("OSystem_PS2::quit");
+		if (_useHdd) {
+			driveStandby();
+			fio.umount("pfs0:");
+		}
+		clearSoundCallback();
+		setTimerCallback(NULL, 0);
+		_screen->wantAnim(false);
+		_systemQuit = true;
+		ee_thread_t statSound, statTimer;
+		do {	// wait until both threads called ExitThread()
+			ReferThreadStatus(_timerTid, &statTimer);
+			ReferThreadStatus(_soundTid, &statSound);
+		} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
+		DeleteThread(_timerTid);
+		DeleteThread(_soundTid);
+		free(_timerStack);
+		free(_soundStack);
+		DisableIntc(INT_TIMER0);
+		RemoveIntcHandler(INT_TIMER0, _intrId);
+
+		_saveManager->quit();
+		_screen->quit();
+
+		padEnd(); // stop pad library
+		cdvdInit(CDVD_EXIT);
+		sioprintf("resetting iop");
+		SifIopReset(NULL, 0);
+		SifExitRpc();
+		while (!SifIopSync());
+		SifInitRpc(0);
+		cdvdExit();
+		SifExitRpc();
+		FlushCache(0);
+		SifLoadFileExit();
+		sioprintf("Restarting ScummVM");
+		LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
 	}
-	clearSoundCallback();
-	setTimerCallback(NULL, 0);
-	_screen->wantAnim(false);
-	_systemQuit = true;
-	ee_thread_t statSound, statTimer;
-	do {	// wait until both threads called ExitThread()
-		ReferThreadStatus(_timerTid, &statTimer);
-		ReferThreadStatus(_soundTid, &statSound);
-	} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
-	DeleteThread(_timerTid);
-	DeleteThread(_soundTid);
-	free(_timerStack);
-	free(_soundStack);
-	DisableIntc(INT_TIMER0);
-	RemoveIntcHandler(INT_TIMER0, _intrId);
-
-	_saveManager->quit();
-	_screen->quit();
-
-	padEnd(); // stop pad library
-	cdvdInit(CDVD_EXIT);
-	sioprintf("resetting iop");
-	SifIopReset(NULL, 0);
-	SifExitRpc();
-	while (!SifIopSync());
-    SifInitRpc(0);
-	cdvdExit();
-	SifExitRpc();
-	FlushCache(0);
-	SifLoadFileExit();
-	sioprintf("Restarting ScummVM");
-	LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
 }
 
 void OSystem_PS2::makeConfigPath(char *dest) {

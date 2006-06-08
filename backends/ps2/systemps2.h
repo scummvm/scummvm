@@ -121,7 +121,6 @@ private:
 	void initTimer(void);
 	void readRtcTime(void);
 
-	void loadModules(void);
 	bool _mouseVisible;
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _usbMassConnected;
 
