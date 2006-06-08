@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -1065,7 +1065,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)&#x0D;&#x0A;"
+							CommandLine="nasm.exe -O1 -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
@@ -1095,7 +1095,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)&#x0D;&#x0A;"
+							CommandLine="nasm.exe -O1 -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
