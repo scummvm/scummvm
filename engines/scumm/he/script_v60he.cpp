@@ -976,7 +976,7 @@ void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
 }
 
 void ScummEngine_v60he::o60_openFile() {
-	int mode, len, slot, i, r;
+	int mode, len, slot, i;
 	byte buffer[100];
 	const char *filename;
 
@@ -1036,47 +1036,39 @@ void ScummEngine_v60he::o60_closeFile() {
 }
 
 void ScummEngine_v60he::o60_deleteFile() {
-	int len, r;
-	byte filename[100];
+	int len;
+	byte buffer[100];
+	const char *filename;
 
-	convertMessageToString(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-
-	debug(1, "stub o60_deleteFile(\"%s\")", filename + r);
+	filename = (char *)buffer + convertFilePath(buffer);
+	debug(1, "o60_deleteFile stub (\"%s\")", filename);
 }
 
 void ScummEngine_v60he::o60_rename() {
-	int len, r1, r2;
-	byte filename[100],filename2[100];
+	int len;
+	byte buffer1[100], buffer2[100];
+	const char *filename1, *filename2;
 
-	convertMessageToString(_scriptPointer, filename, sizeof(filename));
-
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-
-	for (r1 = strlen((char*)filename); r1 != 0; r1--) {
-		if (filename[r1 - 1] == '\\')
-			break;
-	}
-
-	convertMessageToString(_scriptPointer, filename2, sizeof(filename2));
+	convertMessageToString(_scriptPointer, buffer1, sizeof(buffer1));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	for (r2 = strlen((char*)filename2); r2 != 0; r2--) {
-		if (filename2[r2 - 1] == '\\')
-			break;
-	}
+	filename1 = (char *)buffer1 + convertFilePath(buffer1);
 
-	debug(1, "stub o60_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
+	convertMessageToString(_scriptPointer, buffer2, sizeof(buffer2));
+
+	len = resStrLen(_scriptPointer);
+	_scriptPointer += len + 1;
+
+	filename2 = (char *)buffer2 + convertFilePath(buffer2);
+
+	debug(1, "o60_rename stub (\"%s\" to \"%s\")", filename1, filename2);
 }
 
 int ScummEngine_v60he::readFileToArray(int slot, int32 size) {
