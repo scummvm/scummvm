@@ -257,20 +257,20 @@ static const GameSettings gameVariantsTable[] = {
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"puttmoon", "", GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"activity", "", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"funpack",  0, GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"fbpack",   0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-
-	{"puttputt", "HE 61", GID_HEGAME,   6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"puttputt", "HE 60", GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
-	{"puttputt", "Demo",  GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 	{"fbear", "HE 61", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-#ifndef DISABLE_HE
-	{"activity", 0, GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"puttmoon", "", GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+ 
+	{"puttputt", "HE 61", GID_HEGAME,   6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"puttputt", "HE 60", GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+	{"puttputt", "Demo",  GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
+#ifndef DISABLE_HE
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
@@ -461,27 +461,28 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 #endif
 
-	{ "fbear", "fbear", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "fbear", "fbdemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "fbear", "Fatty Bear Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "fbear", "Fatty Bear", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "activity", "activity", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "activity", "Putt & Fatty's Actpack", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "fbpack", "fbpack", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "funpack", "funpack", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "puttmoon", "puttmoon", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "puttmoon", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "puttmoon", "Putt-Putt Moon Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttmoon", "Putt-Putt Moon", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "fbear", "fbear", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "fbear", "fbdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "fbear", "Fatty Bear Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "fbear", "Fatty Bear", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "puttputt", "puttputt", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttputt", "puttdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttputt", "Putt-Putt's Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttputt", "Putt-Putt Parade", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-#ifndef DISABLE_HE
-	{ "activity", "activity", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttmoon", "puttmoon", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttmoon", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttmoon", "Putt-Putt Moon Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttmoon", "Putt-Putt Moon", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
+#ifndef DISABLE_HE
 	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },

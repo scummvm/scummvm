@@ -609,7 +609,9 @@ dog	Putt-Putt and Pep's Dog on a Stick
 	d4b8ee426b1afd3e53bc0cf020418cf6	en	Windows	HE 99	-	-	sev
 
 activity	Putt-Putt & Fatty Bear's Activity Pack
-	b628506f7def772e40de0aa5440fb8e1	en	Windows	HE 70	-	-	
+	2c04aacffb8428f30ccf4f734fbe3adc	en	DOS	-	-	-	Kirben	
+	0e96ab45a4eb72acc1b46813976589fd	en	Mac	-	-	-	Kirben
+	b628506f7def772e40de0aa5440fb8e1	en	Windows	HE 70	-	-	Kirben	
 
 funpack	Putt-Putt's Fun Pack
 	8afb3cf9f95abf208358e984f0c9e738	en	3DO	-	-	-	sev

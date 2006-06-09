@@ -412,6 +412,7 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 			else
 				dst[j++] = dst[i];
 		}
+		dst[j] = 0;
 	} else {
 		// Switch all \ to / for portablity
 		for (int i = 0; i < len; i++) {
@@ -984,12 +985,8 @@ void ScummEngine_v60he::o60_openFile() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	for (r = strlen((char*)buffer); r != 0; r--) {
-		if (buffer[r - 1] == '\\')
-			break;
-	}
-	
-	filename = (char *)buffer + r;
+	filename = (char *)buffer + convertFilePath(buffer);
+	debug(1, "Final filename to %s", filename);
 
 	mode = pop();
 	slot = -1;
