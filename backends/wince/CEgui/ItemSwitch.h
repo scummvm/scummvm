@@ -37,10 +37,14 @@ namespace CEGUI {
 	class ItemSwitch : public PanelItem {
 	public:
 		ItemSwitch(WORD referenceTrue, WORD referenceFalse, bool *item);
+		ItemSwitch(WORD referenceTrue, WORD referenceFalse, int *item, int max);
 		virtual ~ItemSwitch();
 		virtual bool action(int x, int y, bool pushed);
 	private:
+		void init(WORD referenceTrue, WORD referenceFalse);
 		bool *_item;
+		static bool _itemdummy;
+		int  *_itemmultiple, _itemmax;
 		SDL_ImageResource *_backgroundTrue;
 		SDL_ImageResource *_backgroundFalse;
 	};
