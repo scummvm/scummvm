@@ -51,7 +51,12 @@ const String pocketActionNames[] = {
 	"Zoom up",
 	"Zoom down",
 	"FT Cheat",
-	"Bind Keys"
+	"Bind Keys",
+	"Up",
+	"Down",
+	"Left",
+	"Right",
+	"Left Click",
 };
 
 void CEActionsPocket::init() {
@@ -68,7 +73,7 @@ int CEActionsPocket::size() {
 }
 
 String CEActionsPocket::domain() {
-	return "scummvm";
+	return ConfMan.kApplicationDomain;
 }
 
 int CEActionsPocket::version() {
@@ -89,6 +94,17 @@ GUI::Actions()
 		_action_enabled[i] = false;
 	}
 
+	// apply some default settings for emulated mouse
+	_action_enabled[POCKET_ACTION_LEFTCLICK] = true;
+	_action_enabled[POCKET_ACTION_UP] = true;
+	_action_enabled[POCKET_ACTION_DOWN] = true;
+	_action_enabled[POCKET_ACTION_LEFT] = true;
+	_action_enabled[POCKET_ACTION_RIGHT] = true;
+	_action_mapping[POCKET_ACTION_LEFTCLICK] = VK_RETURN;
+	_action_mapping[POCKET_ACTION_UP] = 0x111;
+	_action_mapping[POCKET_ACTION_DOWN] = 0x112;
+	_action_mapping[POCKET_ACTION_LEFT] = 0x114;
+	_action_mapping[POCKET_ACTION_RIGHT] = 0x113;
 }
 
 void CEActionsPocket::initInstanceMain(OSystem *mainSystem) {
@@ -183,9 +199,12 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 
 	if (!pushed) {
 		switch(action) {
-			case POCKET_ACTION_RIGHTCLICK:
-				_CESystem->add_right_click(false);
-				return true;
+		case POCKET_ACTION_RIGHTCLICK:
+			_CESystem->add_right_click(false);
+			return true;
+		case POCKET_ACTION_LEFTCLICK:
+			_CESystem->add_left_click(false);
+			return true;
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
@@ -228,6 +247,21 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_ZOOM_DOWN:
 			_CESystem->swap_zoom_down();
 			return true;
+		case POCKET_ACTION_LEFTCLICK:
+			_CESystem->add_left_click(true);
+			return true;
+		case POCKET_ACTION_UP:
+			_CESystem->move_cursor_up();
+			return true;
+		case POCKET_ACTION_DOWN:
+			_CESystem->move_cursor_down();
+			return true;
+		case POCKET_ACTION_LEFT:
+			_CESystem->move_cursor_left();
+			return true;
+		case POCKET_ACTION_RIGHT:
+			_CESystem->move_cursor_right();
+			return true; 
 		case POCKET_ACTION_QUIT:
 			{
 				GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
