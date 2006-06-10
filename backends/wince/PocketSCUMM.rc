@@ -115,6 +115,7 @@ ITEM_SOUND_OFF          BINARY  DISCARDABLE     "images\\SoundOff.bmp"
 ITEM_VIEW_PORTRAIT      BINARY  DISCARDABLE     "images\\MonkeyPortrait.bmp"
 ITEM_VIEW_LANDSCAPE     BINARY  DISCARDABLE     "images\\MonkeyLandscape.bmp"
 ITEM_BINDKEYS           BINARY  DISCARDABLE     "images\\bindkeys.bmp"
+HI_RES_AWARE CEUX {1}
 
 /////////////////////////////////////////////////////////////////////////////
 //
