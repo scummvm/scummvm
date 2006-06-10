@@ -533,6 +533,7 @@ begin_credits("Credits");
 
 	  begin_section("PocketPC / WinCE");
 		  add_person("Nicolas Bacca", "arisme", "");
+		  add_person("Kostas Nakos", "knakos", "");
 	  end_section();
 
 	  begin_section("Playstation 2");
@@ -614,10 +615,6 @@ begin_credits("Credits");
 
 	  begin_section("OS/2");
 		  add_person("Paul Smedley", "Creeping", "");
-	  end_section();
-
-	  begin_section("PocketPC 2002");
-		  add_person("Kostas Nakos", "knakos", '');
 	  end_section();
 
 	  begin_section("SlackWare");
