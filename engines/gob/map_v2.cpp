@@ -40,6 +40,10 @@ namespace Gob {
 Map_v2::Map_v2(GobEngine *vm) : Map_v1(vm) {
 }
 
+Map_v2::~Map_v2() {
+	_passMap = 0;
+}
+
 void Map_v2::loadMapObjects(char *avjFile) {
 	int i;
 	int j;

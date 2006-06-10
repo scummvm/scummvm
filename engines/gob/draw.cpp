@@ -478,56 +478,6 @@ void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 	}
 }
 
-void Draw::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
-	int i;
-	int16 partsheight;
-	int16 remainheight;
-	int8 fragment;
-
-	if (flags != 0)
-		flags = 2;
-
-	// .-- sub_CBD0 ---
-
-	for (i = 0; i < 3; i++)
-		_bigSpritesParts[index][i] = 0;
-	_spritesHeights[index] = height;
-
-	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 65000) {
-		_spritesHeights[index] = height & 0xFFFE;
-		while (_vm->_video->getRectSize(width, _spritesHeights[index], flags,
-					_vm->_global->_videoMode) > 65000) {
-			_spritesHeights[index] -= 2;
-		}
-
-		partsheight = _spritesHeights[index];
-		_spritesArray[index] =
-			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, partsheight, flags);
-		fragment = 0;
-		while (partsheight < height) {
-			remainheight = height - partsheight;
-			if (_spritesHeights[index] >= remainheight) {
-				_bigSpritesParts[index][fragment] =
-					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
-							remainheight, flags);
-				partsheight = height;
-			} else {
-				_bigSpritesParts[index][fragment] =
-					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
-							_spritesHeights[index], flags);
-				partsheight += _spritesHeights[index];
-			}
-			_vm->_video->clearSurf(_bigSpritesParts[index][fragment]);
-			fragment++;
-		}
-	} else
-		_spritesArray[index] =
-			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
-
-	_vm->_video->clearSurf(_spritesArray[index]);
-	// '------
-}
-
 void Draw::fillRect(int16 index, int16 left, int16 top, int16 right,
 		int16 bottom, int16 color) {
 	int i;

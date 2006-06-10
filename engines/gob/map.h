@@ -152,7 +152,7 @@ public:
 	}
 
 	Map_v2(GobEngine *vm);
-	virtual ~Map_v2() {};
+	virtual ~Map_v2();
 };
 
 }				// End of namespace Gob

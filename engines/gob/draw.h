@@ -119,7 +119,6 @@ public:
 
 	void freeSprite(int16 index);
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
-	void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
 	void fillRect(int16 index, int16 left, int16 top, int16 right,
 		int16 bottom, int16 color);
 	void drawSprite(int16 source, int16 dest, int16 left,
@@ -133,6 +132,7 @@ public:
 	void printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 			int16 bottom, char *str, int16 fontIndex, int16 color);
 
+	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) = 0;
 	virtual void printText(void) = 0;
 	virtual void spriteOperation(int16 operation) = 0;
 
@@ -145,6 +145,7 @@ protected:
 
 class Draw_v1 : public Draw {
 public:
+	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
 	virtual void printText(void);
 	virtual void spriteOperation(int16 operation);
 
@@ -154,6 +155,7 @@ public:
 
 class Draw_v2 : public Draw_v1 {
 public:
+	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
 	virtual void printText(void);
 	virtual void spriteOperation(int16 operation);
 

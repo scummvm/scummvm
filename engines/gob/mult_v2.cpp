@@ -42,6 +42,7 @@ namespace Gob {
 Mult_v2::Mult_v2(GobEngine *vm) : Mult_v1(vm) {
 	int i;
 
+	_renderData2 = 0;
 	_multData2 = 0;
 	for (i = 0; i < 8; i++) _multDatas[i] = 0;
 }
@@ -147,9 +148,9 @@ void Mult_v2::loadMult(int16 resId) {
 	}
 
 	for (i = 0; i < 4; i++) {
-		_multData2->somepointer05size[i] = 0;
-		_multData2->somepointer05[i] = 0;
-		_multData2->somepointer05indices[i] = -1;
+		_multData2->someKeysCount[i] = 0;
+		_multData2->someKeys[i] = 0;
+		_multData2->someKeysIndices[i] = -1;
 
 		for (j = 0; j < 4; j++) {
 			_multData2->field_15F[i][j] = 0;
@@ -284,11 +285,18 @@ void Mult_v2::loadMult(int16 resId) {
 				_vm->_global->_inter_execPtr += size * 14;
 				_dataPtr += 2;
 				for (i = 0; i < 4; i++) {
-					_multData2->somepointer05size[i] = (int16)READ_LE_UINT16(_dataPtr);
+					_multData2->someKeysCount[i] = (int16)READ_LE_UINT16(_dataPtr);
 					_dataPtr += 2;
-					_multData2->somepointer05[i] = new char[_multData2->somepointer05size[i] * 16];
-					for (j = 0; j < _multData2->somepointer05size[i]; j++) {
-						memcpy(_multData2->somepointer05[i]+j*16, _dataPtr, 16);
+					_multData2->someKeys[i] = new Mult_SomeKey[_multData2->someKeysCount[i]];
+					for (j = 0; j < _multData2->someKeysCount[i]; j++) {
+						_multData2->someKeys[i][j].frame = (int16)READ_LE_UINT16(_dataPtr);
+						_multData2->someKeys[i][j].field_2 = (int16)READ_LE_UINT16(_dataPtr + 2);
+						_multData2->someKeys[i][j].field_4 = (int16)READ_LE_UINT16(_dataPtr + 4);
+						_multData2->someKeys[i][j].field_6 = (int16)READ_LE_UINT16(_dataPtr + 6);
+						_multData2->someKeys[i][j].field_8 = (int16)READ_LE_UINT16(_dataPtr + 8);
+						_multData2->someKeys[i][j].field_A = (int16)READ_LE_UINT16(_dataPtr + 10);
+						_multData2->someKeys[i][j].field_C = (int16)READ_LE_UINT16(_dataPtr + 12);
+						_multData2->someKeys[i][j].field_E = (int16)READ_LE_UINT16(_dataPtr + 14);
 						_dataPtr += 16;
 					}
 				}
@@ -311,9 +319,9 @@ void Mult_v2::multSub(uint16 multindex) {
 	uint16 flags;
 	int16 expr;
 	int16 textFrame;
+	int16 index; // di
 	int i;
 	int j;
-	int16 di;
 
 	flags = multindex;
 	multindex = (multindex >> 12) & 0xF;
@@ -333,13 +341,13 @@ void Mult_v2::multSub(uint16 multindex) {
 	}
 
 	if (flags & 0x200)
-		di = 3;
+		index = 3;
 	else if (flags & 0x100)
-		di = 2;
+		index = 2;
 	else if (flags & 0x80)
-		di = 1;
+		index = 1;
 	else
-		di = 0;
+		index = 0;
 
 	if (flags & 0x400) {
 		flags = 0x400;
@@ -349,64 +357,78 @@ void Mult_v2::multSub(uint16 multindex) {
 		flags &= 0x7F;
 	}
 
-	_multData2->field_124[di][0] = flags;
+	_multData2->field_124[index][0] = flags;
 	for (i = 1; i < 4; i++) {
-		_multData2->field_124[di][i] = _vm->_parse->parseValExpr();
+		_multData2->field_124[index][i] = _vm->_parse->parseValExpr();
 	}
 	expr = _vm->_parse->parseValExpr();
-	_multData2->animKeysIndices1[di] = expr;
-	_multData2->animKeysIndices2[di] = expr;
+	_multData2->animKeysIndices1[index] = expr;
+	_multData2->animKeysIndices2[index] = expr;
 	
-	WRITE_VAR(18 + di, expr);
-	if (expr == -1) { // loc_5D0E
+	WRITE_VAR(18 + index, expr);
+	if (expr == -1) {
 		if (_objects)
 			for (i = 0; i < 4; i++)
-				if ((_multData2->field_124[di][i] != -1) && (_multData2->field_124[di][i] != 1024))
-					_objects[_multData2->field_124[di][i]].pAnimData->animType =
-						_objects[_multData2->field_124[di][i]].pAnimData->field_17;
-	} else { // loc_5DDC
+				if ((_multData2->field_124[index][i] != -1) && (_multData2->field_124[index][i] != 1024))
+					_objects[_multData2->field_124[index][i]].pAnimData->animType =
+						_objects[_multData2->field_124[index][i]].pAnimData->field_17;
+	} else {
 		if (_multData2->field_156 == 1) {
-			_multData2->field_157[di] = 32000;
+			_multData2->field_157[index] = 32000;
 			for (i = 0; i < _multData2->textKeysCount; i++) {
 				textFrame = _multData2->textKeys[i].frame;
-				if ((textFrame > _multData2->animKeysIndices2[di]) &&
-						(textFrame < _multData2->field_157[di])) {
-					_multData2->field_157[di] = textFrame;
+				if ((textFrame > _multData2->animKeysIndices2[index]) &&
+						(textFrame < _multData2->field_157[index])) {
+					_multData2->field_157[index] = textFrame;
 				}
 			}
 		} else {
-			_multData2->field_157[di] = 0;
+			_multData2->field_157[index] = 0;
 			for (i = 0; i < _multData2->textKeysCount; i++) {
 				textFrame = _multData2->textKeys[i].frame;
-				if ((textFrame < _multData2->animKeysIndices2[di]) &&
-						(textFrame > _multData2->field_157[di])) {
-					_multData2->field_157[di] = textFrame;
+				if ((textFrame < _multData2->animKeysIndices2[index]) &&
+						(textFrame > _multData2->field_157[index])) {
+					_multData2->field_157[index] = textFrame;
 				}
 			}
 		}
 		if (_objects) {
 			for (i = 0; i < 4; i++) {
-				if ((_multData2->field_124[di][i] != -1) && (_multData2->field_124[di][i] != 1024))
-					_objects[_multData2->field_124[di][i]].pAnimData->field_17 =
-						_objects[_multData2->field_124[di][i]].pAnimData->animType;
+				if ((_multData2->field_124[index][i] != -1) && (_multData2->field_124[index][i] != 1024))
+					_objects[_multData2->field_124[index][i]].pAnimData->field_17 =
+						_objects[_multData2->field_124[index][i]].pAnimData->animType;
 			}
 		}
-		// loc_5FCF
-		for (i = 0; i < 4; i++ /* var_C += 2, var_E += 4*/) {
-			_multData2->field_15F[di][i] = 0;
-			for (j = 0; j < _multData2->animKeysCount[i]; j++) {
-				if (_multData2->animKeys[i][j].frame >= _multData2->animKeysIndices2[di])
-					_multData2->field_15F[di][i] = j;
-			}
-		}
-		if (_multData2->field_156 == -1) { // loc_60CF
-			warning("Mult_v2::multSub(), somepointer05 and somepointer05indices");
-		}
-		// loc_6187
-		warning("Mult_v2::multSub(), somepointer05");
-	}
 
-	warning("GOB2 Stub! Mult_v2::multSub()");
+		for (i = 0; i < 4; i++) {
+			_multData2->field_15F[index][i] = 0;
+			for (j = 0; j < _multData2->animKeysCount[i]; j++) {
+				if (_multData2->animKeys[i][j].frame >= _multData2->animKeysIndices2[index])
+					_multData2->field_15F[index][i] = j;
+			}
+		}
+
+		if (_multData2->field_156 == -1) { // loc_60CF
+			warning("Mult_v2::multSub(), someKeys and someKeysIndices");
+		}
+
+		for (i = 0; i < 4; i++) {
+			_multData2->field_17F[index][i] = 0;
+			for (j = 0; j < _multData2->someKeysCount[i]; j++) {
+				if (_multData2->field_156 == 1) {
+					if (_multData2->someKeys[i][j].frame >= _multData2->animKeysIndices2[index]) {
+						_multData2->field_17F[index][i] = j;
+						break;
+					}
+				} else {
+					if (_multData2->someKeys[i][j].frame >= _multData2->field_157[index]) {
+						_multData2->field_17F[index][i] = j;
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
@@ -445,8 +467,8 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				delete[] _objects;
 			if (_orderArray)
 				delete[] _orderArray;
-			if (_renderData)
-				delete[] _renderData;
+/*			if (_renderData)
+				delete[] _renderData;*/
 			if (_renderData2)
 				delete[] _renderData2;
 
@@ -455,8 +477,8 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 			_orderArray = new int8[_objCount];
 			memset(_orderArray, 0, _objCount * sizeof(int8));
-			_renderData = new int16[9 * _objCount];
-			memset(_renderData, 0, _objCount * 9 * sizeof(int16));
+/*			_renderData = new int16[9 * _objCount];
+			memset(_renderData, 0, _objCount * 9 * sizeof(int16));*/
 			_renderData2 = new Mult_Object*[_objCount];
 			memset(_renderData2, 0, _objCount * sizeof(Mult_Object*));
 
@@ -464,6 +486,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animArrayY = new int32[_objCount];
 
 			_animArrayData = new Mult_AnimData[_objCount];
+			memset(_animArrayData, 0, _objCount * sizeof(Mult_AnimData));
 
 			for (_counter = 0; _counter < _objCount; _counter++) {
 				multObj = &_objects[_counter];
@@ -784,9 +807,12 @@ void Mult_v2::doPalAnim(void) {
 				off = palKey->subst[(_multData2->palAnimIndices[_index] + 1) % 16][_index] - 1;
 				off2 = palKey->subst[_multData2->palAnimIndices[_index]][_index] - 1;
 
-				_vm->_global->_pPaletteDesc->vgaPal[off2].red = _vm->_global->_pPaletteDesc->vgaPal[off].red;
-				_vm->_global->_pPaletteDesc->vgaPal[off2].green = _vm->_global->_pPaletteDesc->vgaPal[off].green;
-				_vm->_global->_pPaletteDesc->vgaPal[off2].blue = _vm->_global->_pPaletteDesc->vgaPal[off].blue;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].red =
+					_vm->_global->_pPaletteDesc->vgaPal[off].red;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].green =
+					_vm->_global->_pPaletteDesc->vgaPal[off].green;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].blue =
+					_vm->_global->_pPaletteDesc->vgaPal[off].blue;
 			}
 
 			_multData2->palAnimIndices[_index] = (_multData2->palAnimIndices[_index] + 1) % 16;
@@ -897,7 +923,7 @@ char Mult_v2::doSoundAnim(char stop, int16 frame) {
 void Mult_v2::sub_62DD(int16 index) {
 	Mult_Object *animObj;
 	Mult_AnimKey *animKey;
-//	void *somep05, *somep05l;
+	Mult_SomeKey *someKey1, *someKey2;
 	int16 frame;
 	int16 layer;
 	int16 layers;
@@ -952,41 +978,41 @@ void Mult_v2::sub_62DD(int16 index) {
 			}
 		}
 		if (_multData2->field_124[index][i] != -1) {
-			warning("GOB2 Stub! Messing about with _multData2->somepointer05");
-			for (j = _multData2->field_17F[index][i]; j < _multData2->somepointer05size[i]; j++) {
-/*
-				somep05 = &_multData2->somepointer05[i][j];
-				somep05l = &_multData2->somepointer05[i][j-1];
-				if (somep05->field_0 > frame)
+//			warning("GOB2 Stub! Messing about with _multData2->someKeys, %d, %d", _multData2->field_17F[index][i], _multData2->someKeysCount[i]);
+			for (j = _multData2->field_17F[index][i]; j < _multData2->someKeysCount[i]; j++) {
+
+				someKey1 = &_multData2->someKeys[i][j];
+				someKey2 = &_multData2->someKeys[i][j-1];
+				if (someKey1->frame > frame)
 					break;
-				else if (somep05->field_0 == frame) {
-					if (somep05->field_2 == -1)
-						_multData2->somepointer05indices[i] = -1;
+				else if (someKey1->frame == frame) {
+					if (someKey1->field_2 == -1)
+						_multData2->someKeysIndices[i] = -1;
 					else {
-						_multData2->somepointer05indices[0] = -1;
-						_multData2->somepointer05indices[1] = -1;
-						_multData2->somepointer05indices[2] = -1;
-						_multData2->somepointer05indices[3] = -1;
-						if ((_multData2->field_156 == 1) || (somep05l->field_2 == 1))
-							_multData2->somepointer05indices[i] = j;
+						_multData2->someKeysIndices[0] = -1;
+						_multData2->someKeysIndices[1] = -1;
+						_multData2->someKeysIndices[2] = -1;
+						_multData2->someKeysIndices[3] = -1;
+						if ((_multData2->field_156 == 1) || (someKey2->field_2 == 1))
+							_multData2->someKeysIndices[i] = j;
 						else if (_multData2->field_157[index] == frame)
-							_multData2->somepointer05indices[i] = -1;
+							_multData2->someKeysIndices[i] = -1;
 						else
-							_multData2->somepointer05indices[i] = j - 1;
+							_multData2->someKeysIndices[i] = j - 1;
 					}
 				}
-*/
+
 			}
 		}
-		if (_multData2->somepointer05indices[i] != -1) {
+		if (_multData2->someKeysIndices[i] != -1) {
 /*
-			int arg3 = frame - _multData2->somepointer05[i][_multData2->somepointer05indices[i]].field_0;
+			int arg3 = frame - _multData2->someKeys[i][_multData2->someKeysIndices[i]].field_0;
 			int arg2 =  _multData2->field_156;
 			if ((arg2 != 1) && (--arg3 > 0))
 			arg3 = 0;
-			int arg1 = _multData2->somepointer05[i][_multData2->somepointer05indices[i]];
+			int arg1 = _multData2->someKeys[i][_multData2->someKeysIndices[i]];
 			// somepointer09 is 14 bytes wide (surely a struct)
-			int arg0 = _multData2->somepointer09[-_multData2->somepointer05[i][_multData2->somepointer05indices[i]].field_2 - 2];
+			int arg0 = _multData2->somepointer09[-_multData2->someKeys[i][_multData2->someKeysIndices[i]].field_2 - 2];
 */
 			warning("GOB2 Stub! sub_1CBF8(arg0, arg1, arg2, arg3);");
 		}
@@ -997,10 +1023,10 @@ void Mult_v2::sub_62DD(int16 index) {
 	if (_multData2->field_156 == 1) { // loc_6809
 		frame++;
 		if (_multData2->field_157[index] == (frame-1)) {
-			_multData2->somepointer05indices[0] = -1;
-			_multData2->somepointer05indices[1] = -1;
-			_multData2->somepointer05indices[2] = -1;
-			_multData2->somepointer05indices[3] = -1;
+			_multData2->someKeysIndices[0] = -1;
+			_multData2->someKeysIndices[1] = -1;
+			_multData2->someKeysIndices[2] = -1;
+			_multData2->someKeysIndices[3] = -1;
 			frame = -1;
 			for (i = 0; i < 4; i++) {
 				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
@@ -1012,10 +1038,10 @@ void Mult_v2::sub_62DD(int16 index) {
 	} else { // loc_68F3
 		frame--;
 		if (_multData2->field_157[index] == (frame+1)) {
-			_multData2->somepointer05indices[0] = -1;
-			_multData2->somepointer05indices[1] = -1;
-			_multData2->somepointer05indices[2] = -1;
-			_multData2->somepointer05indices[3] = -1;
+			_multData2->someKeysIndices[0] = -1;
+			_multData2->someKeysIndices[1] = -1;
+			_multData2->someKeysIndices[2] = -1;
+			_multData2->someKeysIndices[3] = -1;
 			frame = -1;
 			for (i = 0; i < 4; i++) {
 				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
@@ -1186,7 +1212,7 @@ void Mult_v2::animate(void) {
 				if ((animObj1->pAnimData->order == animObj2->pAnimData->order) &&
 						((animObj1->somethingBottom > animObj2->somethingBottom) ||
 						((animObj1->somethingBottom == animObj2->somethingBottom) &&
-						 (animObj1->pAnimData->someFlag == 1))))
+						 (animObj1->pAnimData->isBusy == 1))))
 						SWAP(orderArray[i], orderArray[j]);
 			}
 		}
@@ -1365,6 +1391,20 @@ void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 	}
 }
 
+void Mult_v2::freeMult(void) {
+	if (_vm->_anim->_animSurf != 0)
+		delete _vm->_anim->_animSurf;
+
+	delete[] _objects;
+	delete[] _renderData2;
+	delete[] _orderArray;
+
+	_objects = 0;
+	_renderData2 = 0;
+	_orderArray = 0;
+	_vm->_anim->_animSurf = 0;
+}
+
 void Mult_v2::freeMultKeys(void) {
 	int i;
 	char animCount;
@@ -1390,8 +1430,8 @@ void Mult_v2::freeMultKeys(void) {
 
 	for (i = 0; i < 4; i++) { // loc_73BA
 		delete[] _multData2->animKeys[i];
-		if (_multData2->somepointer05[i] != 0)
-			delete[] _multData2->somepointer05[i];
+		if (_multData2->someKeys[i] != 0)
+			delete[] _multData2->someKeys[i];
 	}
 
 	delete[] _multData2->palFadeKeys;

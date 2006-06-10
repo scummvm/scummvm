@@ -139,20 +139,6 @@ void Mult::interGetObjAnimSize(void) {
 	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawBottom);
 }
 
-void Mult::freeMult(void) {
-	if (_vm->_anim->_animSurf != 0)
-		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
-
-	delete[] _objects;
-	delete[] _renderData;
-	delete[] _orderArray;
-
-	_objects = 0;
-	_renderData = 0;
-	_orderArray = 0;
-	_vm->_anim->_animSurf = 0;
-}
-
 void Mult::freeAll(void) {
 	int16 i;
 

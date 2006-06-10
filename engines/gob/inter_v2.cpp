@@ -892,6 +892,7 @@ int16 Inter_v2::loadSound(int16 search) {
 					*dataPtr ^= 0x80;
 				_vm->_game->_soundTypes[slot] = 4;
 				_vm->_game->_soundSamples[slot] = soundDesc;
+				_vm->_game->_soundFromExt[slot] = 1;
 			} else { // loc_99BC
 				extData = _vm->_game->loadExtData(id, 0, 0);
 				if (extData == 0)
@@ -902,6 +903,7 @@ int16 Inter_v2::loadSound(int16 search) {
 				else
 					// TODO: This is very ugly
 					_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
+				_vm->_game->_soundFromExt[slot] = 1;
 			}
 		} else { // loc_9A13
 			extData = _vm->_game->loadTotResource(id);
@@ -984,7 +986,7 @@ void Inter_v2::o2_moveGoblin(void) {
 	obj->gobDestY = destY;
 	objAnim->field_13 = destX;
 	objAnim->field_14 = destY;
-	if (objAnim->someFlag != 0) {
+	if (objAnim->isBusy != 0) {
 		if ((destX == -1) && (destY == -1)) {
 			mouseX = _vm->_global->_inter_mouseX;
 			mouseY = _vm->_global->_inter_mouseY;
@@ -1101,6 +1103,7 @@ void Inter_v2::loadMult(void) {
 	int16 objIndex; // si
 	int16 i;
 	int16 animation;
+	int16 layer;
 	char *lmultData;
 	Mult::Mult_Object *obj;
 	Mult::Mult_AnimData *objAnim;
@@ -1135,15 +1138,17 @@ void Inter_v2::loadMult(void) {
 			obj->gobDestY = val;
 			obj->goblinY = val;
 			*obj->pPosX *= _vm->_map->_tilesWidth;
+			layer = objAnim->layer;
+			animation = obj->goblinStates[layer][0].animation;
 			objAnim->field_15 = objAnim->unknown;
 			objAnim->nextState = -1;
 			objAnim->field_F = -1;
 			objAnim->pathExistence = 0;
-			objAnim->state = objAnim->layer;
+			objAnim->isBusy = 0;
+			objAnim->state = layer;
 			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
-			objAnim->animation = obj->goblinStates[objAnim->state][0].animation;
-			animation = objAnim->animation;
-			_vm->_scenery->updateAnim(objAnim->state, 0, 0, 0, *obj->pPosX, *obj->pPosY, 0);
+			objAnim->animation = animation;
+			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 			if (!_vm->_map->_bigTiles) {
 				*obj->pPosY = (obj->goblinY + 1) * _vm->_map->_tilesHeight
 					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
@@ -1159,16 +1164,18 @@ void Inter_v2::loadMult(void) {
 			obj = &_vm->_mult->_objects[objIndex];
 			objAnim = obj->pAnimData;
 
+			layer = objAnim->layer;
+			animation = obj->goblinStates[layer][0].animation;
 			objAnim->nextState = -1;
 			objAnim->field_F = -1;
-			objAnim->state = objAnim->layer;
+			objAnim->state = layer;
 			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
-			objAnim->animation = obj->goblinStates[objAnim->state][0].animation;
+			objAnim->animation = animation;
 			if ((*obj->pPosX == 1000) && (*obj->pPosY == 1000)) {
 				*obj->pPosX = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state]->posX;
 				*obj->pPosY = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state]->posY;
 			}
-			_vm->_scenery->updateAnim(objAnim->state, 0, objAnim->animation, 0, *obj->pPosX, *obj->pPosY, 0);
+			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 		}
 	}
 }
@@ -1599,8 +1606,8 @@ void Inter_v2::o2_initMult(void) {
 	if (_vm->_mult->_objects == 0) {
 		_vm->_mult->_renderData2 = new Mult::Mult_Object*[_vm->_mult->_objCount];
 		memset(_vm->_mult->_renderData2, 0, _vm->_mult->_objCount * sizeof(Mult::Mult_Object*));
-		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
-		memset(_vm->_mult->_renderData, 0, _vm->_mult->_objCount * 9 * sizeof(int16));
+/*		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
+		memset(_vm->_mult->_renderData, 0, _vm->_mult->_objCount * 9 * sizeof(int16));*/
 		if (_vm->_inter->_terminate)
 			return;
 		_vm->_mult->_orderArray = new int8[_vm->_mult->_objCount];
@@ -1630,7 +1637,7 @@ void Inter_v2::o2_initMult(void) {
 	if (_vm->_anim->_animSurf != 0 &&
 	    (oldAnimWidth != _vm->_anim->_areaWidth
 		|| oldAnimHeight != _vm->_anim->_areaHeight)) {
-		if (_vm->_anim->_animSurf->flag & 0x80)
+		if (_vm->_anim->_animSurf->vidMode & 0x80)
 			_vm->_draw->freeSprite(0x16);
 		else
 			delete _vm->_anim->_animSurf;

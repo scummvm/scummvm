@@ -1816,7 +1816,7 @@ void Goblin::sub_19BD3(void) {
 	si = anim0->state;
 	di = anim1->state;
 
-	if (anim0->someFlag == 0) {
+	if (anim0->isBusy == 0) {
 		if ((_word_2F9BC == 0) && (anim0->isStatic == 0)) {
 			if ((VAR(_dword_2F9B6) == 0) && (si == 28)) {
 				si = _vm->_util->getRandom(3) + 24;
@@ -1828,7 +1828,7 @@ void Goblin::sub_19BD3(void) {
 		if ((si == 8) || (si == 9) || (si == 29))
 			anim0->curLookDir = 6;
 	}
-	if (anim1->someFlag == 0) {
+	if (anim1->isBusy == 0) {
 		if ((_word_2F9BA == 0) && (anim1->isStatic == 0)) {
 			if ((VAR(_dword_2F9B2) == 0) && (di == 28)) {
 				di = _vm->_util->getRandom(3) + 24;
@@ -1841,10 +1841,10 @@ void Goblin::sub_19BD3(void) {
 			anim1->curLookDir = 6;
 	}
 
-	if ((anim0->someFlag == 1) && (anim0->isStatic == 0) &&
+	if ((anim0->isBusy == 1) && (anim0->isStatic == 0) &&
 			((anim0->state == 28) || (anim0->state == 29)))
 		anim0->curLookDir = 0;
-	if ((anim1->someFlag == 1) && (anim1->isStatic == 0) &&
+	if ((anim1->isBusy == 1) && (anim1->isStatic == 0) &&
 			((anim1->state == 28) || (anim1->state == 29)))
 		anim1->curLookDir = 0;
 
@@ -1853,7 +1853,7 @@ void Goblin::sub_19BD3(void) {
 			anim0->curLookDir = 4;
 		else if (anim0->layer == 45)
 			anim0->curLookDir = 0;
-		if (anim0->someFlag == 0)
+		if (anim0->isBusy == 0)
 			anim0->curLookDir = 6;
 	}
 	if (VAR(19) != ((uint32) -1)) {
@@ -1861,7 +1861,7 @@ void Goblin::sub_19BD3(void) {
 			anim1->curLookDir = 4;
 		else if (anim1->layer == 49)
 			anim1->curLookDir = 0;
-		if (anim1->someFlag == 0)
+		if (anim1->isBusy == 0)
 			anim1->curLookDir = 6;
 	}
 

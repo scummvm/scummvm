@@ -38,6 +38,56 @@ namespace Gob {
 Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
 }
 
+void Draw_v2::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
+	int i;
+	int16 partsheight;
+	int16 remainheight;
+	int8 fragment;
+
+	if (flags != 0)
+		flags = 2;
+
+	// .-- sub_CBD0 ---
+
+	for (i = 0; i < 3; i++)
+		_bigSpritesParts[index][i] = 0;
+	_spritesHeights[index] = height;
+
+	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 65000) {
+		_spritesHeights[index] = height & 0xFFFE;
+		while (_vm->_video->getRectSize(width, _spritesHeights[index], flags,
+					_vm->_global->_videoMode) > 65000) {
+			_spritesHeights[index] -= 2;
+		}
+
+		partsheight = _spritesHeights[index];
+		_spritesArray[index] =
+			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, partsheight, flags);
+		fragment = 0;
+		while (partsheight < height) {
+			remainheight = height - partsheight;
+			if (_spritesHeights[index] >= remainheight) {
+				_bigSpritesParts[index][fragment] =
+					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
+							remainheight, flags);
+				partsheight = height;
+			} else {
+				_bigSpritesParts[index][fragment] =
+					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
+							_spritesHeights[index], flags);
+				partsheight += _spritesHeights[index];
+			}
+			_vm->_video->clearSurf(_bigSpritesParts[index][fragment]);
+			fragment++;
+		}
+	} else
+		_spritesArray[index] =
+			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+
+	_vm->_video->clearSurf(_spritesArray[index]);
+	// '------
+}
+
 void Draw_v2::printText(void) {
 	int i;
 	char *dataPtr;

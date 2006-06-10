@@ -912,6 +912,20 @@ void Mult_v1::animate(void) {
 	}
 }
 
+void Mult_v1::freeMult(void) {
+	if (_vm->_anim->_animSurf != 0)
+		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+
+	delete[] _objects;
+	delete[] _renderData;
+	delete[] _orderArray;
+
+	_objects = 0;
+	_renderData = 0;
+	_orderArray = 0;
+	_vm->_anim->_animSurf = 0;
+}
+
 void Mult_v1::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 	    int16 channel) {
 	_vm->_snd->playSample(soundDesc, repCount, freq);

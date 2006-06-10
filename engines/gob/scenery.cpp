@@ -473,8 +473,7 @@ int16 Scenery::loadAnim(char search) {
 			_animPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex] = 1;
 			_spriteResId[sprIndex] = sprResId;
-			_vm->_draw->_spritesArray[sprIndex] =
-			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
+			_vm->_draw->initBigSprite(sprIndex, width, height, 2);
 
 			_vm->_video->clearSurf(_vm->_draw->_spritesArray[sprIndex]);
 			_vm->_draw->_destSurface = sprIndex;

@@ -46,20 +46,20 @@ public:
 		int8 newAnimation;
 		byte intersected;
 		int8 newCycle;
-		int8 somethingAnimation; // New in GOB2
-		int8 somethingLayer;     // New in GOB2
-		int8 somethingFrame;     // New in GOB2
-		int8 someFlag;           // New in GOB2
 		int8 state;              // New in GOB2
 		int8 nextState;          // New in GOB2
 		int8 field_F;            // New in GOB2
 		int8 curLookDir;         // New in GOB2
+		int8 isBusy;             // New in GOB2
 		int8 pathExistence;      // New in GOB2
 		int8 field_13;           // New in GOB2
 		int8 field_14;           // New in GOB2
 		int8 field_15;           // New in GOB2
 		int8 field_16;           // New in GOB2
 		int8 field_17;           // New in GOB2
+		int8 somethingAnimation; // New in GOB2
+		int8 somethingLayer;     // New in GOB2
+		int8 somethingFrame;     // New in GOB2
 	} GCC_PACK;
 
 	struct Mult_GobState {
@@ -144,6 +144,18 @@ public:
 		int16 resId;
 		int16 soundIndex;
 	} GCC_PACK;
+
+	struct Mult_SomeKey {
+		int16 frame;
+		int16 field_2;
+		int16 field_4;
+		int16 field_6;
+		int16 field_8;
+		int16 field_A;
+		int16 field_C;
+		int16 field_E;
+	} GCC_PACK;
+
 #pragma END_PACK_STRUCTS
 
 	// Globals
@@ -219,7 +231,6 @@ public:
 	void zeroMultData(void);
 	void checkFreeMult(void);
 	void interGetObjAnimSize(void);
-	void freeMult(void);
 	void freeAll(void);
 	void initAll(void);
 
@@ -231,6 +242,7 @@ public:
 	virtual void animate(void) = 0;
 	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
 				  int16 freq, int16 channel) = 0;
+	virtual void freeMult(void) = 0;
 	virtual void freeMultKeys(void) = 0;
 
 	Mult(GobEngine *vm);
@@ -262,6 +274,7 @@ public:
 	virtual void animate(void);
 	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
 				  int16 freq, int16 channel);
+	virtual void freeMult(void);
 	virtual void freeMultKeys(void);
 
 protected:
@@ -318,9 +331,9 @@ public:
 		int16 field_15F[4][4];
 		int16 field_17F[4][4];
 
-		int16 somepointer05size[4];
-		char *somepointer05[4]; // Seems to be similar to staticKeys/animKeys
-		int16 somepointer05indices[4];
+		int16 someKeysCount[4];
+		Mult_SomeKey *someKeys[4];
+		int16 someKeysIndices[4];
 		char *somepointer09; // ?
 		char *somepointer10; // ?
 		char *execPtr;
@@ -344,6 +357,7 @@ public:
 	virtual void animate(void);
 	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
 				  int16 freq, int16 channel);
+	virtual void freeMult(void);
 	virtual void freeMultKeys(void);
 
 protected:

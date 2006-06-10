@@ -38,6 +38,11 @@ namespace Gob {
 Draw_v1::Draw_v1(GobEngine *vm) : Draw(vm) {
 }
 
+void Draw_v1::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
+	_vm->_draw->_spritesArray[index] =
+			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+}
+
 void Draw_v1::printText(void) {
 	int16 savedFlags;
 	int16 ldestSpriteX;
