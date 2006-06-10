@@ -85,6 +85,14 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				char selection[100];
 #ifdef __SYMBIAN32__
 				uint16 key = Actions::Instance()->getMapping(_actionsList->getSelected());
+				
+				if(key != 0) {
+					// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+					if(key >= 315 && key <= 323) {
+						key = key - 315 + SDLK_F1;
+					}
+				}
+
 				if(key != 0)
 					sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
 				else
@@ -106,8 +114,14 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				_actionSelected = _actionsList->getSelected();
 #ifdef __SYMBIAN32__
 				uint16 key = Actions::Instance()->getMapping(_actionSelected);
-				if(key != 0)
+				if(key != 0) {
+					// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+					if(key >= 315 && key <= 323) {
+						key = key - 315 + SDLK_F1;
+					}
+
 					sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
+				}
 				else
 					sprintf(selection, "Associated key : none");
 #else
@@ -150,7 +164,7 @@ void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 		Actions::Instance()->setMapping((ActionType)_actionSelected, ascii);
 #ifdef __SYMBIAN32__
 		if(ascii != 0)
-			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)ascii));
+			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) keycode));
 		else
 			sprintf(selection, "Associated key : none");
 #else
