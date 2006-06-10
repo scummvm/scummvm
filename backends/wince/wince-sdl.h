@@ -86,19 +86,21 @@ public:
 	void swap_freeLook();
 	void swap_zoom_up();
 	void swap_zoom_down();
+	void swap_smartphone_keyboard();
 
 //#ifdef WIN32_PLATFORM_WFSP
 	// Smartphone actions
 
 	void initZones();
-	void loadSmartphoneConfigurationElement(String element, int &value, int defaultValue);
-	void loadSmartphoneConfiguration();
+	void loadDeviceConfigurationElement(String element, int &value, int defaultValue);
+	void loadDeviceConfiguration();
 	void add_left_click(bool pushed);
 	void move_cursor_up();
 	void move_cursor_down();
 	void move_cursor_left();
 	void move_cursor_right();
 	void switch_zone();
+	void smartphone_rotate_display();
 //#endif
 
 	static int getScreenWidth();
@@ -127,6 +129,7 @@ protected:
 	bool getFeatureState(Feature f);
 
 	void internDrawMouse();
+	void drawToolbarMouse(SDL_Surface *surf, bool draw);
 
 private:
 
@@ -167,8 +170,8 @@ private:
 	bool _monkeyKeyboard;		// forced keyboard for Monkey Island copy protection
 	static bool _soundMaster;	// turn off sound after all calculations
 								// static since needed by the SDL callback
-	bool _orientationLandscape; // current orientation
-	bool _newOrientation;		// new orientation
+	int _orientationLandscape;	// current orientation
+	int _newOrientation;		// new orientation
 
 	bool _saveToolbarState;		// save visibility when forced
 	String _saveActiveToolbar;	// save active toolbar when forced
@@ -176,6 +179,10 @@ private:
 	bool _saveToolbarZoom;		// save visibility when zooming
 	bool _zoomUp;				// zooming up mode
 	bool _zoomDown;				// zooming down mode
+
+	bool _rbutton;				// double tap -> right button simulation
+
+	bool _usesEmulatedMouse;	// emulated mousemove ever been used in this session
 
 	int _scaleFactorXm;			// scaler X *
 	int _scaleFactorXd;			// scaler X /
@@ -195,6 +202,7 @@ private:
 	// Mouse
 	int	_mouseHotspotX, _mouseHotspotY;
 	byte *_mouseBackupOld;
+	uint16 *_mouseBackupToolbar;
 
 	// Smartphone specific variables
 

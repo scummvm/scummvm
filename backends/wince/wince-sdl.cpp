@@ -68,6 +68,7 @@ using namespace CEGUI;
 #define NAME_ITEM_SKIP			"Skip"
 #define NAME_ITEM_SOUND			"Sound"
 #define NAME_ITEM_ORIENTATION	"Orientation"
+#define NAME_ITEM_BINDKEYS		"Bindkeys"
 
 // Given to the true main, needed for backend adaptation
 
@@ -208,6 +209,7 @@ int OSystem_WINCE3::getScreenHeight() {
 }
 
 void OSystem_WINCE3::initScreenInfos() {
+	/*
 	// Check if we're running Ozone
 	int result;
 	RawFrameBufferInfo frameBufferInfo;
@@ -218,6 +220,12 @@ void OSystem_WINCE3::initScreenInfos() {
 	// And obtain the real screen size
 	_platformScreenWidth = (result > 0 ? frameBufferInfo.cxPixels : GetSystemMetrics(SM_CXSCREEN));
 	_platformScreenHeight = (result > 0 ? frameBufferInfo.cyPixels : GetSystemMetrics(SM_CYSCREEN));
+	*/
+
+	// sdl port ensures that we use correctly full screen
+	_isOzone = 0;
+	_platformScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	_platformScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 }
 
 bool OSystem_WINCE3::isOzone() {
@@ -228,53 +236,99 @@ bool OSystem_WINCE3::isOzone() {
 
 
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
-	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
-	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
+	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
+	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0)
+	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
+	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false),
+	_usesEmulatedMouse(false)
 {
 	_isSmartphone = CEDevice::isSmartphone();
-	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution();
+	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
 		_mouseCurState.y = 20;
 	}
+	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
 	create_toolbar();
 	// Initialize global key mapping for Smartphones
 	GUI::Actions::init();
 	GUI_Actions::Instance()->initInstanceMain(this);
 	GUI_Actions::Instance()->loadMapping();
 
-	if (_isSmartphone) {
-		loadSmartphoneConfiguration();
-	}
+	//if (_isSmartphone) {
+		loadDeviceConfiguration();
+	//}
 
 	// Mouse backup (temporary code)
 	_mouseBackupOld = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
+	_mouseBackupToolbar = (uint16*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
 }
 
 void OSystem_WINCE3::swap_panel_visibility() {
-	if (!_forcePanelInvisible && !_panelStateForced) {
-		_panelVisible = !_panelVisible;
+	//if (!_forcePanelInvisible && !_panelStateForced) {
+		if (_panelVisible) {
+			if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
+				_panelVisible = !_panelVisible;
+			else
+				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+		}
+		else {
+			_toolbarHandler.setActive(NAME_MAIN_PANEL);
+			_panelVisible = !_panelVisible;
+		}
 		_toolbarHandler.setVisible(_panelVisible);
+
 		if (_screenHeight > 240)
 			addDirtyRect(0, 400, 640, 80);
 		else
 			addDirtyRect(0, 200, 320, 40);
 
-		internUpdateScreen();
-	}
+		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD && _panelVisible)
+			internUpdateScreen();
+		else {
+			update_scalers();
+			hotswapGFXMode();
+		}
+	//}
 }
 
 void OSystem_WINCE3::swap_panel() {
 	_toolbarHighDrawn = false;
-	if (!_panelStateForced) {
-		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
+	//if (!_panelStateForced) {
+		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD && _panelVisible)
 			_toolbarHandler.setActive(NAME_MAIN_PANEL);
 		else
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-	}
+
+		if (_screenHeight > 240)
+			addDirtyRect(0, 400, 640, 80);
+		else
+			addDirtyRect(0, 200, 320, 40);
+
+		_toolbarHandler.setVisible(true);
+		if (!_panelVisible) {
+			_panelVisible = true;
+			update_scalers();
+			hotswapGFXMode();
+		}
+	//}
+}
+
+void OSystem_WINCE3::swap_smartphone_keyboard() {
+	_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+	_panelVisible = !_panelVisible;
+	_toolbarHandler.setVisible(_panelVisible);
+	addDirtyRect(0, 0, 320, 40);
+	internUpdateScreen();
+}
+
+void OSystem_WINCE3::smartphone_rotate_display() {
+	_orientationLandscape = _newOrientation = _orientationLandscape == 1 ? 2 : 1;
+	ConfMan.setInt("landscape", _orientationLandscape);
+	ConfMan.flushToDisk();
+	hotswapGFXMode();
 }
 
 void OSystem_WINCE3::swap_sound_master() {
@@ -374,24 +428,24 @@ void OSystem_WINCE3::initZones() {
         }
 }
 
-void OSystem_WINCE3::loadSmartphoneConfigurationElement(String element, int &value, int defaultValue) {
-	value = ConfMan.getInt(element, "smartphone");
+void OSystem_WINCE3::loadDeviceConfigurationElement(String element, int &value, int defaultValue) {
+	value = ConfMan.getInt(element, ConfMan.kApplicationDomain);
 	if (!value) {
 		value = defaultValue;
-		ConfMan.setInt(element, value, "smartphone");
+		ConfMan.setInt(element, value, ConfMan.kApplicationDomain);
 	}
 }
 
-void OSystem_WINCE3::loadSmartphoneConfiguration() {
-	loadSmartphoneConfigurationElement("repeatTrigger", _keyRepeatTrigger, 200);
-	loadSmartphoneConfigurationElement("repeatX", _repeatX, 4);
-	loadSmartphoneConfigurationElement("repeatY", _repeatY, 4);
-	loadSmartphoneConfigurationElement("stepX1", _stepX1, 2);
-	loadSmartphoneConfigurationElement("stepX2", _stepX2, 10);
-	loadSmartphoneConfigurationElement("stepX3", _stepX3, 40);
-	loadSmartphoneConfigurationElement("stepY1", _stepY1, 2);
-	loadSmartphoneConfigurationElement("stepY2", _stepY2, 10);
-	loadSmartphoneConfigurationElement("stepY3", _stepY3, 20);
+void OSystem_WINCE3::loadDeviceConfiguration() {
+	loadDeviceConfigurationElement("repeatTrigger", _keyRepeatTrigger, 200);
+	loadDeviceConfigurationElement("repeatX", _repeatX, 4);
+	loadDeviceConfigurationElement("repeatY", _repeatY, 4);
+	loadDeviceConfigurationElement("stepX1", _stepX1, 2);
+	loadDeviceConfigurationElement("stepX2", _stepX2, 10);
+	loadDeviceConfigurationElement("stepX3", _stepX3, 40);
+	loadDeviceConfigurationElement("stepY1", _stepY1, 2);
+	loadDeviceConfigurationElement("stepY2", _stepY2, 10);
+	loadDeviceConfigurationElement("stepY3", _stepY3, 20);
 	ConfMan.flushToDisk();
 }
 
@@ -403,6 +457,7 @@ void OSystem_WINCE3::add_left_click(bool pushed) {
 
 void OSystem_WINCE3::move_cursor_up() {
 	int x,y;
+	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatY)
 		y -= _stepY3;
@@ -420,6 +475,7 @@ void OSystem_WINCE3::move_cursor_up() {
 
 void OSystem_WINCE3::move_cursor_down() {
 	int x,y;
+	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatY)
 		y += _stepY3;
@@ -437,6 +493,7 @@ void OSystem_WINCE3::move_cursor_down() {
 
 void OSystem_WINCE3::move_cursor_left() {
 	int x,y;
+	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatX)
 		x -= _stepX3;
@@ -454,6 +511,7 @@ void OSystem_WINCE3::move_cursor_left() {
 
 void OSystem_WINCE3::move_cursor_right() {
 	int x,y;
+	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatX)
 		x += _stepX3;
@@ -495,12 +553,9 @@ void OSystem_WINCE3::create_toolbar() {
 	PanelKeyboard *keyboard;
 
 	// Add the keyboard
-	if (!_hasSmartphoneResolution) {
-		keyboard = new PanelKeyboard(PANEL_KEYBOARD);
-		_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
-		_toolbarHandler.setVisible(false);
-	}
-
+	keyboard = new PanelKeyboard(PANEL_KEYBOARD);
+	_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
+	_toolbarHandler.setVisible(false);
 }
 
 void OSystem_WINCE3::private_sound_proc(void *param, byte *buf, int len) {
@@ -545,12 +600,8 @@ void OSystem_WINCE3::get_sample_rate() {
 		}
 	}
 	// See if the output frequency is forced by the game
-	if (gameid == "ft" ||
-		gameid == "dig" ||
-		gameid == "comi" ||
-		gameid == "queen" ||
-		strncmp(gameid.c_str(), "sword", 5) == 0 ||
-		strncmp(gameid.c_str(), "sky", 3) == 0)
+	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" ||
+		strncmp(gameid.c_str(), "sword", 5) == 0 ||	strncmp(gameid.c_str(), "sky", 3) == 0)
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
@@ -603,16 +654,18 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 			_toolbarHighDrawn = false;
 			if (enable) {
 				_panelStateForced = true;
-				_saveToolbarState = _toolbarHandler.visible();
+				if (!_toolbarHandler.visible()) swap_panel_visibility();
+				//_saveToolbarState = _toolbarHandler.visible();
 				_saveActiveToolbar = _toolbarHandler.activeName();
 				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 				_toolbarHandler.setVisible(true);
 			}
-			else {
-				_panelStateForced = false;
-				_toolbarHandler.setActive(_saveActiveToolbar);
-				_toolbarHandler.setVisible(_saveToolbarState);
-			}
+			else 
+				if (_panelStateForced) {
+					_panelStateForced = false;
+					_toolbarHandler.setActive(_saveActiveToolbar);
+					//_toolbarHandler.setVisible(_saveToolbarState);
+				}
 			return;
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
@@ -728,7 +781,7 @@ void OSystem_WINCE3::update_game_settings() {
 		Panel *panel;
 		_panelInitialized = true;
 		// Add the main panel
-		panel = new Panel(10, 40);
+		panel = new Panel(0, 32);
 		panel->setBackground(IMAGE_PANEL);
 		// Save
 		panel->add(NAME_ITEM_OPTIONS, new ItemAction(ITEM_OPTIONS, POCKET_ACTION_SAVE));
@@ -736,11 +789,21 @@ void OSystem_WINCE3::update_game_settings() {
 		panel->add(NAME_ITEM_SKIP, new ItemAction(ITEM_SKIP, POCKET_ACTION_SKIP));
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster));
-		// portrait/landscape - screen dependant
+		// bind keys
+		panel->add(NAME_ITEM_BINDKEYS, new ItemAction(ITEM_BINDKEYS, POCKET_ACTION_BINDKEYS));
+		// portrait/landscape - screen dependent
 		// FIXME : will still display the portrait/landscape icon when using a scaler (but will be disabled)
 		if (_screenWidth <= 320 && (isOzone() || !CEDevice::hasDesktopResolution())) {
-			_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
-			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
+			if (ConfMan.hasKey("landscape"))
+				if (ConfMan.get("landscape")[0] > 57) {
+					_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
+					//ConfMan.removeKey("landscape", String::emptyString);
+					ConfMan.setInt("landscape", _orientationLandscape);
+				} else
+					_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
+			else
+				_newOrientation = _orientationLandscape = 0;
+			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation, 2));
 		}
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
@@ -752,13 +815,15 @@ void OSystem_WINCE3::update_game_settings() {
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}
 
-		if (_mode == GFX_NORMAL && ConfMan.hasKey("landscape") && ConfMan.getBool("landscape")) {
+		if (_mode == GFX_NORMAL && ConfMan.hasKey("landscape") && ConfMan.getInt("landscape")) {
 			setGraphicsMode(GFX_NORMAL);
 			hotswapGFXMode();
 		}
 
 		if (_hasSmartphoneResolution)
 			panel->setVisible(false);
+
+		_saveToolbarState = true;
 
 		// Set Smush Force Redraw rate for Full Throttle
 		if (!ConfMan.hasKey("Smush_force_redraw")) {
@@ -774,6 +839,12 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
+
+	if (_isSmartphone && !ConfMan.hasKey("landscape"))
+	{
+		ConfMan.setInt("landscape", 1);
+		ConfMan.flushToDisk();
+	}
 
 	switch (_transactionMode) {
 		case kTransactionActive:
@@ -792,12 +863,16 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	if (w == 320 && h == 200 && !_hasSmartphoneResolution)
 		h = 240; // use the extra 40 pixels height for the toolbar
 
-	if (!_hasSmartphoneResolution) { 
+	if (!_hasSmartphoneResolution)
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
 		else
 			_toolbarHandler.setOffset(400);
-	}
+	else
+		if (h == 240)
+			_toolbarHandler.setOffset(200);
+		else	// 176x220
+			_toolbarHandler.setOffset(0);
 
 	if (w != (uint) _screenWidth || h != (uint) _screenHeight)
 		_scalersChanged = false;
@@ -835,6 +910,23 @@ bool OSystem_WINCE3::update_scalers() {
 			_scalerProc = PocketPCPortrait;
 			_modeFlags = 0;
 		}
+		if ( _orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
+			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible) {
+				_scaleFactorXm = 1;
+				_scaleFactorXd = 1;
+				_scaleFactorYm = 6;
+				_scaleFactorYd = 5;
+				_scalerProc = PocketPCLandscapeAspect;
+				_modeFlags = 0;
+			} else {
+				_scaleFactorXm = 1;
+				_scaleFactorXd = 1;
+				_scaleFactorYm = 1;
+				_scaleFactorYd = 1;
+				_scalerProc = Normal1x;
+				_modeFlags = 0;
+			}
+		}
 		if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 2;
@@ -856,7 +948,7 @@ bool OSystem_WINCE3::update_scalers() {
 	}
 
 //#ifdef WIN32_PLATFORM_WFSP
-	if (_hasSmartphoneResolution) {
+	if (CEDevice::hasSmartphoneResolution()) {
 		if (_screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
 		_scaleFactorXm = 2;
@@ -898,7 +990,15 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	_scaleFactorYm = -1;
 	_scaleFactorYd = -1;
 
-	_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
+	if (ConfMan.hasKey("landscape"))
+		if (ConfMan.get("landscape")[0] > 57) {
+			_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
+			//ConfMan.removeKey("landscape", String::emptyString);
+			ConfMan.setInt("landscape", _orientationLandscape);
+		} else
+			_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
+	else
+		_newOrientation = _orientationLandscape = 0;
 
 	update_scalers();
 
@@ -1004,6 +1104,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 void OSystem_WINCE3::loadGFXMode() {
 	int displayWidth;
 	int displayHeight;
+	unsigned int flags = SDL_FULLSCREEN | SDL_SWSURFACE;
 
 	_fullscreen = true; // forced
 	_forceFull = true;
@@ -1029,12 +1130,15 @@ void OSystem_WINCE3::loadGFXMode() {
 	displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;
 
 	// FIXME
-	if (!(displayWidth > GetSystemMetrics(SM_CXSCREEN))) { // no rotation
+	if (displayWidth <= GetSystemMetrics(SM_CXSCREEN)) { // no rotation
 		displayWidth = GetSystemMetrics(SM_CXSCREEN);
 		displayHeight = GetSystemMetrics(SM_CYSCREEN);
-	}
+	} else if (displayHeight > GetSystemMetrics(SM_CXSCREEN))  // rotating, clip height
+		displayHeight = GetSystemMetrics(SM_CXSCREEN);
+	
+	if (_orientationLandscape == 2) flags |= SDL_FLIPVIDEO;
+	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, flags);
 
-	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, SDL_FULLSCREEN | SDL_SWSURFACE);
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
 		// console, which WON'T WORK now that _hwscreen is hosed.
@@ -1149,9 +1253,11 @@ void OSystem_WINCE3::hotswapGFXMode() {
 		return;
 
 	// Keep around the old _screen & _tmpscreen so we can restore the screen data
-	// after the mode switch.
+	// after the mode switch. (also for the overlay)
 	SDL_Surface *old_screen = _screen;
 	SDL_Surface *old_tmpscreen = _tmpscreen;
+	SDL_Surface *old_overlayscreen = _overlayscreen;
+	SDL_Surface *old_tmpscreen2 = _tmpscreen2;
 
 	// Release the HW screen surface
 	SDL_FreeSurface(_hwscreen);
@@ -1173,10 +1279,16 @@ void OSystem_WINCE3::hotswapGFXMode() {
 	// Restore old screen content
 	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
 	SDL_BlitSurface(old_tmpscreen, NULL, _tmpscreen, NULL);
+	if (_overlayVisible) {
+		SDL_BlitSurface(old_overlayscreen, NULL, _overlayscreen, NULL);
+		SDL_BlitSurface(old_tmpscreen2, NULL, _tmpscreen2, NULL);
+	}
 
 	// Free the old surfaces
 	SDL_FreeSurface(old_screen);
 	SDL_FreeSurface(old_tmpscreen);
+	SDL_FreeSurface(old_overlayscreen);
+	SDL_FreeSurface(old_tmpscreen2);
 
 	// Blit everything to the screen
 	internUpdateScreen();
@@ -1186,8 +1298,10 @@ void OSystem_WINCE3::hotswapGFXMode() {
 }
 
 void OSystem_WINCE3::update_keyboard() {
-
 	// Update the forced keyboard for Monkey Island copy protection
+	if (_monkeyKeyboard && !_isSmartphone)
+		if (!_panelVisible || _toolbarHandler.activeName() != NAME_PANEL_KEYBOARD)
+			swap_panel();
 	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
 		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
 			// Switch back to the normal panel now that the keyboard is not used anymore
@@ -1198,6 +1312,7 @@ void OSystem_WINCE3::update_keyboard() {
 
 void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
+	static bool old_overlayVisible = false;
 	assert(_hwscreen != NULL);
 
 	update_keyboard();
@@ -1238,6 +1353,11 @@ void OSystem_WINCE3::internUpdateScreen() {
 	else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
+	}
+
+	if (old_overlayVisible != _overlayVisible) {
+		old_overlayVisible = _overlayVisible;
+		update_scalers();
 	}
 
 	// Force a full redraw if requested
@@ -1326,6 +1446,9 @@ void OSystem_WINCE3::internUpdateScreen() {
 						dst_y = real2Aspect(dst_y);
 					}
 
+					// clip inside platform screen (landscape,bottom only)
+					if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _platformScreenWidth)
+						dst_h = _platformScreenWidth - dst_y;
 
 					if (!_zoomDown)
 						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
@@ -1358,11 +1481,19 @@ void OSystem_WINCE3::internUpdateScreen() {
 		if (_forceFull) {
 			_dirtyRectList[0].y = 0;
 			_dirtyRectList[0].h = (_adjustAspectRatio ? 240 : (_zoomUp || _zoomDown ? _screenHeight / 2 : _screenHeight)) * _scaleFactorYm / _scaleFactorYd;
+			if (_orientationLandscape)
+			{
+				if (_dirtyRectList[0].h > _platformScreenWidth)
+					_dirtyRectList[0].h = _platformScreenWidth; // clip
+			} else {
+				if (_dirtyRectList[0].h > _platformScreenHeight)
+					_dirtyRectList[0].h = _platformScreenHeight; // clip
+			}
 		}
 	}
 	// Add the toolbar if needed
 	SDL_Rect toolbar_rect[1];
-	if (_toolbarHandler.draw(_toolbarLow, &toolbar_rect[0])) {
+	if (_panelVisible && _toolbarHandler.draw(_toolbarLow, &toolbar_rect[0])) {
 		// It can be drawn, scale it
 		uint32 srcPitch, dstPitch;
 		SDL_Surface *toolbarSurface;
@@ -1386,6 +1517,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 		else
 			toolbarSurface = _toolbarLow;
 
+		drawToolbarMouse(toolbarSurface, true);		// draw toolbar mouse if applicable
+
 		// Apply the appropriate scaler
 		SDL_LockSurface(toolbarSurface);
 		SDL_LockSurface(_hwscreen);
@@ -1403,6 +1536,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 		toolbar_rect[0].h = toolbar_rect[0].h * _scaleFactorYm / _scaleFactorYd;
 
 		SDL_UpdateRects(_hwscreen, 1, toolbar_rect);
+
+		drawToolbarMouse(toolbarSurface, false);	// undraw toolbar mouse
 	}
 
 
@@ -1411,7 +1546,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 	// Finally, blit all our changes to the screen
 	if (_numDirtyRects > 0)
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
-
 
 	_numDirtyRects = 0;
 	_forceFull = false;
@@ -1604,7 +1738,7 @@ void OSystem_WINCE3::internDrawMouse() {
 	byte color;
 	const byte *src = _mouseData;		// Image representing the mouse
 	
-	// clip the mouse rect, and addjust the src pointer accordingly
+	// clip the mouse rect, and adjust the src pointer accordingly
 	if (x < 0) {
 		w += x;
 		src -= x;
@@ -1747,6 +1881,67 @@ void OSystem_WINCE3::undrawMouse() {
 	SDL_UnlockSurface(_overlayVisible ? _overlayscreen : _screen);
 }
 
+void OSystem_WINCE3::drawToolbarMouse(SDL_Surface *surf, bool draw) {
+
+	if (!_mouseData || !_usesEmulatedMouse) return;
+
+	int x = _mouseCurState.x - _mouseHotspotX;
+	int y = _mouseCurState.y - _mouseHotspotY - _toolbarHandler.getOffset();
+	int w = _mouseCurState.w;
+	int h = _mouseCurState.h;
+	byte color;
+	const byte *src = _mouseData;
+
+	// clip
+	if (x < 0) {
+		w += x;
+		src -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		src -= y * _mouseCurState.w;
+		y = 0;
+	}
+	if (w > surf->w - x)
+		w = surf->w - x;
+	if (h > surf->h - y)
+		h = surf->h - y;
+	if (w <= 0 || h <= 0)
+		return;
+
+	if (SDL_LockSurface(surf) == -1)
+		error("SDL_LockSurface failed at internDrawToolbarMouse: %s", SDL_GetError());
+
+	uint16 *bak = _mouseBackupToolbar;	// toolbar surfaces are 16bpp
+	uint16 *dst;
+	dst = (uint16 *)surf->pixels + y * surf->w + x;
+
+	if (draw) {		// blit it
+		while (h > 0) {
+			int width = w;
+			while (width > 0) {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != _mouseKeyColor)	// transparent color
+					*dst = 0xFFFF;
+				dst++;
+				width--;
+			}
+			src += _mouseCurState.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += surf->w - w;
+			h--;
+		}
+	} else {		// restore bg
+		for (int y = 0; y < h; ++y, bak += MAX_MOUSE_W, dst += surf->w)
+			for (int x = 0; x < w; ++x)
+				dst[x] = bak[x];
+	}
+
+	SDL_UnlockSurface(surf);
+}
+
 void OSystem_WINCE3::blitCursor() {
 }
 
@@ -1886,7 +2081,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 	CEDevice::wakeUp();
 
-	if (_isSmartphone)
+	//if (_isSmartphone)
 		currentTime = GetTickCount();
 
 	while(SDL_PollEvent(&ev)) {
@@ -1894,12 +2089,12 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 		case SDL_KEYDOWN:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
-				if (_isSmartphone) {
+				//if (_isSmartphone) {
 					keyEvent = true;
 					_lastKeyPressed = ev.key.keysym.sym;
 					_keyRepeatTime = currentTime;
 					_keyRepeat = 0;
-				}
+				//}
 
 				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, true))
 					return true;
@@ -1917,10 +2112,10 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 		case SDL_KEYUP:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
-				if (_isSmartphone) {
+				//if (_isSmartphone) {
 					keyEvent = true;
 					_lastKeyPressed = 0;
-				}
+				//}
 
 				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, false))
 					return true;
@@ -1951,8 +2146,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 			fillMouseEvent(temp_event, ev.button.x, ev.button.y);
 
-			// Check keyboard tap zone
-			if (temp_event.mouse.y <= 20) {
+			if (!_isSmartphone) {	
 				// Already tap initiated ?
 				if (_tapTime) {
 					int deltaX; 
@@ -1965,12 +2159,16 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 						deltaY = temp_event.mouse.y - _tapY;
 					else
 						deltaY = _tapY - temp_event.mouse.y;
-					if (deltaX <= 5 && deltaY <= 5 && (GetTickCount() - _tapTime < 1000))
-						swap_panel_visibility();
-					_tapTime = 0;
-						
-				}
-				else {
+					if (deltaX <= 5 && deltaY <= 5 && (GetTickCount() - _tapTime < 1000)) {
+						if (temp_event.mouse.y <= 20 && _panelInitialized) {		// panel double tap?
+							swap_panel_visibility();
+						} else {		// simulate right click
+							temp_event.type = EVENT_RBUTTONDOWN;
+							_rbutton = true;
+						}
+					}
+					_tapTime = 0;						
+				} else {
 					_tapTime = GetTickCount();
 					_tapX = temp_event.mouse.x;
 					_tapY = temp_event.mouse.y;
@@ -1982,7 +2180,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					internUpdateScreen();
 				if (_newOrientation != _orientationLandscape && _mode == GFX_NORMAL) {
 					_orientationLandscape = _newOrientation;
-					ConfMan.setBool("landscape", _orientationLandscape);
+					ConfMan.setInt("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
 					setGraphicsMode(GFX_NORMAL);
 					hotswapGFXMode();
@@ -2002,6 +2200,11 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 				temp_event.type = EVENT_RBUTTONUP;
 			else
 				break;
+
+			if (_rbutton) {
+				temp_event.type = EVENT_RBUTTONUP;
+				_rbutton = false;
+			}
 
 			fillMouseEvent(temp_event, ev.button.x, ev.button.y);
 
@@ -2029,8 +2232,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	// Simulate repeated key for Smartphones
 
 	if (!keyEvent) {
-		if (_isSmartphone) {
-
+		//if (_isSmartphone) {
 			if (_lastKeyPressed) {
 				if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
 					_keyRepeatTime = currentTime;
@@ -2038,7 +2240,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					GUI_Actions::Instance()->performMapped(_lastKeyPressed, true);
 				}
 			}
-		}
+		//}
 	}
 
 	return false;
