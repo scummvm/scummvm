@@ -55,12 +55,7 @@ namespace CEGUI {
 		virtual ~ToolbarHandler();
 	private:
 
-		struct IgnoreCaseComparator {
-          int operator()(const String& x, const String& y) const {
-			  return scumm_stricmp(x.c_str(), y.c_str()); }
-        };
-
-		HashMap<String, Toolbar*, Common::IgnoreCase_Hash, IgnoreCaseComparator> _toolbarMap;
+		HashMap<String, Toolbar*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _toolbarMap;
 		String _current;
 		Toolbar *_active;
 		int _offset;

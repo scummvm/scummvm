@@ -48,12 +48,8 @@ namespace CEGUI {
 		virtual void forceRedraw();
 		virtual bool action(int x, int y, bool pushed);
 	private:
-		struct IgnoreCaseComparator {
-          int operator()(const String& x, const String& y) const {
-			  return scumm_stricmp(x.c_str(), y.c_str()); }
-        };
 
-		typedef HashMap<String, PanelItem*, Common::IgnoreCase_Hash , IgnoreCaseComparator> ItemMap;
+		typedef HashMap<String, PanelItem*, Common::IgnoreCase_Hash , Common::IgnoreCase_EqualTo> ItemMap;
 
 		ItemMap _itemsMap;
 		int _interleave;

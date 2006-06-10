@@ -33,10 +33,9 @@ namespace CEGUI {
 
 
 	bool Panel::add(const String &name, const PanelItem *item) {
-		PanelItem *ni;
-		ni = _itemsMap[name] = (PanelItem*)item;
-		ni->move(_currentItem, _y + 10);
-		ni->setPanel(this);
+		_itemsMap[name] = (PanelItem*)item;
+		_itemsMap[name]->move(_currentItem, _y + 10);
+		_itemsMap[name]->setPanel(this);
 		_currentItem += _interleave;
 
 		return true;
