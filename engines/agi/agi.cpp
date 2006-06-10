@@ -523,6 +523,7 @@ void AgiEngine::initialize() {
 	game.hires = (uint8 *) calloc(_WIDTH * 2, _HEIGHT);
 
 	_sprites = new SpritesMan;
+	_text = new TextMan;
 	init_video();
 
 	tick_timer = 0;

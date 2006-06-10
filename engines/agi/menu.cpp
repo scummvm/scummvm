@@ -78,13 +78,13 @@ agi_menu_option *Menu::get_menu_option(int i, int j) {
 }
 
 void Menu::draw_menu_bar() {
-	clear_lines(0, 0, MENU_BG);
-	flush_lines(0, 0);
+	_text->clear_lines(0, 0, MENU_BG);
+	_text->flush_lines(0, 0);
 
 	MenuList::iterator iter;
 	for (iter = menubar.begin(); iter != menubar.end(); ++iter) {	
 		agi_menu *m = *iter;
-		print_text(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
+		_text->print_text(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
 	}
 
 }
@@ -92,8 +92,8 @@ void Menu::draw_menu_bar() {
 void Menu::draw_menu_hilite(int cur_menu) {
 	agi_menu *m = get_menu(cur_menu);
 	debugC(6, kDebugLevelMenu, "[%s]", m->text);
-	print_text(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
-	flush_lines(0, 0);
+	_text->print_text(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
+	_text->flush_lines(0, 0);
 }
 
 /* draw box and pulldowns. */
@@ -107,7 +107,7 @@ void Menu::draw_menu_option(int h_menu) {
 	MenuOptionList::iterator iter;
 	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
 		agi_menu_option* d = *iter;
-		print_text(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
+		_text->print_text(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
 				d->enabled ? MENU_FG : MENU_DISABLED, MENU_BG);
 	}
 }
@@ -116,7 +116,7 @@ void Menu::draw_menu_option_hilite(int h_menu, int v_menu) {
 	agi_menu *m = get_menu(h_menu);
 	agi_menu_option *d = get_menu_option(h_menu, v_menu);
 
-	print_text(d->text, 0, m->wincol + 1, v_menu + 2, m->width + 2,
+	_text->print_text(d->text, 0, m->wincol + 1, v_menu + 2, m->width + 2,
 			MENU_BG, d->enabled ? MENU_FG : MENU_DISABLED);
 }
 
@@ -412,7 +412,7 @@ bool Menu::keyhandler(int key) {
 exit_menu:
 	button_used = 0;
 	show_pic();
-	write_status();
+	_text->write_status();
 
 	setvar(V_key, 0);
 	game.keypress = 0;

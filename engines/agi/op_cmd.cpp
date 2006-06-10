@@ -386,17 +386,17 @@ cmd(close_dialogue) {
 }
 
 cmd(close_window) {
-	close_window();
+	_text->close_window();
 }
 
 cmd(status_line_on) {
 	game.status_line = true;
-	write_status();
+	_text->write_status();
 }
 
 cmd(status_line_off) {
 	game.status_line = false;
-	write_status();
+	_text->write_status();
 }
 
 cmd(show_obj) {
@@ -444,6 +444,7 @@ cmd(save_game) {
 }
 
 cmd(load_game) {
+	assert(1);
 	game.simple_save ? loadgame_simple() : loadgame_dialog();
 }
 
@@ -460,7 +461,7 @@ cmd(trace_info) {				/* do nothing */
 }
 
 cmd(show_mem) {
-	message_box("Enough memory");
+	_text->message_box("Enough memory");
 }
 
 cmd(init_joy) { /* do nothing */ ;
@@ -532,7 +533,7 @@ cmd(parse) {
 	setflag(F_entered_cli, false);
 	setflag(F_said_accepted_input, false);
 
-	dictionary_words(agi_sprintf(game.strings[p0]));
+	dictionary_words(_text->agi_sprintf(game.strings[p0]));
 }
 
 cmd(call) {
@@ -867,7 +868,7 @@ cmd(pause) {
 	const char *b[] = { "Continue", NULL };
 
 	game.clock_enabled = false;
-	selection_box("  Game is paused.  \n\n\n", b);
+	_text->selection_box("  Game is paused.  \n\n\n", b);
 	game.clock_enabled = tmp;
 }
 
@@ -907,7 +908,7 @@ cmd(version) {
 
 	strncpy(q + 1 + ((r - q > 0 ? r - q : 1) / 4), ver_msg, strlen(ver_msg));
 	sprintf(msg, q, maj, min);
-	message_box(msg);
+	_text->message_box(msg);
 }
 
 cmd(configure_screen) {
@@ -934,8 +935,8 @@ cmd(graphics) {
 		game.gfx_mode = true;
 		clear_screen(0);
 		show_pic();
-		write_status();
-		write_prompt();
+		_text->write_status();
+		_text->write_prompt();
 	}
 }
 
@@ -962,7 +963,7 @@ cmd(quit) {
 	if (p0) {
 		game.quit_prog_now = true;
 	} else {
-		if (selection_box
+		if (_text->selection_box
 		    (" Quit the game, or continue? \n\n\n", buttons) == 0) {
 			game.quit_prog_now = true;
 		}
@@ -975,7 +976,7 @@ cmd(restart_game) {
 
 	stop_sound();
 	sel = getflag(F_auto_restart) ? 1 :
-	    selection_box(" Restart game, or continue? \n\n\n", buttons);
+	    _text->selection_box(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
 		game.quit_prog_now = 0xff;
@@ -1036,7 +1037,7 @@ cmd(get_string) {
 
 	if (cur_logic->texts != NULL && cur_logic->num_texts >= tex) {
 		int len = strlen(cur_logic->texts[tex]);
-		print_text(cur_logic->texts[tex], 0, col, row, len, game.color_fg, game.color_bg);
+		_text->print_text(cur_logic->texts[tex], 0, col, row, len, game.color_fg, game.color_bg);
 		get_string(col + len - 1, row, p4, p0);
 
 		/* SGEO: display input char */
@@ -1054,7 +1055,7 @@ cmd(get_num) {
 
 	if (cur_logic->texts != NULL && cur_logic->num_texts >= (p0 - 1)) {
 		int len = strlen(cur_logic->texts[p0 - 1]);
-		print_text(cur_logic->texts[p0 - 1], 0, 0, 22, len, game.color_fg, game.color_bg);
+		_text->print_text(cur_logic->texts[p0 - 1], 0, 0, 22, len, game.color_fg, game.color_bg);
 		get_string(len - 1, 22, 3, MAX_STRINGS);
 
 		/* CM: display input char */
@@ -1067,8 +1068,8 @@ cmd(get_num) {
 
 	_v[p1] = atoi(game.strings[MAX_STRINGS]);
 	debugC(4, kDebugLevelScripts, "[%s] -> %d", game.strings[MAX_STRINGS], _v[p1]);
-	clear_lines(22, 22, game.color_bg);
-	flush_lines(22, 22);
+	_text->clear_lines(22, 22, game.color_bg);
+	_text->flush_lines(22, 22);
 }
 
 cmd(set_cursor_char) {
@@ -1101,12 +1102,12 @@ cmd(set_string) {
 }
 
 cmd(display) {
-	print_text(cur_logic->texts[p2 - 1], p1, 0, p0, 40, game.color_fg, game.color_bg);
+	_text->print_text(cur_logic->texts[p2 - 1], p1, 0, p0, 40, game.color_fg, game.color_bg);
 }
 
 cmd(display_f) {
 	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
-	print_text(cur_logic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, game.color_fg, game.color_bg);
+	_text->print_text(cur_logic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, game.color_fg, game.color_bg);
 }
 
 cmd(clear_text_rect) {
@@ -1149,29 +1150,29 @@ cmd(clear_lines) {
 	/* Residence 44 calls clear.lines(24,0,0), see bug #558423 */
 	l = p1 ? p1 : p0;
 
-	clear_lines(p0, l, p2);
-	flush_lines(p0, l);
+	_text->clear_lines(p0, l, p2);
+	_text->flush_lines(p0, l);
 }
 
 cmd(print) {
 	int n = p0 < 1 ? 1 : p0;
-	print(cur_logic->texts[n - 1], 0, 0, 0);
+	_text->print(cur_logic->texts[n - 1], 0, 0, 0);
 }
 
 cmd(print_f) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
-	print(cur_logic->texts[n - 1], 0, 0, 0);
+	_text->print(cur_logic->texts[n - 1], 0, 0, 0);
 }
 
 cmd(print_at) {
 	int n = p0 < 1 ? 1 : p0;
 	debugC(4, kDebugLevelScripts, "%d %d %d %d", p0, p1, p2, p3);
-	print(cur_logic->texts[n - 1], p1, p2, p3);
+	_text->print(cur_logic->texts[n - 1], p1, p2, p3);
 }
 
 cmd(print_at_v) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
-	print(cur_logic->texts[n - 1], p1, p2, p3);
+	_text->print(cur_logic->texts[n - 1], p1, p2, p3);
 }
 
 cmd(push_script) {

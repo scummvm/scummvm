@@ -412,7 +412,7 @@ int load_game(char *s) {
 		game.pri_table[i] = read_uint8(&f);
 
 	if (game.has_window)
-		close_window();
+		_text->close_window();
 	game.msg_box_ticks = 0;
 	game.block.active = false;
 	/* game.window - fixed by close_window() */
@@ -548,7 +548,7 @@ int load_game(char *s) {
 
 	/* Clear input line */
 	clear_screen(0);
-	write_status();
+	_text->write_status();
 
 	/* Recreate background from saved image stack */
 	clear_image_stack();
@@ -606,7 +606,7 @@ static int select_slot() {
 		char dstr[64];
 		for (i = 0; i < NUM_SLOTS; i++) {
 			sprintf(dstr, "[%-32.32s]", desc[i]);
-			print_text(dstr, 0, hm + 1, vm + 4 + i,
+			_text->print_text(dstr, 0, hm + 1, vm + 4 + i,
 					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
 					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
 
@@ -641,7 +641,7 @@ press:
 	debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
 
 getout:
-	close_window();
+	_text->close_window();
 	return rc;
 }
 
@@ -671,10 +671,10 @@ int savegame_dialog() {
 
 	sprintf(path, "%s/%05X_%s_%02d.sav", _savePath, game.crc, game.id, slot);
 
-	draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	print_text("Select a slot in which you wish to save the game:",
+	_text->draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
+	_text->print_text("Select a slot in which you wish to save the game:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
-	print_text("Press ENTER to select, ESC cancels",
+	_text->print_text("Press ENTER to select, ESC cancels",
 			0, hm + 1, vm + 17, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = select_slot();
@@ -682,9 +682,9 @@ int savegame_dialog() {
 		return err_OK;
 
 	/* Get savegame description */
-	draw_window(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
+	_text->draw_window(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
 			GFX_HEIGHT - vp - 9 * CHAR_LINES);
-	print_text("Enter a description for this game:",
+	_text->print_text("Enter a description for this game:",
 			0, hm + 1, vm + 6, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 	draw_rectangle(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
 			37 * CHAR_COLS, 12 * CHAR_LINES, MSG_BOX_TEXT);
@@ -696,16 +696,16 @@ int savegame_dialog() {
 	do {
 		main_cycle();
 	} while (game.input_mode == INPUT_GETSTRING);
-	close_window();
+	_text->close_window();
 
 	desc = game.strings[MAX_STRINGS];
 	sprintf(dstr, "Are you sure you want to save the game "
 			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, slot);
 
-	rc = selection_box(dstr, buttons);
+	rc = _text->selection_box(dstr, buttons);
 
 	if (rc != 0) {
-		message_box("Game NOT saved.");
+		_text->message_box("Game NOT saved.");
 		return err_OK;
 	}
 
@@ -714,7 +714,7 @@ int savegame_dialog() {
 
 	save_game(path, desc);
 
-	message_box("Game saved.");
+	_text->message_box("Game saved.");
 
 	return err_OK;
 }
@@ -727,14 +727,14 @@ int loadgame_simple() {
 
 	_sprites->erase_both();
 	stop_sound();
-	close_window();
+	_text->close_window();
 
 	if ((rc = load_game(path)) == err_OK) {
-		message_box("Game restored.");
+		_text->message_box("Game restored.");
 		game.exit_all_logics = 1;
 		menu->enable_all();
 	} else {
-		message_box("Error restoring game.");
+		_text->message_box("Error restoring game.");
 	}
 
 	return rc;
@@ -757,27 +757,27 @@ int loadgame_dialog() {
 	_sprites->erase_both();
 	stop_sound();
 
-	draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	print_text("Select a game which you wish to\nrestore:",
+	_text->draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
+	_text->print_text("Select a game which you wish to\nrestore:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
-	print_text("Press ENTER to select, ESC cancels",
+	_text->print_text("Press ENTER to select, ESC cancels",
 			0, hm + 1, vm + 17, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = select_slot();
 
 	if (slot < 0) {
-		message_box("Game NOT restored.");
+		_text->message_box("Game NOT restored.");
 		return err_OK;
 	}
 
 	sprintf(path, "%s/%05X_%s_%02d.sav", _savePath, game.crc, game.id, slot);
 
 	if ((rc = load_game(path)) == err_OK) {
-		message_box("Game restored.");
+		_text->message_box("Game restored.");
 		game.exit_all_logics = 1;
 		menu->enable_all();
 	} else {
-		message_box("Error restoring game.");
+		_text->message_box("Error restoring game.");
 	}
 
 	return rc;

@@ -746,7 +746,7 @@ void SpritesMan::show_obj(int n) {
 	objs_savearea(&s);
 	blit_cel(x1, y1, s.x_size, c);
 	commit_block(x1, y1, x2, y2);
-	message_box(game.views[n].descr);
+	_text->message_box(game.views[n].descr);
 	objs_restorearea(&s);
 	commit_block(x1, y1, x2, y2);
 

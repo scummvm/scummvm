@@ -30,7 +30,9 @@
 
 namespace Agi {
 
-static void print_text2(int l, const char *msg, int foff, int xoff, int yoff,
+TextMan *_text;
+
+void TextMan::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 						int len, int fg, int bg) {
 	int x1, y1;
 	int maxx, minx, ofoff;
@@ -113,7 +115,7 @@ static void print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 
 /* len is in characters, not pixels!!
  */
-static void blit_textbox(const char *p, int y, int x, int len) {
+void TextMan::blit_textbox(const char *p, int y, int x, int len) {
 	/* if x | y = -1, then centre the box */
 	int xoff, yoff, lin, h, w;
 	char *msg, *m;
@@ -164,7 +166,7 @@ static void blit_textbox(const char *p, int y, int x, int len) {
 	do_update();
 }
 
-static void erase_textbox() {
+void TextMan::erase_textbox() {
 	if (!game.window.active) {
 		debugC(3, kDebugLevelText, "no window active");
 		return;
@@ -189,7 +191,7 @@ static void erase_textbox() {
 /**
  * Print text in the AGI engine screen.
  */
-void print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
+void TextMan::print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
 	f *= CHAR_COLS;
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
@@ -201,7 +203,7 @@ void print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
 /**
  * Print text in the AGI engine console.
  */
-void print_text_console(const char *msg, int x, int y, int len, int fg, int bg) {
+void TextMan::print_text_console(const char *msg, int x, int y, int len, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= 10;
 
@@ -213,7 +215,7 @@ void print_text_console(const char *msg, int x, int y, int len, int fg, int bg) 
  * @param str  String to wrap.
  * @param len  Length of line.
  */
-char *word_wrap_string(char *str, int *len) {
+char *TextMan::word_wrap_string(char *str, int *len) {
 	/* If the message has a long word (longer than 31 character) then
 	 * loop in line 239 (for (; *v != ' '; v--, c--);) can wrap
 	 * around 0 and write large number in c. This causes returned
@@ -275,7 +277,7 @@ char *word_wrap_string(char *str, int *len) {
 /**
  * Remove existing window, if any.
  */
-void close_window() {
+void TextMan::close_window() {
 	debugC(4, kDebugLevelText, "close window");
 	_sprites->erase_both();
 	erase_textbox();	/* remove window, if any */
@@ -290,7 +292,7 @@ void close_window() {
  * centered in the screen and waits until a key is pressed.
  * @param p The text to be displayed
  */
-int message_box(const char *s) {
+int TextMan::message_box(const char *s) {
 	int k;
 
 	_sprites->erase_both();
@@ -310,7 +312,7 @@ int message_box(const char *s) {
  * @param p The text to be displayed
  * @param b NULL-terminated list of button labels
  */
-int selection_box(const char *m, const char **b) {
+int TextMan::selection_box(const char *m, const char **b) {
 	int x, y, i, s;
 	int key, active = 0;
 	int rc = -1;
@@ -393,7 +395,7 @@ int selection_box(const char *m, const char **b) {
 /**
  *
  */
-int print(const char *p, int lin, int col, int len) {
+int TextMan::print(const char *p, int lin, int col, int len) {
 	if (p == NULL)
 		return 0;
 
@@ -449,7 +451,7 @@ int print(const char *p, int lin, int col, int len) {
 /**
  *
  */
-static void print_status(const char *message, ...) {
+void TextMan::print_status(const char *message, ...) {
 	char x[42];
 	va_list args;
 
@@ -467,7 +469,7 @@ static void print_status(const char *message, ...) {
 	print_text(x, 0, 0, game.line_status, 40, STATUS_FG, STATUS_BG);
 }
 
-static char *safe_strcat(char *s, const char *t) {
+char *TextMan::safe_strcat(char *s, const char *t) {
 	if (t != NULL)
 		strcat(s, t);
 
@@ -482,7 +484,7 @@ static char *safe_strcat(char *s, const char *t) {
  * @param n  logic number
  */
 #define MAX_LEN 768
-char *agi_sprintf(const char *s) {
+char *TextMan::agi_sprintf(const char *s) {
 	static char y[MAX_LEN];
 	char x[MAX_LEN];
 	char z[16], *p;
@@ -568,7 +570,7 @@ char *agi_sprintf(const char *s) {
 /**
  * Write the status line.
  */
-void write_status() {
+void TextMan::write_status() {
 	char x[64];
 
 	if (debug_.statusline) {
@@ -593,7 +595,7 @@ void write_status() {
 /**
  * Print user input prompt.
  */
-void write_prompt() {
+void TextMan::write_prompt() {
 	int l, fg, bg, pos;
 
 	if (!game.input_enabled || game.input_mode != INPUT_NORMAL)
@@ -622,7 +624,7 @@ void write_prompt() {
  * @param l2  end line
  * @param c   color
  */
-void clear_lines(int l1, int l2, int c) {
+void TextMan::clear_lines(int l1, int l2, int c) {
 	/* do we need to adjust for +8 on topline?
 	 * inc for endline so it matches the correct num
 	 * ie, from 22 to 24 is 3 lines, not 2 lines.
@@ -638,7 +640,7 @@ void clear_lines(int l1, int l2, int c) {
 /**
  *
  */
-void flush_lines(int l1, int l2) {
+void TextMan::flush_lines(int l1, int l2) {
 	l1 *= CHAR_LINES;
 	l2 *= CHAR_LINES;
 	l2 += CHAR_LINES - 1;
@@ -649,7 +651,7 @@ void flush_lines(int l1, int l2) {
 /**
  *
  */
-void draw_window(int x1, int y1, int x2, int y2) {
+void TextMan::draw_window(int x1, int y1, int x2, int y2) {
 	game.window.active = true;
 	game.window.x1 = x1;
 	game.window.y1 = y1;

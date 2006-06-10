@@ -98,8 +98,8 @@ void new_room(int n) {
 
 	game.exit_all_logics = true;
 
-	write_status();
-	write_prompt();
+	_text->write_status();
+	_text->write_prompt();
 }
 
 static void reset_controllers() {
@@ -138,7 +138,7 @@ static void interpret_cycle() {
 	game.view_table[0].direction = game.vars[V_ego_dir];
 
 	if (game.vars[V_score] != old_score || getflag(F_sound_on) != old_sound)
-		write_status();
+		_text->write_status();
 
 	game.vars[V_border_touch_obj] = 0;
 	game.vars[V_border_code] = 0;
@@ -203,7 +203,7 @@ int main_cycle() {
 	update_timer();
 
 	if (game.ver == 0) {
-		message_box("Warning: game CRC not listed, assuming AGI version 2.917.");
+		_text->message_box("Warning: game CRC not listed, assuming AGI version 2.917.");
 		game.ver = -1;
 	}
 
@@ -228,7 +228,7 @@ int main_cycle() {
 
 	if (key == KEY_STATUSLN) {
 		debug_.statusline = !debug_.statusline;
-		write_status();
+		_text->write_status();
 		key = 0;
 	}
 
@@ -332,11 +332,11 @@ static int play_game() {
 		if (getvar(V_time_delay) == 0 ||
 		    (1 + clock_count) % getvar(V_time_delay) == 0) {
 			if (!game.has_prompt && game.input_mode == INPUT_NORMAL) {
-				write_prompt();
+				_text->write_prompt();
 				game.has_prompt = 1;
 			} else
 			    if (game.has_prompt && game.input_mode == INPUT_NONE) {
-				write_prompt();
+				_text->write_prompt();
 				game.has_prompt = 0;
 			}
 

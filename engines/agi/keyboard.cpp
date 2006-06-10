@@ -293,8 +293,8 @@ void handle_keys(int key) {
 		game.has_prompt = 0;
 		game.input_buffer[game.cursor_pos = 0] = 0;
 		debugC(3, kDebugLevelInput, "clear lines");
-		clear_lines(l, l + 1, bg);
-		flush_lines(l, l + 1);
+		_text->clear_lines(l, l + 1, bg);
+		_text->flush_lines(l, l + 1);
 
 		break;
 	case KEY_ESCAPE:

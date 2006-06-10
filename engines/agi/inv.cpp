@@ -57,7 +57,7 @@ static uint8 *intobj = NULL;
 
 static void print_item(int n, int fg, int bg)
 {
-	print_text(object_name(intobj[n]), 0, n % 2 ? 39 - strlen(object_name(intobj[n])) : 1,
+	_text->print_text(object_name(intobj[n]), 0, n % 2 ? 39 - strlen(object_name(intobj[n])) : 1,
 			(n / 2) + 2, 40, fg, bg);
 }
 
@@ -88,7 +88,7 @@ static int show_items() {
 	}
 
 	if (i == 0) {
-		print_text(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
+		_text->print_text(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
 	}
 
 	return i;
@@ -166,7 +166,7 @@ void inventory() {
 	game.color_bg = 15;
 	clear_screen(game.color_bg);
 
-	print_text(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
+	_text->print_text(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
 
 	/* FIXME: doesn't check if objects overflow off screen... */
 
@@ -176,9 +176,9 @@ void inventory() {
 	n = show_items();
 
 	if (getflag(F_status_selects_items)) {
-		print_text(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
+		_text->print_text(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
 	} else {
-		print_text(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
+		_text->print_text(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
 	}
 
 	flush_screen();
@@ -197,12 +197,12 @@ void inventory() {
 		wait_any_key();
 
 	clear_screen(0);
-	write_status();
+	_text->write_status();
 	show_pic();
 	game.color_fg = old_fg;
 	game.color_bg = old_bg;
 	game.has_prompt = 0;
-	flush_lines(game.line_user_input, 24);
+	_text->flush_lines(game.line_user_input, 24);
 }
 
 }                             // End of namespace Agi
