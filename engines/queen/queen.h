@@ -31,6 +31,8 @@ namespace Common {
 
 #if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)
 
+#include "common/endian.h"
+
 FORCEINLINE int16 READ_BE_INT16(const void *ptr) {
 	uint16 result;
 	char dummy[2];
