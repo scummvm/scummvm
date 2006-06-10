@@ -60,3 +60,7 @@
 #ifndef DISABLE_LURE
 	"Lure "
 #endif
+#ifndef DISABLE_AGI
+	"AGI "
+#endif
+

@@ -122,7 +122,9 @@
 
 	#define snprintf					scumm_snprintf
 	#define vsnprintf					scumm_vsnprintf
-
+#else // GCCE and the rest
+	#define snprintf(buf,len,args...)	sprintf(buf,args)
+	#define vsnprintf(buf,len,format,valist)	vsprintf(buf,format,valist)
 #endif
 
 // somehow nobody has this function...
