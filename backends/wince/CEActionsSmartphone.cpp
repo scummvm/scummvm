@@ -52,12 +52,14 @@ const String smartphoneActionNames[] = {
 	"Zone",
 	"FT Cheat",
 	"Bind Keys"
+	"Keyboard",
+	"Rotate"
 };
 
 #ifdef SIMU_SMARTPHONE
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8, 0, VK_RETURN };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8, 0, VK_RETURN, 0, 0 };
 #else
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0, VK_RETURN };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0, VK_RETURN, 0, 0 };
 #endif
 
 void CEActionsSmartphone::init() {
@@ -74,7 +76,7 @@ int CEActionsSmartphone::size() {
 }
 
 String CEActionsSmartphone::domain() {
-	return "smartphone";
+	return ConfMan.kApplicationDomain;
 }
 
 int CEActionsSmartphone::version() {
@@ -108,6 +110,10 @@ void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
 	_action_enabled[SMARTPHONE_ACTION_LEFTCLICK] = true;
 	// Right Click
 	_action_enabled[SMARTPHONE_ACTION_RIGHTCLICK] = true;
+	// Show virtual keyboard
+	_action_enabled[SMARTPHONE_ACTION_KEYBOARD] = true;
+	// Rotate display
+	_action_enabled[SMARTPHONE_ACTION_ROTATE] = true;
 }
 
 void CEActionsSmartphone::initInstanceGame() {
@@ -217,6 +223,12 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 				delete keysDialog;
 				keydialogrunning = false;
 			}
+			return true;
+		case SMARTPHONE_ACTION_KEYBOARD:
+			_CESystem->swap_smartphone_keyboard();
+			return true;
+		case SMARTPHONE_ACTION_ROTATE:
+			_CESystem->smartphone_rotate_display();
 			return true;
 	}
 
