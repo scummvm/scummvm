@@ -70,7 +70,7 @@
 #endif
 
 
-#if defined(_MSC_VER) && !defined(__SYMBIAN32__)
+#if defined(_MSC_VER) && !defined(__SYMBIAN32__) && !defined(_WIN32_WCE)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp _strnicmp
@@ -256,6 +256,8 @@
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
+	#include "backends/ps2/fileio.h"
+
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)
 	#define fflush(a)			ps2_fflush(a)
@@ -319,6 +321,41 @@
 
 	typedef unsigned long int uint32;
 	typedef signed long int int32;
+
+#elif defined(_WIN32_WCE)
+
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
+	#define snprintf _snprintf
+
+	#define SCUMM_LITTLE_ENDIAN
+
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
+
+	#if defined(CHECK_HEAP)
+	#undef CHECK_HEAP
+	#define CHECK_HEAP checkHeap();
+	#endif
+
+	#define FORCEINLINE __forceinline
+	#define NORETURN _declspec(noreturn)
+	#define PLUGIN_EXPORT __declspec(dllexport)
+
+	#if defined(_WIN32_WCE) && _WIN32_WCE < 300
+	#define CDECL __cdecl
+	#define SMALL_SCREEN_DEVICE
+	#endif
+
+	typedef signed char int8_t;
+	typedef signed short int16_t;
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+
+	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
+	typedef signed long int32_t;
+	typedef unsigned long uint32_t;
+	#endif
 
 #else
 
@@ -410,17 +447,6 @@
 #else
 	// 15/16 bit color mode everywhere else...
 	typedef int16 OverlayColor;
-#endif
-
-#ifdef __PLAYSTATION2__
-	// for libmpeg2...
-	typedef uint8				uint8_t;
-	typedef uint32				uint32_t;
-
-	// for those replaced fopen/fread/etc functions
-	typedef unsigned long		uint64;
-	typedef signed long			int64;
-	#include "backends/ps2/fileio.h"
 #endif
 
 
