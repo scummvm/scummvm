@@ -413,30 +413,36 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 	uint i;
 	int value;
 	const char *selfpostfixes[] = {"self.x", "self.y", "self.w", "self.h"};
-	const char *postfixes[] = {".x", ".y", ".w", ".h"};
+	const char *postfixesXYWH[] = {".x", ".y", ".w", ".h"};
+	const char *postfixesRGB[] = {".r", ".g", ".b"};
 	int npostfix = 0;
 	const String prefixedname(prefix + name);
 
-	// Make self.BLAH work
-	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
-		String to(prefixedname);
+	// Make self.BLAH work, but not self.ANYTHING.BLAH
+	if (!strchr(prefixedname.c_str(), '.')) {
+		for (i = 0; i < ARRAYSIZE(postfixesXYWH); i++) {
+			String to(prefixedname);
 
-		to += postfixes[i];
+			to += postfixesXYWH[i];
 
-		_evaluator->setAlias(selfpostfixes[i], to);
-		_evaluator->setVar(to, EVAL_UNDEF_VAR);
+			_evaluator->setAlias(selfpostfixes[i], to);
+			_evaluator->setVar(to, EVAL_UNDEF_VAR);
+		}
 	}
+
+	// Count the number of parameters, so that we know if they're meant to
+	// be XY[WH] or RGB.
+
+	int ntmppostfix = 0;
 
 	for (i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) && level == 0) {
-			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
-			_evaluator->setVar(prefixedname + postfixes[npostfix++], value);
-			start = i + 1;
+			ntmppostfix++;
 		}
+
 		if (str[i] == '(')
 			level++;
-
-		if (str[i] == ')') {
+		else if (str[i] == ')') {
 			if (level == 0) {
 				error("Extra ')' in section: [%s] expression: \"%s\" start is at: %d",
 					  section.c_str(), name.c_str(), start);
@@ -448,6 +454,23 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 	if (level > 0)
 		error("Missing ')' in section: [%s] expression: \"%s\" start is at: %d",
 			  section.c_str(), name.c_str(), start);
+
+	const char **postfixes = (ntmppostfix == 2) ? postfixesRGB : postfixesXYWH;
+
+	// Now do it for real, only this time we already know the parantheses
+	// are balanced.
+
+	for (i = 0; i < str.size(); i++) {
+		if (isspace(str[i]) && level == 0) {
+			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
+			_evaluator->setVar(prefixedname + postfixes[npostfix++], value);
+			start = i + 1;
+		}
+		if (str[i] == '(')
+			level++;
+		else if (str[i] == ')')
+			level--;
+	}
 
 	value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + postfixes[npostfix], start);
 
@@ -466,8 +489,6 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 			_evaluator->getVar(prefixedname + ".x") + _evaluator->getVar(prefixedname + ".w"));
 		_evaluator->setVar(prefixedname + ".y2", 
 			_evaluator->getVar(prefixedname + ".y") + _evaluator->getVar(prefixedname + ".h"));
-	} else if (npostfix == 2) { // Specify shortcuts for R G B
-		setRGBAlias(prefixedname);
 	}
 
 	if (npostfix != 0)
@@ -541,19 +562,6 @@ void Theme::setSpecialAlias(const String &alias, const String &name) {
 		String to(name + postfixes[i]);
 
 		_evaluator->setAlias(from.c_str(), to);
-	}
-}
-
-void Theme::setRGBAlias(const String &name) {
-	const char *frompostfixes[] = {".x", ".y", ".w"};
-	const char *topostfixes[] = {".r", ".g", ".b"};
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(frompostfixes); i++) {
-		String from(name + frompostfixes[i]);
-		String to(name + topostfixes[i]);
-
-		_evaluator->setAlias(to.c_str(), from);
 	}
 }
 

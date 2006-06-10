@@ -195,7 +195,6 @@ public:
 	void processResSection(Common::ConfigFile &config, const String &name, bool skipDefs = false, const String &prefix = "");
 	void processSingleLine(const String &section, const String &prefix, const String &name, const String &str);
 	void setSpecialAlias(const String &alias, const String &name);
-	void setRGBAlias(const String &name);
 
 	bool isThemeLoadingRequired();
 	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
