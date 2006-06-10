@@ -39,7 +39,7 @@ TARGETPATH              \Resource\Apps
 LANG                    SC
 END
 
-SOURCEPATH 	..\uiq2
+SOURCEPATH 	.
 START RESOURCE  ScummVM.rss
 HEADER
 TARGETPATH              \Resource\Apps
