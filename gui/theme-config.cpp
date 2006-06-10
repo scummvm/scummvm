@@ -513,7 +513,7 @@ void Theme::processResSection(Common::ConfigFile &config, const String &name, bo
 		}
 		if (iterk->key == "useWithPrefix") {
 			const char *temp = iterk->value.c_str();
-            const char *pos = strrchr(temp, ' ');
+			const char *pos = strrchr(temp, ' ');
 
 			if (pos == NULL)
 				error("2 arguments required for useWithPrefix keyword");
