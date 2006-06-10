@@ -40,7 +40,7 @@ static int computeCapacity(int len) {
 	// grows a bit).
 	// Finally, we subtract 1 to compensate for the trailing zero byte.
 	len += 16;
-	return (len + 32 - 1) & ~0x1F - 1;
+	return ((len + 32 - 1) & ~0x1F) - 1;
 }
 
 String::String(const char *str, int len, int capacity)
