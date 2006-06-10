@@ -819,7 +819,11 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 
 	while (1) {
 		chr = src[num++];
-		if (_game.heversion >= 80 && (src[num - 1] == '(' && src[num] == 'P' && src[num + 1] == 'U')) {
+		if (_game.heversion >= 80 && src[num - 1] == '(' && (src[num] == 'p' || src[num] == 'P')) {
+			// Filter out the following prefixes in subtitles
+			// (pickup4)
+			// (PU1)
+			// (PU2)
 			while (src[num++] != ')');
 			continue;
 		}
