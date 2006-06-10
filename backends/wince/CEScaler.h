@@ -30,6 +30,7 @@
 #include "graphics/scaler/intern.h"
 
 DECLARE_SCALER(PocketPCPortrait);
+DECLARE_SCALER(PocketPCLandscapeAspect);
 DECLARE_SCALER(PocketPCHalf);
 DECLARE_SCALER(PocketPCHalfZoom);
 //#ifdef WIN32_PLATFORM_WFSP

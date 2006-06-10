@@ -72,6 +72,63 @@ void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 	}
 }
 
+void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+
+#define RB(x) ((x & redblueMasks[maskUsed])<<8)
+#define G(x)  ((x & greenMasks[maskUsed])<<3)
+
+#define P20(x) (((x)>>2)-((x)>>4))
+#define P40(x) (((x)>>1)-((x)>>3))
+#define P60(x) (((x)>>1)+((x)>>3))
+#define P80(x) (((x)>>1)+((x)>>2)+((x)>>4))
+
+#define MAKEPIXEL(rb,g) ((((rb)>>8) & redblueMasks[maskUsed] | ((g)>>3) & greenMasks[maskUsed]))
+
+	int i,j;
+	unsigned int p1;
+	unsigned int p2;
+	uint16 * inbuf;
+	uint16 * outbuf;
+	inbuf=(uint16 *)srcPtr;
+	outbuf=(uint16 *)dstPtr;
+
+	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
+	uint16 dstPitch16 = (uint16)(dstPitch / sizeof(uint16));
+
+	for (i=0; i<((height)/6); i++) {
+        for (j=0; j<width; j++) {
+			p1=*((uint16*)inbuf+j);
+			inbuf+=srcPitch16;
+			*((uint16*)outbuf+j)=p1;
+			outbuf+=dstPitch16;
+			p2=*((uint16*)inbuf+j);
+			inbuf+=srcPitch16;
+			*((uint16*)outbuf+j)=MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  
+			outbuf+=dstPitch16;
+			p1=p2; 
+			p2=*((uint16*)inbuf+j);
+			inbuf+=srcPitch16;
+			*((uint16*)outbuf+j)=MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  
+			outbuf+=dstPitch16;
+			p1=p2;
+			p2=*((uint16*)inbuf+j);
+			inbuf+=srcPitch16;
+			*((uint16*)outbuf+j)=MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  
+			outbuf+=dstPitch16;
+			p1=p2;
+			p2=*((uint16*)inbuf+j);
+			*((uint16*)outbuf+j)=MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  
+			outbuf+=dstPitch16;
+			*((uint16*)outbuf+j)=p2;
+			inbuf=inbuf-srcPitch16*4;   
+			outbuf=outbuf-dstPitch16*5; 
+		}      
+        inbuf=inbuf+srcPitch16*5;
+        outbuf=outbuf+dstPitch16*6;
+	}
+}
+
+
 void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int i;
