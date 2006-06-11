@@ -60,8 +60,8 @@ public:
 	//void removeTab(int tabID);
 
 	/** Set the active tab by specifying a valid tab ID.
-     * setActiveTab changes the value of _firstWidget. This means new Widgets
-	 * are always added to the active tab.
+	 * setActiveTab changes the value of _firstWidget. This means new
+	 * Widgets are always added to the active tab.
 	 */
 	void setActiveTab(int tabID);
 
