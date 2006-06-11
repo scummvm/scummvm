@@ -56,10 +56,6 @@
 #include "args.h"
 #endif
 
-#ifdef __SYMBIAN32__
-#include "gui/Actions.h"
-#endif
-
 
 namespace Base {
 
