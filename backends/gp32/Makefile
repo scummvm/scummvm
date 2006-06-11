@@ -133,7 +133,7 @@ OBJS	+=	backends/gp32/gp32std.o \
 OBJS	+= 	backends/gp32/gp32_main.o \
 			backends/gp32/gp32_launcher.o \
 			backends/gp32/gp32_osys.o \
-			backends/gp32/gp-fs.o
+			backends/gp32/gp32-fs.o
 
 $(FXE): $(BIN)
 					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" $< $@
