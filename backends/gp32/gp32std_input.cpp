@@ -200,7 +200,7 @@ bool gp_pollButtonEvent(GP32BtnEvent *ev) {
 	}
 
 	eventQueue.get(ev);
-	GPDEBUG("Event poll %d %d", ev->type, ev->button);
+//	GPDEBUG("Event poll %d %d", ev->type, ev->button);
 
 	return true;
 }

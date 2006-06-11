@@ -328,7 +328,7 @@ static char usedMemStr[16];
 int gUsedMem = 1024 * 1024;
 
 //#define CLEAN_MEMORY_WITH_0xE7
-//#define CHECK_USED_MEMORY
+#define CHECK_USED_MEMORY
 #define CHECK_NEW_TIME
 
 void *operator new(size_t size) {

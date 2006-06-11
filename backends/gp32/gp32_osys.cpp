@@ -114,6 +114,8 @@ void OSystem_GP32::initSize(uint width, uint height) {
 
 	_overlayWidth = width;
 	_overlayHeight = height;
+//	_overlayWidth = 320;
+//	_overlayHeight = 240;
 
 	// Create the surface that contains the 8 bit game data
 	_gameScreen = new uint8[_screenWidth * _screenHeight];
@@ -345,12 +347,10 @@ void OSystem_GP32::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, 
 }
 
 int16 OSystem_GP32::getOverlayHeight() {
-	//NP("OSys::getOverlayHeight()");
 	return getHeight();
 }
 
 int16 OSystem_GP32::getOverlayWidth() {
-	//NP("OSys::getOverlayWidth()");
 	return getWidth();
 }
 

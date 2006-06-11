@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/gp32/gp32-fs.cpp $
+ * $Id: gp32-fs.cpp 23022 2006-06-11 10:08:53Z wonst719 $
  *
  */
 

@@ -64,26 +64,23 @@ void writeConfigVars() {
 
 void readConfigVars() {
 	Common::File file;
-	if (!file.exists("gp:\\gpetc\\scummvm.cfg")) {
+	if (!file.open("gp:\\gpetc\\scummvm.cfg", Common::File::kFileReadMode)) {
 		currentSetting[0] = 2;
 		currentSetting[1] = 5;
 		currentSetting[2] = 1;
 		currentSetting[3] = 1;
 		writeConfigVars();
-	} else {
-		if (!file.open("gp:\\gpetc\\scummvm.cfg", Common::File::kFileReadMode)) {
-			return;
-		}
-		currentSetting[0] = file.readByte();
-		currentSetting[1] = file.readByte();
-		currentSetting[2] = file.readByte();
-		currentSetting[3] = file.readByte();
-		g_vars.cpuSpeed = cpuSpeedTable[currentSetting[0]];
-		g_vars.gammaRamp = gammaTable[currentSetting[1]];
-		g_vars.fmQuality = currentSetting[2];
-		g_vars.sampleRate = sampleTable[currentSetting[3]];
-		file.close();
+		return;
 	}
+	currentSetting[0] = file.readByte();
+	currentSetting[1] = file.readByte();
+	currentSetting[2] = file.readByte();
+	currentSetting[3] = file.readByte();
+	g_vars.cpuSpeed = cpuSpeedTable[currentSetting[0]];
+	g_vars.gammaRamp = gammaTable[currentSetting[1]];
+	g_vars.fmQuality = currentSetting[2];
+	g_vars.sampleRate = sampleTable[currentSetting[3]];
+	file.close();
 }
 
 void configMenu() {
@@ -137,12 +134,12 @@ void configMenu() {
 				currentSelect++;
 		}
 		if (gpd_getButtonDown(nKeyUD, GPC_VK_LEFT)) {
-			if (currentSelect <= 3)
+			if (currentSelect <= 4)
 				if (currentSetting[currentSelect] > 0)
 					currentSetting[currentSelect]--;
 		}
 		if (gpd_getButtonDown(nKeyUD, GPC_VK_RIGHT)) {
-			if (currentSelect <= 3)
+			if (currentSelect <= 4)
 				if (currentSetting[currentSelect] < maxTable[currentSelect] - 1)
 					currentSetting[currentSelect]++;
 		}
