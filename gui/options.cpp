@@ -58,6 +58,7 @@ namespace GUI {
 // - aspect ratio, language, platform, debug mode/level, cd drive, joystick, multi midi, native mt32
 
 enum {
+	kMidiGainChanged		= 'mgch',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
 	kSubtitleToggle			= 'sttg',
@@ -199,6 +200,13 @@ void OptionsDialog::open() {
 			_soundFont->setLabel("None");
 		else
 			_soundFont->setLabel(soundFont);
+
+		// MIDI gain setting
+		char buf[10];
+
+		_midiGainSlider->setValue(ConfMan.getInt("midi_gain", _domain));
+		sprintf(buf, "%.2f", (double)_midiGainSlider->getValue() / 100.0);
+		_midiGainLabel->setLabel(buf);
 	}
 
 	// Volume options
@@ -304,6 +312,7 @@ void OptionsDialog::close() {
 				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
 				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
 				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
+				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
 				String soundFont(_soundFont->getLabel());
 				if (!soundFont.empty() && (soundFont != "None"))
@@ -312,6 +321,7 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("multi_midi", _domain);
 				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("enable_gs", _domain);
+				ConfMan.removeKey("midi_gain", _domain);
 				ConfMan.removeKey("soundfont", _domain);
 			}
 		}
@@ -360,7 +370,14 @@ void OptionsDialog::close() {
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	char buf[10];
+
 	switch (cmd) {
+	case kMidiGainChanged:
+		sprintf(buf, "%.2f", (double)_midiGainSlider->getValue() / 100.0);
+		_midiGainLabel->setLabel(buf);
+		_midiGainLabel->draw();
+		break;
 	case kMusicVolumeChanged:
 		_musicVolumeLabel->setValue(_musicVolumeSlider->getValue());
 		_musicVolumeLabel->draw();
@@ -423,6 +440,9 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 	_multiMidiCheckbox->setEnabled(enabled);
 	_mt32Checkbox->setEnabled(enabled);
 	_enableGSCheckbox->setEnabled(enabled);
+	_midiGainDesc->setEnabled(enabled);
+	_midiGainSlider->setEnabled(enabled);
+	_midiGainLabel->setEnabled(enabled);
 }
 
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
@@ -517,6 +537,13 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
 
 	// GS Extensions setting
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", "Enable Roland GS Mode", 0, 0);
+
+	// MIDI gain setting (FluidSynth uses this)
+	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", "MIDI gain:");
+	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", kMidiGainChanged);
+	_midiGainSlider->setMinValue(0);
+	_midiGainSlider->setMaxValue(1000);
+	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
 
 	_enableMIDISettings = true;
 }

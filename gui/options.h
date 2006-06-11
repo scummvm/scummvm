@@ -99,6 +99,9 @@ private:
 	CheckboxWidget *_multiMidiCheckbox;
 	CheckboxWidget *_mt32Checkbox;
 	CheckboxWidget *_enableGSCheckbox;
+	StaticTextWidget *_midiGainDesc;
+	SliderWidget *_midiGainSlider;
+	StaticTextWidget *_midiGainLabel;
 	
 	//
 	// Subtitle controls
