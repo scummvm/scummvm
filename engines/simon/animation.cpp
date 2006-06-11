@@ -92,8 +92,12 @@ bool MoviePlayer::load(const char *filename) {
 			char shortName[20];
 			memset(shortName, 0, sizeof(shortName));
 			memcpy(shortName, filename, 6);
-			sprintf(shortName, "%s~1.dxa", shortName);
 	
+			sprintf(shortName, "%s~1.dxa", shortName);
+
+			memset(baseName, 0, sizeof(baseName));
+			memcpy(baseName, shortName, 8);
+
 			if (_fd.open(shortName) == false) {
 				error("Failed to load video file %s or %s", videoName, shortName);
 			} else {
