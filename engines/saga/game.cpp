@@ -45,7 +45,7 @@ static DetectedGameList GAME_detectGames(const FSList &fslist);
 
 static const PlainGameDescriptor saga_games[] = {
 	{"ite", "Inherit the Earth: Quest for the Orb"},
-	{"ihnm", "I Have No Mouth and I Must Scream"},
+	//{"ihnm", "I Have No Mouth and I Must Scream"},
 	{0, 0}
 };
 
