@@ -147,6 +147,7 @@ protected:
 	KeysDialog *_keysDialog;
 #endif
 	StaticTextWidget *_savePath;
+	StaticTextWidget *_themePath;
 	StaticTextWidget *_extraPath;
 };
 

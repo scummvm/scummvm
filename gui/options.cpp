@@ -65,6 +65,7 @@ enum {
 	kSpeechVolumeChanged	= 'vcvc',
 	kChooseSoundFontCmd		= 'chsf',
 	kChooseSaveDirCmd		= 'chos',
+	kChooseThemeDirCmd		= 'chth',
 	kChooseExtraDirCmd		= 'chex'
 };
 
@@ -644,6 +645,9 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "globaloptions_savebutton", "Save Path: ", kChooseSaveDirCmd, 0);
 	_savePath = new StaticTextWidget(tab, "globaloptions_savepath", "/foo/bar");
 
+	new ButtonWidget(tab, "globaloptions_themebutton", "Theme Path:", kChooseThemeDirCmd, 0);
+	_themePath = new StaticTextWidget(tab, "globaloptions_themepath", "None");
+
 	new ButtonWidget(tab, "globaloptions_extrabutton", "Extra Path:", kChooseExtraDirCmd, 0);
 	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None");
 #endif
@@ -678,16 +682,23 @@ void GlobalOptionsDialog::open() {
 
 #if !( defined(__DC__) || defined(__GP32__) || defined(__PLAYSTATION2__) )
 	// Set _savePath to the current save path
-	Common::String dir(ConfMan.get("savepath", _domain));
+	Common::String savePath(ConfMan.get("savepath", _domain));
+	Common::String themePath(ConfMan.get("themepath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
-	if (!dir.empty()) {
-		_savePath->setLabel(dir);
+	if (!savePath.empty()) {
+		_savePath->setLabel(savePath);
 	} else {
 		// Default to the current directory...
 		char buf[MAXPATHLEN];
 		getcwd(buf, sizeof(buf));
 		_savePath->setLabel(buf);
+	}
+
+	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
+		_themePath->setLabel("None");
+	} else {
+		_themePath->setLabel(themePath);
 	}
 
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
@@ -702,6 +713,10 @@ void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		// Savepath
 		ConfMan.set("savepath", _savePath->getLabel(), _domain);
+
+		String themePath(_themePath->getLabel());
+		if (!themePath.empty() && (themePath != "None"))
+			ConfMan.set("themepath", themePath, _domain);
 
 		String extraPath(_extraPath->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
@@ -720,6 +735,16 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			_savePath->setLabel(dir.path());
 			draw();
 			// TODO - we should check if the directory is writeable before accepting it
+		}
+		break;
+	}
+	case kChooseThemeDirCmd: {
+		BrowserDialog browser("Select directory for GUI themes", true);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			FilesystemNode dir(browser.getResult());
+			_themePath->setLabel(dir.path());
+			draw();
 		}
 		break;
 	}
