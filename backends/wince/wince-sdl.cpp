@@ -197,7 +197,12 @@ void drawError(char *error) {
 
 void OSystem_WINCE3::initBackend()
 {
-	//GUI::Actions::init();
+	// Initialize global key mapping
+	GUI::Actions::init();
+	GUI_Actions::Instance()->initInstanceMain(this);
+	GUI_Actions::Instance()->loadMapping();
+
+	loadDeviceConfiguration();
 }
 
 int OSystem_WINCE3::getScreenWidth() {
@@ -252,14 +257,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	}
 	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
 	create_toolbar();
-	// Initialize global key mapping for Smartphones
-	GUI::Actions::init();
-	GUI_Actions::Instance()->initInstanceMain(this);
-	GUI_Actions::Instance()->loadMapping();
 
-	//if (_isSmartphone) {
-		loadDeviceConfiguration();
-	//}
 
 	// Mouse backup (temporary code)
 	_mouseBackupOld = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
