@@ -1589,7 +1589,7 @@ void SimonEngine::waitForSync(uint a) {
 	_rightButtonDown = false;
 	while (_vgaWaitFor != 0) {
 		if (_rightButtonDown) {
-			if (_vgaWaitFor == 200 && !getBitFlag(14)) {
+			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
 				skipSpeech();
 				break;
 			}
