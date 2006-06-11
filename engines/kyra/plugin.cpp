@@ -84,6 +84,7 @@ const GameSettings kyra1_games[] = {
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
+#if 0
 const GameSettings kyra2_games[] = {
 	{ "kyra2", "The Hand of Fate",				GI_KYRA2, GF_ENGLISH,	// CD version? Floppy version?
 										"28cbad1c5bf06b2d3825ae57d760d032", "FATE.PAK" },
@@ -95,12 +96,13 @@ const GameSettings kyra3_games[] = {
 	GI_KYRA3, GF_LNGUNK, "3833ff312757b8e6147f464cca0a6587", "ONETIME.PAK" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
+#endif
 
 // Keep list of different supported games
 const PlainGameDescriptor kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
-	{ "kyra2", "The Hand of Fate" },
-	{ "kyra3", "The Legend of Kyrandia: Book Three" },
+	//{ "kyra2", "The Hand of Fate" },
+	//{ "kyra3", "The Legend of Kyrandia: Book Three" },
 	{ 0, 0 }
 };
 
@@ -192,6 +194,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		if (isFound)
 			break;
 
+#if 0
 		for (g = kyra2_games; g->gameid; g++) {
 			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
 				isFound = true;
@@ -207,6 +210,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 
 		if (isFound)
 			break;
+#endif
 	}
 
 	if (file == fslist.end())
@@ -230,6 +234,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 			}
 		}
 
+#if 0
 		for (g = kyra2_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
 				DetectedGame dg(*g, convertKyraLang(g->features), convertKyraPlatform(g->features));
@@ -247,6 +252,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 				detectedGames.push_back(dg);
 			}
 		}
+#endif
 
 		if (detectedGames.empty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
@@ -267,10 +273,12 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 
 	if (!scumm_stricmp("kyra1", gameid)) {
 		*engine = new KyraEngine_v1(syst);
+#if 0
 	} else if (!scumm_stricmp("kyra2", gameid)) {
 		*engine = new KyraEngine_v2(syst);
 	} else if (!scumm_stricmp("kyra3", gameid)) {
 		*engine = new KyraEngine_v3(syst);
+#endif
 	} else
 		error("Kyra engine created with invalid gameid.");
 	
