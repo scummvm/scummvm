@@ -115,6 +115,9 @@ ScummVM Team
   -----------------
      All active team members
 
+  Documentation
+  -------------
+     Joachim Eberhard     
   Retired Team Members
   --------------------
      Tore Anderson         - Former Debian GNU/Linux maintainer
@@ -206,7 +209,6 @@ Special thanks to
    Patrick Combet   - For the original Gobliiins ADL player
    Ivan Dubrov      - For contributing the initial version of the Gobliiins
                       engine
-   Joachim Eberhard - For numerous contributions to documentation
    Jezar            - For his freeverb filter implementation
    Jim Leiterman    - Various info on his FM-TOWNS/Marty SCUMM ports
    lloyd            - For deep tech details about C64 Zak & MM
