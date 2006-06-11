@@ -137,6 +137,8 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 }
 
 void TabWidget::handleScreenChanged() {
+	Widget::handleScreenChanged();
+
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		Widget *w = _tabs[i].firstWidget;
 		while (w) {
@@ -144,12 +146,24 @@ void TabWidget::handleScreenChanged() {
 			w = w->next();
 		}
 	}
+
 	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		_tabHeight = kBigTabHeight;
 	} else {
 		_tabHeight = kTabHeight;
 	}
-	Widget::handleScreenChanged();
+
+	_tabWidth = 40;
+
+	for (uint i = 0; i < _tabs.size(); ++i) {
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * kTabPadding;
+		if (_tabWidth < newWidth)
+			_tabWidth = newWidth;
+	}
+
+	int maxWidth = (_w - kTabLeftOffset) / _tabs.size() - kTabLeftOffset;
+	if (_tabWidth > maxWidth)
+		_tabWidth = maxWidth;
 }
 
 void TabWidget::drawWidget(bool hilite) {
