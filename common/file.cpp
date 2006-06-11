@@ -249,7 +249,9 @@ bool File::open(const String &filename, AccessMode mode) {
 				if (CFURLGetFileSystemRepresentation(fileUrl, false, (UInt8 *)buf, 256)) {
 					_handle = fopen((char *)buf, modeStr);
 				}
+				CFRelease(fileUrl);
 			}
+			CFRelease(cfFileName);
 		}
 #endif
 

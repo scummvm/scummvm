@@ -326,11 +326,10 @@ extern unzFile ZEXPORT unzOpen (const char *path)
 
 	int err=UNZ_OK;
 
-    if (unz_copyright[0]!=' ')
-        return NULL;
-
-	if (!us->file.open(path))
+	if (!us->file.open(path)) {
+		delete us;
 		return NULL;
+	}
 
 	central_pos = unzlocal_SearchCentralDir(us->file);
 	if (central_pos==0)
@@ -361,8 +360,8 @@ extern unzFile ZEXPORT unzOpen (const char *path)
 		err=UNZ_ERRNO;
 
 	if ((number_entry_CD!=us->gi.number_entry) ||
-		(number_disk_with_CD!=0) ||
-		(number_disk!=0))
+	    (number_disk_with_CD!=0) ||
+	    (number_disk!=0))
 		err=UNZ_BADZIPFILE;
 
 	/* size of the central directory */
@@ -379,11 +378,10 @@ extern unzFile ZEXPORT unzOpen (const char *path)
 		err=UNZ_ERRNO;
 
 	if ((central_pos<us->offset_central_dir+us->size_central_dir) &&
-		(err==UNZ_OK))
+	    (err==UNZ_OK))
 		err=UNZ_BADZIPFILE;
 
-	if (err!=UNZ_OK)
-	{
+	if (err!=UNZ_OK) {
 		us->file.close();
 		delete us;
 		return NULL;
@@ -411,8 +409,8 @@ extern int ZEXPORT unzClose (unzFile file)
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;
 
-    if (s->pfile_in_zip_read!=NULL)
-        unzCloseCurrentFile(file);
+	if (s->pfile_in_zip_read!=NULL)
+		unzCloseCurrentFile(file);
 
 	s->file.close();
 	delete s;
