@@ -1,0 +1,633 @@
+# Microsoft eMbedded Visual Tools Project File - Name="kyra" - Package Owner=<4>
+# Microsoft eMbedded Visual Tools Generated Build File, Format Version 6.02
+# ** DO NOT EDIT **
+
+# TARGTYPE "Win32 (WCE ARM) Static Library" 0x8504
+
+CFG=kyra - Win32 (WCE ARM) Debug
+!MESSAGE This is not a valid makefile. To build this project using NMAKE,
+!MESSAGE use the Export Makefile command and run
+!MESSAGE 
+!MESSAGE NMAKE /f "kyra.vcn".
+!MESSAGE 
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "kyra.vcn" CFG="kyra - Win32 (WCE ARM) Debug"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "kyra - Win32 (WCE ARM) Release" (based on "Win32 (WCE ARM) Static Library")
+!MESSAGE "kyra - Win32 (WCE ARM) Debug" (based on "Win32 (WCE ARM) Static Library")
+!MESSAGE 
+
+# Begin Project
+# PROP AllowPerConfigDependencies 0
+# PROP Scc_ProjName ""
+# PROP Scc_LocalPath ""
+# PROP ATL_Project 2
+CPP=clarm.exe
+
+!IF  "$(CFG)" == "kyra - Win32 (WCE ARM) Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "ARMRel"
+# PROP BASE Intermediate_Dir "ARMRel"
+# PROP BASE CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "ARMRel"
+# PROP Intermediate_Dir "ARMRel"
+# PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../engines" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "kyra - Win32 (WCE ARM) Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "ARMDbg"
+# PROP BASE Intermediate_Dir "ARMDbg"
+# PROP BASE CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "ARMDbg"
+# PROP Intermediate_Dir "ARMDbg"
+# PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ENDIF 
+
+# Begin Target
+
+# Name "kyra - Win32 (WCE ARM) Release"
+# Name "kyra - Win32 (WCE ARM) Debug"
+# Begin Group "Source Files"
+
+# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\animator.cpp
+DEP_CPP_ANIMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra.h"\
+	"..\..\..\engines\kyra\screen.h"\
+	"..\..\..\engines\kyra\sprites.h"\
+	
+NODEP_CPP_ANIMA=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\animator.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\debugger.cpp
+NODEP_CPP_DEBUG=\
+	"..\..\..\engines\kyra\common\config-manager.h"\
+	"..\..\..\engines\kyra\common\debugger.cpp"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\kyra\debugger.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\debugger.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\gui.cpp
+DEP_CPP_GUI_C=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra.h"\
+	"..\..\..\engines\kyra\screen.h"\
+	"..\..\..\engines\kyra\script.h"\
+	"..\..\..\engines\kyra\text.h"\
+	
+NODEP_CPP_GUI_C=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\items.cpp
+DEP_CPP_ITEMS=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra.h"\
+	"..\..\..\engines\kyra\resource.h"\
+	"..\..\..\engines\kyra\screen.h"\
+	"..\..\..\engines\kyra\seqplayer.h"\
+	"..\..\..\engines\kyra\sound.h"\
+	"..\..\..\engines\kyra\sprites.h"\
+	"..\..\..\engines\kyra\text.h"\
+	"..\..\..\engines\kyra\wsamovie.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_ITEMS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\kyra.cpp
+DEP_CPP_KYRA_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\kyra\animator.h"\
+	"..\..\..\engines\kyra\debugger.h"\
+	"..\..\..\engines\kyra\kyra.h"\
+	"..\..\..\engines\kyra\resource.h"\
+	"..\..\..\engines\kyra\screen.h"\
+	"..\..\..\engines\kyra\script.h"\
+	"..\..\..\engines\kyra\seqplayer.h"\
+	"..\..\..\engines\kyra\sound.h"\
+	"..\..\..\engines\kyra\sprites.h"\
+	"..\..\..\engines\kyra\text.h"\
+	"..\..\..\engines\kyra\wsamovie.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_KYRA_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\kyra.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\kyra3.cpp
+DEP_CPP_KYRA3=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\kyra\kyra.h"\
+	"..\..\..\engines\kyra\resource.h"\
+	"..\..\..\engines\kyra\screen.h"\
+	"..\..\..\engines\kyra\sound.h"\
+	"..\..\..\engines\kyra\text.h"\
+	"..\..\..\engines\kyra\vqa.h"\
+	"..\..\..\engines\kyra\wsamovie.h"\
+	"..\..\..\graphics\cursorman.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_KYRA3=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\plugin.cpp
+NODEP_CPP_PLUGI=\
+	"..\..\..\engines\kyra\backends\fs\fs.h"\
+	"..\..\..\engines\kyra\base\plugins.h"\
+	"..\..\..\engines\kyra\common\config-manager.h"\
+	"..\..\..\engines\kyra\common\file.h"\
+	"..\..\..\engines\kyra\common\md5.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\resource.cpp
+NODEP_CPP_RESOU=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\file.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\script.h"\
+	"..\..\..\engines\kyra\kyra\wsamovie.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\saveload.cpp
+DEP_CPP_SAVEL=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra.h"\
+	"..\..\..\engines\kyra\resource.h"\
+	"..\..\..\engines\kyra\screen.h"\
+	
+NODEP_CPP_SAVEL=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\scene.cpp
+NODEP_CPP_SCENE=\
+	"..\..\..\engines\kyra\common\savefile.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\script.h"\
+	"..\..\..\engines\kyra\kyra\seqplayer.h"\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\kyra\sprites.h"\
+	"..\..\..\engines\kyra\kyra\text.h"\
+	"..\..\..\engines\kyra\kyra\wsamovie.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\screen.cpp
+NODEP_CPP_SCREE=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\graphics\cursorman.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\screen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\script.cpp
+NODEP_CPP_SCRIP=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\stream.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\common\util.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\script.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\script.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\script_v1.cpp
+NODEP_CPP_SCRIPT=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\script.h"\
+	"..\..\..\engines\kyra\kyra\sprites.h"\
+	"..\..\..\engines\kyra\kyra\text.h"\
+	"..\..\..\engines\kyra\kyra\wsamovie.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\seqplayer.cpp
+NODEP_CPP_SEQPL=\
+	"..\..\..\engines\kyra\base\engine.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\seqplayer.h"\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\kyra\text.h"\
+	"..\..\..\engines\kyra\kyra\wsamovie.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\seqplayer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sequences_v1.cpp
+NODEP_CPP_SEQUE=\
+	"..\..\..\engines\kyra\common\savefile.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\seqplayer.h"\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\kyra\sprites.h"\
+	"..\..\..\engines\kyra\kyra\text.h"\
+	"..\..\..\engines\kyra\kyra\wsamovie.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sound.cpp
+NODEP_CPP_SOUND=\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\sound\audiostream.h"\
+	"..\..\..\engines\kyra\sound\flac.h"\
+	"..\..\..\engines\kyra\sound\mixer.h"\
+	"..\..\..\engines\kyra\sound\mp3.h"\
+	"..\..\..\engines\kyra\sound\voc.h"\
+	"..\..\..\engines\kyra\sound\vorbis.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sound_adlib.cpp
+NODEP_CPP_SOUND_=\
+	"..\..\..\engines\kyra\common\mutex.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\common\timer.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\sound\audiostream.h"\
+	"..\..\..\engines\kyra\sound\fmopl.h"\
+	"..\..\..\engines\kyra\sound\mixer.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sound_digital.cpp
+NODEP_CPP_SOUND_D=\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\sound\audiostream.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sprites.cpp
+NODEP_CPP_SPRIT=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\stream.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\common\util.h"\
+	"..\..\..\engines\kyra\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\sprites.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\sprites.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\staticres.cpp
+NODEP_CPP_STATI=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\resource.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\text.cpp
+NODEP_CPP_TEXT_=\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\sprites.h"\
+	"..\..\..\engines\kyra\kyra\text.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\text.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\timer.cpp
+NODEP_CPP_TIMER=\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\animator.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\vqa.cpp
+NODEP_CPP_VQA_C=\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\common\system.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\sound.h"\
+	"..\..\..\engines\kyra\kyra\vqa.h"\
+	"..\..\..\engines\kyra\sound\audiostream.h"\
+	"..\..\..\engines\kyra\sound\mixer.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\vqa.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\wsamovie.cpp
+NODEP_CPP_WSAMO=\
+	"..\..\..\engines\kyra\common\endian.h"\
+	"..\..\..\engines\kyra\common\stdafx.h"\
+	"..\..\..\engines\kyra\kyra\kyra.h"\
+	"..\..\..\engines\kyra\kyra\screen.h"\
+	"..\..\..\engines\kyra\kyra\wsamovie.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\kyra\wsamovie.h
+# End Source File
+# End Group
+# End Target
+# End Project

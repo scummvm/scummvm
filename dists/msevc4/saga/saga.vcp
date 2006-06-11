@@ -2,6 +2,7 @@
 # Microsoft eMbedded Visual Tools Generated Build File, Format Version 6.02
 # ** DO NOT EDIT **
 
+# TARGTYPE "Win32 (WCE ARM) Static Library" 0x8504
 # TARGTYPE "Win32 (WCE ARMV4) Static Library" 0xa304
 # TARGTYPE "Win32 (WCE emulator) Static Library" 0xa604
 
@@ -22,6 +23,7 @@ CFG=saga - Win32 (WCE emulator) Debug
 !MESSAGE "saga - Win32 (WCE emulator) Debug" (based on "Win32 (WCE emulator) Static Library")
 !MESSAGE "saga - Win32 (WCE ARMV4) Release" (based on "Win32 (WCE ARMV4) Static Library")
 !MESSAGE "saga - Win32 (WCE ARMV4) Debug" (based on "Win32 (WCE ARMV4) Static Library")
+!MESSAGE "saga - Win32 (WCE ARM) Release" (based on "Win32 (WCE ARM) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -47,8 +49,8 @@ CFG=saga - Win32 (WCE emulator) Debug
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2  /c
-# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -73,8 +75,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF  /c
-# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -99,8 +101,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT)  /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "DISABLE_KYRA" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT)  /c
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "DISABLE_KYRA" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -125,8 +127,34 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DISABLE_SWORD1" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug)  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DISABLE_SWORD1" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "ARMRel"
+# PROP BASE Intermediate_Dir "ARMRel"
+# PROP BASE CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "ARMRel"
+# PROP Intermediate_Dir "ARMRel"
+# PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Target_Dir ""
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../engines" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -142,80 +170,28 @@ BSC32=bscmake.exe
 # Name "saga - Win32 (WCE emulator) Debug"
 # Name "saga - Win32 (WCE ARMV4) Release"
 # Name "saga - Win32 (WCE ARMV4) Debug"
+# Name "saga - Win32 (WCE ARM) Release"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\saga\actor.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_ACTOR=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_ACTOR=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\actor.cpp
 DEP_CPP_ACTOR=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
@@ -225,278 +201,439 @@ DEP_CPP_ACTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_ACTOR=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ACTOR=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\actor.h
+SOURCE=..\..\..\engines\saga\actor.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\animation.cpp
+SOURCE=..\..\..\engines\saga\animation.cpp
+DEP_CPP_ANIMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\surface.h"\
+	
+NODEP_CPP_ANIMA=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
 
-NODEP_CPP_ANIMA=\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_ANIMA=\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\animation.h
+SOURCE=..\..\..\engines\saga\animation.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\console.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_CONSO=\
-	"..\..\..\saga\common\debugger.cpp"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_CONSO=\
-	"..\..\..\saga\common\debugger.cpp"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\console.cpp
 DEP_CPP_CONSO=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\debugger.cpp"\
 	"..\..\..\common\debugger.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\console.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\theme.h"\
+	"..\..\..\gui\widget.h"\
+	
+NODEP_CPP_CONSO=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\console.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\events.cpp
+DEP_CPP_EVENT=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\palanim.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\sound\audiocd.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_EVENT=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\events.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\font.cpp
+DEP_CPP_FONT_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\surface.h"\
+	
+NODEP_CPP_FONT_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\font.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\font_map.cpp
+DEP_CPP_FONT_M=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\graphics\surface.h"\
+	
+NODEP_CPP_FONT_M=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\game.cpp
+DEP_CPP_GAME_=\
+	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\game.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\md5.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.cpp"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\graphics\surface.h"\
+	
+NODEP_CPP_GAME_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\saga\gfx.cpp
+DEP_CPP_GFX_C=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
@@ -511,754 +648,58 @@ DEP_CPP_CONSO=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\graphics\font.h"\
-	"..\..\..\graphics\fontman.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\cursorman.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\gui\console.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\object.h"\
-	"..\..\..\gui\widget.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_CONSO=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_CONSO=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.cpp"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stack.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\font.h"\
-	"..\..\..\graphics\fontman.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\gui\console.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\object.h"\
-	"..\..\..\gui\widget.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_CONSO=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\console.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\events.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_EVENT=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_EVENT=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_EVENT=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_EVENT=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\events.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\font.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_FONT_=\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_FONT_=\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_FONT_=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FONT_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_FONT_=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FONT_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\font.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\font_map.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_FONT_M=\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\saga.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_FONT_M=\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\saga.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_FONT_M=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FONT_M=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_FONT_M=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_FONT_M=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\game.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_GAME_=\
-	"..\..\..\saga\backends\fs\fs.h"\
-	"..\..\..\saga\base\options.h"\
-	"..\..\..\saga\base\plugins.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\common\map.h"\
-	"..\..\..\saga\common\md5.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_GAME_=\
-	"..\..\..\saga\backends\fs\fs.h"\
-	"..\..\..\saga\base\options.h"\
-	"..\..\..\saga\base\plugins.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\common\map.h"\
-	"..\..\..\saga\common\md5.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_GAME_=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\md5.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GAME_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_GAME_=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\md5.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GAME_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\gfx.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_GFX_C=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_GFX_C=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_GFX_C=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_GFX_C=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GFX_C=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\gfx.h
+SOURCE=..\..\..\engines\saga\gfx.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\ihnm_introproc.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_IHNM_=\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_IHNM_=\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\ihnm_introproc.cpp
 DEP_CPP_IHNM_=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
@@ -1270,387 +711,169 @@ DEP_CPP_IHNM_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IHNM_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_IHNM_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_IHNM_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\image.cpp
+SOURCE=..\..\..\engines\saga\image.cpp
+DEP_CPP_IMAGE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\surface.h"\
+	
+NODEP_CPP_IMAGE=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
 
-NODEP_CPP_IMAGE=\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_IMAGE=\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_IMAGE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_IMAGE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_IMAGE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_IMAGE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\input.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_INPUT=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_INPUT=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\input.cpp
 DEP_CPP_INPUT=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INPUT=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_INPUT=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_INPUT=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\interface.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_INTER=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\common\timer.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_INTER=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\common\timer.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\interface.cpp
 DEP_CPP_INTER=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
@@ -1662,276 +885,127 @@ DEP_CPP_INTER=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\puzzle.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTER=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_INTER=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_INTER=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\interface.h
+SOURCE=..\..\..\engines\saga\interface.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\isomap.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_ISOMA=\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_ISOMA=\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\isomap.cpp
 DEP_CPP_ISOMA=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ISOMA=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_ISOMA=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ISOMA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\isomap.h
+SOURCE=..\..\..\engines\saga\isomap.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\ite_introproc.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_ITE_I=\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_ITE_I=\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\ite_introproc.cpp
 DEP_CPP_ITE_I=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -1946,260 +1020,126 @@ DEP_CPP_ITE_I=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\palanim.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ITE_I=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_ITE_I=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ITE_I=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\itedata.cpp
+SOURCE=..\..\..\engines\saga\itedata.cpp
+DEP_CPP_ITEDA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_ITEDA=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
 
-NODEP_CPP_ITEDA=\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_ITEDA=\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_ITEDA=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ITEDA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_ITEDA=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ITEDA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\itedata.h
+SOURCE=..\..\..\engines\saga\itedata.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\list.h
+SOURCE=..\..\..\engines\saga\list.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\music.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_MUSIC=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	"..\..\..\saga\sound\audiostream.h"\
-	"..\..\..\saga\sound\flac.h"\
-	"..\..\..\saga\sound\mididrv.h"\
-	"..\..\..\saga\sound\midiparser.h"\
-	"..\..\..\saga\sound\mp3.h"\
-	"..\..\..\saga\sound\vorbis.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_MUSIC=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	"..\..\..\saga\sound\audiostream.h"\
-	"..\..\..\saga\sound\flac.h"\
-	"..\..\..\saga\sound\mididrv.h"\
-	"..\..\..\saga\sound\midiparser.h"\
-	"..\..\..\saga\sound\mp3.h"\
-	"..\..\..\saga\sound\vorbis.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\music.cpp
 DEP_CPP_MUSIC=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2209,13 +1149,15 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\flac.h"\
@@ -2224,827 +1166,358 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_MUSIC=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\flac.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\mp3.h"\
-	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_MUSIC=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\music.h
+SOURCE=..\..\..\engines\saga\music.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\objectmap.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_OBJEC=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_OBJEC=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\objectmap.cpp
 DEP_CPP_OBJEC=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_OBJEC=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_OBJEC=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\objectmap.h
+SOURCE=..\..\..\engines\saga\objectmap.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\palanim.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_PALAN=\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_PALAN=\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\palanim.cpp
 DEP_CPP_PALAN=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\palanim.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALAN=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_PALAN=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PALAN=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\palanim.h
+SOURCE=..\..\..\engines\saga\palanim.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\puzzle.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_PUZZL=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\common\timer.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_PUZZL=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\common\timer.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\puzzle.cpp
 DEP_CPP_PUZZL=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\puzzle.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PUZZL=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_PUZZL=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PUZZL=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\puzzle.h
+SOURCE=..\..\..\engines\saga\puzzle.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\render.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_RENDE=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\common\timer.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_RENDE=\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\common\timer.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\render.cpp
 DEP_CPP_RENDE=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\puzzle.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RENDE=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_RENDE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_RENDE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\render.h
+SOURCE=..\..\..\engines\saga\render.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\resnames.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\saga\rscfile.cpp
+SOURCE=..\..\..\engines\saga\rscfile.cpp
+DEP_CPP_RSCFI=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\sound\audiocd.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_RSCFI=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
 
-NODEP_CPP_RSCFI=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_RSCFI=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_RSCFI=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_RSCFI=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_RSCFI=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_RSCFI=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\rscfile.h
+SOURCE=..\..\..\engines\saga\rscfile.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\saga.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_SAGA_=\
-	"..\..\..\saga\backends\fs\fs.h"\
-	"..\..\..\saga\base\options.h"\
-	"..\..\..\saga\base\plugins.h"\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\common\stdafx.h"\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	"..\..\..\saga\sound\mixer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SAGA_=\
-	"..\..\..\saga\backends\fs\fs.h"\
-	"..\..\..\saga\base\options.h"\
-	"..\..\..\saga\base\plugins.h"\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\common\stdafx.h"\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	"..\..\..\saga\sound\mixer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\saga.cpp
 DEP_CPP_SAGA_=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
@@ -3056,178 +1529,82 @@ DEP_CPP_SAGA_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\palanim.h"\
+	"..\..\..\engines\saga\puzzle.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAGA_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SAGA_=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SAGA_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\saga.h
+SOURCE=..\..\..\engines\saga\saga.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\saveload.cpp
+SOURCE=..\..\..\engines\saga\sagaresnames.h
+# End Source File
+# Begin Source File
 
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_SAVEL=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\common\savefile.h"\
-	"..\..\..\saga\common\stdafx.h"\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SAVEL=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\common\savefile.h"\
-	"..\..\..\saga\common\stdafx.h"\
-	"..\..\..\saga\common\system.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\saveload.cpp
 DEP_CPP_SAVEL=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
@@ -3239,161 +1616,58 @@ DEP_CPP_SAVEL=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SAVEL=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SAVEL=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\scene.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_SCENE=\
-	"..\..\..\saga\common\util.h"\
-	"..\..\..\saga\graphics\ilbm.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SCENE=\
-	"..\..\..\saga\common\util.h"\
-	"..\..\..\saga\graphics\ilbm.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\palanim.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\scene.cpp
 DEP_CPP_SCENE=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
@@ -3409,331 +1683,142 @@ DEP_CPP_SCENE=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\palanim.h"\
+	"..\..\..\engines\saga\puzzle.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\ilbm.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCENE=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SCENE=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\ilbm.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\palanim.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCENE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\scene.h
+SOURCE=..\..\..\engines\saga\scene.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\script.cpp
+SOURCE=..\..\..\engines\saga\script.cpp
+DEP_CPP_SCRIP=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
+	"..\..\..\graphics\surface.h"\
+	
+NODEP_CPP_SCRIP=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
 
-NODEP_CPP_SCRIP=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SCRIP=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_SCRIP=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCRIP=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SCRIP=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCRIP=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\script.h
+SOURCE=..\..\..\engines\saga\script.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sfuncs.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_SFUNC=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SFUNC=\
-	"..\..\..\saga\common\config-manager.h"\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\animation.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\events.h"\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\isomap.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\music.h"\
-	"..\..\..\saga\saga\objectmap.h"\
-	"..\..\..\saga\saga\puzzle.h"\
-	"..\..\..\saga\saga\render.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\sfuncs.cpp
 DEP_CPP_SFUNC=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
@@ -3744,389 +1829,177 @@ DEP_CPP_SFUNC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\animation.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\events.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\isomap.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\music.h"\
+	"..\..\..\engines\saga\objectmap.h"\
+	"..\..\..\engines\saga\puzzle.h"\
+	"..\..\..\engines\saga\render.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SFUNC=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SFUNC=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\animation.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\events.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\isomap.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\music.h"\
-	"..\..\..\saga\objectmap.h"\
-	"..\..\..\saga\puzzle.h"\
-	"..\..\..\saga\render.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\midiparser.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SFUNC=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sndres.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_SNDRE=\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\stream.h"\
-	"..\..\..\saga\sound\adpcm.h"\
-	"..\..\..\saga\sound\audiostream.h"\
-	"..\..\..\saga\sound\voc.h"\
-	"..\..\..\saga\sound\wave.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SNDRE=\
-	"..\..\..\saga\common\file.h"\
-	"..\..\..\saga\saga\itedata.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\sndres.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\saga\stream.h"\
-	"..\..\..\saga\sound\adpcm.h"\
-	"..\..\..\saga\sound\audiostream.h"\
-	"..\..\..\saga\sound\voc.h"\
-	"..\..\..\saga\sound\wave.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\sndres.cpp
 DEP_CPP_SNDRE=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\sndres.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\stream.h"\
 	"..\..\..\sound\adpcm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\wave.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SNDRE=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SNDRE=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\sndres.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\saga\stream.h"\
-	"..\..\..\sound\adpcm.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\voc.h"\
-	"..\..\..\sound\wave.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SNDRE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sndres.h
+SOURCE=..\..\..\engines\saga\sndres.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sound.cpp
+SOURCE=..\..\..\engines\saga\sound.cpp
+DEP_CPP_SOUND=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sound.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\sound\adpcm.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
 
-NODEP_CPP_SOUND=\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\sound\adpcm.h"\
-	"..\..\..\saga\sound\audiostream.h"\
-	"..\..\..\saga\sound\mixer.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SOUND=\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\sound.h"\
-	"..\..\..\saga\sound\adpcm.h"\
-	"..\..\..\saga\sound\audiostream.h"\
-	"..\..\..\saga\sound\mixer.h"\
-	
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_SOUND=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\sound\adpcm.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SOUND=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\sound.h"\
-	"..\..\..\sound\adpcm.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sound.h
+SOURCE=..\..\..\engines\saga\sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sprite.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_SPRIT=\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SPRIT=\
-	"..\..\..\saga\saga\font.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\rscfile.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\sprite.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\sprite.cpp
 DEP_CPP_SPRIT=\
-	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
@@ -4134,213 +2007,109 @@ DEP_CPP_SPRIT=\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\rscfile.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SPRIT=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SPRIT=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\rscfile.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SPRIT=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sprite.h
+SOURCE=..\..\..\engines\saga\sprite.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\sthread.cpp
-
-!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
-
-NODEP_CPP_STHRE=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_STHRE=\
-	"..\..\..\saga\saga\actor.h"\
-	"..\..\..\saga\saga\console.h"\
-	"..\..\..\saga\saga\gfx.h"\
-	"..\..\..\saga\saga\interface.h"\
-	"..\..\..\saga\saga\resnames.h"\
-	"..\..\..\saga\saga\saga.h"\
-	"..\..\..\saga\saga\scene.h"\
-	"..\..\..\saga\saga\script.h"\
-	"..\..\..\saga\saga\stream.h"\
-	
-
-!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\saga\sthread.cpp
 DEP_CPP_STHRE=\
 	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\config.h"\
+	"..\..\..\backends\wince\missing\SDL_byteorder.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\debugger.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\engines\saga\actor.h"\
+	"..\..\..\engines\saga\console.h"\
+	"..\..\..\engines\saga\font.h"\
+	"..\..\..\engines\saga\gfx.h"\
+	"..\..\..\engines\saga\interface.h"\
+	"..\..\..\engines\saga\itedata.h"\
+	"..\..\..\engines\saga\list.h"\
+	"..\..\..\engines\saga\saga.h"\
+	"..\..\..\engines\saga\sagagame.h"\
+	"..\..\..\engines\saga\sagaresnames.h"\
+	"..\..\..\engines\saga\scene.h"\
+	"..\..\..\engines\saga\script.h"\
+	"..\..\..\engines\saga\sprite.h"\
+	"..\..\..\engines\saga\stream.h"\
 	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STHRE=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
+
+!IF  "$(CFG)" == "saga - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Release"
 
 !ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_STHRE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\debugger.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\graphics\surface.h"\
-	"..\..\..\saga\actor.h"\
-	"..\..\..\saga\console.h"\
-	"..\..\..\saga\font.h"\
-	"..\..\..\saga\gfx.h"\
-	"..\..\..\saga\interface.h"\
-	"..\..\..\saga\itedata.h"\
-	"..\..\..\saga\list.h"\
-	"..\..\..\saga\resnames.h"\
-	"..\..\..\saga\saga.h"\
-	"..\..\..\saga\scene.h"\
-	"..\..\..\saga\script.h"\
-	"..\..\..\saga\sprite.h"\
-	"..\..\..\saga\stream.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_STHRE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "saga - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\saga\stream.h
+SOURCE=..\..\..\engines\saga\stream.h
 # End Source File
-# End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
 # End Group
 # End Target
 # End Project

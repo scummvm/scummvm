@@ -1,9 +1,21 @@
-Microsoft eMbedded Visual Tools Workspace File, Format Version 4.00
+Microsoft eMbedded Visual Tools Workspace File, Format Version 3.00
 # WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
 
 ###############################################################################
 
 Project: "gob"=.\gob\gob.vcp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "kyra"=.\kyra\kyra.vcp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -82,6 +94,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name saga
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name kyra
     End Project Dependency
 }}}
 

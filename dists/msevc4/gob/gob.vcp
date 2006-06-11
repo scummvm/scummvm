@@ -2,6 +2,7 @@
 # Microsoft eMbedded Visual Tools Generated Build File, Format Version 6.02
 # ** DO NOT EDIT **
 
+# TARGTYPE "Win32 (WCE ARM) Static Library" 0x8504
 # TARGTYPE "Win32 (WCE ARMV4) Static Library" 0xa304
 # TARGTYPE "Win32 (WCE emulator) Static Library" 0xa604
 
@@ -22,6 +23,7 @@ CFG=gob - Win32 (WCE emulator) Debug
 !MESSAGE "gob - Win32 (WCE emulator) Debug" (based on "Win32 (WCE emulator) Static Library")
 !MESSAGE "gob - Win32 (WCE ARMV4) Release" (based on "Win32 (WCE ARMV4) Static Library")
 !MESSAGE "gob - Win32 (WCE ARMV4) Debug" (based on "Win32 (WCE ARMV4) Static Library")
+!MESSAGE "gob - Win32 (WCE ARM) Release" (based on "Win32 (WCE ARM) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -46,15 +48,15 @@ CFG=gob - Win32 (WCE emulator) Debug
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2  /c
-# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2  /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
 
@@ -72,15 +74,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF  /c
-# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF  /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
@@ -98,15 +100,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{ECBEA43D-CD7B-4852-AD55-D4227B5D624B}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT)  /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "DISABLE_KYRA" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT)  /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "DISABLE_KYRA" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
@@ -124,9 +126,37 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{ECBEA43D-CD7B-4852-AD55-D4227B5D624B}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
 CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug)  /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug)  /c
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "ARMRel"
+# PROP BASE Intermediate_Dir "ARMRel"
+# PROP BASE CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "ARMRel"
+# PROP Intermediate_Dir "ARMRel"
+# PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Sec_AlwaysSign 0
+# PROP Sec_ConfigureDevice 0
+# PROP Target_Dir ""
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../engines" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /FR /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -142,53 +172,29 @@ BSC32=bscmake.exe
 # Name "gob - Win32 (WCE emulator) Debug"
 # Name "gob - Win32 (WCE ARMV4) Release"
 # Name "gob - Win32 (WCE ARMV4) Debug"
+# Name "gob - Win32 (WCE ARM) Release"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\gob\anim.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_ANIM_=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_ANIM_=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\anim.cpp
 DEP_CPP_ANIM_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\video.h"\
 	
 NODEP_CPP_ANIM_=\
 	"..\..\..\common\config.h"\
@@ -197,85 +203,34 @@ NODEP_CPP_ANIM_=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_ANIM_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_ANIM_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\anim.h
+SOURCE=..\..\..\engines\gob\anim.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\cdrom.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_CDROM=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\sound\audiocd.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_CDROM=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\sound\audiocd.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\cdrom.cpp
 DEP_CPP_CDROM=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
@@ -285,17 +240,17 @@ DEP_CPP_CDROM=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
 	"..\..\..\sound\audiocd.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CDROM=\
 	"..\..\..\common\config.h"\
@@ -304,103 +259,46 @@ NODEP_CPP_CDROM=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_CDROM=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\audiocd.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_CDROM=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\cdrom.h
+SOURCE=..\..\..\engines\gob\cdrom.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\dataio.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_DATAI=\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\pack.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_DATAI=\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\pack.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\dataio.cpp
 DEP_CPP_DATAI=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\pack.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\pack.h"\
+	"..\..\..\engines\gob\video.h"\
 	
 NODEP_CPP_DATAI=\
 	"..\..\..\common\config.h"\
@@ -409,118 +307,57 @@ NODEP_CPP_DATAI=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_DATAI=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\pack.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_DATAI=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\dataio.h
+SOURCE=..\..\..\engines\gob\dataio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\draw.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_DRAW_=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\palanim.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_DRAW_=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\palanim.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\draw.cpp
 DEP_CPP_DRAW_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\palanim.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DRAW_=\
 	"..\..\..\common\config.h"\
@@ -529,110 +366,152 @@ NODEP_CPP_DRAW_=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_DRAW_=\
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\draw.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\draw_v1.cpp
+DEP_CPP_DRAW_V=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\palanim.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_DRAW_=\
+NODEP_CPP_DRAW_V=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\draw.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\driver_vga.cpp
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_DRIVE=\
-	"..\..\..\gob\gob\driver_vga.h"\
-	"..\..\..\gob\graphics\primitives.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
 
-NODEP_CPP_DRIVE=\
-	"..\..\..\gob\gob\driver_vga.h"\
-	"..\..\..\gob\graphics\primitives.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_DRIVE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\driver_vga.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\graphics\primitives.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_DRIVE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\draw_v2.cpp
+DEP_CPP_DRAW_V2=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_DRAW_V2=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\driver_vga.cpp
 DEP_CPP_DRIVE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\endian.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\driver_vga.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\driver_vga.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\video.h"\
 	"..\..\..\graphics\primitives.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DRIVE=\
 	"..\..\..\common\config.h"\
@@ -641,93 +520,62 @@ NODEP_CPP_DRIVE=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\driver_vga.h
+SOURCE=..\..\..\engines\gob\driver_vga.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\game.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_GAME_=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\mult.h"\
-	"..\..\..\gob\gob\pack.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_GAME_=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\mult.h"\
-	"..\..\..\gob\gob\pack.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\game.cpp
 DEP_CPP_GAME_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\mult.h"\
-	"..\..\..\gob\pack.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\pack.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GAME_=\
 	"..\..\..\common\config.h"\
@@ -736,203 +584,204 @@ NODEP_CPP_GAME_=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_GAME_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\mult.h"\
-	"..\..\..\gob\pack.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GAME_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\game.h
+SOURCE=..\..\..\engines\gob\game.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\global.cpp
+SOURCE=..\..\..\engines\gob\game_v1.cpp
+DEP_CPP_GAME_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\pack.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_GAME_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_GLOBA=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_GLOBA=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_GLOBA=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GLOBA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_GLOBA=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GLOBA=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\gob.cpp
+SOURCE=..\..\..\engines\gob\game_v2.cpp
+DEP_CPP_GAME_V2=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\pack.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_GAME_V2=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_GOB_C=\
-	"..\..\..\gob\backends\fs\fs.h"\
-	"..\..\..\gob\base\options.h"\
-	"..\..\..\gob\base\plugins.h"\
-	"..\..\..\gob\common\md5.h"\
-	"..\..\..\gob\common\stdafx.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\init.h"\
-	"..\..\..\gob\gob\sound.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_GOB_C=\
-	"..\..\..\gob\backends\fs\fs.h"\
-	"..\..\..\gob\base\options.h"\
-	"..\..\..\gob\base\plugins.h"\
-	"..\..\..\gob\common\md5.h"\
-	"..\..\..\gob\common\stdafx.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\init.h"\
-	"..\..\..\gob\gob\sound.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\global.cpp
+DEP_CPP_GLOBA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\video.h"\
+	
+NODEP_CPP_GLOBA=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\gob.cpp
 DEP_CPP_GOB_C=\
 	"..\..\..\backends\fs\fs.h"\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
+	"..\..\..\base\game.h"\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
+	"..\..\..\common\func.h"\
+	"..\..\..\common\hashmap.h"\
 	"..\..\..\common\md5.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
@@ -943,15 +792,30 @@ DEP_CPP_GOB_C=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\init.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\init.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\pack.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\timer.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GOB_C=\
 	"..\..\..\common\config.h"\
@@ -960,132 +824,60 @@ NODEP_CPP_GOB_C=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_GOB_C=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\options.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\md5.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\init.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GOB_C=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\gob.h
+SOURCE=..\..\..\engines\gob\gob.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\goblin.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_GOBLI=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\map.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_GOBLI=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\map.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\goblin.cpp
 DEP_CPP_GOBLI=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\map.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GOBLI=\
 	"..\..\..\common\config.h"\
@@ -1094,128 +886,159 @@ NODEP_CPP_GOBLI=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_GOBLI=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\map.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GOBLI=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\goblin.h
+SOURCE=..\..\..\engines\gob\goblin.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\init.cpp
+SOURCE=..\..\..\engines\gob\goblin_v1.cpp
+DEP_CPP_GOBLIN=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_GOBLIN=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_INIT_=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\init.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\timer.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_INIT_=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\init.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\timer.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\goblin_v2.cpp
+DEP_CPP_GOBLIN_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_GOBLIN_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\init.cpp
 DEP_CPP_INIT_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\init.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\timer.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\init.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\timer.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INIT_=\
 	"..\..\..\common\config.h"\
@@ -1224,128 +1047,153 @@ NODEP_CPP_INIT_=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_INIT_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\init.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\timer.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_INIT_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\init.h
+SOURCE=..\..\..\engines\gob\init.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\inter.cpp
+SOURCE=..\..\..\engines\gob\init_v1.cpp
+DEP_CPP_INIT_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\init.h"\
+	"..\..\..\engines\gob\timer.h"\
+	"..\..\..\engines\gob\video.h"\
+	
+NODEP_CPP_INIT_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_INTER=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\mult.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_INTER=\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\mult.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\init_v2.cpp
+DEP_CPP_INIT_V2=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\init.h"\
+	"..\..\..\engines\gob\timer.h"\
+	"..\..\..\engines\gob\video.h"\
+	
+NODEP_CPP_INIT_V2=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\inter.cpp
 DEP_CPP_INTER=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\mult.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTER=\
 	"..\..\..\common\config.h"\
@@ -1354,122 +1202,177 @@ NODEP_CPP_INTER=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_INTER=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\mult.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_INTER=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\inter.h
+SOURCE=..\..\..\engines\gob\inter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\map.cpp
+SOURCE=..\..\..\engines\gob\inter_v1.cpp
+DEP_CPP_INTER_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_INTER_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_MAP_C=\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\map.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_MAP_C=\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\goblin.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\map.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\inter_v2.cpp
+DEP_CPP_INTER_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_INTER_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\map.cpp
 DEP_CPP_MAP_C=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\map.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MAP_C=\
 	"..\..\..\common\config.h"\
@@ -1478,130 +1381,166 @@ NODEP_CPP_MAP_C=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_MAP_C=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\goblin.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\map.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_MAP_C=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\map.h
+SOURCE=..\..\..\engines\gob\map.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\mult.cpp
+SOURCE=..\..\..\engines\gob\map_v1.cpp
+DEP_CPP_MAP_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MAP_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_MULT_=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\mult.h"\
-	"..\..\..\gob\gob\palanim.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_MULT_=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\mult.h"\
-	"..\..\..\gob\gob\palanim.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\map_v2.cpp
+DEP_CPP_MAP_V2=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\map.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MAP_V2=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\mult.cpp
 DEP_CPP_MULT_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\mult.h"\
-	"..\..\..\gob\palanim.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MULT_=\
 	"..\..\..\common\config.h"\
@@ -1610,99 +1549,208 @@ NODEP_CPP_MULT_=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_MULT_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\mult.h"\
-	"..\..\..\gob\palanim.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_MULT_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\mult.h
+SOURCE=..\..\..\engines\gob\mult.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\pack.cpp
+SOURCE=..\..\..\engines\gob\mult_v1.cpp
+DEP_CPP_MULT_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MULT_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_PACK_=\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\pack.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_PACK_=\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\pack.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\mult_v2.cpp
+DEP_CPP_MULT_V2=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\mult.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MULT_V2=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\music.cpp
+DEP_CPP_MUSIC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\music.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MUSIC=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\music.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\pack.cpp
 DEP_CPP_PACK_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\pack.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\pack.h"\
 	
 NODEP_CPP_PACK_=\
 	"..\..\..\common\config.h"\
@@ -1711,97 +1759,47 @@ NODEP_CPP_PACK_=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_PACK_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\pack.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PACK_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\pack.h
+SOURCE=..\..\..\engines\gob\pack.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\palanim.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_PALAN=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\palanim.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_PALAN=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\palanim.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\palanim.cpp
 DEP_CPP_PALAN=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\palanim.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\palanim.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
 	
 NODEP_CPP_PALAN=\
 	"..\..\..\common\config.h"\
@@ -1810,108 +1808,54 @@ NODEP_CPP_PALAN=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_PALAN=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\palanim.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PALAN=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\palanim.h
+SOURCE=..\..\..\engines\gob\palanim.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\parse.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_PARSE=\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\util.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_PARSE=\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\util.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\parse.cpp
 DEP_CPP_PARSE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PARSE=\
 	"..\..\..\common\config.h"\
@@ -1920,125 +1864,159 @@ NODEP_CPP_PARSE=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_PARSE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_PARSE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\parse.h
+SOURCE=..\..\..\engines\gob\parse.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\scenery.cpp
+SOURCE=..\..\..\engines\gob\parse_v1.cpp
+DEP_CPP_PARSE_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_PARSE_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_SCENE=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SCENE=\
-	"..\..\..\gob\gob\anim.h"\
-	"..\..\..\gob\gob\cdrom.h"\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\inter.h"\
-	"..\..\..\gob\gob\parse.h"\
-	"..\..\..\gob\gob\scenery.h"\
-	"..\..\..\gob\gob\util.h"\
-	"..\..\..\gob\gob\video.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\parse_v2.cpp
+DEP_CPP_PARSE_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_PARSE_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\scenery.cpp
 DEP_CPP_SCENE=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\cdrom.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\parse.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCENE=\
 	"..\..\..\common\config.h"\
@@ -2047,108 +2025,144 @@ NODEP_CPP_SCENE=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SCENE=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\anim.h"\
-	"..\..\..\gob\cdrom.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\inter.h"\
-	"..\..\..\gob\parse.h"\
-	"..\..\..\gob\scenery.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCENE=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\scenery.h
+SOURCE=..\..\..\engines\gob\scenery.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\sound.cpp
+SOURCE=..\..\..\engines\gob\scenery_v1.cpp
+DEP_CPP_SCENER=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SCENER=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_SOUND=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\sound\audiostream.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_SOUND=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\sound.h"\
-	"..\..\..\gob\sound\audiostream.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\scenery_v2.cpp
+DEP_CPP_SCENERY=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\anim.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\scenery.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SCENERY=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\sound.cpp
 DEP_CPP_SOUND=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\config.h"\
@@ -2157,207 +2171,105 @@ NODEP_CPP_SOUND=\
 	"..\..\..\common\palmversion.h"\
 	
 
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_SOUND=\
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\timer.cpp
+DEP_CPP_TIMER=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\timer.h"\
+	"..\..\..\engines\gob\video.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
-NODEP_CPP_SOUND=\
+NODEP_CPP_TIMER=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\sound.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\timer.cpp
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_TIMER=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\sound.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
 
-NODEP_CPP_TIMER=\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\sound.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
-DEP_CPP_TIMER=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_TIMER=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_TIMER=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_TIMER=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\timer.h
+SOURCE=..\..\..\engines\gob\timer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\util.cpp
-
-!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
-
-NODEP_CPP_UTIL_=\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\timer.h"\
-	"..\..\..\gob\gob\util.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_UTIL_=\
-	"..\..\..\gob\gob\draw.h"\
-	"..\..\..\gob\gob\game.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\timer.h"\
-	"..\..\..\gob\gob\util.h"\
-	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
-
+SOURCE=..\..\..\engines\gob\util.cpp
 DEP_CPP_UTIL_=\
 	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
 	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\timer.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\game.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\goblin.h"\
+	"..\..\..\engines\gob\inter.h"\
+	"..\..\..\engines\gob\sound.h"\
+	"..\..\..\engines\gob\timer.h"\
+	"..\..\..\engines\gob\util.h"\
+	"..\..\..\engines\gob\video.h"\
+	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_UTIL_=\
 	"..\..\..\common\config.h"\
@@ -2365,161 +2277,163 @@ NODEP_CPP_UTIL_=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	
-
-!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_UTIL_=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\draw.h"\
-	"..\..\..\gob\game.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\sound.h"\
-	"..\..\..\gob\timer.h"\
-	"..\..\..\gob\util.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_UTIL_=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\util.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\gob\video.cpp
 
 !IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
 
-NODEP_CPP_VIDEO=\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\driver_vga.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\video.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
-
-NODEP_CPP_VIDEO=\
-	"..\..\..\gob\gob\dataio.h"\
-	"..\..\..\gob\gob\driver_vga.h"\
-	"..\..\..\gob\gob\global.h"\
-	"..\..\..\gob\gob\gob.h"\
-	"..\..\..\gob\gob\video.h"\
-	
 
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
 
-DEP_CPP_VIDEO=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\driver_vga.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_VIDEO=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
-
 !ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
 
-DEP_CPP_VIDEO=\
-	"..\..\..\backends\ps2\fileio.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\endian.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\mutex.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gob\dataio.h"\
-	"..\..\..\gob\driver_vga.h"\
-	"..\..\..\gob\global.h"\
-	"..\..\..\gob\gob.h"\
-	"..\..\..\gob\video.h"\
-	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_VIDEO=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\common\palmversion.h"\
-	
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\gob\video.h
+SOURCE=..\..\..\engines\gob\util.h
 # End Source File
-# End Group
-# Begin Group "Header Files"
+# Begin Source File
 
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
+SOURCE=..\..\..\engines\gob\video.cpp
+DEP_CPP_VIDEO=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\driver_vga.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\video.h"\
+	
+NODEP_CPP_VIDEO=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\video.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\video_v1.cpp
+DEP_CPP_VIDEO_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\video.h"\
+	
+NODEP_CPP_VIDEO_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\engines\gob\video_v2.cpp
+DEP_CPP_VIDEO_V=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\engines\gob\dataio.h"\
+	"..\..\..\engines\gob\draw.h"\
+	"..\..\..\engines\gob\global.h"\
+	"..\..\..\engines\gob\gob.h"\
+	"..\..\..\engines\gob\video.h"\
+	
+NODEP_CPP_VIDEO_V=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!IF  "$(CFG)" == "gob - Win32 (WCE emulator) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE emulator) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Release"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARMV4) Debug"
+
+!ELSEIF  "$(CFG)" == "gob - Win32 (WCE ARM) Release"
+
+!ENDIF 
+
+# End Source File
 # End Group
 # End Target
 # End Project
