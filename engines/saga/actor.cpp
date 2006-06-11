@@ -1148,13 +1148,13 @@ void Actor::handleSpeech(int msec) {
 		if (sampleLength < 0) {
 			_activeSpeech.playingTime = stringLength * 1000 / 22;
 			switch (_vm->_readingSpeed) {
-			case 1:
+			case 2:
 				_activeSpeech.playingTime *= 2;
 				break;
-			case 2:
+			case 1:
 				_activeSpeech.playingTime *= 4;
 				break;
-			case 3:
+			case 0:
 				_activeSpeech.playingTime = 0x7fffff;
 				break;
 			}

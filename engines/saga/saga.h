@@ -409,8 +409,9 @@ private:
 
 public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
+	void setTalkspeed(int talkspeed); 
+	int getTalkspeed(); 
 };
-
 
 } // End of namespace Saga
 

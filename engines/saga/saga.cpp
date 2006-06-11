@@ -150,7 +150,7 @@ int SagaEngine::init() {
 	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
 	_musicVolume = ConfMan.getInt("music_volume") / 25;
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
-	_readingSpeed = ConfMan.getInt("talkspeed");
+	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
 
 	if (_readingSpeed > 3)
@@ -457,5 +457,12 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 	return colorId;
 }
 
+void SagaEngine::setTalkspeed(int talkspeed) {
+	ConfMan.setInt("talkspeed", (talkspeed * 255 + 3 / 2) / 3);
+}
+
+int SagaEngine::getTalkspeed() {
+	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
+}
 
 } // End of namespace Saga

@@ -1367,7 +1367,7 @@ void Interface::setOption(PanelButton *panelButton) {
 			ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		} else {
 			_vm->_readingSpeed = (_vm->_readingSpeed + 1) % 4;
-			ConfMan.setInt("talkspeed", _vm->_readingSpeed);
+			_vm->setTalkspeed(_vm->_readingSpeed);
 		}
 		break;
 	case kTextMusic:
@@ -1893,7 +1893,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	ds->fillRect(fill, solidColor);
 }
 
-static const int readingSpeeds[] = { kTextFast, kTextMid, kTextSlow, kTextClick };
+static const int readingSpeeds[] = { kTextClick, kTextSlow, kTextMid, kTextFast };
 
 void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
