@@ -763,6 +763,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		updateButtons();
 		break;
 	case kQuitCmd:
+		ConfMan.setActiveDomain("");
 		setResult(-1);
 		close();
 		break;
