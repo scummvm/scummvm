@@ -117,6 +117,8 @@ class EditGameDialog : public OptionsDialog {
 public:
 	EditGameDialog(const String &domain, const String &desc);
 
+	virtual void handleScreenChanged();	
+
 	void open();
 	void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
@@ -258,6 +260,17 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// Add OK & Cancel buttons
 	new ButtonWidget(this, "gameoptions_cancel", "Cancel", kCloseCmd, 0);
 	new ButtonWidget(this, "gameoptions_ok", "OK", kOKCmd, 0);
+}
+
+void EditGameDialog::handleScreenChanged() {
+	OptionsDialog::handleScreenChanged();
+
+	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+
+	if (_langPopUp)
+		_langPopUp->changeLabelWidth(labelWidth);
+	if (_platformPopUp)
+		_platformPopUp->changeLabelWidth(labelWidth);
 }
 
 void EditGameDialog::open() {
