@@ -860,7 +860,7 @@ void Mult_v1::animate(void) {
 			} else {
 				pAnimData->frame++;
 				if (pAnimData->frame >=
-				    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer]->framesCount) {
+				    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer].framesCount) {
 					switch (pAnimData->animType) {
 					case 0:
 						pAnimData->frame = 0;
@@ -871,11 +871,11 @@ void Mult_v1::animate(void) {
 
 						*(_objects[i].pPosX) =
 						    *(_objects[i].pPosX) +
-						    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer]->animDeltaX;
+						    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer].animDeltaX;
 
 						*(_objects[i].pPosY) =
 						    *(_objects[i].pPosY) +
-						    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer]->animDeltaY;
+						    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer].animDeltaY;
 						break;
 
 					case 2:

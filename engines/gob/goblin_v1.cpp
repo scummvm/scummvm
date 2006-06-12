@@ -522,11 +522,11 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 		newX =
 		    _vm->_scenery->_animations[gobDesc->animation].
-		    layers[_gobStateLayer]->animDeltaX + gobDesc->xPos;
+		    layers[_gobStateLayer].animDeltaX + gobDesc->xPos;
 
 		newY =
 		    _vm->_scenery->_animations[gobDesc->animation].
-		    layers[_gobStateLayer]->animDeltaY + gobDesc->yPos;
+		    layers[_gobStateLayer].animDeltaY + gobDesc->yPos;
 
 		_gobStateLayer = nextLayer(gobDesc);
 

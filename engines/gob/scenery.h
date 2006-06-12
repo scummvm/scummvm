@@ -68,7 +68,7 @@ public:
 		int16 animDeltaY;
 		int8 transp;
 		int16 framesCount;
-		AnimFramePiece frames[1];
+		AnimFramePiece *frames;
 	} GCC_PACK;
 #pragma END_PACK_STRUCTS
 
@@ -84,7 +84,7 @@ public:
 
 	struct Animation {
 		int16 layersCount;
-		AnimLayer **layers;
+		AnimLayer *layers;
 		PieceDesc **pieces;
 		int8 *piecesFromExt;
 		char *dataPtr;

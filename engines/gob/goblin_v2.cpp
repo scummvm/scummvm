@@ -96,7 +96,7 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 			objAnim->frame = 0;
 			objAnim->isPaused = 0;
 			objAnim->isStatic = 0;
-			objAnim->newCycle = _vm->_scenery->_animations[animation].layers[layer]->framesCount;
+			objAnim->newCycle = _vm->_scenery->_animations[animation].layers[layer].framesCount;
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 			if (!_vm->_map->_bigTiles)
 				*obj->pPosY = (y + 1) * _vm->_map->_tilesHeight
@@ -139,7 +139,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 	dir = 0;
 	animData = obj->pAnimData;
 	framesCount =
-		_vm->_scenery->_animations[(int)animData->animation].layers[animData->layer]->framesCount;
+		_vm->_scenery->_animations[(int)animData->animation].layers[animData->layer].framesCount;
 	gobX = obj->goblinX;
 	gobY = obj->goblinY;
 	animData->order = gobY;
@@ -317,7 +317,7 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	animData = obj->pAnimData;
 
 	framesCount =
-		_vm->_scenery->_animations[(int)animData->animation].layers[animData->layer]->framesCount;
+		_vm->_scenery->_animations[(int)animData->animation].layers[animData->layer].framesCount;
 
 	if (animData->isPaused == 0)
 		animData->frame++;
@@ -388,9 +388,9 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		animData->field_F = -1;
 		animData->state = animData->nextState;
 		*obj->pPosX +=
-			_vm->_scenery->_animations[animData->animation].layers[animData->layer]->animDeltaX;
+			_vm->_scenery->_animations[animData->animation].layers[animData->layer].animDeltaX;
 		*obj->pPosY +=
-			_vm->_scenery->_animations[animData->animation].layers[animData->layer]->animDeltaY;
+			_vm->_scenery->_animations[animData->animation].layers[animData->layer].animDeltaY;
 		animation = obj->goblinStates[animData->nextState][0].animation;
 		layer = obj->goblinStates[animData->nextState][0].layer;
 		animData->layer = layer;

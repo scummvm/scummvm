@@ -77,16 +77,6 @@ void Mult_v2::loadMult(int16 resId) {
 	_multData2 = new Mult_Data;
 	memset(_multData2, 0, sizeof(Mult_Data));
 
-	// ---.
-	for (i = 0; i < 4; i++) {
-		_multData2->field_157[i] = 0;
-		for (j = 0; j < 4; j++) {
-			_multData2->field_15F[i][j] = 0;
-			_multData2->field_17F[i][j] = 0;
-		}
-	}
-	// ---'
-
 	_multDatas[index] = _multData2;
 
 	for (i = 0; i < 10; i++) {
@@ -1012,37 +1002,21 @@ void Mult_v2::sub_62DD(int16 index) {
 	doSoundAnim(0, frame);
 	WRITE_VAR(22, frame);
 
-	if (_multData2->field_156 == 1) { // loc_6809
+	if (_multData2->field_157[index] == frame) {
+		_multData2->someKeysIndices[0] = -1;
+		_multData2->someKeysIndices[1] = -1;
+		_multData2->someKeysIndices[2] = -1;
+		_multData2->someKeysIndices[3] = -1;
+		frame = -1;
+		for (i = 0; i < 4; i++)
+			if ((_multData2->field_124[index][i] != -1) && (_multData2->field_124[index][i] != 1024))
+				_objects[_multData2->field_124[index][i]].pAnimData->animType =
+					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
+	} else if(_multData2->field_156 == 1)
 		frame++;
-		if (_multData2->field_157[index] == (frame-1)) {
-			_multData2->someKeysIndices[0] = -1;
-			_multData2->someKeysIndices[1] = -1;
-			_multData2->someKeysIndices[2] = -1;
-			_multData2->someKeysIndices[3] = -1;
-			frame = -1;
-			for (i = 0; i < 4; i++) {
-				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
-					continue;
-				_objects[_multData2->field_124[index][i]].pAnimData->animType =
-					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
-			}
-		}
-	} else { // loc_68F3
+	else
 		frame--;
-		if (_multData2->field_157[index] == (frame+1)) {
-			_multData2->someKeysIndices[0] = -1;
-			_multData2->someKeysIndices[1] = -1;
-			_multData2->someKeysIndices[2] = -1;
-			_multData2->someKeysIndices[3] = -1;
-			frame = -1;
-			for (i = 0; i < 4; i++) {
-				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
-					continue;
-				_objects[_multData2->field_124[index][i]].pAnimData->animType =
-					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
-			}
-		}
-	}
+
 	// loc_6A06
 	_multData2->animKeysFrames[index] = frame;
 	WRITE_VAR(18 + index, frame);
@@ -1135,29 +1109,27 @@ void Mult_v2::animate(void) {
 						animObj1->someFlag = 0;
 					}
 				}
-			} else {
-				if (animData1->isStatic == 0) {
-					if (animObj1->lastLeft == -1) {
-						animObj1->someFlag = 1;
-						_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-							animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
-						animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-						animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-						animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-						animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
-					} else {
-						animObj1->somethingLeft = animObj1->lastLeft;
-						animObj1->somethingTop = animObj1->lastTop;
-						animObj1->somethingRight = animObj1->lastRight;
-						animObj1->somethingBottom = animObj1->lastBottom;
-					}
-				} else if (animObj1->lastLeft != -1) {
+			} else if (animData1->isStatic == 0) {
+				if (animObj1->lastLeft == -1) {
 					animObj1->someFlag = 1;
+					_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+						animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
+					animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
+					animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
+					animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
+					animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+				} else {
 					animObj1->somethingLeft = animObj1->lastLeft;
 					animObj1->somethingTop = animObj1->lastTop;
 					animObj1->somethingRight = animObj1->lastRight;
 					animObj1->somethingBottom = animObj1->lastBottom;
 				}
+			} else if (animObj1->lastLeft != -1) {
+				animObj1->someFlag = 1;
+				animObj1->somethingLeft = animObj1->lastLeft;
+				animObj1->somethingTop = animObj1->lastTop;
+				animObj1->somethingRight = animObj1->lastRight;
+				animObj1->somethingBottom = animObj1->lastBottom;
 			}
 			animData1->somethingLayer = animData1->layer;
 			animData1->somethingFrame = animData1->frame;
@@ -1194,7 +1166,7 @@ void Mult_v2::animate(void) {
 		for (i = 0; i < numAnims; i++) {
 			animData1 = _renderData2[i]->pAnimData;
 			if (((animData1->isStatic == 0) || (_renderData2[i]->someFlag != 0))
-					& (animData1->order == j))
+					&& (animData1->order == j))
 				orderArray[orderArrayPos++] = i;
 		}
 	}
@@ -1216,62 +1188,57 @@ void Mult_v2::animate(void) {
 	for (i = 0; i < orderArrayPos; i++) {
 		animObj1 = _renderData2[orderArray[i]];
 		animData1 = animObj1->pAnimData;
-		if (animObj1->someFlag == 0) {
-			if (animData1->isStatic == 0) {
-				for (j = 0; j < orderArrayPos; j++) {
-					animObj2 = _renderData2[orderArray[j]];
-					if ((animObj2->someFlag != 0) &&
-							(animObj1->somethingRight >= animObj2->somethingLeft) &&
-							(animObj2->somethingRight >= animObj1->somethingLeft) &&
-							(animObj1->somethingBottom >= animObj2->somethingTop) &&
-							(animObj2->somethingBottom >= animObj1->somethingTop))
-					{
-						_vm->_scenery->_toRedrawLeft = animObj2->somethingLeft;
-						_vm->_scenery->_toRedrawRight = animObj2->somethingRight;
-						_vm->_scenery->_toRedrawTop = animObj2->somethingTop;
-						_vm->_scenery->_toRedrawBottom = animObj2->somethingBottom;
-						_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-								animData1->animation, 12, *animObj1->pPosX, *animObj1->pPosY, 1);
-						_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
-					}
+		if ((animObj1->someFlag == 0) && (animData1->isStatic == 0)) {
+			for (j = 0; j < orderArrayPos; j++) {
+				animObj2 = _renderData2[orderArray[j]];
+				if ((animObj2->someFlag != 0) &&
+						(animObj1->somethingRight >= animObj2->somethingLeft) &&
+						(animObj2->somethingRight >= animObj1->somethingLeft) &&
+						(animObj1->somethingBottom >= animObj2->somethingTop) &&
+						(animObj2->somethingBottom >= animObj1->somethingTop))
+				{
+					_vm->_scenery->_toRedrawLeft = animObj2->somethingLeft;
+					_vm->_scenery->_toRedrawRight = animObj2->somethingRight;
+					_vm->_scenery->_toRedrawTop = animObj2->somethingTop;
+					_vm->_scenery->_toRedrawBottom = animObj2->somethingBottom;
+					_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+							animData1->animation, 12, *animObj1->pPosX, *animObj1->pPosY, 1);
+					_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
 				}
 			}
+		} else if (animData1->isStatic == 0) {
+			_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+					animData1->animation, 10, *animObj1->pPosX, *animObj1->pPosY, 1);
+			if (_vm->_scenery->_toRedrawLeft != -12345) {
+				if (_vm->_global->_pressedKeys[0x36]) {
+					warning("GOB2 Stub! word_2F3BF & word_2F3C1; someValueToAddToY & someValueToAddToX, respectively");
+					// draws a rectangle around the region to redraw, why?
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop, 15);
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom, 15);
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
+				}
+				animObj1->lastLeft = _vm->_scenery->_toRedrawLeft;
+				animObj1->lastRight = _vm->_scenery->_toRedrawRight;
+				animObj1->lastTop = _vm->_scenery->_toRedrawTop;
+				animObj1->lastBottom = _vm->_scenery->_toRedrawBottom;
+			} else
+				animObj1->lastLeft = -1;
 		} else {
-			if (animData1->isStatic == 0) {
-				_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-						animData1->animation, 10, *animObj1->pPosX, *animObj1->pPosY, 1);
-				if (_vm->_scenery->_toRedrawLeft != -12345) {
-					if (_vm->_global->_pressedKeys[0x36]) {
-						warning("GOB2 Stub! word_2F3BF & word_2F3C1; someValueToAddToY & someValueToAddToX, respectively");
-						// draws a rectangle around the region to redraw, why?
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop, 15);
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom, 15);
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
-					}
-					animObj1->lastLeft = _vm->_scenery->_toRedrawLeft;
-					animObj1->lastRight = _vm->_scenery->_toRedrawRight;
-					animObj1->lastTop = _vm->_scenery->_toRedrawTop;
-					animObj1->lastBottom = _vm->_scenery->_toRedrawBottom;
-				} else {
-					animObj1->lastLeft = -1;
-				}
-			} else {
-				_vm->_scenery->_toRedrawLeft = animObj1->somethingLeft;
-				_vm->_scenery->_toRedrawRight = animObj1->somethingRight;
-				_vm->_scenery->_toRedrawTop = animObj1->somethingTop;
-				_vm->_scenery->_toRedrawBottom = animObj1->somethingBottom;
-			}
-			_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
+			_vm->_scenery->_toRedrawLeft = animObj1->somethingLeft;
+			_vm->_scenery->_toRedrawRight = animObj1->somethingRight;
+			_vm->_scenery->_toRedrawTop = animObj1->somethingTop;
+			_vm->_scenery->_toRedrawBottom = animObj1->somethingBottom;
 		}
+		_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
 	}
 
 	for (i = 0; i < numAnims; i++) {
@@ -1300,7 +1267,7 @@ void Mult_v2::animate(void) {
 					if (animData1->animType != 8)
 						animData1->frame++;
 					if (animData1->frame >=
-							_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->framesCount) {
+							_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].framesCount) {
 						switch (animData1->animType) {
 						case 0:
 							animData1->frame = 0;
@@ -1309,9 +1276,9 @@ void Mult_v2::animate(void) {
 						case 1:
 							animData1->frame = 0;
 							*(_objects[i].pPosX) +=
-								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->animDeltaX;
+								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].animDeltaX;
 							*(_objects[i].pPosY) +=
-								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->animDeltaY;
+								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].animDeltaY;
 							break;
 
 						case 2:
@@ -1352,27 +1319,24 @@ void Mult_v2::animate(void) {
 	for (i = 0; i < numAnims; i++) {
 		animObj1 = _renderData2[i];
 		animData1 = animObj1->pAnimData;
-		if ((animData1->isStatic != 0) || (animObj1->lastLeft == -1))
-			continue;
-
-		for (j = 0; j < numAnims; j++) {
-			if (i == j)
-				continue;
-			animObj2 = _renderData2[j];
-			animData2 = animObj2->pAnimData;
-			if ((animData2->isStatic != 0) || (animObj2->lastLeft == -1))
-				continue;
-			if ((animObj2->lastRight >= animObj1->lastLeft) &&
-					(animObj2->lastLeft <= animObj1->lastRight) &&
-					(animObj2->lastBottom >= animObj1->lastTop) &&
-					(animObj2->lastTop <= animObj1->lastBottom))
-				animData2->intersected = animIndices[i];
-		}
+		if ((animData1->isStatic == 0) && (animObj1->lastLeft != -1))
+			for (j = 0; j < numAnims; j++) {
+				animObj2 = _renderData2[j];
+				animData2 = animObj2->pAnimData;
+				if ((i != j) && (animData2->isStatic == 0) && (animObj2->lastLeft != -1))
+					if ((animObj2->lastRight >= animObj1->lastLeft) &&
+							(animObj2->lastLeft <= animObj1->lastRight) &&
+							(animObj2->lastBottom >= animObj1->lastTop) &&
+							(animObj2->lastTop <= animObj1->lastBottom))
+						animData2->intersected = animIndices[i];
+			}
 	}
+
 }
 
 void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 	    int16 channel) {
+//	warning("playSound, %d, %d, %d", repCount, freq, channel);
 	if (soundDesc->frequency >= 0) {
 		if (soundDesc->frequency == freq)
 			_vm->_snd->playSample(soundDesc, repCount, -channel);
