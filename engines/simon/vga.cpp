@@ -2589,31 +2589,31 @@ void SimonEngine::centreScroll() {
 	if (_scrollXMax != 0) {
 		_scrollCount = 0;
 		x = _variableArray[15] - _scrollX;
-		if (getBitFlag(85) || x >= 624) {
+		if (x < 17 || (getBitFlag(85) && x < 320)) {
+			x -= 320;
+			if (_scrollX < -x)
+				x = -_scrollX;
+			_scrollCount = x;
+		} else if ((getBitFlag(85) && x >= 320) || x >= 624) {
 			x -= 320;
 			tmp = _scrollXMax - _scrollX;
 			if (tmp < x)
 				x = tmp;
 			_scrollCount = x;
-		} else if (x < 17) {
-			x -= 320;
-			if (_scrollX < -x)
-				x = -_scrollX;
-			_scrollCount = x;
 		}
 	} else if (_scrollYMax != 0) {
 		_scrollCount = 0;
 		y = _variableArray[16] - _scrollY;
-		if (y >= 460) {
+		if (y < 30) {
+			y -= 240;
+			if (_scrollY < -y)
+				y = -_scrollY;
+			_scrollCount = y;
+		} else if (y >= 460) {
 			y -= 240;
 			tmp = _scrollYMax - _scrollY;
 			if (tmp < y)
 				y = tmp;
-			_scrollCount = y;
-		} else if (y < 30) {
-			y -= 240;
-			if (_scrollY < -y)
-				y = -_scrollY;
 			_scrollCount = y;
 		}
 	}
