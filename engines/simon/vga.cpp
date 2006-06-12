@@ -1730,7 +1730,9 @@ void SimonEngine::vc36_setWindowImage() {
 	uint16 vga_res = vcReadNextWord();
 	uint16 windowNum = vcReadNextWord();
 
-	if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_FF) {
+		_copyPartialMode = 2;
+	} else if (getGameType() == GType_SIMON2) {
 		set_video_mode_internal(windowNum, vga_res);
 	} else if (getGameType() == GType_SIMON1) {
 		if (windowNum == 16) {

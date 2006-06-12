@@ -348,7 +348,11 @@ void SimonEngine::timer_proc1() {
 	}
 
 	if (_copyPartialMode == 2) {
-		fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
+		if (getGameType() == GType_FF) {
+			fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
+		} else {
+			fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
+		}
 		_copyPartialMode = 0;
 	}
 
