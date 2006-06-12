@@ -1172,8 +1172,8 @@ void Inter_v2::loadMult(void) {
 			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
 			objAnim->animation = animation;
 			if ((*obj->pPosX == 1000) && (*obj->pPosY == 1000)) {
-				*obj->pPosX = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state]->posX;
-				*obj->pPosY = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state]->posY;
+				*obj->pPosX = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state].posX;
+				*obj->pPosY = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->state].posY;
 			}
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 		}

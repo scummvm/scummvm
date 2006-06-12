@@ -498,7 +498,7 @@ void Goblin::animateObjects(void) {
 
 			layer = objDesc->stateMach[objDesc->state][0]->layer;
 			pLayer =
-			    _vm->_scenery->_animations[objDesc->animation].layers[layer];
+			    &_vm->_scenery->_animations[objDesc->animation].layers[layer];
 
 			if (objDesc->curFrame < pLayer->framesCount)
 				continue;
@@ -547,8 +547,7 @@ int16 Goblin::getObjMaxFrame(Gob_Object * objDesc) {
 	int16 layer;
 
 	layer = objDesc->stateMach[objDesc->state][0]->layer;
-	return _vm->_scenery->_animations[objDesc->animation].layers[layer]->framesCount -
-	    1;
+	return _vm->_scenery->_animations[objDesc->animation].layers[layer].framesCount - 1;
 }
 
 int16 Goblin::objIntersected(Gob_Object *obj1, Gob_Object *obj2) {
@@ -609,7 +608,7 @@ void Goblin::showBoredom(int16 gobIndex) {
 	layer = gobDesc->stateMach[gobDesc->state][0]->layer;
 
 	frameCount =
-	    _vm->_scenery->_animations[gobDesc->animation].layers[layer]->framesCount;
+	    _vm->_scenery->_animations[gobDesc->animation].layers[layer].framesCount;
 	state = gobDesc->state;
 	frame = gobDesc->curFrame;
 
@@ -1226,7 +1225,7 @@ int16 Goblin::doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 
 	layer = gobDesc->stateMach[gobDesc->state][0]->layer;
 	framesCount =
-	    _vm->_scenery->_animations[gobDesc->animation].layers[layer]->framesCount;
+	    _vm->_scenery->_animations[gobDesc->animation].layers[layer].framesCount;
 
 	if (VAR(59) == 0 &&
 	    gobDesc->state != 30 && gobDesc->state != 31) {
@@ -1977,7 +1976,7 @@ void Goblin::sub_195C7(int16 index, int16 state) {
 	animData->frame = 0;
 	animData->isPaused = 0;
 	animData->isStatic = 0;
-	animData->newCycle = _vm->_scenery->_animations[animation].layers[layer]->framesCount;
+	animData->newCycle = _vm->_scenery->_animations[animation].layers[layer].framesCount;
 	_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 1);
 
 	if (_vm->_map->_bigTiles) {
@@ -2004,7 +2003,7 @@ void Goblin::sub_11984(Mult::Mult_Object *obj) {
 
 	layer = obj->goblinStates[animData->state][0].layer;
 	animation = obj->goblinStates[animData->state][0].animation;
-	framesCount = _vm->_scenery->_animations[animation].layers[layer]->framesCount;
+	framesCount = _vm->_scenery->_animations[animation].layers[layer].framesCount;
 	animData->newCycle = framesCount;
 	playSounds(obj);
 
@@ -2042,9 +2041,9 @@ void Goblin::sub_11984(Mult::Mult_Object *obj) {
 		animData->field_F = -1;
 		animData->animation = obj->goblinStates[animData->state][0].animation;
 		animData->layer = obj->goblinStates[animData->state][0].layer;
-		*obj->pPosX += _vm->_scenery->_animations[animation].layers[layer]->animDeltaX;
-		*obj->pPosY += _vm->_scenery->_animations[animation].layers[layer]->animDeltaY;
-		animData->newCycle = _vm->_scenery->_animations[animation].layers[layer]->framesCount;
+		*obj->pPosX += _vm->_scenery->_animations[animation].layers[layer].animDeltaX;
+		*obj->pPosY += _vm->_scenery->_animations[animation].layers[layer].animDeltaY;
+		animData->newCycle = _vm->_scenery->_animations[animation].layers[layer].framesCount;
 		animData->isPaused = 0;
 	} else
 		animData->frame--;

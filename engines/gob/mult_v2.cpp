@@ -1305,7 +1305,7 @@ void Mult_v2::animate(void) {
 					if (animData1->animType != 8)
 						animData1->frame++;
 					if (animData1->frame >=
-							_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->framesCount) {
+							_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].framesCount) {
 						switch (animData1->animType) {
 						case 0:
 							animData1->frame = 0;
@@ -1314,9 +1314,9 @@ void Mult_v2::animate(void) {
 						case 1:
 							animData1->frame = 0;
 							*(_objects[i].pPosX) +=
-								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->animDeltaX;
+								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].animDeltaX;
 							*(_objects[i].pPosY) +=
-								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer]->animDeltaY;
+								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].animDeltaY;
 							break;
 
 						case 2:

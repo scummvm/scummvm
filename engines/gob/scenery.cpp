@@ -374,8 +374,12 @@ int16 Scenery::loadAnim(char search) {
 	int16 picsCount;
 	int16 resId;
 	int16 i;
+	int16 j;
 	int16 sceneryIndex;
+	int16 framesCount;
 	char *dataPtr;
+	char *dataPtr2;
+	char *dataPtr3;
 	Animation *ptr;
 	int16 offset;
 	int16 pictDescId;
@@ -425,20 +429,41 @@ int16 Scenery::loadAnim(char search) {
 	ptr->layersCount = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
-	ptr->layers = new AnimLayer*[ptr->layersCount];
+	ptr->layers = new AnimLayer[ptr->layersCount];
 	ptr->pieces = new PieceDesc*[picsCount];
 	ptr->piecesFromExt = new int8[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
+//		ptr->layers[i] = new AnimLayer;
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
-		ptr->layers[i] = (AnimLayer *) (dataPtr + offset - 2);
+		dataPtr2 = dataPtr + offset - 2;
 
-		ptr->layers[i]->unknown0 = (int16)READ_LE_UINT16(&ptr->layers[i]->unknown0);
-		ptr->layers[i]->posX = (int16)READ_LE_UINT16(&ptr->layers[i]->posX);
-		ptr->layers[i]->posY = (int16)READ_LE_UINT16(&ptr->layers[i]->posY);
-		ptr->layers[i]->animDeltaX = (int16)READ_LE_UINT16(&ptr->layers[i]->animDeltaX);
-		ptr->layers[i]->animDeltaY = (int16)READ_LE_UINT16(&ptr->layers[i]->animDeltaY);
-		ptr->layers[i]->framesCount = (int16)READ_LE_UINT16(&ptr->layers[i]->framesCount);
+		ptr->layers[i].unknown0 = (int16)READ_LE_UINT16(dataPtr2);
+		ptr->layers[i].posX = (int16)READ_LE_UINT16(dataPtr2 + 2);
+		ptr->layers[i].posY = (int16)READ_LE_UINT16(dataPtr2 + 4);
+		ptr->layers[i].animDeltaX = (int16)READ_LE_UINT16(dataPtr2 + 6);
+		ptr->layers[i].animDeltaY = (int16)READ_LE_UINT16(dataPtr2 + 8);
+		ptr->layers[i].transp = (int8) *(dataPtr2 + 10);
+		ptr->layers[i].framesCount = (int16)READ_LE_UINT16(dataPtr2 + 11);
+		dataPtr2 += 13;
+
+		framesCount = 0;
+		dataPtr3 = dataPtr2;
+		for (j = 0; j < ptr->layers[i].framesCount; j++, framesCount++, dataPtr3 += 5) {
+			while(dataPtr3[4] == 1) {
+				framesCount++;
+				dataPtr3 += 5;
+			}
+		}
+
+		ptr->layers[i].frames = new AnimFramePiece[framesCount];
+		for (j = 0; j < framesCount; j++) {
+			ptr->layers[i].frames[j].pictIndex = *dataPtr2++;
+			ptr->layers[i].frames[j].pieceIndex = *dataPtr2++;
+			ptr->layers[i].frames[j].destX = *dataPtr2++;
+			ptr->layers[i].frames[j].destY = *dataPtr2++;
+			ptr->layers[i].frames[j].notFinal = *dataPtr2++;
+		}
 	}
 
 	for (i = 0; i < picsCount; i++) {
@@ -511,6 +536,9 @@ void Scenery::freeAnim(int16 animation) {
 		}
 	}
 
+	
+	for (i = 0; i < _animations[animation].layersCount; i++)
+		delete[] _animations[animation].layers[i].frames;
 	delete[] _animations[animation].layers;
 	delete[] _animations[animation].pieces;
 	delete[] _animations[animation].piecesFromExt;
@@ -531,7 +559,7 @@ void Scenery::interStoreParams(void) {
 
 	_vm->_inter->evalExpr(&animation);
 	_vm->_inter->evalExpr(&layer);
-	layerPtr = _animations[animation].layers[layer];
+	layerPtr = &_animations[animation].layers[layer];
 
 	var = _vm->_parse->parseVarIndex();
 	WRITE_VAR_OFFSET(var, layerPtr->animDeltaX);

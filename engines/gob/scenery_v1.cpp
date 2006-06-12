@@ -43,10 +43,11 @@ void Scenery_v1::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 	    int16 drawDeltaX, int16 drawDeltaY, char doDraw) {
 	AnimLayer *layerPtr;
 	PieceDesc **pictPtr;
-	AnimFramePiece *framePtr;
 
 	uint16 pieceIndex;
 	uint16 pictIndex;
+
+	int16 curFrame;
 
 	int16 left;
 	int16 right;
@@ -65,7 +66,7 @@ void Scenery_v1::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 	if (layer >= _animations[animation].layersCount)
 		return;
 
-	layerPtr = _animations[animation].layers[layer];
+	layerPtr = &_animations[animation].layers[layer];
 
 	if (frame >= layerPtr->framesCount)
 		return;
@@ -85,11 +86,11 @@ void Scenery_v1::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 		*_pCaptureCounter = *_pCaptureCounter + 1;
 	}
 	pictPtr = _animations[animation].pieces;
-	framePtr = layerPtr->frames;
+	curFrame = 0;
 
-	for (i = 0; i < frame; i++, framePtr++) {
-		while (framePtr->notFinal == 1)
-			framePtr++;
+	for (i = 0; i < frame; i++, curFrame++) {
+		while (layerPtr->frames[curFrame].notFinal == 1)
+			curFrame++;
 	}
 
 	if ((flags & 4) == 0) {
@@ -109,15 +110,15 @@ void Scenery_v1::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 
 	transp = layerPtr->transp ? 3 : 0;
 
-	framePtr--;
+	curFrame--;
 	do {
-		framePtr++;
+		curFrame++;
 
-		pieceIndex = framePtr->pieceIndex;
-		pictIndex = framePtr->pictIndex;
+		pieceIndex = layerPtr->frames[curFrame].pieceIndex;
+		pictIndex = layerPtr->frames[curFrame].pictIndex;
 
-		destX = framePtr->destX;
-		destY = framePtr->destY;
+		destX = layerPtr->frames[curFrame].destX;
+		destY = layerPtr->frames[curFrame].destY;
 
 		highX = pictIndex & 0xc0;
 		highY = pictIndex & 0x30;
@@ -238,7 +239,7 @@ void Scenery_v1::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 				    (int16)(destY + bottom - top));
 			}
 		}
-	} while (framePtr->notFinal == 1);
+	} while (layerPtr->frames[curFrame].notFinal == 1);
 }
 
 } // End of namespace Gob

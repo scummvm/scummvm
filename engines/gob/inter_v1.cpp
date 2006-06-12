@@ -2317,11 +2317,9 @@ void Inter_v1::o1_setGoblinMultState(int16 &extraData, int32 *retVarPtr, Goblin:
 		layer = objDesc->stateMach[objDesc->state][0]->layer;
 
 		objDesc->xPos =
-				_vm->_scenery->_animations[objDesc->animation].layers[layer]->
-				posX;
+				_vm->_scenery->_animations[objDesc->animation].layers[layer].posX;
 		objDesc->yPos =
-				_vm->_scenery->_animations[objDesc->animation].layers[layer]->
-				posY;
+				_vm->_scenery->_animations[objDesc->animation].layers[layer].posY;
 
 		*_vm->_goblin->_curGobScrXVarPtr = objDesc->xPos;
 		*_vm->_goblin->_curGobScrYVarPtr = objDesc->yPos;
@@ -2415,9 +2413,9 @@ void Inter_v1::o1_setGoblinState(int16 &extraData, int32 *retVarPtr, Goblin::Gob
 	layer = objDesc->stateMach[objDesc->state][0]->layer;
 
 	objDesc->xPos =
-			_vm->_scenery->_animations[objDesc->animation].layers[layer]->posX;
+			_vm->_scenery->_animations[objDesc->animation].layers[layer].posX;
 	objDesc->yPos =
-			_vm->_scenery->_animations[objDesc->animation].layers[layer]->posY;
+			_vm->_scenery->_animations[objDesc->animation].layers[layer].posY;
 
 	if (item == _vm->_goblin->_currentGoblin) {
 		*_vm->_goblin->_curGobScrXVarPtr = objDesc->xPos;
@@ -2439,9 +2437,9 @@ void Inter_v1::o1_setGoblinStateRedraw(int16 &extraData, int32 *retVarPtr, Gobli
 	_vm->_goblin->nextLayer(objDesc);
 	layer = objDesc->stateMach[objDesc->state][0]->layer;
 	objDesc->xPos =
-			_vm->_scenery->_animations[objDesc->animation].layers[layer]->posX;
+			_vm->_scenery->_animations[objDesc->animation].layers[layer].posX;
 	objDesc->yPos =
-			_vm->_scenery->_animations[objDesc->animation].layers[layer]->posY;
+			_vm->_scenery->_animations[objDesc->animation].layers[layer].posY;
 
 	objDesc->toRedraw = 1;
 	objDesc->type = 0;

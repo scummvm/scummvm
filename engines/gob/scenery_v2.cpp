@@ -67,7 +67,7 @@ void Scenery_v2::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 	if (layer >= _animations[animation].layersCount)
 		return;
 
-	layerPtr = _animations[animation].layers[layer];
+	layerPtr = &_animations[animation].layers[layer];
 
 	if (frame >= layerPtr->framesCount)
 		return;
