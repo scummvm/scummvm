@@ -87,9 +87,8 @@ public:
 		AnimLayer *layers;
 		PieceDesc **pieces;
 		int8 *piecesFromExt;
-		char *dataPtr;
 		Animation() : layersCount(0), layers(0), pieces(0),
-			              piecesFromExt(0), dataPtr(0) {}
+			              piecesFromExt(0) {}
 	};
 
 	// Global variables
@@ -105,7 +104,6 @@ public:
 
 	char _animPictToSprite[70];
 	int16 _animPictCount[10];
-	char _animFromExt[10];
 	Animation _animations[10];
 	int16 _animResId[10];
 

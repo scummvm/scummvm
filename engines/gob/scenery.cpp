@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/scenery.h"
@@ -53,7 +54,6 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 		_staticFromExt[i] = 0;
 		_staticResId[i] = 0;
 		_animPictCount[i] = 0;
-		_animFromExt[i] = 0;
 		_animResId[i] = 0;
 	}
 
@@ -377,9 +377,8 @@ int16 Scenery::loadAnim(char search) {
 	int16 j;
 	int16 sceneryIndex;
 	int16 framesCount;
+	char *extData;
 	char *dataPtr;
-	char *dataPtr2;
-	char *dataPtr3;
 	Animation *ptr;
 	int16 offset;
 	int16 pictDescId;
@@ -387,7 +386,9 @@ int16 Scenery::loadAnim(char search) {
 	int16 height;
 	int16 sprResId;
 	int16 sprIndex;
+	uint32 layerPos;
 
+	extData = 0;
 	if (_vm->_cdrom->_cdPlaying) {
 		while (_vm->_cdrom->getTrackPos() != -1)
 		    _vm->_util->longDelay(50);
@@ -416,15 +417,12 @@ int16 Scenery::loadAnim(char search) {
 	_animResId[sceneryIndex] = resId;
 
 	if (resId >= 30000) {
-		_animFromExt[sceneryIndex] = 1;
-		dataPtr = _vm->_game->loadExtData(resId, 0, 0);
-	} else {
-		_animFromExt[sceneryIndex] = 0;
+		extData = _vm->_game->loadExtData(resId, 0, 0);
+		dataPtr = extData;
+	} else
 		dataPtr = _vm->_game->loadTotResource(resId);
-	}
 
 	ptr = &_animations[sceneryIndex];
-	ptr->dataPtr = dataPtr;
 
 	ptr->layersCount = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
@@ -434,35 +432,35 @@ int16 Scenery::loadAnim(char search) {
 	ptr->piecesFromExt = new int8[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
-//		ptr->layers[i] = new AnimLayer;
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
-		dataPtr2 = dataPtr + offset - 2;
+		Common::MemoryReadStream layerData((byte *) (dataPtr + offset - 2), 65535);
 
-		ptr->layers[i].unknown0 = (int16)READ_LE_UINT16(dataPtr2);
-		ptr->layers[i].posX = (int16)READ_LE_UINT16(dataPtr2 + 2);
-		ptr->layers[i].posY = (int16)READ_LE_UINT16(dataPtr2 + 4);
-		ptr->layers[i].animDeltaX = (int16)READ_LE_UINT16(dataPtr2 + 6);
-		ptr->layers[i].animDeltaY = (int16)READ_LE_UINT16(dataPtr2 + 8);
-		ptr->layers[i].transp = (int8) *(dataPtr2 + 10);
-		ptr->layers[i].framesCount = (int16)READ_LE_UINT16(dataPtr2 + 11);
-		dataPtr2 += 13;
+		ptr->layers[i].unknown0 = layerData.readSint16LE();
+		ptr->layers[i].posX = layerData.readSint16LE();
+		ptr->layers[i].posY = layerData.readSint16LE();
+		ptr->layers[i].animDeltaX = layerData.readSint16LE();
+		ptr->layers[i].animDeltaY = layerData.readSint16LE();
+		ptr->layers[i].transp = layerData.readByte();
+		ptr->layers[i].framesCount = layerData.readSint16LE();
 
+		layerPos = layerData.pos();
 		framesCount = 0;
-		dataPtr3 = dataPtr2;
-		for (j = 0; j < ptr->layers[i].framesCount; j++, framesCount++, dataPtr3 += 5) {
-			while(dataPtr3[4] == 1) {
+		layerData.seek(4, SEEK_CUR);
+		for (j = 0; j < ptr->layers[i].framesCount; j++, framesCount++, layerData.seek(4, SEEK_CUR)) {
+			while(layerData.readByte() == 1) {
 				framesCount++;
-				dataPtr3 += 5;
+				layerData.seek(4, SEEK_CUR);
 			}
 		}
+		layerData.seek(layerPos);
 
 		ptr->layers[i].frames = new AnimFramePiece[framesCount];
 		for (j = 0; j < framesCount; j++) {
-			ptr->layers[i].frames[j].pictIndex = *dataPtr2++;
-			ptr->layers[i].frames[j].pieceIndex = *dataPtr2++;
-			ptr->layers[i].frames[j].destX = *dataPtr2++;
-			ptr->layers[i].frames[j].destY = *dataPtr2++;
-			ptr->layers[i].frames[j].notFinal = *dataPtr2++;
+			ptr->layers[i].frames[j].pictIndex = layerData.readByte();
+			ptr->layers[i].frames[j].pieceIndex = layerData.readByte();
+			ptr->layers[i].frames[j].destX = layerData.readByte();
+			ptr->layers[i].frames[j].destY = layerData.readByte();
+			ptr->layers[i].frames[j].notFinal = layerData.readByte();
 		}
 	}
 
@@ -509,6 +507,8 @@ int16 Scenery::loadAnim(char search) {
 			_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 		}
 	}
+	if (extData != 0)
+		delete[] extData;
 	return sceneryIndex + 100;
 }
 
@@ -542,10 +542,7 @@ void Scenery::freeAnim(int16 animation) {
 	delete[] _animations[animation].layers;
 	delete[] _animations[animation].pieces;
 	delete[] _animations[animation].piecesFromExt;
-	if (_animFromExt[animation] == 1)
-		delete[] _animations[animation].dataPtr;
 
-	_animFromExt[animation] = 0;
 	_animPictCount[animation] = 0;
 }
 
