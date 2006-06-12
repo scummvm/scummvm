@@ -123,6 +123,7 @@ OBJS	+=	backends/gp32/startup.o \
 
 # Custom GP32 std library
 OBJS	+=	backends/gp32/gp32std.o \
+			backends/gp32/gp32std_file.o \
 			backends/gp32/gp32std_grap.o \
 			backends/gp32/gp32std_input.o \
 			backends/gp32/gp32std_sound.o \

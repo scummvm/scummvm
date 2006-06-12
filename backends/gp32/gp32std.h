@@ -39,33 +39,6 @@
 #define LCD_WIDTH 320
 #define LCD_HEIGHT 240
 
-#define FCACHE_SIZE 8 * 1024
-
-typedef struct {
-	F_HANDLE handle;
-	unsigned long size;
-	unsigned long cachePos;		//cache position
-	unsigned char cacheData[FCACHE_SIZE];
-} GPFILE;
-
-extern GPFILE *gp_stderr;
-extern GPFILE *gp_stdout;
-extern GPFILE *gp_stdin;
-
-extern GPFILE *	gp_fopen(const char *filename, const char *mode);
-extern int		gp_fclose(GPFILE *stream);
-extern int		gp_fseek(GPFILE *stream, long offset, int whence);
-extern size_t	gp_fread(void *ptr, size_t size, size_t n, GPFILE *stream);
-extern size_t	gp_fwrite(const void *ptr, size_t size, size_t n, GPFILE *stream);
-extern long		gp_ftell(GPFILE *stream);
-extern void		gp_clearerr(GPFILE *stream);
-extern int		gp_feof(GPFILE *stream);
-extern char		gp_fgetc(GPFILE *stream);
-extern char *	gp_fgets(char *s, int n, GPFILE *stream);
-extern int		gp_fflush(GPFILE *stream);
-extern int		gp_ferror(GPFILE *stream);
-extern int		gp_fprintf(GPFILE *stream, const char *fmt, ...);
-
 extern char *	gp_strcpy(char *dst, const char *src);
 extern char *	gp_strncpy(char *dst, const char *src, size_t count);
 extern char *	gp_strcat(char *dst, const char *src);
