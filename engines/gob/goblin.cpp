@@ -147,7 +147,7 @@ Goblin::Goblin(GobEngine *vm) : _vm(vm) {
 	for (i = 0; i < 60; i++)
 		_soundSlots[i] = -1;
 
-	warning("GOB2 Stub! _word_2F9C0, _word_2F9BE, _word_2F9BC, _word_2F9BA, _dword_2F9B6, _dword_2F9B2");
+//	warning("GOB2 Stub! _word_2F9C0, _word_2F9BE, _word_2F9BC, _word_2F9BA, _dword_2F9B6, _dword_2F9B2");
 	_word_2F9C0 = 0;
 	_word_2F9BE = 0;
 	_word_2F9BC = 0;
@@ -1892,11 +1892,11 @@ void Goblin::sub_19BD3(void) {
 	var_C = anim1->field_14;
 
 	pass = _vm->_map->getPass(gob1X, gob1Y, 40);
-	if ((pass > 17) && (pass < 21))
+/*	if ((pass > 17) && (pass < 21))
 		warning("GOB2 Stub! sub_19AB7(anim0);");
 	pass = _vm->_map->getPass(gob2X, gob2Y, 40);
 	if ((pass > 17) && (pass < 21))
-		warning("GOB2 Stub! sub_19B45(anim1);");
+		warning("GOB2 Stub! sub_19B45(anim1);");*/
 
 	if ((di < 0) || (di > 39) || (si < 0) || (si > 39))
 		return;
@@ -1912,7 +1912,7 @@ void Goblin::sub_19BD3(void) {
 					di++;
 			} else
 				di--;
-			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
+//			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
 		}
 	} else {
 		if (_vm->_map->getPass(di, si, 40) > 17) {
@@ -1925,7 +1925,7 @@ void Goblin::sub_19BD3(void) {
 					di++;
 			} else
 				di--;
-			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
+//			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
 		}
 	}
 	if (gob2Y > var_C) {
@@ -1939,7 +1939,7 @@ void Goblin::sub_19BD3(void) {
 					var_A++;
 			} else
 				var_A--;
-			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
+//			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
 		}
 	} else {
 		if (_vm->_map->getPass(var_A, var_C, 40) > 17) {
@@ -1952,7 +1952,7 @@ void Goblin::sub_19BD3(void) {
 					var_A++;
 			} else
 				var_A--;
-			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
+//			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
 		}
 	}
 }

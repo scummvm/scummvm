@@ -310,7 +310,7 @@ protected:
 	virtual const char *getOpcodeGoblinDesc(int i);
 	virtual void loadMult(void);
 
-	void o2_drawStub(void) { error("Gob2 stub"); }
+	void o2_drawStub(void) { /*error("Gob2 stub");*/ }
 	void o2_totSub(void);
 	void o2_switchTotSub(void);
 	void o2_stub0x54(void);

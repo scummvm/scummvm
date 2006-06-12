@@ -753,7 +753,7 @@ void Inter_v2::o2_stub0x80(void) {
 		_vm->_global->_videoMode = 0x12;
 		_vm->_video->initPrimary(0xE);
 		_vm->_global->_videoMode = 0x10;
-		warning("GOB2 Stub! Set VGA CRT Maximum Scan Line to 0");
+//		warning("GOB2 Stub! Set VGA CRT Maximum Scan Line to 0");
 		_vm->_draw->_frontSurface->height = 400;
 	} else {
 		_vm->_global->_videoMode = videoMode;
@@ -783,10 +783,10 @@ void Inter_v2::o2_stub0x80(void) {
 		_vm->_game->_word_2E51F = _vm->_global->_primaryHeight - start;
 	_vm->_game->sub_ADD2();
 
-	if (_vm->_game->_off_2E51B != 0) {
+/*	if (_vm->_game->_off_2E51B != 0) {
 		warning("GOB2 Stub! _vid_setSplit(_vm->_global->_primaryHeight - start);");
 		warning("GOB2 Stub! _vid_setPixelShift(0, start);");
-	}
+	}*/
 }
 
 void Inter_v2::o2_stub0x82(void) {
@@ -817,7 +817,7 @@ void Inter_v2::o2_stub0x85(void) {
 	strcpy(dest, _vm->_global->_inter_resStr);
 	strcat(dest, ".ITK");
 
-	warning("STUB: Gob2 drawOperation 0x85 (\"%s\")", dest);
+//	warning("STUB: Gob2 drawOperation 0x85 (\"%s\")", dest);
 	_vm->_dataio->openDataFile(dest);
 }
 
@@ -1429,13 +1429,13 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 			if (_vm->_global->_inter_execPtr[i] != 0)
 				dl = 0;
 		}
-		if (dl != 0) {
+/*		if (dl != 0) {
 			warning("GOB2 Stub! sub_27413");
-/*			sub_27413(_draw_frontSurface);
+			sub_27413(_draw_frontSurface);
 			byte_2E521 = 0;
 			_vm->_global->_inter_execPtr += 18;
-			break;*/
-		}
+			break;
+		}*/
 //		byte_2E521 = 1;
 
 		for (i = 0; i < 18; i++, _vm->_global->_inter_execPtr++) {
@@ -1536,9 +1536,9 @@ bool Inter_v2::o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
 		buf[size] = 0;
 	}
 
-	if (strcmp(buf, "INSTALL") == 0) {
+/*	if (strcmp(buf, "INSTALL") == 0) {
 		warning("GOB2 Stub! word_2E515 = _inter_variables[0E8h]");
-	}
+	}*/
 
 	strcat(buf, ".tot");
 	if (_terminate != 2)
@@ -1900,7 +1900,7 @@ void Inter_v2::storeMouse(void) {
 }
 
 void Inter_v2::o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	warning("GOB2 Stub! o2_setPickable");
+//	warning("GOB2 Stub! o2_setPickable");
 }
 
 void Inter_v2::animPalette(void) {

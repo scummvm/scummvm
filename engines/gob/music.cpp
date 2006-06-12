@@ -354,10 +354,10 @@ void Music::pollMusic(void) {
 			setKey(channel, note, true, false);
 			break;
 		case 0x10:
-			warning("GOB2 Stub! ADL command 0x10");
+//			warning("GOB2 Stub! ADL command 0x10");
 			break;
 		case 0x50:
-			warning("GOB2 Stub! ADL command 0x50");
+//			warning("GOB2 Stub! ADL command 0x50");
 			break;
 		// Note on
 		case 0x90:

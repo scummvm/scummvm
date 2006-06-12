@@ -134,7 +134,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 	_cursorTimeKey = 0;
 
-	warning("GOB2 Stub! _word_2E8E2");
+//	warning("GOB2 Stub! _word_2E8E2");
 	_word_2E8E2 = 2;
 }
 

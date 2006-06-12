@@ -118,12 +118,12 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_imdFrameData = 0;
 	_imdVidBuffer = 0;
 
-	warning("GOB2 Stub! _byte_2FC82, _byte_2FC83, _word_2FC80");
+//	warning("GOB2 Stub! _byte_2FC82, _byte_2FC83, _word_2FC80");
 	_byte_2FC82 = 0;
 	_byte_2FC83 = 0;
 	_word_2FC80 = 0;
 
-	warning("GOB2 Stub! _byte_2FC9B, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517, _dword_2F2B6");
+//	warning("GOB2 Stub! _byte_2FC9B, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517, _dword_2F2B6");
 	_byte_2FC9B = 0;
 	_word_2FC9C = 0;
 	_word_2FC9E = 0;
@@ -2041,7 +2041,7 @@ Game::Imd *Game::loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int
 
 	if (imdPtr->verMin & 0x4000) {
 		// loc_29C4F
-		error("GOB2 Stub! loadImdFile, imdPtr->verMin & 0x4000");
+//		error("GOB2 Stub! loadImdFile, imdPtr->verMin & 0x4000");
 		// Sound stuff, I presume...
 	}
 
@@ -2083,7 +2083,7 @@ Game::Imd *Game::loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int
 	_imdVidBufferSize = imdPtr->vidBufferSize;
 	if (flags & 0x80) {
 		imdPtr->verMin |= 0x1000;
-		warning("GOB2 Stub! loadImdFile(), flags & 0x80");
+//		warning("GOB2 Stub! loadImdFile(), flags & 0x80");
 	}
 
 	return imdPtr;
@@ -2234,7 +2234,7 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 					_word_2FC80 = _vm->_draw->_spritesArray[21]->vidPtr;
 				else
 					_word_2FC80 = _vm->_draw->_spritesArray[20]->vidPtr;
-				warning("GOB2 Stub! sub_1BC3A(_word_2FC80);");
+//				warning("GOB2 Stub! sub_1BC3A(_word_2FC80);");
 			} else
 				_vm->_draw->blitInvalidated();
 		} else
@@ -2370,7 +2370,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 		if (byte_31344 != 0) {
 			if ((var_4 == 0) && (_vm->_global->_soundFlags & 0x14) && (byte_31344 == 2)) { // loc_2A503
 				var_12 = _vm->_util->getTimeKey();
-				warning("GOB2 Stub! viewImd, IMD sound stuff");
+//				warning("GOB2 Stub! viewImd, IMD sound stuff");
 			}
 		}
 		var_4 = 0;
@@ -2399,8 +2399,8 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 					continue;
 				if (!(_vm->_video->_extraMode && (imdPtr->surfDesc->vidMode == 0x13)))
 					imdRenderFrame(imdPtr);
-				else
-					warning("GOB2 Stub! viedImd, sub_2C69A(imdPtr);");
+//				else
+//					warning("GOB2 Stub! viedImd, sub_2C69A(imdPtr);");
 			}
 		} else
 			retVal |= 0x800;
@@ -2621,7 +2621,7 @@ void Game::imdFrameUncompressor(byte *dest, byte *src) {
 }
 
 int16 Game::sub_2C825(Imd *imdPtr) {
-	warning("GOB2 Stub! sub_2C825()");
+//	warning("GOB2 Stub! sub_2C825()");
 	return 0;
 }
 

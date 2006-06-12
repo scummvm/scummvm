@@ -269,7 +269,7 @@ void Mult_v2::loadMult(int16 resId) {
 	_multData2->somepointer10 = 0;
 
 	if (hbstaticCount) {
-		warning("GOB2 Stub! Mult_Data.somepointer09, Mult_Data.somepointer10");
+//		warning("GOB2 Stub! Mult_Data.somepointer09, Mult_Data.somepointer10");
 		size = _vm->_inter->load16();
 		_multData2->execPtr = _vm->_global->_inter_execPtr;
 		_vm->_global->_inter_execPtr += size * 2;
@@ -1014,7 +1014,7 @@ void Mult_v2::sub_62DD(int16 index) {
 			// somepointer09 is 14 bytes wide (surely a struct)
 			int arg0 = _multData2->somepointer09[-_multData2->someKeys[i][_multData2->someKeysIndices[i]].field_2 - 2];
 */
-			warning("GOB2 Stub! sub_1CBF8(arg0, arg1, arg2, arg3);");
+//			warning("GOB2 Stub! sub_1CBF8(arg0, arg1, arg2, arg3);");
 		}
 	}
 	
@@ -1247,7 +1247,7 @@ void Mult_v2::animate(void) {
 						animData1->animation, 10, *animObj1->pPosX, *animObj1->pPosY, 1);
 				if (_vm->_scenery->_toRedrawLeft != -12345) {
 					if (_vm->_global->_pressedKeys[0x36]) {
-						warning("GOB2 Stub! word_2F3BF & word_2F3C1; someValueToAddToY & someValueToAddToX, respectively");
+//						warning("GOB2 Stub! word_2F3BF & word_2F3C1; someValueToAddToY & someValueToAddToX, respectively");
 						// draws a rectangle around the region to redraw, why?
 						_vm->_video->drawLine(_vm->_draw->_frontSurface,
 								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
