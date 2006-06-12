@@ -1038,9 +1038,9 @@ void SimonEngine::setup_cond_c_helper() {
 
 			if (getGameType() == GType_FF) {
 				if (_variableArray[254] == 63) {
-					hitarea_stuff_helper();
+					hitarea_stuff_helper_2();
 				} else if (_variableArray[254] == 75) {
-					hitarea_stuff_helper();
+					hitarea_stuff_helper_2();
 					_variableArray[60] = 9999;
 					goto out_of_here;
 				}
