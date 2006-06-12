@@ -157,7 +157,7 @@ void Mult_v2::loadMult(int16 resId) {
 			_multData2->field_17F[i][j] = 0;
 		}
 
-		_multData2->animKeysIndices1[i] = -1;
+		_multData2->animKeysFrames[i] = -1;
 		_multData2->animKeysCount[i] = READ_LE_UINT16(_dataPtr);
 		_dataPtr += 2;
 
@@ -362,8 +362,8 @@ void Mult_v2::multSub(uint16 multindex) {
 		_multData2->field_124[index][i] = _vm->_parse->parseValExpr();
 	}
 	expr = _vm->_parse->parseValExpr();
-	_multData2->animKeysIndices1[index] = expr;
-	_multData2->animKeysIndices2[index] = expr;
+	_multData2->animKeysFrames[index] = expr;
+	_multData2->someKeysFrames[index] = expr;
 	
 	WRITE_VAR(18 + index, expr);
 	if (expr == -1) {
@@ -377,7 +377,7 @@ void Mult_v2::multSub(uint16 multindex) {
 			_multData2->field_157[index] = 32000;
 			for (i = 0; i < _multData2->textKeysCount; i++) {
 				textFrame = _multData2->textKeys[i].frame;
-				if ((textFrame > _multData2->animKeysIndices2[index]) &&
+				if ((textFrame > _multData2->someKeysFrames[index]) &&
 						(textFrame < _multData2->field_157[index])) {
 					_multData2->field_157[index] = textFrame;
 				}
@@ -386,7 +386,7 @@ void Mult_v2::multSub(uint16 multindex) {
 			_multData2->field_157[index] = 0;
 			for (i = 0; i < _multData2->textKeysCount; i++) {
 				textFrame = _multData2->textKeys[i].frame;
-				if ((textFrame < _multData2->animKeysIndices2[index]) &&
+				if ((textFrame < _multData2->someKeysFrames[index]) &&
 						(textFrame > _multData2->field_157[index])) {
 					_multData2->field_157[index] = textFrame;
 				}
@@ -403,7 +403,7 @@ void Mult_v2::multSub(uint16 multindex) {
 		for (i = 0; i < 4; i++) {
 			_multData2->field_15F[index][i] = 0;
 			for (j = 0; j < _multData2->animKeysCount[i]; j++) {
-				if (_multData2->animKeys[i][j].frame >= _multData2->animKeysIndices2[index])
+				if (_multData2->animKeys[i][j].frame >= _multData2->someKeysFrames[index])
 					_multData2->field_15F[index][i] = j;
 			}
 		}
@@ -416,7 +416,7 @@ void Mult_v2::multSub(uint16 multindex) {
 			_multData2->field_17F[index][i] = 0;
 			for (j = 0; j < _multData2->someKeysCount[i]; j++) {
 				if (_multData2->field_156 == 1) {
-					if (_multData2->someKeys[i][j].frame >= _multData2->animKeysIndices2[index]) {
+					if (_multData2->someKeys[i][j].frame >= _multData2->someKeysFrames[index]) {
 						_multData2->field_17F[index][i] = j;
 						break;
 					}
@@ -927,11 +927,10 @@ void Mult_v2::sub_62DD(int16 index) {
 	int16 frame;
 	int16 layer;
 	int16 layers;
-	int16 curanim;
+	int16 curAnim;
 	int i, j;
 	
-	// I really doubt animKeysIndices1 is a correct name for that field...
-	frame = _multData2->animKeysIndices1[index];
+	frame = _multData2->animKeysFrames[index];
 	if (frame == -1)
 		return;
 
@@ -941,9 +940,7 @@ void Mult_v2::sub_62DD(int16 index) {
 				if ((i >= 4) || (j >= _multData2->animKeysCount[i]))
 					continue;
 				animKey = &_multData2->animKeys[i][j];
-				if (animKey->frame > frame)
-					break;
-				else if (animKey->frame == frame) {
+				if (animKey->frame == frame) {
 					animObj = &_objects[_multData2->field_124[index][i]];
 					if (animKey->layer > -1) {
 						_multData2->field_15F[index][i] = j;
@@ -956,39 +953,32 @@ void Mult_v2::sub_62DD(int16 index) {
 						animObj->pAnimData->maxTick = 0;
 						animObj->pAnimData->animation = 0;
 						animObj->tick = 0;
-						curanim = _multData2->animIndices[0];
+						curAnim = _multData2->animIndices[0];
 						layer = animKey->layer;
-						layers = _vm->_scenery->_animations[curanim].layersCount;
+						layers = _vm->_scenery->_animations[curAnim].layersCount;
 						while (layer >= layers) {
 							layer -= layers;
 							animObj->pAnimData->animation++;
-							curanim = _multData2->animIndices[animObj->pAnimData->animation];
-							layers = _vm->_scenery->_animations[curanim].layersCount;
+							curAnim = _multData2->animIndices[animObj->pAnimData->animation];
+							layers = _vm->_scenery->_animations[curAnim].layersCount;
 						}
-						animObj->pAnimData->layer = 2;
+						animObj->pAnimData->layer = layer;
 						animObj->pAnimData->animation =
 							_multData2->animIndices[animObj->pAnimData->animation];
 						break;
-					}
-					else {
+					} else
 						animObj->pAnimData->isStatic = 1;
-						continue;
-					}
-				}
+				} else if (animKey->frame > frame)
+					break;
 			}
 		}
-		if (_multData2->field_124[index][i] != -1) {
-//			warning("GOB2 Stub! Messing about with _multData2->someKeys, %d, %d", _multData2->field_17F[index][i], _multData2->someKeysCount[i]);
-			for (j = _multData2->field_17F[index][i]; j < _multData2->someKeysCount[i]; j++) {
 
+		if (_multData2->field_124[index][i] != -1) {
+			for (j = _multData2->field_17F[index][i]; j < _multData2->someKeysCount[i]; j++) {
 				someKey1 = &_multData2->someKeys[i][j];
 				someKey2 = &_multData2->someKeys[i][j-1];
-				if (someKey1->frame > frame)
-					break;
-				else if (someKey1->frame == frame) {
-					if (someKey1->field_2 == -1)
-						_multData2->someKeysIndices[i] = -1;
-					else {
+				if (someKey1->frame == frame) {
+					if (someKey1->field_2 != -1) {
 						_multData2->someKeysIndices[0] = -1;
 						_multData2->someKeysIndices[1] = -1;
 						_multData2->someKeysIndices[2] = -1;
@@ -999,9 +989,10 @@ void Mult_v2::sub_62DD(int16 index) {
 							_multData2->someKeysIndices[i] = -1;
 						else
 							_multData2->someKeysIndices[i] = j - 1;
-					}
-				}
-
+					} else
+						_multData2->someKeysIndices[i] = -1;
+				} else if(someKey1->frame > frame)
+					break;
 			}
 		}
 		if (_multData2->someKeysIndices[i] != -1) {
@@ -1019,6 +1010,7 @@ void Mult_v2::sub_62DD(int16 index) {
 	}
 	
 	doSoundAnim(0, frame);
+	WRITE_VAR(22, frame);
 
 	if (_multData2->field_156 == 1) { // loc_6809
 		frame++;
@@ -1052,7 +1044,7 @@ void Mult_v2::sub_62DD(int16 index) {
 		}
 	}
 	// loc_6A06
-	_multData2->animKeysIndices1[index] = frame;
+	_multData2->animKeysFrames[index] = frame;
 	WRITE_VAR(18 + index, frame);
 }
 
@@ -1080,9 +1072,6 @@ void Mult_v2::animate(void) {
 	int orderArrayPos = 0;
 	int8 animIndices[150];
 	int numAnims = 0; // di
-	// .-----
-	int off_2CE67 = 1000;
-	// '-----
 	
 	if (_objects == 0)
 		return;
@@ -1112,65 +1101,71 @@ void Mult_v2::animate(void) {
 		animObj1 = _renderData2[i];
 
 		animObj1->someFlag = 0;
-		// TODO: the region around off_2CE67 is messed up
-		// Should be some high value so that MIN() works
-		animObj1->somethingTop = off_2CE67; // seg011:0AA7
-		animObj1->somethingLeft = off_2CE67;
+		animObj1->somethingTop = 1000;
+		animObj1->somethingLeft = 1000;
 		animObj1->somethingBottom = 0;
 		animObj1->somethingRight = 0;
 		
 		animData1 = animObj1->pAnimData;
-		if ((animData1->isStatic == 0) && (animData1->isPaused == 0)
-				&& (animData1->maxTick == animObj1->tick)) {
-			animObj1->someFlag = 1;
-			_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-					animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
-			if (animObj1->lastLeft == -1) {
-				animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-				animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-				animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
-			} else {
-				animObj1->somethingLeft = MIN(animObj1->lastLeft, _vm->_scenery->_toRedrawLeft);
-				animObj1->somethingTop = MIN(animObj1->lastTop, _vm->_scenery->_toRedrawTop);
-				animObj1->somethingRight = MAX(animObj1->lastRight, _vm->_scenery->_toRedrawRight);
-				animObj1->somethingBottom = MAX(animObj1->lastBottom, _vm->_scenery->_toRedrawBottom);
-				if ((_vm->_game->_totFileData[0x29] > 50) &&
-						(animObj1->somethingLeft == animObj1->lastLeft) &&
-						(animObj1->somethingTop == animObj1->lastTop) &&
-						(animObj1->somethingRight == animObj1->lastRight) &&
-						(animObj1->somethingBottom == animObj1->lastBottom) &&
-						(animData1->somethingLayer == animData1->layer) &&
-						(animData1->somethingFrame == animData1->frame) &&
-						(animData1->somethingAnimation == animData1->animation)) {
-					animObj1->someFlag = 0;
-				}
-			}
-		} else {
-			if (animData1->isStatic == 0) {
-				if (animObj1->lastLeft == -1) {
-					animObj1->someFlag = 1;
-					_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-						animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
-				}
-				animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-				animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-				animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
-			} else if (animObj1->lastLeft != -1) {
+
+		if (animData1->isStatic != 2) {
+			if ((animData1->isStatic == 0) && (animData1->isPaused == 0)
+					&& (animData1->maxTick == animObj1->tick)) {
 				animObj1->someFlag = 1;
-				animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-				animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-				animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+				_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+						animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
+				if (animObj1->lastLeft == -1) {
+					animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
+					animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
+					animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
+					animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+				} else {
+					animObj1->somethingLeft = MIN(animObj1->lastLeft, _vm->_scenery->_toRedrawLeft);
+					animObj1->somethingTop = MIN(animObj1->lastTop, _vm->_scenery->_toRedrawTop);
+					animObj1->somethingRight = MAX(animObj1->lastRight, _vm->_scenery->_toRedrawRight);
+					animObj1->somethingBottom = MAX(animObj1->lastBottom, _vm->_scenery->_toRedrawBottom);
+					if ((_vm->_game->_totFileData[0x29] > 50) &&
+							(animObj1->somethingLeft == animObj1->lastLeft) &&
+							(animObj1->somethingTop == animObj1->lastTop) &&
+							(animObj1->somethingRight == animObj1->lastRight) &&
+							(animObj1->somethingBottom == animObj1->lastBottom) &&
+							(animData1->somethingLayer == animData1->layer) &&
+							(animData1->somethingFrame == animData1->frame) &&
+							(animData1->somethingAnimation == animData1->animation)) {
+						animObj1->someFlag = 0;
+					}
+				}
+			} else {
+				if (animData1->isStatic == 0) {
+					if (animObj1->lastLeft == -1) {
+						animObj1->someFlag = 1;
+						_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+							animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
+						animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
+						animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
+						animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
+						animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+					} else {
+						animObj1->somethingLeft = animObj1->lastLeft;
+						animObj1->somethingTop = animObj1->lastTop;
+						animObj1->somethingRight = animObj1->lastRight;
+						animObj1->somethingBottom = animObj1->lastBottom;
+					}
+				} else if (animObj1->lastLeft != -1) {
+					animObj1->someFlag = 1;
+					animObj1->somethingLeft = animObj1->lastLeft;
+					animObj1->somethingTop = animObj1->lastTop;
+					animObj1->somethingRight = animObj1->lastRight;
+					animObj1->somethingBottom = animObj1->lastBottom;
+				}
 			}
-		}
-		animData1->somethingLayer = animData1->layer;
-		animData1->somethingFrame = animData1->frame;
-		animData1->somethingAnimation = animData1->animation;
-		if ((animObj1->someFlag != 0) || (animData1->isStatic == 0)) {
-			minOrder = MIN(minOrder, animData1->order);
-			maxOrder = MAX(maxOrder, animData1->order);
+			animData1->somethingLayer = animData1->layer;
+			animData1->somethingFrame = animData1->frame;
+			animData1->somethingAnimation = animData1->animation;
+			if ((animObj1->someFlag != 0) || (animData1->isStatic == 0)) {
+				minOrder = MIN(minOrder, animData1->order);
+				maxOrder = MAX(maxOrder, animData1->order);
+			}
 		}
 	}
 
