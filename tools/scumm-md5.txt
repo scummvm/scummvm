@@ -338,6 +338,7 @@ soccer	Backyard Soccer
 
 SoccerMLS	Backyard Soccer MLS Edition
 	bfdf584b01503f0762baded581f6a0a2	en	Windows	-	-	-	sev
+	ce2304f3919e1dcfcc512a81d7b603e0	en	All	-	-	-	Kirben
 
 Soccer2004	Backyard Soccer 2004
 	c4ffae9fac495475d6bc3343ccc8faf9	en	All	-	-	-	Kirben, sev
