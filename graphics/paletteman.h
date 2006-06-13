@@ -32,6 +32,13 @@ namespace Graphics {
 class PaletteManager : public Common::Singleton<PaletteManager> {
 public:
 	/**
+	 * Enable/Disable the current cursor palette.
+	 *
+	 * @param disable
+	 */
+	void disableCursorPalette(bool disable);
+
+	/**
 	 * Push a new cursor palette onto the stack, and set it in the backend.
 	 * The palette entries from 'start' till (start+num-1) will be replaced
 	 * so a full palette updated is accomplished via start=0, num=256.
@@ -77,6 +84,8 @@ private:
 		uint _num;
 		uint _size;
 
+		bool _disabled;
+
 		Palette(const byte *colors, uint start, uint num) {
 			_start = start;
 			_num = num;
@@ -88,6 +97,8 @@ private:
 			} else {
 				_data = NULL;
 			}
+
+			_disabled = false;
 		}
 
 		~Palette() {
