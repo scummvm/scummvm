@@ -37,6 +37,19 @@ PaletteManager::PaletteManager() {
 	}
 }
 
+void PaletteManager::disableCursorPalette(bool disable) {
+	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return;
+
+	if (_cursorPaletteStack.empty())
+		return;
+
+	Palette *pal = _cursorPaletteStack.top();
+	pal->_disabled = disable;
+
+	g_system->disableCursorPalette(true);
+}
+
 void PaletteManager::pushCursorPalette(const byte *colors, uint start, uint num) {
 	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return;
@@ -67,7 +80,7 @@ void PaletteManager::popCursorPalette() {
 
 	pal = _cursorPaletteStack.top();
 
-	if (pal->_num)
+	if (pal->_num && !pal->_disabled)
 		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	else
 		g_system->disableCursorPalette(true);

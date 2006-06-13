@@ -195,7 +195,6 @@ void ThemeNew::enable() {
 }
 
 void ThemeNew::disable() {
-	_system->disableCursorPalette(true);
 	_system->hideOverlay();
 	PaletteMan.popCursorPalette();
 	_enabled = false;
