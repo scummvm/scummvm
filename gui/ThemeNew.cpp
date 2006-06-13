@@ -1299,9 +1299,6 @@ const Graphics::Font *ThemeNew::loadFont(const char *filename) {
 			return font;
 	}
 
-	printf("normal font open!\n");
-	fflush(stdout);
-
 	// normal open
 	if (fontFile.open(filename)) {
 		font = Graphics::NewFont::loadFont(fontFile);
