@@ -1523,8 +1523,8 @@ void Wiz::loadWizCursor(int resId) {
 	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
 	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);
-	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
 	_vm->setCursorHotspot(x, y);
+	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
 
 	// Since we set up cursor palette for default cursor, disable it now
 	PaletteMan.disableCursorPalette(true);
