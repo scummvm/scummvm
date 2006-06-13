@@ -124,10 +124,10 @@ void Draw_v2::printText(void) {
 
 	_vm->_cdrom->playMultMusic();
 
-	if (_vm->_game->_totTextData == 0)
+	if ((_vm->_game->_totTextData == 0) || (_vm->_game->_totTextData->dataPtr == 0))
 		return;
 
-	dataPtr = (char *)_vm->_game->_totTextData + _vm->_game->_totTextData->items[index].offset;
+	dataPtr = _vm->_game->_totTextData->dataPtr + _vm->_game->_totTextData->items[index].offset;
 	ptr = dataPtr;
 
 	if ((_renderFlags & 0x400) && (ptr[1] & 0x80))
@@ -380,7 +380,7 @@ void Draw_v2::printText(void) {
 		case 10:
 			// loc_12C93
 			str[0] = (char)255;
-			WRITE_LE_UINT16((uint16*)(str+1), ptr - (char *)_vm->_game->_totTextData);
+			WRITE_LE_UINT16((uint16*)(str+1), ptr - _vm->_game->_totTextData->dataPtr);
 			str[3] = 0;
 			ptr++;
 			i = *ptr++;
@@ -685,7 +685,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		offset = itemPtr->offset;
 		if (offset >= 0) {
 			dataBuf =
-			    ((char *)_vm->_game->_totResourceTable) +
+			    _vm->_game->_totResourceTable->dataPtr +
 			    szGame_TotResTable + szGame_TotResItem *
 			    _vm->_game->_totResourceTable->itemsCount + offset;
 		} else {
@@ -714,7 +714,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 			if (_fonts[_fontIndex]->extraData == 0) {
 				if (((signed) _textToPrint[0]) == -1) {
-					dataBuf = (char*)_vm->_game->_totTextData + _textToPrint[1] + 1;
+					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (i = 0; i < len; i++) {
 						_vm->_video->drawLetter(READ_LE_UINT16(dataBuf), _destSpriteX,

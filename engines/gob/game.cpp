@@ -372,7 +372,7 @@ char *Game::loadTotResource(int16 id) {
 	itemPtr = &_totResourceTable->items[id];
 	offset = itemPtr->offset;
 	if (offset >= 0) {
-		return ((char *)_totResourceTable) + szGame_TotResTable +
+		return _totResourceTable->dataPtr + szGame_TotResTable +
 		    szGame_TotResItem * _totResourceTable->itemsCount + offset;
 	} else {
 		return (char *)(_imFileData + (int32)READ_LE_UINT32(&((int32 *)_imFileData)[-offset - 1]));

@@ -60,7 +60,7 @@ void Draw_v1::printText(void) {
 
 	_vm->_cdrom->playMultMusic();
 
-	dataPtr = (char *)_vm->_game->_totTextData + _vm->_game->_totTextData->items[index].offset;
+	dataPtr = _vm->_game->_totTextData->dataPtr + _vm->_game->_totTextData->items[index].offset;
 	ptr = dataPtr;
 
 	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
@@ -334,7 +334,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 		offset = itemPtr->offset;
 		if (offset >= 0) {
 			dataBuf =
-			    ((char *)_vm->_game->_totResourceTable) +
+			    _vm->_game->_totResourceTable->dataPtr +
 			    szGame_TotResTable + szGame_TotResItem *
 			    _vm->_game->_totResourceTable->itemsCount + offset;
 		} else {

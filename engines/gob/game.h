@@ -58,7 +58,8 @@ public:
 	struct TotResTable {
 		int16 itemsCount;
 		byte unknown;
-		TotResItem items[1];
+		TotResItem *items;
+		char *dataPtr;
 	} GCC_PACK;
 
 #define szGame_ExtItem (4 + 2 + 2 + 2)
@@ -85,7 +86,8 @@ public:
 #define szGame_TotTextTable (2)
 	struct TotTextTable {
 		int16 itemsCount;
-		TotTextItem items[1];
+		TotTextItem *items;
+		char *dataPtr;
 	} GCC_PACK;
 
 	struct InputDesc {

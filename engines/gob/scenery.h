@@ -47,7 +47,7 @@ public:
 	struct StaticLayer {
 		int16 backResId;
 		int16 planeCount;
-		StaticPlane planes[1];
+		StaticPlane *planes;
 	} GCC_PACK;
 
 	// Animations
@@ -74,12 +74,11 @@ public:
 
 	struct Static {
 		int16 layersCount;
-		StaticLayer **layers;
+		StaticLayer *layers;
 		PieceDesc **pieces;
 		int8 *piecesFromExt;
-		char *dataPtr;
 		Static() : layersCount(0), layers(0), pieces(0),
-				   piecesFromExt(0), dataPtr(0) {}
+				   piecesFromExt(0) {}
 	};
 
 	struct Animation {
@@ -99,7 +98,6 @@ public:
 	char _staticPictToSprite[70];
 	int16 _staticPictCount[10];
 	Static _statics[10];
-	char _staticFromExt[10];
 	int16 _staticResId[10];
 
 	char _animPictToSprite[70];
