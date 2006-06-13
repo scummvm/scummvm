@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/map.h"
@@ -53,16 +54,14 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	int16 id;
 	int16 mapHeight;
 	int16 mapWidth;
-	int16 offData;
 	int16 tmp;
 	int16 numData;
 	int16 statesCount;
 	int16 state;
 	char *variables;
 	char *extData;
-	char *dataPtr;
-	char *dataPtrBak;
-	char *dataPtrBak2;
+	uint32 dataPos1;
+	uint32 dataPos2;
 	int8 statesMask[102];
 	Mult::Mult_GobState *statesPtr;
 
@@ -77,29 +76,27 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	}
 
 	extData = _vm->_game->loadExtData(id, 0, 0);
-	dataPtr = extData;
+	Common::MemoryReadStream mapData((byte *) extData, 4294967295U);
 
-	if (*dataPtr++ == 3) {
-		_vm->_map->_screenWidth = 640;
-		_vm->_map->_passWidth = 65;
+	if (mapData.readByte() == 3) {
+		_screenWidth = 640;
+		_passWidth = 65;
 	} else {
-		_vm->_map->_screenWidth = 320;
-		_vm->_map->_passWidth = 40;
+		_screenWidth = 320;
+		_passWidth = 40;
 	}
-	_wayPointsCount = *dataPtr++;
-	_vm->_map->_tilesWidth = READ_LE_UINT16(dataPtr);
-	dataPtr += 2;
-	_vm->_map->_tilesHeight = READ_LE_UINT16(dataPtr);
-	dataPtr += 2;
+	_wayPointsCount = mapData.readByte();
+	_tilesWidth = mapData.readSint16LE();
+	_tilesHeight = mapData.readSint16LE();
 
-	_vm->_map->_bigTiles = !(_vm->_map->_tilesHeight & 0xFF00);
-	_vm->_map->_tilesHeight &= 0xFF;
+	_bigTiles = !(_tilesHeight & 0xFF00);
+	_tilesHeight &= 0xFF;
 
-	_mapWidth = _vm->_map->_screenWidth / _vm->_map->_tilesWidth;
-	_mapHeight = 200 / _vm->_map->_tilesHeight;
+	_mapWidth = _screenWidth / _tilesWidth;
+	_mapHeight = 200 / _tilesHeight;
 
-	dataPtrBak = dataPtr;
-	dataPtr += _mapWidth * _mapHeight;
+	dataPos2 = mapData.pos();
+	mapData.seek(_mapWidth * _mapHeight, SEEK_CUR);
 
 	if (*extData == 1)
 		wayPointsCount = _wayPointsCount = 40;
@@ -107,79 +104,71 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		wayPointsCount = _wayPointsCount == 0 ? 1 : _wayPointsCount;
 
 	_wayPoints = new Point[wayPointsCount];
-	for (i = 0; i < wayPointsCount; i++) {
-		_wayPoints[i].x = -1;
-		_wayPoints[i].y = -1;
-		_wayPoints[i].field_2 = -1;
-	}
 	for (i = 0; i < _wayPointsCount; i++) {
-		_wayPoints[i].x = *dataPtr++;
-		_wayPoints[i].y = *dataPtr++;
-		_wayPoints[i].field_2 = *dataPtr++;
+		_wayPoints[i].x = mapData.readSByte();
+		_wayPoints[i].y = mapData.readSByte();
+		_wayPoints[i].field_2 = mapData.readSByte();
 	}
 
 	// In the original asm, this writes byte-wise into the variables-array
+	dataPos1 = mapData.pos();
 	if (variables != _vm->_global->_inter_variables) {
 		_passMap = (int8 *) variables;
-		mapHeight = 200 / _vm->_map->_tilesHeight;
-		mapWidth = _vm->_map->_screenWidth / _vm->_map->_tilesWidth;
+		mapHeight = 200 / _tilesHeight;
+		mapWidth = _screenWidth / _tilesWidth;
 		for (i = 0; i < mapHeight; i++) {
-			offData = (mapWidth * i);
+			mapData.seek(dataPos2 + (mapWidth * i));
 			for (j = 0; j < mapWidth; j++) {
-				setPass(j, i, *(dataPtrBak + offData + j), _vm->_map->_passWidth);
+				setPass(j, i, mapData.readSByte());
 			}
 		}
 	}
+	mapData.seek(dataPos1);
 
-	tmp = READ_LE_UINT16(dataPtr);
-	dataPtr += tmp * 14 + 2;
-	tmp = READ_LE_UINT16(dataPtr);
-	dataPtr += tmp * 14 + 2;
-	dataPtr += 28;
-	tmp = READ_LE_UINT16(dataPtr);
-	dataPtr += tmp * 14 + 2;
+	tmp = mapData.readSint16LE();
+	mapData.seek(tmp * 14, SEEK_CUR);
+	tmp = mapData.readSint16LE();
+	mapData.seek(tmp * 14 + 28, SEEK_CUR);
+	tmp = mapData.readSint16LE();
+	mapData.seek(tmp * 14, SEEK_CUR);
 
 	_vm->_goblin->_gobsCount = tmp;
 	for (i = 0; i < _vm->_goblin->_gobsCount; i++) {
 		memset(statesMask, -1, 101);
 		_vm->_mult->_objects[i].goblinStates = new Mult::Mult_GobState*[101];
 		memset(_vm->_mult->_objects[i].goblinStates, 0, 101 * sizeof(Mult::Mult_GobState *));
-		memcpy(statesMask, dataPtr, 100);
-		dataPtr += 100;
-		dataPtrBak2 = dataPtr;
+		mapData.read(statesMask, 100);
+		dataPos1 = mapData.pos();
 		statesCount = 0;
 		for (j = 0; j < 100; j++) {
 			if (statesMask[j] != -1) {
 				statesCount++;
-				dataPtr += 4;
-				numData = *dataPtr++;
+				mapData.seek(4, SEEK_CUR);
+				numData = mapData.readByte();
 				statesCount += numData;
-				dataPtr += numData * 9;
+				mapData.seek(numData * 9, SEEK_CUR);
 			}
 		}
 		statesPtr = new Mult::Mult_GobState[statesCount];
 		_vm->_mult->_objects[i].goblinStates[0] = statesPtr;
-		dataPtr = dataPtrBak2;
+		mapData.seek(dataPos1);
 		for (j = 0; j < 100; j++) {
 			state = statesMask[j];
 			if (state != -1) {
 				_vm->_mult->_objects[i].goblinStates[state] = statesPtr++;
-				_vm->_mult->_objects[i].goblinStates[state][0].animation = READ_LE_UINT16(dataPtr);
-				dataPtr += 2;
-				_vm->_mult->_objects[i].goblinStates[state][0].layer = READ_LE_UINT16(dataPtr);
-				dataPtr += 2;
-				numData = *dataPtr++;
+				_vm->_mult->_objects[i].goblinStates[state][0].animation = mapData.readSint16LE();
+				_vm->_mult->_objects[i].goblinStates[state][0].layer = mapData.readSint16LE();
+				numData = mapData.readByte();
 				_vm->_mult->_objects[i].goblinStates[state][0].dataCount = numData;
 				for (k = 1; k <= numData; k++) {
-					dataPtr++;
-					_vm->_mult->_objects[i].goblinStates[state][k].sndItem = *dataPtr;
-					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].sndFrame = *dataPtr;
-					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].freq = READ_LE_UINT16(dataPtr);
-					dataPtr += 2;
-					_vm->_mult->_objects[i].goblinStates[state][k].repCount = *dataPtr++;
-					_vm->_mult->_objects[i].goblinStates[state][k].speaker = *dataPtr++;
+					mapData.seek(1, SEEK_CUR);
+					_vm->_mult->_objects[i].goblinStates[state][k].sndItem = mapData.readSByte();
+					mapData.seek(1, SEEK_CUR);
+					_vm->_mult->_objects[i].goblinStates[state][k].sndFrame = mapData.readByte();
+					mapData.seek(1, SEEK_CUR);
+					_vm->_mult->_objects[i].goblinStates[state][k].freq = mapData.readSint16LE();
+					_vm->_mult->_objects[i].goblinStates[state][k].repCount = mapData.readSByte();
+					_vm->_mult->_objects[i].goblinStates[state][k].speaker = mapData.readByte();
 					statesPtr++;
 				}
 			}
