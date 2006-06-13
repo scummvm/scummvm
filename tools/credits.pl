@@ -536,7 +536,7 @@ begin_credits("Credits");
 		  add_person("Kostas Nakos", "knakos", "");
 	  end_section();
 
-	  begin_section("PlayStation 2");
+	  begin_section("Playstation 2");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
 	  end_section();
 
@@ -572,7 +572,9 @@ begin_credits("Credits");
     end_section();
 
     begin_section("Documentation");
-	add_person("Joachim Eberhard", "joachimeberhard", "");
+	begin_section("Documentation Manager");
+		add_person("Joachim Eberhard", "joachimeberhard", "");
+    	end_section();
     end_section();
 
     begin_section("Retired Team Members");
