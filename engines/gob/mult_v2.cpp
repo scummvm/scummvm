@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/mult.h"
@@ -77,16 +78,6 @@ void Mult_v2::loadMult(int16 resId) {
 	_multData2 = new Mult_Data;
 	memset(_multData2, 0, sizeof(Mult_Data));
 
-	// ---.
-	for (i = 0; i < 4; i++) {
-		_multData2->field_157[i] = 0;
-		for (j = 0; j < 4; j++) {
-			_multData2->field_15F[i][j] = 0;
-			_multData2->field_17F[i][j] = 0;
-		}
-	}
-	// ---'
-
 	_multDatas[index] = _multData2;
 
 	for (i = 0; i < 10; i++) {
@@ -101,11 +92,10 @@ void Mult_v2::loadMult(int16 resId) {
 	_multData2->frameStart = 0;
 
 	extData = _vm->_game->loadExtData(resId, 0, 0);
-	_dataPtr = extData;
+	Common::MemoryReadStream data((byte *) extData, 4294967295U);
 
-	_multData2->staticCount = staticCount = _dataPtr[0];
-	_multData2->animCount = animCount = _dataPtr[1];
-	_dataPtr += 2;
+	_multData2->staticCount = staticCount = data.readSByte();
+	_multData2->animCount = animCount = data.readSByte();
 	staticCount++;
 	animCount++;
 
@@ -113,38 +103,32 @@ void Mult_v2::loadMult(int16 resId) {
 	staticCount &= 0x7F;
 
 	debugC(7, DEBUG_GRAPHICS, "statics: %u, anims: %u, hb: %u", staticCount, animCount, hbstaticCount);
-	for (i = 0; i < staticCount; i++, _dataPtr += 14) {
+	for (i = 0; i < staticCount; i++, data.seek(14, SEEK_CUR)) {
 		_multData2->staticIndices[i] = _vm->_scenery->loadStatic(1);
 
 		if (_multData2->staticIndices[i] >= 100) {
 			_multData2->staticIndices[i] -= 100;
 			_multData2->staticLoaded[i] = 1;
-		} else {
+		} else
 			_multData2->staticLoaded[i] = 0;
-		}
 	}
 
-	for (i = 0; i < animCount; i++, _dataPtr += 14) {
+	for (i = 0; i < animCount; i++, data.seek(14, SEEK_CUR)) {
 		_multData2->animIndices[i] = _vm->_scenery->loadAnim(1);
 
 		if (_multData2->animIndices[i] >= 100) {
 			_multData2->animIndices[i] -= 100;
 			_multData2->animLoaded[i] = 1;
-		} else {
+		} else
 			_multData2->animLoaded[i] = 0;
-		}
 	}
 
-	_multData2->frameRate = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
-	_multData2->staticKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
+	_multData2->frameRate = data.readSint16LE();
+	_multData2->staticKeysCount = data.readSint16LE();
 	_multData2->staticKeys = new Mult_StaticKey[_multData2->staticKeysCount];
-	for (i = 0; i < _multData2->staticKeysCount; i++, _dataPtr += 4) {
-		_multData2->staticKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_multData2->staticKeys[i].layer = (int16)READ_LE_UINT16(_dataPtr + 2);
+	for (i = 0; i < _multData2->staticKeysCount; i++) {
+		_multData2->staticKeys[i].frame = data.readSint16LE();
+		_multData2->staticKeys[i].layer = data.readSint16LE();
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -157,90 +141,72 @@ void Mult_v2::loadMult(int16 resId) {
 			_multData2->field_17F[i][j] = 0;
 		}
 
-		_multData2->animKeysIndices1[i] = -1;
-		_multData2->animKeysCount[i] = READ_LE_UINT16(_dataPtr);
-		_dataPtr += 2;
-
+		_multData2->animKeysFrames[i] = -1;
+		_multData2->animKeysCount[i] = data.readSint16LE();
 		_multData2->animKeys[i] = new Mult_AnimKey[_multData2->animKeysCount[i]];
-		for (j = 0; j < _multData2->animKeysCount[i]; j++, _dataPtr += 10) {
-			_multData2->animKeys[i][j].frame = (int16)READ_LE_UINT16(_dataPtr);
-			_multData2->animKeys[i][j].layer = (int16)READ_LE_UINT16(_dataPtr + 2);
-			_multData2->animKeys[i][j].posX = (int16)READ_LE_UINT16(_dataPtr + 4);
-			_multData2->animKeys[i][j].posY = (int16)READ_LE_UINT16(_dataPtr + 6);
-			_multData2->animKeys[i][j].order = (int16)READ_LE_UINT16(_dataPtr + 8);
+		for (j = 0; j < _multData2->animKeysCount[i]; j++) {
+			_multData2->animKeys[i][j].frame = data.readSint16LE();
+			_multData2->animKeys[i][j].layer = data.readSint16LE();
+			_multData2->animKeys[i][j].posX = data.readSint16LE();
+			_multData2->animKeys[i][j].posY = data.readSint16LE();
+			_multData2->animKeys[i][j].order = data.readSint16LE();
 		}
 	}
 
 	for (palIndex = 0; palIndex < 5; palIndex++) {
 		for (i = 0; i < 16; i++) {
-			_multData2->fadePal[palIndex][i].red = _dataPtr[0];
-			_multData2->fadePal[palIndex][i].green = _dataPtr[1];
-			_multData2->fadePal[palIndex][i].blue = _dataPtr[2];
-			_dataPtr += 3;
+			_multData2->fadePal[palIndex][i].red = data.readByte();
+			_multData2->fadePal[palIndex][i].green = data.readByte();
+			_multData2->fadePal[palIndex][i].blue = data.readByte();
 		}
 	}
 
-	_multData2->palFadeKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
+	_multData2->palFadeKeysCount = data.readSint16LE();
 	_multData2->palFadeKeys = new Mult_PalFadeKey[_multData2->palFadeKeysCount];
-
-	for (i = 0; i < _multData2->palFadeKeysCount; i++, _dataPtr += 7) {
-		_multData2->palFadeKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_multData2->palFadeKeys[i].fade = (int16)READ_LE_UINT16(_dataPtr + 2);
-		_multData2->palFadeKeys[i].palIndex = (int16)READ_LE_UINT16(_dataPtr + 4);
-		_multData2->palFadeKeys[i].flag = *(_dataPtr + 6);
+	for (i = 0; i < _multData2->palFadeKeysCount; i++) {
+		_multData2->palFadeKeys[i].frame = data.readSint16LE();
+		_multData2->palFadeKeys[i].fade = data.readSint16LE();
+		_multData2->palFadeKeys[i].palIndex = data.readSint16LE();
+		_multData2->palFadeKeys[i].flag = data.readSByte();
 	}
 
-	_multData2->palKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
+	_multData2->palKeysCount = data.readSint16LE();
 	_multData2->palKeys = new Mult_PalKey[_multData2->palKeysCount];
-
-	for (i = 0; i < _multData2->palKeysCount; i++, _dataPtr += 80) {
-		_multData2->palKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_multData2->palKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
-		_multData2->palKeys[i].rates[0] = (int16)READ_LE_UINT16(_dataPtr + 4);
-		_multData2->palKeys[i].rates[1] = (int16)READ_LE_UINT16(_dataPtr + 6);
-		_multData2->palKeys[i].rates[2] = (int16)READ_LE_UINT16(_dataPtr + 8);
-		_multData2->palKeys[i].rates[3] = (int16)READ_LE_UINT16(_dataPtr + 10);
-		_multData2->palKeys[i].unknown0 = (int16)READ_LE_UINT16(_dataPtr + 12);
-		_multData2->palKeys[i].unknown1 = (int16)READ_LE_UINT16(_dataPtr + 14);
-		memcpy(_multData2->palKeys[i].subst, _dataPtr + 16, 64);
+	for (i = 0; i < _multData2->palKeysCount; i++) {
+		_multData2->palKeys[i].frame = data.readSint16LE();
+		_multData2->palKeys[i].cmd = data.readSint16LE();
+		_multData2->palKeys[i].rates[0] = data.readSint16LE();
+		_multData2->palKeys[i].rates[1] = data.readSint16LE();
+		_multData2->palKeys[i].rates[2] = data.readSint16LE();
+		_multData2->palKeys[i].rates[3] = data.readSint16LE();
+		_multData2->palKeys[i].unknown0 = data.readSint16LE();
+		_multData2->palKeys[i].unknown1 = data.readSint16LE();
+		data.read(_multData2->palKeys[i].subst, 64);
 	}
 
-	_multData2->textKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
+	_multData2->textKeysCount = data.readSint16LE();
 	_multData2->textKeys = new Mult_TextKey[_multData2->textKeysCount];
-
-	for (i = 0; i < _multData2->textKeysCount; i++, _dataPtr += 4) {
-		_multData2->textKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_multData2->textKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
+	for (i = 0; i < _multData2->textKeysCount; i++) {
+		_multData2->textKeys[i].frame = data.readSint16LE();
+		_multData2->textKeys[i].cmd = data.readSint16LE();
 		if (!hbstaticCount)
-			_dataPtr += 24;
+			data.seek(24, SEEK_CUR);
 	}
 
-	_multData2->sndKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
-	_multData2->sndKeys = new Mult_SndKey[_multData2->sndKeysCount];
-
+	_multData2->sndKeysCount = data.readSint16LE();
 	warning("SoundKeyCount: %d", _multData2->sndKeysCount);
-
+	_multData2->sndKeys = new Mult_SndKey[_multData2->sndKeysCount];
 	for (i = 0; i < _multData2->sndKeysCount; i++) {
-		_multData2->sndKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_multData2->sndKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
-		_multData2->sndKeys[i].freq = (int16)READ_LE_UINT16(_dataPtr + 4);
-		_multData2->sndKeys[i].channel = (int16)READ_LE_UINT16(_dataPtr + 6);
-		_multData2->sndKeys[i].repCount = (int16)READ_LE_UINT16(_dataPtr + 8);
-/*		_multData2->sndKeys[i].resId = (int16)READ_LE_UINT16(_dataPtr + 10);
-		_multData2->sndKeys[i].soundIndex = (int16)READ_LE_UINT16(_dataPtr + 12);*/
-
+		_multData2->sndKeys[i].frame = data.readSint16LE();
+		_multData2->sndKeys[i].cmd = data.readSint16LE();
+		_multData2->sndKeys[i].freq = data.readSint16LE();
+		_multData2->sndKeys[i].channel = data.readSint16LE();
+		_multData2->sndKeys[i].repCount = data.readSint16LE();
 		_multData2->sndKeys[i].soundIndex = -1;
 		_multData2->sndKeys[i].resId = -1;
-		_dataPtr += 12;
+		data.seek(2, SEEK_CUR);
 		if (!hbstaticCount)
-			_dataPtr += 24;
+			data.seek(24, SEEK_CUR);
 
 		switch (_multData2->sndKeys[i].cmd) {
 		case 1:
@@ -274,30 +240,28 @@ void Mult_v2::loadMult(int16 resId) {
 		_multData2->execPtr = _vm->_global->_inter_execPtr;
 		_vm->_global->_inter_execPtr += size * 2;
 		if (_vm->_game->_totFileData[0x29] >= 51) {
-			size = (int16)READ_LE_UINT16(_dataPtr);
+			size = data.readSint16LE();
 			_multData2->somepointer10 = new char[size * 20];
-			memcpy(_multData2->somepointer09 /*???*/, _dataPtr+2, size * 20);
-			_dataPtr += size * 20 + 2;
+//			data.read(_multData2->somepointer09 /*???*/, size * 20);
+			data.read(_multData2->somepointer10, size * 20);
 			size = _vm->_inter->load16();
 			if (size > 0) {
 				_multData2->somepointer09 = new char[size * 14];
 				memcpy(_multData2->somepointer09, _vm->_global->_inter_execPtr, size * 14);
 				_vm->_global->_inter_execPtr += size * 14;
-				_dataPtr += 2;
+				data.seek(2, SEEK_CUR);
 				for (i = 0; i < 4; i++) {
-					_multData2->someKeysCount[i] = (int16)READ_LE_UINT16(_dataPtr);
-					_dataPtr += 2;
+					_multData2->someKeysCount[i] = data.readSint16LE();
 					_multData2->someKeys[i] = new Mult_SomeKey[_multData2->someKeysCount[i]];
 					for (j = 0; j < _multData2->someKeysCount[i]; j++) {
-						_multData2->someKeys[i][j].frame = (int16)READ_LE_UINT16(_dataPtr);
-						_multData2->someKeys[i][j].field_2 = (int16)READ_LE_UINT16(_dataPtr + 2);
-						_multData2->someKeys[i][j].field_4 = (int16)READ_LE_UINT16(_dataPtr + 4);
-						_multData2->someKeys[i][j].field_6 = (int16)READ_LE_UINT16(_dataPtr + 6);
-						_multData2->someKeys[i][j].field_8 = (int16)READ_LE_UINT16(_dataPtr + 8);
-						_multData2->someKeys[i][j].field_A = (int16)READ_LE_UINT16(_dataPtr + 10);
-						_multData2->someKeys[i][j].field_C = (int16)READ_LE_UINT16(_dataPtr + 12);
-						_multData2->someKeys[i][j].field_E = (int16)READ_LE_UINT16(_dataPtr + 14);
-						_dataPtr += 16;
+						_multData2->someKeys[i][j].frame = data.readSint16LE();
+						_multData2->someKeys[i][j].field_2 = data.readSint16LE();
+						_multData2->someKeys[i][j].field_4 = data.readSint16LE();
+						_multData2->someKeys[i][j].field_6 = data.readSint16LE();
+						_multData2->someKeys[i][j].field_8 = data.readSint16LE();
+						_multData2->someKeys[i][j].field_A = data.readSint16LE();
+						_multData2->someKeys[i][j].field_C = data.readSint16LE();
+						_multData2->someKeys[i][j].field_E = data.readSint16LE();
 					}
 				}
 			}
@@ -362,8 +326,8 @@ void Mult_v2::multSub(uint16 multindex) {
 		_multData2->field_124[index][i] = _vm->_parse->parseValExpr();
 	}
 	expr = _vm->_parse->parseValExpr();
-	_multData2->animKeysIndices1[index] = expr;
-	_multData2->animKeysIndices2[index] = expr;
+	_multData2->animKeysFrames[index] = expr;
+	_multData2->someKeysFrames[index] = expr;
 	
 	WRITE_VAR(18 + index, expr);
 	if (expr == -1) {
@@ -377,7 +341,7 @@ void Mult_v2::multSub(uint16 multindex) {
 			_multData2->field_157[index] = 32000;
 			for (i = 0; i < _multData2->textKeysCount; i++) {
 				textFrame = _multData2->textKeys[i].frame;
-				if ((textFrame > _multData2->animKeysIndices2[index]) &&
+				if ((textFrame > _multData2->someKeysFrames[index]) &&
 						(textFrame < _multData2->field_157[index])) {
 					_multData2->field_157[index] = textFrame;
 				}
@@ -386,7 +350,7 @@ void Mult_v2::multSub(uint16 multindex) {
 			_multData2->field_157[index] = 0;
 			for (i = 0; i < _multData2->textKeysCount; i++) {
 				textFrame = _multData2->textKeys[i].frame;
-				if ((textFrame < _multData2->animKeysIndices2[index]) &&
+				if ((textFrame < _multData2->someKeysFrames[index]) &&
 						(textFrame > _multData2->field_157[index])) {
 					_multData2->field_157[index] = textFrame;
 				}
@@ -403,7 +367,7 @@ void Mult_v2::multSub(uint16 multindex) {
 		for (i = 0; i < 4; i++) {
 			_multData2->field_15F[index][i] = 0;
 			for (j = 0; j < _multData2->animKeysCount[i]; j++) {
-				if (_multData2->animKeys[i][j].frame >= _multData2->animKeysIndices2[index])
+				if (_multData2->animKeys[i][j].frame >= _multData2->someKeysFrames[index])
 					_multData2->field_15F[index][i] = j;
 			}
 		}
@@ -416,7 +380,7 @@ void Mult_v2::multSub(uint16 multindex) {
 			_multData2->field_17F[index][i] = 0;
 			for (j = 0; j < _multData2->someKeysCount[i]; j++) {
 				if (_multData2->field_156 == 1) {
-					if (_multData2->someKeys[i][j].frame >= _multData2->animKeysIndices2[index]) {
+					if (_multData2->someKeys[i][j].frame >= _multData2->someKeysFrames[index]) {
 						_multData2->field_17F[index][i] = j;
 						break;
 					}
@@ -927,11 +891,10 @@ void Mult_v2::sub_62DD(int16 index) {
 	int16 frame;
 	int16 layer;
 	int16 layers;
-	int16 curanim;
+	int16 curAnim;
 	int i, j;
 	
-	// I really doubt animKeysIndices1 is a correct name for that field...
-	frame = _multData2->animKeysIndices1[index];
+	frame = _multData2->animKeysFrames[index];
 	if (frame == -1)
 		return;
 
@@ -941,9 +904,7 @@ void Mult_v2::sub_62DD(int16 index) {
 				if ((i >= 4) || (j >= _multData2->animKeysCount[i]))
 					continue;
 				animKey = &_multData2->animKeys[i][j];
-				if (animKey->frame > frame)
-					break;
-				else if (animKey->frame == frame) {
+				if (animKey->frame == frame) {
 					animObj = &_objects[_multData2->field_124[index][i]];
 					if (animKey->layer > -1) {
 						_multData2->field_15F[index][i] = j;
@@ -956,39 +917,32 @@ void Mult_v2::sub_62DD(int16 index) {
 						animObj->pAnimData->maxTick = 0;
 						animObj->pAnimData->animation = 0;
 						animObj->tick = 0;
-						curanim = _multData2->animIndices[0];
+						curAnim = _multData2->animIndices[0];
 						layer = animKey->layer;
-						layers = _vm->_scenery->_animations[curanim].layersCount;
+						layers = _vm->_scenery->_animations[curAnim].layersCount;
 						while (layer >= layers) {
 							layer -= layers;
 							animObj->pAnimData->animation++;
-							curanim = _multData2->animIndices[animObj->pAnimData->animation];
-							layers = _vm->_scenery->_animations[curanim].layersCount;
+							curAnim = _multData2->animIndices[animObj->pAnimData->animation];
+							layers = _vm->_scenery->_animations[curAnim].layersCount;
 						}
-						animObj->pAnimData->layer = 2;
+						animObj->pAnimData->layer = layer;
 						animObj->pAnimData->animation =
 							_multData2->animIndices[animObj->pAnimData->animation];
 						break;
-					}
-					else {
+					} else
 						animObj->pAnimData->isStatic = 1;
-						continue;
-					}
-				}
+				} else if (animKey->frame > frame)
+					break;
 			}
 		}
-		if (_multData2->field_124[index][i] != -1) {
-//			warning("GOB2 Stub! Messing about with _multData2->someKeys, %d, %d", _multData2->field_17F[index][i], _multData2->someKeysCount[i]);
-			for (j = _multData2->field_17F[index][i]; j < _multData2->someKeysCount[i]; j++) {
 
+		if (_multData2->field_124[index][i] != -1) {
+			for (j = _multData2->field_17F[index][i]; j < _multData2->someKeysCount[i]; j++) {
 				someKey1 = &_multData2->someKeys[i][j];
 				someKey2 = &_multData2->someKeys[i][j-1];
-				if (someKey1->frame > frame)
-					break;
-				else if (someKey1->frame == frame) {
-					if (someKey1->field_2 == -1)
-						_multData2->someKeysIndices[i] = -1;
-					else {
+				if (someKey1->frame == frame) {
+					if (someKey1->field_2 != -1) {
 						_multData2->someKeysIndices[0] = -1;
 						_multData2->someKeysIndices[1] = -1;
 						_multData2->someKeysIndices[2] = -1;
@@ -999,9 +953,10 @@ void Mult_v2::sub_62DD(int16 index) {
 							_multData2->someKeysIndices[i] = -1;
 						else
 							_multData2->someKeysIndices[i] = j - 1;
-					}
-				}
-
+					} else
+						_multData2->someKeysIndices[i] = -1;
+				} else if(someKey1->frame > frame)
+					break;
 			}
 		}
 		if (_multData2->someKeysIndices[i] != -1) {
@@ -1019,40 +974,25 @@ void Mult_v2::sub_62DD(int16 index) {
 	}
 	
 	doSoundAnim(0, frame);
+	WRITE_VAR(22, frame);
 
-	if (_multData2->field_156 == 1) { // loc_6809
+	if (_multData2->field_157[index] == frame) {
+		_multData2->someKeysIndices[0] = -1;
+		_multData2->someKeysIndices[1] = -1;
+		_multData2->someKeysIndices[2] = -1;
+		_multData2->someKeysIndices[3] = -1;
+		frame = -1;
+		for (i = 0; i < 4; i++)
+			if ((_multData2->field_124[index][i] != -1) && (_multData2->field_124[index][i] != 1024))
+				_objects[_multData2->field_124[index][i]].pAnimData->animType =
+					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
+	} else if(_multData2->field_156 == 1)
 		frame++;
-		if (_multData2->field_157[index] == (frame-1)) {
-			_multData2->someKeysIndices[0] = -1;
-			_multData2->someKeysIndices[1] = -1;
-			_multData2->someKeysIndices[2] = -1;
-			_multData2->someKeysIndices[3] = -1;
-			frame = -1;
-			for (i = 0; i < 4; i++) {
-				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
-					continue;
-				_objects[_multData2->field_124[index][i]].pAnimData->animType =
-					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
-			}
-		}
-	} else { // loc_68F3
+	else
 		frame--;
-		if (_multData2->field_157[index] == (frame+1)) {
-			_multData2->someKeysIndices[0] = -1;
-			_multData2->someKeysIndices[1] = -1;
-			_multData2->someKeysIndices[2] = -1;
-			_multData2->someKeysIndices[3] = -1;
-			frame = -1;
-			for (i = 0; i < 4; i++) {
-				if ((_multData2->field_124[index][i] == -1) || (_multData2->field_124[index][i] == 1024))
-					continue;
-				_objects[_multData2->field_124[index][i]].pAnimData->animType =
-					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
-			}
-		}
-	}
+
 	// loc_6A06
-	_multData2->animKeysIndices1[index] = frame;
+	_multData2->animKeysFrames[index] = frame;
 	WRITE_VAR(18 + index, frame);
 }
 
@@ -1080,9 +1020,6 @@ void Mult_v2::animate(void) {
 	int orderArrayPos = 0;
 	int8 animIndices[150];
 	int numAnims = 0; // di
-	// .-----
-	int off_2CE67 = 1000;
-	// '-----
 	
 	if (_objects == 0)
 		return;
@@ -1112,65 +1049,69 @@ void Mult_v2::animate(void) {
 		animObj1 = _renderData2[i];
 
 		animObj1->someFlag = 0;
-		// TODO: the region around off_2CE67 is messed up
-		// Should be some high value so that MIN() works
-		animObj1->somethingTop = off_2CE67; // seg011:0AA7
-		animObj1->somethingLeft = off_2CE67;
+		animObj1->somethingTop = 1000;
+		animObj1->somethingLeft = 1000;
 		animObj1->somethingBottom = 0;
 		animObj1->somethingRight = 0;
 		
 		animData1 = animObj1->pAnimData;
-		if ((animData1->isStatic == 0) && (animData1->isPaused == 0)
-				&& (animData1->maxTick == animObj1->tick)) {
-			animObj1->someFlag = 1;
-			_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-					animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
-			if (animObj1->lastLeft == -1) {
-				animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-				animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-				animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
-			} else {
-				animObj1->somethingLeft = MIN(animObj1->lastLeft, _vm->_scenery->_toRedrawLeft);
-				animObj1->somethingTop = MIN(animObj1->lastTop, _vm->_scenery->_toRedrawTop);
-				animObj1->somethingRight = MAX(animObj1->lastRight, _vm->_scenery->_toRedrawRight);
-				animObj1->somethingBottom = MAX(animObj1->lastBottom, _vm->_scenery->_toRedrawBottom);
-				if ((_vm->_game->_totFileData[0x29] > 50) &&
-						(animObj1->somethingLeft == animObj1->lastLeft) &&
-						(animObj1->somethingTop == animObj1->lastTop) &&
-						(animObj1->somethingRight == animObj1->lastRight) &&
-						(animObj1->somethingBottom == animObj1->lastBottom) &&
-						(animData1->somethingLayer == animData1->layer) &&
-						(animData1->somethingFrame == animData1->frame) &&
-						(animData1->somethingAnimation == animData1->animation)) {
-					animObj1->someFlag = 0;
+
+		if (animData1->isStatic != 2) {
+			if ((animData1->isStatic == 0) && (animData1->isPaused == 0)
+					&& (animData1->maxTick == animObj1->tick)) {
+				animObj1->someFlag = 1;
+				_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+						animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
+				if (animObj1->lastLeft == -1) {
+					animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
+					animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
+					animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
+					animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+				} else {
+					animObj1->somethingLeft = MIN(animObj1->lastLeft, _vm->_scenery->_toRedrawLeft);
+					animObj1->somethingTop = MIN(animObj1->lastTop, _vm->_scenery->_toRedrawTop);
+					animObj1->somethingRight = MAX(animObj1->lastRight, _vm->_scenery->_toRedrawRight);
+					animObj1->somethingBottom = MAX(animObj1->lastBottom, _vm->_scenery->_toRedrawBottom);
+					if ((_vm->_game->_totFileData[0x29] > 50) &&
+							(animObj1->somethingLeft == animObj1->lastLeft) &&
+							(animObj1->somethingTop == animObj1->lastTop) &&
+							(animObj1->somethingRight == animObj1->lastRight) &&
+							(animObj1->somethingBottom == animObj1->lastBottom) &&
+							(animData1->somethingLayer == animData1->layer) &&
+							(animData1->somethingFrame == animData1->frame) &&
+							(animData1->somethingAnimation == animData1->animation)) {
+						animObj1->someFlag = 0;
+					}
 				}
-			}
-		} else {
-			if (animData1->isStatic == 0) {
+			} else if (animData1->isStatic == 0) {
 				if (animObj1->lastLeft == -1) {
 					animObj1->someFlag = 1;
 					_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
 						animData1->animation, 8, *animObj1->pPosX, *animObj1->pPosY, 0);
+					animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
+					animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
+					animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
+					animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+				} else {
+					animObj1->somethingLeft = animObj1->lastLeft;
+					animObj1->somethingTop = animObj1->lastTop;
+					animObj1->somethingRight = animObj1->lastRight;
+					animObj1->somethingBottom = animObj1->lastBottom;
 				}
-				animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-				animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-				animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
 			} else if (animObj1->lastLeft != -1) {
 				animObj1->someFlag = 1;
-				animObj1->somethingLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1->somethingTop = _vm->_scenery->_toRedrawTop;
-				animObj1->somethingRight = _vm->_scenery->_toRedrawRight;
-				animObj1->somethingBottom = _vm->_scenery->_toRedrawBottom;
+				animObj1->somethingLeft = animObj1->lastLeft;
+				animObj1->somethingTop = animObj1->lastTop;
+				animObj1->somethingRight = animObj1->lastRight;
+				animObj1->somethingBottom = animObj1->lastBottom;
 			}
-		}
-		animData1->somethingLayer = animData1->layer;
-		animData1->somethingFrame = animData1->frame;
-		animData1->somethingAnimation = animData1->animation;
-		if ((animObj1->someFlag != 0) || (animData1->isStatic == 0)) {
-			minOrder = MIN(minOrder, animData1->order);
-			maxOrder = MAX(maxOrder, animData1->order);
+			animData1->somethingLayer = animData1->layer;
+			animData1->somethingFrame = animData1->frame;
+			animData1->somethingAnimation = animData1->animation;
+			if ((animObj1->someFlag != 0) || (animData1->isStatic == 0)) {
+				minOrder = MIN(minOrder, animData1->order);
+				maxOrder = MAX(maxOrder, animData1->order);
+			}
 		}
 	}
 
@@ -1199,7 +1140,7 @@ void Mult_v2::animate(void) {
 		for (i = 0; i < numAnims; i++) {
 			animData1 = _renderData2[i]->pAnimData;
 			if (((animData1->isStatic == 0) || (_renderData2[i]->someFlag != 0))
-					& (animData1->order == j))
+					&& (animData1->order == j))
 				orderArray[orderArrayPos++] = i;
 		}
 	}
@@ -1221,62 +1162,57 @@ void Mult_v2::animate(void) {
 	for (i = 0; i < orderArrayPos; i++) {
 		animObj1 = _renderData2[orderArray[i]];
 		animData1 = animObj1->pAnimData;
-		if (animObj1->someFlag == 0) {
-			if (animData1->isStatic == 0) {
-				for (j = 0; j < orderArrayPos; j++) {
-					animObj2 = _renderData2[orderArray[j]];
-					if ((animObj2->someFlag != 0) &&
-							(animObj1->somethingRight >= animObj2->somethingLeft) &&
-							(animObj2->somethingRight >= animObj1->somethingLeft) &&
-							(animObj1->somethingBottom >= animObj2->somethingTop) &&
-							(animObj2->somethingBottom >= animObj1->somethingTop))
-					{
-						_vm->_scenery->_toRedrawLeft = animObj2->somethingLeft;
-						_vm->_scenery->_toRedrawRight = animObj2->somethingRight;
-						_vm->_scenery->_toRedrawTop = animObj2->somethingTop;
-						_vm->_scenery->_toRedrawBottom = animObj2->somethingBottom;
-						_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-								animData1->animation, 12, *animObj1->pPosX, *animObj1->pPosY, 1);
-						_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
-					}
+		if ((animObj1->someFlag == 0) && (animData1->isStatic == 0)) {
+			for (j = 0; j < orderArrayPos; j++) {
+				animObj2 = _renderData2[orderArray[j]];
+				if ((animObj2->someFlag != 0) &&
+						(animObj1->somethingRight >= animObj2->somethingLeft) &&
+						(animObj2->somethingRight >= animObj1->somethingLeft) &&
+						(animObj1->somethingBottom >= animObj2->somethingTop) &&
+						(animObj2->somethingBottom >= animObj1->somethingTop))
+				{
+					_vm->_scenery->_toRedrawLeft = animObj2->somethingLeft;
+					_vm->_scenery->_toRedrawRight = animObj2->somethingRight;
+					_vm->_scenery->_toRedrawTop = animObj2->somethingTop;
+					_vm->_scenery->_toRedrawBottom = animObj2->somethingBottom;
+					_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+							animData1->animation, 12, *animObj1->pPosX, *animObj1->pPosY, 1);
+					_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
 				}
 			}
+		} else if (animData1->isStatic == 0) {
+			_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
+					animData1->animation, 10, *animObj1->pPosX, *animObj1->pPosY, 1);
+			if (_vm->_scenery->_toRedrawLeft != -12345) {
+				if (_vm->_global->_pressedKeys[0x36]) {
+//					warning("GOB2 Stub! word_2F3BF & word_2F3C1; someValueToAddToY & someValueToAddToX, respectively");
+					// draws a rectangle around the region to redraw, why?
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop, 15);
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
+							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom, 15);
+					_vm->_video->drawLine(_vm->_draw->_frontSurface,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop,
+							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
+				}
+				animObj1->lastLeft = _vm->_scenery->_toRedrawLeft;
+				animObj1->lastRight = _vm->_scenery->_toRedrawRight;
+				animObj1->lastTop = _vm->_scenery->_toRedrawTop;
+				animObj1->lastBottom = _vm->_scenery->_toRedrawBottom;
+			} else
+				animObj1->lastLeft = -1;
 		} else {
-			if (animData1->isStatic == 0) {
-				_vm->_scenery->updateAnim(animData1->layer, animData1->frame,
-						animData1->animation, 10, *animObj1->pPosX, *animObj1->pPosY, 1);
-				if (_vm->_scenery->_toRedrawLeft != -12345) {
-					if (_vm->_global->_pressedKeys[0x36]) {
-//						warning("GOB2 Stub! word_2F3BF & word_2F3C1; someValueToAddToY & someValueToAddToX, respectively");
-						// draws a rectangle around the region to redraw, why?
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop, 15);
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
-								_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom, 15);
-						_vm->_video->drawLine(_vm->_draw->_frontSurface,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop,
-								_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
-					}
-					animObj1->lastLeft = _vm->_scenery->_toRedrawLeft;
-					animObj1->lastRight = _vm->_scenery->_toRedrawRight;
-					animObj1->lastTop = _vm->_scenery->_toRedrawTop;
-					animObj1->lastBottom = _vm->_scenery->_toRedrawBottom;
-				} else {
-					animObj1->lastLeft = -1;
-				}
-			} else {
-				_vm->_scenery->_toRedrawLeft = animObj1->somethingLeft;
-				_vm->_scenery->_toRedrawRight = animObj1->somethingRight;
-				_vm->_scenery->_toRedrawTop = animObj1->somethingTop;
-				_vm->_scenery->_toRedrawBottom = animObj1->somethingBottom;
-			}
-			_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
+			_vm->_scenery->_toRedrawLeft = animObj1->somethingLeft;
+			_vm->_scenery->_toRedrawRight = animObj1->somethingRight;
+			_vm->_scenery->_toRedrawTop = animObj1->somethingTop;
+			_vm->_scenery->_toRedrawBottom = animObj1->somethingBottom;
 		}
+		_vm->_scenery->updateStatic(animObj1->pAnimData->order + 1);
 	}
 
 	for (i = 0; i < numAnims; i++) {
@@ -1357,23 +1293,19 @@ void Mult_v2::animate(void) {
 	for (i = 0; i < numAnims; i++) {
 		animObj1 = _renderData2[i];
 		animData1 = animObj1->pAnimData;
-		if ((animData1->isStatic != 0) || (animObj1->lastLeft == -1))
-			continue;
-
-		for (j = 0; j < numAnims; j++) {
-			if (i == j)
-				continue;
-			animObj2 = _renderData2[j];
-			animData2 = animObj2->pAnimData;
-			if ((animData2->isStatic != 0) || (animObj2->lastLeft == -1))
-				continue;
-			if ((animObj2->lastRight >= animObj1->lastLeft) &&
-					(animObj2->lastLeft <= animObj1->lastRight) &&
-					(animObj2->lastBottom >= animObj1->lastTop) &&
-					(animObj2->lastTop <= animObj1->lastBottom))
-				animData2->intersected = animIndices[i];
-		}
+		if ((animData1->isStatic == 0) && (animObj1->lastLeft != -1))
+			for (j = 0; j < numAnims; j++) {
+				animObj2 = _renderData2[j];
+				animData2 = animObj2->pAnimData;
+				if ((i != j) && (animData2->isStatic == 0) && (animObj2->lastLeft != -1))
+					if ((animObj2->lastRight >= animObj1->lastLeft) &&
+							(animObj2->lastLeft <= animObj1->lastRight) &&
+							(animObj2->lastBottom >= animObj1->lastTop) &&
+							(animObj2->lastTop <= animObj1->lastBottom))
+						animData2->intersected = animIndices[i];
+			}
 	}
+
 }
 
 void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,

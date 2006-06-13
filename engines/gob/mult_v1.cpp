@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/mult.h"
@@ -40,23 +41,18 @@ Mult_v1::Mult_v1(GobEngine *vm) : Mult(vm) {
 }
 
 void Mult_v1::loadMult(int16 resId) {
-	char animCount;
-	char staticCount;
 	int16 palIndex;
 	int16 i, j;
 
 	_sndSlotsCount = 0;
 	_frameStart = 0;
 	_multData = _vm->_game->loadExtData(resId, 0, 0);
-	_dataPtr = _multData;
+	Common::MemoryReadStream data((byte *) _multData, 4294967295U);
 
-	staticCount = _dataPtr[0];
-	animCount = _dataPtr[1];
-	_dataPtr += 2;
-	staticCount++;
-	animCount++;
+	_staticCount = data.readSByte() + 1;
+	_animCount = data.readSByte() + 1;
 
-	for (i = 0; i < staticCount; i++, _dataPtr += 14) {
+	for (i = 0; i < _staticCount; i++, data.seek(14, SEEK_CUR)) {
 		_staticIndices[i] = _vm->_scenery->loadStatic(1);
 
 		if (_staticIndices[i] >= 100) {
@@ -67,7 +63,7 @@ void Mult_v1::loadMult(int16 resId) {
 		}
 	}
 
-	for (i = 0; i < animCount; i++, _dataPtr += 14) {
+	for (i = 0; i < _animCount; i++, data.seek(14, SEEK_CUR)) {
 		_animIndices[i] = _vm->_scenery->loadAnim(1);
 
 		if (_animIndices[i] >= 100) {
@@ -78,98 +74,80 @@ void Mult_v1::loadMult(int16 resId) {
 		}
 	}
 
-	_frameRate = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
-	_staticKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
+	_frameRate = data.readSint16LE();
+	_staticKeysCount = data.readSint16LE();
 	_staticKeys = new Mult_StaticKey[_staticKeysCount];
-	for (i = 0; i < _staticKeysCount; i++, _dataPtr += 4) {
-		_staticKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_staticKeys[i].layer = (int16)READ_LE_UINT16(_dataPtr + 2);
+	for (i = 0; i < _staticKeysCount; i++) {
+		_staticKeys[i].frame = data.readSint16LE();
+		_staticKeys[i].layer = data.readSint16LE();
 	}
 
 	for (j = 0; j < 4; j++) {
-		_animKeysCount[j] = READ_LE_UINT16(_dataPtr);
-		_dataPtr += 2;
-
+		_animKeysCount[j] = data.readSint16LE();
 		_animKeys[j] = new Mult_AnimKey[_animKeysCount[j]];
-		for (i = 0; i < _animKeysCount[j]; i++, _dataPtr += 10) {
-			_animKeys[j][i].frame = (int16)READ_LE_UINT16(_dataPtr);
-			_animKeys[j][i].layer = (int16)READ_LE_UINT16(_dataPtr + 2);
-			_animKeys[j][i].posX = (int16)READ_LE_UINT16(_dataPtr + 4);
-			_animKeys[j][i].posY = (int16)READ_LE_UINT16(_dataPtr + 6);
-			_animKeys[j][i].order = (int16)READ_LE_UINT16(_dataPtr + 8);
+		for (i = 0; i < _animKeysCount[j]; i++) {
+			_animKeys[j][i].frame = data.readSint16LE();
+			_animKeys[j][i].layer = data.readSint16LE();
+			_animKeys[j][i].posX = data.readSint16LE();
+			_animKeys[j][i].posY = data.readSint16LE();
+			_animKeys[j][i].order = data.readSint16LE();
 		}
 	}
 
 	for (palIndex = 0; palIndex < 5; palIndex++) {
 		for (i = 0; i < 16; i++) {
-			_fadePal[palIndex][i].red = _dataPtr[0];
-			_fadePal[palIndex][i].green = _dataPtr[1];
-			_fadePal[palIndex][i].blue = _dataPtr[2];
-			_dataPtr += 3;
+			_fadePal[palIndex][i].red = data.readByte();
+			_fadePal[palIndex][i].green = data.readByte();
+			_fadePal[palIndex][i].blue = data.readByte();
 		}
 	}
 
-	_palFadeKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
+	_palFadeKeysCount = data.readSint16LE();
 	_palFadeKeys = new Mult_PalFadeKey[_palFadeKeysCount];
-
-	for (i = 0; i < _palFadeKeysCount; i++, _dataPtr += 7) {
-		_palFadeKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_palFadeKeys[i].fade = (int16)READ_LE_UINT16(_dataPtr + 2);
-		_palFadeKeys[i].palIndex = (int16)READ_LE_UINT16(_dataPtr + 4);
-		_palFadeKeys[i].flag = *(_dataPtr + 6);
+	for (i = 0; i < _palFadeKeysCount; i++) {
+		_palFadeKeys[i].frame = data.readSint16LE();
+		_palFadeKeys[i].fade = data.readSint16LE();
+		_palFadeKeys[i].palIndex = data.readSint16LE();
+		_palFadeKeys[i].flag = data.readSByte();
 	}
 
-	_palKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
+	_palKeysCount = data.readSint16LE();
 	_palKeys = new Mult_PalKey[_palKeysCount];
-	for (i = 0; i < _palKeysCount; i++, _dataPtr += 80) {
-		_palKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_palKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
-		_palKeys[i].rates[0] = (int16)READ_LE_UINT16(_dataPtr + 4);
-		_palKeys[i].rates[1] = (int16)READ_LE_UINT16(_dataPtr + 6);
-		_palKeys[i].rates[2] = (int16)READ_LE_UINT16(_dataPtr + 8);
-		_palKeys[i].rates[3] = (int16)READ_LE_UINT16(_dataPtr + 10);
-		_palKeys[i].unknown0 = (int16)READ_LE_UINT16(_dataPtr + 12);
-		_palKeys[i].unknown1 = (int16)READ_LE_UINT16(_dataPtr + 14);
-		memcpy(_palKeys[i].subst, _dataPtr + 16, 64);
+	for (i = 0; i < _palKeysCount; i++) {
+		_palKeys[i].frame = data.readSint16LE();
+		_palKeys[i].cmd = data.readSint16LE();
+		_palKeys[i].rates[0] = data.readSint16LE();
+		_palKeys[i].rates[1] = data.readSint16LE();
+		_palKeys[i].rates[2] = data.readSint16LE();
+		_palKeys[i].rates[3] = data.readSint16LE();
+		_palKeys[i].unknown0 = data.readSint16LE();
+		_palKeys[i].unknown1 = data.readSint16LE();
+		data.read(_palKeys[i].subst, 64);
 	}
 
-	_textKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
+	_textKeysCount = data.readSint16LE();
 	_textKeys = new Mult_TextKey[_textKeysCount];
-
-	for (i = 0; i < _textKeysCount; i++, _dataPtr += 28) {
-		_textKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_textKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
+	for (i = 0; i < _textKeysCount; i++) {
+		_textKeys[i].frame = data.readSint16LE();
+		_textKeys[i].cmd = data.readSint16LE();
 		for (int k = 0; k < 9; ++k)
-			_textKeys[i].unknown0[k] = (int16)READ_LE_UINT16(_dataPtr + 4 + (k * 2));
-		_textKeys[i].index = (int16)READ_LE_UINT16(_dataPtr + 22);
-		_textKeys[i].unknown1[0] = (int16)READ_LE_UINT16(_dataPtr + 24);
-		_textKeys[i].unknown1[1] = (int16)READ_LE_UINT16(_dataPtr + 26);
+			_textKeys[i].unknown0[k] = data.readSint16LE();
+		_textKeys[i].index = data.readSint16LE();
+		_textKeys[i].unknown1[0] = data.readSint16LE();
+		_textKeys[i].unknown1[1] = data.readSint16LE();
 	}
 
-	_sndKeysCount = READ_LE_UINT16(_dataPtr);
-	_dataPtr += 2;
-
+	_sndKeysCount = data.readSint16LE();
 	_sndKeys = new Mult_SndKey[_sndKeysCount];
 	for (i = 0; i < _sndKeysCount; i++) {
-		_sndKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
-		_sndKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
-		_sndKeys[i].freq = (int16)READ_LE_UINT16(_dataPtr + 4);
-		_sndKeys[i].channel = (int16)READ_LE_UINT16(_dataPtr + 6);
-		_sndKeys[i].repCount = (int16)READ_LE_UINT16(_dataPtr + 8);
-		_sndKeys[i].resId = (int16)READ_LE_UINT16(_dataPtr + 10);
-		_sndKeys[i].soundIndex = (int16)READ_LE_UINT16(_dataPtr + 12);
-
+		_sndKeys[i].frame = data.readSint16LE();
+		_sndKeys[i].cmd = data.readSint16LE();
+		_sndKeys[i].freq = data.readSint16LE();
+		_sndKeys[i].channel = data.readSint16LE();
+		_sndKeys[i].repCount = data.readSint16LE();
 		_sndKeys[i].soundIndex = -1;
 		_sndKeys[i].resId = -1;
-		_dataPtr += 36;
+		data.seek(26, SEEK_CUR);
 		switch (_sndKeys[i].cmd) {
 		case 1:
 		case 4:
@@ -933,24 +911,16 @@ void Mult_v1::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 
 void Mult_v1::freeMultKeys(void) {
 	int i;
-	char animCount;
-	char staticCount;
 
-	_dataPtr = _multData;
-	staticCount = _dataPtr[0];
-	animCount = _dataPtr[1];
+	delete[] _multData;
 
-	delete[] _dataPtr;
-
-	staticCount++;
-	animCount++;
-	for (i = 0; i < staticCount; i++) {
+	for (i = 0; i < _staticCount; i++) {
 
 		if (_staticLoaded[i] != 0)
 			_vm->_scenery->freeStatic(_staticIndices[i]);
 	}
 
-	for (i = 0; i < animCount; i++) {
+	for (i = 0; i < _animCount; i++) {
 		if (_animLoaded[i] != 0)
 			_vm->_scenery->freeAnim(_animIndices[i]);
 	}

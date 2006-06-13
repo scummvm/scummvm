@@ -217,7 +217,6 @@ public:
 
 	char _animDataAllocated;
 
-	char *_dataPtr;
 	int16 _staticLoaded[10];
 	int16 _animLoaded[10];
 	int16 _sndSlotsCount;
@@ -227,6 +226,8 @@ public:
 	Mult_SndKey *_sndKeys;
 
 	int8 *_orderArray;
+	int8 _staticCount;
+	int8 _animCount;
 
 	void zeroMultData(void);
 	void checkFreeMult(void);
@@ -308,8 +309,8 @@ public:
 		int8 animCount;
 		int16 animIndices[10];
 		int16 animLoaded[10];
-		int16 animKeysIndices1[4]; // Not sure with these
-		int16 animKeysIndices2[4]; // "
+		int16 animKeysFrames[4];
+		int16 someKeysFrames[4];
 
 		int16 textKeysCount;
 		Mult_TextKey *textKeys;

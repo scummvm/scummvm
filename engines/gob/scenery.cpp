@@ -132,12 +132,12 @@ int16 Scenery::loadStatic(char search) {
 
 		ptr->layers[i].planes = new StaticPlane[ptr->layers[i].planeCount];
 		for (int j = 0; j < ptr->layers[i].planeCount; ++j) {
-			ptr->layers[i].planes[j].pictIndex = layerData.readByte();
-			ptr->layers[i].planes[j].pieceIndex = layerData.readByte();
-			ptr->layers[i].planes[j].drawOrder = layerData.readByte();
+			ptr->layers[i].planes[j].pictIndex = layerData.readSByte();
+			ptr->layers[i].planes[j].pieceIndex = layerData.readSByte();
+			ptr->layers[i].planes[j].drawOrder = layerData.readSByte();
 			ptr->layers[i].planes[j].destX = layerData.readSint16LE();
 			ptr->layers[i].planes[j].destY = layerData.readSint16LE();
-			ptr->layers[i].planes[j].transp = layerData.readByte();
+			ptr->layers[i].planes[j].transp = layerData.readSByte();
 		}
 
 		ptr->layers[i].backResId = (int16)READ_LE_UINT16(backsPtr);
@@ -444,7 +444,7 @@ int16 Scenery::loadAnim(char search) {
 		ptr->layers[i].posY = layerData.readSint16LE();
 		ptr->layers[i].animDeltaX = layerData.readSint16LE();
 		ptr->layers[i].animDeltaY = layerData.readSint16LE();
-		ptr->layers[i].transp = layerData.readByte();
+		ptr->layers[i].transp = layerData.readSByte();
 		ptr->layers[i].framesCount = layerData.readSint16LE();
 
 		layerPos = layerData.pos();
@@ -462,9 +462,9 @@ int16 Scenery::loadAnim(char search) {
 		for (j = 0; j < framesCount; j++) {
 			ptr->layers[i].frames[j].pictIndex = layerData.readByte();
 			ptr->layers[i].frames[j].pieceIndex = layerData.readByte();
-			ptr->layers[i].frames[j].destX = layerData.readByte();
-			ptr->layers[i].frames[j].destY = layerData.readByte();
-			ptr->layers[i].frames[j].notFinal = layerData.readByte();
+			ptr->layers[i].frames[j].destX = layerData.readSByte();
+			ptr->layers[i].frames[j].destY = layerData.readSByte();
+			ptr->layers[i].frames[j].notFinal = layerData.readSByte();
 		}
 	}
 
