@@ -217,8 +217,15 @@ memBlocks	= word ptr -2*/
 
 		delete[] _vm->_global->_inter_variables;
 		delete[] _vm->_game->_totFileData;
-		delete[] _vm->_game->_totTextData;
-		delete[] _vm->_game->_totResourceTable;
+		if (_vm->_game->_totTextData) {
+			if (_vm->_game->_totTextData->items)
+				delete[] _vm->_game->_totTextData->items;
+			delete _vm->_game->_totTextData;
+		}
+		if (_vm->_game->_totResourceTable) {
+			delete[] _vm->_game->_totResourceTable->items;
+			delete _vm->_game->_totResourceTable;
+		}
 	}
 
 	for (i = 0; i < 4; i++) {

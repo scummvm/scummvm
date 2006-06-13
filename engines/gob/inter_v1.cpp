@@ -1263,7 +1263,7 @@ bool Inter_v1::o1_loadCursor(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	if (offset >= 0) {
 		dataBuf =
-		    ((char *)_vm->_game->_totResourceTable) + szGame_TotResTable +
+		    _vm->_game->_totResourceTable->dataPtr + szGame_TotResTable +
 		    szGame_TotResItem * _vm->_game->_totResourceTable->itemsCount + offset;
 	} else {
 		dataBuf = _vm->_game->_imFileData + (int32)READ_LE_UINT32(&((int32 *)_vm->_game->_imFileData)[-offset - 1]);

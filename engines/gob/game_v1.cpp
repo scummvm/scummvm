@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
@@ -53,9 +54,6 @@ void Game_v1::playTot(int16 skipPlay) {
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
-	char needTextFree;
-	char needFreeResTable;
-	char *curPtr;
 	int32 variablesCount;
 	char *filePtr;
 	char *savedIP;
@@ -105,9 +103,6 @@ void Game_v1::playTot(int16 skipPlay) {
 			_extTable = 0;
 			_extHandle = -1;
 
-			needFreeResTable = 1;
-			needTextFree = 1;
-
 			_totToLoad[0] = 0;
 
 			if (_curTotFile[0] == 0 && _totFileData == 0)
@@ -133,40 +128,38 @@ void Game_v1::playTot(int16 skipPlay) {
 
 			filePtr = (char *)_totFileData + 0x30;
 
+			_totTextData = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
-				curPtr = _totFileData;
-				_totTextData =
-						(TotTextTable *) (curPtr +
-						READ_LE_UINT32((char *)_totFileData + 0x30));
+				_totTextData = new TotTextTable;
+				_totTextData->dataPtr = (_totFileData + READ_LE_UINT32((char *)_totFileData + 0x30));
+				Common::MemoryReadStream totTextData((byte *) _totTextData->dataPtr, 4294967295U);
 
-				_totTextData->itemsCount = (int16)READ_LE_UINT16(&_totTextData->itemsCount);
+				_totTextData->itemsCount = totTextData.readSint16LE();
 
+				_totTextData->items = new TotTextItem[_totTextData->itemsCount];
 				for (i = 0; i < _totTextData->itemsCount; ++i) {
-					_totTextData->items[i].offset = (int16)READ_LE_UINT16(&_totTextData->items[i].offset);
-					_totTextData->items[i].size = (int16)READ_LE_UINT16(&_totTextData->items[i].size);
+					_totTextData->items[i].offset = totTextData.readSint16LE();
+					_totTextData->items[i].size = totTextData.readSint16LE();
 				}
-
-				needTextFree = 0;
 			}
 
 			filePtr = (char *)_totFileData + 0x34;
+			_totResourceTable = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
-				curPtr = _totFileData;
+				_totResourceTable = new TotResTable;
+				_totResourceTable->dataPtr = _totFileData + READ_LE_UINT32((char *)_totFileData + 0x34);
+				Common::MemoryReadStream totResTable((byte *) _totResourceTable->dataPtr, 4294967295U);
 
-				_totResourceTable =
-					(TotResTable *)(curPtr +
-				    READ_LE_UINT32((char *)_totFileData + 0x34));
+				_totResourceTable->itemsCount = totResTable.readSint16LE();
+				_totResourceTable->unknown = totResTable.readByte();
 
-				_totResourceTable->itemsCount = (int16)READ_LE_UINT16(&_totResourceTable->itemsCount);
-
+				_totResourceTable->items = new TotResItem[_totResourceTable->itemsCount];
 				for (i = 0; i < _totResourceTable->itemsCount; ++i) {
-					_totResourceTable->items[i].offset = (int32)READ_LE_UINT32(&_totResourceTable->items[i].offset);
-					_totResourceTable->items[i].size = (int16)READ_LE_UINT16(&_totResourceTable->items[i].size);
-					_totResourceTable->items[i].width = (int16)READ_LE_UINT16(&_totResourceTable->items[i].width);
-					_totResourceTable->items[i].height = (int16)READ_LE_UINT16(&_totResourceTable->items[i].height);
+					_totResourceTable->items[i].offset = totResTable.readSint32LE();
+					_totResourceTable->items[i].size = totResTable.readSint16LE();
+					_totResourceTable->items[i].width = totResTable.readSint16LE();
+					_totResourceTable->items[i].height = totResTable.readSint16LE();
 				}
-
-				needFreeResTable = 0;
 			}
 
 			loadImFile();
@@ -200,12 +193,16 @@ void Game_v1::playTot(int16 skipPlay) {
 			delete[] _totFileData;
 			_totFileData = 0;
 
-			if (needTextFree)
-				delete[] _totTextData;
+			if (_totTextData) {
+				delete[] _totTextData->items;
+				delete _totTextData;
+			}
 			_totTextData = 0;
 
-			if (needFreeResTable)
-				delete[] _totResourceTable;
+			if (_totResourceTable) {
+				delete[] _totResourceTable->items;
+				delete _totResourceTable;
+			}
 			_totResourceTable = 0;
 
 			delete[] _imFileData;

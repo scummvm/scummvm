@@ -51,7 +51,6 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 	}
 	for (i = 0; i < 10; i++) {
 		_staticPictCount[i] = 0;
-		_staticFromExt[i] = 0;
 		_staticResId[i] = 0;
 		_animPictCount[i] = 0;
 		_animResId[i] = 0;
@@ -78,6 +77,7 @@ int16 Scenery::loadStatic(char search) {
 	int16 resId;
 	int16 i;
 	int16 sceneryIndex;
+	char *extData;
 	char *dataPtr;
 	Static *ptr;
 	int16 offset;
@@ -87,6 +87,7 @@ int16 Scenery::loadStatic(char search) {
 	int16 sprResId;
 	int16 sprIndex;
 
+	extData = 0;
 	_vm->_inter->evalExpr(&sceneryIndex);
 	tmp = _vm->_inter->load16();
 	backsPtr = (int16 *)_vm->_global->_inter_execPtr;
@@ -109,35 +110,37 @@ int16 Scenery::loadStatic(char search) {
 	_staticResId[sceneryIndex] = resId;
 
 	if (resId >= 30000) {
-		_staticFromExt[sceneryIndex] = 1;
-		dataPtr = _vm->_game->loadExtData(resId, 0, 0);
-	} else {
-		_staticFromExt[sceneryIndex] = 0;
+		extData = _vm->_game->loadExtData(resId, 0, 0);
+		dataPtr = extData;
+	} else
 		dataPtr = _vm->_game->loadTotResource(resId);
-	}
 
 	ptr = &_statics[sceneryIndex];
-	ptr->dataPtr = dataPtr;
 
 	ptr->layersCount = (int16)READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
-	ptr->layers = new StaticLayer*[ptr->layersCount];
+	ptr->layers = new StaticLayer[ptr->layersCount];
 	ptr->pieces = new PieceDesc*[picsCount];
 	ptr->piecesFromExt = new int8[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
-		ptr->layers[i] = (StaticLayer *)(dataPtr + offset - 2);
+		Common::MemoryReadStream layerData((byte *) (dataPtr + offset), 4294967295U);
 
-		ptr->layers[i]->planeCount = (int16)READ_LE_UINT16(&ptr->layers[i]->planeCount);
+		ptr->layers[i].planeCount = layerData.readSint16LE();
 
-		for (int j = 0; j < ptr->layers[i]->planeCount; ++j) {
-			ptr->layers[i]->planes[j].destX = (int16)READ_LE_UINT16(&ptr->layers[i]->planes[j].destX);
-			ptr->layers[i]->planes[j].destY = (int16)READ_LE_UINT16(&ptr->layers[i]->planes[j].destY);
+		ptr->layers[i].planes = new StaticPlane[ptr->layers[i].planeCount];
+		for (int j = 0; j < ptr->layers[i].planeCount; ++j) {
+			ptr->layers[i].planes[j].pictIndex = layerData.readByte();
+			ptr->layers[i].planes[j].pieceIndex = layerData.readByte();
+			ptr->layers[i].planes[j].drawOrder = layerData.readByte();
+			ptr->layers[i].planes[j].destX = layerData.readSint16LE();
+			ptr->layers[i].planes[j].destY = layerData.readSint16LE();
+			ptr->layers[i].planes[j].transp = layerData.readByte();
 		}
 
-		ptr->layers[i]->backResId = (int16)READ_LE_UINT16(backsPtr);
+		ptr->layers[i].backResId = (int16)READ_LE_UINT16(backsPtr);
 		backsPtr++;
 	}
 
@@ -187,6 +190,8 @@ int16 Scenery::loadStatic(char search) {
 			_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 		}
 	}
+	if (extData != 0)
+		delete[] extData;
 	return sceneryIndex + 100;
 }
 
@@ -213,13 +218,12 @@ void Scenery::freeStatic(int16 index) {
 		}
 	}
 
+	for (i = 0; i < _statics[index].layersCount; i++)
+		delete[] _statics[index].layers[i].planes;
 	delete[] _statics[index].layers;
 	delete[] _statics[index].pieces;
 	delete[] _statics[index].piecesFromExt;
-	if (_staticFromExt[index] == 1)
-		delete[] _statics[index].dataPtr;
 
-	_staticFromExt[index] = 0;
 	_staticPictCount[index] = -1;
 }
 
@@ -243,7 +247,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	if (layer >= ptr->layersCount)
 		return;
 
-	layerPtr = ptr->layers[layer];
+	layerPtr = &ptr->layers[layer];
 
 	_vm->_draw->_spriteLeft = layerPtr->backResId;
 	if (_vm->_draw->_spriteLeft != -1) {
@@ -305,7 +309,7 @@ void Scenery::updateStatic(int16 orderFrom) {
 	if (_curStaticLayer >= _statics[_curStatic].layersCount)
 		return;
 
-	layerPtr = _statics[_curStatic].layers[_curStaticLayer];
+	layerPtr = &_statics[_curStatic].layers[_curStaticLayer];
 	pictPtr = _statics[_curStatic].pieces;
 
 	planeCount = layerPtr->planeCount;
@@ -433,7 +437,7 @@ int16 Scenery::loadAnim(char search) {
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
-		Common::MemoryReadStream layerData((byte *) (dataPtr + offset - 2), 65535);
+		Common::MemoryReadStream layerData((byte *) (dataPtr + offset - 2), 4294967295U);
 
 		ptr->layers[i].unknown0 = layerData.readSint16LE();
 		ptr->layers[i].posX = layerData.readSint16LE();
