@@ -285,8 +285,8 @@ void NewGui::runLoop() {
 		PaletteMan.popCursorPalette();
 
 	if (didSaveState) {
-		restoreState();
 		_theme->disable();
+		restoreState();
 	}
 }
 
