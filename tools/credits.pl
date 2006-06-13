@@ -536,7 +536,7 @@ begin_credits("Credits");
 		  add_person("Kostas Nakos", "knakos", "");
 	  end_section();
 
-	  begin_section("Playstation 2");
+	  begin_section("PlayStation 2");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
 	  end_section();
 

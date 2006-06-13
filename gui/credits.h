@@ -87,7 +87,7 @@ static const char *credits[] = {
 "\\C\\c0""Nicolas Bacca",
 "\\C\\c0""Kostas Nakos",
 "\\C\\c0""",
-"\\C\\c1""Playstation 2",
+"\\C\\c1""PlayStation 2",
 "\\C\\c0""Robert Goeffringmann",
 "\\C\\c0""",
 "\\C\\c1""PSP (PlayStation Portable)",
