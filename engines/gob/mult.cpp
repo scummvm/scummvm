@@ -102,7 +102,6 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 
 	_animDataAllocated = 0;
 
-	_dataPtr = 0;
 	for (i = 0; i < 10; i++) {
 		_staticLoaded[i] = 0;
 		_animLoaded[i] = 0;
