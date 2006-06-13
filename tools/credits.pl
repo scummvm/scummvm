@@ -572,9 +572,9 @@ begin_credits("Credits");
     end_section();
 
     begin_section("Documentation");
-	begin_section("Documentation Manager");
-		add_person("Joachim Eberhard", "joachimeberhard", "");
-    	end_section();
+	begin_persons();
+		add_person("Joachim Eberhard", "joachimeberhard", "Documentation manager");
+    	end_persons();
     end_section();
 
     begin_section("Retired Team Members");
