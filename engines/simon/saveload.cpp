@@ -485,7 +485,7 @@ void SimonEngine::fileError(WindowBlock *window, bool save_error) {
 			break;
 		case Common::IT_ITA:
 			string1 = "\r  Salvataggio non riuscito";
-			string2 = "\r    Prova un\39altro disco";
+			string2 = "\r    Prova un""\x27""altro disco";
 			break;
 		case Common::FR_FRA:
 			string1 = "\r    Echec sauvegarde";
