@@ -205,9 +205,6 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 		return 0;
 	}
 
-	// Now the engine should've set up all debug levels so we can use the command line arugments here
-	Common::enableSpecialDebugLevelList(edebuglevels);
-
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
@@ -239,6 +236,9 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 
 	// Init the engine (this might change the screen parameters
 	result = engine->init();
+
+	// Now the engine should've set up all debug levels so we can use the command line arugments here
+	Common::enableSpecialDebugLevelList(edebuglevels);
 
 	// Run the game engine if the initialization was successful.
 	if (result == 0) {
