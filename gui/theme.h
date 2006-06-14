@@ -160,6 +160,10 @@ public:
 	virtual void restoreBackground(Common::Rect r, bool special = false) = 0;
 	virtual bool addDirtyRect(Common::Rect r, bool save = false, bool special = false) = 0;
 
+	virtual int getTabHeight() const = 0;
+	virtual int getTabSpacing() const = 0;
+	virtual int getTabPadding() const = 0;
+
 	Graphics::TextAlignment convertAligment(TextAlign align) const {
 		switch (align) {
 		case kTextAlignLeft:
@@ -236,7 +240,6 @@ public:
 	
 	void resetDrawArea();
 
-
 	typedef Common::String String;
 
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
@@ -260,6 +263,10 @@ public:
 	void drawLineSeparator(const Common::Rect &r, State state);
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool save = false, bool special = false);
+
+	int getTabHeight() const;
+	int getTabSpacing() const;
+	int getTabPadding() const;
 
 private:
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool skipLastRow = false);
@@ -340,13 +347,17 @@ public:
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
 
+	int getTabHeight() const;
+	int getTabSpacing() const;
+	int getTabPadding() const;
+
 private:
 	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
 	void drawRect(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 				const Graphics::Surface *left, const Graphics::Surface *fill, int alpha, bool skipLastRow = false);
 	void drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 						const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
-						OverlayColor start, OverlayColor end, uint factor = 1, bool skipLastRow = false);
+						OverlayColor start, OverlayColor end, uint factor = 1, bool skipLastRow = false, bool skipTopRow = false);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha);
 	void drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha,
 							OverlayColor start, OverlayColor end, uint factor = 1);
@@ -361,10 +372,11 @@ private:
 
 	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);
 	void drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
-					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow = false);
+					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow = false,
+					bool skipTopRow = false);
 	void drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
 						const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
-						int alpha, bool skipLastRow = false);
+						int alpha, bool skipLastRow = false, bool skipTopRow = false);
 
 	int _shadowLeftWidth, _shadowRightWidth;
 	int _shadowTopHeight, _shadowBottomHeight;
@@ -465,7 +477,7 @@ public:
 		kEditTextBkgd = 47,
 
 		kGUICursor = 48,
-		
+	
 		kImageHandlesMax
 	};
 
@@ -553,6 +565,11 @@ private:
 		
 		kEditTextBackgroundStart = 44,
 		kEditTextBackgroundEnd = 45,
+
+		kTabActiveStart = 46,
+		kTabActiveEnd = 47,
+		kTabInactiveStart = 48,
+		kTabInactiveEnd = 49,
 
 		kColorHandlesMax
 	};

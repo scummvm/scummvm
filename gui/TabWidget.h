@@ -41,6 +41,10 @@ protected:
 	int _tabWidth;
 	int _tabHeight;
 
+	int _tabOffset;
+	int _tabSpacing;
+	int _tabPadding;
+
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
 	TabWidget(GuiObject *boss, const String &name);

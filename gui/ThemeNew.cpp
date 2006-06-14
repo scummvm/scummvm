@@ -43,7 +43,7 @@
 #define kShadowTr4 128
 #define kShadowTr5 192
 
-#define THEME_VERSION 15
+#define THEME_VERSION 16
 
 using Graphics::Surface;
 
@@ -573,34 +573,55 @@ void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const
 		return;
 
 	restoreBackground(r);
-	int tabXOffset = surface(kWidgetSmallBkgdCorner)->w;
-	
-	OverlayColor tabEnd = calcGradient(_colors[kTabBackgroundStart], _colors[kTabBackgroundEnd], tabHeight, r.height(), _gradientFactors[kTabFactor]);
 
+	// whole tab background
+	drawRectMasked(r, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
+						/*(state == kStateDisabled) ? -30 : */256, _colors[kTabBackgroundStart], _colors[kTabBackgroundEnd],
+						_gradientFactors[kTabFactor]);
+	
+	OverlayColor tabEnd = calcGradient(_colors[kTabActiveStart], _colors[kTabActiveEnd], tabHeight, r.height(), _gradientFactors[kTabFactor]);
+
+	const int tabOffset = 1;
+
+	// tab shadows
+	for (int i = 0; i < (int)tabs.size(); ++i) {
+		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
+		drawShadow(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
+					kShadowSmall, true);
+	}
+
+	// inactive tabs
 	for (int i = 0; i < (int)tabs.size(); ++i) {
 		if (i == active)
 			continue;
 
-		Common::Rect tabRect(r.left + tabXOffset + i * tabWidth, r.top, r.left + tabXOffset + i * tabWidth + tabWidth, r.top + tabHeight);
+		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
-					128, _colors[kTabBackgroundStart], tabEnd, _gradientFactors[kTabFactor], true);
+					256, _colors[kTabInactiveStart], _colors[kTabInactiveEnd], _gradientFactors[kTabFactor], true);
 
 		getFont()->drawString(&_screen, tabs[i], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateEnabled), Graphics::kTextAlignCenter, 0, true);
 	}
 	
-	Common::Rect widgetBackground = Common::Rect(r.left, r.top + tabHeight, r.right, r.bottom);
-	drawRectMasked(widgetBackground, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
-						(state == kStateDisabled) ? -30 : 256, tabEnd, _colors[kTabBackgroundEnd],
-						_gradientFactors[kTabFactor]);
+	// area shadow
+	Common::Rect widgetBackground = Common::Rect(r.left, r.top + tabHeight, r.right, r.bottom - 2);
+	drawShadow(widgetBackground, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
+					kShadowSmall, false, true);
+
+	// area itself
+	widgetBackground = Common::Rect(r.left, r.top + tabHeight, r.right, r.bottom);
+	drawRectMasked(widgetBackground, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
+						/*(state == kStateDisabled) ? -30 : */256, tabEnd, _colors[kTabActiveEnd],
+						_gradientFactors[kTabFactor], false, true);
 	addDirtyRect(widgetBackground, true);
 	
-	Common::Rect tabRect(r.left + tabXOffset + active * tabWidth, r.top, r.left + tabXOffset + active * tabWidth + tabWidth, r.top + tabHeight + 1);
+	// active tab
+	Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight + 1);
 	drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
-				256, _colors[kTabBackgroundStart], tabEnd, _gradientFactors[kTabFactor], true);
+				256, _colors[kTabActiveStart], tabEnd, _gradientFactors[kTabFactor], true);
 
 	getFont()->drawString(&_screen, tabs[active], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
 
-	addDirtyRect(r);
+	addDirtyRect(Common::Rect(r.left, r.top-2, r.right, r.bottom));
 }
 
 void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, State state) {
@@ -727,6 +748,22 @@ void ThemeNew::drawLineSeparator(const Common::Rect &r, State state) {
 	addDirtyRect(r);
 }
 
+int ThemeNew::getTabHeight() const {
+	// TODO let the user specify those
+	if (_screen.w >= 400 && _screen.h >= 300) {
+		return 25;
+	} else {
+		return 16;
+	}
+}
+
+int ThemeNew::getTabSpacing() const {
+	return 0;
+}
+int ThemeNew::getTabPadding() const {
+	return 3;
+}
+
 #pragma mark - intern drawing
 
 void ThemeNew::restoreBackground(Common::Rect r, bool special) {
@@ -796,7 +833,7 @@ void ThemeNew::drawRect(const Common::Rect &r, const Surface *corner, const Surf
 
 void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 							const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
-							OverlayColor start, OverlayColor end, uint factor, bool skipLastRow) {
+							OverlayColor start, OverlayColor end, uint factor, bool skipLastRow, bool skipTopRow) {
 	int drawWidth = MIN(corner->w, MIN(top->w, MIN(left->w, fill->w)));
 	int drawHeight = MIN(corner->h, MIN(top->h, MIN(left->h, fill->h)));
 	int partsH = r.height() / drawHeight;
@@ -846,7 +883,7 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 
 			// draw the right surface
 			if (!i || i == partsW - 1) {
-				if (!y || (y == partsH - 1 && !skipLastRow)) {
+				if ((!y && !skipTopRow) || (y == partsH - 1 && !skipLastRow)) {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, (i == partsW - 1), alpha, startCol, endCol);
 				} else {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, (i == partsW - 1), alpha, startCol, endCol);
@@ -890,7 +927,7 @@ Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 }
 
 void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
-						const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow) {
+						const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow, bool skipTopRow) {
 	switch (shadowStyle) {
 	case kShadowFull: {
 		Common::Rect r2(r.left-1, r.top-1, r.right + 4, r.bottom + 4);
@@ -898,10 +935,10 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 		Common::Rect r4(r.left, r.top+1, r.right + 2, r.bottom + 2);
 		Common::Rect r5(r.left, r.top, r.right + 1, r.bottom + 1);
 
-		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr0, skipLastRow);
-		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr1, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr2, skipLastRow);
-		drawShadowRect(r5, r, corner, top, left, fill, kShadowTr3, skipLastRow);
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr0, skipLastRow, skipTopRow);
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr1, skipLastRow, skipTopRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr2, skipLastRow, skipTopRow);
+		drawShadowRect(r5, r, corner, top, left, fill, kShadowTr3, skipLastRow, skipTopRow);
 		//drawShadowRect(r5, r, corner, top, left, fill, kShadowTr35, skipLastRow);
 		} break;
 
@@ -909,24 +946,24 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 		Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
 		Common::Rect r4(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2-1, r.bottom + _shadowBottomHeight/2-1);
 
-		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr1, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr1, skipLastRow, skipTopRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr2, skipLastRow, skipTopRow);
 		} break;
 
 	case kShadowButton: {
 		Common::Rect r2(r.left-1, r.top - 1, r.right, r.bottom);
 		Common::Rect r4(r.left, r.top, r.right + 1, r.bottom + 1);
 
-		drawShadowRect(r2, r, corner, top, left, fill, -kShadowTr35-256, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr4, skipLastRow);
+		drawShadowRect(r2, r, corner, top, left, fill, -kShadowTr35-256, skipLastRow, skipTopRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr4, skipLastRow, skipTopRow);
 		} break;
 
 	case kShadowEmboss: {
 		Common::Rect r2(r.left - 1, r.top - 1, r.right, r.bottom);
 		Common::Rect r4(r.left + 1, r.top + 1, r.right + 1, r.bottom + 1);
 
-		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr5, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr1, skipLastRow);
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr5, skipLastRow, skipTopRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr1, skipLastRow, skipTopRow);
 		} break;
 
 	case kShadowPopUp: {
@@ -935,10 +972,10 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 		Common::Rect r3(r.left - 1, r.top-1, r.right, r.bottom);
 		Common::Rect r4(r.left, r.top, r.right + 1, r.bottom + 1);
 
-		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr1, skipLastRow);
-		drawShadowRect(r25, r, corner, top, left, fill, kShadowTr2, skipLastRow);
-		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
-		drawShadowRect(r3, r, corner, top, left, fill, -kShadowTr35-256, skipLastRow);
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr1, skipLastRow, skipTopRow);
+		drawShadowRect(r25, r, corner, top, left, fill, kShadowTr2, skipLastRow, skipTopRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow, skipTopRow);
+		drawShadowRect(r3, r, corner, top, left, fill, -kShadowTr35-256, skipLastRow, skipTopRow);
 		} break;
 
 	default:
@@ -948,7 +985,7 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 
 void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
 							const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
-							int alpha, bool skipLastRow) {
+							int alpha, bool skipLastRow, bool skipTopRow) {
 	int drawWidth = MIN(corner->w, MIN(top->w, MIN(left->w, fill->w)));
 	int drawHeight = MIN(corner->h, MIN(top->h, MIN(left->h, fill->h)));
 	int partsH = r.height() / drawHeight;
@@ -1008,7 +1045,7 @@ void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, c
 
 			// draw the right surface
 			if (!i || i == partsW - 1) {
-				if (!y || (y == partsH - 1 && !skipLastRow)) {
+				if ((!y && !skipTopRow) || (y == partsH - 1 && !skipLastRow)) {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, (i == partsW - 1), alpha, startCol, endCol);
 				} else {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, (i == partsW - 1), alpha, startCol, endCol);
@@ -1186,6 +1223,11 @@ void ThemeNew::setupColors() {
 
 	getColorFromConfig("tab_background_start", _colors[kTabBackgroundStart]);
 	getColorFromConfig("tab_background_end", _colors[kTabBackgroundEnd]);
+
+	getColorFromConfig("tab_active_start", _colors[kTabActiveStart]);
+	getColorFromConfig("tab_active_end", _colors[kTabActiveEnd]);
+	getColorFromConfig("tab_inactive_start", _colors[kTabInactiveStart]);
+	getColorFromConfig("tab_inactive_end", _colors[kTabInactiveEnd]);
 
 	getColorFromConfig("scrollbar_background_start", _colors[kScrollbarBackgroundStart]);
 	getColorFromConfig("scrollbar_background_end", _colors[kScrollbarBackgroundEnd]);
