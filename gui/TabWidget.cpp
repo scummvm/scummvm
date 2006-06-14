@@ -26,16 +26,6 @@
 #include "gui/newgui.h"
 
 namespace GUI {
-
-enum {
-	kTabHeight = 16,
-	kBigTabHeight = 21,
-
-	kTabLeftOffset = 4,
-	kTabSpacing = 2,
-	kTabPadding = 3
-};
-
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h) {
 	init();
@@ -47,17 +37,16 @@ TabWidget::TabWidget(GuiObject *boss, const String &name)
 }
 
 void TabWidget::init() {
+	_tabOffset = 0;	// TODO
+	_tabSpacing = g_gui.theme()->getTabSpacing();
+	_tabPadding = g_gui.theme()->getTabPadding();
+
 	_flags = WIDGET_ENABLED;
 	_type = kTabWidget;
 	_activeTab = -1;
 
 	_tabWidth = 40;
-
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		_tabHeight = kBigTabHeight;
-	} else {
-		_tabHeight = kTabHeight;
-	}
+	_tabHeight = g_gui.theme()->getTabHeight();
 }
 
 TabWidget::~TabWidget() {
@@ -81,14 +70,7 @@ int TabWidget::addTab(const String &title) {
 	_tabs.push_back(newTab);
 
 	int numTabs = _tabs.size();
-
-	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(title) + 2 * kTabPadding;
-	if (_tabWidth < newWidth)
-		_tabWidth = newWidth;
-	int maxWidth = (_w - kTabLeftOffset) / numTabs - kTabLeftOffset;
-	if (_tabWidth > maxWidth)
-		_tabWidth = maxWidth;
+	_tabWidth = _w / numTabs;
 
 	// Activate the new tab
 	setActiveTab(numTabs - 1);
@@ -116,9 +98,8 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	// Determine which tab was clicked
 	int tabID = -1;
-	x -= kTabLeftOffset;
-	if (x >= 0 && x % (_tabWidth + kTabSpacing) < _tabWidth) {
-		tabID = x / (_tabWidth + kTabSpacing);
+	if (x >= 0 && x % (_tabWidth + _tabSpacing) < _tabWidth) {
+		tabID = x / (_tabWidth + _tabSpacing);
 		if (tabID >= (int)_tabs.size())
 			tabID = -1;
 	}
@@ -147,23 +128,15 @@ void TabWidget::handleScreenChanged() {
 		}
 	}
 
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		_tabHeight = kBigTabHeight;
-	} else {
-		_tabHeight = kTabHeight;
-	}
-
+	_tabHeight = g_gui.theme()->getTabHeight();
 	_tabWidth = 40;
 
-	for (uint i = 0; i < _tabs.size(); ++i) {
-		int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * kTabPadding;
-		if (_tabWidth < newWidth)
-			_tabWidth = newWidth;
-	}
+	_tabOffset = 0;	// TODO
+	_tabSpacing = g_gui.theme()->getTabSpacing();
+	_tabPadding = g_gui.theme()->getTabPadding();
 
-	int maxWidth = (_w - kTabLeftOffset) / _tabs.size() - kTabLeftOffset;
-	if (_tabWidth > maxWidth)
-		_tabWidth = maxWidth;
+	if (_tabs.size())
+		_tabWidth = _w / _tabs.size();
 }
 
 void TabWidget::drawWidget(bool hilite) {

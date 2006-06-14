@@ -138,6 +138,21 @@ void ThemeClassic::resetDrawArea() {
 	}
 }
 
+int ThemeClassic::getTabHeight() const {
+	if (_screen.w >= 400 && _screen.h >= 300) {
+		return 21;
+	} else {
+		return 16;
+	}
+}
+
+int ThemeClassic::getTabSpacing() const {
+	return 2;
+}
+int ThemeClassic::getTabPadding() const {
+	return 3;
+}
+
 void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, State state) {
 	if (!_initOk)
 		return;
