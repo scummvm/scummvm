@@ -602,6 +602,8 @@ arguments -- see the next section.
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
+  --gui-theme=THEME        Select GUI theme (default, modern, classic)
+  --themepath=PATH         Path to where GUI themes are stored
   -e, --music-driver=MODE  Select music driver (see also section 7.0)
   -q, --language=LANG      Select language (see also section 5.2)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)

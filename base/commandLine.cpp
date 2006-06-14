@@ -83,6 +83,8 @@ static const char HELP_STRING[] =
 	"  -g, --gfx-mode=MODE      Select graphics scaler (normal,2x,3x,2xsai,\n"
 	"                           super2xsai,supereagle,advmame2x,advmame3x,hq2x,\n"
 	"                           hq3x,tv2x,dotmatrix)\n"
+	"  --gui-theme=THEME        Select GUI theme (default, modern, classic)\n"
+	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
@@ -480,6 +482,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("gui-theme")
+			END_OPTION
+
+			DO_LONG_OPTION("themepath")
+				// TODO: Verify whether the path is valid
 			END_OPTION
 
 			DO_LONG_OPTION("target-md5")
