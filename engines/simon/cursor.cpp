@@ -435,7 +435,21 @@ void SimonEngine::drawMousePointer_FF() {
 		offs = cursor * 32 + _mouseAnim * 2;
 		drawMousePart(image, _mouseOffs[offs], _mouseOffs[offs + 1]);
 
-		CursorMan.replaceCursor(_mouseData, kMaxCursorWidth, kMaxCursorHeight, 19, 19, 0);
+		int hotspotX = 19;
+		int hotspotY = 19;
+		
+		if (_mouseCursor == 14) {
+			// Finger pointing away from screen. Not sure where
+			// this is used.
+			hotspotX += 4;
+			hotspotY -= 6;
+		} else if (_mouseCursor == 15) {
+			// Finger pointing down. Used for the oh-so-annoying
+			// Cygnus Alpha tile puzzle.
+			hotspotY += 18;
+		}
+
+		CursorMan.replaceCursor(_mouseData, kMaxCursorWidth, kMaxCursorHeight, hotspotX, hotspotY, 0);
 	}
 }
 
