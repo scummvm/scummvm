@@ -388,6 +388,9 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (code & 0x80)
 		code = READ_BE_UINT16(p);
 
+	if (_vm->_game.heversion >= 90)
+		_shadow_mode = 0;
+
 	if (code == AKC_C021 || code == AKC_C022) {
 		uint16 s = cost.curpos[limb] + 4;
 		uint j = 0;
@@ -498,7 +501,10 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				continue;
 
 			if (_vm->_game.heversion >= 90) {
-				_shadow_mode = ((shadowMask & 0x8000) && xmap) ? 3 : 0;
+				if (_vm->_game.heversion >= 99)
+					_shadow_mode = 0;
+				if (xmap && (shadowMask & 0x8000))
+					_shadow_mode = 3;
 			}
 
 			switch (codec) {
