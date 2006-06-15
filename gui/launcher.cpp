@@ -192,35 +192,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	//
-	// 2) The 'Path' tab
-	//
-	tab->addTab("Paths");
-
-	// These buttons have to be extra wide, or the text will be truncated
-	// in the small version of the GUI.
-
-	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
-	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
-
-	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
-	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath);
-	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPathWidget->setLabel("None");
-	}
-
-	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
-	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
-	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePathWidget->setLabel("Default");
-	}
-
-	//
 	// 3) The graphics tab
 	//
-	tab->addTab("Gfx");
+	tab->addTab("Graphics");
 
 	_globalGraphicsOverride = new CheckboxWidget(tab, "gameoptions_graphicsCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
 
@@ -253,6 +227,32 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_globalMIDIOverride = new CheckboxWidget(tab, "gameoptions_midiCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
 
 	addMIDIControls(tab, "gameoptions_");
+
+	//
+	// 2) The 'Path' tab
+	//
+	tab->addTab("Paths");
+
+	// These buttons have to be extra wide, or the text will be truncated
+	// in the small version of the GUI.
+
+	// GUI:  Button + Label for the game path
+	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
+	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
+
+	// GUI:  Button + Label for the additional path
+	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
+	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath);
+	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
+		_extraPathWidget->setLabel("None");
+	}
+
+	// GUI:  Button + Label for the save path
+	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
+	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
+	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
+		_savePathWidget->setLabel("Default");
+	}
 
 	// Activate the first tab
 	tab->setActiveTab(0);
