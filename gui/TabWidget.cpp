@@ -65,9 +65,9 @@ void TabWidget::init() {
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
 	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", kCmdLeft, 0);
-	_navLeft->clearHints(THEME_HINT_SAVE_BACKGROUND);
+	_navLeft->setHints(THEME_HINT_NO_BACKGROUND_RESTORE);
 	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", kCmdRight, 0);
-	_navRight->clearHints(THEME_HINT_SAVE_BACKGROUND);
+	_navRight->setHints(THEME_HINT_NO_BACKGROUND_RESTORE);
 }
 
 TabWidget::~TabWidget() {

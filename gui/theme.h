@@ -59,7 +59,13 @@ enum {
 	THEME_HINT_PLAIN_COLOR = 1 << 4,
 	
 	// Indictaes that a shadows should be drawn around the background
-	THEME_HINT_USE_SHADOW = 1 << 5
+	THEME_HINT_USE_SHADOW = 1 << 5,
+
+	// Indicates that no background should be restored when drawing the widget
+	// (note that this can be silently ignored if for example the theme does
+	// alpha blending and would blend over a allready drawn widget)
+	// TODO: currently only ThemeNew::drawButton supports this
+	THEME_HINT_NO_BACKGROUND_RESTORE = 1 << 6
 };
 
 

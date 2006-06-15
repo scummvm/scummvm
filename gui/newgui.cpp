@@ -148,6 +148,8 @@ void NewGui::redraw() {
 
 		_dialogStack[i]->drawDialog();
 	}
+
+	_theme->drawAll();
 }
 
 void NewGui::runLoop() {

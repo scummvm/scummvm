@@ -400,7 +400,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, Stat
 	
 	Common::Rect r2 = shadowRect(r, kShadowButton);
 
-	if (hints & THEME_HINT_SAVE_BACKGROUND)
+	if (!(hints & THEME_HINT_NO_BACKGROUND_RESTORE) || state == kStateDisabled)
 		restoreBackground(r2);
 
 	// shadow
