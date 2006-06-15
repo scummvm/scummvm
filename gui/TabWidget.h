@@ -35,8 +35,10 @@ class TabWidget : public Widget {
 		Widget *firstWidget;
 	};
 	typedef Common::Array<Tab> TabList;
+
 protected:
 	int _activeTab;
+	int _firstVisibleTab;
 	TabList _tabs;
 	int _tabWidth;
 	int _tabHeight;
@@ -44,6 +46,11 @@ protected:
 	int _tabOffset;
 	int _tabSpacing;
 	int _tabPadding;
+	int _titleVPad;
+
+	int _butRP, _butTP, _butW, _butH;
+
+	ButtonWidget *_navLeft, *_navRight;
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -71,8 +78,11 @@ public:
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual void handleScreenChanged();
+
+	virtual void draw();
 
 protected:
 	virtual void drawWidget(bool hilite);

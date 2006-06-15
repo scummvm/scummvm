@@ -147,11 +147,11 @@ public:
 	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state = kStateEnabled) = 0;
 
 	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, State state = kStateEnabled) = 0;
-	virtual void drawButton(const Common::Rect &r, const Common::String &str, State state = kStateEnabled) = 0;
+	virtual void drawButton(const Common::Rect &r, const Common::String &str, State state = kStateEnabled, uint16 hints = 0) = 0;
 	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state = kStateEnabled, int alpha = 256, bool themeTrans = false) = 0;
 	virtual void drawSlider(const Common::Rect &r, int width, State state = kStateEnabled) = 0;
 	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state = kStateEnabled) = 0;
-	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, State state = kStateEnabled) = 0;
+	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state = kStateEnabled) = 0;
 	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state = kStateEnabled) = 0;
 	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state = kStateEnabled, TextAlign align = kTextAlignLeft) = 0;
 	virtual void drawCaret(const Common::Rect &r, bool erase, State state = kStateEnabled) = 0;
@@ -160,7 +160,6 @@ public:
 	virtual void restoreBackground(Common::Rect r, bool special = false) = 0;
 	virtual bool addDirtyRect(Common::Rect r, bool save = false, bool special = false) = 0;
 
-	virtual int getTabHeight() const = 0;
 	virtual int getTabSpacing() const = 0;
 	virtual int getTabPadding() const = 0;
 
@@ -252,11 +251,11 @@ public:
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
-	void drawButton(const Common::Rect &r, const String &str, State state);
+	void drawButton(const Common::Rect &r, const String &str, State state, uint16 hints);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
 	void drawSlider(const Common::Rect &r, int width, State state);
 	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, State state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, State state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, int titleVPad, State state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, State state);
@@ -264,7 +263,6 @@ public:
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool save = false, bool special = false);
 
-	int getTabHeight() const;
 	int getTabSpacing() const;
 	int getTabPadding() const;
 
@@ -333,11 +331,11 @@ public:
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
-	void drawButton(const Common::Rect &r, const String &str, State state);
+	void drawButton(const Common::Rect &r, const String &str, State state, uint16 hints);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
 	void drawSlider(const Common::Rect &r, int width, State state);
 	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, State state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, State state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, int titleVPad, State state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, State state);
@@ -347,7 +345,6 @@ public:
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
 
-	int getTabHeight() const;
 	int getTabSpacing() const;
 	int getTabPadding() const;
 

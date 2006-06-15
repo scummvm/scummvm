@@ -43,7 +43,7 @@
 #define kShadowTr4 128
 #define kShadowTr5 192
 
-#define THEME_VERSION 16
+#define THEME_VERSION 17
 
 using Graphics::Surface;
 
@@ -391,12 +391,14 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetB
 	addDirtyRect((hints & THEME_HINT_USE_SHADOW) ? r2 : r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
-void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, State state) {
+void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints) {
 	if (!_initOk)
 		return;
 	
 	Common::Rect r2 = shadowRect(r, kShadowButton);
-	restoreBackground(r2);
+
+	if (hints & THEME_HINT_SAVE_BACKGROUND)
+		restoreBackground(r2);
 
 	// shadow
 	drawShadow(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd), kShadowButton);
@@ -568,7 +570,7 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, State state) {
+void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state) {
 	if (!_initOk)
 		return;
 
@@ -595,31 +597,39 @@ void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const
 		if (i == active)
 			continue;
 
-		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
+		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight + 5);
 		drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
 					256, _colors[kTabInactiveStart], _colors[kTabInactiveEnd], _gradientFactors[kTabFactor], true);
 
-		getFont()->drawString(&_screen, tabs[i], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateEnabled), Graphics::kTextAlignCenter, 0, true);
+		getFont()->drawString(&_screen, tabs[i], tabRect.left, tabRect.top+titleVPad, tabRect.width(), getColor(kStateEnabled), Graphics::kTextAlignCenter, 0, true);
 	}
 	
 	// area shadow
-	Common::Rect widgetBackground = Common::Rect(r.left, r.top + tabHeight, r.right, r.bottom - 2);
+	Common::Rect widgetBackground = Common::Rect(r.left, r.top + tabHeight - 1, r.right, r.top 
+                 + tabHeight + 20);
 	drawShadow(widgetBackground, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
-					kShadowSmall, false, true);
+					kShadowSmall);
 
 	// area itself
 	widgetBackground = Common::Rect(r.left, r.top + tabHeight, r.right, r.bottom);
 	drawRectMasked(widgetBackground, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
 						/*(state == kStateDisabled) ? -30 : */256, tabEnd, _colors[kTabActiveEnd],
-						_gradientFactors[kTabFactor], false, true);
+						_gradientFactors[kTabFactor]);
 	addDirtyRect(widgetBackground, true);
 	
 	// active tab
-	Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight + 1);
-	drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
+	if (active >= 0) {
+		Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight + 5);
+
+		Common::Rect shadowRect2(tabRect.left, r.top, tabRect.right, tabRect.bottom - 6);
+		drawShadow(shadowRect2, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd), kShadowSmall, false, true);
+
+		drawRectMasked(tabRect, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
 				256, _colors[kTabActiveStart], tabEnd, _gradientFactors[kTabFactor], true);
 
-	getFont()->drawString(&_screen, tabs[active], tabRect.left, tabRect.top+2, tabRect.width(), getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
+
+		getFont()->drawString(&_screen, tabs[active], tabRect.left, tabRect.top+titleVPad, tabRect.width(), getColor(kStateEnabled), Graphics::kTextAlignCenter, 0, true);
+	}
 
 	addDirtyRect(Common::Rect(r.left, r.top-2, r.right, r.bottom));
 }
@@ -746,15 +756,6 @@ void ThemeNew::drawLineSeparator(const Common::Rect &r, State state) {
 		return;
 	_screen.hLine(r.left - 1, r.top + r.height() / 2, r.right, _system->RGBToColor(0, 0, 0));
 	addDirtyRect(r);
-}
-
-int ThemeNew::getTabHeight() const {
-	// TODO let the user specify those
-	if (_screen.w >= 400 && _screen.h >= 300) {
-		return 25;
-	} else {
-		return 16;
-	}
 }
 
 int ThemeNew::getTabSpacing() const {

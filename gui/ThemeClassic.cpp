@@ -138,14 +138,6 @@ void ThemeClassic::resetDrawArea() {
 	}
 }
 
-int ThemeClassic::getTabHeight() const {
-	if (_screen.w >= 400 && _screen.h >= 300) {
-		return 21;
-	} else {
-		return 16;
-	}
-}
-
 int ThemeClassic::getTabSpacing() const {
 	return 2;
 }
@@ -221,7 +213,7 @@ void ThemeClassic::drawWidgetBackground(const Common::Rect &r, uint16 hints, Wid
 	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
-void ThemeClassic::drawButton(const Common::Rect &r, const Common::String &str, State state) {
+void ThemeClassic::drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints) {
 	if (!_initOk)
 		return;
 	restoreBackground(r);
@@ -356,7 +348,7 @@ void ThemeClassic::drawCheckbox(const Common::Rect &r, const Common::String &str
 	addDirtyRect(r);
 }
 
-void ThemeClassic::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, State state) {
+void ThemeClassic::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state) {
 	if (!_initOk)
 		return;
 	restoreBackground(r);
@@ -368,14 +360,16 @@ void ThemeClassic::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, c
 		_font->drawString(&_screen, tabs[i], r.left + i * tabWidth, r.top+4, tabWidth, getColor(state), Graphics::kTextAlignCenter, 0, true);
 	}
 	
-	box(r.left + active * tabWidth, r.top, tabWidth, tabHeight, _color, _shadowcolor, true);
-	_font->drawString(&_screen, tabs[active], r.left + active * tabWidth, r.top+2, tabWidth, getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
+	if (active >= 0) {
+		box(r.left + active * tabWidth, r.top, tabWidth, tabHeight, _color, _shadowcolor, true);
+		_font->drawString(&_screen, tabs[active], r.left + active * tabWidth, r.top+titleVPad, tabWidth, getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
 
-	_screen.hLine(r.left, r.top + tabHeight, r.left + active * tabWidth + 1, _color);
-	_screen.hLine(r.left + active * tabWidth + tabWidth - 2, r.top + tabHeight, r.right, _color);
-	_screen.hLine(r.left, r.bottom - 1, r.right - 1, _shadowcolor);
-	_screen.vLine(r.left, r.top + tabHeight, r.bottom - 1, _color);
-	_screen.vLine(r.right - 1, r.top + tabHeight, r.bottom - 1, _shadowcolor);
+		_screen.hLine(r.left, r.top + tabHeight, r.left + active * tabWidth + 1, _color);
+		_screen.hLine(r.left + active * tabWidth + tabWidth - 2, r.top + tabHeight, r.right, _color);
+		_screen.hLine(r.left, r.bottom - 1, r.right - 1, _shadowcolor);
+		_screen.vLine(r.left, r.top + tabHeight, r.bottom - 1, _color);
+		_screen.vLine(r.right - 1, r.top + tabHeight, r.bottom - 1, _shadowcolor);
+	}
 	
 	addDirtyRect(r);
 }
