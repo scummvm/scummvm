@@ -180,8 +180,11 @@ void ThemeNew::deinit() {
 void ThemeNew::refresh() {
 	init();
 	resetupGuiRenderer();
-	if (_enabled)
+	if (_enabled) {
 		_system->showOverlay();
+		PaletteMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+		CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+	}		
 }
 
 void ThemeNew::enable() {
@@ -1609,6 +1612,8 @@ void ThemeNew::createCursor() {
 
 	_system->colorToRGB(_colors[kColorTransparency], r, g, b);
 	uint16 transparency = RGBToColor<ColorMasks<565> >(r, g, b);
+
+	delete [] _cursor;
 
 	_cursor = new byte[_cursorWidth * _cursorHeight];
 	assert(_cursor);
