@@ -16,6 +16,7 @@
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
 
+*"..\res\scummvm.key","..\res\scummvm.cer",KEY="scummvm"
 ; Launcher, Application, AIF & Resource file
 "\s60v3\epoc32\release\gcce\urel\ScummVM.exe"-		"!:\sys\bin\ScummVM.exe"
 "\s60v3\epoc32\data\z\resource\apps\ScummVM.rsc"-	"!:\resource\apps\ScummVM.rsc"
