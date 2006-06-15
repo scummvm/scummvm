@@ -213,9 +213,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 5) The volume tab
 	//
-	tab->addTab("Volume");
+	int volControlPos = g_gui.evaluator()->getVar("volumeControlsInAudio", true);
 
-	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	if (!volControlPos) {
+		tab->addTab("Volume");
+
+		_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	} else {
+		_globalVolumeOverride = NULL;
+	}
 
 	addVolumeControls(tab, "gameoptions_");
 
@@ -298,7 +304,9 @@ void EditGameDialog::open() {
 	e = ConfMan.hasKey("music_volume", _domain) ||
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
-	_globalVolumeOverride->setState(e);
+
+	if (_globalVolumeOverride)
+		_globalVolumeOverride->setState(e);
 
 	// TODO: game path
 
@@ -366,6 +374,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
+		if(_globalVolumeOverride == NULL)
+			setVolumeSettingsState(data != 0);
 		draw();
 		break;
 	case kCmdGlobalMIDIOverride:
