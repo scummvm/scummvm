@@ -126,6 +126,8 @@ void TabWidget::setActiveTab(int tabID) {
 
 
 void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	Widget::handleCommand(sender, cmd, data);
+
 	switch (cmd) {
 	case kCmdLeft:
 		if (_firstVisibleTab) {
