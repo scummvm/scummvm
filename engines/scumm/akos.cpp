@@ -1479,8 +1479,6 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 				curpos += 4;
 				break;
 			default:
-				if ((code & 0xC000) == 0xC000)
-					error("akos_increaseAnim: invalid code %x", code);
 				curpos += (code & 0x8000) ? 2 : 1;
 				break;
 			}
