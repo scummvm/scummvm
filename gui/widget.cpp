@@ -201,6 +201,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const String &name, const String &la
 	: StaticTextWidget(boss, name, label), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
+	_hints = THEME_HINT_USE_SHADOW;
 	_type = kButtonWidget;
 }
 
@@ -210,7 +211,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget(bool hilite) {
-	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled, _hints);
 }
 
 #pragma mark -
