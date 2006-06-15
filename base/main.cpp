@@ -118,7 +118,6 @@ static bool launcherDialog(OSystem &system) {
 		// Set the user specified graphics mode (if any).
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
-		// Make GUI 640 x 400
 		system.initSize(320, 200);
 	system.endGFXTransaction();
 
