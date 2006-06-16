@@ -568,7 +568,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						return;
 					}
 				} else {
-					masked = (y < 0 || y >= _out.h) || (*mask & maskbit);
+					masked = (y < v1.boundsRect.top || y >= v1.boundsRect.bottom) || (*mask & maskbit);
 
 					if (color && !masked && !skip_column) {
 						pcolor = palette[color];
@@ -603,7 +603,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 
 				if (_scaleX == 255 || v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _out.w)
+					if (v1.x < 0 || v1.x >= v1.boundsRect.right)
 						return;
 					maskbit = revBitMask(v1.x & 7);
 					v1.destptr += v1.scaleXstep;
@@ -803,6 +803,11 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.x = _actorX;
 	v1.y = _actorY;
 
+	v1.boundsRect.left = 0;
+	v1.boundsRect.top = 0;
+	v1.boundsRect.right = _out.w;
+	v1.boundsRect.bottom = _out.h;
+
 	if (use_scaling) {
 
 		/* Scale direction */
@@ -844,7 +849,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 			j = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (rect.left >= _out.w) {
+				if (rect.left >= v1.boundsRect.right) {
 					startScaleIndexX = j;
 					skip++;
 				}
@@ -903,23 +908,10 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	if (_vm->_game.heversion >= 71) {
+	if (_vm->_game.heversion >= 71 && !use_scaling) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-			if (rect.left < _clipOverride.left)
-				rect.left = _clipOverride.left;
-
-			if (rect.right > _clipOverride.right)
-				rect.right = _clipOverride.right;
-
-			if (rect.top < _clipOverride.top)
-				rect.top = _clipOverride.top;
-
-			if (rect.bottom > _clipOverride.bottom)
-				rect.bottom = _clipOverride.bottom;
+			v1.boundsRect = _clipOverride;
 		}
-
-		if (rect.isValidRect() == false)
-			return 1;
 	}
 
 	if (_actorHitMode) {
@@ -928,23 +920,24 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	} else
 		markRectAsDirty(rect);
 
-	if (rect.top >= _out.h || rect.bottom <= 0)
+	if (rect.top >= v1.boundsRect.bottom || rect.bottom <= v1.boundsRect.top)
 		return 0;
 
-	if (rect.left >= _out.w || rect.right <= 0)
+	if (rect.left >= v1.boundsRect.right || rect.right <= v1.boundsRect.left)
 		return 0;
 
 	v1.replen = 0;
 
 	if (_mirror) {
 		if (!use_scaling)
-			skip = -v1.x;
+			skip = v1.boundsRect.left - v1.x;
+
 		if (skip > 0) {
 			v1.skip_width -= skip;
 			codec1_ignorePakCols(v1, skip);
-			v1.x = 0;
+			v1.x = v1.boundsRect.left;
 		} else {
-			skip = rect.right - _out.w;
+			skip = rect.right - v1.boundsRect.right;
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
@@ -953,13 +946,14 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		}
 	} else {
 		if (!use_scaling)
-			skip = rect.right - _out.w + 1;
+			skip = rect.right - v1.boundsRect.right + 1;
 		if (skip > 0) {
 			v1.skip_width -= skip;
 			codec1_ignorePakCols(v1, skip)	;
-			v1.x = _out.w - 1;
+			v1.x = v1.boundsRect.right - 1;
 		} else {
-			skip = -1 - rect.left;
+			skip = (v1.boundsRect.left -1) - rect.left;
+
 			if (skip <= 0)
 				drawFlag = 2;
 			else
@@ -970,17 +964,17 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (v1.skip_width <= 0 || _height <= 0)
 		return 0;
 
-	if (rect.left < 0)
-		rect.left = 0;
+	if (rect.left < v1.boundsRect.left)
+		rect.left = v1.boundsRect.left;
 
-	if (rect.top < 0)
-		rect.top = 0;
+	if (rect.top < v1.boundsRect.top)
+		rect.top = v1.boundsRect.top;
 
-	if (rect.top > _out.h)
-		rect.top = _out.h;
+	if (rect.top > v1.boundsRect.bottom)
+		rect.top = v1.boundsRect.bottom;
 
-	if (rect.bottom > _out.h)
-		rect.bottom = _out.h;
+	if (rect.bottom > v1.boundsRect.bottom)
+		rect.bottom = v1.boundsRect.bottom;
 
 	if (_draw_top > rect.top)
 		_draw_top = rect.top;
