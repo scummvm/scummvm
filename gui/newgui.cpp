@@ -201,6 +201,9 @@ void NewGui::runLoop() {
 		uint32 time = _system->getMillis();
 
 		while (_system->pollEvent(event)) {
+			if (activeDialog != _dialogStack.top() && event.type != OSystem::EVENT_QUIT && event.type != OSystem::EVENT_SCREEN_CHANGED)
+				continue;
+
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 			
 			switch (event.type) {
@@ -270,7 +273,7 @@ void NewGui::runLoop() {
 		}
 
 		// check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != 0) {
+		if (_currentKeyDown.keycode != 0 && activeDialog == _dialogStack.top()) {
 			if (_keyRepeatTime < time) {
 				// fire event
 				activeDialog->handleKeyDown(_currentKeyDown.ascii, _currentKeyDown.keycode, _currentKeyDown.flags);
