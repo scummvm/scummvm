@@ -344,7 +344,6 @@ void File::close() {
 	if (_handle)
 		fclose(_handle);
 	_handle = NULL;
-	_name.clear();
 }
 
 bool File::isOpen() const {
