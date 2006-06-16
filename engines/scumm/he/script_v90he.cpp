@@ -636,11 +636,12 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 5:
 		_wizParams.processFlags |= kWPFClipBox | 0x100;
 		_wizParams.processMode = 2;
-		_wizParams.box.bottom = pop() + 1;
-		_wizParams.box.right = pop() + 1;
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
 		_wizParams.compType = pop();
+		adjustRect(_wizParams.box);
 		break;
 	case 6:
 		_wizParams.processFlags |= kWPFNewState;
@@ -2613,6 +2614,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_wiz->_rectOverride.top = args[2];
 		_wiz->_rectOverride.right = args[3];
 		_wiz->_rectOverride.bottom = args[4];
+		adjustRect(_wiz->_rectOverride);
 		break;
 	case 43:
 		_wiz->_rectOverrideEnabled = false;

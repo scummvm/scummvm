@@ -427,6 +427,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
+		adjustRect(a->_clipOverride);
 		break;
 	case 22:
 		k = getStackList(args, ARRAYSIZE(args));
@@ -508,6 +509,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
+		adjustRect(_actorClipOverride);
 		break;
 	case 130:		// SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
@@ -1198,6 +1200,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
 		_wizParams.compType = pop();
+		adjustRect(_wizParams.box);
 		break;
 	case 18:
 		_wizParams.processFlags |= kWPFClipBox;

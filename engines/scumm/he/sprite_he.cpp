@@ -927,6 +927,7 @@ void Sprite::setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2) {
 	_spriteGroups[spriteGroupId].bbox.top = y1;
 	_spriteGroups[spriteGroupId].bbox.right = x2;
 	_spriteGroups[spriteGroupId].bbox.bottom = y2;
+	_vm->adjustRect(_spriteGroups[spriteGroupId].bbox);
 
 	redrawSpriteGroup(spriteGroupId);
 }

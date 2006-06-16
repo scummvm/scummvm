@@ -425,6 +425,15 @@ void ScummEngine_v70he::appendSubstring(int dst, int src, int srcOffs, int len) 
 	writeArray(0, 0, dstOffs + i, 0);
 }
 
+void ScummEngine_v70he::adjustRect(Common::Rect &rect) {
+	// Scripts can set all rect positions to -1
+	if (rect.right != -1)
+		rect.right += 1;
+
+	if (rect.bottom != -1)
+		rect.bottom += 1;
+}
+
 void ScummEngine_v70he::o70_startSound() {
 	int var, value;
 
@@ -803,6 +812,7 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		_wiz->_rectOverride.top = args[2];
 		_wiz->_rectOverride.right = args[3];
 		_wiz->_rectOverride.bottom = args[4];
+		adjustRect(_wiz->_rectOverride);
 		break;
 	case 43:
 		_wiz->_rectOverrideEnabled = false;
