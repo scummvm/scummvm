@@ -123,6 +123,7 @@ protected:
 		byte replen;
 		int scaleXstep;
 		int x, y;
+		Common::Rect boundsRect;
 		int scaleXindex, scaleYindex;
 		int skip_width;
 		byte *destptr;
