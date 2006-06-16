@@ -1797,14 +1797,13 @@ void Actor::drawSpeech(void) {
 	char *outputString;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
+	stringLength = strlen(_activeSpeech.strings[0]);
+	outputString = (char*)calloc(stringLength + 1, 1);
 
-	if (_activeSpeech.speechFlags & kSpeakSlow) {
-		stringLength = strlen(_activeSpeech.strings[0]);
-		outputString = (char*)calloc(stringLength + 1, 1);
+	if (_activeSpeech.speechFlags & kSpeakSlow)
 		strncpy(outputString, _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
-	} else {
-		outputString = (char*)_activeSpeech.strings[0];
-	}
+	else
+		strncpy(outputString, _activeSpeech.strings[0], stringLength);
 
 	if (_activeSpeech.actorsCount > 1) {
 		height = _vm->_font->getHeight(kKnownFontScript);
@@ -1824,9 +1823,8 @@ void Actor::drawSpeech(void) {
 		_vm->_font->textDrawRect(kKnownFontScript, backBuffer, outputString, _activeSpeech.drawRect, _activeSpeech.speechColor[0],
 			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
-	if (_activeSpeech.speechFlags & kSpeakSlow) {
-		free(outputString);
-	}
+
+	free(outputString);
 }
 
 bool Actor::followProtagonist(ActorData *actor) {
