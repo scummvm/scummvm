@@ -158,6 +158,7 @@ protected:
 	int getStringCharWidth(byte chr);
 	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
+	void adjustRect(Common::Rect &rect);
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 	virtual void setDefaultCursor();
