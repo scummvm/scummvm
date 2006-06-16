@@ -1139,8 +1139,7 @@ void Actor::handleSpeech(int msec) {
 		if (_activeSpeech.slowModeCharIndex >= stringLength)
 			error("Wrong string index");
 
-		warning("Slow string encountered");
-		_activeSpeech.playingTime = stringLength * 1000 / 4;
+		_activeSpeech.playingTime = 1000 / 8;
 
 	} else {
 		sampleLength = _vm->_sndRes->getVoiceLength(_activeSpeech.sampleResourceId);
@@ -1793,20 +1792,20 @@ void Actor::drawSpeech(void) {
 	Point textPoint;
 	ActorData *actor;
 	int width, height;
-	char oneChar[2];
-	oneChar[1] = 0;
-	const char *outputString;
+	int stringLength;
 	Surface *backBuffer;
+	char *outputString;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	if (_activeSpeech.speechFlags & kSpeakSlow) {
-		outputString = oneChar;
-		oneChar[0] = _activeSpeech.strings[0][_activeSpeech.slowModeCharIndex];
+		stringLength = strlen(_activeSpeech.strings[0]);
+		outputString = (char*)calloc(stringLength + 1, 1);
+		strncpy(outputString, _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
 	} else {
-		outputString = _activeSpeech.strings[0];
+		outputString = (char*)_activeSpeech.strings[0];
 	}
-	
+
 	if (_activeSpeech.actorsCount > 1) {
 		height = _vm->_font->getHeight(kKnownFontScript);
 		width = _vm->_font->getStringWidth(kKnownFontScript, _activeSpeech.strings[0], 0, kFontNormal);
@@ -1818,12 +1817,15 @@ void Actor::drawSpeech(void) {
 			textPoint.x = clamp(10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
 			textPoint.y = clamp(10, actor->_screenPosition.y - 58, _vm->_scene->getHeight() - 10 - height);
 
-			_vm->_font->textDraw(kKnownFontScript, backBuffer, _activeSpeech.strings[0], textPoint,
+			_vm->_font->textDraw(kKnownFontScript, backBuffer, outputString, textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
 	} else {
-		_vm->_font->textDrawRect(kKnownFontScript, backBuffer, _activeSpeech.strings[0], _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+		_vm->_font->textDrawRect(kKnownFontScript, backBuffer, outputString, _activeSpeech.drawRect, _activeSpeech.speechColor[0],
 			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
+	}
+	if (_activeSpeech.speechFlags & kSpeakSlow) {
+		free(outputString);
 	}
 }
 
