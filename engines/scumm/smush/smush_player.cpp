@@ -273,7 +273,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_inTimerCount = 0;
 	_inTimerCountRedraw = ConfMan.getInt("Smush_force_redraw");
 #endif
-#ifdef __SYMBIA32__
+#ifdef __SYMBIAN32__
 	_closeOnTextTick = false;
 #endif
 }
