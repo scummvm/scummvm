@@ -85,6 +85,8 @@ protected:
 	void updateTempo(void);
 	void loadNewMusic(void);
 	void pollMusic(void);
+
+	void stopMusicInternal(void);
 };
 
 } // End of namespace Sky
