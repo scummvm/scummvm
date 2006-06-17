@@ -1534,6 +1534,8 @@ void Actor::setActorCostume(int c) {
 				_vm->ensureResourceLoaded(rtCostume, _costume);
 			}
 			startAnimActor(_initFrame);
+			if (_vm->_game.heversion >= 60)
+				_needRedraw = true;
 		}
 	} else {
 		if (_visible) {
