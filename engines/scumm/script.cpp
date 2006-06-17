@@ -336,7 +336,8 @@ void ScummEngine::runScriptNested(int script) {
 	getScriptEntryPoint();
 	executeScript();
 
-	vm.numNestedScripts--;
+	if (vm.numNestedScripts != 0)
+		vm.numNestedScripts--;
 
 	if (nest->number != 0xFF) {
 		// Try to resume the script which called us, if its status has not changed
