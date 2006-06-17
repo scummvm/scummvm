@@ -47,7 +47,7 @@ void MusicBase::loadSection(uint8 pSection) {
 
 	_mutex.lock();
 	if (_currentMusic)
-		stopMusic();
+		stopMusicInternal();
 	if (_musicData)
 		free(_musicData);
 	_currentSection = pSection;
@@ -82,6 +82,13 @@ void MusicBase::setVolume(uint16 param) {
 
 void MusicBase::stopMusic(void) {
 
+	_mutex.lock();
+	stopMusicInternal();
+	_mutex.unlock();
+}
+
+void MusicBase::stopMusicInternal(void) {
+
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		_channels[cnt]->stopNote();
 		delete _channels[cnt];
@@ -105,7 +112,7 @@ void MusicBase::loadNewMusic(void) {
 		return;
 	}
 	if (_currentMusic != 0)
-		stopMusic();
+		stopMusicInternal();
 
 	_currentMusic = _onNextPoll.musicToProcess;
 
@@ -128,7 +135,7 @@ void MusicBase::pollMusic(void) {
 	_mutex.lock();
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();
-	if (_onNextPoll.doStopMusic) stopMusic();
+	if (_onNextPoll.doStopMusic) stopMusicInternal();
 	if (_onNextPoll.musicToProcess != _currentMusic)
 		loadNewMusic();
 
