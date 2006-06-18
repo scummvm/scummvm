@@ -1087,8 +1087,6 @@ void ScummEngine_v72he::o72_actorOps() {
 	if (!a)
 		return;
 
-	printf("o72_actorOps: Actor %d subOp %d\n", a->_number, subOp);
-
 	switch (subOp) {
 	case 21: // HE 80+
 		k = getStackList(args, ARRAYSIZE(args));
