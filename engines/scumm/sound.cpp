@@ -1698,43 +1698,43 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			ptr[28] += ch;
 			ptr[92] += ch;
 
-			/* flags_1 */
+			/* mod_characteristics */
 			ptr[30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
 			ptr[30 + 1] = instr[i * 16 + 3] & 0xf;
 
-			/* oplvl_1 */
+			/* mod_scalingOutputLevel */
 			ptr[30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
 			ptr[30 + 3] = instr[i * 16 + 4] & 0xf;
 
-			/* atdec_1 */
+			/* mod_attackDecay */
 			ptr[30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
 			ptr[30 + 5] = (~instr[i * 16 + 5]) & 0xf;
 
-			/* sustrel_1 */
+			/* mod_sustainRelease */
 			ptr[30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
 			ptr[30 + 7] = (~instr[i * 16 + 6]) & 0xf;
 
-			/* waveform_1 */
+			/* mod_waveformSelect */
 			ptr[30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
 			ptr[30 + 9] = instr[i * 16 + 7] & 0xf;
 
-			/* flags_2 */
+			/* car_characteristic */
 			ptr[30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
 			ptr[30 + 11] = instr[i * 16 + 8] & 0xf;
 
-			/* oplvl_2 */
+			/* car_scalingOutputLevel */
 			ptr[30 + 12] = (instr[i * 16 + 9] >> 4) & 0xf;
 			ptr[30 + 13] = instr[i * 16 + 9] & 0xf;
 
-			/* atdec_2 */
+			/* car_attackDecay */
 			ptr[30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
 			ptr[30 + 15] = (~instr[i * 16 + 10]) & 0xf;
 
-			/* sustrel_2 */
+			/* car_sustainRelease */
 			ptr[30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
 			ptr[30 + 17] = (~instr[i * 16 + 11]) & 0xf;
 
-			/* waveform_2 */
+			/* car_waveFormSelect */
 			ptr[30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
 			ptr[30 + 19] = instr[i * 16 + 12] & 0xf;
 
@@ -1880,43 +1880,43 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 				ptr[28] += ch;
 				ptr[92] += ch;
 
-				/* flags_1 */
+				/* mod_characteristic */
 				ptr[30 + 0] = (current_instr[ch][3] >> 4) & 0xf;
 				ptr[30 + 1] = current_instr[ch][3] & 0xf;
 
-				/* oplvl_1 */
+				/* mod_scalingOutputLevel */
 				ptr[30 + 2] = (current_instr[ch][4] >> 4) & 0xf;
 				ptr[30 + 3] = current_instr[ch][4] & 0xf;
 
-				/* atdec_1 */
+				/* mod_attackDecay */
 				ptr[30 + 4] = ((~current_instr[ch][5]) >> 4) & 0xf;
 				ptr[30 + 5] = (~current_instr[ch][5]) & 0xf;
 
-				/* sustrel_1 */
+				/* mod_sustainRelease */
 				ptr[30 + 6] = ((~current_instr[ch][6]) >> 4) & 0xf;
 				ptr[30 + 7] = (~current_instr[ch][6]) & 0xf;
 
-				/* waveform_1 */
+				/* mod_waveformSelect */
 				ptr[30 + 8] = (current_instr[ch][7] >> 4) & 0xf;
 				ptr[30 + 9] = current_instr[ch][7] & 0xf;
 
-				/* flags_2 */
+				/* car_characteristic */
 				ptr[30 + 10] = (current_instr[ch][8] >> 4) & 0xf;
 				ptr[30 + 11] = current_instr[ch][8] & 0xf;
 
-				/* oplvl_2 */
+				/* car_scalingOutputLevel */
 				ptr[30 + 12] = ((current_instr[ch][9]) >> 4) & 0xf;
 				ptr[30 + 13] = (current_instr[ch][9]) & 0xf;
 
-				/* atdec_2 */
+				/* car_attackDecay */
 				ptr[30 + 14] = ((~current_instr[ch][10]) >> 4) & 0xf;
 				ptr[30 + 15] = (~current_instr[ch][10]) & 0xf;
 
-				/* sustrel_2 */
+				/* car_sustainRelease */
 				ptr[30 + 16] = ((~current_instr[ch][11]) >> 4) & 0xf;
 				ptr[30 + 17] = (~current_instr[ch][11]) & 0xf;
 
-				/* waveform_2 */
+				/* car_waveFormSelect */
 				ptr[30 + 18] = (current_instr[ch][12] >> 4) & 0xf;
 				ptr[30 + 19] = current_instr[ch][12] & 0xf;
 
