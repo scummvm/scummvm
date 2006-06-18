@@ -806,6 +806,7 @@ void KyraEngine::calcCoords(Menu &menu) {
 
 void KyraEngine::gui_getInput() {
 	OSystem::Event event;
+	static uint32 lastScreenUpdate = 0;
 	uint32 now = _system->getMillis();
 
 	_mouseWheel = 0;
@@ -824,6 +825,7 @@ void KyraEngine::gui_getInput() {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
 			_system->updateScreen();
+			lastScreenUpdate = now;
 			break;
 		case OSystem::EVENT_WHEELUP:
 			_mouseWheel = -1;
@@ -842,6 +844,11 @@ void KyraEngine::gui_getInput() {
 		default:
 			break;
 		}
+	}
+
+	if (now - lastScreenUpdate > 50) {
+		_system->updateScreen();
+		lastScreenUpdate = now;
 	}
 
 	if (!_keyboardEvent.pending && _keyboardEvent.repeat && now >= _keyboardEvent.repeat) {
