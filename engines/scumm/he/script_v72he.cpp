@@ -1721,6 +1721,14 @@ void ScummEngine_v72he::o72_openFile() {
 	const char *filename = (char *)buffer + convertFilePath(buffer);
 	debug(1, "Final filename to %s", filename);
 
+	// Work around for lost, to avoid debug code been triggered.
+	// The 'TEST.FYL' file is always deleted after been created
+	// but we currently don't support deleting files.
+	if (!strcmp(filename, "TEST.FYL")) {
+		push(-1);
+		return;
+	}
+
 	slot = -1;
 	for (i = 1; i < 17; i++) {
 		if (_hInFileTable[i] == 0 && _hOutFileTable[i] == 0) {
