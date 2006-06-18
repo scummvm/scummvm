@@ -1087,6 +1087,8 @@ void ScummEngine_v72he::o72_actorOps() {
 	if (!a)
 		return;
 
+	printf("o72_actorOps: Actor %d subOp %d\n", a->_number, subOp);
+
 	switch (subOp) {
 	case 21: // HE 80+
 		k = getStackList(args, ARRAYSIZE(args));
@@ -1720,6 +1722,14 @@ void ScummEngine_v72he::o72_openFile() {
 
 	const char *filename = (char *)buffer + convertFilePath(buffer);
 	debug(1, "Final filename to %s", filename);
+
+	// Work around for lost, to avoid debug code been triggered.
+	// The 'TEST.FYL' file is always deleted after been created
+	// but we currently don't support deleting files.
+	if (!strcmp(filename, "TEST.FYL")) {
+		push(-1);
+		return;
+	}
 
 	slot = -1;
 	for (i = 1; i < 17; i++) {

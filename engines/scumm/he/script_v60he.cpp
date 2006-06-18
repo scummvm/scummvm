@@ -423,12 +423,13 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 
 	// Strip path
 	int r = 0;
-	if (dst[0] == '.' && dst[1] == '/') { // './'
+	if (dst[0] == '.' && dst[1] == '/') {
 		r = 2;
-	} else if (dst[0] == 'c' && dst[1] == ':' && dst[3] == 'h') { // 'c:/hegames/'
-		r = 11;
-	} else if (dst[0] == 'c' && dst[1] == ':' && dst[3] == 'w') { // 'c:/windows/'
-		r = 11;
+	} else if (dst[0] == 'c' && dst[1] == ':') {
+		for (r = len; r != 0; r--) {
+			if (dst[r - 1] == '/')
+				break;
+		}
 	}
 
 	debug(1, "convertFilePath: converted filePath is %s", dst + r);
