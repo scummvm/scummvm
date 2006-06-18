@@ -623,6 +623,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			break;
 		default:
 			input = Audio::makeVOCStream(*_sfxFile);
+			break;
 		}
 
 		if (!input) {
@@ -1986,6 +1987,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 
 			default:
 				track_time[ch] = -1;
+				break;
 			}
 			track_data[ch] = src_ptr;
 		}
