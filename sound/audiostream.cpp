@@ -261,6 +261,8 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStrea
 		assert((bufferSize & 1) == 0);
 
 	_bufferStart = (byte *)malloc(bufferSize);
+	assert(_bufferStart != NULL);
+
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
 }
