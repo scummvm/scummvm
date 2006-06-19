@@ -1078,6 +1078,7 @@ public:
 protected:
 	void fadeIn(int effect);
 	void fadeOut(int effect);
+	void setScrollBuffer();
 
 	void unkScreenEffect6();
 	void transitionEffect(int a);
