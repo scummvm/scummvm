@@ -789,6 +789,9 @@ void ScummEngine::redrawBGAreas() {
 			val = +1;
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw || diff != 0) {
+			if (_game.version <= 5) {
+				((ScummEngine_v5 *)this)->clearFlashlight();
+			}
 			_bgNeedsRedraw = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
@@ -1087,6 +1090,11 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			fill(backbuff, vs->pitch, flags, width, height);
 		}
 	}
+}
+
+void ScummEngine_v5::clearFlashlight() {
+	_flashlight.isDrawn = false;
+	_flashlight.buffer = NULL;
 }
 
 void ScummEngine_v5::drawFlashlight() {
