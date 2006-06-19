@@ -59,6 +59,7 @@ protected:
 public:
 	ScummEngine_v5(OSystem *syst, const DetectorResult &dr);
 
+	void clearFlashlight();
 protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
