@@ -1926,6 +1926,7 @@ void ScummEngine_v5::o5_roomOps() {
 			}
 			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
+			setScrollBuffer();
 		} else {
 			fadeIn(_newEffect);
 		}
