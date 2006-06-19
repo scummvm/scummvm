@@ -119,14 +119,14 @@ void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
-	if (_game.version == 1) {
-		color = 16;
-		hi_color = 7;
-		arrow_color = 6;
-	} else {
+	if (_game.version == 2) {
 		color = 13;
 		hi_color = 14;
 		arrow_color = 1;
+	} else {
+		color = 16;
+		hi_color = 7;
+		arrow_color = 6;
 	}
 
 	_mouseOverBoxV2 = -1;
