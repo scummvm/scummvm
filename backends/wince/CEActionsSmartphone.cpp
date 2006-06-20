@@ -51,7 +51,7 @@ const String smartphoneActionNames[] = {
 	"Skip",
 	"Zone",
 	"FT Cheat",
-	"Bind Keys"
+	"Bind Keys",
 	"Keyboard",
 	"Rotate"
 };
