@@ -335,7 +335,7 @@ int KyraEngine_v1::setupGameFlags() {
 			_features = 0;
 			_game = GI_KYRA1;
 			Common::File temp;
-			temp.open(g->checkFile);
+			temp.open("INTRO.VRM");
 			if (temp.isOpen())
 			//if (Common::File::exists("INTRO.VRM")) {
 				_features |= GF_TALKIE;
@@ -347,7 +347,7 @@ int KyraEngine_v1::setupGameFlags() {
 			// try to detect the language
 			const Kyra1LanguageTable *lang = kyra1_languages;
 			for (; lang->file; ++lang) {
-				temp.open(g->checkFile);
+				temp.open(lang->file);
 				if (temp.isOpen())
 				//if (Common::File::exists(lang->file)) {
 					_features |= lang->language;
