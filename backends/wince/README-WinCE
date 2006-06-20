@@ -1,6 +1,6 @@
 ScummVM Windows CE FAQ
-Last updated:    2006-01-31
-Release version: 0.8.1
+Last updated:    2006-06-20
+Release version: 0.9.0
 ------------------------------------------------------------------------
 
 This document is intended to give common answers to specific ScummVM
@@ -109,7 +109,7 @@ How do I install ScummVM for Windows CE ?
 If the current release includes a .EXE installer, ScummVM for Windows CE
 will be installed without hassle.
 Otherwise, you'll unzip the release on your desktop computer, and copy 
-the EXE file on your device.
+all files on your device.
 
 If you're using a Pocket PC 2000 operating system, be sure to have GAPI
 installed - it's available on Microsoft website http://www.microsoft.com
@@ -132,8 +132,9 @@ the ScummVM readme. If you are running these games on a slow device with Ogg
 Vorbis compression, it's recommended to sample the files to 11 kHz (this sample
 rate is not supported by other versions of ScummVM).
 
-If you need more details, you can check SirDaved mini-manual online available 
-at http://www.pocketmatrix.com/forums/viewtopic.php?t=8606
+If you need more details, you can check SirDave's mini-manual online available 
+at: http://forums.scummvm.org/viewtopic.php?t=936
+and at: http://www.pocketmatrix.com/forums/viewtopic.php?t=8606
 
 How do I run a game ?
 ---------------------
@@ -162,7 +163,8 @@ screen to make the most common functions just a tap away
     behaves like the ESC key on a regular keyboard
   * The sound icon turns all sound effects and music off and on
   * The key icon allow you to map a key action to a device button.
-  * The monkey icon switches between portrait and landscape mode
+  * The monkey icon switches between portrait, landscape and inverse landscape
+    mode.
 
 You can map additional actions on your device hardware buttons using the 
 "Options" / "Key" menu in the ScummVM options menu. To associate an action to
@@ -189,20 +191,25 @@ The following actions are available
   * Zoom down   : magnify the lower part of the screen for 640x480 games
     rendered on a 320x240 device.
   * FT Cheat    : win a Full Throttle action sequence
-  * Bind key    : map a key action to a device button
+  * Bind keys   : map a key action to a device button
+  * Up,Down,Left:
+    Right,      : emulate mouse/stylus behavior
+    Left Click  :
 
 If you start a game when a Right click mapping is necessary, ScummVM will ask
 you to map one of your hardware key to this action before playing. Just press
 the key you want to map if you see this message.
 
-How do I hide the toolbar ? (0.8.0+) 
+How do I hide the toolbar ?
 ----------------------------
 
 A shortcut is available to hide the toolbar directly from the game screen from
 release 0.8.0. Double tapping the stylus at the top of the screen will switch
 between a visible toolbar panel, a virtual keyboard, and an invisible panel.
-
-The icons should not suddenly disappear without warning (0.8.0 bug)
+If any part of the screen is obscured by the toolbar (like the load/save game
+dialogs) you can use the invisible panel mode to get to it. For 320x200 games 
+on QVGA Pocket PCs, when the panel is hidden the game screen is resized to 
+320x240 for better gaming experience.
 
 How do I play a game on a Microsoft Smartphone device ?
 -------------------------------------------------------
@@ -217,7 +224,7 @@ a set of default keys :
       Hotkey 2       Right mouse button click
       Return/Action  Open the key mapping menu
 
-Note that this mean that the input will be "inversed" on a 240x320 (Windows
+Note that this means that the input will be "inversed" on a 240x320 (Windows
 Mobile 2005) Smartphone. You'll have to remap the keys.
 
 A few options are also emulated by a set of default keys :
@@ -234,7 +241,12 @@ between three screen zones : the game zone, the verbs zone and the inventory
 zone. When you switch to a zone the cursor will be reset to its former location
 in this zone. 
 
-You can change the keys mapping during the game in the "Options" menu.
+There are two more actions available for mapping:
+   - Keyboard: Shows hides a virtual keyboard which can be use whenever text
+               input is required in a game, or a dialog.
+   - Rotate  : Flips the screen orientation between normal and inverse landscape.
+
+You can change the keys mapping during the game in the key mapping menu.
 
 Note that you'll need to push the Action button (center of the pad) to quit
 a Simon game.
@@ -268,18 +280,9 @@ Smush_force_redraw     int      Force a Smush frame redraw every X missed
 
 game specific section (f.e. [monkey2]) - game options
 
-landscape	       bool      Run the game in landscape mode if set.
+landscape	       int      0: Portrait, 1: Landscape, 2: Inverse Landscape
 
-[pocketpc] section - keys definition for Pocket PCs
-
-You usually do not wish to modify these values directly, as they are set 
-by the option dialog, and are only given here for reference.
-
-action_mapping_version int       Mapping version linked to ScummVM version.
-action_mapping         string    Hex codes describing the key associated to
-                                 each different action.
-
-[smartphone] section - keys definition for Smartphones.
+[scummvm] section - keys definition
 
 You usually do not wish to modify these values directly, as they are set 
 by the option dialog, and are only given here for reference.
@@ -288,7 +291,7 @@ action_mapping_version int       Mapping version linked to ScummVM version.
 action_mapping         string    Hex codes describing the key associated to
                                  each different action.
 
-[smartphone] section - mouse emulation tuning
+[scummvm] section - mouse emulation tuning
 
 You can tweak these parameters to customize how the cursor is handled.
 
