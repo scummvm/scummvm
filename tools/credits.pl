@@ -85,6 +85,25 @@ sub html_entities_to_ascii {
 	return $text;
 }
 
+# Convert HTML entities to C++ characters
+sub html_entities_to_cpp {
+	my $text = shift;
+
+	$text =~ s/&aacute;/\\341/g;
+	$text =~ s/&eacute;/\\351/g;
+	$text =~ s/&oacute;/\\363/g;
+	$text =~ s/&oslash;/\\370/g;
+	$text =~ s/&#322;/l/g;
+
+	$text =~ s/&auml;/\\344/g;
+	$text =~ s/&ouml;/\\366/g;
+	$text =~ s/&uuml;/\\374/g;
+
+	$text =~ s/&amp;/&/g;
+	
+	return $text;
+}
+
 # Convert HTML entities to RTF codes
 sub html_entities_to_rtf {
 	my $text = shift;
@@ -240,11 +259,11 @@ sub begin_section {
 		if ($section_level eq 0) {
 		  # TODO: Would be nice to have a 'fat' or 'large' mode for 
 		  # headlines...
-		  $title = html_entities_to_ascii($title);
+		  $title = html_entities_to_cpp($title);
 		  print '"\\\\C\\\\c1""'.$title.'",' . "\n";
 		  print '"\\\\C\\\\c0""",' . "\n";
 		} else {
-		  $title = html_entities_to_ascii($title);
+		  $title = html_entities_to_cpp($title);
 		  print '"\\\\C\\\\c1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML") {
@@ -364,13 +383,13 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
-		$name = html_entities_to_ascii($name);
+		$name = html_entities_to_cpp($name);
 
 		print '"\\\\C\\\\c0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
-			$desc = html_entities_to_ascii($desc);
+			$desc = html_entities_to_cpp($desc);
 			print '"\\\\C\\\\c2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML") {
