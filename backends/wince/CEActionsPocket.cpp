@@ -124,6 +124,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
+	bool is_kyra = (gameid == "kyra1");
 
 	GUI_Actions::initInstanceGame();
 
@@ -141,7 +142,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setAscii(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2 || is_gob)
+	if (is_simon || is_sword2 || is_gob || is_kyra)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else
 	if (is_queen || is_ite) {
@@ -161,7 +162,7 @@ void CEActionsPocket::initInstanceGame() {
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
 	_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite || is_kyra)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
