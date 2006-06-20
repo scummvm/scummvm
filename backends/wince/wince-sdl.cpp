@@ -1185,14 +1185,21 @@ void OSystem_WINCE3::loadGFXMode() {
 
 
 	// Overlay
-	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16, 0, 0, 0, 0);
-	if (_overlayscreen == NULL)
-		error("_overlayscreen failed");
-	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth + 3, _overlayHeight + 3, 16, 0, 0, 0, 0);
-	if (_tmpscreen2 == NULL)
-		error("_tmpscreen2 failed");
-
-
+	if (CEDevice::hasDesktopResolution()) {
+		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth * _scaleFactorXm / _scaleFactorXd, _overlayHeight * _scaleFactorYm / _scaleFactorYd, 16, 0, 0, 0, 0);
+		if (_overlayscreen == NULL)
+			error("_overlayscreen failed");
+		_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth * _scaleFactorXm / _scaleFactorXd + 3, _overlayHeight * _scaleFactorYm / _scaleFactorYd + 3, 16, 0, 0, 0, 0);
+		if (_tmpscreen2 == NULL)
+			error("_tmpscreen2 failed");
+	} else {
+		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16, 0, 0, 0, 0);
+		if (_overlayscreen == NULL)
+			error("_overlayscreen failed");
+		_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth + 3, _overlayHeight + 3, 16, 0, 0, 0, 0);
+		if (_tmpscreen2 == NULL)
+			error("_tmpscreen2 failed");
+	}
 
 	// Toolbar
 	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));
@@ -1445,8 +1452,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 					}
 
 					// clip inside platform screen (landscape,bottom only)
-					if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _platformScreenWidth)
-						dst_h = _platformScreenWidth - dst_y;
+					if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _screenHeight)
+						dst_h = _screenHeight - dst_y;
 
 					if (!_zoomDown)
 						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
@@ -1698,6 +1705,8 @@ void OSystem_WINCE3::copyRectToScreen(const byte *src, int pitch, int x, int y, 
 void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 
 	undrawMouse();
+	if (w == 0 || h == 0)
+		return;
 
 	assert(w <= MAX_MOUSE_W);
 	assert(h <= MAX_MOUSE_H);
