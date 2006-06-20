@@ -5,6 +5,9 @@
 #control build
 DISABLE_SCALERS = true
 DISABLE_HQ_SCALERS = true
+DISABLE_CINE = true
+DISABLE_LURE = true
+DISABLE_AGI = true
 
 srcdir = ../..
 VPATH = $(srcdir)
