@@ -193,7 +193,6 @@ void Control::askForCd(void) {
 	_system->setPalette(palOut, 0, 256);
 	free(palOut);
 
-	Common::File test;
 	char fName[10];
 	uint8 textA[50];
 	sprintf(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
@@ -209,15 +208,13 @@ void Control::askForCd(void) {
 		}
 		delay(300);
 		if (_keyPressed) {
-			test.open(fName);
-			if (!test.isOpen()) {
+			if (!Common::File::exists(fName)) {
 				memset(_screenBuf, 0, 640 * 480);
 				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
 				_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 				delay(2000);
 				refreshText = true;
 			} else {
-				test.close();
 				notAccepted = false;
 			}
 		}

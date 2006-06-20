@@ -352,7 +352,6 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 }
 
 void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
-	Common::File test;
 	bool fileExists[30];
 	bool isFullVersion = false; // default to demo version
 	bool missingTypes[8] = { false, false, false, false, false, false, false, false };
@@ -363,8 +362,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 
 	// check all files and look out if we can find a file that wouldn't exist if this was the demo version
 	for (int fcnt = 0; fcnt < ARRAYSIZE(_cdFileList); fcnt++) {
-		if (test.open(_cdFileList[fcnt].name)) {
-			test.close();
+		if (Common::File::exists(_cdFileList[fcnt].name)) {
 			fileExists[fcnt] = true;
 			flagsToBool(foundTypes, _cdFileList[fcnt].flags);
 			if (!(_cdFileList[fcnt].flags & FLAG_DEMO))
@@ -442,9 +440,8 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	_systemVars.isDemo = (_features & GF_DEMO) != 0;
 	_systemVars.cutscenePackVersion = 0;
 #ifdef USE_MPEG2
-	if (test.open("intro.snd")) {
+	if (Common::File::exists("intro.snd")) {
 		_systemVars.cutscenePackVersion = 1;
-		test.close();
 	}
 #endif
 }
