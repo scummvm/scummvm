@@ -61,8 +61,8 @@ void EditableWidget::setEditString(const String &str) {
 		_editScrollOffset = 0;
 }
 
-bool EditableWidget::tryInsertChar(char c, int pos) {
-	if (isprint(c)) {
+bool EditableWidget::tryInsertChar(byte c, int pos) {
+	if ((c >= 32 && c <= 127) || (c >= 160 && c <= 255)) {
 		_editString.insertChar(c, pos);
 		return true;
 	}
@@ -133,7 +133,7 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		forcecaret = true;
 		break;
 	default:
-		if (tryInsertChar((char)ascii, _caretPos)) {
+		if (tryInsertChar((byte)ascii, _caretPos)) {
 			_caretPos++;
 			dirty = true;
 			forcecaret = true;

@@ -37,6 +37,17 @@
 #include <string.h>
 #include <time.h>
 
+int READ_UINT16(void *addr) {
+	unsigned char *buf = addr;
+	return (buf[0] << 8) | buf[1];
+}
+
+void WRITE_UINT16(void *addr, int value) {
+	unsigned char *buf = addr;
+	buf[0] = (value >> 8) & 0xFF;
+	buf[1] = value & 0xFF;
+}
+
 /* BEGIN font.h*/
 /* bitmap_t helper macros*/
 #define BITMAP_WORDS(x)			(((x)+15)/16)	/* image size in words*/
@@ -49,18 +60,27 @@
 
 typedef unsigned short bitmap_t; /* bitmap image unit size*/
 
+typedef struct {
+	signed char w;
+	signed char h;
+	signed char x;
+	signed char y;
+} BBX;
+
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
 struct font {
 	char *	name;		/* font name*/
 	int		maxwidth;	/* max width in pixels*/
 	int		height;		/* height in pixels*/
+	int	fbbw, fbbh, fbbx, fbby;	/* max bounding box */
 	int		ascent;		/* ascent (baseline) height*/
 	int		firstchar;	/* first character in bitmap*/
 	int		size;		/* font size in glyphs*/
 	bitmap_t*	bits;		/* 16-bit right-padded bitmap data*/
 	unsigned long* offset;	/* offsets into bitmap data*/
 	unsigned char* width;	/* character widths or NULL if fixed*/
+	BBX*	bbx;		/* character bounding box or NULL if fixed*/
 	int		defaultchar;	/* default char (not glyph index)*/
 	long	bits_size;	/* # words of bitmap_t bits*/
 	
@@ -69,7 +89,6 @@ struct font {
 	char *	copyright;	/* copyright info for loadable fonts*/
 	int		pixel_size;
 	int		descent;
-	int		fbbw, fbbh, fbbx, fbby;
 };
 /* END font.h*/
 
@@ -93,7 +112,7 @@ struct font* bdf_read_font(char *path);
 int bdf_read_header(FILE *fp, struct font* pf);
 int bdf_read_bitmaps(FILE *fp, struct font* pf);
 char * bdf_getline(FILE *fp, char *buf, int len);
-bitmap_t bdf_hexval(unsigned char *buf, int ndx1, int ndx2);
+bitmap_t bdf_hexval(unsigned char *buf);
 
 int gen_c_source(struct font* pf, char *path);
 
@@ -446,6 +465,7 @@ int bdf_read_header(FILE *fp, struct font* pf)
 	pf->bits = (bitmap_t *)malloc(pf->bits_size * sizeof(bitmap_t) + EXTRA);
 	pf->offset = (unsigned long *)malloc(pf->size * sizeof(unsigned long));
 	pf->width = (unsigned char *)malloc(pf->size * sizeof(unsigned char));
+	pf->bbx = (BBX *)malloc(pf->size * sizeof(BBX));
 	
 	if (!pf->bits || !pf->offset || !pf->width) {
 		fprintf(stderr, "Error: no memory for font load\n");
@@ -463,6 +483,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 	int i, k, encoding, width;
 	int bbw, bbh, bbx, bby;
 	int proportional = 0;
+	int need_bbx = 0;
 	int encodetable = 0;
 	long l;
 	char buf[256];
@@ -523,29 +544,23 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 				continue;
 			}
 			pf->offset[encoding-pf->firstchar] = ofs;
-
-			/* calc char width*/
-			if (bbx < 0) {
-				width -= bbx;
-				/*if (width > maxwidth)
-					width = maxwidth;*/
-				bbx = 0;
-			}
-			if (width > maxwidth)
-				maxwidth = width;
 			pf->width[encoding-pf->firstchar] = width;
 
-			/* clear bitmap*/
-			memset(ch_bitmap, 0, BITMAP_BYTES(width) * pf->height);
+			pf->bbx[encoding-pf->firstchar].w = bbw;
+			pf->bbx[encoding-pf->firstchar].h = bbh;
+			pf->bbx[encoding-pf->firstchar].x = bbx;
+			pf->bbx[encoding-pf->firstchar].y = bby;
 
-			ch_words = BITMAP_WORDS(width);
-#define BM(row,col) (*(ch_bitmap + ((row)*ch_words) + (col)))
-#define BITMAP_NIBBLES	(BITMAP_BITSPERIMAGE/4)
+			if (width > maxwidth)
+				maxwidth = width;
+
+			/* clear bitmap*/
+			memset(ch_bitmap, 0, BITMAP_BYTES(bbw) * bbh);
+
+			ch_words = BITMAP_WORDS(bbw);
 
 			/* read bitmaps*/
-			for (i = 0; ; ++i) {
-				int hexnibbles;
-
+			for (i = 0; i < bbh; ++i) {
 				if (!bdf_getline(fp, buf, sizeof(buf))) {
 					fprintf(stderr, "Error: EOF reading BITMAP data\n");
 					return 0;
@@ -553,33 +568,32 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 				if (isprefix(buf, "ENDCHAR"))
 					break;
 
-				hexnibbles = strlen(buf);
 				for (k = 0; k < ch_words; ++k) {
-					int ndx = k * BITMAP_NIBBLES;
-					int padnibbles = hexnibbles - ndx;
 					bitmap_t value;
 					
-					if (padnibbles <= 0)
-						break;
-					if (padnibbles >= BITMAP_NIBBLES)
-						padnibbles = 0;
+					value = bdf_hexval((unsigned char *)buf);
 
-					value = bdf_hexval((unsigned char *)buf,
-									   ndx, ndx+BITMAP_NIBBLES-1-padnibbles);
-					value <<= padnibbles * BITMAP_NIBBLES;
-
-					BM(pf->height - pf->descent - bby - bbh + i, k) |=
-						value >> bbx;
-					/* handle overflow into next image word*/
-					if (bbx) {
-						BM(pf->height - pf->descent - bby - bbh + i, k+1) =
-							value << (BITMAP_BITSPERIMAGE - bbx);
+					if (bbw > 8) {
+						WRITE_UINT16(ch_bitmap, value);
+					} else {
+						WRITE_UINT16(ch_bitmap, value << 8);
 					}
+					ch_bitmap++;
 				}
 			}
 
-			ofs += BITMAP_WORDS(width) * pf->height;
+			// If the default glyph is completely empty, the next
+			// glyph will not be dumped. Work around this by
+			// never generating completely empty glyphs.
 
+			if (bbh == 0 && bbw == 0) {
+				pf->bbx[encoding-pf->firstchar].w = 1;
+				pf->bbx[encoding-pf->firstchar].h = 1;
+				*ch_bitmap++ = 0;
+				ofs++;
+			} else {
+				ofs += ch_words * bbh;
+			}
 			continue;
 		}
 		if (strequal(buf, "ENDFONT"))
@@ -596,6 +610,10 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 		if (pf->offset[i] == (unsigned long)-1) {
 			pf->offset[i] = pf->offset[defchar];
 			pf->width[i] = pf->width[defchar];
+			pf->bbx[i].w = pf->bbx[defchar].w;
+			pf->bbx[i].h = pf->bbx[defchar].h;
+			pf->bbx[i].x = pf->bbx[defchar].x;
+			pf->bbx[i].y = pf->bbx[defchar].y;
 		}
 	}
 
@@ -606,7 +624,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 			encodetable = 1;
 			break;
 		}
-		l += BITMAP_WORDS(pf->width[i]) * pf->height;
+		l += BITMAP_WORDS(pf->bbx[i].w) * pf->bbx[i].h;
 	}
 	if (!encodetable) {
 		free(pf->offset);
@@ -623,6 +641,18 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 	if (!proportional) {
 		free(pf->width);
 		pf->width = NULL;
+	}
+
+	/* determine if the font needs a bbx table */
+	for (i = 0; i < pf->size; ++i) {
+		if (pf->bbx[i].w != pf->fbbw || pf->bbx[i].h != pf->fbbh || pf->bbx[i].x != pf->fbbx || pf->bbx[i].y != pf->fbby) {
+			need_bbx = 1;
+			break;
+		}
+	}
+	if (!need_bbx) {
+		free(pf->bbx);
+		pf->bbx = NULL;
 	}
 
 	/* reallocate bits array to actual bits used*/
@@ -670,24 +700,22 @@ char *bdf_getline(FILE *fp, char *buf, int len)
 	return buf;
 }
 
-/* return hex value of portion of buffer*/
-bitmap_t bdf_hexval(unsigned char *buf, int ndx1, int ndx2)
-{
+/* return hex value of buffer */
+bitmap_t bdf_hexval(unsigned char *buf) {
 	bitmap_t val = 0;
-	int i, c;
+	unsigned char *ptr;
 
-	for (i = ndx1; i <= ndx2; ++i) {
-		c = buf[i];
+	for (ptr = buf; *ptr; ptr++) {
+		int c = *ptr;
+
 		if (c >= '0' && c <= '9')
 			c -= '0';
+		else if (c >= 'A' && c <= 'F')
+			c = c - 'A' + 10;
+		else if (c >= 'a' && c <= 'f')
+			c = c - 'a' + 10;
 		else 
-			if (c >= 'A' && c <= 'F')
-				c = c - 'A' + 10;
-			else 
-				if (c >= 'a' && c <= 'f')
-					c = c - 'a' + 10;
-				else 
-					c = 0;
+			c = 0;
 		val = (val << 4) | c;
 	}
 	return val;
@@ -704,6 +732,7 @@ int gen_c_source(struct font* pf, char *path)
 	bitmap_t *ofs = pf->bits;
 	char buf[256];
 	char obuf[256];
+	char bbuf[256];
 	char hdr1[] = {
 		"/* Generated by convbdf on %s. */\n"
 		"#include \"common/stdafx.h\"\n"
@@ -713,6 +742,7 @@ int gen_c_source(struct font* pf, char *path)
 		"   name: %s\n"
 		"   facename: %s\n"
 		"   w x h: %dx%d\n"
+		"   bbx: %d %d %d %d\n"
 		"   size: %d\n"
 		"   ascent: %d\n"
 		"   descent: %d\n"
@@ -742,6 +772,7 @@ int gen_c_source(struct font* pf, char *path)
 			pf->name,
 			pf->facename? pf->facename: "",
 			pf->maxwidth, pf->height,
+			pf->fbbw, pf->fbbh, pf->fbbx, pf->fbby,
 			pf->size,
 			pf->ascent, pf->descent,
 			pf->firstchar, pf->firstchar,
@@ -754,8 +785,10 @@ int gen_c_source(struct font* pf, char *path)
 	for (i = 0; i < pf->size; ++i) {
 		int x;
 		int bitcount = 0;
-		int width = pf->width ? pf->width[i] : pf->maxwidth;
-		int height = pf->height;
+		int width = pf->bbx ? pf->bbx[i].w : pf->fbbw;
+		int height = pf->bbx ? pf->bbx[i].h : pf->fbbh;
+		int xoff = pf->bbx ? pf->bbx[i].x : pf->fbbx;
+		int yoff = pf->bbx ? pf->bbx[i].y : pf->fbby;
 		bitmap_t *bits = pf->bits + (pf->offset? pf->offset[i]: (height * i));
 		bitmap_t bitvalue = 0;
 
@@ -771,8 +804,10 @@ int gen_c_source(struct font* pf, char *path)
 			did_defaultchar = 1;
 		}
 
-		fprintf(ofp, "\n/* Character %d (0x%02x):\n   width %d",
-				i+pf->firstchar, i+pf->firstchar, width);
+		fprintf(ofp, "\n/* Character %d (0x%02x):\n   width %d\n   bbx ( %d, %d, %d, %d )\n",
+				i+pf->firstchar, i+pf->firstchar,
+				pf->width ? pf->width[i+pf->firstchar] : pf->maxwidth,
+				width, height, xoff, yoff);
 
 		if (gen_map) {
 			fprintf(ofp, "\n   +");
@@ -780,12 +815,14 @@ int gen_c_source(struct font* pf, char *path)
 			fprintf(ofp, "+\n");
 
 			x = 0;
-			while (height > 0) {
+			int h = height;
+			while (h > 0) {
 				if (x == 0) fprintf(ofp, "   |");
 
 				if (bitcount <= 0) {
 					bitcount = BITMAP_BITSPERIMAGE;
-					bitvalue = *bits++;
+					bitvalue = READ_UINT16(bits);
+					bits++;
 				}
 
 				fprintf(ofp, BITMAP_TESTBIT(bitvalue)? "*": " ");
@@ -794,7 +831,7 @@ int gen_c_source(struct font* pf, char *path)
 				--bitcount;
 				if (++x == width) {
 					fprintf(ofp, "|\n");
-					--height;
+					--h;
 					x = 0;
 					bitcount = 0;
 				}
@@ -806,9 +843,9 @@ int gen_c_source(struct font* pf, char *path)
 		} else
 			fprintf(ofp, "\n*/\n");
 
-		bits = pf->bits + (pf->offset? pf->offset[i]: (pf->height * i));
-		for (x = BITMAP_WORDS(width) * pf->height; x > 0; --x) {
-			fprintf(ofp, "0x%04x,\n", *bits);
+		bits = pf->bits + (pf->offset? pf->offset[i]: (height * i));
+		for (x = BITMAP_WORDS(width) * height; x > 0; --x) {
+			fprintf(ofp, "0x%04x,\n", READ_UINT16(bits));
 			if (!did_syncmsg && *bits++ != *ofs++) {
 				fprintf(stderr, "Warning: found encoding values in non-sorted order (not an error).\n");
 				did_syncmsg = 1;
@@ -839,6 +876,17 @@ int gen_c_source(struct font* pf, char *path)
 		fprintf(ofp, "};\n\n");
 	}
 
+	/* output bbox table */
+	if (pf->bbx) {
+		fprintf(ofp, "/* Bounding box data. */\n"
+				"static const BBX _sysfont_bbx[] = {\n");
+
+		for (i = 0; i < pf->size; ++i)
+			fprintf(ofp, "\t{ %d, %d, %d, %d },\t/* (0x%02x) */\n",
+				pf->bbx[i].w, pf->bbx[i].h, pf->bbx[i].x, pf->bbx[i].y, i+pf->firstchar);
+		fprintf(ofp, "};\n\n");
+	}
+
 	/* output struct font struct*/
 	if (pf->offset)
 		sprintf(obuf, "_sysfont_offset,");
@@ -850,16 +898,23 @@ int gen_c_source(struct font* pf, char *path)
 	else
 		sprintf(buf, "0,  /* fixed width*/");
 
+	if (pf->bbx)
+		sprintf(bbuf, "_sysfont_bbx,");
+	else
+		sprintf(bbuf, "0,  /* fixed bbox*/");
+
 	fprintf(ofp,
 			"/* Exported structure definition. */\n"
 			"static const FontDesc desc = {\n"
 			"\t" "\"%s\",\n"
 			"\t" "%d,\n"
 			"\t" "%d,\n"
+			"\t" "%d, %d, %d, %d,\n"
 			"\t" "%d,\n"
 			"\t" "%d,\n"
 			"\t" "%d,\n"
 			"\t" "_font_bits,\n"
+			"\t" "%s\n"
 			"\t" "%s\n"
 			"\t" "%s\n"
 			"\t" "%d,\n"
@@ -867,14 +922,20 @@ int gen_c_source(struct font* pf, char *path)
 			"};\n",
 			pf->name,
 			pf->maxwidth, pf->height,
+			pf->fbbw, pf->fbbh, pf->fbbx, pf->fbby,
 			pf->ascent,
 			pf->firstchar,
 			pf->size,
 			obuf,
 			buf,
+			bbuf,
 			pf->defaultchar);
 
-	fprintf(ofp, "\n" "extern const NewFont g_sysfont(desc);\n");
+	fprintf(ofp, "\n" "#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))\n");
+	fprintf(ofp, "extern const NewFont g_sysfont(desc);\n");
+	fprintf(ofp, "#else\n");
+	fprintf(ofp, "DEFINE_FONT(g_sysfont)\n");
+	fprintf(ofp, "#endif\n");
 	fprintf(ofp, "\n} // End of namespace Graphics\n");
  
 	return 0;

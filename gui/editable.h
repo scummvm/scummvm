@@ -76,7 +76,7 @@ protected:
 
 	void setFontStyle(Theme::FontStyle font) { _font = font; }
 
-	virtual bool tryInsertChar(char c, int pos);
+	virtual bool tryInsertChar(byte c, int pos);
 };
 
 } // End of namespace GUI

@@ -408,11 +408,11 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			slideUpAndClose();
 		} else if (modifiers == OSystem::KBD_CTRL) {
 			specialKeys(keycode);
-		} else if (isprint((char)ascii)) {
+		} else if ((ascii >= 32 && ascii <= 127) || (ascii >= 160 && ascii <= 255)) {
 			for (i = _promptEndPos - 1; i >= _currentPos; i--)
 				buffer(i + 1) = buffer(i);
 			_promptEndPos++;
-			putchar((char)ascii);
+			putchar((byte)ascii);
 			scrollToCurrent();
 		}
 	}

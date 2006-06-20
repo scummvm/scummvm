@@ -86,7 +86,7 @@ public:
 	}
 
 protected:
-	bool tryInsertChar(char c, int pos) {
+	bool tryInsertChar(byte c, int pos) {
 		if (isalnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;
