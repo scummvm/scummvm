@@ -851,7 +851,6 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 			_transactionDetails.sizeChanged = true;
 			_transactionDetails.needUnload = true;
 			return;
-			break;
 		case kTransactionCommit:
 			break;
 		default:
@@ -965,17 +964,16 @@ bool OSystem_WINCE3::update_scalers() {
 
 bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
-    switch (_transactionMode) {
-			case kTransactionActive:
+	switch (_transactionMode) {
+	case kTransactionActive:
                 _transactionDetails.mode = mode;
                 _transactionDetails.modeChanged = true;
                 return true;
+        case kTransactionCommit:
                 break;
-	        case kTransactionCommit:
+	default:
                 break;
-		    default:
-                break;
-    }
+	}
 
 	Common::StackLock lock(_graphicsMutex);
 	int oldScaleFactorXm = _scaleFactorXm;

@@ -943,25 +943,18 @@ int GetException(unsigned int CSPR)
 	switch(CSPR & 0x1f) {
 		case 0x10: // USER
 			return 0;
-			break;
 		case 0x11: // FIQ
 			return 1;
-			break;
 		case 0x12: // IRQ
 			return 2;
-			break;
 		case 0x13: // Supervisor
 			return 3;
-			break;
 		case 0x17: // Abort
 			return 4;
-			break;
 		case 0x1B: // Undefined/Breakpoint
 			return 5;
-			break;
 		case 0x1F: // System
 			return 6;
-			break;
 		default:
 			return -1;
 	}
@@ -1299,75 +1292,59 @@ bool CondWillExecute(unsigned int uiCond, unsigned int CSPR)
 			// This is true if Z is set in CSPR
 			if ((CSPR & (1 << 30)) != 0) return true;
 			else return false;
-
-			break;
 		case 1: // NE
 			// This should be true if Z is not set.
 			if ((CSPR & (1 << 30)) == 0) return true;
 			else return false;
-			break;
 		case 2:	// CS/HS
 			//  this one should be true if C is set.
 			if ((CSPR & (1 << 29)) != 0) return true;
 			else return false;
-			break;
 		case 3:	// CC/LO
 			//  this one should be true if C is clear.
 			if ((CSPR & (1 << 29)) == 0) return true;
 			else return false;
-			break;
 		case 4: // MI
 			//  this one should be true if N is set
 			if ((CSPR & (1 << 31)) != 0) return true;
 			else return false;
-			break;
 		case 5: // PL
 			//  this one should be true if N is clear.
 			if ((CSPR & (1 << 31)) == 0) return true;
 			else return false;
-			break;
 		case 6: // VS
 			//  this one should be true if V is set
 			if ((CSPR & (1 << 28)) != 0) return true;
 			else return false;
-			break;
 		case 7:	// VC
 			//  this one should be true if V is clear.
 			if ((CSPR & (1 << 28)) == 0) return true;
 			else return false;
-			break;
 		case 8: // HI
 			// This is true if C and Z is clear
 			if (((CSPR & (1 << 30)) == 0) && ((CSPR & (1 << 29)) == 0)) return true;
 			else return false;
-			break;
 		case 9:	// LS
 			// C clear OR Z set
 			if (((CSPR & (1 << 29)) == 0) || ((CSPR & (1 << 30)) != 0)) return true;
 			else return false;
-			break;
 		case 10: // GE
 			// N set AND V set || N clear and V clear
 			if ((CSPR & (1 << 31)) == (CSPR & (1 << 28))) return true;
 			else return false;
-			break;
 		case 11: // LT
 			// N != V
 			if ((CSPR & (1 << 31)) != (CSPR & (1 << 28))) return true;
 			else return false;
-			break;
 		case 12: // GT
 			// Z == 0, N == V
 			if (((CSPR & (1 << 30)) == 0) && ((CSPR & (1 << 31)) == (CSPR & (1 << 28)))) return true;
 			else return false;
-			break;
 		case 13: // LE
 			if (((CSPR & (1 << 30)) == 1) && ((CSPR & (1 << 31)) != (CSPR & (1 << 28)))) return true;
 			else return false;
-			break;
 		case 14: // AL
 			return true;
-			break;
 		default:
 			break;
 	}
@@ -1662,20 +1639,14 @@ unsigned int Shift_Operand(unsigned int Rm, unsigned int amount, unsigned int sh
 	switch (shift) {
 		case 0: // LSL
 			return LSL(uiRegisterValue, amount);
-			break;
 		case 1: // LSR
 			return LSR(uiRegisterValue, amount);
-			break;
 		case 2: // ASR
 			return ASR(uiRegisterValue, amount);
-			break;
 		case 3: // ROR
 			return ROR(uiRegisterValue, amount);
-			break;
-
 		default:
 			break;
-
 	}
 	return 0;
 }

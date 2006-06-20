@@ -391,7 +391,6 @@ void Music::pollMusic(void) {
 				_ended = true;
 				_samplesTillPoll = 0;
 				return;
-				break;
 			default:
 				warning("Unknown special command in ADL, stopping playback: %X", instr & 0x0F);
 				_repCount = 0;

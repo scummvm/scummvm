@@ -333,7 +333,6 @@ void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 		switch (_state) {
 		case _s_ready:
 			return;
-			break;
 		case _s_attacking:
 			next_state = _s_attacking;
 			break;

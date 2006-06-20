@@ -364,7 +364,6 @@ int Events::handleOneShot(Event *event) {
 		case kEventEnd:
 			_vm->_scene->nextScene();
 			return kEvStBreak;
-			break;
 		default:
 			break;
 		}
@@ -514,7 +513,6 @@ int Events::initializeEvent(Event *event) {
 		break;
 	default:
 		return FAILURE;
-		break;
 	}
 
 	return SUCCESS;

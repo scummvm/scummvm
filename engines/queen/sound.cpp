@@ -53,7 +53,6 @@ Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression)
 	switch (compression) {
 	case COMPRESSION_NONE:
 		return new SBSound(mixer, vm);
-		break;
 	case COMPRESSION_MP3:
 #ifndef USE_MAD
 		warning("Using MP3 compressed datafile, but MP3 support not compiled in");
@@ -61,7 +60,6 @@ Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression)
 #else
 		return new MP3Sound(mixer, vm);
 #endif
-		break;
 	case COMPRESSION_OGG:
 #ifndef USE_VORBIS
 		warning("Using OGG compressed datafile, but OGG support not compiled in");
@@ -69,7 +67,6 @@ Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression)
 #else
 		return new OGGSound(mixer, vm);
 #endif
-		break;
 	case COMPRESSION_FLAC:
 #ifndef USE_FLAC
 		warning("Using FLAC compressed datafile, but FLAC support not compiled in");
@@ -77,7 +74,6 @@ Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression)
 #else
 		return new FLACSound(mixer, vm);
 #endif
-		break;
 	default:
 		warning("Unknown compression type");
 		return new SilentSound(mixer, vm);

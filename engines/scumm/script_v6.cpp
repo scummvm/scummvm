@@ -2791,35 +2791,26 @@ int ScummEngine::getKeyState(int key) {
 	switch (key) {
 	case 0x147: // Home
 		return (_keyDownMap[0x107] || _keyDownMap[0x115]) ? 1 : 0;
-		break;
 	case 0x148: // Up
 		return (_keyDownMap[0x108] || _keyDownMap[0x111] ||
 				_keyDownMap[0x38]) ? 1 : 0;
-		break;
 	case 0x149: // PgUp
 		return (_keyDownMap[0x109] || _keyDownMap[0x118]) ? 1 : 0;
-		break;
 	case 0x14B: // Left
 		return (_keyDownMap[0x104] || _keyDownMap[0x114] ||
 				_keyDownMap[0x34]) ? 1 : 0;
-		break;
 	case 0x14D: // Right
 		return (_keyDownMap[0x106] || _keyDownMap[0x113] ||
 				_keyDownMap[0x36]) ? 1 : 0;
-		break;
 	case 0x14F: // End
 		return (_keyDownMap[0x101] || _keyDownMap[0x117]) ? 1 : 0;
-		break;
 	case 0x150: // Down
 		return (_keyDownMap[0x102] || _keyDownMap[0x112] ||
 				_keyDownMap[0x32]) ? 1 : 0;
-		break;
 	case 0x151: // PgDn
 		return (_keyDownMap[0x103] || _keyDownMap[0x119]) ? 1 : 0;
-		break;
 	default:
 		return (_keyDownMap[key]) ? 1 : 0;
-		break;
 	}
 }
 

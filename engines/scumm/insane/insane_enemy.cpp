@@ -33,31 +33,22 @@ int32 Insane::enemyInitializer(int num, int32 actor1, int32 actor2, int32 probab
 	switch (num) {
 	case EN_ROTT1:
 		return enemy0initializer(actor1, actor2, probability);
-		break;
 	case EN_ROTT2:
 		return enemy1initializer(actor1, actor2, probability);
-		break;
 	case EN_ROTT3:
 		return enemy2initializer(actor1, actor2, probability);
-		break;
 	case EN_VULTF1:
 		return enemy3initializer(actor1, actor2, probability);
-		break;
 	case EN_VULTM1:
 		return enemy4initializer(actor1, actor2, probability);
-		break;
 	case EN_VULTF2:
 		return enemy5initializer(actor1, actor2, probability);
-		break;
 	case EN_VULTM2:
 		return enemy6initializer(actor1, actor2, probability);
-		break;
 	case EN_CAVEFISH:
 		return enemy7initializer(actor1, actor2, probability);
-		break;
 	case EN_TORQUE:
 		return enemy8initializer(actor1, actor2, probability);
-		break;
 	case -1:
 		// nothing
 		break;
@@ -71,34 +62,24 @@ int32 Insane::enemyHandler(int num, int32 actor1, int32 actor2, int32 probabilit
 	switch (num) {
 	case EN_ROTT1:
 		return enemy0handler(actor1, actor2, probability);
-		break;
 	case EN_ROTT2:
 		return enemy1handler(actor1, actor2, probability);
-		break;
 	case EN_ROTT3:
 		return enemy2handler(actor1, actor2, probability);
-		break;
 	case EN_VULTF1:
 		return enemy3handler(actor1, actor2, probability);
-		break;
 	case EN_VULTM1:
 		return enemy4handler(actor1, actor2, probability);
-		break;
 	case EN_VULTF2:
 		return enemy5handler(actor1, actor2, probability);
-		break;
 	case EN_VULTM2:
 		return enemy6handler(actor1, actor2, probability);
-		break;
 	case EN_CAVEFISH:
 		return enemy7handler(actor1, actor2, probability);
-		break;
 	case EN_TORQUE:
 		return enemy8handler(actor1, actor2, probability);
-		break;
 	case EN_BEN:
 		return enemyBenHandler(actor1, actor2, probability);
-		break;
 	case -1:
 		// nothing
 		break;

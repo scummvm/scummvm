@@ -908,23 +908,18 @@ Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 	switch (shadowStyle) {
 	case kShadowButton:
 		return Common::Rect(r.left - 1, r.top - 1, r.right + 1, r.bottom + 1);
-		break;
 
 	case kShadowEmboss:
 		return Common::Rect(r.left - 1, r.top - 1, r.right + 1, r.bottom + 1);
-		break;
 
 	case kShadowPopUp:
 		return Common::Rect(r.left - 1, r.top - 1, r.right + 3, r.bottom + 3);
-		break;
 
 	case kShadowFull:
 		return Common::Rect(r.left - 2, r.top - 2, r.right + 4, r.bottom + 4);
-		break;
 
 	default:
 		return Common::Rect(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
-		break;
 	}
 
 	return Common::Rect();
@@ -1156,11 +1151,9 @@ OverlayColor ThemeNew::getColor(State state) {
 	switch (state) {
 	case kStateDisabled:
 		return _colors[kColorStateDisabled];
-		break;
 
 	case kStateHighlight:
 		return _colors[kColorStateHighlight];
-		break;
 
 	default:
 		break;

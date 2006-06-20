@@ -35,10 +35,8 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_MANIAC:
 	case GID_ZAK:
 		return 4;
-		break;
 	case GID_INDY3:
 		return 6;
-		break;
 	case GID_LOOM:
 	case GID_MONKEY_EGA:
 	case GID_MONKEY_VGA:
@@ -51,7 +49,6 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_FT:
 	case GID_CMI:
 		return 3;
-		break;
 /*	TODO - I don't know the controls for these games
 	case GID_PUTTDEMO:
 	case GID_PUTTPUTT:

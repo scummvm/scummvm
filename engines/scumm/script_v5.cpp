@@ -882,11 +882,9 @@ void ScummEngine_v5::saveVars() {
 			break;
 		case 0x04:
 			return;
-			break;
 		case 0x1F: // close file
 			debug(0, "stub saveVars close file");
 			return;
-			break;
 		}
 	}
 }
@@ -916,11 +914,9 @@ void ScummEngine_v5::loadVars() {
 			break;
 		case 0x04:
 			return;
-			break;
 		case 0x1F: // close file
 			debug(0, "stub loadVars close file");
 			return;
-			break;
 		}
 	}
 }
@@ -1921,7 +1917,6 @@ void ScummEngine_v5::o5_roomOps() {
 				case 30:
 					debug(0, "o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
 					return;
-					break;
 				}
 			}
 			_switchRoomEffect = (byte)(a & 0xFF);

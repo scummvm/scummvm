@@ -632,12 +632,10 @@ void Insane::setSceneCostumes(int sceneId) {
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		setupValues();
 		return;
-		break;
 	case 17:
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
 		setupValues();
 		return;
-		break;
 	case 2:
 		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
 			smlayer_setActorCostume(0, 2, readArray(9));
@@ -645,19 +643,16 @@ void Insane::setSceneCostumes(int sceneId) {
 			smlayer_setActorCostume(0, 2, readArray(10));
 		setupValues();
 		return;
-		break;
 	case 13:
 		setEnemyCostumes();
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		return;
-		break;
 	case 21:
 		_currEnemy = EN_ROTT3; //PATCH
 		setEnemyCostumes();
 		_actor[1].y = 200;
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		return;
-		break;
 	case 4:
 	case 5:
 	case 6:
@@ -668,7 +663,6 @@ void Insane::setSceneCostumes(int sceneId) {
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		setupValues();
 		return;
-		break;
 	case 7:
 	case 8:
 		writeArray(4, 0);

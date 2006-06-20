@@ -293,7 +293,6 @@ int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outb
 			break;
 		default:
 			return FAILURE;
-			break;
 		}
 	}
 
