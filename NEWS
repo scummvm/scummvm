@@ -47,6 +47,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      should fix alignment issues reported on some platforms.
    - Missing data files are handled more gracefully.
 
+ WinCE Port:
+   - Added: PocketPC: Vertical oversampling scaler 320x200=>320x240 when panel not shown (n0p) 
+   - Added: PocketPC: Right click by double-tapping (n0p) 
+   - Fixed: All: Clipping issues in some cases 
+   - Added: PocketPC: Mouse emulation using keys 
+   - Added: Smartphones: Virtual keyboard popup 
+   - Fixed: Smartphones: Incorrect screen blit in SDL port 
+   - Added: All: Mouse cursor visible on panel if using emulated mouse 
+   - Added: All: Inverse landscape mode
+   - Fixed: PocketPC: Dialogs cut-off/not redrawn
+
 0.8.2 (2006-02-08)
  General:
    - Fixed OS X bundle building when using GCC 3.3.
