@@ -301,8 +301,12 @@ int KyraEngine_v1::setupGameFlags() {
 	_features = 0;
 	memset(md5str, 0, sizeof(md5str));
 	for (g = kyra1_games; g->gameid; g++) {
-		if (!Common::File::exists(g->checkFile))
+		Common::File temp;
+		temp.open(g->checkFile);
+		if (!temp.isOpen())
 			continue;
+		//if (!Common::File::exists(g->checkFile))
+		//	continue;
 
 		fileFound = true;
 		
@@ -330,20 +334,27 @@ int KyraEngine_v1::setupGameFlags() {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 			_features = 0;
 			_game = GI_KYRA1;
-			if (Common::File::exists("INTRO.VRM")) {
+			Common::File temp;
+			temp.open(g->checkFile);
+			if (temp.isOpen())
+			//if (Common::File::exists("INTRO.VRM")) {
 				_features |= GF_TALKIE;
 			} else {
 				_features |= GF_FLOPPY;
 			}
+			temp.close();
 		
 			// try to detect the language
 			const Kyra1LanguageTable *lang = kyra1_languages;
 			for (; lang->file; ++lang) {
-				if (Common::File::exists(lang->file)) {
+				temp.open(g->checkFile);
+				if (temp.isOpen())
+				//if (Common::File::exists(lang->file)) {
 					_features |= lang->language;
 					versionFound = true;
 					break;
 				}
+				temp.close();
 			}
 		
 			if (!versionFound) {
