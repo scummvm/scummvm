@@ -28,6 +28,10 @@ RANLIB = sh-elf-ranlib
 HAVE_GCC3 = true
 DISABLE_SCALERS = true
 
+DISABLE_CINE = true
+DISABLE_LURE = true
+DISABLE_AGI = true
+
 ifdef BUILD_PLUGINS
 DEFINES += -DDYNAMIC_MODULES
 PRE_OBJS_FLAGS = -Wl,--whole-archive
