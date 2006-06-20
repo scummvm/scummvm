@@ -1952,7 +1952,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 						| current_instr[ch][0];
 					if (!freq)
 						freq = 0x80;
-					freq <<= ((current_instr[ch][1] >> 2) & 7) + 1;
+					freq <<= (((current_instr[ch][1] >> 2) + 1) & 7);
 					int note = -11;
 					while (freq >= 0x100) {
 						note += 12;
