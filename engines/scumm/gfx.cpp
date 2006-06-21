@@ -1092,6 +1092,74 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	}
 }
 
+/**
+ * Moves the screen content by the offset specified via dx/dy.
+ * Only the region from x=0 till x=height-1 is affected.
+ * @param dx	the horizontal offset.
+ * @param dy	the vertical offset.
+ * @param height	the number of lines which in which the move will be done.
+ */
+void ScummEngine::moveScreen(int dx, int dy, int height) {
+	// Short circuit check - do we have to do anything anyway?
+	if ((dx == 0 && dy == 0) || height <= 0)
+		return;
+
+	byte *src, *dst;
+	int x, y;
+
+	Graphics::Surface screen;
+	assert(_system->grabRawScreen(&screen));
+
+	// vertical movement
+	if (dy > 0) {
+		// move down - copy from bottom to top
+		dst = (byte *)screen.pixels + (height - 1) * _screenWidth;
+		src = dst - dy * _screenWidth;
+		for (y = dy; y < height; y++) {
+			memcpy(dst, src, _screenWidth);
+			src -= _screenWidth;
+			dst -= _screenWidth;
+		}
+	} else if (dy < 0) {
+		// move up - copy from top to bottom
+		dst = (byte *)screen.pixels;
+		src = dst - dy * _screenWidth;
+		for (y = -dy; y < height; y++) {
+			memcpy(dst, src, _screenWidth);
+			src += _screenWidth;
+			dst += _screenWidth;
+		}
+	}
+
+	// horizontal movement
+	if (dx > 0) {
+		// move right - copy from right to left
+		dst = (byte *)screen.pixels + (_screenWidth - 1);
+		src = dst - dx;
+		for (y = 0; y < height; y++) {
+			for (x = dx; x < _screenWidth; x++) {
+				*dst-- = *src--;
+			}
+			src += _screenWidth + (_screenWidth - dx);
+			dst += _screenWidth + (_screenWidth - dx);
+		}
+	} else if (dx < 0)  {
+		// move left - copy from left to right
+		dst = (byte *)screen.pixels;
+		src = dst - dx;
+		for (y = 0; y < height; y++) {
+			for (x = -dx; x < _screenWidth; x++) {
+				*dst++ = *src++;
+			}
+			src += _screenWidth - (_screenWidth + dx);
+			dst += _screenWidth - (_screenWidth + dx);
+		}
+	}
+
+	_system->copyRectToScreen((byte *)screen.pixels, screen.pitch, 0, 0, screen.w, screen.h);
+	screen.free();
+}
+
 void ScummEngine_v5::clearFlashlight() {
 	_flashlight.isDrawn = false;
 	_flashlight.buffer = NULL;
@@ -3052,18 +3120,6 @@ void ScummEngine::fadeOut(int effect) {
 	_screenEffectFlag = false;
 }
 
-void ScummEngine::setScrollBuffer() {
-	if (_switchRoomEffect >= 130 && _switchRoomEffect <= 133) {
-		// We're going to use scrollEffect(), so we'll need a copy of
-		// the current VirtScreen zero.
-		VirtScreen *vs = &virtscr[0];
-
-		free(_scrollBuffer);
-		_scrollBuffer = (byte *) malloc(vs->h * vs->pitch);
-		memcpy(_scrollBuffer, vs->getPixels(0, 0), vs->h * vs->pitch);
-	}
-}
-
 /**
  * Perform a transition effect. There are four different effects possible:
  * 0: Iris effect
@@ -3245,12 +3301,6 @@ void ScummEngine::dissolveEffect(int width, int height) {
 }
 
 void ScummEngine::scrollEffect(int dir) {
-	// It is at least technically possible that this function will be
-	// called without _scrollBuffer having been set up, but will it ever
-	// happen? I don't know.
-	if (!_scrollBuffer)
-		warning("scrollEffect: No scroll buffer. This may look bad");
-
 	VirtScreen *vs = &virtscr[0];
 
 	int x, y;
@@ -3266,17 +3316,14 @@ void ScummEngine::scrollEffect(int dir) {
 	switch (dir) {
 	case 0:
 		//up
-		y = step;
+		y = 1 + step;
 		while (y < vs->h) {
-			_system->copyRectToScreen(vs->getPixels(0, 0),
+			moveScreen(0, -step, vs->h);
+			_system->copyRectToScreen(vs->getPixels(0, y - step),
 				vs->pitch,
-				0, vs->h - y,
-				vs->w, y);
-			if (_scrollBuffer)
-				_system->copyRectToScreen(_scrollBuffer + y * vs->w,
-					vs->pitch,
-					0, 0,
-					vs->w, vs->h - y);
+				0, vs->h - step,
+				vs->w, step);
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			y += step;
@@ -3284,17 +3331,14 @@ void ScummEngine::scrollEffect(int dir) {
 		break;
 	case 1:
 		// down
-		y = step;
+		y = 1 + step;
 		while (y < vs->h) {
+			moveScreen(0, step, vs->h);
 			_system->copyRectToScreen(vs->getPixels(0, vs->h - y),
 				vs->pitch,
 				0, 0,
-				vs->w, y);
-			if (_scrollBuffer)
-				_system->copyRectToScreen(_scrollBuffer,
-					vs->pitch,
-					0, y,
-					vs->w, vs->h - y);
+				vs->w, step);
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			y += step;
@@ -3302,17 +3346,14 @@ void ScummEngine::scrollEffect(int dir) {
 		break;
 	case 2:
 		// left
-		x = step;
+		x = 1 + step;
 		while (x < vs->w) {
-			_system->copyRectToScreen(vs->getPixels(0, 0),
+			moveScreen(-step, 0, vs->h);
+			_system->copyRectToScreen(vs->getPixels(x - step, 0),
 				vs->pitch,
-				vs->w - x, 0,
-				x, vs->h);
-			if (_scrollBuffer)
-				_system->copyRectToScreen(_scrollBuffer + x,
-					vs->pitch,
-					0, 0,
-					vs->w - x, vs->h);
+				vs->w - step, 0,
+				step, vs->h);
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			x += step;
@@ -3320,26 +3361,20 @@ void ScummEngine::scrollEffect(int dir) {
 		break;
 	case 3:
 		// right
-		x = step;
+		x = 1 + step;
 		while (x < vs->w) {
+			moveScreen(step, 0, vs->h);
 			_system->copyRectToScreen(vs->getPixels(vs->w - x, 0),
 				vs->pitch,
 				0, 0,
-				x, vs->h);
-			if (_scrollBuffer)
-				_system->copyRectToScreen(_scrollBuffer,
-					vs->pitch,
-					x, 0,
-					vs->w - x, vs->h);
+				step, vs->h);
+			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
 			x += step;
 		}
 		break;
 	}
-
-	free(_scrollBuffer);
-	_scrollBuffer = NULL;
 }
 
 void ScummEngine::unkScreenEffect6() {
