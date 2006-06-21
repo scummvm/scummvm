@@ -1096,7 +1096,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	
 	if (file == "maniac1.d64" || file == "zak1.d64") {
 		// TODO
-	} else if (file == "00.LFL" || file == "maniac1.d64" || file == "zak1.d64") {
+	} else if (file == "00.LFL") {
 		// Used in V1, V2, V3 games.
 		if (g->version > 3)
 			return false;
