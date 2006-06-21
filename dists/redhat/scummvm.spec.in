@@ -34,10 +34,11 @@ BuildRequires: SDL-devel >= 1.2.2
 %description
 ScummVM is an interpreter that will play graphic adventure games written for
 LucasArts' SCUMM virtual machine (such as Day of the Tentacle and 
-Monkey Island), Adventure Soft's Simon the Sorcerer 1 and 2, 
+Monkey Island), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files, 
 Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
 Interactive Binary Illusions' Flight of the Amazon Queen,
-Coktel Vision's Gobliiins, and Wyrmkeep's Inherit the Earth.
+Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth and Westwood's
+Legend of Kyrandia.
 
 #------------------------------------------------------------------------------
 #   install scripts
