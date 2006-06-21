@@ -364,6 +364,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bgNeedsRedraw = false;
 	_screenEffectFlag = false;
 	_completeScreenRedraw = false;
+	_disableFadeInEffect = false;
 	memset(&_cursor, 0, sizeof(_cursor));
 	memset(_grabbedCursor, 0, sizeof(_grabbedCursor));
 	_currentCursor = 0;
@@ -1549,8 +1550,6 @@ int ScummEngine::go() {
 
 	while (!_quit) {
 
-		updatePalette();
-
 		diff -= _system->getMillis();
 		waitForTimer(delta * 15 + diff);
 		diff = _system->getMillis();
@@ -1594,6 +1593,10 @@ int ScummEngine::scummLoop(int delta) {
 	// Randomize the PRNG by calling it at regular intervals. This ensures
 	// that it will be in a different state each time you run the program.
 	_rnd.getRandomNumber(2);
+
+	if (_game.version <= 6) {
+		updatePalette();
+	}
 
 #ifndef DISABLE_HE
 	if (_game.heversion >= 90) {
@@ -1755,6 +1758,9 @@ load_game:
 		handleMouseOver(oldEgo != VAR(VAR_EGO));
 
 		// Render everything to the screen.
+		if (_game.version >= 7) {
+			updatePalette();
+		}
 		drawDirtyScreenParts();
 
 		// FIXME / TODO: Try to move the following to scummLoop_handleSound or

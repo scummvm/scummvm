@@ -345,16 +345,10 @@ void SmushPlayer::release() {
 
 	_vm->_fullRedraw = true;
 
-	// WORKAROUND bug #1035739: This is hack to workaround some ugly palette
-	// issues, see the mentioned bug report for details.
-	_vm->_doEffect = false;
-
-
 	// HACK HACK HACK: This is an *evil* trick, beware! See above for
 	// some explanation.
 	_vm->virtscr[0].pitch = _origPitch;
 	_vm->gdi._numStrips = _origNumStrips;
-
 
 	_initDone = false;
 }

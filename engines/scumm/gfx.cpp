@@ -3028,6 +3028,16 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 #pragma mark -
 
 void ScummEngine::fadeIn(int effect) {
+	if (_disableFadeInEffect) {
+		// fadeIn() calls can be disabled in TheDig after a SMUSH movie
+		// has been played. Like the original interpreter, we introduce
+		// an extra flag to handle this.
+		_disableFadeInEffect = false;
+		_doEffect = false;
+		_screenEffectFlag = true;
+		return;
+	}
+
 	updatePalette();
 
 	switch (effect) {
@@ -3079,7 +3089,11 @@ void ScummEngine::fadeOut(int effect) {
 	if (!(_game.features & GF_NEW_CAMERA))
 		camera._last.x = camera._cur.x;
 
-	if (_screenEffectFlag && effect != 0) {
+ 	// TheDig can disable fadeIn(), and may call fadeOut() several times
+ 	// successively. Disabling the _screenEffectFlag check forces the screen
+ 	// to get cleared. This fixes glitches, at least, in the first cutscenes
+ 	// when bypassed of FT and TheDig.
+ 	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
 	
 		// Fill screen 0 with black
 		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
@@ -3178,9 +3192,9 @@ void ScummEngine::transitionEffect(int a) {
 		for (i = 0; i < 16; i++)
 			tab_2[i] += delta[i];
 
-		// Draw the current state to the screen and wait half a sec so the user
-		// can watch the effect taking place.
-		waitForTimer(30);
+		// Draw the current state to the screen and wait a few secs so the
+		// user can watch the effect taking place.
+		waitForTimer(VAR_FADE_DELAY != 0xFF ? VAR(VAR_FADE_DELAY) * 10 : 30);
 	}
 }
 

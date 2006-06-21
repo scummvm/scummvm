@@ -976,6 +976,7 @@ protected:
 	//ender: fullscreen
 	bool _fullRedraw, _bgNeedsRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
+	bool _disableFadeInEffect;
 
 	struct {
 		int hotspotX, hotspotY, width, height;

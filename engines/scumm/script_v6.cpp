@@ -2535,6 +2535,10 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					else
 						sp->play((char *)getStringAddressVar(VAR_VIDEONAME));
 					delete sp;
+
+					if (_game.id == GID_DIG) {
+						_disableFadeInEffect = true;
+					}
 				} else if (_game.id == GID_FT) {
 					const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
 						? 232 : 233;
