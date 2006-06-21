@@ -988,8 +988,6 @@ protected:
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;
 
-	byte *_scrollBuffer;
-
 public:
 	bool isLightOn() const;
 
@@ -1008,6 +1006,8 @@ protected:
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
+
+	void moveScreen(int dx, int dy, int height);
 
 	void restoreBG(Common::Rect rect, byte backcolor = 0);
 	void redrawBGStrip(int start, int num);

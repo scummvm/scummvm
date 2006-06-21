@@ -370,7 +370,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_newEffect = 0;
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
-	_scrollBuffer = NULL;
 
 	_doEffect = false;
 	_currentLights = 0;
