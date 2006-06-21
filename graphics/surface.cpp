@@ -164,4 +164,59 @@ void Surface::frameRect(const Common::Rect &r, uint32 color) {
 	vLine(r.right-1, r.top, r.bottom-1, color);
 }
 
+void Surface::move(int dx, int dy, int height) {
+	// Short circuit check - do we have to do anything anyway?
+	if ((dx == 0 && dy == 0) || height <= 0)
+		return;
+
+	byte *src, *dst;
+	int x, y;
+
+	// vertical movement
+	if (dy > 0) {
+		// move down - copy from bottom to top
+		dst = (byte *)pixels + (height - 1) * w;
+		src = dst - dy * w;
+		for (y = dy; y < height; y++) {
+			memcpy(dst, src, w);
+			src -= w;
+			dst -= w;
+		}
+	} else if (dy < 0) {
+		// move up - copy from top to bottom
+		dst = (byte *)pixels;
+		src = dst - dy * w;
+		for (y = -dy; y < height; y++) {
+			memcpy(dst, src, w);
+			src += w;
+			dst += w;
+		}
+	}
+
+	// horizontal movement
+	if (dx > 0) {
+		// move right - copy from right to left
+		dst = (byte *)pixels + (w - 1);
+		src = dst - dx;
+		for (y = 0; y < height; y++) {
+			for (x = dx; x < w; x++) {
+				*dst-- = *src--;
+			}
+			src += w + (w - dx);
+			dst += w + (w - dx);
+		}
+	} else if (dx < 0)  {
+		// move left - copy from left to right
+		dst = (byte *)pixels;
+		src = dst - dx;
+		for (y = 0; y < height; y++) {
+			for (x = -dx; x < w; x++) {
+				*dst++ = *src++;
+			}
+			src += w - (w + dx);
+			dst += w - (w + dx);
+		}
+	}
+}
+
 } // End of namespace Graphics

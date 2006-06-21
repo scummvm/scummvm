@@ -65,6 +65,7 @@ struct Surface {
 	void vLine(int x, int y, int y2, uint32 color);
 	void fillRect(const Common::Rect &r, uint32 color);
 	void frameRect(const Common::Rect &r, uint32 color);
+	void move(int dx, int dy, int height);
 };
 
 

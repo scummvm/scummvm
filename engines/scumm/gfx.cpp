@@ -1104,58 +1104,10 @@ void ScummEngine::moveScreen(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 
-	byte *src, *dst;
-	int x, y;
-
 	Graphics::Surface screen;
 	assert(_system->grabRawScreen(&screen));
 
-	// vertical movement
-	if (dy > 0) {
-		// move down - copy from bottom to top
-		dst = (byte *)screen.pixels + (height - 1) * _screenWidth;
-		src = dst - dy * _screenWidth;
-		for (y = dy; y < height; y++) {
-			memcpy(dst, src, _screenWidth);
-			src -= _screenWidth;
-			dst -= _screenWidth;
-		}
-	} else if (dy < 0) {
-		// move up - copy from top to bottom
-		dst = (byte *)screen.pixels;
-		src = dst - dy * _screenWidth;
-		for (y = -dy; y < height; y++) {
-			memcpy(dst, src, _screenWidth);
-			src += _screenWidth;
-			dst += _screenWidth;
-		}
-	}
-
-	// horizontal movement
-	if (dx > 0) {
-		// move right - copy from right to left
-		dst = (byte *)screen.pixels + (_screenWidth - 1);
-		src = dst - dx;
-		for (y = 0; y < height; y++) {
-			for (x = dx; x < _screenWidth; x++) {
-				*dst-- = *src--;
-			}
-			src += _screenWidth + (_screenWidth - dx);
-			dst += _screenWidth + (_screenWidth - dx);
-		}
-	} else if (dx < 0)  {
-		// move left - copy from left to right
-		dst = (byte *)screen.pixels;
-		src = dst - dx;
-		for (y = 0; y < height; y++) {
-			for (x = -dx; x < _screenWidth; x++) {
-				*dst++ = *src++;
-			}
-			src += _screenWidth - (_screenWidth + dx);
-			dst += _screenWidth - (_screenWidth + dx);
-		}
-	}
-
+	screen.move(dx, dy, height);
 	_system->copyRectToScreen((byte *)screen.pixels, screen.pitch, 0, 0, screen.w, screen.h);
 	screen.free();
 }
