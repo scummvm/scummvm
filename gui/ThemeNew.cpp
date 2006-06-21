@@ -303,6 +303,10 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, State s
 void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!_initOk)
 		return;
+
+	if (r.top < 0 || r.bottom - getFontHeight(font) >= _screen.h)
+		return;
+
 	Common::Rect r2(r.left, r.top, r.right, r.top+getFontHeight(font));
 	uint32 color;
 
