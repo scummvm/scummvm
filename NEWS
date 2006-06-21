@@ -1,14 +1,11 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.9.0 (2006-??-??)
+0.9.0 (2006-06-25)
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
      part of the series is supported.
    - Added support for The Feeble Files
-
- New Ports:
-   - ...
 
  General:
    - Switched from CVS to Subversion.
