@@ -1113,7 +1113,8 @@ Use oggenc or some other vorbis encoder to encode the audio tracks to files.
 Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
 support to use this option. You'll need to rip the files from the CD as a WAV
 file, then encode the vorbis files. This can be done with the following oggenc
-command line with the value after q specifying the desired quality from 0 to 10:
+command line with the value after q specifying the desired quality from
+0 to 10:
 
   oggenc -q 5 track1.wav
 
