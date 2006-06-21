@@ -81,7 +81,7 @@ filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
-\subsubsection{Compressing sfx/speech in Simon the Sorcerer 1 and 2}
+\subsubsection{Compressing sfx/speech in Simon the Sorcerer and The Feeble Files}
 
 Use our compress\_simon util from the scummvm-tools package to perform this task.
 You can choose between multiple target formats, but note that you can only use
@@ -96,6 +96,11 @@ each if ScummVM was compiled with the respective decoder support enabled.
   compress\_simon simon2.voc &(For DOS CD version of Simon 2)\\
   compress\_simon simon2.wav &(For Windows CD version of Simon 2)\\
   compress\_simon mac        &(For Macintosh version of Simon 2)\\
+
+  compress\_simon voices1.wav (For Windows 2CD/4CD version of Feeble)\\
+  compress\_simon voices2.wav (For Windows 2CD/4CD version of Feeble)\\
+  compress\_simon voices3.wav (For Windows 4CD version of Feeble)\\
+  compress\_simon voices4.wav (For Windows 4CD version of Feeble)\\
 \end{tabular}
 
 For Ogg Vorbis add --vorbis to the options, i.e.
