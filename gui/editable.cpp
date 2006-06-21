@@ -62,7 +62,7 @@ void EditableWidget::setEditString(const String &str) {
 }
 
 bool EditableWidget::tryInsertChar(byte c, int pos) {
-	if ((c >= 32 && c <= 127) || (c >= 160 && c <= 255)) {
+	if ((c >= 32 && c <= 127) || c >= 160) {
 		_editString.insertChar(c, pos);
 		return true;
 	}
