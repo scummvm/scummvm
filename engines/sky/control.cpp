@@ -253,6 +253,9 @@ void Control::initPanel(void) {
 	_screenBuf = (uint8 *)malloc(GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 
+	_mouseX = _skyMouse->giveMouseX();
+	_mouseY = _skyMouse->giveMouseY();
+
 	uint16 volY = (127 - _skyMusic->giveVolume()) / 4 + 59 - MPNL_Y; // volume slider's Y coordinate
 	uint16 spdY = (SkyEngine::_systemVars.gameSpeed - 2) / SPEED_MULTIPLY;
 	spdY += MPNL_Y + 83; // speed slider's initial position
