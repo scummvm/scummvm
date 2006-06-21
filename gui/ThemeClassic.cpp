@@ -166,7 +166,7 @@ void ThemeClassic::drawText(const Common::Rect &r, const Common::String &str, St
 	if (!_initOk)
 		return;
 
-	if (r.top < 0 || r.bottom - _font->getFontHeight() >= _screen.h)
+	if (r.top < 0 || r.bottom + _font->getFontHeight() >= _screen.h)
 		return;
 
 	if (!inverted) {
