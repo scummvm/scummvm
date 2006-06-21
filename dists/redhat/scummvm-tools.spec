@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm-tools
-Version		: 0.8.0
+Version		: 0.10.0svn
 Release		: 1
 Summary		: ScummVM-related tools
 Group		: Interpreters
@@ -35,10 +35,10 @@ Tools for compressing ScummVM datafiles and other related tools.
 make
 
 %install
-install -m755 -D compress_queen %{buildroot}%{_bindir}/compress_queen
-install -m755 -D compress_{saga,san,scumm_sou,simon,sword1,sword2} %{buildroot}%{_bindir}
+install -m755 -D encode_dxa %{buildroot}%{_bindir}/encode_dxa
+install -m755 -D compress_{queen,saga,scumm_san,scumm_sou,scumm_bun,simon,sword1,sword2,kyra} %{buildroot}%{_bindir}
 install -m755 -D de{kyra,scumm,sword2} %{buildroot}%{_bindir}
-install -m755 -D extract_{kyra,loom_tg16,mm_nes,scumm_mac,simon1_amiga} %{buildroot}%{_bindir}
+install -m755 -D extract_{kyra,loom_tg16,mm_nes,mm_c64,zak_c64,scumm_mac,simon1_amiga} %{buildroot}%{_bindir}
 
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
@@ -51,6 +51,7 @@ rm -Rf ${RPM_BUILD_ROOT}
 %attr(0755,root,root)%{_bindir}/compress_*
 %attr(0755,root,root)%{_bindir}/de*
 %attr(0755,root,root)%{_bindir}/extract_*
+%attr(0755,root,root)%{_bindir}/encode_dxa
 
 #------------------------------------------------------------------------------
 #   Change Log
