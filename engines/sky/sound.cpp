@@ -1070,7 +1070,9 @@ void Sound::loadSection(uint8 pSection) {
 			error("Unknown sounddriver version!");
 
 	_soundsTotal = _soundData[asmOfs + 1];
+	uint16 sRateTabOfs = READ_LE_UINT16(_soundData + asmOfs + 0x29);
 	_sfxBaseOfs = READ_LE_UINT16(_soundData + asmOfs + 0x31);
+	_sampleRates = _soundData + sRateTabOfs;
 
 	_sfxInfo = _soundData + _sfxBaseOfs;
 	// if we just restored a savegame, the sfxqueue holds the sound we need to restart
@@ -1099,7 +1101,12 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	volume = (volume & 0x7F) << 1;
 	sound &= 0xFF;
 
-	// note: all those tables are big endian. Don't ask me why. *sigh*
+	// Note: All those tables are big endian. Don't ask me why. *sigh*
+
+	// Use the sample rate from game data, see bug #1507757.
+	uint16 sampleRate = READ_BE_UINT16(_sampleRates + (sound << 2));
+	if (sampleRate > 11025)
+		sampleRate = 11025;
 	uint32 dataOfs  = READ_BE_UINT16(_sfxInfo + (sound << 3) + 0) << 4;
 	uint32 dataSize = READ_BE_UINT16(_sfxInfo + (sound << 3) + 2);
 	uint32 dataLoop = READ_BE_UINT16(_sfxInfo + (sound << 3) + 6);
@@ -1115,9 +1122,9 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	}
 
 	if (channel == 0)
-		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, 11025, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
 	else
-		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, 11025, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
 }
 
 void Sound::fnStartFx(uint32 sound, uint8 channel) {
