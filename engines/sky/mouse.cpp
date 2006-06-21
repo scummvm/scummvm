@@ -167,17 +167,34 @@ void Mouse::drawNewMouse() {
 	//drawMouse();
 }
 
-void Mouse::waitMouseNotPressed(void) {
+void Mouse::waitMouseNotPressed(int minDelay) {
 
 	bool mousePressed = true;
+	uint32 now = _system->getMillis();
 	OSystem::Event event;
-	while (mousePressed) {
-		_system->delayMillis(20);
+	while (mousePressed || _system->getMillis() < now + minDelay) {
 		while (_system->pollEvent(event)) {
-			if ((event.type == OSystem::EVENT_LBUTTONUP) ||
-				(event.type == OSystem::EVENT_QUIT))
+			switch (event.type) {
+			case OSystem::EVENT_LBUTTONUP:
 				mousePressed = false;
+				break;
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.ascii == 27) {
+					minDelay = 0;
+					mousePressed = false;
+				}
+				break;
+			case OSystem::EVENT_QUIT:
+				SkyEngine::_systemVars.quitGame = true;
+				minDelay = 0;
+				mousePressed = false;
+				break;
+			default:
+				break;
+			}
 		}
+		_system->updateScreen();
+		_system->delayMillis(20);
 	}
 }
 
