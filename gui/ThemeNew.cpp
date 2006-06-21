@@ -304,7 +304,7 @@ void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, State 
 	if (!_initOk)
 		return;
 
-	if (r.top < 0 || r.bottom + getFontHeight(font) >= _screen.h)
+	if (r.top < 0 || r.bottom >= _screen.h)
 		return;
 
 	Common::Rect r2(r.left, r.top, r.right, r.top+getFontHeight(font));
