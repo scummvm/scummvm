@@ -436,15 +436,23 @@ in the DOS directory of the CD.
 
 3.13) The Feeble Files notes:
 ----- -----------------------
-If you have the Windows version of The Feeble Files, there are two things to
-note. First of all, more than 300 files, most of them necessary for the game to
-run, are stored in a file called data1.cab. ScummVM does not know how to unpack
-this file, so you will probably have to let the original installer do it.
+If you have the Windows version of The Feeble Files, there are several things
+to note. 
 
-Secondly, the game uses Smacker cutscenes extensively. For reasons described
-above, we cannot support these directly. They have to be re-encoded to DXA,
-which is the format used for the Macintosh and Amiga cutscenes. See the tools
-README for further details about this.
+Many of the files necessary for the game are stored in an InstallShield file
+called data1.cab, which ScummVM is unable to unpack. You will need to use the
+original installer or i5comp to unpack the contents of this file.
+
+The game uses Smacker cutscenes extensively, which we can't support directly,
+due to reasons described above. The cutscenes have to be re-encoded to DXA,
+which is the format used by the cutscenes in the Amiga and Macintosh versions.
+See thetools README for a brief guide on converting the cutscenes.
+
+The original speech files will need to be renamed, to use with ScummVM.
+Rename voices.wav on CD1 to voices1.wav
+Rename voices.wav on CD2 to voices2.wav
+Rename voices.wav on CD3 to voices3.wav
+Rename voices.wav on CD4 to voices4.wav
 
 
 3.14) The Legend of Kyrandia notes:
@@ -1161,8 +1169,8 @@ filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
-7.7.6) Compressing sfx/speech in Simon the Sorcerer 1 and 2
------- ----------------------------------------------------
+7.7.6) Compressing sfx/speech in Simon the Sorcerer and The Feeble Files
+------ -----------------------------------------------------------------
 Use our compress_simon util from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
 only use each if ScummVM was compiled with the respective decoder support
@@ -1176,6 +1184,11 @@ enabled.
   compress_simon simon2.voc  (For DOS CD version of Simon 2)
   compress_simon simon2.wav  (For Windows CD version of Simon 2)
   compress_simon mac         (For Macintosh version of Simon 2)
+
+  compress_simon voices1.wav (For Windows 2CD/4CD version of Feeble)
+  compress_simon voices2.wav (For Windows 2CD/4CD version of Feeble)
+  compress_simon voices3.wav (For Windows 4CD version of Feeble)
+  compress_simon voices4.wav (For Windows 4CD version of Feeble)
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
@@ -1384,7 +1397,6 @@ Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
         music_mute      bool     If true, music is muted
         sfx_mute        bool     If true, sound effects are muted
-                                 [Simon the Sorcerer 2 only]
 
 The Legend of Kyrandia adds the following non-standard keyword:
 
