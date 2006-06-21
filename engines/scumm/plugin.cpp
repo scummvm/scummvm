@@ -995,7 +995,13 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 								if (dr.game.platform != Common::kPlatformUnknown && dr.game.platform != d.md5Entry->platform)
 									warning("SCUMM detectGames: Platform values differ for MD5 '%s': %d vs %d (please report to Fingolfin)",
 													md5str, dr.game.platform, d.md5Entry->platform);
-								dr.game.platform = d.md5Entry->platform;
+
+								// Force game to have Mac platform, if required by HE game
+								if (dr.fp.genMethod == kGenHEMac || dr.fp.genMethod == kGenHEMacNoParens) {
+									dr.game.platform = Common::kPlatformMacintosh;
+								} else {
+									dr.game.platform = d.md5Entry->platform;
+								}
 								
 								// HACK: Special case to distinguish the V1 demo from the full version
 								// (since they have identical MD5):
@@ -1045,8 +1051,13 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 
 			dr.game = *g;
 			dr.extra = g->variant; // FIXME: We (ab)use 'variant' for the 'extra' description for now.
-			if (gfp->platform != Common::kPlatformUnknown)
+
+			// Force game to have Mac platform, if required by HE game
+			if (dr.fp.genMethod == kGenHEMac || dr.fp.genMethod == kGenHEMacNoParens) {
+				dr.game.platform = Common::kPlatformMacintosh;
+			} else if (gfp->platform != Common::kPlatformUnknown) {
 				dr.game.platform = gfp->platform;
+			}
 
 
 			// If a variant has been specified, use that!
