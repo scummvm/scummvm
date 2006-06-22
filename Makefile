@@ -115,6 +115,7 @@ osxsnap: bundle doc/readme.pdf
 	mkdir ScummVM-snapshot
 	cp COPYING ./ScummVM-snapshot/License
 	cp NEWS ./ScummVM-snapshot/News
+	cp AUTHORS ./ScummVM-snapshot/Authors
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	cp doc/readme.pdf ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/SetFile -t 'PDF ' -c prvw ./ScummVM-snapshot/ScummVM\ ReadMe
