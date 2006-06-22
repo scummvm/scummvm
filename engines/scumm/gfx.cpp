@@ -52,7 +52,8 @@ struct StripTable {
 
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
-	kPictureDelay = 20
+	kPictureDelay = 20,
+	kFadeDelay = 4 // 1/4th of a jiffie
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -3103,6 +3104,7 @@ void ScummEngine::transitionEffect(int a) {
 	int bottom;
 	int l, t, r, b;
 	const int height = MIN((int)virtscr[0].h, _screenHeight);
+	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -3146,7 +3148,7 @@ void ScummEngine::transitionEffect(int a) {
 
 		// Draw the current state to the screen and wait a few secs so the
 		// user can watch the effect taking place.
-		waitForTimer(VAR_FADE_DELAY != 0xFF ? VAR(VAR_FADE_DELAY) * 10 : 30);
+		waitForTimer(delay);
 	}
 }
 
@@ -3271,13 +3273,14 @@ void ScummEngine::scrollEffect(int dir) {
 
 	int x, y;
 	int step;
+	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
 
 	if ((dir == 0) || (dir == 1))
 		step = vs->h;
 	else
 		step = vs->w;
 
-	step = (step * kPictureDelay) / kScrolltime;
+	step = (step * delay) / kScrolltime;
 
 	switch (dir) {
 	case 0:
@@ -3290,7 +3293,7 @@ void ScummEngine::scrollEffect(int dir) {
 				0, vs->h - step,
 				vs->w, step);
 			_system->updateScreen();
-			waitForTimer(kPictureDelay);
+			waitForTimer(delay);
 
 			y += step;
 		}
@@ -3305,7 +3308,7 @@ void ScummEngine::scrollEffect(int dir) {
 				0, 0,
 				vs->w, step);
 			_system->updateScreen();
-			waitForTimer(kPictureDelay);
+			waitForTimer(delay);
 
 			y += step;
 		}
@@ -3320,7 +3323,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->w - step, 0,
 				step, vs->h);
 			_system->updateScreen();
-			waitForTimer(kPictureDelay);
+			waitForTimer(delay);
 
 			x += step;
 		}
@@ -3335,7 +3338,7 @@ void ScummEngine::scrollEffect(int dir) {
 				0, 0,
 				step, vs->h);
 			_system->updateScreen();
-			waitForTimer(kPictureDelay);
+			waitForTimer(delay);
 
 			x += step;
 		}
