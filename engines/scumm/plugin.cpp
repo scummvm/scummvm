@@ -1052,12 +1052,8 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 			dr.game = *g;
 			dr.extra = g->variant; // FIXME: We (ab)use 'variant' for the 'extra' description for now.
 
-			// Force game to have Mac platform, if required by HE game
-			if (dr.fp.genMethod == kGenHEMac || dr.fp.genMethod == kGenHEMacNoParens) {
-				dr.game.platform = Common::kPlatformMacintosh;
-			} else if (gfp->platform != Common::kPlatformUnknown) {
+			if (gfp->platform != Common::kPlatformUnknown)
 				dr.game.platform = gfp->platform;
-			}
 
 
 			// If a variant has been specified, use that!
