@@ -1606,12 +1606,13 @@ int ScummEngine::scummLoop(int delta) {
 		((ScummEngine_v90he *)this)->_logicHE->startOfFrame();
 	}
 #endif
-	if (_game.version > 2) {
+	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		if (_game.id == GID_ZAK || _game.id == GID_INDY3) {
-			// All versions of Indy3 set three extra timers
+		if ((_game.id == GID_INDY3 && _game.platform != Common::kPlatformMacintosh) ||
+			_game.id == GID_ZAK) {
+			// Amiga/PC versions of Indy3 set three extra timers
 			// FM-TOWNS version of Zak sets three extra timers
 			VAR(39) += delta;
 			VAR(40) += delta;
