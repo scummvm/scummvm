@@ -1271,7 +1271,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_MAC_ES,
+		GID_FEEBLEFILES_ES,
 		"4CD",
 		ARRAYSIZE(FEEBLEFILES_ES_GameFiles),
 		FEEBLEFILES_ES_GameFiles,
