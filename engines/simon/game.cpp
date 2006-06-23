@@ -517,7 +517,7 @@ static GameFileDescription FEEBLEFILES_MAC_FR_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
-static GameFileDescription FEEBLEFILES_MAC_SP_GameFiles[] = {
+static GameFileDescription FEEBLEFILES_MAC_ES_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"71d7d2d5e479b053c5a9757f1702c9c3"},
 	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
@@ -541,6 +541,11 @@ static GameFileDescription FEEBLEFILES_4CD_GameFiles[] = {
 
 static GameFileDescription FEEBLEFILES_DE_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"bcd76ac080003eee3649df18db25b60e"},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
+};
+
+static GameFileDescription FEEBLEFILES_ES_GameFiles[] = {
+	{ "game22",		GAME_BASEFILE,	"71d7d2d5e479b053c5a9757f1702c9c3"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
@@ -1214,10 +1219,10 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_MAC_SP,
+		GID_FEEBLEFILES_MAC_ES,
 		"CD",
-		ARRAYSIZE(FEEBLEFILES_MAC_SP_GameFiles),
-		FEEBLEFILES_MAC_SP_GameFiles,
+		ARRAYSIZE(FEEBLEFILES_MAC_ES_GameFiles),
+		FEEBLEFILES_MAC_ES_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
 		Common::ES_ESP,
 		Common::kPlatformMacintosh,
@@ -1261,6 +1266,20 @@ static GameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 	},
+
+	// The Feeble Files - Spanish Windows 4CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_MAC_ES,
+		"4CD",
+		ARRAYSIZE(FEEBLEFILES_ES_GameFiles),
+		FEEBLEFILES_ES_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+	},
+
 };
 
 DetectedGame toDetectedGame(const GameDescription &g) {
