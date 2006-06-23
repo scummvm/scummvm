@@ -2247,12 +2247,13 @@ void ScummEngine_v100he::o100_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
+			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
 			if (_videoParams.flags == 2) {
-				// result = startVideo(_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
-				// VAR(119) = result;
+				// VAR(119) = startVideo(_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
+				VAR(119) = -1;
 			} else {
-				// result = startVideo(_videoParams.filename, _videoParams.flags);
-				// VAR(119) = result;
+				// VAR(119) = startVideo(_videoParams.filename, _videoParams.flags);
+				VAR(119) = -1;
 			}
 		} else if (_videoParams.status == 19) {
 			// Stop video
