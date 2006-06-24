@@ -813,7 +813,6 @@ protected:
 	ScriptHelper *_scriptInterpreter;
 	Debugger *_debugger;
 	StaticResource *_staticres;
-	Common::SaveFileManager *_saveFileMan;
 
 	ScriptState *_scriptMain;
 	
