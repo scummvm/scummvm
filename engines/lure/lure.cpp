@@ -22,13 +22,12 @@
 
 #include "common/stdafx.h"
 
-#include "backends/fs/fs.h"
-
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/system.h"
 #include "common/md5.h"
 

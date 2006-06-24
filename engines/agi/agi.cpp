@@ -24,12 +24,11 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
 #include "base/plugins.h"
-
-#include "backends/fs/fs.h"
 
 #include "graphics/cursorman.h"
 

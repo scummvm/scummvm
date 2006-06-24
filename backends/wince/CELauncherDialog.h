@@ -23,10 +23,8 @@
 #ifndef CELAUNCHERDIALOG
 #define CELAUNCHERDIALOG
 
-#include "backends/fs/fs.h"
-
 #include "base/plugins.h"
-
+#include "common/fs.h"
 #include "gui/launcher.h"
 
 class CELauncherDialog : public GUI::LauncherDialog {

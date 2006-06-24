@@ -21,9 +21,9 @@
  */
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/hashmap.h"
 #include "common/util.h"
-#include "backends/fs/fs.h"
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"

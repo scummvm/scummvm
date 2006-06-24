@@ -27,11 +27,11 @@
 #include "saga/saga.h"
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/md5.h"
 #include "common/hashmap.h"
 #include "common/config-manager.h"
 #include "base/plugins.h"
-#include "backends/fs/fs.h"
 
 #include "saga/rscfile.h"
 #include "saga/interface.h"

@@ -1,7 +1,6 @@
 MODULE := backends
 
 MODULE_OBJS := \
-	fs/fs.o \
 	fs/posix/posix-fs.o \
 	fs/morphos/abox-fs.o \
 	fs/windows/windows-fs.o \

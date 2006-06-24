@@ -24,7 +24,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include "backends/fs/fs.h"
+#include "common/fs.h"
 
 #ifdef MACOSX
 #include <Carbon/Carbon.h>

@@ -25,7 +25,6 @@
 #if defined (__SYMBIAN32__) 
 #include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/fs.h"
 
 #include <dirent.h>
 #include <eikenv.h>

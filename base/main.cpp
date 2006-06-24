@@ -30,13 +30,13 @@
  */
 
 #include "common/stdafx.h"
-#include "backends/fs/fs.h"
 #include "base/engine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "gui/newgui.h"

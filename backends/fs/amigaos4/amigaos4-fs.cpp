@@ -38,7 +38,6 @@
 
 #include "base/engine.h"
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/fs.h"
 
 #define ENTER() /* debug(6, "Enter") */
 #define LEAVE() /* debug(6, "Leave") */

@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	config-file.o \
 	config-manager.o \
 	file.o \
+	fs.o \
 	hashmap.o \
 	md5.o \
 	mutex.o \

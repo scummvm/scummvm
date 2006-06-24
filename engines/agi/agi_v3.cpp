@@ -27,9 +27,8 @@
 #include "agi/agi.h"
 #include "agi/lzw.h"
 
-#include "backends/fs/fs.h"
-
 #include "common/config-manager.h"
+#include "common/fs.h"
 
 namespace Agi {
 

@@ -26,7 +26,6 @@
 #include "stdafx.h"
 
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/fs.h"
 
 class GP32FilesystemNode : public AbstractFilesystemNode {
 protected:

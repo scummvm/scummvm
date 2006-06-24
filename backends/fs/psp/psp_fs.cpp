@@ -26,7 +26,6 @@
 #include "base/engine.h"
 
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/fs.h"
 
 #include <sys/stat.h>
 #include <unistd.h>

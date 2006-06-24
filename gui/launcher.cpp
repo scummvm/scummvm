@@ -21,14 +21,13 @@
 
 #include "common/stdafx.h"
 
-#include "backends/fs/fs.h"
-
 #include "base/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "common/util.h"
 #include "common/system.h"
 

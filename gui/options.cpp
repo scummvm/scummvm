@@ -28,10 +28,12 @@
 #include "gui/PopUpWidget.h"
 #include "gui/TabWidget.h"
 
-#include "backends/fs/fs.h"
+#include "common/fs.h"
 #include "common/config-manager.h"
-#include "graphics/scaler.h"
 #include "common/system.h"
+
+#include "graphics/scaler.h"
+
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 

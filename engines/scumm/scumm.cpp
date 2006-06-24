@@ -23,9 +23,8 @@
 
 #include "common/stdafx.h"
 
-#include "backends/fs/fs.h"
-
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "common/md5.h"
 #include "common/system.h"
 

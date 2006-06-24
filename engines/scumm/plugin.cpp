@@ -23,11 +23,10 @@
 
 #include "common/stdafx.h"
 
-#include "backends/fs/fs.h"
-
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "common/list.h"
 #include "common/md5.h"
 #include "common/system.h"	// Only needed for g_system

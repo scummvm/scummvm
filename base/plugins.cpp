@@ -22,10 +22,10 @@
  */
 
 #include "common/stdafx.h"
-#include "backends/fs/fs.h"
 #include "base/plugins.h"
 #include "base/engine.h"
 #include "common/util.h"
+#include "common/fs.h"
 
 /** Type of factory functions which make new Engine objects. */
 typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);

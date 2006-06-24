@@ -51,7 +51,7 @@
 #define DETECTOR_TESTING_HACK
 
 #ifdef DETECTOR_TESTING_HACK
-#include "backends/fs/fs.h"
+#include "common/fs.h"
 #endif
 
 namespace Base {

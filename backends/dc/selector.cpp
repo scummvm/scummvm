@@ -25,7 +25,7 @@
 #include <common/scummsys.h>
 #include <base/engine.h>
 #include <base/plugins.h>
-#include <backends/fs/fs.h>
+#include <common/fs.h>
 #include "dc.h"
 #include "icon.h"
 #include "label.h"

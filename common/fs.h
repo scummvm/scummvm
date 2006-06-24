@@ -19,11 +19,13 @@
  * $Id$
  */
 
-#ifndef BACKENDS_FS_H
-#define BACKENDS_FS_H
+#ifndef COMMON_FS_H
+#define COMMON_FS_H
 
 #include "common/array.h"
 #include "common/str.h"
+
+//namespace Common {
 
 class FilesystemNode;
 class AbstractFilesystemNode;
@@ -168,5 +170,6 @@ protected:
 	void decRefCount();
 };
 
+//} // End of namespace Common
 
 #endif

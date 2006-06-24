@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
-#include "backends/fs/fs.h"
+#include "common/fs.h"
 
 class AbstractFilesystemNode;
 
