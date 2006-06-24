@@ -622,6 +622,10 @@ begin_credits("Credits");
 		  add_person("Juha Niemim&auml;ki", "", "");
 	  end_section();
 
+	  begin_section("Atari/FreeMiNT");
+		  add_person("Keith Scroggins", "KeithS", "");
+	  end_section();
+
 	  begin_section("BeOS");
 		  add_person("Stefan Parviainen", "", "");
 	  end_section();
