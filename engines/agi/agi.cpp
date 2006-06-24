@@ -525,7 +525,7 @@ void AgiEngine::initialize() {
 	init_video();
 
 	tick_timer = 0;
-	Common::g_timer->installTimerProc(agi_timer_function_low, 10 * 1000, NULL);
+	_timer->installTimerProc(agi_timer_function_low, 10 * 1000, NULL);
 
 	game.ver = -1;		/* Don't display the conf file warning */
 
