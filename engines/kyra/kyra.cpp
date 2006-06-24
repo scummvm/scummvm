@@ -85,7 +85,6 @@ KyraEngine::KyraEngine(OSystem *system)
 	_screen = 0;
 	_res = 0;
 	_sound = 0;
-	_saveFileMan = 0;
 	_seq = 0;
 	_scriptInterpreter = 0;
 	_text = 0;
@@ -178,8 +177,6 @@ int KyraEngine::init() {
 	}
 	_sound->setVolume(255);
 	
-	_saveFileMan = _system->getSavefileManager();
-	assert(_saveFileMan);	
 	_res = new Resource(this);
 	assert(_res);
 	_screen = new Screen(this, _system);
@@ -347,7 +344,6 @@ KyraEngine::~KyraEngine() {
 	delete _screen;
 	delete _res;
 	delete _sound;
-	delete _saveFileMan;
 	delete _seq;
 	delete _scriptInterpreter;
 	delete _text;
