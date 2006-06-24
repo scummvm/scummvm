@@ -126,6 +126,9 @@ void replay_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
 
 static const char *strSig = "AGI:";
 
+// FIXME: The following wrapper methods are not needed, since class File
+// (resp. class Stream) already offers similar methods.
+
 static void write_uint8(Common::File *f, int8 val) {
 	f->write(&val, 1);
 }
@@ -192,6 +195,7 @@ int save_game(char *s, const char *d) {
 	struct image_stack_element *ptr = image_stack;
 	Common::File f;
 
+	// FIXME: Do *not* use Common::File to access savegames, it is not portable!
 	f.open(s, Common::File::kFileWriteMode);
 
 	if (!f.isOpen())
@@ -354,6 +358,7 @@ int load_game(char *s) {
 	char description[256];
 	Common::File f;
 
+	// FIXME: Do *not* use Common::File to access savegames, it is not portable!
 	f.open(s);
 
 	if (!f.isOpen())
@@ -587,6 +592,7 @@ static int select_slot() {
 		char name[MAX_PATH];
 		Common::File f;
 		char sig[8];
+		// FIXME: Do *not* use Common::File to access savegames, it is not portable!
 		sprintf(name, "%s/%05X_%s_%02d.sav", _savePath, game.crc, game.id, i);
 		f.open(name);
 		if (!f.isOpen()) {

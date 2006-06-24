@@ -434,7 +434,7 @@ int agi_unload_resource(int r, int n) {
 	return loader->unload_resource(r, n);
 }
 
-const char *_savePath;
+const char *_savePath;	// FIXME: Get rid of this
 extern AGIMusic *g_agi_music;
 
 struct GameSettings {
@@ -462,7 +462,7 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_savePath = _saveFileMan->getSavePath();
+	_savePath = _saveFileMan->getSavePath();	// FIXME: Get rid of this
 
 	const GameSettings *g;
 
