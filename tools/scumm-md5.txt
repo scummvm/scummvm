@@ -567,7 +567,6 @@ puttputt	Putt-Putt Joins the Parade
 
 	31aa57f460a3d12429f0552a46a90b39	en	DOS	Demo	Demo	-	
 	f40a7f495f59188ca57a9d1d50301bb6	en	Mac	Demo	Demo	-	khalek
-	29dd7d578edeaccfa17e0c746e5ba337	en	Windows	HE 70	Demo	-	Per Wigren
 	37ff1b308999c4cca7319edfcc1280a0	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
