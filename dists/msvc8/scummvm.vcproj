@@ -776,6 +776,30 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="timer"
+				>
+				<File
+					RelativePath="..\..\backends\timer\default\default-timer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\timer\default\default-timer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="saves"
+				>
+				<File
+					RelativePath="..\..\backends\saves\default\default-saves.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\default\default-saves.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="gui"
