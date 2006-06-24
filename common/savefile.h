@@ -77,8 +77,8 @@ public:
 
 	/**
 	 * Get the path to the save game directory.
-	 * Should only be used for error messages, and not to construct file paths
-	 * from it, since that is highl unportable.
+	 * Should only be used for error messages, *never* to construct file paths
+	 * from it, since that is highly unportable!
 	 */
 	virtual const char *getSavePath() const;
 };
