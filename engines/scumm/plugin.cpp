@@ -100,7 +100,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 #ifndef DISABLE_HE
 	{ "activity", "Putt-Putt & Fatty Bear's Activity Pack" },
 	{ "airport", "Let's Explore the Airport with Buzzy" },
-	{ "artdemo", "Blue's Art Time Activities (Demo)" },
+	{ "arttime", "Blue's Art Time Activities" },
 	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
 	{ "baseball", "Backyard Baseball" },
 	{ "baseball2001", "Backyard Baseball 2001" },
@@ -356,7 +356,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"Soccer2004", 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 
 	// Uses smacker in external files, for testing only
-	{"artdemo", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
+	{"arttime", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 	{"readdemo", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 
 
@@ -487,8 +487,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "artdemo", "artdemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "artdemo", "Blues-ArtTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "arttime", "arttime", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "arttime", "artdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "arttime", "Blues-ArtTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
