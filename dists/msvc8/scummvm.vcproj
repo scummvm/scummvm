@@ -740,19 +740,19 @@
 				Name="sdl"
 				>
 				<File
-					RelativePath="..\..\backends\sdl\events.cpp"
+					RelativePath="..\..\backends\platform\sdl\events.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\sdl\graphics.cpp"
+					RelativePath="..\..\backends\platform\sdl\graphics.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\sdl\sdl-common.h"
+					RelativePath="..\..\backends\platform\sdl\sdl-common.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\sdl\sdl.cpp"
+					RelativePath="..\..\backends\platform\sdl\sdl.cpp"
 					>
 				</File>
 			</Filter>
