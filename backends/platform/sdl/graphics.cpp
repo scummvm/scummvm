@@ -21,7 +21,7 @@
  *
  */
 
-#include "backends/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl-common.h"
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"

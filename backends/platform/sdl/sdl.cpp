@@ -21,7 +21,7 @@
  *
  */
 
-#include "backends/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl-common.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "base/main.h"

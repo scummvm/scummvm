@@ -1327,20 +1327,20 @@ fi
 case $_backend in
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
-		MODULES="$MODULES backends/null"
+		MODULES="$MODULES backends/platform/null"
 		;;
 	sdl)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
 		LIBS="$LIBS `$_sdlconfig --libs`"
-		MODULES="$MODULES backends/sdl"
+		MODULES="$MODULES backends/platform/sdl"
 		;;
 	x11)
 		INCLUDES="$INCLUDES -I/usr/X11R6/include"
 		LIBS="$LIBS -lpthread -lXext -lX11"
 		LDFLAGS="$LDFLAGS -L/usr/X11R6/lib -L/usr/local/lib"
 		DEFINES="$DEFINES -DX11_BACKEND"
-		MODULES="$MODULES backends/x11"
+		MODULES="$MODULES backends/platform/x11"
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"

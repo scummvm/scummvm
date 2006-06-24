@@ -21,7 +21,7 @@
  *
  */
 
-#include "backends/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl-common.h"
 #include "common/util.h"
 
 // FIXME move joystick defines out and replace with confile file options

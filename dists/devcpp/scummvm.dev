@@ -20,7 +20,7 @@ ObjectOutput=scummvm
 OverrideOutput=0
 OverrideOutputName=scummvm.exe
 HostApplication=
-Folders=backends,backends/fs,backends/fs/windows,backends/midi,backends/sdl,base,common,graphics,graphics/fonts,graphics/scaler,gui,sound,sound/softsynth,sound/softsynth/mt32
+Folders=backends,backends/fs,backends/fs/windows,backends/midi,backends/platform/sdl,base,common,graphics,graphics/fonts,graphics/scaler,gui,sound,sound/softsynth,sound/softsynth/mt32
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -30,9 +30,9 @@ CompilerSet=0
 CompilerSettings=0000000000000000000000
 
 [Unit4]
-FileName=..\..\backends\sdl\sdl.cpp
+FileName=..\..\backends\platform\sdl\sdl.cpp
 CompileCpp=1
-Folder=backends/sdl
+Folder=backends/platform/sdl
 Compile=1
 Link=1
 Priority=1000
@@ -40,9 +40,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=..\..\backends\sdl\sdl-common.h
+FileName=..\..\backends\platform\sdl\sdl-common.h
 CompileCpp=1
-Folder=backends/sdl
+Folder=backends/platform/sdl
 Compile=1
 Link=1
 Priority=1000
@@ -1938,9 +1938,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=..\..\backends\sdl\events.cpp
+FileName=..\..\backends\platform\sdl\events.cpp
 CompileCpp=1
-Folder=backends/sdl
+Folder=backends/platform/sdl
 Compile=1
 Link=1
 Priority=1000
@@ -1948,9 +1948,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=..\..\backends\sdl\graphics.cpp
+FileName=..\..\backends\platform\sdl\graphics.cpp
 CompileCpp=1
-Folder=backends/sdl
+Folder=backends/platform/sdl
 Compile=1
 Link=1
 Priority=1000

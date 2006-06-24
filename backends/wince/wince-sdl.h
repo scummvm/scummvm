@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "backends/intern.h"
-#include "backends/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl-common.h"
 
 #include "CEgui.h"
 #include "CEkeys.h"

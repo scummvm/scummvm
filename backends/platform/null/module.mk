@@ -1,10 +1,10 @@
-MODULE := backends/x11
+MODULE := backends/platform/null
 
 MODULE_OBJS := \
-	x11.o
+	null.o
 
 MODULE_DIRS += \
-	backends/x11/
+	backends/platform/null/
 
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)

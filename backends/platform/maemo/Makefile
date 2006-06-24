@@ -60,7 +60,7 @@ MODULE_DIRS += .
 
 
 BACKEND := sdl
-MODULES +=  backends/sdl base
+MODULES +=  backends/platform/sdl base
 MODULE_DIRS += .
 
 HAVE_GCC3 = 1

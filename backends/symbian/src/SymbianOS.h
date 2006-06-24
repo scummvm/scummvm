@@ -25,7 +25,7 @@
 #ifndef SDLSYMBIANH
 #define SDLSYMBIANH
 
-#include "backends/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl-common.h"
 
 /** Vibration support */
 #ifdef USE_VIBRA_SE_PXXX

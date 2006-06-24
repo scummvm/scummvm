@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "base/main.h"
 #include "backends/intern.h"
+#include "backends/platform/x11/x11.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -56,7 +57,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <backends/x11/x11.h>
 
 int main(int argc, char *argv[]) {
 	g_system = OSystem_X11::create(0, 0);
