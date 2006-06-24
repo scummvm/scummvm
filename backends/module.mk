@@ -14,15 +14,5 @@ MODULE_OBJS := \
 	midi/seq.o \
 	midi/windows.o
 
-MODULE_DIRS += \
-	backends \
-	backends/fs \
-	backends/fs/posix \
-	backends/fs/morphos \
-	backends/fs/windows \
-	backends/fs/amigaos4 \
-	backends/fs/dc \
-	backends/midi
-
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

@@ -16,8 +16,5 @@ MODULE_OBJS := \
 	system.o \
 	unzip.o
 
-MODULE_DIRS += \
-	common
-
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

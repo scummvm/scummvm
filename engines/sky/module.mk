@@ -23,15 +23,10 @@ MODULE_OBJS := \
 	music/mt32music.o \
 	music/musicbase.o
 
-MODULE_DIRS += \
-	engines/sky \
-	engines/sky/music \
-	engines/sky/compacts
-
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
 endif
 
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

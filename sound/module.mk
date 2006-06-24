@@ -23,9 +23,5 @@ MODULE_OBJS := \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
 
-MODULE_DIRS += \
-	sound \
-	sound/softsynth
-
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

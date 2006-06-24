@@ -44,13 +44,10 @@ MODULE_OBJS := \
 	video_v1.o \
 	video_v2.o
 
-MODULE_DIRS += \
-	engines/gob
-
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
 endif
 
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

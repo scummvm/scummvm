@@ -1478,7 +1478,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Type ./configure --host=ppc-amigaos
         * If you got an error about sdl-config, use --with-sdl-prefix
           parameter to set the path.
-        * Check 'config.mak' file and if everything seems to fine:
+        * Check 'config.mk' file and if everything seems to be fine:
         * Run 'make'.
         * Cross-compiling with Linux may be as easy.
 

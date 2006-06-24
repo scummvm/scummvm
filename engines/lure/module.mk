@@ -23,14 +23,11 @@ MODULE_OBJS := \
 	surface.o \
 	system.o
 
-MODULE_DIRS += \
-	engines/lure
-
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
 endif
 
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk
 

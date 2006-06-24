@@ -99,14 +99,6 @@ MODULE_OBJS += \
 	he/wiz_he.o
 endif
 
-MODULE_DIRS += \
-	engines/scumm \
-	engines/scumm/he \
-	engines/scumm/imuse \
-	engines/scumm/imuse_digi \
-	engines/scumm/insane \
-	engines/scumm/smush
-
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
@@ -115,4 +107,4 @@ PLUGIN_LDFLAGS += -lz
 endif
 
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

@@ -10,8 +10,5 @@ MODULE_OBJS := \
 	tables.o \
 	freeverb.o
 
-MODULE_DIRS += \
-	sound/softsynth/mt32
-
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

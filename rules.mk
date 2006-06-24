@@ -5,6 +5,10 @@
 # module object lists, one for each module.
 MODULE_OBJS-$(MODULE) := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 
+# Add all involved directories to the MODULE_DIRS list
+MODULE_DIRS += $(sort $(dir $(MODULE_OBJS-$(MODULE))))
+
+
 ifdef PLUGIN
 # Plugin build rule
 # TODO: Right now, for Mac OS X only. We either will have to generate this

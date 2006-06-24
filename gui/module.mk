@@ -23,8 +23,5 @@ MODULE_OBJS := \
 	ThemeNew.o \
 	theme-config.o
 
-MODULE_DIRS += \
-	gui
-
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk

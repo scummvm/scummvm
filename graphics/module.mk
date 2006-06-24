@@ -41,10 +41,5 @@ endif
 
 endif
 
-MODULE_DIRS += \
-	graphics \
-	graphics/fonts \
-	graphics/scaler
-
 # Include common rules 
-include $(srcdir)/common.rules
+include $(srcdir)/rules.mk
