@@ -34,23 +34,19 @@ namespace Common {
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class InSaveFile : public SeekableReadStream {
-};
+class InSaveFile : public SeekableReadStream {};
 
 /**
  * A class which allows game engines to save game state data.
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile : public WriteStream {
-};
+class OutSaveFile : public WriteStream {};
 
 /**
  * Convenience intermediate class, to be removed.
  */
-class SaveFile : public InSaveFile, public OutSaveFile {
-public:
-};
+class SaveFile : public InSaveFile, public OutSaveFile {};
 
 class SaveFileManager {
 
@@ -85,13 +81,6 @@ public:
 	 * from it, since that is highl unportable.
 	 */
 	virtual const char *getSavePath() const;
-};
-
-class DefaultSaveFileManager : public SaveFileManager {
-public:
-	virtual OutSaveFile *openForSaving(const char *filename);
-	virtual InSaveFile *openForLoading(const char *filename);
-	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
 };
 
 } // End of namespace Common

@@ -20,44 +20,17 @@
  *
  */
 
+#ifndef BACKEND_SAVES_DEFAULT_H
+#define BACKEND_SAVES_DEFAULT_H
+
 #include "common/stdafx.h"
-#include "common/util.h"
-#include "common/config-manager.h"
 #include "common/savefile.h"
 
-#include <stdio.h>
-#include <string.h>
+class DefaultSaveFileManager : public Common::SaveFileManager {
+public:
+	virtual Common::OutSaveFile *openForSaving(const char *filename);
+	virtual Common::InSaveFile *openForLoading(const char *filename);
+	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
+};
 
-namespace Common {
-
-const char *SaveFileManager::getSavePath() const {
-
-#if defined(PALMOS_MODE) || defined(__PSP__)
-	return SCUMMVM_SAVEPATH;
-#else
-
-	const char *dir = NULL;
-
-	// Try to use game specific savepath from config
-	dir = ConfMan.get("savepath").c_str();
-
-	// Work around a bug (#999122) in the original 0.6.1 release of
-	// ScummVM, which would insert a bad savepath value into config files.
-	if (0 == strcmp(dir, "None")) {
-		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
-		ConfMan.flushToDisk();
-		dir = ConfMan.get("savepath").c_str();
-	}
-
-#ifdef _WIN32_WCE
-	if (dir[0] == 0)
-		dir = ConfMan.get("path").c_str();
 #endif
-
-	assert(dir);
-
-	return dir;
-#endif
-}
-
-} // End of namespace Common

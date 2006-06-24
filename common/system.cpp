@@ -27,8 +27,9 @@
 
 #include "gui/message.h"
 
+#include "backends/saves/default/default-saves.h"
+
 #include "common/config-manager.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/util.h"
 
@@ -62,7 +63,7 @@ void OSystem::displayMessageOnOSD(const char *msg) {
 }
 
 Common::SaveFileManager *OSystem::getSavefileManager() {
-	return new Common::DefaultSaveFileManager();
+	return new DefaultSaveFileManager();
 }
 
 
