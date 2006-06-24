@@ -144,12 +144,9 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		return;
 
 	// First check whether the selection changed
-	int newSelectedItem;
-	newSelectedItem = findItem(x, y);
-	if (newSelectedItem > (int)_list.size() - 1)
-		newSelectedItem = -1;
+	int newSelectedItem = findItem(x, y);
 
-	if (_selectedItem != newSelectedItem) {
+	if (_selectedItem != newSelectedItem && newSelectedItem != -1) {
 		if (_editMode)
 			abortEditMode();
 		_selectedItem = newSelectedItem;
@@ -157,15 +154,17 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 
 	// TODO: Determine where inside the string the user clicked and place the
-	// caret accordingly. See _editScrollOffset and EditTextWidget::handleMouseDown.
+	// caret accordingly.
+	// See _editScrollOffset and EditTextWidget::handleMouseDown.
 	draw();
 
 }
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	// If this was a double click and the mouse is still over the selected item,
-	// send the double click command
-	if (clickCount == 2 && (_selectedItem == findItem(x, y))) {
+	// If this was a double click and the mouse is still over 
+	// the selected item, send the double click command
+	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
+		_selectedItem >= 0) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
 }
@@ -176,7 +175,13 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 
 
 int ListWidget::findItem(int x, int y) const {
-	return (y - _topPadding) / kLineHeight + _currentPos;
+	if (y < _topPadding) return -1;
+	int item = (y - _topPadding) / kLineHeight + _currentPos;
+	if (item >= _currentPos && item < _currentPos + _entriesPerPage && 
+		item < (int)_list.size())
+		return item;
+	else
+		return -1;
 }
 
 static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {

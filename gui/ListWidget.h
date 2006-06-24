@@ -104,6 +104,7 @@ public:
 protected:
 	void drawWidget(bool hilite);
 
+	//! Finds the item at position (x,y). Returns -1 if there is no item there.
 	int findItem(int x, int y) const;
 	void scrollBarRecalc();
 
