@@ -543,6 +543,11 @@ static GameFileDescription FEEBLEFILES_DE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
+static GameFileDescription FEEBLEFILES_IT_GameFiles[] = {
+	{ "game22",		GAME_BASEFILE,	"80576f2e1ed4c912b63921fe77af313e"},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
+};
+
 static GameFileDescription FEEBLEFILES_ES_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"71d7d2d5e479b053c5a9757f1702c9c3"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
@@ -1266,6 +1271,19 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
+	// The Feeble Files - Italian Windows 4CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_IT,
+		"4CD",
+		ARRAYSIZE(FEEBLEFILES_IT_GameFiles),
+		FEEBLEFILES_IT_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+	},
+
 	// The Feeble Files - Spanish Windows 4CD
 	{
 		"feeble",
@@ -1278,7 +1296,6 @@ static GameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 	},
-
 };
 
 DetectedGame toDetectedGame(const GameDescription &g) {
