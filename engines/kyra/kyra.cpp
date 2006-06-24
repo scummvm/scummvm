@@ -382,12 +382,10 @@ KyraEngine::~KyraEngine() {
 }
 
 KyraEngine_v1::~KyraEngine_v1() {
-	// FIXME: I am leaking badly!
 
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
-	// FIXME: I am leaking badly!
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
