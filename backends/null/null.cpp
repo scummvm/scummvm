@@ -43,7 +43,6 @@ public:
 	virtual bool getFeatureState(Feature f);
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height);
@@ -95,11 +94,6 @@ public:
 	virtual void quit();
 
 	virtual void setWindowCaption(const char *caption);
-
-	virtual void displayMessageOnOSD(const char *msg);
-
-	virtual SaveFileManager *getSavefileManager();
-
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -116,202 +110,146 @@ int main(int argc, char *argv[]) {
 	return res;
 }
 
-OSystem_NULL::OSystem_NULL()
-{
+OSystem_NULL::OSystem_NULL() {
 }
 
-OSystem_NULL::~OSystem_NULL()
-{
+OSystem_NULL::~OSystem_NULL() {
 }
 
-bool OSystem_NULL::hasFeature(Feature f)
-{
+bool OSystem_NULL::hasFeature(Feature f) {
 	return false;
 }
 
-void OSystem_NULL::setFeatureState(Feature f, bool enable)
-{
+void OSystem_NULL::setFeatureState(Feature f, bool enable) {
 }
 
-bool OSystem_NULL::getFeatureState(Feature f)
-{
+bool OSystem_NULL::getFeatureState(Feature f) {
 	return false;
 }
 
-const OSystem::GraphicsMode* OSystem_NULL::getSupportedGraphicsModes() const
-{
+const OSystem::GraphicsMode* OSystem_NULL::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
 
-int OSystem_NULL::getDefaultGraphicsMode() const
-{
+int OSystem_NULL::getDefaultGraphicsMode() const {
 	return -1;
 }
 
-bool OSystem_NULL::setGraphicsMode(int mode)
-{
+bool OSystem_NULL::setGraphicsMode(int mode) {
 	return true;
 }
 
-bool OSystem_NULL::setGraphicsMode(const char *name)
-{
-	return true;
-}
-
-int OSystem_NULL::getGraphicsMode() const
-{
+int OSystem_NULL::getGraphicsMode() const {
 	return -1;
 }
 
-void OSystem_NULL::initSize(uint width, uint height)
-{
+void OSystem_NULL::initSize(uint width, uint height) {
 }
 
-int16 OSystem_NULL::getHeight()
-{
+int16 OSystem_NULL::getHeight() {
 	return 320;
 }
 
-int16 OSystem_NULL::getWidth()
-{
+int16 OSystem_NULL::getWidth() {
 	return 200;
 }
 
-void OSystem_NULL::setPalette(const byte *colors, uint start, uint num)
-{
+void OSystem_NULL::setPalette(const byte *colors, uint start, uint num) {
 }
 
-void OSystem_NULL::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_NULL::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 }
 
-void OSystem_NULL::updateScreen()
-{
+void OSystem_NULL::updateScreen() {
 }
 
-void OSystem_NULL::setShakePos(int shakeOffset)
-{
+void OSystem_NULL::setShakePos(int shakeOffset) {
 }
 
-void OSystem_NULL::showOverlay ()
-{
+void OSystem_NULL::showOverlay () {
 }
 
-void OSystem_NULL::hideOverlay ()
-{
+void OSystem_NULL::hideOverlay () {
 }
 
-void OSystem_NULL::clearOverlay ()
-{
+void OSystem_NULL::clearOverlay () {
 }
 
-void OSystem_NULL::grabOverlay (OverlayColor *buf, int pitch)
-{
+void OSystem_NULL::grabOverlay (OverlayColor *buf, int pitch) {
 }
 
-void OSystem_NULL::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_NULL::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 }
 
-int16 OSystem_NULL::getOverlayHeight()
-{
+int16 OSystem_NULL::getOverlayHeight() {
 	return getHeight();
 }
 
-int16 OSystem_NULL::getOverlayWidth()
-{
+int16 OSystem_NULL::getOverlayWidth() {
 	return getWidth();
 }
 
-OverlayColor OSystem_NULL::RGBToColor(uint8 r, uint8 g, uint8 b)
-{
+OverlayColor OSystem_NULL::RGBToColor(uint8 r, uint8 g, uint8 b) {
 	return 0;
 }
 
-void OSystem_NULL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
-{
+void OSystem_NULL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 }
 
-bool OSystem_NULL::showMouse(bool visible)
-{
+bool OSystem_NULL::showMouse(bool visible) {
 	return true;
 }
 
-void OSystem_NULL::warpMouse(int x, int y)
-{
+void OSystem_NULL::warpMouse(int x, int y) {
 }
 
-void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor)
-{
+void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor) {
 }
 
-bool OSystem_NULL::pollEvent(Event &event)
-{
+bool OSystem_NULL::pollEvent(Event &event) {
 	return false;
 }
 
-uint32 OSystem_NULL::getMillis()
-{
+uint32 OSystem_NULL::getMillis() {
 	return 0;
 }
 
-void OSystem_NULL::delayMillis(uint msecs)
-{
+void OSystem_NULL::delayMillis(uint msecs) {
 }
 
-void OSystem_NULL::setTimerCallback(TimerProc callback, int interval)
-{
+void OSystem_NULL::setTimerCallback(TimerProc callback, int interval) {
 }
 
-OSystem::MutexRef OSystem_NULL::createMutex(void)
-{
+OSystem::MutexRef OSystem_NULL::createMutex(void) {
 	return NULL;
 }
 
-void OSystem_NULL::lockMutex(MutexRef mutex)
-{
+void OSystem_NULL::lockMutex(MutexRef mutex) {
 }
 
-void OSystem_NULL::unlockMutex(MutexRef mutex)
-{
+void OSystem_NULL::unlockMutex(MutexRef mutex) {
 }
 
-void OSystem_NULL::deleteMutex(MutexRef mutex)
-{
+void OSystem_NULL::deleteMutex(MutexRef mutex) {
 }
 
-bool OSystem_NULL::setSoundCallback(SoundProc proc, void *param)
-{
+bool OSystem_NULL::setSoundCallback(SoundProc proc, void *param) {
 	return true;
 }
 
-void OSystem_NULL::clearSoundCallback()
-{
+void OSystem_NULL::clearSoundCallback() {
 }
 
-int OSystem_NULL::getOutputSampleRate() const
-{
+int OSystem_NULL::getOutputSampleRate() const {
 	return 22050;
 }
 
-void OSystem_NULL::quit()
-{
+void OSystem_NULL::quit() {
 }
 
-void OSystem_NULL::setWindowCaption(const char *caption)
-{
+void OSystem_NULL::setWindowCaption(const char *caption) {
 }
-
-void OSystem_NULL::displayMessageOnOSD(const char *msg)
-{
-}
-
-SaveFileManager* OSystem_NULL::getSavefileManager()
-{
-	return NULL;
-}
-
 
 OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();
