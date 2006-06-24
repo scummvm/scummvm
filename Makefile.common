@@ -67,7 +67,7 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 -include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
 
 # Depdir information
-DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULE_DIRS))
+DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES = 
 
 # Make base/version.o depend on all other object files. This way if anything is
