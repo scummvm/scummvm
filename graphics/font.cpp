@@ -82,11 +82,12 @@ void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) con
 		const bitmap_t buffer = READ_UINT16(tmp);
 		tmp++;
 		bitmap_t mask = 0x8000;
-		if (ty + y < 0 || ty + y >= dst->h)
+		if (ty + desc.ascent - bby - bbh + y < 0 ||
+		    ty + desc.ascent - bby - bbh + y >= dst->h)
 			continue;
 
 		for (int x = 0; x < bbw; x++, mask >>= 1) {
-			if (tx + x < 0 || tx + x >= dst->w)
+			if (tx + bbx + x < 0 || tx + bbx + x >= dst->w)
 				continue;
 			if ((buffer & mask) != 0) {
 				if (dst->bytesPerPixel == 1)
