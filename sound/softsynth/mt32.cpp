@@ -391,7 +391,7 @@ class MidiDriver_ThreadedMT32 : public MidiDriver_MT32 {
 private:
 	OSystem::Mutex _eventMutex;
 	MidiEvent_MT32 *_events;
-	Timer::TimerProc _timer_proc;
+	TimerManager::TimerProc _timer_proc;
 
 	void pushMidiEvent(MidiEvent_MT32 *event);
 	MidiEvent_MT32 *popMidiEvent();
@@ -405,7 +405,7 @@ public:
 
 	void onTimer();
 	void close();
-	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, TimerManager::TimerProc timer_proc);
 };
 
 
@@ -421,7 +421,7 @@ void MidiDriver_ThreadedMT32::close() {
 	}
 }
 
-void MidiDriver_ThreadedMT32::setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
+void MidiDriver_ThreadedMT32::setTimerCallback(void *timer_param, TimerManager::TimerProc timer_proc) {
 	if (!_timer_proc || !timer_proc) {
 		if (_timer_proc)
 			g_timer->removeTimerProc(_timer_proc);

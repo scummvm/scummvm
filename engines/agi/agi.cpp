@@ -269,9 +269,8 @@ int agi_get_keypress_low() {
 	return k;
 }
 
-static uint32 agi_timer_function_low(uint32 i) {
+static void agi_timer_function_low(void *refCon) {
 	tick_timer++;
-	return i;
 }
 
 static void init_pri_table() {
@@ -526,7 +525,7 @@ void AgiEngine::initialize() {
 	init_video();
 
 	tick_timer = 0;
-	Common::g_timer->installTimerProc((Common::Timer::TimerProc) agi_timer_function_low, 10 * 1000, NULL);
+	Common::g_timer->installTimerProc(agi_timer_function_low, 10 * 1000, NULL);
 
 	game.ver = -1;		/* Don't display the conf file warning */
 

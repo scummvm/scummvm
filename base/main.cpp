@@ -317,7 +317,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	system.initBackend();
 
 	// Create the timer services
-	Common::g_timer = new Common::Timer(&system);
+	Common::g_timer = new Common::TimerManager(&system);
 
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);

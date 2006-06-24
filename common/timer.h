@@ -36,7 +36,7 @@ class OSystem;
 
 namespace Common {
 
-class Timer {
+class TimerManager {
 public:
 	typedef void (*TimerProc)(void *refCon);
 
@@ -55,8 +55,8 @@ private:
 	} _timerSlots[MAX_TIMERS];
 
 public:
-	Timer(OSystem *system);
-	~Timer();
+	TimerManager(OSystem *system);
+	~TimerManager();
 
 	/**
 	 * Install a new timer callback. It will from now be called every interval microseconds.
@@ -82,7 +82,7 @@ protected:
 	int handler(int t);
 };
 
-extern Timer *g_timer;
+extern TimerManager *g_timer;
 
 } // End of namespace Common
 

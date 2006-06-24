@@ -29,9 +29,9 @@
 
 namespace Common {
 
-Timer *g_timer = NULL;
+TimerManager *g_timer = NULL;
 
-Timer::Timer(OSystem *system) :
+TimerManager::TimerManager(OSystem *system) :
 	_system(system),
 	_timerHandler(0),
 	_lastTime(0) {
@@ -51,10 +51,10 @@ Timer::Timer(OSystem *system) :
 
 }
 
-Timer::~Timer() {
+TimerManager::~TimerManager() {
 	// Remove the timer callback.
 	// Note: backends *must* gurantee that after this method call returns,
-	// the handler is not in use anymore; else race condtions could occurs.
+	// the handler is not in use anymore; else race condtions could occur.
 	_system->setTimerCallback(0, 0);
 
 	{
@@ -67,13 +67,13 @@ Timer::~Timer() {
 	}
 }
 
-int Timer::timer_handler(int t) {
+int TimerManager::timer_handler(int t) {
 	if (g_timer)
 		return g_timer->handler(t);
 	return 0;
 }
 
-int Timer::handler(int t) {
+int TimerManager::handler(int t) {
 	StackLock lock(_mutex);
 	uint32 interval, l;
 
@@ -97,7 +97,7 @@ int Timer::handler(int t) {
 	return t;
 }
 
-bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
+bool TimerManager::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
 	assert(interval > 0);
 	StackLock lock(_mutex);
 
@@ -115,7 +115,7 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 	return false;
 }
 
-void Timer::removeTimerProc(TimerProc procedure) {
+void TimerManager::removeTimerProc(TimerProc procedure) {
 	StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_TIMERS; l++) {

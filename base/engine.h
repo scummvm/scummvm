@@ -32,14 +32,14 @@ namespace Audio {
 }
 namespace Common {
 	class SaveFileManager;
-	class Timer;
+	class TimerManager;
 }
 
 class Engine {
 public:
 	OSystem *_system;
 	Audio::Mixer *_mixer;
-	Common::Timer * _timer;
+	Common::TimerManager * _timer;
 
 protected:
 	const Common::String _targetName; // target name for saves
