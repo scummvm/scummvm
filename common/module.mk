@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	mutex.o \
 	str.o \
 	stream.o \
-	timer.o \
 	util.o \
 	savefile.o \
 	system.o \

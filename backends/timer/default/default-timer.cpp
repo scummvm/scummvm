@@ -19,24 +19,25 @@
  * $Id$
  */
 
-#ifndef __MORPHOS__
-
 #include "common/stdafx.h"
 #include "common/scummsys.h"
-#include "common/timer.h"
+#include "backends/timer/default/default-timer.h"
 #include "common/util.h"
 #include "common/system.h"
 
 namespace Common {
-
+// FIXME: Hack: This global variable shouldn't be declared here; in fact it 
+// probably shouldn't be declared at all but rather a different method to
+// query the TimerManager object should be invented.
 TimerManager *g_timer = NULL;
+}
 
-TimerManager::TimerManager(OSystem *system) :
+DefaultTimerManager::DefaultTimerManager(OSystem *system) :
 	_system(system),
 	_timerHandler(0),
 	_lastTime(0) {
 
-	g_timer = this;
+	Common::g_timer = this;
 
 	for (int i = 0; i < MAX_TIMERS; i++) {
 		_timerSlots[i].procedure = NULL;
@@ -51,14 +52,14 @@ TimerManager::TimerManager(OSystem *system) :
 
 }
 
-TimerManager::~TimerManager() {
+DefaultTimerManager::~DefaultTimerManager() {
 	// Remove the timer callback.
 	// Note: backends *must* gurantee that after this method call returns,
 	// the handler is not in use anymore; else race condtions could occur.
 	_system->setTimerCallback(0, 0);
 
 	{
-		StackLock lock(_mutex);
+		Common::StackLock lock(_mutex);
 		for (int i = 0; i < MAX_TIMERS; i++) {
 			_timerSlots[i].procedure = NULL;
 			_timerSlots[i].interval = 0;
@@ -67,14 +68,14 @@ TimerManager::~TimerManager() {
 	}
 }
 
-int TimerManager::timer_handler(int t) {
-	if (g_timer)
-		return g_timer->handler(t);
+int DefaultTimerManager::timer_handler(int t) {
+	if (Common::g_timer)
+		return ((DefaultTimerManager *)Common::g_timer)->handler(t);
 	return 0;
 }
 
-int TimerManager::handler(int t) {
-	StackLock lock(_mutex);
+int DefaultTimerManager::handler(int t) {
+	Common::StackLock lock(_mutex);
 	uint32 interval, l;
 
 	_lastTime = _thisTime;
@@ -97,9 +98,9 @@ int TimerManager::handler(int t) {
 	return t;
 }
 
-bool TimerManager::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
+bool DefaultTimerManager::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
 	assert(interval > 0);
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (!_timerSlots[l].procedure) {
@@ -115,8 +116,8 @@ bool TimerManager::installTimerProc(TimerProc procedure, int32 interval, void *r
 	return false;
 }
 
-void TimerManager::removeTimerProc(TimerProc procedure) {
-	StackLock lock(_mutex);
+void DefaultTimerManager::removeTimerProc(TimerProc procedure) {
+	Common::StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure == procedure) {
@@ -127,7 +128,3 @@ void TimerManager::removeTimerProc(TimerProc procedure) {
 		}
 	}
 }
-
-} // End of namespace Common
-
-#endif

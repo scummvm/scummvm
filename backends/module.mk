@@ -12,7 +12,8 @@ MODULE_OBJS := \
 	midi/morphos.o \
 	midi/quicktime.o \
 	midi/seq.o \
-	midi/windows.o
+	midi/windows.o \
+	timer/default/default-timer.o
 
 # Include common rules 
 include $(srcdir)/rules.mk

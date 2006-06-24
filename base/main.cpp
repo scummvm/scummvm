@@ -34,6 +34,8 @@
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
+
+#include "backends/timer/default/default-timer.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -317,7 +319,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	system.initBackend();
 
 	// Create the timer services
-	Common::g_timer = new Common::TimerManager(&system);
+	Common::g_timer = new DefaultTimerManager(&system);
 
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);

@@ -23,16 +23,6 @@
 #define COMMON_TIMER_H
 
 #include "common/scummsys.h"
-#include "common/mutex.h"
-
-#define MAX_TIMERS 8
-
-
-#ifdef __MORPHOS__
-#include "morphos_timer.h"
-#else
-
-class OSystem;
 
 namespace Common {
 
@@ -40,23 +30,7 @@ class TimerManager {
 public:
 	typedef void (*TimerProc)(void *refCon);
 
-private:
-	OSystem *_system;
-	Mutex _mutex;
-	void *_timerHandler;
-	int32 _thisTime;
-	int32 _lastTime;
-
-	struct TimerSlots {
-		TimerProc procedure;
-		int32 interval;
-		int32 counter;
-		void *refCon;
-	} _timerSlots[MAX_TIMERS];
-
-public:
-	TimerManager(OSystem *system);
-	~TimerManager();
+	virtual ~TimerManager() {}
 
 	/**
 	 * Install a new timer callback. It will from now be called every interval microseconds.
@@ -70,22 +44,16 @@ public:
 	 * @param refCon	an arbitrary void pointer; will be passed to the timer callback
 	 * @return	true if the timer was installed successfully, false otherwise
 	 */
-	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
+	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon) = 0;
 
 	/**
 	 * Remove the given timer callback. It will not be invoked anymore.
 	 */
-	void removeTimerProc(TimerProc proc);
-
-protected:
-	static int timer_handler(int t);
-	int handler(int t);
+	virtual void removeTimerProc(TimerProc proc) = 0;
 };
 
 extern TimerManager *g_timer;
 
 } // End of namespace Common
-
-#endif
 
 #endif
