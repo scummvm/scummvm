@@ -725,7 +725,7 @@ bitmap_t bdf_hexval(unsigned char *buf) {
 int gen_c_source(struct font* pf, char *path)
 {
 	FILE *ofp;
-	int i;
+	int h, i;
 	int did_defaultchar = 0;
 	int did_syncmsg = 0;
 	time_t t = time(0);
@@ -815,7 +815,7 @@ int gen_c_source(struct font* pf, char *path)
 			fprintf(ofp, "+\n");
 
 			x = 0;
-			int h = height;
+			h = height;
 			while (h > 0) {
 				if (x == 0) fprintf(ofp, "   |");
 
