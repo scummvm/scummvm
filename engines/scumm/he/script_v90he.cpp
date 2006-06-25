@@ -542,12 +542,11 @@ void ScummEngine_v90he::o90_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
+			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
 			if (_videoParams.flags & 2) {
-				int result = _moviePlay->load((const char *)_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
-				VAR(119) = result;
+				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
 			} else {
-				int result = _moviePlay->load((const char *)_videoParams.filename, _videoParams.flags);
-				VAR(119) = result;
+				VAR(119) = _moviePlay->load(filename, _videoParams.flags);
 			}
 		} else if (_videoParams.status == 165) {
 			// Stop video
