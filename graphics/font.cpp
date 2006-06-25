@@ -331,7 +331,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 	long ofs = 0;
 	int maxwidth = 0;
 	int i, k, encoding = 0, width = 0;
-	int bbw, bbh = 0, bbx = 0, bby = 0;
+	int bbw = 0, bbh = 0, bbx = 0, bby = 0;
 	int proportional = 0;
 	int need_bbx = 0;
 	int encodetable = 0;
