@@ -420,6 +420,11 @@ int Actor::actorWalkStep() {
 	}
 
 	_pos = _actorPos;
+
+	if (_pos == _walkdata.next) {
+		_moving &= ~MF_IN_LEG;
+		return 0;
+	}
 	return 1;
 }
 
@@ -776,14 +781,15 @@ void Actor::turnToDirection(int newdir) {
 	if (newdir == -1 || _ignoreTurns)
 		return;
 
-	_moving &= ~MF_TURN;
-
-	if (newdir != _facing) {
-		if (_vm->_game.version <= 6)
-			_moving = MF_TURN;
-		else
-			_moving |= MF_TURN;
+	if (_vm->_game.version <= 6) {
+		_moving = MF_TURN;
 		_targetFacing = newdir;
+	} else {
+		_moving &= ~MF_TURN;
+		if (newdir != _facing) {
+			_moving |= MF_TURN;
+			_targetFacing = newdir;
+		}
 	}
 }
 
@@ -817,7 +823,7 @@ void Actor::showActor() {
 		startAnimActor(_talkStopFrame);
 	} else {
 		if (_costumeNeedsInit) {
-				startAnimActor(_initFrame);
+			startAnimActor(_initFrame);
 			_costumeNeedsInit = false;
 		}
 	}
@@ -1335,7 +1341,7 @@ int ScummEngine_v70he::getActorFromPos(int x, int y) {
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
 			&& y >= _actors[i]._top && y <= _actors[i]._bottom
-			&& (_actors[i]._pos.y > _actors[curActor]._pos.y || curActor == 0)) 
+			&& (_actors[i]._pos.y > _actors[curActor]._pos.y || curActor == 0))
 				curActor = i;
 	}
 
@@ -1596,7 +1602,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	if (!isInCurrentRoom() && _vm->_game.version <= 6) {
 		_pos.x = abr.x;
 		_pos.y = abr.y;
-		if (_ignoreTurns == false && dir != -1)
+		if (!_ignoreTurns && dir != -1)
 			_facing = dir;
 		return;
 	}
@@ -1688,6 +1694,12 @@ void Actor::walkActor() {
 			_moving = 0;
 			setBox(_walkdata.destbox);
 			startWalkAnim(3, _walkdata.destdir);
+			if (_vm->_game.version <= 6) {
+				if (!_ignoreTurns && _walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
+					_targetFacing = _walkdata.destdir;
+					_moving = MF_TURN;
+				}
+			}
 			return;
 		}
 
