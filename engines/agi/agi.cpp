@@ -446,7 +446,7 @@ struct GameSettings {
 };
 
 static const GameSettings agi_settings[] = {
-	{"agi", "AGI game", GID_AGI, MDT_ADLIB, "VIEWDIR"},
+	{"agi", "AGI game", GID_AGI, MDT_ADLIB, "OBJECT"},
 	{NULL, NULL, 0, 0, NULL}
 };
 
