@@ -265,7 +265,7 @@ SliderWidget::SliderWidget(GuiObject *boss, const String &name, uint32 cmd)
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) {
-	if (isEnabled() && _isDragging && x >= 0) {
+	if (isEnabled() && _isDragging) {
 		int newValue = posToValue(x);
 		if (newValue < _valueMin)
 			newValue = _valueMin;
