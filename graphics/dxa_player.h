@@ -109,6 +109,7 @@ protected:
 	void decodeNextFrame();
 
 	void decodeZlib(byte *data, int size, int totalSize);
+	void decode12(byte *data, int size, int totalSize);
 };
  
 } // End of namespace Graphics

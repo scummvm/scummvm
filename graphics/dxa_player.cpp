@@ -167,6 +167,102 @@ void DXAPlayer::decodeZlib(byte *data, int size, int totalSize) {
 #define BLOCKW 4
 #define BLOCKH 4
 
+void DXAPlayer::decode12(byte *data, int size, int totalSize) {
+#ifdef USE_ZLIB
+	/* decompress the input data */
+	decodeZlib(data, size, totalSize);
+
+	byte *dat = data;
+	byte *frame2 = (byte *)malloc(totalSize);
+
+	memcpy(frame2, _frameBuffer1, totalSize);
+
+	for (int by = 0; by < _height; by += BLOCKH) {
+		for (int bx = 0; bx < _width; bx += BLOCKW) {
+			byte type = *dat++;
+			byte *b2 = frame2 + bx + by * _width;
+
+			switch (type) {
+			case 0:
+				break;
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 1:	{
+				unsigned short diffMap;
+				if (type >= 10 && type <= 15) {
+					static const struct { uint8 sh1, sh2; } shiftTbl[6] = {
+						{0, 0},	{8, 0},	{8, 8},	{8, 4},	{4, 0},	{4, 4}
+					};
+					diffMap = ((*dat & 0xF0) << shiftTbl[type-10].sh1) | 
+						  ((*dat & 0x0F) << shiftTbl[type-10].sh2);
+					dat++;
+				} else {
+					diffMap = *(unsigned short*)dat;
+					dat += 2;
+				}
+
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					for (int xc = 0; xc < BLOCKW; xc++) {
+						if (diffMap & 0x8000) {
+							b2[xc] = *dat++;
+						}
+						diffMap <<= 1;
+					}
+					b2 += _width;
+				}
+				break;
+			}
+			case 2:	{
+				byte color = *dat++;
+
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					for (int xc = 0; xc < BLOCKW; xc++) {
+						b2[xc] = color;
+					}
+					b2 += _width;
+				}
+				break;
+			}
+			case 3:	{
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					for (int xc = 0; xc < BLOCKW; xc++) {
+						b2[xc] = *dat++;
+					}
+					b2 += _width;
+				}
+				break;
+			}
+			case 4:	{
+				byte mbyte = *dat++;
+				int mx = (mbyte >> 4) & 0x07;
+				if (mbyte & 0x80)
+					mx = -mx;
+				int my = mbyte & 0x07;
+				if (mbyte & 0x08)
+					my = -my;
+				byte *b1 = _frameBuffer1 + (bx+mx) + (by+my) * _width;
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					memcpy(b2, b1, BLOCKW);
+					b1 += _width;
+					b2 += _width;
+				}
+				break;
+			}
+			case 5:
+				break;
+			}
+		}
+	}
+
+	memcpy(data, frame2, totalSize);
+	free(frame2);
+#endif
+}
+
 void DXAPlayer::decodeNextFrame() {
 	uint32 tag;
 
@@ -190,10 +286,13 @@ void DXAPlayer::decodeNextFrame() {
 		case 3:
 			decodeZlib(_frameBuffer2, size, _frameSize);
 			break;
+		case 12:
+			decode12(_frameBuffer2, size, _frameSize);
+			break;
 		default:
 			error("decodeFrame: Unknown compression type %d", type);
 		}
-		if (type == 2 || type == 4) {
+		if (type == 2 || type == 4 || type == 12) {
 			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
 		} else {
 			for (int j = 0; j < _height; ++j) {
