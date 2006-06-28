@@ -96,10 +96,10 @@ protected:
 	/**
 	 * Copy current frame into the specified position of the destination
 	 * buffer.
-	 * @param dst		the destination buffer
-	 * @param x		the x position of the frame
-	 * @param y		the y position of the frame
-	 * @param pitch		the pitch of desintation buffer
+	 * @param dst		the buffer
+	 * @param x		the x position of the buffer
+	 * @param y		the y position of the buffer
+	 * @param pitch		the pitch of buffer
 	 */
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 
