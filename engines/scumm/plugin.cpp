@@ -564,6 +564,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "FreddiSCS", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "Fritzi3demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "Fritzi3demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi3", "MaliceMCV", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "MM3-DEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi3", "MM3-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
@@ -582,6 +583,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCove", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "FreddiDZZ", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiMML", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "ff5demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCoveDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -618,6 +620,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "PajamaTAL", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "PyjamaHM", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, 
 	{ "pajama2", "Pyjama Pit 2 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PJP2DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PJ2Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
