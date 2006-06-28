@@ -35,33 +35,14 @@
 #include "sound/audiostream.h"
 #include "sound/wave.h"
 
-
-#ifdef USE_ZLIB
-#include <zlib.h>
-#endif
-
 namespace Simon {
 
 MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer) {
+	: DXAPlayer(), _vm(vm), _mixer(mixer) {
 	_omniTV = false;
-	_playing = false;
 
 	_leftButtonDown = false;
 	_rightButtonDown = false;
-
-	_frameBuffer1 = 0;
-	_frameBuffer2 = 0;
-
-	_width = 0;
-	_height = 0;
-
-	_frameSize = 0;
-	_framesCount = 0;
-	_frameNum = 0;
-	_framesPerSec = 0;
-	_frameTicks = 0;
-	_frameSkipped = 0;
 
 	memset(baseName, 0, sizeof(baseName));
 
@@ -69,13 +50,8 @@ MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
 	_ticks = 0;
 }
 
-MoviePlayer::~MoviePlayer() {
-}
-
 bool MoviePlayer::load(const char *filename) {
 	char videoName[20];
-	uint32 tag;
-	int32 frameRate;
 	uint i;
 
 	int baseLen = strlen(filename) - 4;
@@ -84,8 +60,8 @@ bool MoviePlayer::load(const char *filename) {
 
 	// Change file extension to dxa
 	sprintf(videoName, "%s.dxa", baseName);
-	
-	if (_fd.open(videoName) == false) {
+
+	if (!loadFile(videoName)) {
 		// Check short filename to work around
 		// bug in a German Windows 2CD version.
 		if (baseLen >= 8) {
@@ -93,16 +69,14 @@ bool MoviePlayer::load(const char *filename) {
 			memset(shortName, 0, sizeof(shortName));
 			memcpy(shortName, filename, 6);
 	
-			sprintf(shortName, "%s~1.dxa", shortName);
+			sprintf(shortName, "%s~1", shortName);
 
+			if (!loadFile(shortName))
+				error("Failed to load video file %s or %s", videoName, shortName);
+			
 			memset(baseName, 0, sizeof(baseName));
 			memcpy(baseName, shortName, 8);
-
-			if (_fd.open(shortName) == false) {
-				error("Failed to load video file %s or %s", videoName, shortName);
-			} else {
-				debug(0, "Playing video %s", shortName);
-			}
+			debug(0, "Playing video %s", shortName);
 		} else {
 			error("Failed to load video file %s", videoName);
 		}
@@ -116,50 +90,17 @@ bool MoviePlayer::load(const char *filename) {
 		_vm->_language != Common::EN_ANY) {
 		_sequenceNum = 0;
 		for (i = 0; i < 90; i++) {
-			if (!scumm_stricmp(videoName, _sequenceList[i]))
+			if (!scumm_stricmp(baseName, _sequenceList[i]))
 				_sequenceNum = i;
 		}
 	}
-
-	tag = _fd.readUint32BE();
-	assert(tag == MKID_BE('DEXA'));
-
-	_fd.readByte();
-	_framesCount = _fd.readUint16BE();
-	frameRate = _fd.readUint32BE();
-
-	if (frameRate > 0)
-		_framesPerSec = 1000 / frameRate;
-	else if (frameRate < 0)
-		_framesPerSec = 100000 / (-frameRate);
-	else
-		_framesPerSec = 10;
-
-        if (frameRate < 0)
-                _frameTicks = -frameRate / 100;
-	else
-		_frameTicks = frameRate;
-
-	_width = _fd.readUint16BE();
-	_height = _fd.readUint16BE();
-	debug(0, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _framesPerSec, _frameTicks);
-
-	_frameSize = _width * _height;
-	_frameBuffer1 = (uint8 *)malloc(_frameSize);
-	_frameBuffer2 = (uint8 *)malloc(_frameSize);
-	if (!_frameBuffer1 || !_frameBuffer2) {
-		error("error allocating frame tables, size %d\n", _frameSize);
-	}
-
-	_frameNum = 0;
-	_frameSkipped = 0;
 
 	return true;
 }
 
 void MoviePlayer::playOmniTV() {
 	// Load OmniTV video
-	if (_fd.isOpen() == false) {
+	if (!_fd.isOpen()) {
 		_vm->_variableArray[254] = 6747;
 		return;
 	} else {
@@ -177,7 +118,7 @@ void MoviePlayer::play() {
 		return;
 	}
 
-	if (_fd.isOpen() == false) {
+	if (!_fd.isOpen()) {
 		return;
 	}
 
@@ -198,7 +139,7 @@ void MoviePlayer::play() {
 	while (_frameNum < _framesCount)
 		handleNextFrame();
 
-	close();
+	closeFile();
 
 	_vm->o_killAnimate();
 
@@ -212,12 +153,6 @@ void MoviePlayer::play() {
 	}
 
 	_vm->_fastFadeOutFlag = true;
-}
-
-void MoviePlayer::close() {
-	_fd.close();
-	free(_frameBuffer1);
-	free(_frameBuffer2);
 }
 
 void MoviePlayer::startSound() {
@@ -234,7 +169,7 @@ void MoviePlayer::startSound() {
 			_fd.seek(size, SEEK_CUR);
 
 			in.open((const char *)"audio.wav");
-			if (in.isOpen() == false) {
+			if (!in.isOpen()) {
 				error("Can't read offset file 'audio.wav'");
 			}
 
@@ -253,15 +188,14 @@ void MoviePlayer::startSound() {
 
 		Common::MemoryReadStream stream(buffer, size);
 		_bgSoundStream = Audio::makeWAVStream(stream);
-		_mixer->stopHandle(_bgSound);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 		free(buffer);
 	} else {
 		_bgSoundStream = Audio::AudioStream::openStreamFile(baseName);
-		if (_bgSoundStream != NULL) {
-			_mixer->stopHandle(_bgSound);
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
-		}
+	}
+
+	if (_bgSoundStream != NULL) {
+		_mixer->stopHandle(_bgSound);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 	}
 }
 
@@ -271,28 +205,28 @@ void MoviePlayer::nextFrame() {
 
 	if (_vm->getBitFlag(42)) {
 		_omniTV = false;
-		close();
+		closeFile();
 		return;
 	}
 
 	if (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum) {
-		copyFrame(_vm->getBackBuf(), 465, 222);
+		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 		return;
 	}
 
 	if (_frameNum < _framesCount) {
-		decodeFrame();
-		copyFrame(_vm->getBackBuf(), 465, 222);
+		decodeNextFrame();
+		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 		_frameNum++;
 	} else {
 		_omniTV = false;
-		close();
+		closeFile();
 		_vm->_variableArray[254] = 6747;
 	}
 }
 
 void MoviePlayer::handleNextFrame() {
-	decodeFrame();
+	decodeNextFrame();
 	processFrame();
 
 	_vm->_system->updateScreen();
@@ -332,92 +266,22 @@ void MoviePlayer::handleNextFrame() {
 	}
 }
 
-void MoviePlayer::copyFrame(byte *dst, uint x, uint y) {
-	uint h = _height;
-	uint w = _width;
+void MoviePlayer::setPalette(byte *pal) {
+	byte palette[1024];
+	byte *p = palette;
 
-	dst += y * _vm->_screenWidth + x;
-	byte *src = _frameBuffer1;
-
-	do {
-		memcpy(dst, src, w);
-		dst += _vm->_screenWidth;
-		src += _width;
-	} while (--h);
-}
-
-void MoviePlayer::decodeZlib(uint8 *data, int size, int totalSize) {
-#ifdef USE_ZLIB
-	uint8 *temp = (uint8 *)malloc(size);
-	if (temp) {
-		memcpy(temp, data, size);
-    	z_stream d_stream;
-    	d_stream.zalloc = (alloc_func)0;
-    	d_stream.zfree = (free_func)0;
-    	d_stream.opaque = (voidpf)0;
-    	d_stream.next_in = temp;
-    	d_stream.avail_in = size;
-    	d_stream.total_in = size;
-    	d_stream.next_out = data;
-    	d_stream.avail_out = totalSize;
-    	inflateInit(&d_stream);
-        inflate(&d_stream, Z_FINISH);
-    	inflateEnd(&d_stream);
-		free(temp);
-	}
-#endif
-}
-
-void MoviePlayer::decodeFrame() {
-	uint32 tag;
-
-	tag = _fd.readUint32BE();
-	if (tag == MKID_BE('CMAP')) {
-		uint8 rgb[768];
-		byte palette[1024];
-		byte *p = palette;
-
-		_fd.read(rgb, ARRAYSIZE(rgb));
-		for (int i = 0; i <= 256; i++) {
-			*p++ = rgb[i * 3 + 0];
-			*p++ = rgb[i * 3 + 1];
-			*p++ = rgb[i * 3 + 2];
-			*p++ = 0;
-		}
-		_vm->_system->setPalette(palette, 0, 256);
+	for (int i = 0; i <= 256; i++) {
+		*p++ = *pal++;
+		*p++ = *pal++;
+		*p++ = *pal++;
+		*p++ = 0;
 	}
 
-	tag = _fd.readUint32BE();
-	if (tag == MKID_BE('FRAM')) {
-		uint8 type = _fd.readByte();
-		uint32 size = _fd.readUint32BE();
-		debug(5, "frame %d type %d size %d", _frameNum, type, size);
-
-		_fd.read(_frameBuffer2, size);
-
-		switch (type) {
-		case 2:
-		case 3:
-			decodeZlib(_frameBuffer2, size, _frameSize);
-			break;
-		default:
-			error("decodeFrame: Unknown compression type %d", type);
-		}
-		if (type == 2) {
-			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
-		} else {
-			for (int j = 0; j < _height; ++j) {
-				for (int i = 0; i < _width; ++i) {
-					const int offs = j * _width + i;
-					_frameBuffer1[offs] ^= _frameBuffer2[offs];
-				}
-			}
-		}
-	}
+	_vm->_system->setPalette(palette, 0, 256);
 }
 
 void MoviePlayer::processFrame() {
-	copyFrame(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2);
+	copyFrameToBuffer(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
 	_vm->_system->copyRectToScreen(_vm->getFrontBuf(), _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 
 	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum + 1) ||
@@ -447,96 +311,96 @@ void MoviePlayer::processFrame() {
 }
 
 const char * MoviePlayer::_sequenceList[90] = {
-	"agent32.dxa",
-	"Airlock.dxa",
-	"Badluck.dxa",
-	"bentalk1.dxa",
-	"bentalk2.dxa",
-	"bentalk3.dxa",
-	"BigFight.dxa",
-	"BLOWLAB.dxa",
-	"breakdown.dxa",
-	"bridge.dxa",
-	"button2.dxa",
-	"cargo.dxa",
-	"COACH.dxa",
-	"Colatalk.dxa",
-	"cygnus2.dxa",
-	"dream.dxa",
-	"escape2.dxa",
-	"FASALL.dxa",
-	"fbikewurb.dxa",
-	"feebdel.dxa",
-	"Feebohno.dxa",
-	"feebpump.dxa",
-	"feefone1.dxa",
-	"feefone2.dxa",
-	"founder2.dxa",
-	"founder3.dxa",
-	"founder4.dxa",
-	"fxmadsam.dxa",
-	"fxwakeup.dxa",
-	"gate.dxa",
-	"Get Car.dxa",
-	"getaxe.dxa",
-	"getlift.dxa",
-	"icetrench.dxa",
-	"intomb1.dxa",
-	"intomb2.dxa",
-	"Jackpot.dxa",
-	"knockout.dxa",
-	"labocto.dxa",
-	"longfeeb.dxa",
-	"Mainmin.dxa",
-	"maznat.dxa",
-	"meetsquid.dxa",
-	"mflirt.dxa",
-	"mfxHappy.dxa",
-	"Mix_Feeb1.dxa",
-	"Mix_Feeb2.dxa",
-	"Mix_Feeb3.dxa",
-	"Mix_Guardscn.dxa",
-	"Mlights1.dxa",
-	"MLights2.dxa",
-	"MProtest.dxa",
-	"mudman.dxa",
-	"munlock.dxa",
-	"MUS5P2.dxa",
-	"MUSOSP1.dxa",
-	"Omenter.dxa",
-	"Omnicofe.dxa",
-	"OUTMIN~1.dxa",
-	"Readbook.dxa",
-	"Rebelhq.dxa",
-	"RebelHQ2.dxa",
-	"Reedin.dxa",
-	"rescue1.dxa",
-	"rescue2.dxa",
-	"samcar.dxa",
-	"Samdead.dxa",
-	"scanner.dxa",
-	"Sleepy.dxa",
-	"spitbrai.dxa",
-	"statue1.dxa",
-	"statue2.dxa",
-	"sva1.dxa",
-	"sva2.dxa",
-	"Teeter.dxa",
-	"Temple2.dxa",
-	"Temple3.dxa",
-	"Temple4.dxa",
-	"Temple5.dxa",
-	"Temple6.dxa",
-	"Temple7.dxa",
-	"Temple8.dxa",
-	"Tic-tac2.dxa",
-	"torture.dxa",
-	"transmit.dxa",
-	"Typey.dxa",
-	"ventfall.dxa",
-	"ventoff.dxa",
-	"wasting.dxa",
-	"wurbatak.dxa"
+	"agent32",
+	"Airlock",
+	"Badluck",
+	"bentalk1",
+	"bentalk2",
+	"bentalk3",
+	"BigFight",
+	"BLOWLAB",
+	"breakdown",
+	"bridge",
+	"button2",
+	"cargo",
+	"COACH",
+	"Colatalk",
+	"cygnus2",
+	"dream",
+	"escape2",
+	"FASALL",
+	"fbikewurb",
+	"feebdel",
+	"Feebohno",
+	"feebpump",
+	"feefone1",
+	"feefone2",
+	"founder2",
+	"founder3",
+	"founder4",
+	"fxmadsam",
+	"fxwakeup",
+	"gate",
+	"Get Car",
+	"getaxe",
+	"getlift",
+	"icetrench",
+	"intomb1",
+	"intomb2",
+	"Jackpot",
+	"knockout",
+	"labocto",
+	"longfeeb",
+	"Mainmin",
+	"maznat",
+	"meetsquid",
+	"mflirt",
+	"mfxHappy",
+	"Mix_Feeb1",
+	"Mix_Feeb2",
+	"Mix_Feeb3",
+	"Mix_Guardscn",
+	"Mlights1",
+	"MLights2",
+	"MProtest",
+	"mudman",
+	"munlock",
+	"MUS5P2",
+	"MUSOSP1",
+	"Omenter",
+	"Omnicofe",
+	"OUTMIN~1",
+	"Readbook",
+	"Rebelhq",
+	"RebelHQ2",
+	"Reedin",
+	"rescue1",
+	"rescue2",
+	"samcar",
+	"Samdead",
+	"scanner",
+	"Sleepy",
+	"spitbrai",
+	"statue1",
+	"statue2",
+	"sva1",
+	"sva2",
+	"Teeter",
+	"Temple2",
+	"Temple3",
+	"Temple4",
+	"Temple5",
+	"Temple6",
+	"Temple7",
+	"Temple8",
+	"Tic-tac2",
+	"torture",
+	"transmit",
+	"Typey",
+	"ventfall",
+	"ventoff",
+	"wasting",
+	"wurbatak"
 };
 
 } // End of namespace Simon

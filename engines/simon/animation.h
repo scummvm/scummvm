@@ -27,13 +27,14 @@
 #include "common/file.h"
 #include "common/stream.h"
 
+#include "graphics/dxa_player.h"
 #include "sound/mixer.h"
 
 namespace Simon {
 
 class SimonEngine;
 
-class MoviePlayer {
+class MoviePlayer : public Graphics::DXAPlayer {
 	SimonEngine *_vm;
 
 	Audio::Mixer *_mixer;
@@ -42,20 +43,8 @@ class MoviePlayer {
 	Audio::AudioStream *_bgSoundStream;
 
 	bool _omniTV;
-	bool _playing;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
-	Common::File _fd;
-	uint8 *_frameBuffer1;
-	uint8 *_frameBuffer2;
-	uint16 _width;
-	uint16 _height;
-	uint16 _framesCount;
-	uint32 _framesPerSec;
-	uint16 _frameNum;
-	uint32 _frameSize;
-	uint16 _frameSkipped;
-	uint32 _frameTicks;
 	uint32 _ticks;
 	
 	char baseName[40];
@@ -63,21 +52,18 @@ class MoviePlayer {
 	uint8 _sequenceNum;
 public:
 	MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer);
-	~MoviePlayer();
 
 	bool load(const char *filename);
 	void play();
 	void nextFrame();
+protected:
+	virtual void setPalette(byte *pal);
 private:
 	void playOmniTV();
-	void close();
 
-	void copyFrame(byte *dst, uint x, uint y);
-	void decodeFrame();
 	void handleNextFrame();
 	void processFrame();
 	void startSound();
-	void decodeZlib(uint8 *data, int size, int totalSize);
 };
 
 } // End of namespace Simon

@@ -24,6 +24,7 @@
 #define GRAPHICS_ANIMATION_H
 
 #include "common/scummsys.h"
+
 #include "sound/mixer.h"
 
 namespace Audio {
@@ -155,7 +156,6 @@ protected:
 	void plotYUV3x(int width, int height, byte *const *dat);
 #endif
 };
-
 
 } // End of namespace Graphics
 
