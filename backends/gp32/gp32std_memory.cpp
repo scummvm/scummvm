@@ -56,7 +56,7 @@ protected:
 	// Linked list is slow for this task. :)
 	static MemBlock *block;
 
-	byte *block;
+	byte *blockData;
 	size_t size;
 
 //	MemBlock *next;
@@ -68,7 +68,7 @@ public:
 	static void deinit();
 
 	static void *addBlock(size_t size);
-	static void deleteBlock(void *block);
+	static void deleteBlock(void *dstBlock);
 };
 
 byte *MemBlock::userMem = NULL;
@@ -129,7 +129,7 @@ void *MemBlock::addBlock(size_t size)
 	byte *ptr = userMem + (i * USER_BLOCK_SIZE);
 
 	blk->size = size;
-	blk->block = ptr;
+	blk->blockData = ptr;
 	blk->used = 1;
 
 	prevBlock = i;
@@ -137,17 +137,17 @@ void *MemBlock::addBlock(size_t size)
 	return (void *) ptr;
 }
 
-void MemBlock::deleteBlock(void *block)
+void MemBlock::deleteBlock(void *dstBlock)
 {
-	uint32 np = (uint32) block - (uint32) userMem;
+	uint32 np = (uint32) dstBlock - (uint32) userMem;
 
 	if ((np / USER_BLOCK_SIZE) * USER_BLOCK_SIZE != np) {
-		gm_free(block);
+		gm_free(dstBlock);
 //		warning("wrong block! (%d / %d)", (np / USER_BLOCK_SIZE) * USER_BLOCK_SIZE, np);
 	}
 	int i = np / USER_BLOCK_SIZE;
 	if (i > NUM_BLOCK) {
-		gm_free(block);
+		gm_free(dstBlock);
 		return;
 	}
 	block[i].used = 0;
@@ -155,11 +155,11 @@ void MemBlock::deleteBlock(void *block)
 /*
 	int i = 0;
 	for (i = 0; i < NUM_BLOCK; i++) {
-		if (block[i].block == block)
+		if (block[i].blockData == dstBlock)
 			break;
 	}
 	if (i == NUM_BLOCK) {
-		gm_free(block);	//fixme?
+		gm_free(dstBlock);	//fixme?
 		//warning("wrong block! %x", (uint32)block - (uint32)userMem);
 	} else {
 		GPDEBUG("deleteing block %d", i);
