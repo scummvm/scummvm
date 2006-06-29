@@ -55,8 +55,8 @@ void init() {
 }
 
 void GpMain(void *arg) {
-	extern void memChunkInit();
-	memChunkInit();
+	extern void memBlockInit();
+	memBlockInit();
 
 	init();
 
@@ -82,8 +82,8 @@ void GpMain(void *arg) {
 	//int res = scummvm_main(argc, argv);
 	int res = scummvm_main(1, NULL);
 
-	extern void memChunkDeinit();
-	memChunkDeinit();
+	extern void memBlockDeinit();
+	memBlockDeinit();
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
 	
