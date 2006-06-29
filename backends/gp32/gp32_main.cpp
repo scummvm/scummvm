@@ -55,6 +55,9 @@ void init() {
 }
 
 void GpMain(void *arg) {
+	extern void memChunkInit();
+	memChunkInit();
+
 	init();
 
 	readConfigVars();
@@ -78,6 +81,10 @@ void GpMain(void *arg) {
 	// Invoke the actual ScummVM main entry point:
 	//int res = scummvm_main(argc, argv);
 	int res = scummvm_main(1, NULL);
+
+	extern void memChunkDeinit();
+	memChunkDeinit();
+
 	g_system->quit();	// TODO: Consider removing / replacing this!
 	
 	//return res;

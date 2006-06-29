@@ -35,6 +35,8 @@
 #include <cctype>
 
 #include "gp32std.h"
+#include "gp32std_file.h"
+#include "gp32std_memory.h"
 
 #undef byte
 
