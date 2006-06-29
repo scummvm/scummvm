@@ -43,6 +43,14 @@ static GPSOUNDBUF soundBuf;
 // polls the current playing position within the buffer.
 
 static void soundTimer() {
+	static int locked = false;
+
+	if (locked) {
+		return;
+	}
+
+	locked = true;
+
 	unsigned int sampleshiftVal = soundBuf.samples << shiftVal;
 	unsigned int t = (((unsigned int)(*soundPos) - (unsigned int)buffer) >> shiftVal) >= soundBuf.samples ? 1 : 0;
 	if (t != frame) {
@@ -90,6 +98,8 @@ static void soundTimer() {
 			} while ((uint32)d < max);
 		}
 	}
+
+	locked = false;
 }
 
 int gp_soundBufStart(GPSOUNDBUF *sb) {
