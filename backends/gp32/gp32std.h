@@ -47,12 +47,6 @@ extern int		gp_strcasecmp(const char *dst, const char *src);
 extern int		gp_strncasecmp(const char *dst, const char *src, size_t count);
 extern void		gp_sprintf(char *str, const char *fmt, ...);
 
-extern void *	gp_memcpy(void *dst, const void *src, size_t count);
-extern void *	gp_memset(void *dst, int val, size_t count);
-extern void *	gp_malloc(size_t size);
-extern void *	gp_calloc(size_t nitems, size_t size);
-extern void 	gp_free(void *block);
-
 extern void		gp_setCpuSpeed(int freq);
 extern int		gp_printf(const char *fmt, ...);
 extern void		gp_delay(unsigned long msecs);

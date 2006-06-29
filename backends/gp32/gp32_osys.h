@@ -85,62 +85,62 @@ protected:
 public:
 
 	OSystem_GP32();
-	virtual ~OSystem_GP32();
+	~OSystem_GP32();
 
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
+	const GraphicsMode *getSupportedGraphicsModes() const;
+	int getDefaultGraphicsMode() const;
+	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
-	virtual int getGraphicsMode() const;
-	virtual void initSize(uint width, uint height);
-	virtual int16 getHeight();
-	virtual int16 getWidth();
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	int getGraphicsMode() const;
+	void initSize(uint width, uint height);
+	int16 getHeight();
+	int16 getWidth();
+	void setPalette(const byte *colors, uint start, uint num);
+	void grabPalette(byte *colors, uint start, uint num);
 
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-	virtual void updateScreen();
-	virtual void setShakePos(int shakeOffset);
+	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	void updateScreen();
+	void setShakePos(int shakeOffset);
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
+	void showOverlay();
+	void hideOverlay();
+	void clearOverlay();
+	void grabOverlay(OverlayColor *buf, int pitch);
+	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	int16 getOverlayHeight();
+	int16 getOverlayWidth();
 
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
+	OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
+	void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
-	virtual bool showMouse(bool visible);
+	bool showMouse(bool visible);
 
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
+	void warpMouse(int x, int y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
 
-	virtual bool pollEvent(Event &event);
-	virtual uint32 getMillis();
-	virtual void delayMillis(uint msecs);
+	bool pollEvent(Event &event);
+	uint32 getMillis();
+	void delayMillis(uint msecs);
 
-	virtual void setTimerCallback(TimerProc callback, int interval);
+	void setTimerCallback(TimerProc callback, int interval);
 
-	virtual MutexRef createMutex(void);
-	virtual void lockMutex(MutexRef mutex);
-	virtual void unlockMutex(MutexRef mutex);
-	virtual void deleteMutex(MutexRef mutex);
+	MutexRef createMutex(void);
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
 
-	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual void clearSoundCallback();
-	virtual int getOutputSampleRate() const;
+	bool setSoundCallback(SoundProc proc, void *param);
+	void clearSoundCallback();
+	int getOutputSampleRate() const;
 
-	virtual void quit();
+	void quit();
 
-	virtual void setWindowCaption(const char *caption);
+	void setWindowCaption(const char *caption);
 
-	virtual void displayMessageOnOSD(const char *msg);
+	void displayMessageOnOSD(const char *msg);
 
 	void fillMouseEvent(Event &event, int x, int y);
 	void handleKbdMouse();

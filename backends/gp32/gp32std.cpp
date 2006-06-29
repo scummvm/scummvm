@@ -33,6 +33,7 @@
 
 #include "backends/gp32/gp32std.h"
 #include "backends/gp32/gp32std_grap.h"
+#include "backends/gp32/gp32std_memory.h"
 
 #define DEBUG_MAX 5
 char debline[DEBUG_MAX][256];
@@ -63,112 +64,6 @@ void _dprintf(const char *s, ...) {
 	}
 
 //	gp_delay(100);
-}
-
-/////////////////////
-//Memory management
-#undef memcpy
-#undef memset
-void *gp_memcpy(void *dst, const void *src, size_t count) {
-	return memcpy(dst, src, count);
-}
-
-void *gp_memset(void *dst, int val, size_t count) {
-	return memset(dst, val, count);
-}
-
-void *gp_malloc(size_t size) {
-	uint32 np;
-	uint32 *up;
-
-	np = (uint32) gm_malloc(size + sizeof(uint32));
-
-	if (np) {
-		up = (uint32 *) np;
-		*up = 0x1234;
-		return (void *)(np + sizeof(uint32));
-	}
-
-	return NULL;
-}
-
-void *gp_calloc(size_t nitems, size_t size) {
-	void *p = gp_malloc(nitems * size);	//gpcalloc doesnt clear?
-
-	gp_memset(p, 0, nitems * size);
-
-//	if (*(uint8 *)p != 0)
-//		warning("%s: calloc doesn't clear", __FUNCTION__);	//fixme: was error
-
-	return p;
-}
-
-void gp_free(void *block) {
-	uint32 np;
-	uint32 *up;
-
-	if (!block) {
-		return;
-	}
-
-	np = ((uint32) block) - sizeof(uint32);
-	up = (uint32 *) np;
-	if (*up == 0x4321) {
-		warning("%s: double deallocation", __FUNCTION__);
-		return;
-	}
-
-	if (*up != 0x1234) {
-		warning("%s: corrupt block", __FUNCTION__);
-		return;
-	}
-	*up = 0x4321;
-
-	gm_free(up);
-}
-
-//////////////////////////////////////////////////
-// GP32 stuff
-//////////////////////////////////////////////////
-static char usedMemStr[16];
-int gUsedMem = 1024 * 1024;
-
-//#define CLEAN_MEMORY_WITH_0xE7
-#define CHECK_USED_MEMORY
-#define CHECK_NEW_TIME
-
-void *operator new(size_t size) {
-#if defined(CHECK_NEW_TIME)
-	static int ftick;
-	ftick = GpTickCountGet();
-#endif
-//	printf("BP:operator new(%d)", size);
-	void *ptr = gp_malloc(size);
-
-#if defined(CLEAN_MEMORY_WITH_0xE7)
-	if(ptr != NULL) {
-		gp_memset(ptr, 0xE7, size);
-	}
-#endif
-#if defined(CHECK_USED_MEMORY)
-	// Check free memory.
-	gUsedMem = ((int)(ptr) + size) - 0xc000000;
-
-	sprintf(usedMemStr, "%8d", gUsedMem);
-	gp_fillRect(frameBuffer1, 0, 0, 64, 12, 0);
-	gp_textOut(frameBuffer1, 0, 0, usedMemStr, 0xfffff);
-#endif
-#if defined(CHECK_NEW_TIME)
-	sprintf(usedMemStr, "%2d", GpTickCountGet() - ftick);
-	gp_fillRect(frameBuffer1, 72, 0, 24, 12, 0);
-	gp_textOut(frameBuffer1, 72, 0, usedMemStr, 0xfffff);
-#endif
-	return ptr;
-}
-
-void operator delete(void *ptr) {
-//	printf("operator delete(%x)", ptr);
-	gp_free(ptr);
 }
 
 ////////////////////

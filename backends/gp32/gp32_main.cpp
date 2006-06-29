@@ -38,6 +38,9 @@
 GlobalVars g_vars;
 
 void init() {
+	extern void memChunkInit();
+	memChunkInit();
+
 	gp_setCpuSpeed(40); // Default CPU Speed
 
 	GpGraphicModeSet(16, NULL);
@@ -78,6 +81,9 @@ void GpMain(void *arg) {
 	// Invoke the actual ScummVM main entry point:
 	//int res = scummvm_main(argc, argv);
 	int res = scummvm_main(1, NULL);
+
+	extern void memChunkDeinit();
+	memChunkDeinit();
 	g_system->quit();	// TODO: Consider removing / replacing this!
 	
 	//return res;
