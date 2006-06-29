@@ -96,18 +96,22 @@ void MemBlock::deinit()
 void *MemBlock::addBlock(size_t size)
 {
 	int i;
+	MemBlock *blk = &block[prevBlock];
 
 	// some optimizaion with loop
 	for (i = prevBlock; i < NUM_BLOCK; i++) {
-		if (!block[i].used) {
+		if (!blk->used) {
 			break;
 		}
+		blk++;
 	}
 	if(i == NUM_BLOCK) {
+		blk = &block[0];
 		for (i = 0; i < prevBlock; i++) {
-			if (!block[i].used) {
+			if (!blk->used) {
 				break;
 			}
+			blk++;
 		}
 		if(i == prevBlock)
 			return NULL;
@@ -115,9 +119,9 @@ void *MemBlock::addBlock(size_t size)
 
 	byte *ptr = userMem + (i * USER_BLOCK_SIZE);
 
-	block[i].size = size;
-	block[i].block = ptr;
-	block[i].used = 1;
+	blk->size = size;
+	blk->block = ptr;
+	blk->used = 1;
 
 	prevBlock = i;
 
