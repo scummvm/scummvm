@@ -1,6 +1,8 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2006 Won Star - GP32 Backend
+ * Copyright (C) 2002 Ph0x - GP32 Backend
+ * Copyright (C) 2003/2004 DJWillis - GP32 Backend
+ * Copyright (C) 2005/2006 Won Star - GP32 Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,7 +54,7 @@ protected:
 	static int prevBlock;
 
 	// Linked list is slow for this task. :)
-	static MemBlock block[NUM_BLOCK];
+	static MemBlock *block;
 
 	byte *block;
 	size_t size;
@@ -74,23 +76,30 @@ byte *MemBlock::userMem = NULL;
 //size_t MemBlock::allocSize = 0;
 int MemBlock::numBlock = 0;
 int MemBlock::prevBlock = 0;
-MemBlock MemBlock::block[NUM_BLOCK];
+MemBlock *MemBlock::block = NULL;
 
 void MemBlock::init()
 {
 	userMem = (byte *)gm_malloc(USER_MEMORY_SIZE + USER_BLOCK_SIZE);
-	if (!userMem) {
+	block = (MemBlock *)gm_malloc(NUM_BLOCK * sizeof(MemBlock));
+
+	if (!(userMem && block)) {
 		//error
 	}
+
+	memset(userMem, 0, USER_MEMORY_SIZE + USER_BLOCK_SIZE);
+	memset(block, 0, NUM_BLOCK * sizeof(MemBlock));
 }
 
 void MemBlock::deinit()
 {
-	if (!userMem) {
+	if (!(userMem && block)) {
 		//error
 	}
 	gm_free(userMem);
+	gm_free(block);
 	userMem = NULL;
+	block = NULL;
 }
 
 void *MemBlock::addBlock(size_t size)

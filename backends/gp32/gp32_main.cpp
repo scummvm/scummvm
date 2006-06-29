@@ -38,9 +38,6 @@
 GlobalVars g_vars;
 
 void init() {
-	extern void memChunkInit();
-	memChunkInit();
-
 	gp_setCpuSpeed(40); // Default CPU Speed
 
 	GpGraphicModeSet(16, NULL);
@@ -58,6 +55,9 @@ void init() {
 }
 
 void GpMain(void *arg) {
+	extern void memChunkInit();
+	memChunkInit();
+
 	init();
 
 	readConfigVars();
@@ -84,6 +84,7 @@ void GpMain(void *arg) {
 
 	extern void memChunkDeinit();
 	memChunkDeinit();
+
 	g_system->quit();	// TODO: Consider removing / replacing this!
 	
 	//return res;
