@@ -310,7 +310,10 @@ public:
 		int16 animIndices[10];
 		int16 animLoaded[10];
 		int16 animKeysFrames[4];
-		int16 someKeysFrames[4];
+		int16 animKeysStartFrames[4];
+		int16 animKeysStopFrames[4];
+		int16 animKeysIndices[4][4];
+		int8 animDirection;
 
 		int16 textKeysCount;
 		Mult_TextKey *textKeys;
@@ -323,13 +326,11 @@ public:
 		int16 frameRate;      
 
 		Video::Color fadePal[5][16];
-		int16 field_124[4][4]; // Not sure here either
-		int16 palAnimIndices[4]; // Not sure here either
+		int16 field_124[4][4];
+		int16 palAnimIndices[4]; // Not sure here
+		// TODO: Use this one instead of _frameStart
 		int16 frameStart;
 
-		int8 field_156;
-		int16 field_157[4];
-		int16 field_15F[4][4];
 		int16 field_17F[4][4];
 
 		int16 someKeysCount[4];

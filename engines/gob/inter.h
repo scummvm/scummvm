@@ -57,7 +57,7 @@ public:
 	void storeKey(int16 key);
 	void checkSwitchTable(char **ppExec);
 	void callSub(int16 retFlag);
-	void initControlVars(void);
+	void initControlVars(char full);
 	void renewTimeInVars(void);
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
 	virtual int16 loadSound(int16 slot) = 0;
@@ -317,6 +317,7 @@ protected:
 	void o2_stub0x80(void);
 	void o2_stub0x82(void);
 	void o2_stub0x85(void);
+	bool o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_stopSound(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_createSprite(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_animPalInit(char &cmdCount, int16 &counter, int16 &retFlag);

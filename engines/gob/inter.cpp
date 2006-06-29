@@ -279,7 +279,9 @@ void Inter::callSub(int16 retFlag) {
 		_terminate = true;
 }
 
-void Inter::initControlVars(void) {
+void Inter::initControlVars(char full) {
+	int i;
+
 	*_nestLevel = 0;
 	*_breakFromLevel = -1;
 
@@ -287,8 +289,12 @@ void Inter::initControlVars(void) {
 
 	_breakFlag = false;
 	_terminate = false;
-	_animPalDir[0] = 0;
-	_soundEndTimeKey = 0;
+
+	if (full == 1) {
+		for (i = 0; i < 8; i++)
+			_animPalDir[i] = 0;
+		_soundEndTimeKey = 0;
+	}
 }
 
 void Inter::renewTimeInVars(void) {

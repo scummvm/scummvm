@@ -195,10 +195,7 @@ public:
 	void loadSound(int16 slot, char *dataPtr);
 	int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 backColor,
 			int16 frontColor, char *str, int16 fontIndex, char inpType, int16 *pTotTime);
-	int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-					InputDesc * inpDesc);
 	int16 adjustKey(int16 key);
-	void collisionsBlock(void);
 	void loadTotFile(char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
@@ -224,6 +221,9 @@ public:
 	virtual void clearCollisions(void) = 0;
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave) = 0;
+	virtual void collisionsBlock(void) = 0;
+	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
+					InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
 	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse) = 0;
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
@@ -269,7 +269,6 @@ protected:
 
 	GobEngine *_vm;
 		
-	int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
 	void setCollisions(void);
 	void collSub(int16 offset);
 	void collAreaSub(int16 index, int8 enter);
@@ -277,6 +276,7 @@ protected:
 
 	virtual void pushCollisions(char all) = 0;
 	virtual void popCollisions(void) = 0;
+	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex) = 0;
 };
 
 class Game_v1 : public Game {
@@ -285,6 +285,9 @@ public:
 	virtual void clearCollisions(void);
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+	virtual void collisionsBlock(void);
+	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
+					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
 	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse);
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
@@ -297,6 +300,7 @@ public:
 protected:
 	virtual void pushCollisions(char all);
 	virtual void popCollisions(void);
+	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
 };
 
 class Game_v2 : public Game_v1 {
@@ -305,6 +309,9 @@ public:
 	virtual void clearCollisions(void);
 	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+	virtual void collisionsBlock(void);
+	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
+					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
 	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse);
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
@@ -325,6 +332,7 @@ protected:
 
 	virtual void pushCollisions(char all);
 	virtual void popCollisions(void);
+	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
 };
 
 }				// End of namespace Gob

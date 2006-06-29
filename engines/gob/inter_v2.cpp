@@ -526,7 +526,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_waitEndPlay),
 		OPCODE(o1_playComposition),
 		OPCODE(o1_getFreeMem),
-		OPCODE(o1_checkData),
+		OPCODE(o2_checkData),
 		/* 40 */
 		{NULL, ""},
 		OPCODE(o1_prepareStr),
@@ -1178,6 +1178,23 @@ void Inter_v2::loadMult(void) {
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 		}
 	}
+}
+
+bool Inter_v2::o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 handle;
+	int16 varOff;
+
+	evalExpr(0);
+	varOff = _vm->_parse->parseVarIndex();
+	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
+
+	WRITE_VAR_OFFSET(varOff, handle);
+	if (handle >= 0) {
+		_vm->_dataio->closeData(handle);
+		WRITE_VAR(16, (uint32) _vm->_dataio->getDataSize(_vm->_global->_inter_resStr));
+	} else
+		WRITE_VAR(16, (uint32) -1);
+	return false;
 }
 
 bool Inter_v2::o2_stopSound(char &cmdCount, int16 &counter, int16 &retFlag) {
