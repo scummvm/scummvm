@@ -252,9 +252,6 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// Free up memory
 	delete engine;
 
-	// Stop all sound processing now (this prevents some race conditions later on)
-	system.clearSoundCallback();
-
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
