@@ -27,7 +27,7 @@
 #include "common/scummsys.h"
 
 #include "common/rect.h"
-#include "backends/psp/osys_psp.h"
+#include "osys_psp.h"
 
 #include "common/config-manager.h"
 
