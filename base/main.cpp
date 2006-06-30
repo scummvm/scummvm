@@ -48,7 +48,7 @@
 #if defined(_WIN32_WCE)
 #include "backends/wince/CELauncherDialog.h"
 #elif defined(__DC__)
-#include "backends/dc/DCLauncherDialog.h"
+#include "backends/platform/dc/DCLauncherDialog.h"
 #else
 #include "gui/launcher.h"
 #endif
