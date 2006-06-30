@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	midi/quicktime.o \
 	midi/seq.o \
 	midi/windows.o \
+	saves/savefile.o \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
 

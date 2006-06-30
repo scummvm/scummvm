@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	str.o \
 	stream.o \
 	util.o \
-	savefile.o \
 	system.o \
 	unzip.o
 
