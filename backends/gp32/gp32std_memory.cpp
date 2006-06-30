@@ -190,12 +190,15 @@ void *gp_memset(void *dst, int val, size_t count) {
 
 #define MALLOC_MASK 0xAB800000
 
+// WE HAVE TO ALIGN MEMORY ADDRESS ON THE ARM PROCESSOR!
+#define ALIGNED_SIZE(size) ((size) + (4 - ((size) & 3)))
+
 void *gp_malloc(size_t size) {
 	uint32 np;
 	uint32 *up;
 
 	// size + 8 bytes : stores block size
-	int allocSize = size + sizeof(uint32) + sizeof(uint32);
+	int allocSize = ALIGNED_SIZE(size) + sizeof(uint32) + sizeof(uint32);
 	if (allocSize <= USER_BLOCK_SIZE) {
 		np = (uint32) MemBlock::addBlock(allocSize);
 		if (!np) {
@@ -208,8 +211,8 @@ void *gp_malloc(size_t size) {
 
 	if (np) {
 		up = (uint32 *)np;
-		*up = size | MALLOC_MASK;	// mem size: up to 8mb
-		up = (uint32 *)(np + size + sizeof(uint32));
+		*up = ALIGNED_SIZE(size) | MALLOC_MASK;	// mem size: up to 8mb
+		up = (uint32 *)(np + ALIGNED_SIZE(size) + sizeof(uint32));
 		*up = 0x1234;	// catches oob acess
 		return (void *)(np + sizeof(uint32));
 	}
@@ -227,7 +230,7 @@ void gp_free(void *block) {
 
 	np = ((uint32) block) - sizeof(uint32);
 	up = (uint32 *) np;
-	if (*up == 0x43210900) {
+	if (*up == 0x4321) {
 		warning("%s: double deallocation", __FUNCTION__);
 		return;
 	}
@@ -244,9 +247,9 @@ void gp_free(void *block) {
 		return;
 	}
 
-	*up = 0x43210900;
 	np = ((uint32) block) - sizeof(uint32);
 	up = (uint32 *) np;
+	*up = 0x4321;
 
 	if (blockSize + 8 <= USER_BLOCK_SIZE) {
 		MemBlock::deleteBlock(up);
