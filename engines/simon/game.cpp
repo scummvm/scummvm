@@ -543,6 +543,11 @@ static GameFileDescription FEEBLEFILES_DE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
+static GameFileDescription FEEBLEFILES_FR_GameFiles[] = {
+	{ "game22",		GAME_BASEFILE,	"ba90b40a47726039671d9e91630dd7ed"},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
+};
+
 static GameFileDescription FEEBLEFILES_IT_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"80576f2e1ed4c912b63921fe77af313e"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
@@ -1255,6 +1260,19 @@ static GameDescription gameDescriptions[] = {
 		FEEBLEFILES_4CD_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+	},
+
+	// The Feeble Files - French Windows 4CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_FR,
+		"4CD",
+		ARRAYSIZE(FEEBLEFILES_FR_GameFiles),
+		FEEBLEFILES_FR_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::FR_FRA,
 		Common::kPlatformWindows,
 	},
 
