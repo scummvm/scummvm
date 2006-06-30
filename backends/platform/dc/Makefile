@@ -5,7 +5,7 @@ ronindir = /usr/local/ronin
 
 BUILD_PLUGINS = 1
 
-srcdir = ../..
+srcdir = ../../..
 VPATH = $(srcdir)
 
 CC      = sh-elf-gcc -ml -m4-single-only
