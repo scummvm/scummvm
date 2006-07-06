@@ -288,16 +288,17 @@ static const GameSettings gameVariantsTable[] = {
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
 	{"freddi2", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"pajama", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"putttime", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"balloon", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"dog", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"maze", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"socks", "", GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	{"water", "",      GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
-	{"water", "HE 80", GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"water", "HE 99", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+
+	// condMaskCode value changed in setUserCondition & setTalkCondition
+	{"putttime", "", GID_HEGAME, 6, 85, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"socks", "", GID_HEGAME, 6, 85, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
 	{"baseball", "", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
@@ -369,6 +370,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"", "HE 72",   GID_HEGAME, 6,  72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 73",   GID_HEGAME, 6,  73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 80",   GID_HEGAME, 6,  80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 85",   GID_HEGAME, 6,  85, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 90",   GID_HEGAME, 6,  90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 95",   GID_HEGAME, 6,  95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 98",   GID_HEGAME, 6,  98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
@@ -1469,6 +1471,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		case 90:
 			*engine = new ScummEngine_v90he(syst, res);
 			break;
+		case 85:
 		case 80:
 			*engine = new ScummEngine_v80he(syst, res);
 			break;
