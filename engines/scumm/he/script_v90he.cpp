@@ -703,6 +703,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
+		adjustRect(_wizParams.box);
 		break;
 	case 40: // HE99+
 		_wizParams.processFlags |= kWPFPaletteNum;

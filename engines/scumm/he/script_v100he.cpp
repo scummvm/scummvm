@@ -1208,6 +1208,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
+		adjustRect(_wizParams.box);
 		break;
 	case 21:
 		b = pop();
