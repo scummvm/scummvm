@@ -537,8 +537,8 @@ SamsFunShop	Pajama Sam's One-Stop Fun Shop
 	68155a6bf082221525f431c2cbdac8ab	us	All	-	-	-	Kirben
 
 socks	Pajama Sam's Sock Works
-	5e8fb66971a60e523e5afbc4c129c0e8	us	All	HE 80	-	-	Kirben
-	19263586f749a560c1adf8b3393a9593	ru	Windows	HE 80	-	-	sev
+	5e8fb66971a60e523e5afbc4c129c0e8	us	All	HE 85	-	-	Kirben
+	19263586f749a560c1adf8b3393a9593	ru	Windows	HE 85	-	-	sev
 	8de13897f0121c79d29a2377159f9ad0	en	Windows	HE 99	Updated	-	Aziraphale Jasra
 
 puttrace	Putt-Putt Enters the Race
@@ -594,8 +594,8 @@ puttzoo	Putt-Putt Saves the Zoo
 	2a446817ffcabfef8716e0c456ecaf81	de	Windows	-	Demo	-	Joachim Eberhard
 
 PuttTime	Putt-Putt Travels Through Time
-	63fdcdc95cdeea00060883aed38e5504	en	Windows	HE 80	-	-	iziku
-	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	HE 80	-	-	oncer
+	63fdcdc95cdeea00060883aed38e5504	en	All	HE 85	-	-	iziku
+	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	HE 85	-	-	oncer
 	2108d83dcf09f8adb4bc524669c8cf51	us	All	HE 99	Updated	-	Kirben
 	7c980a1b1596a93f26917318884f48f7	de	All	HE 99	Updated	-	Joachim Eberhard
 	d4aac997e2f4e15341f0bfbf905419bd	gb	Windows	HE 99	-	-	eriktorbjorn

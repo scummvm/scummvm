@@ -2022,7 +2022,7 @@ bool Actor::isPlayer() {
 }
 
 void Actor::setUserCondition(int slot, int set) {
-	const int condMaskCode = (_vm->_game.heversion >= 90) ? 0x1FFF : 0x3FF;
+	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
 	checkRange(32, 1, slot, "Condition %d out of range");
 	if (set == 0) {
 		_heCondMask &= ~(1 << (slot + 0xF));
@@ -2042,7 +2042,7 @@ bool Actor::isUserConditionSet(int slot) const {
 }
 
 void Actor::setTalkCondition(int slot) {
-	const int condMaskCode = (_vm->_game.heversion >= 90) ? 0x1FFF : 0x3FF;
+	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
 	checkRange(32, 1, slot, "Condition %d out of range");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
