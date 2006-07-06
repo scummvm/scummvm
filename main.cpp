@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
 		} else {
 			int j;
 needshelp:
-			printf("Residual CVS Version\n");
+			printf("Residual SVN Version\n");
 			printf("--------------------\n");
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
@@ -201,7 +201,8 @@ needshelp:
 	}
 #endif
 
-	splash_bm->deref();
+	if (splash_bm != NULL)
+		splash_bm->deref();
 
 	lua_iolibopen();
 	lua_strlibopen();
