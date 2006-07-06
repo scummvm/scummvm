@@ -1593,10 +1593,6 @@ int ScummEngine::scummLoop(int delta) {
 	// that it will be in a different state each time you run the program.
 	_rnd.getRandomNumber(2);
 
-	if (_game.version <= 6) {
-		updatePalette();
-	}
-
 #ifndef DISABLE_HE
 	if (_game.heversion >= 90) {
 		((ScummEngine_v90he *)this)->_moviePlay->handleNextFrame();
@@ -1758,9 +1754,7 @@ load_game:
 		handleMouseOver(oldEgo != VAR(VAR_EGO));
 
 		// Render everything to the screen.
-		if (_game.version >= 7) {
-			updatePalette();
-		}
+		updatePalette();
 		drawDirtyScreenParts();
 
 		// FIXME / TODO: Try to move the following to scummLoop_handleSound or
