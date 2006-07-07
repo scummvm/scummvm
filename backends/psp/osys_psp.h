@@ -37,6 +37,11 @@ enum GraphicModeID {
 	CENTERED_362X272
 };
 
+namespace Graphics {
+	struct Surface;
+}
+
+
 class OSystem_PSP : public OSystem {
 public:
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
@@ -86,6 +91,7 @@ public:
 	virtual int16 getHeight();
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual bool grabRawScreen(Graphics::Surface *surf);	
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
 
