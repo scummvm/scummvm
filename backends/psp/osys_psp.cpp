@@ -26,6 +26,7 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
+#include "graphics/surface.h"
 #include "common/rect.h"
 #include "backends/psp/osys_psp.h"
 
