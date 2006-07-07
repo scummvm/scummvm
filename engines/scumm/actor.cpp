@@ -384,12 +384,7 @@ int Actor::actorWalkStep() {
 	nextFacing = updateActorDirection(true);
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing) {
-			if (_vm->_game.version <= 6) {
-				startAnimActor(_walkFrame);
-				setDirection(nextFacing);
-			} else {
-				startWalkAnim(1, nextFacing);
-			}
+			startWalkAnim(1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
 	}
