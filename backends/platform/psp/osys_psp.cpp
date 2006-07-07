@@ -26,6 +26,7 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
+#include "graphics/surface.h"
 #include "common/rect.h"
 #include "osys_psp.h"
 
@@ -184,6 +185,15 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 			dst += _screenWidth;
 		} while (--h);
 	}
+}
+
+bool OSystem_PSP::grabRawScreen(Graphics::Surface *surf) {
+	assert(surf);
+
+	surf->create(_screenWidth, _screenHeight, 1);
+	memcpy(surf->pixels, _offscreen, _screenWidth * _screenHeight);
+	
+	return true;
 }
 
 void OSystem_PSP::updateScreen() {
