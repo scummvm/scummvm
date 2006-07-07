@@ -415,7 +415,7 @@ public:
 	 * @param surf	the surfce to store the data in it
 	 * @return true if all went well, false if an error occured
 	 */
-	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
+	virtual bool grabRawScreen(Graphics::Surface *surf) = 0;
 
 	/**
 	 * Clear the screen to black.
