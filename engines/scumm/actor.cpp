@@ -384,7 +384,12 @@ int Actor::actorWalkStep() {
 	nextFacing = updateActorDirection(true);
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing) {
-			startWalkAnim(1, nextFacing);
+			if (_vm->_game.version <= 6) {
+				startAnimActor(_walkFrame);
+				setDirection(nextFacing);
+			} else {
+				startWalkAnim(1, nextFacing);
+			}
 		}
 		_moving |= MF_IN_LEG;
 	}
@@ -1693,12 +1698,14 @@ void Actor::walkActor() {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
 			setBox(_walkdata.destbox);
-			startWalkAnim(3, _walkdata.destdir);
 			if (_vm->_game.version <= 6) {
+				startAnimActor(_standFrame);
 				if (!_ignoreTurns && _walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
 					_targetFacing = _walkdata.destdir;
 					_moving = MF_TURN;
 				}
+			} else {
+				startWalkAnim(3, _walkdata.destdir);
 			}
 			return;
 		}
@@ -1772,7 +1779,11 @@ void Actor::walkActorV12() {
 	} else {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
-			startWalkAnim(3, _walkdata.destdir);
+			startAnimActor(_standFrame);
+			if (_walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
+				_targetFacing = _walkdata.destdir;
+				_moving = MF_TURN;
+			}
 		} else {
 			setBox(_walkdata.curbox);
 			if (_walkbox == _walkdata.destbox) {
@@ -1815,7 +1826,11 @@ void Actor::walkActorOld() {
 
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
-			startWalkAnim(3, _walkdata.destdir);
+			startAnimActor(_standFrame);
+			if (_walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
+				_targetFacing = _walkdata.destdir;
+				_moving = MF_TURN;
+			}
 			return;
 		}
 
