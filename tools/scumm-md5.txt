@@ -503,6 +503,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	us	All	-	-	-	Kirben
+	6a60d395b78b205c93a956100b1bf5ae	de	Windows	-	-	-	EdDammer
 	c6907d44f1166941d982864cd42cdc89	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	fr	Mac	HE 99	-	-	alamaz
 	32709cbeeb3044b34129950860a83f14	ru	Windows	HE 99	-	-	sev
