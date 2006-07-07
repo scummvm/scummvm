@@ -55,7 +55,7 @@ LIBS	+= -lvorbisidec
 CFLAGS	+= -DUSE_MPEG2
 LIBS	+= -lmpeg2
 
-LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lc -lpspuser -lpspkernel
+LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspsdk -lpspuser 
 
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
