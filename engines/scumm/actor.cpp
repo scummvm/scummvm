@@ -1693,12 +1693,14 @@ void Actor::walkActor() {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
 			setBox(_walkdata.destbox);
-			startWalkAnim(3, _walkdata.destdir);
 			if (_vm->_game.version <= 6) {
+				startAnimActor(_standFrame);
 				if (!_ignoreTurns && _walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
 					_targetFacing = _walkdata.destdir;
 					_moving = MF_TURN;
 				}
+			} else {
+				startWalkAnim(3, _walkdata.destdir);
 			}
 			return;
 		}
