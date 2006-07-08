@@ -32,11 +32,16 @@
 
 namespace Lure {
 
-enum TalkState {TALK_NONE, TALK_SELECT, TALK_RESPOND, TALK_RESPONSE_WAIT,
+enum TalkState {TALK_NONE, TALK_START, TALK_SELECT, TALK_RESPOND, TALK_RESPONSE_WAIT,
 	TALK_RESPOND_2};
 
 #define MAX_TALK_SELECTIONS 4
 typedef TalkEntryData *TalkSelections[MAX_TALK_SELECTIONS];
+
+struct TalkDialogDetails {
+	Common::Rect bounds;
+	bool active;
+};
 
 class Resources {
 private:
@@ -58,13 +63,12 @@ private:
 	TalkHeaderList _talkHeaders;
 	TalkDataList _talkData;
 	SequenceDelayList _delayList;
-public: //**DEBUG**
 	Action _currentAction;
-private:
 	MemoryBlock *_talkDialogData;
 	RoomExitCoordinatesList _coordinateList;
 	CharacterScheduleList _charSchedules;
 	RoomExitIndexedHotspotList _indexedRoomExitHospots;
+	PausedCharacterList _pausedList;
 
 	int numCharOffsets;
 	uint16 *_charOffsets;
@@ -73,6 +77,7 @@ private:
 	TalkData *_activeTalkData;
 	TalkState _talkState;
 	TalkSelections _talkSelections;
+	TalkDialogDetails _talkDetails;
 	int _talkSelection;
 	int _talkStartEntry;
 	uint16 _talkingCharacter;
@@ -117,6 +122,7 @@ public:
 	RoomExitCoordinatesList &coordinateList() { return _coordinateList; }
 	CharacterScheduleList &charSchedules() { return _charSchedules; }
 	RoomExitIndexedHotspotList &exitHotspots() { return _indexedRoomExitHospots; }
+	PausedCharacterList &pausedList() { return _pausedList; }
 	uint16 getCharOffset(int index) { 
 		if (index >= numCharOffsets) 
 			error("Invalid index %d passed to script engine support data offset list", index);
@@ -133,6 +139,7 @@ public:
 	void setTalkState(TalkState state) { _talkState = state; }
 	TalkState getTalkState() { return _talkState; }
 	TalkSelections &getTalkSelections() { return _talkSelections; }	
+	TalkDialogDetails &getTalkDetails() { return _talkDetails; }
 	void setTalkSelection(int index) { _talkSelection = index; }
 	int getTalkSelection() { return _talkSelection; }
 	void setTalkStartEntry(int index) { _talkStartEntry = index; }
@@ -147,10 +154,11 @@ public:
 			error("Invalid current action %d", _currentAction);
 		return actionList[_currentAction]; 
 	}
-	void activateHotspot(uint16 hotspotId);
+	Hotspot *activateHotspot(uint16 hotspotId);
 	Hotspot *addHotspot(uint16 hotspotId);
 	void addHotspot(Hotspot *hotspot);
 	void deactivateHotspot(uint16 hotspotId, bool isDestId = false);
+	void deactivateHotspot(Hotspot *hotspot);
 };
 
 } // End of namespace Lure

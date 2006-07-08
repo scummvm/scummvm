@@ -54,6 +54,7 @@ void Resources::freeData() {
 	_delayList.clear();
 	_charSchedules.clear();
 	_indexedRoomExitHospots.clear();
+	_pausedList.clear();
 
 	delete _paletteSubset;
 	delete _scriptData;
@@ -91,7 +92,7 @@ void Resources::reloadData() {
 		if (offsetVal != 0) {
 			// Get room resource
 			RoomResource *rec = (RoomResource *) (mb->data() + offsetVal);
-			
+
 			RoomData *newEntry = new RoomData(rec, paths);
 			_roomData.push_back(newEntry);
 
@@ -313,6 +314,7 @@ void Resources::reloadData() {
 	_talkState = TALK_NONE;
 	_talkSelection = 0;
 	_talkStartEntry = 0;
+	_talkDetails.active = false;
 }
 
 RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
@@ -346,7 +348,6 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 bool Resources::checkHotspotExtent(HotspotData *hotspot) {
 	uint16 roomNum = hotspot->roomNumber;
 	RoomData *room = getRoom(roomNum);
-	
 	return (hotspot->startX >= room->clippingXStart) && ((room->clippingXEnd == 0) || 
 			(hotspot->startX + 32 < room->clippingXEnd));
 }
@@ -420,16 +421,21 @@ HotspotActionList *Resources::getHotspotActions(uint16 actionsOffset) {
 	return _actionsList.getActions(actionsOffset);
 }
 
-void Resources::setTalkingCharacter(uint16 id) { 
-	if (_talkingCharacter != 0)
+void Resources::setTalkingCharacter(uint16 id) {
+	Resources &res = Resources::getReference();
+
+	if (_talkingCharacter != 0) {
 		deactivateHotspot(_talkingCharacter, true);
+		HotspotData *charHotspot = res.getHotspot(_talkingCharacter);
+		assert(charHotspot);
+		charHotspot->talkCountdown = 0;
+	}
 
 	_talkingCharacter = id; 
 	
 	if (_talkingCharacter != 0) {
 		Hotspot *character = getActiveHotspot(id);
-		if (!character)
-			error("Set talking character to non-active hotspot id");
+		assert(character);
 
 		// Add the special "voice" animation above the character
 		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_ID);
@@ -437,23 +443,18 @@ void Resources::setTalkingCharacter(uint16 id) {
 	}
 }
 
-void Resources::activateHotspot(uint16 hotspotId) {
+Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	HotspotData *res = getHotspot(hotspotId);
-	if (!res) return;
+	if (!res) return NULL;
 	res->roomNumber &= 0x7fff; // clear any suppression bit in room #
 
 	// Make sure that the hotspot isn't already active
 	HotspotList::iterator i = _activeHotspots.begin();
-	bool found = false;
-
 	for (; i != _activeHotspots.end(); ++i) {
-		Hotspot &h = *i.operator*();
-		if (h.hotspotId() == res->hotspotId) {
-			found = true;
-			break;
-		}
+		Hotspot *h = *i;
+		if (h->hotspotId() == res->hotspotId) 
+			return h;
 	}
-	if (found) return;
 
 	// Check the script load flag
 	if (res->scriptLoadFlag) {
@@ -494,14 +495,21 @@ void Resources::activateHotspot(uint16 hotspotId) {
 
 		if (loadFlag) {
 			Hotspot *hotspot = addHotspot(hotspotId);
+			assert(hotspot);
 			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
+			return hotspot;
 		}
 	}
+
+	return NULL;
 }
 
 Hotspot *Resources::addHotspot(uint16 hotspotId) {
-	Hotspot *hotspot = new Hotspot(getHotspot(hotspotId));
+	HotspotData *hData = getHotspot(hotspotId);
+	assert(hData);
+	Hotspot *hotspot = new Hotspot(hData);
 	_activeHotspots.push_back(hotspot);
+
 	return hotspot;
 }
 
@@ -516,6 +524,20 @@ void Resources::deactivateHotspot(uint16 hotspotId, bool isDestId) {
 		Hotspot *h = *i;
 		if ((!isDestId && (h->hotspotId() == hotspotId)) ||
 			(isDestId && (h->destHotspotId() == hotspotId) && (h->hotspotId() == 0xffff))) {
+			_activeHotspots.erase(i);
+			break;
+		}
+		
+		i++;
+	}
+}
+
+void Resources::deactivateHotspot(Hotspot *hotspot) {
+	HotspotList::iterator i = _activeHotspots.begin();
+
+	while (i != _activeHotspots.end()) {
+		Hotspot *h = *i;
+		if (h == hotspot) {
 			_activeHotspots.erase(i);
 			break;
 		}
