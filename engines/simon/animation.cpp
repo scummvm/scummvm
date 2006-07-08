@@ -378,7 +378,7 @@ void MoviePlayer::decodeFrame() {
 		byte *p = palette;
 
 		_fd.read(rgb, ARRAYSIZE(rgb));
-		for (int i = 0; i <= 256; i++) {
+		for (int i = 0; i < 256; i++) {
 			*p++ = rgb[i * 3 + 0];
 			*p++ = rgb[i * 3 + 1];
 			*p++ = rgb[i * 3 + 2];
