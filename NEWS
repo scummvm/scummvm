@@ -12,6 +12,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM
    - Improved support for international versions of HE games.
 
+Broken Sword 2
+  - More robust handling of the optional startup.inf file.
+
 0.9.0 (2006-06-25)
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
