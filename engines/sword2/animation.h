@@ -23,6 +23,7 @@
 #define SWORD2_ANIMATION_H
 
 #include "graphics/animation.h"
+#include "graphics/dxa_player.h"
 #include "sound/mixer.h"
 
 namespace Sword2 {
@@ -41,12 +42,97 @@ struct MovieTextObject {
 	uint16 *speech;
 };
 
+struct MovieInfo {
+	const char *name;
+	const uint frames;
+	const bool seamless;
+};
+
+class MoviePlayer {
+protected:
+	Sword2Engine *_vm;
+	Audio::Mixer *_mixer;
+	OSystem *_system;
+
+	byte _originalPalette[4 * 256];
+
+	byte *_textSurface;
+
+	Audio::SoundHandle _speechHandle;
+	Audio::SoundHandle _bgSoundHandle;
+	Audio::AudioStream *_bgSoundStream;
+
+	uint32 _ticks;
+
+	uint _currentFrame;
+	byte *_frameBuffer;
+	int _frameWidth, _frameHeight;
+	int _frameX, _frameY;
+
+	byte _black, _white;
+
+	uint _numFrames;
+	uint _leadOutFrame;
+	bool _seamless;
+
+	int _framesSkipped;
+	bool _forceFrame;
+
+	static struct MovieInfo _movies[];
+
+	MovieTextObject **_textList;
+	int _currentText;
+
+	void savePalette();
+	void restorePalette();
+
+	void openTextObject(MovieTextObject *t);
+	void closeTextObject(MovieTextObject *t);
+
+	virtual void handleScreenChanged() {}
+
+	virtual void clearScreen();
+	virtual void updateScreen();
+	virtual bool decodeFrame() = 0;
+	virtual bool checkSkipFrame();
+	virtual void waitForFrame();
+	virtual void drawFrame();
+	virtual void drawTextObject(MovieTextObject *t);
+	virtual void undrawTextObject(MovieTextObject *t);
+
+public:
+	MoviePlayer(Sword2Engine *vm);
+	virtual ~MoviePlayer();
+
+	void updatePalette(byte *pal, bool packed = true);
+	virtual bool load(const char *name, MovieTextObject *text[]);
+	void play(int32 leadIn, int32 leadOut);
+};
+
+class MoviePlayerDummy : public MoviePlayer {
+protected:
+	virtual bool decodeFrame();
+	virtual bool checkSkipFrame();
+	virtual void waitForFrame();
+	virtual void drawFrame();
+	virtual void drawTextObject(MovieTextObject *t);
+	virtual void undrawTextObject(MovieTextObject *t);
+
+public:
+	MoviePlayerDummy(Sword2Engine *vm);
+	virtual ~MoviePlayerDummy();
+
+	virtual bool load(const char *name, MovieTextObject *text[]);
+};
+
+#ifdef USE_MPEG2
 class AnimationState : public ::Graphics::BaseAnimationState {
 private:
 	Sword2Engine *_vm;
+	MoviePlayer *_player;
 
 public:
-	AnimationState(Sword2Engine *vm);
+	AnimationState(Sword2Engine *vm, MoviePlayer *player);
 	~AnimationState();
 
 #ifndef BACKEND_8BIT
@@ -63,38 +149,45 @@ private:
 #endif
 };
 
-struct MovieInfo {
-	char name[9];
-	uint frames;
-	bool seamless;
-};
+class MoviePlayerMPEG : public MoviePlayer {
+protected:
+	AnimationState *_anim;
 
-class MoviePlayer {
-private:
-	Sword2Engine *_vm;
-	Audio::Mixer *_snd;
-	OSystem *_sys;
+	virtual bool checkSkipFrame();
+	virtual void waitForFrame();
+	virtual bool decodeFrame();
 
-	byte *_textSurface;
-
-	Audio::SoundHandle _leadOutHandle;
-
-	uint _leadOutFrame;
-	bool _seamless;
-
-	static struct MovieInfo _movies[];
-
-	void openTextObject(MovieTextObject *obj);
-	void closeTextObject(MovieTextObject *obj);
-	void drawTextObject(AnimationState *anim, MovieTextObject *obj);
-
-	void playMPEG(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen);
-	void playDummy(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen);
+#ifndef BACKEND_8BIT
+	virtual void handleScreenChanged();
+	virtual void clearScreen();
+	virtual void drawFrame();
+	virtual void updateScreen();
+	virtual void drawTextObject(MovieTextObject *t);
+#endif
 
 public:
-	MoviePlayer(Sword2Engine *vm);
-	int32 play(const char *filename, MovieTextObject *text[], int32 leadInRes, int32 leadOutRes);
+	MoviePlayerMPEG(Sword2Engine *vm);
+	virtual ~MoviePlayerMPEG();
+
+	virtual bool load(const char *name, MovieTextObject *text[]);
 };
+#endif
+
+#ifdef USE_ZLIB
+class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
+protected:
+	virtual void setPalette(byte *pal);
+	virtual bool decodeFrame();
+
+public:
+	MoviePlayerDXA(Sword2Engine *vm);
+	virtual ~MoviePlayerDXA();
+
+	virtual bool load(const char *name, MovieTextObject *text[]);
+};
+#endif
+
+MoviePlayer *makeMoviePlayer(Sword2Engine *vm, const char *name);
 
 } // End of namespace Sword2
 

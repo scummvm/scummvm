@@ -2131,17 +2131,13 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// pause sfx during sequence
 	_vm->_sound->pauseFx();
 
-	MoviePlayer player(_vm);
- 	uint32 rv;
+	MoviePlayer *player = makeMoviePlayer(_vm, filename);
 
-	if (_sequenceTextLines && !readVar(DEMO))
-		rv = player.play(filename, sequenceSpeechArray, _smackerLeadIn, _smackerLeadOut);
-	else
-		rv = player.play(filename, NULL, _smackerLeadIn, _smackerLeadOut);
+	if (player->load(filename, (_sequenceTextLines && !readVar(DEMO)) ? sequenceSpeechArray : NULL)) {
+		player->play(_smackerLeadIn, _smackerLeadOut);
+	}
 
-	// check the error return-value
-	if (rv)
-		debug(5, "MoviePlayer.play(\"%s\") returned 0x%.8x", filename, rv);
+	delete player;
 
 	// unpause sound fx again, in case we're staying in same location
 	_vm->_sound->unpauseFx();

@@ -141,6 +141,9 @@ public:
 	void buildLookup();
 #endif
 
+	int getFrameWidth() { return _frameWidth; }
+	int getFrameHeight() { return _frameHeight; }
+
 protected:
 	bool checkPaletteSwitch();
 	virtual void drawYUV(int width, int height, byte *const *dat) = 0;

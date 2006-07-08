@@ -29,10 +29,6 @@
 #include "sword2/defs.h"
 #include "sword2/screen.h"
 
-#ifdef BACKEND_8BIT
-#include "sword2/animation.h"
-#endif
-
 namespace Sword2 {
 
 #define MILLISECSPERCYCLE  83
@@ -554,32 +550,5 @@ void Screen::closeBackgroundLayer() {
 
 	_layer = 0;
 }
-
-#ifdef BACKEND_8BIT
-void Screen::plotYUV(byte *lut, int width, int height, byte *const *dat) {
-	byte *buf = _buffer + ((480 - height) / 2) * RENDERWIDE + (640 - width) / 2;
-
-	int x, y;
-
-	int ypos = 0;
-	int cpos = 0;
-	int linepos = 0;
-
-	for (y = 0; y < height; y += 2) {
-		for (x = 0; x < width; x += 2) {
-			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH + 1)) + ((dat[1][cpos] + ROUNDADD) >> SHIFT)) * (BITDEPTH + 1);
-			cpos++;
-
-			buf[linepos               ] = lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];
-			buf[RENDERWIDE + linepos++] = lut[i + ((dat[0][width + ypos++] + ROUNDADD) >> SHIFT)];
-			buf[linepos               ] = lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];
-			buf[RENDERWIDE + linepos++] = lut[i + ((dat[0][width + ypos++] + ROUNDADD) >> SHIFT)];
-		}
-		linepos += (2 * RENDERWIDE - width);
-		ypos += width;
-	}
-}
-#endif
-
 
 } // End of namespace Sword2
