@@ -2,8 +2,7 @@ MODULE := engines/lure
 
 MODULE_OBJS := \
 	animseq.o \
-	debug-input.o \
-	debug-methods.o \
+	debugger.o \
 	decode.o \
 	disk.o \
 	events.o \
