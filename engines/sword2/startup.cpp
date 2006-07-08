@@ -60,8 +60,34 @@ bool Sword2Engine::initStartMenu() {
 	int start_ids[MAX_starts];
 	char buf[10];
 
+	int lineno = 0;
+
 	while (fp.readLine(buf, sizeof(buf))) {
-		start_ids[_totalScreenManagers] = atoi(buf);
+		char *errptr;
+		int id;
+
+		lineno++;
+		id = strtol(buf, &errptr, 10);
+
+		if (*errptr) {
+			warning("startup.inf:%d: Invalid string '%s'", lineno, buf);
+			continue;
+		}
+
+		if (!_resman->checkValid(id)) {
+			warning("startup.inf:%d: Invalid resource %d", lineno, id);
+			continue;
+		}
+
+		if (_resman->fetchType(id) != SCREEN_MANAGER) {
+			byte name[NAME_LEN];
+
+			warning("startup.inf:%d: '%s' (%d) is not a screen manager", lineno, _resman->fetchName(id, name), id);
+			continue;
+		}
+
+		start_ids[_totalScreenManagers] = id;
+
 		if (++_totalScreenManagers >= MAX_starts) {
 			warning("Too many entries in startup.inf");
 			break;
@@ -86,17 +112,10 @@ bool Sword2Engine::initStartMenu() {
 		debug(2, "Querying screen manager %d", _startRes);
 
 		// Open each one and run through the interpreter. Script 0 is
-		// the query request script
+		// the query request script. We have already made reasonably
+		// sure the resource is ok.
 
-		// if the resource number is within range & it's not a null
-		// resource
-		// - need to check in case un-built sections included in
-		// start list
-
-		if (_resman->checkValid(_startRes)) {
-			_logic->runResScript(_startRes, 0);
-		} else
-			warning("Start menu resource %d invalid", _startRes);
+		_logic->runResScript(_startRes, 0);
 	}
 
 	return 1;
