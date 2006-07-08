@@ -76,24 +76,27 @@ public:
 
 	static void activateHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3);
+	static void method2(uint16 v1, uint16 v2, uint16 v3);
 	static void clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3);
 	static void deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3);
-	static void method2(uint16 v1, uint16 v2, uint16 v3);
 	static void deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
-	static void setActionsOffset(uint16 hotspotId, uint16 offset, uint16 v3);
-	static void addDelayedSequence(uint16 seqOffset, uint16 delay, uint16 v3);
+	static void resetPathfinder(uint16 v1, uint16 v2, uint16 v3);
+	static void addDelayedSequence(uint16 seqOffset, uint16 delay, uint16 canClear);
 	static void characterInRoom(uint16 characterId, uint16 roomNumber, uint16 v3);
+	static void setDesc(uint16 hotspotId, uint16 descId, uint16 v3);
 	static void setHotspotName(uint16 hotspotId, uint16 nameId, uint16 v3);
 	static void playSound(uint16 v1, uint16 v2, uint16 v3);
 	static void displayDialog(uint16 stringId, uint16 v2, uint16 v3);
 	static void remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3);
-	static void checkCellDoor(uint16 v1, uint16 v2, uint16 v3);
+	static void startSpeakingToNoone(uint16 characterId, uint16 stringId, uint16 v3);
 	static void playMusic(uint16 musicNum, uint16 v2, uint16 v3);
 	static void getDoorBlocked(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void isSkorlInCell(uint16 v1, uint16 v2, uint16 v3);
 	static void setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 v3);
 	static void decrInventoryItems(uint16 v1, uint16 v2, uint16 v3);
-	static void setFrameNumber(uint16 hotspotId, uint16 offset, uint16 v3);
+	static void setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId);
+	static void setActionCtr(uint16 hotspotId, uint16 value, uint16 v3);
+	static void startSpeaking(uint16 characterId, uint16 destHotspot, uint16 messageId);
 	static void disableHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void cutSack(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void increaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
@@ -112,6 +115,9 @@ public:
 	static void getNumGroats(uint16 v1, uint16 v2, uint16 v3);
 	static void animationLoad(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void addActions(uint16 hotspotId, uint16 actions, uint16 v3);
+	static void randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3);
+	static void checkCellDoor(uint16 v1, uint16 v2, uint16 v3);
+	static void method66(uint16 v1, uint16 v2, uint16 v3);
 };
 
 class HotspotScript {

@@ -23,6 +23,7 @@
 #include "lure/scripts.h"
 #include "lure/res.h"
 #include "lure/game.h"
+#include "lure/room.h"
 #include "common/stack.h"
 #include "common/endian.h"
 
@@ -80,6 +81,18 @@ void Script::deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3) {
 	}
 }
 
+// Resets the pathfinder
+
+void Script::resetPathfinder(uint16 v1, uint16 v2, uint16 v3) {
+	// Reset the pathfinding for any characters
+	Resources &res = Resources::getReference();
+
+	for (uint16 charId = PLAYER_ID + 1; charId < FIRST_NONCHARACTER_ID; ++charId) {
+		Hotspot *charHotspot = res.getActiveHotspot(charId);
+		if (charHotspot) charHotspot->pathFinder().clear();
+	}
+}
+
 // deactivates the specified hotspot from active animation
 
 void Script::deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
@@ -95,22 +108,18 @@ void Script::deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 // Sets the offset for the table of action sequence offsets for the given
 // hotspot
 
-void Script::setActionsOffset(uint16 hotspotId, uint16 offset, uint16 v3) {
+void Script::setDesc(uint16 hotspotId, uint16 descId, uint16 v3) {
 	Resources &res = Resources::getReference();
 	HotspotData *hotspot = res.getHotspot(hotspotId);
-	
-	if (!res.getHotspotActions(offset))
-		warning("Hotspot %xh set to invalid actions offset %d",
-			hotspotId, offset);
-	
-	hotspot->actionsOffset = offset;
+	assert(hotspot);
+	hotspot->descId = descId;
 }
 
 // Add a sequence to be executed after a specified delay
 
-void Script::addDelayedSequence(uint16 seqOffset, uint16 delay, uint16 v3) {
+void Script::addDelayedSequence(uint16 seqOffset, uint16 delay, uint16 canClear) {
 	SequenceDelayList &list = Resources::getReference().delayList();
-	list.addSequence(delay, seqOffset);
+	list.add(delay, seqOffset, canClear != 0);
 }
 
 // Checks whether the given character is in the specified room, and stores
@@ -157,13 +166,16 @@ void Script::remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3) {
 		player->roomNumber());
 }
 
-// Checks the status of the cell door, and starts music depending on it's state
+// Starts a character speaking out loud to themselves (ie. no destination character)
 
-void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
-	// In the original game, this method checks to see if the cell door
-	// is currently open, if it is, starts a music sequence. 
-	// TODO: Implement starting music if cell door is open
+void Script::startSpeakingToNoone(uint16 characterId, uint16 stringId, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *charHotspot = res.getActiveHotspot(characterId);
+	assert(charHotspot);
+
+	charHotspot->converse(NOONE_ID, stringId, false);
 }
+
 
 void Script::playMusic(uint16 musicNum, uint16 v2, uint16 v3) {
 	// TODO: Play a given music
@@ -208,11 +220,25 @@ void Script::decrInventoryItems(uint16 v1, uint16 v2, uint16 v3) {
 	// inventory items, so don't do anything
 }
 
-// Sets the current frame number for the given hotspot
+void Script::setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
+	if (hotspot)
+		hotspot->converse(destHotspot, messageId, false);	
+}
 
-void Script::setFrameNumber(uint16 hotspotId, uint16 frameNumber, uint16 v3) {
-	Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
-	hotspot->setFrameNumber(frameNumber);
+// Sets the current action ctr value for the given hotspot
+
+void Script::setActionCtr(uint16 hotspotId, uint16 value, uint16 v3) {
+	HotspotData *hotspot = Resources::getReference().getHotspot(hotspotId);
+	assert(hotspot);
+	hotspot->actionCtr = value;
+}
+
+// Starts the designated character speaking the given message to a given dest hotspot
+
+void Script::startSpeaking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
+	hotspot->converse(destHotspot, messageId, false);
 }
 
 // Disables the given hotspot from being highlighted by the cursor
@@ -371,6 +397,29 @@ void Script::addActions(uint16 hotspotId, uint16 actions, uint16 v3) {
 	hotspot->actions |= actions;
 }
 
+// Generates a random number and stores it in the general field
+
+void Script::randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3) {
+	Common::RandomSource rnd;
+	uint16 v = minVal + rnd.getRandomNumber(maxVal - minVal);
+	Resources::getReference().fieldList().setField(GENERAL, v);
+}
+
+// Checks the status of the cell door, and starts music depending on it's state
+
+void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
+	// In the original game, this method checks to see if the cell door
+	// is currently open, if it is, starts a music sequence. 
+	// TODO: Implement starting music if cell door is open
+}
+
+// Has something to do with music handling 
+
+void Script::method66(uint16 hotspotId, uint16 actions, uint16 v3) {
+	// For now, simply set the general value field so that the Skorl schedule
+	// will work properly
+	Resources::getReference().fieldList().setField(GENERAL, 0);
+}
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
 
@@ -385,20 +434,24 @@ SequenceMethodRecord scriptMethods[] = {
 	{4, Script::clearSequenceDelayList},
 	{5, Script::deactivateHotspotSet},
 	{6, Script::deactivateHotspot},
+	{7, Script::resetPathfinder},
 	{8, Script::addDelayedSequence},
 	{10, Script::characterInRoom},
-	{11, Script::setActionsOffset},
+	{11, Script::setDesc},
 	{12, Script::setHotspotName},
 	{13, Script::playSound},
 	{16, Script::displayDialog},
 	{18, Script::remoteRoomViewSetup},
+	{19, Script::startSpeakingToNoone},
 	{20, Script::checkCellDoor},
 	{21, Script::playMusic},
 	{22, Script::getDoorBlocked},
 	{23, Script::isSkorlInCell},
 	{27, Script::setBlockingHotspotScript},
 	{28, Script::decrInventoryItems},
-	{30, Script::setFrameNumber},
+	{29, Script::setTalking},
+	{30, Script::setActionCtr},
+	{31, Script::startSpeaking},
 	{32, Script::disableHotspot},
 	{33, Script::cutSack},
 	{34, Script::increaseNumGroats},
@@ -417,9 +470,46 @@ SequenceMethodRecord scriptMethods[] = {
 	{57, Script::getNumGroats},
 	{62, Script::animationLoad},
 	{63, Script::addActions},
+	{64, Script::randomToGeneral},
 	{65, Script::checkCellDoor},
+	{66, Script::method66},
 	{0xff, NULL}};
+
+const char *scriptOpcodes[] = {
+	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "NOT_EQUALS", "EQUALS",
+		"GT", "LT", "LT2", "GT2", "AND", "OR", "LOGICAL_AND", "LOGICAL_OR",
+		"GET_FIELD", "SET_FIELD", "PUSH", "SUBROUTINE", "EXEC", "END",
+		"COND_JUMP", "JUMP", "ABORT2", "ABORT3", "RANDOM"
+};
+
+const char *scriptMethodNames[67] = {
+	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", NULL, NULL, "CLEAR SEQUENCE DELAY LIST",
+	"DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", "RESET PATHFINDER",
+	"ADD DELAYED SCRIPT", NULL,
+
+	"IS CHARACTER IN ROOM", "SET HOTSPOT DESC", "SET HOTSPOT NAME",
+	"PLAY SOUND", NULL, NULL, "DISPLAY DIALOG", NULL, "REMOTE ROOM VIEW SETUP",
+	"SET CHAR SPEAKING TO ITSELF",
+
+	"CHECK CELL DOOR", "PLAY MUSIC", "IS DOOR BLOCKED", "IS SKORL IN CELL",
+	NULL, NULL, NULL, "SET BLOCKING HOTSPOT SCRIPT", "DECREMENT # INVENTORY ITEMS",
+	"SET TALKING",
+
+	"SET ACTION CTR", "START SPEAKING", "DISABLE HOTSPOT", "CUT SACK",
+	"INCREASE # GROATS", "ENABLE HOTSPOT", NULL, "TRANSFORM PLAYER",
+	NULL, "ROOM 14 CLOSE DOOR",
+
+	"CHECK DROPPED DESC", NULL, "CLOSE DOOR", NULL, "OPEN DOOR", NULL, NULL,
+	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA", "SET ACTION SUPPORT DATA",
 	
+	"GIVE PLAYER ITEM", "DECREASE # GROATS", NULL, NULL,
+	"SET VILLAGE SKORL TICK PROC", NULL, NULL, "GET # GROATS", NULL, NULL,
+
+	NULL, "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL", 
+	"CHECK CELL DOOR", "METHOD 66"
+};
+
+
 /*------------------------------------------------------------------------*/
 /*-  Script Execution                                                    -*/
 /*-                                                                      -*/
@@ -433,32 +523,82 @@ uint16 Script::execute(uint16 startOffset) {
 	Common::Stack<uint16> stack;
 	Common::Stack<uint16> methodStack;
 	byte opcode;
+	bool hasParam;
 	uint16 param, v1, v2;
 	uint16 param1, param2, param3;
 	uint16 fieldNum;
 	uint32 tempVal;
 	SequenceMethodPtr ptr;
 	SequenceMethodRecord *rec;
+	char debugInfo[MAX_DESC_SIZE];
 
 	uint16 offset = startOffset;
 	bool breakFlag = false;
+
 	param = 0;
 	fields.setField(SEQUENCE_RESULT, 0);
+
+	debugC(ERROR_BASIC, kLureDebugScripts, "Executing script %xh", startOffset);
+	strcpy(debugInfo, "");
 
 	while (!breakFlag) {
 		if (offset >= scriptData->size()) 
 			error("Script failure in script %d - invalid offset %d", startOffset, offset);
 
+		if (gDebugLevel >= ERROR_DETAILED)
+			sprintf(debugInfo, "%xh - ", offset);
+
+		// Get opcode byte and separate into opcode and has parameter bit flag
 		opcode = scripts[offset++];
-		if ((opcode & 1) != 0) {
+		hasParam = (opcode & 1) != 0;
+		opcode >>= 1;
+
+		if (gDebugLevel >= ERROR_DETAILED)
+			strcat(debugInfo, (opcode > S_OPCODE_RANDOM) ? "INVALID" :
+				scriptOpcodes[opcode]);
+
+		if (hasParam) {
 			// Flag to read next two bytes as active parameter
 			if (offset >= scriptData->size()-2) 
 				error("Script failure in script %d - invalid offset %d", startOffset, offset);
 
 			param = READ_LE_UINT16(scripts + offset);
 			offset += 2;
+
+			if (gDebugLevel >= ERROR_DETAILED)
+				sprintf(debugInfo + strlen(debugInfo), " [%d]", 
+					((opcode == S_OPCODE_GET_FIELD) || (opcode == S_OPCODE_SET_FIELD)) ?
+					param >> 1 : param);
 		}
-		opcode >>= 1;	// Discard param bit from opcode byte
+
+		if (gDebugLevel >= ERROR_DETAILED) {
+			switch (opcode) {
+			case S_OPCODE_ADD:
+			case S_OPCODE_SUBTRACT:
+			case S_OPCODE_MULTIPLY:
+			case S_OPCODE_DIVIDE:
+			case S_OPCODE_NOT_EQUALS:
+			case S_OPCODE_EQUALS:
+			case S_OPCODE_GT:
+			case S_OPCODE_LT:
+			case S_OPCODE_LT2:
+			case S_OPCODE_GT2:
+			case S_OPCODE_AND:
+			case S_OPCODE_OR:
+			case S_OPCODE_LOGICAL_AND:
+			case S_OPCODE_LOGICAL_OR:
+				sprintf(debugInfo + strlen(debugInfo), 
+					" %d, %d", stack[stack.size() - 1], stack[stack.size() - 2]);
+				break;
+			
+			case S_OPCODE_SET_FIELD:
+				sprintf(debugInfo + strlen(debugInfo), " <= ST (%d)", stack[stack.size() - 1]);
+				break;
+
+			default:
+				break;
+			}
+		}
 
 		switch (opcode) {
 		case S_OPCODE_ABORT:
@@ -554,14 +694,38 @@ uint16 Script::execute(uint16 startOffset) {
 			break;
 
 		case S_OPCODE_EXEC:
+			// Search for the method in the method list
+			rec = &scriptMethods[0];
+			while ((rec->methodIndex != 0xff) && (rec->methodIndex != param))
+				++rec;
+
+			if (gDebugLevel >= ERROR_DETAILED) {
+				// Set up the debug string for the method call
+				if (rec->methodIndex == 0xff) strcat(debugInfo, " INVALID INDEX");
+				else if (scriptMethodNames[param] == NULL) strcat(debugInfo, " UNKNOWN METHOD");
+				else {
+					strcat(debugInfo, " ");
+					strcat(debugInfo, scriptMethodNames[param]);
+				}
+
+				// Any params
+				if (stack.size() >= 3)
+					sprintf(debugInfo + strlen(debugInfo), " (%d,%d,%d)",
+						stack[stack.size()-1], stack[stack.size()-2], stack[stack.size()-3]);
+				if (stack.size() == 2)
+					sprintf(debugInfo + strlen(debugInfo), " (%d,%d)",
+						stack[stack.size()-1], stack[stack.size()-2]);
+				else if (stack.size() == 1)
+					sprintf(debugInfo + strlen(debugInfo), " (%d)", stack[stack.size()-1]);
+				strcat(debugInfo, ")");
+				
+				debugC(ERROR_DETAILED, kLureDebugScripts, debugInfo);
+			}
+
 			param1 = 0; param2 = 0; param3 = 0;
 			if (!stack.empty()) param1 = stack.pop();
 			if (!stack.empty()) param2 = stack.pop();
 			if (!stack.empty()) param3 = stack.pop();
-
-			rec = &scriptMethods[0];
-			while ((rec->methodIndex != 0xff) && (rec->methodIndex != param))
-				++rec;
 
 			if (rec->methodIndex == 0xff) 
 				warning("Undefined script method %d", param);
@@ -596,9 +760,42 @@ uint16 Script::execute(uint16 startOffset) {
 			error("Unknown script opcode %d", opcode);
 			break;
 		}
+
+		if ((gDebugLevel >= ERROR_DETAILED) && (opcode != S_OPCODE_EXEC)) {
+			switch (opcode) {
+			case S_OPCODE_ADD:
+			case S_OPCODE_SUBTRACT:
+			case S_OPCODE_MULTIPLY:
+			case S_OPCODE_DIVIDE:
+			case S_OPCODE_NOT_EQUALS:
+			case S_OPCODE_EQUALS:
+			case S_OPCODE_GT:
+			case S_OPCODE_LT:
+			case S_OPCODE_LT2:
+			case S_OPCODE_GT2:
+			case S_OPCODE_AND:
+			case S_OPCODE_OR:
+			case S_OPCODE_LOGICAL_AND:
+			case S_OPCODE_LOGICAL_OR:
+			case S_OPCODE_GET_FIELD:
+				sprintf(debugInfo + strlen(debugInfo), " => ST (%d)", stack[stack.size()-1]);
+				break;
+
+			case S_OPCODE_PUSH:
+				strcat(debugInfo, " => ST");
+				break;
+
+			default:
+				break;
+			}
+
+			debugC(ERROR_DETAILED, kLureDebugScripts, debugInfo);
+		}
 	}
 
-	return fields.getField(SEQUENCE_RESULT);
+	uint16 result = fields.getField(SEQUENCE_RESULT);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Script result = %d", result); 
+	return result;
 }
 
 /*------------------------------------------------------------------------*/
@@ -621,7 +818,11 @@ bool HotspotScript::execute(Hotspot *h)
 	uint16 offset = h->script();
 	int16 opcode = 0;
 	int16 param1, param2;
+	uint32 actions;
 	bool breakFlag = false;
+
+	debugC(ERROR_BASIC, kLureDebugScripts, "Executing hotspot %xh script pos=%xh", 
+		h->hotspotId(), offset);
 
 	while (!breakFlag) {
 		opcode = nextVal(scriptData, offset);
@@ -629,6 +830,8 @@ bool HotspotScript::execute(Hotspot *h)
 		switch (opcode) {
 		case S2_OPCODE_TIMEOUT:
 			param1 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET TIMEOUT = %d", param1);
+
 			h->setTickCtr(param1);
 			h->setScript(offset);
 			breakFlag = true;
@@ -637,53 +840,74 @@ bool HotspotScript::execute(Hotspot *h)
 		case S2_OPCODE_POSITION:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET POSITION = (%d,%d)", 
+				param1 - 0x80, param2 - 0x80);
+
 			h->setPosition(param1 - 0x80, param2 - 0x80);
 			break;
 			
 		case S2_OPCODE_CHANGE_POS:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "CHANGE POSITION BY = (%d,%d)", 
+				param1, param2);
+
 			h->setPosition(h->x() + param1, h->y() + param2);
 			break;
 
 		case S2_OPCODE_UNLOAD:
+			debugC(ERROR_DETAILED, kLureDebugScripts, "UNLOAD HOTSPOT");
 			breakFlag = true;
 			break;
 
 		case S2_OPCODE_DIMENSIONS:
 			param1 = nextVal(scriptData, offset) << 4;
 			param2 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET SIZE = (%d,%d)",
+				param1, param2);
+
 			h->setSize((uint16) param1, (uint16) param2);
 			break;
 
 		case S2_OPCODE_JUMP:
 			offset = (uint16) nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "JUMP OFFSET = %xh", offset);
 			break;
 
 		case S2_OPCODE_ANIMATION:
 			param1 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET ANIMATION ID = %xh", param1);
+
 			h->setAnimation(param1);
 			break;
 
 		case S2_OPCODE_UNKNOWN_247:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SUB_247(%d,%d)", param1, param2);
+
 //			warning("UNKNOWN_247 stub called");
 			break;
 
 		case S2_OPCODE_UNKNOWN_258:
 			param1 = nextVal(scriptData, offset);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SUB_258()");
 //			warning("UNKNOWN_258 stub called");
 			break;
 
 		case S2_OPCODE_ACTIONS:
 			param1 = nextVal(scriptData, offset) << 4;
 			param2 = nextVal(scriptData, offset);
-			h->setActions((uint32) param1 | ((uint32) param2 << 16));
+			actions = (uint32) param1 | ((uint32) param2 << 16);
+
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET ACTIONS = %xh", actions);
+			h->setActions(actions);
 			break;
 
 		default:
 			// Set the animation frame number
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME NUMBER = %d", opcode);
+
 			h->setFrameNumber(opcode);
 			h->setScript(offset);
 			breakFlag = true;
