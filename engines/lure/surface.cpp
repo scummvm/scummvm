@@ -175,11 +175,15 @@ void Surface::copyTo(Surface *dest, uint16 x, uint16 y)
 
 void Surface::copyTo(Surface *dest, const Rect &srcBounds, 
 					 uint16 destX, uint16 destY, int transparentColour) {
+	int numBytes = srcBounds.right - srcBounds.left + 1;
+	if (destX + numBytes > dest->width())
+		numBytes = dest->width() - destX;
+	if (numBytes <= 0) return;
+
 	for (uint16 y=0; y<=(srcBounds.bottom-srcBounds.top); ++y) {
 		const uint32 srcPos = (srcBounds.top + y) * _width + srcBounds.left;
 		const uint32 destPos = (destY+y) * dest->width() + destX;
-		
-		uint16 numBytes = srcBounds.right-srcBounds.left+1;
+
 		if (transparentColour == -1) {
 			// No trnnsparent colour, so copy all the bytes of the line
 			dest->data().copyFrom(_data, srcPos, destPos, numBytes);
@@ -187,7 +191,8 @@ void Surface::copyTo(Surface *dest, const Rect &srcBounds,
 			byte *pSrc = _data->data() + srcPos;
 			byte *pDest = dest->data().data() + destPos;
 
-			while (numBytes-- > 0) {
+			int bytesCtr = numBytes;
+			while (bytesCtr-- > 0) {
 				if (*pSrc != (uint8) transparentColour)
 					*pDest = *pSrc;
 				++pSrc;
@@ -420,7 +425,10 @@ void Dialog::show(uint16 stringId) {
 }
 
 void Dialog::showMessage(uint16 messageId, uint16 characterId) {
-	MemoryBlock *data = Resources::getReference().messagesData();
+	Resources &res = Resources::getReference();
+	MemoryBlock *data = res.messagesData();
+	Hotspot *charHotspot = res.getActiveHotspot(characterId);
+	Hotspot *hotspot;
 	uint16 *v = (uint16 *) data->data();
 	uint16 v2, idVal;
 	messageId &= 0x7fff;
@@ -442,32 +450,27 @@ void Dialog::showMessage(uint16 messageId, uint16 characterId) {
 	if (idVal == 0xffff) idVal = 0x8c4; 
 	
 	if (idVal == 0x76) {
-		/* 
-		call    sub_154                 ; (64E7)
-		mov     ax,word ptr ds:[5813h]  ; (273F:5813=1BA3h)
-		mov     [bx+ANIM_SEGMENT],ax
-		mov     ax,word ptr ds:[5817h]  ; (273F:5817=0ED8Eh)
-		mov     [bx+ANIM_FRAME],ax
-		retn
-*/
+		// Special code id for showing the puzzled talk bubble
+		if (!charHotspot) return;
+		hotspot = new Hotspot(charHotspot, PUZZLED_ANIM_ID);
+		res.addHotspot(hotspot);
+
 	} else if (idVal == 0x120) {
-		/* 
-		call    sub_154                 ; (64E7)
-		mov     ax,word ptr ds:[5813h]  ; (273F:5813=1BA3h)
-		mov     [bx+ANIM_SEGMENT],ax
-		mov     ax,word ptr ds:[5817h]  ; (273F:5817=0ED8Eh)
-		shl     ax,1
-		mov     [bx+ANIM_FRAME],ax
-*/
+		// Special code id for showing the exclamation talk bubble
+		if (!charHotspot) return;
+		hotspot = new Hotspot(charHotspot, EXCLAMATION_ANIM_ID);
+		res.addHotspot(hotspot);
+
 	} else if (idVal >= 0x8000) {
 		// Handle string display
 		idVal &= 0x7fff;
 		Dialog::show(idVal);
 		
 	} else if (idVal != 0) {
-		// Handle message as a talking dialog
-		// TODO: show talk dialog
-		warning("Dialog style for message #%d not yet implemented", idVal);
+		// Handle message as a talking dialog (the character talking to themselves)
+		
+		if (!charHotspot) return;
+		charHotspot->converse(NOONE_ID, idVal, false);
 	}
 }
 
