@@ -156,16 +156,7 @@ Resource::Resource(KyraEngine *engine) {
 		error("no filelist found for this game");
 
 	for (uint32 tmp = 0; usedFilelist[tmp]; ++tmp) {
-		// prefetch file
-		PAKFile *file = new PAKFile(usedFilelist[tmp], (_engine->features() & GF_AMIGA) != 0);
-		assert(file);
-
-		if (file->isOpen() && file->isValid()) {
-			_pakfiles.push_back(file);
-		} else {
-			delete file;
-			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
-		}
+		loadPakFile(usedFilelist[tmp]);
 	}
 }
 
@@ -183,17 +174,32 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		return true;
 
 	uint32 size = 0;
-	uint8 *buf = fileData(filename.c_str(), &size);
-	if (!buf || size == 0) {
+	Common::File handle;
+	if (!fileHandle(filename.c_str(), &size, handle)) {
 		warning("couldn't load file: '%s'", filename.c_str());
 		return false;
 	}
 
-	PAKFile *file = new PAKFile(filename.c_str(), buf, size);
-	delete [] buf;
+	PAKFile *file = 0;
+
+	if (handle.name() == filename) {
+		file = new PAKFile(filename.c_str(), (_engine->features() & GF_AMIGA) != 0);
+	} else {
+		uint32 offset = handle.pos();
+		uint8 *buf = new uint8[size];
+		handle.read(buf, size);
+		file = new PAKFile(filename.c_str(), handle.name(), offset, buf, size, (_engine->features() & GF_AMIGA) != 0);
+		delete [] buf;
+	}
+	handle.close();
 
 	if (!file)
 		return false;
+	if (!file->isValid()) {
+		warning("'%s' is no valid pak file!", filename.c_str());
+		delete file;
+		return false;
+	}
 
 	_pakfiles.push_back(file);
 	return true;
@@ -344,9 +350,10 @@ PAKFile::PAKFile(const char *file, bool isAmiga) : ResourceFile() {
 	delete [] buffer;
 	
 	_filename = file;
+	_physfile = "";
 }
 
-PAKFile::PAKFile(const char *file, const uint8 *buffer, uint32 filesize, bool isAmiga) : ResourceFile() {
+PAKFile::PAKFile(const char *file, const char *physfile, const uint32 off, const uint8 *buffer, uint32 filesize, bool isAmiga) : ResourceFile() {
 	_isAmiga = isAmiga;
 	_open = false;
 
@@ -391,12 +398,15 @@ PAKFile::PAKFile(const char *file, const uint8 *buffer, uint32 filesize, bool is
 		startoffset = endoffset;
 	}
 
-	_open = true;	
+	_open = true;
+	_physfile = physfile;
+	_physOffset = off;
 	_filename = file;
 }
 
 PAKFile::~PAKFile() {
 	_filename.clear();
+	_physfile.clear();
 	_open = false;
 
 	_files.clear();
@@ -406,11 +416,9 @@ uint8 *PAKFile::getFile(const char *file) {
 	for (PAKFile_Iterate) {
 		if (!scumm_stricmp(start->_name.c_str(), file)) {
 			Common::File pakfile;
-			if (!pakfile.open(_filename)) {
-				debug(3, "couldn't open pakfile '%s'\n", _filename.c_str());
-				return 0;
-			}
-			pakfile.seek(start->_start);
+			if (!openFile(pakfile))
+				return false;
+			pakfile.seek(start->_start, SEEK_CUR);
 			uint8 *buffer = new uint8[start->_size];
 			assert(buffer);
 			pakfile.read(buffer, start->_size);
@@ -425,11 +433,9 @@ bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
 
 	for (PAKFile_Iterate) {
 		if (!scumm_stricmp(start->_name.c_str(), file)) {
-			if (!filehandle.open(_filename)) {
-				debug(3, "couldn't open pakfile '%s'\n", _filename.c_str());
-				return 0;
-			}
-			filehandle.seek(start->_start);
+			if (!openFile(filehandle))
+				return false;
+			filehandle.seek(start->_start, SEEK_CUR);
 			return true;
 		}
 	}
@@ -442,6 +448,21 @@ uint32 PAKFile::getFileSize(const char* file) {
 			return start->_size;
 	}
 	return 0;
+}
+
+bool PAKFile::openFile(Common::File &filehandle) {
+	filehandle.close();
+
+	if (!filehandle.open(_physfile == "" ? _filename : _physfile)) {
+		debug(3, "couldn't open pakfile '%s'\n", _filename.c_str());
+		return false;
+	}
+
+	if (_physfile != "") {
+		filehandle.seek(_physOffset, SEEK_CUR);
+	}
+
+	return true;
 }
 
 ///////////////////////////////////////////
@@ -495,7 +516,6 @@ INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 		filesize = pakfile.readUint32LE();
 		start->_size = filesize;
 		start->_start = pakfile.pos();
-		printf("'%s', %d, %d\n", start->_name.c_str(), start->_start, start->_size);
 		pakfile.seek(filesize, SEEK_CUR);
 	}
 
@@ -516,7 +536,7 @@ uint8 *INSFile::getFile(const char *file) {
 			Common::File pakfile;
 			if (!pakfile.open(_filename)) {
 				debug(3, "couldn't open insfile '%s'\n", _filename.c_str());
-				return 0;
+				return false;
 			}
 			pakfile.seek(start->_start);
 			uint8 *buffer = new uint8[start->_size];
@@ -531,19 +551,15 @@ uint8 *INSFile::getFile(const char *file) {
 bool INSFile::getFileHandle(const char *file, Common::File &filehandle) {
 	for (INSFile_Iterate) {
 		if (!scumm_stricmp(start->_name.c_str(), file)) {
-			Common::File pakfile;
-			if (!pakfile.open(_filename)) {
+			if (!filehandle.open(_filename)) {
 				debug(3, "couldn't open insfile '%s'\n", _filename.c_str());
-				return 0;
+				return false;
 			}
-			pakfile.seek(start->_start);
-			uint8 *buffer = new uint8[start->_size];
-			assert(buffer);
-			pakfile.read(buffer, start->_size);
-			return buffer;
+			filehandle.seek(start->_start, SEEK_CUR);
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 uint32 INSFile::getFileSize(const char *file) {

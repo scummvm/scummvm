@@ -61,14 +61,20 @@ class PAKFile : public ResourceFile {
 
 public:
 	PAKFile(const char *file, bool isAmiga = false);
-	PAKFile(const char *file, const uint8 *buf, uint32 size, bool isAmiga = false);
+	PAKFile(const char *file, const char *physfile, const uint32 off, const uint8 *buf, uint32 size, bool isAmiga = false);
 	~PAKFile();
 
 	uint8 *getFile(const char *file);
 	bool getFileHandle(const char *file, Common::File &filehandle);
 	uint32 getFileSize(const char *file);
 private:
+	bool openFile(Common::File &filehandle);
+
 	bool _isAmiga;
+
+	Common::String _physfile;
+	uint32 _physOffset;
+
 	Common::List<PakChunk> _files; // the entries
 };
 
