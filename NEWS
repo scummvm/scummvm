@@ -5,6 +5,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Better compression for DXA movies.
 
+ Broken Sword 2:
+   - Added support for DXA cutscenes.
+
 0.9.1 (????-??-??)
  SCUMM
    - Improved support for international versions of HE games.
