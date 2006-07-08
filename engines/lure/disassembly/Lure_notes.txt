@@ -75,6 +75,9 @@ character_change_room - Changes the current room for a given character
              cx = New X position
              bx = New Y position
 
+character_change_room_check_bumped - Called as part of character_change_room
+             to check whether there is any bump occurring
+
 character_check_room_change - Checks whether the given character is within the
               bounds of a room exit, and if so, handles moving the player to
               the new room
@@ -114,7 +117,25 @@ character_pathfind - Handles pathfinding a segment of a walking path to a
                  2 => end of pathfinding reached (destination blocked)
                  3 => end of pathfinding reached (no path to dest)
                  4 => end of pathfinding reached (no walking possible)
-                 
+
+character_paused_list_check - Checks a list of impinging characters for
+              characters, and if there isn't an entry in the paused list,
+              adds a new one 
+    Input:  di = Animation slot
+
+character_paused_list_countdown - Decrements by one any current entries in the
+              list of characters that currently need to be paused
+
+character_paused_list_reset - Resets any current entries in the paused
+              characters list for the specified hotspot to a countdown value
+              of 1 so they will expire in the next frame
+    Input:  di = Animation slot
+
+character_paused_list_scan - Scans the paused list for any entry for the
+              specified hotspot, and if found, resets it back to a wait
+              counter of 15
+   Input: di = Animation slot
+
 character_reset_direction - Rounds off the given character's position, and sets
               their current frame to the default frame for the character's
               current direction
@@ -351,6 +372,9 @@ open_file2 - sets the default drive to the specified drive and then calls
              the open_file method
      Input:  al=drive number
 
+pathfind_reset - Resets the pathfinder for the specified character
+     Input:  ax = Character hotspot Id
+
 pathfind_clear_covered_cells - Clears the cells covered by the base of a given
               animation from being occupied in the path finding data block. This
               prevents characters from walking through each other
@@ -552,10 +576,11 @@ sleep_with_kbd_mouse_break - Pause with breakout by keypress and mouse
     Output:  carry = breakout occurred
              zero  = if set, indicates Escape was pressed
 
-sub_107 - Gets a ax (0 or 3) and bx pointer used later in a call to sub_132
-              to get a sequence offset
-   Input:  ax = Hotspot Id
-
+start_talk_noone - Starts a character talking with no designated destination
+              character (ie. they're talking to themselves)
+     Input:  bx = Chacter Id
+             cx = String Id
+             
 talk_add_voice_animation - Adds an animation entry of a talk bubble, which
               gets displayed above a designated character
    Input:  di = Hotspot slot
