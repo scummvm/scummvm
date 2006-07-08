@@ -164,6 +164,10 @@ REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine");
 namespace Lure {
 
 LureEngine::LureEngine(OSystem *system): Engine(system) {
+
+	Common::addSpecialDebugLevel(kLureDebugScripts, "scripts", "Scripts debugging");
+	Common::addSpecialDebugLevel(kLureDebugAnimations, "animations", "Animations debugging");
+	Common::addSpecialDebugLevel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
 	// Setup mixer
 /*
 	if (!_mixer->isReady()) {
@@ -174,13 +178,14 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 */
+	
 	_features = 0;
 	_game = 0;
 }
 
 void LureEngine::detectGame() {
 	// Make sure all the needed files are present
-	
+
 	if (!Common::File::exists(SUPPORT_FILENAME))
 		error("Missing %s - this is a custom file containing resources from the\n"
 			"Lure of the Temptress executable. See the documentation for creating it.",
@@ -214,7 +219,7 @@ void LureEngine::detectGame() {
 	}
 
 	// Do an md5 check 
-	
+
 	uint8 md5sum[16];
 	char md5str[32 + 1];
 	const GameSettings *g;
@@ -259,7 +264,6 @@ int LureEngine::init() {
 	_system->endGFXTransaction();
 
 	detectGame();
-
 	_sys = new System(_system);
 	_disk = new Disk();
 	_resources = new Resources();
@@ -270,11 +274,14 @@ int LureEngine::init() {
 	_menu = new Menu();
 	Surface::initialise();
 	_room = new Room();
-
 	return 0;
 }
 
 LureEngine::~LureEngine() {
+	// Remove all of our debug levels here
+	Common::clearAllSpecialDebugLevels();
+
+	// Delete and deinitialise subsystems
 	Surface::deinitialise();
 	delete _room;
 	delete _menu;
@@ -288,10 +295,12 @@ LureEngine::~LureEngine() {
 }
 
 int LureEngine::go() {
-	// Show the introduction
-	Introduction *intro = new Introduction(*_screen, *_system);
-	intro->show();
-	delete intro;
+	if (ConfMan.getInt("boot_param") == 0) {
+		// Show the introduction
+		Introduction *intro = new Introduction(*_screen, *_system);
+		intro->show();
+		delete intro;
+	}
 
 	// Play the game
 	if (!_events->quitFlag) {

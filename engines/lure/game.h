@@ -32,6 +32,7 @@
 #include "lure/memory.h"
 #include "lure/screen.h"
 #include "lure/events.h"
+#include "lure/debugger.h"
 
 namespace Lure {
 
@@ -39,6 +40,7 @@ enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2};
 
 class Game {
 private:
+	Debugger *_debugger;
 	bool _slowSpeedFlag, _soundFlag;
 	uint8 _state;
 
@@ -49,8 +51,11 @@ private:
 	void doAction(Action action, uint16 hotspotId, uint16 usedId);
 
 	void playerChangeRoom();
+	void handleBootParam(int value);
 public:
 	Game();
+	virtual ~Game();
+
 	static Game &getReference();
 
 	void nextFrame();

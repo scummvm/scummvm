@@ -24,11 +24,11 @@
 #include "lure/strings.h"
 #include "lure/room.h"
 #include "lure/system.h"
-#include "lure/debug-input.h"
-#include "lure/debug-methods.h"
 #include "lure/scripts.h"
 #include "lure/res_struct.h"
 #include "lure/animseq.h"
+
+#include "common/config-manager.h"
 
 namespace Lure {
 
@@ -40,8 +40,13 @@ Game &Game::getReference() {
 
 Game::Game() {
 	int_game = this;
+	_debugger = new Debugger();
 	_slowSpeedFlag = true;
 	_soundFlag = true;
+}
+
+Game::~Game() {
+	delete _debugger;
 }
 
 void Game::nextFrame() {
@@ -50,6 +55,7 @@ void Game::nextFrame() {
 	Room &room = Room::getReference();
 	HotspotList::iterator i;
 
+	res.pausedList().countdown();
 	room.checkCursor();
 	room.update();
 	
@@ -79,12 +85,11 @@ void Game::nextFrame() {
 
 void Game::execute() {
 	OSystem &system = System::getReference();
-	Room &r = Room::getReference();
+	Room &room = Room::getReference();
 	Resources &res = Resources::getReference();
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Screen &screen = Screen::getReference();
-	//Menu &menu = Menu::getReference();
 	ValueTableData &fields = res.fieldList();
 
 	uint32 timerVal = system.getMillis();
@@ -97,13 +102,13 @@ void Game::execute() {
 
 	Script::execute(STARTUP_SCRIPT);
 
-	// Load the first room
-	r.setRoomNumber(1);
+	int bootParam = ConfMan.getInt("boot_param");
+	handleBootParam(bootParam);
 
 	// Set the player direction
 	res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
 
-	r.update();
+	room.update();
 	mouse.setCursorNum(CURSOR_ARROW);
 	mouse.cursorOn();
 	
@@ -112,48 +117,52 @@ void Game::execute() {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
-				nextFrame();			
+				nextFrame();
 			}
 			res.delayList().tick();
 
 			while (events.pollEvent()) {
 				if (events.type() == OSystem::EVENT_KEYDOWN) {
-					uint16 roomNum = r.roomNumber();
+					uint16 roomNum = room.roomNumber();
 
-#ifdef LURE_DEBUG
-					if (events.event().kbd.keycode == 282) {
-						doDebugMenu();
-						continue;
+					if ((events.event().kbd.flags == OSystem::KBD_CTRL) &&
+						(events.event().kbd.keycode == 'd')) {
+						// Activate the debugger
+						_debugger->attach();
+						break;
 					}
-#endif
+
 					switch (events.event().kbd.ascii) {
 					case 27:
 						events.quitFlag = true;
 						break;
 
-#ifdef LURE_DEBUG
 					case '+':
 						while (++roomNum <= 51) 
 							if (res.getRoom(roomNum) != NULL) break; 
 						if (roomNum == 52) roomNum = 1;
 
-						r.leaveRoom();
-						r.setRoomNumber(roomNum);
+						room.leaveRoom();
+						room.setRoomNumber(roomNum);
 						break;
 
 					case '-':
 						if (roomNum == 1) roomNum = 55;
 						while (res.getRoom(--roomNum) == NULL) ;
 
-						r.leaveRoom();
-						r.setRoomNumber(roomNum);
+						room.leaveRoom();
+						room.setRoomNumber(roomNum);
 						break;
 
 					case '*':
 						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-							r.roomNumber());
+							room.roomNumber());
 						break;
-#endif
+
+					case 267:  // keypad '/'
+						room.setShowInfo(!room.showInfo());
+						break;
+
 					default:
 						break;
 					}
@@ -168,8 +177,9 @@ void Game::execute() {
 			destRoom = fields.getField(NEW_ROOM_NUMBER);
 			if (destRoom != 0) {
 				// Need to change the current room
+				strcpy(room.statusLine(), "");
 				bool remoteFlag = fields.getField(OLD_ROOM_NUMBER) != 0;
-				r.setRoomNumber(destRoom, remoteFlag);
+				room.setRoomNumber(destRoom, remoteFlag);
 				fields.setField(NEW_ROOM_NUMBER, 0);
 			}
 
@@ -180,6 +190,9 @@ void Game::execute() {
 
 			system.updateScreen();
 			system.delayMillis(10);
+
+			if (_debugger->isAttached())
+				_debugger->onFrame();
 		}
 
 		// If Skorl catches player, show the catching animation
@@ -199,52 +212,8 @@ void Game::execute() {
 		}
 	}
 
-	r.leaveRoom();
+	room.leaveRoom();
 }
-
-#ifdef LURE_DEBUG
-
-#define NUM_DEBUG_ITEMS 4
-const char *debugItems[NUM_DEBUG_ITEMS] = 
-		{"Toggle Info", "Set Room", "Show Active HS", "Show Room HS"};
-
-void Game::doDebugMenu() {
-	uint16 index = PopupMenu::Show(NUM_DEBUG_ITEMS, debugItems);
-	Room &r = Room::getReference();
-	Resources &res = Resources::getReference();
-	
-	switch (index) {
-	case 0:
-		// Toggle co-ordinates
-		r.setShowInfo(!r.showInfo());
-		break;
-
-	case 1:
-		// Set room number:
-		uint32 roomNumber;
-		if (!input_integer("Enter room number:", roomNumber)) return;
-		if (res.getRoom(roomNumber))
-			r.setRoomNumber(roomNumber);
-		else
-			Dialog::show("The room does not exist");
-		break;
-
-	case 2:
-		// Show active hotspots
-		showActiveHotspots();
-		break;
-
-	case 3:
-		// Show hotspots in room
-		showRoomHotspots();
-		break;
-
-	default:
-		break;
-	}
-}
-
-#endif
 
 void Game::handleMenuResponse(uint8 selection) {
 	switch (selection) {
@@ -274,9 +243,12 @@ void Game::playerChangeRoom() {
 	Resources &res = Resources::getReference();
 	Room &room = Room::getReference();
 	ValueTableData &fields = res.fieldList();
+	SequenceDelayList &delayList = Resources::getReference().delayList();
+
 	uint16 roomNum = fields.playerNewPos().roomNumber;
 	fields.playerNewPos().roomNumber = 0;
 	Point &newPos = fields.playerNewPos().position;
+	delayList.clear();
 
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	player->currentActions().clear();
@@ -325,12 +297,17 @@ void Game::handleClick() {
 void Game::handleRightClickMenu() {
 	Room &room = Room::getReference();
 	Resources &res = Resources::getReference();
+	Screen &screen = Screen::getReference();
 	ValueTableData &fields = res.fieldList();
+	StringData &strings = StringData::getReference();
+	Mouse &mouse = Mouse::getReference();
+	char *statusLine = room.statusLine();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
-	HotspotData *hotspot;
+	HotspotData *hotspot, *useHotspot;
 	Action action;
 	uint32 actions;
 	uint16 itemId = 0xffff;
+	bool hasItems;
 
 	if (room.hotspotId() != 0) {
 		// Get hotspot actions
@@ -353,7 +330,17 @@ void Game::handleRightClickMenu() {
 
 	bool breakFlag = false;
 	while (!breakFlag) {
+		statusLine = room.statusLine();
+		strcpy(statusLine, "");
+		room.update();
+		screen.update();
+
 		action = PopupMenu::Show(actions);
+
+		if (action != NONE) {
+			sprintf(statusLine, "%s ", actionList[action]);
+			statusLine += strlen(statusLine);
+		}
 
 		switch (action) {
 		case LOOK:
@@ -365,12 +352,42 @@ void Game::handleRightClickMenu() {
 		case USE:
 		case EXAMINE:
 		case DRINK:
-			if (action != DRINK)
-				hotspot = res.getHotspot(room.hotspotId());
-			itemId = PopupMenu::ShowInventory();
-			breakFlag = (itemId != 0xffff);
-			if (breakFlag) 
-				fields.setField(USE_HOTSPOT_ID, itemId);
+			if (action == ASK) {
+				strings.getString(hotspot->nameId, statusLine);
+				strcat(statusLine, " for ");
+			}
+
+			hasItems = (res.numInventoryItems() != 0);
+			if (!hasItems)
+				strcat(statusLine, "(nothing)");
+			statusLine += strlen(statusLine);
+
+			room.update();
+			screen.update();
+			mouse.waitForRelease();
+
+			if (hasItems) {
+				if (action != DRINK)
+					hotspot = res.getHotspot(room.hotspotId());
+				itemId = PopupMenu::ShowInventory();
+				breakFlag = (itemId != 0xffff);
+				if (breakFlag) { 
+					fields.setField(USE_HOTSPOT_ID, itemId);
+					if ((action == GIVE) || (action == USE)) {
+						// Add in the "X to " or "X on " section of give/use action
+						useHotspot = res.getHotspot(itemId);
+						assert(useHotspot);
+						strings.getString(useHotspot->nameId, statusLine);
+						if (action == GIVE) 
+							strcat(statusLine, " to ");
+						else 
+							strcat(statusLine, " on ");
+						statusLine += strlen(statusLine);
+					}
+					else if ((action == DRINK) || (action == EXAMINE))
+						hotspot = res.getHotspot(itemId);
+				}
+			}
 			break;
 
 		default:
@@ -382,7 +399,17 @@ void Game::handleRightClickMenu() {
 
 	if (action != NONE) {
 		player->stopWalking();
-		doAction(action, (hotspot != NULL) ? hotspot->hotspotId : 0, itemId);
+
+		if (hotspot == NULL) {
+			doAction(action, 0, itemId);
+		} else {
+			// Add the hotspot name to the status line and then go do the action
+			strings.getString(hotspot->nameId, statusLine);
+			doAction(action, hotspot->hotspotId, itemId);
+		}
+	} else {
+		// Clear the status line
+		strcpy(room.statusLine(), "");
 	}
 }
 
@@ -390,15 +417,21 @@ void Game::handleLeftClick() {
 	Room &room = Room::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Resources &res = Resources::getReference();
+	StringData &strings = StringData::getReference();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 
 	room.setCursorState(CS_NONE);
 	player->stopWalking();
 	player->setDestHotspot(0);
 	player->setActionCtr(0);
+	strcpy(room.statusLine(), "");
 
 	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {	
 		// Handle look at hotspot
+		sprintf(room.statusLine(), "%s ", actionList[LOOK_AT]);
+		HotspotData *hotspot = res.getHotspot(room.hotspotId());
+		assert(hotspot);
+		strings.getString(hotspot->nameId, room.statusLine() + strlen(room.statusLine()));
 		doAction(LOOK_AT, room.hotspotId(), 0xffff);
 
 	} else if (room.destRoomNumber() != 0) {
@@ -495,6 +528,55 @@ void Game::doSound() {
 	const char *pSrc = _soundFlag ? "on " : "off";
 	char *pDest = menu.getMenu(2).getEntry(2) + 6;
 	memcpy(pDest, pSrc, 3);
+}
+
+void Game::handleBootParam(int value) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	Room &room = Room::getReference();
+	Hotspot *h;
+
+	switch (value) {
+	case 0:
+		// No parameter - load the first room
+		room.setRoomNumber(1);
+		break;
+
+	case 1:
+		// Set player to be in rack room with a few items
+		// Setup Skorl in cell room
+		h = res.getActiveHotspot(SKORL_ID);
+		h->setRoomNumber(1);
+		h->setPosition(140, 120);
+		h->currentActions().top().setSupportData(0x1400);
+		fields.setField(11, 1);
+	
+		// Set up player
+		h = res.getActiveHotspot(PLAYER_ID);
+		h->setRoomNumber(4);
+		h->setPosition(150, 110);
+		res.getHotspot(0x2710)->roomNumber = PLAYER_ID;  // Bottle
+		res.getHotspot(0x2713)->roomNumber = PLAYER_ID;  // Knife
+
+		room.setRoomNumber(4);
+		break;
+
+	case 2:
+		// Set the player up in the outer cell with a full bottle & knife
+		h = res.getActiveHotspot(PLAYER_ID);
+		h->setRoomNumber(2);
+		h->setPosition(100, 110);
+		res.getHotspot(0x2710)->roomNumber = PLAYER_ID;  // Bottle
+		fields.setField(BOTTLE_FILLED, 1);
+		res.getHotspot(0x2713)->roomNumber = PLAYER_ID;  // Knife
+
+		room.setRoomNumber(2);
+		break;
+
+	default:
+		room.setRoomNumber(value);
+		break;
+	}
 }
 
 } // end of namespace Lure
