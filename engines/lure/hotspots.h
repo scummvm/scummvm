@@ -35,6 +35,8 @@ namespace Lure {
 class Hotspot;
 
 class Support {
+private:
+	static bool changeRoomCheckBumped(Hotspot &h);
 public:
 	static int findIntersectingCharacters(Hotspot &h, uint16 *charList); 
 	static bool checkForIntersectingCharacter(Hotspot &h);
@@ -54,15 +56,20 @@ private:
 
 	// Handler methods
 	static void defaultHandler(Hotspot &h);
+	static void voiceBubbleAnimHandler(Hotspot &h);
 	static void standardAnimHandler(Hotspot &h);
 	static void standardCharacterAnimHandler(Hotspot &h);
+	static void puzzledAnimHandler(Hotspot &h);
 	static void roomExitAnimHandler(Hotspot &h);
 	static void playerAnimHandler(Hotspot &h);
+	static void followerAnimHandler(Hotspot &h);
 	static void skorlAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
+	static void prisonerAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
-	static void headAnimationHandler(Hotspot &h);
+	static void headAnimHandler(Hotspot &h);
+	static void rackSerfAnimHandler(Hotspot &h);
 
 public:
 	static HandlerMethodPtr getHandler(uint16 procOffset);
@@ -98,6 +105,7 @@ public:
 	void setAction(CurrentAction newAction) { _action = newAction; }
 	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
 	void setSupportData(CharacterScheduleEntry *newRec) { _supportData = newRec; }
+	void setSupportData(uint16 entryId);
 };
 
 class CurrentActionStack {
@@ -112,7 +120,8 @@ public:
 	CurrentAction action() { return isEmpty() ? NO_ACTION : top().action(); }
 	void pop() { _actions.erase(_actions.begin()); }
 	int size() { return _actions.size(); }
-	void list();
+	void list(char *buffer);
+	void list() { list(NULL); }
 
 	void addBack(CurrentAction newAction, uint16 roomNum) {
 		_actions.push_back(new CurrentActionEntry(newAction, roomNum));
@@ -177,7 +186,8 @@ public:
 	void clear();
 	void reset(RoomPathsData &src);
 	bool process();
-	void list();
+	void list(char *buffer);
+	void list() { list(NULL); }
 
 	void pop() { _list.erase(_list.begin()); }
 	WalkingActionEntry &top() { return **_list.begin(); }
@@ -188,15 +198,13 @@ public:
 
 enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, PC_EXCESS};
 
-enum BlockedState {BS_NONE, BS_INITIAL, BS_UNKNOWN};
+#define MAX_NUM_FRAMES 16
 
 class Hotspot {
 private:
 	HotspotData *_data;
 	HotspotAnimData *_anim;
-public:
 	HandlerMethodPtr _tickHandler;
-private:
 	Surface *_frames;
 	uint16 _hotspotId;
 	uint16 _roomNumber;
@@ -220,23 +228,25 @@ private:
 	CurrentActionStack _currentActions;
 	CharacterScheduleEntry _npcSupportData;
 	PathFinder _pathFinder;
+	uint16 _frameWidth;
+	bool _frameStartsUsed;
+	uint16 _frameStarts[MAX_NUM_FRAMES];
 
 	uint16 _frameCtr;
-	uint8 _actionCtr;
+	uint8 _voiceCtr;
 	int16 _destX, _destY;
 	uint16 _destHotspotId;
 	uint16 _blockedOffset;
 	uint8 _exitCtr;
-	BlockedState _blockedState;
-	bool _unknownFlag;
+	bool _walkFlag;
 
 	// Support methods
-	void startTalk(HotspotData *charHotspot);
+	uint16 getTalkId(HotspotData *charHotspot);
+	void startTalk(HotspotData *charHotspot, uint16 id);
+	void startTalkDialog();
 
 	// Action support methods
 	HotspotPrecheckResult actionPrecheck(HotspotData *hotspot);
-	HotspotPrecheckResult actionPrecheck2(HotspotData *hotspot);
-	void actionPrecheck3(HotspotData *hotspot);
 	bool characterWalkingCheck(HotspotData *hotspot);
 	bool doorCloseCheck(uint16 doorId);
 	void resetDirection();
@@ -265,14 +275,14 @@ private:
 	void npcSetRoomAndBlockedOffset(HotspotData *hotspot);
 	void npcUnknown1(HotspotData *hotspot); 
 	void npcExecScript(HotspotData *hotspot); 
-	void npcUnknown2(HotspotData *hotspot); 
+	void npcResetPausedList(HotspotData *hotspot); 
 	void npcSetRandomDest(HotspotData *hotspot);
 	void npcWalkingCheck(HotspotData *hotspot); 
 	void npcSetSupportOffset(HotspotData *hotspot); 
 	void npcSupportOffsetConditional(HotspotData *hotspot);
 	void npcDispatchAction(HotspotData *hotspot); 
 	void npcUnknown3(HotspotData *hotspot); 
-	void npcUnknown4(HotspotData *hotspot); 
+	void npcPause(HotspotData *hotspot); 
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
 public:
@@ -288,7 +298,10 @@ public:
 	HotspotData *resource() { return _data; }
 	uint16 numFrames() { return _numFrames; }
 	uint16 frameNumber() { return _frameNumber; }
-	void setFrameNumber(uint16 v) { _frameNumber = v; }
+	void setFrameNumber(uint16 frameNum) { 
+		assert(frameNum < _numFrames);
+		_frameNumber = frameNum; 
+	}
 	void incFrameNumber();
 	Direction direction() { return _direction; }
 	uint16 frameWidth() { return _width; }
@@ -301,8 +314,7 @@ public:
 	uint16 destHotspotId() { return _destHotspotId; }
 	uint16 blockedOffset() { return _blockedOffset; }
 	uint8 exitCtr() { return _exitCtr; }
-	BlockedState blockedState() { return _blockedState; }
-	bool unknownFlag() { return _unknownFlag; }
+	bool walkFlag() { return _walkFlag; }
 	uint16 width() { return _width; }
 	uint16 height() { return _height; }
 	uint16 widthCopy() { return _widthCopy; }
@@ -328,13 +340,25 @@ public:
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
-	void setBlockedState(BlockedState newState) { _blockedState = newState; }
-	void setUnknownFlag(bool value) { _unknownFlag = value; }
+	BlockedState blockedState() { 
+		assert(_data);
+		return _data->blockedState; 
+	}
+	void setBlockedState(BlockedState newState) { 
+		assert(_data);
+		_data->blockedState = newState; 
+	}
+	void setWalkFlag(bool value) { _walkFlag = value; }
 	void setSize(uint16 newWidth, uint16 newHeight);
 	void setScript(uint16 offset) {
 		assert(_data != NULL);
 		_sequenceOffset = offset;
 		_data->sequenceOffset = offset; 
+	}
+	void setLayer(uint8 newLayer) {
+		assert(_data != NULL);
+		_layer = newLayer;
+		_data->layer = newLayer;
 	}
 	void setActions(uint32 newActions) { _actions = newActions; }
 	void setCharRectY(uint16 value) { _charRectY = value; }
@@ -348,12 +372,44 @@ public:
 		_data->characterMode = value;
 	}
 	uint16 delayCtr() { 
-		assert(_data != NULL);
-		return _data->delayCtr;
+		assert(_data);
+		return _data->delayCtr; 
 	}
 	void setDelayCtr(uint16 value) { 
-		assert(_data != NULL);
-		_data->delayCtr = value;
+		assert(_data);
+		_data->delayCtr = value;	
+	}
+	uint16 pauseCtr() { 
+		assert(_data);
+		return _data->pauseCtr;
+	}
+	void setPauseCtr(uint16 value) { 
+		assert(_data);
+		_data->pauseCtr = value;
+	}
+	bool coveredFlag() { 
+		assert(_data);
+		return _data->coveredFlag;
+	}
+	void setCoveredFlag(bool value) { 
+		assert(_data);
+		_data->coveredFlag = value;
+	}
+	uint16 useHotspotId() { 
+		assert(_data);
+		return _data->useHotspotId; 
+	}
+	void setUseHotspotId(uint16 value) {
+		assert(_data);
+		_data->useHotspotId = value;
+	}
+	uint16 v2b() {
+		assert(_data);
+		return _data->v2b;
+	}
+	void setV2b(uint16 value) {
+		assert(_data);
+		_data->v2b = value;
 	}
 
 	void copyTo(Surface *dest);
@@ -367,6 +423,7 @@ public:
 	void endAction();
 	void setDirection(Direction dir);
 	void faceHotspot(HotspotData *hotspot);
+	void faceHotspot(uint16 hotspotId);
 	void setRandomDest();
 	void setOccupied(bool occupiedFlag);
 	bool walkingStep();
@@ -374,7 +431,6 @@ public:
 	void updateMovement2(CharacterMode value);
 	void resetPosition();
 
-	// Actions
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
 	CurrentActionStack &currentActions() { return _currentActions; }
@@ -383,8 +439,21 @@ public:
 	uint16 frameCtr() { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
 	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }
-	uint8 actionCtr() { return _actionCtr; }
-	void setActionCtr(uint8 v) { _actionCtr = v; }
+	uint8 actionCtr() { 
+		assert(_data);
+		return _data->actionCtr; 
+	}
+	void setActionCtr(uint8 v) { 
+		assert(_data);
+		_data->actionCtr = v; 
+	}
+	uint8 voiceCtr() { return _voiceCtr; }
+	void setVoiceCtr(uint8 v) { _voiceCtr = v; }
+
+	// Miscellaneous
+	void converse(uint16 destHotspot, uint16 messageId, bool standStill);
+	void scheduleConverse(uint16 destHotspot, uint16 messageId);
+	void handleTalkDialog();
 };
 
 typedef ManagedList<Hotspot *> HotspotList;
