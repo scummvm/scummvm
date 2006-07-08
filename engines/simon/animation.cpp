@@ -270,7 +270,7 @@ void MoviePlayer::setPalette(byte *pal) {
 	byte palette[1024];
 	byte *p = palette;
 
-	for (int i = 0; i <= 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		*p++ = *pal++;
 		*p++ = *pal++;
 		*p++ = *pal++;
