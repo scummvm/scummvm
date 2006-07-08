@@ -281,6 +281,21 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 #endif
 	} else
 		error("Kyra engine created with invalid gameid.");
+
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("KyraEngine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
+
+	if (*engine) {
+		if (((KyraEngine*)(*engine))->setupGameFlags()) {
+			warning("KyraEngine: unable to locate game data at path '%s'", dir.path().c_str());
+			delete *engine;
+			return kNoGameDataFoundError;
+		}
+	}
 	
 	return kNoError;
 }

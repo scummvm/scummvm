@@ -115,10 +115,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system)
 }
 
 int KyraEngine::init() {
-	if (setupGameFlags()) {
-		return -1;
-	}
-
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
