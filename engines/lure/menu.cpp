@@ -391,7 +391,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				}
 
 			} else if (e.type() == OSystem::EVENT_LBUTTONDOWN) {
-				mouse.waitForRelease();
+				//mouse.waitForRelease();
 				goto bail_out;
 
 			} else if (e.type() == OSystem::EVENT_RBUTTONDOWN) {
