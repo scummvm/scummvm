@@ -35,6 +35,16 @@ namespace Lure {
 #define READ_LE_INT32(x) (int32) READ_LE_UINT32(x)
 
 enum {
+	kLureDebugScripts = 1 << 0,
+	kLureDebugAnimations = 1 << 1,
+	kLureDebugHotspots = 1 << 2
+};
+
+#define ERROR_BASIC 1
+#define ERROR_INTERMEDIATE 2
+#define ERROR_DETAILED 3
+
+enum {
 	GF_FLOPPY	= 1 <<  0,
 	GF_LNGUNK	= 1 << 15
 };
@@ -93,7 +103,7 @@ enum Action {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 8
+#define LURE_DAT_MINOR 9
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
@@ -204,10 +214,13 @@ enum Action {
 #define PLAYER_ID 0x3E8
 #define RATPOUCH_ID 0x3E9
 #define SKORL_ID 0x3EA
+#define GOEWIN_ID 0x3EF
 #define FIRST_NONCHARACTER_ID 0x408
 #define SACK_ID 0x40D
+#define PRISONER_ID 0x412
 #define TRANSFORM_ID 0x425
-
+#define START_EXIT_ID 0x2710
+#define BOTTLE_HOTSPOT_ID 0x2710
 #define START_NONVISUAL_HOTSPOT_ID 0x7530
 
 // Milliseconds delay between game frames
@@ -217,6 +230,7 @@ enum Action {
 #define TALK_TICK_PROC_ID 0x8ABD
 #define PLAYER_TICK_PROC_ID 0x5E44
 #define VOICE_TICK_PROC_ID 0x625E
+#define PUZZLED_TICK_PROC_ID 0x6571
 
 // String constants
 #define STRANGER_ID 0x17A
@@ -225,6 +239,11 @@ enum Action {
 
 // Misc constants
 #define VOICE_ANIM_ID 0x5810
+#define PUZZLED_ANIM_ID 0x8001
+#define EXCLAMATION_ANIM_ID 0x8002
+#define SERF_ANIM_ID 0x58A0
+#define CONVERSE_COUNTDOWN_SIZE 40
+#define IDLE_COUNTDOWN_SIZE 15
 
 // Countdown for # operations in path finder before breaking until next
 // tick - set it to 0 if you'd like all pathfinding to be done at once
@@ -235,8 +254,13 @@ enum Action {
 #define PIXELFLAG_HAS_TABLE 4
 
 // Constants used to reference entries in the reworked support data entry lists
-#define RETURN_SUPPORT_ID 0x100
-#define EXIT_BLOCKED_SUPPORT_ID 0x200
+#define RETURN_SUPPORT_ID 0x400
+#define EXIT_BLOCKED_SUPPORT_ID 0x800
+#define JUMP_ADDR_2_SUPPORT_ID 0x1403
+
+// Constants used in animation Serf on the rack
+#define RACK_SERF_SCRIPT_ID_1 0x35C
+#define RACK_SERF_SCRIPT_ID_2 0x384
 
 } // End of namespace Lure
 
