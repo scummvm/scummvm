@@ -53,7 +53,6 @@
 #include "gui/launcher.h"
 #endif
 
-
 #ifdef PALMOS_68K
 #include "args.h"
 #endif
