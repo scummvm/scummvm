@@ -23,6 +23,9 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
+
+#include "gui/message.h"
+
 #include "kyra/resource.h"
 #include "kyra/script.h"
 #include "kyra/wsamovie.h"
@@ -118,10 +121,10 @@ Resource::Resource(KyraEngine *engine) {
 	if (_engine->game() == GI_KYRA1) {
 		/*if (_engine->features() & GF_AMIGA)
 			usedFilelist = kyra1AmigaFilelist;
-			else*/ if (_engine->features() & GF_FLOPPY)
-				usedFilelist = kyra1Filelist;
-			else if (_engine->features() & GF_TALKIE)
-				usedFilelist = kyra1CDFilelist;
+		else*/ if (_engine->features() & GF_FLOPPY)
+			usedFilelist = kyra1Filelist;
+		else if (_engine->features() & GF_TALKIE)
+			usedFilelist = kyra1CDFilelist;
 	} else if (_engine->game() == GI_KYRA2) {
 		// TODO: add kyra2 floppy file list
 		usedFilelist = kyra2CDFilelist;
@@ -132,6 +135,8 @@ Resource::Resource(KyraEngine *engine) {
 	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
 	if (_engine->game() == GI_KYRA1) {
 		if (!loadPakFile("KYRA.DAT")) {
+			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file, get it from the ScummVM website");
+			errorMsg.runModal();
 			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
 		}
 	}
@@ -171,7 +176,9 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	if (isInPakList(filename))
 		return true;
 	PAKFile *file = new PAKFile(filename.c_str());
-	if (!file) {
+	if (!file)
+		return false;
+	if (!file->isValid()) {
 		warning("couldn't load file: '%s'", filename.c_str());
 		return false;
 	}
