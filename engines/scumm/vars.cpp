@@ -298,8 +298,8 @@ void ScummEngine_v72he::setupScummVars() {
 void ScummEngine_v80he::setupScummVars() {
 	ScummEngine_v72he::setupScummVars();
 
-	VAR_PLATFORM = 78;  		// 1 is PC, 2 is Macintosh
-	VAR_WINDOWS_VERSION = 79; 	// 31 is Windows 3.1, 40 is Windows 95+
+	VAR_PLATFORM = 78;
+	VAR_PLATFORM_VERSION = 79;
 	VAR_CURRENT_CHARSET = 80;
 	VAR_SOUNDCODE_TMR = 84;
 	VAR_KEY_STATE = 86;
@@ -653,10 +653,10 @@ void ScummEngine_v80he::resetScummVars() {
 
 	if (_game.platform == Common::kPlatformMacintosh) {
 		VAR(VAR_PLATFORM) = 2;
-		VAR(VAR_WINDOWS_VERSION) = 70;
+		VAR(VAR_PLATFORM_VERSION) = 70;
 	} else {
 		VAR(VAR_PLATFORM) = 1;
-		VAR(VAR_WINDOWS_VERSION) = 40;
+		VAR(VAR_PLATFORM_VERSION) = 40; 	// 31 is Windows 3.1, 40 is Windows 95+
 	}
 	VAR(VAR_COLOR_DEPTH) = 256;
 }

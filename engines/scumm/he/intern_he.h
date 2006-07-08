@@ -397,7 +397,7 @@ protected:
 	void o80_pickVarRandom();
 
 	byte VAR_PLATFORM;
-	byte VAR_WINDOWS_VERSION;
+	byte VAR_PLATFORM_VERSION;
 	byte VAR_CURRENT_CHARSET;
 	byte VAR_COLOR_DEPTH;
 };

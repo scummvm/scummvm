@@ -878,7 +878,7 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 	_sndTmrOffs = 0;
 
 	VAR_PLATFORM = 0xFF;
-	VAR_WINDOWS_VERSION = 0xFF;
+	VAR_PLATFORM_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
 	VAR_COLOR_DEPTH = 0xFF;
 }
