@@ -33,8 +33,26 @@
 
 namespace Kyra {
 
+class ResourceFile {
+public:
+	ResourceFile() : _open(false), _filename() {}
+	virtual ~ResourceFile() {}
+
+	virtual uint8 *getFile(const char *file) = 0;
+	virtual bool getFileHandle(const char *file, Common::File &filehandle) = 0;
+	virtual uint32 getFileSize(const char *file) = 0;
+
+	const Common::String &filename() const { return _filename; }
+
+	virtual bool isValid(void) const { return !(_filename.empty()); }
+	bool isOpen(void) const { return _open; }
+protected:
+	bool _open;
+	Common::String _filename;
+};
+
 // standard Package format for Kyrandia games
-class PAKFile {
+class PAKFile : public ResourceFile {
 	struct PakChunk {
 		Common::String _name;
 		uint32 _start;
@@ -43,20 +61,33 @@ class PAKFile {
 
 public:
 	PAKFile(const char *file, bool isAmiga = false);
+	PAKFile(const char *file, const uint8 *buf, uint32 size, bool isAmiga = false);
 	~PAKFile();
 
 	uint8 *getFile(const char *file);
 	bool getFileHandle(const char *file, Common::File &filehandle);
 	uint32 getFileSize(const char *file);
-
-	bool isValid(void) const { return !(_filename.empty()); }
-	bool isOpen(void) const { return _open; }
-
 private:
-	bool _open;
 	bool _isAmiga;
-	Common::String _filename;
 	Common::List<PakChunk> _files; // the entries
+};
+
+// installation file packages for (Kyra2/)Kyra3
+class INSFile : public ResourceFile {
+	struct FileEntry {
+		Common::String _name;
+		uint32 _start;
+		uint32 _size;
+	};
+public:
+	INSFile(const char *file);
+	~INSFile();
+
+	uint8 *getFile(const char *file);
+	bool getFileHandle(const char *file, Common::File &filehandle);
+	uint32 getFileSize(const char *file);
+protected:
+	Common::List<FileEntry> _files; // the entries
 };
 
 class Resource {
@@ -75,19 +106,8 @@ public:
 	bool fileHandle(const char *file, uint32 *size, Common::File &filehandle);
 
 protected:
-	class PakFileEntry {
-	public:
-		PakFileEntry(PAKFile *file, const Common::String str) : _file(file), _filename(str) {}
-		PakFileEntry(const PakFileEntry &c) : _file(c._file), _filename(c._filename) {}
-
-		PAKFile *_file;
-		const Common::String _filename;
-	private:
-		PakFileEntry &operator =(const PakFileEntry &c) { return *this; }
-	};
-
 	KyraEngine *_engine;
-	Common::List<PakFileEntry> _pakfiles;
+	Common::List<ResourceFile*> _pakfiles;
 };
 
 // TODO?: maybe prefix all things here with 'kKyra1' instead of 'k'

@@ -132,13 +132,20 @@ Resource::Resource(KyraEngine *engine) {
 		usedFilelist = kyra3Filelist;
 	}
 
-	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
 	if (_engine->game() == GI_KYRA1) {
+		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
 		if (!loadPakFile("KYRA.DAT")) {
 			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file, get it from the ScummVM website");
 			errorMsg.runModal();
 			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
 		}
+	} else if (_engine->game() == GI_KYRA3) {
+		// load the installation package file for kyra3
+		INSFile *insFile = new INSFile("WESTWOOD.001");
+		assert(insFile);
+		if (!insFile->isValid())
+			return;
+		_pakfiles.push_back(insFile);
 	}
 	
 	// We only need kyra.dat for the demo.
@@ -153,9 +160,8 @@ Resource::Resource(KyraEngine *engine) {
 		PAKFile *file = new PAKFile(usedFilelist[tmp], (_engine->features() & GF_AMIGA) != 0);
 		assert(file);
 
-		PakFileEntry newPak(file, usedFilelist[tmp]);
 		if (file->isOpen() && file->isValid()) {
-			_pakfiles.push_back(newPak);
+			_pakfiles.push_back(file);
 		} else {
 			delete file;
 			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
@@ -164,34 +170,40 @@ Resource::Resource(KyraEngine *engine) {
 }
 
 Resource::~Resource() {
-	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
 	for (;start != _pakfiles.end(); ++start) {
-		delete start->_file;
-		start->_file = 0;
+		delete *start;
+		*start = 0;
 	}
 }
 
 bool Resource::loadPakFile(const Common::String &filename) {
 	if (isInPakList(filename))
 		return true;
-	PAKFile *file = new PAKFile(filename.c_str());
-	if (!file)
-		return false;
-	if (!file->isValid()) {
+
+	uint32 size = 0;
+	uint8 *buf = fileData(filename.c_str(), &size);
+	if (!buf || size == 0) {
 		warning("couldn't load file: '%s'", filename.c_str());
 		return false;
 	}
-	PakFileEntry newPak(file, filename);
-	_pakfiles.push_back(newPak);
+
+	PAKFile *file = new PAKFile(filename.c_str(), buf, size);
+	delete [] buf;
+
+	if (!file)
+		return false;
+
+	_pakfiles.push_back(file);
 	return true;
 }
 
 void Resource::unloadPakFile(const Common::String &filename) {
-	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 	for (;start != _pakfiles.end(); ++start) {
-		if (scumm_stricmp(start->_filename.c_str(), filename.c_str()) == 0) {
-			delete start->_file;
+		if (scumm_stricmp((*start)->filename().c_str(), filename.c_str()) == 0) {
+			delete *start;
 			_pakfiles.erase(start);
 			break;
 		}
@@ -200,9 +212,9 @@ void Resource::unloadPakFile(const Common::String &filename) {
 }
 
 bool Resource::isInPakList(const Common::String &filename) {
-	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 	for (;start != _pakfiles.end(); ++start) {
-		if (scumm_stricmp(start->_filename.c_str(), filename.c_str()) == 0)
+		if (scumm_stricmp((*start)->filename().c_str(), filename.c_str()) == 0)
 			return true;
 	}
 	return false;
@@ -224,15 +236,15 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 		file_.close();
 	} else {
 		// opens the file in a PAK File
-		Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
 		for (;start != _pakfiles.end(); ++start) {
-			*size = start->_file->getFileSize(file);
+			*size = (*start)->getFileSize(file);
 			
 			if (!(*size))
 				continue;
 			
-			buffer = start->_file->getFile(file);
+			buffer = (*start)->getFile(file);
 			break;
 		}
 	}
@@ -250,15 +262,15 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 	if (filehandle.open(file))
 		return true;
 
-	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
 	for (;start != _pakfiles.end(); ++start) {
-		*size = start->_file->getFileSize(file);
+		*size = (*start)->getFileSize(file);
 		
 		if (!(*size))
 			continue;
 
-		if (start->_file->getFileHandle(file, filehandle)) {
+		if ((*start)->getFileHandle(file, filehandle)) {
 			return true;
 		}
 	}
@@ -269,7 +281,7 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
-PAKFile::PAKFile(const char *file, bool isAmiga) {
+PAKFile::PAKFile(const char *file, bool isAmiga) : ResourceFile() {
 	_isAmiga = isAmiga;
 
 	Common::File pakfile;
@@ -334,6 +346,55 @@ PAKFile::PAKFile(const char *file, bool isAmiga) {
 	_filename = file;
 }
 
+PAKFile::PAKFile(const char *file, const uint8 *buffer, uint32 filesize, bool isAmiga) : ResourceFile() {
+	_isAmiga = isAmiga;
+	_open = false;
+
+	// works with the file
+	uint32 pos = 0, startoffset = 0, endoffset = 0;
+
+	if (!_isAmiga) {
+		startoffset = READ_LE_UINT32(buffer + pos);
+	} else {
+		startoffset = READ_BE_UINT32(buffer + pos);
+	}
+	pos += 4;
+
+	while (pos < filesize) {
+		PakChunk chunk;
+
+		// saves the name
+		chunk._name = (const char*)buffer + pos;
+		pos += strlen(chunk._name.c_str()) + 1;
+		if (!(chunk._name[0]))
+			break;
+
+		if (!_isAmiga) {
+			endoffset = READ_LE_UINT32(buffer + pos);
+		} else {
+			endoffset = READ_BE_UINT32(buffer + pos);
+		}
+		pos += 4;
+
+		if (endoffset == 0) {
+			endoffset = filesize;
+		}
+
+		chunk._start = startoffset;
+		chunk._size = endoffset - startoffset;
+
+		_files.push_back(chunk);
+
+		if (endoffset == filesize)
+			break;
+
+		startoffset = endoffset;
+	}
+
+	_open = true;	
+	_filename = file;
+}
+
 PAKFile::~PAKFile() {
 	_filename.clear();
 	_open = false;
@@ -383,6 +444,117 @@ uint32 PAKFile::getFileSize(const char* file) {
 	return 0;
 }
 
+///////////////////////////////////////////
+// Ins file manager
+#define INSFile_Iterate Common::List<FileEntry>::iterator start=_files.begin();start != _files.end(); ++start
+INSFile::INSFile(const char *file) : ResourceFile(), _files() {
+	Common::File pakfile;
+	_open = false;
+
+	if (!pakfile.open(file)) {
+		debug(3, "couldn't open insfile '%s'\n", file);
+		return;
+	}
+
+	// thanks to eriktorbjorn for this code (a bit modified though)
+
+	// skip first three bytes
+	pakfile.seek(3);
+
+	// first file is the index table
+	uint32 filesize = pakfile.readUint32LE();
+
+	Common::String temp = "";
+
+	for (uint i = 0; i < filesize; ++i) {
+		byte c = pakfile.readByte();
+
+		if (c == '\\') {
+			temp = "";
+		} else if (c == 0x0D) {
+			// line endings are CRLF
+			c = pakfile.readByte();
+			assert(c == 0x0A);
+			++i;
+
+			FileEntry newEntry;
+			newEntry._name = temp;
+			newEntry._start = 0;
+			newEntry._size = 0;
+			_files.push_back(newEntry);
+
+			temp = "";
+		} else {
+			temp += (char)c;
+		}
+	}
+
+	pakfile.seek(3);
+
+	for (INSFile_Iterate) {
+		filesize = pakfile.readUint32LE();
+		start->_size = filesize;
+		start->_start = pakfile.pos();
+		printf("'%s', %d, %d\n", start->_name.c_str(), start->_start, start->_size);
+		pakfile.seek(filesize, SEEK_CUR);
+	}
+
+	_filename = file;
+	_open = true;
+}
+
+INSFile::~INSFile() {
+	_filename.clear();
+	_open = false;
+
+	_files.clear();
+}
+
+uint8 *INSFile::getFile(const char *file) {
+	for (INSFile_Iterate) {
+		if (!scumm_stricmp(start->_name.c_str(), file)) {
+			Common::File pakfile;
+			if (!pakfile.open(_filename)) {
+				debug(3, "couldn't open insfile '%s'\n", _filename.c_str());
+				return 0;
+			}
+			pakfile.seek(start->_start);
+			uint8 *buffer = new uint8[start->_size];
+			assert(buffer);
+			pakfile.read(buffer, start->_size);
+			return buffer;
+		}
+	}
+	return 0;
+}
+
+bool INSFile::getFileHandle(const char *file, Common::File &filehandle) {
+	for (INSFile_Iterate) {
+		if (!scumm_stricmp(start->_name.c_str(), file)) {
+			Common::File pakfile;
+			if (!pakfile.open(_filename)) {
+				debug(3, "couldn't open insfile '%s'\n", _filename.c_str());
+				return 0;
+			}
+			pakfile.seek(start->_start);
+			uint8 *buffer = new uint8[start->_size];
+			assert(buffer);
+			pakfile.read(buffer, start->_size);
+			return buffer;
+		}
+	}
+	return 0;
+}
+
+uint32 INSFile::getFileSize(const char *file) {
+	for (INSFile_Iterate) {
+		if (!scumm_stricmp(start->_name.c_str(), file))
+			return start->_size;
+	}
+	return 0;
+}
+
+////////////////////////////////////////////
 void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
 	debugC(9, kDebugLevelMain, "KyraEngine::loadPalette('%s' %p)", filename, (void *)palData);
 	uint32 fileSize = 0;
