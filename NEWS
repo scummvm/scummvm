@@ -5,6 +5,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Improved support for international versions of HE games.
 
+ Broken Sword 2
+   - More robust handling of the optional startup.inf file.
+
  PSP Port:
    - Fixed crashes during scrolling scenes in certain SCUMM games.
    - Added saving of thumbnail in SCUMM savegames.
