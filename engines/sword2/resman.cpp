@@ -276,7 +276,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 		file->read(_resList[res].ptr, len);
 
-		debug(3, "Loaded resource '%s' from '%s' on CD %d (%d)", fetchName(_resList[res].ptr), _resFiles[cluFileNum].fileName, getCD(), _resFiles[cluFileNum].cd);
+		debug(3, "Loaded resource '%s' (%d) from '%s' on CD %d (%d)", fetchName(_resList[res].ptr), res, _resFiles[cluFileNum].fileName, getCD(), _resFiles[cluFileNum].cd);
 
 		if (dump) {
 			char buf[256];
