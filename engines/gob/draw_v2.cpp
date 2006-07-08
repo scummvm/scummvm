@@ -542,7 +542,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 				_spriteBottom -= _frontSurface->height;
 			}
 			if (_destSurface == 21)
-				invalidateRect(0, _frontSurface->height, 319, _frontSurface->height+_vm->_game->_off_2E51B->height-1);
+				invalidateRect(0, _frontSurface->height, 319,
+						_frontSurface->height + _vm->_game->_off_2E51B->height - 1);
 			destSurface += 4;
 		}
 		if ((_frontSurface->height <= _spriteTop) && (operation == DRAW_BLITSURF)
@@ -653,7 +654,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_INVALIDATE:
-		_vm->_video->drawCircle(_spritesArray[_destSurface], _destSpriteX, _destSpriteY, _spriteRight, _frontColor);
+		_vm->_video->drawCircle(_spritesArray[_destSurface], _destSpriteX,
+				_destSpriteY, _spriteRight, _frontColor);
 		if (_destSurface == 21) {
 			invalidateRect(_destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,	// !!
 			    _destSpriteX + _spriteRight,
@@ -734,8 +736,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency,
 								_frontColor, _backColor, _spritesArray[_destSurface]);
-						_destSpriteX +=
-							*(((char*)_fonts[_fontIndex]->extraData) + (_textToPrint[i] - _fonts[_fontIndex]->startItem));
+						_destSpriteX += *(((char*)_fonts[_fontIndex]->extraData) +
+								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
 					}
 				} else { // loc_DBE9
 					warning("Untested, does that work?");
@@ -872,6 +874,171 @@ void Draw_v2::spriteOperation(int16 operation) {
 			_destSpriteY -= _backDeltaY;
 		}
 	}
+}
+
+void Draw_v2::blitCursor(void) {
+	int16 width;
+	int16 height;
+
+	if (_cursorIndex == -1)
+		return;
+
+	_cursorIndex = -1;
+	width = _cursorWidth;
+	height = _cursorHeight;
+	if(_backSurface->width < (_cursorX + _cursorWidth))
+		width -= _cursorX;
+	if(_backSurface->height < (_cursorY + _cursorHeight))
+		height -= _cursorY;
+	if (_frontSurface == _backSurface)
+		_vm->_video->drawSprite(_cursorBack, _frontSurface, 0, 0, width - 1, height - 1,
+				_cursorX, _cursorY, 0);
+	else if (_noInvalidated == 0)
+		invalidateRect(_cursorX, _cursorY, _cursorX + width - 1, _cursorY + height - 1);
+	else
+		_vm->_video->drawSprite(_backSurface, _frontSurface, _cursorX, _cursorY,
+				_cursorX + width - 1, _cursorY + height - 1, _cursorX, _cursorY, 0);
+}
+
+void Draw_v2::animateCursor(int16 cursor) {
+	int16 newX = 0;
+	int16 newY = 0;
+	Game::Collision *ptr;
+	int16 minX;
+	int16 minY;
+	int16 maxX;
+	int16 maxY;
+	int16 cursorIndex;
+	bool oldCursor;
+
+	oldCursor = _cursorIndex != -1;
+
+	if (((_backSurface->width - 9) < _vm->_global->_inter_mouseX) ||
+			((_backSurface->height - 4) < _vm->_global->_inter_mouseY)) {
+		_vm->_global->_inter_mouseX = MIN((int) _vm->_global->_inter_mouseX, _backSurface->width - 9);
+		_vm->_global->_inter_mouseY = MIN((int) _vm->_global->_inter_mouseY, _backSurface->height - 4);
+		_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
+	}
+
+	// .-- _draw_animateCursorSUB1 ---
+	cursorIndex = cursor;
+	if (cursorIndex == -1) {
+		cursorIndex = 0;
+		for (ptr = _vm->_game->_collisionAreas; ptr->left != -1; ptr++) {
+			if ((ptr->flags & 0xF00) || (ptr->flags & 0x4000))
+				continue;
+
+			if (ptr->left > _vm->_global->_inter_mouseX)
+				continue;
+
+			if (ptr->right < _vm->_global->_inter_mouseX)
+				continue;
+
+			if (ptr->top > _vm->_global->_inter_mouseY)
+				continue;
+
+			if (ptr->bottom < _vm->_global->_inter_mouseY)
+				continue;
+
+			if ((ptr->flags & 0xF000) == 0) {
+				if ((ptr->flags & 0xF) >= 3) {
+					cursorIndex = 3;
+					break;
+				} else if (((ptr->flags & 0xF0) != 0x10) && (cursorIndex == 0))
+					cursorIndex = 1;
+			} else if (cursorIndex == 0)
+				cursorIndex = (ptr->flags >> 12) & 0xF;
+		}
+		if (_cursorAnimLow[cursorIndex] == -1)
+			cursorIndex = 1;
+	}
+	// '------
+
+	if (_cursorAnimLow[cursorIndex] != -1) {
+		// .-- _draw_animateCursorSUB2 ---
+		if (cursorIndex == _cursorIndex) {
+			if ((_cursorAnimDelays[_cursorIndex] != 0) &&
+					((_cursorTimeKey + (_cursorAnimDelays[_cursorIndex] * 10)) <=
+						_vm->_util->getTimeKey())) {
+				_cursorAnim++;
+				if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) ||
+						(_cursorAnimLow[_cursorIndex] > _cursorAnim)) 
+					_cursorAnim = _cursorAnimLow[_cursorIndex];
+				_cursorTimeKey = _vm->_util->getTimeKey();
+			} else {
+				if ((_noInvalidated != 0) && (_vm->_global->_inter_mouseX == _cursorX) &&
+						(_vm->_global->_inter_mouseY == _cursorY)) {
+					_vm->_video->waitRetrace(_vm->_global->_videoMode);
+					return;
+				}
+			}
+		} else {
+			_cursorIndex = cursorIndex;
+			if (_cursorAnimDelays[cursorIndex] != 0) {
+				_cursorAnim = _cursorAnimLow[cursorIndex];
+				_cursorTimeKey = _vm->_util->getTimeKey();
+			}
+		}
+
+		if (_cursorAnimDelays[_cursorIndex] != 0) {
+			if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) ||
+					(_cursorAnimLow[_cursorIndex] > _cursorAnim))
+				_cursorAnim = _cursorAnimLow[_cursorIndex];
+
+			cursorIndex = _cursorAnim;
+		}
+		// '------
+
+		newX = _vm->_global->_inter_mouseX;
+		newY = _vm->_global->_inter_mouseY;
+		if (_cursorXDeltaVar != -1) {
+			newX -= (uint16)VAR(_cursorIndex + _cursorXDeltaVar);
+			newY -= (uint16)VAR(_cursorIndex + _cursorYDeltaVar);
+		}
+
+		minX = MIN(newX, _cursorX);
+		minY = MIN(newY, _cursorY);
+		maxX = MAX(_cursorX, newX) + _cursorWidth - 1;
+		maxY = MAX(_cursorY, newY) + _cursorHeight - 1;
+		if (_frontSurface == _backSurface) { // loc_177C2
+			if ((newX != _cursorX) || (newY != _cursorY)) {
+				if (oldCursor)
+					_vm->_video->drawSprite(_cursorBack, _frontSurface, 0, 0,
+							_cursorWidth - 1, _cursorHeight - 1, _cursorX, _cursorY, 0);
+				_vm->_video->drawSprite(_frontSurface, _cursorBack, newX, newY,
+						newX + _cursorWidth - 1, newY + _cursorHeight - 1, 0, 0, 0);
+				_vm->_video->drawSprite(_cursorSprites, _frontSurface,
+						cursorIndex * _cursorWidth, 0,
+						(cursorIndex * _cursorWidth) + _cursorWidth - 1, _cursorHeight - 1,
+						newX, newY, _transparentCursor);
+			}
+		} else { // loc_1787D
+			_vm->_video->drawSprite(_backSurface, _cursorBack, newX, newY,
+					newX + _cursorWidth - 1, newY + _cursorHeight - 1, 0, 0, 0);
+			_vm->_video->drawSprite(_cursorSprites, _backSurface,
+					cursorIndex * _cursorWidth, 0,
+					(cursorIndex * _cursorWidth) + _cursorWidth - 1, _cursorHeight - 1,
+					newX, newY, _transparentCursor);
+			if (_noInvalidated == 0) {
+				int16 tmp = _cursorIndex;
+				_cursorIndex = -1;
+				blitInvalidated();
+				_cursorIndex = tmp;
+			} else {
+				_vm->_video->waitRetrace(_vm->_global->_videoMode);
+				if (minY < 50)
+					_vm->_util->delay(5);
+			}
+			_vm->_video->drawSprite(_backSurface, _frontSurface,
+					minX, minY, maxX, maxY, minX, minY, 0);
+			_vm->_video->drawSprite(_cursorBack, _backSurface, 0, 0,
+					_cursorWidth - 1, _cursorHeight - 1, newX, newY, 0);
+		}
+	} else
+		blitCursor();
+
+	_cursorX = newX;
+	_cursorY = newY;
 }
 
 } // End of namespace Gob

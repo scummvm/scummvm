@@ -156,7 +156,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_multLoadMult),
 		/* 18 */
 		OPCODE(o1_storeParams),
-		OPCODE(o1_getObjAnimSize),
+		OPCODE(o2_getObjAnimSize),
 		OPCODE(o1_loadStatic),
 		OPCODE(o1_freeStatic),
 		/* 1C */
@@ -1078,11 +1078,11 @@ void Inter_v2::o2_writeGoblinPos(void) {
 	int16 var2;
 	int16 index;
 
-	var1 = _vm->_parse->parseVarIndex() >> 2;
-	var2 = _vm->_parse->parseVarIndex() >> 2;
+	var1 = _vm->_parse->parseVarIndex();
+	var2 = _vm->_parse->parseVarIndex();
 	index = _vm->_parse->parseValExpr();
-	WRITE_VAR(var1, _vm->_mult->_objects[index].goblinX);
-	WRITE_VAR(var2, _vm->_mult->_objects[index].goblinY);
+	WRITE_VAR_OFFSET(var1, _vm->_mult->_objects[index].goblinX);
+	WRITE_VAR_OFFSET(var2, _vm->_mult->_objects[index].goblinY);
 }
 
 void Inter_v2::o2_multSub(void) {
@@ -1707,6 +1707,25 @@ void Inter_v2::o2_initMult(void) {
 	debugC(4, DEBUG_GRAPHICS, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
 }
 
+void Inter_v2::o2_getObjAnimSize(void) {
+	Mult::Mult_AnimData *pAnimData;
+	int16 objIndex;
+
+	objIndex = _vm->_parse->parseValExpr();
+	pAnimData = _vm->_mult->_objects[objIndex].pAnimData;
+	if (pAnimData->isStatic == 0) {
+		_vm->_scenery->updateAnim(pAnimData->layer, pAnimData->frame,
+		    pAnimData->animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
+		    *(_vm->_mult->_objects[objIndex].pPosY), 0);
+	}
+	_vm->_scenery->_toRedrawLeft = MAX(_vm->_scenery->_toRedrawLeft, (int16) 0);
+	_vm->_scenery->_toRedrawTop = MAX(_vm->_scenery->_toRedrawTop, (int16) 0);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawLeft);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawTop);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawRight);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawBottom);
+}
+
 void Inter_v2::o2_loadCurLayer(void) {
 	_vm->_scenery->_curStatic = _vm->_parse->parseValExpr();
 	_vm->_scenery->_curStaticLayer = _vm->_parse->parseValExpr();
@@ -1806,10 +1825,10 @@ void Inter_v2::o2_initCursor(void) {
 		if (count > 0x80)
 			count -= 0x80;
 
-		_vm->_draw->_cursorSprites =
-		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth * count,
-		    _vm->_draw->_cursorHeight, 2);
-		_vm->_draw->_spritesArray[23] = _vm->_draw->_cursorSprites;
+		_vm->_draw->initBigSprite(23, _vm->_draw->_cursorWidth * count,
+				_vm->_draw->_cursorHeight, 2);
+		_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[23];
+		_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
 
 		_vm->_draw->_cursorBack =
 		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth,

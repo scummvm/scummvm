@@ -338,6 +338,7 @@ protected:
 	void o2_multSub(void);
 	void o2_setRenderFlags(void);
 	void o2_initMult(void);
+	void o2_getObjAnimSize(void);
 	void o2_loadCurLayer(void);
 	void o2_playCDTrack(void);
 	void o2_stopCD(void);

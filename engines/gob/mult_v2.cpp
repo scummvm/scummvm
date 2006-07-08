@@ -957,7 +957,7 @@ void Mult_v2::sub_62DD(int16 index) {
 							_multData2->someKeysIndices[i] = j - 1;
 					} else
 						_multData2->someKeysIndices[i] = -1;
-				} else if(someKey1->frame > frame)
+				} else if (someKey1->frame > frame)
 					break;
 			}
 		}
@@ -988,7 +988,7 @@ void Mult_v2::sub_62DD(int16 index) {
 			if ((_multData2->field_124[index][i] != -1) && (_multData2->field_124[index][i] != 1024))
 				_objects[_multData2->field_124[index][i]].pAnimData->animType =
 					_objects[_multData2->field_124[index][i]].pAnimData->field_17;
-	} else if(_multData2->animDirection == 1)
+	} else if (_multData2->animDirection == 1)
 		frame++;
 	else
 		frame--;

@@ -451,7 +451,7 @@ int16 Scenery::loadAnim(char search) {
 		framesCount = 0;
 		layerData.seek(4, SEEK_CUR);
 		for (j = 0; j < ptr->layers[i].framesCount; j++, framesCount++, layerData.seek(4, SEEK_CUR)) {
-			while(layerData.readByte() == 1) {
+			while (layerData.readByte() == 1) {
 				framesCount++;
 				layerData.seek(4, SEEK_CUR);
 			}

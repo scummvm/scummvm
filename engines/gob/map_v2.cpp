@@ -112,12 +112,12 @@ void Map_v2::loadMapObjects(char *avjFile) {
 
 	// In the original asm, this writes byte-wise into the variables-array
 	dataPos1 = mapData.pos();
+	mapData.seek(dataPos2);
 	if (variables != _vm->_global->_inter_variables) {
 		_passMap = (int8 *) variables;
 		mapHeight = 200 / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
 		for (i = 0; i < mapHeight; i++) {
-			mapData.seek(dataPos2 + (mapWidth * i));
 			for (j = 0; j < mapWidth; j++) {
 				setPass(j, i, mapData.readSByte());
 			}

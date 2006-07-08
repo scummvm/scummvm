@@ -231,7 +231,6 @@ public:
 
 	void zeroMultData(void);
 	void checkFreeMult(void);
-	void interGetObjAnimSize(void);
 	void freeAll(void);
 	void initAll(void);
 

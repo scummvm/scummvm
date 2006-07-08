@@ -113,9 +113,6 @@ public:
 	void blitInvalidated(void);
 	void setPalette(void);
 	void clearPalette(void);
-	void blitCursor(void);
-
-	void animateCursor(int16 cursor);
 
 	void freeSprite(int16 index);
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
@@ -135,6 +132,8 @@ public:
 	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) = 0;
 	virtual void printText(void) = 0;
 	virtual void spriteOperation(int16 operation) = 0;
+	virtual void blitCursor(void) = 0;
+	virtual void animateCursor(int16 cursor) = 0;
 
 	Draw(GobEngine *vm);
 	virtual ~Draw() {};
@@ -148,6 +147,8 @@ public:
 	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
 	virtual void printText(void);
 	virtual void spriteOperation(int16 operation);
+	virtual void blitCursor(void);
+	virtual void animateCursor(int16 cursor);
 
 	Draw_v1(GobEngine *vm);
 	virtual ~Draw_v1() {};
@@ -158,6 +159,8 @@ public:
 	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
 	virtual void printText(void);
 	virtual void spriteOperation(int16 operation);
+	virtual void blitCursor(void);
+	virtual void animateCursor(int16 cursor);
 
 	Draw_v2(GobEngine *vm);
 	virtual ~Draw_v2() {};

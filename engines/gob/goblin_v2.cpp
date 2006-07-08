@@ -339,7 +339,7 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		break;
 	}
 
-	switch(animData->state) {
+	switch (animData->state) {
 	case 0:
 	case 1:
 	case 7:

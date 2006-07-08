@@ -1594,7 +1594,20 @@ void Inter_v1::o1_storeParams(void) {
 }
 
 void Inter_v1::o1_getObjAnimSize(void) {
-	_vm->_mult->interGetObjAnimSize();
+	Mult::Mult_AnimData *pAnimData;
+	int16 objIndex;
+
+	evalExpr(&objIndex);
+	pAnimData = _vm->_mult->_objects[objIndex].pAnimData;
+	if (pAnimData->isStatic == 0) {
+		_vm->_scenery->updateAnim(pAnimData->layer, pAnimData->frame,
+		    pAnimData->animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
+		    *(_vm->_mult->_objects[objIndex].pPosY), 0);
+	}
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawLeft);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawTop);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawRight);
+	WRITE_VAR_OFFSET(_vm->_parse->parseVarIndex(), _vm->_scenery->_toRedrawBottom);
 }
 
 void Inter_v1::o1_loadStatic(void) {

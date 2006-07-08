@@ -142,13 +142,13 @@ public:
 	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
 		if (heightOff == -1)
 			heightOff = _passWidth;
-		return _vm->_util->readVariableByte((char *) (_passMap + y * heightOff + x));
+		return _passMap[y * heightOff + x];
 	}
 	
 	virtual inline void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		if (heightOff == -1)
 			heightOff = _passWidth;
-		_vm->_util->writeVariableByte((char *) (_passMap + y * heightOff + x) , pass);
+		_passMap[y * heightOff + x] = pass;
 	}
 
 	Map_v2(GobEngine *vm);

@@ -782,7 +782,7 @@ void Game_v2::collisionsBlock(void) {
 		cmd &= 0x7f;
 		debugC(1, DEBUG_COLLISIONS, "collisionsBlock(%d)", cmd);
 
-		switch(cmd) {
+		switch (cmd) {
 		case 0:
 			_vm->_global->_inter_execPtr += 6;
 			startIP = _vm->_global->_inter_execPtr;
