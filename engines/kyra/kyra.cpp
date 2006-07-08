@@ -177,12 +177,12 @@ int KyraEngine::init() {
 	}
 	_sound->setVolume(255);
 	
-	_res = new Resource(this);
-	assert(_res);
 	_screen = new Screen(this, _system);
 	assert(_screen);
 	if (!_screen->init())
 		error("_screen->init() failed");
+	_res = new Resource(this);
+	assert(_res);
 	_sprites = new Sprites(this, _system);
 	assert(_sprites);
 	_seq = new SeqPlayer(this, _system);

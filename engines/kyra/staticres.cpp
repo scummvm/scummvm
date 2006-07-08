@@ -149,7 +149,8 @@ bool StaticResource::init() {
 	int tempSize = 0;
 	uint8 *temp = getFile("INDEX", tempSize);
 	if (!temp) {
-		error("no matching INDEX file found");
+		warning("no matching INDEX file found");
+		return false;
 	}
 	
 	uint32 version = READ_BE_UINT32(temp);
