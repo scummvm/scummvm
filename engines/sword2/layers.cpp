@@ -48,7 +48,6 @@ namespace Sword2 {
  */
 
 void Screen::initBackground(int32 res, int32 new_palette) {
-	byte buf[NAME_LEN];
 	int i;
 
 	assert(res);
@@ -56,7 +55,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	_vm->_sound->clearFxQueue();
 	waitForFade();
 
-	debug(1, "CHANGED TO LOCATION \"%s\"", _vm->_resman->fetchName(res, buf));
+	debug(1, "CHANGED TO LOCATION \"%s\"", _vm->_resman->fetchName(res));
 
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {

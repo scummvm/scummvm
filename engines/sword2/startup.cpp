@@ -80,9 +80,7 @@ bool Sword2Engine::initStartMenu() {
 		}
 
 		if (_resman->fetchType(id) != SCREEN_MANAGER) {
-			byte name[NAME_LEN];
-
-			warning("startup.inf:%d: '%s' (%d) is not a screen manager", lineno, _resman->fetchName(id, name), id);
+			warning("startup.inf:%d: '%s' (%d) is not a screen manager", lineno, _resman->fetchName(id), id);
 			continue;
 		}
 

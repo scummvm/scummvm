@@ -539,7 +539,6 @@ void Mouse::dragMouse() {
 }
 
 void Mouse::menuMouse() {
-	byte buf[NAME_LEN];
 	MouseEvent *me;
 	int hit;
 
@@ -587,7 +586,7 @@ void Mouse::menuMouse() {
 		hideMouse();
 
 		debug(2, "Right-click on \"%s\" icon",
-			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf));
+			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD)));
 
 		return;
 	}
@@ -615,7 +614,7 @@ void Mouse::menuMouse() {
 		setLuggage(_masterMenuList[hit].luggage_resource);
 
 		debug(2, "Left-clicked on \"%s\" icon - switch to drag mode",
-			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf));
+			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD)));
 	}
 }
 
@@ -817,10 +816,10 @@ void Mouse::normalMouse() {
 				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
 		else if (_vm->_logic->readVar(LEFT_BUTTON))
 			debug(2, "Left-clicked on \"%s\"",
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf1));
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
 		else	// RIGHT BUTTON
 			debug(2, "Right-clicked on \"%s\"",
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf1));
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
 	}
 }
 
@@ -993,9 +992,7 @@ void Mouse::mouseOnOff() {
 				setLuggage(_currentLuggageResource);
 			}
 		} else {
-			byte buf[NAME_LEN];
-
-			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, _vm->_resman->fetchName(_mouseTouching, buf));
+			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, _vm->_resman->fetchName(_mouseTouching));
 		}
 	} else if (_oldMouseTouching && !_mouseTouching) {
 		// the cursor has moved off something - reset cursor to

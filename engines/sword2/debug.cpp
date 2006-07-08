@@ -172,8 +172,6 @@ void Debugger::buildDebugText() {
 	// general debug info
 
 	if (_displayDebugText) {
-		byte name[NAME_LEN];
-
 /*
 		// CD in use
 		sprintf(buf, "CD-%d", currentCD);
@@ -187,7 +185,7 @@ void Debugger::buildDebugText() {
 				_vm->_logic->readVar(MOUSE_X),
 				_vm->_logic->readVar(MOUSE_Y),
 				_vm->_logic->readVar(CLICKED_ID),
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), name));
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
 				_vm->_logic->readVar(MOUSE_X),
@@ -206,7 +204,7 @@ void Debugger::buildDebugText() {
 				mouseX + screenInfo->scroll_offset_x,
 				mouseY + screenInfo->scroll_offset_y,
 				mouseTouching,
-				_vm->_resman->fetchName(mouseTouching, name));
+				_vm->_resman->fetchName(mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
 				mouseX + screenInfo->scroll_offset_x,
@@ -221,7 +219,7 @@ void Debugger::buildDebugText() {
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
 				screenInfo->player_feet_x,
 				screenInfo->player_feet_y,
-				_vm->_resman->fetchName(_graphAnimRes, name),
+				_vm->_resman->fetchName(_graphAnimRes),
 				_graphAnimRes,
 				_graphAnimPc,
 				_graphNoFrames);
@@ -287,7 +285,7 @@ void Debugger::buildDebugText() {
 
 		if (_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				_vm->_resman->fetchName(_speechScriptWaiting, name),
+				_vm->_resman->fetchName(_speechScriptWaiting),
 				_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}

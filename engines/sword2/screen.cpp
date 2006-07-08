@@ -491,12 +491,10 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 	uint32 current_layer_area = layer_head.width * layer_head.height;
 
 	if (current_layer_area > _largestLayerArea) {
-		byte buf[NAME_LEN];
-
 		_largestLayerArea = current_layer_area;
 		sprintf(_largestLayerInfo,
 			"largest layer:  %s layer(%d) is %dx%d",
-			_vm->_resman->fetchName(_thisScreen.background_layer_id, buf),
+			_vm->_resman->fetchName(_thisScreen.background_layer_id),
 			layer_number, layer_head.width, layer_head.height);
 	}
 
@@ -583,12 +581,10 @@ void Screen::processImage(BuildUnit *build_unit) {
 	uint32 current_sprite_area = frame_head.width * frame_head.height;
 
 	if (current_sprite_area > _largestSpriteArea) {
-		byte buf[NAME_LEN];
-
 		_largestSpriteArea = current_sprite_area;
 		sprintf(_largestSpriteInfo,
 			"largest sprite: %s frame(%d) is %dx%d",
-			_vm->_resman->fetchName(build_unit->anim_resource, buf),
+			_vm->_resman->fetchName(build_unit->anim_resource),
 			build_unit->anim_pc,
 			frame_head.width,
 			frame_head.height);
@@ -618,11 +614,9 @@ void Screen::processImage(BuildUnit *build_unit) {
 
 	uint32 rv = drawSprite(&spriteInfo);
 	if (rv) {
-		byte buf[NAME_LEN];
-
 		error("Driver Error %.8x with sprite %s (%d) in processImage",
 			rv,
-			_vm->_resman->fetchName(build_unit->anim_resource, buf),
+			_vm->_resman->fetchName(build_unit->anim_resource),
 			build_unit->anim_resource);
 	}
 

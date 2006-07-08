@@ -434,44 +434,41 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 	}
 
 	// Open up the resource and take a look inside!
-	uint8 type = _vm->_resman->fetchType(res);;
-	byte name[NAME_LEN];
-
-	_vm->_resman->fetchName(res, name);
+	uint8 type = _vm->_resman->fetchType(res);
 
 	switch (type) {
 	case ANIMATION_FILE:
-		DebugPrintf("<anim> %s\n", name);
+		DebugPrintf("<anim> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case SCREEN_FILE:
-		DebugPrintf("<layer> %s\n", name);
+		DebugPrintf("<layer> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case GAME_OBJECT:
-		DebugPrintf("<game object> %s\n", name);
+		DebugPrintf("<game object> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case WALK_GRID_FILE:
-		DebugPrintf("<walk grid> %s\n", name);
+		DebugPrintf("<walk grid> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case GLOBAL_VAR_FILE:
-		DebugPrintf("<global variables> %s\n", name);
+		DebugPrintf("<global variables> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case PARALLAX_FILE_null:
-		DebugPrintf("<parallax file NOT USED!> %s\n", name);
+		DebugPrintf("<parallax file NOT USED!> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case RUN_LIST:
-		DebugPrintf("<run list> %s\n", name);
+		DebugPrintf("<run list> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case TEXT_FILE:
-		DebugPrintf("<text file> %s\n", name);
+		DebugPrintf("<text file> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case SCREEN_MANAGER:
-		DebugPrintf("<screen manager> %s\n", name);
+		DebugPrintf("<screen manager> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case MOUSE_FILE:
-		DebugPrintf("<mouse pointer> %s\n", name);
+		DebugPrintf("<mouse pointer> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case ICON_FILE:
-		DebugPrintf("<menu icon> %s\n", name);
+		DebugPrintf("<menu icon> %s\n", _vm->_resman->fetchName(res));
 		break;
 	default:
 		DebugPrintf("unrecognised fileType %d\n", type);
@@ -511,9 +508,7 @@ bool Debugger::Cmd_RunList(int argc, const char **argv) {
 			if (!res)
 				break;
 
-			byte name[NAME_LEN];
-
-			DebugPrintf("%d %s\n", res, _vm->_resman->fetchName(res, name));
+			DebugPrintf("%d %s\n", res, _vm->_resman->fetchName(res));
 		}
 
 		_vm->_resman->closeResource(runList);
@@ -786,12 +781,11 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 
 	for (uint32 i = 0; i < MAX_events; i++) {
 		if (eventList[i].id) {
-			byte buf[NAME_LEN];
 			uint32 target = eventList[i].id;
 			uint32 script = eventList[i].interact_id;
 
-			DebugPrintf("slot %2d: id = %s (%d)\n", i, _vm->_resman->fetchName(target, buf), target);
-			DebugPrintf("         script = %s (%d) pos %d\n", _vm->_resman->fetchName(script / 65536, buf), script / 65536, script % 65536);
+			DebugPrintf("slot %2d: id = %s (%d)\n", i, _vm->_resman->fetchName(target), target);
+			DebugPrintf("         script = %s (%d) pos %d\n", _vm->_resman->fetchName(script / 65536), script / 65536, script % 65536);
 		}
 	}
 

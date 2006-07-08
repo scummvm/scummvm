@@ -202,9 +202,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 			break;
 		}
 
-		byte buf[NAME_LEN];
-
-		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->_resman->fetchName(res, buf), volume, pan, delay, typeStr);
+		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->_resman->fetchName(res), volume, pan, delay, typeStr);
 	}
 
 	for (int i = 0; i < FXQ_LENGTH; i++) {

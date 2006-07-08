@@ -876,9 +876,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		if (readVar(PLAYER_ID) != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
 		else {
-			byte buf[NAME_LEN];
-
-			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->_resman->fetchName(readVar(ID), buf), text + 2);
+			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->_resman->fetchName(readVar(ID)), text + 2);
 		}
 
 		// Set up the speech animation

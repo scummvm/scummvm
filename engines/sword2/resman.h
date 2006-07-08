@@ -98,7 +98,12 @@ public:
 		return ptr[0];
 	}
 
-	byte *fetchName(uint32 res, byte *buf) {
+	byte *fetchName(uint32 res, byte *buf = NULL) {
+		static byte tempbuf[NAME_LEN];
+
+		if (!buf)
+			buf = tempbuf;
+
 		byte *ptr = openResource(res);
 		memcpy(buf, ptr + 10, NAME_LEN);
 		closeResource(res);
