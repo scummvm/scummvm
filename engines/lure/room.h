@@ -64,6 +64,7 @@ private:
 	uint16 _destRoomNumber;
 	bool _isExit;
 	char _hotspotName[MAX_HOTSPOT_NAME_SIZE + MAX_ACTION_NAME_SIZE];
+	char _statusLine[MAX_DESC_SIZE];
 	HotspotData *_hotspot;
 	bool _showInfo;
 	uint8 _numLayers;
@@ -106,6 +107,7 @@ public:
 	void setTalkDialog(uint16 characterId, uint16 descId);
 	void setCursorState(CursorState state) { _cursorState = state; }
 	bool checkInTalkDialog();
+	char *statusLine() { return _statusLine; }
 };
 
 } // end of namespace Lure

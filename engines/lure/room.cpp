@@ -78,6 +78,7 @@ Room::Room(): _screen(Screen::getReference()) {
 	_talkDialog = NULL;
 	_hotspotId = 0;
 	_hotspotName[0] = '\0';
+	_statusLine[0] = '\0';
 	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr) _layers[ctr] = NULL;
 	_numLayers = 0;
 	_showInfo = false;
@@ -116,7 +117,7 @@ void Room::leaveRoom() {
 		}
 
 	// Scan through the hotspot list and remove any uneeded entries 
-//r.activeHotspots().clear();
+
 	HotspotList &list = r.activeHotspots();
 	HotspotList::iterator i = list.begin();
 	while (i != list.end()) {
@@ -144,54 +145,67 @@ void Room::loadRoomHotspots() {
 }
 
 void Room::checkRoomHotspots() {
+	uint16 rangeStart[4] = {0x408, 0x3e8, 0x7530, 0x2710};
+	uint16 rangeEnd[4] = {0x270f, 0x407, 0xffff, 0x752f};
+
 	Mouse &m = Mouse::getReference();
 	Resources &res = Resources::getReference();
 	HotspotDataList &list = res.hotspotData();
 	HotspotData *entry = NULL;
 	int16 currentX = m.x();
 	int16 currentY = m.y();
-
 	HotspotDataList::iterator i;
-	for (i = list.begin(); i != list.end(); ++i) {
-		entry = *i;
 
-		bool skipFlag = (entry->roomNumber != _roomNumber);
-		if (!skipFlag) {
-			skipFlag = (((entry->flags & 0x80) == 0) && 
-				        ((entry->flags & 0x40) != 0)) ||
-				       ((entry->flags & 0x20) != 0);
-		}
+	// Loop for each range of hotspot Ids
+	for (int ctr = 0; ctr < 4; ++ctr) {
+		for (i = list.begin(); i != list.end(); ++i) {
+			entry = *i;
+			if ((entry->hotspotId < rangeStart[ctr]) || (entry->hotspotId > rangeEnd[ctr]))
+				// Hotspot outside range, so skip it
+				continue;
 
-		if ((!skipFlag) && (entry->hotspotId < 0x409))
-			// For character hotspots, validate they're in clipping range
-			skipFlag = !res.checkHotspotExtent(entry);
-		
-		if (!skipFlag && (entry->hotspotId >= 0x2710) && (entry->hotspotId <= 0x27ff)) {
-			RoomExitJoinData *rec = res.getExitJoin(entry->hotspotId);
-			if ((rec) && (!rec->blocked))
-				// Hotspot is over a room exit, and it's not blocked, so don't 
-				// register it as an active hotspot
-				skipFlag = true;
-		}
+			bool skipFlag = (entry->roomNumber != _roomNumber);
+			if (!skipFlag) {
+				skipFlag = (((entry->flags & 0x80) == 0) && 
+							((entry->flags & 0x40) != 0)) ||
+						((entry->flags & 0x20) != 0);
+			}
 
-		if (!skipFlag) {
-			// Check for a hotspot override
-			HotspotOverrideData *hsEntry = res.getHotspotOverride(entry->hotspotId);
+			if ((!skipFlag) && (entry->hotspotId < 0x409))
+				// For character hotspots, validate they're in clipping range
+				skipFlag = !res.checkHotspotExtent(entry);
+			
+			if (!skipFlag && (entry->hotspotId >= 0x2710) && (entry->hotspotId <= 0x27ff)) {
+				RoomExitJoinData *rec = res.getExitJoin(entry->hotspotId);
+				if ((rec) && (!rec->blocked))
+					// Hotspot is over a room exit, and it's not blocked, so don't 
+					// register it as an active hotspot
+					skipFlag = true;
+			}
 
-			if (hsEntry) {
-				// Check whether cursor is in override hotspot area
-				if ((currentX >= hsEntry->xs) && (currentX <= hsEntry->xe) &&
-					(currentY >= hsEntry->ys) && (currentY <= hsEntry->ye))
-					// Found to be in hotspot entry
-					break;
-			} else {
-				// Check whether cursor is in default hospot area
-				if ((currentX >= entry->startX) && (currentX < entry->startX + entry->width) && 
-					(currentY >= entry->startY) && (currentY < entry->startY + entry->height)) 
-					// Found hotspot entry
-					break;
+			if (!skipFlag) {
+				// Check for a hotspot override
+				HotspotOverrideData *hsEntry = res.getHotspotOverride(entry->hotspotId);
+
+				if (hsEntry) {
+					// Check whether cursor is in override hotspot area
+					if ((currentX >= hsEntry->xs) && (currentX <= hsEntry->xe) &&
+						(currentY >= hsEntry->ys) && (currentY <= hsEntry->ye))
+						// Found to be in hotspot entry
+						break;
+				} else {
+					// Check whether cursor is in default hospot area
+					if ((currentX >= entry->startX) && (currentY >= entry->startY) &&
+						(currentX < entry->startX + entry->widthCopy) && 
+						(currentY < entry->startY + entry->height)) 
+						// Found hotspot entry
+						break;
+				}
 			}
 		}
+
+		if (i != list.end()) 
+			break;
 	}
 
 	if (i == list.end()) {
@@ -280,11 +294,9 @@ void Room::addAnimation(Hotspot &h) {
 	if (_showInfo) {
 		int16 x = h.x();
 		int16 y = h.y();
-		if ((x >= 0) && (x <= 319) && (y >= 0) && (y <= 200)) {
-			sprintf(buffer, "%x", h.hotspotId());
-			strcat(buffer, "h");
-			s.writeString(h.x(), h.y(), buffer, false);
-		}
+		if ((x >= 0) && (x < FULL_SCREEN_WIDTH) && (y >= 0) && (y < FULL_SCREEN_HEIGHT)) 
+			sprintf(buffer, "%xh", h.hotspotId());
+		
 	}
 }
 
@@ -346,7 +358,6 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 void Room::update() {
 	Surface &s = _screen.screen();
 	Resources &res = Resources::getReference();
-	StringData &strings = StringData::getReference();
 	HotspotList &hotspots = res.activeHotspots();
 	HotspotList::iterator i;
 
@@ -417,62 +428,46 @@ void Room::update() {
 
 	// Show any active talk dialog 
 	if (_talkDialog)  {
-		_talkDialog->surface().copyTo(&s, _talkDialogX, _talkDialogY);
+		// Make sure the character is still active and in the viewing room
+		Hotspot *talkCharacter = res.getActiveHotspot(res.getTalkingCharacter());
+		if ((talkCharacter != NULL) && (talkCharacter->roomNumber() == _roomNumber)) 
+			_talkDialog->surface().copyTo(&s, _talkDialogX, _talkDialogY);
 	}
 
-	// Handle showing name of highlighted hotspot
-	if (_hotspotId != 0) {
-		Action action = res.getCurrentAction();
-		uint16 usedId = res.fieldList().getField(USE_HOTSPOT_ID);
-
-		if (action == NONE) {
+	// Handle showing the status line
+	if (!*_statusLine) {
+		// No current status action being display
+		if (_hotspotId != 0) 
 			s.writeString(0, 0, _hotspotName, false, DIALOG_TEXT_COLOUR);
-		} else {
-			char buffer[MAX_DESC_SIZE];
-			const char *actionStr = res.getCurrentActionStr();
-			strcpy(buffer, actionStr);
-
-			if (action != STATUS) {
-				strcat(buffer, " ");
-
-				if ((usedId != 0xffff) && (usedId != 0)) {
-					HotspotData *usedHotspot = res.getHotspot(usedId);
-
-					if (usedHotspot != NULL) 
-						strings.getString(usedHotspot->nameId, buffer + strlen(buffer), NULL, NULL);
-					else
-						strcat(buffer, "???");
-
-					if (action == GIVE) strcat(buffer, " to ");
-					else strcat(buffer, " on ");
-				}
-
-				strcat(buffer, _hotspotName);
-			}
-			s.writeString(0, 0, buffer, false, DIALOG_WHITE_COLOUR);
-		}
+	} else {
+		s.writeString(0, 0, _statusLine, false, DIALOG_WHITE_COLOUR);
 	}
 
 	// If show information is turned on, show extra debugging information
 	if (_showInfo) {
 		char buffer[64];
-		Mouse &m = Mouse::getReference();
-		sprintf(buffer, "Room %d Pos (%d,%d)", _roomNumber, m.x(), m.y());
-		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, DIALOG_TEXT_COLOUR);
 
 		// Temporary display of pathfinding data
 		for (int yctr = 0; yctr < ROOM_PATHS_HEIGHT; ++yctr) {
 			for (int xctr = 0; xctr < ROOM_PATHS_WIDTH; ++xctr) {
+				if (_roomData->paths.isOccupied(xctr, yctr)) 
+					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
+/*
 				uint16 v = tempLayer[(yctr + 1) * DECODED_PATHS_WIDTH + xctr + 1];
 				if ((v != 0) && (v < 100)) {
 					sprintf(buffer, "%d", v % 10);
-//					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
+					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
 //				} else if (v == 0xffff) {
 				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
 					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
 				}
+*/
 			}
 		}
+
+		Mouse &m = Mouse::getReference();
+		sprintf(buffer, "Room %d Pos (%d,%d)", _roomNumber, m.x(), m.y());
+		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, DIALOG_TEXT_COLOUR);
 	}
 }
 
@@ -484,17 +479,15 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 
 	_roomNumber = _roomData->roomNumber;
 	_descId = _roomData->descId;
-	
+
 	_screen.empty();
 	_screen.resetPalette();
 
 	if (_layers[0]) leaveRoom();
-
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
 
 	uint16 paletteId = (_roomData->layers[0] & 0xffe0) - 1;
-
 	for (uint8 layerNum = 0; layerNum < _numLayers; ++layerNum) 
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
@@ -509,9 +502,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 
 	if (_roomData->sequenceOffset != 0xffff)
 		Script::execute(_roomData->sequenceOffset);
+
 	loadRoomHotspots();
 	checkCursor();
-
 	update();
 }
 
@@ -525,13 +518,14 @@ void Room::checkCursor() {
 	uint16 currentCursor = mouse.getCursorNum();
 	uint16 newCursor = currentCursor;
 	CurrentAction playerAction = res.getActiveHotspot(PLAYER_ID)->currentActions().action();
+	uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
 
 	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END) &&
 		((playerAction == START_WALKING) || (playerAction == PROCESSING_PATH))) {
 		// Animate the clock when processing the player path
 		++newCursor;
 		if (newCursor == CURSOR_CROSS) newCursor = CURSOR_TIME_START;
-	} else if (checkInTalkDialog()) {
+	} else if (checkInTalkDialog() && (oldRoomNumber == 0)) {
 		newCursor = CURSOR_TALK;
 	} else if (res.getTalkData()) {
 		newCursor = CURSOR_ARROW;
@@ -541,7 +535,6 @@ void Room::checkCursor() {
 		newCursor = CURSOR_ARROW;
 	} else if (mouse.y() < MENUBAR_Y_SIZE) {
 		// If viewing a room remotely, then don't change to the menu cursor
-		uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
 		if (oldRoomNumber != 0) return;
 		
 		newCursor = CURSOR_MENUBAR;
@@ -576,11 +569,8 @@ void Room::setTalkDialog(uint16 characterId, uint16 stringId) {
 	Resources &res = Resources::getReference();
 	res.setTalkingCharacter(characterId);
 
-	if (characterId == 0) {
-		if (res.getTalkState() == TALK_RESPONSE_WAIT)
-			res.setTalkState(TALK_RESPOND_2);
+	if (characterId == 0)
 		return;
-	}
 
 	HotspotData *character = res.getHotspot(characterId);
 	if (character->roomNumber != _roomNumber)
