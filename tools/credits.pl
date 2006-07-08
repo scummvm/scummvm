@@ -66,6 +66,7 @@ sub html_entities_to_ascii {
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
 	# &auml;    -> a
+	# &uuml;    -> ue
 	# &amp;     -> &
 	# &#322;    -> l
 	$text =~ s/&aacute;/a/g;
@@ -75,7 +76,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&#322;/l/g;
 
 	$text =~ s/&auml;/a/g;
-	$text =~ s/&uuml;/u/g;
+	$text =~ s/&uuml;/ue/g;
 	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver
 	$text =~ s/&ouml;r/or/g;
 	$text =~ s/&ouml;/oe/g;
@@ -602,7 +603,7 @@ begin_credits("Credits");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 		add_person('Vincent Hamm', 'yazoo', "Co-Founder, original CinE engine author");
-		add_person("Ruediger Hanke", "", "Port: MorphOS");
+		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
@@ -693,7 +694,7 @@ begin_credits("Credits");
 		  add_person("Edward Rudd", "", "Fixes for playing MP3 versions of MI1/Loom audio");
 		  add_person("Daniel Schepler", "", "Final MI1 CD music support, initial Ogg Vorbis support");
 		  add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
-		  add_person("Tim ???", "realmz", "Initial MI1 CD music support");
+		  add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
 	  end_persons();
 	end_section();
 
