@@ -59,6 +59,9 @@ public:
 	static StringData &getReference();
 
 	void getString(uint16 stringId, char *dest, const char *hotspotName, const char *actionName);
+	void getString(uint16 stringId, char *dest) {
+		getString(stringId, dest, NULL, NULL);
+	}
 	char *getName(uint8 nameIndex);
 };
 
