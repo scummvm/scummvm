@@ -431,7 +431,7 @@ int ConfigManager::getInt(const String &key, const String &domName) const {
 	if (value.empty())
 		return 0;
 
-	// We zse the special value '0' for the base passed to strtol. Doing that
+	// We use the special value '0' for the base passed to strtol. Doing that
 	// makes it possible to enter hex values as "0x1234", but also decimal
 	// values ("123") are still valid.
 	int ivalue = (int)strtol(value.c_str(), &errpos, 0);
