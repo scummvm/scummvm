@@ -84,6 +84,8 @@ struct HotspotResource {
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;
 	uint16 npcSchedule;
+	uint16 characterMode;
+	uint16 delayCtr;
 } GCC_PACK;
 
 struct HotspotAnimResource {
@@ -373,8 +375,10 @@ public:
 	HotspotActionList *getActions(uint16 recordId);
 };
 
-enum CharacterMode {CHARMODE_NONE, CHARMODE_1, CHARMODE_IDLE, CHARMODE_PAUSED,
-	CHARMODE_4, CHARMODE_5, CHARMODE_6, CHARMODE_7};
+enum CharacterMode {CHARMODE_NONE, CHARMODE_HESITATE, CHARMODE_IDLE, CHARMODE_PAUSED,
+	CHARMODE_4, CHARMODE_CONVERSING, CHARMODE_6, CHARMODE_7, CHARMODE_8};
+
+enum BlockedState {BS_NONE, BS_INITIAL, BS_FINAL};
 
 class HotspotData {
 public:
@@ -409,10 +413,21 @@ public:
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;
 	uint16 npcSchedule;
-
-	uint16 delayCtr;
 	CharacterMode characterMode;
+	uint16 delayCtr;
+
+	// Runtime fields
+	uint16 actionCtr;
+	BlockedState blockedState;
 	bool coveredFlag;
+	uint16 talkMessageId;
+	uint16 talkDestHotspot;
+	uint16 talkCountdown;
+	uint16 pauseCtr;
+	uint16 useHotspotId;
+	uint16 use2HotspotId;
+	uint16 v2b;
+	uint16 v50;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
@@ -543,18 +558,19 @@ public:
 // The following classes hold any sequence offsets that are being delayed
 
 class SequenceDelayData {
-	friend class SequenceDelayList;
-private:
-	uint32 _timeoutCtr;
-	uint16 _sequenceOffset;
 public:
-	SequenceDelayData(uint16 delay, uint16 seqOffset);
+	SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag);
+
+	uint32 timeoutCtr;
+	uint16 sequenceOffset;
+	bool canClear;
 };
 
 class SequenceDelayList: public ManagedList<SequenceDelayData *> {
 public:
-	void addSequence(uint16 delay, uint16 seqOffset);
+	void add(uint16 delay, uint16 seqOffset, bool canClear);
 	void tick();
+	void clear();
 };
 
 // The following classes holds the data for NPC schedules
@@ -599,6 +615,26 @@ public:
 
 typedef List<uint16> CharacterScheduleOffsets;
 
+class PausedCharacter {
+public:
+	PausedCharacter(uint16 SrcCharId, uint16 DestCharId);
+
+	uint16 srcCharId;
+	uint16 destCharId;
+	uint16 counter;
+	HotspotData *charHotspot;
+};
+
+class Hotspot;
+
+class PausedCharacterList: public ManagedList<PausedCharacter *> {
+public:
+	void reset(uint16 hotspotId);
+	void countdown();
+	void scan(Hotspot &h);
+	int check(uint16 charId, int numImpinging, uint16 *impingingList);
+};
+
 // The following class holds the field list used by the script engine as 
 // well as miscellaneous fields used by the game.                          
 
@@ -611,6 +647,7 @@ enum FieldName {
 	ACTIVE_HOTSPOT_ID = 3,
 	SEQUENCE_RESULT = 4,
 	GENERAL = 5,
+	GIVE_TALK_INDEX = 6,
 	NEW_ROOM_NUMBER = 7,
 	OLD_ROOM_NUMBER = 8,
 	CELL_DOOR_STATE = 9,
@@ -621,15 +658,33 @@ enum FieldName {
 	SACK_CUT = 20
 };
 
+enum GameFlags {
+	GAMEFLAG_1 = 1,
+	GAMEFLAG_2 = 2,
+	GAMEFLAG_4 = 4,
+	GAMEFLAG_8 = 8,
+	GAMEFLAG_10 = 0x10,
+	GAMEFLAG_20 = 0x20,
+	GAMEFLAG_40 = 0x40,
+	GAMEFLAG_FAST_TEXTSPEED = 0x80
+};
+
 struct PlayerNewPosition {
 	Point position;
 	uint16 roomNumber;
+};
+
+struct PlayerPendingPosition {
+	Point pos;
+	bool isSet;
 };
 
 class ValueTableData {
 private:
 	uint16 _numGroats;
 	PlayerNewPosition _playerNewPos;
+	PlayerPendingPosition _playerPendingPos;
+	uint8 _flags;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
@@ -640,8 +695,12 @@ public:
 
 	void setField(uint16 fieldIndex, uint16 value);
 	void setField(FieldName fieldName, uint16 value);
+	int size() { return NUM_VALUE_FIELDS; }
+
 	uint16 &numGroats() { return _numGroats; }
+	uint8 &flags() { return _flags; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
+	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
 };
 
 } // End of namespace Lure

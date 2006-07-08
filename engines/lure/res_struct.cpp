@@ -128,6 +128,7 @@ bool RoomPathsData::isOccupied(int x, int y) {
 void RoomPathsData::setOccupied(int x, int y, int width) {
 	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (y >= ROOM_PATHS_HEIGHT))
 		return;
+
 	byte *p = &_data[y * 5 + (x / 8)];
 	byte bitMask = 0x80 >> (x % 8);
 
@@ -144,6 +145,7 @@ void RoomPathsData::setOccupied(int x, int y, int width) {
 void RoomPathsData::clearOccupied(int x, int y, int width) {
 	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (y >= ROOM_PATHS_HEIGHT))
 		return;
+
 	byte *p = &_data[y * 5 + (x / 8)];
 	byte bitMask = 0x80 >> (x % 8);
 
@@ -291,11 +293,20 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
 	tickSequenceOffset = READ_LE_UINT16(&rec->tickSequenceOffset);
 	npcSchedule = READ_LE_UINT16(&rec->npcSchedule);
+	characterMode = (CharacterMode) READ_LE_UINT16(&rec->characterMode);
+	delayCtr = READ_LE_UINT16(&rec->delayCtr);
 
-	// Initialise dynamic fields
-	delayCtr = 0; 
-	characterMode = CHARMODE_NONE;
+	// Initialise runtime fields
+	actionCtr = 0;
+	blockedState = BS_NONE;
 	coveredFlag = false;
+	talkMessageId = 0;
+	talkDestHotspot = 0;
+	talkCountdown = 0;
+	pauseCtr = 0;
+	useHotspotId = 0;
+	v2b = 0;
+	v50 = 0;
 }
 
 // Hotspot override data
@@ -470,16 +481,18 @@ RoomExitCoordinateData &RoomExitCoordinates::getData(uint16 destRoomNumber) {
 
 // The following classes hold any sequence offsets that are being delayed
 
-SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset) {
+SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag) {
 	OSystem &system = System::getReference();
 
-	_timeoutCtr = system.getMillis() + delay;
-	_sequenceOffset = seqOffset;
+	// The delay is in number of ticks (1/18th of a second) - convert to milliseconds
+	timeoutCtr = system.getMillis() + (delay * 1000 / 18);
+	sequenceOffset = seqOffset;
+	canClear = canClearFlag;
 }
 
-void SequenceDelayList::addSequence(uint16 delay, uint16 seqOffset) {
-	SequenceDelayData *entry = new SequenceDelayData(delay, seqOffset);
-	push_back(entry);
+void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
+	SequenceDelayData *entry = new SequenceDelayData(delay, seqOffset, canClear);
+	push_front(entry);
 }
 
 void SequenceDelayList::tick() {
@@ -488,12 +501,25 @@ void SequenceDelayList::tick() {
 
 	for (i = begin(); i != end(); i++) {
 		SequenceDelayData *entry = *i;
-		if (entry->_timeoutCtr >= currTime) {
-			uint16 seqOffset = entry->_sequenceOffset;
+		if (currTime >= entry->timeoutCtr) {
+			// Timeout reached - delete entry from list and execute the sequence
+			uint16 seqOffset = entry->sequenceOffset;
 			erase(i);
 			Script::execute(seqOffset);
 			return;
 		}
+	}
+}
+
+void SequenceDelayList::clear() {
+	SequenceDelayList::iterator i = begin();
+
+	while (i != end()) {
+		SequenceDelayData *entry = *i;
+		if (entry->canClear)
+			i = erase(i);
+		else
+			++i;
 	}
 }
 
@@ -652,6 +678,121 @@ uint16 RoomExitIndexedHotspotList::getHotspot(uint16 roomNumber, uint8 hotspotIn
 	return 0xffff;
 }
 
+// Paused character list methods
+
+PausedCharacter::PausedCharacter(uint16 SrcCharId, uint16 DestCharId) {
+	srcCharId = SrcCharId;
+	destCharId = DestCharId;
+	counter = IDLE_COUNTDOWN_SIZE;
+	charHotspot = Resources::getReference().getHotspot(SrcCharId);
+	assert(charHotspot);
+}
+
+void PausedCharacterList::reset(uint16 hotspotId) {
+	iterator i;
+	for (i = begin(); i != end(); ++i) {
+		PausedCharacter *rec = *i;
+
+		if (rec->srcCharId == hotspotId) {
+			rec->counter = 1;
+			if (rec->destCharId < START_EXIT_ID)
+				rec->charHotspot->pauseCtr = 1;
+		}
+	}
+}
+
+void PausedCharacterList::countdown() {
+	iterator i = begin();
+
+	while (i != end()) {
+		PausedCharacter *rec = *i;
+		--rec->counter;
+
+		// Handle reflecting counter to hotspot
+		if (rec->destCharId < START_EXIT_ID) 
+			rec->charHotspot->pauseCtr = rec->counter + 1;
+
+		// If counter has reached zero, remove entry from list
+		if (rec->counter == 0) 
+			i = erase(i);
+		else 
+			++i;
+	}
+}
+
+void PausedCharacterList::scan(Hotspot &h) {
+	iterator i;
+
+	if (h.blockedState() != BS_NONE) {
+
+		for (i = begin(); i != end(); ++i) {
+			PausedCharacter *rec = *i;
+
+			if (rec->srcCharId == h.hotspotId()) {
+				rec->counter = IDLE_COUNTDOWN_SIZE;
+				
+				if (rec->destCharId < START_EXIT_ID) 
+					rec->charHotspot->pauseCtr = IDLE_COUNTDOWN_SIZE;
+			}
+		}
+	}
+}
+
+int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingingList) {
+	Resources &res = Resources::getReference();
+	PausedCharacterList::iterator i;
+	int result = 0;
+	Hotspot *charHotspot = res.getActiveHotspot(charId);
+	assert(charHotspot);
+
+	for (int index = 0; index < numImpinging; ++index) {
+		Hotspot *hotspot = res.getActiveHotspot(impingingList[index]);
+		if ((!hotspot) || (!hotspot->currentActions().isEmpty() &&
+			(hotspot->currentActions().top().action() == EXEC_HOTSPOT_SCRIPT)))
+			// Entry is skipped if hotspot not present or is executing hotspot script		
+			continue;
+
+		// Scan through the pause list to see if there's a record for the
+		// calling character and the impinging list entry
+		for (i = res.pausedList().begin(); i != res.pausedList().end(); ++i) {
+			PausedCharacter *rec = *i;
+			if ((rec->srcCharId == charId) && 
+				(rec->destCharId == hotspot->hotspotId()))
+				break;
+		}
+
+		if (i != res.pausedList().end())
+			// There was, so move to next impinging character entry
+			continue;
+
+		if ((hotspot->hotspotId() == PLAYER_ID) && !hotspot->coveredFlag())
+			return 1;
+
+		// Add a new paused character entry
+		PausedCharacter *entry = new PausedCharacter(charId, hotspot->hotspotId());
+		res.pausedList().push_back(entry);
+		charHotspot->setBlockedState(BS_INITIAL); 
+
+		if (hotspot->hotspotId() < START_EXIT_ID) {
+			if ((charHotspot->characterMode() == CHARMODE_PAUSED) || 
+				((charHotspot->pauseCtr() == 0) && 
+				(charHotspot->characterMode() == CHARMODE_NONE))) {
+				hotspot->resource()->use2HotspotId = charId;
+			} else {
+				hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
+			}
+		}
+
+		result = 2;
+		if (charHotspot->currentActions().isEmpty())
+			charHotspot->currentActions().addFront(START_WALKING, charHotspot->roomNumber());
+		else
+			charHotspot->currentActions().top().setAction(START_WALKING);
+	}
+
+	return result;
+}
+
 // Field list and miscellaneous variables
 
 ValueTableData::ValueTableData() {
@@ -659,6 +800,11 @@ ValueTableData::ValueTableData() {
 	_playerNewPos.roomNumber = 0;
 	_playerNewPos.position.x = 0;
 	_playerNewPos.position.y = 0;
+	_playerPendingPos.pos.x = 0;
+	_playerPendingPos.pos.y = 0;
+	_playerPendingPos.isSet = false;
+	_flags = GAMEFLAG_4 | GAMEFLAG_1;
+
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;
 }
