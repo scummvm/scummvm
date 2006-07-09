@@ -31,8 +31,8 @@
 
 namespace Scumm {
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 struct Box {				/* Internal walkbox file format */
@@ -81,8 +81,8 @@ struct Box {				/* Internal walkbox file format */
 	} GCC_PACK;
 } GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 #define BOX_MATRIX_SIZE 2000

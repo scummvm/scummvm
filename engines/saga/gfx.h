@@ -78,14 +78,19 @@ struct ClipData {
 	}
 };
 
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
+
 struct PalEntry {
 	byte red;
 	byte green;
 	byte blue;
 } GCC_PACK;
 
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 struct Color {
 	int red;

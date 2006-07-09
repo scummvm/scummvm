@@ -172,8 +172,8 @@ class Win32ResExtractor : public ResExtractor {
  * Structures
  */
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 	struct WinLibrary {
@@ -456,8 +456,8 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 number_of_id_entries;
 	};
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 /*

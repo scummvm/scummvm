@@ -51,8 +51,8 @@ struct ObjectData {
 	byte flags;
 };
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 struct RoomHeader {
@@ -159,8 +159,8 @@ struct ImageHeader { /* file format */
 	} GCC_PACK;
 } GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 struct FindObjectInRoom {

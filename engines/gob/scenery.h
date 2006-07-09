@@ -27,7 +27,11 @@ namespace Gob {
 
 class Scenery {
 public:
+
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
+
 	struct PieceDesc {
 		int16 left;		//NOTE:
 		int16 right;		//These are stored in Little Endian format
@@ -70,7 +74,10 @@ public:
 		int16 framesCount;
 		AnimFramePiece *frames;
 	} GCC_PACK;
+
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 	struct Static {
 		int16 layersCount;

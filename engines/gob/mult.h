@@ -31,7 +31,11 @@ namespace Gob {
 
 class Mult {
 public:
+
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
+
 	struct Mult_AnimData {
 		int8 animation;
 		int8 layer;
@@ -156,7 +160,9 @@ public:
 		int16 field_E;
 	} GCC_PACK;
 
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 	// Globals
 

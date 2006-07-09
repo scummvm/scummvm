@@ -37,8 +37,8 @@ namespace Scumm {
 
 class ScummEngine;
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 struct channel_data {
@@ -66,8 +66,8 @@ struct channel_data {
 	uint16 music_script_nr;    // 48
 } GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 

@@ -43,7 +43,9 @@ public:
 		kDirSE = 0x5100
 	};
 
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
 
 	struct Point {
 		int16 x;
@@ -59,7 +61,9 @@ public:
 		int8 orient;		// ??
 	} GCC_PACK;
 
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 	int16 _mapWidth;
 	int16 _mapHeight;

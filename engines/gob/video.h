@@ -72,7 +72,9 @@ public:
 #define RETURN_PRIMARY		0x01
 #define DISABLE_SPR_ALLOC	0x20
 
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
 
 	struct Color {
 		byte red;
@@ -80,7 +82,9 @@ public:
 		byte blue;
 	} GCC_PACK;
 
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 	struct PalDesc {
 		Color *vgaPal;

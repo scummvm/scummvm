@@ -37,7 +37,11 @@ namespace Gob {
 class Goblin {
 
 public:
+
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
+
 	struct Gob_State {
 		int16 animation;// +0h
 		int16 layer;	// +2h
@@ -92,7 +96,10 @@ public:
 		char x;
 		char y;
 	} GCC_PACK;
+
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 	Util::List *_objList;
 	Gob_Object *_goblins[4];

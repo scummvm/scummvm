@@ -48,8 +48,8 @@ struct MouseObj {
 	Object *compact;
 };
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 struct MousePtr {
@@ -61,8 +61,8 @@ struct MousePtr {
 	uint8  dummyData[0x30];
 } GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 class Logic;

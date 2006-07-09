@@ -29,7 +29,7 @@
 
 namespace Scumm {
 
-#if !defined(__GNUC__)
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
 #endif
 
@@ -39,7 +39,7 @@ struct CostumeInfo {
 	int16 move_x, move_y;
 } GCC_PACK;
 
-#if !defined(__GNUC__)
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
 #endif
 

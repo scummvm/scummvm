@@ -89,8 +89,8 @@ namespace Sword1 {
 #define	MAX_text_obs	2			//text compacts
 #define	TEXT_sect		149			//text compacts exist in section 149, probably after all the megas
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 struct Header {
@@ -134,8 +134,8 @@ struct WalkGridHeader {
 	int32 numNodes;
 } GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 enum fileTypes {

@@ -36,7 +36,7 @@ struct displayText_t {
 	uint32 textWidth;
 };
 
-#if !defined(__GNUC__)
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
 #endif
 
@@ -166,7 +166,7 @@ struct Compact {
 	MegaSet megaSet3;	 //
 } GCC_PACK;
 
-#if !defined(__GNUC__)
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
 #endif
 

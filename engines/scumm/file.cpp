@@ -1241,7 +1241,10 @@ static ScummNESFile::LFL lfls[] = {
 	{ -1, NULL }
 };
 
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
+#endif
+
 struct _lfl_index {
 	byte	room_lfl[55];
 	uint16	room_addr[55];
@@ -1252,7 +1255,10 @@ struct _lfl_index {
 	byte	sound_lfl[100];
 	uint16	sound_addr[100];
 } GCC_PACK lfl_index;
+
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
+#endif
 
 
 bool ScummNESFile::generateResource(int res) {

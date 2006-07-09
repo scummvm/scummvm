@@ -37,7 +37,7 @@ extern const char *actionList[];
 /*                                                                         */
 /*-------------------------------------------------------------------------*/
 
-#if !defined(__GNUC__)
+#if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS
 #endif
 
@@ -215,7 +215,7 @@ struct RoomExitIndexedHotspotResource {
 	uint16 hotspotId;
 };
 
-#if !defined(__GNUC__)
+#if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
 #endif
 

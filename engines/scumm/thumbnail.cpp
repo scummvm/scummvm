@@ -31,8 +31,8 @@ namespace Scumm {
 
 #define THMB_VERSION 1
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
 #endif
 
 struct ThumbnailHeader {
@@ -43,8 +43,8 @@ struct ThumbnailHeader {
 	byte bpp;
 } GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
 #endif
 
 

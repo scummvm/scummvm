@@ -519,9 +519,9 @@ protected:
 		kDwordArray = 6
 	};
 
-	#if !defined(__GNUC__)
-		#pragma START_PACK_STRUCTS
-	#endif
+#if defined(START_PACK_STRUCTS)
+#pragma START_PACK_STRUCTS
+#endif
 
 	struct ArrayHeader {
 		int16 dim1;
@@ -530,9 +530,9 @@ protected:
 		byte data[1];
 	} GCC_PACK;
 
-	#if !defined(__GNUC__)
-		#pragma END_PACK_STRUCTS
-	#endif
+#if defined(END_PACK_STRUCTS)
+#pragma END_PACK_STRUCTS
+#endif
 
 	const OpcodeEntryV6 *_opcodesV6;
 

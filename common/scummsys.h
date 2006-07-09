@@ -70,6 +70,20 @@
 #endif
 
 
+//
+// By default we try to use pragma push/pop to ensure various structs we use
+// are "packed". If your compiler doesn't support this pragma, you are in for 
+// a problem. If you are lucky, an equivalent pragma is available, in which
+// case you can redefine these two macros appropriately. Or maybe your port
+// simply *always* packs everything, in which case you could #undefine them.
+//
+// If neither is possible, tough luck. Try to contact the team, maybe we can
+// come up with a solution, though I wouldn't hold my breath on it :-/.
+//
+#define START_PACK_STRUCTS pack(push, 1)
+#define END_PACK_STRUCTS   pack(pop)
+
+
 #if defined(_MSC_VER) && !defined(__SYMBIAN32__) && !defined(_WIN32_WCE)
 
 	#define scumm_stricmp stricmp
@@ -357,11 +371,6 @@
 //
 // Fallbacks / default values for various special macros
 //
-#ifndef START_PACK_STRUCTS
-#define START_PACK_STRUCTS pack(push, 1)
-#define END_PACK_STRUCTS   pack(pop)
-#endif
-
 #ifndef FORCEINLINE
 #define FORCEINLINE inline
 #endif
