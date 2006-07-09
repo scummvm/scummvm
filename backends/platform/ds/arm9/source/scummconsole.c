@@ -31,7 +31,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <NDS.h>
+#include <nds.h>
 #include "scummconsole.h"
 
 #include <stdarg.h>
