@@ -320,6 +320,33 @@
 	typedef unsigned long int uint32;
 	typedef signed long int int32;
 
+#elif defined (__DS__) //NeilM
+	#define CDECL 
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN 
+
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
+	#define CHECK_HEAP
+
+	#define FORCEINLINE inline
+	#define NORETURN __attribute__((__noreturn__))
+	#define GCC_PACK __attribute__((packed))
+	#define _HEAPOK 0
+
+	#include "nds/jtypes.h"
+	#include <stdarg.h>
+	#include <ctype.h>
+	#include <string.h>
+	#include <math.h>
+    #include <time.h>
+
+	#define START_PACK_STRUCTS pack (push, 1)
+	#define END_PACK_STRUCTS	 pack(pop)
+	
+	#define STRINGBUFLEN 256
+	#define SCUMM_LITTLE_ENDIAN 
+
 #elif defined(_WIN32_WCE)
 
 	#define scumm_stricmp stricmp
@@ -356,7 +383,6 @@
 	#endif
 
 #else
-
 	#error No system type defined
 
 #endif

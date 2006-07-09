@@ -37,7 +37,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#if (!( defined(PALMOS_MODE) || defined(__DC__) || defined(__GP32__) || defined(__amigaos4__) ) && !defined(_MSC_VER))
+#if (!( defined(PALMOS_MODE) || defined(__DC__) || defined(__GP32__) || defined(__amigaos4__) ) && !defined(_MSC_VER) && !defined(__DS__))
 #include <sys/param.h>
 #include <unistd.h>
 #endif

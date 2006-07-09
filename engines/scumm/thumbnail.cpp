@@ -104,7 +104,7 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	Graphics::Surface thumb;
 
-#ifndef PALMOS_68K
+#if !defined(PALMOS_68K) || !defined(__DS__)
 	if (!createThumbnailFromScreen(&thumb))
 #endif
 		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
