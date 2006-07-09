@@ -83,9 +83,6 @@
 	// explains the reasons briefly.
 	#define SCUMMVM_USE_LONG_INT
 
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
-
 	#if defined(CHECK_HEAP)
 	#undef CHECK_HEAP
 	#define CHECK_HEAP checkHeap();
@@ -116,9 +113,6 @@
 	#define scumm_strnicmp strnicmp
 
 	#define SCUMM_LITTLE_ENDIAN
-
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
 
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
@@ -159,11 +153,6 @@
 	#define SCUMM_NEED_ALIGNMENT
 	#endif
 
-	#if !defined(__GNUC__)
-	#define START_PACK_STRUCTS pack (1)
-	#define END_PACK_STRUCTS   pack ()
-	#endif
-
 #elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
 
 	#define scumm_stricmp stricmp
@@ -176,9 +165,6 @@
 	#endif
 
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define START_PACK_STRUCTS pack (1)
-	#define END_PACK_STRUCTS   pack ()
 
 	#include "palmversion.h"
 	#include "globals.h"
@@ -205,11 +191,6 @@
 	// explains the reasons briefly.
 	#define SCUMMVM_USE_LONG_INT
 
-	#if !defined(__GNUC__)
-		#define START_PACK_STRUCTS pack (1)
-		#define END_PACK_STRUCTS   pack ()
-	#endif
-
 #elif defined(__DC__)
 
 	#define scumm_stricmp strcasecmp
@@ -217,9 +198,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
 
 #elif defined(__GP32__)
 
@@ -242,9 +220,6 @@
 	typedef unsigned long int uint32;
 	typedef signed long int int32;
 
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
-
 #elif defined(__PLAYSTATION2__)
 
 	#define scumm_stricmp strcasecmp
@@ -252,9 +227,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN 
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
 
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)
@@ -279,9 +251,6 @@
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
-
 #elif defined(__amigaos4__)
 
 	#define	scumm_stricmp strcasecmp
@@ -297,9 +266,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN	
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
 
 	#define SMALL_SCREEN_DEVICE
 
@@ -321,18 +287,12 @@
 	typedef signed long int int32;
 
 #elif defined (__DS__) //NeilM
-	#define CDECL 
-	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN 
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
-	#define CHECK_HEAP
 
-	#define FORCEINLINE inline
-	#define NORETURN __attribute__((__noreturn__))
-	#define GCC_PACK __attribute__((packed))
-	#define _HEAPOK 0
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN 
 
 	#include "nds/jtypes.h"
 	#include <stdarg.h>
@@ -341,11 +301,7 @@
 	#include <math.h>
     #include <time.h>
 
-	#define START_PACK_STRUCTS pack (push, 1)
-	#define END_PACK_STRUCTS	 pack(pop)
-	
 	#define STRINGBUFLEN 256
-	#define SCUMM_LITTLE_ENDIAN 
 
 #elif defined(_WIN32_WCE)
 
@@ -354,9 +310,6 @@
 	#define snprintf _snprintf
 
 	#define SCUMM_LITTLE_ENDIAN
-
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
 
 	#if defined(CHECK_HEAP)
 	#undef CHECK_HEAP
@@ -405,8 +358,8 @@
 // Fallbacks / default values for various special macros
 //
 #ifndef START_PACK_STRUCTS
-#define	START_PACK_STRUCTS
-#define	END_PACK_STRUCTS
+#define START_PACK_STRUCTS pack(push, 1)
+#define END_PACK_STRUCTS   pack(pop)
 #endif
 
 #ifndef FORCEINLINE
