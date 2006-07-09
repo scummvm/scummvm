@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/rect.h"
 
 #include "sky/autoroute.h"
 #include "sky/compact.h"
@@ -2511,6 +2512,17 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	bool speechFileFound = false;
 	if (SkyEngine::isCDVersion())
 		speechFileFound = _skySound->startSpeech((uint16)textNum);
+
+	
+	// Calculate the point where the character is
+	int x = (((uint32) (target->xcood)) * GAME_SCREEN_WIDTH) >> 9;
+	int y = ((((uint32) (target->ycood)) * GAME_SCREEN_HEIGHT) >> 9);
+
+	// Set the focus region to that area
+	// TODO: Make the box size change based on the object that has the focus
+	Common::Rect rect(x - 96, y - 64, x + 96, y + 64);
+	_skyScreen->setFocusRectangle(rect);
+
 
 	if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
 		// form the text sprite, if player wants subtitles or

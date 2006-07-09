@@ -439,6 +439,28 @@ public:
 	 *       and instead implement the functionality in the frontend.
 	 */
 	virtual void setShakePos(int shakeOffset) = 0;
+		
+	/**
+	 * Sets the area of the screen that has the focus.  For example, when a character
+	 * is speaking, they will have the focus.  Allows for pan-and-scan style views
+	 * where the backend could follow the speaking character or area of interest on 
+	 * the screen.
+	 *
+	 * The backend is responsible for clipping the rectangle and deciding how best to
+	 * zoom the screen to show any shape and size rectangle the engine provides.
+	 *
+	 * @param rect A rectangle on the screen to be focused on
+	 * @see clearFocusRectangle
+	 */	
+	virtual void setFocusRectangle(const Common::Rect& rect) {}
+	
+	/**
+	 * Clears the focus set by a call to setFocusRectangle().  This allows the engine
+	 * to clear the focus during times when no particular area of the screen has the
+	 * focus.
+	 * @see setFocusRectangle
+	 */
+	virtual void clearFocusRectangle() {}
 
 	//@}
 

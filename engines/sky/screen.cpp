@@ -105,6 +105,10 @@ void Screen::clearScreen(void) {
 	_system->updateScreen();
 }
 
+void Screen::setFocusRectangle(const Common::Rect& rect) {
+	_system->setFocusRectangle(rect);
+}
+
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 

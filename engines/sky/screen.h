@@ -28,6 +28,9 @@
 #include "sky/skydefs.h"
 
 class OSystem;
+namespace Common {
+	struct Rect;
+}
 
 namespace Sky {
 
@@ -80,6 +83,7 @@ public:
 	void fnFadeDown(uint32 scroll);
 	void fnDrawScreen(uint32 palette, uint32 scroll);
 	void clearScreen(void);
+	void setFocusRectangle(const Common::Rect& rect);
 
 	void recreate(void);
 	void flip(bool doUpdate = true);
