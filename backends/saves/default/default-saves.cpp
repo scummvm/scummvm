@@ -21,7 +21,7 @@
  */
 
 #include "common/stdafx.h"
-//#include "common/util.h"
+#include "common/savefile.h"
 #include "backends/saves/default/default-saves.h"
 
 #include <stdio.h>
