@@ -675,7 +675,7 @@ void Game::start(void) {
 	delete[] _collisionAreas;
 
 	_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
-	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
+	_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
 	_vm->_video->freeSurfDesc(_vm->_draw->_backSurface);
 }
 
@@ -985,7 +985,8 @@ void Game::sub_ADD2(void) {
 	// TODO: That assignment is not in the original assembly, why?
 	_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[23];
 	_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
-	_vm->_draw->_cursorBack = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, 0);
+	_vm->_draw->_scummvmCursor =
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
 
 	_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
 	_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
@@ -999,7 +1000,7 @@ void Game::sub_ADD2(void) {
 // "DEVclosescreen"
 void Game::sub_BB28(void) {
 	_vm->_draw->freeSprite(23);
-	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
+	_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
 	if (_off_2E51B != 0) {
 		memcpy(_vm->_draw->_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
 		_vm->_draw->_frontSurface->width = 320;

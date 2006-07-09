@@ -87,6 +87,12 @@ public:
 	Video::Color _vgaPalette[256];
 	Video::Color _vgaSmallPalette[16];
 
+	// 0 (00b): No cursor
+	// 1 (01b): Cursor would be on _backSurface
+	// 2 (10b): Cursor would be on _frontSurface
+	// 3 (11b): Cursor would be on _backSurface and _frontSurface
+	uint8 _showCursor;
+
 	int16 _cursorX;
 	int16 _cursorY;
 	int16 _cursorWidth;
@@ -97,7 +103,8 @@ public:
 
 	Video::SurfaceDesc *_cursorSprites;
 	Video::SurfaceDesc *_cursorSpritesBack;
-	Video::SurfaceDesc *_cursorBack;
+	Video::SurfaceDesc *_scummvmCursor;
+
 	int16 _cursorAnim;
 	int8 _cursorAnimLow[40];
 	int8 _cursorAnimHigh[40];

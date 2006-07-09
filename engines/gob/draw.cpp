@@ -117,10 +117,11 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 		_cursorAnimDelays[i] = 0;
 	}
 
+	_showCursor = 0;
 	_cursorIndex = 0;
 	_transparentCursor = 0;
 	_cursorSprites = 0;
-	_cursorBack = 0;
+	_scummvmCursor = 0;
 	_cursorAnim = 0;
 
 	_palLoadData1[0] = 0;
@@ -261,6 +262,7 @@ void Draw::blitInvalidated(void) {
 		return;
 	}
 
+	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 	if (_applyPal) {
 		clearPalette();
 

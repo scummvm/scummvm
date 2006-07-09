@@ -1812,7 +1812,7 @@ void Inter_v2::o2_initCursor(void) {
 	    _vm->_draw->_cursorSprites->width != width * count) {
 
 		_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
-		_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
+		_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
 
 		_vm->_draw->_cursorWidth = width;
 		_vm->_draw->_cursorHeight = height;
@@ -1830,9 +1830,9 @@ void Inter_v2::o2_initCursor(void) {
 		_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[23];
 		_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
 
-		_vm->_draw->_cursorBack =
+		_vm->_draw->_scummvmCursor =
 		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth,
-		    _vm->_draw->_cursorHeight, 0);
+		    _vm->_draw->_cursorHeight, SCUMMVM_CURSOR);
 		for (i = 0; i < 40; i++) {
 			_vm->_draw->_cursorAnimLow[i] = -1;
 			_vm->_draw->_cursorAnimDelays[i] = 0;

@@ -622,7 +622,8 @@ void Game_v1::prepareStart(void) {
 
 	_vm->_draw->_cursorAnimLow[1] = 0;
 	_vm->_draw->_cursorSprites = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 32, 16, 2);
-	_vm->_draw->_cursorBack = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, 0);
+	_vm->_draw->_scummvmCursor =
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
 	_vm->_draw->_renderFlags = 0;
 	_vm->_draw->_backDeltaX = 0;
 	_vm->_draw->_backDeltaY = 0;

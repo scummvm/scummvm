@@ -23,10 +23,12 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "graphics/cursorman.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/video.h"
+#include "gob/draw.h"
 
 namespace Gob {
 
@@ -36,6 +38,7 @@ Video_v1::Video_v1(GobEngine *vm) : Video(vm) {
 //XXX: Use this function to update the screen for now.
 //     This should be moved to a better location later on.
 void Video_v1::waitRetrace(int16) {
+	CursorMan.showMouse((bool) (_vm->_draw->_showCursor & 2));
 	if (_vm->_global->_pPrimarySurfDesc) {
 		g_system->copyRectToScreen(_vm->_global->_pPrimarySurfDesc->vidPtr, 320, 0, 0, 320, 200);
 		g_system->updateScreen();

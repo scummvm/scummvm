@@ -71,6 +71,7 @@ public:
 #define PRIMARY_SURFACE		0x80
 #define RETURN_PRIMARY		0x01
 #define DISABLE_SPR_ALLOC	0x20
+#define SCUMMVM_CURSOR		0x100
 
 #if defined(START_PACK_STRUCTS)
 #pragma START_PACK_STRUCTS

@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "graphics/cursorman.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
@@ -37,6 +38,7 @@ Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
 //XXX: Use this function to update the screen for now.
 //     This should be moved to a better location later on.
 void Video_v2::waitRetrace(int16) {
+	CursorMan.showMouse((bool) (_vm->_draw->_showCursor & 2));
 	if (_vm->_draw->_frontSurface) {
 		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr, 320, 0, 0, 320, 200);
 		g_system->updateScreen();
@@ -106,7 +108,8 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 	else
 		flagsAnd2 = 0;
 
-	width = (width + 7) & 0xFFF8;
+	if ((flags & SCUMMVM_CURSOR) == 0)
+		width = (width + 7) & 0xFFF8;
 
 	if (flags & PRIMARY_SURFACE) {
 		_vm->_global->_primaryWidth = width;
