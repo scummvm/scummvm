@@ -542,6 +542,10 @@ begin_credits("Credits");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
 
+	  begin_section("Nintendo DS");
+		  add_person("Neil Millstone", "agent-q", "");
+	  end_section();
+
 	  begin_section("SymbianOS");
 		  add_person("Jurgen Braam", "SumthinWicked", "");
 		  add_person("Lars Persson", "AnotherGuest", "");
