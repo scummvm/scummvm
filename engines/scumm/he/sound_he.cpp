@@ -154,6 +154,7 @@ void SoundHE::stopSound(int sound) {
 		if (_heChannel[i].sound == sound) {
 			_heChannel[i].sound = 0;
 			_heChannel[i].priority = 0;
+			_heChannel[i].timer = 0;
 			_heChannel[i].sbngBlock = 0;
 			_heChannel[i].codeOffs = 0;
 			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
@@ -191,6 +192,7 @@ void SoundHE::stopSoundChannel(int chan) {
 
 	_heChannel[chan].sound = 0;
 	_heChannel[chan].priority = 0;
+	_heChannel[chan].timer = 0;
 	_heChannel[chan].sbngBlock = 0;
 	_heChannel[chan].codeOffs = 0;
 	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
@@ -384,6 +386,27 @@ void SoundHE::processSoundCode() {
 
 			codePtr += size;
 			_heChannel[chan].codeOffs += size;
+		}
+	}
+
+	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
+		if (_heChannel[chan].sound == 0)
+			continue;
+
+		if (_heChannel[chan].timer == 0)
+			continue;
+
+		if (_vm->getHETimer(chan + 4) > _heChannel[chan].timer) {
+			if (_heChannel[chan].sound == 1) {
+				_vm->stopTalk();
+			}
+
+			_heChannel[chan].sound = 0;
+			_heChannel[chan].priority = 0;
+			_heChannel[chan].timer = 0;
+			_heChannel[chan].sbngBlock = 0;
+			_heChannel[chan].codeOffs = 0;
+			_heChannel[chan].soundVars[0] = 0;
 		}
 	}
 }
@@ -602,20 +625,24 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			_overrideFreq = 0;
 		}
 
-		// TODO: Extra sound flags
-		if (heFlags & 1) {
-			flags |= Audio::Mixer::FLAG_LOOP;
-		}
-
-		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
-
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
 		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
+
+		// TODO: Extra sound flags
+		if (heFlags & 1) {
+			flags |= Audio::Mixer::FLAG_LOOP;
+			_heChannel[heChannel].timer = 0;
+		} else {
+			_heChannel[heChannel].timer = size * 1000 / rate;
+		}
+
+		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
+		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
+
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
