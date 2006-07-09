@@ -48,6 +48,7 @@ public: // Used by createSound()
 		int sound;
 		int codeOffs;
 		int priority;
+		int timer;
 		int sbngBlock;
 		int soundVars[27];
 	} _heChannel[8];
