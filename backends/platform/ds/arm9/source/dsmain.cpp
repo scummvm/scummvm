@@ -106,7 +106,7 @@ bool bufferSecondHalf;
 // Saved buffers
 u8* savedBuffer = NULL;
 bool highBuffer;
-bool displayModeIs8Bit;
+bool displayModeIs8Bit = false;
 
 // Game id
 u8 gameID;
@@ -1790,7 +1790,6 @@ bool isGBAMPAvailable() {
 // Main
 /////////////////
 
-static const Common::String test("poo", 1, 16);
 
 
 
@@ -1878,14 +1877,13 @@ int main(void)
 	consolePrintf("A:			Swap screens\n");
 	consolePrintf("L + R on bootup: Clear SRAM\n\n");
 	consolePrintf("For a complete poo list see the\n");
-	consolePrintf("help screen.\npoo\n");
+	consolePrintf("help screen.\n\n");
 
 
 	for (int r = 0; r < bytes; r++) {
 		soundBuffer[r] = 0;
 	}
 	
-	consolePrintf("length=%d str='%s'\n", test.size(), test.c_str());
 
 	swiWaitForVBlank();
 	swiWaitForVBlank();
