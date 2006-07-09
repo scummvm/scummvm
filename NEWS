@@ -2,11 +2,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.10.0 (????-??-??)
+ New Ports:
+   - Added Nintendo DS port.
+
  General:
    - Better compression for DXA movies.
 
  Broken Sword 2:
    - Added support for DXA cutscenes.
+
+ SCUMM
+   - Fixed various actor walking issues.
 
 0.9.1 (????-??-??)
  SCUMM
