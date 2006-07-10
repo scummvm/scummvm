@@ -143,6 +143,7 @@ public:
 	uint32 _heCondMask;
 	uint32 _hePaletteNum;
 	uint32 _heXmapNum;
+	byte _heFlags;
 
 	AuxBlock _auxBlock;
 
@@ -273,6 +274,8 @@ public:
 	}
 
 	void classChanged(int cls, bool value);
+
+	void setHEFlag(int bit, int set);
 
 	void setUserCondition(int slot, int set);
 	bool isUserConditionSet(int slot) const;
