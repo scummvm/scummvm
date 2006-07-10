@@ -221,14 +221,18 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void BrowserDialog::updateListing() {
 	// Update the path display
 	_currentPath->setLabel(_node.path());
-	
+
 	// We memorize the last visited path.
 	ConfMan.set("browser_lastpath", _node.path());
 
 	// Read in the data from the file system
-	_node.listDir(_nodeContent, _isDirBrowser ? FilesystemNode::kListDirectoriesOnly
-	                                          : FilesystemNode::kListAll);
-	Common::sort(_nodeContent.begin(), _nodeContent.end());
+	FilesystemNode::ListMode listMode = _isDirBrowser ? FilesystemNode::kListDirectoriesOnly
+	                                                  : FilesystemNode::kListAll;
+	if (!_node.listDir(_nodeContent, listMode)) {
+		_nodeContent.clear();
+	} else {
+		Common::sort(_nodeContent.begin(), _nodeContent.end());
+	}
 
 	// Populate the ListWidget
 	Common::StringList list;
