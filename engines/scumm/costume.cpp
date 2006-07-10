@@ -131,6 +131,11 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			v1.scaleXstep = 1;
 		}
 
+		// It's possible that the scale indexes will overflow and wrap
+		// around to zero, so it's important that we use the same
+		// method of accessing it both when calculating the size of the
+		// scaled costume, and when drawing it. See bug #1519667.
+
 		if (_mirror) {
 			/* Adjust X position */
 			startScaleIndexX = _scaleIndexX = scaletableSize - xmoveCur;
@@ -418,7 +423,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	byte len, maskbit;
 	int y;
 	uint color, height, pcolor;
-	const byte *scaleytab;
+	byte scaleIndexY;
 	bool masked;
 
 	y = v1.y;
@@ -428,7 +433,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	color = v1.repcolor;
 	height = _height;
 
-	scaleytab = &v1.scaletable[_scaleIndexY];
+	scaleIndexY = _scaleIndexY;
 	maskbit = revBitMask(v1.x & 7);
 	mask = v1.mask_ptr + v1.x / 8;
 
@@ -443,7 +448,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 			len = *src++;
 
 		do {
-			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
+			if (_scaleY == 255 || v1.scaletable[scaleIndexY++] < _scaleY) {
 				masked = (y < 0 || y >= _out.h) || (v1.mask_ptr && (mask[0] & maskbit));
 				
 				if (color && !masked) {
@@ -466,7 +471,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 				height = _height;
 				y = v1.y;
 
-				scaleytab = &v1.scaletable[_scaleIndexY];
+				scaleIndexY = _scaleIndexY;
 
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
