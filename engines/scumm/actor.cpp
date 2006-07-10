@@ -423,7 +423,7 @@ int Actor::actorWalkStep() {
 
 	_pos = _actorPos;
 
-	if (_pos == _walkdata.next) {
+	if (_vm->_game.version >= 4 && _vm->_game.version <= 6 && _pos == _walkdata.next) {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
