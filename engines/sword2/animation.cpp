@@ -257,6 +257,19 @@ bool MoviePlayer::load(const char *name, MovieTextObject *text[]) {
 			_numFrames = _movies[i].frames;
 			if (_numFrames > 60)
 				_leadOutFrame = _numFrames - 60;
+
+			// Not all cutscenes cover the entire screen, so clear
+			// it. We will always clear the game screen, no matter
+			// how the cutscene is to be displayed. (We have to do
+			// this before showing the overlay.)
+
+			_vm->_mouse->closeMenuImmediately();
+
+			if (!_seamless) {
+				_vm->_screen->clearScene();
+			}
+
+			_vm->_screen->updateDisplay();
 			return true;
 		}
 	}
@@ -289,18 +302,6 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 	}
 
 	savePalette();
-
-	// Not all cutscenes cover the entire screen, so clear it. We will
-	// always clear the game screen, no matter how the cutscene is to be
-	// displayed.
-
-	_vm->_mouse->closeMenuImmediately();
-
-	if (!_seamless) {
-		_vm->_screen->clearScene();
-	}
-
-	_vm->_screen->updateDisplay();
 
 #ifndef SCUMM_BIG_ENDIAN
 	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
