@@ -1127,7 +1127,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 68: // HE 90+
 		k = pop();
-		debug(0,"o72_actorOps: case 68 (%d)", k);
+		a->setHEFlag(1, k);
 		break;
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());

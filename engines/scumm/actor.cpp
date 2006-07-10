@@ -153,6 +153,7 @@ void Actor::initActor(int mode) {
 
 	_auxBlock.reset();
 	_hePaletteNum = 0;
+	_heFlags = 0;
 
 	_vm->_classData[_number] = (_vm->_game.version >= 7) ? _vm->_classData[0] : 0;
 }
@@ -1299,6 +1300,9 @@ void ScummEngine::resetActorBgs() {
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
 		for (j = 1; j < _numActors; j++) {
+			if (_actors[j]._heFlags & 1)
+				continue;
+
 			if (testGfxUsageBit(strip, j) &&
 				((_actors[j]._top != 0x7fffffff && _actors[j]._needRedraw) || _actors[j]._needBgReset)) {
 				clearGfxUsageBit(strip, j);
@@ -2021,6 +2025,15 @@ bool Actor::isPlayer() {
 		return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
 	else
 		return isInClass(kObjectClassPlayer);
+}
+
+void Actor::setHEFlag(int bit, int set) {
+	// Note that condition is inverted
+	if (!set) {
+		_heFlags |= bit;
+	} else {
+		_heFlags &= ~bit;
+	}
 }
 
 void Actor::setUserCondition(int slot, int set) {

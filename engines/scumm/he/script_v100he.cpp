@@ -442,8 +442,8 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->initActor(0);
 		break;
 	case 32:
-		i = pop();
-		debug(0,"o100_actorOps: case 32 (%d)", i);
+		k = pop();
+		a->setHEFlag(1, k);
 		break;
 	case 52:		// SO_ACTOR_NAME
 		copyScriptString(string, sizeof(string));
