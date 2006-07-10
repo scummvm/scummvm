@@ -157,6 +157,13 @@ void ConsoleDialog::open() {
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
 
+	// The screen may have changed since the console was created. We have
+	// to make sure things are properly adjusted, or we may get garbage in
+	// the console, or even outright crashes. This means _scrollLine is not
+	// preserved, but that's a tiny sacrifice.
+
+	handleScreenChanged();
+
 	Dialog::open();
 	if (_promptStartPos == -1) {
 		print(PROMPT);

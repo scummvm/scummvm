@@ -2,6 +2,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.9.1 (????-??-??)
+ General:
+   - Fixed potential garbage and/or crash in debug console.
+
  SCUMM:
    - Improved support for international versions of HE games.
    - Fixed rare actor drawing glitches.
