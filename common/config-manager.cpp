@@ -97,8 +97,42 @@ void ConfigManager::loadDefaultConfigFile() {
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 #else
 	#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+		OSVERSIONINFO win32OsVersion;
+		ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+		win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx(&win32OsVersion);
+		// Check for non-9X version of Windows.
+		if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+			// Use the Application Data directory of the user profile.
+			if (win32OsVersion.dwMajorVersion >= 5) {
+				if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
+					error("Unable to access application data directory");
+			} else {
+				if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
+					error("Unable to access user profile directory");
+
+				strcat(configFile, "\\Application Data");
+				CreateDirectory(configFile, NULL);
+			}
+
+			strcat(configFile, "\\ScummVM");
+			CreateDirectory(configFile, NULL);
+			strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+
+			if (fopen(configFile, "r") == NULL) {
+				// Check windows directory
+				char oldConfigFile[MAXPATHLEN];
+				GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+				strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
+				if (fopen(oldConfigFile, "r"))
+					strcpy(configFile, oldConfigFile);
+			}
+		} else {
+			// Check windows directory
+			GetWindowsDirectory(configFile, MAXPATHLEN);
+			strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+		}
+
 	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(__PLAYSTATION2__)
@@ -125,7 +159,7 @@ void ConfigManager::loadConfigFile(const String &filename) {
 	_filename = filename;
 	_domainSaveOrder.clear();
 	loadFile(_filename);
-	debug(1, "Switched to configuration %s", _filename.c_str());
+	printf("Using configuration file: %s\n", _filename.c_str());
 }
 
 void ConfigManager::loadFile(const String &filename) {
