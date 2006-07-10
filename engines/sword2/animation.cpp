@@ -481,6 +481,8 @@ bool MoviePlayerDXA::load(const char *name, MovieTextObject *text[]) {
 
 #endif
 
+#ifdef USE_MPEG2
+
 ///////////////////////////////////////////////////////////////////////////////
 // Movie player for the old MPEG movies
 ///////////////////////////////////////////////////////////////////////////////
@@ -538,7 +540,23 @@ bool MoviePlayerMPEG::decodeFrame() {
 	return result;
 }
 
-#ifndef BACKEND_8BIT
+AnimationState::AnimationState(Sword2Engine *vm, MoviePlayer *player)
+	: BaseAnimationState(vm->_mixer, vm->_system, 640, 480) {
+	_vm = vm;
+	_player = player;
+}
+
+AnimationState::~AnimationState() {
+}
+
+#ifdef BACKEND_8BIT
+
+void AnimationState::setPalette(byte *pal) {
+	_player->updatePalette(pal, false);
+}
+
+#else
+
 void MoviePlayerMPEG::handleScreenChanged() {
 	_anim->handleScreenChanged();
 }
@@ -559,22 +577,6 @@ void MoviePlayerMPEG::drawTextObject(MovieTextObject *t) {
 		_anim->drawTextObject(t->textSprite, _textSurface);
 	}
 }
-#endif
-
-AnimationState::AnimationState(Sword2Engine *vm, MoviePlayer *player)
-	: BaseAnimationState(vm->_mixer, vm->_system, 640, 480) {
-	_vm = vm;
-	_player = player;
-}
-
-AnimationState::~AnimationState() {
-}
-
-#ifdef BACKEND_8BIT
-void AnimationState::setPalette(byte *pal) {
-	_player->updatePalette(pal, false);
-}
-#else
 
 void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 	int moviePitch = _movieScale * _movieWidth;
@@ -625,7 +627,6 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 		src += s->w;
 	}
 }
-
 #endif
 
 void AnimationState::clearScreen() {
@@ -669,6 +670,8 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 	plotYUV(width, height, dat);
 #endif
 }
+
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dummy player for subtitled speech only
