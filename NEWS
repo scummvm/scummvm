@@ -17,9 +17,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 0.9.1 (????-??-??)
  SCUMM
    - Improved support for international versions of HE games.
+   - Fixed rare actor drawing glitches.
 
-Broken Sword 2
-  - More robust handling of the optional startup.inf file.
+ Broken Sword 2
+   - More robust handling of the optional startup.inf file.
+
+ PSP Port:
+   - Fixed crashes during scrolling scenes in certain SCUMM games.
+   - Added saving of thumbnail in SCUMM savegames.
 
 0.9.0 (2006-06-25)
  New Games:
