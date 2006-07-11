@@ -124,7 +124,7 @@ osxsnap: bundle doc/readme.pdf
 	cp dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/.DS_Store
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
-	hdiutil create -ov -format UDZO -imagekey zlib-level=9  \
+	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ScummVM-snapshot \
 					-volname "ScummVM snapshot" \
 					ScummVM-snapshot.dmg
