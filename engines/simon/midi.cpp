@@ -479,14 +479,14 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 			printf("Expected MThd but found '%c%c%c%c' instead!\n", buf[0], buf[1], buf[2], buf[3]);
 			return;
 		}
-		in->seek(in->readUint32BE() + in->pos(), SEEK_SET);
+		in->seek(in->readUint32BE(), SEEK_CUR);
 
 		// Now skip all the MTrk blocks
 		while (true) {
 			in->read(buf, 4);
 			if (memcmp(buf, "MTrk", 4))
 				break;
-			in->seek(in->readUint32BE() + in->pos(), SEEK_SET);
+			in->seek(in->readUint32BE(), SEEK_CUR);
 		}
 
 		uint32 pos2 = in->pos() - 4;
