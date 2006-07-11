@@ -1194,7 +1194,6 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	_heNoTalkAnimation = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
-	// Only done for pre-AKOS, though.
 	if (bcr->drawCostume(_vm->virtscr[0], _vm->gdi._numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
 	}
