@@ -15,7 +15,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed FM-TOWNS version of Indy3 failing on Amiga port.
 
  Simon
-   - Improved support for international versions of the Feeble Files
+   - Improved support for international versions of the Feeble Files.
+   - Fixed undefined behaviour when loading music.
 
  Broken Sword 2
    - More robust handling of the optional startup.inf file.
