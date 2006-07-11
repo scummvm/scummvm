@@ -115,6 +115,7 @@ osxsnap: bundle doc/readme.pdf
 	mkdir ScummVM-snapshot
 	cp COPYING ./ScummVM-snapshot/License
 	cp NEWS ./ScummVM-snapshot/News
+	cp AUTHORS ./ScummVM-snapshot/Authors
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	cp doc/readme.pdf ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/SetFile -t 'PDF ' -c prvw ./ScummVM-snapshot/ScummVM\ ReadMe
@@ -123,7 +124,7 @@ osxsnap: bundle doc/readme.pdf
 	cp dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/.DS_Store
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
-	hdiutil create -ov -format UDZO -imagekey zlib-level=9  \
+	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ScummVM-snapshot \
 					-volname "ScummVM snapshot" \
 					ScummVM-snapshot.dmg
