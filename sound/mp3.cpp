@@ -183,18 +183,18 @@ bool MP3InputStream::init() {
 
 	// Check the header, determine if this is a stereo stream
 	int num;
-	switch(_frame.header.mode) {
-		case MAD_MODE_SINGLE_CHANNEL:
-		case MAD_MODE_DUAL_CHANNEL:
-		case MAD_MODE_JOINT_STEREO:
-		case MAD_MODE_STEREO:
-			num = MAD_NCHANNELS(&_frame.header);
-			assert(num == 1 || num == 2);
-			_isStereo = (num == 2);
-			break;
-		default:
-			warning("MP3InputStream: Cannot determine number of channels");
-			return false;
+	switch (_frame.header.mode) {
+	case MAD_MODE_SINGLE_CHANNEL:
+	case MAD_MODE_DUAL_CHANNEL:
+	case MAD_MODE_JOINT_STEREO:
+	case MAD_MODE_STEREO:
+		num = MAD_NCHANNELS(&_frame.header);
+		assert(num == 1 || num == 2);
+		_isStereo = (num == 2);
+		break;
+	default:
+		warning("MP3InputStream: Cannot determine number of channels");
+		return false;
 	}
 
 	return true;
@@ -208,7 +208,7 @@ void MP3InputStream::refill(bool first) {
 #ifdef __SYMBIAN32__
 	// For symbian we must check that an alternative file pointer is created, see if its open
 	// If not re-open file and seek to the last read position
-	if(_file && !_file->isOpen()) {
+	if (_file && !_file->isOpen()) {
 		_file->open(_file->name());
 		_file->seek(_lastReadPosition);
 	}
@@ -270,7 +270,7 @@ void MP3InputStream::refill(bool first) {
 
 #ifdef __SYMBIAN32__
 	// For symbian we now store the last read position and then close the file
-	if(_file) {
+	if (_file) {
 		_lastReadPosition = _file->pos();
 		_file->close();
 	}
@@ -446,7 +446,7 @@ void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int sta
 	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
 #ifdef __SYMBIAN32__
 	// Reopen the file if it is not open yet
-	if(!_file->isOpen())
+	if (!_file->isOpen())
 		_file->open(_file->name());
 #endif
 	_file->seek(offset, SEEK_SET);
