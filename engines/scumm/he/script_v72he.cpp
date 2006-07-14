@@ -594,7 +594,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		chr = string[num++];
 		if (chr == '%') {
 			chr = string[num++];
-			switch(chr) {
+			switch (chr) {
 			case 'b':
 				//dst += sprintf((char *)dst, "%b", args[val++]);
 				break;
@@ -1738,7 +1738,7 @@ void ScummEngine_v72he::o72_openFile() {
 	}
 
 	if (slot != -1) {
-		switch(mode) {
+		switch (mode) {
 		case 1:
 			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
 			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);

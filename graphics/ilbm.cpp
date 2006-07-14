@@ -59,7 +59,7 @@ struct Chunk {
 		if (size % 2) {
 			size++;
 		}
-		while(!_input->eos() && !eos()) {
+		while (!_input->eos() && !eos()) {
 			readByte();
 		}
 	}
@@ -244,7 +244,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 		formChunk.incBytesRead(8);
 		chunk.readHeader();
 
-		switch(chunk.id) {
+		switch (chunk.id) {
 		case ID_BMHD:
 			bitmapHeader.width = chunk.readUint16();
 			bitmapHeader.height = chunk.readUint16();

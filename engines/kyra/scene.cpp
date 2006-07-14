@@ -883,7 +883,7 @@ int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) 
 			ypos = _sceneExits.westYPos;
 			_pathfinderFlag = 7;
 		}
-	} else if(xpos >= 308) {
+	} else if (xpos >= 308) {
 		if (_roomTable[sceneId].eastExit != 0xFFFF) {
 			xpos = 307;
 			ypos = _sceneExits.eastYPos;

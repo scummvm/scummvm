@@ -60,7 +60,7 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 
 	do {
 		tag = READ_BE_UINT32(ptr); ptr += 4;
-		switch(tag) {
+		switch (tag) {
 		case MKID_BE('TEXT'):
 		case MKID_BE('STOP'):
 		case MKID_BE('FRMT'):
@@ -154,7 +154,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 			}
 			offset += 4;
 			len >>= 8;
-			switch(code) {
+			switch (code) {
 			case 0:
 				quit = true;
 				break;
@@ -211,7 +211,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
-			switch(tag) {
+			switch (tag) {
 			case MKID_BE('FRMT'):
 				ptr += 12;
 				sound->bits = READ_BE_UINT32(ptr); ptr += 4;

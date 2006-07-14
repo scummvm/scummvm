@@ -373,7 +373,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
-		if(_globalVolumeOverride == NULL)
+		if (_globalVolumeOverride == NULL)
 			setVolumeSettingsState(data != 0);
 		draw();
 		break;

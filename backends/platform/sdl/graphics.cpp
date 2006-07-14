@@ -944,8 +944,8 @@ void OSystem_SDL::makeChecksums(const byte *buf) {
 
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
-	for(y = 0; y != last_y; y++, buf += _screenWidth * (8 - 1))
-		for(x = 0; x != last_x; x++, buf += 8) {
+	for (y = 0; y != last_y; y++, buf += _screenWidth * (8 - 1))
+		for (x = 0; x != last_x; x++, buf += 8) {
 			// Adler32 checksum algorithm (from RFC1950, used by gzip and zlib).
 			// This computes the Adler32 checksum of a 8x8 pixel block. Note
 			// that we can do the modulo operation (which is the slowest part)
@@ -990,8 +990,8 @@ void OSystem_SDL::addDirtyRgnAuto(const byte *buf) {
 		int x, y, w;
 		uint32 *ck = _dirtyChecksums;
 
-		for(y = 0; y != _screenHeight / 8; y++) {
-			for(x = 0; x != _screenWidth / 8; x++, ck++) {
+		for (y = 0; y != _screenHeight / 8; y++) {
+			for (x = 0; x != _screenWidth / 8; x++, ck++) {
 				if (ck[0] != ck[_cksumNum]) {
 					/* found a dirty 8x8 block, now go as far to the right as possible,
 						 and at the same time, unmark the dirty status by setting old to new. */

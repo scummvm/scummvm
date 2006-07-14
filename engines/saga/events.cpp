@@ -125,8 +125,8 @@ int Events::handleContinuous(Event *event) {
 	Surface *backGroundSurface;
 	BGInfo bgInfo;
 	Rect rect;
-	if(event->duration != 0) {
-	event_pc = ((double)event->duration - event->time) / event->duration;
+	if (event->duration != 0) {
+		event_pc = ((double)event->duration - event->time) / event->duration;
 	} else {
 		event_pc = 1.0;
 	}
@@ -207,8 +207,8 @@ int Events::handleImmediate(Event *event) {
 	bool event_done = false;
 
 	// Duration might be 0 so dont do division then
-	if(event->duration != 0) {
-	event_pc = ((double)event->duration - event->time) / event->duration;
+	if (event->duration != 0) {
+		event_pc = ((double)event->duration - event->time) / event->duration;
 	} else {
 		// Just make sure that event_pc is 1.0 so event_done is true
 		event_pc = 1.0;

@@ -519,7 +519,7 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 	maketable(pitch, src[1]);
 	int32 tmp;
 
-	switch(src[0]) {
+	switch (src[0]) {
 	case 0:
 		if ((_deltaBufs[_curtable] - _deltaBuf) > 0) {
 			memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);

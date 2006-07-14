@@ -999,7 +999,7 @@ void ScummEngine_v60he::o60_openFile() {
 	}
 
 	if (slot != -1) {
-		switch(mode) {
+		switch (mode) {
 		case 1:
 			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
 			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);

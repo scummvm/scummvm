@@ -377,11 +377,11 @@ void Resource::clearContexts() {
 	if (_contexts == NULL) {
 		return;
 	}
-	for(i = 0; i < _contextsCount; i++) {
+	for (i = 0; i < _contextsCount; i++) {
 		context = &_contexts[i];
 		delete context->file;
 		if (context->table != NULL) {
-			for(j = 0; j < context->count; j++) {
+			for (j = 0; j < context->count; j++) {
 				delete context->table[j].patchData;
 			}
 		}
@@ -398,7 +398,7 @@ uint32 Resource::convertResourceId(uint32 resourceId) {
 			return resourceId - 2;
 		} else {
 			if (resourceId == 1535 || resourceId == 1536) {
-				error ("Wrong resource number %d for Mac ITE", resourceId);
+				error("Wrong resource number %d for Mac ITE", resourceId);
 			}
 		}
 	}

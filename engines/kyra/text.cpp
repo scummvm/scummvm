@@ -39,7 +39,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 	uint8 currPage;
 	OSystem::Event event;
 
-	//while( towns_isEscKeyPressed() )
+	//while (towns_isEscKeyPressed() )
 		//towns_getKey();
 
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();

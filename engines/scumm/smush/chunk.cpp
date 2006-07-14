@@ -65,7 +65,7 @@ uint32 BaseChunk::getSize() const {
 }
 
 bool BaseChunk::seek(int32 delta, seek_type dir) {
-	switch(dir) {
+	switch (dir) {
 	case seek_cur:
 		_curPos += delta;
 		break;

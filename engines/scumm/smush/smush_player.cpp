@@ -227,7 +227,7 @@ void SmushPlayer::timerCallback(void *refCon) {
 	((SmushPlayer *)refCon)->_inTimerCount++;
 #endif
 #ifdef __SYMBIAN32__
-	if(((SmushPlayer *)refCon)->_closeOnTextTick) {
+	if (((SmushPlayer *)refCon)->_closeOnTextTick) {
 		delete ((SmushPlayer *)refCon)->_base;
 		((SmushPlayer *)refCon)->_base = NULL;
 		((SmushPlayer *)refCon)->_closeOnTextTick = false;
@@ -313,7 +313,7 @@ void SmushPlayer::release() {
 #ifdef __SYMBIAN32__
 	_closeOnTextTick = true;
 	// Wait for _closeOnTextTick to be set to false to indicate file closure
-	while(_closeOnTextTick) {
+	while (_closeOnTextTick) {
 		User::After(15624); 
 	}
 #endif

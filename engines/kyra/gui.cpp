@@ -1458,7 +1458,7 @@ void KyraEngine::gui_fadePalette() {
 		_screen->_currentPalette[i] /= 2;
 	}
 
-	while( menuPalIndexes[index] != -1) {
+	while (menuPalIndexes[index] != -1) {
 		memcpy(&_screen->_currentPalette[menuPalIndexes[index]*3], &_screen->getPalette(2)[menuPalIndexes[index]*3], 3);
 		index++;
 	}

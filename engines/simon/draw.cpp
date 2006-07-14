@@ -176,7 +176,7 @@ void SimonEngine::animateSpritesByY() {
 		vsp++;
 	}
 
-	while(1) {
+	while (1) {
 		y = spriteTable[0][0];
 		slot = spriteTable[0][1];
 

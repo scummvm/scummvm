@@ -759,9 +759,9 @@ void KyraEngine::loadMainScreen(int page) {
 		_screen->loadBitmap("MAIN15.CPS", page, page, 0);
 	else if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
-	else if(_features & GF_FRENCH)
+	else if (_features & GF_FRENCH)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
-	else if(_features & GF_GERMAN)
+	else if (_features & GF_GERMAN)
 		_screen->loadBitmap("MAIN_GER.CPS", page, page, 0);
 	else if (_features & GF_SPANISH)
 		_screen->loadBitmap("MAIN_SPA.CPS", page, page, 0);

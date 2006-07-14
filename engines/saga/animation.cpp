@@ -241,7 +241,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 		char *buf=(char*)anim->resourceData;
 		FILE*f;
 		f=fopen(s,"wb");
-		for(long i=0;i<flen;i++)
+		for (long i = 0; i < flen; i++)
 			fputc(buf[i],f);
 		fclose(f);*/
 

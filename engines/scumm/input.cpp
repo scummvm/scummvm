@@ -331,7 +331,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		if (_voiceMode == 3)
 			_voiceMode = 0;
 
-		switch(_voiceMode) {
+		switch (_voiceMode) {
 		case 0:
 			sprintf(buf, "Speech Only");
 			ConfMan.setBool("speech_mute", false);

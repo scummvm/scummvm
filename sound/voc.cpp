@@ -90,7 +90,7 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &l
 		len |= stream.readByte() << 8;
 		len |= stream.readByte() << 16;
 
-		switch(code) {
+		switch (code) {
 		case 1: {
 			int time_constant = stream.readByte();
 			int packing = stream.readByte();

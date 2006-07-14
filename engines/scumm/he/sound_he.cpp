@@ -369,7 +369,7 @@ void SoundHE::processSoundCode() {
 		assert(codePtr);
 		codePtr += _heChannel[chan].codeOffs;
 
-		while(1) {
+		while (1) {
 			size = READ_LE_UINT16(codePtr);
 			time = READ_LE_UINT32(codePtr + 2);
 
@@ -414,7 +414,7 @@ void SoundHE::processSoundCode() {
 void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 	int arg, opcode, var, val;
 
-	while(READ_LE_UINT16(codePtr) != 0) {
+	while (READ_LE_UINT16(codePtr) != 0) {
 		codePtr += 2;
 		opcode = READ_LE_UINT16(codePtr); codePtr += 2;
 		opcode = (opcode & 0xFFF) >> 4;

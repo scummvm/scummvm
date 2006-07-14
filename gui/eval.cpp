@@ -192,10 +192,10 @@ void Eval::getToken() {
 
 	if (_input[_pos] == '"') {
 		_pos++;
-		while(_input[_pos] != '"' && _input[_pos] != '\n')
+		while (_input[_pos] != '"' && _input[_pos] != '\n')
 			*temp++ = _input[_pos++];
 
-		if(_input[_pos] == '\n')
+		if (_input[_pos] == '\n')
 			exprError(eMissingQuote);
 
 		_pos++;

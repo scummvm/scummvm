@@ -178,7 +178,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 					break;
 				}
 			} else {
-				switch(_vm->_rnd.getRandomNumber(14)) {
+				switch (_vm->_rnd.getRandomNumber(14)) {
 				case 2:
 					if (!_enemyState[EN_ROTT1][2]) {
 						_enemyState[EN_ROTT1][2] = 1;
@@ -342,7 +342,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					break;
 				}
 			} else {
-				switch(_vm->_rnd.getRandomNumber(14)) {
+				switch (_vm->_rnd.getRandomNumber(14)) {
 				case 2:
 					if (!_enemyState[EN_ROTT2][2]) {
 						_enemyState[EN_ROTT2][2] = 1;
@@ -1353,7 +1353,7 @@ void Insane::actor11Reaction(int32 buttons) {
 
 	chooseEnemyWeaponAnim(buttons);
 
-	switch(_actor[1].tilt) {
+	switch (_actor[1].tilt) {
 	case -3:
 		if (_actor[1].act[1].state != 41 || _actor[1].weaponClass != _actor[1].animWeaponClass) {
 			setEnemyAnimation(1, 6);
@@ -1617,7 +1617,7 @@ void Insane::setEnemyState(void) {
 void Insane::actor12Reaction(int32 buttons) {
 	int32 tmp, tmp2;
 
-	switch(_actor[1].act[2].state) {
+	switch (_actor[1].act[2].state) {
 	case 1:
 		smlayer_setActorLayer(1, 2, 5);
 		_actor[1].weaponClass = 2;

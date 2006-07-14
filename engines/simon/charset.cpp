@@ -1546,7 +1546,7 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 		h = 8;
 		w = 6;
 
-		switch(_language) {
+		switch (_language) {
 		case Common::RU_RUS:
 			src = russian_video_font + (chr - 0x20) * 8;
 			break;

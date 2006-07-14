@@ -1905,7 +1905,7 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	Rect rect;
 
 	textId = panelButton->id;
-	switch(panelButton->id) {
+	switch (panelButton->id) {
 	case kTextReadingSpeed:
 		if (_vm->getFeatures() & GF_CD_FX) {
 			if (_vm->_subtitlesEnabled)

@@ -824,7 +824,7 @@ Common::String ScummEngine::generateFilename(const int room) const {
 				if (_heV7DiskOffsets)
 					disk = _heV7DiskOffsets[room];
 		
-				switch(disk) {
+				switch (disk) {
 				case 2:
 					id = 'b';
 					snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);

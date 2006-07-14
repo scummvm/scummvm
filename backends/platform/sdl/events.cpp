@@ -183,8 +183,8 @@ bool OSystem_SDL::pollEvent(Event &event) {
 		return true;
 	}
 
-	while(SDL_PollEvent(&ev)) {
-		switch(ev.type) {
+	while (SDL_PollEvent(&ev)) {
+		switch (ev.type) {
 		case SDL_KEYDOWN:{
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 

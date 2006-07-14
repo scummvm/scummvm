@@ -952,7 +952,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		flags = pop();
 		spriteId = pop();
 		if (spriteId) {
-			switch(flags) {
+			switch (flags) {
 			case 0:
 				push(_sprite->getSpriteFlagXFlipped(spriteId));
 				break;
@@ -1167,7 +1167,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			switch(args[1]) {
+			switch (args[1]) {
 			case 0:
 				_sprite->setSpriteFlagXFlipped(spriteId, args[0]);
 				break;
@@ -1479,7 +1479,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		type = pop();
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			switch(type) {
+			switch (type) {
 			case 0:
 				push(_sprite->getGroupXMul(spriteGroupId));
 				break;

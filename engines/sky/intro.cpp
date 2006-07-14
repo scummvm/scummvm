@@ -825,7 +825,7 @@ bool Intro::commandFlirt(uint16 *&data) {
 		while ((_skyScreen->seqFramesLeft() < *data)) {
 			data++;
 			uint16 command = *data++;
-			switch(command) {
+			switch (command) {
 			case IC_PREPARE_TEXT:
 				_skyText->displayText(*data++, _textBuf, true, INTRO_TEXT_WIDTH, 255);
 				break;

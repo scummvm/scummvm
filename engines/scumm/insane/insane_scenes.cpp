@@ -344,7 +344,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 		break;
 	case 3:
 	case 13:
-		switch(_currEnemy) {
+		switch (_currEnemy) {
 		case EN_TORQUE:
 			smlayer_loadSound(59, flag, phase);
 			smlayer_loadSound(93, flag, phase);

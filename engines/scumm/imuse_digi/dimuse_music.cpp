@@ -171,7 +171,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 
 	fadeOutMusic(120);
 
-	switch(table->opcode) {
+	switch (table->opcode) {
 		case 0:
 		case 5:
 		case 6:
@@ -425,7 +425,7 @@ int IMuseDigital::getSoundIdByName(const char *soundName) {
 void IMuseDigital::playFtMusic(const char *songName, int opcode, int volume) {
 	fadeOutMusic(200);
 
-	switch(opcode) {
+	switch (opcode) {
 		case 0:
 		case 4:
 			break;

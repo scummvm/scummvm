@@ -168,7 +168,7 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 }
 
 void Gfx::initPalette() {
-	if(_vm->getGameType() != GType_IHNM)
+	if (_vm->getGameType() != GType_IHNM)
 		return;
 
 	ResourceContext *resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
@@ -184,7 +184,7 @@ void Gfx::initPalette() {
 
 	MemoryReadStream metaS(resourcePointer, resourceLength);
 
-	for(int i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_globalPalette[i].red = metaS.readByte();
 		_globalPalette[i].green = metaS.readByte();
 		_globalPalette[i].blue = metaS.readByte();

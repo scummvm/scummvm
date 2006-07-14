@@ -573,7 +573,7 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 		gfx_data += 32896;
 	}
 
-	switch(src[2]) {
+	switch (src[2]) {
 	case 0:
 		memcpy(_curBuf, gfx_data, _frameSize);
 		break;

@@ -471,7 +471,7 @@ void Puzzle::solicitHint(void) {
 }
 
 void Puzzle::handleReply(int reply) {
-	switch(reply) {
+	switch (reply) {
 	case 0:		// Quit the puzzle
 		exitPuzzle();
 		break;

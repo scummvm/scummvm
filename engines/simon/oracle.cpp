@@ -92,7 +92,7 @@ void SimonEngine::oracleTextUp() {
 
 	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
-	while(1) {
+	while (1) {
 		if (_textWindow->scrollY == _oracleMaxScrollY)
 			break;
 		_textWindow->textRow = 105;
@@ -126,7 +126,7 @@ void SimonEngine::oracleTextDown() {
 
 	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
-	while(1) {
+	while (1) {
 		if (_textWindow->scrollY == 0)
 			break;
 
@@ -293,8 +293,8 @@ void SimonEngine::listSaveGames(int n) {
 		z++;
 	}
 
-	while(1) {
-		OK=1;
+	while (1) {
+		OK = 1;
 		if (getBitFlag(93) || getBitFlag(94)) {
 			OK = 0;
 			if (j > z)

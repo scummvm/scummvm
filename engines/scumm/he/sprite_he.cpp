@@ -370,7 +370,7 @@ int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 
 	// XXX U32 related check
 
-	switch(type) {
+	switch (type) {
 	case 0x7B:
 		return _spriteTable[spriteId].imgFlags;
 	case 0x7D:
@@ -677,7 +677,7 @@ void Sprite::setSpriteFlagAutoAnim(int spriteId, int value) {
 void Sprite::setSpriteFlagUpdateType(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	switch(value) {
+	switch (value) {
 	case 2:
 		_spriteTable[spriteId].flags &= ~(kSFMarkDirty);
 		_spriteTable[spriteId].flags |= kSFBlitDirectly;
@@ -740,7 +740,7 @@ void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 
 	// XXX U32 related check
 
-	switch(type) {
+	switch (type) {
 	case 0x7B:
 		_spriteTable[spriteId].imgFlags = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;

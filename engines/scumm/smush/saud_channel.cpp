@@ -52,7 +52,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 
-		switch(type) {
+		switch (type) {
 		case TYPE_STRK:
 			_inData = false;
 			if (available_size >= (size + 8)) {

@@ -1917,7 +1917,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		if (params->processFlags & kWPFUseFile) {
 			Common::File f;
 
-			switch(params->fileWriteMode) {
+			switch (params->fileWriteMode) {
 			case 2:
 				_vm->VAR(119) = -1;
 				break;

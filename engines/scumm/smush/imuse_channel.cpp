@@ -140,7 +140,7 @@ bool ImuseChannel::handleStop(Chunk &src) {
 bool ImuseChannel::handleMap(Chunk &map) {
 	while (!map.eof()) {
 		Chunk *sub = map.subBlock();
-		switch(sub->getType()) {
+		switch (sub->getType()) {
 		case TYPE_FRMT:
 			handleFormat(*sub);
 			break;
@@ -213,7 +213,7 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
-		switch(type) {
+		switch (type) {
 		case TYPE_MAP_:
 			_inData = false;
 			if (available_size >= (size + 8)) {

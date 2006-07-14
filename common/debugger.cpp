@@ -193,7 +193,7 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 		if (!strncmp(_dvars[i].name, param[0], strlen(_dvars[i].name))) {
 			if (num_params > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
-				switch(_dvars[i].type) {
+				switch (_dvars[i].type) {
 				// Integer
 				case DVAR_BYTE:
 					*(byte *)_dvars[i].variable = atoi(param[1]);
@@ -226,7 +226,7 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 				}
 			} else {
 				// And again, type-dependent prints/defrefs. The array one is still ugly.
-				switch(_dvars[i].type) {
+				switch (_dvars[i].type) {
 				// Integer
 				case DVAR_BYTE:
 					DebugPrintf("(byte)%s = %d\n", param[0], *(const byte *)_dvars[i].variable);

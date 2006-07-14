@@ -529,7 +529,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 	char quitDos[] = "Quit to DOS?";
 	char restart[] = "Restart?";
 
-	switch(pButton->_onClick) {
+	switch (pButton->_onClick) {
 	case DO_NOTHING:
 		return 0;
 	case REST_GAME_PANEL:

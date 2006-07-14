@@ -501,7 +501,7 @@ int32 Insane::calcBenDamage(bool arg_0, bool arg_4) {
 void Insane::actor02Reaction(int32 buttons) {
 	int32 tmp, tmp2;
 
-	switch(_actor[0].act[2].state) {
+	switch (_actor[0].act[2].state) {
 	case 1:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].weaponClass = 2;
