@@ -304,6 +304,14 @@ static GameFileDescription SIMON1TALKIE_HB_GameFiles[] = {
 static GameFileDescription SIMON1TALKIE_IT_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"8d3ca654e158c91b860c7eae31d65312"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
+	{ "simon.gme",		GAME_GMEFILE,	"52e315e0e02feca86d15cc82e3306b6c"},
+	{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5"},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
+};
+
+static GameFileDescription SIMON1TALKIE_IT2_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"8d3ca654e158c91b860c7eae31d65312"},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
 	{ "simon.gme",		GAME_GMEFILE,	"104efd83c8f3edf545982e07d87f66ac"},
 	{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5"},
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
@@ -854,6 +862,19 @@ static GameDescription gameDescriptions[] = {
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_IT_GameFiles),
 		SIMON1TALKIE_IT_GameFiles,
+		GF_TALKIE,
+		Common::IT_ITA,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 1 - Italian DOS CD alternate
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1TALKIE_IT2,
+		"CD",
+		ARRAYSIZE(SIMON1TALKIE_IT2_GameFiles),
+		SIMON1TALKIE_IT2_GameFiles,
 		GF_TALKIE,
 		Common::IT_ITA,
 		Common::kPlatformPC,
