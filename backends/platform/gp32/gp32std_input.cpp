@@ -26,8 +26,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
-#include "backends/gp32/gp32std.h"
-#include "backends/gp32/gp32std_input.h"
+#include "gp32std.h"
+#include "gp32std_input.h"
 
 static uint32 buttonState = 0;
 static uint16 buttonPressState = 0;

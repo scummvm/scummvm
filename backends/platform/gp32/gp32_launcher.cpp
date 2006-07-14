@@ -28,13 +28,13 @@
 
 #include "base/engine.h"
 
-#include "backends/gp32/gp32std.h"
-#include "backends/gp32/gp32std_grap.h"
-#include "backends/gp32/gp32std_input.h"
+#include "gp32std.h"
+#include "gp32std_grap.h"
+#include "gp32std_input.h"
+#include "gp32_launcher.h"
 
-#include "backends/gp32/gfx_splash.h"
-#include "backends/gp32/gp32_launcher.h"
-#include "backends/gp32/globals.h"
+#include "gfx_splash.h"
+#include "globals.h"
 
 uint16 cpuSpeedTable[15] = {40, 66, 100, 120, 133, 144, 156, 160, 166, 172, 176, 180, 188, 192, 200};
 uint16 gammaTable[16] = {5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000};

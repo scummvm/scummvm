@@ -62,9 +62,9 @@ LIBS		+=	-L$(GPSDK)/lib \
 				-lgpmem -lgpos -lgpstdio -lgpstdlib -lgpsound -lgpgraphic -lgpfont \
 				-lm -lc -lgcc
 
-INCLUDES	+=	-Ibackends/gp32 -Iengines -I$(GPSDK)/include
+INCLUDES	+=	-Ibackends/platform/gp32 -Iengines -I$(GPSDK)/include
 
-MODULES		+=	backends/gp32
+MODULES		+=	backends/platform/gp32
 
 # Outputs
 EXEEXT		= .elf
@@ -83,18 +83,18 @@ DEFINES		+=	-DDISABLE_FANCY_THEMES
 
 # Support libtremor.
 #DEFINES		+=	-DUSE_VORBIS -DUSE_TREMOR -DGP32_SDK
-#INCLUDES	+=	-Ibackends/gp32/gptremor
-#LIBS		+=	-Lbackends/gp32/gptremor -lgptremor
+#INCLUDES	+=	-Ibackends/platform/gp32/gptremor
+#LIBS		+=	-Lbackends/platform/gp32/gptremor -lgptremor
 
 # Support libmad.
 #DEFINES		+=	-DUSE_MAD
-#INCLUDES	+=	-Ibackends/gp32/gpmad
-#LIBS		+=	-Lbackends/gp32/gpmad -lgpmad
+#INCLUDES	+=	-Ibackends/platform/gp32/gpmad
+#LIBS		+=	-Lbackends/platform/gp32/gpmad -lgpmad
 
 # Support libminilzo.
 #DEFINES		+=	-DUSE_MINILZO
-#INCLUDES	+=	-Ibackends/gp32/minilzo
-#LIBS		+=	-Lbackends/gp32/minilzo -lminilzo
+#INCLUDES	+=	-Ibackends/platform/gp32/minilzo
+#LIBS		+=	-Lbackends/platform/gp32/minilzo -lminilzo
 
 # Support for 8:3 save files names (The GP32 uses FAT12/16 (no vFAT) for the file system).
 DEFINES		+=	-DSHORT_SAVENAMES
@@ -112,34 +112,33 @@ DEFINES		+=	-DOUTPUT_UNSIGNED_AUDIO
 #	This builds in the GP32 GDB USB Stub. Don't use it unless you know what your doing.
 #	You also need to remove ANY optemisation from the compiler flags.
 #DEFINES	+=	-DGP32_GDB
-#OBJS	+=	backends/gp32/debug-gdbstub-usb.o
+#OBJS	+=	backends/platform/gp32/debug-gdbstub-usb.o
 
 # Standard librarys and optimization modules
-OBJS	+=	backends/gp32/startup.o \
-			backends/gp32/memcpy.o \
-			backends/gp32/gp_asmlib.o \
-			backends/gp32/gp_clipped.o \
-			backends/gp32/fontdata.o
+OBJS	+=	backends/platform/gp32/startup.o \
+			backends/platform/gp32/memcpy.o \
+			backends/platform/gp32/gp_asmlib.o \
+			backends/platform/gp32/gp_clipped.o \
+			backends/platform/gp32/fontdata.o
 
 # Custom GP32 std library
-OBJS	+=	backends/gp32/gp32std.o \
-			backends/gp32/gp32std_file.o \
-			backends/gp32/gp32std_grap.o \
-			backends/gp32/gp32std_input.o \
-			backends/gp32/gp32std_memory.o \
-			backends/gp32/gp32std_sound.o \
-			#backends/gp32/dmaaudio_asm.o \
-			#backends/gp32/dmaaudio.o \
+OBJS	+=	backends/platform/gp32/gp32std.o \
+			backends/platform/gp32/gp32std_file.o \
+			backends/platform/gp32/gp32std_grap.o \
+			backends/platform/gp32/gp32std_input.o \
+			backends/platform/gp32/gp32std_memory.o \
+			backends/platform/gp32/gp32std_sound.o \
+			#backends/platform/gp32/dmaaudio_asm.o \
+			#backends/platform/gp32/dmaaudio.o \
 
 #Main ScummVM for the GP32 Backend
-OBJS	+= 	backends/gp32/gp32_main.o \
-			backends/gp32/gp32_launcher.o \
-			backends/gp32/gp32_osys.o \
+OBJS	+= 	backends/platform/gp32/gp32_main.o \
+			backends/platform/gp32/gp32_launcher.o \
+			backends/platform/gp32/gp32_osys.o \
 			backends/fs/gp32/gp32-fs.o
 
 $(FXE): $(BIN)
-					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" $< $@
-#					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" -b scummvm.bmp $< $@
+					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" -b backends/platform/gp32/scummvm.bmp $< $@
 
 $(BIN): scummvm$(EXEEXT)
 					$(OBJCOPY) -O binary $< $@

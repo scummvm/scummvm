@@ -31,9 +31,9 @@
 
 #include "base/engine.h"
 
-#include "backends/gp32/gp32std.h"
-#include "backends/gp32/gp32std_grap.h"
-#include "backends/gp32/gp32std_memory.h"
+#include "gp32std.h"
+#include "gp32std_grap.h"
+#include "gp32std_memory.h"
 
 #define DEBUG_MAX 5
 char debline[DEBUG_MAX][256];

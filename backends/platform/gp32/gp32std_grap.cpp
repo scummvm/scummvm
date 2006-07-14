@@ -26,10 +26,10 @@
 #include "common/system.h"
 #include "backends/intern.h"
 
-#include "backends/gp32/gp32std.h"
-#include "backends/gp32/gp32std_grap.h"
+#include "gp32std.h"
+#include "gp32std_grap.h"
 
-#include "backends/gp32/globals.h"
+#include "globals.h"
 
 GPDRAWSURFACE lcdSurface[2];
 

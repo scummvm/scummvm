@@ -34,10 +34,10 @@
 
 #include "base/engine.h"
 
-#include "backends/gp32/gp32std.h"
-#include "backends/gp32/gp32std_grap.h"
-#include "backends/gp32/gp32std_input.h"
-#include "backends/gp32/gp32std_sound.h"
+#include "gp32std.h"
+#include "gp32std_grap.h"
+#include "gp32std_input.h"
+#include "gp32std_sound.h"
 
 class OSystem_GP32 : public OSystem {
 public:
@@ -110,6 +110,9 @@ public:
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+
+	bool grabRawScreen(Graphics::Surface *surf);
+
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();
 

@@ -28,12 +28,12 @@
 
 #include "base/main.h"
 
-#include "backends/gp32/gp32std.h"
-#include "backends/gp32/gp32std_grap.h"
+#include "gp32std.h"
+#include "gp32std_grap.h"
 
-#include "backends/gp32/gp32_launcher.h"
-#include "backends/gp32/gp32_osys.h"
-#include "backends/gp32/globals.h"
+#include "gp32_launcher.h"
+#include "gp32_osys.h"
+#include "globals.h"
 
 GlobalVars g_vars;
 
