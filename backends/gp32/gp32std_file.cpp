@@ -81,7 +81,7 @@ GPFILE *gp_fopen(const char *fileName, const char *openMode) {
 	}
 
 	if (err) {
-		printf("gp_gopen(): IO error %d", err);
+		printf("gp_fopen(): IO error %d", err);
 		delete file;
 		return NULL;
 	}

@@ -110,6 +110,9 @@ public:
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+
+	bool grabRawScreen(Graphics::Surface *surf);
+
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();
 

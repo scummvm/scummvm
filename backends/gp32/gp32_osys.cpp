@@ -34,6 +34,7 @@
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
@@ -150,7 +151,7 @@ int16 OSystem_GP32::getWidth() {
 }
 
 void OSystem_GP32::setPalette(const byte *colors, uint start, uint num) {
-	NP("OSys::setPalette()");
+	//NP("OSys::setPalette()");
 	const byte *b = colors;
 	uint i;
 	uint16 *base = _currentPalette + start;
@@ -171,7 +172,7 @@ void OSystem_GP32::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
-	NP("OSys::copyRectToScreen()");
+	//NP("OSys::copyRectToScreen()");
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
@@ -209,6 +210,16 @@ void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	}
 }
 
+bool OSystem_GP32::grabRawScreen(Graphics::Surface *surf) {
+	assert(surf);
+
+	surf->create(_screenWidth, _screenHeight, 1);
+
+	memcpy(surf->pixels, _gameScreen, _screenWidth * _screenHeight);
+
+	return true;
+}
+
 //TODO: Implement Dirty rect?
 void OSystem_GP32::updateScreen() {
 	uint16 *buffer;
@@ -222,7 +233,7 @@ void OSystem_GP32::updateScreen() {
 		}
 		buffer += 240 - _screenHeight;
 	}
-	
+
 	// draw overlay
 	if (_overlayVisible) {
 		buffer = &_tmpScreen[240 - _overlayHeight];
@@ -257,17 +268,17 @@ void OSystem_GP32::updateScreen() {
 }
 
 void OSystem_GP32::setShakePos(int shakeOffset) {
-	NP("OSys::setShakePos()");
+	//NP("OSys::setShakePos()");
 }
 
 void OSystem_GP32::showOverlay() {
-	NP("OSys::showOverlay()");
+	//NP("OSys::showOverlay()");
 	_overlayVisible = true;
 	clearOverlay();
 }
 
 void OSystem_GP32::hideOverlay() {
-	NP("OSys::hideOverlay()");
+	//NP("OSys::hideOverlay()");
 	_overlayVisible = false;
 	clearOverlay();
 	_forceFull = true;
@@ -276,7 +287,7 @@ void OSystem_GP32::hideOverlay() {
 // Clear overlay with game screen
 //TODO: Optimize?
 void OSystem_GP32::clearOverlay() {
-	NP("OSys::clearOverlay()");
+	//NP("OSys::clearOverlay()");
 	if (!_overlayVisible)
 		return;
 
@@ -295,7 +306,7 @@ void OSystem_GP32::clearOverlay() {
 }
 
 void OSystem_GP32::grabOverlay(OverlayColor *buf, int pitch) {
-	NP("OSys::grabOverlay()");
+	//NP("OSys::grabOverlay()");
 	int h = _overlayHeight;
 	OverlayColor *src = _overlayBuffer;
 
@@ -307,7 +318,7 @@ void OSystem_GP32::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void OSystem_GP32::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	NP("OSys::copyRectToOverlay()");
+	//NP("OSys::copyRectToOverlay()");
 
 	//Clip the coordinates
 	if (x < 0) {
@@ -376,7 +387,7 @@ bool OSystem_GP32::showMouse(bool visible) {
 }
 
 void OSystem_GP32::warpMouse(int x, int y) {
-	NP("OSys::warpMouse()");
+	//NP("OSys::warpMouse()");
 	//assert(x > 0 && x < _screenWidth);
 	//assert(y > 0 && y < _screenHeight);
 	_mouseX = x;
@@ -384,7 +395,7 @@ void OSystem_GP32::warpMouse(int x, int y) {
 }
 
 void OSystem_GP32::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
-	NP("OSys::setMouseCursor()");
+	//NP("OSys::setMouseCursor()");
 	_mouseWidth = w;
 	_mouseHeight = h;
 
@@ -484,7 +495,7 @@ void OSystem_GP32::fillMouseEvent(Event &event, int x, int y) {
 }
 
 bool OSystem_GP32::pollEvent(Event &event) {
-	NP("OSys::pollEvent()");
+	//NP("OSys::pollEvent()");
 	GP32BtnEvent ev;
 
 	handleKbdMouse();
@@ -651,7 +662,7 @@ static void _timerCallbackVoid() {
 }
 
 void OSystem_GP32::setTimerCallback(TimerProc callback, int interval) {
-	NP("OSys::setTimerCallback()");
+	//NP("OSys::setTimerCallback()");
 
 	int timerNo = 1;
 
@@ -688,7 +699,7 @@ void OSystem_GP32::deleteMutex(MutexRef mutex) {
 }
 
 bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
-	NP("OSys::setSoundCallback()");
+	//NP("OSys::setSoundCallback()");
 
 	GPSOUNDBUF gpSoundBuf;
 
@@ -744,18 +755,18 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 }
 
 void OSystem_GP32::clearSoundCallback() {
-	NP("OSys::clearSoundCallback()");
+	//NP("OSys::clearSoundCallback()");
 	if (_samplesPerSec != 0)
 		gp_soundBufStop();
 }
 
 int OSystem_GP32::getOutputSampleRate() const {
-	NP("OSys::getOutputSampleRate()");
+	//NP("OSys::getOutputSampleRate()");
 	return _samplesPerSec;
 }
 
 void OSystem_GP32::quit() {
-	NP("OSys::quit()");
+	//NP("OSys::quit()");
 	clearSoundCallback();
 	setTimerCallback(0, 0);
 	exit(0);
