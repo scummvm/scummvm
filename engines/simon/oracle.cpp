@@ -108,7 +108,7 @@ void SimonEngine::oracleTextUp() {
 			scrollOracleUp();
 			setBitFlag(94, true);
 			sub = getSubroutineByID(_variableArray[104]);
-			if(sub)
+			if (sub)
 				startSubroutineEx(sub);
 			setBitFlag(94, false);
 		}
@@ -297,7 +297,7 @@ void SimonEngine::listSaveGames(int n) {
 		OK=1;
 		if (getBitFlag(93) || getBitFlag(94)) {
 			OK = 0;
-			if(j > z)
+			if (j > z)
 				break;
 		}
 

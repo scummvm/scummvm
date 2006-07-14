@@ -1379,7 +1379,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 			tstr = file->_key;
 			tstr.toLowercase();
 
-			if(!filesMD5.contains(tstr)) {
+			if (!filesMD5.contains(tstr)) {
 				if (testFile.open(file->_key)) {
 					testFile.close();
 
