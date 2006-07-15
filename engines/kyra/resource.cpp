@@ -45,6 +45,10 @@ Resource::Resource(KyraEngine *engine) {
 			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
 		}
 
+		// We only need kyra.dat for the demo.
+		if (_engine->features() & GF_DEMO)
+			return;
+
 		// only VRM file we need in the *whole* game for kyra1
 		if (_engine->features() & GF_TALKIE) {
 			assert(loadPakFile("CHAPTER1.VRM"));
@@ -57,14 +61,10 @@ Resource::Resource(KyraEngine *engine) {
 			return;
 		_pakfiles.push_back(insFile);
 	}
-	
-	// We only need kyra.dat for the demo.
-	if (_engine->features() & GF_DEMO)
-		return;
-	
+
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	
+
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
 		error("invalid game path '%s'", dir.path().c_str());
 	}
