@@ -71,7 +71,9 @@ Resource::Resource(KyraEngine *engine) {
 	}
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->displayName().hasSuffix("PAK") || file->displayName().hasSuffix("APK")) {
+		Common::String filename = file->displayName();
+		filename.toUppercase();
+		if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
 			if (!loadPakFile(file->displayName())) {
 				error("couldn't open pakfile '%s'", file->displayName().c_str());
 			}
