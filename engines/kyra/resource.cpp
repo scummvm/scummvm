@@ -39,10 +39,10 @@ Resource::Resource(KyraEngine *engine) {
 
 	if (_engine->game() == GI_KYRA1) {
 		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
-		if (!loadPakFile("KYRA.DAT")) {
-			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file, get it from the ScummVM website");
+		if (!loadPakFile("KYRA.DAT") || !StaticResource::checkKyraDat()) {
+			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
 			errorMsg.runModal();
-			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
+			error("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
 		}
 
 		// We only need kyra.dat for the demo.
@@ -51,7 +51,7 @@ Resource::Resource(KyraEngine *engine) {
 
 		// only VRM file we need in the *whole* game for kyra1
 		if (_engine->features() & GF_TALKIE) {
-			if !(loadPakFile("CHAPTER1.VRM"))
+			if (!loadPakFile("CHAPTER1.VRM"))
 				error("couldn't open pakfile 'CHAPTER1.VRM'");
 		}
 	} else if (_engine->game() == GI_KYRA3) {
@@ -72,7 +72,7 @@ Resource::Resource(KyraEngine *engine) {
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->displayName().hasSuffix("PAK") || file->displayName().hasSuffix("APK")) {
-			if (loadPakFile(file->displayName()) {
+			if (!loadPakFile(file->displayName())) {
 				error("couldn't open pakfile '%s'", file->displayName().c_str());
 			}
 		}

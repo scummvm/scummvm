@@ -199,6 +199,8 @@ class StaticResource {
 public:
 	StaticResource(KyraEngine *engine) : _engine(engine), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
+	
+	static bool checkKyraDat();
 
 	bool init();
 	void deinit();
