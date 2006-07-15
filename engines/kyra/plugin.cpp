@@ -84,13 +84,13 @@ const GameSettings kyra1_games[] = {
 };
 
 const GameSettings kyra2_games[] = {
-	{ "kyra2", "The Hand of Fate",				GI_KYRA2, GF_ENGLISH,	// CD version? Floppy version?
+	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate", GI_KYRA2, GF_ENGLISH,	// CD version? Floppy version?
 										"28cbad1c5bf06b2d3825ae57d760d032", "FATE.PAK" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
 const GameSettings kyra3_games[] = {
-	{ "kyra3", "The Legend of Kyrandia: Book Three",
+	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge",
 	GI_KYRA3, GF_LNGUNK, "3833ff312757b8e6147f464cca0a6587", "ONETIME.PAK" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
@@ -98,8 +98,8 @@ const GameSettings kyra3_games[] = {
 // Keep list of different supported games
 const PlainGameDescriptor kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
-	{ "kyra2", "The Hand of Fate" },
-	{ "kyra3", "The Legend of Kyrandia: Book Three" },
+	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
+	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
 	{ 0, 0 }
 };
 
