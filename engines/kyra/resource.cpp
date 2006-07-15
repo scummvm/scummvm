@@ -134,10 +134,10 @@ Resource::Resource(KyraEngine *engine) {
 
 	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
 	if (_engine->game() == GI_KYRA1) {
-		if (!loadPakFile("KYRA.DAT")) {
-			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file, get it from the ScummVM website");
+		if (!loadPakFile("KYRA.DAT") || !StaticResource::checkKyraDat()) {
+			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
 			errorMsg.runModal();
-			error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
+			error("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
 		}
 	}
 	

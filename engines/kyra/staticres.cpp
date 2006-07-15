@@ -29,6 +29,18 @@
 namespace Kyra {
 
 #define RESFILE_VERSION 12
+#define KYRADAT_FILESIZE 67227
+
+bool StaticResource::checkKyraDat() {
+	Common::File kyraDat;
+	if (!kyraDat.open("KYRA.DAT"))
+		return false;
+	
+	if (kyraDat.size() != KYRADAT_FILESIZE)
+		return false;
+	
+	return true;
+}
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_LNGUNK)
