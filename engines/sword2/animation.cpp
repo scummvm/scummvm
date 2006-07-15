@@ -400,6 +400,9 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		updateScreen();
 	}
 
+	// The current text object may still be open
+	closeTextObject(_textList[_currentText]);
+
 	if (!terminate) {
 		// Wait for the voice to stop playing. This is to make sure
 		// that we don't cut off the speech in mid-sentence, and - even
@@ -782,12 +785,16 @@ void MoviePlayerDummy::drawFrame() {
 }
 
 void MoviePlayerDummy::drawTextObject(MovieTextObject *t) {
-	_vm->_screen->drawSurface(t->textSprite, _textSurface);
+	if (t->textSprite && _textSurface) {
+		_vm->_screen->drawSurface(t->textSprite, _textSurface);
+	}
 }
 
 void MoviePlayerDummy::undrawTextObject(MovieTextObject *t) {
-	memset(_textSurface, 1, t->textSprite->w * t->textSprite->h);
-	drawTextObject(t);
+	if (t->textSprite && _textSurface) {
+		memset(_textSurface, 1, t->textSprite->w * t->textSprite->h);
+		drawTextObject(t);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
