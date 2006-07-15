@@ -51,7 +51,8 @@ Resource::Resource(KyraEngine *engine) {
 
 		// only VRM file we need in the *whole* game for kyra1
 		if (_engine->features() & GF_TALKIE) {
-			assert(loadPakFile("CHAPTER1.VRM"));
+			if !(loadPakFile("CHAPTER1.VRM"))
+				error("couldn't open pakfile 'CHAPTER1.VRM'");
 		}
 	} else if (_engine->game() == GI_KYRA3) {
 		// load the installation package file for kyra3
@@ -71,7 +72,9 @@ Resource::Resource(KyraEngine *engine) {
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->displayName().hasSuffix("PAK") || file->displayName().hasSuffix("APK")) {
-			assert(loadPakFile(file->displayName()));
+			if (loadPakFile(file->displayName()) {
+				error("couldn't open pakfile '%s'", file->displayName().c_str());
+			}
 		}
 	}
 }
