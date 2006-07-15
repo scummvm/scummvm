@@ -2235,14 +2235,14 @@ void ScummEngine_v5::o5_startScript() {
 
 	// FIXME: Script 171 loads a complete room resource, instead of the actual script.
 	// Causing invalid opcode cases, see bug #1290485
-	if (_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns) && script == 171)
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
 		return;
 
 	if (!_copyProtection) {
 		// Method used by original games to skip copy protection scheme
 		if (_game.id == GID_LOOM && _game.version == 3 && _currentRoom == 69 && script == 201)
 			script = 205;
-		else if ((_game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && script == 152)
+		if (_game.id == GID_MONKEY_VGA && _game.platform == Common::kPlatformPC && script == 152)
 			return;
 	}
 
