@@ -346,10 +346,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\savefile.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\savefile.h"
 				>
 			</File>
@@ -799,6 +795,10 @@
 					RelativePath="..\..\backends\saves\default\default-saves.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\backends\saves\savefile.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1002,6 +1002,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\cursorman.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\dxa_player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\dxa_player.h"
 				>
 			</File>
 			<File
