@@ -73,11 +73,11 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 		clearAll();
 	}
 
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+
+	if (ConfMan.hasKey("extrapath"))
+		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 
 	ImageMan.addArchive(stylefile + ".zip");
 
