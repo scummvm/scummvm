@@ -53,7 +53,7 @@ struct Kyra1LanguageTable {
 };
 
 namespace {
-const GameSettings kyra1_games[] = {
+const GameSettings kyra_games[] = {
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_FLOPPY, // english floppy 1.0 from Malice
 										"3c244298395520bb62b5edfe41688879", "GEMCUT.EMC" },
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_FLOPPY, 
@@ -80,18 +80,15 @@ const GameSettings kyra1_games[] = {
 										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
 	{ "kyra1", "The Legend of Kyrandia Demo",	GI_KYRA1, GF_DEMO | GF_ENGLISH,
 										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
-	{ 0, 0, 0, 0, 0, 0 }
-};
 
-const GameSettings kyra2_games[] = {
+	// kyra 2 games
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate", GI_KYRA2, GF_ENGLISH,	// CD version? Floppy version?
 										"28cbad1c5bf06b2d3825ae57d760d032", "FATE.PAK" },
-	{ 0, 0, 0, 0, 0, 0 }
-};
-
-const GameSettings kyra3_games[] = {
+	
+	// kyra 3 games
 	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge",
 	GI_KYRA3, GF_LNGUNK, "3833ff312757b8e6147f464cca0a6587", "ONETIME.PAK" },
+
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
@@ -125,7 +122,10 @@ Common::Language convertKyraLang(uint32 features) {
 		return Common::DE_DEU;
 	} else if (features & GF_SPANISH) {
 		return Common::ES_ESP;
+	} else if (features & GF_ITALIAN) {
+		return Common::IT_ITA;
 	}
+
 	return Common::UNK_LANG;
 }
 
@@ -147,8 +147,6 @@ const char *getKyraVersion(uint32 features) {
 	return 0;
 }
 } // End of anonymous namespace
-
-using namespace Kyra;
 
 GameList Engine_KYRA_gameIDList() {
 	GameList games;
@@ -182,24 +180,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		if (file->isDirectory())
 			continue;
 
-		// TODO: cleanup
-		for (g = kyra1_games; g->gameid; g++) {
-			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
-				isFound = true;
-		}
-
-		if (isFound)
-			break;
-
-		for (g = kyra2_games; g->gameid; g++) {
-			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
-				isFound = true;
-		}
-
-		if (isFound)
-			break;
-		
-		for (g = kyra3_games; g->gameid; g++) {
+		for (g = kyra_games; g->gameid; g++) {
 			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
 				isFound = true;
 		}
@@ -219,26 +200,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
 		}
 
-		// TODO: cleanup
-		for (g = kyra1_games; g->gameid; g++) {
-			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				DetectedGame dg(*g, convertKyraLang(g->features), convertKyraPlatform(g->features));
-				dg.updateDesc(getKyraVersion(g->features));
-
-				detectedGames.push_back(dg);
-			}
-		}
-
-		for (g = kyra2_games; g->gameid; g++) {
-			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				DetectedGame dg(*g, convertKyraLang(g->features), convertKyraPlatform(g->features));
-				dg.updateDesc(getKyraVersion(g->features));
-
-				detectedGames.push_back(dg);
-			}
-		}
-		
-		for (g = kyra3_games; g->gameid; g++) {
+		for (g = kyra_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
 				DetectedGame dg(*g, convertKyraLang(g->features), convertKyraPlatform(g->features));
 				dg.updateDesc(getKyraVersion(g->features));
@@ -306,7 +268,9 @@ int KyraEngine_v1::setupGameFlags() {
 
 	_features = 0;
 	memset(md5str, 0, sizeof(md5str));
-	for (g = kyra1_games; g->gameid; g++) {
+	for (g = kyra_games; g->gameid; g++) {
+		if (scumm_stricmp(g->gameid, "kyra1"))
+			continue;
 		if (!Common::File::exists(g->checkFile))
 			continue;
 
