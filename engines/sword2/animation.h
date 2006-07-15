@@ -43,7 +43,7 @@ struct MovieTextObject {
 };
 
 struct MovieInfo {
-	MovieInfo(const char *name, const uint frames, const bool seamless) : name(name), frames(frames), seamless(seamless) {}
+	MovieInfo(const char *name_, const uint frames_, const bool seamless_) : name(name_), frames(frames_), seamless(seamless_) {}
 
 	const char *name;
 	const uint frames;
