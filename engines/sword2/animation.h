@@ -43,11 +43,9 @@ struct MovieTextObject {
 };
 
 struct MovieInfo {
-	MovieInfo(const char *name_, const uint frames_, const bool seamless_) : name(name_), frames(frames_), seamless(seamless_) {}
-
 	const char *name;
-	const uint frames;
-	const bool seamless;
+	uint frames;
+	bool seamless;
 };
 
 class MoviePlayer {
@@ -80,7 +78,7 @@ protected:
 	int _framesSkipped;
 	bool _forceFrame;
 
-	static struct MovieInfo _movies[];
+	static const MovieInfo _movies[];
 
 	MovieTextObject **_textList;
 	int _currentText;
