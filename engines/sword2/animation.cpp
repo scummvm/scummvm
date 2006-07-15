@@ -116,12 +116,12 @@ void MoviePlayer::updatePalette(byte *pal, bool packed) {
 		uint32 weight = 3 * r * r + 6 * g * g + 2 * b * b;
 
 		if (weight >= maxWeight) {
-			_black = i;
+			_white = i;
 			maxWeight = weight;
 		}
 
 		if (weight <= minWeight) {
-			_white = i;
+			_black = i;
 			minWeight = i;
 		}
 
@@ -232,9 +232,9 @@ void MoviePlayer::drawTextObject(MovieTextObject *t) {
 		for (int y = 0; y < t->textSprite->h; y++) {
 			for (int x = 0; x < t->textSprite->w; x++) {
 				if (src[x] == 1)
-					dst[x] = _white;
-				else if (src[x] == 255)
 					dst[x] = _black;
+				else if (src[x] == 255)
+					dst[x] = _white;
 			}
 			src += t->textSprite->w;
 			dst += screenWidth;
