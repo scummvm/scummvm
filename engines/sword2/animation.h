@@ -49,6 +49,9 @@ struct MovieInfo {
 };
 
 class MoviePlayer {
+private:
+	bool checkSkipFrame();
+
 protected:
 	Sword2Engine *_vm;
 	Audio::Mixer *_mixer;
@@ -91,11 +94,10 @@ protected:
 
 	virtual void handleScreenChanged() {}
 
-	virtual void clearScreen();
+	virtual void clearFrame();
 	virtual void updateScreen();
 	virtual bool decodeFrame() = 0;
-	virtual bool checkSkipFrame();
-	virtual void waitForFrame();
+	virtual void syncFrame();
 	virtual void drawFrame();
 	virtual void drawTextObject(MovieTextObject *t);
 	virtual void undrawTextObject(MovieTextObject *t);
@@ -112,8 +114,7 @@ public:
 class MoviePlayerDummy : public MoviePlayer {
 protected:
 	virtual bool decodeFrame();
-	virtual bool checkSkipFrame();
-	virtual void waitForFrame();
+	virtual void syncFrame();
 	virtual void drawFrame();
 	virtual void drawTextObject(MovieTextObject *t);
 	virtual void undrawTextObject(MovieTextObject *t);
@@ -139,7 +140,7 @@ public:
 	void drawTextObject(SpriteInfo *s, byte *src);
 #endif
 
-	void clearScreen();
+	void clearFrame();
 
 private:
 	void drawYUV(int width, int height, byte *const *dat);
@@ -153,13 +154,12 @@ class MoviePlayerMPEG : public MoviePlayer {
 protected:
 	AnimationState *_anim;
 
-	virtual bool checkSkipFrame();
-	virtual void waitForFrame();
 	virtual bool decodeFrame();
+	virtual void syncFrame();
 
 #ifndef BACKEND_8BIT
 	virtual void handleScreenChanged();
-	virtual void clearScreen();
+	virtual void clearFrame();
 	virtual void drawFrame();
 	virtual void updateScreen();
 	virtual void drawTextObject(MovieTextObject *t);

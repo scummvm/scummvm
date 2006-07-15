@@ -143,9 +143,8 @@ void MoviePlayer::restorePalette() {
 	_vm->_screen->setPalette(0, 256, _originalPalette, RDPAL_INSTANT);
 }
 
-void MoviePlayer::clearScreen() {
-	_vm->_screen->clearScene();
-	_system->copyRectToScreen(_vm->_screen->getScreen(), _vm->_screen->getScreenWide(), 0, 0, _vm->_screen->getScreenWide(), _vm->_screen->getScreenDeep());
+void MoviePlayer::clearFrame() {
+	memset(_frameBuffer, 0, _vm->_screen->getScreenWide() * _vm->_screen->getScreenDeep());
 }
 
 void MoviePlayer::updateScreen() {
@@ -176,7 +175,14 @@ bool MoviePlayer::checkSkipFrame() {
 	return true;
 }
 
-void MoviePlayer::waitForFrame() {
+void MoviePlayer::syncFrame() {
+	_ticks += 83;
+
+	if (checkSkipFrame()) {
+		warning("Skipped frame %d", _currentFrame);
+		return;
+	}
+
 	if (_bgSoundStream) {
 		while (_mixer->isSoundHandleActive(_bgSoundHandle) && (_mixer->getSoundElapsedTime(_bgSoundHandle) * 12) / 1000 < _currentFrame) {
 			_system->delayMillis(10);
@@ -195,19 +201,9 @@ void MoviePlayer::waitForFrame() {
 }
 
 void MoviePlayer::drawFrame() {
-	_ticks += 83;
-
-	if (checkSkipFrame()) {
-		warning("Skipped frame %d", _currentFrame);
-		return;
-	}
-
-	waitForFrame();
-
 	int screenWidth = _vm->_screen->getScreenWide();
 
 	_system->copyRectToScreen(_frameBuffer + _frameY * screenWidth + _frameX, screenWidth, _frameX, _frameY, _frameWidth, _frameHeight);
-	_vm->_screen->setNeedFullRedraw();
 }
 
 void MoviePlayer::openTextObject(MovieTextObject *t) {
@@ -360,6 +356,7 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 			_vm->_sound->playFx(&leadOutHandle, data, len, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 		}
 
+		syncFrame();
 		drawFrame();
 		updateScreen();
 
@@ -388,7 +385,7 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		// Most cutscenes fade to black on their own, but not all of
 		// them. I think it looks better if they do.
 
-		clearScreen();
+		clearFrame();
 
 		// If the sound is still playing, draw the subtitles one final
 		// time. This happens in the "carib" cutscene.
@@ -397,6 +394,7 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 			drawTextObject(_textList[_currentText]);
 		}
 
+		drawFrame();
 		updateScreen();
 	}
 
@@ -406,16 +404,12 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 	}
 
 	if (!terminate) {
-		// Wait for the voice to stop playing. This is to make sure
-		// that we don't cut off the speech in mid-sentence, and - even
-		// more importantly - that we don't free the sound buffer while
-		// it's still in use.
+		// Wait for the voice and sound track to stop playing. This is
+		// to make sure that we don't cut off the speech in
+		// mid-sentence, and - even more importantly - that we don't
+		// free the sound buffer while it's still in use.
 
-		while (_mixer->isSoundHandleActive(_speechHandle)) {
-			_system->delayMillis(100);
-		}
-
-		while (_mixer->isSoundHandleActive(_bgSoundHandle)) {
+		while (_mixer->isSoundHandleActive(_speechHandle) || _mixer->isSoundHandleActive(_bgSoundHandle)) {
 			_system->delayMillis(100);
 		}
 	} else {
@@ -424,7 +418,8 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 	}
 
 	if (!_seamless) {
-		clearScreen();
+		clearFrame();
+		drawFrame();
 		updateScreen();
 	}
 
@@ -525,13 +520,6 @@ bool MoviePlayerMPEG::load(const char *name, MovieTextObject *text[]) {
 	return true;
 }
 
-bool MoviePlayerMPEG::checkSkipFrame() {
-	return false;
-}
-
-void MoviePlayerMPEG::waitForFrame() {
-}
-
 bool MoviePlayerMPEG::decodeFrame() {
 	bool result = _anim->decodeFrame();
 
@@ -544,6 +532,9 @@ bool MoviePlayerMPEG::decodeFrame() {
 #endif
 
 	return result;
+}
+
+void MoviePlayerMPEG::syncFrame() {
 }
 
 AnimationState::AnimationState(Sword2Engine *vm, MoviePlayer *player)
@@ -567,8 +558,8 @@ void MoviePlayerMPEG::handleScreenChanged() {
 	_anim->handleScreenChanged();
 }
 
-void MoviePlayerMPEG::clearScreen() {
-	_anim->clearScreen();
+void MoviePlayerMPEG::clearFrame() {
+	_anim->clearFrame();
 }
 
 void MoviePlayerMPEG::drawFrame() {
@@ -635,7 +626,7 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 }
 #endif
 
-void AnimationState::clearScreen() {
+void AnimationState::clearFrame() {
 #ifdef BACKEND_8BIT
 	memset(_vm->_screen->getScreen(), 0, _movieWidth * _movieHeight);
 #else
@@ -768,22 +759,16 @@ bool MoviePlayerDummy::decodeFrame() {
 	return true;
 }
 
-bool MoviePlayerDummy::checkSkipFrame() {
-	return false;
-}
-
-void MoviePlayerDummy::waitForFrame() {
+void MoviePlayerDummy::syncFrame() {
 	if (!_textList || _currentFrame < _textList[0]->startFrame) {
 		_ticks = _system->getMillis();
 		return;
 	}
 
-	MoviePlayer::waitForFrame();
+	MoviePlayer::syncFrame();
 }
 
 void MoviePlayerDummy::drawFrame() {
-	_ticks += 83;
-	waitForFrame();
 }
 
 void MoviePlayerDummy::drawTextObject(MovieTextObject *t) {
