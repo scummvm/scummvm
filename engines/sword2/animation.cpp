@@ -50,25 +50,25 @@ namespace Sword2 {
 ///////////////////////////////////////////////////////////////////////////////
 
 MovieInfo MoviePlayer::_movies[] = {
-	{ "carib",    222, false },
-	{ "escape",   187, false },
-	{ "eye",      248, false },
-	{ "finale",  1485, false },
-	{ "guard",     75, false },
-	{ "intro",   1800, false },
-	{ "jungle",   186, false },
-	{ "museum",   167, false },
-	{ "pablo",     75, false },
-	{ "pyramid",   60, false },
-	{ "quaram",   184, false },
-	{ "river",    656, false },
-	{ "sailing",  138, false },
-	{ "shaman",   788, true  },
-	{ "stone1",    34, true  },
-	{ "stone2",   282, false },
-	{ "stone3",    65, true  },
-	{ "demo",      60, false },
-	{ "enddemo",  110, false }
+	MovieInfo("carib",    222, false),
+	MovieInfo("escape",   187, false),
+	MovieInfo("eye",      248, false),
+	MovieInfo("finale",  1485, false),
+	MovieInfo("guard",     75, false),
+	MovieInfo("intro",   1800, false),
+	MovieInfo("jungle",   186, false),
+	MovieInfo("museum",   167, false),
+	MovieInfo("pablo",     75, false),
+	MovieInfo("pyramid",   60, false),
+	MovieInfo("quaram",   184, false),
+	MovieInfo("river",    656, false),
+	MovieInfo("sailing",  138, false),
+	MovieInfo("shaman",   788, true),
+	MovieInfo("stone1",    34, true),
+	MovieInfo("stone2",   282, false),
+	MovieInfo("stone3",    65, true),
+	MovieInfo("demo",      60, false),
+	MovieInfo("enddemo",  110, false)
 };
 
 MoviePlayer::MoviePlayer(Sword2Engine *vm) {
