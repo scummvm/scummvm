@@ -401,7 +401,9 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 	}
 
 	// The current text object may still be open
-	closeTextObject(_textList[_currentText]);
+	if (_textList && _textList[_currentText]) {
+		closeTextObject(_textList[_currentText]);
+	}
 
 	if (!terminate) {
 		// Wait for the voice to stop playing. This is to make sure
