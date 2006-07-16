@@ -1,8 +1,8 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001-2006 The ScummVM project
  * Copyright (C) 2002 Ph0x - GP32 Backend
- * Copyright (C) 2003/2004 DJWillis - GP32 Backend
- * Copyright (C) 2005 Won Star - GP32 Backend
+ * Copyright (C) 2003-2004 DJWillis - GP32 Backend
+ * Copyright (C) 2005-2006 Won Star - GP32 Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -141,6 +141,7 @@ GP32FilesystemNode::GP32FilesystemNode(const String &path) {
 		_isRoot = true;
 		_displayName = "GP32 Root";
 	} else {
+		_isRoot = false;
 		_displayName = String(dsplName);
 	}
 	_isDirectory = true;
@@ -170,6 +171,7 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 		entry._displayName = dirEntry.name;
 		entry._path = _path;
 		entry._path += dirEntry.name;
+		entry._isRoot = false;
 
 		GpFileAttr(entry._path.c_str(), &attr);
 		entry._isDirectory = attr.attr & (1 << 4);
@@ -204,18 +206,12 @@ AbstractFilesystemNode *GP32FilesystemNode::parent() const {
 	if(_isRoot)
 		return 0;
 
-	GP32FilesystemNode *p = new GP32FilesystemNode();
-	if (_path.size() > 4) {
-		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
+	const char *start = _path.c_str();
+	const char *end = lastPathComponent(_path);
 
-		p->_path = String(start, end - start);
-		p->_isDirectory = true;
-		p->_displayName = lastPathComponent(p->_path);
-		p->_isRoot = false;
-		
-		GPDEBUG("%s", p->_path.c_str());
-	}
+	GP32FilesystemNode *p = new GP32FilesystemNode(String(start, end - start));
+
+	NP("%s", p->_path.c_str());
 
 	return p;
 }
