@@ -1,0 +1,1 @@
+You may put libgptremor.a and the header files in this directory when you build with Tremor library.
