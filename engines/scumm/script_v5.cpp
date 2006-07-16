@@ -2230,11 +2230,16 @@ void ScummEngine_v5::o5_startScript() {
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
 		return;
 
+	// Method used by original games to skip copy protection scheme
 	if (!_copyProtection) {
-		// Method used by original games to skip copy protection scheme
-		if (_game.id == GID_LOOM && _game.version == 3 && _currentRoom == 69 && script == 201)
+		// Copy protection was disabled in LucasArts Classic Adventures (PC Disk)
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPC && _game.version == 3 && _currentRoom == 69 && script == 201)
 			script = 205;
+		// Copy protection was disabled in LucasArts Classic Adventures (PC Disk)
 		if (_game.id == GID_MONKEY_VGA && _game.platform == Common::kPlatformPC && script == 152)
+			return;
+		// Copy protection was disabled in LucasArts Mac CD Game Pack II (Macintosh CD)
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh && script == 155)
 			return;
 	}
 
