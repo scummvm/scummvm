@@ -119,7 +119,7 @@ public:
 	void setAnimBlockPtr(int size);
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);
-	void loadFont(FontId fontId, uint8 *fontData);
+	bool loadFont(FontId fontId, const char *filename);
 	FontId setFont(FontId fontId);
 	int getFontHeight() const;
 	int getFontWidth() const;

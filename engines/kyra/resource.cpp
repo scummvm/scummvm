@@ -51,8 +51,7 @@ Resource::Resource(KyraEngine *engine) {
 
 		// only VRM file we need in the *whole* game for kyra1
 		if (_engine->features() & GF_TALKIE) {
-			if (!loadPakFile("CHAPTER1.VRM"))
-				error("couldn't open pakfile 'CHAPTER1.VRM'");
+			loadPakFile("CHAPTER1.VRM");
 		}
 	} else if (_engine->game() == GI_KYRA3) {
 		// load the installation package file for kyra3

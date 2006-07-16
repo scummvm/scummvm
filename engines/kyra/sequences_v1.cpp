@@ -1040,10 +1040,9 @@ void KyraEngine::seq_playCredits() {
 	memset(strings, 0, sizeof(strings));
 	
 	_screen->hideMouse();
-	uint32 sz = 0;
 	if (_features & GF_FLOPPY) {
-		_screen->loadFont(Screen::FID_CRED6_FNT, _res->fileData("CREDIT6.FNT", &sz));
-		_screen->loadFont(Screen::FID_CRED8_FNT, _res->fileData("CREDIT8.FNT", &sz));
+		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
+		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
 	} else
 		_screen->setFont(Screen::FID_8_FNT);
 	

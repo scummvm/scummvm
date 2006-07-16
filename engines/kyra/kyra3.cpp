@@ -85,9 +85,8 @@ int KyraEngine_v3::init() {
 	if (!_soundDigital->init())
 		error("_soundDigital->init() failed");
 	
-	uint32 sz;
-	_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
-	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
+	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
+	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->setScreenDim(0);
 	
 	return 0;

@@ -390,12 +390,11 @@ void KyraEngine::errorString(const char *buf1, char *buf2) {
 
 int KyraEngine::go() {
 	_quitFlag = false;
-	uint32 sz;
 
 	if (_features & GF_FLOPPY && !(_features & GF_AMIGA)) {
-		_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
+		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	}
-	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
+	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->setScreenDim(0);
 
 	_abortIntroFlag = false;

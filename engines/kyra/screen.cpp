@@ -612,20 +612,34 @@ void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 	}
 }
 
-void Screen::loadFont(FontId fontId, uint8 *fontData) {
-	debugC(9, kDebugLevelScreen, "Screen::loadFont(%d, %p)", fontId, (const void *)fontData);
+bool Screen::loadFont(FontId fontId, const char *filename) {
+	debugC(9, kDebugLevelScreen, "Screen::loadFont(%d, '%s')", fontId, filename);
 	Font *fnt = &_fonts[fontId];
-	assert(fontData && !fnt->fontData);
-	fnt->fontData = fontData;
+
+	if (!fnt)
+		error("fontId %d is invalid", fontId);
+
+	if (fnt->fontData)
+		delete [] fnt->fontData;
+
+	uint32 sz = 0;
+	uint8 *fontData = fnt->fontData = _vm->resource()->fileData(filename, &sz);
+
+	if (!fontData || !sz)
+		error("couldn't load font file '%s'", filename);
+
 	uint16 fontSig = READ_LE_UINT16(fontData + 2);
-	if (fontSig != 0x500) {
-		error("Invalid font data");
-	}
+
+	if (fontSig != 0x500)
+		error("Invalid font data (file '%s')", filename);
+
 	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
 	fnt->charSizeOffset = READ_LE_UINT16(fontData + 4);
 	fnt->charBitmapOffset = READ_LE_UINT16(fontData + 6);
 	fnt->charWidthTableOffset = READ_LE_UINT16(fontData + 8);
 	fnt->charHeightTableOffset = READ_LE_UINT16(fontData + 0xC);
+
+	return true;
 }
 
 Screen::FontId Screen::setFont(FontId fontId) {
