@@ -70,7 +70,7 @@ Resource::Resource(KyraEngine *engine) {
 	}
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String filename = file->displayName();
+		Common::String filename = file->path();
 		filename.toUppercase();
 		if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
 			if (!loadPakFile(file->displayName())) {
