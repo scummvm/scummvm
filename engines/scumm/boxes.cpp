@@ -43,7 +43,7 @@ struct Box {				/* Internal walkbox file format */
 			byte y1;
 			byte y2;
 			byte mask;
-		} GCC_PACK c64;
+		} c64;
 
 		struct {
 			byte uy;
@@ -54,7 +54,7 @@ struct Box {				/* Internal walkbox file format */
 			byte lrx;
 			byte mask;
 			byte flags;
-		} GCC_PACK v2;
+		} v2;
 
 		struct {
 			int16 ulx, uly;
@@ -64,7 +64,7 @@ struct Box {				/* Internal walkbox file format */
 			byte mask;
 			byte flags;
 			uint16 scale;
-		} GCC_PACK old;
+		} old;
 
 		struct {
 			int32 ulx, uly;
@@ -77,9 +77,9 @@ struct Box {				/* Internal walkbox file format */
 			uint32 scale;
 			uint32 unk2;
 			uint32 unk3;
-		} GCC_PACK v8;
-	} GCC_PACK;
-} GCC_PACK;
+		} v8;
+	};
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

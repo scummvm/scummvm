@@ -59,7 +59,7 @@ struct MousePtr {
 	uint16 hotSpotX;
 	uint16 hotSpotY;
 	uint8  dummyData[0x30];
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

@@ -237,7 +237,7 @@ protected:
 		int32 dim2start; //0C
 		int32 dim2end;   //10
 		byte data[1];    //14
-	} GCC_PACK;
+	};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

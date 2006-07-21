@@ -41,7 +41,7 @@ struct ThumbnailHeader {
 	byte version;
 	uint16 width, height;
 	byte bpp;
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

@@ -99,7 +99,7 @@ struct Header {
 	uint32	comp_length;
 	char	compression[4];
 	uint32	decomp_length;
-} GCC_PACK;
+};
 
 struct FrameHeader {
 	uint8 runTimeComp[4];
@@ -108,31 +108,31 @@ struct FrameHeader {
 	uint16 height;
 	int16 offsetX;
 	int16 offsetY;
-} GCC_PACK;
+};
 
 struct ParallaxHeader {
 	char type[16];
 	uint16 sizeX;
 	uint16 sizeY;
-} GCC_PACK;
+};
 
 struct AnimUnit {
 	uint32 animX;
 	uint32 animY;
 	uint32 animFrame;
-} GCC_PACK;
+};
 
 struct AnimSet {
 	uint32 cdt;
 	uint32 spr;
-} GCC_PACK;
+};
 
 struct WalkGridHeader {
 	int32 scaleA;
 	int32 scaleB;
 	int32 numBars;
 	int32 numNodes;
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

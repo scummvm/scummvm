@@ -46,7 +46,7 @@ public:
 		int16 funcEnter;
 		int16 funcLeave;
 		int16 field_12; // New in GOB2
-	} GCC_PACK;
+	};
 
 #define szGame_TotResItem (4 + 2 + 2 + 2)
 	struct TotResItem {
@@ -55,7 +55,7 @@ public:
 		int16 size;
 		int16 width;
 		int16 height;
-	} GCC_PACK;
+	};
 
 #define szGame_TotResTable (2 + 1)
 	struct TotResTable {
@@ -63,7 +63,7 @@ public:
 		byte unknown;
 		TotResItem *items;
 		char *dataPtr;
-	} GCC_PACK;
+	};
 
 #define szGame_ExtItem (4 + 2 + 2 + 2)
 	struct ExtItem {
@@ -71,41 +71,41 @@ public:
 		uint16 size;
 		int16 width;		// width&0x7fff - width, width&0x8000 - pack flag
 		int16 height;		// not zero
-	} GCC_PACK;
+	};
 
 #define szGame_ExtTable (2 + 1)
 	struct ExtTable {
 		int16 itemsCount;
 		byte unknown;
 		ExtItem* items;
-	} GCC_PACK;
+	};
 
 #define szGame_TotTextItem (2 + 2)
 	struct TotTextItem {
 		int16 offset;
 		int16 size;
-	} GCC_PACK;
+	};
 
 #define szGame_TotTextTable (2)
 	struct TotTextTable {
 		int16 itemsCount;
 		TotTextItem *items;
 		char *dataPtr;
-	} GCC_PACK;
+	};
 
 	struct InputDesc {
 		int16 fontIndex;
 		int16 backColor;
 		int16 frontColor;
 		char *ptr;
-	} GCC_PACK;
+	};
 
 	struct ImdCoord {
 		int16 left;
 		int16 top;
 		int16 right;
 		int16 bottom;
-	} GCC_PACK;
+	};
 
 	struct Imd {
 		int16 fileHandle;
@@ -129,7 +129,7 @@ public:
 		ImdCoord *frameCoords;
 		int32 frameDataSize;
 		int32 vidBufferSize;
-	} GCC_PACK;
+	};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

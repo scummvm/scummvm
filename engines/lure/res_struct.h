@@ -45,7 +45,7 @@ struct VersionStructure {
 	uint16 id;
 	byte vMajor;
 	byte vMinor;
-} GCC_PACK;
+};
 
 struct FileEntry {
 	uint16 id;
@@ -53,7 +53,7 @@ struct FileEntry {
 	byte sizeExtension;
 	uint16 size;
 	uint16 offset;
-} GCC_PACK;
+};
 
 struct HotspotResource {
 	uint16 hotspotId;
@@ -86,7 +86,7 @@ struct HotspotResource {
 	uint16 npcSchedule;
 	uint16 characterMode;
 	uint16 delayCtr;
-} GCC_PACK;
+};
 
 struct HotspotAnimResource {
 	uint16 animRecordId;
@@ -100,13 +100,13 @@ struct HotspotAnimResource {
 	uint8 downFrame;
 	uint8 leftFrame;
 	uint8 rightFrame;
-} GCC_PACK;
+};
 
 struct MovementResource {
 	uint16 frameNumber;
 	int16 xChange;
 	int16 yChange;
-} GCC_PACK;
+};
 
 struct RoomRect {
 	int16 xs, xe;
@@ -123,7 +123,7 @@ struct RoomResource {
 	int16 clippingXEnd;
 	RoomRect walkBounds;
 	uint16 numExits;
-} GCC_PACK;
+};
 
 struct RoomExitResource {
 	int16 xs, xe, ys, ye;
@@ -131,12 +131,12 @@ struct RoomExitResource {
 	uint8 newRoom;
 	uint8 direction;
 	int16 newRoomX, newRoomY;
-} GCC_PACK;
+};
 
 struct HotspotOverrideResource {
 	uint16 hotspotId;
 	int16 xs, xe, ys, ye;
-} GCC_PACK;
+};
 
 struct RoomExitHotspotResource {
 	uint16 hotspotId;
@@ -144,7 +144,7 @@ struct RoomExitHotspotResource {
 	int16 ys, ye;
 	uint16 cursorNum;
 	uint16 destRoomNumber;
-} GCC_PACK;
+};
 
 struct RoomExitJoinResource {
 	uint16 hotspot1Id;
@@ -158,41 +158,41 @@ struct RoomExitJoinResource {
 	uint8 h2OpenSound;
 	uint8 h2CloseSound;
 	byte blocked;
-} GCC_PACK;
+};
 
 struct HotspotActionResource {
 	byte action;
 	uint16 sequenceOffset;
-} GCC_PACK;
+};
 
 struct TalkHeaderResource {
 	uint16 hotspotId;
 	uint16 offset;
-} GCC_PACK;
+};
 
 struct TalkDataHeaderResource {
 	uint16 recordId;
 	uint16 listOffset;
 	uint16 responsesOffset;
-} GCC_PACK;
+};
 
 struct TalkDataResource {
 	uint16 preSequenceId;
 	uint16 descId;
 	uint16 postSequenceId;
-} GCC_PACK;
+};
 
 struct TalkResponseResource {
 	uint16 sequenceId1;
 	uint16 sequenceId2;
 	uint16 sequenceId3;
-} GCC_PACK;
+};
 
 struct RoomExitCoordinateResource {
 	int16 x;
 	int16 y;
 	uint16 roomNumber;
-} GCC_PACK;
+};
 
 #define ROOM_EXIT_COORDINATES_NUM_ENTRIES 6
 #define ROOM_EXIT_COORDINATES_NUM_ROOMS 52
@@ -200,7 +200,7 @@ struct RoomExitCoordinateResource {
 struct RoomExitCoordinateEntryResource {
 	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 	uint8 roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
-} GCC_PACK;
+};
 
 #define MAX_SCHEDULE_ENTRY_PARAMS 5
 

@@ -64,7 +64,7 @@ struct channel_data {
 	uint16 unknown[4];         // 38 - 44
 	uint16 music_timer;        // 46
 	uint16 music_script_nr;    // 48
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

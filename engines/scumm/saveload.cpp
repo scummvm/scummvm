@@ -67,7 +67,7 @@ struct SaveInfoSection {
 	
 	uint32 date;
 	uint16 time;
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

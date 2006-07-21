@@ -47,12 +47,12 @@ struct AkosHeader {
 	uint16 num_anims;
 	uint16 unk_3;
 	uint16 codec;
-} GCC_PACK;
+};
 
 struct AkosOffset {
 	uint32 akcd;
 	uint16 akci;
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

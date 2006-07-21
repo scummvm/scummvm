@@ -64,7 +64,7 @@ public:
 		int8 somethingAnimation; // New in GOB2
 		int8 somethingLayer;     // New in GOB2
 		int8 somethingFrame;     // New in GOB2
-	} GCC_PACK;
+	};
 
 	struct Mult_GobState {
 		int16 animation; // .
@@ -105,7 +105,7 @@ public:
 	struct Mult_StaticKey {
 		int16 frame;
 		int16 layer;
-	} GCC_PACK;
+	};
 
 	struct Mult_AnimKey {
 		int16 frame;
@@ -113,7 +113,7 @@ public:
 		int16 posX;
 		int16 posY;
 		int16 order;
-	} GCC_PACK;
+	};
 
 	struct Mult_TextKey {
 		int16 frame;
@@ -121,7 +121,7 @@ public:
 		int16 unknown0[9];
 		int16 index;
 		int16 unknown1[2];
-	} GCC_PACK;
+	};
 
 	struct Mult_PalKey {
 		int16 frame;
@@ -130,14 +130,14 @@ public:
 		int16 unknown0;
 		int16 unknown1;
 		int8 subst[16][4];
-	} GCC_PACK;
+	};
 
 	struct Mult_PalFadeKey {
 		int16 frame;
 		int16 fade;
 		int16 palIndex;
 		int8 flag;
-	} GCC_PACK;
+	};
 
 	struct Mult_SndKey {
 		int16 frame;
@@ -147,7 +147,7 @@ public:
 		int16 repCount;
 		int16 resId;
 		int16 soundIndex;
-	} GCC_PACK;
+	};
 
 	struct Mult_SomeKey {
 		int16 frame;
@@ -158,7 +158,7 @@ public:
 		int16 field_A;
 		int16 field_C;
 		int16 field_E;
-	} GCC_PACK;
+	};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
@@ -344,7 +344,7 @@ public:
 		char *somepointer09; // ?
 		char *somepointer10; // ?
 		char *execPtr;
-	} GCC_PACK;
+	};
 #pragma END_PACK_STRUCTS
 
 	Mult_Data *_multData2; // TODO: This'll be _multData once every function using it

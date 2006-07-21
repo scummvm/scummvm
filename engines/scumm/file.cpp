@@ -1254,7 +1254,7 @@ struct _lfl_index {
 	uint16	script_addr[200];
 	byte	sound_lfl[100];
 	uint16	sound_addr[100];
-} GCC_PACK lfl_index;
+} lfl_index;
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

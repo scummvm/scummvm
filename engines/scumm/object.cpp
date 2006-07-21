@@ -45,13 +45,13 @@ struct BompHeader {			/* Bomp header */
 		struct {
 			uint16 unk;
 			uint16 width, height;
-		} GCC_PACK old;
+		} old;
 
 		struct {
 			uint32 width, height;
-		} GCC_PACK v8;
-	} GCC_PACK;
-} GCC_PACK;
+		} v8;
+	};
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

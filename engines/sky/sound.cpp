@@ -45,13 +45,13 @@ struct RoomList {
 	uint8 room;
 	uint8 adlibVolume;
 	uint8 rolandVolume;
-} GCC_PACK;
+};
 
 struct Sfx {
 	uint8 soundNo;
 	uint8 flags;
 	RoomList roomList[10];
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

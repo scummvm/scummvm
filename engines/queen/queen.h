@@ -58,7 +58,7 @@ struct GameStateHeader {
 	uint32 flags;
 	uint32 dataSize;
 	char description[32];
-} GCC_PACK;
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

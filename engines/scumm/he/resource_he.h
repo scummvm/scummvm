@@ -221,7 +221,7 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 reserved;
 		uint16 type;
 		uint16 count;
-		Win32CursorIconDirEntry entries[1] GCC_PACK;
+		Win32CursorIconDirEntry entries[1];
 	};
 
 	struct Win32CursorIconFileDirEntry {

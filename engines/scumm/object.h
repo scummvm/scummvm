@@ -60,13 +60,13 @@ struct RoomHeader {
 		struct {
 			uint16 width, height;
 			uint16 numObjects;
-		} GCC_PACK old;
+		} old;
 
 		struct {
 			uint32 version;
 			uint16 width, height;
 			uint16 numObjects;
-		} GCC_PACK v7;
+		} v7;
 
 		struct {
 			uint32 version;
@@ -74,9 +74,9 @@ struct RoomHeader {
 			uint32 numObjects;
 			uint32 numZBuffer;
 			uint32 transparency;
-		} GCC_PACK v8;
-	} GCC_PACK;
-} GCC_PACK;
+		} v8;
+	};
+};
 
 struct CodeHeader {
 	union {
@@ -88,7 +88,7 @@ struct CodeHeader {
 			int16 walk_x;
 			int16 walk_y;
 			byte actordir;
-		} GCC_PACK v5;
+		} v5;
 
 		struct {
 			uint16 obj_id;
@@ -98,17 +98,17 @@ struct CodeHeader {
 			uint16 unk1;
 			uint16 unk2;
 			byte actordir;
-		} GCC_PACK v6;
+		} v6;
 
 		struct {
 			uint32 version;
 			uint16 obj_id;
 			byte parent;
 			byte parentstate;
-		} GCC_PACK v7;
+		} v7;
 
-	} GCC_PACK;
-} GCC_PACK;
+	};
+};
 
 struct ImageHeader { /* file format */
 	union {
@@ -124,8 +124,8 @@ struct ImageHeader { /* file format */
 			uint16 hotspot_num;
 			struct {
 				int16 x, y;
-			} GCC_PACK hotspot[15];
-		} GCC_PACK old;
+			} hotspot[15];
+		} old;
 
 		struct {
 			uint32 version;
@@ -138,8 +138,8 @@ struct ImageHeader { /* file format */
 			uint16 hotspot_num;
 			struct {
 				int16 x, y;
-			} GCC_PACK hotspot[15];
-		} GCC_PACK v7;
+			} hotspot[15];
+		} v7;
 
 		struct {
 			char name[32];
@@ -154,10 +154,10 @@ struct ImageHeader { /* file format */
 			uint32 flags;	// This field is missing in the COMI demo (version == 800) !
 			struct {
 				int32 x, y;
-			} GCC_PACK hotspot[15];
-		} GCC_PACK v8;
-	} GCC_PACK;
-} GCC_PACK;
+			} hotspot[15];
+		} v8;
+	};
+};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

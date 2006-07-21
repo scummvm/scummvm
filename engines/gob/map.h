@@ -51,7 +51,7 @@ public:
 		int16 x;
 		int16 y;
 		int16 field_2; // Gob2
-	} GCC_PACK;
+	};
 
 #define szMap_ItemPos 3
 
@@ -59,7 +59,7 @@ public:
 		int8 x;
 		int8 y;
 		int8 orient;		// ??
-	} GCC_PACK;
+	};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

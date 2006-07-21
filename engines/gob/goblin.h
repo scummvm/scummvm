@@ -51,7 +51,7 @@ public:
 		int16 freq;		// +Ah, high/low byte * 100 - frequency
 		int16 repCount;	// +Ch high/low byte - repeat count
 		int16 sndFrame;		// +Eh
-	} GCC_PACK;
+	};
 
 	typedef Gob_State *Gob_PState;
 
@@ -90,12 +90,12 @@ public:
 		char multObjIndex;	// +37h, from which play mult animations
 		char unk14;			// +38h
 		char visible;		// +39h
-	} GCC_PACK;
+	};
 
 	struct Gob_Pos {
 		char x;
 		char y;
-	} GCC_PACK;
+	};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS

@@ -528,7 +528,7 @@ protected:
 		int16 type;
 		int16 dim2;
 		byte data[1];
-	} GCC_PACK;
+	};
 
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
