@@ -715,7 +715,7 @@ bool MoviePlayerDummy::decodeFrame() {
 #if defined(USE_MPEG2) || defined(USE_ZLIB)
 		byte msgNoCutscenes[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
 #else
-		byte msgNoCutscenes[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 or ZLib support");
+		byte msgNoCutscenes[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 or ZLib support";
 #endif
 
 		byte *msg;
