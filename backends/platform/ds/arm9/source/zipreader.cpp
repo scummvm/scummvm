@@ -1,5 +1,6 @@
-/* Zip File Reader
- * Copyright (C) 2002-2004 Neil Millstone
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2005-2006 Neil Millstone
+ * Copyright (C) 2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
