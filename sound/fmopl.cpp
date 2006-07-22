@@ -637,10 +637,17 @@ static int OPLOpenTable(void) {
 	/* allocate dynamic tables */
 	if((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == NULL)
 		return 0;
+
+#ifdef __DS__
+	// On the DS, use fast RAM for the sine table, since it thrashes the cache otherwise
+	SIN_TABLE = ((int **) (0x37F8000));
+#else
 	if((SIN_TABLE = (int **)malloc(SIN_ENT * 4 * sizeof(int *))) == NULL) {
 		free(TL_TABLE);
 		return 0;
 	}
+#endif
+
 	if((AMS_TABLE = (int *)malloc(AMS_ENT * 2 * sizeof(int))) == NULL) {
 		free(TL_TABLE);
 		free(SIN_TABLE);
@@ -1186,6 +1193,8 @@ FM_OPL *makeAdlibOPL(int rate) {
 		env_bits = FMOPL_ENV_BITS_LQ;
 		eg_ent = FMOPL_EG_ENT_LQ;
 	}
+	env_bits = FMOPL_ENV_BITS_MQ;
+	eg_ent = FMOPL_EG_ENT_MQ;
 #endif
 
 	OPLBuildTables(env_bits, eg_ent);
