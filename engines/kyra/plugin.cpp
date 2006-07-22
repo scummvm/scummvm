@@ -181,7 +181,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 			continue;
 
 		for (g = kyra_games; g->gameid; g++) {
-			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
+			if (scumm_stricmp(file->name().c_str(), g->checkFile) == 0)
 				isFound = true;
 		}
 
