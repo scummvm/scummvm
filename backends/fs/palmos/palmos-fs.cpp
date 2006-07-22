@@ -44,13 +44,14 @@ public:
 	PalmOSFilesystemNode(const String &p);
 
 	virtual String displayName() const { return _displayName; }
+	virtual String name() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &name) const;
+	virtual AbstractFilesystemNode *child(const String &n) const;
 
 private:
 	static void addFile (AbstractFSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
@@ -179,13 +180,13 @@ AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
 }
 
 
-AbstractFilesystemNode *PalmOSFilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *PalmOSFilesystemNode::child(const String &n) const {
 	assert(_isDirectory);
 	String newPath(_path);
 
 	if (_path.lastChar() != '/')
 		newPath += '/';
-	newPath += name;
+	newPath += n;
 
 	FileRef handle;
 	UInt32 attr;

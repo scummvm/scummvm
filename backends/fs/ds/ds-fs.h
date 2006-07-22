@@ -59,6 +59,7 @@ public:
 	DSFileSystemNode(const String& path, bool isDir);
 	
 	virtual String displayName() const {  return _displayName; }
+	virtual String name() const {  return _displayName; }
 	virtual bool isValid() const { return _isValid; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }

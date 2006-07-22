@@ -46,6 +46,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		~ABoxFilesystemNode();
 
 		virtual String displayName() const { return _displayName; }
+		virtual String name() const { return _displayName; }
 		virtual bool isValid() const { return _isValid; }
 		virtual bool isDirectory() const { return _isDirectory; }
 		virtual String path() const { return _path; }
@@ -53,7 +54,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 		static  AbstractFSList listRoot();
 		virtual AbstractFilesystemNode *parent() const;
-		virtual AbstractFilesystemNode *child(const String &name) const;
+		virtual AbstractFilesystemNode *child(const String &n) const;
 };
 
 
@@ -82,11 +83,11 @@ ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
 	_lock = NULL;
 	for (;;)
 	{
-		char name[bufsize];
-		if (NameFromLock(lock, name, bufsize) != DOSFALSE)
+		char n[bufsize];
+		if (NameFromLock(lock, n, bufsize) != DOSFALSE)
 		{
-			_path = name;
-			_displayName = display_name ? display_name : FilePart(name);
+			_path = n;
+			_displayName = display_name ? display_name : FilePart(n);
 			break;
 		}
 		if (IoErr() != ERROR_LINE_TOO_LONG)
@@ -216,7 +217,7 @@ AbstractFilesystemNode *ABoxFilesystemNode::parent() const
 	return node;
 }
 
-AbstractFilesystemNode *ABoxFilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *ABoxFilesystemNode::child(const String &n) const {
 	TODO
 }
 
@@ -225,7 +226,7 @@ AbstractFSList ABoxFilesystemNode::listRoot()
 	AbstractFSList myList;
 	DosList *dosList;
 	CONST ULONG lockDosListFlags = LDF_READ | LDF_VOLUMES;
-	char name[256];
+	char n[256];
 
 	dosList = LockDosList(lockDosListFlags);
 	if (dosList == NULL)
@@ -247,13 +248,13 @@ AbstractFSList ABoxFilesystemNode::listRoot()
 			CONST_STRPTR device_name = (CONST_STRPTR)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
 			BPTR volume_lock;
 
-			strcpy(name, volume_name);
-			strcat(name, ":");
-			volume_lock = Lock(name, SHARED_LOCK);
+			strcpy(n, volume_name);
+			strcat(n, ":");
+			volume_lock = Lock(n, SHARED_LOCK);
 			if (volume_lock)
 			{
-				sprintf(name, "%s (%s)", volume_name, device_name);
-				entry = new ABoxFilesystemNode(volume_lock, name);
+				sprintf(n, "%s (%s)", volume_name, device_name);
+				entry = new ABoxFilesystemNode(volume_lock, n);
 				if (entry)
 				{
 					if (entry->isValid())

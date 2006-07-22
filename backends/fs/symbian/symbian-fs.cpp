@@ -47,13 +47,14 @@ public:
 	SymbianFilesystemNode(bool aIsRoot);
 	SymbianFilesystemNode(const String &path);
 	virtual String displayName() const { return _displayName; }
+	virtual String name() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &name) const;
+	virtual AbstractFilesystemNode *child(const String &n) const;
 };
 
 
@@ -206,13 +207,13 @@ AbstractFilesystemNode *SymbianFilesystemNode::parent() const {
 	return p;
 }
 
-AbstractFilesystemNode *SymbianFilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *SymbianFilesystemNode::child(const String &n) const {
 	assert(_isDirectory);
 	String newPath(_path);
 
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
-	newPath += name;
+	newPath += n;
 
 	TPtrC8 ptr((const unsigned char*) newPath.c_str(), newPath.size());
 	TFileName fname;

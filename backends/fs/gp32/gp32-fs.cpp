@@ -39,13 +39,14 @@ public:
 	GP32FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
+	virtual String name() const { return _displayName; }
 	virtual bool isValid() const { return true; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &name) const;
+	virtual AbstractFilesystemNode *child(const String &n) const;
 };
 
 #define MAX_PATH_SIZE 256
@@ -216,14 +217,14 @@ AbstractFilesystemNode *GP32FilesystemNode::parent() const {
 	return p;
 }
 
-AbstractFilesystemNode *GP32FilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *GP32FilesystemNode::child(const String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
 	String newPath(_path);
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
-	newPath += name;
+	newPath += n;
 	GP32FilesystemNode *p = new GP32FilesystemNode(newPath);
 
 	return p;

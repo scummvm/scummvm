@@ -64,6 +64,7 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual ~AmigaOSFilesystemNode();
 
 		virtual String displayName() const { return _sDisplayName; };
+		virtual String name() const { return _sDisplayName; };
 		virtual bool isValid() const { return _bIsValid; };
 		virtual bool isDirectory() const { return _bIsDirectory; };
 		virtual String path() const { return _sPath; };
@@ -71,7 +72,7 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 		virtual AbstractFSList listVolumes() const;
 		virtual AbstractFilesystemNode *parent() const;
-		virtual AbstractFilesystemNode *child(const String &name) const;
+		virtual AbstractFilesystemNode *child(const String &n) const;
 };
 
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
@@ -159,11 +160,11 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	_pFileLock = 0;
 
 	while (1) {
-		char *name = new char[bufSize];
-		if (IDOS->NameFromLock(pLock, (STRPTR)name, bufSize) != DOSFALSE) {
-			_sPath = name;
-			_sDisplayName = pDisplayName ? pDisplayName : IDOS->FilePart((STRPTR)name);
-			delete [] name;
+		char *n = new char[bufSize];
+		if (IDOS->NameFromLock(pLock, (STRPTR)n, bufSize) != DOSFALSE) {
+			_sPath = n;
+			_sDisplayName = pDisplayName ? pDisplayName : IDOS->FilePart((STRPTR)n);
+			delete [] n;
 			break;
 		}
 
@@ -171,11 +172,11 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			_bIsValid = false;
 			debug(6, "IoErr() != ERROR_LINE_TOO_LONG");
 			LEAVE();
-			delete [] name;
+			delete [] n;
 			return;
 		}
 		bufSize *= 2;
-		delete [] name;
+		delete [] n;
 	}
 
 	_bIsValid =	false;
@@ -327,12 +328,12 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 	return node;
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &n) const {
 	assert(_bIsDirectory);
 	String newPath(_sPath);
 	if (_sPath.lastChar() != '/')
 		newPath += '/';
-	newPath += name;
+	newPath += n;
 	return new AmigaOSFilesystemNode(newPath);
 }
 
@@ -342,7 +343,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 	AbstractFSList myList;
 
 	const uint32 kLockFlags = LDF_READ | LDF_VOLUMES;
-	char name[MAXPATHLEN];
+	char n[MAXPATHLEN];
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
@@ -360,13 +361,13 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 			const char *volName = (const char *)BADDR(dosList->dol_Name)+1;
 			const char *devName = (const char *)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
 
-			strcpy(name, volName);
-			strcat(name, ":");
+			strcpy(n, volName);
+			strcat(n, ":");
 
-			BPTR volumeLock = IDOS->Lock((STRPTR)name, SHARED_LOCK);
+			BPTR volumeLock = IDOS->Lock((STRPTR)n, SHARED_LOCK);
 			if (volumeLock) {
-				sprintf(name, "%s (%s)", volName, devName);
-				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, name);
+				sprintf(n, "%s (%s)", volName, devName);
+				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, n);
 				if (entry) {
 					if (entry->isValid())
 						myList.push_back(entry);

@@ -151,11 +151,11 @@ AbstractFilesystemNode* DSFileSystemNode::parent() const {
 }
 
 
-AbstractFilesystemNode *DSFileSystemNode::child(const Common::String& name) const {
+AbstractFilesystemNode *DSFileSystemNode::child(const Common::String& n) const {
 	if (_path.lastChar() == '\\') {
-		return new DSFileSystemNode(_path + name);
+		return new DSFileSystemNode(_path + n);
 	} else {
-		return new DSFileSystemNode(_path + "\\" + name);
+		return new DSFileSystemNode(_path + "\\" + n);
 	}
 	
 	return NULL;
@@ -193,14 +193,14 @@ bool DSFileSystemNode::listDir(AbstractFSList &dirList, ListMode mode) const {
 	
 	if (_zipFile->restartFile()) {
 		do {
-			char name[128];	
-			_zipFile->getFileName(name);
+			char n[128];	
+			_zipFile->getFileName(n);
 	
-//			consolePrintf("file: %s\n", name);
+//			consolePrintf("file: %s\n", n);
 			if ( (_zipFile->isDirectory() && ((mode == FilesystemNode::kListDirectoriesOnly) || (mode == FilesystemNode::kListAll)) ) 
 				|| (!_zipFile->isDirectory() && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll)) ) ) 
 			{
-				DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/" + String(name), _zipFile->isDirectory());
+				DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/" + String(n), _zipFile->isDirectory());
 				dsfsn->_isDirectory = _zipFile->isDirectory();
 				dirList.push_back((dsfsn));
 			}
@@ -311,11 +311,11 @@ AbstractFilesystemNode* GBAMPFileSystemNode::parent() const {
 
 }
 
-AbstractFilesystemNode *GBAMPFileSystemNode::child(const Common::String& name) const {
+AbstractFilesystemNode *GBAMPFileSystemNode::child(const Common::String& n) const {
 	if (_path.lastChar() == '\\') {
-		return new DSFileSystemNode(_path + name);
+		return new DSFileSystemNode(_path + n);
 	} else {
-		return new DSFileSystemNode(_path + "\\" + name);
+		return new DSFileSystemNode(_path + "\\" + n);
 	}
 	
 	return NULL;

@@ -135,14 +135,6 @@ public:
 	virtual bool listDir(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;
 
 	/**
-	 * Return a human readable string for this node, usable for display (e.g.
-	 * in the GUI code). Do *not* rely on it being usable for anything else,
-	 * like constructing paths!
-	 * @return the display name
-	 */
-	virtual String displayName() const;
-
-	/**
 	 * Is this node pointing to a directory?
 	 * @todo Currently we assume that a valid node that is not a directory
 	 * automatically is a file (ignoring things like symlinks). That might
@@ -153,10 +145,33 @@ public:
 	virtual bool isDirectory() const;
 
 	/**
+	 * Return a human readable string for this node, usable for display (e.g.
+	 * in the GUI code). Do *not* rely on it being usable for anything else,
+	 * like constructing paths!
+	 * @return the display name
+	 */
+	virtual String displayName() const;
+
+	/**
+	 * Return a string representation of the name of the file. This is can be
+	 * used e.g. by detection code that relies on matching the name of a given
+	 * file. But it is *not* suitable for use with fopen / File::open, nor
+	 * should it be archived.
+	 *
+	 * @return the file name
+	 */
+	virtual String name() const;
+
+	/**
 	 * Return a string representation of the file which can be passed to fopen(),
 	 * and is suitable for archiving (i.e. writing to the config file).
 	 * This will usually be a 'path' (hence the name of the method), but can
-	 * be anything that fulfilly the above criterions.
+	 * be anything that fulfills the above criterions.
+	 *
+	 * @note Do not assume that this string contains (back)slashes or any
+	 *       other kind of 'path separators'.
+	 *
+	 * @return the 'path' represented by this filesystem node
 	 */
 	virtual String path() const;
 

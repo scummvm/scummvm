@@ -42,6 +42,7 @@ public:
 	Ps2FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
+	virtual String name() const { return _displayName; }
 	virtual bool isValid() const { return !_isRoot; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
@@ -50,7 +51,7 @@ public:
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
-	virtual AbstractFilesystemNode *child(const String &name) const;
+	virtual AbstractFilesystemNode *child(const String &n) const;
 };
 
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
@@ -188,7 +189,7 @@ AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
 		return new Ps2FilesystemNode();
 }
 
-AbstractFilesystemNode *Ps2FilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *Ps2FilesystemNode::child(const String &n) const {
 	if (!_isDirectory)
 		return NULL;
 
@@ -200,7 +201,7 @@ AbstractFilesystemNode *Ps2FilesystemNode::child(const String &name) const {
 		iox_dirent_t dirent;
 
 		while (fio.dread(fd, &dirent) > 0) {
-			if (strcmp(name.c_str(), dirent.name) == 0) {
+			if (strcmp(n.c_str(), dirent.name) == 0) {
 				Ps2FilesystemNode *dirEntry = new Ps2FilesystemNode();
 
 				dirEntry->_isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);

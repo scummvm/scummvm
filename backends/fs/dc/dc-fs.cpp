@@ -51,7 +51,7 @@ public:
 
 	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
 	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &name) const;
+	virtual AbstractFilesystemNode *child(const String &n) const;
 };
 
 
@@ -163,14 +163,14 @@ AbstractFilesystemNode *RoninCDFilesystemNode::parent() const {
 	return p;
 }
 
-AbstractFilesystemNode *RoninCDFilesystemNode::child(const String &name) const {
+AbstractFilesystemNode *RoninCDFilesystemNode::child(const String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
 	String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
-	newPath += name;
+	newPath += n;
 	RoninCDFilesystemNode *p = new RoninCDFilesystemNode(newPath, true);
 
 	return p;

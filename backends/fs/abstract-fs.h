@@ -99,7 +99,11 @@ protected:
 public:
 	virtual ~AbstractFilesystemNode() {}
 
-	virtual String displayName() const = 0;
+	virtual String name() const = 0;
+	
+	// By default, we use the actual file name as 'display name'.
+	virtual String displayName() const { return name(); }
+
 	virtual bool isDirectory() const = 0;
 	
 	/**
