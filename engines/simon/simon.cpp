@@ -385,24 +385,24 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	// Add default file directories for Acorn version of
 	// Simon the Sorcerer 1
-	File::addDefaultDirectory(_gameDataPath + "execute/");
-	File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
+	File::addDefaultDirectory(_gameDataPath + "execute");
+	File::addDefaultDirectory(_gameDataPath + "EXECUTE");
 
 	// Add default file directories for Amiga/Macintosh
 	// verisons of Simon the Sorcerer 2
-	File::addDefaultDirectory(_gameDataPath + "voices/");
-	File::addDefaultDirectory(_gameDataPath + "VOICES/");
+	File::addDefaultDirectory(_gameDataPath + "voices");
+	File::addDefaultDirectory(_gameDataPath + "VOICES");
 
 	// Add default file directories for Amiga & Macintosh
 	// versions of The Feeble Files
-	File::addDefaultDirectory(_gameDataPath + "gfx/");
-	File::addDefaultDirectory(_gameDataPath + "GFX/");
-	File::addDefaultDirectory(_gameDataPath + "movies/");
-	File::addDefaultDirectory(_gameDataPath + "MOVIES/");
-	File::addDefaultDirectory(_gameDataPath + "sfx/");
-	File::addDefaultDirectory(_gameDataPath + "SFX/");
-	File::addDefaultDirectory(_gameDataPath + "speech/");
-	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
+	File::addDefaultDirectory(_gameDataPath + "gfx");
+	File::addDefaultDirectory(_gameDataPath + "GFX");
+	File::addDefaultDirectory(_gameDataPath + "movies");
+	File::addDefaultDirectory(_gameDataPath + "MOVIES");
+	File::addDefaultDirectory(_gameDataPath + "sfx");
+	File::addDefaultDirectory(_gameDataPath + "SFX");
+	File::addDefaultDirectory(_gameDataPath + "speech");
+	File::addDefaultDirectory(_gameDataPath + "SPEECH");
 }
 
 int SimonEngine::init() {
