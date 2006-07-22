@@ -43,6 +43,8 @@ struct ThumbnailHeader {
 	byte bpp;
 };
 
+#define ThumbnailHeaderSize (4+4+1+2+2+1)
+
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
 #endif
@@ -111,13 +113,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 
 	ThumbnailHeader header;
 	header.type = MKID_BE('THMB');
-#if defined(PALMOS_ARM) || defined(__GP32__)
-	// sizeof(header) is hardcoded here, because the compiler add padding to
-	// have a 4byte aligned struct and there is no easy way to pack it.
-	header.size = 14 + thumb.w*thumb.h*thumb.bytesPerPixel;
-#else
-	header.size = sizeof(header) + thumb.w*thumb.h*thumb.bytesPerPixel;
-#endif
+	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.bytesPerPixel;
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;

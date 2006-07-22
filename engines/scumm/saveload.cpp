@@ -69,6 +69,8 @@ struct SaveInfoSection {
 	uint16 time;
 };
 
+#define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
+
 #if defined(END_PACK_STRUCTS)
 #pragma END_PACK_STRUCTS
 #endif
@@ -519,7 +521,7 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	section.size = file->readUint32BE();
 
 	// if we extend this we should add a table for the special sizes at the versions to check it
-	if (section.version == INFOSECTION_VERSION && section.size != sizeof(SaveInfoSection)) {
+	if (section.version == INFOSECTION_VERSION && section.size != SaveInfoSectionSize) {
 		warning("Info section is corrupt");
 		file->skip(section.size);
 		return false;
@@ -549,8 +551,8 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 
 	// skip all newer features, this could make problems if some older version uses more space for
 	// saving informations, but this should NOT happen
-	if (section.size > sizeof(SaveInfoSection)) {
-		file->skip(section.size - sizeof(SaveInfoSection));
+	if (section.size > SaveInfoSectionSize) {
+		file->skip(section.size - SaveInfoSectionSize);
 	}
 
 	return true;
@@ -560,7 +562,7 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	SaveInfoSection section;
 	section.type = MKID_BE('INFO');
 	section.version = INFOSECTION_VERSION;
-	section.size = sizeof(SaveInfoSection);
+	section.size = SaveInfoSectionSize;
 
 	// still save old format for older versions
 	section.timeTValue = time(0);
