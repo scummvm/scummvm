@@ -233,6 +233,10 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 	PUT_UINT32(ctx->state[3], digest, 12);
 }
 
+bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
+	return md5_file(file.path().c_str(), digest, length);
+}
+
 bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 	File f;
 

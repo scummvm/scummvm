@@ -23,6 +23,7 @@
 #define COMMON_MD5_H
 
 #include "common/scummsys.h"
+#include "common/fs.h"
 
 namespace Common {
 
@@ -37,6 +38,7 @@ void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
 void md5_finish(md5_context *ctx, uint8 digest[16]);
 
 bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
+bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length = 0);
 
 } // End of namespace Common
 

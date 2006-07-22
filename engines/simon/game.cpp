@@ -1386,7 +1386,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 
 			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
 
-			if (!Common::md5_file(file->path().c_str(), md5sum, FILE_MD5_BYTES)) continue;
+			if (!Common::md5_file(*file, md5sum, FILE_MD5_BYTES)) continue;
 			for (j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
