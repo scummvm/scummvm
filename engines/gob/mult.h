@@ -32,9 +32,7 @@ namespace Gob {
 class Mult {
 public:
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 	struct Mult_AnimData {
 		int8 animation;
@@ -160,9 +158,7 @@ public:
 		int16 field_E;
 	};
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 	// Globals
 
@@ -295,7 +291,9 @@ protected:
 
 class Mult_v2 : public Mult_v1 {
 public:
-#pragma START_PACK_STRUCTS
+
+#include <common/pack-start.h>	// START STRUCT PACKING
+
 	struct Mult_Data {
 		int16 palFadeKeysCount;
 		Mult_PalFadeKey *palFadeKeys;
@@ -345,7 +343,8 @@ public:
 		char *somepointer10; // ?
 		char *execPtr;
 	};
-#pragma END_PACK_STRUCTS
+
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 	Mult_Data *_multData2; // TODO: This'll be _multData once every function using it
 	                       //       in GOB2 is done

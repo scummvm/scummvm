@@ -49,9 +49,7 @@ FORCEINLINE int16 READ_BE_INT16(const void *ptr) {
 
 namespace Queen {
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct GameStateHeader {
 	uint32 version;
@@ -60,9 +58,7 @@ struct GameStateHeader {
 	char description[32];
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 class BamScene;
 class BankManager;

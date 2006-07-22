@@ -34,9 +34,7 @@ namespace Audio {
 class AudioStream;
 
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct VocFileHeader {
 	uint8 desc[20];
@@ -52,9 +50,7 @@ struct VocBlockHeader {
 	uint8 pack;
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 /**
  * Take a sample rate parameter as it occurs in a VOC sound header, and

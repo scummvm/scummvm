@@ -73,15 +73,15 @@
 //
 // By default we try to use pragma push/pop to ensure various structs we use
 // are "packed". If your compiler doesn't support this pragma, you are in for 
-// a problem. If you are lucky, an equivalent pragma is available, in which
-// case you can redefine these two macros appropriately. Or maybe your port
-// simply *always* packs everything, in which case you could #undefine them.
+// a problem. If you are lucky, there is a compiler switch, or another pragma,
+// doing the same thing -- in that case, try to modify common/pack-begin.h and
+// common/pack-end.h accordingly. Or maybe your port simply *always* packs
+// everything, in which case you could #undefine SCUMMVM_USE_PRAGMA_PACK.
 //
 // If neither is possible, tough luck. Try to contact the team, maybe we can
 // come up with a solution, though I wouldn't hold my breath on it :-/.
 //
-#define START_PACK_STRUCTS pack(push, 1)
-#define END_PACK_STRUCTS   pack(pop)
+#define SCUMMVM_USE_PRAGMA_PACK
 
 
 #if defined(_MSC_VER) && !defined(__SYMBIAN32__) && !defined(_WIN32_WCE)

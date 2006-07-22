@@ -26,9 +26,7 @@
 
 namespace Simon {
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 // Feeble Files
 struct VgaFileHeader_Feeble {
@@ -94,9 +92,7 @@ struct AnimationHeader_Simon {
 };
 
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 enum DrawFlags {
 	kDFFlip           = 0x1,

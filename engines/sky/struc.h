@@ -36,9 +36,7 @@ struct displayText_t {
 	uint32 textWidth;
 };
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct dataFileHeader {
 	uint16 flag; // bit 0: set for colour data, clear for not
@@ -166,9 +164,7 @@ struct Compact {
 	MegaSet megaSet3;	 //
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 } // End of namespace Sky
 

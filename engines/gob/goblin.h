@@ -38,9 +38,7 @@ class Goblin {
 
 public:
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 	struct Gob_State {
 		int16 animation;// +0h
@@ -97,9 +95,7 @@ public:
 		char y;
 	};
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 	Util::List *_objList;
 	Gob_Object *_goblins[4];

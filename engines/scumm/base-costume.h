@@ -29,9 +29,7 @@
 
 namespace Scumm {
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct CostumeInfo {
 	uint16 width, height;
@@ -39,9 +37,7 @@ struct CostumeInfo {
 	int16 move_x, move_y;
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 
 

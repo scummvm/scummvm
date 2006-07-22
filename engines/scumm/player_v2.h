@@ -37,9 +37,7 @@ namespace Scumm {
 
 class ScummEngine;
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct channel_data {
 	uint16 time_left;          // 00
@@ -66,9 +64,7 @@ struct channel_data {
 	uint16 music_script_nr;    // 48
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 
 /**

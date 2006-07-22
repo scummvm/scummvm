@@ -28,9 +28,7 @@ namespace Gob {
 class Scenery {
 public:
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 	struct PieceDesc {
 		int16 left;		//NOTE:
@@ -75,9 +73,7 @@ public:
 		AnimFramePiece *frames;
 	};
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 	struct Static {
 		int16 layersCount;

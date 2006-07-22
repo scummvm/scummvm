@@ -226,9 +226,7 @@ protected:
 		const char *desc;
 	};
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 	struct ArrayHeader {
 		int32 type;      //0
@@ -239,9 +237,7 @@ protected:
 		byte data[1];    //14
 	};
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 	const OpcodeEntryV72he *_opcodesV72he;
 

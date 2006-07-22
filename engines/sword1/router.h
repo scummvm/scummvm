@@ -27,9 +27,7 @@
 
 namespace Sword1 {
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct BarData {
 	int16 x1;
@@ -53,9 +51,7 @@ struct NodeData {
 	int16 dist;
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 struct FloorData {
 	int32		nbars;

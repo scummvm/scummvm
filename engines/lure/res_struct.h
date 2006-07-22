@@ -37,9 +37,7 @@ extern const char *actionList[];
 /*                                                                         */
 /*-------------------------------------------------------------------------*/
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct VersionStructure {
 	uint16 id;
@@ -215,9 +213,7 @@ struct RoomExitIndexedHotspotResource {
 	uint16 hotspotId;
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 // Class template for a derived list that destroys the contained
 // object when the record containing it is destroyed. It's not

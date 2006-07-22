@@ -89,9 +89,7 @@ namespace Sword1 {
 #define	MAX_text_obs	2			//text compacts
 #define	TEXT_sect		149			//text compacts exist in section 149, probably after all the megas
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct Header {
 	char type[6];
@@ -134,9 +132,7 @@ struct WalkGridHeader {
 	int32 numNodes;
 };
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 enum fileTypes {
 	TYPE_CD1 = 0,

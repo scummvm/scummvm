@@ -31,9 +31,7 @@ namespace Gob {
 class Game {
 public:
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 	struct Collision {
 		int16 id;
@@ -131,9 +129,7 @@ public:
 		int32 vidBufferSize;
 	};
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 	TotResTable *_totResourceTable;
 	Collision *_collisionAreas;

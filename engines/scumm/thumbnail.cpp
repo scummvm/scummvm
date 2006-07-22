@@ -31,9 +31,7 @@ namespace Scumm {
 
 #define THMB_VERSION 1
 
-#if defined(START_PACK_STRUCTS)
-#pragma START_PACK_STRUCTS
-#endif
+#include <common/pack-start.h>	// START STRUCT PACKING
 
 struct ThumbnailHeader {
 	uint32 type;
@@ -45,9 +43,7 @@ struct ThumbnailHeader {
 
 #define ThumbnailHeaderSize (4+4+1+2+2+1)
 
-#if defined(END_PACK_STRUCTS)
-#pragma END_PACK_STRUCTS
-#endif
+#include <common/pack-end.h>	// END STRUCT PACKING
 
 
 inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
