@@ -261,12 +261,15 @@ void registerDefaults() {
 
 // Use this for options which have an *optional* value
 #define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
-	if (isLongCmd ? (!memcmp(s+2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s+2, longCmd) || !memcmp(s+2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
-		if (isLongCmd) \
-			s += sizeof(longCmd"=") - 1; \
+		if (isLongCmd) { \
+			s += sizeof(longCmd) - 1; \
+			if (*s == '=') \
+				s++; \
+		} \
 		const char *option = s; \
-		if (*s == '\0') { option = s2; i++; } \
+		if (*s == '\0' && !isLongCmd) { option = s2; i++; } \
 		if (!option) option = defaultVal; \
 		if (option) settings[longCmd] = option;
 
