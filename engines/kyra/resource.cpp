@@ -73,8 +73,8 @@ Resource::Resource(KyraEngine *engine) {
 		Common::String filename = file->path();
 		filename.toUppercase();
 		if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
-			if (!loadPakFile(file->displayName())) {
-				error("couldn't open pakfile '%s'", file->displayName().c_str());
+			if (!loadPakFile(file->path())) {
+				error("couldn't open pakfile '%s'", file->path().c_str());
 			}
 		}
 	}
