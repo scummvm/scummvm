@@ -338,7 +338,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 			continue;
 
 		// All the supported games have an intro.stk file.
-		if (scumm_stricmp(file->displayName().c_str(), "intro.stk") == 0)
+		if (scumm_stricmp(file->name().c_str(), "intro.stk") == 0)
 			break;
 	}
 
