@@ -234,6 +234,9 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 }
 
 bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
+	if (file.isDirectory())
+		return false;
+
 	return md5_file(file.path().c_str(), digest, length);
 }
 
