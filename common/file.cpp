@@ -146,10 +146,10 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->path(), level - 1, prefix + file->displayName() + "/");
+			addDefaultDirectoryRecursive(file->path(), level - 1, prefix + file->name() + "/");
 		} else {
 			String lfn(prefix);
-			lfn += file->displayName();
+			lfn += file->name();
 			lfn.toLowercase();
 			if (!_filesMap->contains(lfn)) {
 				(*_filesMap)[lfn] = file->path();
@@ -277,7 +277,7 @@ bool File::open(const String &filename, AccessMode mode) {
 
 bool File::open(const FilesystemNode &node, AccessMode mode) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
-	String filename(node.displayName());
+	String filename(node.name());
 
 	if (_handle) {
 		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
