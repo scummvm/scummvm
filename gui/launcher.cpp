@@ -540,6 +540,14 @@ LauncherDialog::~LauncherDialog() {
 	delete _browser;
 }
 
+void LauncherDialog::open() {
+	// Clear the active domain, in case we return to the dialog from a
+	// failure to launch a game. Otherwise, pressing ESC will attempt to
+	// re-launch the same game again.
+	ConfMan.setActiveDomain("");
+	Dialog::open();
+}
+
 void LauncherDialog::close() {
 	// Save last selection
 	const int sel = _list->getSelected();

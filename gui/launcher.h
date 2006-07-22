@@ -56,6 +56,7 @@ protected:
 	void updateListing();
 	void updateButtons();
 
+	void open();
 	void close();
 	virtual void addGame();
 	void removeGame(int item);
