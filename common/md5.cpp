@@ -234,8 +234,13 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 }
 
 bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
-	if (file.isDirectory())
+	if (!file.isValid()) {
+		warning("md5_file: using an invalid FilesystemNode");
 		return false;
+	} else if (file.isDirectory()) {
+		warning("md5_file: using a diretory FilesystemNode");
+		return false;
+	}
 
 	return md5_file(file.path().c_str(), digest, length);
 }
