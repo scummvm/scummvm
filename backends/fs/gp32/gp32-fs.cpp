@@ -40,6 +40,8 @@ public:
 
 	virtual String displayName() const { return _displayName; }
 	virtual String name() const { return _displayName; }
+	// FIXME: isValid should return false if this Node can't be used!
+	// client code can rely on the return value.
 	virtual bool isValid() const { return true; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }

@@ -77,6 +77,12 @@ FilesystemNode &FilesystemNode::operator  =(const FilesystemNode &node) {
 	return *this;
 }
 
+bool FilesystemNode::isValid() const {
+	if (_realNode == 0)
+		return false;
+	return _realNode->isValid();
+}
+
 FilesystemNode FilesystemNode::getParent() const {
 	if (_realNode == 0)
 		return *this;

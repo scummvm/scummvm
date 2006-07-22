@@ -277,6 +277,15 @@ bool File::open(const String &filename, AccessMode mode) {
 
 bool File::open(const FilesystemNode &node, AccessMode mode) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
+
+	if (!node.isValid()) {
+		warning("File::open: Trying to open an invalid FilesystemNode object");
+		return false;
+	} else if (node.isDirectory()) {
+		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		return false;
+	}
+
 	String filename(node.name());
 
 	if (_handle) {
@@ -288,9 +297,7 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 
-
 	_handle = fopen(node.path().c_str(), modeStr);
-
 
 	if (_handle == NULL) {
 		if (mode == kFileReadMode)
@@ -313,6 +320,9 @@ bool File::exists(const String &filename) {
 	// First try to find the file it via a FilesystemNode (in case an absolute
 	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
+	// FIXME: can't use isValid() here since at the time of writing
+	// FilesystemNode is to be unable to find for example files
+	// added in extrapath
 	if (file.isDirectory())
 		return false;
 

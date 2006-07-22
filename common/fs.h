@@ -114,6 +114,11 @@ public:
 	FilesystemNode &operator  =(const FilesystemNode &node);
 
 	/**
+	 * Checks if the FilesystemNode is valid for any usage
+	 */
+	bool isValid() const;
+
+	/**
 	 * Get the parent node of this node. If this node has no parent node,
 	 * then it returns a duplicate of this node.
 	 */

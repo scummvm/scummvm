@@ -104,6 +104,8 @@ public:
 	// By default, we use the actual file name as 'display name'.
 	virtual String displayName() const { return name(); }
 
+	virtual bool isValid() const = 0;
+
 	virtual bool isDirectory() const = 0;
 	
 	/**
