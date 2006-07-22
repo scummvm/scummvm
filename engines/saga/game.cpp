@@ -127,7 +127,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 	if (fslist != NULL) {
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 			if (file->isDirectory()) continue;
-			tstr = file->displayName();
+			tstr = file->name();
 			tstr.toLowercase();
 
 			if (!filesList.contains(tstr)) continue;

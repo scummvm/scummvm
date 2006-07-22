@@ -67,7 +67,7 @@ int agi_v3_detect_game() {
 
 	for (FSList::const_iterator file = fslist.begin();
 	    file != fslist.end() && !found; ++file) {
-		Common::String f = file->displayName();
+		Common::String f = file->name();
 		f.toLowercase();
 
 		if (f.hasSuffix("vol.0")) {

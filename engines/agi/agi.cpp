@@ -622,9 +622,9 @@ DetectedGameList Engine_AGI_detectGames(const FSList &fslist) {
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin();
 		    file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
+			const char *fileName = file->name().c_str();
 
-			if (0 == scumm_stricmp(g->detectname, gameName)) {
+			if (0 == scumm_stricmp(g->detectname, fileName)) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(*g);
 				break;

@@ -926,7 +926,7 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 			DetectorDesc d;
 			d.path = file->path();
 			d.md5Entry = 0;
-			fileMD5Map[file->displayName()] = d;
+			fileMD5Map[file->name()] = d;
 		}
 	}
 

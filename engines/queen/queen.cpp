@@ -92,16 +92,16 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			const char *gameName = file->displayName().c_str();
+			const char *fileName = file->name().c_str();
 
-			if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
+			if (0 == scumm_stricmp("queen.1", fileName) || 0 == scumm_stricmp("queen.1c", fileName)) {
 				Common::File dataFile;
-				dataFile.open(file->path());
+				dataFile.open(*file);
 				assert(dataFile.isOpen());
 
-				if (0 == scumm_stricmp("queen.1", gameName)) {	//an unmodified file
+				if (0 == scumm_stricmp("queen.1", fileName)) {	//an unmodified file
 					detectedGames.push_back(determineTarget(dataFile.size()));
-				} else if (0 == scumm_stricmp("queen.1c", gameName)) { //oh joy, it's a rebuilt file
+				} else if (0 == scumm_stricmp("queen.1c", fileName)) { //oh joy, it's a rebuilt file
 					char header[9];
 					dataFile.read(header, 9);
 					if (0 == scumm_strnicmp("QTBL", header, 4)) { //check validity
