@@ -449,7 +449,7 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 
 void SimonEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
 	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
-					ptr - _vgaBufferPointers[res].vgaFile1, res, sprite_id);
+					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
 	dump_video_script(ptr, false);
 	printf("; end\n");
 }

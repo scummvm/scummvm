@@ -132,7 +132,7 @@ void SimonEngine::runVgaScript() {
 
 		if (_continousVgaScript) {
 			if (_vcPtr != (const byte *)&_vc_get_out_of_code) {
-				printf("%.5d %.5X: %5d %4d ", _vgaTickCounter, _vcPtr - _curVgaFile1, _vgaCurSpriteId, _vgaCurZoneNum);
+				printf("%.5d %.5X: %5d %4d ", _vgaTickCounter, (unsigned int)(_vcPtr - _curVgaFile1), _vgaCurSpriteId, _vgaCurZoneNum);
 				dump_video_script(_vcPtr, true);
 			}
 		}
