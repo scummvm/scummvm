@@ -44,17 +44,19 @@
 
 namespace Sword2 {
 
-// A savegame consists of a header and the global variables
+char *Sword2Engine::getSaveFileName(uint16 slotNo) {
+	static char buf[128];
 
-// Max length of a savegame filename
-#define	MAX_FILENAME_LEN 128
+	snprintf(buf, sizeof(buf), "%s.%.3d", _targetName.c_str(), slotNo);
+	return buf;
+}
 
 /**
- * Calculate size of required savegame buffer
+ * Calculate size of required savegame buffer. A savegame consists of a header
+ * and the global variables.
  */
 
 uint32 Sword2Engine::findBufferSize() {
-	// Size of savegame header + size of global variables
 	return 212 + _resman->fetchLen(1);
 }
 
@@ -121,9 +123,7 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
 }
 
 uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
-	char saveFileName[MAX_FILENAME_LEN];
-
-	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
+	char *saveFileName = getSaveFileName(slotNo);
 
 	Common::OutSaveFile *out;
 
@@ -201,9 +201,7 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 }
 
 uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
-	char saveFileName[MAX_FILENAME_LEN];
-
-	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
+	char *saveFileName = getSaveFileName(slotNo);
 
 	Common::InSaveFile *in;
 
@@ -368,9 +366,7 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
  */
 
 uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
-	char saveFileName[MAX_FILENAME_LEN];
-
-	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
+	char *saveFileName = getSaveFileName(slotNo);
 
 	Common::InSaveFile *in;
 
@@ -393,9 +389,7 @@ bool Sword2Engine::saveExists() {
 }
 
 bool Sword2Engine::saveExists(uint16 slotNo) {
-	char saveFileName[MAX_FILENAME_LEN];
-
-	sprintf(saveFileName, "%s.%.3d", _targetName.c_str(), slotNo);
+	char *saveFileName = getSaveFileName(slotNo);
 
 	Common::InSaveFile *in;
 

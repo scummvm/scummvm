@@ -197,6 +197,7 @@ public:
 	bool saveExists();
 	bool saveExists(uint16 slotNo);
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
+	char *getSaveFileName(uint16 slotNo);
 	uint32 findBufferSize();
 
 	bool _gamePaused;
