@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_disk_h__
-#define __lure_disk_h__
+#ifndef LURE_DISK_H
+#define LURE_DISK_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __LURE_H__
-#define __LURE_H__
+#ifndef LURE_H
+#define LURE_H
 
 #include "base/engine.h"
 #include "common/rect.h"

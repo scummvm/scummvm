@@ -21,8 +21,8 @@
  */
 
 #ifdef LURE_DEBUG
-#ifndef __lure_input_h__
-#define __lure_input_h__
+#ifndef LURE_DEBUG_INPUT_H
+#define LURE_DEBUG_INPUT_H
 
 #include "common/stdafx.h"
 #include "common/str.h"

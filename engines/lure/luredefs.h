@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __luredefs_h__
-#define __luredefs_h__
+#ifndef LUREDEFS_H
+#define LUREDEFS_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

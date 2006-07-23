@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_intro_h__
-#define __lure_intro_h__
+#ifndef LURE_INTRO_H
+#define LURE_INTRO_H
 
 #include "lure/screen.h"
 

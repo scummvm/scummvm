@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_game_h__
-#define __lure_game_h__
+#ifndef LURE_GAME_H
+#define LURE_GAME_H
 
 #include "common/stdafx.h"
 #include "base/engine.h"

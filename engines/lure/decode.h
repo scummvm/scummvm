@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_decode_h__
-#define __lure_decode_h__
+#ifndef LURE_DECODE_H
+#define LURE_DECODE_H
 
 #include "common/stdafx.h"
 #include "lure/luredefs.h"

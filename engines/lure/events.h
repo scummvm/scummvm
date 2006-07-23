@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_events_h__
-#define __lure_events_h__
+#ifndef LURE_EVENTS_H
+#define LURE_EVENTS_H
 
 #include "common/stdafx.h"
 #include "common/str.h"

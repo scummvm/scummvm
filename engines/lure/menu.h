@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_menu_h__
-#define __lure_menu_h__
+#ifndef LURE_MENU_H
+#define LURE_MENU_H
 
 #include "common/stdafx.h"
 #include "common/str.h"

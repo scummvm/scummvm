@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_room_h__
-#define __lure_room_h__
+#ifndef LURE_ROOM_H
+#define LURE_ROOM_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

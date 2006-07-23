@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_palette_h__
-#define __lure_palette_h__
+#ifndef LURE_PALETTE_H
+#define LURE_PALETTE_H
 
 #include "lure/luredefs.h"
 #include "lure/disk.h"

@@ -21,8 +21,8 @@
  */
 
 #ifdef LURE_DEBUG
-#ifndef __lure_debugprocs_h__
-#define __lure_debugprocs_h__
+#ifndef LURE_DEBUG_METHODS_H
+#define LURE_DEBUG_METHODS_H
 
 #include "common/stdafx.h"
 #include "lure/surface.h"

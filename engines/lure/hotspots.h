@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_hotspots_h__
-#define __lure_hotspots_h__
+#ifndef LURE_HOTSPOTS_H
+#define LURE_HOTSPOTS_H
 
 #include "lure/luredefs.h"
 #include "lure/screen.h"

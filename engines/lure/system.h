@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_system_h__
-#define __lure_system_h__
+#ifndef LURE_SYSTEM_H
+#define LURE_SYSTEM_H
 
 #include "common/stdafx.h"
 #include "common/system.h"

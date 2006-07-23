@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_surface_h__
-#define __lure_surface_h__
+#ifndef LURE_SURFACE_H
+#define LURE_SURFACE_H
 
 #include "common/stdafx.h"
 #include "common/str.h"

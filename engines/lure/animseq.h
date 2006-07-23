@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_animseq_h__
-#define __lure_animseq_h__
+#ifndef LURE_ANIMSEQ_H
+#define LURE_ANIMSEQ_H
 
 #include "lure/screen.h"
 

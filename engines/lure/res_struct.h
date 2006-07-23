@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_resstruct_h__
-#define __lure_resstruct_h__
+#ifndef LURE_RESSTRUCT_H
+#define LURE_RESSTRUCT_H
 
 #include "lure/luredefs.h"
 #include "common/list.h"

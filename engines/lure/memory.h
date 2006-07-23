@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_memory_h__
-#define __lure_memory_h__
+#ifndef LURE_MEMORY_H
+#define LURE_MEMORY_H
 
 #include "common/stdafx.h"
 #include "common/system.h"

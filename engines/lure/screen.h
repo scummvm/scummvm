@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_screen_h__
-#define __lure_screen_h__
+#ifndef LURE_SCREEN_H
+#define LURE_SCREEN_H
 
 #include "common/stdafx.h"
 #include "base/engine.h"

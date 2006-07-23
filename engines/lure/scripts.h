@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __lure_scripts_h__
-#define __lure_scripts_h__
+#ifndef LURE_SCRIPTS_H
+#define LURE_SCRIPTS_H
 
 #include "lure/luredefs.h"
 #include "lure/memory.h"
