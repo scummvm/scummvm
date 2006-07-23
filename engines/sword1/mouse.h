@@ -48,7 +48,7 @@ struct MouseObj {
 	Object *compact;
 };
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct MousePtr {
 	uint16 numFrames;
@@ -59,7 +59,7 @@ struct MousePtr {
 	uint8  dummyData[0x30];
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 class Logic;
 class Menu;

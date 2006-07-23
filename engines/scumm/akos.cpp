@@ -36,7 +36,7 @@
 
 namespace Scumm {
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct AkosHeader {
 	byte unk_1[2];
@@ -52,7 +52,7 @@ struct AkosOffset {
 	uint16 akci;
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 
 enum AkosOpcodes {

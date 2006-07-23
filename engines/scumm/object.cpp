@@ -36,7 +36,7 @@
 
 namespace Scumm {
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct BompHeader {			/* Bomp header */
 	union {
@@ -51,7 +51,7 @@ struct BompHeader {			/* Bomp header */
 	};
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 
 bool ScummEngine::getClass(int obj, int cls) const {

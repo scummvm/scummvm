@@ -37,7 +37,7 @@ namespace Sky {
 #define SFXF_START_DELAY 0x80
 #define SFXF_SAVE 0x20
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct RoomList {
 	uint8 room;
@@ -51,7 +51,7 @@ struct Sfx {
 	RoomList roomList[10];
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 uint16 Sound::_speechConvertTable[8] = {
 	0,									//;Text numbers to file numbers

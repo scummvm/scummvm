@@ -172,7 +172,7 @@ class Win32ResExtractor : public ResExtractor {
  * Structures
  */
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct WinLibrary {
 		Common::File *file;
@@ -454,7 +454,7 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 number_of_id_entries;
 	};
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 /*
  * Function Prototypes

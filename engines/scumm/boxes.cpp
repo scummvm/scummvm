@@ -31,7 +31,7 @@
 
 namespace Scumm {
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct Box {				/* Internal walkbox file format */
 	union {
@@ -79,7 +79,7 @@ struct Box {				/* Internal walkbox file format */
 	};
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 #define BOX_MATRIX_SIZE 2000
 #define BOX_DEBUG 0

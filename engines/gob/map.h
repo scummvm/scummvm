@@ -43,7 +43,7 @@ public:
 		kDirSE = 0x5100
 	};
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct Point {
 		int16 x;
@@ -59,7 +59,7 @@ public:
 		int8 orient;		// ??
 	};
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	int16 _mapWidth;
 	int16 _mapHeight;

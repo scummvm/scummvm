@@ -519,7 +519,7 @@ protected:
 		kDwordArray = 6
 	};
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct ArrayHeader {
 		int16 dim1;
@@ -528,7 +528,7 @@ protected:
 		byte data[1];
 	};
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	const OpcodeEntryV6 *_opcodesV6;
 

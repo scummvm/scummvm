@@ -73,7 +73,7 @@ public:
 #define DISABLE_SPR_ALLOC	0x20
 #define SCUMMVM_CURSOR		0x100
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct Color {
 		byte red;
@@ -81,7 +81,7 @@ public:
 		byte blue;
 	};
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	struct PalDesc {
 		Color *vgaPal;

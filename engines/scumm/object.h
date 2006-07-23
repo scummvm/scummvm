@@ -51,7 +51,7 @@ struct ObjectData {
 	byte flags;
 };
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct RoomHeader {
 	union {
@@ -157,7 +157,7 @@ struct ImageHeader { /* file format */
 	};
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 struct FindObjectInRoom {
 	const CodeHeader *cdhd;

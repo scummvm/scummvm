@@ -226,7 +226,7 @@ protected:
 		const char *desc;
 	};
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct ArrayHeader {
 		int32 type;      //0
@@ -237,7 +237,7 @@ protected:
 		byte data[1];    //14
 	};
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	const OpcodeEntryV72he *_opcodesV72he;
 

@@ -78,7 +78,7 @@ struct ClipData {
 	}
 };
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct PalEntry {
 	byte red;
@@ -86,7 +86,7 @@ struct PalEntry {
 	byte blue;
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 struct Color {
 	int red;

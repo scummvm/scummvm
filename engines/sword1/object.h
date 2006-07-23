@@ -32,7 +32,7 @@ namespace Sword1 {
 #define	O_GRID_SIZE		200
 #define	EXTRA_GRID_SIZE	20
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct OEventSlot {			//receiving event list in the compact -
 	int32	o_event;		//array of these with O_TOTAL_EVENTS elements
@@ -118,7 +118,7 @@ struct Object {
 				// mega size = 12340 bytes (+ 8 byte offset table + 20 byte header = 12368)
 };
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 } // End of namespace Sword1
 
