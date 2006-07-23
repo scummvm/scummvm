@@ -24,8 +24,8 @@
 
 // Font management and font drawing header file
 
-#ifndef SAGA_FONT_H__
-#define SAGA_FONT_H__
+#ifndef SAGA_FONT_H
+#define SAGA_FONT_H
 
 #include "saga/list.h"
 #include "saga/gfx.h"

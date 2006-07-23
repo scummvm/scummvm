@@ -24,8 +24,8 @@
 
 // Sprite management module private header file
 
-#ifndef SAGA_SPRITE_H__
-#define SAGA_SPRITE_H__
+#ifndef SAGA_SPRITE_H
+#define SAGA_SPRITE_H
 
 namespace Saga {
 

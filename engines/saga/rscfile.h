@@ -24,8 +24,8 @@
 
 // RSC Resource file management header file
 
-#ifndef SAGA_RSCFILE_H__
-#define SAGA_RSCFILE_H__
+#ifndef SAGA_RSCFILE_H
+#define SAGA_RSCFILE_H
 
 #include "common/file.h"
 

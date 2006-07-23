@@ -24,8 +24,8 @@
 
 // Actor management module header file
 
-#ifndef SAGA_ACTOR_H__
-#define SAGA_ACTOR_H__
+#ifndef SAGA_ACTOR_H
+#define SAGA_ACTOR_H
 
 #include "common/savefile.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SAGA_STREAM_H__
-#define SAGA_STREAM_H__
+#ifndef SAGA_STREAM_H
+#define SAGA_STREAM_H
 
 #include "common/stream.h"
 

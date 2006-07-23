@@ -24,8 +24,8 @@
 
 // Game interface module private header file
 
-#ifndef SAGA_INTERFACE_H__
-#define SAGA_INTERFACE_H__
+#ifndef SAGA_INTERFACE_H
+#define SAGA_INTERFACE_H
 
 #include "common/savefile.h"
 
@@ -463,4 +463,4 @@ private:
 
 } // End of namespace Saga
 
-#endif				/* INTERFACE_H__ */
+#endif

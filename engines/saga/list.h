@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SAGA_LIST_H__
-#define SAGA_LIST_H__
+#ifndef SAGA_LIST_H
+#define SAGA_LIST_H
 
 #include "common/list.h"
 
