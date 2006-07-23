@@ -136,6 +136,11 @@ int KyraEngine::init() {
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
 
+	_screen = new Screen(this, _system);
+	assert(_screen);
+	if (!_screen->init())
+		error("_screen->init() failed");
+
 	// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
@@ -173,10 +178,6 @@ int KyraEngine::init() {
 	}
 	_sound->setVolume(255);
 	
-	_screen = new Screen(this, _system);
-	assert(_screen);
-	if (!_screen->init())
-		error("_screen->init() failed");
 	_res = new Resource(this);
 	assert(_res);
 	_sprites = new Sprites(this, _system);
