@@ -539,7 +539,7 @@ void OSystem_SDL::internUpdateScreen() {
 
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly.
-	if (_paletteDirtyEnd != 0) {
+	if (_screen && _paletteDirtyEnd != 0) {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
 			_paletteDirtyStart,
 			_paletteDirtyEnd - _paletteDirtyStart);
@@ -779,8 +779,10 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
 
-	if (_screen == NULL)
+	if (_screen == NULL) {
+		warning("OSystem_SDL::copyRectToScreen: _screen == NULL");
 		return;
+	}
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -1025,6 +1027,14 @@ int16 OSystem_SDL::getWidth() {
 
 void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
+
+	// Setting the palette before _screen is created is allowed - for now -
+	// since we don't actually set the palette until the screen is updated.
+	// But it could indicate a programming error, so let's warn about it.
+
+	if (!_screen)
+		warning("OSystem_SDL::setPalette: _screen == NULL");
+
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;
