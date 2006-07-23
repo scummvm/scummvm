@@ -124,6 +124,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
+	bool is_kyra = (gameid == "kyra1");
 
 	GUI_Actions::initInstanceGame();
 
@@ -151,7 +152,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_gob || is_ite)
+	if (is_simon || is_sky || is_gob || is_ite || is_kyra)
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
