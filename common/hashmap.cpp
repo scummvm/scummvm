@@ -57,21 +57,16 @@ namespace Common {
 uint hashit(const char *p) {
 	uint hash = 0;
 	byte c;
-
-	hash = 0;
 	while ((c = *p++))
 		hash = (hash * 31 + c);
-
 	return hash;
 }
 
 uint hashit_lower(const char *p) {
 	uint hash = 0;
 	byte c;
-
 	while ((c = *p++))
 		hash = (hash * 31 + tolower(c));
-
 	return hash;
 }
 

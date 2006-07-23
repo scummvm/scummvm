@@ -60,7 +60,7 @@ GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
 }
 
 void GuiObject::handleScreenChanged() {
-	if (_name != "") {
+	if (!_name.empty()) {
 		if ((_x = g_gui.evaluator()->getVar(_name + ".x")) == EVAL_UNDEF_VAR)
 			error("Undefined variable %s.x", _name.c_str());
 		if ((_y = g_gui.evaluator()->getVar(_name + ".y")) == EVAL_UNDEF_VAR)

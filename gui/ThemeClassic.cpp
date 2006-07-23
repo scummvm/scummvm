@@ -296,7 +296,7 @@ void ThemeClassic::drawPopUpWidget(const Common::Rect &r, const Common::String &
 		_screen.drawLine(p0.x, p1.y, p1.x, p1.y, color);
 	}
 
-	if (sel != "") {
+	if (!sel.empty()) {
 		Common::Rect text(r.left + 2, r.top + 3, r.right - 4, r.top + 3 + _font->getFontHeight());
 		_font->drawString(&_screen, sel, text.left, text.top, text.width(), color, convertAligment(align), deltax, false);
 	}

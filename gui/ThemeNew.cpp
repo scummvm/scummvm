@@ -1309,7 +1309,7 @@ const Graphics::Font *ThemeNew::loadFont(const char *filename) {
 	Common::String cacheFilename = genCacheFilename(filename);
 	Common::File fontFile;
 
-	if (cacheFilename != "") {
+	if (!cacheFilename.empty()) {
 		if (fontFile.open(cacheFilename))
 			font = Graphics::NewFont::loadFromCache(fontFile);
 		if (font)
@@ -1368,7 +1368,7 @@ const Graphics::Font *ThemeNew::loadFont(const char *filename) {
 #endif
 
 	if (font) {
-		if (cacheFilename != "") {
+		if (!cacheFilename.empty()) {
 			if (!Graphics::NewFont::cacheFontData(*font, cacheFilename)) {
 				warning("Couldn't create cache file for font '%s'", filename);
 			}

@@ -373,12 +373,12 @@ uint32 PAKFile::getFileSize(const char* file) {
 bool PAKFile::openFile(Common::File &filehandle) {
 	filehandle.close();
 
-	if (!filehandle.open(_physfile == "" ? _filename : _physfile)) {
+	if (!filehandle.open(_physfile.empty() ? _filename : _physfile)) {
 		debug(3, "couldn't open pakfile '%s'\n", _filename.c_str());
 		return false;
 	}
 
-	if (_physfile != "") {
+	if (!_physfile.empty()) {
 		filehandle.seek(_physOffset, SEEK_CUR);
 	}
 

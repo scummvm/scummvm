@@ -47,6 +47,8 @@
 #include "gob/util.h"
 #include "gob/music.h"
 
+#include "sound/mididrv.h"
+
 namespace Gob {
 
 enum {
@@ -228,7 +230,7 @@ int GobEngine::init() {
 	else
 		error("GobEngine::init(): Unknown version of game engine");
 	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2)) {
-		if (ConfMan.get("music_driver") == "null")
+		if (MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL)
 			_music = new Music_Dummy(this);
 		else
 			_music = new Music(this);
