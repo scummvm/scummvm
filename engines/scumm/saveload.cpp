@@ -53,8 +53,6 @@ struct SaveGameHeader {
 	char name[32];
 };
 
-#include <common/pack-start.h>	// START STRUCT PACKING
-
 struct SaveInfoSection {
 	uint32 type;
 	uint32 version;
@@ -68,8 +66,6 @@ struct SaveInfoSection {
 };
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
-
-#include <common/pack-end.h>	// END STRUCT PACKING
 
 #define INFOSECTION_VERSION 2
 
