@@ -84,7 +84,9 @@ struct HotspotResource {
 	uint16 npcSchedule;
 	uint16 characterMode;
 	uint16 delayCtr;
-};
+	byte flags2;
+	byte hdrFlags;
+} GCC_PACK;
 
 struct HotspotAnimResource {
 	uint16 animRecordId;
@@ -411,6 +413,8 @@ public:
 	uint16 npcSchedule;
 	CharacterMode characterMode;
 	uint16 delayCtr;
+	uint8 flags2;
+	uint8 headerFlags;
 
 	// Runtime fields
 	uint16 actionCtr;
