@@ -84,35 +84,6 @@ GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
 } // End of namespace Base
 
 
-static void setupDummyPalette(OSystem &system) {
-	// FIXME - mouse cursors are currently always set via 8 bit data.
-	// Thus for now we need to setup a dummy palette. On the long run, we might
-	// want to add a setMouseCursor_overlay() method to OSystem, which would serve
-	// two purposes:
-	// 1) allow for 16 bit mouse cursors in overlay mode
-	// 2) no need to backup & restore the mouse cursor before/after the overlay is shown
-	const byte dummy_palette[] = {
-		0, 0, 0, 0,
-		0, 0, 171, 0,
-		0, 171, 0, 0,
-		0, 171, 171, 0,
-		171, 0, 0, 0,
-		171, 0, 171, 0,
-		171, 87, 0, 0,
-		171, 171, 171, 0,
-		87, 87, 87, 0,
-		87, 87, 255, 0,
-		87, 255, 87, 0,
-		87, 255, 255, 0,
-		255, 87, 87, 0,
-		255, 87, 255, 0,
-		255, 255, 87, 0,
-		255, 255, 255, 0,
-	};
-
-	system.setPalette(dummy_palette, 0, 16);
-}
-
 static bool launcherDialog(OSystem &system) {
 
 	system.beginGFXTransaction();
@@ -125,9 +96,6 @@ static bool launcherDialog(OSystem &system) {
 
 	// Clear the main screen
 	system.clearScreen();
-
-	// Setup a dummy palette, for the mouse cursor
-	setupDummyPalette(system);
 
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;
@@ -319,10 +287,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
-
-	// Setup a dummy palette, for the mouse cursor, in case an error
-	// dialog has to be shown. See bug #1097467.
-	setupDummyPalette(system);
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain()) {
