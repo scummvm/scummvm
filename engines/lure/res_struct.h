@@ -86,7 +86,7 @@ struct HotspotResource {
 	uint16 delayCtr;
 	byte flags2;
 	byte hdrFlags;
-} GCC_PACK;
+};
 
 struct HotspotAnimResource {
 	uint16 animRecordId;
