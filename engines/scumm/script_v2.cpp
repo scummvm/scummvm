@@ -94,7 +94,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o5_delayVariable),
 		/* 2C */
 		OPCODE(o2_assignVarByte),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_delay),
 		OPCODE(o2_ifNotState04),
 		/* 30 */
@@ -174,7 +174,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_dummy),
 		/* 6C */
 		OPCODE(o2_getObjPreposition),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
 		/* 70 */
@@ -254,7 +254,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_switchCostumeSet),
 		/* AC */
 		OPCODE(o2_drawSentence),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_waitForMessage),
 		OPCODE(o2_ifNotState04),
 		/* B0 */
@@ -334,7 +334,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_dummy),
 		/* EC */
 		OPCODE(o2_getObjPreposition),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
 		/* F0 */
@@ -1146,6 +1146,9 @@ void ScummEngine_v2::o2_putActor() {
 	x = getVarOrDirectByte(PARAM_2) * 8;
 	y = getVarOrDirectByte(PARAM_3) * 2;
 
+	if (_game.id == GID_MANIAC && _game.version <= 1 && _game.platform != Common::kPlatformNES)
+		a->setFacing(180);
+
 	a->putActor(x, y, a->_room);
 }
 
@@ -1225,6 +1228,22 @@ void ScummEngine_v2::o2_putActorAtObject() {
 	}
 
 	a->putActor(x, y, a->_room);
+}
+
+void ScummEngine_v2::o2_putActorInRoom() {
+	Actor *a;
+	int act = getVarOrDirectByte(PARAM_1);
+	int room = getVarOrDirectByte(PARAM_2);
+
+	a = derefActor(act, "o2_putActorInRoom");
+
+	a->_room = room;
+	if (!room) {
+		if (_game.id == GID_MANIAC && _game.version <= 1 && _game.platform != Common::kPlatformNES)
+			a->setFacing(180);
+
+		a->putActor(0, 0, 0);
+	}
 }
 
 void ScummEngine_v2::o2_getActorElevation() {

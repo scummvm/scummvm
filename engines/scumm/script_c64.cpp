@@ -92,7 +92,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_setActorBitVar),
 		/* 2C */
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o_print_c64),
 		OPCODE(o2_ifState08),
 		/* 30 */
@@ -172,7 +172,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_setActorBitVar),
 		/* 6C */
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState08),
 		/* 70 */
@@ -252,7 +252,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_setActorBitVar),
 		/* AC */
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o_print_c64),
 		OPCODE(o2_ifNotState08),
 		/* B0 */
@@ -332,7 +332,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_setActorBitVar),
 		/* EC */
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_putActorInRoom),
+		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifNotState08),
 		/* F0 */
