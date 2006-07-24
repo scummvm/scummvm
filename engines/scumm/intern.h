@@ -364,6 +364,7 @@ protected:
 	void o2_pickupObject();
 	void o2_putActor();
 	void o2_putActorAtObject();
+	void o2_putActorInRoom();
 	void o2_resourceRoutines();
 	void o2_restart();
 	void o2_roomOps();

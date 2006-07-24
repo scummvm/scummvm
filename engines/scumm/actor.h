@@ -233,6 +233,10 @@ public:
 		return _facing;
 	}
 
+	void setFacing(int newFacing) {
+		_facing = newFacing;
+	}
+
 	int getAnimVar(byte var) const;
 	void setAnimVar(byte var, int value);
 
