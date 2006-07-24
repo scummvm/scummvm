@@ -1639,7 +1639,8 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (_pos.x == abr.x && _pos.y == abr.y) {
-		turnToDirection(dir);
+		if (dir != _facing)
+			turnToDirection(dir);
 		return;
 	}
 
@@ -1713,10 +1714,8 @@ void Actor::walkActor() {
 			setBox(_walkdata.destbox);
 			if (_vm->_game.version <= 6) {
 				startAnimActor(_standFrame);
-				if (!_ignoreTurns && _walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
-					_targetFacing = _walkdata.destdir;
-					_moving = MF_TURN;
-				}
+				if (_targetFacing != _walkdata.destdir)
+					turnToDirection(_walkdata.destdir);
 			} else {
 				startWalkAnim(3, _walkdata.destdir);
 			}
@@ -1793,10 +1792,8 @@ void Actor::walkActorV12() {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
 			startAnimActor(_standFrame);
-			if (_walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
-				_targetFacing = _walkdata.destdir;
-				_moving = MF_TURN;
-			}
+			if (_targetFacing != _walkdata.destdir)
+				turnToDirection(_walkdata.destdir);
 		} else {
 			setBox(_walkdata.curbox);
 			if (_walkbox == _walkdata.destbox) {
@@ -1840,10 +1837,8 @@ void Actor::walkActorOld() {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
 			startAnimActor(_standFrame);
-			if (_walkdata.destdir != -1 && _targetFacing != _walkdata.destdir) {
-				_targetFacing = _walkdata.destdir;
-				_moving = MF_TURN;
-			}
+			if (_targetFacing != _walkdata.destdir)
+				turnToDirection(_walkdata.destdir);
 			return;
 		}
 
