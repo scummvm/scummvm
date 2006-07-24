@@ -67,28 +67,76 @@ public:
 	static void addDefaultDirectoryRecursive(const FilesystemNode &directory, int level = 4, const String &prefix = "");
 
 	static void resetDefaultDirectories();
-	
 
 	File();
 	virtual ~File();
 
+	/**
+	 * Checks if a given file exists in any of the current default paths
+	 * (those were/are added by addDefaultDirectory and/or
+	 * addDefaultDirectoryRecursive).
+	 *
+	 * @param filename: the file to check for
+	 * @return: true if the file exists, else false
+	 */
+	static bool exists(const String &filename);
 
+	/**
+	 * Increases the reference counter of the file object.
+	 * This can be used to share file objects between different
+	 * parts of the code. Some systems (like Symbian don't support
+	 * it thought). It should just be used on file objects
+	 * allocated with new, since decRef destroies the object
+	 * with delete if the counter reaches zero.
+	 *
+	 * This is a possible candidate to be reworked in the future
+	 * see the TODO list for more information.
+	 */
 	void incRef();
+
+	/**
+	 * Decreases the reference counter of the file object.
+	 * If the counter is zero after this call, the file object will
+	 * be deleted, with delete. It should just be used on file objects
+	 * allocated with new out of that reason.
+	 *
+	 * This is a possible candidate to be reworked in the future
+	 * see the TODO list for more information.
+	 */
 	void decRef();
 
 	virtual bool open(const String &filename, AccessMode mode = kFileReadMode);
 	virtual bool open(const FilesystemNode &node, AccessMode mode = kFileReadMode);
-	static bool exists(const String &filename);
 
 	virtual void close();
+
+	/**
+	 * Checks if the object opened a file successfully.
+	 *
+	 * @return: true if any file is opened, false otherwise.
+	 */
 	bool isOpen() const;
+
+	/**
+	 * Returns the filename of the opened file.
+	 *
+	 * @return: the filename
+	 */
+	const char *name() const { return _name.c_str(); }
+
 	bool ioFailed() const;
 	void clearIOFailed();
 	bool eos() const { return eof(); }
+
+	/**
+	 * Checks for end of file.
+	 *
+	 * @return: true if the end of file is reached, false otherwise.
+	 */
 	bool eof() const;
+
 	uint32 pos() const;
 	uint32 size() const;
-	const char *name() const { return _name.c_str(); }
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
 	uint32 write(const void *dataPtr, uint32 dataSize);
