@@ -1133,9 +1133,9 @@ void SimonEngine::o_pauseGame() {
 			}
 		}
 #endif
-		if (_keyPressed == keyYes)
+		if (_keyPressed == keyYes || _keyPressed == (keyYes - 32))
 			shutdown();
-		else if (_keyPressed == keyNo)
+		else if (_keyPressed == keyNo || _keyPressed == (keyNo - 32))
 			break;
 	}
 
