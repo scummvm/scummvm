@@ -93,59 +93,70 @@ int KyraEngine_v3::init() {
 }
 
 int KyraEngine_v3::go() {
-	_screen->_curPage = 0;
-	_screen->clearPage(0);
-	
-	uint8 pal[768];
-	memset(pal, 0, sizeof(pal));
+	uint8 *pal = _screen->getPalette(1);
+	assert(pal);
 	
 	WSAMovieV3 *logo = new WSAMovieV3(this);
+	assert(logo);
 	logo->open("REVENGE.WSA", 1, pal);
 	assert(logo->opened());
 	
-	pal[0] = pal[1] = pal[2] = 0;
-	
-	_screen->setScreenPalette(pal);
-	
-	// XXX
-	playMenuAudioFile();
-	
-	logo->setX(0); logo->setY(0);
-	logo->setDrawPage(0);
+	bool running = true;
+	while (running) {
+		_screen->_curPage = 0;
+		_screen->clearPage(0);
 
-	for (int i = 0; i < 64 && !_quitFlag; ++i) {
-		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-		logo->displayFrame(i);
-		_screen->updateScreen();
-		delayUntil(nextRun);
-	}
+		pal[0] = pal[1] = pal[2] = 0;
+		
+		_screen->setScreenPalette(pal);
+		
+		// XXX
+		playMenuAudioFile();
+		
+		logo->setX(0); logo->setY(0);
+		logo->setDrawPage(0);
 
-	for (int i = 64; i > 29 && !_quitFlag; --i) {
-		uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-		logo->displayFrame(i);
-		_screen->updateScreen();
-		delayUntil(nextRun);
+		for (int i = 0; i < 64 && !_quitFlag; ++i) {
+			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
+			logo->displayFrame(i);
+			_screen->updateScreen();
+			delayUntil(nextRun);
+		}
+
+		for (int i = 64; i > 29 && !_quitFlag; --i) {
+			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
+			logo->displayFrame(i);
+			_screen->updateScreen();
+			delayUntil(nextRun);
+		}
+		
+		switch (handleMainMenu(logo)) {
+		case 0:
+			//delete logo;
+			//logo = 0;
+			//XXX run game
+			//running = false;
+			break;
+		
+		case 1:
+			playVQA("K3INTRO");
+			break;
+		
+		case 2:
+			//delete logo;
+			//logo = 0;
+			//show load dialog
+			//running = false;
+			break;
+		
+		case 3:
+			running = false;
+			break;
+		
+		default:
+			break;
+		}
 	}
-	
-	switch (handleMainMenu(logo)) {
-	case 0:
-		break;
-	
-	case 1:
-		playVQA("K3INTRO");
-		// TODO: Restart the menu animation
-		break;
-	
-	case 2:
-		break;
-	
-	case 3:
-		break;
-	
-	default:
-		break;
-	}
-	
 	delete logo;
 
 	return 0;
@@ -301,8 +312,8 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 				// TODO: Flash the text
 				command = item;
 
-				// TODO: For now, only the intro is supported
-				if (command != 1)
+				// TODO: For now, only playing the intro and quitting is supported
+				if (command != 1 && command != 3)
 					command = -1;
 			}
 		}

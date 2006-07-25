@@ -104,6 +104,7 @@ KyraEngine::KyraEngine(OSystem *system)
 	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_features = 0;
+	_quitFlag = false;
 }
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system)
