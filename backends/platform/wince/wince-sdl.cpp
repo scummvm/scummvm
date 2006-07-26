@@ -483,8 +483,8 @@ void OSystem_WINCE3::move_cursor_down() {
 	else
 		y += _stepY1;
 
-	if (y > 240)
-		y = 240;
+	if (y > _screenHeight*_scaleFactorYm/_scaleFactorYd)
+		y = _screenHeight*_scaleFactorYm/_scaleFactorYd;
 
 	EventsBuffer::simulateMouseMove(x, y);
 }
@@ -519,8 +519,8 @@ void OSystem_WINCE3::move_cursor_right() {
 	else
 		x += _stepX1;
 
-	if (x > 320)
-		x = 320;
+	if (x > _screenWidth*_scaleFactorXm/_scaleFactorXd)
+		x = _screenWidth*_scaleFactorXm/_scaleFactorXd;
 
 	EventsBuffer::simulateMouseMove(x, y);
 }
