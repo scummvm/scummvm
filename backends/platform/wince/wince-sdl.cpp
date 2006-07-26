@@ -908,7 +908,8 @@ bool OSystem_WINCE3::update_scalers() {
 			_modeFlags = 0;
 		}
 		if ( _orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
-			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible) {
+			Common::String gameid(ConfMan.get("gameid"));	// consider removing this check and start honoring the _adjustAspectRatio flag
+			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && !(strncmp(gameid.c_str(), "zak", 3) == 0)) {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 6;
