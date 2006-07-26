@@ -23,7 +23,6 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "common/mutex.h"
-#include "common/timer.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 
