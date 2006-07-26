@@ -177,7 +177,7 @@ void KyraEngine::seq_introLogos() {
 		if (wait > 0) {
 			delay(wait);
 		}
-	} while (y2 >= 64 && !_quitFlag);
+	} while (y2 >= 64 && !_quitFlag && !_abortIntroFlag);
 
 	if (_quitFlag)
 		return;
