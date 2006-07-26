@@ -102,7 +102,7 @@ int KyraEngine_v3::go() {
 	assert(logo->opened());
 	
 	bool running = true;
-	while (running) {
+	while (running && !_quitFlag) {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
