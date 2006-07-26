@@ -627,7 +627,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		uint8 seqCode = *_seqData++;
 		if (seqCode < numCommands) {
 			SeqProc currentProc = commands[seqCode].proc;
-			debugC( 5, kDebugLevelSequence, "seqCode = %d (%s)", seqCode, commands[seqCode].desc);
+			debugC(5, kDebugLevelSequence, "seqCode = %d (%s)", seqCode, commands[seqCode].desc);
 			(this->*currentProc)();
 		} else {
 			error("Invalid sequence opcode %d", seqCode);
