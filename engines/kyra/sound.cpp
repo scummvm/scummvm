@@ -118,6 +118,11 @@ SoundMidiPC::SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *en
 }
 
 SoundMidiPC::~SoundMidiPC() {
+	stopMusic();
+	stopSoundEffect();
+
+	Common::StackLock lock(_mutex);
+
 	_driver->setTimerCallback(NULL, NULL);
 	close();
 }
@@ -243,6 +248,8 @@ void SoundMidiPC::loadMusicFile(const char *file) {
 void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 	stopMusic();
 
+	Common::StackLock lock(_mutex);
+
 	_parserSource = data;
 	_parser = MidiParser::createParser_XMIDI();
 	assert(_parser);
@@ -278,6 +285,8 @@ void SoundMidiPC::loadSoundEffectFile(const char *file) {
 void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 	stopSoundEffect();
 
+	Common::StackLock lock(_mutex);
+
 	_soundEffectSource = data;
 	_soundEffect = MidiParser::createParser_XMIDI();
 	assert(_soundEffect);
@@ -296,6 +305,8 @@ void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 }
 
 void SoundMidiPC::stopMusic() {
+	Common::StackLock lock(_mutex);
+
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
@@ -311,6 +322,8 @@ void SoundMidiPC::stopMusic() {
 }
 
 void SoundMidiPC::stopSoundEffect() {
+	Common::StackLock lock(_mutex);
+
 	_sfxIsPlaying = false;
 	if (_soundEffect) {
 		_soundEffect->unloadMusic();
@@ -323,6 +336,7 @@ void SoundMidiPC::stopSoundEffect() {
 
 void SoundMidiPC::onTimer(void *refCon) {
 	SoundMidiPC *music = (SoundMidiPC *)refCon;
+	Common::StackLock lock(music->_mutex);
 
 	// this should be set to the fadeToBlack value
 	static const uint32 musicFadeTime = 2 * 1000;
