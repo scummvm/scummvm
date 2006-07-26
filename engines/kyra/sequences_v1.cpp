@@ -135,18 +135,21 @@ void KyraEngine::seq_introLogos() {
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	
-	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag)) {
+	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag) || _quitFlag) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
 	delay(60 * _tickLength);
-	if (_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence()) {
+	if (_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence() || _quitFlag) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
 	_screen->fillRect(0, 179, 319, 199, 0);
+
+	if (_quitFlag)
+		return;
 
 	int y1 = 8;
 	int h1 = 175;
@@ -174,7 +177,10 @@ void KyraEngine::seq_introLogos() {
 		if (wait > 0) {
 			delay(wait);
 		}
-	} while (y2 >= 64);
+	} while (y2 >= 64 && !_quitFlag);
+
+	if (_quitFlag)
+		return;
 
 	_seq->playSequence(_seq_Forest, true);
 }
