@@ -26,9 +26,12 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "common/mutex.h"
+
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
+
 #include "kyra/kyra.h"
 
 namespace Audio {
@@ -200,6 +203,8 @@ private:
 	byte *_parserSource;
 	MidiParser *_soundEffect;
 	byte *_soundEffectSource;
+
+	Common::Mutex _mutex;
 };
 
 class MixedSoundDriver : public Sound {
