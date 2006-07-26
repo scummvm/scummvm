@@ -327,6 +327,7 @@ int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	_screen->setFont(oldFont);
 	
 	if (command == 3) {
+		_soundDigital->beginFadeOut(_musicSoundChannel);
 		_screen->fadeToBlack();
 		_soundDigital->stopSound(_musicSoundChannel);
 		_musicSoundChannel = -1;
