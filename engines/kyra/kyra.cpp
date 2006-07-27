@@ -1116,7 +1116,7 @@ void KyraEngine::runNpcScript(int func) {
 int KyraEngine::runOpcode(ScriptState *script, uint8 opcode) {
 	debugC(9, kDebugLevelMain | kDebugLevelScript, "KyraEngine::runOpcode(%p, %d)", (void *)script, opcode);
 	assert(opcode < _opcodeTableSize);
-	if (_opcodeTable[opcode] == &KyraEngine::c1_dummy)
+	if (_opcodeTable[opcode] == &KyraEngine::o1_dummy)
 		warning("calling unimplemented opcode(0x%.02X)", opcode);
 	int val = (this->*_opcodeTable[opcode])(script);
 	assert(script);
