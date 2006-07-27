@@ -479,7 +479,7 @@ void KyraEngine::startup() {
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
 
-	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, _opcodeTable, _opcodeTableSize, 0)) {
+	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, 0)) {
 		error("Could not load \"_STARTUP.EMC\" script");
 	}
 	_scriptInterpreter->initScript(_scriptMain, _npcScriptData);
@@ -491,7 +491,7 @@ void KyraEngine::startup() {
 	}
 	
 	_scriptInterpreter->unloadScript(_npcScriptData);
-	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, _opcodeTable, _opcodeTableSize, 0)) {
+	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, 0)) {
 		error("Could not load \"_NPC.EMC\" script");
 	}
 	
@@ -1111,6 +1111,16 @@ void KyraEngine::runNpcScript(int func) {
 	while (_scriptInterpreter->validScript(_npcScript)) {
 		_scriptInterpreter->runScript(_npcScript);
 	}
+}
+
+int KyraEngine::runOpcode(ScriptState *script, uint8 opcode) {
+	debugC(9, kDebugLevelMain | kDebugLevelScript, "KyraEngine::runOpcode(%p, %d)", (void *)script, opcode);
+	assert(opcode < _opcodeTableSize);
+	if (_opcodeTable[opcode] == &KyraEngine::c1_dummy)
+		warning("calling unimplemented opcode(0x%.02X)", opcode);
+	int val = (this->*_opcodeTable[opcode])(script);
+	assert(script);
+	return val;
 }
 
 } // End of namespace Kyra

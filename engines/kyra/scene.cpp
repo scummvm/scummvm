@@ -471,7 +471,7 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".EMC");
 	_scriptInterpreter->unloadScript(_scriptClickData);
-	_scriptInterpreter->loadScript(fileNameBuffer, _scriptClickData, _opcodeTable, _opcodeTableSize, 0);
+	_scriptInterpreter->loadScript(fileNameBuffer, _scriptClickData, 0);
 	_scriptInterpreter->startScript(_scriptClick, 0);
 	_scriptClick->variables[0] = _currentCharacter->sceneId;
 	_scriptClick->variables[7] = brandonAlive;

@@ -31,9 +31,9 @@ struct ScriptData {
 	byte *data;
 	byte *ordr;
 	uint16 dataSize;
-	KyraEngine::OpcodeProc *opcodes;
-	int opcodeSize;
 	uint16 mustBeFreed;
+	
+	int opcodeTable;	// indicates which opcode table to use (for Kyra3)
 };
 
 struct ScriptState {
@@ -51,7 +51,7 @@ public:
 	ScriptHelper(KyraEngine *vm);
 	virtual ~ScriptHelper();
 	
-	bool loadScript(const char *filename, ScriptData *data, KyraEngine::OpcodeProc *opcodes, int opcodeSize, byte *specialPtr = 0);
+	bool loadScript(const char *filename, ScriptData *data, byte *specialPtr = 0);
 	void unloadScript(ScriptData *data);
 	
 	void initScript(ScriptState *scriptState, ScriptData *data);

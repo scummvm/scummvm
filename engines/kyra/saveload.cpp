@@ -30,7 +30,7 @@
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 
-#define CURRENT_VERSION 5
+#define CURRENT_VERSION 6
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
@@ -145,8 +145,9 @@ void KyraEngine::loadGame(const char *fileName) {
 	}
 	_timerNextRun = 0;
 
+	memset(_flagsTable, 0, sizeof(_flagsTable));
 	uint32 flagsSize = in->readUint32BE();
-	assert(flagsSize == sizeof(_flagsTable));
+	assert(flagsSize <= sizeof(_flagsTable));
 	in->read(_flagsTable, flagsSize);
 
 	for (int i = 0; i < _roomTableSize; ++i) {
