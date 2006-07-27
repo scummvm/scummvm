@@ -705,7 +705,7 @@ protected:
 	bool _abortWalkFlag2;
 	bool _mousePressFlag;
 	int8 _mouseWheel;
-	uint8 _flagsTable[53];
+	uint8 _flagsTable[69];
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint16 _tickLength;
@@ -1021,47 +1021,6 @@ public:
 	int setupGameFlags() { _game = GI_KYRA2; return 0; }
 	
 	int go();
-};
-
-// maybe subclass KyraEngine_v2 later
-class WSAMovieV3;
-
-class KyraEngine_v3 : public KyraEngine {
-public:
-	KyraEngine_v3(OSystem *system);
-	~KyraEngine_v3();
-	
-	Movie *createWSAMovie();
-	
-	SoundDigital *soundDigital() { return _soundDigital; }
-
-	int setupGameFlags();
-	
-	int go();
-
-	void playVQA(const char *name);
-private:
-	int init();
-
-	SoundDigital *_soundDigital;
-	
-	int _lang;
-	
-	// sound specific
-private:
-	void playMenuAudioFile();
-	
-	int _musicSoundChannel;
-	const char *_menuAudioFile;
-
-	// gui/menu specific
-private:
-	static const char *_mainMenuStrings[];
-	int handleMainMenu(WSAMovieV3 *logo);
-	void drawMainMenu(const char * const *strings, int select);
-	void drawMainBox(int x, int y, int w, int h, int fill);
-	
-	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
 };
 
 } // End of namespace Kyra

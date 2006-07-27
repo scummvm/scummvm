@@ -20,6 +20,7 @@
  */
 
 #include "kyra/kyra.h"
+#include "kyra/kyra3.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"

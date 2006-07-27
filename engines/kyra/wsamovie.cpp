@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "kyra/kyra.h"
+#include "kyra/kyra3.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 

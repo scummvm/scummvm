@@ -46,10 +46,6 @@ struct ScriptState {
 	int16 stack[61];
 };
 
-enum {
-	SCRIPT_INIT = 0
-};
-
 class ScriptHelper {
 public:
 	ScriptHelper(KyraEngine *vm);

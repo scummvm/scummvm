@@ -21,6 +21,7 @@
  */
 
 #include "kyra/kyra.h"
+#include "kyra/kyra3.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
@@ -38,10 +39,18 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
+	_curMusicTrack = -1;
+	_unkPage1 = _unkPage2 = 0;
+	_interfaceCPS1 = _interfaceCPS2 = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
 	delete _soundDigital;
+	
+	delete [] _unkPage1;
+	delete [] _unkPage2;
+	delete [] _interfaceCPS1;
+	delete [] _interfaceCPS2;
 }
 
 int KyraEngine_v3::setupGameFlags() {
@@ -132,10 +141,12 @@ int KyraEngine_v3::go() {
 		
 		switch (handleMainMenu(logo)) {
 		case 0:
-			//delete logo;
-			//logo = 0;
-			//XXX run game
-			//running = false;
+			delete logo;
+			logo = 0;
+			preinit();
+			realInit();
+			// XXX
+			running = false;
 			break;
 		
 		case 1:
@@ -192,6 +203,8 @@ void KyraEngine_v3::playVQA(const char *name) {
 	}
 }
 
+#pragma mark -
+
 void KyraEngine_v3::playMenuAudioFile() {
 	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile()");
 	if (_soundDigital->isPlaying(_musicSoundChannel))
@@ -202,8 +215,83 @@ void KyraEngine_v3::playMenuAudioFile() {
 	_res->fileHandle(_menuAudioFile, &temp, *handle);
 	if (handle->isOpen()) {
 		_musicSoundChannel = _soundDigital->playSound(handle, true);
+	} else {
+		delete handle;
 	}
 }
+
+void KyraEngine_v3::playMusicTrack(int track, int force) {
+	debugC(9, kDebugLevelMain, "KyraEngine::playMusicTrack(%d, %d)", track, force);
+	
+	// XXX byte_2C87C compare
+	
+	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel)) {
+		force = 1;
+	} else if (_musicSoundChannel == -1) {
+		force = 1;
+	}
+	
+	if (track == _curMusicTrack && !force)
+		return;
+	
+	stopMusicTrack();
+	
+	if (_musicSoundChannel == -1) {
+		assert(track < _soundListSize && track >= 0);
+
+		Common::File *handle = new Common::File();
+		uint32 temp = 0;
+		_res->fileHandle(_soundList[track], &temp, *handle);
+		if (handle->isOpen()) {
+			_musicSoundChannel = _soundDigital->playSound(handle);
+		} else {
+			delete handle;
+		}
+	}
+	
+	_musicSoundChannel = track;
+}
+
+void KyraEngine_v3::stopMusicTrack() {
+	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel)) {
+		_soundDigital->stopSound(_musicSoundChannel);
+	}
+	
+	_curMusicTrack = -1;
+	_musicSoundChannel = -1;
+}
+
+int KyraEngine_v3::musicUpdate(int forceRestart) {
+	debugC(9, kDebugLevelMain, "KyraEngine::unkUpdate(%d)", forceRestart);
+	
+	static uint32 timer = 0;
+	static uint16 lock = 0;
+
+	if (ABS<int>(_system->getMillis() - timer) > (int)(0x0F * _tickLength)) {
+		timer = _system->getMillis();
+	}
+	
+	if (_system->getMillis() < timer && !forceRestart) {
+		return 1;
+	}
+
+	if (!lock) {
+		lock = 1;
+		if (_musicSoundChannel >= 0) {
+			// XXX sub_1C262 (sound specific. it seems to close some sound resource files in special cases)
+			if (!_soundDigital->isPlaying(_musicSoundChannel)) {
+				if (_curMusicTrack != -1)
+					playMusicTrack(_curMusicTrack, 1);
+			}
+		}
+		lock = 0;
+		timer = _system->getMillis() + 0x0F * _tickLength;
+	}
+	
+	return 1;
+}
+
+#pragma mark -
 
 int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
 	debugC(9, kDebugLevelMain, "KyraEngine::handleMainMenu(%p)", (const void*)logo);
@@ -398,6 +486,36 @@ void KyraEngine_v3::gui_printString(const char *format, int x, int y, int col1, 
 	}
 	
 	_screen->printText(string, x, y, col1, col2);
+}
+
+#pragma mark -
+
+void KyraEngine_v3::preinit() {
+	debugC(9, kDebugLevelMain, "KyraEngine::preinit()");
+
+	musicUpdate(0);
+
+	// XXX snd_allocateSoundBuffer?
+	memset(_flagsTable, 0, sizeof(_flagsTable));
+
+	// XXX
+	setGameFlag(0x216);
+	
+	_unkPage1 = new uint8[64000];
+	assert(_unkPage1);
+	
+	musicUpdate(0);
+	musicUpdate(0);
+	
+	_interfaceCPS1 = new uint8[17920];
+	_interfaceCPS2 = new uint8[3840];
+	assert(_interfaceCPS1 && _interfaceCPS2);
+	
+	_screen->setFont(Screen::FID_6_FNT);
+}
+
+void KyraEngine_v3::realInit() {
+	debugC(9, kDebugLevelMain, "KyraEngine::realInit()");
 }
 
 } // end of namespace Kyra

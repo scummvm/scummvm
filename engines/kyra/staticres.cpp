@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "kyra/kyra.h"
+#include "kyra/kyra3.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 
@@ -1240,5 +1241,52 @@ const char *KyraEngine_v3::_mainMenuStrings[] = {
 	"Spiel beenden",
 	0
 };
+
+const char *KyraEngine_v3::_soundList[] = {
+	"ARREST1.AUD",
+	"BATH1.AUD",
+	"OCEAN1.AUD",
+	"CLOWN1.AUD",
+	"DARM2.AUD",
+	"FALL1M.AUD",
+	"FALL2.AUD",
+	"FISH1.AUD",
+	"FISHWNDR.AUD",
+	"HERMAN1.AUD",
+	"JAIL1.AUD",
+	"JUNGLE1.AUD",
+	"KATHY1.AUD",
+	"NICESINE.AUD",
+	"PEGASUS1.AUD",
+	"PIRATE1.AUD",
+	"PIRATE2.AUD",
+	"PIRATE3.AUD",
+	"POP3.AUD",
+	"PORT1.AUD",
+	"QUEEN1.AUD",
+	"RUINS1.AUD",
+	"SNAKES1.AUD",
+	"SPRING1.AUD",
+	"STATUE1.AUD",
+	"STATUE2.AUD",
+	"TITLE1.AUD",
+	"UNDER1.AUD",
+	"WALKCHP1.AUD",
+	"YANK1.AUD",
+	"ZAN2.AUD",
+	"GROOVE2.AUD",
+	"GROOVE3.AUD",
+	"KING1.AUD",
+	"KING2.AUD",
+	"GROOVE1.AUD",
+	"JAIL2.AUD",
+	"SPIRIT1.AUD",
+	"SPRING1A.AUD",
+	"POP1.AUD",
+	"POP2.AUD",
+	"SQUIRL1.AUD"
+};
+
+const int KyraEngine_v3::_soundListSize = ARRAYSIZE(KyraEngine_v3::_soundList);
 
 } // End of namespace Kyra
