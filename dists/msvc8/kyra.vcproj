@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -192,7 +192,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\kyra2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra2.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\kyra3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra3.h"
 			>
 		</File>
 		<File
