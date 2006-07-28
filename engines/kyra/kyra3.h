@@ -74,7 +74,7 @@ private:
 	// gui/menu specific
 private:
 	static const char *_mainMenuStrings[];
-	int handleMainMenu(WSAMovieV2 *logo);
+	int handleMainMenu(Movie *logo);
 	void drawMainMenu(const char * const *strings, int select);
 	void drawMainBox(int x, int y, int w, int h, int fill);
 	
