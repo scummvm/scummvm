@@ -111,10 +111,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system)
 	: KyraEngine(system) {
 }
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system)
-	: KyraEngine(system) {
-}
-
 int KyraEngine::init() {
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -383,15 +379,11 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 }
 
-KyraEngine_v2::~KyraEngine_v2() {
-}
-
 void KyraEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
 int KyraEngine::go() {
-	_quitFlag = false;
 
 	if (_features & GF_FLOPPY && !(_features & GF_AMIGA)) {
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
@@ -419,15 +411,6 @@ int KyraEngine::go() {
 	return 0;
 }
 
-int KyraEngine_v2::go() {
-	// Kyra2 goes here :)
-	loadPalette("palette.col", _screen->_currentPalette);
-	_screen->setScreenPalette(_screen->_currentPalette);
-	_screen->loadBitmap("_playfld.cps", 0, 0, 0);
-	_screen->updateScreen();
-	waitForEvent();
-	return 0;
-}
 
 void KyraEngine::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine::startup()");

@@ -1014,16 +1014,6 @@ public:
 	int setupGameFlags();
 };
 
-class KyraEngine_v2 : public KyraEngine {
-public:
-	KyraEngine_v2(OSystem *system);
-	~KyraEngine_v2();
-
-	int setupGameFlags() { _game = GI_KYRA2; return 0; }
-	
-	int go();
-};
-
 } // End of namespace Kyra
 
 #endif

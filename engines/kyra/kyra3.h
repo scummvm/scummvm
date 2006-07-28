@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef KYRA_KYRA3_H
-#define KYRA_KYRA3_H
+#ifndef KYRA3_H
+#define KYRA3_H
 
 #include "kyra/kyra.h"
 
 namespace Kyra {
 
 // maybe subclass KyraEngine_v2 later
-class WSAMovieV3;
+class WSAMovieV2;
 
 class KyraEngine_v3 : public KyraEngine {
 public:
@@ -74,7 +74,7 @@ private:
 	// gui/menu specific
 private:
 	static const char *_mainMenuStrings[];
-	int handleMainMenu(WSAMovieV3 *logo);
+	int handleMainMenu(WSAMovieV2 *logo);
 	void drawMainMenu(const char * const *strings, int select);
 	void drawMainBox(int x, int y, int w, int h, int fill);
 	

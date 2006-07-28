@@ -398,6 +398,9 @@ bool VQAMovie::open(const char *filename) {
 			}
 
 			break;
+		case MKID_BE('CMDS'):	// Unused tag, always empty in kyra3
+			debugC(9, kDebugLevelMovie, "VQAMovie::open: skipping CMDS tag");
+			break;
 
 		default:
 			warning("VQAMovie::open: Unknown tag `%c%c%c%c'", (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);

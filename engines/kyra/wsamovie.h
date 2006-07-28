@@ -90,12 +90,9 @@ protected:
 	uint8 *_frameData;
 };
 
-class KyraEngine_v3;
-
-// it could be possible that Kyrandia2 uses exactly the same format
-class WSAMovieV3 : public WSAMovieV1 {
+class WSAMovieV2 : public WSAMovieV1 {
 public:
-	WSAMovieV3(KyraEngine_v3 *vm);
+	WSAMovieV2(KyraEngine *vm);
 	
 	void open(const char *filename, int unk1, uint8 *palette);
 	
@@ -108,7 +105,6 @@ public:
 	int width() const { return _width; }
 	int height() const { return _height; }
 protected:
-	KyraEngine_v3 *_vm3;
 	
 	int16 _xAdd;
 	int16 _yAdd;

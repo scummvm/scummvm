@@ -83,7 +83,7 @@ int KyraEngine_v3::setupGameFlags() {
 }
 
 Movie *KyraEngine_v3::createWSAMovie() {
-	return new WSAMovieV3(this);
+	return new WSAMovieV2(this);
 }
 
 int KyraEngine_v3::init() {
@@ -105,7 +105,7 @@ int KyraEngine_v3::go() {
 	uint8 *pal = _screen->getPalette(1);
 	assert(pal);
 	
-	WSAMovieV3 *logo = new WSAMovieV3(this);
+	WSAMovieV2 *logo = new WSAMovieV2(this);
 	assert(logo);
 	logo->open("REVENGE.WSA", 1, pal);
 	assert(logo->opened());
@@ -293,7 +293,7 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 
 #pragma mark -
 
-int KyraEngine_v3::handleMainMenu(WSAMovieV3 *logo) {
+int KyraEngine_v3::handleMainMenu(WSAMovieV2 *logo) {
 	debugC(9, kDebugLevelMain, "KyraEngine::handleMainMenu(%p)", (const void*)logo);
 	int command = -1;
 	
