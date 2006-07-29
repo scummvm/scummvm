@@ -99,8 +99,7 @@ int EG_AED;
 #define ENV_MOD_AR  0x02
 
 /* -------------------- tables --------------------- */
-static const int slot_array[32]=
-{
+static const int slot_array[32] = {
 	 0, 2, 4, 1, 3, 5,-1,-1,
 	 6, 8,10, 7, 9,11,-1,-1,
 	12,14,16,13,15,17,-1,-1,
@@ -152,7 +151,7 @@ static const double KSL_TABLE_SEED[8 * 16] = {
 	19.875, 20.250, 20.625, 21.000
 };
 
-/* sustain lebel table (3db per step) */
+/* sustain level table (3db per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
 
 static int SL_TABLE[16];
