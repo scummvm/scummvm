@@ -300,6 +300,7 @@ inline void OPL_KEYON(OPL_SLOT *SLOT) {
 	SLOT->evc = EG_AST;
 	SLOT->eve = EG_AED;
 }
+
 /* ----- key off ----- */
 inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
 	if( SLOT->evm > ENV_MOD_RR) {
@@ -343,11 +344,12 @@ inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
 }
 
 /* ---------- calcrate Envelope Generator & Phase Generator ---------- */
+
 /* return : envelope output */
 inline uint OPL_CALC_SLOT(OPL_SLOT *SLOT) {
 	/* calcrate envelope generator */
 	if((SLOT->evc += SLOT->evs) >= SLOT->eve) {
-		switch( SLOT->evm ){
+		switch( SLOT->evm ) {
 		case ENV_MOD_AR: /* ATTACK -> DECAY1 */
 			/* next DR */
 			SLOT->evm = ENV_MOD_DR;
@@ -391,8 +393,7 @@ inline void CALC_FCSLOT(OPL_CH *CH, OPL_SLOT *SLOT) {
 	SLOT->Incr = CH->fc * SLOT->mul;
 	ksr = CH->kcode >> SLOT->KSR;
 
-	if( SLOT->ksr != ksr )
-	{
+	if( SLOT->ksr != ksr ) {
 		SLOT->ksr = ksr;
 		/* attack , decay rate recalcration */
 		SLOT->evsa = SLOT->AR[ksr];
@@ -464,6 +465,7 @@ inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
 }
 
 /* operator output calcrator */
+
 #define OP_OUT(slot,env,con)   slot->wavetable[((slot->Cnt + con) / (0x1000000 / SIN_ENT)) & (SIN_ENT-1)][env]
 /* ---------- calcrate one of channel ---------- */
 inline void OPL_CALC_CH(OPL_CH *CH) {
@@ -485,11 +487,10 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 			int feedback1 = (CH->op1_out[0] + CH->op1_out[1]) >> CH->FB;
 			CH->op1_out[1] = CH->op1_out[0];
 			*CH->connect1 += CH->op1_out[0] = OP_OUT(SLOT, env_out, feedback1);
-		}
-		else 		{
+		} else {
 			*CH->connect1 += OP_OUT(SLOT, env_out, 0);
 		}
-	}else {
+	} else {
 		CH->op1_out[1] = CH->op1_out[0];
 		CH->op1_out[0] = 0;
 	}
@@ -538,7 +539,7 @@ inline void OPL_CALC_RH(OPL_CH *CH) {
 		else {
 			feedback2 = OP_OUT(SLOT, env_out, 0);
 		}
-	}else {
+	} else {
 		feedback2 = 0;
 		CH[6].op1_out[1] = CH[6].op1_out[0];
 		CH[6].op1_out[0] = 0;
@@ -607,7 +608,7 @@ static void init_timetables(FM_OPL *OPL, int ARRATE, int DRRATE) {
 	/* make attack rate & decay rate tables */
 	for (i = 0; i < 4; i++)
 		OPL->AR_TABLE[i] = OPL->DR_TABLE[i] = 0;
-	for (i = 4; i <= 60; i++){
+	for (i = 4; i <= 60; i++) {
 		rate = OPL->freqbase;						/* frequency rate */
 		if(i < 60) 
 			rate *= 1.0 + (i & 3) * 0.25;		/* b0-1 : x1 , x1.25 , x1.5 , x1.75 */
@@ -660,20 +661,20 @@ static int OPLOpenTable(void) {
 		return 0;
 	}
 	/* make total level table */
-	for (t = 0; t < EG_ENT - 1 ; t++){
+	for (t = 0; t < EG_ENT - 1 ; t++) {
 		rate = ((1 << TL_BITS) - 1) / pow(10.0, EG_STEP * t / 20);	/* dB -> voltage */
 		TL_TABLE[         t] =  (int)rate;
 		TL_TABLE[TL_MAX + t] = -TL_TABLE[t];
 	}
 	/* fill volume off area */
-	for (t = EG_ENT - 1; t < TL_MAX; t++){
+	for (t = EG_ENT - 1; t < TL_MAX; t++) {
 		TL_TABLE[t] = TL_TABLE[TL_MAX + t] = 0;
 	}
 
 	/* make sinwave table (total level offet) */
 	/* degree 0 = degree 180                   = off */
-	SIN_TABLE[0] = SIN_TABLE[SIN_ENT /2 ]         = &TL_TABLE[EG_ENT - 1];
-	for (s = 1;s <= SIN_ENT / 4; s++){
+	SIN_TABLE[0] = SIN_TABLE[SIN_ENT /2 ] = &TL_TABLE[EG_ENT - 1];
+	for (s = 1;s <= SIN_ENT / 4; s++) {
 		pom = sin(2 * PI * s / SIN_ENT); /* sin     */
 		pom = 20 * log10(1 / pom);	   /* decibel */
 		j = int(pom / EG_STEP);         /* TL_TABLE steps */
@@ -794,8 +795,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 		case 0x04:	/* IRQ clear / mask and Timer enable */
 			if(v & 0x80) {	/* IRQ flag clear */
 				OPL_STATUS_RESET(OPL, 0x7f);
-			}
-			else {	/* set IRQ mask ,timer enable*/
+			} else {	/* set IRQ mask ,timer enable*/
 				uint8 st1 = v & 1;
 				uint8 st2 = (v >> 1) & 1;
 				/* IRQRST,T1MSK,t2MSK,EOSMSK,BRMSK,x,ST2,ST1 */
@@ -857,8 +857,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 						OPL->P_CH[6].op1_out[0] = OPL->P_CH[6].op1_out[1] = 0;
 						OPL_KEYON(&OPL->P_CH[6].SLOT[SLOT1]);
 						OPL_KEYON(&OPL->P_CH[6].SLOT[SLOT2]);
-					}
-					else {
+					} else {
 						OPL_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1]);
 						OPL_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2]);
 					}
@@ -893,6 +892,9 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			}
 			}
 			return;
+
+		default:
+			break;
 		}
 		/* keyon,block,fnum */
 		if((r & 0x0f) > 8)
@@ -900,8 +902,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 		CH = &OPL->P_CH[r & 0x0f];
 		if(!(r&0x10)) {	/* a0-a8 */
 			block_fnum  = (CH->block_fnum & 0x1f00) | v;
-		}
-		else {	/* b0-b8 */
+		} else {	/* b0-b8 */
 			int keyon = (v >> 5) & 1;
 			block_fnum = ((v & 0x1f) << 8) | (CH->block_fnum & 0xff);
 			if(CH->keyon != keyon) {
@@ -909,8 +910,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 					CH->op1_out[0] = CH->op1_out[1] = 0;
 					OPL_KEYON(&CH->SLOT[SLOT1]);
 					OPL_KEYON(&CH->SLOT[SLOT2]);
-				}
-				else {
+				} else {
 					OPL_KEYOFF(&CH->SLOT[SLOT1]);
 					OPL_KEYOFF(&CH->SLOT[SLOT2]);
 				}
@@ -955,8 +955,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 }
 
 /* lock/unlock for common table */
-static int OPL_LockTable(void)
-{
+static int OPL_LockTable(void) {
 	num_lock++;
 	if(num_lock>1)
 		return 0;
@@ -994,7 +993,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 	uint8 rythm = OPL->rythm & 0x20;
 	OPL_CH *CH, *R_CH;
 
-	if((void *)OPL != cur_chip){
+	if((void *)OPL != cur_chip) {
 		cur_chip = (void *)OPL;
 		/* channel pointers */
 		S_CH = OPL->P_CH;
@@ -1108,7 +1107,6 @@ void OPLDestroy(FM_OPL *OPL) {
 }
 
 /* ----------  Option handlers ----------       */
-
 void OPLSetTimerHandler(FM_OPL *OPL, OPL_TIMERHANDLER TimerHandler,int channelOffset) {
 	OPL->TimerHandler   = TimerHandler;
 	OPL->TimerParam = channelOffset;
@@ -1118,6 +1116,7 @@ void OPLSetIRQHandler(FM_OPL *OPL, OPL_IRQHANDLER IRQHandler, int param) {
 	OPL->IRQHandler     = IRQHandler;
 	OPL->IRQParam = param;
 }
+
 void OPLSetUpdateHandler(FM_OPL *OPL, OPL_UPDATEHANDLER UpdateHandler,int param) {
 	OPL->UpdateHandler = UpdateHandler;
 	OPL->UpdateParam = param;
@@ -1127,8 +1126,7 @@ void OPLSetUpdateHandler(FM_OPL *OPL, OPL_UPDATEHANDLER UpdateHandler,int param)
 int OPLWrite(FM_OPL *OPL,int a,int v) {
 	if(!(a & 1)) {	/* address port */
 		OPL->address = v & 0xff;
-	}
-	else {	/* data port */
+	} else {	/* data port */
 		if(OPL->UpdateHandler)
 			OPL->UpdateHandler(OPL->UpdateParam,0);
 		OPLWriteReg(OPL, OPL->address,v);
@@ -1150,6 +1148,8 @@ unsigned char OPLRead(FM_OPL *OPL,int a) {
 		return 0;
 	case 0x1a: /* PCM-DATA    */
 		return 0;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1157,8 +1157,7 @@ unsigned char OPLRead(FM_OPL *OPL,int a) {
 int OPLTimerOver(FM_OPL *OPL, int c) {
 	if(c) {	/* Timer B */
 		OPL_STATUS_SET(OPL, 0x20);
-	}
-	else {	/* Timer A */
+	} else {	/* Timer A */
 		OPL_STATUS_SET(OPL, 0x40);
 		/* CSM mode key,TL controll */
 		if(OPL->mode & 0x80) {	/* CSM mode total level latch and auto key on */
@@ -1183,13 +1182,10 @@ FM_OPL *makeAdlibOPL(int rate) {
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;
-	}
-	else
-	if (ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")) {
+	} else if (ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")) {
 		env_bits = FMOPL_ENV_BITS_MQ;
 		eg_ent = FMOPL_EG_ENT_MQ;
-	}
-	else {
+	} else {
 		env_bits = FMOPL_ENV_BITS_LQ;
 		eg_ent = FMOPL_EG_ENT_LQ;
 	}
