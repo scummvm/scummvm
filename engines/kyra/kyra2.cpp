@@ -36,17 +36,17 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system)
 KyraEngine_v2::~KyraEngine_v2() {
 }
 
-int KyraEngine_v2::go() {	
+int KyraEngine_v2::go() {
 	uint8 pal[768];
-	
+
 	WSAMovieV2 *title = new WSAMovieV2(this);
 	title->open("title.WSA", 0, pal);
 	assert(title->opened());
-	
+
 	_screen->setScreenPalette(pal);
 	title->setX(0); title->setY(0);
 	title->setDrawPage(0);
-	for (int i = 0; i < 26; ++i) {
+	for (int i = 0; i < 26 && !_quitFlag; ++i) {
 		uint32 nextRun = _system->getMillis() + 6 * _tickLength;
 		title->displayFrame(i);
 		_screen->updateScreen();
@@ -54,7 +54,7 @@ int KyraEngine_v2::go() {
 	}
 
 	delete title;
-	
+
 	waitForEvent();
 	return 0;
 }

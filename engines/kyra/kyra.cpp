@@ -652,7 +652,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 void KyraEngine::waitForEvent() {
 	bool finished = false;
 	OSystem::Event event;
-	while (!finished) {
+	while (!finished && !_quitFlag) {
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
