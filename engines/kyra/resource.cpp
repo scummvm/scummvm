@@ -156,12 +156,14 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 	// test to open it in the main dir
 	if (file_.open(file)) {
 
-		if (size)
-			*size = file_.size();
-		buffer = new uint8[*size];
+		uint32 temp = file_.size();
+		buffer = new uint8[temp];
 		assert(buffer);
 
-		file_.read(buffer, *size);
+		file_.read(buffer, temp);
+
+		if (size)
+			*size = temp;
 
 		file_.close();
 	} else {

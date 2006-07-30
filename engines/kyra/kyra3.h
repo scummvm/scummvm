@@ -100,6 +100,8 @@ private:
 	// items
 	uint8 *_itemBuffer1;
 	uint8 *_itemBuffer2;
+
+	void initItems();
 };
 
 } // end of namespace Kyra

@@ -1907,10 +1907,12 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
-	CursorMan.showMouse(false);
+	if (!_mouseLockCount)
+		CursorMan.showMouse(false);
 	copyRegionToBuffer(8, 0, 0, mouseWidth, mouseHeight, cursor);
 	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
-	CursorMan.showMouse(true);
+	if (!_mouseLockCount)
+		CursorMan.showMouse(true);
 	free(cursor);
 
 	// makes sure that the cursor is drawn

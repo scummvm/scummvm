@@ -133,6 +133,7 @@ int KyraEngine_v3::init() {
 		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
 	}
 
+	initItems();
 	// XXX
 
 	_screen->setMouseCursor(0, 0, *_gameShapes);
@@ -529,6 +530,30 @@ void KyraEngine_v3::preinit() {
 
 void KyraEngine_v3::realInit() {
 	debugC(9, kDebugLevelMain, "KyraEngine::realInit()");
+}
+
+#pragma mark - items
+
+void KyraEngine_v3::initItems() {
+	debugC(9, kDebugLevelMain, "KyraEngine::initItems()");
+
+	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
+
+	// XXX
+
+	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
+
+	uint32 size = 0;
+	uint8 *itemsDat = _res->fileData("_ITEMS.DAT", &size);
+
+	assert(size >= 72+144);
+
+	memcpy(_itemBuffer1, itemsDat   ,  72);
+	memcpy(_itemBuffer2, itemsDat+72, 144);
+
+	delete [] itemsDat;
+
+	_screen->_curPage = 0;
 }
 
 } // end of namespace Kyra
