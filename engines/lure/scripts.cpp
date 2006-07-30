@@ -61,6 +61,15 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 	rsc->sequenceOffset = offset;
 }
 
+void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
+	// Not yet implemented
+}
+
+void Script::setHotspotFlagMask(uint16 maskVal, uint16 v2, uint16 v3) {
+	ValueTableData &fields = Resources::getReference().fieldList();
+	fields.hdrFlagMask() = (uint8) maskVal;
+}
+
 // Clears the sequence delay list
 
 void Script::clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3) {
@@ -431,6 +440,7 @@ struct SequenceMethodRecord {
 SequenceMethodRecord scriptMethods[] = {
 	{0, Script::activateHotspot}, 
 	{1, Script::setHotspotScript},
+	{3, Script::setHotspotFlagMask},
 	{4, Script::clearSequenceDelayList},
 	{5, Script::deactivateHotspotSet},
 	{6, Script::deactivateHotspot},

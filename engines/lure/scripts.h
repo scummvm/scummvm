@@ -77,6 +77,7 @@ public:
 	static void activateHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3);
 	static void method2(uint16 v1, uint16 v2, uint16 v3);
+	static void setHotspotFlagMask(uint16 maskVal, uint16 v2, uint16 v3);
 	static void clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3);
 	static void deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3);
 	static void deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
