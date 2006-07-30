@@ -806,6 +806,7 @@ ValueTableData::ValueTableData() {
 	_playerPendingPos.pos.y = 0;
 	_playerPendingPos.isSet = false;
 	_flags = GAMEFLAG_4 | GAMEFLAG_1;
+	_hdrFlagMask = 1;
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;

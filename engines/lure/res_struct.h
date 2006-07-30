@@ -685,6 +685,7 @@ private:
 	PlayerNewPosition _playerNewPos;
 	PlayerPendingPosition _playerPendingPos;
 	uint8 _flags;
+	uint8 _hdrFlagMask;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
@@ -699,6 +700,7 @@ public:
 
 	uint16 &numGroats() { return _numGroats; }
 	uint8 &flags() { return _flags; }
+	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
 };
