@@ -28,6 +28,8 @@
 #include "lure/res_struct.h"
 #include "lure/res.h"
 #include "lure/strings.h"
+#include "lure/room.h"
+#include "lure/events.h"
 
 namespace Lure {
 
@@ -261,6 +263,82 @@ uint16 PopupMenu::ShowInventory() {
 
 	delete itemNames;
 	delete idList;
+	return result;
+}
+
+#define MAX_NUM_DISPLAY_ITEMS 20
+
+uint16 PopupMenu::ShowItems(Action contextAction) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	HotspotDataList &hotspots = res.hotspotData();
+	StringData &strings = StringData::getReference();
+	Room &room = Room::getReference();
+	Screen &screen = Screen::getReference();
+	Mouse &mouse = Mouse::getReference();
+	HotspotDataList::iterator i;
+	uint16 hotspotIds[MAX_NUM_DISPLAY_ITEMS];
+	uint16 nameIds[MAX_NUM_DISPLAY_ITEMS];
+	char *hotspotNames[MAX_NUM_DISPLAY_ITEMS];
+	int numItems = 0;
+	int itemCtr;
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+
+	// TODO: Looping through room list as well
+
+	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
+		HotspotData *hotspot = *i;
+
+		if ((hotspot->headerFlags != 15) && 
+			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
+			continue;
+
+		if (((hotspot->flags & 0x20) != 0) || ((hotspot->flags & 0x80) == 0))
+			// Skip the current hotspot		
+			continue;
+
+		// Following checks are done for room list - still need to include check against [3350h]
+		if (((hotspot->flags & 0x10) != 0) && (hotspot->roomNumber != player->roomNumber()))
+			continue;
+
+		if ((hotspot->actions & contextAction) == 0)
+			// If hotspot does not allow action, then skip it
+			continue;
+
+		if ((hotspot->nameId == 0x17A) || (hotspot->nameId == 0x147))
+			// Special hotspot names to skip 
+			continue;
+
+		// Check if the hotspot's name is already used in an already set item
+		itemCtr = 0;
+		while ((itemCtr < numItems) && (nameIds[itemCtr] != hotspot->nameId))
+			++itemCtr;
+		if (itemCtr != numItems)
+			// Item's name is already present - skip hotspot
+			continue;
+
+		// Add hotspot to list of entries to display
+		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
+		hotspotIds[numItems] = hotspot->hotspotId;
+		nameIds[numItems] = hotspot->nameId;
+		strings.getString(hotspot->nameId, hotspotNames[numItems]);
+		++numItems;
+	}
+
+	if (numItems == 0) 
+		// No items, so add a 'nothing' to the statusLine
+		strcat(Room::getReference().statusLine(), "(nothing)");
+
+	room.update();
+	screen.update();
+	mouse.waitForRelease();
+
+	if (numItems == 0)
+		// Return flag for no items to ask for
+		return 0xfffe;
+
+	uint16 result = Show(numItems, (const char **) hotspotNames);
+	if (result != 0xffff) result = hotspotIds[result];
 	return result;
 }
 

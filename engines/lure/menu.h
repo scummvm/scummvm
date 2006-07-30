@@ -81,6 +81,7 @@ public:
 	static Action Show(int numEntries, Action *actions);
 	static uint16 Show(int numEntries, const char *actions[]);
 	static uint16 ShowInventory();
+	static uint16 ShowItems(Action contextAction);
 };
 
 } // End of namespace Lure
