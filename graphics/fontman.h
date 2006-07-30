@@ -27,6 +27,7 @@
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "graphics/font.h"
 
 
@@ -81,7 +82,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 	FontManager();
 
-	Common::HashMap<Common::String, const Font *> _fontMap;
+	Common::HashMap<Common::String, const Font *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> _fontMap;
 };
 
 

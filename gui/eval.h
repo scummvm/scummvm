@@ -26,6 +26,7 @@
 #include "common/stdafx.h"
 #include "common/str.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 
 namespace GUI {
 
@@ -68,14 +69,28 @@ public:
 
 	char *lastToken() { return _token; }
 
+	
+	template <class Val>
+	struct CharStar_BaseNode {
+		char *_key;
+		Val _value;
+		CharStar_BaseNode() {assert(0);}
+		CharStar_BaseNode(const char *key) { _key = (char *)malloc(strlen(key)+1); strcpy(_key, key); }
+		~CharStar_BaseNode() { free(_key); }
+	};
+
 	struct CharStar_EqualTo {
 		bool operator()(const char *x, const char *y) const { return strcmp(x, y) == 0; }
 	};
 
+	struct CharStar_Hash {
+		uint operator()(const char *x) const { return Common::hashit(x); }
+	};
+
 	//typedef HashMap<String, int> VariablesMap;
-	typedef HashMap<const char *, int, Common::Hash<const char *>, CharStar_EqualTo> VariablesMap;
-	typedef HashMap<const char *, String, Common::Hash<const char *>, CharStar_EqualTo> AliasesMap;
-	typedef HashMap<const char *, String, Common::Hash<const char *>, CharStar_EqualTo> StringsMap;
+	typedef HashMap<const char *, int, CharStar_Hash, CharStar_EqualTo, CharStar_BaseNode<int> > VariablesMap;
+	typedef HashMap<const char *, String, CharStar_Hash, CharStar_EqualTo, CharStar_BaseNode<String> > AliasesMap;
+	typedef HashMap<const char *, String, CharStar_Hash, CharStar_EqualTo, CharStar_BaseNode<String> > StringsMap;
 
 private:
 	enum TokenTypes {

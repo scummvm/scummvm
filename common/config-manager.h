@@ -29,22 +29,9 @@
 #include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"
+#include "common/hash-str.h"
 
 namespace Common {
-
-struct IgnoreCase_Less {
-  bool operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()) < 0; }
-};
-
-struct IgnoreCase_EqualTo {
-  bool operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()) == 0; }
-};
-
-struct IgnoreCase_Hash {
-  uint operator()(const String& x) const { return hashit_lower(x.c_str()); }
-};
-
-typedef HashMap<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringMap;
 
 /**
  * The (singleton) configuration manager, used to query & set configuration

@@ -24,6 +24,7 @@
 #include "common/fs.h"
 #include "common/hashmap.h"
 #include "common/util.h"
+#include "common/hash-str.h"
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"
@@ -31,14 +32,13 @@
 
 namespace Common {
 
-typedef HashMap<String, String> FilesMap;
-typedef HashMap<String, int> StringIntMap;
+typedef HashMap<String, int, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringIntMap;
 
 // The following two objects could be turned into static members of class
 // File. However, then we would be forced to #include hashmap in file.h
 // which seems to be a high price just for a simple beautification...
 static StringIntMap *_defaultDirectories;
-static FilesMap *_filesMap;
+static StringMap *_filesMap;
 
 static FILE *fopenNoCase(const String &filename, const String &directory, const char *mode) {
 	FILE *file;
@@ -142,7 +142,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 	(*_defaultDirectories)[directory] = level;
 
 	if (!_filesMap)
-		_filesMap = new FilesMap;
+		_filesMap = new StringMap;
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {

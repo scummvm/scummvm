@@ -22,7 +22,7 @@
 #include "common/stdafx.h"
 
 #include "common/str.h"
-#include "common/hash.h"
+#include "common/hash-str.h"
 #include "common/util.h"
 
 #include <ctype.h>

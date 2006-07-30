@@ -58,24 +58,6 @@
 
 namespace Common { 
 
-uint hashit(const char *str);
-uint hashit_lower(const char *str);	// Generate a hash based on the lowercase version of the string
-
-// Specalization of the Hash functor for String objects.
-template <>
-struct Hash<String> {
-	uint operator()(const String& s) const {
-		return hashit(s.c_str());
-	}
-};
-
-template <>
-struct Hash<const char *> {
-	uint operator()(const char *s) const {
-		return hashit(s);
-	}
-};
-
 // data structure used by HashMap internally to keep
 // track of what's mapped to what.
 template <class Key, class Val>
@@ -84,15 +66,6 @@ struct BaseNode {
 	Val _value;
 	BaseNode() {}
 	BaseNode(const Key &key) : _key(key) {}
-};
-	
-template <class Val>
-struct BaseNode<const char *, Val> {
-	char *_key;
-	Val _value;
-	BaseNode() {assert(0);}
-	BaseNode(const char *key) { _key = (char *)malloc(strlen(key)+1); strcpy(_key, key); }
-	~BaseNode() { free(_key); }
 };
 
 // The table sizes ideally are primes. We use a helper function to find

@@ -29,6 +29,8 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/md5.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "simon/simon.h"
 
@@ -1349,10 +1351,10 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 	int gamesCount = ARRAYSIZE(gameDescriptions);
 	int filesCount;
 
-	typedef Common::HashMap<Common::String, bool> StringSet;
+	typedef Common::HashMap<Common::String, bool, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
-	typedef Common::HashMap<Common::String, Common::String> StringMap;
+	typedef Common::StringMap StringMap;
 	StringMap filesMD5;
 
 	Common::String tstr, tstr2;
