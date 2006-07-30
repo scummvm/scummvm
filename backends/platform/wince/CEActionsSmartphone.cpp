@@ -125,28 +125,30 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
 	bool is_kyra = (gameid == "kyra1");
+	bool is_samnmax = (gameid == "samnmax");
+	bool is_fw = (gameid == "fw");
+	bool is_os = (gameid == "os");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sky || gameid == "samnmax" || is_gob)
+	if (is_sky || is_samnmax || is_gob || is_fw || is_os)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions
 	// Save
 	if (is_simon || is_gob)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
-	else
-	if (is_queen || is_ite) {
+	else if (is_queen || is_ite) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ and ITE
-	}
-	else
-	if (is_sky) {
+	} else if (is_sky) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(63);
-	}
-	else {
+	} else if (is_fw || is_os) {
+		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(291); //F10
+	} else {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(319); // F5 key
 	}
