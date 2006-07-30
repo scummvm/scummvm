@@ -348,15 +348,22 @@ void Game::handleRightClickMenu() {
 			breakFlag = true;
 			break;
 
+		case ASK:
+			hotspot = res.getHotspot(room.hotspotId());
+			strings.getString(hotspot->nameId, statusLine);
+			strcat(statusLine, " for ");
+			statusLine += strlen(statusLine);
+
+			itemId = PopupMenu::ShowItems(GET);
+			breakFlag = ((itemId != 0xffff) && (itemId != 0xfffe));
+			if (breakFlag)
+				hotspot = res.getHotspot(itemId);
+			break;
+
 		case GIVE:
 		case USE:
 		case EXAMINE:
 		case DRINK:
-			if (action == ASK) {
-				strings.getString(hotspot->nameId, statusLine);
-				strcat(statusLine, " for ");
-			}
-
 			hasItems = (res.numInventoryItems() != 0);
 			if (!hasItems)
 				strcat(statusLine, "(nothing)");
