@@ -85,8 +85,6 @@ private:
 	uint8 *_unkPage1;
 	uint8 *_unkPage2;
 
-	uint8 *_unkBuffer17;
-
 	// interface?
 	uint8 *_interfaceCPS1;
 	uint8 *_interfaceCPS2;

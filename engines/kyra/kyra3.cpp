@@ -44,7 +44,6 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_interfaceCPS1 = _interfaceCPS2 = 0;
 	memset(_gameShapes, 0, sizeof(_gameShapes));
 	_shapePoolBuffer = 0;
-	_unkBuffer17 = 0;
 	_itemBuffer1 = _itemBuffer2 = 0;
 	_mouseSHPBuf = 0;
 	_tableBuffer1 = _tableBuffer2 = 0;
@@ -57,8 +56,6 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _unkPage2;
 	delete [] _interfaceCPS1;
 	delete [] _interfaceCPS2;
-
-	delete [] _unkBuffer17;
 
 	delete [] _itemBuffer1;
 	delete [] _itemBuffer2;
@@ -121,9 +118,6 @@ int KyraEngine_v3::init() {
 
 	initTableBuffer(_shapePoolBuffer, 300000);
 
-	_unkBuffer17 = new uint8[1850];
-	assert(_unkBuffer17);
-
 	_itemBuffer1 = new uint8[72];
 	_itemBuffer2 = new uint8[144];
 	assert(_itemBuffer1 && _itemBuffer2);
@@ -136,7 +130,6 @@ int KyraEngine_v3::init() {
 	}
 
 	initItems();
-	// XXX
 
 	_screen->setMouseCursor(0, 0, *_gameShapes);
 
