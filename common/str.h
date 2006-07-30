@@ -60,10 +60,23 @@ public:
 	bool operator ==(const char *x) const;
 	bool operator !=(const String &x) const;
 	bool operator !=(const char *x) const;
+
 	bool operator <(const String &x) const;
 	bool operator <=(const String &x) const;
 	bool operator >(const String &x) const;
 	bool operator >=(const String &x) const;
+
+	bool equals(const String &x) const;
+	bool equalsIgnoreCase(const String &x) const;
+	int compareTo(const String &x) const;	// strcmp clone
+	int compareToIgnoreCase(const String &x) const;	// stricmp clone
+
+	bool equals(const char *x) const;
+	bool equalsIgnoreCase(const char *x) const;
+	int compareTo(const char *x) const;	// strcmp clone
+	int compareToIgnoreCase(const char *x) const;	// stricmp clone
+
+
 
 	bool hasSuffix(const char *x) const;
 	bool hasPrefix(const char *x) const;
@@ -91,6 +104,8 @@ public:
 
 	void toLowercase();
 	void toUppercase();
+
+	uint hash() const;
 
 public:
 	typedef char *        iterator;

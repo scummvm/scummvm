@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 
 #include "common/str.h"
+#include "common/hash.h"
 #include "common/util.h"
 
 #include <ctype.h>
@@ -283,40 +284,92 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 	_str = newStr;
 }
 
+uint String::hash() const {
+	return hashit(c_str());
+}
+	
 #pragma mark -
 
 bool String::operator ==(const String &x) const {
-	return (0 == strcmp(c_str(), x.c_str()));
+	return equals(x);
 }
 
 bool String::operator ==(const char *x) const {
 	assert(x != 0);
-	return (0 == strcmp(c_str(), x));
+	return equals(x);
 }
 
 bool String::operator !=(const String &x) const {
-	return (0 != strcmp(c_str(), x.c_str()));
+	return !equals(x);
 }
 
 bool String::operator !=(const char *x) const {
 	assert(x != 0);
-	return (0 != strcmp(c_str(), x));
+	return !equals(x);
 }
 
 bool String::operator < (const String &x) const {
-	return strcmp(c_str(), x.c_str()) < 0;
+	return compareTo(x) < 0;
 }
 
 bool String::operator <= (const String &x) const {
-	return strcmp(c_str(), x.c_str()) <= 0;
+	return compareTo(x) <= 0;
 }
 
 bool String::operator > (const String &x) const {
-	return (x < *this);
+	return compareTo(x) > 0;
 }
 
 bool String::operator >= (const String &x) const {
-	return (x <= *this);
+	return compareTo(x) >= 0;
+}
+
+#pragma mark -
+
+bool operator == (const char* y, const String &x) {
+	return (x == y);
+}
+
+bool operator != (const char* y, const String &x) {
+	return x != y;
+}
+
+#pragma mark -
+
+bool String::equals(const String &x) const {
+	return (0 == compareTo(x));
+}
+
+bool String::equals(const char *x) const {
+	assert(x != 0);
+	return (0 == compareTo(x));
+}
+
+bool String::equalsIgnoreCase(const String &x) const {
+	return (0 == compareToIgnoreCase(x));
+}
+
+bool String::equalsIgnoreCase(const char *x) const {
+	assert(x != 0);
+	return (0 == compareToIgnoreCase(x));
+}
+
+int String::compareTo(const String &x) const {
+	return compareTo(x.c_str());
+}
+
+int String::compareTo(const char *x) const {
+	assert(x != 0);
+	return strcmp(c_str(), x);
+}
+
+int String::compareToIgnoreCase(const String &x) const {
+	return compareToIgnoreCase(x.c_str());
+}
+
+int String::compareToIgnoreCase(const char *x) const {
+	assert(x != 0);
+	return scumm_stricmp(c_str(), x);
 }
 
 #pragma mark -
@@ -339,14 +392,5 @@ String operator +(const String &x, const char *y) {
 	return temp;
 }
 
-#pragma mark -
-
-bool operator == (const char* y, const String &x) {
-	return (x == y);
-}
-
-bool operator != (const char* y, const String &x) {
-	return x != y;
-}
 
 }	// End of namespace Common
