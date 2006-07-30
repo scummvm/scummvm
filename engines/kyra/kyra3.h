@@ -102,6 +102,22 @@ private:
 	uint8 *_itemBuffer2;
 
 	void initItems();
+
+	// used for CSH loading and some sound stuff (maybe voice files?)
+private:
+	uint8 *_tableBuffer1;
+	uint8 *_tableBuffer2;
+	int _unkTableValue;
+
+	// do not think of thouching the code belonging to these functions
+	int initTableBuffer(uint8 *buf, int size);
+	void updateTableBuffer(uint8 *buf);
+	int getTableSize(uint8 *buf);
+	uint8 *allocTableSpace(uint8 *buf, int size, int id);
+	uint8 *findIdInTable(uint8 *buf, int id);
+
+	int addShapeToTable(uint8 *buf, int id, int shapeNum);
+	uint8 *findShapeInTable(int id);
 };
 
 } // end of namespace Kyra

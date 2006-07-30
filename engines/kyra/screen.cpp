@@ -2210,7 +2210,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 
 	if (palData && palSize) {
 		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
-		memcpy(palData, srcData + 10, palSize);		
+		memcpy(palData, srcData + 10, palSize);
 	}
 
 	uint8 *srcPtr = srcData + 10 + palSize;
@@ -2243,9 +2243,15 @@ uint8 *Screen::getPtrToShape(uint8 *shpFile, int shape) {
 	if (shapes <= shape)
 		return 0;
 
-	uint32 offset = READ_LE_UINT32(shpFile + (shape << 1) + 2);
+	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
 
 	return shpFile + offset + 2;
+}
+
+uint16 Screen::getShapeSize(uint8 *shp) {
+	debugC(9, kDebugLevelScreen, "KyraEngine::getShapeSize(%p)", (void *)shp);
+
+	return READ_LE_UINT16(shp+6);
 }
 
 } // End of namespace Kyra

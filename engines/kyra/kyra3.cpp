@@ -47,6 +47,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_unkBuffer17 = 0;
 	_itemBuffer1 = _itemBuffer2 = 0;
 	_mouseSHPBuf = 0;
+	_tableBuffer1 = _tableBuffer2 = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -116,8 +117,9 @@ int KyraEngine_v3::init() {
 
 	_shapePoolBuffer = new uint8[300000];
 	assert(_shapePoolBuffer);
+	memset(_shapePoolBuffer, 0, 300000);
 
-	// XXX game_setUnkBuffer(_shapePoolBuffer)
+	initTableBuffer(_shapePoolBuffer, 300000);
 
 	_unkBuffer17 = new uint8[1850];
 	assert(_unkBuffer17);
@@ -532,6 +534,219 @@ void KyraEngine_v3::realInit() {
 	debugC(9, kDebugLevelMain, "KyraEngine::realInit()");
 }
 
+#pragma mark -
+
+int KyraEngine_v3::initTableBuffer(uint8 *buf, int size) {
+	debugC(9, kDebugLevelMain, "KyraEngine::initTableBuffer(%p, %d)", (void*)buf, size);
+
+	if (!buf || size < 6320)
+		return 0;
+
+	if (_tableBuffer2 != _tableBuffer1 && _tableBuffer2 && _tableBuffer1) {
+		// no idea if this *should* be called
+		memmove(_tableBuffer2, _tableBuffer1, 6320);
+	}
+
+	_tableBuffer1 = buf;
+	size -= 6320;
+
+	*((uint16*)(_tableBuffer1)) = 0;
+	*((uint16*)(_tableBuffer1 + 2)) = 1;
+	*((uint16*)(_tableBuffer1 + 4)) = 1;
+	*((uint32*)(_tableBuffer1 + 6)) = size >> 4;
+	*((uint16*)(_tableBuffer1 + 10)) = 1;
+	*((uint32*)(_tableBuffer1 + 16)) = 6320;
+	*((uint32*)(_tableBuffer1 + 22)) = size >> 4;
+
+	_tableBuffer2 = buf;
+
+	return 1;
+}
+
+void KyraEngine_v3::updateTableBuffer(uint8 *buf) {
+	debugC(9, kDebugLevelMain, "KyraEngine::updateTableBuffer(%p)", (void*)buf);
+
+	if (_tableBuffer2 == buf)
+		return;
+
+	if (_tableBuffer1 != _tableBuffer2)
+		memmove(_tableBuffer2, _tableBuffer1, 6320);
+
+	_tableBuffer2 = _tableBuffer1 = buf;
+}
+
+int KyraEngine_v3::addShapeToTable(uint8 *buf, int id, int shapeNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine::addShapeToTable(%p, %d, %d)", (void*)buf, id, shapeNum);
+
+	if (!buf)
+		return 0;
+
+	uint8 *shapePtr = _screen->getPtrToShape(buf, shapeNum);
+	if (!shapePtr)
+		return 0;
+
+	int shapeSize = _screen->getShapeSize(shapePtr);
+
+	if (getTableSize(_shapePoolBuffer) < shapeSize) {
+		// XXX
+		error("[1] unimplemented table handling");
+	}
+
+	uint8 *ptr = allocTableSpace(_shapePoolBuffer, shapeSize, id);
+
+	if (!ptr) {
+		// XXX
+		error("[2] unimplemented table handling");
+	}
+
+	if (!ptr) {
+		warning("adding shape %d to _shapePoolBuffer not possible, not enough space left\n", id);
+		return shapeSize;
+	}
+
+	memcpy(ptr, shapePtr, shapeSize);
+	return shapeSize;
+}
+
+int KyraEngine_v3::getTableSize(uint8 *buf) {
+	debugC(9, kDebugLevelMain, "KyraEngine::getTableSize(%p)", (void*)buf);
+	updateTableBuffer(buf);
+
+	if (*((uint16*)(_tableBuffer1 + 4)) >= 450)
+		return 0;
+
+	return (*((uint32*)(_tableBuffer1 + 6)) << 4);
+}
+
+uint8 *KyraEngine_v3::allocTableSpace(uint8 *buf, int size, int id) {
+	debugC(9, kDebugLevelMain, "KyraEngine::allocTableSpace(%p, %d, %d)", (void*)buf, size, id);
+
+	if (!buf || !size)
+		return 0;
+
+	updateTableBuffer(buf);
+
+	int entries = *(uint16*)(_tableBuffer1 + 4);
+
+	if (entries >= 450)
+		return 0;
+
+	size += 0xF;
+	size &= 0xFFFFFFF0;
+
+	uint size2 = size >> 4;
+
+	if (*(uint32*)(_tableBuffer1 + 6) < size2)
+		return 0;
+
+	int unk1 = *(uint16*)(_tableBuffer1);
+	int usedEntry = unk1;
+	int ok = 0;
+
+	for (; usedEntry < entries; ++usedEntry) {
+		if (size2 <= *(uint32*)(_tableBuffer1 + usedEntry * 14 + 22)) {
+			ok = 1;
+			break;
+		}
+	}
+
+	if (!ok)
+		return 0;
+
+	ok = 0;
+	int unk3 = unk1 - 1;
+	while (ok <= unk3) {
+		int temp = (ok + unk3) >> 1;
+
+		if (*(uint32*)(_tableBuffer1 + temp * 14 + 12) >= (uint)id) {
+			if (*(uint32*)(_tableBuffer1 + temp * 14 + 12) <= (uint)id) {
+				return 0;
+			} else {
+				unk3 = temp - 1;
+				continue;
+			}
+		}
+
+		ok = temp + 1;
+	}
+
+	uint8 *buf2 = _tableBuffer1 + usedEntry * 14;
+
+	uint unkValue1 = *(uint32*)(buf2 + 16);
+	uint unkValue2 = *(uint32*)(buf2 + 22);
+
+	if (size2 < unkValue2) {
+		*(uint32*)(buf2 + 22) = unkValue2 - size2;
+		*(uint32*)(buf2 + 16) = unkValue1 + size;
+		memcpy(_tableBuffer1 + entries * 14 + 12, _tableBuffer1 + unk1 * 14 + 12, 14);
+	} else {
+		if (usedEntry > unk1) {
+			memcpy(buf2 + 12, _tableBuffer1 + unk1 * 14 + 12, 14);
+		}
+		int temp = *(uint16*)(_tableBuffer1 + 2) - 1;
+		*(uint16*)(_tableBuffer1 + 2) = temp;
+		temp = *(uint16*)(_tableBuffer1 + 4) - 1;
+		*(uint16*)(_tableBuffer1 + 4) = temp;
+	}
+
+	for (int i = unk1; i > ok; --i) {
+		memcpy(_tableBuffer1 + i * 14 + 12, _tableBuffer1 + (i-1) * 14 + 12, 14);
+	}
+
+	buf2 = _tableBuffer1 + ok * 14;
+
+	*(uint32*)(buf2 + 12) = id;
+	*(uint32*)(buf2 + 16) = unkValue1;
+	*(uint32*)(buf2 + 20) = (_system->getMillis() / 60) >> 4;
+	*(uint32*)(buf2 + 22) = size2;
+
+	int temp = *(uint16*)(_tableBuffer1) + 1;
+	*(uint16*)(_tableBuffer1) = temp;
+	temp = *(uint16*)(_tableBuffer1 + 4) + 1;
+	*(uint16*)(_tableBuffer1 + 4) = temp;
+
+	if (temp > *(uint16*)(_tableBuffer1 + 10)) {
+		*(uint16*)(_tableBuffer1 + 10) = temp;
+		if (temp > _unkTableValue)
+			_unkTableValue = temp;
+	}
+
+	temp = *(uint32*)(_tableBuffer1 + 6) - size2;
+	*(uint32*)(_tableBuffer1 + 6) = temp;
+
+	return _tableBuffer2 + unkValue1;
+}
+
+namespace {
+int tableIdCompare(const void *l, const void *r) {
+	int lV = *(uint32*)(l);
+	int rV = *(uint32*)(r);
+
+	return CLIP(lV - rV, -1, 1);
+}
+}
+
+uint8 *KyraEngine_v3::findIdInTable(uint8 *buf, int id) {
+	debugC(9, kDebugLevelMain, "KyraEngine::findIdInTable(%p, %d)", (void*)buf, id);
+
+	updateTableBuffer(buf);
+
+	uint32 idVal = id;
+	uint8 *ptr = (uint8*)bsearch(&idVal, _tableBuffer1 + 12, *(uint16*)(_tableBuffer1), 14, &tableIdCompare);
+
+	if (!ptr) {
+		return 0;
+	}
+
+	return _tableBuffer2 + *(uint32*)(ptr + 4);
+}
+
+uint8 *KyraEngine_v3::findShapeInTable(int id) {
+	debugC(9, kDebugLevelMain, "KyraEngine::findShapeInTable(%d)", id);
+
+	return findIdInTable(_shapePoolBuffer, id);
+}
+
 #pragma mark - items
 
 void KyraEngine_v3::initItems() {
@@ -539,9 +754,15 @@ void KyraEngine_v3::initItems() {
 
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
-	// XXX
+	for (int i = 248; i <= 319; ++i) {
+		addShapeToTable(_screen->getPagePtr(3), i, i-248);
+	}
 
 	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
+
+	for (int i = 320; i <= 397; ++i) {
+		addShapeToTable(_screen->getPagePtr(3), i, i-320);
+	}
 
 	uint32 size = 0;
 	uint8 *itemsDat = _res->fileData("_ITEMS.DAT", &size);
