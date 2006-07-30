@@ -641,6 +641,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama3", "pj3demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "PJ3Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "Pajama Sam Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "pajama3", "PJMini", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "PjSamDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "PjSamDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "PyjamaSKS", kGenHEPC, Common::DE_DEU, UNK, 0 },
@@ -738,6 +739,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox2", "SpyFoxOR", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "spyfox2", "SpyFoxOR", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "spyfoxsr", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "SPYMini", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },

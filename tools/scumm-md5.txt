@@ -521,6 +521,7 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	a654fb60c3b67d6317a7894ffd9f25c5	us	All	-	Demo	-	sev
 	a9f2f04b1ecaab9495b59befffe9bf88	us	All	-	Demo	-	sev
 	0c45eb4baff0c12c3d9dfa889c8070ab	de	All	-	Demo	-	Joachim Eberhard
+	4fe6a2e8df3c4536b278fdd2fbcb181e	en	Windows	-	Mini Game	-	Trekky
 	3e48298920fab9b7aec5a971e1bd1fab	gb	Windows	-	Demo	-	eriktorbjorn
 	cf90b4db5486ef798db78fe6fbf897e5	us	Windows	-	Demo	-	khalek
 
@@ -660,6 +661,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	1c792d28376d45e145cb916bca0400a2	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	de	All	-	Demo	-	Joachim Eberhard
+	e62056ba675ad65d8854ab3c5ad4b3c0	en	Windows	-	Mini Game	-	Trekky
 	19bf6938a94698296bcb0c99c31c91a7	gb	Windows	-	Demo	-	eriktorbjorn
 
 spyozon	SPY Fox 3: Operation Ozone
