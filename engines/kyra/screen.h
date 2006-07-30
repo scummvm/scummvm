@@ -83,6 +83,7 @@ public:
 		FID_8_FNT,
 		FID_CRED6_FNT,
 		FID_CRED8_FNT,
+		FID_BOOKFONT_FNT,
 		FID_NUM
 	};
 	
@@ -187,6 +188,8 @@ public:
 	// maybe subclass screen for kyra3
 	static const ScreenDim _screenDimTableK3[];
 	static const int _screenDimTableCountK3;
+
+	uint8 *getPtrToShape(uint8 *shpFile, int shape);
 private:
 	uint8 *getPagePtr(int pageNum);
 

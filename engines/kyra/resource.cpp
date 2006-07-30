@@ -150,10 +150,14 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 	uint8 *buffer = 0;
 	Common::File file_;
 
+	if (size)
+		*size = 0;
+
 	// test to open it in the main dir
 	if (file_.open(file)) {
 
-		*size = file_.size();
+		if (size)
+			*size = file_.size();
 		buffer = new uint8[*size];
 		assert(buffer);
 
@@ -164,18 +168,22 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 		// opens the file in a PAK File
 		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
+		uint32 temp = 0;
 		for (;start != _pakfiles.end(); ++start) {
-			*size = (*start)->getFileSize(file);
-			
-			if (!(*size))
+			temp = (*start)->getFileSize(file);
+
+			if (!temp)
 				continue;
-			
+
+			if (size)
+				*size = temp;
+
 			buffer = (*start)->getFile(file);
 			break;
 		}
 	}
 
-	if (!buffer || !(*size)) {
+	if (!buffer) {
 		return 0;
 	}
 

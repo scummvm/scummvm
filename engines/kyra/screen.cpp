@@ -2232,4 +2232,18 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	delete [] srcData;
 }
 
+// kyra3 specific
+
+uint8 *Screen::getPtrToShape(uint8 *shpFile, int shape) {
+	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (void *)shpFile, shape);
+	uint16 shapes = READ_LE_UINT16(shpFile);
+
+	if (shapes <= shape)
+		return 0;
+
+	uint32 offset = READ_LE_UINT32(shpFile + (shape << 1) + 2);
+
+	return shpFile + offset + 2;
+}
+
 } // End of namespace Kyra

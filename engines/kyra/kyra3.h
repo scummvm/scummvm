@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+ * Copyright (C) 2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,10 +84,22 @@ private:
 private:	
 	uint8 *_unkPage1;
 	uint8 *_unkPage2;
-	
+
+	uint8 *_unkBuffer17;
+
 	// interface?
 	uint8 *_interfaceCPS1;
 	uint8 *_interfaceCPS2;
+
+	// shapes
+	uint8 *_gameShapes[50];
+	uint8 *_shapePoolBuffer;
+
+	uint8 *_mouseSHPBuf;
+
+	// items
+	uint8 *_itemBuffer1;
+	uint8 *_itemBuffer2;
 };
 
 } // end of namespace Kyra

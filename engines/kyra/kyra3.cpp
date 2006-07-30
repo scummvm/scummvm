@@ -42,6 +42,11 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_curMusicTrack = -1;
 	_unkPage1 = _unkPage2 = 0;
 	_interfaceCPS1 = _interfaceCPS2 = 0;
+	memset(_gameShapes, 0, sizeof(_gameShapes));
+	_shapePoolBuffer = 0;
+	_unkBuffer17 = 0;
+	_itemBuffer1 = _itemBuffer2 = 0;
+	_mouseSHPBuf = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -51,6 +56,15 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _unkPage2;
 	delete [] _interfaceCPS1;
 	delete [] _interfaceCPS2;
+
+	delete [] _unkBuffer17;
+
+	delete [] _itemBuffer1;
+	delete [] _itemBuffer2;
+
+	delete [] _shapePoolBuffer;
+
+	delete [] _mouseSHPBuf;
 }
 
 int KyraEngine_v3::setupGameFlags() {
@@ -96,8 +110,33 @@ int KyraEngine_v3::init() {
 	
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
+	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
+	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
-	
+
+	_shapePoolBuffer = new uint8[300000];
+	assert(_shapePoolBuffer);
+
+	// XXX game_setUnkBuffer(_shapePoolBuffer)
+
+	_unkBuffer17 = new uint8[1850];
+	assert(_unkBuffer17);
+
+	_itemBuffer1 = new uint8[72];
+	_itemBuffer2 = new uint8[144];
+	assert(_itemBuffer1 && _itemBuffer2);
+
+	_mouseSHPBuf = _res->fileData("MOUSE.SHP", 0);
+	assert(_mouseSHPBuf);
+
+	for (int i = 0; i <= 6; ++i) {
+		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
+	}
+
+	// XXX
+
+	_screen->setMouseCursor(0, 0, *_gameShapes);
+
 	return 0;
 }
 
@@ -328,34 +367,8 @@ int KyraEngine_v3::handleMainMenu(Movie *logo) {
 	
 	drawMainMenu(strings, selected);
 
-#define A 0x00
-#define B 0xFF
-#define C 0x7F
-
-	// TODO: This is just a mock-up of the real mouse cursor.
-	const byte cursorImage[] = {
-		A, A, C, C, C, C, C, C, C, C,
-		A, B, A, C, C, C, C, C, C, C,
-		A, B, B, A, C, C, C, C, C, C,
-		A, B, B, B, A, C, C, C, C, C,
-		A, B, B, B, B, A, C, C, C, C,
-		A, B, B, B, B, B, A, C, C, C,
-		A, B, B, B, B, B, B, A, C, C,
-		A, B, B, B, B, B, B, B, A, C,
-		A, B, B, B, B, B, B, B, B, A,
-		C, A, A, A, B, B, B, A, A, C,
-		C, C, C, C, A, B, B, B, A, C,
-		C, C, C, C, C, A, B, B, B, A,
-		C, C, C, C, C, C, A, A, A, C
-	};
-
 	_system->warpMouse(300, 180);
-	CursorMan.replaceCursor(cursorImage, 10, 13, 1, 1, C);
 	_screen->showMouse();
-
-#undef A
-#undef B
-#undef C
 
 	int fh = _screen->getFontHeight();
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
