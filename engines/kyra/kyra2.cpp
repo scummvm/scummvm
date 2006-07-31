@@ -22,8 +22,6 @@
 
 #include "kyra/kyra.h"
 #include "kyra/kyra2.h"
-#include "kyra/screen.h"
-#include "kyra/wsamovie.h"
 
 #include "common/system.h"
 
@@ -37,24 +35,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 }
 
 int KyraEngine_v2::go() {
-	uint8 pal[768];
-
-	WSAMovieV2 *title = new WSAMovieV2(this);
-	title->open("title.WSA", 0, pal);
-	assert(title->opened());
-
-	_screen->setScreenPalette(pal);
-	title->setX(0); title->setY(0);
-	title->setDrawPage(0);
-	for (int i = 0; i < 26 && !_quitFlag; ++i) {
-		uint32 nextRun = _system->getMillis() + 6 * _tickLength;
-		title->displayFrame(i);
-		_screen->updateScreen();
-		delayUntil(nextRun);
-	}
-
-	delete title;
-
+	seq_menu();
 	waitForEvent();
 	return 0;
 }

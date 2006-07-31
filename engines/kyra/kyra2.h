@@ -33,6 +33,9 @@ public:
 	int setupGameFlags() { _game = GI_KYRA2; return 0; }
 	
 	int go();
+
+protected:
+	void seq_menu();
 };
 
 } // end of namespace Kyra
