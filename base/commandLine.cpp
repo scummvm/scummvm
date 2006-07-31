@@ -519,11 +519,10 @@ unknownOption:
 
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
 static void listGames() {
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
+	const PluginList &plugins = PluginManager::instance().getPlugins();
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
@@ -535,12 +534,11 @@ static void listGames() {
 
 /** List all targets which are configured in the config file. */
 static void listTargets() {
-	using namespace Common;
-	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-
 	printf("Target               Description                                           \n"
 	       "-------------------- ------------------------------------------------------\n");
 
+	using namespace Common;
+	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);

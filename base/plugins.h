@@ -92,6 +92,7 @@ public:
 	virtual void unloadPlugin()		{}
 
 	virtual const char *getName() const = 0;
+	virtual const char *getCopyright() const = 0;
 	virtual int getVersion() const	{ return 0; }	// TODO!
 
 	virtual GameList getSupportedGames() const = 0;
@@ -127,10 +128,10 @@ public:
  */
 
 #ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(ID,name) \
+#define REGISTER_PLUGIN(ID,name,copyright) \
 	PluginRegistrator *g_##ID##_PluginReg; \
 	void g_##ID##_PluginReg_alloc() { \
-		g_##ID##_PluginReg = new PluginRegistrator(name, \
+		g_##ID##_PluginReg = new PluginRegistrator(name, copyright, \
 			Engine_##ID##_gameIDList(), \
 			Engine_##ID##_findGameID, \
 			Engine_##ID##_create, \
@@ -139,9 +140,10 @@ public:
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 #else
-#define REGISTER_PLUGIN(ID,name) \
+#define REGISTER_PLUGIN(ID,name,copyright) \
 	extern "C" { \
 		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
+		PLUGIN_EXPORT const char *PLUGIN_copyright() { return copyright; } \
 		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
 		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
 		PLUGIN_EXPORT PluginError PLUGIN_createEngine(OSystem *syst, Engine **engine) { return Engine_##ID##_create(syst, engine); } \
@@ -164,13 +166,14 @@ public:
 
 protected:
 	const char *_name;
+	const char *_copyright;
 	GameIDQueryFunc _qf;
 	EngineFactory _ef;
 	DetectFunc _df;
 	GameList _games;
 
 public:
-	PluginRegistrator(const char *name, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df);
+	PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df);
 };
 #endif
 

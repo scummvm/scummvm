@@ -60,8 +60,8 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 #else
 
-PluginRegistrator::PluginRegistrator(const char *name, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
-	: _name(name), _qf(qf), _ef(ef), _df(df), _games(games) {
+PluginRegistrator::PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
+	: _name(name), _copyright(copyright), _qf(qf), _ef(ef), _df(df), _games(games) {
 	//printf("Automatically registered plugin '%s'\n", name);
 }
 
@@ -115,6 +115,7 @@ public:
 	}
 
 	const char *getName() const { return _plugin->_name; }
+	const char *getCopyright() const { return _plugin->_copyright; }
 
 	PluginError createInstance(OSystem *syst, Engine **engine) const {
 		assert(_plugin->_ef);
@@ -144,6 +145,7 @@ class DynamicPlugin : public Plugin {
 	Common::String _filename;
 
 	Common::String _name;
+	Common::String _copyright;
 	GameIDQueryFunc _qf;
 	EngineFactory _ef;
 	DetectFunc _df;
@@ -156,6 +158,7 @@ public:
 		: _dlHandle(0), _filename(filename), _qf(0), _ef(0), _df(0), _games() {}
 
 	const char *getName() const					{ return _name.c_str(); }
+	const char *getCopyright() const			{ return _copyright.c_str(); }
 
 	PluginError createInstance(OSystem *syst, Engine **engine) const {
 		assert(_ef);
@@ -225,6 +228,14 @@ bool DynamicPlugin::loadPlugin() {
 		return false;
 	}
 	_name = nameFunc();
+
+	// Query the plugin's copyright
+	nameFunc = (NameFunc)findSymbol("PLUGIN_copyright");
+	if (!nameFunc) {
+		unloadPlugin();
+		return false;
+	}
+	_copyright = nameFunc();
 
 	// Query the plugin for the game ids it supports
 	GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_gameIDList");
@@ -316,7 +327,7 @@ void PluginManager::loadPlugins() {
 	}
 
 	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-		Common::String name(i->displayName());
+		Common::String name(i->name());
 		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
 			tryLoadPlugin(new DynamicPlugin(i->path()));
 		}

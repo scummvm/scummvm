@@ -159,7 +159,7 @@ PluginError Engine_LURE_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine");
+REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine", "Lure of the Temptress (C) Revolution");
 
 namespace Lure {
 

@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "base/engine.h"
+#include "base/plugins.h"
 #include "base/version.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -50,21 +51,7 @@ enum {
 //
 // TODO: Add different font sizes (for bigger headlines)
 // TODO: Allow color change in the middle of a line...
-static const char *credits_intro[] = {
-"\\C""Copyright (C) 2002-2006 The ScummVM project",
-"\\C""http://www.scummvm.org",
-"\\C""",
-"\\C""LucasArts SCUMM Games (C) LucasArts",
-"\\C""Humongous SCUMM Games (C) Humongous",
-"\\C""Simon the Sorcerer (C) Adventure Soft",
-"\\C""Beneath a Steel Sky (C) Revolution",
-"\\C""Broken Sword Games (C) Revolution",
-"\\C""Flight of the Amazon Queen (C) John Passfield",
-"\\C""and Steve Stamatiadis",
-"\\C""Inherit the Earth (C) Wyrmkeep Entertainment",
-"\\C""Goblins Games (C) Coktel Vision",
-"\\C""The Legend of Kyrandia (C) Westwood Studios",
-"\\C""",
+static const char *gpl_text[] = {
 "\\C""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
 "\\C""",
 "\\C""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
@@ -116,17 +103,44 @@ AboutDialog::AboutDialog()
 	date += ')';
 	_lines.push_back(date);
 
-	Common::String features("\\C\\c2""Supports: ");
+
+	addLine("");
+	addLine("\\C""Copyright (C) 2002-2006 The ScummVM project");
+	addLine("\\C""http://www.scummvm.org");
+	addLine("");
+
+	addLine("\\C\\c1""Features compiled in:");
+	Common::String features("\\C");
 	features += gScummVMFeatures;
 	addLine(features.c_str());
 
 	_lines.push_back("");
 
-	for (i = 0; i < ARRAYSIZE(credits_intro); i++)
-		addLine(credits_intro[i]);
+	addLine("\\C\\c1""Available engines:");
+	const PluginList &plugins = PluginManager::instance().getPlugins();
+	PluginList::const_iterator iter = plugins.begin();
+	for (; iter != plugins.end(); ++iter) {
+	  Common::String str;
+	  str = "\\C";
+	  str += (**iter).getName();
+	  addLine(str.c_str());
+
+	  str = "\\C\\c2";
+	  str += (**iter).getCopyright();
+	  addLine(str.c_str());
+
+	  //addLine("");
+	}
+
+	_lines.push_back("");
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(credits[i]);
+
+	_lines.push_back("");
+
+	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
+		addLine(gpl_text[i]);
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;

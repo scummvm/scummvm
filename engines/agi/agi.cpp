@@ -640,4 +640,4 @@ PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(AGI, "AGI Engine");
+REGISTER_PLUGIN(AGI, "AGI Engine", "TODO (C) TODO");

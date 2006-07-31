@@ -1508,7 +1508,9 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SCUMM, "Scumm Engine");
+REGISTER_PLUGIN(SCUMM, "Scumm Engine",
+				"LucasArts SCUMM Games (C) LucasArts\n"
+				"Humongous SCUMM Games (C) Humongous" );
 
 #ifdef PALMOS_68K
 #include "scumm_globals.h"

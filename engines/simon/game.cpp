@@ -135,7 +135,7 @@ PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SIMON, "Simon the Sorcerer");
+REGISTER_PLUGIN(SIMON, "Simon the Sorcerer", "Simon the Sorcerer (C) Adventure Soft");
 
 namespace Simon {
 

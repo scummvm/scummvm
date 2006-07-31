@@ -130,7 +130,7 @@ PluginError Engine_QUEEN_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen");
+REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen", "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis");
 
 namespace Queen {
 

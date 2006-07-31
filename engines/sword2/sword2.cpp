@@ -116,7 +116,7 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SWORD2, "Broken Sword 2");
+REGISTER_PLUGIN(SWORD2, "Broken Sword 2", "Broken Sword Games (C) Revolution");
 
 namespace Sword2 {
 

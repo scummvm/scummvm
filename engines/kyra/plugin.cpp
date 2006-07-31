@@ -255,7 +255,7 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine");
+REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
 
 #pragma mark -
 

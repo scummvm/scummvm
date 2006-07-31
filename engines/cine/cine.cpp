@@ -117,7 +117,7 @@ PluginError Engine_CINE_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(CINE, "CINE Engine");
+REGISTER_PLUGIN(CINE, "CINE Engine", "TODO (C) TODO");
 
 namespace Cine {
 

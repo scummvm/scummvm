@@ -82,7 +82,7 @@ PluginError Engine_SAGA_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SAGA, "SAGA Engine");
+REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
 namespace Saga {
 #include "sagagame.cpp"

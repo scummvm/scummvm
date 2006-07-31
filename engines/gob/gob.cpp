@@ -419,4 +419,4 @@ PluginError Engine_GOB_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(GOB, "Gob Engine");
+REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");

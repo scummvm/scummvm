@@ -115,7 +115,7 @@ PluginError Engine_SKY_create(OSystem *syst, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SKY, "Beneath a Steel Sky");
+REGISTER_PLUGIN(SKY, "Beneath a Steel Sky", "Beneath a Steel Sky (C) Revolution");
 
 
 namespace Sky {
