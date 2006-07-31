@@ -47,6 +47,13 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
 	_itemBuffer1 = _itemBuffer2 = 0;
 	_mouseSHPBuf = 0;
 	_tableBuffer1 = _tableBuffer2 = 0;
+	_unkBuffer5 = _unkBuffer6 = _unkBuffer7 = _unkBuffer9 = 0;
+	_costpalData = 0;
+	_unkWSAPtr = 0;
+	memset(_unkShapeTable, 0, sizeof(_unkShapeTable));
+	_scoreFile = 0;
+	_cCodeFile = 0;
+	_scenesList = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -63,6 +70,18 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _shapePoolBuffer;
 
 	delete [] _mouseSHPBuf;
+
+	delete [] _unkBuffer5;
+	delete [] _unkBuffer6;
+	delete [] _unkBuffer7;
+	delete [] _unkBuffer9;
+
+	delete [] _costpalData;
+	delete [] _unkWSAPtr;
+
+	delete [] _scoreFile;
+	delete [] _cCodeFile;
+	delete [] _scenesList;
 }
 
 int KyraEngine_v3::setupGameFlags() {
@@ -408,10 +427,6 @@ int KyraEngine_v3::handleMainMenu(Movie *logo) {
 			if (_mousePressFlag) {
 				// TODO: Flash the text
 				command = item;
-
-				// TODO: For now, only playing the intro and quitting is supported
-				if (command != 1 && command != 3)
-					command = -1;
 			}
 		}
 	}
@@ -525,6 +540,31 @@ void KyraEngine_v3::preinit() {
 
 void KyraEngine_v3::realInit() {
 	debugC(9, kDebugLevelMain, "KyraEngine::realInit()");
+
+	// XXX sound specific stuff
+
+	_unkBuffer5 = new uint8[500];
+	_unkBuffer6 = new uint8[200];
+	_unkBuffer7 = new uint8[600];
+	_costpalData = new uint8[864];
+	_unkBuffer9 = new uint8[3618];
+	_unkWSAPtr = new uint8[624];
+
+	musicUpdate(0);
+
+	_unkPage2 = new uint8[64000];
+
+	musicUpdate(0);
+	musicUpdate(0);
+
+	assert(loadLanguageFile("ITEMS.", _itemList));
+	assert(loadLanguageFile("C_CODE.", _cCodeFile));
+	assert(loadLanguageFile("SCENES.", _scenesList));
+
+	assert(_unkBuffer5 && _unkBuffer6 && _unkBuffer7 && _costpalData && _unkBuffer9 &&
+			_unkWSAPtr && _unkPage2 && _itemList && _cCodeFile && _scenesList);
+
+	musicUpdate(0);
 }
 
 #pragma mark -
@@ -768,6 +808,52 @@ void KyraEngine_v3::initItems() {
 	delete [] itemsDat;
 
 	_screen->_curPage = 0;
+}
+
+#pragma mark -
+
+int KyraEngine_v3::getMaxFileSize(const char *file) {
+	debugC(9, kDebugLevelMain, "KyraEngine::getMaxFileSize(%s)", file);
+	int size = 0;
+
+	char buffer[32];
+
+	for (int i = 0; i < _languageExtensionSize; ++i) {
+		strncpy(buffer, file, 32);
+		size = MAX<uint32>(size, _res->getFileSize(appendLanguage(buffer, i, sizeof(buffer))));
+	}
+
+	return size + 20;
+}
+
+char *KyraEngine_v3::appendLanguage(char *buf, int lang, int bufSize) {
+	debugC(9, kDebugLevelMain, "KyraEngine::appendLanguage([%p|'%s'], %d, %d)", (const void*)buf, buf, lang, bufSize);
+	assert(lang < _languageExtensionSize);
+
+	int size = strlen(buf) + strlen(_languageExtension[lang]);
+
+	if (size > bufSize) {
+		warning("buffer too small to append language extension");
+		return 0;
+	}
+
+	char *temp = buf + strlen(buf);
+	bufSize -= strlen(buf);
+
+	strncat(temp, _languageExtension[lang], bufSize);
+
+	return buf;
+}
+
+bool KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
+	debugC(9, kDebugLevelMain, "KyraEngine::loadLanguageFile('%s', %p)", file, (const void*)buffer);
+
+	uint32 size = 0;
+	char nBuf[32];
+	strncpy(nBuf, file, 32);
+	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
+
+	return size != 0 && buffer != 0;
 }
 
 } // end of namespace Kyra

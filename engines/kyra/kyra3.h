@@ -85,6 +85,22 @@ private:
 	uint8 *_unkPage1;
 	uint8 *_unkPage2;
 
+	uint8 *_unkBuffer5;
+	uint8 *_unkBuffer6;
+	uint8 *_unkBuffer7;
+	uint8 *_unkBuffer9;
+
+	uint8 *_costpalData;
+
+	uint8 *_unkWSAPtr;
+
+	uint8 *_unkShapeTable[20];
+
+	// translation stuff
+	uint8 *_scoreFile;
+	uint8 *_cCodeFile;
+	uint8 *_scenesList;
+
 	// interface?
 	uint8 *_interfaceCPS1;
 	uint8 *_interfaceCPS2;
@@ -98,6 +114,8 @@ private:
 	// items
 	uint8 *_itemBuffer1;
 	uint8 *_itemBuffer2;
+
+	uint8 *_itemList;
 
 	void initItems();
 
@@ -116,6 +134,16 @@ private:
 
 	int addShapeToTable(uint8 *buf, int id, int shapeNum);
 	uint8 *findShapeInTable(int id);
+
+	// resource specific
+private:
+	static const char *_languageExtension[];
+	static const int _languageExtensionSize;
+
+	int getMaxFileSize(const char *file);
+	char *appendLanguage(char *buf, int lang, int bufSize);
+
+	bool loadLanguageFile(const char *file, uint8 *&buffer);
 };
 
 } // end of namespace Kyra

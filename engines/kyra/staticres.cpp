@@ -1289,4 +1289,14 @@ const char *KyraEngine_v3::_soundList[] = {
 
 const int KyraEngine_v3::_soundListSize = ARRAYSIZE(KyraEngine_v3::_soundList);
 
+const char *KyraEngine_v3::_languageExtension[] = {
+	"TRE",
+	"TRF",
+	"TRG"/*,
+	"TRI",		Italian and Spanish was never included
+	"TRS"*/
+};
+
+const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
+
 } // End of namespace Kyra

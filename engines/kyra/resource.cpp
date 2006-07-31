@@ -214,6 +214,38 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 	return false;
 }
 
+uint32 Resource::getFileSize(const char *file) {
+	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
+
+	Common::File temp;
+	if (temp.open(file))
+		return temp.size();
+
+	for (;start != _pakfiles.end(); ++start) {
+		uint32 size = (*start)->getFileSize(file);
+		
+		if (size)
+			return size;
+	}
+
+	return 0;
+}
+
+bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
+	Common::File tempHandle;
+	uint32 size = 0;
+	if (!fileHandle(file, &size, tempHandle))
+		return false;
+
+	if (size > maxSize)
+		return false;
+
+	memset(buf, 0, maxSize);
+	tempHandle.read(buf, size);
+
+	return true;
+}
+
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
