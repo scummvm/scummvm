@@ -90,7 +90,7 @@ static Common::Point closestPtOnLine(const Common::Point &start, const Common::P
 
 
 byte ScummEngine::getMaskFromBox(int box) {
-	// Fix for bug #740244 and #755863. This appears to have been a
+	// WORKAROUND for bug #740244 and #755863. This appears to have been a
 	// long standing bug in the original engine?
 	if (_game.version <= 3 && box == 255)
 		return 1;
@@ -379,27 +379,27 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	if (!ptr || box == 255)
 		return NULL;
 
-	// The NES version of Maniac Mansion attempts to set flags for boxes 2-4
+	// WORKAROUND: The NES version of Maniac Mansion attempts to set flags for boxes 2-4
 	// when there are only three boxes (0-2) when walking out to the garage.
 	if ((_game.id == GID_MANIAC) && (_game.platform == Common::kPlatformNES) && (box >= ptr[0]))
 		return NULL;
 
-	// FIXME: In "pass to adventure", the loom demo, when bobbin enters
+	// WORKAROUND: In "pass to adventure", the loom demo, when bobbin enters
 	// the tent to the elders, box = 2, but ptr[0] = 2 -> errors out.
-	// Hence we disable the check for now. Maybe in PASS (and other old games)
-	// we shouldn't subtract 1 from ptr[0] when performing the check?
-	// this also seems to be incorrect for atari st demo of zak
-	// and assumingly other v2 games
-	// The same happens in Indy3EGA (see bug #770351)
-	// Also happens in ZakEGA (see bug #771803).
+	// Also happens in Indy3EGA (see bug #770351) and ZakEGA (see bug #771803).
 	//
 	// This *might* mean that we have a bug in our box implementation
 	// OTOH, the original engine, unlike ScummVM, performed no bound
 	// checking at all. All the problems so far have been cases where
 	// the value was exactly one more than what we consider the maximum.
-	// So it's very well possible that all of these are script errors.
+	// So it seems to be most likely that all of these are script errors.
+	//
+	// As a workaround, we simply use the last box if the last+1 box is requested.
+	// Note that this may cause different behavior than the original game
+	// engine exhibited! To faithfully reproduce the behavior of the original
+	// engine, we would have to know the data coming *after* the walkbox table.
 	if (_game.version <= 4 && ptr[0] == box)
-	    box--;
+		box--;
 
 	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 	if (_game.version == 0)
@@ -715,7 +715,7 @@ byte *ScummEngine::getBoxMatrixBaseAddr() {
 	return ptr;
 }
 
-/*
+/**
  * Compute if there is a way that connects box 'from' with box 'to'.
  * Returns the number of a box adjactant to 'from' that is the next on the
  * way to 'to' (this can be 'to' itself or a third box).
