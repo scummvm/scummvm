@@ -712,8 +712,8 @@ uint8 *KyraEngine_v3::allocTableSpace(uint8 *buf, int size, int id) {
 
 namespace {
 int tableIdCompare(const void *l, const void *r) {
-	int lV = *(uint32*)(l);
-	int rV = *(uint32*)(r);
+	int lV = *(const uint32*)(l);
+	int rV = *(const uint32*)(r);
 
 	return CLIP(lV - rV, -1, 1);
 }
