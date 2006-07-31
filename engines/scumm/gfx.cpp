@@ -2859,7 +2859,7 @@ void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, con
 		uint h = height;
 		x = 8;
 		for (;;) {
-			*dst = *src++;
+			*dst = _roomPalette[*src++];
 			NEXT_ROW;
 		}
 	} else {
