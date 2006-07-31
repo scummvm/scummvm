@@ -1493,6 +1493,9 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 
 	// This is based on disassembly
 	camera._cur.x = camera._dest.x = a->_pos.x;
+	if ((_game.id == GID_ZAK || _game.id == GID_LOOM) && (_game.platform == Common::kPlatformFMTowns)) {
+		setCameraAt(a->_pos.x, a->_pos.y);
+	}
 	setCameraFollows(a);
 
 	_fullRedraw = true;
