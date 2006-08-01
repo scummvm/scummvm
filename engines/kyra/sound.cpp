@@ -345,7 +345,6 @@ void SoundMidiPC::onTimer(void *refCon) {
 		byte volume = (byte)((musicFadeTime - (music->_engine->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
 		music->setVolume(volume);
 	} else if (music->_fadeStartTime) {
-		music->setVolume(255);
 		music->_fadeStartTime = 0;
 		music->_fadeMusicOut = false;
 		music->_isPlaying = false;
