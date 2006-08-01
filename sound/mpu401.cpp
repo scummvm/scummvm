@@ -41,7 +41,7 @@ MidiDriver *MidiChannel_MPU401::device() {
 }
 
 void MidiChannel_MPU401::send(uint32 b) {
-	_owner->send (b & 0xFFFFFFF0 | (_channel & 0xF));
+	_owner->send(b & 0xFFFFFFF0 | (_channel & 0xF));
 }
 
 void MidiChannel_MPU401::noteOff(byte note) {
@@ -103,7 +103,7 @@ void MidiDriver_MPU401::close() {
 		Common::g_timer->removeTimerProc(_timer_proc);
 	_timer_proc = 0;
 	for (int i = 0; i < 16; ++i)
-		send (0x7B << 8 | 0xB0 | i);
+		send(0x7B << 8 | 0xB0 | i);
 }
 
 uint32 MidiDriver_MPU401::property(int prop, uint32 param) {
