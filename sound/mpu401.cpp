@@ -108,9 +108,9 @@ void MidiDriver_MPU401::close() {
 
 uint32 MidiDriver_MPU401::property(int prop, uint32 param) {
 	switch (prop) {
-		case PROP_CHANNEL_MASK:
-			_channel_mask = param & 0xFFFF;
-			return 1;
+	case PROP_CHANNEL_MASK:
+		_channel_mask = param & 0xFFFF;
+		return 1;
 	}
 
 	return 0;
