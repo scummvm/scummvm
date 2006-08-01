@@ -141,7 +141,10 @@ int KyraEngine::init() {
 	// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
-	if (midiDriver == MD_ADLIB) {
+	// TODO: We should play the native Kyra 2 Adlib music, but until that
+	//       is support, we'll use the automagic MIDI -> Adlib converter.
+
+	if (midiDriver == MD_ADLIB && _game == GI_KYRA1) {
 		_sound = new SoundAdlibPC(_mixer, this);
 		assert(_sound);
 	} else {
@@ -162,7 +165,7 @@ int KyraEngine::init() {
 		// missing. It's just that at least at the time of writing they
 		// decidedly inferior to the Adlib ones.
 
-		if (ConfMan.getBool("multi_midi")) {
+		if (midiDriver != MD_ADLIB && ConfMan.getBool("multi_midi")) {
 			SoundAdlibPC *adlib = new SoundAdlibPC(_mixer, this);
 			assert(adlib);
 			
