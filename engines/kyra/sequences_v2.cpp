@@ -48,8 +48,6 @@ void KyraEngine_v2::seq_menu() {
 	uint8 pal[768];
 	int i;
 
-	_sound->playTrack(2);
-
 	WSAMovieV2 *title = new WSAMovieV2(this);
 	title->setDrawPage(0);
 
@@ -60,6 +58,8 @@ void KyraEngine_v2::seq_menu() {
 	title->displayFrame(0);
 	_screen->updateScreen();
 	_screen->fadePalette(pal, 0x54);
+
+	_sound->playTrack(2);
 
 	for (i = 1; i < 18 && !_quitFlag; ++i) {
 		uint32 nextRun = _system->getMillis() + 6 * _tickLength;
@@ -78,8 +78,6 @@ void KyraEngine_v2::seq_menu() {
 		return;
 	}
 
-	_sound->playTrack(3);
-
 	title->open("TITLE.WSA", 0, pal);
 	assert(title->opened());
 
@@ -87,6 +85,8 @@ void KyraEngine_v2::seq_menu() {
 	title->displayFrame(0);
 	_screen->updateScreen();
 	_screen->fadePalette(pal, 0x54);
+
+	_sound->playTrack(3);
 
 	for (i = 1; i < 26 && !_quitFlag; ++i) {
 		uint32 nextRun = _system->getMillis() + 6 * _tickLength;
