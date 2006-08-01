@@ -99,7 +99,7 @@ SoundMidiPC::SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *en
 	_eventFromMusic = false;
 	_fadeMusicOut = _sfxIsPlaying = false;
 	_fadeStartTime = 0;
-	_isPlaying = _nativeMT32 = false;
+	_isPlaying = _nativeMT32 = _useC55 = false;
 	_soundEffect = _parser = 0;
 	_soundEffectSource = _parserSource = 0;
 
@@ -193,7 +193,7 @@ void SoundMidiPC::send(uint32 b) {
 		_channelVolume[channel] = volume;
 		volume = volume * _volume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
+	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32 && !_useC55) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
@@ -231,7 +231,7 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 
 void SoundMidiPC::loadMusicFile(const char *file) {
 	char filename[25];
-	sprintf(filename, "%s.XMI", file);
+	sprintf(filename, "%s.%s", file, _useC55 ? "C55" : "XMI");
 
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(filename, &size);
@@ -269,7 +269,7 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 
 void SoundMidiPC::loadSoundEffectFile(const char *file) {
 	char filename[25];
-	sprintf(filename, "%s.XMI", file);
+	sprintf(filename, "%s.%s", file, _useC55 ? "C55" : "XMI");
 
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(filename, &size);
