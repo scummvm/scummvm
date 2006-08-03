@@ -73,6 +73,8 @@ public:
 	bool endOfData() const { return false; }
 	int getRate() const { return _mixer->getOutputRate(); }
 
+	void setSyncJumpMask(uint16 mask) { _syncJumpMask = mask; }
+
 private:
 	struct OpcodeEntry {
 		typedef int (AdlibDriver::*DriverOpcode)(va_list &list);
@@ -127,6 +129,7 @@ private:
 	// unk41 - Sound-effect. Used for primaryEffect2()
 
 	struct Channel {
+		bool lock;	// New to ScummVM
 		uint8 opExtraLevel2;
 		uint8 *dataptr;
 		uint8 duration;
@@ -378,6 +381,8 @@ private:
 	static const uint8 _unkTable2_3[];
 	static const uint8 _unkTables[][32];
 
+	uint16 _syncJumpMask;
+
 	Common::Mutex _mutex;
 	Audio::Mixer *_mixer;
 
@@ -421,6 +426,8 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
 	_samplesTillCallback = 0;
 	_samplesTillCallbackRemainder = 0;
+
+	_syncJumpMask = 0;
 }
 
 AdlibDriver::~AdlibDriver() {
@@ -628,6 +635,11 @@ void AdlibDriver::setupPrograms() {
 			unkOutput2(chan);
 		}
 
+		// What we have set up now is, probably, the controlling
+		// channel for the sound. It is assumed that this program will
+		// set up all the other channels it needs, clearing their locks
+		// along the way.
+
 		++_lastProcessed;
 		_lastProcessed &= 0x0F;
 	}
@@ -670,12 +682,38 @@ void AdlibDriver::setupPrograms() {
 void AdlibDriver::executePrograms() {
 	// Each channel runs its own program. There are ten channels: One for
 	// each Adlib channel (0-8), plus one "control channel" (9) which is
-	// the one that tells the other channels what to do. 
+	// the one that tells the other channels what to do.
+
+	// This is where we ensure that channels that are made to jump "in
+	// sync" do so.
+
+	if (_syncJumpMask) {
+		bool forceUnlock = true;
+
+		for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
+			if ((_syncJumpMask & (1 << _curChannel)) == 0)
+				continue;
+
+			if (_channels[_curChannel].dataptr && !_channels[_curChannel].lock) {
+				forceUnlock = false;
+			}
+		}
+
+		if (forceUnlock) {
+			for (_curChannel = 9; _curChannel >= 0; --_curChannel)
+				if (_syncJumpMask & (1 << _curChannel))
+					_channels[_curChannel].lock = false;
+		}
+	}
 
 	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
 		int result = 1;
 
 		if (!_channels[_curChannel].dataptr) {
+			continue;
+		}
+
+		if (_channels[_curChannel].lock && (_syncJumpMask & (1 << _curChannel))) {
 			continue;
 		}
 	
@@ -784,6 +822,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 	channel.primaryEffect = 0;
 	channel.secondaryEffect = 0;
 	channel.spacing1 = 1;
+	channel.lock = false;
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
@@ -1246,6 +1285,8 @@ int AdlibDriver::update_jump(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	dataptr += add;
+	if (_syncJumpMask & (1 << (&channel - _channels)))
+		channel.lock = true;
 	return 0;
 }
 
@@ -2195,8 +2236,18 @@ void SoundAdlibPC::loadMusicFile(const char *file) {
 }
 
 void SoundAdlibPC::playTrack(uint8 track) {
-	if (_musicEnabled)
+	if (_musicEnabled) {
+		// WORKAROUND: There is a bug in the Kyra 1 "Pool of Sorrow"
+		// music which causes the channels to get progressively out of
+		// sync for each loop. To avoid that, we declare that all four
+		// of the song channels have to jump "in sync".
+
+		if (track == 4 && _soundFileLoaded == "KYRA1B")
+			_driver->setSyncJumpMask(0x000F);
+		else
+			_driver->setSyncJumpMask(0);
 		play(track);
+	}
 }
 
 void SoundAdlibPC::haltTrack() {
