@@ -97,8 +97,6 @@ void KyraEngine_v2::seq_menu() {
 
 	title->close();
 
-	_sound->beginFadeOut();
-
 	delete title;
 }
 
