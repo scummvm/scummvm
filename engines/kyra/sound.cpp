@@ -168,6 +168,21 @@ void SoundMidiPC::close() {
 }
 
 void SoundMidiPC::send(uint32 b) {
+	// HACK: For Kyrandia, we make the simplifying assumption that a song
+	// either loops in its entirety, or not at all. So if we see a FOR_LOOP
+	// controller event, we turn on looping even if there isn't any
+	// corresponding NEXT_BREAK event.
+	//
+	// This is a gross over-simplification of how XMIDI handles loops. If
+	// anyone feels like doing a proper implementation, please refer to
+	// the Exult project, and do it in midiparser_xmidi.cpp
+
+	if ((b & 0xFFF0) == 0x74B0) {
+		debugC(9, kDebugLevelMain | kDebugLevelSound, "SoundMidiPC: Looping song");
+		_parser->property(MidiParser::mpAutoLoop, true);
+		return;
+	}
+
 	if (_passThrough) {
 		if ((b & 0xFFF0) == 0x007BB0)
 			return;
@@ -264,7 +279,6 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(getBaseTempo());
 	_parser->setTempo(0);
-	_parser->property(MidiParser::mpAutoLoop, true);
 }
 
 void SoundMidiPC::loadSoundEffectFile(const char *file) {
@@ -385,6 +399,7 @@ void SoundMidiPC::playTrack(uint8 track) {
 		_parser->setTrack(track);
 		_parser->jumpToTick(0);
 		_parser->setTempo(1);
+		_parser->property(MidiParser::mpAutoLoop, false);
 	}
 }
 
