@@ -120,6 +120,23 @@ echocheck () {
 	echo_n "Checking for $@... "
 }
 
+# Add a boolean flag to config.mk. Takes two parameters:
+# The first one can be set to 'yes' to "comment out" the flag,
+# i.e. make it ineffective, use 'no' otherwise.
+# The second param is the name of the flag to set.
+#
+# For now the variable is always set to 1, but we could add
+# another parameter for that...
+add_flag_to_config_mk() {
+	if test "$1" = no ; then
+		_config_mk_data="$_config_mk_data"'
+'"$2 = 1"
+	else
+		_config_mk_data="$_config_mk_data"'
+'"# $2 = 1"
+	fi
+}
+
 #
 # Check whether the given command is a working C++ compiler
 #
@@ -637,107 +654,28 @@ if test "$_cxx_major" -ge "3" ; then
 		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
 		;;
 	esac
-	_make_def_HAVE_GCC3='HAVE_GCC3 = 1'
+	add_flag_to_config_mk no 'HAVE_GCC3'
 fi;
 
 #
 # Engine selection
 #
-if test "$_build_scumm" = no ; then
-	_mak_scumm='DISABLE_SCUMM = 1'
-else
-	_mak_scumm='# DISABLE_SCUMM = 1'
-fi
-
-if test "$_build_scumm_7_8" = no ; then
-	_mak_scumm_7_8='DISABLE_SCUMM_7_8 = 1'
-else
-	_mak_scumm_7_8='# DISABLE_SCUMM_7_8 = 1'
-fi
-
-if test "$_build_he" = no ; then
-	_mak_he='DISABLE_HE = 1'
-else
-	_mak_he='# DISABLE_HE = 1'
-fi
-
-if test "$_build_simon" = no ; then
-	_mak_simon='DISABLE_SIMON = 1'
-else
-	_mak_simon='# DISABLE_SIMON = 1'
-fi
-
-if test "$_build_sky" = no ; then
-	_mak_sky='DISABLE_SKY = 1'
-else
-	_mak_sky='# DISABLE_SKY = 1'
-fi
-
-if test "$_build_sword1" = no ; then
-	_mak_sword1='DISABLE_SWORD1 = 1'
-else
-	_mak_sword1='# DISABLE_SWORD1 = 1'
-fi
-
-if test "$_build_sword2" = no ; then
-	_mak_sword2='DISABLE_SWORD2 = 1'
-else
-	_mak_sword2='# DISABLE_SWORD2 = 1'
-fi
-
-if test "$_build_queen" = no ; then
-	_mak_queen='DISABLE_QUEEN = 1'
-else
-	_mak_queen='# DISABLE_QUEEN = 1'
-fi
-
-if test "$_build_kyra" = no ; then
-	_mak_kyra='DISABLE_KYRA = 1'
-else
-	_mak_kyra='# DISABLE_KYRA = 1'
-fi
-
-if test "$_build_saga" = no ; then
-	_mak_saga='DISABLE_SAGA = 1'
-else
-	_mak_saga='# DISABLE_SAGA = 1'
-fi
-
-if test "$_build_gob" = no ; then
-	_mak_gob='DISABLE_GOB = 1'
-else
-	_mak_gob='# DISABLE_GOB = 1'
-fi
-
-if test "$_build_lure" = no ; then
-	_mak_lure='DISABLE_LURE = 1'
-else
-	_mak_lure='# DISABLE_LURE = 1'
-fi
-
-if test "$_build_cine" = no ; then
-	_mak_cine='DISABLE_CINE = 1'
-else
-	_mak_cine='# DISABLE_CINE = 1'
-fi
-
-if test "$_build_agi" = no ; then
-	_mak_agi='DISABLE_AGI = 1'
-else
-	_mak_agi='# DISABLE_AGI = 1'
-fi
-
-if test "$_build_hq_scalers" = no ; then
-	_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
-else
-	_mak_hq_scalers='# DISABLE_HQ_SCALERS = 1'
-fi
-
-if test "$_build_scalers" = no ; then
-	_mak_scalers='DISABLE_SCALERS = 1'
-else
-	_mak_scalers='# DISABLE_SCALERS = 1'
-fi
+add_flag_to_config_mk $_build_scumm       'DISABLE_SCUMM'
+add_flag_to_config_mk $_build_scumm_7_8   'DISABLE_SCUMM_7_8'
+add_flag_to_config_mk $_build_he          'DISABLE_HE'
+add_flag_to_config_mk $_build_simon       'DISABLE_SIMON'
+add_flag_to_config_mk $_build_sky         'DISABLE_SKY'
+add_flag_to_config_mk $_build_sword1      'DISABLE_SWORD1'
+add_flag_to_config_mk $_build_sword2      'DISABLE_SWORD2'
+add_flag_to_config_mk $_build_queen       'DISABLE_QUEEN'
+add_flag_to_config_mk $_build_kyra        'DISABLE_KYRA'
+add_flag_to_config_mk $_build_saga        'DISABLE_SAGA'
+add_flag_to_config_mk $_build_gob         'DISABLE_GOB'
+add_flag_to_config_mk $_build_lure        'DISABLE_LURE'
+add_flag_to_config_mk $_build_cine        'DISABLE_CINE'
+add_flag_to_config_mk $_build_agi         'DISABLE_AGI'
+add_flag_to_config_mk $_build_hq_scalers  'DISABLE_HQ_SCALERS'
+add_flag_to_config_mk $_build_scalers     'DISABLE_SCALERS'
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
@@ -1022,10 +960,10 @@ fi
 #
 if test "$_mt32emu" = no ; then
 	_def_mt32emu='#undef USE_MT32EMU'
-	_mak_mt32emu='# USE_MT32EMU = 1'
+	add_flag_to_config_mk yes 'USE_MT32EMU'
 else
 	_def_mt32emu='#define USE_MT32EMU'
-	_mak_mt32emu='USE_MT32EMU = 1'
+	add_flag_to_config_mk no 'USE_MT32EMU'
 fi
 
 #
@@ -1235,10 +1173,10 @@ fi
 
 if test "$_nasm" = yes ; then
 	_def_nasm='#define USE_NASM'
-	_make_def_HAVE_NASM='HAVE_NASM = 1'
+	add_flag_to_config_mk no 'HAVE_NASM'
 else
 	_def_nasm='#undef USE_NASM'
-	_make_def_HAVE_NASM='# HAVE_NASM = 1'
+	add_flag_to_config_mk yes 'HAVE_NASM'
 fi
 
 #
@@ -1429,26 +1367,8 @@ BINDIR := $_bindir
 MANDIR := $_mandir
 
 $_mak_plugins
-$_make_def_HAVE_GCC3
-$_make_def_HAVE_NASM
-$_mak_scumm
-$_mak_scumm_7_8
-$_mak_he
-$_mak_simon
-$_mak_sky
-$_mak_sword1
-$_mak_sword2
-$_mak_queen
-$_mak_kyra
-$_mak_saga
-$_mak_gob
-$_mak_lure
-$_mak_cine
-$_mak_agi
-$_mak_mt32emu
 
-$_mak_hq_scalers
-$_mak_scalers
+$_config_mk_data
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
