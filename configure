@@ -1157,7 +1157,7 @@ fi
 if test "$_fluidsynth" = yes ; then
 	_def_fluidsynth='#define USE_FLUIDSYNTH'
 	LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth"
-	INCLUDE="$INCLUDES $FLUIDSYNTH_CFLAGS"
+	INCLUDES="$INCLUDES $FLUIDSYNTH_CFLAGS"
 else
 	_def_fluidsynth='#undef USE_FLUIDSYNTH'
 fi
