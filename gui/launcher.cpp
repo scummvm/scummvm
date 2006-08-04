@@ -116,7 +116,7 @@ class EditGameDialog : public OptionsDialog {
 public:
 	EditGameDialog(const String &domain, const String &desc);
 
-	virtual void handleScreenChanged();	
+	virtual void reflowLayout();	
 
 	void open();
 	void close();
@@ -267,8 +267,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	new ButtonWidget(this, "gameoptions_ok", "OK", kOKCmd, 0);
 }
 
-void EditGameDialog::handleScreenChanged() {
-	OptionsDialog::handleScreenChanged();
+void EditGameDialog::reflowLayout() {
+	OptionsDialog::reflowLayout();
 
 	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
 
@@ -805,7 +805,7 @@ void LauncherDialog::updateButtons() {
 	}
 }
 
-void LauncherDialog::handleScreenChanged() {
+void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
@@ -839,7 +839,7 @@ void LauncherDialog::handleScreenChanged() {
 	_w = g_system->getOverlayWidth();
 	_h = g_system->getOverlayHeight();
 
-	Dialog::handleScreenChanged();
+	Dialog::reflowLayout();
 }
 
 } // End of namespace GUI

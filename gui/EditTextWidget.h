@@ -47,7 +47,7 @@ public:
 
 	virtual bool wantsFocus() { return true; }
 
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 
 protected:
 	void drawWidget(bool hilite);

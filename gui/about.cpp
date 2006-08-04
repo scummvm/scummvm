@@ -308,8 +308,8 @@ void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 		close();
 }
 
-void AboutDialog::handleScreenChanged() {
-	Dialog::handleScreenChanged();
+void AboutDialog::reflowLayout() {
+	Dialog::reflowLayout();
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 

@@ -606,8 +606,8 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	return 2;
 }
 
-void OptionsDialog::handleScreenChanged() {
-	Dialog::handleScreenChanged();
+void OptionsDialog::reflowLayout() {
+	Dialog::reflowLayout();
 
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 

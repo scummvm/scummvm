@@ -62,7 +62,7 @@ public:
 
 	void	releaseFocus();
 
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 
 protected:
 	virtual void open();

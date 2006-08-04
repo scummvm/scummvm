@@ -56,10 +56,10 @@ enum {
 // HACK. FIXME. This doesn't belong here. But otherwise it creates compilation problems
 GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
 	_name = name;
-	handleScreenChanged();
+	reflowLayout();
 }
 
-void GuiObject::handleScreenChanged() {
+void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		if ((_x = g_gui.evaluator()->getVar(_name + ".x")) == EVAL_UNDEF_VAR)
 			error("Undefined variable %s.x", _name.c_str());
@@ -262,7 +262,7 @@ void NewGui::runLoop() {
 				_theme->refresh();
 				// refresh all dialogs
 				for (int i = 0; i < _dialogStack.size(); ++i) {
-					_dialogStack[i]->handleScreenChanged();
+					_dialogStack[i]->reflowLayout();
 				}
 				// We need to redraw immediately. Otherwise
 				// some other event may cause a widget to be

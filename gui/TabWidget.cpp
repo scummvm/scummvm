@@ -169,13 +169,13 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	return Widget::handleKeyDown(ascii, keycode, modifiers);
 }
 
-void TabWidget::handleScreenChanged() {
-	Widget::handleScreenChanged();
+void TabWidget::reflowLayout() {
+	Widget::reflowLayout();
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		Widget *w = _tabs[i].firstWidget;
 		while (w) {
-			w->handleScreenChanged();
+			w->reflowLayout();
 			w = w->next();
 		}
 	}

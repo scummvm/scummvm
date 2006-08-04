@@ -51,7 +51,7 @@ protected:
 	StringList		_domains;
 	BrowserDialog	*_browser;
 
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 
 	void updateListing();
 	void updateButtons();

@@ -82,7 +82,7 @@ public:
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 protected:
 	void drawWidget(bool hilite);
 };

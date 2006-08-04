@@ -162,7 +162,7 @@ void ConsoleDialog::open() {
 	// the console, or even outright crashes. This means _scrollLine is not
 	// preserved, but that's a tiny sacrifice.
 
-	handleScreenChanged();
+	reflowLayout();
 
 	Dialog::open();
 	if (_promptStartPos == -1) {
@@ -214,7 +214,7 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 	}
 }
 
-void ConsoleDialog::handleScreenChanged() {
+void ConsoleDialog::reflowLayout() {
 	init();
 
 	_scrollLine = _promptEndPos / kLineWidth;
@@ -222,7 +222,7 @@ void ConsoleDialog::handleScreenChanged() {
 		_scrollLine = _linesPerPage - 1;
 	updateScrollBuffer();
 
-	Dialog::handleScreenChanged();
+	Dialog::reflowLayout();
 	draw();
 }
 

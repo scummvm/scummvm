@@ -344,7 +344,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
-	handleScreenChanged();
+	reflowLayout();
 
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	setHints(THEME_HINT_SAVE_BACKGROUND);
@@ -369,12 +369,12 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 }
 
-void PopUpWidget::handleScreenChanged() {
+void PopUpWidget::reflowLayout() {
 	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
 	_labelSpacing = g_gui.evaluator()->getVar("PopUpWidget.labelSpacing", 0);
 
-	Widget::handleScreenChanged();
+	Widget::reflowLayout();
 }
 
 void PopUpWidget::appendEntry(const String &entry, uint32 tag) {

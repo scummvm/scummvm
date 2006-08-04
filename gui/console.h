@@ -105,7 +105,7 @@ public:
 	void drawDialog();
 
 	void handleTickle();
-	void handleScreenChanged();
+	void reflowLayout();
 	void handleMouseWheel(int x, int y, int direction);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);

@@ -98,7 +98,7 @@ void Dialog::close() {
 	releaseFocus();
 }
 
-void Dialog::handleScreenChanged() {
+void Dialog::reflowLayout() {
 	// The screen has changed. That means the screen visual may also have
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
@@ -106,12 +106,12 @@ void Dialog::handleScreenChanged() {
 	_drawingHints |= THEME_HINT_FIRST_DRAW; 
 	Widget *w = _firstWidget;
 	while (w) {
-		w->handleScreenChanged();
+		w->reflowLayout();
 		w->setHints(THEME_HINT_FIRST_DRAW);
 		w = w->_next;
 	}
 
-	GuiObject::handleScreenChanged();
+	GuiObject::reflowLayout();
 }
 
 void Dialog::releaseFocus() {

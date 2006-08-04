@@ -446,8 +446,8 @@ void ListWidget::abortEditMode() {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void ListWidget::handleScreenChanged() {
-	Widget::handleScreenChanged();
+void ListWidget::reflowLayout() {
+	Widget::reflowLayout();
 
 	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);

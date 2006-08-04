@@ -128,7 +128,7 @@ public:
 	virtual bool handleKeyUp(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 
-	virtual void handleScreenChanged() { GuiObject::handleScreenChanged(); }
+	virtual void reflowLayout() { GuiObject::reflowLayout(); }
 
 	void draw();
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }

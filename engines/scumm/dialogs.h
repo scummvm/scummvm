@@ -76,7 +76,7 @@ public:
 	void setList(const StringList& list);
 	int runModal();
 
-	void handleScreenChanged();
+	void reflowLayout();
 	
 };
 
@@ -85,7 +85,7 @@ public:
 	MainMenuDialog(ScummEngine *scumm);
 	~MainMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 
 protected:
 	ScummEngine		*_vm;
@@ -110,7 +110,7 @@ public:
 	HelpDialog(const GameSettings &game);
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 
 protected:
 	typedef Common::String String;
@@ -174,7 +174,7 @@ public:
 		close();
 	}
 
-	virtual void handleScreenChanged();
+	virtual void reflowLayout();
 
 protected:
 	void setInfoText (const String& message);

@@ -262,7 +262,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 
-	handleScreenChanged();
+	reflowLayout();
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -322,7 +322,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	}
 }
 
-void SaveLoadChooser::handleScreenChanged() {
+void SaveLoadChooser::reflowLayout() {
 	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
 		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
 		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
@@ -365,7 +365,7 @@ void SaveLoadChooser::handleScreenChanged() {
 		_playtime->setFlags(GUI::WIDGET_INVISIBLE);
 	}
 
-	Dialog::handleScreenChanged();
+	Dialog::reflowLayout();
 }
 
 void SaveLoadChooser::updateInfos() {
@@ -512,17 +512,17 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void MainMenuDialog::handleScreenChanged() {
-	ScummDialog::handleScreenChanged();
+void MainMenuDialog::reflowLayout() {
+	ScummDialog::reflowLayout();
 
-	_optionsDialog->handleScreenChanged();
-	_aboutDialog->handleScreenChanged();
+	_optionsDialog->reflowLayout();
+	_aboutDialog->reflowLayout();
 
-	_saveDialog->handleScreenChanged();
-	_loadDialog->handleScreenChanged();
+	_saveDialog->reflowLayout();
+	_loadDialog->reflowLayout();
 
 #ifndef DISABLE_HELP
-	_helpDialog->handleScreenChanged();
+	_helpDialog->reflowLayout();
 #endif
 }
 
@@ -556,7 +556,7 @@ void MainMenuDialog::load() {
 }
 
 void MainMenuDialog::open() {
-	handleScreenChanged();
+	reflowLayout();
 	Dialog::open();
 }
 
@@ -686,8 +686,8 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 }
 
-void HelpDialog::handleScreenChanged() {
-	ScummDialog::handleScreenChanged();
+void HelpDialog::reflowLayout() {
+	ScummDialog::reflowLayout();
 
 	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -781,10 +781,10 @@ void InfoDialog::setInfoText(const String& message) {
 	// Width and height are dummy
 	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
 
-	handleScreenChanged();
+	reflowLayout();
 }
 
-void InfoDialog::handleScreenChanged() {
+void InfoDialog::reflowLayout() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 

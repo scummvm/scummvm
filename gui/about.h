@@ -53,7 +53,7 @@ public:
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleKeyUp(uint16 ascii, int keycode, int modifiers);
 
-	void handleScreenChanged();
+	void reflowLayout();
 };
 
 } // End of namespace GUI

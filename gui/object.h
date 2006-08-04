@@ -78,7 +78,7 @@ public:
 
 	virtual void	draw() = 0;
 
-	virtual void	handleScreenChanged();
+	virtual void	reflowLayout();
 
 protected:
 	virtual void	releaseFocus() = 0;

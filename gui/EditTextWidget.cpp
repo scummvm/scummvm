@@ -32,7 +32,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
 
-	handleScreenChanged();
+	reflowLayout();
 	setEditString(text);
 }
 
@@ -42,7 +42,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String
 	_type = kEditTextWidget;
 	_hints |= THEME_HINT_USE_SHADOW;
 
-	handleScreenChanged();
+	reflowLayout();
 	setEditString(text);
 }
 
@@ -51,8 +51,8 @@ void EditTextWidget::setEditString(const String &str) {
 	_backupString = str;
 }
 
-void EditTextWidget::handleScreenChanged() {
-	EditableWidget::handleScreenChanged();
+void EditTextWidget::reflowLayout() {
+	EditableWidget::reflowLayout();
 	_leftPadding = g_gui.evaluator()->getVar("EditTextWidget.leftPadding", 0);
 	_rightPadding = g_gui.evaluator()->getVar("EditTextWidget.rightPadding", 0);
 
