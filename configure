@@ -813,6 +813,10 @@ else
 		os2-emx*)
 			DEFINES="$DEFINES -DUNIX"
 			;;
+		mint*)
+			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE" 
+			CXXFLAGS="$CXXFLAGS -m68020-60 -fomit-frame-pointer"
+			;;
 		# given this is a shell script assume some type of unix
 		*)
 			echo "WARNING: could not establish system type, assuming unix like"
