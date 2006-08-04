@@ -19,7 +19,6 @@ MODULE_DIRS :=
 include config.mk
 
 CXXFLAGS:= -Wall $(CXXFLAGS)
-CXXFLAGS+= -O -Wuninitialized
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 # Even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
@@ -28,6 +27,12 @@ CXXFLAGS+= -Wno-reorder -Wwrite-strings
 
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
 CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
+
+# There is a nice extra warning that flags variables that are potentially
+# used before being initialized. Very handy to catch a certain kind of
+# bugs. Unfortunately, it only works when optimizations are turned on,
+# which is why we normally don't use it.
+#CXXFLAGS+= -O -Wuninitialized
 
 #######################################################################
 # Misc stuff - you should never have to edit this                     #
