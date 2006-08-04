@@ -69,6 +69,8 @@ public:
 	// Typically, 320x200
 	virtual void initSize(uint w, uint h); // overloaded by CE backend
 
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
+
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
 
@@ -265,6 +267,7 @@ protected:
 	/** Current video mode flags (see DF_* constants) */
 	uint32 _modeFlags;
 	bool _modeChanged;
+	int _screenChangeCount;
 
 	/** True if aspect ratio correction is enabled. */
 	bool _adjustAspectRatio;

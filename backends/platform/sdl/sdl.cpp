@@ -178,7 +178,7 @@ OSystem_SDL::OSystem_SDL()
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),
-	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirtyChecksums(0),
+	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
 	_joystick(0),

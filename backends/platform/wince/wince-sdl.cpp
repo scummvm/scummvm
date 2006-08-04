@@ -2082,6 +2082,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	if (_modeChanged) {
 		_modeChanged = false;
 		event.type = EVENT_SCREEN_CHANGED;
+		screenChangeCount++;
 		return true;
 	}
 

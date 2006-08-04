@@ -310,6 +310,21 @@ public:
 	virtual void initSize(uint width, uint height) = 0;
 
 	/**
+	 * Return an int value which is changed whenever any screen
+	 * parameters (like the resolution) change. That is, whenever a
+	 * EVENT_SCREEN_CHANGED would be sent. You can track this value
+	 * in your code to detect screen changes in case you do not have
+	 * full control over the event loop(s) being used (like the GUI
+	 * code).
+	 *
+	 * @return an integer which can be used to track screen changes
+	 *
+	 * @note Backends which generate EVENT_SCREEN_CHANGED events MUST
+	 *       overload this method appropriately.
+	 */
+	virtual int getScreenChangeID() const { return 0; }
+
+	/**
 	 * Begin a new GFX transaction, which is a sequence of GFX mode changes.
 	 * The idea behind GFX transactions is to make it possible to activate
 	 * several different GFX changes at once as a "batch" operation. For

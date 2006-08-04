@@ -180,6 +180,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	if (_modeChanged) {
 		_modeChanged = false;
 		event.type = EVENT_SCREEN_CHANGED;
+		_screenChangeCount++;
 		return true;
 	}
 
