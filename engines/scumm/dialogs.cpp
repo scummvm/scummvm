@@ -846,17 +846,22 @@ void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 #pragma mark -
 
-ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey)
-	: GUI::Dialog("scummDummyDialog"), _label(label), _min(minVal), _max(maxVal), _value(val), _incKey(incKey), _decKey(decKey) {
+ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal,
+		int val, uint16 incKey, uint16 decKey)
+	: GUI::Dialog("scummDummyDialog", false),
+	_label(label), _min(minVal), _max(maxVal),
+	_value(val), _incKey(incKey), _decKey(decKey) {
 	assert(_min <= _value && _value <= _max);
-
 }
 
 void ValueDisplayDialog::drawDialog() {
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::THEME_HINT_SAVE_BACKGROUND | GUI::THEME_HINT_FIRST_DRAW);
-	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4, _y+g_gui.theme()->getFontHeight()+4), _label);
-	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4), _percentBarWidth * (_value - _min) / (_max - _min));
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h),
+				GUI::THEME_HINT_SAVE_BACKGROUND | GUI::THEME_HINT_FIRST_DRAW);
+	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
+				_y+g_gui.theme()->getFontHeight()+4), _label);
+	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4),
+				_percentBarWidth * (_value - _min) / (_max - _min));
 }
 
 void ValueDisplayDialog::handleTickle() {
