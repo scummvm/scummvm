@@ -21,7 +21,7 @@
  */
 
 #include "common/stdafx.h"
-#include "backends/maemo/maemo-sdl.h"
+#include "backends/platform/maemo/maemo-sdl.h"
 
 
 void OSystem_MAEMO::loadGFXMode() {

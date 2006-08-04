@@ -28,7 +28,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_syswm.h>
 
-#include "backends/maemo/maemo-sdl.h"
+#include "backends/platform/maemo/maemo-sdl.h"
 #include "base/main.h"
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>

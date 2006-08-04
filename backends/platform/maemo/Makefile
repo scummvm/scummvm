@@ -19,13 +19,13 @@ DISABLE_LURE = 1
 DISABLE_CINE = 1
 DISABLE_AGI = 1
 
-srcdir = ../..
+srcdir = ../../..
 VPATH = $(srcdir)
 
 CXX := g++
 EXECUTABLE  := scummvm
 
-INCDIR = ../../ . $(srcdir)/engines/
+INCDIR = $(srcdir)/ . $(srcdir)/engines/
 
 CXXFLAGS := -g -ansi -W -Wno-unused-parameter
 CXXFLAGS += `pkg-config --cflags gconf-2.0 hildon-libs gtk+-2.0 libosso gdk-2.0`
