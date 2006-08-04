@@ -128,6 +128,12 @@
 			RelativePath="..\..\engines\lure\debug-methods.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\lure\debugger.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\debugger.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\lure\decode.cpp">
 		</File>
 		<File

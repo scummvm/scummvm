@@ -131,9 +131,6 @@
 			RelativePath="..\..\engines\sword2\controls.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\d_draw.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\sword2\debug.cpp">
 		</File>
 		<File
@@ -201,9 +198,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\protocol.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\rdwin.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\render.cpp">

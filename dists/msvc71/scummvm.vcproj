@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib cine_debug/cine.lib lure_debug/lure.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib agi_debug/agi.lib cine_debug/cine.lib gob_debug/gob.lib kyra_debug/kyra.lib lure_debug/lure.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib sword1_debug/sword1.lib sword2_debug/sword2.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
@@ -97,7 +97,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib cine_release/cine.lib lure_release/lure.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib agi_release/agi.lib cine_release/cine.lib gob_release/gob.lib kyra_release/kyra.lib lure_release/lure.lib queen_release/queen.lib saga_release/saga.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib sword1_release/sword1.lib sword2_release/sword2.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -136,25 +136,37 @@
 			Name="base"
 			Filter="">
 			<File
+				RelativePath="..\..\base\commandLine.cpp">
+			</File>
+			<File
+				RelativePath="..\..\base\commandLine.h">
+			</File>
+			<File
 				RelativePath="..\..\base\engine.cpp">
 			</File>
 			<File
 				RelativePath="..\..\base\engine.h">
 			</File>
 			<File
-				RelativePath="..\..\base\options.cpp">
+				RelativePath="..\..\base\game.h">
 			</File>
 			<File
-				RelativePath="..\..\base\options.h">
+				RelativePath="..\..\base\internal_version.h">
 			</File>
 			<File
 				RelativePath="..\..\base\main.cpp">
+			</File>
+			<File
+				RelativePath="..\..\base\main.h">
 			</File>
 			<File
 				RelativePath="..\..\base\plugins.cpp">
 			</File>
 			<File
 				RelativePath="..\..\base\plugins.h">
+			</File>
+			<File
+				RelativePath="..\..\base\version.cpp">
 			</File>
 			<File
 				RelativePath="..\..\base\version.h">
@@ -185,16 +197,31 @@
 				RelativePath="..\..\common\debugger.h">
 			</File>
 			<File
+				RelativePath="..\..\common\endian.h">
+			</File>
+			<File
 				RelativePath="..\..\common\file.cpp">
 			</File>
 			<File
 				RelativePath="..\..\common\file.h">
 			</File>
 			<File
-				RelativePath="..\..\common\list.h">
+				RelativePath="..\..\common\fs.cpp">
 			</File>
 			<File
-				RelativePath="..\..\common\map.h">
+				RelativePath="..\..\common\fs.h">
+			</File>
+			<File
+				RelativePath="..\..\common\func.h">
+			</File>
+			<File
+				RelativePath="..\..\common\hashmap.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\hashmap.h">
+			</File>
+			<File
+				RelativePath="..\..\common\list.h">
 			</File>
 			<File
 				RelativePath="..\..\common\md5.cpp">
@@ -209,10 +236,13 @@
 				RelativePath="..\..\common\mutex.h">
 			</File>
 			<File
-				RelativePath="..\..\common\rect.h">
+				RelativePath="..\..\common\pack-end.h">
 			</File>
 			<File
-				RelativePath="..\..\common\savefile.cpp">
+				RelativePath="..\..\common\pack-start.h">
+			</File>
+			<File
+				RelativePath="..\..\common\rect.h">
 			</File>
 			<File
 				RelativePath="..\..\common\savefile.h">
@@ -246,9 +276,6 @@
 			</File>
 			<File
 				RelativePath="..\..\common\system.h">
-			</File>
-			<File
-				RelativePath="..\..\common\timer.cpp">
 			</File>
 			<File
 				RelativePath="..\..\common\timer.h">
@@ -473,29 +500,10 @@
 				RelativePath="..\..\backends\intern.h">
 			</File>
 			<Filter
-				Name="sdl"
-				Filter="">
-				<File
-					RelativePath="..\..\backends\sdl\events.cpp">
-				</File>
-				<File
-					RelativePath="..\..\backends\sdl\graphics.cpp">
-				</File>
-				<File
-					RelativePath="..\..\backends\sdl\sdl-common.h">
-				</File>
-				<File
-					RelativePath="..\..\backends\sdl\sdl.cpp">
-				</File>
-			</Filter>
-			<Filter
 				Name="fs"
 				Filter="">
 				<File
-					RelativePath="..\..\backends\fs\fs.cpp">
-				</File>
-				<File
-					RelativePath="..\..\backends\fs\fs.h">
+					RelativePath="..\..\backends\fs\abstract-fs.h">
 				</File>
 				<File
 					RelativePath="..\..\backends\fs\windows\windows-fs.cpp">
@@ -506,6 +514,45 @@
 				Filter="">
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="timer"
+				Filter="">
+				<File
+					RelativePath="..\..\backends\timer\default\default-timer.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\timer\default\default-timer.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="sdl"
+				Filter="">
+				<File
+					RelativePath="..\..\backends\platform\sdl\events.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\platform\sdl\graphics.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\platform\sdl\sdl-common.h">
+				</File>
+				<File
+					RelativePath="..\..\backends\platform\sdl\sdl.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="saves"
+				Filter="">
+				<File
+					RelativePath="..\..\backends\saves\default\default-saves.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\default\default-saves.h">
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\savefile.cpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -630,6 +677,9 @@
 				RelativePath="..\..\gui\theme-config.cpp">
 			</File>
 			<File
+				RelativePath="..\..\gui\theme.cpp">
+			</File>
+			<File
 				RelativePath="..\..\gui\theme.h">
 			</File>
 			<File
@@ -653,6 +703,21 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\animation.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\colormasks.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\cursorman.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\cursorman.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\dxa_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\dxa_player.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\font.cpp">
@@ -683,6 +748,12 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\imageman.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\paletteman.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\paletteman.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\primitives.cpp">

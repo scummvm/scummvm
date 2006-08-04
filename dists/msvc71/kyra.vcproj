@@ -134,6 +134,21 @@
 			RelativePath="..\..\engines\kyra\kyra.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\kyra2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra2.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra3.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\plugin.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\resource.cpp">
 		</File>
 		<File
@@ -179,6 +194,9 @@
 			RelativePath="..\..\engines\kyra\sound_adlib.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_digital.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sprites.cpp">
 		</File>
 		<File
@@ -195,6 +213,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\timer.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\vqa.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\vqa.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\wsamovie.cpp">

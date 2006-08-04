@@ -134,6 +134,12 @@
 			RelativePath="..\..\engines\gob\draw.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\draw_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\draw_v2.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\driver_vga.cpp">
 		</File>
 		<File
@@ -144,6 +150,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\game.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\game_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\game_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\global.cpp">
@@ -164,10 +176,22 @@
 			RelativePath="..\..\engines\gob\goblin.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\goblin_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\goblin_v2.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\init.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter.cpp">
@@ -186,6 +210,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\map.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\map_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\map_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\mult.cpp">
@@ -236,6 +266,12 @@
 			RelativePath="..\..\engines\gob\scenery.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\scenery_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\scenery_v2.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\sound.cpp">
 		</File>
 		<File
@@ -258,6 +294,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\video.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\video_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\video_v2.cpp">
 		</File>
 	</Files>
 	<Globals>

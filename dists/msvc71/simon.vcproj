@@ -111,6 +111,12 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\simon\animation.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\simon\animation.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\simon\charset.cpp">
 		</File>
 		<File
@@ -127,6 +133,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\simon\debugger.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\simon\draw.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\simon\event.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\simon\game.cpp">
@@ -171,6 +183,12 @@
 			RelativePath="..\..\engines\simon\sound.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\simon\string.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\simon\subroutine.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\simon\verb.cpp">
 		</File>
 		<File
@@ -178,6 +196,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\simon\vga.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\simon\window.cpp">
 		</File>
 	</Files>
 	<Globals>

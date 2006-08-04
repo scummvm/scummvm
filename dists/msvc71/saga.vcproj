@@ -215,9 +215,6 @@
 			RelativePath="..\..\engines\saga\render.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\resnames.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\saga\rscfile.cpp">
 		</File>
 		<File

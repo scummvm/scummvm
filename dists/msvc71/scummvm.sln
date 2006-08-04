@@ -58,6 +58,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lure", "lure.vcproj", "{04D
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agi", "agi.vcproj", "{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -112,6 +116,10 @@ Global
 		{04D6E063-ECA3-4D4E-BD19-BA5C9165A44A}.Debug.Build.0 = Debug|Win32
 		{04D6E063-ECA3-4D4E-BD19-BA5C9165A44A}.Release.ActiveCfg = Release|Win32
 		{04D6E063-ECA3-4D4E-BD19-BA5C9165A44A}.Release.Build.0 = Release|Win32
+		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Debug.ActiveCfg = Debug|Win32
+		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Debug.Build.0 = Debug|Win32
+		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Release.ActiveCfg = Release|Win32
+		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
