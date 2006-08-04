@@ -112,9 +112,29 @@ DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 }
 
 PluginError Engine_CINE_create(OSystem *syst, Engine **engine) {
+	assert(syst);
 	assert(engine);
-	*engine = new Cine::CineEngine(syst);
-	return kNoError;
+
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("CineEngine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
+
+	// Invoke the detector
+	Common::String gameid = ConfMan.get("gameid");
+	DetectedGameList detectedGames = Engine_CINE_detectGames(fslist);
+
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		if (detectedGames[i].gameid == gameid) {
+			*engine = new Cine::CineEngine(syst);
+			return kNoError;
+		}
+	}
+	
+	warning("CineEngine: Unable to locate game data at path '%s'", dir.path().c_str());
+	return kNoGameDataFoundError;
 }
 
 REGISTER_PLUGIN(CINE, "CINE Engine", "TODO (C) TODO");
