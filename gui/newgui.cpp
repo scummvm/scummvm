@@ -87,6 +87,7 @@ NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 
 	_system = g_system;
+	_lastScreenChangeID = _system->getScreenChangeID();
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
@@ -257,6 +258,8 @@ void NewGui::runLoop() {
 				_system->quit();
 				return;
 			case OSystem::EVENT_SCREEN_CHANGED:
+				_lastScreenChangeID = _system->getScreenChangeID();
+
 				// reinit the whole theme
 				_theme->refresh();
 				// refresh all dialogs
@@ -318,18 +321,22 @@ void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
 	_needRedraw = true;
 
-	// TODO: No need to always reflow everything. Rather, we should
-	// check for the value of OSystem::getScreenChangeID() and
-	// only do a full update when that changed...
-	if (true) {
+	// We reflow the dialog just before opening it. If the screen changed
+	// since the last time we looked, also refresh the loaded theme,
+	// and reflow all other open dialogs, too.
+	int tmpScreenChangeID = _system->getScreenChangeID();
+	if (_lastScreenChangeID != tmpScreenChangeID) {
+		_lastScreenChangeID = tmpScreenChangeID;
+
 		// reinit the whole theme
 		_theme->refresh();
 		// refresh all dialogs
 		for (int i = 0; i < _dialogStack.size(); ++i) {
 		  _dialogStack[i]->reflowLayout();
 		}
-	} else
+	} else {
 	  dialog->reflowLayout();
+	 }
 }
 
 void NewGui::closeTopDialog() {
