@@ -26,7 +26,7 @@
 #define __DMAPIPE_H__
 
 #include "sysdefs.h"
-#include "backends/ps2/GsDefs.h"
+#include "backends/platform/ps2/GsDefs.h"
 
 class SinglePipe;
 

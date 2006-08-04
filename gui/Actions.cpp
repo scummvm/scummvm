@@ -27,10 +27,10 @@
 #include "common/config-manager.h"
 
 #ifdef _WIN32_WCE
-	#include "backends/wince/CEActionsPocket.h"
-	#include "backends/wince/CEActionsSmartphone.h"
+	#include "backends/platform/wince/CEActionsPocket.h"
+	#include "backends/platform/wince/CEActionsSmartphone.h"
 #elif defined(__SYMBIAN32__)
-	#include "backends/symbian/src/SymbianActions.h"
+	#include "backends/platform/symbian/src/SymbianActions.h"
 #endif
 
 namespace GUI {

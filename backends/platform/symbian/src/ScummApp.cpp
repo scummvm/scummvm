@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#include "backends/symbian/src/ScummApp.h"
-#include "backends/symbian/src/ScummVM.hrh"
+#include "backends/platform/symbian/src/ScummApp.h"
+#include "backends/platform/symbian/src/ScummVM.hrh"
 
 #define _PAGESIZE_ 0x1000
 

@@ -20,9 +20,9 @@
  *
  */
 
-#include "backends/ps2/savefile.h"
-#include "backends/ps2/Gs2dScreen.h"
-#include "backends/ps2/GsDefs.h"
+#include "backends/platform/ps2/savefile.h"
+#include "backends/platform/ps2/Gs2dScreen.h"
+#include "backends/platform/ps2/GsDefs.h"
 
 const iconIVECTOR Ps2SaveFileManager::_bgcolor[4] = {
 	{  68,  23, 116,  0 }, // top left

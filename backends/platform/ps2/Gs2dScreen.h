@@ -24,7 +24,7 @@
 #define __GS2DSCREEN_H__
 
 #include "sysdefs.h"
-#include "backends/ps2/DmaPipe.h"
+#include "backends/platform/ps2/DmaPipe.h"
 
 enum TVMode {
 	TV_DONT_CARE = 0,

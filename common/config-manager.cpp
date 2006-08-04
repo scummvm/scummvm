@@ -30,7 +30,7 @@
 DECLARE_SINGLETON(Common::ConfigManager);
 
 #ifdef __PLAYSTATION2__
-#include "backends/ps2/systemps2.h"
+#include "backends/platform/ps2/systemps2.h"
 #endif
 
 #if defined(UNIX)

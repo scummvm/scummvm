@@ -28,9 +28,9 @@
 #include <malloc.h>
 #include <ucl/ucl.h>
 #include <libmc.h>
-#include "backends/ps2/savefile.h"
-#include "backends/ps2/Gs2dScreen.h"
-#include "backends/ps2/systemps2.h"
+#include "backends/platform/ps2/savefile.h"
+#include "backends/platform/ps2/Gs2dScreen.h"
+#include "backends/platform/ps2/systemps2.h"
 #include "common/scummsys.h"
 
 extern void *_gp;

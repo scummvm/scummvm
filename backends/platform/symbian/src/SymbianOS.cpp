@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#include "backends/symbian/src/SymbianOS.h"
-#include "backends/symbian/src/SymbianActions.h"
+#include "backends/platform/symbian/src/SymbianOS.h"
+#include "backends/platform/symbian/src/SymbianActions.h"
 #include "common/config-manager.h"
 #include "gui/Actions.h"
 #include "gui/Key.h"

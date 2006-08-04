@@ -23,8 +23,8 @@
 #include <kernel.h>
 #include <malloc.h>
 #include <assert.h>
-#include "backends/ps2/systemps2.h"
-#include "backends/ps2/ps2pad.h"
+#include "backends/platform/ps2/systemps2.h"
+#include "backends/platform/ps2/ps2pad.h"
 
 Ps2Pad::Ps2Pad(OSystem_PS2 *system) {
 	_system = system;

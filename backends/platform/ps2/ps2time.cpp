@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/ps2/systemps2.h"
+#include "backends/platform/ps2/systemps2.h"
 #include "eecodyvdfs.h"
 #include <osd_config.h>
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))

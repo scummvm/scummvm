@@ -46,7 +46,7 @@
 #include "sound/mididrv.h"
 
 #if defined(_WIN32_WCE)
-#include "backends/wince/CELauncherDialog.h"
+#include "backends/platform/wince/CELauncherDialog.h"
 #elif defined(__DC__)
 #include "backends/platform/dc/DCLauncherDialog.h"
 #else

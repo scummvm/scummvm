@@ -20,14 +20,14 @@
  *
  */
 
-#include "backends/ps2/fileio.h"
+#include "backends/platform/ps2/fileio.h"
 
 #include <tamtypes.h>
 #include <kernel.h>
 #include <fileio.h>
 #include <assert.h>
 #include <string.h>
-#include "backends/ps2/asyncfio.h"
+#include "backends/platform/ps2/asyncfio.h"
 #include "base/engine.h"
 #include "common/file.h"
 #include "eecodyvdfs.h"

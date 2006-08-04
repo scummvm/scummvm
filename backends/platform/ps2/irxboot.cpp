@@ -27,7 +27,7 @@
 #include <sifrpc.h>
 #include <loadfile.h>
 #include <malloc.h>
-#include "backends/ps2/irxboot.h"
+#include "backends/platform/ps2/irxboot.h"
 
 extern void sioprintf(const char *zFormat, ...);
 

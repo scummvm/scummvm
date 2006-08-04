@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/ps2/systemps2.h"
+#include "backends/platform/ps2/systemps2.h"
 
 OSystem::MutexRef OSystem_PS2::createMutex(void) {
 	WaitSema(_mutexSema);

@@ -24,11 +24,11 @@
 #include <malloc.h>
 #include <assert.h>
 #include <libmouse.h>
-#include "backends/ps2/rpckbd.h"
-#include "backends/ps2/ps2input.h"
-#include "backends/ps2/ps2pad.h"
-#include "backends/ps2/systemps2.h"
-#include "backends/ps2/sdlkeys.h"
+#include "backends/platform/ps2/rpckbd.h"
+#include "backends/platform/ps2/ps2input.h"
+#include "backends/platform/ps2/ps2pad.h"
+#include "backends/platform/ps2/systemps2.h"
+#include "backends/platform/ps2/sdlkeys.h"
 #include "common/system.h"
 
 Ps2Input::Ps2Input(OSystem_PS2 *system, bool mouseLoaded, bool kbdLoaded) {

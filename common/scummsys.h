@@ -441,7 +441,7 @@
 	// for those replaced fopen/fread/etc functions
 	typedef unsigned long	uint64;
 	typedef signed long	int64;
-	#include "backends/ps2/fileio.h"
+	#include "backends/platform/ps2/fileio.h"
 #endif
 
 
