@@ -62,6 +62,8 @@ public:
 	virtual void handleTickle();
 	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
+	virtual void reflowLayout();
+
 protected:
 	virtual void startEditMode() = 0;
 	virtual void endEditMode() = 0;

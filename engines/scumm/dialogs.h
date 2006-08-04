@@ -76,8 +76,7 @@ public:
 	void setList(const StringList& list);
 	int runModal();
 
-	void reflowLayout();
-	
+	virtual void reflowLayout();
 };
 
 class MainMenuDialog : public ScummDialog {
@@ -85,7 +84,6 @@ public:
 	MainMenuDialog(ScummEngine *scumm);
 	~MainMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void reflowLayout();
 
 protected:
 	ScummEngine		*_vm;
@@ -100,7 +98,6 @@ protected:
 
 	void save();
 	void load();
-	void open();
 };
 
 #ifndef DISABLE_HELP
@@ -218,6 +215,8 @@ public:
 		close();
 	}
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+
+	virtual void reflowLayout();
 
 protected:
 	enum {

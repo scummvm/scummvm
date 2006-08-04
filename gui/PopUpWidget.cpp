@@ -344,8 +344,6 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
-	reflowLayout();
-
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kPopUpWidget;

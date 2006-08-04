@@ -261,8 +261,6 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
-
-	reflowLayout();
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -512,20 +510,6 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void MainMenuDialog::reflowLayout() {
-	ScummDialog::reflowLayout();
-
-	_optionsDialog->reflowLayout();
-	_aboutDialog->reflowLayout();
-
-	_saveDialog->reflowLayout();
-	_loadDialog->reflowLayout();
-
-#ifndef DISABLE_HELP
-	_helpDialog->reflowLayout();
-#endif
-}
-
 void MainMenuDialog::save() {
 	int idx;
 	_saveDialog->setList(generateSavegameList(_vm, true));
@@ -553,11 +537,6 @@ void MainMenuDialog::load() {
 		_vm->requestLoad(idx);
 		close();
 	}
-}
-
-void MainMenuDialog::open() {
-	reflowLayout();
-	Dialog::open();
 }
 
 #pragma mark -
@@ -780,8 +759,6 @@ void InfoDialog::setInfoText(const String& message) {
 
 	// Width and height are dummy
 	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
-
-	reflowLayout();
 }
 
 void InfoDialog::reflowLayout() {
@@ -873,22 +850,6 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 	: GUI::Dialog("scummDummyDialog"), _label(label), _min(minVal), _max(maxVal), _value(val), _incKey(incKey), _decKey(decKey) {
 	assert(_min <= _value && _value <= _max);
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	if (g_gui.getWidgetSize() == GUI::kBigWidgetSize) {
-		_percentBarWidth = kBigPercentBarWidth;
-	} else {
-		_percentBarWidth = kPercentBarWidth;
-	}
-
-	int width = g_gui.getStringWidth(label) + 16 + _percentBarWidth;
-	int height = g_gui.getFontHeight() + 4 * 2;
-
-	_x = (screenW - width) / 2;
-	_y = (screenH - height) / 2;
-	_w = width;
-	_h = height;
 }
 
 void ValueDisplayDialog::drawDialog() {
@@ -902,6 +863,25 @@ void ValueDisplayDialog::handleTickle() {
 	if (getMillis() > _timer) {
 		close();
 	}
+}
+
+void ValueDisplayDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	if (g_gui.getWidgetSize() == GUI::kBigWidgetSize) {
+		_percentBarWidth = kBigPercentBarWidth;
+	} else {
+		_percentBarWidth = kPercentBarWidth;
+	}
+
+	int width = g_gui.getStringWidth(_label) + 16 + _percentBarWidth;
+	int height = g_gui.getFontHeight() + 4 * 2;
+
+	_x = (screenW - width) / 2;
+	_y = (screenH - height) / 2;
+	_w = width;
+	_h = height;
 }
 
 void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {

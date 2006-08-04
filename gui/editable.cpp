@@ -50,15 +50,19 @@ void EditableWidget::init() {
 EditableWidget::~EditableWidget() {
 }
 
+void EditableWidget::reflowLayout() {
+	Widget::reflowLayout();
+
+	_editScrollOffset = g_gui.getStringWidth(_editString, _font) - getEditRect().width();
+	if (_editScrollOffset < 0)
+		_editScrollOffset = 0;
+}
+
 void EditableWidget::setEditString(const String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
 	_caretPos = _editString.size();
-
-	_editScrollOffset = g_gui.getStringWidth(_editString, _font) - getEditRect().width();
-	if (_editScrollOffset < 0)
-		_editScrollOffset = 0;
 }
 
 bool EditableWidget::tryInsertChar(byte c, int pos) {

@@ -56,7 +56,6 @@ enum {
 // HACK. FIXME. This doesn't belong here. But otherwise it creates compilation problems
 GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
 	_name = name;
-	reflowLayout();
 }
 
 void GuiObject::reflowLayout() {
@@ -318,6 +317,19 @@ void NewGui::restoreState() {
 void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
 	_needRedraw = true;
+
+	// TODO: No need to always reflow everything. Rather, we should
+	// check for the value of OSystem::getScreenChangeID() and
+	// only do a full update when that changed...
+	if (true) {
+		// reinit the whole theme
+		_theme->refresh();
+		// refresh all dialogs
+		for (int i = 0; i < _dialogStack.size(); ++i) {
+		  _dialogStack[i]->reflowLayout();
+		}
+	} else
+	  dialog->reflowLayout();
 }
 
 void NewGui::closeTopDialog() {
