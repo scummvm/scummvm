@@ -654,7 +654,7 @@ void SimonEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
 
 byte *SimonEngine::allocateItem(uint size) {
 	byte *org = _itemHeapPtr;
-	size = (size + 3) & ~3;
+	size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 
 	_itemHeapPtr += size;
 	_itemHeapCurPos += size;
@@ -727,9 +727,9 @@ Child *SimonEngine::allocateChildBlock(Item *i, uint type, uint size) {
 }
 
 void SimonEngine::allocItemHeap() {
-	_itemHeapSize = 10000;
+	_itemHeapSize = 20000;
 	_itemHeapCurPos = 0;
-	_itemHeapPtr = (byte *)calloc(10000, 1);
+	_itemHeapPtr = (byte *)calloc(20000, 1);
 }
 
 void SimonEngine::allocTablesHeap() {
