@@ -181,10 +181,6 @@ void ScummEngine::parseEvents() {
 			_keyPressed = 'q';
 			break;
 
-		case OSystem::EVENT_SCREEN_CHANGED:
-			g_gui.handleScreenChange();
-			break;
-
 		case OSystem::EVENT_QUIT:
 			if (_confirmExit)
 				confirmExitDialog();

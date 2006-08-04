@@ -80,8 +80,6 @@ public:
 
 	WidgetSize getWidgetSize();
 
-	void handleScreenChange();
-
 	void clearDragWidget();
 
 protected:
@@ -90,6 +88,7 @@ protected:
 	Theme		*_theme;
 
 	bool		_needRedraw;
+	int			_lastScreenChangeID;
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;

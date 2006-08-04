@@ -367,10 +367,6 @@ WidgetSize NewGui::getWidgetSize() {
 	return (WidgetSize)(_theme->_evaluator->getVar("widgetSize"));
 }
 
-void NewGui::handleScreenChange() {
-	_theme->refresh();
-}
-
 void NewGui::clearDragWidget() {
 	_dialogStack.top()->_dragWidget = 0;
 }
