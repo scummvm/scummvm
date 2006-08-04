@@ -461,7 +461,7 @@ for ac_option in $@; do
         CXXFLAGS="$CXXFLAGS -Werror"
         ;;
       --enable-release)
-        DEBFLAGS="-O2"
+        DEBFLAGS="-O2 -Wuninitialized"
         ;;
       --with-sdl-prefix=*)
         arg=`echo $ac_option | cut -d '=' -f 2`
