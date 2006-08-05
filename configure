@@ -977,7 +977,7 @@ if test "$_vorbis" = auto ; then
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-	-lvorbis -logg -lm && _vorbis=yes
+	-lvorbisfile -lvorbis -logg -lm && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
 	_def_vorbis='#define USE_VORBIS'
@@ -1014,6 +1014,9 @@ else
 fi
 echo "$_tremor"
 
+#
+# Check for FLAC
+#
 echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
 	_flac=no
