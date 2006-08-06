@@ -775,6 +775,12 @@ void SimonEngine::loadVoice(uint speechId) {
 			loadOffsets((const char*)"speech.wav", speechId, file, offset, srcSize, dstSize);
 		}
 
+		// Voice segment doesn't exist
+		if (offset == 0xFFFFFFFF && srcSize == 0xFFFFFFFF && dstSize == 0xFFFFFFFF) {
+			debug(0, "loadVoice: speechId %d removed", speechId);
+			return;
+		}
+
 		if (getPlatform() == Common::kPlatformAmiga)
 			sprintf(filename, "sp%d.wav", file);
 		else
