@@ -45,8 +45,8 @@
 namespace Lure {
 
 enum {
-	// We only compute MD5 of the first megabyte of our data files.
-	kMD5FileSizeLimit = 1024 * 1024
+	// We only compute MD5 of the first kilobyte of our data files.
+	kMD5FileSizeLimit = 1024
 };
 
 struct GameSettings {
@@ -62,12 +62,12 @@ struct GameSettings {
 //
 static const GameSettings lure_games[] = {
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_ANY,
-										"e45ea5d279a268c7d3c6524c2f63a2d2", "disk1.vga" },
+										"b2a8aa6d7865813a17a3c636e063572e", "disk1.vga" },
 /*
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
-										"00469bde05e79e634c3dd3931d3a708a", "disk1.vga" },
+										"7aa19e444dab1ac7194d9f7a40ffe54a", "disk1.vga" },
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::FR_FRA,
-										"2e6c42dbc76ba4f329261f1ff7013309", "disk1.vga" },
+										"1c94475c1bb7e0e88c1757d3b5377e94", "disk1.vga" },
 */
 	{ 0, 0, 0, 0, Common::UNK_LANG, 0, 0 }
 };
