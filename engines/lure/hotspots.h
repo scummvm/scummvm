@@ -451,7 +451,11 @@ public:
 	void setVoiceCtr(uint8 v) { _voiceCtr = v; }
 
 	// Miscellaneous
-	void converse(uint16 destHotspot, uint16 messageId, bool standStill);
+	void converse(uint16 destCharacterId, uint16 messageId, bool standStill);
+	void converse(uint16 destCharacterId, uint16 messageId) {
+		converse(destCharacterId, messageId, false);
+	}
+	void showMessage(uint16 messageId, uint16 destCharacterId = NOONE_ID);
 	void scheduleConverse(uint16 destHotspot, uint16 messageId);
 	void handleTalkDialog();
 };
