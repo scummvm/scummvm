@@ -336,7 +336,9 @@ void Script::doorOpen(uint16 hotspotId, uint16 v2, uint16 v3) {
 // Lookup the given message Id for the specified character and display in a dialog
 
 void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal) {
-	Dialog::showMessage(messageId, characterId);
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
+	if (hotspot != NULL)
+		hotspot->showMessage(messageId);
 }
 
 // Creates a new dispatch action with the given support data entry
