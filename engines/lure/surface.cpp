@@ -409,80 +409,40 @@ void Dialog::show(const char *text) {
 
 void Dialog::show(uint16 stringId) {
 	char buffer[MAX_DESC_SIZE];
-	Resources &res = Resources::getReference();
-	Room &r = Room::getReference();
 	StringData &sl = StringData::getReference();
 
-	const char *actionName = res.getCurrentActionStr();
-	char hotspotName[MAX_HOTSPOT_NAME_SIZE];
-	if (r.hotspotId() == 0) 
-		strcpy(hotspotName, "");
-	else
-		sl.getString(r.hotspot().nameId, hotspotName, NULL, NULL);
-
-	sl.getString(stringId, buffer, hotspotName, actionName);
+	sl.getString(stringId, buffer);
 	show(buffer);
-}
-
-void Dialog::showMessage(uint16 messageId, uint16 characterId) {
-	Resources &res = Resources::getReference();
-	MemoryBlock *data = res.messagesData();
-	Hotspot *charHotspot = res.getActiveHotspot(characterId);
-	Hotspot *hotspot;
-	uint16 *v = (uint16 *) data->data();
-	uint16 v2, idVal;
-	messageId &= 0x7fff;
-
-	// Skip through header to find table for given character
-	while (READ_LE_UINT16(v) != characterId) v += 2;
-
-	// Scan through secondary list
-	++v;
-	v = (uint16 *) (data->data() + READ_LE_UINT16(v));
-	v2 = 0;
-	while ((idVal = READ_LE_UINT16(v)) != 0xffff) {
-		++v;
-		if (READ_LE_UINT16(v) == messageId) break;
-		++v;
-	}
-
-	// default response if a specific response not found
-	if (idVal == 0xffff) idVal = 0x8c4; 
-	
-	if (idVal == 0x76) {
-		// Special code id for showing the puzzled talk bubble
-		if (!charHotspot) return;
-		hotspot = new Hotspot(charHotspot, PUZZLED_ANIM_ID);
-		res.addHotspot(hotspot);
-
-	} else if (idVal == 0x120) {
-		// Special code id for showing the exclamation talk bubble
-		if (!charHotspot) return;
-		hotspot = new Hotspot(charHotspot, EXCLAMATION_ANIM_ID);
-		res.addHotspot(hotspot);
-
-	} else if (idVal >= 0x8000) {
-		// Handle string display
-		idVal &= 0x7fff;
-		Dialog::show(idVal);
-		
-	} else if (idVal != 0) {
-		// Handle message as a talking dialog (the character talking to themselves)
-		
-		if (!charHotspot) return;
-		charHotspot->converse(NOONE_ID, idVal, false);
-	}
 }
 
 /*--------------------------------------------------------------------------*/
 
-TalkDialog::TalkDialog(uint16 characterId, uint16 descId) {
+TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId) {
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d", 
+		characterId, destCharacterId, activeItemId, descId);
 	StringData &strings = StringData::getReference();
 	Resources &res = Resources::getReference();
-	HotspotData *character = res.getHotspot(characterId);
-	char charName[MAX_DESC_SIZE];
-	strings.getString(character->nameId, charName, NULL, NULL);
-	strings.getString(descId, _desc, NULL, NULL);
+	char srcCharName[MAX_DESC_SIZE];
+	char destCharName[MAX_DESC_SIZE];
+	char itemName[MAX_DESC_SIZE];
+
+	HotspotData *talkingChar = res.getHotspot(characterId);
+	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
+		res.getHotspot(destCharacterId);
+	HotspotData *itemHotspot = (activeItemId == 0) ? NULL :
+		res.getHotspot(activeItemId);
+	assert(talkingChar);
+
+	strings.getString(talkingChar->nameId, srcCharName);
+
+	strcpy(destCharName, "");
+	if (destCharacter != NULL)
+		strings.getString(destCharacter->nameId, destCharName);
+	strcpy(itemName, "");
+	if (itemHotspot != NULL)
+		strings.getStringWithArticle(itemHotspot->nameId, itemName);
+
+	strings.getString(descId, _desc, itemName, destCharName);
 
 	// Apply word wrapping to figure out the needed size of the dialog
 	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE * 2 - 2,
@@ -542,9 +502,9 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 descId) {
 	}
 
 	// Write out the character name
-	uint16 charWidth = Surface::textWidth(charName);
+	uint16 charWidth = Surface::textWidth(srcCharName);
 	_surface->writeString((TALK_DIALOG_WIDTH-charWidth)/2, TALK_DIALOG_EDGE_SIZE + 2,
-		charName, true, DIALOG_WHITE_COLOUR);
+		srcCharName, true, DIALOG_WHITE_COLOUR);
 
 	// TEMPORARY CODE - write out description. More properly, the text is meant to
 	// be displayed slowly, word by word

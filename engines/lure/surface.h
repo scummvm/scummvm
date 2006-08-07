@@ -76,7 +76,6 @@ class Dialog {
 public:
 	static void show(const char *text);
 	static void show(uint16 stringId);
-	static void showMessage(uint16 messageId, uint16 characterId);
 };
 
 class TalkDialog {
@@ -86,7 +85,7 @@ private:
 	char **_lines;
 	uint8 _numLines;
 public:
-	TalkDialog(uint16 characterId, uint16 descId);
+	TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId);
 	~TalkDialog();
 
 	char *desc() { return _desc; }
