@@ -150,7 +150,7 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	DebugPrintf("Available rooms are:\n");
 	for (i = rooms.begin(); i != rooms.end(); ++i) {
 		RoomData *room = *i;
-		strings.getString(room->roomNumber, buffer, NULL, NULL);
+		strings.getString(room->roomNumber, buffer);
 		// DEBUG: Explictly note the second drawbridge room as "Alt" for now
 		if (ctr == 42) { strcat(buffer, " (alt)"); }
 
@@ -271,7 +271,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 				Hotspot *hotspot = *i;
 
 				if (hotspot->nameId() == 0) strcpy(buffer, "none");
-				else strings.getString(hotspot->nameId(), buffer, NULL, NULL);
+				else strings.getString(hotspot->nameId(), buffer);
 
 				DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot->hotspotId(), buffer,
 					hotspot->x(), hotspot->y(), hotspot->roomNumber());
@@ -286,7 +286,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 
 				if (hotspot->roomNumber == roomNumber) {
 					if (hotspot->nameId == 0) strcpy(buffer, "none");
-					else strings.getString(hotspot->nameId, buffer, NULL, NULL);
+					else strings.getString(hotspot->nameId, buffer);
 
 					DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot->hotspotId, buffer,
 					hotspot->startX, hotspot->startY, hotspot->roomNumber);

@@ -251,7 +251,7 @@ uint16 PopupMenu::ShowInventory() {
 		if (hotspot->roomNumber == PLAYER_ID) {
 			idList[itemCtr] = hotspot->hotspotId;
 			char *hotspotName = itemNames[itemCtr++] = (char *) malloc(MAX_HOTSPOT_NAME_SIZE);
-			strings.getString(hotspot->nameId, hotspotName, NULL, NULL);
+			strings.getString(hotspot->nameId, hotspotName);
 		}
 	}
 	
