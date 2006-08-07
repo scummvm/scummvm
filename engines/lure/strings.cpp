@@ -22,6 +22,7 @@
 
 #include "lure/strings.h"
 #include "lure/disk.h"
+#include "lure/res.h"
 #include "lure/room.h"
 #include "common/endian.h"
 
@@ -261,9 +262,13 @@ char StringData::readCharacter() {
 }
 
 void StringData::getString(uint16 stringId, char *dest, const char *hotspotName, 
-							  const char *actionName) {
+							  const char *characterName) {
 	char ch;
+	strcpy(dest, "");
 	char *destPos = dest;
+	stringId &= 0x1fff;      // Strip off any article identifier
+	if (stringId == 0) return;
+
 	initPosition(stringId);
 
 	ch = readCharacter();
@@ -271,7 +276,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 		if (ch == '%') {
 			// Copy over hotspot or action 
 			ch = readCharacter();
-			const char *p = (ch == '1') ? hotspotName : actionName;
+			const char *p = (ch == '1') ? hotspotName : characterName;
 			strcpy(destPos, p);
 			destPos += strlen(p);
 		} else if ((uint8) ch >= 0xa0) {
@@ -298,6 +303,15 @@ char *StringData::getName(uint8 nameIndex) {
 
 	uint16 nameStart = *((uint16 *) (_names->data() + (nameIndex * 2)));
 	return (char *) (_names->data() + nameStart);
+}
+
+// getStringWithArticle
+// Fills a buffer with the string specified by a given string Id with a definite article prefix
+
+void StringData::getStringWithArticle(uint16 stringId, char *dest) {
+	const char *articles[4] = {"the ", "a ", "an ", ""};
+	strcpy(dest, articles[stringId >> 14]);
+	getString(stringId, dest + strlen(dest));
 }
 
 } // namespace Lure
