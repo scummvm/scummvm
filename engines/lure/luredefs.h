@@ -29,6 +29,10 @@
 
 namespace Lure {
 
+#define SUPPORT_FILENAME "lure.dat"
+#define LURE_DAT_MAJOR 1
+#define LURE_DAT_MINOR 11
+
 #define LURE_DEBUG 1
 
 #define READ_LE_INT16(x) (int16) READ_LE_UINT16(x)
@@ -100,10 +104,6 @@ enum Action {
 #define FULL_SCREEN_HEIGHT 200
 #define GAME_COLOURS 256
 #define SCREEN_SIZE (FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH)
-
-#define SUPPORT_FILENAME "lure.dat"
-#define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 10
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
