@@ -267,7 +267,7 @@ void Game::handleClick() {
 
 	if (room.checkInTalkDialog()) {
 		// Close the active talk dialog
-		room.setTalkDialog(0, 0);
+		room.setTalkDialog(0, 0, 0, 0);
 	} else if (oldRoomNumber != 0) {
 		// Viewing a room remotely - handle returning to prior room
 		if ((room.roomNumber() != 35) || (fields.getField(87) == 0)) {
@@ -356,8 +356,6 @@ void Game::handleRightClickMenu() {
 
 			itemId = PopupMenu::ShowItems(GET);
 			breakFlag = ((itemId != 0xffff) && (itemId != 0xfffe));
-			if (breakFlag)
-				hotspot = res.getHotspot(itemId);
 			break;
 
 		case GIVE:
