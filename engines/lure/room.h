@@ -104,7 +104,7 @@ public:
 	bool showInfo() { return _showInfo; }
 	CursorState cursorState() { return _cursorState; }
 	void setShowInfo(bool value) { _showInfo = value; }
-	void setTalkDialog(uint16 characterId, uint16 descId);
+	void setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 usedId, uint16 stringId);
 	void setCursorState(CursorState state) { _cursorState = state; }
 	bool checkInTalkDialog();
 	char *statusLine() { return _statusLine; }

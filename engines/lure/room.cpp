@@ -554,30 +554,33 @@ void Room::checkCursor() {
 		}
 
 		if (oldHotspotId != _hotspotId) 
-			StringData::getReference().getString(_hotspotNameId, _hotspotName, NULL, NULL);
+			StringData::getReference().getString(_hotspotNameId, _hotspotName);
 	}
 
 	if (mouse.getCursorNum() != newCursor) 
 		mouse.setCursorNum(newCursor);
 }
 
-void Room::setTalkDialog(uint16 characterId, uint16 stringId) {
+void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 usedId, uint16 stringId) {
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Room::setTalkDialog - char=%xh string=%d",
+		srcCharacterId, stringId);
+
 	if (_talkDialog) {
 		delete _talkDialog;
 		_talkDialog = NULL;
 	}
 
 	Resources &res = Resources::getReference();
-	res.setTalkingCharacter(characterId);
+	res.setTalkingCharacter(srcCharacterId);
 
-	if (characterId == 0)
+	if (srcCharacterId == 0)
 		return;
 
-	HotspotData *character = res.getHotspot(characterId);
+	HotspotData *character = res.getHotspot(srcCharacterId);
 	if (character->roomNumber != _roomNumber)
 		return;
 
-	_talkDialog = new TalkDialog(characterId, stringId);
+	_talkDialog = new TalkDialog(srcCharacterId, destCharacterId, usedId, stringId);
 	_talkDialogX = character->startX + (character->width / 2) - (TALK_DIALOG_WIDTH / 2);
 
 	if (_talkDialogX < 0) _talkDialogX = 0;
