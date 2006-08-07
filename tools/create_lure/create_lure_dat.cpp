@@ -238,9 +238,9 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 
 			memset(r, 0, sizeof(HotspotResourceOutput));
 			r->hotspotId = TO_LE_16(startId[tableNum] + hotspotIndex);
-			r->nameId = TO_LE_16(FROM_LE_16(entryHeader.resourceId) & 0x1fff);
-			r->descId = TO_LE_16(FROM_LE_16(entryHeader.descId) & 0x1fff);
-			r->descId2 = TO_LE_16(FROM_LE_16(entryHeader.descId2) & 0x1fff);
+			r->nameId = entryHeader.resourceId;
+			r->descId = entryHeader.descId; //TO_LE_16(FROM_LE_16(entryHeader.descId) & 0x1fff);
+			r->descId2 = entryHeader.descId2; //TO_LE_16(FROM_LE_16(entryHeader.descId2) & 0x1fff);
 			r->hdrFlags = entryHeader.hdrFlags;
 
 			// Get the hotspot data
