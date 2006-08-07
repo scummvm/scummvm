@@ -421,7 +421,7 @@ public:
 	BlockedState blockedState;
 	bool coveredFlag;
 	uint16 talkMessageId;
-	uint16 talkDestHotspot;
+	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
 	uint16 pauseCtr;
 	uint16 useHotspotId;

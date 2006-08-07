@@ -303,7 +303,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	blockedState = BS_NONE;
 	coveredFlag = false;
 	talkMessageId = 0;
-	talkDestHotspot = 0;
+	talkDestCharacterId = 0;
 	talkCountdown = 0;
 	pauseCtr = 0;
 	useHotspotId = 0;
