@@ -282,10 +282,11 @@ PAKFile::PAKFile(const char *file, bool isAmiga) : ResourceFile() {
 		PakChunk chunk;
 
 		// saves the name
+		if (!(*((const char*)buffer + pos)))
+			break;
+
 		chunk._name = (const char*)buffer + pos;
 		pos += strlen(chunk._name.c_str()) + 1;
-		if (!(chunk._name[0]))
-			break;
 
 		if (!_isAmiga) {
 			endoffset = READ_LE_UINT32(buffer + pos);
