@@ -260,6 +260,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sequences_v2.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sound.cpp"
 			>
 		</File>
