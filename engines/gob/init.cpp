@@ -205,6 +205,7 @@ memBlocks	= word ptr -2*/
 
 		_vm->_global->_inter_variables = new char[varsCount * 4];
 		memset(_vm->_global->_inter_variables, 0, varsCount * 4);
+		WRITE_VAR(58, 1);
 
 		strcpy(_vm->_game->_curTotFile, buffer);
 

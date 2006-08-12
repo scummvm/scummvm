@@ -220,6 +220,7 @@ public:
 	void sub_19BD3(void);
 	void sub_195C7(int16 index, int16 state);
 	void sub_11984(Mult::Mult_Object *obj);
+	void sub_197A6(int16 destX, int16 destY, int16 objIndex);
 
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state) = 0;

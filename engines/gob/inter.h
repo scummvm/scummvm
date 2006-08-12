@@ -314,6 +314,7 @@ protected:
 	void o2_totSub(void);
 	void o2_switchTotSub(void);
 	void o2_stub0x54(void);
+	void o2_stub0x55(void);
 	void o2_stub0x80(void);
 	void o2_stub0x82(void);
 	void o2_stub0x85(void);

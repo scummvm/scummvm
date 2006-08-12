@@ -231,7 +231,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o2_writeGoblinPos),
 		/* 54 */
 		OPCODE(o2_stub0x54),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x55),
 		OPCODE(o2_placeGoblin),
 		{NULL, ""},
 		/* 58 */
@@ -716,6 +716,97 @@ void Inter_v2::o2_stub0x54(void) {
 	int16 index = _vm->_parse->parseValExpr();
 
 	_vm->_mult->_objects[index].pAnimData->pathExistence = 4;
+}
+
+void Inter_v2::o2_stub0x55(void) {
+	int16 index;
+	int16 state;
+	int16 f16;
+	int16 layer;
+	int16 animation;
+	int16 deltaX;
+	int16 deltaY;
+	int16 deltaHeight;
+	int16 deltaWidth;
+	Mult::Mult_Object *obj;
+	Mult::Mult_AnimData *objAnim;
+
+	index = _vm->_parse->parseValExpr();
+	state = _vm->_parse->parseValExpr();
+	f16 = _vm->_parse->parseValExpr();
+
+	obj = &_vm->_mult->_objects[index];
+	objAnim = obj->pAnimData;
+
+	objAnim->field_16 = f16;
+	switch (f16) {
+	case 0:
+		if (obj->goblinStates[state] != 0) {
+			objAnim->frame = 0;
+			layer = obj->goblinStates[state][0].layer;
+			animation = obj->goblinStates[state][0].animation;
+			objAnim->state = state;
+			objAnim->layer = layer;
+			objAnim->animation = animation;
+			*obj->pPosX = _vm->_scenery->_animations[animation].layers[layer].posX;
+			*obj->pPosY = _vm->_scenery->_animations[animation].layers[layer].posY;
+			objAnim->isPaused = 0;
+			objAnim->isStatic = 0;
+			objAnim->newCycle = _vm->_scenery->_animations[animation].layers[layer].framesCount;
+		}
+		break;
+
+	case 1: 
+	case 4: 
+	case 6:
+		if (obj->goblinStates[state] != 0) {
+			layer = obj->goblinStates[objAnim->state][0].layer;
+			animation = obj->goblinStates[objAnim->state][0].animation;
+			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
+			deltaHeight = _vm->_scenery->_animBottom - _vm->_scenery->_animTop;
+			deltaWidth = _vm->_scenery->_animRight - _vm->_scenery->_animLeft;
+			deltaX = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->layer].animDeltaX;
+			deltaY = _vm->_scenery->_animations[objAnim->animation].layers[objAnim->layer].animDeltaY;
+			layer = obj->goblinStates[state][0].layer;
+			animation = obj->goblinStates[state][0].animation;
+			objAnim->state = state;
+			objAnim->layer = layer;
+			objAnim->animation = animation;
+			objAnim->frame = 0;
+			objAnim->isPaused = 0;
+			objAnim->isStatic = 0;
+			objAnim->newCycle = _vm->_scenery->_animations[animation].layers[layer].framesCount;
+			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
+			deltaHeight -= _vm->_scenery->_animBottom - _vm->_scenery->_animTop;
+			deltaWidth -= _vm->_scenery->_animRight - _vm->_scenery->_animLeft;
+			*obj->pPosX += deltaWidth + deltaX;
+			*obj->pPosY += deltaHeight + deltaY;
+		}
+		break;
+
+	case 11:
+		if (obj->goblinStates[state] != 0) {
+			layer = obj->goblinStates[state][0].layer;
+			animation = obj->goblinStates[state][0].animation;
+			objAnim->state = state;
+			objAnim->layer = layer;
+			objAnim->animation = animation;
+			objAnim->frame = 0;
+			objAnim->isPaused = 0;
+			objAnim->isStatic = 0;
+			objAnim->newCycle = _vm->_scenery->_animations[animation].layers[layer].framesCount;
+			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
+			if (_vm->_map->_bigTiles)
+				*obj->pPosY = ((obj->goblinY + 1) * _vm->_map->_tilesHeight) -
+					(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
+					((obj->goblinY + 1) / 2);
+			else
+				*obj->pPosY = ((obj->goblinY + 1) * _vm->_map->_tilesHeight) -
+					(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+			*obj->pPosX = obj->goblinX * _vm->_map->_tilesWidth;
+		}
+		break;
+	}
 }
 
 void Inter_v2::o2_stub0x80(void) {
@@ -1276,7 +1367,7 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 	}
 	// loc_E2F3
 	if (_vm->_game->_soundTypes[index] & 8) {
-		_vm->_music->loadFromMemory((byte *) _vm->_game->_soundSamples[index]);
+		_vm->_music->loadFromMemory((byte *) _vm->_game->_soundSamples[index], index);
 		_vm->_music->setRepeating(repCount - 1);
 		_vm->_music->startPlay();
 	} else {
@@ -1635,6 +1726,8 @@ void Inter_v2::o2_initMult(void) {
 		for (i = 0; i < _vm->_mult->_objCount; i++) {
 			_vm->_mult->_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);
 			_vm->_mult->_objects[i].pPosY = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posYVar / 4) * 4);
+			if ((i == 0) || (i == 1))
+				warning("=> Goblin %d: %d (%d) (%d)", i, animDataVar + i * 4 * _vm->_global->_inter_animDataSize, (animDataVar + i * 4 * _vm->_global->_inter_animDataSize) / 4, _vm->_global->_inter_animDataSize);
 			_vm->_mult->_objects[i].pAnimData =
 			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables + animDataVar +
 			    i * 4 * _vm->_global->_inter_animDataSize);

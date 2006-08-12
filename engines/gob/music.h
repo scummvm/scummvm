@@ -45,12 +45,13 @@ public:
 	bool playing() { return _playing; }
 	bool getRepeating(void) { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
+	int getIndex(void) { return _index; }
 	virtual void startPlay(void);
 	virtual void stopPlay(void) { _mutex.lock(); _playing = false; _mutex.unlock(); }
 	virtual void playTrack(const char *trackname);
 	virtual void playBgMusic(void);
 	virtual bool loadMusic(const char *filename);
-	virtual void loadFromMemory(byte *data);
+	virtual void loadFromMemory(byte *data, int index=-1);
 	virtual void unloadMusic(void);
 
 // AudioStream API
@@ -68,6 +69,7 @@ protected:
 	static const unsigned char _operators[];
 	static const unsigned char _volRegNums [];
 	FM_OPL *_opl;
+	int _index;
 	byte *_data;
 	byte *_playPos;
 	uint32 _dataSize;

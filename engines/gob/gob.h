@@ -55,6 +55,7 @@ class Music;
 #define	VAR(var)			VAR_OFFSET((var) << 2)
 #define VAR_ADDRESS(var)		(&VAR(var))
 
+//#define	WRITE_VAR_OFFSET(offs, val)	_vm->writeVarDebug(offs, val)
 #define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = (val))
 #define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var) << 2, (val))
 
@@ -120,6 +121,8 @@ public:
 	Util *_util;
 	Inter *_inter;
 	Music *_music;
+
+	void writeVarDebug(uint32 offs, uint32 v);
 };
 
 } // End of namespace Gob

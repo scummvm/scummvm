@@ -148,24 +148,24 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 					offset = arrDesc[dim] * offset + temp2;
 				}
 				if (operation == 16)
-					*valPtr = *(_vm->_global->_inter_variables + temp + offset);
+					*valPtr = *(int8 *)(_vm->_global->_inter_variables + temp + offset);
 				else if (operation == 26)
-					*valPtr = *(uint16*)(_vm->_global->_inter_variables + temp * 4 + offset * 4);
+					*valPtr = *(uint16 *)(_vm->_global->_inter_variables + temp * 4 + offset * 4);
 				else if (operation == 27)
-					*valPtr = *(uint16*)(_vm->_global->_inter_variables + temp * 2 + offset * 2);
+					*valPtr = *(uint16 *)(_vm->_global->_inter_variables + temp * 2 + offset * 2);
 				else if (operation == 28) {
 					_vm->_global->_inter_execPtr++;
 					temp2 = parseValExpr(12);
-					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
+					*valPtr = *(uint8 *)(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
 				break;
 
 			case 17:
-				*valPtr = *(uint16*)(_vm->_global->_inter_variables + _vm->_inter->load16() * 2);
+				*valPtr = *(uint16 *)(_vm->_global->_inter_variables + _vm->_inter->load16() * 2);
 				break;
 
 			case 18:
-				*valPtr = *(_vm->_global->_inter_variables + _vm->_inter->load16());
+				*valPtr = *(int8 *)(_vm->_global->_inter_variables + _vm->_inter->load16());
 				break;
 
 			case 19:
@@ -183,14 +183,14 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 
 			case 23:
 			case 24:
-				*valPtr = VAR(_vm->_inter->load16());
+				*valPtr = *(uint16 *)(_vm->_global->_inter_variables + _vm->_inter->load16() * 4);
 				break;
 
 			case 25:
 				temp = _vm->_inter->load16() * 4;
 				_vm->_global->_inter_execPtr++;
 				temp += parseValExpr(12);
-				*valPtr = *(_vm->_global->_inter_variables + temp);
+				*valPtr = *(uint8 *)(_vm->_global->_inter_variables + temp);
 				break;
 
 			case 29:
@@ -257,7 +257,7 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 				operPtr[-1] = operPtr[0];
 				valPtr[-1] = valPtr[0];
 				if (stkPos > 1 && operPtr[-2] == 1) {
-					valPtr[-2] = 20;
+					operPtr[-2] = 20;
 					valPtr[-2] = -valPtr[-1];
 
 					stkPos--;
@@ -265,26 +265,25 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 					valPtr--;
 				}
 
-				if (stkPos > 2 && operPtr[-2] > 4
-				    && operPtr[-2] < 9) {
+				if (stkPos > 2 && operPtr[-2] > 4 && operPtr[-2] < 9) {
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					switch (operPtr[0]) {
 					case 5:
-						operPtr[-1] *= operPtr[1];
+						valPtr[-1] *= valPtr[1];
 						break;
 
 					case 6:
-						operPtr[-1] /= operPtr[1];
+						valPtr[-1] /= valPtr[1];
 						break;
 
 					case 7:
-						operPtr[-1] %= operPtr[1];
+						valPtr[-1] %= valPtr[1];
 						break;
 
 					case 8:
-						operPtr[-1] &= operPtr[1];
+						valPtr[-1] &= valPtr[1];
 						break;
 					}
 				}
@@ -352,7 +351,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 	int32 prevVal;
 	int32 curVal;
 	int32 *valPtr;
-	char *operPtr;
+	byte *operPtr;
 	byte *arrDescPtr;
 	char var_C;
 	byte operation;
@@ -368,7 +367,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 	memset(operStack, 0, 20);
 
 	stkPos = -1;
-	operPtr = (char *)(operStack - 1);
+	operPtr = operStack - 1;
 	valPtr = values - 1;
 
 	while (1) {
@@ -376,7 +375,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 		operPtr++;
 		valPtr++;
 		operation = *_vm->_global->_inter_execPtr++;
-		if (operation >= 19 && operation <= 29) {
+		if (operation >= 16 && operation <= 29) {
 			switch (operation) {
 			case 16:
 			case 26:
@@ -396,30 +395,30 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 					offset = offset * arrDescPtr[dim] + temp2;
 				}
 				if (operation == 16)
-					*valPtr = *(_vm->_global->_inter_variables + temp + offset);
+					*valPtr = *(int8 *)(_vm->_global->_inter_variables + temp + offset);
 				else if (operation == 26)
-					*valPtr = *(uint32*)(_vm->_global->_inter_variables + temp * 4 + offset * 4);
+					*valPtr = *(uint32 *)(_vm->_global->_inter_variables + temp * 4 + offset * 4);
 				else if (operation == 27)
-					*valPtr = *(uint16*)(_vm->_global->_inter_variables + temp * 2 + offset * 2);
+					*valPtr = *(int16 *)(_vm->_global->_inter_variables + temp * 2 + offset * 2);
 				else if (operation == 28) {
 					*valPtr = encodePtr(_vm->_global->_inter_variables + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4, kInterVar);
 					if (*_vm->_global->_inter_execPtr == 13) {
 						_vm->_global->_inter_execPtr++;
 						temp2 = parseValExpr(12);
 						*operPtr = 20;
-						*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
+						*valPtr = *(uint8 *)(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 					}
 				}
 				break;
 
 			case 17:
 				*operPtr = 20;
-				*valPtr = *(uint16*)(_vm->_global->_inter_variables + _vm->_inter->load16() * 2);
+				*valPtr = *(int16 *)(_vm->_global->_inter_variables + _vm->_inter->load16() * 2);
 				break;
 
 			case 18:
 				*operPtr = 20;
-				*valPtr = *(_vm->_global->_inter_variables + _vm->_inter->load16());
+				*valPtr = *(int8 *)(_vm->_global->_inter_variables + _vm->_inter->load16());
 				break;
 
 			case 19:
@@ -445,9 +444,13 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 				break;
 
 			case 23:
-			case 24:
 				*operPtr = 20;
 				*valPtr = VAR(_vm->_inter->load16());
+				break;
+
+			case 24:
+				*operPtr = 20;
+				*valPtr = *(int16 *)(_vm->_global->_inter_variables + _vm->_inter->load16() * 4);
 				break;
 
 			case 25:
@@ -458,7 +461,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 					_vm->_global->_inter_execPtr++;
 					temp += parseValExpr(12);
 					*operPtr = 20;
-					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
+					*valPtr = *(uint8 *)(_vm->_global->_inter_variables + temp);
 				}
 				break;
 
@@ -560,7 +563,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 				break;
 			}
 			continue;
-		}		// op>= 19 && op <= 29
+		}		// op >= 16 && op <= 29
 
 		if (operation == stopToken || operation == 30 || operation == 31 || operation == 10) {
 			while (stkPos >= 2) {

@@ -478,7 +478,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 y;
 	Video::SurfaceDesc *sourceSurf;
 	Video::SurfaceDesc *destSurf;
-	bool deltaveto;
+	bool deltaVeto;
 	int16 left;
 	int16 ratio;
 	int16 spriteLeft;
@@ -494,10 +494,10 @@ void Draw_v2::spriteOperation(int16 operation) {
 // '---
 
 	if (operation & 0x10) {
-		deltaveto = true;
+		deltaVeto = true;
 		operation &= 0x0F;
 	} else
-		deltaveto = false;
+		deltaVeto = false;
 
 	if (_sourceSurface >= 100)
 		_sourceSurface -= 80;
@@ -505,7 +505,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	if (_destSurface >= 100)
 		_destSurface -= 80;
 
-	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaveto) {
+	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
 		if ((_sourceSurface == 21) && (operation != DRAW_LOADSPRITE)) {
 			_spriteLeft += _backDeltaX;
 			_spriteTop += _backDeltaY;
@@ -864,7 +864,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		_destSpriteX += len * strlen(_textToPrint);
 	}
 
-	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaveto) {
+	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
 		if (_sourceSurface == 21) {
 			_spriteLeft -= _backDeltaX;
 			_spriteTop -= _backDeltaY;

@@ -117,11 +117,9 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		_passMap = (int8 *) variables;
 		mapHeight = 200 / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
-		for (i = 0; i < mapHeight; i++) {
-			for (j = 0; j < mapWidth; j++) {
+		for (i = 0; i < mapHeight; i++)
+			for (j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());
-			}
-		}
 	}
 	mapData.seek(dataPos1);
 

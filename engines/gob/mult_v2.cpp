@@ -327,9 +327,9 @@ void Mult_v2::multSub(uint16 multindex) {
 	}
 
 	_multData2->field_124[index][0] = flags;
-	for (i = 1; i < 4; i++) {
+	for (i = 1; i < 4; i++)
 		_multData2->field_124[index][i] = _vm->_parse->parseValExpr();
-	}
+
 	expr = _vm->_parse->parseValExpr();
 	_multData2->animKeysFrames[index] = expr;
 	_multData2->animKeysStartFrames[index] = expr;
@@ -473,7 +473,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 			_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 
-			if ((_vm->_global->_videoMode == 0x14) &&
+			if ((_vm->_global->_videoMode == 0x13) && _vm->_video->_extraMode &&
 				((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
 					+ (_vm->_anim->_areaWidth * _vm->_anim->_areaHeight) / 4) < 64000) {
 				_vm->_anim->_animSurf = new Video::SurfaceDesc;

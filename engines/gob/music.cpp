@@ -76,6 +76,7 @@ const unsigned char Music::_volRegNums[] = {
 Music::Music(GobEngine *vm) : _vm(vm) {
 	int i;
 
+	_index = -1;
 	_data = 0;
 	_playPos = 0;
 	_dataSize = 0;
@@ -365,6 +366,9 @@ void Music::pollMusic(void) {
 			_pollNotes[channel] = note;
 			setKey(channel, note, true, false);
 			break;
+		case 0x60:
+			warning("GOB2 Stub! ADL command 0x60");
+			break;
 		// Last note off
 		case 0x80:
 			note = _pollNotes[channel];
@@ -452,6 +456,7 @@ void Music::playTrack(const char *trackname) {
 bool Music::loadMusic(const char *filename) {
 	Common::File song;
 
+	unloadMusic();
 	song.open(filename);
 	if (!song.isOpen())
 		return false;
@@ -469,12 +474,13 @@ bool Music::loadMusic(const char *filename) {
 	return true;
 }
 
-void Music::loadFromMemory(byte *data) {
+void Music::loadFromMemory(byte *data, int index) {
 	unloadMusic();
 	_repCount = 0;
 
 	_dataSize = (uint32) -1;
 	_data = data;
+	_index = index;
 
 	reset();
 	setVoices();
@@ -483,6 +489,7 @@ void Music::loadFromMemory(byte *data) {
 
 void Music::unloadMusic(void) {
 	_playing = false;
+	_index = -1;
 
 	if (_data && _needFree)
 		delete[] _data;

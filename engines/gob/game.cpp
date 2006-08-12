@@ -344,7 +344,8 @@ void Game::freeSoundSlot(int16 slot) {
 		return;
 
 	if (_soundADL[slot]) {
-		_vm->_music->stopPlay();
+		if (_vm->_music->getIndex() == slot)
+			_vm->_music->stopPlay();
 		if (_soundFromExt[slot] == 1) {
 			delete[] ((char *) _soundSamples[slot]);
 			_soundFromExt[slot] = 0;
@@ -866,8 +867,10 @@ char *Game::loadLocTexts(void) {
 		warning("Your game version doesn't support the requested language, using the first one available");
 		for (i = 0; i < 10; i++) {
 			handle = openLocTextFile(locTextFile, i);
-			if (handle >= 0)
+			if (handle >= 0) {
 				_vm->_global->_language = i;
+				break;
+			}
 		}
 	}
 

@@ -84,11 +84,7 @@ public:
 		int16 lastRight;
 		int16 lastTop;
 		int16 lastBottom;
-		int8 someFlag;                      // New in GOB2
-		int16 somethingLeft;                // New in GOB2
-		int16 somethingTop;                 // New in GOB2
-		int16 somethingRight;               // New in GOB2
-		int16 somethingBottom;              // New in GOB2
+		Mult::Mult_GobState **goblinStates; // New in GOB2
 		int8 goblinX;                       // New in GOB2
 		int8 goblinY;                       // New in GOB2
 		int8 destX;                         // New in GOB2
@@ -97,7 +93,16 @@ public:
 		int8 gobDestY;                      // New in GOB2
 		int8 nearestWayPoint;               // New in GOB2
 		int8 nearestDest;                   // New in GOB2
-		Mult::Mult_GobState **goblinStates; // New in GOB2
+		int8 field_22;                      // New in GOB2
+		int8 someFlag;                      // New in GOB2
+		int8 field_24;                      // New in GOB2
+		int8 field_25;                      // New in GOB2
+		int8 field_26;                      // New in GOB2
+		int8 field_27;                      // New in GOB2
+		int16 somethingLeft;                // New in GOB2
+		int16 somethingTop;                 // New in GOB2
+		int16 somethingRight;               // New in GOB2
+		int16 somethingBottom;              // New in GOB2
 	};
 
 	struct Mult_StaticKey {

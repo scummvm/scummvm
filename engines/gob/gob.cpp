@@ -193,6 +193,11 @@ void GobEngine::shutdown() {
 	_quitRequested = true;
 }
 
+void GobEngine::writeVarDebug(uint32 offs, uint32 v) {
+	warning("Setting var %d(%d) to %d", offs, offs >> 2, v);
+	(*(uint32 *)(_global->_inter_variables + (offs))) = v;
+}
+
 int GobEngine::init() {
 	_snd = new Snd(this);
 	_global = new Global(this);

@@ -1890,10 +1890,10 @@ void Goblin::sub_19BD3(void) {
 	var_A = anim1->field_13;
 	var_C = anim1->field_14;
 
-	pass = _vm->_map->getPass(gob1X, gob1Y, 40);
+	pass = _vm->_map->getPass(gob1X, gob1Y);
 	if ((pass > 17) && (pass < 21))
 		warning("GOB2 Stub! sub_19AB7(anim0);");
-	pass = _vm->_map->getPass(gob2X, gob2Y, 40);
+	pass = _vm->_map->getPass(gob2X, gob2Y);
 	if ((pass > 17) && (pass < 21))
 		warning("GOB2 Stub! sub_19B45(anim1);");
 
@@ -1901,57 +1901,57 @@ void Goblin::sub_19BD3(void) {
 		return;
 
 	if (gob1Y > si) {
-		if (_vm->_map->getPass(di, si, 40) > 17) {
+		if (_vm->_map->getPass(di, si) > 17) {
 			do {
 				si--;
-			} while (_vm->_map->getPass(di, si, 40) > 17);
+			} while (_vm->_map->getPass(di, si) > 17);
 			si++;
-			if (_vm->_map->getPass(di - 1, si, 40) == 0) {
-				if (_vm->_map->getPass(di + 1, si, 40) != 0)
+			if (_vm->_map->getPass(di - 1, si) == 0) {
+				if (_vm->_map->getPass(di + 1, si) != 0)
 					di++;
 			} else
 				di--;
-			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
+			sub_197A6(di, si, 0);
 		}
 	} else {
-		if (_vm->_map->getPass(di, si, 40) > 17) {
+		if (_vm->_map->getPass(di, si) > 17) {
 			do {
 				si++;
-			} while (_vm->_map->getPass(di, si, 40) > 17);
+			} while (_vm->_map->getPass(di, si) > 17);
 			si--;
-			if (_vm->_map->getPass(di - 1, si, 40) == 0) {
-				if (_vm->_map->getPass(di + 1, si, 40) != 0)
+			if (_vm->_map->getPass(di - 1, si) == 0) {
+				if (_vm->_map->getPass(di + 1, si) != 0)
 					di++;
 			} else
 				di--;
-			warning("GOB2 Stub! sub_197A6(di (=%d), si (=%d), 0);", si, di);
+			sub_197A6(di, si, 0);
 		}
 	}
 	if (gob2Y > var_C) {
-		if (_vm->_map->getPass(var_A, var_C, 40) > 17) {
+		if (_vm->_map->getPass(var_A, var_C) > 17) {
 			do {
 				var_C--;
-			} while (_vm->_map->getPass(var_A, var_C, 40) > 17);
+			} while (_vm->_map->getPass(var_A, var_C) > 17);
 			var_C++;
-			if (_vm->_map->getPass(var_A - 1, var_C, 40) == 0) {
-				if (_vm->_map->getPass(var_A + 1, var_C, 40) != 0)
+			if (_vm->_map->getPass(var_A - 1, var_C) == 0) {
+				if (_vm->_map->getPass(var_A + 1, var_C) != 0)
 					var_A++;
 			} else
 				var_A--;
-			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
+			sub_197A6(var_A, var_C, 1);
 		}
 	} else {
-		if (_vm->_map->getPass(var_A, var_C, 40) > 17) {
+		if (_vm->_map->getPass(var_A, var_C) > 17) {
 			do {
 				var_C++;
-			} while (_vm->_map->getPass(var_A, var_C, 40) > 17);
+			} while (_vm->_map->getPass(var_A, var_C) > 17);
 			var_C--;
-			if (_vm->_map->getPass(var_A - 1, var_C, 40) == 0) {
-				if (_vm->_map->getPass(var_A + 1, var_C, 40) != 0)
+			if (_vm->_map->getPass(var_A - 1, var_C) == 0) {
+				if (_vm->_map->getPass(var_A + 1, var_C) != 0)
 					var_A++;
 			} else
 				var_A--;
-			warning("GOB2 Stub! sub_197A6(var_A (=%d), var_C (=%d), 1);", var_A, var_C);
+			sub_197A6(var_A, var_C, 1);
 		}
 	}
 }
@@ -2047,6 +2047,116 @@ void Goblin::sub_11984(Mult::Mult_Object *obj) {
 		animData->isPaused = 0;
 	} else
 		animData->frame--;
+}
+
+void Goblin::sub_197A6(int16 destX, int16 destY, int16 objIndex) {
+	Mult::Mult_Object *obj;
+	Mult::Mult_AnimData *animData;
+	int16 mouseX;
+	int16 mouseY;
+	int16 gobDestX;
+	int16 gobDestY;
+	int16 mapWidth;
+	int16 mapHeight;
+	int16 di;
+	int16 si;
+	int16 var_1E;
+	int16 var_20;
+	int i;
+
+	obj = &_vm->_mult->_objects[objIndex];
+	animData = obj->pAnimData;
+
+	obj->gobDestX = destX;
+	obj->gobDestY = destY;
+	animData->field_13 = destX;
+	animData->field_14 = destY;
+
+	if ((animData->isBusy != 0) && (destX != -1) && (destY != -1)) {
+		if ((destX == -1) && (destY == -1)) {
+			mouseX = _vm->_global->_inter_mouseX;
+			mouseY = _vm->_global->_inter_mouseY;
+			if (_vm->_map->_bigTiles)
+				mouseY += ((_vm->_global->_inter_mouseX / _vm->_map->_tilesHeight) + 1) / 2;
+			obj->gobDestX = mouseX / _vm->_map->_tilesWidth;
+			obj->gobDestY = mouseY / _vm->_map->_tilesHeight;
+			gobDestX = obj->gobDestX;
+			gobDestY = obj->gobDestY;
+			if (_vm->_map->getPass(obj->gobDestX, obj->gobDestY) == 0) {
+				mapWidth = _vm->_map->_screenWidth / _vm->_map->_tilesWidth;
+				mapHeight = 200 / _vm->_map->_tilesHeight;
+				var_20 = 0;
+				di = -1;
+				si = -1;
+
+				for (i = 1; i <= gobDestX; i++)
+					if (_vm->_map->getPass(gobDestX - i, gobDestY) != 0)
+						break;
+				if (i <= gobDestX)
+					di = ((i - 1) * _vm->_map->_tilesWidth) + (mouseX % _vm->_map->_tilesWidth) + 1;
+				var_1E = i;
+
+				for (i = 1; (gobDestX + i) < mapWidth; i++)
+					if (_vm->_map->getPass(gobDestX + i, gobDestY) != 0)
+						break;
+				if ((gobDestX + i) < mapWidth)
+					si = (i * _vm->_map->_tilesWidth) - (mouseX % _vm->_map->_tilesWidth);
+
+				if ((si != -1) && ((di == -1) || (di > si))) {
+					di = si;
+					var_20 = 1;
+					var_1E = i;
+				}
+				si = -1;
+
+				for (i = 1; (gobDestY + i) < mapHeight; i++)
+					if (_vm->_map->getPass(gobDestX, gobDestY + i) != 0)
+						break;
+				if ((gobDestY + i) < mapHeight)
+					si = (i * _vm->_map->_tilesHeight) - (mouseY % _vm->_map->_tilesHeight);
+
+				if ((si != -1) && ((di == -1) || (di > si))) {
+					di = si;
+					var_20 = 2;
+					var_1E = i;
+				}
+				si = -1;
+
+				for (i = 1; i <= gobDestY; i++)
+					if (_vm->_map->getPass(gobDestX, gobDestY - i) != 0)
+						break;
+				if (i <= gobDestY)
+					si = ((i - 1) * _vm->_map->_tilesHeight) + (mouseY % _vm->_map->_tilesHeight) + 1;
+
+				if ((si != -1) && ((di == -1) || (di > si))) {
+					var_20 = 3;
+					var_1E = i;
+				}
+
+				if (var_20 == 0)
+					gobDestX -= var_1E;
+				else if (var_20 == 1)
+					gobDestX += var_1E;
+				else if (var_20 == 2)
+					gobDestY += var_1E;
+				else if (var_20 == 3)
+					gobDestY -= var_1E;
+			}
+			obj->gobDestX = gobDestX;
+			obj->gobDestY = gobDestY;
+			animData->field_13 = gobDestX;
+			animData->field_14 = gobDestY;
+			if (animData->field_13 == -1) {
+				animData->field_13 = obj->goblinX;
+				obj->gobDestX = obj->goblinX;
+			}
+			if (animData->field_14 == -1) {
+				animData->field_14 = obj->goblinY;
+				obj->gobDestY = obj->goblinY;
+			}
+		}
+	}
+	initiateMove(obj);
 }
 
 } // End of namespace Gob
