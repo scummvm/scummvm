@@ -332,11 +332,11 @@ void NewGui::openDialog(Dialog *dialog) {
 		_theme->refresh();
 		// refresh all dialogs
 		for (int i = 0; i < _dialogStack.size(); ++i) {
-		  _dialogStack[i]->reflowLayout();
+			_dialogStack[i]->reflowLayout();
 		}
 	} else {
-	  dialog->reflowLayout();
-	 }
+		dialog->reflowLayout();
+	}
 }
 
 void NewGui::closeTopDialog() {
