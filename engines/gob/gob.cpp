@@ -62,62 +62,63 @@ struct GameSettings {
 	uint32 features;
 	Common::Language lang;
 	const char *md5sum;
+	const char *startTotBase;
 };
 
 static const GameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "82aea70ef26f41fa963dfae270993e49"},
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "1f499458837008058b8ba6ae07057214"},
-	{"gob1", "Gobliiins (Windows)", GF_GOB1, Common::UNK_LANG, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "82aea70ef26f41fa963dfae270993e49", "intro"},
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "1f499458837008058b8ba6ae07057214", "intro"},
+	{"gob1", "Gobliiins (Windows)", GF_GOB1, Common::UNK_LANG, "8a5e850c49d7cacdba5f5eb1fcc77b89", "intro"},
 
 	// Supplied by Theruler76 in bug report #1201233
-	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, Common::UNK_LANG, "a5e232fcd02733c7dffff107d22d36eb"},
+	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, Common::UNK_LANG, "a5e232fcd02733c7dffff107d22d36eb", "intro"},
 
 	// CD 1.000 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "037db48ebce94bdfe42e2c9510da9211"},
+	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "037db48ebce94bdfe42e2c9510da9211", "intro"},
 	// CD 1.02 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "45f9c1162dd7040fd05fd013ccc176e2"},
+	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "45f9c1162dd7040fd05fd013ccc176e2", "intro"},
 
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "d9f8736b7dc0ea891cd06592a72e8a72"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "69f9ae85252271e7dfa62883e581e5e9"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "26de406cb09228d902274446a6a2eceb"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "baf88a95928edb3f51067983f2dffa93"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "d9f8736b7dc0ea891cd06592a72e8a72", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "69f9ae85252271e7dfa62883e581e5e9", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "26de406cb09228d902274446a6a2eceb", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "baf88a95928edb3f51067983f2dffa93", "intro"},
 
-	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, Common::UNK_LANG, "4f5bf4b9e4c39ebb93579747fc678e97"},
+	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, Common::UNK_LANG, "4f5bf4b9e4c39ebb93579747fc678e97", "intro"},
 	
-	{"gob1", "Gobliiins (Mac)", GF_GOB1 | GF_MAC, Common::UNK_LANG, "4c0e8ce4a2f66ee8226952ad3c6c1155"},
+	{"gob1", "Gobliiins (Mac)", GF_GOB1 | GF_MAC, Common::UNK_LANG, "4c0e8ce4a2f66ee8226952ad3c6c1155", "intro"},
 
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::FR_FRA, "abb5f762f9979d4253002de20f6e7b56"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_GRB, "9b6de65d811c08eebf50391b84fcba92"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_USA, "54d59c200e3823ad0af11a605a6fd06a"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128"},
-	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "b6d47494bf88398ae59c1b5656cafce4"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::FR_FRA, "abb5f762f9979d4253002de20f6e7b56", "intro"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_GRB, "9b6de65d811c08eebf50391b84fcba92", "intro"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_USA, "54d59c200e3823ad0af11a605a6fd06a", "intro"},
+	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128", "intro"},
+	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "b6d47494bf88398ae59c1b5656cafce4", "intro"},
 	// CD 1.000.
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "02bf538fd8003b8da23a3546299c3df4"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "02bf538fd8003b8da23a3546299c3df4", "intro"},
 	// CD 1.01
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::UNK_LANG, "410e632682ab11969bc3b3b588066d95"},
-	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "be8b111191f965ac9b28fe530580d14e"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::UNK_LANG, "410e632682ab11969bc3b3b588066d95", "intro"},
+	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "be8b111191f965ac9b28fe530580d14e", "usa"},
 
 #if 0
-	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "36d9b4032b39a794c8640e500e98893a"},
-	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "d129f639f6ca8d6b5f0f4e15edb91058"},
-	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "8d17b0abc514b1512fdedc6072acd48b"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "36d9b4032b39a794c8640e500e98893a", "intro"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "d129f639f6ca8d6b5f0f4e15edb91058", "intro"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "8d17b0abc514b1512fdedc6072acd48b", "intro"},
 	// CD 1.000
-	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "8d17b0abc514b1512fdedc6072acd48b"},
+	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "8d17b0abc514b1512fdedc6072acd48b", "intro"},
 	// CD 1.02. Spanish "Computer Gaming World"* distribution in Spain
-	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "7d7ab9a987be7208b9b685846fbd3e82"},
+	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "7d7ab9a987be7208b9b685846fbd3e82", "intro"},
 
-	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "4986b44cec309589508d7904f924c217"},
-	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
-	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "59ab69dab5fddbbf698c77a84297a5a2"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "4986b44cec309589508d7904f924c217", "intro"},
+	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc", "intro"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "59ab69dab5fddbbf698c77a84297a5a2", "intro"},
 
 	// CD 1.0
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "c27402cee260d2ff1c4cecb2006a630a"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "c27402cee260d2ff1c4cecb2006a630a", "intro"},
 
 	// CD 1.00, German release (INTRO.STRK seems to be multilingual, though?)
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "751ba028d215e0db1e0254853de6a7e4"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "751ba028d215e0db1e0254853de6a7e4", "intro"},
 #endif
-	{0, 0, 0, Common::UNK_LANG, 0}
+	{0, 0, 0, Common::UNK_LANG, 0, 0}
 };
 
 // Keep list of different supported games
@@ -130,7 +131,8 @@ static const PlainGameDescriptor gob_list[] = {
 
 #define MAX_TIME_DELTA 100
 
-GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang)
+GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang,
+		const char *startTotBase)
  : Engine(syst) {
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -144,6 +146,20 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang)
 	_language = lang;
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_quitRequested = false;
+
+	if (startTotBase == 0) {
+		_startTot = new char[10];
+		_startTot0 = new char[11];
+		strcpy(_startTot, "intro.tot");
+		strcpy(_startTot0, "intro0.tot");
+	} else {
+		_startTot = new char[strlen(startTotBase) + 5];
+		_startTot0 = new char[strlen(startTotBase) + 6];
+		strcpy(_startTot, startTotBase);
+		strcpy(_startTot0, startTotBase);
+		strcat(_startTot, ".tot");
+		strcat(_startTot0, "0.tot");
+	}
 
 	Common::addSpecialDebugLevel(DEBUG_FUNCOP, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(DEBUG_DRAWOP, "DrawOpcodes", "Script DrawOpcodes debug level");
@@ -398,6 +414,8 @@ PluginError Engine_GOB_create(OSystem *syst, Engine **engine) {
 	// data contents
 	Common::String realGame(ConfMan.get("gameid"));
 	uint32 features;
+	const char *startTotBase=NULL;
+
 	if (!scumm_stricmp(realGame.c_str(), "gob2"))
 		features = GF_GOB2;
 	else
@@ -410,6 +428,7 @@ PluginError Engine_GOB_create(OSystem *syst, Engine **engine) {
 			if (g->description)
 				g_system->setWindowCaption(g->description);
 
+			startTotBase = g->startTotBase;
 			found = true;
 			break;
 		}
@@ -420,7 +439,7 @@ PluginError Engine_GOB_create(OSystem *syst, Engine **engine) {
 	}
 
 	assert(engine);
-	*engine = new GobEngine(syst, features, g->lang);
+	*engine = new GobEngine(syst, features, g->lang, startTotBase);
 	return kNoError;
 }
 

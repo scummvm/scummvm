@@ -191,7 +191,7 @@ memBlocks	= word ptr -2*/
 		strcpy(buffer, totName);
 		strcat(buffer, ".tot");
 	} else {
-		strcpy(buffer, "intro.tot");
+		strcpy(buffer, _vm->_startTot);
 	}
 
 	handle = _vm->_dataio->openData(buffer);

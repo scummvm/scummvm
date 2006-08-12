@@ -89,7 +89,7 @@ protected:
 	int init();
 
 public:
-	GobEngine(OSystem *syst, uint32 features, Common::Language lang);
+	GobEngine(OSystem *syst, uint32 features, Common::Language lang, const char *startTotBase);
 	virtual ~GobEngine();
 
 	void shutdown();
@@ -98,6 +98,8 @@ public:
 
 	int32 _features;
 	Common::Language _language;
+	char *_startTot;
+	char *_startTot0;
 	bool _copyProtection;
 	bool _quitRequested;
 

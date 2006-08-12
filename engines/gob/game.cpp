@@ -863,7 +863,7 @@ char *Game::loadLocTexts(void) {
 	strcpy(locTextFile, _curTotFile);
 
 	handle = openLocTextFile(locTextFile, _vm->_global->_language);
-	if ((handle < 0) && !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot")) {
+	if ((handle < 0) && !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
 		warning("Your game version doesn't support the requested language, using the first one available");
 		for (i = 0; i < 10; i++) {
 			handle = openLocTextFile(locTextFile, i);
