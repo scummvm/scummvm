@@ -32,19 +32,12 @@ namespace GUI {
 ListWidget::ListWidget(GuiObject *boss, const String &name)
 	: EditableWidget(boss, name), CommandSender(boss) {
 
-	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);
-	_topPadding = g_gui.evaluator()->getVar("ListWidget.topPadding", 0);
-	_bottomPadding = g_gui.evaluator()->getVar("ListWidget.bottomPadding", 0);
-	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
-	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
+	_scrollBar = NULL;
+	_textWidth = NULL;
 
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		_scrollBarWidth =  kBigScrollBarWidth;
-	} else {
-		_scrollBarWidth = kNormalScrollBarWidth;
-	}
-	
+	// This ensures that _entriesPerPage is properly initialised.
+	reflowLayout();
+
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
@@ -53,7 +46,6 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
-	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
 	_currentKeyDown = 0;
@@ -65,11 +57,6 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
-
-	_textWidth = new int[_entriesPerPage];
-
-	for (int i = 0; i < _entriesPerPage; i++)
-		_textWidth[i] = 0;
 }
 
 ListWidget::~ListWidget() {
@@ -470,9 +457,11 @@ void ListWidget::reflowLayout() {
 	for (int i = 0; i < _entriesPerPage; i++)
 		_textWidth[i] = 0;
 
-	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
-	scrollBarRecalc();
-	scrollToCurrent();
+	if (_scrollBar) {
+		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
+		scrollBarRecalc();
+		scrollToCurrent();
+	}
 }
 
 } // End of namespace GUI
