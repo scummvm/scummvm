@@ -193,6 +193,8 @@ GobEngine::~GobEngine() {
 	delete _gtimer;
 	delete _util;
 	delete _music;
+	delete _startTot;
+	delete _startTot0;
 }
 
 void GobEngine::errorString(const char *buf1, char *buf2) {
