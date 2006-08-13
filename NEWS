@@ -30,6 +30,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Simon
    - Improved support for international versions of the Feeble Files.
    - Fixed undefined behaviour when loading music.
+   - Fixed crash when displaying some subtitles in the Feeble Files.
 
  Broken Sword 2
    - More robust handling of the optional startup.inf file.
