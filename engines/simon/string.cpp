@@ -365,16 +365,15 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 
 	if (getGameType() == GType_FF) {
 		uint16 b, pixels, spaces;
-		uint16 curWdth = width;
 
 		while (1) {
-			string2 = getPixelLength(string, curWdth, pixels);
+			string2 = getPixelLength(string, width, pixels);
 			if (*string2 == 0) {
 				spaces = (width - pixels) / 12;
 				if (spaces != 0)
 					spaces--;
 				while (spaces) {
-	    				*convertedString2++=' ';
+	    				*convertedString2++ = ' ';
 	    				spaces--;
 				}
 				strcpy(convertedString2, string);
@@ -400,7 +399,6 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 			y -= textHeight;
 			if (y < 2)
 			    y = 2;
-			curWdth = pixels;
 			string = string2;
 		}
 	} else {
