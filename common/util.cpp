@@ -116,7 +116,7 @@ const LanguageDescription g_languages[] = {
 	{"de", "German", DE_DEU},
 	{"fr", "French", FR_FRA},
 	{"it", "Italian", IT_ITA},
-	{"pt", "Portuguese", PT_BRA},
+	{"br", "Portuguese", PT_BRA},
 	{"es", "Spanish", ES_ESP},
 	{"jp", "Japanese", JA_JPN},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
