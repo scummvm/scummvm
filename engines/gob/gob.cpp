@@ -52,8 +52,8 @@
 namespace Gob {
 
 enum {
-	// We only compute MD5 of the first megabyte of our data files.
-	kMD5FileSizeLimit = 1024 * 1024
+	// We only compute MD5 of the first 5000 bytes of our data files.
+	kMD5FileSizeLimit = 5000
 };
 
 struct GameSettings {
@@ -67,56 +67,63 @@ struct GameSettings {
 
 static const GameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "82aea70ef26f41fa963dfae270993e49", "intro"},
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "1f499458837008058b8ba6ae07057214", "intro"},
-	{"gob1", "Gobliiins (Windows)", GF_GOB1, Common::UNK_LANG, "8a5e850c49d7cacdba5f5eb1fcc77b89", "intro"},
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, Common::UNK_LANG, "c65e9cc8ba23a38456242e1f2b1caad4", "intro"},
+	{"gob1", "Gobliiins (DOS EGA Ru)", GF_GOB1 | GF_EGA, Common::RU_RUS, "f9233283a0be2464248d83e14b95f09c", "intro"},
+	//{"gob1", "Gobliiins (Windows)", GF_GOB1, Common::UNK_LANG, "8a5e850c49d7cacdba5f5eb1fcc77b89", "intro"},
 
 	// Supplied by Theruler76 in bug report #1201233
-	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, Common::UNK_LANG, "a5e232fcd02733c7dffff107d22d36eb", "intro"},
+	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, Common::UNK_LANG, "26a9118c0770fa5ac93a9626761600b2", "intro"},
 
 	// CD 1.000 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "037db48ebce94bdfe42e2c9510da9211", "intro"},
+	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "2fbf4b5b82bbaee87eb45d4404c28998", "intro"},
 	// CD 1.02 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "45f9c1162dd7040fd05fd013ccc176e2", "intro"},
+	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "8bd873137b6831c896ee8ad217a6a398", "intro"},
 
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "d9f8736b7dc0ea891cd06592a72e8a72", "intro"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "69f9ae85252271e7dfa62883e581e5e9", "intro"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "26de406cb09228d902274446a6a2eceb", "intro"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "baf88a95928edb3f51067983f2dffa93", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "c65e9cc8ba23a38456242e1f2b1caad4", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "972f22c6ff8144a6636423f0354ca549", "intro"},
 
-	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, Common::UNK_LANG, "4f5bf4b9e4c39ebb93579747fc678e97", "intro"},
+	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, Common::UNK_LANG, "e72bd1e3828c7dec4c8a3e58c48bdfdb", "intro"},
 	
-	{"gob1", "Gobliiins (Mac)", GF_GOB1 | GF_MAC, Common::UNK_LANG, "4c0e8ce4a2f66ee8226952ad3c6c1155", "intro"},
+	{"gob1", "Gobliiins (Mac)", GF_GOB1 | GF_MAC, Common::UNK_LANG, "00a42a7d2d22e6b6ab1b8c673c4ed267", "intro"},
 
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::FR_FRA, "abb5f762f9979d4253002de20f6e7b56", "intro"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_GRB, "9b6de65d811c08eebf50391b84fcba92", "intro"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::EN_USA, "54d59c200e3823ad0af11a605a6fd06a", "intro"},
+	{"gob2", "Gobliins 2 (DOS Fra)", GF_GOB2, Common::FR_FRA, "a13ecb4f6d8fd881ebbcc02e45cb5475", "intro"},
+	{"gob2", "Gobliins 2 (DOS Grb)", GF_GOB2, Common::EN_GRB, "b45b984ee8017efd6ea965b9becd4d66", "intro"},
+	{"gob2", "Gobliins 2 (DOS USA)", GF_GOB2, Common::EN_USA, "dedb5d31d8c8050a8cf77abedcc53dae", "intro"},
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128", "intro"},
-	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "b6d47494bf88398ae59c1b5656cafce4", "intro"},
+	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "cd3e1df8b273636ee32e34b7064f50e8", "intro"},
 	// CD 1.000.
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "02bf538fd8003b8da23a3546299c3df4", "intro"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "9de5fbb41cf97182109e5fecc9d90347", "intro"},
 	// CD 1.01
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::UNK_LANG, "410e632682ab11969bc3b3b588066d95", "intro"},
-	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "be8b111191f965ac9b28fe530580d14e", "usa"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::UNK_LANG, "24a6b32757752ccb1917ce92fd7c2a04", "intro"},
+	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "8b1c98ff2ab2e14f47a1b891e9b92217", "usa"},
+
+	{"gob2", "Ween: The Prohpecy", GF_GOB2, Common::UNK_LANG, "2bb8878a8042244dd2b96ff682381baa", "intro"},
+	{"gob2", "Ween: The Prophecy (Fr)", GF_GOB2, Common::UNK_LANG, "4b10525a3782aa7ecd9d833b5c1d308b", "intro"},
+	{"gob2", "Ween: The Prophecy (Demo)", GF_GOB2, Common::UNK_LANG, "2e9c2898f6bf206ede801e3b2e7ee428", "intro"},
+
+	{"gob2", "Bargon Attack", GF_GOB2, Common::UNK_LANG, "da3c54be18ab73fbdb32db24624a9c23", "intro"},
 
 #if 0
-	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "36d9b4032b39a794c8640e500e98893a", "intro"},
-	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "d129f639f6ca8d6b5f0f4e15edb91058", "intro"},
-	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "8d17b0abc514b1512fdedc6072acd48b", "intro"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "32b0f57f5ae79a9ae97e8011df38af42", "intro"},
+	//{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "d129f639f6ca8d6b5f0f4e15edb91058", "intro"},
+	{"gob3", "Goblins Quest 3", GF_GOB3, Common::UNK_LANG, "1e2f64ec8dfa89f42ee49936a27e66e7", "intro"},
+	{"gob3", "Goblins Quest 3 (Fr)", GF_GOB3, Common::FR_FRA, "e42a4f2337d6549487a80864d7826972", "intro"},
+	{"gob3", "Goblins Quest 3 (Ru)", GF_GOB3, Common::RU_RUS, "4e3af248a48a2321364736afab868527", "intro"},
+	{"gob3", "Goblins Quest 3 (Mac)", GF_GOB3, Common::UNK_LANG, "8d28ce1591b0e9cc79bf41cad0fc4c9c", "intro"},
 	// CD 1.000
-	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "8d17b0abc514b1512fdedc6072acd48b", "intro"},
+	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "6f2c226c62dd7ab0ab6f850e89d3fc47", "intro"},
 	// CD 1.02. Spanish "Computer Gaming World"* distribution in Spain
-	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "7d7ab9a987be7208b9b685846fbd3e82", "intro"},
+	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, Common::UNK_LANG, "c3e9132ea9dc0fb866b6d60dcda10261", "intro"},
 
-	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "4986b44cec309589508d7904f924c217", "intro"},
-	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc", "intro"},
-	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "59ab69dab5fddbbf698c77a84297a5a2", "intro"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "7aebd94e49c2c5c518c9e7b74f25de9d", "intro"},
+	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "b9b898fccebe02b69c086052d5024a55", "intro"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, Common::UNK_LANG, "e5dcbc9f6658ebb1e8fe26bc4da0806d", "intro"},
 
 	// CD 1.0
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "c27402cee260d2ff1c4cecb2006a630a", "intro"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "dccf9d31cb720b34d75487408821b77e", "intro"},
 
 	// CD 1.00, German release (INTRO.STRK seems to be multilingual, though?)
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "751ba028d215e0db1e0254853de6a7e4", "intro"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, Common::UNK_LANG, "5f5f4e0a72c33391e67a47674b120cc6", "intro"},
 #endif
 	{0, 0, 0, Common::UNK_LANG, 0, 0}
 };
