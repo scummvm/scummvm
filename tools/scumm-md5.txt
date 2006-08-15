@@ -288,6 +288,7 @@ samnmax	Sam &amp; Max Hit the Road
 	6dead580b0ff14d5f7b33b4219f04159	en	Mac	-	Demo	Mac bundle	
 
 ft	Full Throttle
+	41958e24d03181ff9a381a66d048a581	br	All?	-	-	-	Danilo E.S.
 	09820417db26687bb7fe0c83cc4c553b	en	All?	-	Version A	-	
 	60ba818dc3bede86d40357e3913f8505	en	All?	-	Version B	-	sev
 	4bedb49943df95a9c900a5a82ccbe9de	fr	All?	-	-	-	cyx
