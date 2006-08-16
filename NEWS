@@ -11,14 +11,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Broken Sword 2:
    - Added support for DXA cutscenes.
 
- SCUMM
+ SCUMM:
    - Fixed various actor walking issues.
 
 0.9.1 (????-??-??)
  General:
    - Fixed potential garbage and/or crash in debug console.
 
- SCUMM
+ SCUMM:
    - Improved support for international versions of HE games.
    - Fixed rare actor drawing glitches.
    - Fixed path finding during smart star challendge in Big Thinkers 1st Grade.
@@ -27,12 +27,15 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      Time.
    - Fixed FM-TOWNS version of Indy3 failing on Amiga port.
 
- Simon
+ Simon:
    - Improved support for international versions of the Feeble Files.
    - Fixed undefined behaviour when loading music.
    - Fixed crash when displaying some subtitles in the Feeble Files.
 
- Broken Sword 2
+ BASS:
+   - Fixed character spacing in LINC terminals in floppy version v0.0303
+
+ Broken Sword 2:
    - More robust handling of the optional startup.inf file.
 
  PSP Port:
