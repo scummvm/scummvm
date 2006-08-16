@@ -109,7 +109,7 @@ void Text::patchLINCCharset() {
 	// for every character by one, except for space which needs to be one
 	// pixel wider than before.
 
-	if (SkyEngine::_systemVars.gameVersion == 288) {
+	if (SkyEngine::_systemVars.gameVersion == 288 || SkyEngine::_systemVars.gameVersion == 303) {
 		for (int i = 1; i < CHAR_SET_HEADER; i++)
 			charSetPtr[i]--;
 		charSetPtr[0]++;
