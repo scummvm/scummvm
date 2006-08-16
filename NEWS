@@ -14,12 +14,15 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      Time.
    - Fixed FM-TOWNS version of Indy3 failing on Amiga port.
 
- Simon
+ Simon:
    - Improved support for international versions of the Feeble Files.
    - Fixed undefined behaviour when loading music.
    - Fixed crash when displaying some subtitles in the Feeble Files.
 
- Broken Sword 2
+ BASS:
+   - Fixed character spacing in LINC terminals in floppy version v0.0303
+
+ Broken Sword 2:
    - More robust handling of the optional startup.inf file.
 
  PSP Port:
