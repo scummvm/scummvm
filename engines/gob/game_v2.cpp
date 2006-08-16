@@ -260,9 +260,10 @@ void Game_v2::playTot(int16 skipPlay) {
 			strcpy(_curTotFile, _totToLoad);
 		}
 	} else {
+		_vm->_inter->initControlVars(0);
 		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 		_vm->_global->_inter_execPtr = (char *)_totFileData;
-		_vm->_global->_inter_execPtr += READ_LE_UINT16(_totFileData + (skipPlay << 1) + 0x66);
+		_vm->_global->_inter_execPtr += (int16) READ_LE_UINT16(_totFileData + (skipPlay << 1) + 0x66);
 		_vm->_inter->callSub(2);
 		if (_vm->_inter->_terminate != 0)
 			_vm->_inter->_terminate = 2;
