@@ -532,13 +532,12 @@ void OSystem_WINCE3::switch_zone() {
 
     for (i=0; i<TOTAL_ZONES; i++)
 		if (x >= _zones[i].x && y >= _zones[i].y &&
-			x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height
-		   ) {
+			x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height) {
 				_mouseXZone[i] = x;
 				_mouseYZone[i] = y;
 				break;
 		}
-	_currentZone++;
+	_currentZone = i + 1;
 	if (_currentZone >= TOTAL_ZONES)
 		_currentZone = 0;
 
@@ -697,11 +696,7 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 
 	// Add sound thread priority
 	if (!ConfMan.hasKey("sound_thread_priority")) {
-#ifdef SH3
 		thread_priority = THREAD_PRIORITY_NORMAL;
-#else
-		thread_priority = THREAD_PRIORITY_ABOVE_NORMAL;
-#endif
 	}
 	else
 		thread_priority = ConfMan.getInt("sound_thread_priority");
@@ -1974,7 +1969,7 @@ void OSystem_WINCE3::hideOverlay() {
 
 void OSystem_WINCE3::drawMouse() {
 	// FIXME
-	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset()) && !_forceHideMouse)
+	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)
 		internDrawMouse();		
 }
 
