@@ -309,6 +309,7 @@ Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
   --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
   --mandir=DIR           directory to install the manpage in [PREFIX/man]
+  --datadir=DIR          directory to install the data files in [PREFIX/share]
 
 Special configuration feature:
   --host=HOST            cross-compile to target HOST (arm-linux, ...)
@@ -499,6 +500,9 @@ for ac_option in $@; do
         ;;
       --mandir=*)
         _mandir=`echo $ac_option | cut -d '=' -f 2`
+        ;;
+      --datadir=*)
+        _datadir=`echo $ac_option | cut -d '=' -f 2`
         ;;
       *)
         echo "error: unrecognised option: $ac_option
@@ -1187,6 +1191,10 @@ fi
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
 test -z "$_mandir" && _mandir="$_prefix/man"
+test -z "$_datadir" && _datadir="$_prefix/share"
+
+DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
+
 
 #
 # Check which engines ("frontends") are to be built

@@ -76,6 +76,10 @@ _lastUsedBitMask(0), _forceRedraw(false), _fonts(), _imageHandles(0), _images(0)
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
+#ifdef DATA_PATH
+	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
+#endif
+
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 
