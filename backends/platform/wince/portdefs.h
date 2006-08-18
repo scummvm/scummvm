@@ -48,7 +48,7 @@ char *strpbrk(const char *s, const char *accept);
 void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
 char *getcwd(char *buf, int size);
 void GetCurrentDirectory(int len, char *buf);
-#define INVALID_FILE_ATTRIBUTES 0xbadc0de
+#define INVALID_FILE_ATTRIBUTES 0xffffffff
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
