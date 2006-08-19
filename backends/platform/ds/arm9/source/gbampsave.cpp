@@ -27,7 +27,7 @@
 
 GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
-	//consolePrintf("%s handle is %d\n", name, handle);
+//	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
 	bufferPos = 0;
 	saveSize = 0;
@@ -36,7 +36,7 @@ GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 
 GBAMPSaveFile::~GBAMPSaveFile() {
 	flushSaveBuffer();
-	DS::std_fclose(handle);
+	if (handle) DS::std_fclose(handle);
 }
 
 uint32 GBAMPSaveFile::read(void *buf, uint32 size) {
@@ -143,11 +143,22 @@ Common::SaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool save
 	}
 	
 //	consolePrintf(fileSpec);
-
-	return new GBAMPSaveFile(fileSpec, saveOrLoad);
+	GBAMPSaveFile* sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
+	if (sf->isOpen()) {
+		return sf;	
+	} else {
+		delete sf;
+		return NULL;	
+	}
 }
 
 void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int num) {
+	memset(marks, true, num * sizeof(bool));
+	return;
+	
+	// Seems like I misunderstood what this function was supposed to do.
+	// I thought I was meant to set the marks[] array according to which
+	// saves are present on disk.
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[128];
 	char path[128];

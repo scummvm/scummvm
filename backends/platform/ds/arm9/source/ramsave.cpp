@@ -382,6 +382,9 @@ void DSSaveFileManager::deleteFile(char* name) {
 }
 
 void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
+	memset(marks, true, num * sizeof(bool));
+	return;
+
 	memset(marks, false, num*sizeof(bool));
 
 	for (int saveNum = 0; saveNum < num; saveNum++) {

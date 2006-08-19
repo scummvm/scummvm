@@ -50,7 +50,7 @@ public:
 	void flushSaveBuffer();
 	
 	virtual bool isOpen() const {
-		return true;
+		return handle != 0;
 	}
 };
 
