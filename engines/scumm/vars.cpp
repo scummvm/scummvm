@@ -97,7 +97,7 @@ void ScummEngine::setupScummVars() {
 		VAR_SOUNDPARAM = 64;
 		VAR_SOUNDPARAM2 = 65;
 		VAR_SOUNDPARAM3 = 66;
-		VAR_MOUSEPRESENT = 67;
+		VAR_INPUTMODE = 67;	// 1 is keyboard, 2 is joystick, 3 is mouse
 		VAR_MEMORY_PERFORMANCE = 68;
 		VAR_VIDEO_PERFORMANCE = 69;
 		VAR_ROOM_FLAG = 70;
@@ -749,7 +749,7 @@ void ScummEngine::resetScummVars() {
 		if (_game.version >= 4)
 			VAR(VAR_FIXEDDISK) = 1;
 		if (_game.version >= 5)
-			VAR(VAR_MOUSEPRESENT) = 1;
+			VAR(VAR_INPUTMODE) = 3;
 		if (_game.version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
