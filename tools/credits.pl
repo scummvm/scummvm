@@ -525,6 +525,10 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 
+	  begin_section("Lure");
+		  add_person("Paul Gilbert", "dreammaster", "");
+	  end_section();
+
 	  begin_section("SAGA");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
@@ -543,13 +547,12 @@ begin_credits("Credits");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
 
-	  begin_section("Nintendo DS");
-		  add_person("Neil Millstone", "agent-q", "");
+	  begin_section("GP32");
+		  add_person("Won Star", "wonst719", "");
 	  end_section();
 
-	  begin_section("SymbianOS");
-		  add_person("Jurgen Braam", "SumthinWicked", "");
-		  add_person("Lars Persson", "AnotherGuest", "");
+	  begin_section("Nintendo DS");
+		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
 
 	  begin_section("PalmOS");
@@ -573,6 +576,12 @@ begin_credits("Credits");
 		  add_person('Max Horn', 'Fingolfin', "");
 		  add_person('Eugene Sandulenko', 'sev', "Asm routines, GFX layers");
 	  end_section();
+
+	  begin_section("SymbianOS");
+		  add_person("Jurgen Braam", "SumthinWicked", "");
+		  add_person("Lars Persson", "AnotherGuest", "");
+	  end_section();
+
     end_section();
 
     begin_section("Other subsystems");
@@ -648,6 +657,14 @@ begin_credits("Credits");
 		  add_person('Max Horn', 'Fingolfin', "");
 	  end_section();
 
+	  begin_section("Mandriva");
+		  add_person('Dominik Scherer', '', "");
+	  end_section();
+
+	  begin_section("MorphOS");
+		  add_person('Fabien Coeurjoly', '', "");
+	  end_section();
+
 	  begin_section("OS/2");
 		  add_person("Paul Smedley", "Creeping", "");
 	  end_section();
@@ -658,6 +675,10 @@ begin_credits("Credits");
 
 	  begin_section("Solaris x86");
 		  add_person("Laurent Blume", "laurent", "");
+	  end_section();
+
+	  begin_section("Solaris Spark");
+		  add_person("Markus Strangl", "WooShell", "");
 	  end_section();
 
 	  begin_section("Win32");
