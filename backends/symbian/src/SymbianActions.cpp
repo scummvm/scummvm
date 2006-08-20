@@ -54,7 +54,7 @@ const Common::String actionNames[] = {
 #ifdef UIQ
 static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, 0, 0, 0, SDLK_PAGEUP, 0, 0};
 #elif defined (S60)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9',0,0,0,0,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0};
 #elif defined (S90)
 const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0,0,0,0,0};
 #else
@@ -128,6 +128,7 @@ void SymbianActions::initInstanceGame() {
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
+	bool is_kyra = (gameid == "kyra1");
 	
 	Actions::initInstanceGame();
 
@@ -137,7 +138,7 @@ void SymbianActions::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_gob) 
+	if (is_simon || is_gob || is_kyra) 
 		_action_enabled[ACTION_SAVE] = false;
 	else if (is_queen || is_ite) {
 		_action_enabled[ACTION_SAVE] = true;
