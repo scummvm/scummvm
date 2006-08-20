@@ -57,9 +57,13 @@ ScummVM Team
        Eugene Sandulenko    
 
     Kyra:
+       Torbjorn Andersson    - VQA Player
        Oystein Eftevaag     
        Gregory Montoir      
        Johannes Schickel    
+
+    Lure:
+       Paul Gilbert         
 
     SAGA:
        Torbjorn Andersson   
@@ -75,9 +79,11 @@ ScummVM Team
     Dreamcast:
        Marcus Comstedt      
 
-    SymbianOS:
-       Jurgen Braam         
-       Lars Persson         
+    GP32:
+       Won Star             
+
+    Nintendo DS:
+       Neil Millstone       
 
     PalmOS:
        Chris Apers          
@@ -95,6 +101,10 @@ ScummVM Team
     SDL (Win/Linux/OS X/etc.):
        Max Horn             
        Eugene Sandulenko     - Asm routines, GFX layers
+
+    SymbianOS:
+       Jurgen Braam         
+       Lars Persson         
 
   Other subsystems
   ----------------
@@ -156,6 +166,12 @@ Other contributions
     Mac OS X:
        Max Horn             
 
+    Mandriva:
+       Dominik Scherer      
+
+    MorphOS:
+       Fabien Coeurjoly     
+
     OS/2:
        Paul Smedley         
 
@@ -164,6 +180,9 @@ Other contributions
 
     Solaris x86:
        Laurent Blume        
+
+    Solaris Spark:
+       Markus Strangl       
 
     Win32:
        Travis Howell        
@@ -201,7 +220,7 @@ Other contributions
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                              support
      Andre Souza           - SDL-based OpenGL renderer
-     Tim ???               - Initial MI1 CD music support
+     Tim Phillips          - Initial MI1 CD music support
 
    And to all the contributors, users, and beta testers we've missed. Thanks!
 
