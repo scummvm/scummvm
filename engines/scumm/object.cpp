@@ -929,8 +929,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 	stopObjectScript(obj);
 
 	if (getOwner(obj) == OF_OWNER_ROOM) {
-		i = 0;
-		do {
+		for (i = 0; i < _numLocalObjects; i++)  {
 			if (_objs[i].obj_nr == obj) {
 				if (!_objs[i].fl_object_index)
 					return;
@@ -938,7 +937,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_objs[i].obj_nr = 0;
 				_objs[i].fl_object_index = 0;
 			}
-		} while (++i < _numLocalObjects);
+		}
 		return;
 	}
 
@@ -1386,12 +1385,41 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	if (owner == 0) {
 		clearOwnerOf(obj);
+		
+		// FIXME: See bug #1535358 and many others. Essentially, the following
+		// code, while matching disasm of various versions of the SCUMM engine,
+		// is total bullocks, and leads to odd crashes due to out-of-bounds
+		// array (read) access. Three "famous" crashes were caused by this:
+		//   Monkey Island 1: Using meat with flower
+		//   FOA: Using ribcage with another item
+		//   DOTT: Using stamp with contract
+		//
+		// The bad code:
+		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
+		// That check makes no sense at all: _inventory only contains 80 items,
+		// which are in the order the player picked up items. We can only 
+		// guess that the SCUMM coders meant to write
+		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
+		// which would ensure that an object script that nukes itself gets
+		// stopped. Alas, we can't just make that change, since it could
+		// lead to new regressions.
+		// Another fix would be to completely remove this check, which should
+		// not cause much problems, since it'll only succeed by pure chance.
+		// 
+		// For now we follow a more defensive route: We perform the check
+		// if ss->number is small enough.
+		
 		ss = &vm.slot[_currentScript];
-		if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
-			putOwner(obj, 0);
-			runInventoryScript(arg);
-			stopObjectCode();
-			return;
+		if (ss->where == WIO_INVENTORY) {
+			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
+				warning("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
+				putOwner(obj, 0);
+				runInventoryScript(arg);
+				stopObjectCode();
+				return;
+			}
+			if (ss->number == obj)
+				warning("Odd setOwnerOf case #2: Please report to Fingolfin where you encountered this");
 		}
 	}
 
