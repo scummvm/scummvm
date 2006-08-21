@@ -898,6 +898,7 @@ void ScummEngine_v2::o2_doSentence() {
 		return;
 	}
 
+	assert(_sentenceNum < NUM_SENTENCE);
 	st = &_sentence[_sentenceNum++];
 
 	st->verb = a;
