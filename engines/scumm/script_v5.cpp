@@ -746,7 +746,6 @@ void ScummEngine_v5::o5_divide() {
 
 void ScummEngine_v5::o5_doSentence() {
 	int verb;
-	SentenceTab *st;
 
 	verb = getVarOrDirectByte(PARAM_1);
 	if (verb == 0xFE) {
@@ -756,13 +755,9 @@ void ScummEngine_v5::o5_doSentence() {
 		return;
 	}
 
-	st = &_sentence[_sentenceNum++];
-
-	st->verb = verb;
-	st->objectA = getVarOrDirectWord(PARAM_2);
-	st->objectB = getVarOrDirectWord(PARAM_3);
-	st->preposition = (st->objectB != 0);
-	st->freezeCount = 0;
+	int objectA = getVarOrDirectWord(PARAM_2);
+	int objectB = getVarOrDirectWord(PARAM_3);
+	doSentence(verb, objectA, objectB);
 }
 
 void ScummEngine_v5::o5_drawBox() {

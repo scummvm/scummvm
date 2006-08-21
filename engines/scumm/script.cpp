@@ -1049,7 +1049,7 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 		if (objectA == objectB)
 			return;
 
-		if (_sentenceNum) {
+		if (_sentenceNum > 0) {
 			st = &_sentence[_sentenceNum - 1];
 
 			// Check if this doSentence request is identical to the previous one;
@@ -1060,6 +1060,7 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 
 	}
 
+	assert(_sentenceNum < NUM_SENTENCE);
 	st = &_sentence[_sentenceNum++];
 
 	st->verb = verb;
@@ -1074,6 +1075,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 	int localParamList[24];
 	const ScriptSlot *ss;
 	int sentenceScript;
+
 	if (_game.version <= 2)
 		sentenceScript = 2;
 	else
@@ -1091,20 +1093,21 @@ void ScummEngine::checkAndRunSentenceScript() {
 		return;
 
 	_sentenceNum--;
+	SentenceTab &st = _sentence[_sentenceNum];
 
 	if (_game.version < 7)
-		if (_sentence[_sentenceNum].preposition && _sentence[_sentenceNum].objectB == _sentence[_sentenceNum].objectA)
+		if (st.preposition && st.objectB == st.objectA)
 			return;
 
 	if (_game.version <= 2) {
-		VAR(VAR_ACTIVE_VERB) = _sentence[_sentenceNum].verb;
-		VAR(VAR_ACTIVE_OBJECT1) = _sentence[_sentenceNum].objectA;
-		VAR(VAR_ACTIVE_OBJECT2) = _sentence[_sentenceNum].objectB;
-		VAR(VAR_VERB_ALLOWED) = (0 != getVerbEntrypoint(_sentence[_sentenceNum].objectA, _sentence[_sentenceNum].verb));
+		VAR(VAR_ACTIVE_VERB) = st.verb;
+		VAR(VAR_ACTIVE_OBJECT1) = st.objectA;
+		VAR(VAR_ACTIVE_OBJECT2) = st.objectB;
+		VAR(VAR_VERB_ALLOWED) = (0 != getVerbEntrypoint(st.objectA, st.verb));
 	} else {
-		localParamList[0] = _sentence[_sentenceNum].verb;
-		localParamList[1] = _sentence[_sentenceNum].objectA;
-		localParamList[2] = _sentence[_sentenceNum].objectB;
+		localParamList[0] = st.verb;
+		localParamList[1] = st.objectA;
+		localParamList[2] = st.objectB;
 
 
 		if (_game.id == GID_FT && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
