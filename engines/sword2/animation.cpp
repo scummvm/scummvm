@@ -219,11 +219,20 @@ void MoviePlayer::closeTextObject(MovieTextObject *t) {
 	}
 }
 
+void MoviePlayer::calcTextPosition(MovieTextObject *t, int &xPos, int &yPos) {
+	xPos = 320 - t->textSprite->w / 2;
+	yPos = 420 - t->textSprite->h;
+}
+
 void MoviePlayer::drawTextObject(MovieTextObject *t) {
 	if (t->textSprite && _textSurface) {
 		int screenWidth = _vm->_screen->getScreenWide();
 		byte *src = t->textSprite->data;
-		byte *dst = _frameBuffer + (_frameY + _frameHeight - t->textSprite->h - 20) * screenWidth + _frameX + (_frameWidth - t->textSprite->w) / 2;
+		int xPos, yPos;
+
+		calcTextPosition(t, xPos, yPos);
+
+		byte *dst = _frameBuffer + yPos * screenWidth + xPos;
 
 		for (int y = 0; y < t->textSprite->h; y++) {
 			for (int x = 0; x < t->textSprite->w; x++) {
@@ -235,10 +244,32 @@ void MoviePlayer::drawTextObject(MovieTextObject *t) {
 			src += t->textSprite->w;
 			dst += screenWidth;
 		}
+
+		if (yPos + t->textSprite->h > _frameY + _frameHeight || t->textSprite->w > _frameWidth) {
+			_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, t->textSprite->w, t->textSprite->h);
+		}
 	}
 }
 
 void MoviePlayer::undrawTextObject(MovieTextObject *t) {
+	int xPos, yPos;
+
+	calcTextPosition(t, xPos, yPos);
+
+	// We only need to undraw the text if it's outside the frame. Otherwise
+	// the next frame will cover the old text anyway.
+
+	if (yPos + t->textSprite->h > _frameY + _frameHeight || t->textSprite->w > _frameWidth) {
+		int screenWidth = _vm->_screen->getScreenWide();
+		byte *dst = _frameBuffer + yPos * screenWidth + xPos;
+
+		for (int y = 0; y < t->textSprite->h; y++) {
+			memset(dst, 0, t->textSprite->w);
+			dst += screenWidth;
+		}
+
+		_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, t->textSprite->w, t->textSprite->h);
+	}
 }
 
 bool MoviePlayer::load(const char *name, MovieTextObject *text[]) {
@@ -398,11 +429,6 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		updateScreen();
 	}
 
-	// The current text object may still be open
-	if (_textList && _textList[_currentText]) {
-		closeTextObject(_textList[_currentText]);
-	}
-
 	if (!terminate) {
 		// Wait for the voice and sound track to stop playing. This is
 		// to make sure that we don't cut off the speech in
@@ -415,6 +441,12 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 	} else {
 		_mixer->stopHandle(_speechHandle);
 		_mixer->stopHandle(_bgSoundHandle);
+	}
+
+	// The current text object may still be open
+	if (_textList && _textList[_currentText]) {
+		undrawTextObject(_textList[_currentText]);
+		closeTextObject(_textList[_currentText]);
 	}
 
 	if (!_seamless) {
@@ -573,6 +605,11 @@ void MoviePlayerMPEG::drawTextObject(MovieTextObject *t) {
 	if (t->textSprite && _textSurface) {
 		_anim->drawTextObject(t->textSprite, _textSurface);
 	}
+}
+
+void MoviePlayerMPEG::undrawTextObject(MovieTextObject *t) {
+	// As long as we only have subtitles for full-sized cutscenes, we don't
+	// really need to implement this function.
 }
 
 void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {

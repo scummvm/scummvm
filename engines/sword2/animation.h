@@ -91,6 +91,7 @@ protected:
 
 	void openTextObject(MovieTextObject *t);
 	void closeTextObject(MovieTextObject *t);
+	void calcTextPosition(MovieTextObject *t, int &xPos, int &yPos);
 
 	virtual void handleScreenChanged() {}
 
@@ -113,17 +114,17 @@ public:
 
 class MoviePlayerDummy : public MoviePlayer {
 protected:
-	virtual bool decodeFrame();
-	virtual void syncFrame();
-	virtual void drawFrame();
-	virtual void drawTextObject(MovieTextObject *t);
-	virtual void undrawTextObject(MovieTextObject *t);
+	bool decodeFrame();
+	void syncFrame();
+	void drawFrame();
+	void drawTextObject(MovieTextObject *t);
+	void undrawTextObject(MovieTextObject *t);
 
 public:
 	MoviePlayerDummy(Sword2Engine *vm);
 	virtual ~MoviePlayerDummy();
 
-	virtual bool load(const char *name, MovieTextObject *text[]);
+	bool load(const char *name, MovieTextObject *text[]);
 };
 
 #ifdef USE_MPEG2
@@ -158,32 +159,33 @@ protected:
 	virtual void syncFrame();
 
 #ifndef BACKEND_8BIT
-	virtual void handleScreenChanged();
-	virtual void clearFrame();
-	virtual void drawFrame();
-	virtual void updateScreen();
-	virtual void drawTextObject(MovieTextObject *t);
+	void handleScreenChanged();
+	void clearFrame();
+	void drawFrame();
+	void updateScreen();
+	void drawTextObject(MovieTextObject *t);
+	void undrawTextObject(MovieTextObject *t);
 #endif
 
 public:
 	MoviePlayerMPEG(Sword2Engine *vm);
-	virtual ~MoviePlayerMPEG();
+	~MoviePlayerMPEG();
 
-	virtual bool load(const char *name, MovieTextObject *text[]);
+	bool load(const char *name, MovieTextObject *text[]);
 };
 #endif
 
 #ifdef USE_ZLIB
 class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
 protected:
-	virtual void setPalette(byte *pal);
-	virtual bool decodeFrame();
+	void setPalette(byte *pal);
+	bool decodeFrame();
 
 public:
 	MoviePlayerDXA(Sword2Engine *vm);
-	virtual ~MoviePlayerDXA();
+	~MoviePlayerDXA();
 
-	virtual bool load(const char *name, MovieTextObject *text[]);
+	bool load(const char *name, MovieTextObject *text[]);
 };
 #endif
 
