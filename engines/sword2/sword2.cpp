@@ -111,9 +111,29 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 }
 
 PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
+	assert(syst);
 	assert(engine);
-	*engine = new Sword2::Sword2Engine(syst);
-	return kNoError;
+
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("Sword2Engine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
+
+	// Invoke the detector
+	Common::String gameid = ConfMan.get("gameid");
+	DetectedGameList detectedGames = Engine_SWORD2_detectGames(fslist);
+
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		if (detectedGames[i].gameid == gameid) {
+			*engine = new Sword2::Sword2Engine(syst);
+			return kNoError;
+		}
+	}
+
+	warning("Sword2Engine: Unable to locate game data at path '%s'", dir.path().c_str());
+	return kNoGameDataFoundError;
 }
 
 REGISTER_PLUGIN(SWORD2, "Broken Sword 2", "Broken Sword Games (C) Revolution");
