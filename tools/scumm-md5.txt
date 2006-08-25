@@ -28,7 +28,7 @@ maniac	Maniac Mansion
 	d831f7c048574dd9d5d85db2a1468099	-1	en	C64	C64	-	-	
 	c4a7f7398ac9ae588940f9912ea5fd8f	-1	de	C64	C64	-	-	
 
-	7f45ddd6dbfbf8f80c0c0efea4c295bc	-1	en	DOS	V1	V1	-	
+	7f45ddd6dbfbf8f80c0c0efea4c295bc	1972	en	DOS	V1	V1	-	Fingolfin
 
 	d8d07efcb88f396bee0b402b10c3b1c9	-1	us	NES	NES	-	-	
 	3905799e081b80a61d4460b7b733c206	-1	gb	NES	NES	-	-	
@@ -49,19 +49,19 @@ maniac	Maniac Mansion
 	be83e882b44f2767bc08d4f766ebc347	-1	de	Atari	V2	V2	-	Joachim Eberhard
 	15240c59d3681ed53f714f8d925cb2d6	-1	es	Atari	V2	V2	-	VooD
 	624cdb93654667c869d204a64af7e57f	-1	en	DOS	V2	V2	-	Kirben, Andrea Petrucci
-	b250d0f9cc83f80ced56fe11a4fb057c	-1	en	DOS	V2	V2	alt?	Andrea Petrucci
+	b250d0f9cc83f80ced56fe11a4fb057c	1988	en	DOS	V2	V2	alt?	Andrea Petrucci, Fingolfin
 	114acdc2659a273c220f86ee9edb24c1	-1	fr	DOS	V2	V2	-	Nicolas Sauz&egrave;de
 	99a3699f80b8f776efae592b44b9b991	-1	fr	DOS	V2	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
-	183d7464902d40d00800e8ee1f04117c	-1	de	DOS	V2	V2	-	
+	183d7464902d40d00800e8ee1f04117c	1988	de	DOS	V2	V2	-	Fingolfin
 	87f6e8037b7cc996e13474b491a7a98e	-1	it	DOS	V2	V2	from DOTT	Andrea Petrucci
 	0d1b69471605201ef2fa9cec1f5f02d2	-1	es	DOS	V2	V2	-	abnog, Andrea Petrucci
 
-	40564ec47da48a67787d1f9bd043902a	-1	en	DOS	Demo	Demo	non-interactive	
+	40564ec47da48a67787d1f9bd043902a	1988	en	DOS	Demo	Demo	non-interactive	Fingolfin
 
 zak	Zak McKracken and the Alien Mindbenders
 	55d3987641bf229c83bc729210173383	-1	en	C64	V1	-	-	
 	4973bbc3899e3826dbf316e1d7271ec7	-1	de	C64	V1	-	-	
-	7020931d5a2be0a49d68e7a1882363e4	-1	en	DOS	V1	V1	-	
+	7020931d5a2be0a49d68e7a1882363e4	1896	en	DOS	V1	V1	-	Fingolfin
 	b23f7cd7c304d7dff08e92a96120d5b4	-1	en	DOS	V1	V1	alt?	Andrea Petrucci
 
 	e94c7cc3686fce406d3c91b5eae5a72d	-1	en	Amiga	V2	V2	-	dhweg
@@ -75,15 +75,15 @@ zak	Zak McKracken and the Alien Mindbenders
 	debe337f73d660e951ece7c1f1c81add	-1	en	DOS	V2	V2	alt?	Andrea Petrucci
 	52a4bae0746a11d7b1e8554e91a6645c	-1	fr	DOS	V2	V2	-	Andrea Petrucci
 	c4787c3e8b5e2dfda90850ee800af00f	-1	fr	DOS	V2	V2	alt?	Qvist
-	cdd760228cf1010c2903f37e788ea31c	-1	de	DOS	V2	V2	-	Max Horn
+	cdd760228cf1010c2903f37e788ea31c	1916	de	DOS	V2	V2	-	Fingolfin
 	d06fbe28818fef7bfc45c2cdf0c0849d	-1	de	DOS	V2	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
 	1900e501a52fbf55bde6e4196f6d2aa6	-1	it	DOS	V2	V2	-	Andrea Petrucci
 	75ba23fff4fd63fa446c02864f2a5a4b	-1	it	DOS	V2	V2	alt?	Antti Leimi, Andrea Petrucci
 
-	2d4536a56e01da4b02eb021e7770afa2	-1	en	FM-TOWNS	FM-TOWNS	-	-	
+	2d4536a56e01da4b02eb021e7770afa2	7520	en	FM-TOWNS	FM-TOWNS	-	-	
 	1ca86e2cf9aaa2068738a1e5ba477e60	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 
-	8299d9b8a1b0e7b881bae7a9971dc5e2	-1	en	Atari	V2	Demo	non-interactive	
+	8299d9b8a1b0e7b881bae7a9971dc5e2	1916	en	Atari	V2	Demo	non-interactive	Fingolfin
 
 indy3	Indiana Jones and the Last Crusade
 	9c0fee288ad564a7d25ec3e841810d79	-1	en	Amiga	EGA	EGA	-	dhewg
@@ -93,7 +93,7 @@ indy3	Indiana Jones and the Last Crusade
 	62b8c16b6db226ba95aaa8be73f9885c	-1	es	Amiga	EGA	EGA	-	
 	157367c3c21e0d03a0cba44361b4cf65	-1	en	Atari	No Adlib	EGA	-	Andreas Bylund
 	0f9c7a76657f0840b8f7ccb5bffeb9f4	-1	fr	Atari	No Adlib	EGA	-	Andreas Bylund
-	5fbe557049892eb4b709d90916ec97ca	-1	en	DOS	EGA	EGA	v1.0, 7/09/89	
+	5fbe557049892eb4b709d90916ec97ca	5361	en	DOS	EGA	EGA	v1.0, 7/09/89	Fingolfin
 	6b3ec67da214f558dc5ceaa2acd47453	-1	en	DOS	EGA	EGA	v1.3 from 14 Aug 89	tsuteiuQ, Andrea Petrucci, Peter Eckerlein
 	6508fd55530e6915507e1cc37f7f045d	-1	en	DOS	EGA	EGA	v1.3, 8/14/89 (5.25\")	Zer02
 	66236cd1aec24e1d4aff4c4cc93b7e18	-1	fr	DOS	EGA	EGA	v1.3 from 25 Aug 89	Andrea Petrucci, Peter Eckerlein
@@ -102,17 +102,17 @@ indy3	Indiana Jones and the Last Crusade
 	d62d248c3df6ec177405e2cb23d923b2	-1	it	DOS	EGA	EGA	v1.4 from 25 Nov 89	Andrea Petrucci, Peter Eckerlein
 	86be8ada36371d4fdc35659d0e912a26	-1	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	Andrea Petrucci, Peter Eckerlein
 	ce7fd0c382389a6791fc3e199c117ef4	-1	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	abnog, Peter Eckerlein
-	1dd7aa088e09f96d06818aa9a9deabe0	-1	en	Mac	No Adlib	EGA	-	
+	1dd7aa088e09f96d06818aa9a9deabe0	5361	en	Mac	No Adlib	EGA	-	Fingolfin
 
-	1875b90fade138c9253a8e967007031a	-1	en	DOS	VGA	VGA	IBM 256 color v2.0 from 3 May 90	Peter Eckerlein
-	399b217b0c8d65d0398076da486363a9	-1	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein
+	1875b90fade138c9253a8e967007031a	6295	en	DOS	VGA	VGA	IBM 256 color v2.0 from 3 May 90	Peter Eckerlein, Fingolfin
+	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
 	17b5d5e6af4ae89d62631641d66d5a05	-1	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	-1	ru	DOS	VGA	VGA	VGA	
 
-	04687cdf7f975a89d2474929f7b80946	-1	en	FM-TOWNS	FM-TOWNS	-	-	
+	04687cdf7f975a89d2474929f7b80946	7552	en	FM-TOWNS	FM-TOWNS	-	-	Fingolfin
 	3a0c35f3c147b98a2bdf8d400cfc4ab5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
-	b597e0403cc0002f69170e6caba7edd9	-1	en	DOS	EGA	EGA Demo	non-interactive	
+	b597e0403cc0002f69170e6caba7edd9	5361	en	DOS	EGA	EGA Demo	non-interactive	Fingolfin
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	-1	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -123,25 +123,25 @@ loom	Loom
 	a0a7dea72003933b8b3f8b99b9f7ddeb	-1	en	Atari	No Adlib	EGA	-	
 	0e9b01430e31d9fcd94071d433bbc6bf	-1	fr	Atari	No Adlib	EGA	-	
 	c24c490373aeb48fbd54caa8e7ae376d	-1	de	Atari	No Adlib	EGA	-	Andreas Bylund
-	28ef68ee3ed76d7e2ee8ee13c15fbd5b	-1	en	DOS	EGA	EGA	v1.0 from 8 Mar 90	Peter Eckerlein
+	28ef68ee3ed76d7e2ee8ee13c15fbd5b	5748	en	DOS	EGA	EGA	v1.0 from 8 Mar 90	Peter Eckerlein, Fingolfin
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	-1	en	DOS	EGA	EGA	v1.0 alt	Andrea Petrucci
 	37f56ceb13e401a7ac7d9e6b37fecaf7	-1	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
 	22f4ea88a09da12df9308ba30bcb7d0f	-1	en	DOS	EGA	EGA	v1.1 from 29 Mar 90	James Grosbeck, Peter Eckerlein
 	b886b0a5d909c7158a914e1d7c1c6c65	-1	fr	DOS	EGA	EGA	-	Andrea Petrucci
 	6f8a22bfa397be1f7ed4b74aba0e397e	-1	fr	DOS	EGA	EGA	v1.2 26 Jun 90	Jorpho
 	470c45b636139bb40716daa1c7edaad0	-1	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Peter Eckerlein
-	fa127d7c4bb47d05bb1c33ddcaa9f767	-1	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Fingolfin
+	fa127d7c4bb47d05bb1c33ddcaa9f767	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Fingolfin
 	187d315f6b5168f68680dfe8c3d76a3e	-1	hb	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	-1	it	DOS	EGA	EGA	-	Andrea Petrucci
 	2a208ffbcd0e83e86f4356e6f64aa6e1	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
-	6f0be328c64d689bb606d22a389e1b0f	-1	en	Mac	No Adlib	EGA	-	
+	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No Adlib	EGA	-	Fingolfin
 
-	5d88b9d6a88e6f8e90cded9d01b7f082	-1	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein
+	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
 
 	c5d10e190d4b4d59114b824f2fdbd00e	-1	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
 
-	5a35e36fd777e9c37a49c5b2faca52f9	-1	en	DOS	EGA	EGA Demo	non-interactive	
+	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	EGA	EGA Demo	non-interactive	Fingolfin
 	a00554c31d623fdb9fcb0f924b89b42b	-1	en	DOS	EGA	EGA Demo	non-interactive	Adrian C. Fruehwirth
 
 monkey	The Secret of Monkey Island
@@ -149,7 +149,7 @@ monkey	The Secret of Monkey Island
 	9e5e0fb43bd22f4628719b7501adb717	-1	fr	Atari	No Adlib	EGA	-	Andreas Bylund
 	927a764615c7fcdd72f591355e089d8c	-1	de	Atari	No Adlib	EGA	-	Joachim Eberhard
 	0a41311d462b6639fc45297b9044bf16	-1	es	Atari	No Adlib	EGA	-	
-	49210e124e4c2b30f1290a9ef6306301	-1	en	DOS	EGA	EGA	8 disk v1.0, 9/18/90	Fingolfin
+	49210e124e4c2b30f1290a9ef6306301	8357	en	DOS	EGA	EGA	8 disk v1.0, 9/18/90	Fingolfin
 	1dd3c11ea4439adfe681e4e405b624e1	-1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	fc6b6148e80d67939d9a18697c0f626a	-1	de	DOS	EGA	EGA	8 disk	ghoostkilla
 	910e31cffb28226bd68c569668a0d6b4	-1	es	DOS	EGA	EGA	8 disk	Andrea Petrucci
@@ -168,47 +168,47 @@ monkey	The Secret of Monkey Island
 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
 	15e03ffbfeddb9c2aebc13dcb2a4a8f4	-1	en	DOS	VGA	VGA	4 disk	
 	08656dd9698ddf1023ba9bf8a195e37b	-1	en	DOS	VGA	VGA	V1.1	crossbow777
-	d0b531227a27c6662018d2bd05aac52a	-1	de	DOS	VGA	VGA	4 disk	
+	d0b531227a27c6662018d2bd05aac52a	8357	de	DOS	VGA	VGA	4 disk	Fingolfin
 	66fd5ff9a810dfeb6d6bdada18221140	-1	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
-	45152f7cf2ba8f43cf8a8ea2e740ae09	-1	es	DOS	VGA	VGA	4 disk	
+	45152f7cf2ba8f43cf8a8ea2e740ae09	8357	es	DOS	VGA	VGA	4 disk	Fingolfin
 
-	2d1e891fe52df707c30185e52c50cd92	-1	en	DOS	CD	CD	-	
-	aa8a0cb65f3afbbe2c14c3f9f92775a3	-1	fr	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
-	305d3dd57c96c65b017bc70c8c7cfb5e	-1	de	DOS	CD	CD	-	
-	da6269b18fcb08189c0aa9c95533cce2	-1	it	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
-	f049e38c1f8302b5db6170f1872af89a	-1	es	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
-	2ccd8891ce4d3f1a334d21bff6a88ca2	-1	en	Mac	CD	-	-	Lars N&aelig;sbye Christensen
+	2d1e891fe52df707c30185e52c50cd92	8955	en	DOS	CD	CD	-	Fingolfin
+	aa8a0cb65f3afbbe2c14c3f9f92775a3	8955	fr	DOS	CD	CD	-	Fingolfin, Andrej Sinicyn, Andrea Petrucci
+	305d3dd57c96c65b017bc70c8c7cfb5e	8955	de	DOS	CD	CD	-	Fingolfin
+	da6269b18fcb08189c0aa9c95533cce2	8955	it	DOS	CD	CD	-	Fingolfin, Andrej Sinicyn, Andrea Petrucci
+	f049e38c1f8302b5db6170f1872af89a	8955	es	DOS	CD	CD	-	Fingolfin, Andrej Sinicyn, Andrea Petrucci
+	2ccd8891ce4d3f1a334d21bff6a88ca2	9455	en	Mac	CD	-	-	Fingolfin, Lars N&aelig;sbye Christensen
 	b9ba19ce376efc69be78ef3baef8d2b9	-1	en	Mac	CD	-	alt?	glo_kidd	
 	c13225cb1bbd3bc9fe578301696d8021	-1	en	SEGA	SEGA	-	-	
 
 	8eb84cee9b429314c7f0bdcf560723eb	-1	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 	e17db1ddf91b39ca6bbc8ad3ed19e883	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
-	71523b539491527d9860f4407faf0411	-1	en	DOS	Demo	EGA Demo	-	
+	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
 	771bc18ec6f93837b839c992b211904b	-1	de	DOS	Demo	EGA Demo	-	khalek
 	54a936ad06161ff7bfefcb96200f7bff	-1	en	Amiga	VGA	VGA Demo	-	khalek
 
 pass	Passport to Adventure
-	e6cd81b25ab1453a8a6d3482118c391e	-1	en	DOS	-	-	-	
+	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	-	Fingolfin
 
 zak	Misc FM-TOWNS demos
 	2d388339d6050d8ccaa757b64633954e	-1	en	FM-TOWNS	FM-TOWNS	-	indy/loom (non-interactive)	khalek
-	77f5c9cc0986eb729c1a6b4c8823bbae	-1	en	FM-TOWNS	FM-TOWNS	-	zak/loom (non-interactive)	khalek
+	77f5c9cc0986eb729c1a6b4c8823bbae	7520	en	FM-TOWNS	FM-TOWNS	-	zak/loom (non-interactive)	khalek, Fingolfin
 	3938ee1aa4433fca9d9308c9891172b1	-1	en	FM-TOWNS	FM-TOWNS	-	indy/zak (non-interactive)	khalek
 
 monkey2	Monkey Island 2: LeChuck's Revenge
-	132bff65e6367c09cc69318ce1b59333	-1	en	Amiga	-	-	-	
+	132bff65e6367c09cc69318ce1b59333	11155	en	Amiga	-	-	-	Fingolfin
 	c30ef068add4277104243c31ce46c12b	-1	fr	Amiga	-	-	-	Andreas Bylund
 	da669b20271b85182e9c17a2a37ea02e	-1	de	Amiga	-	-	-	Andreas Bylund, Norbert Lange
 	11ddf1fde76e3156eb3a38da213f484e	-1	it	Amiga	-	-	-	Andrea Petrucci
 	6ea966b4d660c870b9ee790d1fbfc535	-1	es	Amiga	-	-	-	Andreas Bylund
 	3686cf8f89e102ececf4366e1d2c8126	-1	en	DOS	-	-	-	
 	8e4ee4db46954bfe2912e259a16fad82	-1	fr	DOS	-	-	-	Nicolas Sauz&egrave;de, Andrea Petrucci
-	6886e5d08cee329b1f2e743ae2e3ceed	-1	de	DOS	-	-	-	
+	6886e5d08cee329b1f2e743ae2e3ceed	11135	de	DOS	-	-	-	Fingolfin
 	69ea626f1f87eecb78ea0d6c6b983a1d	-1	it	DOS	-	-	-	Andrea Petrucci
 	bd126753de619a495f9f22adc951c8d5	-1	it	DOS	-	-	alt?	Andrea Petrucci
 	7974365d3dc0f43a2748c975f91ff042	-1	es	DOS	-	-	-	Andrea Petrucci
-	4cb9c3618f71668f8e4346c8f323fa82	-1	en	Mac	-	-	-	
+	4cb9c3618f71668f8e4346c8f323fa82	10700	en	Mac	-	-	-	Fingolfin
 	e246e02db9630533a40d99c9f54a8e01	-1	en	Mac	-	-	alt?	Lars N&aelig;sbye Christensen
 
 	da09e666fc8f5b78d7b0ac65d1a3b56e	-1	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
@@ -225,13 +225,13 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	15f588e887e857e8c56fe6ade4956168	-1	es	Amiga	-	Floppy	-	VooD
 	c63ee46143ba65f9ce14cf539ca51bd7	-1	en	DOS	-	Floppy	-	Andrea Petrucci
 	edfdb24a499d92c59f824c52987c0eec	-1	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
-	1fbebd7b2b692df5297870447a80cfed	-1	de	DOS	-	Floppy	-	
+	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	-	Floppy	-	Fingolfin
 	8f3758ff98c9c5d78e5d635222cad026	-1	it	DOS	-	Floppy	-	Andrea Petrucci
 	9bd2a8f72613e715c199246dd511e10f	-1	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
 	06b187468113f9ae5a400b148a847fac	-1	en	Mac	-	Floppy	-	Lars N sbye Christensen
-	d6dd0646404768a63e963891a96daadd	-1	en	Mac	-	Floppy	alt?	Fingolfin
+	d6dd0646404768a63e963891a96daadd	12035	en	Mac	-	Floppy	alt?	Fingolfin
 
-	182344899c2e2998fca0bebcd82aa81a	-1	en	DOS	-	CD	-	
+	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	-	Fingolfin
 	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	-	CD	-	Scott Summers
 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 
@@ -241,29 +241,29 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	-	Demo	-	
 	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	-	Demo	-	Simon Krumrein, sev
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive	
-	28d24a33448fab6795850bc9f159a4a2	-1	jp	FM-TOWNS	-	Demo	non-interactive	khalek
+	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	-	Demo	non-interactive	khalek, Fingolfin
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	-	Floppy	Version A ?	
-	2723fea3dae0cb47768c424b145ae0e7	-1	en	DOS	-	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci
+	2723fea3dae0cb47768c424b145ae0e7	7932	en	DOS	-	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci, Fingolfin
 	92b078d9d6d9d751da9c26b8b3075779	-1	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
 	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	-	Floppy	alt?	Nicolas Joly
 	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	-	Floppy	-	Andrej Sinicyn, Andrea Petrucci
 	50fcdc982a25063b78ad46bf389b8e8d	-1	it	DOS	-	Floppy	-	Andrea Petrucci
 	ae94f110a14ce71fc515d5b648827a8f	-1	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
 
-	4167a92a1d46baa4f4127d918d561f88	-1	en	All?	-	CD	-	
+	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	-	Fingolfin
 	8aa05d3cdb0e795436043f0546af2da2	-1	fr	All?	-	CD?	-	Andrea Petrucci
-	6e959d65358eedf9b68b81e304b97fa4	-1	de	All?	-	CD	-	
+	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	-	CD	-	Fingolfin
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
 	883af4b0af4f77a92f1dcf1d0a283140	-1	es	All?	-	CD	-	Andrea Petrucci
-	cc04a076779379524ed4d9c5ee3c6fb1	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+	cc04a076779379524ed4d9c5ee3c6fb1	282467632	en	Mac	-	CD	Mac bundle	Fingolfin, Joachim Eberhard
 	f73883f13b5a302749a5bad31d909780	-1	de	Mac	-	CD	Mac bundle	morrissey
 
-	c83079157ec765a28de445aec9768d60	-1	en	All	-	Demo	-	
+	c83079157ec765a28de445aec9768d60	7477	en	All	-	Demo	-	Fingolfin
 	17fa250eb72dae2dad511ba79c0b6b0a	-1	fr	DOS	-	Demo	-	cyx
 	ac1642b6edfb8521ca03760126f1c250	-1	de	DOS	-	Demo	-	Simon Krumrein, sev
-	2a41b53cf1a90b6e6f26c10cc6041084	-1	en	Mac	-	Demo	Mac bundle	
+	2a41b53cf1a90b6e6f26c10cc6041084	2439158	en	Mac	-	Demo	Mac bundle	Fingolfin
 
 samnmax	Sam &amp; Max Hit the Road
 	3b301b7892f883ce42ab4be6a274fea6	-1	en	DOS	-	Floppy	-	Andrea Petrucci
@@ -273,51 +273,51 @@ samnmax	Sam &amp; Max Hit the Road
 	b289a2a8cbedbf45786e0b4ad2f510f1	-1	it	DOS	-	Floppy	-	Andrea Petrucci
 	fc53ce0e5f6562b1c1e1b4b8203acafb	-1	es	DOS	-	Floppy	-	Andrea Petrucci
 
-	d917f311a448e3cc7239c31bddb00dd2	-1	en	All?	-	CD	-	
+	d917f311a448e3cc7239c31bddb00dd2	9080	en	All?	-	CD	-	Fingolfin
 	7edd665bbede7ea8b7233f8e650be6f8	-1	fr	All?	-	CD	-	Andrea Petrucci
-	0fb73eddfcf584c02ba097984df131ba	-1	de	All?	-	CD	-	
+	0fb73eddfcf584c02ba097984df131ba	9080	de	All?	-	CD	-	Fingolfin
 	0f6f2e716ba896a44e5059bba1de7ca9	-1	it	All?	-	CD	-	Andrea Petrucci
 	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	-	CD	-	Andrea Petrucci
 	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	-	CD	-	
 	166553538ff320c69edafeee29525419	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 
 	c3196c5349e53e387aaff1533d95e53a	-1	en	DOS	-	Demo	-	
-	0e4c5d54a0ad4b26132e78b5ea76642a	-1	en	DOS	-	Demo	WIP	
-	d9d0dd93d16ab4dec55cabc2b86bbd17	-1	en	DOS	-	Demo	non-interactive	
-	cc8ba2b0df2f9c450bcf055fe2711979	-1	de	DOS	-	Demo	-	Simon Krumrein, sev
+	0e4c5d54a0ad4b26132e78b5ea76642a	6485	en	DOS	-	Demo	WIP	Fingolfin
+	d9d0dd93d16ab4dec55cabc2b86bbd17	6478	en	DOS	-	Demo	non-interactive	Fingolfin
+	cc8ba2b0df2f9c450bcf055fe2711979	7485	de	DOS	-	Demo	-	Simon Krumrein, sev, Fingolfin
 	0425954a9db5c340861672892c3e678d	-1	en	Mac	-	Demo	-	
-	6dead580b0ff14d5f7b33b4219f04159	-1	en	Mac	-	Demo	Mac bundle	
+	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	-	Demo	Mac bundle	Fingolfin
 
 ft	Full Throttle
 	41958e24d03181ff9a381a66d048a581	-1	br	All?	-	-	-	Danilo E.S.
-	09820417db26687bb7fe0c83cc4c553b	-1	en	All?	-	Version A	-	
-	60ba818dc3bede86d40357e3913f8505	-1	en	All?	-	Version B	-	sev
+	09820417db26687bb7fe0c83cc4c553b	19697	en	All?	-	Version A	-	Fingolfin
+	60ba818dc3bede86d40357e3913f8505	19697	en	All?	-	Version B	-	sev, Fingolfin
 	4bedb49943df95a9c900a5a82ccbe9de	-1	fr	All?	-	-	-	cyx
 	8bdb0bf87b5e303dd35693afb9351215	-1	de	All?	-	-	-	dhewg
 	55518cd73cf9c6d23ea29c51ee06bdfe	-1	it	All?	-	-	-	delfino
 	55e4cc866ff9046824e1c638ba2b8c7f	-1	ru	All?	-	-	-	sev
 	e72bb4c2b613db2cf50f89ff6350e70a	-1	es	All?	-	-	-	
-	fe381e45117878b1e942cb876b050fd6	-1	en	Mac	-	-	Mac bundle	fingolfin
-	04401d747f1a2c1c4b388daff71ed378	-1	de	Mac	-	-	Mac bundle	fingolfin
+	fe381e45117878b1e942cb876b050fd6	513243679	en	Mac	-	-	Mac bundle	Fingolfin
+	04401d747f1a2c1c4b388daff71ed378	535405461	de	Mac	-	-	Mac bundle	Fingolfin
 
 	32a433dea56b86a55b59e4ff7d755711	-1	en	DOS	Demo	Demo	-	
-	9d7b67be003fea60be4dcbd193611936	-1	en	Mac	Demo	Demo	-	
-	9b7452b5cd6d3ffb2b2f5118010af84f	-1	en	Mac	Demo	Demo	Mac bundle	Joachim Eberhard
+	9d7b67be003fea60be4dcbd193611936	11164	en	Mac	Demo	Demo	-	Fingolfin
+	9b7452b5cd6d3ffb2b2f5118010af84f	116463537	en	Mac	Demo	Demo	Mac bundle	Fingolfin, Joachim Eberhard
 
 dig	The Dig
-	d8323015ecb8b10bf53474f6e6b0ae33	-1	All	All	-	-	-	
+	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
 	d62047a6729349ab36f7ee065bf26509	-1	ru	All	-	-	-	sev
-	35a2d3040fa512f8232d9e443319d84d	-1	en	Mac	-	-	Mac bundle	fingolfin
+	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
 	21a6592322f92550f144f68a8a4e685e	-1	fr	Mac	-	-	Mac bundle	kaminari
 
-	362c1d281fb9899254cda66ad246c66a	-1	en	All	Demo	Demo	-	
-	cd9c05e755d7bf8e9b9590ad1ebe273e	-1	en	Mac	Demo	Demo	Mac bundle	fingolfin
+	362c1d281fb9899254cda66ad246c66a	3472	en	All	Demo	Demo	-	Fingolfin
+	cd9c05e755d7bf8e9b9590ad1ebe273e	45156007	en	Mac	Demo	Demo	Mac bundle	Fingolfin
 
 comi	The Curse of Monkey Island
-	fe60d6b5ff51b0553ac59963123b5777	-1	All	Windows	-	-	-	
+	fe60d6b5ff51b0553ac59963123b5777	76791	All	Windows	-	-	-	Fingolfin
 	861e59ed72a1cd0e6d454f7ee7e2bf3d	-1	ru	Windows	-	-	-	
 
-	8fec68383202d38c0d25e9e3b757c5df	-1	All	Windows	Demo	Demo	-	
+	8fec68383202d38c0d25e9e3b757c5df	18041	All	Windows	Demo	Demo	-	Fingolfin
 
 baseball	Backyard Baseball
 	cf8d13446ec6cb6222287a925fd47c1d	-1	en	All	-	-	-	sev
