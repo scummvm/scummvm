@@ -878,7 +878,8 @@ static GameDescription gameDescriptions[] = {
 		SIMON1TALKIE_IT2_GameFiles,
 		GF_TALKIE,
 		Common::IT_ITA,
-		Common::kPlatformPC,
+		// FIXME: DOS version which uses WAV format
+		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 1 - Spanish DOS CD
