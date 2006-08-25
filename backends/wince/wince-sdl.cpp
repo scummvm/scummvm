@@ -894,6 +894,8 @@ bool OSystem_WINCE3::update_scalers() {
 	if (_mode != GFX_NORMAL)
 		return false;
 
+	_adjustAspectRatio = false;
+
 	if (CEDevice::hasPocketPCResolution()) {
 		if (!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
 			_scaleFactorXm = 3;
@@ -912,6 +914,7 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYd = 5;
 				_scalerProc = PocketPCLandscapeAspect;
 				_modeFlags = 0;
+				_adjustAspectRatio = true;
 			} else {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
@@ -1443,8 +1446,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 					dst_y /= _scaleFactorYd;
 
 					if (_adjustAspectRatio) {
-						orig_dst_y = dst_y;
-						dst_y = real2Aspect(dst_y);
+						dst_h = real2Aspect(dst_h);
 					}
 
 					// clip inside platform screen (landscape,bottom only)
@@ -1467,11 +1469,10 @@ void OSystem_WINCE3::internUpdateScreen() {
 				else
 					r->y = dst_y - 240;
 				r->w = r->w * _scaleFactorXm / _scaleFactorXd;
-				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
-
-				/*if (_adjustAspectRatio && orig_dst_y / _scaleFactor < _screenHeight)
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y);
-				*/
+				if (!_adjustAspectRatio)
+					r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
+				else
+					r->h = dst_h;
 			}
 			SDL_UnlockSurface(srcSurf);
 			SDL_UnlockSurface(_hwscreen);
@@ -1830,7 +1831,7 @@ void OSystem_WINCE3::undrawMouse() {
 	int old_mouse_w = _mouseCurState.w;
 	int old_mouse_h = _mouseCurState.h;
 
-	// clip the mouse rect, and addjust the src pointer accordingly
+	// clip the mouse rect, and adjust the src pointer accordingly
 	if (old_mouse_x < 0) {
 		old_mouse_w += old_mouse_x;
 		old_mouse_x = 0;
