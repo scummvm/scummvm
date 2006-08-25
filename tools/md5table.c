@@ -62,6 +62,7 @@ typedef struct {
 	const char *platform;
 	const char *variant;
 	const char *extra;
+	const char *size;
 	const char *desc;
 	const char *comments;
 	const char *infoSource;
@@ -136,6 +137,7 @@ static const char *c_header =
 	"	const char *gameid;\n"
 	"	const char *variant;\n"
 	"	const char *extra;\n"
+	"	int32 filesize;\n"
 	"	Common::Language language;\n"
 	"	Common::Platform platform;\n"
 	"};\n"
@@ -143,7 +145,7 @@ static const char *c_header =
 	"static const MD5Table md5table[] = {\n";
 
 static const char *c_footer =
-	"	{ 0, 0, 0, 0, Common::UNK_LANG, Common::kPlatformUnknown }\n"
+	"	{ 0, 0, 0, 0, 0, Common::UNK_LANG, Common::kPlatformUnknown }\n"
 	"};\n";
 
 static void parseEntry(Entry *entry, char *line) {
@@ -152,6 +154,7 @@ static void parseEntry(Entry *entry, char *line) {
 	
 	/* Split at the tabs */
 	entry->md5 = strtok(line, "\t\n\r");
+	entry->size = strtok(NULL, "\t\n\r");
 	entry->language = strtok(NULL, "\t\n\r");
 	entry->platform = strtok(NULL, "\t\n\r");
 	entry->variant = strtok(NULL, "\t\n\r");
@@ -273,8 +276,9 @@ int main(int argc, char *argv[])
 					fprintf(outFile, ", \"%s\"", entry.infoSource);
 				fprintf(outFile, ");\n");
 			} else if (outputMode == kTXTOutput) {
-				fprintf(outFile, "\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+				fprintf(outFile, "\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 					entry.md5,
+					entry.size,
 					entry.language,
 					entry.platform,
 					entry.variant,
@@ -292,8 +296,14 @@ int main(int argc, char *argv[])
 				if (0 == strcmp(entry.extra, "-"))
 					entry.extra = "";
 				snprintf(entriesBuffer + numEntries * entrySize, entrySize,
-					"\t{ \"%s\", \"%s\", \"%s\", \"%s\", Common::%s, Common::%s },\n",
-					entry.md5, gameid, entry.variant, entry.extra, mapStr(entry.language, langMap), mapStr(entry.platform, platformMap));
+					"\t{ \"%s\", \"%s\", \"%s\", \"%s\", %s, Common::%s, Common::%s },\n",
+					entry.md5,
+					gameid,
+					entry.variant,
+					entry.extra,
+					entry.size,
+					mapStr(entry.language, langMap),
+					mapStr(entry.platform, platformMap));
 				numEntries++;
 			}
 		} else {
