@@ -24,6 +24,18 @@
 # TODO: We really should have a separate target for "Misc FM-TOWNS demos", so
 #       that their description in the launcher doesn't start with "Zak McKracken"
 #
+#
+# Table of email addresse of contributors: Sometimes we need to add new
+#   information to this table, or need to verify the correctness of an
+#   entry. To do this, it is vital that we (1) record from who a given 
+#   piece of information comes, and (2) how to reach that person.
+#   Hopefully, this table will help a bit. Please extend it as needed.
+#
+#	Andrea Petrucci	velvet (AT) libero (DOT) it
+#	dhewg	noisehole (AT) yahoo (DOT) com
+#	Gerald Vincent	silverfo (AT) club-internet (DOT) fr
+#	Peter Eckerlein	master (DOT) eckes (AT) web (DOT) de
+#
 maniac	Maniac Mansion
 	d831f7c048574dd9d5d85db2a1468099	-1	en	C64	C64	-	-	
 	c4a7f7398ac9ae588940f9912ea5fd8f	-1	de	C64	C64	-	-	
