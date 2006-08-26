@@ -337,7 +337,7 @@ baseball	Backyard Baseball
 baseball2001	Backyard Baseball 2001
 	a86f9c49355579c30d4a55b477c0d869	-1	en	All	-	-	-	Kirben
 
-	a194f15f51ee62badab74b9e7da97693	-1	en	All	-	Demo	-	khalek, sev
+	a194f15f51ee62badab74b9e7da97693	20507	en	All	-	Demo	-	khalek, sev
 
 baseball2003	Backyard Baseball 2003
 	efe0a04a703e765ebebe92b6c8aa6b86	-1	en	All	-	-	-	Kirben, sev
@@ -362,12 +362,12 @@ Soccer2004	Backyard Soccer 2004
 thinker1	Big Thinkers First Grade
 	5c21fc49aee8f46e58fef21579e614a1	-1	us	All	-	-	-	Kirben
 
-	0f5935bd5e88ba6f09e558d64459746d	-1	us	Windows	-	Demo	-	khalek
+	0f5935bd5e88ba6f09e558d64459746d	30919	us	Windows	-	Demo	-	khalek
 
 thinkerk	Big Thinkers Kindergarten
 	92fc0073a4cf259ff36070ecb8628ba8	-1	us	All	-	-	-	Kirben
 
-	695fe0b3963333b7e15b37514db3c745	-1	us	All	-	Demo	-	khalek, sev
+	695fe0b3963333b7e15b37514db3c745	29789	us	All	-	Demo	-	khalek, sev
 
 BluesABCTime	Blue's ABC Time
 	95b3806e043be08668c54c3ffe98650f	-1	en	All	-	-	-	sev
@@ -383,12 +383,12 @@ BluesBirthday	Blue's Birthday Adventure
 
 fbear	Fatty Bear's Birthday Surprise
 	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 61	-	-	sev
-	3824e60cdf639d22f6df92a03dc4b131	-1	en	DOS	HE 61	-	-	khalek
+	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 61	-	-	khalek
 	ef74d9071d4e564b037cb44bd6774de7	-1	hb	DOS	HE 61	-	-	sev
 	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 61	-	-	khalek
 	179879b6e35c1ead0d93aab26db0951b	-1	en	Windows	HE 70	-	-	khalek
 
-	47e75b1bdcb44c78cb94883d1731ccf8	-1	en	DOS	HE 61	Demo	-	khalek
+	47e75b1bdcb44c78cb94883d1731ccf8	6203	en	DOS	HE 61	Demo	-	khalek
 	6df20c50c1ab19799de9be7ae7716881	-1	en	Mac	HE 61	Demo	-	khalek
 	22c9eb04455440131ffc157aeb8d40a8	-1	en	Windows	HE 70	Demo	-	khalek
 
@@ -398,7 +398,7 @@ fbpack	Fatty Bear's Fun Pack
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
-	6d1baa1065ac5f7b210be8ebe4235e49 	-1	nl	Mac	HE 73	-	-	daniel9
+	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 73	-	-	daniel9
 	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
 	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 71	-	-	Karl Ove Hufthammer
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
@@ -410,7 +410,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
 	0855496dde35356b1a9691e22ba84cdc	-1	en	Windows	HE 73	Demo	-	khalek
-	566165a7338fa11029e7c14d94fa70d0	-1	en	Windows	HE 73	Demo	-	khalek
+	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
 	cf4ef315214c7d8cdab6302cdb7e50db	-1	de	Windows	HE 73	Demo	-	Joachim Eberhard
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
@@ -422,7 +422,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
-	fc8d197a22146e74766e9cb0cfcaf1da	-1	en	All	HE 80	Demo	-	khalek, sev
+	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
 	d37c55388294b66e53e7ced3af88fa68	-1	en	All	HE 100	Updated Demo	-	khalek
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
@@ -433,7 +433,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	78c07ca088526d8d4446a4c2cb501203	-1	fr	Mac	HE 99	-	-	alamaz
 	75bff95816b84672b877d22a911ab811	-1	ru	Windows	HE 99	Updated	-	sev
 
-	cb1559e8405d17a5a278a6b5ad9338d1	-1	en	All	-	Demo	-	khalek, sev
+	cb1559e8405d17a5a278a6b5ad9338d1	22718	en	All	-	Demo	-	khalek, sev
 	bbadf7309c4a2c2763e4bbba3c3be634	-1	fr	All	-	Demo	-	Kirben
 	754feb59d3bf86b8a00840df74fd7b26	-1	nl	Windows	-	Demo	-	adutchguy
 	ed2b074bc3166087a747acb2a3c6abb0	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
@@ -445,7 +445,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
 	78bd5f036ea35a878b74e4f47941f784	-1	ru	Windows	HE 99	-	-	sev
 
-	7c2e76087027eeee9c8f8985f93a1cc5	-1	en	All	-	Demo	-	khalek
+	7c2e76087027eeee9c8f8985f93a1cc5	13584	en	All	-	Demo	-	khalek
 	c25755b08a8d0d47695e05f1e2111bfc	-1	us	All	-	Demo	-	sev
 	ebd324dcf06a4c49e1ba5c231eee1060	-1	us	All	HE 99	Demo	-	sev
 	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
@@ -511,7 +511,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
 
-	f237bf8a5ef9af78b2a6a4f3901da341	-1	en	All	-	Demo	-	khalek, sev
+	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	-1	fr	All	-	Demo	-	Kirben
 	0305e850382b812fec6e5998ef88a966	-1	nl	Windows	-	Demo	-	adutchguy
 	d7ab7cd6105546016e6a0d46fb36b964	-1	en	All	HE 100	Demo	-	khalek
@@ -523,7 +523,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
 
-	36a6750e03fb505fc19fc2bf3e4dbe91	-1	en	All	-	Demo	-	sev
+	36a6750e03fb505fc19fc2bf3e4dbe91	58749	en	All	-	Demo	-	sev
 	30ba1e825d4ad2b448143ae8df18482a	-1	nl	All	HE 98.5	Demo	-	Kirben
 	4521138d15d1fd7649c31fb981746231	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
 
@@ -548,7 +548,7 @@ lost	Pajama Sam's Lost & Found
 	a561d2e2413cc1c71d5a1bf87bf493ea	-1	us	All	HE 100	Updated	-	Kirben
 	69ffe29185b8d71f09f6199f8b2a87cb	-1	ru	Windows	HE 100	-	-	sev
 
-	a2bb6aa0537402c1b3c2ea899ccef64b	-1	en	Windows	HE 99	Demo	-	Kirben
+	a2bb6aa0537402c1b3c2ea899ccef64b	15540	en	Windows	HE 99	Demo	-	Kirben
 
 SamsFunShop	Pajama Sam's One-Stop Fun Shop
 	68155a6bf082221525f431c2cbdac8ab	-1	us	All	-	-	-	Kirben
@@ -563,11 +563,11 @@ puttrace	Putt-Putt Enters the Race
 	055ffe4f47753e47594ac67823220c54	-1	de	All	HE 99	-	-	Joachim Eberhard
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 
-	0ac41e2e3d2174e5a042a6b565328dba	-1	us	All	HE 98	Demo	-	sev
+	0ac41e2e3d2174e5a042a6b565328dba	13110	us	All	HE 98	Demo	-	sev
 	6af2419fe3db5c2fdb091ae4e5833770	-1	nl	All	HE 98.5	Demo	-	Kirben
-	663743c03ae0c007f3d665cf631c0e6b	-1	de	All	HE 99	Demo	-	Joachim Eberhard
+	663743c03ae0c007f3d665cf631c0e6b	13135	de	All	HE 99	Demo	-	Joachim Eberhard
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
-	7c8100e360e8ef05f88069d4cfa0afd1	-1	gb	Windows	HE 99	Demo	-	eriktorbjorn
+	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
 
 puttmoon	Putt-Putt Goes to the Moon
 	a9543ef0d79bcb47cd76ec197ad0a967	-1	en	3DO	-	-	-	sev
@@ -576,7 +576,7 @@ puttmoon	Putt-Putt Goes to the Moon
 	9dc02577bf50d4cfaf3de3fbac06fbe2	-1	en	Mac	-	-	-	khalek
 	9c92eeaf517a31b7221ec2546ab669fd	-1	en	Windows	HE 70	-	-	khalek
 
-	aa6a91b7f6f119d1b7b1f2a4c9e24d59	-1	en	DOS	-	Demo	-	
+	aa6a91b7f6f119d1b7b1f2a4c9e24d59	6233	en	DOS	-	Demo	-	
 	4af4a6b248103c1fe9edef619677f540	-1	en	Mac	-	Demo	-	khalek
 	9c143c5905055d5df7a0f014ab379aee	-1	en	Windows	HE 70	Demo	-	khalek
 
@@ -594,9 +594,9 @@ puttputt	Putt-Putt Joins the Parade
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 61	-	-	khalek
 	6a30a07f353a75cdc602db27d73e1b42	-1	en	Windows	HE 70	-	-	khalek
 
-	31aa57f460a3d12429f0552a46a90b39	-1	en	DOS	Demo	Demo	-	
+	31aa57f460a3d12429f0552a46a90b39	6150	en	DOS	Demo	Demo	-	
 	f40a7f495f59188ca57a9d1d50301bb6	-1	en	Mac	Demo	Demo	-	khalek
-	37ff1b308999c4cca7319edfcc1280a0	-1	en	Windows	HE 70	Demo	-	khalek
+	37ff1b308999c4cca7319edfcc1280a0	8269	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
 	58fdf4c7ad13540a734e18f8584cad89	-1	en	Mac	-	-	-	khalek
@@ -607,7 +607,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	3486ede0f904789267d4bcc5537a46d4	-1	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
 	de4efb910210736813c9a1185384bace	-1	en	Windows	-	Demo	-	khalek
-	f3d55aea441e260e9e9c7d2a187097e0	-1	en	Windows	-	Demo	-	khalek
+	f3d55aea441e260e9e9c7d2a187097e0	14337	en	Windows	-	Demo	-	khalek
 	2a446817ffcabfef8716e0c456ecaf81	-1	de	Windows	-	Demo	-	Joachim Eberhard
 
 PuttTime	Putt-Putt Travels Through Time
@@ -620,7 +620,7 @@ PuttTime	Putt-Putt Travels Through Time
 	a525c1753c1db5011c00417da37887ef	-1	us	All	HE 100	Updated	-	Kirben
 	fcb78ebecab2757264c590890c319cc5	-1	nl	Windows	HE 100	-	-	adutchguy
 
-	4e5867848ee61bc30d157e2c94eee9b4	-1	us	All	HE 90	Demo	-	khalek, sev
+	4e5867848ee61bc30d157e2c94eee9b4	18394	us	All	HE 90	Demo	-	khalek, sev
 	59d5cfcc5e672a6e07baae01328b918b	-1	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	-1	de	All	HE 90	Demo	-	Joachim Eberhard
 	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	Windows	HE 90	Demo	-	adutchguy
@@ -660,8 +660,8 @@ spyfox	SPY Fox 1: Dry Cereal
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
 
-	53e94115b55dd51d4b8ff0871aa1df1e	-1	en	All	-	Demo	-	khalek, sev
-	fbdd947d21e8f5bac6d6f7a316af1c5a	-1	en	All	-	Demo	-	sev
+	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev
+	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	en	All	-	Demo	-	sev
 	ba888e6831517597859e91aa173f945c	-1	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	-1	de	All	-	Demo	-	Joachim Eberhard
 	4edbf9d03550f7ba01e7f34d69b678dd	-1	nl	Windows	HE 98.5	Demo	-	Kirben
