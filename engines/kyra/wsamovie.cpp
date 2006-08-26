@@ -22,6 +22,8 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/system.h"
+
 #include "kyra/kyra.h"
 #include "kyra/kyra3.h"
 #include "kyra/screen.h"
@@ -32,7 +34,7 @@ namespace Kyra {
 WSAMovieV1::WSAMovieV1(KyraEngine *vm) : Movie(vm) {}
 WSAMovieV1::~WSAMovieV1() { close(); }
 
-void WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieV1::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
 	close();
 
@@ -40,7 +42,7 @@ void WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) 
 	uint32 fileSize;
 	uint8 *p = _vm->resource()->fileData(filename, &fileSize);
 	if (!p)
-		return;
+		return 0;
 	
 	const uint8 *wsaData = p;
 	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
@@ -109,6 +111,8 @@ void WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) 
 	
 	delete [] p;
 	_opened = true;
+	
+	return _numFrames;
 }
 
 void WSAMovieV1::close() {
@@ -210,7 +214,7 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 
 WSAMovieV2::WSAMovieV2(KyraEngine *vm) : WSAMovieV1(vm), _xAdd(0), _yAdd(0) {}
 
-void WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
+int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieV3::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
 	close();
 
@@ -219,7 +223,7 @@ void WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	uint8 *p = _vm->resource()->fileData(filename, &fileSize);
 	if (!p) {
 		warning("couldn't load wsa file: '%s'", filename);
-		return;
+		return 0;
 	}
 	
 	const uint8 *wsaData = p;
@@ -281,6 +285,8 @@ void WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	
 	delete [] p;
 	_opened = true;
+	
+	return _numFrames;
 }
 
 } // end of namespace Kyra

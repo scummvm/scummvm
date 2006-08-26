@@ -40,7 +40,7 @@ public:
 
 	virtual bool opened() { return _opened; }
 
-	virtual void open(const char *filename, int offscreen, uint8 *palette) = 0;
+	virtual int open(const char *filename, int offscreen, uint8 *palette) = 0;
 	virtual void close() = 0;
 
 	virtual int frames() = 0;
@@ -63,7 +63,7 @@ public:
 	WSAMovieV1(KyraEngine *vm);
 	virtual ~WSAMovieV1();
 
-	virtual void open(const char *filename, int offscreen, uint8 *palette);
+	virtual int open(const char *filename, int offscreen, uint8 *palette);
 	virtual void close();
 
 	virtual int frames() { return _opened ? _numFrames : -1; }
@@ -94,8 +94,8 @@ class WSAMovieV2 : public WSAMovieV1 {
 public:
 	WSAMovieV2(KyraEngine *vm);
 	
-	void open(const char *filename, int unk1, uint8 *palette);
-	
+	int open(const char *filename, int unk1, uint8 *palette);
+
 	void setX(int x) { _x = x + _xAdd; }
 	void setY(int y) { _y = y + _yAdd; }
 	

@@ -52,8 +52,6 @@ private:
 
 	SoundDigital *_soundDigital;
 	
-	int _lang;
-	
 	// sound specific
 private:
 	void playMenuAudioFile();
@@ -71,17 +69,11 @@ private:
 
 	int musicUpdate(int forceRestart);
 
-	// gui/menu specific
-private:
-	static const char *_mainMenuStrings[];
-	int handleMainMenu(Movie *logo);
-	void drawMainMenu(const char * const *strings, int select);
-	void drawMainBox(int x, int y, int w, int h, int fill);
-	
-	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
+	virtual void gui_initMainMenu();
+	virtual void gui_updateMainMenuAnimation();
 
 	// unknown
-private:	
+private:
 	uint8 *_unkPage1;
 	uint8 *_unkPage2;
 
@@ -95,6 +87,11 @@ private:
 	uint8 *_unkWSAPtr;
 
 	uint8 *_unkShapeTable[20];
+
+	// main menu
+	Movie *_mainMenuLogo;
+	int _mainMenuFrame;
+	int _mainMenuFrameAdd;
 
 	// translation stuff
 	uint8 *_scoreFile;

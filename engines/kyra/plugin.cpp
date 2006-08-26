@@ -84,7 +84,7 @@ const GameSettings kyra_games[] = {
 										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
 
 	// kyra 2 games
-	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate", GI_KYRA2, GF_ENGLISH,	// CD version? Floppy version?
+	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate", GI_KYRA2, GF_ENGLISH | GF_TALKIE,
 										"28cbad1c5bf06b2d3825ae57d760d032", "FATE.PAK" },
 	
 	// kyra 3 games

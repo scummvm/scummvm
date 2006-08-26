@@ -86,30 +86,6 @@ KyraEngine_v3::~KyraEngine_v3() {
 
 int KyraEngine_v3::setupGameFlags() {
 	_game = GI_KYRA3;
-	_lang = 0;
-	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-
-	switch (lang) {
-	case Common::EN_ANY:
-	case Common::EN_USA:
-	case Common::EN_GRB:
-		_lang = 0;
-		break;
-
-	case Common::FR_FRA:
-		_lang = 1;
-		break;
-
-	case Common::DE_DEU:
-		_lang = 2;
-		break;
-
-	default:
-		warning("unsupported language, switching back to English");
-		_lang = 0;
-		break;
-	}
-
 	return 0;
 }
 
@@ -119,6 +95,8 @@ Movie *KyraEngine_v3::createWSAMovie() {
 
 int KyraEngine_v3::init() {
 	KyraEngine::init();
+
+	gui_initMainMenu();
 	
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
@@ -159,10 +137,10 @@ int KyraEngine_v3::go() {
 	uint8 *pal = _screen->getPalette(1);
 	assert(pal);
 	
-	Movie *logo = createWSAMovie();
-	assert(logo);
-	logo->open("REVENGE.WSA", 1, pal);
-	assert(logo->opened());
+	_mainMenuLogo = createWSAMovie();
+	assert(_mainMenuLogo);
+	_mainMenuLogo->open("REVENGE.WSA", 1, pal);
+	assert(_mainMenuLogo->opened());
 	
 	bool running = true;
 	while (running && !_quitFlag) {
@@ -176,27 +154,27 @@ int KyraEngine_v3::go() {
 		// XXX
 		playMenuAudioFile();
 		
-		logo->setX(0); logo->setY(0);
-		logo->setDrawPage(0);
+		_mainMenuLogo->setX(0); _mainMenuLogo->setY(0);
+		_mainMenuLogo->setDrawPage(0);
 
 		for (int i = 0; i < 64 && !_quitFlag; ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			logo->displayFrame(i);
+			_mainMenuLogo->displayFrame(i);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
 		for (int i = 64; i > 29 && !_quitFlag; --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			logo->displayFrame(i);
+			_mainMenuLogo->displayFrame(i);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
-		
-		switch (handleMainMenu(logo)) {
+
+		switch (gui_handleMainMenu()) {
 		case 0:
-			delete logo;
-			logo = 0;
+			delete _mainMenuLogo;
+			_mainMenuLogo = 0;
 			preinit();
 			realInit();
 			// XXX
@@ -208,13 +186,17 @@ int KyraEngine_v3::go() {
 			break;
 		
 		case 2:
-			//delete logo;
-			//logo = 0;
+			//delete _mainMenuLogo;
+			//_mainMenuLogo = 0;
 			//show load dialog
 			//running = false;
 			break;
 		
 		case 3:
+			_soundDigital->beginFadeOut(_musicSoundChannel);
+			_screen->fadeToBlack();
+			_soundDigital->stopSound(_musicSoundChannel);
+			_musicSoundChannel = -1;
 			running = false;
 			break;
 		
@@ -222,7 +204,7 @@ int KyraEngine_v3::go() {
 			break;
 		}
 	}
-	delete logo;
+	delete _mainMenuLogo;
 
 	return 0;
 }
@@ -347,169 +329,35 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 
 #pragma mark -
 
-int KyraEngine_v3::handleMainMenu(Movie *logo) {
-	debugC(9, kDebugLevelMain, "KyraEngine::handleMainMenu(%p)", (const void*)logo);
-	int command = -1;
-	
-	uint8 colorMap[16];
-	memset(colorMap, 0, sizeof(colorMap));
-	_screen->setTextColorMap(colorMap);
-	
-	const char * const *strings = &_mainMenuStrings[_lang << 2];
-	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
-	int charWidthBackUp = _screen->_charWidth;
-	
-	_screen->_charWidth = -2;
-	_screen->setScreenDim(3);
-	int backUpX = _screen->_curDim->sx;
-	int backUpY = _screen->_curDim->sy;
-	int backUpWidth = _screen->_curDim->w;
-	int backUpHeight = _screen->_curDim->h;
-	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 0, 3);
+void KyraEngine_v3::gui_initMainMenu() {
+	KyraEngine::gui_initMainMenu();
+	_mainMenuFrame = 29;
+	_mainMenuFrameAdd = 1;
+}
 
-	int x = _screen->_curDim->sx << 3;
-	int y = _screen->_curDim->sy;
-	int width = _screen->_curDim->w << 3;
-	int height =  _screen->_curDim->h;
-
-	drawMainBox(x, y, width, height, 1);
-	drawMainBox(x + 1, y + 1, width - 2, height - 2, 0);
-	
-	int curFrame = 29, frameAdd = 1;
+void KyraEngine_v3::gui_updateMainMenuAnimation() {
 	uint32 nextRun = 0;
-
-	int selected = 0;
 	
-	drawMainMenu(strings, selected);
-
-	_system->warpMouse(300, 180);
-	_screen->showMouse();
-
-	int fh = _screen->getFontHeight();
-	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
-
-	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
-	
-	while (command == -1 && !_quitFlag) {
-		// yes 2 * _tickLength here not 3 * like in the first draw
-		nextRun = _system->getMillis() + 2 * _tickLength;
-		logo->displayFrame(curFrame);
-		_screen->updateScreen();
-		
-		curFrame += frameAdd;
-		if (curFrame < 29) {
-			curFrame = 29;
-			frameAdd = 1;
-		} else if (curFrame > 63) {
-			curFrame = 64;
-			frameAdd = -1;
-		}
-		
-		// XXX
-		
-		while (_system->getMillis() < nextRun) {
-			// XXX
-			_screen->updateScreen();
-			if ((int32)nextRun - (int32)_system->getMillis() >= 10)
-				delay(10);
-		}
-
-		if (menuRect.contains(mouseX(), mouseY())) {
-			int item = (mouseY() - menuRect.top) / fh;
-
-			if (item != selected) {
-				gui_printString(strings[selected], textPos, menuRect.top + selected * fh, 0x80, 0, 5);
-				gui_printString(strings[item], textPos, menuRect.top + item * fh, 0xFF, 0, 5);
-
-				selected = item;
-			}
-
-			if (_mousePressFlag) {
-				// TODO: Flash the text
-				command = item;
-			}
-		}
-	}
-	
-	if (_quitFlag)
-		command = -1;
-	
-	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
-	_screen->_charWidth = charWidthBackUp;
-	_screen->setFont(oldFont);
-	
-	if (command == 3) {
-		_soundDigital->beginFadeOut(_musicSoundChannel);
-		_screen->fadeToBlack();
-		_soundDigital->stopSound(_musicSoundChannel);
-		_musicSoundChannel = -1;
-	}
-	
-	return command;
-}
-
-void KyraEngine_v3::drawMainMenu(const char * const *strings, int select) {
-	debugC(9, kDebugLevelMain, "KyraEngine::drawMainMenu(%p)", (const void*)strings);
-	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
-	
-	int top = _screen->_curDim->sy;
-	top += menuTable[1];
-	
-	for (int i = 0; i < menuTable[3]; ++i) {
-		int curY = top + i * _screen->getFontHeight();
-		int color = (i == select) ? menuTable[6] : menuTable[5];
-		gui_printString(strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5);
-	}
-}
-
-void KyraEngine_v3::drawMainBox(int x, int y, int w, int h, int fill) {
-	debugC(9, kDebugLevelMain, "KyraEngine::drawMainBox(%d, %d, %d, %d, %d)", x, y, w, h, fill);
-	static const uint8 colorTable[] = { 0x16, 0x19, 0x1A, 0x16 };
-	--w; --h;
-
-	if (fill) {
-		_screen->fillRect(x, y, x+w, y+h, colorTable[0]);
-	}
-	
-	_screen->drawClippedLine(x, y+h, x+w, y+h, colorTable[1]);
-	_screen->drawClippedLine(x+w, y, x+w, y+h, colorTable[1]);
-	_screen->drawClippedLine(x, y, x+w, y, colorTable[2]);
-	_screen->drawClippedLine(x, y, x, y+h, colorTable[2]);
-	
-	_screen->setPagePixel(_screen->_curPage, x, y+h, colorTable[3]);
-	_screen->setPagePixel(_screen->_curPage, x+w, y, colorTable[3]);
-}
-
-void KyraEngine_v3::gui_printString(const char *format, int x, int y, int col1, int col2, int flags, ...) {
-	debugC(9, kDebugLevelMain, "KyraEngine::gui_printString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
-	if (!format)
+	uint32 now = _system->getMillis();
+	if (now < nextRun)
 		return;
+
+	// yes 2 * _tickLength here not 3 * like in the first draw
+	nextRun = now + 2 * _tickLength;
 	
-	char string[512];
-	va_list vaList;
-	va_start(vaList, flags);
-	vsprintf(string, format, vaList);
-	va_end(vaList);
-	
-	if (flags & 1) {
-		x -= _screen->getTextWidth(string) >> 1;
+	_mainMenuLogo->displayFrame(_mainMenuFrame);
+	_screen->updateScreen();
+		
+	_mainMenuFrame += _mainMenuFrameAdd;
+	if (_mainMenuFrame < 29) {
+		_mainMenuFrame = 29;
+		_mainMenuFrameAdd = 1;
+	} else if (_mainMenuFrame > 63) {
+		_mainMenuFrame = 64;
+		_mainMenuFrameAdd = -1;
 	}
-	
-	if (flags & 2) {
-		x -= _screen->getTextWidth(string);
-	}
-	
-	if (flags & 4) {
-		_screen->printText(string, x - 1, y, 240, col2);
-		_screen->printText(string, x, y + 1, 240, col2);
-	}
-	
-	if (flags & 8) {
-		_screen->printText(string, x - 1, y, 227, col2);
-		_screen->printText(string, x, y + 1, 227, col2);
-	}
-	
-	_screen->printText(string, x, y, col1, col2);
+		
+	// XXX
 }
 
 #pragma mark -

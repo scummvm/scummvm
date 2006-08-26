@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "kyra/kyra.h"
+#include "kyra/kyra2.h"
 #include "kyra/kyra3.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
@@ -1225,8 +1226,9 @@ const uint16 KyraEngine::_amuletY[] = { 170, 170, 159, 181 };
 const uint16 KyraEngine::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
 const uint16 KyraEngine::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
 
-// kyra 3 static res
-const char *KyraEngine_v3::_mainMenuStrings[] = {
+// Kyra 2 and 3 main menu
+
+const char *KyraEngine::_mainMenuStrings[] = {
 	"Start a new game",
 	"Introduction",
 	"Load a game",
@@ -1241,6 +1243,88 @@ const char *KyraEngine_v3::_mainMenuStrings[] = {
 	"Spiel beenden",
 	0
 };
+
+// kyra 2 static res
+
+const char *KyraEngine_v2::_introStrings[] = {
+	"Kyrandia is disappearing!",
+	"Rock by rock...",
+	"...and tree by tree.",
+	"Kyrandia ceases to exist!",
+	"The Royal Mystics are baffled.",
+	"Every reference has been consulted.",
+	"Even Marko and his new valet have been allowed into the conference.",
+	"Luckily, the Hand was experienced in these matters.",
+	"And finally a plan was approved...",
+	"...that required a magic Anchor Stone...",
+	"...to be retrieved from the center of the world.",
+	"Zanthia, youngest of the Kyrandian Mystics, has been selected to retrieve the Stone.",
+	"Thank you for playing The Hand of Fate.",
+	"This should be enough blueberries to open a portal to the center of the world.",
+	" DUMMY STRING... ",
+	" DUMMY STRING... ",
+	"Hey! All my equipment has been stolen!",
+	" DUMMY STRING... ",
+	"If they think I'm going to walk all the way down there, they're nuts!",
+	" DUMMY STRING... ",
+	"Hurry up faun!"
+};
+
+const int KyraEngine_v2::_introStringsSize = ARRAYSIZE(KyraEngine_v2::_introStrings);
+
+const char *KyraEngine_v2::_introSoundList[] = {
+	"eintro1.voc",
+	"eintro2.voc",
+	"eintro3.voc",
+	"eintro4.voc",
+	"eintro5.voc",
+	"eintro6.voc",
+	"eintro7.voc",
+	"eintro8.voc",
+	"eintro9.voc",
+	"eintro10.voc",
+	"eintro11voc",
+	"eintro12.voc",
+	"eglow.voc",
+	"0000210.voc",
+	"0000130.voc",
+	"0000180.voc",
+	"0000160.voc",
+	"asong.voc",
+	"crowcaw.voc",
+	"eyerub2.voc",
+	"pluck3.voc",
+	"rodnreel.voc",
+	"frog1.voc",
+	"scavmov2.voc",
+	"lambmom3.voc",
+	"lambkid1.voc",
+	"thunder2.voc",
+	"tunder3.voc",
+	"wind6.voc",
+	"h2odrop2.voc",
+	"gasleak.voc",
+	"polgulp1.voc",
+	"hndslap1.voc",
+	"burp1.voc",
+	"0000220.voc",
+	"0000230.voc",
+	"0000250.voc",
+	"0000260.voc",
+	"0000270.voc",
+	"0000280.voc",
+	"0000290.voc",
+	"0000300.voc",
+	"0000310.voc",
+	"0000320.voc",
+	"0000330.voc",
+	"scream1.voc",
+	"theend.voc"
+};
+
+const int KyraEngine_v2::_introSoundListSize = ARRAYSIZE(KyraEngine_v2::_introSoundList);
+
+// kyra 3 static res
 
 const char *KyraEngine_v3::_soundList[] = {
 	"ARREST1.AUD",

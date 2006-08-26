@@ -188,16 +188,16 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 }
 
-void Screen::fadeFromBlack() {
+void Screen::fadeFromBlack(int delay) {
 	debugC(9, kDebugLevelScreen, "Screen::fadeFromBlack()");
-	fadePalette(_currentPalette, 0x54);
+	fadePalette(_currentPalette, delay);
 }
 
-void Screen::fadeToBlack() {
+void Screen::fadeToBlack(int delay) {
 	debugC(9, kDebugLevelScreen, "Screen::fadeToBlack()");
 	uint8 blackPal[768];
 	memset(blackPal, 0, 768);
-	fadePalette(blackPal, 0x54);
+	fadePalette(blackPal, delay);
 }
 
 void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
@@ -793,7 +793,7 @@ void Screen::drawChar(uint8 c, int x, int y) {
 
 void Screen::setScreenDim(int dim) {
 	debugC(9, kDebugLevelScreen, "setScreenDim(%d)", dim);
-	if (_vm->game() != GI_KYRA3) {
+	if (_vm->game() == GI_KYRA1) {
 		assert(dim < _screenDimTableCount);
 		_curDim = &_screenDimTable[dim];
 	} else {
@@ -1900,7 +1900,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	int mouseHeight = *(shape+2);
 	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
 
-	if (_vm->features() & GF_TALKIE)
+	if (_vm->game() & GI_KYRA1 && _vm->features() & GF_TALKIE)
 		shape -= 2;
 
 	uint8 *cursor = (uint8 *)malloc(mouseHeight * mouseWidth);

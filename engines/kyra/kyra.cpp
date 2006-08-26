@@ -319,6 +319,30 @@ int KyraEngine::init() {
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
+	_lang = 0;
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+
+	switch (lang) {
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+		_lang = 0;
+		break;
+
+	case Common::FR_FRA:
+		_lang = 1;
+		break;
+
+	case Common::DE_DEU:
+		_lang = 2;
+		break;
+
+	default:
+		warning("unsupported language, switching back to English");
+		_lang = 0;
+		break;
+	}
+
 	return 0;
 }
 

@@ -25,6 +25,34 @@
 
 namespace Kyra {
 
+enum kSequences {
+	kSequenceVirgin = 0,
+	kSequenceWestwood = 1,
+	kSequenceTitle = 2,
+	kSequenceOverview = 3
+};
+
+class WSAMovieV2;
+class KyraEngine_v2;
+struct ActiveWSA {
+	WSAMovieV2 *movie;
+	uint16 currentFrame;
+	uint16 endFrame;
+	uint16 frameDelay;
+	uint32 nextFrame;
+};
+
+struct Sequence {
+	uint8 type;
+	const char *filename;
+	int (KyraEngine_v2::*callback)(int);
+	uint8 frameDelay;
+	uint16 duration;
+	uint8 numFrames;
+	bool timeOut;
+	bool fadeOut;
+};
+
 class KyraEngine_v2 : public KyraEngine {
 public:
 	KyraEngine_v2(OSystem *system);
@@ -34,8 +62,27 @@ public:
 	
 	int go();
 
-protected:
-	void seq_menu();
+private:
+	void seq_playSequences(int startSeq, int endSeq = -1);
+	int seq_introWestwood(int seqNum);
+	int seq_introTitle(int seqNum);
+	int seq_introOverview(int seqNum);
+	void seq_loadWSA(int wsaNum, const char *filename, int frameDelay);
+	void seq_unloadWSA(int wsaNum);
+	void seq_playWSAs();
+	
+	void mainMenu();
+	int init();
+	
+	ActiveWSA *_activeWSA;
+	uint8 *_gameShapes[50];
+	uint8 *_mouseSHPBuf;
+
+	static const char *_introSoundList[];
+	static const int _introSoundListSize;
+	static const char *_introStrings[];
+	static const int _introStringsSize;
+	
 };
 
 } // end of namespace Kyra

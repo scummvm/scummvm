@@ -696,6 +696,18 @@ protected:
 	void gui_restorePalette();
 	void gui_setupControls(Menu &menu);
 
+	// Kyra 2 and 3 main menu
+
+	static const char *_mainMenuStrings[];
+	virtual void gui_initMainMenu() {};
+	int gui_handleMainMenu();
+	virtual void gui_updateMainMenuAnimation();
+	void gui_drawMainMenu(const char * const *strings, int select);
+	void gui_drawMainBox(int x, int y, int w, int h, int fill);
+	bool gui_mainMenuGetInput();
+	
+	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
+
 	uint8 _game;
 	bool _quitFlag;
 	bool _skipFlag;
@@ -711,6 +723,7 @@ protected:
 	uint16 _gameSpeed;
 	uint16 _tickLength;
 	uint32 _features;
+	int _lang;
 	int _mouseX, _mouseY;
 	int8 _itemInHand;
 	int _mouseState;

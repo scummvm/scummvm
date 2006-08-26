@@ -100,8 +100,8 @@ public:
 	void clearCurPage();
 	uint8 getPagePixel(int pageNum, int x, int y);
 	void setPagePixel(int pageNum, int x, int y, uint8 color);
-	void fadeFromBlack();
-	void fadeToBlack();
+	void fadeFromBlack(int delay=0x54);
+	void fadeToBlack(int delay=0x54);
 	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
 	void fadePalette(const uint8 *palData, int delay);
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);

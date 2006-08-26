@@ -22,22 +22,79 @@
 
 #include "kyra/kyra.h"
 #include "kyra/kyra2.h"
+#include "kyra/screen.h"
+#include "kyra/resource.h"
+#include "kyra/wsamovie.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system)
-	: KyraEngine(system) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system) : KyraEngine(system) {
+		
+	memset(_gameShapes, 0, sizeof(_gameShapes));
+	_mouseSHPBuf = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
+	delete [] _mouseSHPBuf;
 }
 
-int KyraEngine_v2::go() {
-	seq_menu();
-	waitForEvent();
+int KyraEngine_v2::init() {
+	KyraEngine::init();
+	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
+	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
+	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
+	_screen->setAnimBlockPtr(3500);
+	_screen->setScreenDim(0);
+	
+	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
+	assert(_mouseSHPBuf);
+
+	for (int i = 0; i < 2; i++) {
+		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
+		assert(_gameShapes[i]);
+	}
+
+	_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	return 0;
+}
+
+int KyraEngine_v2::go() {	
+	_sound->loadMusicFile("K2INTRO");
+	// Temporary measure to work around the fact that there's two files called DRAGON.WSA.
+	_res->unloadPakFile("OUTFARM.PAK");
+
+	seq_playSequences(kSequenceVirgin, kSequenceWestwood);
+	mainMenu();
+
+	return 0;
+}
+
+void KyraEngine_v2::mainMenu() {
+	bool running = true;
+
+	while (running && !_quitFlag) {
+		seq_playSequences(kSequenceTitle);
+		_screen->showMouse();
+		
+		switch (gui_handleMainMenu()) {
+			case 0:
+				break;
+			case 1:
+				seq_playSequences(kSequenceOverview); 
+				break;
+			case 2:
+				break;
+			case 3:
+				running = false;
+				break;
+			default:
+				break;
+		}
+		_screen->hideMouse();
+	}	
 }
 
 } // end of namespace Kyra
