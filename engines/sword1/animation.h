@@ -120,7 +120,7 @@ private:
 	Screen *_scr;
 
 public:
-	AnimationState(MoviePlayer *player, Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	AnimationState(MoviePlayer *player, Screen *scr, OSystem *sys);
 	~AnimationState(void);
 	OverlayColor *giveRgbBuffer(void);
 
@@ -149,7 +149,6 @@ protected:
 	bool initOverlays(uint32 id);
 	bool decodeFrame(void);
 	void processFrame(void);
-	void syncFrame(void);
 	void updateScreen(void);
 	void handleScreenChanged(void);
 };

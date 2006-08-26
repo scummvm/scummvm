@@ -75,6 +75,7 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm) {
 	_vm = vm;
 	_mixer = _vm->_mixer;
 	_system = _vm->_system;
+	_name = NULL;
 	_textSurface = NULL;
 	_bgSoundStream = NULL;
 	_ticks = 0;
@@ -96,6 +97,7 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm) {
 }
 
 MoviePlayer::~MoviePlayer() {
+	free(_name);
 }
 
 void MoviePlayer::updatePalette(byte *pal, bool packed) {
@@ -278,6 +280,8 @@ bool MoviePlayer::load(const char *name, MovieTextObject *text[]) {
 	_currentText = 0;
 	_currentFrame = 0;
 
+	_name = strdup(name);
+
 	for (int i = 0; i < ARRAYSIZE(_movies); i++) {
 		if (scumm_stricmp(name, _movies[i].name) == 0) {
 			_seamless = _movies[i].seamless;
@@ -335,8 +339,8 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 #endif
 
 	_framesSkipped = 0;
-
 	_ticks = _system->getMillis();
+	_bgSoundStream = Audio::AudioStream::openStreamFile(_name);
 
 	if (_bgSoundStream) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSoundHandle, _bgSoundStream);
@@ -504,8 +508,6 @@ bool MoviePlayerDXA::load(const char *name, MovieTextObject *text[]) {
 		_frameX = (_vm->_screen->getScreenWide() - _frameWidth) / 2;
 		_frameY = (_vm->_screen->getScreenDeep() - _frameHeight) / 2;
 
-		_bgSoundStream = Audio::AudioStream::openStreamFile(name);
-
 		return true;
 	}
 
@@ -566,11 +568,8 @@ bool MoviePlayerMPEG::decodeFrame() {
 	return result;
 }
 
-void MoviePlayerMPEG::syncFrame() {
-}
-
 AnimationState::AnimationState(Sword2Engine *vm, MoviePlayer *player)
-	: BaseAnimationState(vm->_mixer, vm->_system, 640, 480) {
+	: BaseAnimationState(vm->_system, 640, 480) {
 	_vm = vm;
 	_player = player;
 }

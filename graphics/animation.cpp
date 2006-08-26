@@ -22,7 +22,6 @@
 
 #include "common/stdafx.h"
 #include "graphics/animation.h"
-#include "sound/audiostream.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -31,8 +30,8 @@
 
 namespace Graphics {
 
-BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height)
-	: _movieWidth(width), _movieHeight(height), _frameWidth(width), _frameHeight(height), _snd(snd), _sys(sys) {
+BaseAnimationState::BaseAnimationState(OSystem *sys, int width, int height)
+	: _movieWidth(width), _movieHeight(height), _frameWidth(width), _frameHeight(height), _sys(sys) {
 #ifndef BACKEND_8BIT
 	const int screenW = _sys->getOverlayWidth();
 	const int screenH = _sys->getOverlayHeight();
@@ -51,7 +50,6 @@ BaseAnimationState::BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int widt
 
 BaseAnimationState::~BaseAnimationState() {
 #ifdef USE_MPEG2
-	_snd->stopHandle(_bgSound);
 	if (_mpegDecoder)
 		mpeg2_close(_mpegDecoder);
 	delete _mpegFile;
@@ -61,18 +59,16 @@ BaseAnimationState::~BaseAnimationState() {
 	free(_colorTab);
 	free(_rgbToPix);
 #endif
-	delete _bgSoundStream;
 #endif
 }
 
 
-bool BaseAnimationState::init(const char *name, void *audioArg) {
+bool BaseAnimationState::init(const char *name) {
 #ifdef USE_MPEG2
 	char tempFile[512];
 
 	_mpegDecoder = NULL;
 	_mpegFile = NULL;
-	_bgSoundStream = NULL;
 
 #ifdef BACKEND_8BIT
 
@@ -146,26 +142,11 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 
 	_mpegInfo = mpeg2_info(_mpegDecoder);
 	_frameNum = 0;
-	_frameSkipped = 0;
-	_ticks = _sys->getMillis();
-
-	// Play audio
-	_bgSoundStream = createAudioStream(name, audioArg);
-
-	if (_bgSoundStream != NULL) {
-		_snd->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, 255, 0, false);
-	} else {
-		warning("Cutscene: Could not open Audio Track for %s", name);
-	}
 
 	return true;
 #else /* USE_MPEG2 */
 	return false;
 #endif
-}
-
-Audio::AudioStream *BaseAnimationState::createAudioStream(const char *name, void *arg) {
-	return Audio::AudioStream::openStreamFile(name);
 }
 
 bool BaseAnimationState::decodeFrame() {
@@ -188,39 +169,8 @@ bool BaseAnimationState::decodeFrame() {
 		case STATE_SLICE:
 		case STATE_END:
 			if (_mpegInfo->display_fbuf) {
-				/* simple audio video sync code:
-				 * we calculate the actual frame by taking the elapsed audio time and try
-				 * to stay inside +- 1 frame of this calculated frame number by dropping
-				 * frames if we run behind and delaying if we are too fast
-				 */
-
-				if (checkPaletteSwitch() || (_bgSoundStream == NULL) ||
-					((_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum + 1) ||
-					_frameSkipped > 10) {
-					if (_frameSkipped > 10) {
-						warning("force frame %i redraw", _frameNum);
-						_frameSkipped = 0;
-					}
-					drawYUV(sequence_i->width, sequence_i->height, _mpegInfo->display_fbuf->buf);
-
-					if (_bgSoundStream && _snd->isSoundHandleActive(_bgSound)) {
-						while (_snd->isSoundHandleActive(_bgSound) && (_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum) {
-							_sys->delayMillis(10);
-						}
-						// In case the background sound ends prematurely, update
-						// _ticks so that we can still fall back on the no-sound
-						// sync case for the subsequent frames.
-						_ticks = _sys->getMillis();
-					} else {
-						_ticks += 83;
-						while (_sys->getMillis() < _ticks)
-							_sys->delayMillis(10);
-					}
-				} else {
-					warning("dropped frame %i", _frameNum);
-					_frameSkipped++;
-				}
-
+				checkPaletteSwitch();
+				drawYUV(sequence_i->width, sequence_i->height, _mpegInfo->display_fbuf->buf);
 #ifdef BACKEND_8BIT
 				buildLookup(_palNum + 1, _lutCalcNum);
 #endif

@@ -57,6 +57,8 @@ protected:
 	Audio::Mixer *_mixer;
 	OSystem *_system;
 
+	char *_name;
+
 	byte _originalPalette[4 * 256];
 
 	byte *_textSurface;
@@ -156,7 +158,6 @@ protected:
 	AnimationState *_anim;
 
 	virtual bool decodeFrame();
-	virtual void syncFrame();
 
 #ifndef BACKEND_8BIT
 	void handleScreenChanged();

@@ -25,12 +25,6 @@
 
 #include "common/scummsys.h"
 
-#include "sound/mixer.h"
-
-namespace Audio {
-	class AudioStream;
-}
-
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
 
@@ -72,6 +66,8 @@ namespace Common {
 	class File;
 }
 
+class OSystem;
+
 namespace Graphics {
 
 class BaseAnimationState {
@@ -86,12 +82,9 @@ protected:
 	int _movieScale;
 #endif
 
-	Audio::Mixer *_snd;
 	OSystem *_sys;
 
 	uint _frameNum;
-	uint _frameSkipped;
-	uint32 _ticks;
 
 #ifdef USE_MPEG2
 	mpeg2dec_t *_mpegDecoder;
@@ -99,9 +92,6 @@ protected:
 #endif
 
 	Common::File *_mpegFile;
-
-	Audio::SoundHandle _bgSound;
-	Audio::AudioStream *_bgSoundStream;
 
 #ifdef BACKEND_8BIT
 	int _palNum;
@@ -129,10 +119,10 @@ protected:
 #endif
 
 public:
-	BaseAnimationState(Audio::Mixer *snd, OSystem *sys, int width, int height);
+	BaseAnimationState(OSystem *sys, int width, int height);
 	virtual ~BaseAnimationState();
 
-	bool init(const char *name, void *audioArg = NULL);
+	bool init(const char *name);
 	bool decodeFrame();
 	void handleScreenChanged();
 	void updateScreen();
@@ -147,7 +137,6 @@ public:
 protected:
 	bool checkPaletteSwitch();
 	virtual void drawYUV(int width, int height, byte *const *dat) = 0;
-	virtual Audio::AudioStream *createAudioStream(const char *name, void *arg);
 
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);

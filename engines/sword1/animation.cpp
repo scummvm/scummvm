@@ -186,6 +186,7 @@ void MoviePlayer::play(void) {
 	_scr->clearScreen();
 	_framesSkipped = 0;
 	_ticks = _sys->getMillis();
+	_bgSoundStream = Audio::AudioStream::openStreamFile(sequenceList[_id]);
 	if (_bgSoundStream) {
 		_snd->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSoundHandle, _bgSoundStream);
 	}
@@ -318,9 +319,6 @@ bool MoviePlayerDXA::load(uint32 id) {
 		_frameHeight = getHeight();
 		_frameX = (640 - _frameWidth) / 2;
 		_frameY = (480 - _frameHeight) / 2;
-		if (!_bgSoundStream) {
-			_bgSoundStream = Audio::AudioStream::openStreamFile(sequenceList[id]);
-		}
 		return true;
 	}
 	return false;
@@ -395,8 +393,8 @@ void MoviePlayerMPEG::insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor 
 
 bool MoviePlayerMPEG::load(uint32 id) {
 	if (MoviePlayer::load(id)) {
-		_anim = new AnimationState(this, _scr, _snd, _sys);
-		return _anim->init(sequenceList[id], _bgSoundStream);
+		_anim = new AnimationState(this, _scr, _sys);
+		return _anim->init(sequenceList[id]);
 	}
 	return false;
 }
@@ -450,11 +448,8 @@ void MoviePlayerMPEG::processFrame(void) {
 #endif
 }
 
-void MoviePlayerMPEG::syncFrame(void) {
-}
-
-AnimationState::AnimationState(MoviePlayer *player, Screen *scr, Audio::Mixer *snd, OSystem *sys)
-	: BaseAnimationState(snd, sys, 640, 400), _player(player), _scr(scr) {
+AnimationState::AnimationState(MoviePlayer *player, Screen *scr, OSystem *sys)
+	: BaseAnimationState(sys, 640, 400), _player(player), _scr(scr) {
 }
 
 AnimationState::~AnimationState(void) {
