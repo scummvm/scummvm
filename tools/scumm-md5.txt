@@ -76,7 +76,7 @@ maniac	Maniac Mansion
 	dd30a53035393baa5a5e222e716559af	-1	fr	Atari	V2	V2	-	Andreas Bylund
 	be83e882b44f2767bc08d4f766ebc347	-1	de	Atari	V2	V2	-	Joachim Eberhard
 	15240c59d3681ed53f714f8d925cb2d6	-1	es	Atari	V2	V2	-	VooD
-	624cdb93654667c869d204a64af7e57f	-1	en	DOS	V2	V2	-	Kirben, Andrea Petrucci
+	624cdb93654667c869d204a64af7e57f	1988	en	DOS	V2	V2	-	Kirben, Andrea Petrucci
 	b250d0f9cc83f80ced56fe11a4fb057c	1988	en	DOS	V2	V2	alt?	Andrea Petrucci, Fingolfin
 	114acdc2659a273c220f86ee9edb24c1	-1	fr	DOS	V2	V2	-	Nicolas Sauz&egrave;de
 	99a3699f80b8f776efae592b44b9b991	-1	fr	DOS	V2	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
@@ -99,7 +99,7 @@ zak	Zak McKracken and the Alien Mindbenders
 	d55eff37c2100f5065cde9de428621fa	-1	en	Atari	V2	V2	-	
 	613f64f78ea26c7353b2a5940eb61d6a	-1	fr	Atari	V2	V2	-	Andreas Bylund
 	ff05c07990061d97647f059c48c1d05a	-1	de	Atari	V2	V2	-	
-	675d71151e9b5a968c8ce46d9fbf4cbf	-1	en	DOS	V2	V2	-	Kirben
+	675d71151e9b5a968c8ce46d9fbf4cbf	1916	en	DOS	V2	V2	-	Kirben
 	debe337f73d660e951ece7c1f1c81add	-1	en	DOS	V2	V2	alt?	Andrea Petrucci
 	52a4bae0746a11d7b1e8554e91a6645c	-1	fr	DOS	V2	V2	-	Andrea Petrucci
 	c4787c3e8b5e2dfda90850ee800af00f	-1	fr	DOS	V2	V2	alt?	Qvist
@@ -153,7 +153,7 @@ loom	Loom
 	c24c490373aeb48fbd54caa8e7ae376d	-1	de	Atari	No Adlib	EGA	-	Andreas Bylund
 	28ef68ee3ed76d7e2ee8ee13c15fbd5b	5748	en	DOS	EGA	EGA	v1.0 from 8 Mar 90	Peter Eckerlein, Fingolfin
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	-1	en	DOS	EGA	EGA	v1.0 alt	Andrea Petrucci
-	37f56ceb13e401a7ac7d9e6b37fecaf7	-1	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
+	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
 	22f4ea88a09da12df9308ba30bcb7d0f	-1	en	DOS	EGA	EGA	v1.1 from 29 Mar 90	James Grosbeck, Peter Eckerlein
 	b886b0a5d909c7158a914e1d7c1c6c65	-1	fr	DOS	EGA	EGA	-	Andrea Petrucci
 	6f8a22bfa397be1f7ed4b74aba0e397e	-1	fr	DOS	EGA	EGA	v1.2 26 Jun 90	Jorpho
@@ -194,7 +194,7 @@ monkey	The Secret of Monkey Island
 	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	VGA	-	Andrea Petrucci
 	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	VGA	-	Andreas Bylund
 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
-	15e03ffbfeddb9c2aebc13dcb2a4a8f4	-1	en	DOS	VGA	VGA	4 disk	
+	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk	
 	08656dd9698ddf1023ba9bf8a195e37b	-1	en	DOS	VGA	VGA	V1.1	crossbow777
 	d0b531227a27c6662018d2bd05aac52a	8357	de	DOS	VGA	VGA	4 disk	Fingolfin
 	66fd5ff9a810dfeb6d6bdada18221140	-1	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
@@ -230,7 +230,7 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	da669b20271b85182e9c17a2a37ea02e	-1	de	Amiga	-	-	-	Andreas Bylund, Norbert Lange
 	11ddf1fde76e3156eb3a38da213f484e	-1	it	Amiga	-	-	-	Andrea Petrucci
 	6ea966b4d660c870b9ee790d1fbfc535	-1	es	Amiga	-	-	-	Andreas Bylund
-	3686cf8f89e102ececf4366e1d2c8126	-1	en	DOS	-	-	-	
+	3686cf8f89e102ececf4366e1d2c8126	11135	en	DOS	-	-	-	
 	8e4ee4db46954bfe2912e259a16fad82	-1	fr	DOS	-	-	-	Nicolas Sauz&egrave;de, Andrea Petrucci
 	6886e5d08cee329b1f2e743ae2e3ceed	11135	de	DOS	-	-	-	Fingolfin
 	69ea626f1f87eecb78ea0d6c6b983a1d	-1	it	DOS	-	-	-	Andrea Petrucci
@@ -402,7 +402,7 @@ fbear	Fatty Bear's Birthday Surprise
 	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 61	-	-	khalek
 	ef74d9071d4e564b037cb44bd6774de7	-1	hb	DOS	HE 61	-	-	sev
 	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 61	-	-	khalek
-	179879b6e35c1ead0d93aab26db0951b	-1	en	Windows	HE 70	-	-	khalek
+	179879b6e35c1ead0d93aab26db0951b	13381	en	Windows	HE 70	-	-	khalek
 
 	47e75b1bdcb44c78cb94883d1731ccf8	6203	en	DOS	HE 61	Demo	-	khalek
 	6df20c50c1ab19799de9be7ae7716881	-1	en	Mac	HE 61	Demo	-	khalek
@@ -418,7 +418,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
 	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 71	-	-	Karl Ove Hufthammer
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
-	507bb360688dc4180fdf0d7597352a69	-1	se	Windows	HE 73	-	-	Sven Arvidsson
+	507bb360688dc4180fdf0d7597352a69	26402	se	Windows	HE 73	-	-	Sven Arvidsson
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
 	df047cc4792150f601290357566d36a6	-1	us	All	HE 90	Updated	-	khalek
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
@@ -523,7 +523,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	us	All	-	-	-	khalek
 	4fa6870d9bc8c313b65d54b1da5a1891	-1	nl	Windows	-	-	-	joostp
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
-	898eaa21f79cf8d4f08db856244689ff	-1	en	Windows	HE 99	Updated	-	Joachim Eberhard
+	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
 
@@ -533,7 +533,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	d7ab7cd6105546016e6a0d46fb36b964	-1	en	All	HE 100	Demo	-	khalek
 
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
-	d4e79c3d8645b8266cd78c325bc35154	-1	us	All	-	-	-	Kirben
+	d4e79c3d8645b8266cd78c325bc35154	60557	us	All	-	-	-	Kirben
 	6a60d395b78b205c93a956100b1bf5ae	-1	de	All	HE 98.5	-	-	EdDammer
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
@@ -544,7 +544,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	4521138d15d1fd7649c31fb981746231	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
 
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
-	f7711f9264d4d43c2a1518ec7c10a607	-1	us	All	-	-	-	Kirben
+	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
 	20176076d708bf14407bcc9bdcd7a418	-1	ru	Windows	-	-	-	sev
 
@@ -631,7 +631,7 @@ PuttTime	Putt-Putt Travels Through Time
 	84e3c23a49ded8a6f9197735c8eb3de7	-1	de	Windows	HE 85	-	-	oncer
 	2108d83dcf09f8adb4bc524669c8cf51	-1	us	All	HE 99	Updated	-	Kirben
 	7c980a1b1596a93f26917318884f48f7	-1	de	All	HE 99	Updated	-	Joachim Eberhard
-	d4aac997e2f4e15341f0bfbf905419bd	-1	gb	Windows	HE 99	-	-	eriktorbjorn
+	d4aac997e2f4e15341f0bfbf905419bd	62698	gb	Windows	HE 99	-	-	eriktorbjorn
 	defb8cb9ec4b0f91acfb6b61c6129ad9	-1	ru	Windows	HE 99	-	-	sev
 	a525c1753c1db5011c00417da37887ef	-1	us	All	HE 100	Updated	-	Kirben
 	fcb78ebecab2757264c590890c319cc5	-1	nl	Windows	HE 100	-	-	adutchguy
@@ -669,7 +669,7 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	-1	us	All	-	-	-	Kirben
 
 spyfox	SPY Fox 1: Dry Cereal
-	6bf70eee5de3d24d2403e0dd3d267e8a	-1	All	Windows	-	-	-	khalek
+	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek
 	9bda5fee51d2fda5253d02c642016bf4	-1	nl	Windows	HE 98.5	-	-	joostp
 	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard
 	a28135a7ade38cc0208b04507c46efd1	-1	de	All	HE 99	-	-	nachbarnebenan
@@ -684,7 +684,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	-1	en	All	HE 100	Demo	-	khalek
 
 spyfox2	SPY Fox 2: Some Assembly Required
-	f79e60c17cca601e411f1f75e8ee9b5a	-1	All	All	-	-	-	Kirben
+	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
 	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
@@ -696,7 +696,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	19bf6938a94698296bcb0c99c31c91a7	-1	gb	Windows	-	Demo	-	eriktorbjorn
 
 spyozon	SPY Fox 3: Operation Ozone
-	600abd3e9f47e63e670188b7e4e86ac7	-1	us	All	-	-	-	Kirben
+	600abd3e9f47e63e670188b7e4e86ac7	47128	us	All	-	-	-	Kirben
 	96a3069a3c63caa7329588ce1fef41ee	-1	ru	All	-	-	-	sev
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
