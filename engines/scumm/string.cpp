@@ -844,6 +844,16 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				*dst++ = 0xE1;
 				continue;
 			}
+			
+			// WORKAROUND for bug #1514457: Yet another script bug in Indy3.
+			// Once more a german 'sz' was encoded incorrectly, but this time
+			// they simply encoded it as 0xFF instead of 0xE1. Happens twice
+			// in script 71.
+			if (_game.id == GID_INDY3 && chr == 0x20 && vm.slot[_currentScript].number == 71) {
+				num--;
+				*dst++ = 0xE1;
+				continue;
+			}
 
 			if (chr == 1 || chr == 2 || chr == 3 || chr == 8) {
 				// Simply copy these special codes
