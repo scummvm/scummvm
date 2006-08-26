@@ -36,6 +36,22 @@
 #	Gerald Vincent	silverfo (AT) club-internet (DOT) fr
 #	Peter Eckerlein	master (DOT) eckes (AT) web (DOT) de
 #
+#
+#
+# The following shell script can be used to extract the file sizes of a bunch
+# of detect files, autonmatically inserting the values in here:
+#
+# #!/bin/sh
+# OIFS=$IFS
+# IFS="
+# "
+# for i in `find -name *.??0` `find -name *Data*` ; do
+# 	m=`head -c 1048576 "$i" | md5sum | cut -f1 -d' '` ;
+# 	s=`du -b "$i" | cut -f1` ;
+# 	echo perl -pi -e "s/$m\t-1/$m\t$s/" /PATH/TO/tools/scumm-md5.txt ;
+# done
+# IFS=$OIFS
+#
 maniac	Maniac Mansion
 	d831f7c048574dd9d5d85db2a1468099	-1	en	C64	C64	-	-	
 	c4a7f7398ac9ae588940f9912ea5fd8f	-1	de	C64	C64	-	-	
