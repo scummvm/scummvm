@@ -635,9 +635,29 @@ DetectedGameList Engine_AGI_detectGames(const FSList &fslist) {
 }
 
 PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
+	assert(syst);
 	assert(engine);
-	*engine = new Agi::AgiEngine(syst);
-	return kNoError;
+
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("AgiEngine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
+
+	// Invoke the detector
+	Common::String gameid = ConfMan.get("gameid");
+	DetectedGameList detectedGames = Engine_AGI_detectGames(fslist);
+
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		if (detectedGames[i].gameid == gameid) {
+			*engine = new Agi::AgiEngine(syst);
+			return kNoError;
+		}
+	}
+
+	warning("AgiEngine: Unable to locate game data at path '%s'", dir.path().c_str());
+	return kNoGameDataFoundError;
 }
 
 REGISTER_PLUGIN(AGI, "AGI Engine", "TODO (C) TODO");
