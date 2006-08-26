@@ -113,6 +113,8 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 }
 
 PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
+	assert(syst);
+	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	for (const ObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
@@ -130,9 +132,25 @@ PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
 		}
 	}
 
-	assert(engine);
-	*engine = new Simon::SimonEngine(syst);
-	return kNoError;
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("SimonEngine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
+
+	// Invoke the detector
+	DetectedGameList detectedGames = Engine_SIMON_detectGames(fslist);
+
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		if (detectedGames[i].gameid == gameid) {
+			*engine = new Simon::SimonEngine(syst);
+			return kNoError;
+		}
+	}
+
+	warning("SimonEngine: Unable to locate game data at path '%s'", dir.path().c_str());
+	return kNoGameDataFoundError;
 }
 
 REGISTER_PLUGIN(SIMON, "Simon the Sorcerer", "Simon the Sorcerer (C) Adventure Soft");
