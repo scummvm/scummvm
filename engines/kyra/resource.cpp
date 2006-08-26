@@ -94,6 +94,8 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		return true;
 
 	uint32 size = 0;
+	FilesystemNode *fsNode = new FilesystemNode(filename);
+	
 	Common::File handle;
 	if (!fileHandle(filename.c_str(), &size, handle)) {
 		warning("couldn't load file: '%s'", filename.c_str());
@@ -103,15 +105,16 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	PAKFile *file = 0;
 
 	if (handle.name() == filename) {
-		file = new PAKFile(filename.c_str(), (_engine->features() & GF_AMIGA) != 0);
+		file = new PAKFile(fsNode->name().c_str(), (_engine->features() & GF_AMIGA) != 0);
 	} else {
 		uint32 offset = handle.pos();
 		uint8 *buf = new uint8[size];
 		handle.read(buf, size);
-		file = new PAKFile(filename.c_str(), handle.name(), offset, buf, size, (_engine->features() & GF_AMIGA) != 0);
+		file = new PAKFile(fsNode->name().c_str(), handle.name(), offset, buf, size, (_engine->features() & GF_AMIGA) != 0);
 		delete [] buf;
 	}
 	handle.close();
+	delete fsNode;
 
 	if (!file)
 		return false;
