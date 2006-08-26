@@ -77,9 +77,29 @@ DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
 }
 
 PluginError Engine_SAGA_create(OSystem *syst, Engine **engine) {
+	assert(syst);
 	assert(engine);
-	*engine = new Saga::SagaEngine(syst);
-	return kNoError;
+
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("SagaEngine: invalid game path '%s'", dir.path().c_str());
+		return kInvalidPathError;
+	}
+
+	// Invoke the detector
+	Common::String gameid = ConfMan.get("gameid");
+	DetectedGameList detectedGames = Engine_SAGA_detectGames(fslist);
+
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		if (detectedGames[i].gameid == gameid) {
+			*engine = new Saga::SagaEngine(syst);
+			return kNoError;
+		}
+	}
+
+	warning("SagaEngine: Unable to locate game data at path '%s'", dir.path().c_str());
+	return kNoGameDataFoundError;
 }
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
