@@ -45,10 +45,10 @@
 # OIFS=$IFS
 # IFS="
 # "
-# for i in `find -name *.??0` `find -name *Data*` ; do
+# for i in `find -name 00.*` `find -name 000.*` `find -name *.??0` `find -name *Data*` ; do
 # 	m=`head -c 1048576 "$i" | md5sum | cut -f1 -d' '` ;
 # 	s=`du -b "$i" | cut -f1` ;
-# 	echo perl -pi -e "s/$m\t-1/$m\t$s/" /PATH/TO/tools/scumm-md5.txt ;
+# 	sed -i -e "s/$m\t-1/$m\t$s/" /PATH/TO/scumm-md5.txt ;
 # done
 # IFS=$OIFS
 #
