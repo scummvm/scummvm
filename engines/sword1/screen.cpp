@@ -64,6 +64,14 @@ Screen::~Screen(void) {
 		quitScreen();
 }
 
+void Screen::clearScreen(void) {
+	if (_screenBuf) {
+		_fullRefresh = true;
+		memset(_screenBuf, 0, _scrnSizeX * _scrnSizeY);
+		_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
+	}
+}
+
 void Screen::useTextManager(Text *pTextMan) {
 	_textMan = pTextMan;
 }

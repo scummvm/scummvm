@@ -24,6 +24,7 @@
 #define ANIMATION_H
 
 #include "graphics/animation.h"
+#include "graphics/dxa_player.h"
 
 #include "sword1/screen.h"
 #include "sword1/sound.h"
@@ -57,15 +58,71 @@ enum {
 #define INTRO_LOGO_OVLS 12
 #define INTRO_TEXT_OVLS 8
 
+class MoviePlayer {
+public:
+	MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	virtual ~MoviePlayer(void);
+	virtual bool load(uint32 id);
+	void play(void);
+	void updatePalette(byte *pal, bool packed = true);
+private:
+	bool checkSkipFrame(void);
+protected:
+	Screen *_scr;
+	Audio::Mixer *_snd;
+	OSystem *_sys;
+
+	uint32 _id;
+
+	byte *_frameBuffer;
+	uint _currentFrame;
+	int _framesSkipped;
+	bool _forceFrame;
+
+	int _frameWidth, _frameHeight;
+	int _frameX, _frameY;
+
+	Audio::SoundHandle _bgSoundHandle;
+	Audio::AudioStream *_bgSoundStream;
+	uint32 _ticks;
+
+	virtual void handleScreenChanged(void);
+	virtual bool initOverlays(uint32 id);
+	virtual bool decodeFrame(void) = 0;
+	virtual void processFrame(void) = 0;
+	virtual void syncFrame(void);
+	virtual void updateScreen(void) = 0;
+};
+
+#ifdef USE_ZLIB
+
+class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
+protected:
+	virtual void setPalette(byte *pal);
+public:
+	MoviePlayerDXA(Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	virtual ~MoviePlayerDXA(void);
+	bool load(uint32 id);
+protected:
+	bool initOverlays(uint32 id);
+	bool decodeFrame(void);
+	void processFrame(void);
+	void updateScreen(void);
+};
+
+#endif 
+
+#ifdef USE_MPEG2 
+
 class AnimationState : public Graphics::BaseAnimationState {
 private:
+	MoviePlayer *_player;
 	Screen *_scr;
 
 public:
-	AnimationState(Screen *scr, Audio::Mixer *snd, OSystem *sys);
-	~AnimationState();
+	AnimationState(MoviePlayer *player, Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	~AnimationState(void);
 	OverlayColor *giveRgbBuffer(void);
-	bool soundFinished();
 
 private:
 	void drawYUV(int width, int height, byte *const *dat);
@@ -78,23 +135,26 @@ protected:
 	virtual Audio::AudioStream *createAudioStream(const char *name, void *arg);
 };
 
-class MoviePlayer {
+class MoviePlayerMPEG : public MoviePlayer {
 public:
-	MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys);
-	~MoviePlayer(void);
-	void play(uint32 id);
-private:
+	MoviePlayerMPEG(Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	virtual ~MoviePlayerMPEG(void);
+	bool load(uint32 id);
+protected:
 	void insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor *pal);
-	void processFrame(uint32 animId, AnimationState *anim, uint32 frameNo);
-	bool initOverlays(uint32 id);
-	Screen *_scr;
-	Audio::Mixer *_snd;
-	OSystem *_sys;
-
-	static const char *_sequenceList[20];
-	uint8 *_logoOvls[INTRO_LOGO_OVLS];
+	AnimationState *_anim;
 	OverlayColor *_introPal;
+	uint8 *_logoOvls[INTRO_LOGO_OVLS];
+
+	bool initOverlays(uint32 id);
+	bool decodeFrame(void);
+	void processFrame(void);
+	void syncFrame(void);
+	void updateScreen(void);
+	void handleScreenChanged(void);
 };
+
+#endif
 
 struct FileQueue {
 	Audio::AudioStream *stream;
@@ -113,6 +173,8 @@ public:
 private:
 	FileQueue *_queue;
 };
+
+MoviePlayer *makeMoviePlayer(uint32 id, Screen *scr, Audio::Mixer *snd, OSystem *sys);
 
 } // End of namespace Sword1
 

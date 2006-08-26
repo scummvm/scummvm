@@ -69,6 +69,7 @@ class Screen {
 public:
 	Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
 	~Screen(void);
+	void clearScreen(void);
 	void useTextManager(Text *pTextMan);
 	void draw(void);
 
