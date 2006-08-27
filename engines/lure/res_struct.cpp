@@ -33,6 +33,10 @@ const char *actionList[] = {NULL, "Get", NULL, "Push", "Pull", "Operate", "Open"
 	"Look", "Look at", "Look through", "Ask", NULL, "Drink", "Status",
 	"Go to", "Return", "Bribe", "Examine"};
 
+const Action sortedActions[] = {ASK, BRIBE, BUY, CLOSE, DRINK, EXAMINE, GET, GIVE, 
+	GO_TO, LOCK, LOOK, LOOK_AT, LOOK_THROUGH, OPEN, OPERATE, PULL, PUSH, RETURN, 
+	STATUS, TALK_TO, TELL, UNLOCK, USE, NONE};
+
 int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
@@ -41,6 +45,9 @@ int actionNumParams[NPC_JUMP_ADDRESS+1] = {0,
 
 RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
 	roomNumber = FROM_LE_16(rec->roomNumber);
+	hdrFlags = rec->hdrFlags;
+	actions = FROM_LE_32(rec->actions) & 0xfffffff;
+	flags = (FROM_LE_32(rec->actions) >> 24) & 0xf0;
 	descId = FROM_LE_16(rec->descId);
 	sequenceOffset = FROM_LE_16(rec->sequenceOffset);
 	numLayers = FROM_LE_16(rec->numLayers);
@@ -308,7 +315,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	pauseCtr = 0;
 	useHotspotId = 0;
 	v2b = 0;
-	v50 = 0;
+	actionHotspotId = 0;
 }
 
 // Hotspot override data
@@ -538,6 +545,7 @@ CharacterScheduleEntry::CharacterScheduleEntry(Action theAction, ...) {
 		_params[paramCtr] = (uint16) va_arg(u_Arg, int);
 
 	va_end(u_Arg);
+	_numParams = actionNumParams[_action];
 }
 
 CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
@@ -548,15 +556,12 @@ CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 		error("Invalid action encountered reading NPC schedule");
 
 	_action = (Action) rec->action;
-	for (int index = 0; index < actionNumParams[_action]; ++index) 
+	_numParams = actionNumParams[_action];
+	for (int index = 0; index < _numParams; ++index) 
 		_params[index] = FROM_LE_16(rec->params[index]);
 
 	rec = (CharacterScheduleResource *) ((byte *) rec + 
-		(actionNumParams[_action] + 1) * sizeof(uint16));
-}
-
-int CharacterScheduleEntry::numParams() { 
-	return actionNumParams[_action]; 
+		(_numParams + 1) * sizeof(uint16));
 }
 
 uint16 CharacterScheduleEntry::param(int index) {
@@ -567,6 +572,7 @@ uint16 CharacterScheduleEntry::param(int index) {
 
 void CharacterScheduleEntry::setDetails(Action theAction, ...) {
 	_action = theAction;
+	_numParams = actionNumParams[_action];
 
 	va_list list;
 	va_start(list, theAction);
@@ -575,6 +581,15 @@ void CharacterScheduleEntry::setDetails(Action theAction, ...) {
 		_params[paramCtr] = (uint16) va_arg(list, int);
 
 	va_end(list);
+}
+
+void CharacterScheduleEntry::setDetails2(Action theAction, int numParamEntries, uint16 *paramList) {
+	_action = theAction;
+	_numParams = numParamEntries;
+
+	assert((numParamEntries >= 0) && (numParamEntries < (MAX_TELL_COMMANDS * 3)));
+	for (int paramCtr = 0; paramCtr < numParamEntries; ++paramCtr)
+		_params[paramCtr] = paramList[paramCtr];
 }
 
 CharacterScheduleEntry *CharacterScheduleEntry::next() {

@@ -31,6 +31,7 @@ namespace Lure {
 using namespace Common;
 
 extern const char *actionList[];
+extern const Action sortedActions[];
 
 /*-------------------------------------------------------------------------*/
 /* Structure definitions                                                   */
@@ -115,6 +116,9 @@ struct RoomRect {
 
 struct RoomResource {
 	uint16 roomNumber;
+	uint8 hdrFlags;
+	uint8 unused;
+	uint32 actions;
 	uint16 descId;
 	uint16 numLayers;
 	uint16 layers[4];
@@ -318,6 +322,9 @@ public:
 	RoomData(RoomResource *rec, MemoryBlock *pathData);
 
 	uint16 roomNumber;
+	uint8 hdrFlags;
+	uint8 flags;
+	uint32 actions;
 	uint16 descId;
 	uint16 numLayers;
 	uint16 layers[MAX_NUM_LAYERS];
@@ -427,7 +434,7 @@ public:
 	uint16 useHotspotId;
 	uint16 use2HotspotId;
 	uint16 v2b;
-	uint16 v50;
+	uint16 actionHotspotId;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
@@ -583,7 +590,8 @@ class CharacterScheduleEntry {
 private:
 	CharacterScheduleSet *_parent;
 	Action _action;
-	uint16 _params[MAX_SCHEDULE_ENTRY_PARAMS];
+	uint16 _params[MAX_TELL_COMMANDS * 3];
+	int _numParams;
 public:
 	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
 	CharacterScheduleEntry(Action theAction, ...);
@@ -591,9 +599,10 @@ public:
 		CharacterScheduleResource *&rec);
 
 	Action action() { return _action; }
-	int numParams();
+	int numParams() { return _numParams; }
 	uint16 param(int index);
 	void setDetails(Action theAction, ...);
+	void setDetails2(Action theAction, int numParamEntries, uint16 *paramList);
 	CharacterScheduleEntry *next();
 	CharacterScheduleSet *parent() { return _parent; }
 	uint16 id();
