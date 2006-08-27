@@ -302,6 +302,7 @@ MoviePlayerDXA::MoviePlayerDXA(Screen *src, Audio::Mixer *snd, OSystem *sys)
 }
 
 MoviePlayerDXA::~MoviePlayerDXA(void) {
+	closeFile();
 	// free(_frameBuffer);
 }
 
