@@ -79,6 +79,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_blockedOffset = 0;
 	_exitCtr = 0;
 	_walkFlag = true;
+	_startRoomNumber = 0;
 
 	if (_data->npcSchedule != 0) {
 		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(_data->npcSchedule);
@@ -791,11 +792,12 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 	} else {
 		setActionCtr(1);
 		if ((hotspot->hotspotId >= FIRST_NONCHARACTER_ID) ||
-			((hotspot->v50 != _hotspotId) && (hotspot->characterMode == CHARMODE_4))) {
+			((hotspot->actionHotspotId != _hotspotId) && (hotspot->characterMode == CHARMODE_4))) {
 			// loc_880
 			if (characterWalkingCheck(hotspot))
 				return PC_INITIAL;
-		} else if (hotspot->v50 != _hotspotId) {
+
+		} else if (hotspot->actionHotspotId != _hotspotId) {
 			if (fields.getField(88) == 2) {
 				// loc_882
 				hotspot->v2b = 0x2A;
@@ -813,7 +815,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 	if (hotspot->hotspotId < FIRST_NONCHARACTER_ID) {
 		hotspot->characterMode = CHARMODE_8;
 		hotspot->delayCtr = 30;
-		hotspot->v50 = hotspot->hotspotId;
+		hotspot->actionHotspotId = hotspot->hotspotId;
 	}
 	return PC_EXECUTE;
 }
@@ -1287,7 +1289,38 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 }
 
 void Hotspot::doTell(HotspotData *hotspot) {
-	// TODO
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
+	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
+	Hotspot *character = res.getActiveHotspot(hotspot->hotspotId);
+	assert(character);
+
+	HotspotPrecheckResult result = actionPrecheck(hotspot);
+	if (result == PC_INITIAL) return;
+	else if (result != PC_EXECUTE) {
+		endAction();
+		return;
+	}
+
+	converse(hotspot->hotspotId, 0x7C);
+
+	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, TELL);
+	if (sequenceOffset >= 0x8000) {
+		showMessage(sequenceOffset);
+	} else if (sequenceOffset != 0) {
+		uint16 result = Script::execute(sequenceOffset);
+
+		if (result == 0) {
+			character->setStartRoomNumber(character->roomNumber());
+			character->currentActions().clear();
+			
+			// Build up sequence of commands for character to follow
+			error("Tell command handling yet not yet implemented");
+		}
+	}
+
+	endAction();
 }
 
 void Hotspot::doLook(HotspotData *hotspot) {
@@ -1506,7 +1539,8 @@ void Hotspot::doGoto(HotspotData *hotspot) {
 }
 
 void Hotspot::doReturn(HotspotData *hotspot) {
-	error("Not yet implemented");
+	currentActions().top().setRoomNumber(startRoomNumber());
+	endAction();
 }
 
 uint16 bribe_hotspot_list[] = {0x421, 0x879, 0x3E9, 0x8C7, 0x429, 0x8D1,
@@ -1548,7 +1582,7 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 		if (sequenceOffset != 0) return;
 	}
 
-	// TODO: handle character message display
+	showMessage(sequenceOffset);
 }
 
 void Hotspot::doExamine(HotspotData *hotspot) {
@@ -1944,12 +1978,11 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 			// TODO: Figure out what mode 6 is
 			h.updateMovement();
 			if (bumpedPlayer) return;
-
 		} else {
 			// All other character modes
 			if (h.delayCtr() > 0) {
 				// There is some countdown left to do
-				bool decrementFlag = true; //TODO: = HS[50h] == 0
+				bool decrementFlag = true; 
 
 				if (!decrementFlag) {
 					HotspotData *hotspot = res.getHotspot(0); // TODO: HS[50h]
@@ -1964,7 +1997,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 			}
 		}
 
-		// TODO: HS[50h]=0
+		h.resource()->actionHotspotId = 0;
 		CharacterMode currentMode = h.characterMode();
 		h.setCharacterMode(CHARMODE_NONE);
 		h.pathFinder().clear();
@@ -1975,7 +2008,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		}
 		return;
 	}
-
+//loc_1040
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character point 6");
 	CurrentAction action = actions.action();
 
@@ -2301,7 +2334,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		hotspot = NULL;
 		if (actions.top().hasSupportData()) {
 			hsAction = actions.top().supportData().action();
-			
+
 			if (actions.top().supportData().numParams() > 0) {
 				hotspotId = actions.top().supportData().param(0);
 				hotspot = res.getHotspot(hotspotId);
@@ -2822,11 +2855,11 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 		h.setExitCtr(0);
 		if (h.currentActions().size() > 1) {
 			// Pending items on stack
-			// TODO: Check on HS[4Eh]
-			if (h.currentActions().top().supportData().id() != RETURN_SUPPORT_ID) {
-				h.currentActions().top().supportData().setDetails(RETURN, 0);
+			if (h.startRoomNumber() != 0) {
+				if (h.currentActions().top().supportData().id() != RETURN_SUPPORT_ID) {
+					h.currentActions().top().supportData().setDetails(RETURN, 0);
+				}
 			}
-
 			h.currentActions().top().setRoomNumber(h.roomNumber());
 
 		} else if (h.blockedOffset() != 0) {

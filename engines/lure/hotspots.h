@@ -232,6 +232,7 @@ private:
 	bool _frameStartsUsed;
 	uint16 _frameStarts[MAX_NUM_FRAMES];
 
+	// Runtime fields
 	uint16 _frameCtr;
 	uint8 _voiceCtr;
 	int16 _destX, _destY;
@@ -239,6 +240,7 @@ private:
 	uint16 _blockedOffset;
 	uint8 _exitCtr;
 	bool _walkFlag;
+	uint16 _startRoomNumber;
 
 	// Support methods
 	uint16 getTalkId(HotspotData *charHotspot);
@@ -315,6 +317,7 @@ public:
 	uint16 blockedOffset() { return _blockedOffset; }
 	uint8 exitCtr() { return _exitCtr; }
 	bool walkFlag() { return _walkFlag; }
+	uint16 startRoomNumber() { return _startRoomNumber; }
 	uint16 width() { return _width; }
 	uint16 height() { return _height; }
 	uint16 widthCopy() { return _widthCopy; }
@@ -349,6 +352,7 @@ public:
 		_data->blockedState = newState; 
 	}
 	void setWalkFlag(bool value) { _walkFlag = value; }
+	void setStartRoomNumber(uint16 value) { _startRoomNumber = value; }
 	void setSize(uint16 newWidth, uint16 newHeight);
 	void setScript(uint16 offset) {
 		assert(_data != NULL);
