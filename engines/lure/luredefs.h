@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 11
+#define LURE_DAT_MINOR 12
 
 #define LURE_DEBUG 1
 
@@ -244,6 +244,7 @@ enum Action {
 #define SERF_ANIM_ID 0x58A0
 #define CONVERSE_COUNTDOWN_SIZE 40
 #define IDLE_COUNTDOWN_SIZE 15
+#define MAX_TELL_COMMANDS 8
 
 // Countdown for # operations in path finder before breaking until next
 // tick - set it to 0 if you'd like all pathfinding to be done at once
