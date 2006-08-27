@@ -100,7 +100,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendia
 	_file->seek(base, SEEK_SET);
 
 	if (_file->read(_offsets, size) != size)
-		error("Can't read offsets");
+		error("BaseSound: Can't read offsets");
 
 	for (uint i = 0; i < res; i++) {
 #if defined(SCUMM_BIG_ENDIAN)
@@ -137,9 +137,8 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	byte wavFlags;
 	int size, rate;
-	if (!Audio::loadWAVFromStream(*_file, size, rate, wavFlags)) {
+	if (!Audio::loadWAVFromStream(*_file, size, rate, wavFlags))
 		error("playSound: Not a valid WAV file");
-	}
 
 	flags |= wavFlags;
 
@@ -419,8 +418,7 @@ void Sound::readSfxFile(const char *filename) {
 
 	if (file->isOpen() == false) {
 		if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-			warning("readSfxFile: Can't load sfx file %s", filename);
-		return;
+			error("readSfxFile: Can't load sfx file %s", filename);
 	}
 
 	delete _effects;
@@ -445,10 +443,8 @@ void Sound::readVoiceFile(const char *filename) {
 	File *file = new File();
 	file->open(filename);
 
-	if (file->isOpen() == false) {
-		warning("readVoiceFile: Can't load voice file %s", filename);
-		return;
-	}
+	if (file->isOpen() == false)
+		error("readVoiceFile: Can't load voice file %s", filename);
 
 	delete _voice;
 	_voice = new RawSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
@@ -464,10 +460,9 @@ void Sound::playVoice(uint sound) {
 			sprintf(filename, "voices%d.dat", _filenums[sound]);
 			File *file = new File();
 			file->open(filename);
-			if (file->isOpen() == false) {
-				warning("playVoice: Can't load voice file %s", filename);
-				return;
-			}
+			if (file->isOpen() == false)
+				error("playVoice: Can't load voice file %s", filename);
+
 			delete _voice;
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
@@ -585,9 +580,8 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
-	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
+	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
 		error("playSoundData: Not a valid WAV data");
-	}
 
 	// The Feeble Files originally used DirectSound, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
@@ -689,8 +683,7 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 		sprintf(filename, "%s%d.wav", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen() == false) {
-			warning("switchVoiceFile: Can't load voice file %s", filename);
-			return;
+			error("switchVoiceFile: Can't load voice file %s", filename);
 		}
 		_hasVoiceFile = true;
 		_voice = new WavSound(_mixer, file);

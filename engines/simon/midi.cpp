@@ -522,26 +522,21 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 			in->read(&buf[2], 2);
 		}
 		if (memcmp(buf, "CAT ", 4)) {
-			warning("Could not find 'CAT ' tag to determine resource size");
-			return;
+			error("Could not find 'CAT ' tag to determine resource size");
 		}
 		size += 4 + in->readUint32BE();
 		in->seek(pos, 0);
 		p->data = (byte *)calloc(size, 1);
 		in->read(p->data, size);
 	} else {
-		warning("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
-		return;
+		error("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 	}
 
 	MidiParser *parser = MidiParser::createParser_XMIDI();
 	parser->setMidiDriver(this);
 	parser->setTimerRate(_driver->getBaseTempo());
-	if (!parser->loadMusic(p->data, size)) {
-		warning("Error reading track");
-		delete parser;
-		parser = 0;
-	}
+	if (!parser->loadMusic(p->data, size))
+		error("Error reading track");
 
 	if (!sfx) {
 		_currentTrack = 255;
@@ -557,8 +552,7 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 
 	uint16 size = in->readUint16LE();
 	if (size != in->size() - 2) {
-		warning("Size mismatch in simon1demo MUS file (%ld versus reported %d)", (long)in->size() - 2, (int)size);
-		return;
+		error("Size mismatch in simon1demo MUS file (%ld versus reported %d)", (long)in->size() - 2, (int)size);
 	}
 
 	p->data = (byte *)calloc(size, 1);
@@ -567,11 +561,8 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 	MidiParser *parser = MidiParser_createS1D();
 	parser->setMidiDriver(this);
 	parser->setTimerRate(_driver->getBaseTempo());
-	if (!parser->loadMusic(p->data, size)) {
-		warning("Error reading track");
-		delete parser;
-		parser = 0;
-	}
+	if (!parser->loadMusic(p->data, size))
+		error("Error reading track");
 
 	if (!sfx) {
 		_currentTrack = 255;

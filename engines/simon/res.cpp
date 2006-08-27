@@ -151,23 +151,23 @@ void SimonEngine::decompressData(const char *srcName, byte *dst, uint32 offset, 
 		File in;
 		in.open(srcName);
 		if (in.isOpen() == false)
-			error("decompressData: can't open %s", srcName);
+			error("decompressData: Can't load %s", srcName);
 
 		in.seek(offset, SEEK_SET);
 		if (srcSize != dstSize) {
 			byte *srcBuffer = (byte *)malloc(srcSize);
 
 			if (in.read(srcBuffer, srcSize) != srcSize)
-				error("decompressData: read failed");
+				error("decompressData: Read failed");
 
 			unsigned long decompressedSize = dstSize;
 			int result = uncompress(dst, &decompressedSize, srcBuffer, srcSize);
 			if (result != Z_OK)
-				error("decompressData() Zlib uncompress error");
+				error("decompressData: Zlib uncompress error");
 			free(srcBuffer);
 		} else {
 			if (in.read(dst, dstSize) != dstSize)
-				error("decompressData: read failed");
+				error("decompressData: Read failed");
 		}
 		in.close();
 #else
@@ -183,7 +183,7 @@ void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, ui
 	/* read offsets from index */
 	in.open(filename);
 	if (in.isOpen() == false) {
-		error("Can't open index file '%s'", filename);
+		error("loadOffsets: Can't load index file '%s'", filename);
 	}
 
 	in.seek(number * offsSize, SEEK_SET);
@@ -208,11 +208,11 @@ int SimonEngine::allocGamePcVars(File *in) {
 	item_array_size += 2;
 
 	if (version != 0x80)
-		error("Not a runtime database");
+		error("allocGamePcVars: Not a runtime database");
 
 	_itemArrayPtr = (Item **)calloc(item_array_size, sizeof(Item *));
 	if (_itemArrayPtr == NULL)
-		error("Out of memory for Item array");
+		error("allocGamePcVars: Out of memory for Item array");
 
 	_itemArraySize = item_array_size;
 	_itemArrayInited = item_array_inited;
@@ -236,7 +236,7 @@ void SimonEngine::loadGamePcFile() {
 	/* read main gamepc file */
 	in.open(getFileName(GAME_BASEFILE));
 	if (in.isOpen() == false) {
-		error("Can't open gamepc file '%s'", getFileName(GAME_BASEFILE));
+		error("loadGamePcFile: Can't load gamepc file '%s'", getFileName(GAME_BASEFILE));
 	}
 
 	num_inited_objects = allocGamePcVars(&in);
@@ -255,14 +255,14 @@ void SimonEngine::loadGamePcFile() {
 	/* Read list of TABLE resources */
 	in.open(getFileName(GAME_TBLFILE));
 	if (in.isOpen() == false) {
-		error("Can't open table resources file '%s'", getFileName(GAME_TBLFILE));
+		error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_TBLFILE));
 	}
 
 	file_size = in.size();
 
 	_tblList = (byte *)malloc(file_size);
 	if (_tblList == NULL)
-		error("Out of memory for strip table list");
+		error("loadGamePcFile: Out of memory for strip table list");
 	in.read(_tblList, file_size);
 	in.close();
 
@@ -277,12 +277,12 @@ void SimonEngine::loadGamePcFile() {
 	/* Read list of TEXT resources */
 	in.open(getFileName(GAME_STRFILE));
 	if (in.isOpen() == false)
-		error("Can't open text resources file '%s'", getFileName(GAME_STRFILE));
+		error("loadGamePcFile: Can't load text resources file '%s'", getFileName(GAME_STRFILE));
 
 	file_size = in.size();
 	_strippedTxtMem = (byte *)malloc(file_size);
 	if (_strippedTxtMem == NULL)
-		error("Out of memory for strip text list");
+		error("loadGamePcFile: Out of memory for strip text list");
 	in.read(_strippedTxtMem, file_size);
 	in.close();
 }
@@ -291,7 +291,7 @@ void SimonEngine::readGamePcText(Common::File *in) {
 	_textSize = in->readUint32BE();
 	_textMem = (byte *)malloc(_textSize);
 	if (_textMem == NULL)
-		error("Out of text memory");
+		error("readGamePcText: Out of text memory");
 
 	in->read(_textMem, _textSize);
 
@@ -463,7 +463,7 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 			*ptr++ = val & 255;
 			break;
 		default:
-			error("Bad cmd table entry %c", l);
+			error("readSingleOpcode: Bad cmd table entry %c", l);
 		}
 	}
 }
@@ -474,13 +474,13 @@ void SimonEngine::openGameFile() {
 		_gameFile->open(getFileName(GAME_GMEFILE));
 
 		if (_gameFile->isOpen() == false)
-			error("Can't open game file '%s'", getFileName(GAME_GMEFILE));
+			error("openGameFile: Can't load game file '%s'", getFileName(GAME_GMEFILE));
 
 		uint32 size = _gameFile->readUint32LE();
 
 		_gameOffsetsPtr = (uint32 *)malloc(size);
 		if (_gameOffsetsPtr == NULL)
-			error("out of memory, game offsets");
+			error("openGameFile: Out of memory, game offsets");
 
 		readGameFile(_gameOffsetsPtr, 0, size);
 #if defined(SCUMM_BIG_ENDIAN)
@@ -493,7 +493,7 @@ void SimonEngine::openGameFile() {
 void SimonEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
 	_gameFile->seek(offs, SEEK_SET);
 	if (_gameFile->read(dst, size) != size)
-		error("readGameFile(%d,%d) read failed", offs, size);
+		error("readGameFile: Read failed (%d,%d)", offs, size);
 }
 
 // Thanks to Stuart Caie for providing the original
@@ -635,18 +635,18 @@ void SimonEngine::loadSimonVGAFile(uint vga_id) {
 
 		in.open(filename);
 		if (in.isOpen() == false)
-			error("loadSimonVGAFile: can't open %s", filename);
+			error("loadSimonVGAFile: Can't load %s", filename);
 
 		size = in.size();
 		if (getFeatures() & GF_CRUNCHED) {
 			byte *srcBuffer = (byte *)malloc(size);
 			if (in.read(srcBuffer, size) != size)
-				error("loadSimonVGAFile: read failed");
+				error("loadSimonVGAFile: Read failed");
 			decrunchFile(srcBuffer, _vgaBufferPointers[11].vgaFile2, size);
 			free(srcBuffer);
 		} else {
 			if (in.read(_vgaBufferPointers[11].vgaFile2, size) != size)
-				error("loadSimonVGAFile: read failed");
+				error("loadSimonVGAFile: Read failed");
 		}
 		in.close();
 	} else {
@@ -701,14 +701,14 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 			if (type == 3) 
 				return NULL;
 			else
-				error("loadVGAFile: can't open %s", filename);
+				error("loadVGAFile: Can't load %s", filename);
 		}
 
 		dstSize = srcSize = in.size();
 		if (getFeatures() & GF_CRUNCHED) {
 			byte *srcBuffer = (byte *)malloc(srcSize);
 			if (in.read(srcBuffer, srcSize) != srcSize)
-				error("loadVGAFile: read failed");
+				error("loadVGAFile: Read failed");
 
 			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
 			dst = allocBlock (dstSize + extraBuffer);
@@ -717,7 +717,7 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 		} else {
 			dst = allocBlock(dstSize + extraBuffer);
 			if (in.read(dst, dstSize) != dstSize)
-				error("loadVGAFile: read failed");
+				error("loadVGAFile: Read failed");
 		}
 		in.close();
 	} else {
@@ -753,6 +753,9 @@ void SimonEngine::loadSound(uint sound, int pan, int vol, uint type) {
 		dst = (byte *)malloc(dstSize);
 		decompressData(filename, dst, offset, srcSize, dstSize);
 	} else {
+		if (!_curSfxFile)
+			error("loadSound: Can't load sound data file '%d3.VGA'", _zoneNumber);
+
 		dst = _curSfxFile + READ_LE_UINT32(_curSfxFile + sound * 4);
 	}
 
