@@ -128,6 +128,8 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			lure_exe.read(&buffer, sizeof(RoomResource));
 
 			RoomResourceOutput *rec = (RoomResourceOutput *) (data + offset);
+			rec->hdrFlags = headerEntry.hdrFlags;
+			rec->actions = FROM_LE_32(buffer.actions);
 			rec->roomNumber = headerEntry.roomNumber;
 			rec->descId = headerEntry.descId;
 			rec->numLayers = buffer.numLayers;
@@ -1128,8 +1130,8 @@ void validate_executable() {
 
 int main(int argc, char *argv[])
 {
-	const char *inFilename = (argc >= 2) ? argv[1] : "f:\\games\\lure\\lure.exe";
-	const char *outFilename = (argc == 3) ? argv[2] : "f:\\games\\lure\\lure.dat";
+	const char *inFilename = (argc >= 2) ? argv[1] : "c:\\games\\lure\\lure.exe";
+	const char *outFilename = (argc == 3) ? argv[2] : "c:\\games\\lure\\lure.dat";
 
 	if (!lure_exe.open(inFilename))
 	{

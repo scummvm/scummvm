@@ -27,7 +27,7 @@
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 11
+#define VERSION_MINOR 12
 #define ENGLISH_LURE 
 
 #define DATA_SEGMENT 0xac50
@@ -103,7 +103,8 @@ struct RoomHeaderEntry {
 	uint16 offset;
 	uint16 roomNumber;
 	uint16 descId;
-	byte unused[3];
+	uint16 unused;
+	byte hdrFlags;
 };
 
 struct HotspotHeaderEntry {
@@ -185,12 +186,13 @@ struct HotspotResourceOutput {
 };
 
 struct RoomResource {
-	byte unknown1[6];
+	uint32 actions;
+	uint16 unknown1;
 	uint16 pixelListOffset;
 	byte numLayers;
 	uint16 layers[4];
 	uint16 sequenceOffset;
-	byte unknown3[5];
+	byte unknown2[5];
 	uint8 walkBoundsIndex;
 	int16 clippingXStart;
 	int16 clippingXEnd;
@@ -208,6 +210,9 @@ struct RoomRectOut {
 
 struct RoomResourceOutput {
 	uint16 roomNumber;
+	uint8 hdrFlags;
+	uint8 unused;
+	uint32 actions;
 	uint16 descId;
 	uint16 numLayers;
 	uint16 layers[4];
