@@ -65,6 +65,9 @@ void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
 	// Not yet implemented
 }
 
+// Sets the bitmask indicating what group of rooms/hotspots to display when the
+// player is issuing commands via the "Tell" action
+
 void Script::setHotspotFlagMask(uint16 maskVal, uint16 v2, uint16 v3) {
 	ValueTableData &fields = Resources::getReference().fieldList();
 	fields.hdrFlagMask() = (uint8) maskVal;
