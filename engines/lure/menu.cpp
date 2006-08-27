@@ -271,23 +271,46 @@ uint16 PopupMenu::ShowInventory() {
 uint16 PopupMenu::ShowItems(Action contextAction) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
+	RoomDataList &rooms = res.roomData();
 	HotspotDataList &hotspots = res.hotspotData();
 	StringData &strings = StringData::getReference();
 	Room &room = Room::getReference();
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
-	HotspotDataList::iterator i;
-	uint16 hotspotIds[MAX_NUM_DISPLAY_ITEMS];
+	RoomDataList::iterator ir;
+	HotspotDataList::iterator ih;
+	uint16 entryIds[MAX_NUM_DISPLAY_ITEMS];
 	uint16 nameIds[MAX_NUM_DISPLAY_ITEMS];
-	char *hotspotNames[MAX_NUM_DISPLAY_ITEMS];
+	char *entryNames[MAX_NUM_DISPLAY_ITEMS];
 	int numItems = 0;
 	int itemCtr;
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	uint32 contextBitflag = 1 << (contextAction - 1);
 
-	// TODO: Looping through room list as well
+	// Loop for rooms
+	for (ir = rooms.begin(); ir != rooms.end(); ++ir) {
+		RoomData *roomData = *ir;
 
-	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		HotspotData *hotspot = *i;
+		// Pre-condition checks for whether to skip room
+		if ((roomData->hdrFlags != 15) && ((roomData->hdrFlags & fields.hdrFlagMask()) == 0))
+			continue;
+		if ((roomData->flags & (0x20 | 0x80)) != 0)
+			continue;
+		if ((roomData->actions & contextBitflag) == 0)
+			continue;
+
+		// Add room to list of entries to display
+		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
+		entryIds[numItems] = roomData->roomNumber;
+		nameIds[numItems] = roomData->roomNumber;
+		entryNames[numItems] = (char *) Memory::alloc(MAX_HOTSPOT_NAME_SIZE);
+		strings.getString(roomData->roomNumber, entryNames[numItems]);
+		++numItems;
+	}
+
+	// Loop for hotspots
+	for (ih = hotspots.begin(); ih != hotspots.end(); ++ih) {
+		HotspotData *hotspot = *ih;
 
 		if ((hotspot->headerFlags != 15) && 
 			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
@@ -301,7 +324,7 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 		if (((hotspot->flags & 0x10) != 0) && (hotspot->roomNumber != player->roomNumber()))
 			continue;
 
-		if ((hotspot->actions & contextAction) == 0)
+		if ((hotspot->actions & contextBitflag) == 0)
 			// If hotspot does not allow action, then skip it
 			continue;
 
@@ -319,15 +342,16 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 
 		// Add hotspot to list of entries to display
 		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
-		hotspotIds[numItems] = hotspot->hotspotId;
+		entryIds[numItems] = hotspot->hotspotId;
 		nameIds[numItems] = hotspot->nameId;
-		strings.getString(hotspot->nameId, hotspotNames[numItems]);
+		entryNames[numItems] = (char *) Memory::alloc(MAX_HOTSPOT_NAME_SIZE);
+		strings.getString(hotspot->nameId, entryNames[numItems]);
 		++numItems;
 	}
 
 	if (numItems == 0) 
 		// No items, so add a 'nothing' to the statusLine
-		strcat(Room::getReference().statusLine(), "(nothing)");
+		strcat(room.statusLine(), "(nothing)");
 
 	room.update();
 	screen.update();
@@ -337,8 +361,14 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 		// Return flag for no items to ask for
 		return 0xfffe;
 
-	uint16 result = Show(numItems, (const char **) hotspotNames);
-	if (result != 0xffff) result = hotspotIds[result];
+	// Display items
+	uint16 result = Show(numItems, (const char **) entryNames);
+	if (result != 0xffff) result = entryIds[result];
+
+	// Deallocate display strings
+	for (itemCtr = 0; itemCtr < numItems; ++itemCtr)
+		Memory::dealloc(entryNames[itemCtr]);
+
 	return result;
 }
 
@@ -346,32 +376,36 @@ Action PopupMenu::Show(uint32 actionMask) {
 	int numEntries = 0;
 	uint32 v = actionMask;
 	int index;
+	const Action *currentAction;
+	uint16 resultIndex;
+	Action resultAction;
 
 	for (index = 1; index <= EXAMINE; ++index, v >>= 1) {
 		if (v & 1) ++numEntries;
 	}
 
 	const char **strList = (const char **) Memory::alloc(sizeof(char *) * numEntries);
+	Action *actionSet = (Action *) Memory::alloc(sizeof(Action) * numEntries);
 
-	v = actionMask;
 	int strIndex = 0;
-	for (index=1; index<=EXAMINE; ++index, v >>= 1) {
-		if (v & 1) 
-			strList[strIndex++] = actionList[index];
+	for (currentAction = &sortedActions[0]; *currentAction != NONE; ++currentAction) {
+		if ((actionMask & (1 << (*currentAction - 1))) != 0) {
+			strList[strIndex] = actionList[*currentAction];
+			actionSet[strIndex] = *currentAction;
+			++strIndex;
+		}
 	}
 
-	uint16 result = Show(numEntries, strList);
-	
-	if (result == 0xffff) return NONE;
+	resultIndex = Show(numEntries, strList);
 
-	v = actionMask;
-	for (index = 1; index <= EXAMINE; ++index, v >>= 1) {
-		if (v & 1) 
-			if (result-- == 0) return (Action) index;
-	}
+	if (resultIndex == 0xffff) 
+		resultAction = NONE;
+	else 
+		resultAction = actionSet[resultIndex];
 
-	delete strList;
-	return NONE;
+	Memory::dealloc(strList);
+	Memory::dealloc(actionSet);
+	return resultAction;
 }
 
 Action PopupMenu::Show(int numEntries, Action *actions) {
@@ -430,7 +464,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 			s->fillRect(r, 0);
 
 			for (int index = 0; index < numLines; ++index) {
-				int actionIndex = selectedIndex - (numEntries / 2) + index;
+				int actionIndex = selectedIndex - (numLines / 2) + index;
 				if ((actionIndex >= 0) && (actionIndex < numEntries)) {
 					s->writeString(DIALOG_EDGE_SIZE, DIALOG_EDGE_SIZE + index * FONT_HEIGHT,
 						actions[actionIndex], true, 
