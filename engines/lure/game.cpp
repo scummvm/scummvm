@@ -350,12 +350,21 @@ void Game::handleRightClickMenu() {
 
 		case ASK:
 			hotspot = res.getHotspot(room.hotspotId());
+			assert(hotspot);
 			strings.getString(hotspot->nameId, statusLine);
 			strcat(statusLine, " for ");
 			statusLine += strlen(statusLine);
 
 			itemId = PopupMenu::ShowItems(GET);
 			breakFlag = ((itemId != 0xffff) && (itemId != 0xfffe));
+			break;
+
+		case TELL:
+			hotspot = res.getHotspot(room.hotspotId());
+			assert(hotspot);
+			strings.getString(hotspot->nameId, statusLine);
+			strcat(statusLine, " to ");
+			breakFlag = GetTellActions();
 			break;
 
 		case GIVE:
@@ -452,6 +461,195 @@ void Game::handleLeftClick() {
 	}
 }
 
+const char *continueStrsList[] = {"and then", "finish"};
+
+bool Game::GetTellActions() {
+	Resources &res = Resources::getReference();
+	Screen &screen = Screen::getReference();
+	Room &room = Room::getReference();
+	StringData &strings = StringData::getReference();
+	char *statusLine = room.statusLine();
+	uint16 fullCommands[MAX_TELL_COMMANDS * 3 + 1];
+	uint16 *commands = &fullCommands[1];
+	char *statusLinePos[MAX_TELL_COMMANDS][4];
+	int commandIndex = 0;
+	int paramIndex = 0;
+	uint16 selectionId;
+	char selectionName[MAX_DESC_SIZE];
+	HotspotData *hotspot;
+	Action action;
+
+	// First word will be the destination character
+	fullCommands[0] = room.hotspotId();
+
+	// Loop for getting tell commands
+
+	while ((commandIndex >= 0) && (commandIndex < MAX_TELL_COMMANDS)) {
+
+		// Loop for each sub-part of commands: Action, up to two params, and 
+		// a "and then" selection to allow for more commands
+
+		while ((paramIndex >= 0) && (paramIndex <= 4)) {
+			// Update status line
+			statusLine += strlen(statusLine);
+			statusLinePos[commandIndex][paramIndex] = statusLine;
+			room.update();
+			screen.update();
+
+			switch (paramIndex) {
+			case 0:
+                // Prompt for selection of action to perform
+				action = PopupMenu::Show(0x6A07FD);
+				if (action == NONE) {
+					// Move backwards to prior specified action
+					--commandIndex;
+					if (commandIndex < 0) 
+						paramIndex = -1;
+					else
+					{
+						paramIndex = 3;
+						statusLine = statusLinePos[commandIndex][paramIndex];
+						*statusLine = '\0';
+					}
+					break;
+				}
+
+				// Add the action to the status line
+				sprintf(statusLine + strlen(statusLine), "%s ", actionList[action]);
+
+				// Handle any processing for the action
+				commands[commandIndex * 3] = (uint16) action;
+				commands[commandIndex * 3 + 1] = 0;
+				commands[commandIndex * 3 + 2] = 0;
+				++paramIndex;
+				break;
+
+			case 1:
+				// First parameter
+				action = (Action) commands[commandIndex * 3]; 
+				if (action != RETURN) {
+					// Prompt for selection
+					if ((action != USE) && (action != DRINK) && (action != GIVE)) 
+						selectionId = PopupMenu::ShowItems(action);
+					else
+						selectionId = PopupMenu::ShowItems(GET);
+
+					if ((selectionId == 0xffff) || (selectionId == 0xfffe)) {
+						// Move back to prompting for action
+						--paramIndex;
+						statusLine = statusLinePos[commandIndex][paramIndex];
+						*statusLine = '\0';
+						break;
+					}
+							
+					if (selectionId < NOONE_ID) {
+						// Must be a room selection
+						strings.getString(selectionId, selectionName);
+					} else {
+						hotspot = res.getHotspot(selectionId);
+						assert(hotspot);
+						strings.getString(hotspot->nameId, selectionName);
+					}
+
+					// Store selected entry
+					commands[commandIndex * 3 + 1] = selectionId;
+					strcat(statusLine, selectionName);
+				}
+
+				++paramIndex;
+				break;
+
+			case 2:
+				// Second parameter
+				action = (Action) commands[commandIndex * 3]; 
+				if (action == ASK)
+					strcat(statusLine, " for ");
+				else if (action == GIVE)
+					strcat(statusLine, " to ");
+				else if (action == USE)
+					strcat(statusLine, " on ");
+				else {
+					// All other commads don't need a second parameter
+					++paramIndex;
+					break;
+				}
+
+				// Get the second parameter
+				selectionId = PopupMenu::ShowItems(GET);
+				if ((selectionId == 0xfffe) || (selectionId == 0xffff)) {
+					--paramIndex;
+					statusLine = statusLinePos[commandIndex][paramIndex];
+					*statusLine = '\0';
+				} else {
+					// Display the second parameter
+					hotspot = res.getHotspot(selectionId);
+					assert(hotspot);
+					strings.getString(hotspot->nameId, selectionName);
+					strcat(statusLine, selectionName);
+
+					commands[commandIndex * 3 + 2] = selectionId;
+					++paramIndex;
+				}
+				break;
+
+			case 3:
+				// Prompting for "and then" for more commands
+				if (commandIndex == MAX_TELL_COMMANDS - 1) {
+					// No more commands allowed
+					++commandIndex;
+					paramIndex = -1;
+				} else {
+					// Only prompt if less than 8 commands entered
+					selectionId = PopupMenu::Show(2, continueStrsList);
+
+					switch (selectionId) {
+					case 0:
+						// Get ready for next command
+						sprintf(statusLine + strlen(statusLine), " %s ", continueStrsList[0]);
+						++commandIndex;
+						paramIndex = 0;
+						break;
+
+					case 1:
+						// Increment for just selected command, and add a large amount
+						// to signal that the command sequence is complete
+						commandIndex += 1 + 0x100;
+						paramIndex = -1;
+						break;
+
+					default:
+						// Move to end of just completed command
+						action = (Action) commands[commandIndex * 3]; 
+						if (action == RETURN)
+							paramIndex = 0;
+						else if ((action == ASK) || (action == GIVE) || (action == USE))
+							paramIndex = 2;
+						else
+							paramIndex = 1;
+					
+						statusLine = statusLinePos[commandIndex][paramIndex];
+						*statusLine = '\0';
+					}
+				}
+			}
+		}
+	}
+
+	bool result = (commandIndex != -1);
+	if (result) {
+		commandIndex &= 0xff;
+		assert((commandIndex > 0) && (commandIndex <= MAX_TELL_COMMANDS));
+		strcpy(statusLinePos[0][0], "..");
+		room.update();
+		screen.update();
+
+		CharacterScheduleEntry *playerRec = res.playerSupportRecord();
+  		playerRec->setDetails2(TELL, commandIndex * 3 + 1, &fullCommands[0]);
+	}
+
+	return result;
+}
+
 void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 	Resources &res = Resources::getReference();
 	Room &room = Room::getReference();
@@ -460,14 +658,14 @@ void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 
 	fields.setField(CHARACTER_HOTSPOT_ID, PLAYER_ID);
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspotId);
-//	fields.setField(USE_HOTSPOT_ID, usedId);
 
 	res.setCurrentAction(action);
 	room.setCursorState(CS_ACTION);
 
 	// Set the action
 	CharacterScheduleEntry *rec = res.playerSupportRecord();
-	rec->setDetails(action, hotspotId, usedId);
+	if (action != TELL)
+		rec->setDetails(action, hotspotId, usedId);
 	player->currentActions().addFront(DISPATCH_ACTION, rec, player->roomNumber());
 }
 
