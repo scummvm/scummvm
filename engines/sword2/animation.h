@@ -22,8 +22,8 @@
 #ifndef SWORD2_ANIMATION_H
 #define SWORD2_ANIMATION_H
 
-#include "graphics/animation.h"
 #include "graphics/dxa_player.h"
+#include "graphics/mpeg_player.h"
 #include "sound/mixer.h"
 
 namespace Sword2 {

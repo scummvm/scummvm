@@ -21,8 +21,7 @@
  */
 
 #include "common/stdafx.h"
-#include "graphics/animation.h"
-#include "common/config-manager.h"
+#include "graphics/mpeg_player.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"

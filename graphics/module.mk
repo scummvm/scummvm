@@ -1,7 +1,6 @@
 MODULE := graphics
 
 MODULE_OBJS := \
-	animation.o \
 	cursorman.o \
 	dxa_player.o \
 	font.o \
@@ -13,6 +12,7 @@ MODULE_OBJS := \
 	ilbm.o \
 	imagedec.o \
 	imageman.o \
+	mpeg_player.o \
 	paletteman.o \
 	primitives.o \
 	scaler.o \

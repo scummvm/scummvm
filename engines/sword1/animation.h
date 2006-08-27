@@ -23,8 +23,8 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include "graphics/animation.h"
 #include "graphics/dxa_player.h"
+#include "graphics/mpeg_player.h"
 
 #include "sword1/screen.h"
 #include "sword1/sound.h"
