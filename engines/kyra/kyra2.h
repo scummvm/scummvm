@@ -29,7 +29,8 @@ enum kSequences {
 	kSequenceVirgin = 0,
 	kSequenceWestwood = 1,
 	kSequenceTitle = 2,
-	kSequenceOverview = 3
+	kSequenceOverview = 3,
+	kSequenceLibrary = 4
 };
 
 class WSAMovieV2;
@@ -40,6 +41,17 @@ struct ActiveWSA {
 	uint16 endFrame;
 	uint16 frameDelay;
 	uint32 nextFrame;
+	void (KyraEngine_v2::*callback)(int);
+};
+
+struct ActiveChat {
+	uint16 strIndex;
+	uint16 x;
+	uint16 y;
+	int duration;
+	uint16 field_8;
+	uint16 startTime;
+	uint16 field_E;
 };
 
 struct Sequence {
@@ -67,14 +79,24 @@ private:
 	int seq_introWestwood(int seqNum);
 	int seq_introTitle(int seqNum);
 	int seq_introOverview(int seqNum);
-	void seq_loadWSA(int wsaNum, const char *filename, int frameDelay);
+	int seq_introLibrary(int seqNum);	
+	void seq_introOverviewOver1(int currentFrame);
+	void seq_introOverviewForest(int currentFrame);	
+	void seq_introOverviewDragon(int currentFrame);
+	void seq_loadWSA(int wsaNum, const char *filename, int frameDelay, void (KyraEngine_v2::*callback)(int) = 0 );
 	void seq_unloadWSA(int wsaNum);
 	void seq_playWSAs();
-	
+	void seq_showChats();
+	void seq_playIntroChat(uint8 chatNum);
+	void seq_resetAllChatEntries();
+	void seq_waitForChatsToFinish();
+	void seq_setChatEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 unk1);
+
 	void mainMenu();
 	int init();
 	
 	ActiveWSA *_activeWSA;
+	ActiveChat *_activeChat;
 	uint8 *_gameShapes[50];
 	uint8 *_mouseSHPBuf;
 
@@ -82,6 +104,8 @@ private:
 	static const int _introSoundListSize;
 	static const char *_introStrings[];
 	static const int _introStringsSize;
+	
+	int _introStringsDuration[21];
 	
 };
 

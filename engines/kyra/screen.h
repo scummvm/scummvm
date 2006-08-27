@@ -84,6 +84,7 @@ public:
 		FID_CRED6_FNT,
 		FID_CRED8_FNT,
 		FID_BOOKFONT_FNT,
+		FID_GOLDFONT_FNT,
 		FID_NUM
 	};
 	
@@ -108,6 +109,7 @@ public:
 	void setScreenPalette(const uint8 *palData);
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
 	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
+	void copyPage(uint8 srcPage, uint8 dstPage);
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
 	void copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src);
 	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);

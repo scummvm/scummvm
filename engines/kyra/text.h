@@ -25,6 +25,7 @@
 
 namespace Kyra {
 class Screen;
+class FontId;
 
 class TextDisplayer {
 	struct TalkCoords {
@@ -49,7 +50,9 @@ public:
 	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
-	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
+	void printIntroTextMessage(const char *text, int x, int y, uint8 col1, uint8 col2, uint8 col3,
+			int dstPage, Screen::FontId font=Screen::FID_8_FNT);	
+	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
 	void printCharacterText(const char *text, int8 charNum, int charX);
 
 	uint16 _talkMessageY;

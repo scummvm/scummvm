@@ -45,13 +45,18 @@ int KyraEngine_v2::init() {
 	KyraEngine::init();
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
-	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
+	_screen->loadFont(Screen::FID_GOLDFONT_FNT, "GOLDFONT.FNT");
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 	
 	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
 	assert(_mouseSHPBuf);
 
+	assert(_introStringsSize == 21);
+	for (int i = 0; i < 21; i++) {
+		_introStringsDuration[i] = strlen(_introStrings[i]) * 8;
+	}
+	
 	for (int i = 0; i < 2; i++) {
 		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
 		assert(_gameShapes[i]);
@@ -83,7 +88,7 @@ void KyraEngine_v2::mainMenu() {
 			case 0:
 				break;
 			case 1:
-				seq_playSequences(kSequenceOverview); 
+				seq_playSequences(kSequenceOverview, kSequenceLibrary); 
 				break;
 			case 2:
 				break;
