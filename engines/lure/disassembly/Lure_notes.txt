@@ -33,13 +33,10 @@ animation_load/animation_load_2 - Makes a hotspot 'active' by loading it into
      Input:  load   =>  bx = resource Id
              load_2 =>  si = offset of hotspot record
 
-Seems to load a single animation entry into the runtime
-             location for animations.
-
 animation_load_entry - Not sure if this method is just for loading animations; it
                   does some checks, and if passed, then takes the word at offset
                   9h in the resource and jumps to that location. In calls I've
-                  seen so far, this is 7167h, which then calls animation_load 
+                  seen so far, this is 7167h, which then calls animation_load
      Input:  bx = Resource Id for animation entry
 
 animation_load_entry_2 - Alternate form of the animation load
@@ -63,6 +60,14 @@ animation_unload/animation_unload_2 - Removes a hotspot from the active hotspot
         list. Both are almost the same except animation_unload additionally
         sets field 0Bh of the hotspot (the offset in the animation list where
         a hotspot is loaded) to zero.
+
+animations_preload - Decodes any animations ilsted for the current room, based
+        on a system list. This is likely intended to improve performance on
+        low end systems, as it means the bulk of animations are already decoded
+        before a new screen is faded in
+
+animations_preload_ticks - Handles repeatably calling the animation tick method
+        for hotspots in a room several times before the room is displayed        
 
 char_face_up/char_face_down/char_face_left/char_face_right - Faces the character
               represented by a given hotspot in the given direction
@@ -206,12 +211,18 @@ copy_rectangle - Copys a 32x32 rectangular area from a source buffer to a
 
 copy_protection_check - Performs the copy protection check. Note that in the
      English version of the game supplied by Revolution, this has been cracked.
-     This is 
+     This is
 
 decode_character - Decodes a character from a compressed bit-stream of text
      Input:  DL = current bit position for read is set
              DS:SI = current byte to read data from
     Output:  AL = output byte
+
+decode_character_and_hotspot_names - Decodes the names of both the current
+             talking character as well as the active hotspot. Note that the
+             input and output fields/buffers are hardcoded, and not passed
+             to the method
+     Input:  al = A value of zero suppresses adding the prefix
 
 decode_file_entry -  Decodes a file resource, normally a graphics screen
   Input: dx = source data segment
@@ -230,6 +241,9 @@ decode_string_init - Initialises a source pointer for decoding a compressed
     Output:  ds:si = address of compressed string
              dl = Starting bit position for reading string
 
+
+decode_hotspot_name - Decodes the name of a hotspot, prefixing with the
+                  correct article of 'a', 'an', or 'the'              
 
 decode_and_fade_in_display - Decodes the data for a given screen, and then fades it into
                   view by using the defined fade in proc for the given video mode
@@ -424,6 +438,10 @@ popmenu_populate_list - Populates the contents of the list used to define
              what is displayed in the right-click popup menu
      Input:  dx:ax = Bitset indicating which actions should be displayed, in
              order of their placement in the action list
+
+prepare_ask_item_list - Creates a list of menuitems for the things a character
+             can be asked for
+     Input:  ax = Action index whose context to generate the list for
 
 protection_cycle_characters - Cycles through a single frame in the list of
          possible characters in the copy protection check and displays them
