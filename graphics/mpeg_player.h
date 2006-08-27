@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRAPHICS_ANIMATION_H
-#define GRAPHICS_ANIMATION_H
+#ifndef GRAPHICS_MPEG_PLAYER_H
+#define GRAPHICS_MPEG_PLAYER_H
 
 #include "common/scummsys.h"
 
