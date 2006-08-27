@@ -414,7 +414,7 @@ fbpack	Fatty Bear's Fun Pack
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
-	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 73	-	-	daniel9
+	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 71	-	-	daniel9
 	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
 	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 71	-	-	Karl Ove Hufthammer
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
@@ -443,7 +443,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	8368f552b1e3eba559f8d559bcc4cadb	-1	All	All	-	-	-	Kirben, sev
-	0cccfa5223099a60e76cfcca57a1a141	-1	nl	Windows	-	-	-	adutchguy
+	0cccfa5223099a60e76cfcca57a1a141	-1	nl	All	-	-	-	adutchguy, daniel9
 	898ce8eb1234a955ef75e87141902bb3	-1	ru	Windows	-	-	-	sev
 	83cedbe26aa8b58988e984e3d34cac8e	-1	de	All	HE 99	-	-	Joachim Eberhard
 	78c07ca088526d8d4446a4c2cb501203	-1	fr	Mac	HE 99	-	-	alamaz
@@ -485,6 +485,7 @@ maze	Freddi Fish and Luther's Maze Madness
 	4dbff3787aedcd96b0b325f2d92d7ad9	-1	us	All	HE 100	Updated	-	Kirben
 
 water	Freddi Fish and Luther's Water Worries
+	8539c0ff89868e55a08e652ac44daaae	-1	nl	All	HE 80	-	-	daniel9
 	4ba37f835be11a59d969f90f272f575b	-1	us	All	HE 80	-	-	Kirben
 	2012f854d83d9cc6f73b2b544cd8bbf8	-1	ru	Windows	HE 80	-	-	sev
 	6271130f440066830eca9056c1d7926f	-1	ru	Windows	HE 80	-	-	sev
@@ -535,6 +536,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	60557	us	All	-	-	-	Kirben
 	6a60d395b78b205c93a956100b1bf5ae	-1	de	All	HE 98.5	-	-	EdDammer
+	513f91a9dbe8d5490b39e56a3ac5bbdf	-1	nl	Mac	HE 98.5	-	-	daniel9
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
@@ -546,6 +548,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
+	06c3cf4f31daad8b1cd93153491db9e6	-1	nl	Mac	-	-	-	daniel9
 	20176076d708bf14407bcc9bdcd7a418	-1	ru	Windows	-	-	-	sev
 
 	f08145577e4f13584cc90b3d6e9caa55	-1	nl	All	-	Demo	-	joostp
@@ -560,6 +563,7 @@ pjgames	Pajama Sam: Games to Play On Any Day
 	8a484262363a8e18be87112454f1456b	-1	us	All	-	-	-	Kirben
 
 lost	Pajama Sam's Lost & Found
+	28f07458f1b6c24e118a1ea056827701	-1	nl	All	-	-	-	daniel9
 	ed361270102e355afe5236954216aba2	-1	us	All	-	-	-	Kirben
 	a561d2e2413cc1c71d5a1bf87bf493ea	-1	us	All	HE 100	Updated	-	Kirben
 	69ffe29185b8d71f09f6199f8b2a87cb	-1	ru	Windows	HE 100	-	-	sev
@@ -570,12 +574,14 @@ SamsFunShop	Pajama Sam's One-Stop Fun Shop
 	68155a6bf082221525f431c2cbdac8ab	-1	us	All	-	-	-	Kirben
 
 socks	Pajama Sam's Sock Works
+	4bfa4a43684bcb437f7fb47f457a0aa5	-1	nl	All	HE 85	-	-	daniel9
 	5e8fb66971a60e523e5afbc4c129c0e8	-1	us	All	HE 85	-	-	Kirben
 	19263586f749a560c1adf8b3393a9593	-1	ru	Windows	HE 85	-	-	sev
 	8de13897f0121c79d29a2377159f9ad0	-1	en	Windows	HE 99	Updated	-	Aziraphale Jasra
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
+	1ed22f601f8b3695804a6583cc3083f1	-1	nl	All	HE 98.5	-	-	daniel9
 	055ffe4f47753e47594ac67823220c54	-1	de	All	HE 99	-	-	Joachim Eberhard
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 
@@ -615,6 +621,7 @@ puttputt	Putt-Putt Joins the Parade
 	37ff1b308999c4cca7319edfcc1280a0	8269	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
+	70b0719ac3a5b47ae233c561823d5b96	-1	nl	Mac	-	-	-	daniel9
 	58fdf4c7ad13540a734e18f8584cad89	-1	en	Mac	-	-	-	khalek
 	1005456bfe351c1b679e1ff2dc2849e9	-1	All	Windows	-	-	-	khalek
 	c3b22fa4654bb580b20325ebf4174841	-1	nl	Windows	-	-	-	joostp
@@ -633,8 +640,8 @@ PuttTime	Putt-Putt Travels Through Time
 	7c980a1b1596a93f26917318884f48f7	-1	de	All	HE 99	Updated	-	Joachim Eberhard
 	d4aac997e2f4e15341f0bfbf905419bd	62698	gb	Windows	HE 99	-	-	eriktorbjorn
 	defb8cb9ec4b0f91acfb6b61c6129ad9	-1	ru	Windows	HE 99	-	-	sev
+	fcb78ebecab2757264c590890c319cc5	-1	nl	All	HE 100	-	-	adutchguy, daniel9
 	a525c1753c1db5011c00417da37887ef	-1	us	All	HE 100	Updated	-	Kirben
-	fcb78ebecab2757264c590890c319cc5	-1	nl	Windows	HE 100	-	-	adutchguy
 
 	4e5867848ee61bc30d157e2c94eee9b4	18394	us	All	HE 90	Demo	-	khalek, sev
 	59d5cfcc5e672a6e07baae01328b918b	-1	fr	All	HE 90	Demo	-	Kirben
@@ -670,7 +677,7 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 
 spyfox	SPY Fox 1: Dry Cereal
 	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek
-	9bda5fee51d2fda5253d02c642016bf4	-1	nl	Windows	HE 98.5	-	-	joostp
+	9bda5fee51d2fda5253d02c642016bf4	-1	nl	All	HE 98.5	-	-	daniel9, joostp
 	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard
 	a28135a7ade38cc0208b04507c46efd1	-1	de	All	HE 99	-	-	nachbarnebenan
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
