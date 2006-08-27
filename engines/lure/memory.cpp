@@ -39,7 +39,7 @@ uint8 *Memory::alloc(uint32 size) {
 	return (uint8 *) malloc(size);
 }
 
-void Memory::dealloc(uint8 *block) {
+void Memory::dealloc(void *block) {
 	free(block);
 }
 
