@@ -115,9 +115,7 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		// OTherwise fall through to default.
 
 	default:
-		printf ("MidiParser_S1D: Warning! Unexpected byte 0x%02X found!\n", (int) info.event);
-		_abort_parse = true;
-		_position._play_pos = 0;
+		error("MidiParser_S1D: Unexpected byte 0x%02X found!\n", (int) info.event);
 	}
 }
 
@@ -125,10 +123,8 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 
 	byte *pos = data;
-	if (*(pos++) != 0xFC) {
-		printf ("Warning: Expected 0xFC header but found 0x%02X instead\n", (int) *pos);
-		return false;
-	}
+	if (*(pos++) != 0xFC)
+		error("Expected 0xFC header but found 0x%02X instead\n", (int) *pos);
 
 	// The next 3 bytes MIGHT be tempo, but we skip them and use the default.
 //	setTempo (*(pos++) | (*(pos++) << 8) | (*(pos++) << 16));

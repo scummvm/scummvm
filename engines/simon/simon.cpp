@@ -657,7 +657,7 @@ byte *SimonEngine::allocateItem(uint size) {
 	_itemHeapCurPos += size;
 
 	if (_itemHeapCurPos > _itemHeapSize)
-		error("Itemheap overflow");
+		error("allocateItem: Itemheap overflow");
 
 	return org;
 }
@@ -683,7 +683,7 @@ void SimonEngine::createPlayer() {
 
 	child = (Child *)allocateChildBlock(_currentPlayer, 3, sizeof(Child));
 	if (child == NULL)
-		error("player create failure");
+		error("createPlayer: player create failure");
 
 	setUserFlag(_currentPlayer, 0, 0);
 }
@@ -842,7 +842,7 @@ uint SimonEngine::getNextVarContents() {
 
 uint SimonEngine::readVariable(uint variable) {
 	if (variable >= 255)
-		error("Variable %d out of range in read", variable);
+		error("readVariable: Variable %d out of range", variable);
 
 	if (getGameType() == GType_FF) {
 		if (getBitFlag(83))
@@ -860,7 +860,7 @@ void SimonEngine::writeNextVarContents(uint16 contents) {
 
 void SimonEngine::writeVariable(uint variable, uint16 contents) {
 	if (variable >= 256)
-		error("Variable %d out of range in write", variable);
+		error("writeVariable: Variable %d out of range", variable);
 
 	if (getGameType() == GType_FF && getBitFlag(83))
 		_variableArray2[variable] = contents;
@@ -872,7 +872,7 @@ void SimonEngine::setItemParent(Item *item, Item *parent) {
 	Item *old_parent = derefItem(item->parent);
 
 	if (item == parent)
-		error("Trying to set item as its own parent");
+		error("setItemParent: Trying to set item as its own parent");
 
 	// unlink it if it has a parent
 	if (old_parent)
@@ -1261,7 +1261,7 @@ TextLocation *SimonEngine::getTextLocation(uint a) {
 	case 102:
 		return &_textLocation4;
 	default:
-		error("text, invalid value %d", a);
+		error("getTextLocation: Invalid text location %d", a);
 	}
 	return NULL;
 }
@@ -2133,10 +2133,9 @@ void SimonEngine::loadMusic(uint music) {
 			File f;
 			sprintf(filename, "MOD%d.MUS", music);
 			f.open(filename);
-			if (f.isOpen() == false) {
-				warning("Can't load music from '%s'", filename);
-				return;
-			}
+			if (f.isOpen() == false)
+				error("loadMusic: Can't load music from '%s'", filename);
+
 			if (getGameId() == GID_SIMON1DEMO)
 				midi.loadS1D (&f);
 			else
@@ -2158,15 +2157,13 @@ void SimonEngine::playSting(uint a) {
 
 	sprintf(filename, "STINGS%i.MUS", _soundFileId);
 	mus_file.open(filename);
-	if (!mus_file.isOpen()) {
-		warning("Can't load sound effect from '%s'", filename);
-		return;
-	}
+	if (!mus_file.isOpen())
+		error("playSting: Can't load sound effect from '%s'", filename);
 
 	mus_file.seek(a * 2, SEEK_SET);
 	mus_offset = mus_file.readUint16LE();
 	if (mus_file.ioFailed())
-		error("Can't read sting %d offset", a);
+		error("playSting: Can't read sting %d offset", a);
 
 	mus_file.seek(mus_offset, SEEK_SET);
 	midi.loadSMF(&mus_file, a, true);
