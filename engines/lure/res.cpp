@@ -315,6 +315,7 @@ void Resources::reloadData() {
 	_talkSelection = 0;
 	_talkStartEntry = 0;
 	_talkDetails.active = false;
+	_talkingCharacter = 0;
 }
 
 RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
