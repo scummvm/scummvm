@@ -428,9 +428,6 @@ int SimonEngine::init() {
 		_system->initSize(_screenWidth, _screenHeight);
 	_system->endGFXTransaction();
 
-	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
-	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-
 	// Setup mixer
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
