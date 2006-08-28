@@ -26,7 +26,6 @@
 #include "common/endian.h"
 
 #include "cine/cine.h"
-#include "cine/auto00.h"
 #include "cine/various.h"
 
 #include "common/config-manager.h"
@@ -78,15 +77,12 @@ void loadPrc(const char *pPrcName) {
 	}
 
 	checkDataDisk(-1);
-	if ((gameType == Cine::GID_FW) && (!strcmp(pPrcName, "AUTO00.PRC"))) {
-		if (!ConfMan.getBool("copy_protection"))
-			scriptPtr = AUT000;
-		else
-			scriptPtr = readFile(pPrcName);
+	if ((gameType == Cine::GID_FW) && (!strcmp(pPrcName, BOOT_PRC_NAME))) {
+		scriptPtr = readFile(pPrcName);
 	} else {
 		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
-		assert(scriptPtr);
 	}
+	assert(scriptPtr);
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
