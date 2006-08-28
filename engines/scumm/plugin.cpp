@@ -606,6 +606,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "lost", "Verloren", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "maze", "maze", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "maze", "Doolhof", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "maze", "Maze Madness", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "mustard", "mustard", kGenHEPC, UNK_LANG, UNK, 0 },
