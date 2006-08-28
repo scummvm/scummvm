@@ -191,7 +191,8 @@ void MoviePlayer::play(void) {
 		_snd->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSoundHandle, _bgSoundStream);
 	}
 	_currentFrame = 0;
-	while (decodeFrame()) {
+	bool terminated = false;
+	while (!terminated && decodeFrame()) {
 		processFrame();
 		syncFrame();
 		updateScreen();
@@ -205,7 +206,7 @@ void MoviePlayer::play(void) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 27) {
 					_snd->stopHandle(_bgSoundHandle);
-					return;
+					terminated = true;
 				}
 				break;
 			case OSystem::EVENT_QUIT:
