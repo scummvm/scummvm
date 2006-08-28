@@ -989,14 +989,6 @@
 			Name="graphics"
 			>
 			<File
-				RelativePath="..\..\graphics\animation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\animation.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\graphics\cursorman.cpp"
 				>
 			</File>
@@ -1050,6 +1042,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\imageman.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\mpeg_player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\mpeg_player.h"
 				>
 			</File>
 			<File
