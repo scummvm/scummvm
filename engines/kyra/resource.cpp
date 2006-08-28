@@ -105,7 +105,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	PAKFile *file = 0;
 
 	if (handle.name() == filename) {
-		file = new PAKFile(fsNode->name().c_str(), (_engine->features() & GF_AMIGA) != 0);
+		file = new PAKFile(fsNode->name().c_str(), handle.name(), (_engine->features() & GF_AMIGA) != 0);
 	} else {
 		uint32 offset = handle.pos();
 		uint8 *buf = new uint8[size];
@@ -252,7 +252,7 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
-PAKFile::PAKFile(const char *file, bool isAmiga) : ResourceFile() {
+PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : ResourceFile() {
 	_isAmiga = isAmiga;
 
 	Common::File pakfile;
@@ -316,7 +316,7 @@ PAKFile::PAKFile(const char *file, bool isAmiga) : ResourceFile() {
 	delete [] buffer;
 	
 	_filename = file;
-	_physfile = "";
+	_physfile = physfile;
 }
 
 PAKFile::PAKFile(const char *file, const char *physfile, const uint32 off, const uint8 *buffer, uint32 filesize, bool isAmiga) : ResourceFile() {
