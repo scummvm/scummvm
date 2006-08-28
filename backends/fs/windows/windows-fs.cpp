@@ -69,6 +69,9 @@ static const char *lastPathComponent(const Common::String &str) {
 		--cur;
 	}
 
+	if (cur == start)
+		return cur;
+
 	return cur + 1;
 }
 
