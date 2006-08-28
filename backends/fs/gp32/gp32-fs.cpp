@@ -194,11 +194,11 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	return true;
 }
 
-const char *lastPathComponent(const Common::String &str) {
+static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
-	while (cur > start && *cur != '\\') {
+	while (cur >= start && *cur != '/') {
 		--cur;
 	}
 
