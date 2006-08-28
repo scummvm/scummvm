@@ -314,6 +314,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\common\fs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\hashmap.cpp"
 				>
 			</File>
@@ -755,10 +759,6 @@
 			<Filter
 				Name="fs"
 				>
-				<File
-					RelativePath="..\..\backends\fs\fs.h"
-					>
-				</File>
 				<File
 					RelativePath="..\..\backends\fs\windows\windows-fs.cpp"
 					>
