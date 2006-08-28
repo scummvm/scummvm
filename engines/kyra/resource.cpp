@@ -119,7 +119,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	if (!file)
 		return false;
 	if (!file->isValid()) {
-		warning("'%s' is no valid pak file!", filename.c_str());
+		warning("'%s' is no valid pak file", filename.c_str());
 		delete file;
 		return false;
 	}
