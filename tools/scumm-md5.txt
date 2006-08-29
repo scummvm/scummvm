@@ -549,6 +549,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
+	aefa244ea034b7cd2041f0a44be7d9ba	-1	en	Mac	-	-	-	pix_climber
 	06c3cf4f31daad8b1cd93153491db9e6	-1	nl	Mac	-	-	-	daniel9
 	20176076d708bf14407bcc9bdcd7a418	-1	ru	Windows	-	-	-	sev
 
@@ -695,6 +696,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
+	9fd66fb3b04703bd50da4356e4202558	-1	en	Mac	-	-	-	pix_climber
 	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp

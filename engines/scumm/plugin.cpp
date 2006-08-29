@@ -641,6 +641,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "GPJ3Demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "pajama3", "PajamaHTF", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "Pajama Sam 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "Pajama Sam 3-Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "pj3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -679,6 +680,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "PuttsFunShop", "Putt's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "putttime", "putttime", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "PuttTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "PuttPuttTTT", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "putttime", "PuttPuttTTT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "PuttTijd", kGenHEPC, Common::NL_NLD, UNK, 0 },
@@ -752,6 +754,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox2", "SpyFoxOR", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "spyfox2", "SpyFoxOR", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "spyfoxsr", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "SpyFoxSR", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "SPYMini", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
