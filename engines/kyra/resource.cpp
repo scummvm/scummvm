@@ -317,6 +317,7 @@ PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : Resourc
 	
 	_filename = file;
 	_physfile = physfile;
+	_physOffset = 0;
 }
 
 PAKFile::PAKFile(const char *file, const char *physfile, const uint32 off, const uint8 *buffer, uint32 filesize, bool isAmiga) : ResourceFile() {
