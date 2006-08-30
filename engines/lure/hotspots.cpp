@@ -1296,9 +1296,9 @@ void Hotspot::doTell(HotspotData *hotspot) {
 	Hotspot *character = res.getActiveHotspot(hotspot->hotspotId);
 	assert(character);
 
-	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
-	else if (result != PC_EXECUTE) {
+	HotspotPrecheckResult hsResult = actionPrecheck(hotspot);
+	if (hsResult == PC_INITIAL) return;
+	else if (hsResult != PC_EXECUTE) {
 		endAction();
 		return;
 	}
@@ -1312,11 +1312,15 @@ void Hotspot::doTell(HotspotData *hotspot) {
 		uint16 result = Script::execute(sequenceOffset);
 
 		if (result == 0) {
+			// Build up sequence of commands for character to follow
+			CharacterScheduleEntry &cmdData = _currentActions.top().supportData();
 			character->setStartRoomNumber(character->roomNumber());
 			character->currentActions().clear();
-			
-			// Build up sequence of commands for character to follow
-			error("Tell command handling yet not yet implemented");
+
+			for (int index = 1; index < cmdData.numParams(); index += 3) {
+				character->currentActions().addBack((Action) cmdData.param(index),
+					character->roomNumber(), cmdData.param(index + 1), cmdData.param(index + 2));
+			}
 		}
 	}
 
@@ -3307,6 +3311,28 @@ void PathFinder::initVars() {
 }
 
 // Current action entry class methods
+
+CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
+	_action = newAction; 
+	_supportData = NULL; 
+	_dynamicSupportData = false;
+	_roomNumber = roomNum;
+}
+
+CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
+	_action = newAction; 
+	_supportData = data; 
+	_dynamicSupportData = false;
+	_roomNumber = roomNum;
+}
+
+CurrentActionEntry::CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
+	_action = DISPATCH_ACTION;
+	_supportData = new CharacterScheduleEntry();
+	uint16 params[2] = {param1, param2};
+	_supportData->setDetails2(newAction, 2, params);
+	_roomNumber = roomNum;
+}
 
 void CurrentActionEntry::setSupportData(uint16 entryId) {
 	CharacterScheduleEntry &entry = supportData();

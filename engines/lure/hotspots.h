@@ -83,16 +83,13 @@ private:
 	CurrentAction _action;
 	CharacterScheduleEntry *_supportData;
 	uint16 _roomNumber;
+	bool _dynamicSupportData;
 public:
-	CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
-		_action = newAction; 
-		_supportData = NULL; 
-		_roomNumber = roomNum;
-	}
-	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
-		_action = newAction; 
-		_supportData = data; 
-		_roomNumber = roomNum;
+	CurrentActionEntry(CurrentAction newAction, uint16 roomNum);
+	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum);
+	CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2);
+	virtual ~CurrentActionEntry() {
+		if (_dynamicSupportData) delete _supportData;
 	}
 
 	CurrentAction action() { return _action; }
@@ -129,11 +126,17 @@ public:
 	void addBack(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
 		_actions.push_back(new CurrentActionEntry(newAction, rec, roomNum));
 	}
+	void addBack(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
+		_actions.push_back(new CurrentActionEntry(newAction, roomNum, param1, param2));
+	}
 	void addFront(CurrentAction newAction, uint16 roomNum) {
 		_actions.push_front(new CurrentActionEntry(newAction, roomNum));
 	}
 	void addFront(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
 		_actions.push_front(new CurrentActionEntry(newAction, rec, roomNum));
+	}
+	void addFront(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
+		_actions.push_front(new CurrentActionEntry(newAction, roomNum, param1, param2));
 	}
 };
 
