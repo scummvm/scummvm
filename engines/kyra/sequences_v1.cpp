@@ -151,33 +151,38 @@ void KyraEngine::seq_introLogos() {
 	if (_quitFlag)
 		return;
 
-	int y1 = 8;
-	int h1 = 175;
-	int y2 = 176;
-	int h2 = 0;
-	int32 start, now;
-	int wait;
-	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 2);
-	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 2);
+	_screen->copyRegion(0, 91, 0, 8, 320, 104, 6, 2);
+	_screen->copyRegion(0, 0, 0, 112, 320, 64, 6, 2);
+
+	uint32 start = _system->getMillis();
+	bool doneFlag = false;
+	int oldDistance = 0;
+
 	do {
-		start = (int32)_system->getMillis();
-		if (h1 > 0) {
+		uint32 now = _system->getMillis();
+
+		// The smallest y2 we ever draw the screen for is 65.
+		int distance = (now - start) / _tickLength;
+		if (distance > 112) {
+			distance = 112;
+			doneFlag = true;
+		}
+
+		if (distance > oldDistance) {
+			int y1 = 8 + distance;
+			int h1 = 168 - distance;
+			int y2 = 176 - distance;
+			int h2 = distance;
+
 			_screen->copyRegion(0, y1, 0, 8, 320, h1, 2, 0);
+			if (h2 > 0)
+				_screen->copyRegion(0, 64, 0, y2, 320, h2, 4, 0);
+			_screen->updateScreen();
 		}
-		++y1;
-		--h1;
-		if (h2 > 0) {
-			_screen->copyRegion(0, 64, 0, y2, 320, h2, 4, 0);
-		}
-		--y2;
-		++h2;
-		_screen->updateScreen();
-		now = (int32)_system->getMillis();
-		wait = _tickLength - (now - start);
-		if (wait > 0) {
-			delay(wait);
-		}
-	} while (y2 >= 64 && !_quitFlag && !_abortIntroFlag);
+
+		oldDistance = distance;
+		delay(10);
+	} while (!doneFlag && !_quitFlag && !_abortIntroFlag);
 
 	if (_quitFlag)
 		return;
