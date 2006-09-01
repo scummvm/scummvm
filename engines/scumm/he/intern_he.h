@@ -286,6 +286,7 @@ protected:
 	int getSoundResourceSize(int id);
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
+	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
 
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();

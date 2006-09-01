@@ -1710,7 +1710,7 @@ load_game:
 	}
 
 	if (_game.heversion >= 80) {
-		((SoundHE *)_sound)->processSoundCode();
+		//((SoundHE *)_sound)->processSoundCode();
 	}
 	runAllScripts();
 	checkExecVerbs();

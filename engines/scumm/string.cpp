@@ -792,6 +792,52 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
 }
 
+int ScummEngine_v72he::convertMessageToString(const byte *msg, byte *dst, int dstSize) {
+	uint num = 0;
+	byte chr;
+	const byte *src;
+	byte *end;
+
+	assert(dst);
+	end = dst + dstSize;
+
+	if (msg == NULL) {
+		debug(0, "Bad message in convertMessageToString, ignoring");
+		return 0;
+	}
+
+	src = msg;
+	num = 0;
+
+	while (1) {
+		chr = src[num++];
+		if (_game.heversion >= 80 && src[num - 1] == '(' && (src[num] == 'p' || src[num] == 'P')) {
+			// Filter out the following prefixes in subtitles
+			// (pickup4)
+			// (PU1)
+			// (PU2)
+			while (src[num++] != ')');
+			continue;
+		}
+		if ((_game.features & GF_HE_LOCALIZED) && chr == '[') {
+			while (src[num++] != ']');
+			continue;
+		}
+
+		if (chr == 0)
+			break;
+
+		*dst++ = chr;
+
+		// Check for a buffer overflow
+		if (dst >= end)
+			error("convertMessageToString: buffer overflow!");
+	}
+	*dst = 0;
+
+	return dstSize - (end - dst);
+}
+
 int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize) {
 	uint num = 0;
 	uint32 val;
@@ -819,19 +865,6 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 
 	while (1) {
 		chr = src[num++];
-		if (_game.heversion >= 80 && src[num - 1] == '(' && (src[num] == 'p' || src[num] == 'P')) {
-			// Filter out the following prefixes in subtitles
-			// (pickup4)
-			// (PU1)
-			// (PU2)
-			while (src[num++] != ')');
-			continue;
-		}
-		if ((_game.features & GF_HE_LOCALIZED) && chr == '[') {
-			while (src[num++] != ']');
-			continue;
-		}
-
 		if (chr == 0)
 			break;
 		if (chr == 0xFF) {
