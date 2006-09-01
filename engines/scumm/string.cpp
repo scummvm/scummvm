@@ -715,7 +715,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				_charset->_top += fontHeight;
 				break;
 			}
-		} else if (c == 0xFF || (_game.version <= 6 && c == 0xFE)) {
+		} else if ((c == 0xFF || (_game.version <= 6 && c == 0xFE)) && (_game.heversion <= 72)) {
 			c = buf[i++];
 			switch (c) {
 			case 9:
