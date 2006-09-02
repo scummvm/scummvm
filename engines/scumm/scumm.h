@@ -1213,7 +1213,7 @@ protected:
 	void debugMessage(const byte *msg);
 	void showMessageDialog(const byte *msg);
 
-	int convertMessageToString(const byte *msg, byte *dst, int dstSize);
+	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
 	int convertIntMessage(byte *dst, int dstSize, int var);
 	int convertVerbMessage(byte *dst, int dstSize, int var);
 	int convertNameMessage(byte *dst, int dstSize, int var);
