@@ -1265,7 +1265,7 @@ int ScummEngine::resStrLen(const byte *src) const {
 		src = _scriptPointer;
 	while ((chr = *src++) != 0) {
 		num++;
-		if (chr == 255) {
+		if (_game.heversion <= 71 && chr == 0xFF) {
 			chr = *src++;
 			num++;
 
