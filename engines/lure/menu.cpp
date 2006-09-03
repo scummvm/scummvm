@@ -290,11 +290,10 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 	// Loop for rooms
 	for (ir = rooms.begin(); ir != rooms.end(); ++ir) {
 		RoomData *roomData = *ir;
-
 		// Pre-condition checks for whether to skip room
 		if ((roomData->hdrFlags != 15) && ((roomData->hdrFlags & fields.hdrFlagMask()) == 0))
 			continue;
-		if ((roomData->flags & (0x20 | 0x80)) != 0)
+		if (((roomData->flags & HOTSPOTFLAG_20) != 0) || ((roomData->flags & HOTSPOTFLAG_FOUND) == 0))
 			continue;
 		if ((roomData->actions & contextBitflag) == 0)
 			continue;
@@ -316,7 +315,7 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
 			continue;
 
-		if (((hotspot->flags & 0x20) != 0) || ((hotspot->flags & 0x80) == 0))
+		if (((hotspot->flags & HOTSPOTFLAG_20) != 0) || ((hotspot->flags & HOTSPOTFLAG_FOUND) == 0))
 			// Skip the current hotspot		
 			continue;
 
