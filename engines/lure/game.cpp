@@ -250,6 +250,10 @@ void Game::playerChangeRoom() {
 	Point &newPos = fields.playerNewPos().position;
 	delayList.clear();
 
+	RoomData *roomData = res.getRoom(roomNum);
+	assert(roomData);
+	roomData->flags |= HOTSPOTFLAG_FOUND;
+
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	player->currentActions().clear();
 	player->setRoomNumber(roomNum);
