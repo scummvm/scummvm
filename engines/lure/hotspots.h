@@ -40,7 +40,7 @@ private:
 public:
 	static int findIntersectingCharacters(Hotspot &h, uint16 *charList); 
 	static bool checkForIntersectingCharacter(Hotspot &h);
-	static void checkRoomChange(Hotspot &h);
+	static bool checkRoomChange(Hotspot &h);
 	static void characterChangeRoom(Hotspot &h, uint16 roomNumber, 
 								  int16 newX, int16 newY, Direction dir);
 	static bool charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2);

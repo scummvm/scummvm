@@ -259,6 +259,7 @@ void Game::playerChangeRoom() {
 	player->setRoomNumber(roomNum);
 	//player->setPosition((newPos.x & 0xfff8) || 5, newPos.y & 0xfff8);
 	player->setPosition(newPos.x, newPos.y);
+	player->setOccupied(true);
 	room.setRoomNumber(roomNum, false);
 }
 

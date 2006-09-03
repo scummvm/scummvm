@@ -2146,9 +2146,10 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				// Walking done
 				h.currentActions().top().setAction(DISPATCH_ACTION);
 			 
-			if (h.destHotspotId() != 0) 
+			if (h.destHotspotId() != 0) {
 				// Walking to an exit, check for any required room change
 				Support::checkRoomChange(h);
+			}
 		}
 
 		h.setOccupied(true);
@@ -2448,7 +2449,9 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 			}
 
 			// Check for whether need to change room
-			Support::checkRoomChange(h);
+			if (Support::checkRoomChange(h))
+				// Player changinge room - break now to avoid resetting occupied status
+				break;
 		}
 		h.setOccupied(true);
 		break;
@@ -3461,7 +3464,7 @@ bool Support::checkForIntersectingCharacter(Hotspot &h) {
 
 // Check whether a character needs to change the room they're in
 
-void Support::checkRoomChange(Hotspot &h) {
+bool Support::checkRoomChange(Hotspot &h) {
 	int16 x = h.x() + (h.widthCopy() >> 1);
 	int16 y = h.y() + h.heightCopy() - (h.yCorrection() >> 1);
 
@@ -3476,6 +3479,8 @@ void Support::checkRoomChange(Hotspot &h) {
 				exitRec->x, exitRec->y, exitRec->direction);
 		}
 	}
+
+	return (exitRec != NULL);
 }
 
 void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber, 
