@@ -166,7 +166,7 @@ void Room::checkRoomHotspots() {
 
 			bool skipFlag = (entry->roomNumber != _roomNumber);
 			if (!skipFlag) {
-				skipFlag = (((entry->flags & HOTSPOTFLAG_HIGHLIGHTED) == 0) && 
+				skipFlag = (((entry->flags & HOTSPOTFLAG_FOUND) == 0) && 
 							((entry->flags & HOTSPOTFLAG_SKIP) != 0)) ||
 						    ((entry->flags & HOTSPOTFLAG_20) != 0);
 			}
@@ -218,7 +218,7 @@ void Room::checkRoomHotspots() {
 		_hotspot = entry;
 		_hotspotId = entry->hotspotId;
 		_isExit = false;
-		entry->flags |= HOTSPOTFLAG_HIGHLIGHTED;
+		entry->flags |= HOTSPOTFLAG_FOUND;
 	}
 }
 
