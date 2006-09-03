@@ -255,7 +255,7 @@ enum Action {
 #define PIXELFLAG_HAS_TABLE 4
 
 // Hotspot flags
-#define HOTSPOTFLAG_HIGHLIGHTED 0x80
+#define HOTSPOTFLAG_FOUND 0x80
 #define HOTSPOTFLAG_SKIP 0x40
 #define HOTSPOTFLAG_20 0x20
 
