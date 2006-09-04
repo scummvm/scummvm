@@ -217,7 +217,9 @@ static void process_events() {
 				break;
 			default:
 				if (key < 256 && !isalpha(key)) {
-					key = event.kbd.ascii;
+					// Make sure backspace works right (this fixes a small issue on OS X)
+					if (key != 8)
+						key = event.kbd.ascii;
 					break;
 				}
 				if (key_control)
