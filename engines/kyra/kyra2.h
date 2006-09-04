@@ -30,11 +30,18 @@ enum kSequences {
 	kSequenceWestwood = 1,
 	kSequenceTitle = 2,
 	kSequenceOverview = 3,
-	kSequenceLibrary = 4
+	kSequenceLibrary = 4,
+	kSequenceHand = 5
 };
 
 class WSAMovieV2;
 class KyraEngine_v2;
+
+struct SequenceControl {
+	int8 frameIndex;
+	int8 frameDelay;
+};
+
 struct ActiveWSA {
 	WSAMovieV2 *movie;
 	uint16 currentFrame;
@@ -42,6 +49,7 @@ struct ActiveWSA {
 	uint16 frameDelay;
 	uint32 nextFrame;
 	void (KyraEngine_v2::*callback)(int);
+	const SequenceControl *control;
 };
 
 struct ActiveChat {
@@ -80,10 +88,13 @@ private:
 	int seq_introTitle(int seqNum);
 	int seq_introOverview(int seqNum);
 	int seq_introLibrary(int seqNum);	
+	int seq_introHand(int seqNum);
+
 	void seq_introOverviewOver1(int currentFrame);
 	void seq_introOverviewForest(int currentFrame);	
 	void seq_introOverviewDragon(int currentFrame);
-	void seq_loadWSA(int wsaNum, const char *filename, int frameDelay, void (KyraEngine_v2::*callback)(int) = 0 );
+	void seq_loadWSA(int wsaNum, const char *filename, int frameDelay, void (KyraEngine_v2::*callback)(int) = 0, 
+					 const SequenceControl *control = 0 );
 	void seq_unloadWSA(int wsaNum);
 	void seq_playWSAs();
 	void seq_showChats();

@@ -43,7 +43,8 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		{1, "westwood.wsa", &KyraEngine_v2::seq_introWestwood, 6,   160, 18, true,  true},
 		{1, "title.wsa",    &KyraEngine_v2::seq_introTitle,    6,   10,  26, false, false},
 		{2, "over.cps",     &KyraEngine_v2::seq_introOverview, 16,  30,  1,  false, true},
-		{2, "library.cps",  &KyraEngine_v2::seq_introLibrary,  16,  30,  1,  false, true}
+		{2, "library.cps",  &KyraEngine_v2::seq_introLibrary,  16,  30,  1,  false, true},
+		{2, "hand.cps",     &KyraEngine_v2::seq_introHand,     16,  90,  1,  false, true}
 	};
 
 	assert(startSeq >= 0 && endSeq < ARRAYSIZE(sequences) && startSeq <= endSeq);
@@ -134,8 +135,79 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	delete[] _activeChat;
 }
 
+int KyraEngine_v2::seq_introHand(int seqNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introHand(%i)", seqNum);
+	static const SequenceControl hand1bWSAControl[] = {
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6, 6}, {7, 6},
+		{8, 6}, {9, 6}, {10, 6}, {11, 6}, {11, 12}, {12, 12}, {13, 12}, 
+		{12, 12}, {11, 12}, {-1, -1} };
+	
+	static const SequenceControl hand1cWSAControl[] = {
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {3, 6},
+		{4, 6}, {5, 64}, {5, 6}, {-1, -1} };
+	
+	static const SequenceControl hand2WSAControl[] = {
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {-1, -1} };
+
+	static const SequenceControl hand3WSAControl[] = {
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {-1, -1} };
+
+	static const SequenceControl hand4WSAControl[] = {
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {-1, -1} };
+	
+	switch (seqNum) {
+		case 0:
+			_sound->playTrack(6);
+			seq_playIntroChat(7);
+			//palette stuff
+			break;
+		case 1:
+			// XXX: these show as garbage. New frame encode?
+			seq_loadWSA(1, "hand1a.wsa", 9);
+			seq_loadWSA(2, "hand1b.wsa", 9, 0, hand1bWSAControl);
+			seq_loadWSA(3, "hand1c.wsa", 9, 0, hand1cWSAControl);
+			break;
+		case 0xc9:
+			// palette stuff
+			seq_loadWSA(4, "hand2.wsa", 9, 0, hand2WSAControl);
+			seq_playIntroChat(8);
+			break;
+		case 0x18b:
+			seq_waitForChatsToFinish();
+			seq_loadWSA(5, "hand3.wsa", 9, 0, hand3WSAControl);
+			break;
+		case 0x1f4:
+			seq_waitForChatsToFinish();
+			seq_loadWSA(6, "hand4.wsa", 9, 0, hand4WSAControl);
+			break;
+		case 0x21c:
+			seq_playIntroChat(10);
+			break;
+		case 0x276:
+			seq_waitForChatsToFinish();
+			seq_unloadWSA(1);
+			seq_unloadWSA(2);	
+			seq_unloadWSA(3);
+			seq_unloadWSA(4);
+			seq_unloadWSA(5);
+			seq_unloadWSA(6);						
+			return 0;
+	}
+	
+	return -1;
+}
+
 int KyraEngine_v2::seq_introLibrary(int seqNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introLibrary(%i)", seqNum);
+	
+	static const SequenceControl libraryWSAControl[] = {
+		{0, 10}, {1, 10}, {2, 10}, {3, 10}, {4, 10}, {5, 10}, {6, 10}, {7, 10},
+		{8, 10}, {9, 10}, {8, 10}, {7, 10}, {6, 10}, {5, 40}, {4, 10}, {3, 10},
+		{2, 10}, {1, 10}, {-1, -1} };
 	
 	switch (seqNum) {
 		case 0:
@@ -144,10 +216,32 @@ int KyraEngine_v2::seq_introLibrary(int seqNum) {
 			//XXX: palette stuff
 			break;
 		case 1:
-			// XXX: frame control sequence
-			seq_loadWSA(1, "library.wsa", 9);
+			seq_loadWSA(1, "library.wsa", 9, 0, libraryWSAControl);
 			break;
-		case 200:
+		case 0x64:
+			seq_waitForChatsToFinish();
+			// unk1 = 7;
+			// palette/screen stuff
+			seq_loadWSA(2, "darm.wsa", 9);
+			break;
+		case 0x68:
+			seq_playIntroChat(5);
+			break;
+		case 0xF0:
+			seq_waitForChatsToFinish();
+			seq_loadWSA(3, "library.wsa", 9);
+			break;
+		case 0x154:
+			// palette stuff
+			seq_loadWSA(4, "marco.wsa", 9);
+			seq_playIntroChat(6);
+			break;
+		case 0x294:
+			seq_waitForChatsToFinish();
+			seq_unloadWSA(1);
+			seq_unloadWSA(2);
+			seq_unloadWSA(3);
+			seq_unloadWSA(4);
 			return 0;
 		default:
 			break;
@@ -327,17 +421,37 @@ void KyraEngine_v2::seq_playWSAs() {
 	uint32 currTime = _system->getMillis();
 
 	for (int i = 0; i < 8; i++) {
-		if (_activeWSA[i].movie && currTime >= _activeWSA[i].nextFrame && _activeWSA[i].currentFrame < _activeWSA[i].endFrame) {
-			_activeWSA[i].movie->displayFrame(_activeWSA[i].currentFrame);
-			if (_activeWSA[i].callback != 0)
-				(*this.*_activeWSA[i].callback)(_activeWSA[i].currentFrame);
-			_activeWSA[i].currentFrame++;
-			_activeWSA[i].nextFrame = currTime + _activeWSA[i].frameDelay * _tickLength;
-		}
+			int currentFrame, frameDelay;
+
+			if (_activeWSA[i].control) {
+				int8 nextFrame = _activeWSA[i].control[_activeWSA[i].currentFrame].frameIndex;
+				if (nextFrame == -1)
+					continue;
+				
+				currentFrame = nextFrame;
+				frameDelay = _activeWSA[i].control[_activeWSA[i].currentFrame].frameDelay;				
+			} else {
+				if (_activeWSA[i].currentFrame >= _activeWSA[i].endFrame)
+					continue;				
+
+				currentFrame = _activeWSA[i].currentFrame;
+				frameDelay = _activeWSA[i].frameDelay;
+			}
+
+			_activeWSA[i].movie->displayFrame(currentFrame);
+
+			if (_activeWSA[i].movie && currTime >= _activeWSA[i].nextFrame) {
+				if (_activeWSA[i].callback != 0)
+					(*this.*_activeWSA[i].callback)(currentFrame);
+				_activeWSA[i].currentFrame++;
+				_activeWSA[i].nextFrame = currTime + frameDelay * _tickLength;
+			}
 	}
 }
 
-void KyraEngine_v2::seq_loadWSA(int wsaNum, const char *filename, int frameDelay, void (KyraEngine_v2::*callback)(int)) {
+void KyraEngine_v2::seq_loadWSA(int wsaNum, const char *filename, int frameDelay,
+								void (KyraEngine_v2::*callback)(int), const SequenceControl *control) {
+
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_loadWSA(%i, %s, %i, %i)", wsaNum, filename, frameDelay, callback ? true : false);
 	
 	_activeWSA[wsaNum].movie = new WSAMovieV2(this);
@@ -351,6 +465,7 @@ void KyraEngine_v2::seq_loadWSA(int wsaNum, const char *filename, int frameDelay
 	_activeWSA[wsaNum].movie->setY(0);	
 	_activeWSA[wsaNum].movie->setDrawPage(_screen->_curPage);
 	_activeWSA[wsaNum].callback = callback;	
+	_activeWSA[wsaNum].control = control;
 }
 
 void KyraEngine_v2::seq_unloadWSA(int wsaNum) {

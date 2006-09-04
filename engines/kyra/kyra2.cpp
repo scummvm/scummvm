@@ -68,8 +68,10 @@ int KyraEngine_v2::init() {
 
 int KyraEngine_v2::go() {	
 	_sound->loadMusicFile("K2INTRO");
-	// Temporary measure to work around the fact that there's two files called DRAGON.WSA.
+	// Temporary measure to work around the fact that there's 
+	// several WSA files with identical names in different PAK files.
 	_res->unloadPakFile("OUTFARM.PAK");
+	_res->unloadPakFile("FLYTRAP.PAK");
 
 	seq_playSequences(kSequenceVirgin, kSequenceWestwood);
 	mainMenu();
