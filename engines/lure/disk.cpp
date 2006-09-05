@@ -62,7 +62,10 @@ uint8 Disk::indexOf(uint16 id, bool suppressError) {
 	}
 	
 	if (suppressError) return 0xff;
-	error("Could not find entry Id #%d in file disk%d.vga", id, _fileNum);
+	if (_fileNum == 0) 
+		error("Could not find entry Id #%d in file %s", id, SUPPORT_FILENAME);
+	else
+		error("Could not find entry Id #%d in file disk%d.vga", id, _fileNum);
 }
 
 void Disk::openFile(uint8 fileNum) {
