@@ -910,6 +910,47 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	totalSize += sizeof(uint16);
 }
 
+void read_ratpouch_schedules(byte *&data, uint16 &totalSize) {
+	// TODO: Parse out the schedules Ratpouch has for each room
+	data = (byte *) malloc(1);
+	totalSize = 1;
+}
+
+#define NUM_TEXT_ENTRIES 40
+const char *text_strings[NUM_TEXT_ENTRIES] = {
+	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use", 
+	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL, 
+	"Drink", "Status", "Go to", "Return", "Bribe", "Examine",
+	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text", "Slow Text", 
+	"Sound on", "Sound off", "(nothing)", " for ", " to ", " on ", "and then", "finish"};
+
+
+void save_text_strings(byte *&data, uint16 &totalSize) {
+	int index;
+
+	// Calculate the total needed space
+	totalSize = sizeof(uint16);
+	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
+		if (text_strings[index] != NULL) 
+			totalSize += strlen(text_strings[index]);
+		++totalSize;
+	}
+
+	// Duplicate the text strings list into a data buffer
+	data = (byte *) malloc(totalSize);
+	*((uint16 *) data) = TO_LE_16(NUM_TEXT_ENTRIES);
+	char *p = (char *) data + sizeof(uint16);
+
+	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
+		if (text_strings[index] == NULL)
+			*p++ = '\0';
+		else {
+			strcpy(p, text_strings[index]);
+			p += strlen(p) + 1;
+		}
+	}
+}
+
 void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 {
 	resourceId = 0x3f01 + entryIndex;
@@ -1019,6 +1060,16 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 	case 20:
 		// Read the room exit hotspot list
 		read_room_exit_hotspots_data(data, size);
+		break;
+
+	case 21:
+		// Read in Ratpouch's room specific schedules
+		read_ratpouch_schedules(data, size);
+		break;
+
+	case 22:
+		// Set up the list of text strings used by the game
+		save_text_strings(data, size);
 		break;
 
 	default:
