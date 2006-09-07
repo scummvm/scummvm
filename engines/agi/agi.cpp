@@ -311,7 +311,9 @@ int agi_init() {
 
 	init_words();
 
-	menu = new Menu();
+	if (!menu)
+		menu = new Menu();
+
 	init_pri_table();
 
 	/* clear string buffer */
@@ -522,6 +524,7 @@ void AgiEngine::initialize() {
 	game.sbuf = (uint8 *) calloc(_WIDTH, _HEIGHT);
 	game.hires = (uint8 *) calloc(_WIDTH * 2, _HEIGHT);
 
+	menu = 0;
 	_sprites = new SpritesMan;
 	_text = new TextMan;
 	init_video();
