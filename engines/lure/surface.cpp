@@ -352,7 +352,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 		lines[ctr] = strchr(lines[ctr-1], 0) + 1;
 }
 
-Surface *Surface::newDialog(uint16 width, uint8 numLines, char **lines, bool varLength, uint8 colour) {
+Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength, uint8 colour) {
 	Surface *s = new Surface(width, (DIALOG_EDGE_SIZE + 3) * 2 + 
 		numLines * (FONT_HEIGHT - 1));
 	s->createDialog();
@@ -369,9 +369,8 @@ Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
 	uint8 numLines;
 	wordWrap(lineCopy, width - (DIALOG_EDGE_SIZE + 3) * 2, lines, numLines);
 
-
 	// Create the dialog 
-	Surface *result = newDialog(width, numLines, lines, true, colour);
+	Surface *result = newDialog(width, numLines, (const char **) lines, true, colour);
 
 	// Deallocate used resources
 	free(lines);
@@ -517,6 +516,27 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 TalkDialog::~TalkDialog() {
 	delete _lines;
 	delete _surface;
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool SaveRestoreDialog::show(bool save, Common::String &filename) {
+	Screen &screen = Screen::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Room &room = Room::getReference();
+	mouse.cursorOff();
+
+	room.update();
+	Surface *s = new Surface(INFO_DIALOG_WIDTH, 100);
+	s->createDialog();
+	s->copyToScreen(SAVE_DIALOG_X, SAVE_DIALOG_Y);
+
+	// Wait for a keypress or mouse button
+	Events::getReference().waitForPress();
+
+	screen.update();
+	mouse.cursorOn();
+	return false;
 }
 
 } // end of namespace Lure

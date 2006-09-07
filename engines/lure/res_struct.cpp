@@ -28,11 +28,6 @@
 
 namespace Lure {
 
-const char *actionList[] = {NULL, "Get", NULL, "Push", "Pull", "Operate", "Open",
-	"Close", "Lock", "Unlock", "Use", "Give", "Talk to", "Tell", "Buy",
-	"Look", "Look at", "Look through", "Ask", NULL, "Drink", "Status",
-	"Go to", "Return", "Bribe", "Examine"};
-
 const Action sortedActions[] = {ASK, BRIBE, BUY, CLOSE, DRINK, EXAMINE, GET, GIVE, 
 	GO_TO, LOCK, LOOK, LOOK_AT, LOOK_THROUGH, OPEN, OPERATE, PULL, PUSH, RETURN, 
 	STATUS, TALK_TO, TELL, UNLOCK, USE, NONE};
@@ -808,6 +803,31 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 	}
 
 	return result;
+}
+
+// String list resource class
+
+void StringList::load(MemoryBlock *data) {
+	_data = Memory::allocate(data->size());
+	_data->copyFrom(data);
+
+	_numEntries = READ_LE_UINT16(_data->data());
+	char *p = (char *) _data->data() + sizeof(uint16);
+
+	_entries = (char **) Memory::alloc(_numEntries * sizeof(char *));
+
+	for (int index = 0; index < _numEntries; ++index) {
+		_entries[index] = p;
+		p += strlen(p) + 1;	
+	}
+}
+
+void StringList::clear() {
+	if (_numEntries != 0) {
+		Memory::dealloc(_entries);
+		delete _data;
+		_numEntries = 0;
+	}
 }
 
 // Field list and miscellaneous variables

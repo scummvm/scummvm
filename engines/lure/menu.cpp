@@ -34,37 +34,23 @@
 namespace Lure {
 
 MenuRecord::MenuRecord(uint16 hsxstartVal, uint16 hsxendVal, uint16 xstartVal, 
-					   uint16 widthVal, const char *strings) {
+					   uint16 widthVal, int numParams, ...) {
+	// Store list of pointers to strings
+	va_list params;
+
+	_numEntries = numParams;
+	_entries = (const char **) malloc(sizeof(const char *) * _numEntries);	
+
+	va_start(params, numParams);
+	for (int index = 0; index < _numEntries; ++index)
+		_entries[index] = va_arg(params, const char *);
+
+	// Store position data
 	_xstart = xstartVal; _width = widthVal;
 	_hsxstart = hsxstartVal; _hsxend = hsxendVal;
-
-	// Figure out the number of entries
-	const char *sPtr = strings;
-	_numEntries = 1;
-	while ((sPtr = strchr(sPtr, ',')) != NULL) {
-		++_numEntries;
-		++sPtr;
-	}
-
-	// Set up the list of entries
-	char *sCopy = strdup(strings);
-	char *s;
-	_entries = (char **) malloc(sizeof(char *) * _numEntries);
-	uint8 index = 0;
-	s = sCopy;
-	while (s != NULL) {
-		_entries[index++] = s;
-		s = strchr(s, ',');
-		if (s != NULL) *s++ = '\0'; // replace comma with NULL
-	}
 }
 
-MenuRecord::~MenuRecord() {
-	free(_entries[0]);	// Delete string data for all the menu items
-	free(_entries);		// Free the list
-}
-
-char *MenuRecord::getEntry(uint8 index) {
+const char *MenuRecord::getEntry(uint8 index) {
 	if (index >= _numEntries) error("Invalid menuitem index specified: %d", index);
 	return _entries[index];
 }
@@ -75,15 +61,19 @@ static Menu *int_menu = NULL;
 
 Menu::Menu() {
 	int_menu = this;
+	StringList &sl = Resources::getReference().stringList();
 
 	MemoryBlock *data = Disk::getReference().getEntry(MENU_RESOURCE_ID);
 	PictureDecoder decoder;
 	_menu = decoder.decode(data, SCREEN_SIZE);
 	delete data;
 
-	_menus[0] = new MenuRecord(40, 87, 20, 80, "Credits");
-	_menus[1] = new MenuRecord(127, 179, 100, 120, "Restart game,Save game,Restore game");
-	_menus[2] = new MenuRecord(224, 281, 210, 105, "Quit,Slow Text\x8b,Sound on ");
+	_menus[0] = new MenuRecord(40, 87, 20, 80, 1, sl.getString(S_CREDITS));
+	_menus[1] = new MenuRecord(127, 179, 100, 120, 3, 
+		sl.getString(S_RESTART_GAME), sl.getString(S_SAVE_GAME), sl.getString(S_RESTORE_GAME));
+	_menus[2] = new MenuRecord(224, 281, 210, 105, 3,
+		sl.getString(S_QUIT), sl.getString(S_SLOW_TEXT), sl.getString(S_SOUND_ON));
+
 	_selectedMenu = NULL;
 }
 
@@ -372,6 +362,7 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 }
 
 Action PopupMenu::Show(uint32 actionMask) {
+	StringList &stringList = Resources::getReference().stringList();
 	int numEntries = 0;
 	uint32 v = actionMask;
 	int index;
@@ -389,7 +380,7 @@ Action PopupMenu::Show(uint32 actionMask) {
 	int strIndex = 0;
 	for (currentAction = &sortedActions[0]; *currentAction != NONE; ++currentAction) {
 		if ((actionMask & (1 << (*currentAction - 1))) != 0) {
-			strList[strIndex] = actionList[*currentAction];
+			strList[strIndex] = stringList.getString(*currentAction);
 			actionSet[strIndex] = *currentAction;
 			++strIndex;
 		}
@@ -408,10 +399,11 @@ Action PopupMenu::Show(uint32 actionMask) {
 }
 
 Action PopupMenu::Show(int numEntries, Action *actions) {
+	StringList &stringList = Resources::getReference().stringList();
 	const char **strList = (const char **) Memory::alloc(sizeof(char *) * numEntries);
 	Action *actionPtr = actions;
 	for (int index = 0; index < numEntries; ++index)
-		strList[index] = actionList[*actionPtr++];
+		strList[index] = stringList.getString(*actionPtr++);
 	uint16 result = Show(numEntries, strList);
 	
 	delete strList;

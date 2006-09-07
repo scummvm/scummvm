@@ -306,6 +306,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	Resources &res = Resources::getReference();
 	StringData &strings = StringData::getReference();
+	StringList &stringList = res.stringList();
 	char buffer[MAX_DESC_SIZE];
 	HotspotData *hs;
 	Hotspot *h;
@@ -351,11 +352,12 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 			// List the action set for the character
 			for (int action = GET; action <= EXAMINE; ++action) {
 				uint16 offset = res.getHotspotAction(hs->actionsOffset, (Action) action);
+				const char *actionStr = stringList.getString(action);
 
 				if (offset >= 0x8000) {
-					DebugPrintf("%s - Message %xh\n",  actionList[action], offset & 0x7ff);
+					DebugPrintf("%s - Message %xh\n",  actionStr, offset & 0x7ff);
 				} else if (offset != 0) {
-					DebugPrintf("%s - Script %xh\n", actionList[action], offset);
+					DebugPrintf("%s - Script %xh\n", actionStr, offset);
 				}
 			}
 	} else {

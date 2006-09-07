@@ -67,7 +67,7 @@ public:
 
 	static uint16 textWidth(const char *s, int numChars = 0);
 	static void wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines);
-	static Surface *newDialog(uint16 width, uint8 numLines, char **lines, bool varLength = true, uint8 colour = DIALOG_TEXT_COLOUR);
+	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *newDialog(uint16 width, const char *lines, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *getScreen(uint16 resourceId);
 };
@@ -90,6 +90,11 @@ public:
 
 	char *desc() { return _desc; }
 	Surface &surface() { return *_surface; }
+};
+
+class SaveRestoreDialog {
+public:
+	static bool show(bool save, Common::String &filename);
 };
 
 } // End of namespace Lure

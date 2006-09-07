@@ -69,6 +69,7 @@ private:
 	CharacterScheduleList _charSchedules;
 	RoomExitIndexedHotspotList _indexedRoomExitHospots;
 	PausedCharacterList _pausedList;
+	StringList _stringList;
 
 	int numCharOffsets;
 	uint16 *_charOffsets;
@@ -123,6 +124,7 @@ public:
 	CharacterScheduleList &charSchedules() { return _charSchedules; }
 	RoomExitIndexedHotspotList &exitHotspots() { return _indexedRoomExitHospots; }
 	PausedCharacterList &pausedList() { return _pausedList; }
+	StringList &stringList() { return _stringList; }
 	uint16 getCharOffset(int index) { 
 		if (index >= numCharOffsets) 
 			error("Invalid index %d passed to script engine support data offset list", index);
@@ -152,7 +154,7 @@ public:
 	const char *getCurrentActionStr() { 
 		if (_currentAction > EXAMINE) 
 			error("Invalid current action %d", _currentAction);
-		return actionList[_currentAction]; 
+		return _stringList.getString(_currentAction);
 	}
 	Hotspot *activateHotspot(uint16 hotspotId);
 	Hotspot *addHotspot(uint16 hotspotId);

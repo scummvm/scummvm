@@ -55,6 +55,7 @@ void Resources::freeData() {
 	_charSchedules.clear();
 	_indexedRoomExitHospots.clear();
 	_pausedList.clear();
+	_stringList.clear();
 
 	delete _paletteSubset;
 	delete _scriptData;
@@ -297,6 +298,11 @@ void Resources::reloadData() {
 		_indexedRoomExitHospots.push_back(new RoomExitIndexedHotspotData(indexedRec));
 		indexedRec++;
 	}
+
+	// Load the string list
+	mb = d.getEntry(STRING_LIST_RESOURCE_ID);
+	_stringList.load(mb);
+	delete mb;
 
 	// Initialise delay list
 	_delayList.clear();

@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 12
+#define LURE_DAT_MINOR 13
 
 #define LURE_DEBUG 1
 
@@ -173,6 +173,8 @@ enum Action {
 #define TALK_DIALOG_WIDTH 128
 #define TALK_DIALOG_EDGE_SIZE 3
 #define TALK_DIALOG_Y 33
+#define SAVE_DIALOG_X 69
+#define SAVE_DIALOG_Y 28
 
 // Strings defines
 #define STRINGS_RESOURCE_ID 0x10
@@ -203,6 +205,8 @@ enum Action {
 #define ROOM_PATHS_RESOURCE_ID 0x3f13
 #define EXIT_COORDINATES_RESOURCE_ID 0x3f14
 #define EXIT_HOTSPOT_ID_LIST 0x3f15
+
+#define STRING_LIST_RESOURCE_ID 0x3f17
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC

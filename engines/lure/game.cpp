@@ -216,13 +216,22 @@ void Game::execute() {
 }
 
 void Game::handleMenuResponse(uint8 selection) {
+	Common::String filename;
+
 	switch (selection) {
 	case MENUITEM_CREDITS:
 		doShowCredits();
 		break;
 
 	case MENUITEM_RESTART_GAME: 
+		break;
+
 	case MENUITEM_SAVE_GAME:
+		if (SaveRestoreDialog::show(true, filename)) {
+			// Save the game here
+		}
+		break;
+
 	case MENUITEM_RESTORE_GAME: 
 		break;
 
@@ -304,6 +313,7 @@ void Game::handleRightClickMenu() {
 	Resources &res = Resources::getReference();
 	Screen &screen = Screen::getReference();
 	ValueTableData &fields = res.fieldList();
+	StringList &stringList = res.stringList();
 	StringData &strings = StringData::getReference();
 	Mouse &mouse = Mouse::getReference();
 	char *statusLine = room.statusLine();
@@ -343,7 +353,7 @@ void Game::handleRightClickMenu() {
 		action = PopupMenu::Show(actions);
 
 		if (action != NONE) {
-			sprintf(statusLine, "%s ", actionList[action]);
+			sprintf(statusLine, "%s ", stringList.getString(action));
 			statusLine += strlen(statusLine);
 		}
 
@@ -357,7 +367,7 @@ void Game::handleRightClickMenu() {
 			hotspot = res.getHotspot(room.hotspotId());
 			assert(hotspot);
 			strings.getString(hotspot->nameId, statusLine);
-			strcat(statusLine, " for ");
+			strcat(statusLine, stringList.getString(S_FOR));
 			statusLine += strlen(statusLine);
 
 			itemId = PopupMenu::ShowItems(GET);
@@ -368,7 +378,7 @@ void Game::handleRightClickMenu() {
 			hotspot = res.getHotspot(room.hotspotId());
 			assert(hotspot);
 			strings.getString(hotspot->nameId, statusLine);
-			strcat(statusLine, " to ");
+			strcat(statusLine, stringList.getString(S_TO));
 			breakFlag = GetTellActions();
 			break;
 
@@ -378,7 +388,7 @@ void Game::handleRightClickMenu() {
 		case DRINK:
 			hasItems = (res.numInventoryItems() != 0);
 			if (!hasItems)
-				strcat(statusLine, "(nothing)");
+				strcat(statusLine, stringList.getString(S_NOTHING));
 			statusLine += strlen(statusLine);
 
 			room.update();
@@ -398,9 +408,9 @@ void Game::handleRightClickMenu() {
 						assert(useHotspot);
 						strings.getString(useHotspot->nameId, statusLine);
 						if (action == GIVE) 
-							strcat(statusLine, " to ");
+							strcat(statusLine, stringList.getString(S_TO));
 						else 
-							strcat(statusLine, " on ");
+							strcat(statusLine, stringList.getString(S_ON));
 						statusLine += strlen(statusLine);
 					}
 					else if ((action == DRINK) || (action == EXAMINE))
@@ -437,6 +447,7 @@ void Game::handleLeftClick() {
 	Mouse &mouse = Mouse::getReference();
 	Resources &res = Resources::getReference();
 	StringData &strings = StringData::getReference();
+	StringList &stringList = res.stringList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 
 	room.setCursorState(CS_NONE);
@@ -447,7 +458,7 @@ void Game::handleLeftClick() {
 
 	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {	
 		// Handle look at hotspot
-		sprintf(room.statusLine(), "%s ", actionList[LOOK_AT]);
+		sprintf(room.statusLine(), "%s ", stringList.getString(LOOK_AT));
 		HotspotData *hotspot = res.getHotspot(room.hotspotId());
 		assert(hotspot);
 		strings.getString(hotspot->nameId, room.statusLine() + strlen(room.statusLine()));
@@ -466,13 +477,12 @@ void Game::handleLeftClick() {
 	}
 }
 
-const char *continueStrsList[] = {"and then", "finish"};
-
 bool Game::GetTellActions() {
 	Resources &res = Resources::getReference();
 	Screen &screen = Screen::getReference();
 	Room &room = Room::getReference();
 	StringData &strings = StringData::getReference();
+	StringList &stringList = res.stringList();
 	char *statusLine = room.statusLine();
 	uint16 fullCommands[MAX_TELL_COMMANDS * 3 + 1];
 	uint16 *commands = &fullCommands[1];
@@ -483,6 +493,7 @@ bool Game::GetTellActions() {
 	char selectionName[MAX_DESC_SIZE];
 	HotspotData *hotspot;
 	Action action;
+	const char *continueStrsList[2] = {stringList.getString(S_AND_THEN), stringList.getString(S_FINISH)};
 
 	// First word will be the destination character
 	fullCommands[0] = room.hotspotId();
@@ -520,7 +531,7 @@ bool Game::GetTellActions() {
 				}
 
 				// Add the action to the status line
-				sprintf(statusLine + strlen(statusLine), "%s ", actionList[action]);
+				sprintf(statusLine + strlen(statusLine), "%s ", stringList.getString(action));
 
 				// Handle any processing for the action
 				commands[commandIndex * 3] = (uint16) action;
@@ -722,20 +733,18 @@ void Game::doQuit() {
 
 void Game::doTextSpeed() {
 	Menu &menu = Menu::getReference();
+	StringList &sl = Resources::getReference().stringList();
 
 	_slowSpeedFlag = !_slowSpeedFlag;
-	const char *pSrc = _slowSpeedFlag ? "Slow" : "Fast";
-	char *pDest = menu.getMenu(2).getEntry(1);
-	memcpy(pDest, pSrc, 4);
+	menu.getMenu(2).entries()[1] = sl.getString(_slowSpeedFlag ? S_SLOW_TEXT : S_FAST_TEXT);
 }
 
 void Game::doSound() {
 	Menu &menu = Menu::getReference();
+	StringList &sl = Resources::getReference().stringList();
 
 	_soundFlag = !_soundFlag;
-	const char *pSrc = _soundFlag ? "on " : "off";
-	char *pDest = menu.getMenu(2).getEntry(2) + 6;
-	memcpy(pDest, pSrc, 3);
+	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
 }
 
 void Game::handleBootParam(int value) {

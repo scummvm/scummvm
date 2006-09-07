@@ -30,7 +30,6 @@ namespace Lure {
 
 using namespace Common;
 
-extern const char *actionList[];
 extern const Action sortedActions[];
 
 /*-------------------------------------------------------------------------*/
@@ -642,6 +641,31 @@ public:
 	void countdown();
 	void scan(Hotspot &h);
 	int check(uint16 charId, int numImpinging, uint16 *impingingList);
+};
+
+enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
+	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 
+	S_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38,
+	S_FINISH = 39};
+
+class StringList {
+private:
+	MemoryBlock *_data;
+	int _numEntries;
+	char **_entries;
+public:
+	StringList() { _numEntries = 0; }
+	~StringList() { clear(); }
+
+	void load(MemoryBlock *data);
+	void clear();
+	int count() { return _numEntries; }
+	const char *getString(int index) {
+		if ((index < 0) || (index >= _numEntries)) error("Invalid index specified to String List");
+		return _entries[index];
+	}
+	const char *getString(Action action) { return getString((int) action - 1); }
+	const char *getString(StringEnum sEnum) { return getString((int) sEnum); }
 };
 
 // The following class holds the field list used by the script engine as 

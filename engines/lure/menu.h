@@ -39,20 +39,19 @@ class MenuRecord {
 private:
 	uint16 _xstart, _width;
 	uint16 _hsxstart, _hsxend;
-	char **_entries;
+	const char **_entries;
 	uint8 _numEntries;
 public:
-	MenuRecord(uint16 hsxstartVal, uint16 hsxendVal, uint16 xstartVal, 
-		uint16 widthVal, const char *strings); 
-	~MenuRecord();
+	MenuRecord(uint16 hsxstartVal, uint16 hsxendVal, uint16 xstartVal, uint16 widthVal, 
+		int numParams, ...); 
 
 	uint16 xstart() { return _xstart; }
 	uint16 width() { return _width; }
 	uint16 hsxstart() { return _hsxstart; }
 	uint16 hsxend() { return _hsxend; }
 	uint8 numEntries() { return _numEntries; }
-	char **entries() { return _entries; }
-	char *getEntry(uint8 index);
+	const char **entries() { return _entries; }
+	const char *getEntry(uint8 index);
 };
 
 class Menu {
