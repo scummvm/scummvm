@@ -173,6 +173,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
 	_keyRepeat = 0;
 	_keyRepeatTime = 0;
+	_selectedButton = 255;
 }
 
 void Control::askForCd(void) {
