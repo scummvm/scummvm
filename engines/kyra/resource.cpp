@@ -70,11 +70,11 @@ Resource::Resource(KyraEngine *engine) {
 	}
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String filename = file->path();
+		Common::String filename = file->name();
 		filename.toUppercase();
 		if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
-			if (!loadPakFile(file->path())) {
-				error("couldn't open pakfile '%s'", file->path().c_str());
+			if (!loadPakFile(file->name())) {
+				error("couldn't open pakfile '%s'", file->name().c_str());
 			}
 		}
 	}
@@ -102,19 +102,17 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	}
 
 	PAKFile *file = 0;
-	FilesystemNode *fsNode = new FilesystemNode(ConfMan.get("path") + filename);
 
 	if (handle.name() == filename) {
-		file = new PAKFile(fsNode->name().c_str(), handle.name(), (_engine->features() & GF_AMIGA) != 0);
+		file = new PAKFile(filename.c_str(), handle.name(), (_engine->features() & GF_AMIGA) != 0);
 	} else {
 		uint32 offset = handle.pos();
 		uint8 *buf = new uint8[size];
 		handle.read(buf, size);
-		file = new PAKFile(fsNode->name().c_str(), handle.name(), offset, buf, size, (_engine->features() & GF_AMIGA) != 0);
+		file = new PAKFile(filename.c_str(), handle.name(), offset, buf, size, (_engine->features() & GF_AMIGA) != 0);
 		delete [] buf;
 	}
 	handle.close();
-	delete fsNode;
 
 	if (!file)
 		return false;
