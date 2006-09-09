@@ -31,7 +31,7 @@
 #include "lure/res_struct.h"
 #include "lure/events.h"
 #include "lure/game.h"
-#include <common/endian.h>
+#include "common/endian.h"
 
 namespace Lure {
 
