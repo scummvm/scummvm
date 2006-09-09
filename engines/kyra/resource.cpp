@@ -94,7 +94,8 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		return true;
 
 	uint32 size = 0;
-	FilesystemNode *fsNode = new FilesystemNode(filename);
+	
+	FilesystemNode *fsNode = new FilesystemNode(ConfMan.get("path") + filename);
 	
 	Common::File handle;
 	if (!fileHandle(filename.c_str(), &size, handle)) {
@@ -265,38 +266,43 @@ PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : Resourc
 	}
 
 	uint32 filesize = pakfile.size();
-	buffer = new uint8[filesize];
-	assert(buffer);
-
-	pakfile.read(buffer, filesize);
-	pakfile.close();
 
 	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
+	
+	uint32 startOffsetFromFile;
+	pakfile.read(&startOffsetFromFile, sizeof(uint32));
 
 	if (!_isAmiga) {
-		startoffset = READ_LE_UINT32(buffer + pos);
+		startoffset = READ_LE_UINT32(&startOffsetFromFile);
 	} else {
-		startoffset = READ_BE_UINT32(buffer + pos);
+		startoffset = READ_BE_UINT32(&startOffsetFromFile);
 	}
 	pos += 4;
 
 	while (pos < filesize) {
 		PakChunk chunk;
-
-		// saves the name
-		if (!(*((const char*)buffer + pos)))
+		uint8 buffer[256];
+		uint32 nameLength;
+		
+		// Move to the position of the next file entry
+		pakfile.seek(pos);
+		
+		// Read in the header
+		pakfile.read(&buffer, 256);
+		
+		// Quit now if we encounter an empty string
+		if (!(*((const char*)buffer)))
 			break;
 
-		chunk._name = (const char*)buffer + pos;
-		pos += strlen(chunk._name.c_str()) + 1;
+		chunk._name = (const char*)buffer;
+		nameLength = strlen(chunk._name.c_str()) + 1; 
 
 		if (!_isAmiga) {
-			endoffset = READ_LE_UINT32(buffer + pos);
+			endoffset = READ_LE_UINT32(buffer + nameLength);
 		} else {
-			endoffset = READ_BE_UINT32(buffer + pos);
+			endoffset = READ_BE_UINT32(buffer + nameLength);
 		}
-		pos += 4;
 
 		if (endoffset == 0) {
 			endoffset = filesize;
@@ -311,9 +317,9 @@ PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : Resourc
 			break;
 
 		startoffset = endoffset;
+		pos += nameLength + 4;
 	}
 	_open = true;
-	delete [] buffer;
 	
 	_filename = file;
 	_physfile = physfile;
