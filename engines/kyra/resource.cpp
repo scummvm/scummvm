@@ -95,8 +95,6 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	uint32 size = 0;
 	
-	FilesystemNode *fsNode = new FilesystemNode(ConfMan.get("path") + filename);
-	
 	Common::File handle;
 	if (!fileHandle(filename.c_str(), &size, handle)) {
 		warning("couldn't load file: '%s'", filename.c_str());
@@ -104,6 +102,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	}
 
 	PAKFile *file = 0;
+	FilesystemNode *fsNode = new FilesystemNode(ConfMan.get("path") + filename);
 
 	if (handle.name() == filename) {
 		file = new PAKFile(fsNode->name().c_str(), handle.name(), (_engine->features() & GF_AMIGA) != 0);
