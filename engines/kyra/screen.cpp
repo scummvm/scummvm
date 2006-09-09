@@ -1905,10 +1905,10 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	if (_vm->features() & GF_TALKIE)
 		shape += 2;
 
-	int mouseHeight = *(shape+2);
+	int mouseHeight = *(shape + 2);
 	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
 
-	if (_vm->game() & GI_KYRA1 && _vm->features() & GF_TALKIE)
+	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
 		shape -= 2;
 
 	uint8 *cursor = (uint8 *)malloc(mouseHeight * mouseWidth);
