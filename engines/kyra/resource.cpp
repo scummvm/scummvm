@@ -257,7 +257,6 @@ PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : Resourc
 	_isAmiga = isAmiga;
 
 	Common::File pakfile;
-	uint8 *buffer = 0;
 	_open = false;
 
 	if (!pakfile.open(file)) {
