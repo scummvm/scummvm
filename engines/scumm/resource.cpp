@@ -536,28 +536,28 @@ void ScummEngine::readResTypeList(int id, const char *name) {
 	}
 }
 
-void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
-	debug(9, "allocResTypeData(%s/%s,%s,%d,%d)", resTypeFromId(id), name, tag2str(TO_BE_32(tag)), num, mode);
-	assert(id >= 0 && id < (int)(ARRAYSIZE(res.mode)));
+void ResourceManager::allocResTypeData(int id, uint32 tag, int num_, const char *name_, int mode_) {
+	debug(9, "allocResTypeData(%s/%s,%s,%d,%d)", resTypeFromId(id), name_, tag2str(TO_BE_32(tag)), num_, mode_);
+	assert(id >= 0 && id < (int)(ARRAYSIZE(this->mode)));
 
-	if (num >= 8000)
-		error("Too many %ss (%d) in directory", name, num);
+	if (num_ >= 8000)
+		error("Too many %ss (%d) in directory", name_, num_);
 
-	res.mode[id] = mode;
-	res.num[id] = num;
-	res.tags[id] = tag;
-	res.name[id] = name;
-	res.address[id] = (byte **)calloc(num, sizeof(void *));
-	res.flags[id] = (byte *)calloc(num, sizeof(byte));
-	res.status[id] = (byte *)calloc(num, sizeof(byte));
+	mode[id] = mode_;
+	num[id] = num_;
+	tags[id] = tag;
+	name[id] = name_;
+	address[id] = (byte **)calloc(num_, sizeof(void *));
+	flags[id] = (byte *)calloc(num_, sizeof(byte));
+	status[id] = (byte *)calloc(num_, sizeof(byte));
 
-	if (mode) {
-		res.roomno[id] = (byte *)calloc(num, sizeof(byte));
-		res.roomoffs[id] = (uint32 *)calloc(num, sizeof(uint32));
+	if (mode_) {
+		roomno[id] = (byte *)calloc(num_, sizeof(byte));
+		roomoffs[id] = (uint32 *)calloc(num_, sizeof(uint32));
 	}
 
-	if (_game.heversion >= 70) {
-		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
+	if (_vm->_game.heversion >= 70) {
+		globsize[id] = (uint32 *)calloc(num_, sizeof(uint32));
 	}
 
 }
@@ -773,6 +773,12 @@ byte *ScummEngine::getStringAddressVar(int i) {
 	return getStringAddress(_scummVars[i]);
 }
 
+void ResourceManager::increaseExpireCounter() {
+	if (!(++_expireCounter)) {
+		increaseResourceCounter();
+	}
+}
+
 void ResourceManager::increaseResourceCounter() {
 	int i, j;
 	byte counter;
@@ -835,6 +841,17 @@ ResourceManager::ResourceManager(ScummEngine *vm) {
 	memset(this, 0, sizeof(ResourceManager));
 	_vm = vm;
 //	_allocatedSize = 0;
+}
+
+ResourceManager::~ResourceManager() {
+	freeResources();
+}
+
+void ResourceManager::setHeapThreshold(int min, int max) {
+	assert(0 < max);
+	assert(min <= max);
+	_maxHeapThreshold = max;
+	_minHeapThreshold = min;
 }
 
 bool ResourceManager::validateResource(const char *str, int type, int idx) const {
@@ -1275,28 +1292,28 @@ void ScummEngine::allocateArrays() {
 		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 	}
 
-	allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
+	res.allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
 								_numCostumes, "costume", 1);
-	allocResTypeData(rtRoom, MKID_BE('ROOM'), _numRooms, "room", 1);
-	allocResTypeData(rtRoomImage, MKID_BE('RMIM'), _numRooms, "room image", 1);
-	allocResTypeData(rtRoomScripts, MKID_BE('RMSC'), _numRooms, "room script", 1);
-	allocResTypeData(rtSound, MKID_BE('SOUN'), _numSounds, "sound", 2);
-	allocResTypeData(rtScript, MKID_BE('SCRP'), _numScripts, "script", 1);
-	allocResTypeData(rtCharset, MKID_BE('CHAR'), _numCharsets, "charset", 1);
-	allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
-	allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
-	allocResTypeData(rtTemp, 0, 10, "temp", 0);
-	allocResTypeData(rtScaleTable, 0, 5, "scale table", 0);
-	allocResTypeData(rtActorName, 0, _numActors, "actor name", 0);
-	allocResTypeData(rtVerb, 0, _numVerbs, "verb", 0);
-	allocResTypeData(rtString, 0, _numArray, "array", 0);
-	allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
-	allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
-	allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
-	allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
+	res.allocResTypeData(rtRoom, MKID_BE('ROOM'), _numRooms, "room", 1);
+	res.allocResTypeData(rtRoomImage, MKID_BE('RMIM'), _numRooms, "room image", 1);
+	res.allocResTypeData(rtRoomScripts, MKID_BE('RMSC'), _numRooms, "room script", 1);
+	res.allocResTypeData(rtSound, MKID_BE('SOUN'), _numSounds, "sound", 2);
+	res.allocResTypeData(rtScript, MKID_BE('SCRP'), _numScripts, "script", 1);
+	res.allocResTypeData(rtCharset, MKID_BE('CHAR'), _numCharsets, "charset", 1);
+	res.allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
+	res.allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
+	res.allocResTypeData(rtTemp, 0, 10, "temp", 0);
+	res.allocResTypeData(rtScaleTable, 0, 5, "scale table", 0);
+	res.allocResTypeData(rtActorName, 0, _numActors, "actor name", 0);
+	res.allocResTypeData(rtVerb, 0, _numVerbs, "verb", 0);
+	res.allocResTypeData(rtString, 0, _numArray, "array", 0);
+	res.allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
+	res.allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
+	res.allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
+	res.allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
 
 	if (_game.heversion >= 70) {
-		allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
+		res.allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
 		_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
 	}
 }

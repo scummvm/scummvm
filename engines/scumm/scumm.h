@@ -350,8 +350,8 @@ enum ResTypes {
  * a 'class', at least until somebody gets around to OOfying this more.
  */
 class ResourceManager {
-	friend class ScummDebugger;
-	friend class ScummEngine;
+	//friend class ScummDebugger;
+	//friend class ScummEngine;
 protected:
 	ScummEngine *_vm;
 
@@ -369,17 +369,22 @@ public:
 	uint32 *roomoffs[rtNumTypes];
 	uint32 *globsize[rtNumTypes];
 
+protected:
 	uint32 _allocatedSize;
 	uint32 _maxHeapThreshold, _minHeapThreshold;
 	byte _expireCounter;
 
 public:
 	ResourceManager(ScummEngine *vm);
+	~ResourceManager();
+
+	void setHeapThreshold(int min, int max);
+
+	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
+	void freeResources();
 
 	byte *createResource(int type, int index, uint32 size);
 	void nukeResource(int type, int i);
-
-	void freeResources();
 
 	bool isResourceLoaded(int type, int index) const;
 
@@ -390,14 +395,16 @@ public:
 	void setModified(int type, int i);
 	bool isModified(int type, int i) const;
 
+	void increaseExpireCounter();
 	void setResourceCounter(int type, int index, byte flag);
 	void increaseResourceCounter();
 
 	void resourceStats();
-	void expireResources(uint32 size);
-
-protected:
+	
+//protected:
 	bool validateResource(const char *str, int type, int index) const;
+protected:
+	void expireResources(uint32 size);
 };
 
 /**
@@ -770,7 +777,7 @@ protected:
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	virtual void readResTypeList(int id, const char *name);
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
+//	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 //	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
 //	void nukeResource(int type, int i);

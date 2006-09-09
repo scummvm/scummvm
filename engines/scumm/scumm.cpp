@@ -689,8 +689,6 @@ ScummEngine::~ScummEngine() {
 	free(_palManipPalette);
 	free(_palManipIntermediatePal);
 
-	res.freeResources();
-
 	free(_objectStateTable);
 	free(_objectRoomTable);
 	free(_objectOwnerTable);
@@ -1029,7 +1027,7 @@ void ScummEngine::setupScumm() {
 		requestLoad(ConfMan.getInt("save_slot"));
 	}
 
-	allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
+	res.allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
 
 	setupScummVars();
 
@@ -1066,21 +1064,22 @@ void ScummEngine::setupScumm() {
 		_bootParam = -1;
 	}
 
+	int maxHeapThreshold = -1;
 #ifdef PALMOS_68K
 	if (_game.features & GF_NEW_COSTUMES)
-		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
+		maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
 	else
-		res._maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
+		maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
 #else
 	if (_game.features & GF_NEW_COSTUMES) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
-		res._maxHeapThreshold = 6 * 1024 * 1024;
+		maxHeapThreshold = 6 * 1024 * 1024;
 	} else {
-		res._maxHeapThreshold = 550000;
+		maxHeapThreshold = 550000;
 	}
 #endif
-	res._minHeapThreshold = 400000;
+	res.setHeapThreshold(400000, maxHeapThreshold);
 
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	Graphics::initfonts();
@@ -1767,9 +1766,7 @@ load_game:
 
 	camera._last = camera._cur;
 
-	if (!(++res._expireCounter)) {
-		res.increaseResourceCounter();
-	}
+	res.increaseExpireCounter();
 
 	animateCursor();
 
