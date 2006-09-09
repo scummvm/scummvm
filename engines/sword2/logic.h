@@ -184,6 +184,7 @@ public:
 		const char *desc;
 	};
 	const OpcodeEntry *_opcodes;
+	int _numOpcodes;
 	void setupOpcodes();
 
 	int32 fnTestFunction(int32 *params);

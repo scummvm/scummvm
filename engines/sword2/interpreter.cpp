@@ -193,7 +193,8 @@ void Logic::setupOpcodes() {
 		OPCODE(fnRefreshInventory),
 		OPCODE(fnChangeShadows)
 	};
-	
+
+	_numOpcodes = ARRAYSIZE(opcodes);
 	_opcodes = opcodes;
 }
 
@@ -609,7 +610,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		case CP_CALL_MCODE:
 			// Call an mcode routine
 			Read16ip(parameter);
-			assert(parameter < ARRAYSIZE(opcodes));
+			assert(parameter < _numOpcodes);
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
 			debug(9, "CP_CALL_MCODE: '%s', %d", _opcodes[parameter].desc, value);
