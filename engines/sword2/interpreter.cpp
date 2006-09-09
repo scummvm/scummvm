@@ -42,162 +42,160 @@ namespace Sword2 {
 #	define OPCODE(x)	{ &Logic::x, "" }
 #endif
 
-typedef int32 (Logic::*OpcodeProc)(int32 *);
-struct OpcodeEntry {
-	OpcodeProc proc;
-	const char *desc;
-};
-
-static const OpcodeEntry opcodes[] = {
-	/* 00 */
-	OPCODE(fnTestFunction),
-	OPCODE(fnTestFlags),
-	OPCODE(fnRegisterStartPoint),
-	OPCODE(fnInitBackground),
-	/* 04 */
-	OPCODE(fnSetSession),
-	OPCODE(fnBackSprite),
-	OPCODE(fnSortSprite),
-	OPCODE(fnForeSprite),
-	/* 08 */
-	OPCODE(fnRegisterMouse),
-	OPCODE(fnAnim),
-	OPCODE(fnRandom),
-	OPCODE(fnPreLoad),
-	/* 0C */
-	OPCODE(fnAddSubject),
-	OPCODE(fnInteract),
-	OPCODE(fnChoose),
-	OPCODE(fnWalk),
-	/* 10 */
-	OPCODE(fnWalkToAnim),
-	OPCODE(fnTurn),
-	OPCODE(fnStandAt),
-	OPCODE(fnStand),
-	/* 14 */
-	OPCODE(fnStandAfterAnim),
-	OPCODE(fnPause),
-	OPCODE(fnMegaTableAnim),
-	OPCODE(fnAddMenuObject),
-	/* 18 */
-	OPCODE(fnStartConversation),
-	OPCODE(fnEndConversation),
-	OPCODE(fnSetFrame),
-	OPCODE(fnRandomPause),
-	/* 1C */
-	OPCODE(fnRegisterFrame),
-	OPCODE(fnNoSprite),
-	OPCODE(fnSendSync),
-	OPCODE(fnUpdatePlayerStats),
-	/* 20 */
-	OPCODE(fnPassGraph),
-	OPCODE(fnInitFloorMouse),
-	OPCODE(fnPassMega),
-	OPCODE(fnFaceXY),
-	/* 24 */
-	OPCODE(fnEndSession),
-	OPCODE(fnNoHuman),
-	OPCODE(fnAddHuman),
-	OPCODE(fnWeWait),
-	/* 28 */
-	OPCODE(fnTheyDoWeWait),
-	OPCODE(fnTheyDo),
-	OPCODE(fnWalkToTalkToMega),
-	OPCODE(fnFadeDown),
-	/* 2C */
-	OPCODE(fnISpeak),
-	OPCODE(fnTotalRestart),
-	OPCODE(fnSetWalkGrid),
-	OPCODE(fnSpeechProcess),
-	/* 30 */
-	OPCODE(fnSetScaling),
-	OPCODE(fnStartEvent),
-	OPCODE(fnCheckEventWaiting),
-	OPCODE(fnRequestSpeech),
-	/* 34 */
-	OPCODE(fnGosub),
-	OPCODE(fnTimedWait),
-	OPCODE(fnPlayFx),
-	OPCODE(fnStopFx),
-	/* 38 */
-	OPCODE(fnPlayMusic),
-	OPCODE(fnStopMusic),
-	OPCODE(fnSetValue),
-	OPCODE(fnNewScript),
-	/* 3C */
-	OPCODE(fnGetSync),
-	OPCODE(fnWaitSync),
-	OPCODE(fnRegisterWalkGrid),
-	OPCODE(fnReverseMegaTableAnim),
-	/* 40 */
-	OPCODE(fnReverseAnim),
-	OPCODE(fnAddToKillList),
-	OPCODE(fnSetStandbyCoords),
-	OPCODE(fnBackPar0Sprite),
-	/* 44 */
-	OPCODE(fnBackPar1Sprite),
-	OPCODE(fnForePar0Sprite),
-	OPCODE(fnForePar1Sprite),
-	OPCODE(fnSetPlayerActionEvent),
-	/* 48 */
-	OPCODE(fnSetScrollCoordinate),
-	OPCODE(fnStandAtAnim),
-	OPCODE(fnSetScrollLeftMouse),
-	OPCODE(fnSetScrollRightMouse),
-	/* 4C */
-	OPCODE(fnColour),
-	OPCODE(fnFlash),
-	OPCODE(fnPreFetch),
-	OPCODE(fnGetPlayerSaveData),
-	/* 50 */
-	OPCODE(fnPassPlayerSaveData),
-	OPCODE(fnSendEvent),
-	OPCODE(fnAddWalkGrid),
-	OPCODE(fnRemoveWalkGrid),
-	/* 54 */
-	OPCODE(fnCheckForEvent),
-	OPCODE(fnPauseForEvent),
-	OPCODE(fnClearEvent),
-	OPCODE(fnFaceMega),
-	/* 58 */
-	OPCODE(fnPlaySequence),
-	OPCODE(fnShadedSprite),
-	OPCODE(fnUnshadedSprite),
-	OPCODE(fnFadeUp),
-	/* 5C */
-	OPCODE(fnDisplayMsg),
-	OPCODE(fnSetObjectHeld),
-	OPCODE(fnAddSequenceText),
-	OPCODE(fnResetGlobals),
-	/* 60 */
-	OPCODE(fnSetPalette),
-	OPCODE(fnRegisterPointerText),
-	OPCODE(fnFetchWait),
-	OPCODE(fnRelease),
-	/* 64 */
-	OPCODE(fnPrepareMusic),
-	OPCODE(fnSoundFetch),
-	OPCODE(fnPrepareMusic),	// Again, apparently
-	OPCODE(fnSmackerLeadIn),
-	/* 68 */
-	OPCODE(fnSmackerLeadOut),
-	OPCODE(fnStopAllFx),
-	OPCODE(fnCheckPlayerActivity),
-	OPCODE(fnResetPlayerActivityDelay),
-	/* 6C */
-	OPCODE(fnCheckMusicPlaying),
-	OPCODE(fnPlayCredits),
-	OPCODE(fnSetScrollSpeedNormal),
-	OPCODE(fnSetScrollSpeedSlow),
-	/* 70 */
-	OPCODE(fnRemoveChooser),
-	OPCODE(fnSetFxVolAndPan),
-	OPCODE(fnSetFxVol),
-	OPCODE(fnRestoreGame),
-	/* 74 */
-	OPCODE(fnRefreshInventory),
-	OPCODE(fnChangeShadows)
-};
+void Logic::setupOpcodes() {
+	static const OpcodeEntry opcodes[] = {
+		/* 00 */
+		OPCODE(fnTestFunction),
+		OPCODE(fnTestFlags),
+		OPCODE(fnRegisterStartPoint),
+		OPCODE(fnInitBackground),
+		/* 04 */
+		OPCODE(fnSetSession),
+		OPCODE(fnBackSprite),
+		OPCODE(fnSortSprite),
+		OPCODE(fnForeSprite),
+		/* 08 */
+		OPCODE(fnRegisterMouse),
+		OPCODE(fnAnim),
+		OPCODE(fnRandom),
+		OPCODE(fnPreLoad),
+		/* 0C */
+		OPCODE(fnAddSubject),
+		OPCODE(fnInteract),
+		OPCODE(fnChoose),
+		OPCODE(fnWalk),
+		/* 10 */
+		OPCODE(fnWalkToAnim),
+		OPCODE(fnTurn),
+		OPCODE(fnStandAt),
+		OPCODE(fnStand),
+		/* 14 */
+		OPCODE(fnStandAfterAnim),
+		OPCODE(fnPause),
+		OPCODE(fnMegaTableAnim),
+		OPCODE(fnAddMenuObject),
+		/* 18 */
+		OPCODE(fnStartConversation),
+		OPCODE(fnEndConversation),
+		OPCODE(fnSetFrame),
+		OPCODE(fnRandomPause),
+		/* 1C */
+		OPCODE(fnRegisterFrame),
+		OPCODE(fnNoSprite),
+		OPCODE(fnSendSync),
+		OPCODE(fnUpdatePlayerStats),
+		/* 20 */
+		OPCODE(fnPassGraph),
+		OPCODE(fnInitFloorMouse),
+		OPCODE(fnPassMega),
+		OPCODE(fnFaceXY),
+		/* 24 */
+		OPCODE(fnEndSession),
+		OPCODE(fnNoHuman),
+		OPCODE(fnAddHuman),
+		OPCODE(fnWeWait),
+		/* 28 */
+		OPCODE(fnTheyDoWeWait),
+		OPCODE(fnTheyDo),
+		OPCODE(fnWalkToTalkToMega),
+		OPCODE(fnFadeDown),
+		/* 2C */
+		OPCODE(fnISpeak),
+		OPCODE(fnTotalRestart),
+		OPCODE(fnSetWalkGrid),
+		OPCODE(fnSpeechProcess),
+		/* 30 */
+		OPCODE(fnSetScaling),
+		OPCODE(fnStartEvent),
+		OPCODE(fnCheckEventWaiting),
+		OPCODE(fnRequestSpeech),
+		/* 34 */
+		OPCODE(fnGosub),
+		OPCODE(fnTimedWait),
+		OPCODE(fnPlayFx),
+		OPCODE(fnStopFx),
+		/* 38 */
+		OPCODE(fnPlayMusic),
+		OPCODE(fnStopMusic),
+		OPCODE(fnSetValue),
+		OPCODE(fnNewScript),
+		/* 3C */
+		OPCODE(fnGetSync),
+		OPCODE(fnWaitSync),
+		OPCODE(fnRegisterWalkGrid),
+		OPCODE(fnReverseMegaTableAnim),
+		/* 40 */
+		OPCODE(fnReverseAnim),
+		OPCODE(fnAddToKillList),
+		OPCODE(fnSetStandbyCoords),
+		OPCODE(fnBackPar0Sprite),
+		/* 44 */
+		OPCODE(fnBackPar1Sprite),
+		OPCODE(fnForePar0Sprite),
+		OPCODE(fnForePar1Sprite),
+		OPCODE(fnSetPlayerActionEvent),
+		/* 48 */
+		OPCODE(fnSetScrollCoordinate),
+		OPCODE(fnStandAtAnim),
+		OPCODE(fnSetScrollLeftMouse),
+		OPCODE(fnSetScrollRightMouse),
+		/* 4C */
+		OPCODE(fnColour),
+		OPCODE(fnFlash),
+		OPCODE(fnPreFetch),
+		OPCODE(fnGetPlayerSaveData),
+		/* 50 */
+		OPCODE(fnPassPlayerSaveData),
+		OPCODE(fnSendEvent),
+		OPCODE(fnAddWalkGrid),
+		OPCODE(fnRemoveWalkGrid),
+		/* 54 */
+		OPCODE(fnCheckForEvent),
+		OPCODE(fnPauseForEvent),
+		OPCODE(fnClearEvent),
+		OPCODE(fnFaceMega),
+		/* 58 */
+		OPCODE(fnPlaySequence),
+		OPCODE(fnShadedSprite),
+		OPCODE(fnUnshadedSprite),
+		OPCODE(fnFadeUp),
+		/* 5C */
+		OPCODE(fnDisplayMsg),
+		OPCODE(fnSetObjectHeld),
+		OPCODE(fnAddSequenceText),
+		OPCODE(fnResetGlobals),
+		/* 60 */
+		OPCODE(fnSetPalette),
+		OPCODE(fnRegisterPointerText),
+		OPCODE(fnFetchWait),
+		OPCODE(fnRelease),
+		/* 64 */
+		OPCODE(fnPrepareMusic),
+		OPCODE(fnSoundFetch),
+		OPCODE(fnPrepareMusic),	// Again, apparently
+		OPCODE(fnSmackerLeadIn),
+		/* 68 */
+		OPCODE(fnSmackerLeadOut),
+		OPCODE(fnStopAllFx),
+		OPCODE(fnCheckPlayerActivity),
+		OPCODE(fnResetPlayerActivityDelay),
+		/* 6C */
+		OPCODE(fnCheckMusicPlaying),
+		OPCODE(fnPlayCredits),
+		OPCODE(fnSetScrollSpeedNormal),
+		OPCODE(fnSetScrollSpeedSlow),
+		/* 70 */
+		OPCODE(fnRemoveChooser),
+		OPCODE(fnSetFxVolAndPan),
+		OPCODE(fnSetFxVol),
+		OPCODE(fnRestoreGame),
+		/* 74 */
+		OPCODE(fnRefreshInventory),
+		OPCODE(fnChangeShadows)
+	};
+	
+	_opcodes = opcodes;
+}
 
 #define push(value) \
 do { \
@@ -614,10 +612,10 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			assert(parameter < ARRAYSIZE(opcodes));
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
-			debug(9, "CP_CALL_MCODE: '%s', %d", opcodes[parameter].desc, value);
+			debug(9, "CP_CALL_MCODE: '%s', %d", _opcodes[parameter].desc, value);
 			stackPtr -= value;
 			assert(stackPtr >= 0);
-			retVal = (this->*opcodes[parameter].proc)(&stack[stackPtr]);
+			retVal = (this->*_opcodes[parameter].proc)(&stack[stackPtr]);
 
 			switch (retVal & 7) {
 			case IR_STOP:
@@ -640,7 +638,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 				WRITE_LE_UINT32(offsetPtr, ip);
 				return 2;
 			default:
-				error("Bad return code (%d) from '%s'", retVal & 7, opcodes[parameter].desc);
+				error("Bad return code (%d) from '%s'", retVal & 7, _opcodes[parameter].desc);
 			}
 			parameterReturnedFromMcodeFunction = retVal >> 3;
 			break;
