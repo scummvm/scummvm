@@ -558,10 +558,8 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 
 	if (_game.heversion >= 70) {
 		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
-
-		if (id == rtRoom)
-			_heV7RoomIntOffsets = (uint32 *)calloc(num, sizeof(uint32));
 	}
+
 }
 
 void ScummEngine::loadCharset(int no) {
@@ -1299,6 +1297,7 @@ void ScummEngine::allocateArrays() {
 
 	if (_game.heversion >= 70) {
 		allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
+		_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
 	}
 }
 
