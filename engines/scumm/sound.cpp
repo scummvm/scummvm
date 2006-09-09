@@ -1062,13 +1062,15 @@ void Sound::saveLoadWithSerializer(Serializer *ser) {
 #pragma mark --- Sound resource handling ---
 #pragma mark -
 
+static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *src_ptr, int size);
+
+
 /*
  * TODO: The way we handle sound/music resources really is one huge hack.
  * We probably should reconsider how we do this, and maybe come up with a
  * better/cleaner solution. Even if we keep the existing code, it really
  * could stand a thorough cleanup!
  */
-
 
 int ScummEngine::readSoundResource(int type, int idx) {
 	uint32 pos, total_size, size, tag, basetag, max_total_size;
@@ -1167,7 +1169,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		ptr = (byte *)calloc(total_size, 1);
 		_fileHandle->read(ptr, total_size);
 		//dumpResource("sound-", idx, ptr);
-		convertMac0Resource(type, idx, ptr, total_size);
+		convertMac0Resource(res, type, idx, ptr, total_size);
 		free(ptr);
 		return 1;
 
@@ -1296,7 +1298,7 @@ static const uint16 num_steps_table[] = {
 	600, 860, 1200, 1600
 };
 
-int ScummEngine::convert_extraflags(byte * ptr, byte * src_ptr) {
+static int convert_extraflags(byte * ptr, byte * src_ptr) {
 	int flags = src_ptr[0];
 
 	int t1, t2, t3, t4, time;
@@ -1362,7 +1364,7 @@ int ScummEngine::convert_extraflags(byte * ptr, byte * src_ptr) {
 }
 
 #define kMIDIHeaderSize		46
-static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int total_size) {
+static byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int total_size) {
 	uint32 dw = TO_BE_32(total_size);
 
 	memcpy(ptr, type, 4); ptr += 4;
@@ -1386,7 +1388,7 @@ static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int t
 	return ptr;
 }
 
-static inline byte *writeVLQ(byte *ptr, int value) {
+static byte *writeVLQ(byte *ptr, int value) {
 	if (value > 0x7f) {
 		if (value > 0x3fff) {
 			*ptr++ = (value >> 14) | 0x80;
@@ -1399,7 +1401,7 @@ static inline byte *writeVLQ(byte *ptr, int value) {
 	return ptr;
 }
 
-static inline byte Mac0ToGMInstrument(uint32 type, int &transpose) {
+static byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	transpose = 0;
 	switch (type) {
 	case MKID_BE('MARI'): return 12;
@@ -1421,7 +1423,7 @@ static inline byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	}
 }
 
-void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size) {
+static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *src_ptr, int size) {
 	/*
 	From Markus Magnuson (superqult) we got this information:
 	Mac0
@@ -1612,7 +1614,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 #endif
 }
 
-void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) {
+static void convertADResource(ResourceManager &res, const GameSettings& game, int type, int idx, byte *src_ptr, int size) {
 
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
@@ -1660,10 +1662,10 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 		// Convert the ticks into a MIDI tempo.
 		// Unfortunate LOOM and INDY3 have different interpretation
 		// of the ticks value.
-		if (_game.id == GID_INDY3) {
+		if (game.id == GID_INDY3) {
 			// Note: since we fix ppqn at 480, ppqn/473 is almost 1
 			dw = 500000 * 256 / 473 * ppqn / ticks;
-		} else if (_game.id == GID_LOOM && _game.version == 3) {
+		} else if (game.id == GID_LOOM && game.version == 3) {
 			dw = 500000 * ppqn / 4 / ticks;
 		} else {
 			dw = 500000 * 256 / ticks;
@@ -2089,7 +2091,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		}
 		ptr = (byte *) calloc(ad_size, 1);
 		_fileHandle->read(ptr, ad_size);
-		convertADResource(type, idx, ptr, ad_size);
+		convertADResource(res, _game, type, idx, ptr, ad_size);
 		free(ptr);
 		return 1;
 	} else if ((_musicType == MDT_PCSPK) && wa_offs != 0) {

@@ -785,9 +785,6 @@ public:
 
 protected:
 	int readSoundResource(int type, int index);
-	int convert_extraflags(byte *ptr, byte * src_ptr);
-	void convertMac0Resource(int type, int index, byte *ptr, int size);
-	void convertADResource(int type, int index, byte *ptr, int size);
 	int readSoundResourceSmallHeader(int type, int index);
 	bool isResourceInUse(int type, int i) const;
 
