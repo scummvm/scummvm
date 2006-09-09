@@ -248,7 +248,7 @@ void KyraEngine_v3::playMenuAudioFile() {
 
 	Common::File *handle = new Common::File();
 	uint32 temp = 0;
-	_res->fileHandle(_menuAudioFile, &temp, *handle);
+	_res->getFileHandle(_menuAudioFile, &temp, *handle);
 	if (handle->isOpen()) {
 		_musicSoundChannel = _soundDigital->playSound(handle, true);
 	} else {
@@ -277,7 +277,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 
 		Common::File *handle = new Common::File();
 		uint32 temp = 0;
-		_res->fileHandle(_soundList[track], &temp, *handle);
+		_res->getFileHandle(_soundList[track], &temp, *handle);
 		if (handle->isOpen()) {
 			_musicSoundChannel = _soundDigital->playSound(handle);
 		} else {

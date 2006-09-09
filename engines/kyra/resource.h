@@ -110,7 +110,7 @@ public:
 	// it gives back a file handle (used for the speech player)
 	// it could be that the needed file is embedded in the returned
 	// handle
-	bool fileHandle(const char *file, uint32 *size, Common::File &filehandle);
+	bool getFileHandle(const char *file, uint32 *size, Common::File &filehandle);
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize); 
 

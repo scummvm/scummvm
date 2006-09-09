@@ -96,7 +96,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	uint32 size = 0;
 	
 	Common::File handle;
-	if (!fileHandle(filename.c_str(), &size, handle)) {
+	if (!getFileHandle(filename.c_str(), &size, handle)) {
 		warning("couldn't load file: '%s'", filename.c_str());
 		return false;
 	}
@@ -193,7 +193,7 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 	return buffer;
 }
 
-bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehandle) {
+bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &filehandle) {
 	filehandle.close();
 
 	if (filehandle.open(file))
@@ -235,7 +235,7 @@ uint32 Resource::getFileSize(const char *file) {
 bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 	Common::File tempHandle;
 	uint32 size = 0;
-	if (!fileHandle(file, &size, tempHandle))
+	if (!getFileHandle(file, &size, tempHandle))
 		return false;
 
 	if (size > maxSize)
