@@ -140,12 +140,12 @@ void ControlButton::draw(void) {
 	FrameHeader *fHead = _resMan->fetchFrame(_resMan->fetchRes(_resId), _frameIdx);
 	uint8 *src = (uint8*)fHead + sizeof(FrameHeader);
 	uint8 *dst = _dstBuf;
-	for (uint16 cnt = 0; cnt < FROM_LE_16(fHead->height); cnt++) {
-		for (uint16 cntx = 0; cntx < FROM_LE_16(fHead->width); cntx++)
+	for (uint16 cnt = 0; cnt < READ_LE_UINT16(&fHead->height); cnt++) {
+		for (uint16 cntx = 0; cntx < READ_LE_UINT16(&fHead->width); cntx++)
 			if (src[cntx])
 				dst[cntx] = src[cntx];
 		dst += SCREEN_WIDTH;
-		src += FROM_LE_16(fHead->width);
+		src += READ_LE_UINT16(&fHead->width);
 	}
 	_system->copyRectToScreen(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
 }
