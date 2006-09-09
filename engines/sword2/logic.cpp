@@ -41,6 +41,8 @@ Logic::Logic(Sword2Engine *vm) :
 	memset(_eventList, 0, sizeof(_eventList));
 	memset(_syncList, 0, sizeof(_syncList));
 	_router = new Router(_vm);
+
+	setupOpcodes();
 }
 
 Logic::~Logic() {

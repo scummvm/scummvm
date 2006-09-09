@@ -178,6 +178,15 @@ public:
 
 	Router *_router;
 
+	typedef int32 (Logic::*OpcodeProc)(int32 *);
+	struct OpcodeEntry {
+		OpcodeProc proc;
+		const char *desc;
+	};
+	const OpcodeEntry *_opcodes;
+	int _numOpcodes;
+	void setupOpcodes();
+
 	int32 fnTestFunction(int32 *params);
 	int32 fnTestFlags(int32 *params);
 	int32 fnRegisterStartPoint(int32 *params);

@@ -146,10 +146,10 @@ void Scenery_v1::updateAnim(int16 layer, int16 frame, int16 animation, int16 fla
 
 		pictIndex = (pictIndex & 15) - 1;
 
-		left = FROM_LE_16(pictPtr[pictIndex][pieceIndex].left);
-		right = FROM_LE_16(pictPtr[pictIndex][pieceIndex].right);
-		top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
-		bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
+		left = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].left);
+		right = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].right);
+		top = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].top);
+		bottom = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].bottom);
 
 		if (flags & 2) {
 			if (destX < _vm->_anim->_areaLeft) {
