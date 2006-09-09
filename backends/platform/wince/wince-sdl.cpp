@@ -913,7 +913,7 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYd = 5;
 				_scalerProc = PocketPCLandscapeAspect;
 				_modeFlags = 0;
-				_adjustAspectRatio = true;				
+				_adjustAspectRatio = true;
 			} else {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
@@ -964,14 +964,14 @@ bool OSystem_WINCE3::update_scalers() {
 bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
 	switch (_transactionMode) {
-	case kTransactionActive:
-                _transactionDetails.mode = mode;
-                _transactionDetails.modeChanged = true;
-                return true;
-        case kTransactionCommit:
-                break;
-	default:
-                break;
+		case kTransactionActive:
+			_transactionDetails.mode = mode;
+			_transactionDetails.modeChanged = true;
+			return true;
+		case kTransactionCommit:
+			break;
+		default:
+			break;
 	}
 
 	Common::StackLock lock(_graphicsMutex);
@@ -1322,14 +1322,10 @@ void OSystem_WINCE3::internUpdateScreen() {
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactorXm / _scaleFactorXd, _newShakePos * _scaleFactorYm / _scaleFactorYd};
-
 		if (_adjustAspectRatio)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
-
 		SDL_FillRect(_hwscreen, &blackrect, 0);
-
 		_currentShakePos = _newShakePos;
-
 		_forceFull = true;
 	}
 
@@ -1339,12 +1335,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly.
 	if (_paletteDirtyEnd != 0) {
-		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
-
+		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart);
 		_paletteDirtyEnd = 0;
-
 		_forceFull = true;
 	}
 
@@ -1379,8 +1371,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 
 		_toolbarHandler.forceRedraw();
 	}
-	//else
-	//	undrawMouse();
 
 	// Only draw anything if necessary
 	if (_numDirtyRects > 0) {
@@ -1392,88 +1382,66 @@ void OSystem_WINCE3::internUpdateScreen() {
 		bool toolbarVisible = _toolbarHandler.visible();
 		int toolbarOffset = _toolbarHandler.getOffset();
 
-		if (_scalerProc == Normal1x && !_adjustAspectRatio && 0) {
-			for (r = _dirtyRectList; r != last_rect; ++r) {
-				dst = *r;
-
-				// Check if the toolbar is overwritten
-				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset)  {
-					_toolbarHandler.forceRedraw();
-				}
-
-				if (_overlayVisible) {
-					// FIXME: I don't understand why this is necessary...
-					dst.x--;
-					dst.y--;
-				}
-				dst.y += _currentShakePos;
-				if (SDL_BlitSurface(origSurf, r, _hwscreen, &dst) != 0)
-					error("SDL_BlitSurface failed: %s", SDL_GetError());
-			}
-		} else {
-				for (r = _dirtyRectList; r != last_rect; ++r) {
-					dst = *r;
-					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-					if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
-						error("SDL_BlitSurface failed: %s", SDL_GetError());
-				}
-
-			SDL_LockSurface(srcSurf);
-			SDL_LockSurface(_hwscreen);
-
-			srcPitch = srcSurf->pitch;
-			dstPitch = _hwscreen->pitch;
-
-			for (r = _dirtyRectList; r != last_rect; ++r) {
-				register int dst_y = r->y + _currentShakePos;
-				register int dst_h = 0;
-				register int orig_dst_y = 0;
-
-				// Check if the toolbar is overwritten
-				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset) {
-					_toolbarHandler.forceRedraw();
-				}
-
-				if (dst_y < _screenHeight) {
-					dst_h = r->h;
-					if (dst_h > _screenHeight - dst_y)
-						dst_h = _screenHeight - dst_y;
-
-					dst_y *= _scaleFactorYm;
-					dst_y /= _scaleFactorYd;
-
-					if (_adjustAspectRatio)
-						dst_h = real2Aspect(dst_h);
-
-					// clip inside platform screen (landscape,bottom only)
-					if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _screenHeight)
-						dst_h = _screenHeight - dst_y;
-
-					if (!_zoomDown)
-						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
-					else {
-						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
-					}
-
-				}
-
-				r->x = r->x * _scaleFactorXm / _scaleFactorXd;
-				if (!_zoomDown)
-					r->y = dst_y;
-				else
-					r->y = dst_y - 240;
-				r->w = r->w * _scaleFactorXm / _scaleFactorXd;
-				if (!_adjustAspectRatio)
-					r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
-				else
-					r->h = dst_h;
-			}
-			SDL_UnlockSurface(srcSurf);
-			SDL_UnlockSurface(_hwscreen);
+		for (r = _dirtyRectList; r != last_rect; ++r) {
+			dst = *r;
+			dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
+				error("SDL_BlitSurface failed: %s", SDL_GetError());
 		}
+
+		SDL_LockSurface(srcSurf);
+		SDL_LockSurface(_hwscreen);
+
+		srcPitch = srcSurf->pitch;
+		dstPitch = _hwscreen->pitch;
+
+		for (r = _dirtyRectList; r != last_rect; ++r) {
+			register int dst_y = r->y + _currentShakePos;
+			register int dst_h = 0;
+
+			// Check if the toolbar is overwritten
+			if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset)
+				_toolbarHandler.forceRedraw();
+
+			if (dst_y < _screenHeight) {
+				dst_h = r->h;
+				if (dst_h > _screenHeight - dst_y)
+					dst_h = _screenHeight - dst_y;
+
+				dst_y *= _scaleFactorYm;
+				dst_y /= _scaleFactorYd;
+
+				if (_adjustAspectRatio)
+					dst_h = real2Aspect(dst_h);
+
+				// clip inside platform screen (landscape,bottom only)
+				if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _screenHeight)
+					dst_h = _screenHeight - dst_y;
+
+				if (!_zoomDown)
+					_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
+				else {
+					_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
+				}
+
+			}
+
+			r->x = r->x * _scaleFactorXm / _scaleFactorXd;
+			if (!_zoomDown)
+				r->y = dst_y;
+			else
+				r->y = dst_y - 240;
+			r->w = r->w * _scaleFactorXm / _scaleFactorXd;
+			if (!_adjustAspectRatio)
+				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
+			else
+				r->h = dst_h;
+		}
+		SDL_UnlockSurface(srcSurf);
+		SDL_UnlockSurface(_hwscreen);
 
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
@@ -1538,9 +1506,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 
 		drawToolbarMouse(toolbarSurface, false);	// undraw toolbar mouse
 	}
-
-
-	//drawMouse();
 
 	// Finally, blit all our changes to the screen
 	if (_numDirtyRects > 0)
@@ -1967,7 +1932,7 @@ void OSystem_WINCE3::hideOverlay() {
 
 void OSystem_WINCE3::drawMouse() {
 	// FIXME
-	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)	
+	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)
 		internDrawMouse();		
 }
 
