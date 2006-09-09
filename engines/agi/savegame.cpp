@@ -611,7 +611,14 @@ static int select_slot() {
 	while (42) {
 		char dstr[64];
 		for (i = 0; i < NUM_SLOTS; i++) {
+#ifndef PALMOS_68K
 			sprintf(dstr, "[%-32.32s]", desc[i]);
+#else
+                        dstr[0] = '[';
+                        memcpy(dstr + 1, desc[i], 32);
+                        dstr[33] = ']';
+                        dstr[34] = 0;
+#endif
 			_text->print_text(dstr, 0, hm + 1, vm + 4 + i,
 					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
 					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
