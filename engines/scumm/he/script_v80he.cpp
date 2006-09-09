@@ -256,7 +256,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_getActorWidth),
 		OPCODE(o6_wait),
 		OPCODE(o6_getActorScaleX),
-		OPCODE(o6_getActorAnimCounter1),
+		OPCODE(o6_getActorAnimCounter),
 		/* AC */
 		OPCODE(o80_drawWizPolygon),
 		OPCODE(o6_isAnyOf),

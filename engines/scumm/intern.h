@@ -750,7 +750,7 @@ protected:
 	void o6_getActorWidth();
 	void o6_wait();
 	void o6_getActorScaleX();
-	void o6_getActorAnimCounter1();
+	void o6_getActorAnimCounter();
 	void o6_soundKludge();
 	void o6_isAnyOf();
 	void o6_systemOps();

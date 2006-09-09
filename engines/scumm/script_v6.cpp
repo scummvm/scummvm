@@ -263,7 +263,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_getActorWidth),
 		OPCODE(o6_wait),
 		OPCODE(o6_getActorScaleX),
-		OPCODE(o6_getActorAnimCounter1),
+		OPCODE(o6_getActorAnimCounter),
 		/* AC */
 		OPCODE(o6_soundKludge),
 		OPCODE(o6_isAnyOf),
@@ -1434,11 +1434,11 @@ void ScummEngine_v6::o6_getActorWidth() {
 }
 
 void ScummEngine_v6::o6_getActorScaleX() {
-	Actor *a = derefActor(pop(), "o6_getActorScale");
+	Actor *a = derefActor(pop(), "o6_getActorScaleX");
 	push(a->_scalex);
 }
 
-void ScummEngine_v6::o6_getActorAnimCounter1() {
+void ScummEngine_v6::o6_getActorAnimCounter() {
 	Actor *a = derefActor(pop(), "o6_getActorAnimCounter");
 	push(a->_cost.animCounter);
 }

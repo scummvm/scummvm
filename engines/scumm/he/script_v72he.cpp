@@ -259,7 +259,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_getActorWidth),
 		OPCODE(o6_wait),
 		OPCODE(o6_getActorScaleX),
-		OPCODE(o6_getActorAnimCounter1),
+		OPCODE(o6_getActorAnimCounter),
 		/* AC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
