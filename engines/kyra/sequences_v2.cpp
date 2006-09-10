@@ -67,7 +67,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	uint8 pal[768];
 	memset(pal, 0, sizeof(pal));
 	
-	for (int i = startSeq; i <= endSeq; i++) {
+	for (int i = startSeq; i <= endSeq && !_skipFlag; i++) {
 		uint32 seqDelay = 0;
 		int seqNum = 0;
 
@@ -94,7 +94,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		seqDelay += _system->getMillis();
 		bool mayEndLoop = sequences[i].timeOut;
 		
-		while(!_quitFlag && !_skipFlag) {
+		while (!_quitFlag && !_skipFlag) {
 			uint32 startTime = _system->getMillis();
 			
 			if (sequences[i].callback) {
