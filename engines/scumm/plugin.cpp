@@ -662,6 +662,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttcircus", "circdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttcircus", "Putt Circus Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttcircus", "Putt Circus", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttcircus", "PuttIHC", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "puttcircus", "PuttPuttIHC", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttrace", "500demo", kGenHEPC, Common::NL_NLD, UNK, 0 },
@@ -681,6 +683,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "putttime", "putttime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "putttime", "PuttTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "putttime", "pouce", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "putttime", "PuttPuttTTT", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "putttime", "PuttPuttTTT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "PuttTijd", kGenHEPC, Common::NL_NLD, UNK, 0 },
