@@ -247,7 +247,7 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 
 HotspotActionData::HotspotActionData(HotspotActionResource *rec) {
 	action = (Action) rec->action;
-	sequenceOffset = FROM_LE_16(rec->sequenceOffset);
+	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 }
 
 uint16 HotspotActionList::getActionOffset(Action action) {
