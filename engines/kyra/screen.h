@@ -181,6 +181,7 @@ public:
 	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
 	FontId _currentFont;
+	bool _disableScreen;
 
 	const ScreenDim *_curDim;
 	

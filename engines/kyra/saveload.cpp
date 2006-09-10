@@ -192,6 +192,7 @@ void KyraEngine::loadGame(const char *fileName) {
 		in->readByte(); // Voice
 	}
 
+	_screen->_disableScreen = true;
 	loadMainScreen(8);
 
 	if (queryGameFlag(0x2D)) {
@@ -206,7 +207,7 @@ void KyraEngine::loadGame(const char *fileName) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 10, 8);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 0);
 	}
-	
+
 	createMouseItem(_itemInHand);
 	_animator->setBrandonAnimSeqSize(3, 48);
 	redrawInventory(0);
@@ -222,6 +223,8 @@ void KyraEngine::loadGame(const char *fileName) {
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+	_screen->_disableScreen = false;
+	_screen->updateScreen();
 	
 	_abortWalkFlag = true;
 	_abortWalkFlag2 = false;
