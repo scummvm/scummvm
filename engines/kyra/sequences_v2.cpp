@@ -33,7 +33,9 @@ namespace Kyra {
 
 void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playSequences(%i, %i)", startSeq, endSeq);
-	
+
+	_skipFlag = false;
+
 	if (endSeq == -1)
 		endSeq = startSeq;
 	
