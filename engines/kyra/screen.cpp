@@ -2242,6 +2242,18 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 
 // kyra3 specific
 
+const uint8 *Screen::getPtrToShape(const uint8 *shpFile, int shape) {
+	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (void *)shpFile, shape);
+	uint16 shapes = READ_LE_UINT16(shpFile);
+
+	if (shapes <= shape)
+		return 0;
+
+	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
+
+	return shpFile + offset + 2;
+}
+
 uint8 *Screen::getPtrToShape(uint8 *shpFile, int shape) {
 	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (void *)shpFile, shape);
 	uint16 shapes = READ_LE_UINT16(shpFile);
@@ -2254,7 +2266,7 @@ uint8 *Screen::getPtrToShape(uint8 *shpFile, int shape) {
 	return shpFile + offset + 2;
 }
 
-uint16 Screen::getShapeSize(uint8 *shp) {
+uint16 Screen::getShapeSize(const uint8 *shp) {
 	debugC(9, kDebugLevelScreen, "KyraEngine::getShapeSize(%p)", (void *)shp);
 
 	return READ_LE_UINT16(shp+6);

@@ -129,7 +129,7 @@ private:
 	uint8 *allocTableSpace(uint8 *buf, int size, int id);
 	uint8 *findIdInTable(uint8 *buf, int id);
 
-	int addShapeToTable(uint8 *buf, int id, int shapeNum);
+	int addShapeToTable(const uint8 *buf, int id, int shapeNum);
 	uint8 *findShapeInTable(int id);
 
 	// resource specific

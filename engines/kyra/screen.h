@@ -192,12 +192,13 @@ public:
 	static const int _screenDimTableCountK3;
 
 	uint8 *getPtrToShape(uint8 *shpFile, int shape);
+	const uint8 *getPtrToShape(const uint8 *shpFile, int shape);
 
-	uint16 getShapeSize(uint8 *shp);
+	uint16 getShapeSize(const uint8 *shp);
 
-	// only needed for Kyra3!
-	uint8 *getPagePtr(int pageNum);
 private:
+	uint8 *getPagePtr(int pageNum);
+
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();
 	void copyMouseToScreen();

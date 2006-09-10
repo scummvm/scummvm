@@ -456,13 +456,13 @@ void KyraEngine_v3::updateTableBuffer(uint8 *buf) {
 	_tableBuffer2 = _tableBuffer1 = buf;
 }
 
-int KyraEngine_v3::addShapeToTable(uint8 *buf, int id, int shapeNum) {
+int KyraEngine_v3::addShapeToTable(const uint8 *buf, int id, int shapeNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine::addShapeToTable(%p, %d, %d)", (void*)buf, id, shapeNum);
 
 	if (!buf)
 		return 0;
 
-	uint8 *shapePtr = _screen->getPtrToShape(buf, shapeNum);
+	const uint8 *shapePtr = _screen->getPtrToShape(buf, shapeNum);
 	if (!shapePtr)
 		return 0;
 
@@ -636,13 +636,13 @@ void KyraEngine_v3::initItems() {
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
 	for (int i = 248; i <= 319; ++i) {
-		addShapeToTable(_screen->getPagePtr(3), i, i-248);
+		addShapeToTable(_screen->getCPagePtr(3), i, i-248);
 	}
 
 	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
 
 	for (int i = 320; i <= 397; ++i) {
-		addShapeToTable(_screen->getPagePtr(3), i, i-320);
+		addShapeToTable(_screen->getCPagePtr(3), i, i-320);
 	}
 
 	uint32 size = 0;
