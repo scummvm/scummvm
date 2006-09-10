@@ -72,7 +72,7 @@ void showActiveHotspots() {
 		++s;
 	}
 
-	Surface *surface = Surface::newDialog(300, numLines, lines);
+	Surface *surface = Surface::newDialog(300, numLines, (const char**)lines);
 	mouse.cursorOff();
 	surface->copyToScreen(10, 40);
 	events.waitForPress();
@@ -117,7 +117,7 @@ void showRoomHotspots() {
 		}
 	}
 
-	Surface *surface = Surface::newDialog(300, numLines, lines);
+	Surface *surface = Surface::newDialog(300, numLines, (const char**)lines);
 	mouse.cursorOff();
 	surface->copyToScreen(10, 40);
 	events.waitForPress();
