@@ -103,15 +103,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	PAKFile *file = 0;
 
-	if (handle.name() == filename) {
-		file = new PAKFile(filename.c_str(), handle.name(), (_engine->features() & GF_AMIGA) != 0);
-	} else {
-		uint32 offset = handle.pos();
-		uint8 *buf = new uint8[size];
-		handle.read(buf, size);
-		file = new PAKFile(filename.c_str(), handle.name(), offset, buf, size, (_engine->features() & GF_AMIGA) != 0);
-		delete [] buf;
-	}
+	file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->features() & GF_AMIGA) != 0);
 	handle.close();
 
 	if (!file)
@@ -250,49 +242,46 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
-PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : ResourceFile() {
+PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga) : ResourceFile() {
 	_isAmiga = isAmiga;
 
-	Common::File pakfile;
 	_open = false;
 
-	if (!pakfile.open(file)) {
+	if (!pakfile.isOpen()) {
 		debug(3, "couldn't open pakfile '%s'\n", file);
 		return;
 	}
 
+	uint32 off = pakfile.pos();
 	uint32 filesize = pakfile.size();
 
 	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
-	
-	uint32 startOffsetFromFile;
-	pakfile.read(&startOffsetFromFile, sizeof(uint32));
 
 	if (!_isAmiga) {
-		startoffset = READ_LE_UINT32(&startOffsetFromFile);
+		startoffset = pakfile.readUint32LE();
 	} else {
-		startoffset = READ_BE_UINT32(&startOffsetFromFile);
+		startoffset = pakfile.readUint32BE();
 	}
 	pos += 4;
 
 	while (pos < filesize) {
 		PakChunk chunk;
-		uint8 buffer[256];
+		uint8 buffer[64];
 		uint32 nameLength;
 		
 		// Move to the position of the next file entry
 		pakfile.seek(pos);
 		
 		// Read in the header
-		pakfile.read(&buffer, 256);
+		pakfile.read(&buffer, 64);
 		
 		// Quit now if we encounter an empty string
 		if (!(*((const char*)buffer)))
 			break;
 
 		chunk._name = (const char*)buffer;
-		nameLength = strlen(chunk._name.c_str()) + 1; 
+		nameLength = strlen((const char*)buffer) + 1; 
 
 		if (!_isAmiga) {
 			endoffset = READ_LE_UINT32(buffer + nameLength);
@@ -315,63 +304,13 @@ PAKFile::PAKFile(const char *file, const char *physfile, bool isAmiga) : Resourc
 		startoffset = endoffset;
 		pos += nameLength + 4;
 	}
-	_open = true;
-	
+
+	_open = true;	
 	_filename = file;
-	_physfile = physfile;
-	_physOffset = 0;
-}
-
-PAKFile::PAKFile(const char *file, const char *physfile, const uint32 off, const uint8 *buffer, uint32 filesize, bool isAmiga) : ResourceFile() {
-	_isAmiga = isAmiga;
-	_open = false;
-
-	// works with the file
-	uint32 pos = 0, startoffset = 0, endoffset = 0;
-
-	if (!_isAmiga) {
-		startoffset = READ_LE_UINT32(buffer + pos);
-	} else {
-		startoffset = READ_BE_UINT32(buffer + pos);
-	}
-	pos += 4;
-
-	while (pos < filesize) {
-		PakChunk chunk;
-
-		// saves the name
-		chunk._name = (const char*)buffer + pos;
-		pos += strlen(chunk._name.c_str()) + 1;
-		if (!(chunk._name[0]))
-			break;
-
-		if (!_isAmiga) {
-			endoffset = READ_LE_UINT32(buffer + pos);
-		} else {
-			endoffset = READ_BE_UINT32(buffer + pos);
-		}
-		pos += 4;
-
-		if (endoffset == 0) {
-			endoffset = filesize;
-		}
-
-		chunk._start = startoffset;
-		chunk._size = endoffset - startoffset;
-
-		_files.push_back(chunk);
-
-		if (endoffset == filesize)
-			break;
-
-		startoffset = endoffset;
-	}
-
-	_open = true;
 	_physfile = physfile;
 	_physOffset = off;
-	_filename = file;
 }
+
 
 PAKFile::~PAKFile() {
 	_filename.clear();
@@ -422,15 +361,12 @@ uint32 PAKFile::getFileSize(const char* file) {
 bool PAKFile::openFile(Common::File &filehandle) {
 	filehandle.close();
 
-	if (!filehandle.open(_physfile.empty() ? _filename : _physfile)) {
+	if (!filehandle.open(_physfile)) {
 		debug(3, "couldn't open pakfile '%s'\n", _filename.c_str());
 		return false;
 	}
 
-	if (!_physfile.empty()) {
-		filehandle.seek(_physOffset, SEEK_CUR);
-	}
-
+	filehandle.seek(_physOffset, SEEK_CUR);
 	return true;
 }
 

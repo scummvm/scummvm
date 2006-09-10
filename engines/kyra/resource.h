@@ -60,8 +60,7 @@ class PAKFile : public ResourceFile {
 	};
 
 public:
-	PAKFile(const char *file, const char *physfile, bool isAmiga = false);
-	PAKFile(const char *file, const char *physfile, const uint32 off, const uint8 *buf, uint32 size, bool isAmiga = false);
+	PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga = false);
 	~PAKFile();
 
 	uint8 *getFile(const char *file);
