@@ -28,7 +28,7 @@ CFLAGS =	-marm -march=armv4t -mtune=arm920 -mapcs \
 			-mno-thumb-interwork \
 			-I$(GPSDK)/include \
 			-g \
-			-O \
+			-O2 \
 			-fomit-frame-pointer
 #			-ffast-math \
 #			-fshort-double
@@ -92,9 +92,9 @@ DEFINES		+=	-DDISABLE_FANCY_THEMES
 #LIBS		+=	-Lbackends/platform/gp32/gpmad -lgpmad
 
 # Support libminilzo.
-#DEFINES		+=	-DUSE_MINILZO
-#INCLUDES	+=	-Ibackends/platform/gp32/minilzo
-#LIBS		+=	-Lbackends/platform/gp32/minilzo -lminilzo
+DEFINES		+=	-DUSE_MINILZO
+INCLUDES	+=	-Ibackends/platform/gp32/minilzo
+LIBS		+=	-Lbackends/platform/gp32/minilzo -lminilzo
 
 # Support for 8:3 save files names (The GP32 uses FAT12/16 (no vFAT) for the file system).
 DEFINES		+=	-DSHORT_SAVENAMES
@@ -159,19 +159,15 @@ DISABLE_HQ_SCALERS = 1
 DISABLE_SCUMM_7_8 = 1
 DISABLE_HE = 1
 
-# ???
-DISABLE_SIMON = 1
-DISABLE_SKY = 1
-DISABLE_QUEEN = 1
-DISABLE_GOB = 1
-DISABLE_LURE = 1
-DISABLE_CINE = 1
-
-# In-development engines below.
-# Disable for ALL release builds.
-DISABLE_SAGA = 1
-DISABLE_KYRA = 1
-DISABLE_AGI = 1
+#DISABLE_SIMON = 1
+#DISABLE_SKY = 1
+#DISABLE_QUEEN = 1
+#DISABLE_GOB = 1
+#DISABLE_LURE = 1
+#DISABLE_CINE = 1
+#DISABLE_SAGA = 1
+#DISABLE_KYRA = 1
+#DISABLE_AGI = 1
 
 # The engines below are not supported on the GP32 port so there is
 # no point compiling support into the binary.

@@ -38,10 +38,48 @@ FILE *gp_stdout = NULL;
 FILE *gp_stdin = NULL;
 
 // Cache Idea / Code borrowed from the ps2 port
-//#define USE_CACHE
+#define USE_CACHE
 
 //////////////////
 //File functions
+
+
+// CACHE
+inline bool gp_cacheInPos(GPFILE *stream)
+{
+	return (stream->cachePos <= stream->filePos && stream->filePos < stream->cachePos + stream->bytesInCache);
+}
+
+int gp_cacheMiss(GPFILE *stream)
+{
+	unsigned long readcount = 0;
+
+	int copyLen = stream->fileSize - stream->filePos;
+	if (copyLen > FCACHE_SIZE)
+		copyLen = FCACHE_SIZE;
+
+	stream->cachePos = stream->filePos;
+	stream->cacheBufOffs = 0;
+	stream->bytesInCache = copyLen;
+
+	ERR_CODE err = GpFileRead(stream->handle, stream->cacheData, copyLen, &readcount);
+
+	stream->physFilePos += copyLen;
+
+	return err;
+}
+
+int gp_flushWriteCache(GPFILE *stream) {
+	ERR_CODE err = GpFileWrite(stream->handle, stream->cacheData, stream->bytesInCache); // flush cache
+
+	stream->filePos += stream->bytesInCache;
+	stream->physFilePos += stream->bytesInCache;
+	stream->bytesInCache = 0;
+
+	return err;
+}
+
+///////////////////////////////////////////////////////////////
 
 GPFILE *gp_fopen(const char *fileName, const char *openMode) {
 	//FIXME: allocation, mode
@@ -88,6 +126,9 @@ GPFILE *gp_fopen(const char *fileName, const char *openMode) {
 
 	file->mode = mode;
 	file->cachePos = 0;
+	file->filePos = 0;
+	file->cacheBufOffs = 0;
+	file->physFilePos = 0;
 	file->bytesInCache = 0;
 
 	return file;
@@ -106,9 +147,8 @@ int gp_fclose(GPFILE *stream) {
 */
 
 #ifdef USE_CACHE
-	if (stream->cachePos && stream->mode == OPEN_W) {
-		GpFileWrite(stream->handle, (char *)stream->cacheData, stream->cachePos); // flush cache
-		stream->cachePos = 0;
+	if (stream->bytesInCache && stream->mode == OPEN_W) {
+		gp_flushWriteCache(stream);
 	}
 #endif
 
@@ -130,18 +170,38 @@ int gp_fseek(GPFILE *stream, long offset, int whence) {
 		whence = FROM_END;
 		break;
 	}
-	return GpFileSeek(stream->handle, whence, offset, (long *)&stream->filePos);	//FIXME?
+
+	ERR_CODE err;
+#ifdef USE_CACHE
+	// need to flush cache
+	if (stream->mode == OPEN_W) { // write
+		gp_flushWriteCache(stream);
+		err = GpFileSeek(stream->handle, whence, offset, (long *)&stream->filePos);
+	} else { // read
+		if (whence == SEEK_CUR)
+			offset += stream->physFilePos - stream->filePos;
+
+		err = GpFileSeek(stream->handle, whence, offset, (long *)&stream->physFilePos);
+		stream->filePos = stream->physFilePos;
+
+		if (gp_cacheInPos(stream)) {
+		} else { // cache miss
+			gp_cacheMiss(stream);
+		}
+	}
+#endif
+
+	return 1;
+	//return 0;	//FIXME?
 }
 
 size_t gp_fread(void *ptr, size_t size, size_t n, GPFILE *stream) {
-	ulong readcount = 0;
-	int len = size * n;
-	
-#ifdef USE_CACHE
+	unsigned int len = size * n;
 	uint8 *dest = (uint8 *)ptr;
 
-	while (len && (stream->filePos != stream->fileSize)) {
-		if (stream->cachePos <= filePos && filePos < stream->cachePos + stream->bytesInCache) {
+#ifdef USE_CACHE
+	while (len && !gp_feof(stream)) {
+		if (gp_cacheInPos(stream)) {
 			uint32 startPos = (stream->cacheBufOffs + (stream->filePos - stream->cachePos)) % FCACHE_SIZE;
 			uint32 copyLen = stream->bytesInCache - (stream->filePos - stream->cachePos);
 			if (copyLen > len)
@@ -149,26 +209,28 @@ size_t gp_fread(void *ptr, size_t size, size_t n, GPFILE *stream) {
 			if (startPos + copyLen > FCACHE_SIZE)
 				copyLen = FCACHE_SIZE - startPos;
 
-			memcpy(dest, cacheData + startPos, copyLen);
+			memcpy(dest, stream->cacheData + startPos, copyLen);
 
-			filePos += copyLen;
+			stream->filePos += copyLen;
 			dest += copyLen;
 			len -= copyLen;
-		} else {
-#endif
-			ERR_CODE err = GpFileRead(stream->handle, ptr, len, &readcount);
-
-#ifdef USE_CACHE
-			stream->filePos += len;
+		} else { // cache miss or cache empty
+			gp_cacheMiss(stream);
 		}
 	}
+#else
+	ulong readcount = 0;
+	ERR_CODE err = GpFileRead(stream->handle, ptr, len, &readcount);
+	stream->physFilePos += len;
+	stream->filePos += len;
 #endif
 
-	return readcount / size;	//FIXME?
+	return 1; //readcount / size;	//FIXME
 }
 
 size_t gp_fwrite(const void *ptr, size_t size, size_t n, GPFILE *stream) {
 	int len = size * n;
+	uint8 *srcBuf = (uint8 *)ptr;
 
 	if (!stream) {
 		//warning("writing to null file");
@@ -176,31 +238,37 @@ size_t gp_fwrite(const void *ptr, size_t size, size_t n, GPFILE *stream) {
 	}
 
 #ifdef USE_CACHE
-	if (stream->cachePos + len < FCACHE_SIZE) {
-		memcpy(stream->cacheData + stream->cachePos, ptr, len);
-		stream->cachePos += len;
-	} else {
-		if (stream->cachePos) {
-			GpFileWrite(stream->handle, stream->cacheData, stream->cachePos);	// flush cache
-			stream->cachePos = 0;
-		}
-
-#endif
-		ERR_CODE err = GpFileWrite(stream->handle, ptr, len);
-		if (!err)
-			return n;
+	while (len) {
+		uint32 copyLen;
+		if (stream->bytesInCache + len > FCACHE_SIZE)
+			copyLen = FCACHE_SIZE - stream->bytesInCache;
 		else
-			return -err;
-#ifdef USE_CACHE
+			copyLen = len;
+
+		srcBuf += copyLen;
+		len -= copyLen;
+
+		if (stream->bytesInCache == FCACHE_SIZE) {
+			ERR_CODE err = GpFileWrite(stream->handle, stream->cacheData, stream->bytesInCache); // flush cache
+			stream->filePos += stream->bytesInCache;
+			stream->physFilePos += stream->bytesInCache;
+			stream->bytesInCache = 0;
+		}
 	}
+#else
+	ERR_CODE err = GpFileWrite(stream->handle, ptr, len);
+	if (!err)
+		return n;
+	else
+		return -err;
 #endif
-	return 0;
+	return 1;
 }
 
-//FIXME? use standard func
 long gp_ftell(GPFILE *stream) {
 	ulong pos = 0;
-	ERR_CODE err = GpFileSeek(stream->handle, FROM_CURRENT, 0, (long*)&pos);
+	pos = stream->filePos;
+	//ERR_CODE err = GpFileSeek(stream->handle, FROM_CURRENT, 0, (long*)&pos);
 	return pos;
 }
 
@@ -209,7 +277,7 @@ void gp_clearerr(GPFILE *stream)
 }
 
 int gp_feof(GPFILE *stream) {
-	return gp_ftell(stream) >= stream->fileSize;
+	return (unsigned long)gp_ftell(stream) >= stream->fileSize;
 }
 
 char gp_fgetc(GPFILE *stream) {

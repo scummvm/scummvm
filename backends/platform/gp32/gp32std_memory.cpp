@@ -122,8 +122,10 @@ void *MemBlock::addBlock(size_t size)
 			}
 			blk++;
 		}
-		if(i == prevBlock)
-			return NULL;
+		if(i == prevBlock) {
+			prevBlock = 0;
+			return gm_malloc(size);
+		}
 	}
 
 	byte *ptr = userMem + (i * USER_BLOCK_SIZE);
@@ -139,11 +141,13 @@ void *MemBlock::addBlock(size_t size)
 
 void MemBlock::deleteBlock(void *dstBlock)
 {
+	// Faster method
 	uint32 np = (uint32) dstBlock - (uint32) userMem;
 
 	if ((np / USER_BLOCK_SIZE) * USER_BLOCK_SIZE != np) {
 		gm_free(dstBlock);
 //		warning("wrong block! (%d / %d)", (np / USER_BLOCK_SIZE) * USER_BLOCK_SIZE, np);
+		return;
 	}
 	int i = np / USER_BLOCK_SIZE;
 	if (i > NUM_BLOCK) {
@@ -201,10 +205,6 @@ void *gp_malloc(size_t size) {
 	int allocSize = ALIGNED_SIZE(size) + sizeof(uint32) + sizeof(uint32);
 	if (allocSize <= USER_BLOCK_SIZE) {
 		np = (uint32) MemBlock::addBlock(allocSize);
-		if (!np) {
-//			GPDEBUG("falling back to gm_malloc");
-			np = (uint32) gm_malloc(allocSize);
-		}
 	} else {
 		np = (uint32) gm_malloc(allocSize);
 	}
@@ -276,7 +276,7 @@ static char usedMemStr[16];
 int gUsedMem = 1024 * 1024;
 
 //#define CLEAN_MEMORY_WITH_0xE7
-#define CHECK_USED_MEMORY
+//#define CHECK_USED_MEMORY
 //#define CHECK_NEW_TIME
 //#define CHECK_NEW_SIZE
 

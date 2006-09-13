@@ -67,6 +67,7 @@ void GpMain(void *arg) {
 	//doConfig
 	gp_initGammaTable((float)g_vars.gammaRamp / 10000);
 	gp_setCpuSpeed(g_vars.cpuSpeed);
+	GPDEBUG("Set CPU Speed: %d", g_vars.cpuSpeed);
 
 	// FOR DEBUG PURPOSE!
 	//int argc = 4;

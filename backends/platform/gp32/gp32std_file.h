@@ -33,6 +33,7 @@ typedef struct {
 	unsigned long mode;
 	unsigned long fileSize;
 	unsigned long filePos;
+	unsigned long physFilePos;
 	unsigned long cachePos;
 	unsigned long cacheBufOffs;
 	unsigned long bytesInCache;

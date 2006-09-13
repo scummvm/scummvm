@@ -286,7 +286,7 @@ void GPDEBUG(const char *fmt, ...) {
 }
 
 void NP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
@@ -299,7 +299,7 @@ void NP(const char *fmt, ...) {
 }
 
 void LP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
@@ -312,7 +312,7 @@ void LP(const char *fmt, ...) {
 }
 
 void SP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
@@ -325,7 +325,7 @@ void SP(const char *fmt, ...) {
 }
 
 void BP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
