@@ -660,6 +660,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "puttcircus", "puttcircus", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttcircus", "circdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttcircus", "PouceDLC", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttcircus", "Putt Circus Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttcircus", "Putt Circus", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttcircus", "PuttIHC", kGenHEPC, Common::NL_NLD, UNK, 0 },
