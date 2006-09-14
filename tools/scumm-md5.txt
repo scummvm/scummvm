@@ -388,6 +388,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	e63a0b9249b5ca4cc4d3ac34305ae360	nb	Windows	HE 71	-	-	Karl Ove Hufthammer
 	6d1baa1065ac5f7b210be8ebe4235e49	nl	Mac	HE 73	-	-	daniel9
 	c782fbbe74a987c3df8ac73cd3e289ed	se	Mac	HE 73	-	-	Torbjörn Andersson
+	5ebb57234b2fe5c5dff641e00184ad81	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	de	Windows	HE 73	-	-	Oncer
 	507bb360688dc4180fdf0d7597352a69	se	Windows	HE 73	-	-	Sven Arvidsson
 	df047cc4792150f601290357566d36a6	us	All	HE 90	Updated	-	khalek
@@ -404,6 +405,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	5057fb0e99e5aa29df1836329232f101	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	en	Windows	HE 80	-	-	vampir_raziel
+	0a295b80f9a9edf818e8e161a0e83830	fr	Windows	HE 80	-	-	gist974
 	51305e929e330e24a75a0351c8f9975e	us	All	HE 99	Updated	-	Kirben
 	8ee63cafb1fe9d62aa0d5a23117e70e7	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	HE 100	Updated	-	sev
@@ -415,8 +417,8 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	8368f552b1e3eba559f8d559bcc4cadb	All	All	-	-	-	Kirben, sev
 	0cccfa5223099a60e76cfcca57a1a141	nl	All	-	-	-	adutchguy, daniel9
 	898ce8eb1234a955ef75e87141902bb3	ru	Windows	-	-	-	sev
+	78c07ca088526d8d4446a4c2cb501203	fr	All	HE 99	-	-	alamaz, gist974
 	83cedbe26aa8b58988e984e3d34cac8e	de	All	HE 99	-	-	Joachim Eberhard
-	78c07ca088526d8d4446a4c2cb501203	fr	Mac	HE 99	-	-	alamaz
 	75bff95816b84672b877d22a911ab811	ru	Windows	HE 99	Updated	-	sev
 
 	cb1559e8405d17a5a278a6b5ad9338d1	en	All	-	Demo	-	khalek, sev
@@ -429,6 +431,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	14d48c95b43ddeb983254cf6c43851f1	nl	Windows	-	-	-	adutchguy
 	07b810e37be7489263f7bc7627d4765d	ru	Windows	unenc	Unencrypted	-	sev
 	b5298a5c15ffbe8b381d51ea4e26d35c	de	All	HE 99	-	-	Joachim Eberhard
+	4f138ac6f9b2ac5a41bc68b2c3296064	fr	Windows	HE 99	-	-	gist974
 	78bd5f036ea35a878b74e4f47941f784	ru	Windows	HE 99	-	-	sev
 
 	7c2e76087027eeee9c8f8985f93a1cc5	en	All	-	Demo	-	khalek
@@ -443,7 +446,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	590e6546aacd0d374b7f3a4f53013ab1	All	All	-	-	-	cyx
 	21abe302e1b1e2b66d6f5c12e241ebfd	ru	Windows	unenc	Unencrypted	-	sev
-	b100abf7ff83146df50db78dbd5e9cfa	fr	Mac	HE 100	-	-	alamaz
+	b100abf7ff83146df50db78dbd5e9cfa	fr	All	HE 100	-	-	alamaz, gist974
 	b8955d7d23b4972229060d1592489fef	nl	Windows	HE 100	-	-	adutchguy
 	4ce2d5b355964bbcb5e5ce73236ef868	ru	Windows	HE 100	-	-	sev
 
@@ -508,6 +511,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	us	All	-	-	-	Kirben
 	6a60d395b78b205c93a956100b1bf5ae	de	All	HE 98.5	-	-	EdDammer
 	513f91a9dbe8d5490b39e56a3ac5bbdf	nl	Mac	HE 98.5	-	-	daniel9
+	e5563c8358443c4352fcddf7402a5e0a	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	fr	Mac	HE 99	-	-	alamaz
 	32709cbeeb3044b34129950860a83f14	ru	Windows	HE 99	-	-	sev
@@ -554,6 +558,7 @@ socks	Pajama Sam's Sock Works
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	us	All	HE 98	-	-	Kirben
 	1ed22f601f8b3695804a6583cc3083f1	nl	All	HE 98.5	-	-	daniel9
+	33e989f85da700e2014d00f345cab3d7	fr	Windows	HE 98.5	-	-	gist974
 	055ffe4f47753e47594ac67823220c54	de	All	HE 99	-	-	Joachim Eberhard
 	62050da376483d8edcbd98cd26b6cb57	ru	Windows	HE 99	-	-	sev
 
@@ -605,6 +610,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	d220d154aafbfa12bd6f3ab1b2dae420	de	Mac	-	Demo	-	Joachim Eberhard
 	de4efb910210736813c9a1185384bace	en	Windows	-	Demo	-	khalek
 	f3d55aea441e260e9e9c7d2a187097e0	en	Windows	-	Demo	-	khalek
+	65fa23d6884e8ca23d5d2406d70de7e8	fr	Windows	-	Demo	-	gist974
 	2a446817ffcabfef8716e0c456ecaf81	de	Windows	-	Demo	-	Joachim Eberhard
 
 PuttTime	Putt-Putt Travels Through Time
