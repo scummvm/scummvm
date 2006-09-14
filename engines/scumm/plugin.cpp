@@ -569,6 +569,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "FreddiSCS", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "Fritzi3demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "Fritzi3demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi3", "MALICEMCV", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi3", "MaliceMCV", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "MM3-DEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi3", "MM3-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
@@ -583,11 +584,13 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "FreddiGS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "FreddiHRBG", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "FreddiMini", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "MaliceMRC", kGenHEPC, Common::FR_FRA, UNK, 0 },
 
 	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCove", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "FreddiDZZ", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "freddicove", "FreddiMML", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddicove", "FreddiMML", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCoveDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -625,6 +628,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "pajama2", "pajama2", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "Pajama2", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "pyjam2", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "pajama2", "Pajama Sam 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PajamaTAL", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEPC, Common::DE_DEU, UNK, 0 },
@@ -668,6 +672,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttrace", "500demo", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "puttrace", "course", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttrace", "racedemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttrace", "RaceDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "Rennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
