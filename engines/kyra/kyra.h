@@ -243,7 +243,6 @@ class KyraEngine : public Engine {
 	friend class Debugger;
 	friend class ScreenAnimator;
 public:
-
 	enum {
 		MUSIC_INTRO = 0
 	};

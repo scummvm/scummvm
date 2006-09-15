@@ -105,6 +105,8 @@ KyraEngine::KyraEngine(OSystem *system)
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_features = 0;
 	_quitFlag = false;
+	
+	_currHeadShape = 0;
 }
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system)
