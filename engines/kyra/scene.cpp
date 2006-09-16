@@ -143,15 +143,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 
 	Room *currentRoom = &_roomTable[sceneId];
 	
-	if (_currentRoom != 0xFFFF && (_features & GF_TALKIE)) {
-		char file[32];
-		assert(_currentRoom < _roomTableSize);
-		int tableId = _roomTable[_currentRoom].nameIndex;
-		assert(tableId < _roomFilenameTableSize);
-		strcpy(file, _roomFilenameTable[tableId]);
-		strcat(file, ".VRM");
-		_res->unloadPakFile(file);
-	}
+	setupSceneResource(sceneId);
 	
 	_currentRoom = sceneId;
 	
@@ -163,12 +155,6 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_sprites->setupSceneAnims();
 	_scriptInterpreter->unloadScript(_scriptClickData);
 	loadSceneMSC();
-	
-	if ((_features & GF_TALKIE)) {
-		strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
-		strcat(fileNameBuffer, ".VRM");
-		_res->loadPakFile(fileNameBuffer);
-	}
 	
 	_walkBlockNorth = currentRoom->northExit;
 	_walkBlockEast = currentRoom->eastExit;
@@ -1567,6 +1553,46 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 	}
 
 	return retValue;
+}
+
+void KyraEngine::setupSceneResource(int sceneId) {
+	debugC(9, kDebugLevelMain, "KyraEngine::setupSceneResource(%d)", sceneId);
+	if (_features & GF_FLOPPY)
+		return;
+
+	if (_currentRoom != 0xFFFF) {
+		assert(_currentRoom < _roomTableSize);
+		int tableId = _roomTable[_currentRoom].nameIndex;
+		assert(tableId < _roomFilenameTableSize);
+
+		// unload our old room
+		char file[64];
+		strcpy(file, _roomFilenameTable[tableId]);
+		strcat(file, ".VRM");
+		_res->unloadPakFile(file);
+		strcpy(file, _roomFilenameTable[tableId]);
+		strcat(file, ".PAK");
+		_res->unloadPakFile(file);	
+		strcpy(file, _roomFilenameTable[tableId]);
+		strcat(file, ".APK");
+		_res->unloadPakFile(file);
+	}
+
+	assert(sceneId < _roomTableSize);
+	int tableId = _roomTable[sceneId].nameIndex;
+	assert(tableId < _roomFilenameTableSize);
+
+	// load our new room
+	char file[64];
+	strcpy(file, _roomFilenameTable[tableId]);
+	strcat(file, ".VRM");
+	_res->loadPakFile(file);
+	strcpy(file, _roomFilenameTable[tableId]);
+	strcat(file, ".PAK");
+	_res->loadPakFile(file);
+	strcpy(file, _roomFilenameTable[tableId]);
+	strcat(file, ".APK");
+	_res->loadPakFile(file);
 }
 
 } // end of namespace Kyra

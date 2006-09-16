@@ -69,12 +69,24 @@ Resource::Resource(KyraEngine *engine) {
 		error("invalid game path '%s'", dir.path().c_str());
 	}
 
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String filename = file->name();
-		filename.toUppercase();
-		if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
-			if (!loadPakFile(file->name())) {
-				error("couldn't open pakfile '%s'", file->name().c_str());
+	if (_engine->game() == GI_KYRA1 && (_engine->features() & GF_TALKIE)) {
+		static const char *list[] = {
+			"adl.pak", "col.pak", "finale.pak", "intro1.pak", "intro2.pak", "intro3.pak", "intro4.pak",
+			"misc.pak", "snd.pak", "startup.pak", "xmi.pak", 0
+		};
+
+		for (int i = 0; list[i]; ++i) {
+			if (!loadPakFile(list[i]))
+				error("couldn't open pakfile '%s'", list[i]);
+		}
+	} else {
+		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			Common::String filename = file->name();
+			filename.toUppercase();
+			if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
+				if (!loadPakFile(file->name())) {
+					error("couldn't open pakfile '%s'", file->name().c_str());
+				}
 			}
 		}
 	}
