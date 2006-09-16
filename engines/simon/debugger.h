@@ -24,13 +24,13 @@
 #ifndef SIMON_DEBUGGER_H
 #define SIMON_DEBUGGER_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Simon {
 
 class SimonEngine;
 
-class Debugger : public Common::Debugger<Debugger> {
+class Debugger : public GUI::Debugger {
 public:
 	Debugger(SimonEngine *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
@@ -41,8 +41,6 @@ protected:
 	virtual void preEnter();
 	virtual void postEnter();
 
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_PlayMusic(int argc, const char **argv);
 	bool Cmd_PlaySound(int argc, const char **argv);

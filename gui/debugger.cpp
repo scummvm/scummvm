@@ -22,17 +22,16 @@
 
 #include "common/stdafx.h"
 
-#include "common/debugger.h"
 #include "common/system.h"
 
+#include "gui/debugger.h"
 #if USE_CONSOLE
 	#include "gui/console.h"
 #endif
 
-namespace Common {
+namespace GUI {
 
-template <class T>
-Debugger<T>::Debugger() {
+Debugger::Debugger() {
 	_frame_countdown = 0;
 	_dvar_count = 0;
 	_dcmd_count = 0;
@@ -44,20 +43,28 @@ Debugger<T>::Debugger() {
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
 
-	DCmd_Register("debugflag_list",			&Debugger<T>::Cmd_DebugFlagsList);
-	DCmd_Register("debugflag_enable",		&Debugger<T>::Cmd_DebugFlagEnable);
-	DCmd_Register("debugflag_disable",		&Debugger<T>::Cmd_DebugFlagDisable);
+	//DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
+
+	DCmd_Register("help",				WRAP_METHOD(Debugger, Cmd_Help));
+
+	DCmd_Register("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
+	DCmd_Register("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
+	DCmd_Register("debugflag_disable",	WRAP_METHOD(Debugger, Cmd_DebugFlagDisable));
 }
 
-template <class T>
-Debugger<T>::~Debugger() {
+Debugger::~Debugger() {
+	for (int i = 0; i < _dcmd_count; i++) {
+		delete _dcmds[i].debuglet;
+		_dcmds[i].debuglet = 0;
+	}
 	delete _debuggerDialog;
 }
 
 
 // Initialisation Functions
-template <class T>
-int Debugger<T>::DebugPrintf(const char *format, ...) {
+int Debugger::DebugPrintf(const char *format, ...) {
 	va_list	argptr;
 
 	va_start(argptr, format);
@@ -72,8 +79,7 @@ int Debugger<T>::DebugPrintf(const char *format, ...) {
 }
 
 #ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
-template <class T>
-void Debugger<T>::attach(const char *entry) {
+void Debugger::attach(const char *entry) {
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -86,8 +92,7 @@ void Debugger<T>::attach(const char *entry) {
 	_isAttached = true;
 }
 
-template <class T>
-void Debugger<T>::detach() {
+void Debugger::detach() {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	_detach_now = false;
@@ -95,8 +100,7 @@ void Debugger<T>::detach() {
 }
 
 // Temporary execution handler
-template <class T>
-void Debugger<T>::onFrame() {
+void Debugger::onFrame() {
 	if (_frame_countdown == 0)
 		return;
 	--_frame_countdown;
@@ -115,8 +119,7 @@ void Debugger<T>::onFrame() {
 #endif // of ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
 
 // Main Debugger Loop
-template <class T>
-void Debugger<T>::enter() {
+void Debugger::enter() {
 #if USE_CONSOLE
 	if (_firstTime) {
 		DebugPrintf("Debugger started, type 'exit' to return to the game.\n");
@@ -158,14 +161,26 @@ void Debugger<T>::enter() {
 
 		if (i == 0)
 			continue;
-	} while (RunCommand(buf));
+	} while (parseCommand(buf));
 
 #endif
 }
 
+bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
+	for (int i = 0; i < _dcmd_count; ++i) {
+		if (!strcmp(_dcmds[i].name, argv[0])) {
+			Debuglet *debuglet = _dcmds[i].debuglet;
+			assert(debuglet);
+			result = (*debuglet)(argc, argv);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Command execution loop
-template <class T>
-bool Debugger<T>::RunCommand(const char *inputOrig) {
+bool Debugger::parseCommand(const char *inputOrig) {
 	int i = 0, num_params = 0;
 	const char *param[256];
 	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
@@ -180,12 +195,11 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 		param[num_params++] = input;
 	}
 
-	for (i=0; i < _dcmd_count; i++) {
-		if (!strcmp(_dcmds[i].name, param[0])) {
-			bool result = (((T *)this)->*_dcmds[i].function)(num_params, param);
-			free(input);
-			return result;
-		}
+	// Handle commands first
+	bool result;
+	if (handleCommand(num_params, param, result)) {
+		free(input);
+		return result;
 	}
 
 	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
@@ -272,8 +286,7 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 
 // returns true if something has been completed
 // completion has to be delete[]-ed then
-template <class T>
-bool Debugger<T>::TabComplete(const char *input, char*& completion) {
+bool Debugger::tabComplete(const char *input, char*& completion) {
 	// very basic tab completion
 	// for now it just supports command completions
 
@@ -323,8 +336,7 @@ bool Debugger<T>::TabComplete(const char *input, char*& completion) {
 }
 
 // Variable registration function
-template <class T>
-void Debugger<T>::DVar_Register(const char *varname, void *pointer, int type, int optional) {
+void Debugger::DVar_Register(const char *varname, void *pointer, int type, int optional) {
 	assert(_dvar_count < ARRAYSIZE(_dvars));
 	strcpy(_dvars[_dvar_count].name, varname);
 	_dvars[_dvar_count].type = type;
@@ -335,17 +347,64 @@ void Debugger<T>::DVar_Register(const char *varname, void *pointer, int type, in
 }
 
 // Command registration function
-template <class T>
-void Debugger<T>::DCmd_Register(const char *cmdname, DebugProc pointer) {
+void Debugger::DCmd_Register(const char *cmdname, Debuglet *debuglet) {
 	assert(_dcmd_count < ARRAYSIZE(_dcmds));
 	strcpy(_dcmds[_dcmd_count].name, cmdname);
-	_dcmds[_dcmd_count].function = pointer;
+	_dcmds[_dcmd_count].debuglet = debuglet;
 
 	_dcmd_count++;
 }
 
-template <class T>
-bool Debugger<T>::Cmd_DebugFlagsList(int argc, const char **argv) {
+
+// Detach ("exit") the debugger
+bool Debugger::Cmd_Exit(int argc, const char **argv) {
+	_detach_now = true;
+	return false;
+}
+
+// Print a list of all registered commands (and variables, if any),
+// nicely word-wrapped.
+bool Debugger::Cmd_Help(int argc, const char **argv) {
+
+	int width, size, i;
+
+	DebugPrintf("Commands are:\n");
+	width = 0;
+	for (i = 0; i < _dcmd_count; i++) {
+		size = strlen(_dcmds[i].name) + 1;
+
+		if ((width + size) >= GUI::ConsoleDialog::kCharsPerLine) {
+			DebugPrintf("\n");
+			width = size;
+		} else
+			width += size;
+
+		DebugPrintf("%s ", _dcmds[i].name);
+	}
+	DebugPrintf("\n");
+
+	if (_dvar_count > 0) {
+		DebugPrintf("\n");
+		DebugPrintf("Variables are:\n");
+		width = 0;
+		for (i = 0; i < _dvar_count; i++) {
+			size = strlen(_dvars[i].name) + 1;
+	
+			if ((width + size) >= GUI::ConsoleDialog::kCharsPerLine) {
+				DebugPrintf("\n");
+				width = size;
+			} else
+				width += size;
+	
+			DebugPrintf("%s ", _dvars[i].name);
+		}
+		DebugPrintf("\n");
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 	const Common::Array<Common::EngineDebugLevel> &debugLevels = Common::listSpecialDebugLevels();
 
 	DebugPrintf("Engine debug levels:\n");
@@ -361,8 +420,7 @@ bool Debugger<T>::Cmd_DebugFlagsList(int argc, const char **argv) {
 	return true;
 }
 
-template <class T>
-bool Debugger<T>::Cmd_DebugFlagEnable(int argc, const char **argv) {
+bool Debugger::Cmd_DebugFlagEnable(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("debugflag_enable <flag>\n");
 	} else {
@@ -375,8 +433,7 @@ bool Debugger<T>::Cmd_DebugFlagEnable(int argc, const char **argv) {
 	return true;
 }
 
-template <class T>
-bool Debugger<T>::Cmd_DebugFlagDisable(int argc, const char **argv) {
+bool Debugger::Cmd_DebugFlagDisable(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("debugflag_disable <flag>\n");
 	} else {
@@ -391,21 +448,19 @@ bool Debugger<T>::Cmd_DebugFlagDisable(int argc, const char **argv) {
 
 // Console handler
 #if USE_CONSOLE
-template <class T>
-bool Debugger<T>::debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon) {
+bool Debugger::debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 
-	return debugger->RunCommand(input);
+	return debugger->parseCommand(input);
 }
 
 
-template <class T>
-bool Debugger<T>::debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
+bool Debugger::debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 
-	return debugger->TabComplete(input, completion);
+	return debugger->tabComplete(input, completion);
 }
 
 #endif
 
-}	// End of namespace Common
+}	// End of namespace GUI

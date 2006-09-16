@@ -22,7 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/config-manager.h"
-#include "common/debugger.cpp"
+#include "common/system.h"
 #include "kyra/debugger.h"
 #include "kyra/kyra.h"
 #include "kyra/screen.h"
@@ -30,21 +30,18 @@
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine *vm)
-	: Common::Debugger<Debugger>() {
+	: GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue",			&Debugger::cmd_exit);
-	DCmd_Register("exit",				&Debugger::cmd_exit);
-	DCmd_Register("help",				&Debugger::cmd_help);
-	DCmd_Register("quit",				&Debugger::cmd_exit);
-	DCmd_Register("enter",				&Debugger::cmd_enterRoom);
-	DCmd_Register("rooms",				&Debugger::cmd_listRooms);
-	DCmd_Register("flags",				&Debugger::cmd_listFlags);
-	DCmd_Register("toggleflag",			&Debugger::cmd_toggleFlag);
-	DCmd_Register("queryflag",			&Debugger::cmd_queryFlag);
-	DCmd_Register("timers",				&Debugger::cmd_listTimers);
-	DCmd_Register("settimercountdown",	&Debugger::cmd_setTimerCountdown);
-	DCmd_Register("give",				&Debugger::cmd_giveItem);
+	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
+	DCmd_Register("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
+	DCmd_Register("flags",				WRAP_METHOD(Debugger, cmd_listFlags));
+	DCmd_Register("toggleflag",			WRAP_METHOD(Debugger, cmd_toggleFlag));
+	DCmd_Register("queryflag",			WRAP_METHOD(Debugger, cmd_queryFlag));
+	DCmd_Register("timers",				WRAP_METHOD(Debugger, cmd_listTimers));
+	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger, cmd_setTimerCountdown));
+	DCmd_Register("give",				WRAP_METHOD(Debugger, cmd_giveItem));
 }
 
 void Debugger::preEnter() {
@@ -90,32 +87,6 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Syntax: room <roomnum> <direction>\n");
-	return true;
-}
-
-bool Debugger::cmd_exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Debugger::cmd_help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-	DebugPrintf("\n");
 	return true;
 }
 

@@ -36,7 +36,6 @@ public:
 	typedef bool (*InputCallbackProc)(ConsoleDialog *console, const char *input, void *refCon);
 	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, char*& completion, void *refCon);
 
-protected:
 	enum {
 		kBufferSize	= 32768,
 		kCharsPerLine = 128,
@@ -45,6 +44,7 @@ protected:
 		kHistorySize = 20
 	};
 
+protected:
 	const Graphics::Font *_font;
 
 	char	_buffer[kBufferSize];

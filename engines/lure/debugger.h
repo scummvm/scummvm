@@ -23,23 +23,18 @@
 #ifndef LURE_DEBUGGER_H
 #define LURE_DEBUGGER_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Lure {
 
 class KyraEngine;
 
-class Debugger : public Common::Debugger<Debugger> {
+class Debugger : public GUI::Debugger {
 public:
 	Debugger();
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
-	bool cmd_exit(int argc, const char **argv);
-	bool cmd_help(int argc, const char **argv);
 	bool cmd_enterRoom(int argc, const char **argv);
 	bool cmd_listRooms(int argc, const char **argv);
 	bool cmd_listFields(int argc, const char **argv);

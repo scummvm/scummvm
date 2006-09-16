@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	browser.o \
 	chooser.o \
 	console.o \
+	debugger.o \
 	dialog.o \
 	editable.o \
 	EditTextWidget.o \

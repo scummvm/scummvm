@@ -19,16 +19,16 @@
  * $Id$
  */
 
-#ifndef DEBUGGER_H
-#define DEBUGGER_H
+#ifndef SCUMM_DEBUGGER_H
+#define SCUMM_DEBUGGER_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Scumm {
 
 class ScummEngine;
 
-class ScummDebugger : public Common::Debugger<ScummDebugger> {
+class ScummDebugger : public GUI::Debugger {
 public:
 	ScummDebugger(ScummEngine *s);
 	virtual ~ScummDebugger(); // we need this here for __SYMBIAN32__
@@ -41,7 +41,6 @@ protected:
 	virtual void postEnter();
 
 	// Commands
-	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_LoadGame(int argc, const char **argv);
 	bool Cmd_SaveGame(int argc, const char **argv);
@@ -62,7 +61,6 @@ protected:
 
 	bool Cmd_Debug(int argc, const char **argv);
 	bool Cmd_DebugLevel(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
 
 	bool Cmd_Show(int argc, const char **argv);
 	bool Cmd_Hide(int argc, const char **argv);

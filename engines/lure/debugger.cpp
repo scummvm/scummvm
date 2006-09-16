@@ -22,7 +22,6 @@
 
 #include "common/stdafx.h"
 #include "common/config-manager.h"
-#include "common/debugger.cpp"
 #include "lure/debugger.h"
 #include "lure/res.h"
 #include "lure/res_struct.h"
@@ -31,19 +30,16 @@
 
 namespace Lure {
 
-Debugger::Debugger(): Common::Debugger<Debugger>() {
-	DCmd_Register("continue",			&Debugger::cmd_exit);
-	DCmd_Register("exit",				&Debugger::cmd_exit);
-	DCmd_Register("help",				&Debugger::cmd_help);
-	DCmd_Register("quit",				&Debugger::cmd_exit);
-	DCmd_Register("enter",				&Debugger::cmd_enterRoom);
-	DCmd_Register("rooms",				&Debugger::cmd_listRooms);
-	DCmd_Register("fields",				&Debugger::cmd_listFields);
-	DCmd_Register("setfield",			&Debugger::cmd_setField);
-	DCmd_Register("queryfield",			&Debugger::cmd_queryField);
-	DCmd_Register("give",				&Debugger::cmd_giveItem);
-	DCmd_Register("hotspots",			&Debugger::cmd_hotspots);
-	DCmd_Register("hotspot",			&Debugger::cmd_hotspot);
+Debugger::Debugger(): GUI::Debugger() {
+	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
+	DCmd_Register("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
+	DCmd_Register("fields",				WRAP_METHOD(Debugger, cmd_listFields));
+	DCmd_Register("setfield",			WRAP_METHOD(Debugger, cmd_setField));
+	DCmd_Register("queryfield",			WRAP_METHOD(Debugger, cmd_queryField));
+	DCmd_Register("give",				WRAP_METHOD(Debugger, cmd_giveItem));
+	DCmd_Register("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
+	DCmd_Register("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
 }
 
 static int strToInt(const char *s) {
@@ -71,14 +67,6 @@ static int strToInt(const char *s) {
 			break;
 	}
 	return result;
-}
-
-void Debugger::preEnter() {
-	// NO IMPLEMENTATION
-}
-
-void Debugger::postEnter() {
-	// NO IMPLEMENTATION
 }
 
 bool Debugger::cmd_enterRoom(int argc, const char **argv) {
@@ -111,32 +99,6 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 	DebugPrintf("Syntax: room <roomnum> [<remoteview>]\n");
 	DebugPrintf("A non-zero value for reomteview will change the room without ");
 	DebugPrintf("moving the player.\n");
-	return true;
-}
-
-bool Debugger::cmd_exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Debugger::cmd_help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 69) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-	DebugPrintf("\n");
 	return true;
 }
 

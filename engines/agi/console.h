@@ -25,7 +25,7 @@
 #ifndef AGI_CONSOLE_H
 #define AGI_CONSOLE_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Agi {
 
@@ -41,7 +41,7 @@ struct agi_debug {
 	int ignoretriggers;
 };
 
-class Console : public Common::Debugger<Console> {
+class Console : public GUI::Debugger {
 public:
 	Console(AgiEngine *vm);
 	virtual ~Console(void);
@@ -51,8 +51,6 @@ protected:
 	virtual void postEnter();
 
 private:
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_SetVar(int argc, const char **argv);
 	bool Cmd_SetFlag(int argc, const char **argv);
 	bool Cmd_SetObj(int argc, const char **argv);

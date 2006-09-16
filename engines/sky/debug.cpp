@@ -23,7 +23,6 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/util.h"
-#include "common/debugger.cpp"
 
 #include "sky/debug.h"
 #include "sky/grid.h"
@@ -1280,16 +1279,14 @@ void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 
 
 Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact)
-: Common::Debugger<Debugger>(), _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
-	DCmd_Register("exit", &Debugger::Cmd_Exit);
-	DCmd_Register("help", &Debugger::Cmd_Help);
-	DCmd_Register("info", &Debugger::Cmd_Info);
-	DCmd_Register("showgrid", &Debugger::Cmd_ShowGrid);
-	DCmd_Register("reloadgrid", &Debugger::Cmd_ReloadGrid);
-	DCmd_Register("compact", &Debugger::Cmd_ShowCompact);
-	DCmd_Register("logiccmd", &Debugger::Cmd_LogicCommand);
-	DCmd_Register("scriptvar", &Debugger::Cmd_ScriptVar);
-	DCmd_Register("section", &Debugger::Cmd_Section);
+: GUI::Debugger(), _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
+	DCmd_Register("info",       WRAP_METHOD(Debugger, Cmd_Info));
+	DCmd_Register("showgrid",   WRAP_METHOD(Debugger, Cmd_ShowGrid));
+	DCmd_Register("reloadgrid", WRAP_METHOD(Debugger, Cmd_ReloadGrid));
+	DCmd_Register("compact",    WRAP_METHOD(Debugger, Cmd_ShowCompact));
+	DCmd_Register("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
+	DCmd_Register("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
+	DCmd_Register("section",    WRAP_METHOD(Debugger, Cmd_Section));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
@@ -1300,33 +1297,6 @@ void Debugger::preEnter() {
 
 void Debugger::postEnter() {
 	_mouse->resetCursor();
-}
-
-bool Debugger::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Debugger::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size;
-
-	DebugPrintf("Commands are:\n");
-	for (int i = 0; i < _dcmd_count; ++i) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else {
-			width += size;
-		}
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-	DebugPrintf("\n");
-	return true;
 }
 
 bool Debugger::Cmd_ShowGrid(int argc, const char **argv) {

@@ -32,33 +32,28 @@
 #include "agi/opcodes.h"
 #include "agi/console.h"
 
-#include "common/debugger.cpp"
-
 namespace Agi {
 
 struct agi_debug debug_;
 
-Console::Console(AgiEngine *vm) : Common::Debugger<Console>() {
+Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("debug", &Console::Cmd_Debug);
-	DCmd_Register("cont", &Console::Cmd_Cont);
-	DCmd_Register("exit", &Console::Cmd_Exit);
-	DCmd_Register("quit", &Console::Cmd_Exit);
-	DCmd_Register("help", &Console::Cmd_Help);
-	DCmd_Register("agiver", &Console::Cmd_Agiver);
-	DCmd_Register("crc", &Console::Cmd_Crc);
-	DCmd_Register("flags", &Console::Cmd_Flags);
-	DCmd_Register("logic0", &Console::Cmd_Logic0);
-	DCmd_Register("objs", &Console::Cmd_Objs);
-	DCmd_Register("runopcode", &Console::Cmd_RunOpcode);
-	DCmd_Register("opcode", &Console::Cmd_Opcode);
-	DCmd_Register("step", &Console::Cmd_Step);
-	DCmd_Register("trigger", &Console::Cmd_Trigger);
-	DCmd_Register("vars", &Console::Cmd_Vars);
-	DCmd_Register("setvar", &Console::Cmd_SetVar);
-	DCmd_Register("setflag", &Console::Cmd_SetFlag);
-	DCmd_Register("setobj", &Console::Cmd_SetObj);
+	DCmd_Register("debug",      WRAP_METHOD(Console, Cmd_Debug));
+	DCmd_Register("cont",       WRAP_METHOD(Console, Cmd_Cont));
+	DCmd_Register("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
+	DCmd_Register("crc",        WRAP_METHOD(Console, Cmd_Crc));
+	DCmd_Register("flags",      WRAP_METHOD(Console, Cmd_Flags));
+	DCmd_Register("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
+	DCmd_Register("objs",       WRAP_METHOD(Console, Cmd_Objs));
+	DCmd_Register("runopcode",  WRAP_METHOD(Console, Cmd_RunOpcode));
+	DCmd_Register("opcode",     WRAP_METHOD(Console, Cmd_Opcode));
+	DCmd_Register("step",       WRAP_METHOD(Console, Cmd_Step));
+	DCmd_Register("trigger",    WRAP_METHOD(Console, Cmd_Trigger));
+	DCmd_Register("vars",       WRAP_METHOD(Console, Cmd_Vars));
+	DCmd_Register("setvar",     WRAP_METHOD(Console, Cmd_SetVar));
+	DCmd_Register("setflag",    WRAP_METHOD(Console, Cmd_SetFlag));
+	DCmd_Register("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
 }
 
 Console::~Console() {
@@ -68,34 +63,6 @@ void Console::preEnter() {
 }
 
 void Console::postEnter() {
-}
-
-bool Console::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Console::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-
-	DebugPrintf("\n");
-
-	return true;
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {

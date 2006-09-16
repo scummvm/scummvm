@@ -27,23 +27,16 @@
 #ifndef SAGA_CONSOLE_H_
 #define SAGA_CONSOLE_H_
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Saga {
 
-class Console : public Common::Debugger<Console> {
+class Console : public GUI::Debugger {
 public:
 	Console(SagaEngine *vm);
 	virtual ~Console(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
-
 	bool cmdActorWalkTo(int argc, const char **argv);
 
 	bool Cmd_AnimInfo(int argc, const char **argv);

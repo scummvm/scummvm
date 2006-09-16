@@ -23,13 +23,13 @@
 #ifndef KYRA_DEBUGGER_H
 #define KYRA_DEBUGGER_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Kyra {
 
 class KyraEngine;
 
-class Debugger : public Common::Debugger<Debugger> {
+class Debugger : public GUI::Debugger {
 public:
 	Debugger(KyraEngine *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
@@ -40,8 +40,6 @@ protected:
 	virtual void preEnter();
 	virtual void postEnter();
 
-	bool cmd_exit(int argc, const char **argv);
-	bool cmd_help(int argc, const char **argv);
 	bool cmd_enterRoom(int argc, const char **argv);
 	bool cmd_listRooms(int argc, const char **argv);
 	bool cmd_listFlags(int argc, const char **argv);

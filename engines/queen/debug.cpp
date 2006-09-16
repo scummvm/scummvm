@@ -29,24 +29,20 @@
 #include "queen/resource.h"
 #include "queen/sound.h"
 
-#include "common/debugger.cpp"
-
 namespace Queen {
 
 Debugger::Debugger(QueenEngine *vm)
 	: _vm(vm), _flags(0) {
 
-	DCmd_Register("exit", &Debugger::Cmd_Exit);
-	DCmd_Register("help", &Debugger::Cmd_Help);
-	DCmd_Register("areas", &Debugger::Cmd_Areas);
-	DCmd_Register("asm", &Debugger::Cmd_Asm);
-	DCmd_Register("bob", &Debugger::Cmd_Bob);
-	DCmd_Register("bobs", &Debugger::Cmd_PrintBobs);
-	DCmd_Register("gs", &Debugger::Cmd_GameState);
-	DCmd_Register("info", &Debugger::Cmd_Info);
-	DCmd_Register("items", &Debugger::Cmd_Items);
-	DCmd_Register("room", &Debugger::Cmd_Room);
-	DCmd_Register("song", &Debugger::Cmd_Song);
+	DCmd_Register("areas", WRAP_METHOD(Debugger, Cmd_Areas));
+	DCmd_Register("asm",   WRAP_METHOD(Debugger, Cmd_Asm));
+	DCmd_Register("bob",   WRAP_METHOD(Debugger, Cmd_Bob));
+	DCmd_Register("bobs",  WRAP_METHOD(Debugger, Cmd_PrintBobs));
+	DCmd_Register("gs",    WRAP_METHOD(Debugger, Cmd_GameState));
+	DCmd_Register("info",  WRAP_METHOD(Debugger, Cmd_Info));
+	DCmd_Register("items", WRAP_METHOD(Debugger, Cmd_Items));
+	DCmd_Register("room",  WRAP_METHOD(Debugger, Cmd_Room));
+	DCmd_Register("song",  WRAP_METHOD(Debugger, Cmd_Song));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
@@ -55,32 +51,6 @@ void Debugger::preEnter() {
 
 void Debugger::postEnter() {
 	_vm->graphics()->setupMouseCursor();
-}
-
-bool Debugger::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Debugger::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-	DebugPrintf("\n");
-	return true;
 }
 
 bool Debugger::Cmd_Asm(int argc, const char **argv) {

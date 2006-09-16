@@ -36,8 +36,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
-#include "common/debugger.cpp"
-
 namespace Scumm {
 
 // Debug channel lookup table for Debugger console
@@ -71,7 +69,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 }
 
 ScummDebugger::ScummDebugger(ScummEngine *s)
-	: Common::Debugger<ScummDebugger>() {
+	: GUI::Debugger() {
 	_vm = s;
 
 	// Register variables
@@ -87,38 +85,35 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DVar_Register("scumm_gameid", &_vm->_game.id, DVAR_BYTE, 0);
 
 	// Register commands
-	DCmd_Register("continue", &ScummDebugger::Cmd_Exit);
-	DCmd_Register("exit", &ScummDebugger::Cmd_Exit);
-	DCmd_Register("quit", &ScummDebugger::Cmd_Exit);
-	DCmd_Register("restart", &ScummDebugger::Cmd_Restart);
+	DCmd_Register("continue",  WRAP_METHOD(ScummDebugger, Cmd_Exit));
+	DCmd_Register("restart",   WRAP_METHOD(ScummDebugger, Cmd_Restart));
 
-	DCmd_Register("actor", &ScummDebugger::Cmd_Actor);
-	DCmd_Register("actors", &ScummDebugger::Cmd_PrintActor);
-	DCmd_Register("box", &ScummDebugger::Cmd_PrintBox);
-	DCmd_Register("matrix", &ScummDebugger::Cmd_PrintBoxMatrix);
-	DCmd_Register("camera", &ScummDebugger::Cmd_Camera);
-	DCmd_Register("room", &ScummDebugger::Cmd_Room);
-	DCmd_Register("objects", &ScummDebugger::Cmd_PrintObjects);
-	DCmd_Register("object", &ScummDebugger::Cmd_Object);
-	DCmd_Register("script", &ScummDebugger::Cmd_Script);
-	DCmd_Register("scr", &ScummDebugger::Cmd_Script);
-	DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
-	DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
+	DCmd_Register("actor",     WRAP_METHOD(ScummDebugger, Cmd_Actor));
+	DCmd_Register("actors",    WRAP_METHOD(ScummDebugger, Cmd_PrintActor));
+	DCmd_Register("box",       WRAP_METHOD(ScummDebugger, Cmd_PrintBox));
+	DCmd_Register("matrix",    WRAP_METHOD(ScummDebugger, Cmd_PrintBoxMatrix));
+	DCmd_Register("camera",    WRAP_METHOD(ScummDebugger, Cmd_Camera));
+	DCmd_Register("room",      WRAP_METHOD(ScummDebugger, Cmd_Room));
+	DCmd_Register("objects",   WRAP_METHOD(ScummDebugger, Cmd_PrintObjects));
+	DCmd_Register("object",    WRAP_METHOD(ScummDebugger, Cmd_Object));
+	DCmd_Register("script",    WRAP_METHOD(ScummDebugger, Cmd_Script));
+	DCmd_Register("scr",       WRAP_METHOD(ScummDebugger, Cmd_Script));
+	DCmd_Register("scripts",   WRAP_METHOD(ScummDebugger, Cmd_PrintScript));
+	DCmd_Register("importres", WRAP_METHOD(ScummDebugger, Cmd_ImportRes));
 
 	if (_vm->_game.id == GID_LOOM)
-		DCmd_Register("drafts", &ScummDebugger::Cmd_PrintDraft);
+		DCmd_Register("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
 
-	DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
-	DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
+	DCmd_Register("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
+	DCmd_Register("savegame",  WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
 
-	DCmd_Register("level", &ScummDebugger::Cmd_DebugLevel);
-	DCmd_Register("debug", &ScummDebugger::Cmd_Debug);
-	DCmd_Register("help", &ScummDebugger::Cmd_Help);
+	DCmd_Register("level",     WRAP_METHOD(ScummDebugger, Cmd_DebugLevel));
+	DCmd_Register("debug",     WRAP_METHOD(ScummDebugger, Cmd_Debug));
 
-	DCmd_Register("show", &ScummDebugger::Cmd_Show);
-	DCmd_Register("hide", &ScummDebugger::Cmd_Hide);
+	DCmd_Register("show",      WRAP_METHOD(ScummDebugger, Cmd_Show));
+	DCmd_Register("hide",      WRAP_METHOD(ScummDebugger, Cmd_Hide));
 
-	DCmd_Register("imuse", &ScummDebugger::Cmd_IMuse);
+	DCmd_Register("imuse",     WRAP_METHOD(ScummDebugger, Cmd_IMuse));
 }
 
 ScummDebugger::~ScummDebugger() {} // we need this here for __SYMBIAN32__
@@ -138,11 +133,6 @@ void ScummDebugger::postEnter() {
 // Now the fun stuff:
 
 // Commands
-bool ScummDebugger::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
 bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 	_vm->restart();
 
@@ -514,44 +504,6 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
 	}
-
-	return true;
-}
-
-bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-
-	width = 0;
-
-	DebugPrintf("\n\nVariables are:\n");
-	for (i = 0 ; i < _dvar_count ; i++) {
-		size = strlen(_dvars[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dvars[i].name);
-	}
-
-	DebugPrintf("\n");
 
 	return true;
 }

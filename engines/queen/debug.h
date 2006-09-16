@@ -23,13 +23,13 @@
 #ifndef QUEENDEBUG_H
 #define QUEENDEBUG_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Queen {
 
 class QueenEngine;
 
-class Debugger : public Common::Debugger<Debugger> {
+class Debugger : public GUI::Debugger {
 public:
 
 	Debugger(QueenEngine *vm);
@@ -46,8 +46,6 @@ protected:
 	virtual void preEnter();
 	virtual void postEnter();
 
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_Areas(int argc, const char **argv);
 	bool Cmd_Asm(int argc, const char **argv);
 	bool Cmd_Bob(int argc, const char **argv);

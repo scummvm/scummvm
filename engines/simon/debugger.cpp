@@ -24,7 +24,6 @@
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
-#include "common/debugger.cpp"
 
 #include "simon/debugger.h"
 #include "simon/simon.h"
@@ -32,20 +31,17 @@
 namespace Simon {
 
 Debugger::Debugger(SimonEngine *vm)
-	: Common::Debugger<Debugger>() {
+	: GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue", &Debugger::Cmd_Exit);
-	DCmd_Register("exit", &Debugger::Cmd_Exit);
-	DCmd_Register("help", &Debugger::Cmd_Help);
-	DCmd_Register("quit", &Debugger::Cmd_Exit);
-	DCmd_Register("level", &Debugger::Cmd_DebugLevel);
-	DCmd_Register("music", &Debugger::Cmd_PlayMusic);
-	DCmd_Register("sound", &Debugger::Cmd_PlaySound);
-	DCmd_Register("voice", &Debugger::Cmd_PlayVoice);
-	DCmd_Register("bit", &Debugger::Cmd_SetBit);
-	DCmd_Register("var", &Debugger::Cmd_SetVar);
-	DCmd_Register("sub", &Debugger::Cmd_StartSubroutine);
+	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("level",    WRAP_METHOD(Debugger, Cmd_DebugLevel));
+	DCmd_Register("music",    WRAP_METHOD(Debugger, Cmd_PlayMusic));
+	DCmd_Register("sound",    WRAP_METHOD(Debugger, Cmd_PlaySound));
+	DCmd_Register("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
+	DCmd_Register("bit",      WRAP_METHOD(Debugger, Cmd_SetBit));
+	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
+	DCmd_Register("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
 
 }
 
@@ -59,32 +55,6 @@ void Debugger::postEnter() {
 	//_vm->midi.pause(0);
 }
 
-
-bool Debugger::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Debugger::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-	DebugPrintf("\n");
-	return true;
-}
 
 bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) {

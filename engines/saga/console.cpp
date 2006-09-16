@@ -32,26 +32,21 @@
 
 #include "saga/console.h"
 
-#include "common/debugger.cpp"
-
 namespace Saga {
 
-Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
+Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue", &Console::Cmd_Exit);
-	DCmd_Register("exit", &Console::Cmd_Exit);
-	DCmd_Register("quit", &Console::Cmd_Exit);
-	DCmd_Register("help", &Console::Cmd_Help);
+	DCmd_Register("continue",         WRAP_METHOD(Console, Cmd_Exit));
 
 	// CVAR_Register_I(&_soundEnabled, "sound", NULL, CVAR_CFG, 0, 1);
 	// CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
 	// Actor commands
-	DCmd_Register("actor_walk_to", &Console::cmdActorWalkTo);
+	DCmd_Register("actor_walk_to",    WRAP_METHOD(Console, cmdActorWalkTo));
 
 	// Animation commands
-	DCmd_Register("anim_info", &Console::Cmd_AnimInfo);
+	DCmd_Register("anim_info",        WRAP_METHOD(Console, Cmd_AnimInfo));
 
 	// Game stuff
 
@@ -66,61 +61,12 @@ Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
 #endif
 
 	// Scene commands
-	DCmd_Register("scene_change", &Console::cmdSceneChange);
-	DCmd_Register("action_map_info", &Console::cmdActionMapInfo);
-	DCmd_Register("object_map_info", &Console::cmdObjectMapInfo);
+	DCmd_Register("scene_change",     WRAP_METHOD(Console, cmdSceneChange));
+	DCmd_Register("action_map_info",  WRAP_METHOD(Console, cmdActionMapInfo));
+	DCmd_Register("object_map_info",  WRAP_METHOD(Console, cmdObjectMapInfo));
 }
 
 Console::~Console() {
-}
-
-void Console::preEnter() {
-}
-
-void Console::postEnter() {
-}
-
-bool Console::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	return false;
-}
-
-bool Console::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
-	// wrap around nicely
-	int width = 0, size, i;
-
-	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-
-	width = 0;
-
-	DebugPrintf("\n\nVariables are:\n");
-	for (i = 0 ; i < _dvar_count ; i++) {
-		size = strlen(_dvars[i].name) + 1;
-
-		if ((width + size) >= 39) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dvars[i].name);
-	}
-
-	DebugPrintf("\n");
-
-	return true;
 }
 
 bool Console::cmdActorWalkTo(int argc, const char **argv) {

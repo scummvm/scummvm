@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "common/rect.h"
+#include "common/system.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -34,12 +35,10 @@
 #include "sword2/screen.h"
 #include "sword2/sound.h"
 
-#include "common/debugger.cpp"
-
 namespace Sword2 {
 
 Debugger::Debugger(Sword2Engine *vm)
-	: Common::Debugger<Debugger>() {
+	: GUI::Debugger() {
 	_vm = vm;
 
 	memset(_debugTextBlocks, 0, sizeof(_debugTextBlocks));
@@ -79,47 +78,44 @@ Debugger::Debugger(Sword2Engine *vm)
 
 	// Register commands
 
-	DCmd_Register("continue", &Debugger::Cmd_Exit);
-	DCmd_Register("exit", &Debugger::Cmd_Exit);
-	DCmd_Register("quit", &Debugger::Cmd_Exit);
-	DCmd_Register("q", &Debugger::Cmd_Exit);
-	DCmd_Register("help", &Debugger::Cmd_Help);
-	DCmd_Register("mem", &Debugger::Cmd_Mem);
-	DCmd_Register("tony", &Debugger::Cmd_Tony);
-	DCmd_Register("res", &Debugger::Cmd_Res);
-	DCmd_Register("reslist", &Debugger::Cmd_ResList);
-	DCmd_Register("starts", &Debugger::Cmd_Starts);
-	DCmd_Register("start", &Debugger::Cmd_Start);
-	DCmd_Register("s", &Debugger::Cmd_Start);
-	DCmd_Register("info", &Debugger::Cmd_Info);
-	DCmd_Register("walkgrid", &Debugger::Cmd_WalkGrid);
-	DCmd_Register("mouse", &Debugger::Cmd_Mouse);
-	DCmd_Register("player", &Debugger::Cmd_Player);
-	DCmd_Register("reslook", &Debugger::Cmd_ResLook);
-	DCmd_Register("cur", &Debugger::Cmd_CurrentInfo);
-	DCmd_Register("runlist", &Debugger::Cmd_RunList);
-	DCmd_Register("kill", &Debugger::Cmd_Kill);
-	DCmd_Register("nuke", &Debugger::Cmd_Nuke);
-	DCmd_Register("var", &Debugger::Cmd_Var);
-	DCmd_Register("rect", &Debugger::Cmd_Rect);
-	DCmd_Register("clear", &Debugger::Cmd_Clear);
-	DCmd_Register("debugon", &Debugger::Cmd_DebugOn);
-	DCmd_Register("debugoff", &Debugger::Cmd_DebugOff);
-	DCmd_Register("saverest", &Debugger::Cmd_SaveRest);
-	DCmd_Register("timeon", &Debugger::Cmd_TimeOn);
-	DCmd_Register("timeoff", &Debugger::Cmd_TimeOff);
-	DCmd_Register("text", &Debugger::Cmd_Text);
-	DCmd_Register("showvar", &Debugger::Cmd_ShowVar);
-	DCmd_Register("hidevar", &Debugger::Cmd_HideVar);
-	DCmd_Register("version", &Debugger::Cmd_Version);
-	DCmd_Register("animtest", &Debugger::Cmd_AnimTest);
-	DCmd_Register("texttest", &Debugger::Cmd_TextTest);
-	DCmd_Register("linetest", &Debugger::Cmd_LineTest);
-	DCmd_Register("events", &Debugger::Cmd_Events);
-	DCmd_Register("sfx", &Debugger::Cmd_Sfx);
-	DCmd_Register("english", &Debugger::Cmd_English);
-	DCmd_Register("finnish", &Debugger::Cmd_Finnish);
-	DCmd_Register("polish", &Debugger::Cmd_Polish);
+	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("q",        WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("mem",      WRAP_METHOD(Debugger, Cmd_Mem));
+	DCmd_Register("tony",     WRAP_METHOD(Debugger, Cmd_Tony));
+	DCmd_Register("res",      WRAP_METHOD(Debugger, Cmd_Res));
+	DCmd_Register("reslist",  WRAP_METHOD(Debugger, Cmd_ResList));
+	DCmd_Register("starts",   WRAP_METHOD(Debugger, Cmd_Starts));
+	DCmd_Register("start",    WRAP_METHOD(Debugger, Cmd_Start));
+	DCmd_Register("s",        WRAP_METHOD(Debugger, Cmd_Start));
+	DCmd_Register("info",     WRAP_METHOD(Debugger, Cmd_Info));
+	DCmd_Register("walkgrid", WRAP_METHOD(Debugger, Cmd_WalkGrid));
+	DCmd_Register("mouse",    WRAP_METHOD(Debugger, Cmd_Mouse));
+	DCmd_Register("player",   WRAP_METHOD(Debugger, Cmd_Player));
+	DCmd_Register("reslook",  WRAP_METHOD(Debugger, Cmd_ResLook));
+	DCmd_Register("cur",      WRAP_METHOD(Debugger, Cmd_CurrentInfo));
+	DCmd_Register("runlist",  WRAP_METHOD(Debugger, Cmd_RunList));
+	DCmd_Register("kill",     WRAP_METHOD(Debugger, Cmd_Kill));
+	DCmd_Register("nuke",     WRAP_METHOD(Debugger, Cmd_Nuke));
+	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_Var));
+	DCmd_Register("rect",     WRAP_METHOD(Debugger, Cmd_Rect));
+	DCmd_Register("clear",    WRAP_METHOD(Debugger, Cmd_Clear));
+	DCmd_Register("debugon",  WRAP_METHOD(Debugger, Cmd_DebugOn));
+	DCmd_Register("debugoff", WRAP_METHOD(Debugger, Cmd_DebugOff));
+	DCmd_Register("saverest", WRAP_METHOD(Debugger, Cmd_SaveRest));
+	DCmd_Register("timeon",   WRAP_METHOD(Debugger, Cmd_TimeOn));
+	DCmd_Register("timeoff",  WRAP_METHOD(Debugger, Cmd_TimeOff));
+	DCmd_Register("text",     WRAP_METHOD(Debugger, Cmd_Text));
+	DCmd_Register("showvar",  WRAP_METHOD(Debugger, Cmd_ShowVar));
+	DCmd_Register("hidevar",  WRAP_METHOD(Debugger, Cmd_HideVar));
+	DCmd_Register("version",  WRAP_METHOD(Debugger, Cmd_Version));
+	DCmd_Register("animtest", WRAP_METHOD(Debugger, Cmd_AnimTest));
+	DCmd_Register("texttest", WRAP_METHOD(Debugger, Cmd_TextTest));
+	DCmd_Register("linetest", WRAP_METHOD(Debugger, Cmd_LineTest));
+	DCmd_Register("events",   WRAP_METHOD(Debugger, Cmd_Events));
+	DCmd_Register("sfx",      WRAP_METHOD(Debugger, Cmd_Sfx));
+	DCmd_Register("english",  WRAP_METHOD(Debugger, Cmd_English));
+	DCmd_Register("finnish",  WRAP_METHOD(Debugger, Cmd_Finnish));
+	DCmd_Register("polish",   WRAP_METHOD(Debugger, Cmd_Polish));
 }
 
 void Debugger::varGet(int var) {
@@ -156,34 +152,6 @@ void Debugger::postEnter() {
 }
 
 // Now the fun stuff: Commands
-
-bool Debugger::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
-	_vm->clearInputEvents();
-	return false;
-}
-
-bool Debugger::Cmd_Help(int argc, const char **argv) {
-	// console normally has 78 line width
-	// wrap around nicely
-	int width = 0;
-
-	DebugPrintf("Commands are:\n");
-	for (int i = 0 ; i < _dcmd_count ; i++) {
-		int size = strlen(_dcmds[i].name) + 1;
-
-		if (width + size >= 75) {
-			DebugPrintf("\n");
-			width = size;
-		} else
-			width += size;
-
-		DebugPrintf("%s ", _dcmds[i].name);
-	}
-
-	DebugPrintf("\n");
-	return true;
-}
 
 static int compare_blocks(const void *p1, const void *p2) {
 	const MemBlock *m1 = *(const MemBlock * const *)p1;

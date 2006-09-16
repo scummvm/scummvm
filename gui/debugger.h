@@ -19,19 +19,18 @@
  * $Id$
  */
 
-#ifndef COMMON_DEBUGGER_H
-#define COMMON_DEBUGGER_H
+#ifndef GUI_DEBUGGER_H
+#define GUI_DEBUGGER_H
 
 namespace GUI {
-	class ConsoleDialog;
-}
-
-namespace Common {
 
 // Choose between text console or ScummConsole
 #define USE_CONSOLE	1
 
-template <class T>
+#ifdef USE_CONSOLE
+class ConsoleDialog;
+#endif
+
 class Debugger {
 public:
 	Debugger();
@@ -40,6 +39,9 @@ public:
 	int DebugPrintf(const char *format, ...);
 
 #ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
+	// FIXME: Fingolfin asks: This code *used* to be a problem when GUI::Debugger
+	// was a template class. But is it really still causing problems, or can
+	// this hack go away now?
 	virtual void onFrame();
 
 	virtual void attach(const char *entry = 0);
@@ -50,7 +52,32 @@ public:
 	bool isAttached() const { return _isAttached; }
 
 protected:
-	typedef bool (T::*DebugProc)(int argc, const char **argv);
+	class Debuglet {
+	public:
+		virtual ~Debuglet() {}
+		virtual bool operator()(int argc, const char **argv) = 0;
+	};
+	
+	template <class T>
+	class DelegateDebuglet : public Debuglet {
+		typedef bool (T::*Method)(int argc, const char **argv);
+
+		T *_delegate;
+		const Method _method;
+	public:
+		DelegateDebuglet(T *delegate, Method method)
+			: _delegate(delegate), _method(method) {
+			assert(delegate != 0);
+		}
+		virtual bool operator()(int argc, const char **argv) {
+			return (_delegate->*_method)(argc, argv);
+		};
+	};
+	
+	// Convenicence macro for registering a method of a debugger class
+	// as the current command.
+	#define WRAP_METHOD(cls, method) \
+		new DelegateDebuglet<cls>(this, &cls::method)
 
 	enum {
 		DVAR_BYTE,
@@ -68,13 +95,19 @@ protected:
 
 	struct DCmd {
 		char name[30];
-		DebugProc function;
+		Debuglet *debuglet;
 	};
 
-	int _frame_countdown, _dvar_count, _dcmd_count;
-	DVar _dvars[256];
-	DCmd _dcmds[256];
+	int _frame_countdown;
 	bool _detach_now;
+	
+	// TODO: Consider replacing the following two arrays by a Hashmap
+
+	int _dvar_count;
+	DVar _dvars[256];
+
+	int _dcmd_count;
+	DCmd _dcmds[256];
 
 private:
 	bool _isAttached;
@@ -83,28 +116,43 @@ private:
 	GUI::ConsoleDialog *_debuggerDialog;
 
 protected:
+	// Hook for subclasses: Called just before enter() is run
+	virtual void preEnter() {}
+
+	// Hook for subclasses: Called just after enter() was run
+	virtual void postEnter() {}
+
+	// Hook for subclasses: Process the given command line.
+	// Should return true if and only if argv[0] is a known command and was
+	// handled, false otherwise.
+	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
+
+	
+private:
+//protected:
 	void detach();
 	void enter();
 
-	virtual void preEnter() = 0;
-	virtual void postEnter() = 0;
+	bool parseCommand(const char *input);
+	bool tabComplete(const char *input, char*& completion);
 
-	bool RunCommand(const char *input);
-	bool TabComplete(const char *input, char*& completion);
-
+protected:
 	void DVar_Register(const char *varname, void *pointer, int type, int optional);
-	void DCmd_Register(const char *cmdname, DebugProc pointer);
+	void DCmd_Register(const char *cmdname, Debuglet *debuglet);
 
+	bool Cmd_Exit(int argc, const char **argv);
+	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_DebugFlagsList(int argc, const char **argv);
 	bool Cmd_DebugFlagEnable(int argc, const char **argv);
 	bool Cmd_DebugFlagDisable(int argc, const char **argv);
 
 #if USE_CONSOLE
+private:
 	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
 	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon);
 #endif
 };
 
-}	// End of namespace Common
+}	// End of namespace GUI
 
 #endif

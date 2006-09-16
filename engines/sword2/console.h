@@ -22,12 +22,12 @@
 #ifndef	SWORD2_CONSOLE_H
 #define	SWORD2_CONSOLE_H
 
-#include "common/debugger.h"
+#include "gui/debugger.h"
 #include "sword2/debug.h"
 
 namespace Sword2 {
 
-class Debugger : public Common::Debugger<Debugger> {
+class Debugger : public GUI::Debugger {
 private:
 	void varGet(int var);
 	void varSet(int var, int val);
@@ -83,8 +83,6 @@ protected:
 	virtual void postEnter();
 
 	// Commands
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_Mem(int argc, const char **argv);
 	bool Cmd_Tony(int argc, const char **argv);
 	bool Cmd_Res(int argc, const char **argv);

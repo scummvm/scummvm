@@ -25,7 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
-#include "common/debugger.h"
+#include "gui/debugger.h"
 
 namespace Sky {
 
@@ -34,7 +34,7 @@ class Mouse;
 class Screen;
 class SkyCompact;
 
-class Debugger : public Common::Debugger<Debugger> {
+class Debugger : public GUI::Debugger {
 public:
 	Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact);
 	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
@@ -44,8 +44,6 @@ protected:
 	virtual void preEnter();
 	virtual void postEnter();
 
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_ShowGrid(int argc, const char **argv);
 	bool Cmd_ReloadGrid(int argc, const char **argv);
 	bool Cmd_ShowCompact(int argc, const char **argv);
