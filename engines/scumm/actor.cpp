@@ -1606,7 +1606,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
 	if (!isInCurrentRoom() && _vm->_game.version >= 7) {
-		debug(0, "startWalkActor: attempting to walk actor %d who is not in this room", _number);
+		debugC(DEBUG_ACTORS, "startWalkActor: attempting to walk actor %d who is not in this room", _number);
 		return;
 	}
 
@@ -1929,7 +1929,7 @@ void Actor::walkActorOld() {
 byte *Actor::getActorName() {
 	byte *ptr = _vm->getResourceAddress(rtActorName, _number);
 	if (ptr == NULL) {
-		debug(0, "Failed to find name of actor %d", _number);
+		debugC(DEBUG_ACTORS, "Failed to find name of actor %d", _number);
 	}
 	return ptr;
 }
@@ -1951,13 +1951,13 @@ void Actor::remapActorPaletteColor(int color, int new_color) {
 
 	akos = _vm->getResourceAddress(rtCostume, _costume);
 	if (!akos) {
-		debug(0, "Can't remap actor %d, costume %d not found", _number, _costume);
+		debugC(DEBUG_ACTORS, "Actor::remapActorPaletteColor: Can't remap actor %d, costume %d not found", _number, _costume);
 		return;
 	}
 
 	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
 	if (!akpl) {
-		debug(0, "Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
+		debugC(DEBUG_ACTORS, "Actor::remapActorPaletteColor: Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
 	}
 
@@ -1980,22 +1980,19 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	byte akpl_color;
 
 	if (!isInCurrentRoom()) {
-		debugC(DEBUG_ACTORS, "Remap actor %d not in current room", _number);
-		return;
-	} else if (_costume < 1 || _costume >= _vm->_numCostumes - 1) {
-		debugC(DEBUG_ACTORS, "Remap actor %d invalid costume %d", _number, _costume);
+		debugC(DEBUG_ACTORS, "Actor::remapActorPalette: Actor %d not in current room", _number);
 		return;
 	}
 
 	akos = _vm->getResourceAddress(rtCostume, _costume);
 	if (!akos) {
-		debug(0, "Can't remap actor %d, costume %d not found", _number, _costume);
+		debugC(DEBUG_ACTORS, "Actor::remapActorPalette: Can't remap actor %d, costume %d not found", _number, _costume);
 		return;
 	}
 
 	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
 	if (!akpl) {
-		debug(0, "Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
+		debugC(DEBUG_ACTORS, "Actor::remapActorPalette: Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
 	}
 
@@ -2005,7 +2002,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	rgbs = _vm->findResourceData(MKID_BE('RGBS'), akos);
 
 	if (!rgbs) {
-		debugC(DEBUG_ACTORS, "Can't remap actor %d costume %d doesn't contain an RGB block", _number, _costume);
+		debugC(DEBUG_ACTORS, "Actor::remapActorPalette: Can't remap actor %d costume %d doesn't contain an RGB block", _number, _costume);
 		return;
 	}
 
