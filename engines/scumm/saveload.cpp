@@ -1462,7 +1462,7 @@ void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {
 			data = *(uint32 *)at;
 			at += 4;
 		} else {
-			error("saveLoadArrayOf: invalid size %d", datasize);
+			error("saveArrayOf: invalid size %d", datasize);
 		}
 		switch (filetype) {
 		case sleByte:
@@ -1477,7 +1477,7 @@ void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {
 			saveUint32(data);
 			break;
 		default:
-			error("saveLoadArrayOf: invalid filetype %d", filetype);
+			error("saveArrayOf: invalid filetype %d", filetype);
 		}
 	}
 }
@@ -1510,7 +1510,7 @@ void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype) {
 			data = (int32)loadUint32();
 			break;
 		default:
-			error("saveLoadArrayOf: invalid filetype %d", filetype);
+			error("loadArrayOf: invalid filetype %d", filetype);
 		}
 		if (datasize == 0) {
 			// Do nothing for obsolete data
@@ -1524,7 +1524,7 @@ void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype) {
 			*(uint32 *)at = data;
 			at += 4;
 		} else {
-			error("saveLoadArrayOf: invalid size %d", datasize);
+			error("loadArrayOf: invalid size %d", datasize);
 		}
 	}
 }
