@@ -103,7 +103,12 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 	int len = 0, offset = p.size();
 
-	assert(offset > 0);
+	//assert(offset > 0);
+
+	if (offset <= 0) {
+		debug(6, "Bad offset");
+		return;
+	}
 
 	_sPath = p;
 
@@ -148,6 +153,8 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 				_bIsValid = true;
 			}			 
 		}
+
+		IDOS->UnLock(pLock);
 	}
 
 	IDOS->FreeDosObject(DOS_FIB, fib);
@@ -329,11 +336,28 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 }
 
 AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &n) const {
-	assert(_bIsDirectory);
+	
+	if (!_bIsDirectory) {
+		debug(6, "Not a directory");
+		return 0;
+	}
+
 	String newPath(_sPath);
+
 	if (_sPath.lastChar() != '/')
 		newPath += '/';
+
 	newPath += n;
+
+	BPTR lock = IDOS->Lock(newPath.c_str(), SHARED_LOCK);
+
+	if (!lock) {
+		debug(6, "Bad path");
+		return 0;
+	}
+
+	IDOS->UnLock(lock);
+
 	return new AmigaOSFilesystemNode(newPath);
 }
 
@@ -343,7 +367,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 	AbstractFSList myList;
 
 	const uint32 kLockFlags = LDF_READ | LDF_VOLUMES;
-	char n[MAXPATHLEN];
+	char buffer[MAXPATHLEN];
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
@@ -352,30 +376,49 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 		return myList;
 	}
 
-
 	dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList) {
 		if (dosList->dol_Type == DLT_VOLUME &&
 			dosList->dol_Name &&
 			dosList->dol_Task) {
-			const char *volName = (const char *)BADDR(dosList->dol_Name)+1;
-			const char *devName = (const char *)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
+			//const char *volName = (const char *)BADDR(dosList->dol_Name)+1;
+			
+			// Copy name to buffer
+			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);
 
-			strcpy(n, volName);
-			strcat(n, ":");
+			//const char *devName = (const char *)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
 
-			BPTR volumeLock = IDOS->Lock((STRPTR)n, SHARED_LOCK);
+			// Volume name + '\0'
+			char *volName = new char [strlen(buffer) + 1];
+
+			strcpy(volName, buffer);
+
+			strcat(buffer, ":");
+
+			BPTR volumeLock = IDOS->Lock((STRPTR)buffer, SHARED_LOCK);
 			if (volumeLock) {
-				sprintf(n, "%s (%s)", volName, devName);
-				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, n);
+
+				char *devName = new char [MAXPATHLEN];
+
+				// Find device name
+				IDOS->DevNameFromLock(volumeLock, devName, MAXPATHLEN, DN_DEVICEONLY);
+				
+				sprintf(buffer, "%s (%s)", volName, devName);
+
+				delete [] devName;
+
+				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, buffer);
 				if (entry) {
 					if (entry->isValid())
 						myList.push_back(entry);
 					else
 						delete entry;
 				}
+
 				IDOS->UnLock(volumeLock);
 			}
+
+			delete [] volName;
 		}
 		dosList	= IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	}
