@@ -77,7 +77,7 @@ SOURCEPATH ..\..\..\..\base
 
 //STOP_AUTO_OBJECTS_BASE_//
 
-SOURCEPATH ..\..\..
+SOURCEPATH ..\..\..\..
 
 // backend EPOC/SDL/ESDL specific includes
 SOURCE backends\platform\sdl\events.cpp
