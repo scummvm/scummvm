@@ -38,19 +38,19 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 
 Screen::~Screen() {
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
-		free(_pagePtrs[pageNum]);
+		delete [] _pagePtrs[pageNum];
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
 	}
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
 		delete[] _fonts[f].fontData;
 		_fonts[f].fontData = NULL;
 	}
-	free(_currentPalette);
-	free(_screenPalette);
-	free(_decodeShapeBuffer);
-	free(_animBlockPtr);
+	delete [] _currentPalette;
+	delete [] _screenPalette;
+	delete [] _decodeShapeBuffer;
+	delete [] _animBlockPtr;
 	for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
-		free(_palettes[i]);
+		delete [] _palettes[i];
 	}
 	delete [] _bitBlitRects;
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
@@ -58,8 +58,8 @@ Screen::~Screen() {
 		_saveLoadPage[i] = 0;
 	}
 
-	free(_unkPtr1);
-	free(_unkPtr2);
+	delete [] _unkPtr1;
+	delete [] _unkPtr2;
 	
 	delete [] _dirtyRects;
 }
@@ -79,26 +79,23 @@ bool Screen::init() {
 
 	_curPage = 0;
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
-		uint8 *pagePtr = (uint8 *)malloc(SCREEN_PAGE_SIZE);
+		uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE];
 		if (pagePtr) {
 			memset(pagePtr, 0, SCREEN_PAGE_SIZE);
 			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 		}
 	}
 	memset(_shapePages, 0, sizeof(_shapePages));
-	_currentPalette = (uint8 *)malloc(768);
-	if (_currentPalette) {
-		memset(_currentPalette, 0, 768);
-	}
-	_screenPalette = (uint8 *)malloc(768);
-	if (_screenPalette) {
-		memset(_screenPalette, 0, 768);
-	}
+	_currentPalette = new uint8[768];
+	assert(_currentPalette);
+	memset(_currentPalette, 0, 768);
+	_screenPalette = new uint8[768];
+	assert(_screenPalette);
+	memset(_screenPalette, 0, 768);
 	for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
-		_palettes[i] = (uint8 *)malloc(768);
-		if (_palettes[i]) {
-			memset(_palettes[i], 0, 768);
-		}
+		_palettes[i] = new uint8[768];
+		assert(_palettes[i]);
+		memset(_palettes[i], 0, 768);
 	}
 	setScreenPalette(_currentPalette);
 	_curDim = &_screenDimTable[0];
@@ -121,9 +118,11 @@ bool Screen::init() {
 	_bitBlitNum = 0;
 	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
 
-	_unkPtr1 = (uint8*)malloc(getRectSize(1, 144));
+	_unkPtr1 = new uint8[getRectSize(1, 144)];
+	assert(_unkPtr1);
 	memset(_unkPtr1, 0, getRectSize(1, 144));
-	_unkPtr2 = (uint8*)malloc(getRectSize(1, 144));
+	_unkPtr2 = new uint8[getRectSize(1, 144)];
+	assert(_unkPtr2);
 	memset(_unkPtr2, 0, getRectSize(1, 144));
 	
 	_forceFullUpdate = false;
@@ -647,8 +646,8 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 
 void Screen::setAnimBlockPtr(int size) {
 	debugC(9, kDebugLevelScreen, "Screen::setAnimBlockPtr(%d)", size);
-	free(_animBlockPtr);
-	_animBlockPtr = (uint8 *)malloc(size);
+	delete [] _animBlockPtr;
+	_animBlockPtr = new uint8[size];
 	assert(_animBlockPtr);
 	memset(_animBlockPtr, 0, size);
 	_animBlockSize = size;
@@ -957,8 +956,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	
 	int shapeSize = shapeWidth * shapeHeight;
 	if (_decodeShapeBufferSize < shapeSize) {
-		free(_decodeShapeBuffer);
-		_decodeShapeBuffer = (uint8 *)malloc(shapeSize);
+		delete [] _decodeShapeBuffer;
+		_decodeShapeBuffer = new uint8[shapeSize];
 		_decodeShapeBufferSize = shapeSize;
 	}
 	if (!_decodeShapeBuffer) {
@@ -1962,7 +1961,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
 		shape -= 2;
 
-	uint8 *cursor = (uint8 *)malloc(mouseHeight * mouseWidth);
+	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
 	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
@@ -1970,7 +1969,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	copyRegionToBuffer(8, 0, 0, mouseWidth, mouseHeight, cursor);
 	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
 	CursorMan.showMouse(true);
-	free(cursor);
+	delete [] cursor;
 
 	// makes sure that the cursor is drawn
 	// we do not use Screen::updateScreen here

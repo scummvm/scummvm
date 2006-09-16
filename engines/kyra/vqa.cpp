@@ -51,7 +51,7 @@ VQAMovie::~VQAMovie() {
 
 void VQAMovie::initBuffers() {
 	for (int i = 0; i < ARRAYSIZE(_buffers); i++) {
-		_buffers[i].data = NULL;
+		_buffers[i].data = 0;
 		_buffers[i].size = 0;
 	}
 }
@@ -65,8 +65,8 @@ void *VQAMovie::allocBuffer(int num, uint32 size) {
 		 * We could use realloc() here, but we don't actually need the
 		 * old contents of the buffer.
 		 */
-		free(_buffers[num].data);
-		_buffers[num].data = malloc(size);
+		delete [] _buffers[num].data;
+		_buffers[num].data = new uint8[size];
 		_buffers[num].size = size;
 	}
 
@@ -77,7 +77,7 @@ void *VQAMovie::allocBuffer(int num, uint32 size) {
 
 void VQAMovie::freeBuffers() {
 	for (int i = 0; i < ARRAYSIZE(_buffers); i++) {
-		free(_buffers[i].data);
+		delete [] _buffers[i].data;
 		_buffers[i].data = NULL;
 		_buffers[i].size = 0;
 	}
