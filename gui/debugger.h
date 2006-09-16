@@ -101,15 +101,14 @@ protected:
 	int _frame_countdown;
 	bool _detach_now;
 	
+private:
 	// TODO: Consider replacing the following two arrays by a Hashmap
-
 	int _dvar_count;
 	DVar _dvars[256];
 
 	int _dcmd_count;
 	DCmd _dcmds[256];
 
-private:
 	bool _isAttached;
 	char *_errStr;
 	bool _firstTime;
@@ -129,7 +128,6 @@ protected:
 
 	
 private:
-//protected:
 	void detach();
 	void enter();
 

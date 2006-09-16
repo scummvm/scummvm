@@ -366,6 +366,7 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 // nicely word-wrapped.
 bool Debugger::Cmd_Help(int argc, const char **argv) {
 
+	const int charsPerLine = _debuggerDialog->getCharsPerLine();
 	int width, size, i;
 
 	DebugPrintf("Commands are:\n");
@@ -373,7 +374,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	for (i = 0; i < _dcmd_count; i++) {
 		size = strlen(_dcmds[i].name) + 1;
 
-		if ((width + size) >= GUI::ConsoleDialog::kCharsPerLine) {
+		if ((width + size) >= charsPerLine) {
 			DebugPrintf("\n");
 			width = size;
 		} else
@@ -390,7 +391,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 		for (i = 0; i < _dvar_count; i++) {
 			size = strlen(_dvars[i].name) + 1;
 	
-			if ((width + size) >= GUI::ConsoleDialog::kCharsPerLine) {
+			if ((width + size) >= charsPerLine) {
 				DebugPrintf("\n");
 				width = size;
 			} else

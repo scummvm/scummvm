@@ -31,11 +31,44 @@ namespace GUI {
 
 class ScrollBarWidget;
 
+/*
+ FIXME #1: The console dialog code has some fundamental problems. 
+ First of, note the conflict between the (constant) value kCharsPerLine, and the
+ (variable) value _pageWidth. Look a bit at the code get familiar with them,
+ then return...
+ Now, why don't we just drop kCharsPerLine? Because of the problem of resizing!
+ When the user changes the scaler, the console will get resized. If the dialog
+ becomes smaller because of this, we may have to rewrap text. If the resolution
+ is then increased again, we'd end up with garbled content.
+ 
+ One can now either ignore this problem (and modify our code accordingly to 
+ implement this simple rewrapping -- we currently don't do that at all!).
+ 
+ Or, one can go and implement a more complete console, by replacing the
+ _buffer by a real line buffer -- an arrach of char* pointers.
+ This will allow one to implement resizing perfectly, but has the drawback
+ of making things like scrolling, drawing etc. more complicated.
+ 
+ Either way, the current situation is bad, and we should resolve it one way
+ or the other (and if you can think of a thirds, feel free to suggest it).
+ 
+ 
+ 
+ FIXME #2: Another problem is that apparently _pageWidth isn't computed quite
+ correctly. The current line ends well before reaching the right side of the
+ console dialog. That's irritating and should be fixed.
+ 
+ 
+ FIXME #3: The scroll bar is not shown initially, but the area it would 
+ occupy is not used for anything else. As a result, the gap described above
+ becomes even wider and thus even more irritating.
+*/
 class ConsoleDialog : public Dialog {
 public:
 	typedef bool (*InputCallbackProc)(ConsoleDialog *console, const char *input, void *refCon);
 	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, char*& completion, void *refCon);
 
+protected:
 	enum {
 		kBufferSize	= 32768,
 		kCharsPerLine = 128,
@@ -44,7 +77,6 @@ public:
 		kHistorySize = 20
 	};
 
-protected:
 	const Graphics::Font *_font;
 
 	char	_buffer[kBufferSize];
@@ -122,6 +154,10 @@ public:
 	void setCompletionCallback(CompletionCallbackProc proc, void *refCon) {
 		_completionCallbackProc = proc;
 		_completionCallbackRefCon = refCon;
+	}
+	
+	int getCharsPerLine() {
+		return _pageWidth;
 	}
 
 protected:
