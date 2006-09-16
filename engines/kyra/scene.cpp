@@ -1586,13 +1586,16 @@ void KyraEngine::setupSceneResource(int sceneId) {
 	char file[64];
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".VRM");
-	_res->loadPakFile(file);
+	if (Common::File::exists(file))
+		_res->loadPakFile(file);
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".PAK");
-	_res->loadPakFile(file);
+	if (Common::File::exists(file))
+		_res->loadPakFile(file);
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".APK");
-	_res->loadPakFile(file);
+	if (Common::File::exists(file))
+		_res->loadPakFile(file);
 }
 
 } // end of namespace Kyra

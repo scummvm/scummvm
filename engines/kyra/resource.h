@@ -38,23 +38,26 @@ public:
 	ResourceFile() : _open(false), _filename() {}
 	virtual ~ResourceFile() {}
 
-	virtual uint8 *getFile(const char *file) = 0;
-	virtual bool getFileHandle(const char *file, Common::File &filehandle) = 0;
-	virtual uint32 getFileSize(const char *file) = 0;
+	virtual uint8 *getFile(uint file) = 0;
+	virtual bool getFileHandle(uint file, Common::File &filehandle) = 0;
+	virtual uint32 getFileSize(uint file) = 0;
 
-	const Common::String &filename() const { return _filename; }
+	uint filename() const { return _filename; }
 
-	virtual bool isValid(void) const { return !(_filename.empty()); }
+	virtual bool isValid(void) const { return _filename; }
 	bool isOpen(void) const { return _open; }
+
+	virtual void close() { _open = false; }
+	virtual void open() { _open = true; }
 protected:
 	bool _open;
-	Common::String _filename;
+	uint _filename;
 };
 
 // standard Package format for Kyrandia games
 class PAKFile : public ResourceFile {
 	struct PakChunk {
-		Common::String _name;
+		uint _name;
 		uint32 _start;
 		uint32 _size;
 	};
@@ -63,9 +66,9 @@ public:
 	PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga = false);
 	~PAKFile();
 
-	uint8 *getFile(const char *file);
-	bool getFileHandle(const char *file, Common::File &filehandle);
-	uint32 getFileSize(const char *file);
+	uint8 *getFile(uint file);
+	bool getFileHandle(uint file, Common::File &filehandle);
+	uint32 getFileSize(uint file);
 private:
 	bool openFile(Common::File &filehandle);
 
@@ -80,7 +83,7 @@ private:
 // installation file packages for (Kyra2/)Kyra3
 class INSFile : public ResourceFile {
 	struct FileEntry {
-		Common::String _name;
+		uint _name;
 		uint32 _start;
 		uint32 _size;
 	};
@@ -88,11 +91,13 @@ public:
 	INSFile(const char *file);
 	~INSFile();
 
-	uint8 *getFile(const char *file);
-	bool getFileHandle(const char *file, Common::File &filehandle);
-	uint32 getFileSize(const char *file);
+	uint8 *getFile(uint file);
+	bool getFileHandle(uint file, Common::File &filehandle);
+	uint32 getFileSize(uint file);
 protected:
 	Common::List<FileEntry> _files; // the entries
+
+	Common::String _physfile;
 };
 
 class Resource {

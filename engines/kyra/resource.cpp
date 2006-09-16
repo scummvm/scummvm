@@ -25,6 +25,7 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/hash-str.h"
 
 #include "gui/message.h"
 
@@ -102,8 +103,14 @@ Resource::~Resource() {
 }
 
 bool Resource::loadPakFile(const Common::String &filename) {
-	if (isInPakList(filename))
-		return true;
+	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
+	uint hash = Common::hashit_lower(filename.c_str());
+	for (;start != _pakfiles.end(); ++start) {
+		if ((*start)->filename() == hash) {
+			(*start)->open();
+			return true;
+		}
+	}
 
 	uint32 size = 0;
 	
@@ -132,10 +139,10 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 void Resource::unloadPakFile(const Common::String &filename) {
 	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
+	uint hash = Common::hashit_lower(filename.c_str());
 	for (;start != _pakfiles.end(); ++start) {
-		if (scumm_stricmp((*start)->filename().c_str(), filename.c_str()) == 0) {
-			delete *start;
-			_pakfiles.erase(start);
+		if ((*start)->filename() == hash) {
+			(*start)->close();
 			break;
 		}
 	}
@@ -144,8 +151,9 @@ void Resource::unloadPakFile(const Common::String &filename) {
 
 bool Resource::isInPakList(const Common::String &filename) {
 	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
+	uint hash = Common::hashit_lower(filename.c_str());
 	for (;start != _pakfiles.end(); ++start) {
-		if (scumm_stricmp((*start)->filename().c_str(), filename.c_str()) == 0)
+		if ((*start)->filename() == hash)
 			return true;
 	}
 	return false;
@@ -175,9 +183,13 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 		// opens the file in a PAK File
 		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
+		uint fileHash = Common::hashit_lower(file);
 		uint32 temp = 0;
 		for (;start != _pakfiles.end(); ++start) {
-			temp = (*start)->getFileSize(file);
+			if (!(*start)->isOpen())
+				continue;
+
+			temp = (*start)->getFileSize(fileHash);
 
 			if (!temp)
 				continue;
@@ -185,7 +197,7 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 			if (size)
 				*size = temp;
 
-			buffer = (*start)->getFile(file);
+			buffer = (*start)->getFile(fileHash);
 			break;
 		}
 	}
@@ -205,13 +217,17 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 
 	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
+	uint fileHash = Common::hashit_lower(file);
 	for (;start != _pakfiles.end(); ++start) {
-		*size = (*start)->getFileSize(file);
+		if (!(*start)->isOpen())
+			continue;
+
+		*size = (*start)->getFileSize(fileHash);
 		
 		if (!(*size))
 			continue;
 
-		if ((*start)->getFileHandle(file, filehandle)) {
+		if ((*start)->getFileHandle(fileHash, filehandle)) {
 			return true;
 		}
 	}
@@ -226,8 +242,12 @@ uint32 Resource::getFileSize(const char *file) {
 	if (temp.open(file))
 		return temp.size();
 
+	uint fileHash = Common::hashit_lower(file);
 	for (;start != _pakfiles.end(); ++start) {
-		uint32 size = (*start)->getFileSize(file);
+		if (!(*start)->isOpen())
+			continue;
+
+		uint32 size = (*start)->getFileSize(fileHash);
 		
 		if (size)
 			return size;
@@ -292,7 +312,7 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 		if (!(*((const char*)buffer)))
 			break;
 
-		chunk._name = (const char*)buffer;
+		chunk._name = Common::hashit_lower((const char*)buffer);
 		nameLength = strlen((const char*)buffer) + 1; 
 
 		if (!_isAmiga) {
@@ -318,23 +338,22 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 	}
 
 	_open = true;	
-	_filename = file;
+	_filename = Common::hashit_lower(file);
 	_physfile = physfile;
 	_physOffset = off;
 }
 
 
 PAKFile::~PAKFile() {
-	_filename.clear();
 	_physfile.clear();
 	_open = false;
 
 	_files.clear();
 }
 
-uint8 *PAKFile::getFile(const char *file) {
+uint8 *PAKFile::getFile(uint hash) {
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp(start->_name.c_str(), file)) {
+		if (start->_name == hash) {
 			Common::File pakfile;
 			if (!openFile(pakfile))
 				return false;
@@ -348,11 +367,11 @@ uint8 *PAKFile::getFile(const char *file) {
 	return 0;
 }
 
-bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
+bool PAKFile::getFileHandle(uint hash, Common::File &filehandle) {
 	filehandle.close();
 
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp(start->_name.c_str(), file)) {
+		if (start->_name == hash) {
 			if (!openFile(filehandle))
 				return false;
 			filehandle.seek(start->_start, SEEK_CUR);
@@ -362,9 +381,9 @@ bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
 	return false;
 }
 
-uint32 PAKFile::getFileSize(const char* file) {
+uint32 PAKFile::getFileSize(uint hash) {
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp(start->_name.c_str(), file))
+		if (start->_name == hash)
 			return start->_size;
 	}
 	return 0;
@@ -374,7 +393,6 @@ bool PAKFile::openFile(Common::File &filehandle) {
 	filehandle.close();
 
 	if (!filehandle.open(_physfile)) {
-		debug(3, "couldn't open pakfile '%s'\n", _filename.c_str());
 		return false;
 	}
 
@@ -416,7 +434,7 @@ INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 			++i;
 
 			FileEntry newEntry;
-			newEntry._name = temp;
+			newEntry._name = Common::hashit_lower(temp.c_str());
 			newEntry._start = 0;
 			newEntry._size = 0;
 			_files.push_back(newEntry);
@@ -436,23 +454,22 @@ INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 		pakfile.seek(filesize, SEEK_CUR);
 	}
 
-	_filename = file;
+	_filename = Common::hashit_lower(file);
+	_physfile = file;
 	_open = true;
 }
 
 INSFile::~INSFile() {
-	_filename.clear();
 	_open = false;
 
 	_files.clear();
 }
 
-uint8 *INSFile::getFile(const char *file) {
+uint8 *INSFile::getFile(uint hash) {
 	for (INSFile_Iterate) {
-		if (!scumm_stricmp(start->_name.c_str(), file)) {
+		if (start->_name == hash) {
 			Common::File pakfile;
-			if (!pakfile.open(_filename)) {
-				debug(3, "couldn't open insfile '%s'\n", _filename.c_str());
+			if (!pakfile.open(_physfile)) {
 				return false;
 			}
 			pakfile.seek(start->_start);
@@ -465,11 +482,10 @@ uint8 *INSFile::getFile(const char *file) {
 	return 0;
 }
 
-bool INSFile::getFileHandle(const char *file, Common::File &filehandle) {
+bool INSFile::getFileHandle(uint hash, Common::File &filehandle) {
 	for (INSFile_Iterate) {
-		if (!scumm_stricmp(start->_name.c_str(), file)) {
-			if (!filehandle.open(_filename)) {
-				debug(3, "couldn't open insfile '%s'\n", _filename.c_str());
+		if (start->_name == hash) {
+			if (!filehandle.open(_physfile)) {
 				return false;
 			}
 			filehandle.seek(start->_start, SEEK_CUR);
@@ -479,9 +495,9 @@ bool INSFile::getFileHandle(const char *file, Common::File &filehandle) {
 	return false;
 }
 
-uint32 INSFile::getFileSize(const char *file) {
+uint32 INSFile::getFileSize(uint hash) {
 	for (INSFile_Iterate) {
-		if (!scumm_stricmp(start->_name.c_str(), file))
+		if (start->_name == hash)
 			return start->_size;
 	}
 	return 0;
