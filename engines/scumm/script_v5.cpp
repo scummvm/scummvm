@@ -462,7 +462,7 @@ void ScummEngine_v5::o5_actorOps() {
 		case 11:		// SO_PALETTE
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
-			checkRange(31, 0, i, "Illegal palette slot %d");
+			assertRange(0, i, 31, "o5_actorOps: palette slot");
 			a->setPalette(i, j);
 			break;
 		case 12:		// SO_TALK_COLOR
@@ -1817,7 +1817,7 @@ void ScummEngine_v5::o5_roomOps() {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
-			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
+			assertRange(0, a, 256, "o5_roomOps: 2: room color slot");
 			_roomPalette[b] = a;
 			_fullRedraw = true;
 		} else {
@@ -1838,7 +1838,7 @@ void ScummEngine_v5::o5_roomOps() {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
-			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
+			assertRange(0, a, 256, "o5_roomOps: 4: room color slot");
 			_shadowPalette[b] = a;
 			setDirtyColors(b, b);
 		} else {
@@ -1992,7 +1992,7 @@ void ScummEngine_v5::o5_roomOps() {
 	case 16:	// SO_CYCLE_SPEED
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
-		checkRange(16, 1, a, "o5_roomOps: 16: color cycle out of range (%d)");
+		assertRange(1, a, 16, "o5_roomOps: 16: color cycle");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 	default:
@@ -2342,7 +2342,7 @@ void ScummEngine_v5::o5_verbOps() {
 	verb = getVarOrDirectByte(PARAM_1);
 
 	slot = getVerbSlot(verb, 0);
-	checkRange(_numVerbs - 1, 0, slot, "Illegal new verb slot %d");
+	assertRange(0, slot, _numVerbs - 1, "new verb slot");
 
 	vs = &_verbs[slot];
 	vs->verbid = verb;

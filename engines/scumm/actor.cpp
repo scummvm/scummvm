@@ -1185,7 +1185,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			if (talkState == 0)
 				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
 
-			checkRange(13, 1, talkState, "Talk state %d out of range");
+			assertRange(1, talkState, 13, "Talk state");
 			setTalkCondition(talkState);
 		} else {
 			setTalkCondition(1);
@@ -1935,12 +1935,12 @@ byte *Actor::getActorName() {
 }
 
 int Actor::getAnimVar(byte var) const {
-	checkRange(26, 0, var, "getAnimVar %d out of range(r)");
+	assertRange(0, var, 26, "getAnimVar:");
 	return _animVariable[var];
 }
 
 void Actor::setAnimVar(byte var, int value) {
-	checkRange(26, 0, var, "setAnimVar %d out of range(r)");
+	assertRange(0, var, 26, "setAnimVar:");
 	_animVariable[var] = value;
 }
 
@@ -2052,7 +2052,7 @@ void Actor::setHEFlag(int bit, int set) {
 
 void Actor::setUserCondition(int slot, int set) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	checkRange(32, 1, slot, "Condition %d out of range");
+	assertRange(1, slot, 32, "setUserCondition: Condition");
 	if (set == 0) {
 		_heCondMask &= ~(1 << (slot + 0xF));
 	} else {
@@ -2066,13 +2066,13 @@ void Actor::setUserCondition(int slot, int set) {
 }
 
 bool Actor::isUserConditionSet(int slot) const {
-	checkRange(32, 1, slot, "Condition %d out of range");
+	assertRange(1, slot, 32, "isUserConditionSet: Condition");
 	return (_heCondMask & (1 << (slot + 0xF))) != 0;
 }
 
 void Actor::setTalkCondition(int slot) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	checkRange(32, 1, slot, "Condition %d out of range");
+	assertRange(1, slot, 32, "setTalkCondition: Condition");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
 		_heCondMask |= 1 << (slot - 1);
@@ -2085,7 +2085,7 @@ void Actor::setTalkCondition(int slot) {
 }
 
 bool Actor::isTalkConditionSet(int slot) const {
-	checkRange(32, 1, slot, "Condition %d out of range");
+	assertRange(1, slot, 32, "isTalkConditionSet: Condition");
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 

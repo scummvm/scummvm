@@ -38,7 +38,7 @@ int normalizeAngle(int angle);
 int fromSimpleDir(int dirtype, int dir);
 int toSimpleDir(int dirtype, int dir);
 
-void checkRange(int max, int min, int no, const char *str);
+void assertRange(int min, int value, int max, const char *desc);
 
 const char *tag2str(uint32 tag);
 

@@ -542,14 +542,14 @@ int ScummEngine::readVar(uint var) {
 			return !ConfMan.getBool("subtitles");
 		}
 
-		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+		assertRange(0, var, _numVariables - 1, "variable (reading)");
 		return _scummVars[var];
 	}
 
 	if (var & 0x8000) {
 		if (_game.heversion >= 80) {
 			var &= 0xFFF;
-			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
+			assertRange(0, var, _numRoomVariables - 1, "room variable (reading)");
 			return _roomVars[var];
 
 		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns))) {
@@ -564,7 +564,7 @@ int ScummEngine::readVar(uint var) {
 				}
 			}
 
-			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
+			assertRange(0, var, _numVariables - 1, "variable (reading)");
 			return (_scummVars[ var ] & ( 1 << bit ) ) ? 1 : 0;
 		} else {
 			var &= 0x7FFF;
@@ -573,7 +573,7 @@ int ScummEngine::readVar(uint var) {
 					return 0;
 			}
 
-			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
+			assertRange(0, var, _numBitVariables - 1, "variable (reading)");
 			return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 		}
 	}
@@ -586,9 +586,9 @@ int ScummEngine::readVar(uint var) {
 		}
 
 		if (_game.heversion >= 80)
-			checkRange(25, 0, var, "Local variable %d out of range(r)");
+			assertRange(0, var, 25, "local variable (reading)");
 		else
-			checkRange(20, 0, var, "Local variable %d out of range(r)");
+			assertRange(0, var, 20, "local variable (reading)");
 		return vm.localvar[_currentScript][var];
 	}
 
@@ -600,7 +600,7 @@ void ScummEngine::writeVar(uint var, int value) {
 	debugC(DEBUG_VARS, "writeVar(%d, %d)", var, value);
 
 	if (!(var & 0xF000)) {
-		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
+		assertRange(0, var, _numVariables - 1, "variable (writing)");
 
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
 			// Ignore default setting in HE72-73 games
@@ -641,7 +641,7 @@ void ScummEngine::writeVar(uint var, int value) {
 	if (var & 0x8000) {
 		if (_game.heversion >= 80) {
 			var &= 0xFFF;
-			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
+			assertRange(0, var, _numRoomVariables - 1, "room variable (writing)");
 			_roomVars[var] = value;
 
 		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns))) {
@@ -649,14 +649,14 @@ void ScummEngine::writeVar(uint var, int value) {
 			// as the normal variables!
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
-			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(wzb)");
+			assertRange(0, var, _numVariables - 1, "variable (writing)");
 			if (value)
 				_scummVars[var] |= ( 1 << bit );
 			else
 				_scummVars[var] &= ~( 1 << bit );
 		} else {
 			var &= 0x7FFF;
-			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
+			assertRange(0, var, _numBitVariables - 1, "bit variable (writing)");
 
 			if (value)
 				_bitVars[var >> 3] |= (1 << (var & 7));
@@ -674,9 +674,9 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		if (_game.heversion >= 80)
-			checkRange(25, 0, var, "Local variable %d out of range(w)");
+			assertRange(0, var, 25, "local variable (writing)");
 		else
-			checkRange(20, 0, var, "Local variable %d out of range(w)");
+			assertRange(0, var, 20, "local variable (writing)");
 
 		vm.localvar[_currentScript][var] = value;
 		return;

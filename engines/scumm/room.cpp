@@ -331,7 +331,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			id = READ_LE_UINT32(ptr);
 
-			checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+			assertRange(_numGlobalScripts, id, _numLocalScripts + _numGlobalScripts, "local script");
 			_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 
 			if (_dumpScripts) {
@@ -366,11 +366,11 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			if (_game.version == 8) {
 				id = READ_LE_UINT32(ptr);
-				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+				assertRange(_numGlobalScripts, id, _numLocalScripts + _numGlobalScripts, "local script");
 				_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 			} else if (_game.version == 7) {
 				id = READ_LE_UINT16(ptr);
-				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+				assertRange(_numGlobalScripts, id, _numLocalScripts + _numGlobalScripts, "local script");
 				_localScriptOffsets[id - _numGlobalScripts] = ptr + 2 - roomResPtr;
 			} else {
 				id = ptr[0];

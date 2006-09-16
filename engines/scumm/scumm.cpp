@@ -1954,13 +1954,13 @@ void ScummEngine_v7::scummLoop_handleSound() {
 #pragma mark -
 
 int ScummEngine_v60he::getHETimer(int timer) {
-	checkRange(15, 1, timer, "getHETimer: Timer out of range(%d)");
+	assertRange(1, timer, 15, "getHETimer: Timer");
 	int time = _system->getMillis() - _heTimers[timer];
 	return time;
 }
 
 void ScummEngine_v60he::setHETimer(int timer) {
-	checkRange(15, 1, timer, "setHETimer: Timer out of range(%d)");
+	assertRange(1, timer, 15, "setHETimer: Timer");
 	_heTimers[timer] = _system->getMillis();
 }
 

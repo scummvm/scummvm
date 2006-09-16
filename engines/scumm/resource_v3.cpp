@@ -102,7 +102,7 @@ void ScummEngine_v3::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 
-	checkRange(2, 0, no, "Loading illegal charset %d");
+	assertRange(0, no, 2, "charset");
 	closeRoom();
 
 	Common::File file;

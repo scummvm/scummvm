@@ -466,7 +466,7 @@ void ScummEngine_v90he::o90_getActorData() {
 		push(a->isUserConditionSet(val));
 		break;
 	case 2:
-		checkRange(15, 0, val, "Limb %d out of range");
+		assertRange(0, val, 15, "o90_getActorData: Limb");
 		push(a->_cost.frame[val]);
 		break;
 	case 3:

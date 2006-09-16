@@ -401,7 +401,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	if (_game.version <= 4 && ptr[0] == box)
 		box--;
 
-	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
+	assertRange(0, box, ptr[0] - 1, "box");
 	if (_game.version == 0)
 		return (Box *)(ptr + box * SIZEOF_BOX_C64 + 1);
 	else if (_game.version <= 2)

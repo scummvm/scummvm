@@ -226,7 +226,7 @@ CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
 }
 
 void CharsetRendererCommon::setCurID(byte id) {
-	checkRange(_vm->_numCharsets - 1, 0, id, "Printing with bad charset %d");
+	assertRange(0, id, _vm->_numCharsets - 1, "charset");
 
 	_curId = id;
 
@@ -245,7 +245,7 @@ void CharsetRendererCommon::setCurID(byte id) {
 }
 
 void CharsetRendererV3::setCurID(byte id) {
-	checkRange(_vm->_numCharsets - 1, 0, id, "Printing with bad charset %d");
+	assertRange(0, id, _vm->_numCharsets - 1, "charset");
 
 	_curId = id;
 
@@ -1206,7 +1206,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	byte *charPtr, *dst;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
-	checkRange(_vm->_numCharsets - 1, 0, _curId, "Printing with bad charset %d");
+	assertRange(0, _curId, _vm->_numCharsets - 1, "charset");
 
 	if ((vs = _vm->findVirtScreen(_top)) == NULL)
 		return;
@@ -1316,7 +1316,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	const byte *charPtr;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
-	checkRange(_vm->_numCharsets - 1, 1, _curId, "Printing with bad charset %d");
+	assertRange(1, _curId, _vm->_numCharsets - 1, "charset");
 
 	if ((vs = _vm->findVirtScreen(_top)) == NULL && (vs = _vm->findVirtScreen(_top + getFontHeight())) == NULL)
 		return;

@@ -268,7 +268,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		}
 	}
 
-	checkRange(256, 0, numcolor, "Too many colors (%d) in Palette");
+	assertRange(0, numcolor, 256, "setPaletteFromPtr: numcolor");
 
 	dest = _currentPalette;
 
@@ -357,7 +357,7 @@ void ScummEngine::initCycl(const byte *ptr) {
 void ScummEngine::stopCycle(int i) {
 	ColorCycle *cycl;
 
-	checkRange(16, 0, i, "Stop Cycle %d Out Of Range");
+	assertRange(0, i, 16, "stopCycle: cycle");
 	if (i != 0) {
 		_colorCycle[i - 1].delay = 0;
 		return;

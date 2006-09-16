@@ -434,13 +434,13 @@ int ScummEngine_v2::readVar(uint var) {
 	if (var >= 14 && var <= 16)
 		var = _scummVars[var];
 
-	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+	assertRange(0, var, _numVariables - 1, "variable (reading)");
 	debugC(DEBUG_VARS, "readvar(%d) = %d", var, _scummVars[var]);
 	return _scummVars[var];
 }
 
 void ScummEngine_v2::writeVar(uint var, int value) {
-	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+	assertRange(0, var, _numVariables - 1, "variable (writing)");
 	debugC(DEBUG_VARS, "writeVar(%d) = %d", var, value);
 
 	if (VAR_CUTSCENEEXIT_KEY != 0xFF && var == VAR_CUTSCENEEXIT_KEY) {

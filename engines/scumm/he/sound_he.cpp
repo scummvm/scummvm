@@ -262,7 +262,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 		return isSoundCodeUsed(sound);
 	}
 
-	checkRange(25, 0, var, "Illegal sound variable %d");
+	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
@@ -279,7 +279,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 }
 
 void SoundHE::setSoundVar(int sound, int var, int val) {
-	checkRange(25, 0, var, "Illegal sound variable %d");
+	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {

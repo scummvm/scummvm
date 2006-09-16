@@ -393,19 +393,19 @@ int ScummEngine_v8::readVar(uint var) {
 	debugC(DEBUG_VARS, "readvar(%d)", var);
 
 	if (!(var & 0xF0000000)) {
-		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+		assertRange(0, var, _numVariables - 1, "variable");
 		return _scummVars[var];
 	}
 
 	if (var & 0x80000000) {
 		var &= 0x7FFFFFFF;
-		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
+		assertRange(0, var, _numBitVariables - 1, "bit variable (reading)");
 		return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 	}
 
 	if (var & 0x40000000) {
 		var &= 0xFFFFFFF;
-		checkRange(25, 0, var, "Local variable %d out of range(r)");
+		assertRange(0, var, 25, "local variable (reading)");
 		return vm.localvar[_currentScript][var];
 	}
 
@@ -417,7 +417,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	debugC(DEBUG_VARS, "writeVar(%d, %d)", var, value);
 
 	if (!(var & 0xF0000000)) {
-		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
+		assertRange(0, var, _numVariables - 1, "variable (writing)");
 
 		if (var == VAR_CHARINC) {
 			if (ConfMan.hasKey("talkspeed")) {
@@ -441,7 +441,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 
 	if (var & 0x80000000) {
 		var &= 0x7FFFFFFF;
-		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
+		assertRange(0, var, _numBitVariables - 1, "bit variable (writing)");
 
 		if (value)
 			_bitVars[var >> 3] |= (1 << (var & 7));
@@ -452,7 +452,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 
 	if (var & 0x40000000) {
 		var &= 0xFFFFFFF;
-		checkRange(25, 0, var, "Local variable %d out of range(w)");
+		assertRange(0, var, 25, "local variable (writing)");
 		vm.localvar[_currentScript][var] = value;
 		return;
 	}
@@ -934,7 +934,7 @@ void ScummEngine_v8::o8_actorOps() {
 	case 0x6F:		// SO_ACTOR_PALETTE Set actor palette
 		j = pop();
 		i = pop();
-		checkRange(31, 0, i, "Illegal palette slot %d");
+		assertRange(0, i, 31, "o8_actorOps: palette slot");
 		a->setPalette(i, j);
 		break;
 	case 0x70:		// SO_ACTOR_TALK_COLOR Set actor talk color
@@ -1055,7 +1055,7 @@ void ScummEngine_v8::o8_verbOps() {
 	if (subOp == 0x96) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
-		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		assertRange(0, _curVerbSlot, _numVerbs - 1, "new verb slot");
 		//printf("Setting current actor to %d\n", _curActor);
 		return;
 	}

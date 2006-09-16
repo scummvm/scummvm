@@ -554,7 +554,7 @@ void ScummEngine_v60he::o60_roomOps() {
 	case 187:		// SO_CYCLE_SPEED
 		b = pop();
 		a = pop();
-		checkRange(16, 1, a, "o60_roomOps: 187: color cycle out of range (%d)");
+		assertRange(1, a, 16, "o60_roomOps: 187: color cycle");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 
@@ -682,7 +682,7 @@ void ScummEngine_v60he::o60_actorOps() {
 	case 86:		// SO_PALETTE
 		j = pop();
 		i = pop();
-		checkRange(255, 0, i, "Illegal palette slot %d");
+		assertRange(0, i, 255, "o60_actorOps: palette slot");
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;

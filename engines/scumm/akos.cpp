@@ -1717,7 +1717,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 
 void ScummEngine_v6::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
 	_akosQueuePos++;
-	checkRange(31, 0, _akosQueuePos, "akos_queCommand overflow");
+	assertRange(0, _akosQueuePos, 31, "akos_queCommand: _akosQueuePos");
 
 	_akosQueue[_akosQueuePos].cmd = cmd;
 	_akosQueue[_akosQueuePos].actor = a->_number;

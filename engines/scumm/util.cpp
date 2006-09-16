@@ -29,11 +29,9 @@ namespace Scumm {
 #pragma mark --- Utilities ---
 #pragma mark -
 
-void checkRange(int max, int min, int no, const char *str) {
-	if (no < min || no > max) {
-		char buf[256];
-		snprintf(buf, sizeof(buf), str, no);
-		error("Value %d is out of bounds (%d,%d) (%s)", no, min, max, buf);
+void assertRange(int min, int value, int max, const char *desc) {
+	if (value < min || value > max) {
+		error("%s %d is out of bounds (%d,%d)", desc, value, min, max);
 	}
 }
 

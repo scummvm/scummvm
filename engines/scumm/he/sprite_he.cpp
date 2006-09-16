@@ -49,7 +49,7 @@ void ScummEngine_v90he::allocateArrays() {
 }
 
 void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 	int32 spr_wiz_x, spr_wiz_y;
 	int angle, scale, x1, y1;
 	int32 w, h;
@@ -115,7 +115,7 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 		for (int j = 0; j < num; j++) {
 			code = classId = args[j];
 			classId &= 0x7F;
-			checkRange(32, 1, classId, "class %d out of range in statement");
+			assertRange(1, classId, 32, "class");
 			if (code & 0x80) {
 				if (!(spi->classFlags & (1 << (classId - 1))))
 					cond = 0;
@@ -204,7 +204,7 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 }
 
 int Sprite::getSpriteClass(int spriteId, int num, int *args) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 	int code, classId;
 
 	if (num == 0)
@@ -213,7 +213,7 @@ int Sprite::getSpriteClass(int spriteId, int num, int *args) {
 	for (int i = 0; i < num; i++) {
 		code = classId = args[i];
 		classId &= 0x7F;
-		checkRange(32, 1, classId, "class %d out of range in statement");
+		assertRange(1, classId, 32, "class");
 		if (code & 0x80) {
 			if (!(_spriteTable[spriteId].classFlags & (1 << (classId - 1))))
 				return 0;
@@ -227,85 +227,85 @@ int Sprite::getSpriteClass(int spriteId, int num, int *args) {
 }
 
 int Sprite::getSpriteFlagDoubleBuffered(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFDoubleBuffered) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagYFlipped(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFYFlipped) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagXFlipped(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFXFlipped) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagActive(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFActive) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagRemapPalette(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFRemapPalette) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagAutoAnim(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFAutoAnim) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagUpdateType(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFMarkDirty) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteFlagEraseType(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFImageless) != 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteImage(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].image;
 }
 
 int Sprite::getSpriteImageState(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].imageState;
 }
 
 int Sprite::getSpriteGroup(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].group;
 }
 
 int Sprite::getSpritePalette(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].palette;
 }
 
 int Sprite::getSpritePriority(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].priority;
 }
 
 int Sprite::getSpriteDisplayX(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].group)
 		return _spriteTable[spriteId].tx + _spriteGroups[_spriteTable[spriteId].group].tx;
@@ -314,7 +314,7 @@ int Sprite::getSpriteDisplayX(int spriteId) {
 }
 
 int Sprite::getSpriteDisplayY(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].group)
 		return _spriteTable[spriteId].ty + _spriteGroups[_spriteTable[spriteId].group].ty;
@@ -323,50 +323,50 @@ int Sprite::getSpriteDisplayY(int spriteId) {
 }
 
 int Sprite::getSpriteUserValue(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].userValue;
 }
 
 int Sprite::getSpriteShadow(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].shadow;
 }
 
 int Sprite::getSpriteImageStateCount(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].imageStateCount;
 }
 
 int Sprite::getSpriteScale(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].scale;
 }
 
 int Sprite::getSpriteAnimSpeed(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].animSpeed;
 }
 
 int Sprite::getSpriteSourceImage(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].sourceImage;
 }
 
 int Sprite::getSpriteMaskImage(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	return _spriteTable[spriteId].maskImage;
 }
 
 int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 	debug(0, "getSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	// XXX U32 related check
 
@@ -383,7 +383,7 @@ int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 }
 
 void Sprite::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].image) {
 		_vm->_wiz->getWizImageDim(_spriteTable[spriteId].image, _spriteTable[spriteId].imageState, w, h);
@@ -394,14 +394,14 @@ void Sprite::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
 }
 
 void Sprite::getSpritePosition(int spriteId, int32 &tx, int32 &ty) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	tx = _spriteTable[spriteId].tx;
 	ty = _spriteTable[spriteId].ty;
 }
 
 void Sprite::getSpriteDist(int spriteId, int32 &dx, int32 &dy) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	dx = _spriteTable[spriteId].dx;
 	dy = _spriteTable[spriteId].dy;
@@ -413,7 +413,7 @@ void Sprite::getSpriteDist(int spriteId, int32 &dx, int32 &dy) {
 int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 	int i, numSprites = 0;
 
-	checkRange(_sprite->_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _sprite->_varNumSpriteGroups, "sprite group");
 
 	for (i = (_sprite->_varNumSprites - 1); i > 0; i--) {
 		if (_sprite->_spriteTable[i].group == spriteGroupId)
@@ -439,43 +439,43 @@ int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 }
 
 int Sprite::getGroupPriority(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	return _spriteGroups[spriteGroupId].priority;
 }
 
 int Sprite::getGroupDstResNum(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	return _spriteGroups[spriteGroupId].image;
 }
 
 int Sprite::getGroupXMul(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	return _spriteGroups[spriteGroupId].scale_x_ratio_mul;
 }
 
 int Sprite::getGroupXDiv(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	return _spriteGroups[spriteGroupId].scale_x_ratio_div;
 }
 
 int Sprite::getGroupYMul(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	return _spriteGroups[spriteGroupId].scale_y_ratio_mul;
 }
 
 int Sprite::getGroupYDiv(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	return _spriteGroups[spriteGroupId].scale_y_ratio_div;
 }
 
 void Sprite::getGroupPosition(int spriteGroupId, int32 &tx, int32 &ty) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	tx = _spriteGroups[spriteGroupId].tx;
 	ty = _spriteGroups[spriteGroupId].ty;
@@ -485,7 +485,7 @@ void Sprite::getGroupPosition(int spriteGroupId, int32 &tx, int32 &ty) {
 // spriteInfoSet functions
 //
 void Sprite::setSpritePalette(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].palette != value) {
 		_spriteTable[spriteId].palette = value;
@@ -494,7 +494,7 @@ void Sprite::setSpritePalette(int spriteId, int value) {
 }
 
 void Sprite::setSpriteSourceImage(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].sourceImage != value) {
 		_spriteTable[spriteId].sourceImage = value;
@@ -503,13 +503,13 @@ void Sprite::setSpriteSourceImage(int spriteId, int value) {
 }
 
 void Sprite::setSpriteMaskImage(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].maskImage = value;
 }
 
 void Sprite::setSpriteImageState(int spriteId, int state) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].image) {
 		int imageStateCount = _spriteTable[spriteId].imageStateCount - 1;
@@ -524,7 +524,7 @@ void Sprite::setSpriteImageState(int spriteId, int state) {
 }
 
 void Sprite::setSpritePosition(int spriteId, int tx, int ty) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (_spriteTable[spriteId].tx != tx || _spriteTable[spriteId].ty != ty) {
 		_spriteTable[spriteId].tx = tx;
@@ -534,22 +534,22 @@ void Sprite::setSpritePosition(int spriteId, int tx, int ty) {
 }
 
 void Sprite::setSpriteGroup(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-	checkRange(_varNumSpriteGroups, 0, value, "Invalid sprite group %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(0, value, _varNumSpriteGroups, "sprite group");
 
 	_spriteTable[spriteId].group = value;
 	_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
 void Sprite::setSpriteDist(int spriteId, int value1, int value2) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].dx = value1;
 	_spriteTable[spriteId].dy = value2;
 }
 
 void Sprite::setSpriteShadow(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].shadow = value;
 	if (_spriteTable[spriteId].image)
@@ -557,19 +557,19 @@ void Sprite::setSpriteShadow(int spriteId, int value) {
 }
 
 void Sprite::setSpriteUserValue(int spriteId, int value1, int value2) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].userValue = value2;
 }
 
 void Sprite::setSpritePriority(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].priority = value;
 }
 
 void Sprite::moveSprite(int spriteId, int value1, int value2) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].tx += value1;
 	_spriteTable[spriteId].ty += value2;
@@ -579,7 +579,7 @@ void Sprite::moveSprite(int spriteId, int value1, int value2) {
 }
 
 void Sprite::setSpriteScale(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].flags |= kSFScaled;
 
@@ -592,7 +592,7 @@ void Sprite::setSpriteScale(int spriteId, int value) {
 }
 
 void Sprite::setSpriteAngle(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].flags |= kSFRotated;
 
@@ -605,7 +605,7 @@ void Sprite::setSpriteAngle(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagDoubleBuffered(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
@@ -618,7 +618,7 @@ void Sprite::setSpriteFlagDoubleBuffered(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagYFlipped(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
@@ -631,7 +631,7 @@ void Sprite::setSpriteFlagYFlipped(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagXFlipped(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
@@ -644,7 +644,7 @@ void Sprite::setSpriteFlagXFlipped(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagActive(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (value)
 		_spriteTable[spriteId].flags |= kSFActive;
@@ -653,7 +653,7 @@ void Sprite::setSpriteFlagActive(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagRemapPalette(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
@@ -666,7 +666,7 @@ void Sprite::setSpriteFlagRemapPalette(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagAutoAnim(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	if (value)
 		_spriteTable[spriteId].flags |= kSFAutoAnim;
@@ -675,7 +675,7 @@ void Sprite::setSpriteFlagAutoAnim(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagUpdateType(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	switch (value) {
 	case 2:
@@ -694,7 +694,7 @@ void Sprite::setSpriteFlagUpdateType(int spriteId, int value) {
 }
 
 void Sprite::setSpriteFlagEraseType(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	// Note that condition is inverted
 	if (!value)
@@ -704,15 +704,15 @@ void Sprite::setSpriteFlagEraseType(int spriteId, int value) {
 }
 
 void Sprite::setSpriteAnimSpeed(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].animSpeed = value;
 	_spriteTable[spriteId].animProgress = value;
 }
 
 void Sprite::setSpriteSetClass(int spriteId, int classId, int toggle) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-	checkRange(32, 1, classId, "class %d out of range in statement");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, classId, 32, "class");
 
 	if (toggle) {
 		_spriteTable[spriteId].classFlags |= (1 << (classId - 1));
@@ -722,20 +722,20 @@ void Sprite::setSpriteSetClass(int spriteId, int classId, int toggle) {
 }
 
 void Sprite::setSpriteResetClass(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].classFlags = 0;
 }
 
 void Sprite::setSpriteField84(int spriteId, int value) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].field_84 = value;
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 	debug(0, "setSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 	int32 delay;
 
 	// XXX U32 related check
@@ -761,7 +761,7 @@ void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 }
 
 void Sprite::resetSprite(int spriteId) {
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	_spriteTable[spriteId].angle = 0;
 	_spriteTable[spriteId].scale = 0;
@@ -793,7 +793,7 @@ void Sprite::resetSprite(int spriteId) {
 void Sprite::setSpriteImage(int spriteId, int imageNum) {
 	int origResId, origResWizStates;
 
-	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	origResId = _spriteTable[spriteId].image;
 	origResWizStates = _spriteTable[spriteId].imageStateCount;
@@ -832,7 +832,7 @@ void Sprite::redrawSpriteGroup(int spriteGroupId) {
 }
 
 void Sprite::moveGroupMembers(int spriteGroupId, int value1, int value2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
@@ -846,7 +846,7 @@ void Sprite::moveGroupMembers(int spriteGroupId, int value1, int value2) {
 }
 
 void Sprite::setGroupMembersPriority(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId)
@@ -855,7 +855,7 @@ void Sprite::setGroupMembersPriority(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersGroup(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
@@ -866,7 +866,7 @@ void Sprite::setGroupMembersGroup(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersUpdateType(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId)
@@ -875,7 +875,7 @@ void Sprite::setGroupMembersUpdateType(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersResetSprite(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId)
@@ -884,7 +884,7 @@ void Sprite::setGroupMembersResetSprite(int spriteGroupId) {
 }
 
 void Sprite::setGroupMembersAnimationSpeed(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
@@ -895,7 +895,7 @@ void Sprite::setGroupMembersAnimationSpeed(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersAutoAnimFlag(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
@@ -908,7 +908,7 @@ void Sprite::setGroupMembersAutoAnimFlag(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersShadow(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
@@ -920,7 +920,7 @@ void Sprite::setGroupMembersShadow(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	_spriteGroups[spriteGroupId].flags |= kSGFClipBox;
 	_spriteGroups[spriteGroupId].bbox.left = x1;
@@ -933,7 +933,7 @@ void Sprite::setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2) {
 }
 
 void Sprite::setGroupPriority(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (_spriteGroups[spriteGroupId].priority != value) {
 		_spriteGroups[spriteGroupId].priority = value;
@@ -942,7 +942,7 @@ void Sprite::setGroupPriority(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupPosition(int spriteGroupId, int value1, int value2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (_spriteGroups[spriteGroupId].tx != value1 || _spriteGroups[spriteGroupId].ty != value2) {
 		_spriteGroups[spriteGroupId].tx = value1;
@@ -952,7 +952,7 @@ void Sprite::setGroupPosition(int spriteGroupId, int value1, int value2) {
 }
 
 void Sprite::moveGroup(int spriteGroupId, int value1, int value2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (value1 || value2) {
 		_spriteGroups[spriteGroupId].tx += value1;
@@ -962,7 +962,7 @@ void Sprite::moveGroup(int spriteGroupId, int value1, int value2) {
 }
 
 void Sprite::setGroupImage(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (_spriteGroups[spriteGroupId].image != value) {
 		_spriteGroups[spriteGroupId].image = value;
@@ -979,7 +979,7 @@ void Sprite::setGroupScaling(int spriteGroupId) {
 }
 
 void Sprite::setGroupXMul(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_mul = value;
@@ -989,7 +989,7 @@ void Sprite::setGroupXMul(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupXDiv(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (value == 0)
 		error("setGroupXDiv: Divisor must not be 0");
@@ -1002,7 +1002,7 @@ void Sprite::setGroupXDiv(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupYMul(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_mul = value;
@@ -1012,7 +1012,7 @@ void Sprite::setGroupYMul(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupYDiv(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	if (value == 0)
 		error("setGroupYDiv: Divisor must not be 0");
@@ -1025,7 +1025,7 @@ void Sprite::setGroupYDiv(int spriteGroupId, int value) {
 }
 
 void Sprite::resetGroupBounds(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 
 	_spriteGroups[spriteGroupId].flags &= ~(kSGFClipBox);
 	redrawSpriteGroup(spriteGroupId);
@@ -1042,7 +1042,7 @@ void Sprite::allocTables(int numSprites, int numGroups, int numMaxSprites) {
 }
 
 void Sprite::resetGroup(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
 	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
 
 	spg->priority = 0;

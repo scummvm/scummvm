@@ -1174,7 +1174,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 86:		// SO_PALETTE
 		j = pop();
 		i = pop();
-		checkRange(255, 0, i, "Illegal palette slot %d");
+		assertRange(0, i, 255, "palette slot");
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;
@@ -1279,7 +1279,7 @@ void ScummEngine_v72he::o72_verbOps() {
 	if (subOp == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
-		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		assertRange(0, _curVerbSlot, _numVerbs - 1, "new verb slot");
 		return;
 	}
 	vs = &_verbs[_curVerbSlot];

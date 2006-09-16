@@ -1749,7 +1749,7 @@ void ScummEngine_v6::o6_roomOps() {
 	case 187:		// SO_CYCLE_SPEED
 		b = pop();
 		a = pop();
-		checkRange(16, 1, a, "o6_roomOps: 187: color cycle out of range (%d)");
+		assertRange(1, a, 16, "o6_roomOps: 187: color cycle");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 
@@ -1833,7 +1833,7 @@ void ScummEngine_v6::o6_actorOps() {
 	case 86:		// SO_PALETTE
 		j = pop();
 		i = pop();
-		checkRange(255, 0, i, "Illegal palette slot %d");
+		assertRange(0, i, 255, "o6_actorOps: palette slot");
 		a->setPalette(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
@@ -1933,7 +1933,7 @@ void ScummEngine_v6::o6_verbOps() {
 	if (subOp == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
-		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		assertRange(0, _curVerbSlot, _numVerbs - 1, "new verb slot");
 		return;
 	}
 	vs = &_verbs[_curVerbSlot];

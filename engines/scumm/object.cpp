@@ -55,9 +55,9 @@ struct BompHeader {			/* Bomp header */
 
 
 bool ScummEngine::getClass(int obj, int cls) const {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getClass");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
-	checkRange(32, 1, cls, "Class %d out of range in getClass");
+	assertRange(1, cls, 32, "class");
 
 	if (_game.features & GF_SMALL_HEADER) {
 		// Translate the new (V5) object classes to the old classes
@@ -82,9 +82,9 @@ bool ScummEngine::getClass(int obj, int cls) const {
 }
 
 void ScummEngine::putClass(int obj, int cls, bool set) {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putClass");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
-	checkRange(32, 1, cls, "Class %d out of range in putClass");
+	assertRange(1, cls, 32, "class");
 
 	if (_game.features & GF_SMALL_HEADER) {
 		// Translate the new (V5) object classes to the old classes
@@ -116,18 +116,18 @@ void ScummEngine::putClass(int obj, int cls, bool set) {
 }
 
 int ScummEngine::getOwner(int obj) const {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getOwner");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	return _objectOwnerTable[obj];
 }
 
 void ScummEngine::putOwner(int obj, int owner) {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putOwner");
-	checkRange(0xFF, 0, owner, "Owner %d out of range in putOwner");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
+	assertRange(0, owner, 0xFF, "owner");
 	_objectOwnerTable[obj] = owner;
 }
 
 int ScummEngine::getState(int obj) {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getState");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
 
 	if (!_copyProtection) {
 		// I knew LucasArts sold cracked copies of the original Maniac Mansion,
@@ -147,13 +147,13 @@ int ScummEngine::getState(int obj) {
 }
 
 void ScummEngine::putState(int obj, int state) {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putState");
-	checkRange(0xFF, 0, state, "State %d out of range in putState");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
+	assertRange(0, state, 0xFF, "state");
 	_objectStateTable[obj] = state;
 }
 
 int ScummEngine::getObjectRoom(int obj) const {
-	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getObjectRoom");
+	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	return _objectRoomTable[obj];
 }
 
@@ -427,7 +427,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (od.obj_nr == 0)
 		return;
 
-	checkRange(_numGlobalObjects - 1, 0, od.obj_nr, "Object %d out of range in drawObject");
+	assertRange(0, od.obj_nr, _numGlobalObjects - 1, "object");
 
 	const int xpos = od.x_pos / 8;
 	const int ypos = od.y_pos;
@@ -1619,7 +1619,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 
 	vs = &virtscr[0];
 
-	checkRange(_numGlobalObjects - 1, 30, eo->number, "Illegal Blast object %d");
+	assertRange(30, eo->number, _numGlobalObjects - 1, "blast object");
 
 	objnum = getObjectIndex(eo->number);
 	if (objnum == -1)

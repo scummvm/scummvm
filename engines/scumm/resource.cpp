@@ -579,7 +579,7 @@ void ScummEngine::loadCharset(int no) {
 	}
 
 	assert(no < (int)sizeof(_charsetData) / 16);
-	checkRange(_numCharsets - 1, 1, no, "Loading illegal charset %d");
+	assertRange(1, no, _numCharsets - 1, "charset");
 
 	ptr = getResourceAddress(rtCharset, no);
 
@@ -589,7 +589,7 @@ void ScummEngine::loadCharset(int no) {
 }
 
 void ScummEngine::nukeCharset(int i) {
-	checkRange(_numCharsets - 1, 1, i, "Nuking illegal charset %d");
+	assertRange(1, i, _numCharsets - 1, "charset");
 	res.nukeResource(rtCharset, i);
 }
 

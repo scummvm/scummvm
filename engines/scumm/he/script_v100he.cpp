@@ -455,7 +455,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 57:		// SO_PALETTE
 		j = pop();
 		i = pop();
-		checkRange(255, 0, i, "o100_actorOps: Illegal palette slot %d");
+		assertRange(0, i, 255, "palette slot");
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;
