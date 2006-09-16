@@ -6,7 +6,7 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM S60v1"},(0x101f9b57),0,80,0
+#{"ScummVM S60v1"},(0x101f9b57),0,90,0
 
 ; Platform type
 (0x101F6F88), 0, 0, 0, {"Series60ProductID"}

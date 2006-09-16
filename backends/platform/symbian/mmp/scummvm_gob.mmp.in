@@ -39,7 +39,7 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\engines\gob
+SOURCEPATH ..\..\..\..\engines\gob
 
 //START_AUTO_OBJECTS_GOB_//
 
@@ -49,6 +49,6 @@ SOURCEPATH ..\..\..\engines\gob
 
 // *** Include paths
 
-USERINCLUDE     ..\..\..\engines
-USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\..\engines
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

@@ -39,7 +39,7 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\engines\saga
+SOURCEPATH ..\..\..\..\engines\saga
 
 //START_AUTO_OBJECTS_SAGA_//
 
@@ -49,6 +49,6 @@ SOURCEPATH ..\..\..\engines\saga
 
 // *** Include paths
 
-USERINCLUDE     ..\..\..\engines
-USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\..\engines
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

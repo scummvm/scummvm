@@ -54,14 +54,14 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 	//MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
 	//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 	//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-	//MACRO			DISABLE_AGI		// LIB:scummvm_cine.lib
+	//MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 
 //STOP_AUTO_MACROS_MASTER//
 
 // *** Include paths
 
-USERINCLUDE	    ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound
-USERINCLUDE		..\..\..\backends\fs ..\src ..\..\..\backends\sdl
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound
+USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
 
 SYSTEMINCLUDE 	\epoc32\include\ESDL
 SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
@@ -72,21 +72,21 @@ SYSTEMINCLUDE   ..\src // for portdefs.h
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\common
+SOURCEPATH ..\..\..\..\common
 //START_AUTO_OBJECTS_COMMON_//
 
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_COMMON_//
 
-SOURCEPATH ..\..\..\graphics
+SOURCEPATH ..\..\..\..\graphics
 //START_AUTO_OBJECTS_GRAPHICS_//
 
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_GRAPHICS_//
 
-SOURCEPATH ..\..\..\gui
+SOURCEPATH ..\..\..\..\gui
 //START_AUTO_OBJECTS_GUI_//
 
 	// empty base file, will be updated by Perl build scripts
@@ -98,14 +98,16 @@ SOURCEPATH ..\..\..\gui
 //SOURCE KeysDialog.cpp
 //SOURCE Actions.cpp
 
-SOURCEPATH ..\..\..\sound
+SOURCEPATH ..\..\..\..\sound
 //START_AUTO_OBJECTS_SOUND_//
 
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_SOUND_//
 
-sourcepath ..\..\..
+sourcepath ..\..\..\..
+source	   backends\timer\default\default-timer.cpp
+source	   backends\saves\savefile.cpp
+source	   backends\saves\default\default-saves.cpp
 // backend specific includes
-SOURCE backends\fs\fs.cpp
 // backend specific includes

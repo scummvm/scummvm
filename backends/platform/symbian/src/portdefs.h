@@ -21,7 +21,8 @@
  * $URL$
  * $Id$
  */
-
+#ifndef SYMBIAN_PORTDEFS_H
+#define SYMBIAN_PORTDEFS_H
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
@@ -122,6 +123,9 @@
 
 	#define snprintf					scumm_snprintf
 	#define vsnprintf					scumm_vsnprintf
+	void*	symbian_malloc	(size_t _size);
+
+	#define malloc symbian_malloc
 #else // GCCE and the rest
 	#define snprintf(buf,len,args...)	sprintf(buf,args)
 	#define vsnprintf(buf,len,format,valist)	vsprintf(buf,format,valist)
@@ -146,3 +150,4 @@ namespace Symbian {
 extern void FatalError(const char *msg);
 extern char* GetExecutablePath();
 }
+#endif

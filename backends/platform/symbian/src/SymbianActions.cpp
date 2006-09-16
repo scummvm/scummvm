@@ -128,6 +128,7 @@ void SymbianActions::initInstanceGame() {
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
+	bool is_kyra = (gameid == "kyra1");
 	
 	Actions::initInstanceGame();
 
@@ -137,7 +138,7 @@ void SymbianActions::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_gob) 
+	if (is_simon || is_gob || is_kyra) 
 		_action_enabled[ACTION_SAVE] = false;
 	else if (is_queen || is_ite) {
 		_action_enabled[ACTION_SAVE] = true;

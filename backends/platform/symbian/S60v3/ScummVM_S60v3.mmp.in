@@ -64,7 +64,7 @@ END
 
 EPOCSTACKSIZE	0x0000F000
 EPOCHEAPSIZE	2048000	16192000
-
+ALWAYS_BUILD_AS_ARM
 MACRO			S60
 MACRO			S60V3
 MACRO			EPOC_AS_APP
@@ -80,8 +80,8 @@ STATICLIBRARY esdl.lib
 
 // *** Include paths
 
-USERINCLUDE	    ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\engines
-USERINCLUDE		..\..\..\backends\fs ..\src ..\..\..\backends\sdl ..\..\..\sound
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\engines
+USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..\..\..\..\sound
 
 SYSTEMINCLUDE 	\epoc32\include\ESDL
 SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
@@ -91,7 +91,7 @@ SYSTEMINCLUDE   ..\src // for portdefs.h
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\base
+SOURCEPATH ..\..\..\..\base
 
 //START_AUTO_OBJECTS_BASE_//
 
@@ -102,13 +102,13 @@ SOURCEPATH ..\..\..\base
 SOURCEPATH ..\..\..
 
 // backend EPOC/SDL/ESDL specific includes
-SOURCE backends\sdl\events.cpp
-SOURCE backends\sdl\graphics.cpp
-SOURCE backends\sdl\sdl.cpp
+SOURCE backends\platform\sdl\events.cpp
+SOURCE backends\platform\sdl\graphics.cpp
+SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\fs\symbian\symbian-fs.cpp
-SOURCE backends\symbian\src\SymbianOS.cpp 
-SOURCE backends\symbian\src\SymbianActions.cpp 
-SOURCE backends\symbian\src\ScummApp.cpp
+SOURCE backends\platform\symbian\src\SymbianOS.cpp 
+SOURCE backends\platform\symbian\src\SymbianActions.cpp 
+SOURCE backends\platform\symbian\src\ScummApp.cpp
 
 SOURCE gui\Key.cpp
 SOURCE gui\KeysDialog.cpp

@@ -16,6 +16,8 @@
 ; Product/platform version UID, Major, Minor, Build, Product ID
 (0x101F6300), 3, 0, 0, {"UIQ30ProductID"}
 
+
+*"..\res\scummvm.key","..\res\scummvm.cer",KEY="scummvm"
 ; Application, AIF & Resource file
 "\uiq3\epoc32\release\gcce\urel\ScummVM.exe"-		"!:\sys\bin\ScummVM.exe"
 "\uiq3\epoc32\data\z\resource\apps\ScummVM.rsc"-	"!:\resource\apps\ScummVM.rsc"

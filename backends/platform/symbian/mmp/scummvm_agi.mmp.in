@@ -39,7 +39,7 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\engines\agi
+SOURCEPATH ..\..\..\..\engines\agi
 
 //START_AUTO_OBJECTS_AGI_//
 
@@ -49,7 +49,7 @@ SOURCEPATH ..\..\..\engines\agi
 
 // *** Include paths
 
-USERINCLUDE     ..\..\..\engines
-USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\..\engines
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

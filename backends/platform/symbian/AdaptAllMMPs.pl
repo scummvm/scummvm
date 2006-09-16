@@ -2,7 +2,7 @@
 use Cwd;
 
 $buildDir = getcwd();
-chdir("../../");
+chdir("../../../");
 
 # list of project files to process
 @mmp_files = (

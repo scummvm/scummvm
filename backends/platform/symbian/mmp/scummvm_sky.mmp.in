@@ -39,7 +39,7 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\engines\sky
+SOURCEPATH ..\..\..\..\engines\sky
 
 //START_AUTO_OBJECTS_SKY_//
 
@@ -49,6 +49,6 @@ SOURCEPATH ..\..\..\engines\sky
 
 // *** Include paths
 
-USERINCLUDE     ..\..\..\engines ..\..\..\engines\sky\music
-USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\..\engines ..\..\..\..\engines\sky\music
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src
