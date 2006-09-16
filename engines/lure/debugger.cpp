@@ -46,7 +46,7 @@ Debugger::Debugger(): Common::Debugger<Debugger>() {
 	DCmd_Register("hotspot",			&Debugger::cmd_hotspot);
 }
 
-int Debugger::strToInt(const char *s) {
+static int strToInt(const char *s) {
 	if (!*s) 
 		// No string at all
 		return 0;

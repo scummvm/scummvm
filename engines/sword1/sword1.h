@@ -68,7 +68,6 @@ struct SystemVars {
 };
 
 class SwordEngine : public Engine {
-	void errorString(const char *buf_input, char *buf_output);
 public:
 	SwordEngine(OSystem *syst);
 	virtual ~SwordEngine();

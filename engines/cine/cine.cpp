@@ -167,10 +167,6 @@ CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 CineEngine::~CineEngine() {
 }
 
-void CineEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-}
-
 int CineEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();

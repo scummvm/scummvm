@@ -252,8 +252,6 @@ public:
 
 	virtual int setupGameFlags() = 0;
 	
-	void errorString(const char *buf_input, char *buf_output);
-
 	Resource *resource() { return _res; }
 	Screen *screen() { return _screen; }
 	ScreenAnimator *animator() { return _animator; }

@@ -131,10 +131,6 @@ namespace Sword1 {
 
 SystemVars SwordEngine::_systemVars;
 
-void SwordEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-}
-
 SwordEngine::SwordEngine(OSystem *syst)
 	: Engine(syst) {
 

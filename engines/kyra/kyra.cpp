@@ -411,10 +411,6 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 }
 
-void KyraEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-}
-
 int KyraEngine::go() {
 
 	if (_features & GF_FLOPPY && !(_features & GF_AMIGA)) {

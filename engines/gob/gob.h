@@ -82,8 +82,6 @@ enum {
 };
 
 class GobEngine : public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
 protected:
 	int go();
 	int init();

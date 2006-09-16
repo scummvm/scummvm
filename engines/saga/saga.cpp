@@ -142,10 +142,6 @@ SagaEngine::~SagaEngine() {
 	delete _resource;
 }
 
-void SagaEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-}
-
 int SagaEngine::init() {
 	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
 	_musicVolume = ConfMan.getInt("music_volume") / 25;

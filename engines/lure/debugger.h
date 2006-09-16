@@ -30,8 +30,6 @@ namespace Lure {
 class KyraEngine;
 
 class Debugger : public Common::Debugger<Debugger> {
-private:
-	int strToInt(const char *s);
 public:
 	Debugger();
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ

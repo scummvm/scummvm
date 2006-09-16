@@ -560,10 +560,6 @@ AgiEngine::~AgiEngine() {
 	delete _console;
 }
 
-void AgiEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-}
-
 int AgiEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();

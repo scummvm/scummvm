@@ -229,8 +229,6 @@ extern const char *_savePath;
 class AgiEngine : public ::Engine {
 	int _gameId;
 
-	void errorString(const char *buf_input, char *buf_output);
-
 protected:
 	int init();
 	int go();

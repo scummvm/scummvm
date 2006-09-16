@@ -204,10 +204,6 @@ GobEngine::~GobEngine() {
 	delete[] _startTot0;
 }
 
-void GobEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-}
-
 int GobEngine::go() {
 	_init->initGame(0);
 

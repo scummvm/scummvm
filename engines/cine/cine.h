@@ -55,8 +55,6 @@ enum CineGameId {
 class CineEngine : public Engine {
 	int _gameId;
 
-	void errorString(const char *buf_input, char *buf_output);
-
 protected:
 	int init();
 	int go();

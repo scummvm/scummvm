@@ -60,7 +60,6 @@ public:
 	
 	virtual int init();
 	virtual int go();
-	virtual void errorString(const char *buf_input, char *buf_output);
 	void quitGame();
 
 	uint32 features() { return _features; }

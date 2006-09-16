@@ -250,8 +250,6 @@ inline uint16 objectIndexToId(int type, int index) {
 class SagaEngine : public Engine {
 	friend class Scene;
 
-	void errorString(const char *buf_input, char *buf_output);
-
 protected:
 	int go();
 	int init();
