@@ -29,14 +29,6 @@
 
 namespace GUI {
 
-enum {
-	kBufferSize	= 32768,
-	kLineWidth = 128,
-	kLineBufferSize = 256,
-
-	kHistorySize = 20
-};
-
 class ScrollBarWidget;
 
 class ConsoleDialog : public Dialog {
@@ -45,6 +37,14 @@ public:
 	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, char*& completion, void *refCon);
 
 protected:
+	enum {
+		kBufferSize	= 32768,
+		kCharsPerLine = 128,
+		kLineBufferSize = 256,
+	
+		kHistorySize = 20
+	};
+
 	const Graphics::Font *_font;
 
 	char	_buffer[kBufferSize];
@@ -131,7 +131,7 @@ protected:
 
 	void init();
 
-	int pos2line(int pos) { return (pos - (_scrollLine - _linesPerPage + 1) * kLineWidth) / kLineWidth; }
+	int pos2line(int pos) { return (pos - (_scrollLine - _linesPerPage + 1) * kCharsPerLine) / kCharsPerLine; }
 
 	void drawLine(int line, bool restoreBg = true);
 	void drawCaret(bool erase);

@@ -123,7 +123,7 @@ void ConsoleDialog::init() {
 
 	_pageWidth = (_w - scrollBarWidth - 2 - _leftPadding - _topPadding - scrollBarWidth) / kConsoleCharWidth;
 	_linesPerPage = (_h - 2 - _topPadding - _bottomPadding) / kConsoleLineHeight;
-	_linesInBuffer = kBufferSize / kLineWidth;
+	_linesInBuffer = kBufferSize / kCharsPerLine;
 }
 
 void ConsoleDialog::slideUpAndClose() {
@@ -185,7 +185,7 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 	int x = _x + 1 + _leftPadding;
 	int start = _scrollLine - _linesPerPage + 1;
 	int y = _y + 2 + _topPadding;
-	int limit = MIN(_pageWidth, (int)kLineWidth);
+	int limit = MIN(_pageWidth, (int)kCharsPerLine);
 
 	y += line * kConsoleLineHeight;
 
@@ -198,9 +198,9 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 	for (int column = 0; column < limit; column++) {
 #if 0
 		int l = (start + line) % _linesInBuffer;
-		byte c = buffer(l * kLineWidth + column);
+		byte c = buffer(l * kCharsPerLine + column);
 #else
-		byte c = buffer((start + line) * kLineWidth + column);
+		byte c = buffer((start + line) * kCharsPerLine + column);
 #endif
 		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
@@ -210,7 +210,7 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 void ConsoleDialog::reflowLayout() {
 	init();
 
-	_scrollLine = _promptEndPos / kLineWidth;
+	_scrollLine = _promptEndPos / kCharsPerLine;
 	if (_scrollLine < _linesPerPage - 1)
 		_scrollLine = _linesPerPage - 1;
 	updateScrollBuffer();
@@ -358,8 +358,8 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	case 256 + 25:	// pagedown
 		if (modifiers == OSystem::KBD_SHIFT) {
 			_scrollLine += _linesPerPage - 1;
-			if (_scrollLine > _promptEndPos / kLineWidth) {
-				_scrollLine = _promptEndPos / kLineWidth;
+			if (_scrollLine > _promptEndPos / kCharsPerLine) {
+				_scrollLine = _promptEndPos / kCharsPerLine;
 				if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
 					_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			}
@@ -378,7 +378,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		break;
 	case 256 + 23:	// end
 		if (modifiers == OSystem::KBD_SHIFT) {
-			_scrollLine = _promptEndPos / kLineWidth;
+			_scrollLine = _promptEndPos / kCharsPerLine;
 			if (_scrollLine < _linesPerPage - 1)
 				_scrollLine = _linesPerPage - 1;
 			updateScrollBuffer();
@@ -552,10 +552,10 @@ void ConsoleDialog::historyScroll(int direction) {
 }
 
 void ConsoleDialog::nextLine() {
-	int line = _currentPos / kLineWidth;
+	int line = _currentPos / kCharsPerLine;
 	if (line == _scrollLine)
 		_scrollLine++;
-	_currentPos = (line + 1) * kLineWidth;
+	_currentPos = (line + 1) * kCharsPerLine;
 
 	updateScrollBuffer();
 }
@@ -565,12 +565,12 @@ void ConsoleDialog::nextLine() {
 // a new line is added
 void ConsoleDialog::updateScrollBuffer() {
 	int lastchar = MAX(_promptEndPos, _currentPos);
-	int line = lastchar / kLineWidth;
+	int line = lastchar / kCharsPerLine;
 	int numlines = (line < _linesInBuffer) ? line + 1 : _linesInBuffer;
 	int firstline = line - numlines + 1;
 	if (firstline > _firstLineInBuffer) {
 		// clear old line from buffer
-		for (int i = lastchar; i < (line+1) * kLineWidth; ++i)
+		for (int i = lastchar; i < (line+1) * kCharsPerLine; ++i)
 			buffer(i) = ' ';
 		_firstLineInBuffer = firstline;
 	}
@@ -622,7 +622,7 @@ void ConsoleDialog::putcharIntern(int c) {
 	else {
 		buffer(_currentPos) = (char)c;
 		_currentPos++;
-		if ((_scrollLine + 1) * kLineWidth == _currentPos) {
+		if ((_scrollLine + 1) * kCharsPerLine == _currentPos) {
 			_scrollLine++;
 			updateScrollBuffer();
 		}
@@ -641,7 +641,7 @@ void ConsoleDialog::print(const char *str) {
 
 void ConsoleDialog::drawCaret(bool erase) {
 	// TODO: use code from EditableWidget::drawCaret here
-	int line = _currentPos / kLineWidth;
+	int line = _currentPos / kCharsPerLine;
 	int displayLine = line - _scrollLine + _linesPerPage - 1;
 
 	// Only draw caret if visible
@@ -650,7 +650,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 		return;
 	}
 
-	int x = _x + 1 + _leftPadding + (_currentPos % kLineWidth) * kConsoleCharWidth;
+	int x = _x + 1 + _leftPadding + (_currentPos % kCharsPerLine) * kConsoleCharWidth;
 	int y = _y + _topPadding + displayLine * kConsoleLineHeight;
 
 	_caretVisible = !erase;
@@ -658,7 +658,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 }
 
 void ConsoleDialog::scrollToCurrent() {
-	int line = _promptEndPos / kLineWidth;
+	int line = _promptEndPos / kCharsPerLine;
 
 	if (line + _linesPerPage <= _scrollLine) {
 		// TODO - this should only occur for loong edit lines, though
