@@ -1646,8 +1646,8 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	static uint8 table[274];	
 	int tableIndex = 0;
 	
-	uint8 *newShape = NULL;
-	newShape = (uint8*)malloc(shapeSize+16);
+	uint8 *newShape = 0;
+	newShape = new uint8[shapeSize+16];
 	assert(newShape);
 	
 	byte *dst = newShape;
@@ -1741,8 +1741,11 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 			int16 size = encodeShapeAndCalculateSize(_animBlockPtr, shapePtrBackUp, shapeSize2);
 			if (size > shapeSize2) {
 				shapeSize -= shapeSize2 - size;
-				newShape = (uint8*)realloc(newShape, shapeSize);
-				assert(newShape);
+				uint8 *newShape2 = new uint8[shapeSize];
+				assert(newShape2);
+				memcpy(newShape2, newShape, shapeSize);
+				delete [] newShape;
+				newShape = newShape2;
 			} else {
 				dst = shapePtrBackUp;
 				src = _animBlockPtr;

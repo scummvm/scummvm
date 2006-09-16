@@ -384,16 +384,16 @@ KyraEngine::~KyraEngine() {
 	
 	delete [] _movFacingTable;
 
-	free(_scrollUpButton.process0PtrShape);
-	free(_scrollUpButton.process1PtrShape);
-	free(_scrollUpButton.process2PtrShape);
-	free(_scrollDownButton.process0PtrShape);
-	free(_scrollDownButton.process1PtrShape);
-	free(_scrollDownButton.process2PtrShape);
+	delete [] _scrollUpButton.process0PtrShape;
+	delete [] _scrollUpButton.process1PtrShape;
+	delete [] _scrollUpButton.process2PtrShape;
+	delete [] _scrollDownButton.process0PtrShape;
+	delete [] _scrollDownButton.process1PtrShape;
+	delete [] _scrollDownButton.process2PtrShape;
 		
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
-			free(_shapes[i]);
+			delete [] _shapes[i];
 			for (int i2 = 0; i2 < ARRAYSIZE(_shapes); i2++) {
 				if (_shapes[i2] == _shapes[i] && i2 != i) {
 					_shapes[i2] = 0;
@@ -403,7 +403,7 @@ KyraEngine::~KyraEngine() {
 		}
 	}
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i) {
-		free(_sceneAnimTable[i]);
+		delete [] _sceneAnimTable[i];
 	}
 }
 
@@ -463,15 +463,15 @@ void KyraEngine::startup() {
 	// XXX
 	for (int i = 0; i < 0x0C; ++i) {
 		int size = _screen->getRectSize(3, 24);
-		_shapes[365+i] = (byte*)malloc(size);
+		_shapes[365+i] = new byte[size];
 	}
-	_shapes[0] = (uint8*)malloc(_screen->getRectSize(3, 24));
+	_shapes[0] = new uint8[_screen->getRectSize(3, 24)];
 	memset(_shapes[0], 0, _screen->getRectSize(3, 24));
-	_shapes[1] = (uint8*)malloc(_screen->getRectSize(4, 32));
+	_shapes[1] = new uint8[_screen->getRectSize(4, 32)];
 	memset(_shapes[1], 0, _screen->getRectSize(4, 32));
-	_shapes[2] = (uint8*)malloc(_screen->getRectSize(8, 69));
+	_shapes[2] = new uint8[_screen->getRectSize(8, 69)];
 	memset(_shapes[2], 0, _screen->getRectSize(8, 69));
-	_shapes[3] = (uint8*)malloc(_screen->getRectSize(8, 69));
+	_shapes[3] = new uint8[_screen->getRectSize(8, 69)];
 	memset(_shapes[3], 0, _screen->getRectSize(8, 69));
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {
@@ -764,7 +764,7 @@ void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags
 void KyraEngine::freeShapes123() {
 	debugC(9, kDebugLevelMain, "KyraEngine::freeShapes123()");
 	for (int i = 123; i <= 172; ++i) {
-		free(_shapes[4+i]);
+		delete [] _shapes[4+i];
 		_shapes[4+i] = NULL;
 	}
 }

@@ -48,11 +48,11 @@ Sprites::Sprites(KyraEngine *engine, OSystem *system) {
 }
 
 Sprites::~Sprites() {
-	delete[] _dat;
+	delete [] _dat;
 	freeSceneShapes();
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].background)
-			free(_anims[i].background);
+			delete [] _anims[i].background;
 	}
 }
 
@@ -62,7 +62,7 @@ void Sprites::setupSceneAnims() {
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].background) {
-			free(_anims[i].background);
+			delete [] _anims[i].background;
 			_anims[i].background = 0;
 		}
 
@@ -118,10 +118,9 @@ void Sprites::setupSceneAnims() {
 			if (_anims[i].height2 > 0)
 				bkgdHeight += _anims[i].height2;
 
-			_anims[i].background = (uint8 *)malloc(_screen->getRectSize(bkgdWidth + 1, bkgdHeight));
-			memset(_anims[i].background, 0, _screen->getRectSize(bkgdWidth + 1, bkgdHeight));
-
+			_anims[i].background = new uint8[_screen->getRectSize(bkgdWidth + 1, bkgdHeight)];
 			assert(_anims[i].background);
+			memset(_anims[i].background, 0, _screen->getRectSize(bkgdWidth + 1, bkgdHeight));
 		}
 	}
 }
@@ -492,7 +491,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 void Sprites::freeSceneShapes() {
 	debugC(9, kDebugLevelSprites,  "Sprites::freeSceneShapes()");
 	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++ ) {
-		free(_sceneShapes[i]);
+		delete [] _sceneShapes[i];
 		_sceneShapes[i] = 0;
 	}
 }

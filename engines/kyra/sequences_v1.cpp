@@ -1653,7 +1653,7 @@ void KyraEngine::freePanPages() {
 	delete _endSequenceBackUpRect;
 	_endSequenceBackUpRect = 0;
 	for (int i = 0; i <= 19; ++i) {
-		free(_panPagesTable[i]);
+		delete [] _panPagesTable[i];
 		_panPagesTable[i] = NULL;
 	}
 }

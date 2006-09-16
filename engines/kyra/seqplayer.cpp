@@ -82,7 +82,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 		if (offs != 0) {
 			data += offs;
 			uint16 sz = READ_LE_UINT16(data + 6);
-			panPage = (uint8 *)malloc(sz);
+			panPage = new uint8[sz];
 			if (panPage) {
 				memcpy(panPage, data, sz);
 			}
@@ -96,7 +96,7 @@ void SeqPlayer::makeHandShapes() {
 	_screen->loadBitmap("WRITING.CPS", 3, 3, 0);
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		if (_handShapes[i])
-			free(_handShapes[i]);
+			delete [] _handShapes[i];
 		_handShapes[i] = setPanPages(3, i);
 	}
 }
@@ -104,7 +104,7 @@ void SeqPlayer::makeHandShapes() {
 void SeqPlayer::freeHandShapes() {
 	debugC( 9, kDebugLevelSequence, "SeqPlayer::freeHandShapes()");
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
-		free(_handShapes[i]);
+		delete [] _handShapes[i];
 		_handShapes[i] = 0;
 	}
 }
