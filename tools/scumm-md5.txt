@@ -256,8 +256,8 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	-	Floppy	-	Fingolfin
 	8f3758ff98c9c5d78e5d635222cad026	-1	it	DOS	-	Floppy	-	Andrea Petrucci
 	9bd2a8f72613e715c199246dd511e10f	-1	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
-	06b187468113f9ae5a400b148a847fac	-1	en	Mac	-	Floppy	-	Lars N sbye Christensen
-	d6dd0646404768a63e963891a96daadd	12035	en	Mac	-	Floppy	alt?	Fingolfin
+	06b187468113f9ae5a400b148a847fac	12075	en	Mac	-	Floppy	six data files	Lars N sbye Christensen
+	d6dd0646404768a63e963891a96daadd	12035	en	Mac	-	Floppy	two data files	Fingolfin
 
 	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	-	Fingolfin
 	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	-	CD	-	Scott Summers
