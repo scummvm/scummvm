@@ -55,7 +55,7 @@ class Debugger;
 class SkyCompact;
 
 class SkyEngine : public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	GUI::Debugger *getDebugger();
 protected:
 	byte _keyPressed, _keyFlags;
 	bool _floppyIntro;

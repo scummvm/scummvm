@@ -63,10 +63,6 @@
 
 #include "sound/mixer.h"
 
-#ifdef _WIN32_WCE
-extern bool isSmartphone(void);
-#endif
-
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 namespace Graphics {
 	extern void initfonts();
@@ -2117,6 +2113,9 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
+GUI::Debugger *ScummEngine::getDebugger() {
+	return _debugger;
+}
 
 void ScummEngine::errorString(const char *buf1, char *buf2) {
 	if (_currentScript != 0xFF) {
@@ -2125,19 +2124,6 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 			ss->number, (long)(_scriptPointer - _scriptOrgPointer), buf1);
 	} else {
 		strcpy(buf2, buf1);
-	}
-
-#ifdef _WIN32_WCE
-	if (isSmartphone())
-		return;
-#endif
-
-	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
-	// exit out normally.
-	if (_debugger && !_debugger->isAttached()) {
-		printf("%s\n", buf2);	// (Print it again in case debugger segfaults)
-		_debugger->attach(buf2);
-		_debugger->onFrame();
 	}
 }
 

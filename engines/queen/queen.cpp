@@ -48,10 +48,6 @@
 
 #include "sound/mididrv.h"
 
-#ifdef _WIN32_WCE
-bool isSmartphone();
-#endif
-
 /* Flight of the Amazon Queen */
 static const PlainGameDescriptor queen_setting[] = {
 	{ "queen", "Flight of the Amazon Queen" },
@@ -352,22 +348,8 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	}
 }
 
-void QueenEngine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-
-#ifdef _WIN32_WCE
-	if (isSmartphone())
-		return;
-#endif
-
-	// Unless an error -originated- within the debugger, spawn the
-	// debugger. Otherwise exit out normally.
-	if (_debugger && !_debugger->isAttached()) {
-		// (Print it again in case debugger segfaults)
-		printf("%s\n", buf2);
-		_debugger->attach(buf2);
-		_debugger->onFrame();
-	}
+GUI::Debugger *QueenEngine::getDebugger() {
+	return _debugger;
 }
 
 int QueenEngine::go() {

@@ -141,7 +141,7 @@ class SimonEngine : public Engine {
 	friend class Debugger;
 	friend class MoviePlayer;
 
-	void errorString(const char *buf_input, char *buf_output);
+	GUI::Debugger *getDebugger();
 
 	typedef void (SimonEngine::*OpcodeProc) ();
 	void setupOpcodes();

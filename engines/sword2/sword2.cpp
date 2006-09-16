@@ -42,10 +42,6 @@
 #include "sword2/screen.h"
 #include "sword2/sound.h"
 
-#ifdef _WIN32_WCE
-extern bool isSmartphone();
-#endif
-
 namespace Sword2 {
 
 struct GameSettings {
@@ -196,22 +192,8 @@ Sword2Engine::~Sword2Engine() {
 	delete _memory;
 }
 
-void Sword2Engine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
-
-#ifdef _WIN32_WCE
-	if (isSmartphone())
-		return;
-#endif
-
-	// Unless an error -originated- within the debugger, spawn the
-	// debugger. Otherwise exit out normally.
-	if (_debugger && !_debugger->isAttached()) {
-		// (Print it again in case debugger segfaults)
-		printf("%s\n", buf2);
-		_debugger->attach(buf2);
-		_debugger->onFrame();
-	}
+GUI::Debugger *Sword2Engine::getDebugger() {
+	return _debugger;
 }
 
 void Sword2Engine::registerDefaultSettings() {

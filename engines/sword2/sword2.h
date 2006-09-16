@@ -210,7 +210,7 @@ public:
 
 	void sleepUntil(uint32 time);
 
-	void errorString(const char *buf_input, char *buf_output);
+	GUI::Debugger *getDebugger();
 	void initialiseFontResourceFlags();
 	void initialiseFontResourceFlags(uint8 language);
 

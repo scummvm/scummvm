@@ -417,7 +417,9 @@ class ScummEngine : public Engine {
 	friend class CharsetRenderer;
 	friend class ResourceManager;
 
+	GUI::Debugger *getDebugger();
 	void errorString(const char *buf_input, char *buf_output);
+
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode

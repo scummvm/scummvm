@@ -34,6 +34,9 @@ namespace Common {
 	class SaveFileManager;
 	class TimerManager;
 }
+namespace GUI {
+	class Debugger;
+}
 
 class Engine {
 public:
@@ -80,6 +83,12 @@ public:
 
 	/** Initialized graphics and shows error message. */
 	void GUIErrorMessage(const Common::String msg);
+
+	/**
+	 * Return the engine's debugger instance, if any. Used by error() to
+	 * invoke the debugger when a severe error is reported.
+	 */
+	virtual GUI::Debugger *getDebugger() { return 0; }
 };
 
 extern Engine *g_engine;

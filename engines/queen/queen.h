@@ -130,7 +130,7 @@ public:
 
 protected:
 
-	void errorString(const char *buf_input, char *buf_output);
+	GUI::Debugger *getDebugger();
 
 	int go();
 	int init();

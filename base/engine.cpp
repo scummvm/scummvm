@@ -30,7 +30,12 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "sound/mixer.h"
+#include "gui/debugger.h"
 #include "gui/message.h"
+
+#ifdef _WIN32_WCE
+extern bool isSmartphone(void);
+#endif
 
 /* FIXME - BIG HACK for MidiEmu */
 Engine *g_engine = 0;
@@ -165,26 +170,45 @@ void NORETURN CDECL error(const char *s, ...) {
 	char buf_output[STRINGBUFLEN];
 	va_list va;
 
+	// Generate the full error message
 	va_start(va, s);
 	vsnprintf(buf_input, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#ifndef __GP32__
+
+	// Next, give the active engine (if any) a chance to augment the
+	// error message
 	if (g_engine) {
 		g_engine->errorString(buf_input, buf_output);
 	} else {
 		strcpy(buf_output, buf_input);
 	}
-#else
-	strcpy(buf_output, buf_input);
-#endif
+
+
+	// Print the error message to stderr
 #ifdef __GP32__
 	printf("ERROR: %s\n", buf_output);
-#else
-#ifndef _WIN32_WCE
+#elif !defined(_WIN32_WCE)
 	fprintf(stderr, "%s!\n", buf_output);
 #endif
+
+
+#ifndef __GP32__
+	// Unless this error -originated- within the debugger itself, we
+	// now invoke the debugger, if available / supported.
+	if (g_engine) {
+		GUI::Debugger *debugger = g_engine->getDebugger();
+#ifdef _WIN32_WCE
+		if (isSmartphone())
+			debugger = 0;
 #endif
+		if (debugger && !debugger->isAttached()) {
+			debugger->attach(buf_output);
+			debugger->onFrame();
+		}
+	}
+#endif
+
 
 #if defined( USE_WINDBG )
 #if defined( _WIN32_WCE )
