@@ -427,8 +427,7 @@ void Sound::readSfxFile(const char *filename) {
 	file->open(filename);
 
 	if (file->isOpen() == false) {
-		if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-			error("readSfxFile: Can't load sfx file %s", filename);
+		error("readSfxFile: Can't load sfx file %s", filename);
 	}
 
 	delete _effects;

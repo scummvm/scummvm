@@ -136,13 +136,12 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				in = openTablesFile(filename);
 				readSubroutineBlock(in);
 				closeTablesFile(in);
-				if (getGameType() == GType_FF) {
-					// TODO
-				} else if (getGameType() == GType_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + _soundIndexBase]);
-				} else if (getPlatform() == Common::kPlatformWindows) {
+				} else if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) {
 					memcpy(filename, "SFXXXX", 6);
-					_sound->readSfxFile(filename);
+					if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
+						_sound->readSfxFile(filename);
 				}
 
 				alignTableMem();
