@@ -260,24 +260,30 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		uint32 srcPos = headerPos >> 1;
 		cSize /= 2;
 		uint32 dstPos = 0;
-		/* alloc 200 additional bytes, as the demo sometimes has ASCII junk
-		   at the end of the wave data */
-		int16 *dstData = (int16*)malloc(resSize * 2 + 200);
-		while (srcPos < cSize) {
+		int16 *dstData = (int16*)malloc(resSize * 2);
+		int32 samplesLeft = resSize;
+		while (srcPos < cSize && samplesLeft > 0) {
 			int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
 			srcPos++;
 			if (length < 0) {
 				length = -length;
+				if (length > samplesLeft)
+					length = samplesLeft;
 				for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
 					dstData[dstPos++] = srcData[srcPos];
 				srcPos++;
 			} else {
+				if (length > samplesLeft)
+					length = samplesLeft;
 				memcpy(dstData + dstPos, srcData + srcPos, length * 2);
 				dstPos += length;
 				srcPos += length;
 			}
+			samplesLeft -= length;
 		}
-		assert(dstPos < (uint32)resSize + 100);
+		if (samplesLeft > 0) {
+			memset(dstData + dstPos, 0, samplesLeft * 2);
+		}
 		if (_cowMode == CowDemo) // demo has wave output size embedded in the compressed data
 			*(uint32*)dstData = 0;
 		free(fBuf);

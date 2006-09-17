@@ -22,6 +22,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  BASS:
    - Fixed character spacing in LINC terminals in floppy version v0.0303
 
+ Broken Sword 1:
+   - Fixed speech-related crashes.
+
  Broken Sword 2:
    - More robust handling of the optional startup.inf file.
 
