@@ -1288,9 +1288,6 @@ void ScummEngine::allocateArrays() {
 	if (_game.heversion >= 60) {
 		_arraySlot = (byte *)calloc(_numArray, 1);
 	}
-	if (_game.heversion >= 70) {
-		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
-	}
 
 	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
 								_numCostumes, "costume", 1);

@@ -489,8 +489,6 @@ void ScummEngine::clearRoomObjects() {
 			_objs[i].obj_nr = 0;
 		}
 	} else {
-		storeFlObject(-1);
-
 		for (i = 0; i < _numLocalObjects; i++) {
 			if (_objs[i].obj_nr < 1)	// Optimise codepath
 				continue;
@@ -504,31 +502,48 @@ void ScummEngine::clearRoomObjects() {
 					_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
-				} else if (_game.heversion >= 70) {
-					storeFlObject(i);
-					_objs[i].obj_nr = 0;
-					_objs[i].fl_object_index = 0;
 				}
 			}
 		}
 	}
 }
 
-void ScummEngine::storeFlObject(int slot) {
-	if (slot == -1) {
-		_numStoredFlObjects = 0;
-	} else {
-		memcpy(&_storedFlObjects[_numStoredFlObjects], &_objs[slot], sizeof(_objs[slot]));
-		_numStoredFlObjects++;
-		if (_numStoredFlObjects > 100)
-			error("Too many flobjects saved on room transition.");
-	}
+void ScummEngine_v70he::resetRoomObjects() {
+	ScummEngine_v60he::resetRoomObjects();
+	restoreFlObjects();
 }
 
-void ScummEngine::restoreFlObjects() {
-	if (!_numStoredFlObjects)
-		return;
+void ScummEngine_v70he::clearRoomObjects() {
+	_numStoredFlObjects = 0;
 
+	for (int i = 0; i < _numLocalObjects; i++) {
+		if (_objs[i].obj_nr < 1)	// Optimise codepath
+			continue;
+
+		if (_objs[i].fl_object_index != 0) {
+			if (!_res->isLocked(rtFlObject, _objs[i].fl_object_index)) {
+				_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
+			} else {
+				storeFlObject(i);
+			}
+		}
+		_objs[i].fl_object_index = 0;
+		_objs[i].obj_nr = 0;
+	}
+
+	if (_currentRoom == 0)
+		restoreFlObjects();
+}
+
+
+void ScummEngine_v70he::storeFlObject(int slot) {
+	memcpy(&_storedFlObjects[_numStoredFlObjects], &_objs[slot], sizeof(_objs[slot]));
+	_numStoredFlObjects++;
+	if (_numStoredFlObjects > 100)
+		error("Too many flobjects saved on room transition.");
+}
+
+void ScummEngine_v70he::restoreFlObjects() {
 	int i, slot;
 
 	for (i = 0; i < _numStoredFlObjects; i++) {
@@ -1736,9 +1751,19 @@ int ScummEngine::findFlObjectSlot() {
 	return -1;
 }
 
+void ScummEngine_v70he::loadFlObject(uint object, uint room) {
+	// Don't load an already stored object
+	for (int i = 0; i < _numStoredFlObjects; i++) {
+		if (_storedFlObjects[i].obj_nr == object)
+			return;
+	}
+
+	ScummEngine_v60he::loadFlObject(object, room);
+}
+
 void ScummEngine::loadFlObject(uint object, uint room) {
 	FindObjectInRoom foir;
-	int i, slot, objslot;
+	int slot, objslot;
 	ObjectData *od;
 	byte *flob;
 	uint32 obcd_size, obim_size, flob_size;
@@ -1747,12 +1772,6 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	// Don't load an already loaded object
 	if (getObjectIndex(object) != -1)
 		return;
-
-	// Don't load an already stored object
-	for (i = 0; i < _numStoredFlObjects; i++) {
-		if (_storedFlObjects[i].obj_nr == object)
-			return;
-	}
 
 	// Locate the object in the room resource
 	findObjectInRoom(&foir, foImageHeader | foCodeHeader, object, room);

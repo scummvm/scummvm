@@ -48,6 +48,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
+#include "scumm/object.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
@@ -243,7 +244,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_musicEngine = NULL;
 	_verbs = NULL;
 	_objs = NULL;
-	_storedFlObjects = NULL;
 	_debugFlags = 0;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
@@ -268,7 +268,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_numRoomVariables = 0;
 	_numLocalObjects = 0;
 	_numGlobalObjects = 0;
-	_numStoredFlObjects = 0;
 	_numArray = 0;
 	_numVerbs = 0;
 	_numFlObject = 0;
@@ -835,6 +834,9 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	_heSndSoundFreq = 0;
 
 	_skipProcessActors = 0;
+
+	_numStoredFlObjects = 0;
+	_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 
 	VAR_NUM_SOUND_CHANNELS = 0xFF;
 	VAR_WIZ_TCOLOR = 0xFF;

@@ -129,6 +129,9 @@ protected:
 
 	bool _skipProcessActors;
 
+	int _numStoredFlObjects;
+	ObjectData *_storedFlObjects;
+
 public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he();
@@ -153,7 +156,14 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
 
+	virtual void clearRoomObjects();
+	virtual void resetRoomObjects();
+
 	virtual int getActorFromPos(int x, int y);
+
+	virtual void loadFlObject(uint object, uint room);
+	void storeFlObject(int slot);
+	void restoreFlObjects();
 
 	int getStringCharWidth(byte chr);
 	virtual int setupStringArray(int size);
