@@ -45,7 +45,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Scrolling in the Kyrandia intro is less CPU intensive, at the cost of
      not being as smooth as before.
    - Fixed a tiny graphics glitch in the Kyrandia intro.
-   - Improves screen update handling, speeds up drawing on small devices.
+   - Improved screen update handling, speeds up drawing on small devices.
 
  PSP Port:
    - Fixed crashes during scrolling scenes in certain SCUMM games.
