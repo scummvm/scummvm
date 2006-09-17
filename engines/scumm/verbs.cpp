@@ -365,7 +365,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 	inventoryBox.bottom = vs->topline + virtscr[kVerbVirtScreen].h;
 	inventoryBox.left = 0;
 	inventoryBox.right = vs->w;
-	restoreBG(inventoryBox);
+	restoreBackground(inventoryBox);
 
 	_string[1].charset = 1;
 
@@ -795,7 +795,7 @@ void ScummEngine::restoreVerbBG(int verb) {
 	vs = &_verbs[verb];
 
 	if (vs->oldRect.left != -1) {
-		restoreBG(vs->oldRect, vs->bkcolor);
+		restoreBackground(vs->oldRect, vs->bkcolor);
 		vs->oldRect.left = -1;
 	}
 }

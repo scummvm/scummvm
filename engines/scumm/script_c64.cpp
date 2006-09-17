@@ -557,7 +557,7 @@ void ScummEngine_c64::drawSentence() {
 	sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
 	sentenceline.left = 0;
 	sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
-	restoreBG(sentenceline);
+	restoreBackground(sentenceline);
 
 	drawString(2, (byte*)string);
 }

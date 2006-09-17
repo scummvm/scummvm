@@ -1095,7 +1095,7 @@ void ScummEngine_v2::o2_drawSentence() {
 		sentenceline.left = 0;
 		sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
 	}
-	restoreBG(sentenceline);
+	restoreBackground(sentenceline);
 
 	drawString(2, (byte*)string);
 }
@@ -1608,7 +1608,7 @@ void ScummEngine_v2::setUserState(byte state) {
 	} else {
 		rect.left = 0;
 	}
-	restoreBG(rect);
+	restoreBackground(rect);
 
 	// Draw all verbs and inventory
 	redrawVerbs();

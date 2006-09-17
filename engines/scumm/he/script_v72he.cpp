@@ -1528,7 +1528,7 @@ void ScummEngine_v72he::o72_systemOps() {
 		clearDrawObjectQueue();
 		break;
 	case 26: // HE80+
-		_gdi->copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
+		restoreBackgroundHE(Common::Rect(_screenWidth, _screenHeight));
 		updatePalette();
 		break;
 	case 158:

@@ -1011,7 +1011,7 @@ protected:
 
 	void moveScreen(int dx, int dy, int height);
 
-	void restoreBG(Common::Rect rect, byte backcolor = 0);
+	void restoreBackground(Common::Rect rect, byte backcolor = 0);
 	void redrawBGStrip(int start, int num);
 	virtual void redrawBGAreas();
 
@@ -1109,7 +1109,7 @@ protected:
 	 * needs to be redrawn.
 	 *
 	 * The second leftmost bit is set by removeBlastObject() and
-	 * restoreBG(), but I'm not yet sure why.
+	 * restoreBackground(), but I'm not yet sure why.
 	 */
 	uint32 gfxUsageBits[410 * 3];
 

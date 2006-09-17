@@ -142,6 +142,8 @@ public:
 	byte *heFindResource(uint32 tag, byte *ptr);
 	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 
+	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
+
 protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);

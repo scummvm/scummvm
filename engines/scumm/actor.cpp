@@ -2095,7 +2095,7 @@ void ScummEngine_v71he::preProcessAuxQueue() {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
 			if (ab->r.top <= ab->r.bottom) {
-				_gdi->copyVirtScreenBuffers(ab->r);
+				restoreBackgroundHE(ab->r);
 			}
 		}
 	}

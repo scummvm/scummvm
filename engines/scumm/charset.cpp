@@ -24,6 +24,7 @@
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/util.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/he/wiz_he.h"
 
 namespace Scumm {
@@ -1429,7 +1430,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 		if (_blitAlso && vs->hasTwoBuffers) {
 			Common::Rect dst(_left, _top, _left + origWidth, _top + origHeight);
-			_vm->_gdi->copyVirtScreenBuffers(dst);
+			((ScummEngine_v71he *)_vm)->restoreBackgroundHE(dst);
 		}
 #endif
 	} else {

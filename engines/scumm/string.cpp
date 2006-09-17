@@ -184,7 +184,7 @@ void ScummEngine_v6::removeBlastTexts() {
 	int i;
 
 	for (i = 0; i < _blastTextQueuePos; i++) {
-		restoreBG(_blastTextQueue[i].rect);
+		restoreBackground(_blastTextQueue[i].rect);
 	}
 	_blastTextQueuePos = 0;
 }

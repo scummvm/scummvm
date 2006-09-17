@@ -846,7 +846,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	_gdi->drawBitmap(room + _IM00_offs, &virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
 }
 
-void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
+void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	byte *screenBuf;
 
@@ -898,7 +898,7 @@ void CharsetRenderer::restoreCharsetBg() {
 		_left = -1;
 
 		// Restore background on the whole text area. This code is based on
-		// restoreBG(), but was changed to only restore those parts which are
+		// restoreBackground(), but was changed to only restore those parts which are
 		// currently covered by the charset mask.
 
 		VirtScreen *vs = &_vm->virtscr[_textScreenID];
@@ -1730,7 +1730,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 		debug(0, "Gdi::drawBMAPBg: default case %d", code);
 	}
 
-	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
+	((ScummEngine_v71he *)_vm)->restoreBackgroundHE(Common::Rect(vs->w, vs->h));
 
 	int numzbuf = getZPlanes(ptr, zplane_list, true);
 	if (numzbuf <= 1)
@@ -1798,14 +1798,14 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
 		
-		copyVirtScreenBuffers(rect1);
+		((ScummEngine_v71he *)_vm)->restoreBackgroundHE(rect1);
 	}
 #endif
 }
 
-void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {
+void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 	byte *src, *dst;
-	VirtScreen *vs = &_vm->virtscr[0];
+	VirtScreen *vs = &virtscr[0];
 
 	if (rect.top > vs->h || rect.bottom < 0)
 		return;
@@ -1831,13 +1831,13 @@ void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {
 	if (rw == 0 || rh == 0)
 		return;
 
-	src = _vm->virtscr[0].getBackPixels(rect.left, rect.top);
-	dst = _vm->virtscr[0].getPixels(rect.left, rect.top);
+	src = virtscr[0].getBackPixels(rect.left, rect.top);
+	dst = virtscr[0].getPixels(rect.left, rect.top);
 	
-	assert(rw <= _vm->_screenWidth && rw > 0);
-	assert(rh <= _vm->_screenHeight && rh > 0);
-	blit(dst, _vm->virtscr[0].pitch, src, _vm->virtscr[0].pitch, rw, rh);
-	_vm->markRectAsDirty(kMainVirtScreen, rect, dirtybit);
+	assert(rw <= _screenWidth && rw > 0);
+	assert(rh <= _screenHeight && rh > 0);
+	blit(dst, virtscr[0].pitch, src, virtscr[0].pitch, rw, rh);
+	markRectAsDirty(kMainVirtScreen, rect, dirtybit);
 }
 
 /**

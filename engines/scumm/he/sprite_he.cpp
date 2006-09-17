@@ -1066,7 +1066,7 @@ void Sprite::resetTables(bool refreshScreen) {
 		resetGroup(curGrp);
 
 	if (refreshScreen) {
-		_vm->_gdi->copyVirtScreenBuffers(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
+		_vm->restoreBackgroundHE(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
 	}
 	_numSpritesToProcess = 0;
 }
@@ -1084,7 +1084,7 @@ void Sprite::resetBackground() {
 			spi->flags &= ~kSFChanged;
 			if (spi->bbox.left <= spi->bbox.right && spi->bbox.top <= spi->bbox.bottom) {
 				if (spi->flags & kSFBlitDirectly) {
-					_vm->_gdi->copyVirtScreenBuffers(spi->bbox, USAGE_BIT_RESTORED);
+					_vm->restoreBackgroundHE(spi->bbox, USAGE_BIT_RESTORED);
 				} else if (firstLoop) {
 					xmin = spi->bbox.left;
 					ymin = spi->bbox.top;
@@ -1113,7 +1113,7 @@ void Sprite::resetBackground() {
 		}
 	}
 	if (refreshScreen) {
-		_vm->_gdi->copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
+		_vm->restoreBackgroundHE(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
 	}
 }
 

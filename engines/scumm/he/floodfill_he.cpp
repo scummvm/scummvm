@@ -220,7 +220,7 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	
 	if (r.left <= r.right && r.top <= r.bottom) {
 		if (ffp->flags & 0x8000) {
-			vm->_gdi->copyVirtScreenBuffers(r);
+			vm->restoreBackgroundHE(r);
 		} else {
 			++r.bottom;
 			vm->markRectAsDirty(kMainVirtScreen, r);

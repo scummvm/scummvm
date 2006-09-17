@@ -280,8 +280,6 @@ public:
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
 
-	void copyVirtScreenBuffers(Common::Rect rect, int dirtybit = 0);
-
 	byte *getMaskBuffer(int x, int y, int z);
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }
