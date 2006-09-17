@@ -60,13 +60,14 @@ Screen::~Screen() {
 
 	free(_unkPtr1);
 	free(_unkPtr2);
+
+	delete [] _dirtyRects;
 }
 
 bool Screen::init() {
 	debugC(9, kDebugLevelScreen, "Screen::init()");
 
-	// enable this for now
-	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, false);
 
 	_system->beginGFXTransaction();
 		_vm->initCommonGFX(false);
@@ -123,13 +124,28 @@ bool Screen::init() {
 	memset(_unkPtr1, 0, getRectSize(1, 144));
 	_unkPtr2 = (uint8*)malloc(getRectSize(1, 144));
 	memset(_unkPtr2, 0, getRectSize(1, 144));
+	
+	_forceFullUpdate = false;
+	_numDirtyRects = 0;
+	_dirtyRects = new Rect[kMaxDirtyRects];
+	assert(_dirtyRects);
 
 	return true;
 }
 
 void Screen::updateScreen() {
 	debugC(9, kDebugLevelScreen, "Screen::updateScreen()");
-	_system->copyRectToScreen(getPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+ 	if (_forceFullUpdate) {
+ 		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+ 	} else {
+ 		const byte *page0 = getCPagePtr(0);
+ 		for (int i = 0; i < _numDirtyRects; ++i) {
+ 			Rect &cur = _dirtyRects[i];
+ 			_system->copyRectToScreen(page0 + cur.y * SCREEN_W + cur.x, SCREEN_W, cur.x, cur.y, cur.x2, cur.y2);
+ 		}
+ 	}
+ 	_forceFullUpdate = false;
+ 	_numDirtyRects = 0;
 	//for debug reasons (needs 640x200 screen)
 	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
 	_system->updateScreen();
@@ -138,7 +154,6 @@ void Screen::updateScreen() {
 uint8 *Screen::getPagePtr(int pageNum) {
 	debugC(9, kDebugLevelScreen, "Screen::getPagePtr(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
-	// if pageNum == 0 wholeScreenDirty
 	return _pagePtrs[pageNum];
 }
 
@@ -151,13 +166,14 @@ const uint8 *Screen::getCPagePtr(int pageNum) const {
 uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
 	debugC(9, kDebugLevelScreen, "Screen::getPageRect(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
 	assert(pageNum < SCREEN_PAGE_NUM);
-	// if pageNum == 0 rectDirty(x, y, w, h)
+	if (pageNum == 0 || pageNum == 1) addDirtyRect(x, y, w, h);
 	return _pagePtrs[pageNum] + y * SCREEN_W + x;
 }
 
 void Screen::clearPage(int pageNum) {
 	debugC(9, kDebugLevelScreen, "Screen::clearPage(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
+	if (pageNum == 0 || pageNum == 1) _forceFullUpdate = true;
 	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE);
 }
 
@@ -171,6 +187,7 @@ int Screen::setCurPage(int pageNum) {
 
 void Screen::clearCurPage() {
 	debugC(9, kDebugLevelScreen, "Screen::clearCurPage()");
+	if (_curPage == 0 || _curPage == 1) _forceFullUpdate = true;
 	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
 }
 
@@ -185,6 +202,8 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	debugC(9, kDebugLevelScreen, "Screen::setPagePixel(%d, %d, %d, %d)", pageNum, x, y, color);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x, y, 1, 1);
 	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 }
 
@@ -313,6 +332,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 		seqBuf += SCREEN_W;
 		dstPage += SCREEN_W;
 	}
+	addDirtyRect(0, y, SCREEN_W, h);
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
@@ -348,6 +368,9 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W + x1;
 	assert(x2 + w <= SCREEN_W && y2 + h <= SCREEN_H);
 	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W + x2;
+	
+	if (dstPage == 0 || dstPage == 1)
+		addDirtyRect(x2, y2, w, h);
 
 	if (flags & CR_X_FLIPPED) {
 		while (h--) {
@@ -385,6 +408,10 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	debugC(9, kDebugLevelScreen, "Screen::copyBlockToPage(%d, %d, %d, %d, %d, %p)", pageNum, x, y, w, h, (const void *)src);
 	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H);
 	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
+
+ 	if (pageNum == 0 || pageNum == 1)
+ 		addDirtyRect(x, y, w, h);
+
 	while (h--) {
 		memcpy(dst, src, w);
 		dst += SCREEN_W;
@@ -411,6 +438,10 @@ void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) 
 		h = 200 - y;
 	}
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
+	
+	if (_curPage == 0 || _curPage == 1)
+		addDirtyRect(x*8, y, w*8, h);
+	
 	while (h--) {
 		memcpy(dst, src, w*8);
 		dst += SCREEN_W;
@@ -486,6 +517,8 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 				setPagePixel(dstPage, i, j, color);
 			}
 		}
+		// forcing full update for now
+		_forceFullUpdate = true;
 		updateScreen();
 		now = (int32)_system->getMillis();
 		wait = ticks * _vm->tickLength() - (now - start);
@@ -506,6 +539,10 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 		pageNum = _curPage;
 	}
 	uint8 *dst = getPagePtr(pageNum) + y1 * SCREEN_W + x1;
+	
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x1, y1, x2-x1+1, y2-y1+1);
+	
 	for (; y1 <= y2; ++y1) {
 		memset(dst, color, x2 - x1 + 1);
 		dst += SCREEN_W;
@@ -572,12 +609,12 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 			drawLine(false, x1, y1, x2 - x1 + 1, color);
 }
 
-void Screen::drawLine(bool horizontal, int x, int y, int length, int color) {
-	debugC(9, kDebugLevelScreen, "Screen::drawLine(%i, %i, %i, %i, %i)", horizontal, x, y, length, color);
+void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
+	debugC(9, kDebugLevelScreen, "Screen::drawLine(%i, %i, %i, %i, %i)", vertical, x, y, length, color);
 
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W + x;
 
-	if (horizontal) {
+	if (vertical) {
 		assert((y + length) <= SCREEN_H);
 		int currLine = 0;
 		while (currLine < length) {
@@ -589,6 +626,9 @@ void Screen::drawLine(bool horizontal, int x, int y, int length, int color) {
 		assert((x + length) <= SCREEN_W);
 		memset(ptr, color, length);
 	}
+	
+	if (_curPage == 0 || _curPage == 1)
+		addDirtyRect(x, y, (vertical) ? 1 : length, (vertical) ? length : 1);
 }
 
 void Screen::setAnimBlockPtr(int size) {
@@ -775,6 +815,9 @@ void Screen::drawChar(uint8 c, int x, int y) {
 		}
 		dst += pitch;
 	}
+	
+	if (_curPage == 0 || _curPage == 1)
+		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->charSizeOffset + 4));
 }
 
 void Screen::setScreenDim(int dim) {
@@ -973,6 +1016,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
 	uint8 *dstStart = getPagePtr(pageNum);
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x, y, x2-x1, y2-y1);
 	
 	int scaleYTable[SCREEN_H];
 	assert(y1 >= 0 && y2 < SCREEN_H);
@@ -1903,22 +1948,24 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	updateScreen();
 }
 
-void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
+void Screen::copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr) {
 	debugC(9, kDebugLevelScreen, "Screen::copyScreenFromRect(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)ptr);
 	x <<= 3; w <<= 3;
-	uint8 *src = ptr;
+	const uint8 *src = ptr;
 	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];
 	for (int i = 0; i < h; ++i) {
 		memcpy(dst, src, w);
 		src += w;
 		dst += SCREEN_W;
 	}
+	
+	addDirtyRect(x, y, w, h);
 }
 
 void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 	debugC(9, kDebugLevelScreen, "Screen::copyScreenToRect(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)ptr);
 	x <<= 3; w <<= 3;
-	uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
+	const uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
 	uint8 *dst = ptr;
 	for (int i = 0; i < h; ++i) {
 		memcpy(dst, src, w);
@@ -2199,6 +2246,8 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 
 	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = getPagePtr(dstPage);
+	if (dstPage == 0 || tempPage == 0)
+		_forceFullUpdate = true;
 
 	switch (compType) {
 	case 0:
@@ -2216,6 +2265,33 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	}
 
 	delete [] srcData;
+}
+
+// dirty rect handling
+
+void Screen::addDirtyRect(int x, int y, int w, int h) {
+	if (_numDirtyRects == kMaxDirtyRects || _forceFullUpdate) {
+		_forceFullUpdate = true;
+		return;
+	}
+	
+	if (w == 0 || h == 0)
+		return;
+
+	if (x < 0)
+		x = 0;
+	if (x + w >= 320)
+		w = 320 - x;
+	if (y < 0)
+		y = 0;
+	if (y + h >= 200)
+		h = 200 - y;
+	
+	Rect &cur = _dirtyRects[_numDirtyRects++];
+	cur.x = x;
+	cur.x2 = w;
+	cur.y = y;
+	cur.y2 = h;
 }
 
 } // End of namespace Kyra

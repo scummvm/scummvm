@@ -112,7 +112,7 @@ public:
 	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
-	void drawLine(bool horizontal, int x, int y, int length, int color);
+	void drawLine(bool vertical, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
 	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
@@ -193,7 +193,7 @@ private:
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();
 	void copyMouseToScreen();
-	void copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr);
+	void copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr);
 	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
 	uint8 *_pagePtrs[16];
@@ -211,6 +211,16 @@ private:
 	Rect *_bitBlitRects;
 	int _bitBlitNum;
 	uint8 *_unkPtr1, *_unkPtr2;
+	
+	enum {
+		kMaxDirtyRects = 50
+	};
+	
+	bool _forceFullUpdate;
+	int _numDirtyRects;
+	Rect *_dirtyRects;
+	
+	void addDirtyRect(int x, int y, int w, int h);
 
 	OSystem *_system;
 	KyraEngine *_vm;
