@@ -56,7 +56,9 @@ bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
 		if (_keyMouse.hasMore) {
 			switch (ev->data.keyDown.chr) {
 			// hot swap gfx
+			case 0x1B04:
 			case vchrHard1:
+				printf("swap\n");
 				if (OPTIONS_TST(kOptCollapsible))
 					hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 				return false; // not a key

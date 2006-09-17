@@ -24,6 +24,14 @@
 
 #include "be_zodiac.h"
 
+void OSystem_PalmZodiac::setCursorPalette(const byte *colors, uint start, uint num) {
+	for(uint i = 0; i < num; i++) {
+		_mousePal[i + start] = TwGfxMakeDisplayRGB(colors[0], colors[1], colors[2]);
+		colors += 4;
+	}
+	_cursorPaletteDisabled = false;
+}
+
 void OSystem_PalmZodiac::draw_mouse() {
 	if (_mouseDrawn || !_mouseVisible)
 		return;
@@ -72,18 +80,18 @@ void OSystem_PalmZodiac::draw_mouse() {
 	// Backup the covered area draw the mouse cursor
 	if (_overlayVisible) {
 		uint16 *bak = (uint16 *)_mouseBackupP;			// Surface used to backup the area obscured by the mouse
-		uint16 *dst;
+		uint16 *dst, *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
 
 		TwGfxLockSurface(_overlayP, (void **)&dst);
 		dst += y * _screenWidth + x;
-		
+
 		do {
 			width = w;
 			do {
 				*bak++ = *dst;
 				color = *src++;
 				if (color != _mouseKeyColor)	// transparent, don't draw
-					*dst = _nativePal[color];
+					*dst = pal[color];
 				dst++;
 			} while (--width);
 
@@ -126,7 +134,7 @@ void OSystem_PalmZodiac::undraw_mouse() {
 	if (_overlayVisible) {
 		uint16 *bak = (uint16 *)_mouseBackupP;
 		uint16 *dst;
-		
+
 		TwGfxLockSurface(_overlayP, (void **)&dst);
 		dst += _mouseOldState.y * _screenWidth + _mouseOldState.x;
 

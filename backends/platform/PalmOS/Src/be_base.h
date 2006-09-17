@@ -102,8 +102,8 @@ protected:
 		kKeyAny				= 1 << 31
 	};
 	enum {
-		MAX_MOUSE_W = 40,
-		MAX_MOUSE_H = 40
+		MAX_MOUSE_W = 48,
+		MAX_MOUSE_H = 48
 	};
 	struct MousePos {
 		int16 x,y,w,h;
@@ -151,7 +151,7 @@ protected:
 	int16 _mouseHotspotY;
 	byte _mouseKeyColor;
 	byte *_mouseDataP, *_mouseBackupP;
-	WinHandle _mouseDataH, _mouseBackupH;
+	
 
 	eventsEnum _lastEvent;
 	WChar _lastKey;

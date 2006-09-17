@@ -105,7 +105,7 @@ private:
 
 	OverlayColor *_overlayP;
 	WinHandle _overlayH, _workScreenH;
-	int16 _nativePal[256];
+	int16 _nativePal[256], _mousePal[256];
 	int16 *_workScreenP;
 	
 	Boolean _isSwitchable, _wasRotated;
@@ -135,16 +135,20 @@ private:
 
 protected:
 	UInt16 _sysOldCoord, _sysOldOrientation;
-	Boolean _stretched;
+	Boolean _stretched, _cursorPaletteDisabled;
 
 public:
 	OSystem_PalmOS5();
 	static OSystem *create();
 
+	bool hasFeature(Feature f);
+
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void clearScreen();
 
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	void disableCursorPalette(bool disable);
 
 	void showOverlay();
 	void hideOverlay();

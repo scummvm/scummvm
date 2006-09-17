@@ -46,7 +46,7 @@ private:
 	TwGfxType *_gfxH;
 	TwGfxSurfaceType *_palmScreenP, *_tmpScreenP;
 	TwGfxSurfaceType *_overlayP;
-	UInt16 _nativePal[256];
+	UInt16 _nativePal[256], _mousePal[256];
 	Boolean _fullscreen;
 	
 	TwGfxPointType _srcPos;
@@ -75,10 +75,13 @@ public:
 	static OSystem *create();
 	
 	void setFeatureState(Feature f, bool enable);
+
 	int getDefaultGraphicsMode() const;
 
 	void updateScreen();
 	bool grabRawScreen(Graphics::Surface *surf);
+
+	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);

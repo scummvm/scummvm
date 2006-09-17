@@ -57,7 +57,6 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_batCheckTicks = SysTicksPerSecond() * 15;
 	_batCheckLast = TimGetTicks();
 	
-	_mouseDataH = NULL;
 	_mouseDataP = NULL;
 	_mouseVisible = false;
 	_mouseDrawn = false;
