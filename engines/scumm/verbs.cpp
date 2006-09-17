@@ -815,7 +815,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	if ((vs = findVirtScreen(y)) == NULL)
 		return;
 
-	gdi.disableZBuffer();
+	_gdi->disableZBuffer();
 
 	twobufs = vs->hasTwoBuffers;
 	vs->hasTwoBuffers = false;
@@ -849,7 +849,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	assert(imptr);
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
-		gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr | Gdi::dbObjectMode);
+		_gdi->drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr | Gdi::dbObjectMode);
 	}
 
 	vst = &_verbs[verb];
@@ -857,7 +857,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	vst->curRect.bottom = vst->curRect.top + imgh * 8;
 	vst->oldRect = vst->curRect;
 
-	gdi.enableZBuffer();
+	_gdi->enableZBuffer();
 
 	vs->hasTwoBuffers = twobufs;
 }

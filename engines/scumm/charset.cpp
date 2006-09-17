@@ -1429,7 +1429,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 		if (_blitAlso && vs->hasTwoBuffers) {
 			Common::Rect dst(_left, _top, _left + origWidth, _top + origHeight);
-			_vm->gdi.copyVirtScreenBuffers(dst);
+			_vm->_gdi->copyVirtScreenBuffers(dst);
 		}
 #endif
 	} else {

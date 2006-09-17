@@ -475,9 +475,9 @@ void ScummEngine::drawObject(int obj, int arg) {
 			flags |= Gdi::dbDrawMaskOnAll;
 
 		if (_game.heversion >= 70 && findResource(MKID_BE('SMAP'), ptr) == NULL)
-			gdi.drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
+			_gdi->drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
-			gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
+			_gdi->drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
 }
 
@@ -1705,10 +1705,10 @@ void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
 
 	if (left_strip < 0)
 		left_strip = 0;
-	if (right_strip > gdi._numStrips - 1)
-		right_strip = gdi._numStrips - 1;
+	if (right_strip > _gdi->_numStrips - 1)
+		right_strip = _gdi->_numStrips - 1;
 	for (i = left_strip; i <= right_strip; i++)
-		gdi.resetBackground(r.top, r.bottom, i);
+		_gdi->resetBackground(r.top, r.bottom, i);
 
 	markRectAsDirty(kMainVirtScreen, r, USAGE_BIT_RESTORED);
 }

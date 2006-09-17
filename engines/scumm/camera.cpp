@@ -186,8 +186,8 @@ void ScummEngine::cameraMoved() {
 		}
 	}
 
-	_screenStartStrip = camera._cur.x / 8 - gdi._numStrips / 2;
-	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
+	_screenStartStrip = camera._cur.x / 8 - _gdi->_numStrips / 2;
+	_screenEndStrip = _screenStartStrip + _gdi->_numStrips - 1;
 
 	_screenTop = camera._cur.y - (_screenHeight / 2);
 	if (_game.features & GF_NEW_CAMERA) {

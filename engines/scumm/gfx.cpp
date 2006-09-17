@@ -290,7 +290,7 @@ void ScummEngine::initScreens(int b, int h) {
 	_screenB = b;
 	_screenH = h;
 	
-	gdi.init();
+	_gdi->init();
 }
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs,
@@ -399,12 +399,12 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 	lp = left / 8;
 	rp = right / 8;
 
-	if ((lp >= gdi._numStrips) || (rp < 0))
+	if ((lp >= _gdi->_numStrips) || (rp < 0))
 		return;
 	if (lp < 0)
 		lp = 0;
-	if (rp >= gdi._numStrips)
-		rp = gdi._numStrips - 1;
+	if (rp >= _gdi->_numStrips)
+		rp = _gdi->_numStrips - 1;
 
 	while (lp <= rp) {
 		if (top < vs->tdirty[lp])
@@ -485,13 +485,13 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
 	int w = 8;
 	int start = 0;
 
-	for (i = 0; i < gdi._numStrips; i++) {
+	for (i = 0; i < _gdi->_numStrips; i++) {
 		if (vs->bdirty[i]) {
 			const int top = vs->tdirty[i];
 			const int bottom = vs->bdirty[i];
 			vs->tdirty[i] = vs->h;
 			vs->bdirty[i] = 0;
-			if (i != (gdi._numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
+			if (i != (_gdi->_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
 				// Simple optimizations: if two or more neighbouring strips
 				// form one bigger rectangle, coalesce them.
 				w += 8;
@@ -708,49 +708,49 @@ void ScummEngine::initBGBuffers(int height) {
 		room = getResourceAddress(rtRoom, _roomResource);
 
 	if (_game.version <= 3) {
-		gdi._numZBuffer = 2;
+		_gdi->_numZBuffer = 2;
 	} else if (_game.features & GF_SMALL_HEADER) {
 		int off;
 		ptr = findResourceData(MKID_BE('SMAP'), room);
-		gdi._numZBuffer = 0;
+		_gdi->_numZBuffer = 0;
 
 		if (_game.features & GF_16COLOR)
 			off = READ_LE_UINT16(ptr);
 		else
 			off = READ_LE_UINT32(ptr);
 
-		while (off && gdi._numZBuffer < 4) {
-			gdi._numZBuffer++;
+		while (off && _gdi->_numZBuffer < 4) {
+			_gdi->_numZBuffer++;
 			ptr += off;
 			off = READ_LE_UINT16(ptr);
 		}
 	} else if (_game.version == 8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
 		ptr = findResource(MKID_BE('RMHD'), room);
-		gdi._numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
+		_gdi->_numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
 	} else if (_game.heversion >= 70) {
 		ptr = findResource(MKID_BE('RMIH'), room);
-		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
+		_gdi->_numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	} else {
 		ptr = findResource(MKID_BE('RMIH'), findResource(MKID_BE('RMIM'), room));
-		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
+		_gdi->_numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	}
-	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 8);
+	assert(_gdi->_numZBuffer >= 1 && _gdi->_numZBuffer <= 8);
 
 	if (_game.version >= 7)
-		itemsize = (_roomHeight + 10) * gdi._numStrips;
+		itemsize = (_roomHeight + 10) * _gdi->_numStrips;
 	else
-		itemsize = (_roomHeight + 4) * gdi._numStrips;
+		itemsize = (_roomHeight + 4) * _gdi->_numStrips;
 
 
-	size = itemsize * gdi._numZBuffer;
+	size = itemsize * _gdi->_numZBuffer;
 	memset(res.createResource(rtBuffer, 9, size), 0, size);
 
-	for (i = 0; i < (int)ARRAYSIZE(gdi._imgBufOffs); i++) {
-		if (i < gdi._numZBuffer)
-			gdi._imgBufOffs[i] = i * itemsize;
+	for (i = 0; i < (int)ARRAYSIZE(_gdi->_imgBufOffs); i++) {
+		if (i < _gdi->_numZBuffer)
+			_gdi->_imgBufOffs[i] = i * itemsize;
 		else
-			gdi._imgBufOffs[i] = (gdi._numZBuffer - 1) * itemsize;
+			_gdi->_imgBufOffs[i] = (_gdi->_numZBuffer - 1) * itemsize;
 	}
 }
 
@@ -769,7 +769,7 @@ void ScummEngine::redrawBGAreas() {
 
 	// Redraw parts of the background which are marked as dirty.
 	if (!_fullRedraw && _bgNeedsRedraw) {
-		for (i = 0; i != gdi._numStrips; i++) {
+		for (i = 0; i != _gdi->_numStrips; i++) {
 			if (testGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY)) {
 				redrawBGStrip(i, 1);
 			}
@@ -778,12 +778,12 @@ void ScummEngine::redrawBGAreas() {
 
 	if (_game.features & GF_NEW_CAMERA) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
-		if (_fullRedraw || ABS(diff) >= gdi._numStrips) {
+		if (_fullRedraw || ABS(diff) >= _gdi->_numStrips) {
 			_bgNeedsRedraw = false;
-			redrawBGStrip(0, gdi._numStrips);
+			redrawBGStrip(0, _gdi->_numStrips);
 		} else if (diff > 0) {
 			val = -diff;
-			redrawBGStrip(gdi._numStrips - diff, diff);
+			redrawBGStrip(_gdi->_numStrips - diff, diff);
 		} else if (diff < 0) {
 			val = -diff;
 			redrawBGStrip(0, -diff);
@@ -792,7 +792,7 @@ void ScummEngine::redrawBGAreas() {
 		diff = camera._cur.x - camera._last.x;
 		if (!_fullRedraw && diff == 8) {
 			val = -1;
-			redrawBGStrip(gdi._numStrips - 1, 1);
+			redrawBGStrip(_gdi->_numStrips - 1, 1);
 		} else if (!_fullRedraw && diff == -8) {
 			val = +1;
 			redrawBGStrip(0, 1);
@@ -801,7 +801,7 @@ void ScummEngine::redrawBGAreas() {
 				((ScummEngine_v5 *)this)->clearFlashlight();
 			}
 			_bgNeedsRedraw = false;
-			redrawBGStrip(0, gdi._numStrips);
+			redrawBGStrip(0, _gdi->_numStrips);
 		}
 	}
 
@@ -817,7 +817,7 @@ void ScummEngine_v71he::redrawBGAreas() {
 	byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
 	if (_fullRedraw) {
 		_bgNeedsRedraw = false;
-		gdi.drawBMAPBg(room, &virtscr[0]);
+		_gdi->drawBMAPBg(room, &virtscr[0]);
 	}
 
 	drawRoomObjects(0);
@@ -843,7 +843,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
-	gdi.drawBitmap(room + _IM00_offs, &virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
+	_gdi->drawBitmap(room + _IM00_offs, &virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
 }
 
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
@@ -928,7 +928,7 @@ void CharsetRenderer::restoreCharsetBg() {
 }
 
 void CharsetRenderer::clearCharsetMask() {
-	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->gdi._imgBufOffs[1]);
+	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->_gdi->_imgBufOffs[1]);
 }
 
 void CharsetRenderer::clearTextSurface() {
@@ -936,7 +936,7 @@ void CharsetRenderer::clearTextSurface() {
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
-	return gdi.getMaskBuffer((x + virtscr[0].xstart) / 8, y, z);
+	return _gdi->getMaskBuffer((x + virtscr[0].xstart) / 8, y, z);
 }
 
 byte *Gdi::getMaskBuffer(int x, int y, int z) {
@@ -1171,8 +1171,8 @@ void ScummEngine_v5::drawFlashlight() {
 	// Clip the flashlight at the borders
 	if (_flashlight.x < 0)
 		_flashlight.x = 0;
-	else if (_flashlight.x + _flashlight.w > gdi._numStrips * 8)
-		_flashlight.x = gdi._numStrips * 8 - _flashlight.w;
+	else if (_flashlight.x + _flashlight.w > _gdi->_numStrips * 8)
+		_flashlight.x = _gdi->_numStrips * 8 - _flashlight.w;
 	if (_flashlight.y < 0)
 		_flashlight.y = 0;
 	else if (_flashlight.y + _flashlight.h> vs->h)
@@ -1180,7 +1180,7 @@ void ScummEngine_v5::drawFlashlight() {
 
 	// Redraw any actors "under" the flashlight
 	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
-		assert(0 <= i && i < gdi._numStrips);
+		assert(0 <= i && i < _gdi->_numStrips);
 		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
 		vs->tdirty[i] = 0;
 		vs->bdirty[i] = vs->h;
@@ -3139,14 +3139,14 @@ void ScummEngine::transitionEffect(int a) {
 
 			if (t == b) {
 				while (l <= r) {
-					if (l >= 0 && l < gdi._numStrips && t < bottom) {
+					if (l >= 0 && l < _gdi->_numStrips && t < bottom) {
 						virtscr[0].tdirty[l] = _screenTop + t * 8;
 						virtscr[0].bdirty[l] = _screenTop + (b + 1) * 8;
 					}
 					l++;
 				}
 			} else {
-				if (l < 0 || l >= gdi._numStrips || b <= t)
+				if (l < 0 || l >= _gdi->_numStrips || b <= t)
 					continue;
 				if (b > bottom)
 					b = bottom;

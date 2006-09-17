@@ -712,7 +712,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(ScummEngine, _userPut, sleByte, VER(8)),
 		MKLINE(ScummEngine, _userState, sleUint16, VER(17)),
 		MKLINE(ScummEngine, _cursor.state, sleByte, VER(8)),
-		MK_OBSOLETE(ScummEngine, gdi._cursorActive, sleByte, VER(8), VER(20)),
+		MK_OBSOLETE(ScummEngine, _gdi->_cursorActive, sleByte, VER(8), VER(20)),
 		MKLINE(ScummEngine, _currentCursor, sleByte, VER(8)),
 		MKARRAY(ScummEngine, _grabbedCursor[0], sleByte, 8192, VER(20)),
 		MKLINE(ScummEngine, _cursor.width, sleInt16, VER(20)),
@@ -741,7 +741,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKARRAY_OLD(ScummEngine, gfxUsageBits[0], sleUint32, 410, VER(10), VER(13)),
 		MKARRAY(ScummEngine, gfxUsageBits[0], sleUint32, 3 * 410, VER(14)),
 
-		MK_OBSOLETE(ScummEngine, gdi._transparentColor, sleByte, VER(8), VER(50)),
+		MK_OBSOLETE(ScummEngine, _gdi->_transparentColor, sleByte, VER(8), VER(50)),
 		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
 		MKARRAY(ScummEngine, _darkenPalette[0], sleByte, 768, VER(53)),
 
@@ -752,13 +752,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 		MKLINE(ScummEngine, _egoPositioned, sleByte, VER(8)),
 
-		// gdi._imgBufOffs grew from 4 to 5 entries. Then one day we realized
+		// _gdi->_imgBufOffs grew from 4 to 5 entries. Then one day we realized
 		// that we don't have to store it since initBGBuffers() recomputes it.
-		MK_OBSOLETE_ARRAY(ScummEngine, gdi._imgBufOffs[0], sleUint16, 4, VER(8), VER(9)),
-		MK_OBSOLETE_ARRAY(ScummEngine, gdi._imgBufOffs[0], sleUint16, 5, VER(10), VER(26)),
+		MK_OBSOLETE_ARRAY(ScummEngine, _gdi->_imgBufOffs[0], sleUint16, 4, VER(8), VER(9)),
+		MK_OBSOLETE_ARRAY(ScummEngine, _gdi->_imgBufOffs[0], sleUint16, 5, VER(10), VER(26)),
 
 		// See _imgBufOffs: _numZBuffer is recomputed by initBGBuffers().
-		MK_OBSOLETE(ScummEngine, gdi._numZBuffer, sleByte, VER(8), VER(26)),
+		MK_OBSOLETE(ScummEngine, _gdi->_numZBuffer, sleByte, VER(8), VER(26)),
 
 		MKLINE(ScummEngine, _screenEffectFlag, sleByte, VER(8)),
 

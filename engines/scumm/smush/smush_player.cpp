@@ -296,9 +296,9 @@ void SmushPlayer::init() {
 	// width and pitch to be equal, this will require lots of changes. So
 	// we resort to this hackish solution for now.
 	_origPitch = _vm->virtscr[0].pitch;
-	_origNumStrips = _vm->gdi._numStrips;
+	_origNumStrips = _vm->_gdi->_numStrips;
 	_vm->virtscr[0].pitch = _vm->virtscr[0].w;
-	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
+	_vm->_gdi->_numStrips = _vm->virtscr[0].w / 8;
 
 	_vm->_smixer->stop();
 
@@ -348,7 +348,7 @@ void SmushPlayer::release() {
 	// HACK HACK HACK: This is an *evil* trick, beware! See above for
 	// some explanation.
 	_vm->virtscr[0].pitch = _origPitch;
-	_vm->gdi._numStrips = _origNumStrips;
+	_vm->_gdi->_numStrips = _origNumStrips;
 
 	_initDone = false;
 }

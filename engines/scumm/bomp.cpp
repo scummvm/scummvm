@@ -241,7 +241,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 	// Mask against any additionally imposed mask
 	if (bd.maskPtr) {
-		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip.left) / 8);
+		mask = bd.maskPtr + (bd.y * _gdi->_numStrips) + ((bd.x + clip.left) / 8);
 	}
 
 	// Setup vertical scaling
@@ -326,7 +326,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 		// Advance to the next line
 		pos_y++;
-		mask += gdi._numStrips;
+		mask += _gdi->_numStrips;
 		dst += bd.dst.pitch;
 	}
 }

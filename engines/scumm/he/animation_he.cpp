@@ -93,7 +93,7 @@ void MoviePlayer::handleNextFrame() {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), 0, 0, _vm->_screenWidth);
 		
 		Common::Rect imageRect(_width, _height);
-		_vm->gdi.copyVirtScreenBuffers(imageRect);
+		_vm->_gdi->copyVirtScreenBuffers(imageRect);
 	} else {
 		copyFrameToBuffer(pvs->getPixels(0, 0), 0, 0, _vm->_screenWidth);
 

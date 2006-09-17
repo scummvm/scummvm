@@ -1226,7 +1226,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 				++rImage.bottom;
 				_vm->markRectAsDirty(kMainVirtScreen, rImage);
 			} else {
-				_vm->gdi.copyVirtScreenBuffers(rImage);
+				_vm->_gdi->copyVirtScreenBuffers(rImage);
 			}
 		}
 	}
@@ -1485,7 +1485,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		if (flags & kWIFMarkBufferDirty) {
 			_vm->markRectAsDirty(kMainVirtScreen, bound);
 		} else {
-			_vm->gdi.copyVirtScreenBuffers(bound);
+			_vm->_gdi->copyVirtScreenBuffers(bound);
 		}
 
 		free(srcWizBuf);

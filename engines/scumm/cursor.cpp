@@ -257,10 +257,10 @@ void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
 	drawBox(0, 0, w - 1, h - 1, 0xFF);
 
 	vs->hasTwoBuffers = false;
-	gdi.disableZBuffer();
-	gdi.drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w / 8, 0);
+	_gdi->disableZBuffer();
+	_gdi->drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w / 8, 0);
 	vs->hasTwoBuffers = true;
-	gdi.enableZBuffer();
+	_gdi->enableZBuffer();
 
 	// Grab the data we just drew and setup the cursor with it
 	setCursorFromBuffer(vs->getPixels(0, 0), w, h, vs->pitch);

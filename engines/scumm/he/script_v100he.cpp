@@ -2151,7 +2151,7 @@ void ScummEngine_v100he::o100_systemOps() {
 		debug(0, "Start executable (%s)", string);
 		break;
 	case 75:
-		gdi.copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
+		_gdi->copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
 		updatePalette();
 		break;
 	default:

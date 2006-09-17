@@ -1153,8 +1153,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		bcr->_zbuf = _forceClip;
 		if (bcr->_zbuf == 100) {
 			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
-			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
-				bcr->_zbuf = _vm->gdi._numZBuffer-1;
+			if (bcr->_zbuf > _vm->_gdi->_numZBuffer-1)
+				bcr->_zbuf = _vm->_gdi->_numZBuffer-1;
 		}
 
 	} else {
@@ -1164,8 +1164,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			bcr->_zbuf = 0;
 		else {
 			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
-			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
-				bcr->_zbuf = _vm->gdi._numZBuffer-1;
+			if (bcr->_zbuf > _vm->_gdi->_numZBuffer-1)
+				bcr->_zbuf = _vm->_gdi->_numZBuffer-1;
 		}
 
 	}
@@ -1194,7 +1194,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	_heNoTalkAnimation = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
-	if (bcr->drawCostume(_vm->virtscr[0], _vm->gdi._numStrips, this, _drawToBackBuf) & 1) {
+	if (bcr->drawCostume(_vm->virtscr[0], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
 	}
 
@@ -1293,7 +1293,7 @@ void ScummEngine::setActorRedrawFlags() {
 			_actors[j]._needRedraw = true;
 		}
 	} else {
-		for (i = 0; i < gdi._numStrips; i++) {
+		for (i = 0; i < _gdi->_numStrips; i++) {
 			int strip = _screenStartStrip + i;
 			if (testGfxAnyUsageBits(strip)) {
 				for (j = 1; j < _numActors; j++) {
@@ -1309,7 +1309,7 @@ void ScummEngine::setActorRedrawFlags() {
 void ScummEngine::resetActorBgs() {
 	int i, j;
 
-	for (i = 0; i < gdi._numStrips; i++) {
+	for (i = 0; i < _gdi->_numStrips; i++) {
 		int strip = _screenStartStrip + i;
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
@@ -1321,7 +1321,7 @@ void ScummEngine::resetActorBgs() {
 				((_actors[j]._top != 0x7fffffff && _actors[j]._needRedraw) || _actors[j]._needBgReset)) {
 				clearGfxUsageBit(strip, j);
 				if ((_actors[j]._bottom - _actors[j]._top) >= 0)
-					gdi.resetBackground(_actors[j]._top, _actors[j]._bottom, i);
+					_gdi->resetBackground(_actors[j]._top, _actors[j]._bottom, i);
 			}
 		}
 	}
@@ -2095,7 +2095,7 @@ void ScummEngine_v71he::preProcessAuxQueue() {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
 			if (ab->r.top <= ab->r.bottom) {
-				gdi.copyVirtScreenBuffers(ab->r);
+				_gdi->copyVirtScreenBuffers(ab->r);
 			}
 		}
 	}

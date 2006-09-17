@@ -443,7 +443,7 @@ public:
 	Common::RandomSource _rnd;
 
 	/** Graphics manager */
-	Gdi gdi;
+	Gdi *_gdi;
 
 	/** Central resource data. */
 	ResourceManager res;

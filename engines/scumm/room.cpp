@@ -440,7 +440,7 @@ void ScummEngine::setupRoomSubBlocks() {
 		putClass(182, kObjectClassUntouchable, 0);
 	}
 
-	gdi.roomChanged(roomptr, _IM00_offs, trans);
+	_gdi->roomChanged(roomptr, _IM00_offs, trans);
 }
 
 /**
@@ -694,7 +694,7 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 		}
 	}
 
-	gdi.roomChanged(roomptr, _IM00_offs, 255);
+	_gdi->roomChanged(roomptr, _IM00_offs, 255);
 }
 
 void ScummEngine_v3old::resetRoomSubBlocks() {

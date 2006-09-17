@@ -84,9 +84,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  gdi(this),
 	  res(this),
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
+
+	_gdi = new Gdi(this);
+	//_res = new ResourceManager(this);
 
 	// Copy MD5 checksum
 	memcpy(_gameMD5, dr.md5sum, 16);
@@ -702,6 +704,8 @@ ScummEngine::~ScummEngine() {
 	free(_herculesBuf);
 
 	delete _debugger;
+	
+	delete _gdi;
 }
 
 ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)

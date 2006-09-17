@@ -1066,7 +1066,7 @@ void Sprite::resetTables(bool refreshScreen) {
 		resetGroup(curGrp);
 
 	if (refreshScreen) {
-		_vm->gdi.copyVirtScreenBuffers(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
+		_vm->_gdi->copyVirtScreenBuffers(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
 	}
 	_numSpritesToProcess = 0;
 }
@@ -1084,7 +1084,7 @@ void Sprite::resetBackground() {
 			spi->flags &= ~kSFChanged;
 			if (spi->bbox.left <= spi->bbox.right && spi->bbox.top <= spi->bbox.bottom) {
 				if (spi->flags & kSFBlitDirectly) {
-					_vm->gdi.copyVirtScreenBuffers(spi->bbox, USAGE_BIT_RESTORED);
+					_vm->_gdi->copyVirtScreenBuffers(spi->bbox, USAGE_BIT_RESTORED);
 				} else if (firstLoop) {
 					xmin = spi->bbox.left;
 					ymin = spi->bbox.top;
@@ -1113,7 +1113,7 @@ void Sprite::resetBackground() {
 		}
 	}
 	if (refreshScreen) {
-		_vm->gdi.copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
+		_vm->_gdi->copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
 	}
 }
 
@@ -1125,10 +1125,10 @@ void Sprite::setRedrawFlags(bool checkZOrder) {
 			if ((!checkZOrder || spi->priority >= 0) && (spi->flags & kSFMarkDirty)) {
 				int32 lp = spi->bbox.left / 8;
 				lp = MAX((int32)0, lp);
-				lp = MIN(lp, _vm->gdi._numStrips);
+				lp = MIN(lp, _vm->_gdi->_numStrips);
 				int32 rp = (spi->bbox.right + 7) / 8;
 				rp = MAX((int32)0, rp);
-				rp = MIN(rp, _vm->gdi._numStrips);
+				rp = MIN(rp, _vm->_gdi->_numStrips);
 				for (; lp < rp; lp++) {
 					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
 						spi->flags |= kSFNeedRedraw;
