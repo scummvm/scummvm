@@ -1,7 +1,4 @@
 #include <PalmOS.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 #include "palmdefs.h"
 #include "args.h"
@@ -32,8 +29,6 @@ GlobalsDataPtr gVars;
 #ifdef COMPILE_ZODIAC
 #	include <tapwave.h>
 #	include <TwRuntime.h>
-#else
-#	include <TwDefs.h>
 #endif
 
 void run(int argc, char *argv[]) {
@@ -58,12 +53,9 @@ void run(int argc, char *argv[]) {
 	NativeFuncType *entry;
 	TwLoadModule(0, 0, 0, 1, twLoadFlagTNA|twLoadFlagQuickRun, &entry);
 #else
-	UInt32 glue;
-	FtrGet(twFtrCreator, twFtrAPIGlue, &glue);
-
 	PnoDescriptor pno;
 	PnoLoadFromResources(&pno, 'ARMC', 1, appFileCreator, 1);
-	PnoCall(&pno, (void*)glue);
+	PnoCall(&pno, 0);
 	PnoUnload(&pno);
 #endif
 
