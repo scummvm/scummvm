@@ -2303,7 +2303,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 // kyra3 specific
 
 const uint8 *Screen::getPtrToShape(const uint8 *shpFile, int shape) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (void *)shpFile, shape);
+	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (const void *)shpFile, shape);
 	uint16 shapes = READ_LE_UINT16(shpFile);
 
 	if (shapes <= shape)
@@ -2327,7 +2327,7 @@ uint8 *Screen::getPtrToShape(uint8 *shpFile, int shape) {
 }
 
 uint16 Screen::getShapeSize(const uint8 *shp) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::getShapeSize(%p)", (void *)shp);
+	debugC(9, kDebugLevelScreen, "KyraEngine::getShapeSize(%p)", (const void *)shp);
 
 	return READ_LE_UINT16(shp+6);
 }

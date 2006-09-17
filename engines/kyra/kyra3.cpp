@@ -418,7 +418,7 @@ void KyraEngine_v3::realInit() {
 #pragma mark -
 
 int KyraEngine_v3::initTableBuffer(uint8 *buf, int size) {
-	debugC(9, kDebugLevelMain, "KyraEngine::initTableBuffer(%p, %d)", (void*)buf, size);
+	debugC(9, kDebugLevelMain, "KyraEngine::initTableBuffer(%p, %d)", (void *)buf, size);
 
 	if (!buf || size < 6320)
 		return 0;
@@ -445,7 +445,7 @@ int KyraEngine_v3::initTableBuffer(uint8 *buf, int size) {
 }
 
 void KyraEngine_v3::updateTableBuffer(uint8 *buf) {
-	debugC(9, kDebugLevelMain, "KyraEngine::updateTableBuffer(%p)", (void*)buf);
+	debugC(9, kDebugLevelMain, "KyraEngine::updateTableBuffer(%p)", (void *)buf);
 
 	if (_tableBuffer2 == buf)
 		return;
@@ -457,7 +457,7 @@ void KyraEngine_v3::updateTableBuffer(uint8 *buf) {
 }
 
 int KyraEngine_v3::addShapeToTable(const uint8 *buf, int id, int shapeNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::addShapeToTable(%p, %d, %d)", (void*)buf, id, shapeNum);
+	debugC(9, kDebugLevelMain, "KyraEngine::addShapeToTable(%p, %d, %d)", (const void *)buf, id, shapeNum);
 
 	if (!buf)
 		return 0;
@@ -490,7 +490,7 @@ int KyraEngine_v3::addShapeToTable(const uint8 *buf, int id, int shapeNum) {
 }
 
 int KyraEngine_v3::getTableSize(uint8 *buf) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getTableSize(%p)", (void*)buf);
+	debugC(9, kDebugLevelMain, "KyraEngine::getTableSize(%p)", (void *)buf);
 	updateTableBuffer(buf);
 
 	if (*((uint16*)(_tableBuffer1 + 4)) >= 450)
@@ -500,7 +500,7 @@ int KyraEngine_v3::getTableSize(uint8 *buf) {
 }
 
 uint8 *KyraEngine_v3::allocTableSpace(uint8 *buf, int size, int id) {
-	debugC(9, kDebugLevelMain, "KyraEngine::allocTableSpace(%p, %d, %d)", (void*)buf, size, id);
+	debugC(9, kDebugLevelMain, "KyraEngine::allocTableSpace(%p, %d, %d)", (void *)buf, size, id);
 
 	if (!buf || !size)
 		return 0;
@@ -608,7 +608,7 @@ int tableIdCompare(const void *l, const void *r) {
 }
 
 uint8 *KyraEngine_v3::findIdInTable(uint8 *buf, int id) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findIdInTable(%p, %d)", (void*)buf, id);
+	debugC(9, kDebugLevelMain, "KyraEngine::findIdInTable(%p, %d)", (void *)buf, id);
 
 	updateTableBuffer(buf);
 
