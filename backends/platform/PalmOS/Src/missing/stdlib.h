@@ -36,12 +36,17 @@ extern "C" {
 #endif
 
 /* malloc stuff */
-#if defined(COMPILE_ZODIAC)
-#	define malloc	MemPtrNew
-#elif defined(COMPILE_OS5) && defined(PALMOS_ARM)
+#ifdef STDLIB_TRACE_MEMORY
 #	define malloc	__malloc
+	extern UInt32 __stdlib_trace_memory;
 #else
-#	define malloc	MemGluePtrNew
+#	if defined(COMPILE_ZODIAC)
+#		define malloc	MemPtrNew
+#	elif defined(COMPILE_OS5) && defined(PALMOS_ARM)
+#		define malloc	__malloc
+#	else
+#		define malloc	MemGluePtrNew
+#	endif
 #endif
 
 /* custom exit (true exit !) */
