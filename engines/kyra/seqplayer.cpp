@@ -68,7 +68,7 @@ SeqPlayer::~SeqPlayer() {
 }
 
 uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
-	debugC( 9, kDebugLevelSequence, "SeqPlayer::setPanPages(%d, %d)", pageNum, shape);
+	debugC(9, kDebugLevelSequence, "SeqPlayer::setPanPages(%d, %d)", pageNum, shape);
 	uint8 *panPage = 0;
 	const uint8 *data = _screen->getCPagePtr(pageNum);
 	uint16 numShapes = READ_LE_UINT16(data);
@@ -92,7 +92,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 }
 
 void SeqPlayer::makeHandShapes() {
-	debugC( 9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
+	debugC(9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
 	_screen->loadBitmap("WRITING.CPS", 3, 3, 0);
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		if (_handShapes[i])
@@ -102,7 +102,7 @@ void SeqPlayer::makeHandShapes() {
 }
 
 void SeqPlayer::freeHandShapes() {
-	debugC( 9, kDebugLevelSequence, "SeqPlayer::freeHandShapes()");
+	debugC(9, kDebugLevelSequence, "SeqPlayer::freeHandShapes()");
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		delete [] _handShapes[i];
 		_handShapes[i] = 0;
@@ -465,7 +465,7 @@ void SeqPlayer::s1_prefetchVocFile() {
 }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
-	debugC( 9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(%p, %d)", (const void *)seqData, skipSeq);
+	debugC(9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(%p, %d)", (const void *)seqData, skipSeq);
 	assert(seqData);
 	
 	static SeqEntry floppySeqProcs[] = {
