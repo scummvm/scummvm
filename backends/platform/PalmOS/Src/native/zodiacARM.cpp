@@ -34,12 +34,14 @@
 #include "rumble.h"
 
 
-#include <AdnDebugMgr.h>
+//#include <AdnDebugMgr.h>
 //#define DEBUG_ARM
 
 #include "stdafx.h"
 #include "base/main.h"
-#include "be_zodiac.h"
+#ifdef COMPILE_ZODIAC
+#	include "be_zodiac.h"
+#endif
 #include "be_os5ex.h"
 
 GlobalsDataType g_vars;
@@ -143,4 +145,3 @@ extern UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 
 	return 0;
 }
-
