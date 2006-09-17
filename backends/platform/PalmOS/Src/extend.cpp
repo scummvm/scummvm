@@ -21,7 +21,7 @@
  * $Id$
  *
  */
- 
+
 #include <stdlib.h>
 #include "globals.h"
 
@@ -84,25 +84,26 @@ void *operator new [] (UInt32 size) {
 	MemSet(ptr, 0, size);
 	return ptr;
 }
-#elif defined(COMPILE_OS5)
+#elif defined(COMPILE_OS5) || defined(STDLIB_TRACE_MEMORY)
 
-__inline void *operator new(UInt32 size) {
+void *operator new(UInt32 size) {
 	void *ptr = malloc(size);
 	MemSet(ptr, 0, size);
 	return ptr;
 }
 
-__inline void *operator new [] (UInt32 size) {
+void *operator new [] (UInt32 size) {
 	void *ptr = malloc(size);
 	MemSet(ptr, 0, size);
 	return ptr;
 }
 
-__inline void operator delete(void *ptr) throw() {
+void operator delete(void *ptr) throw() {
 	if (ptr) free(ptr);
 }
 
-__inline void operator delete[](void *ptr) throw() {
+void operator delete[](void *ptr) throw() {
 	if (ptr) free(ptr);
 }
+
 #endif
