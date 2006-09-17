@@ -24,7 +24,6 @@
 
 #ifdef COMPILE_OS5
 
-//#include <tapwave.h>
 #include <PalmOS.h>
 #include <stdlib.h>
 #include "pace.h"
@@ -38,7 +37,6 @@
 	const void*      twEmulState;
 	Call68KFuncType* twCall68KFunc;
 #endif
-struct TwGlue*   twGlue;
 
 unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncType *call68KFuncP) {
 #ifdef COMPILE_ZODIAC
@@ -48,7 +46,7 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 	global.emulStateP = (EmulStateType *)emulStateP;
 	global.call68KFuncP = call68KFuncP;
 #endif
-    twGlue = (struct TwGlue*) userData68KP;
+
 	return PilotMain(sysAppLaunchCmdNormalLaunch, userData68KP, 0);
 }
 
