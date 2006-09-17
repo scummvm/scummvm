@@ -74,7 +74,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 	uint16 numShapes = READ_LE_UINT16(data);
 	if (shape < numShapes) {
 		uint32 offs = 0;
-		if (_vm->features() & GF_TALKIE) {
+		if (_vm->gameFlags().isTalkie) {
 			offs = READ_LE_UINT32(data + 2 + shape * 4);
 		} else {
 			offs = READ_LE_UINT16(data + 2 + shape * 2);
@@ -260,7 +260,7 @@ void SeqPlayer::s1_printText() {
 		int x = (Screen::SCREEN_W - _screen->getTextWidth(str)) / 2;
 		_screen->printText(str, x, 180, 0xF, 0xC);
 	} else {
-		_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->features() & GF_FRENCH) ? 120 : 60);
+		_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->gameFlags().lang == Common::FR_FRA) ? 120 : 60);
 		_seqDisplayedText = txt;
 		_seqDisplayedChar = 0;
 		const char *str = _vm->seqTextsTable()[_seqDisplayedText];
@@ -326,9 +326,9 @@ void SeqPlayer::s1_copyRegion() {
 void SeqPlayer::s1_copyRegionSpecial() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0 };
 	const char *copyStr = 0;
-	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
+	if (!_vm->gameFlags().isTalkie) {
 		copyStr = "Copyright (c) 1992 Westwood Studios";
-	} else if (_vm->features() & GF_TALKIE) {
+	} else {
 		copyStr = "Copyright (c) 1992,1993 Westwood Studios";
 	}
 	
@@ -419,7 +419,7 @@ void SeqPlayer::s1_playTrack() {
 }
 
 void SeqPlayer::s1_allocTempBuffer() {
-	if (_vm->features() & GF_DEMO) {
+	if (_vm->gameFlags().isDemo) {
 		_seqQuitFlag = true;
 	} else {
 		if (!_specialBuffer && !_copyViewOffs) {
@@ -562,14 +562,12 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	const SeqEntry* commands;
 	int numCommands;
 
-	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
-		commands = floppySeqProcs;
-		numCommands = ARRAYSIZE(floppySeqProcs);
-	} else if (_vm->features() & GF_TALKIE) {
+	if (_vm->gameFlags().isTalkie) {
 		commands = cdromSeqProcs;
 		numCommands = ARRAYSIZE(cdromSeqProcs);
 	} else {
-		error("No commandlist found");
+		commands = floppySeqProcs;
+		numCommands = ARRAYSIZE(floppySeqProcs);
 	}
 
 	bool seqSkippedFlag = false;
@@ -619,7 +617,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0') {
 					_seqDisplayedTextTimer = 0xFFFFFFFF;
 				} else {
-					_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->features() & GF_FRENCH) ? 120 : 60);
+					_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->gameFlags().lang == Common::FR_FRA) ? 120 : 60);
 				}
 			}
 		}

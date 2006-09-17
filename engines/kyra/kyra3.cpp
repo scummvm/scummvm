@@ -85,7 +85,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 }
 
 int KyraEngine_v3::setupGameFlags() {
-	_game = GI_KYRA3;
+	_flags.gameID = GI_KYRA3;
 	return 0;
 }
 

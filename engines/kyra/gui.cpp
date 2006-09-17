@@ -508,16 +508,16 @@ void KyraEngine::setGUILabels() {
 	int walkspeedGarbageOffset = 36;
 	int menuLabelGarbageOffset = 0;
 	
-	if (_features & GF_TALKIE) {
-		if (_features & GF_ENGLISH) {
+	if (_flags.isTalkie) {
+		if (_flags.lang == Common::EN_ANY) {
 			offset = 52;
-		} else if (_features & GF_GERMAN) {
+		} else if (_flags.lang == Common::DE_DEU) {
 			offset = 30;
-		} else if (_features & GF_FRENCH) {
+		} else if (_flags.lang == Common::FR_FRA) {
 			offset = 6;
 		}
 		walkspeedGarbageOffset = 48;
-	} else if (_features & GF_SPANISH) {
+	} else if (_flags.lang == Common::ES_ESP) {
 		offset = -4;
 		menuLabelGarbageOffset = 72;
 	}
@@ -572,7 +572,7 @@ void KyraEngine::setGUILabels() {
 	// Main Menu
 	_menu[5].item[5].itemString = &_guiStrings[19 + offset][menuLabelGarbageOffset];
 	
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		// Text & Voice
 		_voiceTextString = _guiStrings[28 + offset];
 	}
@@ -1179,7 +1179,7 @@ int KyraEngine::gui_gameControlsMenu(Button *button) {
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		//_menu[5].width = 230;
 
 		for (int i = 0; i < 5; i++) {
@@ -1260,7 +1260,7 @@ void KyraEngine::gui_setupControls(Menu &menu) {
 
 	int textControl = 3;
 	int clickableOffset = 8;
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		textControl = 4;
 		clickableOffset = 11;
 		
@@ -1592,7 +1592,7 @@ void KyraEngine::gui_drawMainBox(int x, int y, int w, int h, int fill) {
 	static const uint8 kyra2ColorTable[] = { 0x0, 0x19, 0x28, 0xc8 };
 	
 	const uint8 *colorTable;
-	if (_game == GI_KYRA3)
+	if (_flags.gameID == GI_KYRA3)
 		colorTable = kyra3ColorTable;
 	else
 		colorTable = kyra2ColorTable;

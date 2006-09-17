@@ -44,8 +44,50 @@ bool StaticResource::checkKyraDat() {
 	return true;
 }
 
+// used for the KYRA.DAT file which still uses
+// the old flag system, we just convert it, which
+// is less work than to change KYRA.DAT again
+enum {
+	GF_FLOPPY	= 1 <<  0,
+	GF_TALKIE	= 1 <<  1,
+	GF_AUDIOCD	= 1 <<  2,  // FM-Towns versions seems to use audio CD
+	GF_DEMO		= 1 <<  3,
+	GF_ENGLISH	= 1 <<  4,
+	GF_FRENCH	= 1 <<  5,
+	GF_GERMAN	= 1 <<  6,
+	GF_SPANISH	= 1 <<  7,
+	GF_ITALIAN	= 1 <<  8,
+	// other languages here
+	GF_LNGUNK	= 1 << 16,	// also used for multi language in kyra3
+	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
+};
+
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_LNGUNK)
+
+uint32 createFeatures(const GameFlags &flags) {
+	if (flags.isTalkie)
+		return GF_TALKIE;
+	if (flags.isDemo)
+		return GF_DEMO;
+	if (flags.hasAudioCD)
+		return GF_AUDIOCD;
+	return GF_FLOPPY;
+}
+
+uint32 createLanguage(const GameFlags &flags) {
+	if (flags.lang == Common::EN_ANY)
+		return GF_ENGLISH;
+	if (flags.lang == Common::DE_DEU)
+		return GF_GERMAN;
+	if (flags.lang == Common::FR_FRA)
+		return GF_FRENCH;
+	if (flags.lang == Common::ES_ESP)
+		return GF_SPANISH;
+	if (flags.lang == Common::IT_ITA)
+		return GF_ITALIAN;
+	return GF_LNGUNK;
+}
 
 struct LanguageTypes {
 	uint32 flags;
@@ -180,8 +222,10 @@ bool StaticResource::init() {
 	if (gameID != _engine->game()) {
 		error("invalid game id (%d)", gameID);
 	}
-	if ((featuresValue & GAME_FLAGS) != (_engine->features() & GAME_FLAGS)) {
-		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), (_engine->features() & GAME_FLAGS));
+
+	uint32 gameFeatures = createFeatures(_engine->gameFlags());
+	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
+		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
 	}
 
 	// load all tables for now
@@ -351,7 +395,7 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
 	char file[64];
 	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].flags != (_engine->features() & LANGUAGE_FLAGS)) {
+		if (languages[i].flags != createLanguage(_engine->gameFlags())) {
 			continue;
 		}
 			
@@ -540,9 +584,9 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 uint8 *StaticResource::getFile(const char *name, int &size) {
 	char buffer[64];
 	const char *ext = "";
-	if (_engine->features() & GF_TALKIE) {
+	if (_engine->gameFlags().isTalkie) {
 		ext = ".CD";
-	} else if (_engine->features() & GF_DEMO) {
+	} else if (_engine->gameFlags().isDemo) {
 		ext = ".DEM";
 	}
 	snprintf(buffer, 64, "%s%s", name, ext);
@@ -769,17 +813,17 @@ void KyraEngine::loadButtonShapes() {
 void KyraEngine::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
-	if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
+	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie)
 		_screen->loadBitmap("MAIN15.CPS", page, page, 0);
-	else if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
+	else if (_flags.lang == Common::EN_ANY && _flags.isTalkie) 
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
-	else if (_features & GF_FRENCH)
+	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
-	else if (_features & GF_GERMAN)
+	else if (_flags.lang == Common::DE_DEU)
 		_screen->loadBitmap("MAIN_GER.CPS", page, page, 0);
-	else if (_features & GF_SPANISH)
+	else if (_flags.lang == Common::ES_ESP)
 		_screen->loadBitmap("MAIN_SPA.CPS", page, page, 0);
-	else if (_features & GF_ITALIAN)
+	else if (_flags.lang == Common::IT_ITA)
 		_screen->loadBitmap("MAIN_ITA.CPS", page, page, 0);
 	else
 		warning("no main graphics file found");

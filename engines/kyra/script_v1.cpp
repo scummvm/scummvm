@@ -43,7 +43,7 @@ int KyraEngine::o1_magicInMouseItem(ScriptState *script) {
 
 int KyraEngine::o1_characterSays(ScriptState *script) {
 	_skipFlag = false;
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_characterSays(%p) (%d, '%s', %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
 		if (speechEnabled()) {
 			snd_voiceWaitForFinish();
@@ -615,7 +615,7 @@ int KyraEngine::o1_loadPageFromDisk(ScriptState *script) {
 }
 
 int KyraEngine::o1_customPrintTalkString(ScriptState *script) {
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_customPrintTalkString(%p) (%d, '%s', %d, %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
 
 		if (speechEnabled()) {
@@ -1073,12 +1073,12 @@ int KyraEngine::o1_specialEventDisplayBrynnsNote(ScriptState *script) {
 	_screen->hideMouse();
 	_screen->savePageToDisk("HIDPAGE.TMP", 2);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
-	if (_features & GF_TALKIE) {
-		if (_features & GF_ENGLISH) {
+	if (_flags.isTalkie) {
+		if (_flags.lang == Common::EN_ANY) {
 			_screen->loadBitmap("NOTEENG.CPS", 3, 3, 0);
-		} else if (_features & GF_FRENCH) {
+		} else if (_flags.lang == Common::FR_FRA) {
 			_screen->loadBitmap("NOTEFRE.CPS", 3, 3, 0);
-		} else if (_features & GF_GERMAN) {
+		} else if (_flags.lang == Common::DE_DEU) {
 			_screen->loadBitmap("NOTEGER.CPS", 3, 3, 0);
 		}
 	} else {
@@ -1663,7 +1663,7 @@ int KyraEngine::o1_setScaleDepthTableValue(ScriptState *script) {
 }
 
 int KyraEngine::o1_message(ScriptState *script) {
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_message(%p) (%d, '%s', %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2));
 		drawSentenceCommand(stackPosString(1), stackPos(2));
 	} else {

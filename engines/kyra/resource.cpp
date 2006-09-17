@@ -47,11 +47,11 @@ Resource::Resource(KyraEngine *engine) {
 		}
 
 		// We only need kyra.dat for the demo.
-		if (_engine->features() & GF_DEMO)
+		if (_engine->gameFlags().isDemo)
 			return;
 
 		// only VRM file we need in the *whole* game for kyra1
-		if (_engine->features() & GF_TALKIE) {
+		if (_engine->gameFlags().isTalkie) {
 			loadPakFile("CHAPTER1.VRM");
 		}
 	} else if (_engine->game() == GI_KYRA3) {
@@ -70,7 +70,7 @@ Resource::Resource(KyraEngine *engine) {
 		error("invalid game path '%s'", dir.path().c_str());
 	}
 
-	if (_engine->game() == GI_KYRA1 && (_engine->features() & GF_TALKIE)) {
+	if (_engine->game() == GI_KYRA1 && _engine->gameFlags().isTalkie) {
 		static const char *list[] = {
 			"adl.pak", "col.pak", "finale.pak", "intro1.pak", "intro2.pak", "intro3.pak", "intro4.pak",
 			"misc.pak", "snd.pak", "startup.pak", "xmi.pak", 0
@@ -122,7 +122,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	PAKFile *file = 0;
 
-	file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->features() & GF_AMIGA) != 0);
+	file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->gameFlags().platform == Common::kPlatformAmiga));
 	handle.close();
 
 	if (!file)

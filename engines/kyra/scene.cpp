@@ -195,7 +195,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 	debugC(9, kDebugLevelMain, "KyraEngine::transcendScenes(%d, %d)", roomIndex, roomName);
 	assert(roomIndex < _roomTableSize);
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		char file[32];
 		assert(roomIndex < _roomTableSize);
 		int tableId = _roomTable[roomIndex].nameIndex;
@@ -1557,7 +1557,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 
 void KyraEngine::setupSceneResource(int sceneId) {
 	debugC(9, kDebugLevelMain, "KyraEngine::setupSceneResource(%d)", sceneId);
-	if (_features & GF_FLOPPY)
+	if (!_flags.isTalkie)
 		return;
 
 	if (_currentRoom != 0xFFFF) {

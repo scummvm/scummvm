@@ -103,9 +103,7 @@ KyraEngine::KyraEngine(OSystem *system)
 	_scrollUpButton.process0PtrShape = _scrollUpButton.process1PtrShape = _scrollUpButton.process2PtrShape = 0;
 	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
-	_features = 0;
 	_quitFlag = false;
-	
 	_currHeadShape = 0;
 }
 
@@ -146,7 +144,7 @@ int KyraEngine::init() {
 	// TODO: We should play the native Kyra 2 Adlib music, but until that
 	//       is support, we'll use the automagic MIDI -> Adlib converter.
 
-	if (midiDriver == MD_ADLIB && _game == GI_KYRA1) {
+	if (midiDriver == MD_ADLIB && _flags.gameID == GI_KYRA1) {
 		_sound = new SoundAdlibPC(_mixer, this);
 		assert(_sound);
 	} else {
@@ -164,7 +162,7 @@ int KyraEngine::init() {
 		soundMidiPc->hasNativeMT32(native_mt32);
 
 		// C55 appears to be XMIDI for General MIDI instruments
-		soundMidiPc->setUseC55(_game == GI_KYRA2 && !native_mt32);
+		soundMidiPc->setUseC55(_flags.gameID == GI_KYRA2 && !native_mt32);
 		
 		// Unlike some SCUMM games, it's not that the MIDI sounds are
 		// missing. It's just that at least at the time of writing they
@@ -413,7 +411,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 int KyraEngine::go() {
 
-	if (_features & GF_FLOPPY && !(_features & GF_AMIGA)) {
+	if (_res->getFileSize("6.FNT")) {
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	}
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
@@ -421,7 +419,7 @@ int KyraEngine::go() {
 
 	_abortIntroFlag = false;
 
-	if (_features & GF_DEMO) {
+	if (_flags.isDemo) {
 		seq_demo();
 	} else {
 		setGameFlag(0xF3);

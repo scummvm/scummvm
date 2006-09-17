@@ -919,7 +919,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int ppc = (flags >> 8) & 0x3F;
 	
 	const uint8 *src = shapeData;
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+	if (_vm->gameFlags().useAltShapeHeader) {
 		src += 2;
 	}
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
@@ -970,7 +970,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	
 	// only used if shapeFlag & 1 is NOT zero
 	const uint8 *colorTable = shapeData + 10;
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+	if (_vm->gameFlags().useAltShapeHeader) {
 		colorTable += 2;
 	}
 	
@@ -1635,7 +1635,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	}
 	
 	int16 shapeSize2 = shapeSize;
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+	if (_vm->gameFlags().useAltShapeHeader) {
 		shapeSize += 12;
 	} else {
 		shapeSize += 10;
@@ -1651,7 +1651,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	assert(newShape);
 	
 	byte *dst = newShape;
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
+	if (_vm->gameFlags().useAltShapeHeader)
 		dst += 2;
 	WRITE_LE_UINT16(dst, (flags & 3)); dst += 2;
 	*dst = h; dst += 1;
@@ -1719,7 +1719,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	if (!(flags & 2)) {
 		if (shapeSize > _animBlockSize) {
 			dst = newShape;
-			if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+			if (_vm->gameFlags().useAltShapeHeader) {
 				dst += 2;
 			}
 			flags = READ_LE_UINT16(dst);
@@ -1727,7 +1727,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 			WRITE_LE_UINT16(dst, flags);
 		} else {
 			src = newShape;
-			if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+			if (_vm->gameFlags().useAltShapeHeader) {
 				src += 2;
 			}
 			if (flags & 1) {
@@ -1759,14 +1759,14 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	}
 	
 	dst = newShape;
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+	if (_vm->gameFlags().useAltShapeHeader) {
 		dst += 2;
 	}
 	WRITE_LE_UINT16((dst + 6), shapeSize);
 	
 	if (flags & 1) {
 		dst = newShape + 10;
-		if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE)) {
+		if (_vm->gameFlags().useAltShapeHeader) {
 			dst += 2;
 		}
 		src = &table[0x100];
@@ -1955,13 +1955,13 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	// if mouseDisabled
 	//	return _mouseShape
 
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
+	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 
 	int mouseHeight = *(shape + 2);
 	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
 
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
+	if (_vm->gameFlags().useAltShapeHeader)
 		shape -= 2;
 
 	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
@@ -2039,7 +2039,7 @@ byte Screen::getShapeFlag2(int x, int y) {
 
 int Screen::setNewShapeHeight(uint8 *shape, int height) {
 	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p, %d)", (const void *)shape, height);
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
+	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 	int oldHeight = shape[2];
 	shape[2] = height;
@@ -2048,7 +2048,7 @@ int Screen::setNewShapeHeight(uint8 *shape, int height) {
 
 int Screen::resetShapeHeight(uint8 *shape) {
 	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p)", (const void *)shape);
-	if ((_vm->game() == GI_KYRA1) && (_vm->features() & GF_TALKIE))
+	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 	int oldHeight = shape[2];
 	shape[2] = shape[5];

@@ -878,7 +878,7 @@ void KyraEngine::processSpecialMouseItemFX(int shape, int x, int y, int tableVal
 	debugC(9, kDebugLevelMain, "KyraEngine::processSpecialMouseItemFX(%d, %d, %d, %d, %d, %d)", shape, x, y, tableValue, loopStart, maxLoops);
 	uint8 shapeColorTable[16];
 	uint8 *shapePtr = _shapes[4+shape] + 10;
-	if (_features & GF_TALKIE)
+	if (_flags.useAltShapeHeader)
 		shapePtr += 2;
 	for (int i = 0; i < 16; ++i) {
 		shapeColorTable[i] = shapePtr[i];

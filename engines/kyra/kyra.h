@@ -46,19 +46,14 @@ class StaticResource;
 struct ScriptState;
 struct ScriptData;
 
-enum {
-	GF_FLOPPY	= 1 <<  0,
-	GF_TALKIE	= 1 <<  1,
-	GF_AUDIOCD	= 1 <<  2,  // FM-Towns versions seems to use audio CD
-	GF_DEMO		= 1 <<  3,
-	GF_ENGLISH	= 1 <<  4,
-	GF_FRENCH	= 1 <<  5,
-	GF_GERMAN	= 1 <<  6,
-	GF_SPANISH	= 1 <<  7,
-	GF_ITALIAN	= 1 <<  8,
-	// other languages here
-	GF_LNGUNK	= 1 << 16,	// also used for multi language in kyra3
-	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
+struct GameFlags {
+	Common::Language lang;
+	Common::Platform platform;
+	bool isDemo;
+	bool useAltShapeHeader;	// alternative shape header (uses 2 bytes more, those are unused though)
+	bool hasAudioCD;
+	bool isTalkie;
+	byte gameID;
 };
 
 enum {
@@ -261,8 +256,8 @@ public:
 	uint32 tickLength() const { return _tickLength; }
 	virtual Movie *createWSAMovie();
 
-	uint8 game() const { return _game; }
-	uint32 features() const { return _features; }
+	uint8 game() const { return _flags.gameID; }
+	const GameFlags &gameFlags() const { return _flags; }
 
 	uint8 **shapes() { return _shapes; }
 	Character *currentCharacter() { return _currentCharacter; }
@@ -707,7 +702,7 @@ protected:
 	
 	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
 
-	uint8 _game;
+	GameFlags _flags;
 	bool _quitFlag;
 	bool _skipFlag;
 	bool _skipIntroFlag;
@@ -721,7 +716,6 @@ protected:
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint16 _tickLength;
-	uint32 _features;
 	int _lang;
 	int _mouseX, _mouseY;
 	int8 _itemInHand;

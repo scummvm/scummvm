@@ -88,7 +88,7 @@ void KyraEngine::seq_demo() {
 void KyraEngine::seq_intro() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_intro()");
 
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		_res->loadPakFile("INTRO.VRM");
 	}
 	
@@ -119,7 +119,7 @@ void KyraEngine::seq_intro() {
 	_seq->setCopyViewOffs(false);
 	_sound->haltTrack();
 	_sound->voiceStop();
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		_res->unloadPakFile("INTRO.VRM");
 	}
 }
@@ -194,17 +194,17 @@ void KyraEngine::seq_introStory() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_introStory()");
 	_screen->clearPage(3);
 	_screen->clearPage(0);
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		return;
-	} else if (_features & GF_ENGLISH) {
+	} else if (_flags.lang == Common::EN_ANY) {
 		_screen->loadBitmap("TEXT.CPS", 3, 3, 0);
-	} else if (_features & GF_GERMAN) {
+	} else if (_flags.lang == Common::DE_DEU) {
 		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
-	} else if (_features & GF_FRENCH) {
+	} else if (_flags.lang == Common::FR_FRA) {
 		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
-	} else if (_features & GF_SPANISH) {
+	} else if (_flags.lang == Common::ES_ESP) {
 		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
-	} else if (_features & GF_ITALIAN) {
+	} else if (_flags.lang == Common::IT_ITA) {
 		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, 0);
 	} else {
 		warning("no story graphics file found");
@@ -528,7 +528,7 @@ void KyraEngine::seq_winterScroll1() {
 	snd_playSoundEffect(0x20);
 
 	uint8 numFrames, midpoint;
-	if (_features & GF_TALKIE) {
+	if (_flags.isTalkie) {
 		numFrames = 18;
 		midpoint = 136;
 	} else {
@@ -1051,7 +1051,7 @@ void KyraEngine::seq_playCredits() {
 	memset(strings, 0, sizeof(strings));
 	
 	_screen->hideMouse();
-	if (_features & GF_FLOPPY) {
+	if (!_flags.isTalkie) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
 	} else
@@ -1098,12 +1098,12 @@ void KyraEngine::seq_playCredits() {
 		
 		if (*currentString == 1) {
 		   	currentString++;
-			if (_features & GF_FLOPPY)
+			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED6_FNT);
 		} else {
 			if (*currentString == 2)
 				currentString++;
-			if (_features & GF_FLOPPY)
+			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
 		strings[i].font = _screen->_currentFont;

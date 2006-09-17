@@ -598,14 +598,14 @@ void ScreenAnimator::makeBrandonFaceMouse() {
 
 int16 ScreenAnimator::fetchAnimWidth(const uint8 *shape, int16 mult) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::fetchAnimWidth(%p, %d)", (const void *)shape, mult);
-	if (_vm->features() & GF_TALKIE)
+	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 	return (((int16)READ_LE_UINT16((shape+3))) * mult) >> 8;
 }
 
 int16 ScreenAnimator::fetchAnimHeight(const uint8 *shape, int16 mult) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::fetchAnimHeight(%p, %d)", (const void *)shape, mult);
-	if (_vm->features() & GF_TALKIE)
+	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 	return (int16)(((int8)*(shape+2)) * mult) >> 8;
 }

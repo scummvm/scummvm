@@ -32,6 +32,12 @@
 
 #define CURRENT_VERSION 6
 
+// TODO: our current savefiles still use the old
+// flag system to check the version, we should
+// change that some day, but for now it works
+#define GF_FLOPPY (1 <<  0)
+#define GF_TALKIE (1 <<  1)
+
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
 	debugC(9, kDebugLevelMain, "loadGame('%s')", fileName);
@@ -63,13 +69,13 @@ void KyraEngine::loadGame(const char *fileName) {
 	in->read(saveName, 31);
 
 	if (version >= 2) {
-		uint32 gameFlags = in->readUint32BE();
-		if ((gameFlags & GF_FLOPPY) && !(_features & GF_FLOPPY)) {
-			warning("can not load floppy savefile for this (non floppy) gameversion");
+		uint32 flags = in->readUint32BE();
+		if ((flags & GF_FLOPPY) && _flags.isTalkie) {
+			warning("Can not load floppy savefile for this (non floppy) gameversion");
 			delete in;
 			return;
-		} else if ((gameFlags & GF_TALKIE) && !(_features & GF_TALKIE)) {
-			warning("can not load cdrom savefile for this (non cdrom) gameversion");
+		} else if ((flags & GF_TALKIE) && !(_flags.isTalkie)) {
+			warning("Can not load cdrom savefile for this (non cdrom) gameversion");
 			delete in;
 			return;
 		}
@@ -81,7 +87,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	snd_playWanderScoreViaMap(0, 1);
 
 	// unload the current voice file should fix some problems with voices
-	if (_currentRoom != 0xFFFF && (_features & GF_TALKIE)) {
+	if (_currentRoom != 0xFFFF && _flags.isTalkie) {
 		char file[32];
 		assert(_currentRoom < _roomTableSize);
 		int tableId = _roomTable[_currentRoom].nameIndex;
@@ -259,7 +265,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint32BE(MKID_BE('KYRA'));
 	out->writeUint32BE(CURRENT_VERSION);
 	out->write(saveName, 31);
-	out->writeUint32BE(_features);
+	out->writeUint32BE((_flags.isTalkie ? GF_TALKIE : GF_FLOPPY));
 
 	for (int i = 0; i < 11; i++) {
 		out->writeUint16BE(_characterList[i].sceneId);
