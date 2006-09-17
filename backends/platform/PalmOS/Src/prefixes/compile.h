@@ -42,18 +42,29 @@
 #define DISABLE_CINE
 #define DISABLE_AGI
 
+// ScummVM
 #define DISABLE_HQ_SCALERS
+#define DISABLE_FANCY_THEMES
+//#define CT_NO_TRANSPARENCY
+//#define REDUCE_MEMORY_USAGE
 
 // PalmOS
+//#define STDLIB_TRACE_MEMORY
+//#define _DEBUG
+
 #define PALMOS_MODE
-#define COMPILE_ZODIAC
-//#define COMPILE_OS5
+//#define COMPILE_ZODIAC
+#define COMPILE_OS5
 
 //#define DISABLE_ADLIB
 //#define DISABLE_LIGHTSPEED
-//#define DISABLE_TAPWAVE
-//#define REDUCE_MEMORY_USAGE
 
-//#define _DEBUG
+#ifdef COMPILE_ZODIAC
+#	define DISABLE_SONY
+#endif
+
+#ifdef COMPILE_OS5
+#	define DISABLE_TAPWAVE
+#endif
 
 #endif
