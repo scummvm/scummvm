@@ -84,11 +84,10 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  res(this),
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
 
 	_gdi = new Gdi(this);
-	//_res = new ResourceManager(this);
+	_res = new ResourceManager(this);
 
 	// Copy MD5 checksum
 	memcpy(_gameMD5, dr.md5sum, 16);
@@ -705,6 +704,7 @@ ScummEngine::~ScummEngine() {
 
 	delete _debugger;
 	
+	delete _res;
 	delete _gdi;
 }
 
@@ -971,7 +971,7 @@ int ScummEngine::init() {
 	resetScummVars();
 
 	if (_imuse) {
-		_imuse->setBase(res.address[rtSound]);
+		_imuse->setBase(_res->address[rtSound]);
 	}
 
 	if (_game.version >= 5)
@@ -1027,7 +1027,7 @@ void ScummEngine::setupScumm() {
 		requestLoad(ConfMan.getInt("save_slot"));
 	}
 
-	res.allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
+	_res->allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
 
 	setupScummVars();
 
@@ -1079,7 +1079,7 @@ void ScummEngine::setupScumm() {
 		maxHeapThreshold = 550000;
 	}
 #endif
-	res.setHeapThreshold(400000, maxHeapThreshold);
+	_res->setHeapThreshold(400000, maxHeapThreshold);
 
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	Graphics::initfonts();
@@ -1306,7 +1306,7 @@ void ScummEngine_v4::resetScumm() {
 	// The boot script sets the characters of string 21, 
 	// before creating the string.resource.
 	if (_game.id == GID_LOOM) {
-		res.createResource(rtString, 21, 12);
+		_res->createResource(rtString, 21, 12);
 	}
 }
 
@@ -1766,7 +1766,7 @@ load_game:
 
 	camera._last = camera._cur;
 
-	res.increaseExpireCounter();
+	_res->increaseExpireCounter();
 
 	animateCursor();
 
@@ -2013,7 +2013,7 @@ void ScummEngine::restart() {
 	resetScummVars();
 
 	if (_imuse) {
-		_imuse->setBase(res.address[rtSound]);
+		_imuse->setBase(_res->address[rtSound]);
 	}
 
 	// Reinit sound engine

@@ -1022,7 +1022,7 @@ void ScummEngine_v80he::initCharset(int charsetno) {
 
 void ScummEngine::initCharset(int charsetno) {
 	if (_game.id == GID_FT) {
-		if (!res.isResourceLoaded(rtCharset, charsetno))
+		if (!_res->isResourceLoaded(rtCharset, charsetno))
 			loadCharset(charsetno);
 	} else {
 		if (!getResourceAddress(rtCharset, charsetno))

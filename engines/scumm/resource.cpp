@@ -85,8 +85,8 @@ void ScummEngine::openRoom(const int room) {
 	// Load the disk numer / room offs (special case for room 0 exists because
 	// room 0 contains the data which is used to create the roomno / roomoffs
 	// tables -- hence obviously we mustn't use those when loading room 0.
-	const uint32 diskNumber = room ? res.roomno[rtRoom][room] : 0;
-	const uint32 room_offs = room ? res.roomoffs[rtRoom][room] : 0;
+	const uint32 diskNumber = room ? _res->roomno[rtRoom][room] : 0;
+	const uint32 room_offs = room ? _res->roomoffs[rtRoom][room] : 0;
 
 	// FIXME: Since room_offs is const, clearly the following loop either
 	// is never entered, or loops forever (if it wasn't for the return/error
@@ -96,7 +96,7 @@ void ScummEngine::openRoom(const int room) {
 	while (room_offs != 0xFFFFFFFF) {
 
 		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
-			_fileOffset = res.roomoffs[rtRoom][room];
+			_fileOffset = _res->roomoffs[rtRoom][room];
 			return;
 		}
 		
@@ -124,7 +124,7 @@ void ScummEngine::openRoom(const int room) {
 				return;
 			deleteRoomOffsets();
 			readRoomsOffsets();
-			_fileOffset = res.roomoffs[rtRoom][room];
+			_fileOffset = _res->roomoffs[rtRoom][room];
 
 			if (_fileOffset != 8)
 				return;
@@ -159,8 +159,8 @@ void ScummEngine::closeRoom() {
 /** Delete the currently loaded room offsets. */
 void ScummEngine::deleteRoomOffsets() {
 	for (int i = 0; i < _numRooms; i++) {
-		if (res.roomoffs[rtRoom][i] != 0xFFFFFFFF)
-			res.roomoffs[rtRoom][i] = 0;
+		if (_res->roomoffs[rtRoom][i] != 0xFFFFFFFF)
+			_res->roomoffs[rtRoom][i] = 0;
 	}
 }
 
@@ -179,8 +179,8 @@ void ScummEngine::readRoomsOffsets() {
 	num = _fileHandle->readByte();
 	while (num--) {
 		room = _fileHandle->readByte();
-		if (res.roomoffs[rtRoom][room] != 0xFFFFFFFF) {
-			res.roomoffs[rtRoom][room] = _fileHandle->readUint32LE();
+		if (_res->roomoffs[rtRoom][room] != 0xFFFFFFFF) {
+			_res->roomoffs[rtRoom][room] = _fileHandle->readUint32LE();
 		} else {
 			_fileHandle->readUint32LE();
 		}
@@ -508,29 +508,29 @@ void ScummEngine::readResTypeList(int id, const char *name) {
 	else
 		num = _fileHandle->readUint16LE();
 
-	if (num != res.num[id]) {
+	if (num != _res->num[id]) {
 		error("Invalid number of %ss (%d) in directory", name, num);
 	}
 
 	if (_game.features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
-			res.roomno[id][i] = _fileHandle->readByte();
-			res.roomoffs[id][i] = _fileHandle->readUint32LE();
+			_res->roomno[id][i] = _fileHandle->readByte();
+			_res->roomoffs[id][i] = _fileHandle->readUint32LE();
 		}
 	} else {
 		for (i = 0; i < num; i++) {
-			res.roomno[id][i] = _fileHandle->readByte();
+			_res->roomno[id][i] = _fileHandle->readByte();
 		}
 		for (i = 0; i < num; i++) {
-			res.roomoffs[id][i] = _fileHandle->readUint32LE();
+			_res->roomoffs[id][i] = _fileHandle->readUint32LE();
 
 			if (id == rtRoom && _game.heversion >= 70)
-				_heV7RoomIntOffsets[i] = res.roomoffs[id][i];
+				_heV7RoomIntOffsets[i] = _res->roomoffs[id][i];
 		}
 
 		if (_game.heversion >= 70) {
 			for (i = 0; i < num; i++) {
-				res.globsize[id][i] = _fileHandle->readUint32LE();
+				_res->globsize[id][i] = _fileHandle->readUint32LE();
 			}
 		}
 	}
@@ -590,7 +590,7 @@ void ScummEngine::loadCharset(int no) {
 
 void ScummEngine::nukeCharset(int i) {
 	assertRange(1, i, _numCharsets - 1, "charset");
-	res.nukeResource(rtCharset, i);
+	_res->nukeResource(rtCharset, i);
 }
 
 void ScummEngine::ensureResourceLoaded(int type, int i) {
@@ -616,8 +616,8 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 	if (type != rtCharset && i == 0)
 		return;
 
-	if (i <= res.num[type])
-		addr = res.address[type][i];
+	if (i <= _res->num[type])
+		addr = _res->address[type][i];
 
 	if (addr)
 		return;
@@ -642,8 +642,8 @@ int ScummEngine::loadResource(int type, int idx) {
 
 	roomNr = getResourceRoomNr(type, idx);
 
-	if (idx >= res.num[type])
-		error("%s %d undefined %d %d", res.name[type], idx, res.num[type], roomNr);
+	if (idx >= _res->num[type])
+		error("%s %d undefined %d %d", _res->name[type], idx, _res->num[type], roomNr);
 
 	if (roomNr == 0)
 		roomNr = _roomResource;
@@ -656,7 +656,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		else
 			fileOffs = 0;
 	} else {
-		fileOffs = res.roomoffs[type][idx];
+		fileOffs = _res->roomoffs[type][idx];
 		if (fileOffs == 0xFFFFFFFF)
 			return 0;
 	}
@@ -688,16 +688,16 @@ int ScummEngine::loadResource(int type, int idx) {
 
 		tag = _fileHandle->readUint32BE();
 
-		if (tag != res.tags[type] && _game.heversion < 70) {
+		if (tag != _res->tags[type] && _game.heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
-					res.name[type], idx, roomNr,
+					_res->name[type], idx, roomNr,
 					_fileOffset, fileOffs, _fileHandle->name());
 		}
 
 		size = _fileHandle->readUint32BE();
 		_fileHandle->seek(-8, SEEK_CUR);
 	}
-	_fileHandle->read(res.createResource(type, idx, size), size);
+	_fileHandle->read(_res->createResource(type, idx, size), size);
 
 	// dump the resource if requested
 	if (_dumpScripts && type == rtScript) {
@@ -708,7 +708,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		return 1;
 	}
 
-	res.nukeResource(type, idx);
+	_res->nukeResource(type, idx);
 
 	error("Cannot read resource");
 }
@@ -716,7 +716,7 @@ int ScummEngine::loadResource(int type, int idx) {
 int ScummEngine::getResourceRoomNr(int type, int idx) {
 	if (type == rtRoom && _game.heversion < 70)
 		return idx;
-	return res.roomno[type][idx];
+	return _res->roomno[type][idx];
 }
 
 int ScummEngine::getResourceSize(int type, int idx) {
@@ -734,24 +734,24 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 	if (_game.heversion >= 80 && type == rtString)
 		idx &= ~0x33539000;
 
-	if (!res.validateResource("getResourceAddress", type, idx))
+	if (!_res->validateResource("getResourceAddress", type, idx))
 		return NULL;
 
-	if (!res.address[type]) {
-		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
+	if (!_res->address[type]) {
+		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d), _res->address[type] == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
-	if (res.mode[type] && !res.address[type][idx]) {
+	if (_res->mode[type] && !_res->address[type][idx]) {
 		ensureResourceLoaded(type, idx);
 	}
 
-	if (!(ptr = (byte *)res.address[type][idx])) {
+	if (!(ptr = (byte *)_res->address[type][idx])) {
 		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
-	res.setResourceCounter(type, idx, 1);
+	_res->setResourceCounter(type, idx, 1);
 
 	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
 	return ptr + sizeof(MemBlkHeader);
@@ -805,7 +805,7 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 	byte *ptr;
 
 	CHECK_HEAP
-	debugC(DEBUG_RESOURCE, "res.createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
+	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
 		return NULL;
@@ -926,7 +926,7 @@ bool ResourceManager::isLocked(int type, int i) const {
 }
 
 bool ScummEngine::isResourceInUse(int type, int i) const {
-	if (!res.validateResource("isResourceInUse", type, i))
+	if (!_res->validateResource("isResourceInUse", type, i))
 		return false;
 	switch (type) {
 	case rtRoom:
@@ -944,7 +944,7 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 	case rtCharset:
 		return _charset->getCurID() == i;
 	case rtImage:
-		return res.isModified(type, i) != 0;
+		return _res->isModified(type, i) != 0;
 	case rtSpoolBuffer:
 		return _sound->isSoundRunning(10000 + i) != 0;
 	default:
@@ -1028,14 +1028,14 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 	byte *alloced;
 	int i, len;
 
-	res.nukeResource(type, resindex);
+	_res->nukeResource(type, resindex);
 
 	len = resStrLen(source) + 1;
 
 	if (len <= 0)
 		return;
 
-	alloced = res.createResource(type, resindex, len);
+	alloced = _res->createResource(type, resindex, len);
 
 	if (!source) {
 		alloced[0] = fetchScriptByte();
@@ -1292,28 +1292,28 @@ void ScummEngine::allocateArrays() {
 		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 	}
 
-	res.allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
+	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
 								_numCostumes, "costume", 1);
-	res.allocResTypeData(rtRoom, MKID_BE('ROOM'), _numRooms, "room", 1);
-	res.allocResTypeData(rtRoomImage, MKID_BE('RMIM'), _numRooms, "room image", 1);
-	res.allocResTypeData(rtRoomScripts, MKID_BE('RMSC'), _numRooms, "room script", 1);
-	res.allocResTypeData(rtSound, MKID_BE('SOUN'), _numSounds, "sound", 2);
-	res.allocResTypeData(rtScript, MKID_BE('SCRP'), _numScripts, "script", 1);
-	res.allocResTypeData(rtCharset, MKID_BE('CHAR'), _numCharsets, "charset", 1);
-	res.allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
-	res.allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
-	res.allocResTypeData(rtTemp, 0, 10, "temp", 0);
-	res.allocResTypeData(rtScaleTable, 0, 5, "scale table", 0);
-	res.allocResTypeData(rtActorName, 0, _numActors, "actor name", 0);
-	res.allocResTypeData(rtVerb, 0, _numVerbs, "verb", 0);
-	res.allocResTypeData(rtString, 0, _numArray, "array", 0);
-	res.allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
-	res.allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
-	res.allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
-	res.allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
+	_res->allocResTypeData(rtRoom, MKID_BE('ROOM'), _numRooms, "room", 1);
+	_res->allocResTypeData(rtRoomImage, MKID_BE('RMIM'), _numRooms, "room image", 1);
+	_res->allocResTypeData(rtRoomScripts, MKID_BE('RMSC'), _numRooms, "room script", 1);
+	_res->allocResTypeData(rtSound, MKID_BE('SOUN'), _numSounds, "sound", 2);
+	_res->allocResTypeData(rtScript, MKID_BE('SCRP'), _numScripts, "script", 1);
+	_res->allocResTypeData(rtCharset, MKID_BE('CHAR'), _numCharsets, "charset", 1);
+	_res->allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
+	_res->allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
+	_res->allocResTypeData(rtTemp, 0, 10, "temp", 0);
+	_res->allocResTypeData(rtScaleTable, 0, 5, "scale table", 0);
+	_res->allocResTypeData(rtActorName, 0, _numActors, "actor name", 0);
+	_res->allocResTypeData(rtVerb, 0, _numVerbs, "verb", 0);
+	_res->allocResTypeData(rtString, 0, _numArray, "array", 0);
+	_res->allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
+	_res->allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
+	_res->allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
+	_res->allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
 
 	if (_game.heversion >= 70) {
-		res.allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
+		_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
 		_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
 	}
 }

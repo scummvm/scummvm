@@ -1039,7 +1039,7 @@ void ScummEngine::createBoxMatrix() {
 	// the boxes 7,8,9,10,11 the shortest way is to go via box 15.
 	// See also getPathToDestBox.
 
-	byte *matrixStart = res.createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
+	byte *matrixStart = _res->createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
 
 	#define addToMatrix(b)	do { *matrixStart++ = (b); assert(matrixStart < matrixEnd); } while (0)

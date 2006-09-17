@@ -1025,7 +1025,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		dataSize = (dataSize + 1) & ~1;
 		int wizSize = headerSize + dataSize;
 		// write header
-		uint8 *wizImg = _vm->res.createResource(rtImage, resNum, dataSize + headerSize);
+		uint8 *wizImg = _vm->_res->createResource(rtImage, resNum, dataSize + headerSize);
 		WRITE_BE_UINT32(wizImg + 0x00, 'AWIZ');
 		WRITE_BE_UINT32(wizImg + 0x04, wizSize);
 		WRITE_BE_UINT32(wizImg + 0x08, 'WIZH');
@@ -1063,7 +1063,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 			break;
 		}
 	}
-	_vm->res.setModified(rtImage, resNum);
+	_vm->_res->setModified(rtImage, resNum);
 }
 
 void Wiz::displayWizImage(WizImage *pwi) {
@@ -1637,7 +1637,7 @@ void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int i
 	} else {
 		palPtr = _vm->_currentPalette;
 	}
-	uint8 *res_data = _vm->res.createResource(rtImage, resNum, res_size);
+	uint8 *res_data = _vm->_res->createResource(rtImage, resNum, res_size);
 	if (!res_data) {
 		_vm->VAR(119) = -1;
 	} else {
@@ -1671,7 +1671,7 @@ void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int i
 		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
 		WRITE_BE_UINT32(res_data, 8 + img_w * img_h); res_data += 4;
 	}
-	_vm->res.setModified(rtImage, resNum);
+	_vm->_res->setModified(rtImage, resNum);
 }
 
 void Wiz::fillWizRect(const WizParameters *params) {
@@ -1716,7 +1716,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 			}
 		}
 	}
-	_vm->res.setModified(rtImage, params->img.resNum);
+	_vm->_res->setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::fillWizLine(const WizParameters *params) {
@@ -1808,7 +1808,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			}
 		}
 	}
-	_vm->res.setModified(rtImage, params->img.resNum);
+	_vm->_res->setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::fillWizPixel(const WizParameters *params) {
@@ -1845,7 +1845,7 @@ void Wiz::fillWizPixel(const WizParameters *params) {
 			}
 		}
 	}
-	_vm->res.setModified(rtImage, params->img.resNum);
+	_vm->_res->setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::remapWizImagePal(const WizParameters *params) {
@@ -1861,7 +1861,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 		uint8 idx = *index++;
 		rmap[4 + idx] = params->remapColor[idx];
 	}
-	_vm->res.setModified(rtImage, params->img.resNum);
+	_vm->_res->setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
@@ -1890,14 +1890,14 @@ void Wiz::processWizImage(const WizParameters *params) {
 				if (id == MKID_BE('AWIZ') || id == MKID_BE('MULT')) {
 					uint32 size = f.readUint32BE();
 					f.seek(0, SEEK_SET);
-					byte *p = _vm->res.createResource(rtImage, params->img.resNum, size);
+					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
-						_vm->res.nukeResource(rtImage, params->img.resNum);
+						_vm->_res->nukeResource(rtImage, params->img.resNum);
 						error("i/o error when reading '%s'", filename);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
 						_vm->VAR(119) = -2;
 					} else {
-						_vm->res.setModified(rtImage, params->img.resNum);
+						_vm->_res->setModified(rtImage, params->img.resNum);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = 0;
 						_vm->VAR(119) = 0;
 					}
@@ -1955,7 +1955,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	case 7:
 		// Used in PuttsFunShop/SamsFunShop/soccer2004
 		// TODO: Capture polygon
-		_vm->res.setModified(rtImage, params->img.resNum);
+		_vm->_res->setModified(rtImage, params->img.resNum);
 		break;
 	case 8: {
 			int img_w = 640;
@@ -2006,7 +2006,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	case 17:
 		// Used in to draw circles in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Ellipse
-		_vm->res.setModified(rtImage, params->img.resNum);
+		_vm->_res->setModified(rtImage, params->img.resNum);
 		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);

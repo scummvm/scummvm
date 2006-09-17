@@ -733,7 +733,7 @@ Win32ResExtractor::WinResource *Win32ResExtractor::list_ne_type_resources(WinLib
 
 /* list_resources:
  *   Return an array of WinResource's in the current
- *   resource level specified by res.
+ *   resource level specified by _res->
  */
 Win32ResExtractor::WinResource *Win32ResExtractor::list_resources(WinLibrary *fi, WinResource *res, int *count) {
 	if (res != NULL && !res->is_directory)
@@ -1630,7 +1630,7 @@ void ScummEngine_v70he::readRoomsOffsets() {
 	num = READ_LE_UINT16(_heV7RoomOffsets);
 	ptr = _heV7RoomOffsets + 2;
 	for (i = 0; i < num; i++) {
-		res.roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);
+		_res->roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);
 		ptr += 4;
 	}
 }

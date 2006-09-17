@@ -356,7 +356,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		assert(soundName[0] == 0);	// Paranoia check
 
 		_vm->ensureResourceLoaded(rtSound, soundId);
-		_vm->res.lock(rtSound, soundId);
+		_vm->_res->lock(rtSound, soundId);
 		ptr = _vm->getResourceAddress(rtSound, soundId);
 		if (ptr == NULL) {
 			closeSound(sound);
@@ -430,7 +430,7 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 				found = true;
 		}
 		if (!found)
-			_vm->res.unlock(rtSound, soundHandle->soundId);
+			_vm->_res->unlock(rtSound, soundHandle->soundId);
 	}
 
 	if (soundHandle->compressedStream)

@@ -1122,16 +1122,16 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 			objidx = getObjectIndex(_heResId);
 			if (objidx == -1)
 				break;
-			res.lock(rtFlObject, _objs[objidx].fl_object_index);
+			_res->lock(rtFlObject, _objs[objidx].fl_object_index);
 		} else {
-			res.lock(_heResType, _heResId);
+			_res->lock(_heResType, _heResId);
 		}
 		break;
 	case 133:
 		if (_heResType == rtCharset)
 			nukeCharset(_heResId);
 		else
-			res.nukeResource(_heResType, _heResId);
+			_res->nukeResource(_heResType, _heResId);
 		break;
 	case 134:
 	case 135:
@@ -1151,9 +1151,9 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 			objidx = getObjectIndex(_heResId);
 			if (objidx == -1)
 				break;
-			res.unlock(rtFlObject, _objs[objidx].fl_object_index);
+			_res->unlock(rtFlObject, _objs[objidx].fl_object_index);
 		} else {
-			res.unlock(_heResType, _heResId);
+			_res->unlock(_heResType, _heResId);
 		}
 		break;
 	default:

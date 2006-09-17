@@ -500,8 +500,8 @@ void ScummEngine::clearRoomObjects() {
 				_objs[i].obj_nr = 0;
 			} else {
 				// Nuke all unlocked flObjects
-				if (!res.isLocked(rtFlObject, _objs[i].fl_object_index)) {
-					res.nukeResource(rtFlObject, _objs[i].fl_object_index);
+				if (!_res->isLocked(rtFlObject, _objs[i].fl_object_index)) {
+					_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
 				} else if (_game.heversion >= 70) {
@@ -933,7 +933,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 			if (_objs[i].obj_nr == obj) {
 				if (!_objs[i].fl_object_index)
 					return;
-				res.nukeResource(rtFlObject, _objs[i].fl_object_index);
+				_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
 				_objs[i].obj_nr = 0;
 				_objs[i].fl_object_index = 0;
 			}
@@ -945,7 +945,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
 			if (j == WIO_INVENTORY) {
-				res.nukeResource(rtInventory, i);
+				_res->nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 			}
 			a = _inventory;
@@ -953,8 +953,8 @@ void ScummEngine::clearOwnerOf(int obj) {
 				if (!a[0] && a[1]) {
 					a[0] = a[1];
 					a[1] = 0;
-					res.address[rtInventory][i] = res.address[rtInventory][i + 1];
-					res.address[rtInventory][i + 1] = NULL;
+					_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
+					_res->address[rtInventory][i + 1] = NULL;
 				}
 			}
 			return;
@@ -1029,7 +1029,7 @@ void ScummEngine::setObjectName(int obj) {
 
 	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {
-			res.nukeResource(rtObjectName, i);
+			_res->nukeResource(rtObjectName, i);
 			_newNames[i] = 0;
 			break;
 		}
@@ -1234,7 +1234,7 @@ void ScummEngine::addObjectToInventory(uint obj, uint room) {
 
 	slot = getInventorySlot();
 	_inventory[slot] = obj;
-	dst = res.createResource(rtInventory, slot, size);
+	dst = _res->createResource(rtInventory, slot, size);
 	assert(dst);
 	memcpy(dst, ptr, size);
 
@@ -1562,7 +1562,7 @@ void ScummEngine::nukeFlObjects(int min, int max) {
 
 	for (i = (_numLocalObjects-1), od = _objs; --i >= 0; od++)
 		if (od->fl_object_index && od->obj_nr >= min && od->obj_nr <= max) {
-			res.nukeResource(rtFlObject, od->fl_object_index);
+			_res->nukeResource(rtFlObject, od->fl_object_index);
 			od->obj_nr = 0;
 			od->fl_object_index = 0;
 		}
@@ -1729,7 +1729,7 @@ int ScummEngine::findLocalObjectSlot() {
 int ScummEngine::findFlObjectSlot() {
 	int i;
 	for (i = 1; i < _numFlObject; i++) {
-		if (res.address[rtFlObject][i] == NULL)
+		if (_res->address[rtFlObject][i] == NULL)
 			return i;
 	}
 	error("findFlObjectSlot: Out of FLObject slots");
@@ -1782,16 +1782,16 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 
 	// Lock room/roomScripts for the given room. They contains the OBCD/OBIM
 	// data, and a call to createResource might expire them, hence we lock them.
-	isRoomLocked = res.isLocked(rtRoom, room);
-	isRoomScriptsLocked = res.isLocked(rtRoomScripts, room);
+	isRoomLocked = _res->isLocked(rtRoom, room);
+	isRoomScriptsLocked = _res->isLocked(rtRoomScripts, room);
 	if (!isRoomLocked)
-		res.lock(rtRoom, room);
+		_res->lock(rtRoom, room);
 	if (_game.version == 8 && !isRoomScriptsLocked)
-		res.lock(rtRoomScripts, room);
+		_res->lock(rtRoomScripts, room);
 
 	// Allocate slot & memory for floating object
 	slot = findFlObjectSlot();
-	flob = res.createResource(rtFlObject, slot, flob_size);
+	flob = _res->createResource(rtFlObject, slot, flob_size);
 	assert(flob);
 
 	// Copy object code + object image to floating object
@@ -1803,9 +1803,9 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 
 	// Unlock room/roomScripts
 	if (!isRoomLocked)
-		res.unlock(rtRoom, room);
+		_res->unlock(rtRoom, room);
 	if (_game.version == 8 && !isRoomScriptsLocked)
-		res.unlock(rtRoomScripts, room);
+		_res->unlock(rtRoomScripts, room);
 
 	// Setup local object flags
 	resetRoomObject(od, flob, flob);

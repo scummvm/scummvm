@@ -371,7 +371,7 @@ void ScummEngine::nukeArrays(byte scriptSlot) {
 
 	for (i = 1; i < _numArray; i++) {
 		if (_arraySlot[i] == scriptSlot) {
-			res.nukeResource(rtString, i);
+			_res->nukeResource(rtString, i);
 			_arraySlot[i] = 0;
 		}
 	}
@@ -393,26 +393,26 @@ void ScummEngine::getScriptBaseAddress() {
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _numInventory);
-		_lastCodePtr = &res.address[rtInventory][idx];
+		_lastCodePtr = &_res->address[rtInventory][idx];
 		break;
 
 	case WIO_LOCAL:
 	case WIO_ROOM:								/* room script */
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
-			assert(_roomResource < res.num[rtRoomScripts]);
-			_lastCodePtr = &res.address[rtRoomScripts][_roomResource];
+			assert(_roomResource < _res->num[rtRoomScripts]);
+			_lastCodePtr = &_res->address[rtRoomScripts][_roomResource];
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
-			_lastCodePtr = &res.address[rtRoom][_roomResource];
+			_lastCodePtr = &_res->address[rtRoom][_roomResource];
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
-		_lastCodePtr = &res.address[rtScript][ss->number];
+		_lastCodePtr = &_res->address[rtScript][ss->number];
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
@@ -421,7 +421,7 @@ void ScummEngine::getScriptBaseAddress() {
 		idx = _objs[idx].fl_object_index;
 		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
 		assert(idx < _numFlObject);
-		_lastCodePtr = &res.address[rtFlObject][idx];
+		_lastCodePtr = &_res->address[rtFlObject][idx];
 		break;
 	default:
 		error("Bad type while getting base address");
@@ -1024,7 +1024,7 @@ void ScummEngine::killScriptsAndResources() {
 						continue;
 
 					_newNames[i] = 0;
-					res.nukeResource(rtObjectName, i);
+					_res->nukeResource(rtObjectName, i);
 				}
 			}
 		}
@@ -1128,7 +1128,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 			// For now we assume that if there are more than 460 scripts, then
 			// the pair 29/104 is used, else the pair 28/103.
 			
-			if (res.num[rtScript] > 460) {
+			if (_res->num[rtScript] > 460) {
 				if (sentenceScript == 104)
 					sentenceScript = 29;
 			} else {

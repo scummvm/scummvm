@@ -528,7 +528,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		musicFile.seek(music_offs, SEEK_SET);
 
 		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		spoolPtr = _vm->res.createResource(rtSpoolBuffer, heChannel, size);
+		spoolPtr = _vm->_res->createResource(rtSpoolBuffer, heChannel, size);
 		assert(spoolPtr);
 		musicFile.read(spoolPtr, size);
 		musicFile.close();
@@ -686,13 +686,13 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	}
 
 	_sfxMode |= 2;
-	_vm->res.nukeResource(rtSound, 1);
+	_vm->_res->nukeResource(rtSound, 1);
 
 	_sfxFile->seek(offset + 4, SEEK_SET);
 	 size = _sfxFile->readUint32BE();
 	_sfxFile->seek(offset, SEEK_SET);
 
-	_vm->res.createResource(rtSound, 1, size);
+	_vm->_res->createResource(rtSound, 1, size);
 	ptr = _vm->getResourceAddress(rtSound, 1);
 	_sfxFile->read(ptr, size);
 

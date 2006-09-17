@@ -594,12 +594,12 @@ void ScummEngine_c64::o_loadSound() {
 
 void ScummEngine_c64::o_lockSound() {
 	int resid = fetchScriptByte();
-	res.lock(rtSound, resid);
+	_res->lock(rtSound, resid);
 }
 
 void ScummEngine_c64::o_unlockSound() {
 	int resid = fetchScriptByte();
-	res.unlock(rtSound, resid);
+	_res->unlock(rtSound, resid);
 }
 
 void ScummEngine_c64::o_loadCostume() {
@@ -609,12 +609,12 @@ void ScummEngine_c64::o_loadCostume() {
 
 void ScummEngine_c64::o_lockCostume() {
 	int resid = fetchScriptByte();
-	res.lock(rtCostume, resid);
+	_res->lock(rtCostume, resid);
 }
 
 void ScummEngine_c64::o_unlockCostume() {
 	int resid = fetchScriptByte();
-	res.unlock(rtCostume, resid);
+	_res->unlock(rtCostume, resid);
 }
 
 void ScummEngine_c64::o_loadScript() {
@@ -624,12 +624,12 @@ void ScummEngine_c64::o_loadScript() {
 
 void ScummEngine_c64::o_lockScript() {
 	int resid = fetchScriptByte();
-	res.lock(rtScript, resid);
+	_res->lock(rtScript, resid);
 }
 
 void ScummEngine_c64::o_unlockScript() {
 	int resid = fetchScriptByte();
-	res.unlock(rtScript, resid);
+	_res->unlock(rtScript, resid);
 }
 
 void ScummEngine_c64::o_loadRoom() {
@@ -670,12 +670,12 @@ void ScummEngine_c64::o_loadRoomWithEgo() {
 
 void ScummEngine_c64::o_lockRoom() {
 	int resid = fetchScriptByte();
-	res.lock(rtRoom, resid);
+	_res->lock(rtRoom, resid);
 }
 
 void ScummEngine_c64::o_unlockRoom() {
 	int resid = fetchScriptByte();
-	res.unlock(rtRoom, resid);
+	_res->unlock(rtRoom, resid);
 }
 
 void ScummEngine_c64::o_cursorCommand() {

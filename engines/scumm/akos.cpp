@@ -777,7 +777,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	// So I had to put copy of it back here as it was before 1.227 revision
 	// of this file.
 	v1.scaletable = (_vm->_game.heversion >= 61) ? smallCostumeScaleTableAKOS : bigCostumeScaleTable;
-	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->res.isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
+	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->_res->isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 

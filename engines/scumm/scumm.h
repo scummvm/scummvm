@@ -446,7 +446,7 @@ public:
 	Gdi *_gdi;
 
 	/** Central resource data. */
-	ResourceManager res;
+	ResourceManager *_res;
 
 	// Misc utility functions
 	uint32 _debugFlags;	// Used by the debugger

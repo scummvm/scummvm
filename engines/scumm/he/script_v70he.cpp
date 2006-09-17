@@ -541,62 +541,62 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 104:		// SO_NUKE_SCRIPT
 		resid = pop();
-		res.nukeResource(rtScript, resid);
+		_res->nukeResource(rtScript, resid);
 		break;
 	case 105:		// SO_NUKE_SOUND
 		resid = pop();
-		res.nukeResource(rtSound, resid);
+		_res->nukeResource(rtSound, resid);
 		break;
 	case 106:		// SO_NUKE_COSTUME
 		resid = pop();
-		res.nukeResource(rtCostume, resid);
+		_res->nukeResource(rtCostume, resid);
 		break;
 	case 107:		// SO_NUKE_ROOM
 		resid = pop();
-		res.nukeResource(rtRoom, resid);
-		res.nukeResource(rtRoomImage, resid);
+		_res->nukeResource(rtRoom, resid);
+		_res->nukeResource(rtRoomImage, resid);
 		break;
 	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		res.lock(rtScript, resid);
+		_res->lock(rtScript, resid);
 		break;
 	case 109:		// SO_LOCK_SOUND
 		resid = pop();
-		res.lock(rtSound, resid);
+		_res->lock(rtSound, resid);
 		break;
 	case 110:		// SO_LOCK_COSTUME
 		resid = pop();
-		res.lock(rtCostume, resid);
+		_res->lock(rtCostume, resid);
 		break;
 	case 111:		// SO_LOCK_ROOM
 		resid = pop();
 		if (_game.heversion <= 71 && resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		res.lock(rtRoom, resid);
-		res.lock(rtRoomImage, resid);
+		_res->lock(rtRoom, resid);
+		_res->lock(rtRoomImage, resid);
 		break;
 	case 112:		// SO_UNLOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		res.unlock(rtScript, resid);
+		_res->unlock(rtScript, resid);
 		break;
 	case 113:		// SO_UNLOCK_SOUND
 		resid = pop();
-		res.unlock(rtSound, resid);
+		_res->unlock(rtSound, resid);
 		break;
 	case 114:		// SO_UNLOCK_COSTUME
 		resid = pop();
-		res.unlock(rtCostume, resid);
+		_res->unlock(rtCostume, resid);
 		break;
 	case 115:		// SO_UNLOCK_ROOM
 		resid = pop();
 		if (_game.heversion <= 71 && resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		res.unlock(rtRoom, resid);
-		res.unlock(rtRoomImage, resid);
+		_res->unlock(rtRoom, resid);
+		_res->unlock(rtRoomImage, resid);
 		break;
 	case 116:
 		break;
@@ -635,11 +635,11 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 159:
 		resid = pop();
-		res.unlock(rtImage, resid);
+		_res->unlock(rtImage, resid);
 		break;
 	case 192:
 		resid = pop();
-		res.nukeResource(rtImage, resid);
+		_res->nukeResource(rtImage, resid);
 		break;
 	case 201:
 		resid = pop();
@@ -647,7 +647,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 202:
 		resid = pop();
-		res.lock(rtImage, resid);
+		_res->lock(rtImage, resid);
 		break;
 	case 203:
 		resid = pop();
@@ -658,14 +658,14 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		objidx = getObjectIndex(resid);
 		if (objidx == -1)
 			break;
-		res.lock(rtFlObject, _objs[objidx].fl_object_index);
+		_res->lock(rtFlObject, _objs[objidx].fl_object_index);
 		break;
 	case 235:
 		resid = pop();
 		objidx = getObjectIndex(resid);
 		if (objidx == -1)
 			break;
-		res.unlock(rtFlObject, _objs[objidx].fl_object_index);
+		_res->unlock(rtFlObject, _objs[objidx].fl_object_index);
 		break;
 	case 239:
 		// Used in airport

@@ -287,7 +287,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			}
 		}
 	}
-	_vm->res.setModified(rtImage, params->img.resNum);
+	_vm->_res->setModified(rtImage, params->img.resNum);
 }
 
 } // End of namespace Scumm

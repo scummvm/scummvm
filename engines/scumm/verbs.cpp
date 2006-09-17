@@ -882,7 +882,7 @@ void ScummEngine::killVerb(int slot) {
 	vs->verbid = 0;
 	vs->curmode = 0;
 
-	res.nukeResource(rtVerb, slot);
+	_res->nukeResource(rtVerb, slot);
 
 	if (_game.version <= 6 && vs->saveid == 0) {
 		drawVerb(slot, 0);
@@ -910,7 +910,7 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 			if (_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
 				size = READ_LE_UINT16(foir.obim);
-				byte *ptr = res.createResource(rtVerb, verb, size + 2);
+				byte *ptr = _res->createResource(rtVerb, verb, size + 2);
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
 				ptr[0] = *(obcdptr + 9);	// Width
 				ptr[1] = *(obcdptr + 15);	// Height
@@ -929,7 +929,7 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 				size = READ_LE_UINT32(foir.obim);
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
 				size2 = READ_LE_UINT32(obcdptr);
-				res.createResource(rtVerb, verb, size + size2);
+				_res->createResource(rtVerb, verb, size + size2);
 				obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
 				memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
@@ -940,7 +940,7 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 	} else {
 		findObjectInRoom(&foir, foImageHeader, object, room);
 		size = READ_BE_UINT32(foir.obim + 4);
-		res.createResource(rtVerb, verb, size);
+		_res->createResource(rtVerb, verb, size);
 		obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
 		memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
 	}

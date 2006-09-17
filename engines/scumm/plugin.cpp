@@ -821,7 +821,7 @@ static const MD5Table *findInMD5Table(const char *md5) {
 }
 
 Common::String ScummEngine::generateFilename(const int room) const {
-	const int diskNumber = (room > 0) ? res.roomno[rtRoom][room] : 0;
+	const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
 	char buf[128];
 
 	if (_game.version == 4) {

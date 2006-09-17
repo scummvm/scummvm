@@ -419,7 +419,7 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 	size *= dim1end - dim1start + 1;
 	size >>= 3;
 
-	ah = (ArrayHeader *)res.createResource(rtString, id, size + sizeof(ArrayHeader));
+	ah = (ArrayHeader *)_res->createResource(rtString, id, size + sizeof(ArrayHeader));
 
 	ah->type = TO_LE_32(type);
 	ah->dim1start = TO_LE_32(dim1start);
@@ -962,7 +962,7 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 }
 
 void ScummEngine_v72he::o72_getNumFreeArrays() {
-	byte **addr = res.address[rtString];
+	byte **addr = _res->address[rtString];
 	int i, num = 0;
 
 	for (i = 1; i < _numArray; i++) {

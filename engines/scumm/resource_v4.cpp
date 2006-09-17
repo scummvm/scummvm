@@ -149,7 +149,7 @@ void ScummEngine_v4::loadCharset(int no) {
 	}
 
 	size = file.readUint32LE() + 11;
-	file.read(res.createResource(rtCharset, no, size), size);
+	file.read(_res->createResource(rtCharset, no, size), size);
 }
 
 void ScummEngine_v4::readMAXS(int blockSize) {

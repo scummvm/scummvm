@@ -118,7 +118,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;
 
-	res.increaseResourceCounter();
+	_res->increaseResourceCounter();
 
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
@@ -464,8 +464,8 @@ void ScummEngine::resetRoomSubBlocks() {
 	//
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 
-	res.nukeResource(rtMatrix, 1);
-	res.nukeResource(rtMatrix, 2);
+	_res->nukeResource(rtMatrix, 1);
+	_res->nukeResource(rtMatrix, 2);
 	if (_game.features & GF_SMALL_HEADER) {
 		ptr = findResourceData(MKID_BE('BOXD'), roomptr);
 		if (ptr) {
@@ -476,13 +476,13 @@ void ScummEngine::resetRoomSubBlocks() {
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
 
-			res.createResource(rtMatrix, 2, size);
+			_res->createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;
 
 			size = getResourceDataSize(ptr - size - _resourceHeaderSize) - size;
 			if (size > 0) {					// do this :)
-				res.createResource(rtMatrix, 1, size);
+				_res->createResource(rtMatrix, 1, size);
 				memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 			}
 
@@ -491,7 +491,7 @@ void ScummEngine::resetRoomSubBlocks() {
 		ptr = findResourceData(MKID_BE('BOXD'), roomptr);
 		if (ptr) {
 			int size = getResourceDataSize(ptr);
-			res.createResource(rtMatrix, 2, size);
+			_res->createResource(rtMatrix, 2, size);
 			roomptr = getResourceAddress(rtRoom, _roomResource);
 			ptr = findResourceData(MKID_BE('BOXD'), roomptr);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
@@ -500,7 +500,7 @@ void ScummEngine::resetRoomSubBlocks() {
 		ptr = findResourceData(MKID_BE('BOXM'), roomptr);
 		if (ptr) {
 			int size = getResourceDataSize(ptr);
-			res.createResource(rtMatrix, 1, size);
+			_res->createResource(rtMatrix, 1, size);
 			roomptr = getResourceAddress(rtRoom, _roomResource);
 			ptr = findResourceData(MKID_BE('BOXM'), roomptr);
 			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
@@ -510,14 +510,14 @@ void ScummEngine::resetRoomSubBlocks() {
 	//
 	// Load scale data
 	//
-	for (i = 1; i < res.num[rtScaleTable]; i++)
-		res.nukeResource(rtScaleTable, i);
+	for (i = 1; i < _res->num[rtScaleTable]; i++)
+		_res->nukeResource(rtScaleTable, i);
 
 	ptr = findResourceData(MKID_BE('SCAL'), roomptr);
 	if (ptr) {
 		int s1, s2, y1, y2;
 		if (_game.version == 8) {
-			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 16) {
+			for (i = 1; i < _res->num[rtScaleTable]; i++, ptr += 16) {
 				s1 = READ_LE_UINT32(ptr);
 				y1 = READ_LE_UINT32(ptr + 4);
 				s2 = READ_LE_UINT32(ptr + 8);
@@ -525,7 +525,7 @@ void ScummEngine::resetRoomSubBlocks() {
 				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
 			}
 		} else {
-			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 8) {
+			for (i = 1; i < _res->num[rtScaleTable]; i++, ptr += 8) {
 				s1 = READ_LE_UINT16(ptr);
 				y1 = READ_LE_UINT16(ptr + 2);
 				s2 = READ_LE_UINT16(ptr + 4);
@@ -714,8 +714,8 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 	//
 	// Load box data
 	//
-	res.nukeResource(rtMatrix, 1);
-	res.nukeResource(rtMatrix, 2);
+	_res->nukeResource(rtMatrix, 1);
+	_res->nukeResource(rtMatrix, 2);
 
 	if (_game.version <= 2)
 		ptr = roomptr + *(roomptr + 0x15);
@@ -735,7 +735,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 			ptr = roomptr + *(roomptr + 0x15);
 			size = numOfBoxes * SIZEOF_BOX_C64 + 1;
 
-			res.createResource(rtMatrix, 2, size + 1);
+			_res->createResource(rtMatrix, 2, size + 1);
 			getResourceAddress(rtMatrix, 2)[0] = numOfBoxes;
 			memcpy(getResourceAddress(rtMatrix, 2) + 1, ptr, size);
 		} else {
@@ -745,7 +745,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 			else
 				size = numOfBoxes * SIZEOF_BOX_V3 + 1;
 
-			res.createResource(rtMatrix, 2, size);
+			_res->createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 		}
 
@@ -771,7 +771,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 		}
 
 		if (size > 0) {					// do this :)
-			res.createResource(rtMatrix, 1, size);
+			_res->createResource(rtMatrix, 1, size);
 			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 		}
 
@@ -780,8 +780,8 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 	//
 	// No scale data in old bundle games
 	//
-	for (i = 1; i < res.num[rtScaleTable]; i++)
-		res.nukeResource(rtScaleTable, i);
+	for (i = 1; i < _res->num[rtScaleTable]; i++)
+		_res->nukeResource(rtScaleTable, i);
 
 }
 

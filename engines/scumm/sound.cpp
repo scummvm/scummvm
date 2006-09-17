@@ -689,7 +689,7 @@ int Sound::isSoundRunning(int sound) const {
 	if (isSoundInQueue(sound))
 		return 1;
 
-	if (sound > _vm->_numSounds || !_vm->res.isResourceLoaded(rtSound, sound))
+	if (sound > _vm->_numSounds || !_vm->_res->isResourceLoaded(rtSound, sound))
 		return 0;
 
 	if (_vm->_musicEngine)
@@ -722,7 +722,7 @@ bool Sound::isSoundInUse(int sound) const {
 	if (isSoundInQueue(sound))
 		return true;
 
-	if (!_vm->res.isResourceLoaded(rtSound, sound))
+	if (!_vm->_res->isResourceLoaded(rtSound, sound))
 		return false;
 
 	if (_vm->_imuse)
@@ -1062,7 +1062,7 @@ void Sound::saveLoadWithSerializer(Serializer *ser) {
 #pragma mark --- Sound resource handling ---
 #pragma mark -
 
-static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *src_ptr, int size);
+static void convertMac0Resource(ResourceManager *res, int type, int idx, byte *src_ptr, int size);
 
 
 /*
@@ -1094,7 +1094,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	case MKID_BE('iMUS'):
 		if (_musicType != MDT_PCSPK) {
 			_fileHandle->seek(-8, SEEK_CUR);
-			_fileHandle->read(res.createResource(type, idx, total_size + 8), total_size + 8);
+			_fileHandle->read(_res->createResource(type, idx, total_size + 8), total_size + 8);
 			return 1;
 		}
 		break;
@@ -1157,7 +1157,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 		if (best_pri != -1) {
 			_fileHandle->seek(best_offs - 8, SEEK_SET);
-			ptr = res.createResource(type, idx, best_size);
+			ptr = _res->createResource(type, idx, best_size);
 			_fileHandle->read(ptr, best_size);
 			//dumpResource("sound-", idx, ptr);
 			return 1;
@@ -1169,7 +1169,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		ptr = (byte *)calloc(total_size, 1);
 		_fileHandle->read(ptr, total_size);
 		//dumpResource("sound-", idx, ptr);
-		convertMac0Resource(res, type, idx, ptr, total_size);
+		convertMac0Resource(_res, type, idx, ptr, total_size);
 		free(ptr);
 		return 1;
 
@@ -1181,7 +1181,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	case 0x460e200d:	// WORKAROUND bug # 1311447
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		ptr = res.createResource(type, idx, total_size);
+		ptr = _res->createResource(type, idx, total_size);
 		_fileHandle->read(ptr, total_size - 8);
 		//dumpResource("sound-", idx, ptr);
 		return 1;
@@ -1190,7 +1190,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		// HE sound type without SOUN header
 		_fileHandle->seek(-16, SEEK_CUR);
 		total_size = max_total_size + 8;
-		ptr = res.createResource(type, idx, total_size);
+		ptr = _res->createResource(type, idx, total_size);
 		_fileHandle->read(ptr, total_size);
 		//dumpResource("sound-", idx, ptr);
 		return 1;
@@ -1220,14 +1220,14 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 		if (dmuFile.open(buffer) == false) {
 			error("Can't open music file %s*", buffer);
-			res.roomoffs[type][idx] = 0xFFFFFFFF;
+			_res->roomoffs[type][idx] = 0xFFFFFFFF;
 			return 0;
 		}
 		dmuFile.seek(4, SEEK_SET);
 		total_size = dmuFile.readUint32BE();
 		debugC(DEBUG_SOUND, "dmu file size %d", total_size);
 		dmuFile.seek(-8, SEEK_CUR);
-		dmuFile.read(res.createResource(type, idx, total_size), total_size);
+		dmuFile.read(_res->createResource(type, idx, total_size), total_size);
 		dmuFile.close();
 		}
 		return 1;
@@ -1237,14 +1237,14 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			_fileHandle->seek(-12, SEEK_CUR);
 			total_size = _fileHandle->readUint32BE();
 			_fileHandle->seek(-8, SEEK_CUR);
-			ptr = res.createResource(type, idx, total_size);
+			ptr = _res->createResource(type, idx, total_size);
 			_fileHandle->read(ptr, total_size);
 			//dumpResource("sound-", idx, ptr);
 			return 1;
 		}
 		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
-	res.roomoffs[type][idx] = 0xFFFFFFFF;
+	_res->roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
 }
 
@@ -1423,7 +1423,7 @@ static byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	}
 }
 
-static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *src_ptr, int size) {
+static void convertMac0Resource(ResourceManager *res, int type, int idx, byte *src_ptr, int size) {
 	/*
 	From Markus Magnuson (superqult) we got this information:
 	Mac0
@@ -1476,7 +1476,7 @@ static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *s
 	*/
 
 #if 0
-	byte *ptr = res.createResource(type, idx, size);
+	byte *ptr = _res->createResource(type, idx, size);
 	memcpy(ptr, src_ptr, size);
 #else
 	const int ppqn = 480;
@@ -1518,7 +1518,7 @@ static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *s
 	assert(*src_ptr == 0x09);
 
 	// Create sound resource
-	start_ptr = res.createResource(type, idx, total_size);
+	start_ptr = res->createResource(type, idx, total_size);
 
 	// Insert MIDI header
 	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
@@ -1614,7 +1614,7 @@ static void convertMac0Resource(ResourceManager &res, int type, int idx, byte *s
 #endif
 }
 
-static void convertADResource(ResourceManager &res, const GameSettings& game, int type, int idx, byte *src_ptr, int size) {
+static void convertADResource(ResourceManager *res, const GameSettings& game, int type, int idx, byte *src_ptr, int size) {
 
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
@@ -1625,7 +1625,7 @@ static void convertADResource(ResourceManager &res, const GameSettings& game, in
 	int total_size = kMIDIHeaderSize + 7 + 8 * sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
-	ptr = res.createResource(type, idx, total_size);
+	ptr = res->createResource(type, idx, total_size);
 
 	src_ptr += 2;
 	size -= 2;
@@ -2019,7 +2019,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		_fileHandle->seek(ro_offs + 4, SEEK_SET);
 		_fileHandle->read(src_ptr, ro_size -4);
 
-		ptr = res.createResource(type, idx, ro_size + 2);
+		ptr = _res->createResource(type, idx, ro_size + 2);
 		memcpy(ptr, "RO", 2); ptr += 2;
 		memcpy(ptr, src_ptr, ro_size - 4); ptr += ro_size - 4;
 		return 1;
@@ -2091,24 +2091,24 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		}
 		ptr = (byte *) calloc(ad_size, 1);
 		_fileHandle->read(ptr, ad_size);
-		convertADResource(res, _game, type, idx, ptr, ad_size);
+		convertADResource(_res, _game, type, idx, ptr, ad_size);
 		free(ptr);
 		return 1;
 	} else if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
 		if (_game.features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
-			_fileHandle->read(res.createResource(type, idx, wa_size), wa_size);
+			_fileHandle->read(_res->createResource(type, idx, wa_size), wa_size);
 		} else {
 			_fileHandle->seek(wa_offs - 6, SEEK_SET);
-			_fileHandle->read(res.createResource(type, idx, wa_size + 6), wa_size + 6);
+			_fileHandle->read(_res->createResource(type, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
 	} else if (ro_offs != 0) {
 		_fileHandle->seek(ro_offs - 2, SEEK_SET);
-		_fileHandle->read(res.createResource(type, idx, ro_size - 4), ro_size - 4);
+		_fileHandle->read(_res->createResource(type, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
-	res.roomoffs[type][idx] = 0xFFFFFFFF;
+	_res->roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
 }
 

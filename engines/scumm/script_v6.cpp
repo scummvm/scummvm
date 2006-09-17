@@ -448,7 +448,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	size *= dim2 + 1;
 	size *= dim1 + 1;
 
-	ah = (ArrayHeader *)res.createResource(rtString, id, size + sizeof(ArrayHeader));
+	ah = (ArrayHeader *)_res->createResource(rtString, id, size + sizeof(ArrayHeader));
 
 	ah->type = TO_LE_16(type);
 	ah->dim1 = TO_LE_16(dim1 + 1);
@@ -466,7 +466,7 @@ void ScummEngine_v6::nukeArray(int a) {
 		data &= ~0x33539000;
 
 	if (data)
-		res.nukeResource(rtString, data);
+		_res->nukeResource(rtString, data);
 	if (_game.heversion >= 60)
 		_arraySlot[data] = 0;
 
@@ -474,7 +474,7 @@ void ScummEngine_v6::nukeArray(int a) {
 }
 
 int ScummEngine_v6::findFreeArrayId() {
-	byte **addr = res.address[rtString];
+	byte **addr = _res->address[rtString];
 	int i;
 
 	for (i = 1; i < _numArray; i++) {
@@ -1566,59 +1566,59 @@ void ScummEngine_v6::o6_resourceRoutines() {
 		if (_game.version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
-		res.setResourceCounter(rtScript, resid, 0x7F);
+		_res->setResourceCounter(rtScript, resid, 0x7F);
 		break;
 	case 105:		// SO_NUKE_SOUND
 		resid = pop();
-		res.setResourceCounter(rtSound, resid, 0x7F);
+		_res->setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	case 106:		// SO_NUKE_COSTUME
 		resid = pop();
-		res.setResourceCounter(rtCostume, resid, 0x7F);
+		_res->setResourceCounter(rtCostume, resid, 0x7F);
 		break;
 	case 107:		// SO_NUKE_ROOM
 		resid = pop();
-		res.setResourceCounter(rtRoom, resid, 0x7F);
+		_res->setResourceCounter(rtRoom, resid, 0x7F);
 		break;
 	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		res.lock(rtScript, resid);
+		_res->lock(rtScript, resid);
 		break;
 	case 109:		// SO_LOCK_SOUND
 		resid = pop();
-		res.lock(rtSound, resid);
+		_res->lock(rtSound, resid);
 		break;
 	case 110:		// SO_LOCK_COSTUME
 		resid = pop();
-		res.lock(rtCostume, resid);
+		_res->lock(rtCostume, resid);
 		break;
 	case 111:		// SO_LOCK_ROOM
 		resid = pop();
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		res.lock(rtRoom, resid);
+		_res->lock(rtRoom, resid);
 		break;
 	case 112:		// SO_UNLOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		res.unlock(rtScript, resid);
+		_res->unlock(rtScript, resid);
 		break;
 	case 113:		// SO_UNLOCK_SOUND
 		resid = pop();
-		res.unlock(rtSound, resid);
+		_res->unlock(rtSound, resid);
 		break;
 	case 114:		// SO_UNLOCK_COSTUME
 		resid = pop();
-		res.unlock(rtCostume, resid);
+		_res->unlock(rtCostume, resid);
 		break;
 	case 115:		// SO_UNLOCK_ROOM
 		resid = pop();
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		res.unlock(rtRoom, resid);
+		_res->unlock(rtRoom, resid);
 		break;
 	case 116:		// SO_CLEAR_HEAP
 		/* this is actually a scumm message */
@@ -3035,7 +3035,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 		error("ScummEngine_v6::o6_setBoxSet: Can't find dboxes for set %d", arg);
 
 	dboxSize = READ_BE_UINT32(boxd + 4) - 8;
-	byte *matrix = res.createResource(rtMatrix, 2, dboxSize);
+	byte *matrix = _res->createResource(rtMatrix, 2, dboxSize);
 
 	assert(matrix);
 	memcpy(matrix, boxd + 8, dboxSize);
@@ -3048,7 +3048,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);
 
 	mboxSize = READ_BE_UINT32(boxm + 4) - 8;
-	matrix = res.createResource(rtMatrix, 1, mboxSize);
+	matrix = _res->createResource(rtMatrix, 1, mboxSize);
 
 	assert(matrix);
 	memcpy(matrix, boxm + 8, mboxSize);

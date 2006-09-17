@@ -45,16 +45,16 @@ void ScummEngine_v3old::readResTypeList(int id, const char *name) {
 
 	if (id == rtRoom) {
 		for (i = 0; i < num; i++)
-			res.roomno[id][i] = i;
+			_res->roomno[id][i] = i;
 		_fileHandle->seek(num, SEEK_CUR);
 	} else {
 		for (i = 0; i < num; i++)
-			res.roomno[id][i] = _fileHandle->readByte();
+			_res->roomno[id][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < num; i++) {
-		res.roomoffs[id][i] = _fileHandle->readUint16LE();
-		if (res.roomoffs[id][i] == 0xFFFF)
-			res.roomoffs[id][i] = 0xFFFFFFFF;
+		_res->roomoffs[id][i] = _fileHandle->readUint16LE();
+		if (_res->roomoffs[id][i] == 0xFFFF)
+			_res->roomoffs[id][i] = 0xFFFFFFFF;
 	}
 }
 
@@ -116,7 +116,7 @@ void ScummEngine_v3::loadCharset(int no) {
 	}
 
 	size = file.readUint16LE();
-	file.read(res.createResource(rtCharset, no, size), size);
+	file.read(_res->createResource(rtCharset, no, size), size);
 }
 
 } // End of namespace Scumm

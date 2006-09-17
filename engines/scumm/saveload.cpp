@@ -247,8 +247,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Nuke all resources
 	for (i = rtFirst; i <= rtLast; i++)
 		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
-			for (j = 0; j < res.num[i]; j++) {
-				res.nukeResource(i, j);
+			for (j = 0; j < _res->num[i]; j++) {
+				_res->nukeResource(i, j);
 			}
 
 	resetScummVars();
@@ -320,7 +320,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// loading such an old save game, try to upgrade the old to new format.
 	if (hdr.ver < VER(22)) {
 		// Convert all rtScaleTable resources to matching scale items
-		for (i = 1; i < res.num[rtScaleTable]; i++) {
+		for (i = 1; i < _res->num[rtScaleTable]; i++) {
 			convertScaleTableToScaleSlot(i);
 		}
 	}
@@ -1002,11 +1002,11 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// number of script resources, savegames won't break.
 		if (s->isSaving()) {
 			for (type = rtFirst; type <= rtLast; type++) {
-				if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+				if (_res->mode[type] != 1 && type != rtTemp && type != rtBuffer) {
 					s->saveUint16(type);	// Save the res type...
-					for (idx = 0; idx < res.num[type]; idx++) {
+					for (idx = 0; idx < _res->num[type]; idx++) {
 						// Only save resources which actually exist...
-						if (res.address[type][idx]) {
+						if (_res->address[type][idx]) {
 							s->saveUint16(idx);	// Save the index of the resource
 							saveResource(s, type, idx);
 						}
@@ -1018,7 +1018,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		} else {
 			while ((type = s->loadUint16()) != 0xFFFF) {
 				while ((idx = s->loadUint16()) != 0xFFFF) {
-					assert(0 <= idx && idx < res.num[type]);
+					assert(0 <= idx && idx < _res->num[type]);
 					loadResource(s, type, idx);
 				}
 			}
@@ -1028,13 +1028,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
  		for (type = rtFirst; type <= rtLast; type++)
- 			if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+ 			if (_res->mode[type] != 1 && type != rtTemp && type != rtBuffer) {
  				// For V1-V5 games, there used to be no object name resources.
  				// At some point this changed. But since old savegames rely on
  				// unchanged resource counts, we have to hard code the following check
  				if (_game.version < 6 && type == rtObjectName)
  					continue;
- 				for (idx = 1; idx < res.num[type]; idx++)
+ 				for (idx = 1; idx < _res->num[type]; idx++)
  					saveLoadResource(s, type, idx);
  			}
 	}
@@ -1115,8 +1115,8 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	if (s->isSaving()) {
 		for (i = rtFirst; i <= rtLast; i++)
-			for (j = 1; j < res.num[i]; j++) {
-				if (res.isLocked(i, j)) {
+			for (j = 1; j < _res->num[i]; j++) {
+				if (_res->isLocked(i, j)) {
 					s->saveByte(i);
 					s->saveUint16(j);
 				}
@@ -1125,7 +1125,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	} else {
 		while ((i = s->loadByte()) != 0xFF) {
 			j = s->loadUint16();
-			res.lock(i, j);
+			_res->lock(i, j);
 		}
 	}
 
@@ -1307,9 +1307,9 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;
 	uint32 size;
 
-	if (!res.mode[type]) {
+	if (!_res->mode[type]) {
 		if (ser->isSaving()) {
-			ptr = res.address[type][idx];
+			ptr = _res->address[type][idx];
 			if (ptr == NULL) {
 				ser->saveUint32(0);
 				return;
@@ -1329,7 +1329,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 		} else {
 			size = ser->loadUint32();
 			if (size) {
-				res.createResource(type, idx, size);
+				_res->createResource(type, idx, size);
 				ser->loadBytes(getResourceAddress(type, idx), size);
 				if (type == rtInventory) {
 					_inventory[idx] = ser->loadUint16();
@@ -1346,10 +1346,10 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 				}
 			}
 		}
-	} else if (res.mode[type] == 2 && ser->getVersion() >= VER(23)) {
+	} else if (_res->mode[type] == 2 && ser->getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need reloaded.
 		if (ser->isSaving()) {
-			ser->saveUint16(res.address[type][idx] ? 1 : 0);
+			ser->saveUint16(_res->address[type][idx] ? 1 : 0);
 		} else {
 			if (ser->loadUint16())
 				ensureResourceLoaded(type, idx);
@@ -1358,10 +1358,10 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 }
 
 void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
-	assert(res.address[type][idx]);
+	assert(_res->address[type][idx]);
 
-	if (res.mode[type] == 0) {
-		byte *ptr = res.address[type][idx];
+	if (_res->mode[type] == 0) {
+		byte *ptr = _res->address[type][idx];
 		uint32 size = ((MemBlkHeader *)ptr)->size;
 
 		ser->saveUint32(size);
@@ -1381,12 +1381,12 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
 		uint32 size = ser->loadUint32();
 		assert(size);
-		res.createResource(type, idx, size);
+		_res->createResource(type, idx, size);
 		ser->loadBytes(getResourceAddress(type, idx), size);
-	} else if (res.mode[type] == 0) {
+	} else if (_res->mode[type] == 0) {
 		uint32 size = ser->loadUint32();
 		assert(size);
-		res.createResource(type, idx, size);
+		_res->createResource(type, idx, size);
 		ser->loadBytes(getResourceAddress(type, idx), size);
 
 		if (type == rtInventory) {
@@ -1395,7 +1395,7 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		if (type == rtObjectName) {
 			_newNames[idx] = ser->loadUint16();
 		}
-	} else if (res.mode[type] == 2) {
+	} else if (_res->mode[type] == 2) {
 		// HE Games use sound resource 1 for speech
 		if (_game.heversion >= 60 && idx == 1)
 			return;

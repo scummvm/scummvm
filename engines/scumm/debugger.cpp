@@ -325,7 +325,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 			file.seek(-8, SEEK_CUR);
 		}
 
-		file.read(_vm->res.createResource(rtScript, resnum, size), size);
+		file.read(_vm->_res->createResource(rtScript, resnum, size), size);
 
 	} else
 		DebugPrintf("Unknown importres type '%s'\n", argv[1]);
@@ -395,8 +395,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		DebugPrintf("Actor[%d]._elevation = %d\n", actnum, a->getElevation());
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "costume")) {
-		if (value >= _vm->res.num[rtCostume])
-			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
+		if (value >= _vm->_res->num[rtCostume])
+			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->_res->num[rtCostume]);
 		else {
 			a->setActorCostume(value);
 			_vm->_fullRedraw = true;
