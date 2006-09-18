@@ -253,7 +253,8 @@ public:
 	virtual ~Gdi();
 
 	virtual void init();
-	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+	virtual void roomChanged(byte *roomptr);
+	void setTransparentColor(byte transparentColor) { _transparentColor = transparentColor; }
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
@@ -308,7 +309,7 @@ protected:
 public:
 	GdiNES(ScummEngine *vm);
 
-	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+	virtual void roomChanged(byte *roomptr);
 };
 
 class GdiV1 : public Gdi {
@@ -342,7 +343,7 @@ protected:
 public:
 	GdiV1(ScummEngine *vm);
 
-	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+	virtual void roomChanged(byte *roomptr);
 };
 
 class GdiV2 : public Gdi {
@@ -369,7 +370,7 @@ public:
 	GdiV2(ScummEngine *vm);
 	~GdiV2();
 
-	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+	virtual void roomChanged(byte *roomptr);
 };
 
 } // End of namespace Scumm

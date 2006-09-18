@@ -438,7 +438,8 @@ void ScummEngine::setupRoomSubBlocks() {
 		putClass(182, kObjectClassUntouchable, 0);
 	}
 
-	_gdi->roomChanged(roomptr, _IM00_offs, trans);
+	_gdi->roomChanged(roomptr);
+	_gdi->setTransparentColor(trans);
 }
 
 /**
@@ -692,7 +693,7 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 		}
 	}
 
-	_gdi->roomChanged(roomptr, _IM00_offs, 255);
+	_gdi->roomChanged(roomptr);
 }
 
 void ScummEngine_v3old::resetRoomSubBlocks() {

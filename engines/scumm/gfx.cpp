@@ -201,7 +201,7 @@ Gdi::Gdi(ScummEngine *vm) : _vm(vm) {
 
 	_paletteMod = 0;
 	_roomPalette = vm->_roomPalette;
-	_transparentColor = 0;
+	_transparentColor = 255;
 	_decomp_shr = 0;
 	_decomp_mask = 0;
 	_vertStripNextInc = 0;
@@ -248,16 +248,14 @@ void Gdi::init() {
 	}
 }
 
-void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
-	_transparentColor = transparentColor;
+void Gdi::roomChanged(byte *roomptr) {
 }
 
-void GdiNES::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
+void GdiNES::roomChanged(byte *roomptr) {
 	decodeNESGfx(roomptr);
-	_transparentColor = transparentColor;
 }
 
-void GdiV1::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
+void GdiV1::roomChanged(byte *roomptr) {
 	for (int i = 0; i < 4; i++){
 		_C64.colors[i] = roomptr[6 + i];
 	}
@@ -267,14 +265,11 @@ void GdiV1::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) 
 	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
 	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
 	_objectMode = true;
-
-	_transparentColor = transparentColor;
 }
 
-void GdiV2::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
-	_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
-
-	_transparentColor = transparentColor;
+void GdiV2::roomChanged(byte *roomptr) {
+	_roomStrips = generateStripTable(roomptr + READ_LE_UINT16(roomptr + 0x0A),
+			_vm->_roomWidth, _vm->_roomHeight, _roomStrips);
 }
 
 #pragma mark -
