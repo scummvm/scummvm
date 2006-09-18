@@ -32,6 +32,7 @@
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
 #include "scumm/he/wiz_he.h"
+#include "scumm/util.h"
 #ifdef __DS__
 #include "blitters.h"
 #endif
@@ -194,10 +195,22 @@ static const TransitionEffect transitionEffects[6] = {
 
 
 Gdi::Gdi(ScummEngine *vm) {
-	memset(this, 0, sizeof(*this));
 	_vm = vm;
+
+	_numZBuffer = 0;
+	memset(_imgBufOffs, 0, sizeof(_imgBufOffs));
+	_numStrips = 0;
+
 	_paletteMod = 0;
 	_roomPalette = vm->_roomPalette;
+	_transparentColor = 0;
+	_decomp_shr = 0;
+	_decomp_mask = 0;
+	_vertStripNextInc = 0;
+	_zbufferDisabled = false;
+	_objectMode = false;
+	memset(&_C64, 0, sizeof(_C64));
+	memset(&_NES, 0, sizeof(_NES));
 	_roomStrips = 0;
 }
 
@@ -1432,10 +1445,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	assert(height > 0);
 	byte *dstPtr;
 	const byte *smap_ptr;
-	const byte *z_plane_ptr;
-	byte *mask_ptr;
 
-	int i;
 	const byte *zplane_list[9];
 
 	int bottom;
@@ -1512,25 +1522,75 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		limit = numstrip;
 	if (limit > _numStrips - sx)
 		limit = _numStrips - sx;
-	for (int k = 0; k < limit; ++k, ++stripnr) {
+	for (int k = 0; k < limit; ++k, ++stripnr, ++sx, ++x) {
 		CHECK_HEAP;
 
-		if (y < vs->tdirty[sx + k])
-			vs->tdirty[sx + k] = y;
+		if (y < vs->tdirty[sx])
+			vs->tdirty[sx] = y;
 
-		if (bottom > vs->bdirty[sx + k])
-			vs->bdirty[sx + k] = bottom;
+		if (bottom > vs->bdirty[sx])
+			vs->bdirty[sx] = bottom;
 
 		// In the case of a double buffered virtual screen, we draw to
 		// the backbuffer, otherwise to the primary surface memory.
 		if (vs->hasTwoBuffers)
-			dstPtr = vs->backBuf + y * vs->pitch + (x + k) * 8;
+			dstPtr = vs->backBuf + y * vs->pitch + x * 8;
 		else
-			dstPtr = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
+			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
+
+		transpStrip = drawStrip(dstPtr, vs, x, y, width, height, stripnr, smap_ptr);
+
+		CHECK_HEAP;
+		if (vs->hasTwoBuffers) {
+			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
+			if (lightsOn)
+				copy8Col(frontBuf, vs->pitch, dstPtr, height);
+			else
+				clear8Col(frontBuf, vs->pitch, height);
+		}
+		CHECK_HEAP;
+
+		// COMI and HE games only uses flag value
+		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
+			transpStrip = true;
+		
+		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag);
+
+#if 0
+		// HACK: blit mask(s) onto normal screen. Useful to debug masking
+		for (i = 0; i < numzbuf; i++) {
+			byte *dst1, *dst2;
+
+			dst1 = dst2 = (byte *)vs->pixels + y * vs->pitch + x) * 8;
+			if (vs->hasTwoBuffers)
+				dst2 = vs->backBuf + y * vs->pitch + x * 8;
+			mask_ptr = getMaskBuffer(x, y, i);
+
+			for (int h = 0; h < height; h++) {
+				int maskbits = *mask_ptr;
+				for (int j = 0; j < 8; j++) {
+					if (maskbits & 0x80)
+						dst1[j] = dst2[j] = 12 + i;
+					maskbits <<= 1;
+				}
+				dst1 += vs->pitch;
+				dst2 += vs->pitch;
+				mask_ptr += _numStrips;
+			}
+		}
+#endif
+	}
+}
+
+bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr) {
+
+	byte *mask_ptr;
+	bool transpStrip = false;
 
 		if (_vm->_game.version <= 1) {
 			if (_vm->_game.platform == Common::kPlatformNES) {
-				mask_ptr = getMaskBuffer(x + k, y, 1);
+				mask_ptr = getMaskBuffer(x, y, 1);
 				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
 			}
 			else if (_objectMode)
@@ -1558,29 +1618,23 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				if (stripnr * 4 + 8 < smapLen)
 					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 			}
-			if (offset < 0 || offset >= smapLen) {
-				error("drawBitmap: Trying to draw a non-existant strip");
-				return;
-			}
+			assertRange(0, offset, smapLen-1, "screen strip");
 			transpStrip = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 		}
+	return transpStrip;
+}
 
-		CHECK_HEAP;
-		if (vs->hasTwoBuffers) {
-			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
-			if (lightsOn)
-				copy8Col(frontBuf, vs->pitch, dstPtr, height);
-			else
-				clear8Col(frontBuf, vs->pitch, height);
-		}
-		CHECK_HEAP;
+void Gdi::decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag) {
+	int i;
+	byte *mask_ptr;
+	const byte *z_plane_ptr;
 
-		// COMI and HE games only uses flag value
-		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
-			transpStrip = true;
+	const byte *tmsk_ptr = NULL;	// FIXME
 
 		if (_vm->_game.version <= 1) {
-			mask_ptr = getMaskBuffer(x + k, y, 1);
+			mask_ptr = getMaskBuffer(x, y, 1);
 			if (_vm->_game.platform == Common::kPlatformNES) {
 				drawStripNESMask(mask_ptr, stripnr, y, height);
 			} else {
@@ -1610,7 +1664,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			else
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
-				mask_ptr = getMaskBuffer(x + k, y, i);
+				mask_ptr = getMaskBuffer(x, y, i);
 				if (transpStrip && (flag & dbAllowMaskOr))
 					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				else
@@ -1634,7 +1688,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-				mask_ptr = getMaskBuffer(x + k, y, i);
+				mask_ptr = getMaskBuffer(x, y, i);
 
 				if (offs) {
 					z_plane_ptr = zplane_list[i] + offs;
@@ -1656,31 +1710,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				}
 			}
 		}
-
-#if 0
-		// HACK: blit mask(s) onto normal screen. Useful to debug masking
-		for (i = 0; i < numzbuf; i++) {
-			byte *dst1, *dst2;
-
-			dst1 = dst2 = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
-			if (vs->hasTwoBuffers)
-				dst2 = vs->backBuf + y * vs->pitch + (x + k) * 8;
-			mask_ptr = getMaskBuffer(x + k, y, i);
-
-			for (int h = 0; h < height; h++) {
-				int maskbits = *mask_ptr;
-				for (int j = 0; j < 8; j++) {
-					if (maskbits & 0x80)
-						dst1[j] = dst2[j] = 12 + i;
-					maskbits <<= 1;
-				}
-				dst1 += vs->pitch;
-				dst2 += vs->pitch;
-				mask_ptr += _numStrips;
-			}
-		}
-#endif
-	}
 }
 
 /**

@@ -198,7 +198,7 @@ public:
 	int32 _numStrips;
 
 	Gdi(ScummEngine *vm);
-	~Gdi();
+	virtual ~Gdi();
 
 protected:
 	byte _paletteMod;
@@ -266,6 +266,14 @@ protected:
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip);
+
+	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
+					int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr);
+
+	virtual void decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag);
 
 public:
 	void init();
