@@ -83,9 +83,8 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 			data += offs;
 			uint16 sz = READ_LE_UINT16(data + 6);
 			panPage = new uint8[sz];
-			if (panPage) {
-				memcpy(panPage, data, sz);
-			}
+			assert(panPage);	
+			memcpy(panPage, data, sz);
 		}
 	}
 	return panPage;
@@ -94,10 +93,25 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 void SeqPlayer::makeHandShapes() {
 	debugC(9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
 	_screen->loadBitmap("WRITING.CPS", 3, 3, 0);
-	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
-		if (_handShapes[i])
-			delete [] _handShapes[i];
-		_handShapes[i] = setPanPages(3, i);
+	if (_vm->gameFlags().platform == Common::kPlatformMacintosh) {
+		freeHandShapes();
+		
+		int pageBackUp = _screen->_curPage;
+		_screen->_curPage = 2;
+		_handShapes[0] = _screen->encodeShape(0, 0, 88, 122, 0);
+		assert(_handShapes[0]);
+		_handShapes[1] = _screen->encodeShape(88, 0, 80, 117, 0);
+		assert(_handShapes[1]);
+		_handShapes[2] = _screen->encodeShape(168, 0, 117, 124, 0);
+		assert(_handShapes[2]);
+		_screen->_curPage = pageBackUp;
+	} else {
+		for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
+			if (_handShapes[i])
+				delete [] _handShapes[i];
+			_handShapes[i] = setPanPages(3, i);
+			assert(_handShapes[i]);
+		}
 	}
 }
 

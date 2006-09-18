@@ -196,8 +196,10 @@ void KyraEngine::seq_introStory() {
 	_screen->clearPage(0);
 	if (_flags.isTalkie) {
 		return;
-	} else if (_flags.lang == Common::EN_ANY) {
+	} else if (_flags.lang == Common::EN_ANY && _flags.platform != Common::kPlatformMacintosh) {
 		_screen->loadBitmap("TEXT.CPS", 3, 3, 0);
+	} else if (_flags.lang == Common::EN_ANY && _flags.platform == Common::kPlatformMacintosh) {
+		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
 	} else if (_flags.lang == Common::DE_DEU) {
 		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
 	} else if (_flags.lang == Common::FR_FRA) {
@@ -1065,7 +1067,8 @@ void KyraEngine::seq_playCredits() {
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = -1;
 	// we don't need that one for midi or adlib
-	//snd_playWanderScoreViaMap(53, 1);
+	if (_flags.hasAudioCD)
+		snd_playWanderScoreViaMap(53, 1);
 
 	uint8 *buffer = 0;
 	uint32 size;
@@ -1643,8 +1646,29 @@ int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 void KyraEngine::setupPanPages() {
 	debugC(9, kDebugLevelMain, "KyraEngine::setupPanPages()");
 	_screen->loadBitmap("BEAD.CPS", 3, 3, 0);
-	for (int i = 0; i <= 19; ++i) {
-		_panPagesTable[i] = _seq->setPanPages(3, i);
+	if (_flags.platform == Common::kPlatformMacintosh) {
+		int pageBackUp = _screen->_curPage;
+		_screen->_curPage = 2;
+
+		delete [] _panPagesTable[19];
+		_panPagesTable[19] = _screen->encodeShape(0, 0, 16, 9, 0);
+		assert(_panPagesTable[19]);
+		
+		int curX = 16;
+		for (int i = 0; i < 19; ++i) {
+			delete [] _panPagesTable[i];
+			_panPagesTable[i] = _screen->encodeShape(curX, 0, 8, 5, 0);
+			assert(_panPagesTable[i]);
+			curX += 8;
+		}
+
+		_screen->_curPage = pageBackUp;
+	} else {
+		for (int i = 0; i <= 19; ++i) {
+			delete [] _panPagesTable[i];
+			_panPagesTable[i] = _seq->setPanPages(3, i);
+			assert(_panPagesTable[i]);
+		}
 	}
 }
 
@@ -1654,7 +1678,7 @@ void KyraEngine::freePanPages() {
 	_endSequenceBackUpRect = 0;
 	for (int i = 0; i <= 19; ++i) {
 		delete [] _panPagesTable[i];
-		_panPagesTable[i] = NULL;
+		_panPagesTable[i] = 0;
 	}
 }
 

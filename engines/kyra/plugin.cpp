@@ -310,6 +310,14 @@ int KyraEngine_v1::setupGameFlags() {
 		return -1;
 	}
 
+
+	// if the user says we got a macintosh version, then we assume to have one
+	// since it's currently not possible to detect the macintosh version
+	// because of limitations of the current detector code
+	if (Common::parsePlatform(ConfMan.get("platform")) == Common::kPlatformMacintosh) {
+		_flags.platform = Common::kPlatformMacintosh;
+	}
+
 	return 0;
 }
 

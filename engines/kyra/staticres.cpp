@@ -813,9 +813,9 @@ void KyraEngine::loadButtonShapes() {
 void KyraEngine::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
-	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie)
+	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform != Common::kPlatformMacintosh)
 		_screen->loadBitmap("MAIN15.CPS", page, page, 0);
-	else if (_flags.lang == Common::EN_ANY && _flags.isTalkie) 
+	else if (_flags.lang == Common::EN_ANY && (_flags.isTalkie || _flags.platform == Common::kPlatformMacintosh)) 
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
