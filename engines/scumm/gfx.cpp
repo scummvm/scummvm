@@ -1453,7 +1453,7 @@ void GdiNES::prepareDrawBitmap(const byte *ptr, int x, int y, const int width, c
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * and objects, used throughout all SCUMM versions.
  */
-void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
+void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const int width, const int height,
 					int stripnr, int numstrip, byte flag) {
 	assert(ptr);
 	assert(height > 0);
@@ -1564,7 +1564,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag, tmsk_ptr);
 
-#if 1
+#if 0
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking
 		for (int i = 0; i < numzbuf; i++) {
 			byte *dst1, *dst2;
