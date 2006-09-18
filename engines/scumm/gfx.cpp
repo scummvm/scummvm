@@ -207,15 +207,24 @@ Gdi::Gdi(ScummEngine *vm) : _vm(vm) {
 	_vertStripNextInc = 0;
 	_zbufferDisabled = false;
 	_objectMode = false;
-	memset(&_C64, 0, sizeof(_C64));
-	_roomStrips = 0;
+}
+
+Gdi::~Gdi() {
 }
 
 GdiNES::GdiNES(ScummEngine *vm) : Gdi(vm) {
 	memset(&_NES, 0, sizeof(_NES));
 }
 
-Gdi::~Gdi() {
+GdiV1::GdiV1(ScummEngine *vm) : Gdi(vm) {
+	memset(&_C64, 0, sizeof(_C64));
+}
+
+GdiV2::GdiV2(ScummEngine *vm) : Gdi(vm) {
+	_roomStrips = 0;
+}
+
+GdiV2::~GdiV2() {
 	free(_roomStrips);
 }
 
@@ -240,25 +249,31 @@ void Gdi::init() {
 }
 
 void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
-	if (_vm->_game.version <= 1) {
-		for (int i = 0; i < 4; i++){
-			_C64.colors[i] = roomptr[6 + i];
-		}
-		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _C64.charMap, 2048);
-		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
-		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
-		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
-		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
-		_objectMode = true;
-	} else if (_vm->_game.version == 2) {
-		_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
-	}
-	
 	_transparentColor = transparentColor;
 }
 
 void GdiNES::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
 	decodeNESGfx(roomptr);
+	_transparentColor = transparentColor;
+}
+
+void GdiV1::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
+	for (int i = 0; i < 4; i++){
+		_C64.colors[i] = roomptr[6 + i];
+	}
+	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _C64.charMap, 2048);
+	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
+	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
+	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
+	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+	_objectMode = true;
+
+	_transparentColor = transparentColor;
+}
+
+void GdiV2::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
+	_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
+
 	_transparentColor = transparentColor;
 }
 
@@ -1259,7 +1274,38 @@ void ScummEngine::setShake(int mode) {
 #pragma mark -
 
 
-void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, int stripnr, int numstrip) {
+void Gdi::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip) {
+}
+
+void GdiV1::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip) {
+	if (_objectMode) {
+		decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
+	}
+}
+
+void GdiNES::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip) {
+	if (_objectMode) {
+		decodeNESObject(ptr, x, y, width, height);
+	}
+}
+
+
+void GdiV2::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip) {
+	//
+	// Since V3, all graphics data was encoded in strips, which is very efficient
+	// for redrawing only parts of the screen. However, V2 is different: here
+	// the whole graphics are encoded as one big chunk. That makes it rather
+	// dificult to draw only parts of a room/object. We handle the V2 graphics
+	// differently from all other (newer) graphic formats for this reason.
+	//
 	StripTable *table = (_objectMode ? 0 : _roomStrips);
 	const int left = (stripnr * 8);
 	const int right = left + (numstrip * 8);
@@ -1436,19 +1482,6 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	return numzbuf;
 }
 
-void Gdi::prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height) {
-	if (_objectMode && _vm->_game.version <= 1) {
-		decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
-	}
-}
-
-void GdiNES::prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height) {
-	if (_objectMode) {
-		decodeNESObject(ptr, x, y, width, height);
-	}
-}
-
-
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * and objects, used throughout all SCUMM versions.
@@ -1457,12 +1490,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 					int stripnr, int numstrip, byte flag) {
 	assert(ptr);
 	assert(height > 0);
+
 	byte *dstPtr;
 	const byte *smap_ptr;
-
 	const byte *zplane_list[9];
-
-	int bottom;
 	int numzbuf;
 	int sx;
 	bool transpStrip = false;
@@ -1470,20 +1501,16 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	// Check whether lights are turned on or not
 	const bool lightsOn = _vm->isLightOn();
 
-	_objectMode = (flag & dbObjectMode) == dbObjectMode;
-
-	prepareDrawBitmap(ptr, x, y, width, height);
-
 	CHECK_HEAP;
 	if (_vm->_game.features & GF_SMALL_HEADER) {
 		smap_ptr = ptr;
 	} else if (_vm->_game.version == 8) {
 		// Skip to the BSTR->WRAP->OFFS chunk
 		smap_ptr = ptr + 24;
-	} else
+	} else {
 		smap_ptr = _vm->findResource(MKID_BE('SMAP'), ptr);
-
-	assert(smap_ptr);
+		assert(smap_ptr);
+	}
 
 	numzbuf = getZPlanes(ptr, zplane_list, false);
 	
@@ -1492,22 +1519,14 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		tmsk_ptr = _vm->findResource(MKID_BE('TMSK'), ptr);
 	}
 
-	bottom = y + height;
-	if (bottom > vs->h) {
-		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
+	if (y + height > vs->h) {
+		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", y + height, vs->h);
 	}
 
 	_vertStripNextInc = height * vs->pitch - 1;
 
-	//
-	// Since V3, all graphics data was encoded in strips, which is very efficient
-	// for redrawing only parts of the screen. However, V2 is different: here
-	// the whole graphics are encoded as one big chunk. That makes it rather
-	// dificult to draw only parts of a room/object. We handle the V2 graphics
-	// differently from all other (newer) graphic formats for this reason.
-	//
-	if (_vm->_game.version == 2)
-		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip);
+	_objectMode = (flag & dbObjectMode) == dbObjectMode;
+	prepareDrawBitmap(ptr, vs, x, y, width, height, stripnr, numstrip);
 
 	sx = x - vs->xstart / 8;
 	if (sx < 0) {
@@ -1516,9 +1535,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		stripnr += -sx;
 		sx = 0;
 	}
-
-	//if (_vm->_NESStartStrip > 0)
-	//	stripnr -= _vm->_NESStartStrip;
 
 	// Compute the number of strips we have to iterate over.
 	// TODO/FIXME: The computation of its initial value looks very fishy.
@@ -1536,8 +1552,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		if (y < vs->tdirty[sx])
 			vs->tdirty[sx] = y;
 
-		if (bottom > vs->bdirty[sx])
-			vs->bdirty[sx] = bottom;
+		if (y + height > vs->bdirty[sx])
+			vs->bdirty[sx] = y + height;
 
 		// In the case of a double buffered virtual screen, we draw to
 		// the backbuffer, otherwise to the primary surface memory.
@@ -1592,39 +1608,51 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 
 bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
 					int stripnr, const byte *smap_ptr) {
-	bool transpStrip = false;
-
-	if (_vm->_game.version <= 1) {
-		if (_objectMode)
-			drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
-		else
-			drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
-	} else if (_vm->_game.version == 2) {
-		// Do nothing here for V2 games - drawing was already handled.
+	// Do some input verification and make sure the strip/strip offset
+	// are actually valid. Normally, this should never be a problem,
+	// but if e.g. a savegame gets corrupted, we can easily get into
+	// trouble here. See also bug #795214.
+	int offset = -1, smapLen;
+	if (_vm->_game.features & GF_16COLOR) {
+		smapLen = READ_LE_UINT16(smap_ptr);
+		if (stripnr * 2 + 2 < smapLen)
+			offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
+	} else if (_vm->_game.features & GF_SMALL_HEADER) {
+		smapLen = READ_LE_UINT32(smap_ptr);
+		if (stripnr * 4 + 4 < smapLen)
+			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
 	} else {
-		// Do some input verification and make sure the strip/strip offset
-		// are actually valid. Normally, this should never be a problem,
-		// but if e.g. a savegame gets corrupted, we can easily get into
-		// trouble here. See also bug #795214.
-		int offset = -1, smapLen;
-		if (_vm->_game.features & GF_16COLOR) {
-			smapLen = READ_LE_UINT16(smap_ptr);
-			if (stripnr * 2 + 2 < smapLen)
-				offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
-		} else if (_vm->_game.features & GF_SMALL_HEADER) {
-			smapLen = READ_LE_UINT32(smap_ptr);
-			if (stripnr * 4 + 4 < smapLen)
-				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
-		} else {
-			smapLen = READ_BE_UINT32(smap_ptr);
-			if (stripnr * 4 + 8 < smapLen)
-				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
-		}
-		assertRange(0, offset, smapLen-1, "screen strip");
-		transpStrip = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+		smapLen = READ_BE_UINT32(smap_ptr);
+		if (stripnr * 4 + 8 < smapLen)
+			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 	}
+	assertRange(0, offset, smapLen-1, "screen strip");
 
-	return transpStrip;
+	return decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+}
+
+bool GdiNES::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr) {
+	byte *mask_ptr = getMaskBuffer(x, y, 1);
+	drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
+
+	return false;
+}
+
+bool GdiV1::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr) {
+	if (_objectMode)
+		drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
+	else
+		drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
+
+	return false;
+}
+
+bool GdiV2::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr) {
+	// Do nothing here for V2 games - drawing was already handled.
+	return false;
 }
 
 void Gdi::decodeMask(int x, int y, const int width, const int height,
@@ -1634,12 +1662,7 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 	byte *mask_ptr;
 	const byte *z_plane_ptr;
 
-	if (_vm->_game.version <= 1) {
-		mask_ptr = getMaskBuffer(x, y, 1);
-		drawStripC64Mask(mask_ptr, stripnr, width, height);
-	} else if (_vm->_game.version == 2) {
-		// Do nothing here for V2 games - zplane was already handled.
-	} else if (flag & dbDrawMaskOnAll) {
+	if (flag & dbDrawMaskOnAll) {
 		// Sam & Max uses dbDrawMaskOnAll for things like the inventory
 		// box and the speech icons. While these objects only have one
 		// mask, it should be applied to all the Z-planes in the room,
@@ -1708,19 +1731,24 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 	}
 }
 
-bool GdiNES::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr) {
-	byte *mask_ptr = getMaskBuffer(x, y, 1);
-	drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
-
-	return false;
-}
-
 void GdiNES::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
 	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
 	byte *mask_ptr = getMaskBuffer(x, y, 1);
 	drawStripNESMask(mask_ptr, stripnr, y, height);
+}
+
+void GdiV1::decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	byte *mask_ptr = getMaskBuffer(x, y, 1);
+	drawStripC64Mask(mask_ptr, stripnr, width, height);
+}
+
+void GdiV2::decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	// Do nothing here for V2 games - zplane was already handled.
 }
 
 #ifndef DISABLE_HE
@@ -2412,7 +2440,7 @@ void GdiNES::drawStripNESMask(byte *dst, int stripnr, int top, int height) const
 	}
 }
 
-void Gdi::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
+void GdiV1::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
 	int charIdx;
 	height /= 8;
 	for (int y = 0; y < height; y++) {
@@ -2435,7 +2463,7 @@ void Gdi::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int heigh
 	}
 }
 
-void Gdi::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
+void GdiV1::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
 	int charIdx;
 	height /= 8;
 	width /= 8;
@@ -2453,7 +2481,7 @@ void Gdi::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, in
 	}
 }
 
-void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const {
+void GdiV1::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const {
 	int maskIdx;
 	height /= 8;
 	width /= 8;
@@ -2472,7 +2500,7 @@ void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const 
 	}
 }
 
-void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) const {
+void GdiV1::decodeC64Gfx(const byte *src, byte *dst, int size) const {
 	int x, z;
 	byte color, run, common[4];
 
@@ -2512,7 +2540,7 @@ void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) const {
  * @param table		the strip table to fill
  * @return filled strip table
  */
-StripTable *Gdi::generateStripTable(const byte *src, int width, int height, StripTable *table) const {
+StripTable *GdiV2::generateStripTable(const byte *src, int width, int height, StripTable *table) const {
 
 	// If no strip table was given to use, allocate a new one
 	if (table == 0)

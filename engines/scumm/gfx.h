@@ -193,12 +193,6 @@ class Gdi {
 protected:
 	ScummEngine *_vm;
 
-public:
-	int _numZBuffer;
-	int _imgBufOffs[8];
-	int32 _numStrips;
-
-protected:
 	byte _paletteMod;
 	byte *_roomPalette;
 	byte _transparentColor;
@@ -210,22 +204,16 @@ protected:
 	/** Flag which is true when an object is being rendered, false otherwise. */
 	bool _objectMode;
 
-	/** Render settings which are specific to the C64 graphic decoders. */
-	struct {
-		byte colors[4];
-		byte charMap[2048], objectMap[2048], picMap[4096], colorMap[4096];
-		byte maskMap[4096], maskChar[4096];
-	} _C64;
+public:
+	int _numZBuffer;
+	int _imgBufOffs[8];
+	int32 _numStrips;
 
-	/** For V2 games, we cache offsets into the room graphics, to speed up things. */
-	StripTable *_roomStrips;
-
+protected:
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess);
 
 	void drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const;
-	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
-	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
 
 	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
@@ -241,19 +229,12 @@ protected:
 	void drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int height, const bool transpCheck) const;
 
 	/* Mask decompressors */
-	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
 	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
 	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 
 	/* Misc */
-	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
-
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
-
-	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
-	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-	                int stripnr, int numstrip);
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
 					int x, int y, const int width, const int height,
@@ -263,7 +244,9 @@ protected:
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
 	                bool transpStrip, byte flag, const byte *tmsk_ptr);
 
-	virtual void prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height);
+	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip);
 
 public:
 	Gdi(ScummEngine *vm);
@@ -295,8 +278,6 @@ public:
 
 class GdiNES : public Gdi {
 protected:
-	//ScummEngine *_vm;
-
 	struct {
 		byte nametable[16][64], nametableObj[16][64];
 		byte attributes[64], attributesObj[64];
@@ -305,6 +286,7 @@ protected:
 		bool hasmask;
 	} _NES;
 
+protected:
 	void decodeNESGfx(const byte *room);
 	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
 
@@ -319,7 +301,9 @@ protected:
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
 	                bool transpStrip, byte flag, const byte *tmsk_ptr);
 
-	virtual void prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height);
+	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip);
 
 public:
 	GdiNES(ScummEngine *vm);
@@ -327,6 +311,66 @@ public:
 	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
 };
 
+class GdiV1 : public Gdi {
+protected:
+	/** Render settings which are specific to the C64 graphic decoders. */
+	struct {
+		byte colors[4];
+		byte charMap[2048], objectMap[2048], picMap[4096], colorMap[4096];
+		byte maskMap[4096], maskChar[4096];
+	} _C64;
+
+protected:
+	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
+
+	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
+	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
+	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
+
+	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
+					int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr);
+
+	virtual void decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+
+	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip);
+
+public:
+	GdiV1(ScummEngine *vm);
+
+	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+};
+
+class GdiV2 : public Gdi {
+protected:
+	/** For V2 games, we cache offsets into the room graphics, to speed up things. */
+	StripTable *_roomStrips;
+
+protected:
+	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
+
+	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
+					int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr);
+
+	virtual void decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+
+	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip);
+
+public:
+	GdiV2(ScummEngine *vm);
+	~GdiV2();
+
+	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+};
 
 } // End of namespace Scumm
 

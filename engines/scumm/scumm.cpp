@@ -89,6 +89,10 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
+	} else if (_game.version <= 1) {
+		_gdi = new GdiV1(this);
+	} else if (_game.version == 2) {
+		_gdi = new GdiV2(this);
 	} else {
 		_gdi = new Gdi(this);
 	}
