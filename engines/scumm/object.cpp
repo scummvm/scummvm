@@ -474,9 +474,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 		    (_game.id == GID_FT && getClass(od.obj_nr, kObjectClassPlayer)))
 			flags |= Gdi::dbDrawMaskOnAll;
 
+#ifndef DISABLE_HE
 		if (_game.heversion >= 70 && findResource(MKID_BE('SMAP'), ptr) == NULL)
 			_gdi->drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
+#endif
 			_gdi->drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
 }
@@ -508,6 +510,7 @@ void ScummEngine::clearRoomObjects() {
 	}
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::resetRoomObjects() {
 	ScummEngine_v60he::resetRoomObjects();
 	restoreFlObjects();
@@ -553,6 +556,7 @@ void ScummEngine_v70he::restoreFlObjects() {
 
 	_numStoredFlObjects = 0;
 }
+#endif
 
 void ScummEngine::resetRoomObjects() {
 	int i, j;
@@ -1751,6 +1755,7 @@ int ScummEngine::findFlObjectSlot() {
 	return -1;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::loadFlObject(uint object, uint room) {
 	// Don't load an already stored object
 	for (int i = 0; i < _numStoredFlObjects; i++) {
@@ -1760,6 +1765,7 @@ void ScummEngine_v70he::loadFlObject(uint object, uint room) {
 
 	ScummEngine_v60he::loadFlObject(object, room);
 }
+#endif
 
 void ScummEngine::loadFlObject(uint object, uint room) {
 	FindObjectInRoom foir;

@@ -1711,6 +1711,7 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 	}
 }
 
+#ifndef DISABLE_HE
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * used throughout HE71+ versions.
@@ -1803,7 +1804,6 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
-#ifndef DISABLE_HE
 	const byte *bmap_ptr = _vm->findResourceData(MKID_BE('BMAP'), ptr);
 	assert(bmap_ptr);
 
@@ -1828,7 +1828,6 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		
 		((ScummEngine_v71he *)_vm)->restoreBackgroundHE(rect1);
 	}
-#endif
 }
 
 void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
@@ -1867,6 +1866,7 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 	blit(dst, virtscr[0].pitch, src, virtscr[0].pitch, rw, rh);
 	markRectAsDirty(kMainVirtScreen, rect, dirtybit);
 }
+#endif
 
 /**
  * Reset the background behind an actor or blast object.

@@ -285,8 +285,11 @@ public:
 	void decodeNESGfx(const byte *room);
 	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
 
+
+#ifndef DISABLE_HE
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
+#endif
 
 	byte *getMaskBuffer(int x, int y, int z);
 	void disableZBuffer() { _zbufferDisabled = true; }
