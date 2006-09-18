@@ -190,15 +190,13 @@ struct StripTable;
 #define CHARSET_MASK_TRANSPARENCY	253
 
 class Gdi {
+protected:
 	ScummEngine *_vm;
 
 public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
-
-	Gdi(ScummEngine *vm);
-	virtual ~Gdi();
 
 protected:
 	byte _paletteMod;
@@ -219,14 +217,6 @@ protected:
 		byte maskMap[4096], maskChar[4096];
 	} _C64;
 
-	struct {
-		byte nametable[16][64], nametableObj[16][64];
-		byte attributes[64], attributesObj[64];
-		byte masktable[16][8], masktableObj[16][8];
-		int  objX;
-		bool hasmask;
-	} _NES;
-
 	/** For V2 games, we cache offsets into the room graphics, to speed up things. */
 	StripTable *_roomStrips;
 
@@ -236,7 +226,6 @@ protected:
 	void drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
-	void drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height);
 
 	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
@@ -253,7 +242,6 @@ protected:
 
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
-	void drawStripNESMask(byte *dst, int stripnr, int top, int height) const;
 	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
 	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
@@ -275,16 +263,17 @@ protected:
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
 	                bool transpStrip, byte flag, const byte *tmsk_ptr);
 
+	virtual void prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height);
+
 public:
-	void init();
-	void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
+	Gdi(ScummEngine *vm);
+	virtual ~Gdi();
+
+	virtual void init();
+	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
-
-	void decodeNESGfx(const byte *room);
-	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
-
 
 #ifndef DISABLE_HE
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs);
@@ -302,6 +291,40 @@ public:
 		dbDrawMaskOnAll = 1 << 1,
 		dbObjectMode    = 2 << 2
 	};
+};
+
+class GdiNES : public Gdi {
+protected:
+	//ScummEngine *_vm;
+
+	struct {
+		byte nametable[16][64], nametableObj[16][64];
+		byte attributes[64], attributesObj[64];
+		byte masktable[16][8], masktableObj[16][8];
+		int  objX;
+		bool hasmask;
+	} _NES;
+
+	void decodeNESGfx(const byte *room);
+	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
+
+	void drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height);
+	void drawStripNESMask(byte *dst, int stripnr, int top, int height) const;
+
+	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
+					int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr);
+
+	virtual void decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+
+	virtual void prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height);
+
+public:
+	GdiNES(ScummEngine *vm);
+
+	virtual void roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor);
 };
 
 

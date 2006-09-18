@@ -87,7 +87,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
 
-	_gdi = new Gdi(this);
+	if (_game.platform == Common::kPlatformNES) {
+		_gdi = new GdiNES(this);
+	} else {
+		_gdi = new Gdi(this);
+	}
 	_res = new ResourceManager(this);
 
 	// Copy MD5 checksum

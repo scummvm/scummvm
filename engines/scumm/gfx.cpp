@@ -194,9 +194,7 @@ static const TransitionEffect transitionEffects[6] = {
 #endif
 
 
-Gdi::Gdi(ScummEngine *vm) {
-	_vm = vm;
-
+Gdi::Gdi(ScummEngine *vm) : _vm(vm) {
 	_numZBuffer = 0;
 	memset(_imgBufOffs, 0, sizeof(_imgBufOffs));
 	_numStrips = 0;
@@ -210,8 +208,11 @@ Gdi::Gdi(ScummEngine *vm) {
 	_zbufferDisabled = false;
 	_objectMode = false;
 	memset(&_C64, 0, sizeof(_C64));
-	memset(&_NES, 0, sizeof(_NES));
 	_roomStrips = 0;
+}
+
+GdiNES::GdiNES(ScummEngine *vm) : Gdi(vm) {
+	memset(&_NES, 0, sizeof(_NES));
 }
 
 Gdi::~Gdi() {
@@ -240,19 +241,15 @@ void Gdi::init() {
 
 void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
 	if (_vm->_game.version <= 1) {
-		if (_vm->_game.platform == Common::kPlatformNES) {
-			decodeNESGfx(roomptr);
-		} else {
-			for (int i = 0; i < 4; i++){
-				_C64.colors[i] = roomptr[6 + i];
-			}
-			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _C64.charMap, 2048);
-			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
-			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
-			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
-			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
-			_objectMode = true;
+		for (int i = 0; i < 4; i++){
+			_C64.colors[i] = roomptr[6 + i];
 		}
+		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _C64.charMap, 2048);
+		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
+		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
+		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
+		decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+		_objectMode = true;
 	} else if (_vm->_game.version == 2) {
 		_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
 	}
@@ -260,6 +257,10 @@ void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
 	_transparentColor = transparentColor;
 }
 
+void GdiNES::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
+	decodeNESGfx(roomptr);
+	_transparentColor = transparentColor;
+}
 
 #pragma mark -
 #pragma mark --- Virtual Screens ---
@@ -1435,6 +1436,19 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	return numzbuf;
 }
 
+void Gdi::prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height) {
+	if (_objectMode && _vm->_game.version <= 1) {
+		decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
+	}
+}
+
+void GdiNES::prepareDrawBitmap(const byte *ptr, int x, int y, const int width, const int height) {
+	if (_objectMode) {
+		decodeNESObject(ptr, x, y, width, height);
+	}
+}
+
+
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * and objects, used throughout all SCUMM versions.
@@ -1457,14 +1471,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	const bool lightsOn = _vm->isLightOn();
 
 	_objectMode = (flag & dbObjectMode) == dbObjectMode;
-	
-	if (_objectMode && _vm->_game.version <= 1) {
-		if (_vm->_game.platform == Common::kPlatformNES) {
-			decodeNESObject(ptr, x, y, width, height);
-		} else {
-			decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
-		}
-	}
+
+	prepareDrawBitmap(ptr, x, y, width, height);
 
 	CHECK_HEAP;
 	if (_vm->_game.features & GF_SMALL_HEADER) {
@@ -1540,6 +1548,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		transpStrip = drawStrip(dstPtr, vs, x, y, width, height, stripnr, smap_ptr);
 
+		// COMI and HE games only uses flag value
+		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
+			transpStrip = true;
+		
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
 			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
@@ -1550,21 +1562,17 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 		CHECK_HEAP;
 
-		// COMI and HE games only uses flag value
-		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
-			transpStrip = true;
-		
 		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag, tmsk_ptr);
 
-#if 0
+#if 1
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking
-		for (i = 0; i < numzbuf; i++) {
+		for (int i = 0; i < numzbuf; i++) {
 			byte *dst1, *dst2;
 
-			dst1 = dst2 = (byte *)vs->pixels + y * vs->pitch + x) * 8;
+			dst1 = dst2 = (byte *)vs->pixels + y * vs->pitch + x * 8;
 			if (vs->hasTwoBuffers)
 				dst2 = vs->backBuf + y * vs->pitch + x * 8;
-			mask_ptr = getMaskBuffer(x, y, i);
+			byte *mask_ptr = getMaskBuffer(x, y, i);
 
 			for (int h = 0; h < height; h++) {
 				int maskbits = *mask_ptr;
@@ -1584,15 +1592,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
 					int stripnr, const byte *smap_ptr) {
-	byte *mask_ptr;
 	bool transpStrip = false;
 
 	if (_vm->_game.version <= 1) {
-		if (_vm->_game.platform == Common::kPlatformNES) {
-			mask_ptr = getMaskBuffer(x, y, 1);
-			drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
-		}
-		else if (_objectMode)
+		if (_objectMode)
 			drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 		else
 			drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
@@ -1633,11 +1636,7 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 
 	if (_vm->_game.version <= 1) {
 		mask_ptr = getMaskBuffer(x, y, 1);
-		if (_vm->_game.platform == Common::kPlatformNES) {
-			drawStripNESMask(mask_ptr, stripnr, y, height);
-		} else {
-			drawStripC64Mask(mask_ptr, stripnr, width, height);
-		}
+		drawStripC64Mask(mask_ptr, stripnr, width, height);
 	} else if (_vm->_game.version == 2) {
 		// Do nothing here for V2 games - zplane was already handled.
 	} else if (flag & dbDrawMaskOnAll) {
@@ -1707,6 +1706,21 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 			}
 		}
 	}
+}
+
+bool GdiNES::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr) {
+	byte *mask_ptr = getMaskBuffer(x, y, 1);
+	drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
+
+	return false;
+}
+
+void GdiNES::decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	byte *mask_ptr = getMaskBuffer(x, y, 1);
+	drawStripNESMask(mask_ptr, stripnr, y, height);
 }
 
 #ifndef DISABLE_HE
@@ -2146,7 +2160,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 	}
 }
 
-void decodeNESTileData(const byte *src, byte *dest) {
+static void decodeNESTileData(const byte *src, byte *dest) {
 	int len = READ_LE_UINT16(src);	src += 2;
 	const byte *end = src + len;
 	src++;	// skip number-of-tiles byte, assume it is correct
@@ -2170,6 +2184,7 @@ static const int v1MMNEScostTables[2][6] = {
 	{ 25,  27,  29,  31,  33,  35},
 	{ 26,  28,  30,  32,  34,  36}
 };
+
 void ScummEngine::NES_loadCostumeSet(int n) {
 	int i;
 	_NESCostumeSet = n;
@@ -2191,7 +2206,7 @@ void ScummEngine::NES_loadCostumeSet(int n) {
 
 }
 
-void Gdi::decodeNESGfx(const byte *room) {
+void GdiNES::decodeNESGfx(const byte *room) {
 	const byte *gdata = room + READ_LE_UINT16(room + 0x0A);
 	int tileset = *gdata++;
 	int width = READ_LE_UINT16(room + 0x04);
@@ -2267,7 +2282,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 	memcpy(_NES.masktableObj, _NES.masktable, 16*8);
 }
 
-void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height) {
+void GdiNES::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height) {
 	int x, y;
 
 	_NES.objX = xpos;
@@ -2331,8 +2346,7 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 	lmask = *ptr++;
 	rmask = *ptr++;
 
-	y = 0;
-	do {
+	for (y = 0; y < height; ++y) {
 		byte *dest = &_NES.masktableObj[y + ypos][mx];
 		*dest = (*dest & lmask) | *ptr++;
 		dest++;
@@ -2343,11 +2357,10 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 				*dest = *ptr++;
 			dest++;
 		}
-		y++;
-	} while (y < height);
+	}
 }
 
-void Gdi::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
+void GdiNES::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
 	top /= 8;
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
@@ -2374,7 +2387,7 @@ void Gdi::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top
 	}
 }
 
-void Gdi::drawStripNESMask(byte *dst, int stripnr, int top, int height) const {
+void GdiNES::drawStripNESMask(byte *dst, int stripnr, int top, int height) const {
 	top /= 8;
 	height /= 8;
 	int x = stripnr;	// masks, unlike room graphics, should NOT be adjusted
