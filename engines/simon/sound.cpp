@@ -381,7 +381,7 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 #endif
 #ifdef USE_FLAC
 	if (!_hasEffectsFile) {
-		sprintf(filename, "%s.flac", gss->effects_filename);
+		sprintf(filename, "%s.fla", gss->effects_filename);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
