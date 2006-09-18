@@ -1554,7 +1554,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
 			transpStrip = true;
 		
-		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag);
+		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag, tmsk_ptr);
 
 #if 0
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking
@@ -1626,12 +1626,10 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 
 void Gdi::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag) {
+	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
 	int i;
 	byte *mask_ptr;
 	const byte *z_plane_ptr;
-
-	const byte *tmsk_ptr = NULL;	// FIXME
 
 	if (_vm->_game.version <= 1) {
 		mask_ptr = getMaskBuffer(x, y, 1);

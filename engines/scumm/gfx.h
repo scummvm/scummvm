@@ -273,7 +273,7 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                bool transpStrip, byte flag, const byte *tmsk_ptr);
 
 public:
 	void init();
