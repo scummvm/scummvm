@@ -1402,47 +1402,6 @@ void SimonEngine::o_unlockZones() {
 	_vgaMemBase = _vgaFrozenBase;
 }
 
-void SimonEngine::o1_screenTextPObj() {
-	// 177: inventory descriptions
-	uint vgaSpriteId = getVarOrByte();
-	uint color = getVarOrByte();
-
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
-	if (getFeatures() & GF_TALKIE) {
-		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
-			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
-			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
-		} else if (subObject != NULL && subObject->objectFlags & kOFNumber) {
-			uint offs = getOffsetOfChild2Param(subObject, kOFNumber);
-			playSpeech(subObject->objectFlagValue[offs] + 3550, vgaSpriteId);
-		}
-	}
-
-	if (subObject != NULL && subObject->objectFlags & kOFText && _subtitles) {
-		const char *stringPtr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
-		TextLocation *tl = getTextLocation(vgaSpriteId);
-		char buf[256];
-		int j, k;
-
-		if (subObject->objectFlags & kOFNumber) {
-			if (_language == Common::HB_ISR) {
-				j = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
-				k = (j % 10) * 10;
-				k += j / 10;
-				if (!(j % 10))
-					sprintf(buf,"0%d%s", k, stringPtr);
-				else
-					sprintf(buf,"%d%s", k, stringPtr);
-			} else {
-				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
-			}
-			stringPtr = buf;
-		}
-		if (stringPtr != NULL)
-			printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
-	}
-}
-
 void SimonEngine::o_getPathPosn() {
 	// 178: path find
 	uint x = getVarOrWord();
@@ -1585,6 +1544,47 @@ void SimonEngine::o1_playTune() {
 		_lastMusicPlayed = music;
 		loadMusic(music);
 		midi.startTrack(track);
+	}
+}
+
+void SimonEngine::o1_screenTextPObj() {
+	// 177: inventory descriptions
+	uint vgaSpriteId = getVarOrByte();
+	uint color = getVarOrByte();
+
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	if (getFeatures() & GF_TALKIE) {
+		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
+			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
+		} else if (subObject != NULL && subObject->objectFlags & kOFNumber) {
+			uint offs = getOffsetOfChild2Param(subObject, kOFNumber);
+			playSpeech(subObject->objectFlagValue[offs] + 3550, vgaSpriteId);
+		}
+	}
+
+	if (subObject != NULL && subObject->objectFlags & kOFText && _subtitles) {
+		const char *stringPtr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
+		TextLocation *tl = getTextLocation(vgaSpriteId);
+		char buf[256];
+		int j, k;
+
+		if (subObject->objectFlags & kOFNumber) {
+			if (_language == Common::HB_ISR) {
+				j = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
+				k = (j % 10) * 10;
+				k += j / 10;
+				if (!(j % 10))
+					sprintf(buf,"0%d%s", k, stringPtr);
+				else
+					sprintf(buf,"%d%s", k, stringPtr);
+			} else {
+				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
+			}
+			stringPtr = buf;
+		}
+		if (stringPtr != NULL)
+			printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 	}
 }
 

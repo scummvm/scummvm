@@ -2042,19 +2042,8 @@ void SimonEngine::vc56_delay() {
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
-void SimonEngine::vc59() {
-	if (getGameType() == GType_SIMON1) {
-		if (!_sound->isVoiceActive())
-			vcSkipNextInstruction();
-	} else {
-		uint16 file = vcReadNextWord();
-		uint16 start = vcReadNextWord();
-		uint16 end = vcReadNextWord() + 1;
-
-		do {
-			vc_kill_sprite(file, start);
-		} while (++start != end);
-	}
+void SimonEngine::vc57_no_op() {
+	/* unused */
 }
 
 void SimonEngine::vc58() {
@@ -2077,8 +2066,19 @@ void SimonEngine::vc58() {
 	_vgaCurZoneNum = file;
 }
 
-void SimonEngine::vc57_no_op() {
-	/* unused */
+void SimonEngine::vc59() {
+	if (getGameType() == GType_SIMON1) {
+		if (!_sound->isVoiceActive())
+			vcSkipNextInstruction();
+	} else {
+		uint16 file = vcReadNextWord();
+		uint16 start = vcReadNextWord();
+		uint16 end = vcReadNextWord() + 1;
+
+		do {
+			vc_kill_sprite(file, start);
+		} while (++start != end);
+	}
 }
 
 void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
