@@ -361,7 +361,7 @@ void ScummEngine_v5::redefineBuiltinCursorHotspot(int index, int x, int y) {
 	_cursorHotspots[index * 2 + 1] = y;
 }
 
-void ScummEngine_v5::setBuiltinCursor(int idx) {
+void ScummEngine_v2::setBuiltinCursor(int idx) {
 	int i, j;
 	byte color;
 
@@ -389,7 +389,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				*dst++ = palette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | ((idx == 3) ? 4 : 0)];
 		}
 
-	} else if (_game.version <= 2 && _game.platform == Common::kPlatformAmiga) {
+	} else if (_game.platform == Common::kPlatformAmiga) {
 		_cursor.width = 15;
 		_cursor.height = 15;
 		_cursor.hotspotX = 7;
@@ -418,7 +418,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			*(hotspot - _cursor.width * (3 + i) + i) = color;
 			*(hotspot + _cursor.width * (3 + i) + i) = color;
 		}
-	} else if (_game.version <= 2) {
+	} else {
 		_cursor.width = 23;
 		_cursor.height = 21;
 		_cursor.hotspotX = 11;
@@ -463,21 +463,27 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		*(hotspot - (_cursor.width * 5) + 1) = color;
 		*(hotspot + (_cursor.width * 5) - 1) = color;
 		*(hotspot + (_cursor.width * 5) + 1) = color;
-	} else {
-		const uint16 *src;
+	}
 
-		_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
-		_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
-		src = _cursorImages[_currentCursor];
+	updateCursor();
+}
 
-		_cursor.width = 16;
-		_cursor.height = 16;
+void ScummEngine_v5::setBuiltinCursor(int idx) {
+	int i, j;
+	byte color = default_cursor_colors[idx];
+	const uint16 *src = _cursorImages[_currentCursor];
 
-		for (i = 0; i < 16; i++) {
-			for (j = 0; j < 16; j++) {
-				if (src[i] & (1 << j))
-					_grabbedCursor[16 * i + 15 - j] = color;
-			}
+	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+
+	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
+	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
+	_cursor.width = 16;
+	_cursor.height = 16;
+
+	for (i = 0; i < 16; i++) {
+		for (j = 0; j < 16; j++) {
+			if (src[i] & (1 << j))
+				_grabbedCursor[16 * i + 15 - j] = color;
 		}
 	}
 

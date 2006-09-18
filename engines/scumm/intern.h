@@ -85,7 +85,7 @@ protected:
 
 	virtual void animateCursor();
 
-	void setBuiltinCursor(int index);
+	virtual void setBuiltinCursor(int index);
 	void redefineBuiltinCursorFromChar(int index, int chr);
 	void redefineBuiltinCursorHotspot(int index, int x, int y);
 
@@ -313,6 +313,8 @@ protected:
 	virtual void handleMouseOver(bool updateInventory);
 	void initV2MouseOver();
 	void initNESMouseOver();
+
+	virtual void setBuiltinCursor(int index);
 
 	void runObject(int obj, int entry);
 
