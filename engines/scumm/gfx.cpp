@@ -1584,43 +1584,43 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
 					int stripnr, const byte *smap_ptr) {
-
 	byte *mask_ptr;
 	bool transpStrip = false;
 
-		if (_vm->_game.version <= 1) {
-			if (_vm->_game.platform == Common::kPlatformNES) {
-				mask_ptr = getMaskBuffer(x, y, 1);
-				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
-			}
-			else if (_objectMode)
-				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
-			else
-				drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
-		} else if (_vm->_game.version == 2) {
-			// Do nothing here for V2 games - drawing was already handled.
-		} else {
-			// Do some input verification and make sure the strip/strip offset
-			// are actually valid. Normally, this should never be a problem,
-			// but if e.g. a savegame gets corrupted, we can easily get into
-			// trouble here. See also bug #795214.
-			int offset = -1, smapLen;
-			if (_vm->_game.features & GF_16COLOR) {
-				smapLen = READ_LE_UINT16(smap_ptr);
-				if (stripnr * 2 + 2 < smapLen)
-					offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
-			} else if (_vm->_game.features & GF_SMALL_HEADER) {
-				smapLen = READ_LE_UINT32(smap_ptr);
-				if (stripnr * 4 + 4 < smapLen)
-					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
-			} else {
-				smapLen = READ_BE_UINT32(smap_ptr);
-				if (stripnr * 4 + 8 < smapLen)
-					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
-			}
-			assertRange(0, offset, smapLen-1, "screen strip");
-			transpStrip = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+	if (_vm->_game.version <= 1) {
+		if (_vm->_game.platform == Common::kPlatformNES) {
+			mask_ptr = getMaskBuffer(x, y, 1);
+			drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
 		}
+		else if (_objectMode)
+			drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
+		else
+			drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
+	} else if (_vm->_game.version == 2) {
+		// Do nothing here for V2 games - drawing was already handled.
+	} else {
+		// Do some input verification and make sure the strip/strip offset
+		// are actually valid. Normally, this should never be a problem,
+		// but if e.g. a savegame gets corrupted, we can easily get into
+		// trouble here. See also bug #795214.
+		int offset = -1, smapLen;
+		if (_vm->_game.features & GF_16COLOR) {
+			smapLen = READ_LE_UINT16(smap_ptr);
+			if (stripnr * 2 + 2 < smapLen)
+				offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
+		} else if (_vm->_game.features & GF_SMALL_HEADER) {
+			smapLen = READ_LE_UINT32(smap_ptr);
+			if (stripnr * 4 + 4 < smapLen)
+				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
+		} else {
+			smapLen = READ_BE_UINT32(smap_ptr);
+			if (stripnr * 4 + 8 < smapLen)
+				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
+		}
+		assertRange(0, offset, smapLen-1, "screen strip");
+		transpStrip = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+	}
+
 	return transpStrip;
 }
 
@@ -1633,83 +1633,82 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 
 	const byte *tmsk_ptr = NULL;	// FIXME
 
-		if (_vm->_game.version <= 1) {
-			mask_ptr = getMaskBuffer(x, y, 1);
-			if (_vm->_game.platform == Common::kPlatformNES) {
-				drawStripNESMask(mask_ptr, stripnr, y, height);
-			} else {
-				drawStripC64Mask(mask_ptr, stripnr, width, height);
-			}
-		} else if (_vm->_game.version == 2) {
-			// Do nothing here for V2 games - zplane was already handled.
-		} else if (flag & dbDrawMaskOnAll) {
-			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
-			// box and the speech icons. While these objects only have one
-			// mask, it should be applied to all the Z-planes in the room,
-			// i.e. they should mask every actor.
-			//
-			// This flag used to be called dbDrawMaskOnBoth, and all it
-			// would do was to mask Z-plane 0. (Z-plane 1 would also be
-			// masked, because what is now the else-clause used to be run
-			// always.) While this seems to be the only way there is to
-			// mask Z-plane 0, this wasn't good enough since actors in
-			// Z-planes >= 2 would not be masked.
-			//
-			// The flag is also used by The Dig and Full Throttle, but I
-			// don't know what for. At the time of writing, these games
-			// are still too unstable for me to investigate.
-
-			if (_vm->_game.version == 8)
-				z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
-			else
-				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
-			for (i = 0; i < numzbuf; i++) {
-				mask_ptr = getMaskBuffer(x, y, i);
-				if (transpStrip && (flag & dbAllowMaskOr))
-					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
-				else
-					decompressMaskImg(mask_ptr, z_plane_ptr, height);
-			}
+	if (_vm->_game.version <= 1) {
+		mask_ptr = getMaskBuffer(x, y, 1);
+		if (_vm->_game.platform == Common::kPlatformNES) {
+			drawStripNESMask(mask_ptr, stripnr, y, height);
 		} else {
-			for (i = 1; i < numzbuf; i++) {
-				uint32 offs;
+			drawStripC64Mask(mask_ptr, stripnr, width, height);
+		}
+	} else if (_vm->_game.version == 2) {
+		// Do nothing here for V2 games - zplane was already handled.
+	} else if (flag & dbDrawMaskOnAll) {
+		// Sam & Max uses dbDrawMaskOnAll for things like the inventory
+		// box and the speech icons. While these objects only have one
+		// mask, it should be applied to all the Z-planes in the room,
+		// i.e. they should mask every actor.
+		//
+		// This flag used to be called dbDrawMaskOnBoth, and all it
+		// would do was to mask Z-plane 0. (Z-plane 1 would also be
+		// masked, because what is now the else-clause used to be run
+		// always.) While this seems to be the only way there is to
+		// mask Z-plane 0, this wasn't good enough since actors in
+		// Z-planes >= 2 would not be masked.
+		//
+		// The flag is also used by The Dig and Full Throttle, but I
+		// don't know what for. At the time of writing, these games
+		// are still too unstable for me to investigate.
 
-				if (!zplane_list[i])
-					continue;
+		if (_vm->_game.version == 8)
+			z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
+		else
+			z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
+		for (i = 0; i < numzbuf; i++) {
+			mask_ptr = getMaskBuffer(x, y, i);
+			if (transpStrip && (flag & dbAllowMaskOr))
+				decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
+			else
+				decompressMaskImg(mask_ptr, z_plane_ptr, height);
+		}
+	} else {
+		for (i = 1; i < numzbuf; i++) {
+			uint32 offs;
 
-				if (_vm->_game.features & GF_OLD_BUNDLE)
-					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2);
-				else if (_vm->_game.features & GF_OLD256)
-					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
-				else if (_vm->_game.features & GF_SMALL_HEADER)
-					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
-				else if (_vm->_game.version == 8)
-					offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
-				else
-					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
+			if (!zplane_list[i])
+				continue;
 
-				mask_ptr = getMaskBuffer(x, y, i);
+			if (_vm->_game.features & GF_OLD_BUNDLE)
+				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2);
+			else if (_vm->_game.features & GF_OLD256)
+				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
+			else if (_vm->_game.features & GF_SMALL_HEADER)
+				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
+			else if (_vm->_game.version == 8)
+				offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
+			else
+				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-				if (offs) {
-					z_plane_ptr = zplane_list[i] + offs;
+			mask_ptr = getMaskBuffer(x, y, i);
 
-					if (tmsk_ptr) {
-						const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + 8);
-						decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
-					} else if (transpStrip && (flag & dbAllowMaskOr)) {
-						decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
-					} else {
-						decompressMaskImg(mask_ptr, z_plane_ptr, height);
-					}
+			if (offs) {
+				z_plane_ptr = zplane_list[i] + offs;
 
+				if (tmsk_ptr) {
+					const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + 8);
+					decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
+				} else if (transpStrip && (flag & dbAllowMaskOr)) {
+					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				} else {
-					if (!(transpStrip && (flag & dbAllowMaskOr)))
-						for (int h = 0; h < height; h++)
-							mask_ptr[h * _numStrips] = 0;
-					// FIXME: needs better abstraction
+					decompressMaskImg(mask_ptr, z_plane_ptr, height);
 				}
+
+			} else {
+				if (!(transpStrip && (flag & dbAllowMaskOr)))
+					for (int h = 0; h < height; h++)
+						mask_ptr[h * _numStrips] = 0;
 			}
 		}
+	}
 }
 
 /**
