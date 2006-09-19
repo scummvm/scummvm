@@ -70,6 +70,7 @@ static const PlainGameDescriptor simonGames[] = {
 	{"feeble", "The Feeble Files"},
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
+	{"waxworks", "Waxworks"},
 	{NULL, NULL}
 };
 
@@ -88,7 +89,7 @@ GameDescriptor Engine_SIMON_findGameID(const char *gameid) {
 	// First search the list of supported game IDs.
 	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
+		if (!scumm_stricmp(gameid, g->gameid))
 			return *g;
 		g++;
 	}
@@ -586,7 +587,28 @@ static GameFileDescription FEEBLEFILES_ES_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
+static GameFileDescription WAXWORKS_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"7751e9358e894e32ef40ef3b3bae0f2a"},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a"},
+	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c"},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0"},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f"},
+};
+
 static GameDescription gameDescriptions[] = {
+	// Waxworks - English Floopy
+	{
+		"waxworks",
+		GType_WW,
+		GID_WAXWORKS,
+		"Floppy",
+		ARRAYSIZE(WAXWORKS_GameFiles),
+		WAXWORKS_GameFiles,
+		GF_OLD_BUNDLE,
+		Common::EN_ANY,
+		Common::kPlatformPC,
+	},
+
 	// Simon the Sorcerer 1 - English Acorn CD Demo
 	{
 		"simon1",

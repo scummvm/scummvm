@@ -40,6 +40,23 @@ using Common::File;
 namespace Simon {
 
 // Script opcodes to load into memory
+static const char *const opcode_arg_table_waxworks[256] = {
+	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
+	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
+	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
+	"BN ", "BN ", "BB ", "BB ", "BN ", "BN ", "BB ", "BB ", "BN ", "BB ", "BN ", "B ", "I ", "IB ",
+	"IB ", "II ", "I ", "I ", "IN ", "B ", "T ", "T ", "NNNNNB ", "BT ", "BT ", "T ", " ", "B ",
+	"N ", "IBN ", "I ", "I ", "I ", "NN ", " ", " ", "IT ", "II ", "I ", "B ", " ", "IB ", "IBB ",
+	"IIB ", "T ", "T ", "T ", "IB ", "IB ", "IB ", "B ", "BB ", "IBB ", "NB ", "N ", "NBNNN ", "N ",
+	" ", "BNNNNNN ", "B ", " ", "B ", "B ", "BB ", "NNNNNIN ", "N ", "N ", "N ", "NNN ", "NBNN ",
+	"IBNN ", "IB ", "IB ", "IB ", "IB ", "N ", "N ", "N ", "BI ", " ", " ", "N ", "I ", "IBB ",
+	"NN ", "N ", "N ", "Ban ", "BB ", " ", " ", " ", " ", "IB ", "B ", " ", "II ", " ", "BI ", "N ",
+	"I ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "BI ", "BB ", "B ", "B ", "B ",	"B ",
+	"IBB ", "IBN ", "IB ", "B ", " ", "TB ", "TB ", "I ", "N ", "B ", "INB ", "INB ", "INB ", "INB ",
+	"INB ", "INB ", "INB ", "N ", " ", "INBB ", "B ", "B ", "Ian ", "B ", "B ", "B ", "B ", "T ",
+	"T ", "B ", " ", "I ", " ", " "
+};
+
 static const char *const opcode_arg_table_simon1win[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
@@ -252,6 +269,27 @@ void SimonEngine::loadGamePcFile() {
 
 	in.close();
 
+	if (getGameType() == GType_WW) {
+		/* Read list of TABLE resources */
+		in.open(getFileName(GAME_XTBLFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_XTBLFILE));
+		}
+
+		file_size = in.size();
+
+		_xtblList = (byte *)malloc(file_size);
+		if (_xtblList == NULL)
+			error("loadGamePcFile: Out of memory for strip table list");
+		in.read(_xtblList, file_size);
+		in.close();
+
+		/* Remember the current state */
+		_xsubroutineListOrg = _subroutineList;
+		_xtablesHeapPtrOrg = _tablesHeapPtr;
+		_xtablesHeapCurPosOrg = _tablesHeapCurPos;
+	}
+
 	/* Read list of TABLE resources */
 	in.open(getFileName(GAME_TBLFILE));
 	if (in.isOpen() == false) {
@@ -361,6 +399,17 @@ void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 				subObject->objectFlagValue[k++] = in->readUint16BE();
 
 		subObject->objectName = (uint16)in->readUint32BE();
+	} else if (type == 8) {
+		SubUserChain *chain = (SubUserChain *)allocateChildBlock(item, 8, sizeof(SubUserChain));
+		chain->chChained = (uint16)fileReadItemID(in);
+	} else if (type == 9) {
+		setUserFlag(item, 0, in->readUint16BE());
+		setUserFlag(item, 1, in->readUint16BE());
+		setUserFlag(item, 2, in->readUint16BE());
+		setUserFlag(item, 3, in->readUint16BE());
+	} else if (type == 255) {
+		SubUserInherit *inherit = (SubUserInherit *)allocateChildBlock(item, 255, sizeof(SubUserInherit));
+		inherit->inMaster = (uint16)fileReadItemID(in);
 	} else {
 		error("readItemChildren: invalid type %d", type);
 	}
@@ -380,16 +429,18 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 
 	const char *const *table;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF)
 		table = opcode_arg_table_feeblefiles;
-	} else if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE))
+	else if (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))
 		table = opcode_arg_table_simon2win;
 	else if (getGameType() == GType_SIMON2)
 		table = opcode_arg_table_simon2dos;
-	else if (getFeatures() & GF_TALKIE)
+	else if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE))
 		table = opcode_arg_table_simon1win;
-	else
+	else if (getGameType() == GType_SIMON1)
 		table = opcode_arg_table_simon1dos;
+	else /* if (getGameType() == GType_WW) */
+		table = opcode_arg_table_waxworks;
 
 	i = 0;
 
@@ -690,10 +741,14 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
 				sprintf(filename, "%.3d%d.out", id / 2, type);
-			else 
+			else
 				sprintf(filename, "%.3d%d.pkd", id / 2, type);
 		} else {
-			sprintf(filename, "%.3d%d.VGA", id / 2, type);
+			if (getGameType() == GType_WW) {
+				sprintf(filename, "%.2d%d.VGA", id / 2, type);
+			} else {
+				sprintf(filename, "%.3d%d.VGA", id / 2, type);
+			}
 		}
 
 		in.open(filename);

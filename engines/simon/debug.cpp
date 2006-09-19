@@ -48,8 +48,10 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 		st = s = simon1talkie_opcode_name_table[opcode];
 	} else if (getGameType() == GType_SIMON2) {
 		st = s = simon2dos_opcode_name_table[opcode];
-	} else {
+	} else if (getGameType() == GType_SIMON1) {
 		st = s = simon1dos_opcode_name_table[opcode];
+	} else {
+		st = s = ww_opcode_name_table[opcode];
 	}
 	if (s == NULL) {
 		//error("INVALID OPCODE %d", opcode);
@@ -178,7 +180,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 	const char *str, *strn;
 
 	do {
-		if (getGameType() == GType_SIMON1) {
+		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 			opcode = READ_BE_UINT16(src);
 			src += 2;
 		} else {
@@ -194,8 +196,10 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			strn = str = feeblefiles_video_opcode_name_table[opcode];
 		} else if (getGameType() == GType_SIMON2) {
 			strn = str = simon2_video_opcode_name_table[opcode];
-		} else {
+		} else if (getGameType() == GType_SIMON1) {
 			strn = str = simon1_video_opcode_name_table[opcode];
+		} else {
+			strn = str = ww_video_opcode_name_table[opcode];
 		}
 
 		while (*strn != '|')

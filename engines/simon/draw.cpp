@@ -85,14 +85,20 @@ void SimonEngine::animateSprites() {
 		_vgaCurSpritePriority = vsp->priority;
 
 		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-
-		if (getGameType() == GType_SIMON1) {
-			params[4] = READ_BE_UINT16(&vsp->flags);
+		if (getGameType() == GType_WW) {
+			params[1] = readUint16Wrapper(&vsp->x);
+			params[2] = readUint16Wrapper(&vsp->y);
+			params[3] = READ_BE_UINT16(&vsp->flags);
 		} else {
-			*(byte *)(&params[4]) = (byte)vsp->flags;
+			params[1] = readUint16Wrapper(&vsp->palette);
+			params[2] = readUint16Wrapper(&vsp->x);
+			params[3] = readUint16Wrapper(&vsp->y);
+
+			if (getGameType() == GType_SIMON1) {
+				params[4] = READ_BE_UINT16(&vsp->flags);
+			} else {
+				*(byte *)(&params[4]) = (byte)vsp->flags;
+			}
 		}
 
 		_vcPtr = (const byte *)params;
@@ -132,10 +138,22 @@ void SimonEngine::animateSpritesDebug() {
 			printf("id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-		params[4] = readUint16Wrapper(&vsp->flags);
+		if (getGameType() == GType_WW) {
+			params[1] = readUint16Wrapper(&vsp->x);
+			params[2] = readUint16Wrapper(&vsp->y);
+			params[3] = READ_BE_UINT16(&vsp->flags);
+		} else {
+			params[1] = readUint16Wrapper(&vsp->palette);
+			params[2] = readUint16Wrapper(&vsp->x);
+			params[3] = readUint16Wrapper(&vsp->y);
+
+			if (getGameType() == GType_SIMON1) {
+				params[4] = READ_BE_UINT16(&vsp->flags);
+			} else {
+				*(byte *)(&params[4]) = (byte)vsp->flags;
+			}
+		}
+
 		_vcPtr = (const byte *)params;
 		vc10_draw();
 

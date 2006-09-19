@@ -43,7 +43,18 @@ struct SubObject : Child {
 	int16 objectFlagValue[1];
 };
 
+struct SubUserChain : Child {
+	uint16 subroutine_id;
+	uint16 chChained;
+};
+
+struct SubUserInherit : Child {
+	uint16 subroutine_id;
+	uint16 inMaster;
+};
+
 struct SubUserFlag : Child {
+	uint16 subroutine_id;
 	uint16 userFlags[4];
 };
 
@@ -166,11 +177,16 @@ enum GameFileTypes {
 	GAME_GMEFILE  = 1 << 2,
 	GAME_STRFILE  = 1 << 3,
 	GAME_TBLFILE  = 1 << 4,
+	GAME_XTBLFILE  = 1 << 5,
 
-	GAME_GFXIDXFILE = 1 << 5
+	GAME_GFXIDXFILE = 1 << 6
 };
 
 enum GameIds {
+	GID_ELVIRA,
+	GID_ELVIRA2,
+	GID_WAXWORKS,
+
 	GID_SIMON1DOS,
 	GID_SIMON1DOS_RU,
 	GID_SIMON1DOS_INF,

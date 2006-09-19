@@ -40,11 +40,18 @@ Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 			return cur;
 	}
 
-	loadTablesIntoMem(subroutine_id);
+	if (loadXTablesIntoMem(subroutine_id)) {
+		for (cur = _subroutineList; cur; cur = cur->next) {
+			if (cur->id == subroutine_id)
+				return cur;
+		}
+	}
 
-	for (cur = _subroutineList; cur; cur = cur->next) {
-		if (cur->id == subroutine_id)
-			return cur;
+	if (loadTablesIntoMem(subroutine_id)) {
+		for (cur = _subroutineList; cur; cur = cur->next) {
+			if (cur->id == subroutine_id)
+				return cur;
+		}
 	}
 
 	if (subroutine_id != 160)
@@ -99,7 +106,7 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 	return _gameFile;
 }
 
-void SimonEngine::loadTablesIntoMem(uint subr_id) {
+bool SimonEngine::loadTablesIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -108,7 +115,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 
 	p = _tblList;
 	if (p == NULL)
-		return;
+		return 0;
 
 	while (*p) {
 		for (i = 0; *p; p++, i++)
@@ -151,12 +158,71 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 
 				if (_tablesHeapCurPos > _tablesHeapSize)
 					error("loadTablesIntoMem: Out of table memory");
-				return;
+				return 1;
 			}
 		}
 	}
 
 	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
+	return 0;
+}
+
+bool SimonEngine::loadXTablesIntoMem(uint subr_id) {
+	if (getGameType() != GType_WW)
+		return 0;
+
+	byte *p;
+	int i;
+	uint min_num, max_num;
+	char filename[30];
+	File *in;
+
+	p = _xtblList;
+	if (p == NULL)
+		return 0;
+
+	while (*p) {
+		for (i = 0; *p; p++, i++)
+			filename[i] = *p;
+		filename[i] = 0;
+		p++;
+
+		for (;;) {
+			min_num = (p[0] * 256) | p[1];
+			p += 2;
+
+			if (min_num == 0)
+				break;
+
+			max_num = (p[0] * 256) | p[1];
+			p += 2;
+
+			if (subr_id >= min_num && subr_id <= max_num) {
+				_subroutineList = _xsubroutineListOrg;
+				_tablesHeapPtr = _xtablesHeapPtrOrg;
+				_tablesHeapCurPos = _xtablesHeapCurPosOrg;
+				_stringIdLocalMin = 1;
+				_stringIdLocalMax = 0;
+
+				in = openTablesFile(filename);
+				readSubroutineBlock(in);
+				closeTablesFile(in);
+
+				alignTableMem();
+
+				_subroutineListOrg = _subroutineList;
+				_tablesHeapPtrOrg = _tablesHeapPtr;
+				_tablesHeapCurPosOrg = _tablesHeapCurPos;
+				_tablesheapPtrNew = _tablesHeapPtr;
+				_tablesHeapCurPosNew = _tablesHeapCurPos;
+
+				return 1;
+			}
+		}
+	}
+
+	debug(1,"loadXTablesIntoMem: didn't find %d", subr_id);
+	return 0;
 }
 
 void SimonEngine::closeTablesFile(File *in) {

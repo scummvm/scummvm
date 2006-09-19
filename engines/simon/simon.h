@@ -112,7 +112,8 @@ struct VgaTimerEntry {
 enum SIMONGameType {
 	GType_FF = 0,
 	GType_SIMON1 = 1,
-	GType_SIMON2 = 2
+	GType_SIMON2 = 2,
+	GType_WW = 3
 };
 
 struct GameFileDescription {
@@ -216,18 +217,23 @@ protected:
 
 	byte *_iconFilePtr;
 
-	byte *_tblList;
-
 	const byte *_codePtr;
 
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
+	byte *_xtblList;
+	byte *_xtablesHeapPtrOrg;
+	uint _xtablesHeapCurPosOrg;
+	Subroutine *_xsubroutineListOrg;
+
+	byte *_tblList;
 	byte *_tablesHeapPtr, *_tablesHeapPtrOrg, *_tablesheapPtrNew;
 	uint _tablesHeapSize, _tablesHeapCurPos, _tablesHeapCurPosOrg;
 	uint _tablesHeapCurPosNew;
+	Subroutine *_subroutineListOrg;
 
-	Subroutine *_subroutineList, *_subroutineListOrg;
+	Subroutine *_subroutineList;
 	uint _subroutine;
 
 	uint _dxSurfacePitch;
@@ -622,7 +628,8 @@ protected:
 	void mouseOn();
 
 	void loadTextIntoMem(uint stringId);
-	void loadTablesIntoMem(uint subr_id);
+	bool loadTablesIntoMem(uint subr_id);
+	bool loadXTablesIntoMem(uint subr_id);
 
 	uint loadTextFile(const char *filename, byte *dst);
 	Common::File *openTablesFile(const char *filename);
@@ -784,7 +791,7 @@ public:
 	void vc54_no_op();
 	void vc55_moveBox();
 	void vc56_delay();
-	void vc57_no_op();
+	void vc57_blackPalette();
 	void vc58();
 	void vc59();
 	void vc60_killSprite();
@@ -948,6 +955,15 @@ public:
 	void o_mouseOn();
 	void o_unloadZone();
 	void o_unfreezeZones();
+
+	uint16 getDoorState(Item *item, uint16 d);
+	uint16 getExitOf(Item *item, uint16 d);
+
+	// Opcodes, Waxworks only
+	void oww_whereTo();
+	void oww_menu();
+	void oww_textMenu();
+	void oww_ifDoorOpen();
 
 	// Opcodes, Simon 1 only
 	void o1_printLongText();

@@ -288,6 +288,50 @@ void SimonEngine::setupOpcodes() {
 	_numOpcodes = ARRAYSIZE(opcode_table);
 
 	switch (getGameType()) {
+	case GType_WW:
+		// Confirmed
+		opcode_table[70] = &SimonEngine::o1_printLongText;
+		opcode_table[83] = &SimonEngine::o1_rescan;
+		opcode_table[98] = &SimonEngine::o1_animate;
+		opcode_table[99] = &SimonEngine::o1_stopAnimate;
+		opcode_table[85] = &SimonEngine::oww_whereTo;
+		opcode_table[105] = &SimonEngine::oww_menu;
+		opcode_table[106] = &SimonEngine::oww_textMenu;
+		opcode_table[127] = &SimonEngine::o1_playTune;
+		opcode_table[148] = &SimonEngine::oww_ifDoorOpen;
+		opcode_table[179] = &SimonEngine::o_isAdjNoun;
+		opcode_table[180] = &SimonEngine::o_b2Set;
+		opcode_table[181] = &SimonEngine::o_b2Clear;
+		opcode_table[182] = &SimonEngine::o_b2Zero;
+		opcode_table[183] = &SimonEngine::o_b2NotZero;
+
+		// Code difference, check if triggered
+		opcode_table[161] = NULL;
+		opcode_table[162] = NULL;
+		opcode_table[163] = NULL;
+		opcode_table[164] = NULL;
+		opcode_table[165] = NULL;
+		opcode_table[166] = NULL;
+		opcode_table[167] = NULL;
+		opcode_table[168] = NULL;
+		opcode_table[169] = NULL;
+		opcode_table[170] = NULL;
+		opcode_table[171] = NULL;
+		opcode_table[172] = NULL;
+		opcode_table[173] = NULL;
+		opcode_table[174] = NULL;
+		opcode_table[175] = NULL;
+		opcode_table[176] = NULL;
+		opcode_table[177] = NULL;
+		opcode_table[178] = NULL;
+		opcode_table[184] = NULL;
+		opcode_table[185] = NULL;
+		opcode_table[186] = NULL;
+		opcode_table[187] = NULL;
+		opcode_table[188] = NULL;
+		opcode_table[189] = NULL;
+		opcode_table[190] = NULL;
+		break;
 	case GType_SIMON1:
 		opcode_table[70] = &SimonEngine::o1_printLongText;
 		opcode_table[83] = &SimonEngine::o1_rescan;
@@ -376,7 +420,7 @@ int SimonEngine::getScriptReturn() {
 }
 
 // -----------------------------------------------------------------------
-// Simon 1 Opcodes
+// Common Opcodes
 // -----------------------------------------------------------------------
 
 void SimonEngine::o_at() {
@@ -1492,6 +1536,76 @@ void SimonEngine::o_unloadZone() {
 void SimonEngine::o_unfreezeZones() {
 	// 186: vga pointer op 3
 	unfreezeBottom();
+}
+
+// -----------------------------------------------------------------------
+// Waxworks 1 Opcodes
+// -----------------------------------------------------------------------
+
+uint16 SimonEngine::getDoorState(Item *item, uint16 d) {
+	uint16 mask = 3;
+	uint16 n;
+
+	SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
+	if (subRoom == NULL)
+	    return 0;
+
+	d <<= 1;
+	mask <<= d;
+	n = subRoom->roomExitStates & mask;
+	n >>= d;
+
+	return n;
+}
+
+uint16 SimonEngine::getExitOf(Item *item, uint16 d) {
+	uint16 x;
+	uint16 y = 0;
+
+	SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
+	if (subRoom == NULL)
+		return 0;
+	x = d;
+	while (x > y) {
+		if (getDoorState(item, y) == 0)
+			d--;
+		y++;
+	}
+	return subRoom->roomExit[d];
+}
+
+void SimonEngine::oww_whereTo() {
+	// 85: where to
+	Item *i = getNextItemPtr();
+	int16 d = getVarOrByte();
+	int16 f = getVarOrByte();
+
+	if (f == 1)
+		_subjectItem = _itemArrayPtr[getExitOf(i, d)];
+	else
+		_objectItem = _itemArrayPtr[getExitOf(i, d)];
+}
+
+void SimonEngine::oww_menu() {
+	// 105: menu
+	getVarOrByte();
+}
+
+void SimonEngine::oww_textMenu() {
+	// 106: text menu
+
+	/* byte tmp = getVarOrByte();
+	TextMenu[tmp] = getVarOrByte(); */
+
+	getVarOrByte();
+	getVarOrByte();
+}
+
+void SimonEngine::oww_ifDoorOpen() {
+	// 148: if door open
+	Item *item = getNextItemPtr();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getDoorState(item, d) != 0);
 }
 
 // -----------------------------------------------------------------------

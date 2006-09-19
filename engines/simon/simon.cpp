@@ -99,14 +99,18 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	_iconFilePtr = 0;
 
-	_tblList = 0;
-
 	_codePtr = 0;
 
 	_localStringtable = 0;
 	_stringIdLocalMin = 0;
 	_stringIdLocalMax = 0;
 
+	_xtblList = 0;
+	_xtablesHeapPtrOrg = 0;
+	_xtablesHeapCurPosOrg = 0;
+	_xsubroutineListOrg = 0;
+
+	_tblList = 0;
 	_tablesHeapPtr = 0;
 	_tablesHeapPtrOrg = 0;
 	_tablesheapPtrNew = 0;
@@ -114,9 +118,9 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_tablesHeapCurPos = 0;
 	_tablesHeapCurPosOrg = 0;
 	_tablesHeapCurPosNew = 0;
+	_subroutineListOrg = 0;
 
 	_subroutineList = 0;
-	_subroutineListOrg = 0;
 	_subroutine = 0;
 
 	_dxSurfacePitch = 0;
@@ -707,9 +711,9 @@ Child *SimonEngine::allocateChildBlock(Item *i, uint type, uint size) {
 }
 
 void SimonEngine::allocItemHeap() {
-	_itemHeapSize = 20000;
+	_itemHeapSize = 32000;
 	_itemHeapCurPos = 0;
-	_itemHeapPtr = (byte *)calloc(20000, 1);
+	_itemHeapPtr = (byte *)calloc(32000, 1);
 }
 
 void SimonEngine::allocTablesHeap() {
@@ -754,6 +758,7 @@ uint SimonEngine::getVarOrWord() {
 
 Item *SimonEngine::getNextItemPtr() {
 	int a = getNextWord();
+
 	switch (a) {
 	case -1:
 		return _subjectItem;
@@ -764,6 +769,7 @@ Item *SimonEngine::getNextItemPtr() {
 	case -7:
 		return actor();
 	case -9:
+		assert (derefItem(me()->parent) != NULL);
 		return derefItem(me()->parent);
 	default:
 		return derefItem(a);
@@ -1163,7 +1169,11 @@ startOver:
 void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
-	if (getGameType() == GType_SIMON1) {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
+		if (_variableArray[254] || _variableArray[249]) {
+			hitarea_stuff_helper_2();
+		}
+	} else {
 		uint subr_id = (uint16)_variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
@@ -1173,10 +1183,6 @@ void SimonEngine::hitarea_stuff_helper() {
 			}
 			_variableArray[254] = 0;
 			_runScriptReturn1 = false;
-		}
-	} else {
-		if (_variableArray[254] || _variableArray[249]) {
-			hitarea_stuff_helper_2();
 		}
 	}
 
@@ -1265,11 +1271,8 @@ void SimonEngine::loadZone(uint vga_res) {
 	vpe->vgaFile2 = loadVGAFile(vga_res * 2 + 1, 2, size);
 	vpe->vgaFile2End = vpe->vgaFile2 + size;
 
-	vpe->sfxFile = NULL;
-	if (getGameType() == GType_FF && getPlatform() == Common::kPlatformWindows) {
-		vpe->sfxFile = loadVGAFile(vga_res * 2, 3, size);
-		vpe->sfxFileEnd = vpe->sfxFile + size;
-	}
+	vpe->sfxFile = loadVGAFile(vga_res * 2, 3, size);
+	vpe->sfxFileEnd = vpe->sfxFile + size;
 }
 
 void SimonEngine::setZoneBuffers() {
@@ -1343,8 +1346,7 @@ void SimonEngine::checkNoOverWrite(byte *end) {
 
 void SimonEngine::checkRunningAnims(byte *end) {
 	VgaSprite *vsp;
-	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-		(_lockWord & 0x20)) {
+	if (getGameType() != GType_FF && (_lockWord & 0x20)) {
 		return;
 	}
 
@@ -1451,7 +1453,21 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 
 	bb = _curVgaFile1;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		b = bb + READ_BE_UINT16(bb + 10);
+		b += 20;
+
+		count = READ_BE_UINT16(&((VgaFileHeader2_WW *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_WW *) b)->imageTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id)
+				break;
+			b += sizeof(ImageHeader_WW);
+		}
+		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
+
+	} else if (getGameType() == GType_FF) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
@@ -1499,7 +1515,9 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 
 	vc_ptr_org = _vcPtr;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
+	} else if (getGameType() == GType_FF) {
 		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
 	} else {
 		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
@@ -1566,6 +1584,7 @@ void SimonEngine::waitForSync(uint a) {
 	_syncCount = 0;
 	_exitCutscene = false;
 	_rightButtonDown = false;
+
 	while (_vgaWaitFor != 0) {
 		if (_rightButtonDown) {
 			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
@@ -1631,7 +1650,7 @@ uint SimonEngine::itemPtrToID(Item *id) {
 bool SimonEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON1) {
+		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 			if (vsp->id == id)
 				return true;
 		} else {
@@ -1791,9 +1810,12 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 	vsp->y = y;
 	vsp->x = x;
 	vsp->image = 0;
-	vsp->palette = palette;
+	if (getGameType() == GType_WW)
+		vsp->palette = 0;
+	else
+		vsp->palette = palette;
 	vsp->id = vgaSpriteId;
-	if (getGameType() == GType_SIMON1)
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW)
 		vsp->zoneNum = zoneNum = vgaSpriteId / 100;
 	else
 		vsp->zoneNum = zoneNum;
@@ -1809,7 +1831,13 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 	}
 
 	pp = _curVgaFile1;
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		p = pp + READ_BE_UINT16(pp + 10);
+		p += 20;
+
+		count = READ_BE_UINT16(&((VgaFileHeader2_WW *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_WW *) p)->animationTable);
+	} else if (getGameType() == GType_FF) {
 		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
 		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
@@ -1820,7 +1848,16 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 	}
 
 	for (;;) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_WW) {
+			if (READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId) {
+				if (_startVgaScript)
+					dump_vga_script(pp + READ_BE_UINT16(&((AnimationHeader_WW *)p)->scriptOffs), zoneNum, vgaSpriteId);
+
+				addVgaEvent(_vgaBaseDelay, pp + READ_BE_UINT16(&((AnimationHeader_WW *) p)->scriptOffs), vgaSpriteId, zoneNum);
+				break;
+			}
+			p += sizeof(AnimationHeader_WW);
+		} else if (getGameType() == GType_FF) {
 			if (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId) {
 				if (_startVgaScript)
 					dump_vga_script(pp + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
@@ -2125,6 +2162,19 @@ void SimonEngine::loadMusic(uint music) {
 				midi.loadSMF (&f, music);
 		}
 
+		midi.startTrack (0);
+	} else {
+		midi.stop();
+		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
+
+		char filename[15];
+		File f;
+		sprintf(filename, "MOD%d.MUS", music);
+		f.open(filename);
+		if (f.isOpen() == false)
+			error("loadMusic: Can't load music from '%s'", filename);
+
+		midi.loadS1D (&f);
 		midi.startTrack (0);
 	}
 }

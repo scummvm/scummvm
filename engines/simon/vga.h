@@ -92,6 +92,34 @@ struct AnimationHeader_Simon {
 };
 
 
+// Waxworks
+struct VgaFileHeader2_WW {
+	uint16 x_1;
+	uint16 imageCount;
+	uint16 x_2;
+	uint16 animationCount;
+	uint16 x_3;
+	uint16 imageTable;
+	uint16 x_4;
+	uint16 animationTable;
+	uint16 x_5;
+};
+
+struct ImageHeader_WW {
+	uint16 id;
+	uint16 x_1;
+	uint16 x_2;
+	uint16 scriptOffs;
+};
+
+struct AnimationHeader_WW {
+	uint16 id;
+	uint16 x_1;
+	uint16 x_2;
+	uint16 scriptOffs;
+};
+
+
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 enum DrawFlags {

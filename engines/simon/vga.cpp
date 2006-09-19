@@ -92,7 +92,7 @@ void SimonEngine::setupVgaOpcodes() {
 		&SimonEngine::vc54_no_op,
 		&SimonEngine::vc55_moveBox,
 		&SimonEngine::vc56_delay,
-		&SimonEngine::vc57_no_op,
+		&SimonEngine::vc57_blackPalette,
 		&SimonEngine::vc58,
 		&SimonEngine::vc59,
 		&SimonEngine::vc60_killSprite,
@@ -137,7 +137,7 @@ void SimonEngine::runVgaScript() {
 			}
 		}
 
-		if (getGameType() == GType_SIMON1) {
+		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 			opcode = READ_BE_UINT16(_vcPtr);
 			_vcPtr += 2;
 		} else {
@@ -195,7 +195,7 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 VgaSprite *SimonEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON1) {
+		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 			if (vsp->id == _vgaCurSpriteId)
 				break;
 		} else {
@@ -236,6 +236,17 @@ void SimonEngine::vcWriteVar(uint var, int16 value) {
 }
 
 void SimonEngine::vcSkipNextInstruction() {
+	static const byte opcodeParamLenWW[] = {
+		0, 6, 2, 10, 6, 4, 2, 2,
+		4, 4, 8, 2, 2, 2, 2, 2,
+		2, 2, 2, 0, 4, 2, 2, 2,
+		8, 0, 10, 0, 8, 0, 2, 2,
+		0, 0, 0, 4, 4, 4, 2, 4,
+		4, 4, 4, 2, 2, 4, 2, 2,
+		2, 2, 2, 2, 2, 4, 6, 6,
+		0, 0, 0, 0, 2, 2, 0, 0,
+	};
+
 	static const byte opcodeParamLenSimon1[] = {
 		0, 6, 2, 10, 6, 4, 2, 2,
 		4, 4, 10, 0, 2, 2, 2, 2,
@@ -281,9 +292,12 @@ void SimonEngine::vcSkipNextInstruction() {
 	} else if (getGameType() == GType_SIMON2) {
 		opcode = vcReadNextByte();
 		_vcPtr += opcodeParamLenSimon2[opcode];
-	} else {
+	} else if (getGameType() == GType_SIMON1) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenSimon1[opcode];
+	} else {
+		opcode = vcReadNextWord();
+		_vcPtr += opcodeParamLenWW[opcode];
 	}
 
 	if (_continousVgaScript)
@@ -325,7 +339,21 @@ void SimonEngine::vc2_call() {
 
 
 	bb = _curVgaFile1;
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		b = bb + READ_BE_UINT16(bb + 10);
+		b += 20;
+
+		count = READ_BE_UINT16(&((VgaFileHeader2_WW *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_WW *) b)->imageTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == num)
+				break;
+			b += sizeof(ImageHeader_WW);
+		}
+		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == num);
+
+	} else if (getGameType() == GType_FF) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
@@ -351,7 +379,9 @@ void SimonEngine::vc2_call() {
 
 	vcPtrOrg = _vcPtr;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
+	} else if (getGameType() == GType_FF) {
 		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
 	} else {
 		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
@@ -376,7 +406,7 @@ void SimonEngine::vc3_loadSprite() {
 
 	windowNum = vcReadNextWord();		/* 0 */
 
-	if (getGameType() == GType_SIMON1) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 		vgaSpriteId = vcReadNextWord();	/* 2 */
 		zoneNum = vgaSpriteId / 100;
 	} else {
@@ -395,7 +425,10 @@ void SimonEngine::vc3_loadSprite() {
 	while (vsp->id)
 		vsp++;
 
-	vsp->palette = palette;
+	if (getGameType() == GType_WW)
+		vsp->palette = 0;
+	else
+		vsp->palette = palette;
 	vsp->windowNum = windowNum;
 	vsp->priority = 0;
 	vsp->flags = 0;
@@ -420,7 +453,20 @@ void SimonEngine::vc3_loadSprite() {
 	}
 
 	pp = _curVgaFile1;
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		p = pp + READ_BE_UINT16(pp + 10);
+		p += 20;
+
+		count = READ_BE_UINT16(&((VgaFileHeader2_WW *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_WW *) p)->animationTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId)
+				break;
+			p += sizeof(AnimationHeader_WW);
+		}
+		assert(READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId);
+	} else if (getGameType() == GType_FF) {
 		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
 		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
@@ -465,7 +511,9 @@ void SimonEngine::vc3_loadSprite() {
 #endif
 
 	if (_startVgaScript) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_WW) {
+			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW*)p)->scriptOffs), res, vgaSpriteId);
+		} else if (getGameType() == GType_FF) {
 			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), res, vgaSpriteId);
 		} else {
 			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), res, vgaSpriteId);
@@ -473,7 +521,9 @@ void SimonEngine::vc3_loadSprite() {
 		}
 	}
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW *) p)->scriptOffs), vgaSpriteId, res);
+	} else if (getGameType() == GType_FF) {
 		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
 	} else {
 		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
@@ -771,17 +821,21 @@ void SimonEngine::vc10_draw() {
 
 	if (getGameType() == GType_FF) {
 		state.palette = (_vcPtr[0] * 16);
-	} else {
+		_vcPtr += 2;
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		state.palette = (_vcPtr[1] * 16);
+		_vcPtr += 2;
+	} else {
+		state.palette = 0;
 	}
-	_vcPtr += 2;
+
 	state.x = (int16)vcReadNextWord();
 	state.x -= _scrollX;
 
 	state.y = (int16)vcReadNextWord();
 	state.y -= _scrollY;
 
-	if (getGameType() == GType_SIMON1) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 		state.flags = vcReadNextWord();
 	} else {
 		state.flags = vcReadNextByte();
@@ -842,7 +896,7 @@ void SimonEngine::vc10_draw() {
 		return;
 	}
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_WW) {
 		if (state.flags & kDFCompressedFlip) {
 			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
 		} else if (state.flags & kDFFlip) {
@@ -870,7 +924,7 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 
 	vlut = &_video_windows[_windowNum * 4];
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_WW) {
 		state->draw_width = state->width * 2;
 	} 
 
@@ -914,7 +968,7 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 
 	assert(state->draw_width != 0 && state->draw_height != 0);
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_WW) {
 		state->draw_width *= 4;
 	}
 
@@ -1152,7 +1206,8 @@ void SimonEngine::drawImages(VC10_state *state) {
 		} while (++w != state->draw_width);
 
 		/* vc10_helper_5 */
-	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
+	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) &&
+		getGameType() != GType_WW) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -1413,7 +1468,12 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 }
 
 void SimonEngine::vc11_clearPathFinder() {
-	memset(&_pathFindArray, 0, sizeof(_pathFindArray));
+	if (getGameType() == GType_WW) {
+		// FIXME
+		vcReadNextWord();
+	} else {
+		memset(&_pathFindArray, 0, sizeof(_pathFindArray));
+	}
 }
 
 void SimonEngine::vc12_delay() {
@@ -1487,13 +1547,18 @@ void SimonEngine::vc16_waitSync() {
 }
 
 void SimonEngine::vc17_setPathfinderItem() {
-	uint16 a = vcReadNextWord();
-	_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
+	if (getGameType() == GType_WW) {
+		// FIXME
+		vcReadNextWord();
+	} else {
+		uint16 a = vcReadNextWord();
+		_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
 
-	int end = (getGameType() == GType_FF) ? 9999 : 999;
-	while (readUint16Wrapper(_vcPtr) != end)
-		_vcPtr += 4;
-	_vcPtr += 2;
+		int end = (getGameType() == GType_FF) ? 9999 : 999;
+		while (readUint16Wrapper(_vcPtr) != end)
+			_vcPtr += 4;
+		_vcPtr += 2;
+	}
 }
 
 void SimonEngine::vc18_jump() {
@@ -1522,7 +1587,7 @@ void SimonEngine::vc20_setRepeat() {
 void SimonEngine::vc21_endRepeat() {
 	int16 a = vcReadNextWord();
 	const byte *tmp = _vcPtr + a;
-	if (getGameType() == GType_SIMON1)
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW)
 		tmp += 4;
 	else
 		tmp += 3;
@@ -1536,29 +1601,48 @@ void SimonEngine::vc21_endRepeat() {
 }
 
 void SimonEngine::vc22_setSpritePalette() {
-	uint16 a = vcReadNextWord();
-	uint16 b = vcReadNextWord();
-	uint num = a == 0 ? 32 : 16;
-	uint palSize = 96;
-	byte *palptr, *src;
+	byte *offs, *palptr, *src;
+	uint16 a, b, num, palSize;
 
-	if (getGameType() == GType_FF) {
-		a = 0;
+	if (getGameType() != GType_WW)
+		a = vcReadNextWord();
+	b = vcReadNextWord();
+
+	if (getGameType() == GType_WW) {
+		num = 16;
+		palSize = 32;
+		palptr = _displayPalette;
+		offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
+	} else if (getGameType() == GType_FF) {
 		num = 256;
 		palSize = 768;
-	}
 
-	palptr = &_displayPalette[(a * 64)];
-	src = _curVgaFile1 + 6 + b * palSize;
+		palptr = _displayPalette;
+		offs = _curVgaFile1 + 6;
+	} else {
+		num = a == 0 ? 32 : 16;
+		palSize = 96;
+
+		palptr = &_displayPalette[(a * 64)];
+		offs = _curVgaFile1 + 6;
+	}
+	src = offs + b * palSize;
 
 	do {
-		palptr[0] = src[0] * 4;
-		palptr[1] = src[1] * 4;
-		palptr[2] = src[2] * 4;
+		if (getGameType() == GType_WW) {
+			uint16 color = READ_BE_UINT16(src);
+			palptr[2] = ((color & 0x00f) >> 0) * 32;
+			palptr[1] = ((color & 0x0f0) >> 4) * 32;
+			palptr[0] = ((color & 0xf00) >> 8) * 32;
+		} else {
+			palptr[0] = src[0] * 4;
+			palptr[1] = src[1] * 4;
+			palptr[2] = src[2] * 4;
+		}
 		palptr[3] = 0;
 
 		palptr += 4;
-		src += 3;
+		src += (getGameType() == GType_WW) ? 2 : 3;
 	} while (--num);
 
 	_paletteFlag = 2;
@@ -1607,7 +1691,7 @@ void SimonEngine::vc24_setSpriteXY() {
 
 	vsp->x += (int16)vcReadNextWord();
 	vsp->y += (int16)vcReadNextWord();
-	if (getGameType() == GType_SIMON1) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 		vsp->flags = vcReadNextWord();
 	} else {
 		vsp->flags = vcReadNextByte();
@@ -1702,8 +1786,12 @@ void SimonEngine::vc31_setWindow() {
 }
 
 void SimonEngine::vc32_copyVar() {
-	uint16 a = vcReadVar(vcReadNextWord());
-	vcWriteVar(vcReadNextWord(), a);
+	if (getGameType() == GType_WW) {
+		// FIXME
+	} else {
+		uint16 a = vcReadVar(vcReadNextWord());
+		vcWriteVar(vcReadNextWord(), a);
+	}
 }
 
 void SimonEngine::vc33_setMouseOn() {
@@ -1744,9 +1832,15 @@ void SimonEngine::vc36_setWindowImage() {
 }
 
 void SimonEngine::vc37_addToSpriteY() {
-	VgaSprite *vsp = findCurSprite();
-	vsp->y += vcReadVar(vcReadNextWord());
-	_vgaSpriteChanged++;
+	if (getGameType() == GType_WW) {
+		// FIXME
+		vcReadNextWord();
+		vcReadNextWord();
+	} else {
+		VgaSprite *vsp = findCurSprite();
+		vsp->y += vcReadVar(vcReadNextWord());
+		_vgaSpriteChanged++;
+	}
 }
 
 void SimonEngine::vc38_skipIfVarZero() {
@@ -1838,9 +1932,15 @@ void SimonEngine::vc44_skipIfBitSet() {
 }
 
 void SimonEngine::vc45_setSpriteX() {
-	VgaSprite *vsp = findCurSprite();
-	vsp->x = vcReadVar(vcReadNextWord());
-	_vgaSpriteChanged++;
+	if (getGameType() == GType_WW) {
+		//FIXME
+		vcReadNextWord();
+		vcReadNextWord();
+	} else {
+		VgaSprite *vsp = findCurSprite();
+		vsp->x = vcReadVar(vcReadNextWord());
+		_vgaSpriteChanged++;
+	}
 }
 
 void SimonEngine::vc46_setSpriteY() {
@@ -1850,15 +1950,23 @@ void SimonEngine::vc46_setSpriteY() {
 }
 
 void SimonEngine::vc47_addToVar() {
-	uint16 var = vcReadNextWord();
-	vcWriteVar(var, vcReadVar(var) + vcReadVar(vcReadNextWord()));
+	if (getGameType() == GType_WW) {
+		//FIXME
+		vcReadNextWord();
+	} else {
+		uint16 var = vcReadNextWord();
+		vcWriteVar(var, vcReadVar(var) + vcReadVar(vcReadNextWord()));
+	}
 }
 
 void SimonEngine::vc48_setPathFinder() {
 	uint16 a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_WW) {
+		//FIXME
+		vcReadNextWord();
+	} else if (getGameType() == GType_FF) {
 		VgaSprite *vsp = findCurSprite();
 		int16 x, y, ydiff;
 		int16 x1, y1, x2, y2;
@@ -2036,14 +2144,34 @@ void SimonEngine::vc55_moveBox() {
 }
 
 void SimonEngine::vc56_delay() {
-	uint16 num = vcReadVarOrWord() * _frameRate;
+	if (getGameType() == GType_SIMON2) {
+		uint16 num = vcReadVarOrWord() * _frameRate;
 
-	addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+		addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+		_vcPtr = (byte *)&_vc_get_out_of_code;
+	} else if (getGameType() == GType_WW) {
+		byte *src = _curVgaFile2 + 32;
+		byte *dst = getBackBuf();
+
+		uint8 palette[1024];
+		for (int i = 0; i < 256; i++) {
+			palette[i * 4 + 0] = *src++ * 4;
+			palette[i * 4 + 1] = *src++ * 4;
+			palette[i * 4 + 2] = *src++ * 4;
+			palette[i * 4 + 3] = 0;
+		}
+
+		_system->setPalette(palette, 0, 256);
+		memcpy(dst, src, _screenHeight * _screenWidth);
+	}
 }
 
-void SimonEngine::vc57_no_op() {
-	/* unused */
+void SimonEngine::vc57_blackPalette() {
+	if (getGameType() == GType_WW) {
+		//uint8 palette[1024];
+		//memset(palette, 0, sizeof(palette));
+		//_system->setPalette(palette, 0, 256);
+	}
 }
 
 void SimonEngine::vc58() {
@@ -2067,10 +2195,7 @@ void SimonEngine::vc58() {
 }
 
 void SimonEngine::vc59() {
-	if (getGameType() == GType_SIMON1) {
-		if (!_sound->isVoiceActive())
-			vcSkipNextInstruction();
-	} else {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
 		uint16 file = vcReadNextWord();
 		uint16 start = vcReadNextWord();
 		uint16 end = vcReadNextWord() + 1;
@@ -2078,6 +2203,12 @@ void SimonEngine::vc59() {
 		do {
 			vc_kill_sprite(file, start);
 		} while (++start != end);
+	} else if (getGameType() == GType_SIMON1) {
+		if (!_sound->isVoiceActive())
+			vcSkipNextInstruction();
+	} else {
+		// Skip if not EGA
+		vcSkipNextInstruction();
 	}
 }
 
@@ -2139,10 +2270,15 @@ void SimonEngine::vc60_killSprite() {
 }
 
 void SimonEngine::vc61_setMaskImage() {
+	if (getGameType() == GType_WW) {
+		// FIXME
+		vcReadVarOrWord();
+		return;
+	}
+
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadVarOrWord();
-
 	vsp->x += vcReadNextWord();
 	vsp->y += vcReadNextWord();
 	vsp->flags = kDFMasked | kDFUseFrontBuf;
@@ -2156,7 +2292,8 @@ void SimonEngine::vc62_fastFadeOut() {
 	if (!_fastFadeOutFlag) {
 		uint i, fadeSize, fadeCount;
 
-		_fastFadeOutFlag = true;
+		if (getGameType() != GType_WW)
+			_fastFadeOutFlag = true;
 
 		_fastFadeCount = 256;
 		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
