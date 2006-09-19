@@ -2144,12 +2144,7 @@ void SimonEngine::vc55_moveBox() {
 }
 
 void SimonEngine::vc56_delay() {
-	if (getGameType() == GType_SIMON2) {
-		uint16 num = vcReadVarOrWord() * _frameRate;
-
-		addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
-		_vcPtr = (byte *)&_vc_get_out_of_code;
-	} else if (getGameType() == GType_WW) {
+	if (getGameType() == GType_WW) {
 		byte *src = _curVgaFile2 + 32;
 		byte *dst = getBackBuf();
 
@@ -2163,14 +2158,19 @@ void SimonEngine::vc56_delay() {
 
 		_system->setPalette(palette, 0, 256);
 		memcpy(dst, src, _screenHeight * _screenWidth);
+	} else {
+		uint16 num = vcReadVarOrWord() * _frameRate;
+
+		addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }
 
 void SimonEngine::vc57_blackPalette() {
 	if (getGameType() == GType_WW) {
-		//uint8 palette[1024];
-		//memset(palette, 0, sizeof(palette));
-		//_system->setPalette(palette, 0, 256);
+		uint8 palette[1024];
+		memset(palette, 0, sizeof(palette));
+		_system->setPalette(palette, 0, 256);
 	}
 }
 
