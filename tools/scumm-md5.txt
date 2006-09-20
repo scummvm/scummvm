@@ -555,6 +555,7 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
 	aefa244ea034b7cd2041f0a44be7d9ba	-1	en	Mac	-	-	-	pix_climber
 	06c3cf4f31daad8b1cd93153491db9e6	-1	nl	Mac	-	-	-	daniel9
+	7410a8ba9795020cd42f171c4320659e	-1	fr	Windows	-	-	-	gist974
 	20176076d708bf14407bcc9bdcd7a418	-1	ru	Windows	-	-	-	sev
 
 	f08145577e4f13584cc90b3d6e9caa55	-1	nl	All	-	Demo	-	joostp
