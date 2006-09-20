@@ -161,6 +161,10 @@ void MidiDriver_ALSA::send(uint32 b) {
 		snd_seq_ev_set_noteon(&ev, chanID, midiCmd[1], midiCmd[2]);
 		send_event(1);
 		break;
+	case 0xA0:
+		snd_seq_ev_set_keypress(&ev, chanID, midiCmd[1], midiCmd[2]);
+		send_event(1);
+		break;
 	case 0xB0:
 		/* is it this simple ? Wow... */
 		snd_seq_ev_set_controller(&ev, chanID, midiCmd[1], midiCmd[2]);
@@ -172,7 +176,7 @@ void MidiDriver_ALSA::send(uint32 b) {
 		break;
 	case 0xD0:
 		snd_seq_ev_set_chanpress(&ev, chanID, midiCmd[1]);
-		send_event(0);
+		send_event(1);
 		break;
 	case 0xE0:{
 			// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
@@ -184,7 +188,7 @@ void MidiDriver_ALSA::send(uint32 b) {
 		break;
 
 	default:
-		error("Unknown Command: %08x\n", (int)b);
+		warning("Unknown MIDI Command: %08x", (int)b);
 		/* I don't know if this works but, well... */
 		send_event(1);
 		break;
