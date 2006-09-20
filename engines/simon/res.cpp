@@ -269,27 +269,6 @@ void SimonEngine::loadGamePcFile() {
 
 	in.close();
 
-	if (getGameType() == GType_WW) {
-		/* Read list of TABLE resources */
-		in.open(getFileName(GAME_XTBLFILE));
-		if (in.isOpen() == false) {
-			error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_XTBLFILE));
-		}
-
-		file_size = in.size();
-
-		_xtblList = (byte *)malloc(file_size);
-		if (_xtblList == NULL)
-			error("loadGamePcFile: Out of memory for strip table list");
-		in.read(_xtblList, file_size);
-		in.close();
-
-		/* Remember the current state */
-		_xsubroutineListOrg = _subroutineList;
-		_xtablesHeapPtrOrg = _tablesHeapPtr;
-		_xtablesHeapCurPosOrg = _tablesHeapCurPos;
-	}
-
 	/* Read list of TABLE resources */
 	in.open(getFileName(GAME_TBLFILE));
 	if (in.isOpen() == false) {
@@ -323,6 +302,43 @@ void SimonEngine::loadGamePcFile() {
 		error("loadGamePcFile: Out of memory for strip text list");
 	in.read(_strippedTxtMem, file_size);
 	in.close();
+
+	if (getGameType() != GType_WW)
+		return;
+
+	/* Read list of ROOM ITEMS resources */
+	in.open(getFileName(GAME_RMSLFILE));
+	if (in.isOpen() == false) {
+		error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_XTBLFILE));
+	}
+
+	file_size = in.size();
+
+	_roomsList = (byte *)malloc(file_size);
+	if (_roomsList == NULL)
+		error("loadGamePcFile: Out of memory for room items list");
+	in.read(_roomsList, file_size);
+	in.close();
+
+	/* Read list of XTABLE resources */
+	in.open(getFileName(GAME_XTBLFILE));
+	if (in.isOpen() == false) {
+		error("loadGamePcFile: Can't load xtable resources file '%s'", getFileName(GAME_XTBLFILE));
+	}
+
+	file_size = in.size();
+
+	_xtblList = (byte *)malloc(file_size);
+	if (_xtblList == NULL)
+		error("loadGamePcFile: Out of memory for strip xtable list");
+	in.read(_xtblList, file_size);
+	in.close();
+
+	/* Remember the current state */
+	_xsubroutineListOrg = _subroutineList;
+	_xtablesHeapPtrOrg = _tablesHeapPtr;
+	_xtablesHeapCurPosOrg = _tablesHeapCurPos;
+
 }
 
 void SimonEngine::readGamePcText(Common::File *in) {

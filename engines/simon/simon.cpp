@@ -105,6 +105,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_stringIdLocalMin = 0;
 	_stringIdLocalMax = 0;
 
+	_roomsList = 0;
+
 	_xtblList = 0;
 	_xtablesHeapPtrOrg = 0;
 	_xtablesHeapCurPosOrg = 0;
@@ -769,7 +771,6 @@ Item *SimonEngine::getNextItemPtr() {
 	case -7:
 		return actor();
 	case -9:
-		assert (derefItem(me()->parent) != NULL);
 		return derefItem(me()->parent);
 	default:
 		return derefItem(a);

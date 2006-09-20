@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	midiparser_s1d.o \
  	oracle.o \
 	res.o \
+	rooms.o \
 	saveload.o \
 	simon.o \
 	sound.o \

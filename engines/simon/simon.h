@@ -222,6 +222,8 @@ protected:
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
+	byte *_roomsList;
+
 	byte *_xtblList;
 	byte *_xtablesHeapPtrOrg;
 	uint _xtablesHeapCurPosOrg;
@@ -630,6 +632,8 @@ protected:
 	void loadTextIntoMem(uint stringId);
 	bool loadTablesIntoMem(uint subr_id);
 	bool loadXTablesIntoMem(uint subr_id);
+
+	bool loadRoomItems(uint item);
 
 	uint loadTextFile(const char *filename, byte *dst);
 	Common::File *openTablesFile(const char *filename);

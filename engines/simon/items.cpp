@@ -679,7 +679,12 @@ void SimonEngine::o_random() {
 
 void SimonEngine::o_goto() {
 	// 55: set itemA parent
-	setItemParent(me(), getNextItemPtr());
+	uint item = getNextItemID();
+	if (_itemArrayPtr[item] == NULL) {
+		setItemParent(me(), NULL);
+		loadRoomItems(item);
+	}
+	setItemParent(me(), _itemArrayPtr[item]);
 }
 
 void SimonEngine::o_oset() {
@@ -1541,38 +1546,6 @@ void SimonEngine::o_unfreezeZones() {
 // -----------------------------------------------------------------------
 // Waxworks 1 Opcodes
 // -----------------------------------------------------------------------
-
-uint16 SimonEngine::getDoorState(Item *item, uint16 d) {
-	uint16 mask = 3;
-	uint16 n;
-
-	SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
-	if (subRoom == NULL)
-	    return 0;
-
-	d <<= 1;
-	mask <<= d;
-	n = subRoom->roomExitStates & mask;
-	n >>= d;
-
-	return n;
-}
-
-uint16 SimonEngine::getExitOf(Item *item, uint16 d) {
-	uint16 x;
-	uint16 y = 0;
-
-	SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
-	if (subRoom == NULL)
-		return 0;
-	x = d;
-	while (x > y) {
-		if (getDoorState(item, y) == 0)
-			d--;
-		y++;
-	}
-	return subRoom->roomExit[d];
-}
 
 void SimonEngine::oww_whereTo() {
 	// 85: where to
