@@ -52,6 +52,8 @@ public:
 	bool isValid(void) const { return !(_filename.empty()); }
 	bool isOpen(void) const { return _open; }
 
+	void open() { _open = true; }
+	void close() { _open = false; }
 private:
 	bool _open;
 	bool _isAmiga;

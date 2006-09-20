@@ -33,6 +33,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      not being as smooth as before.
    - Fixed a tiny graphics glitch in the Kyrandia intro.
    - Improved screen update handling, speeds up drawing on small devices.
+   - Improved resource loading, faster startup.
 
  PSP Port:
    - Fixed crashes during scrolling scenes in certain SCUMM games.

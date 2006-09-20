@@ -508,6 +508,8 @@ protected:
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag);
 	int resetGameFlag(int flag);
+
+	void setupSceneResource(int sceneId);
 	
 	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
 	void transcendScenes(int roomIndex, int roomName);

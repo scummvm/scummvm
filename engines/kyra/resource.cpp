@@ -66,32 +66,11 @@ Resource::Resource(KyraEngine *engine) {
 	};*/
 
 	static const char *kyra1CDFilelist[] = {
-		"ALTAR.APK", "BELROOM.APK", "BONKBG.APK", "BROKEN.APK", "CASTLE.APK", "CAVE.APK", "CGATE.APK",
-		"DEAD.APK", "DNSTAIR.APK", "DRAGON1.APK", "DRAGON2.APK", "EXTPOT.APK", "FORESTA.APK", "FORESTB.APK",
-		"FOUNTN.APK", "FOYER.APK", "GATECV.APK", "GEM.APK", "GEMCUT.APK", "GENHALL.APK", "GLADE.APK", 
-		"GRAVE.APK", "HEALER.APK", "LAGOON.APK", "LANDING.APK", "LAVA.APK", "LEPHOLE.APK", "LIBRARY.APK",
-		"MIX.APK", "MOONCAV.APK", "POTION.APK", "SONG.APK", "SORROW.APK", "SPELL.APK", "STUMP.APK",
-		"TEMPLE.APK", "TRUNK.APK", "WILLOW.APK", "XEDGE.APK",
-
-		"ADL.PAK", "BRINS.PAK", "CLIFF.PAK", "ENTER.PAK", "FORESTA.PAK", "GEM.PAK", "INTRO1.PAK",
-		"LEPHOLE.PAK", "OAKS.PAK", "SPELL.PAK", "WILLOW.PAK", "ALCHEMY.PAK", "BROKEN.PAK", "COL.PAK",
-		"EXTHEAL.PAK", "FORESTB.PAK", "GEMCUT.PAK", "INTRO2.PAK", "LIBRARY.PAK", "PLATEAU.PAK", "SPRING.PAK",
-		"WISE.PAK", "ALGAE.PAK", "BURN.PAK", "DARMS.PAK", "EXTPOT.PAK", "FORESTC.PAK", "GENCAVB.PAK",
-		"INTRO3.PAK", "MISC.PAK", "PLTCAVE.PAK", "SQUARE.PAK", "XEDGE.PAK", "ALTAR.PAK", "CASTLE.PAK",
-		"DEAD.PAK", "EXTSPEL.PAK", "FOUNTN.PAK", "GENHALL.PAK", "INTRO4.PAK", "MIX.PAK", "POTION.PAK",
-		"STARTUP.PAK", "XEDGEB.PAK", "ARCH.PAK", "CATACOM.PAK", "DNSTAIR.PAK", "FALLS.PAK", "FOYER.PAK",
-		"GEN_CAV.PAK", "KITCHEN.PAK", "MOONCAV.PAK", "RUBY.PAK", "STUMP.PAK", "XEDGEC.PAK", "BALCONY.PAK",
-		"CAVE.PAK", "DRAGON.PAK", "FESTSTH.PAK", "FSOUTH.PAK", "GLADE.PAK", "KYRAGEM.PAK", "NCLIFF.PAK",
-		"SICKWIL.PAK", "TEMPLE.PAK", "XMI.PAK", "BELROOM.PAK",  "CAVEB.PAK", "EDGE.PAK", "FGOWEST.PAK",
-		"FSOUTHB.PAK", "GRAVE.PAK", "LAGOON.PAK", "NCLIFFB.PAK", "SND.PAK", "TRUNK.PAK", "ZROCK.PAK",
-		"BONKBG.PAK", "CGATE.PAK", "EDGEB.PAK", "FINALE.PAK", "FWSTSTH.PAK", "GRTHALL.PAK", "LANDING.PAK",
-		"NWCLIFB.PAK", "SONG.PAK", "UPSTAIR.PAK", "BRIDGE.PAK", "CHASM.PAK", "EMCAV.PAK", "FNORTH.PAK",
-		"GATECV.PAK", "HEALER.PAK", "LAVA.PAK", "NWCLIFF.PAK", "SORROW.PAK", "WELL.PAK",
-		
-		"CHAPTER1.VRM", 0
+		"adl.pak", "col.pak", "finale.pak", "intro1.pak", "intro2.pak", "intro3.pak", "intro4.pak",
+		"misc.pak", "snd.pak", "startup.pak", "xmi.pak", "chapter1.vrm", 0
 	};
 
-	static const char *kyra2CDFilelist[] = {
+	/*static const char *kyra2CDFilelist[] = {
 		"ALLEY.PAK", "COST3_SH.PAK", "DINOD.PAK", "GARDEN.PAK", "INJAIL2.PAK", "MISC_EMC.PAK", "PHONE_B.PAK",
 		"STATION.PAK", "VOLCANO.PAK", "VOLC_L.PAK", "ALTAR.PAK", "COST4_SH.PAK", "DOCK.PAK", "GEARS.PAK",
 		"INSHOP.PAK", "MYSTRM.PAK", "PHONE_C.PAK", "STREET.PAK", "VOLC_A.PAK", "VOLC_M.PAK", "ANCHOR.PAK", 
@@ -114,7 +93,7 @@ Resource::Resource(KyraEngine *engine) {
 	static const char *kyra3Filelist[] = {
 		// enough for now
 		"MISC_EMC.PAK", "MISC_CPS.PAK", "OTHER.PAK", "ONETIME.PAK", 0
-	};
+	};*/
 	
 	const char **usedFilelist = 0;
 
@@ -125,12 +104,12 @@ Resource::Resource(KyraEngine *engine) {
 			usedFilelist = kyra1Filelist;
 		else if (_engine->features() & GF_TALKIE)
 			usedFilelist = kyra1CDFilelist;
-	} else if (_engine->game() == GI_KYRA2) {
+	} /*else if (_engine->game() == GI_KYRA2) {
 		// TODO: add kyra2 floppy file list
 		usedFilelist = kyra2CDFilelist;
 	} else if (_engine->game() == GI_KYRA3) {
 		usedFilelist = kyra3Filelist;
-	}
+	}*/
 
 	// we're loading KYRA.DAT here too (but just for Kyrandia 1)
 	if (_engine->game() == GI_KYRA1) {
@@ -173,8 +152,14 @@ Resource::~Resource() {
 }
 
 bool Resource::loadPakFile(const Common::String &filename) {
-	if (isInPakList(filename))
-		return true;
+	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	for (;start != _pakfiles.end(); ++start) {
+		if (scumm_stricmp(start->_filename.c_str(), filename.c_str()) == 0) {
+			start->_file->open();
+			return true;
+		}
+	}
+
 	PAKFile *file = new PAKFile(filename.c_str());
 	if (!file)
 		return false;
@@ -191,8 +176,7 @@ void Resource::unloadPakFile(const Common::String &filename) {
 	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 	for (;start != _pakfiles.end(); ++start) {
 		if (scumm_stricmp(start->_filename.c_str(), filename.c_str()) == 0) {
-			delete start->_file;
-			_pakfiles.erase(start);
+			start->_file->close();
 			break;
 		}
 	}
@@ -203,7 +187,7 @@ bool Resource::isInPakList(const Common::String &filename) {
 	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 	for (;start != _pakfiles.end(); ++start) {
 		if (scumm_stricmp(start->_filename.c_str(), filename.c_str()) == 0)
-			return true;
+			return start->_file->isOpen();
 	}
 	return false;
 }
@@ -227,6 +211,9 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 		Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 
 		for (;start != _pakfiles.end(); ++start) {
+			if (!start->_file->isOpen())
+				continue;
+
 			*size = start->_file->getFileSize(file);
 			
 			if (!(*size))
@@ -253,6 +240,9 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 
 	for (;start != _pakfiles.end(); ++start) {
+		if (!start->_file->isOpen())
+			continue;
+
 		*size = start->_file->getFileSize(file);
 		
 		if (!(*size))
@@ -273,7 +263,6 @@ PAKFile::PAKFile(const char *file, bool isAmiga) {
 	_isAmiga = isAmiga;
 
 	Common::File pakfile;
-	uint8 *buffer = 0;
 	_open = false;
 
 	if (!pakfile.open(file)) {
@@ -282,37 +271,40 @@ PAKFile::PAKFile(const char *file, bool isAmiga) {
 	}
 
 	uint32 filesize = pakfile.size();
-	buffer = new uint8[filesize];
-	assert(buffer);
-
-	pakfile.read(buffer, filesize);
-	pakfile.close();
 
 	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
 
 	if (!_isAmiga) {
-		startoffset = READ_LE_UINT32(buffer + pos);
+		startoffset = pakfile.readUint32LE();
 	} else {
-		startoffset = READ_BE_UINT32(buffer + pos);
+		startoffset = pakfile.readUint32BE();
 	}
 	pos += 4;
 
 	while (pos < filesize) {
 		PakChunk chunk;
+		uint8 buffer[256];
+		uint32 nameLength;
 
-		// saves the name
-		chunk._name = (const char*)buffer + pos;
-		pos += strlen(chunk._name.c_str()) + 1;
-		if (!(chunk._name[0]))
+		// Move to the position of the next file entry
+		pakfile.seek(pos);
+
+		// Read in the header
+		pakfile.read(&buffer, sizeof(buffer)); 
+
+		// Quit now if we encounter an empty string
+		if (!(*((const char*)buffer)))
 			break;
 
+		chunk._name = (const char*)buffer;
+		nameLength = strlen(chunk._name.c_str()) + 1;
+
 		if (!_isAmiga) {
-			endoffset = READ_LE_UINT32(buffer + pos);
+			endoffset = READ_LE_UINT32(buffer + nameLength);
 		} else {
-			endoffset = READ_BE_UINT32(buffer + pos);
+			endoffset = READ_BE_UINT32(buffer + nameLength);
 		}
-		pos += 4;
 
 		if (endoffset == 0) {
 			endoffset = filesize;
@@ -327,9 +319,9 @@ PAKFile::PAKFile(const char *file, bool isAmiga) {
 			break;
 
 		startoffset = endoffset;
+		pos += nameLength + 4;
 	}
 	_open = true;
-	delete [] buffer;
 	
 	_filename = file;
 }
