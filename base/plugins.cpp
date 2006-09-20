@@ -141,6 +141,9 @@ public:
 #ifdef DYNAMIC_MODULES
 
 class DynamicPlugin : public Plugin {
+protected:
+	typedef void (*VoidFunc)();
+	
 	void *_dlHandle;
 	Common::String _filename;
 
@@ -151,7 +154,7 @@ class DynamicPlugin : public Plugin {
 	DetectFunc _df;
 	GameList _games;
 
-	void *findSymbol(const char *symbol);
+	VoidFunc findSymbol(const char *symbol);
 
 public:
 	DynamicPlugin(const Common::String &filename)
@@ -181,22 +184,29 @@ public:
 	void unloadPlugin();
 };
 
-void *DynamicPlugin::findSymbol(const char *symbol) {
+DynamicPlugin::VoidFunc DynamicPlugin::findSymbol(const char *symbol) {
 #if defined(UNIX) || defined(__DC__)
 	void *func = dlsym(_dlHandle, symbol);
 	if (!func)
 		warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
-	return func;
 #else
 #if defined(_WIN32)
-	void *func = (void*)GetProcAddress((HMODULE)_dlHandle, symbol);
+	void *func = (void *)GetProcAddress((HMODULE)_dlHandle, symbol);
 	if (!func)
 		warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
-	return func;
 #else
 #error TODO
 #endif
 #endif
+
+	// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
+	// standard and POSIX: ISO C++ disallows casting between function pointers
+	// and data pointers, but dlsym always returns a void pointer. For details,
+	// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
+	assert(sizeof(VoidFunc) == sizeof(func));
+	VoidFunc tmp;
+	memcpy(&tmp, &func, sizeof(VoidFunc));
+	return tmp;
 }
 
 bool DynamicPlugin::loadPlugin() {
