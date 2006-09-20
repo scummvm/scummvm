@@ -654,6 +654,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama3", "PJMini", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "PjSamDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "PjSamDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "PyjamaHG", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "pajama3", "PyjamaSKS", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama3", "PyjamaSKS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "UKPajamaEAT", kGenHEPC, Common::RU_RUS, UNK, 0 },
