@@ -3,7 +3,7 @@ How to build an RPM:
 
 Note: the following assumes that the RPM topdir is /usr/src/redhat .
 If you have set a different topdir in /usr/lib/rpm/macros or ~/.rpmmacros,
-replace it with the correct topdir where necessary.
+adapt the below instructions where necessary.
 
 
 1) Collect sources:
