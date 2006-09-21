@@ -21,6 +21,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved support for international versions of the Feeble Files.
    - Fixed undefined behaviour when loading music.
    - Fixed crash when displaying some subtitles in the Feeble Files.
+   - Fixed crackling sound in Mac version of Feeble Files
 
  BASS:
    - Fixed character spacing in LINC terminals in floppy version v0.0303

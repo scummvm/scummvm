@@ -96,7 +96,8 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 si
 	_status.stepIndex = 0;
 	memset(_status.ch, 0, sizeof(_status.ch));
 	_endpos = stream->pos() + size;
-	_blockPos = _blockLen = 0;
+	_blockLen = 0;
+	_blockPos = _blockAlign; // To make sure first header is read
 
 	if (type == kADPCMMSIma && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specifiled for MS IMA ADPCM");
@@ -217,17 +218,21 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 			if (stereo)
 				_status.ch[1].delta = _stream->readSint16LE();
 
-			buffer[samples++] = _status.ch[0].sample1 = _stream->readSint16LE();
+			_status.ch[0].sample1 = _stream->readSint16LE();
 			if (stereo)
-				buffer[samples++] = _status.ch[1].sample1 = _stream->readSint16LE();
+				_status.ch[1].sample1 = _stream->readSint16LE();
 
 			buffer[samples++] = _status.ch[0].sample2 = _stream->readSint16LE();
+
 			if (stereo)
 				buffer[samples++] = _status.ch[1].sample2 = _stream->readSint16LE();
 
+			buffer[samples++] = _status.ch[0].sample1;
+			if (stereo)
+				buffer[samples++] = _status.ch[1].sample1;
+
 			_blockPos = channels * 7;
 		}
-
 
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
@@ -240,6 +245,33 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 	return samples;
 }
 
+
+static const int MSADPCMAdaptationTable[] = {
+	230, 230, 230, 230, 307, 409, 512, 614,
+	768, 614, 512, 409, 307, 230, 230, 230
+};
+
+
+int16 ADPCMInputStream::decodeMS(ADPCMChannelStatus *c, byte code) {
+	int32 predictor;
+
+	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
+	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
+
+	if (predictor < -0x8000)
+		predictor = -0x8000;
+	else if (predictor > 0x7fff)
+		predictor = 0x7fff;
+
+	c->sample2 = c->sample1;
+	c->sample1 = predictor;
+	c->delta = (MSADPCMAdaptationTable[(int)code] * c->delta) >> 8;
+
+	if (c->delta < 16)
+		c->delta = 16;
+
+	return (int16)predictor;
+}
 
 // adjust the step for use on the next sample.
 int16 ADPCMInputStream::stepAdjust(byte code) {
@@ -320,33 +352,6 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 		_status.stepIndex = ARRAYSIZE(imaStepTable) - 1;
 
 	return samp;
-}
-
-static const int MSADPCMAdaptationTable[] = {
-	230, 230, 230, 230, 307, 409, 512, 614,
-	768, 614, 512, 409, 307, 230, 230, 230
-};
-
-
-int16 ADPCMInputStream::decodeMS(ADPCMChannelStatus *c, byte code) {
-	int32 predictor;
-
-	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
-	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
-
-	if (predictor < -0x8000)
-		predictor = -0x8000;
-	else if (predictor > 0x7fff)
-		predictor = 0x7fff;
-
-	c->sample2 = c->sample1;
-	c->sample1 = predictor;
-	c->delta = (MSADPCMAdaptationTable[(int)code] * c->delta) >> 8;
-
-	if (c->delta < 16)
-		c->delta = 16;
-
-	return (int16)predictor;
 }
 
 AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
