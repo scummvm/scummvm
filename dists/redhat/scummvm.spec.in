@@ -50,13 +50,15 @@ mkdir tmp
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 (cd mpeg2dec-0.4.0; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp
+./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix}
 make
 
 %install
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
 install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
+install -m644 -D gui/themes/modern.ini %{buildroot}%{_datadir}/scummvm/modern.ini
+install -m644 -D gui/themes/modern.zip %{buildroot}%{_datadir}/scummvm/modern.zip
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -71,12 +73,15 @@ rm -Rf ${RPM_BUILD_ROOT}
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
+%{_datadir}/scummvm/modern.*
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Thu Sep 21 2006 (0.9.1)
+  - include modern theme
 * Mon Dec 20 2004 (0.7.0)
   - added AUTHORS file
 * Thu Jul 15 2004 (0.6.0-2)
