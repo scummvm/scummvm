@@ -519,7 +519,7 @@ void ScummEngine::checkExecVerbs() {
 		int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 
 		// This could be kUnkVirtScreen.
-		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area
+		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
 			return;
 
