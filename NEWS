@@ -14,6 +14,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed graphical glitches in HE80 version of Putt-Putt Travels Through
      Time.
    - Fixed FM-TOWNS version of Indy3 failing on Amiga port.
+   - Fixed crash in MM NES when clicking on top screen area
 
  Simon:
    - Improved support for international versions of the Feeble Files.

@@ -518,6 +518,11 @@ void ScummEngine::checkExecVerbs() {
 		byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
 		int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 
+		// This could be kUnkVirtScreen.
+		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
+		if (!zone)
+			return;
+
 		if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
 			runInputScript(5, 0, 0);
