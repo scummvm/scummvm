@@ -649,13 +649,13 @@ void LauncherDialog::addGame() {
 			// are *adding* a game to the config, not replacing).
 			String domain(result.gameid);
 			if (ConfMan.hasGameDomain(domain)) {
-				char suffix = 'a';
-				domain += suffix;
+				int suffixN = 1;
+				char suffix[16];
+
 				while (ConfMan.hasGameDomain(domain)) {
-					assert(suffix < 'z');
-					domain.deleteLastChar();
-					suffix++;
-					domain += suffix;
+					snprintf(suffix, 16, "-%d", suffixN);
+					domain = result.gameid + suffix;
+					suffixN++;
 				}
 			}
 

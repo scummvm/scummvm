@@ -20,6 +20,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 0.9.1 (????-??-??)
  General:
    - Fixed potential garbage and/or crash in debug console.
+   - Removed restriction on 27 games per game id when added via launcher.
 
  SCUMM:
    - Improved support for international versions of HE games.
