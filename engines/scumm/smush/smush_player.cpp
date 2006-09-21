@@ -253,7 +253,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_seekPos = -1;
 
 	_skipNext = false;
-	_subtitles = ConfMan.getBool("subtitles");
 	_dst = NULL;
 	_storeFrame = false;
 	_compressedFileMode = false;
@@ -567,7 +566,11 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	}
 
 	// if subtitles disabled and bit 3 is set, then do not draw
-	if ((!_subtitles) && ((flags & 8) == 8))
+	//
+	// Query ConfMan here. However it may be slower, but
+	// player may want to switch the subtitles on or off during the
+	// playback. This fixes bug #1550974
+	if ((!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
 	SmushFont *sf = _sf[0];
