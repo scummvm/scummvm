@@ -57,7 +57,6 @@ private:
 	int32 _seekFrame;
 
 	bool _skipNext;
-	bool _subtitles;
 	bool _skips[37];
 	int32 _frame;
 
