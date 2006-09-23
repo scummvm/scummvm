@@ -24,7 +24,7 @@
 #define SOUND_RATE_H
 
 #include "common/scummsys.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 
 class AudioStream;
 

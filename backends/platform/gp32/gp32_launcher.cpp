@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/file.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "gp32std.h"
 #include "gp32std_grap.h"

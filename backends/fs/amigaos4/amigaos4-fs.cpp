@@ -36,7 +36,7 @@
 
 #include "common/util.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
 
 #define ENTER() /* debug(6, "Enter") */

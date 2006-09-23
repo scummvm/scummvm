@@ -24,7 +24,7 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 namespace Scumm {
 

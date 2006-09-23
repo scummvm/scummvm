@@ -24,7 +24,7 @@
 #include "gui/ScrollBarWidget.h"
 #include "gui/eval.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "base/version.h"
 
 #include "common/system.h"

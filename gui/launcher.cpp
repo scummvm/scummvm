@@ -21,7 +21,7 @@
 
 #include "common/stdafx.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
 #include "base/version.h"

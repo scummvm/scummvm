@@ -23,7 +23,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "dc.h"
 
 EXTERN_C void *memcpy4s(void *s1, const void *s2, unsigned int n);

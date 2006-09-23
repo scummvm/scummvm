@@ -25,7 +25,7 @@
 #include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/PopUpWidget.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 
 namespace GUI {
 

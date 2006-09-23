@@ -24,7 +24,7 @@
 #ifndef SIMON_H
 #define SIMON_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "common/rect.h"
 #include "common/util.h"

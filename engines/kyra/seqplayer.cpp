@@ -23,7 +23,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "kyra/kyra.h"
 #include "kyra/resource.h"

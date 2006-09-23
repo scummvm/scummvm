@@ -23,7 +23,7 @@
 #ifndef LURE_H
 #define LURE_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/rect.h"
 #include "sound/mixer.h"
 #include "common/file.h"

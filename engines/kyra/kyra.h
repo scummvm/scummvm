@@ -23,7 +23,7 @@
 #ifndef KYRA_H
 #define KYRA_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/rect.h"
 
 namespace Kyra {

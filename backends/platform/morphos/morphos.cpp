@@ -23,7 +23,7 @@
  */
 
 #include "common/stdafx.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/util.h"
 #include "scumm/scumm.h"
 

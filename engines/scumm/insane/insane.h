@@ -23,7 +23,7 @@
 #if !defined(INSANE_H) && !defined(DISABLE_SCUMM_7_8)
 #define INSANE_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "scumm/intern.h"
 #include "scumm/nut_renderer.h"
 

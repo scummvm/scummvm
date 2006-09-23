@@ -23,7 +23,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include <ronin/ronin.h>
 #include <string.h>

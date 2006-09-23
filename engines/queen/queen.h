@@ -23,7 +23,7 @@
 #ifndef QUEEN_H
 #define QUEEN_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 namespace Common {
 	class InSaveFile;

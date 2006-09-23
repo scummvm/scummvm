@@ -23,7 +23,7 @@
 #if defined(WIN32) && !defined (__SYMBIAN32__)
 #include <malloc.h>
 #endif
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"

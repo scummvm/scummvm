@@ -23,7 +23,7 @@
 #ifndef BSSWORD1_H
 #define BSSWORD1_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/util.h"
 #include "sword1/sworddefs.h"
 

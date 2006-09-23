@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <string.h>
 #include "backends/platform/ps2/asyncfio.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/file.h"
 #include "eecodyvdfs.h"
 #include "common/config-manager.h"

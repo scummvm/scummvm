@@ -22,7 +22,7 @@
 
 #include "common/stdafx.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"

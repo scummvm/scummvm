@@ -33,7 +33,7 @@
 #include <iopheap.h>
 #include "common/scummsys.h"
 #include "../intern.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "backends/platform/ps2/systemps2.h"
 #include "backends/platform/ps2/Gs2dScreen.h"
 #include "backends/platform/ps2/ps2input.h"

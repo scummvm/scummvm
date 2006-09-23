@@ -29,7 +29,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "cine/texte.h"
 #include "cine/rel.h"

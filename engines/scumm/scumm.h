@@ -24,7 +24,7 @@
 #ifndef SCUMM_H
 #define SCUMM_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/rect.h"

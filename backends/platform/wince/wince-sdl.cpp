@@ -24,7 +24,7 @@
 #include "wince-sdl.h"
 
 #include "common/util.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "base/main.h"
 #include "base/plugins.h"
 #include "common/timer.h"

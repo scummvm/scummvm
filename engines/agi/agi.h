@@ -33,7 +33,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 namespace Agi {
 

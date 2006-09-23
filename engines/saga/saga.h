@@ -25,7 +25,7 @@
 #ifndef SAGA_H
 #define SAGA_H
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "common/stream.h"
 

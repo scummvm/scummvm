@@ -23,7 +23,7 @@
 
 #include "common/stdafx.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"

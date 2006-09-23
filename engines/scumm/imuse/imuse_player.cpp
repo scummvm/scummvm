@@ -23,7 +23,7 @@
 #include "common/stdafx.h"
 
 #include "common/util.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/saveload.h"

@@ -1,7 +1,6 @@
 MODULE := base
 
 MODULE_OBJS := \
-	engine.o \
 	main.o \
 	commandLine.o \
 	plugins.o \

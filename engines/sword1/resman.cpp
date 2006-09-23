@@ -26,7 +26,7 @@
 #include "common/util.h"
 #include "common/str.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "sword1/memman.h"
 #include "sword1/resman.h"

@@ -24,7 +24,7 @@
 #define SKYMAIN_H
 
 #include "common/stdafx.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 
 namespace Sky {
 

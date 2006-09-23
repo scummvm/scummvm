@@ -24,7 +24,7 @@
 #define LURE_SCREEN_H
 
 #include "common/stdafx.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "lure/luredefs.h"
 #include "lure/palette.h"
 #include "lure/disk.h"

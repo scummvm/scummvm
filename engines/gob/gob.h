@@ -26,7 +26,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 namespace Gob {
 

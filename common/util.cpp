@@ -20,7 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#include "base/engine.h"
+#include "engines/engine.h"
 #include "common/util.h"
 
 namespace Common {

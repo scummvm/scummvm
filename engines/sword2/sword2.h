@@ -29,7 +29,7 @@
 
 #define RIGHT_CLICK_CLEARS_LUGGAGE 0
 
-#include "base/engine.h"
+#include "engines/engine.h"
 
 #include "common/util.h"
 
