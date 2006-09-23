@@ -22,6 +22,8 @@
 #include "common/stdafx.h"
 #include "engines/engine.h"
 #include "common/util.h"
+#include "common/system.h"
+#include "gui/debugger.h"
 
 namespace Common {
 
@@ -428,4 +430,112 @@ void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
 	va_end(va);
 
 	debugHelper(buf);
+}
+
+void NORETURN CDECL error(const char *s, ...) {
+	char buf_input[STRINGBUFLEN];
+	char buf_output[STRINGBUFLEN];
+	va_list va;
+
+	// Generate the full error message
+	va_start(va, s);
+	vsnprintf(buf_input, STRINGBUFLEN, s, va);
+	va_end(va);
+
+
+	// Next, give the active engine (if any) a chance to augment the
+	// error message
+	if (g_engine) {
+		g_engine->errorString(buf_input, buf_output);
+	} else {
+		strcpy(buf_output, buf_input);
+	}
+
+
+	// Print the error message to stderr
+#ifdef __GP32__
+	printf("ERROR: %s\n", buf_output);
+#elif !defined(_WIN32_WCE)
+	fprintf(stderr, "%s!\n", buf_output);
+#endif
+
+
+#ifndef __GP32__
+	// Unless this error -originated- within the debugger itself, we
+	// now invoke the debugger, if available / supported.
+	if (g_engine) {
+		GUI::Debugger *debugger = g_engine->getDebugger();
+#ifdef _WIN32_WCE
+		if (isSmartphone())
+			debugger = 0;
+#endif
+		if (debugger && !debugger->isAttached()) {
+			debugger->attach(buf_output);
+			debugger->onFrame();
+		}
+	}
+#endif
+
+
+#if defined( USE_WINDBG )
+#if defined( _WIN32_WCE )
+	TCHAR buf_output_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
+	OutputDebugString(buf_output_unicode);
+#else
+	OutputDebugString(buf_output);
+#endif
+#endif
+
+#if defined ( _WIN32_WCE )
+	drawError(buf_output);
+#endif
+
+#ifdef PALMOS_MODE
+	PalmFatalError(buf_output);
+#endif
+
+#ifdef __SYMBIAN32__
+	Symbian::FatalError(buf_output);
+#endif
+	// Finally exit. quit() will terminate the program if g_system is present
+	if (g_system)
+		g_system->quit();
+
+	exit(1);
+}
+
+void CDECL warning(const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+#ifdef __GP32__ //ph0x FIXME: implement fprint?
+	printf("WARNING: %s\n", buf);
+#else
+#if !defined (_WIN32_WCE) && !defined (__SYMBIAN32__)
+	fprintf(stderr, "WARNING: %s!\n", buf);
+#endif
+#endif
+#if defined( USE_WINDBG )
+	strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
+	OutputDebugString(buf);
+#endif
+#endif
+}
+
+void checkHeap() {
+#if defined(WIN32) && !defined(__SYMBIAN32__)
+	if (_heapchk() != _HEAPOK) {
+		error("Heap is invalid!");
+	}
+#endif
 }
