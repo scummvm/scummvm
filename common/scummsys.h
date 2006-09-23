@@ -106,11 +106,6 @@
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
-	#if defined(_WIN32_WCE) && _WIN32_WCE < 300
-	#define CDECL __cdecl
-	#define SMALL_SCREEN_DEVICE
-	#endif
-
 	typedef signed char int8_t;
 	typedef signed short int16_t;
 	typedef unsigned char uint8_t;
@@ -334,7 +329,7 @@
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
-	#if defined(_WIN32_WCE) && _WIN32_WCE < 300
+	#if _WIN32_WCE < 300
 	#define CDECL __cdecl
 	#define SMALL_SCREEN_DEVICE
 	#endif
