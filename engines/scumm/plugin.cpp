@@ -745,6 +745,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox", "FoxDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "foxdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox", "JAMESDEM", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "spyfox", "renard", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyfox", "Spydemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "Spydemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox", "SPYFox", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -764,6 +765,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox2", "Spy Fox 2 - Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "SpyFoxOR", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "spyfox2", "SpyFoxOR", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "spyfox2", "SPYFoxORE", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyfox2", "spyfoxsr", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox2", "SpyFoxSR", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "SPYMini", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -772,6 +774,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "Spy Ozone Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "SPYFoxSOS", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "thinker1", "1grademo", kGenHEPC, UNK_LANG, UNK, 0 },
