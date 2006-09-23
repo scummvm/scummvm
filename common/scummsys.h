@@ -84,7 +84,61 @@
 #define SCUMMVM_USE_PRAGMA_PACK
 
 
-#if defined(_MSC_VER) && !defined(__SYMBIAN32__) && !defined(_WIN32_WCE)
+#if defined(__SYMBIAN32__)
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_LITTLE_ENDIAN	
+	#define SCUMM_NEED_ALIGNMENT
+
+	#define SMALL_SCREEN_DEVICE
+
+	// Enable Symbians own datatypes
+	// This is done for two reasons
+	// a) uint is already defined by Symbians libc component
+	// b) Symbian is using its "own" datatyping, and the Scummvm port
+	//    should follow this to ensure the best compability possible.
+	#define SCUMMVM_DONT_DEFINE_TYPES
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned long int uint32;
+	typedef signed long int int32;
+
+#elif defined(_WIN32_WCE)
+
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
+	#define snprintf _snprintf
+
+	#define SCUMM_LITTLE_ENDIAN
+
+	#define FORCEINLINE __forceinline
+	#define NORETURN _declspec(noreturn)
+	#define PLUGIN_EXPORT __declspec(dllexport)
+
+	#if _WIN32_WCE < 300
+	#define CDECL __cdecl
+	#define SMALL_SCREEN_DEVICE
+	#endif
+
+	typedef signed char int8_t;
+	typedef signed short int16_t;
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+
+	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
+	typedef signed long int32_t;
+	typedef unsigned long uint32_t;
+	#endif
+
+#elif defined(_MSC_VER)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp _strnicmp
@@ -259,33 +313,6 @@
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-#elif defined(__SYMBIAN32__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
-	#define SCUMM_LITTLE_ENDIAN	
-	#define SCUMM_NEED_ALIGNMENT
-
-	#define SMALL_SCREEN_DEVICE
-
-	// Enable Symbians own datatypes
-	// This is done for two reasons
-	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Scummvm port
-	//    should follow this to ensure the best compability possible.
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
-
 #elif defined (__DS__) //NeilM
 
 	#define scumm_stricmp stricmp
@@ -302,33 +329,6 @@
 	#include <time.h>
 
 	#define STRINGBUFLEN 256
-
-#elif defined(_WIN32_WCE)
-
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
-	#define snprintf _snprintf
-
-	#define SCUMM_LITTLE_ENDIAN
-
-	#define FORCEINLINE __forceinline
-	#define NORETURN _declspec(noreturn)
-	#define PLUGIN_EXPORT __declspec(dllexport)
-
-	#if _WIN32_WCE < 300
-	#define CDECL __cdecl
-	#define SMALL_SCREEN_DEVICE
-	#endif
-
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
-
-	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
-	typedef signed long int32_t;
-	typedef unsigned long uint32_t;
-	#endif
 
 #else
 	#error No system type defined
