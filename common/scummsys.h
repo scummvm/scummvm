@@ -240,13 +240,13 @@
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)
 	#define fflush(a)			ps2_fflush(a)
-	#define fseek(a, b, c)		ps2_fseek(a, b, c)
+	#define fseek(a, b, c)			ps2_fseek(a, b, c)
 	#define ftell(a)			ps2_ftell(a)
 	#define feof(a)				ps2_feof(a)
-	#define fread(a, b, c, d)	ps2_fread(a, b, c, d)
-	#define fwrite(a, b, c, d)	ps2_fwrite(a, b, c, d)
+	#define fread(a, b, c, d)		ps2_fread(a, b, c, d)
+	#define fwrite(a, b, c, d)		ps2_fwrite(a, b, c, d)
 	#define fgetc(a)			ps2_fgetc(a)
-	#define fgets(a, b, c)		ps2_fgets(a, b, c)
+	#define fgets(a, b, c)			ps2_fgets(a, b, c)
 	#define fputc(a, b)			ps2_fputc(a, b)
 	#define fputs(a, b)			ps2_fputs(a, b)
 	#define fprintf				ps2_fprintf
@@ -308,7 +308,7 @@
 	#include <ctype.h>
 	#include <string.h>
 	#include <math.h>
-    #include <time.h>
+	#include <time.h>
 
 	#define STRINGBUFLEN 256
 
