@@ -20,9 +20,6 @@
  */
 
 #include "common/stdafx.h"
-#if defined(WIN32) && !defined (__SYMBIAN32__)
-#include <malloc.h>
-#endif
 #include "engines/engine.h"
 #include "common/util.h"
 #include "common/system.h"
