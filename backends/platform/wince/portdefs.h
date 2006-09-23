@@ -24,8 +24,6 @@
 
 #if _WIN32_WCE < 300
 
-#define _HEAPOK 0
-
 void *calloc(size_t n, size_t s);
 int isalnum(int c);
 int isdigit(int c);

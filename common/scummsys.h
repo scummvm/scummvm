@@ -120,10 +120,6 @@
 
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
-	#ifndef _HEAPOK
-	#define _HEAPOK	(-2)
-	#endif
-
 #elif defined(UNIX)
 
 	#define scumm_stricmp strcasecmp

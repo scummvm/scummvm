@@ -3,8 +3,6 @@
 /* This stuff will live here until port configuration file is in place */
 #define stricmp _stricmp
 #define strdup _strdup
-#define _HEAPOK 0
-#define _heapchk() 0
 
 #ifndef _FILE_DEFINED
    typedef void FILE;
