@@ -1496,7 +1496,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	// Check whether lights are turned on or not
 	const bool lightsOn = _vm->isLightOn();
 
-	CHECK_HEAP;
 	if (_vm->_game.features & GF_SMALL_HEADER) {
 		smap_ptr = ptr;
 	} else if (_vm->_game.version == 8) {
@@ -1542,8 +1541,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	if (limit > _numStrips - sx)
 		limit = _numStrips - sx;
 	for (int k = 0; k < limit; ++k, ++stripnr, ++sx, ++x) {
-		CHECK_HEAP;
-
 		if (y < vs->tdirty[sx])
 			vs->tdirty[sx] = y;
 
@@ -1563,7 +1560,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
 			transpStrip = true;
 		
-		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
 			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
 			if (lightsOn)
@@ -1571,7 +1567,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 			else
 				clear8Col(frontBuf, vs->pitch, height);
 		}
-		CHECK_HEAP;
 
 		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag, tmsk_ptr);
 

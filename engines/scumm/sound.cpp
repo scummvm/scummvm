@@ -1655,8 +1655,6 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, in
 		src_ptr  += 0x11 + 8 * 16;
 		size -= 0x11 + 8 * 16;
 
-		CHECK_HEAP
-
 		track = src_ptr;
 
 		// Convert the ticks into a MIDI tempo.

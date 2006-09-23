@@ -566,7 +566,6 @@ void ScummEngine::resetRoomObjects() {
 	const byte *room, *searchptr, *rootptr;
 	const CodeHeader *cdhd;
 
-	CHECK_HEAP
 	room = getResourceAddress(rtRoom, _roomResource);
 
 	if (_numObjectsInRoom == 0)
@@ -628,8 +627,6 @@ void ScummEngine::resetRoomObjects() {
 		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
 			resetRoomObject(&_objs[i], room);
 	}
-
-	CHECK_HEAP
 }
 
 void ScummEngine_v3old::resetRoomObjects() {
@@ -637,7 +634,6 @@ void ScummEngine_v3old::resetRoomObjects() {
 	ObjectData *od;
 	const byte *room, *ptr;
 
-	CHECK_HEAP
 	room = getResourceAddress(rtRoom, _roomResource);
 
 	if (_numObjectsInRoom == 0)
@@ -673,8 +669,6 @@ void ScummEngine_v3old::resetRoomObjects() {
 			dumpResource(buf, od->obj_nr, room + od->OBCDoffset);
 		}
 	}
-
-	CHECK_HEAP
 }
 
 void ScummEngine_v4::resetRoomObjects() {
@@ -684,7 +678,6 @@ void ScummEngine_v4::resetRoomObjects() {
 	uint16 obim_id;
 	const byte *room;
 
-	CHECK_HEAP
 	room = getResourceAddress(rtRoom, _roomResource);
 
 	if (_numObjectsInRoom == 0)
@@ -729,8 +722,6 @@ void ScummEngine_v4::resetRoomObjects() {
 			resetRoomObject(&_objs[i], room);
 		}
 	}
-
-	CHECK_HEAP
 }
 
 void ScummEngine_c64::resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
@@ -1234,7 +1225,6 @@ void ScummEngine::addObjectToInventory(uint obj, uint room) {
 
 	debug(1, "Adding object %d from room %d into inventory", obj, room);
 
-	CHECK_HEAP
 	if (whereIsObject(obj) == WIO_FLOBJECT) {
 		idx = getObjectIndex(obj);
 		assert(idx >= 0);
@@ -1256,8 +1246,6 @@ void ScummEngine::addObjectToInventory(uint obj, uint room) {
 	dst = _res->createResource(rtInventory, slot, size);
 	assert(dst);
 	memcpy(dst, ptr, size);
-
-	CHECK_HEAP
 }
 
 void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room) {

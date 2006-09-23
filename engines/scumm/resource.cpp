@@ -729,8 +729,6 @@ int ScummEngine::getResourceSize(int type, int idx) {
 byte *ScummEngine::getResourceAddress(int type, int idx) {
 	byte *ptr;
 
-	CHECK_HEAP
-
 	if (_game.heversion >= 80 && type == rtString)
 		idx &= ~0x33539000;
 
@@ -804,7 +802,6 @@ void ResourceManager::setResourceCounter(int type, int idx, byte flag) {
 byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 	byte *ptr;
 
-	CHECK_HEAP
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
@@ -823,7 +820,6 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 
 	expireResources(size);
 
-	CHECK_HEAP
 	ptr = (byte *)calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
 	if (ptr == NULL) {
 		error("Out of memory while allocating %d", size);
@@ -865,7 +861,6 @@ bool ResourceManager::validateResource(const char *str, int type, int idx) const
 void ResourceManager::nukeResource(int type, int idx) {
 	byte *ptr;
 
-	CHECK_HEAP
 	if (!address[type])
 		return;
 

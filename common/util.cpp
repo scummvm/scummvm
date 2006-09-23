@@ -534,11 +534,3 @@ void CDECL warning(const char *s, ...) {
 #endif
 #endif
 }
-
-void checkHeap() {
-#if defined(WIN32) && !defined(__SYMBIAN32__)
-	if (_heapchk() != _HEAPOK) {
-		error("Heap is invalid!");
-	}
-#endif
-}

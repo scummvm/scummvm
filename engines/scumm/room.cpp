@@ -44,7 +44,6 @@ namespace Scumm {
 void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	int i, where;
 
-	CHECK_HEAP;
 	debugC(DEBUG_GENERAL, "Loading room %d", room);
 
 	stopTalk();
@@ -212,8 +211,6 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	_doEffect = true;
-
-	CHECK_HEAP;
 }
 
 /**

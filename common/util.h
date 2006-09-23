@@ -274,8 +274,6 @@ void CDECL debug(const char *s, ...) GCC_PRINTF(1, 2);
 void CDECL debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
 void CDECL debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
 
-void checkHeap();
-
 extern int gDebugLevel;
 
 

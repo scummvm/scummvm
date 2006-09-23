@@ -92,8 +92,6 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	const int scaletableSize = 128;
 	const bool newAmiCost = (_vm->_game.version == 5) && (_vm->_game.platform == Common::kPlatformAmiga);
 
-	CHECK_HEAP
-
 	v1.scaletable = smallCostumeScaleTable;
 
 	if (_loaded._numColors == 32) {
@@ -298,15 +296,12 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		_draw_bottom = rect.bottom;
 
 	if (_height + rect.top >= 256) {
-		CHECK_HEAP
 		return 2;
 	}
 
 	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x;
 
 	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
-
-	CHECK_HEAP
 
 	if (_loaded._format == 0x57) {
 		// The v1 costume renderer needs the actor number, which is
@@ -317,7 +312,6 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	else
 		proc3(v1);
 
-	CHECK_HEAP
 	return drawFlag;
 }
 

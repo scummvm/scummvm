@@ -97,11 +97,6 @@
 	// explains the reasons briefly.
 	#define SCUMMVM_USE_LONG_INT
 
-	#if defined(CHECK_HEAP)
-	#undef CHECK_HEAP
-	#define CHECK_HEAP checkHeap();
-	#endif
-
 	#define FORCEINLINE __forceinline
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
@@ -320,11 +315,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 
-	#if defined(CHECK_HEAP)
-	#undef CHECK_HEAP
-	#define CHECK_HEAP checkHeap();
-	#endif
-
 	#define FORCEINLINE __forceinline
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
@@ -366,10 +356,6 @@
 //
 #ifndef FORCEINLINE
 #define FORCEINLINE inline
-#endif
-
-#ifndef CHECK_HEAP
-#define CHECK_HEAP
 #endif
 
 #ifndef CDECL

@@ -1082,9 +1082,7 @@ void ScummEngine::processUpperActors() {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i].isInCurrentRoom() && _actors[i]._costume && _actors[i]._layer < 0) {
-			CHECK_HEAP
 			_actors[i].drawActorCostume();
-			CHECK_HEAP
 			_actors[i].animateCostume();
 		}
 	}

@@ -233,8 +233,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	_sound->pauseSounds(true);
 
-	CHECK_HEAP
-
 	closeRoom();
 
 	memset(_inventory, 0, sizeof(_inventory[0]) * _numInventory);
@@ -372,7 +370,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
-	CHECK_HEAP
 	debug(1, "State loaded from '%s'", filename);
 
 	_sound->pauseSounds(false);

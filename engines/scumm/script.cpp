@@ -470,7 +470,6 @@ void ScummEngine::executeScript() {
 		executeOpcode(_opcode);
 
 	}
-	CHECK_HEAP;
 }
 
 byte ScummEngine::fetchScriptByte() {
