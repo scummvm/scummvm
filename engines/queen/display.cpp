@@ -851,6 +851,10 @@ void Display::clearTexts(uint16 y1, uint16 y2) {
 	}
 }
 
+void Display::setFocusRect(const Common::Rect& rect) {
+	_system->setFocusRectangle(rect);
+}
+
 int Display::textCenterX(const char *text) const {
 	return (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
 }

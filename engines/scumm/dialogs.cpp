@@ -43,6 +43,10 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#ifdef __DS__
+#include "scummhelp.h"
+#endif
+
 #ifndef DISABLE_HELP
 #include "scumm/help.h"
 #endif
@@ -710,7 +714,12 @@ void HelpDialog::displayKeyBindings() {
 
 	String titleStr, *keyStr, *dscStr;
 
+#ifndef __DS__
 	ScummHelp::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
+#else
+	// DS version has a different help screen
+	DS::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
+#endif
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {

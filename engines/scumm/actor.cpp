@@ -22,6 +22,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/akos.h"
@@ -845,6 +846,20 @@ int ScummEngine::getTalkingActor() {
 }
 
 void ScummEngine::setTalkingActor(int value) {
+
+	if (value == 255) {
+		_system->clearFocusRectangle();
+	} else {
+		// Work out the screen co-ordinates of the actor
+		int x = _actors[value]._pos.x - (camera._cur.x - (_screenWidth >> 1));
+		int y = _actors[value]._top - (camera._cur.y - (_screenHeight >> 1));
+		
+		// Set the focus area to the calculated position
+		// TODO: Make the size adjust depending on what it's focusing on.
+		Common::Rect rect(x - 96, y - 64, x + 96, y + 64);
+		_system->setFocusRectangle(rect);
+	}
+
 	if (_game.id == GID_MANIAC && _game.version <= 1 && !(_game.platform == Common::kPlatformNES))
 		_V1TalkingActor = value;
 	else

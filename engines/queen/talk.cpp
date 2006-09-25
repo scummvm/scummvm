@@ -865,6 +865,15 @@ void Talk::speakSegment(
 		textY = bob->y;
 	}
 
+	// Set the focus rectangle
+	// FIXME: This may not be correct!
+	BobFrame *pbf = _vm->bankMan()->fetchFrame(bob->frameNum);
+
+	int height = (pbf->height * bob->scale) / 100;
+	
+	Common::Rect focus(textX - 96, textY - height - 64, textX + 96, textY + height + 64);
+	_vm->display()->setFocusRect(focus);
+	
 	//int SF = _vm->grid()->findScale(textX, textY);
 
 	const SpeechParameters *parameters = NULL;

@@ -32,6 +32,9 @@
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
 #include "scumm/he/wiz_he.h"
+#ifdef __DS__
+#include "blitters.h"
+#endif
 
 namespace Scumm {
 
@@ -543,7 +546,11 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (_game.version < 7) {
 		// Handle the text mask in older games; newer (V7/V8) games do not use it anymore.
 		const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
-	
+
+#ifdef __DS__
+		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _charset->_textSurface.pitch);
+#else	
+
 		// Compose the text over the game graphics
 		for (int h = 0; h < height; ++h) {
 			for (int w = 0; w < width; ++w) {
@@ -556,6 +563,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			dst += _screenWidth;
 			text += _charset->_textSurface.pitch;
 		}
+#endif
+
 	} else {
 		// Just do a simple blit in V7/V8 games.
 		blit(dst, _screenWidth, src, vs->pitch, width, height);
@@ -973,7 +982,8 @@ static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
 }
 
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
-	do {
+#ifndef __DS__
+do {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8);
 #else
@@ -983,6 +993,9 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 		dst += dstPitch;
 		src += dstPitch;
 	} while (--height);
+#else	
+	DS::asmCopy8Col(dst, dstPitch, src, height);
+#endif
 }
 
 static void clear8Col(byte *dst, int dstPitch, int height) {

@@ -149,6 +149,9 @@ public:
 	//! change the text color for the specified texts list entry
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
+	//! Set the focus rectangle to the speaking character
+	void setFocusRect(const Common::Rect& rect);
+
 	int textCenterX(const char *text) const;
 	uint16 textWidth(const char *text) const;
 	uint16 textWidth(const char *text, uint16 len) const;

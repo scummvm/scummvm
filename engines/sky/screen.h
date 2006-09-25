@@ -88,6 +88,7 @@ public:
 
 	void paintBox(uint16 x, uint16 y);
 	void showGrid(uint8 *gridBuf);
+	void setFocusRectangle(const Common::Rect& rect);
 
 private:
 	OSystem *_system;

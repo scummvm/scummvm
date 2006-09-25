@@ -491,10 +491,12 @@ int SimonEngine::init() {
 		_textIndexBase = 1500 / 4;
 		_numTextBoxes = 20;
 		_numVideoOpcodes = 75;
-#ifndef PALMOS_68K
-		_vgaMemSize = 2000000;
-#else
+#if	defined(PALMOS_68K)
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
+#elif defined(__DS__)
+		_vgaMemSize = 1300000;
+#else
+		_vgaMemSize = 2000000;
 #endif
 		_tableMemSize = 100000;
 		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
