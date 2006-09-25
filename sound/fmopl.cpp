@@ -35,7 +35,7 @@
 
 #include "common/util.h"
 
-#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined (__MAEMO__)
+#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined (__MAEMO__) || defined(__DS__)
 #include "common/config-manager.h"
 #endif
 
@@ -637,10 +637,16 @@ static int OPLOpenTable(void) {
 	/* allocate dynamic tables */
 	if((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == NULL)
 		return 0;
+#ifdef __DS__
+	// On the DS, use fast RAM for the sine table, since it thrashes the cache otherwise
+	// Unfotunately, this doesn't stop OPL emulation from taking up far too much CPU time, but it helps a fair bit.
+	SIN_TABLE = ((int **) (0x37F8000));
+#else
 	if((SIN_TABLE = (int **)malloc(SIN_ENT * 4 * sizeof(int *))) == NULL) {
 		free(TL_TABLE);
 		return 0;
 	}
+#endif
 	if((AMS_TABLE = (int *)malloc(AMS_ENT * 2 * sizeof(int))) == NULL) {
 		free(TL_TABLE);
 		free(SIN_TABLE);
@@ -1172,7 +1178,7 @@ FM_OPL *makeAdlibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(__MAEMO__)
+#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(__MAEMO__) || defined(__DS__)
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;
