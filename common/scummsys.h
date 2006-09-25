@@ -355,6 +355,23 @@
 	typedef unsigned long uint32_t;
 	#endif
 
+#elif defined (__DS__) //NeilM
+
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
+
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN 
+
+	#include "nds/jtypes.h"
+	#include <stdarg.h>
+	#include <ctype.h>
+	#include <string.h>
+	#include <math.h>
+    #include <time.h>
+
+	#define STRINGBUFLEN 256
+
 #else
 
 	#error No system type defined
