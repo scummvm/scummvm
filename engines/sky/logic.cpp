@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/rect.h"
 
 #include "sky/autoroute.h"
 #include "sky/compact.h"

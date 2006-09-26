@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/rect.h"
 #include "queen/talk.h"
 
 #include "queen/bankman.h"
