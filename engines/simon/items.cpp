@@ -288,6 +288,55 @@ void SimonEngine::setupOpcodes() {
 	_numOpcodes = ARRAYSIZE(opcode_table);
 
 	switch (getGameType()) {
+	case GType_ELVIRA:
+	case GType_ELVIRA2:
+		// Confirmed
+		opcode_table[48] = &SimonEngine::o_destroy;
+		opcode_table[51] = &SimonEngine::o_place;
+		opcode_table[91] = &SimonEngine::o_message;
+
+		opcode_table[70] = &SimonEngine::o1_printLongText;
+		opcode_table[83] = &SimonEngine::o1_rescan;
+		opcode_table[98] = &SimonEngine::o1_animate;
+		opcode_table[99] = &SimonEngine::o1_stopAnimate;
+		opcode_table[85] = &SimonEngine::oww_whereTo;
+		opcode_table[105] = &SimonEngine::oww_menu;
+		opcode_table[106] = &SimonEngine::oww_textMenu;
+		opcode_table[127] = &SimonEngine::o1_playTune;
+		opcode_table[148] = &SimonEngine::oww_ifDoorOpen;
+		opcode_table[179] = &SimonEngine::o_isAdjNoun;
+		opcode_table[180] = &SimonEngine::o_b2Set;
+		opcode_table[181] = &SimonEngine::o_b2Clear;
+		opcode_table[182] = &SimonEngine::o_b2Zero;
+		opcode_table[183] = &SimonEngine::o_b2NotZero;
+
+		// Code difference, check if triggered
+		opcode_table[161] = NULL;
+		opcode_table[162] = NULL;
+		opcode_table[163] = NULL;
+		opcode_table[164] = NULL;
+		opcode_table[165] = NULL;
+		opcode_table[166] = NULL;
+		opcode_table[167] = NULL;
+		opcode_table[168] = NULL;
+		opcode_table[169] = NULL;
+		opcode_table[170] = NULL;
+		opcode_table[171] = NULL;
+		opcode_table[172] = NULL;
+		opcode_table[173] = NULL;
+		opcode_table[174] = NULL;
+		opcode_table[175] = NULL;
+		opcode_table[176] = NULL;
+		opcode_table[177] = NULL;
+		opcode_table[178] = NULL;
+		opcode_table[184] = NULL;
+		opcode_table[185] = NULL;
+		opcode_table[186] = NULL;
+		opcode_table[187] = NULL;
+		opcode_table[188] = NULL;
+		opcode_table[189] = NULL;
+		opcode_table[190] = NULL;
+		break;
 	case GType_WW:
 		// Confirmed
 		opcode_table[70] = &SimonEngine::o1_printLongText;
@@ -397,6 +446,50 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[197] = &SimonEngine::o3_b3Clear;
 		opcode_table[198] = &SimonEngine::o3_b3Zero;
 		opcode_table[199] = &SimonEngine::o3_b3NotZero;
+		break;
+	case GType_PP:
+		// Confirmed
+		opcode_table[30] = &SimonEngine::o4_opcode30;
+		opcode_table[38] = &SimonEngine::o4_opcode38;
+		opcode_table[105] = &SimonEngine::o4_loadHiScores;
+		opcode_table[106] = &SimonEngine::o4_checkHiScores;
+
+		// To check
+		opcode_table[23] = &SimonEngine::o3_chance;
+		opcode_table[37] = &SimonEngine::o3_jumpOut;
+		opcode_table[65] = &SimonEngine::o3_addTextBox;
+		opcode_table[70] = &SimonEngine::o3_printLongText;
+		opcode_table[83] = &SimonEngine::o2_rescan;
+		opcode_table[98] = &SimonEngine::o2_animate;
+		opcode_table[99] = &SimonEngine::o2_stopAnimate;
+		opcode_table[107] = &SimonEngine::o3_addBox;
+		opcode_table[122] = &SimonEngine::o3_oracleTextDown;
+		opcode_table[123] = &SimonEngine::o3_oracleTextUp;
+		opcode_table[124] = &SimonEngine::o3_ifTime;
+		opcode_table[127] = &SimonEngine::o3_playTune;
+		opcode_table[131] = &SimonEngine::o3_setTime;
+		opcode_table[132] = &SimonEngine::o3_saveUserGame,
+		opcode_table[133] = &SimonEngine::o3_loadUserGame;
+		opcode_table[134] = &SimonEngine::o3_listSaveGames;
+		opcode_table[135] = &SimonEngine::o3_checkCD;
+		opcode_table[161] = &SimonEngine::o3_screenTextBox;
+		opcode_table[165] = &SimonEngine::o3_isAdjNoun;
+		opcode_table[171] = &SimonEngine::o3_hyperLinkOn;
+		opcode_table[172] = &SimonEngine::o3_hyperLinkOff;
+		opcode_table[173] = &SimonEngine::o3_checkPaths;
+		opcode_table[177] = &SimonEngine::o3_screenTextPObj;
+		opcode_table[181] = &SimonEngine::o3_mouseOff;
+		opcode_table[182] = &SimonEngine::o3_loadVideo;
+		opcode_table[183] = &SimonEngine::o3_playVideo;
+		opcode_table[187] = &SimonEngine::o3_centreScroll;
+		opcode_table[188] = &SimonEngine::o2_isShortText;
+		opcode_table[189] = &SimonEngine::o2_clearMarks;
+		opcode_table[190] = &SimonEngine::o2_waitMark;
+		opcode_table[191] = &SimonEngine::o3_resetPVCount;
+		opcode_table[192] = &SimonEngine::o3_setPathValues;
+		opcode_table[193] = &SimonEngine::o3_stopClock;
+		opcode_table[194] = &SimonEngine::o3_restartClock;
+		opcode_table[195] = &SimonEngine::o3_setColour;
 		break;
 	default:
 		error("setupOpcodes: Unknown game");
@@ -588,7 +681,7 @@ void SimonEngine::o_clear() {
 
 void SimonEngine::o_let() {
 	// 42: set var
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, getVarOrWord());
 }
 
@@ -600,31 +693,31 @@ void SimonEngine::o_add() {
 
 void SimonEngine::o_sub() {
 	// 44: sub
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) - getVarOrWord());
 }
 
 void SimonEngine::o_addf() {
 	// 45: add f
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) + getNextVarContents());
 }
 
 void SimonEngine::o_subf() {
 	// 46: sub f
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) - getNextVarContents());
 }
 
 void SimonEngine::o_mul() {
 	// 47: mul
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) * getVarOrWord());
 }
 
 void SimonEngine::o_div() {
 	// 48: div
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	int value = getVarOrWord();
 	if (value == 0)
 		error("o_div: Division by zero");
@@ -633,13 +726,13 @@ void SimonEngine::o_div() {
 
 void SimonEngine::o_mulf() {
 	// 49: mul f
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) * getNextVarContents());
 }
 
 void SimonEngine::o_divf() {
 	// 50: div f
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	int value = getNextVarContents();
 	if (value == 0)
 		error("o_divf: Division by zero");
@@ -648,7 +741,7 @@ void SimonEngine::o_divf() {
 
 void SimonEngine::o_mod() {
 	// 51: mod
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	int value = getVarOrWord();
 	if (value == 0)
 		error("o_mod: Division by zero");
@@ -657,7 +750,7 @@ void SimonEngine::o_mod() {
 
 void SimonEngine::o_modf() {
 	// 52: mod f
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	int value = getNextVarContents();
 	if (value == 0)
 		error("o_modf: Division by zero");
@@ -666,7 +759,7 @@ void SimonEngine::o_modf() {
 
 void SimonEngine::o_random() {
 	// 53: random
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	uint value = (uint16)getVarOrWord();
 
 	// Disable random in simon1amiga for now
@@ -765,8 +858,13 @@ void SimonEngine::o_setShortText() {
 	// 66: set item name
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
-	if (var < _numTextBoxes)
+	if (var < _numTextBoxes) {
 		_stringIdArray2[var] = stringId;
+		if (getGameType() == GType_PP) {
+			getVarOrWord();
+			getVarOrWord();
+		}
+	}
 }
 
 void SimonEngine::o_setLongText() {
@@ -1270,22 +1368,22 @@ void SimonEngine::o_getItem() {
 
 void SimonEngine::o_bSet() {
 	// 153: set bit
-	setBitFlag(getVarOrByte(), true);
+	setBitFlag(getVarWrapper(), true);
 }
 
 void SimonEngine::o_bClear() {
 	// 154: clear bit
-	setBitFlag(getVarOrByte(), false);
+	setBitFlag(getVarWrapper(), false);
 }
 
 void SimonEngine::o_bZero() {
 	// 155: is bit clear
-	setScriptCondition(!getBitFlag(getVarOrByte()));
+	setScriptCondition(!getBitFlag(getVarWrapper()));
 }
 
 void SimonEngine::o_bNotZero() {
 	// 156: is bit set
-	uint bit = getVarOrByte();
+	uint bit = getVarWrapper();
 
 	// WORKAROUND: Fix for glitch in some versions
 	if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
@@ -1355,7 +1453,7 @@ void SimonEngine::o_screenTextMsg() {
 			speechId = (uint16)getNextWord();
 	}
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		vgaSpriteId = 1;
 
 	tl = getTextLocation(vgaSpriteId);
@@ -2263,29 +2361,67 @@ void SimonEngine::o3_b3NotZero() {
 }
 
 // -----------------------------------------------------------------------
+// Puzzle Pack Opcodes
+// -----------------------------------------------------------------------
+
+void SimonEngine::o4_opcode30() {
+	getNextItemPtr();
+}
+
+void SimonEngine::o4_opcode38() {
+	getVarOrByte();
+	getNextItemPtr();
+}
+
+void SimonEngine::o4_loadHiScores() {
+	getVarOrByte();
+}
+
+void SimonEngine::o4_checkHiScores() {
+	getVarOrByte();
+	getVarOrByte();
+}
+
+// -----------------------------------------------------------------------
 
 int SimonEngine::runScript() {
-	byte opcode;
+	int opcode;
 	bool flag;
 
 	do {
 		if (_continousMainScript)
 			dumpOpcode(_codePtr);
 
-		opcode = getByte();
-		if (opcode == 0xFF)
-			return 0;
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+			opcode = getVarOrWord();
+			if (opcode == 10000)
+				return 0;
+		} else {
+			opcode = getByte();
+			if (opcode == 0xFF)
+				return 0;
+		}
+		debug(1, "runScript: opcode %d", opcode);
 
 		if (_runScriptReturn1)
 			return 1;
 
 		/* Invert condition? */
 		flag = false;
-		if (opcode == 0) {
-			flag = true;
-			opcode = getByte();
-			if (opcode == 0xFF)
-				return 0;
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+			if (opcode == 203) {
+				flag = true;
+				opcode = getVarOrWord();
+				if (opcode == 10000)
+					return 0;
+			}
+		} else {
+			if (opcode == 0) {
+				flag = true;
+				opcode = getByte();
+				if (opcode == 0xFF)
+					return 0;
+			}
 		}
 
 		setScriptCondition(true);

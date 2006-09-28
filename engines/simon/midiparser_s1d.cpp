@@ -115,7 +115,7 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		// OTherwise fall through to default.
 
 	default:
-		warning("MidiParser_S1D: Unexpected byte 0x%02X found", (int) info.command());
+		debug(3, "MidiParser_S1D: Unexpected byte 0x%02X found", (int) info.command());
 		break;
 	}
 }

@@ -288,7 +288,8 @@ Sound::~Sound() {
 
 void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	// Game versions which use separate voice files
-	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32)
+	if (_vm->getGameType() == GType_FF || _vm->getGameType() == GType_PP ||
+		_vm->getGameId() == GID_SIMON1CD32)
 		return;
 
 	char filename[16];

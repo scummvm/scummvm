@@ -67,10 +67,15 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 };
 
 static const PlainGameDescriptor simonGames[] = {
+	{"jumble", "Jumble"},
+	{"puzzle", "Puzzle"},
+	{"swampy", "Swampy Adventures"},
 	{"feeble", "The Feeble Files"},
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
 	{"waxworks", "Waxworks"},
+	{"elvira2", "Elvira 2"},
+	{"elvira", "Elvira"},
 	{NULL, NULL}
 };
 
@@ -596,8 +601,59 @@ static GameFileDescription WAXWORKS_GameFiles[] = {
 	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f"},
 };
 
+static GameFileDescription ELVIRA2_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"00000000000000000000000000000000"},
+	{ "icon.dat",		GAME_ICONFILE,	"00000000000000000000000000000000"},
+	{ "stripped.txt",	GAME_STRFILE,	"00000000000000000000000000000000"},
+	{ "tbllist",		GAME_TBLFILE,	"00000000000000000000000000000000"},
+};
+
+static GameFileDescription ELVIRA_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
+};
+
+static GameFileDescription JUMBLE_GameFiles[] = {
+	{ "Gjumble",		GAME_BASEFILE,	"d54cce46d339038d1a6b74ea213655bc"},
+};
+
+static GameFileDescription PUZZLE_GameFiles[] = {
+	{ "Gpuzzle",		GAME_BASEFILE,	"3f80dac8e0d85401a1058a560fe49ab6"},
+};
+
+static GameFileDescription SWAMPY_GameFiles[] = {
+	{ "Gswampy",		GAME_BASEFILE,	"3a6d4d7b2433e660f2483f9396cc87a2"},
+};
+
 static GameDescription gameDescriptions[] = {
-	// Waxworks - English Floopy
+	// Elvira - English Floppy
+	{
+		"elvira",
+		GType_ELVIRA,
+		GID_ELVIRA,
+		"Floppy",
+		ARRAYSIZE(ELVIRA_GameFiles),
+		ELVIRA_GameFiles,
+		GF_OLD_BUNDLE,
+		Common::EN_ANY,
+		Common::kPlatformPC,
+	},
+
+	// Elvira 2 - English Floppy
+	{
+		"elvira2",
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		"Floppy",
+		ARRAYSIZE(ELVIRA2_GameFiles),
+		ELVIRA2_GameFiles,
+		GF_OLD_BUNDLE,
+		Common::EN_ANY,
+		Common::kPlatformPC,
+	},
+
+	// Waxworks - English Floppy
 	{
 		"waxworks",
 		GType_WW,
@@ -1379,6 +1435,46 @@ static GameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 	},
+
+	// Jumble
+	{
+		"jumble",
+		GType_PP,
+		GID_JUMBLE,
+		"CD",
+		ARRAYSIZE(JUMBLE_GameFiles),
+		JUMBLE_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+	},
+
+	// Puzzle
+	{
+		"puzzle",
+		GType_PP,
+		GID_PUZZLE,
+		"CD",
+		ARRAYSIZE(PUZZLE_GameFiles),
+		PUZZLE_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+	},
+
+	// Swampy Adventures
+	{
+		"swampy",
+		GType_PP,
+		GID_SWAMPY,
+		"CD",
+		ARRAYSIZE(SWAMPY_GameFiles),
+		SWAMPY_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+	},
+
 };
 
 DetectedGame toDetectedGame(const GameDescription &g) {

@@ -37,10 +37,18 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 	byte opcode;
 	const char *s, *st;
 
-	opcode = *p++;
-	if (opcode == 255)
-		return NULL;
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		opcode = READ_BE_UINT16(p);
+		p += 2;
+		if (opcode = 10000)
+			return NULL;
+	} else {
+		opcode = *p++;
+		if (opcode == 255)
+			return NULL;
+	}
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		st = s = feeblefiles_opcode_name_table[opcode];
 	} else if (getGameType() == GType_SIMON2 && getFeatures() & GF_TALKIE) {
 		st = s = simon2talkie_opcode_name_table[opcode];
@@ -192,7 +200,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			return;
 		}
 
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			strn = str = feeblefiles_video_opcode_name_table[opcode];
 		} else if (getGameType() == GType_SIMON2) {
 			strn = str = simon2_video_opcode_name_table[opcode];
@@ -206,7 +214,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			strn++;
 		printf("%.2d: %s ", opcode, strn + 1);
 
-		int end = (getGameType() == GType_FF) ? 9999 : 999;
+		int end = (getGameType() == GType_FF || getGameType() == GType_PP) ? 9999 : 999;
 		for (; *str != '|'; str++) {
 			switch (*str) {
 			case 'x':
@@ -344,7 +352,7 @@ void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int
 	state.dh = h;
 	state.y_skip = 0;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		for (i = 0; i != w; i++) {
 			byte *c = vc10_depackColumn(&state);
 			for (j = 0; j != h; j++) {

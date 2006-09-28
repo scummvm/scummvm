@@ -110,10 +110,13 @@ struct VgaTimerEntry {
 };
 
 enum SIMONGameType {
-	GType_FF = 0,
-	GType_SIMON1 = 1,
-	GType_SIMON2 = 2,
-	GType_WW = 3
+	GType_ELVIRA = 0,
+	GType_ELVIRA2 = 1,
+	GType_WW = 2,
+	GType_SIMON1 = 3,
+	GType_SIMON2 = 4,
+	GType_FF = 6,
+	GType_PP = 7
 };
 
 struct GameFileDescription {
@@ -157,6 +160,7 @@ public:
 	GameDescription *_gameDescription;
 
 	bool initGame(void);
+	void setupGame();
 
 	int getGameId() const { return _gameDescription->gameId; }
 	int getGameType() const { return _gameDescription->gameType; }
@@ -188,6 +192,7 @@ protected:
 	uint _tableMemSize;
 	uint _musicIndexBase;
 	uint _soundIndexBase;
+	uint _numVars;
 	const GameSpecificSettings *gss;
 
 	byte _keyPressed;
@@ -403,11 +408,11 @@ protected:
 	uint16 _stringIdArray3[40];
 	uint16 _speechIdArray4[40];
 
-	uint16 _bitArray[16];
+	uint16 _bitArray[128];
 	uint16 _bitArrayTwo[16];
 	uint16 _bitArrayThree[16];
-	int16 _variableArray[256];
-	int16 _variableArray2[256];
+	int16 *_variableArray;
+	int16 *_variableArray2;
 	int16 *_variableArrayPtr;
 
 	WindowBlock *_windowArray[16];
@@ -552,6 +557,7 @@ protected:
 	int getNextWord();
 
 	uint getNextVarContents();
+	uint getVarWrapper();
 	uint getVarOrWord();
 	uint getVarOrByte();
 	uint readVariable(uint variable);
@@ -629,9 +635,11 @@ protected:
 	void mouseOff();
 	void mouseOn();
 
-	void loadTextIntoMem(uint stringId);
 	bool loadTablesIntoMem(uint subr_id);
+	bool loadTablesOldIntoMem(uint subr_id);
+	bool loadTablesNewIntoMem(uint subr_id);
 	bool loadXTablesIntoMem(uint subr_id);
+	void loadTextIntoMem(uint stringId);
 
 	bool loadRoomItems(uint item);
 
@@ -1028,6 +1036,12 @@ public:
 	void o3_b3Clear();
 	void o3_b3Zero();
 	void o3_b3NotZero();
+
+	// Opcodes, Puzzle Pack only
+	void o4_opcode30();
+	void o4_opcode38();
+	void o4_loadHiScores();
+	void o4_checkHiScores();
 
 protected:
 	void drawImages(VC10_state *state);

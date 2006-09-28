@@ -71,6 +71,7 @@ struct Item {
 	int16 adjective;
 	int16 state;										/* signed int */
 	uint16 classFlags;
+	uint16 itemName;
 	Child *children;
 
 	Item() { memset(this, 0, sizeof(*this)); }
@@ -248,7 +249,11 @@ enum GameIds {
 	GID_FEEBLEFILES_FR,
 	GID_FEEBLEFILES_DE,
 	GID_FEEBLEFILES_IT,
-	GID_FEEBLEFILES_ES
+	GID_FEEBLEFILES_ES,
+
+	GID_JUMBLE,
+	GID_PUZZLE,
+	GID_SWAMPY
 };
 
 } // End of namespace Simon

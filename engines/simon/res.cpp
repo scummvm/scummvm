@@ -40,6 +40,30 @@ using Common::File;
 namespace Simon {
 
 // Script opcodes to load into memory
+static const char *const opcode_arg_table_elvira[300] = {
+	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ",	 "II ",	"II ", "II ", "II ", "F ", "F ", "FN ",	 /*  EQ",        */
+	"FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ", "p ",	 /*  PREP",      */
+	"N ", "I ", "I ", "I ",	 "I ",	"IN ",	"IB ", "IB ", "II ", "IB ", "N ", " ", " ", " ", "I ",	 /*  GET",       */
+	"I ","I ","I ", "I ","I ","I ",	"II ","II ","II ","II ","IBF ", "FIB ", "FF ", "N ", "NI ",
+	"IF ", "F ", "F ", "IB ", "IB ", "FN ",	"FN ", "FN ", "FF ", "FF ", "FN ", "FN ", "FF ", "FF ",	 /*  DIVF",      */
+	"FN ", "FF ", "FN ", "F ", "I ", "IN ", "IN ", "IB ", "IB ", "IB ", "IB ", "II ", "I ", "I ",	 /*  DEC",       */
+	"IN ", "T ", "F ", " ", "T ", "T ", "I ", "I ", " ", " ", "T ", " ", " ", " ", " ", " ", "T ",	 /*  PARSE",     */
+	" ", "N ", "INN ", "II ", "II ", "ITN ", "ITIN ", "ITIN ", "I3 ", "IN ", "I ",	 "I ", "Ivnn ",
+	"vnn ", "Ivnn ", "NN ",	"IT ", "INN ", " ", "N ", "N ", "N ", "T ", "v ", " ", " ", " ", " ",
+	"FN ", "I ", "TN ", "IT ", "II ", "I ", " ", "N ", "I ", " ", "I ", "NI ", "I ", "I ", "T ",	 /*  BECOME",    */
+	"I ", "I ", "N ", "N ", " ", "N ", "IF ", "IF ", "IF ", "IF ", "IF ", "IF ", "T ", "IB ",
+	"IB ", "IB ", "I ", " ", "vnnN ", "Ivnn ", "T ", "T ", "T ", "IF ", " ", " ", " ", "Ivnn ",
+	"IF ", "INI ", "INN ",  "IN ", "II ", "IFF ", "IIF ", "I ", "II ", "I ", "I ", "IN ", "IN ",	 /*  ROPENEXT",  */
+	"II ", "II ", "II ", "II ", "IIN ", "IIN ",  "IN ", "II ", "IN ", "IN ", "T ", "vanpan ",
+	"vIpI ", "T ", "T ", " ", " ",	"IN ", "IN ", "IN ", "IN ", "N ", "INTTT ",  "ITTT ",
+	"ITTT ", "I ", "I ", "IN ", "I ", " ", "F ", "NN ", "INN ", "INN ", "INNN ", "TF ", "NN ",	 /*  PICTURE",   */
+	"N ", "NNNNN ", "N ", " ", "NNNNNNN ", "N ", " ", "N ",	"NN ", "N ", "NNNNNIN ", "N ", "N ",	 /*  ENABLEBOX", */
+	"N ", "NNN ", "NNNN ", "INNN ", "IN ", "IN ", "TT ", "I ", "I ", "I ", "TTT ", "IN ", "IN ",	 /*  UNSETCLASS",*/
+	"FN ", "FN ", "FN ", "N ", "N ", "N ", "NI ", " ", " ",	 "N ", "I ", "INN ", "NN ", "N ",	 /*  WAITENDTUNE */
+	"N ", "Nan ", "NN ", " ", " ", " ", " ", " ", " ", " ", "IF ", "N ", " ", " ",	 " ", "II ",	 /*  PLACENOICONS*/
+	" ", "NI ","N ",
+};
+
 static const char *const opcode_arg_table_waxworks[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
@@ -142,22 +166,39 @@ static const char *const opcode_arg_table_feeblefiles[256] = {
 	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
 };
 
+static const char *const opcode_arg_table_puzzlepack[256] = {
+	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "N ", "N ", "NN ", "NN ",
+	"NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
+	"II ", "I ", "I ", "II ", "II ", "IBN ", "NIB ", "NN ", "B ", "BI ", "IN ", "N ", "N ", "NN ",
+	"NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "B ", "I ", "IB ",
+	"IB ", "II ", "I ", "I ", "IN ", "N ", "T ", "T ", "NNNNNB ", "BTNN ", "BTS ", "T ", " ", "B ",
+	"N ", "IBN ", "I ", "I ", "I ", "NN ", " ", " ", "IT ", "II ", "I ", "B ", " ", "IB ", "IBB ",
+	"IIB ", "T ", " ", " ", "IB ", "IB ", "IB ", "B ", "BB ", "IBB ", "NB ", "N ", "NNBNNN ", "NN ",
+	" ", "BNNNNNN ", "B ", " ", "B ", "B ", "BB ", "NNNNNIN ", "N ", "N ", "N ", "NNN ", "NBNN ",
+	"IBNN ", "IB ", "IB ", "IB ", "IB ", "N ", "N ", "N ", "BI ", " ", " ", "N ", "I ", "IBB ",
+	"NNB ", "N ", "N ", "Ban ", " ", " ", " ", " ", " ", "IN ", "B ", " ", "II ", " ", "BI ",
+	"N ", "I ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "BI ", "BB ", "N ", "N ", "N ",
+	"N ", "IBN ", "IBN ", "IN ", "B ", "BNNN ", "BBTS ", "N ", " ", "Ian ", "B ", "B ", "B ", "B ",
+	"T ", "N ", " ", " ", "I ", " ", " ", "BBI ", "NNBB ", "BBB ", " ", " ", "T ", " ", "N ", "N ",
+	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
+};
+
 uint16 SimonEngine::to16Wrapper(uint value) {
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		return TO_LE_16(value);
 	else
 		return TO_BE_16(value);
 }
 
 uint16 SimonEngine::readUint16Wrapper(const void *src) {
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		return READ_LE_UINT16(src);
 	else
 		return READ_BE_UINT16(src);
 }
 
 uint32 SimonEngine::readUint32Wrapper(const void *src) {
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		return READ_LE_UINT32(src);
 	else
 		return READ_BE_UINT32(src);
@@ -214,15 +255,21 @@ void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, ui
 int SimonEngine::allocGamePcVars(File *in) {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
-	uint i;
+	uint i, start;
 
 	item_array_size = in->readUint32BE();
 	version = in->readUint32BE();
 	item_array_inited = in->readUint32BE();
 	stringtable_num = in->readUint32BE();
 
-	item_array_inited += 2;				// first two items are predefined
-	item_array_size += 2;
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		item_array_inited = item_array_size;
+		start = 0;
+	} else {
+		item_array_inited += 2;				// first two items are predefined
+		item_array_size += 2;
+		start = 1;
+	}
 
 	if (version != 0x80)
 		error("allocGamePcVars: Not a runtime database");
@@ -234,7 +281,7 @@ int SimonEngine::allocGamePcVars(File *in) {
 	_itemArraySize = item_array_size;
 	_itemArrayInited = item_array_inited;
 
-	for (i = 1; i < item_array_inited; i++) {
+	for (i = start; i < item_array_inited; i++) {
 		_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
 	}
 
@@ -261,13 +308,23 @@ void SimonEngine::loadGamePcFile() {
 	createPlayer();
 	readGamePcText(&in);
 
-	for (i = 2; i < num_inited_objects; i++) {
+	int start;
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		start = 0;
+	} else {
+		start = 2;
+	}
+
+	for (i = start; i < num_inited_objects; i++) {
 		readItemFromGamePc(&in, _itemArrayPtr[i]);
 	}
 
 	readSubroutineBlock(&in);
 
 	in.close();
+
+	if (getGameId() == GID_SWAMPY)
+		return;
 
 	/* Read list of TABLE resources */
 	in.open(getFileName(GAME_TBLFILE));
@@ -288,7 +345,7 @@ void SimonEngine::loadGamePcFile() {
 	_tablesHeapPtrOrg = _tablesHeapPtr;
 	_tablesHeapCurPosOrg = _tablesHeapCurPos;
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_FF || getGameType() == GType_PP)
 		return;
 
 	/* Read list of TEXT resources */
@@ -355,15 +412,32 @@ void SimonEngine::readGamePcText(Common::File *in) {
 void SimonEngine::readItemFromGamePc(Common::File *in, Item *item) {
 	uint32 type;
 
-	item->adjective = in->readUint16BE();
-	item->noun = in->readUint16BE();
-	item->state = in->readUint16BE();
-	item->sibling = (uint16)fileReadItemID(in);
-	item->child = (uint16)fileReadItemID(in);
-	item->parent = (uint16)fileReadItemID(in);
-	in->readUint16BE();
-	item->classFlags = in->readUint16BE();
-	item->children = NULL;
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		item->itemName = (uint16)in->readUint32BE();
+		item->adjective = in->readUint16BE();
+		item->noun = in->readUint16BE();
+		item->state = in->readUint16BE();
+		in->readUint16BE();
+		item->sibling = (uint16)fileReadItemID(in);
+		item->child = (uint16)fileReadItemID(in);
+		item->parent = (uint16)fileReadItemID(in);
+		in->readUint16BE();
+		in->readUint16BE();
+		in->readUint16BE();
+		item->classFlags = in->readUint16BE();
+		item->children = NULL;
+	} else {
+		item->adjective = in->readUint16BE();
+		item->noun = in->readUint16BE();
+		item->state = in->readUint16BE();
+		item->sibling = (uint16)fileReadItemID(in);
+		item->child = (uint16)fileReadItemID(in);
+		item->parent = (uint16)fileReadItemID(in);
+		in->readUint16BE();
+		item->classFlags = in->readUint16BE();
+		item->children = NULL;
+	}
+
 
 	type = in->readUint32BE();
 	while (type) {
@@ -375,24 +449,31 @@ void SimonEngine::readItemFromGamePc(Common::File *in, Item *item) {
 
 void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 	if (type == 1) {
-		uint fr1 = in->readUint16BE();
-		uint fr2 = in->readUint16BE();
-		uint i, size;
-		uint j, k;
-		SubRoom *subRoom;
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+			// FIXME
+			in->readUint32BE();
+			in->readUint32BE();
+			in->readUint16BE();
+		} else {
+			uint fr1 = in->readUint16BE();
+			uint fr2 = in->readUint16BE();
+			uint i, size;
+			uint j, k;
+			SubRoom *subRoom;
 
-		size = SubRoom_SIZE;
-		for (i = 0, j = fr2; i != 6; i++, j >>= 2)
-			if (j & 3)
-				size += sizeof(subRoom->roomExit[0]);
+			size = SubRoom_SIZE;
+			for (i = 0, j = fr2; i != 6; i++, j >>= 2)
+				if (j & 3)
+					size += sizeof(subRoom->roomExit[0]);
 
-		subRoom = (SubRoom *)allocateChildBlock(item, 1, size);
-		subRoom->subroutine_id = fr1;
-		subRoom->roomExitStates = fr2;
+			subRoom = (SubRoom *)allocateChildBlock(item, 1, size);
+			subRoom->subroutine_id = fr1;
+			subRoom->roomExitStates = fr2;
 
-		for (i = k = 0, j = fr2; i != 6; i++, j >>= 2)
-			if (j & 3)
-				subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
+			for (i = k = 0, j = fr2; i != 6; i++, j >>= 2)
+				if (j & 3)
+					subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
+		}
 	} else if (type == 2) {
 		uint32 fr = in->readUint32BE();
 		uint i, k, size;
@@ -415,6 +496,24 @@ void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 				subObject->objectFlagValue[k++] = in->readUint16BE();
 
 		subObject->objectName = (uint16)in->readUint32BE();
+	} else if (type == 4) {
+		// FIXME
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+	} else if (type == 7) {
+		// FIXME
+		in->readUint16BE();
+		in->readUint16BE();
 	} else if (type == 8) {
 		SubUserChain *chain = (SubUserChain *)allocateChildBlock(item, 8, sizeof(SubUserChain));
 		chain->chChained = (uint16)fileReadItemID(in);
@@ -423,6 +522,17 @@ void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
 		setUserFlag(item, 3, in->readUint16BE());
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+			setUserFlag(item, 4, in->readUint16BE());
+			setUserFlag(item, 5, in->readUint16BE());
+			setUserFlag(item, 6, in->readUint16BE());
+			setUserFlag(item, 7, in->readUint16BE());
+			// FIXME
+			fileReadItemID(in); 
+			fileReadItemID(in);
+			fileReadItemID(in);
+			fileReadItemID(in);
+		}
 	} else if (type == 255) {
 		SubUserInherit *inherit = (SubUserInherit *)allocateChildBlock(item, 255, sizeof(SubUserInherit));
 		inherit->inMaster = (uint16)fileReadItemID(in);
@@ -441,11 +551,13 @@ uint fileReadItemID(Common::File *in) {
 byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 	int i, l;
 	const char *string_ptr;
-	uint val;
+	uint opcode, val;
 
 	const char *const *table;
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_PP)
+		table = opcode_arg_table_puzzlepack;
+	else if (getGameType() == GType_FF)
 		table = opcode_arg_table_feeblefiles;
 	else if (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))
 		table = opcode_arg_table_simon2win;
@@ -455,12 +567,20 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		table = opcode_arg_table_simon1win;
 	else if (getGameType() == GType_SIMON1)
 		table = opcode_arg_table_simon1dos;
-	else /* if (getGameType() == GType_WW) */
+	else if (getGameType() == GType_WW)
 		table = opcode_arg_table_waxworks;
+	else
+		table = opcode_arg_table_elvira;
 
 	i = 0;
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		opcode = READ_BE_UINT16(ptr);
+		ptr += 2;
+	} else {
+		opcode = *ptr++;
+	}
 
-	string_ptr = table[*ptr++];
+	string_ptr = table[opcode];
 	if (!string_ptr)
 		error("Unable to locate opcode table. Perhaps you are using the wrong game target?");
 
@@ -469,22 +589,31 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 			return ptr;
 
 		l = string_ptr[i++];
+
 		switch (l) {
+		case 'F':
 		case 'N':
 		case 'S':
 		case 'a':
 		case 'n':
 		case 'p':
 		case 'v':
+		case '3':
 			val = in->readUint16BE();
 			*ptr++ = val >> 8;
 			*ptr++ = val & 255;
 			break;
 
 		case 'B':
-			*ptr++ = in->readByte();
-			if (ptr[-1] == 0xFF) {
+			if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+				val = in->readUint16BE();
+				*ptr++ = val >> 8;
+				*ptr++ = val & 255;
+			} else {
 				*ptr++ = in->readByte();
+				if (ptr[-1] == 0xFF) {
+					*ptr++ = in->readByte();
+				}
 			}
 			break;
 

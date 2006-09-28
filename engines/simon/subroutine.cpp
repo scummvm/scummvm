@@ -107,6 +107,63 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 }
 
 bool SimonEngine::loadTablesIntoMem(uint subr_id) {
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2)
+		return loadTablesOldIntoMem(subr_id);
+	else
+		return loadTablesNewIntoMem(subr_id);
+}
+
+
+bool SimonEngine::loadTablesOldIntoMem(uint subr_id) {
+	byte *p;
+	uint16 min_num, max_num, file_num;
+	File *in;
+	char filename[30];
+
+	if (_tblList == NULL)
+		return 0;
+
+	p = _tblList + 32;
+
+	min_num = READ_BE_UINT16(p);
+	max_num = READ_BE_UINT16(p + 2);
+	file_num = *(p + 4);
+	p += 6;
+
+	while (min_num) {
+		if ((subr_id >= min_num) && (subr_id <= max_num)) {
+			_subroutineList = _subroutineListOrg;
+			_tablesHeapPtr = _tablesHeapPtrOrg;
+			_tablesHeapCurPos = _tablesHeapCurPosOrg;
+			_stringIdLocalMin = 1;
+			_stringIdLocalMax = 0;
+
+			sprintf(filename, "TABLES%.2d", file_num);
+			in = openTablesFile(filename);
+			readSubroutineBlock(in);
+			closeTablesFile(in);
+
+			alignTableMem();
+
+			_tablesheapPtrNew = _tablesHeapPtr;
+			_tablesHeapCurPosNew = _tablesHeapCurPos;
+
+			if (_tablesHeapCurPos > _tablesHeapSize)
+				error("loadTablesOldIntoMem: Out of table memory");
+			return 1;
+		}
+
+		min_num = READ_BE_UINT16(p);
+		max_num = READ_BE_UINT16(p + 2);
+		file_num = *(p + 4);
+		p += 6;
+	}
+
+	debug(1,"loadTablesOldIntoMem: didn't find %d", subr_id);
+	return 0;
+}
+
+bool SimonEngine::loadTablesNewIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -124,14 +181,11 @@ bool SimonEngine::loadTablesIntoMem(uint subr_id) {
 		p++;
 
 		for (;;) {
-			min_num = (p[0] * 256) | p[1];
-			p += 2;
-
+			min_num = READ_BE_UINT16(p); p += 2;
 			if (min_num == 0)
 				break;
 
-			max_num = (p[0] * 256) | p[1];
-			p += 2;
+			max_num = READ_BE_UINT16(p); p += 2;
 
 			if (subr_id >= min_num && subr_id <= max_num) {
 				_subroutineList = _subroutineListOrg;
@@ -157,20 +211,17 @@ bool SimonEngine::loadTablesIntoMem(uint subr_id) {
 				_tablesHeapCurPosNew = _tablesHeapCurPos;
 
 				if (_tablesHeapCurPos > _tablesHeapSize)
-					error("loadTablesIntoMem: Out of table memory");
+					error("loadTablesNewIntoMem: Out of table memory");
 				return 1;
 			}
 		}
 	}
 
-	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesNewIntoMem: didn't find %d", subr_id);
 	return 0;
 }
 
 bool SimonEngine::loadXTablesIntoMem(uint subr_id) {
-	if (getGameType() != GType_WW)
-		return 0;
-
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -188,13 +239,13 @@ bool SimonEngine::loadXTablesIntoMem(uint subr_id) {
 		p++;
 
 		for (;;) {
-			min_num = (p[0] * 256) | p[1];
+			min_num = READ_BE_UINT16(p);
 			p += 2;
 
 			if (min_num == 0)
 				break;
 
-			max_num = (p[0] * 256) | p[1];
+			max_num = READ_BE_UINT16(p);
 			p += 2;
 
 			if (subr_id >= min_num && subr_id <= max_num) {
@@ -374,26 +425,49 @@ void SimonEngine::readSubroutine(File *in, Subroutine *sub) {
 }
 
 void SimonEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub) {
-	byte line_buffer[1024], *q = line_buffer;
+	byte line_buffer[2048], *q = line_buffer;
 	int size;
 
 	if (sub->id == 0) {
 		sl->verb = in->readUint16BE();
 		sl->noun1 = in->readUint16BE();
 		sl->noun2 = in->readUint16BE();
+	} else if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		in->readUint16BE();
+		in->readUint16BE();
+		in->readUint16BE();
 	}
 
-	while ((*q = in->readByte()) != 0xFF) {
-		if (*q == 87) {
-			in->readUint16BE();
-		} else {
-			q = readSingleOpcode(in, q);
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		int16 tmp;
+
+		tmp = in->readUint16BE();
+		WRITE_BE_UINT16(q, tmp);
+		while (tmp != 10000) {
+			if (READ_BE_UINT16(q) == 0xC6) {
+				in->readUint16BE();
+			} else {
+				q = readSingleOpcode(in, q);
+			}
+
+			tmp = in->readUint16BE();
+			WRITE_BE_UINT16(q, tmp);
 		}
+
+		size = (q - line_buffer + 1) * 2;
+		memcpy(allocateTable(size), line_buffer, size);
+	} else {
+		while ((*q = in->readByte()) != 0xFF) {
+			if (*q == 87) {
+				in->readUint16BE();
+			} else {
+				q = readSingleOpcode(in, q);
+			}
+		}
+
+		size = (q - line_buffer + 1);
+		memcpy(allocateTable(size), line_buffer, size);
 	}
-
-	size = q - line_buffer + 1;
-
-	memcpy(allocateTable(size), line_buffer, size);
 }
 
 void SimonEngine::readSubroutineBlock(File *in) {
