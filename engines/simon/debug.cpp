@@ -40,7 +40,7 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
 		opcode = READ_BE_UINT16(p);
 		p += 2;
-		if (opcode = 10000)
+		if (opcode == 10000)
 			return NULL;
 	} else {
 		opcode = *p++;
