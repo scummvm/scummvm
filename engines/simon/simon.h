@@ -1047,6 +1047,7 @@ public:
 	void o4_checkHiScores();
 	void o4_loadUserGame();
 	void o4_saveOopsPosition();
+	void o4_resetGameTime();
 	void o4_resetPVCount();
 	void o4_setPathValues();
 

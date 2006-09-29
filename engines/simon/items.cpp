@@ -465,7 +465,7 @@ void SimonEngine::setupOpcodes() {
 
 		// Code difference, check if triggered
 		opcode_table[132] = &SimonEngine::o3_saveUserGame,
-		opcode_table[187] = NULL;	// Reset game time?
+		opcode_table[187] = &SimonEngine::o4_resetGameTime;
 
 		// Code difference. Some kind of logging?
 		opcode_table[190] = &SimonEngine::o2_waitMark;
@@ -2364,40 +2364,52 @@ void SimonEngine::o3_b3NotZero() {
 // -----------------------------------------------------------------------
 
 void SimonEngine::o4_opcode30() {
+	// 30
 	getNextItemPtr();
 }
 
 void SimonEngine::o4_checkTiles() {
-	// for  MahJongg game
+	// 37: for  MahJongg game
 	getVarOrByte();
 }
 
 void SimonEngine::o4_opcode38() {
+	// 38
 	getVarOrByte();
 	getNextItemPtr();
 }
 
 void SimonEngine::o4_loadHiScores() {
+	// 105
 	getVarOrByte();
 }
 
 void SimonEngine::o4_checkHiScores() {
+	// 106
 	getVarOrByte();
 	getVarOrByte();
 }
 
 void SimonEngine::o4_loadUserGame() {
+	// 133
 }
 
 void SimonEngine::o4_saveOopsPosition() {
+	// 173
+}
+
+void SimonEngine::o4_resetGameTime() {
+	// 187
 }
 
 void SimonEngine::o4_resetPVCount() {
+	// 191
 	_PVCount = 0;
 	_GPVCount = 0;
 }
 
 void SimonEngine::o4_setPathValues() {
+	// 192
 	_pathValues[_PVCount++] = getVarOrByte();
 	_pathValues[_PVCount++] = getVarOrByte();
 	_pathValues[_PVCount++] = getVarOrByte();
