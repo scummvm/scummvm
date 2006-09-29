@@ -1041,9 +1041,14 @@ public:
 
 	// Opcodes, Puzzle Pack only
 	void o4_opcode30();
+	void o4_checkTiles();
 	void o4_opcode38();
 	void o4_loadHiScores();
 	void o4_checkHiScores();
+	void o4_loadUserGame();
+	void o4_saveOopsPosition();
+	void o4_resetPVCount();
+	void o4_setPathValues();
 
 protected:
 	void drawImages(VC10_state *state);

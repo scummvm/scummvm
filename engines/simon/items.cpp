@@ -450,21 +450,28 @@ void SimonEngine::setupOpcodes() {
 	case GType_PP:
 		// Confirmed
 		opcode_table[30] = &SimonEngine::o4_opcode30;
+		opcode_table[37] = &SimonEngine::o4_checkTiles;
 		opcode_table[38] = &SimonEngine::o4_opcode38;
 		opcode_table[105] = &SimonEngine::o4_loadHiScores;
 		opcode_table[106] = &SimonEngine::o4_checkHiScores;
+		opcode_table[133] = &SimonEngine::o4_loadUserGame;
 		opcode_table[166] = NULL;
 		opcode_table[167] = NULL;
 		opcode_table[168] = NULL;
 		opcode_table[169] = NULL;
+		opcode_table[173] = &SimonEngine::o4_saveOopsPosition;
+		opcode_table[191] = &SimonEngine::o4_resetPVCount;
+		opcode_table[192] = &SimonEngine::o4_setPathValues;
 
 		// Code difference, check if triggered
 		opcode_table[132] = &SimonEngine::o3_saveUserGame,
-		opcode_table[187] = NULL;
+		opcode_table[187] = NULL;	// Reset game time?
+
+		// Code difference. Some kind of logging?
+		opcode_table[190] = &SimonEngine::o2_waitMark;
 
 		// To check
 		opcode_table[23] = &SimonEngine::o3_chance;
-		opcode_table[37] = &SimonEngine::o3_jumpOut;
 		opcode_table[65] = &SimonEngine::o3_addTextBox;
 		opcode_table[70] = &SimonEngine::o3_printLongText;
 		opcode_table[83] = &SimonEngine::o2_rescan;
@@ -476,20 +483,15 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[124] = &SimonEngine::o3_ifTime;
 		opcode_table[127] = &SimonEngine::o3_playTune;
 		opcode_table[131] = &SimonEngine::o3_setTime;
-		opcode_table[133] = &SimonEngine::o3_loadUserGame;
 		opcode_table[134] = &SimonEngine::o3_listSaveGames;
 		opcode_table[161] = &SimonEngine::o3_screenTextBox;
 		opcode_table[165] = &SimonEngine::o3_isAdjNoun;
 		opcode_table[171] = &SimonEngine::o3_hyperLinkOn;
 		opcode_table[172] = &SimonEngine::o3_hyperLinkOff;
-		opcode_table[173] = &SimonEngine::o3_checkPaths;
 		opcode_table[177] = &SimonEngine::o3_screenTextPObj;
 		opcode_table[181] = &SimonEngine::o3_mouseOff;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
-		opcode_table[190] = &SimonEngine::o2_waitMark;
-		opcode_table[191] = &SimonEngine::o3_resetPVCount;
-		opcode_table[192] = &SimonEngine::o3_setPathValues;
 		opcode_table[193] = &SimonEngine::o3_stopClock;
 		opcode_table[194] = &SimonEngine::o3_restartClock;
 		opcode_table[195] = &SimonEngine::o3_setColour;
@@ -2365,6 +2367,11 @@ void SimonEngine::o4_opcode30() {
 	getNextItemPtr();
 }
 
+void SimonEngine::o4_checkTiles() {
+	// for  MahJongg game
+	getVarOrByte();
+}
+
 void SimonEngine::o4_opcode38() {
 	getVarOrByte();
 	getNextItemPtr();
@@ -2377,6 +2384,24 @@ void SimonEngine::o4_loadHiScores() {
 void SimonEngine::o4_checkHiScores() {
 	getVarOrByte();
 	getVarOrByte();
+}
+
+void SimonEngine::o4_loadUserGame() {
+}
+
+void SimonEngine::o4_saveOopsPosition() {
+}
+
+void SimonEngine::o4_resetPVCount() {
+	_PVCount = 0;
+	_GPVCount = 0;
+}
+
+void SimonEngine::o4_setPathValues() {
+	_pathValues[_PVCount++] = getVarOrByte();
+	_pathValues[_PVCount++] = getVarOrByte();
+	_pathValues[_PVCount++] = getVarOrByte();
+	_pathValues[_PVCount++] = getVarOrByte();
 }
 
 // -----------------------------------------------------------------------
