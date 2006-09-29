@@ -288,8 +288,7 @@ Sound::~Sound() {
 
 void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	// Game versions which use separate voice files
-	if (_vm->getGameType() == GType_FF || _vm->getGameType() == GType_PP ||
-		_vm->getGameId() == GID_SIMON1CD32)
+	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32)
 		return;
 
 	char filename[16];
@@ -361,7 +360,10 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
-			_voice = new VocSound(_mixer, file);
+			if (_vm->getGameType() == GType_PP)
+				_voice = new WavSound(_mixer, file);
+			else
+				_voice = new VocSound(_mixer, file);
 		}
 	}
 }
@@ -482,7 +484,8 @@ void Sound::playVoice(uint sound) {
 		return;
 
 	_mixer->stopHandle(_voiceHandle);
-	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
+	if (_vm->getGameType() == GType_FF || _vm->getGameType() == GType_PP ||
+		_vm->getGameId() == GID_SIMON1CD32) {
 		_voice->playSound(sound, &_voiceHandle, 0);
 	} else {
 		_voice->playSound(sound, &_voiceHandle, Audio::Mixer::FLAG_UNSIGNED);

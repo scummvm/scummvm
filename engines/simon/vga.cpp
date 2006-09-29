@@ -226,12 +226,12 @@ uint SimonEngine::vcReadNextByte() {
 }
 
 uint SimonEngine::vcReadVar(uint var) {
-	assert(var < 255);
+	assert(var < _numVars);
 	return (uint16)_variableArrayPtr[var];
 }
 
 void SimonEngine::vcWriteVar(uint var, int16 value) {
-	assert(var < 255);
+	assert(var < _numVars);
 	_variableArrayPtr[var] = value;
 }
 

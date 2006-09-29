@@ -66,6 +66,11 @@ static const GameSpecificSettings feeblefiles_settings = {
 	"",                                     // effects_filename
 	"VOICES",                               // speech_filename
 };
+
+static const GameSpecificSettings puzzlepack_settings = {
+	"",                                     // effects_filename
+	"MUSIC",                               // speech_filename
+};
 #endif
 
 SimonEngine::SimonEngine(OSystem *syst)
@@ -309,9 +314,11 @@ SimonEngine::SimonEngine(OSystem *syst)
 	memset(_objectArray, 0, sizeof(_objectArray));
 	memset(_itemStore, 0, sizeof(_itemStore));
 
-	memset(_stringIdArray2, 0, sizeof(_stringIdArray2));
-	memset(_stringIdArray3, 0, sizeof(_stringIdArray3));
-	memset(_speechIdArray4, 0, sizeof(_speechIdArray4));
+	memset(_shortText, 0, sizeof(_shortText));
+	memset(_shortTextX, 0, sizeof(_shortText));
+	memset(_shortTextY, 0, sizeof(_shortText));
+	memset(_longText, 0, sizeof(_longText));
+	memset(_longSound, 0, sizeof(_longSound));
 
 	memset(_bitArray, 0, sizeof(_bitArray));
 	memset(_bitArrayTwo, 0, sizeof(_bitArrayTwo));
@@ -483,7 +490,7 @@ int SimonEngine::init() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
 	if (getGameType() == GType_PP) {
-		_speech = false;
+		_speech = true;
 		_subtitles = false;
 	} else if (getFeatures() & GF_TALKIE) {
 		_speech = !ConfMan.getBool("speech_mute");
@@ -521,7 +528,7 @@ int SimonEngine::init() {
 
 void SimonEngine::setupGame() {
 	if (getGameType() == GType_PP) {
-		gss = PTR(feeblefiles_settings);
+		gss = PTR(puzzlepack_settings);
 		_numTextBoxes = 40;
 		_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
@@ -1083,7 +1090,10 @@ void SimonEngine::setup_cond_c_helper() {
 				else
 					id = _lastHitArea->flags / 256;
 			}
-			_variableArray[60] = id;
+			if (getGameType() == GType_PP)
+				_variableArray[199] = id;
+			else
+				_variableArray[60] = id;
 			break;
 		}
 	}
@@ -1176,7 +1186,10 @@ startOver:
 					else
 						id = ha->flags / 256;
 				}
-				_variableArray[60] = id;
+				if (getGameType() == GType_PP)
+					_variableArray[199] = id;
+				else
+					_variableArray[60] = id;
 				displayName(ha);
 				if (_verbHitArea != 0)
 					break;

@@ -404,9 +404,11 @@ protected:
 	Item *_objectArray[20];
 	Item *_itemStore[20];
 
-	uint16 _stringIdArray2[40];
-	uint16 _stringIdArray3[40];
-	uint16 _speechIdArray4[40];
+	uint16 _shortText[40];
+	uint16 _shortTextX[40];
+	uint16 _shortTextY[40];
+	uint16 _longText[40];
+	uint16 _longSound[40];
 
 	uint16 _bitArray[128];
 	uint16 _bitArrayTwo[16];

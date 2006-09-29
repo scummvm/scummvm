@@ -453,6 +453,14 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[38] = &SimonEngine::o4_opcode38;
 		opcode_table[105] = &SimonEngine::o4_loadHiScores;
 		opcode_table[106] = &SimonEngine::o4_checkHiScores;
+		opcode_table[166] = NULL;
+		opcode_table[167] = NULL;
+		opcode_table[168] = NULL;
+		opcode_table[169] = NULL;
+
+		// Code difference, check if triggered
+		opcode_table[132] = &SimonEngine::o3_saveUserGame,
+		opcode_table[187] = NULL;
 
 		// To check
 		opcode_table[23] = &SimonEngine::o3_chance;
@@ -468,10 +476,8 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[124] = &SimonEngine::o3_ifTime;
 		opcode_table[127] = &SimonEngine::o3_playTune;
 		opcode_table[131] = &SimonEngine::o3_setTime;
-		opcode_table[132] = &SimonEngine::o3_saveUserGame,
 		opcode_table[133] = &SimonEngine::o3_loadUserGame;
 		opcode_table[134] = &SimonEngine::o3_listSaveGames;
-		opcode_table[135] = &SimonEngine::o3_checkCD;
 		opcode_table[161] = &SimonEngine::o3_screenTextBox;
 		opcode_table[165] = &SimonEngine::o3_isAdjNoun;
 		opcode_table[171] = &SimonEngine::o3_hyperLinkOn;
@@ -479,9 +485,6 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[173] = &SimonEngine::o3_checkPaths;
 		opcode_table[177] = &SimonEngine::o3_screenTextPObj;
 		opcode_table[181] = &SimonEngine::o3_mouseOff;
-		opcode_table[182] = &SimonEngine::o3_loadVideo;
-		opcode_table[183] = &SimonEngine::o3_playVideo;
-		opcode_table[187] = &SimonEngine::o3_centreScroll;
 		opcode_table[188] = &SimonEngine::o2_isShortText;
 		opcode_table[189] = &SimonEngine::o2_clearMarks;
 		opcode_table[190] = &SimonEngine::o2_waitMark;
@@ -687,7 +690,7 @@ void SimonEngine::o_let() {
 
 void SimonEngine::o_add() {
 	// 43: add
-	uint var = getVarOrByte();
+	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) + getVarOrWord());
 }
 
@@ -761,13 +764,7 @@ void SimonEngine::o_random() {
 	// 53: random
 	uint var = getVarWrapper();
 	uint value = (uint16)getVarOrWord();
-
-	// Disable random in simon1amiga for now
-	// Since copy protection screen is currently unreadable
-	if (getPlatform() == Common::kPlatformAmiga)
-		writeVariable(var, 4);
-	else
-		writeVariable(var, _rnd.getRandomNumber(value - 1));
+	writeVariable(var, _rnd.getRandomNumber(value - 1));
 }
 
 void SimonEngine::o_goto() {
@@ -859,10 +856,10 @@ void SimonEngine::o_setShortText() {
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
 	if (var < _numTextBoxes) {
-		_stringIdArray2[var] = stringId;
+		_shortText[var] = stringId;
 		if (getGameType() == GType_PP) {
-			getVarOrWord();
-			getVarOrWord();
+			_shortTextX[var] = getVarOrWord();
+			_shortTextY[var] = getVarOrWord();
 		}
 	}
 }
@@ -874,12 +871,12 @@ void SimonEngine::o_setLongText() {
 	if (getFeatures() & GF_TALKIE) {
 		uint speechId = getNextWord();
 		if (var < _numTextBoxes) {
-			_stringIdArray3[var] = stringId;
-			_speechIdArray4[var] = speechId;
+			_longText[var] = stringId;
+			_longSound[var] = speechId;
 		}
 	} else {
 		if (var < _numTextBoxes) {
-			_stringIdArray3[var] = stringId;
+			_longText[var] = stringId;
 		}
 	}
 }
@@ -1447,7 +1444,7 @@ void SimonEngine::o_screenTextMsg() {
 		string_ptr = getStringPtrByID(stringId);
 
 	if (getFeatures() & GF_TALKIE) {
-		if (getGameType() == GType_FF)
+		if (getGameType() == GType_FF || getGameType() == GType_PP)
 			speechId = (uint16)getVarOrWord();
 		else
 			speechId = (uint16)getNextWord();
@@ -1607,9 +1604,9 @@ void SimonEngine::o_scnTxtLongText() {
 	uint speechId = 0;
 	TextLocation *tl;
 
-	const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[stringId]);
+	const char *string_ptr = (const char *)getStringPtrByID(_longText[stringId]);
 	if (getFeatures() & GF_TALKIE)
-		speechId = _speechIdArray4[stringId];
+		speechId = _longSound[stringId];
 
 	if (getGameType() == GType_FF)
 		vgaSpriteId = 1;
@@ -1685,7 +1682,7 @@ void SimonEngine::oww_ifDoorOpen() {
 
 void SimonEngine::o1_printLongText() {
 	// 70: show string from array
-	const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
+	const char *str = (const char *)getStringPtrByID(_longText[getVarOrByte()]);
 	showMessageFormat("%s\n", str);
 }
 
@@ -1834,7 +1831,7 @@ void SimonEngine::o1_specialFade() {
 
 void SimonEngine::o2_printLongText() {
 	// 70: show string from array
-	const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
+	const char *str = (const char *)getStringPtrByID(_longText[getVarOrByte()]);
 	writeVariable(51, strlen(str) / 53 * 8 + 8);
 	showMessageFormat("%s\n", str);
 }
@@ -1988,7 +1985,7 @@ void SimonEngine::o2_isShortText() {
 	// 188: string2 is
 	uint i = getVarOrByte();
 	uint str = getNextStringID();
-	setScriptCondition(str < _numTextBoxes && _stringIdArray2[i] == str);
+	setScriptCondition(str < _numTextBoxes && _shortText[i] == str);
 }
 
 void SimonEngine::o2_clearMarks() {
@@ -2057,7 +2054,7 @@ void SimonEngine::o3_addTextBox() {
 void SimonEngine::o3_printLongText() {
 	// 70: show string from array
 	int num = getVarOrByte();
-	const char *str = (const char *)getStringPtrByID(_stringIdArray3[num]);
+	const char *str = (const char *)getStringPtrByID(_longText[num]);
 	sendInteractText(num, "%d. %s\n", num, str);
 }
 

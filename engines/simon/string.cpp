@@ -231,7 +231,7 @@ bool SimonEngine::printTextOf(uint a, uint x, uint y) {
 		return false;
 
 
-	stringPtr = getStringPtrByID(_stringIdArray2[a]);
+	stringPtr = getStringPtrByID(_shortText[a]);
 	if (getGameType() == GType_FF) {
 		getPixelLength((const char *)stringPtr, 400, pixels);
 		w = pixels + 1;
