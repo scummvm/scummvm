@@ -41,7 +41,7 @@ void AGOSEngine::setupOpcodes() {
 	// This opcode table is for Simon 1. Changes for Simon 2 and FF are
 	// made below.
 
-	static OpcodeProc opcode_table[200] = {
+	static OpcodeProc opcode_table[300] = {
 		// 0 - 4
 		NULL,
 		&AGOSEngine::o_at,
