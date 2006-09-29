@@ -34,7 +34,7 @@
 namespace Simon {
 
 const byte *SimonEngine::dumpOpcode(const byte *p) {
-	byte opcode;
+	uint opcode;
 	const char *s, *st;
 
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
