@@ -180,7 +180,7 @@ void SimonEngine::clearName() {
 	HitArea *last;
 	HitArea *ha;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		stopAnimateSimon2(2, 6);
 		_lastNameOn = NULL;
 		_animatePointer = 0;
@@ -344,7 +344,7 @@ void SimonEngine::handleVerbClicked(uint verb) {
 	if (sub)
 		startSubroutine(sub);
 
-	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
 		_runScriptReturn1 = false;
 
 	permitInput();
@@ -410,7 +410,7 @@ void SimonEngine::disableBox(uint hitarea) {
 void SimonEngine::moveBox(uint hitarea, int x, int y) {
 	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			ha->x += x;
 			ha->y += y;
 		} else {
@@ -451,7 +451,8 @@ void SimonEngine::defineBox(int id, int x, int y, int width, int height, int fla
 	ha->verb = verb;
 	ha->item_ptr = item_ptr;
 
-	if (getGameType() == GType_FF && (ha->flags & kBFHyperBox)) {
+	if ((getGameType() == GType_FF || getGameType() == GType_PP) &&
+		(ha->flags & kBFHyperBox)) {
 		ha->data = _hyperLink;
 		ha->priority = 50;
 	}
@@ -460,7 +461,10 @@ void SimonEngine::defineBox(int id, int x, int y, int width, int height, int fla
 }
 
 void SimonEngine::resetVerbs() {
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_PP) {
+		_verbHitArea = 300;
+		return;
+	} else if (getGameType() == GType_FF) {
 		_verbHitArea = 300;
 		int cursor = 0;
 		int animMax = 16;
@@ -513,7 +517,9 @@ void SimonEngine::resetVerbs() {
 }
 
 void SimonEngine::setVerb(HitArea *ha) {
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_PP) {
+		return;
+	} else if (getGameType() == GType_FF) {
 		int cursor = _mouseCursor;
 		if (_noRightClick)
 			return;
@@ -737,8 +743,13 @@ void SimonEngine::boxController(uint x, uint y, uint mode) {
 
 	if (mode != 0 && mode != 3) {
 		_lastHitArea = best_ha;
-		_variableArray[1] = x;
-		_variableArray[2] = y;
+		if (getGameType() == GType_PP) {
+			_variableArray[400] = x;
+			_variableArray[401] = y;
+		} else {
+			_variableArray[1] = x;
+			_variableArray[2] = y;
+		}
 	}
 
 	if (best_ha->flags & kBFNoTouchName) {
@@ -759,7 +770,21 @@ void SimonEngine::displayName(HitArea *ha) {
 	bool result;
 	int x = 0, y = 0;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_PP) {
+		if (ha->flags & kBFHyperBox) {
+			_lastNameOn = ha;
+			return;
+		}
+		if (findBox(50))
+			return;
+
+		y = ha->y;
+		y -= 17;
+		if (y < 0)
+			y = 0;
+		y += 2;
+		x = ha->width / 2 + ha->x;
+	} else if (getGameType() == GType_FF) {
 		if (ha->flags & kBFHyperBox) {
 			_lastNameOn = ha;
 			return;

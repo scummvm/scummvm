@@ -784,8 +784,14 @@ uint SimonEngine::getVarOrByte() {
 uint SimonEngine::getVarOrWord() {
 	uint a = READ_BE_UINT16(_codePtr);
 	_codePtr += 2;
-	if (a >= 30000 && a < 30512) {
-		return readVariable(a - 30000);
+	if (getGameType() == GType_PP) {
+		if (a >= 60000 && a < 62048) {
+			return readVariable(a - 60000);
+		}
+	} else {
+		if (a >= 30000 && a < 30512) {
+			return readVariable(a - 30000);
+		}
 	}
 	return a;
 }
@@ -873,7 +879,9 @@ uint SimonEngine::readVariable(uint variable) {
 	if (variable >= _numVars)
 		error("readVariable: Variable %d out of range", variable);
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_PP) {
+		return (uint16)_variableArray[variable];
+	} else if (getGameType() == GType_FF) {
 		if (getBitFlag(83))
 			return (uint16)_variableArray2[variable];
 		else

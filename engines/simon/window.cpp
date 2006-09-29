@@ -72,7 +72,7 @@ void SimonEngine::changeWindow(uint a) {
 	showmessage_print_char(0);
 	_textWindow = _windowArray[a];
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
 	else
 		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
@@ -109,7 +109,7 @@ void SimonEngine::colorWindow(WindowBlock *window) {
 
 	_lockWord |= 0x8000;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x;
 
 		for (h = 0; h < window->height; h++) {
@@ -142,7 +142,7 @@ void SimonEngine::resetWindow(WindowBlock *window) {
 void SimonEngine::restoreWindow(WindowBlock *window) {
 	_lockWord |= 0x8000;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		restoreBlock(window->y + window->height, window->x + window->width, window->y, window->x);
 	} else if (getGameType() == GType_SIMON2) {
 		if (_restoreWindow6 && _windowArray[2] == window) {

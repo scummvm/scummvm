@@ -968,6 +968,9 @@ void SimonEngine::loadSound(uint sound, int pan, int vol, uint type) {
 }
 
 void SimonEngine::loadVoice(uint speechId) {
+	if (getGameType() == GType_PP && speechId == 99)
+		return;
+
 	if (getFeatures() & GF_ZLIBCOMP) {
 		char filename[15];
 

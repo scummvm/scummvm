@@ -35,7 +35,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 		return;
 
 	while (len-- != 0) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			if (getBitFlag(93)) {
 				if (_curWindow == 3) {
 					if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
@@ -184,7 +184,7 @@ void SimonEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, 
 void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
-	const int textHeight = (getGameType() == GType_FF) ? 15: 10;
+	const int textHeight = (getGameType() == GType_FF || getGameType() == GType_PP) ? 15: 10;
 	uint count = 0;
 
 	if (vga_sprite_id >= 100) {
@@ -194,7 +194,7 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 
 	src = dst = vpe->vgaFile2;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		if (vga_sprite_id == 1)
 			count = 45000;
 	} else {
@@ -205,7 +205,7 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 
 	p = dst + vga_sprite_id * 8;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		WRITE_LE_UINT16(p + 4, height);
 		WRITE_LE_UINT16(p + 6, width);
 		// We need to adjust the offset to the next buffer to be right
@@ -243,7 +243,7 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 			byte *img_hdr, *img;
 			uint i, img_width, img_height;
 
-			if (getGameType() == GType_FF) {
+			if (getGameType() == GType_FF || getGameType() == GType_PP) {
 				img_hdr = src + 96 + chr * 8;
 				img_height = READ_LE_UINT16(img_hdr + 4);
 				img_width = READ_LE_UINT16(img_hdr + 6);
@@ -314,7 +314,7 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 		openTextWindow();
 		if (!_showMessageFlag) {
 			_windowArray[0] = _textWindow;
-			if (getGameType() == GType_FF)
+			if (getGameType() == GType_FF || getGameType() == GType_PP)
 				showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
 			else
 				showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
@@ -341,7 +341,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 		// _printCharMaxPos. In Simon, that is probably prevented by
 		// testing if _printCharCurPos == _printCharMaxPos below.
 
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			fit = _printCharMaxPos > _printCharCurPos + _printCharPixelCount;
 		} else {
 			fit = _printCharMaxPos - _printCharCurPos >= _printCharPixelCount;
@@ -359,7 +359,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 				if (chr == 10)
 					_printCharCurPos = 0;
 				else if (chr != 0)
-					_printCharCurPos += (getGameType() == GType_FF) ? feebleFontSize[chr - 32] : 1;
+					_printCharCurPos += (getGameType() == GType_FF || getGameType() == GType_PP) ? feebleFontSize[chr - 32] : 1;
 			}
 		} else {
 			const byte newline_character = 10;
@@ -368,7 +368,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
 				print_char_helper_1(&chr, 1);
-				_printCharCurPos += (getGameType() == GType_FF) ? feebleFontSize[chr - 32] : 1;
+				_printCharCurPos += (getGameType() == GType_FF || getGameType() == GType_PP) ? feebleFontSize[chr - 32] : 1;
 			} else {
 				print_char_helper_1(&chr, 1);
 				_printCharCurPos = 0;
@@ -378,7 +378,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 		_printCharPixelCount = 0;
 	} else {
 		_lettersToPrintBuf[_numLettersToPrint++] = chr;
-		_printCharPixelCount += (getGameType() == GType_FF) ? feebleFontSize[chr - 32] : 1;
+		_printCharPixelCount += (getGameType() == GType_FF || getGameType() == GType_PP) ? feebleFontSize[chr - 32] : 1;
 	}
 }
 
@@ -386,7 +386,7 @@ void SimonEngine::openTextWindow() {
 	if (_textWindow)
 		return;
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		_textWindow = openWindow(64, 96, 384, 172, 1, 0, 15);
 	else
 		_textWindow = openWindow(8, 144, 24, 6, 1, 0, 15);
@@ -433,7 +433,7 @@ void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 			}
 		}
 	} else if (c >= 32) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			video_putchar_drawchar(window, window->textColumn + window->x, window->textRow + window->y, c);
 			window->textColumn += feebleFontSize[c - 32];
 			return;
@@ -1537,7 +1537,7 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 
 	dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		h = 13;
 		w =  feebleFontSize[chr - 0x20];
 
@@ -1583,7 +1583,7 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 		i = 0;
 		do {
 			if (b < 0) {
-				if (getGameType() == GType_FF) {
+				if (getGameType() == GType_FF || getGameType() == GType_PP) {
 					if (dst[i] == 0)
 						dst[i] = color;
 				} else {
