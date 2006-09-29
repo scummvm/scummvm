@@ -946,7 +946,7 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 	}
 	state->x = cur;
 
-	maxWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? 640 : (vlut[2] * 2);
+	maxWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? _screenWidth : (vlut[2] * 2);
 	cur += state->draw_width - maxWidth;
 	if (cur > 0) {
 		do {
@@ -965,7 +965,7 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 	}
 	state->y = cur;
 
-	maxHeight = (getGameType() == GType_FF || getGameType() == GType_PP) ? 480 : vlut[3];
+	maxHeight = (getGameType() == GType_FF || getGameType() == GType_PP) ? _screenHeight : vlut[3];
 	cur += state->draw_height - maxHeight;
 	if (cur > 0) {
 		do {
@@ -1067,7 +1067,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 
 			if (state->flags & kDFMasked) {
-				if (!getBitFlag(81)) {
+				if (getGameType() == GType_FF && !getBitFlag(81)) {
 					if (state->x  > _feebleRect.right)
 						return;
 					if (state->y > _feebleRect.bottom)

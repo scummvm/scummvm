@@ -1096,7 +1096,9 @@ void SimonEngine::setup_cond_c_helper() {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
 			id = 0xFFFF;
 			if (_lastHitArea->flags & kBFTextBox) {
-				if (getGameType() == GType_FF && (_lastHitArea->flags & kBFHyperBox))
+				if (getGameType() == GType_PP)
+					id = _lastHitArea->id;
+				else if (getGameType() == GType_FF && (_lastHitArea->flags & kBFHyperBox))
 					id = _lastHitArea->data;
 				else
 					id = _lastHitArea->flags / 256;
@@ -1192,7 +1194,9 @@ startOver:
 				_hitAreaSubjectItem = ha->item_ptr;
 				id = 0xFFFF;
 				if (ha->flags & kBFTextBox) {
-					if (getGameType() == GType_FF && (ha->flags & kBFHyperBox))
+					if (getGameType() == GType_PP)
+						id = _lastHitArea->id;
+					else if (getGameType() == GType_FF && (ha->flags & kBFHyperBox))
 						id = ha->data;
 					else
 						id = ha->flags / 256;
