@@ -34,7 +34,7 @@
 
 #include "agos/agos.h"
 
-namespace Simon {
+namespace AGOS {
 static DetectedGameList GAME_detectGames(const FSList &fslist);
 }
 
@@ -116,7 +116,7 @@ GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
 }
 
 DetectedGameList Engine_AGOS_detectGames(const FSList &fslist) {
-	return Simon::GAME_detectGames(fslist);
+	return AGOS::GAME_detectGames(fslist);
 }
 
 PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
@@ -142,7 +142,7 @@ PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("SimonEngine: invalid game path '%s'", dir.path().c_str());
+		warning("AGOSEngine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;
 	}
 
@@ -151,18 +151,18 @@ PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		if (detectedGames[i].gameid == gameid) {
-			*engine = new Simon::SimonEngine(syst);
+			*engine = new AGOS::AGOSEngine(syst);
 			return kNoError;
 		}
 	}
 
-	warning("SimonEngine: Unable to locate game data at path '%s'", dir.path().c_str());
+	warning("AGOSEngine: Unable to locate game data at path '%s'", dir.path().c_str());
 	return kNoGameDataFoundError;
 }
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
-namespace Simon {
+namespace AGOS {
 
 #define FILE_MD5_BYTES 5000
 
@@ -1649,7 +1649,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 	return j;
 }
 
-bool SimonEngine::initGame() {
+bool AGOSEngine::initGame() {
 	uint16 gameCount = ARRAYSIZE(gameDescriptions);
 	int gameNumber = -1;
 	
@@ -1679,7 +1679,7 @@ bool SimonEngine::initGame() {
 	free(matches);
 
 	if (gameNumber >= gameCount || gameNumber == -1) {
-		error("SimonEngine::loadGame wrong gameNumber");
+		error("AGOSEngine::loadGame wrong gameNumber");
 	}
 
 	debug(2, "Running %s", toDetectedGame(gameDescriptions[gameNumber]).description.c_str());
@@ -1701,4 +1701,4 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

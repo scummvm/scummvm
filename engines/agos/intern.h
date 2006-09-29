@@ -24,7 +24,7 @@
 #ifndef AGOS_INTERN_H
 #define AGOS_INTERN_H
 
-namespace Simon {
+namespace AGOS {
 
 struct Child {
 	Child *next;
@@ -257,6 +257,6 @@ enum GameIds {
 	GID_SWAMPY
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

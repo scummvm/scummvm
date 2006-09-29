@@ -28,9 +28,9 @@
 
 using Common::File;
 
-namespace Simon {
+namespace AGOS {
 
-const byte *SimonEngine::getStringPtrByID(uint stringId) {
+const byte *AGOSEngine::getStringPtrByID(uint stringId) {
 	const byte *string_ptr;
 	byte *dst;
 
@@ -47,20 +47,20 @@ const byte *SimonEngine::getStringPtrByID(uint stringId) {
 	return dst;
 }
 
-const byte *SimonEngine::getLocalStringByID(uint stringId) {
+const byte *AGOSEngine::getLocalStringByID(uint stringId) {
 	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
 		loadTextIntoMem(stringId);
 	}
 	return _localStringtable[stringId - _stringIdLocalMin];
 }
 
-void SimonEngine::allocateStringTable(int num) {
+void AGOSEngine::allocateStringTable(int num) {
 	_stringTabPtr = (byte **)calloc(num, sizeof(byte *));
 	_stringTabPos = 0;
 	_stringtab_numalloc = num;
 }
 
-void SimonEngine::setupStringTable(byte *mem, int num) {
+void AGOSEngine::setupStringTable(byte *mem, int num) {
 	int i = 0;
 	for (;;) {
 		_stringTabPtr[i++] = mem;
@@ -73,7 +73,7 @@ void SimonEngine::setupStringTable(byte *mem, int num) {
 	_stringTabPos = i;
 }
 
-void SimonEngine::setupLocalStringTable(byte *mem, int num) {
+void AGOSEngine::setupLocalStringTable(byte *mem, int num) {
 	int i = 0;
 	for (;;) {
 		_localStringtable[i++] = mem;
@@ -84,14 +84,14 @@ void SimonEngine::setupLocalStringTable(byte *mem, int num) {
 	}
 }
 
-uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
+uint AGOSEngine::loadTextFile(const char *filename, byte *dst) {
 	if (getFeatures() & GF_OLD_BUNDLE)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
 }
 
-uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
+uint AGOSEngine::loadTextFile_simon1(const char *filename, byte *dst) {
 	File fo;
 	fo.open(filename);
 	uint32 size;
@@ -108,7 +108,7 @@ uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
 	return size;
 }
 
-uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
+uint AGOSEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	uint res;
 	uint32 offs;
 	uint32 size;
@@ -122,7 +122,7 @@ uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	return size;
 }
 
-void SimonEngine::loadTextIntoMem(uint stringId) {
+void AGOSEngine::loadTextIntoMem(uint stringId) {
 	byte *p;
 	char filename[30];
 	int i;
@@ -212,7 +212,7 @@ const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels) 
 	return string;
 }
 
-bool SimonEngine::printTextOf(uint a, uint x, uint y) {
+bool AGOSEngine::printTextOf(uint a, uint x, uint y) {
 	const byte *stringPtr;
 	uint16 pixels, w;
 
@@ -244,7 +244,7 @@ bool SimonEngine::printTextOf(uint a, uint x, uint y) {
 	return true;
 }
 
-bool SimonEngine::printNameOf(Item *item, uint x, uint y) {
+bool AGOSEngine::printNameOf(Item *item, uint x, uint y) {
 	SubObject *subObject;
 	const byte *stringPtr;
 	uint16 pixels, w;
@@ -269,7 +269,7 @@ bool SimonEngine::printNameOf(Item *item, uint x, uint y) {
 	return true;
 }
 
-void SimonEngine::printInteractText(uint16 num, const char *string) {
+void AGOSEngine::printInteractText(uint16 num, const char *string) {
 	char convertedString[320];
 	char *convertedString2 = convertedString;
 	const char *string2 = string;
@@ -324,7 +324,7 @@ void SimonEngine::printInteractText(uint16 num, const char *string) {
 	_interactY += height;
 }
 
-void SimonEngine::sendInteractText(uint16 num, const char *fmt, ...) {
+void AGOSEngine::sendInteractText(uint16 num, const char *fmt, ...) {
 	va_list arglist;
 	char string[256];
 
@@ -335,7 +335,7 @@ void SimonEngine::sendInteractText(uint16 num, const char *fmt, ...) {
 	printInteractText(num, string);
 }
 
-void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
+void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
 	char convertedString[320];
 	char *convertedString2 = convertedString;
 	const char *string2 = string;
@@ -467,4 +467,4 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 		loadSprite(b, 2, vgaSpriteId, x, y, 12);
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

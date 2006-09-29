@@ -32,9 +32,9 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-namespace Simon {
+namespace AGOS {
 
-int SimonEngine::countSaveGames() {
+int AGOSEngine::countSaveGames() {
 	Common::InSaveFile *f;
 	uint i = 1;
 	bool marks[256];
@@ -54,7 +54,7 @@ int SimonEngine::countSaveGames() {
 	return i;
 }
 
-int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
+int AGOSEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 	int slot, last_slot;
 	Common::InSaveFile *in;
 
@@ -107,7 +107,7 @@ int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 	return slot - curpos;
 }
 
-char *SimonEngine::genSaveName(int slot) {
+char *AGOSEngine::genSaveName(int slot) {
 	static char buf[15];
 
 	if (getGameType() == GType_FF) {
@@ -128,7 +128,7 @@ char *SimonEngine::genSaveName(int slot) {
 	return buf;
 }
 
-void SimonEngine::quickLoadOrSave() {
+void AGOSEngine::quickLoadOrSave() {
 	// The demo of Simon 1 (DOS Floppy) is missing too many segments
 	// and the Feeble Files doesn't always allow a load or save
 	if (getGameId() == GID_SIMON1DEMO || getGameType() == GType_FF)
@@ -173,7 +173,7 @@ void SimonEngine::quickLoadOrSave() {
 	_saveLoadType = 0;
 }
 
-void SimonEngine::listSaveGames(char *buf) {
+void AGOSEngine::listSaveGames(char *buf) {
 	int i;
 
 	disableFileBoxes();
@@ -207,7 +207,7 @@ const byte hebrewKeyTable[96] = {
 	123, 124, 125, 126, 127,
 };
 
-void SimonEngine::userGame(bool load) {
+void AGOSEngine::userGame(bool load) {
 	time_t save_time;
 	int number_of_savegames;
 	int i, name_len, result;
@@ -382,7 +382,7 @@ get_out:;
 	} while (i == _timer4);
 }
 
-int SimonEngine::userGameGetKey(bool *b, char *buf) {
+int AGOSEngine::userGameGetKey(bool *b, char *buf) {
 	HitArea *ha;
 	*b = true;
 
@@ -434,12 +434,12 @@ int SimonEngine::userGameGetKey(bool *b, char *buf) {
 	}
 }
 
-void SimonEngine::disableFileBoxes() {
+void AGOSEngine::disableFileBoxes() {
 	for (int i = 208; i != 214; i++)
 		disableBox(i);
 }
 
-void SimonEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
+void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 	byte old_text;
 
 	windowPutChar(window, x, b);
@@ -460,7 +460,7 @@ void SimonEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 	windowPutChar(window, 8);
 }
 
-void SimonEngine::fileError(WindowBlock *window, bool save_error) {
+void AGOSEngine::fileError(WindowBlock *window, bool save_error) {
 	HitArea *ha;
 	const char *string1, *string2;
 
@@ -576,7 +576,7 @@ loop:;
 	undefineBox(0x7FFF);
 }
 
-bool SimonEngine::saveGame(uint slot, char *caption) {
+bool AGOSEngine::saveGame(uint slot, char *caption) {
 	Common::WriteStream *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
@@ -683,7 +683,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 	return result;
 }
 
-bool SimonEngine::loadGame(uint slot) {
+bool AGOSEngine::loadGame(uint slot) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
@@ -818,4 +818,4 @@ bool SimonEngine::loadGame(uint slot) {
 	return true;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

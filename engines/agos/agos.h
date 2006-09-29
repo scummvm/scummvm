@@ -34,7 +34,7 @@
 #include "agos/sound.h"
 #include "agos/vga.h"
 
-namespace Simon {
+namespace AGOS {
 
 /* Various other settings */
 //#define DUMP_FILE_NR 8
@@ -141,18 +141,18 @@ struct GameSpecificSettings;
 
 class Debugger;
 
-class SimonEngine : public Engine {
+class AGOSEngine : public Engine {
 	friend class Debugger;
 	friend class MoviePlayer;
 
 	GUI::Debugger *getDebugger();
 
-	typedef void (SimonEngine::*OpcodeProc) ();
+	typedef void (AGOSEngine::*OpcodeProc) ();
 	void setupOpcodes();
 	const OpcodeProc *_opcode_table;
 	int _numOpcodes;
 
-	typedef void (SimonEngine::*VgaOpcodeProc) ();
+	typedef void (AGOSEngine::*VgaOpcodeProc) ();
 	void setupVgaOpcodes();
 	const VgaOpcodeProc *_vga_opcode_table;
 
@@ -492,8 +492,8 @@ protected:
 	byte _hebrewCharWidths[32];
 
 public:
-	SimonEngine(OSystem *syst);
-	virtual ~SimonEngine();
+	AGOSEngine(OSystem *syst);
+	virtual ~AGOSEngine();
 
 protected:
 	uint16 to16Wrapper(uint value);
@@ -1186,6 +1186,6 @@ protected:
 	char *genSaveName(int slot);
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

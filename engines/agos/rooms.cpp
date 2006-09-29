@@ -28,9 +28,9 @@
 
 using Common::File;
 
-namespace Simon {
+namespace AGOS {
 
-uint16 SimonEngine::getDoorState(Item *item, uint16 d) {
+uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 	uint16 mask = 3;
 	uint16 n;
 
@@ -46,7 +46,7 @@ uint16 SimonEngine::getDoorState(Item *item, uint16 d) {
 	return n;
 }
 
-uint16 SimonEngine::getExitOf(Item *item, uint16 d) {
+uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
 	uint16 x;
 	uint16 y = 0;
 
@@ -62,7 +62,7 @@ uint16 SimonEngine::getExitOf(Item *item, uint16 d) {
 	return subRoom->roomExit[d];
 }
 
-bool SimonEngine::loadRoomItems(uint item) {
+bool AGOSEngine::loadRoomItems(uint item) {
 	byte *p;
 	uint i, min_num, max_num;
 	char filename[30];
@@ -111,4 +111,4 @@ bool SimonEngine::loadRoomItems(uint item) {
 	return 0;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

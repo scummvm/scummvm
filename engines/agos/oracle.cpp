@@ -29,9 +29,9 @@
 #include "agos/intern.h"
 #include "agos/vga.h"
 
-namespace Simon {
+namespace AGOS {
 
-void SimonEngine::checkLinkBox() {	// Check for boxes spilling over to next row of text
+void AGOSEngine::checkLinkBox() {	// Check for boxes spilling over to next row of text
 	if (_hyperLink != 0) {
 		_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];
 		if (_variableArray[52] != 0) {
@@ -43,7 +43,7 @@ void SimonEngine::checkLinkBox() {	// Check for boxes spilling over to next row 
 	}
 }
 
-void SimonEngine::hyperLinkOn(uint16 x) {
+void AGOSEngine::hyperLinkOn(uint16 x) {
 	if (!getBitFlag(51))
 		return;
 
@@ -53,7 +53,7 @@ void SimonEngine::hyperLinkOn(uint16 x) {
 }
 
 
-void SimonEngine::hyperLinkOff() {
+void AGOSEngine::hyperLinkOff() {
 	if (!getBitFlag(51))
 		return;
 
@@ -63,28 +63,28 @@ void SimonEngine::hyperLinkOff() {
 	_hyperLink = 0;
 }
 
-void SimonEngine::linksUp() {	// Scroll Oracle Links
+void AGOSEngine::linksUp() {	// Scroll Oracle Links
 	uint16 j;
 	for (j = 700; j < _variableArray[53]; j++) {
 		moveBox(j, 0, -15);
 	}
 }
 
-void SimonEngine::linksDown() {
+void AGOSEngine::linksDown() {
 	uint16 i;
 	for (i = 700; i < _variableArray[53]; i++) {
 		moveBox(i,0, 15);
 	}
 }
 
-void SimonEngine::scrollOracle() {
+void AGOSEngine::scrollOracle() {
 	int i;
 
 	for (i = 0; i < 5; i++)
 		scrollOracleUp();
 }
 
-void SimonEngine::oracleTextUp() {
+void AGOSEngine::oracleTextUp() {
 	Subroutine *sub;
 	int i = 0;
 	changeWindow(3);
@@ -118,7 +118,7 @@ void SimonEngine::oracleTextUp() {
 	}
 }
 
-void SimonEngine::oracleTextDown() {
+void AGOSEngine::oracleTextDown() {
 	Subroutine *sub;
 	int i = 0;
 	changeWindow(3);
@@ -152,7 +152,7 @@ void SimonEngine::oracleTextDown() {
 	}
 }
 
-void SimonEngine::scrollOracleUp() {
+void AGOSEngine::scrollOracleUp() {
 	byte *src, *dst;
 	uint16 w, h;
 
@@ -181,7 +181,7 @@ void SimonEngine::scrollOracleUp() {
 	}
 }
 
-void SimonEngine::scrollOracleDown() {
+void AGOSEngine::scrollOracleDown() {
 	byte *src, *dst;
 	uint16 w, h;
 
@@ -209,7 +209,7 @@ void SimonEngine::scrollOracleDown() {
 	}
 }
 
-void SimonEngine::oracleLogo() {
+void AGOSEngine::oracleLogo() {
 	Common::Rect srcRect, dstRect;
 	byte *src, *dst;
 	uint16 w, h;
@@ -237,7 +237,7 @@ void SimonEngine::oracleLogo() {
 	}
 }
 
-void SimonEngine::swapCharacterLogo() {
+void AGOSEngine::swapCharacterLogo() {
 	Common::Rect srcRect, dstRect;
 	byte *src, *dst;
 	uint16 w, h;
@@ -277,7 +277,7 @@ void SimonEngine::swapCharacterLogo() {
 	}
 }
 
-void SimonEngine::listSaveGames(int n) {
+void AGOSEngine::listSaveGames(int n) {
 	char b[108];
 	Common::InSaveFile *in;
 	uint16 j, k, z, maxFiles;
@@ -344,7 +344,7 @@ void SimonEngine::listSaveGames(int n) {
 	}
 }
 
-void SimonEngine::saveUserGame(int slot) {
+void AGOSEngine::saveUserGame(int slot) {
 	WindowBlock *window;
 	Common::InSaveFile *in;
 	char name[108];
@@ -407,7 +407,7 @@ void SimonEngine::saveUserGame(int slot) {
 	}
 }
 
-void SimonEngine::windowBackSpace(WindowBlock *window) {
+void AGOSEngine::windowBackSpace(WindowBlock *window) {
 	byte *dst;
 	uint x, y, h, w;
 
@@ -429,4 +429,4 @@ void SimonEngine::windowBackSpace(WindowBlock *window) {
 	_lockWord &= ~0x8000;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

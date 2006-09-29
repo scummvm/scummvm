@@ -28,29 +28,29 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-namespace Simon {
+namespace AGOS {
 
-byte *SimonEngine::getFrontBuf() {
+byte *AGOSEngine::getFrontBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _frontBuf;
 }
 
-byte *SimonEngine::getBackBuf() {
+byte *AGOSEngine::getBackBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _useBackGround ? _backGroundBuf : _backBuf;
 }
 
-byte *SimonEngine::getBackGround() {
+byte *AGOSEngine::getBackGround() {
 	_dxSurfacePitch = _screenWidth;
 	return _backGroundBuf;
 }
 
-byte *SimonEngine::getScaleBuf() {
+byte *AGOSEngine::getScaleBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _scaleBuf;
 }
 
-void SimonEngine::animateSprites() {
+void AGOSEngine::animateSprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	const byte *vc_ptr_org = _vcPtr;
@@ -114,7 +114,7 @@ void SimonEngine::animateSprites() {
 	_vcPtr = vc_ptr_org;
 }
 
-void SimonEngine::animateSpritesDebug() {
+void AGOSEngine::animateSpritesDebug() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	const byte *vc_ptr_org = _vcPtr;
@@ -164,7 +164,7 @@ void SimonEngine::animateSpritesDebug() {
 	_vcPtr = vc_ptr_org;
 }
 
-void SimonEngine::animateSpritesByY() {
+void AGOSEngine::animateSpritesByY() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	const byte *vc_ptr_org = _vcPtr;
@@ -240,7 +240,7 @@ void SimonEngine::animateSpritesByY() {
 	_vcPtr = vc_ptr_org;
 }
 
-void SimonEngine::displayBoxStars() {
+void AGOSEngine::displayBoxStars() {
 	HitArea *ha, *dha;
 	uint count;
 	uint y_, x_;
@@ -338,7 +338,7 @@ void SimonEngine::displayBoxStars() {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::scrollScreen() {
+void AGOSEngine::scrollScreen() {
 	byte *dst = getFrontBuf();
 	const byte *src;
 	uint x, y;
@@ -397,11 +397,11 @@ void SimonEngine::scrollScreen() {
 	_scrollFlag = 0;
 }
 
-void SimonEngine::clearBackFromTop(uint lines) {
+void AGOSEngine::clearBackFromTop(uint lines) {
 	memset(_backBuf, 0, lines * _screenWidth);
 }
 
-void SimonEngine::dx_clear_surfaces(uint num_lines) {
+void AGOSEngine::dx_clear_surfaces(uint num_lines) {
 	memset(_backBuf, 0, num_lines * _screenWidth);
 
 	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, num_lines);
@@ -412,7 +412,7 @@ void SimonEngine::dx_clear_surfaces(uint num_lines) {
 	}
 }
 
-void SimonEngine::fillFrontFromBack(uint x, uint y, uint w, uint h) {
+void AGOSEngine::fillFrontFromBack(uint x, uint y, uint w, uint h) {
 	uint offs = x + y * _screenWidth;
 	byte *s = _backBuf + offs;
 	byte *d = _frontBuf + offs;
@@ -424,7 +424,7 @@ void SimonEngine::fillFrontFromBack(uint x, uint y, uint w, uint h) {
 	} while (--h);
 }
 
-void SimonEngine::fillBackFromFront(uint x, uint y, uint w, uint h) {
+void AGOSEngine::fillBackFromFront(uint x, uint y, uint w, uint h) {
 	uint offs = x + y * _screenWidth;
 	byte *s = _frontBuf + offs;
 	byte *d = _backBuf + offs;
@@ -436,11 +436,11 @@ void SimonEngine::fillBackFromFront(uint x, uint y, uint w, uint h) {
 	} while (--h);
 }
 
-void SimonEngine::fillBackGroundFromBack(uint lines) {
+void AGOSEngine::fillBackGroundFromBack(uint lines) {
 	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
 }
 
-void SimonEngine::dx_update_screen_and_palette() {
+void AGOSEngine::dx_update_screen_and_palette() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
 		if (memcmp(_displayPalette, _currentPalette, 1024)) {
@@ -467,7 +467,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 	}
 }
 
-void SimonEngine::fastFadeIn() {
+void AGOSEngine::fastFadeIn() {
 	if (_fastFadeInFlag & 0x8000) {
 		slowFadeIn();
 	} else {
@@ -478,7 +478,7 @@ void SimonEngine::fastFadeIn() {
 	}
 }
 
-void SimonEngine::slowFadeIn() {
+void AGOSEngine::slowFadeIn() {
 	uint8 *src, *dst;
 	int c, p;
 
@@ -509,4 +509,4 @@ void SimonEngine::slowFadeIn() {
 	_fastFadeInFlag = 0;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

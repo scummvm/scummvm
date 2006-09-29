@@ -27,9 +27,9 @@
 
 #include "agos/agos.h"
 
-namespace Simon {
+namespace AGOS {
 
-void SimonEngine::loadIconFile() {
+void AGOSEngine::loadIconFile() {
 	Common::File in;
 	uint size;
 
@@ -47,7 +47,7 @@ void SimonEngine::loadIconFile() {
 	in.close();
 }
 
-void SimonEngine::loadIconData() {
+void AGOSEngine::loadIconData() {
 	loadZone(8);
 	VgaPointersEntry *vpe = &_vgaBufferPointers[8];
 
@@ -163,7 +163,7 @@ static void decompressIcon(byte *dst, byte *src, uint w, uint h_org, byte base, 
 	}
 }
 
-void SimonEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
+void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
@@ -202,7 +202,7 @@ void SimonEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
+void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
 	if (getGameType() == GType_FF) {
 		drawIconArray_FF(num, itemRef, line, classMask);
 	} else {
@@ -210,7 +210,7 @@ void SimonEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask
 	}
 }
 
-void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int classMask) {
+void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
 	uint width, height;
@@ -306,7 +306,7 @@ void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int cla
 	}
 }
 
-void SimonEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMask) {
+void AGOSEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
 	uint16 flagnumber = 201;
@@ -410,7 +410,7 @@ l1:;		itemRef = derefItem(itemRef->sibling);
 	window->iconPtr->downArrow = _scrollDownHitArea;
 }
 
-void SimonEngine::defineArrowBoxes(WindowBlock *window) {
+void AGOSEngine::defineArrowBoxes(WindowBlock *window) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -486,7 +486,7 @@ void SimonEngine::defineArrowBoxes(WindowBlock *window) {
 	}
 }
 
-uint SimonEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr) {
+uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -526,7 +526,7 @@ uint SimonEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y
 	return ha - _hitAreas;
 }
 
-void SimonEngine::removeIconArray(uint num) {
+void AGOSEngine::removeIconArray(uint num) {
 	WindowBlock *window;
 	uint16 curWindow;
 	uint16 i;
@@ -564,8 +564,8 @@ void SimonEngine::removeIconArray(uint num) {
 	_fcsData2[num] = 0;
 }
 
-void SimonEngine::removeArrows(WindowBlock *window, uint num) {
+void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	stopAnimateSimon1(128);
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

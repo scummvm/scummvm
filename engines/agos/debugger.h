@@ -26,17 +26,17 @@
 
 #include "gui/debugger.h"
 
-namespace Simon {
+namespace AGOS {
 
-class SimonEngine;
+class AGOSEngine;
 
 class Debugger : public GUI::Debugger {
 public:
-	Debugger(SimonEngine *vm);
+	Debugger(AGOSEngine *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
-	SimonEngine *_vm;
+	AGOSEngine *_vm;
 
 	virtual void preEnter();
 	virtual void postEnter();
@@ -50,6 +50,6 @@ protected:
 	bool Cmd_StartSubroutine(int argc, const char **argv);
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

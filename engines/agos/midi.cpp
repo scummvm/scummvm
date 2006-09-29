@@ -30,7 +30,7 @@
 
 #include "agos/agos.h"
 
-namespace Simon {
+namespace AGOS {
 
 
 // MidiParser_S1D is not considered part of the standard
@@ -571,4 +571,4 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 	p->parser = parser; // That plugs the power cord into the wall
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

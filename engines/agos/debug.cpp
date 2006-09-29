@@ -31,9 +31,9 @@
 
 #include <sys/stat.h>
 
-namespace Simon {
+namespace AGOS {
 
-const byte *SimonEngine::dumpOpcode(const byte *p) {
+const byte *AGOSEngine::dumpOpcode(const byte *p) {
 	uint opcode;
 	const char *s, *st;
 
@@ -147,7 +147,7 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 	}
 }
 
-void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
+void AGOSEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	const byte *p;
 
 	printf("; ****\n");
@@ -165,7 +165,7 @@ void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	}
 }
 
-void SimonEngine::dumpSubroutine(Subroutine *sub) {
+void AGOSEngine::dumpSubroutine(Subroutine *sub) {
 	SubroutineLine *sl;
 
 	printf("\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
@@ -176,14 +176,14 @@ void SimonEngine::dumpSubroutine(Subroutine *sub) {
 	printf("\nEND ******************************************\n");
 }
 
-void SimonEngine::dumpSubroutines() {
+void AGOSEngine::dumpSubroutines() {
 	Subroutine *sub = _subroutineList;
 	for (; sub; sub = sub->next) {
 		dumpSubroutine(sub);
 	}
 }
 
-void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
+void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 	uint opcode;
 	const char *str, *strn;
 
@@ -252,7 +252,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 	} while (!one_opcode_only);
 }
 
-void SimonEngine::dump_vga_file(const byte *vga) {
+void AGOSEngine::dump_vga_file(const byte *vga) {
 	const byte *pp;
 	const byte *p;
 	int count;
@@ -335,7 +335,7 @@ void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint3
 	fclose(out);
 }
 
-void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
+void AGOSEngine::dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
 								 byte base) {
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
@@ -375,7 +375,7 @@ void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int
 	free(b);
 }
 
-void SimonEngine::dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base) {
+void AGOSEngine::dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base) {
 	char buf[40];
 #if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__) && !defined(__PLAYSTATION2__)
 	struct stat statbuf;
@@ -414,7 +414,7 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 	} while (--num);
 }
 
-void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
+void AGOSEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 
 	int i;
 	uint32 offs;
@@ -459,15 +459,15 @@ void SimonEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 	}
 }
 
-void SimonEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
+void AGOSEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
 	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
 					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
 	dump_video_script(ptr, false);
 	printf("; end\n");
 }
 
-void SimonEngine::dump_vga_script(const byte *ptr, uint res, uint sprite_id) {
+void AGOSEngine::dump_vga_script(const byte *ptr, uint res, uint sprite_id) {
 	dump_vga_script_always(ptr, res, sprite_id);
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

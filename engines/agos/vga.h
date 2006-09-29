@@ -24,7 +24,7 @@
 #ifndef AGOS_VGA_H
 #define AGOS_VGA_H
 
-namespace Simon {
+namespace AGOS {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -162,6 +162,6 @@ struct VC10_state {
 
 byte *vc10_depackColumn(VC10_state *vs);
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

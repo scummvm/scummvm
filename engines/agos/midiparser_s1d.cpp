@@ -30,7 +30,7 @@
 
 #include <stdio.h>
 
-namespace Simon {
+namespace AGOS {
 
 /**
  * Simon 1 Demo version of MidiParser.
@@ -152,4 +152,4 @@ void MidiParser_S1D::resetTracking() {
 
 MidiParser *MidiParser_createS1D() { return new MidiParser_S1D; }
 
-} // End of namespace Simon
+} // End of namespace AGOS

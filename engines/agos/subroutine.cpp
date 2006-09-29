@@ -28,9 +28,9 @@
 
 using Common::File;
 
-namespace Simon {
+namespace AGOS {
 
-Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
+Subroutine *AGOSEngine::getSubroutineByID(uint subroutine_id) {
 	Subroutine *cur;
 
 	_subroutine = subroutine_id;
@@ -59,14 +59,14 @@ Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 	return NULL;
 }
 
-void SimonEngine::alignTableMem() {
+void AGOSEngine::alignTableMem() {
 	if ((unsigned long)_tablesHeapPtr & 3) {
 		_tablesHeapPtr += 2;
 		_tablesHeapCurPos += 2;
 	}
 }
 
-byte *SimonEngine::allocateTable(uint size) {
+byte *AGOSEngine::allocateTable(uint size) {
 	byte *org = _tablesHeapPtr;
 
 	size = (size + 1) & ~1;
@@ -80,14 +80,14 @@ byte *SimonEngine::allocateTable(uint size) {
 	return org;
 }
 
-File *SimonEngine::openTablesFile(const char *filename) {
+File *AGOSEngine::openTablesFile(const char *filename) {
 	if (getFeatures() & GF_OLD_BUNDLE)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
 }
 
-File *SimonEngine::openTablesFile_simon1(const char *filename) {
+File *AGOSEngine::openTablesFile_simon1(const char *filename) {
 	File *fo = new File();
 	fo->open(filename);
 	if (fo->isOpen() == false)
@@ -95,7 +95,7 @@ File *SimonEngine::openTablesFile_simon1(const char *filename) {
 	return fo;
 }
 
-File *SimonEngine::openTablesFile_gme(const char *filename) {
+File *AGOSEngine::openTablesFile_gme(const char *filename) {
 	uint res;
 	uint32 offs;
 
@@ -106,7 +106,7 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 	return _gameFile;
 }
 
-bool SimonEngine::loadTablesIntoMem(uint subr_id) {
+bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2)
 		return loadTablesOldIntoMem(subr_id);
 	else
@@ -114,7 +114,7 @@ bool SimonEngine::loadTablesIntoMem(uint subr_id) {
 }
 
 
-bool SimonEngine::loadTablesOldIntoMem(uint subr_id) {
+bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
 	File *in;
@@ -163,7 +163,7 @@ bool SimonEngine::loadTablesOldIntoMem(uint subr_id) {
 	return 0;
 }
 
-bool SimonEngine::loadTablesNewIntoMem(uint subr_id) {
+bool AGOSEngine::loadTablesNewIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -221,7 +221,7 @@ bool SimonEngine::loadTablesNewIntoMem(uint subr_id) {
 	return 0;
 }
 
-bool SimonEngine::loadXTablesIntoMem(uint subr_id) {
+bool AGOSEngine::loadXTablesIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -276,14 +276,14 @@ bool SimonEngine::loadXTablesIntoMem(uint subr_id) {
 	return 0;
 }
 
-void SimonEngine::closeTablesFile(File *in) {
+void AGOSEngine::closeTablesFile(File *in) {
 	if (getFeatures() & GF_OLD_BUNDLE) {
 		in->close();
 		delete in;
 	}
 }
 
-Subroutine *SimonEngine::createSubroutine(uint id) {
+Subroutine *AGOSEngine::createSubroutine(uint id) {
 	Subroutine *sub;
 
 	alignTableMem();
@@ -296,7 +296,7 @@ Subroutine *SimonEngine::createSubroutine(uint id) {
 	return sub;
 }
 
-SubroutineLine *SimonEngine::createSubroutineLine(Subroutine *sub, int where) {
+SubroutineLine *AGOSEngine::createSubroutineLine(Subroutine *sub, int where) {
 	SubroutineLine *sl, *cur_sl = NULL, *last_sl = NULL;
 
 	if (sub->id == 0)
@@ -329,7 +329,7 @@ SubroutineLine *SimonEngine::createSubroutineLine(Subroutine *sub, int where) {
 	return sl;
 }
 
-void SimonEngine::runSubroutine101() {
+void AGOSEngine::runSubroutine101() {
 	Subroutine *sub;
 
 	sub = getSubroutineByID(101);
@@ -339,7 +339,7 @@ void SimonEngine::runSubroutine101() {
 	permitInput();
 }
 
-int SimonEngine::startSubroutine(Subroutine *sub) {
+int AGOSEngine::startSubroutine(Subroutine *sub) {
 	int result = -1;
 	SubroutineLine *sl;
 	const byte *old_code_ptr;
@@ -395,11 +395,11 @@ int SimonEngine::startSubroutine(Subroutine *sub) {
 	return result;
 }
 
-int SimonEngine::startSubroutineEx(Subroutine *sub) {
+int AGOSEngine::startSubroutineEx(Subroutine *sub) {
 	return startSubroutine(sub);
 }
 
-bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
+bool AGOSEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	if (sub->id)
 		return true;
 
@@ -418,13 +418,13 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 	return true;
 }
 
-void SimonEngine::readSubroutine(File *in, Subroutine *sub) {
+void AGOSEngine::readSubroutine(File *in, Subroutine *sub) {
 	while (in->readUint16BE() == 0) {
 		readSubroutineLine(in, createSubroutineLine(sub, 0xFFFF), sub);
 	}
 }
 
-void SimonEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub) {
+void AGOSEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub) {
 	byte line_buffer[2048], *q = line_buffer;
 	int size;
 
@@ -470,10 +470,10 @@ void SimonEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *s
 	}
 }
 
-void SimonEngine::readSubroutineBlock(File *in) {
+void AGOSEngine::readSubroutineBlock(File *in) {
 	while (in->readUint16BE() == 0) {
 		readSubroutine(in, createSubroutine(in->readUint16BE()));
 	}
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

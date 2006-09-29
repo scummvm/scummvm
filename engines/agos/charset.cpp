@@ -26,9 +26,9 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-namespace Simon {
+namespace AGOS {
 
-void SimonEngine::print_char_helper_1(const byte *src, uint len) {
+void AGOSEngine::print_char_helper_1(const byte *src, uint len) {
 	uint idx;
 
 	if (_textWindow == NULL)
@@ -72,13 +72,13 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 	}
 }
 
-void SimonEngine::print_char_helper_5(WindowBlock *window) {
+void AGOSEngine::print_char_helper_5(WindowBlock *window) {
 	uint index = getWindowNum(window);
 	tidyIconArray(index);
 	_fcsData1[index] = 0;
 }
 
-void SimonEngine::tidyIconArray(uint i) {
+void AGOSEngine::tidyIconArray(uint i) {
 	WindowBlock *window;
 
 	if (_fcsData2[i]) {
@@ -90,7 +90,7 @@ void SimonEngine::tidyIconArray(uint i) {
 	}
 }
 
-void SimonEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *dst_org, chr;
 	uint count;
@@ -181,7 +181,7 @@ void SimonEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, 
 	}
 }
 
-void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+void AGOSEngine::renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
 	const int textHeight = (getGameType() == GType_FF || getGameType() == GType_PP) ? 15: 10;
@@ -297,11 +297,11 @@ static const byte feebleFontSize[208] = {
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
 };
 
-uint SimonEngine::getFeebleFontSize(byte chr) {
+uint AGOSEngine::getFeebleFontSize(byte chr) {
 	return feebleFontSize[chr - 32];
 }
 
-void SimonEngine::showMessageFormat(const char *s, ...) {
+void AGOSEngine::showMessageFormat(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	char *str;
 	va_list va;
@@ -327,7 +327,7 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 		showmessage_print_char(*str);
 }
 
-void SimonEngine::showmessage_print_char(byte chr) {
+void AGOSEngine::showmessage_print_char(byte chr) {
 	if (chr == 12) {
 		_numLettersToPrint = 0;
 		_printCharCurPos = 0;
@@ -382,7 +382,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 	}
 }
 
-void SimonEngine::openTextWindow() {
+void AGOSEngine::openTextWindow() {
 	if (_textWindow)
 		return;
 
@@ -392,7 +392,7 @@ void SimonEngine::openTextWindow() {
 		_textWindow = openWindow(8, 144, 24, 6, 1, 0, 15);
 }
 
-void SimonEngine::showmessage_helper_3(uint a, uint b) {
+void AGOSEngine::showmessage_helper_3(uint a, uint b) {
 	_printCharCurPos = a;
 	_printCharMaxPos = b;
 	_printCharPixelCount = 0;
@@ -400,7 +400,7 @@ void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_newLines = 0;
 }
 
-void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
+void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 
 	if (c == 12) {
@@ -472,7 +472,7 @@ void SimonEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	}
 }
 
-void SimonEngine::video_putchar_newline(WindowBlock *window) {
+void AGOSEngine::video_putchar_newline(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		if (_noOracleScroll == 0) {
 			if (window->height < window->textRow + 30) {
@@ -1525,7 +1525,7 @@ static const byte feeble_video_font[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, byte chr) {
+void AGOSEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
 	uint h, w, i;
@@ -1599,20 +1599,20 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 	_lockWord &= ~0x8000;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(AGOS_Charset)
-_GSETPTR(Simon::russian_video_font, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-//_GSETPTR(Simon::polish_video_font, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(Simon::french_video_font, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(Simon::german_video_font, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(Simon::hebrew_video_font, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(Simon::italian_video_font, GBVARS_ITALIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(Simon::spanish_video_font, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(Simon::video_font, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::russian_video_font, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+//_GSETPTR(AGOS::polish_video_font, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::french_video_font, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::german_video_font, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::hebrew_video_font, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::italian_video_font, GBVARS_ITALIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::spanish_video_font, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::video_font, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_AGOS)
 _GEND
 
 _GRELEASE(AGOS_Charset)

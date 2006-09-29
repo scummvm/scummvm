@@ -37,7 +37,7 @@
 
 using Common::File;
 
-namespace Simon {
+namespace AGOS {
 
 // Script opcodes to load into memory
 static const char *const opcode_arg_table_elvira[300] = {
@@ -183,28 +183,28 @@ static const char *const opcode_arg_table_puzzlepack[256] = {
 	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
 };
 
-uint16 SimonEngine::to16Wrapper(uint value) {
+uint16 AGOSEngine::to16Wrapper(uint value) {
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		return TO_LE_16(value);
 	else
 		return TO_BE_16(value);
 }
 
-uint16 SimonEngine::readUint16Wrapper(const void *src) {
+uint16 AGOSEngine::readUint16Wrapper(const void *src) {
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		return READ_LE_UINT16(src);
 	else
 		return READ_BE_UINT16(src);
 }
 
-uint32 SimonEngine::readUint32Wrapper(const void *src) {
+uint32 AGOSEngine::readUint32Wrapper(const void *src) {
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		return READ_LE_UINT32(src);
 	else
 		return READ_BE_UINT32(src);
 }
 
-void SimonEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {
+void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {
 #ifdef USE_ZLIB
 		File in;
 		in.open(srcName);
@@ -233,7 +233,7 @@ void SimonEngine::decompressData(const char *srcName, byte *dst, uint32 offset, 
 #endif
 }
 
-void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &srcSize, uint32 &dstSize) {
+void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &srcSize, uint32 &dstSize) {
 	Common::File in;
 
 	int offsSize = (getPlatform() == Common::kPlatformAmiga) ? 16 : 12;
@@ -252,7 +252,7 @@ void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, ui
 	in.close();
 }
 
-int SimonEngine::allocGamePcVars(File *in) {
+int AGOSEngine::allocGamePcVars(File *in) {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
 	uint i, start;
@@ -292,7 +292,7 @@ int SimonEngine::allocGamePcVars(File *in) {
 	return item_array_inited;
 }
 
-void SimonEngine::loadGamePcFile() {
+void AGOSEngine::loadGamePcFile() {
 	Common::File in;
 	int num_inited_objects;
 	int i, file_size;
@@ -398,7 +398,7 @@ void SimonEngine::loadGamePcFile() {
 
 }
 
-void SimonEngine::readGamePcText(Common::File *in) {
+void AGOSEngine::readGamePcText(Common::File *in) {
 	_textSize = in->readUint32BE();
 	_textMem = (byte *)malloc(_textSize);
 	if (_textMem == NULL)
@@ -409,7 +409,7 @@ void SimonEngine::readGamePcText(Common::File *in) {
 	setupStringTable(_textMem, _stringTabNum);
 }
 
-void SimonEngine::readItemFromGamePc(Common::File *in, Item *item) {
+void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 	uint32 type;
 
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
@@ -447,7 +447,7 @@ void SimonEngine::readItemFromGamePc(Common::File *in, Item *item) {
 	}
 }
 
-void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
+void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 	if (type == 1) {
 		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
 			// FIXME
@@ -548,7 +548,7 @@ uint fileReadItemID(Common::File *in) {
 	return val + 2;
 }
 
-byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
+byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 	int i, l;
 	const char *string_ptr;
 	uint opcode, val;
@@ -664,7 +664,7 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 	}
 }
 
-void SimonEngine::openGameFile() {
+void AGOSEngine::openGameFile() {
 	if (!(getFeatures() & GF_OLD_BUNDLE)) {
 		_gameFile = new File();
 		_gameFile->open(getFileName(GAME_GMEFILE));
@@ -686,7 +686,7 @@ void SimonEngine::openGameFile() {
 	}
 }
 
-void SimonEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
+void AGOSEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
 	_gameFile->seek(offs, SEEK_SET);
 	if (_gameFile->read(dst, size) != size)
 		error("readGameFile: Read failed (%d,%d)", offs, size);
@@ -809,7 +809,7 @@ static bool decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
-void SimonEngine::loadSimonVGAFile(uint vga_id) {
+void AGOSEngine::loadSimonVGAFile(uint vga_id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
@@ -853,7 +853,7 @@ void SimonEngine::loadSimonVGAFile(uint vga_id) {
 	}
 }
 
-byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
+byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	File in;
 	char filename[15];
 	byte *dst = NULL;
@@ -968,7 +968,7 @@ static const char *dimpSoundList[32] = {
 };
 
 
-void SimonEngine::loadSound(uint sound, int pan, int vol, uint type) {
+void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {
 	byte *dst;
 
 	if (getGameId() == GID_DIMP) {
@@ -1019,7 +1019,7 @@ void SimonEngine::loadSound(uint sound, int pan, int vol, uint type) {
 		_sound->playSfxData(dst, sound, pan, vol);
 }
 
-void SimonEngine::loadVoice(uint speechId) {
+void AGOSEngine::loadVoice(uint speechId) {
 	if (getGameType() == GType_PP && speechId == 99)
 		return;
 
@@ -1052,4 +1052,4 @@ void SimonEngine::loadVoice(uint speechId) {
 	}
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

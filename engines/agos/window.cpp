@@ -26,9 +26,9 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-namespace Simon {
+namespace AGOS {
 
-uint SimonEngine::getWindowNum(WindowBlock *window) {
+uint AGOSEngine::getWindowNum(WindowBlock *window) {
 	uint i;
 
 	for (i = 0; i != ARRAYSIZE(_windowArray); i++)
@@ -39,7 +39,7 @@ uint SimonEngine::getWindowNum(WindowBlock *window) {
 	return 0;
 }
 
-WindowBlock *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
+WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
 	WindowBlock *window;
 
 	window = _windowList;
@@ -62,7 +62,7 @@ WindowBlock *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint flags,
 	return window;
 }
 
-void SimonEngine::changeWindow(uint a) {
+void AGOSEngine::changeWindow(uint a) {
 	a &= 7;
 
 	if (_windowArray[a] == NULL || _curWindow == a)
@@ -78,7 +78,7 @@ void SimonEngine::changeWindow(uint a) {
 		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 }
 
-void SimonEngine::closeWindow(uint a) {
+void AGOSEngine::closeWindow(uint a) {
 	if (_windowArray[a] == NULL)
 		return;
 	removeIconArray(a);
@@ -90,7 +90,7 @@ void SimonEngine::closeWindow(uint a) {
 	}
 }
 
-void SimonEngine::clearWindow(WindowBlock *window) {
+void AGOSEngine::clearWindow(WindowBlock *window) {
 	if (window->flags & 0x10)
 		restoreWindow(window);
 	else
@@ -103,7 +103,7 @@ void SimonEngine::clearWindow(WindowBlock *window) {
 	window->scrollY = 0;
 }
 
-void SimonEngine::colorWindow(WindowBlock *window) {
+void AGOSEngine::colorWindow(WindowBlock *window) {
 	byte *dst;
 	uint h, w;
 
@@ -133,13 +133,13 @@ void SimonEngine::colorWindow(WindowBlock *window) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::resetWindow(WindowBlock *window) {
+void AGOSEngine::resetWindow(WindowBlock *window) {
 	if (window->flags & 8)
 		restoreWindow(window);
 	window->mode = 0;
 }
 
-void SimonEngine::restoreWindow(WindowBlock *window) {
+void AGOSEngine::restoreWindow(WindowBlock *window) {
 	_lockWord |= 0x8000;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -158,7 +158,7 @@ void SimonEngine::restoreWindow(WindowBlock *window) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
+void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 
@@ -177,9 +177,9 @@ void SimonEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	}
 }
 
-void SimonEngine::windowPutChar(uint a) {
+void AGOSEngine::windowPutChar(uint a) {
 	if (_textWindow != _windowArray[0])
 		windowPutChar(_textWindow, a);
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

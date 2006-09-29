@@ -32,7 +32,7 @@ namespace Common {
 	class File;
 }
 
-namespace Simon {
+namespace AGOS {
 
 struct MusicInfo {
 	MidiParser *parser;
@@ -123,6 +123,6 @@ public:
 	MidiChannel *getPercussionChannel() { return 0; }
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

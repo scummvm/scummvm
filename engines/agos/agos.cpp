@@ -43,7 +43,7 @@
 
 using Common::File;
 
-namespace Simon {
+namespace AGOS {
 
 #ifdef PALMOS_68K
 #define PTR(a) a
@@ -73,7 +73,7 @@ static const GameSpecificSettings puzzlepack_settings = {
 };
 #endif
 
-SimonEngine::SimonEngine(OSystem *syst)
+AGOSEngine::AGOSEngine(OSystem *syst)
 	: Engine(syst), midi(syst) {
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
@@ -415,7 +415,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	File::addDefaultDirectory(_gameDataPath + "SPEECH");
 }
 
-int SimonEngine::init() {
+int AGOSEngine::init() {
 	// Detect game
 	if (!initGame()) {
 		GUIErrorMessage("No valid games were found in the specified directory.");
@@ -529,7 +529,7 @@ int SimonEngine::init() {
 	return 0;
 }
 
-void SimonEngine::setupGame() {
+void AGOSEngine::setupGame() {
 	if (getGameType() == GType_PP) {
 		gss = PTR(puzzlepack_settings);
 		_numTextBoxes = 40;
@@ -617,7 +617,7 @@ void SimonEngine::setupGame() {
 	_variableArrayPtr = _variableArray;
 }
 
-SimonEngine::~SimonEngine() {
+AGOSEngine::~AGOSEngine() {
 	delete _gameFile;
 
 	midi.close();
@@ -649,11 +649,11 @@ SimonEngine::~SimonEngine() {
 	delete _sound;
 }
 
-GUI::Debugger *SimonEngine::getDebugger() {
+GUI::Debugger *AGOSEngine::getDebugger() {
 	return _debugger;
 }
 
-void SimonEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
+void AGOSEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
 	byte *p = palPtr;
 
 	do {
@@ -673,7 +673,7 @@ void SimonEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
 	} while (--num);
 }
 
-byte *SimonEngine::allocateItem(uint size) {
+byte *AGOSEngine::allocateItem(uint size) {
 	byte *org = _itemHeapPtr;
 	size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 
@@ -686,7 +686,7 @@ byte *SimonEngine::allocateItem(uint size) {
 	return org;
 }
 
-void SimonEngine::setUserFlag(Item *item, int a, int b) {
+void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 	SubUserFlag *subUserFlag;
 
 	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
@@ -698,7 +698,7 @@ void SimonEngine::setUserFlag(Item *item, int a, int b) {
 		subUserFlag->userFlags[a] = b;
 }
 
-void SimonEngine::createPlayer() {
+void AGOSEngine::createPlayer() {
 	Child *child;
 
 	_currentPlayer = _itemArrayPtr[1];
@@ -712,7 +712,7 @@ void SimonEngine::createPlayer() {
 	setUserFlag(_currentPlayer, 0, 0);
 }
 
-Child *SimonEngine::findChildOfType(Item *i, uint type) {
+Child *AGOSEngine::findChildOfType(Item *i, uint type) {
 	Child *child = i->children;
 	for (; child; child = child->next)
 		if (child->type == type)
@@ -720,15 +720,15 @@ Child *SimonEngine::findChildOfType(Item *i, uint type) {
 	return NULL;
 }
 
-bool SimonEngine::isRoom(Item *item) {
+bool AGOSEngine::isRoom(Item *item) {
 	return findChildOfType(item, 1) != NULL;
 }
 
-bool SimonEngine::isObject(Item *item) {
+bool AGOSEngine::isObject(Item *item) {
 	return findChildOfType(item, 2) != NULL;
 }
 
-uint SimonEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
+uint AGOSEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
 	uint m = 1;
 	uint offset = 0;
 	while (m != prop) {
@@ -739,7 +739,7 @@ uint SimonEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
 	return offset;
 }
 
-Child *SimonEngine::allocateChildBlock(Item *i, uint type, uint size) {
+Child *AGOSEngine::allocateChildBlock(Item *i, uint type, uint size) {
 	Child *child = (Child *)allocateItem(size);
 	child->next = i->children;
 	i->children = child;
@@ -747,44 +747,44 @@ Child *SimonEngine::allocateChildBlock(Item *i, uint type, uint size) {
 	return child;
 }
 
-void SimonEngine::allocItemHeap() {
+void AGOSEngine::allocItemHeap() {
 	_itemHeapSize = 64000;
 	_itemHeapCurPos = 0;
 	_itemHeapPtr = (byte *)calloc(64000, 1);
 }
 
-void SimonEngine::allocTablesHeap() {
+void AGOSEngine::allocTablesHeap() {
 	_tablesHeapSize = _tableMemSize;
 	_tablesHeapCurPos = 0;
 	_tablesHeapPtr = (byte *)calloc(_tableMemSize, 1);
 }
 
-void SimonEngine::setItemState(Item *item, int value) {
+void AGOSEngine::setItemState(Item *item, int value) {
 	item->state = value;
 }
 
-byte SimonEngine::getByte() {
+byte AGOSEngine::getByte() {
 	return *_codePtr++;
 }
 
-int SimonEngine::getNextWord() {
+int AGOSEngine::getNextWord() {
 	int16 a = (int16)READ_BE_UINT16(_codePtr);
 	_codePtr += 2;
 	return a;
 }
 
-uint SimonEngine::getNextStringID() {
+uint AGOSEngine::getNextStringID() {
 	return (uint16)getNextWord();
 }
 
-uint SimonEngine::getVarOrByte() {
+uint AGOSEngine::getVarOrByte() {
 	uint a = *_codePtr++;
 	if (a != 255)
 		return a;
 	return readVariable(*_codePtr++);
 }
 
-uint SimonEngine::getVarOrWord() {
+uint AGOSEngine::getVarOrWord() {
 	uint a = READ_BE_UINT16(_codePtr);
 	_codePtr += 2;
 	if (getGameType() == GType_PP) {
@@ -799,14 +799,14 @@ uint SimonEngine::getVarOrWord() {
 	return a;
 }
 
-uint SimonEngine::getVarWrapper() {
+uint AGOSEngine::getVarWrapper() {
 	if (getGameType() == GType_PP)
 		return getVarOrWord();
 	else
 		return getVarOrByte();
 }
 
-Item *SimonEngine::getNextItemPtr() {
+Item *AGOSEngine::getNextItemPtr() {
 	int a = getNextWord();
 
 	switch (a) {
@@ -825,7 +825,7 @@ Item *SimonEngine::getNextItemPtr() {
 	}
 }
 
-Item *SimonEngine::getNextItemPtrStrange() {
+Item *AGOSEngine::getNextItemPtrStrange() {
 	int a = getNextWord();
 	switch (a) {
 	case -1:
@@ -843,7 +843,7 @@ Item *SimonEngine::getNextItemPtrStrange() {
 	}
 }
 
-uint SimonEngine::getNextItemID() {
+uint AGOSEngine::getNextItemID() {
 	int a = getNextWord();
 	switch (a) {
 	case -1:
@@ -861,24 +861,24 @@ uint SimonEngine::getNextItemID() {
 	}
 }
 
-Item *SimonEngine::me() {
+Item *AGOSEngine::me() {
 	if (_currentPlayer)
 		return _currentPlayer;
 	return _dummyItem1;
 }
 
-Item *SimonEngine::actor() {
+Item *AGOSEngine::actor() {
 	error("actor: is this code ever used?");
 	//if (_actorPlayer)
 	//	return _actorPlayer;
 	return _dummyItem1;
 }
 
-uint SimonEngine::getNextVarContents() {
+uint AGOSEngine::getNextVarContents() {
 	return (uint16)readVariable(getVarWrapper());
 }
 
-uint SimonEngine::readVariable(uint variable) {
+uint AGOSEngine::readVariable(uint variable) {
 	if (variable >= _numVars)
 		error("readVariable: Variable %d out of range", variable);
 
@@ -894,11 +894,11 @@ uint SimonEngine::readVariable(uint variable) {
 	}
 }
 
-void SimonEngine::writeNextVarContents(uint16 contents) {
+void AGOSEngine::writeNextVarContents(uint16 contents) {
 	writeVariable(getVarWrapper(), contents);
 }
 
-void SimonEngine::writeVariable(uint variable, uint16 contents) {
+void AGOSEngine::writeVariable(uint variable, uint16 contents) {
 	if (variable >= _numVars)
 		error("writeVariable: Variable %d out of range", variable);
 
@@ -908,7 +908,7 @@ void SimonEngine::writeVariable(uint variable, uint16 contents) {
 		_variableArray[variable] = contents;
 }
 
-void SimonEngine::setItemParent(Item *item, Item *parent) {
+void AGOSEngine::setItemParent(Item *item, Item *parent) {
 	Item *old_parent = derefItem(item->parent);
 
 	if (item == parent)
@@ -922,7 +922,7 @@ void SimonEngine::setItemParent(Item *item, Item *parent) {
 	itemChildrenChanged(parent);
 }
 
-void SimonEngine::itemChildrenChanged(Item *item) {
+void AGOSEngine::itemChildrenChanged(Item *item) {
 	int i;
 	WindowBlock *window;
 
@@ -946,7 +946,7 @@ void SimonEngine::itemChildrenChanged(Item *item) {
 	mouseOn();
 }
 
-void SimonEngine::unlinkItem(Item *item) {
+void AGOSEngine::unlinkItem(Item *item) {
 	Item *first, *parent, *next;
 
 	// can't unlink item without parent
@@ -984,7 +984,7 @@ void SimonEngine::unlinkItem(Item *item) {
 	}
 }
 
-void SimonEngine::linkItem(Item *item, Item *parent) {
+void AGOSEngine::linkItem(Item *item, Item *parent) {
 	uint id;
 	// Don't allow that an item that is already linked is relinked
 	if (item->parent)
@@ -1001,7 +1001,7 @@ void SimonEngine::linkItem(Item *item, Item *parent) {
 	}
 }
 
-void SimonEngine::setup_cond_c_helper() {
+void AGOSEngine::setup_cond_c_helper() {
 	HitArea *last;
 	uint id;
 
@@ -1119,7 +1119,7 @@ out_of_here:
 	_noRightClick = 0;
 }
 
-void SimonEngine::endCutscene() {
+void AGOSEngine::endCutscene() {
 	Subroutine *sub;
 
 	_sound->stopVoice();
@@ -1131,12 +1131,12 @@ void SimonEngine::endCutscene() {
 	_runScriptReturn1 = true;
 }
 
-bool SimonEngine::has_item_childflag_0x10(Item *item) {
+bool AGOSEngine::has_item_childflag_0x10(Item *item) {
 	SubObject *child = (SubObject *)findChildOfType(item, 2);
 	return child && (child->objectFlags & kOFIcon) != 0;
 }
 
-uint SimonEngine::itemGetIconNumber(Item *item) {
+uint AGOSEngine::itemGetIconNumber(Item *item) {
 	SubObject *child = (SubObject *)findChildOfType(item, 2);
 	uint offs;
 
@@ -1147,7 +1147,7 @@ uint SimonEngine::itemGetIconNumber(Item *item) {
 	return child->objectFlagValue[offs];
 }
 
-void SimonEngine::hitarea_stuff() {
+void AGOSEngine::hitarea_stuff() {
 	HitArea *ha;
 	uint id;
 
@@ -1229,7 +1229,7 @@ startOver:
 	_needHitAreaRecalc++;
 }
 
-void SimonEngine::hitarea_stuff_helper() {
+void AGOSEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -1257,7 +1257,7 @@ void SimonEngine::hitarea_stuff_helper() {
 	}
 }
 
-void SimonEngine::hitarea_stuff_helper_2() {
+void AGOSEngine::hitarea_stuff_helper_2() {
 	uint subr_id;
 	Subroutine *sub;
 
@@ -1286,7 +1286,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 	_runScriptReturn1 = false;
 }
 
-void SimonEngine::permitInput() {
+void AGOSEngine::permitInput() {
 	if (!_mortalFlag) {
 		_mortalFlag = true;
 		showmessage_print_char(0);
@@ -1302,7 +1302,7 @@ void SimonEngine::permitInput() {
 	}
 }
 
-TextLocation *SimonEngine::getTextLocation(uint a) {
+TextLocation *AGOSEngine::getTextLocation(uint a) {
 	switch (a) {
 	case 1:
 		return &_textLocation1;
@@ -1318,7 +1318,7 @@ TextLocation *SimonEngine::getTextLocation(uint a) {
 	return NULL;
 }
 
-void SimonEngine::loadZone(uint vga_res) {
+void AGOSEngine::loadZone(uint vga_res) {
 	VgaPointersEntry *vpe;
 	uint32 size;
 
@@ -1341,7 +1341,7 @@ void SimonEngine::loadZone(uint vga_res) {
 	}
 }
 
-void SimonEngine::setZoneBuffers() {
+void AGOSEngine::setZoneBuffers() {
 	_zoneBuffers = (byte *)malloc(_vgaMemSize);
 
 	_vgaMemPtr = _zoneBuffers;
@@ -1351,7 +1351,7 @@ void SimonEngine::setZoneBuffers() {
 	_vgaMemEnd = _zoneBuffers + _vgaMemSize;
 }
 
-byte *SimonEngine::allocBlock(uint32 size) {
+byte *AGOSEngine::allocBlock(uint32 size) {
 	byte *block, *blockEnd;
 	uint i;
 
@@ -1378,7 +1378,7 @@ byte *SimonEngine::allocBlock(uint32 size) {
 	error("allocBlock: Couldn't find free block");
 }
 
-void SimonEngine::checkNoOverWrite(byte *end) {
+void AGOSEngine::checkNoOverWrite(byte *end) {
 	VgaPointersEntry *vpe;
 
 	if (_noOverWrite == 0xFFFF)
@@ -1410,7 +1410,7 @@ void SimonEngine::checkNoOverWrite(byte *end) {
 	}
 }
 
-void SimonEngine::checkRunningAnims(byte *end) {
+void AGOSEngine::checkRunningAnims(byte *end) {
 	VgaSprite *vsp;
 	if (getGameType() != GType_FF && getGameType() != GType_PP && (_lockWord & 0x20)) {
 		return;
@@ -1423,7 +1423,7 @@ void SimonEngine::checkRunningAnims(byte *end) {
 	}
 }
 
-void SimonEngine::checkAnims(uint a, byte *end) {
+void AGOSEngine::checkAnims(uint a, byte *end) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vgaBufferPointers[a];
@@ -1452,7 +1452,7 @@ void SimonEngine::checkAnims(uint a, byte *end) {
 	}
 }
 
-void SimonEngine::checkZonePtrs(byte *end) {
+void AGOSEngine::checkZonePtrs(byte *end) {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
@@ -1477,7 +1477,7 @@ void SimonEngine::checkZonePtrs(byte *end) {
 	} while (++vpe, --count);
 }
 
-void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
+void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
@@ -1633,7 +1633,7 @@ void SimonEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	}
 }
 
-void SimonEngine::waitForSync(uint a) {
+void AGOSEngine::waitForSync(uint a) {
 	const uint maxCount = (getGameType() == GType_SIMON1) ? 500 : 1000;
 
 	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
@@ -1674,7 +1674,7 @@ void SimonEngine::waitForSync(uint a) {
 	}
 }
 
-void SimonEngine::skipSpeech() {
+void AGOSEngine::skipSpeech() {
 	_sound->stopVoice();
 	if (!getBitFlag(28)) {
 		setBitFlag(14, true);
@@ -1697,13 +1697,13 @@ void SimonEngine::skipSpeech() {
 	}
 }
 
-Item *SimonEngine::derefItem(uint item) {
+Item *AGOSEngine::derefItem(uint item) {
 	if (item >= _itemArraySize)
 		error("derefItem: invalid item %d", item);
 	return _itemArrayPtr[item];
 }
 
-uint SimonEngine::itemPtrToID(Item *id) {
+uint AGOSEngine::itemPtrToID(Item *id) {
 	uint i;
 	for (i = 0; i != _itemArraySize; i++)
 		if (_itemArrayPtr[i] == id)
@@ -1712,7 +1712,7 @@ uint SimonEngine::itemPtrToID(Item *id) {
 	return 0;
 }
 
-bool SimonEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
+bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
 		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
@@ -1727,7 +1727,7 @@ bool SimonEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	return false;
 }
 
-void SimonEngine::processSpecialKeys() {
+void AGOSEngine::processSpecialKeys() {
 	switch (_keyPressed) {
 	case 27: // escape
 		_exitCutscene = true;
@@ -1830,7 +1830,7 @@ void SimonEngine::processSpecialKeys() {
 	_keyPressed = 0;
 }
 
-void SimonEngine::pause() {
+void AGOSEngine::pause() {
 	_keyPressed = 1;
 	_pause = 1;
 	bool ambient_status = _ambientPaused;
@@ -1848,7 +1848,7 @@ void SimonEngine::pause() {
 
 }
 
-void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette) {
+void AGOSEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -1951,7 +1951,7 @@ void SimonEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uin
 	_lockWord &= ~0x40;
 }
 
-void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
+void AGOSEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 	if (getGameType() == GType_SIMON1) {
 		if (speech_id == 9999) {
 			if (_subtitles)
@@ -2003,7 +2003,7 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 	}
 }
 
-int SimonEngine::go() {
+int AGOSEngine::go() {
 
 	loadGamePcFile();
 
@@ -2035,7 +2035,7 @@ int SimonEngine::go() {
 	return 0;
 }
 
-void SimonEngine::shutdown() {
+void AGOSEngine::shutdown() {
 	delete _gameFile;
 
 	midi.close();
@@ -2052,7 +2052,7 @@ void SimonEngine::shutdown() {
 	_system->quit();
 }
 
-void SimonEngine::delay(uint amount) {
+void AGOSEngine::delay(uint amount) {
 	OSystem::Event event;
 
 	uint32 start = _system->getMillis();
@@ -2163,7 +2163,7 @@ void SimonEngine::delay(uint amount) {
 	} while (cur < start + amount);
 }
 
-void SimonEngine::loadMusic(uint music) {
+void AGOSEngine::loadMusic(uint music) {
 	char buf[4];
 
 	if (getGameType() == GType_SIMON2) {        // Simon 2 music
@@ -2244,7 +2244,7 @@ void SimonEngine::loadMusic(uint music) {
 	}
 }
 
-void SimonEngine::playSting(uint a) {
+void AGOSEngine::playSting(uint a) {
 	if (!midi._enable_sfx)
 		return;
 
@@ -2268,19 +2268,19 @@ void SimonEngine::playSting(uint a) {
 	midi.startTrack(0);
 }
 
-void SimonEngine::set_volume(int volume) {
+void AGOSEngine::set_volume(int volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(AGOS_AGOS)
-_GSETPTR(Simon::simon1_settings, GBVARS_SIMON1SETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_AGOS)
-_GSETPTR(Simon::simon2_settings, GBVARS_SIMON2SETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_AGOS)
-_GSETPTR(Simon::feeblefiles_settings, GBVARS_FEEBLEFILESSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_AGOS)
+_GSETPTR(AGOS::simon1_settings, GBVARS_SIMON1SETTINGS_INDEX, AGOS::GameSpecificSettings, GBVARS_AGOS)
+_GSETPTR(AGOS::simon2_settings, GBVARS_SIMON2SETTINGS_INDEX, AGOS::GameSpecificSettings, GBVARS_AGOS)
+_GSETPTR(AGOS::feeblefiles_settings, GBVARS_FEEBLEFILESSETTINGS_INDEX, AGOS::GameSpecificSettings, GBVARS_AGOS)
 _GEND
 
 _GRELEASE(AGOS_AGOS)

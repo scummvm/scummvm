@@ -30,103 +30,103 @@
 
 #include "common/system.h"
 
-namespace Simon {
+namespace AGOS {
 
 // Opcode tables
-void SimonEngine::setupVgaOpcodes() {
+void AGOSEngine::setupVgaOpcodes() {
 	static const VgaOpcodeProc vga_opcode_table[] = {
 		NULL,
-		&SimonEngine::vc1_fadeOut,
-		&SimonEngine::vc2_call,
-		&SimonEngine::vc3_loadSprite,
-		&SimonEngine::vc4_fadeIn,
-		&SimonEngine::vc5_skip_if_neq,
-		&SimonEngine::vc6_skip_ifn_sib_with_a,
-		&SimonEngine::vc7_skip_if_sib_with_a,
-		&SimonEngine::vc8_skip_if_parent_is,
-		&SimonEngine::vc9_skip_if_unk3_is,
-		&SimonEngine::vc10_draw,
-		&SimonEngine::vc11_clearPathFinder,
-		&SimonEngine::vc12_delay,
-		&SimonEngine::vc13_addToSpriteX,
-		&SimonEngine::vc14_addToSpriteY,
-		&SimonEngine::vc15_sync,
-		&SimonEngine::vc16_waitSync,
-		&SimonEngine::vc17_setPathfinderItem,
-		&SimonEngine::vc18_jump,
-		&SimonEngine::vc19_chain_to_script,
-		&SimonEngine::vc20_setRepeat,
-		&SimonEngine::vc21_endRepeat,
-		&SimonEngine::vc22_setSpritePalette,
-		&SimonEngine::vc23_setSpritePriority,
-		&SimonEngine::vc24_setSpriteXY,
-		&SimonEngine::vc25_halt_sprite,
-		&SimonEngine::vc26_setSubWindow,
-		&SimonEngine::vc27_resetSprite,
-		&SimonEngine::vc28_dummy_op,
-		&SimonEngine::vc29_stopAllSounds,
-		&SimonEngine::vc30_setFrameRate,
-		&SimonEngine::vc31_setWindow,
-		&SimonEngine::vc32_copyVar,
-		&SimonEngine::vc33_setMouseOn,
-		&SimonEngine::vc34_setMouseOff,
-		&SimonEngine::vc35_clearWindow,
-		&SimonEngine::vc36_setWindowImage,
-		&SimonEngine::vc37_addToSpriteY,
-		&SimonEngine::vc38_skipIfVarZero,
-		&SimonEngine::vc39_setVar,
-		&SimonEngine::vc40,
-		&SimonEngine::vc41,
-		&SimonEngine::vc42_delayIfNotEQ,
-		&SimonEngine::vc43_skipIfBitClear,
-		&SimonEngine::vc44_skipIfBitSet,
-		&SimonEngine::vc45_setSpriteX,
-		&SimonEngine::vc46_setSpriteY,
-		&SimonEngine::vc47_addToVar,
-		&SimonEngine::vc48_setPathFinder,
-		&SimonEngine::vc49_setBit,
-		&SimonEngine::vc50_clearBit,
-		&SimonEngine::vc51_enableBox,
-		&SimonEngine::vc52_playSound,
-		&SimonEngine::vc53_panSFX,
-		&SimonEngine::vc54_no_op,
-		&SimonEngine::vc55_moveBox,
-		&SimonEngine::vc56_delay,
-		&SimonEngine::vc57_blackPalette,
-		&SimonEngine::vc58,
-		&SimonEngine::vc59,
-		&SimonEngine::vc60_killSprite,
-		&SimonEngine::vc61_setMaskImage,
-		&SimonEngine::vc62_fastFadeOut,
-		&SimonEngine::vc63_fastFadeIn,
-		&SimonEngine::vc64_skipIfSpeechEnded,
-		&SimonEngine::vc65_slowFadeIn,
-		&SimonEngine::vc66_skipIfNotEqual,
-		&SimonEngine::vc67_skipIfGE,
-		&SimonEngine::vc68_skipIfLE,
-		&SimonEngine::vc69_playTrack,
-		&SimonEngine::vc70_queueMusic,
-		&SimonEngine::vc71_checkMusicQueue,
-		&SimonEngine::vc72_play_track_2,
-		&SimonEngine::vc73_setMark,
-		&SimonEngine::vc74_clearMark,
-		&SimonEngine::vc75_setScale,
-		&SimonEngine::vc76_setScaleXOffs,
-		&SimonEngine::vc77_setScaleYOffs,
-		&SimonEngine::vc78_computeXY,
-		&SimonEngine::vc79_computePosNum,
-		&SimonEngine::vc80_setOverlayImage,
-		&SimonEngine::vc81_setRandom,
-		&SimonEngine::vc82_getPathValue,
-		&SimonEngine::vc83_playSoundLoop,
-		&SimonEngine::vc84_stopSoundLoop,
+		&AGOSEngine::vc1_fadeOut,
+		&AGOSEngine::vc2_call,
+		&AGOSEngine::vc3_loadSprite,
+		&AGOSEngine::vc4_fadeIn,
+		&AGOSEngine::vc5_skip_if_neq,
+		&AGOSEngine::vc6_skip_ifn_sib_with_a,
+		&AGOSEngine::vc7_skip_if_sib_with_a,
+		&AGOSEngine::vc8_skip_if_parent_is,
+		&AGOSEngine::vc9_skip_if_unk3_is,
+		&AGOSEngine::vc10_draw,
+		&AGOSEngine::vc11_clearPathFinder,
+		&AGOSEngine::vc12_delay,
+		&AGOSEngine::vc13_addToSpriteX,
+		&AGOSEngine::vc14_addToSpriteY,
+		&AGOSEngine::vc15_sync,
+		&AGOSEngine::vc16_waitSync,
+		&AGOSEngine::vc17_setPathfinderItem,
+		&AGOSEngine::vc18_jump,
+		&AGOSEngine::vc19_chain_to_script,
+		&AGOSEngine::vc20_setRepeat,
+		&AGOSEngine::vc21_endRepeat,
+		&AGOSEngine::vc22_setSpritePalette,
+		&AGOSEngine::vc23_setSpritePriority,
+		&AGOSEngine::vc24_setSpriteXY,
+		&AGOSEngine::vc25_halt_sprite,
+		&AGOSEngine::vc26_setSubWindow,
+		&AGOSEngine::vc27_resetSprite,
+		&AGOSEngine::vc28_dummy_op,
+		&AGOSEngine::vc29_stopAllSounds,
+		&AGOSEngine::vc30_setFrameRate,
+		&AGOSEngine::vc31_setWindow,
+		&AGOSEngine::vc32_copyVar,
+		&AGOSEngine::vc33_setMouseOn,
+		&AGOSEngine::vc34_setMouseOff,
+		&AGOSEngine::vc35_clearWindow,
+		&AGOSEngine::vc36_setWindowImage,
+		&AGOSEngine::vc37_addToSpriteY,
+		&AGOSEngine::vc38_skipIfVarZero,
+		&AGOSEngine::vc39_setVar,
+		&AGOSEngine::vc40,
+		&AGOSEngine::vc41,
+		&AGOSEngine::vc42_delayIfNotEQ,
+		&AGOSEngine::vc43_skipIfBitClear,
+		&AGOSEngine::vc44_skipIfBitSet,
+		&AGOSEngine::vc45_setSpriteX,
+		&AGOSEngine::vc46_setSpriteY,
+		&AGOSEngine::vc47_addToVar,
+		&AGOSEngine::vc48_setPathFinder,
+		&AGOSEngine::vc49_setBit,
+		&AGOSEngine::vc50_clearBit,
+		&AGOSEngine::vc51_enableBox,
+		&AGOSEngine::vc52_playSound,
+		&AGOSEngine::vc53_panSFX,
+		&AGOSEngine::vc54_no_op,
+		&AGOSEngine::vc55_moveBox,
+		&AGOSEngine::vc56_delay,
+		&AGOSEngine::vc57_blackPalette,
+		&AGOSEngine::vc58,
+		&AGOSEngine::vc59,
+		&AGOSEngine::vc60_killSprite,
+		&AGOSEngine::vc61_setMaskImage,
+		&AGOSEngine::vc62_fastFadeOut,
+		&AGOSEngine::vc63_fastFadeIn,
+		&AGOSEngine::vc64_skipIfSpeechEnded,
+		&AGOSEngine::vc65_slowFadeIn,
+		&AGOSEngine::vc66_skipIfNotEqual,
+		&AGOSEngine::vc67_skipIfGE,
+		&AGOSEngine::vc68_skipIfLE,
+		&AGOSEngine::vc69_playTrack,
+		&AGOSEngine::vc70_queueMusic,
+		&AGOSEngine::vc71_checkMusicQueue,
+		&AGOSEngine::vc72_play_track_2,
+		&AGOSEngine::vc73_setMark,
+		&AGOSEngine::vc74_clearMark,
+		&AGOSEngine::vc75_setScale,
+		&AGOSEngine::vc76_setScaleXOffs,
+		&AGOSEngine::vc77_setScaleYOffs,
+		&AGOSEngine::vc78_computeXY,
+		&AGOSEngine::vc79_computePosNum,
+		&AGOSEngine::vc80_setOverlayImage,
+		&AGOSEngine::vc81_setRandom,
+		&AGOSEngine::vc82_getPathValue,
+		&AGOSEngine::vc83_playSoundLoop,
+		&AGOSEngine::vc84_stopSoundLoop,
 	};
 	
 	_vga_opcode_table = vga_opcode_table;
 }
 
 // Script parser
-void SimonEngine::runVgaScript() {
+void AGOSEngine::runVgaScript() {
 	for (;;) {
 		uint opcode;
 
@@ -154,7 +154,7 @@ void SimonEngine::runVgaScript() {
 	}
 }
 
-bool SimonEngine::itemIsSiblingOf(uint16 a) {
+bool AGOSEngine::itemIsSiblingOf(uint16 a) {
 	Item *item;
 
 	CHECK_BOUNDS(a, _objectArray);
@@ -166,7 +166,7 @@ bool SimonEngine::itemIsSiblingOf(uint16 a) {
 	return me()->parent == item->parent;
 }
 
-bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {
+bool AGOSEngine::itemIsParentOf(uint16 a, uint16 b) {
 	Item *item_a, *item_b;
 
 	CHECK_BOUNDS(a, _objectArray);
@@ -181,7 +181,7 @@ bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {
 	return derefItem(item_a->parent) == item_b;
 }
 
-bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
+bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	Item *item;
 
 	CHECK_BOUNDS(a, _objectArray);
@@ -192,7 +192,7 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	return item->state == b;
 }
 
-VgaSprite *SimonEngine::findCurSprite() {
+VgaSprite *AGOSEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
 		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
@@ -207,35 +207,35 @@ VgaSprite *SimonEngine::findCurSprite() {
 	return vsp;
 }
 
-int SimonEngine::vcReadVarOrWord() {
+int AGOSEngine::vcReadVarOrWord() {
 	int16 var = vcReadNextWord();
 	if (var < 0)
 		var = vcReadVar(-var);
 	return var;
 }
 
-uint SimonEngine::vcReadNextWord() {
+uint AGOSEngine::vcReadNextWord() {
 	uint a;
 	a = readUint16Wrapper(_vcPtr);
 	_vcPtr += 2;
 	return a;
 }
 
-uint SimonEngine::vcReadNextByte() {
+uint AGOSEngine::vcReadNextByte() {
 	return *_vcPtr++;
 }
 
-uint SimonEngine::vcReadVar(uint var) {
+uint AGOSEngine::vcReadVar(uint var) {
 	assert(var < _numVars);
 	return (uint16)_variableArrayPtr[var];
 }
 
-void SimonEngine::vcWriteVar(uint var, int16 value) {
+void AGOSEngine::vcWriteVar(uint var, int16 value) {
 	assert(var < _numVars);
 	_variableArrayPtr[var] = value;
 }
 
-void SimonEngine::vcSkipNextInstruction() {
+void AGOSEngine::vcSkipNextInstruction() {
 	static const byte opcodeParamLenWW[] = {
 		0, 6, 2, 10, 6, 4, 2, 2,
 		4, 4, 8, 2, 2, 2, 2, 2,
@@ -305,12 +305,12 @@ void SimonEngine::vcSkipNextInstruction() {
 }
 
 // VGA Script commands
-void SimonEngine::vc1_fadeOut() {
+void AGOSEngine::vc1_fadeOut() {
 	/* dummy opcode */
 	_vcPtr += 6;
 }
 
-void SimonEngine::vc2_call() {
+void AGOSEngine::vc2_call() {
 	VgaPointersEntry *vpe;
 	uint16 count, num, res;
 	byte *old_file_1, *old_file_2;
@@ -395,7 +395,7 @@ void SimonEngine::vc2_call() {
 	_vcPtr = vcPtrOrg;
 }
 
-void SimonEngine::vc3_loadSprite() {
+void AGOSEngine::vc3_loadSprite() {
 	uint16 windowNum, zoneNum, palette, x, y, vgaSpriteId;
 	uint16 count, res;
 	VgaSprite *vsp;
@@ -530,36 +530,36 @@ void SimonEngine::vc3_loadSprite() {
 	_curVgaFile1 = old_file_1;
 }
 
-void SimonEngine::vc4_fadeIn() {
+void AGOSEngine::vc4_fadeIn() {
 	/* dummy opcode */
 	_vcPtr += 6;
 }
 
-void SimonEngine::vc5_skip_if_neq() {
+void AGOSEngine::vc5_skip_if_neq() {
 	uint16 var = vcReadNextWord();
 	uint16 value = vcReadNextWord();
 	if (vcReadVar(var) != value)
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc6_skip_ifn_sib_with_a() {
+void AGOSEngine::vc6_skip_ifn_sib_with_a() {
 	if (!itemIsSiblingOf(vcReadNextWord()))
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc7_skip_if_sib_with_a() {
+void AGOSEngine::vc7_skip_if_sib_with_a() {
 	if (itemIsSiblingOf(vcReadNextWord()))
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc8_skip_if_parent_is() {
+void AGOSEngine::vc8_skip_if_parent_is() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 	if (!itemIsParentOf(a, b))
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc9_skip_if_unk3_is() {
+void AGOSEngine::vc9_skip_if_unk3_is() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 	if (!vc_maybe_skip_proc_1(a, b))
@@ -615,7 +615,7 @@ void vc10_skip_cols(VC10_state *vs) {
 	}
 }
 
-byte *SimonEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
+byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 	w *= 8;
 
 	byte *src_org, *dst_org;
@@ -683,7 +683,7 @@ byte *SimonEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 	return _videoBuf1;
 }
 
-byte *SimonEngine::vc10_flip(const byte *src, uint w, uint h) {
+byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
 	if (src == _vc10BasePtrOld)
 		return _videoBuf1;
 
@@ -729,7 +729,7 @@ static uint16 _video_windows[128] = {
 };
  */
 
-void SimonEngine::decodeColumn(byte *dst, const byte *src, int height) {
+void AGOSEngine::decodeColumn(byte *dst, const byte *src, int height) {
 	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
 	byte color;
@@ -773,7 +773,7 @@ void SimonEngine::decodeColumn(byte *dst, const byte *src, int height) {
 	}
 }
 
-void SimonEngine::decodeRow(byte *dst, const byte *src, int width) {
+void AGOSEngine::decodeRow(byte *dst, const byte *src, int width) {
 	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
 	byte color;
@@ -817,7 +817,7 @@ void SimonEngine::decodeRow(byte *dst, const byte *src, int width) {
 	}
 }
 
-void SimonEngine::vc10_draw() {
+void AGOSEngine::vc10_draw() {
 	byte *p2;
 	uint width, height;
 	byte flags;
@@ -925,7 +925,7 @@ void SimonEngine::vc10_draw() {
 	}
 }
 
-bool SimonEngine::drawImages_clip(VC10_state *state) {
+bool AGOSEngine::drawImages_clip(VC10_state *state) {
 	const uint16 *vlut;
 	uint maxWidth, maxHeight;
 	int cur;
@@ -983,7 +983,7 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 	return 1;
 }
 
-void SimonEngine::drawImages_Feeble(VC10_state *state) {
+void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 	if (state->flags & kDFCompressed) {
 		if (state->flags & kDFScaled) {
 			state->surf_addr = getScaleBuf();
@@ -1146,7 +1146,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 	} 
 }
 
-void SimonEngine::drawImages(VC10_state *state) {
+void AGOSEngine::drawImages(VC10_state *state) {
 	const uint16 *vlut = &_video_windows[_windowNum * 4];
 
 	if (drawImages_clip(state) == 0)
@@ -1365,7 +1365,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 	}
 }
 
-void SimonEngine::horizontalScroll(VC10_state *state) {
+void AGOSEngine::horizontalScroll(VC10_state *state) {
 	const byte *src;
 	byte *dst;
 	int w;
@@ -1398,7 +1398,7 @@ void SimonEngine::horizontalScroll(VC10_state *state) {
 	}
 }
 
-void SimonEngine::verticalScroll(VC10_state *state) {
+void AGOSEngine::verticalScroll(VC10_state *state) {
 	const byte *src;
 	byte *dst;
 	int h;
@@ -1424,7 +1424,7 @@ void SimonEngine::verticalScroll(VC10_state *state) {
 	}
 }
 
-void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
+void AGOSEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	Common::Rect srcRect, dstRect;
 	float factor, xscale;
 
@@ -1488,7 +1488,7 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	}
 }
 
-void SimonEngine::vc11_clearPathFinder() {
+void AGOSEngine::vc11_clearPathFinder() {
 	if (getGameType() == GType_WW) {
 		// FIXME
 		vcReadNextWord();
@@ -1497,7 +1497,7 @@ void SimonEngine::vc11_clearPathFinder() {
 	}
 }
 
-void SimonEngine::vc12_delay() {
+void AGOSEngine::vc12_delay() {
 	VgaSprite *vsp = findCurSprite();
 	uint16 num;
 
@@ -1520,19 +1520,19 @@ void SimonEngine::vc12_delay() {
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
-void SimonEngine::vc13_addToSpriteX() {
+void AGOSEngine::vc13_addToSpriteX() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->x += (int16)vcReadNextWord();
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc14_addToSpriteY() {
+void AGOSEngine::vc14_addToSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y += (int16)vcReadNextWord();
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc15_sync() {
+void AGOSEngine::vc15_sync() {
 	VgaSleepStruct *vfs = _vgaSleepStructs, *vfs_tmp;
 	uint16 id = vcReadNextWord();
 	while (vfs->ident != 0) {
@@ -1554,7 +1554,7 @@ void SimonEngine::vc15_sync() {
 		_vgaWaitFor = 0;
 }
 
-void SimonEngine::vc16_waitSync() {
+void AGOSEngine::vc16_waitSync() {
 	VgaSleepStruct *vfs = _vgaSleepStructs;
 	while (vfs->ident)
 		vfs++;
@@ -1567,7 +1567,7 @@ void SimonEngine::vc16_waitSync() {
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
-void SimonEngine::vc17_setPathfinderItem() {
+void AGOSEngine::vc17_setPathfinderItem() {
 	if (getGameType() == GType_WW) {
 		// FIXME
 		vcReadNextWord();
@@ -1582,20 +1582,20 @@ void SimonEngine::vc17_setPathfinderItem() {
 	}
 }
 
-void SimonEngine::vc18_jump() {
+void AGOSEngine::vc18_jump() {
 	int16 offs = vcReadNextWord();
 	_vcPtr += offs;
 }
 
 /* chain to script? */
-void SimonEngine::vc19_chain_to_script() {
+void AGOSEngine::vc19_chain_to_script() {
 	/* unused */
 	error("vc19_chain_to_script: not implemented");
 }
 
 /* helper routines */
 
-void SimonEngine::vc20_setRepeat() {
+void AGOSEngine::vc20_setRepeat() {
 	/* FIXME: This opcode is somewhat strange: it first reads a BE word from
 	 * the script (advancing the script pointer in doing so); then it writes
 	 * back the same word, this time as LE, into the script.
@@ -1605,7 +1605,7 @@ void SimonEngine::vc20_setRepeat() {
 	_vcPtr += 2;
 }
 
-void SimonEngine::vc21_endRepeat() {
+void AGOSEngine::vc21_endRepeat() {
 	int16 a = vcReadNextWord();
 	const byte *tmp = _vcPtr + a;
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW)
@@ -1621,7 +1621,7 @@ void SimonEngine::vc21_endRepeat() {
 	}
 }
 
-void SimonEngine::vc22_setSpritePalette() {
+void AGOSEngine::vc22_setSpritePalette() {
 	byte *offs, *palptr, *src;
 	uint16 a, b, num, palSize;
 
@@ -1671,7 +1671,7 @@ void SimonEngine::vc22_setSpritePalette() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc23_setSpritePriority() {
+void AGOSEngine::vc23_setSpritePriority() {
 	VgaSprite *vsp = findCurSprite(), *vus2;
 	uint16 pri = vcReadNextWord();
 	VgaSprite bak;
@@ -1707,7 +1707,7 @@ void SimonEngine::vc23_setSpritePriority() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc24_setSpriteXY() {
+void AGOSEngine::vc24_setSpriteXY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->image = vcReadVarOrWord();
 
@@ -1722,7 +1722,7 @@ void SimonEngine::vc24_setSpriteXY() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc25_halt_sprite() {
+void AGOSEngine::vc25_halt_sprite() {
 	VgaSprite *vsp = findCurSprite();
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
@@ -1732,7 +1732,7 @@ void SimonEngine::vc25_halt_sprite() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc26_setSubWindow() {
+void AGOSEngine::vc26_setSubWindow() {
 	uint16 *as = &_video_windows[vcReadNextWord() * 4]; // number
 	as[0] = vcReadNextWord(); // x
 	as[1] = vcReadNextWord(); // y
@@ -1740,7 +1740,7 @@ void SimonEngine::vc26_setSubWindow() {
 	as[3] = vcReadNextWord(); // height
 }
 
-void SimonEngine::vc27_resetSprite() {
+void AGOSEngine::vc27_resetSprite() {
 	VgaSprite bak, *vsp;
 	VgaSleepStruct *vfs;
 	VgaTimerEntry *vte, *vte2;
@@ -1790,27 +1790,27 @@ void SimonEngine::vc27_resetSprite() {
 	_lockWord &= ~8;
 }
 
-void SimonEngine::vc28_dummy_op() {
+void AGOSEngine::vc28_dummy_op() {
 	/* unused */
 	_vcPtr += 8;
 }
 
-void SimonEngine::vc29_stopAllSounds() {
+void AGOSEngine::vc29_stopAllSounds() {
 	if (getGameType() != GType_PP)
 		_sound->stopVoice();
 
 	_sound->stopAllSfx();
 }
 
-void SimonEngine::vc30_setFrameRate() {
+void AGOSEngine::vc30_setFrameRate() {
 	_frameRate = vcReadNextWord();
 }
 
-void SimonEngine::vc31_setWindow() {
+void AGOSEngine::vc31_setWindow() {
 	_windowNum = vcReadNextWord();
 }
 
-void SimonEngine::vc32_copyVar() {
+void AGOSEngine::vc32_copyVar() {
 	if (getGameType() == GType_WW) {
 		// FIXME
 	} else {
@@ -1819,26 +1819,26 @@ void SimonEngine::vc32_copyVar() {
 	}
 }
 
-void SimonEngine::vc33_setMouseOn() {
+void AGOSEngine::vc33_setMouseOn() {
 	if (_mouseHideCount != 0) {
 		_mouseHideCount = 1;
 		mouseOn();
 	}
 }
 
-void SimonEngine::vc34_setMouseOff() {
+void AGOSEngine::vc34_setMouseOff() {
 	mouseOff();
 	_mouseHideCount = 200;
 	_leftButtonDown = 0;
 }
 
-void SimonEngine::vc35_clearWindow() {
+void AGOSEngine::vc35_clearWindow() {
 	/* unused */
 	_vcPtr += 4;
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc36_setWindowImage() {
+void AGOSEngine::vc36_setWindowImage() {
 	_updateScreen = false;
 	uint16 vga_res = vcReadNextWord();
 	uint16 windowNum = vcReadNextWord();
@@ -1856,7 +1856,7 @@ void SimonEngine::vc36_setWindowImage() {
 	}
 }
 
-void SimonEngine::vc37_addToSpriteY() {
+void AGOSEngine::vc37_addToSpriteY() {
 	if (getGameType() == GType_WW) {
 		// FIXME
 		vcReadNextWord();
@@ -1868,19 +1868,19 @@ void SimonEngine::vc37_addToSpriteY() {
 	}
 }
 
-void SimonEngine::vc38_skipIfVarZero() {
+void AGOSEngine::vc38_skipIfVarZero() {
 	uint16 var = vcReadNextWord();
 	if (vcReadVar(var) == 0)
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc39_setVar() {
+void AGOSEngine::vc39_setVar() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadNextWord();
 	vcWriteVar(var, value);
 }
 
-void SimonEngine::vc40() {
+void AGOSEngine::vc40() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) + vcReadNextWord();
 
@@ -1909,7 +1909,7 @@ no_scroll:;
 	vcWriteVar(var, value);
 }
 
-void SimonEngine::vc41() {
+void AGOSEngine::vc41() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) - vcReadNextWord();
 
@@ -1935,7 +1935,7 @@ no_scroll:;
 	vcWriteVar(var, value);
 }
 
-void SimonEngine::vc42_delayIfNotEQ() {
+void AGOSEngine::vc42_delayIfNotEQ() {
 	uint16 val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 
@@ -1944,19 +1944,19 @@ void SimonEngine::vc42_delayIfNotEQ() {
 	}
 }
 
-void SimonEngine::vc43_skipIfBitClear() {
+void AGOSEngine::vc43_skipIfBitClear() {
 	if (!getBitFlag(vcReadNextWord())) {
 		vcSkipNextInstruction();
 	}
 }
 
-void SimonEngine::vc44_skipIfBitSet() {
+void AGOSEngine::vc44_skipIfBitSet() {
 	if (getBitFlag(vcReadNextWord())) {
 		vcSkipNextInstruction();
 	}
 }
 
-void SimonEngine::vc45_setSpriteX() {
+void AGOSEngine::vc45_setSpriteX() {
 	if (getGameType() == GType_WW) {
 		//FIXME
 		vcReadNextWord();
@@ -1968,13 +1968,13 @@ void SimonEngine::vc45_setSpriteX() {
 	}
 }
 
-void SimonEngine::vc46_setSpriteY() {
+void AGOSEngine::vc46_setSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y = vcReadVar(vcReadNextWord());
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc47_addToVar() {
+void AGOSEngine::vc47_addToVar() {
 	if (getGameType() == GType_WW) {
 		//FIXME
 		vcReadNextWord();
@@ -1984,7 +1984,7 @@ void SimonEngine::vc47_addToVar() {
 	}
 }
 
-void SimonEngine::vc48_setPathFinder() {
+void AGOSEngine::vc48_setPathFinder() {
 	uint16 a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 
@@ -2060,17 +2060,17 @@ void SimonEngine::vc48_setPathFinder() {
 	}
 }
 
-void SimonEngine::setBitFlag(uint bit, bool value) {
+void AGOSEngine::setBitFlag(uint bit, bool value) {
 	uint16 *bits = &_bitArray[bit / 16];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
 }
 
-bool SimonEngine::getBitFlag(uint bit) {
+bool AGOSEngine::getBitFlag(uint bit) {
 	uint16 *bits = &_bitArray[bit / 16];
 	return (*bits & (1 << (bit & 15))) != 0;
 }
 
-void SimonEngine::vc49_setBit() {
+void AGOSEngine::vc49_setBit() {
 	uint16 bit = vcReadNextWord();
 	if (getGameType() == GType_FF && bit == 82) {
 		_variableArrayPtr = _variableArray2;
@@ -2078,7 +2078,7 @@ void SimonEngine::vc49_setBit() {
 	setBitFlag(bit, true);
 }
 
-void SimonEngine::vc50_clearBit() {
+void AGOSEngine::vc50_clearBit() {
 	uint16 bit = vcReadNextWord();
 	if (getGameType() == GType_FF && bit == 82) {
 		_variableArrayPtr = _variableArray;
@@ -2086,11 +2086,11 @@ void SimonEngine::vc50_clearBit() {
 	setBitFlag(bit, false);
 }
 
-void SimonEngine::vc51_enableBox() {
+void AGOSEngine::vc51_enableBox() {
 	enableBox(vcReadNextWord());
 }
 
-void SimonEngine::vc52_playSound() {
+void AGOSEngine::vc52_playSound() {
 	bool ambient = false;
 
 	uint16 sound = vcReadNextWord();
@@ -2119,7 +2119,7 @@ void SimonEngine::vc52_playSound() {
 	}
 }
 
-void SimonEngine::vc53_panSFX() {
+void AGOSEngine::vc53_panSFX() {
 	VgaSprite *vsp = findCurSprite();
 	int pan;
 
@@ -2142,12 +2142,12 @@ void SimonEngine::vc53_panSFX() {
 	debug(0, "vc53_panSFX: snd %d xoffs %d vol %d", sound, xoffs, vol);
 }
 
-void SimonEngine::vc54_no_op() {
+void AGOSEngine::vc54_no_op() {
 	/* unused */
 	_vcPtr += 6;
 }
 
-void SimonEngine::vc55_moveBox() {
+void AGOSEngine::vc55_moveBox() {
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
 	uint16 id = vcReadNextWord();
@@ -2168,7 +2168,7 @@ void SimonEngine::vc55_moveBox() {
 	_needHitAreaRecalc++;
 }
 
-void SimonEngine::vc56_delay() {
+void AGOSEngine::vc56_delay() {
 	if (getGameType() == GType_WW) {
 		byte *src = _curVgaFile2 + 32;
 		byte *dst = getBackBuf();
@@ -2191,7 +2191,7 @@ void SimonEngine::vc56_delay() {
 	}
 }
 
-void SimonEngine::vc57_blackPalette() {
+void AGOSEngine::vc57_blackPalette() {
 	if (getGameType() == GType_WW) {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
@@ -2199,7 +2199,7 @@ void SimonEngine::vc57_blackPalette() {
 	}
 }
 
-void SimonEngine::vc58() {
+void AGOSEngine::vc58() {
 	if (getGameType() == GType_WW)
 		return;
 
@@ -2222,7 +2222,7 @@ void SimonEngine::vc58() {
 	_vgaCurZoneNum = file;
 }
 
-void SimonEngine::vc59() {
+void AGOSEngine::vc59() {
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
 		uint16 file = vcReadNextWord();
 		uint16 start = vcReadNextWord();
@@ -2240,7 +2240,7 @@ void SimonEngine::vc59() {
 	}
 }
 
-void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
+void AGOSEngine::vc_kill_sprite(uint file, uint sprite) {
 	uint16 old_sprite_id, old_cur_file_id;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
@@ -2285,7 +2285,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 	_vcPtr = vcPtrOrg;
 }
 
-void SimonEngine::vc60_killSprite() {
+void AGOSEngine::vc60_killSprite() {
 	uint16 zoneNum;
 
 	if (getGameType() == GType_SIMON1) {
@@ -2297,7 +2297,7 @@ void SimonEngine::vc60_killSprite() {
 	vc_kill_sprite(zoneNum, sprite);
 }
 
-void SimonEngine::vc61_setMaskImage() {
+void AGOSEngine::vc61_setMaskImage() {
 	if (getGameType() == GType_WW) {
 		// FIXME
 		vcReadVarOrWord();
@@ -2313,7 +2313,7 @@ void SimonEngine::vc61_setMaskImage() {
 	}
 }
 
-void SimonEngine::vc62_fastFadeOut() {
+void AGOSEngine::vc62_fastFadeOut() {
 	vc29_stopAllSounds();
 
 	if (!_fastFadeOutFlag) {
@@ -2396,7 +2396,7 @@ void SimonEngine::vc62_fastFadeOut() {
 	}
 }
 
-void SimonEngine::vc63_fastFadeIn() {
+void AGOSEngine::vc63_fastFadeIn() {
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_fastFadeInFlag = 256;
 	} else {
@@ -2408,14 +2408,14 @@ void SimonEngine::vc63_fastFadeIn() {
 	_fastFadeOutFlag = false;
 }
 
-void SimonEngine::vc64_skipIfSpeechEnded() {
+void AGOSEngine::vc64_skipIfSpeechEnded() {
 	if ((getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) ||
 		!_sound->isVoiceActive()) {
 		vcSkipNextInstruction();
 	}
 }
 
-void SimonEngine::vc65_slowFadeIn() {
+void AGOSEngine::vc65_slowFadeIn() {
 	_fastFadeInFlag = 624;
 	_fastFadeCount = 208;
 	if (_windowNum != 4) {
@@ -2426,7 +2426,7 @@ void SimonEngine::vc65_slowFadeIn() {
 	_fastFadeOutFlag = false;
 }
 
-void SimonEngine::vc66_skipIfNotEqual() {
+void AGOSEngine::vc66_skipIfNotEqual() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 
@@ -2434,7 +2434,7 @@ void SimonEngine::vc66_skipIfNotEqual() {
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc67_skipIfGE() {
+void AGOSEngine::vc67_skipIfGE() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 
@@ -2442,7 +2442,7 @@ void SimonEngine::vc67_skipIfGE() {
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc68_skipIfLE() {
+void AGOSEngine::vc68_skipIfLE() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 
@@ -2450,7 +2450,7 @@ void SimonEngine::vc68_skipIfLE() {
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc69_playTrack() {
+void AGOSEngine::vc69_playTrack() {
 	int16 track = vcReadNextWord();
 	int16 loop = vcReadNextWord();
 
@@ -2473,7 +2473,7 @@ void SimonEngine::vc69_playTrack() {
 	midi.startTrack(track);
 }
 
-void SimonEngine::vc70_queueMusic() {
+void AGOSEngine::vc70_queueMusic() {
 	// Simon2
 	uint16 track = vcReadNextWord();
 	uint16 loop = vcReadNextWord();
@@ -2489,7 +2489,7 @@ void SimonEngine::vc70_queueMusic() {
 		midi.setLoop(loop != 0);
 }
 
-void SimonEngine::vc71_checkMusicQueue() {
+void AGOSEngine::vc71_checkMusicQueue() {
 	// Jamieson630:
 	// This command skips the next instruction
 	// unless (1) there is a track playing, AND
@@ -2498,7 +2498,7 @@ void SimonEngine::vc71_checkMusicQueue() {
 		vcSkipNextInstruction();
 }
 
-void SimonEngine::vc72_play_track_2() {
+void AGOSEngine::vc72_play_track_2() {
 	// Jamieson630:
 	// This is a "play or stop track". Note that
 	// this opcode looks very similar in function
@@ -2523,15 +2523,15 @@ void SimonEngine::vc72_play_track_2() {
 	}
 }
 
-void SimonEngine::vc73_setMark() {
+void AGOSEngine::vc73_setMark() {
 	_marks |= (1 << vcReadNextWord());
 }
 
-void SimonEngine::vc74_clearMark() {
+void AGOSEngine::vc74_clearMark() {
 	_marks &= ~(1 << vcReadNextWord());
 }
 
-int SimonEngine::getScale(int16 y, int16 x) {
+int AGOSEngine::getScale(int16 y, int16 x) {
 	int16 z;
 
 	if (y > _baseY) {
@@ -2554,12 +2554,12 @@ int SimonEngine::getScale(int16 y, int16 x) {
 	}
 }
 
-void SimonEngine::vc75_setScale() {
+void AGOSEngine::vc75_setScale() {
 	_baseY = vcReadNextWord();
 	_scale = (float)vcReadNextWord() / 1000000.;
 }
 
-void SimonEngine::vc76_setScaleXOffs() {
+void AGOSEngine::vc76_setScaleXOffs() {
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadNextWord();
@@ -2574,7 +2574,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 	vsp->flags = kDFScaled;
 }
 
-void SimonEngine::vc77_setScaleYOffs() {
+void AGOSEngine::vc77_setScaleYOffs() {
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadNextWord();
@@ -2590,7 +2590,7 @@ void SimonEngine::vc77_setScaleYOffs() {
 	vsp->flags = kDFScaled;
 }
 
-void SimonEngine::vc78_computeXY() {
+void AGOSEngine::vc78_computeXY() {
 	VgaSprite *vsp = findCurSprite();
 
 	uint16 a = (uint16)_variableArrayPtr[12];
@@ -2613,7 +2613,7 @@ void SimonEngine::vc78_computeXY() {
 	}
 }
 
-void SimonEngine::vc79_computePosNum() {
+void AGOSEngine::vc79_computePosNum() {
 	uint a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 	uint pos = 0;
@@ -2627,7 +2627,7 @@ void SimonEngine::vc79_computePosNum() {
 	_variableArrayPtr[13] = pos;
 }
 
-void SimonEngine::vc80_setOverlayImage() {
+void AGOSEngine::vc80_setOverlayImage() {
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadVarOrWord();
@@ -2639,14 +2639,14 @@ void SimonEngine::vc80_setOverlayImage() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc81_setRandom() {
+void AGOSEngine::vc81_setRandom() {
 	uint16 var = vcReadNextWord();
 	uint16 value = vcReadNextWord();
 
 	_variableArray[var] = _rnd.getRandomNumber(value - 1);
 }
 
-void SimonEngine::vc82_getPathValue() {
+void AGOSEngine::vc82_getPathValue() {
 	uint8 val;
 
 	uint16 var = vcReadNextWord();
@@ -2660,7 +2660,7 @@ void SimonEngine::vc82_getPathValue() {
 	vcWriteVar(var, val);
 }
 
-void SimonEngine::vc83_playSoundLoop() {
+void AGOSEngine::vc83_playSoundLoop() {
 	uint16 sound = vcReadNextWord();
 	int16 vol = vcReadNextWord();
 	int16 pan = vcReadNextWord();
@@ -2668,12 +2668,12 @@ void SimonEngine::vc83_playSoundLoop() {
 	loadSound(sound, pan, vol, 3);
 }
 
-void SimonEngine::vc84_stopSoundLoop() {
+void AGOSEngine::vc84_stopSoundLoop() {
 	_sound->stopSfx5();
 }
 
 // Scrolling functions for Feeble Files
-void SimonEngine::checkScrollX(int16 x, int16 xpos) {
+void AGOSEngine::checkScrollX(int16 x, int16 xpos) {
 	if (_scrollXMax == 0 || getBitFlag(80) || getBitFlag(82) || x == 0)
 		return;
 
@@ -2712,7 +2712,7 @@ void SimonEngine::checkScrollX(int16 x, int16 xpos) {
 	}
 }
 
-void SimonEngine::checkScrollY(int16 y, int16 ypos) {
+void AGOSEngine::checkScrollY(int16 y, int16 ypos) {
 	if (_scrollYMax == 0 || getBitFlag(80))
 		return;
 
@@ -2749,7 +2749,7 @@ void SimonEngine::checkScrollY(int16 y, int16 ypos) {
 	}
 }
 
-void SimonEngine::centreScroll() {
+void AGOSEngine::centreScroll() {
 	int16 x, y, tmp;
 
 	if (_scrollXMax != 0) {
@@ -2785,4 +2785,4 @@ void SimonEngine::centreScroll() {
 	}
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

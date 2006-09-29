@@ -28,15 +28,15 @@
 #include "agos/intern.h"
 #include "common/str.h"
 
-namespace Simon {
+namespace AGOS {
 
 class BaseSound;
 
-class SimonEngine;
+class AGOSEngine;
 
 class Sound {
 private:
-	SimonEngine *_vm;
+	AGOSEngine *_vm;
 
 	Audio::Mixer *_mixer;
 
@@ -61,7 +61,7 @@ private:
 	uint _ambientPlaying;
 
 public:
-	Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
+	Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
 
 	void loadVoiceFile(const GameSpecificSettings *gss);
@@ -93,6 +93,6 @@ public:
 	void ambientPause(bool b);
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

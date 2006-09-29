@@ -24,7 +24,7 @@
 #ifndef AGOS_DEBUG_H
 #define AGOS_DEBUG_H
 
-namespace Simon {
+namespace AGOS {
 
 static const char *const ww_opcode_name_table[256] = {
 	/* 0 */
@@ -1849,7 +1849,7 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"|STOPSOUNDLOOP",
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif
 

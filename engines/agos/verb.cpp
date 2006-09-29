@@ -27,7 +27,7 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-namespace Simon {
+namespace AGOS {
 
 static const char *const russian_verb_names[] = {
 	"Ietj _",
@@ -176,7 +176,7 @@ static const char *const english_verb_prep_names[] = {
 	"", "", "", "to whom ?"
 };
 
-void SimonEngine::clearName() {
+void AGOSEngine::clearName() {
 	HitArea *last;
 	HitArea *ha;
 
@@ -208,7 +208,7 @@ void SimonEngine::clearName() {
 		printVerbOf(last->id);
 }
 
-void SimonEngine::printVerbOf(uint hitarea_id) {
+void AGOSEngine::printVerbOf(uint hitarea_id) {
 	const char *txt;
 	const char * const *verb_names;
 	const char * const *verb_prep_names;
@@ -271,7 +271,7 @@ void SimonEngine::printVerbOf(uint hitarea_id) {
 	showActionString((const byte *)txt);
 }
 
-void SimonEngine::showActionString(const byte *string) {
+void AGOSEngine::showActionString(const byte *string) {
 	WindowBlock *window;
 	uint x;
 
@@ -292,7 +292,7 @@ void SimonEngine::showActionString(const byte *string) {
 		windowPutChar(window, *string);
 }
 
-void SimonEngine::handleVerbClicked(uint verb) {
+void AGOSEngine::handleVerbClicked(uint verb) {
 	Subroutine *sub;
 	int result;
 
@@ -350,7 +350,7 @@ void SimonEngine::handleVerbClicked(uint verb) {
 	permitInput();
 }
 
-void SimonEngine::resetNameWindow() {
+void AGOSEngine::resetNameWindow() {
 	WindowBlock *window;
 
 	if (getGameType() == GType_SIMON2 && getBitFlag(79))
@@ -364,7 +364,7 @@ void SimonEngine::resetNameWindow() {
 	_lastVerbOn = NULL;
 }
 
-HitArea *SimonEngine::findBox(uint hitarea_id) {
+HitArea *AGOSEngine::findBox(uint hitarea_id) {
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
 
@@ -375,7 +375,7 @@ HitArea *SimonEngine::findBox(uint hitarea_id) {
 	return NULL;
 }
 
-HitArea *SimonEngine::findEmptyHitArea() {
+HitArea *AGOSEngine::findEmptyHitArea() {
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
 
@@ -386,18 +386,18 @@ HitArea *SimonEngine::findEmptyHitArea() {
 	return NULL;
 }
 
-void SimonEngine::delete_hitarea_by_index(uint index) {
+void AGOSEngine::delete_hitarea_by_index(uint index) {
 	CHECK_BOUNDS(index, _hitAreas);
 	_hitAreas[index].flags = 0;
 }
 
-void SimonEngine::enableBox(uint hitarea) {
+void AGOSEngine::enableBox(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
 	if (ha != NULL)
 		ha->flags &= ~kBFBoxDead;
 }
 
-void SimonEngine::disableBox(uint hitarea) {
+void AGOSEngine::disableBox(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
 		ha->flags |= kBFBoxDead;
@@ -407,7 +407,7 @@ void SimonEngine::disableBox(uint hitarea) {
 	}
 }
 
-void SimonEngine::moveBox(uint hitarea, int x, int y) {
+void AGOSEngine::moveBox(uint hitarea, int x, int y) {
 	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -420,7 +420,7 @@ void SimonEngine::moveBox(uint hitarea, int x, int y) {
 	}
 }
 
-void SimonEngine::undefineBox(uint hitarea) {
+void AGOSEngine::undefineBox(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
 	if (ha != NULL) {
 		ha->flags = 0;
@@ -430,14 +430,14 @@ void SimonEngine::undefineBox(uint hitarea) {
 	}
 }
 
-bool SimonEngine::isBoxDead(uint hitarea) {
+bool AGOSEngine::isBoxDead(uint hitarea) {
 	HitArea *ha = findBox(hitarea);
 	if (ha == NULL)
 		return false;
 	return (ha->flags & kBFBoxDead) == 0;
 }
 
-void SimonEngine::defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
+void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
 	HitArea *ha;
 	undefineBox(id);
 
@@ -460,7 +460,7 @@ void SimonEngine::defineBox(int id, int x, int y, int width, int height, int fla
 	_needHitAreaRecalc++;
 }
 
-void SimonEngine::resetVerbs() {
+void AGOSEngine::resetVerbs() {
 	if (getGameType() == GType_PP) {
 		_verbHitArea = 300;
 		return;
@@ -516,7 +516,7 @@ void SimonEngine::resetVerbs() {
 	}
 }
 
-void SimonEngine::setVerb(HitArea *ha) {
+void AGOSEngine::setVerb(HitArea *ha) {
 	if (getGameType() == GType_PP) {
 		return;
 	} else if (getGameType() == GType_FF) {
@@ -572,7 +572,7 @@ void SimonEngine::setVerb(HitArea *ha) {
 	}
 }
 
-void SimonEngine::hitarea_leave(HitArea *ha, bool state) {
+void AGOSEngine::hitarea_leave(HitArea *ha, bool state) {
 	if (getGameType() == GType_FF) {
 		invertBox_FF(ha, state);
 	} else if (getGameType() == GType_SIMON2) {
@@ -582,13 +582,13 @@ void SimonEngine::hitarea_leave(HitArea *ha, bool state) {
 	}
 }
 
-void SimonEngine::leaveHitAreaById(uint hitarea_id) {
+void AGOSEngine::leaveHitAreaById(uint hitarea_id) {
 	HitArea *ha = findBox(hitarea_id);
 	if (ha)
 		hitarea_leave(ha);
 }
 
-void SimonEngine::checkUp(WindowBlock *window) {
+void AGOSEngine::checkUp(WindowBlock *window) {
 	uint16 j, k;
 
 	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[31] > 52)) {
@@ -617,7 +617,7 @@ void SimonEngine::checkUp(WindowBlock *window) {
 	}
 }
 
-void SimonEngine::checkDown(WindowBlock *window) {
+void AGOSEngine::checkDown(WindowBlock *window) {
 	uint16 j, k;
 
 	if (((_variableArray[31] - _variableArray[30]) == 24) && (_iOverflow == 1)) {
@@ -642,7 +642,7 @@ void SimonEngine::checkDown(WindowBlock *window) {
 	}
 }
 
-void SimonEngine::inventoryUp(WindowBlock *window) {
+void AGOSEngine::inventoryUp(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
 		checkUp(window);
@@ -669,7 +669,7 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 	}
 }
 
-void SimonEngine::inventoryDown(WindowBlock *window) {
+void AGOSEngine::inventoryDown(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
 		checkDown(window);
@@ -693,7 +693,7 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 	}
 }
 
-void SimonEngine::boxController(uint x, uint y, uint mode) {
+void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	HitArea *best_ha;
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
@@ -766,7 +766,7 @@ void SimonEngine::boxController(uint x, uint y, uint mode) {
 	return;
 }
 
-void SimonEngine::displayName(HitArea *ha) {
+void AGOSEngine::displayName(HitArea *ha) {
 	bool result;
 	int x = 0, y = 0;
 
@@ -822,7 +822,7 @@ void SimonEngine::displayName(HitArea *ha) {
 		_lastNameOn = ha;
 }
 
-void SimonEngine::invertBox_FF(HitArea *ha, bool state) {
+void AGOSEngine::invertBox_FF(HitArea *ha, bool state) {
 	if (getBitFlag(205) || getBitFlag(206)) {
 		if (state != 0) {
 			_mouseAnimMax = _oldMouseAnimMax;
@@ -865,7 +865,7 @@ void SimonEngine::invertBox_FF(HitArea *ha, bool state) {
 	}
 }
 
-void SimonEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
+void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 	byte *src, color;
 	int w, h, i;
 
@@ -903,4 +903,4 @@ void SimonEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 	_lockWord &= ~0x8000;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

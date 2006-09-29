@@ -30,12 +30,12 @@
 #include "graphics/dxa_player.h"
 #include "sound/mixer.h"
 
-namespace Simon {
+namespace AGOS {
 
-class SimonEngine;
+class AGOSEngine;
 
 class MoviePlayer : public Graphics::DXAPlayer {
-	SimonEngine *_vm;
+	AGOSEngine *_vm;
 
 	Audio::Mixer *_mixer;
 
@@ -51,7 +51,7 @@ class MoviePlayer : public Graphics::DXAPlayer {
 	static const char *_sequenceList[90];
 	uint8 _sequenceNum;
 public:
-	MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer);
+	MoviePlayer(AGOSEngine *vm, Audio::Mixer *mixer);
 
 	bool load(const char *filename);
 	void play();
@@ -66,6 +66,6 @@ private:
 	void startSound();
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #endif

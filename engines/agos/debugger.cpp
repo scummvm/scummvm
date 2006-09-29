@@ -28,9 +28,9 @@
 #include "agos/debugger.h"
 #include "agos/agos.h"
 
-namespace Simon {
+namespace AGOS {
 
-Debugger::Debugger(SimonEngine *vm)
+Debugger::Debugger(AGOSEngine *vm)
 	: GUI::Debugger() {
 	_vm = vm;
 
@@ -175,5 +175,5 @@ bool Debugger::Cmd_StartSubroutine(int argc, const char **argv) {
 	return true;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS
 

@@ -35,9 +35,9 @@
 #include "sound/audiostream.h"
 #include "sound/wave.h"
 
-namespace Simon {
+namespace AGOS {
 
-MoviePlayer::MoviePlayer(SimonEngine *vm, Audio::Mixer *mixer)
+MoviePlayer::MoviePlayer(AGOSEngine *vm, Audio::Mixer *mixer)
 	: DXAPlayer(), _vm(vm), _mixer(mixer) {
 	_omniTV = false;
 
@@ -403,4 +403,4 @@ const char * MoviePlayer::_sequenceList[90] = {
 	"wurbatak"
 };
 
-} // End of namespace Simon
+} // End of namespace AGOS

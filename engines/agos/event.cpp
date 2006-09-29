@@ -26,9 +26,9 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-namespace Simon {
+namespace AGOS {
 
-void SimonEngine::addTimeEvent(uint timeout, uint subroutine_id) {
+void AGOSEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = NULL;
 	time_t cur_time;
 
@@ -65,7 +65,7 @@ void SimonEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 	}
 }
 
-void SimonEngine::delTimeEvent(TimeEvent *te) {
+void AGOSEngine::delTimeEvent(TimeEvent *te) {
 	TimeEvent *cur;
 
 	if (te == _pendingDeleteTimeEvent)
@@ -93,7 +93,7 @@ void SimonEngine::delTimeEvent(TimeEvent *te) {
 	}
 }
 
-void SimonEngine::invokeTimeEvent(TimeEvent *te) {
+void AGOSEngine::invokeTimeEvent(TimeEvent *te) {
 	Subroutine *sub;
 
 	_scriptVerb = 0;
@@ -108,7 +108,7 @@ void SimonEngine::invokeTimeEvent(TimeEvent *te) {
 	_runScriptReturn1 = false;
 }
 
-void SimonEngine::killAllTimers() {
+void AGOSEngine::killAllTimers() {
 	TimeEvent *cur, *next;
 
 	for (cur = _firstTimeStruct; cur; cur = next) {
@@ -117,7 +117,7 @@ void SimonEngine::killAllTimers() {
 	}
 }
 
-bool SimonEngine::kickoffTimeEvents() {
+bool AGOSEngine::kickoffTimeEvents() {
 	time_t cur_time;
 	TimeEvent *te;
 	bool result = false;
@@ -141,7 +141,7 @@ bool SimonEngine::kickoffTimeEvents() {
 	return result;
 }
 
-void SimonEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
+void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
 	VgaTimerEntry *vte;
 
 	// When Simon talks to the Golum about stew in French version of
@@ -168,7 +168,7 @@ void SimonEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprit
 	_lockWord &= ~1;
 }
 
-void SimonEngine::deleteVgaEvent(VgaTimerEntry * vte) {
+void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 	_lockWord |= 1;
 
 	if (vte + 1 <= _nextVgaTimerToProcess) {
@@ -183,7 +183,7 @@ void SimonEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 	_lockWord &= ~1;
 }
 
-void SimonEngine::processVgaEvents() {
+void AGOSEngine::processVgaEvents() {
 	VgaTimerEntry *vte = _vgaTimerList;
 	uint timer = (getGameType() == GType_FF) ? 5 : 1;
 
@@ -214,7 +214,7 @@ void SimonEngine::processVgaEvents() {
 	}
 }
 
-void SimonEngine::animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite) {
+void AGOSEngine::animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite) {
 	VgaPointersEntry *vpe;
 
 	_vgaCurSpriteId = cur_sprite;
@@ -232,7 +232,7 @@ void SimonEngine::animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 c
 	runVgaScript();
 }
 
-void SimonEngine::panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param) {
+void AGOSEngine::panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param) {
 	_vgaCurSpriteId = cur_sprite;
 	_vgaCurZoneNum = curZoneNum;
 
@@ -253,7 +253,7 @@ void SimonEngine::panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param) {
 	debug(0, "panEvent: param %d pan %d", param, pan);
 }
 
-void SimonEngine::scrollEvent() {
+void AGOSEngine::scrollEvent() {
 	if (_scrollCount == 0)
 		return;
 
@@ -288,7 +288,7 @@ void SimonEngine::scrollEvent() {
 	}
 }
 
-void SimonEngine::timer_callback() {
+void AGOSEngine::timer_callback() {
 	if (_timer5 != 0) {
 		_syncFlag2 = true;
 		_timer5--;
@@ -297,7 +297,7 @@ void SimonEngine::timer_callback() {
 	}
 }
 
-void SimonEngine::timer_proc1() {
+void AGOSEngine::timer_proc1() {
 	_timer4++;
 
 	if (_lockWord & 0x80E9 || _lockWord & 2)
@@ -373,4 +373,4 @@ void SimonEngine::timer_proc1() {
 	_lockWord &= ~2;
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

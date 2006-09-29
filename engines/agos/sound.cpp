@@ -39,7 +39,7 @@
 
 using Common::File;
 
-namespace Simon {
+namespace AGOS {
 
 #define SOUND_BIG_ENDIAN true
 
@@ -252,7 +252,7 @@ void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 }
 #endif
 
-Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer)
+Sound::Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer) {
 	_voice = 0;
 	_effects = 0;
@@ -711,4 +711,4 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	}
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS

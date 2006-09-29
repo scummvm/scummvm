@@ -29,7 +29,7 @@
 
 #include "agos/agos.h"
 
-namespace Simon {
+namespace AGOS {
 
 #ifdef PALMOS_68K
 static const byte *_simon1_cursor;
@@ -226,7 +226,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
 };
 
-void SimonEngine::drawMousePointer() {
+void AGOSEngine::drawMousePointer() {
 	if (getGameType() == GType_SIMON2) {
 		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
 	} else {
@@ -234,7 +234,7 @@ void SimonEngine::drawMousePointer() {
 	}
 }
 
-void SimonEngine::handleMouseMoved() {
+void AGOSEngine::handleMouseMoved() {
 	uint x;
 
 	if (_mouseHideCount) {
@@ -335,11 +335,11 @@ get_out:
 	_needHitAreaRecalc = 0;
 }
 
-void SimonEngine::mouseOff() {
+void AGOSEngine::mouseOff() {
 	_mouseHideCount++;
 }
 
-void SimonEngine::mouseOn() {
+void AGOSEngine::mouseOn() {
 	_lockWord |= 1;
 
 	if (_mouseHideCount != 0)
@@ -348,7 +348,7 @@ void SimonEngine::mouseOn() {
 	_lockWord &= ~1;
 }
 
-void SimonEngine::pollMouseXY() {
+void AGOSEngine::pollMouseXY() {
 	_mouseX = _sdlMouseX;
 	_mouseY = _sdlMouseY;
 }
@@ -396,7 +396,7 @@ static const byte _mouseOffs[29 * 32] = {
 	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-void SimonEngine::drawMousePointer_FF() {
+void AGOSEngine::drawMousePointer_FF() {
 	uint cursor;
 	int image, offs;
 
@@ -453,7 +453,7 @@ void SimonEngine::drawMousePointer_FF() {
 	}
 }
 
-void SimonEngine::drawMousePart(int image, byte x, byte y) {
+void AGOSEngine::drawMousePart(int image, byte x, byte y) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[7];
 	byte *src;
 	int width, height;
@@ -479,13 +479,13 @@ void SimonEngine::drawMousePart(int image, byte x, byte y) {
 	}
 }
 
-} // End of namespace Simon
+} // End of namespace AGOS
 
 #ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(AGOS_Cursor)
-_GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_AGOS)
 _GEND
 
 _GRELEASE(AGOS_Cursor)
