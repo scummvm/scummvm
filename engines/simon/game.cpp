@@ -67,15 +67,15 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 };
 
 static const PlainGameDescriptor simonGames[] = {
+	{"elvira", "Elvira"},
+	{"elvira2", "Elvira 2"},
+	{"waxworks", "Waxworks"},
+	{"simon1", "Simon the Sorcerer 1"},
+	{"simon2", "Simon the Sorcerer 2"},
+	{"feeble", "The Feeble Files"},
 	{"jumble", "Jumble"},
 	{"puzzle", "Puzzle"},
 	{"swampy", "Swampy Adventures"},
-	{"feeble", "The Feeble Files"},
-	{"simon1", "Simon the Sorcerer 1"},
-	{"simon2", "Simon the Sorcerer 2"},
-	{"waxworks", "Waxworks"},
-	{"elvira2", "Elvira 2"},
-	{"elvira", "Elvira"},
 	{NULL, NULL}
 };
 
@@ -1479,7 +1479,14 @@ static GameDescription gameDescriptions[] = {
 
 DetectedGame toDetectedGame(const GameDescription &g) {
 	const char *title;
-	title = simonGames[g.gameType].description;
+
+	const PlainGameDescriptor *sg = simonGames;
+	while (sg->gameid) {
+		if (!scumm_stricmp(g.name, sg->gameid))
+			title = sg->description;
+		sg++;
+	}
+
 	DetectedGame dg(g.name, title, g.language, g.platform);
 	dg.updateDesc(g.extra);
 	return dg;
