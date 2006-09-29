@@ -773,7 +773,7 @@ begin_credits("Credits");
 
   add_paragraph(
   "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
-  "sharing the source code of The Feeble Files and Simon the Sorcerer's ",
+  "sharing the source code of The Feeble Files and Simon the Sorcerer's ".
   "Puzzle Pack with us.");
 
   end_section();

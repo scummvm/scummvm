@@ -42,12 +42,12 @@ tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
 #
 
 credits:
-	./tools/credits.pl --text > AUTHORS
-	./tools/credits.pl --tex > doc/credits.tex
-	./tools/credits.pl --rtf > Credits.rtf
-	./tools/credits.pl --cpp > gui/credits.h
-	./tools/credits.pl --html > ../web/credits.inc
-	./tools/credits.pl --xml > ../../docs/trunk/docbook/credits.xml
+	$(srcdir)/tools/credits.pl --text > AUTHORS
+	$(srcdir)/tools/credits.pl --tex > doc/credits.tex
+	$(srcdir)/tools/credits.pl --rtf > Credits.rtf
+	$(srcdir)/tools/credits.pl --cpp > gui/credits.h
+	$(srcdir)/tools/credits.pl --html > ../../web/trunk/credits.inc
+	$(srcdir)/tools/credits.pl --xml > ../../docs/trunk/docbook/credits.xml
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > engines/scumm/scumm-md5.h

@@ -297,7 +297,7 @@ static const char *credits[] = {
 "\\C\\c0""",
 "\\C\\c0""Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it is today. Feel free to drop us a line and tell us what you think, guys!",
 "\\C\\c0""",
-"\\C\\c0""Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of The Feeble Files and Simon the Sorcerer's ",
+"\\C\\c0""Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of The Feeble Files and Simon the Sorcerer's Puzzle Pack with us.",
 "\\C\\c0""",
 "\\C\\c0""",
 };
