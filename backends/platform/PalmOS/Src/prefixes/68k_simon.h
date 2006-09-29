@@ -2,7 +2,7 @@
 #define PREFIX_H
 
 #include "compile.h"
-#undef DISABLE_SIMON
+#undef DISABLE_AGOS
 
 #define PALMOS_68K
 

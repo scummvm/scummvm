@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SIMON_INTERN_H
-#define SIMON_INTERN_H
+#ifndef AGOS_INTERN_H
+#define AGOS_INTERN_H
 
 namespace Simon {
 

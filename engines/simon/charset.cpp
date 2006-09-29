@@ -23,8 +23,8 @@
 
 #include "common/stdafx.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
+#include "agos/agos.h"
+#include "agos/intern.h"
 
 namespace Simon {
 
@@ -1604,7 +1604,7 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 #ifdef PALMOS_68K
 #include "scumm_globals.h"
 
-_GINIT(Simon_Charset)
+_GINIT(AGOS_Charset)
 _GSETPTR(Simon::russian_video_font, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_SIMON)
 //_GSETPTR(Simon::polish_video_font, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_SIMON)
 _GSETPTR(Simon::french_video_font, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_SIMON)
@@ -1615,7 +1615,7 @@ _GSETPTR(Simon::spanish_video_font, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_
 _GSETPTR(Simon::video_font, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_SIMON)
 _GEND
 
-_GRELEASE(Simon_Charset)
+_GRELEASE(AGOS_Charset)
 _GRELEASEPTR(GBVARS_RUSSIANVIDEOFONT_INDEX, GBVARS_SIMON)
 //_GRELEASEPTR(GBVARS_POLISHVIDEOFONT_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_FRENCHVIDEOFONT_INDEX, GBVARS_SIMON)

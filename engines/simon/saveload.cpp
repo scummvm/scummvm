@@ -29,8 +29,8 @@
 #include "gui/about.h"
 #include "gui/message.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
+#include "agos/agos.h"
+#include "agos/intern.h"
 
 namespace Simon {
 

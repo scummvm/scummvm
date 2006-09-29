@@ -8,7 +8,7 @@ chdir("../../../");
 @mmp_files = (
 	"mmp/scummvm_scumm.mmp", 
 	"mmp/scummvm_queen.mmp", 
-	"mmp/scummvm_simon.mmp", 
+	"mmp/scummvm_agos.mmp", 
 	"mmp/scummvm_sky.mmp", 
 	"mmp/scummvm_gob.mmp", 
 	"mmp/scummvm_saga.mmp", 
@@ -74,7 +74,7 @@ ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
 chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm);
 ParseModule("_queen",	"queen",	\@section_empty);
-ParseModule("_simon",	"simon",	\@section_empty);
+ParseModule("_agos",	"agos",		\@section_empty);
 ParseModule("_sky",		"sky",		\@section_empty);
 ParseModule("_gob",		"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@section_empty);

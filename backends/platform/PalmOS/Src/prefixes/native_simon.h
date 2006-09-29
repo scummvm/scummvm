@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_SIMON
+#undef DISABLE_AGOS
 
 #endif

@@ -26,7 +26,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scumm", "scumm.vcproj", "{B
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simon", "simon.vcproj", "{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agos", "agos.vcproj", "{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

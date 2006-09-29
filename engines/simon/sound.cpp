@@ -26,8 +26,8 @@
 #include "common/file.h"
 #include "common/util.h"
 
-#include "simon/simon.h"
-#include "simon/sound.h"
+#include "agos/agos.h"
+#include "agos/sound.h"
 
 #include "sound/adpcm.h"
 #include "sound/audiostream.h"

@@ -26,9 +26,9 @@
 
 #include "common/file.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
-#include "simon/sound.h"
+#include "agos/agos.h"
+#include "agos/intern.h"
+#include "agos/sound.h"
 
 
 #ifdef USE_ZLIB

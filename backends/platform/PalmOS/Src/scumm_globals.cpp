@@ -47,10 +47,10 @@ static void GlbInitAll() {
 		CALL_INIT(PlayerV2)
 		CALL_INIT(Scumm_md5table)
 #endif
-#ifndef DISABLE_SIMON
-		CALL_INIT(Simon_Simon)
-		CALL_INIT(Simon_Cursor)
-		CALL_INIT(Simon_Charset)
+#ifndef DISABLE_AGOS
+		CALL_INIT(AGOS_AGOS)
+		CALL_INIT(AGOS_Cursor)
+		CALL_INIT(AGOS_Charset)
 #endif
 #ifndef DISABLE_SKY
 		CALL_INIT(Sky_Hufftext)
@@ -88,10 +88,10 @@ static void GlbReleaseAll() {
 		CALL_RELEASE(PlayerV2)
 		CALL_RELEASE(Scumm_md5table)
 #endif
-#ifndef DISABLE_SIMON
-		CALL_RELEASE(Simon_Simon)
-		CALL_RELEASE(Simon_Cursor)
-		CALL_RELEASE(Simon_Charset)
+#ifndef DISABLE_AGOS
+		CALL_RELEASE(AGOS_AGOS)
+		CALL_RELEASE(AGOS_AGOS)
+		CALL_RELEASE(AGOS_AGOS)
 #endif
 #ifndef DISABLE_SKY
 		CALL_RELEASE(Sky_Hufftext)

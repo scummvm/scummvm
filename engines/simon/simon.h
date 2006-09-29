@@ -21,18 +21,18 @@
  *
  */
 
-#ifndef SIMON_H
-#define SIMON_H
+#ifndef AGOS_AGOS_H
+#define AGOS_AGOS_H
 
 #include "engines/engine.h"
 
 #include "common/rect.h"
 #include "common/util.h"
 
-#include "simon/animation.h"
-#include "simon/midi.h"
-#include "simon/sound.h"
-#include "simon/vga.h"
+#include "agos/animation.h"
+#include "agos/midi.h"
+#include "agos/sound.h"
+#include "agos/vga.h"
 
 namespace Simon {
 

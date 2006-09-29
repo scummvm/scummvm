@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SIMON_MIDI_H
-#define SIMON_MIDI_H
+#ifndef AGOS_MIDI_H
+#define AGOS_MIDI_H
 
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"

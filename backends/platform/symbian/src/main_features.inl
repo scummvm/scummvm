@@ -30,8 +30,8 @@
 #ifndef DISABLE_SCUMM
 	"SCUMM "
 #endif
-#ifndef DISABLE_SIMON
-	"Simon "
+#ifndef DISABLE_AGOS
+	"AGOS "
 #endif
 #ifndef DISABLE_SKY
 	"Sky "

@@ -25,8 +25,8 @@
 
 #include "common/config-manager.h"
 
-#include "simon/debugger.h"
-#include "simon/simon.h"
+#include "agos/debugger.h"
+#include "agos/agos.h"
 
 namespace Simon {
 

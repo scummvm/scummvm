@@ -63,11 +63,11 @@ PROTO_GLOBALS(Costume)
 PROTO_GLOBALS(PlayerV2)
 PROTO_GLOBALS(Scumm_md5table)
 #endif
-// Simon stuffs
-#ifndef DISABLE_SIMON
-PROTO_GLOBALS(Simon_Simon)
-PROTO_GLOBALS(Simon_Cursor)
-PROTO_GLOBALS(Simon_Charset)
+// AGOS stuffs
+#ifndef DISABLE_AGOS
+PROTO_GLOBALS(AGOS_AGOS)
+PROTO_GLOBALS(AGOS_Cursor)
+PROTO_GLOBALS(AGOS_Charset)
 #endif
 // Sky stuffs
 #ifndef DISABLE_SKY

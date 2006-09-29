@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SIMON_VGA_H
-#define SIMON_VGA_H
+#ifndef AGOS_VGA_H
+#define AGOS_VGA_H
 
 namespace Simon {
 

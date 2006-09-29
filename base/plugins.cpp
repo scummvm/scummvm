@@ -368,8 +368,8 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_SWORD2
 	LINK_PLUGIN(SWORD2)
 	#endif
-	#ifndef DISABLE_SIMON
-	LINK_PLUGIN(SIMON)
+	#ifndef DISABLE_AGOS
+	LINK_PLUGIN(AGOS)
 	#endif
 	#ifndef DISABLE_QUEEN
 	LINK_PLUGIN(QUEEN)

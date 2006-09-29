@@ -26,9 +26,9 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "simon/simon.h"
+#include "agos/agos.h"
 
-#include "sound/mixer.h"
+#include "agos/agos.h"
 
 namespace Simon {
 

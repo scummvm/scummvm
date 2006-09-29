@@ -27,7 +27,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "simon/simon.h"
+#include "agos/agos.h"
 
 namespace Simon {
 
@@ -484,11 +484,11 @@ void SimonEngine::drawMousePart(int image, byte x, byte y) {
 #ifdef PALMOS_68K
 #include "scumm_globals.h"
 
-_GINIT(Simon_Cursor)
+_GINIT(AGOS_Cursor)
 _GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_SIMON)
 _GEND
 
-_GRELEASE(Simon_Cursor)
+_GRELEASE(AGOS_Cursor)
 _GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON)
 _GEND
 

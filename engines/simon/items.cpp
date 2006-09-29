@@ -27,8 +27,8 @@
 
 #include "common/system.h"
 
-#include "simon/animation.h"
-#include "simon/simon.h"
+#include "agos/animation.h"
+#include "agos/agos.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);

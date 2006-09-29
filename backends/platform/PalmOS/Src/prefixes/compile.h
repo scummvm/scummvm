@@ -29,7 +29,7 @@
 #define DISABLE_SCUMM_7_8
 #define DISABLE_HE
 
-#define DISABLE_SIMON
+#define DISABLE_AGOS
 #define DISABLE_SKY
 #define DISABLE_SWORD1
 #define DISABLE_SWORD2

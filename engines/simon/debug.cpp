@@ -21,13 +21,13 @@
  *
  */
 
-// Simon debug functions
+// AGOS debug functions
 #include "common/stdafx.h"
 
-#include "simon/debug.h"
-#include "simon/simon.h"
-#include "simon/intern.h"
-#include "simon/vga.h"
+#include "agos/debug.h"
+#include "agos/agos.h"
+#include "agos/intern.h"
+#include "agos/vga.h"
 
 #include <sys/stat.h>
 

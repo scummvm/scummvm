@@ -1,6 +1,6 @@
 [Project]
-FileName=simon.dev
-Name=simon
+FileName=agos.dev
+Name=agos
 UnitCount=26
 Type=2
 Ver=1
@@ -15,10 +15,10 @@ CppCompiler=-Wno-multichar_@@_
 Linker=
 IsCpp=1
 Icon=
-ExeOutput=simon
-ObjectOutput=simon
+ExeOutput=agos
+ObjectOutput=agos
 OverrideOutput=0
-OverrideOutputName=simon.a
+OverrideOutputName=agos.a
 HostApplication=
 Folders=
 CommandLine=
@@ -48,9 +48,9 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit1]
-FileName=..\..\engines\simon\charset.cpp
+FileName=..\..\engines\agos\charset.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -58,9 +58,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=..\..\engines\simon\cursor.cpp
+FileName=..\..\engines\agos\cursor.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -68,9 +68,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=..\..\engines\simon\debug.cpp
+FileName=..\..\engines\agos\debug.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -78,9 +78,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=..\..\engines\simon\debug.h
+FileName=..\..\engines\agos\debug.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -88,9 +88,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=..\..\engines\simon\debugger.cpp
+FileName=..\..\engines\agos\debugger.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -98,9 +98,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=..\..\engines\simon\debugger.h
+FileName=..\..\engines\agos\debugger.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -108,9 +108,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=..\..\engines\simon\game.cpp
+FileName=..\..\engines\agos\game.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -118,9 +118,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=..\..\engines\simon\icons.cpp
+FileName=..\..\engines\agos\icons.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -128,9 +128,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=..\..\engines\simon\intern.h
+FileName=..\..\engines\agos\intern.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -138,9 +138,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=..\..\engines\simon\items.cpp
+FileName=..\..\engines\agos\items.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -148,9 +148,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=..\..\engines\simon\midi.cpp
+FileName=..\..\engines\agos\midi.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -158,9 +158,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=..\..\engines\simon\midi.h
+FileName=..\..\engines\agos\midi.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -168,9 +168,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=..\..\engines\simon\midiparser_s1d.cpp
+FileName=..\..\engines\agos\midiparser_s1d.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -178,9 +178,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=..\..\engines\simon\res.cpp
+FileName=..\..\engines\agos\res.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -188,9 +188,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit15]
-FileName=..\..\engines\simon\saveload.cpp
+FileName=..\..\engines\agos\saveload.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -198,9 +198,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=..\..\engines\simon\simon.cpp
+FileName=..\..\engines\agos\agos.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -208,9 +208,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=..\..\engines\simon\simon.h
+FileName=..\..\engines\agos\agos.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -218,9 +218,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=..\..\engines\simon\sound.cpp
+FileName=..\..\engines\agos\sound.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -228,9 +228,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=..\..\engines\simon\sound.h
+FileName=..\..\engines\agos\sound.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -238,9 +238,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=..\..\engines\simon\verb.cpp
+FileName=..\..\engines\agos\verb.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -248,9 +248,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=..\..\engines\simon\vga.cpp
+FileName=..\..\engines\agos\vga.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -258,9 +258,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=..\..\engines\simon\vga.h
+FileName=..\..\engines\agos\vga.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -268,9 +268,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=..\..\engines\simon\oracle.cpp
+FileName=..\..\engines\agos\oracle.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -278,9 +278,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=..\..\engines\simon\animation.cpp
+FileName=..\..\engines\agos\animation.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -288,9 +288,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=..\..\engines\simon\animation.h
+FileName=..\..\engines\agos\animation.h
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000
@@ -298,9 +298,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=..\..\engines\simon\string.cpp
+FileName=..\..\engines\agos\string.cpp
 CompileCpp=1
-Folder=simon
+Folder=agos
 Compile=1
 Link=1
 Priority=1000

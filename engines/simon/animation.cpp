@@ -28,9 +28,9 @@
 
 #include "graphics/cursorman.h"
 
-#include "simon/animation.h"
-#include "simon/intern.h"
-#include "simon/simon.h"
+#include "agos/animation.h"
+#include "agos/intern.h"
+#include "agos/agos.h"
 
 #include "sound/audiostream.h"
 #include "sound/wave.h"

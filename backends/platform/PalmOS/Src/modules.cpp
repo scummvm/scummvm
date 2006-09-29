@@ -175,7 +175,7 @@ static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			result = GET_MODEARM;
 #else
 #	if	!defined(DISABLE_SCUMM) || \
-		!defined(DISABLE_SIMON) || \
+		!defined(DISABLE_AGOS) || \
 		!defined(DISABLE_SWORD1)
 			result = GET_DATACOMMON|GET_DATAENGINE|GET_MODE68K;
 #	else

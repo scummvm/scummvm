@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SIMON_DEBUG_H
-#define SIMON_DEBUG_H
+#ifndef AGOS_DEBUG_H
+#define AGOS_DEBUG_H
 
 namespace Simon {
 

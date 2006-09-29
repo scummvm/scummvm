@@ -24,9 +24,9 @@
 // Video script opcodes for Simon1/Simon2
 #include "common/stdafx.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
-#include "simon/vga.h"
+#include "agos/agos.h"
+#include "agos/intern.h"
+#include "agos/vga.h"
 
 #include "common/system.h"
 

@@ -75,7 +75,7 @@ Package=<4>
     Project_Dep_Name scumm
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name simon
+    Project_Dep_Name agos
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name sky
@@ -102,7 +102,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "simon"=.\simon\simon.vcp - Package Owner=<4>
+Project: "agos"=.\agos\agos.vcp - Package Owner=<4>
 
 Package=<5>
 {{{

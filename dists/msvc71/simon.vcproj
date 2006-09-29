@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="simon"
+	Name="agos"
 	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="simon_Debug"
-			IntermediateDirectory="simon_Debug"
+			OutputDirectory="agos_Debug"
+			IntermediateDirectory="agos_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/simon.lib"/>
+				OutputFile="$(OutDir)/agos.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -59,8 +59,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="simon_Release"
-			IntermediateDirectory="simon_Release"
+			OutputDirectory="agos_Release"
+			IntermediateDirectory="agos_Release"
 			ConfigurationType="4"
 			ATLMinimizesCRunTimeLibraryUsage="TRUE"
 			CharacterSet="2"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/simon.lib"/>
+				OutputFile="$(OutDir)/agos.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -111,94 +111,94 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\simon\animation.cpp">
+			RelativePath="..\..\engines\agos\animation.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\animation.h">
+			RelativePath="..\..\engines\agos\animation.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\charset.cpp">
+			RelativePath="..\..\engines\agos\charset.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\cursor.cpp">
+			RelativePath="..\..\engines\agos\cursor.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\debug.cpp">
+			RelativePath="..\..\engines\agos\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\debug.h">
+			RelativePath="..\..\engines\agos\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\debugger.cpp">
+			RelativePath="..\..\engines\agos\debugger.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\debugger.h">
+			RelativePath="..\..\engines\agos\debugger.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\draw.cpp">
+			RelativePath="..\..\engines\agos\draw.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\event.cpp">
+			RelativePath="..\..\engines\agos\event.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\game.cpp">
+			RelativePath="..\..\engines\agos\game.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\icons.cpp">
+			RelativePath="..\..\engines\agos\icons.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\intern.h">
+			RelativePath="..\..\engines\agos\intern.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\items.cpp">
+			RelativePath="..\..\engines\agos\items.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\midi.cpp">
+			RelativePath="..\..\engines\agos\midi.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\midi.h">
+			RelativePath="..\..\engines\agos\midi.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\midiparser_s1d.cpp">
+			RelativePath="..\..\engines\agos\midiparser_s1d.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\oracle.cpp">
+			RelativePath="..\..\engines\agos\oracle.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\res.cpp">
+			RelativePath="..\..\engines\agos\res.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\saveload.cpp">
+			RelativePath="..\..\engines\agos\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\simon.cpp">
+			RelativePath="..\..\engines\agos\agos.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\simon.h">
+			RelativePath="..\..\engines\agos\agos.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\sound.cpp">
+			RelativePath="..\..\engines\agos\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\sound.h">
+			RelativePath="..\..\engines\agos\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\string.cpp">
+			RelativePath="..\..\engines\agos\string.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\subroutine.cpp">
+			RelativePath="..\..\engines\agos\subroutine.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\verb.cpp">
+			RelativePath="..\..\engines\agos\verb.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\vga.cpp">
+			RelativePath="..\..\engines\agos\vga.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\vga.h">
+			RelativePath="..\..\engines\agos\vga.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\simon\window.cpp">
+			RelativePath="..\..\engines\agos\window.cpp">
 		</File>
 	</Files>
 	<Globals>

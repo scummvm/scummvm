@@ -49,7 +49,7 @@ _mt32emu=yes
 _build_scumm=yes
 _build_scumm_7_8=yes
 _build_he=yes
-_build_simon=yes
+_build_agos=yes
 _build_sky=yes
 _build_sword1=yes
 _build_sword2=yes
@@ -321,7 +321,7 @@ Optional Features:
   --disable-scumm          don't build the SCUMM engine
   --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
   --disable-he             exclude HE70+ games in SCUMM engine
-  --disable-simon          don't build the simon engine
+  --disable-agos           don't build the AGOS engine
   --disable-sky            don't build the Beneath a Steel Sky engine
   --disable-sword1         don't build the Broken Sword 1 engine
   --disable-sword2         don't build the Broken Sword 2 engine
@@ -389,7 +389,7 @@ for ac_option in $@; do
       --disable-scumm)          _build_scumm=no ;;
       --disable-scumm-7-8)      _build_scumm_7_8=no ;;
       --disable-he)             _build_he=no ;;
-      --disable-simon)          _build_simon=no ;;
+      --disable-agos)           _build_agos=no ;;
       --disable-sky)            _build_sky=no ;;
       --disable-sword1)         _build_sword1=no ;;
       --disable-sword2)         _build_sword2=no ;;
@@ -667,7 +667,7 @@ fi;
 add_flag_to_config_mk $_build_scumm       'DISABLE_SCUMM'
 add_flag_to_config_mk $_build_scumm_7_8   'DISABLE_SCUMM_7_8'
 add_flag_to_config_mk $_build_he          'DISABLE_HE'
-add_flag_to_config_mk $_build_simon       'DISABLE_SIMON'
+add_flag_to_config_mk $_build_agos        'DISABLE_AGOS'
 add_flag_to_config_mk $_build_sky         'DISABLE_SKY'
 add_flag_to_config_mk $_build_sword1      'DISABLE_SWORD1'
 add_flag_to_config_mk $_build_sword2      'DISABLE_SWORD2'
@@ -1211,8 +1211,8 @@ if test "$_build_scumm" = yes ; then
 	fi
 	echo
 fi
-if test "$_build_simon" = yes ; then
-	echo "    Simon the Sorcerer"
+if test "$_build_agos" = yes ; then
+	echo "    AGOS"
 fi
 if test "$_build_sky" = yes ; then
 	echo "    Beneath a Steel Sky"

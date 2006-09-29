@@ -1,6 +1,7 @@
-MODULE := engines/simon
+MODULE := engines/agos
 
 MODULE_OBJS := \
+	agos.o \
 	animation.o \
 	charset.o \
 	cursor.o \
@@ -13,17 +14,16 @@ MODULE_OBJS := \
 	items.o \
 	midi.o \
 	midiparser_s1d.o \
- 	oracle.o \
+	oracle.o \
 	res.o \
 	rooms.o \
 	saveload.o \
-	simon.o \
 	sound.o \
 	string.o \
 	subroutine.o \
 	verb.o \
 	vga.o \
-	window.o \
+	window.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

@@ -13,10 +13,10 @@ endif
 
 endif
 
-ifdef DISABLE_SIMON
-DEFINES += -DDISABLE_SIMON
+ifdef DISABLE_AGOS
+DEFINES += -DDISABLE_AGOS
 else
-MODULES += engines/simon
+MODULES += engines/agos
 endif
 
 ifdef DISABLE_SKY

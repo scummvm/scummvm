@@ -25,7 +25,7 @@
 
 #include "common/file.h"
 
-#include "simon/simon.h"
+#include "agos/agos.h"
 
 namespace Simon {
 

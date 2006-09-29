@@ -25,9 +25,9 @@
 
 #include "common/savefile.h"
 
-#include "simon/simon.h"
-#include "simon/intern.h"
-#include "simon/vga.h"
+#include "agos/agos.h"
+#include "agos/intern.h"
+#include "agos/vga.h"
 
 namespace Simon {
 

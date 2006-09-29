@@ -21,11 +21,11 @@
  *
  */
 
-#ifndef SIMON_SOUND_H
-#define SIMON_SOUND_H
+#ifndef AGOS_SOUND_H
+#define AGOS_SOUND_H
 
 #include "sound/mixer.h"
-#include "simon/intern.h"
+#include "agos/intern.h"
 #include "common/str.h"
 
 namespace Simon {

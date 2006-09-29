@@ -30,10 +30,10 @@
 
 #include "gui/about.h"
 
-#include "simon/debugger.h"
-#include "simon/intern.h"
-#include "simon/simon.h"
-#include "simon/vga.h"
+#include "agos/debugger.h"
+#include "agos/intern.h"
+#include "agos/agos.h"
+#include "agos/vga.h"
 
 #include "sound/mididrv.h"
 
@@ -2277,13 +2277,13 @@ void SimonEngine::set_volume(int volume) {
 #ifdef PALMOS_68K
 #include "scumm_globals.h"
 
-_GINIT(Simon_Simon)
+_GINIT(AGOS_AGOS)
 _GSETPTR(Simon::simon1_settings, GBVARS_SIMON1SETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon2_settings, GBVARS_SIMON2SETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::feeblefiles_settings, GBVARS_FEEBLEFILESSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GEND
 
-_GRELEASE(Simon_Simon)
+_GRELEASE(AGOS_AGOS)
 _GRELEASEPTR(GBVARS_SIMON1SETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2SETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_FEEBLEFILESSETTINGS_INDEX, GBVARS_SIMON)

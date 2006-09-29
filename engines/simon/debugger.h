@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SIMON_DEBUGGER_H
-#define SIMON_DEBUGGER_H
+#ifndef AGOS_DEBUGGER_H
+#define AGOS_DEBUGGER_H
 
 #include "gui/debugger.h"
 

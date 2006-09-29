@@ -44,7 +44,7 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 	//MACRO			DISABLE_SCUMM_7_8
 	//MACRO			DISABLE_SCUMM_HE
 	//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
-	//MACRO			DISABLE_SIMON		// LIB:scummvm_simon.lib
+	//MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 	//MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
 	//MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 	//MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib

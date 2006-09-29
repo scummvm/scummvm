@@ -12,7 +12,7 @@ ResourceIncludes=../..;../../icons
 MakeIncludes=
 Compiler=
 CppCompiler=-Wno-multichar_@@_-DUSE_ZLIB_@@_
-Linker=cine/cine.a_@@_gob/gob.a_@@_kyra/kyra.a_@@_lure/lure.a_@@_queen/queen.a_@@_saga/saga.a_@@_scumm/scumm.a_@@_simon/simon.a_@@_sky/sky.a_@@_sword1/sword1.a_@@_sword2/sword2.a_@@_-lSDL.dll_@@_-lwinmm_@@_-lz.dll_@@_
+Linker=cine/cine.a_@@_gob/gob.a_@@_kyra/kyra.a_@@_lure/lure.a_@@_queen/queen.a_@@_saga/saga.a_@@_scumm/scumm.a_@@_agos/agos.a_@@_sky/sky.a_@@_sword1/sword1.a_@@_sword2/sword2.a_@@_-lSDL.dll_@@_-lwinmm_@@_-lz.dll_@@_
 IsCpp=1
 Icon=scummvm.ico
 ExeOutput=scummvm
@@ -2061,7 +2061,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit203]
-FileName=simon.dev
+FileName=agos.dev
 Folder=scummvm
 Compile=0
 Link=0

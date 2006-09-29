@@ -32,7 +32,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-#include "simon/simon.h"
+#include "agos/agos.h"
 
 namespace Simon {
 static DetectedGameList GAME_detectGames(const FSList &fslist);
@@ -80,7 +80,7 @@ static const PlainGameDescriptor simonGames[] = {
 	{NULL, NULL}
 };
 
-GameList Engine_SIMON_gameIDList() {
+GameList Engine_AGOS_gameIDList() {
 	GameList games;
 	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
@@ -91,7 +91,7 @@ GameList Engine_SIMON_gameIDList() {
 	return games;
 }
 
-GameDescriptor Engine_SIMON_findGameID(const char *gameid) {
+GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
 	// First search the list of supported game IDs.
 	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
@@ -115,11 +115,11 @@ GameDescriptor Engine_SIMON_findGameID(const char *gameid) {
 	return gs;
 }
 
-DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
+DetectedGameList Engine_AGOS_detectGames(const FSList &fslist) {
 	return Simon::GAME_detectGames(fslist);
 }
 
-PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
+PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -147,7 +147,7 @@ PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
 	}
 
 	// Invoke the detector
-	DetectedGameList detectedGames = Engine_SIMON_detectGames(fslist);
+	DetectedGameList detectedGames = Engine_AGOS_detectGames(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		if (detectedGames[i].gameid == gameid) {
@@ -160,7 +160,7 @@ PluginError Engine_SIMON_create(OSystem *syst, Engine **engine) {
 	return kNoGameDataFoundError;
 }
 
-REGISTER_PLUGIN(SIMON, "Simon the Sorcerer", "Simon the Sorcerer (C) Adventure Soft");
+REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
 namespace Simon {
 
