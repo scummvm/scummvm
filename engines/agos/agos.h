@@ -322,7 +322,7 @@ protected:
 	uint _numTextBoxes;
 
 	uint _lastTime;
-	uint32 _clockStopped, _gameStoppedClock;
+	uint32 _clockStopped, _gameStoppedClock, _gameTime;
 	time_t _timeStore;
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
@@ -1041,8 +1041,11 @@ public:
 
 	// Opcodes, Puzzle Pack only
 	void o4_opcode30();
+	void o4_restoreOopsPosition();
 	void o4_checkTiles();
-	void o4_opcode38();
+	void o4_loadMouseImage();
+	void o4_setShortText();
+	void o4_animate();
 	void o4_loadHiScores();
 	void o4_checkHiScores();
 	void o4_loadUserGame();
@@ -1050,6 +1053,7 @@ public:
 	void o4_resetGameTime();
 	void o4_resetPVCount();
 	void o4_setPathValues();
+	void o4_restartClock();
 
 protected:
 	void drawImages(VC10_state *state);

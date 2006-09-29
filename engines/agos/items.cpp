@@ -448,52 +448,47 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[199] = &AGOSEngine::o3_b3NotZero;
 		break;
 	case GType_PP:
-		// Confirmed
-		opcode_table[30] = &AGOSEngine::o4_opcode30;
-		opcode_table[37] = &AGOSEngine::o4_checkTiles;
-		opcode_table[38] = &AGOSEngine::o4_opcode38;
-		opcode_table[105] = &AGOSEngine::o4_loadHiScores;
-		opcode_table[106] = &AGOSEngine::o4_checkHiScores;
-		opcode_table[133] = &AGOSEngine::o4_loadUserGame;
-		opcode_table[166] = NULL;
-		opcode_table[167] = NULL;
-		opcode_table[168] = NULL;
-		opcode_table[169] = NULL;
-		opcode_table[173] = &AGOSEngine::o4_saveOopsPosition;
-		opcode_table[191] = &AGOSEngine::o4_resetPVCount;
-		opcode_table[192] = &AGOSEngine::o4_setPathValues;
-
-		// Code difference, check if triggered
-		opcode_table[132] = &AGOSEngine::o3_saveUserGame,
-		opcode_table[187] = &AGOSEngine::o4_resetGameTime;
-
-		// Code difference. Some kind of logging?
-		opcode_table[190] = &AGOSEngine::o2_waitMark;
-
-		// To check
 		opcode_table[23] = &AGOSEngine::o3_chance;
+		opcode_table[30] = &AGOSEngine::o4_opcode30;
+		opcode_table[32] = &AGOSEngine::o4_restoreOopsPosition;
+		opcode_table[37] = &AGOSEngine::o4_checkTiles;
+		opcode_table[38] = &AGOSEngine::o4_loadMouseImage;
 		opcode_table[65] = &AGOSEngine::o3_addTextBox;
+		opcode_table[66] = &AGOSEngine::o4_setShortText,
 		opcode_table[70] = &AGOSEngine::o3_printLongText;
 		opcode_table[83] = &AGOSEngine::o2_rescan;
-		opcode_table[98] = &AGOSEngine::o2_animate;
+		opcode_table[98] = &AGOSEngine::o4_animate;
 		opcode_table[99] = &AGOSEngine::o2_stopAnimate;
+		opcode_table[105] = &AGOSEngine::o4_loadHiScores;
+		opcode_table[106] = &AGOSEngine::o4_checkHiScores;
 		opcode_table[107] = &AGOSEngine::o3_addBox;
 		opcode_table[122] = &AGOSEngine::o3_oracleTextDown;
 		opcode_table[123] = &AGOSEngine::o3_oracleTextUp;
 		opcode_table[124] = &AGOSEngine::o3_ifTime;
 		opcode_table[127] = &AGOSEngine::o3_playTune;
 		opcode_table[131] = &AGOSEngine::o3_setTime;
+		opcode_table[132] = &AGOSEngine::o3_saveUserGame,
+		opcode_table[133] = &AGOSEngine::o4_loadUserGame;
 		opcode_table[134] = &AGOSEngine::o3_listSaveGames;
 		opcode_table[161] = &AGOSEngine::o3_screenTextBox;
 		opcode_table[165] = &AGOSEngine::o3_isAdjNoun;
+		opcode_table[166] = NULL;
+		opcode_table[167] = NULL;
+		opcode_table[168] = NULL;
+		opcode_table[169] = NULL;
 		opcode_table[171] = &AGOSEngine::o3_hyperLinkOn;
 		opcode_table[172] = &AGOSEngine::o3_hyperLinkOff;
+		opcode_table[173] = &AGOSEngine::o4_saveOopsPosition;
 		opcode_table[177] = &AGOSEngine::o3_screenTextPObj;
 		opcode_table[181] = &AGOSEngine::o3_mouseOff;
+		opcode_table[187] = &AGOSEngine::o4_resetGameTime;
 		opcode_table[188] = &AGOSEngine::o2_isShortText;
 		opcode_table[189] = &AGOSEngine::o2_clearMarks;
+		opcode_table[190] = &AGOSEngine::o2_waitMark;
+		opcode_table[191] = &AGOSEngine::o4_resetPVCount;
+		opcode_table[192] = &AGOSEngine::o4_setPathValues;
 		opcode_table[193] = &AGOSEngine::o3_stopClock;
-		opcode_table[194] = &AGOSEngine::o3_restartClock;
+		opcode_table[194] = &AGOSEngine::o4_restartClock;
 		opcode_table[195] = &AGOSEngine::o3_setColour;
 		break;
 	default:
@@ -859,10 +854,6 @@ void AGOSEngine::o_setShortText() {
 	uint stringId = getNextStringID();
 	if (var < _numTextBoxes) {
 		_shortText[var] = stringId;
-		if (getGameType() == GType_PP) {
-			_shortTextX[var] = getVarOrWord();
-			_shortTextY[var] = getVarOrWord();
-		}
 	}
 }
 
@@ -2368,38 +2359,71 @@ void AGOSEngine::o4_opcode30() {
 	getNextItemPtr();
 }
 
+void AGOSEngine::o4_restoreOopsPosition() {
+	// 32: restore oops position
+	getNextItemPtr();
+}
+
 void AGOSEngine::o4_checkTiles() {
 	// 37: for  MahJongg game
 	getVarOrByte();
 }
 
-void AGOSEngine::o4_opcode38() {
-	// 38
+void AGOSEngine::o4_loadMouseImage() {
+	// 38: load mouse image
 	getVarOrByte();
 	getNextItemPtr();
 }
 
+void AGOSEngine::o4_setShortText() {
+	// 66: set item name
+	uint var = getVarOrByte();
+	uint stringId = getNextStringID();
+	if (var < _numTextBoxes) {
+		_shortText[var] = stringId;
+		_shortTextX[var] = getVarOrWord();
+		_shortTextY[var] = getVarOrWord();
+	}
+}
+
+void AGOSEngine::o4_animate() {
+	// 98: start vga
+	uint vga_res = getVarOrWord();
+	uint vgaSpriteId = getVarOrWord();
+	uint windowNum = getVarOrByte();
+	uint x = getVarOrWord();
+	uint y = getVarOrWord();
+	uint palette = getVarOrWord();
+
+	if (getBitFlag(96)) {
+		printf("Start Block\n");
+	} else {
+		loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
+	}
+}
+
 void AGOSEngine::o4_loadHiScores() {
-	// 105
+	// 105: load high scores
 	getVarOrByte();
 }
 
 void AGOSEngine::o4_checkHiScores() {
-	// 106
+	// 106: check high scores
 	getVarOrByte();
 	getVarOrByte();
 }
 
 void AGOSEngine::o4_loadUserGame() {
-	// 133
+	// 133: load usergame
 }
 
 void AGOSEngine::o4_saveOopsPosition() {
-	// 173
+	// 173: save oops position
 }
 
 void AGOSEngine::o4_resetGameTime() {
-	// 187
+	// 187: reset game time
+	_gameTime = 0;
 }
 
 void AGOSEngine::o4_resetPVCount() {
@@ -2414,6 +2438,13 @@ void AGOSEngine::o4_setPathValues() {
 	_pathValues[_PVCount++] = getVarOrByte();
 	_pathValues[_PVCount++] = getVarOrByte();
 	_pathValues[_PVCount++] = getVarOrByte();
+}
+
+void AGOSEngine::o4_restartClock() {
+	// 194: resume clock
+	if (_clockStopped != 0)
+		_gameTime += time(NULL) - _clockStopped;
+	_clockStopped = 0;
 }
 
 // -----------------------------------------------------------------------

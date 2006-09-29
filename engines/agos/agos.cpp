@@ -227,6 +227,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_clockStopped = 0;
 	_gameStoppedClock = 0;
+	_gameTime = 0;
 	_lastTime = 0;
 
 	_firstTimeStruct = 0;
