@@ -85,6 +85,7 @@ public:
 
 	bool hasVoice() const;
 	bool isVoiceActive() const;
+	void stopAllSfx();
 	void stopSfx5();
 	void stopVoice();
 	void stopAll();

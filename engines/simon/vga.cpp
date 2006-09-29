@@ -1796,7 +1796,10 @@ void SimonEngine::vc28_dummy_op() {
 }
 
 void SimonEngine::vc29_stopAllSounds() {
-	_sound->stopAll();
+	if (getGameType() != GType_PP)
+		_sound->stopVoice();
+
+	_sound->stopAllSfx();
 }
 
 void SimonEngine::vc30_setFrameRate() {
