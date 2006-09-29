@@ -602,10 +602,10 @@ static GameFileDescription WAXWORKS_GameFiles[] = {
 };
 
 static GameFileDescription ELVIRA2_GameFiles[] = {
-	{ "gamepc",		GAME_BASEFILE,	"00000000000000000000000000000000"},
-	{ "icon.dat",		GAME_ICONFILE,	"00000000000000000000000000000000"},
-	{ "stripped.txt",	GAME_STRFILE,	"00000000000000000000000000000000"},
-	{ "tbllist",		GAME_TBLFILE,	"00000000000000000000000000000000"},
+	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7"},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
+	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17"},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
 };
 
 static GameFileDescription ELVIRA_GameFiles[] = {
