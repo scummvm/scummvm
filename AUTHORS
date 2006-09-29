@@ -71,6 +71,7 @@ ScummVM Team
        Eugene Sandulenko    
 
     Simon:
+       Torbjorn Andersson   
        Travis Howell        
        Oliver Kiehl         
 
@@ -201,6 +202,7 @@ Other contributions
 
   Code contributions
   ------------------
+     John Doe              - Improved DXA compression
      Ori Avtalion          - Subtitle control options in the GUI
      Stuart Caie           - Decoders for Simon 1 Amiga data files
      Paolo Costabel        - PSP port contributions
@@ -257,5 +259,5 @@ Special thanks to
    is today. Feel free to drop us a line and tell us what you think, guys!
 
    Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing
-   the source code of The Feeble Files with us.
+   the source code of The Feeble Files and Simon the Sorcerer's 
 

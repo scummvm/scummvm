@@ -536,6 +536,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Simon");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Oliver Kiehl", "olki", "");
 	  end_section();
@@ -703,6 +704,7 @@ begin_credits("Credits");
 
 	begin_section("Code contributions");
 	  begin_persons();
+		  add_person("John Doe", "", "Improved DXA compression");
 		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI");
 		  add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
@@ -771,7 +773,8 @@ begin_credits("Credits");
 
   add_paragraph(
   "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
-  "sharing the source code of The Feeble Files with us.");
+  "sharing the source code of The Feeble Files and Simon the Sorcerer's ",
+  "Puzzle Pack with us.");
 
   end_section();
 
