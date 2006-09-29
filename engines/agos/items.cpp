@@ -289,46 +289,139 @@ void AGOSEngine::setupOpcodes() {
 
 	switch (getGameType()) {
 	case GType_ELVIRA:
-	case GType_ELVIRA2:
-		// Confirmed
+		opcode_table[0] = &AGOSEngine::o_at;
+		opcode_table[1] = &AGOSEngine::o_notAt;
+		opcode_table[2] = NULL;
+
+		opcode_table[6] = &AGOSEngine::o_carried;
+		opcode_table[7] = &AGOSEngine::o_notCarried;
+		opcode_table[8] = &AGOSEngine::o_isAt;
+
+		opcode_table[12] = &AGOSEngine::o_zero;
+		opcode_table[13] = &AGOSEngine::o_notZero;
+		opcode_table[14] = &AGOSEngine::o_eq;
+		opcode_table[15] = &AGOSEngine::o_notEq;
+		opcode_table[16] = &AGOSEngine::o_gt;
+		opcode_table[17] = &AGOSEngine::o_lt;
+		opcode_table[18] = &AGOSEngine::o_eqf;
+		opcode_table[19] = &AGOSEngine::o_notEqf;
+		opcode_table[20] = &AGOSEngine::o_ltf;
+		opcode_table[21] = &AGOSEngine::o_gtf;
+
+		opcode_table[32] = &AGOSEngine::o_isRoom;
+		opcode_table[33] = &AGOSEngine::o_isObject;
+
+		opcode_table[34] = &AGOSEngine::o_state;
+		opcode_table[36] = &AGOSEngine::o_oflag;
+
 		opcode_table[48] = &AGOSEngine::o_destroy;
+		opcode_table[49] = NULL;
+
 		opcode_table[51] = &AGOSEngine::o_place;
+
+		opcode_table[56] = &AGOSEngine::o_copyff;
+
+		opcode_table[61] = &AGOSEngine::o_clear;
+
+		opcode_table[64] = &AGOSEngine::o_let;
+		opcode_table[65] = &AGOSEngine::o_add;
+		opcode_table[66] = &AGOSEngine::o_sub;
+		opcode_table[67] = &AGOSEngine::o_addf;
+		opcode_table[68] = &AGOSEngine::o_subf;
+		opcode_table[69] = &AGOSEngine::o_mul;
+		opcode_table[70] = &AGOSEngine::o_div;
+		opcode_table[71] = &AGOSEngine::o_mulf;
+		opcode_table[72] = &AGOSEngine::o_divf;
+		opcode_table[73] = &AGOSEngine::o_mod;
+		opcode_table[74] = &AGOSEngine::o_modf;
+		opcode_table[75] = &AGOSEngine::o_random;
+
+		opcode_table[77] = &AGOSEngine::o_goto;
+
+		opcode_table[80] = &AGOSEngine::o_oset;
+		opcode_table[81] = &AGOSEngine::o_oclear;
+
+		opcode_table[84] = &AGOSEngine::o_putBy;
+		opcode_table[85] = &AGOSEngine::o_inc;
+		opcode_table[86] = &AGOSEngine::o_dec;
+		opcode_table[87] = &AGOSEngine::o_setState;
+		opcode_table[88] = NULL;
+
 		opcode_table[91] = &AGOSEngine::o_message;
 
-		opcode_table[70] = &AGOSEngine::o1_printLongText;
-		opcode_table[83] = &AGOSEngine::o1_rescan;
-		opcode_table[98] = &AGOSEngine::o1_animate;
-		opcode_table[99] = &AGOSEngine::o1_stopAnimate;
-		opcode_table[85] = &AGOSEngine::oww_whereTo;
-		opcode_table[105] = &AGOSEngine::oww_menu;
-		opcode_table[106] = &AGOSEngine::oww_textMenu;
-		opcode_table[127] = &AGOSEngine::o1_playTune;
-		opcode_table[148] = &AGOSEngine::oww_ifDoorOpen;
-		opcode_table[179] = &AGOSEngine::o_isAdjNoun;
-		opcode_table[180] = &AGOSEngine::o_b2Set;
-		opcode_table[181] = &AGOSEngine::o_b2Clear;
-		opcode_table[182] = &AGOSEngine::o_b2Zero;
-		opcode_table[183] = &AGOSEngine::o_b2NotZero;
+		opcode_table[97] = &AGOSEngine::o_end;
+		opcode_table[98] = &AGOSEngine::o_done;
 
-		// Code difference, check if triggered
-		opcode_table[161] = NULL;
-		opcode_table[162] = NULL;
-		opcode_table[163] = NULL;
-		opcode_table[164] = NULL;
-		opcode_table[165] = NULL;
+		opcode_table[101] = NULL;
+		opcode_table[102] = NULL;
+		opcode_table[103] = NULL;
+		opcode_table[104] = NULL;
+		opcode_table[105] = &AGOSEngine::o_process;
+
+		opcode_table[108] = NULL;
+		opcode_table[109] = NULL;
+		opcode_table[110] = NULL;
+		opcode_table[111] = NULL;
+
+		opcode_table[116] = NULL;
+		opcode_table[117] = NULL;
+		opcode_table[118] = NULL;
+		opcode_table[119] = &AGOSEngine::o_when;
+		opcode_table[120] = NULL;
+		opcode_table[121] = NULL;
+		opcode_table[122] = NULL;
+
+		opcode_table[124] = NULL;
+		opcode_table[125] = NULL;
+		opcode_table[126] = NULL;
+		opcode_table[127] = NULL;
+		opcode_table[128] = &AGOSEngine::o_if1;
+		opcode_table[129] = &AGOSEngine::o_if2;
+		opcode_table[130] = NULL;
+		opcode_table[131] = NULL;
+		opcode_table[132] = NULL;
+
+		opcode_table[134] = NULL;
+		opcode_table[135] = &AGOSEngine::o_isCalled;
+		opcode_table[136] = &AGOSEngine::o_is;
+
+		opcode_table[138] = NULL;
+		opcode_table[139] = NULL;
+
+		opcode_table[141] = NULL;
+		opcode_table[142] = NULL;
+		opcode_table[143] = NULL;
+		opcode_table[144] = NULL;
+		opcode_table[145] = NULL;
+		opcode_table[146] = NULL;
+		opcode_table[147] = NULL;
+		opcode_table[148] = NULL;
+		opcode_table[149] = NULL;
+		opcode_table[150] = NULL;
+		opcode_table[151] = NULL;
+		opcode_table[152] = &AGOSEngine::o_debug;
+		opcode_table[153] = NULL;
+		opcode_table[154] = NULL;
+		opcode_table[155] = NULL;
+		opcode_table[156] = NULL;
+		opcode_table[157] = NULL;
+		opcode_table[158] = NULL;
+		opcode_table[159] = NULL;
+
 		opcode_table[166] = NULL;
 		opcode_table[167] = NULL;
 		opcode_table[168] = NULL;
 		opcode_table[169] = NULL;
-		opcode_table[170] = NULL;
+
 		opcode_table[171] = NULL;
 		opcode_table[172] = NULL;
 		opcode_table[173] = NULL;
 		opcode_table[174] = NULL;
-		opcode_table[175] = NULL;
-		opcode_table[176] = NULL;
-		opcode_table[177] = NULL;
-		opcode_table[178] = NULL;
+
+		opcode_table[179] = NULL;
+
+		opcode_table[182] = NULL;
+		opcode_table[183] = NULL;
 		opcode_table[184] = NULL;
 		opcode_table[185] = NULL;
 		opcode_table[186] = NULL;
@@ -336,6 +429,87 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[188] = NULL;
 		opcode_table[189] = NULL;
 		opcode_table[190] = NULL;
+		opcode_table[191] = NULL;
+		opcode_table[192] = NULL;
+		opcode_table[193] = NULL;
+
+		opcode_table[195] = NULL;
+		opcode_table[196] = NULL;
+		opcode_table[197] = NULL;
+		opcode_table[198] = &AGOSEngine::o_comment;
+		opcode_table[199] = NULL;
+		opcode_table[200] = NULL;
+
+		opcode_table[203] = NULL;
+
+		opcode_table[205] = NULL;
+		opcode_table[206] = &AGOSEngine::o_getParent;
+		opcode_table[207] = &AGOSEngine::o_getNext;
+		opcode_table[208] = &AGOSEngine::o_getChildren;
+
+		opcode_table[210] = NULL;
+		opcode_table[211] = NULL;
+		opcode_table[212] = NULL;
+		opcode_table[213] = NULL;
+		opcode_table[214] = NULL;
+		opcode_table[215] = NULL;
+		opcode_table[216] = NULL;
+		opcode_table[217] = NULL;
+		opcode_table[218] = NULL;
+
+		opcode_table[221] = NULL;
+		opcode_table[222] = NULL;
+		opcode_table[223] = NULL;
+		opcode_table[224] = &AGOSEngine::o_picture;
+		opcode_table[225] = &AGOSEngine::o_loadZone;
+		opcode_table[226] = &AGOSEngine::o1_animate;
+		opcode_table[227] = &AGOSEngine::o1_stopAnimate;
+		opcode_table[228] = &AGOSEngine::o_killAnimate;
+		opcode_table[229] = &AGOSEngine::o_defWindow;
+		opcode_table[230] = &AGOSEngine::o_window;
+		opcode_table[231] = &AGOSEngine::o_cls;
+		opcode_table[232] = &AGOSEngine::o_closeWindow;
+
+		opcode_table[235] = &AGOSEngine::o_addBox;
+		opcode_table[236] = &AGOSEngine::o_delBox;
+		opcode_table[237] = &AGOSEngine::o_enableBox;
+		opcode_table[238] = &AGOSEngine::o_disableBox;
+		opcode_table[239] = &AGOSEngine::o_moveBox;
+
+		opcode_table[242] = &AGOSEngine::o_doIcons;
+		opcode_table[243] = &AGOSEngine::o_isClass;
+		opcode_table[244] = NULL;
+		opcode_table[245] = NULL;
+		opcode_table[246] = NULL;
+		opcode_table[247] = NULL;
+		opcode_table[248] = NULL;
+		opcode_table[249] = &AGOSEngine::o_setClass;
+		opcode_table[250] = &AGOSEngine::o_unsetClass;
+
+		opcode_table[255] = &AGOSEngine::o_waitSync;
+		opcode_table[256] = &AGOSEngine::o_sync;
+		opcode_table[257] = &AGOSEngine::o_defObj;
+
+		opcode_table[261] = &AGOSEngine::o_here;
+		opcode_table[262] = &AGOSEngine::o_doClassIcons;
+		opcode_table[264] = &AGOSEngine::o_waitEndTune;
+		opcode_table[263] = &AGOSEngine::o1_playTune;
+
+		opcode_table[265] = &AGOSEngine::o_ifEndTune;
+		opcode_table[266] = &AGOSEngine::o_setAdjNoun;
+		opcode_table[268] = &AGOSEngine::o_saveUserGame;
+		opcode_table[269] = &AGOSEngine::o_loadUserGame;
+		opcode_table[271] = &AGOSEngine::o_stopTune;
+
+		opcode_table[274] = &AGOSEngine::o_pauseGame;
+		opcode_table[275] = &AGOSEngine::o_copysf;
+		opcode_table[276] = &AGOSEngine::o_restoreIcons;
+
+		opcode_table[279] = &AGOSEngine::o_freezeZones;
+		opcode_table[280] = &AGOSEngine::o_placeNoIcons;
+		opcode_table[281] = &AGOSEngine::o_clearTimers;
+
+		opcode_table[283] = &AGOSEngine::o_isBox;
 		break;
 	case GType_WW:
 		// Confirmed
@@ -420,7 +594,7 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[124] = &AGOSEngine::o3_ifTime;
 		opcode_table[127] = &AGOSEngine::o3_playTune;
 		opcode_table[131] = &AGOSEngine::o3_setTime;
-		opcode_table[132] = &AGOSEngine::o3_saveUserGame,
+		opcode_table[132] = &AGOSEngine::o3_saveUserGame;
 		opcode_table[133] = &AGOSEngine::o3_loadUserGame;
 		opcode_table[134] = &AGOSEngine::o3_listSaveGames;
 		opcode_table[135] = &AGOSEngine::o3_checkCD;
@@ -454,7 +628,7 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[37] = &AGOSEngine::o4_checkTiles;
 		opcode_table[38] = &AGOSEngine::o4_loadMouseImage;
 		opcode_table[65] = &AGOSEngine::o3_addTextBox;
-		opcode_table[66] = &AGOSEngine::o4_setShortText,
+		opcode_table[66] = &AGOSEngine::o4_setShortText;
 		opcode_table[70] = &AGOSEngine::o3_printLongText;
 		opcode_table[83] = &AGOSEngine::o2_rescan;
 		opcode_table[98] = &AGOSEngine::o4_animate;
@@ -467,7 +641,7 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[124] = &AGOSEngine::o3_ifTime;
 		opcode_table[127] = &AGOSEngine::o3_playTune;
 		opcode_table[131] = &AGOSEngine::o3_setTime;
-		opcode_table[132] = &AGOSEngine::o3_saveUserGame,
+		opcode_table[132] = &AGOSEngine::o3_saveUserGame;
 		opcode_table[133] = &AGOSEngine::o4_loadUserGame;
 		opcode_table[134] = &AGOSEngine::o3_listSaveGames;
 		opcode_table[161] = &AGOSEngine::o3_screenTextBox;
