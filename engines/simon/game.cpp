@@ -74,7 +74,7 @@ static const PlainGameDescriptor simonGames[] = {
 	{"simon2", "Simon the Sorcerer 2"},
 	{"feeble", "The Feeble Files"},
 	{"jumble", "Jumble"},
-	{"puzzle", "Puzzle"},
+	{"puzzle", "NoPatience"},
 	{"swampy", "Swampy Adventures"},
 	{NULL, NULL}
 };
