@@ -932,10 +932,62 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	return dst;
 }
 
+static const char *dimpSoundList[32] = {
+	"Beep",
+	"Birth",
+	"Boiling",
+	"Burp",
+	"Cough",
+	"Die1",
+	"Die2",
+	"Fart",
+	"Inject",
+	"Killchik",
+	"Puke",
+	"Lights",
+	"Shock",
+	"Snore",
+	"Snotty",
+	"Whip",
+	"Whistle",
+	"Work1",
+	"Work2",
+	"Yawn",
+	"And0w",
+	"And0x",
+	"And0y",
+	"And0z",
+	"And10",
+	"And11",
+	"And12",
+	"And13",
+	"And14",
+	"And15",
+	"And16",
+	"And17",
+};
+
+
 void SimonEngine::loadSound(uint sound, int pan, int vol, uint type) {
 	byte *dst;
 
-	if (getFeatures() & GF_ZLIBCOMP) {
+	if (getGameId() == GID_DIMP) {
+		File in;
+		char filename[15];
+
+		assert(sound >= 1 && sound <= 32);
+		sprintf(filename, "%s.wav", dimpSoundList[sound - 1]);
+
+		in.open(filename);
+		if (in.isOpen() == false)
+			error("loadSound: Can't load %s", filename);
+
+		uint32 dstSize = in.size();
+		dst = (byte *)malloc(dstSize);
+		if (in.read(dst, dstSize) != dstSize)
+			error("loadSound: Read failed");
+		in.close();
+	} else if (getFeatures() & GF_ZLIBCOMP) {
 		char filename[15];
 
 		uint32 file, offset, srcSize, dstSize;

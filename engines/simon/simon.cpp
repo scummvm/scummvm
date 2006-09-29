@@ -422,7 +422,10 @@ int SimonEngine::init() {
 		return -1;
 	}
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameId() == GID_DIMP) {
+		_screenWidth = 496;
+		_screenHeight = 400;
+	} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else {

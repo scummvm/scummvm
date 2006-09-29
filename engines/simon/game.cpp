@@ -73,6 +73,7 @@ static const PlainGameDescriptor simonGames[] = {
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
 	{"feeble", "The Feeble Files"},
+	{"dimp", "Demon in my Pocket"},
 	{"jumble", "Jumble"},
 	{"puzzle", "NoPatience"},
 	{"swampy", "Swampy Adventures"},
@@ -612,6 +613,10 @@ static GameFileDescription ELVIRA_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
+};
+
+static GameFileDescription DIMP_GameFiles[] = {
+	{ "Gdimp",		GAME_BASEFILE,	"0b1e89ae1dc2e012b7fa7a987b4ac42a"},
 };
 
 static GameFileDescription JUMBLE_GameFiles[] = {
@@ -1436,7 +1441,20 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
-	// Jumble
+	// Simon the Sorcerer's Puzzle Pack - Demon in my Pocket
+	{
+		"dimp",
+		GType_PP,
+		GID_DIMP,
+		"CD",
+		ARRAYSIZE(DIMP_GameFiles),
+		DIMP_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+	},
+
+	// Simon the Sorcerer's Puzzle Pack - Jumble
 	{
 		"jumble",
 		GType_PP,
@@ -1449,7 +1467,7 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
-	// Puzzle
+	// Simon the Sorcerer's Puzzle Pack - NoPatience
 	{
 		"puzzle",
 		GType_PP,
@@ -1462,7 +1480,7 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
-	// Swampy Adventures
+	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures
 	{
 		"swampy",
 		GType_PP,
