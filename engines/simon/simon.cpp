@@ -791,7 +791,7 @@ uint SimonEngine::getVarOrWord() {
 }
 
 uint SimonEngine::getVarWrapper() {
-	if (getGameId() == GID_SWAMPY)
+	if (getGameType() == GType_PP)
 		return getVarOrWord();
 	else
 		return getVarOrByte();

@@ -323,7 +323,7 @@ void SimonEngine::loadGamePcFile() {
 
 	in.close();
 
-	if (getGameId() == GID_SWAMPY)
+	if (getGameType() == GType_PP)
 		return;
 
 	/* Read list of TABLE resources */
@@ -345,7 +345,7 @@ void SimonEngine::loadGamePcFile() {
 	_tablesHeapPtrOrg = _tablesHeapPtr;
 	_tablesHeapCurPosOrg = _tablesHeapCurPos;
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_FF || getGameType() == GType_PP)
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_FF)
 		return;
 
 	/* Read list of TEXT resources */
