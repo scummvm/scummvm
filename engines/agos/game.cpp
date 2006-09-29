@@ -1666,17 +1666,21 @@ bool AGOSEngine::initGame() {
 	if (ConfMan.hasKey("platform"))
 		platform = Common::parsePlatform(ConfMan.get("platform"));
 
+	Common::String gameid = ConfMan.get("gameid");
+
+	// At this point, Engine_AGOS_create() has already verified that the
+	// desired game is in the specified directory. But we've already
+	// forgotten which particular version it was, so we have to do it all
+	// over again...
+
 	count = detectGame(NULL, language, platform, matches);
 
-	if (count == 0) {
-		warning("No valid games were found in the specified directory.");
-		return false;
+	for (int i = 0; i < count; i++) {
+		if (toDetectedGame(gameDescriptions[matches[i]]).gameid == gameid) {
+			gameNumber = matches[i];
+			break;
+		}
 	}
-
-	if (count != 1)
-		warning("Conflicting targets detected (%d)", count);
-
-	gameNumber = matches[0];
 
 	free(matches);
 
