@@ -1544,14 +1544,17 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 	
 	if (fslist != NULL) {
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
-			if (file->isDirectory()) continue;
+			if (file->isDirectory())
+				continue;
 			tstr = file->name();
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
 
-			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
+			if (!filesList.contains(tstr) && !filesList.contains(tstr2))
+				continue;
 
-			if (!Common::md5_file(*file, md5sum, FILE_MD5_BYTES)) continue;
+			if (!Common::md5_file(*file, md5sum, FILE_MD5_BYTES))
+				continue;
 			for (j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
@@ -1639,7 +1642,6 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 			}
 		}
 	}
-
 
 	returnMatches = (int *)malloc(matchedCount * sizeof(int));
 	j = 0;
