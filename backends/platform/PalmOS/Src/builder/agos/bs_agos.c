@@ -32,7 +32,7 @@ typedef struct {
  #endif
 } GameSpecificSettings;
 ///////////////////////////////////////////////////////////////////
-static void addSimon_simon1_settings() {
+static void addAGOS_simon1_settings() {
 
 
 	GameSpecificSettings simon1_settings = {
@@ -49,10 +49,10 @@ static void addSimon_simon1_settings() {
 	"GAMEPC",                               // gamepc_filename
 	};
 
-	writeRecord(&simon1_settings, sizeof(simon1_settings), GBVARS_SIMON1SETTINGS_INDEX, GBVARS_SIMON);
+	writeRecord(&simon1_settings, sizeof(simon1_settings), GBVARS_SIMON1SETTINGS_INDEX, GBVARS_AGOS);
 }
 ///////////////////////////////////////////////////////////////////
-static void addSimon_simon1acorn_settings() {
+static void addAGOS_simon1acorn_settings() {
 
 
 	GameSpecificSettings simon1acorn_settings = {
@@ -69,10 +69,10 @@ static void addSimon_simon1acorn_settings() {
 	"GAMEBASE",                             // gamepc_filename
 };
 
-	writeRecord(&simon1acorn_settings, sizeof(simon1acorn_settings), GBVARS_SIMON1ACORNSETTINGS_INDEX, GBVARS_SIMON);
+	writeRecord(&simon1acorn_settings, sizeof(simon1acorn_settings), GBVARS_SIMON1ACORNSETTINGS_INDEX, GBVARS_AGOS);
 }
 ///////////////////////////////////////////////////////////////////
-static void addSimon_simon1amiga_settings() {
+static void addAGOS_simon1amiga_settings() {
 
 
 	GameSpecificSettings simon1amiga_settings = {
@@ -90,11 +90,11 @@ static void addSimon_simon1amiga_settings() {
 };
 
 
-	writeRecord(&simon1amiga_settings, sizeof(simon1amiga_settings), GBVARS_SIMON1AMIGASETTINGS_INDEX, GBVARS_SIMON);
+	writeRecord(&simon1amiga_settings, sizeof(simon1amiga_settings), GBVARS_SIMON1AMIGASETTINGS_INDEX, GBVARS_AGOS);
 }
 ///////////////////////////////////////////////////////////////////
 
-static void addSimon_simon1demo_settings() {
+static void addAGOS_simon1demo_settings() {
 
 
 	GameSpecificSettings simon1demo_settings = {
@@ -111,10 +111,10 @@ static void addSimon_simon1demo_settings() {
 	"GDEMO",                                // gamepc_filename
 };
 
-	writeRecord(&simon1demo_settings, sizeof(simon1demo_settings), GBVARS_SIMON1DEMOSETTINGS_INDEX, GBVARS_SIMON);
+	writeRecord(&simon1demo_settings, sizeof(simon1demo_settings), GBVARS_SIMON1DEMOSETTINGS_INDEX, GBVARS_AGOS);
 }
 ///////////////////////////////////////////////////////////////////
-static void addSimon_simon2win_settings() {
+static void addAGOS_simon2win_settings() {
 
 
 	GameSpecificSettings simon2win_settings = {
@@ -132,10 +132,10 @@ static void addSimon_simon2win_settings() {
 };
 
 
-	writeRecord(&simon2win_settings, sizeof(simon2win_settings), GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON);
+	writeRecord(&simon2win_settings, sizeof(simon2win_settings), GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_AGOS);
 }
 ///////////////////////////////////////////////////////////////////
-static void addSimon_simon2dos_settings() {
+static void addAGOS_simon2dos_settings() {
 
 
 	GameSpecificSettings simon2dos_settings = {
@@ -152,11 +152,11 @@ static void addSimon_simon2dos_settings() {
 	"GAME32",                               // gamepc_filename
 };
 
-	writeRecord(&simon2dos_settings, sizeof(simon2dos_settings), GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_SIMON);
+	writeRecord(&simon2dos_settings, sizeof(simon2dos_settings), GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_AGOS);
 }
 
 typedef unsigned char byte;
-static void addSimon_simon1_cursor() {
+static void addAGOS_simon1_cursor() {
 
 
 	byte _simon1_cursor[256] = {
@@ -178,10 +178,10 @@ static void addSimon_simon1_cursor() {
 	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 };
 
-	writeRecord(&_simon1_cursor, sizeof(_simon1_cursor), GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON);
+	writeRecord(&_simon1_cursor, sizeof(_simon1_cursor), GBVARS_SIMON1CURSOR_INDEX, GBVARS_AGOS);
 }
 /*
-static void addSimon_simon2_cursors() {
+static void addAGOS_simon2_cursors() {
 
 
 	byte _simon2_cursors[10][256] = {
@@ -357,21 +357,21 @@ static void addSimon_simon2_cursors() {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
 };
 
-	writeRecord(&_simon2_cursors, sizeof(_simon2_cursors), GBVARS_SIMON2CURSORS_INDEX, GBVARS_SIMON);
+	writeRecord(&_simon2_cursors, sizeof(_simon2_cursors), GBVARS_SIMON2CURSORS_INDEX, GBVARS_AGOS);
 }*/
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-void addSimon() {
-	addSimon_simon1_settings();
-	addSimon_simon1acorn_settings();
-	addSimon_simon1amiga_settings();
-	addSimon_simon1demo_settings();
-	addSimon_simon2win_settings();
-	addSimon_simon2dos_settings();
+void addAGOS() {
+	addAGOS_simon1_settings();
+	addAGOS_simon1acorn_settings();
+	addAGOS_simon1amiga_settings();
+	addAGOS_simon1demo_settings();
+	addAGOS_simon2win_settings();
+	addAGOS_simon2dos_settings();
 	
-	addSimon_simon1_cursor();
-//	addSimon_simon2_cursors();
+	addAGOS_simon1_cursor();
+//	addAGOS_simon2_cursors();
 }

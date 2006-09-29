@@ -172,8 +172,8 @@ static Err GamUpdateList() {
 								gitCur.engine++;
 							
 							if (gitCur.engine == ENGINE_SCUMM)	// reorder
-								gitCur.engine = ENGINE_SIMON;
-							else if (gitCur.engine == ENGINE_SIMON)
+								gitCur.engine = ENGINE_AGOS;
+							else if (gitCur.engine == ENGINE_AGOS)
 								gitCur.engine = ENGINE_SCUMM;
 						}
 						

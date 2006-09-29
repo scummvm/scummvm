@@ -485,11 +485,11 @@ void SimonEngine::drawMousePart(int image, byte x, byte y) {
 #include "scumm_globals.h"
 
 _GINIT(AGOS_Cursor)
-_GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_AGOS)
 _GEND
 
 _GRELEASE(AGOS_Cursor)
-_GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_AGOS)
 _GEND
 
 #endif

@@ -164,7 +164,7 @@ enum {
 	ENGINE_SAGA,
 	ENGINE_SCUMM,
 	ENGINE_AGI,
-	ENGINE_SIMON,
+	ENGINE_AGOS,
 	ENGINE_COUNT
 };
 
@@ -183,7 +183,7 @@ static const struct {
 	{ "saga",	"SAGA Engine" },
 	{ "scumm",	"Scumm Games" },
 	{ "agi",	"Sierra AGI" },
-	{ "simon",	"Simon the Sorcerer" },
+	{ "simon",	"AGOS" },
 };
 
 

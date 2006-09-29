@@ -3,7 +3,7 @@
 
 
 //#define BUILD_COMMON
-//#define BUILD_SIMON
+//#define BUILD_AGOS
 #define BUILD_SCUMM
 //#define BUILD_SKY
 //#define BUILD_QUEEN
@@ -63,9 +63,9 @@ void buildAll() {
 	addPlayerV2();
 	addScummTables();
 
-#elif defined(BUILD_SIMON)
-	addSimon();
-	Simon_addCharset();
+#elif defined(BUILD_AGOS)
+	addAGOS();
+	AGOS_addCharset();
 
 #elif defined(BUILD_SKY)
 	Sky_addHufftext();

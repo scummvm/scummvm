@@ -23,8 +23,8 @@ void addCostume();
 void addPlayerV2();
 void addScummTables();
 /////////////////////////////////
-void addSimon();
-void Simon_addCharset();
+void addAGOS();
+void AGOS_addCharset();
 /////////////////////////////////
 void Queen_addTalk();
 void Queen_addRestables();
