@@ -412,6 +412,7 @@ protected:
 	int16 *_variableArray;
 	int16 *_variableArray2;
 	int16 *_variableArrayPtr;
+	int16 *_variableBackupArray;
 
 	WindowBlock *_windowArray[16];
 
@@ -474,6 +475,8 @@ protected:
 
 	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[108];
+
+	bool _oopsValid;
 
 	int _sdlMouseX, _sdlMouseY;
 
