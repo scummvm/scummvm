@@ -47,6 +47,50 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( str, "fooX" );
 	}
 
+	void test_refCount( void )
+	{
+		Common::String foo1("foo");
+		Common::String foo2("foo");
+		Common::String foo3(foo2);
+		foo3 += 'X';
+		TS_ASSERT_EQUALS( foo2, foo1 );
+		TS_ASSERT_EQUALS( foo2, "foo" );
+		TS_ASSERT_EQUALS( foo3, "foo""X" );
+	}
+
+	void test_refCount2( void )
+	{
+		Common::String foo1("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		Common::String foo2("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		Common::String foo3(foo2);
+		foo3 += 'X';
+		TS_ASSERT_EQUALS( foo2, foo1 );
+		TS_ASSERT_EQUALS( foo2, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd" );
+		TS_ASSERT_EQUALS( foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""X" );
+	}
+
+	void test_refCount3( void )
+	{
+		Common::String foo1("0123456789abcdefghijk");
+		Common::String foo2("0123456789abcdefghijk");
+		Common::String foo3(foo2);
+		foo3 += "0123456789abcdefghijk";
+		TS_ASSERT_EQUALS( foo2, foo1 );
+		TS_ASSERT_EQUALS( foo2, "0123456789abcdefghijk" );
+		TS_ASSERT_EQUALS( foo3, "0123456789abcdefghijk""0123456789abcdefghijk" );
+	}
+
+	void test_refCount4( void )
+	{
+		Common::String foo1("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		Common::String foo2("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		Common::String foo3(foo2);
+		foo3 += "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd";
+		TS_ASSERT_EQUALS( foo2, foo1 );
+		TS_ASSERT_EQUALS( foo2, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd" );
+		TS_ASSERT_EQUALS( foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd" );
+	}
+
 	void test_hasPrefix( void )
 	{
 		Common::String str("this/is/a/test, haha");
