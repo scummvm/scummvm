@@ -336,7 +336,7 @@ void AGOSEngine::dropBlock(int a, int b, int c) {
 
 void AGOSEngine::gravityCheck()
 {
-	int i, j, k;
+	int i, k;
 	int x, y, z;
 	int flag;
 	int block;
