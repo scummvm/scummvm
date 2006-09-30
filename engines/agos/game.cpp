@@ -166,6 +166,34 @@ namespace AGOS {
 
 #define FILE_MD5_BYTES 5000
 
+static GameFileDescription ELVIRA1DOS_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"a49e132a1f18306dd5d1ec2fe435e178"},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
+};
+
+static GameFileDescription ELVIRA1DOS2_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
+};
+
+static GameFileDescription ELVIRA2DOS_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7"},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
+	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17"},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
+};
+
+static GameFileDescription WAXWORKSDOS_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"7751e9358e894e32ef40ef3b3bae0f2a"},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a"},
+	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d"},
+	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c"},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0"},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f"},
+};
+
 static GameFileDescription SIMON1ACORNDEMO_GameFiles[] = {
 	{ "data", 	GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900"},
 	{ "gamebase", 	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422"},
@@ -593,28 +621,6 @@ static GameFileDescription FEEBLEFILES_ES_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
-static GameFileDescription WAXWORKS_GameFiles[] = {
-	{ "gamepc",		GAME_BASEFILE,	"7751e9358e894e32ef40ef3b3bae0f2a"},
-	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a"},
-	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d"},
-	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c"},
-	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0"},
-	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f"},
-};
-
-static GameFileDescription ELVIRA2_GameFiles[] = {
-	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7"},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
-	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17"},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
-};
-
-static GameFileDescription ELVIRA_GameFiles[] = {
-	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
-	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
-	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
-};
-
 static GameFileDescription DIMP_GameFiles[] = {
 	{ "Gdimp",		GAME_BASEFILE,	"0b1e89ae1dc2e012b7fa7a987b4ac42a"},
 };
@@ -638,8 +644,21 @@ static GameDescription gameDescriptions[] = {
 		GType_ELVIRA,
 		GID_ELVIRA,
 		"Floppy",
-		ARRAYSIZE(ELVIRA_GameFiles),
-		ELVIRA_GameFiles,
+		ARRAYSIZE(ELVIRA1DOS_GameFiles),
+		ELVIRA1DOS_GameFiles,
+		GF_OLD_BUNDLE,
+		Common::EN_ANY,
+		Common::kPlatformPC,
+	},
+
+	// Elvira - English Floppy Alternative?
+	{
+		"elvira",
+		GType_ELVIRA,
+		GID_ELVIRA,
+		"Floppy",
+		ARRAYSIZE(ELVIRA1DOS2_GameFiles),
+		ELVIRA1DOS2_GameFiles,
 		GF_OLD_BUNDLE,
 		Common::EN_ANY,
 		Common::kPlatformPC,
@@ -651,8 +670,8 @@ static GameDescription gameDescriptions[] = {
 		GType_ELVIRA2,
 		GID_ELVIRA2,
 		"Floppy",
-		ARRAYSIZE(ELVIRA2_GameFiles),
-		ELVIRA2_GameFiles,
+		ARRAYSIZE(ELVIRA2DOS_GameFiles),
+		ELVIRA2DOS_GameFiles,
 		GF_OLD_BUNDLE,
 		Common::EN_ANY,
 		Common::kPlatformPC,
@@ -664,8 +683,8 @@ static GameDescription gameDescriptions[] = {
 		GType_WW,
 		GID_WAXWORKS,
 		"Floppy",
-		ARRAYSIZE(WAXWORKS_GameFiles),
-		WAXWORKS_GameFiles,
+		ARRAYSIZE(WAXWORKSDOS_GameFiles),
+		WAXWORKSDOS_GameFiles,
 		GF_OLD_BUNDLE,
 		Common::EN_ANY,
 		Common::kPlatformPC,
