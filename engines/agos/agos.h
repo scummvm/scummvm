@@ -1060,6 +1060,7 @@ public:
 	void o4_restoreOopsPosition();
 	void o4_checkTiles();
 	void o4_loadMouseImage();
+	void o4_message();
 	void o4_setShortText();
 	void o4_animate();
 	void o4_loadHiScores();

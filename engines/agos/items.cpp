@@ -634,6 +634,7 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[32] = &AGOSEngine::o4_restoreOopsPosition;
 		opcode_table[37] = &AGOSEngine::o4_checkTiles;
 		opcode_table[38] = &AGOSEngine::o4_loadMouseImage;
+		opcode_table[63] = &AGOSEngine::o4_message;
 		opcode_table[65] = &AGOSEngine::o3_addTextBox;
 		opcode_table[66] = &AGOSEngine::o4_setShortText;
 		opcode_table[70] = &AGOSEngine::o3_printLongText;
@@ -2599,6 +2600,16 @@ void AGOSEngine::o4_loadMouseImage() {
 	getVarOrByte();
 	getNextItemPtr();
 	loadMouseImage();
+}
+
+void AGOSEngine::o4_message() {
+	// 63: show string nl
+	if (getBitFlag(105)) {
+		// Swampy adventures
+//		printInfoText(getStringPtrByID(getNextStringID()));
+	} else {
+		o_message();
+	}
 }
 
 void AGOSEngine::o4_setShortText() {
