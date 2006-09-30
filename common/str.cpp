@@ -44,89 +44,99 @@ static int computeCapacity(int len) {
 	return ((len + 32 - 1) & ~0x1F) - 1;
 }
 
-String::String(const char *str, int len, int capacity)
-: _str(0), _len(0), _refCount(0) {
+String::String(const char *str, uint32 len)
+: _len(0), _str(_storage), _storage() {
 
-	if (str && *str && len != 0) {
-		if (len > 0)
-			_len = len;
-		else
-			_len = strlen(str);
-
-		_capacity = computeCapacity(_len);
-		if (_capacity < capacity)
-			_capacity = capacity;
-
-		_str = (char *)malloc(_capacity+1);
-		memcpy(_str, str, _len);
-		_str[_len] = 0;
-	} else {
-		_capacity = _len = 0;
-		_str = 0;
+	if (str && *str) {
+		const uint32 tmp = strlen(str);
+		assert(len <= tmp);
+		if (len <= 0)
+			len = tmp;
+		_len = len;
+		
+		if (len >= _builtinCapacity) {
+			// Not enough internal storage, so allocate more
+			_extern._capacity = computeCapacity(len);
+			_extern._refCount = 0;
+			_str = (char *)malloc(_extern._capacity+1);
+			assert(_str != 0);
+		}
+		
+		// Copy the string into the storage area
+		memcpy(_str, str, len);
+		_str[len] = 0;
 	}
 }
 
 String::String(const String &str)
- : _str(str._str), _len(str._len), _refCount(0), _capacity(str._capacity) {
-
-	if (_str != 0) {
-		// If the string we are copying is non-empty, we increment its
-		// refcount.
+ : _len(str._len), _str(str.isStorageIntern() ? _storage : str._str) {
+	if (str.isStorageIntern()) {
+		// String in internal storage: just copy it
+		memcpy(_storage, str._storage, _builtinCapacity);
+	} else {
+		// String in external storage: use refcount mechanism
 		str.incRefCount();
-		_refCount = str._refCount;
+		_extern._refCount = str._extern._refCount;
+		_extern._capacity = str._extern._capacity;
 	}
+	assert(_str != 0);
 }
-
+	
 String::~String() {
-	decRefCount();
+	decRefCount(_extern._refCount);
 }
 
 void String::incRefCount() const {
-	if (_refCount == 0) {
-		_refCount = new int(2);
+	assert(!isStorageIntern());
+	if (_extern._refCount == 0) {
+		_extern._refCount = new int(2);
 	} else {
-		++(*_refCount);
+		++(*_extern._refCount);
 	}
 }
 
-void String::decRefCount() {
-	if (_refCount) {
-		--(*_refCount);
+void String::decRefCount(int *oldRefCount) {
+	if (isStorageIntern())
+		return;
+
+	if (oldRefCount) {
+		--(*oldRefCount);
 	}
-	if (!_refCount || *_refCount <= 0) {
-		delete _refCount;
-		_refCount = 0;
+	if (!oldRefCount || *oldRefCount <= 0) {
+		// The ref count reached zero, so we free the string storage
+		// and the ref count storage.
+		delete oldRefCount;
 		free(_str);
-		_str = 0;
+
+		// Even though _str points to a freed memory block now,
+		// we do not change its value, because any code that calls
+		// decRefCount will have to do this afterwards anyway.
 	}
 }
 
 String& String::operator  =(const char *str) {
-	int len = strlen(str);
-	if (len > 0) {
-		ensureCapacity(len, false);
-
-		_len = len;
-		memcpy(_str, str, _len + 1);
-	} else if (_len > 0) {
-		decRefCount();
-
-		_refCount = 0;
-		_capacity = 0;
-		_len = 0;
-		_str = 0;
-	}
+	uint32 len = strlen(str);
+	ensureCapacity(len, false);
+	_len = len;
+	memcpy(_str, str, len + 1);
 	return *this;
 }
 
 String &String::operator  =(const String &str) {
-	str.incRefCount();
-	decRefCount();
-
-	_refCount = str._refCount;
-	_capacity = str._capacity;
-	_len = str._len;
-	_str = str._str;
+	if (str.isStorageIntern()) {
+		decRefCount(_extern._refCount);
+		_len = str._len;
+		_str = _storage;
+		memcpy(_str, str._str, _len + 1);
+	} else {
+		str.incRefCount();
+		decRefCount(_extern._refCount);
+	
+		_extern._refCount = str._extern._refCount;
+		_extern._capacity = str._extern._capacity;
+		_len = str._len;
+		_str = str._str;
+	}
 
 	return *this;
 }
@@ -161,7 +171,7 @@ String &String::operator +=(const String &str) {
 	return *this;
 }
 
-String &String::operator += (char c) {
+String &String::operator +=(char c) {
 	ensureCapacity(_len + 1, true);
 
 	_str[_len++] = c;
@@ -186,7 +196,7 @@ bool String::hasPrefix(const char *x) const {
 bool String::hasSuffix(const char *x) const {
 	assert(x != 0);
 	// Compare x with the end of _str.
-	const int x_len = strlen(x);
+	const uint32 x_len = strlen(x);
 	if (x_len > _len)
 		return false;
 	const char *y = c_str() + _len - x_len;
@@ -200,88 +210,113 @@ bool String::hasSuffix(const char *x) const {
 }
 
 void String::deleteLastChar() {
-	if (_len > 0) {
-		ensureCapacity(_len - 1, true);
-		_str[--_len] = 0;
-	}
+	deleteChar(_len - 1);
 }
 
-void String::deleteChar(int p) {
-	if (p >= 0 && p < _len) {
-		ensureCapacity(_len - 1, true);
-		while (p++ < _len)
-			_str[p-1] = _str[p];
-		_len--;
-	}
+void String::deleteChar(uint32 p) {
+	assert(p < _len);
+
+	// Call ensureCapacity to make sure we actually *own* the storage
+	// to which _str points to -- we wouldn't want to modify a storage
+	// which other string objects are sharing, after all.
+	ensureCapacity(_len - 1, true);
+	while (p++ < _len)
+		_str[p-1] = _str[p];
+	_len--;
 }
 
 void String::clear() {
-	if (_capacity) {
-		decRefCount();
+	decRefCount(_extern._refCount);
 
-		_refCount = 0;
-		_capacity = 0;
-		_len = 0;
-		_str = 0;
-	}
+	_len = 0;
+	_str = _storage;
+	_storage[0] = 0;
 }
 
-void String::insertChar(char c, int p) {
-	// FIXME: This should be an 'assert', not an 'if' !
-	if (p >= 0 && p <= _len) {
-		ensureCapacity(_len + 1, true);
-		_len++;
-		for (int i = _len; i > p; i--) {
-			_str[i] = _str[i-1];
-		}
-		_str[p] = c;
-	}
+void String::insertChar(char c, uint32 p) {
+	assert(p <= _len);
+
+	ensureCapacity(_len + 1, true);
+	_len++;
+	for (uint32 i = _len; i > p; --i)
+		_str[i] = _str[i-1];
+	_str[p] = c;
 }
 
 void String::toLowercase() {
-	if (_str == 0 || _len == 0)
-		return;
-
 	ensureCapacity(_len, true);
-	for (int i = 0; i < _len; ++i)
+	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = tolower(_str[i]);
 }
 
 void String::toUppercase() {
-	if (_str == 0 || _len == 0)
-		return;
-
 	ensureCapacity(_len, true);
-	for (int i = 0; i < _len; ++i)
+	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = toupper(_str[i]);
 }
 
-void String::ensureCapacity(int new_len, bool keep_old) {
-	// If there is not enough space, or if we are not the only owner
-	// of the current data, then we have to reallocate it.
-	if (new_len <= _capacity && (_refCount == 0 || *_refCount == 1))
+/**
+ * Ensure that enough storage is available to store at least new_len
+ * characters plus a null byte. In addition, if we currently share
+ * the storage with another string, unshare it, so that we can safely
+ * write to the storage.
+ */
+void String::ensureCapacity(uint32 new_len, bool keep_old) {
+	bool isShared;
+	uint32 curCapacity, newCapacity;
+	char *newStorage;
+	int *oldRefCount = _extern._refCount;
+	
+	if (isStorageIntern()) {
+		isShared = false;
+		curCapacity = _builtinCapacity - 1;
+	} else {
+		isShared = (oldRefCount && *oldRefCount > 1);
+		curCapacity = _extern._capacity;
+	}
+	
+	// Special case: If there is enough space, and we do not share
+	// the storage, then there is nothing to do.
+	if (!isShared && new_len <= curCapacity)
 		return;
 
-	int newCapacity = computeCapacity(new_len);
-
-	// FIXME: We never shrink the capacity here. Is that really a good idea?
-	if (newCapacity < _capacity)
-		newCapacity = _capacity;
-
-	char *newStr = (char *)malloc(newCapacity+1);
-
-	if (keep_old && _str) {
-		memcpy(newStr, _str, _len + 1);
+	if (isShared && new_len <= _builtinCapacity - 1) {
+		// We share the storage, but there is enough internal storage: Use that.
+		newStorage = _storage;
+		newCapacity = _builtinCapacity - 1;
 	} else {
-		_len = 0;
-		newStr[0] = 0;
+		// We need to allocate storage on the heap!
+
+		// Compute a suitable new capacity limit
+		newCapacity = computeCapacity(new_len);
+
+		// Allocate new storage
+		newStorage = (char *)malloc(newCapacity+1);
+		assert(newStorage);
 	}
 
-	decRefCount();
+	// Copy old data if needed, elsewise reset the new storage.
+	if (keep_old) {
+		assert(_len <= newCapacity);
+		memcpy(newStorage, _str, _len + 1);
+	} else {
+		_len = 0;
+		newStorage[0] = 0;
+	}
 
-	_refCount = 0;
-	_capacity = newCapacity;
-	_str = newStr;
+	// Release hold on the old storage ...
+	decRefCount(oldRefCount);
+
+	// ... in favor of the new storage
+	_str = newStorage;
+
+	if (!isStorageIntern()) {
+		// Set the ref count & capacity if we use an external storage.
+		// It is important to do this *after* copying any old content,
+		// else we would override data that has not yet been copied!
+		_extern._refCount = 0;
+		_extern._capacity = newCapacity;
+	}
 }
 
 uint String::hash() const {

@@ -30,13 +30,65 @@
 
 namespace Common {
 
+/**
+ * Simple string class for ScummVM. Provides automatic storage managment,
+ * and overloads several operators in a 'natural' fashion, mimicking
+ * the std::string class. Even provides simple iterators.
+ * 
+ * This class tries to avoid allocating lots of small blocks on the heap,
+ * since that is inefficient on several platforms supported by ScummVM.
+ * Instead, small strings are stored 'inside' the string object (i.e. on
+ * the stack, for stack allocated objects), and only for strings exceeding
+ * a certain length do we allocate a buffer on the heap.
+ */
 class String {
 protected:
-	char		*_str;
-	int 		_len;
-	mutable int *_refCount;
-	int 		_capacity;
+	/**
+	 * The size of the internal storage. Increasing this means less heap
+	 * allocations are needed, at the cost of more stack memory usage,
+	 * and of course lots of wasted memory. Empirically, 90% or more of
+	 * all String instances are less than 32 chars long. If a platform
+	 * is very short on stack space, it would be possible to lower this.
+	 * A value of 24 still seems acceptable, though considerably worse,
+	 * while 16 seems to be the lowest you want to go... Anything lower
+	 * than 8 makes no sense, since that's the size of member _extern
+	 * (on 32 bit machines; 12 bytes on systems with 64bit pointers).
+	 */
+	static const uint32 _builtinCapacity = 32;
 
+	/**
+	 * Length of the string. Stored to avoid having to call strlen
+	 * a lot. Yes, we limit ourselves to strings shorter than 4GB --
+	 * on purpose :-).
+	 */
+	uint32 		_len;
+	
+	/**
+	 * Pointer to the actual string storage. Either points to _storage,
+	 * or to a block allocated on the heap via malloc.
+	 */
+	char		*_str;
+	
+	
+	union {
+		/**
+		 * Internal string storage.
+		 */
+		char _storage[_builtinCapacity];
+		/**
+		 * External string storage data -- the refcounter, and the
+		 * capacity of the string _str points to.
+		 */
+		struct {
+			mutable int *_refCount;
+			uint32 		_capacity;
+		} _extern;
+	};
+	
+	inline bool isStorageIntern() const {
+		return _str == _storage;
+	}
+	
 public:
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	static const String emptyString;
@@ -44,8 +96,8 @@ public:
 	static const char *emptyString;
 #endif
 
-	String() : _str(0), _len(0), _refCount(0), _capacity(0) {}
-	String(const char *str, int len = -1, int capacity = 16);
+	String() : _len(0), _str(_storage), _storage() {}
+	String(const char *str, uint32 len = 0);
 	String(const String &str);
 	virtual ~String();
 
@@ -81,26 +133,26 @@ public:
 	bool hasSuffix(const char *x) const;
 	bool hasPrefix(const char *x) const;
 
-	const char *c_str() const		{ return _str ? _str : ""; }
-	uint size() const				{ return _len; }
+	inline const char *c_str() const		{ return _str; }
+	inline uint size() const				{ return _len; }
 
-	bool empty() const	{ return (_len == 0); }
+	inline bool empty() const	{ return (_len == 0); }
 	char lastChar() const	{ return (_len > 0) ? _str[_len-1] : 0; }
 
 	char operator [](int idx) const {
-		assert(_str && idx >= 0 && idx < _len);
+		assert(_str && idx >= 0 && idx < (int)_len);
 		return _str[idx];
 	}
 
 	char &operator [](int idx) {
-		assert(_str && idx >= 0 && idx < _len);
+		assert(_str && idx >= 0 && idx < (int)_len);
 		return _str[idx];
 	}
 
 	void deleteLastChar();
-	void deleteChar(int p);
+	void deleteChar(uint32 p);
 	void clear();
-	void insertChar(char c, int p);
+	void insertChar(char c, uint32 p);
 
 	void toLowercase();
 	void toUppercase();
@@ -128,9 +180,9 @@ public:
 	}
 
 protected:
-	void ensureCapacity(int new_len, bool keep_old);
+	void ensureCapacity(uint32 new_len, bool keep_old);
 	void incRefCount() const;
-	void decRefCount();
+	void decRefCount(int *oldRefCount);
 };
 
 // Append two strings to form a new (temp) string
