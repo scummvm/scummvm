@@ -2607,7 +2607,7 @@ void AGOSEngine::vc76_setScaleXOffs() {
 		vsp1->x = tmp2;
 		vsp2->x = tmp1;
 		tmp1 = vsp1->y;
-		tmp2 = vsp1->y;
+		tmp2 = vsp2->y;
 		vsp1->y = tmp2;
 		vsp2->y = tmp1;
 
