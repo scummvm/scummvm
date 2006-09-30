@@ -141,6 +141,10 @@ bool AGOSEngine::kickoffTimeEvents() {
 	return result;
 }
 
+bool AGOSEngine::isVgaQueueEmpty() {
+	return true;
+}
+
 void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
 	VgaTimerEntry *vte;
 
