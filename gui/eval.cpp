@@ -302,22 +302,22 @@ int Eval::getBuiltinVar(const char *s) {
 	return EVAL_UNDEF_VAR;
 }
 
-int Eval::getVar_(const char *s, bool includeAliases) {
+int Eval::getVar_(const Common::String &s, bool includeAliases) {
 	int val;
 
-	val = getBuiltinVar(s);
+	val = getBuiltinVar(s.c_str());
 
 	if (val != EVAL_UNDEF_VAR)
 		return val;
 
-	const char *var = s;
+	const Common::String *var = &s;
 	if (includeAliases) {
 		AliasesMap::const_iterator itera = _aliases.find(s);
 		if (itera != _aliases.end())
-			var = itera->_value.c_str();
+			var = &(itera->_value);
 	}
 
-	VariablesMap::const_iterator iterv = _vars.find(var);
+	VariablesMap::const_iterator iterv = _vars.find(*var);
 	if (iterv != _vars.end())
 		return iterv->_value;
 

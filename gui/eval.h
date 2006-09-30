@@ -48,20 +48,17 @@ public:
 
 	void setParent(const String &name);
 
-	void setVar(const String &name, int val) { _vars[name.c_str()] = val; }
-	void setStringVar(const String &name, const String &val) { _strings[name.c_str()] = val; }
-	void setAlias(const char *name, const String &val) { _aliases[name] = val; }
+	void setVar(const String &name, int val) { _vars[name] = val; }
+	void setStringVar(const String &name, const String &val) { _strings[name] = val; }
+	void setAlias(const Common::String &name, const String &val) { _aliases[name] = val; }
 
-	int getVar(const char *s) { return getVar_(s); }
-	int getVar(const char *s, int def) {
+	int getVar(const Common::String &s) { return getVar_(s); }
+	int getVar(const Common::String &s, int def) {
 		int val = getVar_(s);
 		return (val == EVAL_UNDEF_VAR) ? def : val;
 	}
 
-	int getVar(const String &s) { return getVar(s.c_str()); }
-	int getVar(const String &s, int def) { return getVar(s.c_str(), def); }
-
-	const String &getStringVar(const char *name) { return _strings[name]; }
+	const String &getStringVar(const Common::String &name) { return _strings[name]; }
 
 	uint getNumVars() { return _vars.size(); }
 
@@ -69,28 +66,9 @@ public:
 
 	char *lastToken() { return _token; }
 
-	
-	template <class Val>
-	struct CharStar_BaseNode {
-		char *_key;
-		Val _value;
-		CharStar_BaseNode() {assert(0);}
-		CharStar_BaseNode(const char *key) { _key = (char *)malloc(strlen(key)+1); strcpy(_key, key); }
-		~CharStar_BaseNode() { free(_key); }
-	};
-
-	struct CharStar_EqualTo {
-		bool operator()(const char *x, const char *y) const { return strcmp(x, y) == 0; }
-	};
-
-	struct CharStar_Hash {
-		uint operator()(const char *x) const { return Common::hashit(x); }
-	};
-
-	//typedef HashMap<String, int> VariablesMap;
-	typedef HashMap<const char *, int, CharStar_Hash, CharStar_EqualTo, CharStar_BaseNode<int> > VariablesMap;
-	typedef HashMap<const char *, String, CharStar_Hash, CharStar_EqualTo, CharStar_BaseNode<String> > AliasesMap;
-	typedef HashMap<const char *, String, CharStar_Hash, CharStar_EqualTo, CharStar_BaseNode<String> > StringsMap;
+	typedef HashMap<String, int, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> VariablesMap;
+	typedef HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> AliasesMap;
+	typedef HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> StringsMap;
 
 private:
 	enum TokenTypes {
@@ -120,7 +98,7 @@ private:
 	void arith(char op, int *r, int *h);
 	void unary(char op, int *r);
 	void exprError(EvalErrors error);
-	int getVar_(const char *s, bool includeAliases = true);
+	int getVar_(const Common::String &s, bool includeAliases = true);
 	int getBuiltinVar(const char *s);
 	void loadConstants();
 

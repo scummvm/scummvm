@@ -1265,7 +1265,7 @@ void ThemeNew::setupFont(const String &key, const String &name, FontStyle style)
 		_fonts[style] = FontMan.getFontByName(name);
 
 		if (!_fonts[style]) {
-			Common::String temp(_evaluator->getStringVar(key.c_str()));
+			Common::String temp(_evaluator->getStringVar(key));
 
 			_fonts[style] = loadFont(temp.c_str());
 			if (!_fonts[style])
