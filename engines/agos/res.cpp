@@ -40,7 +40,7 @@ using Common::File;
 namespace AGOS {
 
 // Script opcodes to load into memory
-static const char *const opcode_arg_table_elvira[300] = {
+static const char *const opcode_arg_table_elvira1[300] = {
 	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ",	 "II ",	"II ", "II ", "II ", "F ", "F ", "FN ",	 /*  EQ",        */
 	"FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ", "p ",	 /*  PREP",      */
 	"N ", "I ", "I ", "I ",	 "I ",	"IN ",	"IB ", "IB ", "II ", "IB ", "N ", " ", " ", " ", "I ",	 /*  GET",       */
@@ -62,6 +62,30 @@ static const char *const opcode_arg_table_elvira[300] = {
 	"FN ", "FN ", "FN ", "N ", "N ", "N ", "NI ", " ", " ",	 "N ", "I ", "INN ", "NN ", "N ",	 /*  WAITENDTUNE */
 	"N ", "Nan ", "NN ", " ", " ", " ", " ", " ", " ", " ", "IF ", "N ", " ", " ",	 " ", "II ",	 /*  PLACENOICONS*/
 	" ", "NI ","N ",
+};
+
+static const char *const opcode_arg_table_elvira2[400] = {
+	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "F ", "F ", "F ",
+	"N ", "FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ",
+	"p ", "N ", " ", "I ", "I ", "I ", "I ", "IN ", "IB ", "I ", "B ", "II ", "IB ", "N ", " ", " ",
+	" ", "I ", "I ", " ", "I ", "I ", "I ", "I ", "I ", "II ", "I ", "I ", "II ", "II ", "IBF ",
+	"FIB ", "FF ", "N ", "NI ", "IF ", "F ", "F ", "IB ", "IB ", "FN ", "FN ", " ", "FN ", "FF ",
+	"FF ", "FN ", "FN ", "FF ", "FF ", "FN ", "FF ", "FN ", "F ", "I ", "IN ", "IN ", "IB", " ",
+	"IB ", "IB ", "IB ", "II ", "I ", "I ", "IN ", "T ", "F ", " ", "T ", "T ", "I ", "I ", " ",
+	" ", "T ", " ", " ", " ", " ", " ", "T ", " ", "N ", "INN ", "II ", "II ", "ITN ", "ITIN ",
+	"ITI ", "N ", "I3 ", "IN ", "I ", "I ", "Ivnn ", "vnn ", "Ivnn ", "NN ", "IT ", "INN ", " ",
+	"N ", "N ", "N ", " ", "T ", "v ", " ", " ", " ", " ", "FN ", "I ", "TN ", "IT ", "II ", "I ",
+	 " ", "N ", "I ", " ", "I ", "NI ", "I ", "I ", "T ", "I ", "I ", "N ", "N ", " ", "N ", "IF ",
+	"IF ", "IF ", "I ", "F ", "IF ", "IF ", "T ", "IB ", "IB ", "IB ", "I ", " ", "vnnN ", "Ivnn ",
+	"T ", "T ", "T ", "IF ", " ", " ", " ", "Ivnn ", "IF ", "INI ", "INN ", "IN ", " ", "II ",
+	"IFF ", "IIF ", "I ", "II ", "I ", "I ", "IN ", "IN ", "II ", "II ", "II ", "II ", "IIN "
+	" ", "IIN ", "IN ", "II ", "IN ", "IN ", "T ", "v", "anpan ", "vIpI ", "T ", "T ", " ", 
+	" ", "IN ", "I ", "N ", "IN ", "IN ", "N ", "INTTT ", "ITTT ", "ITTT ", "I ", "I ", "IN ", 
+	"I ", " ", "F ", "NN ", "I ", "NN ", "INN ", "INNN ", "TF ", "NN ", "N ", "NNNN ", "N ", "N ",
+	" ", "NNNNNNN ", "N ", " ", "N ", "NN ", "N ", "NNNNNIN ", "N ", "N ", "N ", "N ", "NN ", 
+	"NNNN ", "INNN ", "IN ", "IN ", "TT ", "I ", "I ", "I ", "TTT ", "IN ", "IN ", "FN ", "FN ",
+	"F ", "N ", "N ", "N ", "N ", "NI ", " ", " ", "N ", "I ", "INN ", "NN ", "N ", "N ", "Nan ",
+	"NN ", " ", " ", " ", " ", " ", " ", " ", "IF ", "N ", " ", " ", " ", "II ", " ", "NI ", "N "
 };
 
 static const char *const opcode_arg_table_waxworks[256] = {
@@ -443,7 +467,7 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 
 void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 	if (type == 1) {
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
 			SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
 			subRoom->roomShort = in->readUint32BE();
 			subRoom->roomLong = in->readUint32BE();
@@ -469,27 +493,38 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 					subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
 		}
 	} else if (type == 2) {
-		uint32 fr = in->readUint32BE();
-		uint i, k, size;
-		SubObject *subObject;
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+			SubObject *subObject = (SubObject *)allocateChildBlock(item, 2, sizeof(SubObject));
+			in->readUint32BE();
+			in->readUint32BE();
+			in->readUint32BE();
+			subObject->objectName = in->readUint32BE();
+			subObject->objectSize = in->readUint16BE();
+			subObject->objectWeight = in->readUint16BE();
+			subObject->objectFlags = in->readUint16BE();
+		} else {
+			uint32 fr = in->readUint32BE();
+			uint i, k, size;
+			SubObject *subObject;
 
-		size = SubObject_SIZE;
-		for (i = 0; i != 16; i++)
-			if (fr & (1 << i))
-				size += sizeof(subObject->objectFlagValue[0]);
+			size = SubObject_SIZE;
+			for (i = 0; i != 16; i++)
+				if (fr & (1 << i))
+					size += sizeof(subObject->objectFlagValue[0]);
 
-		subObject = (SubObject *)allocateChildBlock(item, 2, size);
-		subObject->objectFlags = fr;
+			subObject = (SubObject *)allocateChildBlock(item, 2, size);
+			subObject->objectFlags = fr;
 
-		k = 0;
-		if (fr & 1) {
-			subObject->objectFlagValue[k++] = (uint16)in->readUint32BE();
+			k = 0;
+			if (fr & 1) {
+				subObject->objectFlagValue[k++] = (uint16)in->readUint32BE();
+			}
+			for (i = 1; i != 16; i++)
+				if (fr & (1 << i))
+					subObject->objectFlagValue[k++] = in->readUint16BE();
+
+			subObject->objectName = (uint16)in->readUint32BE();
 		}
-		for (i = 1; i != 16; i++)
-			if (fr & (1 << i))
-				subObject->objectFlagValue[k++] = in->readUint16BE();
-
-		subObject->objectName = (uint16)in->readUint32BE();
 	} else if (type == 4) {
 		SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
 		genExit->dest[0] = (uint16)fileReadItemID(in);
@@ -516,7 +551,7 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
 		setUserFlag(item, 3, in->readUint16BE());
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
 			setUserFlag(item, 4, in->readUint16BE());
 			setUserFlag(item, 5, in->readUint16BE());
 			setUserFlag(item, 6, in->readUint16BE());
@@ -563,8 +598,10 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		table = opcode_arg_table_simon1dos;
 	else if (getGameType() == GType_WW)
 		table = opcode_arg_table_waxworks;
+	else if (getGameType() == GType_ELVIRA2)
+		table = opcode_arg_table_elvira2;
 	else
-		table = opcode_arg_table_elvira;
+		table = opcode_arg_table_elvira1;
 
 	i = 0;
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
@@ -594,15 +631,13 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		case 'v':
 		case '3':
 			val = in->readUint16BE();
-			*ptr++ = val >> 8;
-			*ptr++ = val & 255;
+			WRITE_BE_UINT16(ptr, val); ptr += 2;
 			break;
 
 		case 'B':
 			if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
 				val = in->readUint16BE();
-				*ptr++ = val >> 8;
-				*ptr++ = val & 255;
+				WRITE_BE_UINT16(ptr, val); ptr += 2;
 			} else {
 				*ptr++ = in->readByte();
 				if (ptr[-1] == 0xFF) {
@@ -632,8 +667,7 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 			default:
 				val = fileReadItemID(in);;
 			}
-			*ptr++ = val >> 8;
-			*ptr++ = val & 255;
+			WRITE_BE_UINT16(ptr, val); ptr += 2;
 			break;
 
 		case 'T':
@@ -649,11 +683,10 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 				val = (uint16)in->readUint32BE();
 				break;
 			}
-			*ptr++ = val >> 8;
-			*ptr++ = val & 255;
+			WRITE_BE_UINT16(ptr, val); ptr += 2;
 			break;
 		default:
-			error("readSingleOpcode: Bad cmd table entry %c", l);
+			error("readSingleOpcode: Bad cmd table entry %d", l);
 		}
 	}
 }

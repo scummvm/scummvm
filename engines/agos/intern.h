@@ -42,6 +42,8 @@ struct SubRoom : Child {
 
 struct SubObject : Child {
 	uint16 objectName;
+	uint16 objectSize;
+	uint16 objectWeight;
 	uint32 objectFlags;
 	int16 objectFlagValue[1];
 };

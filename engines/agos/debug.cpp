@@ -95,24 +95,32 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 			}
 
 		case 'W':{
-				int n = (int16)((p[0] << 8) | p[1]);
+				int n = (int16)READ_BE_UINT16(p);
 				p += 2;
-				if (n >= 30000 && n < 30512)
-					printf("[%d] ", n - 30000);
-				else
-					printf("%d ", n);
+				if (getGameType() == GType_PP) {
+					if (n >= 60000 && n < 62048)
+						printf("[%d] ", n - 60000);
+					else
+						printf("%d ", n);
+					
+				} else {
+					if (n >= 30000 && n < 30512)
+						printf("[%d] ", n - 30000);
+					else
+						printf("%d ", n);
+				}
 				break;
 			}
 
 		case 'w':{
-				int n = (int16)((p[0] << 8) | p[1]);
+				int n = (int16)READ_BE_UINT16(p);
 				p += 2;
 				printf("%d ", n);
 				break;
 			}
 
 		case 'I':{
-				int n = (int16)((p[0] << 8) | p[1]);;
+				int n = (int16)READ_BE_UINT16(p);
 				p += 2;
 				if (n == -1)
 					printf("ITEM_M1 ");
@@ -135,7 +143,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 			break;
 
 		case 'T':{
-				uint n = ((p[0] << 8) | p[1]);
+				uint n = READ_BE_UINT16(p);
 				p += 2;
 				if (n != 0xFFFF)
 					printf("\"%s\"(%d) ", getStringPtrByID(n), n);
@@ -188,11 +196,11 @@ void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 	const char *str, *strn;
 
 	do {
-		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
+		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
+			opcode = *src++;
+		} else {
 			opcode = READ_BE_UINT16(src);
 			src += 2;
-		} else {
-			opcode = *src++;
 		}
 
 		if (opcode >= _numVideoOpcodes) {
@@ -338,7 +346,7 @@ void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint3
 void AGOSEngine::dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
 								 byte base) {
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+	if (getGameType() != GType_FF && getGameType() != GType_PP)
 		w *= 16;
 
 	/* allocate */

@@ -516,6 +516,8 @@ void AGOSEngine::setupOpcodes() {
 
 		opcode_table[283] = &AGOSEngine::o_isBox;
 		break;
+	case GType_ELVIRA2:
+		break;
 	case GType_WW:
 		// Confirmed
 		opcode_table[70] = &AGOSEngine::o1_printLongText;
