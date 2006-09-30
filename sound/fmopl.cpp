@@ -1188,11 +1188,6 @@ FM_OPL *makeAdlibOPL(int rate) {
 		env_bits = FMOPL_ENV_BITS_LQ;
 		eg_ent = FMOPL_EG_ENT_LQ;
 	}
-	// TODO: add a comment why we foce to MQ,
-	// but make a check what mode the user specified.
-	// Looks a bit pointless...
-	env_bits = FMOPL_ENV_BITS_MQ;
-	eg_ent = FMOPL_EG_ENT_MQ;
 #endif
 
 	OPLBuildTables(env_bits, eg_ent);
