@@ -322,7 +322,29 @@ void AGOSEngine::timer_proc1() {
 	_lockWord |= 2;
 
 	if (!(_lockWord & 0x10)) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_PP) {
+			_syncFlag2 ^= 1;
+			if (!_syncFlag2) {
+				processVgaEvents();
+				if (getBitFlag(98)) {
+					if (!getBitFlag(97)) {
+						printf("PairCheck\n");
+						printf("GravityCheck\n");
+					}
+					printf("CheckIfClickedOnBlock\n");
+					if (getBitFlag(99)) {
+						printf("MoveBlocks\n");
+						printf("DroppingBlock\n");
+					}
+				}
+			} else {
+				processVgaEvents();
+				if (_scrollCount == 0) {
+					_lockWord &= ~2;
+					return;
+				}
+			}
+		} else if (getGameType() == GType_FF) {
 			_syncFlag2 ^= 1;
 			if (!_syncFlag2) {
 				processVgaEvents();
