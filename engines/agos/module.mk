@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	oracle.o \
 	res.o \
 	rooms.o \
+	rules.o \
 	saveload.o \
 	sound.o \
 	string.o \

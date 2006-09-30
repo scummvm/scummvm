@@ -635,6 +635,16 @@ protected:
 	void mouseOff();
 	void mouseOn();
 
+	bool block0Supported(int i, int y);
+	bool block1Supported(int i, int y);
+	void stopBlock(int a, int b);
+	void remove0Block(int i);
+	void remove1Block(int i);
+	void pairCheck();
+	void dropBlock(int a, int b, int c);
+	void gravityCheck();
+	bool hasBlockLanded(int16 yofs, int16 block, int16 priority, int16 type, int16 x, int16 y, int16 z);
+
 	bool loadTablesIntoMem(uint subr_id);
 	bool loadTablesOldIntoMem(uint subr_id);
 	bool loadTablesNewIntoMem(uint subr_id);
