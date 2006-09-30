@@ -262,6 +262,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
+	_picture8600 = 0;
 
 	_soundFileId = 0;
 	_lastMusicPlayed = 0;

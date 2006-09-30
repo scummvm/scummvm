@@ -1172,6 +1172,8 @@ void AGOSEngine::o_picture() {
 	uint vga_res = getVarOrWord();
 	uint mode = getVarOrByte();
 
+	_picture8600 = (vga_res == 8600);
+
 	if (mode == 4)
 		vc29_stopAllSounds();
 
@@ -2776,9 +2778,14 @@ void AGOSEngine::waitForMark(uint i) {
 	_exitCutscene = false;
 	while (!(_marks & (1 << i))) {
 		if (_exitCutscene) {
-			if (getBitFlag(9)) {
-				endCutscene();
-				break;
+			if (getGameType() == GType_PP) {
+				if (_picture8600)
+					break;
+			} else {
+				if (getBitFlag(9)) {
+					endCutscene();
+					break;
+				}
 			}
 		} else {
 			processSpecialKeys();

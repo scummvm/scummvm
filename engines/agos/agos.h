@@ -362,7 +362,7 @@ protected:
 	uint16 _noOverWrite;
 	bool _rejectBlock;
 
-	bool _exitCutscene;
+	bool _exitCutscene, _picture8600;
 
 	uint _soundFileId;
 	int16 _lastMusicPlayed;
