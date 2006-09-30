@@ -150,6 +150,7 @@ bool AGOSEngine::isVgaQueueEmpty() {
 			result = true;
 			break;
 		}
+		vte++;
 	}
 	return result;
 }
