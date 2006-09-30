@@ -616,6 +616,7 @@ void AGOSEngine::setupGame() {
 
 	_variableArray = (int16 *)calloc(_numVars, sizeof(int16));
 	_variableArray2 = (int16 *)calloc(_numVars, sizeof(int16));
+	_variableArrayPtr = _variableArray;
 
 	setupOpcodes();
 
@@ -632,8 +633,6 @@ void AGOSEngine::setupGame() {
 	_noOverWrite = 0xFFFF;
 
 	_stringIdLocalMin = 1;
-
-	_variableArrayPtr = _variableArray;
 }
 
 AGOSEngine::~AGOSEngine() {

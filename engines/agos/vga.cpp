@@ -432,6 +432,10 @@ void AGOSEngine::vc3_loadSprite() {
 	y = vcReadNextWord();			/* 6 */
 	palette = vcReadNextWord();		/* 8 */
 
+	if (getGameType() == GType_PP && getBitFlag(100)) {
+		printf("StartAnOverlayAnim\n");
+	}
+
 	if (isSpriteLoaded(vgaSpriteId, zoneNum))
 		return;
 
@@ -1168,8 +1172,6 @@ void AGOSEngine::drawImages(VC10_state *state) {
 		return;
 
 	uint offs, offs2;
-	// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-	// in lower half of screen
 	if (getGameType() == GType_WW) {
 		//if (_windowNum == 4 || _windowNum >= 10) {
 			offs = state->x * 8;
@@ -1179,9 +1181,11 @@ void AGOSEngine::drawImages(VC10_state *state) {
 		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
 		//}
 	} else if (getGameType() == GType_SIMON1) {
-		if (_windowNum != 2 || _windowNum != 3) {
-			offs = ((vlut[0]) * 2 + state->x) * 8;
-			offs2 = (vlut[1] + state->y);
+		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+		// in lower half of screen
+		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
+			offs = state->x * 8;
+			offs2 = state->y;
 		} else {
 			offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
 			offs2 = (vlut[1] - _video_windows[17] + state->y);
@@ -2412,7 +2416,19 @@ void AGOSEngine::vc62_fastFadeOut() {
 }
 
 void AGOSEngine::vc63_fastFadeIn() {
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameType() == GType_PP) {
+		_fastFadeInFlag = 256;
+
+		if (getBitFlag(100)) {
+			printf("StartOverlayAnims\n");
+		}
+		if (getBitFlag(103)) {
+			printf("NameAndTime\n");
+		}
+		if (getBitFlag(104)) {
+			printf("HiScoreTable\n");
+		}
+	} else if (getGameType() == GType_FF) {
 		_fastFadeInFlag = 256;
 	} else {
 		_fastFadeInFlag = 208;
@@ -2575,18 +2591,42 @@ void AGOSEngine::vc75_setScale() {
 }
 
 void AGOSEngine::vc76_setScaleXOffs() {
-	VgaSprite *vsp = findCurSprite();
+	if (getGameType() == GType_PP && getBitFlag(120)) {
+		VgaSprite *vsp1, *vsp2;
+		uint16 old_file_1, tmp1, tmp2;
 
-	vsp->image = vcReadNextWord();
-	int16 x = vcReadNextWord();
-	uint16 var = vcReadNextWord();
+		old_file_1 = _vgaCurSpriteId;
 
-	vsp->x += getScale(vsp->y, x);
-	_variableArrayPtr[var] = vsp->x;
+		_vgaCurSpriteId = vcReadVar(vcReadNextWord());
+		 vsp1 = findCurSprite();
+		_vgaCurSpriteId = vcReadVar(vcReadNextWord());
+		 vsp2 = findCurSprite();
 
-	checkScrollX(x, vsp->x);
+		tmp1 = vsp1->x;
+		tmp2 = vsp2->x;
+		vsp1->x = tmp2;
+		vsp2->x = tmp1;
+		tmp1 = vsp1->y;
+		tmp2 = vsp1->y;
+		vsp1->y = tmp2;
+		vsp2->y = tmp1;
 
-	vsp->flags = kDFScaled;
+		_vgaCurSpriteId = old_file_1;
+		_vcPtr += 2;
+	} else {
+		VgaSprite *vsp = findCurSprite();
+
+		vsp->image = vcReadNextWord();
+		int16 x = vcReadNextWord();
+		uint16 var = vcReadNextWord();
+
+		vsp->x += getScale(vsp->y, x);
+		_variableArrayPtr[var] = vsp->x;
+
+		checkScrollX(x, vsp->x);
+
+		vsp->flags = kDFScaled;
+	}
 }
 
 void AGOSEngine::vc77_setScaleYOffs() {
