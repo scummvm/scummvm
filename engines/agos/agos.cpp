@@ -167,9 +167,12 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_subtitles = false;
 
 	_animatePointer = 0;
-	_mouseCursor = 0;
+	_maxCursorWidth = 0;
+	_maxCursorHeight = 0;
 	_mouseAnim = 0;
 	_mouseAnimMax = 0;
+	_mouseCursor = 0;
+	_mouseData = 0;
 	_oldMouseCursor = 0;
 	_currentMouseCursor = 0;
 	_currentMouseAnim = 0;
@@ -607,6 +610,7 @@ void AGOSEngine::setupGame() {
 
 	allocItemHeap();
 	allocTablesHeap();
+	initMouse();
 
 	_variableArray = (int16 *)calloc(_numVars, sizeof(int16));
 	_variableArray2 = (int16 *)calloc(_numVars, sizeof(int16));
@@ -1367,9 +1371,9 @@ void AGOSEngine::setZoneBuffers() {
 
 byte *AGOSEngine::allocBlock(uint32 size) {
 	byte *block, *blockEnd;
-	uint i;
+	int vgaMemSize = _vgaMemSize;
 
-	for (i = 0; i < _vgaMemSize / size; i++) {
+	do {
 		block = _vgaMemPtr;
 		blockEnd = block + size;
 
@@ -1387,7 +1391,7 @@ byte *AGOSEngine::allocBlock(uint32 size) {
 			_vgaMemPtr = blockEnd;
 			return block;
 		}
-	}
+	} while (vgaMemSize--);
 
 	error("allocBlock: Couldn't find free block");
 }

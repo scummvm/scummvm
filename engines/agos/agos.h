@@ -330,16 +330,12 @@ protected:
 	int _mouseX, _mouseY;
 	int _mouseXOld, _mouseYOld;
 
-	enum {
-	    kMaxCursorWidth = 40,
-	    kMaxCursorHeight = 40
-	};
-
-	byte _mouseData[kMaxCursorWidth * kMaxCursorHeight];
+	byte *_mouseData;
 	byte _animatePointer;
-	byte _mouseCursor, _mouseAnim, _mouseAnimMax;
-	byte _currentMouseCursor, _currentMouseAnim;
-	byte _oldMouseCursor, _oldMouseAnimMax;
+	byte _maxCursorWidth, _maxCursorHeight;
+	byte _mouseAnim, _mouseAnimMax, _mouseCursor;
+	byte _currentMouseAnim, _currentMouseCursor;
+	byte _oldMouseAnimMax, _oldMouseCursor;
 	uint _mouseHideCount;
 	bool _mouseToggle;
 
@@ -687,6 +683,8 @@ protected:
 
 	void handleMouseMoved();
 	void pollMouseXY();
+	void initMouse();
+	void loadMouseImage();
 	void drawMousePointer();
 	void drawMousePointer_FF();
 	void drawMousePart(int image, byte x, byte y);

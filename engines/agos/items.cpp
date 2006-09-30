@@ -2580,6 +2580,7 @@ void AGOSEngine::o4_loadMouseImage() {
 	// 38: load mouse image
 	getVarOrByte();
 	getNextItemPtr();
+	loadMouseImage();
 }
 
 void AGOSEngine::o4_setShortText() {
