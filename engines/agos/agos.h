@@ -1054,6 +1054,7 @@ public:
 	void o4_animate();
 	void o4_loadHiScores();
 	void o4_checkHiScores();
+	void o4_sync();
 	void o4_loadUserGame();
 	void o4_saveOopsPosition();
 	void o4_resetGameTime();

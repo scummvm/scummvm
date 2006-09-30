@@ -643,6 +643,7 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[105] = &AGOSEngine::o4_loadHiScores;
 		opcode_table[106] = &AGOSEngine::o4_checkHiScores;
 		opcode_table[107] = &AGOSEngine::o3_addBox;
+		opcode_table[120] = &AGOSEngine::o4_sync;
 		opcode_table[122] = &AGOSEngine::o3_oracleTextDown;
 		opcode_table[123] = &AGOSEngine::o3_oracleTextUp;
 		opcode_table[124] = &AGOSEngine::o3_ifTime;
@@ -2636,6 +2637,15 @@ void AGOSEngine::o4_checkHiScores() {
 	// 106: check high scores
 	getVarOrByte();
 	getVarOrByte();
+}
+
+void AGOSEngine::o4_sync() {
+	// 120: sync
+	uint a = getVarOrWord();
+	if (a == 8001 | a == 8101 || a == 8201 || a == 8301 || a == 8401) {
+		_marks &= ~(1 << 2);
+	}
+	sendSync(a);
 }
 
 void AGOSEngine::o4_loadUserGame() {
