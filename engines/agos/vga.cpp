@@ -1803,7 +1803,7 @@ void AGOSEngine::vc27_resetSprite() {
 
 	vcWriteVar(254, 0);
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		setBitFlag(42, true);
 
 	_lockWord &= ~8;
@@ -2662,9 +2662,11 @@ void AGOSEngine::vc78_computeXY() {
 	_variableArrayPtr[16] = posy;
 	vsp->y = posy;
 
-	setBitFlag(85, false);
-	if (getBitFlag(74)) {
-		centreScroll();
+	if (getGameType() == GType_FF) {
+		setBitFlag(85, false);
+		if (getBitFlag(74)) {
+			centreScroll();
+		}
 	}
 }
 
@@ -2706,7 +2708,7 @@ void AGOSEngine::vc82_getPathValue() {
 
 	uint16 var = vcReadNextWord();
 
-	if (getBitFlag(82)) {
+	if (getGameType() == GType_FF && getBitFlag(82)) {
 		val = _pathValues1[_GPVCount1++];
 	} else {
 		val = _pathValues[_GPVCount++];
@@ -2729,7 +2731,10 @@ void AGOSEngine::vc84_stopSoundLoop() {
 
 // Scrolling functions for Feeble Files
 void AGOSEngine::checkScrollX(int16 x, int16 xpos) {
-	if (_scrollXMax == 0 || getBitFlag(80) || getBitFlag(82) || x == 0)
+	if (_scrollXMax == 0 || x == 0)
+		return;
+
+	if ((getGameType() == GType_FF) && (getBitFlag(80) || getBitFlag(82)))
 		return;
 
 	int16 tmp;
@@ -2768,7 +2773,10 @@ void AGOSEngine::checkScrollX(int16 x, int16 xpos) {
 }
 
 void AGOSEngine::checkScrollY(int16 y, int16 ypos) {
-	if (_scrollYMax == 0 || getBitFlag(80))
+	if (_scrollYMax == 0)
+		return;
+
+	if (getGameType() == GType_FF && getBitFlag(80))
 		return;
 
 	int16 tmp;
