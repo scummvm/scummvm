@@ -973,6 +973,12 @@ public:
 	uint16 getDoorState(Item *item, uint16 d);
 	uint16 getExitOf(Item *item, uint16 d);
 
+	// Opcodes, Elvira 1 only
+	void oe1_setFF();
+	void oe1_zoneDisk();
+	void oe1_opcode176();
+	void oe1_opcode178();
+
 	// Opcodes, Waxworks only
 	void oww_whereTo();
 	void oww_menu();

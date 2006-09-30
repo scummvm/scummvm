@@ -35,6 +35,9 @@ struct SubRoom : Child {
 	uint16 subroutine_id;
 	uint16 roomExitStates;
 	uint16 roomExit[1];
+	uint16 roomShort;
+	uint16 roomLong;
+	uint16 flags;
 };
 
 struct SubObject : Child {
@@ -55,7 +58,19 @@ struct SubUserInherit : Child {
 
 struct SubUserFlag : Child {
 	uint16 subroutine_id;
-	uint16 userFlags[4];
+	uint16 userFlags[8];
+	uint16 userItems[1];
+};
+
+struct SubContainer : Child {
+	uint16 subroutine_id;
+	uint16 volume;
+	uint16 flags;
+};
+
+struct SubGenExit : Child {
+	uint16 subroutine_id;
+	uint16 dest[6];
 };
 
 enum {

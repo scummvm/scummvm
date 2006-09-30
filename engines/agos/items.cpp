@@ -321,6 +321,7 @@ void AGOSEngine::setupOpcodes() {
 
 		opcode_table[56] = &AGOSEngine::o_copyff;
 
+		opcode_table[60] = &AGOSEngine::oe1_setFF;
 		opcode_table[61] = &AGOSEngine::o_clear;
 
 		opcode_table[64] = &AGOSEngine::o_let;
@@ -418,6 +419,9 @@ void AGOSEngine::setupOpcodes() {
 		opcode_table[173] = NULL;
 		opcode_table[174] = NULL;
 
+		opcode_table[176] = &AGOSEngine::oe1_opcode176;
+
+		opcode_table[178] = &AGOSEngine::oe1_opcode178;
 		opcode_table[179] = NULL;
 
 		opcode_table[182] = NULL;
@@ -497,6 +501,7 @@ void AGOSEngine::setupOpcodes() {
 
 		opcode_table[265] = &AGOSEngine::o_ifEndTune;
 		opcode_table[266] = &AGOSEngine::o_setAdjNoun;
+		opcode_table[267] = &AGOSEngine::oe1_zoneDisk;
 		opcode_table[268] = &AGOSEngine::o_saveUserGame;
 		opcode_table[269] = &AGOSEngine::o_loadUserGame;
 		opcode_table[271] = &AGOSEngine::o_stopTune;
@@ -827,7 +832,7 @@ void AGOSEngine::o_state() {
 void AGOSEngine::o_oflag() {
 	// 28: item has prop
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
-	byte num = getVarOrByte();
+	uint num = getVarOrByte();
 	setScriptCondition(subObject != NULL && (subObject->objectFlags & (1 << num)) != 0);
 }
 
@@ -1806,7 +1811,33 @@ void AGOSEngine::o_unfreezeZones() {
 }
 
 // -----------------------------------------------------------------------
-// Waxworks 1 Opcodes
+// Elvira 1 Opcodes
+// -----------------------------------------------------------------------
+
+void AGOSEngine::oe1_setFF() {
+	writeNextVarContents(0xFF);
+}
+
+void AGOSEngine::oe1_zoneDisk() {
+	getVarOrWord();
+	getVarOrWord();
+}
+
+void AGOSEngine::oe1_opcode176() {
+	getNextItemPtr();
+	getVarOrWord();
+	getNextItemPtr();
+}
+
+
+void AGOSEngine::oe1_opcode178() {
+	getNextItemPtr();
+	getVarOrWord();
+}
+
+
+// -----------------------------------------------------------------------
+// Waxworks Opcodes
 // -----------------------------------------------------------------------
 
 void AGOSEngine::oww_whereTo() {

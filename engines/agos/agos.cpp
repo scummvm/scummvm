@@ -575,6 +575,18 @@ void AGOSEngine::setupGame() {
 		_soundIndexBase = 1660 / 4;
 		_vgaBaseDelay = 1;
 		_numVars = 256;
+	} else if (getGameType() == GType_ELVIRA) {
+		gss = PTR(simon1_settings);
+		_numTextBoxes = 20;
+		_numVideoOpcodes = 56;
+#ifndef PALMOS_68K
+		_vgaMemSize = 1000000;
+#else
+		_vgaMemSize = gVars->memory[kMemSimon1Games];
+#endif
+		_tableMemSize = 150000;
+		_vgaBaseDelay = 1;
+		_numVars = 512;
 	} else {
 		gss = PTR(simon1_settings);
 		_tableIndexBase = 1576 / 4;
@@ -779,10 +791,14 @@ uint AGOSEngine::getNextStringID() {
 }
 
 uint AGOSEngine::getVarOrByte() {
-	uint a = *_codePtr++;
-	if (a != 255)
-		return a;
-	return readVariable(*_codePtr++);
+	if (getGameType() == GType_ELVIRA) {
+		return getVarOrWord();
+	} else {
+		uint a = *_codePtr++;
+		if (a != 255)
+			return a;
+		return readVariable(*_codePtr++);
+	}
 }
 
 uint AGOSEngine::getVarOrWord() {
@@ -801,7 +817,7 @@ uint AGOSEngine::getVarOrWord() {
 }
 
 uint AGOSEngine::getVarWrapper() {
-	if (getGameType() == GType_PP)
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_PP)
 		return getVarOrWord();
 	else
 		return getVarOrByte();
@@ -809,7 +825,6 @@ uint AGOSEngine::getVarWrapper() {
 
 Item *AGOSEngine::getNextItemPtr() {
 	int a = getNextWord();
-
 	switch (a) {
 	case -1:
 		return _subjectItem;
@@ -969,10 +984,8 @@ void AGOSEngine::unlinkItem(Item *item) {
 	for (;;) {
 		if (!first)
 			error("unlinkItem: parent empty");
-		if (first->sibling == 0) {
-			warning("unlinkItem: parent does not contain child");
-			return;
-		}
+		if (first->sibling == 0)
+			error("unlinkItem: parent does not contain child");
 
 		next = derefItem(first->sibling);
 		if (next == item) {
@@ -1563,7 +1576,7 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 			clearBackFromTop(134);
 			_usePaletteDelay = true;
 		}
-	} else {
+	} else if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
 		_scrollX = 0;
 		_scrollY = 0;
 		_scrollXMax = 0;
@@ -1716,11 +1729,11 @@ uint AGOSEngine::itemPtrToID(Item *id) {
 bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
-			if (vsp->id == id)
+		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (vsp->id == id && vsp->zoneNum == zoneNum)
 				return true;
 		} else {
-			if (vsp->id == id && vsp->zoneNum == zoneNum)
+			if (vsp->id == id)
 				return true;
 		}
 		vsp++;
@@ -1876,16 +1889,16 @@ void AGOSEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 	vsp->y = y;
 	vsp->x = x;
 	vsp->image = 0;
-	if (getGameType() == GType_WW)
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		vsp->palette = 0;
 	else
 		vsp->palette = palette;
 	vsp->id = vgaSpriteId;
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW)
-		vsp->zoneNum = zoneNum = vgaSpriteId / 100;
-	else
-		vsp->zoneNum = zoneNum;
 
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
+		vsp->zoneNum = zoneNum;
+	else
+		vsp->zoneNum = zoneNum = vgaSpriteId / 100;
 
 	for (;;) {
 		vpe = &_vgaBufferPointers[zoneNum];
@@ -2229,7 +2242,7 @@ void AGOSEngine::loadMusic(uint music) {
 		}
 
 		midi.startTrack (0);
-	} else {
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		midi.stop();
 		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
@@ -2242,6 +2255,8 @@ void AGOSEngine::loadMusic(uint music) {
 
 		midi.loadS1D (&f);
 		midi.startTrack (0);
+	} else {
+		warning("Old music type not support");
 	}
 }
 

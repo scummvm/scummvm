@@ -255,7 +255,7 @@ void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uin
 int AGOSEngine::allocGamePcVars(File *in) {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
-	uint i, start;
+	uint i, firstItem;
 
 	item_array_size = in->readUint32BE();
 	version = in->readUint32BE();
@@ -264,11 +264,11 @@ int AGOSEngine::allocGamePcVars(File *in) {
 
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
 		item_array_inited = item_array_size;
-		start = 0;
+		firstItem = 0;
 	} else {
 		item_array_inited += 2;				// first two items are predefined
 		item_array_size += 2;
-		start = 1;
+		firstItem = 1;
 	}
 
 	if (version != 0x80)
@@ -281,7 +281,7 @@ int AGOSEngine::allocGamePcVars(File *in) {
 	_itemArraySize = item_array_size;
 	_itemArrayInited = item_array_inited;
 
-	for (i = start; i < item_array_inited; i++) {
+	for (i = firstItem; i < item_array_inited; i++) {
 		_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
 	}
 
@@ -308,14 +308,8 @@ void AGOSEngine::loadGamePcFile() {
 	createPlayer();
 	readGamePcText(&in);
 
-	int start;
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
-		start = 0;
-	} else {
-		start = 2;
-	}
-
-	for (i = start; i < num_inited_objects; i++) {
+	int firstItem = (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) ? 0 : 2;
+	for (i = firstItem; i < num_inited_objects; i++) {
 		readItemFromGamePc(&in, _itemArrayPtr[i]);
 	}
 
@@ -449,11 +443,11 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 
 void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 	if (type == 1) {
-		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
-			// FIXME
-			in->readUint32BE();
-			in->readUint32BE();
-			in->readUint16BE();
+		if (getGameType() == GType_ELVIRA) {
+			SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
+			subRoom->roomShort = in->readUint32BE();
+			subRoom->roomLong = in->readUint32BE();
+			subRoom->flags = in->readUint16BE();
 		} else {
 			uint fr1 = in->readUint16BE();
 			uint fr2 = in->readUint16BE();
@@ -497,13 +491,13 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 
 		subObject->objectName = (uint16)in->readUint32BE();
 	} else if (type == 4) {
-		// FIXME
-		fileReadItemID(in);
-		fileReadItemID(in);
-		fileReadItemID(in);
-		fileReadItemID(in);
-		fileReadItemID(in);
-		fileReadItemID(in);
+		SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
+		genExit->dest[0] = (uint16)fileReadItemID(in);
+		genExit->dest[1] = (uint16)fileReadItemID(in);
+		genExit->dest[2] = (uint16)fileReadItemID(in);
+		genExit->dest[3] = (uint16)fileReadItemID(in);
+		genExit->dest[4] = (uint16)fileReadItemID(in);
+		genExit->dest[5] = (uint16)fileReadItemID(in);
 		fileReadItemID(in);
 		fileReadItemID(in);
 		fileReadItemID(in);
@@ -511,9 +505,9 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 		fileReadItemID(in);
 		fileReadItemID(in);
 	} else if (type == 7) {
-		// FIXME
-		in->readUint16BE();
-		in->readUint16BE();
+		SubContainer *container = (SubContainer *)allocateChildBlock(item, 7, sizeof(SubContainer));
+		container->volume = in->readUint16BE();
+		container->flags = in->readUint16BE();
 	} else if (type == 8) {
 		SubUserChain *chain = (SubUserChain *)allocateChildBlock(item, 8, sizeof(SubUserChain));
 		chain->chChained = (uint16)fileReadItemID(in);
@@ -522,13 +516,13 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
 		setUserFlag(item, 3, in->readUint16BE());
-		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		if (getGameType() == GType_ELVIRA) {
 			setUserFlag(item, 4, in->readUint16BE());
 			setUserFlag(item, 5, in->readUint16BE());
 			setUserFlag(item, 6, in->readUint16BE());
 			setUserFlag(item, 7, in->readUint16BE());
-			// FIXME
-			fileReadItemID(in); 
+			SubUserFlag *subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+			subUserFlag->userItems[0] = (uint16)fileReadItemID(in); 
 			fileReadItemID(in);
 			fileReadItemID(in);
 			fileReadItemID(in);
@@ -889,7 +883,7 @@ byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 			else
 				sprintf(filename, "%.3d%d.pkd", id / 2, type);
 		} else {
-			if (getGameType() == GType_WW) {
+			if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 				sprintf(filename, "%.2d%d.VGA", id / 2, type);
 			} else {
 				sprintf(filename, "%.3d%d.VGA", id / 2, type);

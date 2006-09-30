@@ -137,11 +137,11 @@ void AGOSEngine::runVgaScript() {
 			}
 		}
 
-		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
+		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
+			opcode = *_vcPtr++;
+		} else {
 			opcode = READ_BE_UINT16(_vcPtr);
 			_vcPtr += 2;
-		} else {
-			opcode = *_vcPtr++;
 		}
 
 		if (opcode >= _numVideoOpcodes)
@@ -195,11 +195,11 @@ bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 VgaSprite *AGOSEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
-			if (vsp->id == _vgaCurSpriteId)
+		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
 				break;
 		} else {
-			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
+			if (vsp->id == _vgaCurSpriteId)
 				break;
 		}
 		vsp++;
@@ -236,6 +236,18 @@ void AGOSEngine::vcWriteVar(uint var, int16 value) {
 }
 
 void AGOSEngine::vcSkipNextInstruction() {
+
+	static const byte opcodeParamLenElvira1[] = {
+		0, 6,  2, 10, 6, 4, 2, 2,
+		4, 4,  8,  2, 0, 2, 2, 2,
+		2, 2,  2,  2, 0, 4, 2, 2,
+		2, 8,  0, 10, 0, 8, 0, 2,
+		2, 0,  0,  0, 0, 2, 4, 2,
+		4, 4,  0,  0, 2, 2, 2, 4,
+		4, 0, 18,  2, 4, 4, 4, 0,
+		4
+	};
+
 	static const byte opcodeParamLenWW[] = {
 		0, 6, 2, 10, 6, 4, 2, 2,
 		4, 4, 8, 2, 2, 2, 2, 2,
@@ -295,9 +307,12 @@ void AGOSEngine::vcSkipNextInstruction() {
 	} else if (getGameType() == GType_SIMON1) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenSimon1[opcode];
-	} else {
+	} else if (getGameType() == GType_WW) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenWW[opcode];
+	} else {
+		opcode = vcReadNextWord();
+		_vcPtr += opcodeParamLenElvira1[opcode];
 	}
 
 	if (_continousVgaScript)
@@ -405,12 +420,12 @@ void AGOSEngine::vc3_loadSprite() {
 
 	windowNum = vcReadNextWord();		/* 0 */
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
-		vgaSpriteId = vcReadNextWord();	/* 2 */
-		zoneNum = vgaSpriteId / 100;
-	} else {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
 		zoneNum = vcReadNextWord();	/* 0 */
 		vgaSpriteId = vcReadNextWord();	/* 2 */
+	} else {
+		vgaSpriteId = vcReadNextWord();	/* 2 */
+		zoneNum = vgaSpriteId / 100;
 	}
 
 	x = vcReadNextWord();			/* 4 */
@@ -424,7 +439,7 @@ void AGOSEngine::vc3_loadSprite() {
 	while (vsp->id)
 		vsp++;
 
-	if (getGameType() == GType_WW)
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		vsp->palette = 0;
 	else
 		vsp->palette = palette;
@@ -843,10 +858,10 @@ void AGOSEngine::vc10_draw() {
 	state.y = (int16)vcReadNextWord();
 	state.y -= _scrollY;
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
-		state.flags = vcReadNextWord();
-	} else {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
 		state.flags = vcReadNextByte();
+	} else {
+		state.flags = vcReadNextWord();
 	}
 
 	if (state.image < 0)
@@ -904,7 +919,7 @@ void AGOSEngine::vc10_draw() {
 		return;
 	}
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_WW) {
+	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		if (state.flags & kDFCompressedFlip) {
 			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
 		} else if (state.flags & kDFFlip) {
@@ -932,7 +947,7 @@ bool AGOSEngine::drawImages_clip(VC10_state *state) {
 
 	vlut = &_video_windows[_windowNum * 4];
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_WW) {
+	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		state->draw_width = state->width * 2;
 	} 
 
@@ -976,7 +991,7 @@ bool AGOSEngine::drawImages_clip(VC10_state *state) {
 
 	assert(state->draw_width != 0 && state->draw_height != 0);
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_WW) {
+	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		state->draw_width *= 4;
 	}
 
@@ -1228,7 +1243,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 
 		/* vc10_helper_5 */
 	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) &&
-		getGameType() != GType_WW) {
+		(getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -1608,10 +1623,10 @@ void AGOSEngine::vc20_setRepeat() {
 void AGOSEngine::vc21_endRepeat() {
 	int16 a = vcReadNextWord();
 	const byte *tmp = _vcPtr + a;
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW)
-		tmp += 4;
-	else
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
 		tmp += 3;
+	else
+		tmp += 4;
 
 	uint16 val = READ_LE_UINT16(tmp);
 	if (val != 0) {
@@ -1713,10 +1728,10 @@ void AGOSEngine::vc24_setSpriteXY() {
 
 	vsp->x += (int16)vcReadNextWord();
 	vsp->y += (int16)vcReadNextWord();
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
-		vsp->flags = vcReadNextWord();
-	} else {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
 		vsp->flags = vcReadNextByte();
+	} else {
+		vsp->flags = vcReadNextWord();
 	}
 
 	_vgaSpriteChanged++;
