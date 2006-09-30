@@ -2571,7 +2571,7 @@ void AGOSEngine::o4_restoreOopsPosition() {
 	getNextItemPtr();
 	if (_oopsValid) {
 		for (uint i = 0; i < _numVars; i++) {
-			_variableArray[i] = _variableBackupArray[i];
+			_variableArray[i] = _variableArray2[i];
 		}
 //		i=FlagData[999]*100+11;
 //		C_PICTURE(4,i);
@@ -2644,7 +2644,7 @@ void AGOSEngine::o4_saveOopsPosition() {
 //	if (IsVQueueEmpty() == 0) {
 		_oopsValid = true;
 		for (uint i = 0; i < _numVars; i++) {
-			_variableBackupArray[i] = _variableArray[i];
+			_variableArray2[i] = _variableArray[i];
 		}
 //	} else
 //		_oopsValid = false;

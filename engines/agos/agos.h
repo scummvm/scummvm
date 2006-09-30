@@ -412,7 +412,6 @@ protected:
 	int16 *_variableArray;
 	int16 *_variableArray2;
 	int16 *_variableArrayPtr;
-	int16 *_variableBackupArray;
 
 	WindowBlock *_windowArray[16];
 

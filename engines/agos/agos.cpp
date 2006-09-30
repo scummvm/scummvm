@@ -331,7 +331,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_variableArray = 0;
 	_variableArray2 = 0;
 	_variableArrayPtr = 0;
-	_variableBackupArray = 0;
 
 	memset(_windowArray, 0, sizeof(_windowArray));
 
@@ -617,7 +616,6 @@ void AGOSEngine::setupGame() {
 
 	_variableArray = (int16 *)calloc(_numVars, sizeof(int16));
 	_variableArray2 = (int16 *)calloc(_numVars, sizeof(int16));
-	_variableBackupArray = (int16 *)calloc(_numVars, sizeof(int16));
 
 	setupOpcodes();
 
@@ -658,6 +656,9 @@ AGOSEngine::~AGOSEngine() {
 	free(_frontBuf);
 	free(_backBuf);
 	free(_scaleBuf);
+
+	free(_variableArray);
+	free(_variableArray2);
 
 	delete _dummyItem1;
 	delete _dummyItem2;
