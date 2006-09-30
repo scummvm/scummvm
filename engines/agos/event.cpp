@@ -142,7 +142,7 @@ bool AGOSEngine::kickoffTimeEvents() {
 }
 
 bool AGOSEngine::isVgaQueueEmpty() {
-	VgaTimerEntry *vte;
+	VgaTimerEntry *vte = _vgaTimerList;
 	bool result = false;
 
 	while (vte->delay) {
