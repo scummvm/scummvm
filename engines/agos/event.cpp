@@ -142,7 +142,16 @@ bool AGOSEngine::kickoffTimeEvents() {
 }
 
 bool AGOSEngine::isVgaQueueEmpty() {
-	return true;
+	VgaTimerEntry *vte;
+	bool result = false;
+
+	while (vte->delay) {
+		if (vte->cur_vga_file == _variableArray[999] && vte->sprite_id >= 100) {
+			result = true;
+			break;
+		}
+	}
+	return result;
 }
 
 void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
