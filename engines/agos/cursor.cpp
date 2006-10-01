@@ -452,7 +452,7 @@ void AGOSEngine::drawMousePointer_FF() {
 		_currentMouseCursor = cursor;
 		_currentMouseAnim = _mouseAnim;
 
-		memset(_mouseData, 0, sizeof(_mouseData));
+		memset(_mouseData, 0, _maxCursorWidth * _maxCursorHeight);
 
 		image = cursor * 16 + 1;
 		offs = cursor * 32;
