@@ -44,7 +44,7 @@ public:
 
 	uint filename() const { return _filename; }
 
-	virtual bool isValid(void) const { return _filename; }
+	virtual bool isValid(void) const { return (_filename != 0); }
 	bool isOpen(void) const { return _open; }
 
 	virtual void close() { _open = false; }
