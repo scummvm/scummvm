@@ -1642,7 +1642,7 @@ void AGOSEngine::vc21_endRepeat() {
 
 void AGOSEngine::vc22_setSpritePalette() {
 	byte *offs, *palptr, *src;
-	uint16 a, b, num, palSize;
+	uint16 a = 0, b, num, palSize;
 
 	if (getGameType() != GType_WW)
 		a = vcReadNextWord();

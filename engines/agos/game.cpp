@@ -1515,7 +1515,7 @@ static GameDescription gameDescriptions[] = {
 };
 
 DetectedGame toDetectedGame(const GameDescription &g) {
-	const char *title;
+	const char *title = 0;
 
 	const PlainGameDescriptor *sg = simonGames;
 	while (sg->gameid) {

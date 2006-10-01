@@ -2539,7 +2539,7 @@ void AGOSEngine::o4_checkHiScores() {
 void AGOSEngine::o4_sync() {
 	// 120: sync
 	uint a = getVarOrWord();
-	if (a == 8001 | a == 8101 || a == 8201 || a == 8301 || a == 8401) {
+	if (a == 8001 || a == 8101 || a == 8201 || a == 8301 || a == 8401) {
 		_marks &= ~(1 << 2);
 	}
 	sendSync(a);
