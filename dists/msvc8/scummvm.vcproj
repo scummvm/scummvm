@@ -208,14 +208,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\base\engine.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\base\engine.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\base\game.h"
 				>
 			</File>
@@ -269,14 +261,6 @@
 			</File>
 			<File
 				RelativePath="..\..\common\config-manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\debugger.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\debugger.h"
 				>
 			</File>
 			<File
@@ -1208,6 +1192,18 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="engines"
+			>
+			<File
+				RelativePath="..\..\engines\engine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\engine.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
