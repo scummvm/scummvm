@@ -1477,6 +1477,254 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"B|B3_NOT_ZERO",
 };
 
+static const char *const puzzlepack_opcode_name_table[256] = {
+	/* 0 */
+	"|NOT",
+	"IJ|AT",
+	"IJ|NOT_AT",
+	NULL,
+	/* 4 */
+	NULL,
+	"IJ|CARRIED",
+	"IJ|NOT_CARRIED",
+	"IIJ|IS_AT",
+	/* 8 */
+	NULL,
+	NULL,
+	NULL,
+	"WJ|IS_ZERO",
+	/* 12 */
+	"WJ|ISNOT_ZERO",
+	"WWJ|IS_EQ",
+	"WWJ|IS_NEQ",
+	"WWJ|IS_LE",
+	/* 16 */
+	"WWJ|IS_GE",
+	"WWJ|IS_EQF",
+	"WWJ|IS_NEQF",
+	"WWJ|IS_LEF",
+	/* 20 */
+	"WWJ|IS_GEF",
+	NULL,
+	NULL,
+	"WJ|CHANCE",
+	/* 24 */
+	NULL,
+	"IJ|IS_ROOM",
+	"IJ|IS_OBJECT",
+	"IWJ|ITEM_STATE_IS",
+	/* 28 */
+	"IBJ|OBJECT_HAS_FLAG",
+	NULL,
+	"I|MINIMIZE_WINDOW",
+	"I|SET_NO_PARENT",
+	/* 32 */
+	"I|RESTORE_OOOPS_POSITION",
+	"II|SET_PARENT",
+	NULL,
+	NULL,
+	/* 36 */
+	"WW|MOVE",
+	"B|LOAD_MOUSE_IMAGE",
+	"BI|CHECK_TITLES",
+	NULL,
+	/* 40 */
+	NULL,
+	"W|ZERO",
+	"WW|SET",
+	"WW|ADD",
+	/* 44 */
+	"WW|SUB",
+	"WW|ADDF",
+	"WW|SUBF",
+	"WW|MUL",
+	/* 48 */
+	"WW|DIV",
+	"WW|MULF",
+	"WW|DIVF",
+	"WW|MOD",
+	/* 52 */
+	"WW|MODF",
+	"WW|RANDOM",
+	NULL,
+	"I|SET_A_PARENT",
+	/* 56 */
+	"IB|SET_CHILD2_BIT",
+	"IB|CLEAR_CHILD2_BIT",
+	"II|MAKE_SIBLING",
+	"I|INC_STATE",
+	/* 60 */
+	"I|DEC_STATE",
+	"IW|SET_STATE",
+	"W|SHOW_INT",
+	"T|SHOW_STRING_NL",
+	/* 64 */
+	"T|SHOW_STRING",
+	"WWWWWB|ADD_TEXT_BOX",
+	"BTWW|SET_SHORT_TEXT",
+	"BTw|SET_LONG_TEXT",
+	/* 68 */
+	"x|END",
+	"x|DONE",
+	"V|SHOW_STRING_AR3",
+	"W|START_SUB",
+	/* 72 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 76 */
+	"WW|ADD_TIMEOUT",
+	"J|IS_M1_EMPTY",
+	"J|IS_M3_EMPTY",
+	"ITJ|CHILD_FR2_IS",
+	/* 80 */
+	"IIJ|IS_ITEM_EQ",
+	NULL,
+	"B|DEBUG",
+	"|RESCAN",
+	/* 84 */
+	NULL,
+	NULL,
+	NULL,
+	"W|COMMENT",
+	/* 88 */
+	"|STOP_ANIMATION",
+	"|RESTART_ANIMATION",
+	"IB|GET_PARENT",
+	"IB|GET_NEXT",
+	/* 92 */
+	"IB|GET_CHILDREN",
+	NULL,
+	NULL,
+	NULL,
+	/* 96 */
+	"WB|PICTURE",
+	"W|LOAD_ZONE",
+	"WWBWWW|ANIMATE",
+	"WW|STOP_ANIMATE",
+	/* 100 */
+	"|KILL_ANIMATE",
+	"BWWWWWW|DEFINE_WINDOW",
+	"B|CHANGE_WINDOW",
+	"|CLS",
+	/* 104 */
+	"B|CLOSE_WINDOW",
+	"B|LOAD_HIGH_SCORES",
+	"BB|CHECK_HIGH_SCORES",
+	"WWWWWIW|ADD_BOX",
+	/* 108 */
+	"W|DEL_BOX",
+	"W|ENABLE_BOX",
+	"W|DISABLE_BOX",
+	"WWW|MOVE_BOX",
+	/* 112 */
+	NULL,
+	NULL,
+	"IB|DO_ICONS",
+	"IBJ|IS_CLASS",
+	/* 116 */
+	"IB|SET_CLASS",
+	"IB|UNSET_CLASS",
+	NULL,
+	"W|WAIT_SYNC",
+	/* 120 */
+	"W|SYNC",
+	"BI|DEF_OBJ",
+	"|ORACLE_TEXT_DOWN",
+	"|ORACLE_TEXT_UP",
+	/* 124 */
+	"WJ|IF_TIME",
+	"IJ|IS_SIBLING_WITH_A",
+	"IBB|DO_CLASS_ICONS",
+	"WWB|PLAY_TUNE",
+	/* 128 */
+	"W|WAIT_END_TUNE",
+	"W|IF_END_TUNE",
+	"Bww|SET_ADJ_NOUN",
+	"|SET_TIME",
+	/* 132 */
+	"|SAVE_GAME",
+	"|LOAD_GAME",
+	"|LIST_SAVED_GAMES",
+	"|SWITCH_CD",
+	/* 136 */
+	"IV|COPY_SF",
+	"B|RESTORE_ICONS",
+	"|FREEZE_ZONES",
+	"II|SET_PARENT_SPECIAL",
+	/* 140 */
+	"|CLEAR_TIMERS",
+	"BI|SET_M1_OR_M3",
+	"WJ|IS_HITAREA_0x40_CLEAR",
+	"I|START_ITEM_SUB",
+	/* 144 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 148 */
+	NULL,
+	NULL,
+	NULL,
+	"BI|SET_ARRAY6_TO",
+	/* 152 */
+	"BB|SET_M1_M3_TO_ARRAY6",
+	"W|SET_BIT",
+	"W|CLEAR_BIT",
+	"WJ|IS_BIT_CLEAR",
+	/* 156 */
+	"WJ|IS_BIT_SET",
+	"IBB|GET_ITEM_PROP",
+	"IBW|SET_ITEM_PROP",
+	NULL,
+	/* 160 */
+	"B|SET_INK",
+	"BWWW|SETUP_TEXT",
+	"BBTW|PRINT_STR",
+	"W|PLAY_EFFECT",
+	/* 164 */
+	"|getDollar2",
+	"IWWJ|IS_ADJ_NOUN",
+	"B|SET_BIT2",
+	"B|CLEAR_BIT2",
+	/* 168 */
+	"BJ|IS_BIT2_CLEAR",
+	"BJ|IS_BIT2_SET",
+	NULL,
+	"W|HYPERLINK_ON",
+	/* 172 */
+	"|HYPERLINK_OFF",
+	"|SAVE_OOPS_POSITION",
+	NULL,
+	"|LOCK_ZONES",
+	/* 176 */
+	"|UNLOCK_ZONES",
+	"BBI|SCREEN_TEXT_POBJ",
+	"WWBB|GETPATHPOSN",
+	"BBB|SCREEN_TEXT_LONG_TEXT",
+	/* 180 */
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
+	"T|LOAD_VIDEO",
+	"|PLAY_VIDEO",
+	/* 184 */
+	"W|UNLOAD_ZONE",
+	NULL,
+	"|UNFREEZE_ZONES",
+	"|RESET_GAME_TIME",
+	/* 188 */
+	"BSJ|STRING2_IS",
+	"|CLEAR_MARKS",
+	"B|WAIT_FOR_MARK",
+	"|RESET_PV_COUNT",
+	/* 192 */
+	"BBBB|SET_PATH_VALUES",
+	"|STOP_CLOCK",
+	"|RESTART_CLOCK",
+	"BBBB|SET_COLOR",
+};
+
 const char *const ww_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",

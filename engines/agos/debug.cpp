@@ -48,7 +48,9 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 			return NULL;
 	}
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameType() == GType_PP) {
+		st = s = puzzlepack_opcode_name_table[opcode];
+	} else if (getGameType() == GType_FF) {
 		st = s = feeblefiles_opcode_name_table[opcode];
 	} else if (getGameType() == GType_SIMON2 && getFeatures() & GF_TALKIE) {
 		st = s = simon2talkie_opcode_name_table[opcode];

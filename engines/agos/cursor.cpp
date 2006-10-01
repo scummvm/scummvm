@@ -321,8 +321,7 @@ void AGOSEngine::handleMouseMoved() {
 			_rightButtonDown = 0;
 			setVerb(NULL);
 		}
-	}
-	if (getGameType() == GType_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
 			if (!_vgaVar9) {
 				if (_mouseX >= 315 || _mouseX < 9)
@@ -349,7 +348,13 @@ void AGOSEngine::handleMouseMoved() {
 
 	x = 0;
 	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+		if (getGameType() == GType_PP)
+			_verbHitArea = 300;
 		_leftButtonDown = 0;
+		x = 1;
+	} else if (getGameType() == GType_PP && _rightButtonDown != 0) {
+		_verbHitArea = 300;
+		_rightButtonDown = 0;
 		x = 1;
 	} else {
 		if (_hitarea_unk_3 == 0 && _needHitAreaRecalc == 0)

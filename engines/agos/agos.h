@@ -1009,6 +1009,7 @@ public:
 	void oe1_opcode178();
 
 	// Opcodes, Waxworks only
+	void oww_goto();
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();

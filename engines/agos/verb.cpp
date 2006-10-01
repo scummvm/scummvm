@@ -463,7 +463,6 @@ void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flag
 void AGOSEngine::resetVerbs() {
 	if (getGameType() == GType_PP) {
 		_verbHitArea = 300;
-		return;
 	} else if (getGameType() == GType_FF) {
 		_verbHitArea = 300;
 		int cursor = 0;
@@ -701,11 +700,10 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	uint16 x_ = x;
 	uint16 y_ = y;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		x_ += _scrollX;
 		y_ += _scrollY;
-	}
-	if (getGameType() == GType_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79) || y < 134) {
 			x_ += _scrollX * 8;
 		}

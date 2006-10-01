@@ -311,6 +311,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	setupAGOSOpcodes(op);
 
 	// Confirmed
+	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[83] = &AGOSEngine::o1_rescan;
 	op[98] = &AGOSEngine::o1_animate;
@@ -785,10 +786,6 @@ void AGOSEngine::o_random() {
 void AGOSEngine::o_goto() {
 	// 55: set itemA parent
 	uint item = getNextItemID();
-	if (_itemArrayPtr[item] == NULL) {
-		setItemParent(me(), NULL);
-		loadRoomItems(item);
-	}
 	setItemParent(me(), _itemArrayPtr[item]);
 }
 
@@ -1722,6 +1719,16 @@ void AGOSEngine::oe1_opcode178() {
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
+
+void AGOSEngine::oww_goto() {
+	// 55: set itemA parent
+	uint item = getNextItemID();
+	if (_itemArrayPtr[item] == NULL) {
+		setItemParent(me(), NULL);
+		loadRoomItems(item);
+	}
+	setItemParent(me(), _itemArrayPtr[item]);
+}
 
 void AGOSEngine::oww_whereTo() {
 	// 85: where to
