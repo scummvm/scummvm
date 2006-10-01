@@ -199,12 +199,11 @@ void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 
 void AGOSEngine::processVgaEvents() {
 	VgaTimerEntry *vte = _vgaTimerList;
-	uint timer = (getGameType() == GType_FF) ? 5 : 1;
 
 	_vgaTickCounter++;
 
 	while (vte->delay) {
-		vte->delay -= timer;
+		vte->delay -= _vgaBaseDelay;
 		if (vte->delay <= 0) {
 			uint16 curZoneNum = vte->cur_vga_file;
 			uint16 cur_sprite = vte->sprite_id;
@@ -214,7 +213,8 @@ void AGOSEngine::processVgaEvents() {
 			_nextVgaTimerToProcess = vte + 1;
 			deleteVgaEvent(vte);
 
-			if (getGameType() == GType_FF && script_ptr == NULL) {
+			if ((getGameType() == GType_FF || getGameType() == GType_PP) &&
+				script_ptr == NULL) {
 				panEvent(curZoneNum, cur_sprite, param);
 			} else if (getGameType() == GType_SIMON2 && script_ptr == NULL) {
 				scrollEvent();
@@ -338,7 +338,6 @@ void AGOSEngine::timer_proc1() {
 					}
 				}
 			} else {
-				processVgaEvents();
 				if (_scrollCount == 0) {
 					_lockWord &= ~2;
 					return;
@@ -384,7 +383,7 @@ void AGOSEngine::timer_proc1() {
 	}
 
 	if (_copyPartialMode == 2) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
 		} else {
 			fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);

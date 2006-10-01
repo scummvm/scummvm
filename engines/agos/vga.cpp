@@ -2418,14 +2418,11 @@ void AGOSEngine::vc62_fastFadeOut() {
 void AGOSEngine::vc63_fastFadeIn() {
 	if (getGameType() == GType_PP) {
 		_fastFadeInFlag = 256;
-
 		if (getBitFlag(100)) {
 			printf("StartOverlayAnims\n");
-		}
-		if (getBitFlag(103)) {
+		} else if (getBitFlag(103)) {
 			printf("NameAndTime\n");
-		}
-		if (getBitFlag(104)) {
+		} else if (getBitFlag(104)) {
 			printf("HiScoreTable\n");
 		}
 	} else if (getGameType() == GType_FF) {
