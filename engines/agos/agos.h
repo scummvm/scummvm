@@ -148,6 +148,17 @@ class AGOSEngine : public Engine {
 	GUI::Debugger *getDebugger();
 
 	typedef void (AGOSEngine::*OpcodeProc) ();
+
+	void setupAGOSOpcodes(OpcodeProc *op);
+
+	void setupElvira1Opcodes(OpcodeProc *op);
+	void setupElvira2Opcodes(OpcodeProc *op);
+	void setupWaxworksOpcodes(OpcodeProc *op);
+	void setupSimon1Opcodes(OpcodeProc *op);
+	void setupSimon2Opcodes(OpcodeProc *op);
+	void setupFeebleOpcodes(OpcodeProc *op);
+	void setupPuzzleOpcodes(OpcodeProc *op);
+
 	void setupOpcodes();
 	const OpcodeProc *_opcode_table;
 	int _numOpcodes;

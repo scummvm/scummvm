@@ -36,643 +36,473 @@ extern bool isSmartphone(void);
 
 namespace AGOS {
 
-// Opcode table
-void AGOSEngine::setupOpcodes() {
-	// This opcode table is for Simon 1. Changes for Simon 2 and FF are
-	// made below.
+void AGOSEngine::setupAGOSOpcodes(OpcodeProc *op) {
+	// A sensible set of opcodes for Simon 1 and later.
 
-	static OpcodeProc opcode_table[300] = {
-		// 0 - 4
-		NULL,
-		&AGOSEngine::o_at,
-		&AGOSEngine::o_notAt,
-		NULL,
-		NULL,
-		// 5 - 9
-		&AGOSEngine::o_carried,
-		&AGOSEngine::o_notCarried,
-		&AGOSEngine::o_isAt,
-		NULL,
-		NULL,
-		// 10 - 14
-		NULL,
-		&AGOSEngine::o_zero,
-		&AGOSEngine::o_notZero,
-		&AGOSEngine::o_eq,
-		&AGOSEngine::o_notEq,
-		// 15 - 19
-		&AGOSEngine::o_gt,
-		&AGOSEngine::o_lt,
-		&AGOSEngine::o_eqf,
-		&AGOSEngine::o_notEqf,
-		&AGOSEngine::o_ltf,
-		// 20 - 24
-		&AGOSEngine::o_gtf,
-		NULL,
-		NULL,
-		&AGOSEngine::o_chance,
-		NULL,
-		// 25 - 29
-		&AGOSEngine::o_isRoom,
-		&AGOSEngine::o_isObject,
-		&AGOSEngine::o_state,
-		&AGOSEngine::o_oflag,
-		NULL,
-		// 30 - 34
-		NULL,
-		&AGOSEngine::o_destroy,
-		NULL,
-		&AGOSEngine::o_place,
-		NULL,
-		// 35 - 39
-		NULL,
-		&AGOSEngine::o_copyff,
-		NULL,
-		NULL,
-		NULL,
-		// 40 - 44
-		NULL,
-		&AGOSEngine::o_clear,
-		&AGOSEngine::o_let,
-		&AGOSEngine::o_add,
-		&AGOSEngine::o_sub,
-		// 45 - 49
-		&AGOSEngine::o_addf,
-		&AGOSEngine::o_subf,
-		&AGOSEngine::o_mul,
-		&AGOSEngine::o_div,
-		&AGOSEngine::o_mulf,
-		// 50 - 54
-		&AGOSEngine::o_divf,
-		&AGOSEngine::o_mod,
-		&AGOSEngine::o_modf,
-		&AGOSEngine::o_random,
-		NULL,
-		// 55 - 59
-		&AGOSEngine::o_goto,
-		&AGOSEngine::o_oset,
-		&AGOSEngine::o_oclear,
-		&AGOSEngine::o_putBy,
-		&AGOSEngine::o_inc,
-		// 60 - 64
-		&AGOSEngine::o_dec,
-		&AGOSEngine::o_setState,
-		&AGOSEngine::o_print,
-		&AGOSEngine::o_message,
-		&AGOSEngine::o_msg,
-		// 65 - 69
-		&AGOSEngine::o_addTextBox,
-		&AGOSEngine::o_setShortText,
-		&AGOSEngine::o_setLongText,
-		&AGOSEngine::o_end,
-		&AGOSEngine::o_done,
-		// 70 - 74
-		NULL,
-		&AGOSEngine::o_process,
-		NULL,
-		NULL,
-		NULL,
-		// 75 - 79
-		NULL,
-		&AGOSEngine::o_when,
-		&AGOSEngine::o_if1,
-		&AGOSEngine::o_if2,
-		&AGOSEngine::o_isCalled,
-		// 80 - 84
-		&AGOSEngine::o_is,
-		NULL,
-		&AGOSEngine::o_debug,
-		NULL,
-		NULL,
-		// 85 - 89
-		NULL,
-		NULL,
-		&AGOSEngine::o_comment,
-		&AGOSEngine::o_haltAnimation,
-		&AGOSEngine::o_restartAnimation,
-		// 90 - 94
-		&AGOSEngine::o_getParent,
-		&AGOSEngine::o_getNext,
-		&AGOSEngine::o_getChildren,
-		NULL,
-		NULL,
-		// 95 - 99
-		NULL,
-		&AGOSEngine::o_picture,
-		&AGOSEngine::o_loadZone,
-		NULL,
-		NULL,
-		// 100 - 104
-		&AGOSEngine::o_killAnimate,
-		&AGOSEngine::o_defWindow,
-		&AGOSEngine::o_window,
-		&AGOSEngine::o_cls,
-		&AGOSEngine::o_closeWindow,
-		// 105 - 109
-		NULL,
-		NULL,
-		&AGOSEngine::o_addBox,
-		&AGOSEngine::o_delBox,
-		&AGOSEngine::o_enableBox,
-		// 110 - 114
-		&AGOSEngine::o_disableBox,
-		&AGOSEngine::o_moveBox,
-		NULL,
-		NULL,
-		&AGOSEngine::o_doIcons,
-		// 115 - 119
-		&AGOSEngine::o_isClass,
-		&AGOSEngine::o_setClass,
-		&AGOSEngine::o_unsetClass,
-		NULL,
-		&AGOSEngine::o_waitSync,
-		// 120 - 124
-		&AGOSEngine::o_sync,
-		&AGOSEngine::o_defObj,
-		NULL,
-		NULL,
-		NULL,
-		// 125 - 129
-		&AGOSEngine::o_here,
-		&AGOSEngine::o_doClassIcons,
-		NULL,
-		&AGOSEngine::o_waitEndTune,
-		&AGOSEngine::o_ifEndTune,
-		// 130 - 134
-		&AGOSEngine::o_setAdjNoun,
-		NULL,
-		&AGOSEngine::o_saveUserGame,
-		&AGOSEngine::o_loadUserGame,
-		&AGOSEngine::o_stopTune,
-		// 135 - 139
-		&AGOSEngine::o_pauseGame,
-		&AGOSEngine::o_copysf,
-		&AGOSEngine::o_restoreIcons,
-		&AGOSEngine::o_freezeZones,
-		&AGOSEngine::o_placeNoIcons,
-		// 140 - 144
-		&AGOSEngine::o_clearTimers,
-		&AGOSEngine::o_setDollar,
-		&AGOSEngine::o_isBox,
-		&AGOSEngine::o_doTable,
-		NULL,
-		// 145 - 149
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		// 150 - 154
-		NULL,
-		&AGOSEngine::o_storeItem,
-		&AGOSEngine::o_getItem,
-		&AGOSEngine::o_bSet,
-		&AGOSEngine::o_bClear,
-		// 155 - 159
-		&AGOSEngine::o_bZero,
-		&AGOSEngine::o_bNotZero,
-		&AGOSEngine::o_getOValue,
-		&AGOSEngine::o_setOValue,
-		NULL,
-		// 160 - 164
-		&AGOSEngine::o_ink,
-		&AGOSEngine::o_screenTextBox,
-		&AGOSEngine::o_screenTextMsg,
-		&AGOSEngine::o_playEffect,
-		&AGOSEngine::o_getDollar2,
-		// 165 - 169
-		&AGOSEngine::o_isAdjNoun,
-		&AGOSEngine::o_b2Set,
-		&AGOSEngine::o_b2Clear,
-		&AGOSEngine::o_b2Zero,
-		&AGOSEngine::o_b2NotZero,
-		// 170 - 174
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		// 175 - 179
-		&AGOSEngine::o_lockZones,
-		&AGOSEngine::o_unlockZones,
-		NULL,
-		&AGOSEngine::o_getPathPosn,
-		&AGOSEngine::o_scnTxtLongText,
-		// 180 - 184
-		&AGOSEngine::o_mouseOn,
-		NULL,
-		NULL,
-		NULL,
-		&AGOSEngine::o_unloadZone,
-		// 185 - 189
-		NULL,
-		&AGOSEngine::o_unfreezeZones,
-		NULL,
-		NULL,
-		NULL,
-		// 190 - 194
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		// 195 - 199
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL
-	};
+	op[1] = &AGOSEngine::o_at;
+	op[2] = &AGOSEngine::o_notAt;
+	op[5] = &AGOSEngine::o_carried;
+	op[6] = &AGOSEngine::o_notCarried;
+	op[7] = &AGOSEngine::o_isAt;
+	op[11] = &AGOSEngine::o_zero;
+	op[12] = &AGOSEngine::o_notZero;
+	op[13] = &AGOSEngine::o_eq;
+	op[14] = &AGOSEngine::o_notEq;
+	op[15] = &AGOSEngine::o_gt;
+	op[16] = &AGOSEngine::o_lt;
+	op[17] = &AGOSEngine::o_eqf;
+	op[18] = &AGOSEngine::o_notEqf;
+	op[19] = &AGOSEngine::o_ltf;
+	op[20] = &AGOSEngine::o_gtf;
+	op[23] = &AGOSEngine::o_chance;
+	op[25] = &AGOSEngine::o_isRoom;
+	op[26] = &AGOSEngine::o_isObject;
+	op[27] = &AGOSEngine::o_state;
+	op[28] = &AGOSEngine::o_oflag;
+	op[31] = &AGOSEngine::o_destroy;
+	op[33] = &AGOSEngine::o_place;
+	op[36] = &AGOSEngine::o_copyff;
+	op[41] = &AGOSEngine::o_clear;
+	op[42] = &AGOSEngine::o_let;
+	op[43] = &AGOSEngine::o_add;
+	op[44] = &AGOSEngine::o_sub;
+	op[45] = &AGOSEngine::o_addf;
+	op[46] = &AGOSEngine::o_subf;
+	op[47] = &AGOSEngine::o_mul;
+	op[48] = &AGOSEngine::o_div;
+	op[49] = &AGOSEngine::o_mulf;
+	op[50] = &AGOSEngine::o_divf;
+	op[51] = &AGOSEngine::o_mod;
+	op[52] = &AGOSEngine::o_modf;
+	op[53] = &AGOSEngine::o_random;
+	op[55] = &AGOSEngine::o_goto;
+	op[56] = &AGOSEngine::o_oset;
+	op[57] = &AGOSEngine::o_oclear;
+	op[58] = &AGOSEngine::o_putBy;
+	op[59] = &AGOSEngine::o_inc;
+	op[60] = &AGOSEngine::o_dec;
+	op[61] = &AGOSEngine::o_setState;
+	op[62] = &AGOSEngine::o_print;
+	op[63] = &AGOSEngine::o_message;
+	op[64] = &AGOSEngine::o_msg;
+	op[65] = &AGOSEngine::o_addTextBox;
+	op[66] = &AGOSEngine::o_setShortText;
+	op[67] = &AGOSEngine::o_setLongText;
+	op[68] = &AGOSEngine::o_end;
+	op[69] = &AGOSEngine::o_done;
+	op[71] = &AGOSEngine::o_process;
+	op[76] = &AGOSEngine::o_when;
+	op[77] = &AGOSEngine::o_if1;
+	op[78] = &AGOSEngine::o_if2;
+	op[79] = &AGOSEngine::o_isCalled;
+	op[80] = &AGOSEngine::o_is;
+	op[82] = &AGOSEngine::o_debug;
+	op[87] = &AGOSEngine::o_comment;
+	op[88] = &AGOSEngine::o_haltAnimation;
+	op[89] = &AGOSEngine::o_restartAnimation;
+	op[90] = &AGOSEngine::o_getParent;
+	op[91] = &AGOSEngine::o_getNext;
+	op[92] = &AGOSEngine::o_getChildren;
+	op[96] = &AGOSEngine::o_picture;
+	op[97] = &AGOSEngine::o_loadZone;
+	op[100] = &AGOSEngine::o_killAnimate;
+	op[101] = &AGOSEngine::o_defWindow;
+	op[102] = &AGOSEngine::o_window;
+	op[103] = &AGOSEngine::o_cls;
+	op[104] = &AGOSEngine::o_closeWindow;
+	op[107] = &AGOSEngine::o_addBox;
+	op[108] = &AGOSEngine::o_delBox;
+	op[109] = &AGOSEngine::o_enableBox;
+	op[110] = &AGOSEngine::o_disableBox;
+	op[111] = &AGOSEngine::o_moveBox;
+	op[114] = &AGOSEngine::o_doIcons;
+	op[115] = &AGOSEngine::o_isClass;
+	op[116] = &AGOSEngine::o_setClass;
+	op[117] = &AGOSEngine::o_unsetClass;
+	op[119] = &AGOSEngine::o_waitSync;
+	op[120] = &AGOSEngine::o_sync;
+	op[121] = &AGOSEngine::o_defObj;
+	op[125] = &AGOSEngine::o_here;
+	op[126] = &AGOSEngine::o_doClassIcons;
+	op[128] = &AGOSEngine::o_waitEndTune;
+	op[129] = &AGOSEngine::o_ifEndTune;
+	op[130] = &AGOSEngine::o_setAdjNoun;
+	op[132] = &AGOSEngine::o_saveUserGame;
+	op[133] = &AGOSEngine::o_loadUserGame;
+	op[134] = &AGOSEngine::o_stopTune;
+	op[135] = &AGOSEngine::o_pauseGame;
+	op[136] = &AGOSEngine::o_copysf;
+	op[137] = &AGOSEngine::o_restoreIcons;
+	op[138] = &AGOSEngine::o_freezeZones;
+	op[139] = &AGOSEngine::o_placeNoIcons;
+	op[140] = &AGOSEngine::o_clearTimers;
+	op[141] = &AGOSEngine::o_setDollar;
+	op[142] = &AGOSEngine::o_isBox;
+	op[143] = &AGOSEngine::o_doTable;
+	op[151] = &AGOSEngine::o_storeItem;
+	op[152] = &AGOSEngine::o_getItem;
+	op[153] = &AGOSEngine::o_bSet;
+	op[154] = &AGOSEngine::o_bClear;
+	op[155] = &AGOSEngine::o_bZero;
+	op[156] = &AGOSEngine::o_bNotZero;
+	op[157] = &AGOSEngine::o_getOValue;
+	op[158] = &AGOSEngine::o_setOValue;
+	op[160] = &AGOSEngine::o_ink;
+	op[161] = &AGOSEngine::o_screenTextBox;
+	op[162] = &AGOSEngine::o_screenTextMsg;
+	op[163] = &AGOSEngine::o_playEffect;
+	op[164] = &AGOSEngine::o_getDollar2;
+	op[165] = &AGOSEngine::o_isAdjNoun;
+	op[166] = &AGOSEngine::o_b2Set;
+	op[167] = &AGOSEngine::o_b2Clear;
+	op[168] = &AGOSEngine::o_b2Zero;
+	op[169] = &AGOSEngine::o_b2NotZero;
+	op[175] = &AGOSEngine::o_lockZones;
+	op[176] = &AGOSEngine::o_unlockZones;
+	op[178] = &AGOSEngine::o_getPathPosn;
+	op[179] = &AGOSEngine::o_scnTxtLongText;
+	op[180] = &AGOSEngine::o_mouseOn;
+	op[184] = &AGOSEngine::o_unloadZone;
+	op[186] = &AGOSEngine::o_unfreezeZones;
+}
+
+void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
+	op[0] = &AGOSEngine::o_at;
+	op[1] = &AGOSEngine::o_notAt;
+
+	op[6] = &AGOSEngine::o_carried;
+	op[7] = &AGOSEngine::o_notCarried;
+	op[8] = &AGOSEngine::o_isAt;
+
+	op[12] = &AGOSEngine::o_zero;
+	op[13] = &AGOSEngine::o_notZero;
+	op[14] = &AGOSEngine::o_eq;
+	op[15] = &AGOSEngine::o_notEq;
+	op[16] = &AGOSEngine::o_gt;
+	op[17] = &AGOSEngine::o_lt;
+	op[18] = &AGOSEngine::o_eqf;
+	op[19] = &AGOSEngine::o_notEqf;
+	op[20] = &AGOSEngine::o_ltf;
+	op[21] = &AGOSEngine::o_gtf;
+
+	op[32] = &AGOSEngine::o_isRoom;
+	op[33] = &AGOSEngine::o_isObject;
+
+	op[34] = &AGOSEngine::o_state;
+	op[36] = &AGOSEngine::o_oflag;
+
+	op[48] = &AGOSEngine::o_destroy;
+
+	op[51] = &AGOSEngine::o_place;
+
+	op[56] = &AGOSEngine::o_copyff;
+
+	op[60] = &AGOSEngine::oe1_setFF;
+	op[61] = &AGOSEngine::o_clear;
+
+	op[64] = &AGOSEngine::o_let;
+	op[65] = &AGOSEngine::o_add;
+	op[66] = &AGOSEngine::o_sub;
+	op[67] = &AGOSEngine::o_addf;
+	op[68] = &AGOSEngine::o_subf;
+	op[69] = &AGOSEngine::o_mul;
+	op[70] = &AGOSEngine::o_div;
+	op[71] = &AGOSEngine::o_mulf;
+	op[72] = &AGOSEngine::o_divf;
+	op[73] = &AGOSEngine::o_mod;
+	op[74] = &AGOSEngine::o_modf;
+	op[75] = &AGOSEngine::o_random;
+
+	op[77] = &AGOSEngine::o_goto;
+
+	op[80] = &AGOSEngine::o_oset;
+	op[81] = &AGOSEngine::o_oclear;
+
+	op[84] = &AGOSEngine::o_putBy;
+	op[85] = &AGOSEngine::o_inc;
+	op[86] = &AGOSEngine::o_dec;
+	op[87] = &AGOSEngine::o_setState;
+
+	op[91] = &AGOSEngine::o_message;
+
+	op[97] = &AGOSEngine::o_end;
+	op[98] = &AGOSEngine::o_done;
+
+	op[105] = &AGOSEngine::o_process;
+
+	op[119] = &AGOSEngine::o_when;
+
+	op[128] = &AGOSEngine::o_if1;
+	op[129] = &AGOSEngine::o_if2;
+
+	op[135] = &AGOSEngine::o_isCalled;
+	op[136] = &AGOSEngine::o_is;
+
+	op[152] = &AGOSEngine::o_debug;
+
+	op[176] = &AGOSEngine::oe1_opcode176;
+
+	op[178] = &AGOSEngine::oe1_opcode178;
+
+	op[198] = &AGOSEngine::o_comment;
+
+	op[206] = &AGOSEngine::o_getParent;
+	op[207] = &AGOSEngine::o_getNext;
+	op[208] = &AGOSEngine::o_getChildren;
+
+	op[224] = &AGOSEngine::o_picture;
+	op[225] = &AGOSEngine::o_loadZone;
+	op[226] = &AGOSEngine::o1_animate;
+	op[227] = &AGOSEngine::o1_stopAnimate;
+	op[228] = &AGOSEngine::o_killAnimate;
+	op[229] = &AGOSEngine::o_defWindow;
+	op[230] = &AGOSEngine::o_window;
+	op[231] = &AGOSEngine::o_cls;
+	op[232] = &AGOSEngine::o_closeWindow;
+
+	op[235] = &AGOSEngine::o_addBox;
+	op[236] = &AGOSEngine::o_delBox;
+	op[237] = &AGOSEngine::o_enableBox;
+	op[238] = &AGOSEngine::o_disableBox;
+	op[239] = &AGOSEngine::o_moveBox;
+
+	op[242] = &AGOSEngine::o_doIcons;
+	op[243] = &AGOSEngine::o_isClass;
+	op[249] = &AGOSEngine::o_setClass;
+	op[250] = &AGOSEngine::o_unsetClass;
+
+	op[255] = &AGOSEngine::o_waitSync;
+	op[256] = &AGOSEngine::o_sync;
+	op[257] = &AGOSEngine::o_defObj;
+
+	op[261] = &AGOSEngine::o_here;
+	op[262] = &AGOSEngine::o_doClassIcons;
+	op[264] = &AGOSEngine::o_waitEndTune;
+	op[263] = &AGOSEngine::o1_playTune;
+
+	op[265] = &AGOSEngine::o_ifEndTune;
+	op[266] = &AGOSEngine::o_setAdjNoun;
+	op[267] = &AGOSEngine::oe1_zoneDisk;
+	op[268] = &AGOSEngine::o_saveUserGame;
+	op[269] = &AGOSEngine::o_loadUserGame;
+	op[271] = &AGOSEngine::o_stopTune;
+
+	op[274] = &AGOSEngine::o_pauseGame;
+	op[275] = &AGOSEngine::o_copysf;
+	op[276] = &AGOSEngine::o_restoreIcons;
+
+	op[279] = &AGOSEngine::o_freezeZones;
+	op[280] = &AGOSEngine::o_placeNoIcons;
+	op[281] = &AGOSEngine::o_clearTimers;
+
+	op[283] = &AGOSEngine::o_isBox;
+}
+
+void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
+	setupAGOSOpcodes(op);
+}
+
+void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
+	setupAGOSOpcodes(op);
+
+	// Confirmed
+	op[70] = &AGOSEngine::o1_printLongText;
+	op[83] = &AGOSEngine::o1_rescan;
+	op[98] = &AGOSEngine::o1_animate;
+	op[99] = &AGOSEngine::o1_stopAnimate;
+	op[85] = &AGOSEngine::oww_whereTo;
+	op[105] = &AGOSEngine::oww_menu;
+	op[106] = &AGOSEngine::oww_textMenu;
+	op[127] = &AGOSEngine::o1_playTune;
+	op[148] = &AGOSEngine::oww_ifDoorOpen;
+	op[179] = &AGOSEngine::o_isAdjNoun;
+	op[180] = &AGOSEngine::o_b2Set;
+	op[181] = &AGOSEngine::o_b2Clear;
+	op[182] = &AGOSEngine::o_b2Zero;
+	op[183] = &AGOSEngine::o_b2NotZero;
+
+	// Code difference, check if triggered
+	op[161] = NULL;
+	op[162] = NULL;
+	op[163] = NULL;
+	op[164] = NULL;
+	op[165] = NULL;
+	op[166] = NULL;
+	op[167] = NULL;
+	op[168] = NULL;
+	op[169] = NULL;
+	op[170] = NULL;
+	op[171] = NULL;
+	op[172] = NULL;
+	op[173] = NULL;
+	op[174] = NULL;
+	op[175] = NULL;
+	op[176] = NULL;
+	op[177] = NULL;
+	op[178] = NULL;
+	op[184] = NULL;
+	op[185] = NULL;
+	op[186] = NULL;
+	op[187] = NULL;
+	op[188] = NULL;
+	op[189] = NULL;
+	op[190] = NULL;
+}
+
+void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
+	setupAGOSOpcodes(op);
+
+	op[70] = &AGOSEngine::o1_printLongText;
+	op[83] = &AGOSEngine::o1_rescan;
+	op[98] = &AGOSEngine::o1_animate;
+	op[99] = &AGOSEngine::o1_stopAnimate;
+	op[127] = &AGOSEngine::o1_playTune;
+	op[177] = &AGOSEngine::o1_screenTextPObj;
+	op[181] = &AGOSEngine::o1_mouseOff;
+	op[182] = &AGOSEngine::o1_loadBeard;
+	op[183] = &AGOSEngine::o1_unloadBeard;
+	op[185] = &AGOSEngine::o1_loadStrings;
+	op[187] = &AGOSEngine::o1_specialFade;
+}
+
+void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
+	setupAGOSOpcodes(op);
+
+	op[70] = &AGOSEngine::o2_printLongText;
+	op[83] = &AGOSEngine::o2_rescan;
+	op[98] = &AGOSEngine::o2_animate;
+	op[99] = &AGOSEngine::o2_stopAnimate;
+	op[127] = &AGOSEngine::o2_playTune;
+	op[177] = &AGOSEngine::o2_screenTextPObj;
+	op[181] = &AGOSEngine::o2_mouseOff;
+	op[188] = &AGOSEngine::o2_isShortText;
+	op[189] = &AGOSEngine::o2_clearMarks;
+	op[190] = &AGOSEngine::o2_waitMark;
+}
+
+void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
+	setupAGOSOpcodes(op);
+
+	op[23] = &AGOSEngine::o3_chance;
+	op[37] = &AGOSEngine::o3_jumpOut;
+	op[65] = &AGOSEngine::o3_addTextBox;
+	op[70] = &AGOSEngine::o3_printLongText;
+	op[83] = &AGOSEngine::o2_rescan;
+	op[98] = &AGOSEngine::o2_animate;
+	op[99] = &AGOSEngine::o2_stopAnimate;
+	op[107] = &AGOSEngine::o3_addBox;
+	op[122] = &AGOSEngine::o3_oracleTextDown;
+	op[123] = &AGOSEngine::o3_oracleTextUp;
+	op[124] = &AGOSEngine::o3_ifTime;
+	op[127] = &AGOSEngine::o3_playTune;
+	op[131] = &AGOSEngine::o3_setTime;
+	op[132] = &AGOSEngine::o3_saveUserGame;
+	op[133] = &AGOSEngine::o3_loadUserGame;
+	op[134] = &AGOSEngine::o3_listSaveGames;
+	op[135] = &AGOSEngine::o3_checkCD;
+	op[161] = &AGOSEngine::o3_screenTextBox;
+	op[165] = &AGOSEngine::o3_isAdjNoun;
+	op[171] = &AGOSEngine::o3_hyperLinkOn;
+	op[172] = &AGOSEngine::o3_hyperLinkOff;
+	op[173] = &AGOSEngine::o3_checkPaths;
+	op[177] = &AGOSEngine::o3_screenTextPObj;
+	op[181] = &AGOSEngine::o3_mouseOff;
+	op[182] = &AGOSEngine::o3_loadVideo;
+	op[183] = &AGOSEngine::o3_playVideo;
+	op[187] = &AGOSEngine::o3_centreScroll;
+	op[188] = &AGOSEngine::o2_isShortText;
+	op[189] = &AGOSEngine::o2_clearMarks;
+	op[190] = &AGOSEngine::o2_waitMark;
+	op[191] = &AGOSEngine::o3_resetPVCount;
+	op[192] = &AGOSEngine::o3_setPathValues;
+	op[193] = &AGOSEngine::o3_stopClock;
+	op[194] = &AGOSEngine::o3_restartClock;
+	op[195] = &AGOSEngine::o3_setColour;
+	op[196] = &AGOSEngine::o3_b3Set;
+	op[197] = &AGOSEngine::o3_b3Clear;
+	op[198] = &AGOSEngine::o3_b3Zero;
+	op[199] = &AGOSEngine::o3_b3NotZero;
+}
+
+void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
+	setupAGOSOpcodes(op);
+
+	op[23] = &AGOSEngine::o3_chance;
+	op[30] = &AGOSEngine::o4_opcode30;
+	op[32] = &AGOSEngine::o4_restoreOopsPosition;
+	op[37] = &AGOSEngine::o4_checkTiles;
+	op[38] = &AGOSEngine::o4_loadMouseImage;
+	op[63] = &AGOSEngine::o4_message;
+	op[65] = &AGOSEngine::o3_addTextBox;
+	op[66] = &AGOSEngine::o4_setShortText;
+	op[70] = &AGOSEngine::o3_printLongText;
+	op[83] = &AGOSEngine::o2_rescan;
+	op[98] = &AGOSEngine::o4_animate;
+	op[99] = &AGOSEngine::o2_stopAnimate;
+	op[105] = &AGOSEngine::o4_loadHiScores;
+	op[106] = &AGOSEngine::o4_checkHiScores;
+	op[107] = &AGOSEngine::o3_addBox;
+	op[120] = &AGOSEngine::o4_sync;
+	op[122] = &AGOSEngine::o3_oracleTextDown;
+	op[123] = &AGOSEngine::o3_oracleTextUp;
+	op[124] = &AGOSEngine::o3_ifTime;
+	op[127] = &AGOSEngine::o3_playTune;
+	op[131] = &AGOSEngine::o3_setTime;
+	op[132] = &AGOSEngine::o3_saveUserGame;
+	op[133] = &AGOSEngine::o4_loadUserGame;
+	op[134] = &AGOSEngine::o3_listSaveGames;
+	op[161] = &AGOSEngine::o3_screenTextBox;
+	op[165] = &AGOSEngine::o3_isAdjNoun;
+	op[166] = NULL;
+	op[167] = NULL;
+	op[168] = NULL;
+	op[169] = NULL;
+	op[171] = &AGOSEngine::o3_hyperLinkOn;
+	op[172] = &AGOSEngine::o3_hyperLinkOff;
+	op[173] = &AGOSEngine::o4_saveOopsPosition;
+	op[177] = &AGOSEngine::o3_screenTextPObj;
+	op[181] = &AGOSEngine::o3_mouseOff;
+	op[187] = &AGOSEngine::o4_resetGameTime;
+	op[188] = &AGOSEngine::o2_isShortText;
+	op[189] = &AGOSEngine::o2_clearMarks;
+	op[190] = &AGOSEngine::o2_waitMark;
+	op[191] = &AGOSEngine::o4_resetPVCount;
+	op[192] = &AGOSEngine::o4_setPathValues;
+	op[193] = &AGOSEngine::o3_stopClock;
+	op[194] = &AGOSEngine::o4_restartClock;
+	op[195] = &AGOSEngine::o3_setColour;
+}
+
+void AGOSEngine::setupOpcodes() {
+	static OpcodeProc opcode_table[300];
+
+	for (int i = 0; i < ARRAYSIZE(opcode_table); i++)
+		opcode_table[i] = NULL;
 
 	_opcode_table = opcode_table;
 	_numOpcodes = ARRAYSIZE(opcode_table);
 
 	switch (getGameType()) {
 	case GType_ELVIRA:
-		opcode_table[0] = &AGOSEngine::o_at;
-		opcode_table[1] = &AGOSEngine::o_notAt;
-		opcode_table[2] = NULL;
-
-		opcode_table[6] = &AGOSEngine::o_carried;
-		opcode_table[7] = &AGOSEngine::o_notCarried;
-		opcode_table[8] = &AGOSEngine::o_isAt;
-
-		opcode_table[12] = &AGOSEngine::o_zero;
-		opcode_table[13] = &AGOSEngine::o_notZero;
-		opcode_table[14] = &AGOSEngine::o_eq;
-		opcode_table[15] = &AGOSEngine::o_notEq;
-		opcode_table[16] = &AGOSEngine::o_gt;
-		opcode_table[17] = &AGOSEngine::o_lt;
-		opcode_table[18] = &AGOSEngine::o_eqf;
-		opcode_table[19] = &AGOSEngine::o_notEqf;
-		opcode_table[20] = &AGOSEngine::o_ltf;
-		opcode_table[21] = &AGOSEngine::o_gtf;
-
-		opcode_table[32] = &AGOSEngine::o_isRoom;
-		opcode_table[33] = &AGOSEngine::o_isObject;
-
-		opcode_table[34] = &AGOSEngine::o_state;
-		opcode_table[36] = &AGOSEngine::o_oflag;
-
-		opcode_table[48] = &AGOSEngine::o_destroy;
-		opcode_table[49] = NULL;
-
-		opcode_table[51] = &AGOSEngine::o_place;
-
-		opcode_table[56] = &AGOSEngine::o_copyff;
-
-		opcode_table[60] = &AGOSEngine::oe1_setFF;
-		opcode_table[61] = &AGOSEngine::o_clear;
-
-		opcode_table[64] = &AGOSEngine::o_let;
-		opcode_table[65] = &AGOSEngine::o_add;
-		opcode_table[66] = &AGOSEngine::o_sub;
-		opcode_table[67] = &AGOSEngine::o_addf;
-		opcode_table[68] = &AGOSEngine::o_subf;
-		opcode_table[69] = &AGOSEngine::o_mul;
-		opcode_table[70] = &AGOSEngine::o_div;
-		opcode_table[71] = &AGOSEngine::o_mulf;
-		opcode_table[72] = &AGOSEngine::o_divf;
-		opcode_table[73] = &AGOSEngine::o_mod;
-		opcode_table[74] = &AGOSEngine::o_modf;
-		opcode_table[75] = &AGOSEngine::o_random;
-
-		opcode_table[77] = &AGOSEngine::o_goto;
-
-		opcode_table[80] = &AGOSEngine::o_oset;
-		opcode_table[81] = &AGOSEngine::o_oclear;
-
-		opcode_table[84] = &AGOSEngine::o_putBy;
-		opcode_table[85] = &AGOSEngine::o_inc;
-		opcode_table[86] = &AGOSEngine::o_dec;
-		opcode_table[87] = &AGOSEngine::o_setState;
-		opcode_table[88] = NULL;
-
-		opcode_table[91] = &AGOSEngine::o_message;
-
-		opcode_table[97] = &AGOSEngine::o_end;
-		opcode_table[98] = &AGOSEngine::o_done;
-
-		opcode_table[101] = NULL;
-		opcode_table[102] = NULL;
-		opcode_table[103] = NULL;
-		opcode_table[104] = NULL;
-		opcode_table[105] = &AGOSEngine::o_process;
-
-		opcode_table[108] = NULL;
-		opcode_table[109] = NULL;
-		opcode_table[110] = NULL;
-		opcode_table[111] = NULL;
-
-		opcode_table[116] = NULL;
-		opcode_table[117] = NULL;
-		opcode_table[118] = NULL;
-		opcode_table[119] = &AGOSEngine::o_when;
-		opcode_table[120] = NULL;
-		opcode_table[121] = NULL;
-		opcode_table[122] = NULL;
-
-		opcode_table[124] = NULL;
-		opcode_table[125] = NULL;
-		opcode_table[126] = NULL;
-		opcode_table[127] = NULL;
-		opcode_table[128] = &AGOSEngine::o_if1;
-		opcode_table[129] = &AGOSEngine::o_if2;
-		opcode_table[130] = NULL;
-		opcode_table[131] = NULL;
-		opcode_table[132] = NULL;
-
-		opcode_table[134] = NULL;
-		opcode_table[135] = &AGOSEngine::o_isCalled;
-		opcode_table[136] = &AGOSEngine::o_is;
-
-		opcode_table[138] = NULL;
-		opcode_table[139] = NULL;
-
-		opcode_table[141] = NULL;
-		opcode_table[142] = NULL;
-		opcode_table[143] = NULL;
-		opcode_table[144] = NULL;
-		opcode_table[145] = NULL;
-		opcode_table[146] = NULL;
-		opcode_table[147] = NULL;
-		opcode_table[148] = NULL;
-		opcode_table[149] = NULL;
-		opcode_table[150] = NULL;
-		opcode_table[151] = NULL;
-		opcode_table[152] = &AGOSEngine::o_debug;
-		opcode_table[153] = NULL;
-		opcode_table[154] = NULL;
-		opcode_table[155] = NULL;
-		opcode_table[156] = NULL;
-		opcode_table[157] = NULL;
-		opcode_table[158] = NULL;
-		opcode_table[159] = NULL;
-
-		opcode_table[166] = NULL;
-		opcode_table[167] = NULL;
-		opcode_table[168] = NULL;
-		opcode_table[169] = NULL;
-
-		opcode_table[171] = NULL;
-		opcode_table[172] = NULL;
-		opcode_table[173] = NULL;
-		opcode_table[174] = NULL;
-
-		opcode_table[176] = &AGOSEngine::oe1_opcode176;
-
-		opcode_table[178] = &AGOSEngine::oe1_opcode178;
-		opcode_table[179] = NULL;
-
-		opcode_table[182] = NULL;
-		opcode_table[183] = NULL;
-		opcode_table[184] = NULL;
-		opcode_table[185] = NULL;
-		opcode_table[186] = NULL;
-		opcode_table[187] = NULL;
-		opcode_table[188] = NULL;
-		opcode_table[189] = NULL;
-		opcode_table[190] = NULL;
-		opcode_table[191] = NULL;
-		opcode_table[192] = NULL;
-		opcode_table[193] = NULL;
-
-		opcode_table[195] = NULL;
-		opcode_table[196] = NULL;
-		opcode_table[197] = NULL;
-		opcode_table[198] = &AGOSEngine::o_comment;
-		opcode_table[199] = NULL;
-		opcode_table[200] = NULL;
-
-		opcode_table[203] = NULL;
-
-		opcode_table[205] = NULL;
-		opcode_table[206] = &AGOSEngine::o_getParent;
-		opcode_table[207] = &AGOSEngine::o_getNext;
-		opcode_table[208] = &AGOSEngine::o_getChildren;
-
-		opcode_table[210] = NULL;
-		opcode_table[211] = NULL;
-		opcode_table[212] = NULL;
-		opcode_table[213] = NULL;
-		opcode_table[214] = NULL;
-		opcode_table[215] = NULL;
-		opcode_table[216] = NULL;
-		opcode_table[217] = NULL;
-		opcode_table[218] = NULL;
-
-		opcode_table[221] = NULL;
-		opcode_table[222] = NULL;
-		opcode_table[223] = NULL;
-		opcode_table[224] = &AGOSEngine::o_picture;
-		opcode_table[225] = &AGOSEngine::o_loadZone;
-		opcode_table[226] = &AGOSEngine::o1_animate;
-		opcode_table[227] = &AGOSEngine::o1_stopAnimate;
-		opcode_table[228] = &AGOSEngine::o_killAnimate;
-		opcode_table[229] = &AGOSEngine::o_defWindow;
-		opcode_table[230] = &AGOSEngine::o_window;
-		opcode_table[231] = &AGOSEngine::o_cls;
-		opcode_table[232] = &AGOSEngine::o_closeWindow;
-
-		opcode_table[235] = &AGOSEngine::o_addBox;
-		opcode_table[236] = &AGOSEngine::o_delBox;
-		opcode_table[237] = &AGOSEngine::o_enableBox;
-		opcode_table[238] = &AGOSEngine::o_disableBox;
-		opcode_table[239] = &AGOSEngine::o_moveBox;
-
-		opcode_table[242] = &AGOSEngine::o_doIcons;
-		opcode_table[243] = &AGOSEngine::o_isClass;
-		opcode_table[244] = NULL;
-		opcode_table[245] = NULL;
-		opcode_table[246] = NULL;
-		opcode_table[247] = NULL;
-		opcode_table[248] = NULL;
-		opcode_table[249] = &AGOSEngine::o_setClass;
-		opcode_table[250] = &AGOSEngine::o_unsetClass;
-
-		opcode_table[255] = &AGOSEngine::o_waitSync;
-		opcode_table[256] = &AGOSEngine::o_sync;
-		opcode_table[257] = &AGOSEngine::o_defObj;
-
-		opcode_table[261] = &AGOSEngine::o_here;
-		opcode_table[262] = &AGOSEngine::o_doClassIcons;
-		opcode_table[264] = &AGOSEngine::o_waitEndTune;
-		opcode_table[263] = &AGOSEngine::o1_playTune;
-
-		opcode_table[265] = &AGOSEngine::o_ifEndTune;
-		opcode_table[266] = &AGOSEngine::o_setAdjNoun;
-		opcode_table[267] = &AGOSEngine::oe1_zoneDisk;
-		opcode_table[268] = &AGOSEngine::o_saveUserGame;
-		opcode_table[269] = &AGOSEngine::o_loadUserGame;
-		opcode_table[271] = &AGOSEngine::o_stopTune;
-
-		opcode_table[274] = &AGOSEngine::o_pauseGame;
-		opcode_table[275] = &AGOSEngine::o_copysf;
-		opcode_table[276] = &AGOSEngine::o_restoreIcons;
-
-		opcode_table[279] = &AGOSEngine::o_freezeZones;
-		opcode_table[280] = &AGOSEngine::o_placeNoIcons;
-		opcode_table[281] = &AGOSEngine::o_clearTimers;
-
-		opcode_table[283] = &AGOSEngine::o_isBox;
+		setupElvira1Opcodes(opcode_table);
 		break;
 	case GType_ELVIRA2:
+		setupElvira2Opcodes(opcode_table);
 		break;
 	case GType_WW:
-		// Confirmed
-		opcode_table[70] = &AGOSEngine::o1_printLongText;
-		opcode_table[83] = &AGOSEngine::o1_rescan;
-		opcode_table[98] = &AGOSEngine::o1_animate;
-		opcode_table[99] = &AGOSEngine::o1_stopAnimate;
-		opcode_table[85] = &AGOSEngine::oww_whereTo;
-		opcode_table[105] = &AGOSEngine::oww_menu;
-		opcode_table[106] = &AGOSEngine::oww_textMenu;
-		opcode_table[127] = &AGOSEngine::o1_playTune;
-		opcode_table[148] = &AGOSEngine::oww_ifDoorOpen;
-		opcode_table[179] = &AGOSEngine::o_isAdjNoun;
-		opcode_table[180] = &AGOSEngine::o_b2Set;
-		opcode_table[181] = &AGOSEngine::o_b2Clear;
-		opcode_table[182] = &AGOSEngine::o_b2Zero;
-		opcode_table[183] = &AGOSEngine::o_b2NotZero;
-
-		// Code difference, check if triggered
-		opcode_table[161] = NULL;
-		opcode_table[162] = NULL;
-		opcode_table[163] = NULL;
-		opcode_table[164] = NULL;
-		opcode_table[165] = NULL;
-		opcode_table[166] = NULL;
-		opcode_table[167] = NULL;
-		opcode_table[168] = NULL;
-		opcode_table[169] = NULL;
-		opcode_table[170] = NULL;
-		opcode_table[171] = NULL;
-		opcode_table[172] = NULL;
-		opcode_table[173] = NULL;
-		opcode_table[174] = NULL;
-		opcode_table[175] = NULL;
-		opcode_table[176] = NULL;
-		opcode_table[177] = NULL;
-		opcode_table[178] = NULL;
-		opcode_table[184] = NULL;
-		opcode_table[185] = NULL;
-		opcode_table[186] = NULL;
-		opcode_table[187] = NULL;
-		opcode_table[188] = NULL;
-		opcode_table[189] = NULL;
-		opcode_table[190] = NULL;
+		setupWaxworksOpcodes(opcode_table);
 		break;
 	case GType_SIMON1:
-		opcode_table[70] = &AGOSEngine::o1_printLongText;
-		opcode_table[83] = &AGOSEngine::o1_rescan;
-		opcode_table[98] = &AGOSEngine::o1_animate;
-		opcode_table[99] = &AGOSEngine::o1_stopAnimate;
-		opcode_table[127] = &AGOSEngine::o1_playTune;
-		opcode_table[177] = &AGOSEngine::o1_screenTextPObj;
-		opcode_table[181] = &AGOSEngine::o1_mouseOff;
-		opcode_table[182] = &AGOSEngine::o1_loadBeard;
-		opcode_table[183] = &AGOSEngine::o1_unloadBeard;
-		opcode_table[185] = &AGOSEngine::o1_loadStrings;
-		opcode_table[187] = &AGOSEngine::o1_specialFade;
+		setupSimon1Opcodes(opcode_table);
 		break;
 	case GType_SIMON2:
-		opcode_table[70] = &AGOSEngine::o2_printLongText;
-		opcode_table[83] = &AGOSEngine::o2_rescan;
-		opcode_table[98] = &AGOSEngine::o2_animate;
-		opcode_table[99] = &AGOSEngine::o2_stopAnimate;
-		opcode_table[127] = &AGOSEngine::o2_playTune;
-		opcode_table[177] = &AGOSEngine::o2_screenTextPObj;
-		opcode_table[181] = &AGOSEngine::o2_mouseOff;
-		opcode_table[188] = &AGOSEngine::o2_isShortText;
-		opcode_table[189] = &AGOSEngine::o2_clearMarks;
-		opcode_table[190] = &AGOSEngine::o2_waitMark;
+		setupSimon2Opcodes(opcode_table);
 		break;
 	case GType_FF:
-		opcode_table[23] = &AGOSEngine::o3_chance;
-		opcode_table[37] = &AGOSEngine::o3_jumpOut;
-		opcode_table[65] = &AGOSEngine::o3_addTextBox;
-		opcode_table[70] = &AGOSEngine::o3_printLongText;
-		opcode_table[83] = &AGOSEngine::o2_rescan;
-		opcode_table[98] = &AGOSEngine::o2_animate;
-		opcode_table[99] = &AGOSEngine::o2_stopAnimate;
-		opcode_table[107] = &AGOSEngine::o3_addBox;
-		opcode_table[122] = &AGOSEngine::o3_oracleTextDown;
-		opcode_table[123] = &AGOSEngine::o3_oracleTextUp;
-		opcode_table[124] = &AGOSEngine::o3_ifTime;
-		opcode_table[127] = &AGOSEngine::o3_playTune;
-		opcode_table[131] = &AGOSEngine::o3_setTime;
-		opcode_table[132] = &AGOSEngine::o3_saveUserGame;
-		opcode_table[133] = &AGOSEngine::o3_loadUserGame;
-		opcode_table[134] = &AGOSEngine::o3_listSaveGames;
-		opcode_table[135] = &AGOSEngine::o3_checkCD;
-		opcode_table[161] = &AGOSEngine::o3_screenTextBox;
-		opcode_table[165] = &AGOSEngine::o3_isAdjNoun;
-		opcode_table[171] = &AGOSEngine::o3_hyperLinkOn;
-		opcode_table[172] = &AGOSEngine::o3_hyperLinkOff;
-		opcode_table[173] = &AGOSEngine::o3_checkPaths;
-		opcode_table[177] = &AGOSEngine::o3_screenTextPObj;
-		opcode_table[181] = &AGOSEngine::o3_mouseOff;
-		opcode_table[182] = &AGOSEngine::o3_loadVideo;
-		opcode_table[183] = &AGOSEngine::o3_playVideo;
-		opcode_table[187] = &AGOSEngine::o3_centreScroll;
-		opcode_table[188] = &AGOSEngine::o2_isShortText;
-		opcode_table[189] = &AGOSEngine::o2_clearMarks;
-		opcode_table[190] = &AGOSEngine::o2_waitMark;
-		opcode_table[191] = &AGOSEngine::o3_resetPVCount;
-		opcode_table[192] = &AGOSEngine::o3_setPathValues;
-		opcode_table[193] = &AGOSEngine::o3_stopClock;
-		opcode_table[194] = &AGOSEngine::o3_restartClock;
-		opcode_table[195] = &AGOSEngine::o3_setColour;
-		opcode_table[196] = &AGOSEngine::o3_b3Set;
-		opcode_table[197] = &AGOSEngine::o3_b3Clear;
-		opcode_table[198] = &AGOSEngine::o3_b3Zero;
-		opcode_table[199] = &AGOSEngine::o3_b3NotZero;
+		setupFeebleOpcodes(opcode_table);
 		break;
 	case GType_PP:
-		opcode_table[23] = &AGOSEngine::o3_chance;
-		opcode_table[30] = &AGOSEngine::o4_opcode30;
-		opcode_table[32] = &AGOSEngine::o4_restoreOopsPosition;
-		opcode_table[37] = &AGOSEngine::o4_checkTiles;
-		opcode_table[38] = &AGOSEngine::o4_loadMouseImage;
-		opcode_table[63] = &AGOSEngine::o4_message;
-		opcode_table[65] = &AGOSEngine::o3_addTextBox;
-		opcode_table[66] = &AGOSEngine::o4_setShortText;
-		opcode_table[70] = &AGOSEngine::o3_printLongText;
-		opcode_table[83] = &AGOSEngine::o2_rescan;
-		opcode_table[98] = &AGOSEngine::o4_animate;
-		opcode_table[99] = &AGOSEngine::o2_stopAnimate;
-		opcode_table[105] = &AGOSEngine::o4_loadHiScores;
-		opcode_table[106] = &AGOSEngine::o4_checkHiScores;
-		opcode_table[107] = &AGOSEngine::o3_addBox;
-		opcode_table[120] = &AGOSEngine::o4_sync;
-		opcode_table[122] = &AGOSEngine::o3_oracleTextDown;
-		opcode_table[123] = &AGOSEngine::o3_oracleTextUp;
-		opcode_table[124] = &AGOSEngine::o3_ifTime;
-		opcode_table[127] = &AGOSEngine::o3_playTune;
-		opcode_table[131] = &AGOSEngine::o3_setTime;
-		opcode_table[132] = &AGOSEngine::o3_saveUserGame;
-		opcode_table[133] = &AGOSEngine::o4_loadUserGame;
-		opcode_table[134] = &AGOSEngine::o3_listSaveGames;
-		opcode_table[161] = &AGOSEngine::o3_screenTextBox;
-		opcode_table[165] = &AGOSEngine::o3_isAdjNoun;
-		opcode_table[166] = NULL;
-		opcode_table[167] = NULL;
-		opcode_table[168] = NULL;
-		opcode_table[169] = NULL;
-		opcode_table[171] = &AGOSEngine::o3_hyperLinkOn;
-		opcode_table[172] = &AGOSEngine::o3_hyperLinkOff;
-		opcode_table[173] = &AGOSEngine::o4_saveOopsPosition;
-		opcode_table[177] = &AGOSEngine::o3_screenTextPObj;
-		opcode_table[181] = &AGOSEngine::o3_mouseOff;
-		opcode_table[187] = &AGOSEngine::o4_resetGameTime;
-		opcode_table[188] = &AGOSEngine::o2_isShortText;
-		opcode_table[189] = &AGOSEngine::o2_clearMarks;
-		opcode_table[190] = &AGOSEngine::o2_waitMark;
-		opcode_table[191] = &AGOSEngine::o4_resetPVCount;
-		opcode_table[192] = &AGOSEngine::o4_setPathValues;
-		opcode_table[193] = &AGOSEngine::o3_stopClock;
-		opcode_table[194] = &AGOSEngine::o4_restartClock;
-		opcode_table[195] = &AGOSEngine::o3_setColour;
+		setupPuzzleOpcodes(opcode_table);
 		break;
 	default:
 		error("setupOpcodes: Unknown game");
