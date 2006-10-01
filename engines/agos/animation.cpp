@@ -263,6 +263,7 @@ void MoviePlayer::handleNextFrame() {
 
 	if (_leftButtonDown && _rightButtonDown && !_vm->getBitFlag(41)) {
 		_frameNum = _framesCount;
+		_mixer->stopHandle(_bgSound);
 	}
 }
 
