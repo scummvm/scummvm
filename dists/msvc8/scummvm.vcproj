@@ -833,6 +833,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\debugger.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\debugger.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\dialog.cpp"
 				>
 			</File>
