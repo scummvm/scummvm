@@ -995,8 +995,16 @@ public:
 	uint16 getExitOf(Item *item, uint16 d);
 
 	// Opcodes, Elvira 1 only
+	void oe1_present();
+	void oe1_notPresent();
+	void oe1_worn();
+	void oe1_notWorn();
+	void oe1_notCarried();
 	void oe1_setFF();
 	void oe1_zoneDisk();
+	void oe1_isNotAt();
+	void oe1_sibling();
+	void oe1_notSibling();
 	void oe1_opcode176();
 	void oe1_opcode178();
 

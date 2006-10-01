@@ -169,11 +169,16 @@ void AGOSEngine::setupAGOSOpcodes(OpcodeProc *op) {
 void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[0] = &AGOSEngine::o_at;
 	op[1] = &AGOSEngine::o_notAt;
-
+	op[2] = &AGOSEngine::oe1_present;
+	op[3] = &AGOSEngine::oe1_notPresent;
+	op[4] = &AGOSEngine::oe1_worn;
+	op[5] = &AGOSEngine::oe1_notWorn;
 	op[6] = &AGOSEngine::o_carried;
 	op[7] = &AGOSEngine::o_notCarried;
 	op[8] = &AGOSEngine::o_isAt;
-
+	op[9] = &AGOSEngine::oe1_isNotAt;
+	op[10] = &AGOSEngine::oe1_sibling;
+	op[11] = &AGOSEngine::oe1_notSibling;
 	op[12] = &AGOSEngine::o_zero;
 	op[13] = &AGOSEngine::o_notZero;
 	op[14] = &AGOSEngine::o_eq;
@@ -1649,6 +1654,48 @@ void AGOSEngine::o_unfreezeZones() {
 // -----------------------------------------------------------------------
 // Elvira 1 Opcodes
 // -----------------------------------------------------------------------
+
+void AGOSEngine::oe1_present() {
+	// 2: present (here or carried)
+	Item *item = getNextItemPtr();
+	setScriptCondition(item->parent == getItem1ID() || item->parent == me()->parent);
+}
+
+void AGOSEngine::oe1_notPresent() {
+	// 3: not present (neither here nor carried)
+	Item *item = getNextItemPtr();
+	setScriptCondition(item->parent != getItem1ID() && item->parent != me()->parent);
+}
+
+void AGOSEngine::oe1_worn() {
+	// 4: worn
+	getNextItemPtr();
+}
+
+void AGOSEngine::oe1_notWorn() {
+	// 5: not worn
+	getNextItemPtr();
+}
+
+void AGOSEngine::oe1_isNotAt() {
+	// 9: parent is not
+	Item *item = getNextItemPtr();
+	setScriptCondition(item->parent != getNextItemID());
+}
+
+void AGOSEngine::oe1_sibling() {
+	// 10: sibling
+	Item *item1 = getNextItemPtr();
+	Item *item2 = getNextItemPtr();
+	setScriptCondition(item1->parent == item2->parent);
+}
+
+void AGOSEngine::oe1_notSibling() {
+	// 11: not sibling
+	Item *item1 = getNextItemPtr();
+	Item *item2 = getNextItemPtr();
+	setScriptCondition(item1->parent != item2->parent);
+}
 
 void AGOSEngine::oe1_setFF() {
 	writeNextVarContents(0xFF);
