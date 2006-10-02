@@ -637,7 +637,13 @@ void AGOSEngine::vc4_fadeIn() {
 }
 
 void AGOSEngine::vc5_skip_if_neq() {
-	uint16 var = vcReadNextWord();
+	uint16 var;
+
+	if (getGameType() == GType_PP)
+		var = vcReadVarOrWord();
+	else
+		var = vcReadNextWord();
+
 	uint16 value = vcReadNextWord();
 	if (vcReadVar(var) != value)
 		vcSkipNextInstruction();
@@ -1254,7 +1260,15 @@ void AGOSEngine::drawImages(VC10_state *state) {
 		return;
 
 	uint offs, offs2;
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA) {
+		if (_windowNum == 2 || _windowNum == 3) {
+			offs = state->x * 8;
+			offs2 = state->y;
+		} else {
+			offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
+			offs2 = (vlut[1] - _video_windows[17] + state->y);
+		}
+	} else if (getGameType() == GType_WW) {
 		//if (_windowNum == 4 || _windowNum >= 10) {
 			offs = state->x * 8;
 			offs2 = state->y;
@@ -1981,13 +1995,23 @@ void AGOSEngine::vc37_addToSpriteY() {
 }
 
 void AGOSEngine::vc38_skipIfVarZero() {
-	uint16 var = vcReadNextWord();
+	uint16 var;
+	if (getGameType() == GType_PP)
+		var = vcReadVarOrWord();
+	else
+		var = vcReadNextWord();
+
 	if (vcReadVar(var) == 0)
 		vcSkipNextInstruction();
 }
 
 void AGOSEngine::vc39_setVar() {
-	uint16 var = vcReadNextWord();
+	uint16 var;
+	if (getGameType() == GType_PP)
+		var = vcReadVarOrWord();
+	else
+		var = vcReadNextWord();
+
 	int16 value = vcReadNextWord();
 	vcWriteVar(var, value);
 }
@@ -2403,14 +2427,19 @@ void AGOSEngine::vc_kill_sprite(uint file, uint sprite) {
 }
 
 void AGOSEngine::vc60_killSprite() {
-	uint16 zoneNum;
+	uint16 sprite, zoneNum;
 
-	if (getGameType() == GType_SIMON1) {
-		zoneNum = _vgaCurZoneNum;
-	} else {
+	if (getGameType() == GType_PP) {
 		zoneNum = vcReadNextWord();
+		sprite = vcReadVarOrWord();
+	} else if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
+		zoneNum = vcReadNextWord();
+		sprite = vcReadNextWord();
+	} else {
+		zoneNum = _vgaCurZoneNum;
+		sprite = vcReadNextWord();
 	}
-	uint16 sprite = vcReadNextWord();
+
 	vc_kill_sprite(zoneNum, sprite);
 }
 
