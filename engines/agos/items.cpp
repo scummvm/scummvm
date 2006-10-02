@@ -2511,7 +2511,7 @@ void AGOSEngine::o4_animate() {
 	uint palette = getVarOrWord();
 
 	if (getBitFlag(96)) {
-		printf("Start Block\n");
+		startBlock(windowNum, vga_res, vgaSpriteId, x, y, palette);
 	} else {
 		loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
 	}

@@ -2927,4 +2927,58 @@ void AGOSEngine::startAnOverlayAnim() {
 	_vgaCurZoneNum = file;
 }
 
+void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint priority) {
+	VgaSprite *vsp = _vgaSprites;
+	const byte *vcPtrOrg;
+	uint16 tmp;
+	uint i;
+
+	while (vsp->id != 0)
+		vsp++;
+
+	_variableArray[201] = vgaSpriteId;
+
+	if (getBitFlag(95)) {
+		_droppingBlockAnim = vgaSpriteId;
+		_droppingBlockX = _variableArray[202];
+		_droppingBlockY = _variableArray[203];
+		_droppingBlockZ = _variableArray[204];
+		_droppingBlockLength = windowNum;
+		if (windowNum == 1) {
+			priority += 9;
+			y += 10;
+			x += 15;
+		}
+		_droppingBlockCount = 4;
+		_droppingBlockType = 4;
+	}
+
+	for (i = 0; i < windowNum; i++) {
+		vsp->palette = 0;
+		vsp->flags = 0;
+		vsp->priority = 0;
+		vsp->windowNum = 4;
+		vsp->zoneNum = 60;
+		vsp->y = y;
+		vsp->x = x;
+		vsp->id = vgaSpriteId;
+		vsp->image = zoneNum;
+
+		_vgaCurSpriteId = vgaSpriteId;
+		_vgaCurZoneNum = 60;
+
+		tmp = to16Wrapper(priority);
+
+		vcPtrOrg = _vcPtr;
+		_vcPtr = (byte *)&tmp;
+		vc23_setSpritePriority();
+		_vcPtr = vcPtrOrg;
+		
+		vgaSpriteId++;
+		x += 15;
+		y += 10;
+		priority += 8;
+	}
+}
+
 } // End of namespace AGOS

@@ -1127,6 +1127,7 @@ protected:
 
 	void startOverlayAnims();
 	void startAnOverlayAnim();
+	void startBlock(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);
