@@ -1196,7 +1196,7 @@ protected:
 
 	Item *getNextItemPtrStrange();
 
-	bool saveGame(uint slot, char *caption);
+	bool saveGame(uint slot, const char *caption);
 	bool loadGame(uint slot);
 
 	void openTextWindow();

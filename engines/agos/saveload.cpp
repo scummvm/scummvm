@@ -110,7 +110,11 @@ int AGOSEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 char *AGOSEngine::genSaveName(int slot) {
 	static char buf[15];
 
-	if (getGameType() == GType_FF) {
+	if (getGameId() == GID_DIMP) {
+		sprintf(buf, "dimp.sav");
+	} else if (getGameType() == GType_PP) {
+		sprintf(buf, "swampy.sav");
+	} else if (getGameType() == GType_FF) {
 		if (slot == 999) {
 			// Restart state
 			if (getPlatform() == Common::kPlatformWindows)
@@ -576,7 +580,7 @@ loop:;
 	undefineBox(0x7FFF);
 }
 
-bool AGOSEngine::saveGame(uint slot, char *caption) {
+bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	Common::WriteStream *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
@@ -592,7 +596,7 @@ bool AGOSEngine::saveGame(uint slot, char *caption) {
 		return false;
 	}
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		f->write(caption, 100);
 		curTime = time(NULL);
 	} else {
@@ -609,7 +613,7 @@ bool AGOSEngine::saveGame(uint slot, char *caption) {
 		i++;
 	f->writeUint32BE(i);
 
-	if (_clockStopped)
+	if (getGameType() == GType_FF && _clockStopped)
 		gsc += ((uint32)time(NULL) - _clockStopped);
 	for (te = _firstTimeStruct; te; te = te->next) {
 		f->writeUint32BE(te->time - curTime + gsc);
@@ -650,8 +654,8 @@ bool AGOSEngine::saveGame(uint slot, char *caption) {
 		}
 	}
 
-	// write the 255 variables
-	for (i = 0; i != 255; i++) {
+	// write the variables
+	for (i = 0; i != _numVars; i++) {
 		f->writeUint16BE(readVariable(i));
 	}
 
@@ -660,13 +664,19 @@ bool AGOSEngine::saveGame(uint slot, char *caption) {
 		f->writeUint16BE(itemPtrToID(_itemStore[i]));
 	}
 
-	// Write the bits in array 1
-	for (i = 0; i != 16; i++)
-		f->writeUint16BE(_bitArray[i]);
+	if (getGameType() == GType_PP) {
+		// Write the bits in array 1
+		for (i = 0; i != 128; i++)
+			f->writeUint16BE(_bitArray[i]);
+	} else {
+		// Write the bits in array 1
+		for (i = 0; i != 16; i++)
+			f->writeUint16BE(_bitArray[i]);
 
-	// Write the bits in array 2
-	for (i = 0; i != 16; i++)
-		f->writeUint16BE(_bitArrayTwo[i]);
+		// Write the bits in array 2
+		for (i = 0; i != 16; i++)
+			f->writeUint16BE(_bitArrayTwo[i]);
+	}
 
 	// Write the bits in array 3
 	if (getGameType() == GType_FF) {
@@ -709,7 +719,7 @@ bool AGOSEngine::loadGame(uint slot) {
 		return false;
 	}
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		f->read(ident, 100);
 	} else {
 		f->read(ident, 18);
@@ -781,8 +791,8 @@ bool AGOSEngine::loadGame(uint slot) {
 	}
 
 
-	// read the 255 variables
-	for (i = 0; i != 255; i++) {
+	// read the variables
+	for (i = 0; i != _numVars; i++) {
 		writeVariable(i, f->readUint16BE());
 	}
 
@@ -791,13 +801,19 @@ bool AGOSEngine::loadGame(uint slot) {
 		_itemStore[i] = derefItem(f->readUint16BE());
 	}
 
-	// Read the bits in array 1
-	for (i = 0; i != 16; i++)
-		_bitArray[i] = f->readUint16BE();
+	if (getGameType() == GType_PP) {
+		// Read the bits in array 1
+		for (i = 0; i != 128; i++)
+			_bitArray[i] = f->readUint16BE();
+	} else {
+		// Read the bits in array 1
+		for (i = 0; i != 16; i++)
+			_bitArray[i] = f->readUint16BE();
 
-	// Read the bits in array 2
-	for (i = 0; i != 16; i++)
-		_bitArrayTwo[i] = f->readUint16BE();
+		// Read the bits in array 2
+		for (i = 0; i != 16; i++)
+			_bitArrayTwo[i] = f->readUint16BE();
+	}
 
 	// Read the bits in array 3
 	if (getGameType() == GType_FF) {

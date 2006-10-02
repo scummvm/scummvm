@@ -2548,10 +2548,28 @@ void AGOSEngine::o4_saveUserGame() {
 	if (_clockStopped != 0)
 		_gameTime += time(NULL) - _clockStopped;
 	_clockStopped = 0;
+
+	if (getGameId() == GID_DIMP) {
+		saveGame(1, (const char *)"dimp");
+	} else if (!getBitFlag(110)) {
+		// Swampy adventures
+		saveGame(1, (const char *)"swampy");
+	}
+
+	//saveHiScores()
 }
 
 void AGOSEngine::o4_loadUserGame() {
 	// 133: load usergame
+
+	// NoPatience or Jumble
+	if (getBitFlag(110)) {
+		//getHiScoreName();
+		return;
+	}
+
+	// XXX
+	loadGame(1);
 }
 
 void AGOSEngine::o4_saveOopsPosition() {
