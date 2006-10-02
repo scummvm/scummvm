@@ -59,21 +59,21 @@ public:
 	}
 
 	/**
-	 * Specify number of bytes which are used to calculate MD5
-	 * Default value is 0 which means whole file
+	 * Specify number of bytes which are used to calculate MD5.
+	 * Default value is 0 which means whole file.
 	 */
 	void setFileMD5Bytes(int bytes) { _fileMD5Bytes = bytes; }
 
 	/**
 	 * Detect games in specified directory.
 	 * Parameters language and platform are used to pass on values
-	 * specified by the user. I.e. this is used to restrict search scope
+	 * specified by the user. I.e. this is used to restrict search scope.
 	 *
-	 * @param fslist: FSList to scan or NULL for scanning all specified
+	 * @param fslist	FSList to scan or NULL for scanning all specified
 	 *  default directories.
-	 * @param language: restrict results to specified language only
-	 * @param platform: restrict results to specified platform only
-	 * @return: list of indexes to GameDescriptions of matched games
+	 * @param language	restrict results to specified language only
+	 * @param platform	restrict results to specified platform only
+	 * @return	list of indexes to GameDescriptions of matched games
 	 */
 	ADList detectGame(const FSList *fslist, Language language, Platform platform);
 
