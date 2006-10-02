@@ -33,96 +33,176 @@
 namespace AGOS {
 
 // Opcode tables
+void AGOSEngine::setupCommonVideoOpcodes(VgaOpcodeProc *op) {
+	op[1] = &AGOSEngine::vc1_fadeOut;
+	op[2] = &AGOSEngine::vc2_call;
+	op[3] = &AGOSEngine::vc3_loadSprite;
+	op[4] = &AGOSEngine::vc4_fadeIn;
+	op[5] = &AGOSEngine::vc5_skip_if_neq;
+	op[6] = &AGOSEngine::vc6_skip_ifn_sib_with_a;
+	op[7] = &AGOSEngine::vc7_skip_if_sib_with_a;
+	op[8] = &AGOSEngine::vc8_skip_if_parent_is;
+	op[9] = &AGOSEngine::vc9_skip_if_unk3_is;
+	op[10] = &AGOSEngine::vc10_draw;
+	op[11] = &AGOSEngine::vc11_clearPathFinder;
+	op[12] = &AGOSEngine::vc12_delay;
+	op[13] = &AGOSEngine::vc13_addToSpriteX;
+	op[14] = &AGOSEngine::vc14_addToSpriteY;
+	op[15] = &AGOSEngine::vc15_sync;
+	op[16] = &AGOSEngine::vc16_waitSync;
+	op[17] = &AGOSEngine::vc17_setPathfinderItem;
+	op[18] = &AGOSEngine::vc18_jump;
+	op[19] = &AGOSEngine::vc19_chain_to_script;
+	op[20] = &AGOSEngine::vc20_setRepeat;
+	op[21] = &AGOSEngine::vc21_endRepeat;
+	op[22] = &AGOSEngine::vc22_setSpritePalette;
+	op[23] = &AGOSEngine::vc23_setSpritePriority;
+	op[24] = &AGOSEngine::vc24_setSpriteXY;
+	op[25] = &AGOSEngine::vc25_halt_sprite;
+	op[26] = &AGOSEngine::vc26_setSubWindow;
+	op[27] = &AGOSEngine::vc27_resetSprite;
+	op[28] = &AGOSEngine::vc28_dummy_op;
+	op[29] = &AGOSEngine::vc29_stopAllSounds;
+	op[30] = &AGOSEngine::vc30_setFrameRate;
+	op[31] = &AGOSEngine::vc31_setWindow;
+	op[32] = &AGOSEngine::vc32_copyVar;
+	op[33] = &AGOSEngine::vc33_setMouseOn;
+	op[34] = &AGOSEngine::vc34_setMouseOff;
+	op[35] = &AGOSEngine::vc35_clearWindow;
+	op[36] = &AGOSEngine::vc36_setWindowImage;
+	op[37] = &AGOSEngine::vc37_addToSpriteY;
+	op[38] = &AGOSEngine::vc38_skipIfVarZero;
+	op[39] = &AGOSEngine::vc39_setVar;
+	op[40] = &AGOSEngine::vc40;
+	op[41] = &AGOSEngine::vc41;
+	op[42] = &AGOSEngine::vc42_delayIfNotEQ;
+	op[43] = &AGOSEngine::vc43_skipIfBitClear;
+	op[44] = &AGOSEngine::vc44_skipIfBitSet;
+	op[45] = &AGOSEngine::vc45_setSpriteX;
+	op[46] = &AGOSEngine::vc46_setSpriteY;
+	op[47] = &AGOSEngine::vc47_addToVar;
+	op[48] = &AGOSEngine::vc48_setPathFinder;
+	op[49] = &AGOSEngine::vc49_setBit;
+	op[50] = &AGOSEngine::vc50_clearBit;
+	op[51] = &AGOSEngine::vc51_enableBox;
+	op[52] = &AGOSEngine::vc52_playSound;
+	op[53] = &AGOSEngine::vc53_panSFX;
+	op[54] = &AGOSEngine::vc54_no_op;
+	op[55] = &AGOSEngine::vc55_moveBox;
+	op[56] = &AGOSEngine::vc56_delay;
+	op[57] = &AGOSEngine::vc57_blackPalette;
+	op[58] = &AGOSEngine::vc58;
+	op[59] = &AGOSEngine::vc59;
+	op[60] = &AGOSEngine::vc60_killSprite;
+	op[61] = &AGOSEngine::vc61_setMaskImage;
+	op[62] = &AGOSEngine::vc62_fastFadeOut;
+	op[63] = &AGOSEngine::vc63_fastFadeIn;
+}
+
+void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
+	op[1] = &AGOSEngine::vc1_fadeOut;
+	op[2] = &AGOSEngine::vc2_call;
+	op[3] = &AGOSEngine::vc3_loadSprite;
+	op[4] = &AGOSEngine::vc4_fadeIn;
+	op[5] = &AGOSEngine::vc5_skip_if_neq;
+	op[6] = &AGOSEngine::vc6_skip_ifn_sib_with_a;
+	op[7] = &AGOSEngine::vc7_skip_if_sib_with_a;
+
+	op[10] = &AGOSEngine::vc10_draw;
+
+	op[13] = &AGOSEngine::vc12_delay;
+	op[14] = &AGOSEngine::vc13_addToSpriteX;
+	op[15] = &AGOSEngine::vc14_addToSpriteY;
+	op[16] = &AGOSEngine::vc15_sync;
+	op[17] = &AGOSEngine::vc16_waitSync;
+	op[18] = &AGOSEngine::vc17_setPathfinderItem;
+	op[19] = &AGOSEngine::vc18_jump;
+
+	op[21] = &AGOSEngine::vc20_setRepeat;
+	op[22] = &AGOSEngine::vc21_endRepeat;
+	op[23] = &AGOSEngine::vc22_setSpritePalette;
+	op[24] = &AGOSEngine::vc23_setSpritePriority;
+	op[25] = &AGOSEngine::vc24_setSpriteXY;
+	op[26] = &AGOSEngine::vc25_halt_sprite;
+	op[27] = &AGOSEngine::vc26_setSubWindow;
+	op[28] = &AGOSEngine::vc27_resetSprite;
+
+	op[29] = &AGOSEngine::vc52_playSound;
+	op[30] = &AGOSEngine::vc29_stopAllSounds;
+	op[31] = &AGOSEngine::vc30_setFrameRate;
+	op[32] = &AGOSEngine::vc31_setWindow;
+
+	op[34] = &AGOSEngine::vc33_setMouseOn;
+	op[35] = &AGOSEngine::vc34_setMouseOff;
+
+	op[38] = &AGOSEngine::vc35_clearWindow;
+
+	op[40] = &AGOSEngine::vc36_setWindowImage;
+
+	op[51] = &AGOSEngine::vc38_skipIfVarZero;
+	op[52] = &AGOSEngine::vc39_setVar;
+	op[53] = &AGOSEngine::vc40;
+	op[54] = &AGOSEngine::vc41;
+}
+
+void AGOSEngine::setupSimon2VideoOpcodes(VgaOpcodeProc *op) {
+	setupCommonVideoOpcodes(op);
+
+	op[64] = &AGOSEngine::vc64_skipIfSpeechEnded;
+	op[65] = &AGOSEngine::vc65_slowFadeIn;
+	op[66] = &AGOSEngine::vc66_skipIfNotEqual;
+	op[67] = &AGOSEngine::vc67_skipIfGE;
+	op[68] = &AGOSEngine::vc68_skipIfLE;
+	op[69] = &AGOSEngine::vc69_playTrack;
+	op[70] = &AGOSEngine::vc70_queueMusic;
+	op[71] = &AGOSEngine::vc71_checkMusicQueue;
+	op[72] = &AGOSEngine::vc72_play_track_2;
+	op[73] = &AGOSEngine::vc73_setMark;
+	op[74] = &AGOSEngine::vc74_clearMark;
+}
+
+void AGOSEngine::setupFeebleVideoOpcodes(VgaOpcodeProc *op) {
+	setupSimon2VideoOpcodes(op);
+
+	op[75] = &AGOSEngine::vc75_setScale;
+	op[76] = &AGOSEngine::vc76_setScaleXOffs;
+	op[77] = &AGOSEngine::vc77_setScaleYOffs;
+	op[78] = &AGOSEngine::vc78_computeXY;
+	op[79] = &AGOSEngine::vc79_computePosNum;
+	op[80] = &AGOSEngine::vc80_setOverlayImage;
+	op[81] = &AGOSEngine::vc81_setRandom;
+	op[82] = &AGOSEngine::vc82_getPathValue;
+	op[83] = &AGOSEngine::vc83_playSoundLoop;
+	op[84] = &AGOSEngine::vc84_stopSoundLoop;
+}
+
 void AGOSEngine::setupVgaOpcodes() {
-	static const VgaOpcodeProc vga_opcode_table[] = {
-		NULL,
-		&AGOSEngine::vc1_fadeOut,
-		&AGOSEngine::vc2_call,
-		&AGOSEngine::vc3_loadSprite,
-		&AGOSEngine::vc4_fadeIn,
-		&AGOSEngine::vc5_skip_if_neq,
-		&AGOSEngine::vc6_skip_ifn_sib_with_a,
-		&AGOSEngine::vc7_skip_if_sib_with_a,
-		&AGOSEngine::vc8_skip_if_parent_is,
-		&AGOSEngine::vc9_skip_if_unk3_is,
-		&AGOSEngine::vc10_draw,
-		&AGOSEngine::vc11_clearPathFinder,
-		&AGOSEngine::vc12_delay,
-		&AGOSEngine::vc13_addToSpriteX,
-		&AGOSEngine::vc14_addToSpriteY,
-		&AGOSEngine::vc15_sync,
-		&AGOSEngine::vc16_waitSync,
-		&AGOSEngine::vc17_setPathfinderItem,
-		&AGOSEngine::vc18_jump,
-		&AGOSEngine::vc19_chain_to_script,
-		&AGOSEngine::vc20_setRepeat,
-		&AGOSEngine::vc21_endRepeat,
-		&AGOSEngine::vc22_setSpritePalette,
-		&AGOSEngine::vc23_setSpritePriority,
-		&AGOSEngine::vc24_setSpriteXY,
-		&AGOSEngine::vc25_halt_sprite,
-		&AGOSEngine::vc26_setSubWindow,
-		&AGOSEngine::vc27_resetSprite,
-		&AGOSEngine::vc28_dummy_op,
-		&AGOSEngine::vc29_stopAllSounds,
-		&AGOSEngine::vc30_setFrameRate,
-		&AGOSEngine::vc31_setWindow,
-		&AGOSEngine::vc32_copyVar,
-		&AGOSEngine::vc33_setMouseOn,
-		&AGOSEngine::vc34_setMouseOff,
-		&AGOSEngine::vc35_clearWindow,
-		&AGOSEngine::vc36_setWindowImage,
-		&AGOSEngine::vc37_addToSpriteY,
-		&AGOSEngine::vc38_skipIfVarZero,
-		&AGOSEngine::vc39_setVar,
-		&AGOSEngine::vc40,
-		&AGOSEngine::vc41,
-		&AGOSEngine::vc42_delayIfNotEQ,
-		&AGOSEngine::vc43_skipIfBitClear,
-		&AGOSEngine::vc44_skipIfBitSet,
-		&AGOSEngine::vc45_setSpriteX,
-		&AGOSEngine::vc46_setSpriteY,
-		&AGOSEngine::vc47_addToVar,
-		&AGOSEngine::vc48_setPathFinder,
-		&AGOSEngine::vc49_setBit,
-		&AGOSEngine::vc50_clearBit,
-		&AGOSEngine::vc51_enableBox,
-		&AGOSEngine::vc52_playSound,
-		&AGOSEngine::vc53_panSFX,
-		&AGOSEngine::vc54_no_op,
-		&AGOSEngine::vc55_moveBox,
-		&AGOSEngine::vc56_delay,
-		&AGOSEngine::vc57_blackPalette,
-		&AGOSEngine::vc58,
-		&AGOSEngine::vc59,
-		&AGOSEngine::vc60_killSprite,
-		&AGOSEngine::vc61_setMaskImage,
-		&AGOSEngine::vc62_fastFadeOut,
-		&AGOSEngine::vc63_fastFadeIn,
-		&AGOSEngine::vc64_skipIfSpeechEnded,
-		&AGOSEngine::vc65_slowFadeIn,
-		&AGOSEngine::vc66_skipIfNotEqual,
-		&AGOSEngine::vc67_skipIfGE,
-		&AGOSEngine::vc68_skipIfLE,
-		&AGOSEngine::vc69_playTrack,
-		&AGOSEngine::vc70_queueMusic,
-		&AGOSEngine::vc71_checkMusicQueue,
-		&AGOSEngine::vc72_play_track_2,
-		&AGOSEngine::vc73_setMark,
-		&AGOSEngine::vc74_clearMark,
-		&AGOSEngine::vc75_setScale,
-		&AGOSEngine::vc76_setScaleXOffs,
-		&AGOSEngine::vc77_setScaleYOffs,
-		&AGOSEngine::vc78_computeXY,
-		&AGOSEngine::vc79_computePosNum,
-		&AGOSEngine::vc80_setOverlayImage,
-		&AGOSEngine::vc81_setRandom,
-		&AGOSEngine::vc82_getPathValue,
-		&AGOSEngine::vc83_playSoundLoop,
-		&AGOSEngine::vc84_stopSoundLoop,
-	};
-	
+	static VgaOpcodeProc vga_opcode_table[100];
+
+	for (int i = 0; i < ARRAYSIZE(vga_opcode_table); i++)
+		vga_opcode_table[i] = NULL;
+
 	_vga_opcode_table = vga_opcode_table;
+
+	switch (getGameType()) {
+	case GType_ELVIRA:
+		setupElvira1VideoOpcodes(vga_opcode_table);
+		break;
+	case GType_ELVIRA2:
+	case GType_WW:
+	case GType_SIMON1:
+		setupCommonVideoOpcodes(vga_opcode_table);
+		break;
+	case GType_SIMON2:
+		setupSimon2VideoOpcodes(vga_opcode_table);
+		break;
+	case GType_FF:
+	case GType_PP:
+		setupFeebleVideoOpcodes(vga_opcode_table);
+		break;
+	default:
+		error("setupVgaOpcodes: Unknown game");
+	}
 }
 
 // Script parser
@@ -144,11 +224,12 @@ void AGOSEngine::runVgaScript() {
 			_vcPtr += 2;
 		}
 
-		if (opcode >= _numVideoOpcodes)
-			error("Invalid VGA opcode '%d' encountered", opcode);
-
 		if (opcode == 0)
 			return;
+
+		debug(1, "runVgaScript: Video opcode %d", opcode);
+		if (opcode >= _numVideoOpcodes || !_vga_opcode_table[opcode])
+			error("Invalid VGA opcode '%d' encountered", opcode);
 
 		(this->*_vga_opcode_table[opcode]) ();
 	}
@@ -1645,7 +1726,7 @@ void AGOSEngine::vc22_setSpritePalette() {
 	byte *offs, *palptr, *src;
 	uint16 a = 0, b, num, palSize;
 
-	if (getGameType() != GType_WW)
+	if (getGameType() != GType_ELVIRA && getGameType() != GType_ELVIRA2 && getGameType() != GType_WW)
 		a = vcReadNextWord();
 	b = vcReadNextWord();
 
@@ -1662,29 +1743,40 @@ void AGOSEngine::vc22_setSpritePalette() {
 		palptr = &_displayPalette[(a * 64)];
 		offs = _curVgaFile1 + 6;
 	} else {
-		num = 16;
 		palSize = 32;
+
 		palptr = _displayPalette;
 		offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
+
+		if (b >= 1000) {
+			b -= 1000;
+			num = 16;
+		} else {
+			num = 13;
+		}
 	}
 
 	src = offs + b * palSize;
 
 	do {
-		if (getGameType() == GType_WW) {
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			uint16 color = READ_BE_UINT16(src);
-			palptr[2] = ((color & 0x00f) >> 0) * 32;
-			palptr[1] = ((color & 0x0f0) >> 4) * 32;
 			palptr[0] = ((color & 0xf00) >> 8) * 32;
+			palptr[1] = ((color & 0x0f0) >> 4) * 32;
+			palptr[2] = ((color & 0x00f) >> 0) * 32;
+			palptr[3] = 0;
+
+			palptr += 4;
+			src += 2;
 		} else {
 			palptr[0] = src[0] * 4;
 			palptr[1] = src[1] * 4;
 			palptr[2] = src[2] * 4;
-		}
-		palptr[3] = 0;
+			palptr[3] = 0;
 
-		palptr += 4;
-		src += (getGameType() == GType_WW) ? 2 : 3;
+			palptr += 4;
+			src += 3;
+		}
 	} while (--num);
 
 	_paletteFlag = 2;
@@ -1865,14 +1957,14 @@ void AGOSEngine::vc36_setWindowImage() {
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_copyPartialMode = 2;
-	} else if (getGameType() == GType_SIMON2) {
-		set_video_mode_internal(windowNum, vga_res);
 	} else if (getGameType() == GType_SIMON1) {
 		if (windowNum == 16) {
 			_copyPartialMode = 2;
 		} else {
 			set_video_mode_internal(windowNum, vga_res);
 		}
+	} else {
+		set_video_mode_internal(windowNum, vga_res);
 	}
 }
 
@@ -2112,6 +2204,11 @@ void AGOSEngine::vc51_enableBox() {
 
 void AGOSEngine::vc52_playSound() {
 	bool ambient = false;
+
+	if (getGameType() == GType_ELVIRA) {
+		_vcPtr += 8;
+		return;
+	}
 
 	uint16 sound = vcReadNextWord();
 	if (sound >= 0x8000) {

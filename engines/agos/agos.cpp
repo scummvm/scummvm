@@ -80,7 +80,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_gameOffsetsPtr = 0;
 
 	_debugger = 0;
-	setupVgaOpcodes();
 
 	_keyPressed = 0;
 
@@ -630,6 +629,7 @@ void AGOSEngine::setupGame() {
 	_variableArrayPtr = _variableArray;
 
 	setupOpcodes();
+	setupVgaOpcodes();
 
 	setZoneBuffers();
 

@@ -164,8 +164,16 @@ class AGOSEngine : public Engine {
 	int _numOpcodes;
 
 	typedef void (AGOSEngine::*VgaOpcodeProc) ();
+
 	void setupVgaOpcodes();
 	const VgaOpcodeProc *_vga_opcode_table;
+	uint _numVideoOpcodes;
+
+	void setupCommonVideoOpcodes(VgaOpcodeProc *op);
+
+	void setupElvira1VideoOpcodes(VgaOpcodeProc *op);
+	void setupSimon2VideoOpcodes(VgaOpcodeProc *op);
+	void setupFeebleVideoOpcodes(VgaOpcodeProc *op);
 
 public:
 	GameDescription *_gameDescription;
@@ -198,7 +206,6 @@ protected:
 	uint _vgaBaseDelay;
 	uint _tableIndexBase;
 	uint _textIndexBase;
-	uint _numVideoOpcodes;
 	uint _vgaMemSize;
 	uint _tableMemSize;
 	uint _musicIndexBase;

@@ -85,7 +85,7 @@ void AGOSEngine::animateSprites() {
 		_vgaCurSpritePriority = vsp->priority;
 
 		params[0] = readUint16Wrapper(&vsp->image);
-		if (getGameType() == GType_WW) {
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			params[1] = readUint16Wrapper(&vsp->x);
 			params[2] = readUint16Wrapper(&vsp->y);
 			params[3] = READ_BE_UINT16(&vsp->flags);
@@ -138,7 +138,7 @@ void AGOSEngine::animateSpritesDebug() {
 			printf("id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		params[0] = readUint16Wrapper(&vsp->image);
-		if (getGameType() == GType_WW) {
+		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			params[1] = readUint16Wrapper(&vsp->x);
 			params[2] = readUint16Wrapper(&vsp->y);
 			params[3] = READ_BE_UINT16(&vsp->flags);
