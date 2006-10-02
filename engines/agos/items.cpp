@@ -455,7 +455,7 @@ void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
 	op[124] = &AGOSEngine::o3_ifTime;
 	op[127] = NULL;
 	op[131] = &AGOSEngine::o3_setTime;
-	op[132] = &AGOSEngine::o3_saveUserGame;
+	op[132] = &AGOSEngine::o4_saveUserGame;
 	op[133] = &AGOSEngine::o4_loadUserGame;
 	op[134] = &AGOSEngine::o3_listSaveGames;
 	op[161] = &AGOSEngine::o3_screenTextBox;
@@ -2541,6 +2541,10 @@ void AGOSEngine::o4_sync() {
 		_marks &= ~(1 << 2);
 	}
 	sendSync(a);
+}
+
+void AGOSEngine::o4_saveUserGame() {
+	// 132: save game
 }
 
 void AGOSEngine::o4_loadUserGame() {

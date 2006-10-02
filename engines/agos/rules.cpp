@@ -285,6 +285,8 @@ bool AGOSEngine::block1Supported(int i, int y) {
 }
 
 void AGOSEngine::checkTiles() {
+	printf("checkTiles\n");
+
 	const byte *tile;
 	uint i, slot;
 

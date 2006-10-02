@@ -740,6 +740,7 @@ protected:
 	void loadIconData();	
 	void loadIconFile();
 
+	bool checkArrows();
 	void processSpecialKeys();
 	void hitarea_stuff_helper();
 
@@ -1098,6 +1099,7 @@ public:
 	void o4_loadHiScores();
 	void o4_checkHiScores();
 	void o4_sync();
+	void o4_saveUserGame();
 	void o4_loadUserGame();
 	void o4_saveOopsPosition();
 	void o4_resetGameTime();

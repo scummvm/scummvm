@@ -1200,10 +1200,13 @@ startOver:
 		for (;;) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
 				displayBoxStars();
-			processSpecialKeys();
-			if (getGameType() == GType_PP && _keyPressed != 0) {
-				_needHitAreaRecalc++;
-				return;
+			if (getGameType() == GType_PP) {
+				if (checkArrows() != 0) {
+					_needHitAreaRecalc++;
+					return;
+				}
+			} else {
+				processSpecialKeys();
 			}
 			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
@@ -1767,6 +1770,27 @@ bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	return false;
 }
 
+bool AGOSEngine::checkArrows() {
+	switch (_keyPressed) {
+	case 17: // Up
+		_verbHitArea = 302;
+		break;
+	case 18: // Down
+		_verbHitArea = 304;
+		break;
+	case 19: // Right
+		_verbHitArea = 303;
+		break;
+	case 20: // Left
+		_verbHitArea = 301;
+		break;
+	}
+
+	bool result = (_keyPressed != 0);
+	_keyPressed = 0;
+	return result;
+}
+
 void AGOSEngine::processSpecialKeys() {
 	switch (_keyPressed) {
 	case 17: // Up
@@ -2168,7 +2192,15 @@ void AGOSEngine::delay(uint amount) {
 						_fastMode ^= 1;
 					else if (event.kbd.keycode == 'd')
 						_debugger->attach();
+				} 
+
+				if (getGameType() == GType_PP) {
+					if (event.kbd.flags == OSystem::KBD_SHIFT)
+						_variableArray[41] = 0;
+					else
+						_variableArray[41] = 1;
 				}
+
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)
 					_keyPressed = 8;
