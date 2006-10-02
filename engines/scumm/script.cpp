@@ -150,6 +150,13 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	const byte *objptr, *verbptr;
 	int verboffs;
 
+	// WORKAROUND for bug #1555938: Disallow pulling the rope if it's
+	// already in the player's inventory.
+
+	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY) {
+		return 0;
+	}
+
 	if (whereIsObject(obj) == WIO_NOT_FOUND)
 		return 0;
 
