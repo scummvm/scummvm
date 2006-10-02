@@ -2865,12 +2865,14 @@ void AGOSEngine::startOverlayAnims() {
 		vsp->priority = 4;
 		vsp->flags = 0;
 		vsp->palette = 0;
-		vsp->image = _variableArray[i];
-		if (i >= 300)
-			vsp->x = (i - 300) / 20 * 32;
-		else
-			vsp->x = i / 20 * 32;
-		vsp->y = 0;
+		vsp->image = _variableArray[1000 + i];
+		if (i >= 300) {
+			vsp->y = ((i - 300) / 20) * 32;
+			vsp->x = ((i - 300) % 20) * 32;
+		} else {
+			vsp->y = (i / 20) * 32;
+			vsp->x = (i % 20) * 32;
+		}
 		vsp->id = 1000 + i;
 		vsp->zoneNum = _overlayAnimationZone;
 	}
@@ -2905,8 +2907,8 @@ void AGOSEngine::startAnOverlayAnim() {
 		vsp->priority = 10;
 	}
 
-	vsp->x = x / 20 * 32;
-	vsp->y = 0;
+	vsp->y = x / 20 * 32;
+	vsp->x = x % 20 * 32;;
 	vsp->id = vcReadVar(a);
 	vsp->zoneNum = _overlayAnimationZone;
 
@@ -2928,6 +2930,8 @@ void AGOSEngine::startAnOverlayAnim() {
 }
 
 void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint priority) {
+	printf("startBlock\n");
+
 	VgaSprite *vsp = _vgaSprites;
 	const byte *vcPtrOrg;
 	uint16 sprite, tmp, zone;
