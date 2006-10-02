@@ -328,13 +328,13 @@ void AGOSEngine::timer_proc1() {
 				processVgaEvents();
 				if (getBitFlag(98)) {
 					if (!getBitFlag(97)) {
-						printf("PairCheck\n");
-						printf("GravityCheck\n");
+						pairCheck();
+						gravityCheck();
 					}
 					printf("CheckIfClickedOnBlock\n");
 					if (getBitFlag(99)) {
-						printf("MoveBlocks\n");
-						printf("DroppingBlock\n");
+						moveBlocks();
+						droppingBlock();
 					}
 				}
 			} else {

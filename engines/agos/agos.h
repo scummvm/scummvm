@@ -304,6 +304,15 @@ protected:
  	uint16 _oracleMaxScrollY, _noOracleScroll;
  	uint16 _interactY;
 
+	uint16 _droppingBlockAnim;
+	uint16 _droppingBlockLength;
+	uint16 _droppingBlockCount;
+	uint16 _droppingBlockLand;
+	uint16 _droppingBlockType;
+	uint16 _droppingBlockX;
+	uint16 _droppingBlockY;
+	uint16 _droppingBlockZ;
+
 	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
 	int16 _scriptAdj1, _scriptAdj2;
 
@@ -398,6 +407,7 @@ protected:
 
 	uint16 _zoneNumber;
 	uint16 _vgaWaitFor, _lastVgaWaitFor;
+	uint16 _overlayAnimationZone;
 	uint16 _vgaCurSpriteId, _vgaCurZoneNum;
 	uint16 _vgaCurSpritePriority;
 
@@ -648,11 +658,14 @@ protected:
 
 	bool block0Supported(int i, int y);
 	bool block1Supported(int i, int y);
+	void checkTiles();
+	void moveBlocks();
+	void dropBlock(int a, int b, int c);
+	void droppingBlock();
 	void stopBlock(int a, int b);
 	void remove0Block(int i);
 	void remove1Block(int i);
 	void pairCheck();
-	void dropBlock(int a, int b, int c);
 	void gravityCheck();
 	bool hasBlockLanded(int16 yofs, int16 block, int16 priority, int16 type, int16 x, int16 y, int16 z);
 
@@ -1049,7 +1062,6 @@ public:
 	void o3_oracleTextDown();
 	void o3_oracleTextUp();
 	void o3_ifTime();
-	void o3_playTune();
 	void o3_setTime();
 	void o3_saveUserGame();
 	void o3_loadUserGame();
@@ -1112,6 +1124,9 @@ protected:
 	void checkScrollX(int16 x, int16 xpos);
 	void checkScrollY(int16 y, int16 ypos);
 	void centreScroll();
+
+	void startOverlayAnims();
+	void startAnOverlayAnim();
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);

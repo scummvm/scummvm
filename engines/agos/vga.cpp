@@ -418,6 +418,11 @@ void AGOSEngine::vc3_loadSprite() {
 	byte *p, *pp;
 	byte *old_file_1;
 
+	if (getGameType() == GType_PP && getBitFlag(100)) {
+		startAnOverlayAnim();
+		return;
+	}
+
 	windowNum = vcReadNextWord();		/* 0 */
 
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -431,10 +436,6 @@ void AGOSEngine::vc3_loadSprite() {
 	x = vcReadNextWord();			/* 4 */
 	y = vcReadNextWord();			/* 6 */
 	palette = vcReadNextWord();		/* 8 */
-
-	if (getGameType() == GType_PP && getBitFlag(100)) {
-		printf("StartAnOverlayAnim\n");
-	}
 
 	if (isSpriteLoaded(vgaSpriteId, zoneNum))
 		return;
@@ -2419,7 +2420,7 @@ void AGOSEngine::vc63_fastFadeIn() {
 	if (getGameType() == GType_PP) {
 		_fastFadeInFlag = 256;
 		if (getBitFlag(100)) {
-			printf("StartOverlayAnims\n");
+			startOverlayAnims();
 		} else if (getBitFlag(103)) {
 			printf("NameAndTime\n");
 		} else if (getBitFlag(104)) {
@@ -2843,6 +2844,87 @@ void AGOSEngine::centreScroll() {
 			_scrollCount = y;
 		}
 	}
+}
+
+void AGOSEngine::startOverlayAnims() {
+	printf("StartOverlayAnims\n");
+
+	VgaSprite *vsp = _vgaSprites;
+	int i;
+
+	_overlayAnimationZone = _variableArray[999];
+	
+	for (i = 0; i < 600; i++) {
+		if (_variableArray[1000 + i] < 100)
+			continue;
+
+		while (vsp->id)
+			vsp++;
+
+		vsp->windowNum = 4;
+		vsp->priority = 4;
+		vsp->flags = 0;
+		vsp->palette = 0;
+		vsp->image = _variableArray[i];
+		if (i >= 300)
+			vsp->x = (i - 300) / 20 * 32;
+		else
+			vsp->x = i / 20 * 32;
+		vsp->y = 0;
+		vsp->id = 1000 + i;
+		vsp->zoneNum = _overlayAnimationZone;
+	}
+}
+
+void AGOSEngine::startAnOverlayAnim() {
+	printf("StartAnOverlayAnim\n");
+
+	VgaSprite *vsp = _vgaSprites;
+	const byte *vcPtrOrg;
+	uint16 a, sprite, file, tmp;
+	int16 x;
+
+	_overlayAnimationZone = _variableArray[999];
+
+	_vcPtr += 4;
+	a = vcReadNextWord();
+	_vcPtr += 4;
+
+	while (vsp->id)
+		vsp++;
+
+	vsp->windowNum = 4;
+	vsp->priority = 20;
+	vsp->flags = 0;
+	vsp->palette = 0;
+	vsp->image = vcReadVar(vcReadVar(a));
+
+	x = vcReadVar(a) - 1300;
+	if (x < 0) {
+		x += 300;
+		vsp->priority = 10;
+	}
+
+	vsp->x = x / 20 * 32;
+	vsp->y = 0;
+	vsp->id = vcReadVar(a);
+	vsp->zoneNum = _overlayAnimationZone;
+
+	sprite = _vgaCurSpriteId;
+	file = _vgaCurZoneNum;
+
+	_vgaCurZoneNum = vsp->zoneNum;
+	_vgaCurSpriteId = vsp->id;
+
+	tmp = to16Wrapper(vsp->priority);
+
+	vcPtrOrg = _vcPtr;
+	_vcPtr = (byte *)&tmp;
+	vc23_setSpritePriority();
+
+	_vcPtr = vcPtrOrg;
+	_vgaCurSpriteId = sprite;
+	_vgaCurZoneNum = file;
 }
 
 } // End of namespace AGOS

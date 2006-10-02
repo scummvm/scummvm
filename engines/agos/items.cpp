@@ -400,13 +400,14 @@ void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
 	op[122] = &AGOSEngine::o3_oracleTextDown;
 	op[123] = &AGOSEngine::o3_oracleTextUp;
 	op[124] = &AGOSEngine::o3_ifTime;
-	op[127] = &AGOSEngine::o3_playTune;
+	op[127] = NULL;
 	op[131] = &AGOSEngine::o3_setTime;
 	op[132] = &AGOSEngine::o3_saveUserGame;
 	op[133] = &AGOSEngine::o3_loadUserGame;
 	op[134] = &AGOSEngine::o3_listSaveGames;
 	op[135] = &AGOSEngine::o3_checkCD;
 	op[161] = &AGOSEngine::o3_screenTextBox;
+	op[163] = NULL;
 	op[165] = &AGOSEngine::o3_isAdjNoun;
 	op[171] = &AGOSEngine::o3_hyperLinkOn;
 	op[172] = &AGOSEngine::o3_hyperLinkOff;
@@ -452,12 +453,13 @@ void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
 	op[122] = &AGOSEngine::o3_oracleTextDown;
 	op[123] = &AGOSEngine::o3_oracleTextUp;
 	op[124] = &AGOSEngine::o3_ifTime;
-	op[127] = &AGOSEngine::o3_playTune;
+	op[127] = NULL;
 	op[131] = &AGOSEngine::o3_setTime;
 	op[132] = &AGOSEngine::o3_saveUserGame;
 	op[133] = &AGOSEngine::o4_loadUserGame;
 	op[134] = &AGOSEngine::o3_listSaveGames;
 	op[161] = &AGOSEngine::o3_screenTextBox;
+	op[163] = NULL;
 	op[165] = &AGOSEngine::o3_isAdjNoun;
 	op[166] = NULL;
 	op[167] = NULL;
@@ -1051,7 +1053,7 @@ void AGOSEngine::o_defWindow() {
 
 	if (num == _curWindow) {
 		_textWindow = _windowArray[num];
-		if (getGameType() == GType_FF)
+		if (getGameType() == GType_FF || getGameType() == GType_PP)
 			showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
 		else
 			showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
@@ -1480,9 +1482,6 @@ void AGOSEngine::o_playEffect() {
 	// 163: play sound
 	uint soundId = getVarOrWord();
 
-	if (getGameType() == GType_FF)
-		error("o_playEffect: triggered");
-
 	if (getGameId() == GID_SIMON1DOS)
 		playSting(soundId);
 	else
@@ -1568,13 +1567,12 @@ void AGOSEngine::o_getPathPosn() {
 	uint prev_i;
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
-	uint maxPath = (getGameType() == GType_FF) ? 100 : 20;
+	uint maxPath = (getGameType() == GType_FF || getGameType() == GType_PP) ? 100 : 20;
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		x += _scrollX;
 		y += _scrollY;
-	}
-	if (getGameType() == GType_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		x += _scrollX * 8;
 	}
 
@@ -1618,7 +1616,7 @@ void AGOSEngine::o_scnTxtLongText() {
 	if (getFeatures() & GF_TALKIE)
 		speechId = _longSound[stringId];
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		vgaSpriteId = 1;
 	tl = getTextLocation(vgaSpriteId);
 
@@ -2200,13 +2198,6 @@ void AGOSEngine::o3_ifTime() {
 		setScriptCondition(false);
 }
 
-void AGOSEngine::o3_playTune() {
-	// 127: usually deals with music, but is a no-op in FF.
-	getVarOrWord();
-	getVarOrWord();
-	getVarOrByte();
-}
-
 void AGOSEngine::o3_setTime() {
 	// 131
 	time(&_timeStore);
@@ -2479,6 +2470,7 @@ void AGOSEngine::o4_restoreOopsPosition() {
 void AGOSEngine::o4_checkTiles() {
 	// 37: for MahJongg game
 	getVarOrByte();
+	checkTiles();
 }
 
 void AGOSEngine::o4_loadMouseImage() {
@@ -2642,11 +2634,10 @@ int AGOSEngine::runScript() {
 }
 
 void AGOSEngine::scriptMouseOn() {
-	if (getGameType() == GType_FF && _mouseCursor != 5) {
+	if ((getGameType() == GType_FF || getGameType() == GType_PP) && _mouseCursor != 5) {
 		resetVerbs();
 		_noRightClick = 0;
-	}
-	if (getGameType() == GType_SIMON2 && getBitFlag(79)) {
+	} else if (getGameType() == GType_SIMON2 && getBitFlag(79)) {
 		_mouseCursor = 0;
 	}
 	_mouseHideCount = 0;
