@@ -149,7 +149,7 @@ class AGOSEngine : public Engine {
 
 	typedef void (AGOSEngine::*OpcodeProc) ();
 
-	void setupAGOSOpcodes(OpcodeProc *op);
+	void setupCommonOpcodes(OpcodeProc *op);
 
 	void setupElvira1Opcodes(OpcodeProc *op);
 	void setupElvira2Opcodes(OpcodeProc *op);

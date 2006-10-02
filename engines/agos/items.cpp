@@ -36,7 +36,7 @@ extern bool isSmartphone(void);
 
 namespace AGOS {
 
-void AGOSEngine::setupAGOSOpcodes(OpcodeProc *op) {
+void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	// A sensible set of opcodes for Simon 1 and later.
 
 	op[1] = &AGOSEngine::o_at;
@@ -304,11 +304,11 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 }
 
 void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
-	setupAGOSOpcodes(op);
+	setupCommonOpcodes(op);
 }
 
 void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
-	setupAGOSOpcodes(op);
+	setupCommonOpcodes(op);
 
 	// Confirmed
 	op[55] = &AGOSEngine::oww_goto;
@@ -356,7 +356,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 }
 
 void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
-	setupAGOSOpcodes(op);
+	setupCommonOpcodes(op);
 
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -372,7 +372,7 @@ void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
 }
 
 void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
-	setupAGOSOpcodes(op);
+	setupCommonOpcodes(op);
 
 	op[70] = &AGOSEngine::o2_printLongText;
 	op[83] = &AGOSEngine::o2_rescan;
@@ -387,7 +387,7 @@ void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
 }
 
 void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
-	setupAGOSOpcodes(op);
+	setupCommonOpcodes(op);
 
 	op[23] = &AGOSEngine::o3_chance;
 	op[37] = &AGOSEngine::o3_jumpOut;
@@ -432,7 +432,7 @@ void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
 }
 
 void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
-	setupAGOSOpcodes(op);
+	setupCommonOpcodes(op);
 
 	op[23] = &AGOSEngine::o3_chance;
 	op[30] = &AGOSEngine::o4_iconifyWindow;
