@@ -31,6 +31,7 @@
 
 #include "saga/gfx.h"
 #include "saga/list.h"
+#include "common/advancedDetector.h"
 
 namespace Saga {
 
@@ -359,7 +360,7 @@ public:
 
 //current game description
 	int _gameNumber;
-	GameDescription *_gameDescription;
+	SAGAGameDescription *_gameDescription;
 	Common::String _gameTitle;
 	Common::Rect _displayClip;
 
@@ -372,8 +373,8 @@ public:
 public:
 	bool initGame(void);
 public:
-	const GameDescription *getGameDescription() const { return _gameDescription; }
-	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
+	const SAGAGameDescription *getGameDescription() const { return _gameDescription; }
+	const bool isBigEndian() const { return (_gameDescription->desc.features & GF_BIG_ENDIAN_DATA) != 0; }
 	const bool isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
 	const GameSoundInfo *getVoiceInfo() const { return _gameDescription->voiceInfo; }
@@ -386,11 +387,11 @@ public:
 	}
 	int getFontsCount() const { return _gameDescription->fontsCount; }
 
-	int getGameId() const { return _gameDescription->gameId; }
-	int getGameType() const { return _gameDescription->gameType; }
-	uint32 getFeatures() const { return _gameDescription->features; }
-	Common::Language getLanguage() const { return _gameDescription->language; }
-	Common::Platform getPlatform() const { return _gameDescription->platform; }
+	int getGameId() const { return _gameDescription->desc.gameId; }
+	int getGameType() const { return _gameDescription->desc.gameType; }
+	uint32 getFeatures() const { return _gameDescription->desc.features; }
+	Common::Language getLanguage() const { return _gameDescription->desc.language; }
+	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
 	int getGameNumber() const { return _gameNumber; }
 	int getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 

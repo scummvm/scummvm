@@ -340,14 +340,14 @@ bool Resource::loadContext(ResourceContext *context) {
 bool Resource::createContexts() {
 	int i;
 	ResourceContext *context;
-	_contextsCount = _vm->getGameDescription()->filesCount;
+	_contextsCount = _vm->getGameDescription()->desc.filesCount;
 	_contexts = (ResourceContext*)calloc(_contextsCount, sizeof(*_contexts));
 
 	for (i = 0; i < _contextsCount; i++) {
 		context = &_contexts[i];
 		context->file = new Common::File();
-		context->fileName = _vm->getGameDescription()->filesDescriptions[i].fileName;
-		context->fileType = _vm->getGameDescription()->filesDescriptions[i].fileType;
+		context->fileName = _vm->getGameDescription()->desc.filesDescriptions[i].fileName;
+		context->fileType = _vm->getGameDescription()->desc.filesDescriptions[i].fileType;
 		context->serial = 0;
 
 		// IHNM has serveral different voice files, so we need to allow

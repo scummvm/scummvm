@@ -32,6 +32,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/config-manager.h"
+#include "common/advancedDetector.h"
 #include "base/plugins.h"
 
 #include "saga/rscfile.h"
@@ -105,9 +106,13 @@ PluginError Engine_SAGA_create(OSystem *syst, Engine **engine) {
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
 namespace Saga {
+
+using Common::ADGameFileDescription;
+using Common::ADGameDescription;
+
 #include "sagagame.cpp"
 
-DetectedGame toDetectedGame(const GameDescription &g) {
+DetectedGame toDetectedGame(const ADGameDescription &g) {
 	const char *title;
 	title = saga_games[g.gameType].description;
 	DetectedGame dg(g.name, title, g.language, g.platform);
@@ -115,152 +120,15 @@ DetectedGame toDetectedGame(const GameDescription &g) {
 	return dg;
 }
 
-static int detectGame(const FSList *fslist, Common::Language language, Common::Platform platform, int*& returnMatches) {
-	int gamesCount = ARRAYSIZE(gameDescriptions);
-	int filesCount;
-
-	typedef Common::HashMap<Common::String, bool, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> StringSet;
-	StringSet filesList;
-
-	typedef Common::StringMap StringMap;
-	StringMap filesMD5;
-
-	Common::String tstr;
-	
-	int i, j;
-	char md5str[32+1];
-	uint8 md5sum[16];
-
-	int matched[ARRAYSIZE(gameDescriptions)];
-	int matchedCount = 0;
-	bool fileMissing;
-	GameFileDescription *fileDesc;
-
-	// First we compose list of files which we need MD5s for
-	for (i = 0; i < gamesCount; i++) {
-		for (j = 0; j < gameDescriptions[i].filesCount; j++) {
-			tstr = Common::String(gameDescriptions[i].filesDescriptions[j].fileName);
-			tstr.toLowercase();
-			filesList[tstr] = true;
-		}
-	}
-	
-	if (fslist != NULL) {
-		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
-			if (file->isDirectory()) continue;
-			tstr = file->name();
-			tstr.toLowercase();
-
-			if (!filesList.contains(tstr)) continue;
-
-			if (!Common::md5_file(*file, md5sum, FILE_MD5_BYTES)) continue;
-			for (j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-			filesMD5[tstr] = Common::String(md5str);
-		}
-	} else {
-		Common::File testFile;
-
-		for (StringSet::const_iterator file = filesList.begin(); file != filesList.end(); ++file) {
-			tstr = file->_key;
-			tstr.toLowercase();
-
-			if (!filesMD5.contains(tstr)) {
-				if (testFile.open(file->_key)) {
-					testFile.close();
-
-					if (Common::md5_file(file->_key.c_str(), md5sum, FILE_MD5_BYTES)) {
-						for (j = 0; j < 16; j++) {
-							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-						}
-						filesMD5[tstr] = Common::String(md5str);
-					}
-				}
-			}
-		}
-	}
-
-	for (i = 0; i < gamesCount; i++) {
-		filesCount = gameDescriptions[i].filesCount;		
-		fileMissing = false;
-
-		// Try to open all files for this game
-		for (j = 0; j < filesCount; j++) {
-			fileDesc = &gameDescriptions[i].filesDescriptions[j];
-			tstr = fileDesc->fileName;
-			tstr.toLowercase();
-
-			if (!filesMD5.contains(tstr)) {
-
-				if ((fileDesc->fileType & (GAME_SOUNDFILE | GAME_VOICEFILE | GAME_MUSICFILE)) != 0) {
-					//TODO: find recompressed files
-				}
-				fileMissing = true;
-				break;
-			}
-			if (strcmp(fileDesc->md5, filesMD5[tstr].c_str())) {
-				fileMissing = true;
-				break;
-			}
-		}
-		if (!fileMissing) {
-			debug(2, "Found game: %s", toDetectedGame(gameDescriptions[i]).description.c_str());
-			matched[matchedCount++] = i;
-		}
-	}
-
-	if (!filesMD5.empty() && (matchedCount == 0)) {
-		printf("MD5s of your game version are unknown. Please, report following data to\n");
-		printf("ScummVM team along with your game name and version:\n");
-
-		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
-	}
-
-	// We have some resource sets which are superpositions of other
-	// Particularly it is ite-demo-linux vs ite-demo-win
-	// Now remove lesser set if bigger matches too
-
-	if (matchedCount > 1) {
-		// Search max number
-		int maxcount = 0;
-		for (i = 0; i < matchedCount; i++) {
-			maxcount = MAX(gameDescriptions[matched[i]].filesCount, maxcount);
-		}
-
-		// Now purge targets with number of files lesser than max
-		for (i = 0; i < matchedCount; i++) {
-			if ((gameDescriptions[matched[i]].language != language && language != Common::UNK_LANG) ||
-				(gameDescriptions[matched[i]].platform != platform && platform != Common::kPlatformUnknown)) {
-				debug(2, "Purged %s", toDetectedGame(gameDescriptions[matched[i]]).description.c_str());
-				matched[i] = -1;
-				continue;
-			}
-
-			if (gameDescriptions[matched[i]].filesCount < maxcount) {
-				debug(2, "Purged: %s", toDetectedGame(gameDescriptions[matched[i]]).description.c_str());
-				matched[i] = -1;
-			}
-		}
-	}
-
-
-	returnMatches = (int *)malloc(matchedCount * sizeof(int));
-	j = 0;
-	for (i = 0; i < matchedCount; i++)
-		if (matched[i] != -1)
-			returnMatches[j++] = matched[i];
-	return j;
-}
-
 bool SagaEngine::initGame() {
 	uint16 gameCount = ARRAYSIZE(gameDescriptions);
 	int gameNumber = -1;
 	
 	DetectedGameList detectedGames;
-	int count;
-	int* matches;
+	Common::AdvancedDetector AdvDetector;
+	Common::ADList matches;
+	Common::ADGameDescList descList;
+
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
 
@@ -270,25 +138,31 @@ bool SagaEngine::initGame() {
 		platform = Common::parsePlatform(ConfMan.get("platform"));
 
 
-	count = detectGame(NULL, language, platform, matches);
+	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
+		descList.push_back((ADGameDescription *)&gameDescriptions[i]);
 
-	if (count == 0) {
+	AdvDetector.registerGameDescriptions(descList);
+	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
+
+	matches = AdvDetector.detectGame(NULL, language, platform);
+
+	if (matches.size() == 0) {
 		warning("No valid games were found in the specified directory.");
 		return false;
 	}
 
-	if (count != 1)
-		warning("Conflicting targets detected (%d)", count);
+	if (matches.size() != 1)
+		warning("Conflicting targets detected (%d)", matches.size());
 
 	gameNumber = matches[0];
 
-	free(matches);
+	//delete matches;
 
 	if (gameNumber >= gameCount || gameNumber == -1) {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
 
-	_gameTitle = toDetectedGame(gameDescriptions[gameNumber]).description;
+	_gameTitle = toDetectedGame(gameDescriptions[gameNumber].desc).description;
 	debug(2, "Running %s", _gameTitle.c_str());
 
 	_gameNumber = gameNumber;
@@ -305,13 +179,22 @@ bool SagaEngine::initGame() {
 
 DetectedGameList GAME_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	int count;
-	int* matches;
-	count = detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown, matches);
+	Common::AdvancedDetector AdvDetector;
+	Common::ADList matches;
+	Common::ADGameDescList descList;
 
-	for (int i = 0; i < count; i++)
-		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]]));
-	free(matches);
+	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
+		descList.push_back((ADGameDescription *)&gameDescriptions[i]);
+
+	AdvDetector.registerGameDescriptions(descList);
+	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
+
+	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
+
+	for (uint i = 0; i < matches.size(); i++)
+		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]].desc));
+	//delete matches;
+
 	return detectedGames;
 }
 

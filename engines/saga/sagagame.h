@@ -191,12 +191,6 @@ enum TextStringIds {
 };
 
 
-struct GameFileDescription {
-	const char *fileName;
-	uint16 fileType;
-	const char *md5;
-};
-
 struct GameResourceDescription {
 	uint32 sceneLUTResourceId;
 	uint32 moduleLUTResourceId;
@@ -332,16 +326,12 @@ struct GamePatchDescription {
 	GameSoundInfo *soundInfo;
 };
 
-struct GameDescription {
-	const char *name;
-	SAGAGameType gameType;
-	GameIds gameId;
-	const char *extra;
+struct SAGAGameDescription {
+	Common::ADGameDescription desc;
+
 	GameDisplayInfo *gameDisplayInfo;
 	int startSceneNumber;
 	GameResourceDescription *resourceDescription;
-	int filesCount;
-	GameFileDescription *filesDescriptions;
 	int fontsCount;
 	GameFontDescription *fontDescriptions;
 	GameSoundInfo *voiceInfo;
@@ -349,9 +339,6 @@ struct GameDescription {
 	GameSoundInfo *musicInfo;
 	int patchesCount;
 	GamePatchDescription *patchDescriptions;
-	uint32 features;
-	Common::Language language;
-	Common::Platform platform;
 };
 
 #define FILE_MD5_BYTES 5000

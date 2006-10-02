@@ -33,6 +33,7 @@
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
+#include "common/advancedDetector.h"
 
 namespace AGOS {
 
@@ -119,24 +120,6 @@ enum SIMONGameType {
 	GType_PP = 7
 };
 
-struct GameFileDescription {
-	const char *fileName;
-	uint16 fileType;
-	const char *md5;
-};
-
-struct GameDescription {
-	const char *name;
-	SIMONGameType gameType;
-	GameIds gameId;
-	const char *extra;
-	int filesCount;
-	GameFileDescription *filesDescriptions;
-	uint32 features;
-	Common::Language language;
-	Common::Platform platform;
-};
-
 struct GameSpecificSettings;
 
 class Debugger;
@@ -176,7 +159,7 @@ class AGOSEngine : public Engine {
 	void setupFeebleVideoOpcodes(VgaOpcodeProc *op);
 
 public:
-	GameDescription *_gameDescription;
+	Common::ADGameDescription *_gameDescription;
 
 	bool initGame(void);
 	void setupGame();

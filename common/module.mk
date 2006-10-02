@@ -1,6 +1,7 @@
 MODULE := common
 
 MODULE_OBJS := \
+	advancedDetector.o \
 	config-file.o \
 	config-manager.o \
 	file.o \
