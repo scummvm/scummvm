@@ -463,7 +463,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 320, 200) {
+	: Dialog(0, 0, 320, 200), _modifiers(0) {
 	_drawingHints |= THEME_HINT_MAIN_DIALOG;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -597,7 +597,48 @@ void LauncherDialog::updateListing() {
 	updateButtons();
 }
 
+void LauncherDialog::addGameRecursive(FilesystemNode dir) {
+printf("addGameRecursive('%s')\n", dir.path().c_str());
+	FSList files;
+	if (!dir.listDir(files, FilesystemNode::kListAll)) {
+		error("browser returned a node that is not a directory: '%s'",
+				dir.path().c_str());
+	}
+
+	// Run the detector on the dir
+	DetectedGameList candidates(PluginManager::instance().detectGames(files));
+	
+	if (candidates.size() >= 1) {
+		// At least one match was found. For now we just take the first one...
+		// a more sophisticated solution would do something more clever here,
+		// e.g. ask the user which one to pick (make sure to display the 
+		// path, too).
+		DetectedGame result = candidates[0];
+		addGameToConf(dir, result, true);
+	}
+	
+	
+	// Recurse into all subdirs
+	for (FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+		if (file->isDirectory()) {
+			addGameRecursive(*file);
+		}
+	}
+}
+
 void LauncherDialog::addGame() {
+	bool massAdd = (_modifiers & OSystem::KBD_SHIFT) != 0;
+	
+	if (massAdd) {
+		MessageDialog alert("Do you really want to run the mass game detector? "
+							"This could potentially add a huge number of games.", "Yes", "No");
+		alert.runModal();
+		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
+			addGameRecursive(_browser->getResult());
+		}
+		return;
+	}
+
 	// Allow user to add a new game to the list.
 	// 1) show a dir selection dialog which lets the user pick the directory
 	//    the game data resides in.
@@ -643,7 +684,13 @@ void LauncherDialog::addGame() {
 		}
 		if (0 <= idx && idx < (int)candidates.size()) {
 			DetectedGame result = candidates[idx];
+			addGameToConf(dir, result, false);
+		}
+	}
+}
 
+
+void LauncherDialog::addGameToConf(FilesystemNode dir, DetectedGame result, bool suppressEditDialog) {
 			// The auto detector or the user made a choice.
 			// Pick a domain name which does not yet exist (after all, we
 			// are *adding* a game to the config, not replacing).
@@ -685,8 +732,12 @@ void LauncherDialog::addGame() {
 				ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
 
 			// Display edit dialog for the new entry
-			EditGameDialog editDialog(domain, result.description);
-			if (editDialog.runModal() > 0) {
+			bool saveit = true;
+			if (!suppressEditDialog) {
+				EditGameDialog editDialog(domain, result.description);
+				saveit = (editDialog.runModal() > 0);
+			}
+			if (saveit) {
 				// User pressed OK, so make changes permanent
 
 				// Write config to disk
@@ -701,8 +752,6 @@ void LauncherDialog::addGame() {
 				ConfMan.removeGameDomain(domain);
 			}
 		}
-	}
-}
 
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
@@ -743,6 +792,16 @@ void LauncherDialog::editGame(int item) {
 		updateListing();
 		draw();
 	}
+}
+
+void LauncherDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	_modifiers = modifiers;
+	Dialog::handleKeyDown(ascii, keycode, modifiers);
+}
+
+void LauncherDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
+	_modifiers = modifiers;
+	Dialog::handleKeyUp(ascii, keycode, modifiers);
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

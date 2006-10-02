@@ -40,6 +40,9 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+
 protected:
 	ListWidget		*_list;
 	Widget			*_startButton;
@@ -50,6 +53,7 @@ protected:
 #endif
 	StringList		_domains;
 	BrowserDialog	*_browser;
+	byte			_modifiers;
 
 	virtual void reflowLayout();
 
@@ -63,6 +67,9 @@ protected:
 	void editGame(int item);
 
 	void selectGame(const String &name);
+	
+	void addGameToConf(FilesystemNode dir, DetectedGame result, bool suppressEditDialog);
+	void addGameRecursive(FilesystemNode dir);
 };
 
 } // End of namespace GUI
