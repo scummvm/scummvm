@@ -70,6 +70,7 @@ public:
 	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *newDialog(uint16 width, const char *lines, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *getScreen(uint16 resourceId);
+	bool getString(Common::String &line, uint32 maxSize, bool isNumeric, bool varLength, int16 x, int16 y);
 };
 
 class Dialog {
@@ -93,8 +94,10 @@ public:
 };
 
 class SaveRestoreDialog {
+private:
+	static void toggleHightlight(int xs, int xe, int ys, int ye);
 public:
-	static bool show(bool save, Common::String &filename);
+	static bool show(bool saveDialog);
 };
 
 } // End of namespace Lure

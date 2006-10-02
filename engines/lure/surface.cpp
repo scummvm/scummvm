@@ -25,6 +25,7 @@
 #include "lure/system.h"
 #include "lure/events.h"
 #include "lure/screen.h"
+#include "lure/lure.h"
 #include "lure/room.h"
 #include "lure/strings.h"
 #include "common/endian.h"
@@ -358,7 +359,7 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 	s->createDialog();
 
 	for (uint8 ctr = 0; ctr < numLines; ++ctr)
-		s->writeString(DIALOG_EDGE_SIZE + 3, DIALOG_EDGE_SIZE + 3 + 
+		s->writeString(DIALOG_EDGE_SIZE + 3, DIALOG_EDGE_SIZE + 2 + 
 			(ctr * (FONT_HEIGHT - 1)), lines[ctr], true, colour, varLength);
 	return s;
 }
@@ -386,6 +387,84 @@ Surface *Surface::getScreen(uint16 resourceId) {
 	delete block;
 	return new Surface(decodedData, FULL_SCREEN_WIDTH, decodedData->size() / FULL_SCREEN_WIDTH);
 }
+
+bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
+	OSystem &system = System::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Events &events = Events::getReference();
+	Screen &screen = Screen::getReference();
+	uint8 bgColour = *(screen.screen().data().data() + (y * FULL_SCREEN_WIDTH) + x);
+	String newLine(line);
+	bool abortFlag = false;
+	bool refreshFlag = false;
+
+	mouse.cursorOff();
+
+	// Insert a cursor character at the end of the string
+	newLine.insertChar('_', newLine.size());
+
+	while (!abortFlag) {
+		// Display the string
+		screen.screen().writeString(x, y, newLine, true, DIALOG_TEXT_COLOUR, varLength);
+		screen.update();
+		int stringSize = screen.screen().textWidth(newLine.c_str());
+
+		// Loop until the input string changes
+		refreshFlag = false;
+		while (!refreshFlag && !abortFlag) {
+			abortFlag = events.quitFlag;
+			if (abortFlag) break;
+
+			if (events.pollEvent()) {
+				if (events.type() == OSystem::EVENT_KEYDOWN) {
+					char ch = events.event().kbd.ascii;
+					uint16 keycode = events.event().kbd.keycode;
+
+					if ((ch == 13) || (keycode == 0x10f)) {
+						// Return character
+						screen.screen().fillRect(
+							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+						screen.update();
+						newLine.deleteLastChar();
+						line = newLine;
+						mouse.cursorOn();
+						return true;
+					}
+					else if (ch == 27) {
+						// Escape character
+						screen.screen().fillRect(
+							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+						screen.update();
+						abortFlag = true;
+					} else if (ch == 8) {
+						// Delete the last character
+						if (newLine.size() == 1) continue;
+
+						screen.screen().fillRect(
+							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+						newLine.deleteChar(newLine.size() - 2);
+						refreshFlag = true;
+
+					} else if ((ch >= ' ') && (newLine.size() < maxSize)) {
+						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
+							screen.screen().fillRect(
+								Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							newLine.insertChar(ch, newLine.size() - 1);
+							refreshFlag = true;
+						}
+					}
+				}
+			}
+
+			system.updateScreen();
+			system.delayMillis(10);
+		}
+	}
+
+	mouse.cursorOn();
+	return false;
+}
+
 
 /*--------------------------------------------------------------------------*/
 
@@ -520,23 +599,174 @@ TalkDialog::~TalkDialog() {
 
 /*--------------------------------------------------------------------------*/
 
-bool SaveRestoreDialog::show(bool save, Common::String &filename) {
+#define SR_SEPARATOR_Y 21
+#define SR_SEPARATOR_X 5
+#define SR_SEPARATOR_HEIGHT 5
+#define SR_SAVEGAME_NAMES_Y (SR_SEPARATOR_Y + SR_SEPARATOR_HEIGHT + 1)
+
+void SaveRestoreDialog::toggleHightlight(int xs, int xe, int ys, int ye) {
 	Screen &screen = Screen::getReference();
-	Mouse &mouse = Mouse::getReference();
-	Room &room = Room::getReference();
-	mouse.cursorOff();
+	byte *addr = screen.screen().data().data() + FULL_SCREEN_WIDTH * ys + xs;
 
-	room.update();
-	Surface *s = new Surface(INFO_DIALOG_WIDTH, 100);
-	s->createDialog();
-	s->copyToScreen(SAVE_DIALOG_X, SAVE_DIALOG_Y);
-
-	// Wait for a keypress or mouse button
-	Events::getReference().waitForPress();
+	for (int y = 0; y < ye - ys + 1; ++y, addr += FULL_SCREEN_WIDTH) {
+		for (int x = 0; x < xe - xs + 1; ++x) {
+			if (addr[x] == DIALOG_TEXT_COLOUR) addr[x] = DIALOG_WHITE_COLOUR;
+			else if (addr[x] == DIALOG_WHITE_COLOUR) addr[x] = DIALOG_TEXT_COLOUR;
+		}
+	}
 
 	screen.update();
-	mouse.cursorOn();
-	return false;
+}
+
+bool SaveRestoreDialog::show(bool saveDialog) {
+	OSystem &system = System::getReference();
+	Screen &screen = Screen::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Events &events = Events::getReference();
+	Room &room = Room::getReference();
+	Resources &res = Resources::getReference();
+	LureEngine &engine = LureEngine::getReference();
+	int selectedLine = -1;
+	int index;
+
+	// Figure out a list of present savegames
+	String **saveNames = (String **)Memory::alloc(sizeof(String *) * MAX_SAVEGAME_SLOTS);
+	int numSaves = 0;
+	while ((numSaves < MAX_SAVEGAME_SLOTS) && 
+		((saveNames[numSaves] = engine.detectSave(numSaves + 1)) != NULL))
+		++numSaves;
+
+	// For the save dialog, if all the slots have not been used up, create a 
+	// blank entry for a new savegame
+	if (saveDialog && (numSaves < MAX_SAVEGAME_SLOTS))
+		saveNames[numSaves++] = new String();
+
+	// For the restore dialog, if there are no savegames, return immediately
+	if (!saveDialog && (numSaves == 0)) {
+		Memory::dealloc(saveNames);
+		return false;
+	}
+
+	room.update();
+	Surface *s = new Surface(INFO_DIALOG_WIDTH, SR_SAVEGAME_NAMES_Y + 
+		numSaves * FONT_HEIGHT + FONT_HEIGHT + 2);
+
+	// Create the outer dialog and dividing line
+	s->createDialog();
+	byte *pDest = s->data().data() + (s->width() * SR_SEPARATOR_Y) + SR_SEPARATOR_X;
+	uint8 rowColours[5] = {*(pDest-2), *(pDest-1), *(pDest-1), *(pDest-2), *(pDest+1)};
+	for (int y = 0; y < SR_SEPARATOR_HEIGHT; ++y, pDest += s->width())
+		memset(pDest, rowColours[y], s->width() - 12);
+
+	// Create title line
+	Common::String title(res.stringList().getString(
+		saveDialog ? S_SAVE_GAME : S_RESTORE_GAME));
+	s->writeString((s->width() - s->textWidth(title.c_str())) / 2, FONT_HEIGHT+2, title, true);
+
+	// Write out any existing save names
+	for (index = 0; index < numSaves; ++index)
+		s->writeString(DIALOG_EDGE_SIZE, SR_SAVEGAME_NAMES_Y, saveNames[index]->c_str(), true);
+
+	// Display the dialog
+	s->copyTo(&screen.screen(), SAVE_DIALOG_X, SAVE_DIALOG_Y);
+	screen.update();
+	mouse.pushCursorNum(CURSOR_ARROW);
+
+	bool abortFlag = false;
+	bool doneFlag = false;
+	while (!abortFlag && !doneFlag) {
+		// Provide highlighting of lines to select a save slot
+		while (!(mouse.lButton() && (selectedLine != -1)) && !mouse.rButton()) {
+			abortFlag = events.quitFlag;
+			if (abortFlag) break;
+
+			if (events.pollEvent()) {
+				if ((events.type() == OSystem::EVENT_KEYDOWN) &&
+					(events.event().kbd.ascii == 27)) {
+					abortFlag = true;
+					break;
+				}
+				if (events.type() == OSystem::EVENT_MOUSEMOVE) {
+					// Mouse movement
+					int lineNum;
+					if ((mouse.x() < (SAVE_DIALOG_X + DIALOG_EDGE_SIZE)) ||
+						(mouse.x() >= (SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE)) ||
+						(mouse.y() < SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y) ||
+						(mouse.y() >= SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + numSaves * FONT_HEIGHT))
+						// Outside displayed lines
+						lineNum = -1;
+					else
+						lineNum = (mouse.y() - (SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y)) / FONT_HEIGHT;
+
+					if (lineNum != selectedLine) {
+						if (selectedLine != -1)
+							// Deselect previously selected line
+							toggleHightlight(SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+								SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE,
+								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
+
+						// Highlight new line
+						selectedLine = lineNum;
+						if (selectedLine != -1)
+							toggleHightlight(SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+								SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE,
+								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
+					}
+				}
+			}
+
+			system.updateScreen();
+			system.delayMillis(10);
+		}
+
+		// Deselect selected row
+		if (selectedLine != -1) 
+			toggleHightlight(SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+				SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE,
+				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
+
+		if (mouse.lButton() || mouse.rButton()) {
+			abortFlag = mouse.rButton();
+			mouse.waitForRelease();
+		}
+		if (abortFlag) break;
+
+		// If in save mode, allow the entry of a new savename
+		if (saveDialog) {
+			if (!screen.screen().getString(*saveNames[selectedLine], 40, 
+				false, true, SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
+				// Aborted out of name selection, so restore old name and 
+				// go back to slot selection
+				screen.screen().writeString(
+					SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+					SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+                    saveNames[selectedLine]->c_str(), true, DIALOG_TEXT_COLOUR, true);
+				selectedLine = -1;
+				continue;
+			}
+		}
+		doneFlag = true;
+	}
+
+	if (doneFlag) {
+		// Handle save or restore
+		if (saveDialog)
+			doneFlag = engine.saveGame(selectedLine + 1, *saveNames[selectedLine]);
+		else
+			doneFlag = engine.loadGame(selectedLine + 1);
+	}
+
+	mouse.popCursor();
+
+	// Free savegame caption list
+	for (index = 0; index < numSaves; ++index) delete saveNames[index];
+	Memory::dealloc(saveNames);
+
+	return doneFlag;
 }
 
 } // end of namespace Lure
