@@ -370,6 +370,8 @@ void AGOSEngine::dropBlock(int id, int priority, int num) {
 }
 
 void AGOSEngine::droppingBlock() {
+	printf("droppingBlock\n");
+
 	if (_droppingBlockAnim == 0)
 		return;
 

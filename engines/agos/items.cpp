@@ -2545,6 +2545,9 @@ void AGOSEngine::o4_sync() {
 
 void AGOSEngine::o4_saveUserGame() {
 	// 132: save game
+	if (_clockStopped != 0)
+		_gameTime += time(NULL) - _clockStopped;
+	_clockStopped = 0;
 }
 
 void AGOSEngine::o4_loadUserGame() {
