@@ -52,6 +52,9 @@ public:
 	bool lButton() { return _lButton; }
 	bool rButton() { return _rButton; }
 	void waitForRelease();
+	void pushCursorNum(uint8 cursorNum);
+	void pushCursorNum(uint8 cursorNum, int hotspotX, int hotspotY);	
+	void popCursor();
 };
 
 class Events {

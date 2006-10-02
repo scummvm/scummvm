@@ -97,6 +97,28 @@ void Mouse::setCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
 	CursorMan.replaceCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
 }
 
+void Mouse::pushCursorNum(uint8 cursorNum) {
+	int hotspotX = 7, hotspotY = 7;
+	if ((cursorNum == CURSOR_ARROW) || (cursorNum == CURSOR_MENUBAR)) {
+		hotspotX = 0; 
+		hotspotY = 0;
+	}
+
+	pushCursorNum(cursorNum, hotspotX, hotspotY);
+}
+
+void Mouse::pushCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
+	Resources &res = Resources::getReference();
+
+	_cursorNum = cursorNum;
+	byte *cursorAddr = res.getCursor(cursorNum);
+	CursorMan.pushCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
+}
+
+void Mouse::popCursor() {
+	CursorMan.popCursor();
+}
+
 void Mouse::setPosition(int newX, int newY) {
 	System::getReference().warpMouse(newX, newY);
 }
