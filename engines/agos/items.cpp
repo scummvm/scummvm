@@ -2479,8 +2479,8 @@ void AGOSEngine::o4_checkTiles() {
 
 void AGOSEngine::o4_loadMouseImage() {
 	// 38: load mouse image
-	getVarOrByte();
 	getNextItemPtr();
+	getVarOrByte();
 	loadMouseImage();
 }
 

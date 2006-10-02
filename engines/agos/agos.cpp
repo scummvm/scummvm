@@ -1201,6 +1201,8 @@ startOver:
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
 				displayBoxStars();
 			processSpecialKeys();
+			if (_keyPressed != 0)
+				break;
 			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
 			if (_lastHitArea3 != 0)
@@ -1731,8 +1733,10 @@ void AGOSEngine::skipSpeech() {
 }
 
 Item *AGOSEngine::derefItem(uint item) {
-	if (item >= _itemArraySize)
-		error("derefItem: invalid item %d", item);
+	if (item >= _itemArraySize) {
+		debug(1, "derefItem: invalid item %d", item);
+		return 0;
+	}
 	return _itemArrayPtr[item];
 }
 
@@ -1762,6 +1766,22 @@ bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 
 void AGOSEngine::processSpecialKeys() {
 	switch (_keyPressed) {
+	case 17: // Up
+		if (getGameType() == GType_PP)
+			_verbHitArea = 302;
+		break;
+	case 18: // Down
+		if (getGameType() == GType_PP)
+			_verbHitArea = 304;
+		break;
+	case 19: // Right
+		if (getGameType() == GType_PP)
+			_verbHitArea = 303;
+		break;
+	case 20: // Left
+		if (getGameType() == GType_PP)
+			_verbHitArea = 301;
+		break;
 	case 27: // escape
 		_exitCutscene = true;
 		break;

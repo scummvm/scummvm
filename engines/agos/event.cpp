@@ -331,11 +331,12 @@ void AGOSEngine::timer_proc1() {
 						pairCheck();
 						gravityCheck();
 					}
-					printf("CheckIfClickedOnBlock\n");
+					if (_leftButtonDown || _rightButtonDown)
+						checkIfClickedOnBlock();
 					if (getBitFlag(99)) {
 						moveBlocks();
-						droppingBlock();
 					}
+					droppingBlock();
 				}
 			} else {
 				if (_scrollCount == 0) {

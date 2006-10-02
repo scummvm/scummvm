@@ -660,9 +660,9 @@ protected:
 	bool block1Supported(int i, int y);
 	void checkTiles();
 	void moveBlocks();
-	void dropBlock(int a, int b, int c);
+	void dropBlock(int id, int priority, int num);
 	void droppingBlock();
-	void stopBlock(int a, int b);
+	void stopBlock(int id, int num);
 	void remove0Block(int i);
 	void remove1Block(int i);
 	void pairCheck();
@@ -1127,7 +1127,8 @@ protected:
 
 	void startOverlayAnims();
 	void startAnOverlayAnim();
-	void startBlock(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
+	void startBlock(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint priority);
+	void checkIfClickedOnBlock();
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);

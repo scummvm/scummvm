@@ -2930,8 +2930,10 @@ void AGOSEngine::startAnOverlayAnim() {
 void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint priority) {
 	VgaSprite *vsp = _vgaSprites;
 	const byte *vcPtrOrg;
-	uint16 tmp;
+	uint16 sprite, tmp, zone;
 	uint i;
+
+	_lockWord |= 0x40;
 
 	while (vsp->id != 0)
 		vsp++;
@@ -2944,13 +2946,14 @@ void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 		_droppingBlockY = _variableArray[203];
 		_droppingBlockZ = _variableArray[204];
 		_droppingBlockLength = windowNum;
-		if (windowNum == 1) {
-			priority += 9;
-			y += 10;
+		_droppingBlockType = 0;
+		if (windowNum != 1) {
+			_droppingBlockType = 1;
 			x += 15;
+			y += 10;
+			priority += 9;
 		}
 		_droppingBlockCount = 4;
-		_droppingBlockType = 4;
 	}
 
 	for (i = 0; i < windowNum; i++) {
@@ -2969,16 +2972,111 @@ void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 
 		tmp = to16Wrapper(priority);
 
+		sprite = _vgaCurSpriteId;
+		zone = _vgaCurZoneNum;
 		vcPtrOrg = _vcPtr;
+
 		_vcPtr = (byte *)&tmp;
 		vc23_setSpritePriority();
+
 		_vcPtr = vcPtrOrg;
+		_vgaCurSpriteId = sprite;
+		_vgaCurZoneNum = zone;
 		
 		vgaSpriteId++;
 		x += 15;
 		y += 10;
 		priority += 8;
+
+		vsp++;
 	}
+
+	_lockWord &= ~0x40;
+}
+
+void AGOSEngine::checkIfClickedOnBlock() {
+	 printf("CheckIfClickedOnBlock\n");
+
+	VgaSprite *vsp = _vgaSprites;
+	uint16 items[2];
+	uint16 image, x, y, zone, priority;
+
+	if (_droppingBlockAnim == 0) {
+		goto get_out;
+	}
+
+	_vgaCurSpriteId = _droppingBlockAnim;
+	_vgaCurZoneNum = 60;
+
+	if (_droppingBlockType == 0) {
+		if (_mouseX >= vsp->x)
+			goto get_out;
+		if (_mouseX - 75 < vsp->x)
+			goto get_out;
+		if (_mouseY >= vsp->y)
+			goto get_out;
+		if (_mouseY - 30 < vsp->y)
+			goto get_out;
+
+		if (_leftButtonDown == 0) {
+			_droppingBlockLand = 1;
+			goto get_out;
+		}
+
+		image = (vsp->image - 2) / 3 + 20;
+		zone = _droppingBlockAnim + 1024;
+		x = vsp->x + 15;
+		y = vsp->y + 10;
+		priority = vsp->priority + 9;
+
+		items[0] = to16Wrapper(60);
+		items[1] = to16Wrapper(_droppingBlockAnim);
+
+		_vcPtr = (byte *)&items;
+		vc60_killSprite();
+
+		startBlock(3, image, zone, x, y, priority);
+
+		_droppingBlockAnim = _variableArray[201];
+		_droppingBlockType = 1;
+		_droppingBlockLength = 3;
+	} else {
+		if (_mouseX >= vsp->x)
+			goto get_out;
+		if (_mouseX - 75 < vsp->x)
+			goto get_out;
+		if (_mouseY - 20 >= vsp->y)
+			goto get_out;
+		if (_mouseY + 30 < vsp->y)
+			goto get_out;
+
+		if (_leftButtonDown == 0) {
+			_droppingBlockLand = 1;
+			goto get_out;
+		}
+
+		image = (vsp->image - 20) * 3 + 2;
+		zone = _droppingBlockAnim - 1024;
+		x = vsp->x - 15;
+		y = vsp->y - 10;
+		priority = vsp->priority - 9;
+
+		items[0] = to16Wrapper(60);
+		items[1] = to16Wrapper(_droppingBlockAnim);
+
+		_vcPtr = (byte *)&items;
+		vc60_killSprite();
+
+		startBlock(1, image, zone, x, y, priority);
+
+		_droppingBlockAnim = _variableArray[201];
+		_droppingBlockType = 0;
+		_droppingBlockLength = 1;
+	}
+
+get_out:;
+	_leftButtonDown = 0;
+	_rightButtonDown = 0;
 }
 
 } // End of namespace AGOS
