@@ -2550,10 +2550,10 @@ void AGOSEngine::o4_saveUserGame() {
 	_clockStopped = 0;
 
 	if (getGameId() == GID_DIMP) {
-		saveGame(1, (const char *)"dimp");
+		saveGame(1, NULL);
 	} else if (!getBitFlag(110)) {
 		// Swampy adventures
-		saveGame(1, (const char *)"swampy");
+		saveGame(1, NULL);
 	}
 
 	//saveHiScores()

@@ -596,10 +596,10 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		return false;
 	}
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameType() == GType_FF) {
 		f->write(caption, 100);
 		curTime = time(NULL);
-	} else {
+	} else if (getGameType() != GType_PP) {
 		f->write(caption, 18);
 	}
 
@@ -719,9 +719,9 @@ bool AGOSEngine::loadGame(uint slot) {
 		return false;
 	}
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameType() == GType_FF) {
 		f->read(ident, 100);
-	} else {
+	} else if (getGameType() != GType_PP) {
 		f->read(ident, 18);
 	}
 
