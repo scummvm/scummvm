@@ -313,6 +313,108 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	actionHotspotId = 0;
 }
 
+void HotspotData::saveToStream(WriteStream *stream) {
+	// Write out the basic fields
+	stream->writeUint16LE(descId);
+	stream->writeUint16LE(descId2);
+	stream->writeUint32LE(actions);
+	stream->writeByte(flags);
+	stream->writeByte(flags2);
+	stream->writeByte(headerFlags);
+	stream->writeSint16LE(startX);
+	stream->writeSint16LE(startY);
+	stream->writeUint16LE(roomNumber);
+
+	stream->writeUint16LE(width);
+	stream->writeUint16LE(height);
+	stream->writeUint16LE(widthCopy);
+	stream->writeUint16LE(heightCopy);
+	stream->writeUint16LE(yCorrection);
+	stream->writeUint16LE(sequenceOffset);
+	stream->writeUint16LE(tickProcOffset);
+	stream->writeUint16LE(tickTimeout);
+	stream->writeUint16LE(tickSequenceOffset);
+	stream->writeUint16LE(characterMode);
+	stream->writeUint16LE(delayCtr);
+
+	// Write out the runtime fields
+	stream->writeUint16LE(actionCtr);
+	stream->writeUint16LE(blockedState);
+	stream->writeByte(coveredFlag);
+	stream->writeUint16LE(talkMessageId);
+	stream->writeUint16LE(talkDestCharacterId);
+	stream->writeUint16LE(talkCountdown);
+	stream->writeUint16LE(pauseCtr);
+	stream->writeUint16LE(useHotspotId);
+	stream->writeUint16LE(use2HotspotId);
+	stream->writeUint16LE(v2b);
+	stream->writeUint16LE(actionHotspotId);
+}
+
+void HotspotData::loadFromStream(ReadStream *stream) {
+	// Read in the basic fields
+	descId = stream->readUint16LE();
+	descId2 = stream->readUint16LE();
+	actions = stream->readUint32LE();
+	flags = stream->readByte();
+	flags2 = stream->readByte();
+	headerFlags = stream->readByte();
+	startX = stream->readSint16LE();
+	startY = stream->readSint16LE();
+	roomNumber = stream->readUint16LE();
+
+	width = stream->readUint16LE();
+	height = stream->readUint16LE();
+	widthCopy = stream->readUint16LE();
+	heightCopy = stream->readUint16LE();
+	yCorrection = stream->readUint16LE();
+	sequenceOffset = stream->readUint16LE();
+	tickProcOffset = stream->readUint16LE();
+	tickTimeout = stream->readUint16LE();
+	tickSequenceOffset = stream->readUint16LE();
+	characterMode = (CharacterMode) stream->readUint16LE();
+	delayCtr = stream->readUint16LE();
+
+	// Read in the runtime fields
+	actionCtr = stream->readUint16LE();
+	blockedState = (BlockedState)stream->readUint16LE();
+	coveredFlag = stream->readByte() != 0;
+	talkMessageId = stream->readUint16LE();
+	talkDestCharacterId = stream->readUint16LE();
+	talkCountdown = stream->readUint16LE();
+	pauseCtr = stream->readUint16LE();
+	useHotspotId = stream->readUint16LE();
+	use2HotspotId = stream->readUint16LE();
+	v2b = stream->readUint16LE();
+	actionHotspotId = stream->readUint16LE();
+}
+
+// Hotspot data list
+
+void HotspotDataList::saveToStream(WriteStream *stream) {
+	iterator i;
+	for (i = begin(); i != end(); ++i)
+	{
+		HotspotData *hotspot = *i;
+		stream->writeUint16LE(hotspot->hotspotId);
+		hotspot->saveToStream(stream);
+	}
+	stream->writeUint16LE(0);
+}
+
+void HotspotDataList::loadFromStream(ReadStream *stream) {
+	Resources &res = Resources::getReference();
+	iterator i;
+	uint16 hotspotId = stream->readUint16LE();
+	while (hotspotId != 0)
+	{
+		HotspotData *hotspot = res.getHotspot(hotspotId);
+		assert(hotspot);
+		hotspot->loadFromStream(stream);
+		hotspotId = stream->readUint16LE();
+	}
+}
+
 // Hotspot override data
 
 HotspotOverrideData::HotspotOverrideData(HotspotOverrideResource *rec) {
@@ -874,6 +976,42 @@ void ValueTableData::setField(uint16 fieldIndex, uint16 value) {
 
 void ValueTableData::setField(FieldName fieldName, uint16 value) {
 	setField((uint16) fieldName, value);
+}
+
+void ValueTableData::saveToStream(Common::WriteStream *stream)
+{
+	// Write out the special fields
+	stream->writeUint16LE(_numGroats);
+	stream->writeSint16LE(_playerNewPos.position.x);
+	stream->writeSint16LE(_playerNewPos.position.y);
+	stream->writeUint16LE(_playerNewPos.roomNumber);
+	stream->writeByte(_playerPendingPos.isSet);
+	stream->writeSint16LE(_playerPendingPos.pos.x);
+	stream->writeSint16LE(_playerPendingPos.pos.y);
+	stream->writeByte(_flags);
+	stream->writeByte(_hdrFlagMask);
+	
+	// Write out the special fields
+	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
+		stream->writeUint16LE(_fieldList[index]);
+}
+
+void ValueTableData::loadFromStream(Common::ReadStream *stream)
+{
+	// Load special fields
+	_numGroats = stream->readUint16LE();
+	_playerNewPos.position.x = stream->readSint16LE();
+	_playerNewPos.position.y = stream->readSint16LE();
+	_playerNewPos.roomNumber = stream->readUint16LE();
+	_playerPendingPos.isSet = stream->readByte() != 0;
+	_playerPendingPos.pos.x = stream->readSint16LE();
+	_playerPendingPos.pos.y = stream->readSint16LE();
+	_flags = stream->readByte();
+	_hdrFlagMask = stream->readByte();
+	
+	// Read in the field list
+	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
+		_fieldList[index] = stream->readUint16LE();
 }
 
 } // end of namespace Lure

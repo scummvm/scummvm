@@ -108,6 +108,8 @@ public:
 	void setCursorState(CursorState state) { _cursorState = state; }
 	bool checkInTalkDialog();
 	char *statusLine() { return _statusLine; }
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 } // end of namespace Lure

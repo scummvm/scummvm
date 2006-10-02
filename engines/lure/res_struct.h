@@ -25,6 +25,7 @@
 
 #include "lure/luredefs.h"
 #include "common/list.h"
+#include "common/file.h"
 
 namespace Lure {
 
@@ -438,9 +439,15 @@ public:
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
 	Direction nonVisualDirection() { return (Direction) scriptLoadFlag; }
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
 };
 
-typedef ManagedList<HotspotData *> HotspotDataList;
+class HotspotDataList: public ManagedList<HotspotData *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 class HotspotOverrideData {
 public:
@@ -736,6 +743,9 @@ public:
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
+
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 } // End of namespace Lure

@@ -249,6 +249,7 @@ enum Action {
 #define CONVERSE_COUNTDOWN_SIZE 40
 #define IDLE_COUNTDOWN_SIZE 15
 #define MAX_TELL_COMMANDS 8
+#define MAX_SAVEGAME_SLOTS 10
 
 // Countdown for # operations in path finder before breaking until next
 // tick - set it to 0 if you'd like all pathfinding to be done at once

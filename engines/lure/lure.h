@@ -43,6 +43,7 @@ class LureEngine : public Engine {
 private:
 	uint32 _features;
 	uint8 _game;
+	Common::Language _language;
 	Disk *_disk;
 	Resources *_resources;
 	Screen *_screen;
@@ -54,9 +55,11 @@ private:
 	Room *_room;
 
 	void detectGame();
+	const char *generateSaveName(int slotNumber);
 public:
 	LureEngine(OSystem *system);
 	~LureEngine();
+	static LureEngine &getReference();
 	
 	virtual int init();
 	virtual int go();
@@ -65,6 +68,10 @@ public:
 	uint32 features() { return _features; }
 	uint8 game() { return _game; }
 	Disk &disk() { return *_disk; }
+
+	bool loadGame(uint8 slotNumber);
+	bool saveGame(uint8 slotNumber, Common::String &caption);
+	Common::String *detectSave(int slotNumber);
 };
 
 } // End of namespace Lure

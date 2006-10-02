@@ -58,7 +58,7 @@ void Game::nextFrame() {
 	res.pausedList().countdown();
 	room.checkCursor();
 	room.update();
-	
+
 	// Call the tick method for each hotspot - this is somewaht complicated
 	// by the fact that a tick proc can unload both itself and/or others,
 	// so we first get a list of the Ids, and call the tick proc for each 
@@ -71,6 +71,7 @@ void Game::nextFrame() {
 		idList[idSize++] = hotspot->hotspotId();
 	}
 
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks begin");
 	for (int idCtr = 0; idCtr < idSize; ++idCtr) {
 		Hotspot *hotspot = res.getActiveHotspot(idList[idCtr]);
 		if (hotspot) {
@@ -78,6 +79,7 @@ void Game::nextFrame() {
 			hotspot->tick();
 		}
 	}
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks end");
 
 	delete[] idList;
 	Screen::getReference().update();
@@ -119,6 +121,7 @@ void Game::execute() {
 				timerVal = system.getMillis();
 				nextFrame();
 			}
+
 			res.delayList().tick();
 
 			while (events.pollEvent()) {
@@ -227,12 +230,11 @@ void Game::handleMenuResponse(uint8 selection) {
 		break;
 
 	case MENUITEM_SAVE_GAME:
-		if (SaveRestoreDialog::show(true, filename)) {
-			// Save the game here
-		}
+		SaveRestoreDialog::show(true);
 		break;
 
 	case MENUITEM_RESTORE_GAME: 
+		SaveRestoreDialog::show(false);
 		break;
 
 	case MENUITEM_QUIT:

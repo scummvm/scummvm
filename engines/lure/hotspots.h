@@ -103,6 +103,9 @@ public:
 	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
 	void setSupportData(CharacterScheduleEntry *newRec) { _supportData = newRec; }
 	void setSupportData(uint16 entryId);
+
+	void saveToStream(WriteStream *stream);
+	static CurrentActionEntry *loadFromStream(ReadStream *stream);
 };
 
 class CurrentActionStack {
@@ -138,6 +141,9 @@ public:
 	void addFront(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
 		_actions.push_front(new CurrentActionEntry(newAction, roomNum, param1, param2));
 	}
+
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
 };
 
 class WalkingActionEntry {
@@ -197,6 +203,9 @@ public:
 	bool isEmpty() { return _list.empty(); }
 	int &stepCtr() { return _stepCtr; }
 	PathFinderResult result() { return _result; }
+
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, PC_EXCESS};
@@ -206,10 +215,12 @@ enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, 
 class Hotspot {
 private:
 	HotspotData *_data;
+	uint16 _animId;
 	HotspotAnimData *_anim;
 	HandlerMethodPtr _tickHandler;
 	Surface *_frames;
 	uint16 _hotspotId;
+	uint16 _originalId;
 	uint16 _roomNumber;
 	int16 _startX, _startY;
 	uint16 _height, _width;
@@ -298,6 +309,7 @@ public:
 	void setAnimation(uint16 newAnimId);
 	void setAnimation(HotspotAnimData *newRecord);
 	uint16 hotspotId() { return _hotspotId; }
+	uint16 originalId() { return _originalId; }
 	Surface &frames() { return *_frames; }
 	HotspotAnimData &anim() { return *_anim; }
 	HotspotData *resource() { return _data; }
@@ -465,9 +477,16 @@ public:
 	void showMessage(uint16 messageId, uint16 destCharacterId = NOONE_ID);
 	void scheduleConverse(uint16 destHotspot, uint16 messageId);
 	void handleTalkDialog();
+
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
-typedef ManagedList<Hotspot *> HotspotList;
+class HotspotList: public ManagedList<Hotspot *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 } // End of namespace Lure
 

@@ -28,6 +28,8 @@
 
 namespace Lure {
 
+using namespace Common;
+
 static Resources *int_resources = NULL;
 
 Resources &Resources::getReference() {
@@ -595,6 +597,23 @@ void Resources::setTalkData(uint16 offset) {
 	}
 
 	error("Unknown talk entry offset %d requested", offset);
+}
+
+void Resources::saveToStream(Common::WriteStream *stream)
+{
+	_hotspotData.saveToStream(stream);
+	_activeHotspots.saveToStream(stream);
+	_fieldList.saveToStream(stream);
+}
+
+void Resources::loadFromStream(Common::ReadStream *stream) {
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
+	_hotspotData.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading active hotspots");
+	_activeHotspots.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading fields");
+	_fieldList.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 
 } // end of namespace Lure

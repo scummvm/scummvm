@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/md5.h"
+#include "common/savefile.h"
+#include "common/stream.h"
 
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
@@ -163,6 +165,8 @@ REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine", "Lure of the Temptress (C)
 
 namespace Lure {
 
+static LureEngine *int_engine = NULL;
+
 LureEngine::LureEngine(OSystem *system): Engine(system) {
 
 	Common::addSpecialDebugLevel(kLureDebugScripts, "scripts", "Scripts debugging");
@@ -241,6 +245,7 @@ void LureEngine::detectGame() {
 		if (strcmp(g->md5sum, (char *)md5str) == 0) {
 			_features = g->features;
 			_game = g->id;
+			_language = g->language;
 
 			if (g->description)
 				g_system->setWindowCaption(g->description);
@@ -274,6 +279,7 @@ int LureEngine::init() {
 	_menu = new Menu();
 	Surface::initialise();
 	_room = new Room();
+	int_engine = this;
 	return 0;
 }
 
@@ -292,6 +298,10 @@ LureEngine::~LureEngine() {
 	delete _resources;
 	delete _disk;
 	delete _sys;
+}
+
+LureEngine &LureEngine::getReference() {
+	return *int_engine;
 }
 
 int LureEngine::go() {
@@ -316,6 +326,103 @@ int LureEngine::go() {
 
 void LureEngine::quitGame() {
 	_system->quit();
+}
+
+const char *LureEngine::generateSaveName(int slotNumber) {
+	static char buffer[15];
+
+	sprintf(buffer, "lure.%.3d", slotNumber);
+	return buffer;
+}
+
+bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
+	Common::WriteStream *f = this->_saveFileMan->openForSaving(
+		generateSaveName(slotNumber));
+	if (f == NULL) {
+		warning("saveGame: Failed to save slot %d", slotNumber);
+		return false;
+	}
+
+	f->write("lure", 5);
+	f->writeByte(_language);
+	f->writeByte(LURE_DAT_MINOR);
+	f->writeString(caption);
+	f->writeByte(0); // End of string terminator
+
+	Room::getReference().saveToStream(f);
+	Resources::getReference().saveToStream(f);
+
+	delete f;
+	return true;
+}
+
+#define FAILED_MSG "loadGame: Failed to load slot %d"
+
+bool LureEngine::loadGame(uint8 slotNumber) {
+	Common::ReadStream *f = this->_saveFileMan->openForLoading(
+		generateSaveName(slotNumber));
+	if (f == NULL) {
+		warning(FAILED_MSG, slotNumber);
+		return false;
+	}
+
+	// Check for header
+	char buffer[5];
+	f->read(buffer, 5);
+	if (memcmp(buffer, "lure", 5) != 0)
+	{
+		warning(FAILED_MSG, slotNumber);
+		delete f;
+		return false;
+	}
+
+	// Check language version 
+	uint8 language = f->readByte();
+	uint8 version = f->readByte();
+	if ((language != _language) || (version != LURE_DAT_MINOR))
+	{
+		warning("loadGame: Failed to load slot %d - incorrect version", slotNumber);
+		delete f;
+		return false;
+	}
+
+	// Read in and discard the savegame caption
+	while (f->readByte() != 0) ;
+
+	// Load in the data
+	Room::getReference().loadFromStream(f);
+	Resources::getReference().loadFromStream(f);
+
+	delete f;
+	return true;
+}
+
+Common::String *LureEngine::detectSave(int slotNumber) {
+	Common::ReadStream *f = this->_saveFileMan->openForLoading(
+		generateSaveName(slotNumber));
+	if (f == NULL) return NULL;
+	Common::String *result = NULL;
+
+	// Check for header
+	char buffer[5];
+	f->read(&buffer[0], 5);
+	if (memcmp(&buffer[0], "lure", 5) == 0) {
+		// Check language version 
+		uint8 language = f->readByte();
+		uint8 version = f->readByte();
+		if ((language == _language) && (version == LURE_DAT_MINOR)) {
+			// Read in the savegame title
+			char saveName[MAX_DESC_SIZE];
+			char *p = saveName;
+			int decCtr = MAX_DESC_SIZE - 1;
+			while ((decCtr > 0) && ((*p++ = f->readByte()) != 0)) --decCtr;
+			*p = '\0';
+			result = new Common::String(saveName);
+		}
+	}
+
+	delete f;
+	return result;
 }
 
 } // End of namespace Lure

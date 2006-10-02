@@ -311,7 +311,8 @@ void Room::addLayers(Hotspot &h) {
 	int16 yStart = hsY / RECT_SIZE;
 	int16 yEnd = (hsY + h.heightCopy() - 1) / RECT_SIZE;
 	int16 numY = yEnd - yStart + 1;
-
+debugC(ERROR_BASIC, kLureDebugAnimations, "p=(%d,%d) rp=(%d,%d) size=(%d,%d)", 
+	   hsX, hsY, xStart, yStart, numX, numY);
 	for (int16 xCtr = 0; xCtr < numX; ++xCtr, ++xStart) {
 		int16 xs = xStart - 4;
 		if (xs < 0) continue;
@@ -397,7 +398,6 @@ void Room::update() {
 	}
 	for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
 		Hotspot &h = *iTemp.operator*();
-
 		flagCoveredCells(h);
 		addAnimation(h);
 		addLayers(h);
@@ -613,6 +613,22 @@ bool Room::checkInTalkDialog() {
 	return ((mouse.x() >= _talkDialogX) && (mouse.y() >= _talkDialogY) &&
 		(mouse.x() < _talkDialogX + _talkDialog->surface().width()) &&
 		(mouse.y() < _talkDialogY + _talkDialog->surface().height()));
+}
+
+void Room::saveToStream(Common::WriteStream *stream) {
+	stream->writeUint16LE(_roomNumber);
+	stream->writeUint16LE(_destRoomNumber);
+	stream->writeByte(_showInfo);
+	stream->writeUint16LE(_cursorState);
+}
+
+void Room::loadFromStream(Common::ReadStream *stream) {
+	int roomNum = stream->readUint16LE();
+	setRoomNumber(roomNum, false);
+
+	_destRoomNumber = stream->readUint16LE();
+	_showInfo = stream->readByte() != 0;
+	_cursorState = (CursorState) stream->readUint16LE();
 }
 
 } // end of namespace Lure

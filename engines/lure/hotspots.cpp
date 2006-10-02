@@ -45,6 +45,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_persistant = false;
 
 	_hotspotId = res->hotspotId;
+	_originalId = res->hotspotId;
 	_roomNumber = res->roomNumber;
 	_startX = res->startX;
 	_startY = res->startY;
@@ -67,9 +68,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_colourOffset = res->colourOffset;
 
 	_override = resources.getHotspotOverride(res->hotspotId);
-
-	if (_data->animRecordId != 0)
-		setAnimation(_data->animRecordId);
+	setAnimation(_data->animRecordId);
 	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcOffset);
 
 	_frameCtr = 0;
@@ -90,6 +89,8 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 // Special constructor used to create a voice hotspot
 
 Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
+	assert(character);
+	_originalId = objType;
 	_data = NULL;
 	_anim = NULL;
 	_frames = NULL;
@@ -130,6 +131,8 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	case EXCLAMATION_ANIM_ID:
 		_roomNumber = character->roomNumber();
 		_hotspotId = 0xfffe;
+		_startX = character->x() + character->talkX() + 12;
+		_startY = character->y() + character->talkY() - 20;
 		_width = 32;
 		_height = 18;
 		_widthCopy = 19;
@@ -162,6 +165,7 @@ Hotspot::~Hotspot() {
 void Hotspot::setAnimation(uint16 newAnimId) {
 	Resources &r = Resources::getReference();
 	HotspotAnimData *tempAnim;
+	_animId = newAnimId;
 	if (newAnimId == 0) tempAnim = NULL;
 	else tempAnim = r.getAnimation(newAnimId); 
 	
@@ -1826,6 +1830,76 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 			charHotspot->hotspotId, id);
 }
 
+void Hotspot::saveToStream(Common::WriteStream *stream) {
+	_currentActions.saveToStream(stream);
+	_pathFinder.saveToStream(stream);
+
+	stream->writeUint16LE(_roomNumber);
+	stream->writeSint16LE(_startX);
+	stream->writeSint16LE(_startY);
+	stream->writeSint16LE(_destX);
+	stream->writeSint16LE(_destY);
+	stream->writeUint16LE(_frameWidth);
+	stream->writeUint16LE(_height);
+	stream->writeUint16LE(_width);
+	stream->writeUint16LE(_heightCopy);
+	stream->writeUint16LE(_widthCopy);
+	stream->writeUint16LE(_yCorrection);
+	stream->writeUint16LE(_talkX);
+	stream->writeUint16LE(_talkY);
+	stream->writeByte(_layer);
+	stream->writeUint16LE(_sequenceOffset);
+	stream->writeUint16LE(_tickCtr);
+	stream->writeUint32LE(_actions);
+	stream->writeByte(_colourOffset);
+	stream->writeUint16LE(_animId);
+	stream->writeUint16LE(_frameNumber);
+
+	stream->writeUint16LE(_frameCtr);
+	stream->writeByte(_skipFlag);
+	stream->writeUint16LE(_charRectY);
+	stream->writeUint16LE(_voiceCtr);
+	stream->writeUint16LE(_blockedOffset);
+	stream->writeUint16LE(_exitCtr);
+	stream->writeByte(_walkFlag);
+	stream->writeUint16LE(_startRoomNumber);
+}
+
+void Hotspot::loadFromStream(Common::ReadStream *stream) {
+	_currentActions.loadFromStream(stream);
+	_pathFinder.loadFromStream(stream);
+
+	_roomNumber = stream->readUint16LE();
+	_startX = stream->readSint16LE();
+	_startY = stream->readSint16LE();
+	_destX = stream->readSint16LE();
+	_destY = stream->readSint16LE();
+	_frameWidth = stream->readUint16LE();
+	_height = stream->readUint16LE();
+	_width = stream->readUint16LE();
+	_heightCopy = stream->readUint16LE();
+	_widthCopy = stream->readUint16LE();
+	_yCorrection = stream->readUint16LE();
+	_talkX = stream->readUint16LE();
+	_talkY = stream->readUint16LE();
+	_layer = stream->readByte();
+	_sequenceOffset = stream->readUint16LE();
+	_tickCtr = stream->readUint16LE();
+	_actions = stream->readUint32LE();
+	_colourOffset = stream->readByte();
+	setAnimation(stream->readUint16LE());
+	setFrameNumber(stream->readUint16LE());
+
+	_frameCtr = stream->readUint16LE();
+	_skipFlag = stream->readByte() != 0;
+	_charRectY = stream->readUint16LE();
+	_voiceCtr = stream->readUint16LE();
+	_blockedOffset = stream->readUint16LE();
+	_exitCtr = stream->readUint16LE();
+	_walkFlag = stream->readByte() != 0;
+	_startRoomNumber = stream->readUint16LE();
+}
+
 /*------------------------------------------------------------------------*/
 
 HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
@@ -3313,6 +3387,34 @@ void PathFinder::initVars() {
 	_countdownCtr -= 700;
 }
 
+void PathFinder::saveToStream(Common::WriteStream *stream) {
+	// Note: current saving process only handles the PathFinder correctly
+	// if all pathfinding is done in one go (ie. multiple calls pathfinding
+	// isn't supported)
+
+	ManagedList<WalkingActionEntry *>::iterator i;
+	for (i = _list.begin(); i != _list.end(); ++i) {
+		WalkingActionEntry *entry = *i;
+		stream->writeByte(entry->direction());
+		stream->writeSint16LE(entry->rawSteps());
+	}
+	stream->writeByte(0xff);
+	stream->writeByte(_result);
+	stream->writeSint16LE(_stepCtr);
+}
+
+void PathFinder::loadFromStream(Common::ReadStream *stream) {
+	_inProgress = false;
+	_list.clear();
+	uint8 direction;
+	while ((direction = stream->readByte()) != 0xff) {
+		int steps = stream->readSint16LE();
+		_list.push_back(new WalkingActionEntry((Direction) direction, steps));
+	}
+	_result = (PathFinderResult)stream->readByte();
+	_stepCtr = stream->readSint16LE();
+}
+
 // Current action entry class methods
 
 CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
@@ -3343,6 +3445,75 @@ void CurrentActionEntry::setSupportData(uint16 entryId) {
 	CharacterScheduleEntry *newEntry = Resources::getReference().
 		charSchedules().getEntry(entryId, entry.parent());
 	setSupportData(newEntry);
+}
+
+void CurrentActionEntry::saveToStream(WriteStream *stream) {
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action entry dyn=%d id=%d",
+		hasSupportData(), hasSupportData() ? supportData().id() : 0);
+	stream->writeByte((uint8) _action);
+	stream->writeUint16LE(_roomNumber);
+	stream->writeByte(hasSupportData());
+	if (hasSupportData()) {
+		// Handle the support data
+		stream->writeByte(_dynamicSupportData);
+		if (_dynamicSupportData)
+		{
+			// Write out the dynamic data
+			stream->writeSint16LE(supportData().numParams());
+			for (int index = 0; index < supportData().numParams(); ++index)
+				stream->writeUint16LE(supportData().param(index));
+		}
+		else
+		{
+			// Write out the Id for the static entry
+			stream->writeSint16LE(supportData().id());
+		}
+	}
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action entry");
+}
+
+CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
+	Resources &res = Resources::getReference();
+	uint8 actionNum = stream->readByte();
+	if (actionNum == 0xff) return NULL;
+	CurrentActionEntry *result;
+
+	uint16 roomNumber = stream->readUint16LE();
+	bool hasSupportData = stream->readByte() != 0;
+
+	if (!hasSupportData) {
+		// An entry that doesn't have support data
+		result = new CurrentActionEntry(
+			(CurrentAction) actionNum, roomNumber);
+	} else {
+		// Handle support data for the entry
+		bool dynamicData = stream->readByte() != 0;
+		if (dynamicData)
+		{
+			// Load action entry that has dynamic data
+			result = new CurrentActionEntry(
+				(CurrentAction) actionNum, roomNumber);
+			result->_supportData = new CharacterScheduleEntry();
+			Action action = (Action) stream->readByte();
+			int numParams = stream->readSint16LE();
+			uint16 *paramList = new uint16[numParams];
+			for (int index = 0; index < numParams; ++index)
+				paramList[index] = stream->readUint16LE();
+				
+			result->_supportData->setDetails2(action, numParams, paramList);
+			delete paramList;
+		}
+		else
+		{
+			// Load action entry with an NPC schedule entry
+			uint16 entryId = stream->readUint16LE();
+			CharacterScheduleEntry *entry = res.charSchedules().getEntry(entryId);
+			result = new CurrentActionEntry((CurrentAction) actionNum, roomNumber);
+			result->setSupportData(entry);
+		}
+	}
+
+	return result;
 }
 
 void CurrentActionStack::list(char *buffer) {
@@ -3407,6 +3578,31 @@ void CurrentActionStack::list(char *buffer) {
 		else
 			printf("\n");
 	}
+}
+
+void CurrentActionStack::saveToStream(WriteStream *stream) {
+	ManagedList<CurrentActionEntry *>::iterator i;
+
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
+	char buffer[MAX_DESC_SIZE];
+	list(buffer);
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer);
+
+	for (i = _actions.begin(); i != _actions.end(); ++i)
+	{
+		CurrentActionEntry *rec = *i;
+		rec->saveToStream(stream);
+	}
+	stream->writeByte(0xff);      // End of list marker
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action stack");
+}
+
+void CurrentActionStack::loadFromStream(ReadStream *stream) {
+	CurrentActionEntry *rec;
+
+	_actions.clear();
+	while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
+		_actions.push_back(rec);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -3548,5 +3744,53 @@ bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 	return false;
 }
 
+void HotspotList::saveToStream(WriteStream *stream) {
+	HotspotList::iterator i;
+	for (i = begin(); i != end(); ++i)
+	{
+		Hotspot *hotspot = *i;
+		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Saving hotspot %xh", hotspot->hotspotId());
+		bool dynamicObject = hotspot->hotspotId() != hotspot->originalId();
+		stream->writeUint16LE(hotspot->originalId());
+		stream->writeByte(dynamicObject);
+		stream->writeUint16LE(hotspot->destHotspotId());
+		hotspot->saveToStream(stream);
+
+		debugC(ERROR_DETAILED, kLureDebugAnimations, "Saved hotspot %xh", hotspot->hotspotId());
+	}
+	stream->writeUint16LE(0);
+}
+
+void HotspotList::loadFromStream(ReadStream *stream) {
+	Resources &res = Resources::getReference();
+	Hotspot *hotspot;
+
+	clear();
+	uint16 hotspotId = stream->readUint16LE();
+	while (hotspotId != 0)
+	{
+		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Loading hotspot %xh", hotspotId);
+		bool dynamicObject = stream->readByte() != 0;
+		uint16 destHotspotId = stream->readUint16LE();
+
+		if (dynamicObject) {
+			// Add in a dynamic object (such as a floating talk bubble)
+			Hotspot *destHotspot = res.getActiveHotspot(destHotspotId);
+			assert(destHotspot);
+			hotspot = new Hotspot(destHotspot, hotspotId);
+			res.addHotspot(hotspot);
+		}
+		else
+		{
+			hotspot = res.activateHotspot(hotspotId);
+		}
+		assert(hotspot);
+
+		hotspot->loadFromStream(stream);
+		debugC(ERROR_DETAILED, kLureDebugAnimations, "Loaded hotspot %xh", hotspotId);
+
+		hotspotId = stream->readUint16LE();
+	}
+}
 
 } // end of namespace Lure

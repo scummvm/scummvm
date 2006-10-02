@@ -212,8 +212,8 @@ void Menu::toggleHighlight(MenuRecord *menuRec) {
 
 void Menu::toggleHighlightItem(uint8 index) {
 	byte *p = _surfaceMenu->data().data() + (DIALOG_EDGE_SIZE + 3 + 
-		((index - 1) * 8)) * _surfaceMenu->width();
-	uint32 numBytes = 8 * _surfaceMenu->width();
+		((index - 1) * (FONT_HEIGHT - 1))) * _surfaceMenu->width();
+	uint32 numBytes = (FONT_HEIGHT - 1) * _surfaceMenu->width();
 
 	while (numBytes-- > 0) {
 		if (*p == MENU_UNSELECTED_COLOUR) *p = MENU_SELECTED_COLOUR;

@@ -29,6 +29,7 @@
 #include "lure/res_struct.h"
 #include "lure/hotspots.h"
 #include "lure/palette.h"
+#include "common/file.h"
 
 namespace Lure {
 
@@ -161,6 +162,8 @@ public:
 	void addHotspot(Hotspot *hotspot);
 	void deactivateHotspot(uint16 hotspotId, bool isDestId = false);
 	void deactivateHotspot(Hotspot *hotspot);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 } // End of namespace Lure
