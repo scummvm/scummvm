@@ -695,7 +695,7 @@ void AGOSEngine::pairCheck() {
 }
 
 void AGOSEngine::gravityCheck() {
-	printf("GravityCheck\n");
+	printf("gravityCheck\n");
 
 	int i, k;
 	int x, y, z;

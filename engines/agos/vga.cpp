@@ -2973,7 +2973,7 @@ void AGOSEngine::centreScroll() {
 }
 
 void AGOSEngine::startOverlayAnims() {
-	printf("StartOverlayAnims\n");
+	printf("startOverlayAnims\n");
 
 	VgaSprite *vsp = _vgaSprites;
 	int i;
@@ -3005,7 +3005,7 @@ void AGOSEngine::startOverlayAnims() {
 }
 
 void AGOSEngine::startAnOverlayAnim() {
-	printf("StartAnOverlayAnim\n");
+	printf("startAnOverlayAnim\n");
 
 	VgaSprite *vsp = _vgaSprites;
 	const byte *vcPtrOrg;
@@ -3016,7 +3016,7 @@ void AGOSEngine::startAnOverlayAnim() {
 
 	_vcPtr += 4;
 	a = vcReadNextWord();
-	_vcPtr += 4;
+	_vcPtr += 6;
 
 	while (vsp->id)
 		vsp++;
@@ -3056,7 +3056,7 @@ void AGOSEngine::startAnOverlayAnim() {
 }
 
 void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint priority) {
-	printf("startBlock\n");
+	printf("startBlock: windowNum %d vgaSpriteId %d x %d y %d priority %d\n", windowNum, vgaSpriteId, x, y, priority);
 
 	VgaSprite *vsp = _vgaSprites;
 	const byte *vcPtrOrg;
@@ -3125,7 +3125,7 @@ void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 }
 
 void AGOSEngine::checkIfClickedOnBlock() {
-	 printf("CheckIfClickedOnBlock\n");
+	 printf("checkIfClickedOnBlock\n");
 
 	VgaSprite *vsp = _vgaSprites;
 	uint16 items[2];
