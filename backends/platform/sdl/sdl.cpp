@@ -227,7 +227,8 @@ bool OSystem_SDL::hasFeature(Feature f) {
 		(f == kFeatureFullscreenMode) ||
 		(f == kFeatureAspectRatioCorrection) ||
 		(f == kFeatureAutoComputeDirtyRects) ||
-		(f == kFeatureCursorHasPalette);
+		(f == kFeatureCursorHasPalette) ||
+		(f == kFeatureIconifyWindow);
 }
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
@@ -243,6 +244,10 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 			_modeFlags |= DF_WANT_RECT_OPTIM;
 		else
 			_modeFlags &= ~DF_WANT_RECT_OPTIM;
+		break;
+	case kFeatureIconifyWindow:
+		if (enable)
+			SDL_WM_IconifyWindow();
 		break;
 	default:
 		break;

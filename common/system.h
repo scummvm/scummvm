@@ -128,7 +128,12 @@ public:
 		 * This should only be set if it offers at least 3-4 bits of accuracy,
 		 * as opposed to a single alpha bit.
 		 */
-		kFeatureOverlaySupportsAlpha
+		kFeatureOverlaySupportsAlpha,
+
+		/**
+		 * Set to true to iconify the window.
+		 */
+		kFeatureIconifyWindow
 	};
 
 	/**

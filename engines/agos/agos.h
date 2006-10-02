@@ -1088,7 +1088,7 @@ public:
 	void o3_b3NotZero();
 
 	// Opcodes, Puzzle Pack only
-	void o4_opcode30();
+	void o4_iconifyWindow();
 	void o4_restoreOopsPosition();
 	void o4_checkTiles();
 	void o4_loadMouseImage();

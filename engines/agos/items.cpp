@@ -435,7 +435,7 @@ void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
 	setupAGOSOpcodes(op);
 
 	op[23] = &AGOSEngine::o3_chance;
-	op[30] = &AGOSEngine::o4_opcode30;
+	op[30] = &AGOSEngine::o4_iconifyWindow;
 	op[32] = &AGOSEngine::o4_restoreOopsPosition;
 	op[37] = &AGOSEngine::o4_checkTiles;
 	op[38] = &AGOSEngine::o4_loadMouseImage;
@@ -2440,9 +2440,13 @@ void AGOSEngine::o3_b3NotZero() {
 // Puzzle Pack Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::o4_opcode30() {
+void AGOSEngine::o4_iconifyWindow() {
 	// 30
 	getNextItemPtr();
+	if (_clockStopped != 0)
+		_gameTime += time(NULL) - _clockStopped;
+	_clockStopped  = 0;
+	_system->setFeatureState(OSystem::kFeatureIconifyWindow, true);
 }
 
 void AGOSEngine::o4_restoreOopsPosition() {
