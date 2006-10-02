@@ -434,7 +434,7 @@ protected:
 	int16 *_variableArray2;
 	int16 *_variableArrayPtr;
 
-	WindowBlock *_windowArray[16];
+	WindowBlock *_windowArray[8];
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
