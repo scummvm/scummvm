@@ -89,22 +89,76 @@ GameDescriptor Engine_SKY_findGameID(const char *gameid) {
 	return GameDescriptor();
 }
 
+struct SkyVersion {
+	int dinnerTableEntries;
+	int dataDiskSize;
+	const char *extraDesc;
+	int version;
+};
+
+// TODO: Would be nice if Disk::determineGameVersion() used this table, too.
+static const SkyVersion skyVersions[] = {
+	{  243, -1, "pc gamer demo", 109 },
+	{  247, -1, "floppy demo", 267 },
+	{ 1404, -1, "floppy", 288 },
+	{ 1413, -1, "floppy", 303 },
+	{ 1445, 8830435, "floppy", 348 },
+	{ 1445, -1, "floppy", 331 },
+	{ 1711, -1, "cd demo", 365 },
+	{ 5099, -1, "cd", 368 },
+	{ 5097, -1, "cd", 372 },
+	{ 0, 0, 0, 0 }
+};
+
 DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
+	bool hasSkyDsk = false;
+	bool hasSkyDnr = false;
+	int dinnerTableEntries = -1;
+	int dataDiskSize = -1;
+
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			const char *fileName = file->name().c_str();
 
 			if (0 == scumm_stricmp("sky.dsk", fileName)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				// The game detector uses US English by default. We want British
-				// English to match the recorded voices better.
-				detectedGames.push_back(DetectedGame(skySetting, Common::EN_GRB, Common::kPlatformUnknown));
-				break;
+				Common::File dataDisk;
+				if (dataDisk.open(file->path())) {
+					hasSkyDsk = true;
+					dataDiskSize = dataDisk.size();
+				}
+			}
+
+			if (0 == scumm_stricmp("sky.dnr", fileName)) {
+				Common::File dinner;
+				if (dinner.open(file->path())) {
+					hasSkyDnr = true;
+					dinnerTableEntries = dinner.readUint32LE();
+				}
 			}
 		}
 	}
+
+	if (hasSkyDsk && hasSkyDnr) {
+		// Match found, add to list of candidates, then abort inner loop.
+		// The game detector uses US English by default. We want British
+		// English to match the recorded voices better.
+		DetectedGame dg(skySetting, Common::UNK_LANG, Common::kPlatformUnknown);
+		const SkyVersion *sv = skyVersions;
+		while (sv->dinnerTableEntries) {
+			if (dinnerTableEntries == sv->dinnerTableEntries &&
+				(sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
+				char buf[32];
+				snprintf(buf, sizeof(buf), "v0.0%d %s", sv->version, sv->extraDesc);
+				dg.updateDesc(buf);
+				break;
+			}
+			++sv;
+		}
+		detectedGames.push_back(dg);
+	}
+
 	return detectedGames;
 }
 
