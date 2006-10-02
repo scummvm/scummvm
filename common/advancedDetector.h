@@ -34,12 +34,9 @@ struct ADGameFileDescription {
 
 struct ADGameDescription {
 	const char *name;
-	int gameType;
-	int gameId;
 	const char *extra;
 	int filesCount;
 	ADGameFileDescription *filesDescriptions;
-	uint32 features;
 	Language language;
 	Platform platform;
 };

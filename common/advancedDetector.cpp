@@ -103,6 +103,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 			tstr = file->_key;
 			tstr.toLowercase();
 
+			debug(3, "+ %s", tstr.c_str());
 			if (!filesMD5.contains(tstr)) {
 				if (testFile.open(file->_key)) {
 					testFile.close();
@@ -112,6 +113,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 						}
 						filesMD5[tstr] = String(md5str);
+						debug(3, "> %s: %s", tstr.c_str(), md5str);
 					}
 				}
 			}
@@ -136,6 +138,8 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 			if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
 				fileMissing = true;
 				break;
+			} else {
+				debug(3, "Matched file: %s", tstr.c_str());
 			}
 		}
 		if (!fileMissing) {

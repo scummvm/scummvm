@@ -120,6 +120,14 @@ enum SIMONGameType {
 	GType_PP = 7
 };
 
+struct AGOSGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	int gameId;
+	uint32 features;
+};
+
 struct GameSpecificSettings;
 
 class Debugger;
@@ -159,7 +167,7 @@ class AGOSEngine : public Engine {
 	void setupFeebleVideoOpcodes(VgaOpcodeProc *op);
 
 public:
-	Common::ADGameDescription *_gameDescription;
+	AGOSGameDescription *_gameDescription;
 
 	bool initGame(void);
 	void setupGame();
@@ -167,12 +175,12 @@ public:
 	int getGameId() const { return _gameDescription->gameId; }
 	int getGameType() const { return _gameDescription->gameType; }
 	uint32 getFeatures() const { return _gameDescription->features; }
-	Common::Language getLanguage() const { return _gameDescription->language; }
-	Common::Platform getPlatform() const { return _gameDescription->platform; }
+	Common::Language getLanguage() const { return _gameDescription->desc.language; }
+	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
 	const char *getFileName(int type) const { 
-		for (int i = 0; i < _gameDescription->filesCount; i++) {
-			if (_gameDescription->filesDescriptions[i].fileType == type)
-				return _gameDescription->filesDescriptions[i].fileName; 
+		for (int i = 0; i < _gameDescription->desc.filesCount; i++) {
+			if (_gameDescription->desc.filesDescriptions[i].fileType == type)
+				return _gameDescription->desc.filesDescriptions[i].fileName; 
 		}
 		error("getFileName: Invalid type %d", type);
 	}

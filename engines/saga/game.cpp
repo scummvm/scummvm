@@ -112,11 +112,11 @@ using Common::ADGameDescription;
 
 #include "sagagame.cpp"
 
-DetectedGame toDetectedGame(const ADGameDescription &g) {
+DetectedGame toDetectedGame(const SAGAGameDescription &g) {
 	const char *title;
 	title = saga_games[g.gameType].description;
-	DetectedGame dg(g.name, title, g.language, g.platform);
-	dg.updateDesc(g.extra);
+	DetectedGame dg(g.desc.name, title, g.desc.language, g.desc.platform);
+	dg.updateDesc(g.desc.extra);
 	return dg;
 }
 
@@ -162,7 +162,7 @@ bool SagaEngine::initGame() {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
 
-	_gameTitle = toDetectedGame(gameDescriptions[gameNumber].desc).description;
+	_gameTitle = toDetectedGame(gameDescriptions[gameNumber]).description;
 	debug(2, "Running %s", _gameTitle.c_str());
 
 	_gameNumber = gameNumber;
@@ -192,7 +192,7 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]].desc));
+		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]]));
 	//delete matches;
 
 	return detectedGames;

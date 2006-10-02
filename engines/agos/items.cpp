@@ -2226,9 +2226,9 @@ void AGOSEngine::o3_checkCD() {
 	// 135: switch CD
 	uint disc = readVariable(97);
 
-	if (!strcmp(_gameDescription->extra, "4CD")) {
+	if (!strcmp(_gameDescription->desc.extra, "4CD")) {
 		_sound->switchVoiceFile(gss, disc);
-	} else if (!strcmp(_gameDescription->extra, "2CD")) {
+	} else if (!strcmp(_gameDescription->desc.extra, "2CD")) {
 		if (disc == 1 || disc == 2)
 			_sound->switchVoiceFile(gss, 1);
 		else if (disc == 3 || disc == 4)

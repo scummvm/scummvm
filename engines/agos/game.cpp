@@ -640,881 +640,1080 @@ static ADGameFileDescription SWAMPY_GameFiles[] = {
 	{ "Gswampy",		GAME_BASEFILE,	"3a6d4d7b2433e660f2483f9396cc87a2"},
 };
 
-static ADGameDescription gameDescriptions[] = {
+static AGOSGameDescription gameDescriptions[] = {
 	// Elvira - English Floppy
 	{
-		"elvira",
+		{
+			"elvira",
+			"Floppy",
+			ARRAYSIZE(ELVIRA1DOS_GameFiles),
+			ELVIRA1DOS_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_ELVIRA,
 		GID_ELVIRA,
-		"Floppy",
-		ARRAYSIZE(ELVIRA1DOS_GameFiles),
-		ELVIRA1DOS_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Elvira - English Floppy Alternative?
 	{
-		"elvira",
+		{
+			"elvira",
+			"Floppy",
+			ARRAYSIZE(ELVIRA1DOS2_GameFiles),
+			ELVIRA1DOS2_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_ELVIRA,
 		GID_ELVIRA,
-		"Floppy",
-		ARRAYSIZE(ELVIRA1DOS2_GameFiles),
-		ELVIRA1DOS2_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Elvira 2 - English Floppy
 	{
-		"elvira2",
+		{
+			"elvira2",
+			"Floppy",
+			ARRAYSIZE(ELVIRA2DOS_GameFiles),
+			ELVIRA2DOS_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		"Floppy",
-		ARRAYSIZE(ELVIRA2DOS_GameFiles),
-		ELVIRA2DOS_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Waxworks - English Floppy
 	{
-		"waxworks",
+		{
+			"waxworks",
+			"Floppy",
+			ARRAYSIZE(WAXWORKSDOS_GameFiles),
+			WAXWORKSDOS_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_WW,
 		GID_WAXWORKS,
-		"Floppy",
-		ARRAYSIZE(WAXWORKSDOS_GameFiles),
-		WAXWORKSDOS_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English Acorn CD Demo
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD Demo",
+			ARRAYSIZE(SIMON1ACORNDEMO_GameFiles),
+			SIMON1ACORNDEMO_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAcorn,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1ACORNDEMO,
-		"CD Demo",
-		ARRAYSIZE(SIMON1ACORNDEMO_GameFiles),
-		SIMON1ACORNDEMO_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformAcorn,
 	},
 
 	// Simon the Sorcerer 1 - English Acorn CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1ACORN_GameFiles),
+			SIMON1ACORN_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAcorn,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1ACORN,
-		"CD",
-		ARRAYSIZE(SIMON1ACORN_GameFiles),
-		SIMON1ACORN_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformAcorn,
 	},
 
 	// Simon the Sorcerer 1 - English AGA Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"AGA Floppy",
+			ARRAYSIZE(SIMON1AMIGA_GameFiles),
+			SIMON1AMIGA_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		"AGA Floppy",
-		ARRAYSIZE(SIMON1AMIGA_GameFiles),
-		SIMON1AMIGA_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - French AGA Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"AGA Floppy",
+			ARRAYSIZE(SIMON1AMIGA_FR_GameFiles),
+			SIMON1AMIGA_FR_GameFiles,
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1AMIGA_FR,
-		"AGA Floppy",
-		ARRAYSIZE(SIMON1AMIGA_FR_GameFiles),
-		SIMON1AMIGA_FR_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
-		Common::FR_FRA,
-		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - German AGA Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"AGA Floppy",
+			ARRAYSIZE(SIMON1AMIGA_DE_GameFiles),
+			SIMON1AMIGA_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1AMIGA_DE,
-		"AGA Floppy",
-		ARRAYSIZE(SIMON1AMIGA_DE_GameFiles),
-		SIMON1AMIGA_DE_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
-		Common::DE_DEU,
-		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - English Amiga ECS Demo
 	{
-		"simon1",
+		{
+			"simon1",
+			"ECS Demo",
+			ARRAYSIZE(SIMON1AMIGADEMO_GameFiles),
+			SIMON1AMIGADEMO_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1AMIGADEMO,
-		"ECS Demo",
-		ARRAYSIZE(SIMON1AMIGADEMO_GameFiles),
-		SIMON1AMIGADEMO_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD32",
+			ARRAYSIZE(SIMON1CD32_GameFiles),
+			SIMON1CD32_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1CD32,
-		"CD32",
-		ARRAYSIZE(SIMON1CD32_GameFiles),
-		SIMON1CD32_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32 alternative?
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD32",
+			ARRAYSIZE(SIMON1CD32_2_GameFiles),
+			SIMON1CD32_2_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1CD32_2,
-		"CD32",
-		ARRAYSIZE(SIMON1CD32_2_GameFiles),
-		SIMON1CD32_2_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy Demo
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy Demo",
+			ARRAYSIZE(SIMON1DEMO_GameFiles),
+			SIMON1DEMO_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DEMO,
-		"Floppy Demo",
-		ARRAYSIZE(SIMON1DEMO_GameFiles),
-		SIMON1DEMO_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_GameFiles),
+			SIMON1DOS_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_GameFiles),
-		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy with Russian patch
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_RU_GameFiles),
+			SIMON1DOS_RU_GameFiles,
+			Common::RU_RUS,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_RU,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_RU_GameFiles),
-		SIMON1DOS_RU_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::RU_RUS,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy (Infocom)
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_INF_GameFiles),
+			SIMON1DOS_INF_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_INF,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_INF_GameFiles),
-		SIMON1DOS_INF_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy (Infocom) with Russian patch
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_INF_RU_GameFiles),
+			SIMON1DOS_INF_RU_GameFiles,
+			Common::RU_RUS,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_INF_RU,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_INF_RU_GameFiles),
-		SIMON1DOS_INF_RU_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::RU_RUS,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - French DOS Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_FR_GameFiles),
+			SIMON1DOS_FR_GameFiles,
+			Common::FR_FRA,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_FR,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_FR_GameFiles),
-		SIMON1DOS_FR_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::FR_FRA,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - German DOS Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_DE_GameFiles),
+			SIMON1DOS_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_DE,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_DE_GameFiles),
-		SIMON1DOS_DE_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::DE_DEU,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - Italian DOS Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_IT_GameFiles),
+			SIMON1DOS_IT_GameFiles,
+			Common::IT_ITA,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_IT,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_IT_GameFiles),
-		SIMON1DOS_IT_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::IT_ITA,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - Spanish DOS Floppy
 	{
-		"simon1",
+		{
+			"simon1",
+			"Floppy",
+			ARRAYSIZE(SIMON1DOS_ES_GameFiles),
+			SIMON1DOS_ES_GameFiles,
+			Common::ES_ESP,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1DOS_ES,
-		"Floppy",
-		ARRAYSIZE(SIMON1DOS_ES_GameFiles),
-		SIMON1DOS_ES_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::ES_ESP,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English DOS CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_GameFiles),
+			SIMON1TALKIE_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_GameFiles),
-		SIMON1TALKIE_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English DOS CD alternate?
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE2_GameFiles),
+			SIMON1TALKIE2_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE2,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE2_GameFiles),
-		SIMON1TALKIE2_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - French DOS CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_FR_GameFiles),
+			SIMON1TALKIE_FR_GameFiles,
+			Common::FR_FRA,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE_FR,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_FR_GameFiles),
-		SIMON1TALKIE_FR_GameFiles,
 		GF_TALKIE,
-		Common::FR_FRA,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - German DOS CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_DE_GameFiles),
+			SIMON1TALKIE_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE_DE,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_DE_GameFiles),
-		SIMON1TALKIE_DE_GameFiles,
 		GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - Hebrew DOS CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_HB_GameFiles),
+			SIMON1TALKIE_HB_GameFiles,
+			Common::HB_ISR,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE_HB,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_HB_GameFiles),
-		SIMON1TALKIE_HB_GameFiles,
 		GF_TALKIE,
-		Common::HB_ISR,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - Italian DOS CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_IT_GameFiles),
+			SIMON1TALKIE_IT_GameFiles,
+			Common::IT_ITA,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE_IT,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_IT_GameFiles),
-		SIMON1TALKIE_IT_GameFiles,
 		GF_TALKIE,
-		Common::IT_ITA,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - Italian DOS CD alternate
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_IT2_GameFiles),
+			SIMON1TALKIE_IT2_GameFiles,
+			// FIXME: DOS version which uses WAV format
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE_IT2,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_IT2_GameFiles),
-		SIMON1TALKIE_IT2_GameFiles,
 		GF_TALKIE,
-		Common::IT_ITA,
-		// FIXME: DOS version which uses WAV format
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 1 - Spanish DOS CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1TALKIE_ES_GameFiles),
+			SIMON1TALKIE_ES_GameFiles,
+			Common::ES_ESP,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1TALKIE_ES,
-		"CD",
-		ARRAYSIZE(SIMON1TALKIE_ES_GameFiles),
-		SIMON1TALKIE_ES_GameFiles,
 		GF_TALKIE,
-		Common::ES_ESP,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 1 - English Windows CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1WIN_GameFiles),
+			SIMON1WIN_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1WIN,
-		"CD",
-		ARRAYSIZE(SIMON1WIN_GameFiles),
-		SIMON1WIN_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 1 - English Windows CD with Russian patch
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1WIN_RU_GameFiles),
+			SIMON1WIN_RU_GameFiles,
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1WIN_RU,
-		"CD",
-		ARRAYSIZE(SIMON1WIN_RU_GameFiles),
-		SIMON1WIN_RU_GameFiles,
 		GF_TALKIE,
-		Common::RU_RUS,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 1 - German Windows CD
 	{
-		"simon1",
+		{
+			"simon1",
+			"CD",
+			ARRAYSIZE(SIMON1WIN_DE_GameFiles),
+			SIMON1WIN_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON1,
 		GID_SIMON1WIN_DE,
-		"CD",
-		ARRAYSIZE(SIMON1WIN_DE_GameFiles),
-		SIMON1WIN_DE_GameFiles,
 		GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy
 	{
-		"simon2",
+		{
+			"simon2",
+			"Floppy",
+			ARRAYSIZE(SIMON2DOS_GameFiles),
+			SIMON2DOS_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		"Floppy",
-		ARRAYSIZE(SIMON2DOS_GameFiles),
-		SIMON2DOS_GameFiles,
 		0,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy with Russian patch
 	{
-		"simon2",
+		{
+			"simon2",
+			"Floppy",
+			ARRAYSIZE(SIMON2DOS_RU_GameFiles),
+			SIMON2DOS_RU_GameFiles,
+			Common::RU_RUS,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DOS_RU,
-		"Floppy",
-		ARRAYSIZE(SIMON2DOS_RU_GameFiles),
-		SIMON2DOS_RU_GameFiles,
 		0,
-		Common::RU_RUS,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy alternate?
 	{
-		"simon2",
+		{
+			"simon2",
+			"Floppy",
+			ARRAYSIZE(SIMON2DOS2_GameFiles),
+			SIMON2DOS2_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DOS2,
-		"Floppy",
-		ARRAYSIZE(SIMON2DOS2_GameFiles),
-		SIMON2DOS2_GameFiles,
 		0,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy alternate? with Russian patch
 	{
-		"simon2",
+		{
+			"simon2",
+			"Floppy",
+			ARRAYSIZE(SIMON2DOS2_RU_GameFiles),
+			SIMON2DOS2_RU_GameFiles,
+			Common::RU_RUS,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DOS2_RU,
-		"Floppy",
-		ARRAYSIZE(SIMON2DOS2_RU_GameFiles),
-		SIMON2DOS2_RU_GameFiles,
 		0,
-		Common::RU_RUS,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - German DOS Floppy
 	{
-		"simon2",
+		{
+			"simon2",
+			"Floppy",
+			ARRAYSIZE(SIMON2DOS_DE_GameFiles),
+			SIMON2DOS_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DOS_DE,
-		"Floppy",
-		ARRAYSIZE(SIMON2DOS_DE_GameFiles),
-		SIMON2DOS_DE_GameFiles,
 		0,
-		Common::DE_DEU,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - Italian DOS Floppy
 	{
-		"simon2",
+		{
+			"simon2",
+			"Floppy",
+			ARRAYSIZE(SIMON2DOS_IT_GameFiles),
+			SIMON2DOS_IT_GameFiles,
+			Common::IT_ITA,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DOS_IT,
-		"Floppy",
-		ARRAYSIZE(SIMON2DOS_IT_GameFiles),
-		SIMON2DOS_IT_GameFiles,
 		0,
-		Common::IT_ITA,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - English DOS CD Demo
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD Demo",
+			ARRAYSIZE(SIMON2DEMO_GameFiles),
+			SIMON2DEMO_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2DEMO,
-		"CD Demo",
-		ARRAYSIZE(SIMON2DEMO_GameFiles),
-		SIMON2DEMO_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - English DOS CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_GameFiles),
+			SIMON2TALKIE_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_GameFiles),
-		SIMON2TALKIE_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
-
 
 	// Simon the Sorcerer 2 - English DOS CD alternate?
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE2_GameFiles),
+			SIMON2TALKIE2_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE2,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE2_GameFiles),
-		SIMON2TALKIE2_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - French DOS CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_FR_GameFiles),
+			SIMON2TALKIE_FR_GameFiles,
+			Common::FR_FRA,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE_FR,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_FR_GameFiles),
-		SIMON2TALKIE_FR_GameFiles,
 		GF_TALKIE,
-		Common::FR_FRA,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - German DOS CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_DE_GameFiles),
+			SIMON2TALKIE_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE_DE,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_DE_GameFiles),
-		SIMON2TALKIE_DE_GameFiles,
 		GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - German DOS CD alternate?
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_DE2_GameFiles),
+			SIMON2TALKIE_DE2_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE_DE2,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_DE2_GameFiles),
-		SIMON2TALKIE_DE2_GameFiles,
 		GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - Hebrew DOS CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_HB_GameFiles),
+			SIMON2TALKIE_HB_GameFiles,
+			Common::HB_ISR,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE_HB,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_HB_GameFiles),
-		SIMON2TALKIE_HB_GameFiles,
 		GF_TALKIE,
-		Common::HB_ISR,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - Italian DOS CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_IT_GameFiles),
+			SIMON2TALKIE_IT_GameFiles,
+			// FIXME: DOS version which uses WAV format
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE_IT,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_IT_GameFiles),
-		SIMON2TALKIE_IT_GameFiles,
 		GF_TALKIE,
-		Common::IT_ITA,
-		// FIXME: DOS version which uses WAV format
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 2 - Spanish DOS CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2TALKIE_ES_GameFiles),
+			SIMON2TALKIE_ES_GameFiles,
+			Common::ES_ESP,
+			Common::kPlatformPC,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2TALKIE_ES,
-		"CD",
-		ARRAYSIZE(SIMON2TALKIE_ES_GameFiles),
-		SIMON2TALKIE_ES_GameFiles,
 		GF_TALKIE,
-		Common::ES_ESP,
-		Common::kPlatformPC,
 	},
 
 	// Simon the Sorcerer 2 - English Windows CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2WIN_GameFiles),
+			SIMON2WIN_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2WIN,
-		"CD",
-		ARRAYSIZE(SIMON2WIN_GameFiles),
-		SIMON2WIN_GameFiles,
 		GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 2 - German Windows CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2WIN_DE_GameFiles),
+			SIMON2WIN_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2WIN_DE,
-		"CD",
-		ARRAYSIZE(SIMON2WIN_DE_GameFiles),
-		SIMON2WIN_DE_GameFiles,
 		GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 2 - German Windows CD 1.1
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2WIN_DE2_GameFiles),
+			SIMON2WIN_DE2_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2WIN_DE2,
-		"CD",
-		ARRAYSIZE(SIMON2WIN_DE2_GameFiles),
-		SIMON2WIN_DE2_GameFiles,
 		GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer 2 - Polish Windows CD
 	{
-		"simon2",
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2WIN_PL_GameFiles),
+			SIMON2WIN_PL_GameFiles,
+			Common::PL_POL,
+			Common::kPlatformWindows,
+		},
+
 		GType_SIMON2,
 		GID_SIMON2WIN_PL,
-		"CD",
-		ARRAYSIZE(SIMON2WIN_PL_GameFiles),
-		SIMON2WIN_PL_GameFiles,
 		GF_TALKIE,
-		Common::PL_POL,
-		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - English Amiga CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"CD",
+			ARRAYSIZE(FEEBLEFILES_AMI_UK_GameFiles),
+			FEEBLEFILES_AMI_UK_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_AMI_UK,
-		"CD",
-		ARRAYSIZE(FEEBLEFILES_AMI_UK_GameFiles),
-		FEEBLEFILES_AMI_UK_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformAmiga,
 	},
 
 	// The Feeble Files - German Amiga CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"CD",
+			ARRAYSIZE(FEEBLEFILES_AMI_DE_GameFiles),
+			FEEBLEFILES_AMI_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_AMI_DE,
-		"CD",
-		ARRAYSIZE(FEEBLEFILES_AMI_DE_GameFiles),
-		FEEBLEFILES_AMI_DE_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformAmiga,
 	},
 
 	// The Feeble Files - English Macintosh CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"CD",
+			ARRAYSIZE(FEEBLEFILES_MAC_UK_GameFiles),
+			FEEBLEFILES_MAC_UK_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_MAC_UK,
-		"CD",
-		ARRAYSIZE(FEEBLEFILES_MAC_UK_GameFiles),
-		FEEBLEFILES_MAC_UK_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformMacintosh,
 	},
 
 	// The Feeble Files - French Macintosh CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"CD",
+			ARRAYSIZE(FEEBLEFILES_MAC_FR_GameFiles),
+			FEEBLEFILES_MAC_FR_GameFiles,
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_MAC_FR,
-		"CD",
-		ARRAYSIZE(FEEBLEFILES_MAC_FR_GameFiles),
-		FEEBLEFILES_MAC_FR_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
-		Common::FR_FRA,
-		Common::kPlatformMacintosh,
 	},
 
 	// The Feeble Files - German Macintosh CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"CD",
+			ARRAYSIZE(FEEBLEFILES_MAC_DE_GameFiles),
+			FEEBLEFILES_MAC_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_MAC_DE,
-		"CD",
-		ARRAYSIZE(FEEBLEFILES_MAC_DE_GameFiles),
-		FEEBLEFILES_MAC_DE_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformMacintosh,
 	},
 
 	// The Feeble Files - Spanish Macintosh CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"CD",
+			ARRAYSIZE(FEEBLEFILES_MAC_ES_GameFiles),
+			FEEBLEFILES_MAC_ES_GameFiles,
+			Common::ES_ESP,
+			Common::kPlatformMacintosh,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_MAC_ES,
-		"CD",
-		ARRAYSIZE(FEEBLEFILES_MAC_ES_GameFiles),
-		FEEBLEFILES_MAC_ES_GameFiles,
 		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
-		Common::ES_ESP,
-		Common::kPlatformMacintosh,
 	},
 
 	// The Feeble Files - English Windows 2CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"2CD",
+			ARRAYSIZE(FEEBLEFILES_2CD_GameFiles),
+			FEEBLEFILES_2CD_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_2CD,
-		"2CD",
-		ARRAYSIZE(FEEBLEFILES_2CD_GameFiles),
-		FEEBLEFILES_2CD_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - English Windows 4CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"4CD",
+			ARRAYSIZE(FEEBLEFILES_4CD_GameFiles),
+			FEEBLEFILES_4CD_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_4CD,
-		"4CD",
-		ARRAYSIZE(FEEBLEFILES_4CD_GameFiles),
-		FEEBLEFILES_4CD_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - French Windows 4CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"4CD",
+			ARRAYSIZE(FEEBLEFILES_FR_GameFiles),
+			FEEBLEFILES_FR_GameFiles,
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_FR,
-		"4CD",
-		ARRAYSIZE(FEEBLEFILES_FR_GameFiles),
-		FEEBLEFILES_FR_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::FR_FRA,
-		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - German Windows 4CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"4CD",
+			ARRAYSIZE(FEEBLEFILES_DE_GameFiles),
+			FEEBLEFILES_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_DE,
-		"4CD",
-		ARRAYSIZE(FEEBLEFILES_DE_GameFiles),
-		FEEBLEFILES_DE_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::DE_DEU,
-		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - Italian Windows 4CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"4CD",
+			ARRAYSIZE(FEEBLEFILES_IT_GameFiles),
+			FEEBLEFILES_IT_GameFiles,
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_IT,
-		"4CD",
-		ARRAYSIZE(FEEBLEFILES_IT_GameFiles),
-		FEEBLEFILES_IT_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::IT_ITA,
-		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - Spanish Windows 4CD
 	{
-		"feeble",
+		{
+			"feeble",
+			"4CD",
+			ARRAYSIZE(FEEBLEFILES_ES_GameFiles),
+			FEEBLEFILES_ES_GameFiles,
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+		},
+
 		GType_FF,
 		GID_FEEBLEFILES_ES,
-		"4CD",
-		ARRAYSIZE(FEEBLEFILES_ES_GameFiles),
-		FEEBLEFILES_ES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::ES_ESP,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Demon in my Pocket
 	{
-		"dimp",
+		{
+			"dimp",
+			"CD",
+			ARRAYSIZE(DIMP_GameFiles),
+			DIMP_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_PP,
 		GID_DIMP,
-		"CD",
-		ARRAYSIZE(DIMP_GameFiles),
-		DIMP_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Jumble
 	{
-		"jumble",
+		{
+			"jumble",
+			"CD",
+			ARRAYSIZE(JUMBLE_GameFiles),
+			JUMBLE_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_PP,
 		GID_JUMBLE,
-		"CD",
-		ARRAYSIZE(JUMBLE_GameFiles),
-		JUMBLE_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - NoPatience
 	{
-		"puzzle",
+		{
+			"puzzle",
+			"CD",
+			ARRAYSIZE(PUZZLE_GameFiles),
+			PUZZLE_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_PP,
 		GID_PUZZLE,
-		"CD",
-		ARRAYSIZE(PUZZLE_GameFiles),
-		PUZZLE_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures
 	{
-		"swampy",
+		{
+			"swampy",
+			"CD",
+			ARRAYSIZE(SWAMPY_GameFiles),
+			SWAMPY_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
 		GType_PP,
 		GID_SWAMPY,
-		"CD",
-		ARRAYSIZE(SWAMPY_GameFiles),
-		SWAMPY_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_ANY,
-		Common::kPlatformWindows,
 	},
-
 };
 
 DetectedGame toDetectedGame(const ADGameDescription &g) {
@@ -1557,7 +1756,7 @@ bool AGOSEngine::initGame() {
 	// over again...
 
 	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back(&gameDescriptions[i]);
+		descList.push_back((ADGameDescription *)&gameDescriptions[i]);
 
 	AdvDetector.registerGameDescriptions(descList);
 	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
@@ -1565,7 +1764,7 @@ bool AGOSEngine::initGame() {
 	matches = AdvDetector.detectGame(NULL, language, platform);
 
 	for (uint i = 0; i < matches.size(); i++) {
-		if (toDetectedGame(gameDescriptions[matches[i]]).gameid == gameid) {
+		if (toDetectedGame(gameDescriptions[matches[i]].desc).gameid == gameid) {
 			gameNumber = matches[i];
 			break;
 		}
@@ -1577,7 +1776,7 @@ bool AGOSEngine::initGame() {
 		error("AGOSEngine::loadGame wrong gameNumber");
 	}
 
-	debug(2, "Running %s", toDetectedGame(gameDescriptions[gameNumber]).description.c_str());
+	debug(2, "Running %s", toDetectedGame(gameDescriptions[gameNumber].desc).description.c_str());
 
 	_gameDescription = &gameDescriptions[gameNumber];
 
@@ -1591,7 +1790,7 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	Common::ADGameDescList descList;
 
 	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back(&gameDescriptions[i]);
+		descList.push_back((ADGameDescription *)&gameDescriptions[i]);
 
 	AdvDetector.registerGameDescriptions(descList);
 	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
@@ -1599,7 +1798,7 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]]));
+		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]].desc));
 	
 	//delete &matches;
 	return detectedGames;

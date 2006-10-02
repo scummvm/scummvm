@@ -329,6 +329,9 @@ struct GamePatchDescription {
 struct SAGAGameDescription {
 	Common::ADGameDescription desc;
 
+	int gameType;
+	int gameId;
+	uint32 features;
 	GameDisplayInfo *gameDisplayInfo;
 	int startSceneNumber;
 	GameResourceDescription *resourceDescription;
