@@ -254,23 +254,25 @@ void MoviePlayer::drawTextObject(MovieTextObject *t) {
 }
 
 void MoviePlayer::undrawTextObject(MovieTextObject *t) {
-	int xPos, yPos;
+	if (t->textSprite) {
+		int xPos, yPos;
 
-	calcTextPosition(t, xPos, yPos);
+		calcTextPosition(t, xPos, yPos);
 
-	// We only need to undraw the text if it's outside the frame. Otherwise
-	// the next frame will cover the old text anyway.
+		// We only need to undraw the text if it's outside the frame.
+		// Otherwise the next frame will cover the old text anyway.
 
-	if (yPos + t->textSprite->h > _frameY + _frameHeight || t->textSprite->w > _frameWidth) {
-		int screenWidth = _vm->_screen->getScreenWide();
-		byte *dst = _frameBuffer + yPos * screenWidth + xPos;
+		if (yPos + t->textSprite->h > _frameY + _frameHeight || t->textSprite->w > _frameWidth) {
+			int screenWidth = _vm->_screen->getScreenWide();
+			byte *dst = _frameBuffer + yPos * screenWidth + xPos;
 
-		for (int y = 0; y < t->textSprite->h; y++) {
-			memset(dst, 0, t->textSprite->w);
-			dst += screenWidth;
+			for (int y = 0; y < t->textSprite->h; y++) {
+				memset(dst, 0, t->textSprite->w);
+				dst += screenWidth;
+			}
+
+			_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, t->textSprite->w, t->textSprite->h);
 		}
-
-		_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, t->textSprite->w, t->textSprite->h);
 	}
 }
 
