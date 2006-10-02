@@ -35,7 +35,7 @@ void AGOSEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 	time(&cur_time);
 
 	te->time = cur_time + timeout - _gameStoppedClock;
-	if (_clockStopped)
+	if (getGameType() == GType_FF && _clockStopped)
 		te->time -= ((uint32)time(NULL) - _clockStopped);
 	te->subroutine_id = subroutine_id;
 
@@ -122,7 +122,7 @@ bool AGOSEngine::kickoffTimeEvents() {
 	TimeEvent *te;
 	bool result = false;
 
-	if (_clockStopped)
+	if (getGameType() == GType_FF && _clockStopped)
 		return result;
 
 	time(&cur_time);
