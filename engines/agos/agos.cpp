@@ -552,7 +552,7 @@ void AGOSEngine::setupGame() {
 		_numTextBoxes = 40;
 		_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
-		_vgaMemSize = 7000000;
+		_vgaMemSize = 7500000;
 #else
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
@@ -564,7 +564,7 @@ void AGOSEngine::setupGame() {
 		_numTextBoxes = 40;
 		_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
-		_vgaMemSize = 7000000;
+		_vgaMemSize = 7500000;
 #else
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
@@ -1201,8 +1201,10 @@ startOver:
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
 				displayBoxStars();
 			processSpecialKeys();
-			if (_keyPressed != 0)
-				break;
+			if (getGameType() == GType_PP && _keyPressed != 0) {
+				_needHitAreaRecalc++;
+				return;
+			}
 			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
 			if (_lastHitArea3 != 0)
@@ -1408,6 +1410,7 @@ byte *AGOSEngine::allocBlock(uint32 size) {
 			_vgaMemPtr = blockEnd;
 			return block;
 		}
+		debug(1, "allocBlock: size %d vgaMemSize %d", size, vgaMemSize);
 	} while (vgaMemSize--);
 
 	error("allocBlock: Couldn't find free block");

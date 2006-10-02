@@ -2486,11 +2486,13 @@ void AGOSEngine::o4_loadMouseImage() {
 
 void AGOSEngine::o4_message() {
 	// 63: show string nl
+
 	if (getBitFlag(105)) {
 		// Swampy adventures
+		getStringPtrByID(getNextStringID());
 //		printInfoText(getStringPtrByID(getNextStringID()));
 	} else {
-		o_message();
+		showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
 	}
 }
 
