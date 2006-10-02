@@ -272,7 +272,7 @@ static const byte _mouseOffs[29 * 32] = {
 void AGOSEngine::handleMouseMoved() {
 	uint x;
 
-	if (_mouseHideCount) {
+	if (getGameId() != GID_DIMP && _mouseHideCount) {
 		CursorMan.showMouse(false);
 		return;
 	}
@@ -414,7 +414,7 @@ void AGOSEngine::loadMouseImage() {
 }
 
 void AGOSEngine::drawMousePointer() {
-	if (getGameType() == GType_PP) {
+	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
 		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 37, 48, 0);
 	} else if (getGameType() == GType_SIMON2) {
 		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
