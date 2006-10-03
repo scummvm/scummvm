@@ -326,18 +326,6 @@ void AGOSEngine::timer_proc1() {
 			_syncFlag2 ^= 1;
 			if (!_syncFlag2) {
 				processVgaEvents();
-				if (getBitFlag(98)) {
-					if (!getBitFlag(97)) {
-						pairCheck();
-						gravityCheck();
-					}
-					if (_leftButtonDown || _rightButtonDown)
-						checkIfClickedOnBlock();
-					if (getBitFlag(99)) {
-						moveBlocks();
-					}
-					droppingBlock();
-				}
 			} else {
 				if (_scrollCount == 0) {
 					_lockWord &= ~2;

@@ -2977,12 +2977,11 @@ void AGOSEngine::centreScroll() {
 }
 
 void AGOSEngine::startOverlayAnims() {
-	printf("startOverlayAnims\n");
-
 	VgaSprite *vsp = _vgaSprites;
+	uint16 zoneNum;
 	int i;
 
-	_overlayAnimationZone = _variableArray[999];
+	zoneNum = _variableArray[999];
 	
 	for (i = 0; i < 600; i++) {
 		if (_variableArray[1000 + i] < 100)
@@ -3004,19 +3003,17 @@ void AGOSEngine::startOverlayAnims() {
 			vsp->x = (i % 20) * 32;
 		}
 		vsp->id = 1000 + i;
-		vsp->zoneNum = _overlayAnimationZone;
+		vsp->zoneNum = zoneNum;
 	}
 }
 
 void AGOSEngine::startAnOverlayAnim() {
-	printf("startAnOverlayAnim\n");
-
 	VgaSprite *vsp = _vgaSprites;
 	const byte *vcPtrOrg;
-	uint16 a, sprite, file, tmp;
+	uint16 a, sprite, file, tmp, zoneNum;
 	int16 x;
 
-	_overlayAnimationZone = _variableArray[999];
+	zoneNum = _variableArray[999];
 
 	_vcPtr += 4;
 	a = vcReadNextWord();
@@ -3040,7 +3037,7 @@ void AGOSEngine::startAnOverlayAnim() {
 	vsp->y = x / 20 * 32;
 	vsp->x = x % 20 * 32;;
 	vsp->id = vcReadVar(a);
-	vsp->zoneNum = _overlayAnimationZone;
+	vsp->zoneNum = zoneNum;
 
 	sprite = _vgaCurSpriteId;
 	file = _vgaCurZoneNum;
@@ -3057,160 +3054,6 @@ void AGOSEngine::startAnOverlayAnim() {
 	_vcPtr = vcPtrOrg;
 	_vgaCurSpriteId = sprite;
 	_vgaCurZoneNum = file;
-}
-
-void AGOSEngine::startBlock(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint priority) {
-	printf("startBlock: windowNum %d vgaSpriteId %d x %d y %d priority %d\n", windowNum, vgaSpriteId, x, y, priority);
-
-	VgaSprite *vsp = _vgaSprites;
-	const byte *vcPtrOrg;
-	uint16 sprite, tmp, zone;
-	uint i;
-
-	_lockWord |= 0x40;
-
-	while (vsp->id != 0)
-		vsp++;
-
-	_variableArray[201] = vgaSpriteId;
-
-	if (getBitFlag(95)) {
-		_droppingBlockAnim = vgaSpriteId;
-		_droppingBlockX = _variableArray[202];
-		_droppingBlockY = _variableArray[203];
-		_droppingBlockZ = _variableArray[204];
-		_droppingBlockLength = windowNum;
-		_droppingBlockType = 0;
-		if (windowNum != 1) {
-			_droppingBlockType = 1;
-			x += 15;
-			y += 10;
-			priority += 9;
-		}
-		_droppingBlockCount = 4;
-	}
-
-	for (i = 0; i < windowNum; i++) {
-		vsp->palette = 0;
-		vsp->flags = 0;
-		vsp->priority = 0;
-		vsp->windowNum = 4;
-		vsp->zoneNum = 60;
-		vsp->y = y;
-		vsp->x = x;
-		vsp->id = vgaSpriteId;
-		vsp->image = zoneNum;
-
-		_vgaCurSpriteId = vgaSpriteId;
-		_vgaCurZoneNum = 60;
-
-		tmp = to16Wrapper(priority);
-
-		sprite = _vgaCurSpriteId;
-		zone = _vgaCurZoneNum;
-		vcPtrOrg = _vcPtr;
-
-		_vcPtr = (byte *)&tmp;
-		vc23_setSpritePriority();
-
-		_vcPtr = vcPtrOrg;
-		_vgaCurSpriteId = sprite;
-		_vgaCurZoneNum = zone;
-		
-		vgaSpriteId++;
-		x += 15;
-		y += 10;
-		priority += 8;
-
-		vsp++;
-	}
-
-	_lockWord &= ~0x40;
-}
-
-void AGOSEngine::checkIfClickedOnBlock() {
-	 printf("checkIfClickedOnBlock\n");
-
-	VgaSprite *vsp = _vgaSprites;
-	uint16 items[2];
-	uint16 image, x, y, zone, priority;
-
-	if (_droppingBlockAnim == 0) {
-		goto get_out;
-	}
-
-	_vgaCurSpriteId = _droppingBlockAnim;
-	_vgaCurZoneNum = 60;
-
-	if (_droppingBlockType == 0) {
-		if (_mouseX >= vsp->x)
-			goto get_out;
-		if (_mouseX - 75 < vsp->x)
-			goto get_out;
-		if (_mouseY >= vsp->y)
-			goto get_out;
-		if (_mouseY - 30 < vsp->y)
-			goto get_out;
-
-		if (_leftButtonDown == 0) {
-			_droppingBlockLand = 1;
-			goto get_out;
-		}
-
-		image = (vsp->image - 2) / 3 + 20;
-		zone = _droppingBlockAnim + 1024;
-		x = vsp->x + 15;
-		y = vsp->y + 10;
-		priority = vsp->priority + 9;
-
-		items[0] = to16Wrapper(60);
-		items[1] = to16Wrapper(_droppingBlockAnim);
-
-		_vcPtr = (byte *)&items;
-		vc60_killSprite();
-
-		startBlock(3, image, zone, x, y, priority);
-
-		_droppingBlockAnim = _variableArray[201];
-		_droppingBlockType = 1;
-		_droppingBlockLength = 3;
-	} else {
-		if (_mouseX >= vsp->x)
-			goto get_out;
-		if (_mouseX - 75 < vsp->x)
-			goto get_out;
-		if (_mouseY - 20 >= vsp->y)
-			goto get_out;
-		if (_mouseY + 30 < vsp->y)
-			goto get_out;
-
-		if (_leftButtonDown == 0) {
-			_droppingBlockLand = 1;
-			goto get_out;
-		}
-
-		image = (vsp->image - 20) * 3 + 2;
-		zone = _droppingBlockAnim - 1024;
-		x = vsp->x - 15;
-		y = vsp->y - 10;
-		priority = vsp->priority - 9;
-
-		items[0] = to16Wrapper(60);
-		items[1] = to16Wrapper(_droppingBlockAnim);
-
-		_vcPtr = (byte *)&items;
-		vc60_killSprite();
-
-		startBlock(1, image, zone, x, y, priority);
-
-		_droppingBlockAnim = _variableArray[201];
-		_droppingBlockType = 0;
-		_droppingBlockLength = 1;
-	}
-
-get_out:;
-	_leftButtonDown = 0;
-	_rightButtonDown = 0;
 }
 
 } // End of namespace AGOS

@@ -302,15 +302,6 @@ protected:
  	uint16 _oracleMaxScrollY, _noOracleScroll;
  	uint16 _interactY;
 
-	uint16 _droppingBlockAnim;
-	uint16 _droppingBlockLength;
-	uint16 _droppingBlockCount;
-	uint16 _droppingBlockLand;
-	uint16 _droppingBlockType;
-	uint16 _droppingBlockX;
-	uint16 _droppingBlockY;
-	uint16 _droppingBlockZ;
-
 	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
 	int16 _scriptAdj1, _scriptAdj2;
 
@@ -405,7 +396,6 @@ protected:
 
 	uint16 _zoneNumber;
 	uint16 _vgaWaitFor, _lastVgaWaitFor;
-	uint16 _overlayAnimationZone;
 	uint16 _vgaCurSpriteId, _vgaCurZoneNum;
 	uint16 _vgaCurSpritePriority;
 
@@ -653,19 +643,6 @@ protected:
 
 	void mouseOff();
 	void mouseOn();
-
-	bool block0Supported(int i, int y);
-	bool block1Supported(int i, int y);
-	void checkTiles();
-	void moveBlocks();
-	void dropBlock(int id, int priority, int num);
-	void droppingBlock();
-	void stopBlock(int id, int num);
-	void remove0Block(int i);
-	void remove1Block(int i);
-	void pairCheck();
-	void gravityCheck();
-	bool hasBlockLanded(int16 yofs, int16 block, int16 priority, int16 type, int16 x, int16 y, int16 z);
 
 	bool loadTablesIntoMem(uint subr_id);
 	bool loadTablesOldIntoMem(uint subr_id);
@@ -1090,11 +1067,9 @@ public:
 	// Opcodes, Puzzle Pack only
 	void o4_iconifyWindow();
 	void o4_restoreOopsPosition();
-	void o4_checkTiles();
 	void o4_loadMouseImage();
 	void o4_message();
 	void o4_setShortText();
-	void o4_animate();
 	void o4_loadHiScores();
 	void o4_checkHiScores();
 	void o4_sync();
@@ -1128,8 +1103,6 @@ protected:
 
 	void startOverlayAnims();
 	void startAnOverlayAnim();
-	void startBlock(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint priority);
-	void checkIfClickedOnBlock();
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);

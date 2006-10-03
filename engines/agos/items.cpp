@@ -440,14 +440,13 @@ void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
 	op[23] = &AGOSEngine::o3_chance;
 	op[30] = &AGOSEngine::o4_iconifyWindow;
 	op[32] = &AGOSEngine::o4_restoreOopsPosition;
-	op[37] = &AGOSEngine::o4_checkTiles;
 	op[38] = &AGOSEngine::o4_loadMouseImage;
 	op[63] = &AGOSEngine::o4_message;
 	op[65] = &AGOSEngine::o3_addTextBox;
 	op[66] = &AGOSEngine::o4_setShortText;
 	op[70] = &AGOSEngine::o3_printLongText;
 	op[83] = &AGOSEngine::o2_rescan;
-	op[98] = &AGOSEngine::o4_animate;
+	op[98] = &AGOSEngine::o2_animate;
 	op[99] = &AGOSEngine::o2_stopAnimate;
 	op[105] = &AGOSEngine::o4_loadHiScores;
 	op[106] = &AGOSEngine::o4_checkHiScores;
@@ -2479,12 +2478,6 @@ void AGOSEngine::o4_restoreOopsPosition() {
 	}
 }
 
-void AGOSEngine::o4_checkTiles() {
-	// 37: for MahJongg game
-	getVarOrByte();
-	checkTiles();
-}
-
 void AGOSEngine::o4_loadMouseImage() {
 	// 38: load mouse image
 	getNextItemPtr();
@@ -2512,22 +2505,6 @@ void AGOSEngine::o4_setShortText() {
 		_shortText[var] = stringId;
 		_shortTextX[var] = getVarOrWord();
 		_shortTextY[var] = getVarOrWord();
-	}
-}
-
-void AGOSEngine::o4_animate() {
-	// 98: start vga
-	uint vga_res = getVarOrWord();
-	uint vgaSpriteId = getVarOrWord();
-	uint windowNum = getVarOrByte();
-	uint x = getVarOrWord();
-	uint y = getVarOrWord();
-	uint palette = getVarOrWord();
-
-	if (getBitFlag(96)) {
-		startBlock(windowNum, vga_res, vgaSpriteId, x, y, palette);
-	} else {
-		loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
 	}
 }
 

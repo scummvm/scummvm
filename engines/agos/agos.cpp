@@ -296,7 +296,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_vgaWaitFor = 0;
 	_lastVgaWaitFor = 0;
 
-	_overlayAnimationZone = 0;
 	_vgaCurZoneNum = 0;
 	_vgaCurSpriteId = 0;
 	_vgaCurSpritePriority = 0;
@@ -386,15 +385,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_interactY = 0;
 	_oracleMaxScrollY = 0;
 	_noOracleScroll = 0;
-
-	_droppingBlockAnim = 0;
-	_droppingBlockLength = 0;
-	_droppingBlockCount = 0;
-	_droppingBlockLand = 0;
-	_droppingBlockType = 0;
-	_droppingBlockX = 0;
-	_droppingBlockY = 0;
-	_droppingBlockZ = 0;
 
 	_sdlMouseX = 0;
 	_sdlMouseY = 0;
