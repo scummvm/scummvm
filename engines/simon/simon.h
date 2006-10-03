@@ -402,7 +402,7 @@ protected:
 	int16 _variableArray2[256];
 	int16 *_variableArrayPtr;
 
-	WindowBlock *_windowArray[16];
+	WindowBlock *_windowArray[8];
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -416,7 +416,7 @@ protected:
 	HitArea _hitAreas[250];
 
 	VgaPointersEntry _vgaBufferPointers[450];
-	VgaSprite _vgaSprites[180];
+	VgaSprite _vgaSprites[90];
 	VgaSleepStruct _vgaSleepStructs[60];
 
 	const uint16 *_pathFindArray[100];
@@ -434,7 +434,7 @@ protected:
 
 	byte _videoBuf1[3000];
 
-	VgaTimerEntry _vgaTimerList[900];
+	VgaTimerEntry _vgaTimerList[95];
 
 	WindowBlock *_windowList;
 
