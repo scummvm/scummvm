@@ -1362,30 +1362,29 @@ TextLocation *AGOSEngine::getTextLocation(uint a) {
 	return NULL;
 }
 
-void AGOSEngine::loadZone(uint vga_res) {
+void AGOSEngine::loadZone(uint zoneNum) {
 	VgaPointersEntry *vpe;
-	uint32 size;
 
-	CHECK_BOUNDS(vga_res, _vgaBufferPointers);
+	CHECK_BOUNDS(zoneNum, _vgaBufferPointers);
 
-	vpe = _vgaBufferPointers + vga_res;
+	vpe = _vgaBufferPointers + zoneNum;
 	if (vpe->vgaFile1 != NULL)
 		return;
 
 	// Loading order is important
 	// due to resource managment
 
-	loadVGAFile(vga_res * 2, 2, size);
+	loadVGAFile(zoneNum, 2);
 	vpe->vgaFile2 = _block;
 	vpe->vgaFile2End = _blockEnd;
 
-	loadVGAFile(vga_res * 2, 1, size);
+	loadVGAFile(zoneNum, 1);
 	vpe->vgaFile1 = _block;
 	vpe->vgaFile1End = _blockEnd;
 
 	vpe->sfxFile = NULL;
 	if (!(getFeatures() & GF_ZLIBCOMP)) {
-		loadVGAFile(vga_res * 2, 3, size);
+		loadVGAFile(zoneNum, 3);
 		vpe->sfxFile = _block;
 		vpe->sfxFileEnd = _blockEnd;
 	}

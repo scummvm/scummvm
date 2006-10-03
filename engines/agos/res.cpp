@@ -554,24 +554,24 @@ static bool decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
-void AGOSEngine::loadSimonVGAFile(uint vga_id) {
+void AGOSEngine::loadSimonVGAFile(uint id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
 		File in;
 		char filename[15];
-		if (vga_id == 23)
-			vga_id = 112;
-		if (vga_id == 328)
-			vga_id = 119;
+		if (id == 23)
+			id = 112;
+		else if (id == 328)
+			id = 119;
 
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
-				sprintf(filename, "0%d.out", vga_id);
+				sprintf(filename, "0%d.out", id);
 			else 
-				sprintf(filename, "0%d.pkd", vga_id);
+				sprintf(filename, "0%d.pkd", id);
 		} else {
-			sprintf(filename, "0%d.VGA", vga_id);
+			sprintf(filename, "0%d.VGA", id);
 		}
 
 		in.open(filename);
@@ -591,18 +591,18 @@ void AGOSEngine::loadSimonVGAFile(uint vga_id) {
 		}
 		in.close();
 	} else {
-		offs = _gameOffsetsPtr[vga_id];
+		offs = _gameOffsetsPtr[id];
 
-		size = _gameOffsetsPtr[vga_id + 1] - offs;
+		size = _gameOffsetsPtr[id + 1] - offs;
 		readGameFile(_vgaBufferPointers[11].vgaFile2, offs, size);
 	}
 }
 
-byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
+void AGOSEngine::loadVGAFile(uint id, uint type) {
 	File in;
 	char filename[15];
 	byte *dst = NULL;
-	uint32 file, offs, srcSize;
+	uint32 file, offs, srcSize, dstSize;
 	uint extraBuffer = 0;
 
 	if (getGameType() == GType_PP) {
@@ -618,11 +618,7 @@ byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	}
 
 	if (getFeatures() & GF_ZLIBCOMP) {
-		if (getPlatform() == Common::kPlatformAmiga) {
-			loadOffsets((const char*)"gfxindex.dat", id / 2 * 3 + type, file, offs, srcSize, dstSize);
-		} else {
-			loadOffsets((const char*)"graphics.vga", id / 2 * 3 + type, file, offs, srcSize, dstSize);
-		}
+		loadOffsets(getFileName(GAME_GFXIDXFILE), id * 3 + type, file, offs, srcSize, dstSize);
 
 		if (getPlatform() == Common::kPlatformAmiga)
 			sprintf(filename, "GFX%d.VGA", file);
@@ -634,52 +630,46 @@ byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
-				sprintf(filename, "%.3d%d.out", id / 2, type);
+				sprintf(filename, "%.3d%d.out", id, type);
 			else
-				sprintf(filename, "%.3d%d.pkd", id / 2, type);
+				sprintf(filename, "%.3d%d.pkd", id, type);
 		} else {
 			if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-				sprintf(filename, "%.2d%d.VGA", id / 2, type);
+				sprintf(filename, "%.2d%d.VGA", id, type);
 			} else {
-				sprintf(filename, "%.3d%d.VGA", id / 2, type);
+				sprintf(filename, "%.3d%d.VGA", id, type);
 			}
 		}
 
 		in.open(filename);
-		if (in.isOpen() == false) {
-			if (type == 3) 
-				return NULL;
-			else
-				error("loadVGAFile: Can't load %s", filename);
-		}
+		if (in.isOpen() == true) {
+			dstSize = srcSize = in.size();
+			if (getFeatures() & GF_CRUNCHED) {
+				byte *srcBuffer = (byte *)malloc(srcSize);
+				if (in.read(srcBuffer, srcSize) != srcSize)
+					error("loadVGAFile: Read failed");
 
-		dstSize = srcSize = in.size();
-		if (getFeatures() & GF_CRUNCHED) {
-			byte *srcBuffer = (byte *)malloc(srcSize);
-			if (in.read(srcBuffer, srcSize) != srcSize)
-				error("loadVGAFile: Read failed");
-
-			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-			dst = allocBlock (dstSize + extraBuffer);
-			decrunchFile(srcBuffer, dst, srcSize);
-			free(srcBuffer);
-		} else {
-			dst = allocBlock(dstSize + extraBuffer);
-			if (in.read(dst, dstSize) != dstSize)
-				error("loadVGAFile: Read failed");
+				dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
+				dst = allocBlock (dstSize + extraBuffer);
+				decrunchFile(srcBuffer, dst, srcSize);
+				free(srcBuffer);
+			} else {
+				dst = allocBlock(dstSize + extraBuffer);
+				if (in.read(dst, dstSize) != dstSize)
+					error("loadVGAFile: Read failed");
+			}
+			in.close();
+		} else if (type != 3) {
+			error("loadVGAFile: Can't load %s", filename);
 		}
-		in.close();
 	} else {
-		id += (type - 1);
+		id = id * 2 + (type - 1);
 		offs = _gameOffsetsPtr[id];
 
 		dstSize = _gameOffsetsPtr[id + 1] - offs;
 		dst = allocBlock(dstSize + extraBuffer);
 		readGameFile(dst, offs, dstSize);
 	}
-
-	dstSize += extraBuffer;
-	return dst;
 }
 
 static const char *dimpSoundList[32] = {

@@ -728,7 +728,7 @@ protected:
 
 	void set_video_mode_internal(uint16 mode, uint16 vga_res_id);
 
-	void loadZone(uint vga_res);
+	void loadZone(uint zoneNum);
 
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
 	void playSpeech(uint speech_id, uint vga_sprite_id);
@@ -1136,8 +1136,8 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	byte *loadVGAFile(uint id, uint type, uint32 &dstSize);
-	void loadSimonVGAFile(uint vga_id);
+	void loadVGAFile(uint id, uint type);
+	void loadSimonVGAFile(uint id);
 
 	int init();
 	int go();
