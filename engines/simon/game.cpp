@@ -590,7 +590,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1ACORNDEMO,
+		GID_SIMON1TALKIE,
 		"CD Demo",
 		ARRAYSIZE(SIMON1ACORNDEMO_GameFiles),
 		SIMON1ACORNDEMO_GameFiles,
@@ -603,7 +603,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1ACORN,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1ACORN_GameFiles),
 		SIMON1ACORN_GameFiles,
@@ -629,7 +629,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1AMIGA_FR,
+		GID_SIMON1AMIGA,
 		"AGA Floppy",
 		ARRAYSIZE(SIMON1AMIGA_FR_GameFiles),
 		SIMON1AMIGA_FR_GameFiles,
@@ -642,7 +642,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1AMIGA_DE,
+		GID_SIMON1AMIGA,
 		"AGA Floppy",
 		ARRAYSIZE(SIMON1AMIGA_DE_GameFiles),
 		SIMON1AMIGA_DE_GameFiles,
@@ -681,7 +681,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1CD32_2,
+		GID_SIMON1CD32,
 		"CD32",
 		ARRAYSIZE(SIMON1CD32_2_GameFiles),
 		SIMON1CD32_2_GameFiles,
@@ -720,7 +720,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_RU,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_RU_GameFiles),
 		SIMON1DOS_RU_GameFiles,
@@ -733,7 +733,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_INF,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_INF_GameFiles),
 		SIMON1DOS_INF_GameFiles,
@@ -746,7 +746,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_INF_RU,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_INF_RU_GameFiles),
 		SIMON1DOS_INF_RU_GameFiles,
@@ -759,7 +759,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_FR,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_FR_GameFiles),
 		SIMON1DOS_FR_GameFiles,
@@ -772,7 +772,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_DE,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_DE_GameFiles),
 		SIMON1DOS_DE_GameFiles,
@@ -785,7 +785,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_IT,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_IT_GameFiles),
 		SIMON1DOS_IT_GameFiles,
@@ -798,7 +798,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_ES,
+		GID_SIMON1DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON1DOS_ES_GameFiles),
 		SIMON1DOS_ES_GameFiles,
@@ -824,7 +824,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE2,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE2_GameFiles),
 		SIMON1TALKIE2_GameFiles,
@@ -837,7 +837,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE_FR,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_FR_GameFiles),
 		SIMON1TALKIE_FR_GameFiles,
@@ -850,7 +850,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE_DE,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_DE_GameFiles),
 		SIMON1TALKIE_DE_GameFiles,
@@ -863,7 +863,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE_HB,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_HB_GameFiles),
 		SIMON1TALKIE_HB_GameFiles,
@@ -876,7 +876,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE_IT,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_IT_GameFiles),
 		SIMON1TALKIE_IT_GameFiles,
@@ -889,7 +889,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE_IT2,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_IT2_GameFiles),
 		SIMON1TALKIE_IT2_GameFiles,
@@ -902,7 +902,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1TALKIE_ES,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1TALKIE_ES_GameFiles),
 		SIMON1TALKIE_ES_GameFiles,
@@ -915,7 +915,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1WIN,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1WIN_GameFiles),
 		SIMON1WIN_GameFiles,
@@ -928,7 +928,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1WIN_RU,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1WIN_RU_GameFiles),
 		SIMON1WIN_RU_GameFiles,
@@ -941,7 +941,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1WIN_DE,
+		GID_SIMON1TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON1WIN_DE_GameFiles),
 		SIMON1WIN_DE_GameFiles,
@@ -967,7 +967,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2DOS_RU,
+		GID_SIMON2DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON2DOS_RU_GameFiles),
 		SIMON2DOS_RU_GameFiles,
@@ -980,7 +980,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2DOS2,
+		GID_SIMON2DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON2DOS2_GameFiles),
 		SIMON2DOS2_GameFiles,
@@ -993,7 +993,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2DOS2_RU,
+		GID_SIMON2DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON2DOS2_RU_GameFiles),
 		SIMON2DOS2_RU_GameFiles,
@@ -1006,7 +1006,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2DOS_DE,
+		GID_SIMON2DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON2DOS_DE_GameFiles),
 		SIMON2DOS_DE_GameFiles,
@@ -1019,7 +1019,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2DOS_IT,
+		GID_SIMON2DOS,
 		"Floppy",
 		ARRAYSIZE(SIMON2DOS_IT_GameFiles),
 		SIMON2DOS_IT_GameFiles,
@@ -1032,7 +1032,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2DEMO,
+		GID_SIMON2TALKIE,
 		"CD Demo",
 		ARRAYSIZE(SIMON2DEMO_GameFiles),
 		SIMON2DEMO_GameFiles,
@@ -1059,7 +1059,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE2,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE2_GameFiles),
 		SIMON2TALKIE2_GameFiles,
@@ -1072,7 +1072,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE_FR,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE_FR_GameFiles),
 		SIMON2TALKIE_FR_GameFiles,
@@ -1085,7 +1085,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE_DE,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE_DE_GameFiles),
 		SIMON2TALKIE_DE_GameFiles,
@@ -1098,7 +1098,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE_DE2,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE_DE2_GameFiles),
 		SIMON2TALKIE_DE2_GameFiles,
@@ -1111,7 +1111,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE_HB,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE_HB_GameFiles),
 		SIMON2TALKIE_HB_GameFiles,
@@ -1124,7 +1124,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE_IT,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE_IT_GameFiles),
 		SIMON2TALKIE_IT_GameFiles,
@@ -1138,7 +1138,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2TALKIE_ES,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2TALKIE_ES_GameFiles),
 		SIMON2TALKIE_ES_GameFiles,
@@ -1151,7 +1151,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2WIN,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2WIN_GameFiles),
 		SIMON2WIN_GameFiles,
@@ -1164,7 +1164,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2WIN_DE,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2WIN_DE_GameFiles),
 		SIMON2WIN_DE_GameFiles,
@@ -1177,7 +1177,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2WIN_DE2,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2WIN_DE2_GameFiles),
 		SIMON2WIN_DE2_GameFiles,
@@ -1190,7 +1190,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon2",
 		GType_SIMON2,
-		GID_SIMON2WIN_PL,
+		GID_SIMON2TALKIE,
 		"CD",
 		ARRAYSIZE(SIMON2WIN_PL_GameFiles),
 		SIMON2WIN_PL_GameFiles,
@@ -1203,7 +1203,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_AMI_UK,
+		GID_FEEBLEFILES,
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_AMI_UK_GameFiles),
 		FEEBLEFILES_AMI_UK_GameFiles,
@@ -1216,7 +1216,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_AMI_DE,
+		GID_FEEBLEFILES,
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_AMI_DE_GameFiles),
 		FEEBLEFILES_AMI_DE_GameFiles,
@@ -1229,7 +1229,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_MAC_UK,
+		GID_FEEBLEFILES,
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_UK_GameFiles),
 		FEEBLEFILES_MAC_UK_GameFiles,
@@ -1242,7 +1242,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_MAC_FR,
+		GID_FEEBLEFILES,
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_FR_GameFiles),
 		FEEBLEFILES_MAC_FR_GameFiles,
@@ -1255,7 +1255,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_MAC_DE,
+		GID_FEEBLEFILES,
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_DE_GameFiles),
 		FEEBLEFILES_MAC_DE_GameFiles,
@@ -1268,7 +1268,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_MAC_ES,
+		GID_FEEBLEFILES,
 		"CD",
 		ARRAYSIZE(FEEBLEFILES_MAC_ES_GameFiles),
 		FEEBLEFILES_MAC_ES_GameFiles,
@@ -1281,7 +1281,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_2CD,
+		GID_FEEBLEFILES,
 		"2CD",
 		ARRAYSIZE(FEEBLEFILES_2CD_GameFiles),
 		FEEBLEFILES_2CD_GameFiles,
@@ -1294,7 +1294,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_4CD,
+		GID_FEEBLEFILES,
 		"4CD",
 		ARRAYSIZE(FEEBLEFILES_4CD_GameFiles),
 		FEEBLEFILES_4CD_GameFiles,
@@ -1307,7 +1307,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_FR,
+		GID_FEEBLEFILES,
 		"4CD",
 		ARRAYSIZE(FEEBLEFILES_FR_GameFiles),
 		FEEBLEFILES_FR_GameFiles,
@@ -1320,7 +1320,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_DE,
+		GID_FEEBLEFILES,
 		"4CD",
 		ARRAYSIZE(FEEBLEFILES_DE_GameFiles),
 		FEEBLEFILES_DE_GameFiles,
@@ -1333,7 +1333,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_IT,
+		GID_FEEBLEFILES,
 		"4CD",
 		ARRAYSIZE(FEEBLEFILES_IT_GameFiles),
 		FEEBLEFILES_IT_GameFiles,
@@ -1346,7 +1346,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"feeble",
 		GType_FF,
-		GID_FEEBLEFILES_ES,
+		GID_FEEBLEFILES,
 		"4CD",
 		ARRAYSIZE(FEEBLEFILES_ES_GameFiles),
 		FEEBLEFILES_ES_GameFiles,
