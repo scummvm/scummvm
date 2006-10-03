@@ -125,7 +125,7 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 
 	byte *pos = data;
 	if (*(pos++) != 0xFC)
-		error("Expected 0xFC header but found 0x%02X instead", (int) *pos);
+		debug(1, "Expected 0xFC header but found 0x%02X instead", (int) *pos);
 
 	// The next 3 bytes MIGHT be tempo, but we skip them and use the default.
 //	setTempo (*(pos++) | (*(pos++) << 8) | (*(pos++) << 16));

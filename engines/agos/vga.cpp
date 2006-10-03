@@ -289,10 +289,14 @@ VgaSprite *AGOSEngine::findCurSprite() {
 }
 
 int AGOSEngine::vcReadVarOrWord() {
-	int16 var = vcReadNextWord();
-	if (var < 0)
-		var = vcReadVar(-var);
-	return var;
+	if (getGameType() == GType_ELVIRA) {
+		return vcReadNextWord();
+	} else {
+		int16 var = vcReadNextWord();
+		if (var < 0)
+			var = vcReadVar(-var);
+		return var;
+	}
 }
 
 uint AGOSEngine::vcReadNextWord() {

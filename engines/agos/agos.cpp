@@ -2328,7 +2328,7 @@ void AGOSEngine::loadMusic(uint music) {
 		}
 
 		midi.startTrack (0);
-	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+	} else {
 		midi.stop();
 		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
@@ -2341,8 +2341,6 @@ void AGOSEngine::loadMusic(uint music) {
 
 		midi.loadS1D (&f);
 		midi.startTrack (0);
-	} else {
-		warning("Old music type not support");
 	}
 }
 

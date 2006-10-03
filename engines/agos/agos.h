@@ -1012,13 +1012,14 @@ public:
 	void oe1_worn();
 	void oe1_notWorn();
 	void oe1_notCarried();
-	void oe1_setFF();
-	void oe1_zoneDisk();
 	void oe1_isNotAt();
 	void oe1_sibling();
 	void oe1_notSibling();
+	void oe1_setFF();
 	void oe1_opcode176();
 	void oe1_opcode178();
+	void oe1_zoneDisk();
+	void oe1_printStats();
 
 	// Opcodes, Waxworks only
 	void oww_goto();

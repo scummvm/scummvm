@@ -249,6 +249,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[178] = &AGOSEngine::oe1_opcode178;
 
+	op[180] = &AGOSEngine::oww_whereTo;
+
 	op[198] = &AGOSEngine::o_comment;
 
 	op[206] = &AGOSEngine::o_getParent;
@@ -290,6 +292,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[267] = &AGOSEngine::oe1_zoneDisk;
 	op[268] = &AGOSEngine::o_saveUserGame;
 	op[269] = &AGOSEngine::o_loadUserGame;
+	op[270] = &AGOSEngine::oe1_printStats;
 	op[271] = &AGOSEngine::o_stopTune;
 
 	op[274] = &AGOSEngine::o_pauseGame;
@@ -1693,12 +1696,8 @@ void AGOSEngine::oe1_notSibling() {
 }
 
 void AGOSEngine::oe1_setFF() {
+	// 60
 	writeNextVarContents(0xFF);
-}
-
-void AGOSEngine::oe1_zoneDisk() {
-	getVarOrWord();
-	getVarOrWord();
 }
 
 void AGOSEngine::oe1_opcode176() {
@@ -1707,10 +1706,19 @@ void AGOSEngine::oe1_opcode176() {
 	getNextItemPtr();
 }
 
-
 void AGOSEngine::oe1_opcode178() {
 	getNextItemPtr();
 	getVarOrWord();
+}
+
+void AGOSEngine::oe1_zoneDisk() {
+	// 267: zone disk 
+	getVarOrWord();
+	getVarOrWord();
+}
+
+void AGOSEngine::oe1_printStats() {
+	// 270: print stats
 }
 
 
