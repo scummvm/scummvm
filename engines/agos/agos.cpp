@@ -274,6 +274,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_vgaSpriteChanged = 0;
 
+	_block = 0;
+	_blockEnd = 0;
 	_vgaMemPtr = 0;
 	_vgaMemEnd = 0;
 	_vgaMemBase = 0;
@@ -1370,16 +1372,22 @@ void AGOSEngine::loadZone(uint vga_res) {
 	if (vpe->vgaFile1 != NULL)
 		return;
 
-	vpe->vgaFile1 = loadVGAFile(vga_res * 2, 1, size);
-	vpe->vgaFile1End = vpe->vgaFile1 + size;
+	// Loading order is important
+	// due to resource managment
 
-	vpe->vgaFile2 = loadVGAFile(vga_res * 2 + 1, 2, size);
-	vpe->vgaFile2End = vpe->vgaFile2 + size;
+	loadVGAFile(vga_res * 2, 2, size);
+	vpe->vgaFile2 = _block;
+	vpe->vgaFile2End = _blockEnd;
+
+	loadVGAFile(vga_res * 2, 1, size);
+	vpe->vgaFile1 = _block;
+	vpe->vgaFile1End = _blockEnd;
 
 	vpe->sfxFile = NULL;
 	if (!(getFeatures() & GF_ZLIBCOMP)) {
-		vpe->sfxFile = loadVGAFile(vga_res * 2, 3, size);
-		vpe->sfxFileEnd = vpe->sfxFile + size;
+		loadVGAFile(vga_res * 2, 3, size);
+		vpe->sfxFile = _block;
+		vpe->sfxFileEnd = _blockEnd;
 	}
 }
 
@@ -1394,34 +1402,28 @@ void AGOSEngine::setZoneBuffers() {
 }
 
 byte *AGOSEngine::allocBlock(uint32 size) {
-	byte *block, *blockEnd;
-	int vgaMemSize = _vgaMemSize;
+	for (;;) {
+		_block = _vgaMemPtr;
+		_blockEnd = _block + size;
 
-	do {
-		block = _vgaMemPtr;
-		blockEnd = block + size;
-
-		if (blockEnd >= _vgaMemEnd) {
+		if (_blockEnd >= _vgaMemEnd) {
 			_vgaMemPtr = _vgaMemBase;
 		} else {
 			_rejectBlock = false;
-			checkNoOverWrite(blockEnd);
+			checkNoOverWrite();
 			if (_rejectBlock)
 				continue;
-			checkRunningAnims(blockEnd);
+			checkRunningAnims();
 			if (_rejectBlock)
 				continue;
-			checkZonePtrs(blockEnd);
-			_vgaMemPtr = blockEnd;
-			return block;
+			checkZonePtrs();
+			_vgaMemPtr = _blockEnd;
+			return _block;
 		}
-		debug(1, "allocBlock: size %d vgaMemSize %d", size, vgaMemSize);
-	} while (vgaMemSize--);
-
-	error("allocBlock: Couldn't find free block");
+	}
 }
 
-void AGOSEngine::checkNoOverWrite(byte *end) {
+void AGOSEngine::checkNoOverWrite() {
 	VgaPointersEntry *vpe;
 
 	if (_noOverWrite == 0xFFFF)
@@ -1430,21 +1432,21 @@ void AGOSEngine::checkNoOverWrite(byte *end) {
 	vpe = &_vgaBufferPointers[_noOverWrite];
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaMemPtr) {
+		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->vgaFile1End;
-		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaMemPtr) {
+		} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->vgaFile2End;
-		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaMemPtr) {
+		} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->sfxFileEnd;
 		} else {
 			_rejectBlock = false;
 		}
 	} else {
-		if (_vgaMemPtr <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
-			_vgaMemPtr <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+			_vgaMemPtr <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 		} else {
@@ -1453,40 +1455,40 @@ void AGOSEngine::checkNoOverWrite(byte *end) {
 	}
 }
 
-void AGOSEngine::checkRunningAnims(byte *end) {
+void AGOSEngine::checkRunningAnims() {
 	VgaSprite *vsp;
 	if (getGameType() != GType_FF && getGameType() != GType_PP && (_lockWord & 0x20)) {
 		return;
 	}
 
 	for (vsp = _vgaSprites; vsp->id; vsp++) {
-		checkAnims(vsp->zoneNum, end);
+		checkAnims(vsp->zoneNum);
 		if (_rejectBlock == true)
 			return;
 	}
 }
 
-void AGOSEngine::checkAnims(uint a, byte *end) {
+void AGOSEngine::checkAnims(uint a) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vgaBufferPointers[a];
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaMemPtr) {
+		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->vgaFile1End;
-		} else if (vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaMemPtr) {
+		} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->vgaFile2End;
-		} else if (vpe->sfxFile && vpe->sfxFile < end && vpe->sfxFileEnd > _vgaMemPtr) {
+		} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->sfxFileEnd;
 		} else {
 			_rejectBlock = false;
 		}
 	} else {
-		if (_vgaMemPtr <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
-				_vgaMemPtr <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+				_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
 			_rejectBlock = true;
 			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 		} else {
@@ -1495,14 +1497,14 @@ void AGOSEngine::checkAnims(uint a, byte *end) {
 	}
 }
 
-void AGOSEngine::checkZonePtrs(byte *end) {
+void AGOSEngine::checkZonePtrs() {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vpe->vgaFile1 < end && vpe->vgaFile1End > _vgaMemPtr ||
-					vpe->vgaFile2 < end && vpe->vgaFile2End > _vgaMemPtr ||
-					vpe->sfxFile < end && vpe->sfxFileEnd > _vgaMemPtr) {
+			if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block ||
+					vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block ||
+					vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
 				vpe->vgaFile1 = NULL;
 				vpe->vgaFile1End = NULL;
 				vpe->vgaFile2 = NULL;
@@ -1511,8 +1513,8 @@ void AGOSEngine::checkZonePtrs(byte *end) {
 				vpe->sfxFileEnd = NULL;
 			}
 		} else {
-			if (_vgaMemPtr <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
-					_vgaMemPtr <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
+			if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+					_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
 				vpe->vgaFile1 = NULL;
 				vpe->vgaFile2 = NULL;
 			}

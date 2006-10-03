@@ -605,6 +605,10 @@ byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 	uint32 file, offs, srcSize;
 	uint extraBuffer = 0;
 
+	if (getGameType() == GType_PP) {
+		_sound->stopVoice();
+	}
+
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		// !!! HACK !!!
 		// Allocate more space for text to cope with foreign languages that use
@@ -666,6 +670,7 @@ byte *AGOSEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 		}
 		in.close();
 	} else {
+		id += (type - 1);
 		offs = _gameOffsetsPtr[id];
 
 		dstSize = _gameOffsetsPtr[id + 1] - offs;

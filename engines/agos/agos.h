@@ -382,6 +382,7 @@ protected:
 
 	uint _vgaSpriteChanged;
 
+	byte *_block, *_blockEnd;
 	byte *_vgaMemPtr, *_vgaMemEnd, *_vgaMemBase;
 	byte *_vgaFrozenBase, *_vgaRealBase;
 	byte *_zoneBuffers;
@@ -746,10 +747,10 @@ protected:
 	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
 	byte *allocBlock(uint32 size);
-	void checkNoOverWrite(byte *end);
-	void checkRunningAnims(byte *end);
-	void checkAnims(uint a, byte *end);
-	void checkZonePtrs(byte *end);
+	void checkNoOverWrite();
+	void checkRunningAnims();
+	void checkAnims(uint a);
+	void checkZonePtrs();
 	void setZoneBuffers();
 
 	void runVgaScript();
