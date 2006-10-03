@@ -575,6 +575,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "MM3-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
 	{ "freddi4", "freddi4", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "Freddi4", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "f4-demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "ff4demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "Ff4demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -590,6 +591,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCove", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "FreddiDZZ", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "freddicove", "FreddiDZZ", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "FreddiMML", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddicove", "FreddiMML", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },

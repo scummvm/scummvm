@@ -458,7 +458,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
-	14d48c95b43ddeb983254cf6c43851f1	-1	nl	Windows	-	-	-	adutchguy
+	14d48c95b43ddeb983254cf6c43851f1	-1	nl	All	-	-	-	adutchguy, daniel9
 	07b810e37be7489263f7bc7627d4765d	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
 	4f138ac6f9b2ac5a41bc68b2c3296064	-1	fr	Windows	HE 99	-	-	gist974
@@ -476,8 +476,8 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
+	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9
 	b100abf7ff83146df50db78dbd5e9cfa	-1	fr	All	HE 100	-	-	alamaz, gist974
-	b8955d7d23b4972229060d1592489fef	-1	nl	Windows	HE 100	-	-	adutchguy
 	4ce2d5b355964bbcb5e5ce73236ef868	-1	ru	Windows	HE 100	-	-	sev
 
 	6b257bb2827dd894b8109a50a1a18b5a	-1	nl	All	HE 100	Demo	-	Kirben, sev
