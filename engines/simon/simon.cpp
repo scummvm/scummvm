@@ -1279,11 +1279,11 @@ void SimonEngine::loadZone(uint vga_res) {
 	if (vpe->vgaFile1 != NULL)
 		return;
 
+	vpe->vgaFile2 = loadVGAFile(vga_res * 2, 2, size);
+	vpe->vgaFile2End = vpe->vgaFile2 + size;
+
 	vpe->vgaFile1 = loadVGAFile(vga_res * 2, 1, size);
 	vpe->vgaFile1End = vpe->vgaFile1 + size;
-
-	vpe->vgaFile2 = loadVGAFile(vga_res * 2 + 1, 2, size);
-	vpe->vgaFile2End = vpe->vgaFile2 + size;
 
 	vpe->sfxFile = NULL;
 	if (getGameType() == GType_FF && getPlatform() == Common::kPlatformWindows) {

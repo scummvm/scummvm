@@ -721,6 +721,7 @@ byte *SimonEngine::loadVGAFile(uint id, uint type, uint32 &dstSize) {
 		}
 		in.close();
 	} else {
+		id += (type - 1);
 		offs = _gameOffsetsPtr[id];
 
 		dstSize = _gameOffsetsPtr[id + 1] - offs;
