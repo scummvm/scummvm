@@ -259,7 +259,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 			continue;
 
 		// Insert the element from the old table into the new table.
-		// Since we know that no key exists twice the old table, we
+		// Since we know that no key exists twice in the old table, we
 		// can do this slightly better than by calling lookup, since we
 		// don't have to call _equal().
 		dex = _hash(old_arr[ctr]->_key) % _arrsize;
