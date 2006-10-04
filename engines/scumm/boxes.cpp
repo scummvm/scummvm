@@ -1181,7 +1181,7 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 	// next box (box2) = final box?
 	if (box2 == finalBox) {
 		// In Indy3, the masks (= z-level) have to match, too -- needed for the
-		// 'maze' in the zeppeling (see bug #1032964).
+		// 'maze' in the zeppelin (see bug #1032964).
 		if (_vm->_game.id != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
 			// Is the actor (x,y) between both gates?
 			if (compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateA[0].x, gateA[0].y) !=
