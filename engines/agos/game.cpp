@@ -182,9 +182,9 @@ static ADGameFileDescription ELVIRA1DOS2_GameFiles[] = {
 };
 
 static ADGameFileDescription ELVIRA2DOS_GameFiles[] = {
-	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7"},
+	{ "gamepc",		GAME_BASEFILE,	"4bf28ab00f5324fd938e632595742382"},
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
-	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17"},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7"},
 	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
 };
 

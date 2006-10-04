@@ -622,7 +622,7 @@ void AGOSEngine::setupGame() {
 #endif
 		_tableMemSize = 50000;
 		_vgaBaseDelay = 1;
-		_numVars = 512;
+		_numVars = 254;
 	} else if (getGameType() == GType_ELVIRA) {
 		gss = PTR(simon1_settings);
 		_numTextBoxes = 20;
@@ -634,7 +634,7 @@ void AGOSEngine::setupGame() {
 #endif
 		_tableMemSize = 150000;
 		_vgaBaseDelay = 1;
-		_numVars = 256;
+		_numVars = 512;
 	}
 
 	allocItemHeap();
