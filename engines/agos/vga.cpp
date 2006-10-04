@@ -1629,7 +1629,7 @@ void AGOSEngine::vc12_delay() {
 	} else if (getGameType() == GType_SIMON2) {
 		num = vcReadNextByte() * _frameRate;
 	} else {
-		num = vcReadVarOrWord();
+		num = vcReadVarOrWord() * _frameRate;
 	}
 
 	// Work around to allow inventory arrows to be

@@ -549,6 +549,7 @@ void AGOSEngine::setupGame() {
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
 		_tableMemSize = 200000;
+		_frameRate = 1;
 		_vgaBaseDelay = 5;
 		_numVars = 2048;
 	} else if (getGameType() == GType_FF) {
@@ -561,6 +562,7 @@ void AGOSEngine::setupGame() {
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
 		_tableMemSize = 200000;
+		_frameRate = 1;
 		_vgaBaseDelay = 5;
 		_numVars = 255;
 	} else if (getGameType() == GType_SIMON2) {
@@ -581,6 +583,7 @@ void AGOSEngine::setupGame() {
 		else
 			_musicIndexBase = 1128 / 4;
 		_soundIndexBase = 1660 / 4;
+		_frameRate = 1;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
 	} else if (getGameType() == GType_SIMON1) {
@@ -597,6 +600,7 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 150000;
 		_musicIndexBase = 1316 / 4;
 		_soundIndexBase = 0;
+		_frameRate = 1;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
 	} else if (getGameType() == GType_WW) {
@@ -609,6 +613,7 @@ void AGOSEngine::setupGame() {
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
 		_tableMemSize = 150000;
+		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
 	} else if (getGameType() == GType_ELVIRA2) {
@@ -621,6 +626,7 @@ void AGOSEngine::setupGame() {
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
 		_tableMemSize = 50000;
+		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
 	} else if (getGameType() == GType_ELVIRA) {
@@ -633,6 +639,7 @@ void AGOSEngine::setupGame() {
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
 		_tableMemSize = 150000;
+		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 512;
 	}
@@ -652,8 +659,6 @@ void AGOSEngine::setupGame() {
 
 	_currentMouseCursor = 255;
 	_currentMouseAnim = 255;
-
-	_frameRate = 1;
 
 	_lastMusicPlayed = -1;
 	_nextMusicToPlay = -1;
