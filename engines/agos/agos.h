@@ -336,6 +336,7 @@ protected:
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 
+	bool _initMouse;
 	int _mouseX, _mouseY;
 	int _mouseXOld, _mouseYOld;
 
@@ -407,8 +408,8 @@ protected:
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
 
-	Item *_objectArray[20];
-	Item *_itemStore[20];
+	Item *_objectArray[50];
+	Item *_itemStore[50];
 
 	uint16 _shortText[40];
 	uint16 _shortTextX[40];
@@ -983,6 +984,14 @@ public:
 
 	uint16 getDoorState(Item *item, uint16 d);
 	uint16 getExitOf(Item *item, uint16 d);
+	void moveDirn(Item *i, int x);
+
+	int sizeContents(Item *x);
+	int sizeOfRec(Item *o, int d);
+	int sizeRec(Item *x, int d);
+
+	int canPlace(Item *x, Item *y);
+	void xPlace(Item *x, Item *y);
 
 	// Opcodes, Elvira 1 only
 	void oe1_present();
@@ -1000,6 +1009,7 @@ public:
 	void oe1_printStats();
 
 	// Opcodes, Waxworks only
+	void oww_moveDirn();
 	void oww_goto();
 	void oww_whereTo();
 	void oww_menu();

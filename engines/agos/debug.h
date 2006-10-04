@@ -95,7 +95,7 @@ static const char *const ww_opcode_name_table[256] = {
 	/* 52 */
 	"VV|MODF",
 	"VW|RANDOM",
-	NULL,
+	"B|MOVE_DIRN",
 	"I|SET_A_PARENT",
 	/* 56 */
 	"IB|SET_CHILD2_BIT",

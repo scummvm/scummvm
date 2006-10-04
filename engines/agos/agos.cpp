@@ -235,6 +235,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
 
+	_initMouse = 0;
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseXOld = 0;
@@ -1142,6 +1143,8 @@ void AGOSEngine::setup_cond_c_helper() {
 			}
 			if (getGameType() == GType_PP)
 				_variableArray[199] = id;
+			else if (getGameType() == GType_WW)
+				_variableArray[10] = id;
 			else
 				_variableArray[60] = id;
 			break;
@@ -1247,6 +1250,8 @@ startOver:
 				}
 				if (getGameType() == GType_PP)
 					_variableArray[199] = id;
+				else if (getGameType() == GType_WW)
+					_variableArray[10] = id;
 				else
 					_variableArray[60] = id;
 				displayName(ha);

@@ -179,7 +179,8 @@ enum SubObjectFlags {
 	kOFKeyColor2      = 0x40,
 	kOFMenu           = 0x80,
 	kOFNumber         = 0x100,
-	kOFVoice          = 0x200
+	kOFSoft           = 0x200, // Waxworks
+	kOFVoice          = 0x200  // Others
 };
 
 enum GameFeatures {

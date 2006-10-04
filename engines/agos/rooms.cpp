@@ -62,6 +62,29 @@ uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
 	return subRoom->roomExit[d];
 }
 
+void AGOSEngine::moveDirn(Item *i, int x) {
+	Item *d;
+	uint16 n;
+
+	if (i->parent == 0)
+		return;
+
+	n = getExitOf(derefItem(i->parent), x);
+	if (derefItem(n) == NULL) {
+		loadRoomItems(n);
+		n=getExitOf(derefItem(i->parent), x);
+	}
+
+	d = derefItem(n);
+	if (d) {
+		n = getDoorState(derefItem(i->parent), x);
+		if(n == 1) {
+			if(!canPlace(i,d))
+				setItemParent(i,d);
+		}
+	}
+}
+
 bool AGOSEngine::loadRoomItems(uint item) {
 	byte *p;
 	uint i, min_num, max_num;

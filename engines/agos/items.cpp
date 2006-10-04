@@ -314,6 +314,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
 	// Confirmed
+	op[54] = &AGOSEngine::oww_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -1010,8 +1011,14 @@ void AGOSEngine::o_picture() {
 
 	_picture8600 = (vga_res == 8600);
 
-	if (mode == 4)
+	if (mode == 4) {
 		vc29_stopAllSounds();
+
+		if (!_initMouse) {
+			_initMouse = 1;
+			vc33_setMouseOn();
+		}
+	}
 
 	if (_lockWord & 0x10)
 		error("o_picture: _lockWord & 0x10");
@@ -1724,6 +1731,12 @@ void AGOSEngine::oe1_printStats() {
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
+
+void AGOSEngine::oww_moveDirn() {
+	// 54: move direction
+	int16 d = getVarOrByte();
+	moveDirn(me(), d);
+}
 
 void AGOSEngine::oww_goto() {
 	// 55: set itemA parent

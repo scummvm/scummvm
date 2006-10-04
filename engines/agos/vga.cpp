@@ -186,9 +186,9 @@ void AGOSEngine::setupVgaOpcodes() {
 
 	switch (getGameType()) {
 	case GType_ELVIRA:
+	case GType_ELVIRA2:
 		setupElvira1VideoOpcodes(vga_opcode_table);
 		break;
-	case GType_ELVIRA2:
 	case GType_WW:
 	case GType_SIMON1:
 		setupCommonVideoOpcodes(vga_opcode_table);
@@ -2449,8 +2449,36 @@ void AGOSEngine::vc60_killSprite() {
 
 void AGOSEngine::vc61_setMaskImage() {
 	if (getGameType() == GType_WW) {
-		// FIXME
-		vcReadVarOrWord();
+		uint16 a = vcReadVarOrWord();
+		byte *src, *dst;
+
+		if (a == 6) {
+			src = _curVgaFile2 + 800;
+			dst = getBackBuf();
+			memcpy(dst, src, 64000);
+			a = 4;
+		}
+
+		src = _curVgaFile2 + 3360;
+		dst = getBackBuf() + 3840;
+
+		uint tmp = a;
+		while (tmp--) {
+			src += 1712;
+			dst += 1536;
+		}
+
+		src += 800;
+
+		if (a != 5) {
+			
+
+
+		}
+
+		if (a == 6) {
+
+		}
 	} else {
 		VgaSprite *vsp = findCurSprite();
 
