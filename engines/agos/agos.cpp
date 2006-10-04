@@ -1623,6 +1623,16 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
 	}
 
+	if (_startVgaScript) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), num, vga_res_id);
+		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), num, vga_res_id);
+		} else {
+			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), num, vga_res_id);
+		}
+	}
+
 	if (getGameType() == GType_SIMON1) {
 		if (vga_res_id == 16300) {
 			clearBackFromTop(134);
@@ -1654,7 +1664,6 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
 	}
 
-	//dump_vga_script(_vcPtr, num, vga_res_id);
 	runVgaScript();
 	_vcPtr = vc_ptr_org;
 
