@@ -1784,7 +1784,7 @@ const char *const ww_video_opcode_name_table[] = {
 	/* 44 */
 	"d|SKIP_IF_BIT_SET",
 	"dd|VC_45",
-	"v|SET_SPRITE_Y",
+	"d|VC_46",
 	"d|VC_47",
 	/* 48 */
 	"d|VC_48",

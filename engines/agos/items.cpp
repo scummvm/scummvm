@@ -308,6 +308,16 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
+
+	op[83] = &AGOSEngine::o1_rescan;
+	op[98] = &AGOSEngine::o1_animate;
+	op[99] = &AGOSEngine::o1_stopAnimate;
+	op[127] = &AGOSEngine::o1_playTune;
+	op[148] = &AGOSEngine::oww_ifDoorOpen;
+	op[180] = &AGOSEngine::o_b2Set;
+	op[181] = &AGOSEngine::o_b2Clear;
+	op[182] = &AGOSEngine::o_b2Zero;
+	op[183] = &AGOSEngine::o_b2NotZero;
 }
 
 void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
@@ -2645,6 +2655,8 @@ int AGOSEngine::runScript() {
 			if (opcode == 0) {
 				flag = true;
 				opcode = getByte();
+				debug(1, "runScript: opcode %d", opcode);
+
 				if (opcode == 0xFF)
 					return 0;
 			}

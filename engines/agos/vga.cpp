@@ -392,7 +392,7 @@ void AGOSEngine::vcSkipNextInstruction() {
 	} else if (getGameType() == GType_SIMON1) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenSimon1[opcode];
-	} else if (getGameType() == GType_WW) {
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenWW[opcode];
 	} else {
@@ -417,7 +417,11 @@ void AGOSEngine::vc2_call() {
 	byte *b, *bb;
 	const byte *vcPtrOrg;
 
-	num = vcReadVarOrWord();
+	if (getGameType() == GType_ELVIRA2) {
+		num = vcReadNextWord();
+	} else {
+		num = vcReadVarOrWord();
+	}
 
 	old_file_1 = _curVgaFile1;
 	old_file_2 = _curVgaFile2;
@@ -1608,7 +1612,7 @@ void AGOSEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 }
 
 void AGOSEngine::vc11_clearPathFinder() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		// FIXME
 		vcReadNextWord();
 	} else {
@@ -1687,7 +1691,7 @@ void AGOSEngine::vc16_waitSync() {
 }
 
 void AGOSEngine::vc17_setPathfinderItem() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		// FIXME
 		vcReadNextWord();
 	} else {
@@ -1839,7 +1843,12 @@ void AGOSEngine::vc23_setSpritePriority() {
 
 void AGOSEngine::vc24_setSpriteXY() {
 	VgaSprite *vsp = findCurSprite();
-	vsp->image = vcReadVarOrWord();
+
+	if (getGameType() == GType_ELVIRA2) {
+		vsp->image = vcReadNextWord();
+	} else {
+		vsp->image = vcReadVarOrWord();
+	}
 
 	vsp->x += (int16)vcReadNextWord();
 	vsp->y += (int16)vcReadNextWord();
@@ -1941,7 +1950,7 @@ void AGOSEngine::vc31_setWindow() {
 }
 
 void AGOSEngine::vc32_copyVar() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		// FIXME
 	} else {
 		uint16 a = vcReadVar(vcReadNextWord());
@@ -1987,7 +1996,7 @@ void AGOSEngine::vc36_setWindowImage() {
 }
 
 void AGOSEngine::vc37_addToSpriteY() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		// FIXME
 		vcReadNextWord();
 		vcReadNextWord();
@@ -2097,7 +2106,7 @@ void AGOSEngine::vc44_skipIfBitSet() {
 }
 
 void AGOSEngine::vc45_setSpriteX() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		//FIXME
 		vcReadNextWord();
 		vcReadNextWord();
@@ -2109,13 +2118,18 @@ void AGOSEngine::vc45_setSpriteX() {
 }
 
 void AGOSEngine::vc46_setSpriteY() {
-	VgaSprite *vsp = findCurSprite();
-	vsp->y = vcReadVar(vcReadNextWord());
-	_vgaSpriteChanged++;
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		//FIXME
+		vcReadNextWord();
+	} else {
+		VgaSprite *vsp = findCurSprite();
+		vsp->y = vcReadVar(vcReadNextWord());
+		_vgaSpriteChanged++;
+	}
 }
 
 void AGOSEngine::vc47_addToVar() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		//FIXME
 		vcReadNextWord();
 	} else {
@@ -2128,7 +2142,7 @@ void AGOSEngine::vc48_setPathFinder() {
 	uint16 a = (uint16)_variableArrayPtr[12];
 	const uint16 *p = _pathFindArray[a - 1];
 
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		//FIXME
 		vcReadNextWord();
 	} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -2314,7 +2328,7 @@ void AGOSEngine::vc55_moveBox() {
 }
 
 void AGOSEngine::vc56_delay() {
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		byte *src = _curVgaFile2 + 32;
 		byte *dst = getBackBuf();
 
@@ -2341,30 +2355,33 @@ void AGOSEngine::vc57_blackPalette() {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
 		_system->setPalette(palette, 0, 256);
+	} else {
+		debug(1, "vc57_blackPalette");
 	}
 }
 
 void AGOSEngine::vc58() {
-	if (getGameType() == GType_WW)
-		error("Code whell");;
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		// FIXME
+	} else {
+		uint16 sprite = _vgaCurSpriteId;
+		uint16 file = _vgaCurZoneNum;
+		const byte *vcPtrOrg;
+		uint16 tmp;
 
-	uint16 sprite = _vgaCurSpriteId;
-	uint16 file = _vgaCurZoneNum;
-	const byte *vcPtrOrg;
-	uint16 tmp;
+		_vgaCurZoneNum = vcReadNextWord();
+		_vgaCurSpriteId = vcReadNextWord();
 
-	_vgaCurZoneNum = vcReadNextWord();
-	_vgaCurSpriteId = vcReadNextWord();
+		tmp = to16Wrapper(vcReadNextWord());
 
-	tmp = to16Wrapper(vcReadNextWord());
+		vcPtrOrg = _vcPtr;
+		_vcPtr = (byte *)&tmp;
+		vc23_setSpritePriority();
 
-	vcPtrOrg = _vcPtr;
-	_vcPtr = (byte *)&tmp;
-	vc23_setSpritePriority();
-
-	_vcPtr = vcPtrOrg;
-	_vgaCurSpriteId = sprite;
-	_vgaCurZoneNum = file;
+		_vcPtr = vcPtrOrg;
+		_vgaCurSpriteId = sprite;
+		_vgaCurZoneNum = file;
+	}
 }
 
 void AGOSEngine::vc59() {
@@ -2379,7 +2396,7 @@ void AGOSEngine::vc59() {
 	} else if (getGameType() == GType_SIMON1) {
 		if (!_sound->isVoiceActive())
 			vcSkipNextInstruction();
-	} else {
+	} else if (getGameType() == GType_WW) {
 		// Skip if not EGA
 		vcSkipNextInstruction();
 	}
@@ -2449,7 +2466,7 @@ void AGOSEngine::vc60_killSprite() {
 
 void AGOSEngine::vc61_setMaskImage() {
 	if (getGameType() == GType_WW) {
-		uint16 a = vcReadVarOrWord();
+		uint16 a = vcReadNextWord();
 		byte *src, *dst;
 
 		if (a == 6) {

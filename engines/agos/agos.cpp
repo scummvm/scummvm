@@ -614,7 +614,7 @@ void AGOSEngine::setupGame() {
 	} else if (getGameType() == GType_ELVIRA2) {
 		gss = PTR(simon1_settings);
 		_numTextBoxes = 20;
-		_numVideoOpcodes = 56;
+		_numVideoOpcodes = 60;
 #ifndef PALMOS_68K
 		_vgaMemSize = 1000000;
 #else
@@ -626,7 +626,7 @@ void AGOSEngine::setupGame() {
 	} else if (getGameType() == GType_ELVIRA) {
 		gss = PTR(simon1_settings);
 		_numTextBoxes = 20;
-		_numVideoOpcodes = 56;
+		_numVideoOpcodes = 57;
 #ifndef PALMOS_68K
 		_vgaMemSize = 1000000;
 #else
@@ -634,7 +634,7 @@ void AGOSEngine::setupGame() {
 #endif
 		_tableMemSize = 150000;
 		_vgaBaseDelay = 1;
-		_numVars = 512;
+		_numVars = 256;
 	}
 
 	allocItemHeap();
