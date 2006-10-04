@@ -564,7 +564,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						return;
 					}
 				} else {
-					masked = (y < v1.boundsRect.top || y >= v1.boundsRect.bottom) || (*mask & maskbit);
+					masked = (y < v1.boundsRect.top || y >= v1.boundsRect.bottom) || (v1.x < 0 || v1.x >= v1.boundsRect.right) || (*mask & maskbit);
 
 					if (color && !masked && !skip_column) {
 						pcolor = palette[color];
