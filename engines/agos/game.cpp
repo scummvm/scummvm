@@ -703,7 +703,7 @@ static AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 			ARRAYSIZE(ELVIRA2DOS_FR_GameFiles),
 			ELVIRA2DOS_FR_GameFiles,
-			Common::EN_ANY,
+			Common::FR_FRA,
 			Common::kPlatformPC,
 		},
 

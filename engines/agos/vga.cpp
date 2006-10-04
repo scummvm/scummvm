@@ -1765,16 +1765,18 @@ void AGOSEngine::vc22_setSpritePalette() {
 		palptr = &_displayPalette[(a * 64)];
 		offs = _curVgaFile1 + 6;
 	} else {
+		num = 16;
 		palSize = 32;
 
 		palptr = _displayPalette;
 		offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 
-		if (b >= 1000) {
-			b -= 1000;
-			num = 16;
-		} else {
-			num = 13;
+		if (getGameType() == GType_ELVIRA) {
+			if (b >= 1000) {
+				b -= 1000;
+			} else {
+				num = 13;
+			}
 		}
 	}
 
