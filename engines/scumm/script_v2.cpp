@@ -59,7 +59,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_ifNotState08),
 		/* 10 */
 		OPCODE(o5_getObjectOwner),
-		OPCODE(o2_animateActor),
+		OPCODE(o5_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o2_actorOps),
 		/* 14 */
@@ -139,7 +139,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_ifState08),
 		/* 50 */
 		OPCODE(o2_pickupObject),
-		OPCODE(o2_animateActor),
+		OPCODE(o5_animateActor),
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o2_actorOps),
 		/* 54 */
@@ -219,7 +219,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_ifNotState08),
 		/* 90 */
 		OPCODE(o5_getObjectOwner),
-		OPCODE(o2_animateActor),
+		OPCODE(o5_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o2_actorOps),
 		/* 94 */
@@ -299,7 +299,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_ifState08),
 		/* D0 */
 		OPCODE(o2_pickupObject),
-		OPCODE(o2_animateActor),
+		OPCODE(o5_animateActor),
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o2_actorOps),
 		/* D4 */
@@ -1260,14 +1260,6 @@ void ScummEngine_v2::o2_setActorElevation() {
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
 	a->setElevation(elevation * 2);
-}
-
-void ScummEngine_v2::o2_animateActor() {
-	int act = getVarOrDirectByte(PARAM_1);
-	int anim = getVarOrDirectByte(PARAM_2);
-
-	Actor *a = derefActor(act, "o2_animateActor");
-	a->animateActor(anim);
 }
 
 void ScummEngine_v2::o2_actorFromPos() {

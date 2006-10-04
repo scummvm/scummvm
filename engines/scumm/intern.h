@@ -323,7 +323,6 @@ protected:
 	void o2_actorOps();
 	void o2_add();
 	void o2_addIndirect();
-	void o2_animateActor();
 	void o2_assignVarByte();
 	void o2_assignVarWordIndirect();
 	void o2_beginOverride();
