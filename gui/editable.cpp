@@ -110,9 +110,11 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		forcecaret = true;
 		break;
 	case 127:	// delete
-		_editString.deleteChar(_caretPos);
+		if (_caretPos < (int)_editString.size()) {
+			_editString.deleteChar(_caretPos);
+			dirty = true;
+		}
 		forcecaret = true;
-		dirty = true;
 		break;
 	case 256 + 20:	// left arrow
 		if (_caretPos > 0) {
