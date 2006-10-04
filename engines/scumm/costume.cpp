@@ -449,7 +449,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 
 		do {
 			if (_scaleY == 255 || v1.scaletable[scaleIndexY++] < _scaleY) {
-				masked = (y < 0 || y >= _out.h) || (v1.mask_ptr && (mask[0] & maskbit));
+				masked = (y < 0 || y >= _out.h) || (v1.x < 0 || v1.x >= _out.w) || (v1.mask_ptr && (mask[0] & maskbit));
 				
 				if (color && !masked) {
 					if (_shadow_mode & 0x20) {
@@ -516,9 +516,9 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 			len = *src++;
 		do {
 			if (_scaleY == 255 || v1.scaletable[_scaleIndexY] < _scaleY) {
-				masked = (y < 0 || y >= _out.h) || (v1.mask_ptr && (mask[0] & maskbit));
+				masked = (y < 0 || y >= _out.h) || (v1.x < 0 || v1.x >= _out.w) || (v1.mask_ptr && (mask[0] & maskbit));
 				
-				if (color && v1.x >= 0 && v1.x < _out.w && !masked) {
+				if (color && !masked) {
 					*dst = _palette[color];
 				}
 
