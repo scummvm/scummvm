@@ -40,6 +40,14 @@ struct SubRoom : Child {
 	uint16 flags;
 };
 
+struct SubSuperRoom : Child {
+	uint16 subroutine_id;
+	uint16 roomX;
+	uint16 roomY;
+	uint16 roomZ;
+	uint16 roomExit[1];
+};
+
 struct SubObject : Child {
 	uint16 objectName;
 	uint16 objectSize;
@@ -77,6 +85,7 @@ struct SubGenExit : Child {
 
 enum {
 	SubRoom_SIZE = sizeof(SubRoom) - sizeof(uint16),
+	SubSuperRoom_SIZE = sizeof(SubSuperRoom) - sizeof(uint16),
 	SubObject_SIZE = sizeof(SubObject) - sizeof(int16)
 };
 

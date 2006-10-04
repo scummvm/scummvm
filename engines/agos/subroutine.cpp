@@ -32,51 +32,27 @@ namespace AGOS {
 
 // Script opcodes to load into memory
 static const char *const opcode_arg_table_elvira1[300] = {
-	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ",	 "II ",	"II ", "II ", "II ", "F ", "F ", "FN ",	 /*  EQ",        */
-	"FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ", "p ",	 /*  PREP",      */
-	"N ", "I ", "I ", "I ",	 "I ",	"IN ",	"IB ", "IB ", "II ", "IB ", "N ", " ", " ", " ", "I ",	 /*  GET",       */
+	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ",	 "II ",	"II ", "II ", "II ", "F ", "F ", "FN ",
+	"FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ", "p ",
+	"N ", "I ", "I ", "I ",	 "I ",	"IN ",	"IB ", "IB ", "II ", "IB ", "N ", " ", " ", " ", "I ",
 	"I ","I ","I ", "I ","I ","I ",	"II ","II ","II ","II ","IBF ", "FIB ", "FF ", "N ", "NI ",
-	"IF ", "F ", "F ", "IB ", "IB ", "FN ",	"FN ", "FN ", "FF ", "FF ", "FN ", "FN ", "FF ", "FF ",	 /*  DIVF",      */
-	"FN ", "FF ", "FN ", "F ", "I ", "IN ", "IN ", "IB ", "IB ", "IB ", "IB ", "II ", "I ", "I ",	 /*  DEC",       */
-	"IN ", "T ", "F ", " ", "T ", "T ", "I ", "I ", " ", " ", "T ", " ", " ", " ", " ", " ", "T ",	 /*  PARSE",     */
+	"IF ", "F ", "F ", "IB ", "IB ", "FN ",	"FN ", "FN ", "FF ", "FF ", "FN ", "FN ", "FF ", "FF ",
+	"FN ", "FF ", "FN ", "F ", "I ", "IN ", "IN ", "IB ", "IB ", "IB ", "IB ", "II ", "I ", "I ",
+	"IN ", "T ", "F ", " ", "T ", "T ", "I ", "I ", " ", " ", "T ", " ", " ", " ", " ", " ", "T ",
 	" ", "N ", "INN ", "II ", "II ", "ITN ", "ITIN ", "ITIN ", "I3 ", "IN ", "I ",	 "I ", "Ivnn ",
 	"vnn ", "Ivnn ", "NN ",	"IT ", "INN ", " ", "N ", "N ", "N ", "T ", "v ", " ", " ", " ", " ",
-	"FN ", "I ", "TN ", "IT ", "II ", "I ", " ", "N ", "I ", " ", "I ", "NI ", "I ", "I ", "T ",	 /*  BECOME",    */
+	"FN ", "I ", "TN ", "IT ", "II ", "I ", " ", "N ", "I ", " ", "I ", "NI ", "I ", "I ", "T ",
 	"I ", "I ", "N ", "N ", " ", "N ", "IF ", "IF ", "IF ", "IF ", "IF ", "IF ", "T ", "IB ",
 	"IB ", "IB ", "I ", " ", "vnnN ", "Ivnn ", "T ", "T ", "T ", "IF ", " ", " ", " ", "Ivnn ",
-	"IF ", "INI ", "INN ",  "IN ", "II ", "IFF ", "IIF ", "I ", "II ", "I ", "I ", "IN ", "IN ",	 /*  ROPENEXT",  */
+	"IF ", "INI ", "INN ",  "IN ", "II ", "IFF ", "IIF ", "I ", "II ", "I ", "I ", "IN ", "IN ",
 	"II ", "II ", "II ", "II ", "IIN ", "IIN ",  "IN ", "II ", "IN ", "IN ", "T ", "vanpan ",
 	"vIpI ", "T ", "T ", " ", " ",	"IN ", "IN ", "IN ", "IN ", "N ", "INTTT ",  "ITTT ",
-	"ITTT ", "I ", "I ", "IN ", "I ", " ", "F ", "NN ", "INN ", "INN ", "INNN ", "TF ", "NN ",	 /*  PICTURE",   */
-	"N ", "NNNNN ", "N ", " ", "NNNNNNN ", "N ", " ", "N ",	"NN ", "N ", "NNNNNIN ", "N ", "N ",	 /*  ENABLEBOX", */
-	"N ", "NNN ", "NNNN ", "INNN ", "IN ", "IN ", "TT ", "I ", "I ", "I ", "TTT ", "IN ", "IN ",	 /*  UNSETCLASS",*/
-	"FN ", "FN ", "FN ", "N ", "N ", "N ", "NI ", " ", " ",	 "N ", "I ", "INN ", "NN ", "N ",	 /*  WAITENDTUNE */
-	"N ", "Nan ", "NN ", " ", " ", " ", " ", " ", " ", " ", "IF ", "N ", " ", " ",	 " ", "II ",	 /*  PLACENOICONS*/
+	"ITTT ", "I ", "I ", "IN ", "I ", " ", "F ", "NN ", "INN ", "INN ", "INNN ", "TF ", "NN ",
+	"N ", "NNNNN ", "N ", " ", "NNNNNNN ", "N ", " ", "N ",	"NN ", "N ", "NNNNNIN ", "N ", "N ",
+	"N ", "NNN ", "NNNN ", "INNN ", "IN ", "IN ", "TT ", "I ", "I ", "I ", "TTT ", "IN ", "IN ",
+	"FN ", "FN ", "FN ", "N ", "N ", "N ", "NI ", " ", " ",	 "N ", "I ", "INN ", "NN ", "N ",
+	"N ", "Nan ", "NN ", " ", " ", " ", " ", " ", " ", " ", "IF ", "N ", " ", " ",	 " ", "II ",
 	" ", "NI ","N ",
-};
-
-static const char *const opcode_arg_table_elvira2[400] = {
-	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "F ", "F ", "F ",
-	"N ", "FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ",
-	"p ", "N ", " ", "I ", "I ", "I ", "I ", "IN ", "IB ", "I ", "B ", "II ", "IB ", "N ", " ", " ",
-	" ", "I ", "I ", " ", "I ", "I ", "I ", "I ", "I ", "II ", "I ", "I ", "II ", "II ", "IBF ",
-	"FIB ", "FF ", "N ", "NI ", "IF ", "F ", "F ", "IB ", "IB ", "FN ", "FN ", " ", "FN ", "FF ",
-	"FF ", "FN ", "FN ", "FF ", "FF ", "FN ", "FF ", "FN ", "F ", "I ", "IN ", "IN ", "IB", " ",
-	"IB ", "IB ", "IB ", "II ", "I ", "I ", "IN ", "T ", "F ", " ", "T ", "T ", "I ", "I ", " ",
-	" ", "T ", " ", " ", " ", " ", " ", "T ", " ", "N ", "INN ", "II ", "II ", "ITN ", "ITIN ",
-	"ITI ", "N ", "I3 ", "IN ", "I ", "I ", "Ivnn ", "vnn ", "Ivnn ", "NN ", "IT ", "INN ", " ",
-	"N ", "N ", "N ", " ", "T ", "v ", " ", " ", " ", " ", "FN ", "I ", "TN ", "IT ", "II ", "I ",
-	 " ", "N ", "I ", " ", "I ", "NI ", "I ", "I ", "T ", "I ", "I ", "N ", "N ", " ", "N ", "IF ",
-	"IF ", "IF ", "I ", "F ", "IF ", "IF ", "T ", "IB ", "IB ", "IB ", "I ", " ", "vnnN ", "Ivnn ",
-	"T ", "T ", "T ", "IF ", " ", " ", " ", "Ivnn ", "IF ", "INI ", "INN ", "IN ", " ", "II ",
-	"IFF ", "IIF ", "I ", "II ", "I ", "I ", "IN ", "IN ", "II ", "II ", "II ", "II ", "IIN "
-	" ", "IIN ", "IN ", "II ", "IN ", "IN ", "T ", "v", "anpan ", "vIpI ", "T ", "T ", " ", 
-	" ", "IN ", "I ", "N ", "IN ", "IN ", "N ", "INTTT ", "ITTT ", "ITTT ", "I ", "I ", "IN ", 
-	"I ", " ", "F ", "NN ", "I ", "NN ", "INN ", "INNN ", "TF ", "NN ", "N ", "NNNN ", "N ", "N ",
-	" ", "NNNNNNN ", "N ", " ", "N ", "NN ", "N ", "NNNNNIN ", "N ", "N ", "N ", "N ", "NN ", 
-	"NNNN ", "INNN ", "IN ", "IN ", "TT ", "I ", "I ", "I ", "TTT ", "IN ", "IN ", "FN ", "FN ",
-	"F ", "N ", "N ", "N ", "N ", "NI ", " ", " ", "N ", "I ", "INN ", "NN ", "N ", "N ", "Nan ",
-	"NN ", " ", " ", " ", " ", " ", " ", " ", "IF ", "N ", " ", " ", " ", "II ", " ", "NI ", "N "
 };
 
 static const char *const opcode_arg_table_waxworks[256] = {
@@ -500,7 +476,7 @@ SubroutineLine *AGOSEngine::createSubroutineLine(Subroutine *sub, int where) {
 void AGOSEngine::runSubroutine101() {
 	Subroutine *sub;
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+	if (getGameType() == GType_ELVIRA) {
 		// HACK
 		sub = getSubroutineByID(1);
 	} else {
@@ -611,13 +587,13 @@ void AGOSEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *su
 		sl->verb = in->readUint16BE();
 		sl->noun1 = in->readUint16BE();
 		sl->noun2 = in->readUint16BE();
-	} else if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+	} else if (getGameType() == GType_ELVIRA) {
 		in->readUint16BE();
 		in->readUint16BE();
 		in->readUint16BE();
 	}
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+	if (getGameType() == GType_ELVIRA) {
 		int16 tmp = in->readUint16BE();
 		WRITE_BE_UINT16(q, tmp);
 		while (tmp != 10000) {
@@ -666,15 +642,13 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		table = opcode_arg_table_simon1win;
 	else if (getGameType() == GType_SIMON1)
 		table = opcode_arg_table_simon1dos;
-	else if (getGameType() == GType_WW)
+	else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2)
 		table = opcode_arg_table_waxworks;
-	else if (getGameType() == GType_ELVIRA2)
-		table = opcode_arg_table_elvira2;
 	else
 		table = opcode_arg_table_elvira1;
 
 	i = 0;
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+	if (getGameType() == GType_ELVIRA) {
 		opcode = READ_BE_UINT16(ptr);
 		ptr += 2;
 	} else {
@@ -705,7 +679,7 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 			break;
 
 		case 'B':
-			if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+			if (getGameType() == GType_ELVIRA) {
 				val = in->readUint16BE();
 				WRITE_BE_UINT16(ptr, val); ptr += 2;
 			} else {

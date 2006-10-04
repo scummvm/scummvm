@@ -186,9 +186,9 @@ void AGOSEngine::setupVgaOpcodes() {
 
 	switch (getGameType()) {
 	case GType_ELVIRA:
-	case GType_ELVIRA2:
 		setupElvira1VideoOpcodes(vga_opcode_table);
 		break;
+	case GType_ELVIRA2:
 	case GType_WW:
 	case GType_SIMON1:
 		setupCommonVideoOpcodes(vga_opcode_table);
@@ -2346,7 +2346,7 @@ void AGOSEngine::vc57_blackPalette() {
 
 void AGOSEngine::vc58() {
 	if (getGameType() == GType_WW)
-		return;
+		error("Code whell");;
 
 	uint16 sprite = _vgaCurSpriteId;
 	uint16 file = _vgaCurZoneNum;

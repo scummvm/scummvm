@@ -611,6 +611,18 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 150000;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
+	} else if (getGameType() == GType_ELVIRA2) {
+		gss = PTR(simon1_settings);
+		_numTextBoxes = 20;
+		_numVideoOpcodes = 56;
+#ifndef PALMOS_68K
+		_vgaMemSize = 1000000;
+#else
+		_vgaMemSize = gVars->memory[kMemSimon1Games];
+#endif
+		_tableMemSize = 50000;
+		_vgaBaseDelay = 1;
+		_numVars = 512;
 	} else if (getGameType() == GType_ELVIRA) {
 		gss = PTR(simon1_settings);
 		_numTextBoxes = 20;

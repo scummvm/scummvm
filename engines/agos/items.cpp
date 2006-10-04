@@ -2618,7 +2618,7 @@ int AGOSEngine::runScript() {
 		if (_continousMainScript)
 			dumpOpcode(_codePtr);
 
-		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		if (getGameType() == GType_ELVIRA) {
 			opcode = getVarOrWord();
 			if (opcode == 10000)
 				return 0;
@@ -2634,7 +2634,7 @@ int AGOSEngine::runScript() {
 
 		/* Invert condition? */
 		flag = false;
-		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		if (getGameType() == GType_ELVIRA) {
 			if (opcode == 203) {
 				flag = true;
 				opcode = getVarOrWord();
