@@ -587,6 +587,18 @@ void ScummEngine_v5::o5_animateActor() {
 		return;
 	}
 
+	// WORKAROUND bug #859513: While on mars, going outside without your helmet
+	// (or missing some other part of your "space suite" will cause your
+	// character to complain ("I can't breathe."). Unfortunately, this is 
+	// coupled with an animate command, making it very difficult to return to
+	// safety (from where you came). The following hack works around this by
+	// ignoring that particular turn command.
+	if (_game.id == GID_ZAK && _currentRoom == 182 && anim == 246 &&
+			((_game.version < 3 && vm.slot[_currentScript].number == 82)
+			|| (_game.version == 3 && vm.slot[_currentScript].number == 131))) {
+		return;
+	}
+
 	Actor *a = derefActor(act, "o5_animateActor");
 	a->animateActor(anim);
 }
