@@ -194,14 +194,18 @@ protected:
 
 	uint32 *_gameOffsetsPtr;
 
+	uint _numVars;
 	uint _vgaBaseDelay;
-	uint _tableIndexBase;
-	uint _textIndexBase;
-	uint _vgaMemSize;
-	uint _tableMemSize;
+
 	uint _musicIndexBase;
 	uint _soundIndexBase;
-	uint _numVars;
+	uint _tableIndexBase;
+	uint _textIndexBase;
+
+	uint _itemMemSize;
+	uint _tableMemSize;
+	uint _vgaMemSize;
+
 	const GameSpecificSettings *gss;
 
 	byte _keyPressed;

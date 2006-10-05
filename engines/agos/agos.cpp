@@ -548,6 +548,7 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
+		_itemMemSize = 20000;
 		_tableMemSize = 200000;
 		_frameRate = 1;
 		_vgaBaseDelay = 5;
@@ -561,6 +562,7 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
+		_itemMemSize = 20000;
 		_tableMemSize = 200000;
 		_frameRate = 1;
 		_vgaBaseDelay = 5;
@@ -576,6 +578,7 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
+		_itemMemSize = 20000;
 		_tableMemSize = 100000;
 		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
 		if ((getGameType() == GType_SIMON2) && _native_mt32)
@@ -597,7 +600,8 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
-		_tableMemSize = 150000;
+		_itemMemSize = 20000;
+		_tableMemSize = 50000;
 		_musicIndexBase = 1316 / 4;
 		_soundIndexBase = 0;
 		_frameRate = 1;
@@ -612,7 +616,8 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
-		_tableMemSize = 150000;
+		_itemMemSize = 64000;
+		_tableMemSize = 50000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
@@ -625,6 +630,7 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
+		_itemMemSize = 64000;
 		_tableMemSize = 50000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
@@ -638,7 +644,8 @@ void AGOSEngine::setupGame() {
 #else
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
-		_tableMemSize = 150000;
+		_itemMemSize = 64000;
+		_tableMemSize = 50000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 512;
@@ -649,8 +656,10 @@ void AGOSEngine::setupGame() {
 	initMouse();
 
 	_variableArray = (int16 *)calloc(_numVars, sizeof(int16));
-	_variableArray2 = (int16 *)calloc(_numVars, sizeof(int16));
 	_variableArrayPtr = _variableArray;
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		_variableArray2 = (int16 *)calloc(_numVars, sizeof(int16));
+	}
 
 	setupOpcodes();
 	setupVgaOpcodes();
@@ -802,15 +811,19 @@ Child *AGOSEngine::allocateChildBlock(Item *i, uint type, uint size) {
 }
 
 void AGOSEngine::allocItemHeap() {
-	_itemHeapSize = 64000;
+	_itemHeapSize = _itemMemSize;
 	_itemHeapCurPos = 0;
-	_itemHeapPtr = (byte *)calloc(64000, 1);
+	_itemHeapPtr = (byte *)calloc(_itemMemSize, 1);
+	if (!_itemHeapPtr)
+		error("Out Of Memory - Items");
 }
 
 void AGOSEngine::allocTablesHeap() {
 	_tablesHeapSize = _tableMemSize;
 	_tablesHeapCurPos = 0;
 	_tablesHeapPtr = (byte *)calloc(_tableMemSize, 1);
+	if (!_tablesHeapPtr)
+		error("Out Of Memory - Tables");
 }
 
 void AGOSEngine::setItemState(Item *item, int value) {
