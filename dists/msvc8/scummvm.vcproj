@@ -244,6 +244,14 @@
 			Name="common"
 			>
 			<File
+				RelativePath="..\..\common\advancedDetector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\advancedDetector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\array.h"
 				>
 			</File>

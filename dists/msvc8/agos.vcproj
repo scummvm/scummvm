@@ -180,6 +180,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\contain.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\cursor.cpp"
 			>
 		</File>
@@ -245,10 +249,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\rooms.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agos\rules.cpp"
 			>
 		</File>
 		<File
