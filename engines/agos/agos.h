@@ -514,6 +514,7 @@ protected:
 	uint32 readUint32Wrapper(const void *src);
 
 	int allocGamePcVars(Common::File *in);
+	int getUserFlag(Item *item, int a);
 	void setUserFlag(Item *item, int a, int b);
 	void createPlayer();
 	void allocateStringTable(int num);
@@ -859,7 +860,7 @@ public:
 	void setScriptReturn(int ret);
 	int getScriptReturn();
 
-	// Opcodes, Simon 1 and later
+	// Opcodes, common
 	void o_at();
 	void o_notAt();
 	void o_carried();
@@ -882,6 +883,8 @@ public:
 	void o_oflag();
 	void o_destroy();
 	void o_place();
+	void o_copyof();
+	void o_copyfo();
 	void o_copyff();
 	void o_clear();
 	void o_let();
@@ -1019,6 +1022,8 @@ public:
 	void oww_menu();
 	void oww_textMenu();
 	void oww_ifDoorOpen();
+	void oww_opcode184();
+	void oww_opcode187();
 
 	// Opcodes, Simon 1 only
 	void o1_printLongText();

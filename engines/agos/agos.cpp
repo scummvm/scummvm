@@ -749,6 +749,19 @@ byte *AGOSEngine::allocateItem(uint size) {
 	return org;
 }
 
+int AGOSEngine::getUserFlag(Item *item, int a) {
+	SubUserFlag *subUserFlag;
+
+	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	if (subUserFlag == NULL)
+		return 0;
+
+	if (a < 0 || a > 3)
+		return 0;
+
+	return	subUserFlag->userFlags[a];
+}
+
 void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 	SubUserFlag *subUserFlag;
 

@@ -200,6 +200,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[51] = &AGOSEngine::o_place;
 
+	op[54] = &AGOSEngine::o_copyof;
+	op[55] = &AGOSEngine::o_copyfo;
 	op[56] = &AGOSEngine::o_copyff;
 
 	op[60] = &AGOSEngine::oe1_setFF;
@@ -309,6 +311,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
+	op[34] = &AGOSEngine::o_copyof;
+	op[35] = &AGOSEngine::o_copyfo;
 	op[83] = &AGOSEngine::o1_rescan;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
@@ -324,6 +328,8 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
 	// Confirmed
+	op[34] = &AGOSEngine::o_copyof;
+	op[35] = &AGOSEngine::o_copyfo;
 	op[54] = &AGOSEngine::oww_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
@@ -335,11 +341,14 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[106] = &AGOSEngine::oww_textMenu;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[148] = &AGOSEngine::oww_ifDoorOpen;
+	op[175] = &AGOSEngine::o_getDollar2;
 	op[179] = &AGOSEngine::o_isAdjNoun;
 	op[180] = &AGOSEngine::o_b2Set;
 	op[181] = &AGOSEngine::o_b2Clear;
 	op[182] = &AGOSEngine::o_b2Zero;
 	op[183] = &AGOSEngine::o_b2NotZero;
+	op[184] = &AGOSEngine::oww_opcode184;
+	op[187] = &AGOSEngine::oww_opcode187;
 
 	// Code difference, check if triggered
 	op[161] = NULL;
@@ -356,14 +365,11 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[172] = NULL;
 	op[173] = NULL;
 	op[174] = NULL;
-	op[175] = NULL;
 	op[176] = NULL;
 	op[177] = NULL;
 	op[178] = NULL;
-	op[184] = NULL;
 	op[185] = NULL;
 	op[186] = NULL;
-	op[187] = NULL;
 	op[188] = NULL;
 	op[189] = NULL;
 	op[190] = NULL;
@@ -700,6 +706,20 @@ void AGOSEngine::o_place() {
 	// 33: set item parent
 	Item *item = getNextItemPtr();
 	setItemParent(item, getNextItemPtr());
+}
+
+void AGOSEngine::o_copyof() {
+	// 34:
+	Item *item = getNextItemPtr();
+	uint tmp = getVarOrByte();
+	writeNextVarContents(getUserFlag(item, tmp));
+}
+
+void AGOSEngine::o_copyfo() {
+	// 35:
+	uint tmp = getNextVarContents();
+	Item *item = getNextItemPtr();
+	setUserFlag(item, getVarOrByte(), tmp);
 }
 
 void AGOSEngine::o_copyff() {
@@ -1790,6 +1810,13 @@ void AGOSEngine::oww_ifDoorOpen() {
 	Item *item = getNextItemPtr();
 	uint16 d = getVarOrByte();
 	setScriptCondition(getDoorState(item, d) != 0);
+}
+
+void AGOSEngine::oww_opcode184() {
+	printf("%s\n", getStringPtrByID(getNextStringID()));
+}
+
+void AGOSEngine::oww_opcode187() {
 }
 
 // -----------------------------------------------------------------------
