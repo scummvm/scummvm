@@ -40,6 +40,7 @@
 #include "registers_alt.h"
 //#include "compact_flash.h"
 #include "dsoptions.h"
+#include "blitters.h"
 
 namespace DS {
 
@@ -114,6 +115,12 @@ u8 gameID;
 
 bool consoleEnable = true;
 bool gameScreenSwap = false;
+bool cpuScaler = false;
+bool isCpuScalerEnabled()
+{
+	return cpuScaler;	
+}
+
 
 MouseMode mouseMode;
 
@@ -522,7 +529,7 @@ void displayMode16Bit() {
 	BG3_CR = BG_BMP16_512x256;
 	highBuffer = false;
 	
-	BG3_XDX = (int) (1.25f * 256);
+	BG3_XDX = cpuScaler ? 256 : (int) (1.25f * 256);
     BG3_XDY = 0;
     BG3_YDX = 0;
     BG3_YDY = (int) ((200.0f / 192.0f) * 256);
@@ -567,8 +574,18 @@ void displayMode16BitFlipBuffer() {
 //		highBuffer = !highBuffer;
 //		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer? 1: 0);
 		
-		for (int r = 0; r < 512 * 256; r++) {
-			*(BG_GFX + r) = *(back + r);
+		if (cpuScaler)
+		{
+			for(int i=0; i<200; ++i)
+			{                 
+				DS::Rescale_320x1555Scanline_To_256x1555Scanline(BG_GFX+i*512, back+i*512);
+			}
+		}
+		else
+		{
+			for (int r = 0; r < 512 * 256; r++) {
+				*(BG_GFX + r) = *(back + r);
+			}
 		}
 	}
 }
@@ -1169,11 +1186,21 @@ void setMainScreenScale(int x, int y) {
 		SUB_BG3_YDX = 0;
 		SUB_BG3_YDY = y;
 	} else {
-		BG3_XDX = x;
-		BG3_XDY = 0;
-		BG3_YDX = 0;
-		BG3_YDY = y;
-		
+		if (cpuScaler && (!displayModeIs8Bit) && (x==320))
+		{
+			BG3_XDX = 256;
+			BG3_XDY = 0;
+			BG3_YDX = 0;
+			BG3_YDY = y;
+		}
+		else
+		{	
+			BG3_XDX = x;
+			BG3_XDY = 0;
+			BG3_YDX = 0;
+			BG3_YDY = y;
+		}
+				
 		touchScX = x;
 		touchScY = y;
 	}
@@ -1941,4 +1968,3 @@ int main(void)
 int main() {
 	DS::main();
 }
-

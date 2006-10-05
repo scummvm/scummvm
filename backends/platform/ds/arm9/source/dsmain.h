@@ -106,6 +106,8 @@ void 	setTouchYOffset(int y);
 void 	setUnscaledMode(bool enable);
 void 	setIndyFightState(bool st);
 bool 	getIndyFightState();
+bool    isCpuScalerEnabled();
+
 
 // Display
 bool 	getIsDisplayMode8Bit();
