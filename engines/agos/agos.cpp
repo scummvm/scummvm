@@ -645,7 +645,7 @@ void AGOSEngine::setupGame() {
 		_vgaMemSize = gVars->memory[kMemSimon1Games];
 #endif
 		_itemMemSize = 64000;
-		_tableMemSize = 50000;
+		_tableMemSize = 80000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 512;
