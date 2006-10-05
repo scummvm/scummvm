@@ -169,6 +169,11 @@ namespace AGOS {
 using Common::ADGameFileDescription;
 using Common::ADGameDescription;
 
+static ADGameFileDescription ELVIRA1AMIGA_GameFiles[] = {
+	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0"},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1"},
+};
+
 static ADGameFileDescription ELVIRA1DOS_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"a49e132a1f18306dd5d1ec2fe435e178"},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
@@ -179,6 +184,13 @@ static ADGameFileDescription ELVIRA1DOS2_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
+};
+
+static ADGameFileDescription ELVIRA2AMIGA_GameFiles[] = {
+	{ "gameamiga",		GAME_BASEFILE,	"4aa163967f5d2bd319f8350d6af03186"},
+	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d"},
+	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e"},
+	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e"},
 };
 
 static ADGameFileDescription ELVIRA2DOS_GameFiles[] = {
@@ -193,6 +205,14 @@ static ADGameFileDescription ELVIRA2DOS_FR_GameFiles[] = {
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
 	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7"},
 	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
+};
+
+static ADGameFileDescription WAXWORKSAMIGA_GameFiles[] = {
+	{ "gameamiga",		GAME_BASEFILE,	"e6207a69cf7356f13acbe8d14bdd844e"},  // Unpacked version
+	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe"},
+	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af"},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0"},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f"},
 };
 
 static ADGameFileDescription WAXWORKSDOS_GameFiles[] = {
@@ -648,7 +668,23 @@ static ADGameFileDescription SWAMPY_GameFiles[] = {
 };
 
 static AGOSGameDescription gameDescriptions[] = {
-	// Elvira - English Floppy
+	// Elvira - English Amiga Floppy
+	{
+		{
+			"elvira",
+			"Floppy",
+			ARRAYSIZE(ELVIRA1AMIGA_GameFiles),
+			ELVIRA1AMIGA_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
+		GType_ELVIRA,
+		GID_ELVIRA,
+		GF_OLD_BUNDLE | GF_CRUNCHED,
+	},
+
+	// Elvira - English DOS Floppy
 	{
 		{
 			"elvira",
@@ -664,7 +700,7 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE,
 	},
 
-	// Elvira - English Floppy Alternative?
+	// Elvira - English DOS Floppy Alternative?
 	{
 		{
 			"elvira",
@@ -680,7 +716,23 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE,
 	},
 
-	// Elvira 2 - English Floppy
+	// Elvira 2 - English Amiga Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+			ARRAYSIZE(ELVIRA2AMIGA_GameFiles),
+			ELVIRA2AMIGA_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE | GF_CRUNCHED,
+	},
+
+	// Elvira 2 - English DOS Floppy
 	{
 		{
 			"elvira2",
@@ -696,7 +748,7 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE,
 	},
 
-	// Elvira 2 - French Floppy
+	// Elvira 2 - French DOS Floppy
 	{
 		{
 			"elvira2",
@@ -712,7 +764,23 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE,
 	},
 
-	// Waxworks - English Floppy
+	// Waxworks - English Amiga Floppy
+	{
+		{
+			"waxworks",
+			"Floppy",
+			ARRAYSIZE(WAXWORKSAMIGA_GameFiles),
+			WAXWORKSAMIGA_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
+		GType_WW,
+		GID_WAXWORKS,
+		GF_OLD_BUNDLE | GF_CRUNCHED,
+	},
+
+	// Waxworks - English DOS Floppy
 	{
 		{
 			"waxworks",
@@ -760,7 +828,7 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE,
 	},
 
-	// Simon the Sorcerer 1 - English AGA Floppy
+	// Simon the Sorcerer 1 - English Amiga AGA Floppy
 	{
 		{
 			"simon1",
@@ -776,7 +844,7 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_CRUNCHED | GF_OLD_BUNDLE,
 	},
 
-	// Simon the Sorcerer 1 - French AGA Floppy
+	// Simon the Sorcerer 1 - French Amiga AGA Floppy
 	{
 		{
 			"simon1",
@@ -792,7 +860,7 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_CRUNCHED | GF_OLD_BUNDLE,
 	},
 
-	// Simon the Sorcerer 1 - German AGA Floppy
+	// Simon the Sorcerer 1 - German Amiga AGA Floppy
 	{
 		{
 			"simon1",

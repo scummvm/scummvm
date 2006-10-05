@@ -173,7 +173,8 @@ void AGOSEngine::loadGamePcFile() {
 
 	in.close();
 
-	if (getGameType() == GType_PP)
+	if ((getGameType() == GType_ELVIRA && getPlatform() == Common::kPlatformAmiga) ||
+		getGameType() == GType_PP)
 		return;
 
 	/* Read list of TABLE resources */
@@ -210,42 +211,42 @@ void AGOSEngine::loadGamePcFile() {
 	in.read(_strippedTxtMem, file_size);
 	in.close();
 
-	if (getGameType() != GType_WW)
-		return;
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
+		/* Read list of ROOM ITEMS resources */
+		in.open(getFileName(GAME_RMSLFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_XTBLFILE));
+		}
 
-	/* Read list of ROOM ITEMS resources */
-	in.open(getFileName(GAME_RMSLFILE));
-	if (in.isOpen() == false) {
-		error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_XTBLFILE));
+		file_size = in.size();
+
+		_roomsList = (byte *)malloc(file_size);
+		if (_roomsList == NULL)
+			error("loadGamePcFile: Out of memory for room items list");
+		in.read(_roomsList, file_size);
+		in.close();
 	}
 
-	file_size = in.size();
+	if (getGameType() == GType_WW) {
+		/* Read list of XTABLE resources */
+		in.open(getFileName(GAME_XTBLFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load xtable resources file '%s'", getFileName(GAME_XTBLFILE));
+		}
 
-	_roomsList = (byte *)malloc(file_size);
-	if (_roomsList == NULL)
-		error("loadGamePcFile: Out of memory for room items list");
-	in.read(_roomsList, file_size);
-	in.close();
+		file_size = in.size();
 
-	/* Read list of XTABLE resources */
-	in.open(getFileName(GAME_XTBLFILE));
-	if (in.isOpen() == false) {
-		error("loadGamePcFile: Can't load xtable resources file '%s'", getFileName(GAME_XTBLFILE));
+		_xtblList = (byte *)malloc(file_size);
+		if (_xtblList == NULL)
+			error("loadGamePcFile: Out of memory for strip xtable list");
+		in.read(_xtblList, file_size);
+		in.close();
+
+		/* Remember the current state */
+		_xsubroutineListOrg = _subroutineList;
+		_xtablesHeapPtrOrg = _tablesHeapPtr;
+		_xtablesHeapCurPosOrg = _tablesHeapCurPos;
 	}
-
-	file_size = in.size();
-
-	_xtblList = (byte *)malloc(file_size);
-	if (_xtblList == NULL)
-		error("loadGamePcFile: Out of memory for strip xtable list");
-	in.read(_xtblList, file_size);
-	in.close();
-
-	/* Remember the current state */
-	_xsubroutineListOrg = _subroutineList;
-	_xtablesHeapPtrOrg = _tablesHeapPtr;
-	_xtablesHeapCurPosOrg = _tablesHeapCurPos;
-
 }
 
 void AGOSEngine::readGamePcText(Common::File *in) {
@@ -668,6 +669,8 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
 				sprintf(filename, "%.3d%d.out", id, type);
+			else if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2)
+				sprintf(filename, "%.2d%d.pkd", id, type);
 			else
 				sprintf(filename, "%.3d%d.pkd", id, type);
 		} else {
