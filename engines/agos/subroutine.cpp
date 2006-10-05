@@ -476,13 +476,7 @@ SubroutineLine *AGOSEngine::createSubroutineLine(Subroutine *sub, int where) {
 void AGOSEngine::runSubroutine101() {
 	Subroutine *sub;
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
-		// HACK
-		sub = getSubroutineByID(1);
-	} else {
-		sub = getSubroutineByID(101);
-	}
-
+	sub = getSubroutineByID(101);
 	if (sub != NULL)
 		startSubroutineEx(sub);
 

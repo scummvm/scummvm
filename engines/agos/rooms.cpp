@@ -102,14 +102,11 @@ bool AGOSEngine::loadRoomItems(uint item) {
 		p++;
 
 		for (;;) {
-			min_num = (p[0] * 256) | p[1];
-			p += 2;
-
+			min_num = READ_BE_UINT16(p); p += 2;
 			if (min_num == 0)
 				break;
 
-			max_num = (p[0] * 256) | p[1];
-			p += 2;
+			max_num = READ_BE_UINT16(p); p += 2;
 
 			if (item >= min_num && item <= max_num) {
 
@@ -118,9 +115,8 @@ bool AGOSEngine::loadRoomItems(uint item) {
 					error("loadRoomItems: Can't load rooms file '%s'", filename);
 				}
 
-				for (i = min_num; i <= max_num; i++) {
+				while ((i = in.readUint16BE()) != 0) {
 					_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
-					in.readUint16BE();
 					readItemFromGamePc(&in, _itemArrayPtr[i]);
 				}
 				in.close();

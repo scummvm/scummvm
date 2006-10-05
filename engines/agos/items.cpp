@@ -231,6 +231,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[87] = &AGOSEngine::o_setState;
 
 	op[91] = &AGOSEngine::o_message;
+	op[92] = &AGOSEngine::o_message;
 
 	op[97] = &AGOSEngine::o_end;
 	op[98] = &AGOSEngine::o_done;
@@ -1771,11 +1772,11 @@ void AGOSEngine::oww_moveDirn() {
 void AGOSEngine::oww_goto() {
 	// 55: set itemA parent
 	uint item = getNextItemID();
-	if (_itemArrayPtr[item] == NULL) {
+	if (derefItem(item) == NULL) {
 		setItemParent(me(), NULL);
 		loadRoomItems(item);
 	}
-	setItemParent(me(), _itemArrayPtr[item]);
+	setItemParent(me(), derefItem(item));
 }
 
 void AGOSEngine::oww_whereTo() {

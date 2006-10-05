@@ -111,7 +111,7 @@ void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uin
 int AGOSEngine::allocGamePcVars(File *in) {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
-	uint i, firstItem;
+	uint i;
 
 	item_array_size = in->readUint32BE();
 	version = in->readUint32BE();
@@ -119,12 +119,11 @@ int AGOSEngine::allocGamePcVars(File *in) {
 	stringtable_num = in->readUint32BE();
 
 	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+		item_array_size += 2;
 		item_array_inited = item_array_size;
-		firstItem = 0;
 	} else {
 		item_array_inited += 2;				// first two items are predefined
 		item_array_size += 2;
-		firstItem = 1;
 	}
 
 	if (version != 0x80)
@@ -137,7 +136,7 @@ int AGOSEngine::allocGamePcVars(File *in) {
 	_itemArraySize = item_array_size;
 	_itemArrayInited = item_array_inited;
 
-	for (i = firstItem; i < item_array_inited; i++) {
+	for (i = 1; i < item_array_inited; i++) {
 		_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
 	}
 
@@ -164,8 +163,7 @@ void AGOSEngine::loadGamePcFile() {
 	createPlayer();
 	readGamePcText(&in);
 
-	int firstItem = (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) ? 0 : 2;
-	for (i = firstItem; i < num_inited_objects; i++) {
+	for (i = 2; i < num_inited_objects; i++) {
 		readItemFromGamePc(&in, _itemArrayPtr[i]);
 	}
 
