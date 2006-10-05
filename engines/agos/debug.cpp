@@ -206,7 +206,7 @@ void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 		}
 
 		if (opcode >= _numVideoOpcodes) {
-			error("Invalid opcode %x\n", opcode);
+			error("Invalid opcode %x", opcode);
 			return;
 		}
 
@@ -251,7 +251,7 @@ void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 									readUint16Wrapper(src + 2));
 					src += 4;
 				}
-				src++;
+				src += 2;
 				break;
 			default:
 				error("Invalid fmt string '%c' in decompile VGA", *str);
