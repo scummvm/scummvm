@@ -32,7 +32,7 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 	Item *z = derefItem(x->parent);
 	SubObject *o = (SubObject *)findChildOfType(y, 2);
 	int ct;
-	int cap;
+	int cap = 0;
 
 	if (o == NULL)
 		return(0);	/* Fits Fine */
