@@ -143,13 +143,9 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	flags |= wavFlags;
 
 	byte *buffer = (byte *)malloc(size);
-	// Check whether malloc was successful.
-	// TODO: Maybe we can handle this more graceful, by reverting to a smaller
-	// buffer and reading the audio data one piece at a time?
-	if (buffer) {
-		_file->read(buffer, size);
-		_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
-	}
+	assert(buffer);
+	_file->read(buffer, size);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
@@ -160,6 +156,7 @@ void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	int size, rate;
 	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
+	assert(buffer);
 	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
@@ -171,13 +168,9 @@ void RawSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	uint size = _file->readUint32BE();
 	byte *buffer = (byte *)malloc(size);
-	// Check whether malloc was successful.
-	// TODO: Maybe we can handle this more graceful, by reverting to a smaller
-	// buffer and reading the audio data one piece at a time?
-	if (buffer) {
-		_file->read(buffer, size);
-		_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
-	}
+	assert(buffer);
+	_file->read(buffer, size);
+	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 #ifdef USE_MAD
