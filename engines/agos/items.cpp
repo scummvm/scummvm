@@ -319,10 +319,31 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[148] = &AGOSEngine::oww_ifDoorOpen;
+	op[161] = &AGOSEngine::oe2_opcode161;
+	op[175] = &AGOSEngine::o_getDollar2;
+	op[179] = &AGOSEngine::o_isAdjNoun;
 	op[180] = &AGOSEngine::o_b2Set;
 	op[181] = &AGOSEngine::o_b2Clear;
 	op[182] = &AGOSEngine::o_b2Zero;
 	op[183] = &AGOSEngine::o_b2NotZero;
+
+	// Code difference, check if triggered
+	op[162] = NULL;
+	op[163] = NULL;
+	op[164] = NULL;
+	op[165] = NULL;
+	op[166] = NULL;
+	op[167] = NULL;
+	op[168] = NULL;
+	op[169] = NULL;
+	op[170] = NULL;
+	op[171] = NULL;
+	op[172] = NULL;
+	op[173] = NULL;
+	op[174] = NULL;
+	op[176] = NULL;
+	op[177] = NULL;
+	op[178] = NULL;
 }
 
 void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
@@ -1758,6 +1779,13 @@ void AGOSEngine::oe1_printStats() {
 	// 270: print stats
 }
 
+// -----------------------------------------------------------------------
+// Elvira 2 Opcodes
+// -----------------------------------------------------------------------
+
+void AGOSEngine::oe2_opcode161() {
+	// 161:
+}
 
 // -----------------------------------------------------------------------
 // Waxworks Opcodes

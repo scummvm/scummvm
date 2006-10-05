@@ -1015,6 +1015,9 @@ public:
 	void oe1_zoneDisk();
 	void oe1_printStats();
 
+	// Opcodes, Elvira 2 only
+	void oe2_opcode161();
+
 	// Opcodes, Waxworks only
 	void oww_moveDirn();
 	void oww_goto();
