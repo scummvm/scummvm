@@ -248,6 +248,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[152] = &AGOSEngine::o_debug;
 
+	op[164] = &AGOSEngine::o1_rescan;
+
 	op[176] = &AGOSEngine::oe1_opcode176;
 
 	op[178] = &AGOSEngine::oe1_opcode178;
@@ -259,6 +261,9 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[206] = &AGOSEngine::o_getParent;
 	op[207] = &AGOSEngine::o_getNext;
 	op[208] = &AGOSEngine::o_getChildren;
+
+	op[219] = &AGOSEngine::oe1_findMaster;
+	op[220] = &AGOSEngine::oe1_nextMaster;
 
 	op[224] = &AGOSEngine::o_picture;
 	op[225] = &AGOSEngine::o_loadZone;
@@ -1759,14 +1764,47 @@ void AGOSEngine::oe1_setFF() {
 }
 
 void AGOSEngine::oe1_opcode176() {
+	// 176
 	getNextItemPtr();
 	getVarOrWord();
 	getNextItemPtr();
 }
 
 void AGOSEngine::oe1_opcode178() {
+	// 178
 	getNextItemPtr();
 	getVarOrWord();
+}
+
+void AGOSEngine::oe1_findMaster() {
+	// 219: find master
+	int16 ad, no;
+	int16 d = getVarOrWord();
+
+	ad = (d == 1) ? _scriptAdj1 : _scriptAdj2;
+	no = (d == 1) ? _scriptNoun1 : _scriptNoun2;
+
+	d = getVarOrWord();
+	if (d == 1)
+		_subjectItem = findMaster(levelOf(me()), ad, no);
+	else
+		_objectItem = findMaster(levelOf(me()), ad, no);
+}
+
+void AGOSEngine::oe1_nextMaster() {
+	// 220: next master
+	int16 ad, no;
+	Item *item = getNextItemPtr();
+	int16 d = getVarOrWord();
+
+	ad = (d == 1) ? _scriptAdj1 : _scriptAdj2;
+	no = (d == 1) ? _scriptNoun1 : _scriptNoun2;
+
+	d = getVarOrWord();
+	if (d == 1)
+		_subjectItem = nextMaster(levelOf(me()), item, ad, no);
+	else
+		_objectItem = nextMaster(levelOf(me()), item, ad, no);
 }
 
 void AGOSEngine::oe1_zoneDisk() {
@@ -2811,6 +2849,14 @@ void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
 	_vcPtr = (byte *)&items;
 	vc60_killSprite();
 	_lockWord &= ~0x8000;
+}
+
+int16 AGOSEngine::levelOf(Item *item) {
+	SubPlayer *p = (SubPlayer *) findChildOfType(item, 3);
+	if(p == NULL)
+		return 0;
+
+	return p->level;
 }
 
 } // End of namespace AGOS

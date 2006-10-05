@@ -775,15 +775,22 @@ void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 }
 
 void AGOSEngine::createPlayer() {
-	Child *child;
+	SubPlayer *p;
 
 	_currentPlayer = _itemArrayPtr[1];
 	_currentPlayer->adjective = -1;
 	_currentPlayer->noun = 10000;
 
-	child = (Child *)allocateChildBlock(_currentPlayer, 3, sizeof(Child));
-	if (child == NULL)
+	p = (SubPlayer *)allocateChildBlock(_currentPlayer, 3, sizeof(SubPlayer));
+	if (p == NULL)
 		error("createPlayer: player create failure");
+
+	p->size = 0;
+	p->weight = 0;
+	p->strength = 6000;
+	//p->flag = xxx;
+	p->level = 1;
+	p->score = 0;
 
 	setUserFlag(_currentPlayer, 0, 0);
 }
@@ -1798,12 +1805,46 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
+int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
+	if ((a == -1) && (n == item->noun))
+		return 1;
+	if ((a == item->adjective) && (n == item->noun))
+		return 1 ;
+
+	return 0;
+}
+
 Item *AGOSEngine::derefItem(uint item) {
 	if (item >= _itemArraySize) {
 		debug(1, "derefItem: invalid item %d", item);
 		return 0;
 	}
 	return _itemArrayPtr[item];
+}
+
+Item *AGOSEngine::findMaster(int16 pe, int16 a, int16 n) {
+	uint j;
+
+	for (j = 1; j < _itemArraySize; j++) {
+		Item *item = derefItem(j);
+		if (wordMatch(item, a, n))
+			return item;
+	}
+
+	return NULL;
+}
+
+Item *AGOSEngine::nextMaster(int16 pe, Item *i, int16 a, int16 n) {
+	uint j;
+	uint first = itemPtrToID(i) + 1;
+
+	for (j = first; j < _itemArraySize; j++) {
+		Item *item = derefItem(j);
+		if (wordMatch(item, a, n))
+			return item;
+	}
+
+	return NULL;
 }
 
 uint AGOSEngine::itemPtrToID(Item *id) {

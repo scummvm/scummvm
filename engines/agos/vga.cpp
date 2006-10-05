@@ -1278,20 +1278,28 @@ void AGOSEngine::drawImages(VC10_state *state) {
 
 	uint offs, offs2;
 	if (getGameType() == GType_ELVIRA) {
-		if (_windowNum == 2 || _windowNum == 3) {
-			offs = state->x * 8;
-			offs2 = state->y;
-		} else {
-			offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
-			offs2 = (vlut[1] - _video_windows[17] + state->y);
-		}
-	} else if (getGameType() == GType_WW) {
-		//if (_windowNum == 4 || _windowNum >= 10) {
-			offs = state->x * 8;
-			offs2 = state->y;
-		//} else {
+		//if (_windowNum != 2 && _windowNum != 3) {
 		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
 		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
+		//} else {
+			offs = (vlut[0] * 2 + state->x) * 8;
+			offs2 = vlut[1] + state->y;
+		//}
+	} else if (getGameType() == GType_ELVIRA2) {
+		//if (_windowNum == 4 || _windowNum >= 10) {
+		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
+		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
+		//} else {
+			offs = (vlut[0] * 2 + state->x) * 8;
+			offs2 = vlut[1] + state->y;
+		//}
+	} else if (getGameType() == GType_WW) {
+		//if (_windowNum == 4 || (_windowNum >= 10 && _windowsNum < 28)) {
+		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
+		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
+		//} else {
+			offs = (vlut[0] * 2 + state->x) * 8;
+			offs2 = vlut[1] + state->y;
 		//}
 	} else if (getGameType() == GType_SIMON1) {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed

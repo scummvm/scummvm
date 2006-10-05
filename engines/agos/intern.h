@@ -56,6 +56,16 @@ struct SubObject : Child {
 	int16 objectFlagValue[1];
 };
 
+struct SubPlayer : Child {
+	int16 userKey;
+	int16 size;
+	int16 weight;
+	int16 strength;
+	int16 flags;
+	int16 level;
+	int32 score;
+};
+
 struct SubUserChain : Child {
 	uint16 subroutine_id;
 	uint16 chChained;

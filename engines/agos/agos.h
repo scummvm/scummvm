@@ -989,6 +989,11 @@ public:
 	void o_unloadZone();
 	void o_unfreezeZones();
 
+	Item *findMaster(int16 pe, int16 a, int16 n);
+	Item *nextMaster(int16 pe, Item *item, int16 a, int16 n);
+	int16 levelOf(Item *item);
+	int wordMatch(Item *item, int16 a, int16 n);
+
 	uint16 getDoorState(Item *item, uint16 d);
 	uint16 getExitOf(Item *item, uint16 d);
 	void moveDirn(Item *i, int x);
@@ -1012,6 +1017,8 @@ public:
 	void oe1_setFF();
 	void oe1_opcode176();
 	void oe1_opcode178();
+	void oe1_findMaster();
+	void oe1_nextMaster();
 	void oe1_zoneDisk();
 	void oe1_printStats();
 
