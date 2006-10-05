@@ -215,6 +215,9 @@ void ZipFile::changeToRoot() {
 void ZipFile::changeDirectory(char* dir) {
 //	consolePrintf("Current dir now '%s'\n", dir);
 	strcpy(_directory, dir);
+	size_t l = strlen(_directory);
+	if (l && (_directory[l-1] == '/' ))	
+		_directory[l-1] = '\0';
 }
 
 ZipFile::~ZipFile() {
