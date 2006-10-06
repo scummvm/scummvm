@@ -389,6 +389,7 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 			subSuperRoom->roomX = x;
 			subSuperRoom->roomY = y;
 			subSuperRoom->roomZ = z;
+			subSuperRoom->roomExitStates = (uint16 *)calloc(j, sizeof(uint16));
 
 			for (i = k = 0; i != j; i++)
 					subSuperRoom->roomExit[k++] = in->readUint16BE();

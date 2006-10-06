@@ -30,6 +30,22 @@ using Common::File;
 
 namespace AGOS {
 
+uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
+	SubGenExit *g;
+	Item *x;
+
+	g = (SubGenExit *)findChildOfType(i, 4);
+	if (g == NULL)
+		return 0;
+
+	x = derefItem(g->dest[d]);
+	if (x == NULL)
+		return 0;
+	if (findChildOfType(x, 1))
+		return 0;
+	return itemPtrToID(x);
+}
+
 uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 	uint16 mask = 3;
 	uint16 n;
@@ -46,11 +62,30 @@ uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 	return n;
 }
 
+uint16 AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
+	SubGenExit *g;
+	Item *x;
+
+	g = (SubGenExit *)findChildOfType(item, 4);
+	if (g == NULL)
+		return 0;
+
+	x = derefItem(g->dest[d]);
+	if (x == NULL)
+		return 0;
+	if (findChildOfType(x, 1))
+		return itemPtrToID(x);
+	if (x->state != 0)
+		return 0;
+	return x->parent;
+}
+
 uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
+	SubRoom *subRoom;
 	uint16 x;
 	uint16 y = 0;
 
-	SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
+	subRoom = (SubRoom *)findChildOfType(item, 1);
 	if (subRoom == NULL)
 		return 0;
 	x = d;
@@ -62,12 +97,83 @@ uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
 	return subRoom->roomExit[d];
 }
 
-void AGOSEngine::moveDirn(Item *i, int x) {
-	Item *d;
+uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
+	SubSuperRoom *sr;
+	uint16 mask = 3;
+	uint16 n;
+	uint16 *c;
+
+	sr = (SubSuperRoom *)findChildOfType(i, 4);
+	if (sr == NULL)
+	    return 0;
+
+	c = sr->roomExitStates;
+	c += x - 1;
+	d <<= 1;
+	mask <<= d;
+	n = *c & mask;
+	n >>= d;
+	return n;
+}
+
+void AGOSEngine::moveDirn_e1(Item *i, uint x) {
+	Item *d, *p;
 	uint16 n;
 
 	if (i->parent == 0)
 		return;
+
+	p = derefItem(i->parent);
+
+	n = getExitOf_e1(p, x);
+	d = derefItem(n);
+	if (n) {
+		if (canPlace(i, d))
+			return;
+
+		setItemParent(i, d);
+		return;
+	}
+
+	d = derefItem(getDoorOf(p, x));
+	if (d) {
+		const byte *name = getStringPtrByID(d->itemName);
+		if (d->state == 1)
+			showMessageFormat("%s is closed.\n", name);
+		else
+			showMessageFormat("%s is locked.\n", name);
+		return;
+	}
+
+	showMessageFormat("You can't go that way.\n");
+}
+
+void AGOSEngine::moveDirn_e2(Item *i, uint x) {
+	SubSuperRoom *sr;
+	Item *d, *p;
+	uint16 a, n;
+
+	if (i->parent == 0)
+		return;
+
+	p = derefItem(i->parent);
+	if (findChildOfType(p, 4)) {
+		n = getExitState(p, _superRoomNumber,x);
+		if (n == 1) {
+			sr = (SubSuperRoom *)findChildOfType(p, 4);
+			switch (x) {
+				case 0: a = -(sr->roomX); break;
+				case 1: a = 1; break;
+				case 2: a = sr->roomX; break;
+				case 3: a = (uint)-1; break;
+				case 4: a = -(sr->roomX * sr->roomY); break;
+				case 5: a = (sr->roomX * sr->roomY); break;
+				default: return;
+			}
+			_superRoomNumber += a;
+		}
+		return;
+	}
 
 	n = getExitOf(derefItem(i->parent), x);
 	if (derefItem(n) == NULL) {
@@ -78,9 +184,32 @@ void AGOSEngine::moveDirn(Item *i, int x) {
 	d = derefItem(n);
 	if (d) {
 		n = getDoorState(derefItem(i->parent), x);
-		if(n == 1) {
-			if(!canPlace(i,d))
-				setItemParent(i,d);
+		if (n == 1) {
+			if (!canPlace(i, d))
+				setItemParent(i, d);
+		}
+	}
+}
+
+void AGOSEngine::moveDirn_ww(Item *i, uint x) {
+	Item *d;
+	uint16 n;
+
+	if (i->parent == 0)
+		return;
+
+	n = getExitOf(derefItem(i->parent), x);
+	if (derefItem(n) == NULL) {
+		loadRoomItems(n);
+		n = getExitOf(derefItem(i->parent), x);
+	}
+
+	d = derefItem(n);
+	if (d) {
+		n = getDoorState(derefItem(i->parent), x);
+		if (n == 1) {
+			if(!canPlace(i, d))
+				setItemParent(i, d);
 		}
 	}
 }
@@ -116,13 +245,8 @@ bool AGOSEngine::loadRoomItems(uint item) {
 				}
 
 				while ((i = in.readUint16BE()) != 0) {
-					Item *item = derefItem(i);
-					item = (Item *)allocateItem(sizeof(Item));
-					readItemFromGamePc(&in, item);
-
-					item->child = NULL;
-					item->parent = NULL;
-
+					_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
+					readItemFromGamePc(&in, _itemArrayPtr[i]);
 				}
 				in.close();
 

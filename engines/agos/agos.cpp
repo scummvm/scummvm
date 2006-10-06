@@ -318,6 +318,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
+	_superRoomNumber = 0;
+
 	memset(_objectArray, 0, sizeof(_objectArray));
 	memset(_itemStore, 0, sizeof(_itemStore));
 

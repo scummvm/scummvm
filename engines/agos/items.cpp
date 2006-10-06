@@ -220,6 +220,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[74] = &AGOSEngine::o_modf;
 	op[75] = &AGOSEngine::o_random;
 
+	op[76] = &AGOSEngine::o_moveDirn;
 	op[77] = &AGOSEngine::o_goto;
 
 	op[80] = &AGOSEngine::o_oset;
@@ -230,8 +231,10 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[86] = &AGOSEngine::o_dec;
 	op[87] = &AGOSEngine::o_setState;
 
+	op[89] = &AGOSEngine::o_print;
+	op[90] = &AGOSEngine::oe1_score;
 	op[91] = &AGOSEngine::o_message;
-	op[92] = &AGOSEngine::o_message;
+	op[92] = &AGOSEngine::o_msg;
 
 	op[97] = &AGOSEngine::o_end;
 	op[98] = &AGOSEngine::o_done;
@@ -319,6 +322,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 
 	op[34] = &AGOSEngine::o_copyof;
 	op[35] = &AGOSEngine::o_copyfo;
+	op[54] = &AGOSEngine::o_moveDirn;
 	op[83] = &AGOSEngine::o1_rescan;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
@@ -357,7 +361,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	// Confirmed
 	op[34] = &AGOSEngine::o_copyof;
 	op[35] = &AGOSEngine::o_copyfo;
-	op[54] = &AGOSEngine::oww_moveDirn;
+	op[54] = &AGOSEngine::o_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -843,6 +847,20 @@ void AGOSEngine::o_random() {
 	uint var = getVarWrapper();
 	uint value = (uint16)getVarOrWord();
 	writeVariable(var, _rnd.getRandomNumber(value - 1));
+}
+
+void AGOSEngine::o_moveDirn() {
+	// 54: move direction
+	int16 d = getVarOrByte();
+
+	if (getGameType() == GType_WW) {
+		moveDirn_ww(me(), d);
+	} else if (getGameType() == GType_ELVIRA2) {
+		moveDirn_e2(me(), d);
+	} else {
+		moveDirn_e1(me(), d);
+	}
+
 }
 
 void AGOSEngine::o_goto() {
@@ -1763,6 +1781,12 @@ void AGOSEngine::oe1_setFF() {
 	writeNextVarContents(0xFF);
 }
 
+void AGOSEngine::oe1_score() {
+	// 90: score
+	SubPlayer *p = (SubPlayer *) findChildOfType(me(), 3);
+	showMessageFormat("Your score is %ld.\n", p->score);
+}
+
 void AGOSEngine::oe1_opcode176() {
 	// 176
 	getNextItemPtr();
@@ -1828,12 +1852,6 @@ void AGOSEngine::oe2_opcode161() {
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
-
-void AGOSEngine::oww_moveDirn() {
-	// 54: move direction
-	int16 d = getVarOrByte();
-	moveDirn(me(), d);
-}
 
 void AGOSEngine::oww_goto() {
 	// 55: set itemA parent

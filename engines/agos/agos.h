@@ -899,6 +899,7 @@ public:
 	void o_mod();
 	void o_modf();
 	void o_random();
+	void o_moveDirn();
 	void o_goto();
 	void o_oset();
 	void o_oclear();
@@ -994,9 +995,16 @@ public:
 	int16 levelOf(Item *item);
 	int wordMatch(Item *item, int16 a, int16 n);
 
+	uint16 getDoorOf(Item *item, uint16 d);
 	uint16 getDoorState(Item *item, uint16 d);
+	uint16 getExitOf_e1(Item *item, uint16 d);
 	uint16 getExitOf(Item *item, uint16 d);
-	void moveDirn(Item *i, int x);
+	uint16 getExitState(Item *item, uint16 x, uint16 d);
+	void moveDirn_e1(Item *i, uint x);
+	void moveDirn_e2(Item *i, uint x);
+	void moveDirn_ww(Item *i, uint x);
+
+	uint _superRoomNumber;
 
 	int sizeContents(Item *x);
 	int sizeOfRec(Item *o, int d);
@@ -1015,6 +1023,7 @@ public:
 	void oe1_sibling();
 	void oe1_notSibling();
 	void oe1_setFF();
+	void oe1_score();
 	void oe1_opcode176();
 	void oe1_opcode178();
 	void oe1_findMaster();
