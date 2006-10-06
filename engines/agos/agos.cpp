@@ -470,7 +470,7 @@ int AGOSEngine::init() {
 		}
 	}
 
-	midi.mapMT32toGM (getGameType() == GType_SIMON1 && !_native_mt32);
+	midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_native_mt32);
 
 	midi.set_driver(driver);
 	int ret = midi.open();
@@ -1282,7 +1282,8 @@ startOver:
 			inventoryUp(ha->window);
 		} else if (ha->id == 0x7FFC) {
 			inventoryDown(ha->window);
-		} else if (ha->id >= 101 && ha->id < 113) {
+		} else if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+			(ha->id >= 101 && ha->id < 113)) {
 			_verbHitArea = ha->verb;
 			setVerb(ha);
 			_defaultVerb = 0;
