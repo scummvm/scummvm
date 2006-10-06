@@ -1839,7 +1839,7 @@ void AGOSEngine::oe1_nextMaster() {
 }
 
 void AGOSEngine::oe1_zoneDisk() {
-	// 267: zone disk 
+	// 267: set disk number of each zone
 	getVarOrWord();
 	getVarOrWord();
 }
