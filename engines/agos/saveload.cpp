@@ -625,7 +625,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		Item *item = _itemArrayPtr[item_index++];
 
 		f->writeUint16BE(item->parent);
-		f->writeUint16BE(item->sibling);
+		f->writeUint16BE(item->next);
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
@@ -751,7 +751,7 @@ bool AGOSEngine::loadGame(uint slot) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
 
 		uint parent = f->readUint16BE();
-		uint sibling = f->readUint16BE();
+		uint next = f->readUint16BE();
 
 		parent_item = derefItem(parent);
 
@@ -759,7 +759,7 @@ bool AGOSEngine::loadGame(uint slot) {
 
 		if (parent_item == NULL) {
 			item->parent = parent;
-			item->sibling = sibling;
+			item->next = next;
 		}
 
 		item->state = f->readUint16BE();

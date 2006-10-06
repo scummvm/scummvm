@@ -514,8 +514,6 @@ protected:
 	uint32 readUint32Wrapper(const void *src);
 
 	int allocGamePcVars(Common::File *in);
-	int getUserFlag(Item *item, int a);
-	void setUserFlag(Item *item, int a, int b);
 	void createPlayer();
 	void allocateStringTable(int num);
 	void setupStringTable(byte *mem, int num);
@@ -528,6 +526,11 @@ protected:
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
+
+	int getUserFlag(Item *item, int a);
+	int getUserItem(Item *item, int n);
+	void setUserFlag(Item *item, int a, int b);
+	void setUserItem(Item *item, int n, int m);
 
 	void paletteFadeOut(byte *palPtr, uint num, uint size);
 	
@@ -990,6 +993,7 @@ public:
 	void o_unloadZone();
 	void o_unfreezeZones();
 
+	Item *findInByClass(Item *i, int16 m);
 	Item *findMaster(int16 pe, int16 a, int16 n);
 	Item *nextMaster(int16 pe, Item *item, int16 a, int16 n);
 	int16 levelOf(Item *item);
@@ -1004,6 +1008,7 @@ public:
 	void moveDirn_e2(Item *i, uint x);
 	void moveDirn_ww(Item *i, uint x);
 
+	uint _classMask, _classMode1, _classMode2;
 	uint _superRoomNumber;
 
 	int sizeContents(Item *x);
@@ -1024,10 +1029,13 @@ public:
 	void oe1_notSibling();
 	void oe1_setFF();
 	void oe1_score();
-	void oe1_opcode176();
-	void oe1_opcode178();
+	void oe1_doClass();
+	void oe1_setUserItem();
+	void oe1_getUserItem();
+	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();
+	void oe1_bitTest();
 	void oe1_zoneDisk();
 	void oe1_printStats();
 

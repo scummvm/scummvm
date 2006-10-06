@@ -318,6 +318,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
+	_classMask = 0;
+	_classMode1 = 0;
+	_classMode2 = 0;
 	_superRoomNumber = 0;
 
 	memset(_objectArray, 0, sizeof(_objectArray));
@@ -776,6 +779,31 @@ void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 		subUserFlag->userFlags[a] = b;
 }
 
+int AGOSEngine::getUserItem(Item *item, int n) {
+	SubUserFlag *subUserFlag;
+
+	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	if (subUserFlag == NULL)
+		return 0;
+
+	if (n < 0 || n > 0)
+		return 0;
+
+	return	subUserFlag->userItems[n];
+}
+
+void AGOSEngine::setUserItem(Item *item, int n, int m) {
+	SubUserFlag *subUserFlag;
+
+	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	if (subUserFlag == NULL) {
+		subUserFlag = (SubUserFlag *) allocateChildBlock(item, 9, sizeof(SubUserFlag));
+	}
+
+	if (n == 0)
+		subUserFlag->userItems[n] = m;
+}
+
 void AGOSEngine::createPlayer() {
 	SubPlayer *p;
 
@@ -1051,23 +1079,23 @@ void AGOSEngine::unlinkItem(Item *item) {
 
 	// the node to remove is first in the parent's children?
 	if (first == item) {
-		parent->child = item->sibling;
+		parent->child = item->next;
 		item->parent = 0;
-		item->sibling = 0;
+		item->next = 0;
 		return;
 	}
 
 	for (;;) {
 		if (!first)
 			error("unlinkItem: parent empty");
-		if (first->sibling == 0)
+		if (first->next == 0)
 			error("unlinkItem: parent does not contain child");
 
-		next = derefItem(first->sibling);
+		next = derefItem(first->next);
 		if (next == item) {
-			first->sibling = next->sibling;
+			first->next = next->next;
 			item->parent = 0;
-			item->sibling = 0;
+			item->next = 0;
 			return;
 		}
 		first = next;
@@ -1084,10 +1112,10 @@ void AGOSEngine::linkItem(Item *item, Item *parent) {
 	item->parent = id;
 
 	if (parent != 0) {
-		item->sibling = parent->child;
+		item->next = parent->child;
 		parent->child = itemPtrToID(item);
 	} else {
-		item->sibling = 0;
+		item->next = 0;
 	}
 }
 
@@ -1835,6 +1863,24 @@ Item *AGOSEngine::derefItem(uint item) {
 		return 0;
 	}
 	return _itemArrayPtr[item];
+}
+
+Item *AGOSEngine::findInByClass(Item *i, int16 m) {
+	i = derefItem(i->child);
+
+	while(i) {
+		if(i->classFlags & m) {
+			//_findNextPtr = derefItem(i->next);
+			return i;
+		}
+		if (m == 0) {
+			//_findNextPtr = derefItem(i->next);
+			return i;
+		}
+		i = derefItem(i->next);
+	}
+
+	return NULL;
 }
 
 Item *AGOSEngine::findMaster(int16 pe, int16 a, int16 n) {

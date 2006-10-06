@@ -103,7 +103,7 @@ enum {
 struct Item {
 	uint16 parent;
 	uint16 child;
-	uint16 sibling;
+	uint16 next;
 	int16 noun;
 	int16 adjective;
 	int16 state;										/* signed int */

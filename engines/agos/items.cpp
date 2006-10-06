@@ -240,6 +240,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[98] = &AGOSEngine::o_done;
 
 	op[105] = &AGOSEngine::o_process;
+	op[106] = &AGOSEngine::oe1_doClass;
 
 	op[119] = &AGOSEngine::o_when;
 
@@ -253,9 +254,9 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[164] = &AGOSEngine::o1_rescan;
 
-	op[176] = &AGOSEngine::oe1_opcode176;
-
-	op[178] = &AGOSEngine::oe1_opcode178;
+	op[176] = &AGOSEngine::oe1_setUserItem;
+	op[177] = &AGOSEngine::oe1_getUserItem;
+	op[178] = &AGOSEngine::oe1_clearUserItem;
 
 	op[180] = &AGOSEngine::oww_whereTo;
 
@@ -289,6 +290,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[249] = &AGOSEngine::o_setClass;
 	op[250] = &AGOSEngine::o_unsetClass;
+
+	op[253] = &AGOSEngine::oe1_bitTest;
 
 	op[255] = &AGOSEngine::o_waitSync;
 	op[256] = &AGOSEngine::o_sync;
@@ -1050,8 +1053,8 @@ void AGOSEngine::o_getParent() {
 }
 
 void AGOSEngine::o_getNext() {
-	// 91: set minusitem to sibling
-	Item *item = derefItem(getNextItemPtr()->sibling);
+	// 91: set minusitem to next
+	Item *item = derefItem(getNextItemPtr()->next);
 	switch (getVarOrByte()) {
 	case 0:
 		_objectItem = item;
@@ -1794,17 +1797,53 @@ void AGOSEngine::oe1_score() {
 	showMessageFormat("Your score is %ld.\n", p->score);
 }
 
-void AGOSEngine::oe1_opcode176() {
-	// 176
-	getNextItemPtr();
-	getVarOrWord();
-	getNextItemPtr();
+void AGOSEngine::oe1_doClass() {
+	// 106: do class
+	Item *i = getNextItemPtr();
+	int16 cm = getVarOrWord();
+	int16 num = getVarOrWord();
+
+	_classMask = (cm != -1) ? 1 << cm : 0;
+	//_classLine = (SubroutineLine *)((uint32)_currentLine->next+(uint32)_currentTable);
+
+	if (num == 1) {
+		_subjectItem = findInByClass(i, (1 << cm));
+		if (_subjectItem)
+			_classMode1 = 1;
+		else
+			_classMode1 = 0;
+	} else {
+		_objectItem = findInByClass(i, (1 << cm));
+		if (_objectItem)
+			_classMode2 = 1;
+		else
+			_classMode2 = 0;
+	}
 }
 
-void AGOSEngine::oe1_opcode178() {
-	// 178
-	getNextItemPtr();
-	getVarOrWord();
+void AGOSEngine::oe1_setUserItem() {
+	// 176: set user item
+	Item *i = getNextItemPtr();
+	uint tmp = getVarOrWord();
+	setUserItem(i, tmp, getNextItemID());
+}
+
+void AGOSEngine::oe1_getUserItem() {
+	// 177: get user item
+	Item *i = getNextItemPtr();
+	int n = getVarOrWord();
+
+	if (getVarOrWord() == 1)
+		_subjectItem = derefItem(getUserItem(i, n));
+	else
+		_objectItem = derefItem(getUserItem(i, n));
+}
+
+void AGOSEngine::oe1_clearUserItem() {
+	// 178: clear user item
+	Item *i = getNextItemPtr();
+	uint tmp = getVarOrWord();
+	setUserItem(i, tmp, 0);
 }
 
 void AGOSEngine::oe1_findMaster() {
@@ -1836,6 +1875,14 @@ void AGOSEngine::oe1_nextMaster() {
 		_subjectItem = nextMaster(levelOf(me()), item, ad, no);
 	else
 		_objectItem = nextMaster(levelOf(me()), item, ad, no);
+}
+
+void AGOSEngine::oe1_bitTest() {
+	// 253: bit test
+	int var = getVarOrWord();
+	int bit = getVarOrWord();
+
+	setScriptCondition((_variableArray[var] & (1 << bit)) != 0);
 }
 
 void AGOSEngine::oe1_zoneDisk() {

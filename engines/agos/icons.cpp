@@ -251,7 +251,7 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 		while (itemRef && width > curWidth) {
 			if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef))
 				curWidth += iconSize;
-			itemRef = derefItem(itemRef->sibling);
+			itemRef = derefItem(itemRef->next);
 		}
 	}
 
@@ -293,7 +293,7 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 					item_again = true;
 			}
 		}
-		itemRef = derefItem(itemRef->sibling);
+		itemRef = derefItem(itemRef->next);
 	}
 
 	window->iconPtr->iconArray[k].item = NULL;
@@ -351,7 +351,7 @@ void AGOSEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMa
 					k++;
 				}
 			}
-			itemRef = derefItem(itemRef->sibling);
+			itemRef = derefItem(itemRef->next);
 		}
 		line -= 52;
 		if (k == (flagnumber + 18))
@@ -394,7 +394,7 @@ void AGOSEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMa
 				idone = 1;	/* Note completed screen */
 			}
 		}
-l1:;		itemRef = derefItem(itemRef->sibling);
+l1:;		itemRef = derefItem(itemRef->next);
 	}
 	window->iconPtr->iconArray[icount].item = NULL;	/* END MARKINGS */
 	if (_variableArray[30] == 0) {

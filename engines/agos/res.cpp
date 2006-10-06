@@ -267,7 +267,7 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 		item->noun = in->readUint16BE();
 		item->state = in->readUint16BE();
 		in->readUint16BE();
-		item->sibling = (uint16)fileReadItemID(in);
+		item->next = (uint16)fileReadItemID(in);
 		item->child = (uint16)fileReadItemID(in);
 		item->parent = (uint16)fileReadItemID(in);
 		in->readUint16BE();
@@ -280,7 +280,7 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 		item->adjective = in->readUint16BE();
 		item->noun = in->readUint16BE();
 		item->state = in->readUint16BE();
-		item->sibling = (uint16)fileReadItemID(in);
+		item->next = (uint16)fileReadItemID(in);
 		item->child = (uint16)fileReadItemID(in);
 		item->parent = (uint16)fileReadItemID(in);
 		in->readUint16BE();
@@ -290,7 +290,7 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 		item->adjective = in->readUint16BE();
 		item->noun = in->readUint16BE();
 		item->state = in->readUint16BE();
-		item->sibling = (uint16)fileReadItemID(in);
+		item->next = (uint16)fileReadItemID(in);
 		item->child = (uint16)fileReadItemID(in);
 		item->parent = (uint16)fileReadItemID(in);
 		in->readUint16BE();

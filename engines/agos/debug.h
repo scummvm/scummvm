@@ -160,7 +160,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	/* 104 */
 	NULL,
 	"W|START_SUB",
-	NULL,
+	"IWW|DO_CLASS",
 	NULL,
 	/* 108 */
 	NULL,
@@ -248,9 +248,9 @@ static const char *const elvira1_opcode_name_table[300] = {
 	NULL,
 	NULL,
 	/* 176 */
-	"IWI|UNK176",
-	NULL,
-	"IW|UNK178",
+	"IWI|SET_USER_ITEM",
+	"IWW|GET_USER_ITEM",
+	"IW|CLEAR_USER_ITEM",
 	NULL,
 	/* 180 */
 	"IWW|WHERE_TO",
@@ -344,7 +344,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	NULL,
 	/* 252 */
 	NULL,
-	NULL,
+	"WWJ|BIT_TEST",
 	NULL,
 	"W|WAIT_SYNC",
 	/* 256 */
