@@ -999,11 +999,14 @@ public:
 	int16 levelOf(Item *item);
 	int wordMatch(Item *item, int16 a, int16 n);
 
+	uint16 getBackExit(int n);
 	uint16 getDoorOf(Item *item, uint16 d);
 	uint16 getDoorState(Item *item, uint16 d);
 	uint16 getExitOf_e1(Item *item, uint16 d);
 	uint16 getExitOf(Item *item, uint16 d);
 	uint16 getExitState(Item *item, uint16 x, uint16 d);
+	void changeDoorState(SubRoom *r, uint16 d, uint16 n);
+	void setDoorState(Item *i, uint16 d, uint16 n);
 	void moveDirn_e1(Item *i, uint x);
 	void moveDirn_e2(Item *i, uint x);
 	void moveDirn_ww(Item *i, uint x);
@@ -1040,6 +1043,9 @@ public:
 	void oe1_printStats();
 
 	// Opcodes, Elvira 2 only
+	void oe2_setDoorState1();
+	void oe2_setDoorState2();
+	void oe2_setDoorState3();
 	void oe2_opcode161();
 
 	// Opcodes, Waxworks only

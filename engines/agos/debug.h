@@ -566,10 +566,10 @@ static const char *const ww_opcode_name_table[256] = {
 	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	"IB|SET_DOOR_STATE1",
+	"IB|SET_DOOR_STATE2",
+	"IB|SET_DOOR_STATE3",
+	"IB|SET_DOOR_STATE2",
 	/* 148 */
 	"IB|IF_DOOR_OPEN",
 	NULL,

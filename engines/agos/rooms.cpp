@@ -30,6 +30,19 @@ using Common::File;
 
 namespace AGOS {
 
+uint16 AGOSEngine::getBackExit(int n) {
+	switch (n) {
+		case 0:return 2;
+		case 1:return 3;
+		case 2:return 0;
+		case 3:return 1;
+		case 4:return 5;
+		case 5:return 4;
+	}
+
+	return 0;
+}
+
 uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
 	SubGenExit *g;
 	Item *x;
@@ -114,6 +127,53 @@ uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
 	n = *c & mask;
 	n >>= d;
 	return n;
+}
+
+void AGOSEngine::changeDoorState(SubRoom *r, uint16 d, uint16 n) {
+	uint16 mask=3;
+	d <<= 1;
+	mask <<= d;
+	n <<= d;
+	r->roomExitStates &= ~mask;
+	r->roomExitStates|= n;
+}
+
+void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
+	Item *j;
+	SubRoom *r, *r1;
+	uint16 d1;
+	uint16 y = 0;
+
+	r = (SubRoom *)findChildOfType(i, 1);
+	if (r == NULL)
+	    return;
+	d1 = d;
+	while (d > y) {
+		if (getDoorState(i, y) == 0)
+			d1--;
+		y++;
+	}
+	changeDoorState(r, d, n);
+
+	j = derefItem(r->roomExit[d1]);
+	if (j == NULL)
+		return;
+	r1 = (SubRoom *)findChildOfType(j, 1);
+	if (r1 == NULL)
+	    return;
+	d = getBackExit(d);
+	d1 = d;
+	y = 0;
+	while(d > y) {
+		if (getDoorState(j, y) == 0)
+			d1--;
+		y++;
+	}
+	/* Check are a complete exit pair */
+	if (derefItem(r1->roomExit[d1]) != i)	    
+		return;
+	/* Change state of exit coming back */
+	changeDoorState(r1, d, n);    
 }
 
 void AGOSEngine::moveDirn_e1(Item *i, uint x) {

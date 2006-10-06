@@ -330,6 +330,10 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[127] = &AGOSEngine::o1_playTune;
+	op[144] = &AGOSEngine::oe2_setDoorState1;
+	op[145] = &AGOSEngine::oe2_setDoorState2;
+	op[146] = &AGOSEngine::oe2_setDoorState3;
+	op[147] = &AGOSEngine::oe2_setDoorState2;
 	op[148] = &AGOSEngine::oww_ifDoorOpen;
 	op[161] = &AGOSEngine::oe2_opcode161;
 	op[175] = &AGOSEngine::o_getDollar2;
@@ -374,6 +378,10 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[105] = &AGOSEngine::oww_menu;
 	op[106] = &AGOSEngine::oww_textMenu;
 	op[127] = &AGOSEngine::o1_playTune;
+	op[144] = &AGOSEngine::oe2_setDoorState1;
+	op[145] = &AGOSEngine::oe2_setDoorState2;
+	op[146] = &AGOSEngine::oe2_setDoorState3;
+	op[147] = &AGOSEngine::oe2_setDoorState2;
 	op[148] = &AGOSEngine::oww_ifDoorOpen;
 	op[175] = &AGOSEngine::o_getDollar2;
 	op[179] = &AGOSEngine::o_isAdjNoun;
@@ -1898,6 +1906,24 @@ void AGOSEngine::oe1_printStats() {
 // -----------------------------------------------------------------------
 // Elvira 2 Opcodes
 // -----------------------------------------------------------------------
+
+void AGOSEngine::oe2_setDoorState1() {
+	// 144:
+	Item *i = getNextItemPtr();
+	setDoorState(i, getVarOrByte(), 1);
+}
+
+void AGOSEngine::oe2_setDoorState2() {
+	// 145:
+	Item *i = getNextItemPtr();
+	setDoorState(i, getVarOrByte(), 2);
+}
+
+void AGOSEngine::oe2_setDoorState3() {
+	// 146:
+	Item *i = getNextItemPtr();
+	setDoorState(i, getVarOrByte(), 3);
+}
 
 void AGOSEngine::oe2_opcode161() {
 	// 161:
