@@ -379,6 +379,8 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[182] = &AGOSEngine::o_b2Zero;
 	op[183] = &AGOSEngine::o_b2NotZero;
 	op[184] = &AGOSEngine::oww_opcode184;
+	op[185] = &AGOSEngine::oww_opcode185;
+	op[186] = &AGOSEngine::oww_opcode186;
 	op[187] = &AGOSEngine::oww_opcode187;
 
 	// Code difference, check if triggered
@@ -399,8 +401,6 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[176] = NULL;
 	op[177] = NULL;
 	op[178] = NULL;
-	op[185] = NULL;
-	op[186] = NULL;
 	op[188] = NULL;
 	op[189] = NULL;
 	op[190] = NULL;
@@ -1106,6 +1106,10 @@ void AGOSEngine::o_loadZone() {
 	uint vga_res = getVarOrWord();
 
 	_lockWord |= 0x80;
+
+	vc27_resetSprite();
+	vc29_stopAllSounds();
+
 	loadZone(vga_res);
 	_lockWord &= ~0x80;
 }
@@ -1870,9 +1874,9 @@ void AGOSEngine::oww_whereTo() {
 	int16 f = getVarOrByte();
 
 	if (f == 1)
-		_subjectItem = _itemArrayPtr[getExitOf(i, d)];
+		_subjectItem = derefItem(getExitOf(i, d));
 	else
-		_objectItem = _itemArrayPtr[getExitOf(i, d)];
+		_objectItem = derefItem(getExitOf(i, d));
 }
 
 void AGOSEngine::oww_menu() {
@@ -1899,6 +1903,14 @@ void AGOSEngine::oww_ifDoorOpen() {
 
 void AGOSEngine::oww_opcode184() {
 	printf("%s\n", getStringPtrByID(getNextStringID()));
+}
+
+void AGOSEngine::oww_opcode185() {
+	printf("%s\n", getStringPtrByID(getNextStringID()));
+}
+
+void AGOSEngine::oww_opcode186() {
+	printf("%s\n", getStringPtrByID(_longText[getVarOrByte()]));
 }
 
 void AGOSEngine::oww_opcode187() {

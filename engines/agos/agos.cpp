@@ -1768,9 +1768,21 @@ void AGOSEngine::waitForSync(uint a) {
 			}
 		}
 		if (_exitCutscene) {
-			if (getBitFlag(9)) {
-				endCutscene();
-				break;
+			if (getGameType() == GType_ELVIRA) {
+				if (_variableArray[105] == 0) {
+					_variableArray[105] = 255;
+					break;
+				}
+			} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+				if (_vgaWaitFor == 51) {
+					setBitFlag(244, 1);
+					break;
+				}
+			} else {
+				if (getBitFlag(9)) {
+					endCutscene();
+					break;
+				}
 			}
 		}
 		processSpecialKeys();

@@ -1042,6 +1042,8 @@ public:
 	void oww_textMenu();
 	void oww_ifDoorOpen();
 	void oww_opcode184();
+	void oww_opcode185();
+	void oww_opcode186();
 	void oww_opcode187();
 
 	// Opcodes, Simon 1 only

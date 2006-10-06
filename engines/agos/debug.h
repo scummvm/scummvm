@@ -245,12 +245,12 @@ static const char *const ww_opcode_name_table[256] = {
 	/* 172 */
 	NULL,
 	NULL,
-	NULL,
-	"|LOCK_ZONES",
+	"W|UNK_174",
+	"|getDollar2",
 	/* 176 */
-	"|UNLOCK_ZONES",
-	"BBI|SCREEN_TEXT_POBJ",
-	"WWBB|GETPATHPOSN",
+	"IWBB|UNK_176",
+	"B|UNK_177",
+	"B|UNK_178",
 	"IWWJ|IS_ADJ_NOUN",
 	/* 180 */
 	"B|SET_BIT2",
@@ -258,10 +258,14 @@ static const char *const ww_opcode_name_table[256] = {
 	"BJ|IS_BIT2_CLEAR",
 	"BJ|IS_BIT2_SET",
 	/* 184 */
-	"W|UNLOAD_ZONE",
-	"W|LOAD_SOUND_FILES",
-	"|UNFREEZE_ZONES",
-	"|FADE_TO_BLACK",
+	"T|UNK_184",
+	"T|UNK_185",
+	"B|UNK_186",
+	"|UNK_187",
+	/* 188 */
+	"I|UNK_188",
+	"|UNK_189",
+	"|UNK_190",
 };
 
 static const char *const simon1dos_opcode_name_table[256] = {
