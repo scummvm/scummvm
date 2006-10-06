@@ -216,8 +216,10 @@ void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			strn = str = simon2_video_opcode_name_table[opcode];
 		} else if (getGameType() == GType_SIMON1) {
 			strn = str = simon1_video_opcode_name_table[opcode];
-		} else {
+		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			strn = str = ww_video_opcode_name_table[opcode];
+		} else {
+			strn = str = elvira1_video_opcode_name_table[opcode];
 		}
 
 		while (*strn != '|')

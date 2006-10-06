@@ -1729,6 +1729,80 @@ static const char *const puzzlepack_opcode_name_table[256] = {
 	"BBBB|SET_COLOR",
 };
 
+const char *const elvira1_video_opcode_name_table[] = {
+	/* 0 */
+	"x|RET",
+	"ddd|FADEOUT",
+	"d|CALL",
+	"ddddd|NEW_SPRITE",
+	/* 4 */
+	"ddd|FADEIN",
+	"vd|SKIP_IF_NEQ",
+	"d|SKIP_IFN_SIB_WITH_A",
+	"d|SKIP_IF_SIB_WITH_A",
+	/* 8 */
+	"dd|SKIP_IF_PARENT_IS",
+	"dd|SKIP_IF_UNK3_IS",
+	"dddd|DRAW",
+	"d|VC_11",
+	/* 12 */
+	"|VC_12",
+	"d|DELAY",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
+	/* 16 */
+	"d|SYNC",
+	"d|WAIT_SYNC",
+	"d|VC_18",
+	"i|JUMP_REL",
+	/* 20 */
+	"|CHAIN_TO",
+	"dd|SET_REPEAT",
+	"i|END_REPEAT",
+	"d|SET_PALETTE",
+	/* 24 */
+	"d|SET_PRIORITY",
+	"diid|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
+	"ddddd|SET_WINDOW",
+	/* 28 */
+	"|RESET",
+	"dddd|PLAY_SOUND",
+	"|STOP_ALL_SOUNDS",
+	"d|SET_FRAME_RATE",
+	/* 32 */
+	"d|SET_WINDOW",
+	"|VC_33",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
+	/* 36 */
+	"|VC_36",
+	"d|VC_37",
+	"dd|CLEAR_WINDOW",
+	"d|VC_39",
+	/* 40 */
+	"dd|SET_WINDOW_IMAGE",
+	"dd|VC_41",
+	"|VC_42",
+	"|VC_43",
+	/* 44 */
+	"d|VC_44",
+	"d|VC_45",
+	"d|VC_46",
+	"dd|VC_47",
+	/* 48 */
+	"dd|VC_48",
+	"|VC_49",
+	"ddddddddd|VC_50",
+	"v|SKIP_IF_VAR_ZERO",
+	/* 52 */
+	"vd|SET_VAR",
+	"vd|ADD_VAR",
+	"vd|SUB_VAR",
+	"|VC_55",
+	"dd|VC_56",
+};
+
 const char *const ww_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
@@ -1749,9 +1823,9 @@ const char *const ww_video_opcode_name_table[] = {
 	"d|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
-	"d|IDENT_WAKEUP",
+	"d|SYNC",
 	/* 16 */
-	"d|IDENT_SLEEP",
+	"d|WAIT_SYNC",
 	"d|VC_17",
 	"i|JUMP_REL",
 	"|CHAIN_TO",
@@ -1776,7 +1850,7 @@ const char *const ww_video_opcode_name_table[] = {
 	"|MOUSE_OFF",
 	"dd|CLEAR_WINDOW",
 	/* 36 */
-	"dd|SAVELOAD_THING",
+	"dd|SET_WINDOW_IMAGE",
 	"dd|VC_37",
 	"v|SKIP_IF_VAR_ZERO",
 	"vd|SET_VAR",
@@ -1832,9 +1906,9 @@ const char *const simon1_video_opcode_name_table[] = {
 	"d|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
-	"d|IDENT_WAKEUP",
+	"d|SYNC",
 	/* 16 */
-	"d|IDENT_SLEEP",
+	"d|WAIT_SYNC",
 	"dq|SET_PATHFIND_ITEM",
 	"i|JUMP_REL",
 	"|CHAIN_TO",
@@ -1859,7 +1933,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|MOUSE_OFF",
 	"dd|CLEAR_WINDOW",
 	/* 36 */
-	"dd|SAVELOAD_THING",
+	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
 	"v|SKIP_IF_VAR_ZERO",
 	"vd|SET_VAR",
@@ -1915,9 +1989,9 @@ const char *const simon2_video_opcode_name_table[] = {
 	"b|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
-	"d|IDENT_WAKEUP",
+	"d|SYNC",
 	/* 16 */
-	"d|IDENT_SLEEP",
+	"d|WAIT_SYNC",
 	"dq|SET_PATHFIND_ITEM",
 	"i|JUMP_REL",
 	"|CHAIN_TO",
@@ -1942,7 +2016,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|MOUSE_OFF",
 	"dd|CLEAR_WINDOW",
 	/* 36 */
-	"dd|SAVELOAD_THING",
+	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
 	"v|SKIP_IF_VAR_ZERO",
 	"vd|SET_VAR",
@@ -2012,9 +2086,9 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"b|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
-	"d|IDENT_WAKEUP",
+	"d|SYNC",
 	/* 16 */
-	"d|IDENT_SLEEP",
+	"d|WAIT_SYNC",
 	"dq|SET_PATHFIND_ITEM",
 	"i|JUMP_REL",
 	"|CHAIN_TO",
@@ -2039,7 +2113,7 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"|MOUSE_OFF",
 	"dd|CLEAR_WINDOW",
 	/* 36 */
-	"dd|SAVELOAD_THING",
+	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
 	"v|SKIP_IF_VAR_ZERO",
 	"vd|SET_VAR",

@@ -107,7 +107,8 @@ void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
 	op[5] = &AGOSEngine::vc5_skip_if_neq;
 	op[6] = &AGOSEngine::vc6_skip_ifn_sib_with_a;
 	op[7] = &AGOSEngine::vc7_skip_if_sib_with_a;
-
+	op[8] = &AGOSEngine::vc8_skip_if_parent_is;
+	op[9] = &AGOSEngine::vc9_skip_if_unk3_is;
 	op[10] = &AGOSEngine::vc10_draw;
 
 	op[13] = &AGOSEngine::vc12_delay;
@@ -126,7 +127,6 @@ void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
 	op[26] = &AGOSEngine::vc25_halt_sprite;
 	op[27] = &AGOSEngine::vc26_setSubWindow;
 	op[28] = &AGOSEngine::vc27_resetSprite;
-
 	op[29] = &AGOSEngine::vc52_playSound;
 	op[30] = &AGOSEngine::vc29_stopAllSounds;
 	op[31] = &AGOSEngine::vc30_setFrameRate;
@@ -2415,7 +2415,7 @@ void AGOSEngine::vc59() {
 	} else if (getGameType() == GType_SIMON1) {
 		if (!_sound->isVoiceActive())
 			vcSkipNextInstruction();
-	} else if (getGameType() == GType_WW) {
+	} else {
 		// Skip if not EGA
 		vcSkipNextInstruction();
 	}
