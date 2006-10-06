@@ -37,7 +37,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 	uint opcode;
 	const char *s, *st;
 
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		opcode = READ_BE_UINT16(p);
 		p += 2;
 		if (opcode == 10000)

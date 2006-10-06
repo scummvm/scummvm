@@ -637,7 +637,7 @@ void AGOSEngine::setupGame() {
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
 		_numVars = 255;
-	} else if (getGameType() == GType_ELVIRA) {
+	} else if (getGameType() == GType_ELVIRA1) {
 		gss = PTR(simon1_settings);
 		_numTextBoxes = 20;
 		_numVideoOpcodes = 57;
@@ -867,7 +867,7 @@ uint AGOSEngine::getNextStringID() {
 }
 
 uint AGOSEngine::getVarOrByte() {
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		return getVarOrWord();
 	} else {
 		uint a = *_codePtr++;
@@ -893,7 +893,7 @@ uint AGOSEngine::getVarOrWord() {
 }
 
 uint AGOSEngine::getVarWrapper() {
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_PP)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_PP)
 		return getVarOrWord();
 	else
 		return getVarOrByte();
@@ -1768,7 +1768,7 @@ void AGOSEngine::waitForSync(uint a) {
 			}
 		}
 		if (_exitCutscene) {
-			if (getGameType() == GType_ELVIRA) {
+			if (getGameType() == GType_ELVIRA1) {
 				if (_variableArray[105] == 0) {
 					_variableArray[105] = 255;
 					break;
@@ -2070,7 +2070,7 @@ void AGOSEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 	vsp->y = y;
 	vsp->x = x;
 	vsp->image = 0;
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		vsp->palette = 0;
 	else
 		vsp->palette = palette;

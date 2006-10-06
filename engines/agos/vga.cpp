@@ -185,7 +185,7 @@ void AGOSEngine::setupVgaOpcodes() {
 	_vga_opcode_table = vga_opcode_table;
 
 	switch (getGameType()) {
-	case GType_ELVIRA:
+	case GType_ELVIRA1:
 		setupElvira1VideoOpcodes(vga_opcode_table);
 		break;
 	case GType_ELVIRA2:
@@ -289,7 +289,7 @@ VgaSprite *AGOSEngine::findCurSprite() {
 }
 
 int AGOSEngine::vcReadVarOrWord() {
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		return vcReadNextWord();
 	} else {
 		int16 var = vcReadNextWord();
@@ -542,7 +542,7 @@ void AGOSEngine::vc3_loadSprite() {
 	while (vsp->id)
 		vsp++;
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		vsp->palette = 0;
 	else
 		vsp->palette = palette;
@@ -1277,7 +1277,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 		return;
 
 	uint offs, offs2;
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		//if (_windowNum != 2 && _windowNum != 3) {
 		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
 		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
@@ -1765,7 +1765,7 @@ void AGOSEngine::vc22_setSpritePalette() {
 	byte *offs, *palptr, *src;
 	uint16 a = 0, b, num, palSize;
 
-	if (getGameType() != GType_ELVIRA && getGameType() != GType_ELVIRA2 && getGameType() != GType_WW)
+	if (getGameType() != GType_ELVIRA1 && getGameType() != GType_ELVIRA2 && getGameType() != GType_WW)
 		a = vcReadNextWord();
 	b = vcReadNextWord();
 
@@ -1788,7 +1788,7 @@ void AGOSEngine::vc22_setSpritePalette() {
 		palptr = _displayPalette;
 		offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA1) {
 			if (b >= 1000) {
 				b -= 1000;
 			} else {
@@ -1800,7 +1800,7 @@ void AGOSEngine::vc22_setSpritePalette() {
 	src = offs + b * palSize;
 
 	do {
-		if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			uint16 color = READ_BE_UINT16(src);
 			palptr[0] = ((color & 0xf00) >> 8) * 32;
 			palptr[1] = ((color & 0x0f0) >> 4) * 32;
@@ -2266,7 +2266,7 @@ void AGOSEngine::vc51_enableBox() {
 void AGOSEngine::vc52_playSound() {
 	bool ambient = false;
 
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		_vcPtr += 8;
 		return;
 	}

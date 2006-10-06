@@ -251,7 +251,7 @@ File *AGOSEngine::openTablesFile_gme(const char *filename) {
 }
 
 bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
 		return loadTablesOldIntoMem(subr_id);
 	else
 		return loadTablesNewIntoMem(subr_id);
@@ -581,13 +581,13 @@ void AGOSEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *su
 		sl->verb = in->readUint16BE();
 		sl->noun1 = in->readUint16BE();
 		sl->noun2 = in->readUint16BE();
-	} else if (getGameType() == GType_ELVIRA) {
+	} else if (getGameType() == GType_ELVIRA1) {
 		in->readUint16BE();
 		in->readUint16BE();
 		in->readUint16BE();
 	}
 
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		int16 tmp = in->readUint16BE();
 		WRITE_BE_UINT16(q, tmp);
 		while (tmp != 10000) {
@@ -642,7 +642,7 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		table = opcode_arg_table_elvira1;
 
 	i = 0;
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		opcode = READ_BE_UINT16(ptr);
 		ptr += 2;
 	} else {
@@ -673,7 +673,7 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 			break;
 
 		case 'B':
-			if (getGameType() == GType_ELVIRA) {
+			if (getGameType() == GType_ELVIRA1) {
 				val = in->readUint16BE();
 				WRITE_BE_UINT16(ptr, val); ptr += 2;
 			} else {

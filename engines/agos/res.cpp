@@ -118,7 +118,7 @@ int AGOSEngine::allocGamePcVars(File *in) {
 	item_array_inited = in->readUint32BE();
 	stringtable_num = in->readUint32BE();
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2) {
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 		item_array_size += 2;
 		item_array_inited = item_array_size;
 	} else {
@@ -171,7 +171,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	in.close();
 
-	if ((getGameType() == GType_ELVIRA && getPlatform() == Common::kPlatformAmiga) ||
+	if ((getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAmiga) ||
 		getGameType() == GType_PP)
 		return;
 
@@ -194,7 +194,7 @@ void AGOSEngine::loadGamePcFile() {
 	_tablesHeapPtrOrg = _tablesHeapPtr;
 	_tablesHeapCurPosOrg = _tablesHeapCurPos;
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_FF)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_FF)
 		return;
 
 	/* Read list of TEXT resources */
@@ -261,7 +261,7 @@ void AGOSEngine::readGamePcText(Common::File *in) {
 void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 	uint32 type;
 
-	if (getGameType() == GType_ELVIRA) {
+	if (getGameType() == GType_ELVIRA1) {
 		item->itemName = (uint16)in->readUint32BE();
 		item->adjective = in->readUint16BE();
 		item->noun = in->readUint16BE();
@@ -309,7 +309,7 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 
 void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 	if (type == 1) {
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA1) {
 			SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
 			subRoom->roomShort = in->readUint32BE();
 			subRoom->roomLong = in->readUint32BE();
@@ -335,7 +335,7 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 					subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
 		}
 	} else if (type == 2) {
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA1) {
 			SubObject *subObject = (SubObject *)allocateChildBlock(item, 2, sizeof(SubObject));
 			in->readUint32BE();
 			in->readUint32BE();
@@ -393,7 +393,7 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 
 			for (i = k = 0; i != j; i++)
 					subSuperRoom->roomExit[k++] = in->readUint16BE();
-		} else if (getGameType() == GType_ELVIRA) {
+		} else if (getGameType() == GType_ELVIRA1) {
 			SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
 			genExit->dest[0] = (uint16)fileReadItemID(in);
 			genExit->dest[1] = (uint16)fileReadItemID(in);
@@ -420,7 +420,7 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
 		setUserFlag(item, 3, in->readUint16BE());
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA1) {
 			setUserFlag(item, 4, in->readUint16BE());
 			setUserFlag(item, 5, in->readUint16BE());
 			setUserFlag(item, 6, in->readUint16BE());
@@ -666,14 +666,18 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 		decompressData(filename, dst, offs, srcSize, dstSize);
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
 		if (getPlatform() == Common::kPlatformAmiga) {
-			if (getFeatures() & GF_TALKIE)
+			if (getFeatures() & GF_TALKIE) {
 				sprintf(filename, "%.3d%d.out", id, type);
-			else if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2)
-				sprintf(filename, "%.2d%d.pkd", id, type);
-			else
+			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
+				if (getGameId() == GID_ELVIRA1DEMO)
+					sprintf(filename, "%.1d%d.out", id, type);
+				else 
+					sprintf(filename, "%.2d%d.pkd", id, type);
+			} else {
 				sprintf(filename, "%.3d%d.pkd", id, type);
+			}
 		} else {
-			if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 				sprintf(filename, "%.2d%d.VGA", id, type);
 			} else {
 				sprintf(filename, "%.3d%d.VGA", id, type);

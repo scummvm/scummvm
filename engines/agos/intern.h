@@ -223,7 +223,8 @@ enum GameFileTypes {
 };
 
 enum GameIds {
-	GID_ELVIRA,
+	GID_ELVIRA1,
+	GID_ELVIRA1DEMO,
 	GID_ELVIRA2,
 	GID_WAXWORKS,
 

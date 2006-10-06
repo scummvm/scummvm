@@ -541,7 +541,7 @@ void AGOSEngine::setupOpcodes() {
 	_numOpcodes = ARRAYSIZE(opcode_table);
 
 	switch (getGameType()) {
-	case GType_ELVIRA:
+	case GType_ELVIRA1:
 		setupElvira1Opcodes(opcode_table);
 		break;
 	case GType_ELVIRA2:
@@ -1107,7 +1107,7 @@ void AGOSEngine::o_loadZone() {
 
 	_lockWord |= 0x80;
 
-	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 ||
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
 		getGameType() == GType_WW) {
 		vc27_resetSprite();
 		vc29_stopAllSounds();
@@ -2755,7 +2755,7 @@ int AGOSEngine::runScript() {
 		if (_continousMainScript)
 			dumpOpcode(_codePtr);
 
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA1) {
 			opcode = getVarOrWord();
 			if (opcode == 10000)
 				return 0;
@@ -2771,7 +2771,7 @@ int AGOSEngine::runScript() {
 
 		/* Invert condition? */
 		flag = false;
-		if (getGameType() == GType_ELVIRA) {
+		if (getGameType() == GType_ELVIRA1) {
 			if (opcode == 203) {
 				flag = true;
 				opcode = getVarOrWord();

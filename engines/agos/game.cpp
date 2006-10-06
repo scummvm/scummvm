@@ -67,7 +67,7 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 };
 
 static const PlainGameDescriptor simonGames[] = {
-	{"elvira", "Elvira"},
+	{"elvira1", "Elvira"},
 	{"elvira2", "Elvira 2"},
 	{"waxworks", "Waxworks"},
 	{"simon1", "Simon the Sorcerer 1"},
@@ -168,6 +168,11 @@ namespace AGOS {
 
 using Common::ADGameFileDescription;
 using Common::ADGameDescription;
+
+static ADGameFileDescription ELVIRA1AMIGADEMO_GameFiles[] = {
+	{ "englishdemo",	GAME_BASEFILE,	"7bbc2dfe8619ef579004ff57674c6e92"},
+	{ "icon.dat",		GAME_ICONFILE,	"68b329da9893e34099c7d8ad5cb9c940"},
+};
 
 static ADGameFileDescription ELVIRA1AMIGA_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0"},
@@ -671,7 +676,7 @@ static AGOSGameDescription gameDescriptions[] = {
 	// Elvira - English Amiga Floppy
 	{
 		{
-			"elvira",
+			"elvira1",
 			"Floppy",
 			ARRAYSIZE(ELVIRA1AMIGA_GameFiles),
 			ELVIRA1AMIGA_GameFiles,
@@ -679,15 +684,31 @@ static AGOSGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 		},
 
-		GType_ELVIRA,
-		GID_ELVIRA,
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED,
+	},
+
+	// Elvira - English Amiga Demo
+	{
+		{
+			"elvira1",
+			"Floppy",
+			ARRAYSIZE(ELVIRA1AMIGADEMO_GameFiles),
+			ELVIRA1AMIGADEMO_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1DEMO,
 		GF_OLD_BUNDLE | GF_CRUNCHED,
 	},
 
 	// Elvira - English DOS Floppy
 	{
 		{
-			"elvira",
+			"elvira1",
 			"Floppy",
 			ARRAYSIZE(ELVIRA1DOS_GameFiles),
 			ELVIRA1DOS_GameFiles,
@@ -695,15 +716,15 @@ static AGOSGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 		},
 
-		GType_ELVIRA,
-		GID_ELVIRA,
+		GType_ELVIRA1,
+		GID_ELVIRA1,
 		GF_OLD_BUNDLE,
 	},
 
 	// Elvira - English DOS Floppy Alternative?
 	{
 		{
-			"elvira",
+			"elvira1",
 			"Floppy",
 			ARRAYSIZE(ELVIRA1DOS2_GameFiles),
 			ELVIRA1DOS2_GameFiles,
@@ -711,8 +732,8 @@ static AGOSGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 		},
 
-		GType_ELVIRA,
-		GID_ELVIRA,
+		GType_ELVIRA1,
+		GID_ELVIRA1,
 		GF_OLD_BUNDLE,
 	},
 

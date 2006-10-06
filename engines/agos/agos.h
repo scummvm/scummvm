@@ -111,7 +111,7 @@ struct VgaTimerEntry {
 };
 
 enum SIMONGameType {
-	GType_ELVIRA = 0,
+	GType_ELVIRA1 = 0,
 	GType_ELVIRA2 = 1,
 	GType_WW = 2,
 	GType_SIMON1 = 3,
