@@ -89,7 +89,7 @@ ConfigManager::ConfigManager()
 
 void ConfigManager::loadDefaultConfigFile() {
 	char configFile[MAXPATHLEN];
-#if defined(UNIX)
+#if defined(UNIX) && !defined(GP2X)  // GP2X is Linux based but Home dir can be read only so do not use it and put the config in the executable dir.
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)
 		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
@@ -335,7 +335,7 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) const {
 	assert(!domName.empty());
 	assert(isValidDomainName(domName));
-	
+
 	if (domName == kTransientDomain)
 		return &_transientDomain;
 	if (domName == kApplicationDomain)
@@ -349,7 +349,7 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 	assert(!domName.empty());
 	assert(isValidDomainName(domName));
-	
+
 	if (domName == kTransientDomain)
 		return &_transientDomain;
 	if (domName == kApplicationDomain)
@@ -527,7 +527,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 					key.c_str(), value.c_str(), domName.c_str());
 
 	(*domain)[key] = value;
-	
+
 	// TODO/FIXME: We used to erase the given key from the transient domain
 	// here. Do we still want to do that?
 	// It was probably there to simplify the options dialogs code:

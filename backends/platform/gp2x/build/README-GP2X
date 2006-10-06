@@ -1,0 +1,114 @@
+$URL$
+$Id$
+
+DO NOT USE THIS FOR ANYTHING OTHER THEN TO TEST A USB MOUSE.
+IT'S BUGGY AND ANYTHING OTHER THEN THE 320*2xx LucasArts GAMES 
+WILL MOST LIGHTLY CRASH YOUR GP2X.
+
+THE README IS BELOW JUST FOR REFERANCE.
+
+ScummVM for the GP2X - UNSTABLE MOUSE TEST - 0.10.0 SVN
+-------------------------------------------------------
+
+This is a test release of ScummVM for the GP2X, it would be appreciated if this alpha test distribution was not mirrored and that people be directed to http://www.distant-earth.com/scummvm instead, until the port is a little more mature, to ensure people download the most recent builds.
+
+This build is still in a very heavy state of development and as such no ‘expected’ behaviour can be guaranteed ;).
+I tested with firmware 1.2.1 for reference.
+
+INCLUDED ENGINES:
+
+Scumm - (All games supported by ScummVM should work to some extent, using the hardware scalar if needed)
+
+// Simon - (Simon the Sorcerer one and two)
+// Sky - (Beneath a Steel Sky)
+// Sword - (Broken Sword 1) - This engine uses the hardware scalar to downsize the graphics to fix on the GP2X. It is NOT very nice to look at.
+// Sword2 - (Broken Sword 2) - This engine uses the hardware scalar to downsize the graphics to fix on the GP2X. It is NOT very nice to look at.
+// Gob - (Goblins one)
+// Queen - Flight of the Amazon Queen
+// Kyra - (The Legend of Kyrandia) - This engine is still under heavy development in ScummVM, however the game is playable.
+// Lure - (Lure of the Temptress) - This engine is still under heavy development in ScummVM, the game is not yet really playable.
+
+
+All other game engines are disabled in this release.
+
+SUPPORTED AUDIO OPTIONS:
+
+Raw audio.
+MP3 audio.
+OGG Vorbis audio (this may be problematic, I just made some big changes to my Tremor code).
+
+RECENT CHANGES:
+
+Refined audio hacks to reduce audio delay a little more.
+Enabled hardware scalar code.
+Now built using SDL 1.2.9 for the parts of the port that use SDL (some parts now hit the hardware directly).
+Enabled new launcher - (Ensure defaulttheme.zip is in the same folder as the executable).
+Aspect Ratio Correction can now be disabled ‘per game’. When adding a game you can find this option on the GFX tab. 
+Note: This will cause the game to run with a black border at the bottom as it will be rendered to a 320*200 frame.
+
+HOW TO SAVE:
+
+NOTE: Everything is saved to the SD card, saves are stored in the game folder, and the config file for ScummVM (.scummvmrc) is stored in the same place as the GPE.
+
+Ok, this is for Scumm engine games but the principle is the same for all.
+
+In Game.
+
+1. Right Trigger
+2. Select SAVE with B
+3. Select a position with B
+4. Right trigger puts ? in the name box for some text.
+5. Press B to save
+
+Basically the emulated keys you have are what I mapped the buttons to, 
+I have a virtual keyboard like the GP32 one (left/right on the stick to pick chars) to add in at some point ;-)
+
+CONTROLLER MAPPING:
+
+NOTE: The controller mappings have recently changed somewhat so please review the new setup.
+This is subject to change; it still does not ‘feel’ quite right.
+
+Mouse Emulation:
+
+Stick: Move Pointer
+Stick Click: ‘light’ Left Click
+B: Left click
+X: Right click
+
+Keyboard Emulation:
+
+Start: Return
+Select: Escape
+Y: Space Bar (Pause)
+Right Trigger: Game Menu (Save, Load, Quit etc.)
+Volume Buttons: Increase and Decrease volume (5% per press)
+
+Fancy button combos:
+
+NOTE: To use button combos press and hold the Left Trigger then...
+
+Volume Buttons: Increase and Decrease subtitle speed (In SCUMM games)
+Right Trigger: 0 (For skipping the copy protection in Monkey Island 2)
+Select: Exit ScummVM completely
+(More to add, ideas please)
+
+KNOWN ISSUES:
+
+Possible random crash (well SegFault). I have had this happen twice and have not tracked down the cause. 
+It happens very infrequently, both times it was in the DOTT CD intro. Saving often is never a bad idea anyhow.
+
+Volume level changes can be a little inconsistent at times.
+
+MAJOR TODOS:
+
+Fix save support when using the Sky engine (Beneath a Steel Sky) - You CAN'T save at the moment but auto save works.
+Look into inconsistencies with Simon engine and map Y key to a button combination to allow clean quitting (Simon 1/2).
+Add splash-screen and pre-ScummVM config menu (CPU speed, LCD timings etc.) - Partly done.
+Fix TV out, maybe make it an option in the pre-ScummVM config menu.
+Any help appreciated :).
+
+SOURCE:
+
+Port source is available on request. Note this is development code (and VERY messy).
+
+John Willis
