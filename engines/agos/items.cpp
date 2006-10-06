@@ -1107,8 +1107,11 @@ void AGOSEngine::o_loadZone() {
 
 	_lockWord |= 0x80;
 
-	vc27_resetSprite();
-	vc29_stopAllSounds();
+	if (getGameType() == GType_ELVIRA || getGameType() == GType_ELVIRA2 ||
+		getGameType() == GType_WW) {
+		vc27_resetSprite();
+		vc29_stopAllSounds();
+	}
 
 	loadZone(vga_res);
 	_lockWord &= ~0x80;
