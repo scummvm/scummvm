@@ -1195,7 +1195,7 @@ protected:
 	void dx_clear_surfaces(uint num_lines);
 	void dx_update_screen_and_palette();
 
-	void dump_video_script(const byte *src, bool one_opcode_only);
+	void dumpVideoScript(const byte *src, bool one_opcode_only);
 	void dump_vga_file(const byte *vga);
 	void dump_vga_script(const byte *ptr, uint res, uint sprite_id);
 	void dump_vga_script_always(const byte *ptr, uint res, uint sprite_id);

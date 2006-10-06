@@ -65,9 +65,11 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 	} else {
 		st = s = elvira1_opcode_name_table[opcode];
 	}
+
 	if (s == NULL) {
-		error("INVALID OPCODE %d", opcode);
+		error("dumpOpcode: INVALID OPCODE %d", opcode);
 	}
+
 	while (*st != '|')
 		st++;
 	printf("%s ", st + 1);
@@ -194,7 +196,7 @@ void AGOSEngine::dumpSubroutines() {
 	}
 }
 
-void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
+void AGOSEngine::dumpVideoScript(const byte *src, bool one_opcode_only) {
 	uint opcode;
 	const char *str, *strn;
 
@@ -208,7 +210,6 @@ void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 
 		if (opcode >= _numVideoOpcodes) {
 			error("Invalid opcode %x", opcode);
-			return;
 		}
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -221,6 +222,10 @@ void AGOSEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			strn = str = ww_video_opcode_name_table[opcode];
 		} else {
 			strn = str = elvira1_video_opcode_name_table[opcode];
+		}
+
+		if (strn == NULL) {
+			error("dumpVideoScript: INVALID OPCODE %d", opcode);
 		}
 
 		while (*strn != '|')
@@ -475,7 +480,7 @@ void AGOSEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 void AGOSEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
 	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
 					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
-	dump_video_script(ptr, false);
+	dumpVideoScript(ptr, false);
 	printf("; end\n");
 }
 
