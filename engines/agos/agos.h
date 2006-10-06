@@ -1043,10 +1043,16 @@ public:
 	void oe1_printStats();
 
 	// Opcodes, Elvira 2 only
-	void oe2_setDoorState1();
-	void oe2_setDoorState2();
-	void oe2_setDoorState3();
+	void oe2_pobj();
+	void oe2_loadUserGame();
+	void oe2_setDoorOpen();
+	void oe2_setDoorClosed();
+	void oe2_setDoorLocked();
+	void oe2_ifDoorOpen();
+	void oe2_ifDoorClosed();
+	void oe2_ifDoorLocked();
 	void oe2_opcode161();
+	void oe2_screenTextMsg();
 
 	// Opcodes, Waxworks only
 	void oww_moveDirn();
@@ -1054,7 +1060,6 @@ public:
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();
-	void oww_ifDoorOpen();
 	void oww_opcode184();
 	void oww_opcode185();
 	void oww_opcode186();

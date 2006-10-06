@@ -477,7 +477,7 @@ static const char *const ww_opcode_name_table[256] = {
 	"W|START_SUB",
 	/* 72 */
 	NULL,
-	NULL,
+	"I|PRINT_OBJ",
 	NULL,
 	NULL,
 	/* 76 */
@@ -497,7 +497,7 @@ static const char *const ww_opcode_name_table[256] = {
 	"W|COMMENT",
 	/* 88 */
 	"|STOP_ANIMATION",
-	"|RESTART_ANIMATION",
+	"T|LOAD_USER_GAME",
 	"IB|GET_PARENT",
 	"IB|GET_NEXT",
 	/* 92 */
@@ -566,14 +566,14 @@ static const char *const ww_opcode_name_table[256] = {
 	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
-	"IB|SET_DOOR_STATE1",
-	"IB|SET_DOOR_STATE2",
-	"IB|SET_DOOR_STATE3",
-	"IB|SET_DOOR_STATE2",
+	"IB|SET_DOOR_OPEN",
+	"IB|SET_DOOR_CLOSED",
+	"IB|SET_DOOR_LOCKED",
+	"IB|SET_DOOR_OPEN",
 	/* 148 */
-	"IB|IF_DOOR_OPEN",
-	NULL,
-	NULL,
+	"IBJ|IF_DOOR_OPEN",
+	"IBJ|IF_DOOR_CLOSED",
+	"IBJ|IF_DOOR_LOCKED",
 	"BI|STORE_ITEM",
 	/* 152 */
 	"BB|GET_ITEM",
@@ -587,8 +587,8 @@ static const char *const ww_opcode_name_table[256] = {
 	NULL,
 	/* 160 */
 	"B|SET_INK",
-	"BWBW|SETUP_TEXT",
-	"BBT|PRINT_STR",
+	"|UNK_161",
+	"BT|PRINT_STR",
 	"W|PLAY_EFFECT",
 	/* 164 */
 	"|getDollar2",

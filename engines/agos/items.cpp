@@ -326,16 +326,21 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[34] = &AGOSEngine::o_copyof;
 	op[35] = &AGOSEngine::o_copyfo;
 	op[54] = &AGOSEngine::o_moveDirn;
+	op[73] = &AGOSEngine::oe2_pobj;
 	op[83] = &AGOSEngine::o1_rescan;
+	op[89] = &AGOSEngine::oe2_loadUserGame;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[127] = &AGOSEngine::o1_playTune;
-	op[144] = &AGOSEngine::oe2_setDoorState1;
-	op[145] = &AGOSEngine::oe2_setDoorState2;
-	op[146] = &AGOSEngine::oe2_setDoorState3;
-	op[147] = &AGOSEngine::oe2_setDoorState2;
-	op[148] = &AGOSEngine::oww_ifDoorOpen;
+	op[144] = &AGOSEngine::oe2_setDoorOpen;
+	op[145] = &AGOSEngine::oe2_setDoorClosed;
+	op[146] = &AGOSEngine::oe2_setDoorLocked;
+	op[147] = &AGOSEngine::oe2_setDoorClosed;
+	op[148] = &AGOSEngine::oe2_ifDoorOpen;
+	op[149] = &AGOSEngine::oe2_ifDoorClosed;
+	op[150] = &AGOSEngine::oe2_ifDoorLocked;
 	op[161] = &AGOSEngine::oe2_opcode161;
+	op[162] = &AGOSEngine::oe2_screenTextMsg;
 	op[175] = &AGOSEngine::o_getDollar2;
 	op[179] = &AGOSEngine::o_isAdjNoun;
 	op[180] = &AGOSEngine::o_b2Set;
@@ -344,7 +349,6 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[183] = &AGOSEngine::o_b2NotZero;
 
 	// Code difference, check if triggered
-	op[162] = NULL;
 	op[163] = NULL;
 	op[164] = NULL;
 	op[165] = NULL;
@@ -371,18 +375,23 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[54] = &AGOSEngine::o_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
+	op[73] = &AGOSEngine::oe2_pobj;
 	op[83] = &AGOSEngine::o1_rescan;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[85] = &AGOSEngine::oww_whereTo;
+	op[89] = &AGOSEngine::oe2_loadUserGame;
 	op[105] = &AGOSEngine::oww_menu;
 	op[106] = &AGOSEngine::oww_textMenu;
 	op[127] = &AGOSEngine::o1_playTune;
-	op[144] = &AGOSEngine::oe2_setDoorState1;
-	op[145] = &AGOSEngine::oe2_setDoorState2;
-	op[146] = &AGOSEngine::oe2_setDoorState3;
-	op[147] = &AGOSEngine::oe2_setDoorState2;
-	op[148] = &AGOSEngine::oww_ifDoorOpen;
+	op[144] = &AGOSEngine::oe2_setDoorOpen;
+	op[145] = &AGOSEngine::oe2_setDoorClosed;
+	op[146] = &AGOSEngine::oe2_setDoorLocked;
+	op[147] = &AGOSEngine::oe2_setDoorClosed;
+	op[148] = &AGOSEngine::oe2_ifDoorOpen;
+	op[149] = &AGOSEngine::oe2_ifDoorClosed;
+	op[150] = &AGOSEngine::oe2_ifDoorLocked;
+	op[162] = &AGOSEngine::oe2_screenTextMsg;
 	op[175] = &AGOSEngine::o_getDollar2;
 	op[179] = &AGOSEngine::o_isAdjNoun;
 	op[180] = &AGOSEngine::o_b2Set;
@@ -396,7 +405,6 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 
 	// Code difference, check if triggered
 	op[161] = NULL;
-	op[162] = NULL;
 	op[163] = NULL;
 	op[164] = NULL;
 	op[165] = NULL;
@@ -1907,26 +1915,66 @@ void AGOSEngine::oe1_printStats() {
 // Elvira 2 Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::oe2_setDoorState1() {
-	// 144:
+void AGOSEngine::oe2_pobj() {
+	// 73: print object
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+
+	if (subObject != NULL && subObject->objectFlags & kOFText)
+		showMessageFormat("%s", (const char *)getStringPtrByID(subObject->objectFlagValue[0]));
+}
+
+void AGOSEngine::oe2_loadUserGame() {
+	// 89: load user game
+	getStringPtrByID(getNextStringID());
+}
+
+void AGOSEngine::oe2_setDoorOpen() {
+	// 144: set door open
 	Item *i = getNextItemPtr();
 	setDoorState(i, getVarOrByte(), 1);
 }
 
-void AGOSEngine::oe2_setDoorState2() {
-	// 145:
+void AGOSEngine::oe2_setDoorClosed() {
+	// 145: set door closed
 	Item *i = getNextItemPtr();
 	setDoorState(i, getVarOrByte(), 2);
 }
 
-void AGOSEngine::oe2_setDoorState3() {
-	// 146:
+void AGOSEngine::oe2_setDoorLocked() {
+	// 146: set door locked
 	Item *i = getNextItemPtr();
 	setDoorState(i, getVarOrByte(), 3);
 }
 
+void AGOSEngine::oe2_ifDoorOpen() {
+	// 148: if door open
+	Item *i = getNextItemPtr();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getDoorState(i, d) == 1);
+}
+
+void AGOSEngine::oe2_ifDoorClosed() {
+	// 149: if door closed
+	Item *i = getNextItemPtr();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getDoorState(i, d) == 2);
+}
+
+void AGOSEngine::oe2_ifDoorLocked() {
+	// 150: if door locked
+	Item *i=getNextItemPtr();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getDoorState(i, d) == 3);
+}
+
 void AGOSEngine::oe2_opcode161() {
 	// 161:
+}
+
+void AGOSEngine::oe2_screenTextMsg() {
+	// 162: print string
+	showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
+	getVarOrByte();
 }
 
 // -----------------------------------------------------------------------
@@ -1968,13 +2016,6 @@ void AGOSEngine::oww_textMenu() {
 
 	getVarOrByte();
 	getVarOrByte();
-}
-
-void AGOSEngine::oww_ifDoorOpen() {
-	// 148: if door open
-	Item *item = getNextItemPtr();
-	uint16 d = getVarOrByte();
-	setScriptCondition(getDoorState(item, d) != 0);
 }
 
 void AGOSEngine::oww_opcode184() {
