@@ -192,8 +192,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[32] = &AGOSEngine::o_isRoom;
 	op[33] = &AGOSEngine::o_isObject;
-
 	op[34] = &AGOSEngine::o_state;
+
 	op[36] = &AGOSEngine::o_oflag;
 
 	op[48] = &AGOSEngine::o_destroy;
@@ -286,6 +286,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[242] = &AGOSEngine::o_doIcons;
 	op[243] = &AGOSEngine::o_isClass;
+
 	op[249] = &AGOSEngine::o_setClass;
 	op[250] = &AGOSEngine::o_unsetClass;
 
@@ -295,9 +296,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[261] = &AGOSEngine::o_here;
 	op[262] = &AGOSEngine::o_doClassIcons;
-	op[264] = &AGOSEngine::o_waitEndTune;
 	op[263] = &AGOSEngine::o1_playTune;
-
+	op[264] = &AGOSEngine::o_waitEndTune;
 	op[265] = &AGOSEngine::o_ifEndTune;
 	op[266] = &AGOSEngine::o_setAdjNoun;
 	op[267] = &AGOSEngine::oe1_zoneDisk;

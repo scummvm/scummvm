@@ -60,12 +60,13 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		st = s = simon2dos_opcode_name_table[opcode];
 	} else if (getGameType() == GType_SIMON1) {
 		st = s = simon1dos_opcode_name_table[opcode];
-	} else {
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		st = s = ww_opcode_name_table[opcode];
+	} else {
+		st = s = elvira1_opcode_name_table[opcode];
 	}
 	if (s == NULL) {
-		//error("INVALID OPCODE %d", opcode);
-		return NULL;
+		error("INVALID OPCODE %d", opcode);
 	}
 	while (*st != '|')
 		st++;

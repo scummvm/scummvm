@@ -26,6 +26,364 @@
 
 namespace AGOS {
 
+static const char *const elvira1_opcode_name_table[300] = {
+	/* 0 */
+	"IJ|AT",
+	"IJ|NOT_AT",
+	NULL,
+	NULL,
+	/* 4 */
+	"IJ|CARRIED",
+	"IJ|NOT_CARRIED",
+	"IIJ|IS_AT",
+	NULL,
+	/* 8 */
+	NULL,
+	NULL,
+	"VJ|IS_ZERO",
+	"VJ|ISNOT_ZERO",
+	/* 12 */
+	"VWJ|IS_EQ",
+	"VWJ|IS_NEQ",
+	"VWJ|IS_LE",
+	"VWJ|IS_GE",
+	/* 16 */
+	"VVJ|IS_EQF",
+	"VVJ|IS_NEQF",
+	"VVJ|IS_LEF",
+	"VVJ|IS_GEF",
+	/* 20 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 24 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 28 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 32 */
+	"IJ|IS_ROOM",
+	"IJ|IS_OBJECT",
+	"IWJ|ITEM_STATE_IS",
+	NULL,
+	/* 36 */
+	"IWJ|OBJECT_HAS_FLAG",
+	NULL,
+	NULL,
+	NULL,
+	/* 40 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 44 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 48 */
+	"I|SET_NO_PARENT",
+	NULL,
+	NULL,
+	"II|SET_PARENT",
+	/* 52 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 56 */
+	"VV|MOVE",
+	NULL,
+	NULL,
+	NULL,
+	/* 60 */
+	"V|SET_FF",
+	"V|ZERO",
+	NULL,
+	NULL,
+	/* 64 */
+	"VW|SET",
+	"VW|ADD",
+	"VW|SUB",
+	"VV|ADDF",
+	/* 68 */
+	"VV|SUBF",
+	"VW|MUL",
+	"VW|DIV",
+	"VV|MULF",
+	/* 72 */
+	"VV|DIVF",
+	"VW|MOD",
+	"VV|MODF",
+	"VW|RANDOM",
+	/* 76 */
+	"W|MOVE_DIRN",
+	"I|SET_A_PARENT",
+	NULL,
+	NULL,
+	/* 80 */
+	"IW|SET_CHILD2_BIT",
+	"IW|CLEAR_CHILD2_BIT",
+	NULL,
+	NULL,
+	/* 84 */
+	"II|MAKE_SIBLING",
+	"I|INC_STATE",
+	"I|DEC_STATE",
+	"IW|SET_STATE",
+	/* 88 */
+	NULL,
+	"V|SHOW_INT",
+	"|SHOW_SCORE",
+	"T|SHOW_STRING_NL",
+	/* 92 */
+	"T|SHOW_STRING",
+	NULL,
+	NULL,
+	NULL,
+	/* 96 */
+	NULL,
+	"x|END",
+	"x|DONE",
+	NULL,
+	/* 100 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 104 */
+	NULL,
+	"W|START_SUB",
+	NULL,
+	NULL,
+	/* 108 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 112 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 116 */
+	NULL,
+	NULL,
+	NULL,
+	"WW|ADD_TIMEOUT",
+	/* 120 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 124 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 128 */
+	"J|IS_M1_EMPTY",
+	"J|IS_M3_EMPTY",
+	NULL,
+	NULL,
+	/* 132 */
+	NULL,
+	NULL,
+	NULL,
+	"ITJ|CHILD_FR2_IS",
+	/* 136 */
+	"IIJ|IS_ITEM_EQ",
+	NULL,
+	NULL,
+	NULL,
+	/* 140 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 144 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 148 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 152 */
+	"W|DEBUG",
+	NULL,
+	NULL,
+	NULL,
+	/* 156 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 160 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 164 */
+	"|RESCAN",
+	NULL,
+	NULL,
+	NULL,
+	/* 168 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 172 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 176 */
+	"IWI|UNK176",
+	NULL,
+	"IW|UNK178",
+	NULL,
+	/* 180 */
+	"IWW|WHERE_TO",
+	NULL,
+	NULL,
+	NULL,
+	/* 184 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 188 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 192 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 196 */
+	NULL,
+	NULL,
+	"W|COMMENT",
+	NULL,
+	/* 200 */
+	NULL,
+	NULL,
+	NULL,
+	"|NOT",
+	/* 204 */
+	NULL,
+	NULL,
+	"IW|GET_PARENT",
+	"IW|GET_NEXT",
+	/* 208 */
+	"IW|GET_CHILDREN",
+	NULL,
+	NULL,
+	NULL,
+	/* 212 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 216 */
+	NULL,
+	NULL,
+	NULL,
+	"WW|FIND_MASTER",
+	/* 220 */
+	"IWW|NEXT_MASTER",
+	NULL,
+	NULL,
+	NULL,
+	/* 224 */
+	"WW|PICTURE",
+	"W|LOAD_ZONE",
+	"WWWWW|ANIMATE",
+	"W|STOP_ANIMATE",
+	/* 228 */
+	"|KILL_ANIMATE",
+	"WWWWWWW|DEFINE_WINDOW",
+	"W|CHANGE_WINDOW",
+	"|CLS",
+	/* 232 */
+	"W|CLOSE_WINDOW",
+	NULL,
+	NULL,
+	"WWWWWIW|ADD_BOX",
+	/* 236 */
+	"W|DEL_BOX",
+	"W|ENABLE_BOX",
+	"W|DISABLE_BOX",
+	"WWW|MOVE_BOX",
+	/* 240 */
+	NULL,
+	NULL,
+	"IW|DO_ICONS",
+	"IWJ|IS_CLASS",
+	/* 244 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 248 */
+	NULL,
+	"IW|SET_CLASS",
+	"IW|UNSET_CLASS",
+	NULL,
+	/* 252 */
+	NULL,
+	NULL,
+	NULL,
+	"W|WAIT_SYNC",
+	/* 256 */
+	"W|SYNC",
+	"WI|DEF_OBJ",
+	NULL,
+	NULL,
+	/* 260 */
+	NULL,
+	"IJ|IS_SIBLING_WITH_A",
+	"IWW|DO_CLASS_ICONS",
+	"WW|PLAY_TUNE",
+	/* 264 */
+	"W|WAIT_END_TUNE",
+	"W|IF_END_TUNE",
+	"Www|SET_ADJ_NOUN",
+	"WW|ZONE_DISK",
+	/* 268 */
+	"|SAVE_GAME",
+	"|LOAD_GAME",
+	"|PRINT_STATS",
+	"|STOP_TUNE",
+	/* 272 */
+	NULL,
+	NULL,
+	"|PAUSE",
+	"IV|COPY_SF",
+	/* 276 */
+	"W|RESTORE_ICONS",
+	NULL,
+	NULL,
+	"|FREEZE_ZONES",
+	/* 280 */
+	"II|SET_PARENT_SPECIAL",
+	"|CLEAR_TIMERS",
+	NULL,
+	"WJ|IS_BOX",
+};
+
 static const char *const ww_opcode_name_table[256] = {
 	/* 0 */
 	"|NOT",
@@ -195,8 +553,8 @@ static const char *const ww_opcode_name_table[256] = {
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
-	"|DUMMYPROC_134",
-	"|QUIT_IF_USER_PRESSES_Y",
+	"|STOP_TUNE",
+	"|PAUSE",
 	/* 136 */
 	"IV|COPY_SF",
 	"B|RESTORE_ICONS",
@@ -205,7 +563,7 @@ static const char *const ww_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -216,9 +574,9 @@ static const char *const ww_opcode_name_table[256] = {
 	"IB|IF_DOOR_OPEN",
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"B|SET_BIT",
 	"B|CLEAR_BIT",
 	"BJ|IS_BIT_CLEAR",
@@ -437,8 +795,8 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
-	"|DUMMYPROC_134",
-	"|QUIT_IF_USER_PRESSES_Y",
+	"|STOP_TUNE",
+	"|PAUSE",
 	/* 136 */
 	"IV|COPY_SF",
 	"B|RESTORE_ICONS",
@@ -447,7 +805,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -458,9 +816,9 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"B|SET_BIT",
 	"B|CLEAR_BIT",
 	"BJ|IS_BIT_CLEAR",
@@ -675,8 +1033,8 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
-	"|DUMMYPROC_134",
-	"|QUIT_IF_USER_PRESSES_Y",
+	"|STOP_TUNE",
+	"|PAUSE",
 	/* 136 */
 	"IV|COPY_SF",
 	"B|RESTORE_ICONS",
@@ -685,7 +1043,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -696,9 +1054,9 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"B|SET_BIT",
 	"B|CLEAR_BIT",
 	"BJ|IS_BIT_CLEAR",
@@ -913,8 +1271,8 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
-	"|DUMMYPROC_134",
-	"|QUIT_IF_USER_PRESSES_Y",
+	"|STOP_TUNE",
+	"|PAUSE",
 	/* 136 */
 	"IV|COPY_SF",
 	"B|RESTORE_ICONS",
@@ -923,7 +1281,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -934,9 +1292,9 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"B|SET_BIT",
 	"B|CLEAR_BIT",
 	"BJ|IS_BIT_CLEAR",
@@ -1155,8 +1513,8 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
-	"|DUMMYPROC_134",
-	"|QUIT_IF_USER_PRESSES_Y",
+	"|STOP_TUNE",
+	"|PAUSE",
 	/* 136 */
 	"IV|COPY_SF",
 	"B|RESTORE_ICONS",
@@ -1165,7 +1523,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -1176,9 +1534,9 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"B|SET_BIT",
 	"B|CLEAR_BIT",
 	"BJ|IS_BIT_CLEAR",
@@ -1407,7 +1765,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -1418,9 +1776,9 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"B|SET_BIT",
 	"B|CLEAR_BIT",
 	"BJ|IS_BIT_CLEAR",
@@ -1660,7 +2018,7 @@ static const char *const puzzlepack_opcode_name_table[256] = {
 	/* 140 */
 	"|CLEAR_TIMERS",
 	"BI|SET_M1_OR_M3",
-	"WJ|IS_HITAREA_0x40_CLEAR",
+	"WJ|IS_BOX",
 	"I|START_ITEM_SUB",
 	/* 144 */
 	NULL,
@@ -1671,9 +2029,9 @@ static const char *const puzzlepack_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	NULL,
-	"BI|SET_ARRAY6_TO",
+	"BI|STORE_ITEM",
 	/* 152 */
-	"BB|SET_M1_M3_TO_ARRAY6",
+	"BB|GET_ITEM",
 	"W|SET_BIT",
 	"W|CLEAR_BIT",
 	"WJ|IS_BIT_CLEAR",
