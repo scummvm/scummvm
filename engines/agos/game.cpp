@@ -67,8 +67,8 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 };
 
 static const PlainGameDescriptor simonGames[] = {
-	{"elvira1", "Elvira"},
-	{"elvira2", "Elvira 2"},
+	{"elvira1", "Elvira - Mistress of the Dark"},
+	{"elvira2", "Elvira II - The Jaws of Ceberus"},
 	{"waxworks", "Waxworks"},
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
