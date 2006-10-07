@@ -21,25 +21,26 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#ifdef DYNAMIC_MODULES
 
-#include "backends/plugins/posix/posix-provider.h"
+#include "backends/plugins/win32/win32-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include <dlfcn.h>
-#define PLUGIN_DIRECTORY	"plugins/"
+#define PLUGIN_DIRECTORY	""
+#define PLUGIN_PREFIX		""
+#define PLUGIN_SUFFIX		".dll"
 
 
-class POSIXPlugin : public DynamicPlugin {
+class Win32Plugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
 	Common::String _filename;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
-		void *func = dlsym(_dlHandle, symbol);
+		void *func = (void *)GetProcAddress((HMODULE)_dlHandle, symbol);
 		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
+			warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 	
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -52,36 +53,36 @@ protected:
 	}
 
 public:
-	POSIXPlugin(const Common::String &filename)
+	Win32Plugin(const Common::String &filename)
 		: _dlHandle(0), _filename(filename) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
-		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
+		_dlHandle = LoadLibrary(_filename.c_str());
 	
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			warning("Failed loading plugin '%s'", _filename.c_str());
 			return false;
 		}
-	
+
 		return DynamicPlugin::loadPlugin();
 	}
 	void unloadPlugin() {
 		if (_dlHandle) {
-			if (dlclose(_dlHandle) != 0)
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			if (!FreeLibrary((HMODULE)_dlHandle))
+				warning("Failed unloading plugin '%s'", _filename.c_str());
 		}
 	}
 };
 
 
-POSIXPluginProvider::POSIXPluginProvider() {
+Win32PluginProvider::Win32PluginProvider() {
 }
 
-POSIXPluginProvider::~POSIXPluginProvider() {
+Win32PluginProvider::~Win32PluginProvider() {
 }
 
-PluginList POSIXPluginProvider::getPlugins() {
+PluginList Win32PluginProvider::getPlugins() {
 	PluginList pl;
 	
 	
@@ -111,7 +112,7 @@ PluginList POSIXPluginProvider::getPlugins() {
 	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		Common::String name(i->name());
 		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
-			pl.push_back(new POSIXPlugin(i->path()));
+			pl.push_back(new Win32Plugin(i->path()));
 		}
 	}
 	
@@ -120,4 +121,4 @@ PluginList POSIXPluginProvider::getPlugins() {
 }
 
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // DYNAMIC_MODULES

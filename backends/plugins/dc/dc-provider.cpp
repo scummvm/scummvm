@@ -21,17 +21,19 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#if defined(DYNAMIC_MODULES) && defined(__DC__)
 
-#include "backends/plugins/posix/posix-provider.h"
+#include "backends/plugins/dc/dc-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include <dlfcn.h>
-#define PLUGIN_DIRECTORY	"plugins/"
+#include "dcloader.h"
+#define PLUGIN_DIRECTORY	"/"
+#define PLUGIN_PREFIX		""
+#define PLUGIN_SUFFIX		".PLG"
 
 
-class POSIXPlugin : public DynamicPlugin {
+class DCPlugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
 	Common::String _filename;
@@ -52,7 +54,7 @@ protected:
 	}
 
 public:
-	POSIXPlugin(const Common::String &filename)
+	DCPlugin(const Common::String &filename)
 		: _dlHandle(0), _filename(filename) {}
 
 	bool loadPlugin() {
@@ -64,7 +66,12 @@ public:
 			return false;
 		}
 	
-		return DynamicPlugin::loadPlugin();
+		bool ret = DynamicPlugin::loadPlugin();
+		
+		if (ret)
+			dlforgetsyms(_dlHandle);
+
+		return ret;
 	}
 	void unloadPlugin() {
 		if (_dlHandle) {
@@ -75,13 +82,13 @@ public:
 };
 
 
-POSIXPluginProvider::POSIXPluginProvider() {
+DCPluginProvider::DCPluginProvider() {
 }
 
-POSIXPluginProvider::~POSIXPluginProvider() {
+DCPluginProvider::~DCPluginProvider() {
 }
 
-PluginList POSIXPluginProvider::getPlugins() {
+PluginList DCPluginProvider::getPlugins() {
 	PluginList pl;
 	
 	
@@ -111,7 +118,7 @@ PluginList POSIXPluginProvider::getPlugins() {
 	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		Common::String name(i->name());
 		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
-			pl.push_back(new POSIXPlugin(i->path()));
+			pl.push_back(new DCPlugin(i->path()));
 		}
 	}
 	
@@ -120,4 +127,4 @@ PluginList POSIXPluginProvider::getPlugins() {
 }
 
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // defined(DYNAMIC_MODULES) && defined(__DC__)

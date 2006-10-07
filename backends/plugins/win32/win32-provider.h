@@ -21,22 +21,22 @@
  *
  */
 
-#ifndef BACKENDS_PLUGINS_POSIX_H
-#define BACKENDS_PLUGINS_POSIX_H
+#ifndef BACKENDS_PLUGINS_WIN32_H
+#define BACKENDS_PLUGINS_WIN32_H
 
 #include "common/stdafx.h"
 #include "base/plugins.h"
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
-class POSIXPluginProvider : public PluginProvider {
+class Win32PluginProvider : public PluginProvider {
 public:
-	POSIXPluginProvider();
-	~POSIXPluginProvider();
+	Win32PluginProvider();
+	~Win32PluginProvider();
 
 	virtual PluginList getPlugins();
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // defined(DYNAMIC_MODULES) && defined(_WIN32)
 
 #endif
