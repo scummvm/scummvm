@@ -1793,6 +1793,21 @@ void AGOSEngine::vc22_setSpritePalette() {
 				b -= 1000;
 			} else {
 				num = 13;
+
+				palptr[13 * 4 + 0] = 160;
+				palptr[13 * 4 + 1] = 0;
+				palptr[13 * 4 + 2] = 0;
+				palptr[13 * 4 + 3] = 0;
+
+				palptr[14 * 4 + 0] = 96;
+				palptr[14 * 4 + 1] = 96;
+				palptr[14 * 4 + 2] = 64;
+				palptr[14 * 4 + 3] = 0;
+
+				palptr[15 * 4 + 0] = 192;
+				palptr[15 * 4 + 1] = 192;
+				palptr[15 * 4 + 2] = 40;
+				palptr[15 * 4 + 3] = 0;
 			}
 		}
 	}
