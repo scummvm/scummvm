@@ -25,6 +25,7 @@
 #define BASE_PLUGINS_H
 
 #include "common/array.h"
+#include "common/list.h"
 #include "common/singleton.h"
 #include "common/util.h"
 #include "base/game.h"
@@ -86,14 +87,14 @@ enum PluginError {
  */
 class Plugin {
 public:
-	virtual ~Plugin()				{}
+	virtual ~Plugin() {}
 
-	virtual bool loadPlugin()		{ return true; }
-	virtual void unloadPlugin()		{}
+	virtual bool loadPlugin() = 0;
+	virtual void unloadPlugin() = 0;
 
 	virtual const char *getName() const = 0;
 	virtual const char *getCopyright() const = 0;
-	virtual int getVersion() const	{ return 0; }	// TODO!
+//	virtual int getVersion() const	{ return 0; }	// TODO!
 
 	virtual GameList getSupportedGames() const = 0;
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
@@ -173,7 +174,8 @@ protected:
 	GameList _games;
 
 public:
-	PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df);
+	PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
+		: _name(name), _copyright(copyright), _qf(qf), _ef(ef), _df(df), _games(games) {}
 };
 #endif
 
@@ -182,7 +184,20 @@ public:
 typedef Common::Array<Plugin *> PluginList;
 
 
-class PluginManager;
+class PluginProvider {
+public:
+	virtual ~PluginProvider() {}
+	
+	/**
+	 * Return a list of Plugin objects. The caller is responsible for actually
+	 * loading/unloading them (by invoking the appropriate methods).
+	 * Furthermore, the caller is responsible for deleting these objects
+	 * eventually.
+	 */
+	virtual PluginList getPlugins() = 0;
+};
+
+//class PluginManager;
 
 /**
  * Instances of this class manage all plugins, including loading them,
@@ -191,8 +206,10 @@ class PluginManager;
  * @todo Add support for dynamic plugins (this may need additional API, e.g. for a plugin path)
  */
 class PluginManager : public Common::Singleton<PluginManager> {
+	typedef Common::List<PluginProvider *> ProviderList;
 private:
 	PluginList _plugins;
+	ProviderList _providers;
 
 	bool tryLoadPlugin(Plugin *plugin);
 
@@ -201,6 +218,8 @@ private:
 
 public:
 	~PluginManager();
+	
+	void addPluginProvider(PluginProvider *pp);
 
 	void loadPlugins();
 	void unloadPlugins();

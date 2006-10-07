@@ -23,52 +23,18 @@
 
 #include "common/stdafx.h"
 #include "base/plugins.h"
-#include "engines/engine.h"
 #include "common/util.h"
 #include "common/fs.h"
 
-/** Type of factory functions which make new Engine objects. */
-typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
-
-typedef const char *(*NameFunc)();
-typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
-typedef GameList (*GameIDListFunc)();
-typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
-
-
 #ifdef DYNAMIC_MODULES
-
-#ifdef UNIX
-#include <dlfcn.h>
-#define PLUGIN_DIRECTORY	"plugins/"
-#else
-#ifdef __DC__
-#include "dcloader.h"
-#define PLUGIN_DIRECTORY	"/"
-#define PLUGIN_PREFIX		""
-#define PLUGIN_SUFFIX		".PLG"
-#else
-#ifdef _WIN32
-#define PLUGIN_DIRECTORY	""
-#define PLUGIN_PREFIX		""
-#define PLUGIN_SUFFIX		".dll"
-#else
-#error No support for loading plugins on non-unix systems at this point!
+  #if defined(UNIX)
+  #include "backends/plugins/posix/posix-provider.h"
+  #elif defined(__DC__)
+  #include "backends/plugins/dc/dc-provider.h"
+  #elif defined(_WIN32)
+  #include "backends/plugins/win32/win32-provider.h"
+  #endif
 #endif
-#endif
-#endif
-
-#else
-
-PluginRegistrator::PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
-	: _name(name), _copyright(copyright), _qf(qf), _ef(ef), _df(df), _games(games) {
-	//printf("Automatically registered plugin '%s'\n", name);
-}
-
-#endif
-
-
-#pragma mark -
 
 
 void DetectedGame::updateDesc(const char *extra) {
@@ -114,6 +80,9 @@ public:
 		delete _plugin;
 	}
 
+	virtual bool loadPlugin()		{ return true; }
+	virtual void unloadPlugin()		{}
+
 	const char *getName() const { return _plugin->_name; }
 	const char *getCopyright() const { return _plugin->_copyright; }
 
@@ -134,266 +103,118 @@ public:
 		return (*_plugin->_df)(fslist);
 	}
 };
-#endif
 
-#pragma mark -
-
-#ifdef DYNAMIC_MODULES
-
-class DynamicPlugin : public Plugin {
-protected:
-	typedef void (*VoidFunc)();
-	
-	void *_dlHandle;
-	Common::String _filename;
-
-	Common::String _name;
-	Common::String _copyright;
-	GameIDQueryFunc _qf;
-	EngineFactory _ef;
-	DetectFunc _df;
-	GameList _games;
-
-	VoidFunc findSymbol(const char *symbol);
-
+class StaticPluginProvider : public PluginProvider {
 public:
-	DynamicPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename), _qf(0), _ef(0), _df(0), _games() {}
-
-	const char *getName() const					{ return _name.c_str(); }
-	const char *getCopyright() const			{ return _copyright.c_str(); }
-
-	PluginError createInstance(OSystem *syst, Engine **engine) const {
-		assert(_ef);
-		return (*_ef)(syst, engine);
+	StaticPluginProvider() {
+	}
+	
+	~StaticPluginProvider() {
 	}
 
-	GameList getSupportedGames() const { return _games; }
-
-	GameDescriptor findGame(const char *gameid) const {
-		assert(_qf);
-		return (*_qf)(gameid);
+	virtual PluginList getPlugins() {
+		PluginList pl;
+	
+		#define LINK_PLUGIN(ID) \
+			extern PluginRegistrator *g_##ID##_PluginReg; \
+			extern void g_##ID##_PluginReg_alloc(); \
+			g_##ID##_PluginReg_alloc(); \
+			plugin = g_##ID##_PluginReg; \
+			pl.push_back(new StaticPlugin(plugin));
+	
+		// "Loader" for the static plugins.
+		// Iterate over all registered (static) plugins and load them.
+		PluginRegistrator *plugin;
+	
+		#ifndef DISABLE_SCUMM
+		LINK_PLUGIN(SCUMM)
+		#endif
+		#ifndef DISABLE_SKY
+		LINK_PLUGIN(SKY)
+		#endif
+		#ifndef DISABLE_SWORD1
+		LINK_PLUGIN(SWORD1)
+		#endif
+		#ifndef DISABLE_SWORD2
+		LINK_PLUGIN(SWORD2)
+		#endif
+		#ifndef DISABLE_AGOS
+		LINK_PLUGIN(AGOS)
+		#endif
+		#ifndef DISABLE_QUEEN
+		LINK_PLUGIN(QUEEN)
+		#endif
+		#ifndef DISABLE_SAGA
+		LINK_PLUGIN(SAGA)
+		#endif
+		#ifndef DISABLE_KYRA
+		LINK_PLUGIN(KYRA)
+		#endif
+		#ifndef DISABLE_GOB
+		LINK_PLUGIN(GOB)
+		#endif
+		#ifndef DISABLE_LURE
+		LINK_PLUGIN(LURE)
+		#endif
+		#ifndef DISABLE_CINE
+		LINK_PLUGIN(CINE)
+		#endif
+		#ifndef DISABLE_AGI
+		LINK_PLUGIN(AGI)
+		#endif
+	
+	
+		return pl;
 	}
-
-	DetectedGameList detectGames(const FSList &fslist) const {
-		assert(_df);
-		return (*_df)(fslist);
-	}
-
-	bool loadPlugin();
-	void unloadPlugin();
 };
 
-DynamicPlugin::VoidFunc DynamicPlugin::findSymbol(const char *symbol) {
-#if defined(UNIX) || defined(__DC__)
-	void *func = dlsym(_dlHandle, symbol);
-	if (!func)
-		warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
-#else
-#if defined(_WIN32)
-	void *func = (void *)GetProcAddress((HMODULE)_dlHandle, symbol);
-	if (!func)
-		warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
-#else
-#error TODO
+
 #endif
-#endif
-
-	// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
-	// standard and POSIX: ISO C++ disallows casting between function pointers
-	// and data pointers, but dlsym always returns a void pointer. For details,
-	// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
-	assert(sizeof(VoidFunc) == sizeof(func));
-	VoidFunc tmp;
-	memcpy(&tmp, &func, sizeof(VoidFunc));
-	return tmp;
-}
-
-bool DynamicPlugin::loadPlugin() {
-	assert(!_dlHandle);
-#if defined(UNIX) || defined(__DC__)
-	_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
-
-	if (!_dlHandle) {
-		warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
-		return false;
-	}
-#else
-#if defined(_WIN32)
-	_dlHandle = LoadLibrary(_filename.c_str());
-
-	if (!_dlHandle) {
-		warning("Failed loading plugin '%s'", _filename.c_str());
-		return false;
-	}
-#else
-#error TODO
-#endif
-#endif
-
-	// Query the plugin's name
-	NameFunc nameFunc = (NameFunc)findSymbol("PLUGIN_name");
-	if (!nameFunc) {
-		unloadPlugin();
-		return false;
-	}
-	_name = nameFunc();
-
-	// Query the plugin's copyright
-	nameFunc = (NameFunc)findSymbol("PLUGIN_copyright");
-	if (!nameFunc) {
-		unloadPlugin();
-		return false;
-	}
-	_copyright = nameFunc();
-
-	// Query the plugin for the game ids it supports
-	GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_gameIDList");
-	if (!gameListFunc) {
-		unloadPlugin();
-		return false;
-	}
-	_games = gameListFunc();
-
-	// Retrieve the gameid query function
-	_qf = (GameIDQueryFunc)findSymbol("PLUGIN_findGameID");
-	if (!_qf) {
-		unloadPlugin();
-		return false;
-	}
-
-	// Retrieve the factory function
-	_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
-	if (!_ef) {
-		unloadPlugin();
-		return false;
-	}
-
-	// Retrieve the detector function
-	_df = (DetectFunc)findSymbol("PLUGIN_detectGames");
-	if (!_df) {
-		unloadPlugin();
-		return false;
-	}
-
-#ifdef __DC__
-	dlforgetsyms(_dlHandle);
-#endif
-
-	return true;
-}
-
-void DynamicPlugin::unloadPlugin() {
-	if (_dlHandle) {
-#if defined(UNIX) || defined(__DC__)
-		if (dlclose(_dlHandle) != 0)
-			warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
-#elif defined(_WIN32)
-		if (!FreeLibrary((HMODULE)_dlHandle))
-			warning("Failed unloading plugin '%s'", _filename.c_str());
-#else
-#error TODO
-#endif
-	}
-}
-
-#endif	// DYNAMIC_MODULES
 
 #pragma mark -
 
 DECLARE_SINGLETON(PluginManager);
 
 PluginManager::PluginManager() {
+
+// FIXME: The following code should be moved to the backend specific code,
+// usually into the main() function just before scummvm_main is called
+#ifdef DYNAMIC_MODULES
+
+#if defined(UNIX)
+	addPluginProvider(new POSIXPluginProvider());
+#elif defined(__DC__)
+	addPluginProvider(new DCPluginProvider());
+#elif defined(_WIN32)
+	addPluginProvider(new Win32PluginProvider());
+#else
+#error No support for loading plugins on non-unix systems at this point!
+#endif
+
+#else
+	addPluginProvider(new StaticPluginProvider());
+#endif
 }
 
 PluginManager::~PluginManager() {
 	// Explicitly unload all loaded plugins
 	unloadPlugins();
 }
+	
+void PluginManager::addPluginProvider(PluginProvider *pp) {
+	_providers.push_back(pp);
+}
 
 void PluginManager::loadPlugins() {
-#ifdef DYNAMIC_MODULES
-	// Load dynamic plugins
-	// TODO... this is right now just a nasty hack.
-	// This should search one or multiple directories for all plugins it can
-	// find (to this end, we maybe should use a special prefix/suffix; e.g.
-	// instead of libscumm.so, use scumm.engine or scumm.plugin etc.).
-	//
-	// The list of directories to search could be e.g.:
-	// User specified (via config file), ".", "./plugins", "$(prefix)/lib".
-	//
-	// We also need to add code which ensures what we are looking at is
-	// a) a ScummVM engine and b) matches the version of the executable.
-	// Hence one more symbol should be exported by plugins which returns
-	// the "ABI" version the plugin was built for, and we can compare that
-	// to the ABI version of the executable.
-
-	// Load all plugins.
-	// Scan for all plugins in this directory
-	FilesystemNode dir(PLUGIN_DIRECTORY);
-	FSList files;
-	if (!dir.listDir(files, FilesystemNode::kListFilesOnly)) {
-		error("Couldn't open plugin directory '%s'", PLUGIN_DIRECTORY);
-	}
-
-	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-		Common::String name(i->name());
-		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
-			tryLoadPlugin(new DynamicPlugin(i->path()));
+	for (ProviderList::iterator pp = _providers.begin();
+	                            pp != _providers.end();
+	                            ++pp) {
+		PluginList pl((**pp).getPlugins());
+		for (PluginList::iterator plugin = pl.begin(); plugin != pl.end(); ++plugin) {
+			tryLoadPlugin(*plugin);
 		}
 	}
 
-#else
-
-	#define LINK_PLUGIN(ID) \
-		extern PluginRegistrator *g_##ID##_PluginReg; \
-		extern void g_##ID##_PluginReg_alloc(); \
-		g_##ID##_PluginReg_alloc(); \
-		plugin = g_##ID##_PluginReg; \
-		tryLoadPlugin(new StaticPlugin(plugin));
-
-	// "Loader" for the static plugins.
-	// Iterate over all registered (static) plugins and load them.
-	PluginRegistrator *plugin;
-
-	#ifndef DISABLE_SCUMM
-	LINK_PLUGIN(SCUMM)
-	#endif
-	#ifndef DISABLE_SKY
-	LINK_PLUGIN(SKY)
-	#endif
-	#ifndef DISABLE_SWORD1
-	LINK_PLUGIN(SWORD1)
-	#endif
-	#ifndef DISABLE_SWORD2
-	LINK_PLUGIN(SWORD2)
-	#endif
-	#ifndef DISABLE_AGOS
-	LINK_PLUGIN(AGOS)
-	#endif
-	#ifndef DISABLE_QUEEN
-	LINK_PLUGIN(QUEEN)
-	#endif
-	#ifndef DISABLE_SAGA
-	LINK_PLUGIN(SAGA)
-	#endif
-	#ifndef DISABLE_KYRA
-	LINK_PLUGIN(KYRA)
-	#endif
-	#ifndef DISABLE_GOB
-	LINK_PLUGIN(GOB)
-	#endif
-	#ifndef DISABLE_LURE
-	LINK_PLUGIN(LURE)
-	#endif
-	#ifndef DISABLE_CINE
-	LINK_PLUGIN(CINE)
-	#endif
-	#ifndef DISABLE_AGI
-	LINK_PLUGIN(AGI)
-	#endif
-
-#endif
 }
 
 void PluginManager::unloadPlugins() {
@@ -423,6 +244,15 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	if (plugin->loadPlugin()) {
 		// If successful, add it to the list of known plugins and return.
 		_plugins.push_back(plugin);
+		
+		// TODO/FIXME: We should perform some additional checks here:
+		// * Check for some kind of "API version" (possibly derived from the
+		//   SVN tree revision?)
+		// * If two plugins provide the same engine, we should only load one.
+		//   To detect this situation, we could just compare the plugin name.
+		//   To handle it, simply prefer modules loaded earlier to those coming.
+		//   Or vice versa... to be determined... :-)
+		
 		return true;
 	} else {
 		// Failed to load the plugin
