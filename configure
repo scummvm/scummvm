@@ -1305,6 +1305,7 @@ case $_backend in
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
 		LIBS="$LIBS `$_sdlconfig --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND"
 		MODULES="$MODULES backends/platform/sdl"
 		;;
 	gp2x)
