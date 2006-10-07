@@ -329,8 +329,9 @@ void ScummEngine_v8::processKeyboard(bool smushMode) {
 
 void ScummEngine_v7::processKeyboard(bool smushMode) {
 
-	// COMI version string is hard coded
-	// Dig/FT version strings are partly hard coded too
+	// COMI version string is hard coded in the engine, hence we don't
+	// invoke versionDialog here (it would only show nonsense).
+	// Dig/FT version strings are partly hard coded, too.
 	if (_game.version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
 		versionDialog();
 		return;
