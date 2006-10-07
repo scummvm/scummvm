@@ -841,6 +841,10 @@ bool AGOSEngine::isObject(Item *item) {
 	return findChildOfType(item, 2) != NULL;
 }
 
+bool AGOSEngine::isPlayer(Item *item) {
+	return findChildOfType(item, 3) != NULL;
+}
+
 uint AGOSEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
 	uint m = 1;
 	uint offset = 0;

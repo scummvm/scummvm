@@ -192,7 +192,8 @@ enum BoxFlags {
 enum SubObjectFlags {
 	kOFText           = 0x1,
 	kOFSize           = 0x2,
-	kOFWeight         = 0x4,
+	kOFWorn           = 0x4, // Elvira 1
+	kOFWeight         = 0x4, // Others
 	kOFVolume         = 0x8,
 	kOFIcon           = 0x10,
 	kOFKeyColor1      = 0x20,

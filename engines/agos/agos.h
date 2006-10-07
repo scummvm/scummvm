@@ -600,6 +600,7 @@ protected:
 
 	bool isRoom(Item *item);
 	bool isObject(Item *item);
+	bool isPlayer(Item *item);
 
 	void itemChildrenChanged(Item *item);
 	void unlinkItem(Item *item);
@@ -886,8 +887,6 @@ public:
 	void o_oflag();
 	void o_destroy();
 	void o_place();
-	void o_copyof();
-	void o_copyfo();
 	void o_copyff();
 	void o_clear();
 	void o_let();
@@ -1030,9 +1029,17 @@ public:
 	void oe1_isNotAt();
 	void oe1_sibling();
 	void oe1_notSibling();
+	void oe1_isPlayer();
+	void oe1_canPut();
+	void oe1_copyof();
+	void oe1_copyfo();
+	void oe1_whatO();
 	void oe1_setFF();
 	void oe1_score();
 	void oe1_doClass();
+	void oe1_pobj();
+	void oe1_pName();
+	void oe1_pcName();
 	void oe1_setUserItem();
 	void oe1_getUserItem();
 	void oe1_clearUserItem();
@@ -1043,7 +1050,6 @@ public:
 	void oe1_printStats();
 
 	// Opcodes, Elvira 2 only
-	void oe2_pobj();
 	void oe2_loadUserGame();
 	void oe2_setDoorOpen();
 	void oe2_setDoorClosed();

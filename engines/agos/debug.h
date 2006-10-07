@@ -30,11 +30,11 @@ static const char *const elvira1_opcode_name_table[300] = {
 	/* 0 */
 	"IJ|AT",
 	"IJ|NOT_AT",
-	NULL,
-	NULL,
+	"IJ|PRESENT",
+	"IJ|NOT_PRESENT",
 	/* 4 */
-	NULL,
-	NULL,
+	"IJ|WORN",
+	"IJ|NOT_WORN",
 	"IJ|CARRIED",
 	"IJ|NOT_CARRIED",
 	/* 8 */
@@ -65,7 +65,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	/* 28 */
 	NULL,
 	NULL,
-	NULL,
+	"IJ|IS_PLAYER",
 	NULL,
 	/* 32 */
 	"IJ|IS_ROOM",
@@ -74,7 +74,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	NULL,
 	/* 36 */
 	"IWJ|OBJECT_HAS_FLAG",
-	NULL,
+	"IIJ|CAN_PUT",
 	NULL,
 	NULL,
 	/* 40 */
@@ -95,11 +95,11 @@ static const char *const elvira1_opcode_name_table[300] = {
 	/* 52 */
 	NULL,
 	NULL,
-	NULL,
-	NULL,
+	"IWV|COPY_OF",
+	"WIW|COPY_FO",
 	/* 56 */
 	"WW|MOVE",
-	NULL,
+	"W|WHAT_O",
 	NULL,
 	NULL,
 	/* 60 */
@@ -168,10 +168,10 @@ static const char *const elvira1_opcode_name_table[300] = {
 	NULL,
 	NULL,
 	/* 112 */
+	"I|PRINT_OBJ",
 	NULL,
-	NULL,
-	NULL,
-	NULL,
+	"I|PRINT_NAME",
+	"I|PRINT_CNAME",
 	/* 116 */
 	NULL,
 	NULL,
@@ -416,23 +416,23 @@ static const char *const ww_opcode_name_table[256] = {
 	NULL,
 	"WJ|CHANCE",
 	/* 24 */
-	NULL,
+	"IJ|IS_PLAYER",
 	"IJ|IS_ROOM",
 	"IJ|IS_OBJECT",
 	"IWJ|ITEM_STATE_IS",
 	/* 28 */
 	"IBJ|OBJECT_HAS_FLAG",
-	NULL,
+	"IIJ|CAN_PUT",
 	NULL,
 	"I|SET_NO_PARENT",
 	/* 32 */
 	NULL,
 	"II|SET_PARENT",
-	NULL,
-	NULL,
+	"IBV|COPY_OF",
+	"VIB|COPY_FO",
 	/* 36 */
 	"VV|MOVE",
-	NULL,
+	"W|WHAT_O",
 	NULL,
 	NULL,
 	/* 40 */
@@ -478,8 +478,8 @@ static const char *const ww_opcode_name_table[256] = {
 	/* 72 */
 	NULL,
 	"I|PRINT_OBJ",
-	NULL,
-	NULL,
+	"I|PRINT_NAME",
+	"I|PRINT_CNAME",
 	/* 76 */
 	"WW|ADD_TIMEOUT",
 	"J|IS_M1_EMPTY",
