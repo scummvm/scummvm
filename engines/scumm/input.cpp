@@ -314,6 +314,7 @@ void ScummEngine::processInput(bool smushMode) {
 	processKeyboard(smushMode);
 }
 
+#ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(bool smushMode) {
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it.
@@ -322,9 +323,38 @@ void ScummEngine_v8::processKeyboard(bool smushMode) {
 		return;
 	}
 
+	// Fall back to V7 behavior
+	ScummEngine_v7::processKeyboard(smushMode);
+}
+
+void ScummEngine_v7::processKeyboard(bool smushMode) {
+
+	// COMI version string is hard coded
+	// Dig/FT version strings are partly hard coded too
+	if (_game.version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
+		versionDialog();
+		return;
+	}
+
+	if (VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+		// Skip cutscene (or active SMUSH video).
+		if (smushMode) {
+			if (_game.id == GID_FT)
+				_insane->escapeKeyHandler();
+			else
+				_smushVideoShouldFinish = true;
+		}
+		if (!smushMode || _smushVideoShouldFinish)
+			abortCutscene();
+
+		_mouseAndKeyboardStat = _lastKeyHit;
+		return;
+	}
+
 	// Fall back to V6 behavior
 	ScummEngine_v6::processKeyboard(smushMode);
 }
+#endif
 
 void ScummEngine_v6::processKeyboard(bool smushMode) {
 	if (_lastKeyHit == 20) {
@@ -362,47 +392,39 @@ void ScummEngine_v6::processKeyboard(bool smushMode) {
 		return;
 	}
 
-	// COMI version string is hard coded
-	// Dig/FT version strings are partly hard coded too
-	if (_game.version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
-		versionDialog();
-		return;
-	}
-
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(smushMode);
 }
 
 void ScummEngine_v2::processKeyboard(bool smushMode) {
-	if ((_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && _lastKeyHit == 27) || 
-		(VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY))) {
-
-		abortCutscene();
-	} else if (_lastKeyHit == ' ') {		// space
+	if (_lastKeyHit == ' ') {		// space
 		pauseGame();
-		return;
 	} else if (_lastKeyHit == 314+5) {		// F5
 		mainMenuDialog();
-		return;
 	} else if (_lastKeyHit == 314+8) {		// F8
 		confirmRestartDialog();
-		return;
 	} else {
-		// Fall back to default behavior
-		ScummEngine::processKeyboard(smushMode);
-	}
 
-	// Store the input type. So far we can't distinguish
-	// between 1, 3 and 5.
-	// 1) Verb	2) Scene	3) Inv.		4) Key
-	// 5) Sentence Bar
-
-	if (VAR_KEYPRESS != 0xFF && _lastKeyHit) {		// Key Input
-		if (315 <= _lastKeyHit && _lastKeyHit < 315+12) {
-			// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
-			_lastKeyHit -= 314;
+		if ((_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && _lastKeyHit == 27) || 
+			(VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == 314+VAR(VAR_CUTSCENEEXIT_KEY))) {
+			abortCutscene();
+		} else {
+			// Fall back to default behavior
+			ScummEngine::processKeyboard(smushMode);
 		}
-		VAR(VAR_KEYPRESS) = _lastKeyHit;
+	
+		// Store the input type. So far we can't distinguish
+		// between 1, 3 and 5.
+		// 1) Verb	2) Scene	3) Inv.		4) Key
+		// 5) Sentence Bar
+	
+		if (VAR_KEYPRESS != 0xFF && _lastKeyHit) {		// Key Input
+			if (315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+				// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
+				_lastKeyHit -= 314;
+			}
+			VAR(VAR_KEYPRESS) = _lastKeyHit;
+		}
 	}
 }
 
@@ -423,32 +445,7 @@ void ScummEngine::processKeyboard(bool smushMode) {
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
 
-
-	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
-		confirmRestartDialog();
-		return;
-	}
-
-	if (VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) {
-		pauseGame();
-		return;
-	}
-
-	if (VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
-#ifndef DISABLE_SCUMM_7_8
-		// Skip cutscene (or active SMUSH video). For the V2 games, which
-		// normally use F4 for this, we add in a hack that makes escape work,
-		// too (just for convenience).
-		if (smushMode) {
-			if (_game.id == GID_FT)
-				_insane->escapeKeyHandler();
-			else
-				_smushVideoShouldFinish = true;
-		}
-#endif
-		if (!smushMode || _smushVideoShouldFinish)
-			abortCutscene();
-	} else if (_lastKeyHit == saveloadkey) {
+	if (_lastKeyHit == saveloadkey) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
@@ -456,49 +453,59 @@ void ScummEngine::processKeyboard(bool smushMode) {
 
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
-		return;
+
+	} else if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
+		confirmRestartDialog();
+
+	} else if (VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) {
+		pauseGame();
+
 	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
 			stopTalk();
-		return;
-	} else if (_lastKeyHit == '[' || _lastKeyHit == ']') { // Change music volume
-		int vol = ConfMan.getInt("music_volume") / 16;
-		if (_lastKeyHit == ']' && vol < 16)
-			vol++;
-		else if (_lastKeyHit == '[' && vol > 0)
-			vol--;
 
-		// Display the music volume
-		ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
-		vol = runDialog(dlg);
-
-		vol *= 16;
-		if (vol > Audio::Mixer::kMaxMixerVolume)
-			vol = Audio::Mixer::kMaxMixerVolume;
-
-		ConfMan.setInt("music_volume", vol);
-		updateSoundSettings();
-	} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
-		if (_lastKeyHit == '+' && _defaultTalkDelay > 0)
-			_defaultTalkDelay--;
-		else if (_lastKeyHit == '-' && _defaultTalkDelay < 9)
-			_defaultTalkDelay++;
-
-		// Display the talk speed
-		ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
-		_defaultTalkDelay = 9 - runDialog(dlg);
-		
-		// Save the new talkspeed value to ConfMan
-		setTalkspeed(_defaultTalkDelay);
-
-		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
-	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		_debugger->attach();
+	} else {
+		if (VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+			abortCutscene();
+		} else if (_lastKeyHit == '[' || _lastKeyHit == ']') { // Change music volume
+			int vol = ConfMan.getInt("music_volume") / 16;
+			if (_lastKeyHit == ']' && vol < 16)
+				vol++;
+			else if (_lastKeyHit == '[' && vol > 0)
+				vol--;
+	
+			// Display the music volume
+			ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
+			vol = runDialog(dlg);
+	
+			vol *= 16;
+			if (vol > Audio::Mixer::kMaxMixerVolume)
+				vol = Audio::Mixer::kMaxMixerVolume;
+	
+			ConfMan.setInt("music_volume", vol);
+			updateSoundSettings();
+		} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
+			if (_lastKeyHit == '+' && _defaultTalkDelay > 0)
+				_defaultTalkDelay--;
+			else if (_lastKeyHit == '-' && _defaultTalkDelay < 9)
+				_defaultTalkDelay++;
+	
+			// Display the talk speed
+			ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
+			_defaultTalkDelay = 9 - runDialog(dlg);
+			
+			// Save the new talkspeed value to ConfMan
+			setTalkspeed(_defaultTalkDelay);
+	
+			if (VAR_CHARINC != 0xFF)
+				VAR(VAR_CHARINC) = _defaultTalkDelay;
+		} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
+			_debugger->attach();
+		}
+	
+		_mouseAndKeyboardStat = _lastKeyHit;
 	}
-
-	_mouseAndKeyboardStat = _lastKeyHit;
 }
 
 } // End of namespace Scumm

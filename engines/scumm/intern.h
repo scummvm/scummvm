@@ -857,6 +857,7 @@ public:
 protected:
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();
+	virtual void processKeyboard(bool smushMode);
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
