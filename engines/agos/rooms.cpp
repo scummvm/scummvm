@@ -225,7 +225,7 @@ void AGOSEngine::moveDirn_e2(Item *i, uint x) {
 				case 0: a = -(sr->roomX); break;
 				case 1: a = 1; break;
 				case 2: a = sr->roomX; break;
-				case 3: a = (uint)-1; break;
+				case 3: a = (uint16)-1; break;
 				case 4: a = -(sr->roomX * sr->roomY); break;
 				case 5: a = (sr->roomX * sr->roomY); break;
 				default: return;
