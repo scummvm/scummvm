@@ -1054,6 +1054,7 @@ public:
 	void oe1_pobj();
 	void oe1_pName();
 	void oe1_pcName();
+	void oe1_cFlag();
 	void oe1_means();
 	void oe1_setUserItem();
 	void oe1_getUserItem();
@@ -1061,9 +1062,12 @@ public:
 	void oe1_findMaster();
 	void oe1_nextMaster();
 	void oe1_setTime();
+	void oe1_bitClear();
+	void oe1_bitSet();
 	void oe1_bitTest();
 	void oe1_zoneDisk();
 	void oe1_printStats();
+	void oe1_setStore();
 
 	// Opcodes, Elvira 2 only
 	void oe2_loadUserGame();

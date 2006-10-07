@@ -260,6 +260,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[152] = &AGOSEngine::o_debug;
 
+	op[162] = &AGOSEngine::oe1_cFlag;
+
 	op[164] = &AGOSEngine::o1_rescan;
 	op[165] = &AGOSEngine::oe1_means;
 
@@ -300,6 +302,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[249] = &AGOSEngine::o_setClass;
 	op[250] = &AGOSEngine::o_unsetClass;
 
+	op[251] = &AGOSEngine::oe1_bitClear;
+	op[252] = &AGOSEngine::oe1_bitSet;
 	op[253] = &AGOSEngine::oe1_bitTest;
 
 	op[259] = &AGOSEngine::oe1_setTime;
@@ -1365,9 +1369,11 @@ void AGOSEngine::o_loadUserGame() {
 }
 
 void AGOSEngine::o_stopTune() {
-	// 134: dummy opcode?
-	midi.stop();
-	_lastMusicPlayed = -1;
+	// 134: stop tune
+	if (getGameType() == GType_SIMON2) {
+		midi.stop();
+		_lastMusicPlayed = -1;
+	}
 }
 
 void AGOSEngine::o_pauseGame() {
@@ -1904,9 +1910,10 @@ void AGOSEngine::oe1_doClass() {
 void AGOSEngine::oe1_pobj() {
 	// 112: print object
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	getVarOrWord();
 
-	if (subObject != NULL && subObject->objectFlags & kOFText)
-		showMessageFormat("%s", (const char *)getStringPtrByID(subObject->objectFlagValue[0]));
+	if (subObject != NULL)
+		showMessageFormat("%s", (const char *)getStringPtrByID(subObject->objectName));
 }
 
 void AGOSEngine::oe1_pName() {
@@ -1923,8 +1930,19 @@ void AGOSEngine::oe1_pcName() {
 	showMessageFormat("%s", name.c_str());
 }
 
+void AGOSEngine::oe1_cFlag() {
+	// 162: check container flag
+	SubContainer *c = (SubContainer *)findChildOfType(getNextItemPtr(), 7);
+	uint bit = getVarOrWord();
+
+	if (c == NULL)
+		setScriptCondition(false);
+	else
+		setScriptCondition((c->flags & (1 << bit)) != 0);
+}
+
 void AGOSEngine::oe1_means() {
-	// TODO
+	// 165: TODO
 }
 
 void AGOSEngine::oe1_setUserItem() {
@@ -1983,6 +2001,22 @@ void AGOSEngine::oe1_nextMaster() {
 		_objectItem = nextMaster(levelOf(me()), item, ad, no);
 }
 
+void AGOSEngine::oe1_bitClear() {
+	// 251: set bit off
+	int var = getVarOrWord();
+	int bit = getVarOrWord();
+
+	writeVariable(var, _variableArray[var] & ~(1 << bit));
+}
+
+void AGOSEngine::oe1_bitSet() {
+	// 252: set bit on
+	int var = getVarOrWord();
+	int bit = getVarOrWord();
+
+	writeVariable(var, _variableArray[var] | (1 << bit));
+}
+
 void AGOSEngine::oe1_bitTest() {
 	// 253: bit test
 	int var = getVarOrWord();
@@ -2004,6 +2038,16 @@ void AGOSEngine::oe1_zoneDisk() {
 
 void AGOSEngine::oe1_printStats() {
 	// 270: print stats
+}
+
+void AGOSEngine::oe1_setStore() {
+	// 282: set store
+	Item *item = getNextItemPtr();
+
+	if (getVarOrWord() == 1)
+		_subjectItem = item;
+	else
+		_objectItem = item;
 }
 
 // -----------------------------------------------------------------------

@@ -744,10 +744,17 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		if (getGameType() == GType_PP) {
 			_variableArray[400] = x;
 			_variableArray[401] = y;
-		} else {
+		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 ||
+			getGameType() == GType_FF) {
 			_variableArray[1] = x;
 			_variableArray[2] = y;
-		}
+		} else if (getGameType() == GType_ELVIRA1) {
+			if (best_ha->verb & 0x4000) {
+				if (_variableArray[500] == 0) {
+					_variableArray[500] = best_ha->verb & 0xBFFF;
+				}
+			}
+		} 
 	}
 
 	if (best_ha->flags & kBFNoTouchName) {

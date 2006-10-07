@@ -1380,11 +1380,13 @@ startOver:
 void AGOSEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
-	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF ||
+		getGameType() == GType_PP) {
 		if (_variableArray[254] || _variableArray[249]) {
 			hitarea_stuff_helper_2();
 		}
-	} else {
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW || 
+		getGameType() == GType_SIMON1) {
 		uint subr_id = (uint16)_variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);

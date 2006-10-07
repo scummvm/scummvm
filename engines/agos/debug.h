@@ -168,7 +168,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	/* 112 */
-	"I|PRINT_OBJ",
+	"IW|PRINT_OBJ",
 	NULL,
 	"I|PRINT_NAME",
 	"I|PRINT_CNAME",
@@ -230,7 +230,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	/* 160 */
 	NULL,
 	NULL,
-	NULL,
+	"IWJ|IS_CFLAG",
 	NULL,
 	/* 164 */
 	"|RESCAN",
@@ -341,9 +341,9 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	"IW|SET_CLASS",
 	"IW|UNSET_CLASS",
-	NULL,
+	"WW|CLEAR_BIT",
 	/* 252 */
-	NULL,
+	"WW|SET_BIT",
 	"WWJ|BIT_TEST",
 	NULL,
 	"W|WAIT_SYNC",
@@ -380,7 +380,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	/* 280 */
 	"II|SET_PARENT_SPECIAL",
 	"|CLEAR_TIMERS",
-	NULL,
+	"IW|SET_STORE",
 	"WJ|IS_BOX",
 };
 
