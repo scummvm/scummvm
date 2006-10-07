@@ -19,6 +19,8 @@
 */
 
 
+#define WAIT { vu32 w; for(w=0;w<0x1;w++){}; }
+
 #include "io_m3sd.h"
 
 #ifdef SUPPORT_M3SD
@@ -87,13 +89,12 @@ bool M3SD_read1sector(u32 sectorn,u32 TAddr)
 	w = SDDIR;
 	for(w=0;w<0x100;w++)
 	{
-		u16 d16;
-		u8 *d8=(u8 *)&d16;
-//		*(u16*)(TAddr+w*2) = SDDIR;	//	16bit
-		d16 = SDDIR;	//	16bit
-		*(u8 *)(TAddr+w*2) =d8[0];
-		*(u8 *)(TAddr+w*2+1) =d8[1];
-		
+//		u16 d16;
+//		u8 *d8=(u8 *)&d16;
+		*(u16*)(TAddr+w*2) = SDDIR;	//	16bit
+//		d16 = SDDIR;	//	16bit
+//		*(u8 *)(TAddr+w*2) =d8[0];
+//		*(u8 *)(TAddr+w*2+1) =d8[1];
 	}
 	w = SDDIR;
 	w = SDDIR;
@@ -148,6 +149,7 @@ void SendCommand(u16 command, u32 sectorn)
 
 	SDDIR=0x29;
 	Hal4ATA_WaitOnBusy();
+	WAIT; // wait for 1clk. (2006/08/13 added by Moonlight.)
 	SDDIR=0x09;
 }
 
@@ -156,11 +158,16 @@ void SendCommand(u16 command, u32 sectorn)
 #define DMA3DAD      *(u32*)0x040000D8
 #define DMA3CNT      *(u32*)0x040000DC
 
+#define DMA3_CR        (*(vuint32*)0x040000DC)
+#define DMA_BUSY	    BIT(31)
+
 void DMA3(u32 src, u32 dst, u32 cnt)
 {
 	DMA3SAD=src;
 	DMA3DAD=dst;
 	DMA3CNT=cnt;
+	
+	while(DMA3_CR & DMA_BUSY); // wait for busy. (2006/08/13 added by Moonlight.)
 }
 
 
@@ -172,6 +179,7 @@ void PassRespond(u32 num)
 	dmanum=(64+(num<<3))>>2;
 	SDDIR=0x8;
 	SDCON=0x4;
+	WAIT; // wait for 1clk. (2006/08/13 added by Moonlight.)
 	DMA3(0x8800000,(u32)&i,0x80400000+dmanum);
 }
 
@@ -179,7 +187,7 @@ void PassRespond(u32 num)
 bool M3SD_write1sector(u32 sectorn,u32 p)
 {
 	u16 crc[4];
-
+	
 	SendCommand(24,sectorn);
 	PassRespond(6);
 
@@ -200,8 +208,12 @@ bool M3SD_write1sector(u32 sectorn,u32 p)
 #define M3_DATA			(vu16*)(0x08800000)		// Pointer to buffer of CF data transered from card
 
 // CF Card status
+#define CF_STS_INSERTED0		0xFF
 #define CF_STS_INSERTED1		0x20
 #define CF_STS_INSERTED2		0x30
+#define CF_STS_INSERTED3		0x22
+#define CF_STS_INSERTED4		0x32
+#define isM3ins(sta) ((sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2)||(sta == CF_STS_INSERTED3)||(sta == CF_STS_INSERTED4))
 
 /*-----------------------------------------------------------------
 M3SD_IsInserted
@@ -210,23 +222,13 @@ bool return OUT:  true if a CF card is inserted
 -----------------------------------------------------------------*/
 bool M3SD_IsInserted (void) 
 {
-	int i;
 	u16 sta;
 	// Change register, then check if value did change
-	M3_REG_STS = CF_STS_INSERTED1;
-
-	for(i=0;i<CARD_TIMEOUT;i++)
-	{
-		sta=M3_REG_STS;
-		if((sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2))
-		{
-			return true;
-			//break;
-		}
-	}
-	return false;
-
-//	return ( (sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2) );
+	M3_REG_STS = CF_STS_INSERTED0;
+	sta=M3_REG_STS;
+//	return (M3_REG_STS == CF_STS_INSERTED);
+//	return ( (sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2)||(sta == CF_STS_INSERTED3)||(sta == CF_STS_INSERTED4) );
+	return  isM3ins(sta);
 //	return true;
 }
 
@@ -244,11 +246,12 @@ bool M3SD_ClearStatus (void)
 	u16 sta;
 
 	i = 0;
-	M3_REG_STS = CF_STS_INSERTED1;
+	M3_REG_STS = CF_STS_INSERTED0;
 	while (i < CARD_TIMEOUT)
 	{
 		sta=M3_REG_STS;
-		if(  (sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2)  )break;
+//		if(  (sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2)||(sta == CF_STS_INSERTED3)||(sta == CF_STS_INSERTED4)  )break;
+		if(   isM3ins(sta)  )break;
 		i++;
 	}
 	if (i >= CARD_TIMEOUT)
@@ -342,7 +345,9 @@ bool M3SD_Unlock(void)
 	vu16 sta;
 	sta=M3_REG_STS;
 	sta=M3_REG_STS;
-	if(  (sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2)  )return true;
+//	if(  (sta == CF_STS_INSERTED1)||(sta == CF_STS_INSERTED2)  )return true;
+	if(  isM3ins(sta)  )return true;
+
 
 	return false;
 }
@@ -358,7 +363,7 @@ bool M3SD_StartUp(void) {
 
 IO_INTERFACE io_m3sd = {
 	DEVICE_TYPE_M3SD,
-	FEATURE_MEDIUM_CANREAD | FEATURE_MEDIUM_CANWRITE,
+	FEATURE_MEDIUM_CANREAD | FEATURE_MEDIUM_CANWRITE | FEATURE_SLOT_GBA,
 	(FN_MEDIUM_STARTUP)&M3SD_StartUp,
 	(FN_MEDIUM_ISINSERTED)&M3SD_IsInserted,
 	(FN_MEDIUM_READSECTORS)&M3SD_ReadSectors,

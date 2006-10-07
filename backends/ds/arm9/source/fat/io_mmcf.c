@@ -83,8 +83,9 @@ static bool cf_block_ready(void)
     while ( (!(CF_RD_STATUS & 0x40)) && (i < CARD_TIMEOUT) ) i++;    
   } while ( (CF_RD_STATUS & 0x80) && (i < CARD_TIMEOUT) ); 
 
-  if (i >= CARD_TIMEOUT) return false;
-
+  if (i >= CARD_TIMEOUT) {
+	return false;
+  }
 
   return true;
 }
@@ -226,6 +227,16 @@ bool MMCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	DC_FlushRange( buffer, j * BYTE_PER_READ);
 #endif
 
+	if (numSecs > 1) 
+	{
+		int r = 0;
+		
+		for (r = 0; r < numSecs; r++)
+		{
+			MMCF_WriteSectors(sector + r, 1, ((unsigned char *) (buffer)) + 512);
+		}
+  }
+
   if ( !cf_block_ready() ) return false;
 
   CF_WR_SECTOR_COUNT = numSecs;
@@ -266,12 +277,33 @@ bool MMCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 		while(i--)
 			*MP_DATA = *buff++; 
 #endif
+
   }
 
 #if defined _CF_USE_DMA && defined NDS
 	// Wait for end of transfer before returning
 	while(DMA3_CR & DMA_BUSY);
 #endif  
+
+//#define _CF_VERIFY
+
+#ifdef _CF_VERIFY
+	char* tmp = malloc(512);
+	int r;
+
+	for (r = 0; r < numSecs; r++)
+	{
+		MMCF_ReadSectors(sector + r, 1, tmp);
+		while (memcmp(temp, ((unsigned char *) (buffer)) + 512 * r, 512) != 0)
+		{
+			consolePrintf("Rewriting sector %d\n", r);
+			MMCF_WriteSectors(sector + r, 1, ((unsigned char *) (buffer)) + 512 * r);
+			MMCF_ReadSectors(sector + r, 1, tmp);
+		}
+	}
+
+	free(temp);
+#endif
 
 	return true;
 }
@@ -298,7 +330,7 @@ bool MMCF_StartUp(void)
 	temp = (~temp & 0xFF);
 	return (MP_REG_LBA1 == temp);
   */
-  if (CF_RD_STATUS != 0x0050)
+  if ( (CF_RD_STATUS != 0x0050) || ( *((u8 *) (0x080000B2)) == 0x96) )
   {
 	return false;
   }

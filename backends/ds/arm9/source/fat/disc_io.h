@@ -10,7 +10,7 @@
 // Allow buffers not aligned to 16 bits when reading files. 
 // Note that this will slow down access speed, so only use if you have to.
 // It is also incompatible with DMA
-//#define _CF_ALLOW_UNALIGNED
+#define _CF_ALLOW_UNALIGNED
 
 // Device support options, added by www.neoflash.com
 
@@ -29,8 +29,8 @@
 // Each additional sector cache uses 512 bytes of memory
 // Disk caching is disabled on GBA to conserve memory
 
-#define DISC_CACHE				// uncomment this line to enable disc caching
-#define DISC_CACHE_COUNT	16	// maximum number of sectors to cache (512 bytes per sector)
+//#define DISC_CACHE				// uncomment this line to enable disc caching
+//#define DISC_CACHE_COUNT	16	// maximum number of sectors to cache (512 bytes per sector)
 //#define DISK_CACHE_DMA		// use DMA for cache copies. If this is enabled, the data buffers must be word aligned
 
 

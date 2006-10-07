@@ -329,7 +329,8 @@ bool MPCF_StartUp(void)
 	u8 temp = MP_REG_LBA1;
 	MP_REG_LBA1 = (~temp & 0xFF);
 	temp = (~temp & 0xFF);
-	return (MP_REG_LBA1 == temp) ;
+	// NDM: Added GBA ROM header check so that this doesn't detect a Max Media Dock!
+	return (MP_REG_LBA1 == temp) && ( *((u8 *) (0x080000B2)) == 0x96);
 }
 
 /*-----------------------------------------------------------------

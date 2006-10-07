@@ -233,6 +233,18 @@ bool disc_setGbaSlotInterface (void)
 #endif
 
 
+#ifdef SUPPORT_MMCF
+	// check if we have a GBA Flash Cart plugged in
+	active_interface = MMCF_GetInterface() ;
+	if (active_interface->fn_StartUp())
+	{
+		// set MMCF as default IO
+		return true ;
+	} ;
+#endif
+
+
+
 #ifdef SUPPORT_M3CF
 	// check if we have a M3 perfect CF plugged in
 	active_interface = M3CF_GetInterface() ;
@@ -308,18 +320,6 @@ bool disc_setGbaSlotInterface (void)
 		return true ;
 	} ;
 #endif
-
-
-#ifdef SUPPORT_MMCF
-	// check if we have a GBA Flash Cart plugged in
-	active_interface = MMCF_GetInterface() ;
-	if (active_interface->fn_StartUp())
-	{
-		// set MMCF as default IO
-		return true ;
-	} ;
-#endif
-
 
 #ifdef SUPPORT_SCSD
 	// check if we have a SuperCard SD plugged in
