@@ -28,8 +28,8 @@
 
 namespace Scumm {
 
+class Insane;
 class SmushMixer;
-
 
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save abit of memory used by opcode names in the Scumm engine.
