@@ -27,6 +27,7 @@
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
+#include "SDL.h"
 #include "SDL_loadso.h"
 #define PLUGIN_DIRECTORY	"plugins/"
 
