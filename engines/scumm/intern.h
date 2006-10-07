@@ -229,6 +229,8 @@ public:
 protected:
 	virtual void readRoomsOffsets();
 	virtual void loadCharset(int no);
+
+	virtual void processKeyboard(bool smushMode);
 };
 
 /**
@@ -285,6 +287,8 @@ protected:
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 	virtual void decodeParseString();
+
+	virtual void processKeyboard(bool smushMode);
 
 	virtual void readIndexFile();
 	void readClassicIndexFile();	// V1
