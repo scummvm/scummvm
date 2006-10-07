@@ -92,7 +92,7 @@ static const char HELP_STRING[] =
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
 	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
-        "                           100) (only supported by some MIDI drivers)\n"
+	"                           100) (only supported by some MIDI drivers)\n"
 	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
