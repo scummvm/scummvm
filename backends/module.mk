@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	midi/windows.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
+	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
