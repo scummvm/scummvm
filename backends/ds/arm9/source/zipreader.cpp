@@ -92,6 +92,8 @@ bool ZipFile::currentFileInFolder() {
 	if (_allFilesVisible) return true;
 	
 	getFileName(name);
+
+//	consolePrintf("N:'%s'D:'%s'\n", name, _directory);
 	
 	if (_directory[0] == 0) { // Root directory
 		name[strlen(name) - 1] = 0;
@@ -214,7 +216,15 @@ void ZipFile::changeToRoot() {
 
 void ZipFile::changeDirectory(char* dir) {
 //	consolePrintf("Current dir now '%s'\n", dir);
+
 	strcpy(_directory, dir);
+	for (int r = 0; r < (int) strlen(_directory); r++) {
+		if (_directory[r] == '/') _directory[r] = '\\';
+	}
+	
+	if (_directory[strlen(_directory) - 1] == '\\')	{
+		_directory[strlen(_directory) - 1] = '\0';
+	}
 }
 
 ZipFile::~ZipFile() {

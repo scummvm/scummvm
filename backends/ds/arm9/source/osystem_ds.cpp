@@ -399,7 +399,7 @@ void OSystem_DS::clearSoundCallback()
 
 int OSystem_DS::getOutputSampleRate() const
 {
-	return 11025;
+	return DS::getSoundFrequency();
 }
 
 bool OSystem_DS::openCD(int drive)
