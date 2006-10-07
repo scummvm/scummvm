@@ -49,6 +49,7 @@ protected:
 	GUI::CheckboxWidget* _unscaledCheckbox;
 	GUI::CheckboxWidget* _twoHundredPercentCheckbox;
 	GUI::CheckboxWidget* _indyFightCheckbox;
+	GUI::CheckboxWidget* _highQualityAudioCheckbox;
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;
 #endif

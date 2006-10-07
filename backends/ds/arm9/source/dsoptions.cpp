@@ -45,30 +45,31 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 20, 320 - 40, 200 - 40) {
 	}
 #endif
 
-	new GUI::StaticTextWidget(this, 0, 10, 280, 20, "ScummVM DS Options", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 80, 10, 130, 20, "ScummVM DS Options", GUI::kTextAlignCenter);
 
-	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 20, 30, 280, 20, "Left handed mode", 0, 'L');
-	_indyFightCheckbox = new GUI::CheckboxWidget(this, 20, 45, 280, 20, "Indy fighting controls", 0, 'I');
-	_unscaledCheckbox = new GUI::CheckboxWidget(this, 20, 60, 280, 20, "Unscaled main screen", 0, 'S');
-	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 75, 280, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
+	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 20, 30, 200, 20, "Left handed mode", 0, 'L');
+	_indyFightCheckbox = new GUI::CheckboxWidget(this, 20, 45, 200, 20, "Indy fighting controls", 0, 'I');
+	_unscaledCheckbox = new GUI::CheckboxWidget(this, 20, 60, 200, 20, "Unscaled main screen", 0, 'S');
+	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 75, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
+	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 90, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
 
-	new GUI::StaticTextWidget(this, 20, 90, 110, 20, "Touch X Offset", GUI::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(this, 130, 90, 130, 12, 1);
+	new GUI::StaticTextWidget(this, 20, 110, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
+	_touchX = new GUI::SliderWidget(this, 130, 110, 130, 12, 1);
 	_touchX->setMinValue(-8);
 	_touchX->setMaxValue(+8);
 	_touchX->setValue(0);
 	_touchX->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(this, 20, 110, 110, 20, "Touch Y Offset", GUI::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(this, 130, 110, 130, 12, 2);
+	new GUI::StaticTextWidget(this, 20, 125, 110, 15, "Touch Y Offset", GUI::kTextAlignLeft);
+	_touchY = new GUI::SliderWidget(this, 130, 125, 130, 12, 2);
 	_touchY->setMinValue(-8);
 	_touchY->setMaxValue(+8);
 	_touchY->setValue(0);
 	_touchY->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(this, 130 + 65 - 10, 130, 20, 20, "0", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 + 130 - 10, 130, 20, 20, "8", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 - 10, 130, 20, 20, "-8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 + 65 - 10, 140, 20, 15, "0", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 + 130 - 10, 140, 20, 15, "8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 - 10, 140, 20, 15, "-8", GUI::kTextAlignCenter);
 
 #ifdef DS_SCUMM_BUILD
 	_delDialog = new Scumm::SaveLoadChooser("Delete game:", "Delete", false, Scumm::g_scumm);
@@ -92,6 +93,12 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 20, 320 - 40, 200 - 40) {
 		_twoHundredPercentCheckbox->setState(false);
 	}
 
+	if (ConfMan.hasKey("22khzaudio", "ds")) {
+		_highQualityAudioCheckbox->setState(ConfMan.getBool("22khzaudio", "ds"));
+	} else {
+		_highQualityAudioCheckbox->setState(false);
+	}
+
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
 	if (ConfMan.hasKey("xoffset", "ds")) {
@@ -112,6 +119,7 @@ DSOptionsDialog::~DSOptionsDialog() {
 	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
 	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
+	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	DS::setOptions();

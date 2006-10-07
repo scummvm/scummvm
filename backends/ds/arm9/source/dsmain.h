@@ -73,6 +73,7 @@ void 	setSoundProc(OSystem::SoundProc proc, void* param);			// Setup a callback 
 void 	doSoundCallback();												// Call function if sound buffers need more data
 void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
 void 	stopSound(int channel);
+int		getSoundFrequency();
 
 // Event queue
 void 	addEventsToQueue();

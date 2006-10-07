@@ -108,6 +108,7 @@ int bufferFrame;
 int bufferRate;
 int bufferSamples;
 bool soundHiPart;
+int soundFrequency;
 
 // Events
 int lastEventFrame;
@@ -325,10 +326,48 @@ void restoreGameBackBuffer() {
 }
 
 
+void startSound(int freq, int buffer) {
+	bufferRate = freq * 2;
+	bufferFrame = 0;
+	bufferSamples = 4096;
+
+	bufferFirstHalf = false;
+	bufferSecondHalf = true;
+	
+	int bytes = (2 * (bufferSamples)) + 100;
+	
+	soundBuffer = (s16 *) malloc(bytes * 2);
+
+
+	soundHiPart = true;
+	
+	for (int r = 0; r < bytes; r++) {
+		soundBuffer[r] = 0;
+	}
+
+	soundFrequency = freq;
+	
+
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	playSound(soundBuffer, (bufferSamples * 2), true, false, freq * 2);
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+}
+
+int getSoundFrequency() {
+	return soundFrequency;
+}
+
+
 void initGame() {
 	// This is a good time to check for left handed mode since the mode change is done as the game starts.
 	// There's probably a better way, but hey.
 //	consolePrintf("initing game\n");
+
+	static bool firstTime = true;
+
 
 	setOptions();
 
@@ -344,7 +383,17 @@ void initGame() {
 //			consolePrintf("Game list num: %d\n", currentGame);
 		}
 	}
-	
+		
+	if (firstTime) {
+		firstTime = false;
+
+		if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
+			startSound(22050, 8192);
+		} else {
+			startSound(11025, 4096);
+		}
+
+	}
 
 }
 
@@ -1240,6 +1289,15 @@ void VBlankHandler(void) {
 
 //	consolePri ntf("X:%d Y:%d\n", getPenX(), getPenY());
 
+	static bool firstTime = true;
+
+	// This is to ensure that the ARM7 vblank handler runs before this one.
+	// Fixes the problem with the MMD when the screens swap over on load.
+	if (firstTime) {
+		firstTime = false;
+		return;
+	}
+
 
 	IPC->tweak = tweak;
 	soundUpdate();
@@ -1534,8 +1592,18 @@ void initHardware() {
 */
 
 
+	for (int r = 0; r < 255; r++) {
+		PALETTE[r] = 0;
+	}
 
 	PALETTE[255] = RGB15(0,31,0);
+
+
+	for (int r = 0; r < 255; r++) {
+		PALETTE_SUB[r] = 0;
+	}
+
+	PALETTE_SUB[255] = RGB15(0,31,0);
 
 	// Allocate save buffer for game screen
 //	savedBuffer = new u8[320 * 200];
@@ -1806,8 +1874,7 @@ bool getIndyFightState() {
 bool GBAMPAvail = false;
 
 void initGBAMP() {	
-	FAT_InitFiles();
-	if (disc_IsInserted()) {
+	if (FAT_InitFiles()) {
 		GBAMPAvail = true;
 		consolePrintf("Found flash card reader!\n");
 	} else {
@@ -1889,19 +1956,14 @@ int main(void)
 //	playSound(twang, 11010, true);   // 18640
 
 //	bufferSize = 10;
-	bufferRate = 22050;
-	bufferFrame = 0;
-//	bufferSamples = (bufferRate * bufferSize) / 60;
-	bufferSamples = 4096;
+
 	
+	/*bufferRate = 44100;
+	bufferFrame = 0;
+	bufferSamples = 8192;
+
 	bufferFirstHalf = false;
 	bufferSecondHalf = true;
-	
-	lastEventFrame = 0;
-	mouseMode = MOUSE_LEFT;
-
-	
-
 	
 	int bytes = (2 * (bufferSamples)) + 100;
 	
@@ -1909,6 +1971,25 @@ int main(void)
 
 
 	soundHiPart = true;
+	
+	for (int r = 0; r < bytes; r++) {
+		soundBuffer[r] = 0;
+	}
+	
+
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	playSound(soundBuffer, (bufferSamples * 2), true);
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+*/
+	
+
+	lastEventFrame = 0;
+	mouseMode = MOUSE_LEFT;
+	
+
 /*
 	TIMER1_CR = 0;
 	TIMER1_DATA = TIMER_FREQ(bufferRate);
@@ -1931,7 +2012,7 @@ int main(void)
 	consolePrintf("---------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1beta1 ");
+	consolePrintf("Version 0.9.1beta3 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
@@ -1964,18 +2045,6 @@ int main(void)
 #endif
 
 
-	for (int r = 0; r < bytes; r++) {
-		soundBuffer[r] = 0;
-	}
-	
-
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	playSound(soundBuffer, (bufferSamples * 2), true);
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	
 
 
 	// Create a file system node to force search for a zip file in GBA rom space
