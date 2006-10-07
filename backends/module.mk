@@ -13,7 +13,9 @@ MODULE_OBJS := \
 	midi/quicktime.o \
 	midi/seq.o \
 	midi/windows.o \
+	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
+	plugins/win32/win32-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o

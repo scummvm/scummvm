@@ -21,7 +21,7 @@
  *
  */
 
-#ifdef DYNAMIC_MODULES
+#if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
 #include "backends/plugins/win32/win32-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
@@ -121,4 +121,4 @@ PluginList Win32PluginProvider::getPlugins() {
 }
 
 
-#endif // DYNAMIC_MODULES
+#endif // defined(DYNAMIC_MODULES) && defined(_WIN32)
