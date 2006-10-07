@@ -101,148 +101,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	// Copy MD5 checksum
 	memcpy(_gameMD5, dr.md5sum, 16);
 	
-	// Add default file directories.
-	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
-		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
-		File::addDefaultDirectory(_gameDataPath + "ROOMS/");
-		File::addDefaultDirectory(_gameDataPath + "rooms/");
-	}
-
-	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
-		// This is for the Mac version of Indy3/Loom
-		File::addDefaultDirectory(_gameDataPath + "Rooms 1/");
-		File::addDefaultDirectory(_gameDataPath + "Rooms 2/");
-		File::addDefaultDirectory(_gameDataPath + "Rooms 3/");
-	}
-
-#ifndef DISABLE_SCUMM_7_8
-#ifdef MACOSX
-	if (_game.version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
-		// Special case for COMI on Mac OS X. The mount points on OS X depend
-		// on the volume name. Hence if playing from CD, we'd get a problem.
-		// So if loading of a resource file fails, we fall back to the (fixed)
-		// CD mount points (/Volumes/MONKEY3_1 and /Volumes/MONKEY3_2).
-		//
-		// This check for whether we play from CD is very crude, though.
-
-		File::addDefaultDirectory("/Volumes/MONKEY3_1/RESOURCE/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_1/resource/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_2/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_2/RESOURCE/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_2/resource/");
-	} else
-#endif
-	if (_game.version == 8) {
-		// This is for COMI
-		File::addDefaultDirectory(_gameDataPath + "RESOURCE/");
-		File::addDefaultDirectory(_gameDataPath + "resource/");
-	}
-
-	if (_game.version == 7) {
-		// This is for Full Throttle & The Dig
-		File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-		File::addDefaultDirectory(_gameDataPath + "video/");
-		File::addDefaultDirectory(_gameDataPath + "DATA/");
-		File::addDefaultDirectory(_gameDataPath + "data/");
-	}
-#endif
-
-
-	// The 	kGenAsIs method is only used for 'container files', i.e. files
-	// that contain the real game files bundled together in an archive format.
-	// This is the case of the NES, C64 and Mac versions of certain games.
-	// Note: All of these can also occur in 'extracted' form, in which case they
-	// are treated like any other SCUMM game.
-	if (_filenamePattern.genMethod == kGenUnchanged) {
-
-		if (_game.platform == Common::kPlatformNES) {
-			// We read data directly from NES ROM instead of extracting it with
-			// external tool
-			assert(_game.id == GID_MANIAC);
-			_fileHandle = new ScummNESFile();
-			_containerFile = _filenamePattern.pattern;
-			
-			_filenamePattern.pattern = "%.2d.LFL";
-			_filenamePattern.genMethod = kGenRoomNum;
-		} else if (_game.platform == Common::kPlatformC64) {
-			// Read data from C64 disk images.
-			const char *tmpBuf1, *tmpBuf2;
-			assert(_game.id == GID_MANIAC || _game.id == GID_ZAK);
-			if (_game.id == GID_MANIAC) {
-				tmpBuf1 = "maniac1.d64";
-				tmpBuf2 = "maniac2.d64";
-			} else {
-				tmpBuf1 = "zak1.d64";
-				tmpBuf2 = "zak2.d64";
-			}
-	
-			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
-			_containerFile = tmpBuf1;
-
-			_filenamePattern.pattern = "%.2d.LFL";
-			_filenamePattern.genMethod = kGenRoomNum;
-		} else if (_game.platform == Common::kPlatformMacintosh) {
-			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
-			// special meta (container) file format to store the actual SCUMM data
-			// files. The rescumm utility used to be used to extract those files. 
-			// While that is still possible, we now support reading those files 
-			// directly. The first step is to check whether one of them is present
-			// (we do that here); the rest is handled by the  ScummFile class and 
-			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
-			// handling).
-			assert(_game.version >= 5 && _game.heversion == 0);
-			_fileHandle = new ScummFile();
-			_containerFile = _filenamePattern.pattern;
-			
-			
-			// We now have to determine the correct _filenamePattern. To do this
-			// we simply hardcode the possibilites. 
-			const char *p1 = 0, *p2 = 0;
-			switch (_game.id) {
-			case GID_INDY4:
-				p1 = "atlantis.%03d";
-				break;
-			case GID_TENTACLE:
-				p1 = "tentacle.%03d";
-				p2 = "dottdemo.%03d";
-				break;
-			case GID_SAMNMAX:
-				p1 = "samnmax.%03d";
-				p2 = "samdemo.%03d";
-				break;
-			case GID_FT:
-				p1 = "ft.la%d";
-				p2 = "ftdemo.la%d";
-				break;
-			case GID_DIG:
-				p1 = "dig.la%d";
-				break;
-			default:
-				break;
-			}
-
-			// Test which file name to use
-			_filenamePattern.genMethod = kGenDiskNum;
-			if (!_fileHandle->open(_containerFile))
-				error("Couldn't open container file '%s'", _containerFile.c_str());
-
-			if ((_filenamePattern.pattern = p1) && _fileHandle->openSubFile(generateFilename(0))) {
-				// Found regular version
-			} else if ((_filenamePattern.pattern = p2) && _fileHandle->openSubFile(generateFilename(0))) {
-				// Found demo
-				_game.features |= GF_DEMO;
-			} else
-				error("Couldn't find known subfile inside container file '%s'", _containerFile.c_str());
-			
-			_fileHandle->close();
-			
-		} else {
-			error("kGenAsIs used with unsupported platform");
-		}
-	} else {
-		// Regular access, no container file involved
-		_fileHandle = new ScummFile();
-	}
+	_fileHandle = 0;
 	
 
 	// Init all vars
@@ -957,6 +816,149 @@ ScummEngine_v8::~ScummEngine_v8() {
 
 int ScummEngine::init() {
 
+	// Add default file directories.
+	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
+		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
+		File::addDefaultDirectory(_gameDataPath + "ROOMS/");
+		File::addDefaultDirectory(_gameDataPath + "rooms/");
+	}
+
+	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
+		// This is for the Mac version of Indy3/Loom
+		File::addDefaultDirectory(_gameDataPath + "Rooms 1/");
+		File::addDefaultDirectory(_gameDataPath + "Rooms 2/");
+		File::addDefaultDirectory(_gameDataPath + "Rooms 3/");
+	}
+
+#ifndef DISABLE_SCUMM_7_8
+#ifdef MACOSX
+	if (_game.version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
+		// Special case for COMI on Mac OS X. The mount points on OS X depend
+		// on the volume name. Hence if playing from CD, we'd get a problem.
+		// So if loading of a resource file fails, we fall back to the (fixed)
+		// CD mount points (/Volumes/MONKEY3_1 and /Volumes/MONKEY3_2).
+		//
+		// This check for whether we play from CD is very crude, though.
+
+		File::addDefaultDirectory("/Volumes/MONKEY3_1/RESOURCE/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_1/resource/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_2/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_2/RESOURCE/");
+		File::addDefaultDirectory("/Volumes/MONKEY3_2/resource/");
+	} else
+#endif
+	if (_game.version == 8) {
+		// This is for COMI
+		File::addDefaultDirectory(_gameDataPath + "RESOURCE/");
+		File::addDefaultDirectory(_gameDataPath + "resource/");
+	}
+
+	if (_game.version == 7) {
+		// This is for Full Throttle & The Dig
+		File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+		File::addDefaultDirectory(_gameDataPath + "video/");
+		File::addDefaultDirectory(_gameDataPath + "DATA/");
+		File::addDefaultDirectory(_gameDataPath + "data/");
+	}
+#endif
+
+
+	// The 	kGenAsIs method is only used for 'container files', i.e. files
+	// that contain the real game files bundled together in an archive format.
+	// This is the case of the NES, C64 and Mac versions of certain games.
+	// Note: All of these can also occur in 'extracted' form, in which case they
+	// are treated like any other SCUMM game.
+	if (_filenamePattern.genMethod == kGenUnchanged) {
+
+		if (_game.platform == Common::kPlatformNES) {
+			// We read data directly from NES ROM instead of extracting it with
+			// external tool
+			assert(_game.id == GID_MANIAC);
+			_fileHandle = new ScummNESFile();
+			_containerFile = _filenamePattern.pattern;
+			
+			_filenamePattern.pattern = "%.2d.LFL";
+			_filenamePattern.genMethod = kGenRoomNum;
+		} else if (_game.platform == Common::kPlatformC64) {
+			// Read data from C64 disk images.
+			const char *tmpBuf1, *tmpBuf2;
+			assert(_game.id == GID_MANIAC || _game.id == GID_ZAK);
+			if (_game.id == GID_MANIAC) {
+				tmpBuf1 = "maniac1.d64";
+				tmpBuf2 = "maniac2.d64";
+			} else {
+				tmpBuf1 = "zak1.d64";
+				tmpBuf2 = "zak2.d64";
+			}
+	
+			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
+			_containerFile = tmpBuf1;
+
+			_filenamePattern.pattern = "%.2d.LFL";
+			_filenamePattern.genMethod = kGenRoomNum;
+		} else if (_game.platform == Common::kPlatformMacintosh) {
+			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
+			// special meta (container) file format to store the actual SCUMM data
+			// files. The rescumm utility used to be used to extract those files. 
+			// While that is still possible, we now support reading those files 
+			// directly. The first step is to check whether one of them is present
+			// (we do that here); the rest is handled by the  ScummFile class and 
+			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
+			// handling).
+			assert(_game.version >= 5 && _game.heversion == 0);
+			_fileHandle = new ScummFile();
+			_containerFile = _filenamePattern.pattern;
+			
+			
+			// We now have to determine the correct _filenamePattern. To do this
+			// we simply hardcode the possibilites. 
+			const char *p1 = 0, *p2 = 0;
+			switch (_game.id) {
+			case GID_INDY4:
+				p1 = "atlantis.%03d";
+				break;
+			case GID_TENTACLE:
+				p1 = "tentacle.%03d";
+				p2 = "dottdemo.%03d";
+				break;
+			case GID_SAMNMAX:
+				p1 = "samnmax.%03d";
+				p2 = "samdemo.%03d";
+				break;
+			case GID_FT:
+				p1 = "ft.la%d";
+				p2 = "ftdemo.la%d";
+				break;
+			case GID_DIG:
+				p1 = "dig.la%d";
+				break;
+			default:
+				break;
+			}
+
+			// Test which file name to use
+			_filenamePattern.genMethod = kGenDiskNum;
+			if (!_fileHandle->open(_containerFile))
+				error("Couldn't open container file '%s'", _containerFile.c_str());
+
+			if ((_filenamePattern.pattern = p1) && _fileHandle->openSubFile(generateFilename(0))) {
+				// Found regular version
+			} else if ((_filenamePattern.pattern = p2) && _fileHandle->openSubFile(generateFilename(0))) {
+				// Found demo
+				_game.features |= GF_DEMO;
+			} else
+				error("Couldn't find known subfile inside container file '%s'", _containerFile.c_str());
+			
+			_fileHandle->close();
+			
+		} else {
+			error("kGenAsIs used with unsupported platform");
+		}
+	} else {
+		// Regular access, no container file involved
+		_fileHandle = new ScummFile();
+	}
+	
 	// Initialize backend
 	_system->beginGFXTransaction();
 		bool defaultTo1XScaler = false;
