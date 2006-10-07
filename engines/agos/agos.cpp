@@ -1668,7 +1668,7 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	bb = _curVgaFile1;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
+		b = bb + READ_LE_UINT16(bb + 2);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
@@ -1680,9 +1680,9 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id);
 
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		b = bb + READ_BE_UINT16(&((VgaFileHeader_Simon *) bb)->hdr2_start);
-		count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageCount);
-		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageTable);
+		b = bb + READ_BE_UINT16(bb + 4);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
 
 		while (count--) {
 			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id)
@@ -1694,8 +1694,8 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 		b = bb + READ_BE_UINT16(bb + 10);
 		b += 20;
 
-		count = READ_BE_UINT16(&((VgaFileHeader2_WW *) b)->imageCount);
-		b = bb + READ_BE_UINT16(&((VgaFileHeader2_WW *) b)->imageTable);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
 
 		while (count--) {
 			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id)
@@ -2157,19 +2157,19 @@ void AGOSEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 
 	pp = _curVgaFile1;
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
+		p = pp + READ_LE_UINT16(pp + 2);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
 		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		p = pp + READ_BE_UINT16(&((VgaFileHeader_Simon *) pp)->hdr2_start);
-		count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationCount);
-		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationTable);
+		p = pp + READ_BE_UINT16(pp + 4);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationTable);
 	} else {
 		p = pp + READ_BE_UINT16(pp + 10);
 		p += 20;
 
-		count = READ_BE_UINT16(&((VgaFileHeader2_WW *) p)->animationCount);
-		p = pp + READ_BE_UINT16(&((VgaFileHeader2_WW *) p)->animationTable);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationTable);
 	}
 
 	for (;;) {

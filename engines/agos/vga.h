@@ -29,12 +29,6 @@ namespace AGOS {
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 // Feeble Files
-struct VgaFileHeader_Feeble {
-	uint16 x_1;
-	uint16 hdr2_start;
-	uint16 x_2, x_3;
-};
-
 struct VgaFileHeader2_Feeble {
 	uint16 imageCount;
 	uint16 x_2;
@@ -60,24 +54,6 @@ struct AnimationHeader_Feeble {
 };
 
 // Simon 1/2
-struct VgaFileHeader_Simon {
-	uint16 x_1, x_2;
-	uint16 hdr2_start;
-	uint16 x_3, x_4;
-};
-
-struct VgaFileHeader2_Simon {
-	uint16 x_1;
-	uint16 imageCount;
-	uint16 x_2;
-	uint16 animationCount;
-	uint16 x_3;
-	uint16 imageTable;
-	uint16 x_4;
-	uint16 animationTable;
-	uint16 x_5;
-};
-
 struct ImageHeader_Simon {
 	uint16 id;
 	uint16 x_1;
@@ -92,19 +68,7 @@ struct AnimationHeader_Simon {
 };
 
 
-// Waxworks
-struct VgaFileHeader2_WW {
-	uint16 x_1;
-	uint16 imageCount;
-	uint16 x_2;
-	uint16 animationCount;
-	uint16 x_3;
-	uint16 imageTable;
-	uint16 x_4;
-	uint16 animationTable;
-	uint16 x_5;
-};
-
+// Elvira 1/2 and Waxworks
 struct ImageHeader_WW {
 	uint16 id;
 	uint16 x_1;
@@ -119,6 +83,18 @@ struct AnimationHeader_WW {
 	uint16 scriptOffs;
 };
 
+// Common
+struct VgaFileHeader2_Common {
+	uint16 x_1;
+	uint16 imageCount;
+	uint16 x_2;
+	uint16 animationCount;
+	uint16 x_3;
+	uint16 imageTable;
+	uint16 x_4;
+	uint16 animationTable;
+	uint16 x_5;
+};
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

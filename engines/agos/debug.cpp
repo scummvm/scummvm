@@ -276,9 +276,9 @@ void AGOSEngine::dump_vga_file(const byte *vga) {
 	int count;
 
 	pp = vga;
-	p = pp + READ_BE_UINT16(&((const VgaFileHeader_Simon *) pp)->hdr2_start);
-	count = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationCount);
-	p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationTable);
+	p = pp + READ_BE_UINT16(pp + 4);
+	count = READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->animationCount);
+	p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->animationTable);
 	while (--count >= 0) {
 		int id = READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->id);
 
@@ -287,9 +287,9 @@ void AGOSEngine::dump_vga_file(const byte *vga) {
 	}
 
 	pp = vga;
-	p = pp + READ_BE_UINT16(&((const VgaFileHeader_Simon *) pp)->hdr2_start);
-	count = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->imageCount);
-	p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->imageTable);
+	p = pp + READ_BE_UINT16(pp + 4);;
+	count = READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->imageCount);
+	p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->imageTable);
 
 	while (--count >= 0) {
 		int id = READ_BE_UINT16(&((const ImageHeader_Simon *) p)->id);
