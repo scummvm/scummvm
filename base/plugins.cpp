@@ -204,9 +204,7 @@ void PluginManager::unloadPlugins() {
 
 void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
 	Plugin *found = NULL;
-	uint i;
-	for (PluginList::iterator p = _plugins.begin(); p != _plugins.end(); ++p)
-	for (i = 0; i < _plugins.size(); i++) {
+	for (PluginList::iterator p = _plugins.begin(); p != _plugins.end(); ++p) {
 		if (*p == plugin) {
 			found = *p;
 		} else {
