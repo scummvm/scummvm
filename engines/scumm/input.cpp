@@ -219,7 +219,7 @@ void ScummEngine::clearClickedStatus() {
 }
 
 void ScummEngine::processInput() {
-	_lastKeyHit = _keyPressed;
+	int lastKeyHit = _keyPressed;
 	_keyPressed = 0;
 
 	//
@@ -250,13 +250,13 @@ void ScummEngine::processInput() {
 	_mouseAndKeyboardStat = 0;
 
 	// Interpret 'return' as left click and 'tab' as right click
-	if (_lastKeyHit && _cursor.state > 0) {
-		if (_lastKeyHit == 9) {
+	if (lastKeyHit && _cursor.state > 0) {
+		if (lastKeyHit == 9) {
 			_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
-			_lastKeyHit = 0;
-		} else if (_lastKeyHit == 13) {
+			lastKeyHit = 0;
+		} else if (lastKeyHit == 13) {
 			_mouseAndKeyboardStat = MBS_LEFT_CLICK;
-			_lastKeyHit = 0;
+			lastKeyHit = 0;
 		}
 	}
 
@@ -266,14 +266,14 @@ void ScummEngine::processInput() {
 		// the behaviour of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
+		lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 	} else if (_rightBtnPressed & msClicked && (_game.version <= 3 && _game.id != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing right
 		// mouse button also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
+		lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 	} else if (_leftBtnPressed & msClicked) {
 		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
@@ -294,50 +294,50 @@ void ScummEngine::processInput() {
 	_rightBtnPressed &= ~msClicked;
 
 #ifdef _WIN32_WCE
-	if (_lastKeyHit == KEY_ALL_SKIP) {
+	if (lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
 		if (_smushActive || vm.cutScenePtr[vm.cutSceneStackPointer])
-			_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
+			lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 		else
 		// Skip talk
 		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0)
-			_lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
+			lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
 		else
 		// Escape
-			_lastKeyHit = 27;
+			lastKeyHit = 27;
 	}
 #endif
 
-	if (!_lastKeyHit)
+	if (!lastKeyHit)
 		return;
 	
-	processKeyboard();
+	processKeyboard(lastKeyHit);
 }
 
 #ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v8::processKeyboard() {
+void ScummEngine_v8::processKeyboard(int lastKeyHit) {
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it.
-	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
+	if (_keyScriptNo && (_keyScriptKey == lastKeyHit)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
 	}
 
 	// Fall back to V7 behavior
-	ScummEngine_v7::processKeyboard();
+	ScummEngine_v7::processKeyboard(lastKeyHit);
 }
 
-void ScummEngine_v7::processKeyboard() {
+void ScummEngine_v7::processKeyboard(int lastKeyHit) {
 
 	// COMI version string is hard coded in the engine, hence we don't
 	// invoke versionDialog here (it would only show nonsense).
 	// Dig/FT version strings are partly hard coded, too.
-	if (_game.version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
+	if (_game.version == 7 && lastKeyHit == VAR(VAR_VERSION_KEY)) {
 		versionDialog();
 		return;
 	}
 
-	if (VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+	if (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
 		// Skip cutscene (or active SMUSH video).
 		if (_smushActive) {
 			if (_game.id == GID_FT)
@@ -348,17 +348,17 @@ void ScummEngine_v7::processKeyboard() {
 		if (!_smushActive || _smushVideoShouldFinish)
 			abortCutscene();
 
-		_mouseAndKeyboardStat = _lastKeyHit;
+		_mouseAndKeyboardStat = lastKeyHit;
 		return;
 	}
 
 	// Fall back to V6 behavior
-	ScummEngine_v6::processKeyboard();
+	ScummEngine_v6::processKeyboard(lastKeyHit);
 }
 #endif
 
-void ScummEngine_v6::processKeyboard() {
-	if (_lastKeyHit == 20) {
+void ScummEngine_v6::processKeyboard(int lastKeyHit) {
+	if (lastKeyHit == 20) {
 		// FIXME: What key is '20' supposed to indicate? I can't trigger
 		// it with my keyboard, it seems...
 		char buf[256];
@@ -394,24 +394,24 @@ void ScummEngine_v6::processKeyboard() {
 	}
 
 	// Fall back to default behavior
-	ScummEngine::processKeyboard();
+	ScummEngine::processKeyboard(lastKeyHit);
 }
 
-void ScummEngine_v2::processKeyboard() {
-	if (_lastKeyHit == ' ') {		// space
+void ScummEngine_v2::processKeyboard(int lastKeyHit) {
+	if (lastKeyHit == ' ') {		// space
 		pauseGame();
-	} else if (_lastKeyHit == 314+5) {		// F5
+	} else if (lastKeyHit == 314+5) {		// F5
 		mainMenuDialog();
-	} else if (_lastKeyHit == 314+8) {		// F8
+	} else if (lastKeyHit == 314+8) {		// F8
 		confirmRestartDialog();
 	} else {
 
-		if ((_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && _lastKeyHit == 27) || 
-			(VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == 314+VAR(VAR_CUTSCENEEXIT_KEY))) {
+		if ((_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && lastKeyHit == 27) || 
+			(VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == 314+VAR(VAR_CUTSCENEEXIT_KEY))) {
 			abortCutscene();
 		} else {
 			// Fall back to default behavior
-			ScummEngine::processKeyboard();
+			ScummEngine::processKeyboard(lastKeyHit);
 		}
 	
 		// Store the input type. So far we can't distinguish
@@ -419,26 +419,27 @@ void ScummEngine_v2::processKeyboard() {
 		// 1) Verb	2) Scene	3) Inv.		4) Key
 		// 5) Sentence Bar
 	
-		if (VAR_KEYPRESS != 0xFF && _lastKeyHit) {		// Key Input
-			if (315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+		if (VAR_KEYPRESS != 0xFF && lastKeyHit) {		// Key Input
+			if (315 <= lastKeyHit && lastKeyHit < 315+12) {
 				// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
-				_lastKeyHit -= 314;
+				VAR(VAR_KEYPRESS) = lastKeyHit - 314;
+			} else {
+				VAR(VAR_KEYPRESS) = lastKeyHit;
 			}
-			VAR(VAR_KEYPRESS) = _lastKeyHit;
 		}
 	}
 }
 
-void ScummEngine_v3::processKeyboard() {
-	if (_game.platform == Common::kPlatformFMTowns && _lastKeyHit == 314+8) {	// F8
+void ScummEngine_v3::processKeyboard(int lastKeyHit) {
+	if (_game.platform == Common::kPlatformFMTowns && lastKeyHit == 314+8) {	// F8
 		confirmRestartDialog();
 	} else {
 		// Fall back to default behavior
-		ScummEngine::processKeyboard();
+		ScummEngine::processKeyboard(lastKeyHit);
 	}
 }
 
-void ScummEngine::processKeyboard() {
+void ScummEngine::processKeyboard(int lastKeyHit) {
 	int saveloadkey;
 
 	if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))
@@ -446,7 +447,7 @@ void ScummEngine::processKeyboard() {
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
 
-	if (_lastKeyHit == saveloadkey) {
+	if (lastKeyHit == saveloadkey) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
@@ -455,25 +456,25 @@ void ScummEngine::processKeyboard() {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 
-	} else if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
+	} else if (VAR_RESTART_KEY != 0xFF && lastKeyHit == VAR(VAR_RESTART_KEY)) {
 		confirmRestartDialog();
 
-	} else if (VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) {
+	} else if (VAR_PAUSE_KEY != 0xFF && lastKeyHit == VAR(VAR_PAUSE_KEY)) {
 		pauseGame();
 
-	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
+	} else if (VAR_TALKSTOP_KEY != 0xFF && lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
 			stopTalk();
 
 	} else {
-		if (VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+		if (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
 			abortCutscene();
-		} else if (_lastKeyHit == '[' || _lastKeyHit == ']') { // Change music volume
+		} else if (lastKeyHit == '[' || lastKeyHit == ']') { // Change music volume
 			int vol = ConfMan.getInt("music_volume") / 16;
-			if (_lastKeyHit == ']' && vol < 16)
+			if (lastKeyHit == ']' && vol < 16)
 				vol++;
-			else if (_lastKeyHit == '[' && vol > 0)
+			else if (lastKeyHit == '[' && vol > 0)
 				vol--;
 	
 			// Display the music volume
@@ -486,10 +487,10 @@ void ScummEngine::processKeyboard() {
 	
 			ConfMan.setInt("music_volume", vol);
 			updateSoundSettings();
-		} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
-			if (_lastKeyHit == '+' && _defaultTalkDelay > 0)
+		} else if (lastKeyHit == '-' || lastKeyHit == '+') { // Change text speed
+			if (lastKeyHit == '+' && _defaultTalkDelay > 0)
 				_defaultTalkDelay--;
-			else if (_lastKeyHit == '-' && _defaultTalkDelay < 9)
+			else if (lastKeyHit == '-' && _defaultTalkDelay < 9)
 				_defaultTalkDelay++;
 	
 			// Display the talk speed
@@ -501,11 +502,11 @@ void ScummEngine::processKeyboard() {
 	
 			if (VAR_CHARINC != 0xFF)
 				VAR(VAR_CHARINC) = _defaultTalkDelay;
-		} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
+		} else if (lastKeyHit == '~' || lastKeyHit == '#') { // Debug console
 			_debugger->attach();
 		}
 	
-		_mouseAndKeyboardStat = _lastKeyHit;
+		_mouseAndKeyboardStat = lastKeyHit;
 	}
 }
 

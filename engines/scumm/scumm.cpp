@@ -155,7 +155,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_currentRoom = 0;
 	_egoPositioned = false;
 	_keyPressed = 0;
-	_lastKeyHit = 0;
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed = 0;
 	_rightBtnPressed = 0;

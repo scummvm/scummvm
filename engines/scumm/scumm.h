@@ -493,7 +493,7 @@ public:
 protected:
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
-	virtual void processKeyboard();
+	virtual void processKeyboard(int lastKeyHit);
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
@@ -600,7 +600,6 @@ public:
 
 protected:
 	int _keyPressed;
-	uint16 _lastKeyHit;
 	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
 
 	Common::Point _mouse;
