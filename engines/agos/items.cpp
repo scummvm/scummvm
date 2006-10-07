@@ -261,6 +261,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[152] = &AGOSEngine::o_debug;
 
 	op[164] = &AGOSEngine::o1_rescan;
+	op[165] = &AGOSEngine::oe1_means;
 
 	op[176] = &AGOSEngine::oe1_setUserItem;
 	op[177] = &AGOSEngine::oe1_getUserItem;
@@ -301,6 +302,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[253] = &AGOSEngine::oe1_bitTest;
 
+	op[259] = &AGOSEngine::oe1_setTime;
+
 	op[255] = &AGOSEngine::o_waitSync;
 	op[256] = &AGOSEngine::o_sync;
 	op[257] = &AGOSEngine::o_defObj;
@@ -331,6 +334,9 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
+	op[8] = &AGOSEngine::oe1_isNotAt;
+	op[9] = &AGOSEngine::oe1_sibling;
+	op[10] = &AGOSEngine::oe1_notSibling;
 	op[24] = &AGOSEngine::oe1_isPlayer;
 	op[29] = &AGOSEngine::oe1_canPut;
 	op[34] = &AGOSEngine::oe1_copyof;
@@ -344,6 +350,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[89] = &AGOSEngine::oe2_loadUserGame;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
+	op[123] = &AGOSEngine::oe1_setTime;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
 	op[145] = &AGOSEngine::oe2_setDoorClosed;
@@ -354,6 +361,8 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[150] = &AGOSEngine::oe2_ifDoorLocked;
 	op[161] = &AGOSEngine::oe2_opcode161;
 	op[162] = &AGOSEngine::oe2_screenTextMsg;
+	op[165] = &AGOSEngine::oe2_setSuperRoom;
+	op[166] = &AGOSEngine::oe2_getSuperRoom;
 	op[175] = &AGOSEngine::o_getDollar2;
 	op[179] = &AGOSEngine::o_isAdjNoun;
 	op[180] = &AGOSEngine::o_b2Set;
@@ -364,8 +373,6 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	// Code difference, check if triggered
 	op[163] = NULL;
 	op[164] = NULL;
-	op[165] = NULL;
-	op[166] = NULL;
 	op[167] = NULL;
 	op[168] = NULL;
 	op[169] = NULL;
@@ -383,6 +390,9 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
 	// Confirmed
+	op[8] = &AGOSEngine::oe1_isNotAt;
+	op[9] = &AGOSEngine::oe1_sibling;
+	op[10] = &AGOSEngine::oe1_notSibling;
 	op[24] = &AGOSEngine::oe1_isPlayer;
 	op[29] = &AGOSEngine::oe1_canPut;
 	op[34] = &AGOSEngine::oe1_copyof;
@@ -401,6 +411,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[89] = &AGOSEngine::oe2_loadUserGame;
 	op[105] = &AGOSEngine::oww_menu;
 	op[106] = &AGOSEngine::oww_textMenu;
+	op[123] = &AGOSEngine::oe1_setTime;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
 	op[145] = &AGOSEngine::oe2_setDoorClosed;
@@ -416,10 +427,13 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[181] = &AGOSEngine::o_b2Clear;
 	op[182] = &AGOSEngine::o_b2Zero;
 	op[183] = &AGOSEngine::o_b2NotZero;
-	op[184] = &AGOSEngine::oww_opcode184;
-	op[185] = &AGOSEngine::oww_opcode185;
-	op[186] = &AGOSEngine::oww_opcode186;
-	op[187] = &AGOSEngine::oww_opcode187;
+	op[184] = &AGOSEngine::oww_boxMessage;
+	op[185] = &AGOSEngine::oww_boxMsg;
+	op[186] = &AGOSEngine::oww_boxLongText;
+	op[187] = &AGOSEngine::oww_printBox;
+	op[188] = &AGOSEngine::oww_boxPObj;
+	op[189] = &AGOSEngine::o_lockZones;
+	op[190] = &AGOSEngine::o_unlockZones;
 
 	// Code difference, check if triggered
 	op[161] = NULL;
@@ -439,8 +453,6 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[177] = NULL;
 	op[178] = NULL;
 	op[188] = NULL;
-	op[189] = NULL;
-	op[190] = NULL;
 }
 
 void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
@@ -1911,6 +1923,10 @@ void AGOSEngine::oe1_pcName() {
 	showMessageFormat("%s", name.c_str());
 }
 
+void AGOSEngine::oe1_means() {
+	// TODO
+}
+
 void AGOSEngine::oe1_setUserItem() {
 	// 176: set user item
 	Item *i = getNextItemPtr();
@@ -1973,6 +1989,11 @@ void AGOSEngine::oe1_bitTest() {
 	int bit = getVarOrWord();
 
 	setScriptCondition((_variableArray[var] & (1 << bit)) != 0);
+}
+
+void AGOSEngine::oe1_setTime() {
+	// 259: set time
+	time(&_timeStore);
 }
 
 void AGOSEngine::oe1_zoneDisk() {
@@ -2043,6 +2064,16 @@ void AGOSEngine::oe2_screenTextMsg() {
 	getVarOrByte();
 }
 
+void AGOSEngine::oe2_setSuperRoom() {
+	// 165: set super room
+	_superRoomNumber = getVarOrWord();
+}
+
+void AGOSEngine::oe2_getSuperRoom() {
+	// 166: get super room
+	writeNextVarContents(_superRoomNumber);
+}
+
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
@@ -2070,33 +2101,42 @@ void AGOSEngine::oww_whereTo() {
 }
 
 void AGOSEngine::oww_menu() {
-	// 105: menu
-	getVarOrByte();
+	// 105: set agos menu
+	_agosMenu = getVarOrByte();
 }
 
 void AGOSEngine::oww_textMenu() {
-	// 106: text menu
-
-	/* byte tmp = getVarOrByte();
-	TextMenu[tmp] = getVarOrByte(); */
-
-	getVarOrByte();
-	getVarOrByte();
+	// 106: set text menu
+	byte slot = getVarOrByte();
+	_textMenu[slot] = getVarOrByte();
 }
 
-void AGOSEngine::oww_opcode184() {
-	printf("%s\n", getStringPtrByID(getNextStringID()));
+void AGOSEngine::oww_boxMessage() {
+	// 184:  print message to box
+	boxTextMessage((const char *)getStringPtrByID(getNextStringID()));
 }
 
-void AGOSEngine::oww_opcode185() {
-	printf("%s\n", getStringPtrByID(getNextStringID()));
+void AGOSEngine::oww_boxMsg() {
+	// 185:  print msg to box
+	boxTextMsg((const char *)getStringPtrByID(getNextStringID()));
 }
 
-void AGOSEngine::oww_opcode186() {
-	printf("%s\n", getStringPtrByID(_longText[getVarOrByte()]));
+void AGOSEngine::oww_boxLongText() {
+	// 186: print long text to box
+	boxTextMsg((const char *)getStringPtrByID(_longText[getVarOrByte()]));
 }
 
-void AGOSEngine::oww_opcode187() {
+void AGOSEngine::oww_printBox() {
+	// 187: print box
+	printBox();
+}
+
+void AGOSEngine::oww_boxPObj() {
+	// 188: print object flag name to box
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+
+	if (subObject != NULL && subObject->objectFlags & kOFText)
+		boxTextMsg((const char *)getStringPtrByID(subObject->objectFlagValue[0]));
 }
 
 // -----------------------------------------------------------------------

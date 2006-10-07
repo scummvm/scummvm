@@ -467,4 +467,261 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		loadSprite(b, 2, vgaSpriteId, x, y, 12);
 }
 
+// String code for boxes in Waxworks
+uint16 AGOSEngine::getBoxSize() {
+	int x;
+	switch (_boxLineCount) {
+	case 1: x = _lineCounts[0];
+		if (x <= 26)
+		    return 1;
+		if (x <= 64)
+		    if (checkFit(_linePtrs[0],32,2))
+			return 2;
+		if (x <= 111)
+		    if (checkFit(_linePtrs[0],37,3))
+			return 3;
+		if (x <= 168)
+		    if (checkFit(_linePtrs[0],42,4))
+			return 4;
+		if (x <= 240)
+		    if (checkFit(_linePtrs[0],48,5))
+			return 5;
+		return 6;
+	case 2: if (_lineCounts[0] <= 32) {
+		    if (_lineCounts[1] <= 32)
+			return 2;
+		    if (_lineCounts[1] <= 74)
+			    if (checkFit(_linePtrs[1],37,2))
+				return 3;
+		    if (_lineCounts[1] <= 126)
+			    if (checkFit(_linePtrs[1],42,3))
+				return 4;
+		    if (_lineCounts[1] <= 172)
+			    if (checkFit(_linePtrs[1],48,4))
+				return 5;
+		    return 6;
+		}
+		if ((_lineCounts[0] <= 74) && (checkFit(_linePtrs[0],37,2))) {
+		    if (_lineCounts[1] <= 37)
+			return 3;
+		    if (_lineCounts[1] <= 84)
+			    if (checkFit(_linePtrs[1],42,2))
+				return 4;
+		    if (_lineCounts[1] <= 144)
+			    if (checkFit(_linePtrs[1],48,3))
+				return 5;
+		    return 6;
+		}
+		if ((_lineCounts[0] <= 126) && (checkFit(_linePtrs[0],42,3))) {
+		    if (_lineCounts[1] <= 42)
+			return 4;
+		    if (_lineCounts[1] <= 84)
+			    if (checkFit(_linePtrs[1],48,2))
+				return 5;
+		    return 6;
+		}
+		if ((_lineCounts[0] <= 192) && (checkFit(_linePtrs[0],48,4))) {
+		    if (_lineCounts[1] <= 48)
+			return 5;
+		    return 6;
+		}
+		return 6;
+	case 3: if (_lineCounts[0] <= 37) {
+		    if (_lineCounts[1] <= 37) {
+			if (_lineCounts[2] <= 37)
+			    return 3;
+			if (_lineCounts[2] <= 84)
+			    if (checkFit(_linePtrs[2],42,2))
+				return 4;
+			if (_lineCounts[2] <= 144)
+			    if (checkFit(_linePtrs[2],48,3))
+				return 5;
+			return 6;
+		    }
+		    if ((_lineCounts[1] <= 84) && (checkFit(_linePtrs[1],42,2))) {
+			if (_lineCounts[2] <= 42)
+			    return 4;
+			if (_lineCounts[2] <= 96)
+			    if (checkFit(_linePtrs[2],48,2))
+				return 5;
+			return 6;
+		    }
+		    if ((_lineCounts[1] <= 144) && (checkFit(_linePtrs[1],48,3))) {
+			if (_lineCounts[2] <= 48)
+			    return 5;
+			return 6;
+		    }
+		    return 6;
+		}
+		if ((_lineCounts[0] <= 84) && (checkFit(_linePtrs[0],42,2))) {
+		    if (_lineCounts[1] <= 42) {
+			if (_lineCounts[2] <= 42)
+			    return 4;
+			if (_lineCounts[2] <= 96)
+			    if (checkFit(_linePtrs[2],48,2))
+				return 5;
+			return 6;
+		    }
+		    if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1],48,2))) {
+			if (_lineCounts[2] <= 48)
+			    return 5;
+			return 6;
+		    }
+		    return 6;
+		}
+		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0],48,3))) {
+		    if (_lineCounts[1] <= 48) {
+			if (_lineCounts[2] <= 48)
+			    return 5;
+		    }
+		    return 6;
+		}
+		return 6;
+	case 4: if (_lineCounts[0] <= 42) {
+		    if (_lineCounts[1] <= 42) {
+			if (_lineCounts[2] <= 42) {
+			    if (_lineCounts[3] <= 42)
+				return 4;
+			    if (_lineCounts[3] <= 96)
+				if (checkFit(_linePtrs[3],48,2))
+				    return 5;
+			    return 6;
+			}
+			if ((_lineCounts[2] <= 96) && (checkFit(_linePtrs[2],48,2)))
+			    if (_lineCounts[3] <= 48)
+				return 5;
+			return 6;
+		    }
+		    if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1],48,2)))
+			 if ((_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
+				return 5;
+		    return 6;
+		}
+		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0],48,2)))
+		    if ((_lineCounts[1] <= 48) && (_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
+			return 5;
+		return 6;
+	case 5: if ((_lineCounts[0]>48)||(_lineCounts[1]>48)||(_lineCounts[2]>48)
+		    ||(_lineCounts[3]>48)||(_lineCounts[4]>48))
+			return 6;
+		else
+			return 5;
+	default:return 6;
+
+    }
+}
+
+
+uint16 AGOSEngine::checkFit(char *Ptr, int width, int lines) {
+    int countw = 0;
+    int countl = 0;
+    char *x;
+    while( *Ptr) {
+	if (*Ptr == '\n')
+	    return 1;
+	if (countw == width) {
+	    countl++;
+	    countw = 0;
+	    Ptr = x;
+	}
+	if (*Ptr == ' ') {
+	    x = Ptr;
+	    x++;
+	}
+	countw++;
+	if (countl == lines)
+	    return 0;
+	Ptr++;
+    }
+    return 1;
+}
+
+void AGOSEngine::boxTextMessage(const char *x) {
+	char *BoxBufferPtr = _boxBuffer;
+	sprintf(BoxBufferPtr, "%s\n", x);
+	_lineCounts[_boxLineCount] += strlen(x);
+	BoxBufferPtr += strlen(x) + 1;
+	_boxLineCount++;
+	_linePtrs[_boxLineCount] = BoxBufferPtr;
+	_boxCR = 1;
+}
+
+void AGOSEngine::boxTextMsg(const char *x) {
+	char *BoxBufferPtr = _boxBuffer;
+	sprintf(BoxBufferPtr, "%s", x);
+	_lineCounts[_boxLineCount] += strlen(x);
+	BoxBufferPtr += strlen(x);
+	_boxCR = 0;
+}
+
+void AGOSEngine::printBox() {
+	char *BoxBufferPtr = 0;
+	uint16 BoxSize;
+	_linePtrs[0] = _boxBuffer;
+	if (_boxCR == 0)
+		_boxLineCount++;
+	stopAnimateSimon1(105);
+	BoxSize=getBoxSize();
+	_variableArray[53] = BoxSize;
+	loadSprite(3, 1, 100, 0, 0, 0);
+	changeWindow(5);
+
+	switch(BoxSize) {
+	case 1: _textWindow->x = 10;
+		_textWindow->y = 163;
+		_textWindow->width = 20;
+		_textWindow->height = 1;
+		_textWindow->textMaxLength = 26;
+		break;
+	case 2: _textWindow->x = 8;
+		_textWindow->y = 160;
+		_textWindow->width = 24;
+		_textWindow->height = 2;
+		_textWindow->textMaxLength = 32;
+		break;
+	case 3: _textWindow->x = 6;
+		_textWindow->y = 156;
+		_textWindow->width = 28;
+		_textWindow->height = 3;
+		_textWindow->textMaxLength = 37;
+		break;
+	case 4: _textWindow->x = 4;
+		_textWindow->y = 153;
+		_textWindow->width = 32;
+		_textWindow->height = 4;
+		_textWindow->textMaxLength = 42;
+		break;
+	case 5: _textWindow->x = 2;
+		_textWindow->y = 150;
+		_textWindow->width = 36;
+		_textWindow->height = 5;
+		_textWindow->textMaxLength = 48;
+		break;
+	default:_textWindow->x = 1;
+		_textWindow->y = 147;
+		_textWindow->width = 38;
+		_textWindow->height = 6;
+		_textWindow->textMaxLength = 50;
+		break;
+	}
+	_textWindow->textColumn = 0;
+	_textWindow->textRow = 0;
+	//_textWindow->w_curpixel = 0;
+	_textWindow->textLength = 0;
+	showmessage_helper_3(_textWindow->textLength,_textWindow->textMaxLength);
+	waitForSync(99);
+	BoxBufferPtr = _boxBuffer;
+	while (*BoxBufferPtr)
+		showmessage_print_char(*BoxBufferPtr++);
+	_boxLineCount = 0;
+	BoxBufferPtr = _boxBuffer;
+	_lineCounts[0] = 0;
+	_lineCounts[1] = 0;
+	_lineCounts[2] = 0;
+	_lineCounts[3] = 0;
+	_lineCounts[4] = 0;
+	_lineCounts[5] = 0;
+	changeWindow(0);
+}
+
 } // End of namespace AGOS

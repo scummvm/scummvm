@@ -302,7 +302,18 @@ protected:
 	const byte *_scrollImage;
 	byte _boxStarHeight;
 
- 	uint16 _hyperLink, _newLines;
+	char _boxBuffer[310];
+	int _boxLineCount;
+	int _lineCounts[6];
+	char *_linePtrs[6];
+	int _boxCR;
+
+	uint _classMask, _classMode1, _classMode2;
+	int _agosMenu;
+	byte _textMenu[10];
+	uint _superRoomNumber;
+
+	uint16 _hyperLink, _newLines;
  	uint16 _oracleMaxScrollY, _noOracleScroll;
  	uint16 _interactY;
 
@@ -756,6 +767,12 @@ protected:
 	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
+	void boxTextMessage(const char *x);
+	void boxTextMsg(const char *x);
+	void printBox();
+	uint16 getBoxSize();
+	uint16 checkFit(char *Ptr, int width, int lines);
+
 	byte *allocBlock(uint32 size);
 	void checkNoOverWrite();
 	void checkRunningAnims();
@@ -1010,9 +1027,6 @@ public:
 	void moveDirn_e2(Item *i, uint x);
 	void moveDirn_ww(Item *i, uint x);
 
-	uint _classMask, _classMode1, _classMode2;
-	uint _superRoomNumber;
-
 	int sizeContents(Item *x);
 	int sizeOfRec(Item *o, int d);
 	int sizeRec(Item *x, int d);
@@ -1040,11 +1054,13 @@ public:
 	void oe1_pobj();
 	void oe1_pName();
 	void oe1_pcName();
+	void oe1_means();
 	void oe1_setUserItem();
 	void oe1_getUserItem();
 	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();
+	void oe1_setTime();
 	void oe1_bitTest();
 	void oe1_zoneDisk();
 	void oe1_printStats();
@@ -1059,6 +1075,8 @@ public:
 	void oe2_ifDoorLocked();
 	void oe2_opcode161();
 	void oe2_screenTextMsg();
+	void oe2_setSuperRoom();
+	void oe2_getSuperRoom();
 
 	// Opcodes, Waxworks only
 	void oww_moveDirn();
@@ -1066,10 +1084,11 @@ public:
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();
-	void oww_opcode184();
-	void oww_opcode185();
-	void oww_opcode186();
-	void oww_opcode187();
+	void oww_boxMessage();
+	void oww_boxMsg();
+	void oww_boxLongText();
+	void oww_printBox();
+	void oww_boxPObj();
 
 	// Opcodes, Simon 1 only
 	void o1_printLongText();

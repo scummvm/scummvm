@@ -318,13 +318,27 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
+	_agosMenu = 0;
 	_classMask = 0;
 	_classMode1 = 0;
 	_classMode2 = 0;
 	_superRoomNumber = 0;
 
+	_boxLineCount = 0;
+	_boxCR = 0;
+	memset(_boxBuffer, 0, sizeof(_boxBuffer));
+
+	_linePtrs[0] = 0;
+	_linePtrs[1] = 0;
+	_linePtrs[2] = 0;
+	_linePtrs[3] = 0;
+	_linePtrs[4] = 0;
+	_linePtrs[5] = 0;
+	memset(_lineCounts, 0, sizeof(_lineCounts));
+
 	memset(_objectArray, 0, sizeof(_objectArray));
 	memset(_itemStore, 0, sizeof(_itemStore));
+	memset(_textMenu, 0, sizeof(_textMenu));
 
 	memset(_shortText, 0, sizeof(_shortText));
 	memset(_shortTextX, 0, sizeof(_shortText));

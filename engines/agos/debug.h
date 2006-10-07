@@ -39,9 +39,9 @@ static const char *const elvira1_opcode_name_table[300] = {
 	"IJ|NOT_CARRIED",
 	/* 8 */
 	"IIJ|IS_AT",
-	NULL,
-	NULL,
-	NULL,
+	"IIJ|IS_NOT_AT",
+	"IIJ|IS_SIBLING",
+	"IIJ|IS_NOT_SIBLING",
 	/* 12 */
 	"WJ|IS_ZERO",
 	"WJ|ISNOT_ZERO",
@@ -234,7 +234,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	NULL,
 	/* 164 */
 	"|RESCAN",
-	NULL,
+	"wwwW|MEANS",
 	NULL,
 	NULL,
 	/* 168 */
@@ -351,7 +351,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	"W|SYNC",
 	"WI|DEF_OBJ",
 	NULL,
-	NULL,
+	"|SET_TIME",
 	/* 260 */
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
@@ -396,9 +396,9 @@ static const char *const ww_opcode_name_table[256] = {
 	"IJ|NOT_CARRIED",
 	"IIJ|IS_AT",
 	/* 8 */
-	NULL,
-	NULL,
-	NULL,
+	"IIJ|IS_NOT_AT",
+	"IIJ|IS_SIBLING",
+	"IIJ|IS_NOT_SIBLING",
 	"VJ|IS_ZERO",
 	/* 12 */
 	"VJ|ISNOT_ZERO",
@@ -539,7 +539,7 @@ static const char *const ww_opcode_name_table[256] = {
 	"W|SYNC",
 	"BI|DEF_OBJ",
 	NULL,
-	NULL,
+	"|SET_TIME",
 	/* 124 */
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
@@ -592,8 +592,8 @@ static const char *const ww_opcode_name_table[256] = {
 	"W|PLAY_EFFECT",
 	/* 164 */
 	"|getDollar2",
-	"IWWJ|IS_ADJ_NOUN",
-	"B|SET_BIT2",
+	"W|SET_SUPER_ROOM",
+	"BV|GET_SUPER_ROOM",
 	"B|CLEAR_BIT2",
 	/* 168 */
 	"BJ|IS_BIT2_CLEAR",
@@ -616,14 +616,14 @@ static const char *const ww_opcode_name_table[256] = {
 	"BJ|IS_BIT2_CLEAR",
 	"BJ|IS_BIT2_SET",
 	/* 184 */
-	"T|UNK_184",
-	"T|UNK_185",
-	"B|UNK_186",
-	"|UNK_187",
+	"T|BOX_MESSAGE",
+	"T|BOX_MSG",
+	"B|BOX_LONG_TEXT",
+	"|PRINT_BOX",
 	/* 188 */
-	"I|UNK_188",
-	"|UNK_189",
-	"|UNK_190",
+	"I|BOX_POBJ",
+	"|LOCK_ZONES",
+	"|UNLOCK_ZONES",
 };
 
 static const char *const simon1dos_opcode_name_table[256] = {
