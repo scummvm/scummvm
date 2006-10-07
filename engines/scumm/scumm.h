@@ -412,8 +412,6 @@ protected:
  */
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
-	friend class SmushPlayer;
-	friend class Insane;
 	friend class CharsetRenderer;
 	friend class ResourceManager;
 
@@ -428,7 +426,6 @@ public:
 	IMuseDigital *_imuseDigital;
 	MusicEngine *_musicEngine;
 	Sound *_sound;
-	SmushMixer *_smixer;
 
 	VerbSlot *_verbs;
 	ObjectData *_objs;
@@ -506,20 +503,6 @@ protected:
 	virtual void animateCursor() {}
 	virtual void updatePalette();
 
-	/**
-	 * Flag which signals that the SMUSH video playback should end now
-	 * (e.g. because it was aborted by the user or it's simply finished).
-	 */
-	bool _smushVideoShouldFinish;
-	/** This flag is a hack to allow the pause dialog to pause SMUSH playback, too. */
-	bool _smushPaused;
-public:
-	/** This flag tells IMuseDigital that INSANE is running. */
-	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
-
-protected:
-	Insane *_insane;
-
 public:
 	void pauseGame();
 	void restart();
@@ -533,7 +516,7 @@ protected:
 	Dialog *_versionDialog;
 	Dialog *_mainMenuDialog;
 
-	int runDialog(Dialog &dialog);
+	virtual int runDialog(Dialog &dialog);
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();

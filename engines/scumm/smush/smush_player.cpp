@@ -235,7 +235,7 @@ void SmushPlayer::timerCallback(void *refCon) {
 #endif
 }
 
-SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
+SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, int speed) {
 	_vm = scumm;
 	_version = -1;
 	_nbframes = 0;

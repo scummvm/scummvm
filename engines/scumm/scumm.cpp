@@ -248,16 +248,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	// Init all vars
 	_imuse = NULL;
 	_imuseDigital = NULL;
-	_smixer = NULL;
 	_musicEngine = NULL;
 	_verbs = NULL;
 	_objs = NULL;
 	_debugFlags = 0;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
-	_smushVideoShouldFinish = false;
-	_smushPaused = false;
-	_insaneRunning = false;
 	_quit = false;
 	_pauseDialog = NULL;
 	_mainMenuDialog = NULL;
@@ -663,12 +659,6 @@ ScummEngine::~ScummEngine() {
 		delete _musicEngine;
 	}
 
-#ifndef DISABLE_SCUMM_7_8
-	if (_smixer) {
-		_smixer->stop();
-		delete _smixer;
-	}
-#endif
 	_mixer->stopAll();
 
 	delete [] _actors;
@@ -789,8 +779,6 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
 	memset(_blastTextQueue, 0, sizeof(_blastTextQueue));
-
-	_smushFrameRate = 0;
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
@@ -926,6 +914,13 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
 	_verbCharset = 0;
 	_verbLineSpacing = 10;
+
+	_smushFrameRate = 0;
+	_smushVideoShouldFinish = false;
+	_smushPaused = false;
+	_insaneRunning = false;
+	_smixer = NULL;
+
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
@@ -933,6 +928,11 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v7::~ScummEngine_v7() {
+	if (_smixer) {
+		_smixer->stop();
+		delete _smixer;
+	}
+
 	free(_languageBuffer);
 	free(_languageIndex);
 }
@@ -992,7 +992,6 @@ int ScummEngine::init() {
 	return 0;
 }
 
-
 void ScummEngine::setupScumm() {
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS) {
@@ -1023,14 +1022,6 @@ void ScummEngine::setupScumm() {
 
 	// Create the costume renderer
 	setupCostumeRenderer();
-
-#ifndef DISABLE_SCUMM_7_8
-	// Create FT INSANE object
-	if (_game.id == GID_FT)
-		_insane = new Insane((ScummEngine_v7 *)this);
-	else
-#endif
-		_insane = 0;
 
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
@@ -1095,6 +1086,27 @@ void ScummEngine::setupScumm() {
 	Graphics::initfonts();
 #endif
 }
+
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v7::setupScumm() {
+
+	if (_game.features & GF_DIGI_IMUSE) {
+#ifndef DISABLE_SCUMM_7_8
+		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
+#endif
+	}
+
+	ScummEngine::setupScumm();
+
+	// Create FT INSANE object
+	if (_game.id == GID_FT)
+		_insane = new Insane((ScummEngine_v7 *)this);
+	else
+		_insane = 0;
+
+	_smixer = new SmushMixer(_mixer);
+}
+#endif
 
 void ScummEngine::setupCharsetRenderer() {
 	if (_game.platform == Common::kPlatformNES)
@@ -1433,10 +1445,7 @@ void ScummEngine::setupMusic(int midi) {
 
 	// Init iMuse
 	if (_game.features & GF_DIGI_IMUSE) {
-#ifndef DISABLE_SCUMM_7_8
-		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
-		_smixer = new SmushMixer(_mixer);
-#endif
+		// Setup for digital iMuse is performed in another place
 	} else if (_game.platform == Common::kPlatformC64) {
 		// TODO
 		_musicEngine = NULL;
@@ -2058,8 +2067,6 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	// Pause sound & video
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
-	bool oldSmushPaused = _smushPaused;
-	_smushPaused = true;
 
 	// Open & run the dialog
 	int result = dialog.runModal();
@@ -2069,12 +2076,22 @@ int ScummEngine::runDialog(Dialog &dialog) {
 
 	// Resume sound & video
 	_sound->pauseSounds(old_soundsPaused);
-	_smushPaused = oldSmushPaused;
 
 	_engineStartTime += (_system->getMillis() / 1000) - _dialogStartTime;
 	_dialogStartTime = 0;
 
 	// Return the result
+	return result;
+}
+
+int ScummEngine_v7::runDialog(Dialog &dialog) {
+	bool oldSmushPaused = _smushPaused;
+	_smushPaused = true;
+
+	int result = ScummEngine::runDialog(dialog);
+
+	_smushPaused = oldSmushPaused;
+
 	return result;
 }
 

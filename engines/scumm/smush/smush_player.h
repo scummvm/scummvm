@@ -31,7 +31,7 @@
 
 namespace Scumm {
 
-class ScummEngine_v6;
+class ScummEngine_v7;
 class SmushFont;
 class SmushMixer;
 class StringResource;
@@ -39,7 +39,7 @@ class StringResource;
 class SmushPlayer {
 	friend class Insane;
 private:
-	ScummEngine_v6 *_vm;
+	ScummEngine_v7 *_vm;
 	int _version;
 	int32 _nbframes;
 	SmushMixer *_smixer;
@@ -95,7 +95,7 @@ private:
 	Common::Mutex _mutex;
 
 public:
-	SmushPlayer(ScummEngine_v6 *scumm, int speed);
+	SmushPlayer(ScummEngine_v7 *scumm, int speed);
 	~SmushPlayer();
 
 	void play(const char *filename, int32 offset = 0, int32 startFrame = 0);

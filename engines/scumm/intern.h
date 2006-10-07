@@ -538,8 +538,6 @@ protected:
 
 	const OpcodeEntryV6 *_opcodesV6;
 
-	int _smushFrameRate;
-
 	struct TextObject {
 		int16 xpos, ypos;
 		byte color;
@@ -576,6 +574,25 @@ protected:
 	} _akosQueue[32];
 	int16 _akosQueuePos;
 
+
+	int _smushFrameRate;
+
+	/**
+	 * Flag which signals that the SMUSH video playback should end now
+	 * (e.g. because it was aborted by the user or it's simply finished).
+	 */
+	bool _smushVideoShouldFinish;
+
+	/** This flag is a hack to allow the pause dialog to pause SMUSH playback, too. */
+	bool _smushPaused;
+
+	Insane *_insane;
+
+public:
+	/** This flag tells IMuseDigital that INSANE is running. */
+	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
+
+	SmushMixer *_smixer;
 
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
@@ -817,6 +834,8 @@ protected:
 
 #ifndef DISABLE_SCUMM_7_8
 class ScummEngine_v7 : public ScummEngine_v6 {
+	friend class SmushPlayer;
+	friend class Insane;
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7();
@@ -855,9 +874,13 @@ public:
 	void clearSubtitleQueue();
 
 protected:
+	virtual int runDialog(Dialog &dialog);
+
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();
 	virtual void processKeyboard(bool smushMode);
+
+	virtual void setupScumm();
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();

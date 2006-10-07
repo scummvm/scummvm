@@ -42,6 +42,7 @@ namespace Scumm {
 struct imuseDigTable;
 struct imuseComiTable;
 class Serializer;
+class ScummEngine_v7;
 
 class IMuseDigital : public MusicEngine {
 private:
@@ -88,7 +89,7 @@ private:
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
 	Common::Mutex _mutex;
-	ScummEngine *_vm;
+	ScummEngine_v7 *_vm;
 	ImuseDigiSndMgr *_sound;
 
 	char *_audioNames;
@@ -130,7 +131,7 @@ private:
 	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
-	IMuseDigital(ScummEngine *scumm, int fps);
+	IMuseDigital(ScummEngine_v7 *scumm, int fps);
 	virtual ~IMuseDigital();
 
 	void setAudioNames(int32 num, char *names);

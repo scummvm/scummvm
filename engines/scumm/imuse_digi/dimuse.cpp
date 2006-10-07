@@ -25,7 +25,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/saveload.h"
-#include "scumm/scumm.h"
+#include "scumm/intern.h"
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
@@ -44,7 +44,7 @@ void IMuseDigital::timer_handler(void *refCon) {
 	imuseDigital->callback();
 }
 
-IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
+IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int fps)
 	: _vm(scumm) {
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
