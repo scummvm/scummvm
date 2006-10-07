@@ -202,11 +202,11 @@ void ScummEngine_v90he::clearClickedStatus() {
 	}
 }
 
-void ScummEngine_v90he::processInput(bool smushMode) {
+void ScummEngine_v90he::processInput() {
 	if (_game.heversion >= 98) {
 		_logicHE->processKeyStroke(_keyPressed);
 	}
-	ScummEngine::processInput(smushMode);
+	ScummEngine::processInput();
 }
 #endif
 
@@ -218,7 +218,7 @@ void ScummEngine::clearClickedStatus() {
 	_rightBtnPressed &= ~msClicked;
 }
 
-void ScummEngine::processInput(bool smushMode) {
+void ScummEngine::processInput() {
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
 
@@ -296,7 +296,7 @@ void ScummEngine::processInput(bool smushMode) {
 #ifdef _WIN32_WCE
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
-		if (smushMode || vm.cutScenePtr[vm.cutSceneStackPointer])
+		if (_smushActive || vm.cutScenePtr[vm.cutSceneStackPointer])
 			_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 		else
 		// Skip talk
@@ -311,11 +311,11 @@ void ScummEngine::processInput(bool smushMode) {
 	if (!_lastKeyHit)
 		return;
 	
-	processKeyboard(smushMode);
+	processKeyboard();
 }
 
 #ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v8::processKeyboard(bool smushMode) {
+void ScummEngine_v8::processKeyboard() {
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it.
 	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
@@ -324,10 +324,10 @@ void ScummEngine_v8::processKeyboard(bool smushMode) {
 	}
 
 	// Fall back to V7 behavior
-	ScummEngine_v7::processKeyboard(smushMode);
+	ScummEngine_v7::processKeyboard();
 }
 
-void ScummEngine_v7::processKeyboard(bool smushMode) {
+void ScummEngine_v7::processKeyboard() {
 
 	// COMI version string is hard coded in the engine, hence we don't
 	// invoke versionDialog here (it would only show nonsense).
@@ -339,13 +339,13 @@ void ScummEngine_v7::processKeyboard(bool smushMode) {
 
 	if (VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
 		// Skip cutscene (or active SMUSH video).
-		if (smushMode) {
+		if (_smushActive) {
 			if (_game.id == GID_FT)
 				_insane->escapeKeyHandler();
 			else
 				_smushVideoShouldFinish = true;
 		}
-		if (!smushMode || _smushVideoShouldFinish)
+		if (!_smushActive || _smushVideoShouldFinish)
 			abortCutscene();
 
 		_mouseAndKeyboardStat = _lastKeyHit;
@@ -353,11 +353,11 @@ void ScummEngine_v7::processKeyboard(bool smushMode) {
 	}
 
 	// Fall back to V6 behavior
-	ScummEngine_v6::processKeyboard(smushMode);
+	ScummEngine_v6::processKeyboard();
 }
 #endif
 
-void ScummEngine_v6::processKeyboard(bool smushMode) {
+void ScummEngine_v6::processKeyboard() {
 	if (_lastKeyHit == 20) {
 		// FIXME: What key is '20' supposed to indicate? I can't trigger
 		// it with my keyboard, it seems...
@@ -394,10 +394,10 @@ void ScummEngine_v6::processKeyboard(bool smushMode) {
 	}
 
 	// Fall back to default behavior
-	ScummEngine::processKeyboard(smushMode);
+	ScummEngine::processKeyboard();
 }
 
-void ScummEngine_v2::processKeyboard(bool smushMode) {
+void ScummEngine_v2::processKeyboard() {
 	if (_lastKeyHit == ' ') {		// space
 		pauseGame();
 	} else if (_lastKeyHit == 314+5) {		// F5
@@ -411,7 +411,7 @@ void ScummEngine_v2::processKeyboard(bool smushMode) {
 			abortCutscene();
 		} else {
 			// Fall back to default behavior
-			ScummEngine::processKeyboard(smushMode);
+			ScummEngine::processKeyboard();
 		}
 	
 		// Store the input type. So far we can't distinguish
@@ -429,16 +429,16 @@ void ScummEngine_v2::processKeyboard(bool smushMode) {
 	}
 }
 
-void ScummEngine_v3::processKeyboard(bool smushMode) {
+void ScummEngine_v3::processKeyboard() {
 	if (_game.platform == Common::kPlatformFMTowns && _lastKeyHit == 314+8) {	// F8
 		confirmRestartDialog();
 	} else {
 		// Fall back to default behavior
-		ScummEngine::processKeyboard(smushMode);
+		ScummEngine::processKeyboard();
 	}
 }
 
-void ScummEngine::processKeyboard(bool smushMode) {
+void ScummEngine::processKeyboard() {
 	int saveloadkey;
 
 	if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))

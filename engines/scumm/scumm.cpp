@@ -777,6 +777,7 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_smushFrameRate = 0;
 	_smushVideoShouldFinish = false;
 	_smushPaused = false;
+	_smushActive = false;
 	_insaneRunning = false;
 	_smixer = NULL;
 
@@ -1636,7 +1637,7 @@ int ScummEngine::scummLoop(int delta) {
 	if (_game.version <= 3)
 		CHARSET_1();
 
-	processInput(false);
+	processInput();
 	
 	scummLoop_updateScummVars();
 

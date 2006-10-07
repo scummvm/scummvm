@@ -284,7 +284,10 @@ SmushPlayer::~SmushPlayer() {
 void SmushPlayer::init() {
 	_frame = 0;
 	_alreadyInit = false;
+
 	_vm->_smushVideoShouldFinish = false;
+	_vm->_smushActive = true;
+
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].getPixels(0, 0);
 
@@ -342,6 +345,7 @@ void SmushPlayer::release() {
 	_vm->_mixer->stopHandle(_IACTchannel);
 	_IACTstream = NULL;
 
+	_vm->_smushActive = false;
 	_vm->_fullRedraw = true;
 
 	// HACK HACK HACK: This is an *evil* trick, beware! See above for
@@ -1320,7 +1324,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_warpNeeded = false;
 		}
 		_vm->parseEvents();
-		_vm->processInput(true);
+		_vm->processInput();
 		if (_palDirtyMax >= _palDirtyMin) {
 			byte palette_colors[1024];
 			byte *p = palette_colors;

@@ -28,6 +28,9 @@
 
 namespace Scumm {
 
+class SmushMixer;
+
+
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save abit of memory used by opcode names in the Scumm engine.
 #ifndef REDUCE_MEMORY_USAGE
@@ -230,7 +233,7 @@ protected:
 	virtual void readRoomsOffsets();
 	virtual void loadCharset(int no);
 
-	virtual void processKeyboard(bool smushMode);
+	virtual void processKeyboard();
 };
 
 /**
@@ -288,7 +291,7 @@ protected:
 	virtual void resetScummVars();
 	virtual void decodeParseString();
 
-	virtual void processKeyboard(bool smushMode);
+	virtual void processKeyboard();
 
 	virtual void readIndexFile();
 	void readClassicIndexFile();	// V1
@@ -586,6 +589,8 @@ protected:
 	/** This flag is a hack to allow the pause dialog to pause SMUSH playback, too. */
 	bool _smushPaused;
 
+	bool _smushActive;
+
 	Insane *_insane;
 
 public:
@@ -605,7 +610,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
-	virtual void processKeyboard(bool smushMode);
+	virtual void processKeyboard();
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
@@ -878,7 +883,7 @@ protected:
 
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();
-	virtual void processKeyboard(bool smushMode);
+	virtual void processKeyboard();
 
 	virtual void setupScumm();
 
@@ -952,7 +957,7 @@ protected:
 
 	virtual int getObjectIdFromOBIM(const byte *obim);
 
-	virtual void processKeyboard(bool smushMode);
+	virtual void processKeyboard();
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

@@ -55,8 +55,6 @@ class BaseScummFile;
 class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
-class Insane;
-class SmushMixer;
 class MusicEngine;
 class ScummEngine;
 class ScummDebugger;
@@ -494,8 +492,8 @@ public:
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	void waitForTimer(int msec_delay);
-	virtual void processInput(bool smushMode);
-	virtual void processKeyboard(bool smushMode);
+	virtual void processInput();
+	virtual void processKeyboard();
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
