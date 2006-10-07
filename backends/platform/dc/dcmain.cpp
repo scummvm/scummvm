@@ -23,7 +23,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include <base/engine.h>
+#include <engines/engine.h>
 #include <base/main.h>
 #include <base/plugins.h>
 #include "dc.h"

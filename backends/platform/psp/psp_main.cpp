@@ -33,7 +33,7 @@
 
 #include <common/stdafx.h>
 #include <common/system.h>
-#include <base/engine.h>
+#include <engines/engine.h>
 #include <base/main.h>
 #include <base/plugins.h>
 
