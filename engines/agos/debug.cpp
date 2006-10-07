@@ -49,21 +49,21 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 	}
 
 	if (getGameType() == GType_PP) {
-		st = s = puzzlepack_opcode_name_table[opcode];
+		st = s = puzzlepack_opcodeNameTable[opcode];
 	} else if (getGameType() == GType_FF) {
-		st = s = feeblefiles_opcode_name_table[opcode];
+		st = s = feeblefiles_opcodeNameTable[opcode];
 	} else if (getGameType() == GType_SIMON2 && getFeatures() & GF_TALKIE) {
-		st = s = simon2talkie_opcode_name_table[opcode];
+		st = s = simon2talkie_opcodeNameTable[opcode];
 	} else if (getFeatures() & GF_TALKIE) {
-		st = s = simon1talkie_opcode_name_table[opcode];
+		st = s = simon1talkie_opcodeNameTable[opcode];
 	} else if (getGameType() == GType_SIMON2) {
-		st = s = simon2dos_opcode_name_table[opcode];
+		st = s = simon2dos_opcodeNameTable[opcode];
 	} else if (getGameType() == GType_SIMON1) {
-		st = s = simon1dos_opcode_name_table[opcode];
+		st = s = simon1dos_opcodeNameTable[opcode];
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-		st = s = ww_opcode_name_table[opcode];
+		st = s = waxworks_opcodeNameTable[opcode];
 	} else {
-		st = s = elvira1_opcode_name_table[opcode];
+		st = s = elvira1_opcodeNameTable[opcode];
 	}
 
 	if (s == NULL) {
@@ -213,15 +213,15 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool one_opcode_only) {
 		}
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			strn = str = feeblefiles_video_opcode_name_table[opcode];
+			strn = str = feeblefiles_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_SIMON2) {
-			strn = str = simon2_video_opcode_name_table[opcode];
+			strn = str = simon2_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_SIMON1) {
-			strn = str = simon1_video_opcode_name_table[opcode];
+			strn = str = simon1_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-			strn = str = ww_video_opcode_name_table[opcode];
+			strn = str = ww_videoOpcodeNameTable[opcode];
 		} else {
-			strn = str = elvira1_video_opcode_name_table[opcode];
+			strn = str = elvira1_videoOpcodeNameTable[opcode];
 		}
 
 		if (strn == NULL) {

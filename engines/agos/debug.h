@@ -26,7 +26,7 @@
 
 namespace AGOS {
 
-static const char *const elvira1_opcode_name_table[300] = {
+static const char *const elvira1_opcodeNameTable[300] = {
 	/* 0 */
 	"IJ|AT",
 	"IJ|NOT_AT",
@@ -384,7 +384,7 @@ static const char *const elvira1_opcode_name_table[300] = {
 	"WJ|IS_BOX",
 };
 
-static const char *const ww_opcode_name_table[256] = {
+static const char *const waxworks_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -626,7 +626,7 @@ static const char *const ww_opcode_name_table[256] = {
 	"|UNLOCK_ZONES",
 };
 
-static const char *const simon1dos_opcode_name_table[256] = {
+static const char *const simon1dos_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -864,7 +864,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"|FADE_TO_BLACK",
 };
 
-static const char *const simon1talkie_opcode_name_table[256] = {
+static const char *const simon1talkie_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -1102,7 +1102,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"|FADE_TO_BLACK",
 };
 
-static const char *const simon2dos_opcode_name_table[256] = {
+static const char *const simon2dos_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -1344,7 +1344,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"B|WAIT_FOR_MARK",
 };
 
-static const char *const simon2talkie_opcode_name_table[256] = {
+static const char *const simon2talkie_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -1586,7 +1586,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"B|WAIT_FOR_MARK",
 };
 
-static const char *const feeblefiles_opcode_name_table[256] = {
+static const char *const feeblefiles_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -1839,7 +1839,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"B|B3_NOT_ZERO",
 };
 
-static const char *const puzzlepack_opcode_name_table[256] = {
+static const char *const puzzlepack_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
 	"IJ|AT",
@@ -2087,7 +2087,7 @@ static const char *const puzzlepack_opcode_name_table[256] = {
 	"BBBB|SET_COLOR",
 };
 
-const char *const elvira1_video_opcode_name_table[] = {
+const char *const elvira1_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
@@ -2161,7 +2161,7 @@ const char *const elvira1_video_opcode_name_table[] = {
 	"dd|VC_56",
 };
 
-const char *const ww_video_opcode_name_table[] = {
+const char *const ww_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
@@ -2244,7 +2244,7 @@ const char *const ww_video_opcode_name_table[] = {
 	"|FASTFADEIN",
 };
 
-const char *const simon1_video_opcode_name_table[] = {
+const char *const simon1_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
@@ -2327,7 +2327,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|FASTFADEIN",
 };
 
-const char *const simon2_video_opcode_name_table[] = {
+const char *const simon2_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
@@ -2424,7 +2424,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"bb|CLEAR_MARK",
 };
 
-const char *const feeblefiles_video_opcode_name_table[] = {
+const char *const feeblefiles_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",

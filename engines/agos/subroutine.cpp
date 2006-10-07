@@ -31,7 +31,7 @@ using Common::File;
 namespace AGOS {
 
 // Script opcodes to load into memory
-static const char *const opcode_arg_table_elvira1[300] = {
+static const char *const opcodeArgTable_elvira1[300] = {
 	"I ", "I ", "I ", "I ", "I ", "I ", "I ", "I ",	 "II ",	"II ", "II ", "II ", "F ", "F ", "FN ",
 	"FN ", "FN ", "FN ", "FF ", "FF ", "FF ", "FF ", "II ", "II ", "a ", "a ", "n ", "n ", "p ",
 	"N ", "I ", "I ", "I ",	 "I ",	"IN ",	"IB ", "IB ", "II ", "IB ", "N ", " ", " ", " ", "I ",
@@ -55,7 +55,7 @@ static const char *const opcode_arg_table_elvira1[300] = {
 	" ", "NI ","N ",
 };
 
-static const char *const opcode_arg_table_waxworks[256] = {
+static const char *const opcodeArgTable_waxworks[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
@@ -72,7 +72,7 @@ static const char *const opcode_arg_table_waxworks[256] = {
 	"T ", "B ", " ", "I ", " ", " "
 };
 
-static const char *const opcode_arg_table_simon1win[256] = {
+static const char *const opcodeArgTable_simon1talkie[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
@@ -89,7 +89,7 @@ static const char *const opcode_arg_table_simon1win[256] = {
 	" ",
 };
 
-static const char *const opcode_arg_table_simon1dos[256] = {
+static const char *const opcodeArgTable_simon1dos[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
@@ -106,7 +106,7 @@ static const char *const opcode_arg_table_simon1dos[256] = {
 	" ",
 };
 
-static const char *const opcode_arg_table_simon2win[256] = {
+static const char *const opcodeArgTable_simon2talkie[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
@@ -123,7 +123,7 @@ static const char *const opcode_arg_table_simon2win[256] = {
 	" ", " ", "BT ", " ", "B "
 };
 
-static const char *const opcode_arg_table_simon2dos[256] = {
+static const char *const opcodeArgTable_simon2dos[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
@@ -140,7 +140,7 @@ static const char *const opcode_arg_table_simon2dos[256] = {
 	" ", " ", "BT ", " ", "B "
 };
 
-static const char *const opcode_arg_table_feeblefiles[256] = {
+static const char *const opcodeArgTable_feeblefiles[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
@@ -157,7 +157,7 @@ static const char *const opcode_arg_table_feeblefiles[256] = {
 	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
 };
 
-static const char *const opcode_arg_table_puzzlepack[256] = {
+static const char *const opcodeArgTable_puzzlepack[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "N ", "N ", "NN ", "NN ",
 	"NN ", "NN ", "NN ", "NN ", "NN ", "NN ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
 	"II ", "I ", "I ", "II ", "II ", "IBN ", "NIB ", "NN ", "B ", "BI ", "IN ", "N ", "N ", "NN ",
@@ -625,21 +625,21 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 	const char *const *table;
 
 	if (getGameType() == GType_PP)
-		table = opcode_arg_table_puzzlepack;
+		table = opcodeArgTable_puzzlepack;
 	else if (getGameType() == GType_FF)
-		table = opcode_arg_table_feeblefiles;
+		table = opcodeArgTable_feeblefiles;
 	else if (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))
-		table = opcode_arg_table_simon2win;
+		table = opcodeArgTable_simon2talkie;
 	else if (getGameType() == GType_SIMON2)
-		table = opcode_arg_table_simon2dos;
+		table = opcodeArgTable_simon2dos;
 	else if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE))
-		table = opcode_arg_table_simon1win;
+		table = opcodeArgTable_simon1talkie;
 	else if (getGameType() == GType_SIMON1)
-		table = opcode_arg_table_simon1dos;
+		table = opcodeArgTable_simon1dos;
 	else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2)
-		table = opcode_arg_table_waxworks;
+		table = opcodeArgTable_waxworks;
 	else
-		table = opcode_arg_table_elvira1;
+		table = opcodeArgTable_elvira1;
 
 	i = 0;
 	if (getGameType() == GType_ELVIRA1) {
