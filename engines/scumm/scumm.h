@@ -481,23 +481,24 @@ protected:
 	void setTalkspeed(int talkspeed);
 	int getTalkspeed();
 
-protected:
 	// Scumm main loop & helper functions.
-	int scummLoop(int delta);
+	virtual int scummLoop(int delta);
 	virtual void scummLoop_updateScummVars();
 	virtual void scummLoop_handleSaveLoad();
 	virtual void scummLoop_handleDrawing();
 	virtual void scummLoop_handleActors() = 0;
 	virtual void scummLoop_handleEffects();
 	virtual void scummLoop_handleSound();
+	
+	virtual void runBootscript();
 
 	// Event handling
 public:
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	void waitForTimer(int msec_delay);
-	void processKbd(bool smushMode);
-	void clearClickedStatus();
+	virtual void processKbd(bool smushMode);
+	virtual void clearClickedStatus();
 
 	// Cursor/palette
 	void updateCursor();

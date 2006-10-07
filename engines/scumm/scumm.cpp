@@ -1534,21 +1534,8 @@ int ScummEngine::go() {
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
-		int args[16];
-		memset(args, 0, sizeof(args));
-		args[0] = _bootParam;
-
 		_saveLoadFlag = 0;
-#ifndef DISABLE_HE
-		if (_game.heversion >= 98) {
-			((ScummEngine_v90he *)this)->_logicHE->initOnce();
-			((ScummEngine_v90he *)this)->_logicHE->beforeBootScript();
-		}
-#endif
-		if (_game.id == GID_MANIAC && (_game.features & GF_DEMO))
-			runScript(9, 0, 0, args);
-		else
-			runScript(1, 0, 0, args);
+		runBootscript();
 	} else {
 		_saveLoadFlag = 0;
 	}
@@ -1558,6 +1545,13 @@ int ScummEngine::go() {
 
 	while (!_quit) {
 
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+	
+		// Randomize the PRNG by calling it at regular intervals. This ensures
+		// that it will be in a different state each time you run the program.
+		_rnd.getRandomNumber(2);
+	
 		diff -= _system->getMillis();
 		waitForTimer(delta * 15 + diff);
 		diff = _system->getMillis();
@@ -1595,21 +1589,6 @@ void ScummEngine::waitForTimer(int msec_delay) {
 }
 
 int ScummEngine::scummLoop(int delta) {
-	if (_debugger->isAttached())
-		_debugger->onFrame();
-
-	// Randomize the PRNG by calling it at regular intervals. This ensures
-	// that it will be in a different state each time you run the program.
-	_rnd.getRandomNumber(2);
-
-#ifndef DISABLE_HE
-	if (_game.heversion >= 90) {
-		((ScummEngine_v90he *)this)->_moviePlay->handleNextFrame();
-	}
-	if (_game.heversion >= 98) {
-		((ScummEngine_v90he *)this)->_logicHE->startOfFrame();
-	}
-#endif
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -1783,20 +1762,29 @@ load_game:
 	/* show or hide mouse */
 	CursorMan.showMouse(_cursor.state > 0);
 
-#ifndef DISABLE_HE
-	if (_game.heversion >= 90) {
-		((ScummEngine_v90he *)this)->_sprite->updateImages();
-	}
-	if (_game.heversion >= 98) {
-		((ScummEngine_v90he *)this)->_logicHE->endOfFrame();
-	}
-#endif
-
 	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;
 	return (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 
 }
+
+#ifndef DISABLE_HE
+int ScummEngine_v90he::scummLoop(int delta) {
+	_moviePlay->handleNextFrame();
+	if (_game.heversion >= 98) {
+		_logicHE->startOfFrame();
+	}
+
+	int ret = ScummEngine::scummLoop(delta);
+	
+	_sprite->updateImages();
+	if (_game.heversion >= 98) {
+		_logicHE->endOfFrame();
+	}
+	
+	return ret;
+}
+#endif
 
 void ScummEngine::scummLoop_updateScummVars() {
 	if (_game.features & GF_NEW_CAMERA) {
@@ -2031,6 +2019,10 @@ void ScummEngine::restart() {
 		_sound->setupSound();
 
 	// Re-run bootscript
+	runBootscript();
+}
+
+void ScummEngine::runBootscript() {
 	int args[16];
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;
@@ -2039,6 +2031,17 @@ void ScummEngine::restart() {
 	else
 		runScript(1, 0, 0, args);
 }
+
+#ifndef DISABLE_HE
+void ScummEngine_v90he::runBootscript() {
+	if (_game.heversion >= 98) {
+		_logicHE->initOnce();
+		_logicHE->beforeBootScript();
+	}
+
+	ScummEngine::runBootscript();
+}
+#endif
 
 void ScummEngine::startManiac() {
 	debug(0, "stub startManiac()");

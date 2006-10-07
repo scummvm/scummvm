@@ -194,14 +194,25 @@ void ScummEngine::parseEvents() {
 	}
 }
 
+#ifndef DISABLE_HE
+void ScummEngine_v90he::clearClickedStatus() {
+	ScummEngine::clearClickedStatus();
+	if (_game.heversion >= 98) {
+		_logicHE->processKeyStroke(_keyPressed);
+	}
+}
+
+void ScummEngine_v90he::processKbd(bool smushMode) {
+	if (_game.heversion >= 98) {
+		_logicHE->processKeyStroke(_keyPressed);
+	}
+	ScummEngine::processKbd(smushMode);
+}
+#endif
+
 void ScummEngine::clearClickedStatus() {
 	_keyPressed = 0;
 
-#ifndef DISABLE_HE
-	if (_game.heversion >= 98) {
-		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
-	}
-#endif
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
@@ -209,12 +220,6 @@ void ScummEngine::clearClickedStatus() {
 
 void ScummEngine::processKbd(bool smushMode) {
 	int saveloadkey;
-
-#ifndef DISABLE_HE
-	if (_game.heversion >= 98) {
-		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
-	}
-#endif
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;

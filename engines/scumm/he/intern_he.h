@@ -444,15 +444,13 @@ protected:
 	int32 _curSpriteId;
 	int32 _curSpriteGroupId;
 
-public:
-	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v90he();
-
-	virtual void resetScumm();
-
 	LogicHE *_logicHE;
 	MoviePlayer *_moviePlay;
 	Sprite *_sprite;
+
+public:
+	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v90he();
 
 protected:
 	virtual void allocateArrays();
@@ -460,10 +458,17 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void scummLoop_handleDrawing();
+	virtual void resetScumm();
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
+
+	virtual int scummLoop(int delta);
+	virtual void scummLoop_handleDrawing();
+	virtual void runBootscript();
+
+	virtual void processKbd(bool smushMode);
+	virtual void clearClickedStatus();
 
 	virtual void saveOrLoad(Serializer *s);
 
