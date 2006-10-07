@@ -30,6 +30,7 @@
 #include "base/main.h"
 #include "backends/intern.h"
 #include "backends/platform/x11/x11.h"
+#include "backends/plugins/posix/posix-provider.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -61,6 +62,10 @@
 int main(int argc, char *argv[]) {
 	g_system = OSystem_X11::create(0, 0);
 	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
+#endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

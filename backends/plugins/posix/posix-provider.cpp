@@ -70,6 +70,7 @@ public:
 		if (_dlHandle) {
 			if (dlclose(_dlHandle) != 0)
 				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			_dlHandle = 0;
 		}
 	}
 };

@@ -21,20 +21,8 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "base/plugins.h"
 #include "common/util.h"
-#include "common/fs.h"
-
-#ifdef DYNAMIC_MODULES
-  #if defined(UNIX)
-  #include "backends/plugins/posix/posix-provider.h"
-  #elif defined(__DC__)
-  #include "backends/plugins/dc/dc-provider.h"
-  #elif defined(_WIN32)
-  #include "backends/plugins/win32/win32-provider.h"
-  #endif
-#endif
 
 
 void DetectedGame::updateDesc(const char *extra) {
@@ -162,8 +150,7 @@ public:
 		#ifndef DISABLE_AGI
 		LINK_PLUGIN(AGI)
 		#endif
-	
-	
+
 		return pl;
 	}
 };
@@ -176,22 +163,9 @@ public:
 DECLARE_SINGLETON(PluginManager);
 
 PluginManager::PluginManager() {
-
-// FIXME: The following code should be moved to the backend specific code,
-// usually into the main() function just before scummvm_main is called
-#ifdef DYNAMIC_MODULES
-
-#if defined(UNIX)
-	addPluginProvider(new POSIXPluginProvider());
-#elif defined(__DC__)
-	addPluginProvider(new DCPluginProvider());
-#elif defined(_WIN32)
-	addPluginProvider(new Win32PluginProvider());
-#else
-#error No support for loading plugins on non-unix systems at this point!
-#endif
-
-#else
+#ifndef DYNAMIC_MODULES
+	// Add the static plugin provider if we do not build with dynamic
+	// plugins.
 	addPluginProvider(new StaticPluginProvider());
 #endif
 }
@@ -199,6 +173,13 @@ PluginManager::PluginManager() {
 PluginManager::~PluginManager() {
 	// Explicitly unload all loaded plugins
 	unloadPlugins();
+	
+	// Delete the plugin providers
+	for (ProviderList::iterator pp = _providers.begin();
+	                            pp != _providers.end();
+	                            ++pp) {
+		delete *pp;
+	}
 }
 	
 void PluginManager::addPluginProvider(PluginProvider *pp) {
@@ -224,12 +205,13 @@ void PluginManager::unloadPlugins() {
 void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
 	Plugin *found = NULL;
 	uint i;
+	for (PluginList::iterator p = _plugins.begin(); p != _plugins.end(); ++p)
 	for (i = 0; i < _plugins.size(); i++) {
-		if (_plugins[i] == plugin) {
-			found = _plugins[i];
+		if (*p == plugin) {
+			found = *p;
 		} else {
-			_plugins[i]->unloadPlugin();
-			delete _plugins[i];
+			(**p).unloadPlugin();
+			delete *p;
 		}
 	}
 	_plugins.clear();

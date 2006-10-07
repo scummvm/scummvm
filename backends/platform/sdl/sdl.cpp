@@ -22,6 +22,7 @@
  */
 
 #include "backends/platform/sdl/sdl-common.h"
+#include "backends/plugins/sdl/sdl-provider.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "base/main.h"
@@ -94,6 +95,10 @@ int main(int argc, char *argv[]) {
 	g_system = new OSystem_SDL();
 #endif
 	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+#endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

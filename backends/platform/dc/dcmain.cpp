@@ -31,6 +31,8 @@
 #include "DCLauncherDialog.h"
 #include <common/config-manager.h>
 
+#include "backends/plugins/dc/dc-provider.h"
+
 
 Icon icon;
 const char *gGameName;
@@ -204,6 +206,10 @@ int main()
 
   g_system = new OSystem_Dreamcast();
   assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new DCPluginProvider());
+#endif
 
   int res = scummvm_main(argc, argv);
 

@@ -24,6 +24,7 @@
 #ifndef BASE_PLUGINS_H
 #define BASE_PLUGINS_H
 
+#include "common/stdafx.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/singleton.h"

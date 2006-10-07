@@ -71,6 +71,7 @@ public:
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))
 				warning("Failed unloading plugin '%s'", _filename.c_str());
+			_dlHandle = 0;
 		}
 	}
 };
