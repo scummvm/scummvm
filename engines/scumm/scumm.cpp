@@ -1625,7 +1625,7 @@ int ScummEngine::scummLoop(int delta) {
 	if (_game.version <= 3)
 		CHARSET_1();
 
-	processKbd(false);
+	processInput(false);
 	
 	scummLoop_updateScummVars();
 

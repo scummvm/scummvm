@@ -497,7 +497,7 @@ public:
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	void waitForTimer(int msec_delay);
-	virtual void processKbd(bool smushMode);
+	virtual void processInput(bool smushMode);
 	virtual void clearClickedStatus();
 
 	// Cursor/palette

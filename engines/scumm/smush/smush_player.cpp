@@ -1320,7 +1320,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_warpNeeded = false;
 		}
 		_vm->parseEvents();
-		_vm->processKbd(true);
+		_vm->processInput(true);
 		if (_palDirtyMax >= _palDirtyMin) {
 			byte palette_colors[1024];
 			byte *p = palette_colors;

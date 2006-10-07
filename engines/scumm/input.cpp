@@ -202,11 +202,11 @@ void ScummEngine_v90he::clearClickedStatus() {
 	}
 }
 
-void ScummEngine_v90he::processKbd(bool smushMode) {
+void ScummEngine_v90he::processInput(bool smushMode) {
 	if (_game.heversion >= 98) {
 		_logicHE->processKeyStroke(_keyPressed);
 	}
-	ScummEngine::processKbd(smushMode);
+	ScummEngine::processInput(smushMode);
 }
 #endif
 
@@ -218,7 +218,7 @@ void ScummEngine::clearClickedStatus() {
 	_rightBtnPressed &= ~msClicked;
 }
 
-void ScummEngine::processKbd(bool smushMode) {
+void ScummEngine::processInput(bool smushMode) {
 	int saveloadkey;
 
 	_lastKeyHit = _keyPressed;
@@ -300,16 +300,6 @@ void ScummEngine::processKbd(bool smushMode) {
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 
-	if (!_lastKeyHit)
-		return;
-
-	// If a key script was specified (a V8 feature), and it's trigger
-	// key was pressed, run it.
-	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
-		runScript(_keyScriptNo, 0, 0, 0);
-		return;
-	}
-
 #ifdef _WIN32_WCE
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
@@ -324,6 +314,16 @@ void ScummEngine::processKbd(bool smushMode) {
 			_lastKeyHit = 27;
 	}
 #endif
+
+	if (!_lastKeyHit)
+		return;
+
+	// If a key script was specified (a V8 feature), and it's trigger
+	// key was pressed, run it.
+	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
+		runScript(_keyScriptNo, 0, 0, 0);
+		return;
+	}
 
 	if (_game.version >= 6 && _lastKeyHit == 20) {
 		char buf[256];

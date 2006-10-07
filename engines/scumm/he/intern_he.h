@@ -467,7 +467,7 @@ protected:
 	virtual void scummLoop_handleDrawing();
 	virtual void runBootscript();
 
-	virtual void processKbd(bool smushMode);
+	virtual void processInput(bool smushMode);
 	virtual void clearClickedStatus();
 
 	virtual void saveOrLoad(Serializer *s);
