@@ -584,6 +584,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
+	virtual void processKeyboard(bool smushMode);
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
@@ -896,6 +897,8 @@ protected:
 	int _objectIDMapSize;
 	ObjectNameId *_objectIDMap;
 
+	int _keyScriptKey, _keyScriptNo;
+
 public:
 	ScummEngine_v8(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v8();
@@ -921,6 +924,7 @@ protected:
 
 	virtual int getObjectIdFromOBIM(const byte *obim);
 
+	virtual void processKeyboard(bool smushMode);
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

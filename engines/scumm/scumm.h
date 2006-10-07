@@ -498,6 +498,7 @@ public:
 protected:
 	void waitForTimer(int msec_delay);
 	virtual void processInput(bool smushMode);
+	virtual void processKeyboard(bool smushMode);
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
@@ -681,7 +682,6 @@ protected:
 	const byte * const *_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int _vmStack[150];
-	int _keyScriptKey, _keyScriptNo;
 
 	virtual void setupOpcodes() = 0;
 	virtual void executeOpcode(byte i) = 0;

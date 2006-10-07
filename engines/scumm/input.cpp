@@ -219,8 +219,6 @@ void ScummEngine::clearClickedStatus() {
 }
 
 void ScummEngine::processInput(bool smushMode) {
-	int saveloadkey;
-
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
 	if (((_game.version <= 2) || (_game.platform == Common::kPlatformFMTowns && _game.version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
@@ -317,7 +315,11 @@ void ScummEngine::processInput(bool smushMode) {
 
 	if (!_lastKeyHit)
 		return;
+	
+	processKeyboard(smushMode);
+}
 
+void ScummEngine_v8::processKeyboard(bool smushMode) {
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it.
 	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
@@ -325,7 +327,13 @@ void ScummEngine::processInput(bool smushMode) {
 		return;
 	}
 
-	if (_game.version >= 6 && _lastKeyHit == 20) {
+	ScummEngine_v6::processKeyboard(smushMode);
+}
+
+void ScummEngine_v6::processKeyboard(bool smushMode) {
+	if (_lastKeyHit == 20) {
+		// FIXME: What key is '20' supposed to indicate? I can't trigger
+		// it with my keyboard, it seems...
 		char buf[256];
 
 		_voiceMode++;
@@ -357,6 +365,10 @@ void ScummEngine::processInput(bool smushMode) {
 		runDialog(dialog);
 		return;
 	}
+}
+
+void ScummEngine::processKeyboard(bool smushMode) {
+	int saveloadkey;
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
 	   (((_game.version <= 2) || (_game.platform == Common::kPlatformFMTowns && _game.version == 3)) && _lastKeyHit == 8)) {

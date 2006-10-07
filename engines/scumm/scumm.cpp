@@ -333,8 +333,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_resultVarNumber = 0;
 	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
-	_keyScriptKey = 0;
-	_keyScriptNo = 0;
 	_fileOffset = 0;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
 	_lastLoadedRoom = 0;
@@ -942,6 +940,8 @@ ScummEngine_v7::~ScummEngine_v7() {
 ScummEngine_v8::ScummEngine_v8(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v7(syst, dr) {
 	_objectIDMap = 0;
+	_keyScriptKey = 0;
+	_keyScriptNo = 0;
 
 	VAR_LANGUAGE = 0xFF;
 }
