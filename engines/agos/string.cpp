@@ -473,167 +473,168 @@ uint16 AGOSEngine::getBoxSize() {
 	switch (_boxLineCount) {
 	case 1: x = _lineCounts[0];
 		if (x <= 26)
-		    return 1;
+			return 1;
 		if (x <= 64)
-		    if (checkFit(_linePtrs[0],32,2))
-			return 2;
+			if (checkFit(_linePtrs[0], 32, 2))
+				return 2;
 		if (x <= 111)
-		    if (checkFit(_linePtrs[0],37,3))
-			return 3;
+			if (checkFit(_linePtrs[0], 37, 3))
+				return 3;
 		if (x <= 168)
-		    if (checkFit(_linePtrs[0],42,4))
-			return 4;
+			if (checkFit(_linePtrs[0], 42, 4))
+				return 4;
 		if (x <= 240)
-		    if (checkFit(_linePtrs[0],48,5))
-			return 5;
+			if (checkFit(_linePtrs[0], 48, 5))
+				return 5;
 		return 6;
 	case 2: if (_lineCounts[0] <= 32) {
-		    if (_lineCounts[1] <= 32)
-			return 2;
-		    if (_lineCounts[1] <= 74)
-			    if (checkFit(_linePtrs[1],37,2))
+			if (_lineCounts[1] <= 32)
+				return 2;
+			if (_lineCounts[1] <= 74)
+				if (checkFit(_linePtrs[1], 37, 2))
+					return 3;
+			if (_lineCounts[1] <= 126)
+				if (checkFit(_linePtrs[1], 42, 3))
+					return 4;
+			if (_lineCounts[1] <= 172)
+				if (checkFit(_linePtrs[1], 48, 4))
+					return 5;
+			return 6;
+		}
+		if ((_lineCounts[0] <= 74) && (checkFit(_linePtrs[0], 37, 2))) {
+			if (_lineCounts[1] <= 37)
 				return 3;
-		    if (_lineCounts[1] <= 126)
-			    if (checkFit(_linePtrs[1],42,3))
+			if (_lineCounts[1] <= 84)
+				if (checkFit(_linePtrs[1], 42, 2))
+					return 4;
+			if (_lineCounts[1] <= 144)
+				if (checkFit(_linePtrs[1], 48, 3))
+					return 5;
+			return 6;
+		}
+		if ((_lineCounts[0] <= 126) && (checkFit(_linePtrs[0], 42, 3))) {
+			if (_lineCounts[1] <= 42)
 				return 4;
-		    if (_lineCounts[1] <= 172)
-			    if (checkFit(_linePtrs[1],48,4))
-				return 5;
-		    return 6;
+			if (_lineCounts[1] <= 84)
+				if (checkFit(_linePtrs[1], 48, 2))
+					return 5;
+			return 6;
 		}
-		if ((_lineCounts[0] <= 74) && (checkFit(_linePtrs[0],37,2))) {
-		    if (_lineCounts[1] <= 37)
-			return 3;
-		    if (_lineCounts[1] <= 84)
-			    if (checkFit(_linePtrs[1],42,2))
-				return 4;
-		    if (_lineCounts[1] <= 144)
-			    if (checkFit(_linePtrs[1],48,3))
+		if ((_lineCounts[0] <= 192) && (checkFit(_linePtrs[0], 48, 4))) {
+			if (_lineCounts[1] <= 48)
 				return 5;
-		    return 6;
-		}
-		if ((_lineCounts[0] <= 126) && (checkFit(_linePtrs[0],42,3))) {
-		    if (_lineCounts[1] <= 42)
-			return 4;
-		    if (_lineCounts[1] <= 84)
-			    if (checkFit(_linePtrs[1],48,2))
-				return 5;
-		    return 6;
-		}
-		if ((_lineCounts[0] <= 192) && (checkFit(_linePtrs[0],48,4))) {
-		    if (_lineCounts[1] <= 48)
-			return 5;
-		    return 6;
+			return 6;
 		}
 		return 6;
 	case 3: if (_lineCounts[0] <= 37) {
-		    if (_lineCounts[1] <= 37) {
-			if (_lineCounts[2] <= 37)
-			    return 3;
-			if (_lineCounts[2] <= 84)
-			    if (checkFit(_linePtrs[2],42,2))
-				return 4;
-			if (_lineCounts[2] <= 144)
-			    if (checkFit(_linePtrs[2],48,3))
-				return 5;
+			if (_lineCounts[1] <= 37) {
+				if (_lineCounts[2] <= 37)
+			    		return 3;
+				if (_lineCounts[2] <= 84)
+					if (checkFit(_linePtrs[2], 42, 2))
+						return 4;
+				if (_lineCounts[2] <= 144)
+					if (checkFit(_linePtrs[2], 48, 3))
+						return 5;
+				return 6;
+			}
+			if ((_lineCounts[1] <= 84) && (checkFit(_linePtrs[1], 42, 2))) {
+				if (_lineCounts[2] <= 42)
+					return 4;
+				if (_lineCounts[2] <= 96)
+					if (checkFit(_linePtrs[2], 48, 2))
+						return 5;
+				return 6;
+		    	}
+			if ((_lineCounts[1] <= 144) && (checkFit(_linePtrs[1], 48, 3))) {
+				if (_lineCounts[2] <= 48)
+					return 5;
+				return 6;
+			}
 			return 6;
-		    }
-		    if ((_lineCounts[1] <= 84) && (checkFit(_linePtrs[1],42,2))) {
-			if (_lineCounts[2] <= 42)
-			    return 4;
-			if (_lineCounts[2] <= 96)
-			    if (checkFit(_linePtrs[2],48,2))
-				return 5;
-			return 6;
-		    }
-		    if ((_lineCounts[1] <= 144) && (checkFit(_linePtrs[1],48,3))) {
-			if (_lineCounts[2] <= 48)
-			    return 5;
-			return 6;
-		    }
-		    return 6;
 		}
-		if ((_lineCounts[0] <= 84) && (checkFit(_linePtrs[0],42,2))) {
-		    if (_lineCounts[1] <= 42) {
-			if (_lineCounts[2] <= 42)
-			    return 4;
-			if (_lineCounts[2] <= 96)
-			    if (checkFit(_linePtrs[2],48,2))
-				return 5;
+		if ((_lineCounts[0] <= 84) && (checkFit(_linePtrs[0], 42, 2))) {
+			if (_lineCounts[1] <= 42) {
+				if (_lineCounts[2] <= 42)
+					return 4;
+				if (_lineCounts[2] <= 96)
+					if (checkFit(_linePtrs[2], 48, 2))
+						return 5;
+				return 6;
+			}
+			if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1], 48, 2))) {
+				if (_lineCounts[2] <= 48)
+					return 5;
+				return 6;
+			}
 			return 6;
-		    }
-		    if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1],48,2))) {
-			if (_lineCounts[2] <= 48)
-			    return 5;
-			return 6;
-		    }
-		    return 6;
 		}
-		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0],48,3))) {
-		    if (_lineCounts[1] <= 48) {
-			if (_lineCounts[2] <= 48)
-			    return 5;
-		    }
-		    return 6;
+		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0], 48, 3))) {
+			if (_lineCounts[1] <= 48) {
+				if (_lineCounts[2] <= 48)
+				    return 5;
+			}
+			return 6;
 		}
 		return 6;
 	case 4: if (_lineCounts[0] <= 42) {
-		    if (_lineCounts[1] <= 42) {
-			if (_lineCounts[2] <= 42) {
-			    if (_lineCounts[3] <= 42)
-				return 4;
-			    if (_lineCounts[3] <= 96)
-				if (checkFit(_linePtrs[3],48,2))
-				    return 5;
-			    return 6;
+			if (_lineCounts[1] <= 42) {
+				if (_lineCounts[2] <= 42) {
+					if (_lineCounts[3] <= 42)
+						return 4;
+					if (_lineCounts[3] <= 96)
+						if (checkFit(_linePtrs[3], 48, 2))
+							return 5;
+					return 6;
+				}
+				if ((_lineCounts[2] <= 96) && (checkFit(_linePtrs[2], 48, 2)))
+					if (_lineCounts[3] <= 48)
+						return 5;
+				return 6;
 			}
-			if ((_lineCounts[2] <= 96) && (checkFit(_linePtrs[2],48,2)))
-			    if (_lineCounts[3] <= 48)
-				return 5;
+			if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1], 48, 2)))
+					if ((_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
+						return 5;
 			return 6;
-		    }
-		    if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1],48,2)))
-			 if ((_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
-				return 5;
-		    return 6;
 		}
-		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0],48,2)))
-		    if ((_lineCounts[1] <= 48) && (_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
-			return 5;
+		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0], 48, 2)))
+			if ((_lineCounts[1] <= 48) && (_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
+				return 5;
 		return 6;
-	case 5: if ((_lineCounts[0]>48)||(_lineCounts[1]>48)||(_lineCounts[2]>48)
-		    ||(_lineCounts[3]>48)||(_lineCounts[4]>48))
+	case 5: if ((_lineCounts[0] > 48) || (_lineCounts[1] > 48) || (_lineCounts[2] > 48)
+			|| (_lineCounts[3] > 48) || (_lineCounts[4] > 48))
 			return 6;
 		else
 			return 5;
-	default:return 6;
-
+	default:
+		return 6;
     }
 }
 
 
 uint16 AGOSEngine::checkFit(char *Ptr, int width, int lines) {
-    int countw = 0;
-    int countl = 0;
-    char *x;
-    while( *Ptr) {
-	if (*Ptr == '\n')
-	    return 1;
-	if (countw == width) {
-	    countl++;
-	    countw = 0;
-	    Ptr = x;
+	int countw = 0;
+	int countl = 0;
+	char *x;
+	while (*Ptr) {
+		if (*Ptr == '\n')
+			return 1;
+		if (countw == width) {
+			countl++;
+			countw = 0;
+			Ptr = x;
+		}
+		if (*Ptr == ' ') {
+			x = Ptr;
+			x++;
+		}
+		countw++;
+		if (countl == lines)
+			return 0;
+		Ptr++;
 	}
-	if (*Ptr == ' ') {
-	    x = Ptr;
-	    x++;
-	}
-	countw++;
-	if (countl == lines)
-	    return 0;
-	Ptr++;
-    }
-    return 1;
+
+	return 1;
 }
 
 void AGOSEngine::boxTextMessage(const char *x) {
@@ -661,7 +662,7 @@ void AGOSEngine::printBox() {
 	if (_boxCR == 0)
 		_boxLineCount++;
 	stopAnimateSimon1(105);
-	BoxSize=getBoxSize();
+	BoxSize = getBoxSize();
 	_variableArray[53] = BoxSize;
 	loadSprite(3, 1, 100, 0, 0, 0);
 	changeWindow(5);
@@ -706,9 +707,9 @@ void AGOSEngine::printBox() {
 	}
 	_textWindow->textColumn = 0;
 	_textWindow->textRow = 0;
-	//_textWindow->w_curpixel = 0;
+	_textWindow->textColumnOffset = 0;
 	_textWindow->textLength = 0;
-	showmessage_helper_3(_textWindow->textLength,_textWindow->textMaxLength);
+	showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 	waitForSync(99);
 	BoxBufferPtr = _boxBuffer;
 	while (*BoxBufferPtr)
