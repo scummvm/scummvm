@@ -213,6 +213,15 @@ public:
 	Eval *_evaluator;
 
 protected:
+	bool loadConfigFile(const String &file);
+	void getColorFromConfig(const String &name, OverlayColor &col);
+	void getColorFromConfig(const String &value, uint8 &r, uint8 &g, uint8 &b);
+
+	const Graphics::Font *loadFont(const char *filename);
+	Common::String genCacheFilename(const char *filename);
+
+	String _stylefile;
+
 	Common::Rect _drawArea;
 	Common::ConfigFile _configFile;
 	Common::ConfigFile _defaultConfig;
@@ -294,11 +303,25 @@ private:
 	bool _initOk;
 	bool _enabled;
 
+	String _fontName;
 	const Graphics::Font *_font;
 	OverlayColor _color, _shadowcolor;
 	OverlayColor _bgcolor;
 	OverlayColor _textcolor;
 	OverlayColor _textcolorhi;
+
+	enum {
+		kColor = 0,
+		kShadowColor = 1,
+		kBGColor = 2,
+		kTextColor = 3,
+		kTextColorHi = 4,
+		kMaxColors = 5
+	};
+	uint8 _colors[kMaxColors][3];
+
+	void setupConfig();
+	bool loadConfig();
 };
 
 #ifndef DISABLE_FANCY_THEMES
@@ -389,8 +412,6 @@ private:
 	Graphics::Surface _screen;
 	Common::Rect _shadowDrawArea;
 
-	Common::String _stylefile;
-
 	bool _initOk;
 	bool _forceRedraw;
 	bool _enabled;
@@ -407,14 +428,13 @@ private:
 
 	void setupFonts();
 	void deleteFonts();
-	const Graphics::Font *loadFont(const char *filename);
-	Common::String genCacheFilename(const char *filename);
+
+	void setupFont(const String &key, const String &name, FontStyle style);
+
 	const Graphics::Font *_fonts[kFontStyleMax];
 
 private:
-	void setupFont(const String &key, const String &name, FontStyle style);
 	void processExtraValues();
-	void getColorFromConfig(const String &value, OverlayColor &color);
 
 public:
 	enum ImageHandles {

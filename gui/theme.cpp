@@ -22,9 +22,11 @@
 #include "gui/theme.h"
 #include "gui/eval.h"
 
+#include "common/unzip.h"
+
 namespace GUI {
 
-Theme::Theme() : _drawArea(), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
+Theme::Theme() : _drawArea(), _stylefile(""), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
 	Common::MemoryReadStream s((const byte *)_defaultConfigINI, strlen(_defaultConfigINI));
 	_defaultConfig.loadFromStream(s);
 
@@ -33,6 +35,156 @@ Theme::Theme() : _drawArea(), _configFile(), _loadedThemeX(0), _loadedThemeY(0) 
 	
 Theme::~Theme() {
 	delete _evaluator;
+}
+
+void Theme::getColorFromConfig(const String &value, OverlayColor &color) {
+	const char *postfixes[] = {".r", ".g", ".b"};
+	int rgb[3];
+
+	for (int cnt = 0; cnt < 3; cnt++)
+		rgb[cnt] = _evaluator->getVar(value + postfixes[cnt], 0);
+
+	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
+}
+
+void Theme::getColorFromConfig(const String &value, uint8 &r, uint8 &g, uint8 &b) {
+	r = _evaluator->getVar(value + ".r", 0);
+	g = _evaluator->getVar(value + ".g", 0);
+	b = _evaluator->getVar(value + ".b", 0);
+}
+
+const Graphics::Font *Theme::loadFont(const char *filename) {
+	const Graphics::NewFont *font = 0;
+	Common::String cacheFilename = genCacheFilename(filename);
+	Common::File fontFile;
+
+	if (!cacheFilename.empty()) {
+		if (fontFile.open(cacheFilename))
+			font = Graphics::NewFont::loadFromCache(fontFile);
+		if (font)
+			return font;
+
+#ifdef USE_ZLIB
+		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+		if (zipFile && unzLocateFile(zipFile, cacheFilename.c_str(), 2) == UNZ_OK) {
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+	
+			font = Graphics::NewFont::loadFromCache(stream);
+	
+			delete [] buffer;
+			buffer = 0;
+		}
+		unzClose(zipFile);
+#endif
+		if (font)
+			return font;
+	}
+
+	// normal open
+	if (fontFile.open(filename)) {
+		font = Graphics::NewFont::loadFont(fontFile);
+	}
+
+#ifdef USE_ZLIB
+	if (!font) {
+		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+		if (zipFile && unzLocateFile(zipFile, filename, 2) == UNZ_OK) {
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+	
+			font = Graphics::NewFont::loadFont(stream);
+	
+			delete [] buffer;
+			buffer = 0;
+		}
+		unzClose(zipFile);
+	}
+#endif
+
+	if (font) {
+		if (!cacheFilename.empty()) {
+			if (!Graphics::NewFont::cacheFontData(*font, cacheFilename)) {
+				warning("Couldn't create cache file for font '%s'", filename);
+			}
+		}
+	}
+
+	return font;
+}
+
+Common::String Theme::genCacheFilename(const char *filename) {
+	Common::String cacheName(filename);
+	for (int i = cacheName.size() - 1; i >= 0; --i) {
+		if (cacheName[i] == '.') {
+			while ((uint)i < cacheName.size() - 1) {
+				cacheName.deleteLastChar();
+			}
+
+			cacheName += "fcc";
+			return cacheName;
+		}
+	}
+
+	return "";
+}
+
+bool Theme::loadConfigFile(const String &stylefile) {
+	if (ConfMan.hasKey("themepath"))
+		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+
+#ifdef DATA_PATH
+	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
+#endif
+
+	if (ConfMan.hasKey("extrapath"))
+		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+
+	if (!_configFile.loadFromFile(stylefile + ".ini")) {
+#ifdef USE_ZLIB
+		// Maybe find a nicer solution to this
+		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
+		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+			if (!_configFile.loadFromStream(stream)) {
+				unzClose(zipFile);
+				return false;
+			}
+			delete [] buffer;
+			buffer = 0;
+		} else {
+			unzClose(zipFile);
+			return false;
+		}
+		unzClose(zipFile);
+#else
+		return false;
+#endif
+	}
+
+	return true;
 }
 
 } // End of namespace GUI

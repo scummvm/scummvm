@@ -20,19 +20,23 @@
  */
 
 #include "gui/theme.h"
+#include "gui/eval.h"
+
+#define THEME_VERSION 1
 
 namespace GUI {
 ThemeClassic::ThemeClassic(OSystem *system) : Theme() {
+	_stylefile = "classic";
 	_system = system;
 	_initOk = false;
+	_font = 0;
 	memset(&_screen, 0, sizeof(_screen));
 #ifndef CT_NO_TRANSPARENCY
 	memset(&_dialog, 0, sizeof(_dialog));
 #endif
 	_font = 0;
-	
-	// Maybe change this filename
-	_configFile.loadFromFile("classic.ini");
+
+	loadConfigFile(_stylefile);
 }
 
 ThemeClassic::~ThemeClassic() {
@@ -45,21 +49,28 @@ bool ThemeClassic::init() {
 	if (_screen.pixels) {
 		_initOk = true;
 		clearAll();
-		_bgcolor = _system->RGBToColor(0, 0, 0);
-		_color = _system->RGBToColor(104, 104, 104);
-		_shadowcolor = _system->RGBToColor(64, 64, 64);
-		_textcolor = _system->RGBToColor(32, 160, 32);
-		_textcolorhi = _system->RGBToColor(0, 255, 0);
+		resetDrawArea();
+	}
+
+	if (isThemeLoadingRequired()) {
+		loadTheme(_defaultConfig);
+		loadTheme(_configFile, false);
+
+		setupConfig();
+	}
+
+	_bgcolor = _system->RGBToColor(_colors[kBGColor][0], _colors[kBGColor][1], _colors[kBGColor][2]);
+	_color = _system->RGBToColor(_colors[kColor][0], _colors[kColor][1], _colors[kColor][2]);
+	_shadowcolor = _system->RGBToColor(_colors[kShadowColor][0], _colors[kShadowColor][1], _colors[kShadowColor][2]);
+	_textcolor = _system->RGBToColor(_colors[kTextColor][0], _colors[kTextColor][1], _colors[kTextColor][2]);
+	_textcolorhi = _system->RGBToColor(_colors[kTextColorHi][0], _colors[kTextColorHi][1], _colors[kTextColorHi][2]);
+	if (_fontName == "builtin") {
 		if (_screen.w >= 400 && _screen.h >= 300) {
 			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		} else {
 			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		}
-		resetDrawArea();
 	}
-
-	if (isThemeLoadingRequired())
-		loadTheme(_defaultConfig);
 
 	return true;
 }
@@ -74,11 +85,6 @@ void ThemeClassic::deinit() {
 
 void ThemeClassic::refresh() {
 	init();
-	_bgcolor = _system->RGBToColor(0, 0, 0);
-	_color = _system->RGBToColor(104, 104, 104);
-	_shadowcolor = _system->RGBToColor(64, 64, 64);
-	_textcolor = _system->RGBToColor(32, 160, 32);
-	_textcolorhi = _system->RGBToColor(0, 255, 0);
 	if (_enabled)
 		_system->showOverlay();
 }
@@ -615,5 +621,61 @@ void ThemeClassic::blendScreenToDialog() {
 	}
 }
 #endif
+
+void ThemeClassic::setupConfig() {
+	if (_configFile.hasSection("theme")) {
+		loadConfig();
+		return;
+	}
+
+	static const uint8 colors[][3] = {
+		{ 104, 104, 104 },
+		{ 64, 64, 64 },
+		{ 0, 0, 0, },
+		{ 32, 160, 32 },
+		{ 0, 255, 0 }
+	};
+
+	memcpy(_colors, colors, sizeof(colors));
+}
+
+bool ThemeClassic::loadConfig() {
+	Common::String temp;
+	_configFile.getKey("version", "theme", temp);
+	if (atoi(temp.c_str()) != THEME_VERSION) {
+		// TODO: improve this detection and handle it nicer
+		warning("Theme config uses a different version (you have: '%s', needed is: '%d')", temp.c_str(), THEME_VERSION);
+		return false;
+	}
+
+	temp.clear();
+	_configFile.getKey("type", "theme", temp);
+	if (0 != temp.compareToIgnoreCase("classic")) {
+		warning("Theme config is not for the classic style theme");
+		return false;
+	}
+
+	getColorFromConfig("color", _colors[kColor][0], _colors[kColor][1], _colors[kColor][2]);
+	getColorFromConfig("shadowcolor", _colors[kShadowColor][0], _colors[kShadowColor][1], _colors[kShadowColor][2]);
+	getColorFromConfig("bgcolor", _colors[kBGColor][0], _colors[kBGColor][1], _colors[kBGColor][2]);
+	getColorFromConfig("textcolor", _colors[kTextColor][0], _colors[kTextColor][1], _colors[kTextColor][2]);
+	getColorFromConfig("textcolorhi", _colors[kTextColorHi][0], _colors[kTextColorHi][1], _colors[kTextColorHi][2]);
+
+	temp.clear();
+	temp = _evaluator->getStringVar("font");
+	if (temp.empty() || temp.compareToIgnoreCase("builtin")) {
+		if (_fontName != "builtin")	
+			delete _font;
+		_fontName = "builtin";
+	} else if (temp != _fontName) {
+		if (_fontName != "builtin")
+			delete _font;
+		_font = loadFont(temp.c_str());
+		_fontName = temp;
+	}
+
+	return true;
+}
+
 } // end of namespace GUI
 
