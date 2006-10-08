@@ -830,6 +830,9 @@ byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
 }
 
 /* must not be const */
+// FIXME: In that case it is *wrong* to have it as a static
+// variable here! Rather, it should be turned into a member
+// of class AGOSEngine.
 static uint16 _video_windows[128] = {
 	0,  0, 20, 200,
 	0,  0,  3, 136,
