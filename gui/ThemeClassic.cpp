@@ -489,7 +489,7 @@ void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 #ifdef CT_NO_TRANSPARENCY
 	_screen.fillRect(r, _bgcolor);
 #else
-	if (_dialog && !_enableBlending) {
+	if (_dialog) {
 		if (!_dialog->screen.pixels) {
 			_screen.fillRect(r, _bgcolor);
 			return;
