@@ -1794,102 +1794,24 @@ void AGOSEngine::vc22_setSpritePalette() {
 				b -= 1000;
 				_bottomPalette = 0;
 			} else {
+				const byte extraColors[19 * 3] = {
+					40,  0,  0,   24, 24, 16,   48, 48, 40,
+					 0,  0,  0,   16,  0,  0,    8,  8,  0,
+					48, 24,  0,   56, 40,  0,    0,  0, 24,
+					 8, 16, 24,   24, 32, 40,   16, 24,  0,
+					24,  8,  0,   16, 16,  0,   40, 40, 32,
+					32, 32, 24,   40,  0,  0,   24, 24, 16,
+					48, 48, 40
+				};
+
 				num = 13;
 
-				palptr[13 * 4 + 0] = 160;
-				palptr[13 * 4 + 1] = 0;
-				palptr[13 * 4 + 2] = 0;
-				palptr[13 * 4 + 3] = 0;
-
-				palptr[14 * 4 + 0] = 96;
-				palptr[14 * 4 + 1] = 96;
-				palptr[14 * 4 + 2] = 64;
-				palptr[14 * 4 + 3] = 0;
-
-				palptr[15 * 4 + 0] = 192;
-				palptr[15 * 4 + 1] = 192;
-				palptr[15 * 4 + 2] = 40;
-				palptr[15 * 4 + 3] = 0;
-
-				palptr[16 * 4 + 0] = 0;
-				palptr[16 * 4 + 1] = 0;
-				palptr[16 * 4 + 2] = 0;
-				palptr[16 * 4 + 3] = 0;
-
-				palptr[17 * 4 + 0] = 16;
-				palptr[17 * 4 + 1] = 0;
-				palptr[17 * 4 + 2] = 0;
-				palptr[17 * 4 + 3] = 0;
-
-				palptr[18 * 4 + 0] = 8;
-				palptr[18 * 4 + 1] = 8;
-				palptr[18 * 4 + 2] = 0;
-				palptr[18 * 4 + 3] = 0;
-
-				palptr[19 * 4 + 0] = 48;
-				palptr[19 * 4 + 1] = 24;
-				palptr[19 * 4 + 2] = 0;
-				palptr[19 * 4 + 3] = 0;
-
-				palptr[20 * 4 + 0] = 56;
-				palptr[20 * 4 + 1] = 40;
-				palptr[20 * 4 + 2] = 0;
-				palptr[20 * 4 + 3] = 0;
-
-				palptr[21 * 4 + 0] = 0;
-				palptr[21 * 4 + 1] = 0;
-				palptr[21 * 4 + 2] = 24;
-				palptr[21 * 4 + 3] = 0;
-
-				palptr[22 * 4 + 0] = 8;
-				palptr[22 * 4 + 1] = 16;
-				palptr[22 * 4 + 2] = 24;
-				palptr[22 * 4 + 3] = 0;
-
-				palptr[23 * 4 + 0] = 24;
-				palptr[23 * 4 + 1] = 32;
-				palptr[23 * 4 + 2] = 40;
-				palptr[23 * 4 + 3] = 0;
-
-				palptr[24 * 4 + 0] = 16;
-				palptr[24 * 4 + 1] = 24;
-				palptr[24 * 4 + 2] = 0;
-				palptr[24 * 4 + 3] = 0;
-
-				palptr[25 * 4 + 0] = 24;
-				palptr[25 * 4 + 1] = 8;
-				palptr[25 * 4 + 2] = 0;
-				palptr[25 * 4 + 3] = 0;
-
-				palptr[26 * 4 + 0] = 16;
-				palptr[26 * 4 + 1] = 16;
-				palptr[26 * 4 + 2] = 0;
-				palptr[26 * 4 + 3] = 0;
-
-				palptr[27 * 4 + 0] = 40;
-				palptr[27 * 4 + 1] = 40;
-				palptr[27 * 4 + 2] = 32;
-				palptr[27 * 4 + 3] = 0;
-
-				palptr[28 * 4 + 0] = 32;
-				palptr[28 * 4 + 1] = 32;
-				palptr[28 * 4 + 2] = 24;
-				palptr[28 * 4 + 3] = 0;
-
-				palptr[29 * 4 + 0] = 40;
-				palptr[29 * 4 + 1] = 0;
-				palptr[29 * 4 + 2] = 0;
-				palptr[29 * 4 + 3] = 0;
-
-				palptr[30 * 4 + 0] = 24;
-				palptr[30 * 4 + 1] = 24;
-				palptr[30 * 4 + 2] = 16;
-				palptr[30 * 4 + 3] = 0;
-
-				palptr[31 * 4 + 0] = 48;
-				palptr[31 * 4 + 1] = 48;
-				palptr[31 * 4 + 2] = 40;
-				palptr[31 * 4 + 3] = 0;
+				for (int i = 0; i < 19; i++) {
+					palptr[(13 + i) * 4 + 0] = extraColors[i * 3 + 0] * 4;
+					palptr[(13 + i) * 4 + 1] = extraColors[i * 3 + 1] * 4;
+					palptr[(13 + i) * 4 + 2] = extraColors[i * 3 + 2] * 4;
+					palptr[(13 + i) * 4 + 3] = 0;
+				}
 			}
 		}
 	}
