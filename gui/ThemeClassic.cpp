@@ -123,7 +123,10 @@ void ThemeClassic::openDialog(bool topDialog) {
 		_dialog->screen.create(_screen.w, _screen.h, sizeof(OverlayColor));
 	}
 	memcpy(_dialog->screen.pixels, _screen.pixels, _screen.pitch*_screen.h);
-	blendScreenToDialog();
+	if (!_enableBlending)
+		_dialog->screen.fillRect(Common::Rect(0, 0, _screen.w, _screen.h), _bgcolor);
+	else
+		blendScreenToDialog();
 #endif
 }
 
@@ -486,7 +489,7 @@ void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 #ifdef CT_NO_TRANSPARENCY
 	_screen.fillRect(r, _bgcolor);
 #else
-	if (_dialog && _enableBlending) {
+	if (_dialog && !_enableBlending) {
 		if (!_dialog->screen.pixels) {
 			_screen.fillRect(r, _bgcolor);
 			return;
@@ -502,6 +505,8 @@ void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 			dst += _screen.w;
 		}
 	} else {
+		if (_dialog)
+			_dialog->screen.fillRect(r, _bgcolor);
 		_screen.fillRect(r, _bgcolor);
 	}
 #endif
