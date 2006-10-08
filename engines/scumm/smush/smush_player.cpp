@@ -405,16 +405,6 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, pan, b, size);
 }
 
-void SmushPlayer::handleSkip(Chunk &b) {
-	checkBlock(b, TYPE_SKIP, 4);
-	int32 code = b.getDword();
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleSkip(%d)", code);
-	if (code >= 0 && code < 37)
-		_skipNext = _skips[code];
-	else
-		_skipNext = true;
-}
-
 void SmushPlayer::handleStore(Chunk &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
 	checkBlock(b, TYPE_STOR, 4);
@@ -991,11 +981,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleFetch(*sub);
 			break;
 		case TYPE_SKIP:
-			if (_insanity)
-				_vm->_insane->procSKIP(*sub);
-			else
-				handleSkip(*sub);
-			break;
+			_vm->_insane->procSKIP(*sub);
 		case TYPE_TEXT:
 			handleTextResource(*sub);
 			break;

@@ -57,7 +57,6 @@ private:
 	int32 _seekFrame;
 
 	bool _skipNext;
-	bool _skips[37];
 	int32 _frame;
 
 	Audio::SoundHandle _IACTchannel;
@@ -133,7 +132,6 @@ private:
 	void handleFrameObject(Chunk &);
 	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
 	void handleSoundFrame(Chunk &);
-	void handleSkip(Chunk &);
 	void handleStore(Chunk &);
 	void handleFetch(Chunk &);
 	void handleIACT(Chunk &);
