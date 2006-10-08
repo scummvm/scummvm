@@ -44,6 +44,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  BASS:
    - Fixed character spacing in LINC terminals in floppy version v0.0303
+   - Fixed a regression which caused incorrect adlib music emulation
 
  Broken Sword 1:
    - Fixed speech-related crashes.
