@@ -311,16 +311,6 @@ bool disc_setGbaSlotInterface (void)
 #endif
 
 
-#ifdef SUPPORT_NJSD
-	// check if we have a GBA Flash Cart plugged in
-	active_interface = NJSD_GetInterface() ;
-	if (active_interface->fn_StartUp())
-	{
-		// set NJSD as default IO
-		return true ;
-	} ;
-#endif
-
 #ifdef SUPPORT_SCSD
 	// check if we have a SuperCard SD plugged in
 	active_interface = SCSD_GetInterface() ;
@@ -349,6 +339,16 @@ bool disc_setDsSlotInterface (void)
 	WAIT_CR |= (1<<11);
 #endif
 
+#ifdef SUPPORT_NJSD
+	// check if we have a GBA Flash Cart plugged in
+	active_interface = NJSD_GetInterface() ;
+	if (active_interface->fn_StartUp())
+	{
+		// set NJSD as default IO
+		return true ;
+	} ;
+#endif
+
 #ifdef SUPPORT_NMMC
 	// check if we have a Neoflash MK2 / MK3 plugged in
 	active_interface = NMMC_GetInterface() ;
@@ -358,6 +358,9 @@ bool disc_setDsSlotInterface (void)
 		return true ;
 	} ;
 #endif
+
+
+
 
 	return false;
 }

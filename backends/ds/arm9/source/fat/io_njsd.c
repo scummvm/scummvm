@@ -42,7 +42,7 @@
 #include "io_sd_common.h"
 
 #define BYTES_PER_READ 512
-//#define _NJSD_SYNC
+#define _NJSD_SYNC
 // #define _NJSD_DEBUG
 
 //---------------------------------------------------------------
