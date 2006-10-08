@@ -45,6 +45,9 @@ class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
+
+	virtual void initBackend(void);
+
 	virtual void initSize(uint width, uint height);
 
 	virtual int16 getHeight(void);
@@ -61,6 +64,9 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+
+	virtual int16 getOverlayHeight();
+	virtual int16 getOverlayWidth();
 
 	virtual bool showMouse(bool visible);
 
@@ -128,9 +134,9 @@ private:
 
 	Gs2dScreen	*_screen;
 	Ps2Input	*_input;
-	uint16		_oldMouseX, _oldMouseY;
 	uint32		_msgClearTime;
 	uint16		_printY;
+	bool		_showOverlay;
 
 	int			_mutexSema;
 	Ps2Mutex	_mutex[MAX_MUTEXES];
@@ -142,6 +148,7 @@ private:
 	static const GraphicsMode _graphicsMode;
 
 	int			_bootDevice;
+	char		_bootPath[256];
 };
 
 #endif // SYSTEMPS2_H

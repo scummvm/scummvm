@@ -45,6 +45,21 @@ extern void sioprintf(const char *zFormat, ...);
 
 AsyncFio fio;
 
+class Ps2File {
+public:
+	Ps2File(int64 cacheId);
+	virtual ~Ps2File(void);
+	virtual bool open(const char *name) = 0;
+	virtual uint32 read(void *dest, uint32 len) = 0;
+	virtual uint32 write(const void *src, uint32 len) = 0;
+	virtual uint32 tell(void) = 0;
+	virtual uint32 size(void) = 0;
+	virtual int seek(int32 offset, int origin) = 0;
+	virtual bool eof(void) = 0;
+	int64 _cacheId;
+private:
+};
+
 Ps2File::Ps2File(int64 cacheId) {
 	_cacheId = cacheId;
 }
@@ -423,8 +438,6 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		assert(cacheListSema >= 0);
 	}
 
-	printf("ps2_fopen: %s, %s\n", fname, mode);
-
 	if (!checkedPath && g_engine) {
 		// are we playing from cd/dvd?
 		const char *gameDataPath = ConfMan.get("path").c_str();
@@ -701,7 +714,7 @@ int64 TocManager::fileExists(const char *name) {
 	TocNode *node = _rootNode;
 	int64 retId = 1;
 	while (node) {
-		if (((name[node->nameLen] == '/') || (name[node->nameLen] == '\0')) && (strnicmp(name, node->name, node->nameLen) == 0)) {
+		if (((name[node->nameLen] == '/') || (name[node->nameLen] == '\0')) && (strncmp(name, node->name, node->nameLen) == 0)) {
 			name += node->nameLen;
 			nameLen -= node->nameLen;
 			if (node->isDir) {

@@ -52,6 +52,7 @@
 #include "eecodyvdfs.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"
+#include "common/config-manager.h"
 
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
 
@@ -239,6 +240,15 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_systemQuit = false;
 	_usbMassConnected = false;
 
+	ee_sema_t newSema;
+	newSema.init_count = 1;
+	newSema.max_count = 1;
+	_mutexSema = CreateSema(&newSema);
+	for (int i = 0; i < MAX_MUTEXES; i++) {
+		_mutex[i].sema = -1;
+		_mutex[i].count = _mutex[i].owner = 0;
+	}
+
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
 	sioprintf("Initializing system...");
@@ -248,6 +258,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 	char irxPath[256];
 	_bootDevice = detectBootPath(elfPath, irxPath);
+	strcpy(_bootPath, irxPath);
 
 	IrxReference *modules;
 	int numModules = loadIrxModules(_bootDevice, irxPath, &modules);
@@ -313,20 +324,33 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
 
-	ee_sema_t newSema;
-	newSema.init_count = 1;
-	newSema.max_count = 1;
-	_mutexSema = CreateSema(&newSema);
-	for (int i = 0; i < MAX_MUTEXES; i++) {
-		_mutex[i].sema = -1;
-		_mutex[i].count = _mutex[i].owner = 0;
-	}
-
 	_screen->wantAnim(false);
 	_screen->clearScreen();
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
+}
+
+void OSystem_PS2::initBackend(void) {
+	ConfMan.setInt("autosave_period", 15 * 60);
+	if (_bootDevice == CDROM) {
+		// translate e.g. "cdrom0:\\yada\\blah.ext;1" to "cdfs:/yada/blah.ext"
+		char themePath[256];
+		strcpy(themePath, "cdfs:");
+		char *src = _bootPath + 7; // skip "cdrom0:"
+		char *dest = themePath + 5; // skip "cdfs:"
+		do {
+			if (*src == '\\')
+				*dest++ = '/';
+			else
+				*dest++ = *src;
+		} while (*src++);
+		sioprintf("Theme path: \"%s\"", themePath);
+		ConfMan.set("themepath", themePath);
+	} else {
+		sioprintf("Theme path (same as boot path): \"%s\"", _bootPath);
+		ConfMan.set("themepath", _bootPath);
+	}
 }
 
 void OSystem_PS2::initTimer(void) {
@@ -486,12 +510,9 @@ bool OSystem_PS2::usbMassPresent(void) {
 void OSystem_PS2::initSize(uint width, uint height) {
 	printf("initializing new size: (%d/%d)...", width, height);
 	_screen->newScreenSize(width, height);
-	_screen->setMouseXy(width / 2, height / 2);
-	_input->newRange(0, 0, width - 1, height - 1);
-	_input->warpTo(width / 2, height / 2);
+	_input->setResolution(width, height);
+	_screen->setMouseXy(_input->getX(), _input->getY());
 
-	_oldMouseX = width / 2;
-	_oldMouseY = height / 2;
 	printf("done\n");
 }
 
@@ -612,11 +633,16 @@ void OSystem_PS2::updateCD(void) {
 }
 
 void OSystem_PS2::showOverlay(void) {
+	// overlay and game screen may have different resolutions, update mouse coordinates
 	_screen->showOverlay();
+	_input->setResolution(640, 480);
+	_screen->setMouseXy(_input->getX(), _input->getY());
 }
 
 void OSystem_PS2::hideOverlay(void) {
 	_screen->hideOverlay();
+	_input->setResolution(_screen->getWidth(), _screen->getHeight());
+	_screen->setMouseXy(_input->getX(), _input->getY());
 }
 
 void OSystem_PS2::clearOverlay(void) {
@@ -629,6 +655,14 @@ void OSystem_PS2::grabOverlay(OverlayColor *buf, int pitch) {
 
 void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	_screen->copyOverlayRect((uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+}
+
+int16 OSystem_PS2::getOverlayWidth(void) {
+	return 640;
+}
+
+int16 OSystem_PS2::getOverlayHeight(void) {
+	return 480;
 }
 
 const OSystem::GraphicsMode OSystem_PS2::_graphicsMode = { NULL, NULL, 0 };

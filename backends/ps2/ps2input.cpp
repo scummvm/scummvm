@@ -36,12 +36,17 @@ Ps2Input::Ps2Input(OSystem_PS2 *system, bool mouseLoaded, bool kbdLoaded) {
 	_mouseLoaded = mouseLoaded;
 	_kbdLoaded = kbdLoaded;
 	_pad = new Ps2Pad(system);
+	
 	_lastPadCheck = 0;
-	_posX = _posY = _mButtons = _padLastButtons = 0;
+	_mButtons = _padLastButtons = 0;
 	_padAccel = 0;
 	_minx = _miny = 0;
-	_maxy = 239;
 	_maxx = 319;
+	_maxy = 239;
+	
+	_posX = _maxx / 2;
+	_posY = _maxy / 2;
+
 	_keyFlags = 0;
 	if (_mouseLoaded) {
 		if (PS2MouseInit() >= 0) {
@@ -61,18 +66,22 @@ Ps2Input::Ps2Input(OSystem_PS2 *system, bool mouseLoaded, bool kbdLoaded) {
 			_kbdLoaded = false;
 		}
 	}
+	setResolution(320, 240);
 }
 
 Ps2Input::~Ps2Input(void) {
 }
 
-void Ps2Input::newRange(uint16 minx, uint16 miny, uint16 maxx, uint16 maxy) {
-	_minx = minx;
-	_miny = miny;
-	_maxx = maxx;
-	_maxy = maxy;
+void Ps2Input::setResolution(uint16 width, uint16 height) {
+	int oldWidth = (_maxx - _minx) + 1;
+	int oldHeight = (_maxy - _miny) + 1;
+	_minx = _miny = 0;
+	_maxx = width - 1;
+	_maxy = height - 1;
+	_posX = (_posX * width) / oldWidth;
+	_posY = (_posY * height) / oldHeight;
 	if (_mouseLoaded)
-		PS2MouseSetBoundary(minx, maxx, miny, maxy);
+		PS2MouseSetBoundary(_minx, _maxx, _miny, _maxy);
 	warpTo(_posX, _posY);
 }
 
@@ -86,6 +95,14 @@ void Ps2Input::warpTo(uint16 x, uint16 y) {
 	}
 	if (_mouseLoaded)
 		PS2MouseSetPosition(_posX, _posY);
+}
+
+uint16 Ps2Input::getX(void) {
+	return _posX;
+}
+
+uint16 Ps2Input::getY(void) {
+	return _posY;
 }
 
 #define JOY_THRESHOLD 30

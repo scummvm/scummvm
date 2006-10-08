@@ -25,37 +25,6 @@
 
 #include "common/scummsys.h"
 
-class Ps2File {
-public:
-	Ps2File(int64 cacheId);
-	virtual ~Ps2File(void);
-	virtual bool open(const char *name) = 0;
-	virtual uint32 read(void *dest, uint32 len) = 0;
-	virtual uint32 write(const void *src, uint32 len) = 0;
-	virtual uint32 tell(void) = 0;
-	virtual uint32 size(void) = 0;
-	virtual int seek(int32 offset, int origin) = 0;
-	virtual bool eof(void) = 0;
-	int64 _cacheId;
-private:
-};
-
-class Ps2SmushFile : public Ps2File {
-public:
-	Ps2SmushFile(int64 cacheId);
-	virtual ~Ps2SmushFile(void);
-	virtual bool open(const char *name);
-	virtual uint32 read(void *dest, uint32 len);
-	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
-	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
-private:
-	uint32 _filePos, _fileSize;
-	int _id;
-};
-
 FILE *ps2_fopen(const char *fname, const char *mode);
 int ps2_fclose(FILE *stream);
 int ps2_fflush(FILE *stream);
