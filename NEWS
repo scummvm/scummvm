@@ -4,6 +4,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 0.10.0 (????-??-??)
  New Ports:
    - Added Nintendo DS port.
+   - Added GP2X port.
 
  General:
    - Better compression for DXA movies.
