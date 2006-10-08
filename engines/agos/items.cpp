@@ -306,12 +306,12 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[252] = &AGOSEngine::oe1_bitSet;
 	op[253] = &AGOSEngine::oe1_bitTest;
 
-	op[259] = &AGOSEngine::oe1_setTime;
-
 	op[255] = &AGOSEngine::o_waitSync;
 	op[256] = &AGOSEngine::o_sync;
 	op[257] = &AGOSEngine::o_defObj;
 
+	op[259] = &AGOSEngine::oe1_setTime;
+	op[260] = &AGOSEngine::oe1_ifTime;
 	op[261] = &AGOSEngine::o_here;
 	op[262] = &AGOSEngine::o_doClassIcons;
 	op[263] = &AGOSEngine::o1_playTune;
@@ -323,15 +323,17 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[269] = &AGOSEngine::o_loadUserGame;
 	op[270] = &AGOSEngine::oe1_printStats;
 	op[271] = &AGOSEngine::o_stopTune;
-
+	op[272] = &AGOSEngine::oe1_printPlayerDamage;
+	op[273] = &AGOSEngine::oe1_printMonsterDamage;
 	op[274] = &AGOSEngine::o_pauseGame;
 	op[275] = &AGOSEngine::o_copysf;
 	op[276] = &AGOSEngine::o_restoreIcons;
-
+	op[277] = &AGOSEngine::oe1_printPlayerHit;
+	op[278] = &AGOSEngine::oe1_printMonsterHit;
 	op[279] = &AGOSEngine::o_freezeZones;
 	op[280] = &AGOSEngine::o_placeNoIcons;
 	op[281] = &AGOSEngine::o_clearTimers;
-
+	op[282] = &AGOSEngine::oe1_setStore;
 	op[283] = &AGOSEngine::o_isBox;
 }
 
@@ -2025,6 +2027,19 @@ void AGOSEngine::oe1_setTime() {
 	time(&_timeStore);
 }
 
+void AGOSEngine::oe1_ifTime() {
+	// 260: if time
+	time_t t;
+
+	uint a = getVarOrWord();
+	time(&t);
+	t -= a;
+	if (t >= _timeStore)
+		setScriptCondition(true);
+	else
+		setScriptCondition(false);
+}
+
 void AGOSEngine::oe1_zoneDisk() {
 	// 267: set disk number of each zone
 	getVarOrWord();
@@ -2033,6 +2048,27 @@ void AGOSEngine::oe1_zoneDisk() {
 
 void AGOSEngine::oe1_printStats() {
 	// 270: print stats
+	printStats();
+}
+
+void AGOSEngine::oe1_printPlayerDamage() {
+	// 272: print player damage
+	printStats();
+}
+
+void AGOSEngine::oe1_printMonsterDamage() {
+	// 273: print monster damage
+	printStats();
+}
+
+void AGOSEngine::oe1_printPlayerHit() {
+	// 277: print player hit
+	printStats();
+}
+
+void AGOSEngine::oe1_printMonsterHit() {
+	// 278: print monster hit
+	printStats();
 }
 
 void AGOSEngine::oe1_setStore() {

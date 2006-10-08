@@ -353,7 +353,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	"|SET_TIME",
 	/* 260 */
-	NULL,
+	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IWW|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
@@ -368,14 +368,14 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"|PRINT_STATS",
 	"|STOP_TUNE",
 	/* 272 */
-	NULL,
-	NULL,
+	"|PRINT_PLAYER_DAMAGE",
+	"|PRINT_MONSTER_DAMAGE",
 	"|PAUSE",
 	"IW|COPY_SF",
 	/* 276 */
 	"W|RESTORE_ICONS",
-	NULL,
-	NULL,
+	"|PRINT_PLAYER_HIT",
+	"|PRINT_MONSTER_HIT",
 	"|FREEZE_ZONES",
 	/* 280 */
 	"II|SET_PARENT_SPECIAL",

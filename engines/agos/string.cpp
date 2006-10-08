@@ -725,4 +725,134 @@ void AGOSEngine::printBox() {
 	changeWindow(0);
 }
 
+// String code for statistics in Elvira 1
+void AGOSEngine::printMonsterDamage() {
+	WindowBlock *window = _dummyWindow;
+	window->flags = 1;
+
+	mouseOff();
+	writeChar(window, 36, 88, 2, _variableArray[442]);
+	mouseOn();
+}
+
+void AGOSEngine::printPlayerDamage() {
+	WindowBlock *window = _dummyWindow;
+	window->flags = 1;
+
+	mouseOff();
+	writeChar(window, 36, 38, 2, _variableArray[441]);
+	mouseOn();
+}
+
+void AGOSEngine::printMonsterHit() {
+	WindowBlock *window = _dummyWindow;
+	window->flags = 1;
+
+	mouseOff();
+	writeChar(window, 35, 166, 4, _variableArray[415]);
+	mouseOn();
+}
+
+void AGOSEngine::printPlayerHit() {
+	WindowBlock *window = _dummyWindow;
+	window->flags = 1;
+
+	mouseOff();
+	writeChar(window, 3, 166, 0, _variableArray[414]);
+	mouseOn();
+}
+
+void AGOSEngine::printStats() {
+	WindowBlock *window = _dummyWindow;
+	int val;
+
+	window->flags = 1;
+
+	mouseOff();
+
+	// Strength
+	val = _variableArray[0];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 5, 133, 6, val);
+
+	// Resolution
+	val = _variableArray[1];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 11, 133, 6, val);
+
+	// Dexterity
+	val = _variableArray[2];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 18, 133, 0, val);
+
+	// Skill
+	val = _variableArray[3];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 24, 133, 0, val);
+
+	// Life
+	val = _variableArray[5];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 30, 133, 2, val);
+
+	// Experience
+	val = _variableArray[6];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 36, 133, 4, val);
+
+	mouseOn();
+}
+
+void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val) {
+	int chr;
+
+	// Clear background of first digit
+	window->textColumnOffset = offs;
+	window->text_color = 0;
+	video_putchar_drawchar(window, x, y, 129);
+
+	if (val != -1) {
+		// Print first digit
+		chr = val / 10 + 48;
+		window->text_color = 15;
+		video_putchar_drawchar(window, x, y, chr);
+	}
+
+	offs += 6;
+	if (offs >= 7) {
+		offs -= 8;
+		x++;
+	}
+
+	// Clear background of second digit
+	window->textColumnOffset = offs;
+	window->text_color = 0;
+	video_putchar_drawchar(window, x, y, 129);
+
+	if (val != -1) {
+		// Print second digit
+		chr = val % 10 + 48;
+		window->text_color = 15;
+		video_putchar_drawchar(window, x, y, chr);
+	}
+}
+
 } // End of namespace AGOS

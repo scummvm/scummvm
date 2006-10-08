@@ -439,6 +439,7 @@ protected:
 	int16 *_variableArray2;
 	int16 *_variableArrayPtr;
 
+	WindowBlock *_dummyWindow;
 	WindowBlock *_windowArray[8];
 
 	byte _fcsData1[8];
@@ -773,6 +774,13 @@ protected:
 	uint16 getBoxSize();
 	uint16 checkFit(char *Ptr, int width, int lines);
 
+	void printMonsterDamage();
+	void printPlayerDamage();
+	void printMonsterHit();
+	void printPlayerHit();
+	void printStats();
+	void writeChar(WindowBlock *window, int x, int y, int offs, int val);
+
 	byte *allocBlock(uint32 size);
 	void checkNoOverWrite();
 	void checkRunningAnims();
@@ -1062,11 +1070,16 @@ public:
 	void oe1_findMaster();
 	void oe1_nextMaster();
 	void oe1_setTime();
+	void oe1_ifTime();
 	void oe1_bitClear();
 	void oe1_bitSet();
 	void oe1_bitTest();
 	void oe1_zoneDisk();
 	void oe1_printStats();
+	void oe1_printPlayerDamage();
+	void oe1_printMonsterDamage();
+	void oe1_printPlayerHit();
+	void oe1_printMonsterHit();
 	void oe1_setStore();
 
 	// Opcodes, Elvira 2 only

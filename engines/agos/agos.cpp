@@ -378,6 +378,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	memset(_videoBuf1, 0, sizeof(_videoBuf1));
 
+	_dummyWindow = new WindowBlock;
 	_windowList = new WindowBlock[16];
 
 	memset(_lettersToPrintBuf, 0, sizeof(_lettersToPrintBuf));
@@ -724,6 +725,7 @@ AGOSEngine::~AGOSEngine() {
 	delete _dummyItem2;
 	delete _dummyItem3;
 
+	delete [] _dummyWindow;
 	delete [] _windowList;
 
 	delete _debugger;
