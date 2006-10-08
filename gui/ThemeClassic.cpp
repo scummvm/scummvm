@@ -30,6 +30,7 @@ ThemeClassic::ThemeClassic(OSystem *system) : Theme() {
 	_system = system;
 	_initOk = false;
 	_font = 0;
+	_fontName.clear();
 	memset(&_screen, 0, sizeof(_screen));
 #ifndef CT_NO_TRANSPARENCY
 	memset(&_dialog, 0, sizeof(_dialog));
@@ -64,7 +65,7 @@ bool ThemeClassic::init() {
 	_shadowcolor = _system->RGBToColor(_colors[kShadowColor][0], _colors[kShadowColor][1], _colors[kShadowColor][2]);
 	_textcolor = _system->RGBToColor(_colors[kTextColor][0], _colors[kTextColor][1], _colors[kTextColor][2]);
 	_textcolorhi = _system->RGBToColor(_colors[kTextColorHi][0], _colors[kTextColorHi][1], _colors[kTextColorHi][2]);
-	if (_fontName == "builtin") {
+	if (_fontName.empty()) {
 		if (_screen.w >= 400 && _screen.h >= 300) {
 			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		} else {
@@ -663,12 +664,12 @@ bool ThemeClassic::loadConfig() {
 
 	temp.clear();
 	temp = _evaluator->getStringVar("font");
-	if (temp.empty() || temp.compareToIgnoreCase("builtin")) {
-		if (_fontName != "builtin")	
+	if (temp.empty() || 0 == temp.compareToIgnoreCase("builtin")) {
+		if (!_fontName.empty())	
 			delete _font;
-		_fontName = "builtin";
+		_fontName.clear();
 	} else if (temp != _fontName) {
-		if (_fontName != "builtin")
+		if (!_fontName.empty())
 			delete _font;
 		_font = loadFont(temp.c_str());
 		_fontName = temp;
