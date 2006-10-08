@@ -158,7 +158,6 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	}
 	_theme->resetDrawArea();
 
-	_theme->enable();
 	if (!oldTheme.empty())
 		screenChange();
 
@@ -240,8 +239,8 @@ void NewGui::runLoop() {
 
 			// HACK to change the cursor to the new themes one
 			if (_themeChange) {
-				if (useStandardCurs)
-					PaletteMan.popCursorPalette();
+				_theme->enable();
+				PaletteMan.popCursorPalette();
 
 				CursorMan.popCursor();
 
