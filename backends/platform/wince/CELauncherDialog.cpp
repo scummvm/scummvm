@@ -83,7 +83,7 @@ void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 	}
 }
 
-void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) {
+void CELauncherDialog::addCandidate(Common::String path, DetectedGameList &candidates) {
 	int idx = -1;
 	DetectedGame result;
 
@@ -119,7 +119,7 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	String domain(result.gameid);
+	Common::String domain(result.gameid);
 	if (ConfMan.hasGameDomain(domain)) {
 		char suffix = 'a';
 		domain += suffix;
@@ -150,7 +150,7 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 	FSList files;
 	node.listDir(files, FilesystemNode::kListFilesOnly);
 	DetectedGameList candidates(PluginManager::instance().detectGames(files));
-	addCandidate(node.path(), candidates);
+	CELauncherDialog::addCandidate((Common::String) node.path(), candidates);
 	// Then recurse on the subdirectories
 	FSList dirs;
 	node.listDir(dirs, FilesystemNode::kListDirectoriesOnly);

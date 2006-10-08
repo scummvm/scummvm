@@ -64,6 +64,11 @@ static HANDLE (WINAPI* _SetPowerRequirement)(PVOID,int,ULONG,PVOID,ULONG) = NULL
 static DWORD (WINAPI* _ReleasePowerRequirement)(HANDLE) = NULL;
 static HANDLE _hPowerManagement = NULL;
 static DWORD _lastTime = 0;
+#ifdef __GNUC__
+extern "C" void WINAPI SystemIdleTimerReset(void);
+#define SPI_GETPLATFORMTYPE 257
+#endif
+
 
 #define TIMER_TRIGGER 9000
 
@@ -82,7 +87,7 @@ void CEDevice::init() {
 
 	}
 	if (_SetPowerRequirement)
-		_hPowerManagement = _SetPowerRequirement(TEXT("BKL1:"), 0, 1, NULL, 0);
+		_hPowerManagement = _SetPowerRequirement((PVOID) TEXT("BKL1:"), 0, 1, (PVOID) NULL, 0);
 	_lastTime = GetTickCount();
 }
 
@@ -154,7 +159,7 @@ bool CEDevice::isSmartphone() {
 	BOOL result = SystemParametersInfo(SPI_GETPLATFORMTYPE, sizeof(platformType), platformType, 0);
 	if (!result && GetLastError() == ERROR_ACCESS_DENIED)
 		return true;
-	return (wcsnicmp(platformType, TEXT("SmartPhone"), 10) == 0);
+	return (_wcsnicmp(platformType, TEXT("SmartPhone"), 10) == 0);
 #endif
 }
 

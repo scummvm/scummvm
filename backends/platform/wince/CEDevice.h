@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/str.h"
 
-#include <gx.h>
+//#include <gx.h>
 
 class CEDevice {
 	public:

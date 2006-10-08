@@ -9,7 +9,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "sys/stat.h"
+#ifndef __GNUC__
 #include "sys/time.h"
+#else
+#include <stdio.h>
+#endif
 #include "time.h"
 #include "dirent.h"
 
@@ -26,9 +30,159 @@ char *strdup(const char *strSource);
 
 #endif
 
-/* Limited dirent implementation. Used by UI.C and DEVICES.C */
+#ifdef __GNUC__
+#define EXT_C extern "C"
+#else
+#define EXT_C 
+#endif
+
+// common missing functions required by both gcc and evc
+
+void *bsearch(const void *key, const void *base, size_t nmemb,
+			  size_t size, int (*compar)(const void *, const void *)) {
+	size_t i;
+
+	for (i=0; i<nmemb; i++)
+		if (compar(key, (void*)((size_t)base + size * i)) == 0)
+			return (void*)((size_t)base + size * i);
+	return NULL;
+}
+
 static WIN32_FIND_DATA wfd;
 
+/* Very limited implementation of stat. Used by UI.C, MEMORY-P.C (latter is not critical) */
+int stat(const char *fname, struct stat *ss)
+{
+	TCHAR fnameUnc[MAX_PATH+1];
+	HANDLE handle;
+	int len;
+
+	if(fname == NULL || ss == NULL)
+		return -1;
+
+	/* Special case (dummy on WinCE) */
+	len = strlen(fname);
+	if(len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
+		(len == 2 || fname[len-3] == '\\'))
+	{
+		/* That's everything implemented so far */
+		memset(ss, 0, sizeof(struct stat));
+		ss->st_size = 1024;
+		ss->st_mode |= S_IFDIR;
+		return 0;
+	}
+
+	MultiByteToWideChar(CP_ACP, 0, fname, -1, fnameUnc, MAX_PATH);
+	handle = FindFirstFile(fnameUnc, &wfd);
+	if(handle == INVALID_HANDLE_VALUE)
+		return -1;
+	else
+	{
+		/* That's everything implemented so far */
+		memset(ss, 0, sizeof(struct stat));
+		ss->st_size = wfd.nFileSizeLow;
+		if(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			ss->st_mode |= S_IFDIR;
+
+		FindClose(handle);
+	}
+	return 0;
+}
+
+/* Limited implementation of time.h. time_t formula is possibly incorrect. */
+EXT_C time_t time(time_t* res)
+{
+	time_t t;
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+
+	t = (time_t)(((((((st.wYear-1970)*12+st.wMonth)*31+st.wDay)*7+st.wDayOfWeek)*24+st.wHour)*60+st.wMinute)*60+st.wSecond);
+
+	if(res)
+		*res = t;
+	return t;
+}
+
+EXT_C struct tm* localtime(time_t* timer)
+{
+	static struct tm tmLocalTime;
+	unsigned long rem = *timer;
+
+	tmLocalTime.tm_sec  = (short)(rem % 60);
+	rem /= 60;
+	tmLocalTime.tm_min  = (short)(rem % 60);
+	rem /= 60;
+	tmLocalTime.tm_hour = (short)(rem % 24);
+	rem /= 24;
+	tmLocalTime.tm_mday = (short)(rem % 7);
+	rem /= 7;
+	tmLocalTime.tm_mday = (short)(rem % 31);
+	rem /= 31;
+	tmLocalTime.tm_mon  = (short)(rem % 12);
+	rem /= 12;
+	tmLocalTime.tm_year = (short)(rem+1970);
+
+	return &tmLocalTime;
+}
+
+char cwd[MAX_PATH+1] = "";
+EXT_C char *getcwd(char *buffer, int maxlen)
+{
+	TCHAR fileUnc[MAX_PATH+1];
+	char* plast;
+
+	if(cwd[0] == 0)
+	{
+		GetModuleFileName(NULL, fileUnc, MAX_PATH);
+		WideCharToMultiByte(CP_ACP, 0, fileUnc, -1, cwd, MAX_PATH, NULL, NULL);
+		plast = strrchr(cwd, '\\');
+		if(plast)
+			*plast = 0;
+		/* Special trick to keep start menu clean... */
+		if(_stricmp(cwd, "\\windows\\start menu") == 0)
+			strcpy(cwd, "\\Apps");
+	}
+	if(buffer)
+		strncpy(buffer, cwd, maxlen);
+	return cwd;
+}
+
+#ifdef __GNUC__
+#undef GetCurrentDirectory
+#endif
+EXT_C void GetCurrentDirectory(int len, char *buf)
+{
+	getcwd(buf,len);
+};
+
+/*
+Windows CE fopen has non-standard behavior -- not
+fully qualified paths refer to root folder rather
+than current folder (concept not implemented in CE).
+*/
+#undef fopen
+EXT_C FILE *wce_fopen(const char* fname, const char* fmode)
+{
+	char fullname[MAX_PATH+1];
+
+	if(!fname || fname[0] == '\0')
+		return NULL;
+	if(fname[0] != '\\' && fname[0] != '/')
+	{
+		getcwd(fullname, MAX_PATH);
+		strncat(fullname, "\\", MAX_PATH-strlen(fullname)-1);
+		strncat(fullname, fname, MAX_PATH-strlen(fullname)-strlen(fname));
+		return fopen(fullname, fmode);
+	}
+	else
+		return fopen(fname, fmode);
+}
+
+
+// evc only functions follow
+#ifndef __GNUC__
+
+/* Limited dirent implementation. Used by UI.C and DEVICES.C */
 DIR* opendir(const char* fname)
 {
 	DIR* pdir;
@@ -129,45 +283,6 @@ int closedir(DIR* dir)
 	return 1;
 }
 
-/* Very limited implementation of stat. Used by UI.C, MEMORY-P.C (latter is not critical) */
-int stat(const char *fname, struct stat *ss)
-{
-	TCHAR fnameUnc[MAX_PATH+1];
-	HANDLE handle;
-	int len;
-
-	if(fname == NULL || ss == NULL)
-		return -1;
-
-	/* Special case (dummy on WinCE) */
-	len = strlen(fname);
-	if(len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
-		(len == 2 || fname[len-3] == '\\'))
-	{
-		/* That's everything implemented so far */
-		memset(ss, 0, sizeof(struct stat));
-		ss->st_size = 1024;
-		ss->st_mode |= S_IFDIR;
-		return 0;
-	}
-
-	MultiByteToWideChar(CP_ACP, 0, fname, -1, fnameUnc, MAX_PATH);
-	handle = FindFirstFile(fnameUnc, &wfd);
-	if(handle == INVALID_HANDLE_VALUE)
-		return -1;
-	else
-	{
-		/* That's everything implemented so far */
-		memset(ss, 0, sizeof(struct stat));
-		ss->st_size = wfd.nFileSizeLow;
-		if(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			ss->st_mode |= S_IFDIR;
-
-		FindClose(handle);
-	}
-	return 0;
-}
-
 /* Remove file by name */
 int remove(const char* path)
 {
@@ -264,70 +379,6 @@ char *strdup(const char *strSource)
 	return buffer;
 }
 
-/* Used in UI.C */
-char cwd[MAX_PATH+1] = "";
-char *getcwd(char *buffer, int maxlen)
-{
-	TCHAR fileUnc[MAX_PATH+1];
-	char* plast;
-
-	if(cwd[0] == 0)
-	{
-		GetModuleFileName(NULL, fileUnc, MAX_PATH);
-		WideCharToMultiByte(CP_ACP, 0, fileUnc, -1, cwd, MAX_PATH, NULL, NULL);
-		plast = strrchr(cwd, '\\');
-		if(plast)
-			*plast = 0;
-		/* Special trick to keep start menu clean... */
-		if(_stricmp(cwd, "\\windows\\start menu") == 0)
-			strcpy(cwd, "\\Apps");
-	}
-	if(buffer)
-		strncpy(buffer, cwd, maxlen);
-	return cwd;
-}
-
-void GetCurrentDirectory(int len, char *buf)
-{
-	getcwd(buf,len);
-};
-
-/* Limited implementation of time.h. time_t formula is possibly incorrect. */
-time_t time(time_t* res)
-{
-	time_t t;
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-
-	t = (time_t)(((((((st.wYear-1970)*12+st.wMonth)*31+st.wDay)*7+st.wDayOfWeek)*24+st.wHour)*60+st.wMinute)*60+st.wSecond);
-
-	if(res)
-		*res = t;
-	return t;
-}
-
-struct tm* localtime(time_t* timer)
-{
-	static struct tm tmLocalTime;
-	unsigned long rem = *timer;
-
-	tmLocalTime.tm_sec  = (short)(rem % 60);
-	rem /= 60;
-	tmLocalTime.tm_min  = (short)(rem % 60);
-	rem /= 60;
-	tmLocalTime.tm_hour = (short)(rem % 24);
-	rem /= 24;
-	tmLocalTime.tm_mday = (short)(rem % 7);
-	rem /= 7;
-	tmLocalTime.tm_mday = (short)(rem % 31);
-	rem /= 31;
-	tmLocalTime.tm_mon  = (short)(rem % 12);
-	rem /= 12;
-	tmLocalTime.tm_year = (short)(rem+1970);
-
-	return &tmLocalTime;
-}
-
 /* Very limited implementation of sys/time.h */
 void gettimeofday(struct timeval* tp, void* dummy)
 {
@@ -343,30 +394,6 @@ void usleep(long usec)
 		Sleep(0);
 	else
 		Sleep(msec);
-}
-
-/*
-Windows CE fopen has non-standard behavior -- not
-fully qualified paths refer to root folder rather
-than current folder (concept not implemented in CE).
-*/
-#undef fopen
-
-FILE* wce_fopen(const char* fname, const char* fmode)
-{
-	char fullname[MAX_PATH+1];
-
-	if(!fname || fname[0] == '\0')
-		return NULL;
-	if(fname[0] != '\\' && fname[0] != '/')
-	{
-		getcwd(fullname, MAX_PATH);
-		strncat(fullname, "\\", MAX_PATH-strlen(fullname)-1);
-		strncat(fullname, fname, MAX_PATH-strlen(fullname)-strlen(fname));
-		return fopen(fullname, fmode);
-	}
-	else
-		return fopen(fname, fmode);
 }
 
 /* This may provide for better sync mechanism */
@@ -397,16 +424,6 @@ char* getenv(char* name)
 	}
 	else
 		return "";
-}
-
-void *bsearch(const void *key, const void *base, size_t nmemb,
-			  size_t size, int (*compar)(const void *, const void *)) {
-	size_t i;
-
-	for (i=0; i<nmemb; i++)
-		if (compar(key, (void*)((size_t)base + size * i)) == 0)
-			return (void*)((size_t)base + size * i);
-	return NULL;
 }
 
 #if _WIN32_WCE < 300 || defined(_TEST_HPC_STDIO)
@@ -642,3 +659,40 @@ long int strtol(const char *nptr, char **endptr, int base) {
 #endif
 
 
+// gcc build only functions follow
+#else // defined(__GNUC__)
+
+int islower(int c)
+{
+	return (c>='a' && c<='z');
+}
+
+int isspace(int c)
+{
+	return (c==' ' || c=='\f' || c=='\n' || c=='\r' || c=='\t' || c=='\v');
+}
+
+int isalpha(int c)
+{
+	return (islower(c) || (c>='A' && c<='Z'));
+}
+
+int isalnum(int c)
+{
+	return (isalpha(c) || (c>='0' && c<='9'));
+}
+
+int isprint(int c)
+{
+	static char punct[] = "!\"#%&'();<=>?[\\]*+,-./:^_{|}~";
+	int i = 0, flag = 0;
+	while ((punct[i] != 0) && (flag = (punct[i] != c)))
+		i++;
+	return (isalnum(c) || flag);
+}
+
+extern "C" int atexit(void (*function)(void))
+{
+	return 0;
+}
+#endif

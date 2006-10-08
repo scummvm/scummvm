@@ -43,10 +43,23 @@ char *strpbrk(const char *s, const char *accept);
 
 #ifdef _WIN32_WCE
 
-void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
-char *getcwd(char *buf, int size);
-void GetCurrentDirectory(int len, char *buf);
-#define INVALID_FILE_ATTRIBUTES 0xffffffff
+#ifndef __GNUC__
+	void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
+	char *getcwd(char *buf, int size);
+	typedef int ptrdiff_t;
+	void GetCurrentDirectory(int len, char *buf);
+	#define INVALID_FILE_ATTRIBUTES 0xffffffff
+#else
+	#include <math.h>
+	#undef GetCurrentDirectory
+	extern "C" void GetCurrentDirectory(int len, char *buf);
+	#define stricmp _stricmp
+	#define strnicmp _strnicmp
+	#define snprintf _snprintf
+	#define strdup _strdup
+	#define fopen wce_fopen
+#endif
+
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,13 +72,11 @@ void GetCurrentDirectory(int len, char *buf);
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>
-#include <Winuser.h>
 #include <direct.h>
 #include <time.h>
 
 void drawError(char*);
 
 #define vsnprintf _vsnprintf
-typedef int ptrdiff_t;
 
 #endif

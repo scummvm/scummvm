@@ -33,6 +33,7 @@ using GUI::kCloseCmd;
 using GUI::StaticTextWidget;
 using GUI::kTextAlignCenter;
 using GUI::CommandSender;
+using GUI::Actions;
 
 enum {
 	kMapCmd					= 'map ',

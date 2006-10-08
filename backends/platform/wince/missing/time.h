@@ -16,8 +16,14 @@ struct tm
 	short tm_sec;
 };
 
-time_t time(time_t* dummy);
-struct tm* localtime(time_t* dummy);
+#ifdef __GNUC__
+#define EXT_C extern "C"
+#else
+#define EXT_C 
+#endif
+
+EXT_C time_t time(time_t* dummy);
+EXT_C struct tm* localtime(time_t* dummy);
 
 unsigned int clock();
 

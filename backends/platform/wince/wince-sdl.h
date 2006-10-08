@@ -30,8 +30,8 @@
 #include "backends/intern.h"
 #include "backends/platform/sdl/sdl-common.h"
 
-#include "CEgui.h"
-#include "CEkeys.h"
+#include "CEGUI.h"
+#include "CEKeys.h"
 #include "CEDevice.h"
 #include "CEScaler.h"
 

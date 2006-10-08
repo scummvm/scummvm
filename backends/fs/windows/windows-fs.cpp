@@ -21,11 +21,16 @@
 
 #ifdef WIN32
 
+#ifdef _WIN32_WCE
+#include <windows.h>
+#endif
 #include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef _WIN32_WCE
 #include <windows.h>
+#endif
 #include <tchar.h>
 
 /*

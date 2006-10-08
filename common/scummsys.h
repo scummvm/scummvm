@@ -119,8 +119,10 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 
-	#define FORCEINLINE __forceinline
-	#define NORETURN _declspec(noreturn)
+	#ifndef __GNUC__
+		#define FORCEINLINE __forceinline
+		#define NORETURN _declspec(noreturn)
+	#endif
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
 	#if _WIN32_WCE < 300
@@ -132,11 +134,6 @@
 	typedef signed short int16_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;
-
-	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
-	typedef signed long int32_t;
-	typedef unsigned long uint32_t;
-	#endif
 
 #elif defined(_MSC_VER)
 

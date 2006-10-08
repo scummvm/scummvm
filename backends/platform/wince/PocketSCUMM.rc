@@ -1,145 +1,24 @@
-//Microsoft eMbedded Visual C++ generated resource script.
-//
 #include "resource.h"
-
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#include "newres.h"
-
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
-
-/////////////////////////////////////////////////////////////////////////////
-// French (France) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
-#ifdef _WIN32
-LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
-#pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Icon
 //
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
 IDI_POCKETSCUMM         ICON    DISCARDABLE     "icons/scumm_icon.ico"
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "#include ""newres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menubar
-//
-
-IDR_SMARTFON_MENUBAR_GAMES MENU DISCARDABLE 
-BEGIN
-    POPUP "Games"
-    BEGIN
-        POPUP "Play"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        MENUITEM SEPARATOR
-        MENUITEM "Scan",                        IDM_SMARTFON_SCAN
-        MENUITEM SEPARATOR
-        MENUITEM "Quit",                        IDM_SMARTFON_QUIT
-    END
-    POPUP "Options"
-    BEGIN
-        POPUP "Keys Mapping"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        MENUITEM "Sound",                       IDM_SMARTFON_SOUND
-        MENUITEM "Help",                        IDM_SMARTFON_HELP
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Data
-//
-
-IDR_SMARTFON_MENUBAR_GAMES SHMENUBAR DISCARDABLE 
-BEGIN
-    IDR_SMARTFON_MENUBAR_GAMES, 2,
-    I_IMAGENONE, ID_MENU_GAMES, TBSTATE_ENABLED, 
-    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_CAP_MENUITEM40002, 0, 0,
-    I_IMAGENONE, ID_MENU_OPTIONS, TBSTATE_ENABLED, 
-    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_CAP_OPTIONS, 0, 1,
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // BINARY
 //
 
-PANEL_GENERIC           BINARY  DISCARDABLE     "images\\panelbig.bmp"
-PANEL_KEYBOARD          BINARY  DISCARDABLE     "images\\keyboard.bmp"
-ITEM_SKIP               BINARY  DISCARDABLE     "images\\Action.bmp"
-ITEM_OPTIONS            BINARY  DISCARDABLE     "images\\DiskwFolder.bmp"
-ITEM_SOUND_ON           BINARY  DISCARDABLE     "images\\SoundOn.bmp"
-ITEM_SOUND_OFF          BINARY  DISCARDABLE     "images\\SoundOff.bmp"
-ITEM_VIEW_PORTRAIT      BINARY  DISCARDABLE     "images\\MonkeyPortrait.bmp"
-ITEM_VIEW_LANDSCAPE     BINARY  DISCARDABLE     "images\\MonkeyLandscape.bmp"
-ITEM_BINDKEYS           BINARY  DISCARDABLE     "images\\bindkeys.bmp"
+PANEL_GENERIC           BINARY  DISCARDABLE     "images/panelbig.bmp"
+PANEL_KEYBOARD          BINARY  DISCARDABLE     "images/keyboard.bmp"
+ITEM_SKIP               BINARY  DISCARDABLE     "images/Action.bmp"
+ITEM_OPTIONS            BINARY  DISCARDABLE     "images/DiskwFolder.bmp"
+ITEM_SOUND_ON           BINARY  DISCARDABLE     "images/SoundOn.bmp"
+ITEM_SOUND_OFF          BINARY  DISCARDABLE     "images/SoundOff.bmp"
+ITEM_VIEW_PORTRAIT      BINARY  DISCARDABLE     "images/MonkeyPortrait.bmp"
+ITEM_VIEW_LANDSCAPE     BINARY  DISCARDABLE     "images/MonkeyLandscape.bmp"
+ITEM_BINDKEYS           BINARY  DISCARDABLE     "images/bindkeys.bmp"
 HI_RES_AWARE CEUX {1}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_CAP_MENUITEM40002   "Games"
-    IDS_CAP_OPTIONS         "Options"
-END
-
-#endif    // French (France) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-#ifndef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 3 resource.
-//
-
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
-

@@ -295,10 +295,6 @@ void ScummEngine::processInput() {
 
 #ifdef _WIN32_WCE
 	if (lastKeyHit == KEY_ALL_SKIP) {
-		// Skip cutscene
-		if (_smushActive || vm.cutScenePtr[vm.cutSceneStackPointer])
-			lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
-		else
 		// Skip talk
 		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0)
 			lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
@@ -337,6 +333,7 @@ void ScummEngine_v7::processKeyboard(int lastKeyHit) {
 		return;
 	}
 
+#ifndef _WIN32_WCE
 	if (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
 		// Skip cutscene (or active SMUSH video).
 		if (_smushActive) {
@@ -351,6 +348,30 @@ void ScummEngine_v7::processKeyboard(int lastKeyHit) {
 		_mouseAndKeyboardStat = lastKeyHit;
 		return;
 	}
+#else
+	// On WinCE we've also got one special for skipping cutscenes or dialog, whatever is appropriate
+	// Since _smushActive is not a member of the base case class ScummEngine::, we detect here if we're
+	// playing a cutscene and skip it; else we forward the keystroke through to ScummEngine::processInput.
+	if (lastKeyHit == KEY_ALL_SKIP || (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY))) {
+		int bail = 1;
+		if (_smushActive) {
+			if (_game.id == GID_FT) {
+				_insane->escapeKeyHandler();
+				bail = 0;
+			} else
+				_smushVideoShouldFinish = true;
+		}
+		if ((!_smushActive && vm.cutScenePtr[vm.cutSceneStackPointer]) || _smushVideoShouldFinish) {
+			abortCutscene();
+			bail = 0;
+		}
+		if (!bail) {
+			_mouseAndKeyboardStat = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
+			return;
+		}
+		
+	}
+#endif
 
 	// Fall back to V6 behavior
 	ScummEngine_v6::processKeyboard(lastKeyHit);

@@ -119,10 +119,8 @@ bool isSmartphone() {
 	return _hasSmartphoneResolution;
 }
 
-// ********************************************************************************************
-
 // MAIN
-
+#ifndef __GNUC__
 int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	CEException::writeException(TEXT("\\scummvmCrash"), exceptionPointers);
 	drawError("Unrecoverable exception occurred - see crash dump in latest \\scummvmCrash file");
@@ -133,28 +131,37 @@ int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	exit(0);
 	return EXCEPTION_EXECUTE_HANDLER;
 }
+#endif
 
 OSystem *OSystem_WINCE3_create() {
 	return new OSystem_WINCE3();
 }
 
 int SDL_main(int argc, char **argv) {
+
+#ifdef __GNUC__
+	// Due to incomplete crt0.o implementation, we go through the constructor function
+	// list provided by the linker and init all of them
+	// thanks to joostp and DJWillis
+	extern void (*__CTOR_LIST__)() ;
+	void (**constructor)() = &__CTOR_LIST__ ;
+	constructor++ ;
+	while(*constructor) { 
+            (*constructor)() ;
+            constructor++ ;
+        }
+#endif
+	
 	CEDevice::init();
 	OSystem_WINCE3::initScreenInfos();
-	/* Sanity check */
-//#ifndef WIN32_PLATFORM_WFSP
-//	if (CEDevice::hasSmartphoneResolution()) {
-//		MessageBox(NULL, TEXT("This build was not compiled with Smartphone support"), TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
-//		return 0;
-//	}
-//#endif
+	
 	/* Avoid print problems - this file will be put in RAM anyway */
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
 
 	int res = 0;
 
-#ifndef DEBUG
+#if !defined(DEBUG) && !defined(__GNUC__)
 	__try {
 #endif
 		g_system = OSystem_WINCE3_create();
@@ -162,8 +169,9 @@ int SDL_main(int argc, char **argv) {
 
 		// Invoke the actual ScummVM main entry point:
 		res = scummvm_main(argc, argv);
+		//res = scummvm_main(0, NULL);
 		g_system->quit();	// TODO: Consider removing / replacing this!
-#ifndef DEBUG
+#if !defined(DEBUG) && !defined(__GNUC__)
 	}
 	__except (handleException(GetExceptionInformation())) {
 	}
@@ -574,14 +582,14 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
                 if (!ov_open(testFile, test_ov_file, NULL, 0)) {
                         bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
                         ov_clear(test_ov_file);
-						delete test_ov_file;
+			delete test_ov_file;
                         return highSampleRate;
                 }
         }
 
         // Do not test for OGG samples - too big and too slow anyway :)
 
-		delete test_ov_file;
+	delete test_ov_file;
         return false;
 }
 #endif
@@ -1304,12 +1312,14 @@ void OSystem_WINCE3::update_keyboard() {
 	if (_monkeyKeyboard && !_isSmartphone)
 		if (!_panelVisible || _toolbarHandler.activeName() != NAME_PANEL_KEYBOARD)
 			swap_panel();
+#ifndef DISABLE_SCUMM
 	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
 		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
 			// Switch back to the normal panel now that the keyboard is not used anymore
 			_monkeyKeyboard = false;
 			_toolbarHandler.setActive(NAME_MAIN_PANEL);
 	}
+#endif
 }
 
 void OSystem_WINCE3::internUpdateScreen() {
@@ -2042,7 +2052,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	if (_modeChanged) {
 		_modeChanged = false;
 		event.type = EVENT_SCREEN_CHANGED;
-		screenChangeCount++;
+		_screenChangeCount++;
 		return true;
 	}
 

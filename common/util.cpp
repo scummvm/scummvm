@@ -25,6 +25,11 @@
 #include "common/system.h"
 #include "gui/debugger.h"
 
+#ifdef _WIN32_WCE
+// This is required for the debugger attachment
+extern bool isSmartphone(void);
+#endif
+
 namespace Common {
 
 //
