@@ -1159,7 +1159,7 @@ void AGOSEngine::o_defWindow() {
 		fillColor = color % 100;
 		textColor = color / 100;
 	} else {
-		fillColor = getVarOrWord();
+		fillColor = color;
 		textColor = 0;
 	}
 
