@@ -64,7 +64,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	/* 28 */
 	NULL,
-	NULL,
+	"WJ|CHANCE",
 	"IJ|IS_PLAYER",
 	NULL,
 	/* 32 */
@@ -254,7 +254,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	/* 180 */
 	"IWW|WHERE_TO",
-	NULL,
+	"IIW|DOOR_EXIT",
 	NULL,
 	NULL,
 	/* 184 */

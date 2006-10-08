@@ -1068,6 +1068,7 @@ public:
 	void oe1_setUserItem();
 	void oe1_getUserItem();
 	void oe1_whereTo();
+	void oe1_doorExit();
 	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();

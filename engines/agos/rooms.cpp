@@ -54,7 +54,7 @@ uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
 	x = derefItem(g->dest[d]);
 	if (x == NULL)
 		return 0;
-	if (findChildOfType(x, 1))
+	if (isRoom(x))
 		return 0;
 	return itemPtrToID(x);
 }

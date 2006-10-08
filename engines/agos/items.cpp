@@ -270,6 +270,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[178] = &AGOSEngine::oe1_clearUserItem;
 
 	op[180] = &AGOSEngine::oe1_whereTo;
+	op[181] = &AGOSEngine::oe1_doorExit;
 
 	op[198] = &AGOSEngine::o_comment;
 
@@ -1072,47 +1073,30 @@ void AGOSEngine::o_restartAnimation() {
 
 void AGOSEngine::o_getParent() {
 	// 90: set minusitem to parent
-	Item *item = derefItem(getNextItemPtr()->parent);
-	switch (getVarOrByte()) {
-	case 0:
-		_objectItem = item;
-		break;
-	case 1:
-		_subjectItem = item;
-		break;
-	default:
-		error("o_getParent: invalid subcode");
-	}
+	Item *i = getNextItemPtr();
+	if (getVarOrByte() == 1)
+		_subjectItem = derefItem(i->parent);
+	else
+		_objectItem = derefItem(i->parent);
 }
 
 void AGOSEngine::o_getNext() {
 	// 91: set minusitem to next
-	Item *item = derefItem(getNextItemPtr()->next);
-	switch (getVarOrByte()) {
-	case 0:
-		_objectItem = item;
-		break;
-	case 1:
-		_subjectItem = item;
-		break;
-	default:
-		error("o_getNext: invalid subcode");
-	}
+	Item *i = getNextItemPtr();
+	if (getVarOrByte() == 1)
+		_subjectItem = derefItem(i->next);
+	else
+		_objectItem = derefItem(i->next);
 }
 
 void AGOSEngine::o_getChildren() {
 	// 92: set minusitem to child
-	Item *item = derefItem(getNextItemPtr()->child);
-	switch (getVarOrByte()) {
-	case 0:
-		_objectItem = item;
-		break;
-	case 1:
-		_subjectItem = item;
-		break;
-	default:
-		error("o_getChildren: invalid subcode");
-	}
+	Item *i = getNextItemPtr();
+	if (getVarOrByte() == 1)
+		_subjectItem = derefItem(i->child);
+
+	else
+		_objectItem = derefItem(i->child);
 }
 
 void AGOSEngine::o_picture() {
@@ -1972,13 +1956,38 @@ void AGOSEngine::oe1_getUserItem() {
 void AGOSEngine::oe1_whereTo() {
 	// 180: where to
 	Item *i = getNextItemPtr();
-	int16 d = getVarOrByte();
-	int16 f = getVarOrByte();
+	int16 d = getVarOrWord();
+	int16 f = getVarOrWord();
 
 	if (f == 1)
 		_subjectItem = derefItem(getExitOf_e1(i, d));
 	else
 		_objectItem = derefItem(getExitOf_e1(i, d));
+}
+
+void AGOSEngine::oe1_doorExit() {
+	// 181: door exit
+	Item *x;
+	Item *a = (Item *)-1;
+	SubUserChain *c;
+	Item *i = getNextItemPtr();
+	Item *d = getNextItemPtr();
+	int16 f = getVarOrWord();
+	int16 ct = 0;
+
+
+	c = (SubUserChain *)findChildOfType(d, 8);
+	if (c)
+		a = derefItem(c->chChained);
+	while (ct < 6) {
+		x = derefItem(getDoorOf(i, ct));
+		if ((x == d) | (x == a)) {
+			writeVariable(f, ct);
+			return;
+		}
+		ct++;
+	}
+	writeVariable(f, 255);
 }
 
 void AGOSEngine::oe1_clearUserItem() {
@@ -3091,6 +3100,7 @@ int AGOSEngine::runScript() {
 			if (opcode == 203) {
 				flag = true;
 				opcode = getVarOrWord();
+				debug(1, "runScript: opcode %d", opcode);
 				if (opcode == 10000)
 					return 0;
 			}
