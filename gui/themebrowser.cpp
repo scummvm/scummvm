@@ -171,7 +171,11 @@ bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
 		return false;
 
 	out.type = type;
-	out.name = out.file;
+
+	if (cfg.hasKey("name", "theme"))
+		cfg.getKey("name", "theme", out.name);
+	else
+		out.name = out.file;
 
 	return true;
 }
