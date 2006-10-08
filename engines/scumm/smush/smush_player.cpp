@@ -940,9 +940,6 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	_skipNext = false;
 
-	uint32 start_time, end_time;
-	start_time = _vm->_system->getMillis();
-
 	if (_insanity) {
 		_vm->_insane->procPreRendering();
 	}
@@ -1001,8 +998,6 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
 
-	end_time = _vm->_system->getMillis();
-
 	if (_width != 0 && _height != 0) {
 #ifdef _WIN32_WCE
 		if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
@@ -1014,8 +1009,6 @@ void SmushPlayer::handleFrame(Chunk &b) {
 #endif
 	}
 	_smixer->handleFrame();
-
-	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed);
 
 	_frame++;
 }
@@ -1334,10 +1327,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_palDirtyMin = 256;
 		}
 		if (_updateNeeded) {
-			uint32 end_time, start_time;
 			int w = _width, h = _height;
-
-			start_time = _vm->_system->getMillis();
 
 			// Workaround for bug #1386333: "FT DEMO: assertion triggered 
 			// when playing movie". Some frames there are 384 x 224
@@ -1354,11 +1344,6 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_inTimer = false;
 			_inTimerCount = 0;
 #endif
-
-			end_time = _vm->_system->getMillis();
-
-			debugC(DEBUG_SMUSH, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
-
 		}
 		if (_vm->_quit || _vm->_saveLoadFlag) {
 			_smixer->stop();
