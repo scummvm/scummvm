@@ -85,15 +85,31 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
 		while (*pos)
 			if (*pos++ == '/')
 				dsplName = pos;
-		if (dsplName)
+		if (dsplName) {
 			_displayName = String(dsplName);
-		else {
+
+			// check if this is a file or directory
+			if (path.lastChar() != '/') {
+				char checkPath[256];
+				sprintf(checkPath, "%s/", path.c_str());
+				int fd = fio.dopen(checkPath);
+				printf("check: %s: %d\n", checkPath, fd);
+				if (fd < 0)
+					_isDirectory = false;
+				else
+					fio.dclose(fd);
+			} // if it ends with /, assume it's not a file
+		} else {
 			if (strncmp(path.c_str(), "cdfs", 4) == 0)
 				_displayName = "DVD Drive";
 			else if (strncmp(path.c_str(), "mass", 4) == 0)
 				_displayName = "USB Mass Storage";
-			else
+			else if (strncmp(path.c_str(), "pfs0", 4) == 0)
 				_displayName = "Harddisk";
+			else {
+				printf("PS2FSNode ctor: invalid path %s\n", path.c_str());
+				_isDirectory = false;
+			}
 		}
 	}
 }
@@ -130,6 +146,19 @@ bool Ps2FilesystemNode::listDir(AbstractFSList &list, ListMode mode) const {
 		}
 		return true;
 	} else {
+		if (strncmp(_path.c_str(), "host:", 5) == 0) {
+			// special case, we can't list the host device.
+			Ps2FilesystemNode dirEntry;
+			dirEntry._isRoot = false;
+			dirEntry._isDirectory = false;
+			char *fakeFiles[4] = { "modern.ini", "modern.zip", "classic.ini", "classic.zip" };
+			for (int i = 0; i < 4; i++) {
+				dirEntry._path = _path + fakeFiles[i];
+				dirEntry._displayName = fakeFiles[i];
+				list.push_back(new Ps2FilesystemNode(&dirEntry));
+			}
+			return true;
+		}
 		char listDir[256];
 		int fd;
 		if (_path.lastChar() == '/')
