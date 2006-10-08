@@ -94,6 +94,8 @@ protected:
 
 	bool		_stateIsSaved;
 
+	bool		_useStdCursor;
+
 	// for continuous events (keyDown)
 	struct {
 		uint16 ascii;

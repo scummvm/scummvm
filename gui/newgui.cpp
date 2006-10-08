@@ -86,6 +86,7 @@ void GuiObject::reflowLayout() {
 NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
+	_useStdCursor = false;
 
 	_system = g_system;
 	_lastScreenChangeID = _system->getScreenChangeID();
@@ -126,6 +127,15 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	Common::ConfigFile cfg;
 
 	Common::String oldTheme = (_theme != 0) ? _theme->getStylefileName() : "";
+
+	if (_theme)
+		_theme->disable();
+
+	if (_useStdCursor) {
+		PaletteMan.popCursorPalette();
+		CursorMan.popCursor();
+	}
+
 	delete _theme;
 
 	if (style.compareToIgnoreCase("classic (builtin)") == 0) {
@@ -205,12 +215,11 @@ void NewGui::runLoop() {
 		saveState();
 		_theme->enable();
 		didSaveState = true;
+
+		_useStdCursor = !_theme->ownCursor();
+		if (_useStdCursor)
+			setupCursor();
 	}
-
-	bool useStandardCurs = !_theme->ownCursor();
-
-	if (useStandardCurs)
-		setupCursor();
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		if (_needRedraw) {
@@ -223,7 +232,7 @@ void NewGui::runLoop() {
 
 		activeDialog->handleTickle();
 
-		if (useStandardCurs)
+		if (_useStdCursor)
 			animateCursor();
 		_theme->drawAll();
 		_system->updateScreen();
@@ -240,12 +249,9 @@ void NewGui::runLoop() {
 			// HACK to change the cursor to the new themes one
 			if (_themeChange) {
 				_theme->enable();
-				PaletteMan.popCursorPalette();
 
-				CursorMan.popCursor();
-
-				useStandardCurs = !_theme->ownCursor();
-				if (useStandardCurs)
+				_useStdCursor = !_theme->ownCursor();
+				if (_useStdCursor)
 					setupCursor();
 
 				_theme->refresh();
@@ -325,12 +331,11 @@ void NewGui::runLoop() {
 	}
 
 	_theme->closeDialog();
-	if (useStandardCurs)
-		PaletteMan.popCursorPalette();
 
 	if (didSaveState) {
 		_theme->disable();
 		restoreState();
+		_useStdCursor = false;
 	}
 }
 
@@ -347,7 +352,10 @@ void NewGui::saveState() {
 }
 
 void NewGui::restoreState() {
-	CursorMan.popCursor();
+	if (_useStdCursor) {
+		CursorMan.popCursor();
+		PaletteMan.popCursorPalette();
+	}
 
 	_system->updateScreen();
 
