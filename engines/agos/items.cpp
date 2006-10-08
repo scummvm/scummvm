@@ -585,35 +585,30 @@ void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
 }
 
 void AGOSEngine::setupOpcodes() {
-	static OpcodeProc opcode_table[300];
-
-	for (int i = 0; i < ARRAYSIZE(opcode_table); i++)
-		opcode_table[i] = NULL;
-
-	_opcode_table = opcode_table;
-	_numOpcodes = ARRAYSIZE(opcode_table);
+	memset(_opcode_table, 0, sizeof(_opcode_table));
+	_numOpcodes = ARRAYSIZE(_opcode_table);
 
 	switch (getGameType()) {
 	case GType_ELVIRA1:
-		setupElvira1Opcodes(opcode_table);
+		setupElvira1Opcodes(_opcode_table);
 		break;
 	case GType_ELVIRA2:
-		setupElvira2Opcodes(opcode_table);
+		setupElvira2Opcodes(_opcode_table);
 		break;
 	case GType_WW:
-		setupWaxworksOpcodes(opcode_table);
+		setupWaxworksOpcodes(_opcode_table);
 		break;
 	case GType_SIMON1:
-		setupSimon1Opcodes(opcode_table);
+		setupSimon1Opcodes(_opcode_table);
 		break;
 	case GType_SIMON2:
-		setupSimon2Opcodes(opcode_table);
+		setupSimon2Opcodes(_opcode_table);
 		break;
 	case GType_FF:
-		setupFeebleOpcodes(opcode_table);
+		setupFeebleOpcodes(_opcode_table);
 		break;
 	case GType_PP:
-		setupPuzzleOpcodes(opcode_table);
+		setupPuzzleOpcodes(_opcode_table);
 		break;
 	default:
 		error("setupOpcodes: Unknown game");

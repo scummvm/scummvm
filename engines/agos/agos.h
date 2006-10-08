@@ -151,13 +151,13 @@ class AGOSEngine : public Engine {
 	void setupPuzzleOpcodes(OpcodeProc *op);
 
 	void setupOpcodes();
-	const OpcodeProc *_opcode_table;
+	OpcodeProc _opcode_table[300];
 	int _numOpcodes;
 
 	typedef void (AGOSEngine::*VgaOpcodeProc) ();
 
 	void setupVgaOpcodes();
-	const VgaOpcodeProc *_vga_opcode_table;
+	VgaOpcodeProc _vga_opcode_table[100];
 	uint _numVideoOpcodes;
 
 	void setupCommonVideoOpcodes(VgaOpcodeProc *op);

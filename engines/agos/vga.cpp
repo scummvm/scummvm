@@ -177,28 +177,23 @@ void AGOSEngine::setupFeebleVideoOpcodes(VgaOpcodeProc *op) {
 }
 
 void AGOSEngine::setupVgaOpcodes() {
-	static VgaOpcodeProc vga_opcode_table[100];
-
-	for (int i = 0; i < ARRAYSIZE(vga_opcode_table); i++)
-		vga_opcode_table[i] = NULL;
-
-	_vga_opcode_table = vga_opcode_table;
+	memset(_vga_opcode_table, 0, sizeof(_vga_opcode_table));
 
 	switch (getGameType()) {
 	case GType_ELVIRA1:
-		setupElvira1VideoOpcodes(vga_opcode_table);
+		setupElvira1VideoOpcodes(_vga_opcode_table);
 		break;
 	case GType_ELVIRA2:
 	case GType_WW:
 	case GType_SIMON1:
-		setupCommonVideoOpcodes(vga_opcode_table);
+		setupCommonVideoOpcodes(_vga_opcode_table);
 		break;
 	case GType_SIMON2:
-		setupSimon2VideoOpcodes(vga_opcode_table);
+		setupSimon2VideoOpcodes(_vga_opcode_table);
 		break;
 	case GType_FF:
 	case GType_PP:
-		setupFeebleVideoOpcodes(vga_opcode_table);
+		setupFeebleVideoOpcodes(_vga_opcode_table);
 		break;
 	default:
 		error("setupVgaOpcodes: Unknown game");

@@ -1844,7 +1844,6 @@ DetectedGame toDetectedGame(const ADGameDescription &g) {
 }
 
 bool AGOSEngine::initGame() {
-	uint16 gameCount = ARRAYSIZE(gameDescriptions);
 	int gameNumber = -1;
 	
 	DetectedGameList detectedGames;
@@ -1884,7 +1883,7 @@ bool AGOSEngine::initGame() {
 
 	//delete &matches;
 
-	if (gameNumber >= gameCount || gameNumber == -1) {
+	if (gameNumber >= ARRAYSIZE(gameDescriptions) || gameNumber == -1) {
 		error("AGOSEngine::loadGame wrong gameNumber");
 	}
 
