@@ -128,8 +128,8 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	Common::String oldTheme = (_theme != 0) ? _theme->getStylefileName() : "";
 	delete _theme;
 
-	if (style.compareToIgnoreCase("classic") == 0) {
-		_theme = new ThemeClassic(_system);
+	if (style.compareToIgnoreCase("classic (builtin)") == 0) {
+		_theme = new ThemeClassic(_system, style);
 	} else {	
 		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
 			if (0 == styleType.compareToIgnoreCase("classic"))

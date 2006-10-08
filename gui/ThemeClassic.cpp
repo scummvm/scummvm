@@ -39,7 +39,7 @@ ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const 
 
 	// 'classic' is always the built in one, we force it and
 	// ignore all 'classic' named config files
-	if (config.compareToIgnoreCase("classic") != 0) {
+	if (config.compareToIgnoreCase("classic (builtin)") != 0) {
 		if (cfg)
 			_configFile = *cfg;
 		else

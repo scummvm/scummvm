@@ -85,9 +85,9 @@ void ThemeBrowser::updateListing() {
 	
 	// classic is always build in
 	Entry th;
-	th.name = "classic";
-	th.type = "classic";
-	th.file = "classic";
+	th.name = "Classic (Builtin)";
+	th.type = "Classic";
+	th.file = "Classic (Builtin)";
 	_themes.push_back(th);
 
 	// we are using only the paths 'themepath', 'extrapath', DATA_PATH and '.'
