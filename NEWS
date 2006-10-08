@@ -21,6 +21,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Simon:
    - Renamed Simon engine to AGOS.
 
+ WinCE Port:
+   - Now using a GCC toolchain for building.
+
 0.9.1 (????-??-??)
  General:
    - Fixed potential garbage and/or crash in debug console.
