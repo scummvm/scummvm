@@ -269,7 +269,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[177] = &AGOSEngine::oe1_getUserItem;
 	op[178] = &AGOSEngine::oe1_clearUserItem;
 
-	op[180] = &AGOSEngine::oww_whereTo;
+	op[180] = &AGOSEngine::oe1_whereTo;
 
 	op[198] = &AGOSEngine::o_comment;
 
@@ -1168,15 +1168,24 @@ void AGOSEngine::o_defWindow() {
 	uint w = getVarOrWord();
 	uint h = getVarOrWord();
 	uint flags = getVarOrWord();
-	uint fill_color = getVarOrWord();
-	uint text_color = 0;
+	uint color = getVarOrWord();
+
+	uint fillColor, textColor;
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
+		getGameType() == GType_WW) {
+		fillColor = color % 100;
+		textColor = color / 100;
+	} else {
+		fillColor = getVarOrWord();
+		textColor = 0;
+	}
 
 	num &= 7;
 
 	if (_windowArray[num])
 		closeWindow(num);
 
-	_windowArray[num] = openWindow(x, y, w, h, flags, fill_color, text_color);
+	_windowArray[num] = openWindow(x, y, w, h, flags, fillColor, textColor);
 
 	if (num == _curWindow) {
 		_textWindow = _windowArray[num];
@@ -1958,6 +1967,18 @@ void AGOSEngine::oe1_getUserItem() {
 		_subjectItem = derefItem(getUserItem(i, n));
 	else
 		_objectItem = derefItem(getUserItem(i, n));
+}
+
+void AGOSEngine::oe1_whereTo() {
+	// 180: where to
+	Item *i = getNextItemPtr();
+	int16 d = getVarOrByte();
+	int16 f = getVarOrByte();
+
+	if (f == 1)
+		_subjectItem = derefItem(getExitOf_e1(i, d));
+	else
+		_objectItem = derefItem(getExitOf_e1(i, d));
 }
 
 void AGOSEngine::oe1_clearUserItem() {

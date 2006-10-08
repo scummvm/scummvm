@@ -274,7 +274,6 @@ protected:
 	bool _hitarea_unk_3;
 	bool _mortalFlag;
 	bool _updateScreen;
-	bool _usePaletteDelay;
 	bool _syncFlag2;
 	bool _inCallBack;
 	bool _cepeFlag;
@@ -378,7 +377,9 @@ protected:
 
 	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
+	bool _usePaletteDelay;
 	byte _paletteFlag;
+	int _bottomPalette;
 	uint _fastFadeCount;
 	volatile uint16 _fastFadeInFlag;
 
@@ -1066,6 +1067,7 @@ public:
 	void oe1_means();
 	void oe1_setUserItem();
 	void oe1_getUserItem();
+	void oe1_whereTo();
 	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();

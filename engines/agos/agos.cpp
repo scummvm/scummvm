@@ -145,7 +145,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_hitarea_unk_3 = 0;
 	_mortalFlag = 0;
 	_updateScreen = false;
-	_usePaletteDelay = 0;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
 	_cepeFlag = 0;
@@ -253,15 +252,18 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
 
-	_fastFadeInFlag = 0;
 
 	_noOverWrite = 0;
 	_rejectBlock = false;
 
+	_fastFadeCount = 0;
+	_fastFadeInFlag = 0;
 	_fastFadeOutFlag = 0;
 	_unkPalFlag = 0;
+	_usePaletteDelay = 0;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
+	_bottomPalette = 0;
 	_picture8600 = 0;
 
 	_soundFileId = 0;
@@ -270,8 +272,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_showPreposition = 0;
 	_showMessageFlag = 0;
-
-	_fastFadeCount = 0;
 
 	_vgaSpriteChanged = 0;
 
@@ -1305,7 +1305,7 @@ startOver:
 		_lastHitArea3 = NULL;
 
 		for (;;) {
-			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
+			if (getGameType() != GType_FF && getGameType() != GType_PP && _keyPressed == 35)
 				displayBoxStars();
 			if (getGameType() == GType_PP) {
 				if (checkArrows() != 0) {
@@ -1753,6 +1753,15 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	runVgaScript();
 	_vcPtr = vc_ptr_org;
 
+	if (getGameType() == GType_ELVIRA1 && _windowNum == 3 && _bottomPalette != 0) {
+		byte *dst = getBackBuf() + 42560;
+		int size = 21440;
+
+		while (size--) {
+			*dst += 0x10;
+			dst++;
+		}
+	}
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);

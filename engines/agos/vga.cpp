@@ -1485,6 +1485,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 			src = state->depack_src + (state->width * state->y_skip) * 8;
 			dst = state->surf_addr;
 			state->x_skip *= 4;
+
 			do {
 				for (count = 0; count != state->draw_width; count++) {
 					byte color;
@@ -1498,7 +1499,6 @@ void AGOSEngine::drawImages(VC10_state *state) {
 				dst += _screenWidth;
 				src += state->width * 8;
 			} while (--state->draw_height);
-			/* vc10_helper_7 */
 		}
 	}
 }
@@ -1759,6 +1759,7 @@ void AGOSEngine::vc21_endRepeat() {
 	}
 }
 
+// TODO: Split this code into specific games!
 void AGOSEngine::vc22_setSpritePalette() {
 	byte *offs, *palptr, *src;
 	uint16 a = 0, b, num, palSize;
@@ -1786,9 +1787,12 @@ void AGOSEngine::vc22_setSpritePalette() {
 		palptr = _displayPalette;
 		offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 
+		_bottomPalette = 1;
+
 		if (getGameType() == GType_ELVIRA1) {
 			if (b >= 1000) {
 				b -= 1000;
+				_bottomPalette = 0;
 			} else {
 				num = 13;
 
@@ -1806,6 +1810,86 @@ void AGOSEngine::vc22_setSpritePalette() {
 				palptr[15 * 4 + 1] = 192;
 				palptr[15 * 4 + 2] = 40;
 				palptr[15 * 4 + 3] = 0;
+
+				palptr[16 * 4 + 0] = 0;
+				palptr[16 * 4 + 1] = 0;
+				palptr[16 * 4 + 2] = 0;
+				palptr[16 * 4 + 3] = 0;
+
+				palptr[17 * 4 + 0] = 16;
+				palptr[17 * 4 + 1] = 0;
+				palptr[17 * 4 + 2] = 0;
+				palptr[17 * 4 + 3] = 0;
+
+				palptr[18 * 4 + 0] = 8;
+				palptr[18 * 4 + 1] = 8;
+				palptr[18 * 4 + 2] = 0;
+				palptr[18 * 4 + 3] = 0;
+
+				palptr[19 * 4 + 0] = 48;
+				palptr[19 * 4 + 1] = 24;
+				palptr[19 * 4 + 2] = 0;
+				palptr[19 * 4 + 3] = 0;
+
+				palptr[20 * 4 + 0] = 56;
+				palptr[20 * 4 + 1] = 40;
+				palptr[20 * 4 + 2] = 0;
+				palptr[20 * 4 + 3] = 0;
+
+				palptr[21 * 4 + 0] = 0;
+				palptr[21 * 4 + 1] = 0;
+				palptr[21 * 4 + 2] = 24;
+				palptr[21 * 4 + 3] = 0;
+
+				palptr[22 * 4 + 0] = 8;
+				palptr[22 * 4 + 1] = 16;
+				palptr[22 * 4 + 2] = 24;
+				palptr[22 * 4 + 3] = 0;
+
+				palptr[23 * 4 + 0] = 24;
+				palptr[23 * 4 + 1] = 32;
+				palptr[23 * 4 + 2] = 40;
+				palptr[23 * 4 + 3] = 0;
+
+				palptr[24 * 4 + 0] = 16;
+				palptr[24 * 4 + 1] = 24;
+				palptr[24 * 4 + 2] = 0;
+				palptr[24 * 4 + 3] = 0;
+
+				palptr[25 * 4 + 0] = 24;
+				palptr[25 * 4 + 1] = 8;
+				palptr[25 * 4 + 2] = 0;
+				palptr[25 * 4 + 3] = 0;
+
+				palptr[26 * 4 + 0] = 16;
+				palptr[26 * 4 + 1] = 16;
+				palptr[26 * 4 + 2] = 0;
+				palptr[26 * 4 + 3] = 0;
+
+				palptr[27 * 4 + 0] = 40;
+				palptr[27 * 4 + 1] = 40;
+				palptr[27 * 4 + 2] = 32;
+				palptr[27 * 4 + 3] = 0;
+
+				palptr[28 * 4 + 0] = 32;
+				palptr[28 * 4 + 1] = 32;
+				palptr[28 * 4 + 2] = 24;
+				palptr[28 * 4 + 3] = 0;
+
+				palptr[29 * 4 + 0] = 40;
+				palptr[29 * 4 + 1] = 0;
+				palptr[29 * 4 + 2] = 0;
+				palptr[29 * 4 + 3] = 0;
+
+				palptr[30 * 4 + 0] = 24;
+				palptr[30 * 4 + 1] = 24;
+				palptr[30 * 4 + 2] = 16;
+				palptr[30 * 4 + 3] = 0;
+
+				palptr[31 * 4 + 0] = 48;
+				palptr[31 * 4 + 1] = 48;
+				palptr[31 * 4 + 2] = 40;
+				palptr[31 * 4 + 3] = 0;
 			}
 		}
 	}
@@ -2004,9 +2088,10 @@ void AGOSEngine::vc34_setMouseOff() {
 }
 
 void AGOSEngine::vc35_clearWindow() {
-	/* unused */
-	_vcPtr += 4;
-	_vgaSpriteChanged++;
+	uint16 num = vcReadNextWord();
+	uint16 color = vcReadNextWord();
+
+	debug(0, "vc35_clearWindow: window %d color %d\n", num, color);
 }
 
 void AGOSEngine::vc36_setWindowImage() {

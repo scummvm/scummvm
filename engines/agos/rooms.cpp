@@ -86,7 +86,7 @@ uint16 AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
 	x = derefItem(g->dest[d]);
 	if (x == NULL)
 		return 0;
-	if (findChildOfType(x, 1))
+	if (isRoom(x))
 		return itemPtrToID(x);
 	if (x->state != 0)
 		return 0;
