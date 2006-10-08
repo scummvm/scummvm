@@ -128,17 +128,21 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	Common::String oldTheme = (_theme != 0) ? _theme->getStylefileName() : "";
 	delete _theme;
 
-	if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
-		if (0 == styleType.compareToIgnoreCase("classic"))
-			_theme = new ThemeClassic(_system, style, &cfg);
+	if (style.compareToIgnoreCase("classic") == 0) {
+		_theme = new ThemeClassic(_system);
+	} else {	
+		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
+			if (0 == styleType.compareToIgnoreCase("classic"))
+				_theme = new ThemeClassic(_system, style, &cfg);
 #ifndef DISABLE_FANCY_THEMES
-		else if (0 == styleType.compareToIgnoreCase("modern"))
-			_theme = new ThemeNew(_system, style, &cfg);
+			else if (0 == styleType.compareToIgnoreCase("modern"))
+				_theme = new ThemeNew(_system, style, &cfg);
 #endif
-		else
-			warning("Unsupported theme type '%s'", styleType.c_str());
-	} else {
-		warning("Config '%s' is NOT usable for themes or not found", style.c_str());
+			else
+				warning("Unsupported theme type '%s'", styleType.c_str());
+		} else {
+			warning("Config '%s' is NOT usable for themes or not found", style.c_str());
+		}
 	}
 	cfg.clear();
 

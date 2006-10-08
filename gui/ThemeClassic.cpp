@@ -37,10 +37,14 @@ ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const 
 #endif
 	_font = 0;
 
-	if (cfg)
-		_configFile = *cfg;
-	else
-		loadConfigFile(_stylefile);
+	// 'classic' is always the built in one, we force it and
+	// ignore all 'classic' named config files
+	if (config.compareToIgnoreCase("classic") != 0) {
+		if (cfg)
+			_configFile = *cfg;
+		else
+			loadConfigFile(_stylefile);
+	}
 }
 
 ThemeClassic::~ThemeClassic() {

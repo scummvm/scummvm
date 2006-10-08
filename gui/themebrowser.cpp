@@ -82,6 +82,13 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 
 void ThemeBrowser::updateListing() {
 	_themes.clear();
+	
+	// classic is always build in
+	Entry th;
+	th.name = "classic";
+	th.type = "classic";
+	th.file = "classic";
+	_themes.push_back(th);
 
 	if (ConfMan.hasKey("themepath"))
 		addDir(_themes, ConfMan.get("themepath"), 0);
