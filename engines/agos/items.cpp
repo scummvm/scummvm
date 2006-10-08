@@ -1094,7 +1094,6 @@ void AGOSEngine::o_getChildren() {
 	Item *i = getNextItemPtr();
 	if (getVarOrByte() == 1)
 		_subjectItem = derefItem(i->child);
-
 	else
 		_objectItem = derefItem(i->child);
 }
@@ -3212,7 +3211,7 @@ void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
 
 int16 AGOSEngine::levelOf(Item *item) {
 	SubPlayer *p = (SubPlayer *) findChildOfType(item, 3);
-	if(p == NULL)
+	if (p == NULL)
 		return 0;
 
 	return p->level;

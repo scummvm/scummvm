@@ -1899,8 +1899,8 @@ Item *AGOSEngine::derefItem(uint item) {
 Item *AGOSEngine::findInByClass(Item *i, int16 m) {
 	i = derefItem(i->child);
 
-	while(i) {
-		if(i->classFlags & m) {
+	while (i) {
+		if (i->classFlags & m) {
 			//_findNextPtr = derefItem(i->next);
 			return i;
 		}

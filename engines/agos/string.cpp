@@ -667,7 +667,7 @@ void AGOSEngine::printBox() {
 	loadSprite(3, 1, 100, 0, 0, 0);
 	changeWindow(5);
 
-	switch(BoxSize) {
+	switch (BoxSize) {
 	case 1: _textWindow->x = 10;
 		_textWindow->y = 163;
 		_textWindow->width = 20;

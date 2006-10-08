@@ -164,7 +164,7 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 	d = getBackExit(d);
 	d1 = d;
 	y = 0;
-	while(d > y) {
+	while (d > y) {
 		if (getDoorState(j, y) == 0)
 			d1--;
 		y++;
@@ -268,7 +268,7 @@ void AGOSEngine::moveDirn_ww(Item *i, uint x) {
 	if (d) {
 		n = getDoorState(derefItem(i->parent), x);
 		if (n == 1) {
-			if(!canPlace(i, d))
+			if (!canPlace(i, d))
 				setItemParent(i, d);
 		}
 	}
