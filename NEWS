@@ -8,6 +8,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  General:
    - Better compression for DXA movies.
+   - Added Dialog which allows the user to select the GUI theme on runtime.
 
  Broken Sword 1:
    - Added support for DXA cutscenes.
