@@ -125,6 +125,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 	_sDisplayName = String(str + offset, len);
 	_pFileLock = 0;
+	_bIsDirectory = false;
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
@@ -149,7 +150,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 			}
 			else {
-				_bIsDirectory = false;
+				//_bIsDirectory = false;
 				_bIsValid = true;
 			}			 
 		}
@@ -187,6 +188,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	}
 
 	_bIsValid =	false;
+	_bIsDirectory = false;
 
 	struct FileInfoBlock *fib = (struct	FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
@@ -206,7 +208,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 				_sPath += '/';
 		}
 		else {
-			_bIsDirectory = false;
+			//_bIsDirectory = false;
 			_bIsValid = true;
 		}		 
 	}
