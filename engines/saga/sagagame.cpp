@@ -86,7 +86,7 @@ static PanelButton ITE_ProtectionPanelButtons[] = {
 	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
 };*/
 
-static GameDisplayInfo ITE_DisplayInfo = {
+static const GameDisplayInfo ITE_DisplayInfo = {
 	320, 200,		// logical width&height
 
 	35,				// scene path y offset
@@ -150,7 +150,7 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	ITE_ProtectPanelButtons
 };
 
-static GameResourceDescription ITE_Resources = {
+static const GameResourceDescription ITE_Resources = {
 	RID_ITE_SCENE_LUT,  // Scene lookup table RN
 	RID_ITE_SCRIPT_LUT, // Script lookup table RN
 	RID_ITE_MAIN_PANEL,
@@ -163,7 +163,7 @@ static GameResourceDescription ITE_Resources = {
 	RID_ITE_ACTOR_NAMES
 };
 
-static GameResourceDescription ITEDemo_Resources = {
+static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_SCENE_LUT,  // Scene lookup table RN
 	RID_ITEDEMO_SCRIPT_LUT, // Script lookup table RN
 	RID_ITEDEMO_MAIN_PANEL,
@@ -177,19 +177,19 @@ static GameResourceDescription ITEDemo_Resources = {
 };
 
 // Inherit the Earth - DOS Demo version
-static ADGameFileDescription ITE_DEMO_G_GameFiles[] = {
+static const ADGameFileDescription ITE_DEMO_G_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932"},
 	//{"ite.dmo",	GAME_DEMOFILE},						"0b9a70eb4e120b6f00579b46c8cae29e"
 	{"scripts.rsc", GAME_SCRIPTFILE,					"d5697dd3240a3ceaddaa986c47e1a2d7"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0"}
 };
 
-static GameFontDescription ITEDEMO_GameFonts[] = {
+static const GameFontDescription ITEDEMO_GameFonts[] = {
 	{0},
 	{1}
 };
 
-static GameSoundInfo ITEDEMO_GameSound = {
+static const GameSoundInfo ITEDEMO_GameSound = {
 	kSoundVOC,
 	-1,
 	-1,
@@ -200,26 +200,26 @@ static GameSoundInfo ITEDEMO_GameSound = {
 
 // Inherit the Earth - Wyrmkeep Win32 Demo version
 
-static ADGameFileDescription ITE_WINDEMO2_GameFiles[] = {
+static const ADGameFileDescription ITE_WINDEMO2_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c"},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4"}
 };
 
-static ADGameFileDescription ITE_WINDEMO1_GameFiles[] = {
+static const ADGameFileDescription ITE_WINDEMO1_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a"},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3"}
 };
 
-static GameFontDescription ITEWINDEMO_GameFonts[] = {
+static const GameFontDescription ITEWINDEMO_GameFonts[] = {
 	{2},
 	{0}
 };
 
-static GameSoundInfo ITEWINDEMO1_GameSound = {
+static const GameSoundInfo ITEWINDEMO1_GameSound = {
 	kSoundPCM,
 	22050,
 	8,
@@ -228,7 +228,7 @@ static GameSoundInfo ITEWINDEMO1_GameSound = {
 	false
 };
 
-static GameSoundInfo ITEWINDEMO2_GameVoice = {
+static const GameSoundInfo ITEWINDEMO2_GameVoice = {
 	kSoundVOX,
 	22050,
 	16,
@@ -237,7 +237,7 @@ static GameSoundInfo ITEWINDEMO2_GameVoice = {
 	true
 };
 
-static GameSoundInfo ITEWINDEMO2_GameSound = {
+static const GameSoundInfo ITEWINDEMO2_GameSound = {
 	kSoundPCM,
 	22050,
 	16,
@@ -247,7 +247,7 @@ static GameSoundInfo ITEWINDEMO2_GameSound = {
 };
 
 // Inherit the Earth - Wyrmkeep Mac Demo version
-static ADGameFileDescription ITE_MACDEMO2_GameFiles[] = {
+static const ADGameFileDescription ITE_MACDEMO2_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c"},
@@ -255,7 +255,7 @@ static ADGameFileDescription ITE_MACDEMO2_GameFiles[] = {
 	{"musicd.rsc",		GAME_MUSICFILE,		"495bdde51fd9f4bea2b9c911091b1ab2"}
 };
 
-static ADGameFileDescription ITE_MACDEMO1_GameFiles[] = {
+static const ADGameFileDescription ITE_MACDEMO1_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c"},
@@ -263,7 +263,7 @@ static ADGameFileDescription ITE_MACDEMO1_GameFiles[] = {
 	{"musicd.rsc",		GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f"}
 };
 
-static GameSoundInfo ITEMACDEMO_GameVoice = {
+static const GameSoundInfo ITEMACDEMO_GameVoice = {
 	kSoundVOX,
 	22050,
 	16,
@@ -272,7 +272,7 @@ static GameSoundInfo ITEMACDEMO_GameVoice = {
 	true
 };
 
-static GameSoundInfo ITEMACDEMO_GameSound = {
+static const GameSoundInfo ITEMACDEMO_GameSound = {
 	kSoundPCM,
 	22050,
 	16,
@@ -281,7 +281,7 @@ static GameSoundInfo ITEMACDEMO_GameSound = {
 	true
 };
 
-static GameSoundInfo ITEMACDEMO_GameMusic = {
+static const GameSoundInfo ITEMACDEMO_GameMusic = {
 	kSoundPCM,
 	11025,
 	16,
@@ -291,7 +291,7 @@ static GameSoundInfo ITEMACDEMO_GameMusic = {
 };
 
 // Inherit the Earth - Wyrmkeep Linux Demo version
-static ADGameFileDescription ITE_LINDEMO_GameFiles[] = {
+static const ADGameFileDescription ITE_LINDEMO_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c"},
@@ -299,7 +299,7 @@ static ADGameFileDescription ITE_LINDEMO_GameFiles[] = {
 	{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"}
 };
 
-static GameSoundInfo ITELINDEMO_GameMusic = {
+static const GameSoundInfo ITELINDEMO_GameMusic = {
 	kSoundPCM,
 	11025,
 	16,
@@ -310,7 +310,7 @@ static GameSoundInfo ITELINDEMO_GameMusic = {
 
 // Inherit the Earth - Wyrmkeep Linux version
 
-static ADGameFileDescription ITE_LINCD_GameFiles[] = {
+static const ADGameFileDescription ITE_LINCD_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
@@ -324,7 +324,7 @@ static ADGameFileDescription ITE_LINCD_GameFiles[] = {
 // modified to include the Wyrmkeep changes. The resource files are little-
 // endian, except for the voice file which is big-endian.
 
-static ADGameFileDescription ITE_MULTICD_GameFiles[] = {
+static const ADGameFileDescription ITE_MULTICD_GameFiles[] = {
 	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9"},
 	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",					GAME_SOUNDFILE,						"e2ccb61c325d6d1ead3be0e731fe29fe"},
@@ -332,7 +332,7 @@ static ADGameFileDescription ITE_MULTICD_GameFiles[] = {
 	{"music.rsc",					GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"}
 };
 
-static ADGameFileDescription ITE_MACCD_G_GameFiles[] = {
+static const ADGameFileDescription ITE_MACCD_G_GameFiles[] = {
 	{"ite resources.bin",	GAME_RESOURCEFILE | GAME_MACBINARY,	"0bd506aa887bfc7965f695c6bd28237d"},
 	{"ite scripts.bin",		GAME_SCRIPTFILE | GAME_MACBINARY,	"af0d7a2588e09ad3ecbc5b474ea238bf"},
 	{"ite sounds.bin",		GAME_SOUNDFILE | GAME_MACBINARY,	"441426c6bb2a517f65c7e49b57f7a345"},
@@ -340,7 +340,7 @@ static ADGameFileDescription ITE_MACCD_G_GameFiles[] = {
 	{"ite voices.bin",		GAME_VOICEFILE | GAME_MACBINARY,	"dba92ae7d57e942250fe135609708369"}
 };
 
-static GameSoundInfo ITEMACCD_G_GameSound = {
+static const GameSoundInfo ITEMACCD_G_GameSound = {
 	kSoundMacPCM,
 	22050,
 	8,
@@ -350,7 +350,7 @@ static GameSoundInfo ITEMACCD_G_GameSound = {
 };
 
 // Inherit the Earth - Mac Wyrmkeep version
-static ADGameFileDescription ITE_MACCD_GameFiles[] = {
+static const ADGameFileDescription ITE_MACCD_GameFiles[] = {
 	{"ite.rsc",						GAME_RESOURCEFILE,	"4f7fa11c5175980ed593392838523060"},
 	{"scripts.rsc",					GAME_SCRIPTFILE,	"adf1f46c1d0589083996a7060c798ad0"},
 	{"sounds.rsc",					GAME_SOUNDFILE,		"95863b89a0916941f6c5e1789843ba14"},
@@ -358,7 +358,7 @@ static ADGameFileDescription ITE_MACCD_GameFiles[] = {
 	{"music.rsc",					GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f"}
 };
 
-static GameSoundInfo ITEMACCD_GameSound = {
+static const GameSoundInfo ITEMACCD_GameSound = {
 	kSoundPCM,
 	22050,
 	16,
@@ -367,7 +367,7 @@ static GameSoundInfo ITEMACCD_GameSound = {
 	true
 };
 
-static GameSoundInfo ITEMACCD_GameMusic = {
+static const GameSoundInfo ITEMACCD_GameMusic = {
 	kSoundPCM,
 	11025,
 	16,
@@ -377,39 +377,39 @@ static GameSoundInfo ITEMACCD_GameMusic = {
 };
 
 // Inherit the Earth - Diskette version
-static ADGameFileDescription ITE_DISK_DE_GameFiles[] = {
+static const ADGameFileDescription ITE_DISK_DE_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"0c9113e630f97ef0996b8c3114badb08"}
 };
 
-static ADGameFileDescription ITE_DISK_G_GameFiles[] = {
+static const ADGameFileDescription ITE_DISK_G_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d"}
 };
 
-static ADGameFileDescription ITE_DISK_DE2_GameFiles[] = {
+static const ADGameFileDescription ITE_DISK_DE2_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"0c9113e630f97ef0996b8c3114badb08"},
 	{"music.rsc",	GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"}
 };
 
-static ADGameFileDescription ITE_DISK_G2_GameFiles[] = {
+static const ADGameFileDescription ITE_DISK_G2_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d"},
 	{"music.rsc",	GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"}
 };
 
-static GameFontDescription ITEDISK_GameFonts[] = {
+static const GameFontDescription ITEDISK_GameFonts[] = {
 	{2},
 	{0},
 	{1}
 };
 
-static GameSoundInfo ITEDISK_GameSound = {
+static const GameSoundInfo ITEDISK_GameSound = {
 	kSoundVOC,
 	-1,
 	-1,
@@ -419,14 +419,14 @@ static GameSoundInfo ITEDISK_GameSound = {
 };
 
 // Inherit the Earth - CD Enhanced version
-static ADGameFileDescription ITE_WINCD_GameFiles[] = {
+static const ADGameFileDescription ITE_WINCD_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
 	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"}
 };
 
-static ADGameFileDescription ITE_CD_G_GameFiles[] = {
+static const ADGameFileDescription ITE_CD_G_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
@@ -434,14 +434,14 @@ static ADGameFileDescription ITE_CD_G_GameFiles[] = {
 };
 
 // reported by mld. Bestsellergamers cover disk
-static ADGameFileDescription ITE_CD_DE_GameFiles[] = {
+static const ADGameFileDescription ITE_CD_DE_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
 	{"voices.rsc",	GAME_VOICEFILE,		"2fbad5d10b9b60a3415dc4aebbb11718"}
 };
 
-static ADGameFileDescription ITE_CD_GameFiles[] = {
+static const ADGameFileDescription ITE_CD_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
@@ -449,7 +449,7 @@ static ADGameFileDescription ITE_CD_GameFiles[] = {
 };
 
 
-static ADGameFileDescription ITE_CD_G2_GameFiles[] = {
+static const ADGameFileDescription ITE_CD_G2_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
@@ -457,7 +457,7 @@ static ADGameFileDescription ITE_CD_G2_GameFiles[] = {
 	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"}
 };
 
-static ADGameFileDescription ITE_CD_DE2_GameFiles[] = {
+static const ADGameFileDescription ITE_CD_DE2_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
@@ -466,13 +466,13 @@ static ADGameFileDescription ITE_CD_DE2_GameFiles[] = {
 };
 
 
-static GameFontDescription ITECD_GameFonts[] = {
+static const GameFontDescription ITECD_GameFonts[] = {
 	{2},
 	{0},
 	{1}
 };
 
-static GameSoundInfo ITECD_GameSound = {
+static const GameSoundInfo ITECD_GameSound = {
 	kSoundPCM,
 	22050,
 	16,
@@ -481,7 +481,7 @@ static GameSoundInfo ITECD_GameSound = {
 	true
 };
 
-static GamePatchDescription ITEWinPatch1_Files[] = {
+static const GamePatchDescription ITEWinPatch1_Files[] = {
 	{ "cave.mid", GAME_RESOURCEFILE, 9, NULL},
 	{ "intro.mid", GAME_RESOURCEFILE, 10, NULL},
 	{ "fvillage.mid", GAME_RESOURCEFILE, 11, NULL},
@@ -519,7 +519,7 @@ static GamePatchDescription ITEWinPatch1_Files[] = {
 	{ "p2_a.voc", GAME_VOICEFILE, 4, NULL}
 };
 
-static GamePatchDescription ITEWinPatch2_Files[] = {
+static const GamePatchDescription ITEWinPatch2_Files[] = {
 	{ "cave.mid", GAME_RESOURCEFILE, 9, NULL},
 	{ "intro.mid", GAME_RESOURCEFILE, 10, NULL},
 	{ "fvillage.mid", GAME_RESOURCEFILE, 11, NULL},
@@ -542,7 +542,7 @@ static GamePatchDescription ITEWinPatch2_Files[] = {
 	tycho.bbm*/
 };
 
-static GamePatchDescription ITEMacPatch_Files[] = {
+static const GamePatchDescription ITEMacPatch_Files[] = {
 	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
 	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
 	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
@@ -553,7 +553,7 @@ static GamePatchDescription ITEMacPatch_Files[] = {
 	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITEMACCD_GameSound}
 };
 
-static GamePatchDescription ITELinPatch_Files[] = {
+static const GamePatchDescription ITELinPatch_Files[] = {
 	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
 	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
 	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
@@ -615,7 +615,7 @@ static PanelButton IHNM_SavePanelButtons[] = {
 };
 
 
-static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
+static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	640, 480,	// logical width&height
 
 	0,			// scene path y offset
@@ -681,7 +681,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	IHNM_SavePanelButtons
 };
 
-static GameResourceDescription IHNM_Resources = {
+static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
 	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
 	RID_IHNM_MAIN_PANEL,
@@ -695,7 +695,7 @@ static GameResourceDescription IHNM_Resources = {
 };
 
 // I Have No Mouth and I Must Scream - Demo version
-static ADGameFileDescription IHNM_DEMO_GameFiles[] = {
+static const ADGameFileDescription IHNM_DEMO_GameFiles[] = {
 	{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6"},
 	{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a"},
 	{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269"},
@@ -704,7 +704,7 @@ static ADGameFileDescription IHNM_DEMO_GameFiles[] = {
 
 // I Have No Mouth and I Must Scream - Retail CD version
 
-static ADGameFileDescription IHNM_CD_GameFiles[] = {
+static const ADGameFileDescription IHNM_CD_GameFiles[] = {
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52"},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583"},
 	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6"},
@@ -720,7 +720,7 @@ static ADGameFileDescription IHNM_CD_GameFiles[] = {
 	{"voices6.res",	GAME_VOICEFILE,						"f580ed7568c7d6ef34e934ba20adf834"}
 };
 
-static ADGameFileDescription IHNM_CD_ES_GameFiles[] = {
+static const ADGameFileDescription IHNM_CD_ES_GameFiles[] = {
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52"},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583"},
 	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224"},
@@ -736,7 +736,7 @@ static ADGameFileDescription IHNM_CD_ES_GameFiles[] = {
 	{"voices6.res",	GAME_VOICEFILE,						"96c9bda9a5f41d6bc232ed7bf6d371d9"}
 };
 
-static ADGameFileDescription IHNM_CD_RU_GameFiles[] = {
+static const ADGameFileDescription IHNM_CD_RU_GameFiles[] = {
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52"},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583"},
 	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6"},
@@ -755,7 +755,7 @@ static ADGameFileDescription IHNM_CD_RU_GameFiles[] = {
 // I Have No Mouth and I Must Scream - Censored CD version (without Nimdok)
 
 // Reported by mld. German Retail
-static ADGameFileDescription IHNM_CD_DE_GameFiles[] = {
+static const ADGameFileDescription IHNM_CD_DE_GameFiles[] = {
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52"},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583"},
 	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224"},
@@ -770,7 +770,7 @@ static ADGameFileDescription IHNM_CD_DE_GameFiles[] = {
 	{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4"}
 };
 
-static ADGameFileDescription IHNM_CD_FR_GameFiles[] = {
+static const ADGameFileDescription IHNM_CD_FR_GameFiles[] = {
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52"},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583"},
 	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224"},
@@ -785,13 +785,13 @@ static ADGameFileDescription IHNM_CD_FR_GameFiles[] = {
 	{"voices6.res",	GAME_VOICEFILE,						"3fc5358a5d8eee43bdfab2740276572e"}
 };
 
-static GameFontDescription IHNMDEMO_GameFonts[] = {
+static const GameFontDescription IHNMDEMO_GameFonts[] = {
 	{2},
 	{3},
 	{4}
 };
 
-static GameFontDescription IHNMCD_GameFonts[] = {
+static const GameFontDescription IHNMCD_GameFonts[] = {
 	{2},
 	{3},
 	{4},
@@ -801,7 +801,7 @@ static GameFontDescription IHNMCD_GameFonts[] = {
 	{8}   // kIHNMMainFont
 };
 
-static GameSoundInfo IHNM_GameSound = {
+static const GameSoundInfo IHNM_GameSound = {
 	kSoundWAV,
 	-1,
 	-1,
@@ -812,7 +812,7 @@ static GameSoundInfo IHNM_GameSound = {
 
 #define FILE_MD5_BYTES 5000
 
-static SAGAGameDescription gameDescriptions[] = {
+static const SAGAGameDescription gameDescriptions[] = {
 	// Inherit the earth - DOS Demo version
 	// sound unchecked
 	{

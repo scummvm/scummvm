@@ -40,9 +40,9 @@ namespace Saga {
 struct PatchData {
 	bool _deletePatchFile;
 	Common::File *_patchFile;
-	GamePatchDescription *_patchDescription;
+	const GamePatchDescription *_patchDescription;
 
-	PatchData(GamePatchDescription *patchDescription): _patchDescription(patchDescription), _deletePatchFile(true) {
+	PatchData(const GamePatchDescription *patchDescription): _patchDescription(patchDescription), _deletePatchFile(true) {
 		_patchFile = new Common::File();
 	}
 	PatchData(Common::File *patchFile): _patchDescription(NULL), _patchFile(patchFile), _deletePatchFile(false) {

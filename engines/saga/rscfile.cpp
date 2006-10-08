@@ -261,7 +261,7 @@ bool Resource::loadMacContext(ResourceContext *context) {
 bool Resource::loadContext(ResourceContext *context) {
 	size_t i;
 	int j;
-	GamePatchDescription *patchDescription;
+	const GamePatchDescription *patchDescription;
 	ResourceData *resourceData;
 	uint16 subjectResourceType;
 	ResourceContext *subjectContext;

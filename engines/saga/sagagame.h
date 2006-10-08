@@ -323,7 +323,7 @@ struct GamePatchDescription {
 	const char *fileName;
 	uint16 fileType;
 	uint32 resourceId;
-	GameSoundInfo *soundInfo;
+	const GameSoundInfo *soundInfo;
 };
 
 struct SAGAGameDescription {
@@ -332,16 +332,16 @@ struct SAGAGameDescription {
 	int gameType;
 	int gameId;
 	uint32 features;
-	GameDisplayInfo *gameDisplayInfo;
+	const GameDisplayInfo *gameDisplayInfo;
 	int startSceneNumber;
-	GameResourceDescription *resourceDescription;
+	const GameResourceDescription *resourceDescription;
 	int fontsCount;
-	GameFontDescription *fontDescriptions;
-	GameSoundInfo *voiceInfo;
-	GameSoundInfo *sfxInfo;
-	GameSoundInfo *musicInfo;
+	const GameFontDescription *fontDescriptions;
+	const GameSoundInfo *voiceInfo;
+	const GameSoundInfo *sfxInfo;
+	const GameSoundInfo *musicInfo;
 	int patchesCount;
-	GamePatchDescription *patchDescriptions;
+	const GamePatchDescription *patchDescriptions;
 };
 
 #define FILE_MD5_BYTES 5000

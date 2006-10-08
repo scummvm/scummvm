@@ -360,7 +360,7 @@ public:
 
 //current game description
 	int _gameNumber;
-	SAGAGameDescription *_gameDescription;
+	const SAGAGameDescription *_gameDescription;
 	Common::String _gameTitle;
 	Common::Rect _displayClip;
 
