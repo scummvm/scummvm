@@ -899,6 +899,11 @@ void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 					color ^= 2;
 					src[i] = color;
 				}
+			} else if (getGameType() == GType_ELVIRA2)  {
+				if (!(color & 1)) {
+					color ^= 2;
+					src[i] = color;
+				}
 			} else {
 				if (a >= color && b < color) {
 					if (c >= color)
