@@ -982,6 +982,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			break;
 		case TYPE_SKIP:
 			_vm->_insane->procSKIP(*sub);
+			break;
 		case TYPE_TEXT:
 			handleTextResource(*sub);
 			break;
