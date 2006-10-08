@@ -693,7 +693,7 @@ static AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"elvira1",
-			"Floppy",
+			"Demo",
 			ARRAYSIZE(ELVIRA1AMIGADEMO_GameFiles),
 			ELVIRA1AMIGADEMO_GameFiles,
 			Common::EN_ANY,
@@ -721,14 +721,14 @@ static AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE,
 	},
 
-	// Elvira - English DOS Floppy Alternative?
+	// Elvira - French DOS Floppy
 	{
 		{
 			"elvira1",
 			"Floppy",
 			ARRAYSIZE(ELVIRA1DOS2_GameFiles),
 			ELVIRA1DOS2_GameFiles,
-			Common::EN_ANY,
+			Common::FR_FRA,
 			Common::kPlatformPC,
 		},
 
