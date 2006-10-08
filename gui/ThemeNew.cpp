@@ -365,6 +365,16 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetB
 		end = kEditTextBackgroundEnd;
 		factor = kEditTextFactor;
 		break;
+	case kWidgetBackgroundSlider:
+		corner = kSliderBkgdCorner;
+		top = kSliderBkgdTop;
+		left = kSliderBkgdLeft;
+		bkgd = kSliderBkgd;
+		shadow = kShadowEmboss;
+		start = kSliderBackgroundStart;
+		end = kSliderBackgroundEnd;
+		factor = kSliderFactor;
+		break;
 	default:
 		corner = kWidgetBkgdCorner;
 		top = kWidgetBkgdTop;
@@ -495,7 +505,7 @@ void ThemeNew::drawSlider(const Common::Rect &rr, int width, State state) {
 	r.left++;
 	r.right++;
 
-	drawWidgetBackground(r, THEME_HINT_USE_SHADOW, kWidgetBackgroundEditText, kStateEnabled);
+	drawWidgetBackground(r, THEME_HINT_USE_SHADOW, kWidgetBackgroundSlider, kStateEnabled);
 
 	Common::Rect r2 = r;
 	r2.left = r.left;

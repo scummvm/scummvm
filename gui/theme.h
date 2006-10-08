@@ -87,7 +87,8 @@ public:
 		kWidgetBackgroundPlain,
 		kWidgetBackgroundBorder,
 		kWidgetBackgroundBorderSmall,
-		kWidgetBackgroundEditText
+		kWidgetBackgroundEditText,
+		kWidgetBackgroundSlider
 	};
 
 	enum State {
