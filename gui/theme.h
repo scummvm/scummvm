@@ -302,6 +302,7 @@ private:
 
 	void blendScreenToDialog();
 #endif
+	bool _enableBlending;
 
 	bool _forceRedraw;
 	bool _initOk;

@@ -22,10 +22,11 @@
 #include "gui/theme.h"
 #include "gui/eval.h"
 
-#define THEME_VERSION 1
+#define THEME_VERSION 2
 
 namespace GUI {
 ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const Common::ConfigFile *cfg) : Theme() {
+	_enableBlending = true;
 	_stylefile = config;
 	_system = system;
 	_initOk = false;
@@ -487,7 +488,7 @@ void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 #ifdef CT_NO_TRANSPARENCY
 	_screen.fillRect(r, _bgcolor);
 #else
-	if (_dialog) {
+	if (_dialog && _enableBlending) {
 		if (!_dialog->screen.pixels) {
 			_screen.fillRect(r, _bgcolor);
 			return;
@@ -580,7 +581,7 @@ OverlayColor ThemeClassic::getColor(State state) {
 void ThemeClassic::blendScreenToDialog() {
 	Common::Rect rect(0, 0, _screen.w, _screen.h);
 
-	if (!rect.isValidRect())
+	if (!rect.isValidRect() || !_enableBlending)
 		return;
 
 	if (_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
@@ -694,6 +695,8 @@ bool ThemeClassic::loadConfig() {
 		_font = loadFont(temp.c_str());
 		_fontName = temp;
 	}
+
+	_enableBlending = (_evaluator->getVar("blending") != 0);
 
 	return true;
 }
