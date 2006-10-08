@@ -43,6 +43,9 @@
 #elif defined(__PSP__)
 #define	SAMPLES_PER_SEC	44100
 
+#elif defined(__GP2X__)
+#define	SAMPLES_PER_SEC	11025
+
 #elif defined(PALMOS_MODE)
 #	ifdef PALMOS_ARM
 #		ifdef COMPILE_ZODIAC

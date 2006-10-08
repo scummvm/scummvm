@@ -1,0 +1,5 @@
+# Build settings for the GP2X backend
+MODULES  += backends/gp2x
+DEFINES  += -DUNIX -DGP2X
+INCLUDES += `sdl-config --cflags`
+LIBS     += `sdl-config --libs`

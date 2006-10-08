@@ -286,7 +286,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, gp2x, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -510,6 +510,10 @@ ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=ppc
 	;;
+gp2x)
+	_host_os=gp2x-linux
+	_host_cpu=arm
+	;;
 *)
 	guessed_host=`$_srcdir/config.guess`
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
@@ -527,6 +531,9 @@ mingw* | cygwin* | os2-emx*)
 	;;
 arm-riscos)
 	EXEEXT=",ff8"
+	;;
+gp2x-linux)
+	EXEEXT=".gpe"
 	;;
 *)
 	EXEEXT=""
@@ -766,6 +773,18 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			;;
+ 		gp2x)
+ 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+ 			DEFINES="$DEFINES -DUNIX -DGP2X"
+ 			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
+ 			_def_align='#define SCUMM_NEED_ALIGNMENT'
+ 			type_1_byte='char'
+ 			type_2_byte='short'
+ 			type_4_byte='int'
+ 			_backend="gp2x"
+ 			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
+ 			_build_hq_scalers="no"
+ 			;;
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_def_endianness='#define SCUMM_BIG_ENDIAN'
@@ -1342,6 +1361,14 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
 		LIBS="$LIBS `$_sdlconfig --libs`"
 		MODULES="$MODULES backends/sdl"
+		;;
+	gp2x)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
+		LIBS="$LIBS `$_sdlconfig --libs`"
+		LDFLAGS="$LDFLAGS -static"
+		CXXFLAGS="$CXXFLAGS -march=armv4t"
+		MODULES="$MODULES backends/gp2x"
 		;;
 	x11)
 		INCLUDES="$INCLUDES -I/usr/X11R6/include"
