@@ -25,8 +25,8 @@
 #define THEME_VERSION 1
 
 namespace GUI {
-ThemeClassic::ThemeClassic(OSystem *system) : Theme() {
-	_stylefile = "classic";
+ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const Common::ConfigFile *cfg) : Theme() {
+	_stylefile = config;
 	_system = system;
 	_initOk = false;
 	_font = 0;
@@ -37,7 +37,10 @@ ThemeClassic::ThemeClassic(OSystem *system) : Theme() {
 #endif
 	_font = 0;
 
-	loadConfigFile(_stylefile);
+	if (cfg)
+		_configFile = *cfg;
+	else
+		loadConfigFile(_stylefile);
 }
 
 ThemeClassic::~ThemeClassic() {
@@ -625,8 +628,8 @@ void ThemeClassic::blendScreenToDialog() {
 
 void ThemeClassic::setupConfig() {
 	if (_configFile.hasSection("theme")) {
-		loadConfig();
-		return;
+		if (loadConfig())
+			return;
 	}
 
 	static const uint8 colors[][3] = {
@@ -646,6 +649,10 @@ bool ThemeClassic::loadConfig() {
 	if (atoi(temp.c_str()) != THEME_VERSION) {
 		// TODO: improve this detection and handle it nicer
 		warning("Theme config uses a different version (you have: '%s', needed is: '%d')", temp.c_str(), THEME_VERSION);
+		_configFile.clear();
+
+		// force a theme reload here
+		loadTheme(_defaultConfig);
 		return false;
 	}
 
@@ -653,6 +660,10 @@ bool ThemeClassic::loadConfig() {
 	_configFile.getKey("type", "theme", temp);
 	if (0 != temp.compareToIgnoreCase("classic")) {
 		warning("Theme config is not for the classic style theme");
+		_configFile.clear();
+
+		// force a theme reload here
+		loadTheme(_defaultConfig);
 		return false;
 	}
 

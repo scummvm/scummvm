@@ -85,6 +85,7 @@ void GuiObject::reflowLayout() {
 // Constructor
 NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	_theme = 0;
 
 	_system = g_system;
 	_lastScreenChangeID = _system->getScreenChangeID();
@@ -99,17 +100,28 @@ NewGui::NewGui() : _needRedraw(false),
 	ConfMan.registerDefault("gui_theme", "default");
 	Common::String style(ConfMan.get("gui_theme"));
 	// The default theme for now is the 'modern' theme.
-	if (scumm_stricmp(style.c_str(), "default") == 0)
+	if (style.compareToIgnoreCase("default") == 0)
 		style = "modern";
 
-	if (scumm_stricmp(style.c_str(), "classic") == 0) {
-#endif
-		_theme = new ThemeClassic(_system);
-#ifndef DISABLE_FANCY_THEMES
+	Common::String styleType;
+	Common::ConfigFile cfg;
+
+	if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
+		if (0 == styleType.compareToIgnoreCase("classic"))
+			_theme = new ThemeClassic(_system, style, &cfg);
+		else if (0 == styleType.compareToIgnoreCase("modern"))
+			_theme = new ThemeNew(_system, style, &cfg);
+		else
+			warning("Unsupported theme type '%s'", styleType.c_str());
 	} else {
-		_theme = new ThemeNew(_system, style.c_str());
+		warning("Config '%s' is NOT usable for themes or not found", style.c_str());
 	}
+	cfg.clear();
 #endif
+	
+	if (!_theme)
+		_theme = new ThemeClassic(_system);
+
 	assert(_theme);
 
 	// Init the theme

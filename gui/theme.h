@@ -212,6 +212,7 @@ public:
 
 	Eval *_evaluator;
 
+	static bool themeConfigUseable(const String &file, const String &style="", String *cStyle=0, Common::ConfigFile *cfg=0);
 protected:
 	bool loadConfigFile(const String &file);
 	void getColorFromConfig(const String &name, OverlayColor &col);
@@ -236,7 +237,7 @@ private:
 
 class ThemeClassic : public Theme {
 public:
-	ThemeClassic(OSystem *system);
+	ThemeClassic(OSystem *system, const Common::String &config = "classic", const Common::ConfigFile *cfg = 0);
 	virtual ~ThemeClassic();
 
 	bool init();
@@ -329,7 +330,7 @@ private:
 class ThemeNew : public Theme {
 	typedef Common::String String;
 public:
-	ThemeNew(OSystem *system, const String &stylefile);
+	ThemeNew(OSystem *system, const String &stylefile, const Common::ConfigFile *cfg = 0);
 	virtual ~ThemeNew();
 
 	bool init();

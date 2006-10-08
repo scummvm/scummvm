@@ -187,4 +187,70 @@ bool Theme::loadConfigFile(const String &stylefile) {
 	return true;
 }
 
+bool Theme::themeConfigUseable(const String &stylefile, const String &style, String *cStyle, Common::ConfigFile *cfg) {
+	if (ConfMan.hasKey("themepath"))
+		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+
+#ifdef DATA_PATH
+	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
+#endif
+
+	if (ConfMan.hasKey("extrapath"))
+		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+
+	Common::File file;
+	Common::ConfigFile configFile;
+	if (!cfg && (cStyle || !style.empty()))
+		cfg = &configFile;
+
+	if (!file.open(stylefile + ".ini")) {
+#ifdef USE_ZLIB
+		// Maybe find a nicer solution to this
+		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
+		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
+			if (!style.empty() || cStyle || cfg) {
+				unz_file_info fileInfo;
+				unzOpenCurrentFile(zipFile);
+				unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+				uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+				assert(buffer);
+				memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+				unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+				unzCloseCurrentFile(zipFile);
+				Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+				if (!cfg->loadFromStream(stream)) {
+					unzClose(zipFile);
+					return false;
+				}
+				delete [] buffer;
+				buffer = 0;
+			}
+		} else {
+			unzClose(zipFile);
+			return false;
+		}
+		unzClose(zipFile);
+#else
+		return false;
+#endif
+	}
+
+	if (!style.empty() || cStyle || cfg) {
+		if (file.isOpen()) {
+			if (!cfg->loadFromStream(file))
+				return false;
+			file.close();
+		}
+
+		Common::String temp;
+		cfg->getKey("type", "theme", temp);
+		if (cStyle)
+			*cStyle = temp;
+		if (0 != temp.compareToIgnoreCase(style) && !style.empty())
+			return false;
+	}
+
+	return true;
+}
+
 } // End of namespace GUI
