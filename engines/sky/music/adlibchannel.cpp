@@ -86,7 +86,10 @@ bool AdlibChannel::isActive(void) {
 
 void AdlibChannel::updateVolume(uint16 pVolume) {
 
-	_musicVolume = pVolume * 3;
+	pVolume = (pVolume * 3) >> 1;
+	if (pVolume > 0x7F)
+		pVolume = 0x7F;
+	_musicVolume = pVolume | 128;
 }
 
 /*	This class uses the same area for the register mirror as the original
