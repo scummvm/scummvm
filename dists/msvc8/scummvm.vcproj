@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -310,6 +310,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\func.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\hash-str.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\hashmap.cpp"
 				>
 			</File>
@@ -335,6 +343,14 @@
 			</File>
 			<File
 				RelativePath="..\..\common\mutex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\pack-end.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\pack-start.h"
 				>
 			</File>
 			<File
@@ -805,14 +821,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\Actions.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\Actions.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\browser.cpp"
 				>
 			</File>
@@ -988,6 +996,10 @@
 		<Filter
 			Name="graphics"
 			>
+			<File
+				RelativePath="..\..\graphics\colormasks.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\graphics\cursorman.cpp"
 				>

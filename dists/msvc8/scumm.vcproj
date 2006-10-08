@@ -379,6 +379,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\he\sound_he.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\he\sprite_he.cpp"
 				>
 			</File>
