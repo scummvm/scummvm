@@ -615,7 +615,7 @@ uint16 AGOSEngine::getBoxSize() {
 uint16 AGOSEngine::checkFit(char *Ptr, int width, int lines) {
 	int countw = 0;
 	int countl = 0;
-	char *x;
+	char *x = NULL;
 	while (*Ptr) {
 		if (*Ptr == '\n')
 			return 1;
