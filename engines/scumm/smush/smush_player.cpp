@@ -432,12 +432,21 @@ void SmushPlayer::handleFetch(Chunk &b) {
 
 void SmushPlayer::handleIACT(Chunk &b) {
 	checkBlock(b, TYPE_IACT, 8);
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleImuseAction()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::IACT()");
 
-	/* int code = */ b.getWord();
+	int code = b.getWord();
 	int flags = b.getWord();
 	int unknown = b.getShort();
 	int track_flags = b.getWord();
+
+	if ((code != 8) && (flags != 46)) {
+		_vm->_insane->procIACT(_dst, 0, 0, 0, b, 0, 0, code, flags, unknown, track_flags);
+		return;
+	}
+
+	if (_compressedFileMode) {
+		return;
+	}
 
 	assert(flags == 46 && unknown == 0);
 	int track_id = b.getWord();
@@ -973,13 +982,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleDeltaPalette(*sub);
 			break;
 		case TYPE_IACT:
-			// FIXME: check parameters
-			if (_insanity)
-				_vm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
-			else {
-				if (!_compressedFileMode)
-					handleIACT(*sub);
-			}
+			handleIACT(*sub);
 			break;
 		case TYPE_STOR:
 			handleStore(*sub);

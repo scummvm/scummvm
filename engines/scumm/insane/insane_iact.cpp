@@ -36,44 +36,39 @@
 namespace Scumm {
 
 void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	if (_keyboardDisable)
 		return;
 
 	switch (_currSceneId) {
 	case 1:
-		iactScene1(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags);
+		iactScene1(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
 	case 3:
 	case 13:
-		iactScene3(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags);
+		iactScene3(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
 	case 4:
 	case 5:
-		iactScene4(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags);
+		iactScene4(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
 	case 6:
-		iactScene6(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags);
+		iactScene6(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
 	case 17:
-		iactScene17(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags);
+		iactScene17(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
 	case 21:
-		iactScene21(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags);
+		iactScene21(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
 	}
 }
 
 void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
-	_player->checkBlock(b, TYPE_IACT, 8);
-
-	int16 par1, par2, par3, par4, par5, par6, par7, par9, par11, par13, tmp;
-
-	par1 = b.getWord(); // cx
-	par2 = b.getWord(); // dx
-	par3 = b.getWord(); // si
-	par4 = b.getWord(); // bx
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int16 par1, int16 par2, int16 par3, int16 par4) {
+	int16 par5, par6, par7, par9, par11, par13, tmp;
 
 	switch (par1) {
 	case 2: // PATCH
@@ -298,16 +293,11 @@ void Insane::removeEnemyFromMetList(int32 enemy1) {
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
-	_player->checkBlock(b, TYPE_IACT, 8);
-
-	int command, par1, par2, par3, tmp;
-	command = b.getWord();
-	par1 = b.getWord();
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int16 command, int16 par1, int16, int16) {
+	int par2, par3;
 	if (command == 6) {
 		if (par1 == 9) {
-			tmp = b.getWord();  // ptr + 4
-			tmp = b.getWord();  // ptr + 6
 			par2 = b.getWord(); // ptr + 8
 			par3 = b.getWord(); // ptr + 10
 
@@ -326,15 +316,9 @@ void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
-	_player->checkBlock(b, TYPE_IACT, 8);
-
-	int16 par1, par2, par3, par4, par5;
-
-	par1 = b.getWord(); // edx
-	par2 = b.getWord(); // bx
-	par3 = b.getWord();
-	par4 = b.getWord(); // cx
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int16 par1, int16 par2, int16 par3, int16 par4) {
+	int16 par5;
 
 	switch (par1) {
 	case 2:
@@ -408,15 +392,9 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
-	_player->checkBlock(b, TYPE_IACT, 8);
-
-	int16 par1, par2, par3, par4, par5;
-
-	par1 = b.getWord();
-	par2 = b.getWord(); // bx
-	par3 = b.getWord();
-	par4 = b.getWord();
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int16 par1, int16 par2, int16 par3, int16 par4) {
+	int16 par5;
 
 	switch (par1) {
 	case 7:
@@ -499,15 +477,8 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
-	_player->checkBlock(b, TYPE_IACT, 8);
-	int16 par1, par2, par3, par4;
-
-	par1 = b.getWord(); // dx
-	par2 = b.getWord(); // cx
-	par3 = b.getWord(); // di
-	par4 = b.getWord();
-
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	switch (par1) {
 	case 2:
 	case 3:
@@ -552,7 +523,8 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
+					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+  					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	// void implementation
 }
 
