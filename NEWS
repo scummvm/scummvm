@@ -44,6 +44,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed crashes during scrolling scenes in certain SCUMM games.
    - Added saving of thumbnail in SCUMM savegames.
 
+ PS2 Port:
+   - Overlay uses higher resolution now.
+   - Can boot from USB, HDD etc. as well.
+
 0.9.0 (2006-06-25)
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
