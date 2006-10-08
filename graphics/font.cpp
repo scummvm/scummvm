@@ -867,7 +867,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringLi
 	// lines.
 
 	for (Common::String::const_iterator x = str.begin(); x != str.end(); ++x) {
-		const char c = *x;
+		const byte c = *x;
 		const int w = getCharWidth(c);
 		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
 
