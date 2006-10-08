@@ -67,7 +67,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	switch (cmd) {
 	case kChooseCmd:
 	case kListItemActivatedCmd:
-	case kListItemDoubleClickedCmd:
+	case kListItemDoubleClickedCmd: {
 		int selection = _fileList->getSelected();
 		if (selection < 0)
 			break;
@@ -75,6 +75,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		setResult(1);
 		close();
 		break;
+	}
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
