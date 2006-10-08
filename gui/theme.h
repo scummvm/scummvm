@@ -34,6 +34,8 @@
 
 #include "gui/widget.h"
 
+#define THEME_VERSION 18
+
 namespace GUI {
 
 class Eval;

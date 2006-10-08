@@ -22,8 +22,6 @@
 #include "gui/theme.h"
 #include "gui/eval.h"
 
-#define THEME_VERSION 2
-
 namespace GUI {
 ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const Common::ConfigFile *cfg) : Theme() {
 	_enableBlending = true;

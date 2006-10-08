@@ -41,8 +41,6 @@
 #define kShadowTr4 128
 #define kShadowTr5 192
 
-#define THEME_VERSION 18
-
 using Graphics::Surface;
 
 /** Specifies the currently active 16bit pixel format, 555 or 565. */
