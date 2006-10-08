@@ -97,6 +97,11 @@ _lastUsedBitMask(0), _forceRedraw(false), _imageHandles(0), _images(0), _colors(
 		return;
 	}
 
+	if (_configFile.hasKey("name", "theme"))
+		_configFile.getKey("name", "theme", _stylename);
+	else
+		_stylename = _stylefile;
+
 	_images = new const Graphics::Surface*[kImageHandlesMax];
 	assert(_images);
 

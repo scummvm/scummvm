@@ -215,6 +215,7 @@ public:
 	static bool themeConfigUseable(const String &file, const String &style="", String *cStyle=0, Common::ConfigFile *cfg=0);
 
 	const String &getStylefileName() const { return _stylefile; }
+	const String &getThemeName() const { return _stylename; }
 protected:
 	bool loadConfigFile(const String &file);
 	void getColorFromConfig(const String &name, OverlayColor &col);
@@ -223,7 +224,7 @@ protected:
 	const Graphics::Font *loadFont(const char *filename);
 	Common::String genCacheFilename(const char *filename);
 
-	String _stylefile;
+	String _stylefile, _stylename;
 
 	Common::Rect _drawArea;
 	Common::ConfigFile _configFile;

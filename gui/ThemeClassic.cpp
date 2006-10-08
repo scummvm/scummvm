@@ -45,6 +45,11 @@ ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const 
 		else
 			loadConfigFile(_stylefile);
 	}
+
+	if (_configFile.hasKey("name", "theme"))
+		_configFile.getKey("name", "theme", _stylename);
+	else
+		_stylename = _stylefile;
 }
 
 ThemeClassic::~ThemeClassic() {

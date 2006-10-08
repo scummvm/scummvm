@@ -690,7 +690,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	tab->addTab("Misc");
 
 	new ButtonWidget(tab, "globaloptions_themebutton2", "Theme:", kChooseThemeCmd, 0);
-	_curTheme = new StaticTextWidget(tab, "globaloptions_curtheme", ConfMan.get("gui_theme"));
+	_curTheme = new StaticTextWidget(tab, "globaloptions_curtheme", g_gui.theme()->getThemeName());
 
 	// TODO: joystick setting
 
@@ -808,10 +808,10 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::String theme = browser.selected();
+			const Common::String &theme = browser.selected();
 			if (0 != theme.compareToIgnoreCase(g_gui.theme()->getStylefileName()))
 				if (g_gui.loadNewTheme(theme)) {
-					_curTheme->setLabel(theme);
+					_curTheme->setLabel(g_gui.theme()->getThemeName());
 					ConfMan.set("gui_theme", theme);
 				}
 			draw();
