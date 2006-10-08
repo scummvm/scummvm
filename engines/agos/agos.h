@@ -167,7 +167,7 @@ class AGOSEngine : public Engine {
 	void setupFeebleVideoOpcodes(VgaOpcodeProc *op);
 
 public:
-	AGOSGameDescription *_gameDescription;
+	const AGOSGameDescription *_gameDescription;
 
 	bool initGame(void);
 	void setupGame();
