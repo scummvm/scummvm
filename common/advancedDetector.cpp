@@ -63,7 +63,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 
 	uint matchedCount = 0;
 	bool fileMissing;
-	ADGameFileDescription *fileDesc;
+	const ADGameFileDescription *fileDesc;
 
 	assert(_gameDescriptions.size());
 

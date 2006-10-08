@@ -36,7 +36,7 @@ struct ADGameDescription {
 	const char *name;
 	const char *extra;
 	int filesCount;
-	ADGameFileDescription *filesDescriptions;
+	const ADGameFileDescription *filesDescriptions;
 	Language language;
 	Platform platform;
 };
