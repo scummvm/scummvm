@@ -90,6 +90,10 @@ void ThemeBrowser::updateListing() {
 	th.file = "classic";
 	_themes.push_back(th);
 
+	// we are using only the paths 'themepath', 'extrapath', DATA_PATH and '.'
+	// since these are the default locations for the theme files
+	// files in other places are ignored in this dialog
+	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
 		addDir(_themes, ConfMan.get("themepath"), 0);
 
