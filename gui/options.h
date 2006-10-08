@@ -36,6 +36,7 @@ class CheckboxWidget;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
+class ListWidget;
 
 class OptionsDialog : public Dialog {
 	typedef Common::String String;
@@ -152,6 +153,8 @@ protected:
 	StaticTextWidget *_savePath;
 	StaticTextWidget *_themePath;
 	StaticTextWidget *_extraPath;
+
+	StaticTextWidget *_curTheme;
 };
 
 } // End of namespace GUI

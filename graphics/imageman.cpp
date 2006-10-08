@@ -43,7 +43,7 @@ ImageManager::~ImageManager() {
 	_surfaces.clear();
 #ifdef USE_ZLIB
 	for (ZipIterator pos2 = _archives.begin(); pos2 != _archives.end(); ++pos2) {
-		unzClose(*pos2);
+		unzClose(pos2->file);
 	}
 	_archives.clear();
 #endif
@@ -54,9 +54,24 @@ bool ImageManager::addArchive(const Common::String &name) {
 	unzFile newFile = unzOpen(name.c_str());
 	if (!newFile)
 		return false;
-	_archives.push_back(newFile);
+	Archive arch;
+	arch.file = newFile;
+	arch.filename = name;
+	_archives.push_back(arch);
 #endif
 	return true;
+}
+
+void ImageManager::remArchive(const Common::String &name) {
+#ifdef USE_ZLIB
+	for (ZipIterator pos = _archives.begin(); pos != _archives.end(); ++pos) {
+		if (pos->filename.compareToIgnoreCase(name) == 0) {
+			unzClose(pos->file);
+			_archives.erase(pos);
+			break;
+		}
+	}
+#endif
 }
 
 bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
@@ -74,7 +89,7 @@ bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
 #ifdef USE_ZLIB
 			ZipIterator file = _archives.end();
 			for (ZipIterator pos = _archives.begin(); pos != _archives.end(); ++pos) {
-				if (unzLocateFile(*pos, name.c_str(), 2) == UNZ_OK) {
+				if (unzLocateFile(pos->file, name.c_str(), 2) == UNZ_OK) {
 					file = pos;
 					break;
 				}
@@ -84,12 +99,12 @@ bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
 				return false;
 
 			unz_file_info fileInfo;
-			unzOpenCurrentFile(*file);
-			unzGetCurrentFileInfo(*file, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			unzOpenCurrentFile(file->file);
+			unzGetCurrentFileInfo(file->file, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
 			uint8 *buffer = new uint8[fileInfo.uncompressed_size];
 			assert(buffer);
-			unzReadCurrentFile(*file, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(*file);
+			unzReadCurrentFile(file->file, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(file->file);
 			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size);
 			surf = ImageDecoder::loadFile(stream);
 			delete [] buffer;

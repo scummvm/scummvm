@@ -106,35 +106,61 @@ NewGui::NewGui() : _needRedraw(false),
 	Common::String styleType;
 	Common::ConfigFile cfg;
 
-	if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
-		if (0 == styleType.compareToIgnoreCase("classic"))
-			_theme = new ThemeClassic(_system, style, &cfg);
-		else if (0 == styleType.compareToIgnoreCase("modern"))
-			_theme = new ThemeNew(_system, style, &cfg);
-		else
-			warning("Unsupported theme type '%s'", styleType.c_str());
-	} else {
-		warning("Config '%s' is NOT usable for themes or not found", style.c_str());
-	}
-	cfg.clear();
 #endif
 	
-	if (!_theme)
-		_theme = new ThemeClassic(_system);
-
-	assert(_theme);
-
-	// Init the theme
-	if (!_theme->init()) {
-		warning("Could not initialize your preferred theme, falling back to classic style");
-		delete _theme;
+	if (!loadNewTheme(style)) {
+		warning("falling back to classic style");
 		_theme = new ThemeClassic(_system);
 		assert(_theme);
 		if (!_theme->init()) {
 			error("Couldn't initialize classic theme");
 		}
 	}
+
 	_theme->resetDrawArea();
+	_themeChange = false;
+}
+
+bool NewGui::loadNewTheme(const Common::String &style) {
+	Common::String styleType;
+	Common::ConfigFile cfg;
+
+	Common::String oldTheme = (_theme != 0) ? _theme->getStylefileName() : "";
+	delete _theme;
+
+	if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
+		if (0 == styleType.compareToIgnoreCase("classic"))
+			_theme = new ThemeClassic(_system, style, &cfg);
+#ifndef DISABLE_FANCY_THEMES
+		else if (0 == styleType.compareToIgnoreCase("modern"))
+			_theme = new ThemeNew(_system, style, &cfg);
+#endif
+		else
+			warning("Unsupported theme type '%s'", styleType.c_str());
+	} else {
+		warning("Config '%s' is NOT usable for themes or not found", style.c_str());
+	}
+	cfg.clear();
+
+	if (!_theme)
+		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);
+
+	if (!_theme->init()) {
+		warning("Could not initialize your preferred theme");
+		delete _theme;
+		_theme = 0;
+		loadNewTheme(oldTheme);
+		return false;
+	}
+	_theme->resetDrawArea();
+
+	_theme->enable();
+	if (!oldTheme.empty())
+		screenChange();
+
+	_themeChange = true;
+
+	return true;
 }
 
 void NewGui::redraw() {
@@ -180,18 +206,8 @@ void NewGui::runLoop() {
 
 	bool useStandardCurs = !_theme->ownCursor();
 
-	if (useStandardCurs) {
-		const byte palette[] = {
-			255, 255, 255, 0,
-			255, 255, 255, 0,
-			171, 171, 171, 0,
-			 87,  87,  87, 0
-		};
-
-		PaletteMan.pushCursorPalette(palette, 0, 4);
-		CursorMan.pushCursor(NULL, 0, 0, 0, 0);
-		CursorMan.showMouse(true);
-	}
+	if (useStandardCurs)
+		setupCursor();
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		if (_needRedraw) {
@@ -217,6 +233,23 @@ void NewGui::runLoop() {
 				continue;
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+
+			// HACK to change the cursor to the new themes one
+			if (_themeChange) {
+				if (useStandardCurs)
+					PaletteMan.popCursorPalette();
+
+				CursorMan.popCursor();
+
+				useStandardCurs = !_theme->ownCursor();
+				if (useStandardCurs)
+					setupCursor();
+
+				_theme->refresh();
+
+				_themeChange = false;
+				redraw();
+			}
 			
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
@@ -270,18 +303,7 @@ void NewGui::runLoop() {
 				_system->quit();
 				return;
 			case OSystem::EVENT_SCREEN_CHANGED:
-				_lastScreenChangeID = _system->getScreenChangeID();
-
-				// reinit the whole theme
-				_theme->refresh();
-				// refresh all dialogs
-				for (int i = 0; i < _dialogStack.size(); ++i) {
-					_dialogStack[i]->reflowLayout();
-				}
-				// We need to redraw immediately. Otherwise
-				// some other event may cause a widget to be
-				// redrawn before redraw() has been called.
-				redraw();
+				screenChange();
 				break;
 			}
 		}
@@ -361,6 +383,19 @@ void NewGui::closeTopDialog() {
 	_needRedraw = true;
 }
 
+void NewGui::setupCursor() {
+	const byte palette[] = {
+		255, 255, 255, 0,
+		255, 255, 255, 0,
+		171, 171, 171, 0,
+		 87,  87,  87, 0
+	};
+
+	PaletteMan.pushCursorPalette(palette, 0, 4);
+	CursorMan.pushCursor(NULL, 0, 0, 0, 0);
+	CursorMan.showMouse(true);
+}
+
 // Draw the mouse cursor (animated). This is pretty much the same as in old
 // SCUMM games, but the code no longer resembles what we have in cursor.cpp
 // very much. We could plug in a different cursor here if we like to.
@@ -388,6 +423,21 @@ WidgetSize NewGui::getWidgetSize() {
 
 void NewGui::clearDragWidget() {
 	_dialogStack.top()->_dragWidget = 0;
+}
+
+void NewGui::screenChange() {
+	_lastScreenChangeID = _system->getScreenChangeID();
+
+	// reinit the whole theme
+	_theme->refresh();
+	// refresh all dialogs
+	for (int i = 0; i < _dialogStack.size(); ++i) {
+		_dialogStack[i]->reflowLayout();
+	}
+	// We need to redraw immediately. Otherwise
+	// some other event may cause a widget to be
+	// redrawn before redraw() has been called.
+	redraw();
 }
 
 } // End of namespace GUI

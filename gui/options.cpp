@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "gui/browser.h"
+#include "gui/themebrowser.h"
 #include "gui/chooser.h"
 #include "gui/eval.h"
 #include "gui/newgui.h"
@@ -69,7 +70,8 @@ enum {
 	kChooseSoundFontCmd		= 'chsf',
 	kChooseSaveDirCmd		= 'chos',
 	kChooseThemeDirCmd		= 'chth',
-	kChooseExtraDirCmd		= 'chex'
+	kChooseExtraDirCmd		= 'chex',
+	kChooseThemeCmd			= 'chtf'
 };
 
 #ifdef SMALL_SCREEN_DEVICE
@@ -685,6 +687,11 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "globaloptions_keysbutton", "Keys", kChooseKeyMappingCmd, 0);
 #endif
 
+	tab->addTab("Misc");
+
+	new ButtonWidget(tab, "globaloptions_themebutton2", "Theme:", kChooseThemeCmd, 0);
+	_curTheme = new StaticTextWidget(tab, "globaloptions_curtheme", ConfMan.get("gui_theme", _domain));
+
 	// TODO: joystick setting
 
 
@@ -793,6 +800,18 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			FilesystemNode file(browser.getResult());
 			_soundFont->setLabel(file.path());
+			draw();
+		}
+		break;
+	}
+	case kChooseThemeCmd: {
+		ThemeBrowser browser;
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::String theme = browser.selected();
+			if (0 != theme.compareToIgnoreCase(g_gui.theme()->getStylefileName()))
+				if (g_gui.loadNewTheme(theme))
+					_curTheme->setLabel(theme);
 			draw();
 		}
 		break;

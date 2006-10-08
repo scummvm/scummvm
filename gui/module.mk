@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	PopUpWidget.o \
 	ScrollBarWidget.o \
 	TabWidget.o \
+	themebrowser.o \
 	widget.o \
 	theme.o \
 	ThemeClassic.o \

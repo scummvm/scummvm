@@ -70,6 +70,7 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
+	bool loadNewTheme(const Common::String &file);
 	Theme *theme() { return _theme; }
 	Eval *evaluator() { return _theme->_evaluator; }
 
@@ -113,16 +114,20 @@ protected:
 	int		_cursorAnimateTimer;
 	byte		_cursor[2048];
 
+	bool _themeChange;
+
 	void saveState();
 	void restoreState();
 
 	void openDialog(Dialog *dialog);
 	void closeTopDialog();
 
+	void screenChange();
 	void redraw();
 
 	void loop();
 
+	void setupCursor();
 	void animateCursor();
 };
 

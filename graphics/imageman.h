@@ -37,13 +37,21 @@ public:
 	~ImageManager();
 
 	/**
-	 * adds an .zip archive to the pool there the ImagaManager searches
+	 * adds an .zip archive to the pool where the ImageManager searches
 	 * for image files
 	 *
 	 * @param name the name of the archive
 	 * @return true on success and false on failure
 	 */
 	bool addArchive(const Common::String &name);
+
+	/**
+	 * deletes an .zip archive from the pool where the Image Manager searches
+	 * for image files
+	 *
+	 * @param name the name of the archive
+	 */
+	void remArchive(const Common::String &name);
 
 	/** 
 	 * registers a surface to the ImageManager.
@@ -84,14 +92,18 @@ private:
 	};
 	typedef Common::List<Entry*>::iterator Iterator;
 #ifdef USE_ZLIB
-	typedef Common::List<unzFile>::iterator ZipIterator;
+	struct Archive {
+		unzFile file;
+		Common::String filename;
+	};
+	typedef Common::List<Archive>::iterator ZipIterator;
 #endif
 	
 	Iterator searchHandle(const Common::String &name);
 
 	Common::List<Entry*> _surfaces;
 #ifdef USE_ZLIB
-	Common::List<unzFile> _archives;
+	Common::List<Archive> _archives;
 #endif
 };
 

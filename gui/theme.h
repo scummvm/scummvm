@@ -213,6 +213,8 @@ public:
 	Eval *_evaluator;
 
 	static bool themeConfigUseable(const String &file, const String &style="", String *cStyle=0, Common::ConfigFile *cfg=0);
+
+	const String &getStylefileName() const { return _stylefile; }
 protected:
 	bool loadConfigFile(const String &file);
 	void getColorFromConfig(const String &name, OverlayColor &col);

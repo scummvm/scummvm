@@ -114,6 +114,7 @@ ThemeNew::~ThemeNew() {
 			ImageMan.unregisterSurface(_imageHandles[i]);
 		}
 	}
+	ImageMan.remArchive(_stylefile + ".zip");
 }
 
 bool ThemeNew::init() {
