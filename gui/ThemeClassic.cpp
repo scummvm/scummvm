@@ -505,8 +505,6 @@ void ThemeClassic::restoreBackground(Common::Rect r, bool special) {
 			dst += _screen.w;
 		}
 	} else {
-		if (_dialog)
-			_dialog->screen.fillRect(r, _bgcolor);
 		_screen.fillRect(r, _bgcolor);
 	}
 #endif
@@ -584,7 +582,7 @@ OverlayColor ThemeClassic::getColor(State state) {
 void ThemeClassic::blendScreenToDialog() {
 	Common::Rect rect(0, 0, _screen.w, _screen.h);
 
-	if (!rect.isValidRect() || !_enableBlending)
+	if (!rect.isValidRect())
 		return;
 
 	if (_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
