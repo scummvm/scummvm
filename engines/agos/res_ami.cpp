@@ -275,9 +275,9 @@ void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
 	bufptrout = bufferout;
 	clipnumber = 0;
 	while(1) {
-		clipoffset = READ_BE_UINT32(bufptr); bufptr +=4;
-		clipheight = READ_BE_UINT16(bufptr); bufptr +=2;
-		clipwidth = READ_BE_UINT16(bufptr); bufptr +=2;
+		clipoffset = READ_BE_UINT32(bufptr); bufptr += 4;
+		clipheight = READ_BE_UINT16(bufptr); bufptr += 2;
+		clipwidth = READ_BE_UINT16(bufptr); bufptr += 2;
 		if (clipoffset != 0)
 			break;
 		WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
@@ -285,7 +285,7 @@ void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
 		clipnumber++;
 	}
 
-	clipsend = (byte *)(clipoffset + (uint32)buffer);
+	clipsend = buffer + clipoffset;
 	bufoutend = clipoffset;
 	while (bufptr <= clipsend) {
 		if (clipoffset != 0) {
@@ -294,9 +294,9 @@ void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
 			WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
 			WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
 		}
-		clipoffset = READ_BE_UINT32(bufptr); bufptr +=4;
-		clipheight = READ_BE_UINT16(bufptr); bufptr +=2;
-		clipwidth = READ_BE_UINT16(bufptr); bufptr +=2;
+		clipoffset = READ_BE_UINT32(bufptr); bufptr += 4;
+		clipheight = READ_BE_UINT16(bufptr); bufptr += 2;
+		clipwidth = READ_BE_UINT16(bufptr); bufptr += 2;
 		clipnumber++;
 	}
 	outlength = bufoutend;
