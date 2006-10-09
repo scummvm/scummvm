@@ -1366,7 +1366,8 @@ void AGOSEngine::drawImages(VC10_state *state) {
 
 		/* vc10_helper_5 */
 	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) &&
-		(getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)) {
+		(getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+		getPlatform() != Common::kPlatformAmiga) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
