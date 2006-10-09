@@ -708,17 +708,17 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 				}
 				free(srcBuffer);
 			} else {
-				//if (getGameId() == GID_SIMON1CD32) {
-				//	dst = (byte *)malloc(dstSize);
-				//	if (in.read(dst, dstSize) != dstSize)
-				//		error("loadVGAFile: Read failed");
-				//	convertAmiga(dst, dstSize);
-				//	free(dst);
-				//} else {
+				if (getGameId() == GID_SIMON1CD32 && type == 2) {
+					dst = (byte *)malloc(dstSize);
+					if (in.read(dst, dstSize) != dstSize)
+						error("loadVGAFile: Read failed");
+					convertAmiga(dst, dstSize);
+					free(dst);
+				} else {
 					dst = allocBlock(dstSize + extraBuffer);
 					if (in.read(dst, dstSize) != dstSize)
 						error("loadVGAFile: Read failed");
-				//}
+				}
 			}
 			in.close();
 		} else if (type != 3) {
