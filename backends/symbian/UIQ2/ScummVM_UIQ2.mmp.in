@@ -35,6 +35,8 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 RESOURCE		ScummVM.rss
 EPOCSTACKSIZE	0x80008000 // this enables ECompXL app compression
+EPOCHEAPSIZE	0x100000 0x4000000
+
 AIF				ScummVm.Aif ..\res\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp
 UID             0x100039ce 0x101f9b57
 

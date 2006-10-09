@@ -38,7 +38,7 @@ OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid l
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
 
 EPOCSTACKSIZE	0x00008000
-EPOCHEAPSIZE	1024	8192000
+EPOCHEAPSIZE	0x100000 0x4000000
 
 MACRO			S80
 

@@ -39,7 +39,8 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 #if !defined(WINS)
 EPOCSTACKSIZE	0x00008000
-EPOCHEAPSIZE	2048000	8192000
+EPOCHEAPSIZE	0x100000 0x4000000
+
 #endif
 
 MACRO			S60
