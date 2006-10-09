@@ -2,10 +2,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.10.0 (????-??-??)
- New Ports:
-   - Added Nintendo DS port.
-   - Added GP2X port.
-
  General:
    - Better compression for DXA movies.
    - Added Dialog which allows the user to select the GUI theme on runtime.
@@ -26,6 +22,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Now using a GCC toolchain for building.
 
 0.9.1 (????-??-??)
+ New Ports:
+   - Added Nintendo DS port.
+   - Added GP2X port.
+
  General:
    - Fixed potential garbage and/or crash in debug console.
    - Removed restriction on 27 games per game id when added via launcher.
