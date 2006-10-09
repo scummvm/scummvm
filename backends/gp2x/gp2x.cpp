@@ -34,6 +34,13 @@
 #include "common/util.h"
 #include "base/main.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <limits.h>
+#include <errno.h>
+#include <sys/stat.h>
+
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
@@ -78,6 +85,38 @@ void OSystem_GP2X::initBackend() {
 	// TODO: Clean way of flushing the file on every write without resorting to this or hacking the POSIX FS code.
 	//system("/bin/mount -t vfat -o remount,sync,iocharset=utf8 /dev/mmcsd/disc0/part1 /mnt/sd");
 
+	// Setup default save path to be workingdir/saves
+	#ifndef PATH_MAX
+		#define PATH_MAX 255
+	#endif
+
+	char savePath[PATH_MAX+1];
+	char workDirName[PATH_MAX+1]; /* To be passed to getcwd system call. */
+	if (getcwd(workDirName, PATH_MAX) == NULL) {
+		error("Could not obtain current working directory.");
+	} else {
+		printf("Current working directory: %s\n", workDirName);
+	}
+
+	strcpy(savePath, workDirName);
+	strcat(savePath, "/saves");
+	printf("Current save directory: %s\n", savePath);
+	struct stat sb;
+	if (stat(savePath, &sb) == -1)
+		if (errno == ENOENT) // Create the dir if it does not exist
+			if (mkdir(savePath, 0755) != 0)
+				warning("mkdir for '%s' failed!", savePath);
+
+	ConfMan.registerDefault("savepath", savePath);
+
+	// Setup other defaults.
+
+	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("music_volume", 250); // Up default volume as we use a seperate volume system anyway.
+	ConfMan.registerDefault("sfx_volume", 250);
+	ConfMan.registerDefault("speech_volume", 250);
+	ConfMan.registerDefault("autosave_period", 3 * 60);	// Trigger autosave every 3 minutes - On low batts 4 mins is about your warning time.
+
 	_graphicsMutex = createMutex();
 
 	_cksumValid = false;
@@ -89,8 +128,9 @@ void OSystem_GP2X::initBackend() {
 	_scalerType = 0;
 	_modeFlags = 0;
 	_adjustZoomOnMouse = false;
+	ConfMan.setBool("FM_low_quality", true);
 
-	// Enable joystick
+	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
@@ -104,33 +144,6 @@ void OSystem_GP2X::initBackend() {
 	GP2X_mixer_set_volume(70, 70);
 
 	SDL_ShowCursor(SDL_DISABLE);
-
-	// Setup defaults for ConfMan settings (save locations, FMOPL etc.)
-	ConfMan.setBool("FM_low_quality", true);
-
-
-	// BEGIN: SAVE BLOCK HACKS
-
-	// On the GP2X not all the filesystem is read/write and this can include Home on some firmware versions
-	// so we stick save games in ./saves under the executable and create the dir if it's not there (unless the user changes it).
-
-	// Borrowed from savefile.cpp to keep core code clean,
-//	const char *dir = NULL;
-//	dir = ConfMan.get("savepath").c_str();
-
-//	const char *rootdir = ConfMan.get("path").c_str();
-//	assert(rootdir);
-
-//	if (0 == strcmp(dir, "//.scummvm")) {
-//		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
-//		ConfMan.set("savepath", ConfMan.get("path").c_str(), ConfMan.getActiveDomainName());
-//		ConfMan.flushToDisk();
-//		dir = ConfMan.get("savepath").c_str();
-//	}
-
-	//displayMessageOnOSD("Creating save game folder.");
-
-	// END: SAVE BLOCK HACKS
 
 	_inited = true;
 }
