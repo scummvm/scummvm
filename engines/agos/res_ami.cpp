@@ -21,7 +21,7 @@
  *
  */
 
-// Resource file routines for Simon1/Simon2
+// Conversion routines for planar graphics in Amiga verisions
 #include "common/stdafx.h"
 
 #include "agos/agos.h"
