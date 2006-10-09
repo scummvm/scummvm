@@ -56,6 +56,10 @@
 #endif
 #endif
 
+#ifdef __GNUC__
+extern "C" _CRTIMP FILE* __cdecl   _wfreopen (const wchar_t*, const wchar_t*, FILE*);
+#endif
+
 using namespace CEGUI;
 
 // ********************************************************************************************
@@ -67,7 +71,7 @@ using namespace CEGUI;
 #define NAME_ITEM_OPTIONS		"Options"
 #define NAME_ITEM_SKIP			"Skip"
 #define NAME_ITEM_SOUND			"Sound"
-#define NAME_ITEM_ORIENTATION	"Orientation"
+#define NAME_ITEM_ORIENTATION		"Orientation"
 #define NAME_ITEM_BINDKEYS		"Bindkeys"
 
 // Given to the true main, needed for backend adaptation
@@ -111,6 +115,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
 	{0, 0, 0}
 };
 
+#define STDOUT_FNAME "\\scummvm_stdout.txt"
+#define STDERR_FNAME "\\scummvm_stderr.txt"
 
 // ********************************************************************************************
 
@@ -156,8 +162,38 @@ int SDL_main(int argc, char **argv) {
 	OSystem_WINCE3::initScreenInfos();
 	
 	/* Avoid print problems - this file will be put in RAM anyway */
-	stdout_file = fopen("\\scummvm_stdout.txt", "w");
-	stderr_file = fopen("\\scummvm_stderr.txt", "w");
+#ifndef __GNUC__
+	stdout_file = fopen(STDOUT_FNAME, "w");
+	stderr_file = fopen(STDERR_FNAME, "w");
+#else
+	/* Redirect standard input and standard output */
+	FILE *newfp = _wfreopen(TEXT(STDOUT_FNAME), TEXT("w"), stdout);
+	if (newfp == NULL) {
+#if !defined(stdout)
+		stdout = fopen(STDOUT_FNAME, "w");
+		stdout_file = stdout;
+#else
+		newfp = fopen(STDOUT_FNAME, "w");
+		if (newfp) {
+			*stdout = *newfp;
+			stdout_file = stdout;
+		}
+#endif
+	}
+	newfp = _wfreopen(TEXT(STDERR_FNAME), TEXT("w"), stderr);
+	if (newfp == NULL) {
+#if !defined(stderr)
+		stderr = fopen(STDERR_FNAME, "w");
+		stderr_file = stderr;
+#else
+		newfp = fopen(STDERR_FNAME, "w");
+		if (newfp) {
+			*stderr = *newfp;
+			stderr_file = stderr;
+		}
+#endif
+	}
+#endif
 
 	int res = 0;
 
