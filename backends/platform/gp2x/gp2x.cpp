@@ -34,6 +34,13 @@
 #include "common/util.h"
 #include "base/main.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <limits.h>
+#include <errno.h>
+#include <sys/stat.h>
+
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
@@ -77,6 +84,38 @@ void OSystem_GP2X::initBackend() {
 
 	// TODO: Clean way of flushing the file on every write without resorting to this or hacking the POSIX FS code.
 	//system("/bin/mount -t vfat -o remount,sync,iocharset=utf8 /dev/mmcsd/disc0/part1 /mnt/sd");
+
+	// Setup default save path to be workingdir/saves
+	#ifndef PATH_MAX
+		#define PATH_MAX 255
+	#endif
+
+	char savePath[PATH_MAX+1];
+	char workDirName[PATH_MAX+1]; /* To be passed to getcwd system call. */
+	if (getcwd(workDirName, PATH_MAX) == NULL) {
+		error("Could not obtain current working directory.");
+	} else {
+		printf("Current working directory: %s\n", workDirName);
+	}
+
+	strcpy(savePath, workDirName);
+	strcat(savePath, "/saves");
+	printf("Current save directory: %s\n", savePath);
+	struct stat sb;
+	if (stat(savePath, &sb) == -1)
+		if (errno == ENOENT) // Create the dir if it does not exist
+			if (mkdir(savePath, 0755) != 0)
+				warning("mkdir for '%s' failed!", savePath);
+
+	ConfMan.registerDefault("savepath", savePath);
+
+	// Setup other defaults.
+
+	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("music_volume", 250); // Up default volume as we use a seperate volume system anyway.
+	ConfMan.registerDefault("sfx_volume", 250);
+	ConfMan.registerDefault("speech_volume", 250);
+	ConfMan.registerDefault("autosave_period", 3 * 60);	// Trigger autosave every 3 minutes - On low batts 4 mins is about your warning time.
 
 	_graphicsMutex = createMutex();
 
