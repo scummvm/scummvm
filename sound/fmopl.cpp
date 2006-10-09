@@ -35,7 +35,7 @@
 
 #include "common/util.h"
 
-#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(__GP2X__) || defined (__MAEMO__) || defined(__DS__)
+#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__)
 #include "common/config-manager.h"
 #endif
 
