@@ -245,32 +245,39 @@ static const ADGameFileDescription SIMON1ACORN_GameFiles[] = {
 	{ "tbllist", 	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
-static const ADGameFileDescription SIMON1AMIGA_GameFiles[] = {
+static const ADGameFileDescription SIMON1AMIGA_ECS_GameFiles[] = {
+	{ "gameamiga",		GAME_BASEFILE,	"bb94a688e247695d912cce9d0173d73a"},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed"},
+	{ "stripped.txt",	GAME_STRFILE,	"f5fc67db3b8c5283cda51c43b98a74f8"},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b"},
+};
+
+static const ADGameFileDescription SIMON1AMIGA_ECS_DEMO_GameFiles[] = {
+	{ "gameamiga",		GAME_BASEFILE,	"a12b696170f14eca5ff75f1549829251"},  // Unpacked version
+	{ "icon.pkd",		GAME_ICONFILE,	"ebc96af15bfaf75ba8210326b9260d2f"},
+	{ "stripped.txt",	GAME_STRFILE,	"8edde5b9498dc9f31da1093028da467c"},
+	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c"},
+};
+
+static const ADGameFileDescription SIMON1AMIGA_AGA_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"6c9ad2ff571d34a4cf0c696cf4e13500"},
 	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed"},
 	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8"},
 	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b"},
 };
 
-static const ADGameFileDescription SIMON1AMIGA_FR_GameFiles[] = {
+static const ADGameFileDescription SIMON1AMIGA_AGA_FR_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"bd9828b9d4e5d89b50fe8c47a8e6bc07"},
 	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed"},
 	{ "stripped.txt",	GAME_STRFILE,	"2297baec985617d0d5612a0124bac359"},
 	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b"},
 };
 
-static const ADGameFileDescription SIMON1AMIGA_DE_GameFiles[] = {
+static const ADGameFileDescription SIMON1AMIGA_AGA_DE_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"a2de9553f3b73064369948b5af38bb30"},
 	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed"},
 	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8"},
 	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b"},
-};
-
-static const ADGameFileDescription SIMON1AMIGADEMO_GameFiles[] = {
-	{ "gameamiga",		GAME_BASEFILE,	"a12b696170f14eca5ff75f1549829251"},  // Unpacked version
-	{ "icon.pkd",		GAME_ICONFILE,	"ebc96af15bfaf75ba8210326b9260d2f"},
-	{ "stripped.txt",	GAME_STRFILE,	"8edde5b9498dc9f31da1093028da467c"},
-	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c"},
 };
 
 static const ADGameFileDescription SIMON1CD32_GameFiles[] = {
@@ -849,13 +856,45 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE,
 	},
 
+	// Simon the Sorcerer 1 - English Amiga ECS Floppy
+	{
+		{
+			"simon1",
+			"ECS Floppy",
+			ARRAYSIZE(SIMON1AMIGA_ECS_GameFiles),
+			SIMON1AMIGA_ECS_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
+		GType_SIMON1,
+		GID_SIMON1AMIGADEMO,
+		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE,
+	},
+
+	// Simon the Sorcerer 1 - English Amiga ECS Demo
+	{
+		{
+			"simon1",
+			"ECS Demo",
+			ARRAYSIZE(SIMON1AMIGA_ECS_DEMO_GameFiles),
+			SIMON1AMIGA_ECS_DEMO_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+
+		GType_SIMON1,
+		GID_SIMON1AMIGADEMO,
+		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE,
+	},
+
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy
 	{
 		{
 			"simon1",
 			"AGA Floppy",
-			ARRAYSIZE(SIMON1AMIGA_GameFiles),
-			SIMON1AMIGA_GameFiles,
+			ARRAYSIZE(SIMON1AMIGA_AGA_GameFiles),
+			SIMON1AMIGA_AGA_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -870,8 +909,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"AGA Floppy",
-			ARRAYSIZE(SIMON1AMIGA_FR_GameFiles),
-			SIMON1AMIGA_FR_GameFiles,
+			ARRAYSIZE(SIMON1AMIGA_AGA_FR_GameFiles),
+			SIMON1AMIGA_AGA_FR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
 		},
@@ -886,30 +925,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"AGA Floppy",
-			ARRAYSIZE(SIMON1AMIGA_DE_GameFiles),
-			SIMON1AMIGA_DE_GameFiles,
+			ARRAYSIZE(SIMON1AMIGA_AGA_DE_GameFiles),
+			SIMON1AMIGA_AGA_DE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 		},
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE,
-	},
-
-	// Simon the Sorcerer 1 - English Amiga ECS Demo
-	{
-		{
-			"simon1",
-			"ECS Demo",
-			ARRAYSIZE(SIMON1AMIGADEMO_GameFiles),
-			SIMON1AMIGADEMO_GameFiles,
-			Common::EN_ANY,
-			Common::kPlatformAmiga,
-		},
-
-		GType_SIMON1,
-		GID_SIMON1AMIGADEMO,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
 	},
 

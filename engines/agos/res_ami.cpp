@@ -39,6 +39,8 @@ byte *clipoutptr;
 int clipnumber;
 
 static void uncompressplane(byte *plane, byte *outptr, uint16 length) {
+	debug(0, "uncompressplane: length %d", length);
+
 	char x;
 	byte y, z;
 	while (length) {
@@ -69,6 +71,8 @@ static void uncompressplane(byte *plane, byte *outptr, uint16 length) {
 }
 
 static void convertcompressedclip(uint16 height, uint16 width) {
+	debug(0, "convertcompressedclip: height %d width %d", height, width);
+
 	byte *plane0;
 	byte *plane1;
 	byte *plane2;
@@ -218,6 +222,8 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 }
 
 static void convertclip(uint32 offset, uint16 height, uint16 width) {
+	debug(0, "convertclip: height %d width %d", height, width);
+
 	uint32 length, i, j;
 	uint16 word1, word2, word3, word4;
 	byte outbyte, outbyte1;

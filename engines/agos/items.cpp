@@ -884,7 +884,12 @@ void AGOSEngine::o_random() {
 	// 53: random
 	uint var = getVarWrapper();
 	uint value = (uint16)getVarOrWord();
-	writeVariable(var, _rnd.getRandomNumber(value - 1));
+
+	// Copy protection subtitles aren't displayed in Amiga version
+	if (getGameId() == GID_SIMON1AMIGA && var == 51 && value == 8)
+		writeVariable(var, 4);
+	else
+		writeVariable(var, _rnd.getRandomNumber(value - 1));
 }
 
 void AGOSEngine::o_moveDirn() {

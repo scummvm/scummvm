@@ -959,6 +959,10 @@ void AGOSEngine::vc10_draw() {
 		state.palette = 0;
 	}
 
+	if (getFeatures() & GF_32COLOR) {
+		state.palette = 0;
+	}
+
 	state.x = (int16)vcReadNextWord();
 	state.x -= _scrollX;
 
@@ -2147,9 +2151,10 @@ void AGOSEngine::vc44_skipIfBitSet() {
 
 void AGOSEngine::vc45_setSpriteX() {
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-		//FIXME
-		vcReadNextWord();
-		vcReadNextWord();
+		uint num = vcReadNextWord();
+		uint color = vcReadNextWord();
+
+		debug(0, "vc45: window %d color %d\n", num, color);
 	} else {
 		VgaSprite *vsp = findCurSprite();
 		vsp->x = vcReadVar(vcReadNextWord());
