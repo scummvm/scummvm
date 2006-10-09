@@ -737,15 +737,15 @@ void vc10_skip_cols(VC10_state *vs) {
 byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 	w *= 8;
 
-	byte *src_org, *dst_org;
+	byte *src_org, *dstPtr;
 	byte color;
 	int8 cur = -0x80;
 	uint i, w_cur = w;
 
-	dst_org = _videoBuf1 + w;
+	dstPtr = _videoBuf1 + w;
 
 	do {
-		byte *dst = dst_org;
+		byte *dst = dstPtr;
 		uint h_cur = h;
 
 		if (cur == -0x80)
@@ -781,14 +781,14 @@ byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 			cur = *src++;
 		}
 	next_line:
-		dst_org++;
+		dstPtr++;
 	} while (--w_cur);
 
 
-	src_org = dst_org = _videoBuf1 + w;
+	src_org = dstPtr = _videoBuf1 + w;
 
 	do {
-		byte *dst = dst_org;
+		byte *dst = dstPtr;
 		for (i = 0; i != w; ++i) {
 			byte b = src_org[i];
 			b = (b >> 4) | (b << 4);
@@ -796,66 +796,40 @@ byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 		}
 
 		src_org += w;
-		dst_org += w;
+		dstPtr += w;
 	} while (--h);
 
 	return _videoBuf1;
 }
 
 byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
-	if (src == _vc10BasePtrOld)
-		return _videoBuf1;
+	w *= 8;
 
-	_vc10BasePtrOld = src;
-
-	byte *dst_org, *src_org;
+	byte *dstPtr;
 	uint i;
 
-	w *= 8;
-	src_org = dst_org = _videoBuf1 + w;
+	dstPtr = _videoBuf1 + w;
 
 	do {
-		byte *dst = dst_org;
+		byte *dst = dstPtr;
 		for (i = 0; i != w; ++i) {
-			byte b = src_org[i];
+			byte b = src[i];
 			b = (b >> 4) | (b << 4);
 			*--dst = b;
 		}
 
-		src_org += w;
-		dst_org += w;
+		src += w;
+		dstPtr += w;
 	} while (--h);
 
 	return _videoBuf1;
 }
 
-/* must not be const */
-// FIXME: In that case it is *wrong* to have it as a static
-// variable here! Rather, it should be turned into a member
-// of class AGOSEngine.
-static uint16 _video_windows[128] = {
-	0,  0, 20, 200,
-	0,  0,  3, 136,
-	17, 0,  3, 136,
-	0,  0, 20, 200,
-	0,  0, 20, 134
-};
-
-/* Elvira 1/2 & Waxworks
-static uint16 _video_windows[128] = {
-	 3, 0, 14, 136,
-	 0, 0,  3, 136,
-	17, 0,  3, 136,
-	 0, 0, 20, 200,
-	 3, 3, 14, 127,
-};
- */
-
 void AGOSEngine::decodeColumn(byte *dst, const byte *src, int height) {
 	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
 	byte color;
-	byte *dst_org = dst;
+	byte *dstPtr = dst;
 	uint h = height, w = 8;
 
 	for (;;) {
@@ -872,7 +846,7 @@ void AGOSEngine::decodeColumn(byte *dst, const byte *src, int height) {
 					/* reached right edge? */
 					if (--w == 0)
 						return;
-					dst = ++dst_org;
+					dst = ++dstPtr;
 					h = height;
 				}
 			} while (--reps >= 0);
@@ -887,7 +861,7 @@ void AGOSEngine::decodeColumn(byte *dst, const byte *src, int height) {
 					/* reached right edge? */
 					if (--w == 0)
 						return;
-					dst = ++dst_org;
+					dst = ++dstPtr;
 					h = height;
 				}
 			} while (++reps != 0);
@@ -899,7 +873,7 @@ void AGOSEngine::decodeRow(byte *dst, const byte *src, int width) {
 	const uint pitch = _dxSurfacePitch;
 	int8 reps = (int8)0x80;
 	byte color;
-	byte *dst_org = dst;
+	byte *dstPtr = dst;
 	uint w = width, h = 8;
 
 	for (;;) {
@@ -915,8 +889,8 @@ void AGOSEngine::decodeRow(byte *dst, const byte *src, int width) {
 					/* reached bottom? */
 					if (--h == 0)
 						return;
-					dst_org += pitch;
-					dst = dst_org;
+					dstPtr += pitch;
+					dst = dstPtr;
 					w = width;
 				}
 			} while (--reps >= 0);
@@ -930,8 +904,8 @@ void AGOSEngine::decodeRow(byte *dst, const byte *src, int width) {
 					/* reached bottom? */
 					if (--h == 0)
 						return;
-					dst_org += pitch;
-					dst = dst_org;
+					dstPtr += pitch;
+					dst = dstPtr;
 					w = width;
 				}
 			} while (++reps != 0);
@@ -1056,7 +1030,7 @@ bool AGOSEngine::drawImages_clip(VC10_state *state) {
 	uint maxWidth, maxHeight;
 	int cur;
 
-	vlut = &_video_windows[_windowNum * 4];
+	vlut = &_videoWindows[_windowNum * 4];
 
 	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		state->draw_width = state->width * 2;
@@ -1116,16 +1090,16 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 			state->surf_pitch = _dxSurfacePitch;
 
 			uint w, h;
-			byte *src, *dst, *dst_org;
+			byte *src, *dst, *dstPtr;
 
 			state->dl = state->width;
 			state->dh = state->height;
 
-			dst_org = state->surf_addr;
+			dstPtr = state->surf_addr;
 			w = 0;
 			do {
 				src = vc10_depackColumn(state);
-				dst = dst_org;
+				dst = dstPtr;
 
 				h = 0;
 				do {
@@ -1133,7 +1107,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 					dst += _screenWidth;
 					src++;
 				} while (++h != state->draw_height);
-				dst_org++;
+				dstPtr++;
 			} while (++w != state->draw_width);
 
 			if (_vgaCurSpritePriority % 10 != 9) {
@@ -1150,18 +1124,18 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 			state->surf_addr += (state->x + _scrollX) + (state->y + _scrollY) * state->surf_pitch;
 
 			uint w, h;
-			byte *src, *dst, *dst_org;
+			byte *src, *dst, *dstPtr;
 
 			state->dl = state->width;
 			state->dh = state->height;
 
-			dst_org = state->surf_addr;
+			dstPtr = state->surf_addr;
 			w = 0;
 			do {
 				byte color;
 
 				src = vc10_depackColumn(state);
-				dst = dst_org;
+				dst = dstPtr;
 
 				h = 0;
 				do {
@@ -1171,7 +1145,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 					dst += _screenWidth;
 					src++;
 				} while (++h != state->draw_height);
-				dst_org++;
+				dstPtr++;
 			} while (++w != state->draw_width);
 
 			if (_vgaCurSpritePriority % 10 == 9) {
@@ -1184,7 +1158,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 			state->surf_addr += state->x + state->y * state->surf_pitch;
 
 			uint w, h;
-			byte *src, *dst, *dst_org;
+			byte *src, *dst, *dstPtr;
 
 			state->dl = state->width;
 			state->dh = state->height;
@@ -1204,13 +1178,13 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 						return;
 				}
 
-				dst_org = state->surf_addr;
+				dstPtr = state->surf_addr;
 				w = 0;
 				do {
 					byte color;
 
 					src = vc10_depackColumn(state);
-					dst = dst_org;
+					dst = dstPtr;
 
 					h = 0;
 					do {
@@ -1220,16 +1194,16 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 						dst += _screenWidth;
 						src++;
 					} while (++h != state->draw_height);
-					dst_org++;
+					dstPtr++;
 				} while (++w != state->draw_width);
 			} else {
-				dst_org = state->surf_addr;
+				dstPtr = state->surf_addr;
 				w = 0;
 				do {
 					byte color;
 
 					src = vc10_depackColumn(state);
-					dst = dst_org;
+					dst = dstPtr;
 
 					h = 0;
 					do {
@@ -1239,7 +1213,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 						dst += _screenWidth;
 						src++;
 					} while (++h != state->draw_height);
-					dst_org++;
+					dstPtr++;
 				} while (++w != state->draw_width);
 			}
 		}
@@ -1273,7 +1247,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 }
 
 void AGOSEngine::drawImages(VC10_state *state) {
-	const uint16 *vlut = &_video_windows[_windowNum * 4];
+	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
 	if (drawImages_clip(state) == 0)
 		return;
@@ -1281,24 +1255,24 @@ void AGOSEngine::drawImages(VC10_state *state) {
 	uint offs, offs2;
 	if (getGameType() == GType_ELVIRA1) {
 		//if (_windowNum != 2 && _windowNum != 3) {
-		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
-		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
+		//	offs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+		//	offs2 = (vlut[1] - _videoWindows[17] + state->y);
 		//} else {
 			offs = (vlut[0] * 2 + state->x) * 8;
 			offs2 = vlut[1] + state->y;
 		//}
 	} else if (getGameType() == GType_ELVIRA2) {
 		//if (_windowNum == 4 || _windowNum >= 10) {
-		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
-		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
+		//	offs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+		//	offs2 = (vlut[1] - _videoWindows[17] + state->y);
 		//} else {
 			offs = (vlut[0] * 2 + state->x) * 8;
 			offs2 = vlut[1] + state->y;
 		//}
 	} else if (getGameType() == GType_WW) {
 		//if (_windowNum == 4 || (_windowNum >= 10 && _windowsNum < 28)) {
-		//	offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
-		//	offs2 = (vlut[1] - _video_windows[17] + state->y);
+		//	offs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+		//	offs2 = (vlut[1] - _videoWindows[17] + state->y);
 		//} else {
 			offs = (vlut[0] * 2 + state->x) * 8;
 			offs2 = vlut[1] + state->y;
@@ -1310,12 +1284,12 @@ void AGOSEngine::drawImages(VC10_state *state) {
 			offs = state->x * 8;
 			offs2 = state->y;
 		} else {
-			offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
-			offs2 = (vlut[1] - _video_windows[17] + state->y);
+			offs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			offs2 = (vlut[1] - _videoWindows[17] + state->y);
 		}
 	} else {
-		offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
-		offs2 = (vlut[1] - _video_windows[17] + state->y);
+		offs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+		offs2 = (vlut[1] - _videoWindows[17] + state->y);
 	}
 
 	state->surf2_addr += offs + offs2 * state->surf2_pitch;
@@ -1377,7 +1351,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 		uint h, i;
 
 		if (state->flags & kDFCompressed) {
-			byte *dst_org = state->surf_addr;
+			byte *dstPtr = state->surf_addr;
 			src = state->depack_src;
 			/* AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD EEEEEEEE
 			 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
@@ -1386,7 +1360,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 			do {
 				uint count = state->draw_width / 4;
 
-				dst = dst_org;
+				dst = dstPtr;
 				do {
 					uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
 					byte color;
@@ -1422,7 +1396,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 					dst += 8;
 					src += 5;
 				} while (--count);
-				dst_org += _screenWidth;
+				dstPtr += _screenWidth;
 			} while (--state->draw_height);
 		} else {
 			src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
@@ -1448,7 +1422,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 
 		if (state->flags & kDFCompressed) {
 			uint w, h;
-			byte *src, *dst, *dst_org;
+			byte *src, *dst, *dstPtr;
 
 			state->x_skip *= 4;				/* reached */
 
@@ -1457,16 +1431,16 @@ void AGOSEngine::drawImages(VC10_state *state) {
 
 			vc10_skip_cols(state);
 
-			dst_org = state->surf_addr;
+			dstPtr = state->surf_addr;
 			if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
-				dst_org += vcReadVar(252);
+				dstPtr += vcReadVar(252);
 			}
 			w = 0;
 			do {
 				byte color;
 
 				src = vc10_depackColumn(state);
-				dst = dst_org;
+				dst = dstPtr;
 
 				h = 0;
 				do {
@@ -1479,7 +1453,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 					dst += _screenWidth;
 					src++;
 				} while (++h != state->draw_height);
-				dst_org += 2;
+				dstPtr += 2;
 			} while (++w != state->draw_width);
 			/* vc10_helper_6 */
 		} else {
@@ -1915,7 +1889,7 @@ void AGOSEngine::vc25_halt_sprite() {
 }
 
 void AGOSEngine::vc26_setSubWindow() {
-	uint16 *as = &_video_windows[vcReadNextWord() * 4]; // number
+	uint16 *as = &_videoWindows[vcReadNextWord() * 4]; // number
 	as[0] = vcReadNextWord(); // x
 	as[1] = vcReadNextWord(); // y
 	as[2] = vcReadNextWord(); // width
@@ -2018,7 +1992,7 @@ void AGOSEngine::vc35_clearWindow() {
 	uint16 num = vcReadNextWord();
 	uint16 color = vcReadNextWord();
 
-	debug(0, "vc35_clearWindow: window %d color %d\n", num, color);
+	debug(0, "vc35_clearWindow: window %d color %d", num, color);
 }
 
 void AGOSEngine::vc36_setWindowImage() {
@@ -2154,7 +2128,7 @@ void AGOSEngine::vc45_setSpriteX() {
 		uint num = vcReadNextWord();
 		uint color = vcReadNextWord();
 
-		debug(0, "vc45: window %d color %d\n", num, color);
+		debug(0, "vc45: window %d color %d", num, color);
 	} else {
 		VgaSprite *vsp = findCurSprite();
 		vsp->x = vcReadVar(vcReadNextWord());

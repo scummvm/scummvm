@@ -472,6 +472,7 @@ protected:
 	uint8 _displayPalette[1024];
 
 	byte _videoBuf1[3000];
+	uint16 _videoWindows[128];
 
 	VgaTimerEntry _vgaTimerList[205];
 
@@ -1241,7 +1242,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	void convertAmiga(byte *srcBuf, int32 flength);
+	void convertAmiga(byte *srcBuf, int32 fileSize);
 	void loadVGAFile(uint id, uint type);
 	void loadSimonVGAFile(uint id);
 

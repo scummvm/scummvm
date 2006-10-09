@@ -178,7 +178,7 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-			decompressIconAmiga (dst, src, 224, _dxSurfacePitch);
+			decompressIconAmiga (dst, src, 16, _dxSurfacePitch);
 		} else {
 			src = _iconFilePtr;
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
