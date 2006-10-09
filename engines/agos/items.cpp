@@ -290,6 +290,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[230] = &AGOSEngine::o_window;
 	op[231] = &AGOSEngine::o_cls;
 	op[232] = &AGOSEngine::o_closeWindow;
+	op[233] = &AGOSEngine::oe1_menu;
 
 	op[235] = &AGOSEngine::o_addBox;
 	op[236] = &AGOSEngine::o_delBox;
@@ -2025,6 +2026,11 @@ void AGOSEngine::oe1_nextMaster() {
 		_subjectItem = nextMaster(levelOf(me()), item, ad, no);
 	else
 		_objectItem = nextMaster(levelOf(me()), item, ad, no);
+}
+
+void AGOSEngine::oe1_menu() {
+	// 233: agos menu
+	// Used by Amiga demo
 }
 
 void AGOSEngine::oe1_bitClear() {

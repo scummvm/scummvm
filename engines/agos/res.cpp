@@ -669,10 +669,14 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 			if (getFeatures() & GF_TALKIE) {
 				sprintf(filename, "%.3d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-				if (getGameId() == GID_ELVIRA1DEMO)
-					sprintf(filename, "%.1d%d.out", id, type);
-				else 
+				if (getGameId() == GID_ELVIRA1DEMO) {
+					if (id == 27)
+						sprintf(filename, "K%d.out", type);
+					else
+						sprintf(filename, "%.1d%d.out", id, type);
+				} else {
 					sprintf(filename, "%.2d%d.pkd", id, type);
+				}
 			} else {
 				sprintf(filename, "%.3d%d.pkd", id, type);
 			}
@@ -693,8 +697,15 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 					error("loadVGAFile: Read failed");
 
 				dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-				dst = allocBlock (dstSize + extraBuffer);
-				decrunchFile(srcBuffer, dst, srcSize);
+				if (type == 2 && dstSize != 64800) {
+					dst = (byte *)malloc(dstSize);
+					decrunchFile(srcBuffer, dst, srcSize);
+					convertAmiga(dst, dstSize);
+					free(dst);
+				} else {
+					dst = allocBlock (dstSize + extraBuffer);
+					decrunchFile(srcBuffer, dst, srcSize);
+				}
 				free(srcBuffer);
 			} else {
 				dst = allocBlock(dstSize + extraBuffer);

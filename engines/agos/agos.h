@@ -1072,6 +1072,7 @@ public:
 	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();
+	void oe1_menu();
 	void oe1_setTime();
 	void oe1_ifTime();
 	void oe1_bitClear();
@@ -1240,6 +1241,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
+	void convertAmiga(byte *srcBuf, int32 flength);
 	void loadVGAFile(uint id, uint type);
 	void loadSimonVGAFile(uint id);
 
