@@ -83,8 +83,8 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 	uint16 length, i, j, k, word1, word2, word3, word4, cliplength;
 	byte outbyte, outbyte1, x, y;
 	char n;
-	uncbuffer = (byte *)malloc((int32)(height * width / 2));
-	uncbfrout = (byte *)malloc((int32)(height * width / 2));
+	uncbuffer = (byte *)malloc(height * width * 2);
+	uncbfrout = (byte *)malloc(height * width * 2);
 	length = width / 16;
 	length *= height;
 	plane0 = READ_BE_UINT32(clipptr) + clipptr; clipptr += 4; plane0 += 4;
