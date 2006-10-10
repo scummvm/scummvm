@@ -719,8 +719,6 @@ void AGOSEngine::setupGame() {
 		} else {
 			_videoWindows[i] = initialVideoWindows_Common[i];
 		}
-
-		printf("initialVideoWindows_Common[%d] %d\n", i, _videoWindows[i]);
 	}
 }
 

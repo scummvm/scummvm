@@ -164,15 +164,26 @@ static void decompressIcon(byte *dst, byte *src, uint w, uint h_org, byte base, 
 }
 
 void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
-	return;
-
 	byte *dst;
 	byte *src;
 
 	_lockWord |= 0x8000;
 	dst = getFrontBuf();
 
-	if (getGameType() == GType_SIMON1) {
+	if (getGameType() == GType_SIMON2) {
+		// Simon 2
+		dst += 110;
+		dst += x;
+		dst += (y + window->y) * _dxSurfacePitch;
+
+		src = _iconFilePtr;
+		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 0]);
+		decompressIcon(dst, src, 20, 10, 224, _dxSurfacePitch);
+
+		src = _iconFilePtr;
+		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
+		decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
+	} else if (getGameType() == GType_SIMON1) {
 		// Simon 1
 		dst += (x + window->x) * 8;
 		dst += (y * 25 + window->y) * _dxSurfacePitch;
@@ -187,18 +198,7 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 			decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 		}
 	} else {
-		// Simon 2
-		dst += 110;
-		dst += x;
-		dst += (y + window->y) * _dxSurfacePitch;
-
-		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 0]);
-		decompressIcon(dst, src, 20, 10, 224, _dxSurfacePitch);
-
-		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
-		decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
+		// TODO
 	}
 
 	_lockWord &= ~0x8000;

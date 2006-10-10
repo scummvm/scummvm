@@ -1249,9 +1249,6 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 void AGOSEngine::drawImages(VC10_state *state) {
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
-	printf("_windowNum %d vlut[0] %d vlut[1] %d\n", _windowNum, vlut[0], vlut[1]);
-
-
 	if (drawImages_clip(state) == 0)
 		return;
 
@@ -1294,8 +1291,6 @@ void AGOSEngine::drawImages(VC10_state *state) {
 		offs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
 		offs2 = (vlut[1] - _videoWindows[17] + state->y);
 	}
-
-	printf("offs %d offs2 %d\n", offs, offs2);
 
 	state->surf2_addr += offs + offs2 * state->surf2_pitch;
 	state->surf_addr += offs + offs2 * state->surf_pitch;
