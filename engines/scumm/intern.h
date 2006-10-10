@@ -30,6 +30,7 @@ namespace Scumm {
 
 class Insane;
 class SmushMixer;
+class SmushPlayer;
 
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save abit of memory used by opcode names in the Scumm engine.
@@ -598,6 +599,7 @@ public:
 	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
 
 	SmushMixer *_smixer;
+	SmushPlayer *_splayer;
 
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);

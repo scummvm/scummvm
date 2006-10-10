@@ -1176,9 +1176,7 @@ void ScummEngine_v8::o8_systemOps() {
 void ScummEngine_v8::o8_startVideo() {
 	int len = resStrLen(_scriptPointer);
 
-	SmushPlayer *sp = new SmushPlayer(this, 12);
-	sp->play((const char*)_scriptPointer);
-	delete sp;
+	_splayer->play((const char*)_scriptPointer, 12);
 
 	_scriptPointer += len + 1;
 }

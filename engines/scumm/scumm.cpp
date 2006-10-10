@@ -42,6 +42,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
+#include "scumm/smush/smush_player.h"
 #include "scumm/insane/insane.h"
 #include "scumm/intern.h"
 #include "scumm/he/animation_he.h"
@@ -779,6 +780,7 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_smushActive = false;
 	_insaneRunning = false;
 	_smixer = NULL;
+	_splayer = NULL;
 
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
@@ -790,6 +792,10 @@ ScummEngine_v7::~ScummEngine_v7() {
 	if (_smixer) {
 		_smixer->stop();
 		delete _smixer;
+	}
+	if (_splayer) {
+		_splayer->release();
+		delete _splayer;
 	}
 
 	free(_languageBuffer);
@@ -1107,6 +1113,8 @@ void ScummEngine_v7::setupScumm() {
 		_insane = 0;
 
 	_smixer = new SmushMixer(_mixer);
+
+	_splayer = new SmushPlayer(this);
 }
 #endif
 

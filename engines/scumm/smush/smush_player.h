@@ -73,6 +73,7 @@ private:
 	bool _initDone;
 	int _speed;
 	bool _outputSound;
+	bool _endOfFile;
 
 	byte *_dst;
 	bool _updateNeeded;
@@ -94,10 +95,11 @@ private:
 	Common::Mutex _mutex;
 
 public:
-	SmushPlayer(ScummEngine_v7 *scumm, int speed);
+	SmushPlayer(ScummEngine_v7 *scumm);
 	~SmushPlayer();
 
-	void play(const char *filename, int32 offset = 0, int32 startFrame = 0);
+	void play(const char *filename, int32 speed, int32 offset = 0, int32 startFrame = 0);
+	void release();
 	void warpMouse(int x, int y, int buttons);
 
 protected:
@@ -115,8 +117,7 @@ protected:
 
 private:
 	void parseNextFrame();
-	void init();
-	void release();
+	void init(int32 spped);
 	void setupAnim(const char *file);
 	void updateScreen();
 	void tryCmpFile(const char *filename);

@@ -36,7 +36,7 @@ namespace Scumm {
 
 void Insane::runScene(int arraynum) {
 	_insaneIsRunning = true;
-	_player = new SmushPlayer(_vm, _speed);
+	_player = _vm->_splayer;
 	_player->insanity(true);
 
 	_numberArray = arraynum;
@@ -170,8 +170,6 @@ void Insane::runScene(int arraynum) {
 	}
 	// insane_unlock(); // FIXME
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
-
-	delete _player;
 }
 
 int Insane::initScene(int sceneId) {

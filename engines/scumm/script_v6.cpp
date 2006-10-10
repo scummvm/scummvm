@@ -2526,15 +2526,12 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
 						_smushFrameRate = 14;
 
-					SmushPlayer *sp = new SmushPlayer((ScummEngine_v7 *)this, _smushFrameRate);
-
 					// Correct incorrect smush filename in Macintosh FT demo
 					if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
 					    (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "jumpgorge.san") == 0))
-						sp->play("jumpgorg.san");
+						_splayer->play("jumpgorg.san", _smushFrameRate);
 					else
-						sp->play((char *)getStringAddressVar(VAR_VIDEONAME));
-					delete sp;
+						_splayer->play((char *)getStringAddressVar(VAR_VIDEONAME), _smushFrameRate);
 
 					if (_game.id == GID_DIG) {
 						_disableFadeInEffect = true;

@@ -235,11 +235,11 @@ void SmushPlayer::timerCallback(void *refCon) {
 #endif
 }
 
-SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, int speed) {
+SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 	_version = -1;
 	_nbframes = 0;
-	_smixer = 0;
+	_smixer = NULL;
 	_strings = NULL;
 	_sf[0] = NULL;
 	_sf[1] = NULL;
@@ -261,7 +261,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, int speed) {
 	_IACTpos = 0;
 	_soundFrequency = 22050;
 	_initDone = false;
-	_speed = speed;
+	_speed = -1;
 	_insanity = false;
 	_middleAudio = false;
 	_skipPalette = false;
@@ -278,12 +278,13 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, int speed) {
 }
 
 SmushPlayer::~SmushPlayer() {
-	release();
 }
 
-void SmushPlayer::init() {
+void SmushPlayer::init(int32 speed) {
 	_frame = 0;
+	_speed = speed;
 	_alreadyInit = false;
+	_endOfFile = false;
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
@@ -302,6 +303,8 @@ void SmushPlayer::init() {
 	_vm->virtscr[0].pitch = _vm->virtscr[0].w;
 	_vm->_gdi->_numStrips = _vm->virtscr[0].w / 8;
 
+	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
+	_vm->_mixer->stopHandle(_IACTchannel);
 	_vm->_smixer->stop();
 
 	Common::g_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
@@ -340,9 +343,6 @@ void SmushPlayer::release() {
 	free(_frameBuffer);
 	_frameBuffer = NULL;
 
-	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
-
-	_vm->_mixer->stopHandle(_IACTchannel);
 	_IACTstream = NULL;
 
 	_vm->_smushActive = false;
@@ -1115,6 +1115,7 @@ void SmushPlayer::parseNextFrame() {
 	assert(_base);
 	if (_base->eof()) {
 		_vm->_smushVideoShouldFinish = true;
+		_endOfFile = true;
 		return;
 	}
 
@@ -1273,7 +1274,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 #endif
 }
 
-void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
+void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
 
 	// Verify the specified file exists
 	ScummFile f;
@@ -1299,7 +1300,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	_base = 0;
 
 	setupAnim(filename);
-	init();
+	init(speed);
 
 	for (;;) {
 		if (_warpNeeded) {
@@ -1345,12 +1346,14 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			_inTimerCount = 0;
 #endif
 		}
-		if (_vm->_quit || _vm->_saveLoadFlag) {
+		if (_endOfFile)
+			break;
+		if (_vm->_quit || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
 			_smixer->stop();
+			_vm->_mixer->stopHandle(_compressedFileSoundHandle);
+			_vm->_mixer->stopHandle(_IACTchannel);
 			break;
 		}
-		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
-			break;
 		_vm->_system->delayMillis(10);
 	}
 

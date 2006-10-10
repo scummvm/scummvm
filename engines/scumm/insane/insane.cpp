@@ -620,7 +620,7 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 		smush_setupSanFromStart(filename, 0, -1, -1, 0);
 	}
 
-	_player->play(filename, offset, startFrame);
+	_player->play(filename, _speed, offset, startFrame);
 }
 
 void Insane::smush_warpMouse(int x, int y, int buttons) {
