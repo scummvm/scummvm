@@ -348,7 +348,7 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetB
 		shadow = kShadowEmboss;
 		start = kSliderBackgroundStart;
 		end = kSliderBackgroundEnd;
-		factor = kSliderFactor;
+		factor = kSliderBackground;
 		break;
 	default:
 		corner = kWidgetBkgdCorner;
