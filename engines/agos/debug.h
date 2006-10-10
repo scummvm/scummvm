@@ -55,8 +55,8 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	/* 20 */
 	"WWJ|IS_LEF",
 	"WWJ|IS_GEF",
-	NULL,
-	NULL,
+	"WWJ|IS_IN",
+	"WWJ|IS_NOT_IN",
 	/* 24 */
 	NULL,
 	NULL,

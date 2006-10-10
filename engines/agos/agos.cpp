@@ -559,7 +559,7 @@ int AGOSEngine::init() {
 	return 0;
 }
 
-const static uint16 initialVideoWindows_Simon[24] = {
+const static uint16 initialVideoWindows_Simon[20] = {
 	0,  0, 20, 200,
 	0,  0,  3, 136,
 	17, 0,  3, 136,
@@ -567,7 +567,7 @@ const static uint16 initialVideoWindows_Simon[24] = {
 	0,  0, 20, 134
 };
 
-const static uint16 initialVideoWindows_Common[24] = {
+const static uint16 initialVideoWindows_Common[20] = {
 	 3, 0, 14, 136,
 	 0, 0,  3, 136,
 	17, 0,  3, 136,
@@ -713,7 +713,7 @@ void AGOSEngine::setupGame() {
 
 	_stringIdLocalMin = 1;
 
-	for (int i = 0; i < 24; i++) {
+	for (int i = 0; i < 20; i++) {
 		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
 			_videoWindows[i] = initialVideoWindows_Simon[i];
 		else

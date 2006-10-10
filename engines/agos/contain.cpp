@@ -60,6 +60,16 @@ void AGOSEngine::xPlace(Item *x, Item *y) {
 	linkItem(x, y);
 }
 
+int AGOSEngine::contains(Item *a, Item *b) {
+	while (derefItem(b->parent)) {
+		if (derefItem(b->parent) == a)
+			return 1;
+		b = derefItem(b->parent);
+	}
+
+	return 0;
+}
+
 int AGOSEngine::sizeContents(Item *x) {
 	return sizeRec(x, 0);
 }

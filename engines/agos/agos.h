@@ -1036,6 +1036,8 @@ public:
 	void moveDirn_e2(Item *i, uint x);
 	void moveDirn_ww(Item *i, uint x);
 
+	int contains(Item *a, Item *b);
+
 	int sizeContents(Item *x);
 	int sizeOfRec(Item *o, int d);
 	int sizeRec(Item *x, int d);
@@ -1056,6 +1058,8 @@ public:
 	void oe1_isNotAt();
 	void oe1_sibling();
 	void oe1_notSibling();
+	void oe1_isIn();
+	void oe1_isNotIn();
 	void oe1_isPlayer();
 	void oe1_canPut();
 	void oe1_copyof();

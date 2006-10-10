@@ -189,6 +189,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[19] = &AGOSEngine::o_notEqf;
 	op[20] = &AGOSEngine::o_ltf;
 	op[21] = &AGOSEngine::o_gtf;
+	op[22] = &AGOSEngine::oe1_isIn;
+	op[23] = &AGOSEngine::oe1_isNotIn;
 
 	op[29] = &AGOSEngine::o_chance;
 	op[30] = &AGOSEngine::oe1_isPlayer;
@@ -1816,6 +1818,20 @@ void AGOSEngine::oe1_notSibling() {
 	Item *item1 = getNextItemPtr();
 	Item *item2 = getNextItemPtr();
 	setScriptCondition(item1->parent != item2->parent);
+}
+
+void AGOSEngine::oe1_isIn() {
+	// 22: is in
+	Item *item1 = getNextItemPtr();
+	Item *item2 = getNextItemPtr();
+	setScriptCondition(contains(item1, item2) != 0);
+}
+
+void AGOSEngine::oe1_isNotIn() {
+	// 23: is not in
+	Item *item1 = getNextItemPtr();
+	Item *item2 = getNextItemPtr();
+	setScriptCondition(contains(item1, item2) == 0);
 }
 
 void AGOSEngine::oe1_isPlayer() {
