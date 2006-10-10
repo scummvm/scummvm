@@ -98,4 +98,33 @@ int AGOSEngine::sizeOfRec(Item *o, int d) {
 	return 0;
 }
 
+int AGOSEngine::weighUp(Item *x) {
+	return weightRec(x, 0);
+}
+
+int AGOSEngine::weightRec(Item *x, int d) {
+	int n = weightOf(x);
+	Item *o;
+
+	if (d > 32)
+		return 0;
+	o = derefItem(x->child);
+	while (o) {
+		n += weightRec(o, d + 1);
+		o = derefItem(o->next);
+	}
+
+	return n;
+}
+
+int AGOSEngine::weightOf(Item *x) {
+	SubObject *o = (SubObject *)findChildOfType(x, 2);
+	SubPlayer *p = (SubPlayer *)findChildOfType(x, 3);
+	if (o)
+		return o->objectWeight;
+	if (p)
+		return p->weight;
+	return 0;
+}
+
 } // End of namespace AGOS

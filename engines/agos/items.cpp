@@ -209,6 +209,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[56] = &AGOSEngine::o_copyff;
 	op[57] = &AGOSEngine::oe1_whatO;
 
+	op[59] = &AGOSEngine::oe1_weigh;
 	op[60] = &AGOSEngine::oe1_setFF;
 	op[61] = &AGOSEngine::o_clear;
 
@@ -225,7 +226,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[74] = &AGOSEngine::o_modf;
 	op[75] = &AGOSEngine::o_random;
 
-	op[76] = &AGOSEngine::o_moveDirn;
+	op[76] = &AGOSEngine::oe1_moveDirn;
 	op[77] = &AGOSEngine::o_goto;
 
 	op[80] = &AGOSEngine::o_oset;
@@ -350,7 +351,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[34] = &AGOSEngine::oe1_copyof;
 	op[35] = &AGOSEngine::oe1_copyfo;
 	op[37] = &AGOSEngine::oe1_whatO;
-	op[54] = &AGOSEngine::o_moveDirn;
+	op[54] = &AGOSEngine::oe2_moveDirn;
 	op[73] = &AGOSEngine::oe1_pobj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
@@ -406,7 +407,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[34] = &AGOSEngine::oe1_copyof;
 	op[37] = &AGOSEngine::oe1_whatO;
 	op[35] = &AGOSEngine::oe1_copyfo;
-	op[54] = &AGOSEngine::o_moveDirn;
+	op[54] = &AGOSEngine::oww_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[73] = &AGOSEngine::oe1_pobj;
@@ -890,20 +891,6 @@ void AGOSEngine::o_random() {
 		writeVariable(var, 4);
 	else
 		writeVariable(var, _rnd.getRandomNumber(value - 1));
-}
-
-void AGOSEngine::o_moveDirn() {
-	// 54: move direction
-	int16 d = getVarOrByte();
-
-	if (getGameType() == GType_WW) {
-		moveDirn_ww(me(), d);
-	} else if (getGameType() == GType_ELVIRA2) {
-		moveDirn_e2(me(), d);
-	} else {
-		moveDirn_e1(me(), d);
-	}
-
 }
 
 void AGOSEngine::o_goto() {
@@ -1867,9 +1854,21 @@ void AGOSEngine::oe1_whatO() {
 		_objectItem = findMaster(levelOf(me()), _scriptAdj2, _scriptNoun2);
 }
 
+void AGOSEngine::oe1_weigh() {
+	// 59: weight
+	Item *item = getNextItemPtr();
+	writeVariable(getVarOrWord(), weighUp(item));
+}
+
 void AGOSEngine::oe1_setFF() {
 	// 60: set FF
 	writeNextVarContents(0xFF);
+}
+
+void AGOSEngine::oe1_moveDirn() {
+	// 54: move direction
+	int16 d = readVariable(getVarOrWord());
+	moveDirn_e1(me(), d);
 }
 
 void AGOSEngine::oe1_score() {
@@ -1937,7 +1936,16 @@ void AGOSEngine::oe1_cFlag() {
 }
 
 void AGOSEngine::oe1_means() {
-	// 165: TODO
+	// 165: means
+	_scriptVerb = getNextWord();
+	_scriptNoun1 = getNextWord();
+	_scriptNoun2 = getNextWord();
+
+	if (getVarOrWord()) {
+		int16 tmp = _scriptNoun1;
+		_scriptNoun1 = _scriptNoun2;
+		_scriptNoun2 = tmp;
+	}
 }
 
 void AGOSEngine::oe1_setUserItem() {
@@ -2125,6 +2133,12 @@ void AGOSEngine::oe1_setStore() {
 // Elvira 2 Opcodes
 // -----------------------------------------------------------------------
 
+void AGOSEngine::oe2_moveDirn() {
+	// 54: move direction
+	int16 d = getVarOrByte();
+	moveDirn_e2(me(), d);
+}
+
 void AGOSEngine::oe2_loadUserGame() {
 	// 89: load user game
 	getStringPtrByID(getNextStringID());
@@ -2192,6 +2206,12 @@ void AGOSEngine::oe2_getSuperRoom() {
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
+
+void AGOSEngine::oww_moveDirn() {
+	// 54: move direction
+	int16 d = getVarOrByte();
+	moveDirn_ww(me(), d);
+}
 
 void AGOSEngine::oww_goto() {
 	// 55: set itemA parent

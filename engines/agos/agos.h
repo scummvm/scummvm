@@ -928,7 +928,6 @@ public:
 	void o_mod();
 	void o_modf();
 	void o_random();
-	void o_moveDirn();
 	void o_goto();
 	void o_oset();
 	void o_oclear();
@@ -1041,6 +1040,10 @@ public:
 	int sizeOfRec(Item *o, int d);
 	int sizeRec(Item *x, int d);
 
+	int weighUp(Item *x);
+	int weightRec(Item *x, int d);
+	int weightOf(Item *x);
+
 	int canPlace(Item *x, Item *y);
 	void xPlace(Item *x, Item *y);
 
@@ -1058,7 +1061,9 @@ public:
 	void oe1_copyof();
 	void oe1_copyfo();
 	void oe1_whatO();
+	void oe1_weigh();
 	void oe1_setFF();
+	void oe1_moveDirn();
 	void oe1_score();
 	void oe1_doClass();
 	void oe1_pobj();
@@ -1088,6 +1093,7 @@ public:
 	void oe1_setStore();
 
 	// Opcodes, Elvira 2 only
+	void oe2_moveDirn();
 	void oe2_loadUserGame();
 	void oe2_setDoorOpen();
 	void oe2_setDoorClosed();

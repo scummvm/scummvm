@@ -101,7 +101,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"WW|MOVE",
 	"W|WHAT_O",
 	NULL,
-	NULL,
+	"IW|WEIGH",
 	/* 60 */
 	"W|SET_FF",
 	"W|ZERO",
