@@ -45,7 +45,6 @@
 
 #include "sound/fmopl.h"
 
-#include "ozone.h"
 #include "CEException.h"
 
 #ifdef USE_VORBIS

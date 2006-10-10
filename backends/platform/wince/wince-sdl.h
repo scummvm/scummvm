@@ -37,9 +37,25 @@
 
 #include <SDL.h>
 
-
-
 #define TOTAL_ZONES 3
+
+// defines used for implementing the raw frame buffer access method (2003+)
+#define GETRAWFRAMEBUFFER   0x00020001
+#define FORMAT_565 1
+#define FORMAT_555 2
+#define FORMAT_OTHER 3
+#if defined(_WIN32_WCE) && _WIN32_WCE <= 300
+typedef struct _RawFrameBufferInfo
+{
+	WORD wFormat;
+	WORD wBPP;
+	VOID *pFramePointer;
+	int  cxStride;
+	int  cyStride;
+	int  cxPixels;
+	int  cyPixels;
+} RawFrameBufferInfo;
+#endif
 
 class OSystem_WINCE3 : public OSystem_SDL {
 public:
