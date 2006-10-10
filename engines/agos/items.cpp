@@ -338,7 +338,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[279] = &AGOSEngine::o_freezeZones;
 	op[280] = &AGOSEngine::o_placeNoIcons;
 	op[281] = &AGOSEngine::o_clearTimers;
-	op[282] = &AGOSEngine::oe1_setStore;
+	op[282] = &AGOSEngine::o_setDollar;
 	op[283] = &AGOSEngine::o_isBox;
 }
 
@@ -2133,16 +2133,6 @@ void AGOSEngine::oe1_printPlayerHit() {
 void AGOSEngine::oe1_printMonsterHit() {
 	// 278: print monster hit
 	printStats();
-}
-
-void AGOSEngine::oe1_setStore() {
-	// 282: set store
-	Item *item = getNextItemPtr();
-
-	if (getVarOrWord() == 1)
-		_subjectItem = item;
-	else
-		_objectItem = item;
 }
 
 // -----------------------------------------------------------------------

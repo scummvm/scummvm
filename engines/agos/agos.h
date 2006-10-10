@@ -1094,7 +1094,6 @@ public:
 	void oe1_printMonsterDamage();
 	void oe1_printPlayerHit();
 	void oe1_printMonsterHit();
-	void oe1_setStore();
 
 	// Opcodes, Elvira 2 only
 	void oe2_moveDirn();

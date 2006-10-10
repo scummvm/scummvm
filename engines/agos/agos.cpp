@@ -714,10 +714,13 @@ void AGOSEngine::setupGame() {
 	_stringIdLocalMin = 1;
 
 	for (int i = 0; i < 20; i++) {
-		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			_videoWindows[i] = initialVideoWindows_Simon[i];
-		else
+		} else {
 			_videoWindows[i] = initialVideoWindows_Common[i];
+		}
+
+		printf("initialVideoWindows_Common[%d] %d\n", i, _videoWindows[i]);
 	}
 }
 

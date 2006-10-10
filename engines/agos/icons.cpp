@@ -164,6 +164,8 @@ static void decompressIcon(byte *dst, byte *src, uint w, uint h_org, byte base, 
 }
 
 void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
+	return;
+
 	byte *dst;
 	byte *src;
 
