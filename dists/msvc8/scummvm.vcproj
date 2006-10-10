@@ -977,6 +977,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\themebrowser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\themebrowser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\ThemeClassic.cpp"
 				>
 			</File>
