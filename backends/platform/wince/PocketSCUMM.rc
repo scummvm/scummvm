@@ -5,7 +5,7 @@
 // Icon
 //
 
-IDI_POCKETSCUMM         ICON    DISCARDABLE     "icons/scumm_icon.ico"
+IDI_POCKETSCUMM         ICON    DISCARDABLE     "images/scumm_icon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
