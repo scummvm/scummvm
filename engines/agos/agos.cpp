@@ -1658,10 +1658,10 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
-	uint16 count;
+	uint16 count, updateWindow;
 	const byte *vc_ptr_org;
 
-	_windowNum = mode;
+	_windowNum = updateWindow = mode;
 	_lockWord |= 0x20;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -1778,7 +1778,7 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	runVgaScript();
 	_vcPtr = vc_ptr_org;
 
-	if (getGameType() == GType_ELVIRA1 && _windowNum == 3 && _bottomPalette != 0) {
+	if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
 		byte *dst = getBackBuf() + 42560;
 		int size = 21440;
 
