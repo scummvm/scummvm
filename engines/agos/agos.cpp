@@ -2154,8 +2154,9 @@ void AGOSEngine::loadSprite(uint windowNum, uint zoneNum, uint vgaSpriteId, uint
 	byte *p, *pp;
 	uint count;
 
-	if (vgaSpriteId >= 400)
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) && vgaSpriteId >= 400) {
 		_lastVgaWaitFor = 0;
+	}
 
 	_lockWord |= 0x40;
 
