@@ -471,7 +471,7 @@ protected:
 	uint8 _currentPalette[1024];
 	uint8 _displayPalette[1024];
 
-	byte _videoBuf1[3000];
+	byte _videoBuf1[32000];
 	uint16 _videoWindows[128];
 
 	VgaTimerEntry _vgaTimerList[205];
