@@ -39,7 +39,7 @@ uint AGOSEngine::getWindowNum(WindowBlock *window) {
 	return 0;
 }
 
-WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
+WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fillColor, uint textColor) {
 	WindowBlock *window;
 
 	window = _windowList;
@@ -52,8 +52,8 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	window->width = w;
 	window->height = h;
 	window->flags = flags;
-	window->fill_color = fill_color;
-	window->text_color = text_color;
+	window->fill_color = fillColor;
+	window->text_color = textColor;
 	window->textColumn = 0;
 	window->textRow = 0;
 	window->textColumnOffset = 0;

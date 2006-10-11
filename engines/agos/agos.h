@@ -699,7 +699,7 @@ protected:
 	void inventoryUp(WindowBlock *window);
 	void inventoryDown(WindowBlock *window);
 
-	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
+	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fillColor, uint textColor);
 	uint getWindowNum(WindowBlock *window);
 	void clearWindow(WindowBlock *window);
 	void changeWindow(uint a);
@@ -1083,6 +1083,7 @@ public:
 	void oe1_findMaster();
 	void oe1_nextMaster();
 	void oe1_menu();
+	void oe1_enableInput();
 	void oe1_setTime();
 	void oe1_ifTime();
 	void oe1_bitClear();

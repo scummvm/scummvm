@@ -350,7 +350,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	/* 256 */
 	"W|SYNC",
 	"WI|DEF_OBJ",
-	NULL,
+	"|ENABLE_INPUT",
 	"|SET_TIME",
 	/* 260 */
 	"WJ|IF_TIME",

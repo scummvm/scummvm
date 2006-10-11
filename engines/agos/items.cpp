@@ -315,6 +315,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[256] = &AGOSEngine::o_sync;
 	op[257] = &AGOSEngine::o_defObj;
 
+	op[258] = &AGOSEngine::oe1_enableInput;
 	op[259] = &AGOSEngine::oe1_setTime;
 	op[260] = &AGOSEngine::oe1_ifTime;
 	op[261] = &AGOSEngine::o_here;
@@ -2084,6 +2085,20 @@ void AGOSEngine::oe1_bitTest() {
 	int bit = getVarOrWord();
 
 	setScriptCondition((_variableArray[var] & (1 << bit)) != 0);
+}
+
+void AGOSEngine::oe1_enableInput() {
+	// 258: enable input
+	_variableArray[500] = 0;
+
+	for (int i = 120; i < 130; i++)
+		disableBox(i);
+
+	// XXX
+	_lastHitArea = 0;
+	_verbHitArea = 0;
+	_hitAreaSubjectItem = NULL;
+	_hitAreaObjectItem = NULL;
 }
 
 void AGOSEngine::oe1_setTime() {
