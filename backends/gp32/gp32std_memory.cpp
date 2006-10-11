@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "backends/intern.h"
 
-#include "engines/engine.h"
+#include "base/engine.h"
 
 #include "gp32std.h"
 #include "gp32std_grap.h"
