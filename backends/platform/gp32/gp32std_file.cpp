@@ -45,13 +45,11 @@ FILE *gp_stdin = NULL;
 
 
 // CACHE
-inline bool gp_cacheInPos(GPFILE *stream)
-{
+inline bool gp_cacheInPos(GPFILE *stream) {
 	return (stream->cachePos <= stream->filePos && stream->filePos < stream->cachePos + stream->bytesInCache);
 }
 
-int gp_cacheMiss(GPFILE *stream)
-{
+int gp_cacheMiss(GPFILE *stream) {
 	unsigned long readcount = 0;
 
 	int copyLen = stream->fileSize - stream->filePos;
@@ -70,6 +68,9 @@ int gp_cacheMiss(GPFILE *stream)
 }
 
 int gp_flushWriteCache(GPFILE *stream) {
+	if (stream->bytesInCache == 0)
+		return 0;
+
 	ERR_CODE err = GpFileWrite(stream->handle, stream->cacheData, stream->bytesInCache); // flush cache
 
 	stream->filePos += stream->bytesInCache;
@@ -82,7 +83,6 @@ int gp_flushWriteCache(GPFILE *stream) {
 ///////////////////////////////////////////////////////////////
 
 GPFILE *gp_fopen(const char *fileName, const char *openMode) {
-	//FIXME: allocation, mode
 	uint32 mode;
 	GPFILE *file;
 	ERR_CODE err;
@@ -184,8 +184,7 @@ int gp_fseek(GPFILE *stream, long offset, int whence) {
 		err = GpFileSeek(stream->handle, whence, offset, (long *)&stream->physFilePos);
 		stream->filePos = stream->physFilePos;
 
-		if (gp_cacheInPos(stream)) {
-		} else { // cache miss
+		if (!gp_cacheInPos(stream)) { // cache miss
 			gp_cacheMiss(stream);
 		}
 	}
@@ -249,10 +248,7 @@ size_t gp_fwrite(const void *ptr, size_t size, size_t n, GPFILE *stream) {
 		len -= copyLen;
 
 		if (stream->bytesInCache == FCACHE_SIZE) {
-			ERR_CODE err = GpFileWrite(stream->handle, stream->cacheData, stream->bytesInCache); // flush cache
-			stream->filePos += stream->bytesInCache;
-			stream->physFilePos += stream->bytesInCache;
-			stream->bytesInCache = 0;
+			gp_flushWriteCache(stream);
 		}
 	}
 #else
