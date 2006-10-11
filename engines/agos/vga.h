@@ -71,7 +71,7 @@ struct AnimationHeader_Simon {
 // Elvira 1/2 and Waxworks
 struct ImageHeader_WW {
 	uint16 id;
-	uint16 x_1;
+	uint16 color;
 	uint16 x_2;
 	uint16 scriptOffs;
 };

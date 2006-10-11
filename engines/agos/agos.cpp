@@ -559,7 +559,7 @@ int AGOSEngine::init() {
 	return 0;
 }
 
-const static uint16 initialVideoWindows_Simon[20] = {
+static const uint16 initialVideoWindows_Simon[20] = {
 	0,  0, 20, 200,
 	0,  0,  3, 136,
 	17, 0,  3, 136,
@@ -567,7 +567,7 @@ const static uint16 initialVideoWindows_Simon[20] = {
 	0,  0, 20, 134
 };
 
-const static uint16 initialVideoWindows_Common[20] = {
+static const uint16 initialVideoWindows_Common[20] = {
 	 3, 0, 14, 136,
 	 0, 0,  3, 136,
 	17, 0,  3, 136,
@@ -1764,6 +1764,8 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 			_variableArray[251] = 0;
 		}
 	}
+
+	clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
 
 	vc_ptr_org = _vcPtr;
 

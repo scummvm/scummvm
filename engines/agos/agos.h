@@ -1217,6 +1217,8 @@ protected:
 	void checkScrollY(int16 y, int16 ypos);
 	void centreScroll();
 
+	void clearWindow(uint windowNum, uint color);
+
 	void startOverlayAnims();
 	void startAnOverlayAnim();
 
