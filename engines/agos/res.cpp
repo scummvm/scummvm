@@ -443,7 +443,7 @@ uint fileReadItemID(Common::File *in) {
 }
 
 void AGOSEngine::openGameFile() {
-	if (!(getFeatures() & GF_OLD_BUNDLE)) {
+	if (getFileName(GAME_GMEFILE) != NULL) {
 		_gameFile = new File();
 		_gameFile->open(getFileName(GAME_GMEFILE));
 
