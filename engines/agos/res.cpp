@@ -168,48 +168,44 @@ void AGOSEngine::loadGamePcFile() {
 	}
 
 	readSubroutineBlock(&in);
-
 	in.close();
 
-	if ((getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAmiga) ||
-		getGameType() == GType_PP)
-		return;
+	if (getFileName(GAME_TBLFILE) != NULL) {
+		/* Read list of TABLE resources */
+		in.open(getFileName(GAME_TBLFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_TBLFILE));
+		}
 
-	/* Read list of TABLE resources */
-	in.open(getFileName(GAME_TBLFILE));
-	if (in.isOpen() == false) {
-		error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_TBLFILE));
+		file_size = in.size();
+
+		_tblList = (byte *)malloc(file_size);
+		if (_tblList == NULL)
+			error("loadGamePcFile: Out of memory for strip table list");
+		in.read(_tblList, file_size);
+		in.close();
+
+		/* Remember the current state */
+		_subroutineListOrg = _subroutineList;
+		_tablesHeapPtrOrg = _tablesHeapPtr;
+		_tablesHeapCurPosOrg = _tablesHeapCurPos;
 	}
 
-	file_size = in.size();
+	if (getFileName(GAME_STRFILE) != NULL) {
+		/* Read list of TEXT resources */
+		in.open(getFileName(GAME_STRFILE));
+		if (in.isOpen() == false)
+			error("loadGamePcFile: Can't load text resources file '%s'", getFileName(GAME_STRFILE));
 
-	_tblList = (byte *)malloc(file_size);
-	if (_tblList == NULL)
-		error("loadGamePcFile: Out of memory for strip table list");
-	in.read(_tblList, file_size);
-	in.close();
+		file_size = in.size();
+		_strippedTxtMem = (byte *)malloc(file_size);
+		if (_strippedTxtMem == NULL)
+			error("loadGamePcFile: Out of memory for strip text list");
+		in.read(_strippedTxtMem, file_size);
+		in.close();
+	}
 
-	/* Remember the current state */
-	_subroutineListOrg = _subroutineList;
-	_tablesHeapPtrOrg = _tablesHeapPtr;
-	_tablesHeapCurPosOrg = _tablesHeapCurPos;
-
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_FF)
-		return;
-
-	/* Read list of TEXT resources */
-	in.open(getFileName(GAME_STRFILE));
-	if (in.isOpen() == false)
-		error("loadGamePcFile: Can't load text resources file '%s'", getFileName(GAME_STRFILE));
-
-	file_size = in.size();
-	_strippedTxtMem = (byte *)malloc(file_size);
-	if (_strippedTxtMem == NULL)
-		error("loadGamePcFile: Out of memory for strip text list");
-	in.read(_strippedTxtMem, file_size);
-	in.close();
-
-	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
+	if (getFileName(GAME_RMSLFILE) != NULL) {
 		/* Read list of ROOM ITEMS resources */
 		in.open(getFileName(GAME_RMSLFILE));
 		if (in.isOpen() == false) {
@@ -225,7 +221,7 @@ void AGOSEngine::loadGamePcFile() {
 		in.close();
 	}
 
-	if (getGameType() == GType_WW) {
+	if (getFileName(GAME_XTBLFILE) != NULL) {
 		/* Read list of XTABLE resources */
 		in.open(getFileName(GAME_XTBLFILE));
 		if (in.isOpen() == false) {
@@ -665,7 +661,7 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 		dst = allocBlock(dstSize + extraBuffer);
 		decompressData(filename, dst, offs, srcSize, dstSize);
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
-		if (getPlatform() == Common::kPlatformAmiga) {
+		if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
 			if (getFeatures() & GF_TALKIE) {
 				sprintf(filename, "%.3d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {

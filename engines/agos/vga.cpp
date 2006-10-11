@@ -1335,8 +1335,6 @@ void AGOSEngine::drawImages(VC10_state *state) {
 				} while (--h);
 			}
 		} while (++w != state->draw_width);
-
-		/* vc10_helper_5 */
 	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) &&
 		(getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 		getPlatform() != Common::kPlatformAmiga) {
@@ -1407,7 +1405,6 @@ void AGOSEngine::drawImages(VC10_state *state) {
 				src += state->width * 16;
 			} while (--h);
 		}
-		/* vc10_helper_4 */
 	} else {
 		if (getGameType() == GType_SIMON2 && state->flags & kDFUseFrontBuf && getBitFlag(171)) {
 			state->surf_addr = state->surf2_addr;
@@ -1449,7 +1446,6 @@ void AGOSEngine::drawImages(VC10_state *state) {
 				} while (++h != state->draw_height);
 				dstPtr += 2;
 			} while (++w != state->draw_width);
-			/* vc10_helper_6 */
 		} else {
 			const byte *src;
 			byte *dst;

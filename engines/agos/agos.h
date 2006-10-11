@@ -182,7 +182,7 @@ public:
 			if (_gameDescription->desc.filesDescriptions[i].fileType == type)
 				return _gameDescription->desc.filesDescriptions[i].fileName; 
 		}
-		error("getFileName: Invalid type %d", type);
+		return NULL;
 	}
 
 protected:

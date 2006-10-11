@@ -2311,10 +2311,12 @@ int AGOSEngine::go() {
 	addTimeEvent(0, 1);
 	openGameFile();
 
-	if (getGameType() == GType_FF)
-		loadIconData();
-	else if (getGameType() != GType_PP)
-		loadIconFile();
+	if (getFileName(GAME_ICONFILE) != NULL) {
+		if (getGameType() == GType_FF)
+			loadIconData();
+		else
+			loadIconFile();
+	}
 
 	vc34_setMouseOff();
 
@@ -2475,7 +2477,15 @@ void AGOSEngine::delay(uint amount) {
 void AGOSEngine::loadMusic(uint music) {
 	char buf[4];
 
-	if (getGameType() == GType_SIMON2) {        // Simon 2 music
+	if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
+		if (getFeatures() & GF_CRUNCHED) {
+			// TODO Add support for decruncher
+			debug(5,"loadMusic - Decrunch %dtune attempt", music);
+		}
+		// TODO Add Protracker support for simon1amiga/cd32
+		debug(5,"playMusic - Load %dtune attempt", music);
+		return;
+	} else if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
 		_gameFile->read(buf, 4);
@@ -2489,17 +2499,7 @@ void AGOSEngine::loadMusic(uint music) {
 
 		_lastMusicPlayed = music;
 		_nextMusicToPlay = -1;
-	} else if (getGameType() == GType_SIMON1) {        // Simon 1 music
-		if (getPlatform() == Common::kPlatformAmiga) {
-			if (getFeatures() & GF_CRUNCHED) {
-				// TODO Add support for decruncher
-				debug(5,"loadMusic - Decrunch %dtune attempt", music);
-			}
-			// TODO Add Protracker support for simon1amiga/cd32
-			debug(5,"playMusic - Load %dtune attempt", music);
-			return;
-		}
-
+	} else if (getGameType() == GType_SIMON1) {
 		midi.stop();
 		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
@@ -2538,11 +2538,8 @@ void AGOSEngine::loadMusic(uint music) {
 
 		midi.startTrack (0);
 	} else {
-		if (getPlatform() == Common::kPlatformAmiga)
-			return;
-
 		midi.stop();
-		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		midi.setLoop (true); // Must do this BEFORE loading music.
 
 		char filename[15];
 		File f;

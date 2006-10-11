@@ -169,14 +169,20 @@ namespace AGOS {
 using Common::ADGameFileDescription;
 using Common::ADGameDescription;
 
+static const ADGameFileDescription ELVIRA1AMIGA_GameFiles[] = {
+	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0"},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1"},
+};
+
 static const ADGameFileDescription ELVIRA1AMIGADEMO_GameFiles[] = {
 	{ "englishdemo",	GAME_BASEFILE,	"7bbc2dfe8619ef579004ff57674c6e92"},
 	{ "icon.dat",		GAME_ICONFILE,	"68b329da9893e34099c7d8ad5cb9c940"},
 };
 
-static const ADGameFileDescription ELVIRA1AMIGA_GameFiles[] = {
-	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0"},
+static const ADGameFileDescription ELVIRA1ST_GameFiles[] = {
+	{ "gamest",		GAME_BASEFILE,	"8942859018fcfb2dbed13e83d974d1ab"},
 	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1"},
+	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b"},
 };
 
 static const ADGameFileDescription ELVIRA1DOS_GameFiles[] = {
@@ -185,7 +191,7 @@ static const ADGameFileDescription ELVIRA1DOS_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
 };
 
-static const ADGameFileDescription ELVIRA1DOS2_GameFiles[] = {
+static const ADGameFileDescription ELVIRA1DOS_FR_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
@@ -712,6 +718,22 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED,
 	},
 
+	// Elvira - English Atari ST Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+			ARRAYSIZE(ELVIRA1ST_GameFiles),
+			ELVIRA1ST_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED,
+	},
+
 	// Elvira - English DOS Floppy
 	{
 		{
@@ -733,8 +755,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"elvira1",
 			"Floppy",
-			ARRAYSIZE(ELVIRA1DOS2_GameFiles),
-			ELVIRA1DOS2_GameFiles,
+			ARRAYSIZE(ELVIRA1DOS_FR_GameFiles),
+			ELVIRA1DOS_FR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformPC,
 		},
