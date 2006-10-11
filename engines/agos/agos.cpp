@@ -28,8 +28,6 @@
 #include "common/fs.h"
 #include "common/system.h"
 
-#include "gui/about.h"
-
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
@@ -1333,7 +1331,7 @@ startOver:
 			if (getGameType() != GType_FF && getGameType() != GType_PP && _keyPressed == 35)
 				displayBoxStars();
 			if (getGameType() == GType_PP) {
-				if (checkArrows() != 0) {
+				if (processSpecialKeys() != 0) {
 					_needHitAreaRecalc++;
 					return;
 				}
@@ -1990,28 +1988,7 @@ bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	return false;
 }
 
-bool AGOSEngine::checkArrows() {
-	switch (_keyPressed) {
-	case 17: // Up
-		_verbHitArea = 302;
-		break;
-	case 18: // Down
-		_verbHitArea = 304;
-		break;
-	case 19: // Right
-		_verbHitArea = 303;
-		break;
-	case 20: // Left
-		_verbHitArea = 301;
-		break;
-	}
-
-	bool result = (_keyPressed != 0);
-	_keyPressed = 0;
-	return result;
-}
-
-void AGOSEngine::processSpecialKeys() {
+bool AGOSEngine::processSpecialKeys() {
 	switch (_keyPressed) {
 	case 17: // Up
 		if (getGameType() == GType_PP)
@@ -2127,7 +2104,9 @@ void AGOSEngine::processSpecialKeys() {
 		break;
 	}
 
+	bool result = (_keyPressed != 0);
 	_keyPressed = 0;
+	return result;
 }
 
 void AGOSEngine::pause() {
@@ -2353,125 +2332,6 @@ void AGOSEngine::shutdown() {
 	free(_gameOffsetsPtr);
 
 	_system->quit();
-}
-
-void AGOSEngine::delay(uint amount) {
-	OSystem::Event event;
-
-	uint32 start = _system->getMillis();
-	uint32 cur = start;
-	uint this_delay, vga_period;
-
-	if (_debugger->isAttached())
-		_debugger->onFrame();
-
-	if (_fastMode)
-	 	vga_period = 10;
-	else if (getGameType() == GType_SIMON2)
-		vga_period = 45;
-	else
-		vga_period = 50;
-
-	_rnd.getRandomNumber(2);
-
-	do {
-		while (!_inCallBack && cur >= _lastVgaTick + vga_period && !_pause) {
-			_lastVgaTick += vga_period;
-
-			// don't get too many frames behind
-			if (cur >= _lastVgaTick + vga_period * 2)
-				_lastVgaTick = cur;
-
-			_inCallBack = true;
-			timer_callback();
-			_inCallBack = false;
-		}
-
-		while (_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'
-					&& (event.kbd.flags == OSystem::KBD_ALT ||
-						event.kbd.flags == OSystem::KBD_CTRL)) {
-					_saveLoadSlot = event.kbd.keycode - '0';
-
-					// There is no save slot 0
-					if (_saveLoadSlot == 0)
-						_saveLoadSlot = 10;
-
-					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-					_saveLoadType = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
-
-					// We should only allow a load or save when it was possible in original
-					// This stops load/save during copy protection, conversations and cut scenes
-					if (!_mouseHideCount && !_showPreposition)
-						quickLoadOrSave();
-				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'a') {
-						GUI::Dialog *_aboutDialog;
-						_aboutDialog = new GUI::AboutDialog();
-						_aboutDialog->runModal();
-					} else if (event.kbd.keycode == 'f')
-						_fastMode ^= 1;
-					else if (event.kbd.keycode == 'd')
-						_debugger->attach();
-				} 
-
-				if (getGameType() == GType_PP) {
-					if (event.kbd.flags == OSystem::KBD_SHIFT)
-						_variableArray[41] = 0;
-					else
-						_variableArray[41] = 1;
-				}
-
-				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
-					_keyPressed = 8;
-				else
-					_keyPressed = (byte)event.kbd.ascii;
-				break;
-			case OSystem::EVENT_MOUSEMOVE:
-				_sdlMouseX = event.mouse.x;
-				_sdlMouseY = event.mouse.y;
-				break;
-			case OSystem::EVENT_LBUTTONDOWN:
-				if (getGameType() == GType_FF)
-					setBitFlag(89, true);
-				_leftButtonDown++;
-#if defined (_WIN32_WCE) || defined(PALMOS_MODE)
-				_sdlMouseX = event.mouse.x;
-				_sdlMouseY = event.mouse.y;
-#endif
-				break;
-			case OSystem::EVENT_LBUTTONUP:
-				if (getGameType() == GType_FF)
-					setBitFlag(89, false);
-				break;
-			case OSystem::EVENT_RBUTTONDOWN:
-				if (getGameType() == GType_FF)
-					setBitFlag(92, false);
-				_rightButtonDown++;
-				break;
-			case OSystem::EVENT_QUIT:
-				shutdown();
-				return;
-			default:
-				break;
-			}
-		}
-
-		_system->updateScreen();
-
-		if (amount == 0)
-			break;
-
-		this_delay = _fastMode ? 1 : 20;
-		if (this_delay > amount)
-			this_delay = amount;
-		_system->delayMillis(this_delay);
-
-		cur = _system->getMillis();
-	} while (cur < start + amount);
 }
 
 void AGOSEngine::loadMusic(uint music) {

@@ -740,8 +740,7 @@ protected:
 	void loadIconData();	
 	void loadIconFile();
 
-	bool checkArrows();
-	void processSpecialKeys();
+	bool processSpecialKeys();
 	void hitarea_stuff_helper();
 
 	void permitInput();
