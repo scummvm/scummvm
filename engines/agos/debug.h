@@ -95,7 +95,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	/* 52 */
 	NULL,
 	NULL,
-	"IWV|COPY_OF",
+	"IWW|COPY_OF",
 	"WIW|COPY_FO",
 	/* 56 */
 	"WW|MOVE",

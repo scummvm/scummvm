@@ -1874,12 +1874,12 @@ void AGOSEngine::oe1_whatO() {
 void AGOSEngine::oe1_weigh() {
 	// 59: weight
 	Item *item = getNextItemPtr();
-	writeVariable(getVarOrWord(), weighUp(item));
+	writeNextVarContents(weighUp(item));
 }
 
 void AGOSEngine::oe1_setFF() {
 	// 60: set FF
-	writeNextVarContents(0xFF);
+	writeNextVarContents(255);
 }
 
 void AGOSEngine::oe1_moveDirn() {
@@ -2004,7 +2004,6 @@ void AGOSEngine::oe1_doorExit() {
 	Item *d = getNextItemPtr();
 	int16 f = getVarOrWord();
 	int16 ct = 0;
-
 
 	c = (SubUserChain *)findChildOfType(d, 8);
 	if (c)
