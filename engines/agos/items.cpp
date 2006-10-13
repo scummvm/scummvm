@@ -3262,7 +3262,7 @@ void AGOSEngine::stopAnimateSimon1(uint a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
-	vc60_killSprite();
+	vc60_stopAnimation();
 	_lockWord &= ~0x8000;
 }
 
@@ -3274,7 +3274,7 @@ void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
 
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&items;
-	vc60_killSprite();
+	vc60_stopAnimation();
 	_lockWord &= ~0x8000;
 }
 

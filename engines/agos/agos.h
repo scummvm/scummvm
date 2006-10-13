@@ -822,9 +822,9 @@ public:
 	void vc19_loop();
 	void vc20_setRepeat();
 	void vc21_endRepeat();
-	void vc22_setSpritePaletteOld();
-	void vc22_setSpritePaletteNew();
-	void vc23_setSpritePriority();
+	void vc22_setPaletteOld();
+	void vc22_setPaletteNew();
+	void vc23_setPriority();
 	void vc24_setSpriteXY();
 	void vc25_halt_sprite();
 	void vc26_setSubWindow();
@@ -867,9 +867,12 @@ public:
 	void vc56_fullScreen();
 	void vc56_delayLong();
 	void vc57_blackPalette();
-	void vc58();
-	void vc59();
-	void vc60_killSprite();
+	void vc58_checkCodeWheel();
+	void vc58_changePriority();
+	void vc59_skipIfNotEGA();
+	void vc59_skipIfSpeechEnded();
+	void vc59_stopAnimations();
+	void vc60_stopAnimation();
 	void vc61();
 	void vc61_setMaskImage();
 	void vc62_fastFadeOut();

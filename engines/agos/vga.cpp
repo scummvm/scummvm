@@ -52,7 +52,7 @@ void AGOSEngine::setupCommonVideoOpcodes(VgaOpcodeProc *op) {
 	op[18] = &AGOSEngine::vc18_jump;
 	op[20] = &AGOSEngine::vc20_setRepeat;
 	op[21] = &AGOSEngine::vc21_endRepeat;
-	op[23] = &AGOSEngine::vc23_setSpritePriority;
+	op[23] = &AGOSEngine::vc23_setPriority;
 	op[24] = &AGOSEngine::vc24_setSpriteXY;
 	op[25] = &AGOSEngine::vc25_halt_sprite;
 	op[26] = &AGOSEngine::vc26_setSubWindow;
@@ -77,8 +77,8 @@ void AGOSEngine::setupCommonVideoOpcodes(VgaOpcodeProc *op) {
 	op[49] = &AGOSEngine::vc49_setBit;
 	op[50] = &AGOSEngine::vc50_clearBit;
 	op[51] = &AGOSEngine::vc51_enableBox;
+	op[52] = &AGOSEngine::vc52_playSound;
 	op[55] = &AGOSEngine::vc55_moveBox;
-	op[59] = &AGOSEngine::vc59;
 }
 
 void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
@@ -103,8 +103,8 @@ void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
 	op[20] = &AGOSEngine::vc19_loop;
 	op[21] = &AGOSEngine::vc20_setRepeat;
 	op[22] = &AGOSEngine::vc21_endRepeat;
-	op[23] = &AGOSEngine::vc22_setSpritePaletteOld;
-	op[24] = &AGOSEngine::vc23_setSpritePriority;
+	op[23] = &AGOSEngine::vc22_setPaletteOld;
+	op[24] = &AGOSEngine::vc23_setPriority;
 	op[25] = &AGOSEngine::vc24_setSpriteXY;
 	op[26] = &AGOSEngine::vc25_halt_sprite;
 	op[27] = &AGOSEngine::vc26_setSubWindow;
@@ -134,7 +134,7 @@ void AGOSEngine::setupElvira2VideoOpcodes(VgaOpcodeProc *op) {
 	op[11] = &AGOSEngine::vc11;
 	op[17] = &AGOSEngine::vc17_waitEnd;
 	op[19] = &AGOSEngine::vc19_loop;
-	op[22] = &AGOSEngine::vc22_setSpritePaletteOld;
+	op[22] = &AGOSEngine::vc22_setPaletteOld;
 	op[28] = &AGOSEngine::vc28_playSFX;
 	op[32] = &AGOSEngine::vc32_saveScreen;
 	op[37] = &AGOSEngine::vc37_pokePalette;
@@ -146,12 +146,14 @@ void AGOSEngine::setupElvira2VideoOpcodes(VgaOpcodeProc *op) {
 	op[54] = &AGOSEngine::vc54_dissolveOut;
 	op[57] = &AGOSEngine::vc57_blackPalette;
 	op[56] = &AGOSEngine::vc56_fullScreen;
+	op[59] = &AGOSEngine::vc59_skipIfNotEGA;
 }
 
 void AGOSEngine::setupWaxworksVideoOpcodes(VgaOpcodeProc *op) {
 	setupElvira2VideoOpcodes(op);
 
-	op[60] = &AGOSEngine::vc60_killSprite;
+	op[58] = &AGOSEngine::vc58_checkCodeWheel;
+	op[60] = &AGOSEngine::vc60_stopAnimation;
 	op[61] = &AGOSEngine::vc61;
 	op[62] = &AGOSEngine::vc62_fastFadeOut;
 	op[63] = &AGOSEngine::vc63_fastFadeIn;
@@ -162,12 +164,12 @@ void AGOSEngine::setupSimon1VideoOpcodes(VgaOpcodeProc *op) {
 
 	op[11] = &AGOSEngine::vc11_clearPathFinder;
 	op[17] = &AGOSEngine::vc17_setPathfinderItem;
-	op[22] = &AGOSEngine::vc22_setSpritePaletteNew;
+	op[22] = &AGOSEngine::vc22_setPaletteNew;
 	op[32] = &AGOSEngine::vc32_copyVar;
 	op[37] = &AGOSEngine::vc37_addToSpriteY;
 	op[48] = &AGOSEngine::vc48_setPathFinder;
-	op[52] = &AGOSEngine::vc52_playSound;
-	op[60] = &AGOSEngine::vc60_killSprite;
+	op[59] = &AGOSEngine::vc59_skipIfSpeechEnded;
+	op[60] = &AGOSEngine::vc60_stopAnimation;
 	op[61] = &AGOSEngine::vc61_setMaskImage;
 	op[62] = &AGOSEngine::vc62_fastFadeOut;
 	op[63] = &AGOSEngine::vc63_fastFadeIn;
@@ -177,8 +179,8 @@ void AGOSEngine::setupSimon2VideoOpcodes(VgaOpcodeProc *op) {
 	setupSimon1VideoOpcodes(op);
 
 	op[56] = &AGOSEngine::vc56_delayLong;
-	op[58] = &AGOSEngine::vc58;
-	op[60] = &AGOSEngine::vc60_killSprite;
+	op[58] = &AGOSEngine::vc58_changePriority;
+	op[59] = &AGOSEngine::vc59_stopAnimations;
 	op[64] = &AGOSEngine::vc64_skipIfSpeechEnded;
 	op[65] = &AGOSEngine::vc65_slowFadeIn;
 	op[66] = &AGOSEngine::vc66_skipIfNotEqual;
@@ -1762,7 +1764,7 @@ void AGOSEngine::vc21_endRepeat() {
 	}
 }
 
-void AGOSEngine::vc22_setSpritePaletteOld() {
+void AGOSEngine::vc22_setPaletteOld() {
 	byte *offs, *palptr, *src;
 	uint16 b, num;
 
@@ -1817,7 +1819,7 @@ void AGOSEngine::vc22_setSpritePaletteOld() {
 	_vgaSpriteChanged++;
 }
 
-void AGOSEngine::vc22_setSpritePaletteNew() {
+void AGOSEngine::vc22_setPaletteNew() {
 	byte *offs, *palptr, *src;
 	uint16 a = 0, b, num, palSize;
 
@@ -1853,7 +1855,7 @@ void AGOSEngine::vc22_setSpritePaletteNew() {
 	_vgaSpriteChanged++;
 }
 
-void AGOSEngine::vc23_setSpritePriority() {
+void AGOSEngine::vc23_setPriority() {
 	VgaSprite *vsp = findCurSprite(), *vus2;
 	uint16 pri = vcReadNextWord();
 	VgaSprite bak;
@@ -1983,7 +1985,7 @@ void AGOSEngine::vc28_playSFX() {
 	uint b = vcReadNextWord();
 	uint c = vcReadNextWord();
 	uint d = vcReadNextWord();
-	debug(0, "vc37_pokePalette: stub (%d, %d, %d, %d)", a, b, c, d);
+	debug(0, "vc28_playSFX: stub (%d, %d, %d, %d)", a, b, c, d);
 }
 
 void AGOSEngine::vc29_stopAllSounds() {
@@ -2438,7 +2440,12 @@ void AGOSEngine::vc57_blackPalette() {
 	_system->setPalette(palette, 0, 256);
 }
 
-void AGOSEngine::vc58() {
+void AGOSEngine::vc58_checkCodeWheel() {
+	// TODO
+	debug(0, "vc58_checkCodeWheel: stub");
+}
+
+void AGOSEngine::vc58_changePriority() {
 	uint16 sprite = _vgaCurSpriteId;
 	uint16 file = _vgaCurZoneNum;
 	const byte *vcPtrOrg;
@@ -2451,29 +2458,31 @@ void AGOSEngine::vc58() {
 
 	vcPtrOrg = _vcPtr;
 	_vcPtr = (byte *)&tmp;
-	vc23_setSpritePriority();
+	vc23_setPriority();
 
 	_vcPtr = vcPtrOrg;
 	_vgaCurSpriteId = sprite;
 	_vgaCurZoneNum = file;
 }
 
-void AGOSEngine::vc59() {
-	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-		uint16 file = vcReadNextWord();
-		uint16 start = vcReadNextWord();
-		uint16 end = vcReadNextWord() + 1;
+void AGOSEngine::vc59_skipIfNotEGA() {
+	// Skip if not EGA
+	vcSkipNextInstruction();
+}
 
-		do {
-			vc_kill_sprite(file, start);
-		} while (++start != end);
-	} else if (getGameType() == GType_SIMON1) {
-		if (!_sound->isVoiceActive())
-			vcSkipNextInstruction();
-	} else {
-		// Skip if not EGA
+void AGOSEngine::vc59_skipIfSpeechEnded() {
+	if (!_sound->isVoiceActive())
 		vcSkipNextInstruction();
-	}
+}
+
+void AGOSEngine::vc59_stopAnimations() {
+	uint16 file = vcReadNextWord();
+	uint16 start = vcReadNextWord();
+	uint16 end = vcReadNextWord() + 1;
+
+	do {
+		vc_kill_sprite(file, start);
+	} while (++start != end);
 }
 
 void AGOSEngine::vc_kill_sprite(uint file, uint sprite) {
@@ -2521,7 +2530,7 @@ void AGOSEngine::vc_kill_sprite(uint file, uint sprite) {
 	_vcPtr = vcPtrOrg;
 }
 
-void AGOSEngine::vc60_killSprite() {
+void AGOSEngine::vc60_stopAnimation() {
 	uint16 sprite, zoneNum;
 
 	if (getGameType() == GType_PP) {
@@ -3164,7 +3173,7 @@ void AGOSEngine::startAnOverlayAnim() {
 
 	vcPtrOrg = _vcPtr;
 	_vcPtr = (byte *)&tmp;
-	vc23_setSpritePriority();
+	vc23_setPriority();
 
 	_vcPtr = vcPtrOrg;
 	_vgaCurSpriteId = sprite;
