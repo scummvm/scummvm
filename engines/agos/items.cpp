@@ -383,6 +383,11 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[183] = &AGOSEngine::o_b2NotZero;
 
 	// Code difference, check if triggered
+	op[65] = NULL;
+	op[66] = NULL;
+	op[67] = NULL;
+	op[70] = NULL;
+
 	op[163] = NULL;
 	op[164] = NULL;
 	op[167] = NULL;
@@ -417,10 +422,10 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
-	op[98] = &AGOSEngine::o1_animate;
-	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[85] = &AGOSEngine::oww_whereTo;
 	op[89] = &AGOSEngine::oe2_loadUserGame;
+	op[98] = &AGOSEngine::o1_animate;
+	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[105] = &AGOSEngine::oww_menu;
 	op[106] = &AGOSEngine::oww_textMenu;
 	op[123] = &AGOSEngine::oe1_setTime;
@@ -1466,11 +1471,24 @@ void AGOSEngine::o_isBox() {
 
 void AGOSEngine::o_doTable() {
 	// 143: start item sub
-	SubRoom *subRoom = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
-	if (subRoom != NULL) {
-		Subroutine *sub = getSubroutineByID(subRoom->subroutine_id);
-		if (sub)
+	SubRoom *r = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
+	if (r != NULL) {
+		Subroutine *sub = getSubroutineByID(r->subroutine_id);
+		if (sub) {
 			startSubroutine(sub);
+			return;
+		}
+	}
+
+	if (getGameType() == GType_ELVIRA2) {
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(getNextItemPtr(), 4);
+		if (sr != NULL) {
+			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
+			if (sub) {
+				startSubroutine(sub);
+				return;
+			}
+		}
 	}
 }
 

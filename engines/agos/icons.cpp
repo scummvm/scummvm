@@ -199,6 +199,9 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
 			decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 		}
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		// TODO
+
 	} else if (getGameType() == GType_ELVIRA1) {
 		dst += (x + window->x) * 8;
 		dst += (y * 8 + window->y) * _dxSurfacePitch;
@@ -206,8 +209,6 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 		src = _iconFilePtr;
 		src += icon * 288;
 		decompressIconAmiga(dst, src, 16, _dxSurfacePitch, false);
-	} else {
-		// TODO
 	}
 
 	_lockWord &= ~0x8000;

@@ -43,22 +43,6 @@ uint16 AGOSEngine::getBackExit(int n) {
 	return 0;
 }
 
-uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
-	SubGenExit *g;
-	Item *x;
-
-	g = (SubGenExit *)findChildOfType(i, 4);
-	if (g == NULL)
-		return 0;
-
-	x = derefItem(g->dest[d]);
-	if (x == NULL)
-		return 0;
-	if (isRoom(x))
-		return 0;
-	return itemPtrToID(x);
-}
-
 uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 	uint16 mask = 3;
 	uint16 n;
@@ -73,24 +57,6 @@ uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 	n >>= d;
 
 	return n;
-}
-
-uint16 AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
-	SubGenExit *g;
-	Item *x;
-
-	g = (SubGenExit *)findChildOfType(item, 4);
-	if (g == NULL)
-		return 0;
-
-	x = derefItem(g->dest[d]);
-	if (x == NULL)
-		return 0;
-	if (isRoom(x))
-		return itemPtrToID(x);
-	if (x->state != 0)
-		return 0;
-	return x->parent;
 }
 
 uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
@@ -108,25 +74,6 @@ uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
 		y++;
 	}
 	return subRoom->roomExit[d];
-}
-
-uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
-	SubSuperRoom *sr;
-	uint16 mask = 3;
-	uint16 n;
-	uint16 *c;
-
-	sr = (SubSuperRoom *)findChildOfType(i, 4);
-	if (sr == NULL)
-	    return 0;
-
-	c = sr->roomExitStates;
-	c += x - 1;
-	d <<= 1;
-	mask <<= d;
-	n = *c & mask;
-	n >>= d;
-	return n;
 }
 
 void AGOSEngine::changeDoorState(SubRoom *r, uint16 d, uint16 n) {
@@ -176,6 +123,41 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 	changeDoorState(r1, d, n);    
 }
 
+// Elvira 1 specific
+uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
+	SubGenExit *g;
+	Item *x;
+
+	g = (SubGenExit *)findChildOfType(i, 4);
+	if (g == NULL)
+		return 0;
+
+	x = derefItem(g->dest[d]);
+	if (x == NULL)
+		return 0;
+	if (isRoom(x))
+		return 0;
+	return itemPtrToID(x);
+}
+
+uint16 AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
+	SubGenExit *g;
+	Item *x;
+
+	g = (SubGenExit *)findChildOfType(item, 4);
+	if (g == NULL)
+		return 0;
+
+	x = derefItem(g->dest[d]);
+	if (x == NULL)
+		return 0;
+	if (isRoom(x))
+		return itemPtrToID(x);
+	if (x->state != 0)
+		return 0;
+	return x->parent;
+}
+
 void AGOSEngine::moveDirn_e1(Item *i, uint x) {
 	Item *d, *p;
 	uint16 n;
@@ -206,6 +188,26 @@ void AGOSEngine::moveDirn_e1(Item *i, uint x) {
 	}
 
 	showMessageFormat("You can't go that way.\n");
+}
+
+// Elvira 2 specific
+uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
+	SubSuperRoom *sr;
+	uint16 mask = 3;
+	uint16 n;
+	uint16 *c;
+
+	sr = (SubSuperRoom *)findChildOfType(i, 4);
+	if (sr == NULL)
+	    return 0;
+
+	c = sr->roomExitStates;
+	c += x - 1;
+	d <<= 1;
+	mask <<= d;
+	n = *c & mask;
+	n >>= d;
+	return n;
 }
 
 void AGOSEngine::moveDirn_e2(Item *i, uint x) {
@@ -251,6 +253,7 @@ void AGOSEngine::moveDirn_e2(Item *i, uint x) {
 	}
 }
 
+// Waxworks specific
 void AGOSEngine::moveDirn_ww(Item *i, uint x) {
 	Item *d;
 	uint16 n;

@@ -1227,6 +1227,8 @@ protected:
 	bool vc_maybe_skip_proc_1(uint16 a, int16 b);
 
 	bool isVgaQueueEmpty();
+	void haltAnimation();
+	void restartAnimation();
 	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param = 0);
 	void deleteVgaEvent(VgaTimerEntry * vte);
 	void processVgaEvents();

@@ -60,8 +60,10 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		st = s = simon2dos_opcodeNameTable[opcode];
 	} else if (getGameType() == GType_SIMON1) {
 		st = s = simon1dos_opcodeNameTable[opcode];
-	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+	} else if (getGameType() == GType_WW) {
 		st = s = waxworks_opcodeNameTable[opcode];
+	} else if (getGameType() == GType_ELVIRA2) {
+		st = s = elvira2_opcodeNameTable[opcode];
 	} else {
 		st = s = elvira1_opcodeNameTable[opcode];
 	}

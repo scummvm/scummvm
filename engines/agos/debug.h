@@ -384,6 +384,239 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"WJ|IS_BOX",
 };
 
+static const char *const elvira2_opcodeNameTable[256] = {
+	/* 0 */
+	"|NOT",
+	"IJ|AT",
+	"IJ|NOT_AT",
+	NULL,
+	/* 4 */
+	NULL,
+	"IJ|CARRIED",
+	"IJ|NOT_CARRIED",
+	"IIJ|IS_AT",
+	/* 8 */
+	"IIJ|IS_NOT_AT",
+	"IIJ|IS_SIBLING",
+	"IIJ|IS_NOT_SIBLING",
+	"VJ|IS_ZERO",
+	/* 12 */
+	"VJ|ISNOT_ZERO",
+	"VWJ|IS_EQ",
+	"VWJ|IS_NEQ",
+	"VWJ|IS_LE",
+	/* 16 */
+	"VWJ|IS_GE",
+	"VVJ|IS_EQF",
+	"VVJ|IS_NEQF",
+	"VVJ|IS_LEF",
+	/* 20 */
+	"VVJ|IS_GEF",
+	NULL,
+	NULL,
+	"WJ|CHANCE",
+	/* 24 */
+	"IJ|IS_PLAYER",
+	"IJ|IS_ROOM",
+	"IJ|IS_OBJECT",
+	"IWJ|ITEM_STATE_IS",
+	/* 28 */
+	"IBJ|OBJECT_HAS_FLAG",
+	"IIJ|CAN_PUT",
+	NULL,
+	"I|SET_NO_PARENT",
+	/* 32 */
+	NULL,
+	"II|SET_PARENT",
+	"IBV|COPY_OF",
+	"VIB|COPY_FO",
+	/* 36 */
+	"VV|MOVE",
+	"W|WHAT_O",
+	NULL,
+	NULL,
+	/* 40 */
+	NULL,
+	"V|ZERO",
+	"VW|SET",
+	"VW|ADD",
+	/* 44 */
+	"VW|SUB",
+	"VV|ADDF",
+	"VV|SUBF",
+	"VW|MUL",
+	/* 48 */
+	"VW|DIV",
+	"VV|MULF",
+	"VV|DIVF",
+	"VW|MOD",
+	/* 52 */
+	"VV|MODF",
+	"VW|RANDOM",
+	"B|MOVE_DIRN",
+	"I|SET_A_PARENT",
+	/* 56 */
+	"IB|SET_CHILD2_BIT",
+	"IB|CLEAR_CHILD2_BIT",
+	"II|MAKE_SIBLING",
+	"I|INC_STATE",
+	/* 60 */
+	"I|DEC_STATE",
+	"IW|SET_STATE",
+	"V|SHOW_INT",
+	"T|SHOW_STRING_NL",
+	/* 64 */
+	"T|SHOW_STRING",
+	"I|UNK_65",
+	"I|UNK_66",
+	"|UNK_67",
+	/* 68 */
+	"x|END",
+	"x|DONE",
+	NULL,
+	"W|START_SUB",
+	/* 72 */
+	NULL,
+	"I|PRINT_OBJ",
+	"I|PRINT_NAME",
+	"I|PRINT_CNAME",
+	/* 76 */
+	"WW|ADD_TIMEOUT",
+	"J|IS_M1_EMPTY",
+	"J|IS_M3_EMPTY",
+	"ITJ|CHILD_FR2_IS",
+	/* 80 */
+	"IIJ|IS_ITEM_EQ",
+	NULL,
+	"B|DEBUG",
+	"|RESCAN",
+	/* 84 */
+	NULL,
+	"IBB|WHERE_TO",
+	NULL,
+	"W|COMMENT",
+	/* 88 */
+	"|STOP_ANIMATION",
+	"T|LOAD_USER_GAME",
+	"IB|GET_PARENT",
+	"IB|GET_NEXT",
+	/* 92 */
+	"IB|GET_CHILDREN",
+	NULL,
+	NULL,
+	NULL,
+	/* 96 */
+	"WB|PICTURE",
+	"W|LOAD_ZONE",
+	"WBWWW|ANIMATE",
+	"W|STOP_ANIMATE",
+	/* 100 */
+	"|KILL_ANIMATE",
+	"BWWWWWW|DEFINE_WINDOW",
+	"B|CHANGE_WINDOW",
+	"|CLS",
+	/* 104 */
+	"B|CLOSE_WINDOW",
+	"B|UNK_105",
+	"W|UNK_106",
+	"WWWWWIW|ADD_BOX",
+	/* 108 */
+	"W|DEL_BOX",
+	"W|ENABLE_BOX",
+	"W|DISABLE_BOX",
+	"WWW|MOVE_BOX",
+	/* 112 */
+	NULL,
+	NULL,
+	"IB|DO_ICONS",
+	"IBJ|IS_CLASS",
+	/* 116 */
+	"IB|SET_CLASS",
+	"IB|UNSET_CLASS",
+	NULL,
+	"W|WAIT_SYNC",
+	/* 120 */
+	"W|SYNC",
+	"BI|DEF_OBJ",
+	NULL,
+	"|SET_TIME",
+	/* 124 */
+	NULL,
+	"IJ|IS_SIBLING_WITH_A",
+	"IBB|DO_CLASS_ICONS",
+	"WW|PLAY_TUNE",
+	/* 128 */
+	"W|WAIT_END_TUNE",
+	"W|IF_END_TUNE",
+	"Bww|SET_ADJ_NOUN",
+	NULL,
+	/* 132 */
+	"|SAVE_GAME",
+	"|LOAD_GAME",
+	"|STOP_TUNE",
+	"|PAUSE",
+	/* 136 */
+	"IV|COPY_SF",
+	"B|RESTORE_ICONS",
+	"|FREEZE_ZONES",
+	"II|SET_PARENT_SPECIAL",
+	/* 140 */
+	"|CLEAR_TIMERS",
+	"BI|SET_M1_OR_M3",
+	"WJ|IS_BOX",
+	"I|START_ITEM_SUB",
+	/* 144 */
+	"IB|SET_DOOR_OPEN",
+	"IB|SET_DOOR_CLOSED",
+	"IB|SET_DOOR_LOCKED",
+	"IB|SET_DOOR_OPEN",
+	/* 148 */
+	"IBJ|IF_DOOR_OPEN",
+	"IBJ|IF_DOOR_CLOSED",
+	"IBJ|IF_DOOR_LOCKED",
+	"BI|STORE_ITEM",
+	/* 152 */
+	"BB|GET_ITEM",
+	"B|SET_BIT",
+	"B|CLEAR_BIT",
+	"BJ|IS_BIT_CLEAR",
+	/* 156 */
+	"BJ|IS_BIT_SET",
+	"IBB|GET_ITEM_PROP",
+	"IBW|SET_ITEM_PROP",
+	NULL,
+	/* 160 */
+	"B|SET_INK",
+	"|UNK_161",
+	"BT|PRINT_STR",
+	NULL,
+	/* 164 */
+	NULL,
+	"W|SET_SUPER_ROOM",
+	"BV|GET_SUPER_ROOM",
+	NULL,
+	/* 168 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	/* 172 */
+	NULL,
+	NULL,
+	"W|UNK_174",
+	"|getDollar2",
+	/* 176 */
+	"IWBB|UNK_176",
+	"B|UNK_177",
+	"B|UNK_178",
+	"IWWJ|IS_ADJ_NOUN",
+	/* 180 */
+	"B|SET_BIT2",
+	"B|CLEAR_BIT2",
+	"BJ|IS_BIT2_CLEAR",
+	"BJ|IS_BIT2_SET",
+};
+
 static const char *const waxworks_opcodeNameTable[256] = {
 	/* 0 */
 	"|NOT",
@@ -589,15 +822,15 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"B|SET_INK",
 	"|UNK_161",
 	"BT|PRINT_STR",
-	"W|PLAY_EFFECT",
+	NULL,
 	/* 164 */
-	"|getDollar2",
+	NULL,
 	"W|SET_SUPER_ROOM",
 	"BV|GET_SUPER_ROOM",
-	"B|CLEAR_BIT2",
+	NULL,
 	/* 168 */
-	"BJ|IS_BIT2_CLEAR",
-	"BJ|IS_BIT2_SET",
+	NULL,
+	NULL,
 	NULL,
 	NULL,
 	/* 172 */

@@ -55,6 +55,23 @@ static const char *const opcodeArgTable_elvira1[300] = {
 	" ", "NI ","N ",
 };
 
+static const char *const opcodeArgTable_elvira2[256] = {
+	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
+	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
+	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
+	"BN ", "BN ", "BB ", "BB ", "BN ", "BN ", "BB ", "BB ", "BN ", "BB ", "BN ", "B ", "I ", "IB ",
+	"IB ", "II ", "I ", "I ", "IN ", "B ", "T ", "T ", "I  ", "I ", " ", "T ", " ", " ",
+	"N ", "IBN ", "I ", "I ", "I ", "NN ", " ", " ", "IT ", "II ", "I ", "B ", " ", "IB ", "IBB ",
+	"IIB ", "T ", "T ", "T ", "IB ", "IB ", "IB ", "B ", "BB ", "IBB ", "NB ", "N ", "NBNNN ", "N ",
+	" ", "BNNNNNN ", "B ", " ", "B ", "B ", "N ", "NNNNNIN ", "N ", "N ", "N ", "NNN ", "NBNN ",
+	"IBNN ", "IB ", "IB ", "IB ", "IB ", "N ", "N ", "N ", "BI ", " ", " ", "N ", "I ", "IBB ",
+	"NN ", "N ", "N ", "Ban ", "BB ", " ", " ", " ", " ", "IB ", "B ", " ", "II ", " ", "BI ", "N ",
+	"I ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "BI ", "BB ", "B ", "B ", "B ",	"B ",
+	"IBB ", "IBN ", "IB ", "B ", " ", "TB ", "TB ", "I ", "N ", "B ", "INB ", "INB ", "INB ", "INB ",
+	"INB ", "INB ", "INB ", "N ", " ", "INBB ", "B ", "B ", "Ian ", "B ", "B ", "B ", "B ", "T ",
+	"T ", "B ", " ", "I ", " ", " "
+};
+
 static const char *const opcodeArgTable_waxworks[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
@@ -636,8 +653,10 @@ byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 		table = opcodeArgTable_simon1talkie;
 	else if (getGameType() == GType_SIMON1)
 		table = opcodeArgTable_simon1dos;
-	else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2)
+	else if (getGameType() == GType_WW)
 		table = opcodeArgTable_waxworks;
+	else if (getGameType() == GType_ELVIRA2)
+		table = opcodeArgTable_elvira2;
 	else
 		table = opcodeArgTable_elvira1;
 

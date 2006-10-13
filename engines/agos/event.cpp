@@ -160,6 +160,20 @@ bool AGOSEngine::isVgaQueueEmpty() {
 	return result;
 }
 
+void AGOSEngine::haltAnimation() {
+	VgaTimerEntry *vte = _vgaTimerList;
+
+	_lockWord |= 0x10;
+
+	while (vte->delay) {
+		vte->delay += 10;
+	}
+}
+
+void AGOSEngine::restartAnimation() {
+	_lockWord &= ~0x10;
+}
+
 void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
 	VgaTimerEntry *vte;
 
