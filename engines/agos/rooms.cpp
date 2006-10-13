@@ -284,6 +284,8 @@ bool AGOSEngine::loadRoomItems(uint item) {
 	if (p == NULL)
 		return 0;
 
+	item -= 2;
+
 	while (*p) {
 		for (i = 0; *p; p++, i++)
 			filename[i] = *p;
@@ -305,10 +307,10 @@ bool AGOSEngine::loadRoomItems(uint item) {
 				}
 
 				while ((i = in.readUint16BE()) != 0) {
-					_itemArrayPtr[i + 1] = (Item *)allocateItem(sizeof(Item));
-					readItemFromGamePc(&in, _itemArrayPtr[i + 1]);
+					_itemArrayPtr[i + 2] = (Item *)allocateItem(sizeof(Item));
+					readItemFromGamePc(&in, _itemArrayPtr[i + 2]);
 
-					Item *tmp = _itemArrayPtr[i + 1];
+					Item *tmp = _itemArrayPtr[i + 2];
 					tmp->child = 0;
 					tmp->parent = 0;
 				}
