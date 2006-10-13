@@ -147,6 +147,7 @@ void Insane::runScene(int arraynum) {
 	_enemy[EN_ROTT3].maxdamage = 120;
 
 	_insaneIsRunning = false;
+	_player->insanity(false);
 
 	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
 		writeArray(50, _actor[0].inventory[INV_CHAIN]);
