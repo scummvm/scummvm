@@ -89,9 +89,9 @@ bool BaseChunk::seek(int32 delta, seek_type dir) {
 		// This will lead to incorrect seek requests
 		//
 		// Check if INSANE is running and give more feedback in this case
-		if (g_scumm->_insaneRunning) {
-			warning("Looks like you compressed file %s in wrong way. It has FLU index which was not updated", _name.c_str());
-		}
+		//if (g_scumm->_insaneRunning) {
+		//	warning("Looks like you compressed file %s in wrong way. It has FLU index which was not updated", _name.c_str());
+		//}
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
 	}
 	return true;
