@@ -2359,7 +2359,9 @@ void AGOSEngine::vc52_playSound() {
 
 void AGOSEngine::vc53_dissolveIn() {
 	// TODO
-	debug(0, "vc53_dissolveIn: stub");
+	uint num = vcReadNextWord();
+	uint speed = vcReadNextWord();
+	debug(0, "vc53_dissolveIn: stub (%d, %d)", num, speed);
 }
 
 void AGOSEngine::vc53_panSFX() {
@@ -2387,7 +2389,10 @@ void AGOSEngine::vc53_panSFX() {
 
 void AGOSEngine::vc54_dissolveOut() {
 	// TODO
-	debug(0, "vc54_dissolveOut: stub");
+	uint num = vcReadNextWord();
+	uint color = vcReadNextWord();
+	uint speed = vcReadNextWord();
+	debug(0, "vc54_dissolveOut: stub (%d, %d, %d)", num, color, speed);
 }
 
 void AGOSEngine::vc55_moveBox() {
