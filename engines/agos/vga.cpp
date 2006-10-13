@@ -138,10 +138,10 @@ void AGOSEngine::setupElvira2VideoOpcodes(VgaOpcodeProc *op) {
 	op[28] = &AGOSEngine::vc28_playSFX;
 	op[32] = &AGOSEngine::vc32_saveScreen;
 	op[37] = &AGOSEngine::vc37_pokePalette;
-	op[45] = &AGOSEngine::vc45;
-	op[46] = &AGOSEngine::vc46;
-	op[47] = &AGOSEngine::vc47;
-	op[48] = &AGOSEngine::vc48;
+	op[45] = &AGOSEngine::vc45_setWindowPalette;
+	op[46] = &AGOSEngine::vc46_setPaletteSlot1;
+	op[47] = &AGOSEngine::vc47_setPaletteSlot2;
+	op[48] = &AGOSEngine::vc48_setPaletteSlot3;
 	op[53] = &AGOSEngine::vc53_dissolveIn;
 	op[54] = &AGOSEngine::vc54_dissolveOut;
 	op[57] = &AGOSEngine::vc57_blackPalette;
@@ -1449,6 +1449,9 @@ void AGOSEngine::drawImages(VC10_state *state) {
 			state->surf_pitch = state->surf2_pitch;
 		}
 
+		if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+			state->palette = state->surf_addr[0] & 0xF0;
+
 		if (state->flags & kDFCompressed) {
 			uint w, h;
 			byte *src, *dst, *dstPtr;
@@ -2183,11 +2186,21 @@ void AGOSEngine::vc44_skipIfBitSet() {
 	}
 }
 
-void AGOSEngine::vc45() {
-	// TODO
+void AGOSEngine::vc45_setWindowPalette() {
 	uint num = vcReadNextWord();
 	uint color = vcReadNextWord();
-	debug(0, "vc45: window %d color %d", num, color);
+
+	const uint16 *vlut = &_videoWindows[num * 4];
+	uint16 *dst = (uint16 *)getBackBuf() + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
+
+	for (uint h = 0; h < vlut[3]; h++) {
+		uint width = vlut[2] * 8;
+		for (uint w = 0; w < width; w++) {
+			dst[w] &= 0xF0F;
+			dst[w] |= color * 16;
+		}
+		dst += _dxSurfacePitch / 2;
+	}
 }
 
 void AGOSEngine::vc45_setSpriteX() {
@@ -2196,10 +2209,32 @@ void AGOSEngine::vc45_setSpriteX() {
 	_vgaSpriteChanged++;
 }
 
-void AGOSEngine::vc46() {
-	// TODO
-	uint a = vcReadNextWord();
-	debug(0, "vc46: stub (%d)", a);
+void AGOSEngine::setPaletteSlot(uint srcOffs, uint dstOffs) {
+	byte *offs, *palptr, *src;
+	uint16 num;
+
+	palptr = _displayPalette + dstOffs * 64;
+	offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
+	src = offs + srcOffs * 32;
+	num = 16;
+
+	do {
+		uint16 color = READ_BE_UINT16(src);
+		palptr[0] = ((color & 0xf00) >> 8) * 32;
+		palptr[1] = ((color & 0x0f0) >> 4) * 32;
+		palptr[2] = ((color & 0x00f) >> 0) * 32;
+		palptr[3] = 0;
+
+		palptr += 4;
+		src += 2;
+	} while (--num);
+
+	_paletteFlag = 2;
+}
+
+void AGOSEngine::vc46_setPaletteSlot1() {
+	uint srcOffs = vcReadNextWord();
+	setPaletteSlot(srcOffs, 1);
 }
 
 void AGOSEngine::vc46_setSpriteY() {
@@ -2208,10 +2243,9 @@ void AGOSEngine::vc46_setSpriteY() {
 	_vgaSpriteChanged++;
 }
 
-void AGOSEngine::vc47() {
-	// TODO
-	uint a = vcReadNextWord();
-	debug(0, "vc47: stub (%d)", a);
+void AGOSEngine::vc47_setPaletteSlot2() {
+	uint srcOffs = vcReadNextWord();
+	setPaletteSlot(srcOffs, 2);
 }
 
 void AGOSEngine::vc47_addToVar() {
@@ -2219,10 +2253,9 @@ void AGOSEngine::vc47_addToVar() {
 	vcWriteVar(var, vcReadVar(var) + vcReadVar(vcReadNextWord()));
 }
 
-void AGOSEngine::vc48() {
-	// TODO
-	uint a = vcReadNextWord();
-	debug(0, "vc48: stub (%d)", a);
+void AGOSEngine::vc48_setPaletteSlot3() {
+	uint srcOffs = vcReadNextWord();
+	setPaletteSlot(srcOffs, 3);
 }
 
 void AGOSEngine::vc48_setPathFinder() {

@@ -848,13 +848,13 @@ public:
 	void vc42_delayIfNotEQ();
 	void vc43_skipIfBitClear();
 	void vc44_skipIfBitSet();
-	void vc45();
+	void vc45_setWindowPalette();
 	void vc45_setSpriteX();
-	void vc46();
+	void vc46_setPaletteSlot1();
 	void vc46_setSpriteY();
-	void vc47();
+	void vc47_setPaletteSlot2();
 	void vc47_addToVar();
-	void vc48();
+	void vc48_setPaletteSlot3();
 	void vc48_setPathFinder();
 	void vc49_setBit();
 	void vc50_clearBit();
@@ -1236,6 +1236,7 @@ protected:
 	void centreScroll();
 
 	void clearWindow(uint windowNum, uint color);
+	void setPaletteSlot(uint srcOffs, uint dstOffs);
 
 	void startOverlayAnims();
 	void startAnOverlayAnim();
