@@ -39,8 +39,8 @@ public:
 	typedef const T *const_iterator;
 
 public:
-	Array<T>() : _capacity(0), _size(0), _data(0) {}
-	Array<T>(const Array<T>& array) : _capacity(0), _size(0), _data(0) {
+	Array() : _capacity(0), _size(0), _data(0) {}
+	Array(const Array<T>& array) : _capacity(0), _size(0), _data(0) {
 		_size = array._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
@@ -48,12 +48,7 @@ public:
 			_data[i] = array._data[i];
 	}
 
-#ifdef __SYMBIAN32__
-	~Array()
-#else
-	~Array<T>()
-#endif
-	{
+	~Array() {
 		if (_data)
 			delete [] _data;
 	}

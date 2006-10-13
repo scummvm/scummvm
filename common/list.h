@@ -47,7 +47,7 @@ public:
 	struct Node : public NodeBase {
 		T2 _data;
 		
-		Node<T2>(const T2 &x) : _data(x) {}
+		Node(const T2 &x) : _data(x) {}
 	};
 
 	template <class T2>
@@ -56,13 +56,13 @@ public:
 		NodeBase *_node;
 
 #if !defined (PALMOS_MODE) && !defined (__WINSCW__)
-		explicit Iterator<T2>(NodeBase *node) : _node(node) {}
+		explicit Iterator(NodeBase *node) : _node(node) {}
 #else
-		Iterator<T2>(NodeBase *node) : _node(node) {}
+		Iterator(NodeBase *node) : _node(node) {}
 #endif
 
 	public:
-		Iterator<T2>() : _node(0) {}
+		Iterator() : _node(0) {}
 
 		// Prefix inc
 		Iterator<T2> &operator++() {
@@ -116,12 +116,12 @@ public:
 	typedef Iterator<const T>  const_iterator;
 
 public:
-	List<T>() {
+	List() {
 		_anchor = new NodeBase;
 		_anchor->_prev = _anchor;
 		_anchor->_next = _anchor;
 	}
-	List<T>(const List<T>& list) {
+	List(const List<T>& list) {
 		_anchor = new NodeBase;
 		_anchor->_prev = _anchor;
 		_anchor->_next = _anchor;
@@ -129,12 +129,7 @@ public:
 		insert(begin(), list.begin(), list.end());
 	}
 
-#ifndef __SYMBIAN32__
-	~List<T>()
-#else
-	~List()
-#endif
-	{
+	~List() {
 		clear();
 		delete _anchor;
 	}
