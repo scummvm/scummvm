@@ -274,14 +274,15 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 void AGOSEngine::showActionString(const byte *string) {
 	WindowBlock *window;
 	uint x;
+	const uint len = (getGameType() == GType_WW) ? 29 : 53;
 
 	window = _windowArray[1];
 	if (window == NULL || window->text_color == 0)
 		return;
 
 	// Arisme : hack for long strings in the French version
-	if ((strlen((const char*)string) - 1) <= 53)
-		x = (53 - (strlen((const char *)string) - 1)) * 3;
+	if ((strlen((const char*)string) - 1) <= len)
+		x = (len - (strlen((const char *)string) - 1)) * 3;
 	else
 		x = 0;
 
