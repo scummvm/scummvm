@@ -55,6 +55,9 @@ public:
 	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
 	virtual ~BaseSound();
 	virtual void playSound(uint sound, Audio::SoundHandle *handle, byte flags) = 0;
+#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
+	virtual Audio::AudioStream *makeAudioStream(uint sound) { return NULL; }
+#endif
 };
 
 class WavSound : public BaseSound {
@@ -173,17 +176,70 @@ void RawSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
+#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
+class CompAudioStream : public Audio::AudioStream {
+private:
+	BaseSound *_parent;
+	Audio::AudioStream *_stream;
+	bool _loop;
+	uint _sound;
+public:
+	CompAudioStream(BaseSound *parent, uint sound, bool loop);
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return _stream ? _stream->isStereo() : 0; }
+	bool endOfData() const;
+	int getRate() const { return _stream ? _stream->getRate() : 22050; }
+};
+
+CompAudioStream::CompAudioStream(BaseSound *parent, uint sound, bool loop) {
+	_parent = parent;
+	_sound = sound;
+	_loop = loop;
+
+	_stream = _parent->makeAudioStream(sound);
+}
+
+int CompAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	if (!_loop) {
+		return _stream->readBuffer(buffer, numSamples);
+	}
+
+	int16 *buf = buffer;
+	int samplesLeft = numSamples;
+
+	while (samplesLeft > 0) {
+		int len = _stream->readBuffer(buf, samplesLeft);
+		if (len < samplesLeft) {
+			delete _stream;
+			_stream = _parent->makeAudioStream(_sound);
+		}
+		samplesLeft -= len;
+		buf += len;
+	}
+
+	return numSamples;
+}
+
+bool CompAudioStream::endOfData() const {
+	if (!_stream)
+		return true;
+	if (_loop)
+		return false;
+	return _stream->endOfData();
+}
+#endif
+
 #ifdef USE_MAD
 class MP3Sound : public BaseSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, Audio::SoundHandle *handle, byte flags);
 };
 
-void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
-{
+Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 	if (_offsets == NULL)
-		return;
+		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
@@ -193,7 +249,12 @@ void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeMP3Stream(_file, size));
+	return Audio::makeMP3Stream(_file, size);
+}
+
+void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
+{
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0));
 }
 #endif
 
@@ -201,13 +262,13 @@ void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 class VorbisSound : public BaseSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, Audio::SoundHandle *handle, byte flags);
 };
 
-void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
-{
+Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 	if (_offsets == NULL)
-		return;
+		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
@@ -217,7 +278,12 @@ void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeVorbisStream(_file, size));
+	return Audio::makeVorbisStream(_file, size);
+}
+
+void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
+{
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0));
 }
 #endif
 
@@ -225,13 +291,13 @@ void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 class FlacSound : public BaseSound {
 public:
 	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, Audio::SoundHandle *handle, byte flags);
 };
 
-void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
-{
+Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 	if (_offsets == NULL)
-		return;
+		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
@@ -241,7 +307,12 @@ void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeFlacStream(_file, size));
+	return Audio::makeFlacStream(_file, size);
+}
+
+void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
+{
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0));
 }
 #endif
 
