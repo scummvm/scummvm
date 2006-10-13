@@ -1736,6 +1736,8 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 			b += sizeof(ImageHeader_WW);
 		}
 		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
+
+		clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
 	}
 
 	if (_startVgaScript) {
@@ -1768,8 +1770,6 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 			_variableArray[251] = 0;
 		}
 	}
-
-	clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
 
 	vc_ptr_org = _vcPtr;
 
