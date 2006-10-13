@@ -2296,11 +2296,10 @@ int AGOSEngine::go() {
 	addTimeEvent(0, 1);
 	openGameFile();
 
-	if (getFileName(GAME_ICONFILE) != NULL) {
-		if (getGameType() == GType_FF)
-			loadIconData();
-		else
-			loadIconFile();
+	if (getGameType() == GType_FF) {
+		loadIconData();
+	} else if (getFileName(GAME_ICONFILE) != NULL) {
+		loadIconFile();
 	}
 
 	vc34_setMouseOff();
