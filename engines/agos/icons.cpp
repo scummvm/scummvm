@@ -63,40 +63,44 @@ void AGOSEngine::loadIconData() {
 
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
-void decompressIconAmiga (byte *dst, byte *src, byte base, uint pitch) {
+static void decompressIconAmiga(byte *dst, byte *src, byte base, uint pitch, bool decompress = true) {
 	byte icon_pln[288];
-	byte *i, *o, x, y;
+	byte *i, *o, *srcPtr, x, y;
 
-	// Decode RLE planar icon data
-	i = src;
-	o = icon_pln;
-	while (o < &icon_pln[288]) {
-		x = *i++;
-		if (x < 128) {
-			do {
-				*o++ = *i++;
-				*o++ = *i++;
-				*o++ = *i++;
-			} while (x-- > 0);
-		} else {
-			x = 256 - x;
-			do {
-				*o++ = i[0];
-				*o++ = i[1];
-				*o++ = i[2];
-			} while (x-- > 0);
-			i += 3;
+	srcPtr = src;
+	if (decompress) {
+		// Decode RLE planar icon data
+		i = src;
+		o = icon_pln;
+		while (o < &icon_pln[288]) {
+			x = *i++;
+			if (x < 128) {
+				do {
+					*o++ = *i++;
+					*o++ = *i++;
+					*o++ = *i++;
+				} while (x-- > 0);
+			} else {
+				x = 256 - x;
+				do {
+					*o++ = i[0];
+					*o++ = i[1];
+					*o++ = i[2];
+				} while (x-- > 0);
+				i += 3;
+			}
 		}
+		srcPtr = icon_pln;
 	}
 
 	// Translate planar data to chunky (very slow method)
 	for (y = 0; y < 24; y++) {
 		for (x = 0; x < 24; x++) {
 			byte pixel =
-				  (icon_pln[((     y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
-				| (icon_pln[((24 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
-				| (icon_pln[((48 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
-				| (icon_pln[((72 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
+				  (srcPtr[((     y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
+				| (srcPtr[((24 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
+				| (srcPtr[((48 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
+				| (srcPtr[((72 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
 			if (pixel)
 				dst[x] = pixel | base;
 		}
@@ -171,7 +175,6 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 	dst = getFrontBuf();
 
 	if (getGameType() == GType_SIMON2) {
-		// Simon 2
 		dst += 110;
 		dst += x;
 		dst += (y + window->y) * _dxSurfacePitch;
@@ -184,19 +187,25 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
 		decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
 	} else if (getGameType() == GType_SIMON1) {
-		// Simon 1
 		dst += (x + window->x) * 8;
 		dst += (y * 25 + window->y) * _dxSurfacePitch;
 
 		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-			decompressIconAmiga (dst, src, 16, _dxSurfacePitch);
+			decompressIconAmiga(dst, src, 16, _dxSurfacePitch);
 		} else {
 			src = _iconFilePtr;
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
 			decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 		}
+	} else if (getGameType() == GType_ELVIRA1) {
+		dst += (x + window->x) * 8;
+		dst += (y * 8 + window->y) * _dxSurfacePitch;
+
+		src = _iconFilePtr;
+		src += icon * 288;
+		decompressIconAmiga(dst, src, 16, _dxSurfacePitch, false);
 	} else {
 		// TODO
 	}

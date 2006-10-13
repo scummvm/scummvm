@@ -800,7 +800,7 @@ int AGOSEngine::getUserFlag(Item *item, int a) {
 	if (subUserFlag == NULL)
 		return 0;
 
-	if (a < 0 || a > 3)
+	if (a < 0 || a > 7)
 		return 0;
 
 	return	subUserFlag->userFlags[a];
@@ -814,8 +814,10 @@ void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 		subUserFlag = (SubUserFlag *) allocateChildBlock(item, 9, sizeof(SubUserFlag));
 	}
 
-	if (a >= 0 && a <= 3)
-		subUserFlag->userFlags[a] = b;
+	if (a < 0 || a > 7)
+		return;
+
+	subUserFlag->userFlags[a] = b;
 }
 
 int AGOSEngine::getUserItem(Item *item, int n) {
@@ -1300,14 +1302,18 @@ bool AGOSEngine::has_item_childflag_0x10(Item *item) {
 }
 
 uint AGOSEngine::itemGetIconNumber(Item *item) {
-	SubObject *child = (SubObject *)findChildOfType(item, 2);
-	uint offs;
+	if (getGameType() == GType_ELVIRA1) {
+		return getUserFlag(item, 7);
+	} else {
+		SubObject *child = (SubObject *)findChildOfType(item, 2);
+		uint offs;
 
-	if (child == NULL || !(child->objectFlags & kOFIcon))
-		return 0;
+		if (child == NULL || !(child->objectFlags & kOFIcon))
+			return 0;
 
-	offs = getOffsetOfChild2Param(child, 0x10);
-	return child->objectFlagValue[offs];
+		offs = getOffsetOfChild2Param(child, 0x10);
+		return child->objectFlagValue[offs];
+	}
 }
 
 void AGOSEngine::hitarea_stuff() {

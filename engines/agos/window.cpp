@@ -59,6 +59,10 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	window->textColumnOffset = 0;
 	window->textMaxLength = window->width * 8 / 6; // characters are 6 pixels
 	window->scrollY = 0;
+
+	if (getGameType() == GType_ELVIRA1)
+		clearWindow(window);
+
 	return window;
 }
 
