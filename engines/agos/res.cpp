@@ -498,7 +498,7 @@ void AGOSEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
 #define SD_TYPE_LITERAL (0)
 #define SD_TYPE_MATCH   (1)
 
-static bool decrunchFile(byte *src, byte *dst, uint32 size) {
+bool AGOSEngine::decrunchFile(byte *src, byte *dst, uint32 size) {
 	byte *s = src + size - 4;
 	uint32 destlen = READ_BE_UINT32 (s);
 	uint32 bb, x, y;
@@ -666,8 +666,16 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 				sprintf(filename, "%.3d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 				if (getGameId() == GID_ELVIRA1DEMO) {
-					if (id == 27)
+					if (id == 20)
+						sprintf(filename, "D%d.out", type);
+					else if (id == 26)
+						sprintf(filename, "J%d.out", type);
+					else if (id == 27)
 						sprintf(filename, "K%d.out", type);
+					else if (id == 33)
+						sprintf(filename, "Q%d.out", type);
+					else if (id == 34)
+						sprintf(filename, "R%d.out", type);
 					else
 						sprintf(filename, "%.1d%d.out", id, type);
 				} else {
