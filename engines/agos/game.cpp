@@ -890,7 +890,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGADEMO,
+		GID_SIMON1AMIGA,
 		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE,
 	},
 
