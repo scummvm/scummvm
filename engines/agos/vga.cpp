@@ -2619,22 +2619,22 @@ void AGOSEngine::vc61() {
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dst = getBackBuf();
+		dst = getFrontBuf();
 		memcpy(dst, src, 64000);
-		tmp = 4;
+		tmp = 4 - 1;
 	} else {
-		tmp = a;
+		tmp = a - 1;
 	}
 
-	src = _curVgaFile2 + 3360;
-	while (tmp--) {
-		src += 1712;
-	}
+	src = _curVgaFile2 + 3840 * 16 + 3360;
+	while (tmp--)
+		src += 1536 * 16 + 1712;
+
 
 	src += 800;
 
 	if (a != 5) {
-		dst = getBackBuf() + 7448;
+		dst = getFrontBuf() + 7448;
 		for (h = 0; h < 177; h++) {
 			memcpy(dst, src, 144);
 			src += 144;
@@ -2644,10 +2644,10 @@ void AGOSEngine::vc61() {
 		if (a != 6)
 			return;
 
-		src += 15344;
+		src = _curVgaFile2 + 9984 * 16 + 15344;
 	}
 
-	dst = getBackBuf() + 50296;
+	dst = getFrontBuf() + 50296;
 	for (h = 0; h < 17; h++) {
 		memcpy(dst, src, 208);
 		src += 208;
@@ -2656,9 +2656,18 @@ void AGOSEngine::vc61() {
 
 	if (a == 6) {
 		//fullFade();
-	}
+		src = _curVgaFile2 + 32;
 
-	debug(0, "vc61: stub (%d)", a);
+		uint8 palette[1024];
+		for (int i = 0; i < 256; i++) {
+			palette[i * 4 + 0] = *src++ * 4;
+			palette[i * 4 + 1] = *src++ * 4;
+			palette[i * 4 + 2] = *src++ * 4;
+			palette[i * 4 + 3] = 0;
+		}
+
+		_system->setPalette(palette, 0, 256);
+	}
 }
 
 void AGOSEngine::vc61_setMaskImage() {

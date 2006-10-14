@@ -217,7 +217,7 @@ bool File::open(const String &filename, AccessMode mode) {
 		_handle = fopenNoCase(filename, "", modeStr);
 	} else if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
-		debug(3, "Opening hashed: %s", fname.c_str());
+		debug(0, "Opening hashed: %s", fname.c_str());
 		_handle = fopen(fname.c_str(), modeStr);
 	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
