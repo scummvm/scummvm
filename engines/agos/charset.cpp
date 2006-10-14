@@ -1577,6 +1577,8 @@ void AGOSEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, byt
 	}
 
 	color = window->text_color;
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+		color += dst[0] & 0xF0;
 
 	do {
 		int8 b = *src++;
