@@ -172,6 +172,7 @@ static const ADGameFileDescription ELVIRA1AMIGA_GameFiles[] = {
 };
 
 static const ADGameFileDescription ELVIRA1AMIGADEMO_GameFiles[] = {
+	{ "agos.mdf",		GAME_MENUFILE,	"825bc8eecd599f4c26732902ba2c2c77"},
 	{ "englishdemo",	GAME_BASEFILE,	"7bbc2dfe8619ef579004ff57674c6e92"},
 	{ "icon.dat",		GAME_ICONFILE,	"68b329da9893e34099c7d8ad5cb9c940"},
 };
@@ -218,6 +219,7 @@ static const ADGameFileDescription ELVIRA2DOS_FR_GameFiles[] = {
 static const ADGameFileDescription WAXWORKSAMIGA_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"e6207a69cf7356f13acbe8d14bdd844e"},  // Unpacked version
 	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe"},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e"},
 	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af"},
 	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0"},
 	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f"},
@@ -226,6 +228,7 @@ static const ADGameFileDescription WAXWORKSAMIGA_GameFiles[] = {
 static const ADGameFileDescription WAXWORKSDOS_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"7751e9358e894e32ef40ef3b3bae0f2a"},
 	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a"},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e"},
 	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d"},
 	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c"},
 	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0"},
