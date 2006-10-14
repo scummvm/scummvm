@@ -2478,7 +2478,7 @@ void AGOSEngine::vc56_fullScreen() {
 	byte *src = _curVgaFile2 + 32;
 	byte *dst = getBackBuf();
 
-	memcpy(dst, src, _screenHeight * _screenWidth);
+	memcpy(dst, src + 768, _screenHeight * _screenWidth);
 	//fullFade();
 
 	uint8 palette[1024];
