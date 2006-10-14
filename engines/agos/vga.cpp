@@ -2614,15 +2614,16 @@ void AGOSEngine::vc60_stopAnimation() {
 
 void AGOSEngine::vc61() {
 	uint16 a = vcReadNextWord();
-	byte *src, *dst;
+	byte *src, *dst, *dstPtr;
 	uint h, tmp;
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dst = getFrontBuf();
-		memcpy(dst, src, 64000);
+		dstPtr = getBackBuf();
+		memcpy(dstPtr, src, 64000);
 		tmp = 4 - 1;
 	} else {
+		dstPtr = getFrontBuf();
 		tmp = a - 1;
 	}
 
@@ -2634,7 +2635,7 @@ void AGOSEngine::vc61() {
 	src += 800;
 
 	if (a != 5) {
-		dst = getFrontBuf() + 7448;
+		dst = dstPtr + 7448;
 		for (h = 0; h < 177; h++) {
 			memcpy(dst, src, 144);
 			src += 144;
@@ -2647,7 +2648,7 @@ void AGOSEngine::vc61() {
 		src = _curVgaFile2 + 9984 * 16 + 15344;
 	}
 
-	dst = getFrontBuf() + 50296;
+	dst = dstPtr + 50296;
 	for (h = 0; h < 17; h++) {
 		memcpy(dst, src, 208);
 		src += 208;
