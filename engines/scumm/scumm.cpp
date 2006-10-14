@@ -2087,6 +2087,10 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	updateCursor();
 	CursorMan.showMouse(visible);
 
+	// Update the screen to make it less likely that the player will see a
+	// brief cursor palette glitch when the GUI is disabled.
+	_system->updateScreen();
+
 	// Resume sound & video
 	_sound->pauseSounds(old_soundsPaused);
 
