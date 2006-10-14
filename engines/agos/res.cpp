@@ -825,8 +825,10 @@ void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {
 }
 
 void AGOSEngine::loadVoice(uint speechId) {
-	if (getGameType() == GType_PP && speechId == 99)
+	if (getGameType() == GType_PP && speechId == 99) {
+		_sound->stopVoice();
 		return;
+	}
 
 	if (getFeatures() & GF_ZLIBCOMP) {
 		char filename[15];

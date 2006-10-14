@@ -148,7 +148,7 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	assert(buffer);
 	_file->read(buffer, size);
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
@@ -160,7 +160,7 @@ void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	int size, rate;
 	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
 	assert(buffer);
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 void RawSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
@@ -173,7 +173,7 @@ void RawSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	assert(buffer);
 	_file->read(buffer, size);
-	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 #if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
@@ -254,7 +254,7 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 
 void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 #endif
 
@@ -283,7 +283,7 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 
 void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 #endif
 
@@ -312,7 +312,7 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 
 void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0));
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 #endif
 
@@ -547,6 +547,9 @@ void Sound::playVoice(uint sound) {
 	if (!_voice)
 		return;
 
+	if (_mixer->getSoundID(_voiceHandle) == (int)sound)
+		return;
+
 	_mixer->stopHandle(_voiceHandle);
 	if (_vm->getGameType() == GType_PP) {
 		_voice->playSound(sound, &_voiceHandle, Audio::Mixer::FLAG_LOOP);
@@ -629,7 +632,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size) {
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, soundData, size);
 
-	_mixer->playRaw(&_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(&_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 // Feeble Files specific
@@ -722,7 +725,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		memcpy(buffer, soundData + stream.pos(), size);
 	}
 
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, -1, v, p);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound, v, p);
 }
 
 void Sound::stopSfx5() {
