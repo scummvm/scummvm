@@ -2078,6 +2078,8 @@ void AGOSEngine::oe1_nextMaster() {
 void AGOSEngine::oe1_menu() {
 	// 233: agos menu
 	// Used by Amiga demo
+	getVarOrWord();
+	getVarOrWord();
 }
 
 void AGOSEngine::oe1_bitClear() {

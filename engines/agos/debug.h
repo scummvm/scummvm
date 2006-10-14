@@ -319,7 +319,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"|CLS",
 	/* 232 */
 	"W|CLOSE_WINDOW",
-	NULL,
+	"WW|AGOS_MENU",
 	NULL,
 	"WWWWWIW|ADD_BOX",
 	/* 236 */
