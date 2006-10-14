@@ -1787,16 +1787,6 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 	runVgaScript();
 	_vcPtr = vc_ptr_org;
 
-	if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
-		byte *dst = getBackBuf() + 42560;
-		int size = 21440;
-
-		while (size--) {
-			*dst += 0x10;
-			dst++;
-		}
-	}
-
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
 		fillBackGroundFromBack(_screenHeight);
@@ -1823,6 +1813,16 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 
 		_syncFlag2 = 1;
 		_timer5 = 0;
+	}
+
+	if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
+		byte *dst = getBackBuf() + 42560;
+		int size = 21440;
+
+		while (size--) {
+			*dst += 0x10;
+			dst++;
+		}
 	}
 
 	_lockWord &= ~0x20;

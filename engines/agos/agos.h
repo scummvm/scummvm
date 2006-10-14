@@ -459,7 +459,8 @@ protected:
 
 	VgaPointersEntry _vgaBufferPointers[450];
 	VgaSprite _vgaSprites[200];
-	VgaSleepStruct _vgaSleepStructs[60];
+	VgaSleepStruct _waitSyncTable[60];
+	VgaSleepStruct _waitEndTable[60];
 
 	const uint16 *_pathFindArray[100];
 
@@ -1237,6 +1238,7 @@ protected:
 
 	void clearWindow(uint windowNum, uint color);
 	void setPaletteSlot(uint srcOffs, uint dstOffs);
+	void checkWaitEndTable();
 
 	void startOverlayAnims();
 	void startAnOverlayAnim();
@@ -1275,6 +1277,7 @@ protected:
 	byte *getScaleBuf();
 
 	void convertAmiga(byte *srcBuf, int32 fileSize);
+	bool decrunchFile(byte *src, byte *dst, uint32 size);
 	bool loadVGAFile(uint id, uint type);
 	void loadSimonVGAFile(uint id);
 

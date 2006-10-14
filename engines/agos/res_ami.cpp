@@ -39,7 +39,7 @@ byte *clipoutptr;
 int clipnumber;
 
 static void uncompressplane(byte *plane, byte *outptr, uint16 length) {
-	debug(0, "uncompressplane: length %d", length);
+	debug(10, "uncompressplane: length %d", length);
 
 	char x;
 	byte y, z;
@@ -71,7 +71,7 @@ static void uncompressplane(byte *plane, byte *outptr, uint16 length) {
 }
 
 static void convertcompressedclip(uint16 height, uint16 width) {
-	debug(0, "convertcompressedclip: height %d width %d", height, width);
+	debug(10, "convertcompressedclip: height %d width %d", height, width);
 
 	byte *plane0;
 	byte *plane1;
@@ -217,12 +217,12 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 	}
 	if (cliplength > (height * width / 2))
 		warning("Negative compression. Clip %d. %d bytes bigger.",clipnumber,(cliplength-(height*width/2)));
-	free(uncbuffer);
-	free(uncbfrout);
+	//free(uncbuffer);
+	//free(uncbfrout);
 }
 
 static void convertclip(uint32 offset, uint16 height, uint16 width) {
-	debug(0, "convertclip: height %d width %d", height, width);
+	debug(10, "convertclip: height %d width %d", height, width);
 
 	uint32 length, i, j;
 	uint16 word1, word2, word3, word4;
@@ -264,7 +264,7 @@ void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
 	uint16 clipwidth, clipheight;
 	byte *clipsend;
 
-	debug(0, "convertAmiga: fizeSize %d", fileSize);
+	debug(10, "convertAmiga: fizeSize %d", fileSize);
 
 	buffer = (byte *)malloc((int32)fileSize);
 	memcpy(buffer, srcBuf, fileSize);
@@ -300,7 +300,7 @@ void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
 		clipnumber++;
 	}
 	outlength = bufoutend;
-	debug(0, "convertAmiga: outlength %d",outlength);
+	debug(10, "convertAmiga: outlength %d",outlength);
 
 	byte *dstBuf = allocBlock (outlength);
 	memcpy(dstBuf, bufferout, outlength);

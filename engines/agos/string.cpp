@@ -444,11 +444,12 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	if (getGameType() == GType_FF) {
 		renderString(1, color, width, height, convertedString);
 	} else {
-		color = color * 3 + 192;
-		if (getPlatform() == Common::kPlatformAmiga)
+		if (getPlatform() == Common::kPlatformAmiga) {
 			renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
-		else
+		} else {
+			color = color * 3 + 192;
 			renderString(vgaSpriteId, color, width, height, convertedString);
+		}
 	}
 
 	int b = 4;

@@ -1681,7 +1681,7 @@ void AGOSEngine::vc14_addToSpriteY() {
 }
 
 void AGOSEngine::vc15_sync() {
-	VgaSleepStruct *vfs = _vgaSleepStructs, *vfs_tmp;
+	VgaSleepStruct *vfs = _waitSyncTable, *vfs_tmp;
 	uint16 id = vcReadNextWord();
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
@@ -1703,7 +1703,7 @@ void AGOSEngine::vc15_sync() {
 }
 
 void AGOSEngine::vc16_waitSync() {
-	VgaSleepStruct *vfs = _vgaSleepStructs;
+	VgaSleepStruct *vfs = _waitSyncTable;
 	while (vfs->ident)
 		vfs++;
 
@@ -1715,10 +1715,33 @@ void AGOSEngine::vc16_waitSync() {
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
+void AGOSEngine::checkWaitEndTable() {
+	VgaSleepStruct *vfs = _waitEndTable, *vfs_tmp;
+	while (vfs->ident != 0) {
+		if (vfs->ident == _vgaCurSpriteId) {
+			addVgaEvent(_vgaBaseDelay, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
+			vfs_tmp = vfs;
+			do {
+				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
+				vfs_tmp++;
+			} while (vfs_tmp->ident != 0);
+		} else {
+			vfs++;
+		}
+	}
+}
+
 void AGOSEngine::vc17_waitEnd() {
-	// TODO
-	uint a = vcReadNextWord();
-	debug(0, "vc17_waitEnd: stub (%d)", a);
+	VgaSleepStruct *vfs = _waitEndTable;
+	while (vfs->ident)
+		vfs++;
+
+	vfs->ident = vcReadNextWord();
+	vfs->code_ptr = _vcPtr;
+	vfs->sprite_id = _vgaCurSpriteId;
+	vfs->cur_vga_file = _vgaCurZoneNum;
+
+	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
 void AGOSEngine::vc17_setPathfinderItem() {
@@ -1737,8 +1760,24 @@ void AGOSEngine::vc18_jump() {
 }
 
 void AGOSEngine::vc19_loop() {
-	// TODO
-	debug(0, "vc19_loop: stub");
+	uint16 count;
+	byte *b, *bb;
+
+	bb = _curVgaFile1;
+	b = _curVgaFile1 + READ_BE_UINT16(bb + 10);
+	b += 20;
+
+	count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->animationCount);
+	b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->animationTable);
+
+	while (count--) {
+		if (READ_BE_UINT16(&((AnimationHeader_WW *) b)->id) == _vgaCurSpriteId)
+			break;
+		b += sizeof(AnimationHeader_WW);
+	}
+	assert(READ_BE_UINT16(&((AnimationHeader_WW *) b)->id) == _vgaCurSpriteId);
+
+	_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW *) b)->scriptOffs);
 }
 
 void AGOSEngine::vc20_setRepeat() {
@@ -1915,6 +1954,8 @@ void AGOSEngine::vc24_setSpriteXY() {
 }
 
 void AGOSEngine::vc25_halt_sprite() {
+	checkWaitEndTable();
+
 	VgaSprite *vsp = findCurSprite();
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
@@ -1955,7 +1996,13 @@ void AGOSEngine::vc27_resetSprite() {
 	if (bak.id != 0)
 		memcpy(_vgaSprites, &bak, sizeof(VgaSprite));
 
-	vfs = _vgaSleepStructs;
+	vfs = _waitEndTable;
+	while (vfs->ident) {
+		vfs->ident = 0;
+		vfs++;
+	}
+
+	vfs = _waitSyncTable;
 	while (vfs->ident) {
 		vfs->ident = 0;
 		vfs++;
@@ -1992,7 +2039,7 @@ void AGOSEngine::vc28_playSFX() {
 	frequency = vcReadNextWord();
 	flags = vcReadNextWord();
 
-	debug(0, "vc28_playSFX: stub (%d, %d, %d, %d)", sound, channels, frequency, flags);
+	debug(0, "vc28_playSFX: (%d, %d, %d, %d)", sound, channels, frequency, flags);
 
 	if (_curSfxFile == NULL)
 		return;
@@ -2006,7 +2053,7 @@ void AGOSEngine::vc28_playSFX() {
 		size = READ_LE_UINT16(dst);
 		offs = 4;
 	} else {
-		while (READ_BE_UINT16(dst) != sound)
+		while (READ_BE_UINT16(dst + 6) != sound)
 			dst += 12;
 
 		size = READ_BE_UINT16(dst + 2);
@@ -2564,7 +2611,7 @@ void AGOSEngine::vc_kill_sprite(uint file, uint sprite) {
 	_vgaCurZoneNum = file;
 	_vgaCurSpriteId = sprite;
 
-	vfs = _vgaSleepStructs;
+	vfs = _waitSyncTable;
 	while (vfs->ident != 0) {
 		if (vfs->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vfs->cur_vga_file == _vgaCurZoneNum)) {
 			while (vfs->ident != 0) {
