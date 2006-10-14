@@ -75,6 +75,9 @@ public:
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
+	// Elvira 1/2 and Waxworks specific
+	void playRawData(byte *soundData, uint sound, uint size);
+
 	// Feeble Files specific
 	void playAmbientData(byte *soundData, uint sound, uint pan, uint vol);
 	void playSfxData(byte *soundData, uint sound, uint pan, uint vol);

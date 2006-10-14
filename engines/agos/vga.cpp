@@ -1983,12 +1983,37 @@ void AGOSEngine::vc27_resetSprite() {
 }
 
 void AGOSEngine::vc28_playSFX() {
-	// TODO
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
-	uint c = vcReadNextWord();
-	uint d = vcReadNextWord();
-	debug(0, "vc28_playSFX: stub (%d, %d, %d, %d)", a, b, c, d);
+	byte *dst;
+	uint sound, channels, frequency, flags;
+	uint offs, size;
+
+	sound = vcReadNextWord();
+	channels = vcReadNextWord();
+	frequency = vcReadNextWord();
+	flags = vcReadNextWord();
+
+	debug(0, "vc28_playSFX: stub (%d, %d, %d, %d)", sound, channels, frequency, flags);
+
+	if (_curSfxFile == NULL)
+		return;
+
+	dst = _curSfxFile;
+	if (getGameType() == GType_WW) {
+		uint tmp = sound;
+		while (tmp--)
+			dst += READ_LE_UINT16(dst) + 4;
+
+		size = READ_LE_UINT16(dst);
+		offs = 4;
+	} else {
+		while (READ_BE_UINT16(dst) != sound)
+			dst += 12;
+
+		size = READ_BE_UINT16(dst + 2);
+		offs = READ_BE_UINT32(dst + 8);
+	}
+
+	_sound->playRawData(dst + offs, sound, size);
 }
 
 void AGOSEngine::vc29_stopAllSounds() {
@@ -2453,6 +2478,9 @@ void AGOSEngine::vc56_fullScreen() {
 	byte *src = _curVgaFile2 + 32;
 	byte *dst = getBackBuf();
 
+	memcpy(dst, src, _screenHeight * _screenWidth);
+	//fullFade();
+
 	uint8 palette[1024];
 	for (int i = 0; i < 256; i++) {
 		palette[i * 4 + 0] = *src++ * 4;
@@ -2462,7 +2490,6 @@ void AGOSEngine::vc56_fullScreen() {
 	}
 
 	_system->setPalette(palette, 0, 256);
-	memcpy(dst, src, _screenHeight * _screenWidth);
 }
 
 void AGOSEngine::vc56_delayLong() {
@@ -2588,30 +2615,50 @@ void AGOSEngine::vc60_stopAnimation() {
 void AGOSEngine::vc61() {
 	uint16 a = vcReadNextWord();
 	byte *src, *dst;
+	uint h, tmp;
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
 		dst = getBackBuf();
 		memcpy(dst, src, 64000);
-		a = 4;
+		tmp = 4;
+	} else {
+		tmp = a;
 	}
 
 	src = _curVgaFile2 + 3360;
-	dst = getBackBuf() + 3840;
-
-	uint tmp = a;
 	while (tmp--) {
 		src += 1712;
-		dst += 1536;
 	}
 
 	src += 800;
 
 	if (a != 5) {
+		dst = getBackBuf() + 7448;
+		for (h = 0; h < 177; h++) {
+			memcpy(dst, src, 144);
+			src += 144;
+			dst += _screenWidth;
+		}
+
+		if (a != 6)
+			return;
+
+		src += 15344;
+	}
+
+	dst = getBackBuf() + 50296;
+	for (h = 0; h < 17; h++) {
+		memcpy(dst, src, 208);
+		src += 208;
+		dst += _screenWidth;
 	}
 
 	if (a == 6) {
+		//fullFade();
 	}
+
+	debug(0, "vc61: stub (%d)", a);
 }
 
 void AGOSEngine::vc61_setMaskImage() {

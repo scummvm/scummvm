@@ -1275,7 +1275,7 @@ protected:
 	byte *getScaleBuf();
 
 	void convertAmiga(byte *srcBuf, int32 fileSize);
-	void loadVGAFile(uint id, uint type);
+	bool loadVGAFile(uint id, uint type);
 	void loadSimonVGAFile(uint id);
 
 	int init();

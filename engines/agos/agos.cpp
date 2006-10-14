@@ -1523,9 +1523,10 @@ void AGOSEngine::loadZone(uint zoneNum) {
 
 	vpe->sfxFile = NULL;
 	if (!(getFeatures() & GF_ZLIBCOMP)) {
-		loadVGAFile(zoneNum, 3);
-		vpe->sfxFile = _block;
-		vpe->sfxFileEnd = _blockEnd;
+		if (loadVGAFile(zoneNum, 3)) {
+			vpe->sfxFile = _block;
+			vpe->sfxFileEnd = _blockEnd;
+		}
 	}
 }
 

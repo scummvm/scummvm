@@ -624,6 +624,14 @@ void Sound::ambientPause(bool b) {
 	}
 }
 
+// Elvira 1/2 and Waxworks specific
+void Sound::playRawData(byte *soundData, uint sound, uint size) {
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, soundData, size);
+
+	_mixer->playRaw(&_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
+}
+
 // Feeble Files specific
 void Sound::playAmbientData(byte *soundData, uint sound, uint pan, uint vol) {
 	if (sound == _ambientPlaying)

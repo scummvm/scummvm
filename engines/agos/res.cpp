@@ -631,7 +631,7 @@ void AGOSEngine::loadSimonVGAFile(uint id) {
 	}
 }
 
-void AGOSEngine::loadVGAFile(uint id, uint type) {
+bool AGOSEngine::loadVGAFile(uint id, uint type) {
 	File in;
 	char filename[15];
 	byte *dst = NULL;
@@ -685,41 +685,46 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 		}
 
 		in.open(filename);
-		if (in.isOpen() == true) {
-			dstSize = srcSize = in.size();
-			if (getFeatures() & GF_CRUNCHED) {
-				byte *srcBuffer = (byte *)malloc(srcSize);
-				if (in.read(srcBuffer, srcSize) != srcSize)
-					error("loadVGAFile: Read failed");
-
-				dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-				if (type == 2 && dstSize != 64800) {
-					dst = (byte *)malloc(dstSize);
-					decrunchFile(srcBuffer, dst, srcSize);
-					convertAmiga(dst, dstSize);
-					free(dst);
-				} else {
-					dst = allocBlock (dstSize + extraBuffer);
-					decrunchFile(srcBuffer, dst, srcSize);
-				}
-				free(srcBuffer);
+		if (in.isOpen() == false) {
+			// Sound VGA files don't always exist
+			if (type == 3) {
+				return false;
 			} else {
-				if (getGameId() == GID_SIMON1CD32 && type == 2) {
-					dst = (byte *)malloc(dstSize);
-					if (in.read(dst, dstSize) != dstSize)
-						error("loadVGAFile: Read failed");
-					convertAmiga(dst, dstSize);
-					free(dst);
-				} else {
-					dst = allocBlock(dstSize + extraBuffer);
-					if (in.read(dst, dstSize) != dstSize)
-						error("loadVGAFile: Read failed");
-				}
+				error("loadVGAFile: Can't load %s", filename);
 			}
-			in.close();
-		} else if (type != 3) {
-			error("loadVGAFile: Can't load %s", filename);
 		}
+
+		dstSize = srcSize = in.size();
+		if (getFeatures() & GF_CRUNCHED) {
+			byte *srcBuffer = (byte *)malloc(srcSize);
+			if (in.read(srcBuffer, srcSize) != srcSize)
+			error("loadVGAFile: Read failed");
+
+			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
+			if (type == 2 && dstSize != 64800) {
+				dst = (byte *)malloc(dstSize);
+				decrunchFile(srcBuffer, dst, srcSize);
+				convertAmiga(dst, dstSize);
+				free(dst);
+			} else {
+				dst = allocBlock (dstSize + extraBuffer);
+				decrunchFile(srcBuffer, dst, srcSize);
+			}
+			free(srcBuffer);
+		} else {
+			if (getGameId() == GID_SIMON1CD32 && type == 2) {
+				dst = (byte *)malloc(dstSize);
+				if (in.read(dst, dstSize) != dstSize)
+					error("loadVGAFile: Read failed");
+				convertAmiga(dst, dstSize);
+				free(dst);
+			} else {
+				dst = allocBlock(dstSize + extraBuffer);
+				if (in.read(dst, dstSize) != dstSize)
+					error("loadVGAFile: Read failed");
+			}
+		}
+		in.close();
 	} else {
 		id = id * 2 + (type - 1);
 		offs = _gameOffsetsPtr[id];
@@ -728,6 +733,8 @@ void AGOSEngine::loadVGAFile(uint id, uint type) {
 		dst = allocBlock(dstSize + extraBuffer);
 		readGameFile(dst, offs, dstSize);
 	}
+
+	return true;
 }
 
 static const char *dimpSoundList[32] = {
