@@ -638,10 +638,6 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 	uint32 file, offs, srcSize, dstSize;
 	uint extraBuffer = 0;
 
-	if (getGameType() == GType_PP) {
-		_sound->stopVoice();
-	}
-
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		// !!! HACK !!!
 		// Allocate more space for text to cope with foreign languages that use
