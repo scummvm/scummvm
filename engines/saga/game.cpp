@@ -28,9 +28,6 @@
 
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/md5.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
 #include "base/plugins.h"
