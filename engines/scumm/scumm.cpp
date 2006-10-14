@@ -2078,11 +2078,14 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
 
+	bool visible = CursorMan.isVisible();
+
 	// Open & run the dialog
 	int result = dialog.runModal();
 
 	// Restore old cursor
 	updateCursor();
+	CursorMan.showMouse(visible);
 
 	// Resume sound & video
 	_sound->pauseSounds(old_soundsPaused);
