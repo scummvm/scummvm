@@ -97,7 +97,7 @@ PluginError Engine_CINE_create(OSystem *syst, Engine **engine) {
 	return kNoGameDataFoundError;
 }
 
-REGISTER_PLUGIN(CINE, "Cinematique evo.1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
+REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
 
 namespace Cine {
 

@@ -58,7 +58,7 @@ _build_saga=yes
 _build_gob=yes
 _build_kyra=yes
 _build_lure=no
-_build_cine=no
+_build_cine=yes
 _build_agi=no
 _need_memalign=no
 _build_plugins=no
@@ -330,7 +330,7 @@ Optional Features:
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
   --enable-lure            build the Lure of the Temptress engine
-  --enable-cine            build the Cinematique engine evo 1
+  --disable-cine           don't build the Cinematique engine evo 1
   --enable-agi             build the AGI engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
@@ -398,7 +398,7 @@ for ac_option in $@; do
       --disable-gob)            _build_gob=no ;;
       --disable-kyra)           _build_kyra=no ;;
       --enable-lure)            _build_lure=yes ;;
-      --enable-cine)            _build_cine=yes ;;
+      --disable-cine)           _build_cine=no ;;
       --enable-agi)             _build_agi=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
