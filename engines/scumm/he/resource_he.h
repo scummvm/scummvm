@@ -189,6 +189,8 @@ class Win32ResExtractor : public ResExtractor {
 		int level;
 		bool numeric_id;
 		bool is_directory;
+		
+		char *get_resource_id_quoted();
 	};
 
 
@@ -482,7 +484,6 @@ class Win32ResExtractor : public ResExtractor {
 	WinResource *list_pe_resources(WinLibrary *, Win32ImageResourceDirectory *, int, int *);
 	int calc_vma_size(WinLibrary *);
 	int do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, int, byte **);
-	char *get_resource_id_quoted(WinResource *);
 	WinResource *find_with_resource_array(WinLibrary *, WinResource *, const char *);
 
 	bool check_offset(byte *, int, const char *, void *, int);

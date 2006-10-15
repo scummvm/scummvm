@@ -245,6 +245,20 @@ const char *Win32ResExtractor::res_type_string_to_id(const char *type) {
 	return type;
 }
 
+/* return the resource id quoted if it's a string, otherwise just return it */
+char *Win32ResExtractor::WinResource::get_resource_id_quoted() {
+	// FIXME: Using a static var here is EVIL and in fact, broken when
+	// used multiple times in a row, e.g. in a single call to printf()
+	// or debug()... which is in fact how we use this function... :-)
+	static char tmp[WINRES_ID_MAXLEN+2];
+
+	if (numeric_id || id[0] == '\0')
+		return id;
+
+	sprintf(tmp, "'%s'", id);
+	return tmp;
+}
+
 int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
                             WinResource *type_wr, WinResource *name_wr,
 							WinResource *lang_wr, byte **data) {
@@ -271,9 +285,9 @@ int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
 		type = res_type_id_to_string(id);
 
 	debugC(DEBUG_RESOURCE, "extractCursor(). Found cursor name: %s%s%s [size=%d]",
-	  get_resource_id_quoted(name_wr),
+	  name_wr->get_resource_id_quoted(),
 	  (lang_wr->id[0] != '\0' ? " language: " : ""),
-	  get_resource_id_quoted(lang_wr), size);
+	  lang_wr->get_resource_id_quoted(), size);
 
 	return size;
 }
@@ -534,17 +548,6 @@ int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base,
 	memset(WINRESOURCE_BY_LEVEL(wr[0].level), 0, sizeof(WinResource));
 
 	return size;
-}
-
-/* return the resource id quoted if it's a string, otherwise just return it */
-char *Win32ResExtractor::get_resource_id_quoted(WinResource *wr) {
-	static char tmp[WINRES_ID_MAXLEN+2];
-
-	if (wr->numeric_id || wr->id[0] == '\0')
-		return wr->id;
-
-	sprintf(tmp, "'%s'", wr->id);
-	return tmp;
 }
 
 bool Win32ResExtractor::compare_resource_id(WinResource *wr, const char *id) {
