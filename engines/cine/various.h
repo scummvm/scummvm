@@ -32,8 +32,6 @@
 
 namespace Cine {
 
-extern int gameType;
-
 typedef char commandeType[20];
 
 void initLanguage(Common::Language lang);

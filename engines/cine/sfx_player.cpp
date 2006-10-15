@@ -63,7 +63,7 @@ bool SfxPlayer::load(const char *song) {
 	}
 
 	/* like the original PC version, skip introduction song (file doesn't exist) */
-	if (gameType == Cine::GID_OS && strncmp(song, "INTRO", 5) == 0) {
+	if (g_cine->getGameType() == Cine::GType_OS && strncmp(song, "INTRO", 5) == 0) {
 		return 0;
 	}
 		

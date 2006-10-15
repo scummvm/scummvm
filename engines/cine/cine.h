@@ -28,6 +28,7 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "common/advancedDetector.h"
 
 #include "engines/engine.h"
 
@@ -47,26 +48,45 @@
 
 namespace Cine {
 
-enum CineGameId {
-	GID_FW = 1,
-	GID_OS
+enum CineGameType {
+	GType_FW = 1,
+	GType_OS
+};
+
+enum CineGameFeatures {
+	GF_CD =   1 << 0,
+	GF_DEMO = 1 << 1
+};
+
+struct CINEGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	uint32 features;
 };
 
 class CineEngine : public Engine {
-	int _gameId;
 
 protected:
 	int init();
 	int go();
 	void shutdown();
+	
+	bool initGame();
 
 public:
 	CineEngine(OSystem *syst);
 	virtual ~CineEngine();
-	int getGameId() {
-		return _gameId;
-	}
+
+	int getGameType() const { return _gameDescription->gameType; }
+	uint32 getFeatures() const { return _gameDescription->features; }
+	Common::Language getLanguage() const { return _gameDescription->desc.language; }
+	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
+
+	const CINEGameDescription *_gameDescription;
 };
+
+extern CineEngine *g_cine;
 
 #define BOOT_PRC_NAME "AUTO00.PRC"
 

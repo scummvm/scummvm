@@ -421,7 +421,7 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 
 				if ((xdif >= 0) && ((treshold << 4) > xdif) && (ydif > 0) && (ydif < height)) {
 					if (animDataTable[frame].ptr1) {
-						if (gameType == Cine::GID_OS)
+						if (g_cine->getGameType() == Cine::GType_OS)
 							return currentHead->objIdx;
 
 						if (currentHead->type == 0)	{ // use generated mask
@@ -449,7 +449,7 @@ static commandeType currentSaveName[10];
 int16 loadSaveDirectory(void) {
 	Common::InSaveFile *fHandle;
 
-	if (gameType == Cine::GID_FW)
+	if (g_cine->getGameType() == Cine::GType_FW)
 		fHandle = g_saveFileMan->openForLoading("FW.DIR");
 	else
 		fHandle = g_saveFileMan->openForLoading("OS.DIR");
@@ -601,7 +601,7 @@ int16 makeLoad(char *saveName) {
 	g_sfxPlayer->stop();
 	freeAnimDataTable();
 	unloadAllMasks();
-	// if (gameType == Cine::GID_OS) {
+	// if (g_cine->getGameType() == Cine::GType_OS) {
 	// 	freeUnkList();
 	// }
 	freePrcLinkedList();
@@ -1090,7 +1090,7 @@ void makeSystemMenu(void) {
 
 					if (selectedSave >= 0) {
 						char saveNameBuffer[256];
-						if (gameType == Cine::GID_FW)
+						if (g_cine->getGameType() == Cine::GType_FW)
 							sprintf(saveNameBuffer, "FW.%1d", selectedSave);
 						else
 							sprintf(saveNameBuffer, "OS.%1d", selectedSave);
@@ -1132,7 +1132,7 @@ void makeSystemMenu(void) {
 					//makeTextEntryMenu("Veuillez entrer le Nom de la Sauvegarde .", &currentSaveName[selectedSave], 120);
 					sprintf(currentSaveName[selectedSave], "temporary save name");
 
-					if (gameType == Cine::GID_FW)
+					if (g_cine->getGameType() == Cine::GType_FW)
 						sprintf(saveFileName, "FW.%1d", selectedSave);
 					else
 						sprintf(saveFileName, "OS.%1d", selectedSave);
@@ -1143,7 +1143,7 @@ void makeSystemMenu(void) {
 
 						Common::OutSaveFile *fHandle;
 
-						if (gameType == Cine::GID_FW)
+						if (g_cine->getGameType() == Cine::GType_FW)
 							fHandle = g_saveFileMan->openForSaving("FW.DIR");
 						else
 							fHandle = g_saveFileMan->openForSaving("OS.DIR");
@@ -1285,7 +1285,7 @@ int16 buildObjectListCommand(void) {
 	int16 i;
 	int16 j;
 
-	assert(gameType == Cine::GID_FW);
+	assert(g_cine->getGameType() == Cine::GType_FW);
 
 	for (i = 0; i < 20; i++) {
 		objectListCommand[i][0] = 0;
@@ -1308,7 +1308,7 @@ int16 buildObjectListCommand2(int16 param) {
 	int16 i;
 	int16 j;
 
-	assert(gameType == Cine::GID_OS);
+	assert(g_cine->getGameType() == Cine::GType_OS);
 
 	for (i = 0; i < 20; i++) {
 		objectListCommand[i][0] = 0;
@@ -1383,7 +1383,7 @@ void makeCommandLine(void) {
 
 		getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
 
-		if (gameType == Cine::GID_FW) {
+		if (g_cine->getGameType() == Cine::GType_FW) {
 			si = selectSubObject(x, y + 8);
 		} else {
 			si = selectSubObject2(x, y + 8, -subObjectUseTable[playerCommand]);
@@ -1393,7 +1393,7 @@ void makeCommandLine(void) {
 			playerCommand = -1;
 			strcpy(commandBuffer, "");
 		} else {
-			if (gameType == Cine::GID_OS) {
+			if (g_cine->getGameType() == Cine::GType_OS) {
 				if (si >= 8000) {
 					si -= 8000;
 					canUseOnObject = canUseOnItemTable[playerCommand];
@@ -1420,7 +1420,7 @@ void makeCommandLine(void) {
 		}
 	}
 
-	if (gameType == Cine::GID_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		if (playerCommand != -1 && canUseOnObject != 0)	{ // call use on sub object
 			int16 si;
 
@@ -1971,7 +1971,7 @@ void makeActionMenu(void) {
 
 	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
-	if (gameType == Cine::GID_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
 
 		if (playerCommand >= 8000) {
@@ -2109,7 +2109,7 @@ uint16 executePlayerInput(void) {
 		} else {
 			if (mouseButton & 2) {
 				if (!(mouseButton & 1)) {
-					if (gameType == Cine::GID_OS) {
+					if (g_cine->getGameType() == Cine::GType_OS) {
 						playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
 
 						if (playerCommand >= 8000) {
@@ -2343,7 +2343,7 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 	} else
 #endif
 
-	if (gameType == Cine::GID_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		drawSpriteRaw2(spritePtr, objectTable[currentOverlay->objIdx].part, width, height, page, x, y);
 	} else {
 		drawSpriteRaw(spritePtr, maskPtr, width, height, page, x, y);
@@ -2676,7 +2676,7 @@ void drawOverlays(void) {
 				y = objPtr->y;
 
 				if (objPtr->frame >= 0) {
-					if (gameType == Cine::GID_OS) {
+					if (g_cine->getGameType() == Cine::GType_OS) {
 						uint16 partVar1;
 						uint16 partVar2;
 						AnimData *pPart;
@@ -3161,7 +3161,8 @@ void processSeqListElement(SeqListElement *element) {
 		param1 = ptr1[1];
 		param2 = ptr1[2];
 
-		assert(element->varC == 255);
+		if (element->varC != 255)
+			warning("processSeqListElement: varC = %d", element->varC);
 
 		if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
 			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);

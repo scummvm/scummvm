@@ -422,7 +422,7 @@ void setupOpcodes() {
 		o1_changeDataDisk
 	};
 
-	if (gameType == Cine::GID_FW) {
+	if (g_cine->getGameType() == Cine::GType_FW) {
 		_opcodeTable = opcodeTableFW;
 		_numOpcodes = ARRAYSIZE(opcodeTableFW);
 	} else {
@@ -541,7 +541,7 @@ void addToBGList(int16 objIdx) {
 
 	part = objectTable[objIdx].part;
 
-	if (gameType == Cine::GID_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		drawSpriteRaw2(animDataTable[objectTable[objIdx].frame].ptr1, objectTable[objIdx].part, width, height, page2Raw, x, y);
 	} else {
 		drawSpriteRaw(animDataTable[objectTable[objIdx].frame].ptr1, animDataTable[objectTable[objIdx].frame].ptr2, width, height, page2Raw, x, y);
@@ -1627,7 +1627,7 @@ void o1_compareGlobalVar() {
 
 		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _currentLine, varIdx, value);
 
-		if (varIdx == 255 && (gameType == Cine::GID_FW)) {	// TODO: fix
+		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {	// TODO: fix
 			_currentScriptElement->compareResult = 1;
 		} else {
 			_currentScriptElement->compareResult = compareVars(globalVars[varIdx], value);
@@ -1717,6 +1717,12 @@ void o1_loadMusic() {
 	const char *param = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _currentLine, param);
+
+	if (g_cine->getPlatform() == Common::kPlatformAmiga) {
+		warning("STUB: o1_loadMusic");
+		return;
+	}
+
 	g_sfxPlayer->load(param);
 }
 

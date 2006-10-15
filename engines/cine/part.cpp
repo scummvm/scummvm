@@ -68,7 +68,7 @@ void loadPart(const char *partName) {
 		partFileHandle.readUint32BE(); // unused
 	}
 
-	if (gameType == Cine::GID_FW)
+	if (g_cine->getGameType() == Cine::GType_FW && g_cine->getPlatform() == Common::kPlatformPC)
 		loadPal(partName);
 }
 
@@ -97,7 +97,7 @@ void freePartRange(byte startIdx, byte numIdx) {
 void closePart(void) {
 }
 
-static const char *bundleNames[] = {
+static const char *bundleNamesDOSEN[] = {
 	"EGOUBASE",
 	"LABYBASE",
 	"PROCEGOU",
@@ -133,8 +133,6 @@ static const char *bundleNames[] = {
 	"RSC15",
 	"RSC16",
 	"RSC17",
-// english version
-#if 1
 	"SONS1",
 	"SONS2",
 	"SONS3",
@@ -144,34 +142,247 @@ static const char *bundleNames[] = {
 	"SONS7",
 	"SONS8",
 	"SONS9",
-#else
-	"SONS31", // french version
+	NULL
+};
+
+static const char *bundleNamesDOSUS[] = {
+	"EGOUBASE",
+	"LABYBASE",
+	"PROCEGOU",
+	"PROCLABY",
+	"PROCS00",
+	"PROCS01",
+	"PROCS02",
+	"PROCS03",
+	"PROCS04",
+	"PROCS06",
+	"PROCS07",
+	"PROCS08",
+	"PROCS12",
+	"PROCS13",
+	"PROCS15",
+	"PROCS16",
+	"RSC00",
+	"RSC02",
+	"RSC03",
+	"RSC04",
+	"RSC05",
+	"RSC06",
+	"RSC07",
+	"RSC08",
+	"RSC09",
+	"RSC10",
+	"RSC11",
+	"RSC12",
+	"RSC13",
+	"RSC14",
+	"RSC15",
+	"RSC16",
+	"RSC17",
+	"SONS31",
 	"SONS32",
 	"SONS33",
-	"SONS34"
-#endif
+	"SONS34",
+	NULL
+};
+
+static const char *bundleNamesDOSFR[] = {
+	"EGOUBASE",
+	"LABYBASE",
+	"PROCEGOU",
+	"PROCLABY",
+	"PROCS00",
+	"PROCS01",
+	"PROCS02",
+	"PROCS03",
+	"PROCS04",
+	"PROCS06",
+	"PROCS07",
+	"PROCS08",
+	"PROCS10",
+	"PROCS12",
+	"PROCS13",
+	"PROCS15",
+	"PROCS16",
+	"RSC00",
+	"RSC01",
+	"RSC02",
+	"RSC03",
+	"RSC04",
+	"RSC05",
+	"RSC06",
+	"RSC07",
+	"RSC08",
+	"RSC09",
+	"RSC10",
+	"RSC11",
+	"RSC12",
+	"RSC13",
+	"RSC14",
+	"RSC15",
+	"RSC16",
+	"RSC17",
+	"SONS31",
+	"SONS32",
+	"SONS33",
+	"SONS34",
+	NULL
+};
+
+static const char *bundleNamesDOSES[] = {
+	"EGOUBASE",
+	"LABYBASE",
+	"PROCS1",
+	"PROCS2",
+	"PROCS3",
+	"PROCS4",
+	"PROCS5",
+	"PROCS6",
+	"SD01A",
+	"SD01B",
+	"SD01C",
+	"SD01D",
+	"SD021",
+	"SD022",
+	"SD03",
+	"SDSONS",
+	"SDSONS2",
+	"SDSONS3",
+	"SINTRO2",
+	NULL
+};
+
+static const char *bundleNamesDOSInt[] = {
+	"EGOUBASE",
+	"LABYBASE",
+	"PROCS1",
+	"PROCS2",
+	"PROCS3",
+	"PROCS4",
+	"PROCS5",
+	"PROCS6",
+	"SD01A",
+	"SD01B",
+	"SD01C",
+	"SD01D",
+	"SD021",
+	"SD022",
+	"SD03",
+	"SDS1",
+	"SDS2",
+	"SDS3",
+	"SDS4",
+	"SDS5",
+	"SDS6",
+	"SINTRO2",
+	NULL
+};
+
+static const char *bundleNamesAmiga[] = {
+	"EGOUBASE",
+	"LABYBASE",
+	"PROCS0",
+	"PROCS1",
+	"PROCS2",
+	"SAMPLES",
+	"SAMPLES2",
+	"SAMPLES3",
+	"SD01A",
+	"SD01B",
+	"SD01C",
+	"SD01D",
+	"SD02",
+	"SD03",
+	"SDSONS",
+	"SDSONS2",
+	"SDSONS3",
+	"SINTRO2",
+	NULL
+};
+
+static const char *bundleNamesAmigaDemo[] = {
+	"DEMO_OS",
+	"SDSONS",
+	NULL
+};
+
+static const char *bundleNamesAtari[] = {
+	"EGOUBASE",
+	"LABYBASE",
+	"PROCS0",
+	"PROCS1",
+	"PROCS2",
+	"SAMPLES",
+	"SD01A",
+	"SD01B",
+	"SD01C",
+	"SD01D",
+	"SD02",
+	"SD03",
+	"SDSONS",
+	"SDSONS2",
+	"SDSONS3",
+	"SINTRO2",
+	NULL
 };
 
 int16 findFileInBundle(const char *fileName) {
 	uint16 i;
 
-	if (gameType == Cine::GID_OS) {
-		uint16 j;
-
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		for (i = 0; i < numElementInPart; i++) {
 			if (!strcmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
 
-		for (j = 0; j < 39; j++) {
-			loadPart(bundleNames[j]);
+		const char **bPtr;
+
+		if (g_cine->getPlatform() == Common::kPlatformPC) {
+			switch (g_cine->getLanguage()) {
+			case Common::EN_GRB:
+				bPtr = bundleNamesDOSEN;
+				break;
+			case Common::EN_USA:
+				if (g_cine->getFeatures() & GF_CD)
+					bPtr = bundleNamesDOSUS;
+				else
+					bPtr = bundleNamesDOSInt;
+				break;
+			case Common::DE_DEU:
+			case Common::IT_ITA:
+				bPtr = bundleNamesDOSInt;
+				break;
+			case Common::ES_ESP:
+				if (g_cine->getFeatures() & GF_CD)
+					bPtr = bundleNamesDOSInt;
+				else
+					bPtr = bundleNamesDOSES;
+				break;
+			case Common::FR_FRA:
+				bPtr = bundleNamesDOSFR;
+				break;
+			default:
+				break;
+			}
+		} else if (g_cine->getPlatform() == Common::kPlatformAmiga) {
+			if (g_cine->getFeatures() & GF_DEMO)
+				bPtr = bundleNamesAmigaDemo;
+			else
+				bPtr = bundleNamesAmiga;
+		} else if (g_cine->getPlatform() == Common::kPlatformAtariST) {
+				bPtr = bundleNamesAtari;
+		}
+
+		while (**bPtr) {
+			loadPart(*bPtr);
 
 			for (i = 0; i < numElementInPart; i++) {
 				if (!strcmp(fileName, partBuffer[i].partName)) {
 					return i;
 				}
 			}
+			bPtr++;
 		}
 	} else {
 		for (i = 0; i < numElementInPart; i++) {

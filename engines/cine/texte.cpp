@@ -57,7 +57,7 @@ void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
 
 	tempBuffer = pDestinationBuffer;
 
-	if (gameType == Cine::GID_FW) {
+	if (g_cine->getGameType() == Cine::GType_FW) {
 		dataSize = dataSize / 0x4E;
 
 		loadRelatedPalette(pFileName);

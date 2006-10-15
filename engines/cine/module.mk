@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	bg.o \
 	bg_list.o \
 	cine.o \
+	detection.o \
 	font.o \
 	gfx.o \
 	main_loop.o \

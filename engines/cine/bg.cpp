@@ -44,7 +44,7 @@ byte loadCt(const char *ctName) {
 
 	byte *ptr = readBundleFile(findFileInBundle(ctName));
 
-	if (gameType == Cine::GID_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 		if (bpp == 8) {
 			ptr += 3 * 256;

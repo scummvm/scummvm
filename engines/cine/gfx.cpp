@@ -335,7 +335,7 @@ void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
-			if (((gameType == Cine::GID_FW && (!maskPtr || !(*maskPtr))) || (gameType == Cine::GID_OS)) && (x + j >= 0
+			if (((g_cine->getGameType() == Cine::GType_FW && (!maskPtr || !(*maskPtr))) || (g_cine->getGameType() == Cine::GType_OS)) && (x + j >= 0
 					&& x + j < 320 && i + y >= 0 && i + y < 200)) {
 				*(destPtr++) = *(spritePtr++);
 			} else {

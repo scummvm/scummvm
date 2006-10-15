@@ -304,7 +304,7 @@ void mainLoop(int bootScriptIdx) {
 	unloadAllMasks();
 	freePrcLinkedList();
 	releaseObjectScripts();
-	// if (gameType == Cine::GID_OS) {
+	// if (g_cine->getGameType() == Cine::GType_OS) {
 	// 	freeUnkList();
 	// }
 	closeEngine7();

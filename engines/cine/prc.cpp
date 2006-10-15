@@ -77,7 +77,8 @@ void loadPrc(const char *pPrcName) {
 	}
 
 	checkDataDisk(-1);
-	if ((gameType == Cine::GID_FW) && (!strcmp(pPrcName, BOOT_PRC_NAME))) {
+	if ((g_cine->getGameType() == Cine::GType_FW) &&
+		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
 		scriptPtr = readFile(pPrcName);
 	} else {
 		scriptPtr = readBundleFile(findFileInBundle(pPrcName));

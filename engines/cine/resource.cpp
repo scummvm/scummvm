@@ -94,7 +94,7 @@ byte *snd_loadBasesonEntry(const char *entryName) {
 	int entryNum;
 	byte *entryData = NULL;
 
-	if (gameType == Cine::GID_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		entryNum = findFileInBundle((const char *)entryName);
 		if (entryNum != -1)
 			entryData = readBundleFile(entryNum);

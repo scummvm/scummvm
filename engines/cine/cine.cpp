@@ -29,8 +29,6 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-#include "base/plugins.h"
-
 #include "graphics/cursorman.h"
 
 #include "sound/mididrv.h"
@@ -50,96 +48,9 @@ SoundDriver *g_soundDriver;
 SfxPlayer *g_sfxPlayer;
 Common::SaveFileManager *g_saveFileMan;
 
+CineEngine *g_cine;
+
 static void initialize();
-
-struct GameSettings {
-	const char *gameid;
-	const char *description;
-	byte id;
-	uint32 features;
-	const char *detectname;
-};
-
-static const GameSettings cine_settings[] = {
-	{"fw", "Future Wars", Cine::GID_FW, MDT_ADLIB, "AUTO00.PRC"},
-	{"os", "Operation Stealth", Cine::GID_OS, MDT_ADLIB, "PROCS00"},
-	{NULL, NULL, 0, 0, NULL}
-};
-
-} // End of namespace Cine
-
-
-GameList Engine_CINE_gameIDList() {
-	GameList games;
-	const Cine::GameSettings *g = Cine::cine_settings;
-
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
-
-	return games;
-}
-
-GameDescriptor Engine_CINE_findGameID(const char *gameid) {
-	const Cine::GameSettings *g = Cine::cine_settings;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-	return *g;
-}
-
-DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	const Cine::GameSettings *g;
-
-	for (g = Cine::cine_settings; g->gameid; ++g) {
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin();
-		    file != fslist.end(); ++file) {
-			const char *fileName = file->name().c_str();
-
-			if (0 == scumm_stricmp(g->detectname, fileName)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
-				break;
-			}
-		}
-	}
-	return detectedGames;
-}
-
-PluginError Engine_CINE_create(OSystem *syst, Engine **engine) {
-	assert(syst);
-	assert(engine);
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("CineEngine: invalid game path '%s'", dir.path().c_str());
-		return kInvalidPathError;
-	}
-
-	// Invoke the detector
-	Common::String gameid = ConfMan.get("gameid");
-	DetectedGameList detectedGames = Engine_CINE_detectGames(fslist);
-
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid == gameid) {
-			*engine = new Cine::CineEngine(syst);
-			return kNoError;
-		}
-	}
-	
-	warning("CineEngine: Unable to locate game data at path '%s'", dir.path().c_str());
-	return kNoGameDataFoundError;
-}
-
-REGISTER_PLUGIN(CINE, "CINE Engine", "TODO (C) TODO");
-
-namespace Cine {
 
 CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
@@ -152,29 +63,26 @@ CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	const Cine::GameSettings *g;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = Cine::cine_settings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid)) {
-			_gameId = g->id;
-			break;
-		}
-
-	gameType = _gameId;
+	g_cine = this;
 }
 
 CineEngine::~CineEngine() {
 }
 
 int CineEngine::init() {
+	// Detect game
+	if (!initGame()) {
+		GUIErrorMessage("No valid games were found in the specified directory.");
+		return -1;
+	}
+
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	if (gameType == GID_FW) {
+	if (g_cine->getGameType() == GType_FW) {
 		g_soundDriver = new AdlibSoundDriverINS(_mixer);
 	} else {
 		g_soundDriver = new AdlibSoundDriverADL(_mixer);
@@ -192,7 +100,7 @@ int CineEngine::go() {
 
 	mainLoop(1);
 
-	if (gameType == Cine::GID_FW)
+	if (g_cine->getGameType() == Cine::GType_FW)
 		snd_clearBasesonEntries();
 
 	delete g_sfxPlayer;
@@ -200,8 +108,6 @@ int CineEngine::go() {
 	return 0;
 }
 
-
-int gameType;
 
 static void initialize() {
 	uint16 i;
@@ -219,11 +125,11 @@ static void initialize() {
 	
 	loadTextData("texte.dat", textDataPtr);
 
-	switch (gameType) {
-	case Cine::GID_FW:
+	switch (g_cine->getGameType()) {
+	case Cine::GType_FW:
 		snd_loadBasesonEntries("BASESON.SND");
 		break;
-	case Cine::GID_OS:
+	case Cine::GType_OS:
 		// TODO
 		// load POLDAT.DAT
 		// load ERRMESS.DAT (default responses to actions)
@@ -240,7 +146,7 @@ static void initialize() {
 	}
 
 	// bypass protection
-	if (gameType == GID_OS && !ConfMan.getBool("copy_protection")) {
+	if (g_cine->getGameType() == GType_OS && !ConfMan.getBool("copy_protection")) {
 		globalVars[255] = 1;
 	}
 
