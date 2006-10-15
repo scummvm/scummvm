@@ -209,7 +209,8 @@ enum GameFeatures {
 	GF_OLD_BUNDLE = 1 << 1,
 	GF_CRUNCHED   = 1 << 2,
 	GF_ZLIBCOMP   = 1 << 3,
-	GF_32COLOR    = 1 << 4
+	GF_32COLOR    = 1 << 4,
+	GF_DEMO       = 1 << 5
 };
 
 enum GameFileTypes {
@@ -227,14 +228,11 @@ enum GameFileTypes {
 
 enum GameIds {
 	GID_ELVIRA1,
-	GID_ELVIRA1DEMO,
 	GID_ELVIRA2,
 	GID_WAXWORKS,
 
 	GID_SIMON1DOS,
-	GID_SIMON1DEMO,
 	GID_SIMON1AMIGA,
-	GID_SIMON1AMIGADEMO,
 	GID_SIMON1CD32,
 	GID_SIMON1TALKIE,
 

@@ -133,10 +133,11 @@ char *AGOSEngine::genSaveName(int slot) {
 }
 
 void AGOSEngine::quickLoadOrSave() {
-	// The demo of Simon 1 (DOS Floppy) is missing too many segments
-	// and the Feeble Files doesn't always allow a load or save
-	if (getGameId() == GID_SIMON1DEMO || getGameType() == GType_FF)
+	// Quick load & save is only supported complete version of Simon the Sorcerer 1/2
+	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2 &&
+		!(getFeatures() & GF_DEMO)) {
 		return;
+	}
 
 	bool success;
 	char buf[50];

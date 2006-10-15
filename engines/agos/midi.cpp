@@ -552,7 +552,7 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 
 	uint16 size = in->readUint16LE();
 	if (size != in->size() - 2) {
-		error("Size mismatch in simon1demo MUS file (%ld versus reported %d)", (long)in->size() - 2, (int)size);
+		error("Size mismatch in MUS file (%ld versus reported %d)", (long)in->size() - 2, (int)size);
 	}
 
 	p->data = (byte *)calloc(size, 1);

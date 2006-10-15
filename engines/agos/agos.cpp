@@ -2403,7 +2403,7 @@ void AGOSEngine::loadMusic(uint music) {
 			if (f.isOpen() == false)
 				error("loadMusic: Can't load music from '%s'", filename);
 
-			if (getGameId() == GID_SIMON1DEMO)
+			if (getFeatures() & GF_DEMO)
 				midi.loadS1D (&f);
 			else
 				midi.loadSMF (&f, music);

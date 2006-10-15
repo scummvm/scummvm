@@ -722,8 +722,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_ELVIRA1,
-		GID_ELVIRA1DEMO,
-		GF_OLD_BUNDLE | GF_CRUNCHED,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_DEMO,
 	},
 
 	// Elvira - English Atari ST Floppy
@@ -930,8 +930,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGADEMO,
-		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE,
+		GID_SIMON1AMIGA,
+		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE | GF_DEMO,
 	},
 
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy
@@ -1026,8 +1026,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1DEMO,
-		GF_OLD_BUNDLE,
+		GID_SIMON1DOS,
+		GF_OLD_BUNDLE | GF_DEMO,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy
