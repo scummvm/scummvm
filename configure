@@ -156,9 +156,9 @@ EOF
 
 if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
-	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -587,7 +587,7 @@ for compiler in $compilers; do
 	break
 	fi
 done
-if test -z $CXX; then
+if test -z "$CXX"; then
 	echo "none found!"
 	exit 1
 fi
