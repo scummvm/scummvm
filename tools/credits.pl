@@ -484,6 +484,12 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
+	  begin_section("AGOS");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Travis Howell", "Kirben", "");
+		  add_person("Oliver Kiehl", "olki", "");
+	  end_section();
+
 	  begin_section("BASS");	# Beneath a Steel Sky
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
 		  add_person("Oliver Kiehl", "olki", "");
@@ -533,12 +539,6 @@ begin_credits("Credits");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
 		  add_person("Eugene Sandulenko", "sev", "");
-	  end_section();
-
-	  begin_section("Simon");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Travis Howell", "Kirben", "");
-		  add_person("Oliver Kiehl", "olki", "");
 	  end_section();
     end_section();
 
