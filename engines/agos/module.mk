@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	event.o \
 	game.o \
 	icons.o \
-	items.o \
 	menus.o \
 	midi.o \
 	midiparser_s1d.o \
@@ -21,6 +20,7 @@ MODULE_OBJS := \
 	res_ami.o \
 	rooms.o \
 	saveload.o \
+	script.o \
 	sound.o \
 	string.o \
 	subroutine.o \
