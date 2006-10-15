@@ -703,7 +703,8 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 		}
 
 		dstSize = srcSize = in.size();
-		if (getFeatures() & GF_CRUNCHED) {
+		if ((getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) ||
+			(getFeatures() & GF_CRUNCHED && type != 3)) {
 			byte *srcBuffer = (byte *)malloc(srcSize);
 			if (in.read(srcBuffer, srcSize) != srcSize)
 			error("loadVGAFile: Read failed");
