@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	game.o \
 	icons.o \
 	items.o \
+	menus.o \
 	midi.o \
 	midiparser_s1d.o \
 	oracle.o \

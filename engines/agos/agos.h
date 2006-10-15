@@ -243,6 +243,7 @@ protected:
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
+	byte *_menuBase;
 	byte *_roomsList;
 
 	byte *_xtblList;
@@ -653,6 +654,8 @@ protected:
 	TextLocation *getTextLocation(uint a);
 	void setup_cond_c_helper();
 
+	void drawMenuStrip(uint windowNum, uint menuNum);
+
 	void checkLinkBox();
  	void hyperLinkOn(uint16 x);
  	void hyperLinkOff();
@@ -743,6 +746,7 @@ protected:
 
 	void loadIconData();	
 	void loadIconFile();
+	void loadMenuFile();
 
 	bool processSpecialKeys();
 	void hitarea_stuff_helper();

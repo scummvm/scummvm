@@ -150,7 +150,7 @@ int AGOSEngine::allocGamePcVars(File *in) {
 void AGOSEngine::loadGamePcFile() {
 	Common::File in;
 	int num_inited_objects;
-	int i, file_size;
+	int i, fileSize;
 
 	/* read main gamepc file */
 	in.open(getFileName(GAME_BASEFILE));
@@ -177,12 +177,12 @@ void AGOSEngine::loadGamePcFile() {
 			error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_TBLFILE));
 		}
 
-		file_size = in.size();
+		fileSize = in.size();
 
-		_tblList = (byte *)malloc(file_size);
+		_tblList = (byte *)malloc(fileSize);
 		if (_tblList == NULL)
 			error("loadGamePcFile: Out of memory for strip table list");
-		in.read(_tblList, file_size);
+		in.read(_tblList, fileSize);
 		in.close();
 
 		/* Remember the current state */
@@ -197,11 +197,11 @@ void AGOSEngine::loadGamePcFile() {
 		if (in.isOpen() == false)
 			error("loadGamePcFile: Can't load text resources file '%s'", getFileName(GAME_STRFILE));
 
-		file_size = in.size();
-		_strippedTxtMem = (byte *)malloc(file_size);
+		fileSize = in.size();
+		_strippedTxtMem = (byte *)malloc(fileSize);
 		if (_strippedTxtMem == NULL)
 			error("loadGamePcFile: Out of memory for strip text list");
-		in.read(_strippedTxtMem, file_size);
+		in.read(_strippedTxtMem, fileSize);
 		in.close();
 	}
 
@@ -209,15 +209,15 @@ void AGOSEngine::loadGamePcFile() {
 		/* Read list of ROOM ITEMS resources */
 		in.open(getFileName(GAME_RMSLFILE));
 		if (in.isOpen() == false) {
-			error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_XTBLFILE));
+			error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_RMSLFILE));
 		}
 
-		file_size = in.size();
+		fileSize = in.size();
 
-		_roomsList = (byte *)malloc(file_size);
+		_roomsList = (byte *)malloc(fileSize);
 		if (_roomsList == NULL)
 			error("loadGamePcFile: Out of memory for room items list");
-		in.read(_roomsList, file_size);
+		in.read(_roomsList, fileSize);
 		in.close();
 	}
 
@@ -228,12 +228,12 @@ void AGOSEngine::loadGamePcFile() {
 			error("loadGamePcFile: Can't load xtable resources file '%s'", getFileName(GAME_XTBLFILE));
 		}
 
-		file_size = in.size();
+		fileSize = in.size();
 
-		_xtblList = (byte *)malloc(file_size);
+		_xtblList = (byte *)malloc(fileSize);
 		if (_xtblList == NULL)
 			error("loadGamePcFile: Out of memory for strip xtable list");
-		in.read(_xtblList, file_size);
+		in.read(_xtblList, fileSize);
 		in.close();
 
 		/* Remember the current state */

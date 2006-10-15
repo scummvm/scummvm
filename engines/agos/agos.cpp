@@ -107,6 +107,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_stringIdLocalMin = 0;
 	_stringIdLocalMax = 0;
 
+	_menuBase = 0;
 	_roomsList = 0;
 
 	_xtblList = 0;
@@ -2303,6 +2304,10 @@ int AGOSEngine::go() {
 		loadIconData();
 	} else if (getFileName(GAME_ICONFILE) != NULL) {
 		loadIconFile();
+	}
+
+	if (getFileName(GAME_MENUFILE) != NULL) {
+		loadMenuFile();
 	}
 
 	vc34_setMouseOff();
