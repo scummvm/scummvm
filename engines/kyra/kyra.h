@@ -602,7 +602,7 @@ protected:
 	void updateKyragemFading();
 	
 	void setupOpcodeTable();
-	OpcodeProc *_opcodeTable;
+	const OpcodeProc *_opcodeTable;
 	int _opcodeTableSize;
 	
 	void waitForEvent();

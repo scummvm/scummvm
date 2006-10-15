@@ -99,7 +99,7 @@ public:
 
 class CharsetRendererCommon : public CharsetRenderer {
 protected:
-	byte *_fontPtr;
+	const byte *_fontPtr;
 	int _bitDepth;
 	int _fontHeight;
 	int _numChars;
@@ -155,7 +155,7 @@ public:
 
 class CharsetRendererV3 : public CharsetRendererCommon {
 protected:
-	byte *_widthTable;
+	const byte *_widthTable;
 
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}

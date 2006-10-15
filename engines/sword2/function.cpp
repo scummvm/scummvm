@@ -1881,11 +1881,11 @@ int32 Logic::fnColour(int32 *params) {
 #define GREEN	3
 #define BLUE	4
 
-static uint8 black[4]	= {  0,    0,   0,   0 };
-static uint8 white[4]	= { 255, 255, 255,   0 };
-static uint8 red[4]	= { 255,   0,   0,   0 };
-static uint8 green[4]	= {   0, 255,   0,   0 };
-static uint8 blue[4]	= {   0,   0, 255,   0 };
+static const uint8 black[4]	= {  0,    0,   0,   0 };
+static const uint8 white[4]	= { 255, 255, 255,   0 };
+static const uint8 red[4]	= { 255,   0,   0,   0 };
+static const uint8 green[4]	= {   0, 255,   0,   0 };
+static const uint8 blue[4]	= {   0,   0, 255,   0 };
 #endif
 
 int32 Logic::fnFlash(int32 *params) {

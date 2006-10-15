@@ -65,7 +65,7 @@ uint16 Sound::_speechConvertTable[8] = {
 };
 
 
-static Sfx fx_null = {
+static const Sfx fx_null = {
 	0,
 	0,
 	{
@@ -74,7 +74,7 @@ static Sfx fx_null = {
 	}
 };
 
-static Sfx fx_level_3_ping = {
+static const Sfx fx_level_3_ping = {
 	1,
 	0,
 	{
@@ -85,7 +85,7 @@ static Sfx fx_level_3_ping = {
 	}
 };
 
-static Sfx fx_factory_sound = {
+static const Sfx fx_factory_sound = {
 	1,
 	SFXF_SAVE,
 	{
@@ -93,7 +93,7 @@ static Sfx fx_factory_sound = {
 	}
 };
 
-static Sfx fx_crowbar_plaster = {
+static const Sfx fx_crowbar_plaster = {
 	1,
 	0,
 	{
@@ -101,7 +101,7 @@ static Sfx fx_crowbar_plaster = {
 	}
 };
 
-static Sfx fx_masonry_fall = {
+static const Sfx fx_masonry_fall = {
 	1,
 	0,
 	{
@@ -109,7 +109,7 @@ static Sfx fx_masonry_fall = {
 	}
 };
 
-static Sfx fx_prise_brick = {
+static const Sfx fx_prise_brick = {
 	2,
 	0,
 	{
@@ -117,7 +117,7 @@ static Sfx fx_prise_brick = {
 	}
 };
 
-static Sfx fx_rope_creak = {
+static const Sfx fx_rope_creak = {
 	2,
 	0,
 	{
@@ -125,7 +125,7 @@ static Sfx fx_rope_creak = {
 	}
 };
 
-static Sfx fx_ping = {
+static const Sfx fx_ping = {
 	3,
 	0,
 	{
@@ -133,7 +133,7 @@ static Sfx fx_ping = {
 	}
 };
 
-static Sfx fx_force_fire_door = {
+static const Sfx fx_force_fire_door = {
 	3,
 	0,
 	{
@@ -141,7 +141,7 @@ static Sfx fx_force_fire_door = {
 	}
 };
 
-static Sfx fx_brick_hit_foster = {
+static const Sfx fx_brick_hit_foster = {
 	3,
 	10+SFXF_START_DELAY,
 	{
@@ -149,7 +149,7 @@ static Sfx fx_brick_hit_foster = {
 	}
 };
 
-static Sfx fx_brick_hit_plank = {
+static const Sfx fx_brick_hit_plank = {
 	3,
 	8+SFXF_START_DELAY,
 	{
@@ -157,7 +157,7 @@ static Sfx fx_brick_hit_plank = {
 	}
 };
 
-static Sfx fx_rm3_lift_moving = {
+static const Sfx fx_rm3_lift_moving = {
 	4,
 	SFXF_SAVE,
 	{
@@ -167,7 +167,7 @@ static Sfx fx_rm3_lift_moving = {
 	}
 };
 
-static Sfx fx_weld = {
+static const Sfx fx_weld = {
 	4,
 	0,
 	{
@@ -180,7 +180,7 @@ static Sfx fx_weld = {
 	}
 };
 
-static Sfx fx_weld12 = {
+static const Sfx fx_weld12 = {
 	4,
 	0,
 	{
@@ -189,7 +189,7 @@ static Sfx fx_weld12 = {
 	}
 };
 
-static Sfx fx_spray_on_skin = {
+static const Sfx fx_spray_on_skin = {
 	4,
 	0,
 	{
@@ -197,7 +197,7 @@ static Sfx fx_spray_on_skin = {
 	}
 };
 
-static Sfx fx_plank_vibrating = {
+static const Sfx fx_plank_vibrating = {
 	4,
 	6+SFXF_START_DELAY,
 	{
@@ -205,7 +205,7 @@ static Sfx fx_plank_vibrating = {
 	}
 };
 
-static Sfx fx_press_bang = {
+static const Sfx fx_press_bang = {
 	5,
 	0,
 	{
@@ -214,7 +214,7 @@ static Sfx fx_press_bang = {
 	}
 };
 
-static Sfx fx_spanner_clunk = {
+static const Sfx fx_spanner_clunk = {
 	5,
 	0,
 	{
@@ -222,7 +222,7 @@ static Sfx fx_spanner_clunk = {
 	}
 };
 
-static Sfx fx_break_crystals = {
+static const Sfx fx_break_crystals = {
 	5,
 	0,
 	{
@@ -231,7 +231,7 @@ static Sfx fx_break_crystals = {
 	}
 };
 
-static Sfx fx_press_hiss = {
+static const Sfx fx_press_hiss = {
 	6,
 	0,
 	{
@@ -240,7 +240,7 @@ static Sfx fx_press_hiss = {
 	}
 };
 
-static Sfx fx_open_door = {
+static const Sfx fx_open_door = {
 	6,
 	0,
 	{
@@ -248,7 +248,7 @@ static Sfx fx_open_door = {
 	}
 };
 
-static Sfx fx_open_lamb_door = {
+static const Sfx fx_open_lamb_door = {
 	6,
 	0,
 	{
@@ -258,7 +258,7 @@ static Sfx fx_open_lamb_door = {
 	}
 };
 
-static Sfx fx_splash = {
+static const Sfx fx_splash = {
 	6,
 	22+SFXF_START_DELAY,
 	{
@@ -266,7 +266,7 @@ static Sfx fx_splash = {
 	}
 };
 
-static Sfx fx_disintegrate = {
+static const Sfx fx_disintegrate = {
 	7,
 	0,
 	{
@@ -274,7 +274,7 @@ static Sfx fx_disintegrate = {
 	}
 };
 
-static Sfx fx_buzzer = {
+static const Sfx fx_buzzer = {
 	7,
 	4+SFXF_START_DELAY,
 	{
@@ -282,7 +282,7 @@ static Sfx fx_buzzer = {
 	}
 };
 
-static Sfx fx_lathe = {
+static const Sfx fx_lathe = {
 	7,
 	SFXF_SAVE,
 	{
@@ -292,7 +292,7 @@ static Sfx fx_lathe = {
 	}
 };
 
-static Sfx fx_hit_crowbar_brick = {
+static const Sfx fx_hit_crowbar_brick = {
 	7,
 	9+SFXF_START_DELAY,
 	{
@@ -300,7 +300,7 @@ static Sfx fx_hit_crowbar_brick = {
 	}
 };
 
-static Sfx fx_hello_helga = {
+static const Sfx fx_hello_helga = {
 	8,
 	0,
 	{
@@ -308,7 +308,7 @@ static Sfx fx_hello_helga = {
 	}
 };
 
-static Sfx fx_statue_on_armour = {
+static const Sfx fx_statue_on_armour = {
 	8,
 	0,
 	{
@@ -316,7 +316,7 @@ static Sfx fx_statue_on_armour = {
 	}
 };
 
-static Sfx fx_lift_alarm = {
+static const Sfx fx_lift_alarm = {
 	8,
 	SFXF_SAVE,
 	{
@@ -325,7 +325,7 @@ static Sfx fx_lift_alarm = {
 	}
 };
 
-static Sfx fx_drop_crowbar = {
+static const Sfx fx_drop_crowbar = {
 	8,
 	5+SFXF_START_DELAY,
 	{
@@ -333,7 +333,7 @@ static Sfx fx_drop_crowbar = {
 	}
 };
 
-static Sfx fx_byee_helga = {
+static const Sfx fx_byee_helga = {
 	9,
 	3+SFXF_START_DELAY,
 	{
@@ -341,7 +341,7 @@ static Sfx fx_byee_helga = {
 	}
 };
 
-static Sfx fx_shed_door_creak = {
+static const Sfx fx_shed_door_creak = {
 	10,
 	0,
 	{
@@ -349,7 +349,7 @@ static Sfx fx_shed_door_creak = {
 	}
 };
 
-static Sfx fx_explosion = {
+static const Sfx fx_explosion = {
 	10,
 	0,
 	{
@@ -357,7 +357,7 @@ static Sfx fx_explosion = {
 	}
 };
 
-static Sfx fx_fire_crackle_in_pit = {
+static const Sfx fx_fire_crackle_in_pit = {
 	 9,
 	SFXF_SAVE,
 	{
@@ -365,7 +365,7 @@ static Sfx fx_fire_crackle_in_pit = {
 	}
 };
 
-static Sfx fx_remove_bar_grill = {
+static const Sfx fx_remove_bar_grill = {
 	10,
 	7+SFXF_START_DELAY,
 	{
@@ -373,7 +373,7 @@ static Sfx fx_remove_bar_grill = {
 	}
 };
 
-static Sfx fx_grill_creak = {
+static const Sfx fx_grill_creak = {
 	10,
 	43+SFXF_START_DELAY,
 	{
@@ -381,7 +381,7 @@ static Sfx fx_grill_creak = {
 	}
 };
 
-static Sfx fx_steam1 = {
+static const Sfx fx_steam1 = {
 	11,
 	SFXF_SAVE,
 	{
@@ -390,7 +390,7 @@ static Sfx fx_steam1 = {
 	}
 };
 
-static Sfx fx_steam2 = {
+static const Sfx fx_steam2 = {
 	11,
 	SFXF_SAVE,
 	{
@@ -399,7 +399,7 @@ static Sfx fx_steam2 = {
 	}
 };
 
-static Sfx fx_steam3 = {
+static const Sfx fx_steam3 = {
 	11,
 	SFXF_SAVE,
 	{
@@ -408,7 +408,7 @@ static Sfx fx_steam3 = {
 	}
 };
 
-static Sfx fx_crowbar_wooden = {
+static const Sfx fx_crowbar_wooden = {
 	11,
 	0,
 	{
@@ -416,7 +416,7 @@ static Sfx fx_crowbar_wooden = {
 	}
 };
 
-static Sfx fx_helmet_down_3 = {
+static const Sfx fx_helmet_down_3 = {
 	11,
 	0,
 	{
@@ -424,7 +424,7 @@ static Sfx fx_helmet_down_3 = {
 	}
 };
 
-static Sfx fx_guard_fall = {
+static const Sfx fx_guard_fall = {
 	11,
 	4,
 	{
@@ -433,7 +433,7 @@ static Sfx fx_guard_fall = {
 };
 
 #if 0
-static Sfx fx_furnace = {
+static const Sfx fx_furnace = {
 	11,
 	0,
 	{
@@ -443,7 +443,7 @@ static Sfx fx_furnace = {
 };
 #endif
 
-static Sfx fx_fall_thru_box = {
+static const Sfx fx_fall_thru_box = {
 	12,
 	0,
 	{
@@ -451,7 +451,7 @@ static Sfx fx_fall_thru_box = {
 	}
 };
 
-static Sfx fx_lazer = {
+static const Sfx fx_lazer = {
 	12,
 	0,
 	{
@@ -459,7 +459,7 @@ static Sfx fx_lazer = {
 	}
 };
 
-static Sfx fx_scanner = {
+static const Sfx fx_scanner = {
 	12,
 	0,
 	{
@@ -467,7 +467,7 @@ static Sfx fx_scanner = {
 	}
 };
 
-static Sfx fx_helmet_up_3 = {
+static const Sfx fx_helmet_up_3 = {
 	12,
 	0,
 	{
@@ -475,7 +475,7 @@ static Sfx fx_helmet_up_3 = {
 	}
 };
 
-static Sfx fx_liquid_bubble = {
+static const Sfx fx_liquid_bubble = {
 	12,
 	SFXF_SAVE,
 	{
@@ -485,7 +485,7 @@ static Sfx fx_liquid_bubble = {
 	}
 };
 
-static Sfx fx_liquid_drip = {
+static const Sfx fx_liquid_drip = {
 	13,
 	6+SFXF_START_DELAY,
 	{
@@ -493,7 +493,7 @@ static Sfx fx_liquid_drip = {
 	}
 };
 
-static Sfx fx_goo_drip = {
+static const Sfx fx_goo_drip = {
 	13,
 	5+SFXF_START_DELAY,
 	{
@@ -501,7 +501,7 @@ static Sfx fx_goo_drip = {
 	}
 };
 
-static Sfx fx_comp_bleeps = {
+static const Sfx fx_comp_bleeps = {
 	13,
 	0,
 	{
@@ -509,7 +509,7 @@ static Sfx fx_comp_bleeps = {
 	}
 };
 
-static Sfx fx_use_crowbar_grill = {
+static const Sfx fx_use_crowbar_grill = {
 	13,
 	34+SFXF_START_DELAY,
 	{
@@ -517,7 +517,7 @@ static Sfx fx_use_crowbar_grill = {
 	}
 };
 
-static Sfx fx_helmet_grind = {
+static const Sfx fx_helmet_grind = {
 	14,
 	0,
 	{
@@ -525,7 +525,7 @@ static Sfx fx_helmet_grind = {
 	}
 };
 
-static Sfx fx_lift_moving = {
+static const Sfx fx_lift_moving = {
 	14,
 	SFXF_SAVE,
 	{
@@ -535,7 +535,7 @@ static Sfx fx_lift_moving = {
 	}
 };
 
-static Sfx fx_use_secateurs = {
+static const Sfx fx_use_secateurs = {
 	14,
 	18+SFXF_START_DELAY,
 	{
@@ -543,7 +543,7 @@ static Sfx fx_use_secateurs = {
 	}
 };
 
-static Sfx fx_hit_joey1 = {
+static const Sfx fx_hit_joey1 = {
 	14,
 	7+SFXF_START_DELAY,
 	{
@@ -551,7 +551,7 @@ static Sfx fx_hit_joey1 = {
 	}
 };
 
-static Sfx fx_hit_joey2 = {
+static const Sfx fx_hit_joey2 = {
 	14,
 	13+SFXF_START_DELAY,
 	{
@@ -559,7 +559,7 @@ static Sfx fx_hit_joey2 = {
 	}
 };
 
-static Sfx fx_dani_phone_ring = {
+static const Sfx fx_dani_phone_ring = {
 	15,
 	0,
 	{
@@ -567,7 +567,7 @@ static Sfx fx_dani_phone_ring = {
 	}
 };
 
-static Sfx fx_sc74_pod_down = {
+static const Sfx fx_sc74_pod_down = {
 	15,
 	0,
 	{
@@ -575,7 +575,7 @@ static Sfx fx_sc74_pod_down = {
 	}
 };
 
-static Sfx fx_phone = {
+static const Sfx fx_phone = {
 	15,
 	0,
 	{
@@ -583,7 +583,7 @@ static Sfx fx_phone = {
 	}
 };
 
-static Sfx fx_25_weld = {
+static const Sfx fx_25_weld = {
 	15,
 	0,
 	{
@@ -591,7 +591,7 @@ static Sfx fx_25_weld = {
 	}
 };
 
-static Sfx fx_lift_open_7 = {
+static const Sfx fx_lift_open_7 = {
 	15,
 	0,
 	{
@@ -600,7 +600,7 @@ static Sfx fx_lift_open_7 = {
 	}
 };
 
-static Sfx fx_lift_close_7 = {
+static const Sfx fx_lift_close_7 = {
 	16,
 	0,
 	{
@@ -609,7 +609,7 @@ static Sfx fx_lift_close_7 = {
 	}
 };
 
-static Sfx fx_s2_helmet = {
+static const Sfx fx_s2_helmet = {
 	16,
 	0,
 	{
@@ -617,7 +617,7 @@ static Sfx fx_s2_helmet = {
 	}
 };
 
-static Sfx fx_hiss_in_nitrogen = {
+static const Sfx fx_hiss_in_nitrogen = {
 	16,
 	0,
 	{
@@ -625,7 +625,7 @@ static Sfx fx_hiss_in_nitrogen = {
 	}
 };
 
-static Sfx fx_dog_yap_indoors = {
+static const Sfx fx_dog_yap_indoors = {
 	16,
 	0,
 	{
@@ -634,7 +634,7 @@ static Sfx fx_dog_yap_indoors = {
 	}
 };
 
-static Sfx fx_dog_yap_outdoors = {
+static const Sfx fx_dog_yap_outdoors = {
 	16,
 	0,
 	{
@@ -646,7 +646,7 @@ static Sfx fx_dog_yap_outdoors = {
 	}
 };
 
-static Sfx fx_locker_creak_open = {
+static const Sfx fx_locker_creak_open = {
 	17,
 	0,
 	{
@@ -654,7 +654,7 @@ static Sfx fx_locker_creak_open = {
 	}
 };
 
-static Sfx fx_big_tent_gurgle = {
+static const Sfx fx_big_tent_gurgle = {
 	17,
 	0,
 	{
@@ -662,7 +662,7 @@ static Sfx fx_big_tent_gurgle = {
 	}
 };
 
-static Sfx fx_wind_howl = {
+static const Sfx fx_wind_howl = {
 	17,
 	SFXF_SAVE,
 	{
@@ -671,7 +671,7 @@ static Sfx fx_wind_howl = {
 	}
 };
 
-static Sfx fx_lift_open_29 = {
+static const Sfx fx_lift_open_29 = {
 	17,
 	0,
 	{
@@ -680,7 +680,7 @@ static Sfx fx_lift_open_29 = {
 	}
 };
 
-static Sfx fx_lift_arrive_7 = {
+static const Sfx fx_lift_arrive_7 = {
 	17,
 	0,
 	{
@@ -689,7 +689,7 @@ static Sfx fx_lift_arrive_7 = {
 	}
 };
 
-static Sfx fx_lift_close_29 = {
+static const Sfx fx_lift_close_29 = {
 	18,
 	0,
 	{
@@ -699,7 +699,7 @@ static Sfx fx_lift_close_29 = {
 	}
 };
 
-static Sfx fx_shaft_industrial_noise = {
+static const Sfx fx_shaft_industrial_noise = {
 	18,
 	SFXF_SAVE,
 	{
@@ -707,7 +707,7 @@ static Sfx fx_shaft_industrial_noise = {
 	}
 };
 
-static Sfx fx_gall_drop = {
+static const Sfx fx_gall_drop = {
 	18,
 	29+SFXF_START_DELAY,
 	{
@@ -715,7 +715,7 @@ static Sfx fx_gall_drop = {
 	}
 };
 
-static Sfx fx_door_slam_under = {
+static const Sfx fx_door_slam_under = {
 	19,
 	0,
 	{
@@ -723,7 +723,7 @@ static Sfx fx_door_slam_under = {
 	}
 };
 
-static Sfx fx_reichs_fish = {
+static const Sfx fx_reichs_fish = {
 	19,
 	SFXF_SAVE,
 	{
@@ -731,7 +731,7 @@ static Sfx fx_reichs_fish = {
 	}
 };
 
-static Sfx fx_judges_gavel1 = {
+static const Sfx fx_judges_gavel1 = {
 	19,
 	13+SFXF_START_DELAY,
 	{
@@ -739,7 +739,7 @@ static Sfx fx_judges_gavel1 = {
 	}
 };
 
-static Sfx fx_judges_gavel2 = {
+static const Sfx fx_judges_gavel2 = {
 	19,
 	16+SFXF_START_DELAY,
 	{
@@ -747,7 +747,7 @@ static Sfx fx_judges_gavel2 = {
 	}
 };
 
-static Sfx fx_judges_gavel3 = {
+static const Sfx fx_judges_gavel3 = {
 	19,
 	19+SFXF_START_DELAY,
 	{
@@ -755,7 +755,7 @@ static Sfx fx_judges_gavel3 = {
 	}
 };
 
-static Sfx fx_wind_3 = {
+static const Sfx fx_wind_3 = {
 	20,
 	SFXF_SAVE,
 	{
@@ -763,7 +763,7 @@ static Sfx fx_wind_3 = {
 	}
 };
 
-static Sfx fx_fact_sensor = {
+static const Sfx fx_fact_sensor = {
 	20,
 	SFXF_SAVE,
 	{
@@ -771,7 +771,7 @@ static Sfx fx_fact_sensor = {
 	}
 };
 
-static Sfx fx_medi_stab_gall = {
+static const Sfx fx_medi_stab_gall = {
 	20,
 	17+SFXF_START_DELAY,
 	{
@@ -779,7 +779,7 @@ static Sfx fx_medi_stab_gall = {
 	}
 };
 
-static Sfx fx_computer_3 = {
+static const Sfx fx_computer_3 = {
 	21,
 	SFXF_SAVE,
 	{
@@ -787,7 +787,7 @@ static Sfx fx_computer_3 = {
 	}
 };
 
-static Sfx fx_timber_cracking = {
+static const Sfx fx_timber_cracking = {
 	21,
 	0,
 	{
@@ -795,7 +795,7 @@ static Sfx fx_timber_cracking = {
 	}
 };
 
-static Sfx fx_anchor_fall = {
+static const Sfx fx_anchor_fall = {
 	22,
 	0,
 	{
@@ -803,7 +803,7 @@ static Sfx fx_anchor_fall = {
 	}
 };
 
-static Sfx fx_elevator_4 = {
+static const Sfx fx_elevator_4 = {
 	22,
 	0,
 	{
@@ -811,7 +811,7 @@ static Sfx fx_elevator_4 = {
 	}
 };
 
-static Sfx fx_star_trek_2 = {
+static const Sfx fx_star_trek_2 = {
 	22,
 	SFXF_SAVE,
 	{
@@ -819,7 +819,7 @@ static Sfx fx_star_trek_2 = {
 	}
 };
 
-static Sfx fx_lift_closing = {
+static const Sfx fx_lift_closing = {
 	23,
 	0,
 	{
@@ -827,7 +827,7 @@ static Sfx fx_lift_closing = {
 	}
 };
 
-static Sfx fx_heartbeat = {
+static const Sfx fx_heartbeat = {
 	23,
 	11+SFXF_START_DELAY,
 	{
@@ -843,7 +843,7 @@ static Sfx fx_heartbeat = {
 	}
 };
 
-static Sfx fx_pos_key = {
+static const Sfx fx_pos_key = {
 	25,
 	2+SFXF_START_DELAY,
 	{
@@ -851,7 +851,7 @@ static Sfx fx_pos_key = {
 	}
 };
 
-static Sfx fx_neg_key = {
+static const Sfx fx_neg_key = {
 	26,
 	2+SFXF_START_DELAY,
 	{
@@ -859,7 +859,7 @@ static Sfx fx_neg_key = {
 	}
 };
 
-static Sfx fx_orifice_swallow_drip = {
+static const Sfx fx_orifice_swallow_drip = {
 	28,
 	0,
 	{
@@ -867,7 +867,7 @@ static Sfx fx_orifice_swallow_drip = {
 	}
 };
 
-static Sfx *musicList[] = {
+static const Sfx *musicList[] = {
 	&fx_press_bang, // 256 banging of the press
 	&fx_press_hiss, // 257 hissing press
 	&fx_wind_howl, // 258 howling wind
@@ -1135,8 +1135,8 @@ void Sound::fnStartFx(uint32 sound, uint8 channel) {
 
 	sound &= ~(1 << 8);
 
-	Sfx *sfx = musicList[sound];
-	RoomList *roomList = sfx->roomList;
+	const Sfx *sfx = musicList[sound];
+	const RoomList *roomList = sfx->roomList;
 
 	int i = 0;
 	if (roomList[i].room != 0xff) // if room list empty then do all rooms

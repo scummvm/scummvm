@@ -94,7 +94,7 @@ struct LanguageTypes {
 	const char *ext;
 };
 
-static LanguageTypes languages[] = {
+static const LanguageTypes languages[] = {
 	{ GF_ENGLISH, "ENG" },	// this is the default language
 	{ GF_FRENCH, "FRE" },
 	{ GF_GERMAN, "GER" },
@@ -858,7 +858,7 @@ const int Screen::_screenDimTableCountK3 = ARRAYSIZE(_screenDimTableK3);
 
 #define Opcode(x) &KyraEngine::x
 void KyraEngine::setupOpcodeTable() {
-	static OpcodeProc opcodeTable[] = {
+	static const OpcodeProc opcodeTable[] = {
 		// 0x00
 		Opcode(o1_magicInMouseItem),
 		Opcode(o1_characterSays),
