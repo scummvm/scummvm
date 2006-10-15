@@ -430,14 +430,14 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 }
 
 #ifdef PALMOS_68K
-static byte *englishCharsetDataV2;
-static byte *germanCharsetDataV2;
-static byte *frenchCharsetDataV2;
-static byte *italianCharsetDataV2;
-static byte *spanishCharsetDataV2;
+static const byte *englishCharsetDataV2;
+static const byte *germanCharsetDataV2;
+static const byte *frenchCharsetDataV2;
+static const byte *italianCharsetDataV2;
+static const byte *spanishCharsetDataV2;
 #else
 // English Zak font
-static byte englishCharsetDataV2[] = {
+static const byte englishCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0C, 0x18, 0x3E, 0x03, 0x00,
 	0x80, 0xC0, 0x60, 0x30, 0x18, 0x7C, 0xC0, 0x00,
@@ -569,7 +569,7 @@ static byte englishCharsetDataV2[] = {
 };
 
 // German Zak font
-static byte germanCharsetDataV2[] = {
+static const byte germanCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0c, 0x18, 0x3e, 0x03, 0x00,
 	0x80, 0xc0, 0x60, 0x30, 0x18, 0x7c, 0xc0, 0x00,
@@ -701,7 +701,7 @@ static byte germanCharsetDataV2[] = {
 };
 
 // French Zak font.
-static byte frenchCharsetDataV2[] = {
+static const byte frenchCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0c, 0x18, 0x3e, 0x03, 0x00,
 	0x80, 0xc0, 0x60, 0x30, 0x18, 0x7c, 0xc0, 0x00,
@@ -833,7 +833,7 @@ static byte frenchCharsetDataV2[] = {
 };
 
 // Italian Zak font.
-static byte italianCharsetDataV2[] = {
+static const byte italianCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0c, 0x18, 0x3e, 0x03, 0x00,
 	0x80, 0xc0, 0x60, 0x30, 0x18, 0x7c, 0xc0, 0x00,
@@ -966,7 +966,7 @@ static byte italianCharsetDataV2[] = {
 
 // Spanish Zak font.
 // FIXME: This is identical to germanCharsetDataV2 it seems?!
-static byte spanishCharsetDataV2[] = {
+static const byte spanishCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0c, 0x18, 0x3e, 0x03, 0x00,
 	0x80, 0xc0, 0x60, 0x30, 0x18, 0x7c, 0xc0, 0x00,
@@ -1204,7 +1204,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	// Indy3 / Zak256 / Loom
 	int width, height, origWidth = 0, origHeight;
 	VirtScreen *vs;
-	byte *charPtr, *dst;
+	const byte *charPtr;
+	byte *dst;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
 	assertRange(0, _curId, _vm->_numCharsets - 1, "charset");
@@ -1277,7 +1278,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 }
 
 void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
-	byte *charPtr, *dst;
+	const byte *charPtr;
+	byte *dst;
 	int width, height;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 	if (is2byte) {
@@ -1297,13 +1299,13 @@ void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int
 void CharsetRenderer::translateColor() {
 	// Based on disassembly
 	if (_vm->_renderMode == Common::kRenderCGA) {
-		static byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15,
+		static const byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15,
 										   15, 3, 3, 3, 5, 5, 15, 15};
 		_color = CGAtextColorMap[_color & 0x0f];
 	}
 
 	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
-		static byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15,
+		static const byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15,
 										   8, 15, 15, 15, 15, 15, 15, 15};
 		_color = HercTextColorMap[_color & 0x0f];
 	}
