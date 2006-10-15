@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 
+#include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"
 #include "scumm/smush/chunk_type.h"
@@ -83,7 +84,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			offset += 8;
 			return false;
 		default:
-			error("unknown Chunk in SAUD track : %s ", Chunk::ChunkString(type));
+			error("unknown Chunk in SAUD track : %s ", tag2str(type));
 		}
 		offset += size + 8;
 		return true;

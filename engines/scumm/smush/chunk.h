@@ -35,7 +35,6 @@ public:
 	virtual ~Chunk() {};
 	enum seek_type { seek_start, seek_end, seek_cur };
 	typedef uint32 type;
-	static const char *ChunkString(type t);
 	virtual type getType() const = 0;
 	virtual uint32 getSize() const = 0;
 	virtual Chunk *subBlock() = 0;

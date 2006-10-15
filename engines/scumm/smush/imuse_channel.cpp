@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "scumm/scumm.h"
+#include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"
 #include "scumm/smush/chunk_type.h"
@@ -153,7 +154,7 @@ bool ImuseChannel::handleMap(Chunk &map) {
 			handleStop(*sub);
 			break;
 		default:
-			error("Unknown iMUS subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
+			error("Unknown iMUS subChunk found : %s, %d", tag2str(sub->getType()), sub->getSize());
 		}
 		delete sub;
 	}
@@ -243,7 +244,7 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 			}
 			return false;
 		default:
-			error("unknown Chunk in iMUS track : %s ", Chunk::ChunkString(type));
+			error("unknown Chunk in iMUS track : %s ", tag2str(type));
 		}
 		offset += size + 8;
 		return true;

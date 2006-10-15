@@ -31,16 +31,6 @@
 
 namespace Scumm {
 
-const char *Chunk::ChunkString(Chunk::type t) {
-	static char data[5];
-	data[0] = (char)((t >> 24) & 0xFF);
-	data[1] = (char)((t >> 16) & 0xFF);
-	data[2] = (char)((t >> 8) & 0xFF);
-	data[3] = (char)((t >> 0) & 0xFF);
-	data[4] = 0;
-	return data;
-}
-
 BaseChunk::BaseChunk() :
 	_type(0),
 	_size(0),

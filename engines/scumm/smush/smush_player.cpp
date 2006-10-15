@@ -38,6 +38,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk_type.h"
 #include "scumm/smush/chunk.h"
@@ -984,7 +985,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			handleTextResource(*sub);
 			break;
 		default:
-			error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
+			error("Unknown frame subChunk found : %s, %d", tag2str(sub->getType()), sub->getSize());
 		}
 
 		b.reseek();
