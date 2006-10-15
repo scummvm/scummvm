@@ -230,6 +230,13 @@ void Part::noteOn(byte note, byte velocity) {
 		mc = _player->getMidiDriver()->getPercussionChannel();
 		if (!mc)
 			return;
+		
+		// FIXME: The following is evil, EVIL!!! Either prev_vol_eff is
+		// actually meant to be a member of the Part class (i.e. each
+		// instance of Part keeps a separate copy of it); or it really
+		// is supposed to be shared by all Part instances -- but then it
+		// should be implemented as a class static var. As it is, using
+		// a function level static var in most cases is arcane and evil.
 		static byte prev_vol_eff = 128;
 		if (_vol_eff != prev_vol_eff){
 			mc->volume(_vol_eff);
