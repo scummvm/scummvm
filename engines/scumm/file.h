@@ -87,7 +87,7 @@ private:
 
 	bool generateIndex();
 	bool generateResource(int res);
-	uint16 extractResource(Common::WriteStream *out, Resource *res);
+	uint16 extractResource(Common::WriteStream *out, const Resource *res);
 
 	byte fileReadByte();
 	uint16 fileReadUint16LE();

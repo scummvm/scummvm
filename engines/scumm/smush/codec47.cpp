@@ -69,19 +69,19 @@ namespace Scumm {
 		(dst)[1] = val;	\
 	} while (0)
 
-static int8 codec47_table_small1[] = {
+static const  int8 codec47_table_small1[] = {
   0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
-static int8 codec47_table_small2[] = {
+static const int8 codec47_table_small2[] = {
   0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
-static int8 codec47_table_big1[] = {
+static const int8 codec47_table_big1[] = {
   0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
-static int8 codec47_table_big2[] = {
+static const int8 codec47_table_big2[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
@@ -148,7 +148,7 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 	int32 b1, b2;
 	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	int8 *table47_1 = 0, *table47_2 = 0;
+	const int8 *table47_1 = 0, *table47_2 = 0;
 	int32 *ptr_small_big;
 	byte *ptr;
 	int i, x, y;

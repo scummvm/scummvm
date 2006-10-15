@@ -155,7 +155,7 @@ void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 void ScummEngine_v70he::setDefaultCursor() {
 	const uint16 *src;
 	int i, j;
-	static byte palette[] = { 0xff, 0xff, 0xff, 0,
+	static const byte palette[] = { 0xff, 0xff, 0xff, 0,
 							  0,    0,    0,    0};
 
 	memset(_grabbedCursor, 5, sizeof(_grabbedCursor));

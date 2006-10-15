@@ -78,11 +78,11 @@ struct ResString {
 };
 
 #ifdef PALMOS_68K
-static ResString *string_map_table_v7;
-static ResString *string_map_table_v6;
-static ResString *string_map_table_v5;
+static const ResString *string_map_table_v7;
+static const ResString *string_map_table_v6;
+static const ResString *string_map_table_v5;
 #else
-static ResString string_map_table_v8[] = {
+static const ResString string_map_table_v8[] = {
 	{0, "/BT_100/Please insert disk %d. Press ENTER"},
 	{0, "/BT__003/Unable to Find %s, (%s %d) Press Button."},
 	{0, "/BT__004/Error reading disk %c, (%c%d) Press Button."},
@@ -105,7 +105,7 @@ static ResString string_map_table_v8[] = {
 	{0, "/BT__020/Select a game to LOAD"}
 };
 
-static ResString string_map_table_v7[] = {
+static const ResString string_map_table_v7[] = {
 	{96, "game name and version"}, //that's how it's supposed to be
 	{83, "Unable to Find %s, (%c%d) Press Button."},
 	{84, "Error reading disk %c, (%c%d) Press Button."},
@@ -163,7 +163,7 @@ static ResString string_map_table_v7[] = {
 
 };
 
-static ResString string_map_table_v6[] = {
+static const ResString string_map_table_v6[] = {
 	{90, "Insert Disk %c and Press Button to Continue."},
 	{91, "Unable to Find %s, (%c%d) Press Button."},
 	{92, "Error reading disk %c, (%c%d) Press Button."},
@@ -187,7 +187,7 @@ static ResString string_map_table_v6[] = {
 	{117, "How may I serve you?"}
 };
 
-static ResString string_map_table_v345[] = {
+static const ResString string_map_table_v345[] = {
 	{1, "Insert Disk %c and Press Button to Continue."},
 	{2, "Unable to Find %s, (%c%d) Press Button."},
 	{3, "Error reading disk %c, (%c%d) Press Button."},

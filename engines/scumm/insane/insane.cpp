@@ -877,7 +877,7 @@ void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 }
 
 int32 Insane::weaponMaxRange(int32 actornum) {
-	static int map[8] = {135, 125, 130, 125, 120, 104, 104, 104};
+	static const int map[8] = {135, 125, 130, 125, 120, 104, 104, 104};
 
 	if (_actor[actornum].weapon == -1)
 		return 104;
@@ -886,7 +886,7 @@ int32 Insane::weaponMaxRange(int32 actornum) {
 }
 
 int32 Insane::weaponMinRange(int32 actornum) {
-	static int map[8] = {80, 40, 80, 40, 80, 80, 40, 50};
+	static const int map[8] = {80, 40, 80, 40, 80, 80, 40, 50};
 
 	if (_actor[actornum].weapon == -1)
 		return 40;
@@ -895,7 +895,7 @@ int32 Insane::weaponMinRange(int32 actornum) {
 }
 
 int32 Insane::weaponDamage(int32 actornum) {
-	static int map[8] = {20, 300, 25, 40, 15, 10, 10, 5};
+	static const int map[8] = {20, 300, 25, 40, 15, 10, 10, 5};
 
 	if (_actor[actornum].weapon == -1)
 		return 10;
