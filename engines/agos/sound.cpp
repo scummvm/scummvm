@@ -488,7 +488,7 @@ void Sound::readSfxFile(const char *filename) {
 	if (_hasEffectsFile)
 		return;
 
-	stopAll();
+	_mixer->stopHandle(_effectsHandle);
 
 	File *file = new File();
 	file->open(filename);
@@ -514,7 +514,7 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 }
 
 void Sound::readVoiceFile(const char *filename) {
-	stopAll();
+	_mixer->stopHandle(_voiceHandle);
 
 	File *file = new File();
 	file->open(filename);
@@ -529,7 +529,7 @@ void Sound::readVoiceFile(const char *filename) {
 void Sound::playVoice(uint sound) {
 	if (_filenums) {
 		if (_lastVoiceFile != _filenums[sound]) {
-			stopAll();
+			_mixer->stopHandle(_voiceHandle);
 
 			char filename[16];
 			_lastVoiceFile = _filenums[sound];
@@ -739,7 +739,7 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	if (_lastVoiceFile == disc)
 		return;
 
-	stopAll();
+	_mixer->stopHandle(_voiceHandle);
 	delete _voice;
 
 	_hasVoiceFile = false;
