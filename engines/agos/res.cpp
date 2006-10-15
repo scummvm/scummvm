@@ -674,9 +674,15 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 				else
 					sprintf(filename, "%.1d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-				sprintf(filename, "%.2d%d.pkd", id, type);
+				if (type == 3)
+					sprintf(filename, "%.2d%d.out", id, type);
+				else
+					sprintf(filename, "%.2d%d.pkd", id, type);
 			} else {
-				sprintf(filename, "%.3d%d.pkd", id, type);
+				if (type == 3)
+					sprintf(filename, "%.3d%d.out", id, type);
+				else
+					sprintf(filename, "%.3d%d.pkd", id, type);
 			}
 		} else {
 			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
