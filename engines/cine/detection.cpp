@@ -163,7 +163,7 @@ static const ADGameFileDescription OSUS_GameFiles[] = {
 	{ "procs1",		0,	"d8c3a9d05a63e4cfa801826a7063a126"},
 };
 
-static const ADGameFileDescription OSUSAlt_GameFiles[] = {
+static const ADGameFileDescription OSUS256_GameFiles[] = {
 	{ "procs00",	0,	"862a75d76fb7fffec30e52be9ad1c474"},
 };
 
@@ -385,7 +385,7 @@ static const CINEGameDescription gameDescriptions[] = {
 	{
 		{
 			"os",
-			"CD",
+			"256 colors",
 			ARRAYSIZE(OS_GameFiles),
 			OS_GameFiles,
 			Common::EN_GRB,
@@ -411,9 +411,9 @@ static const CINEGameDescription gameDescriptions[] = {
 	{
 		{
 			"os",
-			"CD",
-			ARRAYSIZE(OSUSAlt_GameFiles),
-			OSUSAlt_GameFiles,
+			"256 colors",
+			ARRAYSIZE(OSUS256_GameFiles),
+			OSUS256_GameFiles,
 			Common::EN_USA,
 			Common::kPlatformPC,
 		},
@@ -450,7 +450,7 @@ static const CINEGameDescription gameDescriptions[] = {
 	{
 		{
 			"os",
-			"CD",
+			"256 colors",
 			ARRAYSIZE(OSESCD_GameFiles),
 			OSESCD_GameFiles,
 			Common::ES_ESP,
@@ -463,7 +463,7 @@ static const CINEGameDescription gameDescriptions[] = {
 	{
 		{
 			"os",
-			"CD",
+			"256 colors",
 			ARRAYSIZE(OSFR_GameFiles),
 			OSFR_GameFiles,
 			Common::FR_FRA,
