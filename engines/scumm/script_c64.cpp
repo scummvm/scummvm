@@ -460,7 +460,6 @@ void ScummEngine_c64::ifNotStateCommon(byte type) {
 
 void ScummEngine_c64::drawSentence() {
 	Common::Rect sentenceline;
-	static char sentence[256];
 	const byte *temp;
 	int sentencePrep = 0;
 
@@ -468,7 +467,7 @@ void ScummEngine_c64::drawSentence() {
 		return;
 
 	if (getResourceAddress(rtVerb, _activeVerb)) {
-		strcpy(sentence, (char*)getResourceAddress(rtVerb, _activeVerb));
+		strcpy(_sentenceBuf, (char*)getResourceAddress(rtVerb, _activeVerb));
 	} else {
 		return;
 	}
@@ -476,8 +475,8 @@ void ScummEngine_c64::drawSentence() {
 	if (_activeObject > 0) {
 		temp = getObjOrActorName(_activeObject);
 		if (temp) {
-			strcat(sentence, " ");
-			strcat(sentence, (const char*)temp);
+			strcat(_sentenceBuf, " ");
+			strcat(_sentenceBuf, (const char*)temp);
 		}
 
 		if (_verbs[_activeVerb].prep == 0xFF) {
@@ -518,14 +517,14 @@ void ScummEngine_c64::drawSentence() {
 			lang = 0;	// Default to english
 		}
 
-		strcat(sentence, prepositions[lang][sentencePrep]);
+		strcat(_sentenceBuf, prepositions[lang][sentencePrep]);
 	}
 
 	if (_activeInventory > 0) {
 		temp = getObjOrActorName(_activeInventory);
 		if (temp) {
-			strcat(sentence, " ");
-			strcat(sentence, (const char*)temp);
+			strcat(_sentenceBuf, " ");
+			strcat(_sentenceBuf, (const char*)temp);
 		}
 	}
 
@@ -536,7 +535,7 @@ void ScummEngine_c64::drawSentence() {
 	_string[2].color = 16;
 
 	byte string[80];
-	char *ptr = sentence;
+	char *ptr = _sentenceBuf;
 	int i = 0, len = 0;
 
 	// Maximum length of printable characters

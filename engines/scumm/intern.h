@@ -273,6 +273,8 @@ protected:
 
 	V2MouseoverBox _mouseOverBoxesV2[7];
 	int8 _mouseOverBoxV2;
+	
+	static char _sentenceBuf[256];
 
 public:
 	ScummEngine_v2(OSystem *syst, const DetectorResult &dr);
