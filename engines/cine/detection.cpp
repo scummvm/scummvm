@@ -110,6 +110,10 @@ static const ADGameFileDescription FW_GameFiles[] = {
 	{ "part01",		0,	"61d003202d301c29dd399acfb1354310"},
 };
 
+static const ADGameFileDescription FWALT_GameFiles[] = {
+	{ "part01",		0,	"91d7271155520eae6915a9dd2dac120c"},
+};
+
 static const ADGameFileDescription FWDE_GameFiles[] = {
 	{ "part01",		0,	"f5e98fcca3fb5e7afa284c81c39d8b14"},
 };
@@ -232,6 +236,20 @@ static const CINEGameDescription gameDescriptions[] = {
 			"",
 			ARRAYSIZE(FW_GameFiles),
 			FW_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_FW,
+		0,
+	},
+
+	{
+		// This is the version included in the UK "Classic Collection"
+		{
+			"fw",
+			"",
+			ARRAYSIZE(FWALT_GameFiles),
+			FWALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
