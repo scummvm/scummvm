@@ -202,6 +202,14 @@ static const ADGameFileDescription ELVIRA2AMIGA_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e"},
 };
 
+static const ADGameFileDescription ELVIRA2ST_GameFiles[] = {
+	{ "gamest",		GAME_BASEFILE,	"1b1acd637d32bee79859b7cc9de070e7"},
+	{ "icon.dat",		GAME_ICONFILE,	"9a4eaf4df0cdf5cc85a5134150f96589"},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
+	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e"},
+	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e"},
+};
+
 static const ADGameFileDescription ELVIRA2DOS_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7"},
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
@@ -775,6 +783,22 @@ static const AGOSGameDescription gameDescriptions[] = {
 			ELVIRA2AMIGA_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE | GF_CRUNCHED,
+	},
+
+	// Elvira 2 - English Atari ST Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+			ARRAYSIZE(ELVIRA2ST_GameFiles),
+			ELVIRA2ST_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
 		},
 
 		GType_ELVIRA2,
