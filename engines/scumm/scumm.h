@@ -1132,7 +1132,6 @@ protected:
 	bool _enable_gs;
 	MidiDriverFlags _musicType;
 	bool _copyProtection;
-	bool _confirmExit;
 
 public:
 	uint16 _extraBoxFlags[65];

@@ -27,10 +27,6 @@
 #include "sound/mixer.h"
 #include "scumm/saveload.h"
 
-namespace Common {
-	class File;
-}
-
 namespace Scumm {
 
 class ScummEngine;
@@ -78,8 +74,6 @@ protected:
 	bool _endOfMouthSync;
 	uint16 _mouthSyncTimes[64];
 	uint _curSoundPos;
-
-	int _overrideFreq;
 
 	int16 _currentCDSound;
 	int16 _currentMusic;

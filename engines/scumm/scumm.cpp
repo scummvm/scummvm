@@ -268,7 +268,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
 	_copyProtection = false;
-	_confirmExit = false;
 	_voiceMode = 0;
 	_talkDelay = 0;
 	_NES_lastTalkingActor = 0;
@@ -455,10 +454,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	else
 		_voiceMode = ConfMan.getBool("subtitles");
 
-	_confirmExit = ConfMan.getBool("confirm_exit");
-
 	if (ConfMan.hasKey("render_mode")) {
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 	} else {
 		_renderMode = Common::kRenderDefault;
 	}

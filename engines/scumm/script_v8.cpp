@@ -1282,7 +1282,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		debug(0, "o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
 	case 34:	// queryQuit
-		if (_confirmExit)
+		if (ConfMan.getBool("confirm_exit"))
 			confirmExitDialog();
 		else
 			_quit = true;

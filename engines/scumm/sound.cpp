@@ -74,7 +74,6 @@ Sound::Sound(ScummEngine *parent)
 	_mouthSyncMode(false),
 	_endOfMouthSync(false),
 	_curSoundPos(0),
-	_overrideFreq(0),
 	_currentCDSound(0),
 	_currentMusic(0),
 	_soundsPaused(false),

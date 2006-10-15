@@ -50,6 +50,7 @@ SoundHE::SoundHE(ScummEngine *parent)
 	:
 	Sound(parent),
 	_vm((ScummEngine_v60he *)parent),
+	_overrideFreq(0),
 	_heMusic(0),
 	_heMusicTracks(0) {
 

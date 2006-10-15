@@ -33,6 +33,8 @@ class SoundHE : public Sound {
 protected:
 	ScummEngine_v60he *_vm;
 
+	int _overrideFreq;
+
 	struct HEMusic {
 		int32 id;
 		int32 offset;

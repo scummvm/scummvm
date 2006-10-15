@@ -182,7 +182,7 @@ void ScummEngine::parseEvents() {
 			break;
 
 		case OSystem::EVENT_QUIT:
-			if (_confirmExit)
+			if (ConfMan.getBool("confirm_exit"))
 				confirmExitDialog();
 			else
 				_quit = true;
