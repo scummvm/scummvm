@@ -96,6 +96,7 @@ LPIO_INTERFACE active_interface = 0;
 #define CACHE_FREE 0xFFFFFFFF
 	
 static u8 cacheBuffer[ DISC_CACHE_COUNT * 512 ];
+bool M3SDDetect = false;
 
 static struct {
 	u32 sector;
@@ -131,16 +132,16 @@ static u32 disc_CacheFindFree(void) {
 			i = j;
 		}
 	}
-	
+	/*
 	if( cache[ i ].sector != CACHE_FREE && cache[i].dirty != 0 ) {
 
 		active_interface->fn_WriteSectors( cache[ i ].sector, 1, &cacheBuffer[ i * 512 ] );
-		/* todo: handle write error here */
+		/* todo: handle write error here 
 
 		cache[ i ].sector = CACHE_FREE;
 		cache[ i ].dirty = 0;
 		cache[ i ].count = 0;
-	}
+	}*/
 
 	return i;
 }
@@ -219,6 +220,10 @@ bool disc_CacheWriteSector( void *buffer, u32 sector ) {
 
 */
 
+void disc_setM3SDEnable(bool on) {
+	M3SDDetect = on;
+}
+
 bool disc_setGbaSlotInterface (void)
 {
 	// If running on an NDS, make sure the correct CPU can access
@@ -232,6 +237,18 @@ bool disc_setGbaSlotInterface (void)
  #endif
 #endif
 
+
+#ifdef SUPPORT_M3SD
+	if (M3SDDetect)	{
+		// check if we have a M3 perfect SD plugged in
+		active_interface = M3SD_GetInterface() ;
+		if (active_interface->fn_StartUp())
+		{
+			// set M3 SD as default IO
+			return true ;
+		} ;
+	}
+#endif
 
 #ifdef SUPPORT_MMCF
 	// check if we have a GBA Flash Cart plugged in
@@ -251,17 +268,6 @@ bool disc_setGbaSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set M3 CF as default IO
-		return true ;
-	} ;
-#endif
-
-
-#ifdef SUPPORT_M3SD
-	// check if we have a M3 perfect SD plugged in
-	active_interface = M3SD_GetInterface() ;
-	if (active_interface->fn_StartUp())
-	{
-		// set M3 SD as default IO
 		return true ;
 	} ;
 #endif
@@ -320,6 +326,7 @@ bool disc_setGbaSlotInterface (void)
 		return true ;
 	} ;
 #endif
+
 
 
 	return false;
@@ -420,7 +427,7 @@ bool disc_ReadSectors(u32 sector, u8 numSecs, void* buffer)
 
 bool disc_WriteSectors(u32 sector, u8 numSecs, void* buffer) 
 {
-#ifdef DISC_CACHE
+/*#ifdef DISC_CACHE
 	u8 *p=(u8*)buffer;
 	u32 i;
 	u32 inumSecs=numSecs;
@@ -431,10 +438,11 @@ bool disc_WriteSectors(u32 sector, u8 numSecs, void* buffer)
 			return false;
 	}
 	return true;
-#else
+#else*/
+	disc_CacheInit();
 	if (active_interface) return active_interface->fn_WriteSectors(sector,numSecs,buffer) ;
 	return false ;
-#endif
+//#endif
 } 
 
 bool disc_ClearStatus(void) 

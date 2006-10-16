@@ -42,7 +42,7 @@
 #include "io_sd_common.h"
 
 #define BYTES_PER_READ 512
-#define _NJSD_SYNC
+//#define _NJSD_SYNC
 // #define _NJSD_DEBUG
 
 //---------------------------------------------------------------
@@ -61,7 +61,7 @@
 
 //---------------------------------------------------------------
 // Send / receive timeouts, to stop infinite wait loops
-#define IRQ_TIMEOUT 10000000
+#define IRQ_TIMEOUT 1000000
 #define RESET_TIMEOUT 1000
 #define COMMAND_TIMEOUT 10000
 #define MAX_STARTUP_TRIES 2000	// Arbitrary value, check if the card is ready 20 times before giving up

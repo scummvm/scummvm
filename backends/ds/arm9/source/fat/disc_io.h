@@ -11,6 +11,7 @@
 // Note that this will slow down access speed, so only use if you have to.
 // It is also incompatible with DMA
 #define _CF_ALLOW_UNALIGNED
+#define _IO_ALLOW_UNALIGNED
 
 // Device support options, added by www.neoflash.com
 
@@ -29,8 +30,8 @@
 // Each additional sector cache uses 512 bytes of memory
 // Disk caching is disabled on GBA to conserve memory
 
-//#define DISC_CACHE				// uncomment this line to enable disc caching
-//#define DISC_CACHE_COUNT	16	// maximum number of sectors to cache (512 bytes per sector)
+#define DISC_CACHE				// uncomment this line to enable disc caching
+#define DISC_CACHE_COUNT	32	// maximum number of sectors to cache (512 bytes per sector)
 //#define DISK_CACHE_DMA		// use DMA for cache copies. If this is enabled, the data buffers must be word aligned
 
 
@@ -85,6 +86,8 @@ bool return OUT:  true if a disc is inserted
 -----------------------------------------------------------------*/
 extern bool disc_IsInserted(void) ;
 
+
+extern void disc_setM3SDEnable(bool on);
 /*-----------------------------------------------------------------
 disc_ReadSectors
 Read 512 byte sector numbered "sector" into "buffer"

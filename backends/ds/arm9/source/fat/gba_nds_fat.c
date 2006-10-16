@@ -818,16 +818,18 @@ bool FAT_InitFiles (void)
 	{
 		return (false);
 	}
-	
 	// Read first sector of CF card
 	if ( !disc_ReadSector(0, globalBuffer)) {
 		return false;
 	}
 
+
 	// Make sure it is a valid MBR or boot sector
 	if ( (globalBuffer[0x1FE] != 0x55) || (globalBuffer[0x1FF] != 0xAA)) {
 		return false;
 	}
+
+	
 
 	// Check if there is a FAT string, which indicates this is a boot sector
 	if ((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T'))
