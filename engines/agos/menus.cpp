@@ -123,5 +123,62 @@ void AGOSEngine::drawMenuStrip(uint windowNum, uint menuNum) {
 	mouseOn();
 }
 
+// Waxworks specific?
+uint AGOSEngine::menuFor(Item *item, uint id) {
+	if (id != 0xFFFF && id < 10 && _textMenu[id] != 0) {
+		return _textMenu[id];
+	} else {
+		// TODO
+	}
+
+	return 0;
+}
+
+void AGOSEngine::clearMenuStrip() {
+	int i;
+
+	for (i = 111; i != 115; i++)
+		disableBox(i);
+
+	set_video_mode_internal(2, 101);
+}
+
+void AGOSEngine::doMenuStrip(uint menuNum) {
+	int i;
+
+	for (i = 111; i != 115; i++)
+		disableBox(i);
+
+	for (i = 11; i != 16; i++)
+		_variableArray[i] = 0;
+
+	byte *srcPtr = _menuBase;
+	while (menuNum--) {
+		while (READ_BE_UINT16(srcPtr) != 0)
+			srcPtr += 2;
+		srcPtr += 2;
+	}
+
+	uint id = 111;
+	uint var = 11;
+
+	while (READ_BE_UINT16(srcPtr) != 0) {
+		uint verb = READ_BE_UINT16(srcPtr);
+		_variableArray[var] = verb;
+
+		HitArea *ha = findBox(id);
+		if (ha != NULL) {
+			ha->flags &= ~kBFBoxDead;
+			ha->verb = verb;
+		}
+
+		id++;
+		srcPtr += 2;
+		var++;
+	}
+
+	_variableArray[15] = id - 111;
+	set_video_mode_internal(2, 102);
+}
 
 } // End of namespace AGOS

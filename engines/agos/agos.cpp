@@ -1329,7 +1329,10 @@ void AGOSEngine::hitarea_stuff() {
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
 
-	resetVerbs();
+	if (getGameType() == GType_WW)
+		clearMenuStrip();
+	else
+		resetVerbs();
 
 startOver:
 	for (;;) {
@@ -1368,6 +1371,33 @@ startOver:
 			setVerb(ha);
 			_defaultVerb = 0;
 		} else {
+			if (getGameType() == GType_WW) {
+				if (ha->id == 98) {
+					loadSprite(2, 0, 110, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 108) {
+					loadSprite(2, 0, 106, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 109) {
+					loadSprite(2, 0, 107, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 115) {
+					loadSprite(2, 0, 109, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 116) {
+					loadSprite(2, 0, 113, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 117) {
+					loadSprite(2, 0, 112, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 118) {
+					loadSprite(2, 0, 108, 0, 0, 0);
+					waitForSync(34);
+				} else if (ha->id == 119) {
+					loadSprite(2, 0, 111, 0, 0, 0);
+					waitForSync(34);
+				}
+			}
 			if ((_verbHitArea != 0 || _hitAreaSubjectItem != ha->item_ptr && ha->flags & kBFBoxItem) &&
 					ha->item_ptr) {
 			if_1:;
@@ -1388,8 +1418,13 @@ startOver:
 				else
 					_variableArray[60] = id;
 				displayName(ha);
-				if (_verbHitArea != 0)
+
+				if (_verbHitArea != 0) {
 					break;
+				}
+
+				if (getGameType() == GType_WW)
+					doMenuStrip(menuFor(ha->item_ptr, id));
 			} else {
 				// else 1
 				if (ha->verb == 0) {

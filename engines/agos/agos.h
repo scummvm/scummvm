@@ -657,6 +657,10 @@ protected:
 
 	void drawMenuStrip(uint windowNum, uint menuNum);
 
+	uint menuFor(Item *item, uint id);
+	void clearMenuStrip();
+	void doMenuStrip(uint menuNum);
+
 	void checkLinkBox();
  	void hyperLinkOn(uint16 x);
  	void hyperLinkOff();

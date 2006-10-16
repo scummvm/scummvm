@@ -312,10 +312,6 @@ bool AGOSEngine::loadRoomItems(uint item) {
 				while ((i = in.readUint16BE()) != 0) {
 					_itemArrayPtr[i + 2] = (Item *)allocateItem(sizeof(Item));
 					readItemFromGamePc(&in, _itemArrayPtr[i + 2]);
-
-					Item *tmp = _itemArrayPtr[i + 2];
-					tmp->child = 0;
-					tmp->parent = 0;
 				}
 				in.close();
 
