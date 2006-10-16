@@ -133,8 +133,14 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	
 	
 	char str[100];
-	sprintf(str, "/track%d.wav", track);
-	path = path + str;
+
+	if (path[strlen(path.c_str()) - 1] == '/') {
+		sprintf(str, "track%d.wav", track);
+		path = path + str;
+	} else {
+		sprintf(str, "/track%d.wav", track);
+		path = path + str;
+	}
 	
 	
 	//1820160
@@ -459,10 +465,14 @@ bool checkCD() {
 	consolePrintf("Attempted to open cd drive\n");
 
 	Common::String path = ConfMan.get("path");
-	path = path + "/track2.wav";
 	// 6577 153 154
+	if (path[strlen(path.c_str()) - 1] == '/') {
+		path = path + "track2.wav";
+	} else {
+		path = path + "/track2.wav";
+	}
 	consolePrintf("Looking for %s...", path.c_str());
-	
+
 	FILE* file;
 	if ((file = DS::std_fopen(path.c_str(), "r"))) {
 		consolePrintf("Success!\n");

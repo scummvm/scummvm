@@ -36,8 +36,8 @@ namespace Scumm {
 
 namespace DS {
 
-DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 20, 320 - 40, 200 - 40) {
-	addButton(this, 10, 140, "Close", GUI::kCloseCmd, 'C');
+DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
+	addButton(this, 10, 160, "Close", GUI::kCloseCmd, 'C');
 	
 #ifdef DS_SCUMM_BUILD
 	if (!DS::isGBAMPAvailable()) {
@@ -45,31 +45,32 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 20, 320 - 40, 200 - 40) {
 	}
 #endif
 
-	new GUI::StaticTextWidget(this, 80, 10, 130, 20, "ScummVM DS Options", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 80, 10, 130, 15, "ScummVM DS Options", GUI::kTextAlignCenter);
 
-	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 20, 30, 200, 20, "Left handed mode", 0, 'L');
-	_indyFightCheckbox = new GUI::CheckboxWidget(this, 20, 45, 200, 20, "Indy fighting controls", 0, 'I');
-	_unscaledCheckbox = new GUI::CheckboxWidget(this, 20, 60, 200, 20, "Unscaled main screen", 0, 'S');
-	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 75, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
-	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 90, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
+	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 20, 25, 200, 20, "Left handed mode", 0, 'L');
+	_indyFightCheckbox = new GUI::CheckboxWidget(this, 20, 40, 200, 20, "Indy fighting controls", 0, 'I');
+	_unscaledCheckbox = new GUI::CheckboxWidget(this, 20, 55, 200, 20, "Unscaled main screen", 0, 'S');
+	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 70, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
+	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 85, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
+	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
 
-	new GUI::StaticTextWidget(this, 20, 110, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(this, 130, 110, 130, 12, 1);
+	new GUI::StaticTextWidget(this, 20, 130, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
+	_touchX = new GUI::SliderWidget(this, 130, 130, 130, 12, 1);
 	_touchX->setMinValue(-8);
 	_touchX->setMaxValue(+8);
 	_touchX->setValue(0);
 	_touchX->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(this, 20, 125, 110, 15, "Touch Y Offset", GUI::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(this, 130, 125, 130, 12, 2);
+	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch Y Offset", GUI::kTextAlignLeft);
+	_touchY = new GUI::SliderWidget(this, 130, 145, 130, 12, 2);
 	_touchY->setMinValue(-8);
 	_touchY->setMaxValue(+8);
 	_touchY->setValue(0);
 	_touchY->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(this, 130 + 65 - 10, 140, 20, 15, "0", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 + 130 - 10, 140, 20, 15, "8", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 - 10, 140, 20, 15, "-8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 + 65 - 10, 160, 20, 15, "0", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 + 130 - 10, 160, 20, 15, "8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 - 10, 160, 20, 15, "-8", GUI::kTextAlignCenter);
 
 #ifdef DS_SCUMM_BUILD
 	_delDialog = new Scumm::SaveLoadChooser("Delete game:", "Delete", false, Scumm::g_scumm);
@@ -99,6 +100,12 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 20, 320 - 40, 200 - 40) {
 		_highQualityAudioCheckbox->setState(false);
 	}
 
+	if (ConfMan.hasKey("disablepoweroff", "ds")) {
+		_disablePowerOff->setState(ConfMan.getBool("disablepoweroff", "ds"));
+	} else {
+		_disablePowerOff->setState(false);
+	}
+
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
 	if (ConfMan.hasKey("xoffset", "ds")) {
@@ -120,6 +127,7 @@ DSOptionsDialog::~DSOptionsDialog() {
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
 	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
+	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	DS::setOptions();

@@ -25,6 +25,7 @@
 #include "compressor/lz.h"
 
 #define CART_RAM ((vu8 *) (0x0A000000))
+#define SRAM_SAVE_MAX (65533)
 
 DSSaveFile::DSSaveFile() {
 	ptr = 0;
@@ -82,8 +83,7 @@ bool DSSaveFile::loadFromSaveRAM(vu8* address) {
 	for (int t = 0; t < (int) sizeof(newSave); t++) {
 		((char *) (&newSave))[t] = *(address + t);
 	}
-	
-	
+
 	if (newSave.magic == 0xBEEFCAFE) {
 		newSave.isValid = true;
 
@@ -101,6 +101,7 @@ bool DSSaveFile::loadFromSaveRAM(vu8* address) {
 		this->saveData = saveData;
 		ownsData = true;
 		ptr = 0;
+
 		return true;
 	}
 	
@@ -314,7 +315,7 @@ void DSSaveFileManager::loadAllFromSRAM() {
 		gbaSave[r].deleteFile();
 	}
 
-	sramBytesFree = 65533;
+	sramBytesFree = SRAM_SAVE_MAX;
 
 	// Try to find saves in save RAM
 	for (int r = 0; r < 8; r++) {
@@ -327,7 +328,7 @@ void DSSaveFileManager::loadAllFromSRAM() {
 }
 
 void DSSaveFileManager::formatSram() {
-	for (int r = 0; r < 65533; r++) {
+	for (int r = 0; r < SRAM_SAVE_MAX; r++) {
 		*(CART_RAM + r) = 0;
 	}
 	
@@ -421,6 +422,7 @@ Common::SaveFile *DSSaveFileManager::makeSaveFile(const char *filename, bool sav
 void DSSaveFileManager::flushToSaveRAM() {
 	int cartAddr = 1;
 	int s;
+	int extraData = DSSaveFileManager::getExtraData();
 	
 	*((u16 *) (0x4000204)) |= 0x3;
 	
@@ -434,13 +436,13 @@ void DSSaveFileManager::flushToSaveRAM() {
 		}
 	}
 	
-	if (size <= 65533) {
+	if (size <= SRAM_SAVE_MAX) {
 
-		for (int r = 0; r < 65533; r++) {
+		for (int r = 0; r < SRAM_SAVE_MAX; r++) {
 			*(CART_RAM + r) = 0;
 		}
 		
-		sramBytesFree = 65533;
+		sramBytesFree = SRAM_SAVE_MAX;
 		
 		for (int r = 0; (r < 8); r++) {
 			if (gbaSave[r].isValid() && (!gbaSave[r].isTemp())) {
@@ -459,5 +461,40 @@ void DSSaveFileManager::flushToSaveRAM() {
 		loadAllFromSRAM();
 		
 	}
+
+	DSSaveFileManager::setExtraData(extraData);
 //	consolePrintf("SRAM free: %d bytes\n", getBytesFree());
+}
+
+void DSSaveFileManager::setExtraData(int data) {
+	// Offset of extra data is 31.  This overlaps the padding and reserved bytes of the first save entry.
+	// which have not been used up until now.  So it should be safe.
+
+	vu8* sram = CART_RAM + 31;
+
+	*(sram + 0) = 0xF0;		// This is an identifier to check
+	*(sram + 1) = 0x0D;		// that extra data is present.
+
+	*(sram + 2) = (data & 0xFF000000) >> 24;		// Now write the actual data
+	*(sram + 3) = (data & 0x00FF0000) >> 16;		// taking care to use single
+	*(sram + 4) = (data & 0x0000FF00) >> 8;			// byte writes (it's an 8-bit bus)
+	*(sram + 5) = (data & 0x000000FF);
+}
+
+bool DSSaveFileManager::isExtraDataPresent() {
+	vu8* sram = CART_RAM + 31;
+
+	// Check for the identifier
+	return ((*(sram + 0) == 0xF0) && (*(sram + 1) == 0x0D));
+}
+
+int DSSaveFileManager::getExtraData() {
+	vu8* sram = CART_RAM + 31;
+
+	if (isExtraDataPresent()) {
+		int value = (*(sram + 2) << 24) | (*(sram + 3) << 16) | (*(sram + 4) << 8) | (*(sram + 5));
+		return value;
+	} else {
+		return 0;
+	}
 }

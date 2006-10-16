@@ -56,6 +56,8 @@
 //#include "compact_flash.h"
 #include "dsoptions.h"
 #include "user_debugger.h"
+#include "ramsave.h"
+#include "disc_io.h"
 
 namespace DS {
 
@@ -1917,8 +1919,12 @@ void powerOff() {
 		swiWaitForVBlank();			// Allow you to read error before the power
 	}								// is turned off.
 
-	IPC->reset = true;				// Send message to ARM7 to turn power off
-	while (true);		// Stop the program continuing beyond this point
+	if (ConfMan.hasKey("disablepoweroff", "ds") && ConfMan.getBool("disablepoweroff", "ds")) {
+		while (true);
+	} else {
+		IPC->reset = true;				// Send message to ARM7 to turn power off
+		while (true);		// Stop the program continuing beyond this point
+	}
 }
 
 /////////////////
@@ -2012,7 +2018,7 @@ int main(void)
 	consolePrintf("---------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1beta3 ");
+	consolePrintf("Version 0.9.1beta4 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
@@ -2030,22 +2036,47 @@ int main(void)
 	consolePrintf("D-pad left:  Left mouse button\n");
 	consolePrintf("D-pad right: Right mouse button\n");
 	consolePrintf("D-pad up:    Hover mouse\n");
-	consolePrintf("D-pad down:  Skip dialog line\n");
 	consolePrintf("B button:    Skip cutscenes\n");
 	consolePrintf("Select:		DS Options menu\n");
 	consolePrintf("Start:       Game menu\n");
 	consolePrintf("Y (in game): Toggle console\n");
 	consolePrintf("X:           Toggle keyboard\n");
 	consolePrintf("A:			Swap screens\n");
-	consolePrintf("L+R (on start): Clear SRAM\n\n");
+	consolePrintf("L+R (on start): Clear SRAM\n");
 
 #if defined(DS_BUILD_A)
 	consolePrintf("For a complete key list see the\n");
 	consolePrintf("help screen.\n\n");
 #endif
 
+	
+	// Do M3 detection selectioon
+	int extraData = DSSaveFileManager::getExtraData();
+	bool present = DSSaveFileManager::isExtraDataPresent();
 
+	swiWaitForVBlank();
 
+	if ((present) && (extraData & 0x00000001)) {
+
+		if (keysHeld() & KEY_L) {
+			extraData &= ~0x00000001;
+			consolePrintf("M3 SD Detection: OFF\n");
+			DSSaveFileManager::setExtraData(extraData);
+		} else {
+			consolePrintf("M3 SD Detection: ON\n");
+			consolePrintf("Hold L on startup to disable.\n");
+		}
+
+	} else if (keysHeld() & KEY_L) {
+		consolePrintf("M3 SD Detection: ON\n");
+		extraData |= 0x00000001;
+		DSSaveFileManager::setExtraData(extraData);
+	} else {
+		consolePrintf("M3 SD Detection: OFF\n");
+		consolePrintf("Hold L on startup to enable.\n");
+	}
+
+	disc_setM3SDEnable(extraData & 0x00000001);
 
 	// Create a file system node to force search for a zip file in GBA rom space
 	DSFileSystemNode* node = new DSFileSystemNode();
