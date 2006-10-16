@@ -579,18 +579,18 @@ bool AGOSEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub)
 	return true;
 }
 
-void AGOSEngine::readSubroutineBlock(File *in) {
+void AGOSEngine::readSubroutineBlock(Common::SeekableReadStream *in) {
 	while (in->readUint16BE() == 0) {
 		readSubroutine(in, createSubroutine(in->readUint16BE()));
 	}
 }
-void AGOSEngine::readSubroutine(File *in, Subroutine *sub) {
+void AGOSEngine::readSubroutine(Common::SeekableReadStream *in, Subroutine *sub) {
 	while (in->readUint16BE() == 0) {
 		readSubroutineLine(in, createSubroutineLine(sub, 0xFFFF), sub);
 	}
 }
 
-void AGOSEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub) {
+void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLine *sl, Subroutine *sub) {
 	byte line_buffer[2048], *q = line_buffer;
 	int size;
 
@@ -634,7 +634,7 @@ void AGOSEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *su
 	}
 }
 
-byte *AGOSEngine::readSingleOpcode(Common::File *in, byte *ptr) {
+byte *AGOSEngine::readSingleOpcode(Common::SeekableReadStream *in, byte *ptr) {
 	int i, l;
 	const char *string_ptr;
 	uint opcode, val;

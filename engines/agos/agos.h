@@ -41,7 +41,7 @@ namespace AGOS {
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
 
-uint fileReadItemID(Common::File *in);
+uint fileReadItemID(Common::SeekableReadStream *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
 
@@ -532,15 +532,16 @@ protected:
 	uint16 readUint16Wrapper(const void *src);
 	uint32 readUint32Wrapper(const void *src);
 
-	int allocGamePcVars(Common::File *in);
+	int allocGamePcVars(Common::SeekableReadStream *in);
 	void createPlayer();
 	void allocateStringTable(int num);
 	void setupStringTable(byte *mem, int num);
 	void setupLocalStringTable(byte *mem, int num);
-	void readGamePcText(Common::File *in);
-	void readItemChildren(Common::File *in, Item *item, uint tmp);
-	void readItemFromGamePc(Common::File *in, Item *item);
+	void readGamePcText(Common::SeekableReadStream *in);
+	void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp);
+	void readItemFromGamePc(Common::SeekableReadStream *in, Item *item);
 	void loadGamePcFile();
+	void readGamePcFile(Common::SeekableReadStream *in);
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint sound, int pan, int vol, uint type);
@@ -564,11 +565,11 @@ protected:
 	void allocTablesHeap();
 
 	Subroutine *createSubroutine(uint a);
-	void readSubroutine(Common::File *in, Subroutine *sub);
+	void readSubroutine(Common::SeekableReadStream *in, Subroutine *sub);
 	SubroutineLine *createSubroutineLine(Subroutine *sub, int a);
-	void readSubroutineLine(Common::File *in, SubroutineLine *new_table, Subroutine *sub);
-	byte *readSingleOpcode(Common::File *in, byte *ptr);
-	void readSubroutineBlock(Common::File *in);
+	void readSubroutineLine(Common::SeekableReadStream *in, SubroutineLine *new_table, Subroutine *sub);
+	byte *readSingleOpcode(Common::SeekableReadStream *in, byte *ptr);
+	void readSubroutineBlock(Common::SeekableReadStream *in);
 
 	Subroutine *getSubroutineByID(uint subroutine_id);
 

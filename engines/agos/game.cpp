@@ -225,7 +225,7 @@ static const ADGameFileDescription ELVIRA2DOS_FR_GameFiles[] = {
 };
 
 static const ADGameFileDescription WAXWORKSAMIGA_GameFiles[] = {
-	{ "gameamiga",		GAME_BASEFILE,	"e6207a69cf7356f13acbe8d14bdd844e"},  // Unpacked version
+	{ "gameamiga",		GAME_BASEFILE,	"eca24fe7c3e005caca47cecac56f7245"},
 	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe"},
 	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e"},
 	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af"},
@@ -267,7 +267,7 @@ static const ADGameFileDescription SIMON1AMIGA_ECS_GameFiles[] = {
 };
 
 static const ADGameFileDescription SIMON1AMIGA_ECS_DEMO_GameFiles[] = {
-	{ "gameamiga",		GAME_BASEFILE,	"a12b696170f14eca5ff75f1549829251"},  // Unpacked version
+	{ "gameamiga",		GAME_BASEFILE,	"4696309eed9d7335c62ebb87a0f006ad"},
 	{ "icon.pkd",		GAME_ICONFILE,	"ebc96af15bfaf75ba8210326b9260d2f"},
 	{ "stripped.txt",	GAME_STRFILE,	"8edde5b9498dc9f31da1093028da467c"},
 	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c"},
@@ -851,7 +851,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_WW,
 		GID_WAXWORKS,
-		GF_OLD_BUNDLE | GF_CRUNCHED,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC,
 	},
 
 	// Waxworks - English DOS Floppy
@@ -931,7 +931,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE | GF_DEMO,
+		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_DEMO,
 	},
 
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy

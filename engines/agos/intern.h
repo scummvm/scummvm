@@ -205,12 +205,13 @@ enum SubObjectFlags {
 };
 
 enum GameFeatures {
-	GF_TALKIE     = 1 << 0,
-	GF_OLD_BUNDLE = 1 << 1,
-	GF_CRUNCHED   = 1 << 2,
-	GF_ZLIBCOMP   = 1 << 3,
-	GF_32COLOR    = 1 << 4,
-	GF_DEMO       = 1 << 5
+	GF_TALKIE           = 1 << 0,
+	GF_OLD_BUNDLE      = 1 << 1,
+	GF_CRUNCHED        = 1 << 2,
+	GF_CRUNCHED_GAMEPC = 1 << 3,
+	GF_ZLIBCOMP        = 1 << 4,
+	GF_32COLOR         = 1 << 5,
+	GF_DEMO            = 1 << 6
 };
 
 enum GameFileTypes {

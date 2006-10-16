@@ -108,7 +108,7 @@ void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uin
 	in.close();
 }
 
-int AGOSEngine::allocGamePcVars(File *in) {
+int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
 	uint i;
@@ -118,11 +118,12 @@ int AGOSEngine::allocGamePcVars(File *in) {
 	item_array_inited = in->readUint32BE();
 	stringtable_num = in->readUint32BE();
 
+	// First two items are predefined
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 		item_array_size += 2;
 		item_array_inited = item_array_size;
 	} else {
-		item_array_inited += 2;				// first two items are predefined
+		item_array_inited += 2;		
 		item_array_size += 2;
 	}
 
@@ -149,26 +150,33 @@ int AGOSEngine::allocGamePcVars(File *in) {
 
 void AGOSEngine::loadGamePcFile() {
 	Common::File in;
-	int num_inited_objects;
-	int i, fileSize;
+	int fileSize;
 
-	/* read main gamepc file */
-	in.open(getFileName(GAME_BASEFILE));
-	if (in.isOpen() == false) {
-		error("loadGamePcFile: Can't load gamepc file '%s'", getFileName(GAME_BASEFILE));
+	if (getFileName(GAME_BASEFILE) != NULL) {
+		/* Read main gamexx file */
+		in.open(getFileName(GAME_BASEFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load gamexx file '%s'", getFileName(GAME_BASEFILE));
+		}
+
+		if (getFeatures() & GF_CRUNCHED_GAMEPC) {
+			uint srcSize = in.size();
+			byte *srcBuf = (byte *)malloc(srcSize);
+			in.read(srcBuf, srcSize);
+
+			uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
+			byte *dstBuf = (byte *)malloc(dstSize);
+			decrunchFile(srcBuf, dstBuf, srcSize);
+			free(srcBuf);
+
+			Common::MemoryReadStream stream(dstBuf, dstSize);
+			readGamePcFile(&stream);
+			free(dstBuf);
+		} else {
+			readGamePcFile(&in);
+		}
+		in.close();
 	}
-
-	num_inited_objects = allocGamePcVars(&in);
-
-	createPlayer();
-	readGamePcText(&in);
-
-	for (i = 2; i < num_inited_objects; i++) {
-		readItemFromGamePc(&in, _itemArrayPtr[i]);
-	}
-
-	readSubroutineBlock(&in);
-	in.close();
 
 	if (getFileName(GAME_TBLFILE) != NULL) {
 		/* Read list of TABLE resources */
@@ -243,7 +251,23 @@ void AGOSEngine::loadGamePcFile() {
 	}
 }
 
-void AGOSEngine::readGamePcText(Common::File *in) {
+void AGOSEngine::readGamePcFile(Common::SeekableReadStream *in) {
+	int num_inited_objects;
+	int i;
+
+	num_inited_objects = allocGamePcVars(in);
+
+	createPlayer();
+	readGamePcText(in);
+
+	for (i = 2; i < num_inited_objects; i++) {
+		readItemFromGamePc(in, _itemArrayPtr[i]);
+	}
+
+	readSubroutineBlock(in);
+}
+
+void AGOSEngine::readGamePcText(Common::SeekableReadStream *in) {
 	_textSize = in->readUint32BE();
 	_textMem = (byte *)malloc(_textSize);
 	if (_textMem == NULL)
@@ -254,7 +278,7 @@ void AGOSEngine::readGamePcText(Common::File *in) {
 	setupStringTable(_textMem, _stringTabNum);
 }
 
-void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
+void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) {
 	uint32 type;
 
 	if (getGameType() == GType_ELVIRA1) {
@@ -303,7 +327,7 @@ void AGOSEngine::readItemFromGamePc(Common::File *in, Item *item) {
 	}
 }
 
-void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
+void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, uint type) {
 	if (type == 1) {
 		if (getGameType() == GType_ELVIRA1) {
 			SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
@@ -435,7 +459,7 @@ void AGOSEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 	}
 }
 
-uint fileReadItemID(Common::File *in) {
+uint fileReadItemID(Common::SeekableReadStream *in) {
 	uint32 val = in->readUint32BE();
 	if (val == 0xFFFFFFFF)
 		return 0;
