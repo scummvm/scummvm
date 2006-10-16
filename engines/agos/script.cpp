@@ -360,6 +360,8 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
 	op[89] = &AGOSEngine::oe2_loadUserGame;
+	op[94] = &AGOSEngine::oe1_findMaster;
+	op[95] = &AGOSEngine::oe1_nextMaster;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[123] = &AGOSEngine::oe1_setTime;
@@ -424,6 +426,8 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[83] = &AGOSEngine::o1_rescan;
 	op[85] = &AGOSEngine::oww_whereTo;
 	op[89] = &AGOSEngine::oe2_loadUserGame;
+	op[94] = &AGOSEngine::oe1_findMaster;
+	op[95] = &AGOSEngine::oe1_nextMaster;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[105] = &AGOSEngine::oww_menu;
@@ -1884,9 +1888,9 @@ void AGOSEngine::oe1_whatO() {
 	int a = getVarOrWord();	
 
 	if (a == 1)
-		_subjectItem = findMaster(levelOf(me()), _scriptAdj1,_scriptNoun1);
+		_subjectItem = findMaster(_scriptAdj1,_scriptNoun1);
 	else
-		_objectItem = findMaster(levelOf(me()), _scriptAdj2, _scriptNoun2);
+		_objectItem = findMaster(_scriptAdj2, _scriptNoun2);
 }
 
 void AGOSEngine::oe1_weigh() {
@@ -2047,32 +2051,32 @@ void AGOSEngine::oe1_clearUserItem() {
 void AGOSEngine::oe1_findMaster() {
 	// 219: find master
 	int16 ad, no;
-	int16 d = getVarOrWord();
+	int16 d = getVarOrByte();
 
 	ad = (d == 1) ? _scriptAdj1 : _scriptAdj2;
 	no = (d == 1) ? _scriptNoun1 : _scriptNoun2;
 
-	d = getVarOrWord();
+	d = getVarOrByte();
 	if (d == 1)
-		_subjectItem = findMaster(levelOf(me()), ad, no);
+		_subjectItem = findMaster(ad, no);
 	else
-		_objectItem = findMaster(levelOf(me()), ad, no);
+		_objectItem = findMaster(ad, no);
 }
 
 void AGOSEngine::oe1_nextMaster() {
 	// 220: next master
 	int16 ad, no;
 	Item *item = getNextItemPtr();
-	int16 d = getVarOrWord();
+	int16 d = getVarOrByte();
 
 	ad = (d == 1) ? _scriptAdj1 : _scriptAdj2;
 	no = (d == 1) ? _scriptNoun1 : _scriptNoun2;
 
-	d = getVarOrWord();
+	d = getVarOrByte();
 	if (d == 1)
-		_subjectItem = nextMaster(levelOf(me()), item, ad, no);
+		_subjectItem = nextMaster(item, ad, no);
 	else
-		_objectItem = nextMaster(levelOf(me()), item, ad, no);
+		_objectItem = nextMaster(item, ad, no);
 }
 
 void AGOSEngine::oe1_menu() {

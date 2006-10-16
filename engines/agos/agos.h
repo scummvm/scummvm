@@ -1046,8 +1046,8 @@ public:
 	void o_unfreezeZones();
 
 	Item *findInByClass(Item *i, int16 m);
-	Item *findMaster(int16 pe, int16 a, int16 n);
-	Item *nextMaster(int16 pe, Item *item, int16 a, int16 n);
+	Item *findMaster(int16 a, int16 n);
+	Item *nextMaster(Item *item, int16 a, int16 n);
 	int16 levelOf(Item *item);
 	int wordMatch(Item *item, int16 a, int16 n);
 

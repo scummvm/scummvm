@@ -1984,7 +1984,7 @@ Item *AGOSEngine::findInByClass(Item *i, int16 m) {
 	return NULL;
 }
 
-Item *AGOSEngine::findMaster(int16 pe, int16 a, int16 n) {
+Item *AGOSEngine::findMaster(int16 a, int16 n) {
 	uint j;
 
 	for (j = 1; j < _itemArraySize; j++) {
@@ -1996,7 +1996,7 @@ Item *AGOSEngine::findMaster(int16 pe, int16 a, int16 n) {
 	return NULL;
 }
 
-Item *AGOSEngine::nextMaster(int16 pe, Item *i, int16 a, int16 n) {
+Item *AGOSEngine::nextMaster(Item *i, int16 a, int16 n) {
 	uint j;
 	uint first = itemPtrToID(i) + 1;
 

@@ -503,8 +503,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	/* 92 */
 	"IB|GET_CHILDREN",
 	NULL,
-	NULL,
-	NULL,
+	"BB|FIND_MASTER",
+	"IBB|NEXT_MASTER",
 	/* 96 */
 	"WB|PICTURE",
 	"W|LOAD_ZONE",
@@ -736,8 +736,8 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	/* 92 */
 	"IB|GET_CHILDREN",
 	NULL,
-	NULL,
-	NULL,
+	"BB|FIND_MASTER",
+	"IBB|NEXT_MASTER",
 	/* 96 */
 	"WB|PICTURE",
 	"W|LOAD_ZONE",
