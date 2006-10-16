@@ -160,7 +160,11 @@ void AGOSEngine::clearMenuStrip() {
 	for (i = 111; i != 115; i++)
 		disableBox(i);
 
-	set_video_mode_internal(2, 101);
+	if (getGameType() == GType_WW) {
+		set_video_mode_internal(2, 101);
+	} else {
+		set_video_mode_internal(2, 102);
+	}
 }
 
 // Elvira 2 and Waxworks specific
