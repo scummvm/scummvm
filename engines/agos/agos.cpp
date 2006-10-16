@@ -712,6 +712,7 @@ void AGOSEngine::setupGame() {
 
 	_stringIdLocalMin = 1;
 
+	_agosMenu = 1;
 	_superRoomNumber = 1;
 
 	for (int i = 0; i < 20; i++) {
@@ -1173,6 +1174,9 @@ void AGOSEngine::setup_cond_c_helper() {
 
 	_noRightClick = 1;
 
+	if (getGameType() == GType_WW)
+		clearMenuStrip();
+
 	if (getGameType() == GType_FF) {
 		int cursor = 5;
 		int animMax = 16;
@@ -1423,8 +1427,10 @@ startOver:
 					break;
 				}
 
-				if (getGameType() == GType_WW)
-					doMenuStrip(menuFor(ha->item_ptr, id));
+				if (getGameType() == GType_ELVIRA2)
+					doMenuStrip(menuFor_e2(ha->item_ptr, id));
+				else if (getGameType() == GType_WW)
+					doMenuStrip(menuFor_ww(ha->item_ptr, id));
 			} else {
 				// else 1
 				if (ha->verb == 0) {
@@ -1442,6 +1448,9 @@ startOver:
 			}
 		}
 	}
+
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+		clearMenuStrip();
 
 	_needHitAreaRecalc++;
 }

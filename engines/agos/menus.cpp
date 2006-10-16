@@ -123,15 +123,35 @@ void AGOSEngine::drawMenuStrip(uint windowNum, uint menuNum) {
 	mouseOn();
 }
 
-// Waxworks specific?
-uint AGOSEngine::menuFor(Item *item, uint id) {
-	if (id != 0xFFFF && id < 10 && _textMenu[id] != 0) {
-		return _textMenu[id];
-	} else {
-		// TODO
+// Elvira 2 specific
+uint AGOSEngine::menuFor_e2(Item *item, uint id) {
+	if (id = 0 || id == 2462 || id == 2480)
+		return 0xFFFF;
+ 
+	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
+		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
+		return subObject->objectFlagValue[offs];
 	}
 
-	return 0;
+	return _agosMenu;
+}
+
+// Waxworks specific
+uint AGOSEngine::menuFor_ww(Item *item, uint id) {
+	if (id != 0xFFFF && id < 10 && _textMenu[id] != 0)
+		return _textMenu[id];
+
+	if (item == NULL || itemPtrToID(item) == 542 || itemPtrToID(item) == 558)
+		return _agosMenu;
+
+	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
+		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
+		return subObject->objectFlagValue[offs];
+	}
+
+	return _agosMenu;
 }
 
 void AGOSEngine::clearMenuStrip() {
@@ -143,13 +163,15 @@ void AGOSEngine::clearMenuStrip() {
 	set_video_mode_internal(2, 101);
 }
 
+// Elvira 2 and Waxworks specific
 void AGOSEngine::doMenuStrip(uint menuNum) {
-	int i;
+	uint i;
+	const uint var = (getGameType() == GType_WW) ? 11 : 1;
 
 	for (i = 111; i != 115; i++)
 		disableBox(i);
 
-	for (i = 11; i != 16; i++)
+	for (i = var; i != (var + 5); i++)
 		_variableArray[i] = 0;
 
 	byte *srcPtr = _menuBase;
@@ -160,11 +182,11 @@ void AGOSEngine::doMenuStrip(uint menuNum) {
 	}
 
 	uint id = 111;
-	uint var = 11;
+	uint v = var;
 
 	while (READ_BE_UINT16(srcPtr) != 0) {
 		uint verb = READ_BE_UINT16(srcPtr);
-		_variableArray[var] = verb;
+		_variableArray[v] = verb;
 
 		HitArea *ha = findBox(id);
 		if (ha != NULL) {
@@ -174,11 +196,15 @@ void AGOSEngine::doMenuStrip(uint menuNum) {
 
 		id++;
 		srcPtr += 2;
-		var++;
+		v++;
 	}
 
-	_variableArray[15] = id - 111;
-	set_video_mode_internal(2, 102);
+	_variableArray[var + 4] = id - 111;
+	if (getGameType() == GType_WW) {
+		set_video_mode_internal(2, 102);
+	} else {
+		set_video_mode_internal(2, 103);
+	}
 }
 
 } // End of namespace AGOS

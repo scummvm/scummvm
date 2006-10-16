@@ -462,6 +462,9 @@ void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flag
 }
 
 void AGOSEngine::resetVerbs() {
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
+		return;
+
 	if (getGameType() == GType_PP) {
 		_verbHitArea = 300;
 	} else if (getGameType() == GType_FF) {

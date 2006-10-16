@@ -655,11 +655,11 @@ protected:
 	TextLocation *getTextLocation(uint a);
 	void setup_cond_c_helper();
 
-	void drawMenuStrip(uint windowNum, uint menuNum);
-
-	uint menuFor(Item *item, uint id);
+	uint menuFor_e2(Item *item, uint id);
+	uint menuFor_ww(Item *item, uint id);
 	void clearMenuStrip();
 	void doMenuStrip(uint menuNum);
+	void drawMenuStrip(uint windowNum, uint menuNum);
 
 	void checkLinkBox();
  	void hyperLinkOn(uint16 x);
