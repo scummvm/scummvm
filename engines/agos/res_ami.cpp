@@ -260,6 +260,14 @@ static void convertclip(uint32 offset, uint16 height, uint16 width) {
 }
 
 void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
+	// TODO Better detection of full screen images
+	if ((getGameType() == GType_WW && fileSize == 178624) ||
+		fileSize == 64800) {
+		byte *dstBuf = allocBlock (fileSize);
+		memcpy(dstBuf, srcBuf, fileSize);
+		return;
+	}
+
 	uint32 clipoffset, outlength;
 	uint16 clipwidth, clipheight;
 	byte *clipsend;

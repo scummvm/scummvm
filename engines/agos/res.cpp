@@ -731,10 +731,10 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 			(getFeatures() & GF_CRUNCHED && type != 3)) {
 			byte *srcBuffer = (byte *)malloc(srcSize);
 			if (in.read(srcBuffer, srcSize) != srcSize)
-			error("loadVGAFile: Read failed");
+				error("loadVGAFile: Read failed");
 
 			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-			if (type == 2 && dstSize != 64800) {
+			if (type == 2) {
 				dst = (byte *)malloc(dstSize);
 				decrunchFile(srcBuffer, dst, srcSize);
 				convertAmiga(dst, dstSize);
