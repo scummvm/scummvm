@@ -2312,6 +2312,11 @@ int AGOSEngine::go() {
 
 	vc34_setMouseOff();
 
+	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
+		_initMouse = 1;
+		loadMusic(0);
+	}
+
 	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
 		getGameType() == GType_FF) {
 		_moviePlay->load((const char *)"epic.dxa");
@@ -2350,14 +2355,21 @@ void AGOSEngine::shutdown() {
 void AGOSEngine::loadMusic(uint music) {
 	char buf[4];
 
-	if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
+	if (getPlatform() == Common::kPlatformAtariST) {
+		// TODO: Add support for music format used by Elvira 2
+	} else if (getPlatform() == Common::kPlatformAmiga) {
+		// TODO: Add Protracker mod support for Amiga versions
+		char filename[15];
+
+		if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
+			sprintf(filename, "elvira2");
+		else
+			sprintf(filename, "%dtune", music);
+
 		if (getFeatures() & GF_CRUNCHED) {
-			// TODO Add support for decruncher
-			debug(5,"loadMusic - Decrunch %dtune attempt", music);
+			debug(5,"loadMusic - Decrunch %s attempt", filename);
 		}
-		// TODO Add Protracker support for simon1amiga/cd32
-		debug(5,"playMusic - Load %dtune attempt", music);
-		return;
+		debug(5,"playMusic - Play %s attempt", filename);
 	} else if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
