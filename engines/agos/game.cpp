@@ -189,6 +189,12 @@ static const ADGameFileDescription ELVIRA1DOS_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
 };
 
+static const ADGameFileDescription ELVIRA1DOS_DE_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"d0b593143e21fc150c044819df2c0b98"},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
+};
+
 static const ADGameFileDescription ELVIRA1DOS_FR_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843"},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
@@ -216,6 +222,22 @@ static const ADGameFileDescription ELVIRA2DOS_GameFiles[] = {
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
 	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
 	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17"},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
+};
+
+static const ADGameFileDescription ELVIRA2DOS_ALT_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"1282fd5c520861ae2b73bf653afef547"},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
+	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17"},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
+};
+
+static const ADGameFileDescription ELVIRA2DOS_DE_GameFiles[] = {
+	{ "gamepc",		GAME_BASEFILE,	"d1979d2fbc5fb5276563578ca55cbcec"},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7"},
 	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
 };
 
@@ -697,7 +719,7 @@ static const ADGameFileDescription SWAMPY_GameFiles[] = {
 };
 
 static const AGOSGameDescription gameDescriptions[] = {
-	// Elvira - English Amiga Floppy
+	// Elvira 1 - English Amiga Floppy
 	{
 		{
 			"elvira1",
@@ -713,7 +735,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED,
 	},
 
-	// Elvira - English Amiga Demo
+	// Elvira 1 - English Amiga Demo
 	{
 		{
 			"elvira1",
@@ -729,7 +751,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_DEMO,
 	},
 
-	// Elvira - English Atari ST Floppy
+	// Elvira 1 - English Atari ST Floppy
 	{
 		{
 			"elvira1",
@@ -745,7 +767,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED,
 	},
 
-	// Elvira - English DOS Floppy
+	// Elvira 1 - English DOS Floppy
 	{
 		{
 			"elvira1",
@@ -761,7 +783,23 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE,
 	},
 
-	// Elvira - French DOS Floppy
+	// Elvira 1 - German DOS Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+			ARRAYSIZE(ELVIRA1DOS_DE_GameFiles),
+			ELVIRA1DOS_DE_GameFiles,
+			Common::DE_DEU,
+			Common::kPlatformPC,
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE,
+	},
+
+	// Elvira 1 - French DOS Floppy
 	{
 		{
 			"elvira1",
@@ -817,6 +855,38 @@ static const AGOSGameDescription gameDescriptions[] = {
 			ARRAYSIZE(ELVIRA2DOS_GameFiles),
 			ELVIRA2DOS_GameFiles,
 			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE,
+	},
+
+	// Elvira 2 - English DOS Floppy, Alternate
+	{
+		{
+			"elvira2",
+			"Floppy",
+			ARRAYSIZE(ELVIRA2DOS_ALT_GameFiles),
+			ELVIRA2DOS_ALT_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE,
+	},
+
+	// Elvira 2 - German DOS Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+			ARRAYSIZE(ELVIRA2DOS_DE_GameFiles),
+			ELVIRA2DOS_DE_GameFiles,
+			Common::DE_DEU,
 			Common::kPlatformPC,
 		},
 
