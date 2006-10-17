@@ -389,7 +389,6 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[66] = NULL;
 	op[67] = NULL;
 	op[70] = NULL;
-
 	op[163] = NULL;
 	op[164] = NULL;
 	op[167] = NULL;
@@ -473,7 +472,6 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[176] = NULL;
 	op[177] = NULL;
 	op[178] = NULL;
-	op[188] = NULL;
 }
 
 void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
