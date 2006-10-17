@@ -717,7 +717,7 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 		}
 
 		in.open(filename);
-		if (in.isOpen() == false) {
+		if (in.isOpen() == false || in.size() == 0) {
 			// Sound VGA files don't always exist
 			if (type == 3) {
 				return false;
