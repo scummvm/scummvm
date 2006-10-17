@@ -383,8 +383,13 @@ void AGOSEngine::showmessage_print_char(byte chr) {
 }
 
 void AGOSEngine::openTextWindow() {
-	if (_textWindow)
+	if (_textWindow) {
+		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			if (_textWindow->flags & 0x80)
+				clearWindow(_textWindow);
+		}
 		return;
+	}
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		_textWindow = openWindow(64, 96, 384, 172, 1, 0, 15);

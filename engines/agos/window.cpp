@@ -46,6 +46,9 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	while (window->mode != 0)
 		window++;
 
+	if (getGameType() == GType_ELVIRA1 && y >= 133)
+		textColor += 16;
+
 	window->mode = 2;
 	window->x = x;
 	window->y = y;
@@ -60,7 +63,7 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	window->textMaxLength = window->width * 8 / 6; // characters are 6 pixels
 	window->scrollY = 0;
 
-	if (getGameType() == GType_ELVIRA1)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearWindow(window);
 
 	return window;
