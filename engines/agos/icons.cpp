@@ -674,7 +674,7 @@ void AGOSEngine::removeIconArray(uint num) {
 	if (window == NULL || window->iconPtr == NULL)
 		return;
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		changeWindow(num);
 		windowPutChar(12);
 		changeWindow(curWindow);
