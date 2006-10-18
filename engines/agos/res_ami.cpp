@@ -253,7 +253,7 @@ static void convertclip(uint32 offset, uint16 height, uint16 width) {
 				word2 <<= 1;
 				word3 <<= 1;
 				word4 <<= 1;
-				*clipoutptr++ = outbyte * 16 + outbyte1; bufoutend++;
+				*clipoutptr++ = (outbyte * 16 + outbyte1); bufoutend++;
 			}
 		}
 	}

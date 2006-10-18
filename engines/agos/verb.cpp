@@ -177,6 +177,12 @@ static const char *const english_verb_prep_names[] = {
 };
 
 void AGOSEngine::clearName() {
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
+		return;
+
+	//if (_nameLocked == 1)
+	//	return;
+
 	HitArea *last;
 	HitArea *ha;
 
@@ -738,6 +744,9 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if (best_ha == NULL) {
 		clearName();
+		if (getGameType() == GType_WW && _mouseCursor >= 4)
+			_mouseCursor = 0;
+
 		return;
 	}
 
@@ -761,11 +770,24 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		} 
 	}
 
-	if (best_ha->flags & kBFNoTouchName) {
-		clearName();
-	} else if (best_ha != _lastNameOn) {
-		displayName(best_ha);
+	if ((getGameType() == GType_WW) && (_mouseCursor == 0 || _mouseCursor >= 4)) {
+		uint verb = best_ha->verb & 0x3FFF;
+		if  (verb >= 239 && verb <= 242) {
+			uint cursor = verb - 235;
+			if (_mouseCursor != cursor) {
+				_mouseCursor = cursor;
+				_needHitAreaRecalc++;
+			}
+		}
 	}
+
+	//if (_nameLocked == 0) {
+		if (best_ha->flags & kBFNoTouchName) {
+			clearName();
+		} else if (best_ha != _lastNameOn) {
+			displayName(best_ha);
+		}
+	//}
 
 	if (best_ha->flags & kBFInvertTouch && !(best_ha->flags & kBFBoxSelected)) {
 		hitarea_leave(best_ha, false);
@@ -776,6 +798,9 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 }
 
 void AGOSEngine::displayName(HitArea *ha) {
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
+		return;
+
 	bool result;
 	int x = 0, y = 0;
 

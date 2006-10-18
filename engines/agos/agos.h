@@ -340,6 +340,7 @@ protected:
 	uint16 _defaultVerb;
 	uint _currentBoxNumber;
 	uint _iOverflow;
+	uint _nameLocked;
 
 	uint16 _windowNum;
 

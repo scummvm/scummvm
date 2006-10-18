@@ -204,6 +204,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_currentBoxNumber = 0;
 	_iOverflow = 0;
+	_nameLocked = 0;
 	_hitAreaObjectItem = 0;
 	_lastHitArea = 0;
 	_lastNameOn = 0;
@@ -1228,6 +1229,7 @@ void AGOSEngine::setup_cond_c_helper() {
 
 	_lastHitArea = 0;
 	_hitAreaObjectItem = NULL;
+	_nameLocked = 0;
 
 	last = _lastNameOn;
 	clearName();
@@ -1332,11 +1334,15 @@ void AGOSEngine::hitarea_stuff() {
 	_verbHitArea = 0;
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
+	_nameLocked = 0;
 
-	if (getGameType() == GType_WW)
+	if (getGameType() == GType_WW) {
+		_mouseCursor = 0;
+		_needHitAreaRecalc++;
 		clearMenuStrip();
-	else
+	} else {
 		resetVerbs();
+	}
 
 startOver:
 	for (;;) {
@@ -1376,6 +1382,9 @@ startOver:
 			_defaultVerb = 0;
 		} else {
 			if (getGameType() == GType_WW) {
+				if (_mouseCursor == 3)
+					_verbHitArea = 236;
+
 				if (ha->id == 98) {
 					loadSprite(2, 0, 110, 0, 0, 0);
 					waitForSync(34);
@@ -1421,7 +1430,10 @@ startOver:
 					_variableArray[10] = id;
 				else
 					_variableArray[60] = id;
+
+				_nameLocked = 2;
 				displayName(ha);
+				_nameLocked = 1;
 
 				if (_verbHitArea != 0) {
 					break;
@@ -1437,6 +1449,11 @@ startOver:
 					if (ha->item_ptr)
 						goto if_1;
 				} else {
+					if (getGameType() == GType_WW && _mouseCursor != 0 && _mouseCursor < 4) {
+						_hitAreaSubjectItem = ha->item_ptr;
+						break;
+					}
+
 					_verbHitArea = ha->verb & 0xBFFF;
 					if (ha->verb & 0x4000) {
 						_hitAreaSubjectItem = ha->item_ptr;
@@ -1444,6 +1461,16 @@ startOver:
 					}
 					if (_hitAreaSubjectItem != NULL)
 						break;
+
+					if (getGameType() == GType_WW) {
+						if (ha->id == 109) {
+							_mouseCursor = 2;
+							_needHitAreaRecalc++;
+						} else if (ha->id == 117) {
+							_mouseCursor = 3;
+							_needHitAreaRecalc++;
+						}
+					}
 				}
 			}
 		}
@@ -1452,6 +1479,7 @@ startOver:
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearMenuStrip();
 
+	_nameLocked = 0;
 	_needHitAreaRecalc++;
 }
 
