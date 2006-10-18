@@ -387,6 +387,12 @@ void AGOSEngine::handleMouseMoved() {
 		get_out2:;
 			_vgaVar9 = 0;
 		}
+	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
+		uint swordCursor = (getGameType() == GType_WW) ? _variableArray[51] : _variableArray[72];
+		if (swordCursor != 0 && _mouseCursor != swordCursor) {
+			_mouseCursor = swordCursor;
+			_needHitAreaRecalc++;
+		}
 	}
 
 	if (_mouseX != _mouseXOld || _mouseY != _mouseYOld)

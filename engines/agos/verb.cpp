@@ -744,9 +744,10 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if (best_ha == NULL) {
 		clearName();
-		if (getGameType() == GType_WW && _mouseCursor >= 4)
+		if (getGameType() == GType_WW && _mouseCursor >= 4) {
 			_mouseCursor = 0;
-
+			_needHitAreaRecalc++;
+		}
 		return;
 	}
 
