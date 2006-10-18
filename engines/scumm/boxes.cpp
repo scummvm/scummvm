@@ -439,12 +439,7 @@ int ScummEngine_v6::getSpecialBox(int x, int y) {
 }
 
 bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
-	BoxCoords box;
-
-	if (b < 0 || b == Actor::kInvalidBox)
-		return false;
-
-	box = getBoxCoordinates(b);
+	BoxCoords box = getBoxCoordinates(b);
 
 	if (x < box.ul.x && x < box.ur.x && x < box.lr.x && x < box.ll.x)
 		return false;
@@ -458,8 +453,8 @@ bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 	if (y > box.ul.y && y > box.ur.y && y > box.lr.y && y > box.ll.y)
 		return false;
 
-	if (box.ul.x == box.ur.x && box.ul.y == box.ur.y && box.lr.x == box.ll.x && box.lr.y == box.ll.y ||
-		box.ul.x == box.ll.x && box.ul.y == box.ll.y && box.ur.x == box.lr.x && box.ur.y == box.lr.y) {
+	if (box.ul == box.ur && box.lr == box.ll ||
+		box.ul == box.ll && box.ur == box.lr) {
 
 		Common::Point pt;
 		pt = closestPtOnLine(box.ul, box.lr, x, y);
