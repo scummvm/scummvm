@@ -50,6 +50,10 @@ struct BoxCoords {			/* Box coordinates */
 	Common::Point lr;
 };
 
+void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[2], Common::Point gateB[2]);
+bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold);
+int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY);
+
 } // End of namespace Scumm
 
 #endif

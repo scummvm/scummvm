@@ -642,7 +642,7 @@ void ScummDebugger::printBox(int box) {
 	int mask = _vm->getMaskFromBox(box);
 	int scale = _vm->getBoxScale(box);
 
-	_vm->getBoxCoordinates(box, &coords);
+	coords = _vm->getBoxCoordinates(box);
 
 	// Print out coords, flags, zbuffer mask
 	DebugPrintf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d, scale=%d\n",
@@ -748,7 +748,7 @@ void ScummDebugger::drawBox(int box) {
 	BoxCoords coords;
 	Common::Point r[4];
 
-	_vm->getBoxCoordinates(box, &coords);
+	coords = _vm->getBoxCoordinates(box);
 
 	r[0] = coords.ul;
 	r[1] = coords.ur;

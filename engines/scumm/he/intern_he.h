@@ -55,7 +55,6 @@ protected:
 	const OpcodeEntryv60he *_opcodesv60he;
 
 public:
-	//Common::File _hFileTable[17];
 	Common::SeekableReadStream *_hInFileTable[17];
 	Common::WriteStream *_hOutFileTable[17];
 

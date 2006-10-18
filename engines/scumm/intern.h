@@ -668,6 +668,8 @@ protected:
 
 	virtual void processActors();
 
+	int getSpecialBox(int x, int y);
+
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
 	void o6_pushByte();

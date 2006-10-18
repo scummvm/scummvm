@@ -25,6 +25,7 @@
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
+#include "scumm/intern.h"
 #include "scumm/util.h"
 
 #include "common/util.h"
@@ -87,6 +88,7 @@ struct Box {				/* Internal walkbox file format */
 
 static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
 static Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &end, int x, int y);
+static uint distanceFromPt(int x, int y, int ptx, int pty);
 
 
 byte ScummEngine::getMaskFromBox(int box) {
@@ -416,7 +418,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
 }
 
-int ScummEngine::getSpecialBox(int x, int y) {
+int ScummEngine_v6::getSpecialBox(int x, int y) {
 	int i;
 	int numOfBoxes;
 	byte flag;
@@ -442,7 +444,7 @@ bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 	if (b < 0 || b == Actor::kInvalidBox)
 		return false;
 
-	getBoxCoordinates(b, &box);
+	box = getBoxCoordinates(b);
 
 	if (x < box.ul.x && x < box.ur.x && x < box.lr.x && x < box.ll.x)
 		return false;
@@ -480,7 +482,8 @@ bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 	return true;
 }
 
-void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
+BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
+	BoxCoords tmp, *box = &tmp;
 	Box *bp = getBoxBaseAddr(boxnum);
 	assert(bp);
 
@@ -543,9 +546,10 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 		box->lr.x = (int16)READ_LE_UINT16(&bp->old.lrx);
 		box->lr.y = (int16)READ_LE_UINT16(&bp->old.lry);
 	}
+	return *box;
 }
 
-uint ScummEngine::distanceFromPt(int x, int y, int ptx, int pty) {
+uint distanceFromPt(int x, int y, int ptx, int pty) {
 	int diffx, diffy;
 
 	diffx = ABS(ptx - x);
@@ -639,11 +643,8 @@ Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &e
 	return pt;
 }
 
-bool ScummEngine::inBoxQuickReject(int b, int x, int y, int threshold) {
+bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
 	int t;
-	BoxCoords box;
-
-	getBoxCoordinates(b, &box);
 
 	t = x - threshold;
 	if (t > box.ul.x && t > box.ur.x && t > box.lr.x && t > box.ll.x)
@@ -664,13 +665,10 @@ bool ScummEngine::inBoxQuickReject(int b, int x, int y, int threshold) {
 	return false;
 }
 
-int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
+int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY) {
 	Common::Point pt;
 	uint dist;
 	uint bestdist = 0xFFFFFF;
-	BoxCoords box;
-
-	getBoxCoordinates(b, &box);
 
 	pt = closestPtOnLine(box.ul, box.ur, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
@@ -809,15 +807,12 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
  * line in order to get from box1 to box3 via box2.
  */
 bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point &foundPath) {
-	BoxCoords box1;
-	BoxCoords box2;
+	BoxCoords box1 = _vm->getBoxCoordinates(box1nr);
+	BoxCoords box2 = _vm->getBoxCoordinates(box2nr);
 	Common::Point tmp;
 	int i, j;
 	int flag;
 	int q, pos;
-
-	_vm->getBoxCoordinates(box1nr, &box1);
-	_vm->getBoxCoordinates(box2nr, &box2);
 
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {
@@ -1080,8 +1075,8 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	if (getBoxFlags(box1nr) & kBoxInvisible || getBoxFlags(box2nr) & kBoxInvisible)
 		return false;
 
-	getBoxCoordinates(box1nr, &box2);
-	getBoxCoordinates(box2nr, &box);
+	box2 = getBoxCoordinates(box1nr);
+	box = getBoxCoordinates(box2nr);
 
 	// Roughly, the idea of this algorithm is to check if we can find
 	// two sides of the two given boxes which touch.
@@ -1173,7 +1168,7 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 	Common::Point gateA[2];
 	Common::Point gateB[2];
 
-	_vm->getGates(box1, box2, gateA, gateB);
+	getGates(_vm->getBoxCoordinates(box1), _vm->getBoxCoordinates(box2), gateA, gateB);
 
 	p2.x = 32000;
 	p3.x = 32000;
@@ -1210,34 +1205,31 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
  * This way the lines bound a 'corridor' between the two boxes, through which
  * the actor has to walk to get from box1 to box2.
  */
-void ScummEngine::getGates(int box1, int box2, Common::Point gateA[2], Common::Point gateB[2]) {
+void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[2], Common::Point gateB[2]) {
 	int i, j;
 	int dist[8];
 	int minDist[3];
 	int closest[3];
 	int box[3];
-	BoxCoords coords;
 	Common::Point closestPoint[8];
 	Common::Point boxCorner[8];
 	int line1, line2;
 
 	// For all corner coordinates of the first box, compute the point closest
 	// to them on the second box (and also compute the distance of these points).
-	getBoxCoordinates(box1, &coords);
-	boxCorner[0] = coords.ul;
-	boxCorner[1] = coords.ur;
-	boxCorner[2] = coords.lr;
-	boxCorner[3] = coords.ll;
+	boxCorner[0] = box1.ul;
+	boxCorner[1] = box1.ur;
+	boxCorner[2] = box1.lr;
+	boxCorner[3] = box1.ll;
 	for (i = 0; i < 4; i++) {
 		dist[i] = getClosestPtOnBox(box2, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
 	}
 
 	// Now do the same but with the roles of the first and second box swapped.
-	getBoxCoordinates(box2, &coords);
-	boxCorner[4] = coords.ul;
-	boxCorner[5] = coords.ur;
-	boxCorner[6] = coords.lr;
-	boxCorner[7] = coords.ll;
+	boxCorner[4] = box2.ul;
+	boxCorner[5] = box2.ur;
+	boxCorner[6] = box2.lr;
+	boxCorner[7] = box2.ll;
 	for (i = 4; i < 8; i++) {
 		dist[i] = getClosestPtOnBox(box1, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
 	}

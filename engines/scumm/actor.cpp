@@ -702,7 +702,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			// For increased performance, we perform a quick test if
 			// the coordinates can even be within a distance of 'threshold'
 			// pixels of the box.
-			if (threshold > 0 && _vm->inBoxQuickReject(box, dstX, dstY, threshold))
+			if (threshold > 0 && inBoxQuickReject(_vm->getBoxCoordinates(box), dstX, dstY, threshold))
 				continue;
 
 			// Check if the point is contained in the box. If it is,
@@ -715,7 +715,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			}
 
 			// Find the point in the box which is closest to our point.
-			tmpDist = _vm->getClosestPtOnBox(box, dstX, dstY, tmpX, tmpY);
+			tmpDist = getClosestPtOnBox(_vm->getBoxCoordinates(box), dstX, dstY, tmpX, tmpY);
 
 			// Check if the box is closer than the previous boxes.
 			if (tmpDist < bestDist) {
@@ -1812,8 +1812,8 @@ void Actor::walkActorV12() {
 
 				_walkdata.curbox = next_box;
 
-				_vm->getClosestPtOnBox(_walkdata.curbox, x, y, tmp.x, tmp.y);
-				_vm->getClosestPtOnBox(_walkbox, tmp.x, tmp.y, foundPath.x, foundPath.y);
+				getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), x, y, tmp.x, tmp.y);
+				getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
 			}
 			calcMovementFactor(foundPath);
 		}
@@ -1896,8 +1896,8 @@ void Actor::walkActorOld() {
 		_walkdata.curbox = next_box;
 
 		if (_vm->_game.version <= 2) {
-			_vm->getClosestPtOnBox(_walkdata.curbox, _pos.x, _pos.y, p2.x, p2.y);
-			_vm->getClosestPtOnBox(_walkbox, p2.x, p2.y, p3.x, p3.y);
+			getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, p2.x, p2.y);
+			getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), p2.x, p2.y, p3.x, p3.y);
 // FIXME: Work in progress
 //			calcMovementFactor(p3);
 //			return;

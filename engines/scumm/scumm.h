@@ -1139,17 +1139,14 @@ public:
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
-	void getGates(int trap1, int trap2, Common::Point gateA[2], Common::Point gateB[2]);
-	bool inBoxQuickReject(int box, int x, int y, int threshold);
-	int getClosestPtOnBox(int box, int x, int y, int16& outX, int16& outY);
-	int getSpecialBox(int param1, int param2);
 
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
 
 	bool checkXYInBoxBounds(int box, int x, int y);
-	uint distanceFromPt(int x, int y, int ptx, int pty);
-	void getBoxCoordinates(int boxnum, BoxCoords *bc);
+
+	BoxCoords getBoxCoordinates(int boxnum);
+
 	byte getMaskFromBox(int box);
 	Box *getBoxBaseAddr(int box);
 	byte getBoxFlags(int box);
