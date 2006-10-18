@@ -86,10 +86,82 @@ struct Box {				/* Internal walkbox file format */
 #define BOX_DEBUG 0
 
 
-static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
-static Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &end, int x, int y);
-static uint distanceFromPt(int x, int y, int ptx, int pty);
 static void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[2], Common::Point gateB[2]);
+
+static bool compareSlope(const Common::Point &p1, const Common::Point &p2, const Common::Point &p3) {
+	return (p2.y - p1.y) * (p3.x - p1.x) <= (p3.y - p1.y) * (p2.x - p1.x);
+}
+
+/**
+ * Find the point on a line segment which is closest to a given point.
+ *
+ * @param lineStart	the start of the line segment
+ * @param lineEnd	the end of the line segment
+ * @param p		the point which we want to 'project' on the line segment
+ * @return the point on the line segment closest to the given point
+ */
+static Common::Point closestPtOnLine(const Common::Point &lineStart, const Common::Point &lineEnd, const Common::Point &p) {
+	Common::Point result;
+
+	const int lxdiff = lineEnd.x - lineStart.x;
+	const int lydiff = lineEnd.y - lineStart.y;
+
+	if (lineEnd.x == lineStart.x) {	// Vertical line?
+		result.x = lineStart.x;
+		result.y = p.y;
+	} else if (lineEnd.y == lineStart.y) {	// Horizontal line?
+		result.x = p.x;
+		result.y = lineStart.y;
+	} else {
+		const int dist = lxdiff * lxdiff + lydiff * lydiff;
+		int a, b, c;
+		if (ABS(lxdiff) > ABS(lydiff)) {
+			a = lineStart.x * lydiff / lxdiff;
+			b = p.x * lxdiff / lydiff;
+
+			c = (a + b - lineStart.y + p.y) * lydiff * lxdiff / dist;
+
+			result.x = c;
+			result.y = c * lydiff / lxdiff - a + lineStart.y;
+		} else {
+			a = lineStart.y * lxdiff / lydiff;
+			b = p.y * lydiff / lxdiff;
+
+			c = (a + b - lineStart.x + p.x) * lydiff * lxdiff / dist;
+
+			result.x = c * lxdiff / lydiff - a + lineStart.x;
+			result.y = c;
+		}
+	}
+
+	if (ABS(lydiff) < ABS(lxdiff)) {
+		if (lxdiff > 0) {
+			if (result.x < lineStart.x)
+				result = lineStart;
+			else if (result.x > lineEnd.x)
+				result = lineEnd;
+		} else {
+			if (result.x > lineStart.x)
+				result = lineStart;
+			else if (result.x < lineEnd.x)
+				result = lineEnd;
+		}
+	} else {
+		if (lydiff > 0) {
+			if (result.y < lineStart.y)
+				result = lineStart;
+			else if (result.y > lineEnd.y)
+				result = lineEnd;
+		} else {
+			if (result.y > lineStart.y)
+				result = lineStart;
+			else if (result.y < lineEnd.y)
+				result = lineEnd;
+		}
+	}
+
+	return result;
+}
 
 byte ScummEngine::getMaskFromBox(int box) {
 	// WORKAROUND for bug #740244 and #755863. This appears to have been a
@@ -440,7 +512,12 @@ int ScummEngine_v6::getSpecialBox(int x, int y) {
 
 bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box = getBoxCoordinates(b);
+	const Common::Point p(x, y);
 
+	// Quick check: If the x (resp. y) coordinate of the point is
+	// strictly smaller (bigger) than the x (y) coordinates of all
+	// corners of the quadrangle, then it certainly is *not* contained
+	// inside the quadrangle.
 	if (x < box.ul.x && x < box.ur.x && x < box.lr.x && x < box.ll.x)
 		return false;
 
@@ -453,25 +530,28 @@ bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 	if (y > box.ul.y && y > box.ur.y && y > box.lr.y && y > box.ll.y)
 		return false;
 
+	// Corner case: If the box is a simple line segment, we consider the
+	// point to be contained "in" (or rather, lying on) the line if it
+	// is very close to its projection to the line segment.
 	if (box.ul == box.ur && box.lr == box.ll ||
 		box.ul == box.ll && box.ur == box.lr) {
 
-		Common::Point pt;
-		pt = closestPtOnLine(box.ul, box.lr, x, y);
-		if (distanceFromPt(x, y, pt.x, pt.y) <= 4)
+		Common::Point tmp;
+		tmp = closestPtOnLine(box.ul, box.lr, p);
+		if (p.sqrDist(tmp) <= 4)
 			return true;
 	}
-
-	if (!compareSlope(box.ul.x, box.ul.y, box.ur.x, box.ur.y, x, y))
+	
+	if (!compareSlope(box.ul, box.ur, p))
 		return false;
 
-	if (!compareSlope(box.ur.x, box.ur.y, box.lr.x, box.lr.y, x, y))
+	if (!compareSlope(box.ur, box.lr, p))
+		return false;
+		
+	if (!compareSlope(box.ll, p, box.lr))
 		return false;
 
-	if (!compareSlope(box.ll.x, box.ll.y, x, y, box.lr.x, box.lr.y))
-		return false;
-
-	if (!compareSlope(box.ul.x, box.ul.y, x, y, box.ll.x, box.ll.y))
+	if (!compareSlope(box.ul, p, box.ll))
 		return false;
 
 	return true;
@@ -544,100 +624,6 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 	return *box;
 }
 
-uint distanceFromPt(int x, int y, int ptx, int pty) {
-	int diffx, diffy;
-
-	diffx = ABS(ptx - x);
-
-	if (diffx >= 0x1000)
-		return 0xFFFFFF;
-
-	diffy = ABS(pty - y);
-
-	if (diffy >= 0x1000)
-		return 0xFFFFFF;
-	diffx *= diffx;
-	diffy *= diffy;
-	return diffx + diffy;
-}
-
-
-bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3) {
-	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
-}
-
-/**
- * Find the point on a line segment which is closest to a given point.
- *
- * @param start	the start of the line segment
- * @param end	the end of the line segment
- * @param x		the x coordinate of the point which we want to 'project' on the line segment
- * @param y		the y coordinate of the point which we want to 'project' on the line segment
- * @return the point on the line segmen closes to the given point
- */
-Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &end, int x, int y) {
-	Common::Point pt;
-
-	const int lxdiff = end.x - start.x;
-	const int lydiff = end.y - start.y;
-
-	if (end.x == start.x) {	// Vertical line?
-		pt.x = start.x;
-		pt.y = y;
-	} else if (end.y == start.y) {	// Horizontal line?
-		pt.x = x;
-		pt.y = start.y;
-	} else {
-		const int dist = lxdiff * lxdiff + lydiff * lydiff;
-		int a, b, c;
-		if (ABS(lxdiff) > ABS(lydiff)) {
-			a = start.x * lydiff / lxdiff;
-			b = x * lxdiff / lydiff;
-
-			c = (a + b - start.y + y) * lydiff * lxdiff / dist;
-
-			pt.x = c;
-			pt.y = c * lydiff / lxdiff - a + start.y;
-		} else {
-			a = start.y * lxdiff / lydiff;
-			b = y * lydiff / lxdiff;
-
-			c = (a + b - start.x + x) * lydiff * lxdiff / dist;
-
-			pt.y = c;
-			pt.x = c * lxdiff / lydiff - a + start.x;
-		}
-	}
-
-	if (ABS(lydiff) < ABS(lxdiff)) {
-		if (lxdiff > 0) {
-			if (pt.x < start.x)
-				pt = start;
-			else if (pt.x > end.x)
-				pt = end;
-		} else {
-			if (pt.x > start.x)
-				pt = start;
-			else if (pt.x < end.x)
-				pt = end;
-		}
-	} else {
-		if (lydiff > 0) {
-			if (pt.y < start.y)
-				pt = start;
-			else if (pt.y > end.y)
-				pt = end;
-		} else {
-			if (pt.y > start.y)
-				pt = start;
-			else if (pt.y < end.y)
-				pt = end;
-		}
-	}
-
-	return pt;
-}
-
 bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
 	int t;
 
@@ -661,40 +647,41 @@ bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
 }
 
 int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY) {
-	Common::Point pt;
+	const Common::Point p(x, y);
+	Common::Point tmp;
 	uint dist;
 	uint bestdist = 0xFFFFFF;
 
-	pt = closestPtOnLine(box.ul, box.ur, x, y);
-	dist = distanceFromPt(x, y, pt.x, pt.y);
+	tmp = closestPtOnLine(box.ul, box.ur, p);
+	dist = p.sqrDist(tmp);
 	if (dist < bestdist) {
 		bestdist = dist;
-		outX = pt.x;
-		outY = pt.y;
+		outX = tmp.x;
+		outY = tmp.y;
 	}
 
-	pt = closestPtOnLine(box.ur, box.lr, x, y);
-	dist = distanceFromPt(x, y, pt.x, pt.y);
+	tmp = closestPtOnLine(box.ur, box.lr, p);
+	dist = p.sqrDist(tmp);
 	if (dist < bestdist) {
 		bestdist = dist;
-		outX = pt.x;
-		outY = pt.y;
+		outX = tmp.x;
+		outY = tmp.y;
 	}
 
-	pt = closestPtOnLine(box.lr, box.ll, x, y);
-	dist = distanceFromPt(x, y, pt.x, pt.y);
+	tmp = closestPtOnLine(box.lr, box.ll, p);
+	dist = p.sqrDist(tmp);
 	if (dist < bestdist) {
 		bestdist = dist;
-		outX = pt.x;
-		outY = pt.y;
+		outX = tmp.x;
+		outY = tmp.y;
 	}
 
-	pt = closestPtOnLine(box.ll, box.ul, x, y);
-	dist = distanceFromPt(x, y, pt.x, pt.y);
+	tmp = closestPtOnLine(box.ll, box.ul, p);
+	dist = p.sqrDist(tmp);
 	if (dist < bestdist) {
 		bestdist = dist;
-		outX = pt.x;
-		outY = pt.y;
+		outX = tmp.x;
+		outY = tmp.y;
 	}
 
 	return bestdist;
@@ -1174,20 +1161,19 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 		// 'maze' in the zeppelin (see bug #1032964).
 		if (_vm->_game.id != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
 			// Is the actor (x,y) between both gates?
-			if (compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateA[0].x, gateA[0].y) !=
-					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateB[0].x, gateB[0].y) &&
-					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateA[1].x, gateA[1].y) !=
-					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateB[1].x, gateB[1].y)) {
+			if (compareSlope(_pos, _walkdata.dest, gateA[0]) !=
+					compareSlope(_pos, _walkdata.dest, gateB[0]) &&
+					compareSlope(_pos, _walkdata.dest, gateA[1]) !=
+					compareSlope(_pos, _walkdata.dest, gateB[1])) {
 				return;
 			}
 		}
 	}
 
-	p3 = pt = closestPtOnLine(gateA[1], gateB[1], _pos.x, _pos.y);
+	p3 = pt = closestPtOnLine(gateA[1], gateB[1], _pos);
 
-	if (compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateA[0].x, gateA[0].y) ==
-			compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateB[0].x, gateB[0].y)) {
-		closestPtOnLine(gateA[0], gateB[0], _pos.x, _pos.y);
+	if (compareSlope(_pos, p3, gateA[0]) == compareSlope(_pos, p3, gateB[0])) {
+		closestPtOnLine(gateA[0], gateB[0], _pos);
 		p2 = pt;	// if point 2 between gates, ignore!
 	}
 }
