@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef __SOUND_MODS_PROTRACKER_H__
-#define __SOUND_MODS_PROTRACKER_H__
+#ifndef SOUND_MODS_PROTRACKER_H
+#define SOUND_MODS_PROTRACKER_H
 
 #include "common/stdafx.h"
 #include "common/system.h"
@@ -32,7 +32,7 @@
 namespace Modules {
 
 class SoundBuffer {
-      private:
+private:
 	int _capacity;
 	int _size;
 	int16 *_data;
@@ -82,6 +82,7 @@ public:
 };
 
 class ProtrackerPlayer {
+private:
 	OSystem *_system;
 	Module *_module;
 
@@ -129,7 +130,7 @@ class ProtrackerPlayer {
 	} _track[4];
 
 public:
-	ProtrackerPlayer() : _system(NULL), _module(NULL) { };
+	ProtrackerPlayer() : _system(0), _module(0) { };
 
 	void init(OSystem *system);
 

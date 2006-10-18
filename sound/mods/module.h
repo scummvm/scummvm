@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef __SOUND_MODS_MODULE_H__
-#define __SOUND_MODS_MODULE_H__
+#ifndef SOUND_MODS_MODULE_H
+#define SOUND_MODS_MODULE_H
 
 namespace Modules {
 
@@ -34,15 +34,15 @@ namespace Modules {
  * like they are in the file.
  */
 
-typedef struct {
+struct note_t {
 	byte sample;
 	uint16 period;
 	uint16 effect;
-} note_t;
+};
 
 typedef note_t pattern_t[64][4];
 
-typedef struct {
+struct sample_t {
 	byte name[23];
 	uint16 len;
 	byte finetune;
@@ -50,7 +50,7 @@ typedef struct {
 	uint16 repeat;
 	uint16 replen;
 	byte *data;
-} sample_t;
+};
 
 class Module {
 public:

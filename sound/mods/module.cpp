@@ -161,9 +161,9 @@ bool Module::load(const char *fn) {
 }
 
 Module::Module() {
-	pattern = NULL;
+	pattern = 0;
 	for (int i = 0; i < 31; ++i) {
-		sample[i].data = NULL;
+		sample[i].data = 0;
 	}
 }
 

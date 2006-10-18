@@ -106,7 +106,7 @@ void ProtrackerPlayer::generateSound() {
 			static bool did_warn_about_finetune = false;
 			if (!did_warn_about_finetune && _module->sample[sample].finetune != 0) {
 				did_warn_about_finetune = true;
-				puts("Warning! Finetuning not implemented!");
+				warning("Finetuning not implemented!");
 			}
 
 			if (_module->sample[sample].replen > 2) {
