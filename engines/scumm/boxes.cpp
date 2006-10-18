@@ -89,7 +89,7 @@ struct Box {				/* Internal walkbox file format */
 static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
 static Common::Point closestPtOnLine(const Common::Point &start, const Common::Point &end, int x, int y);
 static uint distanceFromPt(int x, int y, int ptx, int pty);
-
+static void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[2], Common::Point gateB[2]);
 
 byte ScummEngine::getMaskFromBox(int box) {
 	// WORKAROUND for bug #740244 and #755863. This appears to have been a
