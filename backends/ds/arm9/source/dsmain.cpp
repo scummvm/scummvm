@@ -2018,7 +2018,7 @@ int main(void)
 	consolePrintf("---------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1beta4 ");
+	consolePrintf("Version 0.9.1beta6 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
@@ -2054,8 +2054,41 @@ int main(void)
 	int extraData = DSSaveFileManager::getExtraData();
 	bool present = DSSaveFileManager::isExtraDataPresent();
 
-	swiWaitForVBlank();
+	for (int r = 0; r < 30; r++) {
+		swiWaitForVBlank();
+	}
 
+	int mode = extraData & 0x03;
+
+	if (mode == 0) {
+		if ((keysHeld() & KEY_L) && !(keysHeld() & KEY_R)) {
+			mode = 1;
+		} else if (!(keysHeld() & KEY_L) && (keysHeld() & KEY_R)) {
+			mode = 2;
+		}
+	} else {
+		if ((keysHeld() & KEY_L) && !(keysHeld() & KEY_R)) {
+			mode = 0;
+		}
+	}
+
+
+	if (mode == 0) {
+		consolePrintf("On startup hold L if you have\n");
+		consolePrintf("an M3 SD or R for an SC SD\n");
+	} else if (mode == 1) {
+		consolePrintf("Using M3 SD Mode.\n");
+		consolePrintf("Hold L on startup to disable.\n");
+	} else if (mode == 2) {
+		consolePrintf("Using SC SD Mode.\n");
+		consolePrintf("Hold L on startup to disable.\n");
+	}
+
+	disc_setEnable(mode);
+	DSSaveFileManager::setExtraData(mode);
+
+
+/*
 	if ((present) && (extraData & 0x00000001)) {
 
 		if (keysHeld() & KEY_L) {
@@ -2077,8 +2110,9 @@ int main(void)
 	}
 
 	disc_setM3SDEnable(extraData & 0x00000001);
-
+*/
 	// Create a file system node to force search for a zip file in GBA rom space
+
 	DSFileSystemNode* node = new DSFileSystemNode();
 	if (!node->getZip() || (!node->getZip()->isReady())) {
 		// If not found, init CF/SD driver
