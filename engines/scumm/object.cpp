@@ -36,24 +36,6 @@
 
 namespace Scumm {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-struct BompHeader {			/* Bomp header */
-	union {
-		struct {
-			uint16 unk;
-			uint16 width, height;
-		} old;
-
-		struct {
-			uint32 width, height;
-		} v8;
-	};
-};
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-
 void ScummEngine::addObjectToInventory(uint obj, uint room) {
 	int idx, slot;
 	uint32 size;
@@ -293,7 +275,7 @@ int ScummEngine::getState(int obj) {
 		//
 		// This will keep the security door open at all times. I can only
 		// assume that 182 and 193 each correspond to one particular side of
-		// the it. Fortunately it does not prevent frustrated players from
+		// it. Fortunately this does not prevent frustrated players from
 		// blowing up the mansion, should they feel the urge to.
 
 		if (_game.id == GID_MANIAC && (obj == 182 || obj == 193))
@@ -1651,11 +1633,11 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		error("object %d is not a blast object", eo->number);
 
 	if (_game.version == 8) {
-		bdd.srcwidth = READ_LE_UINT32(&((const BompHeader *)bomp)->v8.width);
-		bdd.srcheight = READ_LE_UINT32(&((const BompHeader *)bomp)->v8.height);
+		bdd.srcwidth = READ_LE_UINT32(bomp);
+		bdd.srcheight = READ_LE_UINT32(bomp+4);
 	} else {
-		bdd.srcwidth = READ_LE_UINT16(&((const BompHeader *)bomp)->old.width);
-		bdd.srcheight = READ_LE_UINT16(&((const BompHeader *)bomp)->old.height);
+		bdd.srcwidth = READ_LE_UINT16(bomp+2);
+		bdd.srcheight = READ_LE_UINT16(bomp+4);
 	}
 
 	bdd.dst = *vs;
