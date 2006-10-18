@@ -897,8 +897,6 @@ public:
 	Actor *derefActor(int id, const char *errmsg = 0) const;
 	Actor *derefActorSafe(int id, const char *errmsg) const;
 
-	int getAngleFromPos(int x, int y) const;
-
 protected:
 	void walkActors();
 	void playActorSounds();
