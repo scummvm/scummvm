@@ -542,16 +542,21 @@ bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 			return true;
 	}
 	
+	// Finally, fall back to the classic algorithm to compute containment
+	// in a convex polygon: For each (oriented) side of the polygon
+	// (quadrangle in this case), compute whether p is "left" or "right"
+	// from it.
+
 	if (!compareSlope(box.ul, box.ur, p))
 		return false;
 
 	if (!compareSlope(box.ur, box.lr, p))
 		return false;
-		
-	if (!compareSlope(box.ll, p, box.lr))
+
+	if (!compareSlope(box.lr, box.ll, p))
 		return false;
 
-	if (!compareSlope(box.ul, p, box.ll))
+	if (!compareSlope(box.ll, box.ul, p))
 		return false;
 
 	return true;
