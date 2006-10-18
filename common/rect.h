@@ -42,6 +42,24 @@ struct Point {
 	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
 	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
 	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
+	
+	/**
+	 * Return the square of the distance between this point and the point p.
+	 *
+	 * @param p		the other point
+	 * @return the distance between this and p
+	 */
+	uint sqrDist(const Point & p) const {
+		int diffx = ABS(p.x - x);
+		if (diffx >= 0x1000)
+			return 0xFFFFFF;
+	
+		int diffy = ABS(p.y - y);
+		if (diffy >= 0x1000)
+			return 0xFFFFFF;
+
+		return diffx*diffx + diffy*diffy;
+	}
 };
 
 /*! 	@brief simple class for handling a rectangular zone.
