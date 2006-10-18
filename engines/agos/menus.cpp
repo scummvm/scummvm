@@ -125,7 +125,7 @@ void AGOSEngine::drawMenuStrip(uint windowNum, uint menuNum) {
 
 // Elvira 2 specific
 uint AGOSEngine::menuFor_e2(Item *item, uint id) {
-	if (id = 0 || id == 2462 || id == 2480)
+	if (id == 0 || id == 2462 || id == 2480)
 		return 0xFFFF;
  
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
