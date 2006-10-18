@@ -54,6 +54,163 @@ struct BompHeader {			/* Bomp header */
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 
+void ScummEngine::addObjectToInventory(uint obj, uint room) {
+	int idx, slot;
+	uint32 size;
+	const byte *ptr;
+	byte *dst;
+	FindObjectInRoom foir;
+
+	debug(1, "Adding object %d from room %d into inventory", obj, room);
+
+	if (whereIsObject(obj) == WIO_FLOBJECT) {
+		idx = getObjectIndex(obj);
+		assert(idx >= 0);
+		ptr = getResourceAddress(rtFlObject, _objs[idx].fl_object_index) + 8;
+		size = READ_BE_UINT32(ptr + 4);
+	} else {
+		findObjectInRoom(&foir, foCodeHeader, obj, room);
+		if (_game.features & GF_OLD_BUNDLE)
+			size = READ_LE_UINT16(foir.obcd);
+		else if (_game.features & GF_SMALL_HEADER)
+			size = READ_LE_UINT32(foir.obcd);
+		else
+			size = READ_BE_UINT32(foir.obcd + 4);
+		ptr = foir.obcd;
+	}
+
+	slot = getInventorySlot();
+	_inventory[slot] = obj;
+	dst = _res->createResource(rtInventory, slot, size);
+	assert(dst);
+	memcpy(dst, ptr, size);
+}
+
+int ScummEngine::getInventorySlot() {
+	int i;
+	for (i = 0; i < _numInventory; i++) {
+		if (_inventory[i] == 0)
+			return i;
+	}
+	error("Inventory full, %d max items", _numInventory);
+	return -1;
+}
+
+int ScummEngine::findInventory(int owner, int idx) {
+	int count = 1, i, obj;
+	for (i = 0; i < _numInventory; i++) {
+		obj = _inventory[i];
+		if (obj && getOwner(obj) == owner && count++ == idx)
+			return obj;
+	}
+	return 0;
+}
+
+int ScummEngine::getInventoryCount(int owner) {
+	int i, obj;
+	int count = 0;
+	for (i = 0; i < _numInventory; i++) {
+		obj = _inventory[i];
+		if (obj && getOwner(obj) == owner)
+			count++;
+	}
+	return count;
+}
+
+void ScummEngine::setOwnerOf(int obj, int owner) {
+	ScriptSlot *ss;
+
+	// In Sam & Max this is necessary, or you won't get your stuff back
+	// from the Lost and Found tent after riding the Cone of Tragedy. But
+	// it probably applies to all V6+ games. See bugs #493153 and #907113.
+	// FT disassembly is checked, behaviour is correct. [sev]
+
+	int arg = (_game.version >= 6) ? obj : 0;
+
+	if (owner == 0) {
+		clearOwnerOf(obj);
+		
+		// FIXME: See bug #1535358 and many others. Essentially, the following
+		// code, while matching disasm of various versions of the SCUMM engine,
+		// is total bullocks, and leads to odd crashes due to out-of-bounds
+		// array (read) access. Three "famous" crashes were caused by this:
+		//   Monkey Island 1: Using meat with flower
+		//   FOA: Using ribcage with another item
+		//   DOTT: Using stamp with contract
+		//
+		// The bad code:
+		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
+		// That check makes no sense at all: _inventory only contains 80 items,
+		// which are in the order the player picked up items. We can only 
+		// guess that the SCUMM coders meant to write
+		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
+		// which would ensure that an object script that nukes itself gets
+		// stopped. Alas, we can't just make that change, since it could
+		// lead to new regressions.
+		// Another fix would be to completely remove this check, which should
+		// not cause much problems, since it'll only succeed by pure chance.
+		// 
+		// For now we follow a more defensive route: We perform the check
+		// if ss->number is small enough.
+		
+		ss = &vm.slot[_currentScript];
+		if (ss->where == WIO_INVENTORY) {
+			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
+				warning("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
+				putOwner(obj, 0);
+				runInventoryScript(arg);
+				stopObjectCode();
+				return;
+			}
+			if (ss->number == obj)
+				warning("Odd setOwnerOf case #2: Please report to Fingolfin where you encountered this");
+		}
+	}
+
+	putOwner(obj, owner);
+	runInventoryScript(arg);
+}
+
+void ScummEngine::clearOwnerOf(int obj) {
+	int i, j;
+	uint16 *a;
+
+	stopObjectScript(obj);
+
+	if (getOwner(obj) == OF_OWNER_ROOM) {
+		for (i = 0; i < _numLocalObjects; i++)  {
+			if (_objs[i].obj_nr == obj) {
+				if (!_objs[i].fl_object_index)
+					return;
+				_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
+				_objs[i].obj_nr = 0;
+				_objs[i].fl_object_index = 0;
+			}
+		}
+		return;
+	}
+
+	for (i = 0; i < _numInventory; i++) {
+		if (_inventory[i] == obj) {
+			j = whereIsObject(obj);
+			if (j == WIO_INVENTORY) {
+				_res->nukeResource(rtInventory, i);
+				_inventory[i] = 0;
+			}
+			a = _inventory;
+			for (i = 0; i < _numInventory - 1; i++, a++) {
+				if (!a[0] && a[1]) {
+					a[0] = a[1];
+					a[1] = 0;
+					_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
+					_res->address[rtInventory][i + 1] = NULL;
+				}
+			}
+			return;
+		}
+	}
+}
+
 bool ScummEngine::getClass(int obj, int cls) const {
 	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
@@ -932,46 +1089,6 @@ void ScummEngine_v80he::clearDrawQueues() {
 }
 #endif
 
-void ScummEngine::clearOwnerOf(int obj) {
-	int i, j;
-	uint16 *a;
-
-	stopObjectScript(obj);
-
-	if (getOwner(obj) == OF_OWNER_ROOM) {
-		for (i = 0; i < _numLocalObjects; i++)  {
-			if (_objs[i].obj_nr == obj) {
-				if (!_objs[i].fl_object_index)
-					return;
-				_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
-				_objs[i].obj_nr = 0;
-				_objs[i].fl_object_index = 0;
-			}
-		}
-		return;
-	}
-
-	for (i = 0; i < _numInventory; i++) {
-		if (_inventory[i] == obj) {
-			j = whereIsObject(obj);
-			if (j == WIO_INVENTORY) {
-				_res->nukeResource(rtInventory, i);
-				_inventory[i] = 0;
-			}
-			a = _inventory;
-			for (i = 0; i < _numInventory - 1; i++, a++) {
-				if (!a[0] && a[1]) {
-					a[0] = a[1];
-					a[1] = 0;
-					_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
-					_res->address[rtInventory][i + 1] = NULL;
-				}
-			}
-			return;
-		}
-	}
-}
-
 /**
  * Mark the rectangle covered by the given object as dirty, thus eventually
  * ensuring a redraw of that area. This function is typically invoked when an
@@ -1216,38 +1333,6 @@ int ScummEngine::getObjectIdFromOBIM(const byte *obim) {
 	return READ_LE_UINT16(&imhd->old.obj_id);
 }
 
-void ScummEngine::addObjectToInventory(uint obj, uint room) {
-	int idx, slot;
-	uint32 size;
-	const byte *ptr;
-	byte *dst;
-	FindObjectInRoom foir;
-
-	debug(1, "Adding object %d from room %d into inventory", obj, room);
-
-	if (whereIsObject(obj) == WIO_FLOBJECT) {
-		idx = getObjectIndex(obj);
-		assert(idx >= 0);
-		ptr = getResourceAddress(rtFlObject, _objs[idx].fl_object_index) + 8;
-		size = READ_BE_UINT32(ptr + 4);
-	} else {
-		findObjectInRoom(&foir, foCodeHeader, obj, room);
-		if (_game.features & GF_OLD_BUNDLE)
-			size = READ_LE_UINT16(foir.obcd);
-		else if (_game.features & GF_SMALL_HEADER)
-			size = READ_LE_UINT32(foir.obcd);
-		else
-			size = READ_BE_UINT32(foir.obcd + 4);
-		ptr = foir.obcd;
-	}
-
-	slot = getInventorySlot();
-	_inventory[slot] = obj;
-	dst = _res->createResource(rtInventory, slot, size);
-	assert(dst);
-	memcpy(dst, ptr, size);
-}
-
 void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room) {
 
 	const CodeHeader *cdhd;
@@ -1370,70 +1455,6 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	}
 }
 
-int ScummEngine::getInventorySlot() {
-	int i;
-	for (i = 0; i < _numInventory; i++) {
-		if (_inventory[i] == 0)
-			return i;
-	}
-	error("Inventory full, %d max items", _numInventory);
-	return -1;
-}
-
-void ScummEngine::setOwnerOf(int obj, int owner) {
-	ScriptSlot *ss;
-
-	// In Sam & Max this is necessary, or you won't get your stuff back
-	// from the Lost and Found tent after riding the Cone of Tragedy. But
-	// it probably applies to all V6+ games. See bugs #493153 and #907113.
-	// FT disassembly is checked, behaviour is correct. [sev]
-
-	int arg = (_game.version >= 6) ? obj : 0;
-
-	if (owner == 0) {
-		clearOwnerOf(obj);
-		
-		// FIXME: See bug #1535358 and many others. Essentially, the following
-		// code, while matching disasm of various versions of the SCUMM engine,
-		// is total bullocks, and leads to odd crashes due to out-of-bounds
-		// array (read) access. Three "famous" crashes were caused by this:
-		//   Monkey Island 1: Using meat with flower
-		//   FOA: Using ribcage with another item
-		//   DOTT: Using stamp with contract
-		//
-		// The bad code:
-		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
-		// That check makes no sense at all: _inventory only contains 80 items,
-		// which are in the order the player picked up items. We can only 
-		// guess that the SCUMM coders meant to write
-		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
-		// which would ensure that an object script that nukes itself gets
-		// stopped. Alas, we can't just make that change, since it could
-		// lead to new regressions.
-		// Another fix would be to completely remove this check, which should
-		// not cause much problems, since it'll only succeed by pure chance.
-		// 
-		// For now we follow a more defensive route: We perform the check
-		// if ss->number is small enough.
-		
-		ss = &vm.slot[_currentScript];
-		if (ss->where == WIO_INVENTORY) {
-			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
-				warning("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
-				putOwner(obj, 0);
-				runInventoryScript(arg);
-				stopObjectCode();
-				return;
-			}
-			if (ss->number == obj)
-				warning("Odd setOwnerOf case #2: Please report to Fingolfin where you encountered this");
-		}
-	}
-
-	putOwner(obj, owner);
-	runInventoryScript(arg);
-}
-
 int ScummEngine::getObjX(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
@@ -1477,27 +1498,6 @@ int ScummEngine::getObjNewDir(int obj) {
 	return dir;
 }
 
-int ScummEngine::findInventory(int owner, int idx) {
-	int count = 1, i, obj;
-	for (i = 0; i < _numInventory; i++) {
-		obj = _inventory[i];
-		if (obj && getOwner(obj) == owner && count++ == idx)
-			return obj;
-	}
-	return 0;
-}
-
-int ScummEngine::getInventoryCount(int owner) {
-	int i, obj;
-	int count = 0;
-	for (i = 0; i < _numInventory; i++) {
-		obj = _inventory[i];
-		if (obj && getOwner(obj) == owner)
-			count++;
-	}
-	return count;
-}
-
 void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 	int i;
 
@@ -1531,7 +1531,7 @@ void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 	putState(obj, state);
 }
 
-int ScummEngine::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f) {
+int ScummEngine_v6::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f) {
 	int i, j;
 	int x, y;
 	int x2, y2;

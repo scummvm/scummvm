@@ -863,8 +863,6 @@ protected:
 	const byte *getObjectImage(const byte *ptr, int state);
 	virtual int getObjectIdFromOBIM(const byte *obim);
 
-	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
-
 protected:
 	/* Should be in Verb class */
 	uint16 _verbMouseOver;

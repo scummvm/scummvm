@@ -670,6 +670,8 @@ protected:
 
 	int getSpecialBox(int x, int y);
 
+	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
+
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
 	void o6_pushByte();
