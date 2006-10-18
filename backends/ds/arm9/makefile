@@ -2,9 +2,10 @@
 libndsdir = $(DEVKITPRO)/libnds
 
 # Select the build you want by uncommenting one of the following lines:
-#DS_BUILD_A = 1
+
+DS_BUILD_A = 1
 #DS_BUILD_B = 1
-DS_BUILD_C = 1
+#DS_BUILD_C = 1
 
 
 # Uncomment the following line to build in support for MP3 audio
@@ -87,7 +88,7 @@ ICON 		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++
 
-CFLAGS	=	-Wno-multichar -Wall -O2\
+CFLAGS	=	-Wno-multichar -Wall -Os\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
  		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-ffast-math -mthumb-interwork
@@ -163,11 +164,14 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 			$(portdir)/source/fat/io_m3sd_asm.o $(portdir)/source/fat/io_scsd_asm.o \
 			$(portdir)/source/fat/io_njsd.o \
 			$(portdir)/source/fat/io_mmcf.o \
-			$(portdir)/source/fat/io_sd_common.o 
+			$(portdir)/source/fat/io_sd_common.o \
+			$(portdir)/source/fat/io_m3_common.o 
+
+
 
 #			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
-#			$(portdir)/source/fat/io_sc_common.o 
+#			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o 
 
 			
 			
