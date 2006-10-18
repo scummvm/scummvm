@@ -88,6 +88,7 @@ LPIO_INTERFACE active_interface = 0;
 		Added by www.neoflash.com 
 
 */
+int discDetect = 0;
 
 #ifdef DISC_CACHE
 
@@ -96,7 +97,6 @@ LPIO_INTERFACE active_interface = 0;
 #define CACHE_FREE 0xFFFFFFFF
 	
 static u8 cacheBuffer[ DISC_CACHE_COUNT * 512 ];
-bool M3SDDetect = false;
 
 static struct {
 	u32 sector;
@@ -220,8 +220,8 @@ bool disc_CacheWriteSector( void *buffer, u32 sector ) {
 
 */
 
-void disc_setM3SDEnable(bool on) {
-	M3SDDetect = on;
+void disc_setEnable(int disc) {
+	discDetect = disc;
 }
 
 bool disc_setGbaSlotInterface (void)
@@ -239,7 +239,7 @@ bool disc_setGbaSlotInterface (void)
 
 
 #ifdef SUPPORT_M3SD
-	if (M3SDDetect)	{
+	if (discDetect == 1)	{
 		// check if we have a M3 perfect SD plugged in
 		active_interface = M3SD_GetInterface() ;
 		if (active_interface->fn_StartUp())
@@ -249,6 +249,9 @@ bool disc_setGbaSlotInterface (void)
 		} ;
 	}
 #endif
+
+
+
 
 #ifdef SUPPORT_MMCF
 	// check if we have a GBA Flash Cart plugged in
@@ -317,16 +320,6 @@ bool disc_setGbaSlotInterface (void)
 #endif
 
 
-#ifdef SUPPORT_SCSD
-	// check if we have a SuperCard SD plugged in
-	active_interface = SCSD_GetInterface() ;
-	if (active_interface->fn_StartUp())
-	{
-		// set SC SD as default IO
-		return true ;
-	} ;
-#endif
-
 
 
 	return false;
@@ -344,6 +337,19 @@ bool disc_setDsSlotInterface (void)
 #endif
 #ifdef ARM7
 	WAIT_CR |= (1<<11);
+#endif
+
+#ifdef SUPPORT_SCSD
+	// check if we have a SuperCard SD plugged in
+	if (discDetect == 2) {
+		active_interface = SCSD_GetInterface() ;
+		consolePrintf("SCSD!");
+		if (active_interface->fn_StartUp())
+		{
+			// set SC SD as default IO
+			return true ;
+		} ;
+	}
 #endif
 
 #ifdef SUPPORT_NJSD
@@ -439,7 +445,9 @@ bool disc_WriteSectors(u32 sector, u8 numSecs, void* buffer)
 	}
 	return true;
 #else*/
+#ifdef DISC_CACHE
 	disc_CacheInit();
+#endif
 	if (active_interface) return active_interface->fn_WriteSectors(sector,numSecs,buffer) ;
 	return false ;
 //#endif

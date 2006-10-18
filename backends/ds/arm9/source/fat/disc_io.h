@@ -87,7 +87,7 @@ bool return OUT:  true if a disc is inserted
 extern bool disc_IsInserted(void) ;
 
 
-extern void disc_setM3SDEnable(bool on);
+extern void disc_setEnable(int en);
 /*-----------------------------------------------------------------
 disc_ReadSectors
 Read 512 byte sector numbered "sector" into "buffer"
