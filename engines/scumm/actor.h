@@ -32,6 +32,12 @@
 
 namespace Scumm {
 
+
+enum {
+	V12_X_MULTIPLIER = 8,
+	V12_Y_MULTIPLIER = 2
+};
+
 enum MoveFlags {
 	MF_NEW_LEG = 1,
 	MF_IN_LEG = 2,

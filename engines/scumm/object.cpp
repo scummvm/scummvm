@@ -454,10 +454,10 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 		// For V1/V2 games, distances are measured in the original "character"
 		// based coordinate system, instead of pixels. Otherwise various scripts
 		// will break. See bugs #853874, #774529
-		x /= 8;
-		y /= 2;
-		x2 /= 8;
-		y2 /= 2;
+		x /= V12_X_MULTIPLIER;
+		y /= V12_Y_MULTIPLIER;
+		x2 /= V12_X_MULTIPLIER;
+		y2 /= V12_Y_MULTIPLIER;
 	}
 
 	return getDist(x, y, x2, y2);

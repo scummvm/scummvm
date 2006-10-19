@@ -1980,9 +1980,12 @@ void ScummEngine_v5::o5_roomOps() {
 				int len = 256, cnt = 0;
 				ptr = (byte *)malloc(len);
 				while (ptr) {
-				  int r = file->read(ptr + cnt, len - cnt);
-				  if ((cnt += r) < len) break;
-				  ptr = (byte *)realloc(ptr, len *= 2);
+					int r = file->read(ptr + cnt, len - cnt);
+					cnt += r;
+					if (cnt < len)
+						break;
+					len *= 2;
+					ptr = (byte *)realloc(ptr, len);
 				}
 				ptr[cnt] = '\0';
 				loadPtrToResource(rtString, a, ptr);
@@ -2615,7 +2618,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		return;
 
 	if (_game.version <= 2)
-		dist *= 8;
+		dist *= V12_X_MULTIPLIER;
 	else if (dist == 0xFF) {
 		dist = a->_scalex * a->_width / 0xFF;
 		dist += (a2->_scalex * a2->_width / 0xFF) / 2;

@@ -950,8 +950,8 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			return abr;
 
 		bestDist = (_vm->_game.version >= 7) ? 0x7FFFFFFF : 0xFFFF;
-		if (_vm->_game.version <= 2)
-			bestDist *= 8*2;	// Adjust for the fact that we multiply x by 8 and y by 2
+		if (_vm->_game.version <= 2)	// Adjust for the fact that we multiply x by 8 and y by 2
+			bestDist *= V12_X_MULTIPLIER * V12_Y_MULTIPLIER;
 		bestBox = kInvalidBox;
 
 		// We iterate (backwards) over all boxes, searching the one closest
