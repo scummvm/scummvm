@@ -21,6 +21,13 @@ MODULE_OBJS := \
 	rooms.o \
 	saveload.o \
 	script.o \
+	script_e1.o \
+	script_e2.o \
+	script_ww.o \
+	script_s1.o \
+	script_s2.o \
+	script_ff.o \
+	script_pp.o \
 	sound.o \
 	string.o \
 	subroutine.o \
