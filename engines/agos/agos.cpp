@@ -34,6 +34,7 @@
 #include "agos/vga.h"
 
 #include "sound/mididrv.h"
+#include "sound/mod.h"
 
 #ifdef PALMOS_68K
 #include "globals.h"
@@ -1352,13 +1353,9 @@ startOver:
 		for (;;) {
 			if (getGameType() != GType_FF && getGameType() != GType_PP && _keyPressed == 35)
 				displayBoxStars();
-			if (getGameType() == GType_PP) {
-				if (processSpecialKeys() != 0) {
-					_needHitAreaRecalc++;
-					return;
-				}
-			} else {
-				processSpecialKeys();
+			if (processSpecialKeys() != 0) {
+				_needHitAreaRecalc++;
+				return;
 			}
 			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
@@ -2075,18 +2072,26 @@ bool AGOSEngine::processSpecialKeys() {
 	case 17: // Up
 		if (getGameType() == GType_PP)
 			_verbHitArea = 302;
+		else if (getGameType() == GType_WW)
+			_verbHitArea = 239;
 		break;
 	case 18: // Down
 		if (getGameType() == GType_PP)
 			_verbHitArea = 304;
+		else if (getGameType() == GType_WW)
+			_verbHitArea = 241;
 		break;
 	case 19: // Right
 		if (getGameType() == GType_PP)
 			_verbHitArea = 303;
+		else if (getGameType() == GType_WW)
+			_verbHitArea = 240;
 		break;
 	case 20: // Left
 		if (getGameType() == GType_PP)
 			_verbHitArea = 301;
+		else if (getGameType() == GType_WW)
+			_verbHitArea = 242;
 		break;
 	case 27: // escape
 		_exitCutscene = true;
@@ -2430,18 +2435,40 @@ void AGOSEngine::loadMusic(uint music) {
 	if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music format used by Elvira 2
 	} else if (getPlatform() == Common::kPlatformAmiga) {
-		// TODO: Add Protracker mod support for Amiga versions
+		Audio::AudioStream *modStream;
 		char filename[15];
+		File f;
 
 		if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
 			sprintf(filename, "elvira2");
 		else
 			sprintf(filename, "%dtune", music);
 
-		if (getFeatures() & GF_CRUNCHED) {
-			debug(5,"loadMusic - Decrunch %s attempt", filename);
+		f.open(filename);
+		if (f.isOpen() == false) {
+			error("loadMusic: Can't load music from '%s'", filename);
 		}
-		debug(5,"playMusic - Play %s attempt", filename);
+
+		if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
+			getFeatures() & GF_CRUNCHED) {
+			uint srcSize = f.size();
+			byte *srcBuf = (byte *)malloc(srcSize);
+			if (f.read(srcBuf, srcSize) != srcSize)
+				error("loadMusic: Read failed");
+
+			uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
+			byte *dstBuf = (byte *)malloc(dstSize);
+			decrunchFile(srcBuf, dstBuf, srcSize);
+			free(srcBuf);
+
+			Common::MemoryReadStream stream(dstBuf, dstSize);
+			modStream = Audio::makeMODStream(&stream);
+		} else {
+			modStream = Audio::makeMODStream(&f);
+ 		}
+
+		_mixer->stopAll();
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, modStream);
 	} else if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);

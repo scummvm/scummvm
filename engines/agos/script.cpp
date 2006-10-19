@@ -250,6 +250,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[105] = &AGOSEngine::o_process;
 	op[106] = &AGOSEngine::oe1_doClass;
 
+	op[112] = &AGOSEngine::oe1_pObj;
+
 	op[114] = &AGOSEngine::oe1_pName;
 	op[115] = &AGOSEngine::oe1_pcName;
 
@@ -355,7 +357,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[35] = &AGOSEngine::oe1_copyfo;
 	op[37] = &AGOSEngine::oe1_whatO;
 	op[54] = &AGOSEngine::oe2_moveDirn;
-	op[73] = &AGOSEngine::oe1_pobj;
+	op[73] = &AGOSEngine::oe1_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -419,7 +421,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[54] = &AGOSEngine::oww_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[70] = &AGOSEngine::o1_printLongText;
-	op[73] = &AGOSEngine::oe1_pobj;
+	op[73] = &AGOSEngine::oe1_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -1938,7 +1940,7 @@ void AGOSEngine::oe1_doClass() {
 	}
 }
 
-void AGOSEngine::oe1_pobj() {
+void AGOSEngine::oe1_pObj() {
 	// 112: print object
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	getVarOrWord();

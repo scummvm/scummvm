@@ -1098,7 +1098,7 @@ public:
 	void oe1_moveDirn();
 	void oe1_score();
 	void oe1_doClass();
-	void oe1_pobj();
+	void oe1_pObj();
 	void oe1_pName();
 	void oe1_pcName();
 	void oe1_cFlag();
