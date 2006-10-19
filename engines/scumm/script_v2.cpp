@@ -1345,7 +1345,7 @@ void ScummEngine_v2::o2_lights() {
 	if (c == 0) {
 		if (_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES)) {
 			// Convert older light mode values into
-			// equivalent values.of later games
+			// equivalent values of later games.
 			// 0 Darkness
 			// 1 Flashlight
 			// 2 Lighted area

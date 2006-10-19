@@ -161,9 +161,8 @@ void ScummEngine::clearOwnerOf(int obj) {
 
 	if (getOwner(obj) == OF_OWNER_ROOM) {
 		for (i = 0; i < _numLocalObjects; i++)  {
-			if (_objs[i].obj_nr == obj) {
-				if (!_objs[i].fl_object_index)
-					return;
+			if (_objs[i].obj_nr == obj && _objs[i].fl_object_index) {
+				// Removing an flObject from a room means we can nuke it
 				_res->nukeResource(rtFlObject, _objs[i].fl_object_index);
 				_objs[i].obj_nr = 0;
 				_objs[i].fl_object_index = 0;
