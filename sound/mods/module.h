@@ -24,6 +24,8 @@
 #ifndef SOUND_MODS_MODULE_H
 #define SOUND_MODS_MODULE_H
 
+#include "common/file.h"
+
 namespace Modules {
 
 /*
@@ -68,6 +70,7 @@ public:
 	~Module();
 
 	bool load(const char *fn);
+	bool loadStream(Common::SeekableReadStream &st);
 };
 
 } // End of namespace Modules

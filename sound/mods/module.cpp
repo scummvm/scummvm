@@ -46,6 +46,14 @@ bool Module::load(const char *fn) {
 
 	Common::MemoryReadStream st(buf, bufsz);
 
+	bool result = loadStream(st);
+
+	delete[] buf;
+	
+	return result;
+}
+
+bool Module::loadStream(Common::SeekableReadStream &st) {
 	st.read(songname, 20);
 	songname[0] = '\0';
 
@@ -154,8 +162,6 @@ bool Module::load(const char *fn) {
 	}
 
 	assert(st.eos());
-
-	delete[] buf;
 
 	return true;
 }

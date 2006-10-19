@@ -34,6 +34,7 @@
 #include "agos/vga.h"
 
 #include "sound/mididrv.h"
+#include "sound/mods/protracker.h"
 
 #ifdef PALMOS_68K
 #include "globals.h"
@@ -386,6 +387,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_vgaTickCounter = 0;
 
+	_modPlayer = 0;
 	_moviePlay = 0;
 	_sound = 0;
 
@@ -510,8 +512,11 @@ int AGOSEngine::init() {
 	setupGame();
 
 	_debugger = new Debugger(this);
-	_moviePlay = new MoviePlayer(this, _mixer);
+	_modPlayer = new Modules::ProtrackerPlayer();
 	_sound = new Sound(this, gss, _mixer);
+
+	_modPlayer->init(_system);
+	_moviePlay = new MoviePlayer(this, _mixer);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
@@ -757,6 +762,7 @@ AGOSEngine::~AGOSEngine() {
 	delete [] _windowList;
 
 	delete _debugger;
+	delete _modPlayer;
 	delete _moviePlay;
 	delete _sound;
 }
@@ -1353,8 +1359,7 @@ startOver:
 			if (getGameType() != GType_FF && getGameType() != GType_PP && _keyPressed == 35)
 				displayBoxStars();
 			if (processSpecialKeys() != 0) {
-				_needHitAreaRecalc++;
-				return;
+				goto out_of_here;
 			}
 			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
@@ -1472,6 +1477,7 @@ startOver:
 		}
 	}
 
+out_of_here:
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearMenuStrip();
 
@@ -2434,7 +2440,6 @@ void AGOSEngine::loadMusic(uint music) {
 	if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music format used by Elvira 2
 	} else if (getPlatform() == Common::kPlatformAmiga) {
-		/*
 		_modPlayer->stop();
 
 		char filename[15];
@@ -2447,7 +2452,7 @@ void AGOSEngine::loadMusic(uint music) {
 
 		f.open(filename);
 		if (f.isOpen() == false) {
-			error("loadMusic: Can't load music from '%s'", filename);
+			error("loadMusic: Can't load module from '%s'", filename);
 		}
 
 		if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
@@ -2468,7 +2473,6 @@ void AGOSEngine::loadMusic(uint music) {
 			_modPlayer->loadModuleStream(f);
 		}
 		_modPlayer->start();
-		*/
 	} else if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);

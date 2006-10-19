@@ -78,6 +78,14 @@ void ProtrackerPlayer::loadModule(const char *fn) {
 	_module->load(fn);
 }
 
+void ProtrackerPlayer::loadModuleStream(Common::SeekableReadStream &fs) {
+	if (_module)
+		delete _module;
+
+	_module = new Module();
+	_module->loadStream(fs);
+}
+
 void ProtrackerPlayer::generateSound() {
 	_generatedSamplesOverflow += 5.0 * 44100.0 / (2.0 * _bpm);
 	int samples = (int)floor(_generatedSamplesOverflow);

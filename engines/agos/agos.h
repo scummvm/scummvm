@@ -33,7 +33,10 @@
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
+
 #include "common/advancedDetector.h"
+
+#include "sound/mods/protracker.h"
 
 namespace AGOS {
 
@@ -492,6 +495,7 @@ protected:
 	int _vgaTickCounter;
 
 	MoviePlayer *_moviePlay;
+	Modules::ProtrackerPlayer *_modPlayer;
 
 	Sound *_sound;
 

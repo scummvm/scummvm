@@ -139,6 +139,7 @@ public:
 	void stop();
 
 	void loadModule(const char *fn);
+	void loadModuleStream(Common::SeekableReadStream &fs);
 
 	void mix(byte *buf, int len);
 
