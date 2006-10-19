@@ -34,7 +34,6 @@
 #include "agos/vga.h"
 
 #include "sound/mididrv.h"
-#include "sound/mod.h"
 
 #ifdef PALMOS_68K
 #include "globals.h"
@@ -2435,7 +2434,9 @@ void AGOSEngine::loadMusic(uint music) {
 	if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music format used by Elvira 2
 	} else if (getPlatform() == Common::kPlatformAmiga) {
-		Audio::AudioStream *modStream;
+		/*
+		_modPlayer->stop();
+
 		char filename[15];
 		File f;
 
@@ -2462,13 +2463,12 @@ void AGOSEngine::loadMusic(uint music) {
 			free(srcBuf);
 
 			Common::MemoryReadStream stream(dstBuf, dstSize);
-			modStream = Audio::makeMODStream(&stream);
+			_modPlayer->loadModuleStream(stream);
 		} else {
-			modStream = Audio::makeMODStream(&f);
- 		}
-
-		_mixer->stopAll();
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, modStream);
+			_modPlayer->loadModuleStream(f);
+		}
+		_modPlayer->start();
+		*/
 	} else if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
