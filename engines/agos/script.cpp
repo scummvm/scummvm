@@ -2422,7 +2422,7 @@ void AGOSEngine::o1_loadBeard() {
 	if (_beardLoaded == false) {
 		_beardLoaded = true;
 		_lockWord |= 0x8000;
-		loadSimonVGAFile(328);
+		loadVGABeardFile(328);
 		_lockWord &= ~0x8000;
 	}
 }
@@ -2432,7 +2432,7 @@ void AGOSEngine::o1_unloadBeard() {
 	if (_beardLoaded == true) {
 		_beardLoaded = false;
 		_lockWord |= 0x8000;
-		loadSimonVGAFile(23);
+		loadVGABeardFile(23);
 		_lockWord &= ~0x8000;
 	}
 }

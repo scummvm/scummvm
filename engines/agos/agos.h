@@ -730,7 +730,7 @@ protected:
 	void displayName(HitArea * ha);
 	void resetNameWindow();
 	void displayBoxStars();
-	void hitarea_stuff();
+	void waitForInput();
 	void invertBox_FF(HitArea *ha, bool state);
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
@@ -1292,8 +1292,9 @@ protected:
 
 	void convertAmiga(byte *srcBuf, int32 fileSize);
 	bool decrunchFile(byte *src, byte *dst, uint32 size);
-	bool loadVGAFile(uint id, uint type);
-	void loadSimonVGAFile(uint id);
+	void loadVGABeardFile(uint id);
+	void loadVGAVideoFile(uint id, uint type);
+	bool loadVGASoundFile(uint id, uint type);
 
 	int init();
 	int go();

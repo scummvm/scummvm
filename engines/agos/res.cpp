@@ -611,7 +611,7 @@ bool AGOSEngine::decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
-void AGOSEngine::loadSimonVGAFile(uint id) {
+void AGOSEngine::loadVGABeardFile(uint id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
@@ -655,10 +655,10 @@ void AGOSEngine::loadSimonVGAFile(uint id) {
 	}
 }
 
-bool AGOSEngine::loadVGAFile(uint id, uint type) {
+void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
 	File in;
 	char filename[15];
-	byte *dst = NULL;
+	byte *dst;
 	uint32 file, offs, srcSize, dstSize;
 	uint extraBuffer = 0;
 
@@ -698,15 +698,9 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 				else
 					sprintf(filename, "%.1d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-				if (type == 3)
-					sprintf(filename, "%.2d%d.out", id, type);
-				else
-					sprintf(filename, "%.2d%d.pkd", id, type);
+				sprintf(filename, "%.2d%d.pkd", id, type);
 			} else {
-				if (type == 3)
-					sprintf(filename, "%.3d%d.out", id, type);
-				else
-					sprintf(filename, "%.3d%d.pkd", id, type);
+				sprintf(filename, "%.3d%d.pkd", id, type);
 			}
 		} else {
 			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
@@ -717,21 +711,15 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 		}
 
 		in.open(filename);
-		if (in.isOpen() == false || in.size() == 0) {
-			// Sound VGA files don't always exist
-			if (type == 3) {
-				return false;
-			} else {
-				error("loadVGAFile: Can't load %s", filename);
-			}
+		if (in.isOpen() == false) {
+			error("loadVGAVideoFile: Can't load %s", filename);
 		}
 
 		dstSize = srcSize = in.size();
-		if ((getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) ||
-			(getFeatures() & GF_CRUNCHED && type != 3)) {
+		if (getFeatures() & GF_CRUNCHED) {
 			byte *srcBuffer = (byte *)malloc(srcSize);
 			if (in.read(srcBuffer, srcSize) != srcSize)
-				error("loadVGAFile: Read failed");
+				error("loadVGAVideoFile: Read failed");
 
 			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
 			if (type == 2) {
@@ -748,13 +736,13 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 			if (getGameId() == GID_SIMON1CD32 && type == 2) {
 				dst = (byte *)malloc(dstSize);
 				if (in.read(dst, dstSize) != dstSize)
-					error("loadVGAFile: Read failed");
+					error("loadVGAVideoFile: Read failed");
 				convertAmiga(dst, dstSize);
 				free(dst);
 			} else {
 				dst = allocBlock(dstSize + extraBuffer);
 				if (in.read(dst, dstSize) != dstSize)
-					error("loadVGAFile: Read failed");
+					error("loadVGAVideoFile: Read failed");
 			}
 		}
 		in.close();
@@ -766,6 +754,79 @@ bool AGOSEngine::loadVGAFile(uint id, uint type) {
 		dst = allocBlock(dstSize + extraBuffer);
 		readGameFile(dst, offs, dstSize);
 	}
+}
+
+static const byte elvira1_soundTable[100] = {
+	0, 2, 0, 1, 0, 0, 0, 0, 0, 3,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 6, 4, 0, 0, 9, 0,
+	0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 8, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 0, 0, 5, 0, 6, 6, 0, 0,
+	0, 5, 0, 0, 6, 0, 0, 0, 0, 8,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+bool AGOSEngine::loadVGASoundFile(uint id, uint type) {
+	File in;
+	char filename[15];
+	byte *dst;
+	uint32 srcSize, dstSize;
+
+	if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
+		if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
+			if (id == 20)
+				sprintf(filename, "D%d.out", type);
+			else if (id == 26)
+				sprintf(filename, "J%d.out", type);
+			else if (id == 27)
+				sprintf(filename, "K%d.out", type);
+			else if (id == 33)
+				sprintf(filename, "Q%d.out", type);
+			else if (id == 34)
+				sprintf(filename, "R%d.out", type);
+			else
+				sprintf(filename, "%.1d%d.out", id, type);
+		} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
+			sprintf(filename, "%.2d%d.out", id, type);
+		} else {
+			sprintf(filename, "%.3d%d.out", id, type);
+		}
+	} else {
+		if (getGameType() == GType_ELVIRA1) {
+			if (elvira1_soundTable[id] == 0)
+				return false;
+
+			sprintf(filename, "%.2d.SND", elvira1_soundTable[id]);
+		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			sprintf(filename, "%.2d%d.VGA", id, type);
+		} else {
+			sprintf(filename, "%.3d%d.VGA", id, type);
+		}
+	}
+
+	in.open(filename);
+	if (in.isOpen() == false || in.size() == 0) {
+		return false;
+	}
+
+	dstSize = srcSize = in.size();
+	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
+		byte *srcBuffer = (byte *)malloc(srcSize);
+		if (in.read(srcBuffer, srcSize) != srcSize)
+			error("loadVGASoundFile: Read failed");
+
+		dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
+		dst = allocBlock (dstSize);
+		decrunchFile(srcBuffer, dst, srcSize);
+		free(srcBuffer);
+	} else {
+		dst = allocBlock(dstSize);
+		if (in.read(dst, dstSize) != dstSize)
+			error("loadVGASoundFile: Read failed");
+	}
+	in.close();
 
 	return true;
 }

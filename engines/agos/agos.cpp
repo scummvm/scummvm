@@ -1331,7 +1331,7 @@ uint AGOSEngine::itemGetIconNumber(Item *item) {
 	}
 }
 
-void AGOSEngine::hitarea_stuff() {
+void AGOSEngine::waitForInput() {
 	HitArea *ha;
 	uint id;
 
@@ -1588,17 +1588,17 @@ void AGOSEngine::loadZone(uint zoneNum) {
 	// Loading order is important
 	// due to resource managment
 
-	loadVGAFile(zoneNum, 2);
+	loadVGAVideoFile(zoneNum, 2);
 	vpe->vgaFile2 = _block;
 	vpe->vgaFile2End = _blockEnd;
 
-	loadVGAFile(zoneNum, 1);
+	loadVGAVideoFile(zoneNum, 1);
 	vpe->vgaFile1 = _block;
 	vpe->vgaFile1End = _blockEnd;
 
 	vpe->sfxFile = NULL;
 	if (!(getFeatures() & GF_ZLIBCOMP)) {
-		if (loadVGAFile(zoneNum, 3)) {
+		if (loadVGASoundFile(zoneNum, 3)) {
 			vpe->sfxFile = _block;
 			vpe->sfxFileEnd = _blockEnd;
 		}
@@ -2409,7 +2409,7 @@ int AGOSEngine::go() {
 	permitInput();
 
 	while (1) {
-		hitarea_stuff();
+		waitForInput();
 		handleVerbClicked(_verbHitArea);
 		delay(100);
 	}
