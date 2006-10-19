@@ -32,7 +32,6 @@ namespace AGOS {
 void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
-	// Confirmed
 	op[8] = &AGOSEngine::oe1_isNotAt;
 	op[9] = &AGOSEngine::oe1_sibling;
 	op[10] = &AGOSEngine::oe1_notSibling;
@@ -43,6 +42,9 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[35] = &AGOSEngine::oe1_copyfo;
 	op[54] = &AGOSEngine::oww_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
+	op[65] = &AGOSEngine::o_addTextBox;
+	op[66] = &AGOSEngine::o_setShortText;
+	op[67] = &AGOSEngine::o_setLongText;
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[73] = &AGOSEngine::oe1_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
@@ -79,24 +81,6 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[188] = &AGOSEngine::oww_boxPObj;
 	op[189] = &AGOSEngine::o_lockZones;
 	op[190] = &AGOSEngine::o_unlockZones;
-
-	// Code difference, check if triggered
-	op[161] = NULL;
-	op[163] = NULL;
-	op[164] = NULL;
-	op[165] = NULL;
-	op[166] = NULL;
-	op[167] = NULL;
-	op[168] = NULL;
-	op[169] = NULL;
-	op[170] = NULL;
-	op[171] = NULL;
-	op[172] = NULL;
-	op[173] = NULL;
-	op[174] = NULL;
-	op[176] = NULL;
-	op[177] = NULL;
-	op[178] = NULL;
 }
 
 // -----------------------------------------------------------------------

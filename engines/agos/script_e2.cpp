@@ -67,25 +67,6 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[181] = &AGOSEngine::o_b2Clear;
 	op[182] = &AGOSEngine::o_b2Zero;
 	op[183] = &AGOSEngine::o_b2NotZero;
-
-	// Code difference, check if triggered
-	op[65] = NULL;
-	op[66] = NULL;
-	op[67] = NULL;
-	op[70] = NULL;
-	op[163] = NULL;
-	op[164] = NULL;
-	op[167] = NULL;
-	op[168] = NULL;
-	op[169] = NULL;
-	op[170] = NULL;
-	op[171] = NULL;
-	op[172] = NULL;
-	op[173] = NULL;
-	op[174] = NULL;
-	op[176] = NULL;
-	op[177] = NULL;
-	op[178] = NULL;
 }
 
 // -----------------------------------------------------------------------

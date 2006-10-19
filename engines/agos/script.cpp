@@ -37,7 +37,7 @@ extern bool isSmartphone(void);
 namespace AGOS {
 
 void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
-	// A sensible set of opcodes for Simon 1 and later.
+	// A common set of opcodes for Elvira 2 and later.
 
 	op[1] = &AGOSEngine::o_at;
 	op[2] = &AGOSEngine::o_notAt;
@@ -85,9 +85,6 @@ void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	op[62] = &AGOSEngine::o_print;
 	op[63] = &AGOSEngine::o_message;
 	op[64] = &AGOSEngine::o_msg;
-	op[65] = &AGOSEngine::o_addTextBox;
-	op[66] = &AGOSEngine::o_setShortText;
-	op[67] = &AGOSEngine::o_setLongText;
 	op[68] = &AGOSEngine::o_end;
 	op[69] = &AGOSEngine::o_done;
 	op[71] = &AGOSEngine::o_process;
@@ -148,22 +145,6 @@ void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	op[157] = &AGOSEngine::o_getOValue;
 	op[158] = &AGOSEngine::o_setOValue;
 	op[160] = &AGOSEngine::o_ink;
-	op[161] = &AGOSEngine::o_screenTextBox;
-	op[162] = &AGOSEngine::o_screenTextMsg;
-	op[163] = &AGOSEngine::o_playEffect;
-	op[164] = &AGOSEngine::o_getDollar2;
-	op[165] = &AGOSEngine::o_isAdjNoun;
-	op[166] = &AGOSEngine::o_b2Set;
-	op[167] = &AGOSEngine::o_b2Clear;
-	op[168] = &AGOSEngine::o_b2Zero;
-	op[169] = &AGOSEngine::o_b2NotZero;
-	op[175] = &AGOSEngine::o_lockZones;
-	op[176] = &AGOSEngine::o_unlockZones;
-	op[178] = &AGOSEngine::o_getPathPosn;
-	op[179] = &AGOSEngine::o_scnTxtLongText;
-	op[180] = &AGOSEngine::o_mouseOn;
-	op[184] = &AGOSEngine::o_unloadZone;
-	op[186] = &AGOSEngine::o_unfreezeZones;
 }
 
 void AGOSEngine::setupOpcodes() {

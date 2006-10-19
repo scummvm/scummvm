@@ -30,16 +30,35 @@ namespace AGOS {
 void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
+	op[65] = &AGOSEngine::o_addTextBox;
+	op[66] = &AGOSEngine::o_setShortText;
+	op[67] = &AGOSEngine::o_setLongText;
 	op[70] = &AGOSEngine::o1_printLongText;
 	op[83] = &AGOSEngine::o1_rescan;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[127] = &AGOSEngine::o1_playTune;
+	op[161] = &AGOSEngine::o_screenTextBox;
+	op[162] = &AGOSEngine::o_screenTextMsg;
+	op[163] = &AGOSEngine::o_playEffect;
+	op[164] = &AGOSEngine::o_getDollar2;
+	op[165] = &AGOSEngine::o_isAdjNoun;
+	op[166] = &AGOSEngine::o_b2Set;
+	op[167] = &AGOSEngine::o_b2Clear;
+	op[168] = &AGOSEngine::o_b2Zero;
+	op[169] = &AGOSEngine::o_b2NotZero;
+	op[175] = &AGOSEngine::o_lockZones;
+	op[176] = &AGOSEngine::o_unlockZones;
 	op[177] = &AGOSEngine::o1_screenTextPObj;
+	op[178] = &AGOSEngine::o_getPathPosn;
+	op[179] = &AGOSEngine::o_scnTxtLongText;
+	op[180] = &AGOSEngine::o_mouseOn;
 	op[181] = &AGOSEngine::o1_mouseOff;
 	op[182] = &AGOSEngine::o1_loadBeard;
 	op[183] = &AGOSEngine::o1_unloadBeard;
+	op[184] = &AGOSEngine::o_unloadZone;
 	op[185] = &AGOSEngine::o1_loadStrings;
+	op[186] = &AGOSEngine::o_unfreezeZones;
 	op[187] = &AGOSEngine::o1_specialFade;
 }
 
