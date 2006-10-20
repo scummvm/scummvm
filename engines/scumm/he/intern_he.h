@@ -276,7 +276,7 @@ protected:
 
 	virtual void redrawBGAreas();
 
-	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
+	byte *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
 	virtual int readArray(int array, int idx2, int idx1);
 	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end,

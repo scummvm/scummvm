@@ -397,7 +397,7 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 	return obj;
 }
 
-ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
+byte *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
 	int id;
 	int size;
 	ArrayHeader *ah;
@@ -413,7 +413,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 		// integer arrays. There seems to be no reason for this, and it wastes
 		// space. However, we can't just remove this either, as that would
 		// break savegame compatibility. So do not touch this unless you are
-		// also adding code which updated old savegames, too. And of course
+		// also adding code which updates old savegames, too. And of course
 		// readArray() and writeArray() would have to be updated, too...
 		if (type != kStringArray)
 			type = kIntArray;
@@ -454,7 +454,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	ah->dim1 = TO_LE_16(dim1 + 1);
 	ah->dim2 = TO_LE_16(dim2 + 1);
 
-	return ah;
+	return ah->data;
 }
 
 void ScummEngine_v6::nukeArray(int a) {
@@ -492,10 +492,11 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 	if (!ah)
 		return 0;
 
-	// Workaround for a long standing bug where we save array headers in native
-	// endianness, instead of a fixed endianness. We try to detect savegames
-	// which were created on a big endian system and convert them to little
-	// endian.
+	// Workaround for a long standing bug where we saved array headers in native
+	// endianness, instead of a fixed endianness. We now always store the
+	// dimensions in little endian byte order. But to stay compatible with older
+	// savegames, we try to detect savegames which were created on a big endian
+	// system and convert them to the proper little endian format on the fly.
 	if ((FROM_LE_16(ah->dim1) & 0xF000) || (FROM_LE_16(ah->dim2) & 0xF000) || (FROM_LE_16(ah->type) & 0xFF00)) {
 		SWAP16(ah->dim1);
 		SWAP16(ah->dim2);
@@ -518,6 +519,8 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// [03BD] (5D)           if ((localvar13 != -1) && (localvar14 != -1)) {
 	// [03CF] (B6)             printDebug.begin()
 	// ...
+	// So it checks for invalid array indices only *after* using them to access
+	// the array. Ouch.
 	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
 		return 0;
 	}
@@ -2081,15 +2084,15 @@ void ScummEngine_v6::o6_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	int b, c, d, len;
-	ArrayHeader *ah;
+	byte *data;
 	int list[128];
 
 	switch (subOp) {
 	case 205:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, len + 1);
-		copyScriptString(ah->data + b);
+		data = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(data + b);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
 		b = pop();
@@ -2961,7 +2964,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 
 	num = readArray(value, 0, 0);
 
-	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
+	ArrayHeader *ah = getArray(value);
 	dim1 = FROM_LE_16(ah->dim1) - 1;
 
 	if (dim1 < num) {

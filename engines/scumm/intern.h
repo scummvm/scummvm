@@ -630,7 +630,7 @@ protected:
 	int popRoomAndObj(int *room);
 
 	ArrayHeader *getArray(int array);
-	ArrayHeader *defineArray(int array, int type, int dim2, int dim1);
+	byte *defineArray(int array, int type, int dim2, int dim1);
 	int findFreeArrayId();
 	void nukeArray(int array);
 	virtual int readArray(int array, int index, int base);

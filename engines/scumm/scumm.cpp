@@ -1405,8 +1405,8 @@ void ScummEngine_v99he::resetScumm() {
 
 	// Array 129 is set to base name
 	int len = strlen(_filenamePattern.pattern);
-	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
-	memcpy(ah->data, _filenamePattern.pattern, len);
+	byte *data = defineArray(129, kStringArray, 0, 0, 0, len);
+	memcpy(data, _filenamePattern.pattern, len);
 }
 #endif
 

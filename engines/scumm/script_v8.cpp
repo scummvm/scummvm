@@ -633,15 +633,15 @@ void ScummEngine_v8::o8_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	int b, c, d, len;
-	ArrayHeader *ah;
+	byte *data;
 	int list[128];
 
 	switch (subOp) {
 	case 0x14:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, len + 1);
-		copyScriptString(ah->data + b);
+		data = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(data + b);
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
 		b = pop();
@@ -1273,9 +1273,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		{
 		int idx = args[1];
 		int value = args[2];
-		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, idx);
+		const char *str = (const char *)getStringAddress(idx);
 
-		debugC(DEBUG_GENERAL,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", (char *)ah->data, value);
+		debugC(DEBUG_GENERAL,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", str, value);
 		}
 		break;
 	case 33:	// paletteSetIntensity
@@ -1371,22 +1371,22 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 	case 0xE0:		// readRegistryValue
 		{
 		int idx = args[1];
-		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, idx);
-		if (!strcmp((char *)ah->data, "SFX Volume"))
+		const char *str = (const char *)getStringAddress(idx);
+		if (!strcmp(str, "SFX Volume"))
 			push(ConfMan.getInt("sfx_volume") / 2);
-		else if (!strcmp((char *)ah->data, "Voice Volume"))
+		else if (!strcmp(str, "Voice Volume"))
 			push(ConfMan.getInt("speech_volume") / 2);
-		else if (!strcmp((char *)ah->data, "Music Volume"))
+		else if (!strcmp(str, "Music Volume"))
 			push(ConfMan.getInt("music_volume") / 2);
-		else if (!strcmp((char *)ah->data, "Text Status"))
+		else if (!strcmp(str, "Text Status"))
 			push(ConfMan.getBool("subtitles"));
-		else if (!strcmp((char *)ah->data, "Object Names"))
+		else if (!strcmp(str, "Object Names"))
 			push(ConfMan.getBool("object_labels"));
-		else if (!strcmp((char *)ah->data, "Saveload Page"))
+		else if (!strcmp(str, "Saveload Page"))
 			push(14);
 		else 		// Use defaults
 			push(-1);
-		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", (char *)ah->data);
+		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", str);
 		}
 		break;
 	case 0xE1:		// imGetMusicPosition

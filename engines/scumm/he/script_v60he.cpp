@@ -856,7 +856,7 @@ uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 
 void ScummEngine_v60he::o60_kernelGetFunctions() {
 	int args[29];
-	ArrayHeader *ah;
+	byte *data;
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
@@ -864,8 +864,8 @@ void ScummEngine_v60he::o60_kernelGetFunctions() {
 		// Used to store images when decorating cake in
 		// Fatty Bear's Birthday Surprise
 		writeVar(0, 0);
-		ah = defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
-		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
+		data = defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
+		virtScreenSave(data, args[1], args[2], args[3], args[4]);
 		push(readVar(0));
 		break;
 	default:
@@ -1078,8 +1078,8 @@ int ScummEngine_v60he::readFileToArray(int slot, int32 size) {
 		size = _hInFileTable[slot]->size() - _hInFileTable[slot]->pos();
 
 	writeVar(0, 0);
-	ArrayHeader *ah = defineArray(0, kByteArray, 0, size);
-	_hInFileTable[slot]->read(ah->data, size);
+	byte *data = defineArray(0, kByteArray, 0, size);
+	_hInFileTable[slot]->read(data, size);
 
 	return readVar(0);
 }

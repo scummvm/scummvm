@@ -381,7 +381,7 @@ const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
 
 static const int arrayDataSizes[] = { 0, 1, 4, 8, 8, 16, 32 };
 
-ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
+byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
 											int dim1start, int dim1end) {
 	int id;
 	int size;
@@ -427,7 +427,7 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 	ah->dim2start = TO_LE_32(dim2start);
 	ah->dim2end = TO_LE_32(dim2end);
 
-	return ah;
+	return ah->data;
 }
 
 int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
@@ -1395,7 +1395,7 @@ void ScummEngine_v72he::o72_findObject() {
 }
 
 void ScummEngine_v72he::o72_arrayOps() {
-	ArrayHeader *ah;
+	byte *data;
 	byte string[1024];
 	int dim1end, dim1start, dim2end, dim2start;
 	int id, len, b, c, list[128];
@@ -1410,8 +1410,8 @@ void ScummEngine_v72he::o72_arrayOps() {
 	case 7:			// SO_ASSIGN_STRING
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string);
-		ah = defineArray(array, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, string, len);
+		data = defineArray(array, kStringArray, 0, 0, 0, len);
+		memcpy(data, string, len);
 		break;
 
 	case 126:
@@ -1489,8 +1489,8 @@ void ScummEngine_v72he::o72_arrayOps() {
 	case 194:
 		decodeScriptString(string);
 		len = resStrLen(string);
-		ah = defineArray(array, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, string, len);
+		data = defineArray(array, kStringArray, 0, 0, 0, len);
+		memcpy(data, string, len);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
 		b = pop();
@@ -1661,14 +1661,14 @@ void ScummEngine_v72he::o72_traceStatus() {
 
 void ScummEngine_v72he::o72_kernelGetFunctions() {
 	int args[29];
-	ArrayHeader *ah;
+	byte *data;
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 1:
 		writeVar(0, 0);
-		ah = defineArray(0, kByteArray, 0, 0, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
-		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
+		data = defineArray(0, kByteArray, 0, 0, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
+		virtScreenSave(data, args[1], args[2], args[3], args[4]);
 		push(readVar(0));
 		break;
 	default:
@@ -1772,8 +1772,8 @@ int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
 		size = _hInFileTable[slot]->size() - _hInFileTable[slot]->pos();
 
 	writeVar(0, 0);
-	ArrayHeader *ah = defineArray(0, kByteArray, 0, 0, 0, size);
-	_hInFileTable[slot]->read(ah->data, size + 1);
+	byte *data = defineArray(0, kByteArray, 0, 0, 0, size);
+	_hInFileTable[slot]->read(data, size + 1);
 
 	return readVar(0);
 }
@@ -2107,7 +2107,7 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 
 void ScummEngine_v72he::o72_readINI() {
 	byte option[128];
-	ArrayHeader *ah;
+	byte *data;
 	const char *entry;
 	int len;
 
@@ -2131,8 +2131,8 @@ void ScummEngine_v72he::o72_readINI() {
 
 		writeVar(0, 0);
 		len = resStrLen((const byte *)entry);
-		ah = defineArray(0, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, entry, len);
+		data = defineArray(0, kStringArray, 0, 0, 0, len);
+		memcpy(data, entry, len);
 
 		push(readVar(0));
 		break;

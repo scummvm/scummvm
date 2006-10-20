@@ -580,7 +580,7 @@ void ScummEngine_v100he::o100_actorOps() {
 }
 
 void ScummEngine_v100he::o100_arrayOps() {
-	ArrayHeader *ah;
+	byte *data;
 	byte string[1024];
 	int dim1end, dim1start, dim2end, dim2start;
 	int id, len, b, c, list[128];
@@ -595,14 +595,14 @@ void ScummEngine_v100he::o100_arrayOps() {
 	case 35:
 		decodeScriptString(string);
 		len = resStrLen(string);
-		ah = defineArray(array, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, string, len);
+		data = defineArray(array, kStringArray, 0, 0, 0, len);
+		memcpy(data, string, len);
 		break;
 	case 77:			// SO_ASSIGN_STRING
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string);
-		ah = defineArray(array, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, string, len);
+		data = defineArray(array, kStringArray, 0, 0, 0, len);
+		memcpy(data, string, len);
 		break;
 
 	case 128:		// SO_ASSIGN_2DIM_LIST

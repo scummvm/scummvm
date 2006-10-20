@@ -927,7 +927,7 @@ void ScummEngine_v70he::o70_isResourceLoaded() {
 
 void ScummEngine_v70he::o70_readINI() {
 	byte option[256];
-	ArrayHeader *ah;
+	byte *data;
 	const char *entry;
 	int len, type;
 
@@ -951,8 +951,8 @@ void ScummEngine_v70he::o70_readINI() {
 
 		writeVar(0, 0);
 		len = resStrLen((const byte *)entry);
-		ah = defineArray(0, kStringArray, 0, len);
-		memcpy(ah->data, entry, len);
+		data = defineArray(0, kStringArray, 0, len);
+		memcpy(data, entry, len);
 
 		push(readVar(0));
 		break;

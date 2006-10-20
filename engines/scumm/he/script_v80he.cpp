@@ -447,7 +447,7 @@ void ScummEngine_v80he::o80_sourceDebug() {
 
 void ScummEngine_v80he::o80_readConfigFile() {
 	byte option[128], section[128], filename[256];
-	ArrayHeader *ah;
+	byte *data;
 	Common::String entry;
 	int len, r;
 
@@ -477,8 +477,8 @@ void ScummEngine_v80he::o80_readConfigFile() {
 
 		writeVar(0, 0);
 		len = resStrLen((const byte *)entry.c_str());
-		ah = defineArray(0, kStringArray, 0, 0, 0, len);
-		memcpy(ah->data, entry.c_str(), len);
+		data = defineArray(0, kStringArray, 0, 0, 0, len);
+		memcpy(data, entry.c_str(), len);
 		push(readVar(0));
 		break;
 	default:

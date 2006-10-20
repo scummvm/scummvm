@@ -764,7 +764,8 @@ byte *ScummEngine_v6::getStringAddress(int i) {
 	byte *addr = getResourceAddress(rtString, i);
 	if (addr == NULL)
 		return NULL;
-	return ((ScummEngine_v6::ArrayHeader *)addr)->data;
+	// Skip over the ArrayHeader
+	return addr + 6;
 }
 
 byte *ScummEngine::getStringAddressVar(int i) {
