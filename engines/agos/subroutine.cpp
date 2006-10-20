@@ -241,6 +241,26 @@ byte *AGOSEngine::allocateTable(uint size) {
 	return org;
 }
 
+void AGOSEngine::allocTablesHeap() {
+	_tablesHeapSize = _tableMemSize;
+	_tablesHeapCurPos = 0;
+	_tablesHeapPtr = (byte *)calloc(_tableMemSize, 1);
+	if (!_tablesHeapPtr)
+		error("Out Of Memory - Tables");
+}
+
+void AGOSEngine::endCutscene() {
+	Subroutine *sub;
+
+	_sound->stopVoice();
+
+	sub = getSubroutineByID(170);
+	if (sub != NULL)
+		startSubroutineEx(sub);
+
+	_runScriptReturn1 = true;
+}
+
 File *AGOSEngine::openTablesFile(const char *filename) {
 	if (getFeatures() & GF_OLD_BUNDLE)
 		return openTablesFile_simon1(filename);

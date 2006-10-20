@@ -11,7 +11,10 @@ MODULE_OBJS := \
 	draw.o \
 	event.o \
 	game.o \
+	gfx.o \
 	icons.o \
+	input.o \
+	items.o \
 	menus.o \
 	midi.o \
 	midiparser_s1d.o \
@@ -33,7 +36,11 @@ MODULE_OBJS := \
 	subroutine.o \
 	verb.o \
 	vga.o \
-	window.o
+	vga_s1.o \
+	vga_s2.o \
+	vga_ff.o \
+	window.o \
+	zones.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

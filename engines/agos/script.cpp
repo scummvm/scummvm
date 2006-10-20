@@ -1333,6 +1333,87 @@ void AGOSEngine::o_unfreezeZones() {
 
 // -----------------------------------------------------------------------
 
+byte AGOSEngine::getByte() {
+	return *_codePtr++;
+}
+
+int AGOSEngine::getNextWord() {
+	int16 a = (int16)READ_BE_UINT16(_codePtr);
+	_codePtr += 2;
+	return a;
+}
+
+uint AGOSEngine::getNextStringID() {
+	return (uint16)getNextWord();
+}
+
+uint AGOSEngine::getVarOrByte() {
+	if (getGameType() == GType_ELVIRA1) {
+		return getVarOrWord();
+	} else {
+		uint a = *_codePtr++;
+		if (a != 255)
+			return a;
+		return readVariable(*_codePtr++);
+	}
+}
+
+uint AGOSEngine::getVarOrWord() {
+	uint a = READ_BE_UINT16(_codePtr);
+	_codePtr += 2;
+	if (getGameType() == GType_PP) {
+		if (a >= 60000 && a < 62048) {
+			return readVariable(a - 60000);
+		}
+	} else {
+		if (a >= 30000 && a < 30512) {
+			return readVariable(a - 30000);
+		}
+	}
+	return a;
+}
+
+uint AGOSEngine::getVarWrapper() {
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_PP)
+		return getVarOrWord();
+	else
+		return getVarOrByte();
+}
+
+uint AGOSEngine::getNextVarContents() {
+	return (uint16)readVariable(getVarWrapper());
+}
+
+uint AGOSEngine::readVariable(uint variable) {
+	if (variable >= _numVars)
+		error("readVariable: Variable %d out of range", variable);
+
+	if (getGameType() == GType_PP) {
+		return (uint16)_variableArray[variable];
+	} else if (getGameType() == GType_FF) {
+		if (getBitFlag(83))
+			return (uint16)_variableArray2[variable];
+		else
+			return (uint16)_variableArray[variable];
+	} else {
+			return _variableArray[variable];
+	}
+}
+
+void AGOSEngine::writeNextVarContents(uint16 contents) {
+	writeVariable(getVarWrapper(), contents);
+}
+
+void AGOSEngine::writeVariable(uint variable, uint16 contents) {
+	if (variable >= _numVars)
+		error("writeVariable: Variable %d out of range", variable);
+
+	if (getGameType() == GType_FF && getBitFlag(83))
+		_variableArray2[variable] = contents;
+	else
+		_variableArray[variable] = contents;
+}
+
 int AGOSEngine::runScript() {
 	int opcode;
 	bool flag;

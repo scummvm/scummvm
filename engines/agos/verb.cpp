@@ -606,14 +606,14 @@ void AGOSEngine::checkUp(WindowBlock *window) {
 		if (!isBoxDead(j + 201)) {
 			uint index = getWindowNum(window);
 			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
-			loadSprite(4, 9, k + 34, 0, 0, 0);	
+			animate(4, 9, k + 34, 0, 0, 0);	
 		}
 	}
 	if ((_variableArray[31] - _variableArray[30]) == 76) {
 		k = ((_variableArray[31] / 52) % 3);
 		j = k * 6;
 		if (isBoxDead(j + 201)) {
-			loadSprite(4, 9, k + 31, 0, 0, 0);
+			animate(4, 9, k + 31, 0, 0, 0);
 			undefineBox(j + 201);
 			undefineBox(j + 202);
 			undefineBox(j + 203);
@@ -633,14 +633,14 @@ void AGOSEngine::checkDown(WindowBlock *window) {
 		uint index = getWindowNum(window);
 		drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 		k = ((_variableArray[31] / 52) % 3);
-		loadSprite(4, 9, k + 25, 0, 0, 0);	
+		animate(4, 9, k + 25, 0, 0, 0);	
 		_variableArray[31] += 52;
 	}
 	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[30] > 52)) {
 		k = (((_variableArray[31] / 52) + 1) % 3);
 		j = k * 6;
 		if (isBoxDead(j + 201)) {
-			loadSprite(4, 9, k + 28, 0, 0, 0);
+			animate(4, 9, k + 28, 0, 0, 0);
 			undefineBox(j + 201);
 			undefineBox(j + 202);
 			undefineBox(j + 203);
@@ -655,7 +655,7 @@ void AGOSEngine::inventoryUp(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
 		checkUp(window);
-		loadSprite(4, 9, 21, 0 ,0, 0);	
+		animate(4, 9, 21, 0 ,0, 0);	
 		while (1) {
 			if (_currentBoxNumber != 0x7FFB || !getBitFlag(89))
 				break;
@@ -682,7 +682,7 @@ void AGOSEngine::inventoryDown(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
 		checkDown(window);
-		loadSprite(4, 9, 23, 0, 0, 0);	
+		animate(4, 9, 23, 0, 0, 0);	
 		while (1) {
 			if (_currentBoxNumber != 0x7FFC || !getBitFlag(89))
 				break;

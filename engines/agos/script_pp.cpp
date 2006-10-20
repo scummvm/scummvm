@@ -49,7 +49,6 @@ void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
 	op[122] = &AGOSEngine::o3_oracleTextDown;
 	op[123] = &AGOSEngine::o3_oracleTextUp;
 	op[124] = &AGOSEngine::o3_ifTime;
-	op[127] = NULL;
 	op[131] = &AGOSEngine::o3_setTime;
 	op[132] = &AGOSEngine::o4_saveUserGame;
 	op[133] = &AGOSEngine::o4_loadUserGame;

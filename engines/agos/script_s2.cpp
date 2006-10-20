@@ -87,13 +87,16 @@ void AGOSEngine::o2_rescan() {
 
 void AGOSEngine::o2_animate() {
 	// 98: start vga
-	uint vga_res = getVarOrWord();
+	uint zoneNum = getVarOrWord();
 	uint vgaSpriteId = getVarOrWord();
 	uint windowNum = getVarOrByte();
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
 	uint palette = getVarOrWord();
-	loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
+
+	_lockWord |= 0x40;
+	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette);
+	_lockWord &= ~0x40;
 }
 
 void AGOSEngine::o2_stopAnimate() {

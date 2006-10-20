@@ -557,7 +557,7 @@ void AGOSEngine::defineArrowBoxes(WindowBlock *window) {
 		ha->verb = 1;
 
 		stopAnimateSimon1(128);
-		loadSprite(0, 1, 128, 0, 0, 14);
+		animate(0, 1, 128, 0, 0, 14);
 	} else if (getGameType() == GType_WW) {
 		ha->x = 255;
 		ha->y = 170;

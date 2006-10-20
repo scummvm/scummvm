@@ -771,7 +771,7 @@ protected:
 
 	void loadZone(uint zoneNum);
 
-	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
+	void animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool setZone = true);
 	void playSpeech(uint speech_id, uint vga_sprite_id);
 	void skipSpeech();
 

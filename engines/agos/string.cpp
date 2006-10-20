@@ -54,6 +54,22 @@ const byte *AGOSEngine::getLocalStringByID(uint stringId) {
 	return _localStringtable[stringId - _stringIdLocalMin];
 }
 
+TextLocation *AGOSEngine::getTextLocation(uint a) {
+	switch (a) {
+	case 1:
+		return &_textLocation1;
+	case 2:
+		return &_textLocation2;
+	case 101:
+		return &_textLocation3;
+	case 102:
+		return &_textLocation4;
+	default:
+		error("getTextLocation: Invalid text location %d", a);
+	}
+	return NULL;
+}
+
 void AGOSEngine::allocateStringTable(int num) {
 	_stringTabPtr = (byte **)calloc(num, sizeof(byte *));
 	_stringTabPos = 0;
@@ -319,7 +335,7 @@ void AGOSEngine::printInteractText(uint16 num, const char *string) {
 
 	stopAnimateSimon2(2, num + 6);
 	renderString(num, 0, w, height, convertedString);
-	loadSprite(4, 2, num + 6, x, _interactY, 12);
+	animate(4, 2, num + 6, x, _interactY, 12);
 
 	_interactY += height;
 }
@@ -463,9 +479,9 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	}
 
 	if (getGameType() == GType_SIMON1)
-		loadSprite(b, 2, vgaSpriteId + 199, x, y, 12);
+		animate(b, 2, vgaSpriteId + 199, x, y, 12);
 	else
-		loadSprite(b, 2, vgaSpriteId, x, y, 12);
+		animate(b, 2, vgaSpriteId, x, y, 12);
 }
 
 // String code for boxes in Waxworks
@@ -665,7 +681,7 @@ void AGOSEngine::printBox() {
 	stopAnimateSimon1(105);
 	BoxSize = getBoxSize();
 	_variableArray[53] = BoxSize;
-	loadSprite(3, 1, 100, 0, 0, 0);
+	animate(3, 1, 100, 0, 0, 0);
 	changeWindow(5);
 
 	switch (BoxSize) {

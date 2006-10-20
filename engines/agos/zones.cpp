@@ -1,0 +1,196 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "common/stdafx.h"
+
+#include "common/file.h"
+
+#include "agos/intern.h"
+#include "agos/agos.h"
+#include "agos/vga.h"
+
+namespace AGOS {
+
+void AGOSEngine::loadZone(uint zoneNum) {
+	VgaPointersEntry *vpe;
+
+	CHECK_BOUNDS(zoneNum, _vgaBufferPointers);
+
+	vpe = _vgaBufferPointers + zoneNum;
+	if (vpe->vgaFile1 != NULL)
+		return;
+
+	// Loading order is important
+	// due to resource managment
+
+	loadVGAVideoFile(zoneNum, 2);
+	vpe->vgaFile2 = _block;
+	vpe->vgaFile2End = _blockEnd;
+
+	loadVGAVideoFile(zoneNum, 1);
+	vpe->vgaFile1 = _block;
+	vpe->vgaFile1End = _blockEnd;
+
+	vpe->sfxFile = NULL;
+	if (!(getFeatures() & GF_ZLIBCOMP)) {
+		if (loadVGASoundFile(zoneNum, 3)) {
+			vpe->sfxFile = _block;
+			vpe->sfxFileEnd = _blockEnd;
+		}
+	}
+}
+
+void AGOSEngine::setZoneBuffers() {
+	_zoneBuffers = (byte *)malloc(_vgaMemSize);
+
+	_vgaMemPtr = _zoneBuffers;
+	_vgaMemBase = _zoneBuffers;
+	_vgaFrozenBase = _zoneBuffers;
+	_vgaRealBase = _zoneBuffers;
+	_vgaMemEnd = _zoneBuffers + _vgaMemSize;
+}
+
+byte *AGOSEngine::allocBlock(uint32 size) {
+	for (;;) {
+		_block = _vgaMemPtr;
+		_blockEnd = _block + size;
+
+		if (_blockEnd >= _vgaMemEnd) {
+			_vgaMemPtr = _vgaMemBase;
+		} else {
+			_rejectBlock = false;
+			checkNoOverWrite();
+			if (_rejectBlock)
+				continue;
+			checkRunningAnims();
+			if (_rejectBlock)
+				continue;
+			checkZonePtrs();
+			_vgaMemPtr = _blockEnd;
+			return _block;
+		}
+	}
+}
+
+void AGOSEngine::checkNoOverWrite() {
+	VgaPointersEntry *vpe;
+
+	if (_noOverWrite == 0xFFFF)
+		return;
+
+	vpe = &_vgaBufferPointers[_noOverWrite];
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->vgaFile1End;
+		} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->vgaFile2End;
+		} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->sfxFileEnd;
+		} else {
+			_rejectBlock = false;
+		}
+	} else {
+		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+			_vgaMemPtr <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
+		} else {
+			_rejectBlock = false;
+		}
+	}
+}
+
+void AGOSEngine::checkRunningAnims() {
+	VgaSprite *vsp;
+	if (getGameType() != GType_FF && getGameType() != GType_PP && (_lockWord & 0x20)) {
+		return;
+	}
+
+	for (vsp = _vgaSprites; vsp->id; vsp++) {
+		checkAnims(vsp->zoneNum);
+		if (_rejectBlock == true)
+			return;
+	}
+}
+
+void AGOSEngine::checkAnims(uint a) {
+	VgaPointersEntry *vpe;
+
+	vpe = &_vgaBufferPointers[a];
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->vgaFile1End;
+		} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->vgaFile2End;
+		} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->sfxFileEnd;
+		} else {
+			_rejectBlock = false;
+		}
+	} else {
+		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+				_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+			_rejectBlock = true;
+			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
+		} else {
+			_rejectBlock = false;
+		}
+	}
+}
+
+void AGOSEngine::checkZonePtrs() {
+	uint count = ARRAYSIZE(_vgaBufferPointers);
+	VgaPointersEntry *vpe = _vgaBufferPointers;
+	do {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block ||
+					vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block ||
+					vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+				vpe->vgaFile1 = NULL;
+				vpe->vgaFile1End = NULL;
+				vpe->vgaFile2 = NULL;
+				vpe->vgaFile2End = NULL;
+				vpe->sfxFile = NULL;
+				vpe->sfxFileEnd = NULL;
+			}
+		} else {
+			if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+					_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+				vpe->vgaFile1 = NULL;
+				vpe->vgaFile2 = NULL;
+			}
+		}
+	} while (++vpe, --count);
+}
+
+} // End of namespace AGOS
+
+
