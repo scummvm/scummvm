@@ -110,7 +110,7 @@ void MidiDriver_Zodiac::send(uint32 b) {
 }
 
 void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
-	TwMidiSysEx(_midiHandle, 0, msg, length);
+	TwMidiSysEx(_midiHandle, 0, (byte *)msg, length);
 }
 
 MidiDriver *MidiDriver_Zodiac_create() {
