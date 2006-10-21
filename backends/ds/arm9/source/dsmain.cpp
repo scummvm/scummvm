@@ -1875,8 +1875,11 @@ bool getIndyFightState() {
 
 bool GBAMPAvail = false;
 
-void initGBAMP() {	
+void initGBAMP(int mode) {	
 	if (FAT_InitFiles()) {
+		if (mode == 2)	{
+			disc_IsInserted();
+		}
 		GBAMPAvail = true;
 		consolePrintf("Found flash card reader!\n");
 	} else {
@@ -1918,6 +1921,10 @@ void powerOff() {
 	while (keysHeld() != 0) {		// Wait for all keys to be released.
 		swiWaitForVBlank();			// Allow you to read error before the power
 	}								// is turned off.
+
+	for (int r = 0; r < 60; r++) {
+		swiWaitForVBlank();
+	}
 
 	if (ConfMan.hasKey("disablepoweroff", "ds") && ConfMan.getBool("disablepoweroff", "ds")) {
 		while (true);
@@ -2116,7 +2123,7 @@ int main(void)
 	DSFileSystemNode* node = new DSFileSystemNode();
 	if (!node->getZip() || (!node->getZip()->isReady())) {
 		// If not found, init CF/SD driver
-		initGBAMP();
+		initGBAMP(mode);
 	}
 	delete node;
 
@@ -2126,6 +2133,7 @@ int main(void)
 	
 	
 //	OSystem_DS::instance();
+
 	g_system = new OSystem_DS();
 	assert(g_system);
 
