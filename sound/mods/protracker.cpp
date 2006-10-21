@@ -35,6 +35,13 @@ void ProtrackerPlayer::init(OSystem *system) {
 
 	_buf = new SoundBuffer();
 
+// FIXME BROKEN: You must NOT use OSystem::setSoundCallback(),
+// ever! The only piece of code allowed to use it is the mixer.
+// And soon the call might be removed completely, too.
+// The proper way to do this is to create a AudioStream
+// subclass and hook that with the mixer. See also the
+// code used by other softsynths (sound/softsynth/emumidi.h).
+
 	_system->setSoundCallback(&audioCallback, this);
 }
 
