@@ -121,10 +121,35 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			info.length = 0;
 			break;
 		}
-		// Otherwise fall through to default.
 
+		switch (info.event & 0x0F) {
+		case 0x2: // Song Position Pointer?
+			info.basic.param1 = *(_position._play_pos++);
+			info.basic.param2 = *(_position._play_pos++);
+			break;
+
+		case 0x3: // Song Select?
+			info.basic.param1 = *(_position._play_pos++);
+			info.basic.param2 = 0;
+			break;
+
+		case 0x8:
+			info.basic.param1 = info.basic.param2 = 0;
+			break;
+
+		case 0xF: // META event?
+			info.ext.type = *(_position._play_pos++);
+			info.length = readVLQ(_position._play_pos);
+			info.ext.data = _position._play_pos;
+			_position._play_pos += info.length;
+			break;
+		default:
+			debug(0, "MidiParser_S1D: Unexpected type 0x%02X found", (int) info.event);
+			break;
+		}
+		break;
 	default:
-		debug(6, "MidiParser_S1D: Unexpected byte 0x%02X found", (int) info.command());
+		debug(0, "MidiParser_S1D: Unexpected event 0x%02X found", (int) info.command());
 		break;
 	}
 }
