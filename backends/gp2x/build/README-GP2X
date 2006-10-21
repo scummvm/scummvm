@@ -55,6 +55,7 @@ are supported. Please check game compatability for more infomation.
     * Scumm - (All games supported by ScummVM should work to some
       extent, using the hardware scalar if needed)
     * Simon - (Simon the Sorcerer one and two).
+    * Saga - (Inherit the Earth)
     * Sky - (Beneath a Steel Sky)
     * Sword - (Broken Sword 1) - This engine uses the hardware scalar to
       downsize the graphics to fix on the GP2X. It is NOT very nice to

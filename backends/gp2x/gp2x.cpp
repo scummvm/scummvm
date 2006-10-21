@@ -248,8 +248,8 @@ void OSystem_GP2X::quit() {
 	//CloseRam();
 	GP2X_device_deinit();
 	SDL_Quit();
-	chdir("/usr/gp2x");
-	execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
+	// chdir("/usr/gp2x");
+	// execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
 }
 
 OSystem::MutexRef OSystem_GP2X::createMutex(void) {
