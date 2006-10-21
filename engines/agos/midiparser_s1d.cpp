@@ -45,7 +45,7 @@ protected:
 	bool _no_delta;
 
 protected:
-	void parseNextEvent (EventInfo &info);
+	void parseNextEvent(EventInfo &info);
 	void resetTracking();
 	uint32 readVLQ2(byte * &data);
 
@@ -97,6 +97,15 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		info.length = 0;
 		break;
 
+	case 0xA:
+	case 0xB:
+		// I'm not sure what these are meant to do, or what the
+		// parameter is. Elvira 1 needs them, though, and who am I to
+		// argue with her?
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = 0;
+		break;
+
 	case 0xC:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
@@ -112,7 +121,7 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			info.length = 0;
 			break;
 		}
-		// OTherwise fall through to default.
+		// Otherwise fall through to default.
 
 	default:
 		debug(6, "MidiParser_S1D: Unexpected byte 0x%02X found", (int) info.command());
