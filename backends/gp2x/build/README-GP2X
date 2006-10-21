@@ -1,4 +1,4 @@
-ScummVM - GP2X SPECIFIC README - 0.9.1 SVN
+ScummVM - GP2X SPECIFIC README - 0.9.1
 ------------------------------------------------------------------------
 
 Contents:
@@ -23,24 +23,18 @@ About the backend/port
 This is the readme for the offficial GP2X ScummVM backend (also known as
 the GP2X port).
 
-This is an SVN test release of ScummVM for the GP2X, it would be
-appreciated if this SVN test distribution was not mirrored and that
-people be directed to http://www.distant-earth.com/scummvm instead for
-updated SVN builds.
+Fully supported official releases of the GP2X ScummVM backend (ScummVM
+for the GP2X) are made in line with main official releases and are
+avalalble from the ScummVM downloads page
+<http://www.scummvm.org/downloads.php>.
 
-Full supported official releases of the GP2X ScummVM backend are made in
-line with main official releases and are avalalble from the ScummVM
-downloads page <http://www.scummvm.org/downloads.php>.
-
-This build is in an active state of development and as such no
-?expected? behavior can be guaranteed ;).
-
-SVN builds are quickly tested with firmware 2.0.0 for reference.
+This build was tested with firmware 2.1.0 for reference.
 
 Please refer to the GP2X ScummVM forum
-<http://forums.scummvm.org/viewforum.php?f=14> and WiKi
-<http://wiki.scummvm.org/index.php/GP2X> for the latest information on
-the port.
+<http://forums.scummvm.org/viewforum.php?f=14>, WiKi
+<http://wiki.scummvm.org/index.php/GP2X> and my own ScummVM page
+<http://www.distant-earth.com/scummvm> for the latest information on the
+port.
 
 ------------------------------------------------------------------------
 Game compatibility
@@ -88,9 +82,9 @@ For best results use uncompressed audio in games.
 ------------------------------------------------------------------------
 Supported cut-scene options
 
-No cut scene compression options are currently supported.
-
-DXA video support will be added as soon as it is stable.
+No cut scene compression options are supported in this release.
+Compressed video support will be added to future releases as soon as it
+is stable.
 
 ------------------------------------------------------------------------
 Recent changes
@@ -99,8 +93,8 @@ Refined audio hacks to reduce audio delay a little more.
 Enabled hardware scalar code.
 Now built using SDL 1.2.9 for the parts of the port that use SDL (some
 parts now hit the hardware directly).
-Enabled new launcher - (Ensure defaulttheme.zip is in the same folder as
-the executable).
+Enabled new launcher - (Ensure modern.zip and modern.ini are in the same
+folder as the executable).
 Aspect Ratio Correction can now be disabled ?per game?. When adding a
 game you can find this option on the GFX tab.
 Note: This will cause the game to run with a black border at the bottom
@@ -116,7 +110,7 @@ location.
 The configiration file for ScummVM (.scummvmrc) is stored in the same
 place as the ScummVM executable.
 
-The save process below is for Scumm engine games but the principle is
+The save process below is for SCUMM engine games but the principle is
 the same for all.
 
 In Game.
@@ -130,8 +124,7 @@ In Game.
 Basically the emulated keys you can use are equivelent to the values
 buttons are mapped to,
 
-I have a virtual keyboard like the GP32 one (left/right on the stick to
-pick chars) to add in at some point ;-)
+I have a virtual keyboard to add in at some point ;-)
 
 ------------------------------------------------------------------------
 Controller mappings
@@ -163,22 +156,20 @@ Select: Exit ScummVM completely (and gracefully)
 ------------------------------------------------------------------------
 Know issues
 
-Possible random crash (well SegFault). I have had this happen twice and
-have not tracked down the cause.
+Thanks to feedback from teh GP2X community most (all I hope)
+show-stopping bugs should have been worked out for this release.
+
+There exists a possible random crash (well SegFault). I have had this
+happen twice and have not tracked down the cause.
 It happens very infrequently, both times it was in the DOTT CD intro.
+
 Saving often is never a bad idea anyhow.
 
 ------------------------------------------------------------------------
 Major TODO's
 
-Fix save support when using the Sky engine (Beneath a Steel Sky) - You
-CAN'T save at the moment but auto save works.
-Look into inconsistencies with AGOS engine and map Y key to a button
-combination to allow clean quitting (Simon 1/2).
-Add splash-screen and pre-ScummVM config menu (CPU speed, LCD timings
-etc.) - Partly done.
-Fix TV out, maybe make it an option in the pre-ScummVM config menu.
-Any help appreciated :).
+This is a official point release (0.9.1) - To look at the TODO list for
+the port review this document in any SVN builds.
 
 ------------------------------------------------------------------------
 Additional resources/links

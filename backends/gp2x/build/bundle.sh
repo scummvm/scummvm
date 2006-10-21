@@ -15,10 +15,11 @@ mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`\saves"
 
 echo "Please put your save games in this dir" >> "scummvm-gp2x-`date '+%Y-%m-%d'`\saves\PUT_SAVES_IN_THIS_DIR"
 
+cp ./scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./scummvm.png ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X.html ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X ./scummvm-gp2x-`date '+%Y-%m-%d'`/
-cp ../../../scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ../../../scummvm ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../AUTHORS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../README ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../COPYING ./scummvm-gp2x-`date '+%Y-%m-%d'`/
