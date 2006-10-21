@@ -26,32 +26,31 @@
 #include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "sound/mixer.h"
 #include "gui/message.h"
+#include "sound/mixer.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
 #endif
 
-/* FIXME - BIG HACK for MidiEmu */
+// FIXME - BIG HACK for MidiEmu & error()
 Engine *g_engine = 0;
+
 
 Engine::Engine(OSystem *syst)
 	: _system(syst),
+		_mixer(_system->getMixer()),
+		_timer(_system->getTimerManager()),
+		_saveFileMan(_system->getSavefileManager()),
 		_gameDataPath(ConfMan.get("path")),
-		_targetName(ConfMan.getActiveDomainName()){
+		_targetName(ConfMan.getActiveDomainName()) {
+
 	g_engine = this;
-	_mixer = new Audio::Mixer();
-
-	_timer = Common::g_timer;
-
-	_saveFileMan = _system->getSavefileManager();
-
 	_autosavePeriod = ConfMan.getInt("autosave_period");
 }
 
 Engine::~Engine() {
-	delete _mixer;
+	_mixer->stopAll(true);
 	delete _saveFileMan;
 
 	g_engine = NULL;

@@ -28,12 +28,17 @@
 #include "common/mutex.h"
 #include "common/rect.h"
 
+namespace Audio {
+	class Mixer;
+}
+
 namespace Graphics {
 	struct Surface;
 }
 
 namespace Common {
 	class SaveFileManager;
+	class TimerManager;
 }
 
 /**
@@ -969,6 +974,13 @@ public:
 
 	/** Savefile management. */
 	virtual Common::SaveFileManager *getSavefileManager();
+
+
+	/** TODO */
+	virtual Audio::Mixer *getMixer();
+
+	/** TODO */
+	virtual Common::TimerManager *getTimerManager();
 
 	//@}
 };

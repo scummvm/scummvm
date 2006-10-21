@@ -45,9 +45,10 @@ public:
 	Common::TimerManager * _timer;
 
 protected:
+	Common::SaveFileManager *_saveFileMan;
+
 	const Common::String _targetName; // target name for saves
 	const Common::String _gameDataPath;
-	Common::SaveFileManager *_saveFileMan;
 
 private:
 	int _autosavePeriod;
