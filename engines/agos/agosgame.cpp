@@ -15,7 +15,7 @@ static const ADGameFileDescription ELVIRA1ST_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b"},
 };
 
-static const ADGameFileDescription ELVIRA1DOS_GameFiles[] = {
+static const ADGameFileDescription ELVIRA1DOS_EN_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"a49e132a1f18306dd5d1ec2fe435e178"},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45"},
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149"},
@@ -49,7 +49,7 @@ static const ADGameFileDescription ELVIRA2ST_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e"},
 };
 
-static const ADGameFileDescription ELVIRA2DOS_GameFiles[] = {
+static const ADGameFileDescription ELVIRA2DOS_EN_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7"},
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
 	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
@@ -57,7 +57,7 @@ static const ADGameFileDescription ELVIRA2DOS_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
 };
 
-static const ADGameFileDescription ELVIRA2DOS_ALT_GameFiles[] = {
+static const ADGameFileDescription ELVIRA2DOS_EN_ALT_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"1282fd5c520861ae2b73bf653afef547"},
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
 	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
@@ -130,7 +130,7 @@ static const ADGameFileDescription SIMON1AMIGA_ECS_DEMO_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c"},
 };
 
-static const ADGameFileDescription SIMON1AMIGA_AGA_GameFiles[] = {
+static const ADGameFileDescription SIMON1AMIGA_AGA_EN_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"6c9ad2ff571d34a4cf0c696cf4e13500"},
 	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed"},
 	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8"},
@@ -158,7 +158,7 @@ static const ADGameFileDescription SIMON1CD32_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b"},
 };
 
-static const ADGameFileDescription SIMON1CD32_2_GameFiles[] = {
+static const ADGameFileDescription SIMON1CD32_ALT_GameFiles[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"ec5358680c117f29b128cbbb322111a4"},
 	{ "icon.pkd",		GAME_ICONFILE,	"8ce5a46466a4f8f6d0f780b0ef00d5f5"},
 	{ "stripped.txt",	GAME_STRFILE,	"59be788020441e21861e284236fd08c1"},
@@ -179,7 +179,7 @@ static const ADGameFileDescription SIMON1DOS_INF_RU_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
-static const ADGameFileDescription SIMON1DOS_GameFiles[] = {
+static const ADGameFileDescription SIMON1DOS_EN_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
 	{ "stripped.txt",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f"},
@@ -228,7 +228,7 @@ static const ADGameFileDescription SIMON1DEMO_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c"},
 };
 
-static const ADGameFileDescription SIMON1TALKIE_GameFiles[] = {
+static const ADGameFileDescription SIMON1TALKIE_EN_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
 	{ "simon.gme",		GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806"},
@@ -236,7 +236,7 @@ static const ADGameFileDescription SIMON1TALKIE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
-static const ADGameFileDescription SIMON1TALKIE2_GameFiles[] = {
+static const ADGameFileDescription SIMON1TALKIE_EN_ALT_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"c0b948b6821d2140f8b977144f21027a"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
 	{ "simon.gme",		GAME_GMEFILE,	"64f73e94639b63af846ac4a8a94a23d8"},
@@ -276,7 +276,7 @@ static const ADGameFileDescription SIMON1TALKIE_IT_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
-static const ADGameFileDescription SIMON1TALKIE_IT2_GameFiles[] = {
+static const ADGameFileDescription SIMON1TALKIE_IT_ALT_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"8d3ca654e158c91b860c7eae31d65312"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
 	{ "simon.gme",		GAME_GMEFILE,	"104efd83c8f3edf545982e07d87f66ac"},
@@ -292,7 +292,7 @@ static const ADGameFileDescription SIMON1TALKIE_ES_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
-static const ADGameFileDescription SIMON1WIN_GameFiles[] = {
+static const ADGameFileDescription SIMON1WIN_EN_GameFiles[] = {
 	{ "gamepc",		GAME_BASEFILE,	"c7c12fea7f6d0bfd22af5cdbc8166862"},
 	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19"},
 	{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc"},
@@ -316,7 +316,7 @@ static const ADGameFileDescription SIMON1WIN_DE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8"},
 };
 
-static const ADGameFileDescription SIMON2DOS_GameFiles[] = {
+static const ADGameFileDescription SIMON2DOS_EN_GameFiles[] = {
 	{ "game32",		GAME_BASEFILE,	"27c8e7feada80c75b70b9c2f6088d519"},
 	{ "icon.dat",		GAME_ICONFILE,	"ee92d1f84893195a60449f2430d07285"},
 	{ "simon2.gme",		GAME_GMEFILE,	"eefcc32b1f2c0482c1a59a963a146345"},
@@ -332,7 +332,7 @@ static const ADGameFileDescription SIMON2DOS_RU_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
-static const ADGameFileDescription SIMON2DOS2_GameFiles[] = {
+static const ADGameFileDescription SIMON2DOS_EN_ALT_GameFiles[] = {
 	{ "game32",		GAME_BASEFILE,	"604d04315935e77624bd356ac926e068"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
 	{ "simon2.gme",		GAME_GMEFILE,	"aa6840420899a31874204f90bb214108"},
@@ -372,7 +372,7 @@ static const ADGameFileDescription SIMON2DEMO_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601"},
 };
 
-static const ADGameFileDescription SIMON2TALKIE_GameFiles[] = {
+static const ADGameFileDescription SIMON2TALKIE_EN_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"8c301fb9c4fcf119d2730ccd2a565eb3"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
 	{ "simon2.gme",		GAME_GMEFILE,	"9c535d403966750ae98bdaf698375a38"},
@@ -380,7 +380,7 @@ static const ADGameFileDescription SIMON2TALKIE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
-static const ADGameFileDescription SIMON2TALKIE2_GameFiles[] = {
+static const ADGameFileDescription SIMON2TALKIE_EN_ALT_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
 	{ "simon2.gme",		GAME_GMEFILE,	"8d6dcc65577e285dbca03ff6d7d9323c"},
@@ -404,7 +404,7 @@ static const ADGameFileDescription SIMON2TALKIE_DE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
-static const ADGameFileDescription SIMON2TALKIE_DE2_GameFiles[] = {
+static const ADGameFileDescription SIMON2TALKIE_DE_ALT_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"a76ea940076b5d9316796dea225a9b69"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
 	{ "simon2.gme",		GAME_GMEFILE,	"ec9f0f24fd895e7ea72e3c8e448c0240"},
@@ -444,7 +444,7 @@ static const ADGameFileDescription SIMON2WIN_CZ_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
-static const ADGameFileDescription SIMON2WIN_GameFiles[] = {
+static const ADGameFileDescription SIMON2WIN_EN_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
 	{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04"},
@@ -460,7 +460,7 @@ static const ADGameFileDescription SIMON2WIN_DE_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
-static const ADGameFileDescription SIMON2WIN_DE2_GameFiles[] = {
+static const ADGameFileDescription SIMON2WIN_DE_ALT_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"9e858b3bb189c134c3a5f34c3385a8d3"},
 	{ "icon.dat",		GAME_ICONFILE,	"ee92d1f84893195a60449f2430d07285"},
 	{ "simon2.gme",		GAME_GMEFILE,	"16d574da07e93bcae43cee353dab8c7e"},
@@ -512,12 +512,12 @@ static const ADGameFileDescription FEEBLEFILES_MAC_UK_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
-static const ADGameFileDescription FEEBLEFILES_2CD_GameFiles[] = {
+static const ADGameFileDescription FEEBLEFILES_EN_2CD_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
 
-static const ADGameFileDescription FEEBLEFILES_4CD_GameFiles[] = {
+static const ADGameFileDescription FEEBLEFILES_EN_4CD_GameFiles[] = {
 	{ "game22",		GAME_BASEFILE,	"a8746407a5b20a7da0da0a14c380af1c"},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf"},
 };
@@ -614,8 +614,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"elvira1",
 			"Floppy",
-			ARRAYSIZE(ELVIRA1DOS_GameFiles),
-			ELVIRA1DOS_GameFiles,
+			ARRAYSIZE(ELVIRA1DOS_EN_GameFiles),
+			ELVIRA1DOS_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -694,8 +694,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"elvira2",
 			"Floppy",
-			ARRAYSIZE(ELVIRA2DOS_GameFiles),
-			ELVIRA2DOS_GameFiles,
+			ARRAYSIZE(ELVIRA2DOS_EN_GameFiles),
+			ELVIRA2DOS_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -710,8 +710,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"elvira2",
 			"Floppy",
-			ARRAYSIZE(ELVIRA2DOS_ALT_GameFiles),
-			ELVIRA2DOS_ALT_GameFiles,
+			ARRAYSIZE(ELVIRA2DOS_EN_ALT_GameFiles),
+			ELVIRA2DOS_EN_ALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -854,8 +854,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"AGA Floppy",
-			ARRAYSIZE(SIMON1AMIGA_AGA_GameFiles),
-			SIMON1AMIGA_AGA_GameFiles,
+			ARRAYSIZE(SIMON1AMIGA_AGA_EN_GameFiles),
+			SIMON1AMIGA_AGA_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -918,8 +918,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"CD32",
-			ARRAYSIZE(SIMON1CD32_2_GameFiles),
-			SIMON1CD32_2_GameFiles,
+			ARRAYSIZE(SIMON1CD32_ALT_GameFiles),
+			SIMON1CD32_ALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -950,8 +950,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"Floppy",
-			ARRAYSIZE(SIMON1DOS_GameFiles),
-			SIMON1DOS_GameFiles,
+			ARRAYSIZE(SIMON1DOS_EN_GameFiles),
+			SIMON1DOS_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1078,8 +1078,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"CD",
-			ARRAYSIZE(SIMON1TALKIE_GameFiles),
-			SIMON1TALKIE_GameFiles,
+			ARRAYSIZE(SIMON1TALKIE_EN_GameFiles),
+			SIMON1TALKIE_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1094,8 +1094,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"CD",
-			ARRAYSIZE(SIMON1TALKIE2_GameFiles),
-			SIMON1TALKIE2_GameFiles,
+			ARRAYSIZE(SIMON1TALKIE_EN_ALT_GameFiles),
+			SIMON1TALKIE_EN_ALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1174,8 +1174,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"CD",
-			ARRAYSIZE(SIMON1TALKIE_IT2_GameFiles),
-			SIMON1TALKIE_IT2_GameFiles,
+			ARRAYSIZE(SIMON1TALKIE_IT_ALT_GameFiles),
+			SIMON1TALKIE_IT_ALT_GameFiles,
 			// FIXME: DOS version which uses WAV format
 			Common::IT_ITA,
 			Common::kPlatformWindows,
@@ -1207,8 +1207,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon1",
 			"CD",
-			ARRAYSIZE(SIMON1WIN_GameFiles),
-			SIMON1WIN_GameFiles,
+			ARRAYSIZE(SIMON1WIN_EN_GameFiles),
+			SIMON1WIN_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 		},
@@ -1255,8 +1255,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"Floppy",
-			ARRAYSIZE(SIMON2DOS_GameFiles),
-			SIMON2DOS_GameFiles,
+			ARRAYSIZE(SIMON2DOS_EN_GameFiles),
+			SIMON2DOS_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1287,8 +1287,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"Floppy",
-			ARRAYSIZE(SIMON2DOS2_GameFiles),
-			SIMON2DOS2_GameFiles,
+			ARRAYSIZE(SIMON2DOS_EN_ALT_GameFiles),
+			SIMON2DOS_EN_ALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1367,8 +1367,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"CD",
-			ARRAYSIZE(SIMON2TALKIE_GameFiles),
-			SIMON2TALKIE_GameFiles,
+			ARRAYSIZE(SIMON2TALKIE_EN_GameFiles),
+			SIMON2TALKIE_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1383,8 +1383,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"CD",
-			ARRAYSIZE(SIMON2TALKIE2_GameFiles),
-			SIMON2TALKIE2_GameFiles,
+			ARRAYSIZE(SIMON2TALKIE_EN_ALT_GameFiles),
+			SIMON2TALKIE_EN_ALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -1431,8 +1431,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"CD",
-			ARRAYSIZE(SIMON2TALKIE_DE2_GameFiles),
-			SIMON2TALKIE_DE2_GameFiles,
+			ARRAYSIZE(SIMON2TALKIE_DE_ALT_GameFiles),
+			SIMON2TALKIE_DE_ALT_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
 		},
@@ -1512,8 +1512,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"CD",
-			ARRAYSIZE(SIMON2WIN_GameFiles),
-			SIMON2WIN_GameFiles,
+			ARRAYSIZE(SIMON2WIN_EN_GameFiles),
+			SIMON2WIN_EN_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 		},
@@ -1544,8 +1544,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"CD",
-			ARRAYSIZE(SIMON2WIN_DE2_GameFiles),
-			SIMON2WIN_DE2_GameFiles,
+			ARRAYSIZE(SIMON2WIN_DE_ALT_GameFiles),
+			SIMON2WIN_DE_ALT_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 		},
@@ -1672,8 +1672,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"feeble",
 			"2CD",
-			ARRAYSIZE(FEEBLEFILES_2CD_GameFiles),
-			FEEBLEFILES_2CD_GameFiles,
+			ARRAYSIZE(FEEBLEFILES_EN_2CD_GameFiles),
+			FEEBLEFILES_EN_2CD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 		},
@@ -1688,8 +1688,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"feeble",
 			"4CD",
-			ARRAYSIZE(FEEBLEFILES_4CD_GameFiles),
-			FEEBLEFILES_4CD_GameFiles,
+			ARRAYSIZE(FEEBLEFILES_EN_4CD_GameFiles),
+			FEEBLEFILES_EN_4CD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 		},
