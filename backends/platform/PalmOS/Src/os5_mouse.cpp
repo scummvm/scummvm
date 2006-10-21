@@ -24,6 +24,19 @@
 
 #include "be_os5.h"
 
+void OSystem_PalmOS5::setCursorPalette(const byte *colors, uint start, uint num) {
+	for(uint i = 0; i < num; i++) {
+		_mousePal[i + start] = gfxMakeDisplayRGB(colors[0], colors[1], colors[2]);
+		colors += 4;
+	}
+	
+	_cursorPaletteDisabled = false;
+}
+
+void OSystem_PalmOS5::disableCursorPalette(bool disable) {
+	_cursorPaletteDisabled = disable;
+}
+
 void OSystem_PalmOS5::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
 	if (w == 0 || h == 0)
 		return;
@@ -38,6 +51,7 @@ void OSystem_PalmOS5::setMouseCursor(const byte *buf, uint w, uint h, int hotspo
 
 	// copy new cursor
 	byte *dst = _mouseDataP;
+	memset(dst, MAX_MOUSE_W * MAX_MOUSE_H, keycolor);
 	while (h--) {
 		memcpy(dst, buf, w);
 		dst += MAX_MOUSE_W;
@@ -105,14 +119,15 @@ void OSystem_PalmOS5::draw_mouse() {
 	if (_overlayVisible) {
 		int16 *bak = (int16 *)_mouseBackupP;			// Surface used to backup the area obscured by the mouse
 		int16 *dst = _overlayP + y * _screenWidth + x;
-		
+		int16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
+
 		do {
 			width = w;
 			do {
 				*bak++ = *dst;
 				color = *src++;
 				if (color != _mouseKeyColor)	// transparent, don't draw
-					*dst = _nativePal[color];
+					*dst = pal[color];
 				dst++;
 			} while (--width);
 

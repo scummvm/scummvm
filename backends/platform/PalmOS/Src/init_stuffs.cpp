@@ -1,5 +1,9 @@
 #include <PalmOS.h>
+
+#ifndef DISABLE_SONY
 #include <SonyClie.h>
+#endif
+
 #include <PalmNavigator.h>
 #include <HsExtCommon.h>
 #include <HsNavCommon.h>

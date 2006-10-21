@@ -24,6 +24,10 @@
 
 #include "be_base.h"
 
+#ifdef STDLIB_TRACE_MEMORY
+#	include <stdlib.h>
+#endif
+
 #if defined(COMPILE_OS5) && defined(PALMOS_ARM)
 extern "C" void SysEventGet(EventType *eventP, Int32 timeout);
 extern "C" void SysEventAddToQueue (const EventType *eventP);
@@ -306,6 +310,11 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 				key = (key == '0') ? 324 : (315 + key - '1');
 				mask = 0;
 
+#ifdef STDLIB_TRACE_MEMORY
+			// print memory
+			} else if  (key == 'm' && mask == (KBD_CTRL|KBD_ALT)) {
+				printf("Used memory: %d\n", __stdlib_trace_memory);
+#endif
 			// exit
 			} else if  ((key == 'z' && mask == KBD_CTRL) || (mask == KBD_ALT && key == 'x')) {
 				event.type = EVENT_QUIT;
@@ -320,6 +329,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			}
 			
 			// other keys
+			_lastEvent = keyDownEvent;
 			event.type = EVENT_KEYDOWN;
 			event.kbd.keycode = key;
 			event.kbd.ascii = key;
@@ -327,6 +337,11 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			return true;
 
 		default:
+			if (_lastEvent == keyDownEvent) {
+				event.type = EVENT_KEYUP;
+				_lastEvent = nilEvent;
+				return true;
+			}
 			return false;
 		};
 	}

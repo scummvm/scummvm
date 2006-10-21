@@ -24,6 +24,10 @@
 
 #include <stdlib.h>
 
+#ifdef STDLIB_TRACE_MEMORY
+UInt32 __stdlib_trace_memory = 0;
+#endif
+
 #define memNewChunkFlagAllowLarge	0x1000 
 SysAppInfoPtr SysGetAppInfo(SysAppInfoPtr *uiAppPP, SysAppInfoPtr *actionCodeAppPP) SYS_TRAP(sysTrapSysGetAppInfo);
 
@@ -60,6 +64,9 @@ MemPtr __malloc(UInt32 size) {
 		newP = MemChunkNew(0, size, attr);
 	}
 
+#ifdef STDLIB_TRACE_MEMORY
+	__stdlib_trace_memory += size;
+#endif
 	return newP;
 }
 
@@ -72,17 +79,32 @@ MemPtr calloc(UInt32 nelem, UInt32 elsize) {
 	if (newP)
 		MemSet(newP,size,0);
 
+#ifdef STDLIB_TRACE_MEMORY
+	__stdlib_trace_memory += size;
+#endif
 	return newP;
 }
 
 Err free(MemPtr memP) {
-	if (memP)
+	if (memP) {
+#ifdef STDLIB_TRACE_MEMORY
+		UInt32 sz = MemPtrSize(memP);
+		__stdlib_trace_memory -= sz;
+#endif
 		return MemPtrFree(memP);
+	}
+
 	return memErrInvalidParam;
 }
 
 MemPtr realloc(MemPtr oldP, UInt32 size) {
 	MemPtr newP;
+
+#ifdef STDLIB_TRACE_MEMORY
+	UInt32 sz = MemPtrSize(oldP);
+	__stdlib_trace_memory -= sz;
+	__stdlib_trace_memory += size;
+#endif
 
 	if (oldP != NULL)
 		if (MemPtrResize(oldP, size) == 0)

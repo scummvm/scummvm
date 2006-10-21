@@ -39,11 +39,6 @@ bool OSystem_PalmBase::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
-	if (visible)
-		draw_mouse();
-	else
-		undraw_mouse();
-
 	return last;
 }
 

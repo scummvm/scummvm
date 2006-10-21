@@ -37,6 +37,7 @@ OSystem_PalmOS5::OSystem_PalmOS5() : OSystem_PalmBase() {
 	_overlayH = NULL;
 	_isSwitchable = false;
 	_wasRotated = false;
+	_cursorPaletteDisabled = true;
 
 	MemSet(&_soundEx, sizeof(SoundExType), 0);
 	_soundEx.sound = &_sound;
@@ -59,6 +60,15 @@ void OSystem_PalmOS5::int_initBackend() {
 		_keyMouse.bitButLeft= keyBitRockerCenter;
 		_keyMouse.hasMore	= true;
 	}
+}
+
+bool OSystem_PalmOS5::hasFeature(Feature f) {
+	switch (f) {
+		case kFeatureCursorHasPalette:
+			return true;
+	}
+
+	return false;
 }
 
 void OSystem_PalmOS5::setWindowCaption(const char *caption) {
