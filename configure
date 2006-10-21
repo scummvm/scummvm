@@ -110,7 +110,7 @@ cc_check() {
 	echo >> "$TMPLOG"
 	echo "$CXX $TMPC -o $TMPO$EXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$EXEEXT"
-	( $CXX "$TMPC" -o "$TMPO$EXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$EXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
 	echo >> "$TMPLOG"
 	return "$TMP"
@@ -158,7 +158,7 @@ if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
 	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 $CXXFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-if eval "$CXX -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp"; then
+if eval "$CXX $CXXFLAGS -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp"; then
 	datatype=`./tmp_find_type_with_size $1`
 	if test "$datatype" = "unknown"; then
 		echo "couldn't find data type with $1 bytes"
@@ -805,7 +805,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-	$CXX -o tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
+	$CXX $CXXFLAGS -o tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 	endianness=`./tmp_endianness_check`
 	echo $endianness;
 	case $endianness in
