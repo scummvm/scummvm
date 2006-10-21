@@ -436,6 +436,14 @@ static const ADGameFileDescription SIMON2TALKIE_ES_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
+static const ADGameFileDescription SIMON2WIN_CZ_GameFiles[] = {
+	{ "gsptr30",		GAME_BASEFILE,	"eb8217f9ec4628d12ca606033146c48c"},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
+	{ "simon2.gme",		GAME_GMEFILE,	"2d1074788501c55dcd9e59269ea0aaed"},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6"},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
+};
+
 static const ADGameFileDescription SIMON2WIN_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
@@ -1476,6 +1484,22 @@ static const AGOSGameDescription gameDescriptions[] = {
 			SIMON2TALKIE_ES_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformPC,
+		},
+
+		GType_SIMON2,
+		GID_SIMON2TALKIE,
+		GF_TALKIE,
+	},
+
+	// Simon the Sorcerer 2 - Czech Windows CD
+	{
+		{
+			"simon2",
+			"CD",
+			ARRAYSIZE(SIMON2WIN_CZ_GameFiles),
+			SIMON2WIN_CZ_GameFiles,
+			Common::CZ_CZE,
+			Common::kPlatformWindows,
 		},
 
 		GType_SIMON2,
