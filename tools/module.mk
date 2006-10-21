@@ -27,11 +27,11 @@ clean-tools:
 
 tools/convbdf$(EXEEXT): $(srcdir)/tools/convbdf.c
 	$(MKDIR) tools/$(DEPDIR)
-	$(CC) -Wall -o $@ $<
+	$(CC) $(CFLAGS) -Wall -o $@ $<
 
 tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
 	$(MKDIR) tools/$(DEPDIR)
-	$(CC) -Wall -o $@ $<
+	$(CC) $(CFLAGS) -Wall -o $@ $<
 
 #
 # Rules to explicitly rebuild the credits / MD5 tables.
