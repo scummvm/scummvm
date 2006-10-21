@@ -39,7 +39,7 @@ class ScummEngine;
  */
 class Player_V3A : public MusicEngine {
 public:
-	Player_V3A(ScummEngine *scumm);
+	Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_V3A();
 
 	virtual void setMusicVolume(int vol);

@@ -34,7 +34,8 @@ namespace Scumm {
 #define TIMER_BASE_FREQ 1193000
 #define FIXP_SHIFT  16
 
-Player_V1::Player_V1(ScummEngine *scumm, bool pcjr) : Player_V2(scumm, pcjr) {
+Player_V1::Player_V1(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
+	: Player_V2(scumm, mixer, pcjr) {
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);

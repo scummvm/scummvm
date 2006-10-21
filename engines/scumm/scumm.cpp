@@ -1009,9 +1009,9 @@ void ScummEngine::setupScumm() {
 
 	// Create the sound manager
 	if (_game.heversion > 0)
-		_sound = new SoundHE(this);
+		_sound = new SoundHE(this, _mixer);
 	else
-		_sound = new Sound(this);
+		_sound = new Sound(this, _mixer);
 
 	// Setup the music engine
 	setupMusic(_game.midi);
@@ -1096,16 +1096,14 @@ void ScummEngine::setupScumm() {
 void ScummEngine_v7::setupScumm() {
 
 	if (_game.features & GF_DIGI_IMUSE) {
-#ifndef DISABLE_SCUMM_7_8
-		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
-#endif
+		_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, 10);
 	}
 
 	ScummEngine::setupScumm();
 
 	// Create FT INSANE object
 	if (_game.id == GID_FT)
-		_insane = new Insane((ScummEngine_v7 *)this);
+		_insane = new Insane(this);
 	else
 		_insane = 0;
 
@@ -1457,19 +1455,19 @@ void ScummEngine::setupMusic(int midi) {
 		// TODO
 		_musicEngine = NULL;
 	} else if (_game.platform == Common::kPlatformNES) {
-		_musicEngine = new Player_NES(this);
+		_musicEngine = new Player_NES(this, _mixer);
 	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version == 2)) {
-		_musicEngine = new Player_V2A(this);
+		_musicEngine = new Player_V2A(this, _mixer);
 	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version == 3)) {
-		_musicEngine = new Player_V3A(this);
+		_musicEngine = new Player_V3A(this, _mixer);
 	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version <= 4)) {
 		_musicEngine = NULL;
 	} else if (_game.id == GID_MANIAC && (_game.version == 1)) {
-		_musicEngine = new Player_V1(this, midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V1(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_game.version <= 2) {
-		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
 	} else if ((_musicType == MDT_PCSPK) && ((_game.version > 2) && (_game.version <= 4))) {
-		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_game.version >= 3 && _game.heversion <= 61 && _game.platform != Common::kPlatform3DO) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;

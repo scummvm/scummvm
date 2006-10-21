@@ -119,7 +119,7 @@ void Puzzle::initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, 
 
 void Puzzle::execute(void) {
 	_active = true;
-	Common::g_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
+	_vm->_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
 
 	initPieces();
 
@@ -134,7 +134,7 @@ void Puzzle::execute(void) {
 void Puzzle::exitPuzzle(void) {
 	_active = false;
 
-	Common::g_timer->removeTimerProc(&hintTimerCallback);
+	_vm->_timer->removeTimerProc(&hintTimerCallback);
 
 	_vm->_scene->changeScene(ITE_SCENE_LODGE, 0, kTransitionNoFade);
 	_vm->_interface->setMode(kPanelMain);
@@ -383,17 +383,17 @@ void Puzzle::solicitHint(void) {
 
 	_vm->_actor->setSpeechColor(1, kITEColorBlack);
 
-	Common::g_timer->removeTimerProc(&hintTimerCallback);
+	_vm->_timer->removeTimerProc(&hintTimerCallback);
 
 	switch (_hintRqState) {
 	case kRQSpeaking:
 		if (_vm->_actor->isSpeaking()) {
-			Common::g_timer->installTimerProc(&hintTimerCallback, 50000, this);
+			_vm->_timer->installTimerProc(&hintTimerCallback, 50000, this);
 			break;
 		}
 
 		_hintRqState = _hintNextRqState;
-		Common::g_timer->installTimerProc(&hintTimerCallback, 333333, this);
+		_vm->_timer->installTimerProc(&hintTimerCallback, 333333, this);
 		break;
 
 	case kRQNoHint:
@@ -416,11 +416,11 @@ void Puzzle::solicitHint(void) {
 		//	Roll to see if Sakka scolds
 		if (_vm->_rnd.getRandomNumber(1)) {
 			_hintRqState = kRQSakkaDenies;
-			Common::g_timer->installTimerProc(&hintTimerCallback, 200000, this);
+			_vm->_timer->installTimerProc(&hintTimerCallback, 200000, this);
 		} else {
 			_hintRqState = kRQSpeaking;
 			_hintNextRqState = kRQHintRequested;
-			Common::g_timer->installTimerProc(&hintTimerCallback, 50000, this);
+			_vm->_timer->installTimerProc(&hintTimerCallback, 50000, this);
 		}
 
 		break;
@@ -433,7 +433,7 @@ void Puzzle::solicitHint(void) {
 
 		_hintRqState = kRQSpeaking;
 		_hintNextRqState = kRQHintRequestedStage2;
-		Common::g_timer->installTimerProc(&hintTimerCallback, 50000, this);
+		_vm->_timer->installTimerProc(&hintTimerCallback, 50000, this);
 
 		_vm->_interface->converseClear();
 		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 1, 0, 0 );
@@ -460,7 +460,7 @@ void Puzzle::solicitHint(void) {
 		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0);
 		_vm->_interface->converseDisplayText();
 
-		Common::g_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
+		_vm->_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
 
 		_hintRqState = kRQSkipEverything;
 		break;
@@ -483,8 +483,8 @@ void Puzzle::handleReply(int reply) {
 	case 2:		// Decline the hint
 		_vm->_actor->abortSpeech();
 		_hintRqState = kRQNoHint;
-		Common::g_timer->removeTimerProc(&hintTimerCallback);
-		Common::g_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime * 2, this);
+		_vm->_timer->removeTimerProc(&hintTimerCallback);
+		_vm->_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime * 2, this);
 		clearHint();
 		break;
 	}
@@ -546,8 +546,8 @@ void Puzzle::giveHint(void) {
 	_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0);
 	_vm->_interface->converseDisplayText();
 
-	Common::g_timer->removeTimerProc(&hintTimerCallback);
-	Common::g_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
+	_vm->_timer->removeTimerProc(&hintTimerCallback);
+	_vm->_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
 }
 
 void Puzzle::clearHint(void) {

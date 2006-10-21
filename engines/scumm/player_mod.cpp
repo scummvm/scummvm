@@ -28,9 +28,9 @@
 
 namespace Scumm {
 
-Player_MOD::Player_MOD(ScummEngine *scumm) {
+Player_MOD::Player_MOD(Audio::Mixer *mixer) {
 	int i;
-	_mixer = scumm->_mixer;
+	_mixer = mixer;
 	_samplerate = _mixer->getOutputRate();
 	_mixamt = 0;
 	_mixpos = 0;

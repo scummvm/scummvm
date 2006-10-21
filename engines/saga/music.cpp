@@ -346,7 +346,7 @@ void Music::musicVolumeGauge() {
 	_player->setVolume(volume);
 
 	if (_currentVolumePercent == 100) {
-		Common::g_timer->removeTimerProc(&musicVolumeGaugeCallback);
+		_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = _targetVolume;
 	}
 }
@@ -361,12 +361,12 @@ void Music::setVolume(int volume, int time) {
 	if (time == 1) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 		_player->setVolume(volume);
-		Common::g_timer->removeTimerProc(&musicVolumeGaugeCallback);
+		_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = volume;
 		return;
 	}
 
-	Common::g_timer->installTimerProc(&musicVolumeGaugeCallback, time * 100L, this);
+	_vm->_timer->installTimerProc(&musicVolumeGaugeCallback, time * 100L, this);
 }
 
 bool Music::isPlaying() {

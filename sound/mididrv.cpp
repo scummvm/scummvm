@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "sound/mididrv.h"
 
@@ -211,9 +212,9 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	switch (midiDriver) {
 	case MD_NULL:      return MidiDriver_NULL_create();
 
-	case MD_ADLIB:     return MidiDriver_ADLIB_create(g_engine->_mixer);
+	case MD_ADLIB:     return MidiDriver_ADLIB_create(g_system->getMixer());
 
-	case MD_TOWNS:     return MidiDriver_YM2612_create(g_engine->_mixer);
+	case MD_TOWNS:     return MidiDriver_YM2612_create(g_system->getMixer());
 
 	// Right now PC Speaker and PCjr are handled
 	// outside the MidiDriver architecture, so
@@ -222,11 +223,11 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	case MD_PCJR:      return NULL;
 
 #ifdef USE_FLUIDSYNTH
-	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create(g_engine->_mixer);
+	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create(g_system->getMixer());
 #endif
 
 #ifdef USE_MT32EMU
-	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
+	case MD_MT32:      return MidiDriver_MT32_create(g_system->getMixer());
 #endif
 
 #if defined(PALMOS_MODE)

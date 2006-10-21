@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "sound/mpu401.h"
+#include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 
@@ -100,7 +101,7 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 
 void MidiDriver_MPU401::close() {
 	if (_timer_proc)
-		Common::g_timer->removeTimerProc(_timer_proc);
+		g_system->getTimerManager()->removeTimerProc(_timer_proc);
 	_timer_proc = 0;
 	for (int i = 0; i < 16; ++i)
 		send(0x7B << 8 | 0xB0 | i);
@@ -134,9 +135,9 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 void MidiDriver_MPU401::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
 	if (!_timer_proc || !timer_proc) {
 		if (_timer_proc)
-			Common::g_timer->removeTimerProc(_timer_proc);
+			g_system->getTimerManager()->removeTimerProc(_timer_proc);
 		_timer_proc = timer_proc;
 		if (timer_proc)
-			Common::g_timer->installTimerProc(timer_proc, 10000, timer_param);
+			g_system->getTimerManager()->installTimerProc(timer_proc, 10000, timer_param);
 	}
 }

@@ -56,9 +56,10 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 };
 
 
-Sound::Sound(ScummEngine *parent)
+Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	:
 	_vm(parent),
+	_mixer(mixer),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
 	_sfxFile(0),
@@ -187,7 +188,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// WORKAROUND bug # 1311447
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
@@ -209,7 +210,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
@@ -280,7 +281,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 6, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
 
@@ -333,7 +334,7 @@ void Sound::playSound(int soundID) {
 				if (loopEnd > 0)
 					flags |= Audio::Mixer::FLAG_LOOP;
 
-				_vm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
 			}
 			break;
 		case 1:
@@ -394,7 +395,7 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
+		_mixer->playRaw(NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
 
@@ -458,7 +459,7 @@ void Sound::processSfxQueues() {
 		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
-			finished = !_vm->_mixer->isSoundHandleActive(_talkChannelHandle);
+			finished = !_mixer->isSoundHandleActive(_talkChannelHandle);
 		}
 
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
@@ -556,7 +557,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 		if (mode == 1 && (_vm->_game.id == GID_TENTACLE || _vm->_game.id == GID_SAMNMAX)) {
 			id = 777777 + _talk_sound_channel;
-			_vm->_mixer->stopID(id);
+			_mixer->stopID(id);
 		}
 
 		if (b > 8) {
@@ -598,7 +599,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		_mouthSyncMode = true;
 	}
 
-	if (!_soundsPaused && _vm->_mixer->isReady()) {
+	if (!_soundsPaused && _mixer->isReady()) {
 		Audio::AudioStream *input = NULL;
 
 		switch (_soundMode) {
@@ -636,7 +637,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 #endif
 		} else {
-			_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, input, id);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, input, id);
 		}
 	}
 }
@@ -650,7 +651,7 @@ void Sound::stopTalkSound() {
 		} else if (_vm->_game.heversion >= 60) {
 			stopSound(1);
 		} else {
-			_vm->_mixer->stopHandle(_talkChannelHandle);
+			_mixer->stopHandle(_talkChannelHandle);
 		}
 		_sfxMode &= ~2;
 	}
@@ -682,7 +683,7 @@ int Sound::isSoundRunning(int sound) const {
 	if (sound == _currentCDSound)
 		return pollCD();
 
-	if (_vm->_mixer->isSoundIDActive(sound))
+	if (_mixer->isSoundIDActive(sound))
 		return 1;
 
 	if (isSoundInQueue(sound))
@@ -727,7 +728,7 @@ bool Sound::isSoundInUse(int sound) const {
 	if (_vm->_imuse)
 		return _vm->_imuse->get_sound_active(sound);
 
-	if (_vm->_mixer->isSoundIDActive(sound))
+	if (_mixer->isSoundIDActive(sound))
 		return 1;
 
 	return false;
@@ -765,7 +766,7 @@ void Sound::stopSound(int sound) {
 	}
 
 	if (!(_vm->_game.features & GF_DIGI_IMUSE))
-		_vm->_mixer->stopID(sound);
+		_mixer->stopID(sound);
 
 	if (_vm->_musicEngine)
 		_vm->_musicEngine->stopSound(sound);
@@ -797,7 +798,7 @@ void Sound::stopAllSounds() {
 
 	// Stop all SFX
 	if (!_vm->_imuseDigital) {
-		_vm->_mixer->stopAll();
+		_mixer->stopAll();
 	}
 }
 
@@ -874,7 +875,7 @@ void Sound::pauseSounds(bool pause) {
 	}
 #endif
 
-	_vm->_mixer->pauseAll(pause);
+	_mixer->pauseAll(pause);
 
 	if ((_vm->_game.features & GF_AUDIOTRACKS) && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
 		if (pause)
@@ -983,7 +984,7 @@ BaseScummFile *Sound::openSfxFile() {
 }
 
 bool Sound::isSfxFinished() const {
-	return !_vm->_mixer->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType);
+	return !_mixer->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType);
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is

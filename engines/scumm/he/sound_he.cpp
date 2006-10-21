@@ -46,9 +46,9 @@
 
 namespace Scumm {
 
-SoundHE::SoundHE(ScummEngine *parent)
+SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
 	:
-	Sound(parent),
+	Sound(parent, mixer),
 	_vm((ScummEngine_v60he *)parent),
 	_overrideFreq(0),
 	_heMusic(0),
@@ -114,7 +114,7 @@ void SoundHE::processSoundQueues() {
 int SoundHE::isSoundRunning(int sound) const {
 	if (_vm->_game.heversion >= 70) {
 		if (sound >= 10000) {
-			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
+			return _mixer->getSoundID(_heSoundChannels[sound - 10000]);
 		}
 	} else if (_vm->_game.heversion >= 60) {
 		if (sound == -2) {
@@ -124,7 +124,7 @@ int SoundHE::isSoundRunning(int sound) const {
 		}
 	}
 
-	if (_vm->_mixer->isSoundIDActive(sound))
+	if (_mixer->isSoundIDActive(sound))
 		return sound;
 
 	if (isSoundInQueue(sound))
@@ -189,7 +189,7 @@ void SoundHE::stopSoundChannel(int chan) {
 		_vm->_talkDelay = 0;
 	}
 
-	_vm->_mixer->stopHandle(_heSoundChannels[chan]);
+	_mixer->stopHandle(_heSoundChannels[chan]);
 
 	_heChannel[chan].sound = 0;
 	_heChannel[chan].priority = 0;
@@ -219,7 +219,7 @@ int SoundHE::findFreeSoundChannel() {
 
 	if (min < 8) {
 		for (chan = min; chan < ARRAYSIZE(_heChannel); chan++) {
-			if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) == 0)
+			if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) == 0)
 				return chan;
 		}
 	} else {
@@ -236,7 +236,7 @@ int SoundHE::isSoundCodeUsed(int sound) {
 			chan = i;
 	}
 
-	if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
+	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
 		return _heChannel[chan].sbngBlock;
 	} else {
 		return 0;
@@ -250,7 +250,7 @@ int SoundHE::getSoundPos(int sound) {
 			chan = i;
 	}
 
-	if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
+	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
 		int time =  _vm->getHETimer(chan + 4) * 11025 / 1000;
 		return time;
 	} else {
@@ -271,7 +271,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 			chan = i;
 	}
 
-	if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
+	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
 		debug(5, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
@@ -528,14 +528,14 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		musicFile.seek(music_offs, SEEK_SET);
 
-		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
+		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		spoolPtr = _vm->_res->createResource(rtSpoolBuffer, heChannel, size);
 		assert(spoolPtr);
 		musicFile.read(spoolPtr, size);
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID, 255, 0, 0,0, type);
+			_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID, 255, 0, 0,0, type);
 			return;
 		}
 	}
@@ -585,8 +585,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			flags |= Audio::Mixer::FLAG_LOOP;
 		}
 
-		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID, 255, 0, 0,0, type);
+		_mixer->stopHandle(_heSoundChannels[heChannel]);
+		_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID, 255, 0, 0,0, type);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
@@ -598,7 +598,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		// Skip DIGI/TALK (8) and HSHD (24) blocks
 		ptr += 32;
 
-		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
+		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
 			if (curSnd == 1 && soundID != 1)
 				return;
@@ -641,8 +641,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			_heChannel[heChannel].timer = size * 1000 / rate;
 		}
 
-		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
+		_mixer->stopHandle(_heSoundChannels[heChannel]);
+		_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
 
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
@@ -658,9 +658,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		flags = Audio::Mixer::FLAG_AUTOFREE;
 
-		_vm->_mixer->stopID(_currentMusic);
+		_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0, Audio::Mixer::kMusicSoundType);
+		_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0, Audio::Mixer::kMusicSoundType);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {

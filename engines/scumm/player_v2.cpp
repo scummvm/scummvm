@@ -342,12 +342,12 @@ static const uint16 pcjr_freq_table[12] = {
 #endif
 
 
-Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
+Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr) {
 	int i;
 
 	_isV3Game = (scumm->_game.version >= 3);
 	_vm = scumm;
-	_mixer = scumm->_mixer;
+	_mixer = mixer;
 	_sample_rate = _mixer->getOutputRate();
 
 	_header_len = (scumm->_game.features & GF_OLD_BUNDLE) ? 4 : 6;

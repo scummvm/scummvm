@@ -172,9 +172,9 @@ void IMuseDigital::flushTracks() {
 	 				track->stream->finish();
 	 			}
 				if (track->stream->endOfStream()
-						|| _vm->_mixer->isPaused() // hack for paused Mixer
+						|| _mixer->isPaused() // hack for paused Mixer
 						|| _vm->_insaneRunning) { // INSANE hack for sync timer mode
-					_vm->_mixer->stopHandle(track->handle);
+					_mixer->stopHandle(track->handle);
 					delete track->stream;
 					track->stream = NULL;
 					_sound->closeSound(track->soundHandle);
@@ -182,7 +182,7 @@ void IMuseDigital::flushTracks() {
 					track->used = false;
 				}
 			} else if (track->stream2) {
-				_vm->_mixer->stopHandle(track->handle);
+				_mixer->stopHandle(track->handle);
 				delete track->stream2;
 				track->stream2 = NULL;
 				track->used = false;
@@ -285,7 +285,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
-			if ((track->stream2 && _vm->_mixer->isSoundHandleActive(track->handle)) ||
+			if ((track->stream2 && _mixer->isSoundHandleActive(track->handle)) ||
 				(track->stream && track->used && !track->readyToRemove)) {
 					return 1;
 			}

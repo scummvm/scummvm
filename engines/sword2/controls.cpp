@@ -1003,7 +1003,7 @@ void OptionsDialog::onAction(Widget *widget, int result) {
 	if (widget == _musicSwitch) {
 		_vm->_sound->muteMusic(result != 0);
 	} else if (widget == _musicSlider) {
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, result);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, result);
 		_vm->_sound->muteMusic(result == 0);
 		_musicSwitch->setValue(result != 0);
 	} else if (widget == _speechSlider) {

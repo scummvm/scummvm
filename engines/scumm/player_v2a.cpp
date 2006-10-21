@@ -1303,7 +1303,7 @@ static V2A_Sound *findSound (unsigned long crc) {
 	return NULL;
 }
 
-Player_V2A::Player_V2A(ScummEngine *scumm) {
+Player_V2A::Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer) {
 	int i;
 	_vm = scumm;
 
@@ -1317,7 +1317,7 @@ Player_V2A::Player_V2A(ScummEngine *scumm) {
 		_slot[i].sound = NULL;
 	}
 
-	_mod = new Player_MOD(scumm);
+	_mod = new Player_MOD(mixer);
 	_mod->setUpdateProc(update_proc, this, 60);
 }
 

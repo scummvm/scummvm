@@ -68,6 +68,8 @@ AudioCDManager::AudioCDManager() {
 	memset(_cachedTracks, 0, sizeof(_cachedTracks));
 	memset(_trackInfo, 0, sizeof(_trackInfo));
 	_currentCache = 0;
+	_mixer = g_system->getMixer();
+	assert(_mixer);
 }
 
 void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
@@ -83,9 +85,9 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 		_cd.duration = duration;
 
 		if (index >= 0) {
-			g_engine->_mixer->stopHandle(_cd.handle);
+			_mixer->stopHandle(_cd.handle);
 			_cd.playing = true;
-			_trackInfo[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
+			_trackInfo[index]->play(_mixer, &_cd.handle, _cd.start, _cd.duration);
 		} else {
 			g_system->playCD(track, numLoops, startFrame, duration);
 			_cd.playing = false;
@@ -95,7 +97,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 
 void AudioCDManager::stop() {
 	if (_cd.playing) {
-		g_engine->_mixer->stopHandle(_cd.handle);
+		_mixer->stopHandle(_cd.handle);
 		_cd.playing = false;
 	} else {
 		g_system->stopCD();
@@ -109,16 +111,16 @@ bool AudioCDManager::isPlaying() const {
 void AudioCDManager::updateCD() {
 	if (_cd.playing) {
 		// If the sound handle is 0, then playback stopped.
-		if (!g_engine->_mixer->isSoundHandleActive(_cd.handle)) {
+		if (!_mixer->isSoundHandleActive(_cd.handle)) {
 			// If playback just stopped, check if the current track is supposed
 			// to be repeated, and if that's the case, play it again. Else, stop
 			// the CD explicitly.
 			if (_cd.numLoops == -1 || --_cd.numLoops > 0) {
 				int index = getCachedTrack(_cd.track);
 				assert(index >= 0);
-				_trackInfo[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
+				_trackInfo[index]->play(_mixer, &_cd.handle, _cd.start, _cd.duration);
 			} else {
-				g_engine->_mixer->stopHandle(_cd.handle);
+				_mixer->stopHandle(_cd.handle);
 				_cd.playing = false;
 			}
 		}

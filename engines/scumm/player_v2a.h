@@ -40,7 +40,7 @@ class V2A_Sound;
  */
 class Player_V2A : public MusicEngine {
 public:
-	Player_V2A(ScummEngine *scumm);
+	Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_V2A();
 
 	virtual void setMusicVolume(int vol);

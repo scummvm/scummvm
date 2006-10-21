@@ -38,7 +38,7 @@ namespace Scumm {
  */
 class Player_MOD : public Audio::AudioStream {
 public:
-	Player_MOD(ScummEngine *scumm);
+	Player_MOD(Audio::Mixer *mixer);
 	virtual ~Player_MOD();
 	virtual void setMusicVolume(int vol);
 

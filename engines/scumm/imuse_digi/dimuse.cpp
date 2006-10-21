@@ -44,8 +44,8 @@ void IMuseDigital::timer_handler(void *refCon) {
 	imuseDigital->callback();
 }
 
-IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int fps)
-	: _vm(scumm) {
+IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
+	: _vm(scumm), _mixer(mixer) {
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	assert(_sound);
@@ -200,7 +200,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			if (track->volGroupId == 3)
 				type = Audio::Mixer::kMusicSoundType;
 
-			_vm->_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
+			_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
 		}
 	}
 }
@@ -318,9 +318,9 @@ void IMuseDigital::callback() {
 					if (result > mixer_size)
 						result = mixer_size;
 
-					if (_vm->_mixer->isReady()) {
-						_vm->_mixer->setChannelVolume(track->handle, vol);
-						_vm->_mixer->setChannelBalance(track->handle, pan);
+					if (_mixer->isReady()) {
+						_mixer->setChannelVolume(track->handle, vol);
+						_mixer->setChannelBalance(track->handle, pan);
 						track->stream->append(data, result);
 						track->regionOffset += result;
 					}
@@ -335,13 +335,13 @@ void IMuseDigital::callback() {
 					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
 			} else if (track->stream2) {
-				if (_vm->_mixer->isReady()) {
+				if (_mixer->isReady()) {
 					if (!track->started) {
 						track->started = true;
-						_vm->_mixer->playInputStream(type, &track->handle, track->stream2, -1, vol, pan, false);
+						_mixer->playInputStream(type, &track->handle, track->stream2, -1, vol, pan, false);
 					} else {
-						_vm->_mixer->setChannelVolume(track->handle, vol);
-						_vm->_mixer->setChannelBalance(track->handle, pan);
+						_mixer->setChannelVolume(track->handle, vol);
+						_mixer->setChannelBalance(track->handle, pan);
 					}
 				}
 			}

@@ -90,6 +90,7 @@ private:
 
 	Common::Mutex _mutex;
 	ScummEngine_v7 *_vm;
+	Audio::Mixer *_mixer;
 	ImuseDigiSndMgr *_sound;
 
 	char *_audioNames;
@@ -131,7 +132,7 @@ private:
 	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
-	IMuseDigital(ScummEngine_v7 *scumm, int fps);
+	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps);
 	virtual ~IMuseDigital();
 
 	void setAudioNames(int32 num, char *names);

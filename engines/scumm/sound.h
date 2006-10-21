@@ -27,6 +27,10 @@
 #include "sound/mixer.h"
 #include "scumm/saveload.h"
 
+namespace Audio {
+class Mixer;
+}
+
 namespace Scumm {
 
 class ScummEngine;
@@ -52,6 +56,7 @@ public:
 
 protected:
 	ScummEngine *_vm;
+	Audio::Mixer *_mixer;
 
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos;
@@ -85,7 +90,7 @@ public:
 	byte _sfxMode;
 
 public:
-	Sound(ScummEngine *parent);
+	Sound(ScummEngine *parent, Audio::Mixer *mixer);
 	virtual ~Sound();
 	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);

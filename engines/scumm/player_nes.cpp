@@ -605,10 +605,10 @@ int16 APU_GetSample(void) {
 
 }
 
-Player_NES::Player_NES(ScummEngine *scumm) {
+Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 	int i;
 	_vm = scumm;
-	_mixer = scumm->_mixer;
+	_mixer = mixer;
 	APUe::APU.SampleRate = _sample_rate = _mixer->getOutputRate();
 
 	_samples_per_frame = _sample_rate / 60;

@@ -39,8 +39,8 @@ class Channel;
 class Mixer;
 
 class SoundHandle {
-	friend class Audio::Channel;
-	friend class Audio::Mixer;
+	friend class Channel;
+	friend class Mixer;
 	uint32 _val;
 public:
 	inline SoundHandle() : _val(0xFFFFFFFF) {}

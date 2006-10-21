@@ -31,9 +31,10 @@
 
 namespace Audio {
 
+
 class DigitalTrackInfo {
 public:
-	virtual void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) = 0;
+	virtual void play(Mixer *mixer, SoundHandle *handle, int startFrame, int duration) = 0;
 	virtual ~DigitalTrackInfo() { }
 };
 
@@ -65,7 +66,7 @@ private:
 private:
 	/* used for emulated CD music */
 	struct ExtStatus : Status {
-		Audio::SoundHandle handle;
+		SoundHandle handle;
 	};
 	ExtStatus _cd;
 
@@ -81,6 +82,7 @@ private:
 	DigitalTrackInfo *_trackInfo[CACHE_TRACKS];
 	int _currentCache;
 
+	Mixer	*_mixer;
 };
 
 /** Shortcut for accessing the audio CD manager. */

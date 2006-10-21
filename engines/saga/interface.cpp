@@ -546,8 +546,8 @@ void Interface::textInputRepeatCallback(void *refCon) {
 void Interface::textInputStartRepeat(uint16 ascii) {
 	if (!_textInputRepeatPhase) {
 		_textInputRepeatPhase = 1;
-		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
-		Common::g_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY1, this);
+		_vm->_timer->removeTimerProc(&textInputRepeatCallback);
+		_vm->_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY1, this);
 	}
 
 	_textInputRepeatChar = ascii;
@@ -556,8 +556,8 @@ void Interface::textInputStartRepeat(uint16 ascii) {
 void Interface::textInputRepeat() {
 	if (_textInputRepeatPhase == 1) {
 		_textInputRepeatPhase = 2;
-		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
-		Common::g_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY2, this);
+		_vm->_timer->removeTimerProc(&textInputRepeatCallback);
+		_vm->_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY2, this);
 	} else if (_textInputRepeatPhase == 2) {
 		processAscii(_textInputRepeatChar, true);
 	}
@@ -565,7 +565,7 @@ void Interface::textInputRepeat() {
 
 void Interface::processKeyUp(uint16 ascii) {
 	if (_textInputRepeatPhase) {
-		Common::g_timer->removeTimerProc(&textInputRepeatCallback);
+		_vm->_timer->removeTimerProc(&textInputRepeatCallback);
 		_textInputRepeatPhase = 0;
 	}
 }

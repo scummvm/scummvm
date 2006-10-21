@@ -33,7 +33,7 @@ namespace Scumm {
  */
 class Player_V1 : public Player_V2 {
 public:
-	Player_V1(ScummEngine *scumm, bool pcjr);
+	Player_V1(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
 	~Player_V1();
 
 	virtual void startSound(int sound);

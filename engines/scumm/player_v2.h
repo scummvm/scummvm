@@ -74,7 +74,7 @@ struct channel_data {
  */
 class Player_V2 : public Audio::AudioStream, public MusicEngine {
 public:
-	Player_V2(ScummEngine *scumm, bool pcjr);
+	Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
 	virtual ~Player_V2();
 
 	virtual void setMusicVolume(int vol);

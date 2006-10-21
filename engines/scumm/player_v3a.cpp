@@ -35,7 +35,7 @@ static const uint16 note_freqs[4][12] = {
 	{0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00A9, 0x00A0, 0x0097, 0x008E, 0x0086, 0x007F, 0x00F0, 0x00E2}
 };
 
-Player_V3A::Player_V3A(ScummEngine *scumm) {
+Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer) {
 	int i;
 	_vm = scumm;
 	for (i = 0; i < V3A_MAXMUS; i++) {
@@ -56,7 +56,7 @@ Player_V3A::Player_V3A(ScummEngine *scumm) {
 
 	_isinit = false;
 
-	_mod = new Player_MOD(scumm);
+	_mod = new Player_MOD(mixer);
 	_mod->setUpdateProc(update_proc, this, 60);
 }
 

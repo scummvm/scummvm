@@ -326,7 +326,7 @@ void SaveLoadChooser::reflowLayout() {
 		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
 		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
 		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
-		int thumbH = ((_vm->_system->getHeight() % 200 && _vm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 
 		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
 	

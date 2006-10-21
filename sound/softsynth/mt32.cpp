@@ -75,7 +75,7 @@ public:
 	int getRate() const { return _outputRate; }
 };
 
-class MT32File: public MT32Emu::File {
+class MT32File : public MT32Emu::File {
 	Common::File file;
 public:
 	bool open(const char *filename, OpenMode mode) {
