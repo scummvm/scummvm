@@ -393,7 +393,7 @@ HitArea *AGOSEngine::findEmptyHitArea() {
 	return NULL;
 }
 
-void AGOSEngine::delete_hitarea_by_index(uint index) {
+void AGOSEngine::freeBox(uint index) {
 	CHECK_BOUNDS(index, _hitAreas);
 	_hitAreas[index].flags = 0;
 }

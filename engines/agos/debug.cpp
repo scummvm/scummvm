@@ -272,7 +272,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool one_opcode_only) {
 	} while (!one_opcode_only);
 }
 
-void AGOSEngine::dump_vga_file(const byte *vga) {
+void AGOSEngine::dumpVgaFile(const byte *vga) {
 	const byte *pp;
 	const byte *p;
 	int count;
@@ -284,7 +284,7 @@ void AGOSEngine::dump_vga_file(const byte *vga) {
 	while (--count >= 0) {
 		int id = READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->id);
 
-		dump_vga_script_always(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->scriptOffs), id / 100, id);
 		p += sizeof(AnimationHeader_Simon);
 	}
 
@@ -296,7 +296,7 @@ void AGOSEngine::dump_vga_file(const byte *vga) {
 	while (--count >= 0) {
 		int id = READ_BE_UINT16(&((const ImageHeader_Simon *) p)->id);
 
-		dump_vga_script_always(vga + READ_BE_UINT16(&((const ImageHeader_Simon *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const ImageHeader_Simon *) p)->scriptOffs), id / 100, id);
 		p += sizeof(ImageHeader_Simon);
 	}
 }
@@ -320,7 +320,7 @@ static const byte bmp_hdr[] = {
 	0x00, 0x01, 0x00, 0x00,
 };
 
-void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint32 *palette) {
+void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32 *palette) {
 	FILE *out = fopen(filename, "wb");
 	byte my_hdr[sizeof(bmp_hdr)];
 	int i;
@@ -355,7 +355,7 @@ void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint3
 	fclose(out);
 }
 
-void AGOSEngine::dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
+void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
 								 byte base) {
 
 	if (getGameType() != GType_FF && getGameType() != GType_PP)
@@ -391,11 +391,11 @@ void AGOSEngine::dump_bitmap(const char *filename, const byte *offs, int w, int 
 		}
 	}
 
-	dump_bmp(filename, w, h, b, (const uint32 *)palette);
+	dumpBMP(filename, w, h, b, (const uint32 *)palette);
 	free(b);
 }
 
-void AGOSEngine::dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base) {
+void AGOSEngine::dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base) {
 	char buf[40];
 #if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__) && !defined(__PLAYSTATION2__)
 	struct stat statbuf;
@@ -412,10 +412,10 @@ void AGOSEngine::dump_single_bitmap(int file, int image, const byte *offs, int w
 		return;
 #endif
 
-	dump_bitmap(buf, offs, w, h, 0, _displayPalette, base);
+	dumpBitmap(buf, offs, w, h, 0, _displayPalette, base);
 }
 
-void pal_load(byte *pal, const byte *vga1, int a, int b) {
+void palLoad(byte *pal, const byte *vga1, int a, int b) {
 	uint num = (a == 0) ? 0x20 : 0x10;
 	byte *palptr;
 	const byte *src;
@@ -434,7 +434,7 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 	} while (--num);
 }
 
-void AGOSEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
+void AGOSEngine::dumpVgaBitmaps(const byte *vga, byte *vga1, int res) {
 
 	int i;
 	uint32 offs;
@@ -442,10 +442,10 @@ void AGOSEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 	byte pal[768];
 
 	memset(pal, 0, sizeof(pal));
-	pal_load(pal, vga1, 2, 0);
-	pal_load(pal, vga1, 3, 1);
-	pal_load(pal, vga1, 4, 2);
-	pal_load(pal, vga1, 5, 3);
+	palLoad(pal, vga1, 2, 0);
+	palLoad(pal, vga1, 3, 1);
+	palLoad(pal, vga1, 4, 2);
+	palLoad(pal, vga1, 5, 3);
 
 	int width, height, flags;
 
@@ -474,20 +474,20 @@ void AGOSEngine::dump_vga_bitmaps(const byte *vga, byte *vga1, int res) {
 		sprintf(buf, "dumps/Res%d_Image%d.bmp", res, i);
 #endif
 
-		dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
+		dumpBitmap(buf, vga + offs, width, height, flags, pal, 0);
 
 	}
 }
 
-void AGOSEngine::dump_vga_script_always(const byte *ptr, uint res, uint sprite_id) {
+void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint res, uint sprite_id) {
 	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
 					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
 	dumpVideoScript(ptr, false);
 	printf("; end\n");
 }
 
-void AGOSEngine::dump_vga_script(const byte *ptr, uint res, uint sprite_id) {
-	dump_vga_script_always(ptr, res, sprite_id);
+void AGOSEngine::dumpVgaScript(const byte *ptr, uint res, uint sprite_id) {
+	dumpVgaScriptAlways(ptr, res, sprite_id);
 }
 
 } // End of namespace AGOS

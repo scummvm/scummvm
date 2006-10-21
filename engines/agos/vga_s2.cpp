@@ -81,7 +81,7 @@ void AGOSEngine::vc59_stopAnimations() {
 	uint16 end = vcReadNextWord() + 1;
 
 	do {
-		vc_kill_sprite(file, start);
+		vcStopAnimation(file, start);
 	} while (++start != end);
 }
 

@@ -528,7 +528,7 @@ void AGOSEngine::timer_proc1() {
 			}
 		}
 		handleMouseMoved();
-		dx_update_screen_and_palette();
+		updateScreen();
 		_updateScreen = false;
 	}
 

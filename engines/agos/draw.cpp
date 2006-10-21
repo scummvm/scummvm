@@ -328,10 +328,10 @@ void AGOSEngine::displayBoxStars() {
 			}
 		} while (ha++, --count);
 
-		dx_update_screen_and_palette();
+		updateScreen();
 		delay(100);
 		animateSprites();
-		dx_update_screen_and_palette();
+		updateScreen();
 		delay(100);
 	}
 
@@ -401,7 +401,7 @@ void AGOSEngine::clearBackFromTop(uint lines) {
 	memset(_backBuf, 0, lines * _screenWidth);
 }
 
-void AGOSEngine::dx_clear_surfaces(uint num_lines) {
+void AGOSEngine::clearSurfaces(uint num_lines) {
 	memset(_backBuf, 0, num_lines * _screenWidth);
 
 	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, num_lines);
@@ -440,7 +440,7 @@ void AGOSEngine::fillBackGroundFromBack(uint lines) {
 	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
 }
 
-void AGOSEngine::dx_update_screen_and_palette() {
+void AGOSEngine::updateScreen() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
 		if (memcmp(_displayPalette, _currentPalette, 1024)) {

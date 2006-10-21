@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	oracle.o \
 	res.o \
 	res_ami.o \
+	res_snd.o \
 	rooms.o \
 	saveload.o \
 	script.o \

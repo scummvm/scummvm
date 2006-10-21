@@ -31,6 +31,17 @@
 
 namespace AGOS {
 
+void AGOSEngine::freezeBottom() {
+	_vgaMemBase = _vgaMemPtr;
+	_vgaFrozenBase = _vgaMemPtr;
+}
+
+void AGOSEngine::unfreezeBottom() {
+	_vgaMemPtr = _vgaRealBase;
+	_vgaMemBase = _vgaRealBase;
+	_vgaFrozenBase = _vgaRealBase;
+}
+
 void AGOSEngine::loadZone(uint zoneNum) {
 	VgaPointersEntry *vpe;
 

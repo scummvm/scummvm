@@ -681,15 +681,15 @@ void AGOSEngine::removeIconArray(uint num) {
 	}
 
 	for (i = 0; window->iconPtr->iconArray[i].item != NULL; i++) {
-		delete_hitarea_by_index(window->iconPtr->iconArray[i].boxCode);
+		freeBox(window->iconPtr->iconArray[i].boxCode);
 	}
 
 	if (window->iconPtr->upArrow != -1) {
-		delete_hitarea_by_index(window->iconPtr->upArrow);
+		freeBox(window->iconPtr->upArrow);
 	}
 
 	if (window->iconPtr->downArrow != -1) {
-		delete_hitarea_by_index(window->iconPtr->downArrow);
+		freeBox(window->iconPtr->downArrow);
 		removeArrows(window, num);
 	}
 

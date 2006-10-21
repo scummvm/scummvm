@@ -641,7 +641,7 @@ void AGOSEngine::vc10_draw() {
 		return;
 
 	if (_dumpImages)
-		dump_single_bitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
+		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
 											 state.palette);
 	// Check if image is compressed
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -1443,7 +1443,7 @@ void AGOSEngine::vc59_skipIfNotEGA() {
 	vcSkipNextInstruction();
 }
 
-void AGOSEngine::vc_kill_sprite(uint file, uint sprite) {
+void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 	uint16 old_sprite_id, old_cur_file_id;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
@@ -1502,7 +1502,7 @@ void AGOSEngine::vc60_stopAnimation() {
 		sprite = vcReadNextWord();
 	}
 
-	vc_kill_sprite(zoneNum, sprite);
+	vcStopAnimation(zoneNum, sprite);
 }
 
 void AGOSEngine::vc61() {
@@ -1634,11 +1634,11 @@ void AGOSEngine::vc62_fastFadeOut() {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
 		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
-			dx_clear_surfaces(200);
+			clearSurfaces(200);
 		} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			dx_clear_surfaces(480);
+			clearSurfaces(480);
 		} else {
-			dx_clear_surfaces(_windowNum == 4 ? 134 : 200);
+			clearSurfaces(_windowNum == 4 ? 134 : 200);
 		}
 	}
 	if (getGameType() == GType_SIMON2) {
@@ -1761,7 +1761,7 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 		static bool dumped = false;
 		if (res == DUMP_FILE_NR && !dumped) {
 			dumped = true;
-			dump_vga_file(_curVgaFile1);
+			dumpVgaFile(_curVgaFile1);
 		}
 	}
 #endif
@@ -1771,18 +1771,18 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 		static bool dumped = false;
 		if (res == DUMP_BITMAPS_FILE_NR && !dumped) {
 			dumped = true;
-			dump_vga_bitmaps(_curVgaFile2, _curVgaFile1, zoneNum);
+			dumpVgaBitmaps(_curVgaFile2, _curVgaFile1, zoneNum);
 		}
 	}
 #endif
 
 	if (_startVgaScript) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
+			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), zoneNum, vgaSpriteId);
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), zoneNum, vgaSpriteId);
 		} else {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW*)p)->scriptOffs), zoneNum, vgaSpriteId);
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW*)p)->scriptOffs), zoneNum, vgaSpriteId);
 		}
 	}
 
@@ -1872,11 +1872,11 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
 
 	if (_startVgaScript) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vga_res_id);
+			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vga_res_id);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), zoneNum, vga_res_id);
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), zoneNum, vga_res_id);
 		} else {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), zoneNum, vga_res_id);
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), zoneNum, vga_res_id);
 		}
 	}
 

@@ -315,19 +315,27 @@ void AGOSEngine::showMessageFormat(const char *s, ...) {
 		if (!_showMessageFlag) {
 			_windowArray[0] = _textWindow;
 			if (getGameType() == GType_FF || getGameType() == GType_PP)
-				showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+				justifyStart(_textWindow->textColumn, _textWindow->width);
 			else
-				showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+				justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
 		}
 		_showMessageFlag = true;
 		_fcsData1[_curWindow] = 1;
 	}
 
 	for (str = buf; *str; str++)
-		showmessage_print_char(*str);
+		justifyOutPut(*str);
 }
 
-void AGOSEngine::showmessage_print_char(byte chr) {
+void AGOSEngine::justifyStart(uint a, uint b) {
+	_printCharCurPos = a;
+	_printCharMaxPos = b;
+	_printCharPixelCount = 0;
+	_numLettersToPrint = 0;
+	_newLines = 0;
+}
+
+void AGOSEngine::justifyOutPut(byte chr) {
 	if (chr == 12) {
 		_numLettersToPrint = 0;
 		_printCharCurPos = 0;
@@ -397,21 +405,13 @@ void AGOSEngine::openTextWindow() {
 		_textWindow = openWindow(8, 144, 24, 6, 1, 0, 15);
 }
 
-void AGOSEngine::showmessage_helper_3(uint a, uint b) {
-	_printCharCurPos = a;
-	_printCharMaxPos = b;
-	_printCharPixelCount = 0;
-	_numLettersToPrint = 0;
-	_newLines = 0;
-}
-
 void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 
 	if (c == 12) {
 		clearWindow(window);
 	} else if (c == 13 || c == 10) {
-		video_putchar_newline(window);
+		windowNewLine(window);
 	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
 		if (_language == Common::HB_ISR) {
 			if (b >= 64 && b < 91)
@@ -439,15 +439,15 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 		}
 	} else if (c >= 32) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			video_putchar_drawchar(window, window->textColumn + window->x, window->textRow + window->y, c);
+			windowDrawChar(window, window->textColumn + window->x, window->textRow + window->y, c);
 			window->textColumn += feebleFontSize[c - 32];
 			return;
 		}
 
 		if (window->textLength == window->textMaxLength) {
-			video_putchar_newline(window);
+			windowNewLine(window);
 		} else if (window->textRow == window->height) {
-			video_putchar_newline(window);
+			windowNewLine(window);
 			window->textRow--;
 		}
 
@@ -459,10 +459,10 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 				window->textColumnOffset += 8;
 				window->textColumn++;
 			}
-			video_putchar_drawchar(window, (window->width + window->x - window->textColumn) * 8, window->textRow * 8 + window->y, c);
+			windowDrawChar(window, (window->width + window->x - window->textColumn) * 8, window->textRow * 8 + window->y, c);
 			window->textLength++;
 		} else {
-			video_putchar_drawchar(window, (window->textColumn + window->x) * 8, window->textRow * 8 + window->y, c);
+			windowDrawChar(window, (window->textColumn + window->x) * 8, window->textRow * 8 + window->y, c);
 
 			window->textLength++;
 			window->textColumnOffset += 6;
@@ -477,7 +477,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	}
 }
 
-void AGOSEngine::video_putchar_newline(WindowBlock *window) {
+void AGOSEngine::windowNewLine(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		if (_noOracleScroll == 0) {
 			if (window->height < window->textRow + 30) {
@@ -1530,7 +1530,7 @@ static const byte feeble_video_font[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-void AGOSEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, byte chr) {
+void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
 	uint h, w, i;
@@ -1577,7 +1577,7 @@ void AGOSEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, byt
 			src = video_font + (chr - 0x20) * 8;
 			break;
 		default:
-			error("video_putchar_drawchar: Unknown language %d\n", _language);
+			error("windowDrawChar: Unknown language %d\n", _language);
 		}
 	}
 

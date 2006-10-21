@@ -255,7 +255,7 @@ void MidiPlayer::pause(bool b) {
 	}
 }
 
-void MidiPlayer::set_volume(int volume) {
+void MidiPlayer::setVolume(int volume) {
 	if (volume < 0)
 		volume = 0;
 	else if (volume > 255)
@@ -277,7 +277,7 @@ void MidiPlayer::set_volume(int volume) {
 	}
 }
 
-void MidiPlayer::set_driver(MidiDriver *md) {
+void MidiPlayer::setDriver(MidiDriver *md) {
 	// Don't try to set this more than once.
 	if (_driver)
 		return;

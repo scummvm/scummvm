@@ -726,11 +726,11 @@ void AGOSEngine::printBox() {
 	_textWindow->textRow = 0;
 	_textWindow->textColumnOffset = 0;
 	_textWindow->textLength = 0;
-	showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+	justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
 	waitForSync(99);
 	BoxBufferPtr = _boxBuffer;
 	while (*BoxBufferPtr)
-		showmessage_print_char(*BoxBufferPtr++);
+		justifyOutPut(*BoxBufferPtr++);
 	_boxLineCount = 0;
 	BoxBufferPtr = _boxBuffer;
 	_lineCounts[0] = 0;
@@ -844,13 +844,13 @@ void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val)
 	// Clear background of first digit
 	window->textColumnOffset = offs;
 	window->text_color = 0;
-	video_putchar_drawchar(window, x * 8, y, 129);
+	windowDrawChar(window, x * 8, y, 129);
 
 	if (val != -1) {
 		// Print first digit
 		chr = val / 10 + 48;
 		window->text_color = 15;
-		video_putchar_drawchar(window, x * 8, y, chr);
+		windowDrawChar(window, x * 8, y, chr);
 	}
 
 	offs += 6;
@@ -862,13 +862,13 @@ void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val)
 	// Clear background of second digit
 	window->textColumnOffset = offs;
 	window->text_color = 0;
-	video_putchar_drawchar(window, x * 8, y, 129);
+	windowDrawChar(window, x * 8, y, 129);
 
 	if (val != -1) {
 		// Print second digit
 		chr = val % 10 + 48;
 		window->text_color = 15;
-		video_putchar_drawchar(window, x * 8, y, chr);
+		windowDrawChar(window, x * 8, y, chr);
 	}
 }
 

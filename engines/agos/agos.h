@@ -591,12 +591,6 @@ protected:
 
 	int runScript();
 
-	Item *getNextItemPtr();
-	uint getNextItemID();
-	uint getItem1ID() {return 1;}
-	Item *me();
-	Item *actor();
-
 	byte getByte();
 	int getNextWord();
 
@@ -608,12 +602,13 @@ protected:
 	void writeNextVarContents(uint16 contents);
 	void writeVariable(uint variable, uint16 contents);
 
-	void setItemParent(Item *item, Item *parent);
-
-	uint itemPtrToID(Item *id);
-
 	Item *derefItem(uint item);
-	void setItemState(Item *item, int value);
+	Item *getNextItemPtr();
+	uint getNextItemID();
+	uint getItem1ID() {return 1;}
+	uint itemPtrToID(Item *id);
+	Item *me();
+	Item *actor();
 
 	void showMessageFormat(const char *s, ...);
 	const byte *getStringPtrByID(uint stringId);
@@ -623,6 +618,11 @@ protected:
 	void addTimeEvent(uint timeout, uint subroutine_id);
 	void delTimeEvent(TimeEvent *te);
 
+	Item *findInByClass(Item *i, int16 m);
+	Item *findMaster(int16 a, int16 n);
+	Item *nextMaster(Item *item, int16 a, int16 n);
+	int wordMatch(Item *item, int16 a, int16 n);
+
 	bool isRoom(Item *item);
 	bool isObject(Item *item);
 	bool isPlayer(Item *item);
@@ -630,6 +630,9 @@ protected:
 	void itemChildrenChanged(Item *item);
 	void unlinkItem(Item *item);
 	void linkItem(Item *item, Item *parent);
+
+	void setItemParent(Item *item, Item *parent);
+	void setItemState(Item *item, int value);
 
 	void stopAnimateSimon1(uint a);
 	void stopAnimateSimon2(uint a, uint b);
@@ -659,6 +662,28 @@ protected:
 
 	TextLocation *getTextLocation(uint a);
 	void setup_cond_c_helper();
+
+	uint16 getBackExit(int n);
+	uint16 getDoorOf(Item *item, uint16 d);
+	uint16 getDoorState(Item *item, uint16 d);
+	uint16 getExitOf_e1(Item *item, uint16 d);
+	uint16 getExitOf(Item *item, uint16 d);
+	uint16 getExitState(Item *item, uint16 x, uint16 d);
+	void changeDoorState(SubRoom *r, uint16 d, uint16 n);
+	void setDoorState(Item *i, uint16 d, uint16 n);
+	void moveDirn_e1(Item *i, uint x);
+	void moveDirn_e2(Item *i, uint x);
+	void moveDirn_ww(Item *i, uint x);
+
+	int canPlace(Item *x, Item *y);
+	int contains(Item *a, Item *b);
+	int sizeContents(Item *x);
+	int sizeOfRec(Item *o, int d);
+	int sizeRec(Item *x, int d);
+	int weighUp(Item *x);
+	int weightRec(Item *x, int d);
+	int weightOf(Item *x);
+	void xPlace(Item *x, Item *y);
 
 	uint menuFor_e2(Item *item, uint id);
 	uint menuFor_ww(Item *item, uint id);
@@ -764,8 +789,8 @@ protected:
 	void permitInput();
 
 	uint getFeebleFontSize(byte chr);
-	void showmessage_helper_3(uint a, uint b);
-	void showmessage_print_char(byte chr);
+	void justifyStart(uint a, uint b);
+	void justifyOutPut(byte chr);
 
 	void loadZone(uint zoneNum);
 
@@ -1051,37 +1076,6 @@ public:
 	void o_unloadZone();
 	void o_unfreezeZones();
 
-	Item *findInByClass(Item *i, int16 m);
-	Item *findMaster(int16 a, int16 n);
-	Item *nextMaster(Item *item, int16 a, int16 n);
-	int16 levelOf(Item *item);
-	int wordMatch(Item *item, int16 a, int16 n);
-
-	uint16 getBackExit(int n);
-	uint16 getDoorOf(Item *item, uint16 d);
-	uint16 getDoorState(Item *item, uint16 d);
-	uint16 getExitOf_e1(Item *item, uint16 d);
-	uint16 getExitOf(Item *item, uint16 d);
-	uint16 getExitState(Item *item, uint16 x, uint16 d);
-	void changeDoorState(SubRoom *r, uint16 d, uint16 n);
-	void setDoorState(Item *i, uint16 d, uint16 n);
-	void moveDirn_e1(Item *i, uint x);
-	void moveDirn_e2(Item *i, uint x);
-	void moveDirn_ww(Item *i, uint x);
-
-	int contains(Item *a, Item *b);
-
-	int sizeContents(Item *x);
-	int sizeOfRec(Item *o, int d);
-	int sizeRec(Item *x, int d);
-
-	int weighUp(Item *x);
-	int weightRec(Item *x, int d);
-	int weightOf(Item *x);
-
-	int canPlace(Item *x, Item *y);
-	void xPlace(Item *x, Item *y);
-
 	// Opcodes, Elvira 1 only
 	void oe1_present();
 	void oe1_notPresent();
@@ -1277,7 +1271,7 @@ protected:
 	bool isSpriteLoaded(uint16 id, uint16 zoneNum);
 
 	void resetWindow(WindowBlock *window);
-	void delete_hitarea_by_index(uint index);
+	void freeBox(uint index);
 
 	void windowPutChar(uint a);
 
@@ -1310,16 +1304,16 @@ protected:
 	void animateSpritesDebug();
 	void animateSpritesByY();
 
-	void dx_clear_surfaces(uint num_lines);
-	void dx_update_screen_and_palette();
+	void clearSurfaces(uint num_lines);
+	void updateScreen();
 
 	void dumpVideoScript(const byte *src, bool one_opcode_only);
-	void dump_vga_file(const byte *vga);
-	void dump_vga_script(const byte *ptr, uint res, uint sprite_id);
-	void dump_vga_script_always(const byte *ptr, uint res, uint sprite_id);
-	void dump_vga_bitmaps(const byte *vga, byte *vga1, int res);
-	void dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base);
-	void dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
+	void dumpVgaFile(const byte *vga);
+	void dumpVgaScript(const byte *ptr, uint res, uint sprite_id);
+	void dumpVgaScriptAlways(const byte *ptr, uint res, uint sprite_id);
+	void dumpVgaBitmaps(const byte *vga, byte *vga1, int res);
+	void dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base);
+	void dumpBitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
 
 	void clearBackFromTop(uint lines);
 	void fillFrontFromBack(uint x, uint y, uint w, uint h);
@@ -1343,8 +1337,8 @@ protected:
 	void openTextWindow();
 	void tidyIconArray(uint i);
 
-	void video_putchar_newline(WindowBlock *window);
-	void video_putchar_drawchar(WindowBlock *window, uint x, uint y, byte chr);
+	void windowNewLine(WindowBlock *window);
+	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
 	void loadMusic(uint music);
 	void checkTimerCallback();
@@ -1360,11 +1354,7 @@ protected:
 	void fastFadeIn();
 	void slowFadeIn();
 
-	void vc_kill_sprite(uint file, uint sprite);
-
-	void set_dummy_cursor();
-
-	void set_volume(int volume);
+	void vcStopAnimation(uint file, uint sprite);
 
 	void userGame(bool load);
 	void disableFileBoxes();

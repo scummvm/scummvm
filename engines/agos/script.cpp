@@ -724,9 +724,9 @@ void AGOSEngine::o_defWindow() {
 	if (num == _curWindow) {
 		_textWindow = _windowArray[num];
 		if (getGameType() == GType_FF || getGameType() == GType_PP)
-			showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+			justifyStart(_textWindow->textColumn, _textWindow->width);
 		else
-			showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+			justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
 	}
 }
 
@@ -1506,17 +1506,6 @@ void AGOSEngine::waitForMark(uint i) {
 	}
 }
 
-void AGOSEngine::freezeBottom() {
-	_vgaMemBase = _vgaMemPtr;
-	_vgaFrozenBase = _vgaMemPtr;
-}
-
-void AGOSEngine::unfreezeBottom() {
-	_vgaMemPtr = _vgaRealBase;
-	_vgaMemBase = _vgaRealBase;
-	_vgaFrozenBase = _vgaRealBase;
-}
-
 void AGOSEngine::sendSync(uint a) {
 	uint16 id = to16Wrapper(a);
 	_lockWord |= 0x8000;
@@ -1550,14 +1539,6 @@ void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
 	_vcPtr = (byte *)&items;
 	vc60_stopAnimation();
 	_lockWord &= ~0x8000;
-}
-
-int16 AGOSEngine::levelOf(Item *item) {
-	SubPlayer *p = (SubPlayer *) findChildOfType(item, 3);
-	if (p == NULL)
-		return 0;
-
-	return p->level;
 }
 
 } // End of namespace AGOS

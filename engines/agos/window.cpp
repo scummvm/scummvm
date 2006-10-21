@@ -76,13 +76,13 @@ void AGOSEngine::changeWindow(uint a) {
 		return;
 
 	_curWindow = a;
-	showmessage_print_char(0);
+	justifyOutPut(0);
 	_textWindow = _windowArray[a];
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
-		showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+		justifyStart(_textWindow->textColumn, _textWindow->width);
 	else
-		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+		justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
 }
 
 void AGOSEngine::closeWindow(uint a) {

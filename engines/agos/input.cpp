@@ -371,14 +371,14 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 void AGOSEngine::permitInput() {
 	if (!_mortalFlag) {
 		_mortalFlag = true;
-		showmessage_print_char(0);
+		justifyOutPut(0);
 		_curWindow = 0;
 		if (_windowArray[0] != 0) {
 			_textWindow = _windowArray[0];
 			if (getGameType() == GType_FF || getGameType() == GType_PP)
-				showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+				justifyStart(_textWindow->textColumn, _textWindow->width);
 			else
-				showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+				justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
 		}
 		_mortalFlag = false;
 	}
@@ -465,10 +465,10 @@ bool AGOSEngine::processSpecialKeys() {
 				_speech ^= 1;
 		}
 	case '+':
-		midi.set_volume(midi.get_volume() + 16);
+		midi.setVolume(midi.getVolume() + 16);
 		break;
 	case '-':
-		midi.set_volume(midi.get_volume() - 16);
+		midi.setVolume(midi.getVolume() - 16);
 		break;
 	case 'm':
 		midi.pause(_musicPaused ^= 1);

@@ -474,7 +474,7 @@ int AGOSEngine::init() {
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
-	set_volume(ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	// Setup midi driver
@@ -493,11 +493,11 @@ int AGOSEngine::init() {
 
 	midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_native_mt32);
 
-	midi.set_driver(driver);
+	midi.setDriver(driver);
 	int ret = midi.open();
 	if (ret)
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
-	midi.set_volume(ConfMan.getInt("music_volume"));
+	midi.setVolume(ConfMan.getInt("music_volume"));
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_musicPaused ^= 1);
@@ -771,26 +771,6 @@ GUI::Debugger *AGOSEngine::getDebugger() {
 	return _debugger;
 }
 
-void AGOSEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
-	byte *p = palPtr;
-
-	do {
-		if (p[0] >= size)
-			p[0] -= size;
-		else
-			p[0] = 0;
-		if (p[1] >= size)
-			p[1] -= size;
-		else
-			p[1] = 0;
-		if (p[2] >= size)
-			p[2] -= size;
-		else
-			p[2] = 0;
-		p += 4;
-	} while (--num);
-}
-
 void AGOSEngine::pause() {
 	_keyPressed = 1;
 	_pause = 1;
@@ -806,86 +786,9 @@ void AGOSEngine::pause() {
 	}
 	midi.pause(music_status);
 	_sound->ambientPause(ambient_status);
-
-}
-
-void AGOSEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
-	if (getGameType() == GType_SIMON1) {
-		if (speech_id == 9999) {
-			if (_subtitles)
-				return;
-			if (!getBitFlag(14) && !getBitFlag(28)) {
-				setBitFlag(14, true);
-				_variableArray[100] = 15;
-				animate(4, 1, 130, 0, 0, 0);
-				waitForSync(130);
-			}
-			_skipVgaWait = true;
-		} else {
-			if (_subtitles && _scriptVar2) {
-				animate(4, 2, 204, 0, 0, 0);
-				waitForSync(204);
-				stopAnimateSimon1(204);
-			}
-			stopAnimateSimon1(vgaSpriteId + 201);
-			loadVoice(speech_id);
-			animate(4, 2, vgaSpriteId + 201, 0, 0, 0);
-		}
-	} else {
-		if (speech_id == 0xFFFF) {
-			if (_subtitles)
-				return;
-			if (!getBitFlag(14) && !getBitFlag(28)) {
-				setBitFlag(14, true);
-				_variableArray[100] = 5;
-				animate(4, 1, 30, 0, 0, 0);
-				waitForSync(130);
-			}
-			_skipVgaWait = true;
-		} else {
-			if (getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) {
-				loadVoice(speech_id);
-				return;
-			}
-
-			if (_subtitles && _scriptVar2) {
-				animate(4, 2, 5, 0, 0, 0);
-				waitForSync(205);
-				stopAnimateSimon2(2,5);
-			}
-
-			stopAnimateSimon2(2, vgaSpriteId + 2);
-			loadVoice(speech_id);
-			animate(4, 2, vgaSpriteId + 2, 0, 0, 0);
-		}
-	}
-}
-
-void AGOSEngine::skipSpeech() {
-	_sound->stopVoice();
-	if (!getBitFlag(28)) {
-		setBitFlag(14, true);
-		if (getGameType() == GType_FF) {
-			_variableArray[103] = 5;
-			animate(4, 2, 13, 0, 0, 0);
-			waitForSync(213);
-			stopAnimateSimon2(2, 1);
-		} else if (getGameType() == GType_SIMON2) {
-			_variableArray[100] = 5;
-			animate(4, 1, 30, 0, 0, 0);
-			waitForSync(130);
-			stopAnimateSimon2(2, 1);
-		} else {
-			_variableArray[100] = 15;
-			animate(4, 1, 130, 0, 0, 0);
-			waitForSync(130);
-			stopAnimateSimon1(1);
-		}
-	}
 }
 
 int AGOSEngine::go() {
-
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);
@@ -941,141 +844,6 @@ void AGOSEngine::shutdown() {
 	free(_gameOffsetsPtr);
 
 	_system->quit();
-}
-
-void AGOSEngine::loadMusic(uint music) {
-	char buf[4];
-
-	if (getPlatform() == Common::kPlatformAtariST) {
-		// TODO: Add support for music format used by Elvira 2
-	} else if (getPlatform() == Common::kPlatformAmiga) {
-		_modPlayer->stop();
-
-		char filename[15];
-		File f;
-
-		if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
-			sprintf(filename, "elvira2");
-		else
-			sprintf(filename, "%dtune", music);
-
-		f.open(filename);
-		if (f.isOpen() == false) {
-			error("loadMusic: Can't load module from '%s'", filename);
-		}
-
-		if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
-			getFeatures() & GF_CRUNCHED) {
-			uint srcSize = f.size();
-			byte *srcBuf = (byte *)malloc(srcSize);
-			if (f.read(srcBuf, srcSize) != srcSize)
-				error("loadMusic: Read failed");
-
-			uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
-			byte *dstBuf = (byte *)malloc(dstSize);
-			decrunchFile(srcBuf, dstBuf, srcSize);
-			free(srcBuf);
-
-			Common::MemoryReadStream stream(dstBuf, dstSize);
-			_modPlayer->loadModuleStream(stream);
-		} else {
-			_modPlayer->loadModuleStream(f);
-		}
-		_modPlayer->start();
-	} else if (getGameType() == GType_SIMON2) {
-		midi.stop();
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_gameFile->read(buf, 4);
-		if (!memcmp(buf, "FORM", 4)) {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			midi.loadXMIDI (_gameFile);
-		} else {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			midi.loadMultipleSMF (_gameFile);
-		}
-
-		_lastMusicPlayed = music;
-		_nextMusicToPlay = -1;
-	} else if (getGameType() == GType_SIMON1) {
-		midi.stop();
-		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
-
-		if (getFeatures() & GF_TALKIE) {
-			// FIXME: The very last music resource, a cymbal crash for when the
-			// two demons crash into each other, should NOT be looped like the
-			// other music tracks. In simon1dos/talkie the GMF resource includes
-			// a loop override that acomplishes this, but there seems to be nothing
-			// for this in the SMF resources.
-			if (music == 35)
-				midi.setLoop (false);
-
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-			_gameFile->read(buf, 4);
-			if (!memcmp(buf, "GMF\x1", 4)) {
-				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				midi.loadSMF (_gameFile, music);
-			} else {
-				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				midi.loadMultipleSMF (_gameFile);
-			}
-
-		} else {
-			char filename[15];
-			File f;
-			sprintf(filename, "MOD%d.MUS", music);
-			f.open(filename);
-			if (f.isOpen() == false)
-				error("loadMusic: Can't load music from '%s'", filename);
-
-			if (getFeatures() & GF_DEMO)
-				midi.loadS1D (&f);
-			else
-				midi.loadSMF (&f, music);
-		}
-
-		midi.startTrack (0);
-	} else {
-		midi.stop();
-		midi.setLoop (true); // Must do this BEFORE loading music.
-
-		char filename[15];
-		File f;
-		sprintf(filename, "MOD%d.MUS", music);
-		f.open(filename);
-		if (f.isOpen() == false)
-			error("loadMusic: Can't load music from '%s'", filename);
-
-		midi.loadS1D (&f);
-		midi.startTrack (0);
-	}
-}
-
-void AGOSEngine::playSting(uint a) {
-	if (!midi._enable_sfx)
-		return;
-
-	char filename[15];
-
-	File mus_file;
-	uint16 mus_offset;
-
-	sprintf(filename, "STINGS%i.MUS", _soundFileId);
-	mus_file.open(filename);
-	if (!mus_file.isOpen())
-		error("playSting: Can't load sound effect from '%s'", filename);
-
-	mus_file.seek(a * 2, SEEK_SET);
-	mus_offset = mus_file.readUint16LE();
-	if (mus_file.ioFailed())
-		error("playSting: Can't read sting %d offset", a);
-
-	mus_file.seek(mus_offset, SEEK_SET);
-	midi.loadSMF(&mus_file, a, true);
-	midi.startTrack(0);
-}
-
-void AGOSEngine::set_volume(int volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 }
 
 } // End of namespace AGOS

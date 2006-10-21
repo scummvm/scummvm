@@ -740,4 +740,24 @@ void AGOSEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	}
 }
 
+void AGOSEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
+	byte *p = palPtr;
+
+	do {
+		if (p[0] >= size)
+			p[0] -= size;
+		else
+			p[0] = 0;
+		if (p[1] >= size)
+			p[1] -= size;
+		else
+			p[1] = 0;
+		if (p[2] >= size)
+			p[2] -= size;
+		else
+			p[2] = 0;
+		p += 4;
+	} while (--num);
+}
+
 } // End of namespace AGOS

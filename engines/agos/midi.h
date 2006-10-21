@@ -101,9 +101,9 @@ public:
 	void stop();
 	void pause(bool b);
 
-	int  get_volume() { return _masterVolume; }
-	void set_volume(int volume);
-	void set_driver(MidiDriver *md);
+	int  getVolume() { return _masterVolume; }
+	void setVolume(int volume);
+	void setDriver(MidiDriver *md);
 
 public:
 	// MidiDriver interface implementation

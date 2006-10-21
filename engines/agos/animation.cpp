@@ -148,7 +148,7 @@ void MoviePlayer::play() {
 	} else {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
-		_vm->dx_clear_surfaces(480);
+		_vm->clearSurfaces(480);
 		_vm->_system->setPalette(palette, 0, 256);
 	}
 
