@@ -449,6 +449,8 @@ void AGOSEngine::vc3_loadSprite() {
 	y = vcReadNextWord();			/* 6 */
 	palette = vcReadNextWord();		/* 8 */
 
+	old_file_1 = _curVgaFile1;
+
 	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette, false);
 
 	_curVgaFile1 = old_file_1;
@@ -1818,7 +1820,6 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
 
 			loadZone(zoneNum);
 		} else {
-
 			if (vpe->vgaFile1 != NULL)
 				break;
 			if (_zoneNumber != zoneNum)
