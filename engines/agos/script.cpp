@@ -668,7 +668,7 @@ void AGOSEngine::o_picture() {
 	if (_lockWord & 0x10)
 		error("o_picture: _lockWord & 0x10");
 
-	set_video_mode_internal(mode, vga_res);
+	setWindowImage(mode, vga_res);
 }
 
 void AGOSEngine::o_loadZone() {

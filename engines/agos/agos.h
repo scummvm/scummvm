@@ -767,11 +767,12 @@ protected:
 	void showmessage_helper_3(uint a, uint b);
 	void showmessage_print_char(byte chr);
 
-	void set_video_mode_internal(uint16 mode, uint16 vga_res_id);
-
 	void loadZone(uint zoneNum);
 
 	void animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool setZone = true);
+	void setImage(uint16 vga_res_id, bool setZone);
+	void setWindowImage(uint16 mode, uint16 vga_res_id);
+
 	void playSpeech(uint speech_id, uint vga_sprite_id);
 	void skipSpeech();
 

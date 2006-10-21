@@ -568,7 +568,7 @@ void AGOSEngine::defineArrowBoxes(WindowBlock *window) {
 		ha->priority = 100;
 		ha->window = window;
 		ha->verb = 1;
-		set_video_mode_internal(6, 103);
+		setWindowImage(6, 103);
 	} else if (getGameType() == GType_ELVIRA2) {
 		ha->x = 54;
 		ha->y = 178;
@@ -579,7 +579,7 @@ void AGOSEngine::defineArrowBoxes(WindowBlock *window) {
 		ha->priority = 100;
 		ha->window = window;
 		ha->verb = 1;
-		set_video_mode_internal(6, 106);
+		setWindowImage(6, 106);
 	} else {
 		ha->x = 30 * 8;
 		ha->y = 170;
@@ -705,10 +705,10 @@ void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 		stopAnimateSimon1(128);
 	} else if (getGameType() == GType_WW) {
 		setBitFlag(22, false);
-		set_video_mode_internal(6, 103);
+		setWindowImage(6, 103);
 	} else if (getGameType() == GType_ELVIRA2) {
 		setBitFlag(21, false);
-		set_video_mode_internal(6, 106);
+		setWindowImage(6, 106);
 	}
 }
 

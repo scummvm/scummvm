@@ -408,11 +408,8 @@ void AGOSEngine::vc1_fadeOut() {
 }
 
 void AGOSEngine::vc2_call() {
-	VgaPointersEntry *vpe;
-	uint16 count, num, res;
+	uint16 num;
 	byte *old_file_1, *old_file_2;
-	byte *b, *bb;
-	const byte *vcPtrOrg;
 
 	if (getGameType() == GType_ELVIRA2) {
 		num = vcReadNextWord();
@@ -423,86 +420,10 @@ void AGOSEngine::vc2_call() {
 	old_file_1 = _curVgaFile1;
 	old_file_2 = _curVgaFile2;
 
-	for (;;) {
-		res = num / 100;
-		vpe = &_vgaBufferPointers[res];
-
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		if (vpe->vgaFile1 != NULL)
-			break;
-		if (_zoneNumber != res)
-			_noOverWrite = _zoneNumber;
-
-		loadZone(res);
-		_noOverWrite = 0xFFFF;
-	}
-
-
-	bb = _curVgaFile1;
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		b = bb + READ_LE_UINT16(bb + 2);
-		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
-		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
-
-		while (count--) {
-			if (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == num)
-				break;
-			b += sizeof(ImageHeader_Feeble);
-		}
-		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == num);
-	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		b = bb + READ_BE_UINT16(bb + 4);
-		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
-		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
-
-		while (count--) {
-			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == num)
-				break;
-			b += sizeof(ImageHeader_Simon);
-		}
-		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == num);
-	} else {
-		b = bb + READ_BE_UINT16(bb + 10);
-		b += 20;
-
-		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
-		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
-
-		while (count--) {
-			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == num)
-				break;
-			b += sizeof(ImageHeader_WW);
-		}
-		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == num);
-	}
-
-	if (_startVgaScript) {
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), res, num);
-		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), res, num);
-		} else {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), res, num);
-		}
-	}
-
-	vcPtrOrg = _vcPtr;
-
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
-	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
-	} else {
-		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
-	}
-
-	runVgaScript();
+	setImage(num, false);
 
 	_curVgaFile1 = old_file_1;
 	_curVgaFile2 = old_file_2;
-
-	_vcPtr = vcPtrOrg;
 }
 
 void AGOSEngine::vc3_loadSprite() {
@@ -1226,10 +1147,10 @@ void AGOSEngine::vc36_setWindowImage() {
 		if (windowNum == 16) {
 			_copyPartialMode = 2;
 		} else {
-			set_video_mode_internal(windowNum, vga_res);
+			setWindowImage(windowNum, vga_res);
 		}
 	} else {
-		set_video_mode_internal(windowNum, vga_res);
+		setWindowImage(windowNum, vga_res);
 	}
 }
 
@@ -1874,42 +1795,38 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 	}
 }
 
-void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
-	uint num, num_lines;
+void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
+	uint zoneNum;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
-	uint16 count, updateWindow;
+	uint16 count;
 	const byte *vc_ptr_org;
 
-	_windowNum = updateWindow = mode;
-	_lockWord |= 0x20;
-
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		vc27_resetSprite();
-	}
-
-	if (vga_res_id == 0) {
-		if (getGameType() == GType_SIMON1) {
-			_unkPalFlag = true;
-		} else if (getGameType() == GType_SIMON2) {
-			_useBackGround = true;
-			_restoreWindow6 = true;
-		}
-	}
-
-	_zoneNumber = num = vga_res_id / 100;
+	zoneNum = vga_res_id / 100;
 
 	for (;;) {
-		vpe = &_vgaBufferPointers[num];
-
+		vpe = &_vgaBufferPointers[zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
 
-		if (vpe->vgaFile1 != NULL)
-			break;
+		if (setZone) {
+			_curSfxFile = vpe->sfxFile;
+			_zoneNumber = zoneNum;
 
-		loadZone(num);
+			if (vpe->vgaFile1 != NULL)
+				break;
+
+			loadZone(zoneNum);
+		} else {
+
+			if (vpe->vgaFile1 != NULL)
+				break;
+			if (_zoneNumber != zoneNum)
+				_noOverWrite = _zoneNumber;
+
+			loadZone(zoneNum);
+			_noOverWrite = 0xFFFF;
+		}
 	}
 
 	bb = _curVgaFile1;
@@ -1955,11 +1872,45 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 
 	if (_startVgaScript) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), num, vga_res_id);
+			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vga_res_id);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), num, vga_res_id);
+			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), zoneNum, vga_res_id);
 		} else {
-			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), num, vga_res_id);
+			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), zoneNum, vga_res_id);
+		}
+	}
+
+	vc_ptr_org = _vcPtr;
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
+	} else {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
+	}
+
+	runVgaScript();
+	_vcPtr = vc_ptr_org;
+}
+
+void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
+	uint num_lines;
+	uint16 updateWindow;
+
+	_windowNum = updateWindow = mode;
+	_lockWord |= 0x20;
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		vc27_resetSprite();
+	}
+
+	if (vga_res_id == 0) {
+		if (getGameType() == GType_SIMON1) {
+			_unkPalFlag = true;
+		} else if (getGameType() == GType_SIMON2) {
+			_useBackGround = true;
+			_restoreWindow6 = true;
 		}
 	}
 
@@ -1984,18 +1935,7 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 		}
 	}
 
-	vc_ptr_org = _vcPtr;
-
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
-	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
-	} else {
-		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
-	}
-
-	runVgaScript();
-	_vcPtr = vc_ptr_org;
+	setImage(vga_res_id, true);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
@@ -2010,7 +1950,7 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 			_syncFlag2 = 1;
 		}
 		_useBackGround = false;
-	} else {
+	} else if (getGameType() == GType_SIMON1) {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
 		if (_subroutine == 2923 || _subroutine == 2926)
@@ -2020,7 +1960,12 @@ void AGOSEngine::set_video_mode_internal(uint16 mode, uint16 vga_res_id) {
 
 		fillFrontFromBack(0, 0, _screenWidth, num_lines);
 		fillBackGroundFromBack(num_lines);
-
+		_syncFlag2 = 1;
+		_timer5 = 0;
+	} else {
+		num_lines = _windowNum == 4 ? 134 : 200;
+		fillFrontFromBack(0, 0, _screenWidth, num_lines);
+		fillBackGroundFromBack(num_lines);
 		_syncFlag2 = 1;
 		_timer5 = 0;
 	}

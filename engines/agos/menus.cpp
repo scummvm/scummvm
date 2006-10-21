@@ -161,9 +161,9 @@ void AGOSEngine::clearMenuStrip() {
 		disableBox(i);
 
 	if (getGameType() == GType_WW) {
-		set_video_mode_internal(2, 101);
+		setWindowImage(2, 101);
 	} else {
-		set_video_mode_internal(2, 102);
+		setWindowImage(2, 102);
 	}
 }
 
@@ -205,9 +205,9 @@ void AGOSEngine::doMenuStrip(uint menuNum) {
 
 	_variableArray[var + 4] = id - 111;
 	if (getGameType() == GType_WW) {
-		set_video_mode_internal(2, 102);
+		setWindowImage(2, 102);
 	} else {
-		set_video_mode_internal(2, 103);
+		setWindowImage(2, 103);
 	}
 }
 

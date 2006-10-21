@@ -104,7 +104,7 @@ void AGOSEngine::o4_restoreOopsPosition() {
 			_variableArray[i] = _variableArray2[i];
 		}
 		i = _variableArray[999] * 100 + 11;
-		set_video_mode_internal(4,i);
+		setWindowImage(4,i);
 		if (getBitFlag(110)) {
 			_gameTime += 10;
 		} else {
