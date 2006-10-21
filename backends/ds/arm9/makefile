@@ -26,6 +26,7 @@ VPATH = $(srcdir)
 
 ifdef DS_BUILD_A
 	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A
+	LOGO = logoa.bmp
 	DISABLE_HE = 1
 	#DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -45,6 +46,7 @@ endif
 
 ifdef DS_BUILD_B
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_B
+	LOGO = logob.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -64,6 +66,7 @@ endif
 
 ifdef DS_BUILD_C	
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_C
+	LOGO = logoc.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -298,8 +301,8 @@ endif
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../logo.bmp "$(shell basename $@);ScummVM 0.9.0;Port v0.6"
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../logo.bmp "$(shell basename $@);ScummVM 0.9.0;Port v0.6"
+	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.9.0;DS Port"
+	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.9.1;DS Port"
 	dsbuild $@ -l ../ndsloader.bin
 
 	padbin 16 $(basename $@).ds.gba
