@@ -524,10 +524,14 @@ int AGOSEngine::init() {
 	setupGame();
 
 	_debugger = new Debugger(this);
-	_modPlayer = new Modules::ProtrackerPlayer();
 	_sound = new Sound(this, gss, _mixer);
 
-	_modPlayer->init(_system);
+	if (getPlatform() == Common::kPlatformAmiga) {
+		_modPlayer = new Modules::ProtrackerPlayer();
+		_modPlayer->init(_system);
+	} else {
+		_modPlayer = 0;
+	}
 	_moviePlay = new MoviePlayer(this, _mixer);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {

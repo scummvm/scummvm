@@ -118,6 +118,7 @@ void AGOSEngine::loadMusic(uint music) {
 	if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music format used by Elvira 2
 	} else if (getPlatform() == Common::kPlatformAmiga) {
+		assert(_modPlayer);
 		_modPlayer->stop();
 
 		char filename[15];
