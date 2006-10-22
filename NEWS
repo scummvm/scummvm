@@ -1,10 +1,11 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.9.1 (????-??-??)
+0.9.1 (2006-10-29)
  New Ports:
    - Added Nintendo DS port.
    - Added GP2X port.
+   - Added GP32 port.
 
  General:
    - Fixed potential garbage and/or crash in debug console.
