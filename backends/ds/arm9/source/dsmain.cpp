@@ -2025,7 +2025,7 @@ int main(void)
 	consolePrintf("---------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1beta6 ");
+	consolePrintf("Version 0.9.1");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
