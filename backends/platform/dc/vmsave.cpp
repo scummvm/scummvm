@@ -401,7 +401,7 @@ void VMSaveManager::listSavefiles(const char *prefix, bool *marks, int num)
     tryList(prefix, marks, num, i);
 }
 
-Common::SaveFileManager *OSystem_Dreamcast::getSavefileManager()
+Common::SaveFileManager *OSystem_Dreamcast::createSavefileManager()
 {
   return new VMSaveManager();
 }

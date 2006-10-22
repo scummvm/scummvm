@@ -38,9 +38,23 @@ class Interactive
 
 class OSystem_Dreamcast : public OSystem {
 
+ private:
+
+  // Set function that generates samples
+  typedef void (*SoundProc)(void *param, byte *buf, int len);
+  bool setSoundCallback(SoundProc proc, void *param);
+  void clearSoundCallback();
+
+  // Add a callback timer
+  typedef int (*TimerProc)(int interval);
+  void setTimerCallback(TimerProc callback, int timer);
+
+  Common::SaveFileManager *createSavefileManager();
+
  public:
   OSystem_Dreamcast();
 
+  virtual void initBackend();
 
   // Determine whether the backend supports the specified feature.
   bool hasFeature(Feature f);
@@ -114,10 +128,6 @@ class OSystem_Dreamcast : public OSystem {
   // Returns true if an event was retrieved.
   bool pollEvent(Event &event);
 
-  // Set function that generates samples
-  bool setSoundCallback(SoundProc proc, void *param);
-  void clearSoundCallback();
-
   // Determine the output sample rate. Audio data provided by the sound
   // callback will be played using this rate.
   int getOutputSampleRate() const;
@@ -167,9 +177,6 @@ class OSystem_Dreamcast : public OSystem {
     b = ((color<<4)&0xf0)|(color&0x0f);
   }
 
-  // Add a callback timer
-  void setTimerCallback(TimerProc callback, int timer);
-
   // Mutex handling
   MutexRef createMutex();
   void lockMutex(MutexRef mutex);
@@ -180,9 +187,10 @@ class OSystem_Dreamcast : public OSystem {
   // given value.
   void setWindowCaption(const char *caption);
 
-  // Savefile handling
-  Common::SaveFileManager *getSavefileManager();
-
+  // Modulatized backend
+  Common::SaveFileManager *getSavefileManager() { return _savefile; }
+  Audio::Mixer *getMixer() { return _mixer; }
+  Common::TimerManager *getTimerManager() { return _timer; }
 
   // Extra SoftKbd support
   void mouseToSoftKbd(int x, int y, int &rx, int &ry) const;
@@ -190,6 +198,9 @@ class OSystem_Dreamcast : public OSystem {
 
  private:
 
+  Common::SaveFileManager *_savefile;
+  Audio::Mixer *_mixer;
+  Common::TimerManager *_timer;
   SoftKeyboard _softkbd;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;

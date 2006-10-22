@@ -32,6 +32,8 @@
 #include <common/config-manager.h>
 
 #include "backends/plugins/dc/dc-provider.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
 
 
 Icon icon;
@@ -47,6 +49,21 @@ OSystem_Dreamcast::OSystem_Dreamcast()
   memset(screen_tx, 0, sizeof(screen_tx));
   memset(mouse_tx, 0, sizeof(mouse_tx));
   memset(ovl_tx, 0, sizeof(ovl_tx));
+}
+
+static int timer_handler(int t) {
+  DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+  tm->handler();
+  return t;
+}
+
+void OSystem_Dreamcast::initBackend()
+{
+  _savefile = createSavefileManager();
+  _mixer = new Audio::Mixer();
+  _timer = new DefaultTimerManager();
+  setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+  setTimerCallback(&timer_handler, 10);
 }
 
 
