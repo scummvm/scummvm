@@ -76,6 +76,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Overlay uses higher resolution now.
    - Can boot from USB, HDD etc. as well.
 
+ WinCE Port:
+   - Several bugfixes
+   - Re-add support for 2002 based devices
+
 0.9.0 (2006-06-25)
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
