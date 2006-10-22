@@ -67,8 +67,8 @@ Resource::Resource(KyraEngine *engine) {
 
 	static const char *kyra1CDFilelist[] = {
 		"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "DRAGON1.APK", "DRAGON2.APK", "FINALE.PAK",
-		"INTRO.VRM", "INTRO1.PAK", "INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",
-		"SND.PAK", "STARTUP.PAK", "XMI.PAK", 0
+		"INTRO1.PAK", "INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK",
+		"STARTUP.PAK", "XMI.PAK", 0
 	};
 
 	/*static const char *kyra2CDFilelist[] = {
