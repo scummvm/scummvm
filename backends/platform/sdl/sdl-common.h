@@ -135,7 +135,6 @@ public:
 	// Set function that generates samples
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
-	void clearSoundCallback();
 	virtual Audio::Mixer *getMixer();
 
 	// Poll CD status
@@ -154,10 +153,6 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
-
-	// Add a callback timer
-	typedef int (*TimerProc)(int interval);
-	void setTimerCallback(TimerProc callback, int timer);
 	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling
@@ -373,6 +368,8 @@ protected:
 
 	Common::SaveFileManager *_savefile;
 	Audio::Mixer *_mixer;
+	
+	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
 
 

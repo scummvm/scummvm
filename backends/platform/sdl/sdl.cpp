@@ -46,9 +46,9 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 }
 #endif
 
-static int timer_handler(int t) {
-	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
-	return tm->handler(t);
+static Uint32 timer_handler(Uint32 interval, void *param) {
+	((DefaultTimerManager *)param)->handler();
+	return interval;
 }
 
 int main(int argc, char *argv[]) {
@@ -196,8 +196,15 @@ void OSystem_SDL::initBackend() {
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_timer == 0) {
+		// TODO: We could implement a custom SDLTimerManager by using
+		// SDL_AddTimer. That might yield better timer resolution, but it would
+		// also change the semantics of a timer: Right now, ScummVM timers
+		// *never* run in parallel, due to the way they are implemented. If we
+		// switched to SDL_AddTimer, each timer might run in a separate thread.
+		// Unfortunately, not all our code is prepared for that, so we can't just
+		// switch. But it's a long term goal to do just that!
 		_timer = new DefaultTimerManager();
-		setTimerCallback(&timer_handler, 10);
+		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
 	
 	OSystem::initBackend();
@@ -240,10 +247,17 @@ OSystem_SDL::OSystem_SDL()
 }
 
 OSystem_SDL::~OSystem_SDL() {
+	SDL_RemoveTimer(_timerID);
+	SDL_CloseAudio();
+
 	free(_dirtyChecksums);
 	free(_currentPalette);
 	free(_cursorPalette);
 	free(_mouseData);
+
+	delete _savefile;
+	delete _mixer;
+	delete _timer;
 }
 
 uint32 OSystem_SDL::getMillis() {
@@ -252,10 +266,6 @@ uint32 OSystem_SDL::getMillis() {
 
 void OSystem_SDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
-}
-
-void OSystem_SDL::setTimerCallback(TimerProc callback, int timer) {
-	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 
 Common::TimerManager *OSystem_SDL::getTimerManager() {
@@ -443,10 +453,6 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	debug(1, "Output sample rate: %d Hz", _samplesPerSec);
 	SDL_PauseAudio(0);
 	return true;
-}
-
-void OSystem_SDL::clearSoundCallback() {
-	SDL_CloseAudio();
 }
 
 int OSystem_SDL::getOutputSampleRate() const {
