@@ -420,7 +420,7 @@ void AGOSEngine::vc2_call() {
 	old_file_1 = _curVgaFile1;
 	old_file_2 = _curVgaFile2;
 
-	setImage(num, false);
+	setImage(num, true);
 
 	_curVgaFile1 = old_file_1;
 	_curVgaFile2 = old_file_2;
@@ -451,7 +451,7 @@ void AGOSEngine::vc3_loadSprite() {
 
 	old_file_1 = _curVgaFile1;
 
-	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette, false);
+	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette, true);
 
 	_curVgaFile1 = old_file_1;
 }
@@ -1670,7 +1670,7 @@ void AGOSEngine::vc63_fastFadeIn() {
 	_fastFadeOutFlag = false;
 }
 
-void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool setZone) {
+void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool vgaScript) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -1704,12 +1704,7 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 	for (;;) {
 		vpe = &_vgaBufferPointers[zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
-		if (setZone) {
-			_zoneNumber = zoneNum;
-			if (vpe->vgaFile1 != NULL)
-				break;
-			loadZone(zoneNum);
-		} else {
+		if (vgaScript) {
 			if (vpe->vgaFile1 != NULL)
 				break;
 			if (_zoneNumber != zoneNum)
@@ -1717,6 +1712,11 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 
 			loadZone(zoneNum);
 			_noOverWrite = 0xFFFF;
+		} else {
+			_zoneNumber = zoneNum;
+			if (vpe->vgaFile1 != NULL)
+				break;
+			loadZone(zoneNum);
 		}
 	}
 
@@ -1797,7 +1797,7 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 	}
 }
 
-void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
+void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 	uint zoneNum;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
@@ -1811,15 +1811,7 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
 
-		if (setZone) {
-			_curSfxFile = vpe->sfxFile;
-			_zoneNumber = zoneNum;
-
-			if (vpe->vgaFile1 != NULL)
-				break;
-
-			loadZone(zoneNum);
-		} else {
+		if (vgaScript) {
 			if (vpe->vgaFile1 != NULL)
 				break;
 			if (_zoneNumber != zoneNum)
@@ -1827,6 +1819,14 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
 
 			loadZone(zoneNum);
 			_noOverWrite = 0xFFFF;
+		} else {
+			_curSfxFile = vpe->sfxFile;
+			_zoneNumber = zoneNum;
+
+			if (vpe->vgaFile1 != NULL)
+				break;
+
+			loadZone(zoneNum);
 		}
 	}
 
@@ -1842,7 +1842,6 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
 			b += sizeof(ImageHeader_Feeble);
 		}
 		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id);
-
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		b = bb + READ_BE_UINT16(bb + 4);
 		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
@@ -1868,7 +1867,8 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool setZone) {
 		}
 		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
 
-		clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
+		if (!vgaScript)
+			clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
 	}
 
 	if (_startVgaScript) {
@@ -1936,7 +1936,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		}
 	}
 
-	setImage(vga_res_id, true);
+	setImage(vga_res_id);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
