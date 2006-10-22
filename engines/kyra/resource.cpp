@@ -40,7 +40,7 @@ Resource::Resource(KyraEngine *engine) {
 
 	if (_engine->game() == GI_KYRA1) {
 		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
-		if (!loadPakFile("KYRA.DAT") || !StaticResource::checkKyraDat()) {
+		if (!loadPakFile("KYRA.DAT", true) || !StaticResource::checkKyraDat()) {
 			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
 			errorMsg.runModal();
 			error("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
@@ -102,7 +102,7 @@ Resource::~Resource() {
 	}
 }
 
-bool Resource::loadPakFile(const Common::String &filename) {
+bool Resource::loadPakFile(const Common::String &filename, const bool forcePC) {
 	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 	uint hash = Common::hashit_lower(filename.c_str());
 	for (;start != _pakfiles.end(); ++start) {
@@ -122,7 +122,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	PAKFile *file = 0;
 
-	file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->gameFlags().platform == Common::kPlatformAmiga));
+	file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->gameFlags().platform == Common::kPlatformAmiga) && !forcePC);
 	handle.close();
 
 	if (!file)

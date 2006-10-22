@@ -316,6 +316,11 @@ int KyraEngine_v1::setupGameFlags() {
 	// because of limitations of the current detector code
 	if (Common::parsePlatform(ConfMan.get("platform")) == Common::kPlatformMacintosh) {
 		_flags.platform = Common::kPlatformMacintosh;
+	} else if (Common::parsePlatform(ConfMan.get("platform")) == Common::kPlatformAmiga) {
+		// it is possible to detect if the game is an amiga version, but since it's
+		// horrible broken at the time of adding this, we just set the amiga platform
+		// if the user want's to crash it's ScummVM
+		_flags.platform = Common::kPlatformAmiga;
 	}
 
 	return 0;

@@ -105,7 +105,7 @@ public:
 	Resource(KyraEngine *engine);
 	~Resource();
 	
-	bool loadPakFile(const Common::String &filename);
+	bool loadPakFile(const Common::String &filename, const bool forcePC = false);
 	void unloadPakFile(const Common::String &filename);
 	bool isInPakList(const Common::String &filename);
 
