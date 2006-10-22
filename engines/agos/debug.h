@@ -527,7 +527,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"WWW|MOVE_BOX",
 	/* 112 */
 	NULL,
-	NULL,
+	"IBWW|DRAW_ITEM",
 	"IB|DO_ICONS",
 	"IBJ|IS_CLASS",
 	/* 116 */
@@ -760,7 +760,7 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"WWW|MOVE_BOX",
 	/* 112 */
 	NULL,
-	NULL,
+	"IBWW|DRAW_ITEM",
 	"IB|DO_ICONS",
 	"IBJ|IS_CLASS",
 	/* 116 */

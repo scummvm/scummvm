@@ -51,6 +51,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[95] = &AGOSEngine::oe1_nextMaster;
 	op[98] = &AGOSEngine::o1_animate;
 	op[99] = &AGOSEngine::o1_stopAnimate;
+	op[113] = &AGOSEngine::oe2_drawItem;
 	op[123] = &AGOSEngine::oe1_setTime;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
@@ -93,6 +94,17 @@ void AGOSEngine::oe2_pObj() {
 void AGOSEngine::oe2_loadUserGame() {
 	// 89: load user game
 	getStringPtrByID(getNextStringID());
+}
+
+void AGOSEngine::oe2_drawItem() {
+	// 113: draw item
+	Item *i = getNextItemPtr();
+	int a = getVarOrByte();
+	int x = getVarOrWord();
+	int y = getVarOrWord();
+	mouseOff();
+	draw_icon_c(_windowArray[a % 8], itemGetIconNumber(i), x, y);
+	mouseOn();
 }
 
 void AGOSEngine::oe2_setDoorOpen() {

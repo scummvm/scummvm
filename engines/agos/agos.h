@@ -1138,6 +1138,7 @@ public:
 	void oe2_moveDirn();
 	void oe2_pObj();
 	void oe2_loadUserGame();
+	void oe2_drawItem();
 	void oe2_setDoorOpen();
 	void oe2_setDoorClosed();
 	void oe2_setDoorLocked();

@@ -146,6 +146,7 @@ void AGOSEngine::setupElvira2VideoOpcodes(VgaOpcodeProc *op) {
 	op[54] = &AGOSEngine::vc54_dissolveOut;
 	op[57] = &AGOSEngine::vc57_blackPalette;
 	op[56] = &AGOSEngine::vc56_fullScreen;
+	op[58] = &AGOSEngine::vc58_checkCodeWheel;
 	op[59] = &AGOSEngine::vc59_skipIfNotEGA;
 }
 

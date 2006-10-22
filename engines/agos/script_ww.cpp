@@ -61,6 +61,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[105] = &AGOSEngine::oww_menu;
 	op[106] = &AGOSEngine::oww_textMenu;
+	op[113] = &AGOSEngine::oe2_drawItem;
 	op[123] = &AGOSEngine::oe1_setTime;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
