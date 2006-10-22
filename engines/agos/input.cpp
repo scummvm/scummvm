@@ -31,9 +31,32 @@
 
 namespace AGOS {
 
+uint AGOSEngine::setVerbText(HitArea *ha) {
+	uint id = 0xFFFF;
+
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
+		return id;
+
+	if (ha->flags & kBFTextBox) {
+		if (getGameType() == GType_PP)
+			id = ha->id;
+		else if (getGameType() == GType_FF && (_lastHitArea->flags & kBFHyperBox))
+			id = ha->data;
+		else
+			id = ha->flags / 256;
+	}
+	if (getGameType() == GType_PP)
+		_variableArray[199] = id;
+	else if (getGameType() == GType_WW)
+		_variableArray[10] = id;
+	else
+		_variableArray[60] = id;
+
+	return id;
+}
+
 void AGOSEngine::setup_cond_c_helper() {
 	HitArea *last;
-	uint id;
 
 	_noRightClick = 1;
 
@@ -128,21 +151,7 @@ void AGOSEngine::setup_cond_c_helper() {
 			inventoryDown(_lastHitArea->window);
 		} else if (_lastHitArea->item_ptr != NULL) {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
-			id = 0xFFFF;
-			if (_lastHitArea->flags & kBFTextBox) {
-				if (getGameType() == GType_PP)
-					id = _lastHitArea->id;
-				else if (getGameType() == GType_FF && (_lastHitArea->flags & kBFHyperBox))
-					id = _lastHitArea->data;
-				else
-					id = _lastHitArea->flags / 256;
-			}
-			if (getGameType() == GType_PP)
-				_variableArray[199] = id;
-			else if (getGameType() == GType_WW)
-				_variableArray[10] = id;
-			else
-				_variableArray[60] = id;
+			setVerbText(_lastHitArea);
 			break;
 		}
 	}
@@ -241,22 +250,7 @@ startOver:
 					ha->item_ptr) {
 			if_1:;
 				_hitAreaSubjectItem = ha->item_ptr;
-				id = 0xFFFF;
-				if (ha->flags & kBFTextBox) {
-					if (getGameType() == GType_PP)
-						id = _lastHitArea->id;
-					else if (getGameType() == GType_FF && (ha->flags & kBFHyperBox))
-						id = ha->data;
-					else
-						id = ha->flags / 256;
-				}
-				if (getGameType() == GType_PP)
-					_variableArray[199] = id;
-				else if (getGameType() == GType_WW)
-					_variableArray[10] = id;
-				else
-					_variableArray[60] = id;
-
+				id = setVerbText(ha);
 				_nameLocked = 2;
 				displayName(ha);
 				_nameLocked = 1;

@@ -662,6 +662,9 @@ protected:
 	void unfreezeBottom();
 
 	TextLocation *getTextLocation(uint a);
+
+	uint setVerbText(HitArea *ha);
+	void waitForInput();
 	void setup_cond_c_helper();
 
 	uint16 getBackExit(int n);
@@ -756,7 +759,6 @@ protected:
 	void displayName(HitArea * ha);
 	void resetNameWindow();
 	void displayBoxStars();
-	void waitForInput();
 	void invertBox_FF(HitArea *ha, bool state);
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
