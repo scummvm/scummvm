@@ -48,7 +48,7 @@ void OSystem_Dreamcast::delayMillis(uint msecs)
 {
   getMillis();
   unsigned int t, start = Timer();
-  int time = (((unsigned int)msecs)*100000U)>>11;
+  int time = (((unsigned int)msecs)*3125U)>>6;
   while(((int)((t = Timer())-start))<time) {
     if(_timer != NULL)
       _timer->handler();
