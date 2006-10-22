@@ -237,6 +237,8 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
 void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 				  int w, int h)
 {
+  if(w<1 || h<1)
+    return;
   unsigned char *dst = screen + y*SCREEN_W + x;
   do {
     memcpy(dst, buf, w);
@@ -568,6 +570,8 @@ void OSystem_Dreamcast::grabOverlay(int16 *buf, int pitch)
 void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
 					  int x, int y, int w, int h)
 {
+  if(w<1 || h<1)
+    return;
   unsigned short *dst = overlay + y*OVL_W + x;
   do {
     memcpy(dst, buf, w*sizeof(int16));
