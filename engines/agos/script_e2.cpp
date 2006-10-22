@@ -33,11 +33,14 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[8] = &AGOSEngine::oe1_isNotAt;
 	op[9] = &AGOSEngine::oe1_sibling;
 	op[10] = &AGOSEngine::oe1_notSibling;
+	op[21] = &AGOSEngine::oe1_isIn;
+	op[22] = &AGOSEngine::oe1_isNotIn;
 	op[24] = &AGOSEngine::oe1_isPlayer;
 	op[29] = &AGOSEngine::oe1_canPut;
 	op[34] = &AGOSEngine::oe1_copyof;
 	op[35] = &AGOSEngine::oe1_copyfo;
 	op[37] = &AGOSEngine::oe1_whatO;
+	op[39] = &AGOSEngine::oe1_weigh;
 	op[54] = &AGOSEngine::oe2_moveDirn;
 	op[73] = &AGOSEngine::oe1_pObj;
 	op[74] = &AGOSEngine::oe1_pName;

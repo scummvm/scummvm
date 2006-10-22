@@ -35,11 +35,14 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[8] = &AGOSEngine::oe1_isNotAt;
 	op[9] = &AGOSEngine::oe1_sibling;
 	op[10] = &AGOSEngine::oe1_notSibling;
+	op[21] = &AGOSEngine::oe1_isIn;
+	op[22] = &AGOSEngine::oe1_isNotIn;
 	op[24] = &AGOSEngine::oe1_isPlayer;
 	op[29] = &AGOSEngine::oe1_canPut;
 	op[34] = &AGOSEngine::oe1_copyof;
 	op[37] = &AGOSEngine::oe1_whatO;
 	op[35] = &AGOSEngine::oe1_copyfo;
+	op[39] = &AGOSEngine::oe1_weigh;
 	op[54] = &AGOSEngine::oww_moveDirn;
 	op[55] = &AGOSEngine::oww_goto;
 	op[65] = &AGOSEngine::o_addTextBox;

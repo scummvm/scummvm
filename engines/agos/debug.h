@@ -55,8 +55,8 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	/* 20 */
 	"WWJ|IS_LEF",
 	"WWJ|IS_GEF",
-	"WWJ|IS_IN",
-	"WWJ|IS_NOT_IN",
+	"IIJ|IS_IN",
+	"IIJ|IS_NOT_IN",
 	/* 24 */
 	NULL,
 	NULL,
@@ -412,8 +412,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"VVJ|IS_LEF",
 	/* 20 */
 	"VVJ|IS_GEF",
-	NULL,
-	NULL,
+	"IIJ|IS_IN",
+	"IIJ|IS_NOT_IN",
 	"WJ|CHANCE",
 	/* 24 */
 	"IJ|IS_PLAYER",
@@ -434,7 +434,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"VV|MOVE",
 	"W|WHAT_O",
 	NULL,
-	NULL,
+	"IW|WEIGH",
 	/* 40 */
 	NULL,
 	"V|ZERO",
@@ -645,8 +645,8 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"VVJ|IS_LEF",
 	/* 20 */
 	"VVJ|IS_GEF",
-	NULL,
-	NULL,
+	"IIJ|IS_IN",
+	"IIJ|IS_NOT_IN",
 	"WJ|CHANCE",
 	/* 24 */
 	"IJ|IS_PLAYER",
@@ -667,7 +667,7 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"VV|MOVE",
 	"W|WHAT_O",
 	NULL,
-	NULL,
+	"IW|WEIGH",
 	/* 40 */
 	NULL,
 	"V|ZERO",
