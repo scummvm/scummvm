@@ -1,6 +1,6 @@
-ScummVM Windows CE FAQ
-Last updated:    2006-06-20
-Release version: 0.9.0
+ScummVM Windows CE ReadMe & FAQ
+Last updated:    2006-10-22
+Release version: 0.9.1
 ------------------------------------------------------------------------
 
 This document is intended to give common answers to specific ScummVM
@@ -63,6 +63,12 @@ The font can get hard to read (you should prefer talkie games, or wear glasses)
 * Support for Windows Mobile 5 is experimental but should work. "Flipping" devices
 such as the HTC Wizard or HTC Universal work only in portait (closed) mode for the
 moment.
+
+* WM Landscape Smartphones (320x240)
+
+Success has been reported with such devices. For the Motorola Q, manual
+editing of the scummvm.ini file is required.
+(see: http://forums.scummvm.org/viewtopic.php?t=2618)
 
 Partial / Discontinued support
 ------------------------------
@@ -458,19 +464,6 @@ I've installed the movies pack but they are not playing
 
 MPEG 2 playback takes too much memory in the current release, and may prevent
 movies from playing in VGA mode. This may get better in the next releases.
-
-----------------
--- Gobliiins --
-----------------
-
-Cursor is grabled after loading a game 
---------------------------------------
-
-Due to a bug in 0.8.0, you'll have to tap the stylus somewhere on the game
-screen between 2 letters when entering a code. Otherwise the cursor will get
-garbled.
-
-This has not been retested for 0.8.1 but should be fixed.
 
 ------------------------------------------------------------------------
 Support
