@@ -123,6 +123,9 @@ static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
 	}
 #endif
 
+#ifdef _WIN32_WCE
+	static ogg_int64_t offset2 = offset;		// work around broken MS compiler
+#endif
 	return f->curr_pos;
 }
 
