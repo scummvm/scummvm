@@ -35,27 +35,26 @@ endif
 INCDIR   := $(srcdir) . $(srcdir)/engines/ . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
-CFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags` 
-CFLAGS	:= $(addprefix -I,$(INCDIR)) $(CFLAGS)
+CXXFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags` 
+CXXFLAGS:= $(addprefix -I,$(INCDIR)) $(CXXFLAGS)
 LDFLAGS := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 LIBS     = 
 
 #comment this out if you don't want to use libmad
-CFLAGS	+= -DUSE_MAD
+CXXFLAGS+= -DUSE_MAD
 LIBS	+= -lmad 
 
 #comment this out if you don't want to use libtremor
-CFLAGS	+= -DUSE_VORBIS -DUSE_TREMOR
+CXXFLAGS+= -DUSE_VORBIS -DUSE_TREMOR
 LIBS	+= -lvorbisidec
 
 #comment this out if you don't want to use libmpeg2
-CFLAGS	+= -DUSE_MPEG2
+CXXFLAGS+= -DUSE_MPEG2
 LIBS	+= -lmpeg2
 
 LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspsdk -lpspuser
 
-CXXFLAGS := $(CFLAGS) $(CXXFLAGS) -fno-exceptions -fno-rtti
-ASFLAGS  := $(CFLAGS) $(ASFLAGS)
+CXXFLAGS := $(CXXFLAGS) -fno-exceptions -fno-rtti
 
 TARGET = scummvm-psp
 OBJS := psp_main.o \
