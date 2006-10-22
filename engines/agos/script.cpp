@@ -1542,7 +1542,7 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
 				_variableArray[293] = 0;
 				_wallOn = 0;
 			}
-		} else if (getGameType() == GType_ELVIRA1) {
+		} else if (getGameType() == GType_ELVIRA2) {
 			if (_variableArray[70] == 0) {
 				_variableArray[71] = 0;
 				_wallOn = 0;
