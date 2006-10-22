@@ -32,6 +32,9 @@ class ListWidget;
 class GraphicsWidget;
 
 class LauncherDialog : public Dialog {
+#ifdef _WIN32_WCE
+public:			// pacify MS compiler
+#endif
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
