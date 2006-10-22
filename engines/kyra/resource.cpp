@@ -72,8 +72,9 @@ Resource::Resource(KyraEngine *engine) {
 
 	if (_engine->game() == GI_KYRA1 && _engine->gameFlags().isTalkie) {
 		static const char *list[] = {
-			"adl.pak", "col.pak", "finale.pak", "intro1.pak", "intro2.pak", "intro3.pak", "intro4.pak",
-			"misc.pak", "snd.pak", "startup.pak", "xmi.pak", 0
+			"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "DRAGON1.APK", "DRAGON2.APK", "FINALE.PAK",
+			"INTRO1.PAK", "INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK",
+			"STARTUP.PAK", "XMI.PAK", 0
 		};
 
 		for (int i = 0; list[i]; ++i) {
