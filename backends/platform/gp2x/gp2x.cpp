@@ -145,6 +145,8 @@ void OSystem_GP2X::initBackend() {
 
 	SDL_ShowCursor(SDL_DISABLE);
 
+	OSystem::initBackend();
+
 	_inited = true;
 }
 

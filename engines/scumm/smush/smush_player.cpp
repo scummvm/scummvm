@@ -308,7 +308,7 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_mixer->stopHandle(_IACTchannel);
 	_vm->_smixer->stop();
 
-	Common::g_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
+	_vm->_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
 
 	_initDone = true;
 }

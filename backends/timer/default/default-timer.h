@@ -32,7 +32,6 @@ private:
 	enum {
 		MAX_TIMERS = 8
 	};
-	OSystem *_system;
 	Common::Mutex _mutex;
 	void *_timerHandler;
 	int32 _thisTime;
@@ -46,13 +45,12 @@ private:
 	} _timerSlots[MAX_TIMERS];
 
 public:
-	DefaultTimerManager(OSystem *system);
+	DefaultTimerManager();
 	~DefaultTimerManager();
 	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
 	void removeTimerProc(TimerProc proc);
 
-protected:
-	static int timer_handler(int t);
+	// Timer callback, to be invoked at regular time intervals by the backend.
 	int handler(int t);
 };
 

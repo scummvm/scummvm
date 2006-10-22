@@ -25,19 +25,9 @@
 #include "common/util.h"
 #include "common/system.h"
 
-namespace Common {
-// FIXME: Hack: This global variable shouldn't be declared here; in fact it 
-// probably shouldn't be declared at all but rather a different method to
-// query the TimerManager object should be invented.
-TimerManager *g_timer = NULL;
-}
-
-DefaultTimerManager::DefaultTimerManager(OSystem *system) :
-	_system(system),
+DefaultTimerManager::DefaultTimerManager() :
 	_timerHandler(0),
 	_lastTime(0) {
-
-	Common::g_timer = this;
 
 	for (int i = 0; i < MAX_TIMERS; i++) {
 		_timerSlots[i].procedure = NULL;
@@ -45,33 +35,16 @@ DefaultTimerManager::DefaultTimerManager(OSystem *system) :
 		_timerSlots[i].counter = 0;
 	}
 
-	_thisTime = _system->getMillis();
-
-	// Set the timer last, after everything has been initialised
-	_system->setTimerCallback(&timer_handler, 10);
-
+	_thisTime = g_system->getMillis();
 }
 
 DefaultTimerManager::~DefaultTimerManager() {
-	// Remove the timer callback.
-	// Note: backends *must* gurantee that after this method call returns,
-	// the handler is not in use anymore; else race condtions could occur.
-	_system->setTimerCallback(0, 0);
-
-	{
-		Common::StackLock lock(_mutex);
-		for (int i = 0; i < MAX_TIMERS; i++) {
-			_timerSlots[i].procedure = NULL;
-			_timerSlots[i].interval = 0;
-			_timerSlots[i].counter = 0;
-		}
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i < MAX_TIMERS; i++) {
+		_timerSlots[i].procedure = NULL;
+		_timerSlots[i].interval = 0;
+		_timerSlots[i].counter = 0;
 	}
-}
-
-int DefaultTimerManager::timer_handler(int t) {
-	if (Common::g_timer)
-		return ((DefaultTimerManager *)Common::g_timer)->handler(t);
-	return 0;
 }
 
 int DefaultTimerManager::handler(int t) {
@@ -79,7 +52,7 @@ int DefaultTimerManager::handler(int t) {
 	uint32 interval, l;
 
 	_lastTime = _thisTime;
-	_thisTime = _system->getMillis();
+	_thisTime = g_system->getMillis();
 	interval = 1000 * (_thisTime - _lastTime);
 
 	for (l = 0; l < MAX_TIMERS; l++) {

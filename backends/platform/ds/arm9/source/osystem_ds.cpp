@@ -52,6 +52,8 @@ OSystem_DS::~OSystem_DS() {
 void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_low_quality", true);
+
+	OSystem::initBackend();
 }
 
 bool OSystem_DS::hasFeature(Feature f) {

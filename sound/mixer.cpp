@@ -119,21 +119,18 @@ Mixer::Mixer() {
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
 
-	_mixerReady = _syst->setSoundCallback(mixCallback, this);
-	_outputRate = (uint)_syst->getOutputSampleRate();
-
-	if (_outputRate == 0)
-		error("OSystem returned invalid sample rate");
-
-	debug(1, "Output sample rate: %d Hz", _outputRate);
+	_mixerReady = false;
 }
 
 Mixer::~Mixer() {
-	_syst->clearSoundCallback();
 	stopAll(true);
 
 	delete _premixChannel;
 	_premixChannel = 0;
+}
+
+uint Mixer::getOutputRate() const {
+	return (uint)_syst->getOutputSampleRate();
 }
 
 bool Mixer::isPaused() {
@@ -238,6 +235,9 @@ void Mixer::playInputStream(SoundType type, SoundHandle *handle, AudioStream *in
 
 void Mixer::mix(int16 *buf, uint len) {
 	Common::StackLock lock(_mutex);
+	
+	// Since the mixer callback has been called, the mixer must be ready...
+	_mixerReady = true;
 
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));

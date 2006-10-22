@@ -27,12 +27,12 @@
 
 #include "gui/message.h"
 
-#include "backends/saves/default/default-saves.h"
-
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
+
+#include "sound/mixer.h"
 
 OSystem *g_system = 0;
 
@@ -61,23 +61,6 @@ void OSystem::displayMessageOnOSD(const char *msg) {
 	// Display the message for 1.5 seconds
 	GUI::TimedMessageDialog dialog(msg, 1500);
 	dialog.runModal();
-}
-
-Common::SaveFileManager *OSystem::getSavefileManager() {
-	// TODO: Change this to always return the same 
-	// instance, instead of a new one each time around...
-	return new DefaultSaveFileManager();
-}
-
-Audio::Mixer *OSystem::getMixer() {
-	// FIXME
-	extern Audio::Mixer *g_mixer;
-	return g_mixer;
-}
-
-Common::TimerManager *OSystem::getTimerManager() {
-	// FIXME
-	return Common::g_timer;
 }
 
 

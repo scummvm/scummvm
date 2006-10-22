@@ -424,10 +424,10 @@ void MidiDriver_ThreadedMT32::close() {
 void MidiDriver_ThreadedMT32::setTimerCallback(void *timer_param, TimerManager::TimerProc timer_proc) {
 	if (!_timer_proc || !timer_proc) {
 		if (_timer_proc)
-			g_timer->removeTimerProc(_timer_proc);
+			_vm->_timer->removeTimerProc(_timer_proc);
 		_timer_proc = timer_proc;
 		if (timer_proc)
-			g_timer->installTimerProc(timer_proc, getBaseTempo(), timer_param);
+			_vm->_timer->installTimerProc(timer_proc, getBaseTempo(), timer_param);
 	}
 }
 

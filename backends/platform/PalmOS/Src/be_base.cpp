@@ -83,6 +83,8 @@ void OSystem_PalmBase::initBackend() {
 
 	int_initBackend();
 	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
+
+	OSystem::initBackend();
 }
 
 uint32 OSystem_PalmBase::getMillis() {

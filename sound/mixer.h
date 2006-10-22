@@ -94,8 +94,6 @@ private:
 
 	Channel *_premixChannel;
 
-	uint _outputRate;
-
 	int _volumeForSoundType[4];
 
 	bool _paused;
@@ -292,9 +290,9 @@ public:
 	 *
 	 * @return the output sample rate in Hz
 	 */
-	uint getOutputRate() const { return _outputRate; }
+	uint getOutputRate() const;
 
-private:
+protected:
 	void insertChannel(SoundHandle *handle, Channel *chan);
 
 	/**
@@ -302,6 +300,9 @@ private:
 	 */
 	void mix(int16 * buf, uint len);
 
+	// FIXME: temporary "public" to allow access to mixCallback
+	// from within OSystem::makeMixer()
+public:
 	/**
 	 * The mixer callback function, passed on to OSystem::setSoundCallback().
 	 * This simply calls the mix() method.

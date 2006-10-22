@@ -66,6 +66,10 @@ public:
 	/**
 	 * The following method is called once, from main.cpp, after all
 	 * config data (including command line params etc.) are fully loaded.
+	 *
+	 * @note Subclasses should always invoke the implementation of their
+	 *       parent class. They should so so near the end of their own
+	 *       implementation.
 	 */
 	virtual void initBackend() { }
 
@@ -675,8 +679,6 @@ public:
 	/** @name Events and Time */
 	//@{
 
-	typedef int (*TimerProc)(int interval);
-
 	/**
 	 * The types of events backends may generate.
 	 * @see Event
@@ -798,24 +800,10 @@ public:
 	virtual void delayMillis(uint msecs) = 0;
 
 	/**
-	 * Set the timer callback, a function which is periodically invoked by the
-	 * backend. This can for example be done via a background thread.
-	 * There is at most one active timer; if this method is called while there
-	 * is already an active timer, then the new timer callback should replace
-	 * the previous one. In particular, passing a callback pointer value of 0
-	 * is legal and can be used to clear the current timer callback.
-	 * @see Common::Timer
-	 * @note The implementation of this method must be 'atomic' in the sense
-	 *       that when the method returns, the previously set callback must
-	 *       not be in use anymore (in particular, if timers are implemented
-	 *       via threads, then it must be ensured that the timer thread is
-	 *       not using the old callback function anymore).
-	 *
-	 * @param callback	pointer to the callback. May be 0 to reset the timer
-	 * @param interval	the interval (in milliseconds) between invocations
-	 *                  of the callback
+	 * Returh the timer manager. For more information, refer to the
+	 * TimerManager documentation.
 	 */
-	virtual void setTimerCallback(TimerProc callback, int interval) = 0;
+	virtual Common::TimerManager *getTimerManager() = 0;
 
 	//@}
 
@@ -870,22 +858,12 @@ public:
 
 	/** @name Sound */
 	//@{
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
 
 	/**
-	 * Set the audio callback which is invoked whenever samples need to be generated.
-	 * Currently, only the 16-bit signed mode is ever used for Simon & Scumm
-	 * @param proc		pointer to the callback.
-	 * @param param		an arbitrary parameter which is stored and passed to proc.
+	 * Returh the audio mixer. For more information, refer to the
+	 * Audio::Mixer documentation.
 	 */
-	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
-
-	/**
-	 * Remove any audio callback previously set via setSoundCallback, thus effectively
-	 * stopping all audio output immediately.
-	 * @see setSoundCallback
-	 */
-	virtual void clearSoundCallback() = 0;
+	virtual Audio::Mixer *getMixer() = 0;
 
 	/**
 	 * Determine the output sample rate. Audio data provided by the sound
@@ -972,15 +950,12 @@ public:
 	 */
 	virtual void displayMessageOnOSD(const char *msg);
 
-	/** Savefile management. */
-	virtual Common::SaveFileManager *getSavefileManager();
-
-
-	/** TODO */
-	virtual Audio::Mixer *getMixer();
-
-	/** TODO */
-	virtual Common::TimerManager *getTimerManager();
+	/**
+	 * Return the SaveFileManager, used to store and load savestates
+	 * and other modifiable persistent game data. For more information,
+	 * refer to the TimerManager documentation.
+	 */
+	virtual Common::SaveFileManager *getSavefileManager() = 0;
 
 	//@}
 };
@@ -988,6 +963,5 @@ public:
 
 /** The global OSystem instance. Initialised in main(). */
 extern OSystem *g_system;
-
 
 #endif

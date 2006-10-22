@@ -33,6 +33,15 @@
 #include "backends/intern.h"
 
 
+namespace Audio {
+	class Mixer;
+}
+
+namespace Common {
+	class SaveFileManager;
+	class TimerManager;
+}
+
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
@@ -124,9 +133,10 @@ public:
 	virtual bool pollEvent(Event &event); // overloaded by CE backend
 
 	// Set function that generates samples
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
-
 	void clearSoundCallback();
+	virtual Audio::Mixer *getMixer();
 
 	// Poll CD status
 	// Returns true if cd audio is playing
@@ -146,7 +156,9 @@ public:
 
 
 	// Add a callback timer
+	typedef int (*TimerProc)(int interval);
 	void setTimerCallback(TimerProc callback, int timer);
+	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling
 	MutexRef createMutex();
@@ -186,6 +198,8 @@ public:
 #ifdef USE_OSD
 	void displayMessageOnOSD(const char *msg);
 #endif
+
+	virtual Common::SaveFileManager *getSavefileManager();
 
 protected:
 	bool _inited;
@@ -355,6 +369,12 @@ protected:
 	 * when accessing the screen.
 	 */
 	MutexRef _graphicsMutex;
+
+
+	Common::SaveFileManager *_savefile;
+	Audio::Mixer *_mixer;
+	Common::TimerManager *_timer;
+
 
 
 	void addDirtyRgnAuto(const byte *buf);

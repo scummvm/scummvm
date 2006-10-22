@@ -205,7 +205,8 @@ out_of_loop:
 
 	/* And finally start the local timer */
 	gettimeofday(&_start_time, NULL);
-
+	
+	OSystem::initBackend();
 }
 
 #undef CAPTURE_SOUND

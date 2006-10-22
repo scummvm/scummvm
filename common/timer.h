@@ -52,8 +52,6 @@ public:
 	virtual void removeTimerProc(TimerProc proc) = 0;
 };
 
-extern TimerManager *g_timer;
-
 } // End of namespace Common
 
 #endif

@@ -27,6 +27,10 @@
 #include "common/util.h"
 #include "base/main.h"
 
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
+
 #include "icons/scummvm.xpm"
 
 #if defined(__SYMBIAN32__)
@@ -41,6 +45,11 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 	return main(__argc, __argv);
 }
 #endif
+
+static int timer_handler(int t) {
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	return tm->handler(t);
+}
 
 int main(int argc, char *argv[]) {
 
@@ -169,6 +178,29 @@ void OSystem_SDL::initBackend() {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
+	
+
+	// Create the savefile manager, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_savefile == 0) {
+		_savefile = new DefaultSaveFileManager();
+	}
+
+	// Create and hook up the mixer, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_mixer == 0) {
+		_mixer = new Audio::Mixer();
+		setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	}
+
+	// Create and hook up the timer manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_timer == 0) {
+		_timer = new DefaultTimerManager();
+		setTimerCallback(&timer_handler, 10);
+	}
+	
+	OSystem::initBackend();
 
 	_inited = true;
 }
@@ -189,6 +221,9 @@ OSystem_SDL::OSystem_SDL()
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+	_savefile(0),
+	_mixer(0),
+	_timer(0),
 	_graphicsMutex(0), _transactionMode(kTransactionNone) {
 
 	// allocate palette storage
@@ -221,6 +256,16 @@ void OSystem_SDL::delayMillis(uint msecs) {
 
 void OSystem_SDL::setTimerCallback(TimerProc callback, int timer) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
+}
+
+Common::TimerManager *OSystem_SDL::getTimerManager() {
+	assert(_timer);
+	return _timer;
+}
+
+Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
+	assert(_savefile);
+	return _savefile;
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
@@ -395,6 +440,7 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	// least on some platforms SDL will lie and claim it did get the rate
 	// even if it didn't. Probably only happens for "weird" rates, though.
 	_samplesPerSec = obtained.freq;
+	debug(1, "Output sample rate: %d Hz", _samplesPerSec);
 	SDL_PauseAudio(0);
 	return true;
 }
@@ -405,6 +451,11 @@ void OSystem_SDL::clearSoundCallback() {
 
 int OSystem_SDL::getOutputSampleRate() const {
 	return _samplesPerSec;
+}
+
+Audio::Mixer *OSystem_SDL::getMixer() {
+	assert(_mixer);
+	return _mixer;
 }
 
 #pragma mark -

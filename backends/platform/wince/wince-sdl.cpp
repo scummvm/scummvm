@@ -246,6 +246,12 @@ void OSystem_WINCE3::initBackend()
 	GUI_Actions::Instance()->loadMapping();
 
 	loadDeviceConfiguration();
+
+	// FIXME: We are currently not calling OSystem_SDL::initBackend() here.
+	// Maybe on purpose, but this is possibly a bit risky... E.g. _inited
+	// won't be set correctly due to this... Can we change this? Maybe after
+	// some changes to the base SDL backend?
+	//OSystem_SDL::initBackend();
 }
 
 int OSystem_WINCE3::getScreenWidth() {

@@ -35,16 +35,12 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "backends/timer/default/default-timer.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
-#include "common/timer.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -227,10 +223,6 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 }
 
 
-// FIXME: Temporary hack, to be removed soon
-Audio::Mixer *g_mixer = 0;
-
-
 extern "C" int scummvm_main(int argc, char *argv[]) {
 	Common::String specialDebug;
 	Common::String command;
@@ -288,11 +280,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 
-	// Create the timer services
-	Common::g_timer = new DefaultTimerManager(&system);
-	
-	g_mixer = new Audio::Mixer();
-
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
 
@@ -335,12 +322,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 		launcherDialog(system);
 	}
-
-	// Deinit the mixer
-	delete g_mixer;
-
-	// Deinit the timer
-	delete Common::g_timer;
 
 	return 0;
 }

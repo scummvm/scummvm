@@ -42,7 +42,8 @@ void ProtrackerPlayer::init(OSystem *system) {
 // subclass and hook that with the mixer. See also the
 // code used by other softsynths (sound/softsynth/emumidi.h).
 
-	_system->setSoundCallback(&audioCallback, this);
+//	_system->setSoundCallback(&audioCallback, this);
+error("ProtrackerPlayer::init -- setSoundCallback is no more");
 }
 
 void ProtrackerPlayer::start() {
