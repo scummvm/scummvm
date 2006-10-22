@@ -27,16 +27,23 @@
 #if defined(USE_NULL_DRIVER)
 
 #include "common/rect.h"
-#include "common/savefile.h"
+
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
 
 class OSystem_NULL : public OSystem {
-public:
-	static OSystem *instance();
+protected:
+	Common::SaveFileManager *_savefile;
+	Audio::Mixer *_mixer;
+	Common::TimerManager *_timer;
 
 public:
 
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
+
+	virtual void initBackend();
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -73,15 +80,11 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
-	virtual void setTimerCallback(TimerProc callback, int interval);
-
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
 
 	virtual bool openCD(int drive);
@@ -94,6 +97,10 @@ public:
 	virtual void quit();
 
 	virtual void setWindowCaption(const char *caption);
+
+	virtual Common::SaveFileManager *getSavefileManager();
+	virtual Audio::Mixer *getMixer();
+	virtual Common::TimerManager *getTimerManager();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -111,9 +118,27 @@ int main(int argc, char *argv[]) {
 }
 
 OSystem_NULL::OSystem_NULL() {
+	_savefile = 0;
+	_mixer = 0;
+	_timer = 0;
 }
 
 OSystem_NULL::~OSystem_NULL() {
+	delete _savefile;
+	delete _mixer;
+	delete _timer;
+}
+
+void OSystem_NULL::initBackend() {
+	_savefile = new DefaultSaveFileManager();
+	_mixer = new Audio::Mixer();
+	_timer = new DefaultTimerManager();
+
+	// Note that both the mixer and the timer manager are useless
+	// this way; they need to be hooked into the system somehow to
+	// be functional. Of course, can't do that in a NULL backend :).
+
+	OSystem::initBackend();
 }
 
 bool OSystem_NULL::hasFeature(Feature f) {
@@ -218,9 +243,6 @@ uint32 OSystem_NULL::getMillis() {
 void OSystem_NULL::delayMillis(uint msecs) {
 }
 
-void OSystem_NULL::setTimerCallback(TimerProc callback, int interval) {
-}
-
 OSystem::MutexRef OSystem_NULL::createMutex(void) {
 	return NULL;
 }
@@ -249,6 +271,21 @@ void OSystem_NULL::quit() {
 }
 
 void OSystem_NULL::setWindowCaption(const char *caption) {
+}
+
+Common::SaveFileManager *DefaulOSystem::getSavefileManager() {
+	assert(_savefile);
+	return _savefile;
+}
+
+Audio::Mixer *DefaulOSystem::getMixer() {
+	assert(_mixer);
+	return _mixer;
+}
+
+Common::TimerManager *DefaulOSystem::getTimerManager() {
+	assert(_timer);
+	return _timer;
 }
 
 OSystem *OSystem_NULL_create() {
