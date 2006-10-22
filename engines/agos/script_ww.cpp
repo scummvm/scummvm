@@ -49,7 +49,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[66] = &AGOSEngine::o_setShortText;
 	op[67] = &AGOSEngine::o_setLongText;
 	op[70] = &AGOSEngine::o1_printLongText;
-	op[73] = &AGOSEngine::oe1_pObj;
+	op[73] = &AGOSEngine::oe2_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -150,7 +150,7 @@ void AGOSEngine::oww_printBox() {
 }
 
 void AGOSEngine::oww_boxPObj() {
-	// 188: print object flag name to box
+	// 188: print object name to box
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)

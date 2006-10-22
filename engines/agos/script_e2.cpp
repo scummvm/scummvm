@@ -42,7 +42,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[37] = &AGOSEngine::oe1_whatO;
 	op[39] = &AGOSEngine::oe1_weigh;
 	op[54] = &AGOSEngine::oe2_moveDirn;
-	op[73] = &AGOSEngine::oe1_pObj;
+	op[73] = &AGOSEngine::oe2_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
@@ -80,6 +80,14 @@ void AGOSEngine::oe2_moveDirn() {
 	// 54: move direction
 	int16 d = getVarOrByte();
 	moveDirn_e2(me(), d);
+}
+
+void AGOSEngine::oe2_pObj() {
+	// 73: print object
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+
+	if (subObject != NULL && subObject->objectFlags & kOFText)
+		showMessageFormat((const char *)getStringPtrByID(subObject->objectFlagValue[0]));
 }
 
 void AGOSEngine::oe2_loadUserGame() {
