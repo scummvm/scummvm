@@ -324,6 +324,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_classMode1 = 0;
 	_classMode2 = 0;
 	_superRoomNumber = 0;
+	_wallOn = 0;
 
 	_boxLineCount = 0;
 	_boxCR = 0;

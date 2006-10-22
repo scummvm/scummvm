@@ -655,20 +655,7 @@ void AGOSEngine::o_picture() {
 	uint mode = getVarOrByte();
 
 	_picture8600 = (vga_res == 8600);
-
-	if (mode == 4) {
-		vc29_stopAllSounds();
-
-		if (!_initMouse) {
-			_initMouse = 1;
-			vc33_setMouseOn();
-		}
-	}
-
-	if (_lockWord & 0x10)
-		error("o_picture: _lockWord & 0x10");
-
-	setWindowImage(mode, vga_res);
+	setWindowImageEx(mode, vga_res);
 }
 
 void AGOSEngine::o_loadZone() {
@@ -1539,6 +1526,35 @@ void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
 	_vcPtr = (byte *)&items;
 	vc60_stopAnimation();
 	_lockWord &= ~0x8000;
+}
+
+void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
+	if (!_initMouse) {
+		_initMouse = 1;
+		vc33_setMouseOn();
+	}
+
+	if (mode == 4) {
+		vc29_stopAllSounds();
+
+		if (getGameType() == GType_ELVIRA1) {
+			if (_variableArray[299] == 0) {
+				_variableArray[293] = 0;
+				_wallOn = 0;
+			}
+		} else if (getGameType() == GType_ELVIRA1) {
+			if (_variableArray[70] == 0) {
+				_variableArray[71] = 0;
+				_wallOn = 0;
+			}
+		}
+
+	}
+
+	if (_lockWord & 0x10)
+		error("setWindowImageEx: _lockWord & 0x10");
+
+	setWindowImage(mode, vga_res);
 }
 
 } // End of namespace AGOS

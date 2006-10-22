@@ -318,6 +318,7 @@ protected:
 	int _agosMenu;
 	byte _textMenu[10];
 	uint _superRoomNumber;
+	uint _wallOn;
 
 	uint16 _hyperLink, _newLines;
  	uint16 _oracleMaxScrollY, _noOracleScroll;
@@ -797,6 +798,7 @@ protected:
 	void animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool setZone = true);
 	void setImage(uint16 vga_res_id, bool setZone);
 	void setWindowImage(uint16 mode, uint16 vga_res_id);
+	void setWindowImageEx(uint16 mode, uint16 vga_res);
 
 	void playSpeech(uint speech_id, uint vga_sprite_id);
 	void skipSpeech();

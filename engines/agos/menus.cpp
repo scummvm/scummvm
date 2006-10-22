@@ -161,9 +161,9 @@ void AGOSEngine::clearMenuStrip() {
 		disableBox(i);
 
 	if (getGameType() == GType_WW) {
-		setWindowImage(2, 101);
+		setWindowImageEx(2, 101);
 	} else {
-		setWindowImage(2, 102);
+		setWindowImageEx(2, 102);
 	}
 }
 
@@ -205,9 +205,9 @@ void AGOSEngine::doMenuStrip(uint menuNum) {
 
 	_variableArray[var + 4] = id - 111;
 	if (getGameType() == GType_WW) {
-		setWindowImage(2, 102);
+		setWindowImageEx(2, 102);
 	} else {
-		setWindowImage(2, 103);
+		setWindowImageEx(2, 103);
 	}
 }
 
