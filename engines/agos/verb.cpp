@@ -657,7 +657,7 @@ void AGOSEngine::inventoryUp(WindowBlock *window) {
 		checkUp(window);
 		animate(4, 9, 21, 0 ,0, 0);	
 		while (1) {
-			if (_currentBoxNumber != 0x7FFB || !getBitFlag(89))
+			if (_currentBox->id != 0x7FFB || !getBitFlag(89))
 				break;
 			checkUp(window);
 			delay(1);
@@ -684,7 +684,7 @@ void AGOSEngine::inventoryDown(WindowBlock *window) {
 		checkDown(window);
 		animate(4, 9, 23, 0, 0, 0);	
 		while (1) {
-			if (_currentBoxNumber != 0x7FFC || !getBitFlag(89))
+			if (_currentBox->id != 0x7FFC || !getBitFlag(89))
 				break;
 			checkDown(window);
 			delay(1);
@@ -740,8 +740,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		}
 	} while (ha++, --count);
 
-	_currentBoxNumber = 0;
-
+	_currentBox = best_ha;
 	if (best_ha == NULL) {
 		clearName();
 		if (getGameType() == GType_WW && _mouseCursor >= 4) {
@@ -751,26 +750,32 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		return;
 	}
 
-	_currentBoxNumber = best_ha->id;
-
-	if (mode != 0 && mode != 3) {
-		_lastHitArea = best_ha;
-		if (getGameType() == GType_PP) {
-			_variableArray[400] = x;
-			_variableArray[401] = y;
-		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 ||
-			getGameType() == GType_FF) {
-			_variableArray[1] = x;
-			_variableArray[2] = y;
-		} else if (getGameType() == GType_ELVIRA1) {
-			if (best_ha->verb & 0x4000) {
-				if (_variableArray[500] == 0) {
-					_variableArray[500] = best_ha->verb & 0xBFFF;
+	if (mode != 0) {
+		if (mode == 3) {
+			if (getGameType() == GType_ELVIRA1) {
+				if (best_ha->verb & 0x4000) {
+					if (_variableArray[500] == 0) {
+						_variableArray[500] = best_ha->verb & 0xBFFF;
+					}
 				}
-			}
-		} 
-	}
+			} 
 
+			if (best_ha->flags & kBFDragBox) {
+				_lastClickRem = best_ha;
+			}
+		} else {
+			_lastHitArea = best_ha;
+			if (getGameType() == GType_PP) {
+				_variableArray[400] = x;
+				_variableArray[401] = y;
+			} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 ||
+				getGameType() == GType_FF) {
+				_variableArray[1] = x;
+				_variableArray[2] = y;
+			}
+		}
+	}
+ 
 	if ((getGameType() == GType_WW) && (_mouseCursor == 0 || _mouseCursor >= 4)) {
 		uint verb = best_ha->verb & 0x3FFF;
 		if  (verb >= 239 && verb <= 242) {
@@ -794,8 +799,6 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		hitarea_leave(best_ha, false);
 		best_ha->flags |= kBFBoxSelected;
 	}
-
-	return;
 }
 
 void AGOSEngine::displayName(HitArea *ha) {

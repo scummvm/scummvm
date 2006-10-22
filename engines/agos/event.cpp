@@ -404,6 +404,8 @@ void AGOSEngine::delay(uint amount) {
 				if (getGameType() == GType_FF)
 					setBitFlag(89, true);
 				_leftButtonDown++;
+				_leftButton = 1;
+
 #if defined (_WIN32_WCE) || defined(PALMOS_MODE)
 				_sdlMouseX = event.mouse.x;
 				_sdlMouseY = event.mouse.y;
@@ -412,6 +414,9 @@ void AGOSEngine::delay(uint amount) {
 			case OSystem::EVENT_LBUTTONUP:
 				if (getGameType() == GType_FF)
 					setBitFlag(89, false);
+
+				_leftButton = 0;
+				_leftButtonCount = 0;
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)
@@ -425,6 +430,9 @@ void AGOSEngine::delay(uint amount) {
 				break;
 			}
 		}
+
+		if (_leftButton == 1)
+			_leftButtonCount++;
 
 		_system->updateScreen();
 

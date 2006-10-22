@@ -344,6 +344,13 @@ void AGOSEngine::handleMouseMoved() {
 			resetVerbs();
 	}
 
+	if (_leftButton == 0) {
+		if (_dragMode != 0) {
+			_dragEnd = 1;
+		}
+		_dragCount = 0;
+	}
+
 	if (getGameType() == GType_FF) {
 		if (getBitFlag(99)) { // Oracle
 			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
@@ -398,6 +405,29 @@ void AGOSEngine::handleMouseMoved() {
 	if (_mouseX != _mouseXOld || _mouseY != _mouseYOld)
 		_needHitAreaRecalc++;
 
+	if (_leftButtonOld == 0 && _leftButtonCount != 0) {
+		_lastClickRem = 0;
+		boxController(_mouseX, _mouseY, 3);
+	}
+	_leftButtonOld = _leftButton;
+
+	if (_dragMode != 0 || _lastHitArea3 != 0) {
+		x = 0;
+		if (_needHitAreaRecalc == 0)
+			goto get_out;
+		else
+			goto boxstuff;
+	}
+
+	if (_leftButton != 0 && _dragAccept != 0 && _lastClickRem != NULL) {
+		_dragCount++;
+		if (_dragCount == 2) {
+			_dragMode = 1;
+			_dragFlag = 1;
+			_needHitAreaRecalc++;
+		}
+	}
+
 	x = 0;
 	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
 		if (getGameType() == GType_PP)
@@ -413,6 +443,7 @@ void AGOSEngine::handleMouseMoved() {
 			goto get_out;
 	}
 
+boxstuff:
 	boxController(_mouseX, _mouseY, x);
 	_lastHitArea3 = _lastHitArea;
 	if (x == 1 && _lastHitArea == NULL)
@@ -483,6 +514,9 @@ void AGOSEngine::drawMousePointer() {
 		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
 		uint cursor = (_mouseCursor == 0) ? _mouseCursor : _mouseCursor - 1;
+		if (_dragFlag != 0)
+			cursor = 1;
+
 		src = _common_cursors[cursor];
 
 		for (i = 0; i < 16; i++) {

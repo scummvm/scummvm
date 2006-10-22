@@ -338,13 +338,19 @@ protected:
 	HitArea *_lastNameOn;
 	HitArea *_lastHitArea3;
 	Item *_hitAreaSubjectItem;
-	HitArea *_currentVerbBox, *_lastVerbOn;
+	HitArea *_currentBox, *_currentVerbBox, *_lastVerbOn;
 	uint _needHitAreaRecalc;
 	uint _verbHitArea;
 	uint16 _defaultVerb;
-	uint _currentBoxNumber;
 	uint _iOverflow;
 	uint _nameLocked;
+
+	uint _dragAccept;
+	uint _dragFlag;
+	uint _dragMode;
+	uint _dragCount;
+	uint _dragEnd;
+	HitArea *_lastClickRem;
 
 	uint16 _windowNum;
 
@@ -373,6 +379,7 @@ protected:
 	bool _mouseToggle;
 
 	byte _leftButtonDown;
+	byte _leftButton, _leftButtonCount, _leftButtonOld;
 	byte _rightButtonDown;
 	bool _noRightClick;
 

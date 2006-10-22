@@ -112,7 +112,7 @@ void AGOSEngine::oracleTextUp() {
 				startSubroutineEx(sub);
 			setBitFlag(94, false);
 		}
-		if (_currentBoxNumber != 601 || !getBitFlag(89))
+		if (_currentBox->id != 601 || !getBitFlag(89))
 			break;
 		delay(100);
 	}
@@ -146,7 +146,7 @@ void AGOSEngine::oracleTextDown() {
 				startSubroutineEx(sub);
 			setBitFlag(93, false);
 		}
-		if (_currentBoxNumber != 600 || !getBitFlag(89))
+		if (_currentBox->id != 600 || !getBitFlag(89))
 			break;
 		delay(100);
 	}

@@ -203,7 +203,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_objectItem = 0;
 	_currentPlayer = 0;
 
-	_currentBoxNumber = 0;
 	_iOverflow = 0;
 	_nameLocked = 0;
 	_hitAreaObjectItem = 0;
@@ -211,12 +210,20 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_lastNameOn = 0;
 	_lastHitArea3 = 0;
 	_hitAreaSubjectItem = 0;
+	_currentBox = 0;
 	_currentVerbBox = 0;
 	_lastVerbOn = 0;
 	_needHitAreaRecalc = 0;
 	_verbHitArea = 0;
 	_defaultVerb = 0;
 	_mouseHideCount = 0;
+
+	_dragAccept = 0;
+	_dragFlag = 0;
+	_dragMode = 0;
+	_dragCount = 0;
+	_dragEnd = 0;
+	_lastClickRem = 0;
 
 	_windowNum = 0;
 
@@ -244,6 +251,10 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_leftButtonDown = 0;
 	_rightButtonDown = 0;
 	_noRightClick = false;
+
+	_leftButton = 0;
+	_leftButtonCount = 0;
+	_leftButtonOld = 0;
 
 	_dummyItem1 = new Item();
 	_dummyItem2 = new Item();
