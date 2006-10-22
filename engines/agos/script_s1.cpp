@@ -23,6 +23,8 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "agos/agos.h"
 
 namespace AGOS {
