@@ -49,49 +49,10 @@ void OSystem_Dreamcast::delayMillis(uint msecs)
   getMillis();
   unsigned int t, start = Timer();
   int time = (((unsigned int)msecs)*100000U)>>11;
-  while(((int)((t = Timer())-start))<time)
+  while(((int)((t = Timer())-start))<time) {
+    if(_timer != NULL)
+      _timer->handler();
     checkSound();
+  }
   getMillis();
 }
-
-void OSystem_Dreamcast::setTimerCallback(TimerProc callback, int timer)
-{
-  if (callback != NULL) {
-    _timer_duration = timer;
-    _timer_next_expiry = Timer() + USEC_TO_TIMER(1000*timer);
-    _timer_callback = callback;
-    _timer_active = true;
-  } else {
-    _timer_active = false;
-  }
-}
-
-
-/*
-void waitForTimer(Scumm *s, int time)
-{
-  if(time<0)
-    return;
-  unsigned int start = Timer();
-  unsigned int devpoll = start+USEC_TO_TIMER(25000);
-  unsigned int t;
-  int oldmousex = s->mouse.x, oldmousey = s->mouse.y;
-  time = (((unsigned int)time)*100000U)>>11;
-  int mask = getimask();
-  while(((int)((t = Timer())-start))<time)
-    if(((int)(t-devpoll))>0) {
-      setimask(15);
-      checkSound();
-      handleInput(locked_get_pads(), s->mouse.x, s->mouse.y,
-		  s->_leftBtnPressed, s->_rightBtnPressed, s->_keyPressed);
-      setimask(mask);
-      devpoll += USEC_TO_TIMER(17000);
-      if(s->mouse.x != oldmousex || s->mouse.y != oldmousey) {
-	extern void updateScreen(Scumm *s);
-	updateScreen(s);
-	oldmousex = s->mouse.x;
-	oldmousey = s->mouse.y;
-      }
-    }
-}
-*/

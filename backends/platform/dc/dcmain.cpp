@@ -32,7 +32,6 @@
 #include <common/config-manager.h>
 
 #include "backends/plugins/dc/dc-provider.h"
-#include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
 
 
@@ -42,7 +41,7 @@ const char *gGameName;
 
 OSystem_Dreamcast::OSystem_Dreamcast()
   : _devpoll(0), screen(NULL), mouse(NULL), overlay(NULL), _softkbd(this),
-    _ms_buf(NULL), _sound_proc(NULL), _timer_active(false),
+    _ms_buf(NULL), _timer(NULL), _mixer(NULL), _savefile(NULL),
     _current_shake_pos(0), _aspect_stretch(false), _softkbd_on(false),
     _softkbd_motion(0), _enable_cursor_palette(false)
 {
@@ -51,19 +50,11 @@ OSystem_Dreamcast::OSystem_Dreamcast()
   memset(ovl_tx, 0, sizeof(ovl_tx));
 }
 
-static int timer_handler(int t) {
-  DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
-  tm->handler();
-  return t;
-}
-
 void OSystem_Dreamcast::initBackend()
 {
   _savefile = createSavefileManager();
   _mixer = new Audio::Mixer();
   _timer = new DefaultTimerManager();
-  setSoundCallback(Audio::Mixer::mixCallback, _mixer);
-  setTimerCallback(&timer_handler, 10);
 }
 
 

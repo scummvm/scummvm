@@ -23,6 +23,7 @@
 
 #include <common/system.h>
 #include <ronin/soundcommon.h>
+#include "backends/timer/default/default-timer.h"
 
 #define NUM_BUFFERS 4
 #define SOUND_BUFFER_SHIFT 3
@@ -37,19 +38,6 @@ class Interactive
 #include "softkbd.h"
 
 class OSystem_Dreamcast : public OSystem {
-
- private:
-
-  // Set function that generates samples
-  typedef void (*SoundProc)(void *param, byte *buf, int len);
-  bool setSoundCallback(SoundProc proc, void *param);
-  void clearSoundCallback();
-
-  // Add a callback timer
-  typedef int (*TimerProc)(int interval);
-  void setTimerCallback(TimerProc callback, int timer);
-
-  Common::SaveFileManager *createSavefileManager();
 
  public:
   OSystem_Dreamcast();
@@ -200,7 +188,7 @@ class OSystem_Dreamcast : public OSystem {
 
   Common::SaveFileManager *_savefile;
   Audio::Mixer *_mixer;
-  Common::TimerManager *_timer;
+  DefaultTimerManager *_timer;
   SoftKeyboard _softkbd;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
@@ -209,17 +197,11 @@ class OSystem_Dreamcast : public OSystem {
   int _overlay_x, _overlay_y;
   unsigned char *_ms_buf;
   unsigned char _ms_keycolor;
-  SoundProc _sound_proc;
-  void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
   bool _aspect_stretch, _softkbd_on, _enable_cursor_palette;
   float _overlay_fade, _xscale, _yscale, _top_offset;
   int _softkbd_motion;
-
-  uint32 _timer_duration, _timer_next_expiry;
-  bool _timer_active;
-  int (*_timer_callback) (int);
 
   unsigned char *screen;
   unsigned short *mouse;
@@ -237,6 +219,8 @@ class OSystem_Dreamcast : public OSystem {
 		 unsigned char *buf, bool visible);
 
   void setScaling();
+
+  Common::SaveFileManager *createSavefileManager();
 };
 
 

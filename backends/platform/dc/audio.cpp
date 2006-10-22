@@ -24,6 +24,7 @@
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include "engines/engine.h"
+#include "sound/mixer.h"
 #include "dc.h"
 
 EXTERN_C void *memcpy4s(void *s1, const void *s2, unsigned int n);
@@ -36,28 +37,12 @@ void initSound()
   do_sound_command(CMD_SET_BUFFER(SOUND_BUFFER_SHIFT));
 }
 
-bool OSystem_Dreamcast::setSoundCallback(SoundProc proc, void *param)
-{
-  assert(SAMPLE_MODE == 0);
-
-  _sound_proc_param = param;
-  _sound_proc = proc;
-
-  return true;
-}
-
-void OSystem_Dreamcast::clearSoundCallback()
-{
-  _sound_proc = NULL;
-  _sound_proc_param = NULL;
-}
-
 void OSystem_Dreamcast::checkSound()
 {
   int n;
   int curr_ring_buffer_samples;
 
-  if(!_sound_proc)
+  if(!_mixer)
     return;
 
   if(read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
@@ -75,8 +60,8 @@ void OSystem_Dreamcast::checkSound()
   if(n<100)
     return;
 
-  _sound_proc(_sound_proc_param, (byte*)temp_sound_buffer,
-	      2*SAMPLES_TO_BYTES(n));
+  Audio::Mixer::mixCallback(_mixer, (byte*)temp_sound_buffer,
+			    2*SAMPLES_TO_BYTES(n));
 
   if(fillpos+n > curr_ring_buffer_samples) {
     int r = curr_ring_buffer_samples - fillpos;

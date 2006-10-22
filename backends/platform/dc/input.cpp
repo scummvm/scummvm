@@ -191,10 +191,8 @@ bool OSystem_Dreamcast::pollEvent(Event &event)
 {
   unsigned int t = Timer();
 
-  if(_timer_active && ((int)(t-_timer_next_expiry))>=0) {
-    _timer_duration = _timer_callback(_timer_duration);
-    _timer_next_expiry = t+USEC_TO_TIMER(1000*_timer_duration);
-  }
+  if(_timer != NULL)
+    _timer->handler();
 
   if(((int)(t-_devpoll))<0)
     return false;
