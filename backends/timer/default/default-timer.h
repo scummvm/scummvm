@@ -51,7 +51,7 @@ public:
 	void removeTimerProc(TimerProc proc);
 
 	// Timer callback, to be invoked at regular time intervals by the backend.
-	int handler(int t);
+	void handler();
 };
 
 #endif

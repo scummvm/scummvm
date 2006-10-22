@@ -47,7 +47,7 @@ DefaultTimerManager::~DefaultTimerManager() {
 	}
 }
 
-int DefaultTimerManager::handler(int t) {
+void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 	uint32 interval, l;
 
@@ -67,8 +67,6 @@ int DefaultTimerManager::handler(int t) {
 			}
 		}
 	}
-
-	return t;
 }
 
 bool DefaultTimerManager::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
