@@ -535,14 +535,20 @@ void AGOSEngine::oe1_enableInput() {
 	// 258: enable input
 	_variableArray[500] = 0;
 
-	for (int i = 120; i < 130; i++)
+	for (int i = 120; i != 130; i++)
 		disableBox(i);
 
-	// XXX
-	_lastHitArea = 0;
 	_verbHitArea = 0;
-	_hitAreaSubjectItem = NULL;
-	_hitAreaObjectItem = NULL;
+	_hitAreaSubjectItem = 0;
+	_hitAreaObjectItem = 0;
+
+	_dragFlag = 0;
+	_dragAccept = 0;
+	_dragCount = 0;
+	_dragMode = 0;
+
+	_lastHitArea3 = 0;
+	_lastHitArea = 0;
 }
 
 void AGOSEngine::oe1_setTime() {
