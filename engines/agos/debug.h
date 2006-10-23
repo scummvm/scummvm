@@ -541,7 +541,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	NULL,
 	"|SET_TIME",
 	/* 124 */
-	NULL,
+	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
@@ -774,7 +774,7 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	NULL,
 	"|SET_TIME",
 	/* 124 */
-	NULL,
+	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",

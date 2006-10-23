@@ -53,6 +53,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[99] = &AGOSEngine::o1_stopAnimate;
 	op[113] = &AGOSEngine::oe2_drawItem;
 	op[123] = &AGOSEngine::oe1_setTime;
+	op[124] = &AGOSEngine::oe1_ifTime;
 	op[127] = &AGOSEngine::o1_playTune;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
 	op[145] = &AGOSEngine::oe2_setDoorClosed;
