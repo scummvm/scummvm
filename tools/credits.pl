@@ -547,6 +547,10 @@ begin_credits("Credits");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
 
+	  begin_section("GP2X");
+		  add_person("John Willis", "DJWillis", "");
+	  end_section();
+
 	  begin_section("GP32");
 		  add_person("Won Star", "wonst719", "");
 	  end_section();
