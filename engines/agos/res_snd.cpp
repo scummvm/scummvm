@@ -30,6 +30,7 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
 
@@ -118,8 +119,7 @@ void AGOSEngine::loadMusic(uint music) {
 	if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music format used by Elvira 2
 	} else if (getPlatform() == Common::kPlatformAmiga) {
-		assert(_modPlayer);
-		_modPlayer->stop();
+		_mixer->stopHandle(_modHandle);
 
 		char filename[15];
 		File f;
@@ -134,8 +134,10 @@ void AGOSEngine::loadMusic(uint music) {
 			error("loadMusic: Can't load module from '%s'", filename);
 		}
 
+		Audio::AudioStream *audioStream;
 		if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
 			getFeatures() & GF_CRUNCHED) {
+
 			uint srcSize = f.size();
 			byte *srcBuf = (byte *)malloc(srcSize);
 			if (f.read(srcBuf, srcSize) != srcSize)
@@ -147,11 +149,12 @@ void AGOSEngine::loadMusic(uint music) {
 			free(srcBuf);
 
 			Common::MemoryReadStream stream(dstBuf, dstSize);
-			_modPlayer->loadModuleStream(stream);
+			audioStream = Audio::makeProtrackerStream(&stream, _mixer->getOutputRate());
 		} else {
-			_modPlayer->loadModuleStream(f);
+			audioStream = Audio::makeProtrackerStream(&f, _mixer->getOutputRate());
 		}
-		_modPlayer->start();
+
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
 	} else if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);

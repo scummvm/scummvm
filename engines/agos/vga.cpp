@@ -1439,6 +1439,8 @@ void AGOSEngine::vc57_blackPalette() {
 void AGOSEngine::vc58_checkCodeWheel() {
 	// TODO
 	debug(0, "vc58_checkCodeWheel: stub");
+
+	_variableArray[0] = 1;
 }
 
 void AGOSEngine::vc59_skipIfNotEGA() {

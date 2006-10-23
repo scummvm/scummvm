@@ -399,7 +399,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_vgaTickCounter = 0;
 
-	_modPlayer = 0;
 	_moviePlay = 0;
 	_sound = 0;
 
@@ -526,12 +525,6 @@ int AGOSEngine::init() {
 	_debugger = new Debugger(this);
 	_sound = new Sound(this, gss, _mixer);
 
-	if (getPlatform() == Common::kPlatformAmiga) {
-		_modPlayer = new Modules::ProtrackerPlayer();
-		_modPlayer->init(_system);
-	} else {
-		_modPlayer = 0;
-	}
 	_moviePlay = new MoviePlayer(this, _mixer);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
@@ -778,7 +771,6 @@ AGOSEngine::~AGOSEngine() {
 	delete [] _windowList;
 
 	delete _debugger;
-	delete _modPlayer;
 	delete _moviePlay;
 	delete _sound;
 }

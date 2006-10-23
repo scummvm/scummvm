@@ -22,80 +22,158 @@
  */
 
 #include "common/stdafx.h"
-#include "common/system.h"
 
 #include "sound/mods/protracker.h"
+#include "sound/mods/module.h"
+
+#include "sound/audiostream.h"
 
 namespace Modules {
 
-#define DUMP 1
+class SoundBuffer {
+private:
+	int _capacity;
+	int _size;
+	int16 *_data;
 
-void ProtrackerPlayer::init(OSystem *system) {
-	_system = system;
+public:
+	SoundBuffer() {
+		_size = 0;
+		_capacity = 8192;
+		_data = (int16 *)malloc(_capacity * sizeof(int16));
+		assert(_data);
+	}
+
+	~SoundBuffer() {
+		free(_data);
+	}
+
+	int size() {
+		return _size;
+	}
+
+	int16 *getEnd() {
+		return _data + _size;
+	}
+
+	void ensureCapacity(int len) {
+		if (_size + len > _capacity) {
+			do {
+				_capacity *= 2;
+			} while (_size + len > _capacity);
+
+			_data = (int16 *)realloc(_data, _capacity * sizeof(int16));
+			assert(_data);
+		}
+	}
+
+	void finish(int len) {
+		_size += len;
+	}
+
+	void pop(int16 *dest, int len) {
+		assert(_size >= len);
+		memcpy(dest, _data, len * sizeof(int16));
+		memmove(_data, _data + len, (_size - len) * sizeof(int16));
+		_size -= len;
+	}
+};
+
+class ProtrackerStream : public ::Audio::AudioStream {
+private:
+	Module *_module;
+
+	int _rate;
+	SoundBuffer *_buf;
+	double _generatedSamplesOverflow;
+
+	int _tick;
+	int _row;
+	int _pos;
+
+	int _patternDelay;
+
+	int _speed;
+	int _bpm;
+
+	// For effect 0xB - Jump To Pattern;
+	bool _hasJumpToPattern;
+	int _jumpToPattern;
+
+	// For effect 0xD - PatternBreak;
+	bool _hasPatternBreak;
+	int _skiprow;
+
+	// For effect 0xE6 - Pattern Loop
+	bool _hasPatternLoop;
+	int _patternLoopCount;
+	int _patternLoopRow;
+
+	struct {
+		byte sample;
+		uint16 period;
+		double offset;
+
+		byte vol;
+
+		// For effect 0x3 - Porta to note
+		uint16 portaToNote;
+		byte portaToNoteSpeed;
+
+		// For effect 0x4 - Vibrato
+		int vibrato;
+		byte vibratoPos;
+		byte vibratoSpeed;
+		byte vibratoDepth;
+	} _track[4];
+
+public:
+	ProtrackerStream(Common::ReadStream *stream, int rate);
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return false; }
+	bool endOfData() const { return false; }
+
+	int getRate() const { return _rate; }
+	
+private:
+	void generateSound();
+
+	void updateRow();
+	void updateEffects();
+};
+
+ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate) {
+	_module = new Module();
+	bool result = _module->load(*stream);
+	assert(result);
 
 	_buf = new SoundBuffer();
+	
+	_rate = rate;
+	_tick = _row = _pos = 0;
+	_hasJumpToPattern = false;
+	_hasPatternBreak = false;
+	_hasPatternLoop = false;
+	_patternDelay = 0;
+	_patternLoopCount = 0;
+	_patternLoopRow = 0;
+	_speed = 6;
+	_bpm = 125;
 
-// FIXME BROKEN: You must NOT use OSystem::setSoundCallback(),
-// ever! The only piece of code allowed to use it is the mixer.
-// And soon the call might be removed completely, too.
-// The proper way to do this is to create a AudioStream
-// subclass and hook that with the mixer. See also the
-// code used by other softsynths (sound/softsynth/emumidi.h).
+	_generatedSamplesOverflow = 0.0;
 
-//	_system->setSoundCallback(&audioCallback, this);
-error("ProtrackerPlayer::init -- setSoundCallback is no more");
+	for (int t = 0; t < 4; t++) {
+		_track[t].sample = 0;
+		_track[t].period = 0;
+		_track[t].offset = 0.0;
+
+		_track[t].vibrato = 0;
+	}	
 }
 
-void ProtrackerPlayer::start() {
-	if (_module) {
-		_tick = _row = _pos = 0;
-		_hasJumpToPattern = false;
-		_hasPatternBreak = false;
-		_hasPatternLoop = false;
-		_patternLoopCount = 0;
-		_patternLoopRow = 0;
-		_speed = 6;
-		_bpm = 125;
-
-		_generatedSamplesOverflow = 0.0;
-
-		for (int t = 0; t < 4; t++) {
-			_track[t].sample = 0;
-			_track[t].period = 0;
-			_track[t].offset = 0.0;
-
-			_track[t].vibrato = 0;
-		}
-
-		//_system->startAudio();
-	}
-}
-
-void ProtrackerPlayer::pause() {
-}
-
-void ProtrackerPlayer::stop() {
-	//_system->stopAudio();
-}
-
-void ProtrackerPlayer::loadModule(const char *fn) {
-	if (_module)
-		delete _module;
-
-	_module = new Module();
-	_module->load(fn);
-}
-
-void ProtrackerPlayer::loadModuleStream(Common::SeekableReadStream &fs) {
-	if (_module)
-		delete _module;
-
-	_module = new Module();
-	_module->loadStream(fs);
-}
-
-void ProtrackerPlayer::generateSound() {
-	_generatedSamplesOverflow += 5.0 * 44100.0 / (2.0 * _bpm);
+void ProtrackerStream::generateSound() {
+	_generatedSamplesOverflow += 5.0 * _rate / (2.0 * _bpm);
 	int samples = (int)floor(_generatedSamplesOverflow);
 	_generatedSamplesOverflow -= samples;
 
@@ -113,11 +191,11 @@ void ProtrackerPlayer::generateSound() {
 			    (7093789.2 / 2.0) / (_track[track].period +
 			    _track[track].vibrato);
 
-			double rate = frequency / 44100.0;
+			double rate = frequency / _rate;
 			double offset = _track[track].offset;
 			int sample = _track[track].sample - 1;
 			int slen = _module->sample[sample].len;
-			byte *data = _module->sample[sample].data;
+			int8 *data = _module->sample[sample].data;
 
 			static bool did_warn_about_finetune = false;
 			if (!did_warn_about_finetune && _module->sample[sample].finetune != 0) {
@@ -128,21 +206,14 @@ void ProtrackerPlayer::generateSound() {
 			if (_module->sample[sample].replen > 2) {
 				int neededSamples = samples;
 
-				//printf("%d %d >= %d\n", (int)offset, (int)(offset + neededSamples*rate), _module->sample[sample].repeat + _module->sample[sample].replen);
-
 				while ((int)(offset + neededSamples * rate) >=
 				    (_module->sample[sample].repeat + _module->sample[sample].replen)) {
-					//puts("/* The repeat length is the limiting factor */");
-					//printf("case 1: period: %d\trate: %g\toffset: %g\tsample: %d\tslen: %d\tvol: %d\n", _track[track].period, rate, _track[track].offset, _track[track].sample, slen, _track[track].vol);
+					/* The repeat length is the limiting factor */
 
 					int end =
 					    (int)((_module->sample[sample].
 						repeat + _module->sample[sample].
 						replen - offset) / rate);
-
-					if ((int)(offset + rate * end) > slen)
-						warning("!!!!!!!!!");
-					//printf("writing %d-%d max %d\n", (int)offset, (int)(offset + rate*end), slen);
 
 					for (int i = 0; i < end; i++)
 						*p++ +=
@@ -153,11 +224,8 @@ void ProtrackerPlayer::generateSound() {
 					neededSamples -= end;
 				}
 				if (neededSamples > 0) {
-					//puts("/* The requested number of samples is the limiting factor, not the repeat length */");
-					//printf("case 2: period: %d\trate: %g\toffset: %g\tsample: %d\tslen: %d\tvol: %d\n", _track[track].period, rate, _track[track].offset, _track[track].sample, slen, _track[track].vol);
+					/* The requested number of samples is the limiting factor, not the repeat length */
 
-					//if ((int)(offset + rate*neededSamples) > slen) puts("!!!!!!!!!");
-					//printf("writing %d-%d max %d\n", (int)offset, (int)(offset + rate*neededSamples), slen);
 					for (int i = 0; i < neededSamples; i++)
 						*p++ +=
 						    _track[track].vol * data[(int)(offset + rate * i)];
@@ -169,7 +237,6 @@ void ProtrackerPlayer::generateSound() {
 					if ((int)(offset + samples * rate) >=
 					    slen) {
 						/* The end of the sample is the limiting factor */
-						//printf("case 3: period: %d\trate: %g\toffset: %g\tsample: %d\tslen: %d\tvol: %d\n", _track[track].period, rate, _track[track].offset, _track[track].sample, slen, _track[track].vol);
 
 						int end = (int)((slen - offset) / rate);
 						for (int i = 0; i < end; i++)
@@ -178,7 +245,6 @@ void ProtrackerPlayer::generateSound() {
 						_track[track].offset = slen;
 					} else {
 						/* The requested number of samples is the limiting factor, not the sample */
-						//printf("case 4: period: %d\trate: %g\toffset: %g\tsample: %d\tslen: %d\tvol: %d\n", _track[track].period, rate, _track[track].offset, _track[track].sample, slen, _track[track].vol);
 
 						for (int i = 0; i < samples; i++)
 							*p++ += _track[track].vol *
@@ -193,12 +259,7 @@ void ProtrackerPlayer::generateSound() {
 	_buf->finish(samples);
 }
 
-void ProtrackerPlayer::updateRow() {
-	//printf("ProtrackerPlayer::updateRow(): tick: %d\tpos: %d->%d\trow: %d\n", _tick, _pos, _module->songpos[_pos], _row);
-
-#ifdef DUMP
-	printf("%3d:%3d:%2d: ", _pos, _module->songpos[_pos], _row);
-#endif
+void ProtrackerStream::updateRow() {
 	for (int track = 0; track < 4; track++) {
 		_track[track].vibrato = 0;
 		note_t note =
@@ -223,136 +284,6 @@ void ProtrackerPlayer::updateRow() {
 		int exy = note.effect & 0xff;
 		int ex = (note.effect >> 4) & 0xf;
 		int ey = note.effect & 0xf;
-
-#ifdef DUMP
-		const char *notename;
-
-		switch (note.period) {
-		case 856:
-			notename = "C-1";
-			break;
-		case 808:
-			notename = "C#1";
-			break;
-		case 762:
-			notename = "D-1";
-			break;
-		case 720:
-			notename = "D#1";
-			break;
-		case 678:
-			notename = "E-1";
-			break;
-		case 640:
-			notename = "E#1";
-			break;
-		case 604:
-			notename = "F-1";
-			break;
-		case 570:
-			notename = "F#1";
-			break;
-		case 538:
-			notename = "A-1";
-			break;
-		case 508:
-			notename = "A#1";
-			break;
-		case 480:
-			notename = "B-1";
-			break;
-		case 453:
-			notename = "B#1";
-			break;
-		case 428:
-			notename = "C-2";
-			break;
-		case 404:
-			notename = "C#2";
-			break;
-		case 381:
-			notename = "D-2";
-			break;
-		case 360:
-			notename = "D#2";
-			break;
-		case 339:
-			notename = "E-2";
-			break;
-		case 320:
-			notename = "E#2";
-			break;
-		case 302:
-			notename = "F-2";
-			break;
-		case 285:
-			notename = "F#2";
-			break;
-		case 269:
-			notename = "A-2";
-			break;
-		case 254:
-			notename = "A#2";
-			break;
-		case 240:
-			notename = "B-2";
-			break;
-		case 226:
-			notename = "B#2";
-			break;
-		case 214:
-			notename = "C-3";
-			break;
-		case 202:
-			notename = "C#3";
-			break;
-		case 190:
-			notename = "D-3";
-			break;
-		case 180:
-			notename = "D#3";
-			break;
-		case 170:
-			notename = "E-3";
-			break;
-		case 160:
-			notename = "E#3";
-			break;
-		case 151:
-			notename = "F-3";
-			break;
-		case 143:
-			notename = "F#3";
-			break;
-		case 135:
-			notename = "A-3";
-			break;
-		case 127:
-			notename = "A#3";
-			break;
-		case 120:
-			notename = "B-3";
-			break;
-		case 113:
-			notename = "B#3";
-			break;
-		case 0:
-			notename = "   ";
-			break;
-		default:
-			notename = "???";
-			break;
-		}
-
-		if (track > 0)
-			printf("  |  ");
-
-		if (note.sample)
-			printf("%2d %s %3X", note.sample, notename,
-			    note.effect);
-		else
-			printf("   %s %3X", notename, note.effect);
-#endif
 
 		switch (effect) {
 		case 0x0:
@@ -406,32 +337,24 @@ void ProtrackerPlayer::updateRow() {
 			case 0x9:
 				break;	// Retrigger note
 			default:
-				printf("Unimplemented effect %X\n",
-				    note.effect);
+				warning("Unimplemented effect %X\n", note.effect);
 			}
 			break;
 
 		case 0xF:
 			if (exy < 0x20) {
 				_speed = exy;
-				//printf("Speed: %x\n", _speed);
 			} else {
 				_bpm = exy;
-				//printf("BPM: %x\n", _bpm);
 			}
 			break;
 		default:
-			printf("Unimplemented effect %X\n", note.effect);
+			warning("Unimplemented effect %X\n", note.effect);
 		}
 	}
-#ifdef DUMP
-	putchar('\n');
-	fflush(NULL);
-#endif
 }
 
-void ProtrackerPlayer::updateEffects() {
-	//printf("ProtrackerPlayer::updateEffects(): tick: %d\tpos: %d->%d\trow: %d\n", _tick, _pos, _module->songpos[_pos], _row);
+void ProtrackerStream::updateEffects() {
 
 	static const int16 sinetable[64] = {
 		   0,   24,   49,   74,   97,  120,  141,  161,
@@ -455,8 +378,6 @@ void ProtrackerPlayer::updateEffects() {
 		int exy = note.effect & 0xff;
 		int ex = (note.effect >> 4) & 0xf;
 		int ey = (note.effect) & 0xf;
-
-		//printf("track %d: period: %3d\tsample: %2d\teffect: %x\n", track, note.period, note.sample, note.effect);
 
 		int vol;
 		switch (effect) {
@@ -568,11 +489,8 @@ void ProtrackerPlayer::updateEffects() {
 	}
 }
 
-void ProtrackerPlayer::mix(byte *buf0, int len) {
-	int16 *buf = (int16 *)buf0;
-	len /= 2;
-
-	while (_buf->size() < len) {
+int ProtrackerStream::readBuffer(int16 *buffer, const int numSamples) {
+	while (_buf->size() < numSamples) {
 		if (_tick == 0) {
 			if (_hasJumpToPattern) {
 				_hasJumpToPattern = false;
@@ -608,12 +526,17 @@ void ProtrackerPlayer::mix(byte *buf0, int len) {
 		generateSound();
 	}
 
-	_buf->pop(buf, len);
-}
+	_buf->pop(buffer, numSamples);
 
-void ProtrackerPlayer::audioCallback(void *param, byte *buf, int len) {
-	((ProtrackerPlayer *)param)->mix(buf, len);
+	return numSamples;
 }
 
 } // End of namespace Modules
 
+namespace Audio {
+
+AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate) {
+	return new Modules::ProtrackerStream(stream, rate);
+}
+
+} // End of namespace Audio

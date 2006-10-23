@@ -22,40 +22,16 @@
  */
 
 #include "common/stdafx.h"
-#include "common/system.h"
-#include "common/file.h"
-#include "common/stream.h"
 
 #include "sound/mods/module.h"
 
+#include "common/util.h"
+
 namespace Modules {
 
-bool Module::load(const char *fn) {
-	Common::File f;
-
-	if (!f.open(fn))
-		return false;
-
-	int bufsz = f.size();
-	byte *buf = new byte[bufsz];
-
-	int r = f.read(buf, bufsz);
-	assert(r);
-
-	f.close();
-
-	Common::MemoryReadStream st(buf, bufsz);
-
-	bool result = loadStream(st);
-
-	delete[] buf;
-	
-	return result;
-}
-
-bool Module::loadStream(Common::SeekableReadStream &st) {
+bool Module::load(Common::ReadStream &st) {
 	st.read(songname, 20);
-	songname[0] = '\0';
+	songname[20] = '\0';
 
 	for (int i = 0; i < 31; ++i) {
 		st.read(sample[i].name, 22);
@@ -68,18 +44,17 @@ bool Module::loadStream(Common::SeekableReadStream &st) {
 		sample[i].vol = st.readByte();
 		sample[i].repeat = 2 * st.readUint16BE();
 		sample[i].replen = 2 * st.readUint16BE();
-
-		//printf("\"%s\"\tlen: %d\tfinetune: %d\tvol: %d\trepeat: %d\treplen: %d\n",
-		//       sample[i].name, sample[i].len, sample[i].finetune, sample[i].vol, sample[i].repeat, sample[i].replen);
-
 	}
 
 	songlen = 2 * st.readByte();
 	undef = 2 * st.readByte();
 
 	st.read(songpos, 128);
-	st.read(sig, 4);	// Should be "M.K."
-	assert(0 == memcmp(sig, "M.K.", 4));
+	st.read(sig, 4);
+	if (memcmp(sig, "M.K.", 4)) {
+		warning("Expected 'M.K.' in protracker module");
+		return false;
+	}
 
 	int maxpattern = 0;
 	for (int i = 0; i < 128; ++i)
@@ -93,62 +68,9 @@ bool Module::loadStream(Common::SeekableReadStream &st) {
 			for (int k = 0; k < 4; ++k) {
 				uint32 note = st.readUint32BE();
 				pattern[i][j][k].sample = (note & 0xf0000000) >> 24 | (note & 0x0000f000) >> 12;
-
 				pattern[i][j][k].period = (note >> 16) & 0xfff;
 				pattern[i][j][k].effect = note & 0xfff;
-/*
-        const char *notename;
-
-        switch (pattern[i][j][k].period) {
-          case 856: notename = "C-1"; break;
-          case 808: notename = "C#1"; break;
-          case 762: notename = "D-1"; break;
-          case 720: notename = "D#1"; break;
-          case 678: notename = "E-1"; break;
-          case 640: notename = "E#1"; break;
-          case 604: notename = "F-1"; break;
-          case 570: notename = "F#1"; break;
-          case 538: notename = "A-1"; break;
-          case 508: notename = "A#1"; break;
-          case 480: notename = "B-1"; break;
-          case 453: notename = "B#1"; break;
-          case 428: notename = "C-2"; break;
-          case 404: notename = "C#2"; break;
-          case 381: notename = "D-2"; break;
-          case 360: notename = "D#2"; break;
-          case 339: notename = "E-2"; break;
-          case 320: notename = "E#2"; break;
-          case 302: notename = "F-2"; break;
-          case 285: notename = "F#2"; break;
-          case 269: notename = "A-2"; break;
-          case 254: notename = "A#2"; break;
-          case 240: notename = "B-2"; break;
-          case 226: notename = "B#2"; break;
-          case 214: notename = "C-3"; break;
-          case 202: notename = "C#3"; break;
-          case 190: notename = "D-3"; break;
-          case 180: notename = "D#3"; break;
-          case 170: notename = "E-3"; break;
-          case 160: notename = "E#3"; break;
-          case 151: notename = "F-3"; break;
-          case 143: notename = "F#3"; break;
-          case 135: notename = "A-3"; break;
-          case 127: notename = "A#3"; break;
-          case 120: notename = "B-3"; break;
-          case 113: notename = "B#3"; break;
-          case   0: notename = "   "; break;
-          default:  notename = "???"; break;
-        }
-
-        if (k > 0) printf("  |  ");
-
-        if (pattern[i][j][k].sample)
-          printf("%2d %s %3X", pattern[i][j][k].sample, notename, pattern[i][j][k].effect);
-        else
-          printf("   %s %3X", notename, pattern[i][j][k].effect);
-*/
 			}
-			//printf("\n");
 		}
 	}
 
@@ -156,12 +78,13 @@ bool Module::loadStream(Common::SeekableReadStream &st) {
 		if (!sample[i].len)
 			sample[i].data = 0;
 		else {
-			sample[i].data = new byte[sample[i].len];
+			sample[i].data = new int8[sample[i].len];
 			st.read((byte *)sample[i].data, sample[i].len);
 		}
 	}
 
-	assert(st.eos());
+	if (!st.eos())
+		warning("Expected EOS on module stream");
 
 	return true;
 }

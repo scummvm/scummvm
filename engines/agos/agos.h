@@ -503,7 +503,7 @@ protected:
 	int _vgaTickCounter;
 
 	MoviePlayer *_moviePlay;
-	Modules::ProtrackerPlayer *_modPlayer;
+	Audio::SoundHandle _modHandle;
 
 	Sound *_sound;
 

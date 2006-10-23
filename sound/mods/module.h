@@ -24,7 +24,7 @@
 #ifndef SOUND_MODS_MODULE_H
 #define SOUND_MODS_MODULE_H
 
-#include "common/file.h"
+#include "common/stream.h"
 
 namespace Modules {
 
@@ -36,11 +36,15 @@ namespace Modules {
  * like they are in the file.
  */
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct note_t {
 	byte sample;
 	uint16 period;
 	uint16 effect;
 };
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 typedef note_t pattern_t[64][4];
 
@@ -51,7 +55,7 @@ struct sample_t {
 	byte vol;
 	uint16 repeat;
 	uint16 replen;
-	byte *data;
+	int8 *data;
 };
 
 class Module {
@@ -69,8 +73,7 @@ public:
 	Module();
 	~Module();
 
-	bool load(const char *fn);
-	bool loadStream(Common::SeekableReadStream &st);
+	bool load(Common::ReadStream &stream);
 };
 
 } // End of namespace Modules
