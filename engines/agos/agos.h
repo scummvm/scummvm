@@ -1145,10 +1145,12 @@ public:
 	void oe2_ifDoorOpen();
 	void oe2_ifDoorClosed();
 	void oe2_ifDoorLocked();
-	void oe2_opcode161();
-	void oe2_screenTextMsg();
+	void oe2_unk161();
+	void oe2_unk162();
 	void oe2_setSuperRoom();
 	void oe2_getSuperRoom();
+	void oe2_unk177();
+	void oe2_unk178();
 
 	// Opcodes, Waxworks only
 	void oww_moveDirn();
@@ -1156,6 +1158,7 @@ public:
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();
+	void oww_screenTextMsg();
 	void oww_boxMessage();
 	void oww_boxMsg();
 	void oww_boxLongText();

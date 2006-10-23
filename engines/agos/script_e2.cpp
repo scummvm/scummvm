@@ -62,11 +62,13 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[148] = &AGOSEngine::oe2_ifDoorOpen;
 	op[149] = &AGOSEngine::oe2_ifDoorClosed;
 	op[150] = &AGOSEngine::oe2_ifDoorLocked;
-	op[161] = &AGOSEngine::oe2_opcode161;
-	op[162] = &AGOSEngine::oe2_screenTextMsg;
+	op[161] = &AGOSEngine::oe2_unk161;
+	op[162] = &AGOSEngine::oe2_unk162;
 	op[165] = &AGOSEngine::oe2_setSuperRoom;
 	op[166] = &AGOSEngine::oe2_getSuperRoom;
 	op[175] = &AGOSEngine::o_getDollar2;
+	op[177] = &AGOSEngine::oe2_unk177;
+	op[178] = &AGOSEngine::oe2_unk178;
 	op[179] = &AGOSEngine::o_isAdjNoun;
 	op[180] = &AGOSEngine::o_b2Set;
 	op[181] = &AGOSEngine::o_b2Clear;
@@ -147,14 +149,16 @@ void AGOSEngine::oe2_ifDoorLocked() {
 	setScriptCondition(getDoorState(i, d) == 3);
 }
 
-void AGOSEngine::oe2_opcode161() {
+void AGOSEngine::oe2_unk161() {
 	// 161:
+	debug(0, "oe2_unk161: stub");
 }
 
-void AGOSEngine::oe2_screenTextMsg() {
-	// 162: print string
+void AGOSEngine::oe2_unk162() {
+	// 162: print string?
 	showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
-	getVarOrByte();
+	uint a = getVarOrByte();
+	debug(0, "oe2_unk162: stub (%d)", a);
 }
 
 void AGOSEngine::oe2_setSuperRoom() {
@@ -165,6 +169,18 @@ void AGOSEngine::oe2_setSuperRoom() {
 void AGOSEngine::oe2_getSuperRoom() {
 	// 166: get super room
 	writeNextVarContents(_superRoomNumber);
+}
+
+void AGOSEngine::oe2_unk177() {
+	// 177: set unknown vga event
+	uint a = getVarOrByte();
+	debug(0, "oe2_unk177: stub (%d)", a);
+}
+
+void AGOSEngine::oe2_unk178() {
+	// 178: set unknown vga event
+	uint a = getVarOrByte();
+	debug(0, "oe2_unk178: stub (%d)", a);
 }
 
 } // End of namespace AGOS

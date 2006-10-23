@@ -588,7 +588,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	/* 160 */
 	"B|SET_INK",
 	"|UNK_161",
-	"BT|PRINT_STR",
+	"TB|UNK_162",
 	NULL,
 	/* 164 */
 	NULL,
@@ -821,7 +821,7 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	/* 160 */
 	"B|SET_INK",
 	"|UNK_161",
-	"BT|PRINT_STR",
+	"TB|PRINT_STR",
 	NULL,
 	/* 164 */
 	NULL,
