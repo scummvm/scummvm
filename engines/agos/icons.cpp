@@ -288,7 +288,7 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 	while (itemRef && line-- != 0) {
 		curWidth = 0;
 		while (itemRef && width > curWidth) {
-			if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef))
+			if ((classMask == 0 || itemRef->classFlags & classMask) && hasIcon(itemRef))
 				curWidth += iconSize;
 			itemRef = derefItem(itemRef->next);
 		}
@@ -306,7 +306,7 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 	showArrows = false;
 
 	while (itemRef) {
-		if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef)) {
+		if ((classMask == 0 || itemRef->classFlags & classMask) && hasIcon(itemRef)) {
 			if (item_again == false) {
 				window->iconPtr->iconArray[k].item = itemRef;
 				if (getGameType() == GType_SIMON2) {
@@ -389,7 +389,7 @@ void AGOSEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMa
 		uint16 ct = xp;
 		while (itemRef && ct < iconperline) {
 			if ((classMask == 0) || ((itemRef->classFlags & classMask) != 0)) {
-				if (has_item_childflag_0x10(itemRef)) {
+				if (hasIcon(itemRef)) {
 					ct += 45;
 					k++;
 				}
@@ -410,7 +410,7 @@ void AGOSEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMa
 	while (itemRef) {
 		if ((classMask != 0) && ((itemRef->classFlags & classMask) == 0))
 			goto l1;
-		if (has_item_childflag_0x10(itemRef) == 0)
+		if (hasIcon(itemRef) == 0)
 			goto l1;
 		if (!idone) {
 /*

@@ -781,7 +781,7 @@ protected:
 	void removeArrows(WindowBlock *window, uint num);
 
 	void draw_icon_c(WindowBlock *window, uint icon, uint x, uint y);
-	bool has_item_childflag_0x10(Item *item);
+	bool hasIcon(Item *item);
 	uint itemGetIconNumber(Item *item);
 	uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 	void drawIconArray(uint i, Item *item_ptr, int line, int classMask);

@@ -60,6 +60,15 @@ void AGOSEngine::allocItemHeap() {
 		error("Out Of Memory - Items");
 }
 
+bool AGOSEngine::hasIcon(Item *item) {
+	if (getGameType() == GType_ELVIRA1) {
+		return (getUserFlag(item, 7) != 0);
+	} else {
+		SubObject *child = (SubObject *)findChildOfType(item, 2);
+		return (child && (child->objectFlags & kOFIcon) != 0);
+	}
+}
+
 uint AGOSEngine::itemGetIconNumber(Item *item) {
 	if (getGameType() == GType_ELVIRA1) {
 		return getUserFlag(item, 7);
@@ -339,11 +348,6 @@ void AGOSEngine::linkItem(Item *item, Item *parent) {
 	} else {
 		item->next = 0;
 	}
-}
-
-bool AGOSEngine::has_item_childflag_0x10(Item *item) {
-	SubObject *child = (SubObject *)findChildOfType(item, 2);
-	return child && (child->objectFlags & kOFIcon) != 0;
 }
 
 int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
