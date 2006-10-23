@@ -2340,15 +2340,19 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 		return;
 	}
 	
-	if (w == 0 || h == 0)
+	if (w == 0 || h == 0 || x >= SCREEN_W || y >= SCREEN_H || x + w < 0 || y + h < 0)
 		return;
 
-	if (x < 0)
+	if (x < 0) {
+		w += x;
 		x = 0;
+	}
 	if (x + w >= 320)
 		w = 320 - x;
-	if (y < 0)
+	if (y < 0) {
+		h += y;
 		y = 0;
+	}
 	if (y + h >= 200)
 		h = 200 - y;
 	
