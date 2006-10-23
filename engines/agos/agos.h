@@ -830,11 +830,6 @@ protected:
 	uint16 getBoxSize();
 	uint16 checkFit(char *Ptr, int width, int lines);
 
-	void printMonsterDamage();
-	void printPlayerDamage();
-	void printMonsterHit();
-	void printPlayerHit();
-	void printStats();
 	void writeChar(WindowBlock *window, int x, int y, int offs, int val);
 
 	byte *allocBlock(uint32 size);
@@ -1145,7 +1140,7 @@ public:
 	void oe2_ifDoorOpen();
 	void oe2_ifDoorClosed();
 	void oe2_ifDoorLocked();
-	void oe2_unk161();
+	void oe2_printStats();
 	void oe2_unk162();
 	void oe2_setSuperRoom();
 	void oe2_getSuperRoom();

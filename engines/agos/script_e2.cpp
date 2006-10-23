@@ -62,7 +62,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[148] = &AGOSEngine::oe2_ifDoorOpen;
 	op[149] = &AGOSEngine::oe2_ifDoorClosed;
 	op[150] = &AGOSEngine::oe2_ifDoorLocked;
-	op[161] = &AGOSEngine::oe2_unk161;
+	op[161] = &AGOSEngine::oe2_printStats;
 	op[162] = &AGOSEngine::oe2_unk162;
 	op[165] = &AGOSEngine::oe2_setSuperRoom;
 	op[166] = &AGOSEngine::oe2_getSuperRoom;
@@ -149,9 +149,49 @@ void AGOSEngine::oe2_ifDoorLocked() {
 	setScriptCondition(getDoorState(i, d) == 3);
 }
 
-void AGOSEngine::oe2_unk161() {
-	// 161:
-	debug(0, "oe2_unk161: stub");
+void AGOSEngine::oe2_printStats() {
+	// 161: print stats
+	WindowBlock *window = _dummyWindow;
+	int val;
+
+	window->flags = 1;
+
+	mouseOff();
+
+	// Level
+	val = _variableArray[20];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 10, 134, 0, val);
+
+	// HP
+	val = _variableArray[22];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 16, 134, 6, val);
+
+	// PP
+	val = _variableArray[23];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 23, 134, 4, val);
+
+	// Experience
+	val = _variableArray[21];
+	if (val < -99)
+		val = -99;
+	if (val > 9999)
+		val = 9999;	
+	writeChar(window, 30, 134, 6, val / 100);
+	writeChar(window, 32, 134, 2, val);
+
+	mouseOn();
 }
 
 void AGOSEngine::oe2_unk162() {
