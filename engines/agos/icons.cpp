@@ -167,7 +167,7 @@ static void decompressIcon(byte *dst, byte *src, uint width, uint height, byte b
 	}
 }
 
-void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
+void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
@@ -223,7 +223,7 @@ void AGOSEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-			decompressIconAmiga(dst, src, 24, 24, 16, _dxSurfacePitch);
+			decompressIconAmiga(dst, src, 24, 24, color, _dxSurfacePitch);
 		} else {
 			src = _iconFilePtr;
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
@@ -310,15 +310,15 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 			if (item_again == false) {
 				window->iconPtr->iconArray[k].item = itemRef;
 				if (getGameType() == GType_SIMON2) {
-					draw_icon_c(window, itemGetIconNumber(itemRef), x_pos, y_pos);
+					drawIcon(window, itemGetIconNumber(itemRef), x_pos, y_pos);
 					window->iconPtr->iconArray[k].boxCode =
 						setupIconHitArea(window, 0, x_pos, y_pos, itemRef);
 				} else if (getGameType() == GType_SIMON1) {
-					draw_icon_c(window, itemGetIconNumber(itemRef), x_pos * 3, y_pos);
+					drawIcon(window, itemGetIconNumber(itemRef), x_pos * 3, y_pos);
 					window->iconPtr->iconArray[k].boxCode =
 						setupIconHitArea(window, 0, x_pos * 3, y_pos, itemRef);
 				} else {
-					draw_icon_c(window, itemGetIconNumber(itemRef), x_pos * 3, y_pos * 3);
+					drawIcon(window, itemGetIconNumber(itemRef), x_pos * 3, y_pos * 3);
 					window->iconPtr->iconArray[k].boxCode =
 						setupIconHitArea(window, 0, x_pos * 3, y_pos * 3, itemRef);
 				}
@@ -343,7 +343,7 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 
 	if (showArrows != 0 || window->iconPtr->line != 0) {
 		/* Plot arrows and add their boxes */
-		defineArrowBoxes(window);		
+		addArrows(window);		
 		window->iconPtr->upArrow = _scrollUpHitArea;
 		window->iconPtr->downArrow = _scrollDownHitArea;
 	}
@@ -448,12 +448,88 @@ l1:;		itemRef = derefItem(itemRef->next);
 	}
 
 	/* Plot arrows and add their boxes */
-	defineArrowBoxes(window);		
+	addArrows(window);		
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
 }
 
-void AGOSEngine::defineArrowBoxes(WindowBlock *window) {
+uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr) {
+	HitArea *ha;
+
+	ha = findEmptyHitArea();
+
+	if (getGameType() == GType_FF) {
+		ha->x = x;
+		ha->y = y;
+		ha->item_ptr = item_ptr;
+		ha->width = 45;
+		ha->height = 44;
+		ha->flags = kBFBoxInUse | kBFBoxItem;
+		ha->id = num;
+		ha->priority = 100;
+		ha->verb = 208;
+	} else if (getGameType() == GType_SIMON2) {
+		ha->x = x + 110;
+		ha->y = window->y + y;
+		ha->item_ptr = item_ptr;
+		ha->width = 20;
+		ha->height = 20;
+		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
+		ha->id = 0x7FFD;
+		ha->priority = 100;
+		ha->verb = 208;
+	} else if (getGameType() == GType_SIMON1) {
+		ha->x = (x + window->x) * 8;
+		ha->y = y * 25 + window->y;
+		ha->item_ptr = item_ptr;
+		ha->width = 24;
+		ha->height = 24;
+		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
+		ha->id = 0x7FFD;
+		ha->priority = 100;
+		ha->verb = 208;
+	} else if (getGameType() == GType_WW) {
+		ha->x = (x + window->x) * 8;
+		ha->y = y * 20 + window->y;
+		ha->item_ptr = item_ptr;
+		ha->width = 24;
+		ha->height = 20;
+		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
+		ha->id = 0x7FFD;
+		ha->priority = 100;
+		ha->verb = 208;
+	} else if (getGameType() == GType_ELVIRA2) {
+		ha->x = (x + window->x) * 8;
+		ha->y = y * 8 + window->y;
+		ha->item_ptr = item_ptr;
+		ha->width = 24;
+		ha->height = 24;
+		ha->id = 0x7FFD;
+		ha->priority = 100;
+
+		if (window->iconPtr->classMask == 2) {
+			ha->flags = kBFDragBox | kBFBoxInUse;
+			ha->verb = 248 + 0x4000;
+		} else {
+			ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
+			ha->verb = 208;
+		}
+	} else {
+		ha->x = (x + window->x) * 8;
+		ha->y = y * 8 + window->y;
+		ha->item_ptr = item_ptr;
+		ha->width = 24;
+		ha->height = 24;
+		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
+		ha->id = 0x7FFD;
+		ha->priority = 100;
+		ha->verb = 253;
+	}
+
+	return ha - _hitAreas;
+}
+
+void AGOSEngine::addArrows(WindowBlock *window) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -593,74 +669,16 @@ void AGOSEngine::defineArrowBoxes(WindowBlock *window) {
 	}
 }
 
-uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr) {
-	HitArea *ha;
-
-	ha = findEmptyHitArea();
-
-	if (getGameType() == GType_FF) {
-		ha->x = x;
-		ha->y = y;
-		ha->item_ptr = item_ptr;
-		ha->width = 45;
-		ha->height = 44;
-		ha->flags = kBFBoxInUse | kBFBoxItem;
-		ha->id = num;
-		ha->priority = 100;
-		ha->verb = 208;
-	} else if (getGameType() == GType_SIMON2) {
-		ha->x = x + 110;
-		ha->y = window->y + y;
-		ha->item_ptr = item_ptr;
-		ha->width = 20;
-		ha->height = 20;
-		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
-		ha->id = 0x7FFD;
-		ha->priority = 100;
-		ha->verb = 208;
-	} else if (getGameType() == GType_SIMON1) {
-		ha->x = (x + window->x) * 8;
-		ha->y = y * 25 + window->y;
-		ha->item_ptr = item_ptr;
-		ha->width = 24;
-		ha->height = 24;
-		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
-		ha->id = 0x7FFD;
-		ha->priority = 100;
-		ha->verb = 208;
+void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
+	if (getGameType() == GType_SIMON1) {
+		stopAnimateSimon1(128);
 	} else if (getGameType() == GType_WW) {
-		ha->x = (x + window->x) * 8;
-		ha->y = y * 20 + window->y;
-		ha->item_ptr = item_ptr;
-		ha->width = 24;
-		ha->height = 20;
-		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
-		ha->id = 0x7FFD;
-		ha->priority = 100;
-		ha->verb = 208;
+		setBitFlag(22, false);
+		setWindowImageEx(6, 103);
 	} else if (getGameType() == GType_ELVIRA2) {
-		ha->x = (x + window->x) * 8;
-		ha->y = y * 8 + window->y;
-		ha->item_ptr = item_ptr;
-		ha->width = 24;
-		ha->height = 24;
-		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
-		ha->id = 0x7FFD;
-		ha->priority = 100;
-		ha->verb = 208;
-	} else {
-		ha->x = (x + window->x) * 8;
-		ha->y = y * 8 + window->y;
-		ha->item_ptr = item_ptr;
-		ha->width = 24;
-		ha->height = 24;
-		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
-		ha->id = 0x7FFD;
-		ha->priority = 100;
-		ha->verb = 253;
+		setBitFlag(21, false);
+		setWindowImageEx(6, 106);
 	}
-
-	return ha - _hitAreas;
 }
 
 void AGOSEngine::removeIconArray(uint num) {
@@ -698,18 +716,6 @@ void AGOSEngine::removeIconArray(uint num) {
 
 	_fcsData1[num] = 0;
 	_fcsData2[num] = 0;
-}
-
-void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
-	if (getGameType() == GType_SIMON1) {
-		stopAnimateSimon1(128);
-	} else if (getGameType() == GType_WW) {
-		setBitFlag(22, false);
-		setWindowImageEx(6, 103);
-	} else if (getGameType() == GType_ELVIRA2) {
-		setBitFlag(21, false);
-		setWindowImageEx(6, 106);
-	}
 }
 
 } // End of namespace AGOS

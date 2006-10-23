@@ -788,11 +788,11 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	}
 
 	//if (_nameLocked == 0) {
-		if (best_ha->flags & kBFNoTouchName) {
-			clearName();
-		} else if (best_ha != _lastNameOn) {
-			displayName(best_ha);
-		}
+		//if (best_ha->flags & kBFNoTouchName) {
+		//	clearName();
+		//} else if (best_ha != _lastNameOn) {
+		//	displayName(best_ha);
+		//}
 	//}
 
 	if (best_ha->flags & kBFInvertTouch && !(best_ha->flags & kBFBoxSelected)) {

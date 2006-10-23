@@ -106,7 +106,7 @@ void AGOSEngine::oe2_drawItem() {
 	int x = getVarOrWord();
 	int y = getVarOrWord();
 	mouseOff();
-	draw_icon_c(_windowArray[a % 8], itemGetIconNumber(i), x, y);
+	drawIcon(_windowArray[a % 8], itemGetIconNumber(i), x, y);
 	mouseOn();
 }
 

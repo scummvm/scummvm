@@ -777,10 +777,10 @@ protected:
 	void drawMousePointer_FF();
 	void drawMousePart(int image, byte x, byte y);
 
-	void defineArrowBoxes(WindowBlock *window);
+	void addArrows(WindowBlock *window);
 	void removeArrows(WindowBlock *window, uint num);
 
-	void draw_icon_c(WindowBlock *window, uint icon, uint x, uint y);
+	void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 	bool hasIcon(Item *item);
 	uint itemGetIconNumber(Item *item);
 	uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
