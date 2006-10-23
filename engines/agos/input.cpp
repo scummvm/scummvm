@@ -170,6 +170,7 @@ void AGOSEngine::waitForInput() {
 
 	_leftButtonDown = 0;
 	_lastHitArea = 0;
+	_lastClickRem = 0;
 	_verbHitArea = 0;
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
