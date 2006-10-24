@@ -113,6 +113,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "dog", "Putt-Putt and Pep's Dog on a Stick" },
 	{ "farm", "Let's Explore the Farm with Buzzy" },
 	{ "football", "Backyard Football" },
+	{ "football2002", "Backyard Football 2002" },
 	{ "freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds" },
 	{ "freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse" },
 	{ "freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell" },
@@ -359,6 +360,7 @@ static const GameSettings gameVariantsTable[] = {
 	// Uses smacker in external files, for testing only
 	{"arttime", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 	{"readdemo", 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
+	{"football2002", 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, UNK},
 
 
 	// The following are meant to be generic HE game variants and as such do
@@ -538,8 +540,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "football", "football", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "football", "FootBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "football", "FootBall Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "football", "FootBall2002", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "football", "footdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+
+	{ "football2002", "FootBall2002", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "freddi", "freddi", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi", "Freddi", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
