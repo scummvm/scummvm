@@ -389,9 +389,8 @@ void ScreenAnimator::prepDrawAllObjects() {
 
 void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::copyChangedObjectsForward(%d)", refreshFlag);
-	AnimObject *curObject = _objectQueue;
 
-	while (curObject) {
+	for (AnimObject *curObject = _objectQueue; curObject; curObject = curObject->nextAnimObject) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {
 				int xpos = 0, ypos = 0, width = 0, height = 0;
@@ -402,14 +401,22 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 				
 				if (xpos < 1) {
 					xpos = 1;
-				} else if (xpos + width > 39) {
-					width = width - (xpos + width - 39);
+				} else if (xpos > 39) {
+					continue;
+				}
+
+				if (xpos + width > 39) {
+					width = 39 - xpos;
 				}
 				
 				if (ypos < 8) {
 					ypos = 8;
-				} else if (ypos + height > 135) {
-					height = height - (ypos + height - 136);
+				} else if (ypos > 136) {
+					continue;
+				}
+
+				if (ypos + height > 136) {
+					height = 136 - ypos;
 				}
 				
 				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0, Screen::CR_CLIPPED);
@@ -417,8 +424,8 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 				_updateScreen = true;
 			}
 		}
-		curObject = curObject->nextAnimObject;
 	}
+
 	if (_updateScreen) {
 		_screen->updateScreen();
 		_updateScreen = false;

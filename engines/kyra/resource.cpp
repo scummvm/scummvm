@@ -66,9 +66,9 @@ Resource::Resource(KyraEngine *engine) {
 	};*/
 
 	static const char *kyra1CDFilelist[] = {
-		"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "DRAGON1.APK", "DRAGON2.APK", "FINALE.PAK",
-		"INTRO1.PAK", "INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK",
-		"STARTUP.PAK", "XMI.PAK", 0
+		"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
+		"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
+		"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
 	};
 
 	/*static const char *kyra2CDFilelist[] = {
@@ -174,6 +174,11 @@ bool Resource::loadPakFile(const Common::String &filename) {
 }
 
 void Resource::unloadPakFile(const Common::String &filename) {
+	// never unload these!
+	if (scumm_stricmp(filename.c_str(), "CAVE.APK") == 0 ||
+		scumm_stricmp(filename.c_str(), "LAGOON.APK") == 0)
+		return;
+
 	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 	for (;start != _pakfiles.end(); ++start) {
 		if (scumm_stricmp(start->_filename.c_str(), filename.c_str()) == 0) {
@@ -181,7 +186,6 @@ void Resource::unloadPakFile(const Common::String &filename) {
 			break;
 		}
 	}
-	return;
 }
 
 bool Resource::isInPakList(const Common::String &filename) {
