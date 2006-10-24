@@ -144,12 +144,12 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			_position._play_pos += info.length;
 			break;
 		default:
-			debug(0, "MidiParser_S1D: Unexpected type 0x%02X found", (int) info.event);
+			debug(10, "MidiParser_S1D: Unexpected type 0x%02X found", (int) info.event);
 			break;
 		}
 		break;
 	default:
-		debug(0, "MidiParser_S1D: Unexpected event 0x%02X found", (int) info.command());
+		debug(10, "MidiParser_S1D: Unexpected event 0x%02X found", (int) info.command());
 		break;
 	}
 }

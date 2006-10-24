@@ -123,9 +123,72 @@ void AGOSEngine::drawMenuStrip(uint windowNum, uint menuNum) {
 	mouseOn();
 }
 
+void AGOSEngine::lightMenuStrip(int a) {
+	mouseOff();
+	unlightMenuStrip();
+
+	for (int i = 120; i != 130; i++) {
+		if (a == 0)
+			break;
+
+		if (a & (1 << i - 120)) {
+			enableBox(i);
+			lightMenuBox(i);
+		}
+	}
+
+	mouseOn();	
+}
+
+void AGOSEngine::unlightMenuStrip() {
+	byte *src;
+	int w, h, i;
+
+	mouseOff();
+
+	src = getFrontBuf() + 2832;
+	w = 48;
+	h = 82;
+
+	do {
+		for (i = 0; i != w; ++i) {
+			if (src[i] != 0)
+				src[i] = 14;
+		}
+		src += _dxSurfacePitch;
+	} while (--h);
+
+	for (i = 120; i != 130; i++)
+		disableBox(i);
+
+	mouseOn();
+}
+
+void AGOSEngine::lightMenuBox(uint hitarea) {
+	HitArea *ha = findBox(hitarea);
+	byte *src;
+	int w, h, i;
+
+	mouseOff();
+
+	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
+	w = ha->width;
+	h = ha->height;
+
+	do {
+		for (i = 0; i != w; ++i) {
+			if (src[i] == 14)
+				src[i] = 15;
+		}
+		src += _dxSurfacePitch;
+	} while (--h);
+
+	mouseOn();
+}
+
 // Elvira 2 specific
-uint AGOSEngine::menuFor_e2(Item *item, uint id) {
-	if (id == 0 || id == 2462 || id == 2480)
+uint AGOSEngine::menuFor_e2(Item *item) {
+	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return 0xFFFF;
  
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
@@ -142,7 +205,7 @@ uint AGOSEngine::menuFor_ww(Item *item, uint id) {
 	if (id != 0xFFFF && id < 10 && _textMenu[id] != 0)
 		return _textMenu[id];
 
-	if (item == NULL || itemPtrToID(item) == 542 || itemPtrToID(item) == 558)
+	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return _agosMenu;
 
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);

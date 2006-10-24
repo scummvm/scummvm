@@ -170,7 +170,7 @@ void AGOSEngine::waitForInput() {
 
 	_leftButtonDown = 0;
 	_lastHitArea = 0;
-	_lastClickRem = 0;
+	//_lastClickRem = 0;
 	_verbHitArea = 0;
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
@@ -263,10 +263,12 @@ startOver:
 					break;
 				}
 
-				if (getGameType() == GType_ELVIRA2)
-					doMenuStrip(menuFor_e2(ha->item_ptr, id));
-				else if (getGameType() == GType_WW)
+				if (getGameType() == GType_WW)
 					doMenuStrip(menuFor_ww(ha->item_ptr, id));
+				else if (getGameType() == GType_ELVIRA2)
+					doMenuStrip(menuFor_e2(ha->item_ptr));
+				else if (getGameType() == GType_ELVIRA1)
+					lightMenuStrip(getUserFlag1(ha->item_ptr, 6));
 			} else {
 				// else 1
 				if (ha->verb == 0) {
@@ -303,6 +305,8 @@ startOver:
 out_of_here:
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearMenuStrip();
+	else if (getGameType() == GType_ELVIRA1)
+		unlightMenuStrip();
 
 	_nameLocked = 0;
 	_needHitAreaRecalc++;

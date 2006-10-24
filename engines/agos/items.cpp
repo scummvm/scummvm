@@ -130,6 +130,22 @@ int AGOSEngine::getUserFlag(Item *item, int a) {
 	return	subUserFlag->userFlags[a];
 }
 
+int AGOSEngine::getUserFlag1(Item *item, int a) {
+	SubUserFlag *subUserFlag;
+
+	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
+		return -1;
+
+	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	if (subUserFlag == NULL)
+		return 0;
+
+	if (a < 0 || a > 7)
+		return 0;
+
+	return	subUserFlag->userFlags[a];
+}
+
 void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 	SubUserFlag *subUserFlag;
 

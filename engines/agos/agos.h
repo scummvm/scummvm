@@ -561,6 +561,7 @@ protected:
 	void loadVoice(uint speechId);
 
 	int getUserFlag(Item *item, int a);
+	int getUserFlag1(Item *item, int a);
 	int getUserItem(Item *item, int n);
 	void setUserFlag(Item *item, int a, int b);
 	void setUserItem(Item *item, int n, int m);
@@ -696,11 +697,15 @@ protected:
 	int weightOf(Item *x);
 	void xPlace(Item *x, Item *y);
 
-	uint menuFor_e2(Item *item, uint id);
+	void drawMenuStrip(uint windowNum, uint menuNum);
+	void lightMenuStrip(int a);
+	void unlightMenuStrip();
+	void lightMenuBox(uint hitarea);
+
+	uint menuFor_e2(Item *item);
 	uint menuFor_ww(Item *item, uint id);
 	void clearMenuStrip();
 	void doMenuStrip(uint menuNum);
-	void drawMenuStrip(uint windowNum, uint menuNum);
 
 	void checkLinkBox();
  	void hyperLinkOn(uint16 x);
