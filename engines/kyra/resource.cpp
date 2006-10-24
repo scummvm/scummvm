@@ -81,6 +81,11 @@ Resource::Resource(KyraEngine *engine) {
 			if (!loadPakFile(list[i]))
 				error("couldn't open pakfile '%s'", list[i]);
 		}
+
+		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
+		for (;start != _pakfiles.end(); ++start) {
+			(*start)->protect();
+		}
 	} else {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->name();

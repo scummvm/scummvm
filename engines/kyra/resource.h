@@ -35,7 +35,7 @@ namespace Kyra {
 
 class ResourceFile {
 public:
-	ResourceFile() : _open(false), _filename() {}
+	ResourceFile() : _open(false), _protected(false), _filename() {}
 	virtual ~ResourceFile() {}
 
 	virtual uint8 *getFile(uint file) = 0;
@@ -47,10 +47,12 @@ public:
 	virtual bool isValid(void) const { return (_filename != 0); }
 	bool isOpen(void) const { return _open; }
 
-	virtual void close() { _open = false; }
+	virtual void close() { if (!_protected) _open = false; }
+	virtual void protect(const bool prot = true) { _protected = prot; }
 	virtual void open() { _open = true; }
 protected:
 	bool _open;
+	bool _protected;
 	uint _filename;
 };
 
