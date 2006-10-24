@@ -366,8 +366,8 @@ music2.clu so that ScummVM can tell which ones are from CD 1 and which ones are
 from CD 2. Any other files that appear in both cluster directories are
 identical. Use whichever you like.
 
-In addition, you will need the cd.bin, cd.inf and startup.inf files from the
-sword2 directory on CD 1.
+In addition, you will need the cd.inf and, optionally, the startup.inf
+files from the sword2 directory on CD 1.
 
 ScummVM does not support the original cutscene files, so there is no need to
 copy them.
