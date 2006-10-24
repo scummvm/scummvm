@@ -910,7 +910,7 @@ void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 	_lockWord |= 0x8000;
 	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
 
-	_hitarea_unk_3 = true;
+	_litBoxFlag = true;
 
 	w = ha->width;
 	h = ha->height;

@@ -142,7 +142,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_skipVgaWait = 0;
 	_noParentNotify = 0;
 	_beardLoaded = 0;
-	_hitarea_unk_3 = 0;
+	_litBoxFlag = 0;
 	_mortalFlag = 0;
 	_updateScreen = false;
 	_syncFlag2 = 0;

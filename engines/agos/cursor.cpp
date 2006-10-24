@@ -439,7 +439,7 @@ void AGOSEngine::handleMouseMoved() {
 		_rightButtonDown = 0;
 		x = 1;
 	} else {
-		if (_hitarea_unk_3 == 0 && _needHitAreaRecalc == 0)
+		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
 			goto get_out;
 	}
 
@@ -456,6 +456,7 @@ get_out:
 		drawMousePointer();
 
 	_needHitAreaRecalc = 0;
+	_litBoxFlag = 0;
 }
 
 void AGOSEngine::mouseOff() {

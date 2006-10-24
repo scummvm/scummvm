@@ -278,7 +278,7 @@ protected:
 	bool _skipVgaWait;
 	bool _noParentNotify;
 	bool _beardLoaded;
-	bool _hitarea_unk_3;
+	bool _litBoxFlag;
 	bool _mortalFlag;
 	bool _updateScreen;
 	bool _syncFlag2;

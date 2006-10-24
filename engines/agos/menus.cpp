@@ -128,9 +128,6 @@ void AGOSEngine::lightMenuStrip(int a) {
 	unlightMenuStrip();
 
 	for (int i = 120; i != 130; i++) {
-		if (a == 0)
-			break;
-
 		if (a & (1 << i - 120)) {
 			enableBox(i);
 			lightMenuBox(i);
