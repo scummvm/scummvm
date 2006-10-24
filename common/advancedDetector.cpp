@@ -36,7 +36,7 @@ AdvancedDetector::AdvancedDetector() {
 
 String AdvancedDetector::getDescription(int num) {
 	char tmp[256];
-	ADGameDescription *g = _gameDescriptions[num];
+	const ADGameDescription *g = _gameDescriptions[num];
 
 	snprintf(tmp, 256, "%s (%s %s/%s)", g->name, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language));

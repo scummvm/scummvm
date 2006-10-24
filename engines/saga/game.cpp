@@ -136,7 +136,7 @@ bool SagaEngine::initGame() {
 
 
 	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back((ADGameDescription *)&gameDescriptions[i]);
+		descList.push_back((const ADGameDescription *)&gameDescriptions[i]);
 
 	AdvDetector.registerGameDescriptions(descList);
 	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
@@ -181,7 +181,7 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	Common::ADGameDescList descList;
 
 	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back((ADGameDescription *)&gameDescriptions[i]);
+		descList.push_back((const ADGameDescription *)&gameDescriptions[i]);
 
 	AdvDetector.registerGameDescriptions(descList);
 	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);

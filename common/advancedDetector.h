@@ -42,7 +42,7 @@ struct ADGameDescription {
 };
 
 typedef Array<int> ADList;
-typedef Array<ADGameDescription*> ADGameDescList;
+typedef Array<const ADGameDescription*> ADGameDescList;
 
 class AdvancedDetector {
 
@@ -51,7 +51,7 @@ public:
 	~AdvancedDetector() {};
 
 
-	void registerGameDescriptions(Array<ADGameDescription*> gameDescriptions) {
+	void registerGameDescriptions(ADGameDescList gameDescriptions) {
 		_gameDescriptions = gameDescriptions;
 	}
 
