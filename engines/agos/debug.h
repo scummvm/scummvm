@@ -63,7 +63,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	/* 28 */
-	NULL,
+	"WJ|PREP",
 	"WJ|CHANCE",
 	"IJ|IS_PLAYER",
 	NULL,
@@ -81,9 +81,9 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	NULL,
-	NULL,
+	"IW|GET",
 	/* 44 */
-	NULL,
+	"I|DROP",
 	NULL,
 	NULL,
 	"I|CREATE",
@@ -144,16 +144,16 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"T|SHOW_STRING_NL",
 	/* 92 */
 	"T|SHOW_STRING",
+	"I|LISTOBJ",
 	NULL,
-	NULL,
-	NULL,
+	"|INVEN",
 	/* 96 */
 	"|LOOK",
 	"x|END",
 	"x|DONE",
 	NULL,
 	/* 100 */
-	NULL,
+	"x|OK",
 	NULL,
 	NULL,
 	NULL,
@@ -203,7 +203,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	/* 140 */
-	NULL,
+	"I|EXITS",
 	NULL,
 	NULL,
 	NULL,
@@ -359,7 +359,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"WW|PLAY_TUNE",
 	/* 264 */
 	NULL,
-	NULL,
+	"W|IF_END_TUNE",
 	"Www|SET_ADJ_NOUN",
 	"WW|ZONE_DISK",
 	/* 268 */
