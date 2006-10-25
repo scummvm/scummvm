@@ -25,77 +25,116 @@
 #include "common/util.h"
 #include "common/system.h"
 
+
+struct TimerSlot {
+	Common::TimerManager::TimerProc callback;
+	void *refCon;
+	int32 interval;
+	int32 nextFireTime;
+	
+	TimerSlot *next;
+};
+
+void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
+	// The head points to a fake anchor TimerSlot; this common
+	// trick allows us to get rid of many special cases.
+	
+	const int32 nextFireTime = newSlot->nextFireTime;
+	TimerSlot *slot = head;
+	newSlot->next = 0;
+
+	// Insert the new slot into the sorted list of already scheduled
+	// timers in such a way that the list stays sorted...
+	while (true) {
+		assert(slot);
+		if (slot->next == 0 || slot->next->nextFireTime > nextFireTime) {
+			newSlot->next = slot->next;
+			slot->next = newSlot;
+			return;
+		}
+		slot = slot->next;
+	}
+}
+
+
 DefaultTimerManager::DefaultTimerManager() :
 	_timerHandler(0),
-	_lastTime(0) {
-
-	for (int i = 0; i < MAX_TIMERS; i++) {
-		_timerSlots[i].procedure = NULL;
-		_timerSlots[i].interval = 0;
-		_timerSlots[i].counter = 0;
-	}
-
-	_thisTime = g_system->getMillis();
+	_head(0) {
+	
+	_head = new TimerSlot();
+	memset(_head, 0, sizeof(TimerSlot));
 }
 
 DefaultTimerManager::~DefaultTimerManager() {
 	Common::StackLock lock(_mutex);
-	for (int i = 0; i < MAX_TIMERS; i++) {
-		_timerSlots[i].procedure = NULL;
-		_timerSlots[i].interval = 0;
-		_timerSlots[i].counter = 0;
+	
+	TimerSlot *slot = _head;
+	while (slot) {
+		TimerSlot *next = slot->next;
+		delete slot;
+		slot = next;
 	}
+	_head = 0;
 }
 
 void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
-	uint32 interval, l;
 
-	_lastTime = _thisTime;
-	_thisTime = g_system->getMillis();
-	interval = 1000 * (_thisTime - _lastTime);
+	const int32 curTime = g_system->getMillis();
+	
+	// Repeat as long as there is a TimerSlot that is scheduled to fire.
+	TimerSlot *slot = _head->next;
+	while (slot && slot->nextFireTime < curTime) {
+		// Remove the slot from the priority queue
+		_head->next = slot->next;
+		
+		// Update the fire time and reinsert the TimerSlot into the priority
+		// queue. Has to be done before the timer callback is invoked, in case
+		// the callback wants to remove itself.
+		assert(slot->interval > 0);
+		slot->nextFireTime += slot->interval;
+		insertPrioQueue(_head, slot);
 
-	for (l = 0; l < MAX_TIMERS; l++) {
-		if (_timerSlots[l].procedure && _timerSlots[l].interval > 0) {
-			_timerSlots[l].counter -= interval;
-			while (_timerSlots[l].counter <= 0) {
-				// A small paranoia check which catches the case where
-				// a timer removes itself (which it never should do).
-				assert(_timerSlots[l].procedure && _timerSlots[l].interval > 0);
-				_timerSlots[l].counter += _timerSlots[l].interval;
-				_timerSlots[l].procedure(_timerSlots[l].refCon);
-			}
-		}
+		// Invoke the timer callback
+		assert(slot->callback);
+		slot->callback(slot->refCon);
+		
+		// Look at the next scheduled timer
+		slot = _head->next;
 	}
 }
 
-bool DefaultTimerManager::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
+bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, void *refCon) {
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
+	
+	
+	interval /= 1000;
+	
+	TimerSlot *slot = new TimerSlot;
+	slot->callback = callback;
+	slot->refCon = refCon;
+	slot->interval = interval;
+	slot->nextFireTime = g_system->getMillis() + interval;
+	slot->next = 0;
+	
+	insertPrioQueue(_head, slot);
 
-	for (int l = 0; l < MAX_TIMERS; l++) {
-		if (!_timerSlots[l].procedure) {
-			_timerSlots[l].procedure = procedure;
-			_timerSlots[l].interval = interval;
-			_timerSlots[l].counter = interval;
-			_timerSlots[l].refCon = refCon;
-			return true;
-		}
-	}
-
-	warning("Couldn't find free timer slot");
-	return false;
+	return true;
 }
 
-void DefaultTimerManager::removeTimerProc(TimerProc procedure) {
+void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	Common::StackLock lock(_mutex);
 
-	for (int l = 0; l < MAX_TIMERS; l++) {
-		if (_timerSlots[l].procedure == procedure) {
-			_timerSlots[l].procedure = 0;
-			_timerSlots[l].interval = 0;
-			_timerSlots[l].counter = 1;	// Work around a problem when a timer proc removes itself
-			_timerSlots[l].refCon = 0;
+	TimerSlot *slot = _head;
+	
+	while (slot->next) {
+		if (slot->next->callback == callback) {
+			TimerSlot *next = slot->next->next;
+			delete slot->next;
+			slot->next = next;
+		} else {
+			slot = slot->next;
 		}
 	}
 }

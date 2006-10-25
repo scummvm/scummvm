@@ -27,22 +27,14 @@
 
 class OSystem;
 
+struct TimerSlot;
+	
 class DefaultTimerManager : public Common::TimerManager {
 private:
-	enum {
-		MAX_TIMERS = 8
-	};
 	Common::Mutex _mutex;
 	void *_timerHandler;
-	int32 _thisTime;
-	int32 _lastTime;
-
-	struct TimerSlots {
-		TimerProc procedure;
-		int32 interval;
-		int32 counter;
-		void *refCon;
-	} _timerSlots[MAX_TIMERS];
+	TimerSlot *_head;
+	
 
 public:
 	DefaultTimerManager();
