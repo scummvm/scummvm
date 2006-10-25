@@ -549,6 +549,7 @@ int LogicHEfunshop::checkShape(int32 data0, int32 data1, int32 data4, int32 data
 
 /***********************
  * Backyard Football
+ * Backyard Football 2002
  * Backyard Football Demo
  *
  */
@@ -623,7 +624,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 	default:
 		LogicHE::dispatch(op, numArgs, args);
-		error("Tell sev how to reproduce it");
+		warning("Tell sev how to reproduce it (%d)", op);
 	}
 
 	return res;
@@ -802,7 +803,7 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 	default:
 		// original range is 1001 - 1021
 		LogicHE::dispatch(op, numArgs, args);
-		warning("Tell sev how to reproduce it");
+		warning("Tell sev how to reproduce it (%d)", op);
 	}
 
 	return res;
