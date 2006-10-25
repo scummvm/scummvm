@@ -218,6 +218,14 @@ public:
 
 	const String &getStylefileName() const { return _stylefile; }
 	const String &getThemeName() const { return _stylename; }
+
+	virtual bool supportsImages() const { return false; }
+
+	enum kThemeImages {
+		kImageLogo = 0
+	};
+
+	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
 protected:
 	bool loadConfigFile(const String &file);
 	void getColorFromConfig(const String &name, OverlayColor &col);
@@ -377,7 +385,6 @@ public:
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, State state);
 	void drawLineSeparator(const Common::Rect &r, State state);
-	const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
 
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
@@ -385,6 +392,8 @@ public:
 	int getTabSpacing() const;
 	int getTabPadding() const;
 
+	bool supportsImages() const { return true; }
+	const Graphics::Surface *getImageSurface(const kThemeImages n) const { return n == kImageLogo ? _images[kThemeLogo] : 0; }
 private:
 	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
 	void drawRect(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
@@ -443,7 +452,6 @@ private:
 private:
 	void processExtraValues();
 
-public:
 	enum ImageHandles {
 		kDialogBkgdCorner = 0,
 		kDialogBkgdTop = 1,

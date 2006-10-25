@@ -474,12 +474,10 @@ LauncherDialog::LauncherDialog()
 
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
-	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
+	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "launcher_logo");
 		_logo->useThemeTransparency(true);
-		ThemeModern *th = (ThemeModern *)g_gui.theme();
-
-		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
+		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
 
 		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
 	} else
@@ -866,7 +864,7 @@ void LauncherDialog::updateButtons() {
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
-	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
+	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
@@ -876,9 +874,7 @@ void LauncherDialog::reflowLayout() {
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "launcher_logo");
 		_logo->useThemeTransparency(true);
-		ThemeModern *th = (ThemeModern *)g_gui.theme();
-
-		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
+		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
 	} else {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
 		if (ver) {
