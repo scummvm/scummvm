@@ -42,6 +42,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[37] = &AGOSEngine::oe1_whatO;
 	op[39] = &AGOSEngine::oe1_weigh;
 	op[54] = &AGOSEngine::oe2_moveDirn;
+	op[72] = &AGOSEngine::oe2_doClass;
 	op[73] = &AGOSEngine::oe2_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
@@ -66,6 +67,13 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[162] = &AGOSEngine::oe2_unk162;
 	op[165] = &AGOSEngine::oe2_setSuperRoom;
 	op[166] = &AGOSEngine::oe2_getSuperRoom;
+	op[167] = &AGOSEngine::oe2_setExitOpen;
+	op[168] = &AGOSEngine::oe2_setExitClosed;
+	op[169] = &AGOSEngine::oe2_setExitLocked;
+	op[170] = &AGOSEngine::oe2_setExitClosed;
+	op[171] = &AGOSEngine::oe2_ifExitOpen;
+	op[172] = &AGOSEngine::oe2_ifExitClosed;
+	op[173] = &AGOSEngine::oe2_ifExitLocked;
 	op[175] = &AGOSEngine::o_getDollar2;
 	op[177] = &AGOSEngine::oe2_unk177;
 	op[178] = &AGOSEngine::oe2_unk178;
@@ -84,6 +92,29 @@ void AGOSEngine::oe2_moveDirn() {
 	// 54: move direction
 	int16 d = getVarOrByte();
 	moveDirn_e2(me(), d);
+}
+
+void AGOSEngine::oe2_doClass() {
+	// 72: do class
+	Item *i = getNextItemPtr();
+	byte cm = getByte();
+	int16 num = getVarOrWord();
+
+	_classMask = (cm != 0xFF) ? 1 << cm : 0;
+	_classLine = (SubroutineLine *)((byte *)_currentTable + _currentLine->next);
+	if (num == 1) {
+		_subjectItem = findInByClass(i, (1 << cm));
+		if (_subjectItem)
+			_classMode1 = 1;
+		else
+			_classMode1 = 0;
+	} else {
+		_objectItem = findInByClass(i, (1 << cm));
+		if (_objectItem)
+			_classMode2 = 1;
+		else
+			_classMode2 = 0;
+	}
 }
 
 void AGOSEngine::oe2_pObj() {
@@ -209,6 +240,54 @@ void AGOSEngine::oe2_setSuperRoom() {
 void AGOSEngine::oe2_getSuperRoom() {
 	// 166: get super room
 	writeNextVarContents(_superRoomNumber);
+}
+
+void AGOSEngine::oe2_setExitOpen() {
+	// 167: set exit open
+	Item *i = getNextItemPtr();
+	uint16 n = getVarOrWord();
+	uint16 d = getVarOrByte();
+	setExitState(i, n, d, 1);
+}
+
+void AGOSEngine::oe2_setExitClosed() {
+	// 168: set exit closed
+	Item *i = getNextItemPtr();
+	uint16 n = getVarOrWord();
+	uint16 d = getVarOrByte();
+	setExitState(i, n, d, 2);
+}
+
+void AGOSEngine::oe2_setExitLocked() {
+	// 169: set exit locked
+	Item *i = getNextItemPtr();
+	uint16 n = getVarOrWord();
+	uint16 d = getVarOrByte();
+	setExitState(i, n, d, 3);
+}
+
+void AGOSEngine::oe2_ifExitOpen() {
+	// 171: if exit open
+	Item *i = getNextItemPtr();
+	uint16 n = getVarOrWord();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getExitState(i, n, d) == 1);
+}
+
+void AGOSEngine::oe2_ifExitClosed() {
+	// 172: if exit closed
+	Item *i = getNextItemPtr();
+	uint16 n = getVarOrWord();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getExitState(i, n, d) == 2);
+}
+
+void AGOSEngine::oe2_ifExitLocked() {
+	// 173: if exit locked
+	Item *i = getNextItemPtr();
+	uint16 n = getVarOrWord();
+	uint16 d = getVarOrByte();
+	setScriptCondition(getExitState(i, n, d) == 3);
 }
 
 void AGOSEngine::oe2_unk177() {

@@ -63,6 +63,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[36] = &AGOSEngine::o_oflag;
 	op[37] = &AGOSEngine::oe1_canPut;
 
+	op[47] = &AGOSEngine::oe1_create;
 	op[48] = &AGOSEngine::o_destroy;
 
 	op[51] = &AGOSEngine::o_place;
@@ -105,6 +106,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[91] = &AGOSEngine::o_message;
 	op[92] = &AGOSEngine::o_msg;
 
+	op[96] = &AGOSEngine::oe1_look;
 	op[97] = &AGOSEngine::o_end;
 	op[98] = &AGOSEngine::o_done;
 
@@ -139,6 +141,9 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[181] = &AGOSEngine::oe1_doorExit;
 
 	op[198] = &AGOSEngine::o_comment;
+
+	op[201] = &AGOSEngine::oe1_saveGame;
+	op[202] = &AGOSEngine::oe1_loadGame;
 
 	op[206] = &AGOSEngine::o_getParent;
 	op[207] = &AGOSEngine::o_getNext;
@@ -290,6 +295,11 @@ void AGOSEngine::oe1_canPut() {
 	setScriptCondition(canPlace(item1, item2) == 0);
 }
 
+void AGOSEngine::oe1_create() {
+	// 47: create
+	setItemParent(getNextItemPtr(), derefItem(me()->parent));
+}
+
 void AGOSEngine::oe1_copyof() {
 	// 54: copy of
 	Item *item = getNextItemPtr();
@@ -335,6 +345,11 @@ void AGOSEngine::oe1_score() {
 	// 90: score
 	SubPlayer *p = (SubPlayer *) findChildOfType(me(), 3);
 	showMessageFormat("Your score is %ld.\n", p->score);
+}
+
+void AGOSEngine::oe1_look() {
+	// 96: look
+	debug(0, "oe1_look: stub");
 }
 
 void AGOSEngine::oe1_doClass() {
@@ -459,6 +474,16 @@ void AGOSEngine::oe1_doorExit() {
 		ct++;
 	}
 	writeVariable(f, 255);
+}
+
+void AGOSEngine::oe1_saveGame() {
+	// 201: save game
+	debug(0, "oe1_saveGame: stub (%s)", getStringPtrByID(getNextStringID()));
+}
+
+void AGOSEngine::oe1_loadGame() {
+	// 202: load game
+	debug(0, "oe1_loadGame: stub (%s)", getStringPtrByID(getNextStringID()));
 }
 
 void AGOSEngine::oe1_clearUserItem() {

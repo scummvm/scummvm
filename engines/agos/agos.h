@@ -682,15 +682,23 @@ protected:
 	void setup_cond_c_helper();
 
 	uint16 getBackExit(int n);
-	uint16 getDoorOf(Item *item, uint16 d);
 	uint16 getDoorState(Item *item, uint16 d);
-	uint16 getExitOf_e1(Item *item, uint16 d);
 	uint16 getExitOf(Item *item, uint16 d);
-	uint16 getExitState(Item *item, uint16 x, uint16 d);
 	void changeDoorState(SubRoom *r, uint16 d, uint16 n);
 	void setDoorState(Item *i, uint16 d, uint16 n);
+
+	// Elvira 1 specific
+	uint16 getDoorOf(Item *item, uint16 d);
+	uint16 getExitOf_e1(Item *item, uint16 d);
 	void moveDirn_e1(Item *i, uint x);
+
+	// Elvira 2 specific
+	int changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s);
+	uint16 getExitState(Item *item, uint16 x, uint16 d);
+	void setExitState(Item *i, uint16 n, uint16 d, uint16 s);
 	void moveDirn_e2(Item *i, uint x);
+
+	// Waxworks specific
 	void moveDirn_ww(Item *i, uint x);
 
 	int canPlace(Item *x, Item *y);
@@ -1106,6 +1114,7 @@ public:
 	void oe1_isNotIn();
 	void oe1_isPlayer();
 	void oe1_canPut();
+	void oe1_create();
 	void oe1_copyof();
 	void oe1_copyfo();
 	void oe1_whatO();
@@ -1113,6 +1122,7 @@ public:
 	void oe1_setFF();
 	void oe1_moveDirn();
 	void oe1_score();
+	void oe1_look();
 	void oe1_doClass();
 	void oe1_pObj();
 	void oe1_pName();
@@ -1123,6 +1133,8 @@ public:
 	void oe1_getUserItem();
 	void oe1_whereTo();
 	void oe1_doorExit();
+	void oe1_saveGame();
+	void oe1_loadGame();
 	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();
@@ -1142,6 +1154,7 @@ public:
 
 	// Opcodes, Elvira 2 only
 	void oe2_moveDirn();
+	void oe2_doClass();
 	void oe2_pObj();
 	void oe2_loadUserGame();
 	void oe2_drawItem();
@@ -1155,6 +1168,12 @@ public:
 	void oe2_unk162();
 	void oe2_setSuperRoom();
 	void oe2_getSuperRoom();
+	void oe2_setExitOpen();
+	void oe2_setExitClosed();
+	void oe2_setExitLocked();
+	void oe2_ifExitOpen();
+	void oe2_ifExitClosed();
+	void oe2_ifExitLocked();
 	void oe2_unk177();
 	void oe2_unk178();
 

@@ -86,7 +86,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	NULL,
-	NULL,
+	"I|CREATE",
 	/* 48 */
 	"I|SET_NO_PARENT",
 	NULL,
@@ -148,7 +148,7 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	/* 96 */
-	NULL,
+	"|LOOK",
 	"x|END",
 	"x|DONE",
 	NULL,
@@ -279,8 +279,8 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	/* 200 */
 	NULL,
-	NULL,
-	NULL,
+	"T|SAVE_GAME",
+	"T|LOAD_GAME",
 	"|NOT",
 	/* 204 */
 	NULL,
@@ -476,7 +476,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	NULL,
 	"W|START_SUB",
 	/* 72 */
-	NULL,
+	"IBW|DO_CLASS",
 	"I|PRINT_OBJ",
 	"I|PRINT_NAME",
 	"I|PRINT_CNAME",
@@ -593,16 +593,16 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	/* 164 */
 	NULL,
 	"W|SET_SUPER_ROOM",
-	"BV|GET_SUPER_ROOM",
-	NULL,
+	"V|GET_SUPER_ROOM",
+	"IWB|SET_EXIT_OPEN",
 	/* 168 */
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	"IWB|SET_EXIT_CLOSED",
+	"IWB|SET_EXIT_LOCKED",
+	"IWB|SET_EXIT_CLOSED",
+	"IWBJ|IF_EXIT_OPEN",
 	/* 172 */
-	NULL,
-	NULL,
+	"IWBJ|IF_EXIT_CLOSED",
+	"IWBJ|IF_EXIT_LOCKED",
 	"W|UNK_174",
 	"|getDollar2",
 	/* 176 */
