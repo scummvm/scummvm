@@ -581,6 +581,7 @@ restart:
 		if (!_subjectItem) {
 			_classMode1 = 0;
 		} else {
+			delay(0);
 			sl = _classLine;	/* Rescanner */
 			goto restart;
 		}
@@ -591,6 +592,7 @@ restart:
 		if (!_objectItem) {
 			_classMode2 = 0;
 		} else {
+			delay(0);
 			sl = _classLine;	/* Rescanner */
 			goto restart;
 		}
@@ -598,6 +600,7 @@ restart:
 
 	/* result -10 means restart subroutine */
 	if (result == -10) {
+		delay(0);
 		sl = (SubroutineLine *)((byte *)sub + sub->first);
 		goto restart;
 	}
