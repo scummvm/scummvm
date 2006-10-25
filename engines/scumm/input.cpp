@@ -39,6 +39,7 @@
 #endif
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/intern.h"
 
 
 #ifdef _WIN32_WCE
