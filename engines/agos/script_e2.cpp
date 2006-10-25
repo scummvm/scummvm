@@ -47,7 +47,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
 	op[83] = &AGOSEngine::o1_rescan;
-	op[89] = &AGOSEngine::oe2_loadUserGame;
+	op[89] = &AGOSEngine::oe1_loadGame;
 	op[94] = &AGOSEngine::oe1_findMaster;
 	op[95] = &AGOSEngine::oe1_nextMaster;
 	op[98] = &AGOSEngine::o1_animate;
@@ -123,11 +123,6 @@ void AGOSEngine::oe2_pObj() {
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		showMessageFormat((const char *)getStringPtrByID(subObject->objectFlagValue[0]));
-}
-
-void AGOSEngine::oe2_loadUserGame() {
-	// 89: load user game
-	getStringPtrByID(getNextStringID());
 }
 
 void AGOSEngine::oe2_drawItem() {

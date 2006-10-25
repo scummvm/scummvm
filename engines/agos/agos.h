@@ -1063,7 +1063,6 @@ public:
 	void o_setAdjNoun();
 	void o_saveUserGame();
 	void o_loadUserGame();
-	void o_stopTune();
 	void o_pauseGame();
 	void o_copysf();
 	void o_restoreIcons();
@@ -1126,7 +1125,6 @@ public:
 	void oe1_pName();
 	void oe1_pcName();
 	void oe1_cFlag();
-	void oe1_means();
 	void oe1_setUserItem();
 	void oe1_getUserItem();
 	void oe1_whereTo();
@@ -1145,6 +1143,7 @@ public:
 	void oe1_bitTest();
 	void oe1_zoneDisk();
 	void oe1_printStats();
+	void oe1_stopTune();
 	void oe1_printPlayerDamage();
 	void oe1_printMonsterDamage();
 	void oe1_printPlayerHit();
@@ -1154,7 +1153,6 @@ public:
 	void oe2_moveDirn();
 	void oe2_doClass();
 	void oe2_pObj();
-	void oe2_loadUserGame();
 	void oe2_drawItem();
 	void oe2_setDoorOpen();
 	void oe2_setDoorClosed();

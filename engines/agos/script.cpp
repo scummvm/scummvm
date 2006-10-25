@@ -124,7 +124,6 @@ void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	op[130] = &AGOSEngine::o_setAdjNoun;
 	op[132] = &AGOSEngine::o_saveUserGame;
 	op[133] = &AGOSEngine::o_loadUserGame;
-	op[134] = &AGOSEngine::o_stopTune;
 	op[135] = &AGOSEngine::o_pauseGame;
 	op[136] = &AGOSEngine::o_copysf;
 	op[137] = &AGOSEngine::o_restoreIcons;
@@ -880,14 +879,6 @@ void AGOSEngine::o_loadUserGame() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	userGame(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-}
-
-void AGOSEngine::o_stopTune() {
-	// 134: stop tune
-	if (getGameType() == GType_SIMON2) {
-		midi.stop();
-		_lastMusicPlayed = -1;
-	}
 }
 
 void AGOSEngine::o_pauseGame() {

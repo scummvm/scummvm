@@ -131,7 +131,6 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[162] = &AGOSEngine::oe1_cFlag;
 
 	op[164] = &AGOSEngine::o1_rescan;
-	op[165] = &AGOSEngine::oe1_means;
 
 	op[176] = &AGOSEngine::oe1_setUserItem;
 	op[177] = &AGOSEngine::oe1_getUserItem;
@@ -194,7 +193,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[268] = &AGOSEngine::o_saveUserGame;
 	op[269] = &AGOSEngine::o_loadUserGame;
 	op[270] = &AGOSEngine::oe1_printStats;
-	op[271] = &AGOSEngine::o_stopTune;
+	op[271] = &AGOSEngine::oe1_stopTune;
 	op[272] = &AGOSEngine::oe1_printPlayerDamage;
 	op[273] = &AGOSEngine::oe1_printMonsterDamage;
 	op[274] = &AGOSEngine::o_pauseGame;
@@ -405,19 +404,6 @@ void AGOSEngine::oe1_cFlag() {
 		setScriptCondition(false);
 	else
 		setScriptCondition((c->flags & (1 << bit)) != 0);
-}
-
-void AGOSEngine::oe1_means() {
-	// 165: means
-	_scriptVerb = getNextWord();
-	_scriptNoun1 = getNextWord();
-	_scriptNoun2 = getNextWord();
-
-	if (getVarOrWord()) {
-		int16 tmp = _scriptNoun1;
-		_scriptNoun1 = _scriptNoun2;
-		_scriptNoun2 = tmp;
-	}
 }
 
 void AGOSEngine::oe1_setUserItem() {
@@ -655,6 +641,10 @@ void AGOSEngine::oe1_printStats() {
 	writeChar(window, 36, 133, 4, val);
 
 	mouseOn();
+}
+
+void AGOSEngine::oe1_stopTune() {
+	// 271: stop tune
 }
 
 void AGOSEngine::oe1_printPlayerDamage() {

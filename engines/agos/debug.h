@@ -710,9 +710,9 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"W|START_SUB",
 	/* 72 */
 	NULL,
-	"I|PRINT_OBJ",
-	"I|PRINT_NAME",
-	"I|PRINT_CNAME",
+	NULL,
+	NULL,
+	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
 	"J|IS_M1_EMPTY",
@@ -760,7 +760,7 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"WWW|MOVE_BOX",
 	/* 112 */
 	NULL,
-	"IBWW|DRAW_ITEM",
+	NULL,
 	"IB|DO_ICONS",
 	"IBJ|IS_CLASS",
 	/* 116 */
@@ -772,9 +772,9 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"W|SYNC",
 	"BI|DEF_OBJ",
 	NULL,
-	"|SET_TIME",
+	NULL,
 	/* 124 */
-	"WJ|IF_TIME",
+	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
