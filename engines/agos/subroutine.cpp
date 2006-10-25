@@ -215,8 +215,8 @@ Subroutine *AGOSEngine::getSubroutineByID(uint subroutine_id) {
 		}
 	}
 
-	//if (subroutine_id != 160)
-	//	debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
+	if (subroutine_id != 160)
+		debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
 	return NULL;
 }
 
@@ -312,7 +312,6 @@ bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 	p += 6;
 
 	while (min_num) {
-		//printf("loadTablesOldIntoMem: min %d max %d\n", min_num, max_num);
 		if ((subr_id >= min_num) && (subr_id <= max_num)) {
 			_subroutineList = _subroutineListOrg;
 			_tablesHeapPtr = _tablesHeapPtrOrg;
@@ -369,7 +368,6 @@ bool AGOSEngine::loadTablesNewIntoMem(uint subr_id) {
 
 			max_num = READ_BE_UINT16(p); p += 2;
 
-			//printf("loadTablesNewIntoMem: min %d max %d\n", min_num, max_num);
 			if (subr_id >= min_num && subr_id <= max_num) {
 				_subroutineList = _subroutineListOrg;
 				_tablesHeapPtr = _tablesHeapPtrOrg;
@@ -515,12 +513,9 @@ SubroutineLine *AGOSEngine::createSubroutineLine(Subroutine *sub, int where) {
 void AGOSEngine::runSubroutine101() {
 	Subroutine *sub;
 
-	for (int i = 0; i < 1000000; i++) {
-		sub = getSubroutineByID(i);
-		if (sub != NULL)
-			startSubroutine(sub);
-	}
-	error("Complete");
+	sub = getSubroutineByID(101);
+	if (sub != NULL)
+		startSubroutineEx(sub);
 
 	permitInput();
 }
@@ -542,10 +537,8 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	_classMode1 = 0;
 	_classMode2 = 0;
 
-	//if (_startMainScript)
+	if (_startMainScript)
 		dumpSubroutine(sub);
-
-	return 0;
 
 	if (++_recursionDepth > 40)
 		error("Recursion error");
