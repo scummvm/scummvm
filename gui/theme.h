@@ -66,7 +66,7 @@ enum {
 	// Indicates that no background should be restored when drawing the widget
 	// (note that this can be silently ignored if for example the theme does
 	// alpha blending and would blend over a allready drawn widget)
-	// TODO: currently only ThemeNew::drawButton supports this
+	// TODO: currently only ThemeModern::drawButton supports this
 	THEME_HINT_NO_BACKGROUND_RESTORE = 1 << 6
 };
 
@@ -333,11 +333,11 @@ private:
 
 #ifndef DISABLE_FANCY_THEMES
 
-class ThemeNew : public Theme {
+class ThemeModern : public Theme {
 	typedef Common::String String;
 public:
-	ThemeNew(OSystem *system, const String &stylefile, const Common::ConfigFile *cfg = 0);
-	virtual ~ThemeNew();
+	ThemeModern(OSystem *system, const String &stylefile, const Common::ConfigFile *cfg = 0);
+	virtual ~ThemeModern();
 
 	bool init();
 	void deinit();
@@ -514,7 +514,7 @@ public:
 
 private:
 	int _dimPercentValue;
-	typedef OverlayColor (ThemeNew::*InactiveDialogCallback)(OverlayColor col);	
+	typedef OverlayColor (ThemeModern::*InactiveDialogCallback)(OverlayColor col);	
 	InactiveDialogCallback _dialogShadingCallback;
 	
 	OverlayColor calcLuminance(OverlayColor col);

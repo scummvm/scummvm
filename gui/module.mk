@@ -22,7 +22,7 @@ MODULE_OBJS := \
 	widget.o \
 	theme.o \
 	ThemeClassic.o \
-	ThemeNew.o \
+	ThemeModern.o \
 	theme-config.o
 
 # Include common rules 

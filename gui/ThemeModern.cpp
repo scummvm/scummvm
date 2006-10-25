@@ -53,7 +53,7 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 
 #pragma mark -
 
-ThemeNew::ThemeNew(OSystem *system, const Common::String &stylefile, const Common::ConfigFile *cfg) : Theme(), _system(system), _screen(), _initOk(false),
+ThemeModern::ThemeModern(OSystem *system, const Common::String &stylefile, const Common::ConfigFile *cfg) : Theme(), _system(system), _screen(), _initOk(false),
 _lastUsedBitMask(0), _forceRedraw(false), _imageHandles(0), _images(0), _colors(), _fonts(), _cursor(0), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
@@ -106,7 +106,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _imageHandles(0), _images(0), _colors(
 	_lastUsedBitMask = gBitFormat;
 }
 
-ThemeNew::~ThemeNew() {
+ThemeModern::~ThemeModern() {
 	deleteFonts();
 	deinit();
 	delete [] _images;
@@ -120,7 +120,7 @@ ThemeNew::~ThemeNew() {
 	ImageMan.remArchive(_stylefile + ".zip");
 }
 
-bool ThemeNew::init() {
+bool ThemeModern::init() {
 	if (!_images)
 		return false;
 
@@ -148,7 +148,7 @@ bool ThemeNew::init() {
 	return true;
 }
 
-void ThemeNew::deinit() {
+void ThemeModern::deinit() {
 	if (_initOk) {
 		_system->hideOverlay();
 		_screen.free();
@@ -156,7 +156,7 @@ void ThemeNew::deinit() {
 	}
 }
 
-void ThemeNew::refresh() {
+void ThemeModern::refresh() {
 	init();
 	resetupGuiRenderer();
 	if (_enabled) {
@@ -166,7 +166,7 @@ void ThemeNew::refresh() {
 	}		
 }
 
-void ThemeNew::enable() {
+void ThemeModern::enable() {
 	init();
 	resetupGuiRenderer();
 	resetDrawArea();
@@ -176,13 +176,13 @@ void ThemeNew::enable() {
 	_enabled = true;
 }
 
-void ThemeNew::disable() {
+void ThemeModern::disable() {
 	_system->hideOverlay();
 	PaletteMan.popCursorPalette();
 	_enabled = false;
 }
 
-void ThemeNew::openDialog(bool topDialog) {
+void ThemeModern::openDialog(bool topDialog) {
 	if (!_dialog) {
 		_dialog = new DialogState;
 		assert(_dialog);
@@ -206,7 +206,7 @@ void ThemeNew::openDialog(bool topDialog) {
 		addDirtyRect(Common::Rect(0, 0, _screen.w, _screen.h), false, false);
 }
 
-void ThemeNew::closeDialog() {
+void ThemeModern::closeDialog() {
 	if (_dialog) {
 		_dialog->screen.free();
 		delete _dialog;
@@ -215,7 +215,7 @@ void ThemeNew::closeDialog() {
 	_forceRedraw = true;
 }
 
-void ThemeNew::clearAll() {
+void ThemeModern::clearAll() {
 	if (!_initOk)
 		return;
 	_system->clearOverlay();
@@ -223,12 +223,12 @@ void ThemeNew::clearAll() {
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
 }
 
-void ThemeNew::drawAll() {
-	// TODO: see ThemeNew::addDirtyRect
+void ThemeModern::drawAll() {
+	// TODO: see ThemeModern::addDirtyRect
 	_forceRedraw = false;
 }
 
-void ThemeNew::setDrawArea(const Common::Rect &r) {
+void ThemeModern::setDrawArea(const Common::Rect &r) {
 	if (_initOk) {
 		_drawArea = r;
 		_shadowDrawArea = Common::Rect(r.left-_shadowLeftWidth, r.top-_shadowTopHeight, r.right+_shadowRightWidth, r.bottom+_shadowBottomHeight);
@@ -237,7 +237,7 @@ void ThemeNew::setDrawArea(const Common::Rect &r) {
 	}
 }
 
-void ThemeNew::resetDrawArea() {
+void ThemeModern::resetDrawArea() {
 	if (_initOk) {
 		_drawArea = Common::Rect(0, 0, _screen.w, _screen.h);
 		_shadowDrawArea = _drawArea;
@@ -246,7 +246,7 @@ void ThemeNew::resetDrawArea() {
 
 #define surface(x) (_images[x])
  
-void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, State state) {
+void ThemeModern::drawDialogBackground(const Common::Rect &r, uint16 hints, State state) {
 	if (!_initOk)
 		return;
 
@@ -279,7 +279,7 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, State s
 	addDirtyRect(r2, (hints & THEME_HINT_SAVE_BACKGROUND) != 0, true);
 }
 
-void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeModern::drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!_initOk)
 		return;
 
@@ -300,7 +300,7 @@ void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, State 
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state) {
+void ThemeModern::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state) {
 	if (!_initOk)
 		return;
 	restoreBackground(r);
@@ -308,7 +308,7 @@ void ThemeNew::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *fo
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state) {
+void ThemeModern::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state) {
 	if (!_initOk)
 		return;
 
@@ -384,7 +384,7 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetB
 	addDirtyRect((hints & THEME_HINT_USE_SHADOW) ? r2 : r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
-void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints) {
+void ThemeModern::drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints) {
 	if (!_initOk)
 		return;
 	
@@ -428,7 +428,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, Stat
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans) {
+void ThemeModern::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans) {
 	if (!_initOk)
 		return;
 
@@ -471,7 +471,7 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 	addDirtyRect(rect);
 }
 
-void ThemeNew::drawSlider(const Common::Rect &rr, int width, State state) {
+void ThemeModern::drawSlider(const Common::Rect &rr, int width, State state) {
 	if (!_initOk)
 		return;
 
@@ -503,7 +503,7 @@ void ThemeNew::drawSlider(const Common::Rect &rr, int width, State state) {
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align) {
+void ThemeModern::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align) {
 	if (!_initOk)
 		return;
 
@@ -545,7 +545,7 @@ void ThemeNew::drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state) {
+void ThemeModern::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state) {
 	if (!_initOk)
 		return;
 	Common::Rect r2 = r;
@@ -563,7 +563,7 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state) {
+void ThemeModern::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state) {
 	if (!_initOk)
 		return;
 
@@ -627,7 +627,7 @@ void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const
 	addDirtyRect(Common::Rect(r.left, r.top-2, r.right, r.bottom));
 }
 
-void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, State state) {
+void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, State state) {
 	if (!_initOk)
 		return;
 	const int UP_DOWN_BOX_HEIGHT = r.width() + 1;
@@ -715,7 +715,7 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawCaret(const Common::Rect &r, bool erase, State state) {
+void ThemeModern::drawCaret(const Common::Rect &r, bool erase, State state) {
 	if (!_initOk)
 		return;
 
@@ -744,23 +744,23 @@ void ThemeNew::drawCaret(const Common::Rect &r, bool erase, State state) {
 	addDirtyRect(r);
 }
 
-void ThemeNew::drawLineSeparator(const Common::Rect &r, State state) {
+void ThemeModern::drawLineSeparator(const Common::Rect &r, State state) {
 	if (!_initOk)
 		return;
 	_screen.hLine(r.left - 1, r.top + r.height() / 2, r.right, _system->RGBToColor(0, 0, 0));
 	addDirtyRect(r);
 }
 
-int ThemeNew::getTabSpacing() const {
+int ThemeModern::getTabSpacing() const {
 	return 0;
 }
-int ThemeNew::getTabPadding() const {
+int ThemeModern::getTabPadding() const {
 	return 3;
 }
 
 #pragma mark - intern drawing
 
-void ThemeNew::restoreBackground(Common::Rect r, bool special) {
+void ThemeModern::restoreBackground(Common::Rect r, bool special) {
 	r.clip(_screen.w, _screen.h);
 	if (special) {
 		r.clip(_shadowDrawArea);
@@ -784,7 +784,7 @@ void ThemeNew::restoreBackground(Common::Rect r, bool special) {
 	}
 }
 
-bool ThemeNew::addDirtyRect(Common::Rect r, bool backup, bool special) {
+bool ThemeModern::addDirtyRect(Common::Rect r, bool backup, bool special) {
 	// TODO: implement proper dirty rect handling
 	// FIXME: problem with the 'pitch'
 	r.clip(_screen.w, _screen.h);
@@ -809,7 +809,7 @@ bool ThemeNew::addDirtyRect(Common::Rect r, bool backup, bool special) {
 	return true;
 }
 
-void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor) {
+void ThemeModern::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor) {
 	OverlayColor *ptr = (OverlayColor*)_screen.getBasePtr(r.left, r.top);
 	int h = r.height();
 	while (h--) {
@@ -821,11 +821,11 @@ void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor
 	}
 }
 
-void ThemeNew::drawRect(const Common::Rect &r, const Surface *corner, const Surface *top, const Surface *left, const Surface *fill, int alpha, bool skipLastRow) {
+void ThemeModern::drawRect(const Common::Rect &r, const Surface *corner, const Surface *top, const Surface *left, const Surface *fill, int alpha, bool skipLastRow) {
 	drawRectMasked(r, corner, top, left, fill, alpha, _system->RGBToColor(255, 255, 255), _system->RGBToColor(255, 255, 255), 1, skipLastRow);
 }
 
-void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
+void ThemeModern::drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 							const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
 							OverlayColor start, OverlayColor end, uint factor, bool skipLastRow, bool skipTopRow) {
 	int drawWidth = MIN(corner->w, MIN(top->w, MIN(left->w, fill->w)));
@@ -894,7 +894,7 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 	}
 }
 
-Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
+Common::Rect ThemeModern::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 	switch (shadowStyle) {
 	case kShadowButton:
 		return Common::Rect(r.left - 1, r.top - 1, r.right + 1, r.bottom + 1);
@@ -915,7 +915,7 @@ Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 	return Common::Rect();
 }
 
-void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
+void ThemeModern::drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 						const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow, bool skipTopRow) {
 	switch (shadowStyle) {
 	case kShadowFull: {
@@ -972,7 +972,7 @@ void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner
 	}
 }
 
-void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
+void ThemeModern::drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
 							const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
 							int alpha, bool skipLastRow, bool skipTopRow) {
 	int drawWidth = MIN(corner->w, MIN(top->w, MIN(left->w, fill->w)));
@@ -1050,11 +1050,11 @@ void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, c
 	}
 }
 
-void ThemeNew::drawSurface(const Common::Rect &r, const Surface *surf, bool upDown, bool leftRight, int alpha) {
+void ThemeModern::drawSurface(const Common::Rect &r, const Surface *surf, bool upDown, bool leftRight, int alpha) {
 	drawSurfaceMasked(r, surf, upDown, leftRight, alpha, _system->RGBToColor(255, 255, 255), _system->RGBToColor(255, 255, 255));
 }
 
-void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight,
+void ThemeModern::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight,
 								int alpha, OverlayColor start, OverlayColor end, uint factor) {
 	OverlayColor *dst = (OverlayColor*)_screen.getBasePtr(r.left, r.top);
 	const OverlayColor *src = 0;
@@ -1137,7 +1137,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 #undef NO_EFFECT
 }
 
-OverlayColor ThemeNew::getColor(State state) {
+OverlayColor ThemeModern::getColor(State state) {
 	switch (state) {
 	case kStateDisabled:
 		return _colors[kColorStateDisabled];
@@ -1151,7 +1151,7 @@ OverlayColor ThemeNew::getColor(State state) {
 	return _colors[kColorStateEnabled];
 }
 
-void ThemeNew::resetupGuiRenderer() {
+void ThemeModern::resetupGuiRenderer() {
 	if (_lastUsedBitMask == gBitFormat || !_initOk) {
 		// ok same format no need to reload
 		return;
@@ -1172,7 +1172,7 @@ void ThemeNew::resetupGuiRenderer() {
 	setupColors();
 }
 
-void ThemeNew::setupColors() {
+void ThemeModern::setupColors() {
 	// load the colors from the config file
 	getColorFromConfig("main_dialog_start", _colors[kMainDialogStart]);
 	getColorFromConfig("main_dialog_end", _colors[kMainDialogEnd]);
@@ -1245,7 +1245,7 @@ void ThemeNew::setupColors() {
 #define FONT_NAME_FIXED_BOLD "newgui_fixed_bold"
 #define FONT_NAME_FIXED_ITALIC "newgui_fixed_italic"
 
-void ThemeNew::setupFonts() {
+void ThemeModern::setupFonts() {
 	if (_screen.w >= 400 && _screen.h >= 270) {
 		setupFont("fontfile_bold", FONT_NAME_BOLD, kFontStyleBold);
 		setupFont("fontfile_normal", FONT_NAME_NORMAL, kFontStyleNormal);
@@ -1261,7 +1261,7 @@ void ThemeNew::setupFonts() {
 	}
 }
 
-void ThemeNew::deleteFonts() {
+void ThemeModern::deleteFonts() {
 	const Graphics::Font *normal = FontMan.getFontByName(FONT_NAME_NORMAL);
 	const Graphics::Font *bold = FontMan.getFontByName(FONT_NAME_BOLD);
 	const Graphics::Font *italic = FontMan.getFontByName(FONT_NAME_ITALIC);
@@ -1275,7 +1275,7 @@ void ThemeNew::deleteFonts() {
 	FontMan.removeFontName(FONT_NAME_ITALIC);
 }
 
-void ThemeNew::setupFont(const String &key, const String &name, FontStyle style) {
+void ThemeModern::setupFont(const String &key, const String &name, FontStyle style) {
 	if (_evaluator->getVar(key) == EVAL_STRING_VAR) {
 		_fonts[style] = FontMan.getFontByName(name);
 
@@ -1295,7 +1295,7 @@ void ThemeNew::setupFont(const String &key, const String &name, FontStyle style)
 
 #pragma mark -
 
-void ThemeNew::processExtraValues() {
+void ThemeModern::processExtraValues() {
 	static Common::String imageHandlesTable[kImageHandlesMax];
 
 	// load the pixmap filenames from the config file
@@ -1413,7 +1413,7 @@ void ThemeNew::processExtraValues() {
 		break;
 
 	case kShadingLuminance:
-		_dialogShadingCallback = &ThemeNew::calcLuminance;
+		_dialogShadingCallback = &ThemeModern::calcLuminance;
 		break;
 
 	case kShadingDim:
@@ -1427,7 +1427,7 @@ void ThemeNew::processExtraValues() {
 				
 		if (_dimPercentValue != 0) {
 			_dimPercentValue = 256 * (100 - _dimPercentValue) / 100;
-			_dialogShadingCallback = &ThemeNew::calcDimColor;
+			_dialogShadingCallback = &ThemeModern::calcDimColor;
 		}
 		break;
 
@@ -1448,7 +1448,7 @@ void ThemeNew::processExtraValues() {
 
 #pragma mark -
 
-OverlayColor ThemeNew::calcLuminance(OverlayColor col) {
+OverlayColor ThemeModern::calcLuminance(OverlayColor col) {
 	uint8 r, g, b;
 	_system->colorToRGB(col, r, g, b);
 
@@ -1457,7 +1457,7 @@ OverlayColor ThemeNew::calcLuminance(OverlayColor col) {
 	return _system->RGBToColor(lum, lum, lum);
 }
 
-OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
+OverlayColor ThemeModern::calcDimColor(OverlayColor col) {
 	uint8 r, g, b;
 	_system->colorToRGB(col, r, g, b);
 	
@@ -1470,13 +1470,13 @@ OverlayColor ThemeNew::calcDimColor(OverlayColor col) {
 
 #pragma mark -
 
-void ThemeNew::setUpCursor() {
+void ThemeModern::setUpCursor() {
 	PaletteMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 	CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 	CursorMan.showMouse(true);
 }
 
-void ThemeNew::createCursor() {
+void ThemeModern::createCursor() {
 	const Surface *cursor = _images[kGUICursor];
 
 	_cursorWidth = cursor->w;

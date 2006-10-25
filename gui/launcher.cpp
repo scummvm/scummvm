@@ -477,7 +477,7 @@ LauncherDialog::LauncherDialog()
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
 		_logo = new GraphicsWidget(this, "launcher_logo");
 		_logo->useThemeTransparency(true);
-		ThemeNew *th = (ThemeNew *)g_gui.theme();
+		ThemeModern *th = (ThemeModern *)g_gui.theme();
 
 		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
 
@@ -876,7 +876,7 @@ void LauncherDialog::reflowLayout() {
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "launcher_logo");
 		_logo->useThemeTransparency(true);
-		ThemeNew *th = (ThemeNew *)g_gui.theme();
+		ThemeModern *th = (ThemeModern *)g_gui.theme();
 
 		_logo->setGfx(th->getImageSurface(th->kThemeLogo));
 	} else {

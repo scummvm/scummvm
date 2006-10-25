@@ -153,7 +153,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 				_theme = new ThemeClassic(_system, style, &cfg);
 #ifndef DISABLE_FANCY_THEMES
 			else if (0 == styleType.compareToIgnoreCase("modern"))
-				_theme = new ThemeNew(_system, style, &cfg);
+				_theme = new ThemeModern(_system, style, &cfg);
 #endif
 			else
 				warning("Unsupported theme type '%s'", styleType.c_str());
