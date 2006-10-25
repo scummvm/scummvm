@@ -1060,8 +1060,6 @@ public:
 	void o_defObj();
 	void o_here();
 	void o_doClassIcons();
-	void o_waitEndTune();
-	void o_ifEndTune();
 	void o_setAdjNoun();
 	void o_saveUserGame();
 	void o_loadUserGame();

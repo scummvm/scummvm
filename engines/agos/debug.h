@@ -358,8 +358,8 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"IWW|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
 	/* 264 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Www|SET_ADJ_NOUN",
 	"WW|ZONE_DISK",
 	/* 268 */
@@ -546,8 +546,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
@@ -779,8 +779,8 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
@@ -1021,8 +1021,8 @@ static const char *const simon1dos_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
@@ -1259,8 +1259,8 @@ static const char *const simon1talkie_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WW|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
@@ -1497,8 +1497,8 @@ static const char *const simon2dos_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WWB|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
@@ -1739,8 +1739,8 @@ static const char *const simon2talkie_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WWB|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
@@ -1981,8 +1981,8 @@ static const char *const feeblefiles_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WWB|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	"|SET_TIME",
 	/* 132 */
@@ -2234,8 +2234,8 @@ static const char *const puzzlepack_opcodeNameTable[256] = {
 	"IBB|DO_CLASS_ICONS",
 	"WWB|PLAY_TUNE",
 	/* 128 */
-	"W|WAIT_END_TUNE",
-	"W|IF_END_TUNE",
+	NULL,
+	NULL,
 	"Bww|SET_ADJ_NOUN",
 	"|SET_TIME",
 	/* 132 */

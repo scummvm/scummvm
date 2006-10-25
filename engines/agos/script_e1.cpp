@@ -189,8 +189,6 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[261] = &AGOSEngine::o_here;
 	op[262] = &AGOSEngine::o_doClassIcons;
 	op[263] = &AGOSEngine::o1_playTune;
-	op[264] = &AGOSEngine::o_waitEndTune;
-	op[265] = &AGOSEngine::o_ifEndTune;
 	op[266] = &AGOSEngine::o_setAdjNoun;
 	op[267] = &AGOSEngine::oe1_zoneDisk;
 	op[268] = &AGOSEngine::o_saveUserGame;

@@ -121,8 +121,6 @@ void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	op[121] = &AGOSEngine::o_defObj;
 	op[125] = &AGOSEngine::o_here;
 	op[126] = &AGOSEngine::o_doClassIcons;
-	op[128] = &AGOSEngine::o_waitEndTune;
-	op[129] = &AGOSEngine::o_ifEndTune;
 	op[130] = &AGOSEngine::o_setAdjNoun;
 	op[132] = &AGOSEngine::o_saveUserGame;
 	op[133] = &AGOSEngine::o_loadUserGame;
@@ -856,17 +854,6 @@ void AGOSEngine::o_doClassIcons() {
 	mouseOff();
 	drawIconArray(num, item, 1, a);
 	mouseOn();
-}
-
-void AGOSEngine::o_waitEndTune() {
-	// 128: dummy instruction
-	getVarOrWord();
-}
-
-void AGOSEngine::o_ifEndTune() {
-	// 129: dummy instruction
-	getVarOrWord();
-	setScriptCondition(true);
 }
 
 void AGOSEngine::o_setAdjNoun() {
