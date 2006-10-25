@@ -1867,7 +1867,7 @@ static const char *const feeblefiles_opcodeNameTable[256] = {
 	NULL,
 	/* 36 */
 	"VV|MOVE",
-	"|JUMP_OUT",
+	"B|JUMP_OUT",
 	NULL,
 	NULL,
 	/* 40 */
