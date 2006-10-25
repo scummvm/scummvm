@@ -109,14 +109,12 @@ NewGui::NewGui() : _needRedraw(false),
 
 	Common::String styleType;
 	Common::ConfigFile cfg;
-	if (loadNewTheme(style))
+	if (loadNewTheme(style)) {
 	   loadClassicTheme = false;
-	else
-	{
+	} else {
 	   loadClassicTheme = true;
 	   warning("falling back to classic style");
 	}
-
 #endif
 	
 	if (loadClassicTheme) {
