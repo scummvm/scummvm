@@ -2096,6 +2096,7 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	return result;
 }
 
+#ifndef DISABLE_SCUMM_7_8
 int ScummEngine_v7::runDialog(Dialog &dialog) {
 	bool oldSmushPaused = _smushPaused;
 	_smushPaused = true;
@@ -2106,6 +2107,7 @@ int ScummEngine_v7::runDialog(Dialog &dialog) {
 
 	return result;
 }
+#endif
 
 void ScummEngine::pauseDialog() {
 	if (!_pauseDialog)
