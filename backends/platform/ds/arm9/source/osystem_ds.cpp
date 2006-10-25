@@ -51,12 +51,22 @@ OSystem_DS::OSystem_DS()
 OSystem_DS::~OSystem_DS() {
 }
 
+static int timer_handler(int t)
+{
+	DSTimerManager *tm = (DSTimerManager *)g_system->getTimerManager();
+	tm->handler();
+	return t;
+}
+   
 void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_low_quality", true);
 
 	_mixer = new DSAudioMixer;
 	_timer = new DSTimerManager;
+	DS::setSoundProc(Audio::Mixer::mixCallback, _mixer);
+    DS::setTimerCallback(&timer_handler, 10);
+    
 	OSystem::initBackend();
 }
 
@@ -367,12 +377,6 @@ void OSystem_DS::delayMillis(uint msecs)
 	DS::addEventsToQueue();
 }
 
-void OSystem_DS::setTimerCallback(TimerProc callback, int interval)
-{
-//	consolePrintf("Settimercallback interval=%d\n", interval);
-	DS::setTimerCallback(callback, interval);
-}
-
 OSystem::MutexRef OSystem_DS::createMutex(void)
 {
 	return NULL;
@@ -388,13 +392,6 @@ void OSystem_DS::unlockMutex(MutexRef mutex)
 
 void OSystem_DS::deleteMutex(MutexRef mutex)
 {
-}
-
-bool OSystem_DS::setSoundCallback(SoundProc proc, void *param)
-{
-//	consolePrintf("Setsoundcallback");
-	DS::setSoundProc(proc, param);
-	return true;
 }
 
 void OSystem_DS::clearSoundCallback()

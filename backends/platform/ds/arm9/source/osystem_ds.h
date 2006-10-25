@@ -100,14 +100,11 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
-	virtual void setTimerCallback(TimerProc callback, int interval);
-
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual bool setSoundCallback(SoundProc proc, void *param);
 	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
 
