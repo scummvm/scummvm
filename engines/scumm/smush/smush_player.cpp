@@ -222,16 +222,17 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 }
 
 void SmushPlayer::timerCallback(void *refCon) {
-	((SmushPlayer *)refCon)->parseNextFrame();
+	SmushPlayer *sp = (SmushPlayer *)refCon;
+	sp->parseNextFrame();
 #ifdef _WIN32_WCE
-	((SmushPlayer *)refCon)->_inTimer = true;
-	((SmushPlayer *)refCon)->_inTimerCount++;
+	sp->_inTimer = true;
+	sp->_inTimerCount++;
 #endif
 #ifdef __SYMBIAN32__
-	if (((SmushPlayer *)refCon)->_closeOnTextTick) {
-		delete ((SmushPlayer *)refCon)->_base;
-		((SmushPlayer *)refCon)->_base = NULL;
-		((SmushPlayer *)refCon)->_closeOnTextTick = false;
+	if (sp->_closeOnTextTick) {
+		delete sp->_base;
+		sp->_base = NULL;
+		sp->_closeOnTextTick = false;
 	}
 #endif
 }
