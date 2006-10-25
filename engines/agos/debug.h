@@ -2120,8 +2120,8 @@ static const char *const puzzlepack_opcodeNameTable[256] = {
 	NULL,
 	/* 36 */
 	"WW|MOVE",
-	"BI|CHECK_TITLES",
-	"B|LOAD_MOUSE_IMAGE",
+	"B|CHECK_TILES",
+	"IB|LOAD_MOUSE_IMAGE",
 	NULL,
 	/* 40 */
 	NULL,
