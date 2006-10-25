@@ -134,6 +134,79 @@ void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height) {
 		: "r0", "%0", "%2", "%3");
 }
 
+
+static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
+                                                  u16* dest)
+{
+    u16 rs0 = s0 & 0x1F;
+    u16 rs1 = s1 & 0x1F;
+    u16 rs2 = s2 & 0x1F;
+    u16 rs3 = s3 & 0x1F;
+    u16 rs4 = s4 & 0x1F;
+    
+    u16 gs0 = (s0 >> 5) & 0x1F;
+    u16 gs1 = (s1 >> 5) & 0x1F;
+    u16 gs2 = (s2 >> 5) & 0x1F;
+    u16 gs3 = (s3 >> 5) & 0x1F;
+    u16 gs4 = (s4 >> 5) & 0x1F;
+    
+    u16 bs0 = (s0 >> 10) & 0x1F;
+    u16 bs1 = (s1 >> 10) & 0x1F;
+    u16 bs2 = (s2 >> 10) & 0x1F;
+    u16 bs3 = (s3 >> 10) & 0x1F;
+    u16 bs4 = (s4 >> 10) & 0x1F;
+    
+    u16 rd0 = 4*rs0 +   rs1;
+    u16 rd1 = 3*rs1 + 2*rs2;
+    u16 rd2 = 2*rs2 + 3*rs3;
+    u16 rd3 =   rs3 + 4*rs4;
+    
+    u16 gd0 = 4*gs0 +   gs1;
+    u16 gd1 = 3*gs1 + 2*gs2;
+    u16 gd2 = 2*gs2 + 3*gs3;
+    u16 gd3 =   gs3 + 4*gs4;
+    
+    u16 bd0 = 4*bs0 +   bs1;
+    u16 bd1 = 3*bs1 + 2*bs2;
+    u16 bd2 = 2*bs2 + 3*bs3;
+    u16 bd3 =   bs3 + 4*bs4;
+    
+    // Offsetting for correct rounding
+    rd0 = rd0*2+5; rd1 = rd1*2+5; rd2 = rd2*2+5; rd3 = rd3*2+5;
+    gd0 = gd0*2+5; gd1 = gd1*2+5; gd2 = gd2*2+5; gd3 = gd3*2+5;
+    bd0 = bd0*2+5; bd1 = bd1*2+5; bd2 = bd2*2+5; bd3 = bd3*2+5;
+    
+    rd0 /= 10; rd1 /= 10; rd2 /= 10; rd3 /= 10;
+    gd0 /= 10; gd1 /= 10; gd2 /= 10; gd3 /= 10;
+    bd0 /= 10; bd1 /= 10; bd2 /= 10; bd3 /= 10;
+    
+    u16 d0 = 0x8000 | (bd0 << 10) | (gd0 << 5) | rd0;
+    u16 d1 = 0x8000 | (bd1 << 10) | (gd1 << 5) | rd1;
+    u16 d2 = 0x8000 | (bd2 << 10) | (gd2 << 5) | rd2;
+    u16 d3 = 0x8000 | (bd3 << 10) | (gd3 << 5) | rd3;
+    
+    dest[0] = d0;
+    dest[1] = d1;
+    dest[2] = d2;
+    dest[3] = d3;
+}
+
+// Can't work in place
+void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u16* palette)
+{
+   for(size_t i=0; i<64; ++i)
+   {
+       u16 s0 = palette[src[5*i+0]];
+       u16 s1 = palette[src[5*i+1]];
+       u16 s2 = palette[src[5*i+2]];
+       u16 s3 = palette[src[5*i+3]];
+       u16 s4 = palette[src[5*i+4]];
+
+       RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
+   }
+}
+
+
 // Can work in place, because it's a contraction
 void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
 {
@@ -145,59 +218,8 @@ void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
        u16 s3 = src[5*i+3];
        u16 s4 = src[5*i+4];
 
-       u16 rs0 = s0 & 0x1F;
-       u16 rs1 = s1 & 0x1F;
-       u16 rs2 = s2 & 0x1F;
-       u16 rs3 = s3 & 0x1F;
-       u16 rs4 = s4 & 0x1F;
-
-       u16 gs0 = (s0 >> 5) & 0x1F;
-       u16 gs1 = (s1 >> 5) & 0x1F;
-       u16 gs2 = (s2 >> 5) & 0x1F;
-       u16 gs3 = (s3 >> 5) & 0x1F;
-       u16 gs4 = (s4 >> 5) & 0x1F;
-
-       u16 bs0 = (s0 >> 10) & 0x1F;
-       u16 bs1 = (s1 >> 10) & 0x1F;
-       u16 bs2 = (s2 >> 10) & 0x1F;
-       u16 bs3 = (s3 >> 10) & 0x1F;
-       u16 bs4 = (s4 >> 10) & 0x1F;
-
-       u16 rd0 = 4*rs0 +   rs1;
-       u16 rd1 = 3*rs1 + 2*rs2;
-       u16 rd2 = 2*rs2 + 3*rs3;
-       u16 rd3 =   rs3 + 4*rs4;
-
-       u16 gd0 = 4*gs0 +   gs1;
-       u16 gd1 = 3*gs1 + 2*gs2;
-       u16 gd2 = 2*gs2 + 3*gs3;
-       u16 gd3 =   gs3 + 4*gs4;
-
-       u16 bd0 = 4*bs0 +   bs1;
-       u16 bd1 = 3*bs1 + 2*bs2;
-       u16 bd2 = 2*bs2 + 3*bs3;
-       u16 bd3 =   bs3 + 4*bs4;
-
-       // Offsetting for correct rounding
-       rd0 = rd0*2+5; rd1 = rd1*2+5; rd2 = rd2*2+5; rd3 = rd3*2+5;
-       gd0 = gd0*2+5; gd1 = gd1*2+5; gd2 = gd2*2+5; gd3 = gd3*2+5;
-       bd0 = bd0*2+5; bd1 = bd1*2+5; bd2 = bd2*2+5; bd3 = bd3*2+5;
-
-       rd0 /= 10; rd1 /= 10; rd2 /= 10; rd3 /= 10;
-       gd0 /= 10; gd1 /= 10; gd2 /= 10; gd3 /= 10;
-       bd0 /= 10; bd1 /= 10; bd2 /= 10; bd3 /= 10;
-
-       u16 d0 = 0x8000 | (bd0 << 10) | (gd0 << 5) | rd0;
-       u16 d1 = 0x8000 | (bd1 << 10) | (gd1 << 5) | rd1;
-       u16 d2 = 0x8000 | (bd2 << 10) | (gd2 << 5) | rd2;
-       u16 d3 = 0x8000 | (bd3 << 10) | (gd3 << 5) | rd3;
-
-       dest[4*i+0] = d0;
-       dest[4*i+1] = d1;
-       dest[4*i+2] = d2;
-       dest[4*i+3] = d3;
+       RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
    }
 }
 
 }
-

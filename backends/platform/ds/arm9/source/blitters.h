@@ -26,6 +26,7 @@ namespace DS {
 void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst, 
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
+void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u16* palette)
 void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src);
 
 }
