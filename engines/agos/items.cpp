@@ -385,19 +385,33 @@ Item *AGOSEngine::derefItem(uint item) {
 
 Item *AGOSEngine::findInByClass(Item *i, int16 m) {
 	i = derefItem(i->child);
-
 	while (i) {
 		if (i->classFlags & m) {
-			//_findNextPtr = derefItem(i->next);
+			_findNextPtr = derefItem(i->next);
 			return i;
 		}
 		if (m == 0) {
-			//_findNextPtr = derefItem(i->next);
+			_findNextPtr = derefItem(i->next);
 			return i;
 		}
 		i = derefItem(i->next);
 	}
+	return NULL;
+}
 
+Item *AGOSEngine::nextInByClass(Item *i, int16 m) {
+	i = _findNextPtr;
+	while(i) {
+		if (i->classFlags & m) {
+			_findNextPtr = derefItem(i->next);
+			return i;
+		}
+		if (m == 0) {
+			_findNextPtr = derefItem(i->next);
+			return i;
+		}
+		i = derefItem(i->next);
+	}
 	return NULL;
 }
 

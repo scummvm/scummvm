@@ -314,7 +314,12 @@ protected:
 	char *_linePtrs[6];
 	int _boxCR;
 
+	SubroutineLine *_classLine;
 	uint _classMask, _classMode1, _classMode2;
+	Item *_findNextPtr;
+	Subroutine *_currentTable;
+	SubroutineLine *_currentLine;
+
 	int _agosMenu;
 	byte _textMenu[10];
 	uint _superRoomNumber;
@@ -628,6 +633,7 @@ protected:
 	void delTimeEvent(TimeEvent *te);
 
 	Item *findInByClass(Item *i, int16 m);
+	Item *nextInByClass(Item *i, int16 m);
 	Item *findMaster(int16 a, int16 n);
 	Item *nextMaster(Item *item, int16 a, int16 n);
 	int wordMatch(Item *item, int16 a, int16 n);

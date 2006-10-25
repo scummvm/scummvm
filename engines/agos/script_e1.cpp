@@ -344,8 +344,7 @@ void AGOSEngine::oe1_doClass() {
 	int16 num = getVarOrWord();
 
 	_classMask = (cm != -1) ? 1 << cm : 0;
-	//_classLine = (SubroutineLine *)((uint32)_currentLine->next+(uint32)_currentTable);
-
+	_classLine = (SubroutineLine *)((byte *)_currentTable + _currentLine->next);
 	if (num == 1) {
 		_subjectItem = findInByClass(i, (1 << cm));
 		if (_subjectItem)

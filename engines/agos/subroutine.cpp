@@ -522,13 +522,23 @@ void AGOSEngine::runSubroutine101() {
 
 int AGOSEngine::startSubroutine(Subroutine *sub) {
 	int result = -1;
-	SubroutineLine *sl;
-	const byte *old_code_ptr;
+	SubroutineLine *sl = (SubroutineLine *)((byte *)sub + sub->first);
+
+	const byte *old_code_ptr = _codePtr;
+	Subroutine *old_currentTable = _currentTable;
+	SubroutineLine *old_currentLine = _currentLine;
+	SubroutineLine *old_classLine = _classLine;
+	int16 old_classMask = _classMask;
+	int16 old_classMode1 = _classMode1;
+	int16 old_classMode2 = _classMode2;
+
+	_classLine = 0;
+	_classMask = 0;
+	_classMode1 = 0;
+	_classMode2 = 0;
 
 	if (_startMainScript)
 		dumpSubroutine(sub);
-
-	old_code_ptr = _codePtr;
 
 	if (++_recursionDepth > 40)
 		error("Recursion error");
@@ -543,9 +553,10 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 			setBitFlag(171, false);
 	}
 
-	sl = (SubroutineLine *)((byte *)sub + sub->first);
-
+	_currentTable = sub;
+restart:
 	while ((byte *)sl != (byte *)sub) {
+		_currentLine = sl;
 		if (checkIfToRunSubroutineLine(sl, sub)) {
 			result = 0;
 			_codePtr = (byte *)sl;
@@ -558,19 +569,47 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 				printf("; %d\n", sub->id);
 			result = runScript();
 			if (result != 0) {
-				/* result -10 means restart subroutine */
-				if (result == -10) {
-					delay(0);							/* maybe leave control to the VGA */
-					sl = (SubroutineLine *)((byte *)sub + sub->first);
-					continue;
-				}
 				break;
 			}
 		}
 		sl = (SubroutineLine *)((byte *)sub + sl->next);
 	}
 
+	if (_classMode1) {
+		debug(0, "_classMode1");
+		_subjectItem = nextInByClass(_subjectItem, _classMask);
+		if (!_subjectItem) {
+			_classMode1 = 0;
+		} else {
+			sl = _classLine;	/* Rescanner */
+			goto restart;
+		}
+	}
+	if (_classMode2) {
+		debug(0, "_classMode2");
+		_objectItem = nextInByClass(_objectItem, _classMask);
+		if (!_objectItem) {
+			_classMode2 = 0;
+		} else {
+			sl = _classLine;	/* Rescanner */
+			goto restart;
+		}
+	}
+
+	/* result -10 means restart subroutine */
+	if (result == -10) {
+		sl = (SubroutineLine *)((byte *)sub + sub->first);
+		goto restart;
+	}
+
 	_codePtr = old_code_ptr;
+	_currentLine = old_currentLine;
+	_currentTable = old_currentTable;
+	_classLine = old_classLine;
+	_classMask = old_classMask;
+	_classMode1 = old_classMode2;
+	_classMode2 = old_classMode1;
+	_findNextPtr = 0;
 
 	_recursionDepth--;
 	return result;

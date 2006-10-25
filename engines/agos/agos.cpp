@@ -330,10 +330,15 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
-	_agosMenu = 0;
+	_classLine = 0;
 	_classMask = 0;
 	_classMode1 = 0;
 	_classMode2 = 0;
+	_currentLine = 0;
+	_currentTable = 0;
+	_findNextPtr = 0;
+
+	_agosMenu = 0;
 	_superRoomNumber = 0;
 	_wallOn = 0;
 
