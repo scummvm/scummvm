@@ -44,6 +44,8 @@ OSystem_DS::OSystem_DS()
 	lastPenFrame = 0;
 	queuePos = 0;
 	_instance = this;
+	_mixer = NULL;
+    _timer = NULL;
 }
 
 OSystem_DS::~OSystem_DS() {
@@ -53,6 +55,8 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_low_quality", true);
 
+	_mixer = new DSAudioMixer;
+	_timer = new DSTimerManager;
 	OSystem::initBackend();
 }
 

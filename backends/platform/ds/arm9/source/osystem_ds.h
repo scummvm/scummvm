@@ -25,6 +25,18 @@
 #include "nds.h"
 #include "ramsave.h"
 #include "gbampsave.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
+
+class DSAudioMixer : public Audio::Mixer
+{	
+};
+
+class DSTimerManager : public DefaultTimerManager
+{	
+};
+
 
 class OSystem_DS : public OSystem {
 public:
@@ -37,8 +49,13 @@ public:
 	
 	DSSaveFileManager saveManager;
 	GBAMPSaveFileManager mpSaveManager;
-	
+    DSAudioMixer* _mixer;
+    DSTimerManager* _timer;
+    	
 	static OSystem_DS* _instance;
+	
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
+    typedef int  (*TimerProc)(int interval);
 
 public:
 
@@ -119,6 +136,9 @@ public:
 	virtual void clearFocusRectangle();
 	
 	virtual void initBackend();
+	
+	virtual Audio::Mixer*            getMixer()           { return _mixer; }
+    virtual Common::TimerManager*    getTimerManager()    { return _timer; }
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

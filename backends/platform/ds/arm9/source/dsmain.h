@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include "stdafx.h"
-#include "system.h"
+#include "osystem_ds.h"
 #include "scummconsole.h"
 #include "NDS/scummvm_ipc.h"
 
@@ -63,12 +63,12 @@ void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);
 
 // Timers
-void 	setTimerCallback(OSystem::TimerProc proc, int interval);		// Setup a callback function at a regular interval
+void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval
 int 	getMillis();													// Return the current runtime in milliseconds
 void 	doTimerCallback();												// Call callback function if required
 
 // Sound
-void 	setSoundProc(OSystem::SoundProc proc, void* param);			// Setup a callback function for sound
+void 	setSoundProc(OSystem_DS::SoundProc proc, void* param);			// Setup a callback function for sound
 void 	doSoundCallback();												// Call function if sound buffers need more data
 void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
 void 	stopSound(int channel);

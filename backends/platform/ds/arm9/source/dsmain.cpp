@@ -69,7 +69,7 @@ int currentTimeMillis;
 // Timer Callback
 int callbackInterval;
 int callbackTimer;
-OSystem::TimerProc callback;
+OSystem_DS::TimerProc callback;
 
 // Scaled
 bool scaledMode;
@@ -99,7 +99,7 @@ int lastEventFrame;
 bool indyFightState;
 bool indyFightRight;
 
-OSystem::SoundProc soundCallback;
+OSystem_DS::SoundProc soundCallback;
 void* soundParam;
 int lastCallbackFrame;
 bool bufferFirstHalf;
@@ -603,7 +603,7 @@ u16* get8BitBackBuffer() {
 	return BG_GFX + 0x10000;		// 16bit qty!
 }
 
-void setSoundProc(OSystem::SoundProc proc, void* param) {
+void setSoundProc(OSystem_DS::SoundProc proc, void* param) {
 //	consolePrintf("Set sound callback");
 	soundCallback = proc;
 	soundParam = param;
@@ -1464,7 +1464,7 @@ int getMillis() {
 //	return frameCount * FRAME_TIME;
 }
 
-void setTimerCallback(OSystem::TimerProc proc, int interval) {
+void setTimerCallback(OSystem_DS::TimerProc proc, int interval) {
 //	consolePrintf("Set timer proc %x, int %d\n", proc, interval);
 	callback = proc;
 	callbackInterval = interval;
