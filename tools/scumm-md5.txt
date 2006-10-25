@@ -366,7 +366,7 @@ football	Backyard Football
 	5bd335265a61caa3d78956ad9f88ba23	-1	en	All	-	Demo	-	sev
 
 football2002	Backyard Football 2002
-	a095616d2d23ccf43b8e257711202cba	-1	en	Windows	-	-	-	clone2727
+	a095616d2d23ccf43b8e257711202cba	-1	en	All	-	-	-	clone2727
 
 soccer	Backyard Soccer
 	701246819d1a70573f41bf33fc19214f	-1	en	All	-	-	-	sev
