@@ -222,4 +222,20 @@ void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
    }
 }
 
+void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
+{
+	for(size_t i=0; i<200; ++i)
+	{
+		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, palette);			
+	}
+}
+
+void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride)
+{
+	for(size_t i=0; i<200; ++i)
+	{
+		Rescale_320x1555Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride);
+	}
+}
+
 }
