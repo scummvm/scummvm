@@ -97,7 +97,10 @@ NewGui::NewGui() : _needRedraw(false),
 	// Reset key repeat
 	_currentKeyDown.keycode = 0;
 
-#ifndef DISABLE_FANCY_THEMES
+	bool loadClassicTheme;
+#ifdef DISABLE_FANCY_THEMES
+	loadClassicTheme = true;
+#else
 	ConfMan.registerDefault("gui_theme", "default");
 	Common::String style(ConfMan.get("gui_theme"));
 	// The default theme for now is the 'modern' theme.
@@ -106,11 +109,17 @@ NewGui::NewGui() : _needRedraw(false),
 
 	Common::String styleType;
 	Common::ConfigFile cfg;
+	if (loadNewTheme(style))
+	   loadClassicTheme = false;
+	else
+	{
+	   loadClassicTheme = true;
+	   warning("falling back to classic style");
+	}
 
 #endif
 	
-	if (!loadNewTheme(style)) {
-		warning("falling back to classic style");
+	if (loadClassicTheme) {
 		_theme = new ThemeClassic(_system);
 		assert(_theme);
 		if (!_theme->init()) {
