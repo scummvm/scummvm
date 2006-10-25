@@ -37,6 +37,9 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <sys/soundcard.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 static          unsigned long   gp2x_dev[8]={0,0,0,0,0,0,0,0};//, gp2x_ticks_per_second;
 static volatile unsigned short *gp2x_memregs;
@@ -136,6 +139,15 @@ void GP2X_setCpuspeed(unsigned int mhz)
 	set_FCLK(mhz);
 	set_DCLK_Div(0);
 	set_920_Div(0);
+}
+
+int GP2X_getBattLevel() {
+    int devbatt;
+    unsigned short currentval=0;
+    devbatt = open("/dev/batt", O_RDONLY);
+    read (devbatt, &currentval, 2);
+    close (devbatt);
+    return (currentval);
 }
 
 void set_display_clock_div(unsigned div)

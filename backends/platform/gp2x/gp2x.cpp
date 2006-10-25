@@ -34,6 +34,11 @@
 #include "common/util.h"
 #include "base/main.h"
 
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "backends/plugins/posix/posix-provider.h"
+#include "sound/mixer.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -41,9 +46,17 @@
 #include <errno.h>
 #include <sys/stat.h>
 
+// Disable for normal serial logging.
+#define DUMP_STDOUT
+
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
+
+static Uint32 timer_handler(Uint32 interval, void *param) {
+	((DefaultTimerManager *)param)->handler();
+	return interval;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -82,8 +95,6 @@ void OSystem_GP2X::initBackend() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-	// TODO: Clean way of flushing the file on every write without resorting to this or hacking the POSIX FS code.
-	//system("/bin/mount -t vfat -o remount,sync,iocharset=utf8 /dev/mmcsd/disc0/part1 /mnt/sd");
 
 	// Setup default save path to be workingdir/saves
 	#ifndef PATH_MAX
@@ -108,6 +119,49 @@ void OSystem_GP2X::initBackend() {
 				warning("mkdir for '%s' failed!", savePath);
 
 	ConfMan.registerDefault("savepath", savePath);
+
+	// Note: Review and clean this, it's OTT at the moment.
+
+	#if defined(DUMP_STDOUT)
+		// The GP2X has a serial console but most users do not use this so we
+		// output all our STDOUT and STDERR to files for debug purposes.
+		char STDOUT_FILE[PATH_MAX+1];
+		char STDERR_FILE[PATH_MAX+1];
+
+		strcpy(STDOUT_FILE, workDirName);
+		strcpy(STDERR_FILE, workDirName);
+		strcat(STDOUT_FILE, "/scummvm.stdout.txt");
+		strcat(STDERR_FILE, "/scummvm.stderr.txt");
+
+		/* Flush the output in case anything is queued */
+		fclose(stdout);
+		fclose(stderr);
+
+		/* Redirect standard input and standard output */
+		FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
+		if (newfp == NULL) {	/* This happens on NT */
+		#if !defined(stdout)
+			stdout = fopen(STDOUT_FILE, "w");
+		#else
+			newfp = fopen(STDOUT_FILE, "w");
+			if (newfp) {
+				*stdout = *newfp;
+			}
+		#endif
+		}
+		newfp = freopen(STDERR_FILE, "w", stderr);
+		if (newfp == NULL) {	/* This happens on NT */
+		#if !defined(stderr)
+			stderr = fopen(STDERR_FILE, "w");
+		#else
+			newfp = fopen(STDERR_FILE, "w");
+			if (newfp) {
+				*stderr = *newfp;
+			}
+		#endif
+		}
+		setbuf(stderr, NULL);			/* No buffering */
+	#endif // DUMP_STDOUT
 
 	// Setup other defaults.
 
@@ -145,6 +199,33 @@ void OSystem_GP2X::initBackend() {
 
 	SDL_ShowCursor(SDL_DISABLE);
 
+	// Create the savefile manager, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_savefile == 0) {
+		_savefile = new DefaultSaveFileManager();
+	}
+
+	// Create and hook up the mixer, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_mixer == 0) {
+		_mixer = new Audio::Mixer();
+		setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	}
+
+	// Create and hook up the timer manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_timer == 0) {
+		// TODO: We could implement a custom SDLTimerManager by using
+		// SDL_AddTimer. That might yield better timer resolution, but it would
+		// also change the semantics of a timer: Right now, ScummVM timers
+		// *never* run in parallel, due to the way they are implemented. If we
+		// switched to SDL_AddTimer, each timer might run in a separate thread.
+		// Unfortunately, not all our code is prepared for that, so we can't just
+		// switch. But it's a long term goal to do just that!
+		_timer = new DefaultTimerManager();
+		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+	}
+
 	OSystem::initBackend();
 
 	_inited = true;
@@ -164,6 +245,9 @@ OSystem_GP2X::OSystem_GP2X()
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+	_savefile(0),
+	_mixer(0),
+	_timer(0),
 	_graphicsMutex(0), _transactionMode(kTransactionNone) {
 
 	// allocate palette storage
@@ -180,10 +264,17 @@ OSystem_GP2X::OSystem_GP2X()
 }
 
 OSystem_GP2X::~OSystem_GP2X() {
+	SDL_RemoveTimer(_timerID);
+	SDL_CloseAudio();
+
 	free(_dirtyChecksums);
 	free(_currentPalette);
 	free(_cursorPalette);
 	free(_mouseData);
+
+	delete _savefile;
+	delete _mixer;
+	delete _timer;
 }
 
 uint32 OSystem_GP2X::getMillis() {
@@ -194,9 +285,19 @@ void OSystem_GP2X::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void OSystem_GP2X::setTimerCallback(TimerProc callback, int timer) {
-	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
+Common::TimerManager *OSystem_GP2X::getTimerManager() {
+	assert(_timer);
+	return _timer;
 }
+
+Common::SaveFileManager *OSystem_GP2X::getSavefileManager() {
+	assert(_savefile);
+	return _savefile;
+}
+
+//void OSystem_GP2X::setTimerCallback(TimerProc callback, int timer) {
+//	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
+//}
 
 bool OSystem_GP2X::hasFeature(Feature f) {
 	return
@@ -250,8 +351,9 @@ void OSystem_GP2X::quit() {
 	//CloseRam();
 	GP2X_device_deinit();
 	SDL_Quit();
-	chdir("/usr/gp2x");
-	execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
+	//chdir("/usr/gp2x");
+	//execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
+	exit(0);
 }
 
 OSystem::MutexRef OSystem_GP2X::createMutex(void) {
@@ -313,6 +415,11 @@ void OSystem_GP2X::clearSoundCallback() {
 
 int OSystem_GP2X::getOutputSampleRate() const {
 	return _samplesPerSec;
+}
+
+Audio::Mixer *OSystem_GP2X::getMixer() {
+	assert(_mixer);
+	return _mixer;
 }
 
 #pragma mark -

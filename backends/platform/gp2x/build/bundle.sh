@@ -11,20 +11,25 @@ export LDFLAGS=-L/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/lib
 
 echo Collecting files.
 mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`"
+mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`\saves"
 
+echo "Please put your save games in this dir" >> "scummvm-gp2x-`date '+%Y-%m-%d'`\saves\PUT_SAVES_IN_THIS_DIR"
+
+cp ./scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./scummvm.png ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X.html ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X ./scummvm-gp2x-`date '+%Y-%m-%d'`/
-cp ../../../../scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ../../../../scummvm.gp2x ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../AUTHORS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../README ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../COPYING ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ../../../../NEWS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.ini ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.zip ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 
 
 echo Making Stripped GPE.
-arm-open2x-linux-strip ./scummvm-gp2x-`date '+%Y-%m-%d'`/scummvm.gpe
+arm-open2x-linux-strip ./scummvm-gp2x-`date '+%Y-%m-%d'`/scummvm.gp2x
 
 echo Building ZIP bundle.
 echo You should have a "scummvm-gp2x-`date '+%Y-%m-%d'`.zip" for the GP2X port ready to go.

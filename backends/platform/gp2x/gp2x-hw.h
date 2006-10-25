@@ -62,6 +62,8 @@ extern void	GP2X_mixer_set_volume(int, int);
 extern int	GP2X_mixer_get_volume();
 extern void	GP2X_mixer_move_volume(int);
 extern void GP2X_setCpuspeed(unsigned int cpuspeed);
+extern int GP2X_getBattLevel();
+
 
 extern void save_system_regs(void); /* save some registers */
 extern void set_display_clock_div(unsigned div);

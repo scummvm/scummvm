@@ -37,6 +37,15 @@
 #include <SDL.h>
 #include <SDL_gp2x.h>
 
+namespace Audio {
+	class Mixer;
+}
+
+namespace Common {
+	class SaveFileManager;
+	class TimerManager;
+}
+
 //#define DISABLE_SCALERS
 
 enum {
@@ -123,7 +132,9 @@ public:
 	virtual bool pollEvent(Event &event); // overloaded by CE backend
 
 	// Set function that generates samples
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
+	virtual Audio::Mixer *getMixer();
 
 	void clearSoundCallback();
 
@@ -143,9 +154,7 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
-
-	// Add a callback timer
-	void setTimerCallback(TimerProc callback, int timer);
+	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling
 	MutexRef createMutex();
@@ -183,6 +192,8 @@ public:
 	virtual bool getFeatureState(Feature f);
 
 	void displayMessageOnOSD(const char *msg);
+
+	virtual Common::SaveFileManager *getSavefileManager();
 
 protected:
 	bool _inited;
@@ -326,11 +337,8 @@ protected:
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
-	//int16 _mouseHotspotX;
-	//int16 _mouseHotspotY;
 	byte _mouseKeyColor;
 	int _cursorTargetScale;
-	//bool _cursorHasOwnPalette;
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;
@@ -359,6 +367,11 @@ protected:
 	 */
 	MutexRef _graphicsMutex;
 
+	Common::SaveFileManager *_savefile;
+	Audio::Mixer *_mixer;
+
+	SDL_TimerID _timerID;
+	Common::TimerManager *_timer;
 
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
