@@ -46,16 +46,16 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[73] = &AGOSEngine::oe2_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
-	op[83] = &AGOSEngine::o1_rescan;
+	op[83] = &AGOSEngine::oe1_rescan;
 	op[89] = &AGOSEngine::oe1_loadGame;
 	op[94] = &AGOSEngine::oe1_findMaster;
 	op[95] = &AGOSEngine::oe1_nextMaster;
-	op[98] = &AGOSEngine::o1_animate;
-	op[99] = &AGOSEngine::o1_stopAnimate;
+	op[98] = &AGOSEngine::oe1_animate;
+	op[99] = &AGOSEngine::oe1_stopAnimate;
 	op[113] = &AGOSEngine::oe2_drawItem;
 	op[123] = &AGOSEngine::oe1_setTime;
 	op[124] = &AGOSEngine::oe1_ifTime;
-	op[127] = &AGOSEngine::o1_playTune;
+	op[127] = &AGOSEngine::os1_playTune;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
 	op[145] = &AGOSEngine::oe2_setDoorClosed;
 	op[146] = &AGOSEngine::oe2_setDoorLocked;
@@ -74,14 +74,14 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[171] = &AGOSEngine::oe2_ifExitOpen;
 	op[172] = &AGOSEngine::oe2_ifExitClosed;
 	op[173] = &AGOSEngine::oe2_ifExitLocked;
-	op[175] = &AGOSEngine::o_getDollar2;
+	op[175] = &AGOSEngine::oe2_getDollar2;
 	op[177] = &AGOSEngine::oe2_unk177;
 	op[178] = &AGOSEngine::oe2_unk178;
-	op[179] = &AGOSEngine::o_isAdjNoun;
-	op[180] = &AGOSEngine::o_b2Set;
-	op[181] = &AGOSEngine::o_b2Clear;
-	op[182] = &AGOSEngine::o_b2Zero;
-	op[183] = &AGOSEngine::o_b2NotZero;
+	op[179] = &AGOSEngine::oe2_isAdjNoun;
+	op[180] = &AGOSEngine::oe2_b2Set;
+	op[181] = &AGOSEngine::oe2_b2Clear;
+	op[182] = &AGOSEngine::oe2_b2Zero;
+	op[183] = &AGOSEngine::oe2_b2NotZero;
 }
 
 // -----------------------------------------------------------------------
@@ -285,6 +285,31 @@ void AGOSEngine::oe2_ifExitLocked() {
 	setScriptCondition(getExitState(i, n, d) == 3);
 }
 
+void AGOSEngine::oe2_getDollar2() {
+	// 175
+	_showPreposition = true;
+
+	setup_cond_c_helper();
+
+	_objectItem = _hitAreaObjectItem;
+
+	if (_objectItem == _dummyItem2)
+		_objectItem = me();
+
+	if (_objectItem == _dummyItem3)
+		_objectItem = derefItem(me()->parent);
+
+	if (_objectItem != NULL) {
+		_scriptNoun2 = _objectItem->noun;
+		_scriptAdj2 = _objectItem->adjective;
+	} else {
+		_scriptNoun2 = -1;
+		_scriptAdj2 = -1;
+	}
+
+	_showPreposition = false;
+}
+
 void AGOSEngine::oe2_unk177() {
 	// 177: set unknown vga event
 	uint a = getVarOrByte();
@@ -295,6 +320,37 @@ void AGOSEngine::oe2_unk178() {
 	// 178: set unknown vga event
 	uint a = getVarOrByte();
 	debug(0, "oe2_unk178: stub (%d)", a);
+}
+
+void AGOSEngine::oe2_isAdjNoun() {
+	// 179: item unk1 unk2 is
+	Item *item = getNextItemPtr();
+	int16 a = getNextWord(), b = getNextWord();
+	setScriptCondition(item->adjective == a && item->noun == b);
+}
+
+void AGOSEngine::oe2_b2Set() {
+	// 180: set bit2
+	uint bit = getVarOrByte();
+	_bitArrayTwo[bit / 16] |= (1 << (bit & 15));
+}
+
+void AGOSEngine::oe2_b2Clear() {
+	// 181: clear bit2
+	uint bit = getVarOrByte();
+	_bitArrayTwo[bit / 16] &= ~(1 << (bit & 15));
+}
+
+void AGOSEngine::oe2_b2Zero() {
+	// 182: is bit2 clear
+	uint bit = getVarOrByte();
+	setScriptCondition((_bitArrayTwo[bit / 16] & (1 << (bit & 15))) == 0);
+}
+
+void AGOSEngine::oe2_b2NotZero() {
+	// 183: is bit2 set
+	uint bit = getVarOrByte();
+	setScriptCondition((_bitArrayTwo[bit / 16] & (1 << (bit & 15))) != 0);
 }
 
 } // End of namespace AGOS

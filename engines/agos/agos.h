@@ -1021,9 +1021,6 @@ public:
 	void o_print();
 	void o_message();
 	void o_msg();
-	void o_addTextBox();
-	void o_setShortText();
-	void o_setLongText();
 	void o_end();
 	void o_done();
 	void o_process();
@@ -1081,24 +1078,8 @@ public:
 	void o_getOValue();
 	void o_setOValue();
 	void o_ink();
-	void o_screenTextBox();
-	void o_screenTextMsg();
-	void o_playEffect();
-	void o_getDollar2();
-	void o_isAdjNoun();
-	void o_b2Set();
-	void o_b2Clear();
-	void o_b2Zero();
-	void o_b2NotZero();
-	void o_lockZones();
-	void o_unlockZones();
-	void o_getPathPosn();
-	void o_scnTxtLongText();
-	void o_mouseOn();
-	void o_unloadZone();
-	void o_unfreezeZones();
 
-	// Opcodes, Elvira 1 only
+	// Opcodes, Elvira 1
 	void oe1_present();
 	void oe1_notPresent();
 	void oe1_worn();
@@ -1125,6 +1106,7 @@ public:
 	void oe1_pName();
 	void oe1_pcName();
 	void oe1_cFlag();
+	void oe1_rescan();
 	void oe1_setUserItem();
 	void oe1_getUserItem();
 	void oe1_whereTo();
@@ -1134,6 +1116,8 @@ public:
 	void oe1_clearUserItem();
 	void oe1_findMaster();
 	void oe1_nextMaster();
+	void oe1_animate();
+	void oe1_stopAnimate();
 	void oe1_menu();
 	void oe1_enableInput();
 	void oe1_setTime();
@@ -1149,7 +1133,7 @@ public:
 	void oe1_printPlayerHit();
 	void oe1_printMonsterHit();
 
-	// Opcodes, Elvira 2 only
+	// Opcodes, Elvira 2
 	void oe2_moveDirn();
 	void oe2_doClass();
 	void oe2_pObj();
@@ -1170,12 +1154,21 @@ public:
 	void oe2_ifExitOpen();
 	void oe2_ifExitClosed();
 	void oe2_ifExitLocked();
+	void oe2_getDollar2();
 	void oe2_unk177();
 	void oe2_unk178();
+	void oe2_isAdjNoun();
+	void oe2_b2Set();
+	void oe2_b2Clear();
+	void oe2_b2Zero();
+	void oe2_b2NotZero();
 
-	// Opcodes, Waxworks only
+	// Opcodes, Waxworks
 	void oww_moveDirn();
 	void oww_goto();
+	void oww_addTextBox();
+	void oww_setShortText();
+	void oww_setLongText();
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();
@@ -1185,82 +1178,90 @@ public:
 	void oww_boxLongText();
 	void oww_printBox();
 	void oww_boxPObj();
+	void oww_lockZones();
+	void oww_unlockZones();
 
-	// Opcodes, Simon 1 only
-	void o1_printLongText();
-	void o1_rescan();
-	void o1_animate();
-	void o1_stopAnimate();
-	void o1_playTune();
-	void o1_screenTextPObj();
-	void o1_mouseOff();
-	void o1_loadBeard();
-	void o1_unloadBeard();
-	void o1_loadStrings();
-	void o1_specialFade();
+	// Opcodes, Simon 1
+	void oww_printLongText();
+	void os1_animate();
+	void os1_playTune();
+	void os1_screenTextBox();
+	void os1_screenTextMsg();
+	void os1_playEffect();
+	void os1_screenTextPObj();
+	void os1_getPathPosn();
+	void os1_scnTxtLongText();
+	void os1_mouseOn();
+	void os1_mouseOff();
+	void os1_loadBeard();
+	void os1_unloadBeard();
+	void os1_unloadZone();
+	void os1_loadStrings();
+	void os1_unfreezeZones();
+	void os1_specialFade();
 
-	// Opcodes, Simon 2 and later
-	void o2_printLongText();
-	void o2_rescan();
-	void o2_animate();
-	void o2_stopAnimate();
-	void o2_playTune();
-	void o2_screenTextPObj();
-	void o2_mouseOff();
-	void o2_isShortText();
-	void o2_clearMarks();
-	void o2_waitMark();
+	// Opcodes, Simon 2
+	void os2_printLongText();
+	void os2_rescan();
+	void os2_animate();
+	void os2_stopAnimate();
+	void os2_playTune();
+	void os2_screenTextPObj();
+	void os2_mouseOff();
+	void os2_isShortText();
+	void os2_clearMarks();
+	void os2_waitMark();
 
-	// Opcodes, Feeble Files only
-	void o3_chance();
-	void o3_jumpOut();
-	void o3_addTextBox();
-	void o3_printLongText();
-	void o3_addBox();
-	void o3_oracleTextDown();
-	void o3_oracleTextUp();
-	void o3_ifTime();
-	void o3_setTime();
-	void o3_saveUserGame();
-	void o3_loadUserGame();
-	void o3_listSaveGames();
-	void o3_checkCD();
-	void o3_screenTextBox();
-	void o3_isAdjNoun();
-	void o3_hyperLinkOn();
-	void o3_hyperLinkOff();
-	void o3_checkPaths();
-	void o3_screenTextPObj();
-	void o3_mouseOff();
-	void o3_loadVideo();
-	void o3_playVideo();
-	void o3_centreScroll();
-	void o3_resetPVCount();
-	void o3_setPathValues();
-	void o3_stopClock();
-	void o3_restartClock();
-	void o3_setColour();
-	void o3_b3Set();
-	void o3_b3Clear();
-	void o3_b3Zero();
-	void o3_b3NotZero();
+	// Opcodes, Feeble Files
+	void off_chance();
+	void off_jumpOut();
+	void off_addTextBox();
+	void off_printLongText();
+	void off_addBox();
+	void off_oracleTextDown();
+	void off_oracleTextUp();
+	void off_ifTime();
+	void off_setTime();
+	void off_saveUserGame();
+	void off_loadUserGame();
+	void off_listSaveGames();
+	void off_checkCD();
+	void off_screenTextBox();
+	void off_isAdjNoun();
+	void off_hyperLinkOn();
+	void off_hyperLinkOff();
+	void off_checkPaths();
+	void off_screenTextPObj();
+	void off_mouseOff();
+	void off_loadVideo();
+	void off_playVideo();
+	void off_centreScroll();
+	void off_resetPVCount();
+	void off_setPathValues();
+	void off_stopClock();
+	void off_restartClock();
+	void off_setColour();
+	void off_b3Set();
+	void off_b3Clear();
+	void off_b3Zero();
+	void off_b3NotZero();
 
-	// Opcodes, Puzzle Pack only
-	void o4_iconifyWindow();
-	void o4_restoreOopsPosition();
-	void o4_loadMouseImage();
-	void o4_message();
-	void o4_setShortText();
-	void o4_loadHiScores();
-	void o4_checkHiScores();
-	void o4_sync();
-	void o4_saveUserGame();
-	void o4_loadUserGame();
-	void o4_saveOopsPosition();
-	void o4_resetGameTime();
-	void o4_resetPVCount();
-	void o4_setPathValues();
-	void o4_restartClock();
+	// Opcodes, Puzzle Pack
+	void opp_iconifyWindow();
+	void opp_restoreOopsPosition();
+	void opp_loadMouseImage();
+	void opp_message();
+	void opp_setShortText();
+	void opp_loadHiScores();
+	void opp_checkHiScores();
+	void opp_sync();
+	void opp_saveUserGame();
+	void opp_loadUserGame();
+	void opp_saveOopsPosition();
+	void opp_resetGameTime();
+	void opp_resetPVCount();
+	void opp_setPathValues();
+	void opp_restartClock();
 
 protected:
 	void drawImages(VC10_state *state);

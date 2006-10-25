@@ -32,62 +32,53 @@ namespace AGOS {
 void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
-	op[65] = &AGOSEngine::o_addTextBox;
-	op[66] = &AGOSEngine::o_setShortText;
-	op[67] = &AGOSEngine::o_setLongText;
-	op[70] = &AGOSEngine::o1_printLongText;
-	op[83] = &AGOSEngine::o1_rescan;
-	op[98] = &AGOSEngine::o1_animate;
-	op[99] = &AGOSEngine::o1_stopAnimate;
-	op[127] = &AGOSEngine::o1_playTune;
-	op[161] = &AGOSEngine::o_screenTextBox;
-	op[162] = &AGOSEngine::o_screenTextMsg;
-	op[163] = &AGOSEngine::o_playEffect;
-	op[164] = &AGOSEngine::o_getDollar2;
-	op[165] = &AGOSEngine::o_isAdjNoun;
-	op[166] = &AGOSEngine::o_b2Set;
-	op[167] = &AGOSEngine::o_b2Clear;
-	op[168] = &AGOSEngine::o_b2Zero;
-	op[169] = &AGOSEngine::o_b2NotZero;
-	op[175] = &AGOSEngine::o_lockZones;
-	op[176] = &AGOSEngine::o_unlockZones;
-	op[177] = &AGOSEngine::o1_screenTextPObj;
-	op[178] = &AGOSEngine::o_getPathPosn;
-	op[179] = &AGOSEngine::o_scnTxtLongText;
-	op[180] = &AGOSEngine::o_mouseOn;
-	op[181] = &AGOSEngine::o1_mouseOff;
-	op[182] = &AGOSEngine::o1_loadBeard;
-	op[183] = &AGOSEngine::o1_unloadBeard;
-	op[184] = &AGOSEngine::o_unloadZone;
-	op[185] = &AGOSEngine::o1_loadStrings;
-	op[186] = &AGOSEngine::o_unfreezeZones;
-	op[187] = &AGOSEngine::o1_specialFade;
+	op[65] = &AGOSEngine::oww_addTextBox;
+	op[66] = &AGOSEngine::oww_setShortText;
+	op[67] = &AGOSEngine::oww_setLongText;
+	op[70] = &AGOSEngine::oww_printLongText;
+	op[83] = &AGOSEngine::oe1_rescan;
+	op[88] = &AGOSEngine::o_haltAnimation;
+	op[89] = &AGOSEngine::o_restartAnimation;
+	op[98] = &AGOSEngine::os1_animate;
+	op[99] = &AGOSEngine::oe1_stopAnimate;
+	op[127] = &AGOSEngine::os1_playTune;
+	op[161] = &AGOSEngine::os1_screenTextBox;
+	op[162] = &AGOSEngine::os1_screenTextMsg;
+	op[163] = &AGOSEngine::os1_playEffect;
+	op[164] = &AGOSEngine::oe2_getDollar2;
+	op[165] = &AGOSEngine::oe2_isAdjNoun;
+	op[166] = &AGOSEngine::oe2_b2Set;
+	op[167] = &AGOSEngine::oe2_b2Clear;
+	op[168] = &AGOSEngine::oe2_b2Zero;
+	op[169] = &AGOSEngine::oe2_b2NotZero;
+	op[175] = &AGOSEngine::oww_lockZones;
+	op[176] = &AGOSEngine::oww_unlockZones;
+	op[177] = &AGOSEngine::os1_screenTextPObj;
+	op[178] = &AGOSEngine::os1_getPathPosn;
+	op[179] = &AGOSEngine::os1_scnTxtLongText;
+	op[180] = &AGOSEngine::os1_mouseOn;
+	op[181] = &AGOSEngine::os1_mouseOff;
+	op[182] = &AGOSEngine::os1_loadBeard;
+	op[183] = &AGOSEngine::os1_unloadBeard;
+	op[184] = &AGOSEngine::os1_unloadZone;
+	op[185] = &AGOSEngine::os1_loadStrings;
+	op[186] = &AGOSEngine::os1_unfreezeZones;
+	op[187] = &AGOSEngine::os1_specialFade;
 }
 
 // -----------------------------------------------------------------------
 // Simon 1 Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::o1_printLongText() {
-	// 70: show string from array
-	const char *str = (const char *)getStringPtrByID(_longText[getVarOrByte()]);
-	showMessageFormat("%s\n", str);
-}
-
-void AGOSEngine::o1_rescan() {
-	// 83: restart subroutine
-	setScriptReturn(-10);
-}
-
-void AGOSEngine::o1_animate() {
-	// 98: start vga
+void AGOSEngine::os1_animate() {
+	// 98: animate
 	uint vgaSpriteId = getVarOrWord();
 	uint windowNum = getVarOrByte();
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
 	uint palette = getVarOrWord();
 
-	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) && vgaSpriteId >= 400) {
+	if (getFeatures() & GF_TALKIE && vgaSpriteId >= 400) {
 		_lastVgaWaitFor = 0;
 	}
 
@@ -96,12 +87,7 @@ void AGOSEngine::o1_animate() {
 	_lockWord &= ~0x40;
 }
 
-void AGOSEngine::o1_stopAnimate() {
-	// 99: kill sprite
-	stopAnimateSimon1(getVarOrWord());
-}
-
-void AGOSEngine::o1_playTune() {
+void AGOSEngine::os1_playTune() {
 	// 127: deals with music
 	int music = getVarOrWord();
 	int track = getVarOrWord();
@@ -122,7 +108,61 @@ void AGOSEngine::o1_playTune() {
 	}
 }
 
-void AGOSEngine::o1_screenTextPObj() {
+void AGOSEngine::os1_screenTextBox() {
+	// 161: setup text
+	TextLocation *tl = getTextLocation(getVarOrByte());
+
+	tl->x = getVarOrWord();
+	tl->y = getVarOrByte();
+	tl->width = getVarOrWord();
+}
+	
+void AGOSEngine::os1_screenTextMsg() {
+	// 162: print string
+	uint vgaSpriteId = getVarOrByte();
+	uint color = getVarOrByte();
+	uint stringId = getNextStringID();
+	const byte *string_ptr = NULL;
+	uint speechId = 0;
+	TextLocation *tl;
+
+	if (stringId != 0xFFFF)
+		string_ptr = getStringPtrByID(stringId);
+
+	if (getFeatures() & GF_TALKIE) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP)
+			speechId = (uint16)getVarOrWord();
+		else
+			speechId = (uint16)getNextWord();
+	}
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
+		vgaSpriteId = 1;
+
+	tl = getTextLocation(vgaSpriteId);
+	if (_speech && speechId != 0)
+		playSpeech(speechId, vgaSpriteId);
+	if (((getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) || getGameType() == GType_FF) &&
+		speechId == 0) {
+		stopAnimateSimon2(2, vgaSpriteId + 2);
+	}
+
+	if (string_ptr != NULL && (speechId == 0 || _subtitles))
+		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
+
+}
+
+void AGOSEngine::os1_playEffect() {
+	// 163: play sound
+	uint soundId = getVarOrWord();
+
+	if (getGameId() == GID_SIMON1DOS)
+		playSting(soundId);
+	else
+		_sound->playEffects(soundId);
+}
+
+void AGOSEngine::os1_screenTextPObj() {
 	// 177: inventory descriptions
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -163,12 +203,88 @@ void AGOSEngine::o1_screenTextPObj() {
 	}
 }
 
-void AGOSEngine::o1_mouseOff() {
+void AGOSEngine::os1_getPathPosn() {
+	// 178: path find
+	uint x = getVarOrWord();
+	uint y = getVarOrWord();
+	uint var_1 = getVarOrByte();
+	uint var_2 = getVarOrByte();
+
+	const uint16 *p;
+	uint i, j;
+	uint prev_i;
+	uint x_diff, y_diff;
+	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
+	uint maxPath = (getGameType() == GType_FF || getGameType() == GType_PP) ? 100 : 20;
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		x += _scrollX;
+		y += _scrollY;
+	} else if (getGameType() == GType_SIMON2) {
+		x += _scrollX * 8;
+	}
+
+	int end = (getGameType() == GType_FF) ? 9999 : 999;
+	prev_i = maxPath + 1 - readVariable(12);
+	for (i = maxPath; i != 0; --i) {
+		p = (const uint16 *)_pathFindArray[maxPath - i];
+		if (!p)
+			continue;
+		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {
+			x_diff = ABS((int16)(readUint16Wrapper(&p[0]) - x));
+			y_diff = ABS((int16)(readUint16Wrapper(&p[1]) - 12 - y));
+
+			if (x_diff < y_diff) {
+				x_diff /= 4;
+				y_diff *= 4;
+			}
+			x_diff += y_diff /= 4;
+
+			if (x_diff < best_dist || x_diff == best_dist && prev_i == i) {
+				best_dist = x_diff;
+				best_i = maxPath + 1 - i;
+				best_j = j;
+			}
+		}
+	}
+
+	writeVariable(var_1, best_i);
+	writeVariable(var_2, best_j);
+}
+
+void AGOSEngine::os1_scnTxtLongText() {
+	// 179: conversation responses and room descriptions
+	uint vgaSpriteId = getVarOrByte();
+	uint color = getVarOrByte();
+	uint stringId = getVarOrByte();
+	uint speechId = 0;
+	TextLocation *tl;
+
+	const char *string_ptr = (const char *)getStringPtrByID(_longText[stringId]);
+	if (getFeatures() & GF_TALKIE)
+		speechId = _longSound[stringId];
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP)
+		vgaSpriteId = 1;
+	tl = getTextLocation(vgaSpriteId);
+
+	if (_speech && speechId != 0)
+		playSpeech(speechId, vgaSpriteId);
+	if (string_ptr != NULL && _subtitles)
+		printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+}
+
+void AGOSEngine::os1_mouseOn() {
+	// 180: force mouseOn
+	scriptMouseOn();
+}
+
+void AGOSEngine::os1_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
 }
 
-void AGOSEngine::o1_loadBeard() {
+void AGOSEngine::os1_loadBeard() {
 	// 182: load beard
 	if (_beardLoaded == false) {
 		_beardLoaded = true;
@@ -178,7 +294,7 @@ void AGOSEngine::o1_loadBeard() {
 	}
 }
 
-void AGOSEngine::o1_unloadBeard() {
+void AGOSEngine::os1_unloadBeard() {
 	// 183: unload beard
 	if (_beardLoaded == true) {
 		_beardLoaded = false;
@@ -188,7 +304,17 @@ void AGOSEngine::o1_unloadBeard() {
 	}
 }
 
-void AGOSEngine::o1_loadStrings() {
+void AGOSEngine::os1_unloadZone() {
+	// 184: unload zone
+	uint a = getVarOrWord();
+	VgaPointersEntry *vpe = &_vgaBufferPointers[a];
+
+	vpe->sfxFile = NULL;
+	vpe->vgaFile1 = NULL;
+	vpe->vgaFile2 = NULL;
+}
+
+void AGOSEngine::os1_loadStrings() {
 	// 185: load sound files
 	_soundFileId = getVarOrWord();
 	if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE) {
@@ -200,7 +326,12 @@ void AGOSEngine::o1_loadStrings() {
 	}
 }
 
-void AGOSEngine::o1_specialFade() {
+void AGOSEngine::os1_unfreezeZones() {
+	// 186: freeze zone
+	unfreezeBottom();
+}
+
+void AGOSEngine::os1_specialFade() {
 	// 187: fade to black
 	uint i;
 

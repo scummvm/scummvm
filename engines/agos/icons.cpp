@@ -58,7 +58,7 @@ void AGOSEngine::loadIconData() {
 		error("Out of icon memory");
 
 	memcpy(_iconFilePtr, src, 43 * 336);
-	o_unfreezeZones();
+	os1_unfreezeZones();
 }
 
 // Thanks to Stuart Caie for providing the original

@@ -130,7 +130,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[162] = &AGOSEngine::oe1_cFlag;
 
-	op[164] = &AGOSEngine::o1_rescan;
+	op[164] = &AGOSEngine::oe1_rescan;
 
 	op[176] = &AGOSEngine::oe1_setUserItem;
 	op[177] = &AGOSEngine::oe1_getUserItem;
@@ -153,8 +153,8 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 
 	op[224] = &AGOSEngine::o_picture;
 	op[225] = &AGOSEngine::o_loadZone;
-	op[226] = &AGOSEngine::o1_animate;
-	op[227] = &AGOSEngine::o1_stopAnimate;
+	op[226] = &AGOSEngine::oe1_animate;
+	op[227] = &AGOSEngine::oe1_stopAnimate;
 	op[228] = &AGOSEngine::o_killAnimate;
 	op[229] = &AGOSEngine::o_defWindow;
 	op[230] = &AGOSEngine::o_window;
@@ -187,7 +187,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[260] = &AGOSEngine::oe1_ifTime;
 	op[261] = &AGOSEngine::o_here;
 	op[262] = &AGOSEngine::o_doClassIcons;
-	op[263] = &AGOSEngine::o1_playTune;
+	op[263] = &AGOSEngine::os1_playTune;
 	op[266] = &AGOSEngine::o_setAdjNoun;
 	op[267] = &AGOSEngine::oe1_zoneDisk;
 	op[268] = &AGOSEngine::o_saveUserGame;
@@ -406,6 +406,11 @@ void AGOSEngine::oe1_cFlag() {
 		setScriptCondition((c->flags & (1 << bit)) != 0);
 }
 
+void AGOSEngine::oe1_rescan() {
+	// 164: restart subroutine
+	setScriptReturn(-10);
+}
+
 void AGOSEngine::oe1_setUserItem() {
 	// 176: set user item
 	Item *i = getNextItemPtr();
@@ -506,6 +511,28 @@ void AGOSEngine::oe1_nextMaster() {
 		_subjectItem = nextMaster(item, ad, no);
 	else
 		_objectItem = nextMaster(item, ad, no);
+}
+
+void AGOSEngine::oe1_animate() {
+	// 226: animate
+	uint vgaSpriteId = getVarOrWord();
+	uint windowNum = getVarOrByte();
+	uint x = getVarOrWord();
+	uint y = getVarOrWord();
+	uint palette = getVarOrWord();
+
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) && vgaSpriteId >= 400) {
+		_lastVgaWaitFor = 0;
+	}
+
+	_lockWord |= 0x40;
+	animate(windowNum, vgaSpriteId / 100, vgaSpriteId, x, y, palette);
+	_lockWord &= ~0x40;
+}
+
+void AGOSEngine::oe1_stopAnimate() {
+	// 227: stop animate
+	stopAnimateSimon1(getVarOrWord());
 }
 
 void AGOSEngine::oe1_menu() {

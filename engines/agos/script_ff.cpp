@@ -33,66 +33,66 @@ namespace AGOS {
 void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
-	op[23] = &AGOSEngine::o3_chance;
-	op[37] = &AGOSEngine::o3_jumpOut;
-	op[65] = &AGOSEngine::o3_addTextBox;
-	op[66] = &AGOSEngine::o_setShortText;
-	op[67] = &AGOSEngine::o_setLongText;
-	op[70] = &AGOSEngine::o3_printLongText;
-	op[83] = &AGOSEngine::o2_rescan;
-	op[98] = &AGOSEngine::o2_animate;
-	op[99] = &AGOSEngine::o2_stopAnimate;
-	op[107] = &AGOSEngine::o3_addBox;
-	op[122] = &AGOSEngine::o3_oracleTextDown;
-	op[123] = &AGOSEngine::o3_oracleTextUp;
-	op[124] = &AGOSEngine::o3_ifTime;
-	op[131] = &AGOSEngine::o3_setTime;
-	op[132] = &AGOSEngine::o3_saveUserGame;
-	op[133] = &AGOSEngine::o3_loadUserGame;
-	op[134] = &AGOSEngine::o3_listSaveGames;
-	op[135] = &AGOSEngine::o3_checkCD;
-	op[161] = &AGOSEngine::o3_screenTextBox;
-	op[162] = &AGOSEngine::o_screenTextMsg;
-	op[164] = &AGOSEngine::o_getDollar2;
-	op[165] = &AGOSEngine::o3_isAdjNoun;
-	op[166] = &AGOSEngine::o_b2Set;
-	op[167] = &AGOSEngine::o_b2Clear;
-	op[168] = &AGOSEngine::o_b2Zero;
-	op[169] = &AGOSEngine::o_b2NotZero;
-	op[171] = &AGOSEngine::o3_hyperLinkOn;
-	op[172] = &AGOSEngine::o3_hyperLinkOff;
-	op[173] = &AGOSEngine::o3_checkPaths;
-	op[175] = &AGOSEngine::o_lockZones;
-	op[176] = &AGOSEngine::o_unlockZones;
-	op[177] = &AGOSEngine::o3_screenTextPObj;
-	op[178] = &AGOSEngine::o_getPathPosn;
-	op[179] = &AGOSEngine::o_scnTxtLongText;
-	op[180] = &AGOSEngine::o_mouseOn;
-	op[181] = &AGOSEngine::o3_mouseOff;
-	op[182] = &AGOSEngine::o3_loadVideo;
-	op[183] = &AGOSEngine::o3_playVideo;
-	op[184] = &AGOSEngine::o_unloadZone;
-	op[186] = &AGOSEngine::o_unfreezeZones;
-	op[187] = &AGOSEngine::o3_centreScroll;
-	op[188] = &AGOSEngine::o2_isShortText;
-	op[189] = &AGOSEngine::o2_clearMarks;
-	op[190] = &AGOSEngine::o2_waitMark;
-	op[191] = &AGOSEngine::o3_resetPVCount;
-	op[192] = &AGOSEngine::o3_setPathValues;
-	op[193] = &AGOSEngine::o3_stopClock;
-	op[194] = &AGOSEngine::o3_restartClock;
-	op[195] = &AGOSEngine::o3_setColour;
-	op[196] = &AGOSEngine::o3_b3Set;
-	op[197] = &AGOSEngine::o3_b3Clear;
-	op[198] = &AGOSEngine::o3_b3Zero;
-	op[199] = &AGOSEngine::o3_b3NotZero;
+	op[23] = &AGOSEngine::off_chance;
+	op[37] = &AGOSEngine::off_jumpOut;
+	op[65] = &AGOSEngine::off_addTextBox;
+	op[66] = &AGOSEngine::oww_setShortText;
+	op[67] = &AGOSEngine::oww_setLongText;
+	op[70] = &AGOSEngine::off_printLongText;
+	op[83] = &AGOSEngine::os2_rescan;
+	op[98] = &AGOSEngine::os2_animate;
+	op[99] = &AGOSEngine::os2_stopAnimate;
+	op[107] = &AGOSEngine::off_addBox;
+	op[122] = &AGOSEngine::off_oracleTextDown;
+	op[123] = &AGOSEngine::off_oracleTextUp;
+	op[124] = &AGOSEngine::off_ifTime;
+	op[131] = &AGOSEngine::off_setTime;
+	op[132] = &AGOSEngine::off_saveUserGame;
+	op[133] = &AGOSEngine::off_loadUserGame;
+	op[134] = &AGOSEngine::off_listSaveGames;
+	op[135] = &AGOSEngine::off_checkCD;
+	op[161] = &AGOSEngine::off_screenTextBox;
+	op[162] = &AGOSEngine::os1_screenTextMsg;
+	op[164] = &AGOSEngine::oe2_getDollar2;
+	op[165] = &AGOSEngine::off_isAdjNoun;
+	op[166] = &AGOSEngine::oe2_b2Set;
+	op[167] = &AGOSEngine::oe2_b2Clear;
+	op[168] = &AGOSEngine::oe2_b2Zero;
+	op[169] = &AGOSEngine::oe2_b2NotZero;
+	op[171] = &AGOSEngine::off_hyperLinkOn;
+	op[172] = &AGOSEngine::off_hyperLinkOff;
+	op[173] = &AGOSEngine::off_checkPaths;
+	op[175] = &AGOSEngine::oww_lockZones;
+	op[176] = &AGOSEngine::oww_unlockZones;
+	op[177] = &AGOSEngine::off_screenTextPObj;
+	op[178] = &AGOSEngine::os1_getPathPosn;
+	op[179] = &AGOSEngine::os1_scnTxtLongText;
+	op[180] = &AGOSEngine::os1_mouseOn;
+	op[181] = &AGOSEngine::off_mouseOff;
+	op[182] = &AGOSEngine::off_loadVideo;
+	op[183] = &AGOSEngine::off_playVideo;
+	op[184] = &AGOSEngine::os1_unloadZone;
+	op[186] = &AGOSEngine::os1_unfreezeZones;
+	op[187] = &AGOSEngine::off_centreScroll;
+	op[188] = &AGOSEngine::os2_isShortText;
+	op[189] = &AGOSEngine::os2_clearMarks;
+	op[190] = &AGOSEngine::os2_waitMark;
+	op[191] = &AGOSEngine::off_resetPVCount;
+	op[192] = &AGOSEngine::off_setPathValues;
+	op[193] = &AGOSEngine::off_stopClock;
+	op[194] = &AGOSEngine::off_restartClock;
+	op[195] = &AGOSEngine::off_setColour;
+	op[196] = &AGOSEngine::off_b3Set;
+	op[197] = &AGOSEngine::off_b3Clear;
+	op[198] = &AGOSEngine::off_b3Zero;
+	op[199] = &AGOSEngine::off_b3NotZero;
 }
 
 // -----------------------------------------------------------------------
 // Feeble Files Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::o3_chance() {
+void AGOSEngine::off_chance() {
 	// 23
 	uint a = getVarOrWord();
 
@@ -112,13 +112,13 @@ void AGOSEngine::o3_chance() {
 		setScriptCondition(false);
 }
 
-void AGOSEngine::o3_jumpOut() {
+void AGOSEngine::off_jumpOut() {
 	// 37
 	getVarOrByte();
 	setScriptReturn(1);
 }
 
-void AGOSEngine::o3_addTextBox() {
+void AGOSEngine::off_addTextBox() {
 	// 65: add hit area
 	uint flags = kBFTextBox | kBFBoxItem;
 	uint id = getVarOrWord();
@@ -139,14 +139,14 @@ void AGOSEngine::o3_addTextBox() {
 		defineBox(id, x, y, w, h, flags + (num << 8), 208, _dummyItem2);
 }
 
-void AGOSEngine::o3_printLongText() {
+void AGOSEngine::off_printLongText() {
 	// 70: show string from array
 	int num = getVarOrByte();
 	const char *str = (const char *)getStringPtrByID(_longText[num]);
 	sendInteractText(num, "%d. %s\n", num, str);
 }
 
-void AGOSEngine::o3_addBox() {
+void AGOSEngine::off_addBox() {
 	// 107: add item hitarea
 	uint flags = 0;
 	uint id = getVarOrWord();
@@ -176,17 +176,17 @@ void AGOSEngine::o3_addBox() {
 	defineBox(id, x, y, w, h, flags, verb, item);
 }
 
-void AGOSEngine::o3_oracleTextDown() {
+void AGOSEngine::off_oracleTextDown() {
 	// 122: oracle text down
 	oracleTextDown();
 }
 
-void AGOSEngine::o3_oracleTextUp() {
+void AGOSEngine::off_oracleTextUp() {
 	// 123: oracle text up
 	oracleTextUp();
 }
 
-void AGOSEngine::o3_ifTime() {
+void AGOSEngine::off_ifTime() {
 	// 124: if time
 	time_t t;
 
@@ -200,13 +200,13 @@ void AGOSEngine::o3_ifTime() {
 		setScriptCondition(false);
 }
 
-void AGOSEngine::o3_setTime() {
+void AGOSEngine::off_setTime() {
 	// 131
 	time(&_timeStore);
 	_timeStore -= _gameStoppedClock;
 }
 
-void AGOSEngine::o3_saveUserGame() {
+void AGOSEngine::off_saveUserGame() {
 	// 132: save game
 	_noOracleScroll = 0;
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
@@ -214,17 +214,17 @@ void AGOSEngine::o3_saveUserGame() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void AGOSEngine::o3_loadUserGame() {
+void AGOSEngine::off_loadUserGame() {
 	// 133: load game
 	loadGame(readVariable(55));
 }
 
-void AGOSEngine::o3_listSaveGames() {
+void AGOSEngine::off_listSaveGames() {
 	// 134: dummy opcode?
 	listSaveGames(1);
 }
 
-void AGOSEngine::o3_checkCD() {
+void AGOSEngine::off_checkCD() {
 	// 135: switch CD
 	uint disc = readVariable(97);
 
@@ -240,7 +240,7 @@ void AGOSEngine::o3_checkCD() {
 	debug(0, "Switch to CD number %d", disc);
 }
 
-void AGOSEngine::o3_screenTextBox() {
+void AGOSEngine::off_screenTextBox() {
 	// 161: setup text
 	TextLocation *tl = getTextLocation(getVarOrByte());
 
@@ -249,7 +249,7 @@ void AGOSEngine::o3_screenTextBox() {
 	tl->width = getVarOrWord();
 }
 
-void AGOSEngine::o3_isAdjNoun() {
+void AGOSEngine::off_isAdjNoun() {
 	// 165: item unk1 unk2 is
 	Item *item = getNextItemPtr();
 	int16 a = getNextWord(), b = getNextWord();
@@ -261,17 +261,17 @@ void AGOSEngine::o3_isAdjNoun() {
 		setScriptCondition(false);
 }
 
-void AGOSEngine::o3_hyperLinkOn() {
+void AGOSEngine::off_hyperLinkOn() {
 	// 171: oracle hyperlink on
 	hyperLinkOn(getVarOrWord());
 }
 
-void AGOSEngine::o3_hyperLinkOff() {
+void AGOSEngine::off_hyperLinkOff() {
 	// 172: oracle hyperlink off
 	hyperLinkOff();
 }
 
-void AGOSEngine::o3_checkPaths() {
+void AGOSEngine::off_checkPaths() {
 	// 173 check paths
 	int i, count;
 	const uint8 *pathVal1 = _pathValues1;
@@ -307,7 +307,7 @@ void AGOSEngine::o3_checkPaths() {
 	_variableArray2[52] = result;
 }
 
-void AGOSEngine::o3_screenTextPObj() {
+void AGOSEngine::off_screenTextPObj() {
 	// 177: inventory descriptions
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -336,29 +336,29 @@ void AGOSEngine::o3_screenTextPObj() {
 	}
 }
 
-void AGOSEngine::o3_mouseOff() {
+void AGOSEngine::off_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
 	clearName();
 }
 
-void AGOSEngine::o3_loadVideo() {
+void AGOSEngine::off_loadVideo() {
 	// 182: load video file
 	const byte *filename = getStringPtrByID(getNextStringID());
 	_moviePlay->load((const char *)filename);
 }
 
-void AGOSEngine::o3_playVideo() {
+void AGOSEngine::off_playVideo() {
 	// 183: play video
 	_moviePlay->play();
 }
 
-void AGOSEngine::o3_centreScroll() {
+void AGOSEngine::off_centreScroll() {
 	// 187
 	centreScroll();
 }
 
-void AGOSEngine::o3_resetPVCount() {
+void AGOSEngine::off_resetPVCount() {
 	// 191
 	if (getBitFlag(83)) {
 		_PVCount1 = 0;
@@ -369,7 +369,7 @@ void AGOSEngine::o3_resetPVCount() {
 	}
 }
 
-void AGOSEngine::o3_setPathValues() {
+void AGOSEngine::off_setPathValues() {
 	// 192
 	uint8 a = getVarOrByte();
 	uint8 b = getVarOrByte();
@@ -388,19 +388,19 @@ void AGOSEngine::o3_setPathValues() {
 	}
 }
 
-void AGOSEngine::o3_stopClock() {
+void AGOSEngine::off_stopClock() {
 	// 193: pause clock
 	_clockStopped = time(NULL);
 }
 
-void AGOSEngine::o3_restartClock() {
+void AGOSEngine::off_restartClock() {
 	// 194: resume clock
 	if (_clockStopped != 0)
 		_gameStoppedClock += time(NULL) - _clockStopped;
 	_clockStopped = 0;
 }
 
-void AGOSEngine::o3_setColour() {
+void AGOSEngine::off_setColour() {
 	// 195: set palette colour
 	uint c = getVarOrByte() * 4;
 	uint r = getVarOrByte();
@@ -414,25 +414,25 @@ void AGOSEngine::o3_setColour() {
 	_paletteFlag = 2;
 }
 
-void AGOSEngine::o3_b3Set() {
+void AGOSEngine::off_b3Set() {
 	// 196: set bit3
 	uint bit = getVarOrByte();
 	_bitArrayThree[bit / 16] |= (1 << (bit & 15));
 }
 
-void AGOSEngine::o3_b3Clear() {
+void AGOSEngine::off_b3Clear() {
 	// 197: clear bit3
 	uint bit = getVarOrByte();
 	_bitArrayThree[bit / 16] &= ~(1 << (bit & 15));
 }
 
-void AGOSEngine::o3_b3Zero() {
+void AGOSEngine::off_b3Zero() {
 	// 198: is bit3 clear
 	uint bit = getVarOrByte();
 	setScriptCondition((_bitArrayThree[bit / 16] & (1 << (bit & 15))) == 0);
 }
 
-void AGOSEngine::o3_b3NotZero() {
+void AGOSEngine::off_b3NotZero() {
 	// 199: is bit3 set
 	uint bit = getVarOrByte();
 	setScriptCondition((_bitArrayThree[bit / 16] & (1 << (bit & 15))) != 0);

@@ -30,49 +30,51 @@ namespace AGOS {
 void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
 	setupCommonOpcodes(op);
 
-	op[65] = &AGOSEngine::o_addTextBox;
-	op[66] = &AGOSEngine::o_setShortText;
-	op[67] = &AGOSEngine::o_setLongText;
-	op[70] = &AGOSEngine::o2_printLongText;
-	op[83] = &AGOSEngine::o2_rescan;
-	op[98] = &AGOSEngine::o2_animate;
-	op[99] = &AGOSEngine::o2_stopAnimate;
-	op[127] = &AGOSEngine::o2_playTune;
-	op[161] = &AGOSEngine::o_screenTextBox;
-	op[162] = &AGOSEngine::o_screenTextMsg;
-	op[163] = &AGOSEngine::o_playEffect;
-	op[164] = &AGOSEngine::o_getDollar2;
-	op[165] = &AGOSEngine::o_isAdjNoun;
-	op[166] = &AGOSEngine::o_b2Set;
-	op[167] = &AGOSEngine::o_b2Clear;
-	op[168] = &AGOSEngine::o_b2Zero;
-	op[169] = &AGOSEngine::o_b2NotZero;
-	op[175] = &AGOSEngine::o_lockZones;
-	op[176] = &AGOSEngine::o_unlockZones;
-	op[177] = &AGOSEngine::o2_screenTextPObj;
-	op[178] = &AGOSEngine::o_getPathPosn;
-	op[179] = &AGOSEngine::o_scnTxtLongText;
-	op[180] = &AGOSEngine::o_mouseOn;
-	op[181] = &AGOSEngine::o2_mouseOff;
-	op[184] = &AGOSEngine::o_unloadZone;
-	op[186] = &AGOSEngine::o_unfreezeZones;
-	op[188] = &AGOSEngine::o2_isShortText;
-	op[189] = &AGOSEngine::o2_clearMarks;
-	op[190] = &AGOSEngine::o2_waitMark;
+	op[65] = &AGOSEngine::oww_addTextBox;
+	op[66] = &AGOSEngine::oww_setShortText;
+	op[67] = &AGOSEngine::oww_setLongText;
+	op[70] = &AGOSEngine::os2_printLongText;
+	op[83] = &AGOSEngine::os2_rescan;
+	op[88] = &AGOSEngine::o_haltAnimation;
+	op[89] = &AGOSEngine::o_restartAnimation;
+	op[98] = &AGOSEngine::os2_animate;
+	op[99] = &AGOSEngine::os2_stopAnimate;
+	op[127] = &AGOSEngine::os2_playTune;
+	op[161] = &AGOSEngine::os1_screenTextBox;
+	op[162] = &AGOSEngine::os1_screenTextMsg;
+	op[163] = &AGOSEngine::os1_playEffect;
+	op[164] = &AGOSEngine::oe2_getDollar2;
+	op[165] = &AGOSEngine::oe2_isAdjNoun;
+	op[166] = &AGOSEngine::oe2_b2Set;
+	op[167] = &AGOSEngine::oe2_b2Clear;
+	op[168] = &AGOSEngine::oe2_b2Zero;
+	op[169] = &AGOSEngine::oe2_b2NotZero;
+	op[175] = &AGOSEngine::oww_lockZones;
+	op[176] = &AGOSEngine::oww_unlockZones;
+	op[177] = &AGOSEngine::os2_screenTextPObj;
+	op[178] = &AGOSEngine::os1_getPathPosn;
+	op[179] = &AGOSEngine::os1_scnTxtLongText;
+	op[180] = &AGOSEngine::os1_mouseOn;
+	op[181] = &AGOSEngine::os2_mouseOff;
+	op[184] = &AGOSEngine::os1_unloadZone;
+	op[186] = &AGOSEngine::os1_unfreezeZones;
+	op[188] = &AGOSEngine::os2_isShortText;
+	op[189] = &AGOSEngine::os2_clearMarks;
+	op[190] = &AGOSEngine::os2_waitMark;
 }
 
 // -----------------------------------------------------------------------
 // Simon 2 Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::o2_printLongText() {
+void AGOSEngine::os2_printLongText() {
 	// 70: show string from array
 	const char *str = (const char *)getStringPtrByID(_longText[getVarOrByte()]);
 	writeVariable(51, strlen(str) / 53 * 8 + 8);
 	showMessageFormat("%s\n", str);
 }
 
-void AGOSEngine::o2_rescan() {
+void AGOSEngine::os2_rescan() {
 	// 83: restart subroutine
 	if (_exitCutscene) {
 		if (getBitFlag(9)) {
@@ -85,7 +87,7 @@ void AGOSEngine::o2_rescan() {
 	setScriptReturn(-10);
 }
 
-void AGOSEngine::o2_animate() {
+void AGOSEngine::os2_animate() {
 	// 98: start vga
 	uint zoneNum = getVarOrWord();
 	uint vgaSpriteId = getVarOrWord();
@@ -99,14 +101,14 @@ void AGOSEngine::o2_animate() {
 	_lockWord &= ~0x40;
 }
 
-void AGOSEngine::o2_stopAnimate() {
+void AGOSEngine::os2_stopAnimate() {
 	// 99: kill sprite
 	uint a = getVarOrWord();
 	uint b = getVarOrWord();
 	stopAnimateSimon2(a, b);
 }
 
-void AGOSEngine::o2_playTune() {
+void AGOSEngine::os2_playTune() {
 	// 127: deals with music
 	int music = getVarOrWord();
 	int track = getVarOrWord();
@@ -128,7 +130,7 @@ void AGOSEngine::o2_playTune() {
 		midi.startTrack(track);
 }
 
-void AGOSEngine::o2_screenTextPObj() {
+void AGOSEngine::os2_screenTextPObj() {
 	// 177: inventory descriptions
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
@@ -177,7 +179,7 @@ void AGOSEngine::o2_screenTextPObj() {
 						speechId = 51;
 						break;
 					default:
-						error("o2_screenTextPObj: invalid case %d", speechIdOffs);
+						error("os2_screenTextPObj: invalid case %d", speechIdOffs);
 					}
 				}
 			}
@@ -213,26 +215,26 @@ void AGOSEngine::o2_screenTextPObj() {
 	}
 }
 
-void AGOSEngine::o2_mouseOff() {
+void AGOSEngine::os2_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
 	changeWindow(1);
 	showMessageFormat("\xC");
 }
 
-void AGOSEngine::o2_isShortText() {
+void AGOSEngine::os2_isShortText() {
 	// 188: string2 is
 	uint i = getVarOrByte();
 	uint str = getNextStringID();
 	setScriptCondition(str < _numTextBoxes && _shortText[i] == str);
 }
 
-void AGOSEngine::o2_clearMarks() {
+void AGOSEngine::os2_clearMarks() {
 	// 189: clear_op189_flag
 	_marks = 0;
 }
 
-void AGOSEngine::o2_waitMark() {
+void AGOSEngine::os2_waitMark() {
 	// 190
 	uint i = getVarOrByte();
 	if (!(_marks & (1 << i)))
