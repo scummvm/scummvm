@@ -278,7 +278,7 @@ void AGOSEngine::o_gtf() {
 }
 
 void AGOSEngine::o_chance() {
-	// 23
+	// 23: chance
 	uint a = getVarOrWord();
 
 	if (a == 0) {
@@ -616,7 +616,7 @@ void AGOSEngine::o_picture() {
 }
 
 void AGOSEngine::o_loadZone() {
-	// 97: load vga
+	// 97: load zone
 	uint vga_res = getVarOrWord();
 
 	_lockWord |= 0x80;
@@ -632,14 +632,14 @@ void AGOSEngine::o_loadZone() {
 }
 
 void AGOSEngine::o_killAnimate() {
-	// 100: vga reset
+	// 100: kill animations
 	_lockWord |= 0x8000;
 	vc27_resetSprite();
 	_lockWord &= ~0x8000;
 }
 
 void AGOSEngine::o_defWindow() {
-	// 101
+	// 101: define window
 	uint num = getVarOrByte();
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
@@ -695,7 +695,7 @@ void AGOSEngine::o_closeWindow() {
 }
 
 void AGOSEngine::o_addBox() {
-	// 107: add item hitarea
+	// 107: add item box
 	uint flags = 0;
 	uint id = getVarOrWord();
 	uint params = id / 1000;
@@ -729,12 +729,12 @@ void AGOSEngine::o_addBox() {
 }
 
 void AGOSEngine::o_delBox() {
-	// 108: delete hitarea
+	// 108: delete box
 	undefineBox(getVarOrWord());
 }
 
 void AGOSEngine::o_enableBox() {
-	// 109: clear hitarea bit 0x40
+	// 109: enable box
 	enableBox(getVarOrWord());
 }
 
@@ -806,7 +806,7 @@ void AGOSEngine::o_here() {
 }
 
 void AGOSEngine::o_doClassIcons() {
-	// 126
+	// 126: do class icons
 	Item *item = getNextItemPtr();
 	uint num = getVarOrByte();
 	uint a = 1 << getVarOrByte();
@@ -828,21 +828,21 @@ void AGOSEngine::o_setAdjNoun() {
 }
 
 void AGOSEngine::o_saveUserGame() {
-	// 132: save game
+	// 132: save user game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	userGame(false);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void AGOSEngine::o_loadUserGame() {
-	// 133: load game
+	// 133: load user game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	userGame(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void AGOSEngine::o_pauseGame() {
-	// 135: quit if user presses y
+	// 135: pause game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	// If all else fails, use English as fallback.
@@ -910,7 +910,7 @@ void AGOSEngine::o_restoreIcons() {
 }
 
 void AGOSEngine::o_freezeZones() {
-	// 138: vga pointer op 4
+	// 138: freeze zones
 	freezeBottom();
 }
 
@@ -923,7 +923,7 @@ void AGOSEngine::o_placeNoIcons() {
 }
 
 void AGOSEngine::o_clearTimers() {
-	// 140: del te and add one
+	// 140: clear timers
 	killAllTimers();
 	addTimeEvent(3, 0xA0);
 }
@@ -940,7 +940,7 @@ void AGOSEngine::o_setDollar() {
 }
 
 void AGOSEngine::o_isBox() {
-	// 142: is hitarea 0x40 clear
+	// 142: is box dead
 	setScriptCondition(isBoxDead(getVarOrWord()));
 }
 
