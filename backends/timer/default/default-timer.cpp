@@ -80,7 +80,7 @@ DefaultTimerManager::~DefaultTimerManager() {
 void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 
-	const int32 curTime = g_system->getMillis();
+	const int32 curTime = g_system->getMillis() * 1000;
 	
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
@@ -109,13 +109,11 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	Common::StackLock lock(_mutex);
 	
 	
-	interval /= 1000;
-	
 	TimerSlot *slot = new TimerSlot;
 	slot->callback = callback;
 	slot->refCon = refCon;
 	slot->interval = interval;
-	slot->nextFireTime = g_system->getMillis() + interval;
+	slot->nextFireTime = g_system->getMillis() * 1000 + interval;
 	slot->next = 0;
 	
 	insertPrioQueue(_head, slot);
