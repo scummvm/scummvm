@@ -514,16 +514,118 @@ void AGOSEngine::windowNewLine(WindowBlock *window) {
 }
 
 #ifdef PALMOS_68K
-static const byte *russian_video_font;
-static const byte *polish_video_font;
-static const byte *french_video_font;
-static const byte *german_video_font;
-static const byte *hebrew_video_font;
-static const byte *italian_video_font;
-static const byte *spanish_video_font;
-static const byte *video_font;
+static const byte *czech_windowFont;
+static const byte *russian_windowFont;
+static const byte *polish_windowFont;
+static const byte *french_windowFont;
+static const byte *german_windowFont;
+static const byte *hebrew_windowFont;
+static const byte *italian_windowFont;
+static const byte *spanish_windowFont;
+static const byte *english_windowFont;
 #else
-static const byte russian_video_font[] = {
+static const byte czech_windowFont[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	32, 112, 112, 32, 32, 0, 32, 0,
+	48, 48, 96, 0, 0, 0, 0, 0,
+	80, 32, 120, 128, 112, 8, 240, 0,
+	16, 32, 112, 136, 136, 136, 112, 0,
+	80, 32, 176, 72, 72, 64, 224, 0,
+	0, 16, 40, 16, 42, 68, 58, 0,
+	48, 48, 96, 0, 0, 0, 0, 0,
+	0, 4, 8, 8, 8, 8, 4, 0,
+	0, 32, 16, 16, 16, 16, 32, 0,
+	0, 0, 20, 8, 62, 8, 20, 0,
+	0, 112, 136, 240, 136, 136, 240, 0,
+	0, 0, 0, 0, 0, 48, 48, 96,
+	0, 0, 0, 240, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 48, 48, 0,
+	80, 32, 248, 144, 32, 72, 248, 0,
+	112, 136, 152, 168, 200, 136, 112, 0,
+	32, 96, 32, 32, 32, 32, 112, 0,
+	112, 136, 8, 48, 64, 136, 248, 0,
+	112, 136, 8, 48, 8, 136, 112, 0,
+	16, 48, 80, 144, 248, 16, 56, 0,
+	248, 128, 240, 8, 8, 136, 112, 0,
+	48, 64, 128, 240, 136, 136, 112, 0,
+	248, 136, 8, 16, 32, 32, 32, 0,
+	112, 136, 136, 112, 136, 136, 112, 0,
+	112, 136, 136, 120, 8, 16, 96, 0,
+	0, 0, 48, 48, 0, 48, 48, 0,
+	8, 16, 112, 8, 120, 136, 120, 0,
+	32, 80, 32, 144, 144, 144, 104, 0,
+	16, 32, 112, 136, 248, 128, 112, 0,
+	80, 32, 112, 136, 248, 128, 112, 0,
+	112, 136, 8, 16, 32, 0, 32, 0,
+	32, 64, 192, 64, 64, 64, 224, 0,
+	112, 136, 136, 248, 136, 136, 136, 0,
+	240, 72, 72, 112, 72, 72, 240, 0,
+	48, 72, 128, 128, 128, 72, 48, 0,
+	224, 80, 72, 72, 72, 80, 224, 0,
+	248, 72, 64, 112, 64, 72, 248, 0,
+	248, 72, 64, 112, 64, 64, 224, 0,
+	48, 72, 128, 152, 136, 72, 56, 0,
+	136, 136, 136, 248, 136, 136, 136, 0,
+	248, 32, 32, 32, 32, 32, 248, 0,
+	24, 8, 8, 8, 136, 136, 112, 0,
+	200, 72, 80, 96, 80, 72, 200, 0,
+	224, 64, 64, 64, 64, 72, 248, 0,
+	136, 216, 168, 168, 136, 136, 136, 0,
+	136, 200, 168, 152, 136, 136, 136, 0,
+	112, 136, 136, 136, 136, 136, 112, 0,
+	240, 72, 72, 112, 64, 64, 224, 0,
+	112, 136, 136, 136, 136, 168, 112, 8,
+	240, 72, 72, 112, 72, 72, 200, 0,
+	112, 136, 128, 112, 8, 136, 112, 0,
+	248, 168, 32, 32, 32, 32, 112, 0,
+	136, 136, 136, 136, 136, 136, 120, 0,
+	136, 136, 136, 80, 80, 32, 32, 0,
+	136, 136, 136, 136, 168, 216, 136, 0,
+	136, 136, 80, 32, 80, 136, 136, 0,
+	136, 136, 136, 112, 32, 32, 112, 0,
+	248, 136, 16, 32, 64, 136, 248, 0,
+	0, 14, 8, 8, 8, 8, 14, 0,
+	0, 128, 64, 32, 16, 8, 4, 0,
+	0, 112, 16, 16, 16, 16, 112, 0,
+	80, 32, 112, 136, 128, 136, 112, 0,
+	16, 32, 136, 136, 136, 112, 32, 192,
+	16, 32, 144, 144, 144, 144, 104, 0,
+	0, 0, 112, 8, 120, 136, 120, 0,
+	192, 64, 80, 104, 72, 72, 112, 0,
+	0, 0, 112, 136, 128, 136, 112, 0,
+	24, 16, 80, 176, 144, 144, 112, 0,
+	0, 0, 112, 136, 248, 128, 112, 0,
+	48, 72, 64, 224, 64, 64, 224, 0,
+	0, 0, 104, 144, 144, 112, 136, 112,
+	192, 64, 80, 104, 72, 72, 200, 0,
+	64, 0, 192, 64, 64, 64, 224, 0,
+	8, 0, 8, 8, 8, 8, 136, 112,
+	192, 64, 72, 80, 96, 80, 200, 0,
+	192, 64, 64, 64, 64, 64, 224, 0,
+	0, 0, 144, 216, 168, 136, 136, 0,
+	0, 0, 240, 136, 136, 136, 136, 0,
+	0, 0, 112, 136, 136, 136, 112, 0,
+	0, 0, 176, 72, 72, 112, 64, 224,
+	0, 0, 104, 144, 144, 112, 16, 56,
+	0, 0, 176, 72, 72, 64, 224, 0,
+	0, 0, 120, 128, 112, 8, 240, 0,
+	64, 64, 240, 64, 64, 72, 48, 0,
+	0, 0, 144, 144, 144, 144, 104, 0,
+	0, 0, 136, 136, 136, 80, 32, 0,
+	0, 0, 136, 136, 168, 216, 144, 0,
+	0, 0, 136, 80, 32, 80, 136, 0,
+	0, 0, 136, 136, 136, 112, 32, 192,
+	0, 0, 248, 144, 32, 72, 248, 0,
+	32, 80, 0, 96, 144, 144, 96, 0,
+	0, 14, 8, 48, 8, 8, 14, 0,
+	0, 8, 8, 8, 8, 8, 8, 0,
+	0, 112, 16, 12, 16, 16, 112, 0,
+	0, 0, 0, 0, 0, 0, 248, 0,
+	252, 252, 252, 252, 252, 252, 252, 252,
+	240, 240, 240, 240, 240, 240, 240, 240,
+};
+
+static const byte russian_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -624,7 +726,7 @@ static const byte russian_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte polish_video_font[] = {
+static const byte polish_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -725,7 +827,7 @@ static const byte polish_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte french_video_font[] = {
+static const byte french_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -826,7 +928,7 @@ static const byte french_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte german_video_font[] = {
+static const byte german_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -927,7 +1029,7 @@ static const byte german_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte hebrew_video_font[] = {
+static const byte hebrew_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -1028,7 +1130,7 @@ static const byte hebrew_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte italian_video_font[] = {
+static const byte italian_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -1129,7 +1231,7 @@ static const byte italian_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte spanish_video_font[] = {
+static const byte spanish_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -1230,7 +1332,7 @@ static const byte spanish_video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-static const byte video_font[] = {
+static const byte english_windowFont[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
@@ -1332,7 +1434,7 @@ static const byte video_font[] = {
 };
 #endif
 
-static const byte feeble_video_font[] = {
+static const byte feeble_windowFont[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,
 	128,128,128,128,128,128,128,0,0,128,0,0,0,
 	144,144,144,0,0,0,0,0,0,0,0,0,0,
@@ -1546,35 +1648,38 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		h = 13;
 		w =  feebleFontSize[chr - 0x20];
 
-		src = feeble_video_font + (chr - 0x20) * 13;
+		src = feeble_windowFont + (chr - 0x20) * 13;
 	} else {
 		h = 8;
 		w = 6;
 
 		switch (_language) {
+		case Common::CZ_CZE:
+			src = czech_windowFont + (chr - 0x20) * 8;
+			break;
 		case Common::RU_RUS:
-			src = russian_video_font + (chr - 0x20) * 8;
+			src = russian_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::PL_POL:
-			src = polish_video_font + (chr - 0x20) * 8;
+			src = polish_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::HB_ISR:
-			src = hebrew_video_font + (chr - 0x20) * 8;
+			src = hebrew_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::ES_ESP:
-			src = spanish_video_font + (chr - 0x20) * 8;
+			src = spanish_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::IT_ITA:
-			src = italian_video_font + (chr - 0x20) * 8;
+			src = italian_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::FR_FRA:
-			src = french_video_font + (chr - 0x20) * 8;
+			src = french_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::DE_DEU:
-			src = german_video_font + (chr - 0x20) * 8;
+			src = german_windowFont + (chr - 0x20) * 8;
 			break;
 		case Common::EN_ANY:
-			src = video_font + (chr - 0x20) * 8;
+			src = english_windowFont + (chr - 0x20) * 8;
 			break;
 		default:
 			error("windowDrawChar: Unknown language %d\n", _language);
@@ -1612,14 +1717,14 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 #include "scumm_globals.h"
 
 _GINIT(AGOS_Charset)
-_GSETPTR(AGOS::russian_video_font, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-//_GSETPTR(AGOS::polish_video_font, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::french_video_font, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::german_video_font, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::hebrew_video_font, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::italian_video_font, GBVARS_ITALIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::spanish_video_font, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::video_font, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::russian_windowFont, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+//_GSETPTR(AGOS::polish_windowFont, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::french_windowFont, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::german_windowFont, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::hebrew_windowFont, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::italian_windowFont, GBVARS_ITALIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::spanish_windowFont, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
+_GSETPTR(AGOS::english_windowFont, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_AGOS)
 _GEND
 
 _GRELEASE(AGOS_Charset)
