@@ -593,6 +593,7 @@ protected:
 	Subroutine *getSubroutineByID(uint subroutine_id);
 
 	/* used in debugger */
+	void dumpAllSubroutines();
 	void dumpSubroutines();
 	void dumpSubroutine(Subroutine *sub);
 	void dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub);
