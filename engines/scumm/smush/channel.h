@@ -45,32 +45,24 @@ protected:
 	int32 _volume;
 	int32 _pan;
 
+	void processBuffer();
+
+	virtual bool handleSubTags(int32 &offset) = 0;
+
 public:
-	SmushChannel(int32 track) :
-		_track(track),
-		_tbuffer(0),
-		_tbufferSize(0),
-		_sbuffer(0),
-		_sbufferSize(0),
-		_dataSize(-1),
-		_inData(false),
-		_volume(0),
-		_pan(0) {
-	}
-	virtual ~SmushChannel() {
-		delete[] _tbuffer;
-		delete[] _sbuffer;
-	}
+	SmushChannel(int32 track);
+	virtual ~SmushChannel();
 	virtual bool appendData(Chunk &b, int32 size) = 0;
 	virtual bool setParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool checkParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool isTerminated() const = 0;
-	virtual int32 availableSoundData() const = 0;
+	virtual int32 getAvailableSoundDataSize() const = 0;
 	virtual void getSoundData(int16 *sound_buffer, int32 size) = 0;
 	virtual void getSoundData(int8 *sound_buffer, int32 size) = 0;
 	virtual int32 getRate() = 0;
 	virtual bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) = 0;
-	virtual int32 getTrackIdentifier() const = 0;
+
+	int32 getTrackIdentifier() const { return _track; };
 };
 
 class SaudChannel : public SmushChannel {
@@ -86,7 +78,6 @@ protected:
 	void handleSmrk(Chunk &c);
 	void handleShdr(Chunk &c);
 	bool handleSubTags(int32 &offset);
-	bool processBuffer();
 
 public:
 	SaudChannel(int32 track);
@@ -95,7 +86,7 @@ public:
 	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index);
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
 	bool appendData(Chunk &b, int32 size);
-	int32 availableSoundData() const;
+	int32 getAvailableSoundDataSize() const;
 	void getSoundData(int16 *sound_buffer, int32 size);
 	void getSoundData(int8 *sound_buffer, int32 size) { error("8bit request for SAUD channel should never happen"); };
 	int32 getRate() { return 22050; }
@@ -106,7 +97,6 @@ public:
 		pan = _pan;
 		return true;
 	};
-	virtual int32 getTrackIdentifier() const { return _track; };
 };
 
 class ImuseChannel : public SmushChannel {
@@ -120,12 +110,11 @@ private:
 protected:
 	int32 decode(int32 size, int32 &ret);
 	void decode();
-	bool processBuffer();
-	bool handleMap(Chunk &);
-	bool handleFormat(Chunk &);
-	bool handleRegion(Chunk &);
-	bool handleStop(Chunk &);
-	bool handleSubTags(int32 & offset);
+	bool handleMap(Chunk &c);
+	bool handleFormat(Chunk &c);
+	bool handleRegion(Chunk &c);
+	bool handleStop(Chunk &c);
+	bool handleSubTags(int32 &offset);
 
 public:
 	ImuseChannel(int32 track);
@@ -134,7 +123,7 @@ public:
 	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32);
 	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
 	bool appendData(Chunk &b, int32 size);
-	int32 availableSoundData() const;
+	int32 getAvailableSoundDataSize() const;
 	void getSoundData(int16 *sound_buffer, int32 size);
 	void getSoundData(int8 *sound_buffer, int32 size);
 	int32 getRate() { return _rate; }
@@ -145,7 +134,6 @@ public:
 		pan = _pan;
 		return true;
 	};
-	virtual int32 getTrackIdentifier() const { return _track; };
 };
 
 } // End of namespace Scumm

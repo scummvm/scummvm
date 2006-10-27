@@ -21,7 +21,9 @@
  */
 
 #include "common/stdafx.h"
-#include "scumm/scumm.h"
+#include "common/endian.h"
+
+#include "scumm/scumm.h"	// For DEBUG_SMUSH
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"
@@ -93,7 +95,14 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 			b.read(_tbuffer, size);
 		}
 	}
-	return processBuffer();
+
+	processBuffer();
+
+	_srbufferSize = _sbufferSize;
+	if (_sbuffer && _bitsize == 12)
+		decode();
+
+	return true;
 }
 
 bool ImuseChannel::handleFormat(Chunk &src) {
@@ -237,72 +246,7 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 	return false;
 }
 
-bool ImuseChannel::processBuffer() {
-	assert(_tbuffer != 0);
-	assert(_tbufferSize != 0);
-	assert(_sbuffer == 0);
-	assert(_sbufferSize == 0);
-
-	if (_inData) {
-		if (_dataSize < _tbufferSize) {
-			int32 offset = _dataSize;
-			while (handleSubTags(offset))
-				;
-			_sbufferSize = _dataSize;
-			_sbuffer = _tbuffer;
-			if (offset < _tbufferSize) {
-				int new_size = _tbufferSize - offset;
-				_tbuffer = new byte[new_size];
-				if (!_tbuffer)
-					error("imuse_channel failed to allocate memory");
-				memcpy(_tbuffer, _sbuffer + offset, new_size);
-				_tbufferSize = new_size;
-			} else {
-				_tbuffer = 0;
-				_tbufferSize = 0;
-			}
-			if (_sbufferSize == 0) {
-				delete []_sbuffer;
-				_sbuffer = 0;
-			}
-		} else {
-			_sbufferSize = _tbufferSize;
-			_sbuffer = _tbuffer;
-			_tbufferSize = 0;
-			_tbuffer = 0;
-		}
-	} else {
-		int32 offset = 0;
-		while (handleSubTags(offset))
-			;
-		if (_inData) {
-			_sbufferSize = _tbufferSize - offset;
-			assert(_sbufferSize);
-			_sbuffer = new byte[_sbufferSize];
-			if (!_sbuffer)
-				error("imuse_channel failed to allocate memory");
-			memcpy(_sbuffer, _tbuffer + offset, _sbufferSize);
-			delete []_tbuffer;
-			_tbuffer = 0;
-			_tbufferSize = 0;
-		} else {
-			if (offset) {
-				byte * old = _tbuffer;
-				int32 new_size = _tbufferSize - offset;
-				_tbuffer = new byte[new_size];
-				if (!_tbuffer) error("imuse_channel failed to allocate memory");
-				memcpy(_tbuffer, old + offset, new_size);
-				_tbufferSize = new_size;
-				delete []old;
-			}
-		}
-	}
-	_srbufferSize = _sbufferSize;
-	if (_sbuffer && _bitsize == 12) decode();
-	return true;
-}
-
-int32 ImuseChannel::availableSoundData(void) const {
+int32 ImuseChannel::getAvailableSoundDataSize(void) const {
 	int32 ret = _sbufferSize;
 	if (_channels == 2) ret /= 2;
 	if (_bitsize > 8) ret /= 2;

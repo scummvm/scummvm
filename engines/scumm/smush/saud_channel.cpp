@@ -92,75 +92,6 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 	return false;
 }
 
-bool SaudChannel::processBuffer() {
-	assert(_tbuffer != 0);
-	assert(_tbufferSize != 0);
-	assert(_sbuffer == 0);
-	assert(_sbufferSize == 0);
-
-	if (_keepSize) {
-		_sbufferSize = _tbufferSize;
-		_sbuffer = _tbuffer;
-		_tbufferSize = 0;
-		_tbuffer = 0;
-	} else if (_inData) {
-		if (_dataSize < _tbufferSize) {
-			int32 offset = _dataSize;
-			while (handleSubTags(offset))
-				;
-			_sbufferSize = _dataSize;
-			_sbuffer = _tbuffer;
-			if (offset < _tbufferSize) {
-				int new_size = _tbufferSize - offset;
-				_tbuffer = new byte[new_size];
-				if (!_tbuffer)
-					error("SaudChannel failed to allocate memory");
-				memcpy(_tbuffer, _sbuffer + offset, new_size);
-				_tbufferSize = new_size;
-			} else {
-				_tbuffer = 0;
-				_tbufferSize = 0;
-			}
-			if (_sbufferSize == 0) {
-				delete []_sbuffer;
-				_sbuffer = 0;
-			}
-		} else {
-			_sbufferSize = _tbufferSize;
-			_sbuffer = _tbuffer;
-			_tbufferSize = 0;
-			_tbuffer = 0;
-		}
-	} else {
-		int32 offset = 0;
-		while (handleSubTags(offset))
-			;
-		if (_inData) {
-			_sbufferSize = _tbufferSize - offset;
-			assert(_sbufferSize);
-			_sbuffer = new byte[_sbufferSize];
-			if (!_sbuffer)
-				error("saud_channel failed to allocate memory");
-			memcpy(_sbuffer, _tbuffer + offset, _sbufferSize);
-			delete []_tbuffer;
-			_tbuffer = 0;
-			_tbufferSize = 0;
-		} else {
-			if (offset) {
-				byte *old = _tbuffer;
-				int32 new_size = _tbufferSize - offset;
-				_tbuffer = new byte[new_size];
-				if (!_tbuffer)
-					error("SaudChannel failed to allocate memory");
-				memcpy(_tbuffer, old + offset, new_size);
-				_tbufferSize = new_size;
-				delete []old;
-			}
-		}
-	}
-	return true;
-}
-
 SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
 	_nbframes(0),
 	_markReached(false),
@@ -236,10 +167,20 @@ bool SaudChannel::appendData(Chunk &b, int32 size) {
 			error("saud_channel failed to allocate memory");
 		b.read(_tbuffer, _tbufferSize);
 	}
-	return processBuffer();
+
+	if (_keepSize) {
+		_sbufferSize = _tbufferSize;
+		_sbuffer = _tbuffer;
+		_tbufferSize = 0;
+		_tbuffer = 0;
+	} else {
+		processBuffer();
+	}
+
+	return true;
 }
 
-int32 SaudChannel::availableSoundData(void) const {
+int32 SaudChannel::getAvailableSoundDataSize(void) const {
 	return _sbufferSize;
 }
 

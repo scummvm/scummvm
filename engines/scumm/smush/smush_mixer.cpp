@@ -109,7 +109,7 @@ bool SmushMixer::handleFrame() {
 				void *data;
 
 				_channels[i].chan->getParameters(stereo, is_16bit, vol, pan);
-				int32 size = _channels[i].chan->availableSoundData();
+				int32 size = _channels[i].chan->getAvailableSoundDataSize();
 				byte flags = stereo ? Audio::Mixer::FLAG_STEREO : 0;
 
 				if (is_16bit) {
