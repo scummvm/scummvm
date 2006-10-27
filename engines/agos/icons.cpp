@@ -632,7 +632,7 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 		ha->window = window;
 		ha->verb = 1;
 
-		stopAnimateSimon1(128);
+		stopAnimate(128);
 		animate(0, 1, 128, 0, 0, 14);
 	} else if (getGameType() == GType_WW) {
 		ha->x = 255;
@@ -671,7 +671,7 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (getGameType() == GType_SIMON1) {
-		stopAnimateSimon1(128);
+		stopAnimate(128);
 	} else if (getGameType() == GType_WW) {
 		setBitFlag(22, false);
 		setWindowImageEx(6, 103);

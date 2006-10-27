@@ -560,7 +560,7 @@ void AGOSEngine::oe1_animate() {
 
 void AGOSEngine::oe1_stopAnimate() {
 	// 227: stop animate
-	stopAnimateSimon1(getVarOrWord());
+	stopAnimate(getVarOrWord());
 }
 
 void AGOSEngine::oe1_menu() {

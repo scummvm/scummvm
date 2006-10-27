@@ -241,4 +241,25 @@ void AGOSEngine::os2_waitMark() {
 		waitForMark(i);
 }
 
+void AGOSEngine::waitForMark(uint i) {
+	_exitCutscene = false;
+	while (!(_marks & (1 << i))) {
+		if (_exitCutscene) {
+			if (getGameType() == GType_PP) {
+				if (_picture8600)
+					break;
+			} else {
+				if (getBitFlag(9)) {
+					endCutscene();
+					break;
+				}
+			}
+		} else {
+			processSpecialKeys();
+		}
+
+		delay(10);
+	}
+}
+
 } // End of namespace AGOS

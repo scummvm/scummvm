@@ -453,7 +453,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	}
 
 	if (getGameType() == GType_SIMON1)
-		stopAnimateSimon1(vgaSpriteId + 199);
+		stopAnimate(vgaSpriteId + 199);
 	else
 		stopAnimateSimon2(2, vgaSpriteId);
 
@@ -678,7 +678,7 @@ void AGOSEngine::printBox() {
 	_linePtrs[0] = _boxBuffer;
 	if (_boxCR == 0)
 		_boxLineCount++;
-	stopAnimateSimon1(105);
+	stopAnimate(105);
 	BoxSize = getBoxSize();
 	_variableArray[53] = BoxSize;
 	animate(3, 1, 100, 0, 0, 0);

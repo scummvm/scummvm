@@ -649,7 +649,7 @@ protected:
 	void setItemParent(Item *item, Item *parent);
 	void setItemState(Item *item, int value);
 
-	void stopAnimateSimon1(uint a);
+	void stopAnimate(uint a);
 	void stopAnimateSimon2(uint a, uint b);
 
 	void enableBox(uint hitarea);
@@ -1072,16 +1072,6 @@ public:
 	void o_clearTimers();
 	void o_setDollar();
 	void o_isBox();
-	void o_doTable();
-	void o_storeItem();
-	void o_getItem();
-	void o_bSet();
-	void o_bClear();
-	void o_bZero();
-	void o_bNotZero();
-	void o_getOValue();
-	void o_setOValue();
-	void o_ink();
 
 	// Opcodes, Elvira 1
 	void oe1_present();
@@ -1142,12 +1132,22 @@ public:
 	void oe2_doClass();
 	void oe2_pObj();
 	void oe2_drawItem();
+	void oe2_doTable();
 	void oe2_setDoorOpen();
 	void oe2_setDoorClosed();
 	void oe2_setDoorLocked();
 	void oe2_ifDoorOpen();
 	void oe2_ifDoorClosed();
 	void oe2_ifDoorLocked();
+	void oe2_storeItem();
+	void oe2_getItem();
+	void oe2_bSet();
+	void oe2_bClear();
+	void oe2_bZero();
+	void oe2_bNotZero();
+	void oe2_getOValue();
+	void oe2_setOValue();
+	void oe2_ink();
 	void oe2_printStats();
 	void oe2_unk162();
 	void oe2_setSuperRoom();

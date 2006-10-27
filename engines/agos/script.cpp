@@ -130,16 +130,16 @@ void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	op[140] = &AGOSEngine::o_clearTimers;
 	op[141] = &AGOSEngine::o_setDollar;
 	op[142] = &AGOSEngine::o_isBox;
-	op[143] = &AGOSEngine::o_doTable;
-	op[151] = &AGOSEngine::o_storeItem;
-	op[152] = &AGOSEngine::o_getItem;
-	op[153] = &AGOSEngine::o_bSet;
-	op[154] = &AGOSEngine::o_bClear;
-	op[155] = &AGOSEngine::o_bZero;
-	op[156] = &AGOSEngine::o_bNotZero;
-	op[157] = &AGOSEngine::o_getOValue;
-	op[158] = &AGOSEngine::o_setOValue;
-	op[160] = &AGOSEngine::o_ink;
+	op[143] = &AGOSEngine::oe2_doTable;
+	op[151] = &AGOSEngine::oe2_storeItem;
+	op[152] = &AGOSEngine::oe2_getItem;
+	op[153] = &AGOSEngine::oe2_bSet;
+	op[154] = &AGOSEngine::oe2_bClear;
+	op[155] = &AGOSEngine::oe2_bZero;
+	op[156] = &AGOSEngine::oe2_bNotZero;
+	op[157] = &AGOSEngine::oe2_getOValue;
+	op[158] = &AGOSEngine::oe2_setOValue;
+	op[160] = &AGOSEngine::oe2_ink;
 }
 
 void AGOSEngine::setupOpcodes() {
@@ -713,7 +713,7 @@ void AGOSEngine::o_addBox() {
 	if (params & 8)
 		flags |= kBFTextBox;
 	if (params & 16)
-		flags |= 0x10;
+		flags |= kBFDragBox;
 
 	x = getVarOrWord();
 	y = getVarOrWord();
@@ -946,106 +946,6 @@ void AGOSEngine::o_isBox() {
 	setScriptCondition(isBoxDead(getVarOrWord()));
 }
 
-void AGOSEngine::o_doTable() {
-	// 143: start item sub
-	SubRoom *r = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
-	if (r != NULL) {
-		Subroutine *sub = getSubroutineByID(r->subroutine_id);
-		if (sub) {
-			startSubroutine(sub);
-			return;
-		}
-	}
-
-	if (getGameType() == GType_ELVIRA2) {
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(getNextItemPtr(), 4);
-		if (sr != NULL) {
-			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
-			if (sub) {
-				startSubroutine(sub);
-				return;
-			}
-		}
-	}
-}
-
-void AGOSEngine::o_storeItem() {
-	// 151: set array6 to item
-	uint var = getVarOrByte();
-	Item *item = getNextItemPtr();
-	_itemStore[var] = item;
-}
-
-void AGOSEngine::o_getItem() {
-	// 152: set m1 to m3 to array 6
-	Item *item = _itemStore[getVarOrByte()];
-	uint var = getVarOrByte();
-	if (var == 1) {
-		_subjectItem = item;
-	} else {
-		_objectItem = item;
-	}
-}
-
-void AGOSEngine::o_bSet() {
-	// 153: set bit
-	setBitFlag(getVarWrapper(), true);
-}
-
-void AGOSEngine::o_bClear() {
-	// 154: clear bit
-	setBitFlag(getVarWrapper(), false);
-}
-
-void AGOSEngine::o_bZero() {
-	// 155: is bit clear
-	setScriptCondition(!getBitFlag(getVarWrapper()));
-}
-
-void AGOSEngine::o_bNotZero() {
-	// 156: is bit set
-	uint bit = getVarWrapper();
-
-	// WORKAROUND: Fix for glitch in some versions
-	if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
-		bit = 50;
-	}
-
-	setScriptCondition(getBitFlag(bit));
-}
-
-void AGOSEngine::o_getOValue() {
-	// 157: get item int prop
-	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
-	uint prop = getVarOrByte();
-
-	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
-		uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
-		writeNextVarContents(subObject->objectFlagValue[offs]);
-	} else {
-		writeNextVarContents(0);
-	}
-}
-
-void AGOSEngine::o_setOValue() {
-	// 158: set item prop
-	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
-	uint prop = getVarOrByte();
-	int value = getVarOrWord();
-
-	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
-		uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
-		subObject->objectFlagValue[offs] = value;
-	}
-}
-
-void AGOSEngine::o_ink() {
-	// 160
-	setTextColor(getVarOrByte());
-}
-
 // -----------------------------------------------------------------------
 
 byte AGOSEngine::getByte() {
@@ -1200,27 +1100,6 @@ void AGOSEngine::scriptMouseOff() {
 	_lockWord &= ~0x8000;
 }
 
-void AGOSEngine::waitForMark(uint i) {
-	_exitCutscene = false;
-	while (!(_marks & (1 << i))) {
-		if (_exitCutscene) {
-			if (getGameType() == GType_PP) {
-				if (_picture8600)
-					break;
-			} else {
-				if (getBitFlag(9)) {
-					endCutscene();
-					break;
-				}
-			}
-		} else {
-			processSpecialKeys();
-		}
-
-		delay(10);
-	}
-}
-
 void AGOSEngine::sendSync(uint a) {
 	uint16 id = to16Wrapper(a);
 	_lockWord |= 0x8000;
@@ -1236,7 +1115,7 @@ void AGOSEngine::setTextColor(uint color) {
 	window->text_color = color;
 }
 
-void AGOSEngine::stopAnimateSimon1(uint a) {
+void AGOSEngine::stopAnimate(uint a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;

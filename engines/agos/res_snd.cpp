@@ -54,9 +54,9 @@ void AGOSEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			if (_subtitles && _scriptVar2) {
 				animate(4, 2, 204, 0, 0, 0);
 				waitForSync(204);
-				stopAnimateSimon1(204);
+				stopAnimate(204);
 			}
-			stopAnimateSimon1(vgaSpriteId + 201);
+			stopAnimate(vgaSpriteId + 201);
 			loadVoice(speech_id);
 			animate(4, 2, vgaSpriteId + 201, 0, 0, 0);
 		}
@@ -108,7 +108,7 @@ void AGOSEngine::skipSpeech() {
 			_variableArray[100] = 15;
 			animate(4, 1, 130, 0, 0, 0);
 			waitForSync(130);
-			stopAnimateSimon1(1);
+			stopAnimate(1);
 		}
 	}
 }

@@ -165,7 +165,7 @@ void AGOSEngine::off_addBox() {
 	if (params & 8)
 		flags |= kBFTextBox;
 	if (params & 16)
-		flags |= 0x10;
+		flags |= kBFHyperBox;
 
 	x = getVarOrWord();
 	y = getVarOrWord();

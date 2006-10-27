@@ -136,6 +136,29 @@ void AGOSEngine::oe2_drawItem() {
 	mouseOn();
 }
 
+void AGOSEngine::oe2_doTable() {
+	// 143: start item sub
+	SubRoom *r = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
+	if (r != NULL) {
+		Subroutine *sub = getSubroutineByID(r->subroutine_id);
+		if (sub) {
+			startSubroutine(sub);
+			return;
+		}
+	}
+
+	if (getGameType() == GType_ELVIRA2) {
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(getNextItemPtr(), 4);
+		if (sr != NULL) {
+			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
+			if (sub) {
+				startSubroutine(sub);
+				return;
+			}
+		}
+	}
+}
+
 void AGOSEngine::oe2_setDoorOpen() {
 	// 144: set door open
 	Item *i = getNextItemPtr();
@@ -173,6 +196,83 @@ void AGOSEngine::oe2_ifDoorLocked() {
 	Item *i=getNextItemPtr();
 	uint16 d = getVarOrByte();
 	setScriptCondition(getDoorState(i, d) == 3);
+}
+
+void AGOSEngine::oe2_storeItem() {
+	// 151: set array6 to item
+	uint var = getVarOrByte();
+	Item *item = getNextItemPtr();
+	_itemStore[var] = item;
+}
+
+void AGOSEngine::oe2_getItem() {
+	// 152: set m1 to m3 to array 6
+	Item *item = _itemStore[getVarOrByte()];
+	uint var = getVarOrByte();
+	if (var == 1) {
+		_subjectItem = item;
+	} else {
+		_objectItem = item;
+	}
+}
+
+void AGOSEngine::oe2_bSet() {
+	// 153: set bit
+	setBitFlag(getVarWrapper(), true);
+}
+
+void AGOSEngine::oe2_bClear() {
+	// 154: clear bit
+	setBitFlag(getVarWrapper(), false);
+}
+
+void AGOSEngine::oe2_bZero() {
+	// 155: is bit clear
+	setScriptCondition(!getBitFlag(getVarWrapper()));
+}
+
+void AGOSEngine::oe2_bNotZero() {
+	// 156: is bit set
+	uint bit = getVarWrapper();
+
+	// WORKAROUND: Fix for glitch in some versions
+	if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
+		bit = 50;
+	}
+
+	setScriptCondition(getBitFlag(bit));
+}
+
+void AGOSEngine::oe2_getOValue() {
+	// 157: get item int prop
+	Item *item = getNextItemPtr();
+	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	uint prop = getVarOrByte();
+
+	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
+		uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
+		writeNextVarContents(subObject->objectFlagValue[offs]);
+	} else {
+		writeNextVarContents(0);
+	}
+}
+
+void AGOSEngine::oe2_setOValue() {
+	// 158: set item prop
+	Item *item = getNextItemPtr();
+	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	uint prop = getVarOrByte();
+	int value = getVarOrWord();
+
+	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
+		uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
+		subObject->objectFlagValue[offs] = value;
+	}
+}
+
+void AGOSEngine::oe2_ink() {
+	// 160
+	setTextColor(getVarOrByte());
 }
 
 void AGOSEngine::oe2_printStats() {
