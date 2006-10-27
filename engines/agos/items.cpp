@@ -102,7 +102,7 @@ void AGOSEngine::createPlayer() {
 	p->size = 0;
 	p->weight = 0;
 	p->strength = 6000;
-	//p->flag = xxx;
+	p->flags = 1; // Male
 	p->level = 1;
 	p->score = 0;
 

@@ -346,7 +346,35 @@ void AGOSEngine::oe1_score() {
 
 void AGOSEngine::oe1_look() {
 	// 96: look
-	debug(0, "oe1_look: stub");
+	Item *i = derefItem(me()->parent);
+	if (i == NULL)
+		return;
+
+	SubRoom *r = (SubRoom *)findChildOfType(i, 1);
+	SubObject *o = (SubObject *)findChildOfType(i, 2);
+	SubPlayer *p = (SubPlayer *)findChildOfType(i, 3);
+	if (p == NULL)
+		return;
+
+	if ((o) && (!r)) {
+		showMessageFormat("In the %s\n", (const char *)getStringPtrByID(i->itemName));
+	} else if (p) {
+		showMessageFormat("Carried by %s\n", (const char *)getStringPtrByID(i->itemName));
+	}
+
+	if (r) {
+		showMessageFormat("%s", (const char *)getStringPtrByID(r->roomLong));
+	}
+
+	showMessageFormat("\n");
+
+	Item *l = derefItem(i->child);
+	if (l) {
+		lobjFunc(l, "You can see ");	/* Show objects */
+	}
+	if (r && (r->flags & 4) && levelOf(i) < 10000) {
+		shutdown();
+	}
 }
 
 void AGOSEngine::oe1_doClass() {
@@ -712,6 +740,62 @@ void AGOSEngine::oe1_printMonsterHit() {
 	mouseOff();
 	writeChar(window, 35, 166, 4, _variableArray[415]);
 	mouseOn();
+}
+
+int16 AGOSEngine::levelOf(Item *item) {
+	SubPlayer *p = (SubPlayer *) findChildOfType(item, 3);
+	if (p == NULL)
+		return 0;
+
+	return p->level;
+}
+
+int16 AGOSEngine::moreText(Item *i) {
+	SubObject *o;
+	i = derefItem(i->next);
+
+	while (i) {
+		o = (SubObject *)findChildOfType(i, 2);
+		if ((o) && (o->objectFlags & 1))
+			goto l1;
+		if (i != me())
+			return 1;
+	l1:	i = derefItem(i->next);
+	}
+
+	return 0;
+}
+
+void AGOSEngine::lobjFunc(Item *i, const char *f) {
+	int n = 0;
+	SubObject *o;
+
+	while (i) {
+		o = (SubObject *)findChildOfType(i, 2);
+		if ((o) && (o->objectFlags & 1))
+			goto l1;
+		if (i == me())
+			goto l1;
+		if (n == 0) {
+			if (f)
+				showMessageFormat("%s", f);
+			n = 1;
+		} else {
+			if (moreText(i))
+				showMessageFormat(", ");
+			else
+				showMessageFormat(" and ");
+		}
+		showMessageFormat("%s", (const char *)getStringPtrByID(i->itemName));
+l1:		i = derefItem(i->next);
+	}
+	if (f) {
+		if (n == 1)
+			showMessageFormat(".\n");
+	} else {
+		if (n == 0)
+			showMessageFormat("nothing");
+	}
 }
 
 } // End of namespace AGOS

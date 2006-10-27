@@ -670,7 +670,7 @@ void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLi
 		int16 tmp = in->readUint16BE();
 		WRITE_BE_UINT16(q, tmp);
 		while (tmp != 10000) {
-			if (READ_BE_UINT16(q) == 0xC6) {
+			if (READ_BE_UINT16(q) == 198) {
 				in->readUint16BE();
 			} else {
 				q = readSingleOpcode(in, q);
@@ -679,9 +679,6 @@ void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLi
 			tmp = in->readUint16BE();
 			WRITE_BE_UINT16(q, tmp);
 		}
-
-		size = (q - line_buffer + 1) * 2;
-		memcpy(allocateTable(size), line_buffer, size);
 	} else {
 		while ((*q = in->readByte()) != 0xFF) {
 			if (*q == 87) {
@@ -690,10 +687,10 @@ void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLi
 				q = readSingleOpcode(in, q);
 			}
 		}
-
-		size = (q - line_buffer + 1);
-		memcpy(allocateTable(size), line_buffer, size);
 	}
+
+	size = (q - line_buffer + 1);
+	memcpy(allocateTable(size), line_buffer, size);
 }
 
 byte *AGOSEngine::readSingleOpcode(Common::SeekableReadStream *in, byte *ptr) {

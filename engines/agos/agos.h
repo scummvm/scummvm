@@ -701,6 +701,10 @@ protected:
 	// Waxworks specific
 	void moveDirn_ww(Item *i, uint x);
 
+	int16 levelOf(Item *item); 
+	int16 moreText(Item *i);
+	void lobjFunc(Item *i, const char *f);
+
 	int canPlace(Item *x, Item *y);
 	int contains(Item *a, Item *b);
 	int sizeContents(Item *x);
