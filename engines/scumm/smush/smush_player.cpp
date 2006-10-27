@@ -261,7 +261,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_width = 0;
 	_height = 0;
 	_IACTpos = 0;
-	_soundFrequency = 22050;
 	_initDone = false;
 	_speed = -1;
 	_insanity = false;
@@ -377,7 +376,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 //	}
 	SmushChannel *c = _smixer->findChannel(track_id);
 	if (c == NULL) {
-		c = new SaudChannel(track_id, _soundFrequency);
+		c = new SaudChannel(track_id);
 		_smixer->addChannel(c);
 	}
 
@@ -462,13 +461,13 @@ void SmushPlayer::handleIACT(Chunk &b) {
 		} else if ((track_flags >= 300) && (track_flags <= 363)) {
 			track = track_id + 600;
 		} else {
-			error("ImuseChannel::handleIACT(): bad track_flags: %d", track_flags);
+			error("SmushPlayer::handleIACT(): bad track_flags: %d", track_flags);
 		}
 		debugC(DEBUG_SMUSH, "SmushPlayer::handleIACT(): %d, %d, %d", track, index, track_flags);
 
 		SmushChannel *c = _smixer->findChannel(track);
 		if (c == 0) {
-			c = new ImuseChannel(track, _soundFrequency);
+			c = new ImuseChannel(track);
 			_smixer->addChannel(c);
 		}
 		if (index == 0)

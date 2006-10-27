@@ -104,11 +104,11 @@ bool SmushMixer::handleFrame() {
 					_channels[i].stream = 0;
 				}
 			} else {
-				int32 rate, vol, pan;
+				int32 vol, pan;
 				bool stereo, is_16bit;
 				void *data;
 
-				_channels[i].chan->getParameters(rate, stereo, is_16bit, vol, pan);
+				_channels[i].chan->getParameters(stereo, is_16bit, vol, pan);
 				int32 size = _channels[i].chan->availableSoundData();
 				byte flags = stereo ? Audio::Mixer::FLAG_STEREO : 0;
 
@@ -129,7 +129,7 @@ bool SmushMixer::handleFrame() {
 
 				if (_mixer->isReady()) {
 					if (!_channels[i].stream) {
-						_channels[i].stream = Audio::makeAppendableAudioStream(rate, flags, 500000);
+						_channels[i].stream = Audio::makeAppendableAudioStream(_channels[i].chan->getRate(), flags, 500000);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);

@@ -106,7 +106,8 @@ bool SaudChannel::processBuffer() {
 	} else if (_inData) {
 		if (_dataSize < _tbufferSize) {
 			int32 offset = _dataSize;
-			while (handleSubTags(offset)) ;
+			while (handleSubTags(offset))
+				;
 			_sbufferSize = _dataSize;
 			_sbuffer = _tbuffer;
 			if (offset < _tbufferSize) {
@@ -132,7 +133,8 @@ bool SaudChannel::processBuffer() {
 		}
 	} else {
 		int32 offset = 0;
-		while (handleSubTags(offset));
+		while (handleSubTags(offset))
+			;
 		if (_inData) {
 			_sbufferSize = _tbufferSize - offset;
 			assert(_sbufferSize);
@@ -159,18 +161,10 @@ bool SaudChannel::processBuffer() {
 	return true;
 }
 
-SaudChannel::SaudChannel(int32 track, int32 freq) :
-	_track(track),
+SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
 	_nbframes(0),
-	_dataSize(-1),
-	_frequency(freq),
-	_inData(false),
 	_markReached(false),
 	_index(0),
-	_tbuffer(0),
-	_tbufferSize(0),
-	_sbuffer(0),
-	_sbufferSize(0),
 	_keepSize(false) {
 }
 
@@ -179,12 +173,6 @@ SaudChannel::~SaudChannel() {
 	_tbufferSize = 0;
 	_sbufferSize = 0;
 	_markReached = true;
-	if (_tbuffer)
-		delete []_tbuffer;
-	if (_sbuffer) {
-		// _sbuffer can be not empty here with insane when it seeks in video
-		delete []_sbuffer;
-	}
 	_sbuffer = 0;
 }
 

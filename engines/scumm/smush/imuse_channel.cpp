@@ -29,25 +29,10 @@
 
 namespace Scumm {
 
-ImuseChannel::ImuseChannel(int32 track, int32 freq) :
-	_track(track),
-	_tbuffer(0),
-	_tbufferSize(0),
-	_sbuffer(0),
-	_sbufferSize(0),
-	_frequency(freq),
-	_dataSize(-1),
-	_inData(false) {
+ImuseChannel::ImuseChannel(int32 track) : SmushChannel(track) {
 }
 
 ImuseChannel::~ImuseChannel() {
-	if (_tbuffer) {
-		delete []_tbuffer;
-	}
-	if (_sbuffer) {
-		warning("_sbuffer should be 0 !!!");
-		delete []_sbuffer;
-	}
 }
 
 bool ImuseChannel::isTerminated() const {
@@ -260,14 +245,16 @@ bool ImuseChannel::processBuffer() {
 
 	if (_inData) {
 		if (_dataSize < _tbufferSize) {
-			int32 offset= _dataSize;
-			while (handleSubTags(offset));
+			int32 offset = _dataSize;
+			while (handleSubTags(offset))
+				;
 			_sbufferSize = _dataSize;
 			_sbuffer = _tbuffer;
 			if (offset < _tbufferSize) {
-				int32 new_size = _tbufferSize - offset;
+				int new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
-				if (!_tbuffer) error("imuse_channel failed to allocate memory");
+				if (!_tbuffer)
+					error("imuse_channel failed to allocate memory");
 				memcpy(_tbuffer, _sbuffer + offset, new_size);
 				_tbufferSize = new_size;
 			} else {
@@ -286,12 +273,14 @@ bool ImuseChannel::processBuffer() {
 		}
 	} else {
 		int32 offset = 0;
-		while (handleSubTags(offset));
+		while (handleSubTags(offset))
+			;
 		if (_inData) {
 			_sbufferSize = _tbufferSize - offset;
 			assert(_sbufferSize);
 			_sbuffer = new byte[_sbufferSize];
-			if (!_sbuffer) error("imuse_channel failed to allocate memory");
+			if (!_sbuffer)
+				error("imuse_channel failed to allocate memory");
 			memcpy(_sbuffer, _tbuffer + offset, _sbufferSize);
 			delete []_tbuffer;
 			_tbuffer = 0;
