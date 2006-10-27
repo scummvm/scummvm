@@ -215,8 +215,7 @@ Subroutine *AGOSEngine::getSubroutineByID(uint subroutine_id) {
 		}
 	}
 
-	if (subroutine_id != 160)
-		debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
+	debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
 	return NULL;
 }
 
@@ -689,7 +688,7 @@ void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLi
 		}
 	}
 
-	size = (q - line_buffer + 1);
+	size = (q - line_buffer + 2);
 	memcpy(allocateTable(size), line_buffer, size);
 }
 
