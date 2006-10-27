@@ -471,28 +471,31 @@ bool AGOSEngine::processSpecialKeys() {
 		_exitCutscene = true;
 		break;
 	case 59: // F1
-		if (getGameType() == GType_SIMON1) {
-			vcWriteVar(5, 40);
-		} else {
+		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 50);
+			vcWriteVar(86, 0);
+		} else if (getGameType() == GType_SIMON1) {
+			vcWriteVar(5, 40);
+			vcWriteVar(86, 0);
 		}
-		vcWriteVar(86, 0);
 		break;
 	case 60: // F2
-		if (getGameType() == GType_SIMON1) {
-			vcWriteVar(5, 60);
-		} else {
+		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 75);
+			vcWriteVar(86, 1);
+		} else if (getGameType() == GType_SIMON1) {
+			vcWriteVar(5, 60);
+			vcWriteVar(86, 1);
 		}
-		vcWriteVar(86, 1);
 		break;
 	case 61: // F3
-		if (getGameType() == GType_SIMON1) {
-			vcWriteVar(5, 100);
-		} else {
+		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 125);
+			vcWriteVar(86, 2);
+		} else if (getGameType() == GType_SIMON1) {
+			vcWriteVar(5, 100);
+			vcWriteVar(86, 2);
 		}
-		vcWriteVar(86, 2);
 		break;
 	case 63: // F5
 		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
