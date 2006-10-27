@@ -551,8 +551,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|STOP_TUNE",
 	"|PAUSE",
 	/* 136 */
@@ -784,8 +784,8 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|STOP_TUNE",
 	"|PAUSE",
 	/* 136 */
@@ -1026,8 +1026,8 @@ static const char *const simon1dos_opcodeNameTable[256] = {
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|STOP_TUNE",
 	"|PAUSE",
 	/* 136 */
@@ -1264,8 +1264,8 @@ static const char *const simon1talkie_opcodeNameTable[256] = {
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|STOP_TUNE",
 	"|PAUSE",
 	/* 136 */
@@ -1502,8 +1502,8 @@ static const char *const simon2dos_opcodeNameTable[256] = {
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|STOP_TUNE",
 	"|PAUSE",
 	/* 136 */
@@ -1744,8 +1744,8 @@ static const char *const simon2talkie_opcodeNameTable[256] = {
 	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|STOP_TUNE",
 	"|PAUSE",
 	/* 136 */
@@ -1979,15 +1979,15 @@ static const char *const feeblefiles_opcodeNameTable[256] = {
 	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
-	"WWB|PLAY_TUNE",
+	NULL,
 	/* 128 */
 	NULL,
 	NULL,
 	"Bww|SET_ADJ_NOUN",
 	"|SET_TIME",
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|LIST_SAVED_GAMES",
 	"|SWITCH_CD",
 	/* 136 */
@@ -2232,15 +2232,15 @@ static const char *const puzzlepack_opcodeNameTable[256] = {
 	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|DO_CLASS_ICONS",
-	"WWB|PLAY_TUNE",
+	NULL,
 	/* 128 */
 	NULL,
 	NULL,
 	"Bww|SET_ADJ_NOUN",
 	"|SET_TIME",
 	/* 132 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|LIST_SAVED_GAMES",
 	"|SWITCH_CD",
 	/* 136 */
