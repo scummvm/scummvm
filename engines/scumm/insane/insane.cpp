@@ -934,7 +934,7 @@ void Insane::reinitActors(void) {
 }
 
 int Insane::calcTilt(int speed) {
-	const int tilt[7] = {-5, -4, -2, 0, 2, 4, 5};
+	static const int tilt[7] = {-5, -4, -2, 0, 2, 4, 5};
 	if (speed + 3 > 6)
 		return 0;
 
@@ -944,7 +944,7 @@ int Insane::calcTilt(int speed) {
 bool Insane::actor1StateFlags(int state) {
 	// This is compressed table. It contains indexes where state
 	// changes. I.e. 0-33: true, 34-38: false 39-72: true, etc.
-	const int spans[] = {0, 34, 39, 73, 89, 90, 92, 93, 99, 100, 117};
+	static const int spans[] = {0, 34, 39, 73, 89, 90, 92, 93, 99, 100, 117};
 	bool retvalue = 0;
 	unsigned int i;
 
@@ -1099,7 +1099,7 @@ void Insane::escapeKeyHandler(void) {
 }
 
 bool Insane::actor0StateFlags1(int state) {
-	const int spans[] = {0, 2, 34, 35, 39, 69, 98, 100, 117};
+	static const int spans[] = {0, 2, 34, 35, 39, 69, 98, 100, 117};
 	bool retvalue = 1;
 	unsigned int i;
 
@@ -1112,7 +1112,7 @@ bool Insane::actor0StateFlags1(int state) {
 }
 
 bool Insane::actor0StateFlags2(int state) {
-	const int spans[] = {0, 10, 14, 34, 39, 73, 75, 79, 81, 90, 93, 94,
+	static const int spans[] = {0, 10, 14, 34, 39, 73, 75, 79, 81, 90, 93, 94,
 		 98, 100, 117, 133, 136, 153, 158, 200, 202, 209, 212, 213, 217,
 		 219, 236, 256, 259, 272, 277, 311, 312, 315, 317, 328, 331, 332,
 		 336, 338, 355, 379, 382, 391, 396, 440, 441, 447, 450, 451, 455,
