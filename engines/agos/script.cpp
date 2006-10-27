@@ -925,7 +925,9 @@ void AGOSEngine::o_placeNoIcons() {
 void AGOSEngine::o_clearTimers() {
 	// 140: clear timers
 	killAllTimers();
-	addTimeEvent(3, 0xA0);
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+		addTimeEvent(3, 160);
 }
 
 void AGOSEngine::o_setDollar() {
