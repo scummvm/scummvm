@@ -36,11 +36,9 @@
 
 #include "common/advancedDetector.h"
 
-#include "sound/mods/protracker.h"
-
 namespace AGOS {
 
-/* Various other settings */
+/* Enable and set to zone number number to dump */
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
 
