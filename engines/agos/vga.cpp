@@ -1016,7 +1016,8 @@ void AGOSEngine::vc27_resetSprite() {
 		}
 	}
 
-	vcWriteVar(254, 0);
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
+		vcWriteVar(254, 0);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		setBitFlag(42, true);
