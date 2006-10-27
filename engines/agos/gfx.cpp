@@ -760,4 +760,356 @@ void AGOSEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
 	} while (--num);
 }
 
+void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool vgaScript) {
+	VgaSprite *vsp;
+	VgaPointersEntry *vpe;
+	byte *p, *pp;
+	uint count;
+
+	if (isSpriteLoaded(vgaSpriteId, zoneNum))
+		return;
+
+	vsp = _vgaSprites;
+	while (vsp->id != 0)
+		vsp++;
+
+	vsp->windowNum = windowNum;
+	vsp->priority = 0;
+	vsp->flags = 0;
+
+	vsp->y = y;
+	vsp->x = x;
+	vsp->image = 0;
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+		vsp->palette = 0;
+	else
+		vsp->palette = palette;
+	vsp->id = vgaSpriteId;
+
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
+		vsp->zoneNum = zoneNum;
+	else
+		vsp->zoneNum = zoneNum = vgaSpriteId / 100;
+
+	for (;;) {
+		vpe = &_vgaBufferPointers[zoneNum];
+		_curVgaFile1 = vpe->vgaFile1;
+		if (vgaScript) {
+			if (vpe->vgaFile1 != NULL)
+				break;
+			if (_zoneNumber != zoneNum)
+				_noOverWrite = _zoneNumber;
+
+			loadZone(zoneNum);
+			_noOverWrite = 0xFFFF;
+		} else {
+			_zoneNumber = zoneNum;
+			if (vpe->vgaFile1 != NULL)
+				break;
+			loadZone(zoneNum);
+		}
+	}
+
+	pp = _curVgaFile1;
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		p = pp + READ_LE_UINT16(pp + 2);
+		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
+		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
+
+		while (count--) {
+			if (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId)
+				break;
+			p += sizeof(AnimationHeader_Feeble);
+		}
+		assert(READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		p = pp + READ_BE_UINT16(pp + 4);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId)
+				break;
+			p += sizeof(AnimationHeader_Simon);
+		}
+		assert(READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId);
+	} else {
+		p = pp + READ_BE_UINT16(pp + 10);
+		p += 20;
+
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Common *) p)->animationTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId)
+				break;
+			p += sizeof(AnimationHeader_WW);
+		}
+		assert(READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId);
+	}
+
+#ifdef DUMP_FILE_NR
+	{
+		static bool dumped = false;
+		if (res == DUMP_FILE_NR && !dumped) {
+			dumped = true;
+			dumpVgaFile(_curVgaFile1);
+		}
+	}
+#endif
+
+#ifdef DUMP_BITMAPS_FILE_NR
+	{
+		static bool dumped = false;
+		if (res == DUMP_BITMAPS_FILE_NR && !dumped) {
+			dumped = true;
+			dumpVgaBitmaps(_curVgaFile2, _curVgaFile1, zoneNum);
+		}
+	}
+#endif
+
+	if (_startVgaScript) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
+		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), zoneNum, vgaSpriteId);
+		} else {
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW*)p)->scriptOffs), zoneNum, vgaSpriteId);
+		}
+	}
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, zoneNum);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, zoneNum);
+	} else {
+		addVgaEvent(_vgaBaseDelay, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW *) p)->scriptOffs), vgaSpriteId, zoneNum);
+	}
+}
+
+void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
+	uint zoneNum;
+	VgaPointersEntry *vpe;
+	byte *bb, *b;
+	uint16 count;
+	const byte *vc_ptr_org;
+
+	zoneNum = vga_res_id / 100;
+
+	for (;;) {
+		vpe = &_vgaBufferPointers[zoneNum];
+		_curVgaFile1 = vpe->vgaFile1;
+		_curVgaFile2 = vpe->vgaFile2;
+
+		if (vgaScript) {
+			if (vpe->vgaFile1 != NULL)
+				break;
+			if (_zoneNumber != zoneNum)
+				_noOverWrite = _zoneNumber;
+
+			loadZone(zoneNum);
+			_noOverWrite = 0xFFFF;
+		} else {
+			_curSfxFile = vpe->sfxFile;
+			_zoneNumber = zoneNum;
+
+			if (vpe->vgaFile1 != NULL)
+				break;
+
+			loadZone(zoneNum);
+		}
+	}
+
+	bb = _curVgaFile1;
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		b = bb + READ_LE_UINT16(bb + 2);
+		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
+		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
+
+		while (count--) {
+			if (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id)
+				break;
+			b += sizeof(ImageHeader_Feeble);
+		}
+		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		b = bb + READ_BE_UINT16(bb + 4);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id)
+				break;
+			b += sizeof(ImageHeader_Simon);
+		}
+		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id);
+	} else {
+		b = bb + READ_BE_UINT16(bb + 10);
+		b += 20;
+
+		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
+
+		while (count--) {
+			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id)
+				break;
+			b += sizeof(ImageHeader_WW);
+		}
+		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
+
+		if (!vgaScript)
+			clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
+	}
+
+	if (_startVgaScript) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vga_res_id);
+		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), zoneNum, vga_res_id);
+		} else {
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), zoneNum, vga_res_id);
+		}
+	}
+
+	vc_ptr_org = _vcPtr;
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
+	} else {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW *) b)->scriptOffs);
+	}
+
+	runVgaScript();
+	_vcPtr = vc_ptr_org;
+}
+
+void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
+	if (!_initMouse) {
+		_initMouse = 1;
+		vc33_setMouseOn();
+	}
+
+	if (mode == 4) {
+		vc29_stopAllSounds();
+
+		if (getGameType() == GType_ELVIRA1) {
+			if (_variableArray[299] == 0) {
+				_variableArray[293] = 0;
+				_wallOn = 0;
+			}
+		} else if (getGameType() == GType_ELVIRA2) {
+			if (_variableArray[70] == 0) {
+				_variableArray[71] = 0;
+				_wallOn = 0;
+			}
+		}
+
+	}
+
+	if (_lockWord & 0x10)
+		error("setWindowImageEx: _lockWord & 0x10");
+
+	setWindowImage(mode, vga_res);
+}
+
+void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
+	uint num_lines;
+	uint16 updateWindow;
+
+	_windowNum = updateWindow = mode;
+	_lockWord |= 0x20;
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		vc27_resetSprite();
+	}
+
+	if (vga_res_id == 0) {
+		if (getGameType() == GType_SIMON1) {
+			_unkPalFlag = true;
+		} else if (getGameType() == GType_SIMON2) {
+			_useBackGround = true;
+			_restoreWindow6 = true;
+		}
+	}
+
+	if (getGameType() == GType_SIMON1) {
+		if (vga_res_id == 16300) {
+			clearBackFromTop(134);
+			_usePaletteDelay = true;
+		}
+	} else if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
+		_scrollX = 0;
+		_scrollY = 0;
+		_scrollXMax = 0;
+		_scrollYMax = 0;
+		_scrollCount = 0;
+		_scrollFlag = 0;
+		_scrollHeight = 134;
+		_variableArrayPtr = _variableArray;
+		if (_variableArray[34] >= 0) {
+			if (getGameType() == GType_FF)
+				_variableArray[250] = 0;
+			_variableArray[251] = 0;
+		}
+	}
+
+	setImage(vga_res_id);
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
+		fillBackGroundFromBack(_screenHeight);
+		_syncFlag2 = 1;
+	} else if (getGameType() == GType_SIMON2) {
+		if (!_useBackGround) {
+			num_lines = _windowNum == 4 ? 134 : 200;
+			_boxStarHeight = num_lines;
+			fillFrontFromBack(0, 0, _screenWidth, num_lines);
+			fillBackGroundFromBack(num_lines);
+			_syncFlag2 = 1;
+		}
+		_useBackGround = false;
+	} else if (getGameType() == GType_SIMON1) {
+		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+		// in lower half of screen
+		if (_subroutine == 2923 || _subroutine == 2926)
+			num_lines = 200;
+		else
+			num_lines = _windowNum == 4 ? 134 : 200;
+
+		fillFrontFromBack(0, 0, _screenWidth, num_lines);
+		fillBackGroundFromBack(num_lines);
+		_syncFlag2 = 1;
+		_timer5 = 0;
+	} else {
+		num_lines = _windowNum == 4 ? 134 : 200;
+		fillFrontFromBack(0, 0, _screenWidth, num_lines);
+		fillBackGroundFromBack(num_lines);
+		_syncFlag2 = 1;
+		_timer5 = 0;
+	}
+
+	if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
+		byte *dst = getBackBuf() + 42560;
+		int size = 21440;
+
+		while (size--) {
+			*dst += 0x10;
+			dst++;
+		}
+	}
+
+	_lockWord &= ~0x20;
+
+	if (getGameType() == GType_SIMON1) {
+		if (_unkPalFlag) {
+			_unkPalFlag = false;
+			while (_fastFadeInFlag != 0) {
+				delay(10);
+			}
+		}
+	}
+}
+
 } // End of namespace AGOS

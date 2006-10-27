@@ -205,7 +205,7 @@ enum SubObjectFlags {
 };
 
 enum GameFeatures {
-	GF_TALKIE           = 1 << 0,
+	GF_TALKIE          = 1 << 0,
 	GF_OLD_BUNDLE      = 1 << 1,
 	GF_CRUNCHED        = 1 << 2,
 	GF_CRUNCHED_GAMEPC = 1 << 3,
@@ -222,7 +222,7 @@ enum GameFileTypes {
 	GAME_STRFILE  = 1 << 4,
 	GAME_RMSLFILE = 1 << 5,
 	GAME_TBLFILE  = 1 << 6,
-	GAME_XTBLFILE  = 1 << 7,
+	GAME_XTBLFILE = 1 << 7,
 
 	GAME_GFXIDXFILE = 1 << 8
 };

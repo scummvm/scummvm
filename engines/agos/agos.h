@@ -867,32 +867,26 @@ public:
 	bool getBitFlag(uint bit);
 	void setBitFlag(uint bit, bool value);
 
-	// Simon1/Simon2 video script opcodes
+	// Video Script Opcodes, Common
 	void vc1_fadeOut();
 	void vc2_call();
 	void vc3_loadSprite();
 	void vc4_fadeIn();
-	void vc5_skip_if_neq();
-	void vc6_skip_ifn_sib_with_a();
-	void vc7_skip_if_sib_with_a();
-	void vc8_skip_if_parent_is();
-	void vc9_skip_if_unk3_is();
+	void vc5_ifEqual();
+	void vc6_ifObjectHere();
+	void vc7_ifObjectNotHere();
+	void vc8_ifObjectIsAt();
+	void vc9_ifObjectStateIs();
 	void vc10_draw();
-	void vc11();
-	void vc11_clearPathFinder();
 	void vc12_delay();
 	void vc13_addToSpriteX();
 	void vc14_addToSpriteY();
 	void vc15_sync();
 	void vc16_waitSync();
-	void vc17_waitEnd();
-	void vc17_setPathfinderItem();
 	void vc18_jump();
 	void vc19_loop();
 	void vc20_setRepeat();
 	void vc21_endRepeat();
-	void vc22_setPaletteOld();
-	void vc22_setPaletteNew();
 	void vc23_setPriority();
 	void vc24_setSpriteXY();
 	void vc25_halt_sprite();
@@ -902,65 +896,79 @@ public:
 	void vc29_stopAllSounds();
 	void vc30_setFrameRate();
 	void vc31_setWindow();
-	void vc32_saveScreen();
-	void vc32_copyVar();
 	void vc33_setMouseOn();
 	void vc34_setMouseOff();
 	void vc35_clearWindow();
 	void vc36_setWindowImage();
-	void vc37_pokePalette();
-	void vc37_addToSpriteY();
-	void vc38_skipIfVarZero();
+	void vc38_ifVarNotZero();
 	void vc39_setVar();
 	void vc40();
 	void vc41();
 	void vc42_delayIfNotEQ();
-	void vc43_skipIfBitClear();
-	void vc44_skipIfBitSet();
+
+	// Video Script Opcodes, Elvira 1
+	void vc11_onStop();
+	void vc17_waitEnd();
+	void vc22_setPaletteOld();
+	void vc32_saveScreen();
+	void vc37_pokePalette();
+
+	// Video Script Opcodes, Elvira 2
+	void vc43_ifBitSet();
+	void vc44_ifBitClear();
 	void vc45_setWindowPalette();
-	void vc45_setSpriteX();
 	void vc46_setPaletteSlot1();
-	void vc46_setSpriteY();
 	void vc47_setPaletteSlot2();
-	void vc47_addToVar();
 	void vc48_setPaletteSlot3();
-	void vc48_setPathFinder();
 	void vc49_setBit();
 	void vc50_clearBit();
 	void vc51_enableBox();
 	void vc52_playSound();
 	void vc53_dissolveIn();
-	void vc53_panSFX();
 	void vc54_dissolveOut();
 	void vc55_moveBox();
 	void vc56_fullScreen();
-	void vc56_delayLong();
 	void vc57_blackPalette();
 	void vc58_checkCodeWheel();
 	void vc58_changePriority();
-	void vc59_skipIfNotEGA();
-	void vc59_skipIfSpeechEnded();
-	void vc59_stopAnimations();
+	void vc59_ifEGA();
+
+	// Video Script Opcodes, Waxworks
 	void vc60_stopAnimation();
 	void vc61();
-	void vc61_setMaskImage();
 	void vc62_fastFadeOut();
 	void vc63_fastFadeIn();
 
-	// Simon2 specific Video Script Opcodes
-	void vc64_skipIfSpeechEnded();
+	// Video Script Opcodes, Simon 1
+	void vc11_clearPathFinder();
+	void vc17_setPathfinderItem();
+	void vc32_copyVar();
+	void vc37_addToSpriteY();
+	void vc45_setSpriteX();
+	void vc46_setSpriteY();
+	void vc47_addToVar();
+	void vc48_setPathFinder();
+	void vc59_ifSpeech();
+	void vc61_setMaskImage();
+	void vc22_setPaletteNew();
+
+	// Video Script Opcodes, Simon 2
+	void vc56_delayLong();
+	void vc59_stopAnimations();
+	void vc64_ifSpeech();
 	void vc65_slowFadeIn();
-	void vc66_skipIfNotEqual();
-	void vc67_skipIfGE();
-	void vc68_skipIfLE();
-	void vc69_playTrack();
-	void vc70_queueMusic();
-	void vc71_checkMusicQueue();
-	void vc72_play_track_2();
+	void vc66_ifEqual();
+	void vc67_ifLE();
+	void vc68_ifGE();
+	void vc69_playSeq();
+	void vc70_joinSeq();
+	void vc71_ifSeqWaiting();
+	void vc72_segue();
 	void vc73_setMark();
 	void vc74_clearMark();
 
-	// Feeble specific Video Script Opcodes
+	// Video Script Opcodes, Feeble Files
+	void vc53_panSFX();
 	void vc75_setScale();
 	void vc76_setScaleXOffs();
 	void vc77_setScaleYOffs();

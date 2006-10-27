@@ -25,7 +25,6 @@
 
 #include "agos/agos.h"
 #include "agos/intern.h"
-#include "agos/vga.h"
 
 namespace AGOS {
 
@@ -35,15 +34,15 @@ void AGOSEngine::setupSimon2VideoOpcodes(VgaOpcodeProc *op) {
 	op[56] = &AGOSEngine::vc56_delayLong;
 	op[58] = &AGOSEngine::vc58_changePriority;
 	op[59] = &AGOSEngine::vc59_stopAnimations;
-	op[64] = &AGOSEngine::vc64_skipIfSpeechEnded;
+	op[64] = &AGOSEngine::vc64_ifSpeech;
 	op[65] = &AGOSEngine::vc65_slowFadeIn;
-	op[66] = &AGOSEngine::vc66_skipIfNotEqual;
-	op[67] = &AGOSEngine::vc67_skipIfGE;
-	op[68] = &AGOSEngine::vc68_skipIfLE;
-	op[69] = &AGOSEngine::vc69_playTrack;
-	op[70] = &AGOSEngine::vc70_queueMusic;
-	op[71] = &AGOSEngine::vc71_checkMusicQueue;
-	op[72] = &AGOSEngine::vc72_play_track_2;
+	op[66] = &AGOSEngine::vc66_ifEqual;
+	op[67] = &AGOSEngine::vc67_ifLE;
+	op[68] = &AGOSEngine::vc68_ifGE;
+	op[69] = &AGOSEngine::vc69_playSeq;
+	op[70] = &AGOSEngine::vc70_joinSeq;
+	op[71] = &AGOSEngine::vc71_ifSeqWaiting;
+	op[72] = &AGOSEngine::vc72_segue;
 	op[73] = &AGOSEngine::vc73_setMark;
 	op[74] = &AGOSEngine::vc74_clearMark;
 }
@@ -85,7 +84,7 @@ void AGOSEngine::vc59_stopAnimations() {
 	} while (++start != end);
 }
 
-void AGOSEngine::vc64_skipIfSpeechEnded() {
+void AGOSEngine::vc64_ifSpeech() {
 	if ((getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) ||
 		!_sound->isVoiceActive()) {
 		vcSkipNextInstruction();
@@ -103,7 +102,7 @@ void AGOSEngine::vc65_slowFadeIn() {
 	_fastFadeOutFlag = false;
 }
 
-void AGOSEngine::vc66_skipIfNotEqual() {
+void AGOSEngine::vc66_ifEqual() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 
@@ -111,7 +110,7 @@ void AGOSEngine::vc66_skipIfNotEqual() {
 		vcSkipNextInstruction();
 }
 
-void AGOSEngine::vc67_skipIfGE() {
+void AGOSEngine::vc67_ifLE() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 
@@ -119,7 +118,7 @@ void AGOSEngine::vc67_skipIfGE() {
 		vcSkipNextInstruction();
 }
 
-void AGOSEngine::vc68_skipIfLE() {
+void AGOSEngine::vc68_ifGE() {
 	uint16 a = vcReadNextWord();
 	uint16 b = vcReadNextWord();
 
@@ -127,7 +126,7 @@ void AGOSEngine::vc68_skipIfLE() {
 		vcSkipNextInstruction();
 }
 
-void AGOSEngine::vc69_playTrack() {
+void AGOSEngine::vc69_playSeq() {
 	int16 track = vcReadNextWord();
 	int16 loop = vcReadNextWord();
 
@@ -150,7 +149,7 @@ void AGOSEngine::vc69_playTrack() {
 	midi.startTrack(track);
 }
 
-void AGOSEngine::vc70_queueMusic() {
+void AGOSEngine::vc70_joinSeq() {
 	// Simon2
 	uint16 track = vcReadNextWord();
 	uint16 loop = vcReadNextWord();
@@ -166,7 +165,7 @@ void AGOSEngine::vc70_queueMusic() {
 		midi.setLoop(loop != 0);
 }
 
-void AGOSEngine::vc71_checkMusicQueue() {
+void AGOSEngine::vc71_ifSeqWaiting() {
 	// Jamieson630:
 	// This command skips the next instruction
 	// unless (1) there is a track playing, AND
@@ -175,7 +174,7 @@ void AGOSEngine::vc71_checkMusicQueue() {
 		vcSkipNextInstruction();
 }
 
-void AGOSEngine::vc72_play_track_2() {
+void AGOSEngine::vc72_segue() {
 	// Jamieson630:
 	// This is a "play or stop track". Note that
 	// this opcode looks very similar in function

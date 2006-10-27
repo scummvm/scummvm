@@ -38,7 +38,7 @@ void AGOSEngine::setupSimon1VideoOpcodes(VgaOpcodeProc *op) {
 	op[32] = &AGOSEngine::vc32_copyVar;
 	op[37] = &AGOSEngine::vc37_addToSpriteY;
 	op[48] = &AGOSEngine::vc48_setPathFinder;
-	op[59] = &AGOSEngine::vc59_skipIfSpeechEnded;
+	op[59] = &AGOSEngine::vc59_ifSpeech;
 	op[60] = &AGOSEngine::vc60_stopAnimation;
 	op[61] = &AGOSEngine::vc61_setMaskImage;
 	op[62] = &AGOSEngine::vc62_fastFadeOut;
@@ -196,7 +196,7 @@ void AGOSEngine::vc48_setPathFinder() {
 	}
 }
 
-void AGOSEngine::vc59_skipIfSpeechEnded() {
+void AGOSEngine::vc59_ifSpeech() {
 	if (!_sound->isVoiceActive())
 		vcSkipNextInstruction();
 }

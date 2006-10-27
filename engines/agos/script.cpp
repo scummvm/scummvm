@@ -1135,33 +1135,57 @@ void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
 	_lockWord &= ~0x8000;
 }
 
-void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
-	if (!_initMouse) {
-		_initMouse = 1;
-		vc33_setMouseOn();
+void AGOSEngine::waitForSync(uint a) {
+	const uint maxCount = (getGameType() == GType_SIMON1) ? 500 : 1000;
+
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
+		if (a != 200) {
+			uint16 tmp = _lastVgaWaitFor;
+			_lastVgaWaitFor = 0;
+			if (tmp == a)
+				return;
+		}
 	}
 
-	if (mode == 4) {
-		vc29_stopAllSounds();
+	_vgaWaitFor = a;
+	_syncCount = 0;
+	_exitCutscene = false;
+	_rightButtonDown = false;
 
-		if (getGameType() == GType_ELVIRA1) {
-			if (_variableArray[299] == 0) {
-				_variableArray[293] = 0;
-				_wallOn = 0;
-			}
-		} else if (getGameType() == GType_ELVIRA2) {
-			if (_variableArray[70] == 0) {
-				_variableArray[71] = 0;
-				_wallOn = 0;
+	while (_vgaWaitFor != 0) {
+		if (_rightButtonDown) {
+			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
+				skipSpeech();
+				break;
 			}
 		}
+		if (_exitCutscene) {
+			if (getGameType() == GType_ELVIRA1) {
+				if (_variableArray[105] == 0) {
+					_variableArray[105] = 255;
+					break;
+				}
+			} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+				if (_vgaWaitFor == 51) {
+					setBitFlag(244, 1);
+					break;
+				}
+			} else {
+				if (getBitFlag(9)) {
+					endCutscene();
+					break;
+				}
+			}
+		}
+		processSpecialKeys();
 
+		if (_syncCount >= maxCount) {
+			warning("waitForSync: wait timed out");
+			break;
+		}
+
+		delay(1);
 	}
-
-	if (_lockWord & 0x10)
-		error("setWindowImageEx: _lockWord & 0x10");
-
-	setWindowImage(mode, vga_res);
 }
 
 } // End of namespace AGOS

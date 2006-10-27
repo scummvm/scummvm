@@ -37,6 +37,8 @@ MODULE_OBJS := \
 	subroutine.o \
 	verb.o \
 	vga.o \
+	vga_e2.o \
+	vga_ww.o \
 	vga_s1.o \
 	vga_s2.o \
 	vga_ff.o \
