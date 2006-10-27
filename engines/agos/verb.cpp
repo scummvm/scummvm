@@ -376,8 +376,13 @@ HitArea *AGOSEngine::findBox(uint hitarea_id) {
 	uint count = ARRAYSIZE(_hitAreas);
 
 	do {
-		if (ha->id == hitarea_id && ha->flags != 0)
-			return ha;
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (ha->id == hitarea_id && ha->flags != 0)
+				return ha;
+		} else {
+			if (ha->id == hitarea_id)
+				return ha;
+		}
 	} while (ha++, --count);
 	return NULL;
 }
@@ -409,8 +414,10 @@ void AGOSEngine::disableBox(uint hitarea) {
 	if (ha != NULL) {
 		ha->flags |= kBFBoxDead;
 		ha->flags &= ~kBFBoxSelected;
-		if (hitarea == 102)
+		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+			hitarea == 102) {
 			resetVerbs();
+		}
 	}
 }
 
