@@ -821,7 +821,7 @@ protected:
 	void permitInput();
 
 	uint getFeebleFontSize(byte chr);
-	void justifyStart(uint a, uint b);
+	void justifyStart();
 	void justifyOutPut(byte chr);
 
 	void loadZone(uint zoneNum);

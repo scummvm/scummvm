@@ -726,7 +726,7 @@ void AGOSEngine::printBox() {
 	_textWindow->textRow = 0;
 	_textWindow->textColumnOffset = 0;
 	_textWindow->textLength = 0;
-	justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
+	justifyStart();
 	waitForSync(99);
 	BoxBufferPtr = _boxBuffer;
 	while (*BoxBufferPtr)

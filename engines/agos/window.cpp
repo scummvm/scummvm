@@ -78,11 +78,7 @@ void AGOSEngine::changeWindow(uint a) {
 	_curWindow = a;
 	justifyOutPut(0);
 	_textWindow = _windowArray[a];
-
-	if (getGameType() == GType_FF || getGameType() == GType_PP)
-		justifyStart(_textWindow->textColumn, _textWindow->width);
-	else
-		justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
+	justifyStart();
 }
 
 void AGOSEngine::closeWindow(uint a) {

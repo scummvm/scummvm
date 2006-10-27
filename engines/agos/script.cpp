@@ -667,10 +667,7 @@ void AGOSEngine::o_defWindow() {
 
 	if (num == _curWindow) {
 		_textWindow = _windowArray[num];
-		if (getGameType() == GType_FF || getGameType() == GType_PP)
-			justifyStart(_textWindow->textColumn, _textWindow->width);
-		else
-			justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
+		justifyStart();
 	}
 }
 

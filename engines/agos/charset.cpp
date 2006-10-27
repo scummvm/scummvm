@@ -314,10 +314,7 @@ void AGOSEngine::showMessageFormat(const char *s, ...) {
 		openTextWindow();
 		if (!_showMessageFlag) {
 			_windowArray[0] = _textWindow;
-			if (getGameType() == GType_FF || getGameType() == GType_PP)
-				justifyStart(_textWindow->textColumn, _textWindow->width);
-			else
-				justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
+			justifyStart();
 		}
 		_showMessageFlag = true;
 		_fcsData1[_curWindow] = 1;
@@ -327,9 +324,14 @@ void AGOSEngine::showMessageFormat(const char *s, ...) {
 		justifyOutPut(*str);
 }
 
-void AGOSEngine::justifyStart(uint a, uint b) {
-	_printCharCurPos = a;
-	_printCharMaxPos = b;
+void AGOSEngine::justifyStart() {
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		_printCharCurPos = _textWindow->textColumn;
+		_printCharMaxPos = _textWindow->width;
+	} else {
+		_printCharCurPos = _textWindow->textLength;
+		_printCharMaxPos = _textWindow->textMaxLength;
+	}
 	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
 	_newLines = 0;

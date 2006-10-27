@@ -432,10 +432,7 @@ void AGOSEngine::permitInput() {
 		_curWindow = 0;
 		if (_windowArray[0] != 0) {
 			_textWindow = _windowArray[0];
-			if (getGameType() == GType_FF || getGameType() == GType_PP)
-				justifyStart(_textWindow->textColumn, _textWindow->width);
-			else
-				justifyStart(_textWindow->textLength, _textWindow->textMaxLength);
+			justifyStart();
 		}
 		_mortalFlag = false;
 	}
