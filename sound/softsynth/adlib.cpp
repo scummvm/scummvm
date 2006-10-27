@@ -234,14 +234,14 @@ static const AdlibSetParams adlib_setparam_table[] = {
 	{0xC0, 1, 14, 0}    // feedback
 };
 
-const byte param_table_1[16] = {
+static const byte param_table_1[16] = {
 	29, 28, 27, 0,
 	3, 4, 7, 8,
 	13, 16, 17, 20,
 	21, 30, 31, 0
 };
 
-const uint16 maxval_table[16] = {
+static const uint16 maxval_table[16] = {
 	0x2FF, 0x1F, 0x7, 0x3F,
 	0x0F, 0x0F, 0x0F, 0x3,
 	0x3F, 0x0F, 0x0F, 0x0F,
@@ -473,6 +473,7 @@ static const byte gm_percussion_lookup[128] = {
 };
 
 static byte lookup_table[64][32];
+
 static const byte volume_table[] = {
 	0, 4, 7, 11,
 	13, 16, 18, 20,
