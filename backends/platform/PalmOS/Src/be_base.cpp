@@ -26,6 +26,10 @@
 #include "common/config-file.h"
 #include "common/config-manager.h"
 
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
+
 OSystem_PalmBase::OSystem_PalmBase() {
 	_overlayVisible = false;
 
@@ -57,6 +61,10 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_batCheckTicks = SysTicksPerSecond() * 15;
 	_batCheckLast = TimGetTicks();
 	
+	_saveMgr = 0;
+	_timerMgr = 0;
+	_mixerMgr = 0;
+	
 	_mouseDataP = NULL;
 	_mouseVisible = false;
 	_mouseDrawn = false;
@@ -68,6 +76,12 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	
 	_keyMouseRepeat = 0;
 	_keyMouseDelay = (gVars->arrowKeys) ? computeMsecs(125) : computeMsecs(25);
+}
+
+static int timer_handler(int t) {
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	tm->handler();
+	return t;
 }
 
 void OSystem_PalmBase::initBackend() {
@@ -83,6 +97,26 @@ void OSystem_PalmBase::initBackend() {
 
 	int_initBackend();
 	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
+
+	// Create the savefile manager, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_saveMgr == 0) {
+		_saveMgr = new DefaultSaveFileManager();
+	}
+
+	// Create and hook up the mixer, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_mixerMgr == 0) {
+		_mixerMgr = new Audio::Mixer();
+		setSoundCallback(Audio::Mixer::mixCallback, _mixerMgr);
+	}
+
+	// Create and hook up the timer manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_timerMgr == 0) {
+		_timerMgr = new DefaultTimerManager();
+		setTimerCallback(::timer_handler, 10);
+	}
 
 	OSystem::initBackend();
 }
@@ -113,5 +147,22 @@ void OSystem_PalmBase::quit() {
 	int_quit();
 	clearSoundCallback();
 	unload_gfx_mode();
+	
+	delete _saveMgr;
+	delete _timerMgr;
+	delete _mixerMgr;
+	
 	exit(0);
+}
+
+Common::SaveFileManager *OSystem_PalmBase::getSavefileManager() {
+	return _saveMgr;
+}
+
+Audio::Mixer * OSystem_PalmBase::getMixer() {
+	return _mixerMgr;
+}
+
+Common::TimerManager * OSystem_PalmBase::getTimerManager() {
+	return _timerMgr;
 }

@@ -157,7 +157,3 @@ Common::SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool s
 	}
 	return sf;
 }
-
-Common::SaveFileManager *OSystem_PalmBase::getSavefileManager() {
-	return new PalmSaveFileManager();
-}

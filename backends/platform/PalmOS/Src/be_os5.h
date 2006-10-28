@@ -132,6 +132,8 @@ private:
 
 	virtual SndStreamVariableBufferCallback sound_callback();
 	virtual void sound_handler();
+	virtual bool setSoundCallback(SoundProc proc, void *param);
+	void clearSoundCallback();
 
 protected:
 	UInt16 _sysOldCoord, _sysOldOrientation;
@@ -157,9 +159,6 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
-	virtual bool setSoundCallback(SoundProc proc, void *param);
-	void clearSoundCallback();
 
 	void setWindowCaption(const char *caption);
 

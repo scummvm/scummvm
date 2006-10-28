@@ -27,7 +27,7 @@
 static SYSTEM_CALLBACK Err sndCallbackEx(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP) {
 	CALLBACK_PROLOGUE
 	SoundType *_sound = ((SoundExType *)UserDataP)->sound;
-	((OSystem::SoundProc)_sound->proc)(_sound->param, (byte *)bufferP, *bufferSizeP);
+	((SoundProc)_sound->proc)(_sound->param, (byte *)bufferP, *bufferSizeP);
 	CALLBACK_EPILOGUE
 	return errNone;
 }

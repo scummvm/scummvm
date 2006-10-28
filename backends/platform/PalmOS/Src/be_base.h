@@ -29,6 +29,15 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
+namespace Audio {
+	class Mixer;
+}
+
+namespace Common {
+	class SaveFileManager;
+	class TimerManager;
+}
+
 enum {
 	GFX_NORMAL = 0,
 	GFX_WIDE,
@@ -51,10 +60,14 @@ enum {
 
 #define computeMsecs(x) ((SysTicksPerSecond() * x) / 1000)
 
+
+typedef void (*SoundProc)(void *param, byte *buf, int len);
+typedef int (*TimerProc)(int interval);
+
 typedef struct {
 	UInt32 duration, nextExpiry;
 	Boolean active;
-	OSystem::TimerProc callback;
+	TimerProc callback;
 } TimerType, *TimerPtr;
 
 typedef struct {
@@ -88,7 +101,10 @@ private:
 	void battery_handler();
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y) = 0;
 	void simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr);
+
 	virtual void sound_handler() = 0;
+	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
+	virtual void clearSoundCallback() = 0;
 
 protected:
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
@@ -111,6 +127,10 @@ protected:
 
 	TimerType _timer;
 	SoundType _sound;
+
+	Common::SaveFileManager *_saveMgr;
+	Audio::Mixer *_mixerMgr;
+	Common::TimerManager *_timerMgr;
 
 	RGBColorType _currentPalette[256];
 	uint _paletteDirtyStart, _paletteDirtyEnd;
@@ -233,14 +253,14 @@ public:
 	virtual void unlockMutex(MutexRef mutex) {}
 	virtual void deleteMutex(MutexRef mutex) {}
 	
-	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
-	virtual void clearSoundCallback() = 0;
 	int getOutputSampleRate() const { return _samplesPerSec; }
+	virtual Audio::Mixer *getMixer();
 
 	void quit();
 	virtual void setWindowCaption(const char *caption) = 0;
 	
 	Common::SaveFileManager *getSavefileManager();
+	Common::TimerManager *getTimerManager();
 };
 
 #endif
