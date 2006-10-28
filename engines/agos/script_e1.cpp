@@ -52,31 +52,23 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[21] = &AGOSEngine::o_gtf;
 	op[22] = &AGOSEngine::oe1_isIn;
 	op[23] = &AGOSEngine::oe1_isNotIn;
-
 	op[29] = &AGOSEngine::o_chance;
 	op[30] = &AGOSEngine::oe1_isPlayer;
-
 	op[32] = &AGOSEngine::o_isRoom;
 	op[33] = &AGOSEngine::o_isObject;
 	op[34] = &AGOSEngine::o_state;
-
 	op[36] = &AGOSEngine::o_oflag;
 	op[37] = &AGOSEngine::oe1_canPut;
-
 	op[47] = &AGOSEngine::oe1_create;
 	op[48] = &AGOSEngine::o_destroy;
-
 	op[51] = &AGOSEngine::o_place;
-
 	op[54] = &AGOSEngine::oe1_copyof;
 	op[55] = &AGOSEngine::oe1_copyfo;
 	op[56] = &AGOSEngine::o_copyff;
 	op[57] = &AGOSEngine::oe1_whatO;
-
 	op[59] = &AGOSEngine::oe1_weigh;
 	op[60] = &AGOSEngine::oe1_setFF;
 	op[61] = &AGOSEngine::o_clear;
-
 	op[64] = &AGOSEngine::o_let;
 	op[65] = &AGOSEngine::o_add;
 	op[66] = &AGOSEngine::o_sub;
@@ -89,68 +81,47 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[73] = &AGOSEngine::o_mod;
 	op[74] = &AGOSEngine::o_modf;
 	op[75] = &AGOSEngine::o_random;
-
 	op[76] = &AGOSEngine::oe1_moveDirn;
 	op[77] = &AGOSEngine::o_goto;
-
 	op[80] = &AGOSEngine::o_oset;
 	op[81] = &AGOSEngine::o_oclear;
-
 	op[84] = &AGOSEngine::o_putBy;
 	op[85] = &AGOSEngine::o_inc;
 	op[86] = &AGOSEngine::o_dec;
 	op[87] = &AGOSEngine::o_setState;
-
 	op[89] = &AGOSEngine::o_print;
 	op[90] = &AGOSEngine::oe1_score;
 	op[91] = &AGOSEngine::o_message;
 	op[92] = &AGOSEngine::o_msg;
-
 	op[96] = &AGOSEngine::oe1_look;
 	op[97] = &AGOSEngine::o_end;
 	op[98] = &AGOSEngine::o_done;
-
 	op[105] = &AGOSEngine::o_process;
 	op[106] = &AGOSEngine::oe1_doClass;
-
 	op[112] = &AGOSEngine::oe1_pObj;
-
 	op[114] = &AGOSEngine::oe1_pName;
 	op[115] = &AGOSEngine::oe1_pcName;
-
 	op[119] = &AGOSEngine::o_when;
-
 	op[128] = &AGOSEngine::o_if1;
 	op[129] = &AGOSEngine::o_if2;
-
 	op[135] = &AGOSEngine::oe1_isCalled;
 	op[136] = &AGOSEngine::o_is;
-
 	op[152] = &AGOSEngine::o_debug;
-
 	op[162] = &AGOSEngine::oe1_cFlag;
-
 	op[164] = &AGOSEngine::oe1_rescan;
-
 	op[176] = &AGOSEngine::oe1_setUserItem;
 	op[177] = &AGOSEngine::oe1_getUserItem;
 	op[178] = &AGOSEngine::oe1_clearUserItem;
-
 	op[180] = &AGOSEngine::oe1_whereTo;
 	op[181] = &AGOSEngine::oe1_doorExit;
-
 	op[198] = &AGOSEngine::o_comment;
-
 	op[201] = &AGOSEngine::oe1_saveGame;
 	op[202] = &AGOSEngine::oe1_loadGame;
-
 	op[206] = &AGOSEngine::o_getParent;
 	op[207] = &AGOSEngine::o_getNext;
 	op[208] = &AGOSEngine::o_getChildren;
-
 	op[219] = &AGOSEngine::oe1_findMaster;
 	op[220] = &AGOSEngine::oe1_nextMaster;
-
 	op[224] = &AGOSEngine::o_picture;
 	op[225] = &AGOSEngine::o_loadZone;
 	op[226] = &AGOSEngine::oe1_animate;
@@ -161,27 +132,21 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[231] = &AGOSEngine::o_cls;
 	op[232] = &AGOSEngine::o_closeWindow;
 	op[233] = &AGOSEngine::oe1_menu;
-
 	op[235] = &AGOSEngine::o_addBox;
 	op[236] = &AGOSEngine::o_delBox;
 	op[237] = &AGOSEngine::o_enableBox;
 	op[238] = &AGOSEngine::o_disableBox;
 	op[239] = &AGOSEngine::o_moveBox;
-
 	op[242] = &AGOSEngine::o_doIcons;
 	op[243] = &AGOSEngine::o_isClass;
-
 	op[249] = &AGOSEngine::o_setClass;
 	op[250] = &AGOSEngine::o_unsetClass;
-
 	op[251] = &AGOSEngine::oe1_bitClear;
 	op[252] = &AGOSEngine::oe1_bitSet;
 	op[253] = &AGOSEngine::oe1_bitTest;
-
 	op[255] = &AGOSEngine::o_waitSync;
 	op[256] = &AGOSEngine::o_sync;
 	op[257] = &AGOSEngine::o_defObj;
-
 	op[258] = &AGOSEngine::oe1_enableInput;
 	op[259] = &AGOSEngine::oe1_setTime;
 	op[260] = &AGOSEngine::oe1_ifTime;
