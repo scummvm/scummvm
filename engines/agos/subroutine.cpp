@@ -542,16 +542,6 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	if (++_recursionDepth > 40)
 		error("Recursion error");
 
-	// WORKAROUND: Bit Flag 171 isn't set when Simon rides the lion to the
-	// goblin camp in non-English versions. Bit Flag 171 is required to display 
-	// the red trail between locations on the map, during the ride.
-	if (getGameType() == GType_SIMON2) {
-		if (sub->id == 13020)
-			setBitFlag(171, true);
-		if (sub->id == 13021)
-			setBitFlag(171, false);
-	}
-
 	_currentTable = sub;
 restart:
 	while ((byte *)sl != (byte *)sub) {
@@ -575,7 +565,6 @@ restart:
 	}
 
 	if (_classMode1) {
-		debug(0, "_classMode1");
 		_subjectItem = nextInByClass(_subjectItem, _classMask);
 		if (!_subjectItem) {
 			_classMode1 = 0;
@@ -586,7 +575,6 @@ restart:
 		}
 	}
 	if (_classMode2) {
-		debug(0, "_classMode2");
 		_objectItem = nextInByClass(_objectItem, _classMask);
 		if (!_objectItem) {
 			_classMode2 = 0;

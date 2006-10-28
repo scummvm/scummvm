@@ -130,13 +130,13 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 				int n = (int16)READ_BE_UINT16(p);
 				p += 2;
 				if (n == -1)
-					printf("ITEM_M1 ");
+					printf("SUBJECT_ITEM ");
 				else if (n == -3)
-					printf("ITEM_M3 ");
+					printf("OBJECT_ITEM ");
 				else if (n == -5)
-					printf("ITEM_1 ");
+					printf("ME_ITEM ");
 				else if (n == -7)
-					printf("ITEM_0 ");
+					printf("ACTOR_ITEM ");
 				else if (n == -9)
 					printf("ITEM_A_PARENT ");
 				else

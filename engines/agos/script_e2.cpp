@@ -46,6 +46,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[73] = &AGOSEngine::oe2_pObj;
 	op[74] = &AGOSEngine::oe1_pName;
 	op[75] = &AGOSEngine::oe1_pcName;
+	op[79] = &AGOSEngine::oe1_isCalled;
 	op[83] = &AGOSEngine::oe1_rescan;
 	op[89] = &AGOSEngine::oe1_loadGame;
 	op[94] = &AGOSEngine::oe1_findMaster;

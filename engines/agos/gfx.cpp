@@ -548,7 +548,7 @@ void AGOSEngine::drawImages(VC10_state *state) {
 			} while (--h);
 		}
 	} else {
-		if (getGameType() == GType_SIMON2 && state->flags & kDFUseFrontBuf && getBitFlag(171)) {
+		if (state->flags & kDFUseFrontBuf) {
 			state->surf_addr = state->surf2_addr;
 			state->surf_pitch = state->surf2_pitch;
 		}

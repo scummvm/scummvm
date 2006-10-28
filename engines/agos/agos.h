@@ -1106,6 +1106,7 @@ public:
 	void oe1_pObj();
 	void oe1_pName();
 	void oe1_pcName();
+	void oe1_isCalled();
 	void oe1_cFlag();
 	void oe1_rescan();
 	void oe1_setUserItem();

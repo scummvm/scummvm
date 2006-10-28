@@ -188,8 +188,8 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	NULL,
 	NULL,
 	/* 128 */
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	NULL,
 	NULL,
 	/* 132 */
@@ -482,8 +482,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"I|PRINT_CNAME",
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -715,8 +715,8 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -957,8 +957,8 @@ static const char *const simon1dos_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -1195,8 +1195,8 @@ static const char *const simon1talkie_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -1433,8 +1433,8 @@ static const char *const simon2dos_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -1675,8 +1675,8 @@ static const char *const simon2talkie_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -1917,8 +1917,8 @@ static const char *const feeblefiles_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
@@ -2170,8 +2170,8 @@ static const char *const puzzlepack_opcodeNameTable[256] = {
 	NULL,
 	/* 76 */
 	"WW|ADD_TIMEOUT",
-	"J|IS_M1_EMPTY",
-	"J|IS_M3_EMPTY",
+	"J|IS_SUBJECT_ITEM_EMPTY",
+	"J|IS_OBJECT_ITEM_EMPTY",
 	"ITJ|CHILD_FR2_IS",
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",

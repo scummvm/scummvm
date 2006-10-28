@@ -123,7 +123,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[128] = &AGOSEngine::o_if1;
 	op[129] = &AGOSEngine::o_if2;
 
-	op[135] = &AGOSEngine::o_isCalled;
+	op[135] = &AGOSEngine::oe1_isCalled;
 	op[136] = &AGOSEngine::o_is;
 
 	op[152] = &AGOSEngine::o_debug;
@@ -423,6 +423,13 @@ void AGOSEngine::oe1_pcName() {
 	showMessageFormat("%s", name.c_str());
 }
 
+void AGOSEngine::oe1_isCalled() {
+	// 135: childstruct fr2 is
+	Item *item = getNextItemPtr();
+	uint stringId = getNextStringID();
+	setScriptCondition(!scumm_stricmp((const char *)getStringPtrByID(item->itemName), (const char *)getStringPtrByID(stringId)));
+}
+
 void AGOSEngine::oe1_cFlag() {
 	// 162: check container flag
 	SubContainer *c = (SubContainer *)findChildOfType(getNextItemPtr(), 7);
@@ -548,10 +555,6 @@ void AGOSEngine::oe1_animate() {
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
 	uint palette = getVarOrWord();
-
-	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) && vgaSpriteId >= 400) {
-		_lastVgaWaitFor = 0;
-	}
 
 	_lockWord |= 0x40;
 	animate(windowNum, vgaSpriteId / 100, vgaSpriteId, x, y, palette);
@@ -708,7 +711,7 @@ void AGOSEngine::oe1_printPlayerDamage() {
 	window->flags = 1;
 
 	mouseOff();
-	writeChar(window, 36, 38, 2, _variableArray[441]);
+	writeChar(window, 36, 38, 2, _variableArray[241]);
 	mouseOn();
 }
 
@@ -718,7 +721,7 @@ void AGOSEngine::oe1_printMonsterDamage() {
 	window->flags = 1;
 
 	mouseOff();
-	writeChar(window, 36, 88, 2, _variableArray[442]);
+	writeChar(window, 36, 88, 2, _variableArray[242]);
 	mouseOn();
 }
 
