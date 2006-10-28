@@ -25,9 +25,10 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
-#define curItemVersion sysMakeROMVersion(3,5,5,0,0)	// Added : AGI engine
+#define curItemVersion sysMakeROMVersion(3,5,6,0,0)	// Changed : Simon -> AGOS
 
 
+#define itemVersion_355 sysMakeROMVersion(3,5,5,0,0)	// Added : AGI engine
 #define itemVersion_354 sysMakeROMVersion(3,5,4,0,0)	// Added : Default/Auto music driver
 #define itemVersion_353 sysMakeROMVersion(3,5,3,0,0)	// Added : CinE engine and 3DO platform
 #define itemVersion_352 sysMakeROMVersion(3,5,2,0,0)	// Added : Lure engine
@@ -153,7 +154,8 @@ typedef struct {
 } GameInfoType;
 
 enum {
-	ENGINE_SKY = 0,
+	ENGINE_AGOS = 0,
+	ENGINE_SKY,
 	ENGINE_SWORD1,
 	ENGINE_SWORD2,
 	ENGINE_CINE,
@@ -164,7 +166,6 @@ enum {
 	ENGINE_SAGA,
 	ENGINE_SCUMM,
 	ENGINE_AGI,
-	ENGINE_AGOS,
 	ENGINE_COUNT
 };
 
@@ -172,6 +173,7 @@ static const struct {
 	const char *fileP;
 	const char *nameP;
 } engines[] = {
+	{ "agos",	"AGOS Engine" },
 	{ "sky",	"Beneath a Steel Sky" },
 	{ "sword1",	"Broken Sword 1" },
 	{ "sword2",	"Broken Sword 2" },
@@ -183,7 +185,6 @@ static const struct {
 	{ "saga",	"SAGA Engine" },
 	{ "scumm",	"Scumm Games" },
 	{ "agi",	"Sierra AGI" },
-	{ "simon",	"AGOS" },
 };
 
 
