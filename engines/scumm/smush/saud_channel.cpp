@@ -184,11 +184,8 @@ int32 SaudChannel::getAvailableSoundDataSize(void) const {
 	return _sbufferSize;
 }
 
-void SaudChannel::getSoundData(int16 *snd, int32 size) {
-	for (int32 i = 0; i < size; i++) {
-		snd[2 * i] = TO_LE_16(_sbuffer[i] ^ 0x80);
-		snd[2 * i + 1] = TO_LE_16(_sbuffer[i] ^ 0x80);
-	}
+void SaudChannel::getSoundData(int8 *snd, int32 size) {
+	memcpy(snd, _sbuffer, size);
 	if (!_keepSize)
 		_dataSize -= size;
 	delete []_sbuffer;

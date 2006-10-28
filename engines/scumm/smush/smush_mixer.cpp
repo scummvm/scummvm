@@ -113,14 +113,14 @@ bool SmushMixer::handleFrame() {
 				byte flags = stereo ? Audio::Mixer::FLAG_STEREO : 0;
 
 				if (is_16bit) {
-					data = malloc(size * (stereo ? 2 : 1) * 4);
+					data = malloc(size * (stereo ? 4 : 2));
 					_channels[i].chan->getSoundData((int16 *)data, size);
 					size *= stereo ? 4 : 2;
 
 					flags |= Audio::Mixer::FLAG_16BITS;
 
 				} else {
-					data = malloc(size * (stereo ? 2 : 1) * 2);
+					data = malloc(size * (stereo ? 2 : 1));
 					_channels[i].chan->getSoundData((int8 *)data, size);
 					size *= stereo ? 2 : 1;
 

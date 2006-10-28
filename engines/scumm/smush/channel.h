@@ -87,12 +87,12 @@ public:
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
 	bool appendData(Chunk &b, int32 size);
 	int32 getAvailableSoundDataSize() const;
-	void getSoundData(int16 *sound_buffer, int32 size);
-	void getSoundData(int8 *sound_buffer, int32 size) { error("8bit request for SAUD channel should never happen"); };
+	void getSoundData(int16 *sound_buffer, int32 size) { error("16bit request for SAUD channel should never happen"); };
+	void getSoundData(int8 *sound_buffer, int32 size);
 	int32 getRate() { return 22050; }
 	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
-		stereo = true;
-		is_16bit = true;
+		stereo = false;
+		is_16bit = false;
 		vol = _volume;
 		pan = _pan;
 		return true;
