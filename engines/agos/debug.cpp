@@ -281,6 +281,17 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool one_opcode_only) {
 	} while (!one_opcode_only);
 }
 
+void AGOSEngine::dumpVgaScript(const byte *ptr, uint res, uint sprite_id) {
+	dumpVgaScriptAlways(ptr, res, sprite_id);
+}
+
+void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint res, uint sprite_id) {
+	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
+					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
+	dumpVideoScript(ptr, false);
+	printf("; end\n");
+}
+
 void AGOSEngine::dumpVgaFile(const byte *vga) {
 	const byte *pp;
 	const byte *p;
@@ -324,14 +335,14 @@ void AGOSEngine::dumpVgaFile(const byte *vga) {
 
 	pp = vga;
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		p = pp + READ_BE_UINT16(pp + 2);;
-		count = READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->imageCount);
-		p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->imageTable);
+		p = pp + READ_LE_UINT16(pp + 2);;
+		count = READ_LE_UINT16(&((const VgaFileHeader2_Feeble *) p)->imageCount);
+		p = pp + READ_LE_UINT16(&((const VgaFileHeader2_Feeble *) p)->imageTable);
 
 		while (--count >= 0) {
-			int id = READ_BE_UINT16(&((const ImageHeader_Feeble *) p)->id);
+			int id = READ_LE_UINT16(&((const ImageHeader_Feeble *) p)->id);
 
-			dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const ImageHeader_Feeble *) p)->scriptOffs), id / 100, id);
+			dumpVgaScriptAlways(vga + READ_LE_UINT16(&((const ImageHeader_Feeble *) p)->scriptOffs), id / 100, id);
 			p += sizeof(ImageHeader_Feeble);
 		}
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
@@ -536,17 +547,6 @@ void AGOSEngine::dumpVgaBitmaps(const byte *vga, byte *vga1, int res) {
 
 		dumpBitmap(buf, vga + offs, width, height, flags, pal, 0);
 	}
-}
-
-void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint res, uint sprite_id) {
-	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
-					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
-	dumpVideoScript(ptr, false);
-	printf("; end\n");
-}
-
-void AGOSEngine::dumpVgaScript(const byte *ptr, uint res, uint sprite_id) {
-	dumpVgaScriptAlways(ptr, res, sprite_id);
 }
 
 } // End of namespace AGOS
