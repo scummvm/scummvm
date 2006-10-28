@@ -982,7 +982,8 @@ void AGOSEngine::vc27_resetSprite() {
 
 	vsp = _vgaSprites;
 	while (vsp->id) {
-		if ((getGameType() == GType_SIMON1) && vsp->id == 128) {
+		if ((getGameType() == GType_SIMON1 && vsp->id == 128) ||
+			(getGameType() == GType_ELVIRA2 && vsp->id == 100)) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
 		}
 		vsp->id = 0;
@@ -1006,7 +1007,8 @@ void AGOSEngine::vc27_resetSprite() {
 
 	vte = _vgaTimerList;
 	while (vte->delay) {
-		if ((getGameType() == GType_SIMON1) && vte->sprite_id == 128) {
+		if ((getGameType() == GType_SIMON1 && vte->sprite_id == 128) ||
+			(getGameType() == GType_ELVIRA2 && vte->sprite_id == 100)) {
 			vte++;
 		} else {
 			vte2 = vte;
