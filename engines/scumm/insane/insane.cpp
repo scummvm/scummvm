@@ -37,7 +37,6 @@
 
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
-#include "scumm/smush/chunk_type.h"
 #include "scumm/smush/chunk.h"
 
 #include "scumm/insane/insane.h"
@@ -1320,14 +1319,14 @@ void Insane::procSKIP(Chunk &b) {
 	_player->_skipNext = false;
 
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
-		_player->checkBlock(b, TYPE_SKIP, 2);
+		_player->checkBlock(b, MKID_BE('SKIP'), 2);
 		par1 = b.getWord();
 		if (isBitSet(par1))
 			_player->_skipNext = true;
 		return;
 	}
 
-	_player->checkBlock(b, TYPE_SKIP, 4);
+	_player->checkBlock(b, MKID_BE('SKIP'), 4);
 
 	par1 = b.getWord();
 	par2 = b.getWord();

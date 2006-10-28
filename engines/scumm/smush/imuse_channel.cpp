@@ -27,14 +27,10 @@
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"
-#include "scumm/smush/chunk_type.h"
 
 namespace Scumm {
 
 ImuseChannel::ImuseChannel(int32 track) : SmushChannel(track) {
-}
-
-ImuseChannel::~ImuseChannel() {
 }
 
 bool ImuseChannel::isTerminated() const {
@@ -66,7 +62,7 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 		assert(size > 8);
 		Chunk::type imus_type = b.getDword(); imus_type = SWAP_BYTES_32(imus_type);
 		uint32 imus_size = b.getDword(); imus_size = SWAP_BYTES_32(imus_size);
-		if (imus_type != TYPE_iMUS)
+		if (imus_type != MKID_BE('iMUS'))
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
 		_tbufferSize = size;
@@ -136,15 +132,15 @@ bool ImuseChannel::handleMap(Chunk &map) {
 	while (!map.eof()) {
 		Chunk *sub = map.subBlock();
 		switch (sub->getType()) {
-		case TYPE_FRMT:
+		case MKID_BE('FRMT'):
 			handleFormat(*sub);
 			break;
-		case TYPE_TEXT:
+		case MKID_BE('TEXT'):
 			break;
-		case TYPE_REGN:
+		case MKID_BE('REGN'):
 			handleRegion(*sub);
 			break;
-		case TYPE_STOP:
+		case MKID_BE('STOP'):
 			handleStop(*sub);
 			break;
 		default:
@@ -179,7 +175,7 @@ void ImuseChannel::decode() {
 		}
 	}
 
-	// FIXME: Code duplication! See decode12BitsSample() in scumm/imuse_digi.cpp
+	// FIXME: Code duplication! See decode12BitsSample() in imuse_digi/dimuse_codecs.cpp
 
 	int loop_size = _sbufferSize / 3;
 	int new_size = loop_size * 4;
@@ -209,14 +205,14 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch (type) {
-		case TYPE_MAP_:
+		case MKID_BE('MAP '):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
 				handleMap(c);
 			}
 			break;
-		case TYPE_DATA:
+		case MKID_BE('DATA'):
 			_inData = true;
 			_dataSize = size;
 			offset += 8;

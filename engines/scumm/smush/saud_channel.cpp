@@ -26,9 +26,19 @@
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"
-#include "scumm/smush/chunk_type.h"
 
 namespace Scumm {
+
+SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
+	_nbframes(0),
+	_markReached(false),
+	_index(0),
+	_keepSize(false) {
+}
+
+bool SaudChannel::isTerminated() const {
+	return (_markReached && _dataSize == 0 && _sbuffer == 0);
+}
 
 void SaudChannel::handleStrk(Chunk &b) {
 	int32 size = b.getSize();
@@ -54,7 +64,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		uint32 available_size = _tbufferSize - offset;
 
 		switch (type) {
-		case TYPE_STRK:
+		case MKID_BE('STRK'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
@@ -62,7 +72,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case TYPE_SMRK:
+		case MKID_BE('SMRK'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
@@ -70,7 +80,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case TYPE_SHDR:
+		case MKID_BE('SHDR'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
@@ -78,7 +88,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case TYPE_SDAT:
+		case MKID_BE('SDAT'):
 			_inData = true;
 			_dataSize = size;
 			offset += 8;
@@ -90,25 +100,6 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		return true;
 	}
 	return false;
-}
-
-SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
-	_nbframes(0),
-	_markReached(false),
-	_index(0),
-	_keepSize(false) {
-}
-
-SaudChannel::~SaudChannel() {
-	_dataSize = 0;
-	_tbufferSize = 0;
-	_sbufferSize = 0;
-	_markReached = true;
-	_sbuffer = 0;
-}
-
-bool SaudChannel::isTerminated() const {
-	return (_markReached && _dataSize == 0 && _sbuffer == 0);
 }
 
 bool SaudChannel::setParameters(int32 nb, int32 flags, int32 volume, int32 pan, int32 index) {
@@ -146,7 +137,7 @@ bool SaudChannel::appendData(Chunk &b, int32 size) {
 		saud_type = SWAP_BYTES_32(saud_type);
 		uint32 saud_size = b.getDword();
 		saud_size = SWAP_BYTES_32(saud_size);
-		if (saud_type != TYPE_SAUD)
+		if (saud_type != MKID_BE('SAUD'))
 			error("Invalid Chunk for SaudChannel : %X", saud_type);
 		size -= 8;
 		_dataSize = -2;

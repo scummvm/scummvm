@@ -40,7 +40,6 @@
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
-#include "scumm/smush/chunk_type.h"
 #include "scumm/smush/chunk.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_mixer.h"
@@ -62,7 +61,7 @@
 
 namespace Scumm {
 
-const int MAX_STRINGS = 200;
+static const int MAX_STRINGS = 200;
 
 class StringResource {
 private:
@@ -200,7 +199,7 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 		assert(length > ETRS_HEADER_LENGTH);
 		Chunk::type type = READ_BE_UINT32(filebuffer);
 
-		if (type != TYPE_ETRS) {
+		if (type != MKID_BE('ETRS')) {
 			delete [] filebuffer;
 			return getStrings(vm, file, false);
 		}
@@ -390,7 +389,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 }
 
 void SmushPlayer::handleSoundFrame(Chunk &b) {
-	checkBlock(b, TYPE_PSAD);
+	checkBlock(b, MKID_BE('PSAD'));
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleSoundFrame()");
 
 	int32 track_id = b.getWord();
@@ -408,13 +407,13 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 
 void SmushPlayer::handleStore(Chunk &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
-	checkBlock(b, TYPE_STOR, 4);
+	checkBlock(b, MKID_BE('STOR'), 4);
 	_storeFrame = true;
 }
 
 void SmushPlayer::handleFetch(Chunk &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
-	checkBlock(b, TYPE_FTCH, 6);
+	checkBlock(b, MKID_BE('FTCH'), 6);
 
 	if (_frameBuffer != NULL) {
 		memcpy(_dst, _frameBuffer, _width * _height);
@@ -422,7 +421,7 @@ void SmushPlayer::handleFetch(Chunk &b) {
 }
 
 void SmushPlayer::handleIACT(Chunk &b) {
-	checkBlock(b, TYPE_IACT, 8);
+	checkBlock(b, MKID_BE('IACT'), 8);
 	debugC(DEBUG_SMUSH, "SmushPlayer::IACT()");
 
 	int code = b.getWord();
@@ -558,7 +557,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 
 	const char *str;
 	char *string = NULL, *string2 = NULL;
-	if (b.getType() == TYPE_TEXT) {
+	if (b.getType() == MKID_BE('TEXT')) {
 		string = (char *)malloc(b.getSize() - 16);
 		str = string;
 		b.read(string, b.getSize() - 16);
@@ -743,7 +742,7 @@ static byte delta_color(byte org_color, int16 delta_color) {
 }
 
 void SmushPlayer::handleDeltaPalette(Chunk &b) {
-	checkBlock(b, TYPE_XPAL);
+	checkBlock(b, MKID_BE('XPAL'));
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleDeltaPalette()");
 
 	if (b.getSize() == 0x300 * 3 + 4) {
@@ -772,7 +771,7 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 }
 
 void SmushPlayer::handleNewPalette(Chunk &b) {
-	checkBlock(b, TYPE_NPAL, 0x300);
+	checkBlock(b, MKID_BE('NPAL'), 0x300);
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleNewPalette()");
 
 	if (_skipPalette)
@@ -864,7 +863,7 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 #endif
 
 void SmushPlayer::handleFrameObject(Chunk &b) {
-	checkBlock(b, TYPE_FOBJ, 14);
+	checkBlock(b, MKID_BE('FOBJ'), 14);
 	if (_skipNext) {
 		_skipNext = false;
 		return;
@@ -937,7 +936,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 }
 
 void SmushPlayer::handleFrame(Chunk &b) {
-	checkBlock(b, TYPE_FRME);
+	checkBlock(b, MKID_BE('FRME'));
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	_skipNext = false;
 
@@ -948,40 +947,40 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	while (!b.eof()) {
 		Chunk *sub = b.subBlock();
 		switch (sub->getType()) {
-		case TYPE_NPAL:
+		case MKID_BE('NPAL'):
 			handleNewPalette(*sub);
 			break;
-		case TYPE_FOBJ:
+		case MKID_BE('FOBJ'):
 			handleFrameObject(*sub);
 			break;
 #ifdef USE_ZLIB
-		case TYPE_ZFOB:
+		case MKID_BE('ZFOB'):
 			handleZlibFrameObject(*sub);
 			break;
 #endif
-		case TYPE_PSAD:
+		case MKID_BE('PSAD'):
 			if (!_compressedFileMode)
 				handleSoundFrame(*sub);
 			break;
-		case TYPE_TRES:
+		case MKID_BE('TRES'):
 			handleTextResource(*sub);
 			break;
-		case TYPE_XPAL:
+		case MKID_BE('XPAL'):
 			handleDeltaPalette(*sub);
 			break;
-		case TYPE_IACT:
+		case MKID_BE('IACT'):
 			handleIACT(*sub);
 			break;
-		case TYPE_STOR:
+		case MKID_BE('STOR'):
 			handleStore(*sub);
 			break;
-		case TYPE_FTCH:
+		case MKID_BE('FTCH'):
 			handleFetch(*sub);
 			break;
-		case TYPE_SKIP:
+		case MKID_BE('SKIP'):
 			_vm->_insane->procSKIP(*sub);
 			break;
-		case TYPE_TEXT:
+		case MKID_BE('TEXT'):
 			handleTextResource(*sub);
 			break;
 		default:
@@ -1015,7 +1014,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 }
 
 void SmushPlayer::handleAnimHeader(Chunk &b) {
-	checkBlock(b, TYPE_AHDR, 0x300 + 6);
+	checkBlock(b, MKID_BE('AHDR'), 0x300 + 6);
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
 
 	_version = b.getWord();
@@ -1091,7 +1090,7 @@ void SmushPlayer::parseNextFrame() {
 				assert(_seekPos > 8);
 				// In this case we need to get palette and number of frames
 				sub = _base->subBlock();
-				checkBlock(*sub, TYPE_AHDR);
+				checkBlock(*sub, MKID_BE('AHDR'));
 				handleAnimHeader(*sub);
 				delete sub;
 
@@ -1123,10 +1122,10 @@ void SmushPlayer::parseNextFrame() {
 	sub = _base->subBlock();
 
 	switch (sub->getType()) {
-	case TYPE_AHDR: // FT INSANE may seek file to the beginning
+	case MKID_BE('AHDR'): // FT INSANE may seek file to the beginning
 		handleAnimHeader(*sub);
 		break;
-	case TYPE_FRME:
+	case MKID_BE('FRME'):
 		handleFrame(*sub);
 		break;
 	default:

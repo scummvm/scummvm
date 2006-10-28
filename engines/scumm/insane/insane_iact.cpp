@@ -28,7 +28,6 @@
 #include "scumm/scumm.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/chunk_type.h"
 #include "scumm/smush/chunk.h"
 
 #include "scumm/insane/insane.h"

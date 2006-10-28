@@ -80,7 +80,6 @@ protected:
 
 public:
 	SaudChannel(int32 track);
-	virtual ~SaudChannel();
 	bool isTerminated() const;
 	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index);
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
@@ -105,7 +104,6 @@ private:
 	int32 _channels;			//!< the number of channels of the original data
 
 protected:
-	int32 decode(int32 size, int32 &ret);
 	void decode();
 	bool handleMap(Chunk &c);
 	bool handleFormat(Chunk &c);
@@ -115,7 +113,6 @@ protected:
 
 public:
 	ImuseChannel(int32 track);
-	virtual ~ImuseChannel();
 	bool isTerminated() const;
 	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32);
 	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
