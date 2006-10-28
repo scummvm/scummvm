@@ -55,7 +55,7 @@ public:
 		friend class List<T>;
 		NodeBase *_node;
 
-#if !defined (PALMOS_MODE) && !defined (__WINSCW__)
+#if !defined (__WINSCW__)
 		explicit Iterator(NodeBase *node) : _node(node) {}
 #else
 		Iterator(NodeBase *node) : _node(node) {}
