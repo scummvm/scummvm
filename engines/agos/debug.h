@@ -2363,7 +2363,7 @@ const char *const elvira1_videoOpcodeNameTable[] = {
 	"d|SET_FRAME_RATE",
 	/* 32 */
 	"d|SET_WINDOW",
-	"|VC_33",
+	"|SAVE_SCREEN",
 	"|MOUSE_ON",
 	"|MOUSE_OFF",
 	/* 36 */
@@ -2436,7 +2436,7 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"d|SET_FRAME_RATE",
 	"d|SET_WINDOW",
 	/* 32 */
-	"|VC_32",
+	"|SAVE_SCREEN",
 	"|MOUSE_ON",
 	"|MOUSE_OFF",
 	"dd|CLEAR_WINDOW",
@@ -2468,7 +2468,7 @@ const char *const ww_videoOpcodeNameTable[] = {
 	/* 56 */
 	"|FULL_SCREEN",
 	"|BLACK_PALETTE",
-	"|SET_PRIORITIES",
+	"|CHECK_CODE_WHEEL",
 	"|IF_EGA",
 	/* 60 */
 	"d|STOP_ANIMATE",
@@ -2551,7 +2551,7 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	/* 56 */
 	"|DUMMY_56",
 	"|BLACK_PALETTE",
-	"|SET_PRIORITIES",
+	"|DUMMY_58",
 	"|IF_SPEECH",
 	/* 60 */
 	"d|STOP_ANIMATE",
@@ -2565,7 +2565,7 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"x|RET",
 	"ddd|FADEOUT",
 	"d|CALL",
-	"ddddd|NEW_SPRITE",
+	"dddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
 	"vd|IF_EQUAL",
@@ -2634,7 +2634,7 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	/* 56 */
 	"i|WAIT_BIG",
 	"|BLACK_PALETTE",
-	"|SET_PRIORITIES",
+	"ddd|SET_PRIORITIES",
 	"ddd|STOP_ANIMATIONS",
 	/* 60 */
 	"dd|STOP_ANIMATE",
@@ -2644,10 +2644,10 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	/* 64 */
 	"|IF_SPEECH",
 	"|SLOW_FADE_IN",
-	"|IF_VAR_EQUAL",
-	"|IF_VAR_LE",
+	"dd|IF_VAR_EQUAL",
+	"dd|IF_VAR_LE",
 	/* 68 */
-	"|IF_VAR_GE",
+	"dd|IF_VAR_GE",
 	"dd|PLAY_SEQ",
 	"dd|JOIN_SEQ",
 	"|IF_SEQ_WAITING",
@@ -2662,7 +2662,7 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"x|RET",
 	"ddd|FADEOUT",
 	"d|CALL",
-	"ddddd|NEW_SPRITE",
+	"dddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
 	"vd|IF_EQUAL",
@@ -2731,7 +2731,7 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	/* 56 */
 	"i|WAIT_BIG",
 	"|BLACK_PALETTE",
-	"|SET_PRIORITIES",
+	"ddd|SET_PRIORITIES",
 	"ddd|STOP_ANIMATIONS",
 	/* 60 */
 	"dd|STOP_ANIMATE",
@@ -2741,10 +2741,10 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	/* 64 */
 	"|IF_SPEECH",
 	"|SLOW_FADE_IN",
-	"|IF_VAR_EQUAL",
-	"|IF_VAR_LE",
+	"dd|IF_VAR_EQUAL",
+	"dd|IF_VAR_LE",
 	/* 68 */
-	"|IF_VAR_GE",
+	"dd|IF_VAR_GE",
 	"dd|PLAY_SEQ",
 	"dd|JOIN_SEQ",
 	"|IF_SEQ_WAITING",
