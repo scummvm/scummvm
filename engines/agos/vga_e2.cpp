@@ -34,7 +34,6 @@ namespace AGOS {
 void AGOSEngine::setupElvira2VideoOpcodes(VgaOpcodeProc *op) {
 	setupCommonVideoOpcodes(op);
 
-	op[11] = &AGOSEngine::vc11_onStop;
 	op[17] = &AGOSEngine::vc17_waitEnd;
 	op[19] = &AGOSEngine::vc19_loop;
 	op[22] = &AGOSEngine::vc22_setPaletteOld;

@@ -107,7 +107,6 @@ struct VgaTimerEntry {
 	const byte *script_pointer;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
-	int32 param;
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -907,7 +906,6 @@ public:
 	void vc42_delayIfNotEQ();
 
 	// Video Script Opcodes, Elvira 1
-	void vc11_onStop();
 	void vc17_waitEnd();
 	void vc22_setPaletteOld();
 	void vc32_saveScreen();
@@ -968,7 +966,6 @@ public:
 	void vc74_clearMark();
 
 	// Video Script Opcodes, Feeble Files
-	void vc53_panSFX();
 	void vc75_setScale();
 	void vc76_setScaleXOffs();
 	void vc77_setScaleYOffs();
@@ -1309,11 +1306,10 @@ protected:
 	bool isVgaQueueEmpty();
 	void haltAnimation();
 	void restartAnimation();
-	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param = 0);
+	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum);
 	void deleteVgaEvent(VgaTimerEntry * vte);
 	void processVgaEvents();
 	void animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite);
-	void panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param);
 	void scrollEvent();
 
 	VgaSprite *findCurSprite();

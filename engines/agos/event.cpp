@@ -174,7 +174,7 @@ void AGOSEngine::restartAnimation() {
 	_lockWord &= ~0x10;
 }
 
-void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, int32 param) {
+void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum) {
 	VgaTimerEntry *vte;
 
 	// When Simon talks to the Golum about stew in French version of
@@ -196,7 +196,6 @@ void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite
 	vte->script_pointer = code_ptr;
 	vte->sprite_id = cur_sprite;
 	vte->cur_vga_file = curZoneNum;
-	vte->param = param;
 
 	_lockWord &= ~1;
 }
@@ -227,15 +226,11 @@ void AGOSEngine::processVgaEvents() {
 			uint16 curZoneNum = vte->cur_vga_file;
 			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
-			int32 param = vte->param;
 
 			_nextVgaTimerToProcess = vte + 1;
 			deleteVgaEvent(vte);
 
-			if ((getGameType() == GType_FF || getGameType() == GType_PP) &&
-				script_ptr == NULL) {
-				panEvent(curZoneNum, cur_sprite, param);
-			} else if (getGameType() == GType_SIMON2 && script_ptr == NULL) {
+			if (getGameType() == GType_SIMON2 && script_ptr == NULL) {
 				scrollEvent();
 			} else {
 				animateEvent(script_ptr, curZoneNum, cur_sprite);
@@ -263,27 +258,6 @@ void AGOSEngine::animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cu
 	_vcPtr = code_ptr;
 
 	runVgaScript();
-}
-
-void AGOSEngine::panEvent(uint16 curZoneNum, uint16 cur_sprite, int32 param) {
-	_vgaCurSpriteId = cur_sprite;
-	_vgaCurZoneNum = curZoneNum;
-
-	VgaSprite *vsp = findCurSprite();
-
-	param &= 0x10;
-
-	int32 pan = (vsp->x - _scrollX + param) * 8 - 2560;
-	if (pan < -10000)
-		pan = -10000;
-	if (pan > 10000)
-		pan = 10000;
-
-	//setSfxPan(param, pan);
-
-	if (pan != 0)
-		addVgaEvent(10, NULL, _vgaCurSpriteId, _vgaCurZoneNum); /* pan event */
-	debug(0, "panEvent: param %d pan %d", param, pan);
 }
 
 void AGOSEngine::scrollEvent() {

@@ -92,8 +92,6 @@ void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
 	op[8] = &AGOSEngine::vc8_ifObjectIsAt;
 	op[9] = &AGOSEngine::vc9_ifObjectStateIs;
 	op[10] = &AGOSEngine::vc10_draw;
-	op[11] = &AGOSEngine::vc11_onStop;
-
 	op[13] = &AGOSEngine::vc12_delay;
 	op[14] = &AGOSEngine::vc13_addToSpriteX;
 	op[15] = &AGOSEngine::vc14_addToSpriteY;
@@ -117,17 +115,13 @@ void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
 	op[33] = &AGOSEngine::vc32_saveScreen;
 	op[34] = &AGOSEngine::vc33_setMouseOn;
 	op[35] = &AGOSEngine::vc34_setMouseOff;
-
 	op[38] = &AGOSEngine::vc35_clearWindow;
-
 	op[40] = &AGOSEngine::vc36_setWindowImage;
 	op[41] = &AGOSEngine::vc37_pokePalette;
-
 	op[51] = &AGOSEngine::vc38_ifVarNotZero;
 	op[52] = &AGOSEngine::vc39_setVar;
 	op[53] = &AGOSEngine::vc40;
 	op[54] = &AGOSEngine::vc41;
-
 	op[56] = &AGOSEngine::vc42_delayIfNotEQ;
 }
 
@@ -680,11 +674,6 @@ void AGOSEngine::vc10_draw() {
 	} else {
 		drawImages(&state);
 	}
-}
-
-void AGOSEngine::vc11_onStop() {
-	uint a = vcReadNextWord();
-	debug(0, "vc11_onStop: stub (%d)", a);
 }
 
 void AGOSEngine::vc12_delay() {

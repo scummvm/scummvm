@@ -31,7 +31,6 @@ namespace AGOS {
 void AGOSEngine::setupFeebleVideoOpcodes(VgaOpcodeProc *op) {
 	setupSimon2VideoOpcodes(op);
 
-	op[53] = &AGOSEngine::vc53_panSFX;
 	op[75] = &AGOSEngine::vc75_setScale;
 	op[76] = &AGOSEngine::vc76_setScaleXOffs;
 	op[77] = &AGOSEngine::vc77_setScaleYOffs;
@@ -42,29 +41,6 @@ void AGOSEngine::setupFeebleVideoOpcodes(VgaOpcodeProc *op) {
 	op[82] = &AGOSEngine::vc82_getPathValue;
 	op[83] = &AGOSEngine::vc83_playSoundLoop;
 	op[84] = &AGOSEngine::vc84_stopSoundLoop;
-}
-
-void AGOSEngine::vc53_panSFX() {
-	VgaSprite *vsp = findCurSprite();
-	int pan;
-
-	uint16 sound = vcReadNextWord();
-	int16 xoffs = vcReadNextWord();
-	int16 vol = vcReadNextWord();
-
-	pan = (vsp->x - _scrollX + xoffs) * 8 - 2560;
-	if (pan < -10000)
-		pan = -10000;
-	if (pan > 10000)
-		pan = 10000;
-
-	loadSound(sound, 0, vol, 1);
-
-	if (xoffs != 2)
-		xoffs |= 0x10;
-
-	addVgaEvent(10, NULL, _vgaCurSpriteId, _vgaCurZoneNum, xoffs); /* pan event */
-	debug(0, "vc53_panSFX: snd %d xoffs %d vol %d", sound, xoffs, vol);
 }
 
 int AGOSEngine::getScale(int16 y, int16 x) {
