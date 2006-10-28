@@ -243,14 +243,16 @@ void AGOSEngine::o_notEq() {
 
 void AGOSEngine::o_gt() {
 	// 15: is greater
-	uint tmp = getNextVarContents();
-	setScriptCondition(tmp > getVarOrWord());
+	int16 tmp1 = getNextVarContents();
+	int16 tmp2 = getVarOrWord();
+	setScriptCondition(tmp1 > tmp2);
 }
 
 void AGOSEngine::o_lt() {
 	// 16: is less
-	uint tmp = getNextVarContents();
-	setScriptCondition(tmp < getVarOrWord());
+	int16 tmp1 = getNextVarContents();
+	int16 tmp2 = getVarOrWord();
+	setScriptCondition(tmp1 < tmp2);
 }
 
 void AGOSEngine::o_eqf() {
@@ -267,14 +269,16 @@ void AGOSEngine::o_notEqf() {
 
 void AGOSEngine::o_ltf() {
 	// 19: is greater f
-	uint tmp = getNextVarContents();
-	setScriptCondition(tmp < getNextVarContents());
+	int16 tmp1 = getNextVarContents();
+	int16 tmp2 = getNextVarContents();
+	setScriptCondition(tmp1 < tmp2);
 }
 
 void AGOSEngine::o_gtf() {
 	// 20: is less f
-	uint tmp = getNextVarContents();
-	setScriptCondition(tmp > getNextVarContents());
+	int16 tmp1 = getNextVarContents();
+	int16 tmp2 = getNextVarContents();
+	setScriptCondition(tmp1 > tmp2);
 }
 
 void AGOSEngine::o_chance() {
