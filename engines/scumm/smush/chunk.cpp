@@ -121,7 +121,7 @@ Chunk *FileChunk::subBlock() {
 }
 
 void FileChunk::reseek() {
-	_data->seek(_offset + _curPos, SEEK_CUR);
+	_data->seek(_offset + _curPos, SEEK_SET);
 }
 
 uint32 FileChunk::read(void *buffer, uint32 dataSize) {
