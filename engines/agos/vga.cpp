@@ -1142,10 +1142,17 @@ void AGOSEngine::vc36_setWindowImage() {
 }
 
 void AGOSEngine::vc37_pokePalette() {
-	// TODO
-	uint a = vcReadNextWord();
-	uint b = vcReadNextWord();
-	debug(0, "vc37_pokePalette: stub (%d, %d)", a, b);
+	uint16 offs = vcReadNextWord();
+	uint16 color = vcReadNextWord();
+
+	byte *palptr = _displayPalette + offs * 4;
+	palptr[0] = ((color & 0xf00) >> 8) * 32;
+	palptr[1] = ((color & 0x0f0) >> 4) * 32;
+	palptr[2] = ((color & 0x00f) >> 0) * 32;
+	palptr[3] = 0;
+
+	_paletteFlag = 2;
+	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc38_ifVarNotZero() {
