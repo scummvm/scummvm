@@ -1044,15 +1044,15 @@ echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
 	_flac=no
 	cat > $TMPC << EOF
-#include <FLAC/seekable_stream_decoder.h>
-int main(void) { FLAC__seekable_stream_decoder_init( 0 ); return 0; }
+#include <FLAC/format.h>
+int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
-	-lFLAC -lm && _flac=yes
+	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+	-lFLAC -logg -lm && _flac=yes
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
-	LIBS="$LIBS $FLAC_LIBS -lFLAC"
+	LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
 else
 	_def_flac='#undef USE_FLAC'
