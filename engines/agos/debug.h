@@ -2328,23 +2328,23 @@ const char *const elvira1_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|SKIP_IF_NEQ",
-	"d|SKIP_IFN_SIB_WITH_A",
-	"d|SKIP_IF_SIB_WITH_A",
+	"vd|IF_EQUAL",
+	"d|IF_OBJECT_HERE",
+	"d|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|SKIP_IF_PARENT_IS",
-	"dd|SKIP_IF_UNK3_IS",
+	"dd|IF_OBJECT_IS_AT",
+	"dd|IF_OBJECT_STATE_IS",
 	"dddd|DRAW",
-	"d|VC_11",
+	"d|ON_STOP",
 	/* 12 */
-	"|VC_12",
+	"|TEST_STOP",
 	"d|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
 	/* 16 */
 	"d|SYNC",
 	"d|WAIT_SYNC",
-	"d|VC_18",
+	"d|WAIT_END",
 	"i|JUMP_REL",
 	/* 20 */
 	"|CHAIN_TO",
@@ -2373,7 +2373,7 @@ const char *const elvira1_videoOpcodeNameTable[] = {
 	"d|VC_39",
 	/* 40 */
 	"dd|SET_WINDOW_IMAGE",
-	"dd|VC_41",
+	"dd|POKE_PALETTE",
 	"|VC_42",
 	"|VC_43",
 	/* 44 */
@@ -2385,13 +2385,13 @@ const char *const elvira1_videoOpcodeNameTable[] = {
 	"dd|VC_48",
 	"|VC_49",
 	"ddddddddd|VC_50",
-	"v|SKIP_IF_VAR_ZERO",
+	"v|IF_VAR_NOT_ZERO",
 	/* 52 */
 	"vd|SET_VAR",
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"|VC_55",
-	"dd|VC_56",
+	"dd|DELAY_IF_NOT_EQ",
 };
 
 const char *const ww_videoOpcodeNameTable[] = {
@@ -2402,14 +2402,14 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|SKIP_IF_NEQ",
-	"d|SKIP_IFN_SIB_WITH_A",
-	"d|SKIP_IF_SIB_WITH_A",
+	"vd|IF_EQUAL",
+	"d|IF_OBJECT_HERE",
+	"d|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|SKIP_IF_PARENT_IS",
-	"dd|SKIP_IF_UNK3_IS",
+	"dd|IF_OBJECT_IS_AT",
+	"dd|IF_OBJECT_STATE_IS",
 	"dddd|DRAW",
-	"d|VC_11",
+	"d|ON_STOP",
 	/* 12 */
 	"d|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
@@ -2417,7 +2417,7 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"d|SYNC",
 	/* 16 */
 	"d|WAIT_SYNC",
-	"d|VC_17",
+	"d|WAIT_END",
 	"i|JUMP_REL",
 	"|CHAIN_TO",
 	/* 20 */
@@ -2442,34 +2442,34 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"dd|CLEAR_WINDOW",
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
-	"dd|VC_37",
-	"v|SKIP_IF_VAR_ZERO",
+	"dd|POKE_PALETTE",
+	"v|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|SKIP_IF_BIT_CLEAR",
+	"d|IF_BIT_SET",
 	/* 44 */
-	"d|SKIP_IF_BIT_SET",
-	"dd|VC_45",
-	"d|VC_46",
-	"d|VC_47",
+	"d|IF_BIT_CLEAR",
+	"dd|SET_WINDOW_PALETTE",
+	"d|SET_PALETTE_SLOT1",
+	"d|SET_PALETTE_SLOT2",
 	/* 48 */
-	"d|VC_48",
+	"d|SET_PALETTE_SLOT3",
 	"d|SET_BIT",
 	"d|CLEAR_BIT",
 	"d|ENABLE_BOX",
 	/* 52 */
 	"d|PLAY_EFFECT",
-	"dd|DUMMY_53",
-	"ddd|DUMMY_54",
+	"dd|DISSOLVE_IN",
+	"ddd|DISSOLVE_OUT",
 	"ddd|MOVE_BOX",
 	/* 56 */
 	"|FULL_SCREEN",
 	"|BLACK_PALETTE",
 	"|SET_PRIORITIES",
-	"|SKIP_IF_NOT_EGA",
+	"|IF_EGA",
 	/* 60 */
 	"d|STOP_ANIMATE",
 	"d|VC_61",
@@ -2485,12 +2485,12 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|SKIP_IF_NEQ",
-	"d|SKIP_IFN_SIB_WITH_A",
-	"d|SKIP_IF_SIB_WITH_A",
+	"vd|IF_EQUAL",
+	"d|IF_OBJECT_HERE",
+	"d|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|SKIP_IF_PARENT_IS",
-	"dd|SKIP_IF_UNK3_IS",
+	"dd|IF_OBJECT_IS_AT",
+	"dd|IF_OBJECT_STATE_IS",
 	"ddddd|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
@@ -2526,15 +2526,15 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
-	"v|SKIP_IF_VAR_ZERO",
+	"v|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|SKIP_IF_BIT_CLEAR",
+	"d|IF_BIT_SET",
 	/* 44 */
-	"d|SKIP_IF_BIT_SET",
+	"d|IF_BIT_CLEAR",
 	"v|SET_SPRITE_X",
 	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
@@ -2552,7 +2552,7 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"|DUMMY_56",
 	"|BLACK_PALETTE",
 	"|SET_PRIORITIES",
-	"|SKIP_IF_VOICE",
+	"|IF_SPEECH",
 	/* 60 */
 	"d|STOP_ANIMATE",
 	"ddd|MASK",
@@ -2568,12 +2568,12 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|SKIP_IF_NEQ",
-	"d|SKIP_IFN_SIB_WITH_A",
-	"d|SKIP_IF_SIB_WITH_A",
+	"vd|IF_EQUAL",
+	"d|IF_OBJECT_HERE",
+	"d|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|SKIP_IF_PARENT_IS",
-	"dd|SKIP_IF_UNK3_IS",
+	"dd|IF_OBJECT_IS_AT",
+	"dd|IF_OBJECT_STATE_IS",
 	"ddddb|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
@@ -2609,15 +2609,15 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
-	"v|SKIP_IF_VAR_ZERO",
+	"v|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|SKIP_IF_BIT_CLEAR",
+	"d|IF_BIT_SET",
 	/* 44 */
-	"d|SKIP_IF_BIT_SET",
+	"d|IF_BIT_CLEAR",
 	"v|SET_SPRITE_X",
 	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
@@ -2642,17 +2642,17 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 	/* 64 */
-	"|SKIP_IF_VOICE",
+	"|IF_SPEECH",
 	"|SLOW_FADE_IN",
-	"|SKIP_IF_NZ",
-	"|SKIP_IF_GE",
+	"|IF_VAR_EQUAL",
+	"|IF_VAR_LE",
 	/* 68 */
-	"|SKIP_IF_LE",
-	"dd|PLAY_TRACK",
-	"dd|QUEUE_MUSIC",
-	"|CHECK_MUSIC_QUEUE",
+	"|IF_VAR_GE",
+	"dd|PLAY_SEQ",
+	"dd|JOIN_SEQ",
+	"|IF_SEQ_WAITING",
 	/* 72 */
-	"dd|PLAY_TRACK_2",
+	"dd|SEQUE",
 	"bb|SET_MARK",
 	"bb|CLEAR_MARK",
 };
@@ -2665,12 +2665,12 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|SKIP_IF_NEQ",
-	"d|SKIP_IFN_SIB_WITH_A",
-	"d|SKIP_IF_SIB_WITH_A",
+	"vd|IF_EQUAL",
+	"d|IF_OBJECT_HERE",
+	"d|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|SKIP_IF_PARENT_IS",
-	"dd|SKIP_IF_UNK3_IS",
+	"dd|IF_OBJECT_IS_AT",
+	"dd|IF_OBJECT_STATE_IS",
 	"ddddb|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
@@ -2706,15 +2706,15 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
-	"v|SKIP_IF_VAR_ZERO",
+	"v|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|SKIP_IF_BIT_CLEAR",
+	"d|IF_BIT_SET",
 	/* 44 */
-	"d|SKIP_IF_BIT_SET",
+	"d|IF_BIT_CLEAR",
 	"v|SET_SPRITE_X",
 	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
@@ -2739,17 +2739,17 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 	/* 64 */
-	"|SKIP_IF_VOICE",
+	"|IF_SPEECH",
 	"|SLOW_FADE_IN",
-	"|SKIP_IF_NZ",
-	"|SKIP_IF_GE",
+	"|IF_VAR_EQUAL",
+	"|IF_VAR_LE",
 	/* 68 */
-	"|SKIP_IF_LE",
-	"dd|PLAY_TRACK",
-	"dd|QUEUE_MUSIC",
-	"|CHECK_MUSIC_QUEUE",
+	"|IF_VAR_GE",
+	"dd|PLAY_SEQ",
+	"dd|JOIN_SEQ",
+	"|IF_SEQ_WAITING",
 	/* 72 */
-	"dd|PLAY_TRACK_2",
+	"dd|SEQUE",
 	"bb|SET_MARK",
 	"bb|CLEAR_MARK",
 	"dd|SETSCALE",

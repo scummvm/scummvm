@@ -127,7 +127,8 @@ void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
 	op[52] = &AGOSEngine::vc39_setVar;
 	op[53] = &AGOSEngine::vc40;
 	op[54] = &AGOSEngine::vc41;
-	op[55] = &AGOSEngine::vc42_delayIfNotEQ;
+
+	op[56] = &AGOSEngine::vc42_delayIfNotEQ;
 }
 
 void AGOSEngine::setupVgaOpcodes() {
