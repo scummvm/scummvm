@@ -56,13 +56,12 @@ public:
 	virtual bool setParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool checkParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool isTerminated() const = 0;
-	virtual int32 getAvailableSoundDataSize() const = 0;
-	virtual void getSoundData(int16 *sound_buffer, int32 size) = 0;
-	virtual void getSoundData(int8 *sound_buffer, int32 size) = 0;
+	virtual byte *getSoundData() = 0;
 	virtual int32 getRate() = 0;
 	virtual bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) = 0;
 
-	int32 getTrackIdentifier() const { return _track; };
+	int32 getAvailableSoundDataSize() const { return _sbufferSize; }
+	int32 getTrackIdentifier() const { return _track; }
 };
 
 class SaudChannel : public SmushChannel {
@@ -86,9 +85,7 @@ public:
 	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index);
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
 	bool appendData(Chunk &b, int32 size);
-	int32 getAvailableSoundDataSize() const;
-	void getSoundData(int16 *sound_buffer, int32 size) { error("16bit request for SAUD channel should never happen"); };
-	void getSoundData(int8 *sound_buffer, int32 size);
+	byte *getSoundData();
 	int32 getRate() { return 22050; }
 	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
 		stereo = false;
@@ -123,9 +120,7 @@ public:
 	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32);
 	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
 	bool appendData(Chunk &b, int32 size);
-	int32 getAvailableSoundDataSize() const;
-	void getSoundData(int16 *sound_buffer, int32 size);
-	void getSoundData(int8 *sound_buffer, int32 size);
+	byte *getSoundData();
 	int32 getRate() { return _rate; }
 	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
 		stereo = (_channels == 2);

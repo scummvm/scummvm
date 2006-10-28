@@ -106,24 +106,16 @@ bool SmushMixer::handleFrame() {
 			} else {
 				int32 vol, pan;
 				bool stereo, is_16bit;
-				void *data;
 
 				_channels[i].chan->getParameters(stereo, is_16bit, vol, pan);
+
 				int32 size = _channels[i].chan->getAvailableSoundDataSize();
+				byte *data = _channels[i].chan->getSoundData();
+
 				byte flags = stereo ? Audio::Mixer::FLAG_STEREO : 0;
-
 				if (is_16bit) {
-					data = malloc(size * (stereo ? 4 : 2));
-					_channels[i].chan->getSoundData((int16 *)data, size);
-					size *= stereo ? 4 : 2;
-
 					flags |= Audio::Mixer::FLAG_16BITS;
-
 				} else {
-					data = malloc(size * (stereo ? 2 : 1));
-					_channels[i].chan->getSoundData((int8 *)data, size);
-					size *= stereo ? 2 : 1;
-
 					flags |= Audio::Mixer::FLAG_UNSIGNED;
 				}
 
@@ -134,9 +126,9 @@ bool SmushMixer::handleFrame() {
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
-					_channels[i].stream->append((byte *)data, size);
+					_channels[i].stream->append(data, size);
 				}
-				free(data);
+				delete[] data;
 			}
 		}
 	}

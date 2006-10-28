@@ -246,36 +246,16 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 	return false;
 }
 
-int32 ImuseChannel::getAvailableSoundDataSize(void) const {
-	int32 ret = _sbufferSize;
-	if (_channels == 2) ret /= 2;
-	if (_bitsize > 8) ret /= 2;
-	return ret;
-}
+byte *ImuseChannel::getSoundData() {
+	byte *tmp = _sbuffer;
 
-void ImuseChannel::getSoundData(int16 *snd, int32 size) {
-	if (_dataSize <= 0 || _bitsize <= 8) error("invalid call to imuse_channel::read_sound_data()");
-	if (_channels == 2) size *= 2;
+	assert(_dataSize > 0);
+	_dataSize -= _srbufferSize;
 
-	memcpy(snd, _sbuffer, size * 2);
-
-	delete []_sbuffer;
-	assert(_sbufferSize == 2 * size);
 	_sbuffer = 0;
 	_sbufferSize = 0;
-	_dataSize -= _srbufferSize;
-}
-
-void ImuseChannel::getSoundData(int8 *snd, int32 size) {
-	if (_dataSize <= 0 || _bitsize > 8) error("invalid call to imuse_channel::read_sound_data()");
-	if (_channels == 2) size *= 2;
-
-	memcpy(snd, _sbuffer, size);
-
-	delete []_sbuffer;
-	_sbuffer = 0;
-	_sbufferSize = 0;
-	_dataSize -= _srbufferSize;
+	
+	return tmp;
 }
 
 } // End of namespace Scumm

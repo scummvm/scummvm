@@ -180,17 +180,17 @@ bool SaudChannel::appendData(Chunk &b, int32 size) {
 	return true;
 }
 
-int32 SaudChannel::getAvailableSoundDataSize(void) const {
-	return _sbufferSize;
-}
+byte *SaudChannel::getSoundData() {
+	byte *tmp = _sbuffer;
 
-void SaudChannel::getSoundData(int8 *snd, int32 size) {
-	memcpy(snd, _sbuffer, size);
+	assert(_dataSize > 0);
 	if (!_keepSize)
-		_dataSize -= size;
-	delete []_sbuffer;
+		_dataSize -= _sbufferSize;
+
 	_sbuffer = 0;
 	_sbufferSize = 0;
+	
+	return tmp;
 }
 
 } // End of namespace Scumm
