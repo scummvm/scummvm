@@ -1320,7 +1320,7 @@ void Insane::procSKIP(Chunk &b) {
 
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		_player->checkBlock(b, MKID_BE('SKIP'), 2);
-		par1 = b.getWord();
+		par1 = b.readUint16LE();
 		if (isBitSet(par1))
 			_player->_skipNext = true;
 		return;
@@ -1328,8 +1328,8 @@ void Insane::procSKIP(Chunk &b) {
 
 	_player->checkBlock(b, MKID_BE('SKIP'), 4);
 
-	par1 = b.getWord();
-	par2 = b.getWord();
+	par1 = b.readUint16LE();
+	par2 = b.readUint16LE();
 
 
 	if (!par2) {

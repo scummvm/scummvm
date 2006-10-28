@@ -74,7 +74,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (par3 != 1)
 			break;
 
-		par5 = b.getWord(); // si
+		par5 = b.readUint16LE(); // si
 		if (_actor[0].field_8 == 112) {
 			setBit(par5);
 			break;
@@ -92,27 +92,27 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		break;
 	case 3:
 		if (par3 == 1) {
-			setBit(b.getWord());
+			setBit(b.readUint16LE());
 			_approachAnim = -1;
 		}
 		break;
 	case 4:
 		if (par3 == 1 && (_approachAnim < 0 || _approachAnim > 4))
-			setBit(b.getWord());
+			setBit(b.readUint16LE());
 		break;
 	case 5:
 		if (par2 != 13)
 			break;
 
-		tmp = b.getWord();   // +8
-		tmp = b.getWord();   // +10
-		par7 = b.getWord();  // +12 dx
-		tmp = b.getWord();   // +14
-		par9 = b.getWord();  // +16 bx
-		tmp = b.getWord();   // +18
-		par11 = b.getWord(); // +20 cx
-		tmp = b.getWord();   // +22
-		par13 = b.getWord(); // +24 ax
+		tmp = b.readUint16LE();   // +8
+		tmp = b.readUint16LE();   // +10
+		par7 = b.readUint16LE();  // +12 dx
+		tmp = b.readUint16LE();   // +14
+		par9 = b.readUint16LE();  // +16 bx
+		tmp = b.readUint16LE();   // +18
+		par11 = b.readUint16LE(); // +20 cx
+		tmp = b.readUint16LE();   // +22
+		par13 = b.readUint16LE(); // +24 ax
 		
 		if (par13 > _actor[0].x || par11 < _actor[0].x) {
 			_tiresRustle = true;
@@ -143,8 +143,8 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 								 _continueFrame1, 1300);
 			break;
 		case 9:
-			par5 = b.getWord(); // si
-			par6 = b.getWord(); // bx
+			par5 = b.readUint16LE(); // si
+			par6 = b.readUint16LE(); // bx
 			smlayer_setFluPalette(_smush_roadrsh3Rip, 0);
 			if (par5 == par6 - 1)
 				smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -153,10 +153,10 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 7:
 		switch (par4) {
 		case 1:
-			_actor[0].x -= (b.getWord() - 160) / 10;
+			_actor[0].x -= (b.readUint16LE() - 160) / 10;
 			break;
 		case 2:
-			par5 = b.getWord();
+			par5 = b.readUint16LE();
 
 			if (par5 - 8 > _actor[0].x || par5 + 8 < _actor[0].x) {
 				if (smlayer_isSoundRunning(86))
@@ -297,8 +297,8 @@ void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	int par2, par3;
 	if (command == 6) {
 		if (par1 == 9) {
-			par2 = b.getWord(); // ptr + 8
-			par3 = b.getWord(); // ptr + 10
+			par2 = b.readUint16LE(); // ptr + 8
+			par3 = b.readUint16LE(); // ptr + 10
 
 			if (!par2)
 				smlayer_setFluPalette(_smush_roadrsh3Rip, 0);
@@ -322,7 +322,7 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	switch (par1) {
 	case 2:
 	case 4:
-		par5 = b.getWord(); // si
+		par5 = b.readUint16LE(); // si
 		switch (par3) {
 		case 1:
 			if (par4 == 1) {
@@ -397,7 +397,7 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	switch (par1) {
 	case 7:
-		par5 = b.getWord();
+		par5 = b.readUint16LE();
 		if (par4 != 3)
 			break;
 
@@ -408,7 +408,7 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		break;
 	case 2:
 	case 4:
-		par5 = b.getWord();
+		par5 = b.readUint16LE();
 		switch (par3) {
 		case 1:
 			if (par4 == 1) {
@@ -483,7 +483,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 3:
 	case 4:
 		if (par3 == 1) {
-			setBit(b.getWord());
+			setBit(b.readUint16LE());
 			_approachAnim = -1;
 		}
 		break;

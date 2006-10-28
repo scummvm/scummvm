@@ -41,7 +41,7 @@ bool SaudChannel::isTerminated() const {
 }
 
 void SaudChannel::handleStrk(Chunk &b) {
-	int32 size = b.getSize();
+	int32 size = b.size();
 	if (size != 14 && size != 10) {
 		error("STRK has an invalid size : %d", size);
 	}
@@ -52,7 +52,7 @@ void SaudChannel::handleSmrk(Chunk &b) {
 }
 
 void SaudChannel::handleShdr(Chunk &b) {
-	int32 size = b.getSize();
+	int32 size = b.size();
 	if (size != 4)
 		error("SHDR has an invalid size : %d", size);
 }
@@ -133,9 +133,9 @@ bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volu
 bool SaudChannel::appendData(Chunk &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type saud_type = b.getDword();
+		Chunk::type saud_type = b.readUint32LE();
 		saud_type = SWAP_BYTES_32(saud_type);
-		uint32 saud_size = b.getDword();
+		uint32 saud_size = b.readUint32LE();
 		saud_size = SWAP_BYTES_32(saud_size);
 		if (saud_type != MKID_BE('SAUD'))
 			error("Invalid Chunk for SaudChannel : %X", saud_type);

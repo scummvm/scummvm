@@ -38,11 +38,11 @@ BaseChunk::BaseChunk() :
 	_name("") {
 }
 
-bool BaseChunk::eof() const {
+bool BaseChunk::eos() const {
 	return _curPos >= _size;
 }
 
-uint32 BaseChunk::tell() const {
+uint32 BaseChunk::pos() const {
 	return _curPos;
 }
 
@@ -50,22 +50,22 @@ Chunk::type BaseChunk::getType() const {
 	return _type;
 }
 
-uint32 BaseChunk::getSize() const {
+uint32 BaseChunk::size() const {
 	return _size;
 }
 
-bool BaseChunk::seek(int32 delta, seek_type dir) {
+void BaseChunk::seek(int32 delta, int dir) {
 	switch (dir) {
-	case seek_cur:
+	case SEEK_CUR:
 		_curPos += delta;
 		break;
-	case seek_start:
+	case SEEK_SET:
 		if (delta < 0)
 			error("invalid seek request");
 
 		_curPos = (uint32)delta;
 		break;
-	case seek_end:
+	case SEEK_END:
 		if (delta > 0 || _size < (uint32)-delta)
 			error("invalid seek request");
 
@@ -82,14 +82,13 @@ bool BaseChunk::seek(int32 delta, seek_type dir) {
 		warning("Looks like you compressed file %s in wrong way. It has FLU index which was not updated", _name.c_str());
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
 	}
-	return true;
 }
 
 FileChunk::FileChunk(BaseScummFile *data, int offset) {
 	_data = data;
 	_deleteData = false;
 
-	_data->seek(offset, seek_start);
+	_data->seek(offset, SEEK_SET);
 	_type = _data->readUint32BE();
 	_size = _data->readUint32BE();
 	_offset = _data->pos();
@@ -102,7 +101,7 @@ FileChunk::FileChunk(const Common::String &name, int offset) {
 	if (!g_scumm->openFile(*_data, name))
 		error("FileChunk: Unable to open file %s", name.c_str());
 
-	_data->seek(offset, seek_start);
+	_data->seek(offset, SEEK_SET);
 	_type = _data->readUint32BE();
 	_size = _data->readUint32BE();
 	_offset = _data->pos();
@@ -117,56 +116,22 @@ FileChunk::~FileChunk() {
 
 Chunk *FileChunk::subBlock() {
 	FileChunk *ptr = new FileChunk(_data, _offset + _curPos);
-	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->getSize());
+	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->size(), SEEK_CUR);
 	return ptr;
 }
 
 void FileChunk::reseek() {
-	_data->seek(_offset + _curPos);
+	_data->seek(_offset + _curPos, SEEK_CUR);
 }
 
-bool FileChunk::read(void *buffer, uint32 size) {
-	if (size <= 0 || (_curPos + size) > _size)
+uint32 FileChunk::read(void *buffer, uint32 dataSize) {
+	if (dataSize <= 0 || (_curPos + dataSize) > _size)
 		error("invalid buffer read request");
 
-	_data->read(buffer, size);
-	_curPos += size;
-	return true;
-}
-
-int8 FileChunk::getChar() {
-	return (int8)getByte();
-}
-
-byte FileChunk::getByte() {
-	_curPos++;
-
-	if (_curPos > _size)
-		error("invalid byte read request");
-
-	return _data->readByte();
-}
-
-int16 FileChunk::getShort() {
-	return (int16)getWord();
-}
-
-uint16 FileChunk::getWord() {
-	_curPos += 2;
-
-	if (_curPos > _size)
-		error("invalid word read request");
-
-	return _data->readUint16LE();
-}
-
-uint32 FileChunk::getDword() {
-	_curPos += 4;
-
-	if (_curPos > _size)
-		error("invalid dword read request");
-
-	return _data->readUint32LE();
+	dataSize = _data->read(buffer, dataSize);
+	_curPos += dataSize;
+	
+	return dataSize;
 }
 
 MemoryChunk::MemoryChunk(byte *data) {
@@ -181,62 +146,20 @@ MemoryChunk::MemoryChunk(byte *data) {
 
 Chunk *MemoryChunk::subBlock() {
 	MemoryChunk *ptr = new MemoryChunk(_data + _curPos);
-	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->getSize());
+	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->size(), SEEK_CUR);
 	return ptr;
 }
 
 void MemoryChunk::reseek() {
 }
 
-bool MemoryChunk::read(void *buffer, uint32 size) {
-	if (size <= 0 || (_curPos + size) > _size)
+uint32 MemoryChunk::read(void *buffer, uint32 dataSize) {
+	if (dataSize <= 0 || (_curPos + dataSize) > _size)
 		error("invalid buffer read request");
 
-	memcpy(buffer, _data + _curPos, size);
-	_curPos += size;
-	return true;
-}
-
-int8 MemoryChunk::getChar() {
-	if (_curPos >= _size)
-		error("invalid char read request");
-
-	return _data[_curPos++];
-}
-
-byte MemoryChunk::getByte() {
-	if (_curPos >= _size)
-		error("invalid byte read request");
-
-	byte *ptr = (byte *)(_data + _curPos);
-	_curPos += 1;
-	return *ptr;
-}
-
-int16 MemoryChunk::getShort() {
-	if (_curPos >= _size - 1)
-		error("invalid int16 read request");
-
-	int16 buffer = getWord();
-	return *((int16 *)&buffer);
-}
-
-uint16 MemoryChunk::getWord() {
-	if (_curPos >= _size - 1)
-		error("invalid word read request");
-
-	uint16 *ptr = (uint16 *)(_data + _curPos);
-	_curPos += 2;
-	return READ_LE_UINT16(ptr);
-}
-
-uint32 MemoryChunk::getDword() {
-	if (_curPos >= _size - 3)
-		error("invalid dword read request");
-
-	uint32 *ptr = (uint32 *)(_data + _curPos);
-	_curPos += 4;
-	return READ_LE_UINT32(ptr);
+	memcpy(buffer, _data + _curPos, dataSize);
+	_curPos += dataSize;
+	return dataSize;
 }
 
 } // End of namespace Scumm

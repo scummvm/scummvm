@@ -25,29 +25,19 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 namespace Scumm {
 
 class BaseScummFile;
 
-class Chunk {
+class Chunk : public Common::SeekableReadStream {
 public:
-	virtual ~Chunk() {};
-	enum seek_type { seek_start, seek_end, seek_cur };
 	typedef uint32 type;
+
 	virtual type getType() const = 0;
-	virtual uint32 getSize() const = 0;
 	virtual Chunk *subBlock() = 0;
 	virtual void reseek() = 0;
-	virtual bool eof() const = 0;
-	virtual uint32 tell() const = 0;
-	virtual bool seek(int32 delta, seek_type dir = seek_cur) = 0;
-	virtual bool read(void *buffer, uint32 size) = 0;
-	virtual int8 getChar() = 0;
-	virtual byte getByte() = 0;
-	virtual int16 getShort() = 0;
-	virtual uint16 getWord() = 0;
-	virtual uint32 getDword() = 0;
 };
 
 // Common functionality for concrete chunks (FileChunk, MemoryChunk)
@@ -62,10 +52,10 @@ protected:
 
 public:
 	Chunk::type getType() const;
-	uint32 getSize() const;
-	bool eof() const;
-	uint32 tell() const;
-	bool seek(int32 delta, seek_type dir = seek_cur);
+	uint32 size() const;
+	bool eos() const;
+	uint32 pos() const;
+	void seek(int32 delta, int dir = SEEK_CUR);
 };
 
 class FileChunk : public BaseChunk {
@@ -80,12 +70,7 @@ public:
 	virtual ~FileChunk();
 	Chunk *subBlock();
 	void reseek();
-	bool read(void *buffer, uint32 size);
-	int8 getChar();
-	byte getByte();
-	short getShort();
-	uint16 getWord();
-	uint32 getDword();
+	uint32 read(void *buffer, uint32 size);
 };
 
 class MemoryChunk : public BaseChunk {
@@ -96,12 +81,7 @@ public:
 	MemoryChunk(byte *data);
 	Chunk *subBlock();
 	void reseek();
-	bool read(void *buffer, uint32 size);
-	int8 getChar();
-	byte getByte();
-	int16 getShort();
-	uint16 getWord();
-	uint32 getDword();
+	uint32 read(void *buffer, uint32 size);
 };
 
 } // End of namespace Scumm

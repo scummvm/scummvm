@@ -60,8 +60,8 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 bool ImuseChannel::appendData(Chunk &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type imus_type = b.getDword(); imus_type = SWAP_BYTES_32(imus_type);
-		uint32 imus_size = b.getDword(); imus_size = SWAP_BYTES_32(imus_size);
+		Chunk::type imus_type = b.readUint32LE(); imus_type = SWAP_BYTES_32(imus_type);
+		uint32 imus_size = b.readUint32LE(); imus_size = SWAP_BYTES_32(imus_size);
 		if (imus_type != MKID_BE('iMUS'))
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
@@ -102,34 +102,34 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 }
 
 bool ImuseChannel::handleFormat(Chunk &src) {
-	if (src.getSize() != 20) error("invalid size for FRMT Chunk");
-	uint32 imuse_start = src.getDword();
+	if (src.size() != 20) error("invalid size for FRMT Chunk");
+	uint32 imuse_start = src.readUint32LE();
 	imuse_start = SWAP_BYTES_32(imuse_start);
-	src.seek(4);
-	_bitsize = src.getDword();
+	src.seek(4, SEEK_CUR);
+	_bitsize = src.readUint32LE();
 	_bitsize = SWAP_BYTES_32(_bitsize);
-	_rate = src.getDword();
+	_rate = src.readUint32LE();
 	_rate = SWAP_BYTES_32(_rate);
-	_channels = src.getDword();
+	_channels = src.readUint32LE();
 	_channels = SWAP_BYTES_32(_channels);
 	assert(_channels == 1 || _channels == 2);
 	return true;
 }
 
 bool ImuseChannel::handleRegion(Chunk &src) {
-	if (src.getSize() != 8)
+	if (src.size() != 8)
 		error("invalid size for REGN Chunk");
 	return true;
 }
 
 bool ImuseChannel::handleStop(Chunk &src) {
-	if (src.getSize() != 4)
+	if (src.size() != 4)
 		error("invalid size for STOP Chunk");
 	return true;
 }
 
 bool ImuseChannel::handleMap(Chunk &map) {
-	while (!map.eof()) {
+	while (!map.eos()) {
 		Chunk *sub = map.subBlock();
 		switch (sub->getType()) {
 		case MKID_BE('FRMT'):
@@ -144,7 +144,7 @@ bool ImuseChannel::handleMap(Chunk &map) {
 			handleStop(*sub);
 			break;
 		default:
-			error("Unknown iMUS subChunk found : %s, %d", tag2str(sub->getType()), sub->getSize());
+			error("Unknown iMUS subChunk found : %s, %d", tag2str(sub->getType()), sub->size());
 		}
 		delete sub;
 	}
