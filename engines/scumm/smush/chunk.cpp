@@ -62,14 +62,14 @@ void BaseChunk::seek(int32 delta, int dir) {
 	case SEEK_SET:
 		if (delta < 0)
 			error("invalid seek request");
-
 		_curPos = (uint32)delta;
 		break;
 	case SEEK_END:
 		if (delta > 0 || _size < (uint32)-delta)
 			error("invalid seek request");
-
 		_curPos = (uint32)(_size + delta);
+		break;
+	default:
 		break;
 	}
 
@@ -116,7 +116,7 @@ FileChunk::~FileChunk() {
 
 Chunk *FileChunk::subBlock() {
 	FileChunk *ptr = new FileChunk(_data, _offset + _curPos);
-	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->size(), SEEK_CUR);
+	skip(sizeof(Chunk::type) + sizeof(uint32) + ptr->size());
 	return ptr;
 }
 
@@ -146,7 +146,7 @@ MemoryChunk::MemoryChunk(byte *data) {
 
 Chunk *MemoryChunk::subBlock() {
 	MemoryChunk *ptr = new MemoryChunk(_data + _curPos);
-	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->size(), SEEK_CUR);
+	skip(sizeof(Chunk::type) + sizeof(uint32) + ptr->size());
 	return ptr;
 }
 

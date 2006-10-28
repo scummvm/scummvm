@@ -989,7 +989,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 
 		b.reseek();
 		if (sub->size() & 1)
-			b.seek(1, SEEK_CUR);
+			b.skip(1);
 
 		delete sub;
 	}

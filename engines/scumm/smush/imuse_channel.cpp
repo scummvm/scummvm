@@ -60,8 +60,8 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 bool ImuseChannel::appendData(Chunk &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type imus_type = b.readUint32LE(); imus_type = SWAP_BYTES_32(imus_type);
-		uint32 imus_size = b.readUint32LE(); imus_size = SWAP_BYTES_32(imus_size);
+		Chunk::type imus_type = b.readUint32BE();
+		/*uint32 imus_size =*/ b.readUint32BE();
 		if (imus_type != MKID_BE('iMUS'))
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
@@ -103,15 +103,11 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 
 bool ImuseChannel::handleFormat(Chunk &src) {
 	if (src.size() != 20) error("invalid size for FRMT Chunk");
-	uint32 imuse_start = src.readUint32LE();
-	imuse_start = SWAP_BYTES_32(imuse_start);
-	src.seek(4, SEEK_CUR);
-	_bitsize = src.readUint32LE();
-	_bitsize = SWAP_BYTES_32(_bitsize);
-	_rate = src.readUint32LE();
-	_rate = SWAP_BYTES_32(_rate);
-	_channels = src.readUint32LE();
-	_channels = SWAP_BYTES_32(_channels);
+	/*uint32 imuse_start =*/ src.readUint32BE();
+	src.skip(4);
+	_bitsize = src.readUint32BE();
+	_rate = src.readUint32BE();
+	_channels = src.readUint32BE();
 	assert(_channels == 1 || _channels == 2);
 	return true;
 }

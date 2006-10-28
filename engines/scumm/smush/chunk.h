@@ -55,7 +55,7 @@ public:
 	uint32 size() const;
 	bool eos() const;
 	uint32 pos() const;
-	void seek(int32 delta, int dir = SEEK_CUR);
+	void seek(int32 delta, int dir);
 };
 
 class FileChunk : public BaseChunk {
