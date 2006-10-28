@@ -527,6 +527,7 @@ void AGOSEngine::drawMousePointer() {
 		const uint16 *src;
 		int i, j;
 
+		const uint8 color = (getGameType() == GType_ELVIRA1) ? 15: 65;
 		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
 		uint cursor = _mouseCursor;
@@ -542,7 +543,7 @@ void AGOSEngine::drawMousePointer() {
 			for (j = 0; j < 16; j++) {
 				if (src[0] & (1 << (15 - (j % 16)))) {
 					if (src[1] & (1 << (15 - (j % 16)))) {
-						_mouseData[16 * i + j] = 65;
+						_mouseData[16 * i + j] = color;
 					} else {
 						_mouseData[16 * i + j] = 0;
 					}
