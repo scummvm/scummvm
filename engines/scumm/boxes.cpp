@@ -629,28 +629,6 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 	return *box;
 }
 
-bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
-	int t;
-
-	t = x - threshold;
-	if (t > box.ul.x && t > box.ur.x && t > box.lr.x && t > box.ll.x)
-		return true;
-
-	t = x + threshold;
-	if (t < box.ul.x && t < box.ur.x && t < box.lr.x && t < box.ll.x)
-		return true;
-
-	t = y - threshold;
-	if (t > box.ul.y && t > box.ur.y && t > box.lr.y && t > box.ll.y)
-		return true;
-
-	t = y + threshold;
-	if (t < box.ul.y && t < box.ur.y && t < box.lr.y && t < box.ll.y)
-		return true;
-
-	return false;
-}
-
 int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY) {
 	const Common::Point p(x, y);
 	Common::Point tmp;
@@ -1077,11 +1055,11 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 			if (box2.ur.x == box2.ul.x && box.ul.x == box2.ul.x && box.ur.x == box2.ul.x) {
 				bool swappedBox2 = false, swappedBox1 = false;
 				if (box2.ur.y < box2.ul.y) {
-					swappedBox2 = 1;
+					swappedBox2 = true;
 					SWAP(box2.ur.y, box2.ul.y);
 				}
 				if (box.ur.y < box.ul.y) {
-					swappedBox1 = 1;
+					swappedBox1 = true;
 					SWAP(box.ur.y, box.ul.y);
 				}
 				if (box.ur.y < box2.ul.y ||
@@ -1106,11 +1084,11 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 			if (box2.ur.y == box2.ul.y && box.ul.y == box2.ul.y && box.ur.y == box2.ul.y) {
 				bool swappedBox2 = false, swappedBox1 = false;
 				if (box2.ur.x < box2.ul.x) {
-					swappedBox2 = 1;
+					swappedBox2 = true;
 					SWAP(box2.ur.x, box2.ul.x);
 				}
 				if (box.ur.x < box.ul.x) {
-					swappedBox1 = 1;
+					swappedBox1 = true;
 					SWAP(box.ur.x, box.ul.x);
 				}
 				if (box.ur.x < box2.ul.x ||

@@ -926,6 +926,28 @@ int Actor::getActorXYPos(int &xPos, int &yPos) const {
 	return 0;
 }
 
+static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
+	int t;
+
+	t = x - threshold;
+	if (t > box.ul.x && t > box.ur.x && t > box.lr.x && t > box.ll.x)
+		return true;
+
+	t = x + threshold;
+	if (t < box.ul.x && t < box.ur.x && t < box.lr.x && t < box.ll.x)
+		return true;
+
+	t = y - threshold;
+	if (t > box.ul.y && t > box.ur.y && t > box.lr.y && t > box.ll.y)
+		return true;
+
+	t = y + threshold;
+	if (t < box.ul.y && t < box.ur.y && t < box.lr.y && t < box.ll.y)
+		return true;
+
+	return false;
+}
+
 AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	const uint thresholdTable[] = { 30, 80, 0 };
 	AdjustBoxResult abr;

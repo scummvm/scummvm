@@ -50,7 +50,6 @@ struct BoxCoords {			/* Box coordinates */
 	Common::Point lr;
 };
 
-bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold);
 int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY);
 
 } // End of namespace Scumm
