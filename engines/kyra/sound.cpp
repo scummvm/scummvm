@@ -72,12 +72,13 @@ void Sound::voicePlay(const char *file) {
 			return;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
-		_mixer->stopHandle(_vocHandle);
 		_currentVocFile = Audio::makeVOCStream(vocStream);
 	}
 
-	if (_currentVocFile)
+	if (_currentVocFile) {
+		_mixer->stopHandle(_vocHandle);
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
+	}
 	delete [] fileData;
 	fileSize = 0;
 }
