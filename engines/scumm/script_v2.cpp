@@ -472,40 +472,40 @@ void ScummEngine_v2::clearStateCommon(byte type) {
 
 void ScummEngine_v2::o2_setState08() {
 	int obj = getVarOrDirectWord(PARAM_1);
-	putState(obj, getState(obj) | 0x08);
+	putState(obj, getState(obj) | kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_v2::o2_clearState08() {
 	int obj = getVarOrDirectWord(PARAM_1);
-	putState(obj, getState(obj) & ~0x08);
+	putState(obj, getState(obj) & ~kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_v2::o2_setState04() {
-	setStateCommon(0x04);
+	setStateCommon(kObjectStateLocked);
 }
 
 void ScummEngine_v2::o2_clearState04() {
-	clearStateCommon(0x04);
+	clearStateCommon(kObjectStateLocked);
 }
 
 void ScummEngine_v2::o2_setState02() {
-	setStateCommon(0x02);
+	setStateCommon(kObjectStateUntouchable);
 }
 
 void ScummEngine_v2::o2_clearState02() {
-	clearStateCommon(0x02);
+	clearStateCommon(kObjectStateUntouchable);
 }
 
 void ScummEngine_v2::o2_setState01() {
-	setStateCommon(0x01);
+	setStateCommon(kObjectStatePickupable);
 }
 
 void ScummEngine_v2::o2_clearState01() {
-	clearStateCommon(0x01);
+	clearStateCommon(kObjectStatePickupable);
 }
 
 void ScummEngine_v2::o2_assignVarWordIndirect() {
@@ -575,51 +575,51 @@ void ScummEngine_v2::o2_getBitVar() {
 void ScummEngine_v2::ifStateCommon(byte type) {
 	int obj = getVarOrDirectWord(PARAM_1);
 
-	if ((getState(obj) & type) == 0)
-		o5_jumpRelative();
-	else
+	if ((getState(obj) & type) != 0)
 		ignoreScriptWord();
+	else
+		o5_jumpRelative();
 }
 
 void ScummEngine_v2::ifNotStateCommon(byte type) {
 	int obj = getVarOrDirectWord(PARAM_1);
 
-	if ((getState(obj) & type) != 0)
-		o5_jumpRelative();
-	else
+	if ((getState(obj) & type) == 0)
 		ignoreScriptWord();
+	else
+		o5_jumpRelative();
 }
 
 void ScummEngine_v2::o2_ifState08() {
-	ifStateCommon(0x08);
+	ifStateCommon(kObjectState_08);
 }
 
 void ScummEngine_v2::o2_ifNotState08() {
-	ifNotStateCommon(0x08);
+	ifNotStateCommon(kObjectState_08);
 }
 
 void ScummEngine_v2::o2_ifState04() {
-	ifStateCommon(0x04);
+	ifStateCommon(kObjectStateLocked);
 }
 
 void ScummEngine_v2::o2_ifNotState04() {
-	ifNotStateCommon(0x04);
+	ifNotStateCommon(kObjectStateLocked);
 }
 
 void ScummEngine_v2::o2_ifState02() {
-	ifStateCommon(0x02);
+	ifStateCommon(kObjectStateUntouchable);
 }
 
 void ScummEngine_v2::o2_ifNotState02() {
-	ifNotStateCommon(0x02);
+	ifNotStateCommon(kObjectStateUntouchable);
 }
 
 void ScummEngine_v2::o2_ifState01() {
-	ifStateCommon(0x01);
+	ifStateCommon(kObjectStatePickupable);
 }
 
 void ScummEngine_v2::o2_ifNotState01() {
-	ifNotStateCommon(0x01);
+	ifNotStateCommon(kObjectStatePickupable);
 }
 
 void ScummEngine_v2::o2_addIndirect() {
@@ -753,10 +753,10 @@ void ScummEngine_v2::o2_drawObject() {
 	i = _numLocalObjects;
 	while (i--) {
 		if (_objs[i].obj_nr && _objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
-			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & ~0x08);
+			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & ~kObjectState_08);
 	}
 
-	putState(obj, getState(od->obj_nr) | 0x08);
+	putState(obj, getState(od->obj_nr) | kObjectState_08);
 }
 
 void ScummEngine_v2::o2_resourceRoutines() {
@@ -1547,7 +1547,7 @@ void ScummEngine_v2::o2_pickupObject() {
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
-	putState(obj, getState(obj) | 0xA);
+	putState(obj, getState(obj) | kObjectState_08 | kObjectStateUntouchable);
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);

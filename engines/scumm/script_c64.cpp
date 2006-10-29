@@ -439,23 +439,19 @@ void ScummEngine_c64::clearStateCommon(byte type) {
 void ScummEngine_c64::ifStateCommon(byte type) {
 	int obj = getObjectFlag();
 
-	if ((getState(obj) & type) == 0) {
+	if ((getState(obj) & type) != 0)
+		ScummEngine::fetchScriptWord();
+	else
 		o_jumpRelative();
-	} else {
-		fetchScriptByte();
-		fetchScriptByte();
-	}
 }
 
 void ScummEngine_c64::ifNotStateCommon(byte type) {
 	int obj = getObjectFlag();
 
-	if ((getState(obj) & type) != 0) {
+	if ((getState(obj) & type) == 0)
+		ScummEngine::fetchScriptWord();
+	else
 		o_jumpRelative();
-	} else {
-		fetchScriptByte();
-		fetchScriptByte();
-	}
 }
 
 void ScummEngine_c64::drawSentence() {
@@ -563,14 +559,14 @@ void ScummEngine_c64::drawSentence() {
 
 void ScummEngine_c64::o_setState08() {
 	int obj = getObjectFlag();
-	putState(obj, getState(obj) | 0x08);
+	putState(obj, getState(obj) | kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_c64::o_clearState08() {
 	int obj = getObjectFlag();
-	putState(obj, getState(obj) & ~0x08);
+	putState(obj, getState(obj) & ~kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
@@ -775,7 +771,7 @@ void ScummEngine_c64::o_pickupObject() {
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
-	putState(obj, getState(obj) | 0xA);
+	putState(obj, getState(obj) | kObjectState_08 | kObjectStateUntouchable);
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);
