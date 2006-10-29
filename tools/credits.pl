@@ -454,8 +454,8 @@ begin_credits("Credits");
   begin_section("ScummVM Team");
     begin_section("Project Leaders");
 	  begin_persons();
-		add_person('James Brown', 'ender', "");
-		add_person('Max Horn', 'Fingolfin', "");
+		add_person("James Brown", "ender", "");
+		add_person("Max Horn", "Fingolfin", "");
 		add_person("Eugene Sandulenko", "sev", "");
 	  end_persons();
     end_section();
@@ -464,9 +464,9 @@ begin_credits("Credits");
     begin_section("Engine Teams");
 	  begin_section("SCUMM");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person('James Brown', 'ender', "");
+		  add_person("James Brown", "ender", "");
 		  add_person("Jonathan Gray", "khalek", "");
-		  add_person('Max Horn', 'Fingolfin', "");
+		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
 		  add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
@@ -578,8 +578,8 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("SDL (Win/Linux/OS X/etc.)");
-		  add_person('Max Horn', 'Fingolfin', "");
-		  add_person('Eugene Sandulenko', 'sev', "Asm routines, GFX layers");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Eugene Sandulenko", "sev", "Asm routines, GFX layers");
 	  end_section();
 
 	  begin_section("SymbianOS");
@@ -591,7 +591,7 @@ begin_credits("Credits");
 
     begin_section("Other subsystems");
 	  begin_section("Infrastructure");
-		  add_person('Max Horn', 'Fingolfin', "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc.");
+		  add_person("Max Horn", "Fingolfin", "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc.");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
@@ -621,13 +621,13 @@ begin_credits("Credits");
 		add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
-		add_person('Vincent Hamm', 'yazoo', "Co-Founder, original CinE engine author");
+		add_person("Vincent Hamm", "yazoo", "Co-Founder, original CinE engine author");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
-		add_person('Jeremy Newman', 'laxdragon', "Former webmaster");
-		add_person('Ludvig Strigeus', 'ludde', "Original ScummVM and SimonVM author");
+		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
+		add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
 		add_person("Lionel Ulmer", "bbrox", "Port: X11");
 	  end_persons();
     end_section();
@@ -659,15 +659,16 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Mac OS X");
-		  add_person('Max Horn', 'Fingolfin', "");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Oystein Eftevaag", "vinterstum", "");
 	  end_section();
 
 	  begin_section("Mandriva");
-		  add_person('Dominik Scherer', '', "");
+		  add_person("Dominik Scherer", "", "");
 	  end_section();
 
 	  begin_section("MorphOS");
-		  add_person('Fabien Coeurjoly', '', "");
+		  add_person("Fabien Coeurjoly", "", "");
 	  end_section();
 
 	  begin_section("OS/2");
@@ -682,7 +683,7 @@ begin_credits("Credits");
 		  add_person("Laurent Blume", "laurent", "");
 	  end_section();
 
-	  begin_section("Solaris Spark");
+	  begin_section("Solaris SPARC");
 		  add_person("Markus Strangl", "WooShell", "");
 	  end_section();
 
@@ -700,9 +701,9 @@ begin_credits("Credits");
 		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
 		  add_person("David Jensen", "Tyst", "SVG logo conversion");
-		  add_person("Jean Marc", "", 'ScummVM logo');
-		  add_person("", "Raina", 'ScummVM forum buttons');
-		  add_person("Clemens Steinhuber", "", 'ScummVM forum theme');
+		  add_person("Jean Marc", "", "ScummVM logo");
+		  add_person("", "Raina", "ScummVM forum buttons");
+		  add_person("Clemens Steinhuber", "", "ScummVM forum theme");
 	  end_persons();
 	end_section();
 
@@ -718,7 +719,7 @@ begin_credits("Credits");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 		  add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for EPOC/SymbianOS");
-		  add_person("Claudio Matsuoka", "", 'Daily Linux builds');
+		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
 		  add_person("Mikesch Nepomuk", "", "MI1 VGA floppy patches");
 		  add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
