@@ -491,14 +491,14 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		_vm->markObjectRectAsDirty(obj);
 		_vm->clearDrawObjectQueue();
 		_vm->runInventoryScript(obj);
-	} else if (!strcmp(argv[2], "state")) {
+	} else if (!strcmp(argv[2], "state") && argc == 4) {
 		_vm->putState(obj, atoi(argv[3]));
 		//is BgNeedsRedraw enough?
 		_vm->_bgNeedsRedraw = true;
 	} else if (!strcmp(argv[2], "name")) {
 		DebugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
 	} else {
-		DebugPrintf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
+		DebugPrintf("Unknown object command '%s'\nUse <pickup | state | name> as command\n", argv[2]);
 	}
 
 	return true;
