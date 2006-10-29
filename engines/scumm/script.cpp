@@ -222,8 +222,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 /* Stop script 'script' */
 void ScummEngine::stopScript(int script) {
 	ScriptSlot *ss;
-	NestedScript *nest;
-	int i, num;
+	int i;
 
 	if (script == 0)
 		return;
@@ -243,19 +242,14 @@ void ScummEngine::stopScript(int script) {
 		}
 	}
 
-	nest = vm.nest;
-	num = vm.numNestedScripts;
-
-	while (num > 0) {
-		if (nest->number == script &&
-				(nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
-			nukeArrays(nest->slot);
-			nest->number = 0xFF;
-			nest->slot = 0xFF;
-			nest->where = 0xFF;
+	for (i = 0; i < vm.numNestedScripts; ++i) {
+		if (vm.nest[i].number == script &&
+				(vm.nest[i].where == WIO_GLOBAL || vm.nest[i].where == WIO_LOCAL)) {
+			nukeArrays(vm.nest[i].slot);
+			vm.nest[i].number = 0xFF;
+			vm.nest[i].slot = 0xFF;
+			vm.nest[i].where = 0xFF;
 		}
-		nest++;
-		num--;
 	}
 }
 
@@ -461,7 +455,8 @@ void ScummEngine::executeScript() {
 			printf("\n");
 		}
 		_opcode = fetchScriptByte();
-		vm.slot[_currentScript].didexec = 1;
+		if (_game.version > 2) // V0-V2 games didn't use the didexec flag
+			vm.slot[_currentScript].didexec = true;
 		debugC(DEBUG_OPCODES, "Script %d, offset 0x%x: [%X] %s()",
 				vm.slot[_currentScript].number,
 				_scriptPointer - _scriptOrgPointer,
@@ -915,14 +910,14 @@ void ScummEngine::runAllScripts() {
 	int i;
 
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++)
-		vm.slot[i].didexec = 0;
+		vm.slot[i].didexec = false;
 
 	_currentScript = 0xFF;
 	int numCycles = (_game.heversion >= 90) ? VAR(VAR_NUM_SCRIPT_CYCLES) : 1;
 
 	for (int cycle = 1; cycle <= numCycles; cycle++) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
-			if (vm.slot[i].cycle == cycle && vm.slot[i].status == ssRunning && vm.slot[i].didexec == 0) {
+			if (vm.slot[i].cycle == cycle && vm.slot[i].status == ssRunning && !vm.slot[i].didexec) {
 				_currentScript = (byte)i;
 				getScriptBaseAddress();
 				getScriptEntryPoint();
