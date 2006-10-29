@@ -145,7 +145,7 @@ bool Debugger::Cmd_SetVar(int argc, const char **argv) {
 	uint var, value;
 	if (argc > 1) {
 		var = atoi(argv[1]);
-		if (var <= 254) {
+		if (var < _vm->_numVars) {
 			if (argc > 2) {
 				value = atoi(argv[2]);
 				_vm->writeVariable(var, value);
@@ -155,7 +155,7 @@ bool Debugger::Cmd_SetVar(int argc, const char **argv) {
 				DebugPrintf("Var %d is %d\n", var, value);
 			}
 		} else
-			DebugPrintf("Var out of range (0 - 254)\n");
+			DebugPrintf("Var out of range (0 - %d)\n", _vm->_numVars - 1);
 	} else
 		DebugPrintf("Syntax: var <varnum> <value>\n");
 
