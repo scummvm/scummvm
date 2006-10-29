@@ -65,7 +65,6 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[149] = &AGOSEngine::oe2_ifDoorClosed;
 	op[150] = &AGOSEngine::oe2_ifDoorLocked;
 	op[161] = &AGOSEngine::oe2_printStats;
-	op[162] = &AGOSEngine::oe2_unk162;
 	op[165] = &AGOSEngine::oe2_setSuperRoom;
 	op[166] = &AGOSEngine::oe2_getSuperRoom;
 	op[167] = &AGOSEngine::oe2_setExitOpen;
@@ -75,7 +74,9 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[171] = &AGOSEngine::oe2_ifExitOpen;
 	op[172] = &AGOSEngine::oe2_ifExitClosed;
 	op[173] = &AGOSEngine::oe2_ifExitLocked;
+	op[174] = &AGOSEngine::oe2_unk174;
 	op[175] = &AGOSEngine::oe2_getDollar2;
+	op[176] = &AGOSEngine::oe2_setSRExit;
 	op[177] = &AGOSEngine::oe2_unk177;
 	op[178] = &AGOSEngine::oe2_unk178;
 	op[179] = &AGOSEngine::oe2_isAdjNoun;
@@ -321,13 +322,6 @@ void AGOSEngine::oe2_printStats() {
 	mouseOn();
 }
 
-void AGOSEngine::oe2_unk162() {
-	// 162: print string?
-	showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
-	uint a = getVarOrByte();
-	debug(0, "oe2_unk162: stub (%d)", a);
-}
-
 void AGOSEngine::oe2_setSuperRoom() {
 	// 165: set super room
 	_superRoomNumber = getVarOrWord();
@@ -386,6 +380,12 @@ void AGOSEngine::oe2_ifExitLocked() {
 	setScriptCondition(getExitState(i, n, d) == 3);
 }
 
+void AGOSEngine::oe2_unk174() {
+	// 174:
+	uint a = getVarOrWord();
+	debug(0, "oe2_unk174: stub (%d)", a);
+}
+
 void AGOSEngine::oe2_getDollar2() {
 	// 175
 	_showPreposition = true;
@@ -409,6 +409,15 @@ void AGOSEngine::oe2_getDollar2() {
 	}
 
 	_showPreposition = false;
+}
+
+void AGOSEngine::oe2_setSRExit() {
+	// 176: set super room exit
+	Item *i = getNextItemPtr();
+	uint n = getVarOrWord();
+	uint d = getVarOrByte();
+	uint s = getVarOrByte();
+	setSRExit(i, n, d, s);
 }
 
 void AGOSEngine::oe2_unk177() {

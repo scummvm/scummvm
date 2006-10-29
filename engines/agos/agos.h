@@ -694,6 +694,7 @@ protected:
 	int changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s);
 	uint16 getExitState(Item *item, uint16 x, uint16 d);
 	void setExitState(Item *i, uint16 n, uint16 d, uint16 s);
+	void setSRExit(Item *i, int n, int d, uint16 s);
 	void moveDirn_e2(Item *i, uint x);
 
 	// Waxworks specific
@@ -1154,7 +1155,6 @@ public:
 	void oe2_setOValue();
 	void oe2_ink();
 	void oe2_printStats();
-	void oe2_unk162();
 	void oe2_setSuperRoom();
 	void oe2_getSuperRoom();
 	void oe2_setExitOpen();
@@ -1163,7 +1163,9 @@ public:
 	void oe2_ifExitOpen();
 	void oe2_ifExitClosed();
 	void oe2_ifExitLocked();
+	void oe2_unk174();
 	void oe2_getDollar2();
+	void oe2_setSRExit();
 	void oe2_unk177();
 	void oe2_unk178();
 	void oe2_isAdjNoun();
@@ -1181,7 +1183,6 @@ public:
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();
-	void oww_screenTextMsg();
 	void oww_boxMessage();
 	void oww_boxMsg();
 	void oww_boxLongText();

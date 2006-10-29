@@ -282,6 +282,23 @@ void AGOSEngine::setExitState(Item *i, uint16 n, uint16 d, uint16 s) {
 		changeExitStates(sr, n, d, s);
 }
 
+void AGOSEngine::setSRExit(Item *i, int n, int d, uint16 s) {
+	uint16 *c;
+	uint16 mask = 3;
+
+	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
+	if (sr) {
+		n--;
+		c = sr->roomExitStates;
+		c += n;
+		d <<= 1;
+		mask <<= d;
+		s <<= d;
+		*c &= ~mask;
+		*c |= s;
+	}
+}
+
 void AGOSEngine::moveDirn_e2(Item *i, uint x) {
 	SubSuperRoom *sr;
 	Item *d, *p;

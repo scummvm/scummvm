@@ -467,9 +467,9 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"T|SHOW_STRING_NL",
 	/* 64 */
 	"T|SHOW_STRING",
-	"I|UNK_65",
-	"I|UNK_66",
-	"|UNK_67",
+	NULL,
+	NULL,
+	NULL,
 	/* 68 */
 	"x|END",
 	"x|DONE",
@@ -517,8 +517,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"|CLS",
 	/* 104 */
 	"B|CLOSE_WINDOW",
-	"B|UNK_105",
-	"W|UNK_106",
+	"B|SET_AGOS_MENU",
+	NULL,
 	"WWWWWIW|ADD_BOX",
 	/* 108 */
 	"W|DEL_BOX",
@@ -587,8 +587,8 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	NULL,
 	/* 160 */
 	"B|SET_INK",
-	"|UNK_161",
-	"TB|UNK_162",
+	"|PRINT_STATS",
+	NULL,
 	NULL,
 	/* 164 */
 	NULL,
@@ -606,7 +606,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"W|UNK_174",
 	"|getDollar2",
 	/* 176 */
-	"IWBB|UNK_176",
+	"IWBB|SET_SUPER_ROOM_EXIT",
 	"B|UNK_177",
 	"B|UNK_178",
 	"IWWJ|IS_ADJ_NOUN",
@@ -750,8 +750,8 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"|CLS",
 	/* 104 */
 	"B|CLOSE_WINDOW",
-	"B|MENU",
-	"BB|TEXT_MENU",
+	"B|SET_AGOS_MENU",
+	"BB|SET_TEXT_MENU",
 	"WWWWWIW|ADD_BOX",
 	/* 108 */
 	"W|DEL_BOX",
@@ -820,13 +820,13 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	NULL,
 	/* 160 */
 	"B|SET_INK",
-	"|UNK_161",
-	"TB|PRINT_STR",
+	NULL,
+	NULL,
 	NULL,
 	/* 164 */
 	NULL,
-	"W|SET_SUPER_ROOM",
-	"BV|GET_SUPER_ROOM",
+	NULL,
+	NULL,
 	NULL,
 	/* 168 */
 	NULL,
@@ -836,12 +836,12 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	/* 172 */
 	NULL,
 	NULL,
-	"W|UNK_174",
+	NULL,
 	"|getDollar2",
 	/* 176 */
-	"IWBB|UNK_176",
-	"B|UNK_177",
-	"B|UNK_178",
+	NULL,
+	NULL,
+	NULL,
 	"IWWJ|IS_ADJ_NOUN",
 	/* 180 */
 	"B|SET_BIT2",

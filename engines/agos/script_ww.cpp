@@ -66,7 +66,6 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[148] = &AGOSEngine::oe2_ifDoorOpen;
 	op[149] = &AGOSEngine::oe2_ifDoorClosed;
 	op[150] = &AGOSEngine::oe2_ifDoorLocked;
-	op[162] = &AGOSEngine::oww_screenTextMsg;
 	op[175] = &AGOSEngine::oe2_getDollar2;
 	op[179] = &AGOSEngine::oe2_isAdjNoun;
 	op[180] = &AGOSEngine::oe2_b2Set;
@@ -167,12 +166,6 @@ void AGOSEngine::oww_textMenu() {
 	// 106: set text menu
 	byte slot = getVarOrByte();
 	_textMenu[slot] = getVarOrByte();
-}
-
-void AGOSEngine::oww_screenTextMsg() {
-	// 162: print string
-	showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
-	getVarOrByte();
 }
 
 void AGOSEngine::oww_boxMessage() {
