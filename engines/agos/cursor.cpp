@@ -436,7 +436,7 @@ void AGOSEngine::handleMouseMoved() {
 
 	if (_leftButton != 0 && _dragAccept != 0 && _lastClickRem != NULL) {
 		_dragCount++;
-		if (_dragCount == 2) {
+		if (_dragCount == 20) {
 			_dragMode = 1;
 			_dragFlag = 1;
 			_needHitAreaRecalc++;
