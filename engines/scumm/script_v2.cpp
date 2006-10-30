@@ -1174,14 +1174,6 @@ void ScummEngine_v2::o2_stopScript() {
 
 	script = getVarOrDirectByte(PARAM_1);
 
-	if (_game.id == GID_ZAK && _roomResource == 7 && vm.slot[_currentScript].number == 10001) {
-	// FIXME: Nasty hack for bug #771499
-	// Don't let the exit script for room 7 stop the buy script (24), when
-	// switching to the number selection keypad (script 15)
-		if ((script == 24) && isScriptRunning(15))
-			return;
-	}
-
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when

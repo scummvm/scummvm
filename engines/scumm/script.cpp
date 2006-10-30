@@ -346,7 +346,8 @@ void ScummEngine::runScriptNested(int script) {
 		// stopped in the meantime, and if it did not already move on.
 		slot = &vm.slot[nest->slot];
 		if (slot->number == nest->number && slot->where == nest->where &&
-				slot->status != ssDead && slot->freezeCount == 0) {
+				slot->status != ssDead && (slot->freezeCount == 0 ||
+				_game.version <= 2)) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
