@@ -1469,10 +1469,6 @@ void ScummEngine_v2::o2_cutscene() {
 
 	VAR(VAR_CURSORSTATE) = 200;
 
-	// FIXME allows quotes script (173) to start during introudction of
-	// demo mode of V1 Maniac Mansion. setUserState was halting script
-	// 173 before it started.
-	if (!(_game.id == GID_MANIAC && (_game.features & GF_DEMO)))
 	// Hide inventory, freeze scripts, hide cursor
 	setUserState(15);
 
