@@ -190,7 +190,8 @@ void OSystem_SDL::initBackend() {
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
 		_mixer = new Audio::Mixer();
-		setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+		bool result = setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+		_mixer->setReady(result);
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for

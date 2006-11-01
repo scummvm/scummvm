@@ -308,6 +308,8 @@ public:
 	 * This simply calls the mix() method.
 	 */
 	static void mixCallback(void *s, byte *samples, int len);
+	
+	void setReady(bool ready) { _mixerReady = ready; }
 };
 
 
