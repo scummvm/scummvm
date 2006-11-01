@@ -330,10 +330,6 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_NUM_PALETTES = 130;
 		VAR_NUM_UNK = 131;
 	}
-	if (_game.heversion >= 100) {
-		// Enable Bink video
-		VAR(140) = 1;
-	}
 }
 #endif
 
@@ -688,6 +684,11 @@ void ScummEngine_v99he::resetScummVars() {
 
 	VAR(VAR_NUM_PALETTES) = _numPalettes;
 	VAR(VAR_NUM_UNK) = _numUnk;
+
+	if (_game.heversion >= 100) {
+		// Enable Bink video
+		VAR(140) = 1;
+	}
 }
 #endif
 
