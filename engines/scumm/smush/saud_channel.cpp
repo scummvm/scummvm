@@ -172,9 +172,10 @@ bool SaudChannel::appendData(Chunk &b, int32 size) {
 byte *SaudChannel::getSoundData() {
 	byte *tmp = _sbuffer;
 
-	assert(_dataSize > 0);
-	if (!_keepSize)
+	if (!_keepSize) {
+		assert(_dataSize > 0);
 		_dataSize -= _sbufferSize;
+	}
 
 	_sbuffer = 0;
 	_sbufferSize = 0;
