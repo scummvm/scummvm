@@ -1440,7 +1440,7 @@ void ScummEngine::setupMusic(int midi) {
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
-		warning("Sound mixer initialization failed\n");
+		warning("Sound mixer initialization failed");
 		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK)	{
 			midiDriver = MD_NULL;
 			_musicType = MDT_NONE;
