@@ -27,6 +27,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -2248,13 +2249,11 @@ void ScummEngine_v100he::o100_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
-			//const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
+			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
 			if (_videoParams.flags == 2) {
-				// VAR(119) = startVideo(_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
-				VAR(119) = -1;
+				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
 			} else {
-				// VAR(119) = startVideo(_videoParams.filename, _videoParams.flags);
-				VAR(119) = -1;
+				VAR(119) = _moviePlay->load(filename, _videoParams.flags);
 			}
 		} else if (_videoParams.status == 19) {
 			// Stop video
