@@ -2891,29 +2891,31 @@ void ScummEngine_v100he::o100_getVideoData() {
 	switch (subOp) {
 	case 0:
 		pop();
+		push(_moviePlay->getFrameCount());
 		break;
 	case 13:
 		pop();
+		push(_moviePlay->getHeight());
 		break;
 	case 14:
 		pop();
+		push(_moviePlay->getImageNum());
 		break;
 	case 28:
-		pop();
-		pop();
+		debug(0, "o100_getVideoData: subOp 28 stub (%d, %d)", pop(), pop());
+		push(0);
 		break;
 	case 47:
 		pop();
+		push(_moviePlay->getCurFrame());
 		break;
 	case 58:
 		pop();
+		push(_moviePlay->getWidth());
 		break;
 	default:
 		error("o100_getVideoData: unhandled case %d", subOp);
 	}
-
-	push(-1);
-	debug(1,"o100_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {

@@ -25,7 +25,10 @@
 #define ANIMATION_H
 
 #include "common/file.h"
+
 #include "graphics/dxa_player.h"
+
+#include "sound/mixer.h"
 
 namespace Scumm {
 
@@ -34,11 +37,17 @@ class ScummEngine_v90he;
 class MoviePlayer : public Graphics::DXAPlayer {
 	ScummEngine_v90he *_vm;
 
+	Audio::Mixer *_mixer;
+
+	Audio::SoundHandle _bgSound;
+	Audio::AudioStream *_bgSoundStream;
+
+	char baseName[40];
 	uint32 _flags;
 	uint32 _wizResNum;
 	
 public:
-	MoviePlayer(ScummEngine_v90he *vm);
+	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
 
 	int getImageNum();
 	int load(const char *filename, int flags, int image = 0);

@@ -735,7 +735,7 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v80he(syst, dr) {
-	_moviePlay = new MoviePlayer(this);
+	_moviePlay = new MoviePlayer(this, _mixer);
 	_sprite = new Sprite(this);
 
 	memset(_videoParams.filename, 0, sizeof(_videoParams.filename));

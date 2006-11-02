@@ -26,10 +26,12 @@
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 
+#include "sound/audiostream.h"
+
 namespace Scumm {
 
-MoviePlayer::MoviePlayer(ScummEngine_v90he *vm)
-	: DXAPlayer(), _vm(vm) {
+MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
+	: DXAPlayer(), _vm(vm), _mixer(mixer) {
 
 	_flags = 0;
 	_wizResNum = 0;
@@ -48,12 +50,12 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 		closeFile();
 	}
 
+	int baseLen = strlen(filename) - 4;
+	memset(baseName, 0, sizeof(baseName));
+	memcpy(baseName, filename, baseLen);
+
 	// Change file extension to dxa
-	strcpy(videoName, filename);
-	int len = strlen(videoName) - 3;
-	videoName[len++] = 'd';
-	videoName[len++] = 'x';
-	videoName[len++] = 'a';
+	sprintf(videoName, "%s.dxa", baseName);
 	
 	if (!loadFile(videoName)) {
 		warning("Failed to load video file %s", videoName);
@@ -70,6 +72,12 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 
 	_flags = flags;
 	_wizResNum = image;
+
+	_bgSoundStream = Audio::AudioStream::openStreamFile(baseName);
+	if (_bgSoundStream != NULL) {
+		_mixer->stopHandle(_bgSound);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+	}
 
 	return 0;
 }
