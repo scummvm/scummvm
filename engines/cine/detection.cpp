@@ -706,7 +706,6 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 	for (uint i = 0; i < matches.size(); i++)
 		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]].desc));
 	
-	//delete &matches;
 	return detectedGames;
 }
 

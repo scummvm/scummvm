@@ -79,7 +79,7 @@ private:
 
 	int _fileMD5Bytes;
 
-	String getDescription(int num);
+	String getDescription(int num) const;
 };
 
 }	// End of namespace Common

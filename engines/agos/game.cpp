@@ -219,8 +219,6 @@ bool AGOSEngine::initGame() {
 		}
 	}
 
-	//delete &matches;
-
 	if (gameNumber >= ARRAYSIZE(gameDescriptions) || gameNumber == -1) {
 		error("AGOSEngine::loadGame wrong gameNumber");
 	}

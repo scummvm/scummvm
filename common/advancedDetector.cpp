@@ -34,7 +34,7 @@ AdvancedDetector::AdvancedDetector() {
 	_fileMD5Bytes = 0;
 }
 
-String AdvancedDetector::getDescription(int num) {
+String AdvancedDetector::getDescription(int num) const {
 	char tmp[256];
 	const ADGameDescription *g = _gameDescriptions[num];
 
@@ -67,7 +67,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 
 	assert(_gameDescriptions.size());
 
-	matched = (int *)malloc(_gameDescriptions.size() * sizeof(int));
+	matched = new int[_gameDescriptions.size()];
 
 	// First we compose list of files which we need MD5s for
 	for (i = 0; i < _gameDescriptions.size(); i++) {
@@ -138,9 +138,8 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 			if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
 				fileMissing = true;
 				break;
-			} else {
-				debug(3, "Matched file: %s", tstr.c_str());
 			}
+			debug(3, "Matched file: %s", tstr.c_str());
 		}
 		if (!fileMissing) {
 			debug(2, "Found game: %s", getDescription(i).c_str());
@@ -183,13 +182,13 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 	}
 
 
-	ADList *returnMatches = new ADList;
-	j = 0;
+	ADList returnMatches;
 	for (i = 0; i < matchedCount; i++)
 		if (matched[i] != -1)
-			returnMatches->push_back(matched[i]);
+			returnMatches.push_back(matched[i]);
 
-	return *returnMatches;
+	delete[] matched;
+	return returnMatches;
 }
 
 }	// End of namespace Common

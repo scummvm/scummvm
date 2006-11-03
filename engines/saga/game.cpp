@@ -153,8 +153,6 @@ bool SagaEngine::initGame() {
 
 	gameNumber = matches[0];
 
-	//delete matches;
-
 	if (gameNumber >= gameCount || gameNumber == -1) {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
