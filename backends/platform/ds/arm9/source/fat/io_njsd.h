@@ -1,11 +1,8 @@
 /*
- io_m3sd.h 
+ io_njsd.h 
 
- Hardware Routines for reading a Secure Digital card
- using the M3 SD
-
- Some code based on M3 SD drivers supplied by M3Adapter.
- Some code written by SaTa may have been unknowingly used.
+ Hardware Routines for reading an SD card using
+ a NinjaDS SD adapter.
 
  Copyright (c) 2006 Michael "Chishm" Chisholm
 	
@@ -30,20 +27,24 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	2006-07-11 - Chishm
+	2006-08-02 - Chishm
 		* Original release
 */
 
-#ifndef IO_M3SD_H
-#define IO_M3SD_H
-
-// 'M3SD'
-#define DEVICE_TYPE_M3SD 0x4453334D
+#ifndef IO_NJSD_H
+#define IO_NJSD_H
 
 #include "disc_io.h"
 
-// export interface
-//extern const IO_INTERFACE _io_m3sd ;
-LPIO_INTERFACE M3SD_GetInterface(void);
+#ifdef NDS
 
-#endif	// define IO_M3SD_H
+// 'NJSD'
+#define DEVICE_TYPE_NJSD 0x44534A4E
+
+
+// export interface
+extern LPIO_INTERFACE NJSD_GetInterface(void) ;
+
+#endif // defined NDS
+
+#endif	// define IO_NJSD_H

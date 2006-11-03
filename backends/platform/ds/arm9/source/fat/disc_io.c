@@ -29,6 +29,7 @@
 */
 
 #include "disc_io.h"
+#include "scummconsole.h"
 
 #ifdef NDS
 	#include <nds.h>
@@ -68,6 +69,14 @@
  #include "io_efa2.h"
 #endif
 
+#ifdef SUPPORT_NJSD
+ #include "io_njsd.h"
+#endif
+
+#ifdef SUPPORT_MMCF
+ #include "io_mmcf.h"
+#endif
+
 // Keep a pointer to the active interface
 LPIO_INTERFACE active_interface = 0;
 
@@ -79,6 +88,7 @@ LPIO_INTERFACE active_interface = 0;
 		Added by www.neoflash.com 
 
 */
+int discDetect = 0;
 
 #ifdef DISC_CACHE
 
@@ -122,16 +132,16 @@ static u32 disc_CacheFindFree(void) {
 			i = j;
 		}
 	}
-	
+	/*
 	if( cache[ i ].sector != CACHE_FREE && cache[i].dirty != 0 ) {
 
 		active_interface->fn_WriteSectors( cache[ i ].sector, 1, &cacheBuffer[ i * 512 ] );
-		/* todo: handle write error here */
+		/* todo: handle write error here 
 
 		cache[ i ].sector = CACHE_FREE;
 		cache[ i ].dirty = 0;
 		cache[ i ].count = 0;
-	}
+	}*/
 
 	return i;
 }
@@ -210,6 +220,10 @@ bool disc_CacheWriteSector( void *buffer, u32 sector ) {
 
 */
 
+void disc_setEnable(int disc) {
+	discDetect = disc;
+}
+
 bool disc_setGbaSlotInterface (void)
 {
 	// If running on an NDS, make sure the correct CPU can access
@@ -223,6 +237,34 @@ bool disc_setGbaSlotInterface (void)
  #endif
 #endif
 
+
+#ifdef SUPPORT_M3SD
+	if (discDetect == 1)	{
+		// check if we have a M3 perfect SD plugged in
+		active_interface = M3SD_GetInterface() ;
+		if (active_interface->fn_StartUp())
+		{
+			// set M3 SD as default IO
+			return true ;
+		} ;
+	}
+#endif
+
+
+
+
+#ifdef SUPPORT_MMCF
+	// check if we have a GBA Flash Cart plugged in
+	active_interface = MMCF_GetInterface() ;
+	if (active_interface->fn_StartUp())
+	{
+		// set MMCF as default IO
+		return true ;
+	} ;
+#endif
+
+
+
 #ifdef SUPPORT_M3CF
 	// check if we have a M3 perfect CF plugged in
 	active_interface = M3CF_GetInterface() ;
@@ -233,15 +275,6 @@ bool disc_setGbaSlotInterface (void)
 	} ;
 #endif
 
-#ifdef SUPPORT_M3SD
-	// check if we have a M3 perfect SD plugged in
-	active_interface = M3SD_GetInterface() ;
-	if (active_interface->fn_StartUp())
-	{
-		// set M3 SD as default IO
-		return true ;
-	} ;
-#endif
 
 #ifdef SUPPORT_MPCF
 	// check if we have a GBA Movie Player plugged in
@@ -253,6 +286,7 @@ bool disc_setGbaSlotInterface (void)
 	} ;
 #endif
 
+
 #ifdef SUPPORT_SCCF
 	// check if we have a SuperCard CF plugged in
 	active_interface = SCCF_GetInterface() ;
@@ -263,15 +297,6 @@ bool disc_setGbaSlotInterface (void)
 	} ;
 #endif
 
-#ifdef SUPPORT_SCSD
-	// check if we have a SuperCard SD plugged in
-	active_interface = SCSD_GetInterface() ;
-	if (active_interface->fn_StartUp())
-	{
-		// set SC SD as default IO
-		return true ;
-	} ;
-#endif
 
 
 #ifdef SUPPORT_EFA2
@@ -283,6 +308,7 @@ bool disc_setGbaSlotInterface (void)
 	} ;
 #endif
 
+
 #ifdef SUPPORT_FCSR
 	// check if we have a GBA Flash Cart plugged in
 	active_interface = FCSR_GetInterface() ;
@@ -292,6 +318,9 @@ bool disc_setGbaSlotInterface (void)
 		return true ;
 	} ;
 #endif
+
+
+
 
 	return false;
 }
@@ -310,6 +339,29 @@ bool disc_setDsSlotInterface (void)
 	WAIT_CR |= (1<<11);
 #endif
 
+#ifdef SUPPORT_SCSD
+	// check if we have a SuperCard SD plugged in
+	if (discDetect == 2) {
+		active_interface = SCSD_GetInterface() ;
+		consolePrintf("SCSD!");
+		if (active_interface->fn_StartUp())
+		{
+			// set SC SD as default IO
+			return true ;
+		} ;
+	}
+#endif
+
+#ifdef SUPPORT_NJSD
+	// check if we have a GBA Flash Cart plugged in
+	active_interface = NJSD_GetInterface() ;
+	if (active_interface->fn_StartUp())
+	{
+		// set NJSD as default IO
+		return true ;
+	} ;
+#endif
+
 #ifdef SUPPORT_NMMC
 	// check if we have a Neoflash MK2 / MK3 plugged in
 	active_interface = NMMC_GetInterface() ;
@@ -319,6 +371,9 @@ bool disc_setDsSlotInterface (void)
 		return true ;
 	} ;
 #endif
+
+
+
 
 	return false;
 }
@@ -378,7 +433,7 @@ bool disc_ReadSectors(u32 sector, u8 numSecs, void* buffer)
 
 bool disc_WriteSectors(u32 sector, u8 numSecs, void* buffer) 
 {
-#ifdef DISC_CACHE
+/*#ifdef DISC_CACHE
 	u8 *p=(u8*)buffer;
 	u32 i;
 	u32 inumSecs=numSecs;
@@ -389,10 +444,13 @@ bool disc_WriteSectors(u32 sector, u8 numSecs, void* buffer)
 			return false;
 	}
 	return true;
-#else
+#else*/
+#ifdef DISC_CACHE
+	disc_CacheInit();
+#endif
 	if (active_interface) return active_interface->fn_WriteSectors(sector,numSecs,buffer) ;
 	return false ;
-#endif
+//#endif
 } 
 
 bool disc_ClearStatus(void) 

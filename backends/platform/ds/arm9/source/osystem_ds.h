@@ -29,12 +29,10 @@
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
 
-class DSAudioMixer : public Audio::Mixer
-{	
+class DSAudioMixer : public Audio::Mixer {	
 };
 
-class DSTimerManager : public DefaultTimerManager
-{	
+class DSTimerManager : public DefaultTimerManager {	
 };
 
 
@@ -49,13 +47,13 @@ public:
 	
 	DSSaveFileManager saveManager;
 	GBAMPSaveFileManager mpSaveManager;
-    DSAudioMixer* _mixer;
-    DSTimerManager* _timer;
-    	
+	DSAudioMixer* _mixer;
+	DSTimerManager* _timer;
+
 	static OSystem_DS* _instance;
 	
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
-    typedef int  (*TimerProc)(int interval);
+	typedef int  (*TimerProc)(int interval);
 
 public:
 
@@ -134,8 +132,9 @@ public:
 	
 	virtual void initBackend();
 	
-	virtual Audio::Mixer*            getMixer()           { return _mixer; }
-    virtual Common::TimerManager*    getTimerManager()    { return _timer; }
+	virtual Audio::Mixer* getMixer() { return _mixer; }
+	virtual Common::TimerManager* getTimerManager() { return _timer; }
+	static int timerHandler(int t);
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -144,16 +143,16 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 
 OverlayColor OSystem_DS::RGBToColor(uint8 r, uint8 g, uint8 b)
 {
-	return 0x8000 | (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 5);
+	return 0x8000 | (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10);
 	//consolePrintf("rgbtocol\n");
-	return 0;
+	//return 0;
 }
 
 void OSystem_DS::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
 {
 	r = (color & 0x001F) << 3;
-	g = (color & 0x03E0) >> 5 << 3;
-	b = (color & 0x7C00) >> 10 << 3;
+	g = ((color & 0x03E0) >> 5) << 3;
+	b = ((color & 0x7C00) >> 10) << 3;
 	//consolePrintf("coltorgb\n");
 }
 

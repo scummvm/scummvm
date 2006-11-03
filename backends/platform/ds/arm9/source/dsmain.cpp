@@ -19,6 +19,21 @@
  */
  
 
+// - Turn off when quit - Done
+// - Simon and Kyrandia - Done
+// - 200% scale option - Done
+// - Change zoom range - Done
+// - Speed increase! - Done
+// - Fixed bugs in Sky - Done
+// - Change name of ini file and intro screen for build c - Done
+// - Check for existance of zip file in batch file - Done
+// - Add new support - Done
+// - Fix help screen
+
+// - Remove scummconsole.c
+// - Delete files
+// - Fatlib conversion
+
 #include <nds.h>
 
 #include <ARM9/console.h> //basic print funcionality
@@ -40,6 +55,9 @@
 #include "registers_alt.h"
 //#include "compact_flash.h"
 #include "dsoptions.h"
+#include "user_debugger.h"
+#include "ramsave.h"
+#include "disc_io.h"
 #include "blitters.h"
 
 namespace DS {
@@ -58,7 +76,7 @@ enum MouseMode {
 // Defines
 #define FRAME_TIME 17
 #define SCUMM_GAME_HEIGHT 142
-#define SCUMM_GAME_WIDTH 232
+#define SCUMM_GAME_WIDTH 227
 
 int textureID;
 u16* texture;
@@ -93,6 +111,7 @@ int bufferFrame;
 int bufferRate;
 int bufferSamples;
 bool soundHiPart;
+int soundFrequency;
 
 // Events
 int lastEventFrame;
@@ -116,11 +135,7 @@ u8 gameID;
 bool consoleEnable = true;
 bool gameScreenSwap = false;
 bool cpuScaler = false;
-bool isCpuScalerEnabled()
-{
-	return cpuScaler;	
-}
-
+bool isCpuScalerEnabled();
 
 MouseMode mouseMode;
 
@@ -151,6 +166,9 @@ char gameName[32];
 // 8-bit surface size
 int gameWidth = 320;
 int gameHeight = 200;
+
+// Scale
+bool twoHundredPercentFixedScale = false;
 
 enum controlType {
 	CONT_SCUMM_ORIGINAL,
@@ -215,6 +233,10 @@ extern "C" int scummvm_main(int argc, char *argv[]);
 void updateStatus();
 
 TransferSound soundControl;
+
+bool isCpuScalerEnabled() {
+	return cpuScaler;	
+}
 
 //plays an 8 bit mono sample at 11025Hz
 void playSound(const void* data, u32 length, bool loop, bool adpcm, int rate)
@@ -313,10 +335,48 @@ void restoreGameBackBuffer() {
 }
 
 
+void startSound(int freq, int buffer) {
+	bufferRate = freq * 2;
+	bufferFrame = 0;
+	bufferSamples = 4096;
+
+	bufferFirstHalf = false;
+	bufferSecondHalf = true;
+	
+	int bytes = (2 * (bufferSamples)) + 100;
+	
+	soundBuffer = (s16 *) malloc(bytes * 2);
+
+
+	soundHiPart = true;
+	
+	for (int r = 0; r < bytes; r++) {
+		soundBuffer[r] = 0;
+	}
+
+	soundFrequency = freq;
+	
+
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	playSound(soundBuffer, (bufferSamples * 2), true, false, freq * 2);
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+}
+
+int getSoundFrequency() {
+	return soundFrequency;
+}
+
+
 void initGame() {
 	// This is a good time to check for left handed mode since the mode change is done as the game starts.
 	// There's probably a better way, but hey.
 //	consolePrintf("initing game\n");
+
+	static bool firstTime = true;
+
 
 	setOptions();
 
@@ -332,7 +392,17 @@ void initGame() {
 //			consolePrintf("Game list num: %d\n", currentGame);
 		}
 	}
-	
+		
+	if (firstTime) {
+		firstTime = false;
+
+		if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
+			startSound(22050, 8192);
+		} else {
+			startSound(11025, 4096);
+		}
+
+	}
 
 }
 
@@ -346,6 +416,10 @@ void setTouchXOffset(int x) {
 
 void setTouchYOffset(int y) {
 	touchYOffset = y;
+}
+
+void set200PercentFixedScale(bool on) {
+	twoHundredPercentFixedScale = on;
 }
 
 void setUnscaledMode(bool enable) {
@@ -991,7 +1065,7 @@ void addEventsToQueue() {
 					// Extra controls for Benieth a Steel Sky
 					if ((getKeysDown() & KEY_DOWN)) {
 						penY = 0;
-						penX = 0;		// Show inventory by moving mouse onto top line
+						penX = 160;		// Show inventory by moving mouse onto top line
 					}
 				}
 
@@ -1244,6 +1318,15 @@ void VBlankHandler(void) {
 
 //	consolePri ntf("X:%d Y:%d\n", getPenX(), getPenY());
 
+	static bool firstTime = true;
+
+	// This is to ensure that the ARM7 vblank handler runs before this one.
+	// Fixes the problem with the MMD when the screens swap over on load.
+	if (firstTime) {
+		firstTime = false;
+		return;
+	}
+
 
 	IPC->tweak = tweak;
 	soundUpdate();
@@ -1327,35 +1410,45 @@ void VBlankHandler(void) {
     SUB_BG3_XDY = 0;
     SUB_BG3_YDX = 0;
     SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
+
+	static int ratio = ( 320 << 8) / SCUMM_GAME_WIDTH;
 	
 	
 	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
-		if ((getKeysHeld() & KEY_A) && (subScreenScale < 256)) {
-			subScreenScale += 3;
+		if ((getKeysHeld() & KEY_A) && (subScreenScale < ratio)) {
+			subScreenScale += 2;
 		}
 		
 		if ((getKeysHeld() & KEY_B) && (subScreenScale > 128)) {
-			subScreenScale -=3;
+			subScreenScale -=2;
 		}
-		
-		int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
-		int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
-		
+	}
+
+
+	int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
+	int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
+	
+	if (twoHundredPercentFixedScale) {
+		subScreenWidth = 256 >> 1;
+		subScreenHeight = 192 >> 1;
+	} else {
 		subScreenWidth = SCUMM_GAME_WIDTH * subScreenScale >> 8;
 		subScreenHeight = SCUMM_GAME_HEIGHT * subScreenScale >> 8;
-		
-		subScTargetX = xCenter - ((subScreenWidth >> 1) << 8);
-		subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
-		
-
-		
-
-		if (subScTargetX < 0) subScTargetX = 0;
-		if (subScTargetX > (gameWidth - subScreenWidth) << 8) subScTargetX = (gameWidth - subScreenWidth) << 8;
-	
-		if (subScTargetY < 0) subScTargetY = 0;
-		if (subScTargetY > (gameHeight - subScreenHeight) << 8) subScTargetY = (gameHeight - subScreenHeight) << 8;
 	}
+	
+	subScTargetX = xCenter - ((subScreenWidth >> 1) << 8);
+	subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
+	
+
+	
+
+	if (subScTargetX < 0) subScTargetX = 0;
+	if (subScTargetX > (gameWidth - subScreenWidth) << 8) subScTargetX = (gameWidth - subScreenWidth) << 8;
+
+	if (subScTargetY < 0) subScTargetY = 0;
+	if (subScTargetY > (gameHeight - subScreenHeight) << 8) subScTargetY = (gameHeight - subScreenHeight) << 8;
+
+
 
 	subScX += (subScTargetX - subScX) >> 2;
 	subScY += (subScTargetY - subScY) >> 2;
@@ -1526,8 +1619,18 @@ void initHardware() {
 */
 
 
+	for (int r = 0; r < 255; r++) {
+		PALETTE[r] = 0;
+	}
 
 	PALETTE[255] = RGB15(0,31,0);
+
+
+	for (int r = 0; r < 255; r++) {
+		PALETTE_SUB[r] = 0;
+	}
+
+	PALETTE_SUB[255] = RGB15(0,31,0);
 
 	// Allocate save buffer for game screen
 //	savedBuffer = new u8[320 * 200];
@@ -1797,9 +1900,11 @@ bool getIndyFightState() {
 
 bool GBAMPAvail = false;
 
-void initGBAMP() {	
-	FAT_InitFiles();
-	if (disc_IsInserted()) {
+void initGBAMP(int mode) {	
+	if (FAT_InitFiles()) {
+		if (mode == 2)	{
+			disc_IsInserted();
+		}
 		GBAMPAvail = true;
 		consolePrintf("Found flash card reader!\n");
 	} else {
@@ -1813,12 +1918,50 @@ bool isGBAMPAvailable() {
 }
 
 
+#ifdef USE_DEBUGGER
+void initDebugger() {
+	set_verbosity(VERBOSE_INFO | VERBOSE_ERROR);
+	wireless_init(0);
+	wireless_connect();
+	
+	// This is where the address of the computer running the Java
+	// stub goes.
+	debugger_connect_tcp(192, 168, 0, 1);
+	debugger_init();	
+	
+	// Update function - should really call every frame
+	user_debugger_update();	
+}
+
+
+// Ensure the function is processed with C linkage
+extern "C" void debug_print_stub(char* string);
+
+void debug_print_stub(char *string) {
+	consolePrintf(string);
+}
+#endif
+
+void powerOff() {
+	while (keysHeld() != 0) {		// Wait for all keys to be released.
+		swiWaitForVBlank();			// Allow you to read error before the power
+	}								// is turned off.
+
+	for (int r = 0; r < 60; r++) {
+		swiWaitForVBlank();
+	}
+
+	if (ConfMan.hasKey("disablepoweroff", "ds") && ConfMan.getBool("disablepoweroff", "ds")) {
+		while (true);
+	} else {
+		IPC->reset = true;				// Send message to ARM7 to turn power off
+		while (true);		// Stop the program continuing beyond this point
+	}
+}
 
 /////////////////
 // Main
 /////////////////
-
-
 
 
 int main(void)
@@ -1827,6 +1970,13 @@ int main(void)
 	
 
 	initHardware();
+	
+#ifdef USE_DEBUGGER
+	swiWaitForVBlank();
+	if (!(keysHeld() & KEY_Y)) {
+		initDebugger();
+	}
+#endif
 	
 	// Let arm9 read cartridge
 	*((u16 *) (0x04000204)) &= ~0x0080;
@@ -1844,19 +1994,14 @@ int main(void)
 //	playSound(twang, 11010, true);   // 18640
 
 //	bufferSize = 10;
-	bufferRate = 22050;
-	bufferFrame = 0;
-//	bufferSamples = (bufferRate * bufferSize) / 60;
-	bufferSamples = 4096;
+
 	
+	/*bufferRate = 44100;
+	bufferFrame = 0;
+	bufferSamples = 8192;
+
 	bufferFirstHalf = false;
 	bufferSecondHalf = true;
-	
-	lastEventFrame = 0;
-	mouseMode = MOUSE_LEFT;
-
-	
-
 	
 	int bytes = (2 * (bufferSamples)) + 100;
 	
@@ -1864,6 +2009,25 @@ int main(void)
 
 
 	soundHiPart = true;
+	
+	for (int r = 0; r < bytes; r++) {
+		soundBuffer[r] = 0;
+	}
+	
+
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	playSound(soundBuffer, (bufferSamples * 2), true);
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+*/
+	
+
+	lastEventFrame = 0;
+	mouseMode = MOUSE_LEFT;
+	
+
 /*
 	TIMER1_CR = 0;
 	TIMER1_DATA = TIMER_FREQ(bufferRate);
@@ -1883,50 +2047,110 @@ int main(void)
 	
 
 	
-	consolePrintf("------------------------\n");
+	consolePrintf("---------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-#ifdef DS_SCUMM_BUILD
-	consolePrintf("Version 0.61 build A\n");
-#else
-	consolePrintf("Version 0.61 build B\n");
+	consolePrintf("Version 0.10.0SVN ");
+#if defined(DS_BUILD_A)
+	consolePrintf("build A\n");
+	consolePrintf("Supports: Lucasarts SCUMM\n");
+	consolePrintf("---------------------------\n");
+#elif defined(DS_BUILD_B)
+	consolePrintf("build B\n");
+	consolePrintf("Supports: BASS, QUEEN\n");
+	consolePrintf("---------------------------\n");
+#elif defined(DS_BUILD_C)
+	consolePrintf("build C\n");
+	consolePrintf("---------------------------\n");
+	consolePrintf("Supports: SIMON, KYRA, GOB\n");
 #endif
-	consolePrintf("------------------------\n");
 	consolePrintf("L/R + D-pad/pen: Scroll view\n");
 	consolePrintf("D-pad left:  Left mouse button\n");
 	consolePrintf("D-pad right: Right mouse button\n");
 	consolePrintf("D-pad up:    Hover mouse\n");
-	consolePrintf("D-pad down:  Skip dialog line\n");
 	consolePrintf("B button:    Skip cutscenes\n");
 	consolePrintf("Select:		DS Options menu\n");
 	consolePrintf("Start:       Game menu\n");
 	consolePrintf("Y (in game): Toggle console\n");
 	consolePrintf("X:           Toggle keyboard\n");
 	consolePrintf("A:			Swap screens\n");
-	consolePrintf("L + R on bootup: Clear SRAM\n\n");
-	consolePrintf("For a complete poo list see the\n");
+	consolePrintf("L+R (on start): Clear SRAM\n");
+
+#if defined(DS_BUILD_A)
+	consolePrintf("For a complete key list see the\n");
 	consolePrintf("help screen.\n\n");
+#else
+	consolePrintf("\n");
+#endif
 
+	
+	// Do M3 detection selectioon
+	int extraData = DSSaveFileManager::getExtraData();
+	bool present = DSSaveFileManager::isExtraDataPresent();
 
-	for (int r = 0; r < bytes; r++) {
-		soundBuffer[r] = 0;
+	for (int r = 0; r < 30; r++) {
+		swiWaitForVBlank();
 	}
-	
 
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	playSound(soundBuffer, (bufferSamples * 2), true);
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	
+	int mode = extraData & 0x03;
+
+	if (mode == 0) {
+		if ((keysHeld() & KEY_L) && !(keysHeld() & KEY_R)) {
+			mode = 1;
+		} else if (!(keysHeld() & KEY_L) && (keysHeld() & KEY_R)) {
+			mode = 2;
+		}
+	} else {
+		if ((keysHeld() & KEY_L) && !(keysHeld() & KEY_R)) {
+			mode = 0;
+		}
+	}
 
 
+	if (mode == 0) {
+		consolePrintf("On startup hold L if you have\n");
+		consolePrintf("an M3 SD or R for an SC SD\n");
+	} else if (mode == 1) {
+		consolePrintf("Using M3 SD Mode.\n");
+		consolePrintf("Hold L on startup to disable.\n");
+	} else if (mode == 2) {
+		consolePrintf("Using SC SD Mode.\n");
+		consolePrintf("Hold L on startup to disable.\n");
+	}
+
+	disc_setEnable(mode);
+	DSSaveFileManager::setExtraData(mode);
+
+
+/*
+	if ((present) && (extraData & 0x00000001)) {
+
+		if (keysHeld() & KEY_L) {
+			extraData &= ~0x00000001;
+			consolePrintf("M3 SD Detection: OFF\n");
+			DSSaveFileManager::setExtraData(extraData);
+		} else {
+			consolePrintf("M3 SD Detection: ON\n");
+			consolePrintf("Hold L on startup to disable.\n");
+		}
+
+	} else if (keysHeld() & KEY_L) {
+		consolePrintf("M3 SD Detection: ON\n");
+		extraData |= 0x00000001;
+		DSSaveFileManager::setExtraData(extraData);
+	} else {
+		consolePrintf("M3 SD Detection: OFF\n");
+		consolePrintf("Hold L on startup to enable.\n");
+	}
+
+	disc_setM3SDEnable(extraData & 0x00000001);
+*/
 	// Create a file system node to force search for a zip file in GBA rom space
+
 	DSFileSystemNode* node = new DSFileSystemNode();
 	if (!node->getZip() || (!node->getZip()->isReady())) {
 		// If not found, init CF/SD driver
-		initGBAMP();
+		initGBAMP(mode);
 	}
 	delete node;
 
@@ -1936,6 +2160,7 @@ int main(void)
 	
 	
 //	OSystem_DS::instance();
+
 	g_system = new OSystem_DS();
 	assert(g_system);
 
@@ -1945,20 +2170,28 @@ int main(void)
 
 //	printf("'%s'", Common::ConfigManager::kTransientDomain.c_str());
 	//printf("'%s'", Common::ConfigManager::kApplicationDomain.c_str());
-	
 
+#if defined(DS_BUILD_A)
+	char* argv[2] = {"/scummvmds", "--config=scummvm.ini"};
+#elif defined(DS_BUILD_B)
 	char* argv[2] = {"/scummvmds", "--config=scummvmb.ini"};
+#elif defined(DS_BUILD_C)
+	char* argv[2] = {"/scummvmds", "--config=scummvmc.ini"};
+#endif
+
+
 #ifdef DS_NON_SCUMM_BUILD	
 
 	while (1) {
 		scummvm_main(2, (char **) &argv);
+		powerOff();
 	}
 #else
 	while (1) {
 		scummvm_main(1, (char **) &argv);
+		powerOff();
 	}
 #endif
-	
 
 	return 0;
 }
@@ -1968,3 +2201,4 @@ int main(void)
 int main() {
 	DS::main();
 }
+

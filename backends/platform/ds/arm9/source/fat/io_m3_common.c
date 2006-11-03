@@ -1,11 +1,10 @@
 /*
- io_m3sd.h 
+	io_m3_common.c 
 
- Hardware Routines for reading a Secure Digital card
- using the M3 SD
-
- Some code based on M3 SD drivers supplied by M3Adapter.
- Some code written by SaTa may have been unknowingly used.
+	Routines common to all version of the M3
+	
+	Some code based on M3 SD drivers supplied by M3Adapter.
+	Some code written by SaTa may have been unknowingly used.
 
  Copyright (c) 2006 Michael "Chishm" Chisholm
 	
@@ -29,21 +28,33 @@
  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-	2006-07-11 - Chishm
-		* Original release
 */
 
-#ifndef IO_M3SD_H
-#define IO_M3SD_H
+#include "io_m3_common.h"
 
-// 'M3SD'
-#define DEVICE_TYPE_M3SD 0x4453334D
+static u16 _M3_readHalfword (u32 addr) {
+	return *((vu16*)addr);
+}
 
-#include "disc_io.h"
+void _M3_changeMode (u32 mode) {
+	_M3_readHalfword (0x08e00002);
+	_M3_readHalfword (0x0800000e);
+	_M3_readHalfword (0x08801ffc);
+	_M3_readHalfword (0x0800104a);
+	_M3_readHalfword (0x08800612);
+	_M3_readHalfword (0x08000000);
+	_M3_readHalfword (0x08801b66);
+	_M3_readHalfword (0x08000000 + (mode << 1));
+	_M3_readHalfword (0x0800080e);
+	_M3_readHalfword (0x08000000);
+	
+	if ((mode & 0x0f) != 4) {
+		_M3_readHalfword (0x09000000);
+	} else {
+		_M3_readHalfword (0x080001e4);
+		_M3_readHalfword (0x080001e4);
+		_M3_readHalfword (0x08000188);
+		_M3_readHalfword (0x08000188);
+	}
+}	
 
-// export interface
-//extern const IO_INTERFACE _io_m3sd ;
-LPIO_INTERFACE M3SD_GetInterface(void);
-
-#endif	// define IO_M3SD_H

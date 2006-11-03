@@ -1,14 +1,22 @@
 #BUILD_PLUGINS = 1
 libndsdir = $(DEVKITPRO)/libnds
 
-#DS_BUILD_A = 1
+# Select the build you want by uncommenting one of the following lines:
+
+DS_BUILD_A = 1
 #DS_BUILD_B = 1
-DS_BUILD_C = 1
+#DS_BUILD_C = 1
 
-#DS_SCUMM_BUILD = 1
-#DS_NON_SCUMM_BUILD = 1
 
-#USE_MAD = 1
+# Uncomment the following line to build in support for MP3 audio
+# using libmad:
+USE_MAD = 1
+
+# Uncomment the following line to enable support for the
+# ace DS Debugger (remembering to make the same change in the arm7 makefile):
+#USE_DEBUGGER = 1
+# NOTE: The header and libs for the debugger is assumed to be in the libnds
+# folder.
 
 VPATH = $(srcdir)
 
@@ -17,7 +25,8 @@ VPATH = $(srcdir)
 
 
 ifdef DS_BUILD_A
-	DEFINES = -DDS_SCUMM_BUILD
+	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A
+	LOGO = logoa.bmp
 	DISABLE_HE = 1
 	#DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -36,7 +45,28 @@ ifdef DS_BUILD_A
 endif
 
 ifdef DS_BUILD_B
-	DEFINES = -DDS_NON_SCUMM_BUILD
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_B
+	LOGO = logob.bmp
+	DISABLE_HE = 1
+	DISABLE_SCUMM = 1
+	DISABLE_SCUMM_7_8 = 1
+	DISABLE_AGOS = 1
+	#DISABLE_SKY = 1
+	DISABLE_SWORD1 = 1
+	DISABLE_SWORD2 = 1
+	#DISABLE_QUEEN = 1
+	DISABLE_SAGA = 1
+	DISABLE_KYRA = 1
+	DISABLE_GOB = 1
+	DISABLE_LURE = 1
+	DISABLE_CINE = 1
+	DISABLE_AGI = 1
+	BUILD=scummvm-B
+endif
+
+ifdef DS_BUILD_C	
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_C
+	LOGO = logoc.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -44,29 +74,10 @@ ifdef DS_BUILD_B
 	DISABLE_SKY = 1
 	DISABLE_SWORD1 = 1
 	DISABLE_SWORD2 = 1
-	#DISABLE_QUEEN = 1
-	DISABLE_SAGA = 1
-	DISABLE_KYRA = 1
-	#DISABLE_GOB = 1
-	DISABLE_LURE = 1
-	DISABLE_CINE = 1
-	DISABLE_AGI = 1
-	BUILD=scummvm-B
-endif
-
-ifdef DS_BUILD_C
-	DEFINES = -DDS_NON_SCUMM_BUILD
-	DISABLE_HE = 1
-	DISABLE_SCUMM = 1
-	DISABLE_SCUMM_7_8 = 1
-	DISABLE_AGOS = 1
-	DISABLE_SKY = 1
-	DISABLE_SWORD1 = 1
-	DISABLE_SWORD2 = 1
 	DISABLE_QUEEN = 1
-	#DISABLE_SAGA = 1
-	DISABLE_KYRA = 1
-	DISABLE_GOB = 1
+	DISABLE_SAGA = 1
+	#DISABLE_KYRA = 1
+	#DISABLE_GOB = 1
 	DISABLE_LURE = 1
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
@@ -84,6 +95,11 @@ CFLAGS	=	-Wno-multichar -Wall -Os\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
  		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-ffast-math -mthumb-interwork
+
+ifdef USE_DEBUGGER
+	DEFINES += -DUSE_DEBUGGER
+	CFLAGS += -g
+endif
 		
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
 		-fno-exceptions -fno-rtti
@@ -93,6 +109,7 @@ DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
+
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt
 
@@ -104,6 +121,9 @@ INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
 ifdef USE_MAD
 	LIBS += -lmad
+endif
+ifdef USE_DEBUGGER
+	LIBS += -ldsdebugger -ldswifi9
 endif
 
 #-Lscumm -lscumm -Lbase -lbase -Lcommon -lcommon -Lgraphics -lgraphics -Lgui -lgui -Lsound -lsound
@@ -144,7 +164,18 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 			$(portdir)/source/fat/io_mpcf.o $(portdir)/source/fat/io_sccf.o\
 			$(portdir)/source/fat/io_m3sd.o\
 			$(portdir)/source/fat/io_nmmc.o $(portdir)/source/fat/io_scsd.o \
-			$(portdir)/source/fat/io_m3sd_asm.o $(portdir)/source/fat/io_scsd_asm.o 
+			$(portdir)/source/fat/io_m3sd_asm.o $(portdir)/source/fat/io_scsd_asm.o \
+			$(portdir)/source/fat/io_njsd.o \
+			$(portdir)/source/fat/io_mmcf.o \
+			$(portdir)/source/fat/io_sd_common.o \
+			$(portdir)/source/fat/io_m3_common.o 
+
+
+
+#			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
+#			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
+#			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o 
+
 			
 			
 			
@@ -230,6 +261,7 @@ else
 endif
 
 
+#---------------------------------------------------------------------------------
  
 #---------------------------------------------------------------------------------
 %.o	:	%.pcx
@@ -269,9 +301,10 @@ endif
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../logo.bmp "$(shell basename $@);ScummVM 0.9.0;Port v0.6"
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../logo.bmp "$(shell basename $@);ScummVM 0.9.0;Port v0.6"
-	dsbuild $@
+	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.9.0;DS Port"
+	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.9.1;DS Port"
+	dsbuild $@ -l ../ndsloader.bin
+
 	padbin 16 $(basename $@).ds.gba
 
 #---------------------------------------------------------------------------------

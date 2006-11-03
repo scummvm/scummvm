@@ -35,14 +35,14 @@ class DSSaveFile : public Common::SaveFile {
 	bool saveCompressed;
 
 	struct SCUMMSave {
-		u32 magic;
-		bool isValid;
-		bool pad;
-		char name[16];
-		u32 size;
-		u32 compressedSize;
-		u16 pad2;
-		u32 reserved;
+		u32 magic;		// 4
+		bool isValid;	// 5
+		bool pad;		// 6
+		char name[16];	// 22
+		u32 size;		// 26
+		u32 compressedSize; // 30
+		u16 extraMagic;	// 32
+		u32 reserved;	// 36
 	} __attribute__ ((packed));
 	
 	SCUMMSave save;
@@ -89,6 +89,7 @@ public:
 	
 	bool loadFromSaveRAM(vu8* address);
 	int saveToSaveRAM(vu8* address);
+
 	
 	
 	void deleteFile();
@@ -133,6 +134,10 @@ public:
 	void formatSram();
 	
 	void loadAllFromSRAM();
+
+	static bool isExtraDataPresent();
+	static int getExtraData();
+	static void setExtraData(int data);
 
 protected:
 	Common::SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);

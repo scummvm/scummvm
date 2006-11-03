@@ -47,10 +47,8 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 		ADD_BIND("A", "Switch screens");
 		ADD_BIND("Y", "Show/hide debug console");
 		ADD_BIND("X", "Show/hide keyboard");
-		ADD_BIND("L + Pad", "Scroll current touch screen view");
-		ADD_BIND("L + Pen", "Scroll current touch screen view");
-		ADD_BIND("L + B", "Zoom in");
-		ADD_BIND("L + A", "Zoom out");
+		ADD_BIND("L + Pad/Pen", "Scroll current touch screen view");
+		ADD_BIND("L + B/A", "Zoom in/out");
 		break;
 	}
 
@@ -66,10 +64,8 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 		ADD_BIND("Pad Up", "Show/hide keyboard");
 		ADD_BIND("Pad Left", "Show/hide debug console");
 		ADD_BIND("Pad Right", "Swap screens");
-		ADD_BIND("R + Pad", "Scroll current touch screen view");
-		ADD_BIND("R + Pen", "Scroll current touch screen view");
-		ADD_BIND("R + B", "Zoom in");
-		ADD_BIND("R + A", "Zoom out");
+		ADD_BIND("R + Pad/Pen", "Scroll current touch screen view");
+		ADD_BIND("R+down/right", "Zoom in/out");
 		break;
 	}
 

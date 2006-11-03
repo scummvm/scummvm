@@ -49,9 +49,11 @@ OSystem_DS::OSystem_DS()
 }
 
 OSystem_DS::~OSystem_DS() {
+	delete _mixer;
+	delete _timer;
 }
 
-static int timer_handler(int t)
+int OSystem_DS::timerHandler(int t)
 {
 	DSTimerManager *tm = (DSTimerManager *)g_system->getTimerManager();
 	tm->handler();
@@ -60,12 +62,12 @@ static int timer_handler(int t)
    
 void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
-	ConfMan.setBool("FM_low_quality", true);
+	ConfMan.setBool("FM_medium_quality", true);
 
 	_mixer = new DSAudioMixer;
 	_timer = new DSTimerManager;
 	DS::setSoundProc(Audio::Mixer::mixCallback, _mixer);
-    DS::setTimerCallback(&timer_handler, 10);
+    DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
     
 	OSystem::initBackend();
 }
@@ -123,8 +125,8 @@ int16 OSystem_DS::getWidth() {
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 //	consolePrintf("Set palette %d, %d colours\n", start, num);
+//return;
 	if (!DS::getIsDisplayMode8Bit()) return;
-	
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -402,7 +404,7 @@ void OSystem_DS::clearSoundCallback()
 
 int OSystem_DS::getOutputSampleRate() const
 {
-	return 11025;
+	return DS::getSoundFrequency();
 }
 
 bool OSystem_DS::openCD(int drive)

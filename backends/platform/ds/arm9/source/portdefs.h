@@ -33,6 +33,7 @@ typedef signed int s32;
 
 //#define double float
 
+#define CT_NO_TRANSPARENCY
 
 #undef assert
 #define assert(expr) consolePrintf("Asserted!")

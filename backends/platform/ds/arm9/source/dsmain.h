@@ -61,6 +61,7 @@ u16* 	get8BitBackBuffer();
 
 void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);
+void	set200PercentFixedScale(bool on);
 
 // Timers
 void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval
@@ -72,6 +73,7 @@ void 	setSoundProc(OSystem_DS::SoundProc proc, void* param);			// Setup a callba
 void 	doSoundCallback();												// Call function if sound buffers need more data
 void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
 void 	stopSound(int channel);
+int		getSoundFrequency();
 
 // Event queue
 void 	addEventsToQueue();
@@ -107,7 +109,6 @@ void 	setUnscaledMode(bool enable);
 void 	setIndyFightState(bool st);
 bool 	getIndyFightState();
 bool    isCpuScalerEnabled();
-
 
 // Display
 bool 	getIsDisplayMode8Bit();

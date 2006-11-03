@@ -47,7 +47,10 @@ protected:
 	GUI::SliderWidget* _touchY;
 	GUI::CheckboxWidget* _leftHandedCheckbox;
 	GUI::CheckboxWidget* _unscaledCheckbox;
+	GUI::CheckboxWidget* _twoHundredPercentCheckbox;
 	GUI::CheckboxWidget* _indyFightCheckbox;
+	GUI::CheckboxWidget* _highQualityAudioCheckbox;
+	GUI::CheckboxWidget* _disablePowerOff;
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;
 #endif

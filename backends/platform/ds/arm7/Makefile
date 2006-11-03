@@ -12,6 +12,9 @@ TARGET	:=	arm7
 BUILD		:=	build
 SOURCES	:=	gfx source data  
 INCLUDES	:=	include build
+
+# Enable support for debugger (must be the same as in the arm9 makefile)
+USE_DEBUGGER = 1
  
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -26,6 +29,11 @@ CFLAGS	:=	-g -Wall -O2\
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM7
+
+ifdef USE_DEBUGGER
+	CFLAGS += -DUSE_DEBUGGER
+endif
+	
 
 CXXFLAGS	:=	$(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS	:=	-g $(ARCH)
@@ -49,6 +57,10 @@ PREFIX			:=	arm-eabi-
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
 LIBS	:= -lnds7
+
+ifdef USE_DEBUGGER
+	LIBS += -ldswifi7
+endif
  
  
 #---------------------------------------------------------------------------------

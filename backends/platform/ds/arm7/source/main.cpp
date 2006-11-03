@@ -34,9 +34,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <registers_alt.h>
-
 #include <NDS/scummvm_ipc.h>
 //////////////////////////////////////////////////////////////////////
+#ifdef USE_DEBUGGER
+#include <dswifi7.h>
+#endif
 
 
 #define TOUCH_CAL_X1 (*(vs16*)0x027FFCD8)
@@ -99,7 +101,7 @@ s8 getFreeSoundChannel() {
 }
 
 void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8 vol=0x7F,  u8 pan=63, u8 format=0) {
-  REG_IME = IME_DISABLE;
+//  REG_IME = IME_DISABLE;
 
   channel = getFreeSoundChannel();
 /*  if (format == 2) {
@@ -216,7 +218,7 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 //  IPC->fillSoundSecondHalf = true;
 //  soundFirstHalf = true;
   
-  REG_IME = IME_ENABLE;
+//  REG_IME = IME_ENABLE;
 }
 
 void stopSound(int chan) {
@@ -310,9 +312,8 @@ void performSleep() {
   
   powerManagerWrite(0, 0x30, false);
 }
+
 */
-
-
 void performSleep() {
   powerManagerWrite(0, 0x30, true);
 
@@ -345,11 +346,9 @@ void performSleep() {
 
 //////////////////////////////////////////////////////////////////////
 
-
-void InterruptHandler(void) {
-  static int heartbeat = 0;
-
-  if (REG_IF & IRQ_TIMER1) {
+  
+  	
+void InterruptTimer1() {
 	
 	IPC->fillNeeded[playingSection] = true;
 	soundFilled[playingSection] = false;
@@ -385,13 +384,9 @@ void InterruptHandler(void) {
 			soundFilled[r] = true;
 		//}
 	}*/
-	
-
-    REG_IF = IRQ_TIMER1;
-  }
+}	
   
-
-  if (REG_IF & IRQ_TIMER3) {
+void InterruptTimer3() {
 	while (IPC->adpcm.semaphore);		// Wait for buffer to become free if needed
 	IPC->adpcm.semaphore = true;		// Lock the buffer structure to prevent clashing with the ARM7
 		
@@ -403,11 +398,9 @@ void InterruptHandler(void) {
 		IPC->streamPlayingSection++;
 	}
 	
-    REG_IF = IRQ_TIMER3;
 	
 	IPC->adpcm.semaphore = false;
-  }
-
+}
 
 //  IPC->performArm9SleepMode = false;
 
@@ -420,13 +413,12 @@ void InterruptHandler(void) {
   
   
  
- 
-  if (REG_IF & IRQ_VBLANK) {
+ void InterruptVBlank() {
     uint16 but=0, x=0, y=0, xpx=0, ypx=0, z1=0, z2=0, batt=0, aux=0;
     int t1=0, t2=0;
     uint32 temp=0;
     uint8 ct[sizeof(IPC->curtime)];
-
+	static int heartbeat = 0;
     
     // Update the heartbeat
     heartbeat++;
@@ -472,6 +464,7 @@ void InterruptHandler(void) {
     // Read the temperature
     temp = touchReadTemperature(&t1, &t2);
  
+ 
     // Update the IPC struct
     IPC->heartbeat = heartbeat;
     IPC->buttons   = but;
@@ -508,18 +501,69 @@ void InterruptHandler(void) {
 			stopSound(-snd->data[i].rate);
 		}
       }
-    } 
-
-    REG_IF = IRQ_VBLANK;
-  }
- 
-}
+    }
+    
+   
+ #ifdef USE_DEBUGGER
+    Wifi_Update(); // update wireless in vblank
+ #endif
+ }
  
 
 //////////////////////////////////////////////////////////////////////
+
+
+#ifdef USE_DEBUGGER
+
+// callback to allow wifi library to notify arm9
+void arm7_synctoarm9() { // send fifo message
+   REG_IPC_FIFO_TX = 0x87654321;
+}
+// interrupt handler to allow incoming notifications from arm9
+void arm7_fifo() { // check incoming fifo messages
+   u32 msg = REG_IPC_FIFO_RX;
+   if(msg==0x87654321) Wifi_Sync();
+}
+
  
 
+void initDebugger() {
+	
+	// set up the wifi irq
+	irqSet(IRQ_WIFI, Wifi_Interrupt); // set up wifi interrupt
+	irqEnable(IRQ_WIFI);
+
+    //get them talking together
+
+	// sync with arm9 and init wifi
+	u32 fifo_temp;
+
+	while(1) { // wait for magic number
+		while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+		fifo_temp=REG_IPC_FIFO_RX;
+		if(fifo_temp==0x12345678) break;
+   	}
+
+   	while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+   	fifo_temp=REG_IPC_FIFO_RX; // give next value to wifi_init
+   	Wifi_Init(fifo_temp);
+
+   	irqSet(IRQ_FIFO_NOT_EMPTY,arm7_fifo); // set up fifo irq
+   	irqEnable(IRQ_FIFO_NOT_EMPTY);
+   	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
+
+   	Wifi_SetSyncHandler(arm7_synctoarm9); // allow wifi lib to notify arm9
+	// arm7 wifi init complete	
+
+}
+#endif
+
 int main(int argc, char ** argv) {
+	
+#ifdef USE_DEBUGGER
+  REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
+#endif
+  
   // Reset the clock if needed
   rtcReset();
 
@@ -528,7 +572,9 @@ int main(int argc, char ** argv) {
   SOUND_CR = SOUND_ENABLE | SOUND_VOL(0x7F);
   IPC->soundData = 0;
   IPC->reset = false;
-  
+
+
+ 
   
   for (int r = 0; r < 8; r++) {
 	IPC->adpcm.arm7Buffer[r] = (u8 *) malloc(512);
@@ -540,14 +586,29 @@ int main(int argc, char ** argv) {
 
  
   // Set up the interrupt handler
-  REG_IME = 0;
+  
+  irqInit();
+
+  irqSet(IRQ_VBLANK, InterruptVBlank);
+  irqEnable(IRQ_VBLANK);
+
+  irqSet(IRQ_TIMER1, InterruptTimer1);
+  irqEnable(IRQ_TIMER1);
+
+  irqSet(IRQ_TIMER3, InterruptTimer3);
+  irqEnable(IRQ_TIMER3);
+  
+/*  REG_IME = 0;
   IRQ_HANDLER = &InterruptHandler;
   REG_IE = IRQ_VBLANK | IRQ_TIMER1 | IRQ_TIMER3;
   REG_IF = ~0;
   DISP_SR = DISP_VBLANK_IRQ;
   REG_IME = 1;
-  
-  
+  */
+ 
+#ifdef USE_DEBUGGER  
+  initDebugger();
+#endif  
 
   // Keep the ARM7 out of main RAM
   while (1) {
