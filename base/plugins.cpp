@@ -150,6 +150,9 @@ public:
 		#ifndef DISABLE_AGI
 		LINK_PLUGIN(AGI)
 		#endif
+		#ifndef DISABLE_TOUCHE
+		LINK_PLUGIN(TOUCHE)
+		#endif
 
 		return pl;
 	}
@@ -181,7 +184,7 @@ PluginManager::~PluginManager() {
 		delete *pp;
 	}
 }
-	
+
 void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }

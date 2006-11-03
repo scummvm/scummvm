@@ -60,6 +60,7 @@ _build_kyra=yes
 _build_lure=no
 _build_cine=yes
 _build_agi=no
+_build_touche=no
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -332,6 +333,7 @@ Optional Features:
   --enable-lure            build the Lure of the Temptress engine
   --disable-cine           don't build the Cinematique engine evo 1
   --enable-agi             build the AGI engine
+  --enable-touche          build the Touche: The Adventures of the Fifth Musketeer engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -400,6 +402,7 @@ for ac_option in $@; do
       --enable-lure)            _build_lure=yes ;;
       --disable-cine)           _build_cine=no ;;
       --enable-agi)             _build_agi=yes ;;
+      --enable-touche)          _build_touche=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -685,6 +688,7 @@ add_flag_to_config_mk $_build_gob         'DISABLE_GOB'
 add_flag_to_config_mk $_build_lure        'DISABLE_LURE'
 add_flag_to_config_mk $_build_cine        'DISABLE_CINE'
 add_flag_to_config_mk $_build_agi         'DISABLE_AGI'
+add_flag_to_config_mk $_build_touche      'DISABLE_TOUCHE'
 add_flag_to_config_mk $_build_hq_scalers  'DISABLE_HQ_SCALERS'
 add_flag_to_config_mk $_build_scalers     'DISABLE_SCALERS'
 
@@ -1270,9 +1274,11 @@ fi
 if test "$_build_cine" = yes ; then
 	echo "    Cinematique evo 1"
 fi
-
 if test "$_build_agi" = yes ; then
 	echo "    AGI"
+fi
+if test "$_build_touche" = yes ; then
+	echo "    Touche: The Adventures of the Fifth Musketeer"
 fi
 
 echo

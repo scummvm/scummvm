@@ -1,0 +1,822 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id: $
+ *
+ */
+
+#include "common/stdafx.h"
+
+#include "touche/touche.h"
+
+namespace Touche {
+
+void ToucheEngine::op_nop() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_nop()");
+}
+
+void ToucheEngine::op_jnz() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_jnz()");
+	if (*_script.stackDataPtr != 0) {
+		_script.dataOffset = _script.readNextWord();
+	} else {
+		_script.dataOffset += 2;
+	}
+}
+
+void ToucheEngine::op_jz() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_jz()");
+	if (*_script.stackDataPtr == 0) {
+		_script.dataOffset = _script.readNextWord();
+	} else {
+		_script.dataOffset += 2;
+	}
+}
+
+void ToucheEngine::op_jmp() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_jmp()");
+	_script.dataOffset = _script.readNextWord();
+}
+
+void ToucheEngine::op_true() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_true()");
+	*_script.stackDataPtr = -1;
+}
+
+void ToucheEngine::op_false() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_false()");
+	*_script.stackDataPtr = 0;
+}
+
+void ToucheEngine::op_push() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_push()");
+	--_script.stackDataPtr;
+	*_script.stackDataPtr = 0;
+}
+
+void ToucheEngine::op_testFalse() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testFalse()");
+	if (*_script.stackDataPtr == 0) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_add() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_add()");
+	int16 val = *_script.stackDataPtr++;
+	*_script.stackDataPtr += val;
+}
+
+void ToucheEngine::op_sub() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_sub()");
+	int16 val = *_script.stackDataPtr++;
+	*_script.stackDataPtr -= val;
+}
+
+void ToucheEngine::op_mul() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_mul()");
+	int16 val = *_script.stackDataPtr++;
+	*_script.stackDataPtr *= val;
+}
+
+void ToucheEngine::op_div() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_div()");
+	int16 val = *_script.stackDataPtr++;
+	if (val != 0) {
+		*_script.stackDataPtr /= val;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_mod() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_mod()");
+	int16 val = *_script.stackDataPtr++;
+	if (val != 0) {
+		*_script.stackDataPtr %= val;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_and() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_and()");
+	uint16 val = *_script.stackDataPtr++;
+	*_script.stackDataPtr &= val;
+}
+
+void ToucheEngine::op_or() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_or()");
+	uint16 val = *_script.stackDataPtr++;
+	*_script.stackDataPtr |= val;
+}
+
+void ToucheEngine::op_not() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_not()");
+	uint16 val = *_script.stackDataPtr;
+	*_script.stackDataPtr = ~val;
+}
+
+void ToucheEngine::op_testGreater() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testGreater()");
+	int16 val = *_script.stackDataPtr++;
+	if (val > *_script.stackDataPtr) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_testEquals() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testEquals()");
+	int16 val = *_script.stackDataPtr++;
+	if (val == *_script.stackDataPtr) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_testLower() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testLower()");
+	int16 val = *_script.stackDataPtr++;
+	if (val < *_script.stackDataPtr) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_fetchScriptWord() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_fetchScriptWord()");
+	int16 val = _script.readNextWord();
+	*_script.stackDataPtr = val;
+}
+
+void ToucheEngine::op_testGreaterOrEquals() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testGreaterOrEquals()");
+	int16 val = *_script.stackDataPtr++;
+	if (val >= *_script.stackDataPtr) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_testLowerOrEquals() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testLowerOrEquals()");
+	int16 val = *_script.stackDataPtr++;
+	if (val <= *_script.stackDataPtr) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_testNotEquals() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_testNotEquals()");
+	int16 val = *_script.stackDataPtr++;
+	if (val != *_script.stackDataPtr) {
+		*_script.stackDataPtr = -1;
+	} else {
+		*_script.stackDataPtr = 0;
+	}
+}
+
+void ToucheEngine::op_endConversation() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_endConversation()");
+	_script.quitFlag = 1;
+	_conversationEnded = true;
+	_disabledInputCounter = false;
+}
+
+void ToucheEngine::op_stopScript() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_stopScript()");
+	_script.quitFlag = 1;
+}
+
+void ToucheEngine::op_getFlag() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getFlag()");
+	uint16 fl = _script.readNextWord();
+	*_script.stackDataPtr = _flagsTable[fl];
+}
+
+void ToucheEngine::op_setFlag() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setFlag()");
+	uint16 flag = _script.readNextWord();
+	int16 val = *_script.stackDataPtr;
+	_flagsTable[flag] = val;
+	switch (flag) {
+	case 104:
+		_currentKeyCharNum = val;
+		break;
+	case 612:
+		_flagsTable[613] = getRandomNumber(val);
+		break;
+	case 614:
+	case 615:
+		_fullRedrawCounter = 1;
+		break;
+	default:
+		break;
+	}
+}
+
+void ToucheEngine::op_fetchScriptByte() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_fetchScriptByte()");
+	int16 val = _script.readNextByte();
+	*_script.stackDataPtr = val;
+}
+
+void ToucheEngine::op_getScriptValue() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getScriptValue()");
+	uint8 index = _script.readNextByte();
+	assert(index < _script.stackDataBasePtr[2]);
+	*_script.stackDataPtr = _script.stackDataBasePtr[3 + index];
+}
+
+void ToucheEngine::op_setScriptValue() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setScriptValue()");
+	uint8 index = _script.readNextByte();
+	assert(index < _script.stackDataBasePtr[2]);
+	_script.stackDataBasePtr[3 + index] = *_script.stackDataPtr;
+}
+
+void ToucheEngine::op_getKeyCharWalkBox() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getKeyCharWalkBox()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	*_script.stackDataPtr = _keyCharsTable[keyChar].walkDataNum;
+}
+
+void ToucheEngine::op_startSound() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startSound()");
+	_newSoundNum = _script.readNextWord();
+	_newSoundDelay = _script.readNextWord();
+	_newSoundPriority = 1;
+}
+
+void ToucheEngine::op_initKeyCharTalk() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_initKeyCharTalk()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	int16 num = _script.readNextWord();
+	if (num == -1) {
+		num = _script.readNextWord();
+		num = _keyCharsTable[num].pointsDataNum;
+	}
+	sortPointsData(-1, num);
+	buildWalkPointsList(keyChar);
+	_keyCharsTable[keyChar].flags &= ~0x10;
+	if (_script.keyCharNum == keyChar) {
+		removeFromTalkTable(_script.keyCharNum);
+		_keyCharsTable[keyChar].waitingKeyCharPosTable[0] = -1;
+		_keyCharsTable[keyChar].waitingKeyCharPosTable[2] = -1;
+		_keyCharsTable[keyChar].waitingKeyChar = _script.keyCharNum;
+		_keyCharsTable[keyChar].waitingKeyCharPosTable[1] = num;
+		_script.quitFlag = 3;
+	}
+}
+
+void ToucheEngine::op_loadRoom() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadRoom()");
+	int16 num = _script.readNextWord();
+	res_loadRoom(num);
+}
+
+void ToucheEngine::op_updateRoom() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_updateRoom()");
+	int16 area = _script.readNextWord();
+	updateRoomAreas(area, 0);
+}
+
+void ToucheEngine::op_startTalk() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startTalk()");
+	int16 keyChar = _script.readNextWord();
+	int16 num = _script.readNextWord();
+	if (num == 750) {
+		return;
+	}
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+		num += _currentKeyCharNum & 1;
+	}
+	addToTalkTable(keyChar, num, _script.keyCharNum);
+	_script.quitFlag = 3;
+}
+
+void ToucheEngine::op_loadSprite() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadSprite()");
+	int16 index = _script.readNextWord();
+	int16 num = _script.readNextWord();
+	res_loadSprite(num, index);
+}
+
+void ToucheEngine::op_loadSequence() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadSequence()");
+	int16 index = _script.readNextWord();
+	int16 num = _script.readNextWord();
+	res_loadSequence(num, index);
+}
+
+void ToucheEngine::op_setKeyCharBox() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setKeyCharBox()");
+	int16 keyChar = _script.readNextWord();
+	int16 num = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	setKeyCharBox(keyChar, num);
+}
+
+void ToucheEngine::op_initKeyCharScript() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_initKeyCharScript()");
+	int16 keyChar = _script.readNextWord();
+	int16 color = _script.readNextWord();
+	int16 f1 = _script.readNextWord();
+	int16 f2 = _script.readNextWord();
+	int16 f3 = _script.readNextWord();
+	setKeyCharTextColor(keyChar, color);
+	initKeyCharScript(keyChar, f1, f2, f3);
+}
+
+void ToucheEngine::op_setKeyCharFrame() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setKeyCharFrame()");
+	int16 keyChar = _script.readNextWord();
+	int16 val1 = _script.readNextWord();
+	int16 val2 = _script.readNextWord();
+	int16 val3 = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	setKeyCharFrame(keyChar, val1, val2, val3);
+}
+
+void ToucheEngine::op_setKeyCharDirection() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setKeyCharDirection()");
+	int16 keyChar = _script.readNextWord();
+	int16 dir = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	setKeyCharFacingDirection(keyChar, dir);
+}
+
+void ToucheEngine::op_clearConversationChoices() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_clearConversationChoices()");
+	clearConversationChoices();
+}
+
+void ToucheEngine::op_addConversationChoice() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_addConversationChoice()");
+	int16 num = _script.readNextWord();
+	addConversationChoice(num);
+}
+
+void ToucheEngine::op_removeConversationChoice() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_removeConversationChoice()");
+	int16 num = _script.readNextWord();
+	removeConversationChoice(num);
+}
+
+void ToucheEngine::op_getInventoryItem() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getInventoryItem()");
+	int16 keyChar = _script.readNextWord();
+	uint16 item = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	assert(item < sizeof(_keyCharsTable[keyChar].inventoryItems));
+	*_script.stackDataPtr = _keyCharsTable[keyChar].inventoryItems[item];
+}
+
+void ToucheEngine::op_setInventoryItem() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setInventoryItem()");
+	int16 keyChar = _script.readNextWord();
+	uint16 item = _script.readNextWord();
+	if (item == 4) {
+		setKeyCharMoney();
+	}
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	assert(item < sizeof(_keyCharsTable[keyChar].inventoryItems));
+	_keyCharsTable[keyChar].inventoryItems[item] = *_script.stackDataPtr;
+	if (item == 4 && !_hideInventoryTexts) {
+		drawAmountOfMoneyInInventory();
+	}
+}
+
+void ToucheEngine::op_startEpisode() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startEpisode()");
+	_newEpisodeNum = _script.readNextWord();
+	_flagsTable[0] = _script.readNextWord();
+	_disabledInputCounter = 1;
+	_script.quitFlag = 1;
+}
+
+void ToucheEngine::op_setConversationNum() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setConversationNum()");
+	_conversationNum = _script.readNextWord();
+}
+
+void ToucheEngine::op_enableInventoryItem() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_enableInventoryItem()");
+	int16 flag = _script.readNextWord();
+	int16 item = _script.readNextWord();
+	int16 rnd = _script.readNextWord();
+	changeInventoryItemState(flag, item, rnd, 1);
+}
+
+void ToucheEngine::op_enableInput() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_enableInput()");
+	++_disabledInputCounter;
+}
+
+void ToucheEngine::op_disableInput() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_disableInput()");
+	if (_disabledInputCounter != 0) {
+		--_disabledInputCounter;
+	}
+}
+
+void ToucheEngine::op_faceKeyChar() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_faceKeyChar()");
+	int16 keyChar1 = _script.readNextWord();
+	int16 keyChar2 = _script.readNextWord();
+	if (keyChar1 == 256) {
+		keyChar1 = _currentKeyCharNum;
+	}
+	if (_keyCharsTable[keyChar1].xPos <= _keyCharsTable[keyChar2].xPos) {
+		_keyCharsTable[keyChar2].facingDirection = 3;
+	} else {
+		_keyCharsTable[keyChar2].facingDirection = 0;
+	}
+}
+
+void ToucheEngine::op_getKeyCharCurrentAnim() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getKeyCharCurrentAnim()");
+	int16 keyChar = _script.readNextWord();
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	*_script.stackDataPtr = _keyCharsTable[keyChar].currentAnim;
+}
+
+void ToucheEngine::op_getCurrentKeyChar() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getCurrentKeyChar()");
+	*_script.stackDataPtr = _currentKeyCharNum;
+}
+
+void ToucheEngine::op_isKeyCharActive() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_isKeyCharActive()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	*_script.stackDataPtr = _keyCharsTable[keyChar].num != 0 ? 1 : 0;
+}
+
+void ToucheEngine::op_setPalette() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setPalette()");
+	int16 r = _script.readNextWord();
+	int16 g = _script.readNextWord();
+	int16 b = _script.readNextWord();
+	setPalette(0, 240, r, g, b);
+}
+
+void ToucheEngine::op_changeWalkPath() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_changeWalkPath()");
+	int16 num1 = _script.readNextWord();
+	int16 num2 = _script.readNextWord();
+	int16 val = _script.readNextWord();
+	changeWalkPath(num1, num2, val);
+}
+
+void ToucheEngine::op_lockWalkPath() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_lockWalkPath()");
+	int16 num1 = _script.readNextWord();
+	int16 num2 = _script.readNextWord();
+	lockWalkPath(num1, num2);
+}
+
+void ToucheEngine::op_initializeKeyChar() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_initializeKeyChar()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	initKeyChars(keyChar);
+}
+
+void ToucheEngine::op_setupWaitingKeyChars() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setupWaitingKeyChars()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	int16 val1 = _script.readNextWord();
+	int16 val2 = _script.readNextWord();
+	if (val1 == -1) {
+		_waitingSetKeyCharNum2 = keyChar;
+		_waitingSetKeyCharNum1 = val2;
+		_waitingSetKeyCharNum3 = _script.keyCharNum;
+		_script.quitFlag = 3;
+	} else {
+		_keyCharsTable[_script.keyCharNum].waitingKeyCharPosTable[0] = -1;
+		_keyCharsTable[_script.keyCharNum].waitingKeyCharPosTable[1] = -1;
+		_keyCharsTable[_script.keyCharNum].waitingKeyCharPosTable[2] = -1;
+		_keyCharsTable[_script.keyCharNum].waitingKeyChar = keyChar;
+		assert(val1 >= 0 && val1 < 3);
+		_keyCharsTable[_script.keyCharNum].waitingKeyCharPosTable[val1] = val2;
+		_script.quitFlag = 3;
+	}
+}
+
+void ToucheEngine::op_updateRoomAreas() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setupWaitingKeyChars()");
+	int16 area = _script.readNextWord();
+	updateRoomAreas(area, 1);
+}
+
+void ToucheEngine::op_unlockWalkPath() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_unlockWalkPath()");
+	int16 num1 = _script.readNextWord();
+	int16 num2 = _script.readNextWord();
+	unlockWalkPath(num1, num2);
+}
+
+void ToucheEngine::op_addItemToInventoryAndRedraw() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_addItemToInventoryAndRedraw()");
+	int16 inventory = _script.readNextWord();
+	int16 item = *_script.stackDataPtr;
+	if (inventory == 256) {
+		inventory = _currentKeyCharNum;
+	}
+	addItemToInventory(inventory, item);
+	if (_currentKeyCharNum == inventory && !_hideInventoryTexts) {
+		drawInventory(_currentKeyCharNum, 1);
+	}
+}
+
+void ToucheEngine::op_giveItemTo() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_giveItemTo()");
+	_giveItemToCounter = 1;
+	_giveItemToObjectNum = _script.readNextWord();
+	_giveItemToKeyCharNum = _script.keyCharNum;
+	_script.quitFlag = 3;
+}
+
+void ToucheEngine::op_resetHitBoxes() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_resetHitBoxes()");
+	int16 num = _script.readNextWord();
+	if (num & 0x4000) {
+		num &= 0xFF;
+		_keyCharsTable[num].strNum = 1;
+	} else {
+		for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
+			if (_programHitBoxTable[i].item == num) {
+				_programHitBoxTable[i].str = _programHitBoxTable[i].defaultStr;
+				break;
+			}
+		}
+	}
+}
+
+void ToucheEngine::op_fadePalette() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_fadePalette()");
+	int16 fadeOut = _script.readNextWord();
+	if (fadeOut) {
+		fadePalette(0, 240, 255, -2, 128);
+	} else {
+		fadePalette(0, 240, 0, 2, 128);
+	}
+}
+
+void ToucheEngine::op_disableInventoryItem() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_disableInventoryItem()");
+	int16 flag = _script.readNextWord();
+	int16 item = _script.readNextWord();
+	int16 rnd = _script.readNextWord();
+	changeInventoryItemState(flag, item, rnd, 0);
+}
+
+void ToucheEngine::op_getInventoryItemFlags() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getInventoryItemFlags()");
+	int16 item = _script.readNextWord();
+	int16 flags = _inventoryItemsInfoTable[item];
+	if (flags & 0x10) {
+		flags &= 0xF;
+	} else {
+		flags &= ~0xF;
+	}
+	*_script.stackDataPtr = flags;
+}
+
+void ToucheEngine::op_drawInventory() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_drawInventory()");
+	int16 num = _script.readNextWord();
+	drawInventory(num, 1);
+}
+
+void ToucheEngine::op_stopKeyCharScript() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_stopKeyCharScript()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	_keyCharsTable[keyChar].flags |= kScriptStopped;
+}
+
+void ToucheEngine::op_restartKeyCharScript() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_restartKeyCharScript()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	KeyChar *key = &_keyCharsTable[keyChar];
+	key->flags &= ~(kScriptStopped | kScriptPaused);
+	key->scriptDataOffset = key->scriptDataStartOffset;
+	key->scriptStackPtr = &key->scriptStackTable[39];
+}
+
+void ToucheEngine::op_getKeyCharCurrentWalkBox() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getKeyCharCurrentWalkBox()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	*_script.stackDataPtr = _keyCharsTable[keyChar].currentWalkBox;
+}
+
+void ToucheEngine::op_getKeyCharPointsDataNum() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_getKeyCharPointsDataNum()");
+	int16 keyChar = _script.readNextWord();
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	*_script.stackDataPtr = _keyCharsTable[keyChar].pointsDataNum;
+}
+
+void ToucheEngine::op_setupFollowingKeyChar() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setupFollowingKeyChar()");
+	int16 val = _script.readNextWord();
+	int16 keyChar = _script.readNextWord();
+	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
+	_keyCharsTable[keyChar].followingKeyCharNum = val;
+	_keyCharsTable[keyChar].flags |= 0x10;
+	_keyCharsTable[keyChar].followingKeyCharPos = -1;
+}
+
+void ToucheEngine::op_startAnimation() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startAnimation()");
+	int16 num = _script.readNextWord();
+	int16 pos = _script.readNextWord();
+	int16 keyChar = *_script.stackDataPtr;
+	addToAnimationTable(num, pos, keyChar, 3);
+}
+
+void ToucheEngine::op_setKeyCharTextColor() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setKeyCharTextColor()");
+	int16 keyChar = _script.readNextWord();
+	uint16 color = _script.readNextWord();
+	setKeyCharTextColor(keyChar, color);
+}
+
+void ToucheEngine::op_startMusic() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startMusic()");
+	_newMusicNum = _script.readNextWord();
+}
+
+void ToucheEngine::op_copyPaletteColor() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_copyPaletteColor()");
+	int16 src = _script.readNextWord();
+	int16 dst = _script.readNextWord();
+	copyPaletteColor(src, dst);
+}
+
+void ToucheEngine::op_delay() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_delay()");
+	int16 delay = _script.readNextWord();
+	_keyCharsTable[_script.keyCharNum].delay = delay;
+	_script.quitFlag = 3;
+}
+
+void ToucheEngine::op_lockHitBox() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_lockHitBox()");
+	int16 num = _script.readNextWord();
+	lockUnlockHitBox(num, 1);
+}
+
+void ToucheEngine::op_removeItemFromInventory() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_removeItemFromInventory()");
+	int16 keyChar = _script.readNextWord();
+	int16 item = *_script.stackDataPtr;
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
+	}
+	removeItemFromInventory(keyChar, item);
+	if (keyChar == _currentKeyCharNum && !_hideInventoryTexts) {
+		drawInventory(_currentKeyCharNum, 1);
+	}
+}
+
+void ToucheEngine::op_unlockHitBox() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_unlockHitBox()");
+	int16 num = _script.readNextWord();
+	lockUnlockHitBox(num, 0);
+}
+
+void ToucheEngine::op_addRoomArea() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_addRoomArea()");
+	int16 num = _script.readNextWord();
+	uint16 flag = _script.readNextWord();
+	addRoomArea(num, flag);
+}
+
+void ToucheEngine::op_setKeyCharFlags() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setKeyCharFlags()");
+	int16 keyChar = _script.readNextWord();
+	uint16 flags = _script.readNextWord();
+	flags &= 0xFF00;
+	_keyCharsTable[keyChar].flags |= flags;
+}
+
+void ToucheEngine::op_unsetKeyCharFlags() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_unsetKeyCharFlags()");
+	int16 keyChar = _script.readNextWord();
+	uint16 flags = _script.readNextWord();
+	flags &= 0xFF00;
+	_keyCharsTable[keyChar].flags &= ~flags;
+}
+
+void ToucheEngine::op_loadVoice() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadVoice()");
+	int16 num = _script.readNextWord();
+	res_loadSpeech(num);
+}
+
+void ToucheEngine::op_drawSpriteOnBackdrop() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_drawSpriteOnBackdrop()");
+	int16 num = _script.readNextWord();
+	int16 x = _script.readNextWord();
+	int16 y = _script.readNextWord();
+	drawSpriteOnBackdrop(num, x, y);
+}
+
+void ToucheEngine::op_startPaletteFadeIn() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startPaletteFadeIn()");
+	_flagsTable[290] = 0;
+	_flagsTable[605] = 0;
+	_flagsTable[607] = 0;
+	_flagsTable[608] = 0xFF;
+	_flagsTable[609] = 0xFF;
+	_flagsTable[610] = 0;
+	_flagsTable[603] = _script.readNextWord();
+}
+
+void ToucheEngine::op_startPaletteFadeOut() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_startPaletteFadeOut()");
+	_flagsTable[290] = 0;
+	_flagsTable[605] = 0xFF;
+	_flagsTable[607] = 0;
+	_flagsTable[608] = 0xFF;
+	_flagsTable[609] = 0xFF;
+	_flagsTable[610] = 0;
+	_flagsTable[603] = -_script.readNextWord();
+}
+
+void ToucheEngine::op_setRoomAreaState() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setRoomAreaState()");
+	int16 num = _script.readNextWord();
+	int16 val = _script.readNextWord();
+	setRoomAreaState(num, val);
+}
+
+} // namespace Touche

@@ -45,19 +45,19 @@ endif
 
 ifdef DISABLE_SAGA
 DEFINES += -DDISABLE_SAGA
-else 
+else
 MODULES += engines/saga
 endif
 
 ifdef DISABLE_KYRA
 DEFINES += -DDISABLE_KYRA
-else 
+else
 MODULES += engines/kyra
 endif
 
 ifdef DISABLE_GOB
 DEFINES += -DDISABLE_GOB
-else 
+else
 MODULES += engines/gob
 endif
 
@@ -69,13 +69,18 @@ endif
 
 ifdef DISABLE_CINE
 DEFINES += -DDISABLE_CINE
-else 
+else
 MODULES += engines/cine
 endif
 
 ifdef DISABLE_AGI
 DEFINES += -DDISABLE_AGI
-else 
+else
 MODULES += engines/agi
 endif
 
+ifdef DISABLE_TOUCHE
+DEFINES += -DDISABLE_TOUCHE
+else
+MODULES += engines/touche
+endif
