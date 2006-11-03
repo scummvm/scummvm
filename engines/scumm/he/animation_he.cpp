@@ -118,4 +118,4 @@ void MoviePlayer::setPalette(byte *pal) {
 	_vm->setPaletteFromPtr(pal, 256);
 }
 
-} // End of namespace Simon
+} // End of namespace Scumm

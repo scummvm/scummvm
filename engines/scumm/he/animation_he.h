@@ -58,6 +58,6 @@ protected:
 	virtual void setPalette(byte *pal);
 };
 
-} // End of namespace Simon
+} // End of namespace Scumm
 
 #endif
