@@ -348,15 +348,15 @@ void Talk::findDialogueString(uint16 offset, int16 id, int16 max, char *str) {
 byte *Talk::loadDialogFile(const char *filename) {
 	static const struct {
 		const char *filename;
-		Language lang;
+		Common::Language language;
 	} dogFiles[] = {
-		{ "chief1.dog", FRENCH  },
-		{ "chief2.dog", FRENCH  },
-		{ "bud1.dog",   ITALIAN }
+		{ "chief1.dog", Common::FR_FRA },
+		{ "chief2.dog", Common::FR_FRA },
+		{ "bud1.dog",   Common::IT_ITA }
 	};
 	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
 		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
-			_vm->resource()->getLanguage() == dogFiles[i].lang) {
+			_vm->resource()->getLanguage() == dogFiles[i].language) {
 			Common::File fdog;
 			fdog.open(filename);
 			if (fdog.isOpen()) {
@@ -798,7 +798,7 @@ void Talk::speakSegment(
 
 	// French talkie version has a useless voice file ;	c30e_102 file is the same as c30e_101,
 	// so there is no need to play it. This voice was used in room 30 (N8) when talking to Klunk.
-	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102"))
+	if (!(_vm->resource()->getLanguage() == Common::FR_FRA && !strcmp(voiceFileName, "c30e_102"))
 		&& _vm->sound()->speechOn())
 		_vm->sound()->playSfx(voiceFileName, true);
 
@@ -1076,10 +1076,10 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	}
 	int lines;
 	memset(optionText, 0, 5 * MAX_STRING_SIZE);
-	if (_vm->resource()->getLanguage() == ENGLISH || _vm->display()->textWidth(option) <= MAX_TEXT_WIDTH) {
+	if (_vm->resource()->getLanguage() == Common::EN_ANY || _vm->display()->textWidth(option) <= MAX_TEXT_WIDTH) {
 		strcpy(optionText[0], option);
 		lines = 1;
-	} else if (_vm->resource()->getLanguage() == HEBREW) {
+	} else if (_vm->resource()->getLanguage() == Common::HB_ISR) {
 		lines = splitOptionHebrew(option, optionText);
 	} else {
 		lines = splitOptionDefault(option, optionText);
@@ -1196,7 +1196,7 @@ int16 Talk::selectSentence() {
 
 		_vm->grid()->clear(GS_PANEL);
 
-		if (_vm->resource()->getLanguage() != ENGLISH) {
+		if (_vm->resource()->getLanguage() != Common::EN_ANY) {
 			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
 			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
@@ -1219,7 +1219,7 @@ int16 Talk::selectSentence() {
 							i,
 							0,
 							yOffset * LINE_HEIGHT - PUSHUP,
-							(_vm->resource()->getLanguage() == ENGLISH) ? 319 : MAX_TEXT_WIDTH,
+							(_vm->resource()->getLanguage() == Common::EN_ANY) ? 319 : MAX_TEXT_WIDTH,
 							(yOffset + optionLines) * LINE_HEIGHT - PUSHUP);
 				}
 
@@ -1242,7 +1242,7 @@ int16 Talk::selectSentence() {
 
 		// Up and down dialogue arrows
 
-		if (_vm->resource()->getLanguage() != ENGLISH) {
+		if (_vm->resource()->getLanguage() != Common::EN_ANY) {
 			arrowBobUp->active    = (startOption > 1);
 			arrowBobDown->active  = (yOffset > 4);
 		}

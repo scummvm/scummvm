@@ -172,24 +172,25 @@ void Resource::checkJASVersion() {
 		error("Verifying game version failed! (expected: '%s', found: '%s')", _versionString, versionStr);
 }
 
-Language Resource::getLanguage() const {
+Common::Language Resource::getLanguage() const {
 	switch (_versionString[1]) {
 	case 'E':
 		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS)
-			return RUSSIAN;
-		return ENGLISH;
+			return Common::RU_RUS;
+		return Common::EN_ANY;
 	case 'G':
-		return GERMAN;
+		return Common::DE_DEU;
 	case 'F':
-		return FRENCH;
+		return Common::FR_FRA;
 	case 'I':
-		return ITALIAN;
+		return Common::IT_ITA;
 	case 'S':
-		return SPANISH;
+		return Common::ES_ESP;
 	case 'H':
-		return HEBREW;
+		return Common::HB_ISR;
 	default:
-		return ENGLISH;
+		warning("Unknown language id '%c', defaulting to English", _versionString[1]);
+		return Common::EN_ANY;
 	}
 }
 
@@ -211,8 +212,7 @@ void Resource::readTableCompResource() {
 		error("Invalid table header");
 
 	_resourceFile->read(_versionString, 6);
-	_resourceFile->readByte(); // obsolete
-	_resourceFile->readByte(); // obsolete
+	_resourceFile->skip(2); // obsolete
 	_compression = _resourceFile->readByte();
 
 	readTableEntries(_resourceFile);

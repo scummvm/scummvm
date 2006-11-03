@@ -27,7 +27,7 @@
 
 namespace Queen {
 
-const char *Input::_commandKeys[LANGUAGE_COUNT] = {
+const char *Input::_commandKeys[] = {
 	"ocmglptu", // English
 	"osbgpnre", // German
 	"ofdnepau", // French
@@ -36,7 +36,7 @@ const char *Input::_commandKeys[LANGUAGE_COUNT] = {
 	"acodmthu"  // Spanish
 };
 
-const Verb Input::_verbKeys[8] = {
+const Verb Input::_verbKeys[] = {
 	VERB_OPEN,
 	VERB_CLOSE,
 	VERB_MOVE,
@@ -47,7 +47,7 @@ const Verb Input::_verbKeys[8] = {
 	VERB_USE
 };
 
-Input::Input(Language language, OSystem *system) :
+Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE),
 	_cutawayRunning(false), _canQuit(false), _cutawayQuit(false),
 	_dialogueRunning(false), _talkQuit(false), _quickSave(false),
@@ -55,23 +55,23 @@ Input::Input(Language language, OSystem *system) :
 	_mouse_y(0), _mouseButton(0), _idleTime(0) {
 
 	switch (language) {
-	case ENGLISH:
-	case RUSSIAN:
+	case Common::EN_ANY:
+	case Common::RU_RUS:
 		_currentCommandKeys = _commandKeys[0];
 		break;
-	case GERMAN:
+	case Common::DE_DEU:
 		_currentCommandKeys = _commandKeys[1];
 		break;
-	case FRENCH:
+	case Common::FR_FRA:
 		_currentCommandKeys = _commandKeys[2];
 		break;
-	case ITALIAN:
+	case Common::IT_ITA:
 		_currentCommandKeys = _commandKeys[3];
 		break;
-	case HEBREW:
+	case Common::HB_ISR:
 		_currentCommandKeys = _commandKeys[4];
 		break;
-	case SPANISH:
+	case Common::ES_ESP:
 		_currentCommandKeys = _commandKeys[5];
 		break;
 	default:

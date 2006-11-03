@@ -83,7 +83,7 @@ public:
 	const char *JASVersion() const { return _versionString; }
 
 	//! returns language of the game
-	Language getLanguage() const;
+	Common::Language getLanguage() const;
 
 	enum Version {
 		VER_ENG_FLOPPY   = 0,

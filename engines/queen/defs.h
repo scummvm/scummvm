@@ -41,12 +41,10 @@ enum {
 	PANEL_ZONE_HEIGHT  =  50
 };
 
-
 enum {
 	FRAMES_JOE      = 38,
 	FRAMES_JOURNAL  = 40
 };
-
 
 enum Direction {
 	DIR_LEFT  = 1,
@@ -54,7 +52,6 @@ enum Direction {
 	DIR_FRONT = 3,
 	DIR_BACK  = 4
 };
-
 
 enum {
 	INK_BG_PANEL      = 226,
@@ -67,7 +64,6 @@ enum {
 	INK_JOE           = 14,
 	INK_OUTLINED_TEXT = 16
 };
-
 
 enum {
 	ITEM_NONE                     =  0,
@@ -252,7 +248,6 @@ enum {
 	ROOM_JOURNAL              = 200 // dummy value to keep Display methods happy
 };
 
-
 //! GameState vars
 enum {
 	VAR_HOTEL_ITEMS_REMOVED       =   3,
@@ -264,18 +259,6 @@ enum {
 	VAR_INTRO_PLAYED              = 117,
 	VAR_AZURA_IN_LOVE             = 167
 };
-
-
-enum Language {
-	ENGLISH  = 'E',
-	FRENCH   = 'F',
-	GERMAN   = 'G',
-	HEBREW   = 'H',
-	ITALIAN  = 'I',
-	SPANISH  = 'S',
-	RUSSIAN  = 'R'
-};
-
 
 enum Verb {
 	VERB_NONE = 0,
@@ -316,7 +299,6 @@ enum Verb {
 	VERB_PREP_WITH = 11,
 	VERB_PREP_TO   = 12
 };
-
 
 } // End of namespace Queen
 

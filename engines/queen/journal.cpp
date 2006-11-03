@@ -387,7 +387,7 @@ void Journal::drawPanelText(int y, const char *text) {
 		_panelTextY[_panelTextCount++] = y;
 	} else {
 		*p++ = '\0';
-		if (_vm->resource()->getLanguage() == HEBREW) {
+		if (_vm->resource()->getLanguage() == Common::HB_ISR) {
 			drawPanelText(y - 5, p);
 			drawPanelText(y + 5, s);
 		} else {

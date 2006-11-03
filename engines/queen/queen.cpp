@@ -68,8 +68,9 @@ GameDescriptor Engine_QUEEN_findGameID(const char *gameid) {
 	return GameDescriptor();
 }
 
-
-GameDescriptor determineTarget(uint32 size) {
+// FIXME/TODO: it would be nice to re-use the existing code of the
+// Resource class to detect the FOTAQ version.
+static GameDescriptor determineTarget(uint32 size) {
 	switch (size) {
 	case 3724538:	//regular demo
 	case 3732177:
@@ -260,14 +261,14 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 		assert(dataSize < SAVESTATE_MAX_SIZE);
 
 		// write header
-		GameStateHeader header;
-		memset(&header, 0, sizeof(header));
 		file->writeUint32BE('SCVM');
-		header.version = TO_BE_32(SAVESTATE_CUR_VER);
-		header.flags = TO_BE_32(0);
-		header.dataSize = TO_BE_32(dataSize);
-		strncpy(header.description, desc, sizeof(header.description) - 1);
-		file->write(&header, sizeof(header));
+		file->writeUint32BE(SAVESTATE_CUR_VER);
+		file->writeUint32BE(0);
+		file->writeUint32BE(dataSize);
+		char description[32];
+		memset(description, 0, 32);
+		strncpy(description, desc, 31);
+		file->write(description, 32);
 
 		// write save data
 		file->write(saveData, dataSize);

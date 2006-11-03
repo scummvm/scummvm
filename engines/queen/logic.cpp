@@ -206,7 +206,7 @@ void Logic::initialise() {
 	}
 
 	// Patch for German text bug
-	if (_vm->resource()->getLanguage() == GERMAN) {
+	if (_vm->resource()->getLanguage() == Common::DE_DEU) {
 		_objDescription[296] = "Es bringt nicht viel, das festzubinden.";
 	}
 
@@ -233,7 +233,7 @@ void Logic::initialise() {
 	// Spanish version adds some space characters (0x20) at the beginning
 	// and the end of the journal button captions. As the engine computes
 	// the text width to center it, we need to trim those strings.
-	if (_vm->resource()->getLanguage() == SPANISH) {
+	if (_vm->resource()->getLanguage() == Common::ES_ESP) {
 		for (i = 30; i <= 35; i++) {
 			_joeResponse[i] = trim(_joeResponse[i]);
 		}
@@ -1232,7 +1232,7 @@ void Logic::handlePinnacleRoom() {
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
-	CmdText cmdText((_vm->resource()->getLanguage() == HEBREW), 5, _vm);
+	CmdText cmdText((_vm->resource()->getLanguage() == Common::HB_ISR), 5, _vm);
 	cmdText.setVerb(VERB_WALK_TO);
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 

@@ -45,9 +45,9 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0),
 	_system(system), _vm(vm) {
 
-	if (vm->resource()->getLanguage() == HEBREW)
+	if (vm->resource()->getLanguage() == Common::HB_ISR)
 		_font = _fontHebrew;
-	else if (vm->resource()->getLanguage() == RUSSIAN)
+	else if (vm->resource()->getLanguage() == Common::RU_RUS)
 		_font = _fontRussian;
 	else
 		_font = _fontRegular;

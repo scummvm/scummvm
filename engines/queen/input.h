@@ -44,7 +44,7 @@ public:
 		MOUSE_RBUTTON = 2
 	};
 
-	Input(Language language, OSystem *system);
+	Input(Common::Language language, OSystem *system);
 
 	//! calls the other delay() with a value adjusted depending on _fastMode
 	void delay();
@@ -114,10 +114,6 @@ private:
 		KEY_F12
 	};
 
-	enum {
-		LANGUAGE_COUNT = 6
-	};
-
 	//! used to get keyboard and mouse events
 	OSystem *_system;
 
@@ -167,10 +163,10 @@ private:
 	const char *_currentCommandKeys;
 
 	//! command keys for all languages
-	static const char *_commandKeys[LANGUAGE_COUNT];
+	static const char *_commandKeys[];
 
 	//! verbs matching the command keys
-	static const Verb _verbKeys[8];
+	static const Verb _verbKeys[];
 };
 
 } // End of namespace Queen
