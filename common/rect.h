@@ -42,7 +42,7 @@ struct Point {
 	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
 	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
 	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
-	
+
 	/**
 	 * Return the square of the distance between this point and the point p.
 	 *
@@ -53,7 +53,7 @@ struct Point {
 		int diffx = ABS(p.x - x);
 		if (diffx >= 0x1000)
 			return 0xFFFFFF;
-	
+
 		int diffy = ABS(p.y - y);
 		if (diffy >= 0x1000)
 			return 0xFFFFFF;
@@ -183,6 +183,11 @@ struct Rect {
 		right += x - left;
 		top = y;
 		left = x;
+	}
+
+	void translate(int16 dx, int16 dy) {
+		left += dx;	right += dx;
+		top += dy; bottom += dy;
 	}
 
 	void moveTo(const Point &p) {
