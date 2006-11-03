@@ -47,7 +47,7 @@ int getSampleRateFromVOCRate(int vocSR) {
 	}
 }
 
-byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
+static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	VocFileHeader fileHeader;
 
 	if (stream.read(&fileHeader, 8) != 8)
@@ -91,11 +91,26 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &l
 		len |= stream.readByte() << 16;
 
 		switch (code) {
-		case 1: {
-			int time_constant = stream.readByte();
-			int packing = stream.readByte();
-			len -= 2;
-			rate = getSampleRateFromVOCRate(time_constant);
+		case 1:
+		case 9: {
+			int packing;
+			if (code == 1) {
+				int time_constant = stream.readByte();
+				packing = stream.readByte();
+				len -= 2;
+				rate = getSampleRateFromVOCRate(time_constant);
+			} else {
+				rate = stream.readUint32LE();
+				int bits = stream.readByte();
+				int channels = stream.readByte();
+				if (bits != 8 || channels != 1) {
+					warning("Unsupported VOC file format (%d bits per sample, %d channels)", bits, channels);
+					break;
+				}
+				packing = stream.readUint16LE();
+				stream.readUint32LE();		
+				len -= 12;
+			}
 			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 			if (packing == 0) {
 				if (size) {
@@ -119,7 +134,7 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &l
 			assert(len == 0);
 			break;
 		default:
-			warning("Invalid code in VOC file : %d", code);
+			warning("Unhandled code in VOC file : %d", code);
 			return ret_sound;
 		}
 	}
