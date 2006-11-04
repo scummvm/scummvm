@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -732,10 +732,12 @@ protected:
 	static SpriteData _spritesTable[NUM_SPRITES];
 	static const uint8 _directionsTable[];
 	static char _saveLoadDescriptionsTable[10][33];
-	static const Common::Rect _inventoryAreasTable[13];
 
 	const OpcodeProc *_opcodesTable;
+	const Common::Rect *_inventoryAreasTable;
 	void setupOpcodes();
+	void setupRect();
+	void setupUIRect();
 };
 
 /*

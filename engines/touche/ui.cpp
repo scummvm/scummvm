@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -29,36 +29,44 @@
 
 namespace Touche {
 
-static const Common::Rect buttonsRectTable1[15] = {
-	Common::Rect(108, 120, 444, 135),
-	Common::Rect(108, 136, 444, 151),
-	Common::Rect(108, 152, 444, 167),
-	Common::Rect(108, 168, 444, 183),
-	Common::Rect(108, 184, 444, 199),
-	Common::Rect(108, 200, 444, 215),
-	Common::Rect(108, 216, 444, 231),
-	Common::Rect(108, 232, 444, 247),
-	Common::Rect(108, 248, 444, 263),
-	Common::Rect(108, 264, 444, 279),
-	Common::Rect(452, 120, 546, 144),
-	Common::Rect(452, 152, 546, 176),
-	Common::Rect(452, 216, 546, 240),
-	Common::Rect(452, 248, 546, 272),
-	Common::Rect(452, 184, 546, 208)
-};
+static const Common::Rect *buttonsRectTable1;
+static const Common::Rect *buttonsRectTable2;
 
-static const Common::Rect buttonsRectTable2[10] = {
-	Common::Rect(396, 130, 420, 154),
-	Common::Rect(396, 160, 420, 184),
-	Common::Rect(396, 190, 420, 214),
-	Common::Rect(126, 130, 380, 154),
-	Common::Rect(126, 160, 380, 184),
-	Common::Rect(126, 190, 380, 214),
-	Common::Rect(126, 250, 150, 274),
-	Common::Rect(396, 250, 420, 274),
-	Common::Rect(154, 256, 392, 268),
-	Common::Rect(126, 222, 420, 242)
-};
+void ToucheEngine::setupUIRect() {
+	static const Common::Rect inButtonsRectTable1[15] = {
+		Common::Rect(108, 120, 444, 135),
+		Common::Rect(108, 136, 444, 151),
+		Common::Rect(108, 152, 444, 167),
+		Common::Rect(108, 168, 444, 183),
+		Common::Rect(108, 184, 444, 199),
+		Common::Rect(108, 200, 444, 215),
+		Common::Rect(108, 216, 444, 231),
+		Common::Rect(108, 232, 444, 247),
+		Common::Rect(108, 248, 444, 263),
+		Common::Rect(108, 264, 444, 279),
+		Common::Rect(452, 120, 546, 144),
+		Common::Rect(452, 152, 546, 176),
+		Common::Rect(452, 216, 546, 240),
+		Common::Rect(452, 248, 546, 272),
+		Common::Rect(452, 184, 546, 208)
+	};
+
+	static const Common::Rect inButtonsRectTable2[10] = {
+		Common::Rect(396, 130, 420, 154),
+		Common::Rect(396, 160, 420, 184),
+		Common::Rect(396, 190, 420, 214),
+		Common::Rect(126, 130, 380, 154),
+		Common::Rect(126, 160, 380, 184),
+		Common::Rect(126, 190, 380, 214),
+		Common::Rect(126, 250, 150, 274),
+		Common::Rect(396, 250, 420, 274),
+		Common::Rect(154, 256, 392, 268),
+		Common::Rect(126, 222, 420, 242)
+	};
+	
+	buttonsRectTable1 = inButtonsRectTable1;
+	buttonsRectTable2 = inButtonsRectTable2;
+}
 
 static int16 settingsMenuTextsTable[] = { 0, 0, 0, -92, -93, -94, -87, -88, 0, -91 };
 

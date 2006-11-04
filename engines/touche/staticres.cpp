@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -235,21 +235,25 @@ char ToucheEngine::_saveLoadDescriptionsTable[10][33] = {
 	"[Empty.9.......................]"
 };
 
-const Common::Rect ToucheEngine::_inventoryAreasTable[13] = {
-	Common::Rect(  0, 354,  50, 400),
-	Common::Rect( 66, 354, 124, 380),
-	Common::Rect( 74, 380, 116, 398),
-	Common::Rect(116, 380, 158, 398),
-	Common::Rect(144, 354, 198, 380),
-	Common::Rect(202, 354, 238, 396),
-	Common::Rect(242, 354, 300, 396),
-	Common::Rect(300, 354, 358, 396),
-	Common::Rect(358, 354, 416, 396),
-	Common::Rect(416, 354, 474, 396),
-	Common::Rect(474, 354, 532, 396),
-	Common::Rect(532, 354, 590, 396),
-	Common::Rect(594, 354, 640, 395)
-};
+void ToucheEngine::setupRect() {
+	static const Common::Rect inventoryAreasTable[13] = {
+		Common::Rect(  0, 354,  50, 400),
+		Common::Rect( 66, 354, 124, 380),
+		Common::Rect( 74, 380, 116, 398),
+		Common::Rect(116, 380, 158, 398),
+		Common::Rect(144, 354, 198, 380),
+		Common::Rect(202, 354, 238, 396),
+		Common::Rect(242, 354, 300, 396),
+		Common::Rect(300, 354, 358, 396),
+		Common::Rect(358, 354, 416, 396),
+		Common::Rect(416, 354, 474, 396),
+		Common::Rect(474, 354, 532, 396),
+		Common::Rect(532, 354, 590, 396),
+		Common::Rect(594, 354, 640, 395)
+	};
+
+	_inventoryAreasTable = inventoryAreasTable;
+}
 
 const uint16 Graphics::_fontOffs[] = {
 	0x0000, 0x0007, 0x0024, 0x0043, 0x0072, 0x00AD, 0x00E0, 0x0113, 0x0124, 0x0141,

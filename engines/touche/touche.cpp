@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -64,7 +64,10 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_fullRedrawCounter = 0;
 	_redrawScreenCounter1 = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
+
 	setupOpcodes();
+	setupRect();
+	setupUIRect();
 
 	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
