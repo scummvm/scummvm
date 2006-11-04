@@ -126,8 +126,8 @@ bool Debugger::Cmd_GameState(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Info(int argc, const char **argv) {
-	DebugPrintf("Version: %s\n", _vm->resource()->JASVersion());
-	DebugPrintf("Audio compression: %d\n", _vm->resource()->compression());
+	DebugPrintf("Version: %s\n", _vm->resource()->getJASVersion());
+	DebugPrintf("Audio compression: %d\n", _vm->resource()->getCompression());
 	return true;
 }
 

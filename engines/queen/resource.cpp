@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/config-manager.h"
 #include "queen/resource.h"
 
@@ -32,7 +33,7 @@ static ResourceEntry *_resourceTablePEM10;
 
 const char *Resource::_tableFilename = "queen.tbl";
 
-const GameVersion Resource::_gameVersions[] = {
+const RetailGameVersion Resource::_gameVersions[] = {
 	{ "PEM10", 0x00000008,  22677657 },
 	{ "CEM10", 0x0000584E, 190787021 },
 	{ "PFM10", 0x0002CD93,  22157304 },
@@ -56,16 +57,29 @@ static int compareResourceEntry(const void *a, const void *b) {
 
 Resource::Resource()
 	: _resourceEntries(0), _resourceTable(NULL) {
-	_resourceFile = new Common::File();
-	if (!findCompressedVersion() && !findNormalVersion())
-		error("Could not open resource file '%s'", "queen.1");
+	memset(&_version, 0, sizeof(_version));
+
+	if (!_resourceFile.open("queen.1c")) {
+		if (!_resourceFile.open("queen.1")) {
+			error("Could not open resource file 'queen.1[c]'");
+		}
+	}
+	if (!detectVersion(&_version, &_resourceFile)) {
+		error("Unable to detect game version");
+	}
+
+	if (_version.features & GF_REBUILT) {
+		readTableEntries(&_resourceFile);
+	} else {
+		readTableFile(_version.tableOffset);
+	}
+
 	checkJASVersion();
-	debug(5, "Detected game version: %s, which has %d resource entries", _versionString, _resourceEntries);
+	debug(5, "Detected game version: %s, which has %d resource entries", _version.str, _resourceEntries);
 }
 
 Resource::~Resource() {
-	_resourceFile->close();
-	delete _resourceFile;
+	_resourceFile.close();
 
 	if (_resourceTable != _resourceTablePEM10)
 		delete[] _resourceTable;
@@ -74,22 +88,17 @@ Resource::~Resource() {
 ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	assert(filename[0] && strlen(filename) < 14);
 
-	char entryName[14];
-	char *ptr = entryName;
-
-	strcpy(entryName, filename);
-	do
-		*ptr = toupper(*ptr);
-	while (*ptr++);
+	Common::String entryName(filename);
+	entryName.toUppercase();
 
 	ResourceEntry *re = NULL;
 #ifndef PALMOS_MODE
-	re = (ResourceEntry *)bsearch(entryName, _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
+	re = (ResourceEntry *)bsearch(entryName.c_str(), _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
 #else
 	// PALMOS FIXME (?) : still doesn't work for me (????) use this instead
 	uint32 cur = 0;
 	do {
-		if (!strcmp(entryName, _resourceTable[cur].filename)) {
+		if (!strcmp(entryName.c_str(), _resourceTable[cur].filename)) {
 			re = &_resourceTable[cur];
 			break;
 		}
@@ -113,44 +122,78 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size, 
 		dstBuf = new byte[sz];
 	}
 
-	_resourceFile->seek(re->offset + skipBytes);
-	_resourceFile->read(dstBuf, sz);
+	_resourceFile.seek(re->offset + skipBytes);
+	_resourceFile.read(dstBuf, sz);
 	return dstBuf;
 }
 
-bool Resource::findNormalVersion() {
-	_resourceFile->open("queen.1");
-	if (!_resourceFile->isOpen()) {
-		return false;
-	}
+bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
+	memset(ver, 0, sizeof(DetectedGameVersion));
 
-	_compression = COMPRESSION_NONE;
-
-	// detect game version based on resource file size ; we try to
-	// verify that it is indeed the version we think it is later on
-	const GameVersion *gameVersion = detectGameVersion(_resourceFile->size());
-	if (gameVersion == NULL)
-		error("Unknown/unsupported FOTAQ version");
-
-	strcpy(_versionString, gameVersion->versionString);
-	if (!readTableFile(gameVersion)) {
-		// check if it is the english floppy version, for which we have a hardcoded version of the table
-		if (!strcmp(gameVersion->versionString, _gameVersions[VER_ENG_FLOPPY].versionString)) {
-			_resourceEntries = 1076;
-			_resourceTable = _resourceTablePEM10;
-		} else {
-			error("Could not find tablefile '%s'", _tableFilename);
+	char versionStr[6];
+	if (f->readUint32BE() == MKID_BE('QTBL')) {
+		f->read(versionStr, 6);
+		f->skip(2);
+		ver->compression = f->readByte();
+		ver->features = GF_REBUILT;
+		ver->tableOffset = 0;
+	} else {
+		const RetailGameVersion *gameVersion = detectGameVersionFromSize(f->size());
+		if (gameVersion == NULL) {
+			warning("Unknown/unsupported FOTAQ version");
+			return false;
 		}
+		strcpy(versionStr, gameVersion->str);
+		ver->compression = COMPRESSION_NONE;
+		ver->features = 0;
+		ver->tableOffset = gameVersion->tableOffset;
 	}
-	return true;
-}
 
-bool Resource::findCompressedVersion() {
-	_resourceFile->open("queen.1c");
-	if (!_resourceFile->isOpen()) {
-		return false;
+	switch (versionStr[1]) {
+	case 'E':
+		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
+			ver->language = Common::RU_RUS;
+		} else {
+			ver->language = Common::EN_ANY;
+		}
+		break;
+	case 'G':
+		ver->language = Common::DE_DEU;
+		break;
+	case 'F':
+		ver->language = Common::FR_FRA;
+		break;
+	case 'I':
+		ver->language = Common::IT_ITA;
+		break;
+	case 'S':
+		ver->language = Common::ES_ESP;
+		break;
+	case 'H':
+		ver->language = Common::HB_ISR;
+		break;
+	default:
+		warning("Unknown language id '%c', defaulting to English", versionStr[1]);
+		ver->language = Common::EN_ANY;
+		break;
 	}
-	readTableCompResource();
+
+	switch (versionStr[0]) {
+	case 'P':
+		ver->features |= GF_FLOPPY;
+		break;
+	case 'C':
+		ver->features |= GF_TALKIE;
+		break;
+	}
+
+	if (strcmp(versionStr, "PE100") == 0) {
+		ver->features |= GF_DEMO;
+	} else if (strcmp(versionStr, "PEint") == 0) {
+		ver->features |= GF_INTERVIEW;
+	}
+
+	strcpy(ver->str, versionStr);
 	return true;
 }
 
@@ -164,58 +207,32 @@ void Resource::checkJASVersion() {
 		offset += JAS_VERSION_OFFSET_INTV;
 	else
 		offset += JAS_VERSION_OFFSET_PC;
-	_resourceFile->seek(offset);
+	_resourceFile.seek(offset);
 
 	char versionStr[6];
-	_resourceFile->read(versionStr, 6);
-	if (strcmp(_versionString, versionStr))
-		error("Verifying game version failed! (expected: '%s', found: '%s')", _versionString, versionStr);
+	_resourceFile.read(versionStr, 6);
+	if (strcmp(_version.str, versionStr))
+		error("Verifying game version failed! (expected: '%s', found: '%s')", _version.str, versionStr);
 }
 
-Common::Language Resource::getLanguage() const {
-	switch (_versionString[1]) {
-	case 'E':
-		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS)
-			return Common::RU_RUS;
-		return Common::EN_ANY;
-	case 'G':
-		return Common::DE_DEU;
-	case 'F':
-		return Common::FR_FRA;
-	case 'I':
-		return Common::IT_ITA;
-	case 'S':
-		return Common::ES_ESP;
-	case 'H':
-		return Common::HB_ISR;
-	default:
-		warning("Unknown language id '%c', defaulting to English", _versionString[1]);
-		return Common::EN_ANY;
-	}
-}
-
-bool Resource::readTableFile(const GameVersion *gameVersion) {
+void Resource::readTableFile(uint32 offset) {
 	Common::File tableFile;
 	tableFile.open(_tableFilename);
-	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
-		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION)
+	if (tableFile.isOpen() && tableFile.readUint32BE() == MKID_BE('QTBL')) {
+		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION) {
 			warning("Incorrect version of queen.tbl, please update it");
-		tableFile.seek(gameVersion->tableOffset);
+		}
+		tableFile.seek(offset);
 		readTableEntries(&tableFile);
-		return true;
+	} else {
+		// check if it is the english floppy version, for which we have a hardcoded version of the table
+		if (strcmp(_version.str, _gameVersions[VER_ENG_FLOPPY].str) == 0) {
+			_resourceEntries = 1076;
+			_resourceTable = _resourceTablePEM10;
+		} else {
+			error("Could not find tablefile '%s'", _tableFilename);
+		}
 	}
-	return false;
-}
-
-void Resource::readTableCompResource() {
-	if (_resourceFile->readUint32BE() != 'QTBL')
-		error("Invalid table header");
-
-	_resourceFile->read(_versionString, 6);
-	_resourceFile->skip(2); // obsolete
-	_compression = _resourceFile->readByte();
-
-	readTableEntries(_resourceFile);
 }
 
 void Resource::readTableEntries(Common::File *file) {
@@ -231,11 +248,10 @@ void Resource::readTableEntries(Common::File *file) {
 	}
 }
 
-const GameVersion *Resource::detectGameVersion(uint32 size) const {
-	const GameVersion *pgv = _gameVersions;
-	for (int i = 0; i < VER_COUNT; ++i, ++pgv) {
-		if (pgv->dataFileSize == size) {
-			return pgv;
+const RetailGameVersion *Resource::detectGameVersionFromSize(uint32 size) {
+	for (int i = 0; i < VER_COUNT; ++i) {
+		if (_gameVersions[i].dataFileSize == size) {
+			return &_gameVersions[i];
 		}
  	}
 	return NULL;
@@ -249,8 +265,8 @@ Common::File *Resource::giveCompressedSound(const char *filename, uint32 *size) 
 		if (size != NULL) {
 			*size = re->size;
 		}
-		_resourceFile->seek(re->offset);
-		f = _resourceFile;
+		_resourceFile.seek(re->offset);
+		f = &_resourceFile;
 	}
 	return f;
 }

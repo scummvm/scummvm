@@ -48,39 +48,21 @@
 
 #include "sound/mididrv.h"
 
-/* Flight of the Amazon Queen */
-static const PlainGameDescriptor queen_setting[] = {
-	{ "queen", "Flight of the Amazon Queen" },
-	{ "queen", "Flight of the Amazon Queen (Demo)" },
-	{ "queen", "Flight of the Amazon Queen (Interview)" },
-	{ 0, 0 }
+static const PlainGameDescriptor queenGameDescriptor = {
+	"queen", "Flight of the Amazon Queen"
 };
 
 GameList Engine_QUEEN_gameIDList() {
 	GameList games;
-	games.push_back(queen_setting[0]);
+	games.push_back(queenGameDescriptor);
 	return games;
 }
 
 GameDescriptor Engine_QUEEN_findGameID(const char *gameid) {
-	if (0 == scumm_stricmp(gameid, queen_setting[0].gameid))
-		return queen_setting[0];
-	return GameDescriptor();
-}
-
-// FIXME/TODO: it would be nice to re-use the existing code of the
-// Resource class to detect the FOTAQ version.
-static GameDescriptor determineTarget(uint32 size) {
-	switch (size) {
-	case 3724538:	//regular demo
-	case 3732177:
-		return queen_setting[1];
-	case 1915913:   //interview demo
-		return queen_setting[2];
-	default:	//non-demo
-		return queen_setting[0];
+	if (0 == scumm_stricmp(gameid, queenGameDescriptor.gameid)) {
+		return queenGameDescriptor;
 	}
-	return queen_setting[0];
+	return GameDescriptor();
 }
 
 DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
@@ -88,32 +70,27 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (!file->isDirectory()) {
-			const char *fileName = file->name().c_str();
-
-			if (0 == scumm_stricmp("queen.1", fileName) || 0 == scumm_stricmp("queen.1c", fileName)) {
-				Common::File dataFile;
-				dataFile.open(*file);
-				assert(dataFile.isOpen());
-
-				if (0 == scumm_stricmp("queen.1", fileName)) {	//an unmodified file
-					detectedGames.push_back(determineTarget(dataFile.size()));
-				} else if (0 == scumm_stricmp("queen.1c", fileName)) { //oh joy, it's a rebuilt file
-					char header[9];
-					dataFile.read(header, 9);
-					if (0 == scumm_strnicmp("QTBL", header, 4)) { //check validity
-						uint8 version = 0;	//default to full/normal version
-
-						if (0 == scumm_strnicmp("PE100", header + 4, 5)) //One of the 2 regular demos
-							version = 1;
-						if (0 == scumm_strnicmp("PEint", header + 4, 5)) //Interview demo
-							version = 2;
-
-						detectedGames.push_back(queen_setting[version]);
-					}
+		if (file->isDirectory()) {
+			continue;
+		}
+		if (file->name().equalsIgnoreCase("queen.1") || file->name().equalsIgnoreCase("queen.1c")) {
+			Common::File dataFile;
+			if (!dataFile.open(*file)) {
+				continue;
+			}
+			Queen::DetectedGameVersion version;
+			if (Queen::Resource::detectVersion(&version, &dataFile)) {
+				DetectedGame dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, Common::kPlatformPC);
+				if (version.features & Queen::GF_DEMO) {
+					dg.updateDesc("Demo");
+				} else if (version.features & Queen::GF_INTERVIEW) {
+					dg.updateDesc("Interview");
+				} else if (version.features & Queen::GF_FLOPPY) {
+					dg.updateDesc("Floppy");
+				} else if (version.features & Queen::GF_TALKIE) {
+					dg.updateDesc("Talkie");
 				}
-
-				dataFile.close();
+				detectedGames.push_back(dg);
 				break;
 			}
 		}
@@ -421,7 +398,7 @@ int QueenEngine::init() {
 	_music = new Music(driver, this);
 	_music->hasNativeMT32(native_mt32);
 
-	_sound = Sound::giveSound(_mixer, this, _resource->compression());
+	_sound = Sound::giveSound(_mixer, this, _resource->getCompression());
 	_walk = new Walk(this);
 	//_talkspeedScale = (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 255.0;
 

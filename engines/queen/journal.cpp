@@ -457,7 +457,7 @@ void Journal::drawConfigPanel() {
 
 void Journal::drawInfoPanel() {
 	showBob(BOB_INFO_BOX, 72, 221, FRAME_INFO_BOX);
-	const char *ver = _vm->resource()->JASVersion();
+	const char *ver = _vm->resource()->getJASVersion();
 	switch (ver[0]) {
 	case 'P':
 		_vm->display()->setTextCentered(132, "PC Hard Drive", false);

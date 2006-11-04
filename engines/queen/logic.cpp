@@ -190,7 +190,7 @@ void Logic::initialise() {
 	_currentRoom = _objectData[_entryObj].room;
 	_entryObj = 0;
 
-	if (memcmp(ptr, _vm->resource()->JASVersion(), 5) != 0) {
+	if (memcmp(ptr, _vm->resource()->getJASVersion(), 5) != 0) {
 		warning("Unexpected queen.jas file format");
 	}
 

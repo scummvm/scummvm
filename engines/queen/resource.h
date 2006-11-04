@@ -29,31 +29,33 @@
 
 namespace Queen {
 
+enum GameFeatures {
+	GF_DEMO      = 1 << 0, // demo
+	GF_TALKIE    = 1 << 1, // equivalent to cdrom version check
+	GF_FLOPPY    = 1 << 2, // floppy, ie. non-talkie version
+	GF_INTERVIEW = 1 << 3, // interview demo
+	GF_REBUILT   = 1 << 4  // version rebuilt with the 'compression_queen' tool
+};
+
+struct RetailGameVersion {
+	char str[6];
+	uint32 tableOffset;
+	uint32 dataFileSize;
+};
+
+struct DetectedGameVersion {
+	Common::Language language;
+	uint8 features;
+	uint8 compression;
+	char str[6];
+	uint32 tableOffset;
+};
+
 struct ResourceEntry {
 	char filename[13];
 	uint8 bundle;
 	uint32 offset;
 	uint32 size;
-};
-
-struct GameVersion {
-	char versionString[6];
-	uint32 tableOffset;
-	uint32 dataFileSize;
-};
-
-class LineReader {
-public:
-
-	LineReader(char *buffer, uint32 bufsize);
-	~LineReader();
-	char *nextLine();
-
-private:
-
-	char *_buffer;
-	uint32 _bufSize;
-	int _current;
 };
 
 class Resource {
@@ -71,19 +73,22 @@ public:
 	//! returns a reference to a sound file
 	Common::File *giveCompressedSound(const char *filename, uint32 *size);
 
-	bool isDemo() const { return !strcmp(_versionString, "PE100"); }
-	bool isInterview() const { return !strcmp(_versionString, "PEint"); }
-	bool isFloppy() const { return _versionString[0] == 'P'; }
-	bool isCD() const { return _versionString[0] == 'C'; }
+	bool isDemo() const { return _version.features & GF_DEMO; }
+	bool isInterview() const { return _version.features & GF_INTERVIEW; }
+	bool isFloppy() const { return _version.features & GF_FLOPPY; }
+	bool isCD() const { return _version.features & GF_TALKIE; }
 
 	//! returns compression type for audio files
-	uint8 compression() const { return _compression; }
+	uint8 getCompression() const { return _version.compression; }
 
 	//! returns JAS version string (contains language, platform and version information)
-	const char *JASVersion() const { return _versionString; }
+	const char *getJASVersion() const { return _version.str; }
 
-	//! returns language of the game
-	Common::Language getLanguage() const;
+	//! returns the language of the game
+	Common::Language getLanguage() const { return _version.language; }
+
+	//! detect game version
+	static bool detectVersion(DetectedGameVersion *ver, Common::File *f);
 
 	enum Version {
 		VER_ENG_FLOPPY   = 0,
@@ -115,24 +120,14 @@ public:
 
 protected:
 
-	Common::File *_resourceFile;
+	Common::File _resourceFile;
 
-	//! compression type for audio files
-	uint8 _compression;
-
-	//! JAS version string of the game
-	char _versionString[6];
+	DetectedGameVersion _version;
 
 	//! number of entries in resource table
 	uint32 _resourceEntries;
 
 	ResourceEntry *_resourceTable;
-
-	//! look for a normal queen version (ie. queen.1)
-	bool findNormalVersion();
-
-	//! look for a compressed/rebuilt queen version (ie. queen.1c)
-	bool findCompressedVersion();
 
 	//! verify the version of the selected game
 	void checkJASVersion();
@@ -141,27 +136,38 @@ protected:
 	ResourceEntry *resourceEntry(const char *filename) const;
 
 	//! extarct the resource table for the specified game version
-	bool readTableFile(const GameVersion *gameVersion);
-
-	//! reads the resource table from a rebuilt datafile (ie. queen.1c)
-	void readTableCompResource();
+	void readTableFile(uint32 offset);
 
 	//! read the resource table from the specified file
 	void readTableEntries(Common::File *file);
 
 	//! detect game version based on queen.1 datafile size
-	const GameVersion *detectGameVersion(uint32 size) const;
+	static const RetailGameVersion *detectGameVersionFromSize(uint32 size);
 
 	//! resource table filename (queen.tbl)
 	static const char *_tableFilename;
 
 	//! known FOTAQ versions
-	static const GameVersion _gameVersions[];
+	static const RetailGameVersion _gameVersions[];
 
 #ifndef PALMOS_68K
 	//! resource table for english floppy version
 	static ResourceEntry _resourceTablePEM10[];
 #endif
+};
+
+class LineReader {
+public:
+
+	LineReader(char *buffer, uint32 bufsize);
+	~LineReader();
+	char *nextLine();
+
+private:
+
+	char *_buffer;
+	uint32 _bufSize;
+	int _current;
 };
 
 } // End of namespace Queen
