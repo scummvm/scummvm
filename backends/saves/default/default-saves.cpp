@@ -161,7 +161,7 @@ static void join_paths(const char *filename, const char *directory,
 		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
 #endif
 
-#if !defined(__GP32__) && !defined(PALMOS_MODE)
+#if !defined(__GP32__)
 		strncat(buf, "/", bufsize-1);	// prevent double /
 #endif
 	}

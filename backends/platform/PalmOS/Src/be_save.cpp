@@ -24,90 +24,7 @@
 
 #include "be_base.h"
 #include "common/savefile.h"
-
-// SaveFile class
-
-class PalmSaveFile : public Common::SaveFile {
-private:
-	FILE *fh;
-public:
-	PalmSaveFile(const char *filename, bool saveOrLoad) {
-		fh = ::fopen(filename, (saveOrLoad? "wb" : "rb"));
-	}
-	~PalmSaveFile() {
-		if (fh) ::fclose(fh);
-	}
-	
-	bool eos() const { return feof(fh) != 0; }
-	bool ioFailed() const { return ferror(fh) != 0; }
-	void clearIOFailed() { clearerr(fh); }
-
-	bool isOpen() const { return fh != NULL; }
-
-	uint32 read(void *buf, uint32 size);
-	uint32 write(const void *buf, uint32 size);
-
-	uint32 pos() const {
-		assert(fh);
-		return ftell(fh);
-	}
-	uint32 size() const {
-		assert(fh);
-		uint32 oldPos = ftell(fh);
-		fseek(fh, 0, SEEK_END);
-		uint32 length = ftell(fh);
-		fseek(fh, oldPos, SEEK_SET);
-		return length;
-	}
-	void seek(int32 offs, int whence = SEEK_SET) {
-		assert(fh);
-		fseek(fh, offs, whence);
-	}
-};
-
-uint32 PalmSaveFile::read(void *buf, uint32 size) {
-	// we must return the size, where fread return nitems upon success ( 1 <=> size)
-	if (fh) return (::fread(buf, 1, size, fh));
-	return 0;
-}
-
-uint32 PalmSaveFile::write(const void *buf, uint32 size) {
-	// we must return the size, where fwrite return nitems upon success ( 1 <=> size)
-	if (fh) return ::fwrite(buf, 1, size, fh);
-	return 0;
-}
-
-
-
-
-
-// SaveFileManager class
-
-class PalmSaveFileManager : public Common::SaveFileManager {
-public:
-	virtual Common::OutSaveFile *openForSaving(const char *filename) {
-		return openSavefile(filename, true);
-	}
-	virtual Common::InSaveFile *openForLoading(const char *filename) {
-		return openSavefile(filename, false);
-	}
-
-	Common::SaveFile *openSavefile(const char *filename, bool saveOrLoad);
-	void listSavefiles(const char *prefix, bool *marks, int num);
-
-protected:
-	Common::SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
-};
-
-Common::SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
-	char buf[256];
-
-	strcpy(buf, getSavePath());
-	strcat(buf, "/");
-	strcat(buf, filename);
-
-	return makeSaveFile(buf, saveOrLoad);
-}
+#include "be_save.h"
 
 void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	FileRef fileRef;
@@ -146,14 +63,4 @@ void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num
 	}
 
 	VFSFileClose(fileRef);
-}
-
-Common::SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
-	PalmSaveFile *sf = new PalmSaveFile(filename, saveOrLoad);
-
-	if (!sf->isOpen()) {
-		delete sf;
-		sf = 0;
-	}
-	return sf;
 }

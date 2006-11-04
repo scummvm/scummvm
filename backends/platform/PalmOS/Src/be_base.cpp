@@ -23,10 +23,9 @@
  */
 
 #include "be_base.h"
+#include "be_save.h"
 #include "common/config-file.h"
 #include "common/config-manager.h"
-
-#include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
 
@@ -101,7 +100,7 @@ void OSystem_PalmBase::initBackend() {
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_saveMgr == 0) {
-		_saveMgr = new DefaultSaveFileManager();
+		_saveMgr = new PalmSaveFileManager();
 	}
 
 	// Create and hook up the mixer, if none exists yet (we check for this to
