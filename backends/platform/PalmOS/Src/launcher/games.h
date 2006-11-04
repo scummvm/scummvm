@@ -166,6 +166,7 @@ enum {
 	ENGINE_SAGA,
 	ENGINE_SCUMM,
 	ENGINE_AGI,
+	ENGINE_TOUCHE,
 	ENGINE_COUNT
 };
 
@@ -185,6 +186,7 @@ static const struct {
 	{ "saga",	"SAGA Engine" },
 	{ "scumm",	"Scumm Games" },
 	{ "agi",	"Sierra AGI" },
+	{ "touche",	"Touche: The Adventures of the Fifth Musketeer" },
 };
 
 
