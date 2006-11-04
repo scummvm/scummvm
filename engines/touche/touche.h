@@ -729,11 +729,13 @@ protected:
 	uint8 *_offscreenBuffer;
 	uint8 _paletteBuffer[256 * 4];
 
-	static OpcodeProc _opcodesTable[NUM_OPCODES];
 	static SpriteData _spritesTable[NUM_SPRITES];
 	static const uint8 _directionsTable[];
 	static char _saveLoadDescriptionsTable[10][33];
 	static const Common::Rect _inventoryAreasTable[13];
+
+	const OpcodeProc *_opcodesTable;
+	void setupOpcodes();
 };
 
 /*

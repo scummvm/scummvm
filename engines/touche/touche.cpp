@@ -64,6 +64,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_fullRedrawCounter = 0;
 	_redrawScreenCounter1 = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
+	setupOpcodes();
 
 	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
