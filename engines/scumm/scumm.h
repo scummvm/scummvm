@@ -583,10 +583,6 @@ public:
 	int _NESStartStrip;
 
 protected:
-	/* Current objects - can go in their respective classes */
-	byte _curActor;
-	int _curVerb;
-	int _curVerbSlot;
 	int _curPalIndex;
 
 public:
@@ -870,10 +866,6 @@ protected:
 	int8 _userPut;
 	uint16 _userState;
 
-	int _activeInventory;
-	int _activeObject;
-	int _activeVerb;
-
 	virtual void handleMouseOver(bool updateInventory);
 	virtual void redrawVerbs();
 	virtual void checkExecVerbs();
@@ -1013,7 +1005,7 @@ protected:
 
 	void resetPalette();
 
-	void setPalette(int pal);
+	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	virtual void setPalColor(int index, int r, int g, int b);

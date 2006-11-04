@@ -560,7 +560,7 @@ void ScummEngine_v60he::o60_roomOps() {
 
 	case 213:		// SO_ROOM_NEW_PALETTE
 		a = pop();
-		setPalette(a);
+		setCurrentPalette(a);
 		break;
 	case 220:
 		a = pop();

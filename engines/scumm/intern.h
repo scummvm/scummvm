@@ -276,6 +276,10 @@ protected:
 	
 	char _sentenceBuf[256];
 
+	int _activeInventory;
+	int _activeObject;
+	int _activeVerb;
+
 public:
 	ScummEngine_v2(OSystem *syst, const DetectorResult &dr);
 
@@ -595,6 +599,10 @@ protected:
 	bool _smushActive;
 
 	Insane *_insane;
+
+	byte _curActor;
+	int _curVerb;
+	int _curVerbSlot;
 
 public:
 	/** This flag tells IMuseDigital that INSANE is running. */

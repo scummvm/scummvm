@@ -1038,7 +1038,7 @@ void ScummEngine_v72he::o72_roomOps() {
 
 	case 213:		// SO_ROOM_NEW_PALETTE
 		a = pop();
-		setPalette(a);
+		setCurrentPalette(a);
 		break;
 
 	case 220:

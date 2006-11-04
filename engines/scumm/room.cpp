@@ -553,7 +553,7 @@ void ScummEngine::resetRoomSubBlocks() {
 #endif
 
 	if (_PALS_offs || _CLUT_offs)
-		setPalette(0);
+		setCurrentPalette(0);
 }
 
 

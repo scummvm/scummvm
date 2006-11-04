@@ -149,9 +149,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_numTalkies = 0;
 	_numPalettes = 0;
 	_numUnk = 0;
-	_curActor = 0;
-	_curVerb = 0;
-	_curVerbSlot = 0;
 	_curPalIndex = 0;
 	_currentRoom = 0;
 	_egoPositioned = false;
@@ -170,9 +167,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_numObjectsInRoom = 0;
 	_userPut = 0;
 	_userState = 0;
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 0;
 	_resourceHeaderSize = 8;
 	_saveLoadFlag = 0;
 	_saveLoadSlot = 0;
@@ -612,6 +606,10 @@ ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v3old(syst, dr) {
 
+	_activeInventory = 0;
+	_activeObject = 0;
+	_activeVerb = 0;
+
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
 	VAR_SENTENCE_OBJECT2 = 0xFF;
@@ -638,6 +636,10 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
+
+	_curActor = 0;
+	_curVerb = 0;
+	_curVerbSlot = 0;
 
 	VAR_VIDEONAME = 0xFF;
 	VAR_RANDOM_NR = 0xFF;
