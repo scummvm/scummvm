@@ -264,6 +264,9 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool one_opcode_only) {
 				printf("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
+			case 'j':
+				printf("-> ");
+				break;
 			case 'q':
 				while (readUint16Wrapper(src) != end) {
 					printf("(%d,%d) ", readUint16Wrapper(src),

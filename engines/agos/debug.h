@@ -2328,12 +2328,12 @@ const char *const elvira1_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|IF_EQUAL",
-	"d|IF_OBJECT_HERE",
-	"d|IF_OBJECT_NOT_HERE",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|IF_OBJECT_IS_AT",
-	"dd|IF_OBJECT_STATE_IS",
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
 	"dddd|DRAW",
 	"d|ON_STOP",
 	/* 12 */
@@ -2402,12 +2402,12 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|IF_EQUAL",
-	"d|IF_OBJECT_HERE",
-	"d|IF_OBJECT_NOT_HERE",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|IF_OBJECT_IS_AT",
-	"dd|IF_OBJECT_STATE_IS",
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
 	"dddd|DRAW",
 	"d|ON_STOP",
 	/* 12 */
@@ -2443,15 +2443,15 @@ const char *const ww_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"dd|POKE_PALETTE",
-	"v|IF_VAR_NOT_ZERO",
+	"vj|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|IF_BIT_SET",
+	"dj|IF_BIT_SET",
 	/* 44 */
-	"d|IF_BIT_CLEAR",
+	"dj|IF_BIT_CLEAR",
 	"dd|SET_WINDOW_PALETTE",
 	"d|SET_PALETTE_SLOT1",
 	"d|SET_PALETTE_SLOT2",
@@ -2469,7 +2469,7 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"|FULL_SCREEN",
 	"|BLACK_PALETTE",
 	"|CHECK_CODE_WHEEL",
-	"|IF_EGA",
+	"j|IF_EGA",
 	/* 60 */
 	"d|STOP_ANIMATE",
 	"d|VC_61",
@@ -2485,12 +2485,12 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|IF_EQUAL",
-	"d|IF_OBJECT_HERE",
-	"d|IF_OBJECT_NOT_HERE",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|IF_OBJECT_IS_AT",
-	"dd|IF_OBJECT_STATE_IS",
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
 	"ddddd|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
@@ -2526,15 +2526,15 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
-	"v|IF_VAR_NOT_ZERO",
+	"vj|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|IF_BIT_SET",
+	"dj|IF_BIT_SET",
 	/* 44 */
-	"d|IF_BIT_CLEAR",
+	"dj|IF_BIT_CLEAR",
 	"v|SET_SPRITE_X",
 	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
@@ -2552,7 +2552,7 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"|DUMMY_56",
 	"|BLACK_PALETTE",
 	"|DUMMY_58",
-	"|IF_SPEECH",
+	"j|IF_SPEECH",
 	/* 60 */
 	"d|STOP_ANIMATE",
 	"ddd|MASK",
@@ -2568,12 +2568,12 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"dddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|IF_EQUAL",
-	"d|IF_OBJECT_HERE",
-	"d|IF_OBJECT_NOT_HERE",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|IF_OBJECT_IS_AT",
-	"dd|IF_OBJECT_STATE_IS",
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
 	"ddddb|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
@@ -2609,15 +2609,15 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
-	"v|IF_VAR_NOT_ZERO",
+	"vj|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|IF_BIT_SET",
+	"dj|IF_BIT_SET",
 	/* 44 */
-	"d|IF_BIT_CLEAR",
+	"dj|IF_BIT_CLEAR",
 	"v|SET_SPRITE_X",
 	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
@@ -2642,15 +2642,15 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 	/* 64 */
-	"|IF_SPEECH",
+	"j|IF_SPEECH",
 	"|SLOW_FADE_IN",
-	"dd|IF_VAR_EQUAL",
-	"dd|IF_VAR_LE",
+	"ddj|IF_VAR_EQUAL",
+	"ddj|IF_VAR_LE",
 	/* 68 */
-	"dd|IF_VAR_GE",
+	"ddj|IF_VAR_GE",
 	"dd|PLAY_SEQ",
 	"dd|JOIN_SEQ",
-	"|IF_SEQ_WAITING",
+	"j|IF_SEQ_WAITING",
 	/* 72 */
 	"dd|SEQUE",
 	"bb|SET_MARK",
@@ -2665,12 +2665,12 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"dddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
-	"vd|IF_EQUAL",
-	"d|IF_OBJECT_HERE",
-	"d|IF_OBJECT_NOT_HERE",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
 	/* 8 */
-	"dd|IF_OBJECT_IS_AT",
-	"dd|IF_OBJECT_STATE_IS",
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
 	"ddddb|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
@@ -2706,15 +2706,15 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	/* 36 */
 	"dd|SET_WINDOW_IMAGE",
 	"v|SET_SPRITE_OFFSET_Y",
-	"v|IF_VAR_NOT_ZERO",
+	"vj|IF_VAR_NOT_ZERO",
 	"vd|SET_VAR",
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
 	"vd|DELAY_IF_NOT_EQ",
-	"d|IF_BIT_SET",
+	"dj|IF_BIT_SET",
 	/* 44 */
-	"d|IF_BIT_CLEAR",
+	"dj|IF_BIT_CLEAR",
 	"v|SET_SPRITE_X",
 	"v|SET_SPRITE_Y",
 	"vv|ADD_VAR_F",
@@ -2739,12 +2739,12 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 	/* 64 */
-	"|IF_SPEECH",
+	"j|IF_SPEECH",
 	"|SLOW_FADE_IN",
-	"dd|IF_VAR_EQUAL",
-	"dd|IF_VAR_LE",
+	"ddj|IF_VAR_EQUAL",
+	"ddj|IF_VAR_LE",
 	/* 68 */
-	"dd|IF_VAR_GE",
+	"ddj|IF_VAR_GE",
 	"dd|PLAY_SEQ",
 	"dd|JOIN_SEQ",
 	"|IF_SEQ_WAITING",
