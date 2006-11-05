@@ -84,6 +84,21 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_gameFile = 0;
 
+	_itemMemSize = 0;
+	_tableMemSize = 0;
+	_vgaMemSize = 0;
+
+	_musicIndexBase = 0;
+	_soundIndexBase = 0;
+	_tableIndexBase = 0;
+	_textIndexBase = 0;
+
+	_numItemStore = 0;
+	_numTextBoxes = 0;
+	_numVars = 0;
+	_numVideoOpcodes = 0;
+	_vgaBaseDelay = 0;
+
 	_strippedTxtMem = 0;
 	_textMem = 0;
 	_textSize = 0;
@@ -231,8 +246,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_printCharMaxPos = 0;
 	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
-
-	_numTextBoxes = 0;
 
 	_clockStopped = 0;
 	_gameStoppedClock = 0;
@@ -597,7 +610,6 @@ static const uint16 initialVideoWindows_Common[20] = {
 void AGOSEngine::setupGame() {
 	if (getGameType() == GType_PP) {
 		gss = PTR(puzzlepack_settings);
-		_numTextBoxes = 40;
 		_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
 		_vgaMemSize = 7500000;
@@ -608,10 +620,11 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 200000;
 		_frameRate = 1;
 		_vgaBaseDelay = 5;
+		_numItemStore = 10;
+		_numTextBoxes = 40;
 		_numVars = 2048;
 	} else if (getGameType() == GType_FF) {
 		gss = PTR(feeblefiles_settings);
-		_numTextBoxes = 40;
 		_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
 		_vgaMemSize = 7500000;
@@ -622,12 +635,13 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 200000;
 		_frameRate = 1;
 		_vgaBaseDelay = 5;
+		_numItemStore = 10;
+		_numTextBoxes = 40;
 		_numVars = 255;
 	} else if (getGameType() == GType_SIMON2) {
 		gss = PTR(simon2_settings);
 		_tableIndexBase = 1580 / 4;
 		_textIndexBase = 1500 / 4;
-		_numTextBoxes = 20;
 		_numVideoOpcodes = 75;
 #ifndef PALMOS_68K
 		_vgaMemSize = 2000000;
@@ -644,12 +658,13 @@ void AGOSEngine::setupGame() {
 		_soundIndexBase = 1660 / 4;
 		_frameRate = 1;
 		_vgaBaseDelay = 1;
+		_numItemStore = 10;
+		_numTextBoxes = 20;
 		_numVars = 255;
 	} else if (getGameType() == GType_SIMON1) {
 		gss = PTR(simon1_settings);
 		_tableIndexBase = 1576 / 4;
 		_textIndexBase = 1460 / 4;
-		_numTextBoxes = 20;
 		_numVideoOpcodes = 64;
 #ifndef PALMOS_68K
 		_vgaMemSize = 1000000;
@@ -662,10 +677,11 @@ void AGOSEngine::setupGame() {
 		_soundIndexBase = 0;
 		_frameRate = 1;
 		_vgaBaseDelay = 1;
+		_numItemStore = 10;
+		_numTextBoxes = 20;
 		_numVars = 255;
 	} else if (getGameType() == GType_WW) {
 		gss = PTR(simon1_settings);
-		_numTextBoxes = 20;
 		_numVideoOpcodes = 64;
 #ifndef PALMOS_68K
 		_vgaMemSize = 1000000;
@@ -676,10 +692,11 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 50000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
+		_numItemStore = 50;
+		_numTextBoxes = 10;
 		_numVars = 255;
 	} else if (getGameType() == GType_ELVIRA2) {
 		gss = PTR(simon1_settings);
-		_numTextBoxes = 20;
 		_numVideoOpcodes = 60;
 #ifndef PALMOS_68K
 		_vgaMemSize = 1000000;
@@ -690,10 +707,10 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 100000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
+		_numItemStore = 50;
 		_numVars = 255;
 	} else if (getGameType() == GType_ELVIRA1) {
 		gss = PTR(simon1_settings);
-		_numTextBoxes = 20;
 		_numVideoOpcodes = 57;
 #ifndef PALMOS_68K
 		_vgaMemSize = 1000000;

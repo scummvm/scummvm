@@ -197,7 +197,7 @@ protected:
 
 	uint32 *_gameOffsetsPtr;
 
-	uint _numVars;
+	uint _numItemStore, _numVars;
 	uint _vgaBaseDelay;
 
 	uint _musicIndexBase;
@@ -1138,6 +1138,7 @@ public:
 	void oe2_moveDirn();
 	void oe2_doClass();
 	void oe2_pObj();
+	void oe2_loadGame();
 	void oe2_drawItem();
 	void oe2_doTable();
 	void oe2_setDoorOpen();
@@ -1379,8 +1380,11 @@ protected:
 
 	Item *getNextItemPtrStrange();
 
+	bool loadGame_e1(const char *filename);
+	bool saveGame_e1(const char *filename);
+
+	bool loadGame(const char *filename);
 	bool saveGame(uint slot, const char *caption);
-	bool loadGame(uint slot);
 
 	void openTextWindow();
 	void tidyIconArray(uint i);

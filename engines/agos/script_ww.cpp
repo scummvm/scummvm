@@ -51,7 +51,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[70] = &AGOSEngine::oww_printLongText;
 	op[83] = &AGOSEngine::oe1_rescan;
 	op[85] = &AGOSEngine::oww_whereTo;
-	op[89] = &AGOSEngine::oe1_loadGame;
+	op[89] = &AGOSEngine::oe2_loadGame;
 	op[94] = &AGOSEngine::oe1_findMaster;
 	op[95] = &AGOSEngine::oe1_nextMaster;
 	op[98] = &AGOSEngine::oe1_animate;

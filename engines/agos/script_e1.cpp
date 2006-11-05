@@ -467,12 +467,18 @@ void AGOSEngine::oe1_doorExit() {
 
 void AGOSEngine::oe1_saveGame() {
 	// 201: save game
-	debug(0, "oe1_saveGame: stub (%s)", getStringPtrByID(getNextStringID()));
+	uint16 stringId = getNextStringID();
+
+	debug(0, "oe1_saveGame: stub (%s)", getStringPtrByID(stringId));
+	saveGame_e1((const char *)getStringPtrByID(stringId));
 }
 
 void AGOSEngine::oe1_loadGame() {
 	// 202: load game
-	debug(0, "oe1_loadGame: stub (%s)", getStringPtrByID(getNextStringID()));
+	uint16 stringId = getNextStringID();
+
+	debug(0, "oe1_loadGame: stub (%s)", (const char *)getStringPtrByID(stringId));
+	loadGame_e1((const char *)getStringPtrByID(stringId));
 }
 
 void AGOSEngine::oe1_clearUserItem() {

@@ -145,7 +145,7 @@ void AGOSEngine::quickLoadOrSave() {
 	char *filename = genSaveName(_saveLoadSlot);
 	if (_saveLoadType == 2) {
 		Subroutine *sub;
-		success = loadGame(_saveLoadSlot);
+		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
 			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
 		} else {
@@ -369,7 +369,7 @@ restart:;
 		if (!saveGame(_saveLoadRowCurPos + result, buf + result * 18))
 			fileError(_windowArray[5], true);
 	} else {
-		if (!loadGame(_saveLoadRowCurPos + i))
+		if (!loadGame(genSaveName(_saveLoadRowCurPos + i)))
 			fileError(_windowArray[5], false);
 	}
 
@@ -410,7 +410,6 @@ int AGOSEngine::userGameGetKey(bool *b, char *buf) {
 		} while (_lastHitArea3 == 0);
 
 		ha = _lastHitArea;
-
 		if (ha == NULL || ha->id < 205) {
 		} else if (ha->id == 205) {
 			return ha->id;
@@ -581,6 +580,344 @@ loop:;
 	undefineBox(0x7FFF);
 }
 
+bool AGOSEngine::loadGame_e1(const char *filename) {
+	Common::SeekableReadStream *f = NULL;
+	uint num, item_index, i;
+
+	_lockWord |= 0x100;
+
+	// Load restart state
+	Common::File *file = new Common::File();
+	file->open(filename, Common::File::kFileReadMode);
+	if (!file->isOpen()) {
+		delete file;
+		f = _saveFileMan->openForLoading(filename);
+	} else {
+		f = file;
+	}
+
+	if (f == NULL) {
+		_lockWord &= ~0x100;
+		return false;
+	}
+
+	num = f->readUint32BE();
+
+	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemArrayInited - 1) {
+		delete f;
+		_lockWord &= ~0x100;
+		return false;
+	}
+
+	f->readUint32BE();
+	f->readUint32BE();
+	_noParentNotify = true;
+
+	// add all timers
+	killAllTimers();
+	for (num = f->readUint32BE(); num; num--) {
+		uint32 timeout = f->readUint32BE();
+		uint16 func_to_call = f->readUint16BE();
+		addTimeEvent(timeout, func_to_call);
+	}
+
+	item_index = 1;
+	for (num = _itemArrayInited - 1; num; num--) {
+		Item *item = _itemArrayPtr[item_index++], *parent_item;
+
+		uint16 parent = f->readUint32BE();
+		if (parent == 0xFFFF)
+			parent_item = 0;
+		else
+			parent_item = derefItem(parent);
+
+		setItemParent(item, parent_item);
+
+		item->state = f->readUint16BE();
+		item->classFlags = f->readUint16BE();
+
+		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		if (o) {
+			o->objectSize = f->readUint16BE();
+			o->objectWeight = f->readUint16BE();
+		}
+
+		SubPlayer *p = (SubPlayer *)findChildOfType(item, 3);
+		if (p) {
+			p->score = f->readUint32BE();
+			p->level = f->readUint16BE();
+			p->size = f->readUint16BE();
+			p->weight = f->readUint16BE();
+			p->strength = f->readUint16BE();
+		}
+
+		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		if (u) {
+			for (i = 0; i != 8; i++) {
+				u->userFlags[i] = f->readUint16BE();
+			}
+
+			uint16 val = f->readUint32BE();
+			if (val == 0xFFFF)
+				u->userItems[0] = 0;
+			else
+				u->userItems[0] = val;
+		}
+	}
+
+	// read the variables
+	for (i = 0; i != _numVars; i++) {
+		writeVariable(i, f->readUint16BE());
+	}
+
+	debug(0, "Pos %d Size %d\n", f->pos(), f->size());
+	if (f->ioFailed()) {
+		error("load failed");
+	}
+
+	delete f;
+
+	_noParentNotify = false;
+
+	_lockWord &= ~0x100;
+
+	return true;
+}
+
+bool AGOSEngine::saveGame_e1(const char *filename) {
+	Common::WriteStream *f;
+	uint item_index, num_item, i;
+	TimeEvent *te;
+	uint32 curTime = 0;
+	uint32 gsc = _gameStoppedClock;
+
+	_lockWord |= 0x100;
+
+	f = _saveFileMan->openForSaving(filename);
+	if (f == NULL) {
+		warning("saveGame: Failed to save %s", filename);
+		_lockWord &= ~0x100;
+		return false;
+	}
+
+	f->writeUint32BE(_itemArrayInited - 1);
+	f->writeUint32BE(0xFFFFFFFF);
+	f->writeUint32BE(0);
+	f->writeUint32BE(0);
+
+	i = 0;
+	for (te = _firstTimeStruct; te; te = te->next)
+		i++;
+	f->writeUint32BE(i);
+
+	for (te = _firstTimeStruct; te; te = te->next) {
+		f->writeUint32BE(te->time - curTime + gsc);
+		f->writeUint16BE(te->subroutine_id);
+	}
+
+	item_index = 1;
+	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
+		Item *item = _itemArrayPtr[item_index++];
+
+		if (item->parent == 0)
+			f->writeUint32BE(0xFFFFFFFF);
+		else
+			f->writeUint32BE(item->parent);
+
+		f->writeUint16BE(item->state);
+		f->writeUint16BE(item->classFlags);
+
+		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		if (o) {
+			f->writeUint16BE(o->objectSize);
+			f->writeUint16BE(o->objectWeight);
+		}
+
+		SubPlayer *p = (SubPlayer *)findChildOfType(item, 3);
+		if (p) {
+			f->writeUint32BE(p->score);
+			f->writeUint16BE(p->level);
+			f->writeUint16BE(p->size);
+			f->writeUint16BE(p->weight);
+			f->writeUint16BE(p->strength);
+		}
+
+		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		if (u) {
+			for (i = 0; i != 8; i++) {
+				f->writeUint16BE(u->userFlags[i]);
+			}
+
+			if (u->userItems[0] == 0)
+				f->writeUint32BE(0xFFFFFFFF);
+			else
+				f->writeUint32BE(u->userItems[0]);
+		}
+	}
+
+	// write the variables
+	for (i = 0; i != _numVars; i++) {
+		f->writeUint16BE(readVariable(i));
+	}
+
+	f->flush();
+	bool result = !f->ioFailed();
+
+	delete f;
+	_lockWord &= ~0x100;
+
+	return result;
+}
+
+bool AGOSEngine::loadGame(const char *filename) {
+	char ident[100];
+	Common::SeekableReadStream *f = NULL;
+	uint num, item_index, i, j;
+
+	_lockWord |= 0x100;
+
+	// Load restart state
+	Common::File *file = new Common::File();
+	file->open(filename, Common::File::kFileReadMode);
+	if (!file->isOpen()) {
+		delete file;
+		f = _saveFileMan->openForLoading(filename);
+	} else {
+		f = file;
+	}
+
+	if (f == NULL) {
+		warning("loadGame: Failed to load %s", filename);
+		_lockWord &= ~0x100;
+		return false;
+	}
+
+	if (getGameType() == GType_FF) {
+		f->read(ident, 100);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		f->read(ident, 18);
+	}
+
+	num = f->readUint32BE();
+
+	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemArrayInited - 1) {
+		delete f;
+		_lockWord &= ~0x100;
+		return false;
+	}
+
+	f->readUint32BE();
+	f->readUint32BE();
+	_noParentNotify = true;
+
+	// add all timers
+	killAllTimers();
+	for (num = f->readUint32BE(); num; num--) {
+		uint32 timeout = f->readUint32BE();
+		uint16 func_to_call = f->readUint16BE();
+		addTimeEvent(timeout, func_to_call);
+	}
+
+	item_index = 1;
+	for (num = _itemArrayInited - 1; num; num--) {
+		Item *item = _itemArrayPtr[item_index++], *parent_item;
+
+		uint parent = f->readUint16BE();
+		uint next = f->readUint16BE();
+
+		parent_item = derefItem(parent);
+
+		setItemParent(item, parent_item);
+
+		if (parent_item == NULL) {
+			item->parent = parent;
+			item->next = next;
+		}
+
+		item->state = f->readUint16BE();
+		item->classFlags = f->readUint16BE();
+
+		SubRoom *r = (SubRoom *)findChildOfType(item, 1);
+		if (r) {
+			r->roomExitStates = f->readUint16BE();
+		}
+
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
+		if (sr) {
+			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
+			uint16 *c = sr->roomExitStates;
+			while(n--)
+				*c++ = f->readUint16BE();
+		}
+
+		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		if (o) {
+			o->objectFlags = f->readUint32BE();
+			i = o->objectFlags & 1;
+
+			for (j = 1; j < 16; j++) {
+				if (o->objectFlags & (1 << j)) {
+					o->objectFlagValue[i++] = f->readUint16BE();
+				}
+			}
+		}
+
+		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		if (u) {
+			for (i = 0; i != 4; i++) {
+				u->userFlags[i] = f->readUint16BE();
+			}
+		}
+	}
+
+
+	// read the variables
+	for (i = 0; i != _numVars; i++) {
+		writeVariable(i, f->readUint16BE());
+	}
+
+	// read the items in item store
+	for (i = 0; i != _numItemStore; i++) {
+		_itemStore[i] = derefItem(f->readUint16BE());
+	}
+
+	if (getGameType() == GType_PP) {
+		// Read the bits in array 1
+		for (i = 0; i != 128; i++)
+			_bitArray[i] = f->readUint16BE();
+	} else {
+		// Read the bits in array 1
+		for (i = 0; i != 16; i++)
+			_bitArray[i] = f->readUint16BE();
+
+		// Read the bits in array 2
+		for (i = 0; i != 16; i++)
+			_bitArrayTwo[i] = f->readUint16BE();
+	}
+
+	// Read the bits in array 3
+	if (getGameType() == GType_FF) {
+		for (i = 0; i != 16; i++)
+			_bitArrayThree[i] = f->readUint16BE();
+	}
+
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		_superRoomNumber = f->readUint16BE();
+	}
+
+	if (f->ioFailed()) {
+		error("load failed");
+	}
+
+	delete f;
+
+	_noParentNotify = false;
+
+	_lockWord &= ~0x100;
+
+	return true;
+}
+
 bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	Common::WriteStream *f;
 	uint item_index, num_item, i, j;
@@ -600,7 +937,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	if (getGameType() == GType_FF) {
 		f->write(caption, 100);
 		curTime = time(NULL);
-	} else if (getGameType() != GType_PP) {
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->write(caption, 18);
 	}
 
@@ -630,27 +967,35 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
-		SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
-		if (subRoom) {
-			f->writeUint16BE(subRoom->roomExitStates);
+		SubRoom *r = (SubRoom *)findChildOfType(item, 1);
+		if (r) {
+			f->writeUint16BE(r->roomExitStates);
 		}
 
-		SubObject *subObject = (SubObject *)findChildOfType(item, 2);
-		if (subObject) {
-			f->writeUint32BE(subObject->objectFlags);
-			i = subObject->objectFlags & 1;
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
+		if (sr) {
+			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
+			uint16 *c = sr->roomExitStates;
+			while(n--)
+				f->writeUint16BE(*c++);
+		}
+
+		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		if (o) {
+			f->writeUint32BE(o->objectFlags);
+			i = o->objectFlags & 1;
 
 			for (j = 1; j < 16; j++) {
-				if (subObject->objectFlags & (1 << j)) {
-					f->writeUint16BE(subObject->objectFlagValue[i++]);
+				if (o->objectFlags & (1 << j)) {
+					f->writeUint16BE(o->objectFlagValue[i++]);
 				}
 			}
 		}
 
-		SubUserFlag *subUserFlag = (SubUserFlag *)findChildOfType(item, 9);
-		if (subUserFlag) {
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, 9);
+		if (u) {
 			for (i = 0; i != 4; i++) {
-				f->writeUint16BE(subUserFlag->userFlags[i]);
+				f->writeUint16BE(u->userFlags[i]);
 			}
 		}
 	}
@@ -660,8 +1005,8 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(readVariable(i));
 	}
 
-	// write the items in array 6
-	for (i = 0; i != 10; i++) {
+	// write the items in item store
+	for (i = 0; i != _numItemStore; i++) {
 		f->writeUint16BE(itemPtrToID(_itemStore[i]));
 	}
 
@@ -685,6 +1030,10 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 			f->writeUint16BE(_bitArrayThree[i]);
 	}
 
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		f->writeUint16BE(_superRoomNumber);
+	}
+
 	f->flush();
 	bool result = !f->ioFailed();
 
@@ -692,147 +1041,6 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	_lockWord &= ~0x100;
 
 	return result;
-}
-
-bool AGOSEngine::loadGame(uint slot) {
-	char ident[100];
-	Common::SeekableReadStream *f = NULL;
-	uint num, item_index, i, j;
-
-	_lockWord |= 0x100;
-
-	if (getGameType() == GType_FF && slot == 999) {
-		// Load restart state
-		Common::File *file = new Common::File();
-		file->open(genSaveName(slot), Common::File::kFileReadMode);
-		if (!file->isOpen()) {
-			delete file;
-		} else {
-			f = file;
-		}
-	} else {
-		f = _saveFileMan->openForLoading(genSaveName(slot));
-	}
-
-	if (f == NULL) {
-		warning("loadGame: Failed to load slot %d", slot);
-		_lockWord &= ~0x100;
-		return false;
-	}
-
-	if (getGameType() == GType_FF) {
-		f->read(ident, 100);
-	} else if (getGameType() != GType_PP) {
-		f->read(ident, 18);
-	}
-
-	num = f->readUint32BE();
-
-	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemArrayInited - 1) {
-		delete f;
-		_lockWord &= ~0x100;
-		return false;
-	}
-
-	f->readUint32BE();
-	f->readUint32BE();
-	_noParentNotify = true;
-
-
-	// add all timers
-	killAllTimers();
-	for (num = f->readUint32BE(); num; num--) {
-		uint32 timeout = f->readUint32BE();
-		uint16 func_to_call = f->readUint16BE();
-		addTimeEvent(timeout, func_to_call);
-	}
-
-	item_index = 1;
-	for (num = _itemArrayInited - 1; num; num--) {
-		Item *item = _itemArrayPtr[item_index++], *parent_item;
-
-		uint parent = f->readUint16BE();
-		uint next = f->readUint16BE();
-
-		parent_item = derefItem(parent);
-
-		setItemParent(item, parent_item);
-
-		if (parent_item == NULL) {
-			item->parent = parent;
-			item->next = next;
-		}
-
-		item->state = f->readUint16BE();
-		item->classFlags = f->readUint16BE();
-
-		SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
-		if (subRoom != NULL) {
-			subRoom->roomExitStates = f->readUint16BE();
-		}
-
-		SubObject *subObject = (SubObject *)findChildOfType(item, 2);
-		if (subObject != NULL) {
-			subObject->objectFlags = f->readUint32BE();
-			i = subObject->objectFlags & 1;
-
-			for (j = 1; j < 16; j++) {
-				if (subObject->objectFlags & (1 << j)) {
-					subObject->objectFlagValue[i++] = f->readUint16BE();
-				}
-			}
-		}
-
-		SubUserFlag *subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
-		if (subUserFlag) {
-			for (i = 0; i != 4; i++) {
-				subUserFlag->userFlags[i] = f->readUint16BE();
-			}
-		}
-	}
-
-
-	// read the variables
-	for (i = 0; i != _numVars; i++) {
-		writeVariable(i, f->readUint16BE());
-	}
-
-	// read the items in array 6
-	for (i = 0; i != 10; i++) {
-		_itemStore[i] = derefItem(f->readUint16BE());
-	}
-
-	if (getGameType() == GType_PP) {
-		// Read the bits in array 1
-		for (i = 0; i != 128; i++)
-			_bitArray[i] = f->readUint16BE();
-	} else {
-		// Read the bits in array 1
-		for (i = 0; i != 16; i++)
-			_bitArray[i] = f->readUint16BE();
-
-		// Read the bits in array 2
-		for (i = 0; i != 16; i++)
-			_bitArrayTwo[i] = f->readUint16BE();
-	}
-
-	// Read the bits in array 3
-	if (getGameType() == GType_FF) {
-		for (i = 0; i != 16; i++)
-			_bitArrayThree[i] = f->readUint16BE();
-	}
-
-	if (f->ioFailed()) {
-		error("load failed");
-	}
-
-	delete f;
-
-	_noParentNotify = false;
-
-	_lockWord &= ~0x100;
-
-	return true;
 }
 
 } // End of namespace AGOS

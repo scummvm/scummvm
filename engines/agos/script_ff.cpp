@@ -216,7 +216,7 @@ void AGOSEngine::off_saveUserGame() {
 
 void AGOSEngine::off_loadUserGame() {
 	// 133: load game
-	loadGame(readVariable(55));
+	loadGame(genSaveName(readVariable(55)));
 }
 
 void AGOSEngine::off_listSaveGames() {

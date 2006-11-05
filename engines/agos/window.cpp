@@ -127,8 +127,12 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 		h = window->height * 8;
 		w = window->width * 8;
 
+		uint8 color = window->fill_color;
+		if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+			color += dst[0] & 0xF0;
+
 		do {
-			memset(dst, window->fill_color, w);
+			memset(dst, color, w);
 			dst += _dxSurfacePitch;
 		} while (--h);
 	}

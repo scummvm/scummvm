@@ -210,21 +210,6 @@ bool AGOSEngine::itemIsParentOf(uint16 a, uint16 b) {
 	return derefItem(item_a->parent) == item_b;
 }
 
-bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
-	VgaSprite *vsp = _vgaSprites;
-	while (vsp->id) {
-		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vsp->id == id && vsp->zoneNum == zoneNum)
-				return true;
-		} else {
-			if (vsp->id == id)
-				return true;
-		}
-		vsp++;
-	}
-	return false;
-}
-
 bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	Item *item;
 
@@ -249,6 +234,21 @@ VgaSprite *AGOSEngine::findCurSprite() {
 		vsp++;
 	}
 	return vsp;
+}
+
+bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
+	VgaSprite *vsp = _vgaSprites;
+	while (vsp->id) {
+		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (vsp->id == id && vsp->zoneNum == zoneNum)
+				return true;
+		} else {
+			if (vsp->id == id)
+				return true;
+		}
+		vsp++;
+	}
+	return false;
 }
 
 bool AGOSEngine::getBitFlag(uint bit) {

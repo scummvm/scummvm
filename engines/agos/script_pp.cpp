@@ -193,7 +193,7 @@ void AGOSEngine::opp_loadUserGame() {
 	}
 
 	// XXX
-	loadGame(1);
+	loadGame(genSaveName(1));
 }
 
 void AGOSEngine::opp_saveOopsPosition() {
