@@ -402,17 +402,16 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 			j = x * y * z;
 			size = SubSuperRoom_SIZE;
 			for (i = 0; i != j; i++)
-				size += sizeof(subSuperRoom->roomExit[0]);
+				size += sizeof(subSuperRoom->roomExitStates[0]);
 
 			subSuperRoom = (SubSuperRoom *)allocateChildBlock(item, 4, size);
 			subSuperRoom->subroutine_id = id;
 			subSuperRoom->roomX = x;
 			subSuperRoom->roomY = y;
 			subSuperRoom->roomZ = z;
-			subSuperRoom->roomExitStates = (uint16 *)calloc(j, sizeof(uint16));
 
 			for (i = k = 0; i != j; i++)
-					subSuperRoom->roomExit[k++] = in->readUint16BE();
+				subSuperRoom->roomExitStates[k++] = in->readUint16BE();
 		} else if (getGameType() == GType_ELVIRA1) {
 			SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
 			genExit->dest[0] = (uint16)fileReadItemID(in);

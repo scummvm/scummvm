@@ -193,7 +193,6 @@ void AGOSEngine::moveDirn_e1(Item *i, uint x) {
 // Elvira 2 specific
 int AGOSEngine::changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s) {
 	int b, bd;
-	uint16 *c;
 	uint16 mask = 3;
 	uint16 bs = s;
 
@@ -238,22 +237,18 @@ int AGOSEngine::changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s) {
 			return 0;
 	}
 	n--;
-	c = sr->roomExitStates;
-	c += n;
 	d <<= 1;
 	mask <<= d;
 	s <<= d;
-	*c &= ~mask;
-	*c |= s;
+	sr->roomExitStates[n] &= ~mask;
+	sr->roomExitStates[n] |= s;
 	mask = 3;
 	n += b;
-	c = sr->roomExitStates;
-	c += n;
 	bd <<= 1;
 	mask <<= bd;
 	bs <<= bd;
-	*c &= ~mask;
-	*c |= bs;
+	sr->roomExitStates[n] &= ~mask;
+	sr->roomExitStates[n] |= bs;
 	return 1;
 }
 
@@ -261,17 +256,14 @@ uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
 	SubSuperRoom *sr;
 	uint16 mask = 3;
 	uint16 n;
-	uint16 *c;
 
 	sr = (SubSuperRoom *)findChildOfType(i, 4);
 	if (sr == NULL)
 	    return 0;
 
-	c = sr->roomExitStates;
-	c += x - 1;
 	d <<= 1;
 	mask <<= d;
-	n = *c & mask;
+	n = sr->roomExitStates[x - 1] & mask;
 	n >>= d;
 	return n;
 }
@@ -283,19 +275,16 @@ void AGOSEngine::setExitState(Item *i, uint16 n, uint16 d, uint16 s) {
 }
 
 void AGOSEngine::setSRExit(Item *i, int n, int d, uint16 s) {
-	uint16 *c;
 	uint16 mask = 3;
 
 	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
 	if (sr) {
 		n--;
-		c = sr->roomExitStates;
-		c += n;
 		d <<= 1;
 		mask <<= d;
 		s <<= d;
-		*c &= ~mask;
-		*c |= s;
+		sr->roomExitStates[n] &= ~mask;
+		sr->roomExitStates[n] |= s;
 	}
 }
 
@@ -316,7 +305,7 @@ void AGOSEngine::moveDirn_e2(Item *i, uint x) {
 				case 0: a = -(sr->roomX); break;
 				case 1: a = 1; break;
 				case 2: a = sr->roomX; break;
-				case 3: a = (uint16)-1; break;
+				case 3: a = 0xFFFF; break;
 				case 4: a = -(sr->roomX * sr->roomY); break;
 				case 5: a = (sr->roomX * sr->roomY); break;
 				default: return;

@@ -134,8 +134,8 @@ char *AGOSEngine::genSaveName(int slot) {
 
 void AGOSEngine::quickLoadOrSave() {
 	// Quick load & save is only supported complete version of Simon the Sorcerer 1/2
-	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2 &&
-		!(getFeatures() & GF_DEMO)) {
+	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2 ||
+		(getFeatures() & GF_DEMO)) {
 		return;
 	}
 
@@ -617,8 +617,8 @@ bool AGOSEngine::loadGame_e1(const char *filename) {
 	killAllTimers();
 	for (num = f->readUint32BE(); num; num--) {
 		uint32 timeout = f->readUint32BE();
-		uint16 func_to_call = f->readUint16BE();
-		addTimeEvent(timeout, func_to_call);
+		uint16 subroutine_id = f->readUint16BE();
+		addTimeEvent(timeout, subroutine_id);
 	}
 
 	item_index = 1;
@@ -814,8 +814,8 @@ bool AGOSEngine::loadGame(const char *filename) {
 	killAllTimers();
 	for (num = f->readUint32BE(); num; num--) {
 		uint32 timeout = f->readUint32BE();
-		uint16 func_to_call = f->readUint16BE();
-		addTimeEvent(timeout, func_to_call);
+		uint16 subroutine_id = f->readUint16BE();
+		addTimeEvent(timeout, subroutine_id);
 	}
 
 	item_index = 1;
@@ -845,9 +845,8 @@ bool AGOSEngine::loadGame(const char *filename) {
 		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
-			uint16 *c = sr->roomExitStates;
-			while(n--)
-				*c++ = f->readUint16BE();
+ 			for (i = j = 0; i != n; i++)
+				sr->roomExitStates[j++] = f->readUint16BE();
 		}
 
 		SubObject *o = (SubObject *)findChildOfType(item, 2);
@@ -975,9 +974,8 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
-			uint16 *c = sr->roomExitStates;
-			while(n--)
-				f->writeUint16BE(*c++);
+ 			for (i = j = 0; i != n; i++)
+				f->writeUint16BE(sr->roomExitStates[j++]);
 		}
 
 		SubObject *o = (SubObject *)findChildOfType(item, 2);

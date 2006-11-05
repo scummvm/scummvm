@@ -45,8 +45,7 @@ struct SubSuperRoom : Child {
 	uint16 roomX;
 	uint16 roomY;
 	uint16 roomZ;
-	uint16 *roomExitStates;
-	uint16 roomExit[1];
+	uint16 roomExitStates[1];
 };
 
 struct SubObject : Child {
