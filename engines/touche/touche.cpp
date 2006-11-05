@@ -24,6 +24,9 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
+#include "sound/mididrv.h"
+
+#include "touche/midi.h"
 #include "touche/touche.h"
 #include "touche/graphics.h"
 
@@ -74,10 +77,15 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	Common::addSpecialDebugLevel(kDebugResource, "Resource", "Resource debug level");
 	Common::addSpecialDebugLevel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
 	Common::addSpecialDebugLevel(kDebugUserIntf, "UserIntf", "UserInterface debug level");
+
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_midiPlayer = new MidiPlayer(driver);
 }
 
 ToucheEngine::~ToucheEngine() {
 	Common::clearAllSpecialDebugLevels();
+	delete _midiPlayer;
 }
 
 int ToucheEngine::init() {
@@ -88,6 +96,9 @@ int ToucheEngine::init() {
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+
+	_midiPlayer->setVolume(ConfMan.getInt("music_volume"));
 	return 0;
 }
 

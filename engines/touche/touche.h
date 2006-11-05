@@ -299,6 +299,8 @@ enum SaveLoadMode {
 	kLoadGameState
 };
 
+class MidiPlayer;
+
 class ToucheEngine: public Engine {
 public:
 
@@ -594,6 +596,8 @@ protected:
 	int ui_displayQuitDialog();
 	void ui_displayTextMode(int str);
 
+
+	MidiPlayer *_midiPlayer;
 
 	Common::Language _language;
 	Common::RandomSource _rnd;

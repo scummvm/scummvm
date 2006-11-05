@@ -2,6 +2,7 @@ MODULE := engines/touche
 
 MODULE_OBJS := \
 	graphics.o \
+	midi.o \
 	plugin.o \
 	opcodes.o \
 	resource.o \

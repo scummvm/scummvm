@@ -28,6 +28,7 @@
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 
+#include "touche/midi.h"
 #include "touche/touche.h"
 #include "touche/graphics.h"
 
@@ -564,7 +565,7 @@ void ToucheEngine::res_loadMusic(int num) {
 	uint32 size;
 	const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
 	_fData.seek(offs);
-	// XXX start MIDI data playback
+	_midiPlayer->play(_fData, size);
 }
 
 void ToucheEngine::res_loadSpeech(int num) {
