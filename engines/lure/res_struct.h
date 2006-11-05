@@ -695,7 +695,8 @@ enum FieldName {
 	PRISONER_DEAD = 15,
 	BOTTLE_FILLED = 18,
 	TALK_INDEX = 19,
-	SACK_CUT = 20
+	SACK_CUT = 20,
+	ROOM_EXIT_ANIMATION = 82
 };
 
 enum GameFlags {
