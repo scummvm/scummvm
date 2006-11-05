@@ -152,7 +152,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[260] = &AGOSEngine::oe1_ifTime;
 	op[261] = &AGOSEngine::o_here;
 	op[262] = &AGOSEngine::o_doClassIcons;
-	op[263] = &AGOSEngine::os1_playTune;
+	op[263] = &AGOSEngine::oe1_playTune;
 	op[266] = &AGOSEngine::o_setAdjNoun;
 	op[267] = &AGOSEngine::oe1_zoneDisk;
 	op[268] = &AGOSEngine::o_saveUserGame;
@@ -598,6 +598,26 @@ void AGOSEngine::oe1_ifTime() {
 		setScriptCondition(true);
 	else
 		setScriptCondition(false);
+}
+
+void AGOSEngine::oe1_playTune() {
+	// 264: play tune
+	int music = getVarOrWord();
+	int track = getVarOrWord();
+
+	if (music != _lastMusicPlayed) {
+		_lastMusicPlayed = music;
+		// No tune under water
+		if (music == 4) {
+			if (getPlatform() == Common::kPlatformAmiga)
+				_mixer->stopHandle(_modHandle);
+			else
+				midi.stop();
+		} else {
+			loadMusic(music);
+			midi.startTrack(track);
+		}
+	}
 }
 
 void AGOSEngine::oe1_zoneDisk() {

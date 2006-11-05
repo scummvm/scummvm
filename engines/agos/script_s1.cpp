@@ -88,18 +88,9 @@ void AGOSEngine::os1_animate() {
 }
 
 void AGOSEngine::os1_playTune() {
-	// 127: deals with music
+	// 127:  play tune
 	int music = getVarOrWord();
 	int track = getVarOrWord();
-
-	// Jamieson630:
-	// This appears to be a "load or play music" command.
-	// The music resource is specified, and optionally
-	// a track as well. Normally we see two calls being
-	// made, one to load the resource and another to
-	// actually start a track (so the resource is
-	// effectively preloaded so there's no latency when
-	// starting playback).
 
 	if (music != _lastMusicPlayed) {
 		_lastMusicPlayed = music;

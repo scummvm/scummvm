@@ -1122,6 +1122,7 @@ public:
 	void oe1_enableInput();
 	void oe1_setTime();
 	void oe1_ifTime();
+	void oe1_playTune();
 	void oe1_bitClear();
 	void oe1_bitSet();
 	void oe1_bitTest();
