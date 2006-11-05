@@ -986,13 +986,13 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 }
 
 void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
-	if (!_initMouse) {
-		_initMouse = 1;
-		vc33_setMouseOn();
-	}
-
 	if (mode == 4) {
 		vc29_stopAllSounds();
+
+		if (!_initMouse) {
+			_initMouse = 1;
+			vc33_setMouseOn();
+		}
 
 		if (getGameType() == GType_ELVIRA1) {
 			if (_variableArray[299] == 0) {
