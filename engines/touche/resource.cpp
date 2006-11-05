@@ -561,7 +561,6 @@ void ToucheEngine::res_loadSound(int priority, int num) {
 
 void ToucheEngine::res_loadMusic(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadMusic() num=%d", num);
-	warning("UNIMPLEMENTED ToucheEngine::res_loadMusic() num=%d", num);
 	uint32 size;
 	const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
 	_fData.seek(offs);

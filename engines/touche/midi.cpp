@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/mutex.h"
 #include "common/stream.h"
 
 #include "sound/midiparser.h"
@@ -31,7 +30,7 @@
 namespace Touche {
 
 MidiPlayer::MidiPlayer(MidiDriver *driver)
-	: _masterVolume(255), _isPlaying(false), _driver(driver), _parser(0), _midiData(0) {
+	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
 	assert(_driver);
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
@@ -75,12 +74,12 @@ void MidiPlayer::updateTimer() {
 	_mutex.unlock();
 }
 
+void MidiPlayer::adjustVolume(int diff) {
+	setVolume(_masterVolume + diff);
+}
+
 void MidiPlayer::setVolume(int volume) {
-	if (volume < 0) {
-		volume = 0;
-	} else if (volume > 255) {
-		volume = 255;
-	}
+	_masterVolume = CLIP(volume, 0, 255);
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);

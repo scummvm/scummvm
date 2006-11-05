@@ -25,6 +25,7 @@
 #include "common/savefile.h"
 
 #include "touche/graphics.h"
+#include "touche/midi.h"
 #include "touche/touche.h"
 
 namespace Touche {
@@ -63,7 +64,7 @@ void ToucheEngine::setupUIRect() {
 		Common::Rect(154, 256, 392, 268),
 		Common::Rect(126, 222, 420, 242)
 	};
-	
+
 	buttonsRectTable1 = inButtonsRectTable1;
 	buttonsRectTable2 = inButtonsRectTable2;
 }
@@ -130,7 +131,7 @@ void ToucheEngine::ui_drawButtonBorders(const Common::Rect *r, int count) {
 }
 
 void ToucheEngine::ui_drawMusicVolumeBar() {
-	int volume = _snd_midiContext.volume * 232 / 256;
+	int volume = _midiPlayer->getVolume() * 232 / 255;
 	if (volume != 0) {
 		Graphics::fillRect(_offscreenBuffer, 640, 157, 259, volume, 6, 0xF0);
 	}
@@ -394,14 +395,10 @@ void ToucheEngine::ui_handleOptions(int forceDisplay) {
 				_talkTextMode = kTalkModeVoiceAndText;
 				break;
 			case 26:
-				if (_snd_midiContext.volume > 0) {
-					_snd_midiContext.volume -= 16;
-				}
+				_midiPlayer->adjustVolume(-16);
 				break;
 			case 27:
-				if (_snd_midiContext.volume < 256) {
-					_snd_midiContext.volume += 16;
-				}
+				_midiPlayer->adjustVolume(+16);
 				break;
 			}
 		}
@@ -410,7 +407,6 @@ void ToucheEngine::ui_handleOptions(int forceDisplay) {
 		if (_flagsTable[611] != 0) {
 			_flagsTable[611] = ui_displayQuitDialog();
 		}
-		_snd_midiContext.currentVolume = _snd_midiContext.volume;
 	}
 }
 

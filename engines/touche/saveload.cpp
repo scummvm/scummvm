@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -269,7 +269,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	clearRoomArea();
 	int16 room_offs_x, room_offs_y;
 	_currentEpisodeNum = stream->readUint16LE();
-	_currentMusicNum = stream->readUint16LE();
+	_newMusicNum = stream->readUint16LE();
 	_currentRoomNum = stream->readUint16LE();
 	res_loadRoom(_currentRoomNum);
 	room_offs_x = stream->readUint16LE();

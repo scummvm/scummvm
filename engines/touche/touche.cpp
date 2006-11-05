@@ -46,12 +46,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	clearDirtyRects();
 
 	_defaultSoundPriority = 0;
-	_snd_midiContext.unk2 = 0;
-	_snd_midiContext.unkA = 1;
-	_snd_midiContext.unkB = 0;
-	_snd_midiContext.volume = 0;
-	_snd_midiContext.unkF = 0;
-	_snd_midiContext.currentVolume = 175;
+
 	_playSoundCounter = 0;
 
 	_processRandomPaletteCounter = 0;
@@ -1711,15 +1706,10 @@ void ToucheEngine::clearRoomArea() {
 }
 
 void ToucheEngine::startNewMusic() {
-	_snd_midiContext.unkA = _flagsTable[619] & 0xFF;
+//	bool unkMidiFlag = _flagsTable[619] != 0;
 	if (_newMusicNum != 0 && _newMusicNum != _currentMusicNum) {
-		_snd_midiContext.unkB = 3;
-		if (_snd_midiContext.unkF != 0 && _snd_midiContext.unk2 != 0) {
-			return;
-		}
-		_snd_midiContext.unkB = 0;
 		res_loadMusic(_newMusicNum);
-		_snd_midiContext.unk2 = 0;
+		_currentMusicNum = _newMusicNum;
 		_newMusicNum = 0;
 	}
 }

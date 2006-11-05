@@ -197,15 +197,6 @@ struct SpriteData {
 	uint16 h;
 };
 
-struct MidiContext {
-	uint8 unk2;
-	uint8 unkA;
-	uint8 unkB;
-	uint16 volume;
-	uint8 unkF;
-	uint16 currentVolume;
-};
-
 struct ProgramPointData {
 	int16 x, y, z;
 	int16 priority;
@@ -617,7 +608,6 @@ protected:
 	int _playSoundCounter;
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
-	MidiContext _snd_midiContext;
 
 	int16 _inventoryList1[101];
 	int16 _inventoryList2[101];

@@ -24,13 +24,14 @@
 #define TOUCHE_MIDI_H
 
 #include "common/util.h"
+#include "common/mutex.h"
+
 #include "sound/mididrv.h"
 
 class MidiParser;
 
 namespace Common {
 	class ReadStream;
-	class Mutex;
 }
 
 namespace Touche {
@@ -48,7 +49,9 @@ public:
 	void play(Common::ReadStream &stream, int size, bool loop = false);
 	void stop();
 	void updateTimer();
+	void adjustVolume(int diff);
 	void setVolume(int volume);
+	int getVolume() const { return _masterVolume; }
 
 	// MidiDriver interface
 	int open();
@@ -64,14 +67,14 @@ private:
 
 	static void timerCallback(void *p);
 
-	int _masterVolume;
-	bool _isLooping;
-	bool _isPlaying;
 	MidiDriver *_driver;
 	MidiParser *_parser;
-	MidiChannel *_channelsTable[NUM_CHANNELS];
-	byte _channelsVolume[NUM_CHANNELS];
 	uint8 *_midiData;
+	bool _isLooping;
+	bool _isPlaying;
+	int _masterVolume;
+	MidiChannel *_channelsTable[NUM_CHANNELS];
+	uint8 _channelsVolume[NUM_CHANNELS];
 	Common::Mutex _mutex;
 };
 
