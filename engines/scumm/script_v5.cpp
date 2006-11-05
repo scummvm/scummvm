@@ -1879,17 +1879,9 @@ void ScummEngine_v5::o5_roomOps() {
 		setScaleSlot(e - 1, 0, b, a, 0, d, c);
 		break;
 	case 8:		// SO_ROOM_INTENSITY
-		if (_game.features & GF_SMALL_HEADER) {
-			if (_game.version != 3) {
-				a = getVarOrDirectWord(PARAM_1);
-				b = getVarOrDirectWord(PARAM_2);
-			}
-			c = getVarOrDirectWord(PARAM_3);
-		} else {
-			a = getVarOrDirectByte(PARAM_1);
-			b = getVarOrDirectByte(PARAM_2);
-			c = getVarOrDirectByte(PARAM_3);
-		}
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
+		c = getVarOrDirectByte(PARAM_3);
 		darkenPalette(a, a, a, b, c);
 		break;
 	case 9:		// SO_ROOM_SAVEGAME
