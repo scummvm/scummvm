@@ -148,7 +148,9 @@ void AGOSEngine::oe2_drawItem() {
 
 void AGOSEngine::oe2_doTable() {
 	// 143: start item sub
-	SubRoom *r = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
+	Item *i = getNextItemPtr();
+
+	SubRoom *r = (SubRoom *)findChildOfType(i, 1);
 	if (r != NULL) {
 		Subroutine *sub = getSubroutineByID(r->subroutine_id);
 		if (sub) {
@@ -158,7 +160,7 @@ void AGOSEngine::oe2_doTable() {
 	}
 
 	if (getGameType() == GType_ELVIRA2) {
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(getNextItemPtr(), 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
 		if (sr != NULL) {
 			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
 			if (sub) {
