@@ -79,8 +79,8 @@ void ToucheEngine::setupOpcodes() {
 		0,
 		0,
 		/* 0x28 */
-		&ToucheEngine::op_getScriptValue,
-		&ToucheEngine::op_setScriptValue,
+		0,
+		0,
 		0,
 		0,
 		/* 0x2C */
@@ -114,7 +114,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_startEpisode,
 		&ToucheEngine::op_setConversationNum,
 		/* 0x44 */
-		&ToucheEngine::op_enableInventoryItem,
+		0,
 		&ToucheEngine::op_enableInput,
 		&ToucheEngine::op_disableInput,
 		&ToucheEngine::op_faceKeyChar,
@@ -139,7 +139,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_fadePalette,
 		0,
 		/* 0x58 */
-		&ToucheEngine::op_disableInventoryItem,
+		0,
 		0,
 		0,
 		0,
@@ -172,7 +172,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_startMusic,
 		0,
 		0,
-		&ToucheEngine::op_copyPaletteColor,
+		0,
 		/* 0x74 */
 		&ToucheEngine::op_delay,
 		&ToucheEngine::op_lockHitBox,
@@ -422,20 +422,6 @@ void ToucheEngine::op_fetchScriptByte() {
 	*_script.stackDataPtr = val;
 }
 
-void ToucheEngine::op_getScriptValue() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_getScriptValue()");
-	uint8 index = _script.readNextByte();
-	assert(index < _script.stackDataBasePtr[2]);
-	*_script.stackDataPtr = _script.stackDataBasePtr[3 + index];
-}
-
-void ToucheEngine::op_setScriptValue() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_setScriptValue()");
-	uint8 index = _script.readNextByte();
-	assert(index < _script.stackDataBasePtr[2]);
-	_script.stackDataBasePtr[3 + index] = *_script.stackDataPtr;
-}
-
 void ToucheEngine::op_getKeyCharWalkBox() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_getKeyCharWalkBox()");
 	int16 keyChar = _script.readNextWord();
@@ -620,14 +606,6 @@ void ToucheEngine::op_setConversationNum() {
 	_conversationNum = _script.readNextWord();
 }
 
-void ToucheEngine::op_enableInventoryItem() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_enableInventoryItem()");
-	int16 flag = _script.readNextWord();
-	int16 item = _script.readNextWord();
-	int16 rnd = _script.readNextWord();
-	changeInventoryItemState(flag, item, rnd, 1);
-}
-
 void ToucheEngine::op_enableInput() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_enableInput()");
 	++_disabledInputCounter;
@@ -792,14 +770,6 @@ void ToucheEngine::op_fadePalette() {
 	}
 }
 
-void ToucheEngine::op_disableInventoryItem() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_disableInventoryItem()");
-	int16 flag = _script.readNextWord();
-	int16 item = _script.readNextWord();
-	int16 rnd = _script.readNextWord();
-	changeInventoryItemState(flag, item, rnd, 0);
-}
-
 void ToucheEngine::op_getInventoryItemFlags() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_getInventoryItemFlags()");
 	int16 item = _script.readNextWord();
@@ -889,13 +859,6 @@ void ToucheEngine::op_setKeyCharTextColor() {
 void ToucheEngine::op_startMusic() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_startMusic()");
 	_newMusicNum = _script.readNextWord();
-}
-
-void ToucheEngine::op_copyPaletteColor() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_copyPaletteColor()");
-	int16 src = _script.readNextWord();
-	int16 dst = _script.readNextWord();
-	copyPaletteColor(src, dst);
 }
 
 void ToucheEngine::op_delay() {

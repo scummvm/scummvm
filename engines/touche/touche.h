@@ -406,7 +406,6 @@ protected:
 	void appendItemToInventoryList(int index);
 	void addItemToInventory(int inventory, int16 item);
 	void removeItemFromInventory(int inventory, int16 item);
-	void changeInventoryItemState(int flag, int itemNum, int itemRnd, int inventoryItem);
 
 	void resetTalkingVars();
 	int updateKeyCharTalk(int pauseFlag);
@@ -447,7 +446,6 @@ protected:
 	void addToDirtyRect(const Common::Rect &r);
 	void clearDirtyRects();
 	void setPalette(int firstColor, int colorCount, int redScale, int greenScale, int blueScale);
-	void copyPaletteColor(int srcColorIndex, int dstColorIndex);
 	void updateScreenArea(const uint8 *src, int srcPitch, int srcX, int srcY, int dstX, int dstY, int w, int h);
 	void updateEntireScreen();
 	void updateDirtyScreenAreas();
@@ -489,8 +487,6 @@ protected:
 	void op_getFlag();
 	void op_setFlag();
 	void op_fetchScriptByte();
-	void op_getScriptValue();
-	void op_setScriptValue();
 	void op_getKeyCharWalkBox();
 	void op_startSound();
 	void op_initKeyCharTalk();
@@ -510,7 +506,6 @@ protected:
 	void op_setInventoryItem();
 	void op_startEpisode();
 	void op_setConversationNum();
-	void op_enableInventoryItem();
 	void op_enableInput();
 	void op_disableInput();
 	void op_faceKeyChar();
@@ -528,7 +523,6 @@ protected:
 	void op_giveItemTo();
 	void op_resetHitBoxes();
 	void op_fadePalette();
-	void op_disableInventoryItem();
 	void op_getInventoryItemFlags();
 	void op_drawInventory();
 	void op_stopKeyCharScript();
@@ -539,7 +533,6 @@ protected:
 	void op_startAnimation();
 	void op_setKeyCharTextColor();
 	void op_startMusic();
-	void op_copyPaletteColor();
 	void op_delay();
 	void op_lockHitBox();
 	void op_removeItemFromInventory();

@@ -2142,30 +2142,6 @@ void ToucheEngine::removeItemFromInventory(int inventory, int16 item) {
 	}
 }
 
-void ToucheEngine::changeInventoryItemState(int flag, int itemNum, int itemRnd, int inventoryItem) {
-	const int rnd = getRandomNumber(100) + 1;
-	if (inventoryItem) {
-		itemNum = _keyCharsTable[_currentKeyCharNum].inventoryItems[itemNum];
-	}
-	if (_flagsTable[174]) {
-		itemNum /= 2;
-		_flagsTable[174] = 0;
-	}
-	int16 value;
-	if (itemNum > itemRnd) {
-		value = 1;
-	} else if (rnd < itemNum / 6) {
-		value = 0;
-	} else if (rnd <= itemNum) {
-		value = 1;
-	} else if (rnd >= itemNum * 2) {
-		value = 2;
-	} else {
-		value = 3;
-	}
-	_flagsTable[flag] = value;
-}
-
 void ToucheEngine::resetTalkingVars() {
 	_talkListCurrent = 0;
 	_talkListEnd = 0;
@@ -3243,10 +3219,6 @@ void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gS
 		pal[i * 4 + 3] = 0;
 	}
 	_system->setPalette(&pal[firstColor * 4], firstColor, colorCount);
-}
-
-void ToucheEngine::copyPaletteColor(int srcColorIndex, int dstColorIndex) {
-	memcpy(&_paletteBuffer[dstColorIndex * 4], &_paletteBuffer[srcColorIndex * 4], 4);
 }
 
 void ToucheEngine::updateScreenArea(const uint8 *src, int srcPitch, int srcX, int srcY, int dstX, int dstY, int w, int h) {
