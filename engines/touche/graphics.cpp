@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -94,32 +94,14 @@ void Graphics::fillRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, ui
 }
 
 void Graphics::drawRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color1, uint8 color2) {
-	int x1 = x;
-	int y1 = y;
-	int x2 = x + w - 1;
-	int y2 = y + h - 1;
-	drawLineHV(dst, dstPitch, x1, y1, x2, y1, color1);
-	drawLineHV(dst, dstPitch, x1, y1, x1, y2, color1);
-	drawLineHV(dst, dstPitch, x2, y1 + 1, x2, y2, color2);
-	drawLineHV(dst, dstPitch, x1 + 1, y2, x2, y2, color2);
-}
-
-void Graphics::drawLineHV(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color) {
-	if (x2 < x1) {
-		SWAP(x2, x1);
-	}
-	if (y2 < y1) {
-		SWAP(y2, y1);
-	}
-	if (y1 == y2) {
-		for (int x = x1; x < x2; ++x) {
-			dst[y1 * dstPitch + x] = color;
-		}
-	} else {
-		for (int y = y1; y < y2; ++y) {
-			dst[y * dstPitch + x1] = color;
-		}
-	}
+	const int x1 = x;
+	const int y1 = y;
+	const int x2 = x + w - 1;
+	const int y2 = y + h - 1;
+	drawLine(dst, dstPitch, x1, y1, x2, y1, color1);
+	drawLine(dst, dstPitch, x1, y1, x1, y2, color1);
+	drawLine(dst, dstPitch, x2, y1 + 1, x2, y2, color2);
+	drawLine(dst, dstPitch, x1 + 1, y2, x2, y2, color2);
 }
 
 void Graphics::drawLine(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color) {

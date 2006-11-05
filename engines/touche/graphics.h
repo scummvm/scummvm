@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -40,7 +40,6 @@ struct Graphics {
 	static int drawChar16(uint8 *dst, int dstPitch, uint8 chr, int x, int y, uint16 color);
 	static void fillRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color);
 	static void drawRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color1, uint8 color2);
-	static void drawLineHV(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color);
 	static void drawLine(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color);
 	static void copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, int flags = 0);
 	static void copyMask(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, uint8 fillColor);

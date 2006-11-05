@@ -103,7 +103,6 @@ int ToucheEngine::go() {
 
 	res_deallocateTables();
 	res_closeDataFile();
-
 	return 0;
 }
 
@@ -540,7 +539,7 @@ void ToucheEngine::executeScriptOpcode(int16 param) {
 	debugC(9, kDebugEngine, "executeScriptOpcode(%d) offset=%04X", param, _script.dataOffset);
 	_script.keyCharNum = param;
 	_script.opcodeNum = _script.readNextByte();
-	if (_script.opcodeNum < NUM_OPCODES) {
+	if (_script.opcodeNum < _numOpcodes) {
 		OpcodeProc op = _opcodesTable[_script.opcodeNum];
 		if (op) {
 			(this->*op)();

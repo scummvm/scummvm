@@ -72,9 +72,9 @@ static int16 settingsMenuTextsTable[] = { 0, 0, 0, -92, -93, -94, -87, -88, 0, -
 
 static const int16 optionsMenuTextsTable[] = { -52, -53, -54, -55, -90 };
 
-static const int16 saveMenuTextsTable[] = { 2000, -56, -52, 2001, 0 };
+static const int16 loadMenuTextsTable[] = { 2000, -56, -52, 2001, 0 };
 
-static const int16 loadMenuTextsTable[] = { 2000, -56, -53, 2001, 0 };
+static const int16 saveMenuTextsTable[] = { 2000, -56, -53, 2001, 0 };
 
 bool ToucheEngine::ui_processEvents() {
 	bool quit = false;
@@ -182,7 +182,7 @@ void ToucheEngine::ui_drawCurrentGameStateDescription() {
 	updateScreenArea(_offscreenBuffer, 640, r->left, r->top, r->left, r->top, r->width(), r->height());
 }
 
-void ToucheEngine::ui_drawSaveLoadMenu(int page, int saveOrLoad) {
+void ToucheEngine::ui_drawSaveLoadMenu(int page, SaveLoadMode mode) {
 	for (int i = 0; i < 10; ++i) {
 		_saveLoadDescriptionsTable[i][0] = 0;
 		const int gameState = page + i;
@@ -191,10 +191,13 @@ void ToucheEngine::ui_drawSaveLoadMenu(int page, int saveOrLoad) {
 		}
 	}
 	ui_drawSaveGamesList(page);
-	if (saveOrLoad == 0) {
-		ui_drawButtonText(loadMenuTextsTable, &buttonsRectTable1[10], 5, true);
-	} else {
-		ui_drawButtonText(saveMenuTextsTable, &buttonsRectTable1[10], 5, true);
+	switch (mode) {
+	case kLoadGameState:
+ 		ui_drawButtonText(loadMenuTextsTable, &buttonsRectTable1[10], 5, true);
+		break;
+	case kSaveGameState:
+ 		ui_drawButtonText(saveMenuTextsTable, &buttonsRectTable1[10], 5, true);
+		break;
 	}
 	updateScreenArea(_offscreenBuffer, 640, 90, 102, 90, 102, 460, 196);
 }
@@ -270,7 +273,7 @@ void ToucheEngine::ui_drawOptionsMenu() {
 	updateScreenArea(_offscreenBuffer, 640, 90, 102, 90, 102, 460, 196);
 }
 
-int ToucheEngine::ui_handleSaveLoad(int saveOrLoad) {
+int ToucheEngine::ui_handleSaveLoad(SaveLoadMode mode) {
 	char gameStateFileName[16];
 	generateGameStateFileName(999, gameStateFileName, 15, true);
 	_saveFileMan->listSavefiles(gameStateFileName, _saveLoadMarks, NUM_GAMESTATE_FILES);
@@ -279,7 +282,7 @@ int ToucheEngine::ui_handleSaveLoad(int saveOrLoad) {
 	while (!quitMenu) {
 		_saveLoadCurrentDescription[0] = 0;
 		_saveLoadCurrentDescriptionLen = 0;
-		ui_drawSaveLoadMenu(_saveLoadCurrentPage, saveOrLoad);
+		ui_drawSaveLoadMenu(_saveLoadCurrentPage, mode);
 		int descriptionLen = 0;
 		int button = -1;
 		while (button == -1 && !quitMenu) {
@@ -287,7 +290,7 @@ int ToucheEngine::ui_handleSaveLoad(int saveOrLoad) {
 			if (!_inp_mouseButtonClicked) {
 				button = -1;
 			}
-			if (saveOrLoad == 0) {
+			if (mode == kSaveGameState) {
 				_saveLoadCurrentPage = (_saveLoadCurrentSlot / 10) * 10;
 				if (_saveLoadCurrentDescriptionLen != descriptionLen) {
 					descriptionLen = _saveLoadCurrentDescriptionLen;
@@ -312,7 +315,7 @@ int ToucheEngine::ui_handleSaveLoad(int saveOrLoad) {
 		case 12:
 			quitMenu = true;
 			ret = 1;
-			if (saveOrLoad == 0) {
+			if (mode == kSaveGameState) {
 				if (saveGameState(_saveLoadCurrentSlot, _saveLoadDescriptionsTable[_saveLoadCurrentSlot % 10])) {
 					ret = 2;
 				}
@@ -361,12 +364,12 @@ void ToucheEngine::ui_handleOptions(int forceDisplay) {
 			_inp_mouseButtonClicked = false;
 			switch (button) {
 			case 10:
-				if (ui_handleSaveLoad(1) == 2) {
+				if (ui_handleSaveLoad(kLoadGameState) == 2) {
 					quitMenu = true;
 				}
 				break;
 			case 11:
-				if (ui_handleSaveLoad(0) == 2) {
+				if (ui_handleSaveLoad(kSaveGameState) == 2) {
 					quitMenu = true;
 				}
 				break;
@@ -420,24 +423,24 @@ void ToucheEngine::ui_drawActionsPanel(int dstX, int dstY, int deltaX, int delta
 	  _menuKitData, 42, 0, 40,
 	  14, 24,
 	  Graphics::kTransparent);
-	Graphics::copyRect(_offscreenBuffer, 640, dstX, deltaY - 16 + dstY, 
-	  _menuKitData, 42, 0, 24, 
+	Graphics::copyRect(_offscreenBuffer, 640, dstX, deltaY - 16 + dstY,
+	  _menuKitData, 42, 0, 24,
 	  14, 16,
 	  Graphics::kTransparent);
 	Graphics::copyRect(_offscreenBuffer, 640, deltaX - 14 + dstX, deltaY - 16 + dstY,
-	  _menuKitData, 42, 0, 64, 
+	  _menuKitData, 42, 0, 64,
 	  14, 16,
 	  Graphics::kTransparent);
 	int x1 = deltaX - 28;
 	int x2 = dstX + 14;
 	while (x1 > 0) {
 		int w = (x1 > 14) ? 14 : x1;
-		Graphics::copyRect(_offscreenBuffer, 640, x2, dstY, 
-		  _menuKitData, 42, 0, 80, 
-		  w, 24, 
+		Graphics::copyRect(_offscreenBuffer, 640, x2, dstY,
+		  _menuKitData, 42, 0, 80,
+		  w, 24,
 		  Graphics::kTransparent);
-		Graphics::copyRect(_offscreenBuffer, 640, x2, deltaY - 16 + dstY, 
-		  _menuKitData, 42, 0, 104, 
+		Graphics::copyRect(_offscreenBuffer, 640, x2, deltaY - 16 + dstY,
+		  _menuKitData, 42, 0, 104,
 		  w, 16,
 		  Graphics::kTransparent);
 		x1 -= 14;
@@ -447,12 +450,12 @@ void ToucheEngine::ui_drawActionsPanel(int dstX, int dstY, int deltaX, int delta
 	x2 = dstY + 24;
 	while (x1 > 0) {
 		int w = (x1 > 120) ? 120 : x1;
-		Graphics::copyRect(_offscreenBuffer, 640, dstX, x2, 
-		  _menuKitData, 42, 14, 0, 
-		  14, w, 
+		Graphics::copyRect(_offscreenBuffer, 640, dstX, x2,
+		  _menuKitData, 42, 14, 0,
+		  14, w,
 		  Graphics::kTransparent);
-		Graphics::copyRect(_offscreenBuffer, 640, deltaX - 14 + dstX, x2, 
-		  _menuKitData, 42, 28, 0, 
+		Graphics::copyRect(_offscreenBuffer, 640, deltaX - 14 + dstX, x2,
+		  _menuKitData, 42, 28, 0,
 		  14, w,
 		  Graphics::kTransparent);
 		x1 -= 120;
@@ -511,7 +514,7 @@ void ToucheEngine::ui_printStatusString(const char *str) {
 }
 
 void ToucheEngine::ui_clearStatusString() {
-	Graphics::copyRect(_offscreenBuffer, 640, 0, 0, 
+	Graphics::copyRect(_offscreenBuffer, 640, 0, 0,
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
 	  640, 16);
 	updateScreenArea(_offscreenBuffer, 640, 0, 0, 0, 0, 640, 16);

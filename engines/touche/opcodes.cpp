@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -25,6 +25,183 @@
 #include "touche/touche.h"
 
 namespace Touche {
+
+void ToucheEngine::setupOpcodes() {
+	static const OpcodeProc opcodesTable[] = {
+		/* 0x00 */
+		&ToucheEngine::op_nop,
+		&ToucheEngine::op_jnz,
+		&ToucheEngine::op_jz,
+		&ToucheEngine::op_jmp,
+		/* 0x04 */
+		&ToucheEngine::op_true,
+		&ToucheEngine::op_false,
+		&ToucheEngine::op_push,
+		&ToucheEngine::op_testFalse,
+		/* 0x08 */
+		&ToucheEngine::op_add,
+		&ToucheEngine::op_sub,
+		&ToucheEngine::op_mul,
+		&ToucheEngine::op_div,
+		/* 0x0C */
+		&ToucheEngine::op_mod,
+		&ToucheEngine::op_and,
+		&ToucheEngine::op_or,
+		&ToucheEngine::op_not,
+		/* 0x10 */
+		&ToucheEngine::op_testGreater,
+		&ToucheEngine::op_testEquals,
+		&ToucheEngine::op_testLower,
+		&ToucheEngine::op_fetchScriptWord,
+		/* 0x14 */
+		0,
+		0,
+		0,
+		0,
+		/* 0x18 */
+		&ToucheEngine::op_testGreaterOrEquals,
+		&ToucheEngine::op_testLowerOrEquals,
+		&ToucheEngine::op_testNotEquals,
+		&ToucheEngine::op_endConversation,
+		/* 0x1C */
+		&ToucheEngine::op_stopScript,
+		&ToucheEngine::op_getFlag,
+		&ToucheEngine::op_setFlag,
+		0,
+		/* 0x20 */
+		0,
+		0,
+		0,
+		&ToucheEngine::op_fetchScriptByte,
+		/* 0x24 */
+		0,
+		0,
+		0,
+		0,
+		/* 0x28 */
+		&ToucheEngine::op_getScriptValue,
+		&ToucheEngine::op_setScriptValue,
+		0,
+		0,
+		/* 0x2C */
+		0,
+		0,
+		&ToucheEngine::op_getKeyCharWalkBox,
+		&ToucheEngine::op_startSound,
+		/* 0x30 */
+		&ToucheEngine::op_initKeyCharTalk,
+		0,
+		0,
+		0,
+		/* 0x34 */
+		&ToucheEngine::op_loadRoom,
+		&ToucheEngine::op_updateRoom,
+		&ToucheEngine::op_startTalk,
+		&ToucheEngine::op_setKeyCharBox,
+		/* 0x38 */
+		&ToucheEngine::op_initKeyCharScript,
+		&ToucheEngine::op_loadSprite,
+		&ToucheEngine::op_loadSequence,
+		&ToucheEngine::op_setKeyCharFrame,
+		/* 0x3C */
+		&ToucheEngine::op_setKeyCharDirection,
+		&ToucheEngine::op_clearConversationChoices,
+		&ToucheEngine::op_addConversationChoice,
+		&ToucheEngine::op_removeConversationChoice,
+		/* 0x40 */
+		&ToucheEngine::op_getInventoryItem,
+		&ToucheEngine::op_setInventoryItem,
+		&ToucheEngine::op_startEpisode,
+		&ToucheEngine::op_setConversationNum,
+		/* 0x44 */
+		&ToucheEngine::op_enableInventoryItem,
+		&ToucheEngine::op_enableInput,
+		&ToucheEngine::op_disableInput,
+		&ToucheEngine::op_faceKeyChar,
+		/* 0x48 */
+		&ToucheEngine::op_getKeyCharCurrentAnim,
+		&ToucheEngine::op_getCurrentKeyChar,
+		&ToucheEngine::op_isKeyCharActive,
+		&ToucheEngine::op_setPalette,
+		/* 0x4C */
+		&ToucheEngine::op_changeWalkPath,
+		&ToucheEngine::op_lockWalkPath,
+		&ToucheEngine::op_initializeKeyChar,
+		&ToucheEngine::op_setupWaitingKeyChars,
+		/* 0x50 */
+		&ToucheEngine::op_updateRoomAreas,
+		&ToucheEngine::op_unlockWalkPath,
+		0,
+		&ToucheEngine::op_addItemToInventoryAndRedraw,
+		/* 0x54 */
+		&ToucheEngine::op_giveItemTo,
+		&ToucheEngine::op_resetHitBoxes,
+		&ToucheEngine::op_fadePalette,
+		0,
+		/* 0x58 */
+		&ToucheEngine::op_disableInventoryItem,
+		0,
+		0,
+		0,
+		/* 0x5C */
+		0,
+		0,
+		0,
+		0,
+		/* 0x60 */
+		0,
+		&ToucheEngine::op_getInventoryItemFlags,
+		&ToucheEngine::op_drawInventory,
+		&ToucheEngine::op_stopKeyCharScript,
+		/* 0x64 */
+		&ToucheEngine::op_restartKeyCharScript,
+		&ToucheEngine::op_getKeyCharCurrentWalkBox,
+		&ToucheEngine::op_getKeyCharPointsDataNum,
+		&ToucheEngine::op_setupFollowingKeyChar,
+		/* 0x68 */
+		&ToucheEngine::op_startAnimation,
+		&ToucheEngine::op_setKeyCharTextColor,
+		0,
+		0,
+		/* 0x6C */
+		0,
+		0,
+		0,
+		0,
+		/* 0x70 */
+		&ToucheEngine::op_startMusic,
+		0,
+		0,
+		&ToucheEngine::op_copyPaletteColor,
+		/* 0x74 */
+		&ToucheEngine::op_delay,
+		&ToucheEngine::op_lockHitBox,
+		&ToucheEngine::op_removeItemFromInventory,
+		&ToucheEngine::op_unlockHitBox,
+		/* 0x78 */
+		&ToucheEngine::op_addRoomArea,
+		&ToucheEngine::op_setKeyCharFlags,
+		0,
+		0,
+		/* 0x7C */
+		0,
+		0,
+		0,
+		0,
+		/* 0x80 */
+		&ToucheEngine::op_unsetKeyCharFlags,
+		&ToucheEngine::op_drawSpriteOnBackdrop,
+		&ToucheEngine::op_loadVoice,
+		0,
+		/* 0x84 */
+		&ToucheEngine::op_startPaletteFadeIn,
+		&ToucheEngine::op_startPaletteFadeOut,
+		&ToucheEngine::op_setRoomAreaState
+	};
+
+	_opcodesTable = opcodesTable;
+	_numOpcodes = ARRAYSIZE(opcodesTable);
+}
 
 void ToucheEngine::op_nop() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_nop()");

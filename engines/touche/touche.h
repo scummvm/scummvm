@@ -294,11 +294,15 @@ enum ScriptFlag {
 	kScriptPaused  = 1 << 1
 };
 
+enum SaveLoadMode {
+	kSaveGameState = 0,
+	kLoadGameState
+};
+
 class ToucheEngine: public Engine {
 public:
 
 	enum {
-		NUM_OPCODES = 135,
 		NUM_FLAGS = 2000,
 		NUM_KEYCHARS = 32,
 		NUM_AREAS = 10,
@@ -454,6 +458,7 @@ protected:
 	void readGameStateDescription(int num, char *description, int len);
 	void generateGameStateFileName(int num, char *dst, int len, bool prefixOnly = false) const;
 
+	void setupOpcodes();
 	void op_nop();
 	void op_jnz();
 	void op_jz();
@@ -573,13 +578,13 @@ protected:
 	void ui_drawTalkMode();
 	void ui_drawAllBorders();
 	void ui_drawSaveGamesList(int page);
-	void ui_drawSaveLoadMenu(int page, int saveOrLoad);
+	void ui_drawSaveLoadMenu(int page, SaveLoadMode mode);
 	int ui_getButtonPressed(const Common::Rect *r, int count) const;
 	void ui_drawButtonText(const int16 *texts, const Common::Rect *r, int count, bool centerTexts);
 	void ui_drawArrow(int x, int y, int dx, uint8 color);
 	void ui_drawOptionsMenu();
 	void ui_drawCurrentGameStateDescription();
-	int ui_handleSaveLoad(int saveOrLoad);
+	int ui_handleSaveLoad(SaveLoadMode mode);
 	void ui_handleOptions(int forceDisplay);
 	void ui_drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY);
 	void ui_drawConversationPanelBorder(int dstY, int srcX, int srcY);
@@ -685,6 +690,8 @@ protected:
 	AnimationEntry _animationTable[NUM_ANIMATION_ENTRIES];
 
 	Script _script;
+	const OpcodeProc *_opcodesTable;
+	int _numOpcodes;
 
 	Common::File _fData;
 	Common::File _fSpeech[2];
@@ -733,9 +740,7 @@ protected:
 	static const uint8 _directionsTable[];
 	static char _saveLoadDescriptionsTable[10][33];
 
-	const OpcodeProc *_opcodesTable;
 	const Common::Rect *_inventoryAreasTable;
-	void setupOpcodes();
 	void setupRect();
 	void setupUIRect();
 };

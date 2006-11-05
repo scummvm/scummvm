@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: $
+ * $Id$
  *
  */
 
@@ -102,7 +102,7 @@ DetectedGameList Engine_TOUCHE_detectGames(const FSList &fslist) {
 			continue;
 		}
 		for (int i = 0; i < ARRAYSIZE(toucheGameVersionsTable); ++i) {
-			if (scumm_stricmp(file->name().c_str(), toucheDetectFileName) == 0) {
+			if (file->name().equalsIgnoreCase(toucheDetectFileName)) {
 				foundFile = true;
 				break;
 			}
