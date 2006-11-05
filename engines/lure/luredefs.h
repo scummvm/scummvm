@@ -115,6 +115,12 @@ enum Action {
 // Palette and animation for Skorl catching player
 #define SKORL_CATCH_PALETTE_ID 0x4060
 #define SKORL_CATCH_ANIM_ID 0x4061
+// Palette and animation for chute animation
+#define CHUTE_PALETTE_ID 0x404C
+#define CHUTE_ANIM_ID 0x404D
+// Palette and animation for hiding in barrel
+#define BARREL_PALETTE_ID 0xE9F0
+#define BARREL_ANIM_ID 0xE9F1
 
 // Specifies the maximum buffer sized allocated for decoding animation data
 #define MAX_ANIM_DECODER_BUFFER_SIZE 300000

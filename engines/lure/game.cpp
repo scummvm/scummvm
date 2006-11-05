@@ -251,8 +251,11 @@ void Game::handleMenuResponse(uint8 selection) {
 }
 
 void Game::playerChangeRoom() {
+	OSystem &system = System::getReference();
 	Resources &res = Resources::getReference();
+	Screen &screen = Screen::getReference();
 	Room &room = Room::getReference();
+	Mouse &mouse = Mouse::getReference();
 	ValueTableData &fields = res.fieldList();
 	SequenceDelayList &delayList = Resources::getReference().delayList();
 
@@ -265,6 +268,28 @@ void Game::playerChangeRoom() {
 	assert(roomData);
 	roomData->flags |= HOTSPOTFLAG_FOUND;
 
+	// Check for any room change animation
+
+	int animFlag = fields.getField(ROOM_EXIT_ANIMATION);
+	if (animFlag == 1)
+	{
+		Palette palette(CHUTE_PALETTE_ID);
+		AnimationSequence *anim = new AnimationSequence(screen, system, 
+			CHUTE_ANIM_ID, palette, false);
+		mouse.cursorOff();
+		anim->show();
+		mouse.cursorOn();
+	} else if (animFlag != 0)
+	{
+		Palette palette(BARREL_PALETTE_ID);
+		AnimationSequence *anim = new AnimationSequence(screen, system, 
+			BARREL_ANIM_ID, palette, false);
+		mouse.cursorOff();
+		anim->show();
+		mouse.cursorOn();
+	}
+
+	// Change to the new room
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	player->currentActions().clear();
 	player->setRoomNumber(roomNum);
