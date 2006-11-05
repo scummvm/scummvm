@@ -294,7 +294,7 @@ void AGOSEngine::oe2_printStats() {
 		val = 99;	
 	writeChar(window, 10, 134, 0, val);
 
-	// HP
+	// PP
 	val = _variableArray[22];
 	if (val < -99)
 		val = -99;
@@ -302,7 +302,7 @@ void AGOSEngine::oe2_printStats() {
 		val = 99;	
 	writeChar(window, 16, 134, 6, val);
 
-	// PP
+	// HP
 	val = _variableArray[23];
 	if (val < -99)
 		val = -99;
