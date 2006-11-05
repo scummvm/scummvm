@@ -843,9 +843,9 @@ void ToucheEngine::op_setupFollowingKeyChar() {
 
 void ToucheEngine::op_startAnimation() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_startAnimation()");
-	int16 num = _script.readNextWord();
+	int16 keyChar = _script.readNextWord();
 	int16 pos = _script.readNextWord();
-	int16 keyChar = *_script.stackDataPtr;
+	int16 num = *_script.stackDataPtr;
 	addToAnimationTable(num, pos, keyChar, 3);
 }
 

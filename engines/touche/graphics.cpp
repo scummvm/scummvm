@@ -176,7 +176,7 @@ void Graphics::copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint
 }
 
 void Graphics::copyMask(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, uint8 fillColor) {
-	dst += dstY * dstPitch * dstX;
+	dst += dstY * dstPitch + dstX;
 	src += srcY * srcPitch + srcX;
 	while (h--) {
 		for (int i = 0; i < w; ++i) {

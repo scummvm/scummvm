@@ -420,7 +420,7 @@ void ToucheEngine::setupEpisode(int num) {
 		if (_flagsTable[911] != 0) {
 			// load scripts from external data files
 		}
-		debug(0, "Setting up episode %d\n", num);
+		debug(0, "Setting up episode %d", num);
 		res_loadProgram(num);
 		_disabledInputCounter = 0;
 	}
@@ -830,6 +830,8 @@ void ToucheEngine::fadePalette(int firstColor, int lastColor, int scale, int sca
 			scale = 0;
 		}
 		setPalette(firstColor, lastColor, scale, scale, scale);
+		_system->updateScreen();
+		_system->delayMillis(10);
 	}
 }
 
@@ -1186,7 +1188,7 @@ void ToucheEngine::setKeyCharRandomFrame(KeyChar *key) {
 }
 
 void ToucheEngine::setKeyCharMoney() {
-	_keyCharsTable[_currentKeyCharNum].money = _currentAmountOfMoney;
+	_keyCharsTable[_currentKeyCharNum].money += _currentAmountOfMoney;
 	drawAmountOfMoneyInInventory();
 }
 
@@ -1251,7 +1253,7 @@ int ToucheEngine::restartKeyCharScriptOnAction(int action, int obj1, int obj2) {
 	for (uint i = 0; i < _programActionScriptOffsetTable.size(); ++i) {
 		const ProgramActionScriptOffsetData *pasod = &_programActionScriptOffsetTable[i];
 		if (pasod->object1 == obj1 && pasod->action == action && pasod->object2 == obj2) {
-			debug(0, "Found matching action i=%d %d,%d,%d\n", i, pasod->action, pasod->object1, pasod->object2);
+			debug(0, "Found matching action i=%d %d,%d,%d", i, pasod->action, pasod->object1, pasod->object2);
 			KeyChar *key = &_keyCharsTable[_currentKeyCharNum];
 			key->scriptDataOffset = pasod->offset;
 			key->scriptStackPtr = &key->scriptStackTable[39];
@@ -1706,7 +1708,7 @@ void ToucheEngine::clearRoomArea() {
 }
 
 void ToucheEngine::startNewMusic() {
-//	bool unkMidiFlag = _flagsTable[619] != 0;
+//	bool loopMusic = _flagsTable[619] != 0; // ?
 	if (_newMusicNum != 0 && _newMusicNum != _currentMusicNum) {
 		res_loadMusic(_newMusicNum);
 		_currentMusicNum = _newMusicNum;
@@ -2054,15 +2056,15 @@ void ToucheEngine::drawInventory(int index, int flag) {
 
 void ToucheEngine::drawAmountOfMoneyInInventory() {
 	if (_flagsTable[606] == 0 && !_hideInventoryTexts) {
-		char text[4];
-		snprintf(text, sizeof(text)-1, "%d", _keyCharsTable[0].money);
+		char text[10];
+		sprintf(text, "%d", _keyCharsTable[0].money);
 		Graphics::fillRect(_offscreenBuffer, 640, 74, 354, 40, 16, 0xD2);
 		drawGameString(16, 217, 94, 355, text);
 		updateScreenArea(_offscreenBuffer, 640, 74, 354, 74, 354, 40, 16);
 		Graphics::fillRect(_offscreenBuffer, 640, 150, 353, 40, 41, 0xD2);
 		if (_currentAmountOfMoney != 0) {
 			drawIcon(141, 348, 1);
-			snprintf(text, sizeof(text)-1, "%d", _currentAmountOfMoney);
+			sprintf(text, "%d", _currentAmountOfMoney);
 			drawGameString(16, 217, 170, 378, text);
 		}
 		updateScreenArea(_offscreenBuffer, 640, 150, 353, 150, 353, 40, 41);
@@ -2248,9 +2250,10 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 }
 
 const char *ToucheEngine::formatTalkText(int mode, int *y, int *h, const char *text) {
+	static char talkTextBuffer[200];
 	int newLineWidth = 0;
 	int lineWidth = 0;
-	char *textBuffer = _talkTextBuffer;
+	char *textBuffer = talkTextBuffer;
 	char *textLine = textBuffer;
 	if (mode != 16) {
 		return text;
@@ -2286,7 +2289,7 @@ const char *ToucheEngine::formatTalkText(int mode, int *y, int *h, const char *t
 		if (*y < 0) {
 			*y = 1;
 		}
-		return _talkTextBuffer;
+		return talkTextBuffer;
 	}
 }
 
@@ -3067,11 +3070,12 @@ void ToucheEngine::addToAnimationTable(int num, int posNum, int keyChar, int del
 			anim->posNum = posNum;
 			int16 xPos, yPos, x2Pos, y2Pos;
 			if (posNum >= 0) {
-				assert(posNum >= 0 && posNum < NUM_KEYCHARS);
+				assert(posNum < NUM_KEYCHARS);
 				xPos = _keyCharsTable[posNum].xPos;
 				yPos = _keyCharsTable[posNum].yPos - 50;
 			} else {
 				posNum = -posNum;
+				assert((uint)posNum < _programPointsTable.size());
 				xPos = _programPointsTable[posNum].x;
 				yPos = _programPointsTable[posNum].y;
 			}
@@ -3090,6 +3094,7 @@ void ToucheEngine::addToAnimationTable(int num, int posNum, int keyChar, int del
 			anim->dy = yPos;
 			anim->displayCounter = 8;
 			anim->displayRect.left = -1;
+			break;
 		}
 	}
 }

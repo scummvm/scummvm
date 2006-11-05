@@ -454,9 +454,9 @@ void ToucheEngine::res_loadSprite(int num, int index) {
 	}
 	spr->w = _currentImageWidth;
 	spr->h = _currentImageHeight;
-	Graphics::copyRect(_offscreenBuffer, 640, 0, 0,
-	  _backdropBuffer, _currentImageWidth, _flagsTable[614], _flagsTable[615],
-	  640, 100);
+//	Graphics::copyRect(_offscreenBuffer, 640, 0, 0,
+//	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
+//	  640, 100);
 }
 
 void ToucheEngine::res_loadSequence(int num, int index) {
@@ -564,7 +564,7 @@ void ToucheEngine::res_loadMusic(int num) {
 	uint32 size;
 	const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
 	_fData.seek(offs);
-	_midiPlayer->play(_fData, size);
+	_midiPlayer->play(_fData, size, true);
 }
 
 void ToucheEngine::res_loadSpeech(int num) {

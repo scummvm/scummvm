@@ -632,7 +632,6 @@ protected:
 	int _talkTableLastOtherKeyChar;
 	int _talkTableLastStringNum;
 	int _objectDescriptionNum;
-	char _talkTextBuffer[200];
 	TalkEntry _talkTable[NUM_TALK_ENTRIES];
 
 	bool _conversationChoicesUpdated;
