@@ -108,7 +108,7 @@ void ToucheEngine::res_allocateTables() {
 		error("Unable to allocate memory for conv kit data");
 	}
 
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < NUM_SEQUENCES; ++i) {
 		_sequenceDataTable[i] = (uint8 *)malloc(16384);
 		if (!_sequenceDataTable[i]) {
 			error("Unable to allocate memory for sequence data %d", i);
@@ -429,6 +429,9 @@ void ToucheEngine::res_loadRoom(int num) {
 	_fullRedrawCounter = 1;
 	_roomNeedRedraw = true;
 
+//	uint8 *p = _backdropBuffer + _currentBitmapWidth * _currentBitmapHeight;
+//	_spritesTable[5].ptr = p + 16384;
+//	_spritesTable[6].ptr = p + 145728 + 16384;
 	_sequenceEntryTable[5].sprNum = -1;
 	_sequenceEntryTable[5].seqNum = -1;
 	_sequenceEntryTable[6].sprNum = -1;

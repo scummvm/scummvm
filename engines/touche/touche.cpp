@@ -64,7 +64,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
 	setupOpcodes();
-	setupRect();
 	setupUIRect();
 
 	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");
@@ -157,6 +156,7 @@ void ToucheEngine::restart() {
 	clearAreaTable();
 	clearAnimationTable();
 
+	setupInventoryAreas();
 	initInventoryObjectsTable();
 	initInventoryLists();
 	drawInventory(0, 1);
@@ -1189,6 +1189,7 @@ void ToucheEngine::setKeyCharRandomFrame(KeyChar *key) {
 
 void ToucheEngine::setKeyCharMoney() {
 	_keyCharsTable[_currentKeyCharNum].money += _currentAmountOfMoney;
+	_currentAmountOfMoney = 0;
 	drawAmountOfMoneyInInventory();
 }
 
@@ -1373,83 +1374,83 @@ void ToucheEngine::updateCursor(int num) {
 }
 
 void ToucheEngine::handleMouseButtonClicked() {
-	for (int i = 0; i < 13; ++i) {
-		if (_inventoryAreasTable[i].contains(_inp_mousePos)) {
-			switch (i) {
-			case 0:
-				_keyCharsTable[_currentKeyCharNum].money += _currentAmountOfMoney;
-				_currentAmountOfMoney = 0;
-				ui_handleOptions(0);
-				break;
-			case 1:
-				setKeyCharMoney();
+	for (int area = 0; area < ARRAYSIZE(_inventoryAreasTable); ++area) {
+		if (_inventoryAreasTable[area].contains(_inp_mousePos)) {
+			if (area >= kInventoryObject1 && area <= kInventoryObject6) {
+				int item = _inventoryVar1[area - 6 + *_inventoryVar2];
+				_flagsTable[119] = _currentCursorObject;
 				if (_currentCursorObject == 1) {
-					setCursor(0);
-				}
-				break;
-			case 2:
-				if (_keyCharsTable[_currentKeyCharNum].money >= 10) {
-					_keyCharsTable[_currentKeyCharNum].money -= 10;
-					_currentAmountOfMoney += 10;
-				}
-				break;
-			case 3:
-				if (_keyCharsTable[_currentKeyCharNum].money != 0) {
-					--_keyCharsTable[_currentKeyCharNum].money;
-					++_currentAmountOfMoney;
-					drawAmountOfMoneyInInventory();
-				}
-				break;
-			case 4:
-				if (_currentAmountOfMoney != 0) {
-					updateCursor(_objectDescriptionNum);
-					int money = _currentAmountOfMoney;
+					setKeyCharMoney();
+					_flagsTable[118] = _currentAmountOfMoney;
 					_currentAmountOfMoney = 0;
-					drawAmountOfMoneyInInventory();
-					setCursor(1);
-					_currentAmountOfMoney = money;
 				}
-				break;
-			case 5:
-				if (*_inventoryVar2 != 0) {
-					*_inventoryVar2 -= 6;
-					drawInventory(_objectDescriptionNum, 1);
-				}
-				break;
-			case 12:
-				if (_inventoryVar1[12 + *_inventoryVar2] != 0) {
-					*_inventoryVar2 += 6;
-					drawInventory(_objectDescriptionNum, 1);
-				}
-				break;
-			default:
-				if (i >= 6 && i <= 11) {
-					int item = _inventoryVar1[i - 6 + *_inventoryVar2];
-					_flagsTable[119] = _currentCursorObject;
-					if (_currentCursorObject == 1) {
-						setKeyCharMoney();
-						_flagsTable[118] = _currentAmountOfMoney;
-						_currentAmountOfMoney = 0;
-					}
-					if (item != 0 && _currentCursorObject != 0) {
-						if (restartKeyCharScriptOnAction(-53, item | 0x1000, 0)) {
-							updateCursor(_objectDescriptionNum);
-							drawInventory(_objectDescriptionNum, 1);
-						}
-					} else {
-						_inventoryVar1[i - 6 + *_inventoryVar2] = 0;
-						if (_currentCursorObject != 0) {
-							updateCursor(_objectDescriptionNum);
-						}
-						if (item != 0) {
-							setCursor(item);
-							packInventoryItems(0);
-							packInventoryItems(1);
-						}
+				if (item != 0 && _currentCursorObject != 0) {
+					if (restartKeyCharScriptOnAction(-53, item | 0x1000, 0)) {
+						updateCursor(_objectDescriptionNum);
 						drawInventory(_objectDescriptionNum, 1);
 					}
+				} else {
+					_inventoryVar1[area - 6 + *_inventoryVar2] = 0;
+					if (_currentCursorObject != 0) {
+						updateCursor(_objectDescriptionNum);
+					}
+					if (item != 0) {
+						setCursor(item);
+						packInventoryItems(0);
+						packInventoryItems(1);
+					}
+					drawInventory(_objectDescriptionNum, 1);
 				}
-				break;
+			} else {
+				switch (area) {
+				case kInventoryCharacter:
+					_keyCharsTable[_currentKeyCharNum].money += _currentAmountOfMoney;
+					_currentAmountOfMoney = 0;
+					ui_handleOptions(0);
+					break;
+				case kInventoryMoneyDisplay:
+					setKeyCharMoney();
+					if (_currentCursorObject == 1) {
+						setCursor(0);
+					}
+					break;
+				case kInventoryGoldCoins:
+					if (_keyCharsTable[_currentKeyCharNum].money >= 10) {
+						_keyCharsTable[_currentKeyCharNum].money -= 10;
+						_currentAmountOfMoney += 10;
+						drawAmountOfMoneyInInventory();
+					}
+					break;
+				case kInventorySilverCoins:
+					if (_keyCharsTable[_currentKeyCharNum].money != 0) {
+						--_keyCharsTable[_currentKeyCharNum].money;
+						++_currentAmountOfMoney;
+						drawAmountOfMoneyInInventory();
+					}
+					break;
+				case kInventoryMoney:
+					if (_currentAmountOfMoney != 0) {
+						updateCursor(_objectDescriptionNum);
+						int money = _currentAmountOfMoney;
+						_currentAmountOfMoney = 0;
+						drawAmountOfMoneyInInventory();
+						setCursor(1);
+						_currentAmountOfMoney = money;
+					}
+					break;
+				case kInventoryScroller1:
+					if (*_inventoryVar2 != 0) {
+						*_inventoryVar2 -= 6;
+						drawInventory(_objectDescriptionNum, 1);
+					}
+					break;
+				case kInventoryScroller2:
+					if (_inventoryVar1[6 + *_inventoryVar2] != 0) {
+						*_inventoryVar2 += 6;
+						drawInventory(_objectDescriptionNum, 1);
+					}
+					break;
+				}
 			}
 			break;
 		}
@@ -1457,24 +1458,22 @@ void ToucheEngine::handleMouseButtonClicked() {
 }
 
 void ToucheEngine::handleMouseButtonPressed() {
-	for (int pos = 0; pos < 13; ++pos) {
-		const Common::Rect &r = _inventoryAreasTable[pos];
+	for (int area = kInventoryObject1; area <= kInventoryObject6; ++area) {
+		const Common::Rect &r = _inventoryAreasTable[area];
 		if (r.contains(_inp_mousePos)) {
-			if (pos >= 6 && pos <= 11) {
-				int item = _inventoryVar1[pos - 6 + *_inventoryVar2] | 0x1000;
-				for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
-					const ProgramHitBoxData *hitBox = &_programHitBoxTable[i];
-					if (hitBox->item == item) {
-						const int menuX = r.left + r.width() / 2;
-						const int menuY = 352;
-						int act = handleActionMenuUnderCursor(hitBox->actions, menuX, menuY, hitBox->str);
-						if (act != 0) {
-							restartKeyCharScriptOnAction(act, hitBox->item, 0);
-						}
+			int item = _inventoryVar1[area - 6 + *_inventoryVar2] | 0x1000;
+			for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
+				const ProgramHitBoxData *hitBox = &_programHitBoxTable[i];
+				if (hitBox->item == item) {
+					const int menuX = r.left + r.width() / 2;
+					const int menuY = 352;
+					int act = handleActionMenuUnderCursor(hitBox->actions, menuX, menuY, hitBox->str);
+					if (act != 0) {
+						restartKeyCharScriptOnAction(act, hitBox->item, 0);
 					}
 				}
-				break;
 			}
+			break;
 		}
 	}
 }
@@ -1841,6 +1840,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 				break;
 			}
 		}
+		_system->updateScreen();
 		_system->delayMillis(50);
 	}
 
@@ -2023,6 +2023,22 @@ void ToucheEngine::initInventoryLists() {
 	_inventoryListCount[3 * 2 + 0] = 0;
 	_inventoryListCount[3 * 2 + 1] = 6;
 	_inventoryListCount[3 * 2 + 2] = 6;
+}
+
+void ToucheEngine::setupInventoryAreas() {
+	_inventoryAreasTable[kInventoryCharacter]    = Common::Rect(  0, 354,  50, 400);
+	_inventoryAreasTable[kInventoryMoneyDisplay] = Common::Rect( 66, 354, 124, 380);
+	_inventoryAreasTable[kInventoryGoldCoins]    = Common::Rect( 74, 380, 116, 398);
+	_inventoryAreasTable[kInventorySilverCoins]  = Common::Rect(116, 380, 158, 398);
+	_inventoryAreasTable[kInventoryMoney]        = Common::Rect(144, 354, 198, 380);
+	_inventoryAreasTable[kInventoryScroller1]    = Common::Rect(202, 354, 238, 396);
+	_inventoryAreasTable[kInventoryObject1]      = Common::Rect(242, 354, 300, 396);
+	_inventoryAreasTable[kInventoryObject2]      = Common::Rect(300, 354, 358, 396);
+	_inventoryAreasTable[kInventoryObject3]      = Common::Rect(358, 354, 416, 396);
+	_inventoryAreasTable[kInventoryObject4]      = Common::Rect(416, 354, 474, 396);
+	_inventoryAreasTable[kInventoryObject5]      = Common::Rect(474, 354, 532, 396);
+	_inventoryAreasTable[kInventoryObject6]      = Common::Rect(532, 354, 590, 396);
+	_inventoryAreasTable[kInventoryScroller2]    = Common::Rect(594, 354, 640, 395);
 }
 
 void ToucheEngine::drawInventory(int index, int flag) {

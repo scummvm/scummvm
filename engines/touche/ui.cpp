@@ -167,7 +167,7 @@ void ToucheEngine::ui_drawSaveGamesList(int page) {
 }
 
 void ToucheEngine::ui_drawCurrentGameStateDescription() {
-	const Common::Rect *r = &buttonsRectTable1[_saveLoadCurrentSlot];
+	const Common::Rect *r = &buttonsRectTable1[_saveLoadCurrentSlot % 10];
 	Graphics::fillRect(_offscreenBuffer, 640, r->left, r->top, r->width(), r->height(), 0xF8);
 
 	int y = r->top;
@@ -292,7 +292,6 @@ int ToucheEngine::ui_handleSaveLoad(SaveLoadMode mode) {
 				button = -1;
 			}
 			if (mode == kSaveGameState) {
-				_saveLoadCurrentPage = (_saveLoadCurrentSlot / 10) * 10;
 				if (_saveLoadCurrentDescriptionLen != descriptionLen) {
 					descriptionLen = _saveLoadCurrentDescriptionLen;
 					ui_drawCurrentGameStateDescription();

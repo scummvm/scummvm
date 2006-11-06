@@ -290,6 +290,22 @@ enum SaveLoadMode {
 	kLoadGameState
 };
 
+enum InventoryArea {
+	kInventoryCharacter = 0,
+	kInventoryMoneyDisplay,
+	kInventoryGoldCoins,
+	kInventorySilverCoins,
+	kInventoryMoney,
+	kInventoryScroller1,
+	kInventoryObject1,
+	kInventoryObject2,
+	kInventoryObject3,
+	kInventoryObject4,
+	kInventoryObject5,
+	kInventoryObject6,
+	kInventoryScroller2
+};
+
 class MidiPlayer;
 
 class ToucheEngine: public Engine {
@@ -299,7 +315,7 @@ public:
 		NUM_FLAGS = 2000,
 		NUM_KEYCHARS = 32,
 		NUM_AREAS = 10,
-		NUM_SPRITES = 5,
+		NUM_SPRITES = 7,
 		NUM_SEQUENCES = 7,
 		NUM_CONVERSATION_CHOICES = 40,
 		NUM_TALK_ENTRIES = 16,
@@ -391,6 +407,7 @@ protected:
 
 	void initInventoryObjectsTable();
 	void initInventoryLists();
+	void setupInventoryAreas();
 	void drawInventory(int index, int flag);
 	void drawAmountOfMoneyInInventory();
 	void packInventoryItems(int index);
@@ -618,6 +635,7 @@ protected:
 	int16 *_inventoryVar1;
 	int16 *_inventoryVar2;
 	int _currentCursorObject;
+	Common::Rect _inventoryAreasTable[13];
 
 	int _talkTextMode;
 	int _talkListEnd;
@@ -687,7 +705,7 @@ protected:
 	uint8 *_backdropBuffer;
 	uint8 *_menuKitData;
 	uint8 *_convKitData;
-	uint8 *_sequenceDataTable[5];
+	uint8 *_sequenceDataTable[NUM_SEQUENCES];
 	uint8 *_programData;
 	uint32 _programDataSize;
 	uint8 *_mouseData;
@@ -726,8 +744,6 @@ protected:
 	static const uint8 _directionsTable[];
 	static char _saveLoadDescriptionsTable[10][33];
 
-	const Common::Rect *_inventoryAreasTable;
-	void setupRect();
 	void setupUIRect();
 };
 
