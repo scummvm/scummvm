@@ -460,7 +460,7 @@ void AGOSEngine::o_oset() {
 	// 56: set child2 fr bit
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	int value = getVarOrByte();
-	if (subObject != NULL && value >= 0x10)
+	if (subObject != NULL && value >= 16)
 		subObject->objectFlags |= (1 << value);
 }
 
@@ -468,7 +468,7 @@ void AGOSEngine::o_oclear() {
 	// 57: clear child2 fr bit
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	int value = getVarOrByte();
-	if (subObject != NULL && value >= 0x10)
+	if (subObject != NULL && value >= 16)
 		subObject->objectFlags &= ~(1 << value);
 }
 
@@ -927,7 +927,7 @@ void AGOSEngine::o_clearTimers() {
 	// 140: clear timers
 	killAllTimers();
 
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+	if (getGameType() == GType_SIMON1)
 		addTimeEvent(3, 160);
 }
 
