@@ -110,10 +110,23 @@ void AGOSEngine::createPlayer() {
 }
 
 Child *AGOSEngine::findChildOfType(Item *i, uint type) {
+	Item *b = NULL;
 	Child *child = i->children;
-	for (; child; child = child->next)
+
+	for (; child; child = child->next) {
 		if (child->type == type)
 			return child;
+		if (child->type == 255)
+			b = derefItem(((SubInherit *)(child))->inMaster);
+	}
+	if (b) {
+		child = b->children;
+		for (; child; child = child->next) {
+			if (child->type == type)
+				return child;
+		}
+	}
+
 	return NULL;
 }
 

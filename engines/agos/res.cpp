@@ -432,7 +432,7 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 		container->volume = in->readUint16BE();
 		container->flags = in->readUint16BE();
 	} else if (type == 8) {
-		SubUserChain *chain = (SubUserChain *)allocateChildBlock(item, 8, sizeof(SubUserChain));
+		SubChain *chain = (SubChain *)allocateChildBlock(item, 8, sizeof(SubChain));
 		chain->chChained = (uint16)fileReadItemID(in);
 	} else if (type == 9) {
 		setUserFlag(item, 0, in->readUint16BE());
@@ -451,7 +451,7 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 			fileReadItemID(in);
 		}
 	} else if (type == 255) {
-		SubUserInherit *inherit = (SubUserInherit *)allocateChildBlock(item, 255, sizeof(SubUserInherit));
+		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, 255, sizeof(SubInherit));
 		inherit->inMaster = (uint16)fileReadItemID(in);
 	} else {
 		error("readItemChildren: invalid type %d", type);

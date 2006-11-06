@@ -66,20 +66,9 @@ struct SubPlayer : Child {
 	int32 score;
 };
 
-struct SubUserChain : Child {
+struct SubGenExit : Child {
 	uint16 subroutine_id;
-	uint16 chChained;
-};
-
-struct SubUserInherit : Child {
-	uint16 subroutine_id;
-	uint16 inMaster;
-};
-
-struct SubUserFlag : Child {
-	uint16 subroutine_id;
-	uint16 userFlags[8];
-	uint16 userItems[1];
+	uint16 dest[6];
 };
 
 struct SubContainer : Child {
@@ -88,9 +77,20 @@ struct SubContainer : Child {
 	uint16 flags;
 };
 
-struct SubGenExit : Child {
+struct SubChain : Child {
 	uint16 subroutine_id;
-	uint16 dest[6];
+	uint16 chChained;
+};
+
+struct SubUserFlag : Child {
+	uint16 subroutine_id;
+	uint16 userFlags[8];
+	uint16 userItems[1];
+};
+
+struct SubInherit : Child {
+	uint16 subroutine_id;
+	uint16 inMaster;
 };
 
 enum {

@@ -445,13 +445,13 @@ void AGOSEngine::oe1_doorExit() {
 	// 181: door exit
 	Item *x;
 	Item *a = (Item *)-1;
-	SubUserChain *c;
+	SubChain *c;
 	Item *i = getNextItemPtr();
 	Item *d = getNextItemPtr();
 	int16 f = getVarOrWord();
 	int16 ct = 0;
 
-	c = (SubUserChain *)findChildOfType(d, 8);
+	c = (SubChain *)findChildOfType(d, 8);
 	if (c)
 		a = derefItem(c->chChained);
 	while (ct < 6) {

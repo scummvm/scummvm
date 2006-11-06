@@ -1105,10 +1105,10 @@ Child *nextSub(Child *sub, int16 key) {
 }
 
 void AGOSEngine::synchChain(Item *i) {
-	SubUserChain *c = (SubUserChain *)findChildOfType(i, 8);
+	SubChain *c = (SubChain *)findChildOfType(i, 8);
 	while (c) {
 		setItemState(derefItem(c->chChained), i->state);
-		c = (SubUserChain *)nextSub((Child *)c, 8);
+		c = (SubChain *)nextSub((Child *)c, 8);
 	}
 }
 
