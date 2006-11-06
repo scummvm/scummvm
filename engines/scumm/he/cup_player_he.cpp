@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "scumm/scumm.h"
+#include "scumm/util.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/cup_player_he.h"
 
@@ -34,7 +35,7 @@ bool CUP_Player::open(const char *filename) {
 	if (_fd.open(filename)) {
 		uint32 tag = _fd.readUint32BE();
 		_fd.readUint32BE();
-		if (tag == 'BEAN') {
+		if (tag == MKID_BE('BEAN')) {
 			_playbackRate = 66;
 			_width = 640;
 			_height = 480;
@@ -73,22 +74,22 @@ void CUP_Player::parseHeaderTags() {
 	while (_dataSize == 0 && !_vm->_quit && !_fd.ioFailed()) {
 		uint32 tag = loadNextChunk();
 		switch (tag) {
-		case 'HEAD':
+		case MKID_BE('HEAD'):
 			handleHEAD(_currentChunkData, _currentChunkSize);
 			break;
-		case 'SFXB':
+		case MKID_BE('SFXB'):
 			handleSFXB(_currentChunkData, _currentChunkSize);
 			break;
-		case 'RGBS':
+		case MKID_BE('RGBS'):
 			handleRGBS(_currentChunkData, _currentChunkSize);
 			break;
-		case 'DATA':
+		case MKID_BE('DATA'):
 			_dataSize = _currentChunkSize;
 			break;
-		case 'GFXB':
+		case MKID_BE('GFXB'):
 			// this is never triggered
 		default:
-			warning("unhandled tag %c%c%c%c", tag>>24, (tag>>16)&0xFF, (tag>>8)&0xFF, tag&0xFF);
+			warning("unhandled tag %s", tag2str(tag));
 			break;
 		}
 	}
@@ -100,7 +101,7 @@ void CUP_Player::play() {
 	while (_currentChunkSize != 0 && !_vm->_quit) {
 		uint32 tag, size;
 		parseNextTag(_currentChunkData, &r, tag, size);
-		if (tag == 'BLOK') {
+		if (tag == MKID_BE('BLOK')) {
 			bool fastMode = false;
 			int diff = _system->getMillis() - ticks;
 			if (diff >= 0 && diff <= _playbackRate && !fastMode) {
@@ -126,34 +127,36 @@ void CUP_Player::parseNextTag(const uint8 *data, Common::Rect *r1, uint32 &tag, 
 	size = READ_BE_UINT32(data + 4);
 	data += 8;
 	switch (tag) {
-	case 'FRAM':
+	case MKID_BE('FRAM'):
 		handleFRAM(_offscreenBuffer, data, size);
 		break;
-	case 'LZSS':
+	case MKID_BE('LZSS'):
 		data = handleLZSS(data, size);
 		if (data) {
 			uint32 t, s;
 			parseNextTag(data, r1, t, s);
 		}
 		break;
-	case 'RATE':
+	case MKID_BE('RATE'):
 		handleRATE(data, size);
 		break;
-	case 'RGBS':
+	case MKID_BE('RGBS'):
 		handleRGBS(data, size);
 		break;
-	case 'SNDE':
+	case MKID_BE('SNDE'):
 		handleSNDE(data, size);
 		break;
-	case 'TOIL':
+	case MKID_BE('TOIL'):
 		handleTOIL(data, size);
 		break;
-	case 'BLOK':
+	case MKID_BE('BLOK'):
 		// not handled here
 		break;
-	case 'SRLE':
-	case 'WRLE':
-		// these are never triggered
+	case MKID_BE('SRLE'):
+		handleSRLE(_offscreenBuffer, data, size);
+		break;
+	case MKID_BE('WRLE'):
+		// this is never triggered
 	default:
 		warning("Unhandled tag %c%c%c%c", tag>>24, (tag>>16)&0xFF, (tag>>8)&0xFF, tag&0xFF);
 		break;
@@ -202,7 +205,7 @@ void CUP_Player::handleFRAM(uint8 *dst, const uint8 *data, uint32 size) {
 	}
 }
 
-// decodeWiz, decodeTRLE
+// FIXME/TODO, re-use the WIZ decoding code in wiz.cpp to handle this
 void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect *r1, const uint8 *data, int code1) {
 	if (code1 == 256) {
 		dst += r1->top * _width + r1->left;
@@ -240,6 +243,60 @@ void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect *r1, const uint8 *data, int
 	}
 }
 
+void CUP_Player::handleSRLE(uint8 *dst, const uint8 *data, uint32 size) {
+//	x1 = READ_LE_UINT16(data + 0);
+//	y1 = READ_LE_UINT16(data + 2);
+//	x2 = READ_LE_UINT16(data + 4);
+//	y2 = READ_LE_UINT16(data + 6);
+	const uint8 *codeData = data + 8;
+	size = READ_LE_UINT32(data + 40);
+	decodeSRLE(dst, codeData, data + 44, size);
+}
+
+void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *codeTable, const uint8 *data, int unpackedSize) {
+	while (unpackedSize > 0) {
+		int size, code = *data++;
+		if ((code & 1) == 0) {
+			if ((code & 2) == 0) {
+				size = (code >> 2) + 1;
+				dst += size;
+				unpackedSize -= size;
+			} else {
+				if ((code & 4) == 0) {
+					*dst++ = codeTable[code >> 3];
+					--unpackedSize;
+				} else {
+					code >>= 3;
+					if (code == 0) {
+						size = 1 + *data++;
+						const uint8 color = *data++;
+						memset(dst, color, MIN(unpackedSize, size));
+						dst += size;
+						unpackedSize -= size;
+					} else {
+						size = code;
+						const uint8 color = *data++;
+						memset(dst, color, MIN(unpackedSize, size));
+						dst += size;
+						unpackedSize -= size;
+					}
+				}
+			}
+		} else {
+			code >>= 1;
+			if (code == 0) {
+				code = READ_LE_UINT16(data); data += 2;
+				++code;
+				dst += code;
+				unpackedSize -= code;
+			} else {
+				dst += code;
+				unpackedSize -= code;
+			}
+		}
+	}
+}
+
 uint8 *CUP_Player::handleLZSS(const uint8 *data, uint32 dataSize) {
 	uint32 compressionType = 0;
 	uint32 compressionSize = 0;
@@ -247,7 +304,7 @@ uint8 *CUP_Player::handleLZSS(const uint8 *data, uint32 dataSize) {
 
 	tag = READ_BE_UINT32(data);
 	size = READ_BE_UINT32(data + 4);
-	if (tag == 'LZHD') {
+	if (tag == MKID_BE('LZHD')) {
 		compressionType = READ_LE_UINT32(data + 8);
 		compressionSize = READ_LE_UINT32(data + 12);
 	}
@@ -255,7 +312,7 @@ uint8 *CUP_Player::handleLZSS(const uint8 *data, uint32 dataSize) {
 
 	tag = READ_BE_UINT32(data);
 	size = READ_BE_UINT32(data + 4);
-	if (tag == 'DATA') {
+	if (tag == MKID_BE('DATA')) {
 		if (compressionType == 0x2000) {
 			if (_bufferLzssSize < compressionSize) {
 				_bufferLzssSize = compressionSize;
@@ -363,133 +420,5 @@ void CUP_Player::handleTOIL(const uint8 *data, uint32 dataSize) {
 		}
 	}
 }
-
-#if 0
-void CUP_Player::processSRLE(uint8 *dst1, uint8 *dst2, const uint8 *codeTable, uint8 *data, int32 unpackedSize) {
-	bool bit;
-	uint16 code;
-	while (unpackedSize > 0) {
-		code = *data++;
-		bit = (code & 1) == 1;
-		code >>= 1;
-		if (!bit) {
-			bit = (code & 1) == 1;
-			code >>= 1;
-			if (!bit) {
-				int size = code + 1;
-				unpackedSize -= size;
-				memcpy(dst1, dst2, size);
-				dst1 += size;
-				dst2 += size;
-			} else {
-				bit = (code & 1) == 1;
-				code >>= 1;
-				if (!bit) {
-					++dst2;
-					*dst1++ = codeTable[code];
-					--unpackedSize;
-				} else if (code == 0) {
-					size = 1 + *data++;
-					color = *data++;
-					color = _cup_colorRemapTable[color];
-					dst2 += size;
-					unpackedSize -= size;
-					memset(dst1, color, size);
-					dst1 += size;
-				} else {
-					size = code;
-					code = *data++;
-					code = _cup_colorRemapTable[code];
-					dst2 += size;
-					unpackedSize -= size;
-					memset(dst1, code, size);
-					dst1 += size;
-				}
-			}
-		} else if (code == 0) {
-			code = READ_LE_UINT16(data); data += 2;
-			++code;
-			dst1 += code;
-			dst2 += code;
-			unpackedSize -= code;
-		} else {
-			dst1 += code;
-			dst2 += code;
-			unpackedSize -= code;
-		}
-	}
-}
-
-void CUP_Player::processWRLE(uint8 *dst, uint8 *codeTable, const uint8 *data, int32 unpackedSize, uint8 rleCode, int pitch) {
-	uint8 color;
-	uint16 code;
-	if (unpackedSize <= 0) return;
-	do {
-		code = *data++;
-		if ((code & 1) != 0) {
-			int size = ((code & 6) >> 1) + 3;
-			code >>= 3;
-			unpackedSize -= var4;
-			color = codeTable[code];
-			if (color != rleCode) {
-				memset(dst, color, size);
-			} else {
-				memcpy(dst, dst + pitch, size);
-			}
-		} else if ((code & 2) == 0) {
-			code >>= 2;
-			if (code == 0) {
-				code = READ_LE_UINT16(data); data += 2;
-			}
-			dst += code;
-			unpackedSize -= code;
-		} else if ((code & 4) != 0) {
-			code >>= 3;
-			if (code == 0) {
-				code = *data++;
-			}
-			unpackedSize -= code;
-			color = *data++;
-			if (color != rleCode) {
-				memset(dst, color, code);
-			} else {
-				assert(code < pitch);
-				memcpy(dst, dst + pitch, code);
-			}
-			dst += code;
-		} else {
-			code >>= 3;
-			color = codeTable[code];
-			if (color == rleCode) {
-				color = dst[pitch];
-			}
-			*dst++ = code;
-			--unpackedSize;
-		}
-	} while (unpackedSize > 0);
-}
-
-void CUP_Player::handleSRLE(IMAGE *img1, IMAGE *img2, Common::Rect *r, const uint8 *data, uint32 dataSize) {
-	Common::Rect r1;
-	r1.left = READ_LE_UINT16(data);
-	r1.top = READ_LE_UINT16(data + 2);
-	r1.right = READ_LE_UINT16(data + 4);
-	r1.bottom = READ_LE_UINT16(data + 6);
-	const uint8 *codeData = data + 8;
-	uint32 size = READ_LE_UINT32(data + 40);
-	processSRLE(img1->ptr, img2->ptr, codeData, data + 44, size);
-}
-
-void CUP_Player::handleWRLE(IMAGE *img, Common::Rect *r, const uint8 *data, uint32 dataSize) {
-	Common::Rect r1;
-	r1.left = READ_LE_UINT16(data); data += 2;
-	r1.top = READ_LE_UINT16(data); data += 2;
-	r1.right = READ_LE_UINT16(data); data += 2;
-	r1.bottom = READ_LE_UINT16(data); data += 2;
-	const uint8 *codeData = data + 8;
-	uint32 size = READ_LE_UINT32(data + 40);
-	processWRLE(img->ptr, codeData, data + 44, size, 0, -img->w);
-}
-#endif
 
 } // End of namespace Scumm

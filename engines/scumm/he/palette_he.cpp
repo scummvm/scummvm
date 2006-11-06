@@ -84,7 +84,7 @@ int ScummEngine_v90he::getHEPaletteSimilarColor(int palSlot, int red, int green,
 
 	uint8 *pal = _hePalettes + palSlot * 1024 + start * 3;
 
-	int bestsum = 0xFFFFFFFF;
+	int bestsum = 0x7FFFFFFF;
 	int bestitem = start;
 
 	for (int i = start; i <= end; i++) {
