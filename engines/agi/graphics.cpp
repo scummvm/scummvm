@@ -282,7 +282,7 @@ void print_character(int x, int y, char c, int fg, int bg) {
  * @param a  set if the button has focus
  * @param p  set if the button is pressed
  */
-void draw_button(int x, int y, const char *s, int a, int p) {
+void draw_button(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 
@@ -292,7 +292,7 @@ void draw_button(int x, int y, const char *s, int a, int p) {
 	y2 = y + CHAR_LINES + 2;
 
 	while (*s) {
-		put_text_character(0, x + (!!p), y + (!!p), *s++, a ? 15 : 0, a ? 0 : 15);
+		put_text_character(0, x + (!!p), y + (!!p), *s++, a ? fgcolor : bgcolor, a ? bgcolor : fgcolor);
 		x += CHAR_COLS;
 	}
 

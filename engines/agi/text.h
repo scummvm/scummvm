@@ -26,8 +26,13 @@
 #define AGI_TEXT_H
 
 #include "agi/agi.h"
+#include "common/hash-str.h"
 
 namespace Agi {
+
+#define MAXWORDLEN 24
+
+typedef Common::String String;
 
 class TextMan {
 public:
@@ -44,6 +49,7 @@ public:
 	void write_prompt(void);
 	void clear_lines(int, int, int);
 	void flush_lines(int, int);
+	bool predictiveDialog(void);
 
 private:
 	void print_status(const char *message, ...);
@@ -51,6 +57,30 @@ private:
 	void blit_textbox(const char *p, int y, int x, int len);
 	void erase_textbox();
 	char *safe_strcat(char *s, const char *t);
+
+	void loadDict(void);
+
+	bool matchWord(void);
+
+private:
+	typedef Common::HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> DictMap;
+
+	DictMap _dict;
+	Common::StringList _dictKeys;
+
+	String _currentCode;
+	String _currentWord;
+	String _matchedWord;
+
+	int _wordNumber;
+
+	int _wordPosition;
+
+	bool _nextIsActive;
+	bool _addIsActive;
+
+public:
+	char _predictiveResult[40];
 };
 
 extern TextMan *_text;

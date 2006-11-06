@@ -170,6 +170,16 @@ int handle_controller(int key) {
 				break;
 			}
 		}
+
+		if (mouse.y >= game.line_user_input * CHAR_LINES &&
+				mouse.y <= (game.line_user_input + 1) * CHAR_LINES) {
+			if (_text->predictiveDialog()) {
+				strcpy((char *)game.input_buffer, _text->_predictiveResult);
+				handle_keys(KEY_ENTER);
+			}
+			return true;
+		}
+
 		if (!opt.agimouse) {
 			/* Handle mouse button events */
 			if (key == BUTTON_LEFT) {
@@ -201,6 +211,18 @@ void handle_getstring(int key) {
 	debugC(3, kDebugLevelInput, "handling key: %02x", key);
 
 	switch (key) {
+	case BUTTON_LEFT:
+		if (mouse.y >= stringdata.y * CHAR_LINES &&
+				mouse.y <= (stringdata.y + 1) * CHAR_LINES) {
+			if (_text->predictiveDialog()) {
+				strcpy(game.strings[stringdata.str], _text->_predictiveResult);
+				new_input_mode(INPUT_NORMAL);
+				print_character(stringdata.x + strlen(game.strings[stringdata.str]) + 1,
+								stringdata.y, ' ', game.color_fg, game.color_bg);
+				return;
+			}
+		}
+		break;
 	case KEY_ENTER:
 		debugC(3, kDebugLevelInput, "KEY_ENTER");
 		game.has_prompt = 0;
