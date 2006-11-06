@@ -481,15 +481,19 @@ void AGOSEngine::o_putBy() {
 void AGOSEngine::o_inc() {
 	// 59: item inc state
 	Item *item = getNextItemPtr();
-	if (item->state <= 30000)
+	if (item->state <= 30000) {
 		setItemState(item, item->state + 1);
+		synchChain(item);
+	}
 }
 
 void AGOSEngine::o_dec() {
 	// 60: item dec state
 	Item *item = getNextItemPtr();
-	if (item->state >= 0)
+	if (item->state >= 0) {
 		setItemState(item, item->state - 1);
+		synchChain(item);
+	}
 }
 
 void AGOSEngine::o_setState() {
@@ -501,6 +505,7 @@ void AGOSEngine::o_setState() {
 	if (value > 30000)
 		value = 30000;
 	setItemState(item, value);
+	synchChain(item);
 }
 
 void AGOSEngine::o_print() {
@@ -810,9 +815,13 @@ void AGOSEngine::o_doClassIcons() {
 	// 126: do class icons
 	Item *item = getNextItemPtr();
 	uint num = getVarOrByte();
-	uint a = 1 << getVarOrByte();
+	uint a = getVarOrByte();
+
 	mouseOff();
-	drawIconArray(num, item, 1, a);
+	if (getGameType() == GType_ELVIRA1)
+		drawIconArray(num, item, 0, a);
+	else
+		drawIconArray(num, item, 0, 1 << a);
 	mouseOn();
 }
 
@@ -1085,20 +1094,22 @@ int AGOSEngine::runScript() {
 	return getScriptReturn();
 }
 
-void AGOSEngine::scriptMouseOn() {
-	if ((getGameType() == GType_FF || getGameType() == GType_PP) && _mouseCursor != 5) {
-		resetVerbs();
-		_noRightClick = 0;
-	} else if (getGameType() == GType_SIMON2 && getBitFlag(79)) {
-		_mouseCursor = 0;
+Child *nextSub(Child *sub, int16 key) {
+	Child *a = sub->next;
+	while (a) {
+		if (a->type == key)
+			return a;
+		a = a->next;
 	}
-	_mouseHideCount = 0;
+	return NULL;
 }
 
-void AGOSEngine::scriptMouseOff() {
-	_lockWord |= 0x8000;
-	vc34_setMouseOff();
-	_lockWord &= ~0x8000;
+void AGOSEngine::synchChain(Item *i) {
+	SubUserChain *c = (SubUserChain *)findChildOfType(i, 8);
+	while (c) {
+		setItemState(derefItem(c->chChained), i->state);
+		c = (SubUserChain *)nextSub((Child *)c, 8);
+	}
 }
 
 void AGOSEngine::sendSync(uint a) {
@@ -1109,29 +1120,10 @@ void AGOSEngine::sendSync(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void AGOSEngine::setTextColor(uint color) {
-	WindowBlock *window;
-
-	window = _windowArray[_curWindow];
-	window->text_color = color;
-}
-
 void AGOSEngine::stopAnimate(uint a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
-	vc60_stopAnimation();
-	_lockWord &= ~0x8000;
-}
-
-void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
-	uint16 items[2];
-
-	items[0] = to16Wrapper(a);
-	items[1] = to16Wrapper(b);
-
-	_lockWord |= 0x8000;
-	_vcPtr = (byte *)&items;
 	vc60_stopAnimation();
 	_lockWord &= ~0x8000;
 }

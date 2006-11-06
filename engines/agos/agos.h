@@ -666,8 +666,6 @@ protected:
 	void waitForSync(uint a);
 
 	uint getOffsetOfChild2Param(SubObject *child, uint prop);
-	void setTextColor(uint color);
-	void scriptMouseOn();
 	void scriptMouseOff();
 	void freezeBottom();
 	void unfreezeBottom();
@@ -685,8 +683,8 @@ protected:
 	void setDoorState(Item *i, uint16 d, uint16 n);
 
 	// Elvira 1 specific
-	uint16 getDoorOf(Item *item, uint16 d);
-	uint16 getExitOf_e1(Item *item, uint16 d);
+	Item *getDoorOf(Item *item, uint16 d);
+	Item *getExitOf_e1(Item *item, uint16 d);
 	void moveDirn_e1(Item *i, uint x);
 
 	// Elvira 2 specific
@@ -778,6 +776,7 @@ protected:
 	void clearWindow(WindowBlock *window);
 	void changeWindow(uint a);
 	void closeWindow(uint a);
+	void setTextColor(uint color);
 	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 
 	HitArea *findBox(uint hitarea_id);
@@ -1133,6 +1132,8 @@ public:
 	void oe1_printPlayerHit();
 	void oe1_printMonsterHit();
 
+	void synchChain(Item *i);
+
 	// Opcodes, Elvira 2
 	void oe2_moveDirn();
 	void oe2_doClass();
@@ -1218,6 +1219,7 @@ public:
 	void os2_stopAnimate();
 	void os2_playTune();
 	void os2_screenTextPObj();
+	void os2_mouseOn();
 	void os2_mouseOff();
 	void os2_isShortText();
 	void os2_clearMarks();
@@ -1243,6 +1245,7 @@ public:
 	void off_hyperLinkOff();
 	void off_checkPaths();
 	void off_screenTextPObj();
+	void off_mouseOn();
 	void off_mouseOff();
 	void off_loadVideo();
 	void off_playVideo();

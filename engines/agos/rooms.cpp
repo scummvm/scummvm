@@ -124,7 +124,7 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 }
 
 // Elvira 1 specific
-uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
+Item *AGOSEngine::getDoorOf(Item *i, uint16 d) {
 	SubGenExit *g;
 	Item *x;
 
@@ -137,10 +137,10 @@ uint16 AGOSEngine::getDoorOf(Item *i, uint16 d) {
 		return 0;
 	if (isRoom(x))
 		return 0;
-	return itemPtrToID(x);
+	return x;
 }
 
-uint16 AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
+Item *AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
 	SubGenExit *g;
 	Item *x;
 
@@ -152,24 +152,22 @@ uint16 AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
 	if (x == NULL)
 		return 0;
 	if (isRoom(x))
-		return itemPtrToID(x);
+		return x;
 	if (x->state != 0)
 		return 0;
-	return x->parent;
+	return derefItem(x->parent);
 }
 
 void AGOSEngine::moveDirn_e1(Item *i, uint x) {
 	Item *d, *p;
-	uint16 n;
-
-	if (i->parent == 0)
-		return;
 
 	p = derefItem(i->parent);
+	if (p == 0)
+		return;
 
-	n = getExitOf_e1(p, x);
-	d = derefItem(n);
-	if (n) {
+
+	d = getExitOf_e1(p, x);
+	if (d) {
 		if (canPlace(i, d))
 			return;
 
@@ -177,7 +175,7 @@ void AGOSEngine::moveDirn_e1(Item *i, uint x) {
 		return;
 	}
 
-	d = derefItem(getDoorOf(p, x));
+	d = getDoorOf(p, x);
 	if (d) {
 		const byte *name = getStringPtrByID(d->itemName);
 		if (d->state == 1)

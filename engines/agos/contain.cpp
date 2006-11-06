@@ -81,7 +81,7 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 }
 
 void AGOSEngine::xPlace(Item *x, Item *y) {
-	if (x->parent != 0)
+	if (derefItem(x->parent))
 		unlinkItem(x);
 
 	linkItem(x, y);

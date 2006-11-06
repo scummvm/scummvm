@@ -436,9 +436,9 @@ void AGOSEngine::oe1_whereTo() {
 	int16 f = getVarOrWord();
 
 	if (f == 1)
-		_subjectItem = derefItem(getExitOf_e1(i, d));
+		_subjectItem = getExitOf_e1(i, d);
 	else
-		_objectItem = derefItem(getExitOf_e1(i, d));
+		_objectItem = getExitOf_e1(i, d);
 }
 
 void AGOSEngine::oe1_doorExit() {
@@ -455,7 +455,7 @@ void AGOSEngine::oe1_doorExit() {
 	if (c)
 		a = derefItem(c->chChained);
 	while (ct < 6) {
-		x = derefItem(getDoorOf(i, ct));
+		x = getDoorOf(i, ct);
 		if ((x == d) | (x == a)) {
 			writeVariable(f, ct);
 			return;

@@ -67,7 +67,7 @@ void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
 	op[177] = &AGOSEngine::off_screenTextPObj;
 	op[178] = &AGOSEngine::os1_getPathPosn;
 	op[179] = &AGOSEngine::os1_scnTxtLongText;
-	op[180] = &AGOSEngine::os1_mouseOn;
+	op[180] = &AGOSEngine::off_mouseOn;
 	op[181] = &AGOSEngine::off_mouseOff;
 	op[182] = &AGOSEngine::off_loadVideo;
 	op[183] = &AGOSEngine::off_playVideo;
@@ -334,6 +334,15 @@ void AGOSEngine::off_screenTextPObj() {
 		if (string_ptr != NULL)
 			printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 	}
+}
+
+void AGOSEngine::off_mouseOn() {
+	// 180: force mouseOn
+	if (_mouseCursor != 5) {
+		resetVerbs();
+		_noRightClick = 0;
+	}
+	_mouseHideCount = 0;
 }
 
 void AGOSEngine::off_mouseOff() {

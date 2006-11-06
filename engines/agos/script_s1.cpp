@@ -267,7 +267,7 @@ void AGOSEngine::os1_scnTxtLongText() {
 
 void AGOSEngine::os1_mouseOn() {
 	// 180: force mouseOn
-	scriptMouseOn();
+	_mouseHideCount = 0;
 }
 
 void AGOSEngine::os1_mouseOff() {
@@ -338,6 +338,12 @@ void AGOSEngine::os1_specialFade() {
 
 	memcpy(_currentPalette, _videoBuf1, 1024);
 	memcpy(_displayPalette, _videoBuf1, 1024);
+}
+
+void AGOSEngine::scriptMouseOff() {
+	_lockWord |= 0x8000;
+	vc34_setMouseOff();
+	_lockWord &= ~0x8000;
 }
 
 } // End of namespace AGOS

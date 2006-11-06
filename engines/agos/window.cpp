@@ -184,6 +184,13 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	}
 }
 
+void AGOSEngine::setTextColor(uint color) {
+	WindowBlock *window;
+
+	window = _windowArray[_curWindow];
+	window->text_color = color;
+}
+
 void AGOSEngine::windowPutChar(uint a) {
 	if (_textWindow != _windowArray[0])
 		windowPutChar(_textWindow, a);

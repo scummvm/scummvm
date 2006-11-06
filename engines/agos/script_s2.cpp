@@ -54,7 +54,7 @@ void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
 	op[177] = &AGOSEngine::os2_screenTextPObj;
 	op[178] = &AGOSEngine::os1_getPathPosn;
 	op[179] = &AGOSEngine::os1_scnTxtLongText;
-	op[180] = &AGOSEngine::os1_mouseOn;
+	op[180] = &AGOSEngine::os2_mouseOn;
 	op[181] = &AGOSEngine::os2_mouseOff;
 	op[184] = &AGOSEngine::os1_unloadZone;
 	op[186] = &AGOSEngine::os1_unfreezeZones;
@@ -215,6 +215,14 @@ void AGOSEngine::os2_screenTextPObj() {
 	}
 }
 
+void AGOSEngine::os2_mouseOn() {
+	// 180: force mouseOn
+	if (getGameType() == GType_SIMON2 && getBitFlag(79)) {
+		_mouseCursor = 0;
+	}
+	_mouseHideCount = 0;
+}
+
 void AGOSEngine::os2_mouseOff() {
 	// 181: force mouseOff
 	scriptMouseOff();
@@ -239,6 +247,18 @@ void AGOSEngine::os2_waitMark() {
 	uint i = getVarOrByte();
 	if (!(_marks & (1 << i)))
 		waitForMark(i);
+}
+
+void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
+	uint16 items[2];
+
+	items[0] = to16Wrapper(a);
+	items[1] = to16Wrapper(b);
+
+	_lockWord |= 0x8000;
+	_vcPtr = (byte *)&items;
+	vc60_stopAnimation();
+	_lockWord &= ~0x8000;
 }
 
 void AGOSEngine::waitForMark(uint i) {
