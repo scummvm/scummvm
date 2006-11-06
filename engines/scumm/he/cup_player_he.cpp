@@ -222,12 +222,12 @@ void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect *r1, const uint8 *data, int
 						dst += code;
 					} else if (code & 2) { // set
 						code = (code >> 2) + 1;
-						const int sz = MIN(code, dstEnd - dst);
+						const int sz = MIN((int)code, (int)(dstEnd - dst));
 						memset(dst, *data++, sz);
 						dst += sz;
 					} else { // copy
 						code = (code >> 2) + 1;
-						const int sz = MIN(code, dstEnd - dst);
+						const int sz = MIN((int)code, (int)(dstEnd - dst));
 						memcpy(dst, data, sz);
 						dst += sz;
 						data += sz;
