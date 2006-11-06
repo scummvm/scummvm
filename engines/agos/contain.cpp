@@ -30,26 +30,53 @@ namespace AGOS {
 
 int AGOSEngine::canPlace(Item *x, Item *y) {
 	Item *z = derefItem(x->parent);
-	SubObject *o = (SubObject *)findChildOfType(y, 2);
-	int ct;
-	int cap = 0;
 
-	if (o == NULL)
-		return(0);	/* Fits Fine */
+	if (getGameType() == GType_ELVIRA1) {
+		SubPlayer *p = (SubPlayer *)findChildOfType(y, 3);
+		SubContainer *c = (SubContainer *)findChildOfType(y, 7);
+		int cap;
+		int wt;
 
-	xPlace(x,NULL);		/* Avoid disturbing figures */
-	if (o)
-		cap = sizeContents(y);
+		if ((c == NULL) && (p == NULL))
+			return 0;		/* Fits Fine */
 
-	xPlace(x, z);
-	if ((o) && (o->objectFlags & kOFVolume)) {
-		ct = getOffsetOfChild2Param(o, kOFVoice);
-		cap = o->objectFlagValue[ct] - cap;
-		cap -= sizeOfRec(x, 0);	/* - size of item going in */
-		if (cap < 0)
-			return -1;	/* Too big to fit */
+		xPlace(x, NULL);		/* Avoid disturbing figures */
+		if (c)
+			cap = sizeContents(y);
+
+		wt = weightOf(y);
+		xPlace(x, z);
+		if (c) {
+			cap = c->volume - cap;
+			cap -= sizeOfRec(x, 0);	/* - size of item going in */
+			if (cap < 0)
+				return -1;	/* Too big to fit */
+		}
+		if (p) {
+			if (wt + weightOf(x) > p->strength * 10)
+				return -2;	/* Too heavy */
+		}
+	} else {
+		SubObject *o = (SubObject *)findChildOfType(y, 2);
+		int ct;
+		int cap = 0;
+
+		if (o == NULL)
+			return 0;	/* Fits Fine */
+
+		xPlace(x,NULL);		/* Avoid disturbing figures */
+		if (o)
+			cap = sizeContents(y);
+
+		xPlace(x, z);
+		if ((o) && (o->objectFlags & kOFVolume)) {
+			ct = getOffsetOfChild2Param(o, kOFVolume);
+			cap = o->objectFlagValue[ct] - cap;
+			cap -= sizeOfRec(x, 0);	/* - size of item going in */
+			if (cap < 0)
+				return -1;	/* Too big to fit */
+		}
 	}
-
 	return 0;
 }
 
@@ -90,20 +117,37 @@ int AGOSEngine::sizeRec(Item *x, int d) {
 	return n;
 }
 
-int AGOSEngine::sizeOfRec(Item *o, int d) {
-	SubObject *a = (SubObject *)findChildOfType(o, 2);
-	int ct;
+int AGOSEngine::sizeOfRec(Item *i, int d) {
+	SubObject *o = (SubObject *)findChildOfType(i, 2);
 
-	if ((a) && (a->objectFlags & kOFSoft)) {
-		if (a->objectFlags & kOFSize) {
-			ct = getOffsetOfChild2Param(a, kOFSize);
-			return a->objectFlagValue[ct] + sizeRec(o, d + 1);
+	if (getGameType() == GType_ELVIRA1) {
+		SubPlayer *p = (SubPlayer *)findChildOfType(i, 3);
+		SubContainer *c = (SubContainer *)findChildOfType(i, 7);
+
+		if ((c) && (c->flags & 1)) {
+			if (o)
+				return (o->objectSize + sizeRec(i, d + 1));
+			if (p)
+				return (p->size + sizeRec(i, d + 1));
+			return (sizeRec(i, d + 1));
 		}
-		return sizeRec(o, d + 1);
-	}
-	if ((a) && (a->objectFlags & kOFSize)) {
-		ct = getOffsetOfChild2Param(a, kOFSize);
-		return a->objectFlagValue[ct];
+		if (o)
+			return (o->objectWeight);
+		if (p)
+			return (p->weight);
+	} else {
+		int ct;
+		if ((o) && (o->objectFlags & kOFSoft)) {
+			if (o->objectFlags & kOFSize) {
+				ct = getOffsetOfChild2Param(o, kOFSize);
+				return o->objectFlagValue[ct] + sizeRec(i, d + 1);
+			}
+			return sizeRec(i, d + 1);
+		}
+		if ((o) && (o->objectFlags & kOFSize)) {
+			ct = getOffsetOfChild2Param(o, kOFSize);
+			return o->objectFlagValue[ct];
+		}
 	}
 	return 0;
 }
@@ -129,11 +173,19 @@ int AGOSEngine::weightRec(Item *x, int d) {
 
 int AGOSEngine::weightOf(Item *x) {
 	SubObject *o = (SubObject *)findChildOfType(x, 2);
-	SubPlayer *p = (SubPlayer *)findChildOfType(x, 3);
-	if (o)
-		return o->objectWeight;
-	if (p)
-		return p->weight;
+
+	if (getGameType() == GType_ELVIRA1) {
+		SubPlayer *p = (SubPlayer *)findChildOfType(x, 3);
+		if (o)
+			return o->objectWeight;
+		if (p)
+			return p->weight;
+	} else {
+		if ((o) && (o->objectFlags & kOFWeight)) {
+			int ct = getOffsetOfChild2Param(o, kOFWeight);
+			return (o->objectFlagValue[ct]);
+		}
+	}
 	return 0;
 }
 
