@@ -625,11 +625,11 @@ bool AGOSEngine::loadGame_e1(const char *filename) {
 	for (num = _itemArrayInited - 1; num; num--) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
 
-		uint16 parent = f->readUint32BE();
-		if (parent == 0xFFFF)
+		uint32 parent = f->readUint32BE();
+		if (parent == 0xFFFFFFFF)
 			parent_item = 0;
 		else
-			parent_item = derefItem(parent);
+			parent_item = derefItem(parent + 1);
 
 		setItemParent(item, parent_item);
 
@@ -657,11 +657,11 @@ bool AGOSEngine::loadGame_e1(const char *filename) {
 				u->userFlags[i] = f->readUint16BE();
 			}
 
-			uint16 val = f->readUint32BE();
-			if (val == 0xFFFF)
+			uint32 val = f->readUint32BE();
+			if (val == 0xFFFFFFFF)
 				u->userItems[0] = 0;
 			else
-				u->userItems[0] = val;
+				u->userItems[0] = val + 1;
 		}
 	}
 
@@ -722,7 +722,7 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 		if (item->parent == 0)
 			f->writeUint32BE(0xFFFFFFFF);
 		else
-			f->writeUint32BE(item->parent);
+			f->writeUint32BE(item->parent - 1);
 
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
@@ -751,7 +751,7 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 			if (u->userItems[0] == 0)
 				f->writeUint32BE(0xFFFFFFFF);
 			else
-				f->writeUint32BE(u->userItems[0]);
+				f->writeUint32BE(u->userItems[0] - 1);
 		}
 	}
 
