@@ -42,6 +42,7 @@ class ResExtractor;
 class LogicHE;
 class MoviePlayer;
 class Sprite;
+class CUP_Player;
 #endif
 
 class ScummEngine_v60he : public ScummEngine_v6 {
@@ -629,6 +630,27 @@ protected:
 	void o100_getWizData();
 	void o100_getVideoData();
 };
+
+class ScummEngine_vCUPhe : public Engine {
+protected:
+	CUP_Player *_cupPlayer;
+	FilenamePattern _filenamePattern;
+
+public:
+	ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_vCUPhe();
+
+	int init();
+	int go();
+
+	void parseEvents();
+
+	bool _quit;
+	OSystem *_syst;
+
+	GameSettings _game;
+};
+
 #endif
 
 

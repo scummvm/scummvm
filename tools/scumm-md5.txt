@@ -349,6 +349,8 @@ comi	The Curse of Monkey Island
 
 baseball	Backyard Baseball
 	cf8d13446ec6cb6222287a925fd47c1d	-1	en	All	-	-	-	sev
+	94db6519da85b8d08c976d8e9a858ea7	10044774	All	All	HE CUP	Demo	-	sev
+	8aed489aba45d2b9fb8a04079c9c6e6a	12876596	All	All	HE CUP	Demo	Updated	sev
 
 baseball2001	Backyard Baseball 2001
 	a86f9c49355579c30d4a55b477c0d869	-1	en	All	-	-	-	Kirben
@@ -393,12 +395,14 @@ BluesABCTime	Blue's ABC Time
 
 	7ddeaf52c8b9a50551ce0aa2ac811d07	-1	en	All	-	Demo	-	khalek, sev
 	810a9da887aefa597b0cf3c77d262897	-1	en	All	-	Demo	-	sev
+	356fb5f680b68251333016175935d126	4133436	All	All	HE CUP	Demo	-	sev
 
 BluesBirthday	Blue's Birthday Adventure
 	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	-	-	
 
 	2d4acbdcfd8e374c9da8c2e7303a5cd0	-1	en	All	-	Demo	-	Kirben
 	dbf4d59d70b826733f379f998354d350	-1	en	All	-	Demo	-	Kirben
+	fa30c4a7a806629626269b6dcab59a15	7819264	All	All	HE CUP	Demo	-	sev
 
 fbear	Fatty Bear's Birthday Surprise
 	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 61	-	-	sev
@@ -602,6 +606,7 @@ puttrace	Putt-Putt Enters the Race
 	663743c03ae0c007f3d665cf631c0e6b	13135	de	All	HE 99	Demo	-	Joachim Eberhard
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
 	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
+	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Demo	-	sev
 
 puttmoon	Putt-Putt Goes to the Moon
 	a9543ef0d79bcb47cd76ec197ad0a967	-1	en	3DO	-	-	-	sev
@@ -721,6 +726,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
 	e62056ba675ad65d8854ab3c5ad4b3c0	-1	en	Windows	-	Mini Game	-	Trekky
 	19bf6938a94698296bcb0c99c31c91a7	-1	gb	Windows	-	Demo	-	eriktorbjorn
+	49a1739981a89066b1121fac04b710f4	5756234	All	All	HE CUP	Demo	-	sev
 
 spyozon	SPY Fox 3: Operation Ozone
 	600abd3e9f47e63e670188b7e4e86ac7	47128	us	All	-	-	-	Kirben
@@ -729,6 +735,7 @@ spyozon	SPY Fox 3: Operation Ozone
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
 	ebd0b2c8a387f18887282afe6cad894a	-1	en	All	-	Demo	-	Kirben
+	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Demo	-	sev
 
 chase	SPY Fox in Cheese Chase
 	589601b676c98b1c0c987bc031ab68b3	-1	us	All	HE 95	-	-	Kirben

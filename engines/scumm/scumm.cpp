@@ -60,6 +60,7 @@
 #include "scumm/sound.h"
 #include "scumm/imuse/sysex.h"
 #include "scumm/he/sprite_he.h"
+#include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
@@ -765,6 +766,51 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 		free(_hePalettes);
 	}
 }
+
+ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst){
+	_syst = syst;
+	_game = dr.game;
+	_filenamePattern = dr.fp,
+	
+	_cupPlayer = new CUP_Player(syst, this, _mixer);
+}
+
+ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
+	delete _cupPlayer;
+}
+
+int ScummEngine_vCUPhe::init() {
+	_system->beginGFXTransaction();
+		_system->initSize(640, 480);
+		initCommonGFX(true);
+	_system->endGFXTransaction();
+
+	return 0;
+}
+
+int ScummEngine_vCUPhe::go() {
+	_cupPlayer->open(_filenamePattern.pattern);
+	_cupPlayer->play();
+	_cupPlayer->close();
+
+	return 0;
+}
+
+void ScummEngine_vCUPhe::parseEvents() {
+	OSystem::Event event;
+	
+	while (_system->pollEvent(event)) {
+		switch (event.type) {
+		case OSystem::EVENT_QUIT:
+			_quit = true;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 #endif
 
 #ifndef DISABLE_SCUMM_7_8
@@ -868,7 +914,7 @@ int ScummEngine::init() {
 #endif
 
 
-	// The 	kGenAsIs method is only used for 'container files', i.e. files
+	// The 	kGenUnchanged method is only used for 'container files', i.e. files
 	// that contain the real game files bundled together in an archive format.
 	// This is the case of the NES, C64 and Mac versions of certain games.
 	// Note: All of these can also occur in 'extracted' form, in which case they
@@ -957,7 +1003,7 @@ int ScummEngine::init() {
 			_fileHandle->close();
 			
 		} else {
-			error("kGenAsIs used with unsupported platform");
+			error("kGenUnchanged used with unsupported platform");
 		}
 	} else {
 		// Regular access, no container file involved

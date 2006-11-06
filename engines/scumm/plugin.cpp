@@ -271,6 +271,9 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttputt", "Demo",  GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 #ifndef DISABLE_HE
+	// HE CUP demos
+	{"", "HE CUP",  GID_HECUP,  6, 200, MDT_NONE, 0, UNK},
+
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
@@ -500,6 +503,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "baseball", "baseball", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "baseball", "BaseBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "baseball", "basedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "baseball2001", "baseball2001", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "baseball2001", "bb2demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -516,6 +520,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "bluesabctime", "bluesabctime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "bluesabctime", "abc-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -523,6 +528,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "BluesBirthday", "Blue'sBirthday-Yellow", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "BluesBirthday", "bda-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -691,6 +697,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttrace", "ToffRennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttrace", "ToffRennen", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "puttrace", "racedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "PuttsFunShop", "PuttsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "PuttsFunShop", "Putt's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -775,6 +782,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox2", "spyfoxsr", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox2", "SpyFoxSR", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "SPYMini", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "spy2preview.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -782,6 +790,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "SPYFoxSOS", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "ozonepre.cup", kGenUnchanged, UNK_LANG, UNK, "HE CUP" },
 
 	{ "thinker1", "1grademo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "thinker1", "thinker1", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -1495,6 +1504,9 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	case 6:
 		switch (res.game.heversion) {
 #ifndef DISABLE_HE
+		case 200:
+			*engine = new ScummEngine_vCUPhe(syst, res);
+			break;
 		case 100:
 			*engine = new ScummEngine_v100he(syst, res);
 			break;
