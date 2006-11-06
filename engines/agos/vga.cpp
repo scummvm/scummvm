@@ -671,6 +671,8 @@ void AGOSEngine::vc10_draw() {
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		drawImages_Feeble(&state);
+	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		drawImages_Simon(&state);
 	} else {
 		drawImages(&state);
 	}

@@ -1275,9 +1275,12 @@ public:
 	void opp_restartClock();
 
 protected:
-	void drawImages(VC10_state *state);
-	void drawImages_Feeble(VC10_state *state);
 	bool drawImages_clip(VC10_state *state);
+
+	void drawImages(VC10_state *state);
+	void drawImages_Simon(VC10_state *state);
+	void drawImages_Feeble(VC10_state *state);
+
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
 	void horizontalScroll(VC10_state *state);
 	void verticalScroll(VC10_state *state);
