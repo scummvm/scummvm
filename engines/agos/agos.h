@@ -367,7 +367,6 @@ protected:
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 
-	bool _initMouse;
 	int _mouseX, _mouseY;
 	int _mouseXOld, _mouseYOld;
 

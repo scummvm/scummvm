@@ -989,19 +989,6 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
 	if (mode == 4) {
 		vc29_stopAllSounds();
 
-		if (!_initMouse) {
-			_initMouse = 1;
-			vc33_setMouseOn();
-
-			// Set mouse palette
-			if (getGameType() == GType_WW) {
-				_displayPalette[65 * 4 + 0] = 48 * 4;
-				_displayPalette[65 * 4 + 1] = 48 * 4;
-				_displayPalette[65 * 4 + 2] = 40 * 4;
-				_displayPalette[65 * 4 + 3] = 0;
-			}
-		}
-
 		if (getGameType() == GType_ELVIRA1) {
 			if (_variableArray[299] == 0) {
 				_variableArray[293] = 0;

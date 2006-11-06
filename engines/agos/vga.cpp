@@ -1074,6 +1074,13 @@ void AGOSEngine::vc32_saveScreen() {
 void AGOSEngine::vc33_setMouseOn() {
 	if (_mouseHideCount != 0) {
 		_mouseHideCount = 1;
+		if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			// Set mouse palette
+			_displayPalette[65 * 4 + 0] = 48 * 4;
+			_displayPalette[65 * 4 + 1] = 48 * 4;
+			_displayPalette[65 * 4 + 2] = 40 * 4;
+			_displayPalette[65 * 4 + 3] = 0;
+		}
 		mouseOn();
 	}
 }

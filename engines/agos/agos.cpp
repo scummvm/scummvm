@@ -255,7 +255,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
 
-	_initMouse = 0;
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseXOld = 0;
@@ -837,7 +836,6 @@ int AGOSEngine::go() {
 	vc34_setMouseOff();
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
-		_initMouse = 1;
 		loadMusic(0);
 	}
 
