@@ -179,6 +179,7 @@ void ThemeModern::enable() {
 void ThemeModern::disable() {
 	_system->hideOverlay();
 	PaletteMan.popCursorPalette();
+	CursorMan.popCursor();
 	_enabled = false;
 }
 
