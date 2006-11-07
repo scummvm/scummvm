@@ -156,7 +156,6 @@ public:
 
 	uint32 setInputEventFilter(uint32 filter);
 
-	void clearInputEvents();
 	void parseInputEvents();
 
 	bool checkForMouseEvents();

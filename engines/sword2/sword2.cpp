@@ -348,6 +348,10 @@ int Sword2Engine::go() {
 
 		if (ke) {
 			if ((ke->modifiers == OSystem::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
+				// HACK: We have to clear the 'repeat' flag, or
+				// it will probably trigger a keyboard repeat
+				// immediately after the debug console closes.
+				_keyboardEvent.repeat = 0;
 				_debugger->attach();
 			} else if (ke->modifiers == 0 || ke->modifiers == OSystem::KBD_SHIFT) {
 				switch (ke->keycode) {
@@ -497,17 +501,6 @@ uint32 Sword2Engine::setInputEventFilter(uint32 filter) {
 
 	_inputEventFilter = filter;
 	return oldFilter;
-}
-
-/**
- * Clear the input events. This is so that we won't get any keyboard repeat
- * right after using the debugging console.
- */
-
-void Sword2Engine::clearInputEvents() {
-	_keyboardEvent.pending = false;
-	_keyboardEvent.repeat = 0;
-	_mouseEvent.pending = false;
 }
 
 /**
