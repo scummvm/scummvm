@@ -2575,11 +2575,6 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	int nr2 = getVarOrDirectByte(PARAM_2);
 	int dist = fetchScriptByte();
 
-	if (nr == 106 && _game.id == GID_INDY4) {
-		printf("Bypassing Indy4 bug\n");
-		return;
-	}
-
 	if (_game.id == GID_LOOM && _game.version == 4 && nr == 1 && nr2 == 0 &&
 		dist == 255 && vm.slot[_currentScript].number == 98) {
 		// WORKAROUND bug #743615: LoomCD script 98 contains this:
@@ -2588,6 +2583,20 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		// or unknown meaning to this odd walk request...
 		return;
 	}
+
+
+/*
+FIXME: Disabled this undocumented workaround (which has been there since the
+very first revision of this code). It's likely related to the following workaround;
+if so, they should be merged. As it is, undocumented workarounds are bad and
+thus I disabled this. If anybody gets troubles due to this, we will be able to
+implement a proper fix.
+
+	if (nr == 106 && _game.id == GID_INDY4) {
+		printf("Bypassing Indy4 bug\n");
+		return;
+	}
+*/
 
 	if (_game.id == GID_INDY4 && nr == 1 && nr2 == 106 &&
 		dist == 255 && vm.slot[_currentScript].number == 210) {
