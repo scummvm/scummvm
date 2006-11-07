@@ -53,6 +53,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	_roomNeedRedraw = false;
 	_fastWalkMode = false;
+	_fastMode = false;
 
 	_currentObjectNum = -1;
 	_objectDescriptionNum = 0;
@@ -193,27 +194,30 @@ void ToucheEngine::restart() {
 
 void ToucheEngine::mainLoop() {
 	restart();
+
 	_inp_mousePos.x = 640 / 2;
 	_inp_mousePos.y = 352 / 2;
-	_inp_mouseButtonClicked = false;
-	_inp_mouseButtonPressed = false;
+	_inp_leftMouseButtonPressed = false;
+	_inp_rightMouseButtonPressed = false;
 	_system->warpMouse(_inp_mousePos.x, _inp_mousePos.y);
 	setPalette(0, 255, 0, 0, 0);
-#ifdef NORMAL_GAME_SPEED
+
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+		_newEpisodeNum = _currentEpisodeNum;
+	}
+
 	const int cycleDelay = 1000 / (1193180 / 32768);
-#else
-	const int cycleDelay = 10;
-#endif
 	uint32 frameTimeStamp = _system->getMillis();
 	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
-		if ((cycleCounter & 3) == 0) {
+		if ((cycleCounter & 2) == 0) {
 			runCycle();
 		}
-		if ((cycleCounter & 2) == 0) {
+		if ((cycleCounter & 1) == 0) {
 			fadePaletteFromFlags();
  		}
 		int delay = _system->getMillis() - frameTimeStamp;
-		delay = cycleDelay - delay;
+		delay = (_fastMode ? 10 : cycleDelay) - delay;
 		if (delay < 1) {
 			delay = 1;
 		}
@@ -235,31 +239,32 @@ void ToucheEngine::processEvents() {
 				if (_displayQuitDialog) {
 					_flagsTable[611] = ui_displayQuitDialog();
 				}
-			}
-			if (event.kbd.keycode == 286) { // F5
+			} else if (event.kbd.keycode == 286) { // F5
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
 					ui_handleOptions(0);
 				}
-			}
-			if (event.kbd.keycode == 290) { // F9
+			} else if (event.kbd.keycode == 290) { // F9
 				_fastWalkMode = true;
-			}
-			if (event.kbd.keycode == 291) { // F10
+			} else if (event.kbd.keycode == 291) { // F10
 				_fastWalkMode = false;
 			}
-			if (event.kbd.ascii == 't') {
-				++_talkTextMode;
-				if (_talkTextMode == kTalkModeCount) {
-					_talkTextMode = 0;
+			if (event.kbd.flags == OSystem::KBD_CTRL) {
+				if (event.kbd.keycode == 'd') {
+					// enable debugging stuff ?
+					_flagsTable[777] = 1;
+				} else if (event.kbd.keycode == 'f') {
+					_fastMode = !_fastMode;
 				}
-				ui_displayTextMode(-(92 + _talkTextMode));
-			}
-			if (event.kbd.ascii == 'd') {
-				// enable debugging stuff ?
-				_flagsTable[777] = 1;
-			}
-			if (event.kbd.ascii == ' ') {
-				updateKeyCharTalk(2);
+			} else {
+				if (event.kbd.ascii == 't') {
+					++_talkTextMode;
+					if (_talkTextMode == kTalkModeCount) {
+						_talkTextMode = 0;
+					}
+					ui_displayTextMode(-(92 + _talkTextMode));
+				} else if (event.kbd.ascii == ' ') {
+					updateKeyCharTalk(2);
+				}
 			}
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
@@ -269,7 +274,7 @@ void ToucheEngine::processEvents() {
 		case OSystem::EVENT_LBUTTONDOWN:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
-			_inp_mouseButtonClicked = true;
+			_inp_leftMouseButtonPressed = true;
 			break;
 		case OSystem::EVENT_LBUTTONUP:
 			_inp_mousePos.x = event.mouse.x;
@@ -278,12 +283,12 @@ void ToucheEngine::processEvents() {
 		case OSystem::EVENT_RBUTTONDOWN:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
-			_inp_mouseButtonPressed = true;
+			_inp_rightMouseButtonPressed = true;
 			break;
 		case OSystem::EVENT_RBUTTONUP:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
-			_inp_mouseButtonPressed = false;
+			_inp_rightMouseButtonPressed = false;
 			break;
 		default:
 			break;
@@ -439,7 +444,8 @@ void ToucheEngine::setupNewEpisode() {
 		if (_newEpisodeNum == 91) {
 			_displayQuitDialog = true;
 		}
-//		flushDigitalSounds();
+		res_stopSound();
+		res_stopSpeech();
 		setupEpisode(_newEpisodeNum);
 		runCurrentKeyCharScript(1);
 		_newEpisodeNum = 0;
@@ -824,11 +830,7 @@ void ToucheEngine::redrawRoom() {
 void ToucheEngine::fadePalette(int firstColor, int lastColor, int scale, int scaleInc, int fadingStepsCount) {
 	for (int i = 0; i < fadingStepsCount; ++i) {
 		scale += scaleInc;
-		if (scale > 255) {
-			scale = 0;
-		} else if (scale < 0) {
-			scale = 0;
-		}
+		scale = CLIP(scale, 0, 255);
 		setPalette(firstColor, lastColor, scale, scale, scale);
 		_system->updateScreen();
 		_system->delayMillis(10);
@@ -969,6 +971,7 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 				frameDir = READ_LE_UINT16(sequenceData + frameDir * 2);
 			}
 			if (keyChar == 0) {
+				assert(frameDir < NUM_DIRECTIONS);
 				if (_directionsTable[frameDir] <= _flagsTable[176]) {
 					continue;
 				}
@@ -1033,6 +1036,7 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 				frameDir = READ_LE_UINT16(sequenceData + frameDir * 2);
 			}
 			if (keyChar == 0) {
+				assert(frameDir < NUM_DIRECTIONS);
 				if (_directionsTable[frameDir] <= _flagsTable[176]) {
 					continue;
 				}
@@ -1373,7 +1377,7 @@ void ToucheEngine::updateCursor(int num) {
 	}
 }
 
-void ToucheEngine::handleMouseButtonClicked() {
+void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 	for (int area = 0; area < ARRAYSIZE(_inventoryAreasTable); ++area) {
 		if (_inventoryAreasTable[area].contains(_inp_mousePos)) {
 			if (area >= kInventoryObject1 && area <= kInventoryObject6) {
@@ -1457,7 +1461,7 @@ void ToucheEngine::handleMouseButtonClicked() {
 	}
 }
 
-void ToucheEngine::handleMouseButtonPressed() {
+void ToucheEngine::handleRightMouseButtonClickOnInventory() {
 	for (int area = kInventoryObject1; area <= kInventoryObject6; ++area) {
 		const Common::Rect &r = _inventoryAreasTable[area];
 		if (r.contains(_inp_mousePos)) {
@@ -1480,16 +1484,16 @@ void ToucheEngine::handleMouseButtonPressed() {
 
 void ToucheEngine::handleMouseInput(int flag) {
 	if (_disabledInputCounter != 0 || _flagsTable[618] != 0) {
-		_inp_mouseButtonPressed = false;
+		_inp_rightMouseButtonPressed = false;
 	}
 	if (_inp_mousePos.y < _roomAreaRect.height()) {
-		handleMouseInputRoomArea(flag);
+		handleMouseClickOnRoom(flag);
 	} else {
-		handleMouseInputInventoryArea(flag);
+		handleMouseClickOnInventory(flag);
 	}
 }
 
-void ToucheEngine::handleMouseInputRoomArea(int flag) {
+void ToucheEngine::handleMouseClickOnRoom(int flag) {
 	if (_hideInventoryTexts && _conversationReplyNum != -1 && !_conversationAreaCleared) {
 		drawConversationString(_conversationReplyNum, 0xD6);
 	}
@@ -1539,8 +1543,8 @@ void ToucheEngine::handleMouseInputRoomArea(int flag) {
 			if (_giveItemToCounter == 0 && !_hideInventoryTexts) {
 				if (hitBox->contains(hitPosX, hitPosY)) {
 					if (!itemDisabled) {
-						if (_inp_mouseButtonClicked && _currentCursorObject != 0) {
-							_inp_mouseButtonClicked = false;
+						if (_inp_leftMouseButtonPressed && _currentCursorObject != 0) {
+							_inp_leftMouseButtonPressed = false;
 							itemSelected = true;
 							_flagsTable[119] = _currentCursorObject;
 							if (_currentCursorObject == 1) {
@@ -1590,8 +1594,8 @@ void ToucheEngine::handleMouseInputRoomArea(int flag) {
 						_programHitBoxTable[i].hitBoxes[1] = Common::Rect(strPosX, strPosY, strPosX + strWidth, strPosY + 16);
 						_programHitBoxTable[i].state |= 0x8000;
 					}
-					if (_inp_mouseButtonClicked) {
-						_inp_mouseButtonClicked = false;
+					if (_inp_leftMouseButtonPressed) {
+						_inp_leftMouseButtonPressed = false;
 						if (_currentCursorObject != 0) {
 							updateCursor(_currentKeyCharNum);
 						} else {
@@ -1601,9 +1605,9 @@ void ToucheEngine::handleMouseInputRoomArea(int flag) {
 							}
 						}
 					} else {
-						if (_inp_mouseButtonPressed && !itemDisabled && !itemSelected) {
+						if (_inp_rightMouseButtonPressed && !itemDisabled && !itemSelected) {
 							int act = handleActionMenuUnderCursor(_programHitBoxTable[i].actions, _inp_mousePos.x, _inp_mousePos.y, str);
-							_inp_mouseButtonPressed = false;
+							_inp_rightMouseButtonPressed = false;
 							int16 facing = (keyCharNewPosX <= _keyCharsTable[_currentKeyCharNum].xPos) ? 3 : 0;
 							_keyCharsTable[_currentKeyCharNum].facingDirection = facing;
 							if (act != 0) {
@@ -1622,8 +1626,8 @@ void ToucheEngine::handleMouseInputRoomArea(int flag) {
 				}
 			}
 		}
-		if (_inp_mouseButtonClicked) {
-			_inp_mouseButtonClicked = false;
+		if (_inp_leftMouseButtonPressed) {
+			_inp_leftMouseButtonPressed = false;
 			if (_currentCursorObject != 0) {
 				if (_currentCursorObject != 1) {
 					addItemToInventory(_currentKeyCharNum, _currentCursorObject);
@@ -1642,7 +1646,7 @@ void ToucheEngine::handleMouseInputRoomArea(int flag) {
 	}
 }
 
-void ToucheEngine::handleMouseInputInventoryArea(int flag) {
+void ToucheEngine::handleMouseClickOnInventory(int flag) {
 	if (flag) {
 		drawHitBoxes();
 	}
@@ -1661,8 +1665,8 @@ void ToucheEngine::handleMouseInputInventoryArea(int flag) {
 						drawConversationString(replyNum, 0xFF);
 						_conversationReplyNum = replyNum;
 					}
-					if (_inp_mouseButtonClicked) {
-						_inp_mouseButtonClicked = false;
+					if (_inp_leftMouseButtonPressed) {
+						_inp_leftMouseButtonPressed = false;
 						setupConversationScript(replyNum);
 						_conversationReplyNum = -1;
 					}
@@ -1672,25 +1676,25 @@ void ToucheEngine::handleMouseInputInventoryArea(int flag) {
 					drawConversationString(_conversationReplyNum, 0xD6);
 				}
 				_conversationReplyNum = -1;
-				if (_inp_mouseButtonClicked) {
+				if (_inp_leftMouseButtonPressed) {
 					int replyNum = _inp_mousePos.y - _roomAreaRect.height();
 					if (replyNum < 40) {
 						drawCharacterConversationRepeat();
 					} else {
 						drawCharacterConversationRepeat2();
 					}
-					_inp_mouseButtonClicked = false;
+					_inp_leftMouseButtonPressed = false;
 				}
 			}
 		}
 	} else if (_disabledInputCounter == 0 && !_hideInventoryTexts) {
-		if (_inp_mouseButtonClicked) {
-			handleMouseButtonClicked();
-			_inp_mouseButtonClicked = false;
+		if (_inp_leftMouseButtonPressed) {
+			handleLeftMouseButtonClickOnInventory();
+			_inp_leftMouseButtonPressed = false;
 		}
-		if (_inp_mouseButtonPressed) {
-			handleMouseButtonPressed();
-			_inp_mouseButtonPressed = false;
+		if (_inp_rightMouseButtonPressed) {
+			handleRightMouseButtonClickOnInventory();
+			_inp_rightMouseButtonPressed = false;
 		}
 	}
 }
@@ -1707,7 +1711,7 @@ void ToucheEngine::clearRoomArea() {
 }
 
 void ToucheEngine::startNewMusic() {
-//	bool loopMusic = _flagsTable[619] != 0; // ?
+//	_midiPlayer->setLooping(_flagsTable[619] != 0);
 	if (_newMusicNum != 0 && _newMusicNum != _currentMusicNum) {
 		res_loadMusic(_newMusicNum);
 		_currentMusicNum = _newMusicNum;
@@ -1795,7 +1799,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	_redrawScreenCounter1 = 2;
 	Common::Rect rect(0, y, 640, y + h);
 	i = -1;
-	while (_inp_mouseButtonPressed) {
+	while (_inp_rightMouseButtonPressed) {
 		if (rect.contains(_inp_mousePos)) {
 			int c = (_inp_mousePos.y - y) / 16;
 			if (c != i) {
@@ -1829,12 +1833,12 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 			case OSystem::EVENT_RBUTTONDOWN:
 				_inp_mousePos.x = event.mouse.x;
 				_inp_mousePos.y = event.mouse.y;
-				_inp_mouseButtonPressed = true;
+				_inp_rightMouseButtonPressed = true;
 				break;
 			case OSystem::EVENT_RBUTTONUP:
 				_inp_mousePos.x = event.mouse.x;
 				_inp_mousePos.y = event.mouse.y;
-				_inp_mouseButtonPressed = false;
+				_inp_rightMouseButtonPressed = false;
 				break;
 			default:
 				break;
@@ -2005,24 +2009,24 @@ void ToucheEngine::initInventoryObjectsTable() {
 void ToucheEngine::initInventoryLists() {
 	memset(_inventoryList1, 0, sizeof(_inventoryList1));
 	_inventoryList1[100] = -1;
-	_inventoryListPtrs[0] = _inventoryList1;
-	_inventoryListCount[3 * 0 + 0] = 0; // start offset
-	_inventoryListCount[3 * 0 + 1] = 100; // max number of items
-	_inventoryListCount[3 * 0 + 2] = 6; // items per inventory line
+	_inventoryStateTable[0].displayOffset = 0;
+	_inventoryStateTable[0].lastItem = 100;
+	_inventoryStateTable[0].itemsPerLine = 6;
+	_inventoryStateTable[0].itemsList = _inventoryList1;
 
 	memset(_inventoryList2, 0, sizeof(_inventoryList2));
 	_inventoryList2[100] = -1;
-	_inventoryListPtrs[1] = _inventoryList2;
-	_inventoryListCount[3 * 1 + 0] = 0;
-	_inventoryListCount[3 * 1 + 1] = 100;
-	_inventoryListCount[3 * 1 + 2] = 6;
+	_inventoryStateTable[1].displayOffset = 0;
+	_inventoryStateTable[1].lastItem = 100;
+	_inventoryStateTable[1].itemsPerLine = 6;
+	_inventoryStateTable[1].itemsList = _inventoryList2;
 
 	memset(_inventoryList3, 0, sizeof(_inventoryList3));
 	_inventoryList3[6] = -1;
-	_inventoryListPtrs[2] = _inventoryList3;
-	_inventoryListCount[3 * 2 + 0] = 0;
-	_inventoryListCount[3 * 2 + 1] = 6;
-	_inventoryListCount[3 * 2 + 2] = 6;
+	_inventoryStateTable[2].displayOffset = 0;
+	_inventoryStateTable[2].lastItem = 6;
+	_inventoryStateTable[2].itemsPerLine = 6;
+	_inventoryStateTable[2].itemsList = _inventoryList3;
 }
 
 void ToucheEngine::setupInventoryAreas() {
@@ -2049,8 +2053,8 @@ void ToucheEngine::drawInventory(int index, int flag) {
 		if (_objectDescriptionNum == index && flag == 0) {
 			return;
 		}
-		_inventoryVar1 = _inventoryListPtrs[index];
-		_inventoryVar2 = &_inventoryListCount[index * 3];
+		_inventoryVar1 = _inventoryStateTable[index].itemsList;
+		_inventoryVar2 = &_inventoryStateTable[index].displayOffset;
 		_objectDescriptionNum = index;
 		uint8 *dst = _offscreenBuffer + 640 * 352;
 		res_loadSpriteImage(index + 12, dst);
@@ -2088,7 +2092,7 @@ void ToucheEngine::drawAmountOfMoneyInInventory() {
 }
 
 void ToucheEngine::packInventoryItems(int index) {
-	int16 *p = _inventoryListPtrs[index];
+	int16 *p = _inventoryStateTable[index].itemsList;
 	for (int i = 0; *p != -1; ++i, ++p) {
 		if (p[0] == 0 && p[1] != -1) {
 			p[0] = p[1];
@@ -2098,8 +2102,8 @@ void ToucheEngine::packInventoryItems(int index) {
 }
 
 void ToucheEngine::appendItemToInventoryList(int index) {
-	int last = _inventoryListCount[index * 3 + 1] - 1;
-	int16 *p = _inventoryListPtrs[index];
+	int last = _inventoryStateTable[index].lastItem - 1;
+	int16 *p = _inventoryStateTable[index].itemsList;
 	if (p[last] != 0) {
 		warning("Inventory %d Full", index);
 	} else {
@@ -2119,7 +2123,7 @@ void ToucheEngine::addItemToInventory(int inventory, int16 item) {
 	} else {
 		appendItemToInventoryList(inventory);
 		assert(inventory >= 0 && inventory < 3);
-		int16 *p = _inventoryListPtrs[inventory];
+		int16 *p = _inventoryStateTable[inventory].itemsList;
 		for (int i = 0; *p != -1; ++i, ++p) {
 			if (*p == 0) {
 				*p = item;
@@ -2138,7 +2142,7 @@ void ToucheEngine::removeItemFromInventory(int inventory, int16 item) {
 		drawAmountOfMoneyInInventory();
 	} else {
 		assert(inventory >= 0 && inventory < 3);
-		int16 *p = _inventoryListPtrs[inventory];
+		int16 *p = _inventoryStateTable[inventory].itemsList;
 		for (int i = 0; *p != -1; ++i, ++p) {
 			if (*p == item) {
 				*p = 0;

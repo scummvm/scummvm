@@ -155,7 +155,7 @@ void ToucheEngine::res_deallocateTables() {
 	free(_convKitData);
 	_convKitData = 0;
 
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < NUM_SEQUENCES; ++i) {
 		free(_sequenceDataTable[i]);
 		_sequenceDataTable[i] = 0;
 	}
@@ -429,9 +429,6 @@ void ToucheEngine::res_loadRoom(int num) {
 	_fullRedrawCounter = 1;
 	_roomNeedRedraw = true;
 
-//	uint8 *p = _backdropBuffer + _currentBitmapWidth * _currentBitmapHeight;
-//	_spritesTable[5].ptr = p + 16384;
-//	_spritesTable[6].ptr = p + 145728 + 16384;
 	_sequenceEntryTable[5].sprNum = -1;
 	_sequenceEntryTable[5].seqNum = -1;
 	_sequenceEntryTable[6].sprNum = -1;
@@ -447,6 +444,15 @@ void ToucheEngine::res_loadSprite(int num, int index) {
 	_fData.seek(offs);
 	_currentImageWidth = _fData.readUint16LE();
 	_currentImageHeight = _fData.readUint16LE();
+	const uint32 size = _currentImageWidth * _currentImageHeight;
+	if (size > spr->size) {
+		warning("Reallocating memory for sprite %d (index %d), %d bytes needed", num, index, size - spr->size);
+		spr->size = size;
+		spr->ptr = (uint8 *)realloc(spr->ptr, size);
+		if (!spr->ptr) {
+			error("Unable to reallocate memory for sprite %d", index);
+		}
+	}
 	for (int i = 0; i < _currentImageHeight; ++i) {
 		res_decodeScanLineImageRLE(spr->ptr + _currentImageWidth * i, _currentImageWidth);
 	}
@@ -457,9 +463,6 @@ void ToucheEngine::res_loadSprite(int num, int index) {
 	}
 	spr->w = _currentImageWidth;
 	spr->h = _currentImageHeight;
-//	Graphics::copyRect(_offscreenBuffer, 640, 0, 0,
-//	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
-//	  640, 100);
 }
 
 void ToucheEngine::res_loadSequence(int num, int index) {
@@ -562,6 +565,10 @@ void ToucheEngine::res_loadSound(int priority, int num) {
 	}
 }
 
+void ToucheEngine::res_stopSound() {
+	_mixer->stopHandle(_sfxHandle);
+}
+
 void ToucheEngine::res_loadMusic(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadMusic() num=%d", num);
 	uint32 size;
@@ -573,7 +580,8 @@ void ToucheEngine::res_loadMusic(int num) {
 void ToucheEngine::res_loadSpeech(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadSpeech() num=%d", num);
 	if (num == -1) {
-		// XXX stop all sounds currently playing
+		_mixer->stopHandle(_speechHandle);
+		_speechPlaying = false;
 	} else {
 		if (_compressedSpeechData < 0) { // uncompressed speech data
 			if (_fSpeech[0].isOpen()) {

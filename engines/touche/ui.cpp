@@ -108,7 +108,7 @@ bool ToucheEngine::ui_processEvents() {
 		case OSystem::EVENT_LBUTTONDOWN:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
-			_inp_mouseButtonClicked = true;
+			_inp_leftMouseButtonPressed = true;
 			break;
 		case OSystem::EVENT_LBUTTONUP:
 			_inp_mousePos.x = event.mouse.x;
@@ -288,7 +288,7 @@ int ToucheEngine::ui_handleSaveLoad(SaveLoadMode mode) {
 		int button = -1;
 		while (button == -1 && !quitMenu) {
 			button = ui_getButtonPressed(buttonsRectTable1, 15);
-			if (!_inp_mouseButtonClicked) {
+			if (!_inp_leftMouseButtonPressed) {
 				button = -1;
 			}
 			if (mode == kSaveGameState) {
@@ -300,7 +300,7 @@ int ToucheEngine::ui_handleSaveLoad(SaveLoadMode mode) {
 			}
 			quitMenu = ui_processEvents();
 		}
-		_inp_mouseButtonClicked = false;
+		_inp_leftMouseButtonPressed = false;
 		switch (button) {
 		case 10:
 			_saveLoadCurrentPage -= 10;
@@ -320,7 +320,7 @@ int ToucheEngine::ui_handleSaveLoad(SaveLoadMode mode) {
 					ret = 2;
 				}
 			} else {
-				if (loadGameState(_saveLoadCurrentSlot, _saveLoadDescriptionsTable[_saveLoadCurrentSlot % 10])) {
+				if (loadGameState(_saveLoadCurrentSlot)) {
 					ret = 2;
 				}
 			}
@@ -353,7 +353,7 @@ void ToucheEngine::ui_handleOptions(int forceDisplay) {
 			ui_drawOptionsMenu();
 			int button = -1;
 			while (button == -1 && !quitMenu) {
-				if (_inp_mouseButtonClicked) {
+				if (_inp_leftMouseButtonPressed) {
 					button = ui_getButtonPressed(buttonsRectTable1, 15);
 					if (button < 10) {
 						button = ui_getButtonPressed(buttonsRectTable2, 10) + 20;
@@ -361,7 +361,7 @@ void ToucheEngine::ui_handleOptions(int forceDisplay) {
 				}
 				quitMenu = ui_processEvents();
 			}
-			_inp_mouseButtonClicked = false;
+			_inp_leftMouseButtonPressed = false;
 			switch (button) {
 			case 10:
 				if (ui_handleSaveLoad(kLoadGameState) == 2) {

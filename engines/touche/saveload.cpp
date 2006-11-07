@@ -233,7 +233,7 @@ void ToucheEngine::saveGameStateData(Common::WriteStream *stream) {
 		saveOrLoad(*stream, _programPointsTable[i]);
 	}
 	stream->write(_updatedRoomAreasTable, 200);
-	for (uint i = 0; i < 6; ++i) {
+	for (uint i = 0; i < NUM_SEQUENCES; ++i) {
 		saveOrLoad(*stream, _sequenceEntryTable[i]);
 	}
 	for (uint i = 0; i < 1024; ++i) {
@@ -296,7 +296,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	for (uint i = 1; i <= _updatedRoomAreasTable[0]; ++i) {
 		updateRoomAreas(_updatedRoomAreasTable[i], -1);
 	}
-	for (uint i = 0; i < 6; ++i) {
+	for (uint i = 0; i < NUM_SEQUENCES; ++i) {
 		saveOrLoad(*stream, _sequenceEntryTable[i]);
 	}
 	for (uint i = 0; i < 1024; ++i) {
@@ -333,15 +333,16 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 		}
 	}
 	_currentKeyCharNum = _flagsTable[104];
-	_inventoryListCount[0] = 0;
-	_inventoryListCount[3] = 0;
-	_inventoryListCount[6] = 0;
+	_inventoryStateTable[0].displayOffset = 0;
+	_inventoryStateTable[1].displayOffset = 0;
+	_inventoryStateTable[2].displayOffset = 0;
 	drawInventory(_currentKeyCharNum, 1);
 	Graphics::copyRect(_offscreenBuffer, 640, 0, 0, _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615], 640, 352);
 	updateEntireScreen();
 	if (_flagsTable[617] != 0) {
 		res_loadSpeech(_flagsTable[617]);
 	}
+	debug(0, "Loaded state, current episode %d", _currentEpisodeNum);
 }
 
 bool ToucheEngine::saveGameState(int num, const char *description) {
@@ -368,7 +369,7 @@ bool ToucheEngine::saveGameState(int num, const char *description) {
 	return saveOk;
 }
 
-bool ToucheEngine::loadGameState(int num, const char *description) {
+bool ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
 	char gameStateFileName[16];
 	generateGameStateFileName(num, gameStateFileName, 15);

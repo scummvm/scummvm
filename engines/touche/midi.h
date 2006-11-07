@@ -52,6 +52,7 @@ public:
 	void adjustVolume(int diff);
 	void setVolume(int volume);
 	int getVolume() const { return _masterVolume; }
+	void setLooping(bool loop) { _isLooping = loop; }
 
 	// MidiDriver interface
 	int open();

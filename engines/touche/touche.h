@@ -197,6 +197,13 @@ struct SpriteData {
 	uint16 h;
 };
 
+struct InventoryState {
+	int16 displayOffset;
+	int16 lastItem;
+	int16 itemsPerLine;
+	int16 *itemsList;
+};
+
 struct ProgramPointData {
 	int16 x, y, z;
 	int16 priority;
@@ -322,7 +329,8 @@ public:
 		NUM_ANIMATION_ENTRIES = 4,
 		NUM_INVENTORY_ITEMS = 100,
 		NUM_DIRTY_RECTS = 50,
-		NUM_GAMESTATE_FILES = 100
+		NUM_GAMESTATE_FILES = 100,
+		NUM_DIRECTIONS = 135
 	};
 
 	typedef void (ToucheEngine::*OpcodeProc)();
@@ -382,11 +390,11 @@ protected:
 	void drawHitBoxes();
 	void setCursor(int num);
 	void updateCursor(int num);
-	void handleMouseButtonClicked();
-	void handleMouseButtonPressed();
+	void handleLeftMouseButtonClickOnInventory();
+	void handleRightMouseButtonClickOnInventory();
 	void handleMouseInput(int flag);
-	void handleMouseInputRoomArea(int flag);
-	void handleMouseInputInventoryArea(int flag);
+	void handleMouseClickOnRoom(int flag);
+	void handleMouseClickOnInventory(int flag);
 	void scrollScreenToPos(int num);
 	void clearRoomArea();
 	void startNewMusic();
@@ -462,7 +470,7 @@ protected:
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
 	bool saveGameState(int num, const char *description);
-	bool loadGameState(int num, const char *description);
+	bool loadGameState(int num);
 	void readGameStateDescription(int num, char *description, int len);
 	void generateGameStateFileName(int num, char *dst, int len, bool prefixOnly = false) const;
 
@@ -570,6 +578,7 @@ protected:
 	void res_loadImage(int num, uint8 *dst);
 	void res_loadImageHelper(uint8 *imgData, int imgWidth, int imgHeight);
 	void res_loadSound(int flag, int num);
+	void res_stopSound();
 	void res_loadMusic(int num);
 	void res_loadSpeech(int num);
 	void res_loadSpeechSegment(int num);
@@ -604,8 +613,8 @@ protected:
 	Common::RandomSource _rnd;
 
 	Common::Point _inp_mousePos;
-	bool _inp_mouseButtonClicked;
-	bool _inp_mouseButtonPressed;
+	bool _inp_leftMouseButtonPressed;
+	bool _inp_rightMouseButtonPressed;
 	int _disabledInputCounter;
 	bool _hideInventoryTexts;
 
@@ -629,8 +638,7 @@ protected:
 	int16 _inventoryList1[101];
 	int16 _inventoryList2[101];
 	int16 _inventoryList3[7];
-	int16 *_inventoryListPtrs[3];
-	int16 _inventoryListCount[9];
+	InventoryState _inventoryStateTable[3];
 	int16 _inventoryItemsInfoTable[NUM_INVENTORY_ITEMS];
 	int16 *_inventoryVar1;
 	int16 *_inventoryVar2;
@@ -690,6 +698,7 @@ protected:
 	int16 _spriteScalingTable[1000];
 
 	bool _fastWalkMode;
+	bool _fastMode;
 
 	AnimationEntry _animationTable[NUM_ANIMATION_ENTRIES];
 
@@ -741,7 +750,7 @@ protected:
 	uint8 _paletteBuffer[256 * 4];
 
 	static SpriteData _spritesTable[NUM_SPRITES];
-	static const uint8 _directionsTable[];
+	static const uint8 _directionsTable[NUM_DIRECTIONS];
 	static char _saveLoadDescriptionsTable[10][33];
 
 	void setupUIRect();
