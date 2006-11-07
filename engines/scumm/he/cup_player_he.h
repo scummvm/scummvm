@@ -58,14 +58,14 @@ struct CUP_Player {
 	uint32 loadNextChunk();
 	void parseHeaderTags();
 	void play();
-	void parseNextTag(const uint8 *data, Common::Rect *r1, uint32 &tag, uint32 &size);
+	void parseNextTag(const uint8 *data, uint32 &tag, uint32 &size);
 	void handleHEAD(const uint8 *data, uint32 dataSize);
 	void handleSFXB(const uint8 *data, uint32 dataSize);
 	void handleRGBS(const uint8 *data, uint32 dataSize);
 	void handleFRAM(uint8 *dst, const uint8 *data, uint32 size);
-	void decodeFRAM(uint8 *dst, Common::Rect *r1, const uint8 *data, int code);
+	void decodeFRAM(uint8 *dst, Common::Rect &dstRect, const uint8 *data, int type);
 	void handleSRLE(uint8 *dst, const uint8 *data, uint32 size);
-	void decodeSRLE(uint8 *dst, const uint8 *code, const uint8 *data, int unpackedSize);
+	void decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data, int unpackedSize);
 	uint8 *handleLZSS(const uint8 *data, uint32 dataSize);
 	void decodeLzssData(uint8 *dst1, const uint8 *src1, const uint8 *src2, const uint8 *src3, uint8 *dst2);
 	void handleRATE(const uint8 *data, uint32 dataSize);

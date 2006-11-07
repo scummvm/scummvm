@@ -97,10 +97,9 @@ void CUP_Player::parseHeaderTags() {
 
 void CUP_Player::play() {
 	int ticks = _system->getMillis();
-	Common::Rect r;
 	while (_currentChunkSize != 0 && !_vm->_quit) {
 		uint32 tag, size;
-		parseNextTag(_currentChunkData, &r, tag, size);
+		parseNextTag(_currentChunkData, tag, size);
 		if (tag == MKID_BE('BLOK')) {
 			bool fastMode = false;
 			int diff = _system->getMillis() - ticks;
@@ -122,7 +121,7 @@ void CUP_Player::play() {
 	}
 }
 
-void CUP_Player::parseNextTag(const uint8 *data, Common::Rect *r1, uint32 &tag, uint32 &size) {
+void CUP_Player::parseNextTag(const uint8 *data, uint32 &tag, uint32 &size) {
 	tag = READ_BE_UINT32(data);
 	size = READ_BE_UINT32(data + 4);
 	data += 8;
@@ -134,7 +133,7 @@ void CUP_Player::parseNextTag(const uint8 *data, Common::Rect *r1, uint32 &tag, 
 		data = handleLZSS(data, size);
 		if (data) {
 			uint32 t, s;
-			parseNextTag(data, r1, t, s);
+			parseNextTag(data, t, s);
 		}
 		break;
 	case MKID_BE('RATE'):
@@ -158,7 +157,7 @@ void CUP_Player::parseNextTag(const uint8 *data, Common::Rect *r1, uint32 &tag, 
 	case MKID_BE('WRLE'):
 		// this is never triggered
 	default:
-		warning("Unhandled tag %c%c%c%c", tag>>24, (tag>>16)&0xFF, (tag>>8)&0xFF, tag&0xFF);
+		warning("unhandled tag %s", tag2str(tag));
 		break;
 	}
 }
@@ -187,31 +186,28 @@ void CUP_Player::handleRGBS(const uint8 *data, uint32 dataSize) {
 }
 
 void CUP_Player::handleFRAM(uint8 *dst, const uint8 *data, uint32 size) {
-	Common::Rect r1;
-	memset(&r1, 0, sizeof(r1));
-	int code = 256;
-	int flags = *data++;
+	const uint8 flags = *data++;
+	int type = 256;
 	if (flags & 1) {
-		code = *data++;
+		type = *data++;
 	}
+	Common::Rect dstRect;
 	if (flags & 2) {
-		r1.left = READ_LE_UINT16(data); data += 2;
-		r1.top = READ_LE_UINT16(data); data += 2;
-		r1.right = READ_LE_UINT16(data); data += 2;
-		r1.bottom = READ_LE_UINT16(data); data += 2;
+		dstRect.left   = READ_LE_UINT16(data); data += 2;
+		dstRect.top    = READ_LE_UINT16(data); data += 2;
+		dstRect.right  = READ_LE_UINT16(data); data += 2;
+		dstRect.bottom = READ_LE_UINT16(data); data += 2;
 	}
 	if (flags & 0x80) {
-		decodeFRAM(dst, &r1, data, code);
+		decodeFRAM(dst, dstRect, data, type);
 	}
 }
 
-// FIXME/TODO, re-use the WIZ decoding code in wiz.cpp to handle this
-void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect *r1, const uint8 *data, int code1) {
-	if (code1 == 256) {
-		dst += r1->top * _width + r1->left;
-		int h = r1->bottom - r1->top + 1;
-		int w = r1->right - r1->left + 1;
-		if (h < 0 || w < 0) { warning("h=%d w=%d", h, w); return; }
+void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect &dstRect, const uint8 *data, int type) {
+	if (type == 256) {
+		dst += dstRect.top * _width + dstRect.left;
+		int h = dstRect.bottom - dstRect.top + 1;
+		int w = dstRect.right - dstRect.left + 1;
 		while (h--) {
 			uint16 lineSize = READ_LE_UINT16(data); data += 2;
 			uint8 *dstNextLine = dst + _width;
@@ -248,12 +244,12 @@ void CUP_Player::handleSRLE(uint8 *dst, const uint8 *data, uint32 size) {
 //	y1 = READ_LE_UINT16(data + 2);
 //	x2 = READ_LE_UINT16(data + 4);
 //	y2 = READ_LE_UINT16(data + 6);
-	const uint8 *codeData = data + 8;
-	size = READ_LE_UINT32(data + 40);
-	decodeSRLE(dst, codeData, data + 44, size);
+	const uint8 *colorMap = data + 8;
+	int unpackedSize = READ_LE_UINT32(data + 40);
+	decodeSRLE(dst, colorMap, data + 44, unpackedSize);
 }
 
-void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *codeTable, const uint8 *data, int unpackedSize) {
+void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data, int unpackedSize) {
 	while (unpackedSize > 0) {
 		int size, code = *data++;
 		if ((code & 1) == 0) {
@@ -263,36 +259,27 @@ void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *codeTable, const uint8 *dat
 				unpackedSize -= size;
 			} else {
 				if ((code & 4) == 0) {
-					*dst++ = codeTable[code >> 3];
+					*dst++ = colorMap[code >> 3];
 					--unpackedSize;
 				} else {
 					code >>= 3;
 					if (code == 0) {
 						size = 1 + *data++;
-						const uint8 color = *data++;
-						memset(dst, color, MIN(unpackedSize, size));
-						dst += size;
-						unpackedSize -= size;
 					} else {
 						size = code;
-						const uint8 color = *data++;
-						memset(dst, color, MIN(unpackedSize, size));
-						dst += size;
-						unpackedSize -= size;
 					}
+					memset(dst, *data++, MIN(unpackedSize, size));
+					dst += size;
+					unpackedSize -= size;
 				}
 			}
 		} else {
 			code >>= 1;
 			if (code == 0) {
-				code = READ_LE_UINT16(data); data += 2;
-				++code;
-				dst += code;
-				unpackedSize -= code;
-			} else {
-				dst += code;
-				unpackedSize -= code;
+				code = 1 + READ_LE_UINT16(data); data += 2;
 			}
+			dst += code;
+			unpackedSize -= code;
 		}
 	}
 }
@@ -358,12 +345,8 @@ void CUP_Player::decodeLzssData(uint8 *dst1, const uint8 *src1, const uint8 *src
 }
 
 void CUP_Player::handleRATE(const uint8 *data, uint32 dataSize) {
-	_playbackRate = (int16)READ_LE_UINT16(data);
-	if (_playbackRate > 4000) {
-		_playbackRate = 4000;
-	} else if (_playbackRate < 1) {
-		_playbackRate = 1;
-	}
+	const int rate = (int16)READ_LE_UINT16(data);
+	_playbackRate = CLIP(rate, 1, 4000);
 }
 
 void CUP_Player::handleSNDE(const uint8 *data, uint32 dataSize) {
