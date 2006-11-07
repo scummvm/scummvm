@@ -580,6 +580,20 @@ loop:;
 	undefineBox(0x7FFF);
 }
 
+uint16 readItemID(Common::SeekableReadStream *f) {
+	uint32 val = f->readUint32BE();
+	if (val == 0xFFFFFFFF)
+		return 0;
+	return val + 1;
+}
+
+void writeItemID(Common::WriteStream *f, uint16 val) {
+	if (val == 0)
+		f->writeUint32BE(0xFFFFFFFF);
+	else
+		f->writeUint32BE(val - 1);
+}
+
 bool AGOSEngine::loadGame_e1(const char *filename) {
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
@@ -625,12 +639,7 @@ bool AGOSEngine::loadGame_e1(const char *filename) {
 	for (num = _itemArrayInited - 1; num; num--) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
 
-		uint32 parent = f->readUint32BE();
-		if (parent == 0xFFFFFFFF)
-			parent_item = 0;
-		else
-			parent_item = derefItem(parent + 1);
-
+		parent_item = derefItem(readItemID(f));
 		setItemParent(item, parent_item);
 
 		item->state = f->readUint16BE();
@@ -656,12 +665,7 @@ bool AGOSEngine::loadGame_e1(const char *filename) {
 			for (i = 0; i != 8; i++) {
 				u->userFlags[i] = f->readUint16BE();
 			}
-
-			uint32 val = f->readUint32BE();
-			if (val == 0xFFFFFFFF)
-				u->userItems[0] = 0;
-			else
-				u->userItems[0] = val + 1;
+			u->userItems[0] = readItemID(f);
 		}
 	}
 
@@ -670,7 +674,6 @@ bool AGOSEngine::loadGame_e1(const char *filename) {
 		writeVariable(i, f->readUint16BE());
 	}
 
-	debug(0, "Pos %d Size %d\n", f->pos(), f->size());
 	if (f->ioFailed()) {
 		error("load failed");
 	}
@@ -719,10 +722,7 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
 		Item *item = _itemArrayPtr[item_index++];
 
-		if (item->parent == 0)
-			f->writeUint32BE(0xFFFFFFFF);
-		else
-			f->writeUint32BE(item->parent - 1);
+		writeItemID(f, item->parent);
 
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
@@ -747,11 +747,7 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 			for (i = 0; i != 8; i++) {
 				f->writeUint16BE(u->userFlags[i]);
 			}
-
-			if (u->userItems[0] == 0)
-				f->writeUint32BE(0xFFFFFFFF);
-			else
-				f->writeUint32BE(u->userItems[0] - 1);
+			writeItemID(f, u->userItems[0]);
 		}
 	}
 
@@ -822,16 +818,20 @@ bool AGOSEngine::loadGame(const char *filename) {
 	for (num = _itemArrayInited - 1; num; num--) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
 
-		uint parent = f->readUint16BE();
-		uint next = f->readUint16BE();
+		if (getGameType() == GType_ELVIRA2) {
+			parent_item = derefItem(readItemID(f));
+			setItemParent(item, parent_item);
+		} else {
+			uint parent = f->readUint16BE();
+			uint next = f->readUint16BE();
 
-		parent_item = derefItem(parent);
+			parent_item = derefItem(parent);
+			setItemParent(item, parent_item);
 
-		setItemParent(item, parent_item);
-
-		if (parent_item == NULL) {
-			item->parent = parent;
-			item->next = next;
+			if (parent_item == NULL) {
+				item->parent = parent;
+				item->next = next;
+			}
 		}
 
 		item->state = f->readUint16BE();
@@ -869,7 +869,6 @@ bool AGOSEngine::loadGame(const char *filename) {
 		}
 	}
 
-
 	// read the variables
 	for (i = 0; i != _numVars; i++) {
 		writeVariable(i, f->readUint16BE());
@@ -877,28 +876,24 @@ bool AGOSEngine::loadGame(const char *filename) {
 
 	// read the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		_itemStore[i] = derefItem(f->readUint16BE());
+		if (getGameType() == GType_ELVIRA2) {
+			_itemStore[i] = derefItem(readItemID(f));
+		} else {
+			_itemStore[i] = derefItem(f->readUint16BE());
+		}
 	}
 
-	if (getGameType() == GType_PP) {
-		// Read the bits in array 1
-		for (i = 0; i != 128; i++)
-			_bitArray[i] = f->readUint16BE();
-	} else {
-		// Read the bits in array 1
-		for (i = 0; i != 16; i++)
-			_bitArray[i] = f->readUint16BE();
+	// Read the bits in array 1
+	for (i = 0; i != _numBitArray1; i++)
+		_bitArray[i] = f->readUint16BE();
 
-		// Read the bits in array 2
-		for (i = 0; i != 16; i++)
-			_bitArrayTwo[i] = f->readUint16BE();
-	}
+	// Read the bits in array 2
+	for (i = 0; i != _numBitArray2; i++)
+		_bitArrayTwo[i] = f->readUint16BE();
 
 	// Read the bits in array 3
-	if (getGameType() == GType_FF) {
-		for (i = 0; i != 16; i++)
-			_bitArrayThree[i] = f->readUint16BE();
-	}
+	for (i = 0; i != _numBitArray3; i++)
+		_bitArrayThree[i] = f->readUint16BE();
 
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		_superRoomNumber = f->readUint16BE();
@@ -961,8 +956,13 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
 		Item *item = _itemArrayPtr[item_index++];
 
-		f->writeUint16BE(item->parent);
-		f->writeUint16BE(item->next);
+		if (getGameType() == GType_ELVIRA2) {
+			writeItemID(f, item->parent);
+		} else {
+			f->writeUint16BE(item->parent);
+			f->writeUint16BE(item->next);
+		}
+
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
@@ -1005,28 +1005,24 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 
 	// write the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		f->writeUint16BE(itemPtrToID(_itemStore[i]));
+		if (getGameType() == GType_ELVIRA2) {
+			writeItemID(f, itemPtrToID(_itemStore[i]));
+		} else {
+			f->writeUint16BE(itemPtrToID(_itemStore[i]));
+		}
 	}
 
-	if (getGameType() == GType_PP) {
-		// Write the bits in array 1
-		for (i = 0; i != 128; i++)
-			f->writeUint16BE(_bitArray[i]);
-	} else {
-		// Write the bits in array 1
-		for (i = 0; i != 16; i++)
-			f->writeUint16BE(_bitArray[i]);
+	// Write the bits in array 1
+	for (i = 0; i != _numBitArray1; i++)
+		f->writeUint16BE(_bitArray[i]);
 
-		// Write the bits in array 2
-		for (i = 0; i != 16; i++)
-			f->writeUint16BE(_bitArrayTwo[i]);
-	}
+	// Write the bits in array 2
+	for (i = 0; i != _numBitArray2; i++)
+		f->writeUint16BE(_bitArrayTwo[i]);
 
 	// Write the bits in array 3
-	if (getGameType() == GType_FF) {
-		for (i = 0; i != 16; i++)
-			f->writeUint16BE(_bitArrayThree[i]);
-	}
+	for (i = 0; i != _numBitArray3; i++)
+		f->writeUint16BE(_bitArrayThree[i]);
 
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		f->writeUint16BE(_superRoomNumber);

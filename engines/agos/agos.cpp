@@ -93,6 +93,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_tableIndexBase = 0;
 	_textIndexBase = 0;
 
+	_numBitArray1 = 0;
+	_numBitArray2 = 0;
+	_numBitArray3 = 0;
 	_numItemStore = 0;
 	_numTextBoxes = 0;
 	_numVars = 0;
@@ -619,6 +622,7 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 200000;
 		_frameRate = 1;
 		_vgaBaseDelay = 5;
+		_numBitArray1 = 128;
 		_numItemStore = 10;
 		_numTextBoxes = 40;
 		_numVars = 2048;
@@ -634,6 +638,9 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 200000;
 		_frameRate = 1;
 		_vgaBaseDelay = 5;
+		_numBitArray1 = 16;
+		_numBitArray2 = 16;
+		_numBitArray3 = 16;
 		_numItemStore = 10;
 		_numTextBoxes = 40;
 		_numVars = 255;
@@ -657,6 +664,8 @@ void AGOSEngine::setupGame() {
 		_soundIndexBase = 1660 / 4;
 		_frameRate = 1;
 		_vgaBaseDelay = 1;
+		_numBitArray1 = 16;
+		_numBitArray2 = 16;
 		_numItemStore = 10;
 		_numTextBoxes = 20;
 		_numVars = 255;
@@ -676,6 +685,8 @@ void AGOSEngine::setupGame() {
 		_soundIndexBase = 0;
 		_frameRate = 1;
 		_vgaBaseDelay = 1;
+		_numBitArray1 = 16;
+		_numBitArray2 = 16;
 		_numItemStore = 10;
 		_numTextBoxes = 20;
 		_numVars = 255;
@@ -691,6 +702,8 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 50000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
+		_numBitArray1 = 16;
+		_numBitArray2 = 15;
 		_numItemStore = 50;
 		_numTextBoxes = 10;
 		_numVars = 255;
@@ -706,6 +719,8 @@ void AGOSEngine::setupGame() {
 		_tableMemSize = 100000;
 		_frameRate = 4;
 		_vgaBaseDelay = 1;
+		_numBitArray1 = 16;
+		_numBitArray2 = 15;
 		_numItemStore = 50;
 		_numVars = 255;
 	} else if (getGameType() == GType_ELVIRA1) {
