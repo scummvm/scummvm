@@ -171,8 +171,8 @@ int handle_controller(int key) {
 			}
 		}
 
-		if (mouse.y >= game.line_user_input * CHAR_LINES &&
-				mouse.y <= (game.line_user_input + 1) * CHAR_LINES) {
+		if ((int)mouse.y >= game.line_user_input * CHAR_LINES &&
+				(int)mouse.y <= (game.line_user_input + 1) * CHAR_LINES) {
 			if (_text->predictiveDialog()) {
 				strcpy((char *)game.input_buffer, _text->_predictiveResult);
 				handle_keys(KEY_ENTER);
@@ -212,8 +212,8 @@ void handle_getstring(int key) {
 
 	switch (key) {
 	case BUTTON_LEFT:
-		if (mouse.y >= stringdata.y * CHAR_LINES &&
-				mouse.y <= (stringdata.y + 1) * CHAR_LINES) {
+		if ((int)mouse.y >= stringdata.y * CHAR_LINES &&
+				(int)mouse.y <= (stringdata.y + 1) * CHAR_LINES) {
 			if (_text->predictiveDialog()) {
 				strcpy(game.strings[stringdata.str], _text->_predictiveResult);
 				new_input_mode(INPUT_NORMAL);

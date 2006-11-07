@@ -74,7 +74,7 @@ private:
 
 	int _wordNumber;
 
-	int _wordPosition;
+	uint _wordPosition;
 
 	bool _nextIsActive;
 	bool _addIsActive;
