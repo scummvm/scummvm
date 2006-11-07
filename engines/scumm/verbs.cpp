@@ -619,17 +619,15 @@ void ScummEngine::verbMouseOver(int verb) {
 	if (_game.id == GID_FT)
 		return;
 
-	if (_verbMouseOver == verb)
-		return;
-
-	if (_verbs[_verbMouseOver].type != kImageVerbType) {
-		drawVerb(_verbMouseOver, 0);
-		_verbMouseOver = verb;
-	}
-
-	if (_verbs[verb].type != kImageVerbType && _verbs[verb].hicolor) {
-		drawVerb(verb, 1);
-		_verbMouseOver = verb;
+	if (_verbMouseOver != verb) {
+		if (_verbs[_verbMouseOver].type != kImageVerbType) {
+			drawVerb(_verbMouseOver, 0);
+		}
+	
+		if (_verbs[verb].type != kImageVerbType && _verbs[verb].hicolor) {
+			drawVerb(verb, 1);
+			_verbMouseOver = verb;
+		}
 	}
 }
 

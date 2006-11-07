@@ -2161,7 +2161,6 @@ void ScummEngine_v5::o5_startSound() {
 	// WORKAROUND: In the scene where Largo is talking to Mad Marty, the
 	// Woodtick music often resumes before Largo's theme has finished. As
 	// far as I can tell, this is a script bug.
-
 	if (_game.id == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
 		debug(1, "Delaying Woodtick music until Largo's theme has finished\n");
 		_scriptPointer = oldaddr;
@@ -2230,8 +2229,8 @@ void ScummEngine_v5::o5_startScript() {
 
 	getWordVararg(data);
 
-	// FIXME: Script 171 loads a complete room resource, instead of the actual script.
-	// Causing invalid opcode cases, see bug #1290485
+	// WORKAROUND bug #1290485: Script 171 loads a complete room resource,
+	// instead of the actual script, causing invalid opcode cases
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
 		return;
 
@@ -2379,7 +2378,7 @@ void ScummEngine_v5::o5_verbOps() {
 		case 5:		// SO_VERB_AT
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
-			// Macintosh verison of indy3ega used different interface, so adjust values.
+			// Macintosh version of indy3ega used different interface, so adjust values.
 			if ((_game.platform == Common::kPlatformMacintosh) && (_game.id == GID_INDY3)) {
 				switch (verb) {
 				case 1:

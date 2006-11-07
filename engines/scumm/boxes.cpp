@@ -1043,11 +1043,11 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	box2 = getBoxCoordinates(box1nr);
 	box = getBoxCoordinates(box2nr);
 
-	// Roughly, the idea of this algorithm is to check if we can find
-	// two sides of the two given boxes which touch.
+	// Roughly, the idea of this algorithm is to search for sies of the given
+	// boxes that touch each other.
 	// In order to keep te code simple, we only match the upper sides;
 	// then, we "rotate" the box coordinates four times each, for a total
-	// of 16 comparisions (four sides compared with four sides each).
+	// of 16 comparisions.
 	for (int j = 0; j < 4; j++) {
 		for (int k = 0; k < 4; k++) {
 			// Are the "upper" sides of the boxes on a single vertical line
@@ -1165,9 +1165,9 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
  * Compute the "gate" between two boxes. The gate is a pair of two lines which
  * both start on box 'box1' and end on 'box2'. For both lines, one of its
  * end points is the corner point of one of the two boxes. The other end point
- * is a point on the other point closest to first end point.
- * This way the lines bound a 'corridor' between the two boxes, through which
- * the actor has to walk to get from box1 to box2.
+ * is the point on the other box closest to the first end point.
+ * This way the lines form the boundary of a 'corridor' between the two boxes,
+ * through which the actor has to walk to get from box1 to box2.
  */
 void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[2], Common::Point gateB[2]) {
 	int i, j;
