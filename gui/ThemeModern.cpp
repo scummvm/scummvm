@@ -170,7 +170,8 @@ void ThemeModern::enable() {
 	init();
 	resetupGuiRenderer();
 	resetDrawArea();
-	setUpCursor();
+	if (_useCursor)
+		setUpCursor();
 	_system->showOverlay();
 	clearAll();
 	_enabled = true;
@@ -178,8 +179,10 @@ void ThemeModern::enable() {
 
 void ThemeModern::disable() {
 	_system->hideOverlay();
-	PaletteMan.popCursorPalette();
-	CursorMan.popCursor();
+	if (_useCursor) {
+		PaletteMan.popCursorPalette();
+		CursorMan.popCursor();
+	}
 	_enabled = false;
 }
 
