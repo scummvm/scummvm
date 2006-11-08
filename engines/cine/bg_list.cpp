@@ -117,6 +117,8 @@ void freeBgIncrustList(void) {
 		free(bgIncrustPtr);
 		bgIncrustPtr = bgIncrustPtrN;
 	}
+
+	resetBgIncrustList();
 }
 
 void resetBgIncrustList(void) {
