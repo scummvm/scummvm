@@ -776,7 +776,6 @@ int16 makeLoad(char *saveName) {
 	}
 
 	size = fHandle->readSint16BE();
-	debug(0, "%d entries", size);
 	for (i = 0; i < size; i++) {
 		loadBgIncrustFromSave(fHandle);
 	}
