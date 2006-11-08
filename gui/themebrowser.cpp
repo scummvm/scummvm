@@ -26,6 +26,10 @@
 #include "gui/theme.h"
 #include "common/fs.h"
 
+#ifdef MACOSX
+#include "CoreFoundation/CoreFoundation.h"
+#endif
+
 namespace GUI {
 
 enum {
@@ -100,6 +104,18 @@ void ThemeBrowser::updateListing() {
 
 #ifdef DATA_PATH
 	addDir(_themes, DATA_PATH);
+#endif
+
+#ifdef MACOSX
+    CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+    if (resourceUrl) {
+		char buf[256];
+		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
+			Common::String resourcePath = buf;
+			addDir(_themes, resourcePath, 0);
+		}
+	    CFRelease(resourceUrl);
+    }
 #endif
 
 	if (ConfMan.hasKey("extrapath"))
