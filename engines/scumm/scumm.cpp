@@ -1023,6 +1023,16 @@ int ScummEngine::init() {
 		initCommonGFX(defaultTo1XScaler);
 	_system->endGFXTransaction();
 
+	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
+	// game will be forced to 1x. At this stage GUI will not be aware of
+	// resolution change, so widgets will be off screen. This forces it to
+	// recompute
+	//
+	// Fixes bug #1590596: "HE: When 3x graphics are choosen, F5 crashes game"
+	if (defaultTo1XScaler) {
+		g_gui.screenChange();
+	}
+
 	setupScumm();
 
 	readIndexFile();

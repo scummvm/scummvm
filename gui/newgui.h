@@ -83,6 +83,8 @@ public:
 
 	void clearDragWidget();
 
+	void screenChange();
+
 protected:
 	OSystem			*_system;
 
@@ -124,7 +126,6 @@ protected:
 	void openDialog(Dialog *dialog);
 	void closeTopDialog();
 
-	void screenChange();
 	void redraw();
 
 	void loop();
