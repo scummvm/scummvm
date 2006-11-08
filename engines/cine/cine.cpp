@@ -35,6 +35,7 @@
 #include "sound/mixer.h"
 
 #include "cine/cine.h"
+#include "cine/bg_list.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/sfx_player.h"
@@ -177,7 +178,7 @@ static void initialize() {
 	overlayHead.previous = NULL;
 
 	var8 = 0;
-	var9 = NULL;
+	bgIncrustList = NULL;
 
 	objScriptList.next = NULL;
 	globalScriptsHead.next = NULL;

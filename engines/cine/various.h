@@ -75,7 +75,6 @@ extern SeqListElement seqList;
 
 extern uint32 var6;
 extern uint32 var8;
-extern byte *var9;
 
 extern uint16 var2;
 extern uint16 var3;
@@ -152,7 +151,6 @@ void checkForPendingDataLoad(void);
 extern uint16 exitEngine;
 
 void hideMouse(void);
-void closeEngine7(void);
 
 extern uint16 var22;
 

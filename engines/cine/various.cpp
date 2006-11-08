@@ -31,6 +31,7 @@
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/sfx_player.h"
+#include "cine/bg_list.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -44,8 +45,6 @@ int16 commandVar2;
 unk1Struct messageTable[NUM_MAX_MESSAGE];
 
 uint32 var6;
-uint32 var8;
-byte *var9;
 
 uint16 var2;
 uint16 var3;
@@ -67,9 +66,6 @@ void waitPlayerInput(void) {
 }
 
 void freeAnimDataTable(void) {
-}
-
-void mainLoopSub1(void) {
 }
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
@@ -606,7 +602,7 @@ int16 makeLoad(char *saveName) {
 	// }
 	freePrcLinkedList();
 	releaseObjectScripts();
-	closeEngine7();
+	freeBgIncrustList();
 	closePart();
 
 	for (i = 0; i < NUM_MAX_REL; i++) {
@@ -780,8 +776,9 @@ int16 makeLoad(char *saveName) {
 	}
 
 	size = fHandle->readSint16BE();
+	debug(0, "%d entries", size);
 	for (i = 0; i < size; i++) {
-		// loadBgIncrustFromSave(fHandle);
+		loadBgIncrustFromSave(fHandle);
 	}
 
 	delete fHandle;
@@ -815,7 +812,7 @@ int16 makeLoad(char *saveName) {
 	}
 
 	loadResourcesFromSave();
-	//reincrustAllBg();
+	reincrustAllBg();
 
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 
@@ -1021,8 +1018,28 @@ void makeSave(char *saveFileName) {
 		}
 	}
 
-	// This corresponds to the loadBgIncrustFromSave() handling, I think.
-	fHandle->writeUint16BE(0);
+	int numBgIncrustList = 0;
+	BGIncrustList *bgIncrustPtr = bgIncrustList;
+
+	while (bgIncrustPtr) {
+		numBgIncrustList++;
+		bgIncrustPtr = bgIncrustPtr->next;
+	}
+
+	fHandle->writeUint16BE(numBgIncrustList);
+	bgIncrustPtr = bgIncrustList;
+	while (bgIncrustPtr) {
+		fHandle->writeUint32BE(0); // next
+		fHandle->writeUint32BE(0); // unkPtr
+		fHandle->writeUint16BE(bgIncrustPtr->objIdx);
+		fHandle->writeUint16BE(bgIncrustPtr->param);
+		fHandle->writeUint16BE(bgIncrustPtr->x);
+		fHandle->writeUint16BE(bgIncrustPtr->y);
+		fHandle->writeUint16BE(bgIncrustPtr->frame);
+		fHandle->writeUint16BE(bgIncrustPtr->part);
+
+		bgIncrustPtr = bgIncrustPtr->next;
+	}
 
 	delete fHandle;
 
@@ -2882,9 +2899,6 @@ void checkForPendingDataLoad(void) {
 uint16 exitEngine;
 
 void hideMouse(void) {
-}
-
-void closeEngine7(void) {
 }
 
 void removeExtention(char *dest, const char *source) {

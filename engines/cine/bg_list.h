@@ -27,10 +27,32 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/savefile.h"
 
 namespace Cine {
 
-void addSpriteFilledToBGList(int16 idx);
+struct BGIncrustList {
+	struct BGIncrustList *next;
+	byte *unkPtr;
+	int16 objIdx;
+	int16 param;
+	int16 x;
+	int16 y;
+	int16 frame;
+	int16 part;
+};
+
+extern BGIncrustList *bgIncrustList;
+extern uint32 var8;
+
+void addToBGList(int16 objIdx, bool addList = true);
+void addSpriteFilledToBGList(int16 idx, bool addList = true);
+
+void createBgIncrustListElement(int16 objIdx, int16 param);
+void freeBgIncrustList(void);
+void resetBgIncrustList(void);
+void loadBgIncrustFromSave(Common::InSaveFile *fHandle);
+void reincrustAllBg(void);
 
 } // End of namespace Cine
 

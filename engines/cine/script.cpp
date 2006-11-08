@@ -523,33 +523,6 @@ uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
 
 scriptStruct scriptTable[NUM_MAX_SCRIPT];
 
-void createVar9Element(int16 objIdx, int16 param) {
-}
-
-void addToBGList(int16 objIdx) {
-	int16 x;
-	int16 y;
-	int16 width;
-	int16 height;
-	int16 part;
-
-	x = objectTable[objIdx].x;
-	y = objectTable[objIdx].y;
-
-	width = animDataTable[objectTable[objIdx].frame].var1;
-	height = animDataTable[objectTable[objIdx].frame].height;
-
-	part = objectTable[objIdx].part;
-
-	if (g_cine->getGameType() == Cine::GType_OS) {
-		drawSpriteRaw2(animDataTable[objectTable[objIdx].frame].ptr1, objectTable[objIdx].part, width, height, page2Raw, x, y);
-	} else {
-		drawSpriteRaw(animDataTable[objectTable[objIdx].frame].ptr1, animDataTable[objectTable[objIdx].frame].ptr2, width, height, page2Raw, x, y);
-	}
-
-	createVar9Element(objIdx, 0);
-}
-
 void stopGlobalScript(uint16 scriptIdx) {
 	prcLinkedListStruct *currentHead = &globalScriptsHead;
 	prcLinkedListStruct *tempHead = currentHead;
@@ -1307,8 +1280,8 @@ void o1_addSpriteFilledToBgList() {
 }
 
 void o1_op1B() {
-	debugC(5, kCineDebugScript, "Line: %d: closeEngine7", _currentLine);
-	closeEngine7();
+	debugC(5, kCineDebugScript, "Line: %d: freeBgIncrustList", _currentLine);
+	freeBgIncrustList();
 }
 
 void o1_label() {
@@ -1460,7 +1433,7 @@ void o1_loadBg() {
 	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _currentLine, param);
 
 	loadBg(param);
-	closeEngine7();
+	freeBgIncrustList();
 	bgVar0 = 0;
 }
 
@@ -2756,7 +2729,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			}
 		case 0x1B:
 			{
-				sprintf(lineBuffer, "closeEngine7()\n");
+				sprintf(lineBuffer, "freeBgIncrustList()\n");
 				break;
 			}
 		case 0x1D:

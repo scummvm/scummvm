@@ -30,6 +30,7 @@
 #include "cine/object.h"
 #include "cine/sfx_player.h"
 #include "cine/various.h"
+#include "cine/bg_list.h"
 
 namespace Cine {
 
@@ -166,7 +167,7 @@ void mainLoop(int bootScriptIdx) {
 	resetSeqList();
 	resetglobalScriptsHead();
 	resetObjectScriptHead();
-	mainLoopSub1();
+	resetBgIncrustList();
 
 	setTextWindow(0, 0, 20, 200);
 
@@ -307,7 +308,7 @@ void mainLoop(int bootScriptIdx) {
 	// if (g_cine->getGameType() == Cine::GType_OS) {
 	// 	freeUnkList();
 	// }
-	closeEngine7();
+	freeBgIncrustList();
 	closePart();
 }
 
