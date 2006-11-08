@@ -189,7 +189,7 @@ void sysexHandler_Scumm (Player *player, const byte *msg, uint16 len) {
 
 	case 96: // Set instrument
 		part = player->getPart(p[0] & 0x0F);
-		a = (p[1] & 0x0F) << 12 |(p[2] & 0x0F) << 8 |(p[4] & 0x0F) << 4 |(p[4] & 0x0F);
+		a = (p[1] & 0x0F) << 12 |(p[2] & 0x0F) << 8 |(p[3] & 0x0F) << 4 |(p[4] & 0x0F);
 		if (part)
 			part->set_instrument(a);
 		break;
