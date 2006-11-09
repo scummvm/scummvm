@@ -41,7 +41,7 @@
 
 namespace Saga {
 
-HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
+HitZone::HitZone(MemoryReadStreamEndian *readStream, int index, int sceneNumber): _index(index) {
 	int i, j;
 	HitZone::ClickArea *clickArea;
 	Point *point;
@@ -74,6 +74,13 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
 			point = &clickArea->points[j];
 			point->x = readStream->readSint16();
 			point->y = readStream->readSint16();
+
+			// WORKAROUND: bug #1259608: "ITE: Riff ignores command in Ferret merchant center"
+			// Apparently ITE Mac version has bug in game data. Both ObjectMap and ActionMap
+			// for exit area are little taller (y = 123) and thus Riff goes to exit 
+			// when clicked on barrel of nails.
+			if (sceneNumber == 18 && index == 0 && i == 0 && j == 0 && point->y == 123)
+				point->y = 129;
 		}
 	}
 }
@@ -198,7 +205,7 @@ void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
 	}
 
 	for (i = 0; i < _hitZoneListCount; i++) {
-		_hitZoneList[i] = new HitZone(&readS, i);
+		_hitZoneList[i] = new HitZone(&readS, i, _vm->_scene->currentSceneNumber());
 	}
 }
 

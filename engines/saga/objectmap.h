@@ -40,7 +40,7 @@ private:
 	};
 
 public:
-	HitZone(MemoryReadStreamEndian *readStream, int index);
+	HitZone(MemoryReadStreamEndian *readStream, int index, int sceneNumber);
 	~HitZone();
 
 	int getNameIndex() const {
