@@ -1349,7 +1349,7 @@ void Mult_v2::freeMultKeys(void) {
 	if (_multData2 == 0)
 		return;
 
-	staticCount = (_multData2->staticCount + 1) && 0x7F;
+	staticCount = (_multData2->staticCount + 1) & 0x7F;
 	animCount = _multData2->animCount + 1;
 
 	for (i = 0; i < staticCount; i++) { // loc_7345
