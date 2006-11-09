@@ -75,11 +75,9 @@ struct Sequence {
 
 class KyraEngine_v2 : public KyraEngine {
 public:
-	KyraEngine_v2(OSystem *system);
+	KyraEngine_v2(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v2();
 
-	int setupGameFlags() { _flags.gameID = GI_KYRA2; return 0; }
-	
 	int go();
 
 private:

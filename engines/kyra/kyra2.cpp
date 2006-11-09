@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system) : KyraEngine(system) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
 		
 	memset(_gameShapes, 0, sizeof(_gameShapes));
 	_mouseSHPBuf = 0;

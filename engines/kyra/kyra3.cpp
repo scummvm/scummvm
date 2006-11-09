@@ -35,7 +35,7 @@
 #include "graphics/cursorman.h"
 
 namespace Kyra {
-KyraEngine_v3::KyraEngine_v3(OSystem *system) : KyraEngine(system) {
+KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
@@ -82,11 +82,6 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _scoreFile;
 	delete [] _cCodeFile;
 	delete [] _scenesList;
-}
-
-int KyraEngine_v3::setupGameFlags() {
-	_flags.gameID = GI_KYRA3;
-	return 0;
 }
 
 Movie *KyraEngine_v3::createWSAMovie() {

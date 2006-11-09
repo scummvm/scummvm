@@ -32,15 +32,13 @@ class WSAMovieV2;
 
 class KyraEngine_v3 : public KyraEngine {
 public:
-	KyraEngine_v3(OSystem *system);
+	KyraEngine_v3(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v3();
 	
 	Movie *createWSAMovie();
 	
 	SoundDigital *soundDigital() { return _soundDigital; }
 
-	int setupGameFlags();
-	
 	int go();
 
 	void playVQA(const char *name);

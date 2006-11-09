@@ -242,11 +242,9 @@ public:
 		MUSIC_INTRO = 0
 	};
 
-	KyraEngine(OSystem *system);
+	KyraEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine();
 
-	virtual int setupGameFlags() = 0;
-	
 	Resource *resource() { return _res; }
 	Screen *screen() { return _screen; }
 	ScreenAnimator *animator() { return _animator; }
@@ -1014,10 +1012,8 @@ protected:
 
 class KyraEngine_v1 : public KyraEngine {
 public:
-	KyraEngine_v1(OSystem *system);
+	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v1();
-
-	int setupGameFlags();
 };
 
 } // End of namespace Kyra
