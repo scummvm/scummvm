@@ -120,7 +120,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1EnglishFloppy2), kyra1EnglishFloppy2, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
 	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1FrenchFloppy1) , kyra1FrenchFloppy1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
 	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1GermanFloppy1) , kyra1GermanFloppy1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1GermanFloppy2) , kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
+	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1GermanFloppy2) , kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from Arne.F
 	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1SpanishFloppy1), kyra1SpanishFloppy1, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from VooD
 	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1SpanishFloppy2), kyra1SpanishFloppy2, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
 	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1ItalianFloppy1), kyra1ItalianFloppy1, IT_ITA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from gourry
