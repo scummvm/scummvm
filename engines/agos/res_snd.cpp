@@ -56,9 +56,13 @@ void AGOSEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 				waitForSync(204);
 				stopAnimate(204);
 			}
-			stopAnimate(vgaSpriteId + 201);
+			if (vgaSpriteId < 100)
+				stopAnimate(vgaSpriteId + 201);
+
 			loadVoice(speech_id);
-			animate(4, 2, vgaSpriteId + 201, 0, 0, 0);
+
+			if (vgaSpriteId < 100)
+				animate(4, 2, vgaSpriteId + 201, 0, 0, 0);
 		}
 	} else {
 		if (speech_id == 0xFFFF) {
