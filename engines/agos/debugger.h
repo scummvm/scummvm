@@ -47,6 +47,7 @@ protected:
 	bool Cmd_PlayVoice(int argc, const char **argv);
 	bool Cmd_SetBit(int argc, const char **argv);
 	bool Cmd_SetVar(int argc, const char **argv);
+	bool Cmd_SetObjectFlag(int argc, const char **argv);
 	bool Cmd_StartSubroutine(int argc, const char **argv);
 };
 

@@ -41,6 +41,7 @@ Debugger::Debugger(AGOSEngine *vm)
 	DCmd_Register("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
 	DCmd_Register("bit",      WRAP_METHOD(Debugger, Cmd_SetBit));
 	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
+	DCmd_Register("obj",      WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
 	DCmd_Register("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
 
 }
@@ -158,6 +159,41 @@ bool Debugger::Cmd_SetVar(int argc, const char **argv) {
 			DebugPrintf("Var out of range (0 - %d)\n", _vm->_numVars - 1);
 	} else
 		DebugPrintf("Syntax: var <varnum> <value>\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_SetObjectFlag(int argc, const char **argv) {
+	uint obj, prop, value;
+	if (argc > 2) {
+		obj = atoi(argv[1]);
+		prop = atoi(argv[2]);
+
+		if (obj >= 1 && obj < _vm->_itemArraySize) {
+			SubObject *o = (SubObject *)_vm->findChildOfType(_vm->derefItem(obj), 2);
+			if (o != NULL) {
+				if (o->objectFlags & (1 << prop) && prop < 16) {
+					uint offs = _vm->getOffsetOfChild2Param(o, 1 << prop);
+					if (argc > 3) {
+						value = atoi(argv[3]);
+						o->objectFlagValue[offs] = value;
+						DebugPrintf("Object %d Flag %d set to %d\n", obj, prop, value);
+					} else {
+						value = o->objectFlagValue[offs];
+						DebugPrintf("Object %d Flag %d is %d\n", obj, prop, value);
+					}
+				} else {
+					DebugPrintf("Object flag out of range\n");
+				}
+			} else {
+				DebugPrintf("Item isn't an object\n");
+			}
+		} else {
+			DebugPrintf("Item out of range (1 - %d)\n", _vm->_itemArraySize - 1);
+		}
+	} else {
+		DebugPrintf("Syntax: obj <itemnum> <flag> <value>\n");
+	}
 
 	return true;
 }
