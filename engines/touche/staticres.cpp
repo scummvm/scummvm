@@ -49,18 +49,6 @@ const uint8 ToucheEngine::_directionsTable[NUM_DIRECTIONS] = {
 	0x7F, 0x7F, 0x7F, 0x7F, 0x00, 0x00, 0x00
 };
 
-char ToucheEngine::_saveLoadDescriptionsTable[10][33] = {
-	"[Empty.1.......................]",
-	"[Empty.2.......................]",
-	"[Empty.3.......................]",
-	"[Empty.4.......................]",
-	"[Empty.5.......................]",
-	"[Empty.6.......................]",
-	"[Empty.7.......................]",
-	"[Empty.8.......................]",
-	"[Empty.9.......................]"
-};
-
 const uint16 Graphics::_fontOffs[] = {
 	0x0000, 0x0007, 0x0024, 0x0043, 0x0072, 0x00AD, 0x00E0, 0x0113, 0x0124, 0x0141,
 	0x015E, 0x0191, 0x01C4, 0x01E3, 0x01F8, 0x0215, 0x0232, 0x0269, 0x0286, 0x02BD,

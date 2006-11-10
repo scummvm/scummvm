@@ -65,7 +65,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
 	setupOpcodes();
-	setupUIRect();
 
 	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
@@ -237,11 +236,11 @@ void ToucheEngine::processEvents() {
 			_flagsTable[600] = event.kbd.keycode;
 			if (event.kbd.keycode == 27) { // ESC
 				if (_displayQuitDialog) {
-					_flagsTable[611] = ui_displayQuitDialog();
+					_flagsTable[611] = displayQuitDialog();
 				}
 			} else if (event.kbd.keycode == 286) { // F5
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
-					ui_handleOptions(0);
+					handleOptions(0);
 				}
 			} else if (event.kbd.keycode == 290) { // F9
 				_fastWalkMode = true;
@@ -261,7 +260,7 @@ void ToucheEngine::processEvents() {
 					if (_talkTextMode == kTalkModeCount) {
 						_talkTextMode = 0;
 					}
-					ui_displayTextMode(-(92 + _talkTextMode));
+					displayTextMode(-(92 + _talkTextMode));
 				} else if (event.kbd.ascii == ' ') {
 					updateKeyCharTalk(2);
 				}
@@ -1366,8 +1365,8 @@ void ToucheEngine::setCursor(int num) {
 	_system->showMouse(true);
 }
 
-void ToucheEngine::updateCursor(int num) {
-	debugC(9, kDebugEngine, "ToucheEngine::updateCursor(%d)", num);
+void ToucheEngine::setDefaultCursor(int num) {
+	debugC(9, kDebugEngine, "ToucheEngine::setDefaultCursor(%d)", num);
 	if (_currentCursorObject != 0) {
 		if (_currentCursorObject != 1) {
 			addItemToInventory(num, _currentCursorObject);
@@ -1390,13 +1389,13 @@ void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 				}
 				if (item != 0 && _currentCursorObject != 0) {
 					if (restartKeyCharScriptOnAction(-53, item | 0x1000, 0)) {
-						updateCursor(_objectDescriptionNum);
+						setDefaultCursor(_objectDescriptionNum);
 						drawInventory(_objectDescriptionNum, 1);
 					}
 				} else {
 					_inventoryVar1[area - 6 + *_inventoryVar2] = 0;
 					if (_currentCursorObject != 0) {
-						updateCursor(_objectDescriptionNum);
+						setDefaultCursor(_objectDescriptionNum);
 					}
 					if (item != 0) {
 						setCursor(item);
@@ -1410,7 +1409,7 @@ void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 				case kInventoryCharacter:
 					_keyCharsTable[_currentKeyCharNum].money += _currentAmountOfMoney;
 					_currentAmountOfMoney = 0;
-					ui_handleOptions(0);
+					handleOptions(0);
 					break;
 				case kInventoryMoneyDisplay:
 					setKeyCharMoney();
@@ -1434,7 +1433,7 @@ void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 					break;
 				case kInventoryMoney:
 					if (_currentAmountOfMoney != 0) {
-						updateCursor(_objectDescriptionNum);
+						setDefaultCursor(_objectDescriptionNum);
 						int money = _currentAmountOfMoney;
 						_currentAmountOfMoney = 0;
 						drawAmountOfMoneyInInventory();
@@ -1597,7 +1596,7 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 					if (_inp_leftMouseButtonPressed) {
 						_inp_leftMouseButtonPressed = false;
 						if (_currentCursorObject != 0) {
-							updateCursor(_currentKeyCharNum);
+							setDefaultCursor(_currentKeyCharNum);
 						} else {
 							drawInventory(_currentKeyCharNum, 0);
 							if (restartKeyCharScriptOnAction(-49, _programHitBoxTable[i].item, 0) == 0) {
@@ -1784,7 +1783,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	addToDirtyRect(_cursorObjectRect);
 
 	Graphics::fillRect(_offscreenBuffer, 640, cursorPosX + 14, cursorPosY + 24, cursorW - 28, cursorH - 40, 0xF8);
-	ui_drawActionsPanel(cursorPosX, cursorPosY, cursorW, cursorH);
+	drawActionsPanel(cursorPosX, cursorPosY, cursorW, cursorH);
 
 	const char *strData = getString(str);
 	drawGameString(16, 0xF8FF, offs + strW / 2, cursorPosY + 4, strData);
@@ -2436,7 +2435,7 @@ void ToucheEngine::drawCharacterConversation() {
 			return;
 		}
 	}
-	ui_drawConversationPanel();
+	drawConversationPanel();
 	for (int i = 0; i < 4; ++i) {
 		drawString(_offscreenBuffer, 640, 16, 214, 42, 328 + i * 16, _conversationChoicesTable[_drawCharacterConversionRepeatCounter + i].msg);
 	}
@@ -2451,7 +2450,7 @@ void ToucheEngine::drawConversationString(int num, uint16 color) {
 }
 
 void ToucheEngine::clearConversationArea() {
-	ui_drawConversationPanel();
+	drawConversationPanel();
 	updateScreenArea(_offscreenBuffer, 640, 0, 320, 0, 320, 640, 80);
 	_conversationAreaCleared = true;
 }

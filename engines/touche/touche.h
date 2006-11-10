@@ -329,7 +329,6 @@ public:
 		NUM_ANIMATION_ENTRIES = 4,
 		NUM_INVENTORY_ITEMS = 100,
 		NUM_DIRTY_RECTS = 50,
-		NUM_GAMESTATE_FILES = 100,
 		NUM_DIRECTIONS = 135
 	};
 
@@ -389,7 +388,7 @@ protected:
 	void lockUnlockHitBox(int num, int lock);
 	void drawHitBoxes();
 	void setCursor(int num);
-	void updateCursor(int num);
+	void setDefaultCursor(int num);
 	void handleLeftMouseButtonClickOnInventory();
 	void handleRightMouseButtonClickOnInventory();
 	void handleMouseInput(int flag);
@@ -584,27 +583,17 @@ protected:
 	void res_loadSpeechSegment(int num);
 	void res_stopSpeech();
 
-	bool ui_processEvents();
-	void ui_drawButtonBorders(const Common::Rect *r, int count);
-	void ui_drawMusicVolumeBar();
-	void ui_drawTalkMode();
-	void ui_drawAllBorders();
-	void ui_drawSaveGamesList(int page);
-	void ui_drawSaveLoadMenu(int page, SaveLoadMode mode);
-	int ui_getButtonPressed(const Common::Rect *r, int count) const;
-	void ui_drawButtonText(const int16 *texts, const Common::Rect *r, int count, bool centerTexts);
-	void ui_drawArrow(int x, int y, int dx, uint8 color);
-	void ui_drawOptionsMenu();
-	void ui_drawCurrentGameStateDescription();
-	int ui_handleSaveLoad(SaveLoadMode mode);
-	void ui_handleOptions(int forceDisplay);
-	void ui_drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY);
-	void ui_drawConversationPanelBorder(int dstY, int srcX, int srcY);
-	void ui_drawConversationPanel();
-	void ui_printStatusString(const char *str);
-	void ui_clearStatusString();
-	int ui_displayQuitDialog();
-	void ui_displayTextMode(int str);
+	void drawButton(void *button);
+	void redrawMenu(void *menu);
+	void handleMenuAction(void *menu, int actionId);
+	void handleOptions(int forceDisplay);
+	void drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY);
+	void drawConversationPanelBorder(int dstY, int srcX, int srcY);
+	void drawConversationPanel();
+	void printStatusString(const char *str);
+	void clearStatusString();
+	int displayQuitDialog();
+	void displayTextMode(int str);
 
 
 	MidiPlayer *_midiPlayer;
@@ -621,9 +610,6 @@ protected:
 	bool _displayQuitDialog;
 	int _saveLoadCurrentPage;
 	int _saveLoadCurrentSlot;
-	bool _saveLoadMarks[NUM_GAMESTATE_FILES];
-	char _saveLoadCurrentDescription[33];
-	int _saveLoadCurrentDescriptionLen;
 
 	int _defaultSoundPriority;
 	int _newMusicNum;
@@ -751,9 +737,6 @@ protected:
 
 	static SpriteData _spritesTable[NUM_SPRITES];
 	static const uint8 _directionsTable[NUM_DIRECTIONS];
-	static char _saveLoadDescriptionsTable[10][33];
-
-	void setupUIRect();
 };
 
 /*
@@ -766,6 +749,7 @@ protected:
 	266 : keychar direction override
 	267 : don't decode picture/sprite images (in load_image_helper)
 	268 : don't decode picture/sprite images
+	269 : disable room background animations
 	270 : play random sound
 	290 : process random palette
 	295 : game cycle counter (incremented)

@@ -267,13 +267,12 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	clearAreaTable();
 	_flagsTable[115] = 0;
 	clearRoomArea();
-	int16 room_offs_x, room_offs_y;
 	_currentEpisodeNum = stream->readUint16LE();
 	_newMusicNum = stream->readUint16LE();
 	_currentRoomNum = stream->readUint16LE();
 	res_loadRoom(_currentRoomNum);
-	room_offs_x = stream->readUint16LE();
-	room_offs_y = stream->readUint16LE();
+	int16 roomOffsX = stream->readUint16LE();
+	int16 roomOffsY = stream->readUint16LE();
 	_disabledInputCounter = stream->readUint16LE();
 	res_loadProgram(_currentEpisodeNum);
 	setupEpisode(-1);
@@ -322,9 +321,9 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	}
 	_talkListEnd = stream->readUint16LE();
 	_talkListCurrent = stream->readUint16LE();
-	_flagsTable[614] = room_offs_x;
-	_flagsTable[615] = room_offs_y;
-	for (uint i = 0; i < 6; ++i) {
+	_flagsTable[614] = roomOffsX;
+	_flagsTable[615] = roomOffsY;
+	for (uint i = 0; i < NUM_SEQUENCES; ++i) {
 		if (_sequenceEntryTable[i].seqNum != -1) {
 			res_loadSequence(_sequenceEntryTable[i].seqNum, i);
 		}
@@ -377,7 +376,7 @@ bool ToucheEngine::loadGameState(int num) {
 	if (f) {
 		uint16 version = f->readUint16LE();
 		if (version < kCurrentGameStateVersion) {
-			warning("Unsupported gamestate version %d\n", version);
+			warning("Unsupported gamestate version %d (index %d)", version, num);
 		} else {
 			f->skip(2 + kGameStateDescriptionLen);
 			loadGameStateData(f);

@@ -465,6 +465,20 @@ void ToucheEngine::op_initKeyCharTalk() {
 void ToucheEngine::op_loadRoom() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadRoom()");
 	int16 num = _script.readNextWord();
+	if (_currentEpisodeNum == 27 && num == 34 && _currentRoomNum != 58) {
+		//
+		// Workaround to what appears to be a scripting bug. The script
+		// 27 triggers a palette fading just after loading the room 34.
+		// Set flag 115, so that only *one* palette refresh occurs.
+		//
+		//  [0086] (13) ST[0] = 1
+		//  [0089] (1E) FLAGS[606] = ST[0]
+		//  [008C] (34) LOAD_ROOM(34)
+		//  [xxxx] ...
+		//  [00B4] (84) START_PALETTE_FADE_IN(20)
+		//
+		_flagsTable[115] = 1;
+	}
 	res_loadRoom(num);
 }
 

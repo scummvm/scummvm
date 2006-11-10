@@ -98,12 +98,12 @@ void ToucheEngine::res_allocateTables() {
 		error("Unable to allocate memory for backdrop buffer");
 	}
 
-	_menuKitData = (uint8 *)malloc(5040);
+	_menuKitData = (uint8 *)malloc(42 * 120);
 	if (!_menuKitData) {
 		error("Unable to allocate memory for menu kit data");
 	}
 
-	_convKitData = (uint8 *)malloc(12160);
+	_convKitData = (uint8 *)malloc(152 * 80);
 	if (!_convKitData) {
 		error("Unable to allocate memory for conv kit data");
 	}
@@ -450,7 +450,7 @@ void ToucheEngine::res_loadSprite(int num, int index) {
 		spr->size = size;
 		spr->ptr = (uint8 *)realloc(spr->ptr, size);
 		if (!spr->ptr) {
-			error("Unable to reallocate memory for sprite %d", index);
+			error("Unable to reallocate memory for sprite %d", num);
 		}
 	}
 	for (int i = 0; i < _currentImageHeight; ++i) {
