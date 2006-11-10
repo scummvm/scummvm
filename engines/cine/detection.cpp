@@ -44,58 +44,14 @@ static const PlainGameDescriptor cineGames[] = {
 	{NULL, NULL}
 };
 
-GameList Engine_CINE_gameIDList() {
-	GameList games;
-	const PlainGameDescriptor *g = cineGames;
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
+ADVANCED_DETECTOR_GAMEID_LIST(CINE, cineGames);
 
-	return games;
-}
+ADVANCED_DETECTOR_FIND_GAMEID(CINE, cineGames, NULL);
 
-GameDescriptor Engine_CINE_findGameID(const char *gameid) {
-	// First search the list of supported game IDs.
-	const PlainGameDescriptor *g = cineGames;
-	while (g->gameid) {
-		if (!scumm_stricmp(gameid, g->gameid))
-			return *g;
-		g++;
-	}
+ADVANCED_DETECTOR_DETECT_GAMES(CINE, Cine::GAME_detectGames);
 
-	return *g;
-}
+ADVANCED_DETECTOR_ENGINE_CREATE(CINE, Cine::CineEngine, "CineEngine", NULL);
 
-DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
-	return Cine::GAME_detectGames(fslist);
-}
-
-PluginError Engine_CINE_create(OSystem *syst, Engine **engine) {
-	assert(syst);
-	assert(engine);
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("CineEngine: invalid game path '%s'", dir.path().c_str());
-		return kInvalidPathError;
-	}
-
-	// Invoke the detector
-	Common::String gameid = ConfMan.get("gameid");
-	DetectedGameList detectedGames = Engine_CINE_detectGames(fslist);
-
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid == gameid) {
-			*engine = new Cine::CineEngine(syst);
-			return kNoError;
-		}
-	}
-	
-	warning("CineEngine: Unable to locate game data at path '%s'", dir.path().c_str());
-	return kNoGameDataFoundError;
-}
 
 REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
 
@@ -623,90 +579,10 @@ static const CINEGameDescription gameDescriptions[] = {
 
 };
 
-DetectedGame toDetectedGame(const ADGameDescription &g) {
-	const char *title = 0;
+ADVANCED_DETECTOR_TO_DETECTED_GAME(cineGames);
 
-	const PlainGameDescriptor *sg = cineGames;
-	while (sg->gameid) {
-		if (!scumm_stricmp(g.name, sg->gameid))
-			title = sg->description;
-		sg++;
-	}
+ADVANCED_DETECTOR_DETECT_INIT_GAME(CineEngine::initGame, gameDescriptions, _gameDescription, Common::ADTrue);
 
-	DetectedGame dg(g.name, title, g.language, g.platform);
-	dg.updateDesc(g.extra);
-	return dg;
-}
-
-bool CineEngine::initGame() {
-	int gameNumber = -1;
-	
-	DetectedGameList detectedGames;
-	Common::AdvancedDetector AdvDetector;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-
-	Common::Language language = Common::UNK_LANG;
-	Common::Platform platform = Common::kPlatformUnknown;
-
-	if (ConfMan.hasKey("language"))
-		language = Common::parseLanguage(ConfMan.get("language"));
-	if (ConfMan.hasKey("platform"))
-		platform = Common::parsePlatform(ConfMan.get("platform"));
-
-	Common::String gameid = ConfMan.get("gameid");
-
-	// At this point, Engine_Cine_create() has already verified that the
-	// desired game is in the specified directory. But we've already
-	// forgotten which particular version it was, so we have to do it all
-	// over again...
-
-	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back((const ADGameDescription *)&gameDescriptions[i]);
-
-	AdvDetector.registerGameDescriptions(descList);
-	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
-
-	matches = AdvDetector.detectGame(NULL, language, platform);
-
-	for (uint i = 0; i < matches.size(); i++) {
-		if (toDetectedGame(gameDescriptions[matches[i]].desc).gameid == gameid) {
-			gameNumber = matches[i];
-			break;
-		}
-	}
-
-	//delete &matches;
-
-	if (gameNumber >= ARRAYSIZE(gameDescriptions) || gameNumber == -1) {
-		error("CineEngine::loadGame wrong gameNumber");
-	}
-
-	debug(2, "Running %s", toDetectedGame(gameDescriptions[gameNumber].desc).description.c_str());
-
-	_gameDescription = &gameDescriptions[gameNumber];
-
-	return true;
-}
-
-DetectedGameList GAME_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	Common::AdvancedDetector AdvDetector;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-
-	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back((const ADGameDescription *)&gameDescriptions[i]);
-
-	AdvDetector.registerGameDescriptions(descList);
-	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
-
-	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
-
-	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]].desc));
-	
-	return detectedGames;
-}
+ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(GAME_detectGames, gameDescriptions);
 
 } // End of namespace Cine

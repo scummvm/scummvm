@@ -30,6 +30,10 @@
 
 namespace Common {
 
+bool ADTrue() {
+	return true;
+}
+
 AdvancedDetector::AdvancedDetector() {
 	_fileMD5Bytes = 0;
 }

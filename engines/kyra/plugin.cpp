@@ -203,29 +203,9 @@ const PlainGameDescriptor gameList[] = {
 
 } // End of anonymous namespace
 
-GameList Engine_KYRA_gameIDList() {
-	GameList games;
-	const PlainGameDescriptor *g = gameList;
+ADVANCED_DETECTOR_GAMEID_LIST(KYRA, gameList);
 
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
-
-	return games;
-}
-
-GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	const PlainGameDescriptor *g = gameList;
-
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-
-	return *g;
-}
+ADVANCED_DETECTOR_FIND_GAMEID(KYRA, gameList, NULL);
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;

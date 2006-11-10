@@ -48,57 +48,14 @@ static const PlainGameDescriptor saga_games[] = {
 	{0, 0}
 };
 
-GameList Engine_SAGA_gameIDList() {
-	GameList games;
-	const PlainGameDescriptor *g = saga_games;
+ADVANCED_DETECTOR_GAMEID_LIST(SAGA, saga_games);
 
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
+ADVANCED_DETECTOR_FIND_GAMEID(SAGA, saga_games, NULL);
 
-	return games;
-}
+ADVANCED_DETECTOR_DETECT_GAMES(SAGA, Saga::GAME_detectGames);
 
-GameDescriptor Engine_SAGA_findGameID(const char *gameid) {
-	const PlainGameDescriptor *g = saga_games;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-	return *g;
-}
+ADVANCED_DETECTOR_ENGINE_CREATE(SAGA, Saga::SagaEngine, "SagaEngine", NULL);
 
-DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
-	return Saga::GAME_detectGames(fslist);
-}
-
-PluginError Engine_SAGA_create(OSystem *syst, Engine **engine) {
-	assert(syst);
-	assert(engine);
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("SagaEngine: invalid game path '%s'", dir.path().c_str());
-		return kInvalidPathError;
-	}
-
-	// Invoke the detector
-	Common::String gameid = ConfMan.get("gameid");
-	DetectedGameList detectedGames = Engine_SAGA_detectGames(fslist);
-
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid == gameid) {
-			*engine = new Saga::SagaEngine(syst);
-			return kNoError;
-		}
-	}
-
-	warning("SagaEngine: Unable to locate game data at path '%s'", dir.path().c_str());
-	return kNoGameDataFoundError;
-}
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
@@ -109,59 +66,9 @@ using Common::ADGameDescription;
 
 #include "sagagame.cpp"
 
-DetectedGame toDetectedGame(const SAGAGameDescription &g) {
-	const char *title;
-	title = saga_games[g.gameType].description;
-	DetectedGame dg(g.desc.name, title, g.desc.language, g.desc.platform);
-	dg.updateDesc(g.desc.extra);
-	return dg;
-}
+ADVANCED_DETECTOR_TO_DETECTED_GAME(saga_games);
 
-bool SagaEngine::initGame() {
-	uint16 gameCount = ARRAYSIZE(gameDescriptions);
-	int gameNumber = -1;
-	
-	DetectedGameList detectedGames;
-	Common::AdvancedDetector AdvDetector;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-
-	Common::Language language = Common::UNK_LANG;
-	Common::Platform platform = Common::kPlatformUnknown;
-
-	if (ConfMan.hasKey("language"))
-		language = Common::parseLanguage(ConfMan.get("language"));
-	if (ConfMan.hasKey("platform"))
-		platform = Common::parsePlatform(ConfMan.get("platform"));
-
-
-	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back((const ADGameDescription *)&gameDescriptions[i]);
-
-	AdvDetector.registerGameDescriptions(descList);
-	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
-
-	matches = AdvDetector.detectGame(NULL, language, platform);
-
-	if (matches.size() == 0) {
-		warning("No valid games were found in the specified directory.");
-		return false;
-	}
-
-	if (matches.size() != 1)
-		warning("Conflicting targets detected (%d)", matches.size());
-
-	gameNumber = matches[0];
-
-	if (gameNumber >= gameCount || gameNumber == -1) {
-		error("SagaEngine::loadGame wrong gameNumber");
-	}
-
-	_gameTitle = toDetectedGame(gameDescriptions[gameNumber]).description;
-	debug(2, "Running %s", _gameTitle.c_str());
-
-	_gameNumber = gameNumber;
-	_gameDescription = &gameDescriptions[gameNumber];
+bool SagaEngine::postInitGame() {
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
 	_displayClip.right = _gameDisplayInfo.logicalWidth;
 	_displayClip.bottom = _gameDisplayInfo.logicalHeight;
@@ -172,25 +79,8 @@ bool SagaEngine::initGame() {
 	return true;
 }
 
-DetectedGameList GAME_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	Common::AdvancedDetector AdvDetector;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
+ADVANCED_DETECTOR_DETECT_INIT_GAME(SagaEngine::initGame, gameDescriptions, _gameDescription, postInitGame);
 
-	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
-		descList.push_back((const ADGameDescription *)&gameDescriptions[i]);
-
-	AdvDetector.registerGameDescriptions(descList);
-	AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES);
-
-	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
-
-	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]]));
-	//delete matches;
-
-	return detectedGames;
-}
+ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(GAME_detectGames, gameDescriptions);
 
 } // End of namespace Saga

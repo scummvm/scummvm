@@ -372,6 +372,7 @@ public:
 
 public:
 	bool initGame(void);
+	bool postInitGame(void);
 public:
 	const SAGAGameDescription *getGameDescription() const { return _gameDescription; }
 	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
