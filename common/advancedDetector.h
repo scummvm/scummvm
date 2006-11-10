@@ -70,7 +70,7 @@ typedef Array<const ADGameDescription*> ADGameDescList;
 		const PlainGameDescriptor *g = list; \
 		while (g->gameid) { \
 			if (0 == scumm_stricmp(gameid, g->gameid)) \
-				break; \
+				return *g; \
 			g++; \
 		} \
 		 \
