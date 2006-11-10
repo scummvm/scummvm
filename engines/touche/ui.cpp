@@ -147,7 +147,7 @@ void ToucheEngine::drawButton(void *button) {
 	if (b->flags & kButtonText) {
 		if (b->data != 0) {
 			const char *str = getString(b->data);
-			const int w = getStringWidth(16, b->data);
+			const int w = getStringWidth(b->data);
 			const int h = 16;
 			const int x = b->x + (b->w - w) / 2;
 			const int y = b->y + (b->h - h) / 2;

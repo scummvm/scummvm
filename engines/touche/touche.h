@@ -377,9 +377,9 @@ protected:
 	void setKeyCharRandomFrame(KeyChar *key);
 	void setKeyCharMoney();
 	const char *getString(int num) const;
-	int getStringWidth(int m, int num) const;
-	void drawString(uint8 *dst, int dstPitch, int m, uint16 color, int x, int y, int16 num);
-	void drawGameString(int m, uint16 color, int x1, int y, const char *str);
+	int getStringWidth(int num) const;
+	void drawString(uint8 *dst, int dstPitch, uint16 color, int x, int y, int16 num);
+	void drawGameString(uint16 color, int x1, int y, const char *str);
 	int restartKeyCharScriptOnAction(int action, int obj1, int obj2);
 	void buildSpriteScalingTable(int z1, int z2);
 	void drawSpriteOnBackdrop(int num, int x, int y);
