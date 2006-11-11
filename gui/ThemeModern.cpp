@@ -57,6 +57,7 @@ ThemeModern::ThemeModern(OSystem *system, const Common::String &stylefile, const
 _lastUsedBitMask(0), _forceRedraw(false), _imageHandles(0), _images(0), _colors(), _fonts(), _cursor(0), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
+	_enabled = false;
 	_useCursor = false;
 	memset(&_screen, 0, sizeof(_screen));
 	memset(&_dialog, 0, sizeof(_dialog));

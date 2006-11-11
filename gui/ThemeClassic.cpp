@@ -28,6 +28,7 @@ ThemeClassic::ThemeClassic(OSystem *system, const Common::String &config, const 
 	_stylefile = config;
 	_system = system;
 	_initOk = false;
+	_enabled = false;
 	_font = 0;
 	_fontName.clear();
 	memset(&_screen, 0, sizeof(_screen));
