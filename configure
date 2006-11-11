@@ -60,7 +60,7 @@ _build_kyra=yes
 _build_lure=no
 _build_cine=yes
 _build_agi=no
-_build_touche=no
+_build_touche=yes
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -333,7 +333,7 @@ Optional Features:
   --enable-lure            build the Lure of the Temptress engine
   --disable-cine           don't build the Cinematique engine evo 1
   --enable-agi             build the AGI engine
-  --enable-touche          build the Touche: The Adventures of the Fifth Musketeer engine
+  --disable-touche         don't build the Touche: The Adventures of the Fifth Musketeer engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -402,7 +402,7 @@ for ac_option in $@; do
       --enable-lure)            _build_lure=yes ;;
       --disable-cine)           _build_cine=no ;;
       --enable-agi)             _build_agi=yes ;;
-      --enable-touche)          _build_touche=yes ;;
+      --disable-touche)         _build_touche=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
