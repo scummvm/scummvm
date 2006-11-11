@@ -80,11 +80,13 @@ void MidiPlayer::adjustVolume(int diff) {
 
 void MidiPlayer::setVolume(int volume) {
 	_masterVolume = CLIP(volume, 0, 255);
+	_mutex.lock();
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 		}
 	}
+	_mutex.unlock();
 }
 
 int MidiPlayer::open() {

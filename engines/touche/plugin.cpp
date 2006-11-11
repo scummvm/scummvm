@@ -151,4 +151,4 @@ PluginError Engine_TOUCHE_create(OSystem *system, Engine **engine) {
 	return kNoError;
 }
 
-REGISTER_PLUGIN(TOUCHE, "Touche: The Adventures of the 5th Musketeer", "Touche: The Adventures of the 5th Musketeer (C) US Gold");
+REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musketeer (C) Clipper Software");

@@ -554,7 +554,7 @@ void ToucheEngine::res_loadImageHelper(uint8 *imgData, int imgWidth, int imgHeig
 
 void ToucheEngine::res_loadSound(int priority, int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadSound() num=%d", num);
-	if (priority >= _defaultSoundPriority) {
+	if (priority >= 0) {
 		uint32 size;
 		const uint32 offs = res_getDataOffset(kResourceTypeSound, num, &size);
 		_fData.seek(offs);
@@ -650,7 +650,6 @@ void ToucheEngine::res_stopSpeech() {
 	debugC(9, kDebugResource, "ToucheEngine::res_stopSpeech()");
 	_mixer->stopHandle(_speechHandle);
 	_speechPlaying = false;
-	_defaultSoundPriority = 0;
 }
 
 } // namespace Touche

@@ -343,8 +343,10 @@ public:
 protected:
 
 	void restart();
+	void readConfigurationSettings();
+	void writeConfigurationSettings();
 	void mainLoop();
-	void processEvents();
+	void processEvents(bool handleKeyEvents = true);
 	void runCycle();
 	int16 getRandomNumber(int max);
 	void changePaletteRange();
@@ -432,8 +434,8 @@ protected:
 	void runConversationScript(uint16 offset);
 	void findConversationByNum(int16 num);
 	void clearConversationChoices();
-	void drawCharacterConversationRepeat2();
-	void drawCharacterConversationRepeat();
+	void scrollDownConversationChoice();
+	void scrollUpConversationChoice();
 	void drawCharacterConversation();
 	void drawConversationString(int num, uint16 color);
 	void clearConversationArea();
@@ -611,7 +613,6 @@ protected:
 	int _saveLoadCurrentPage;
 	int _saveLoadCurrentSlot;
 
-	int _defaultSoundPriority;
 	int _newMusicNum;
 	int _currentMusicNum;
 	int _newSoundNum;
@@ -650,7 +651,7 @@ protected:
 	int _conversationReplyNum;
 	bool _conversationEnded;
 	int _conversationNum;
-	int _drawCharacterConversionRepeatCounter;
+	int _scrollConversationChoiceOffset;
 	int _currentConversation;
 	bool _disableConversationScript;
 	bool _conversationAreaCleared;

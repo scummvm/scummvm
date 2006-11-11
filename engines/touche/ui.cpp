@@ -493,14 +493,14 @@ void ToucheEngine::drawConversationPanel() {
 	--dstX;
 	Graphics::copyRect(_offscreenBuffer, 640, dstX, 320, _convKitData, 152, 120, 0, 7, 80);
 	dstX -= 3;
-	if (_drawCharacterConversionRepeatCounter != 0) {
+	if (_scrollConversationChoiceOffset != 0) {
 		drawConversationPanelBorder(320, 72, 0);
 		Graphics::copyRect(_offscreenBuffer, 640, 0, 320, _convKitData, 152, 128, 0, 24, 21);
 		Graphics::copyRect(_offscreenBuffer, 640, dstX, 320, _convKitData, 152, 128, 34, 10, 10);
 	} else {
 		drawConversationPanelBorder(320, 24, 0);
 	}
-	if (_conversationChoicesTable[_drawCharacterConversionRepeatCounter + 4].msg != 0) {
+	if (_conversationChoicesTable[_scrollConversationChoiceOffset + 4].msg != 0) {
 		drawConversationPanelBorder(394, 72, 74);
 		Graphics::copyRect(_offscreenBuffer, 640, 0, 379, _convKitData, 152, 128, 59, 24, 21);
 		Graphics::copyRect(_offscreenBuffer, 640, dstX, 394, _convKitData, 152, 128, 46, 10, 6);

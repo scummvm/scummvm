@@ -29,7 +29,7 @@
 namespace Touche {
 
 enum {
-	kCurrentGameStateVersion = 5,
+	kCurrentGameStateVersion = 6,
 	kGameStateDescriptionLen = 32
 };
 
@@ -209,6 +209,38 @@ static void saveOrLoad(S &s, ProgramPointData &data) {
 	saveOrLoad(s, data.priority);
 }
 
+template <class S, class A>
+static void saveOrLoadCommonArray(S &s, A &array);
+
+template <class A>
+static void saveOrLoadCommonArray(Common::WriteStream &stream, A &array) {
+	uint count = array.size();
+	assert(count < 0xFFFF);
+	stream.writeUint16LE(count);
+	for (uint i = 0; i < count; ++i) {
+		saveOrLoad(stream, array[i]);
+	}
+}
+
+template <class A>
+static void saveOrLoadCommonArray(Common::ReadStream &stream, A &array) {
+	uint count = stream.readUint16LE();
+	if (count == array.size()) {
+		for (uint i = 0; i < count; ++i) {
+			saveOrLoad(stream, array[i]);
+		}
+	}
+}
+
+template <class S, class A>
+static void saveOrLoadStaticArray(S &s, A &array, uint count) {
+	for (uint i = 0; i < count; ++i) {
+		saveOrLoad(s, array[i]);
+	}
+}
+
+static const uint32 saveLoadEndMarker = 0x55AA55AA;
+
 void ToucheEngine::saveGameStateData(Common::WriteStream *stream) {
 	setKeyCharMoney();
 	stream->writeUint16LE(_currentEpisodeNum);
@@ -217,48 +249,23 @@ void ToucheEngine::saveGameStateData(Common::WriteStream *stream) {
 	stream->writeUint16LE(_flagsTable[614]);
 	stream->writeUint16LE(_flagsTable[615]);
 	stream->writeUint16LE(_disabledInputCounter);
-	for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
-		saveOrLoad(*stream, _programHitBoxTable[i]);
-	}
-	for (uint i = 0; i < _programBackgroundTable.size(); ++i) {
-		saveOrLoad(*stream, _programBackgroundTable[i]);
-	}
-	for (uint i = 0; i < _programAreaTable.size(); ++i) {
-		saveOrLoad(*stream, _programAreaTable[i]);
-	}
-	for (uint i = 0; i < _programWalkTable.size(); ++i) {
-		saveOrLoad(*stream, _programWalkTable[i]);
-	}
-	for (uint i = 0; i < _programPointsTable.size(); ++i) {
-		saveOrLoad(*stream, _programPointsTable[i]);
-	}
+	saveOrLoadCommonArray(*stream, _programHitBoxTable);
+	saveOrLoadCommonArray(*stream, _programBackgroundTable);
+	saveOrLoadCommonArray(*stream, _programAreaTable);
+	saveOrLoadCommonArray(*stream, _programWalkTable);
+	saveOrLoadCommonArray(*stream, _programPointsTable);
 	stream->write(_updatedRoomAreasTable, 200);
-	for (uint i = 0; i < NUM_SEQUENCES; ++i) {
-		saveOrLoad(*stream, _sequenceEntryTable[i]);
-	}
-	for (uint i = 0; i < 1024; ++i) {
-		saveOrLoad(*stream, _flagsTable[i]);
-	}
-	for (uint i = 0; i < 100; ++i) {
-		saveOrLoad(*stream, _inventoryList1[i]);
-	}
-	for (uint i = 0; i < 100; ++i) {
-		saveOrLoad(*stream, _inventoryList2[i]);
-	}
-	for (uint i = 0; i < 6; ++i) {
-		saveOrLoad(*stream, _inventoryList3[i]);
-	}
-	for (uint i = 0; i < NUM_KEYCHARS; ++i) {
-		saveOrLoad(*stream, _keyCharsTable[i]);
-	}
-	for (uint i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
-		saveOrLoad(*stream, _inventoryItemsInfoTable[i]);
-	}
-	for (uint i = 0; i < NUM_TALK_ENTRIES; ++i) {
-		saveOrLoad(*stream, _talkTable[i]);
-	}
+	saveOrLoadStaticArray(*stream, _sequenceEntryTable, NUM_SEQUENCES);
+	saveOrLoadStaticArray(*stream, _flagsTable, 1024);
+	saveOrLoadStaticArray(*stream, _inventoryList1, 100);
+	saveOrLoadStaticArray(*stream, _inventoryList2, 100);
+	saveOrLoadStaticArray(*stream, _inventoryList3, 6);
+	saveOrLoadStaticArray(*stream, _keyCharsTable, NUM_KEYCHARS);
+	saveOrLoadStaticArray(*stream, _inventoryItemsInfoTable, NUM_INVENTORY_ITEMS);
+	saveOrLoadStaticArray(*stream, _talkTable, NUM_TALK_ENTRIES);
 	stream->writeUint16LE(_talkListEnd);
 	stream->writeUint16LE(_talkListCurrent);
+	stream->writeUint32LE(saveLoadEndMarker);
 }
 
 void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
@@ -276,51 +283,30 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	_disabledInputCounter = stream->readUint16LE();
 	res_loadProgram(_currentEpisodeNum);
 	setupEpisode(-1);
-	for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
-		saveOrLoad(*stream, _programHitBoxTable[i]);
-	}
-	for (uint i = 0; i < _programBackgroundTable.size(); ++i) {
-		saveOrLoad(*stream, _programBackgroundTable[i]);
-	}
-	for (uint i = 0; i < _programAreaTable.size(); ++i) {
-		saveOrLoad(*stream, _programAreaTable[i]);
-	}
-	for (uint i = 0; i < _programWalkTable.size(); ++i) {
-		saveOrLoad(*stream, _programWalkTable[i]);
-	}
-	for (uint i = 0; i < _programPointsTable.size(); ++i) {
-		saveOrLoad(*stream, _programPointsTable[i]);
-	}
+	saveOrLoadCommonArray(*stream, _programHitBoxTable);
+	saveOrLoadCommonArray(*stream, _programBackgroundTable);
+	saveOrLoadCommonArray(*stream, _programAreaTable);
+	saveOrLoadCommonArray(*stream, _programWalkTable);
+	saveOrLoadCommonArray(*stream, _programPointsTable);
 	stream->read(_updatedRoomAreasTable, 200);
 	for (uint i = 1; i <= _updatedRoomAreasTable[0]; ++i) {
 		updateRoomAreas(_updatedRoomAreasTable[i], -1);
 	}
-	for (uint i = 0; i < NUM_SEQUENCES; ++i) {
-		saveOrLoad(*stream, _sequenceEntryTable[i]);
-	}
-	for (uint i = 0; i < 1024; ++i) {
-		saveOrLoad(*stream, _flagsTable[i]);
-	}
-	for (uint i = 0; i < 100; ++i) {
-		saveOrLoad(*stream, _inventoryList1[i]);
-	}
-	for (uint i = 0; i < 100; ++i) {
-		saveOrLoad(*stream, _inventoryList2[i]);
-	}
-	for (uint i = 0; i < 6; ++i) {
-		saveOrLoad(*stream, _inventoryList3[i]);
-	}
-	for (uint i = 0; i < NUM_KEYCHARS; ++i) {
-		saveOrLoad(*stream, _keyCharsTable[i]);
-	}
-	for (uint i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
-		saveOrLoad(*stream, _inventoryItemsInfoTable[i]);
-	}
-	for (uint i = 0; i < NUM_TALK_ENTRIES; ++i) {
-		saveOrLoad(*stream, _talkTable[i]);
-	}
+	saveOrLoadStaticArray(*stream, _sequenceEntryTable, NUM_SEQUENCES);
+	saveOrLoadStaticArray(*stream, _flagsTable, 1024);
+	saveOrLoadStaticArray(*stream, _inventoryList1, 100);
+	saveOrLoadStaticArray(*stream, _inventoryList2, 100);
+	saveOrLoadStaticArray(*stream, _inventoryList3, 6);
+	saveOrLoadStaticArray(*stream, _keyCharsTable, NUM_KEYCHARS);
+	saveOrLoadStaticArray(*stream, _inventoryItemsInfoTable, NUM_INVENTORY_ITEMS);
+	saveOrLoadStaticArray(*stream, _talkTable, NUM_TALK_ENTRIES);
 	_talkListEnd = stream->readUint16LE();
 	_talkListCurrent = stream->readUint16LE();
+	if (stream->readUint32LE() != saveLoadEndMarker) {
+		warning("Corrupted gamestate data");
+		// if that ever happens, exit the game
+		_flagsTable[611] = 1;
+	}
 	_flagsTable[614] = roomOffsX;
 	_flagsTable[615] = roomOffsY;
 	for (uint i = 0; i < NUM_SEQUENCES; ++i) {

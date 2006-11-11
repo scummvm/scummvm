@@ -35,8 +35,6 @@ namespace Touche {
 ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	: Engine(system), _language(language) {
 
-	_talkTextMode = kTalkModeVoiceAndText;
-
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
@@ -44,8 +42,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_screenRect = Common::Rect(640, 400);
 	_roomAreaRect = Common::Rect(640, 352);
 	clearDirtyRects();
-
-	_defaultSoundPriority = 0;
 
 	_playSoundCounter = 0;
 
@@ -91,8 +87,6 @@ int ToucheEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
-
-	_midiPlayer->setVolume(ConfMan.getInt("music_volume"));
 	return 0;
 }
 
@@ -179,7 +173,7 @@ void ToucheEngine::restart() {
 	_conversationReplyNum = -1;
 	_conversationEnded = false;
 	_conversationNum = 0;
-	_drawCharacterConversionRepeatCounter = 0;
+	_scrollConversationChoiceOffset = 0;
 	_currentConversation = 0;
 	_disableConversationScript = false;
 	_conversationAreaCleared = false;
@@ -189,6 +183,41 @@ void ToucheEngine::restart() {
 	if (_language == Common::FR_FRA) {
 		_flagsTable[621] = 1;
 	}
+}
+
+void ToucheEngine::readConfigurationSettings() {
+	if (ConfMan.getBool("speech_mute")) {
+		_talkTextMode = kTalkModeTextOnly;
+		if (!ConfMan.getBool("subtitles")) {
+			ConfMan.setBool("subtitles", true);
+		}
+	} else {
+		if (ConfMan.getBool("subtitles")) {
+			_talkTextMode = kTalkModeVoiceAndText;
+		} else {
+			_talkTextMode = kTalkModeVoiceOnly;
+		}
+	}
+	_midiPlayer->setVolume(ConfMan.getInt("music_volume"));
+}
+
+void ToucheEngine::writeConfigurationSettings() {
+	switch (_talkTextMode) {
+	case kTalkModeTextOnly:
+		ConfMan.setBool("speech_mute", true);
+		ConfMan.setBool("subtitles", true);
+		break;
+	case kTalkModeVoiceOnly:
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.setBool("subtitles", false);
+		break;
+	case kTalkModeVoiceAndText:
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.setBool("subtitles", true);
+		break;
+	}
+	ConfMan.setInt("music_volume", _midiPlayer->getVolume());
+	ConfMan.flushToDisk();
 }
 
 void ToucheEngine::mainLoop() {
@@ -201,6 +230,8 @@ void ToucheEngine::mainLoop() {
 	_system->warpMouse(_inp_mousePos.x, _inp_mousePos.y);
 	setPalette(0, 255, 0, 0, 0);
 
+	readConfigurationSettings();
+
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
 		_newEpisodeNum = _currentEpisodeNum;
@@ -209,10 +240,10 @@ void ToucheEngine::mainLoop() {
 	const int cycleDelay = 1000 / (1193180 / 32768);
 	uint32 frameTimeStamp = _system->getMillis();
 	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
-		if ((cycleCounter & 2) == 0) {
+		if ((cycleCounter % 3) == 0) {
 			runCycle();
 		}
-		if ((cycleCounter & 1) == 0) {
+		if ((cycleCounter % 2) == 0) {
 			fadePaletteFromFlags();
  		}
 		int delay = _system->getMillis() - frameTimeStamp;
@@ -223,9 +254,11 @@ void ToucheEngine::mainLoop() {
 		_system->delayMillis(delay);
 		frameTimeStamp = _system->getMillis();
 	}
+
+	writeConfigurationSettings();
 }
 
-void ToucheEngine::processEvents() {
+void ToucheEngine::processEvents(bool handleKeyEvents) {
 	OSystem::Event event;
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
@@ -233,6 +266,9 @@ void ToucheEngine::processEvents() {
 			_flagsTable[611] = 1;
 			break;
 		case OSystem::EVENT_KEYDOWN:
+			if (!handleKeyEvents) {
+				break;
+			}
 			_flagsTable[600] = event.kbd.keycode;
 			if (event.kbd.keycode == 27) { // ESC
 				if (_displayQuitDialog) {
@@ -337,7 +373,6 @@ void ToucheEngine::runCycle() {
 	if (_flagsTable[612] != 0) {
 		_flagsTable[613] = getRandomNumber(_flagsTable[612]);
 	}
-	processEvents();
 	sortKeyChars();
 	for (int i = 0; i < NUM_KEYCHARS; ++i) {
 		runKeyCharScript(&_keyCharsTable[i]);
@@ -369,6 +404,7 @@ void ToucheEngine::runCycle() {
 	if (_flagsTable[299]) {
 		--_flagsTable[299];
 	}
+	processEvents();
 }
 
 int16 ToucheEngine::getRandomNumber(int max) {
@@ -997,12 +1033,11 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 			}
 
 			uint8 *dstCur = dst + copyRegion.r.top * dstPitch + copyRegion.r.left;
-			const int spr_y1 = srcOffsY + copyRegion.srcY;
-			const int spr_x1 = srcOffsX + copyRegion.srcX;
-			const uint8 *srcSpr = spr->ptr + spr_y1 * spr->bitmapWidth + spr_x1;
+			const uint8 *srcSpr = spr->ptr + (srcOffsY + copyRegion.srcY) * spr->bitmapWidth;
+			srcSpr += vflipped ? srcOffsX + spr->w - 1 - copyRegion.srcX : srcOffsX + copyRegion.srcX;
 			for (int h = 0; h < copyRegion.r.height(); ++h) {
 				for (int w = 0; w < copyRegion.r.width(); ++w) {
-					uint8 color = vflipped ? srcSpr[spr->w - 1 - w] : srcSpr[w];
+					uint8 color = vflipped ? srcSpr[-w] : srcSpr[w];
 					if (color != 0) {
 						dstCur[w] = color;
 					}
@@ -1663,9 +1698,9 @@ void ToucheEngine::handleMouseClickOnInventory(int flag) {
 				if (_inp_leftMouseButtonPressed) {
 					int replyNum = _inp_mousePos.y - _roomAreaRect.height();
 					if (replyNum < 40) {
-						drawCharacterConversationRepeat();
+						scrollUpConversationChoice();
 					} else {
-						drawCharacterConversationRepeat2();
+						scrollDownConversationChoice();
 					}
 					_inp_leftMouseButtonPressed = false;
 				}
@@ -1718,7 +1753,6 @@ void ToucheEngine::updateSpeech() {
 	if (_speechPlaying) {
 		if (!_mixer->isSoundHandleActive(_speechHandle)) {
 			_speechPlaying = false;
-			_defaultSoundPriority = 0;
 		}
 	}
 }
@@ -1783,7 +1817,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	_redrawScreenCounter1 = 2;
 	Common::Rect rect(0, y, 640, y + h);
 	i = -1;
-	while (_inp_rightMouseButtonPressed) {
+	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
 		if (rect.contains(_inp_mousePos)) {
 			int c = (_inp_mousePos.y - y) / 16;
 			if (c != i) {
@@ -1803,31 +1837,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 			updateScreenArea(_offscreenBuffer, 640, offs, drawY, offs, drawY, strW, 16);
 			i = -1;
 		}
-
-		OSystem::Event event;
-		while (_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_QUIT:
-				_flagsTable[611] = 1;
-				break;
-			case OSystem::EVENT_MOUSEMOVE:
-				_inp_mousePos.x = event.mouse.x;
-				_inp_mousePos.y = event.mouse.y;
-				break;
-			case OSystem::EVENT_RBUTTONDOWN:
-				_inp_mousePos.x = event.mouse.x;
-				_inp_mousePos.y = event.mouse.y;
-				_inp_rightMouseButtonPressed = true;
-				break;
-			case OSystem::EVENT_RBUTTONUP:
-				_inp_mousePos.x = event.mouse.x;
-				_inp_mousePos.y = event.mouse.y;
-				_inp_rightMouseButtonPressed = false;
-				break;
-			default:
-				break;
-			}
-		}
+		processEvents(false);
 		_system->updateScreen();
 		_system->delayMillis(50);
 	}
@@ -2391,19 +2401,19 @@ void ToucheEngine::clearConversationChoices() {
 		_conversationChoicesTable[i].num = 0;
 		_conversationChoicesTable[i].msg = 0;
 	}
-	_drawCharacterConversionRepeatCounter = 0;
+	_scrollConversationChoiceOffset = 0;
 }
 
-void ToucheEngine::drawCharacterConversationRepeat2() {
-	if (_conversationChoicesTable[4 + _drawCharacterConversionRepeatCounter].msg != 0) {
-		++_drawCharacterConversionRepeatCounter;
+void ToucheEngine::scrollDownConversationChoice() {
+	if (_conversationChoicesTable[4 + _scrollConversationChoiceOffset].msg != 0) {
+		++_scrollConversationChoiceOffset;
 		drawCharacterConversation();
 	}
 }
 
-void ToucheEngine::drawCharacterConversationRepeat() {
-	if (_drawCharacterConversionRepeatCounter != 0) {
-		--_drawCharacterConversionRepeatCounter;
+void ToucheEngine::scrollUpConversationChoice() {
+	if (_scrollConversationChoiceOffset != 0) {
+		--_scrollConversationChoiceOffset;
 		drawCharacterConversation();
 	}
 }
@@ -2422,7 +2432,7 @@ void ToucheEngine::drawCharacterConversation() {
 	}
 	drawConversationPanel();
 	for (int i = 0; i < 4; ++i) {
-		drawString(_offscreenBuffer, 640, 214, 42, 328 + i * 16, _conversationChoicesTable[_drawCharacterConversionRepeatCounter + i].msg);
+		drawString(_offscreenBuffer, 640, 214, 42, 328 + i * 16, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
 	}
 	updateScreenArea(_offscreenBuffer, 640, 0, 320, 0, 320, 640, 80);
 	_conversationAreaCleared = false;
@@ -2430,7 +2440,7 @@ void ToucheEngine::drawCharacterConversation() {
 
 void ToucheEngine::drawConversationString(int num, uint16 color) {
 	const int y = 328 + num * 16;
-	drawString(_offscreenBuffer, 640, color, 42, y, _conversationChoicesTable[num + _drawCharacterConversionRepeatCounter].msg);
+	drawString(_offscreenBuffer, 640, color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
 	updateScreenArea(_offscreenBuffer, 640, 0, y, 0, y, 640, 16);
 }
 
@@ -2443,11 +2453,11 @@ void ToucheEngine::clearConversationArea() {
 void ToucheEngine::setupConversationScript(int num) {
 	debugC(9, kDebugEngine, "ToucheEngine::setupConversationScript(%d)", num);
 	if (num < 5 && _conversationChoicesTable[num].msg != 0) {
-		num = _conversationChoicesTable[_drawCharacterConversionRepeatCounter + num].num;
+		num = _conversationChoicesTable[_scrollConversationChoiceOffset + num].num;
 		KeyChar *key = &_keyCharsTable[_currentKeyCharNum];
 		key->scriptDataOffset = _programConversationTable[_currentConversation + num].offset;
 		key->scriptStackPtr = &key->scriptStackTable[39];
-		_drawCharacterConversionRepeatCounter = 0;
+		_scrollConversationChoiceOffset = 0;
 		removeConversationChoice(num);
 		clearConversationArea();
 	}
