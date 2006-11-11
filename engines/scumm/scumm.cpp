@@ -771,6 +771,7 @@ ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) 
 	_syst = syst;
 	_game = dr.game;
 	_filenamePattern = dr.fp,
+	_quit = false;
 	
 	_cupPlayer = new CUP_Player(syst, this, _mixer);
 }
