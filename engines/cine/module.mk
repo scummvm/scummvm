@@ -6,7 +6,6 @@ MODULE_OBJS = \
 	bg_list.o \
 	cine.o \
 	detection.o \
-	font.o \
 	gfx.o \
 	main_loop.o \
 	msg.o \

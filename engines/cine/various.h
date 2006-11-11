@@ -32,8 +32,6 @@
 
 namespace Cine {
 
-typedef char commandeType[20];
-
 void initLanguage(Common::Language lang);
 
 int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width);

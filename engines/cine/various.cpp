@@ -27,7 +27,6 @@
 #include "common/savefile.h"
 
 #include "cine/cine.h"
-#include "cine/font.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/sfx_player.h"
@@ -128,147 +127,7 @@ byte inputVar1 = 0;
 uint16 inputVar2;
 uint16 inputVar3;
 
-const char **failureMessages;
-const commandeType *defaultActionCommand;
-const commandeType *systemMenu;
-const commandeType *confirmMenu;
-const char *commandPrepositionOn;
-
 selectedObjStruct currentSelectedObject;
-
-void initLanguage(Common::Language lang) {
-	static const char *failureMessages_EN[] = {
-		// EXAMINE
-		"I don't see anything unusual.",
-		"There's nothing of interest here.",
-		"This isn't particularly interesting.",
-		"You won't find anything.",
-		// TAKE
-		"I can't take that.",
-		"I find it difficult.",
-		"I don't see what I am supposed to take.",
-		"I have difficulty in following you.",
-		// INVENTORY (???)
-		"There's no point.",
-		"You have better things to do.",
-		"Come on, don't let's waste any time.",
-		"That doesn't seem to me to be a good idea.",
-		// USE
-		"I don't see why I should do that.",
-		"It's had no effect whatsoever.",
-		"It won't produce any results.",
-		"Try and find something else.",
-		// OPERATE
-		"It doesn't work.",
-		"Let suppose you are trying and don't let's mention it again.",
-		"Nothing happens.",
-		"You have better things to do.",
-		// SPEAK
-		"No answer.",
-		"More action , less talking !",
-		"I'd be very surprised if you got an answer",
-		"A wall of silence ..."
-	};
-
-	static const commandeType defaultActionCommand_EN[] = {
-		"EXAMINE",
-		"TAKE",
-		"INVENTORY",
-		"USE",
-		"OPERATE",
-		"SPEAK",
-		"NOACTION"
-	};
-
-	static const commandeType systemMenu_EN[] = {
-		"Pause",
-		"Restart Game",
-		"Quit",
-		"Backup Drive is A:",
-		"Restore game",
-		"Save game"
-	};
-
-	static const commandeType confirmMenu_EN[] = {
-		"Ok, go ahead ...",
-		"Absolutely Not!"
-	};
-
-	// \x82 == é, \x85 == à, \x87 == ç, \x88 == ê
-	static const char *failureMessages_FR[] = {
-		// EXAMINER
-		"Je ne vois rien de special.",
-		"Il n'y a rien d'int\x82ressant.",
-		"Cela pr\x82sente peu d'int\x82r\x88ts.",
-		"Vous ne trouvez rien.",
-		// PRENDRE
-		"Je ne peux pas prendre cela.",
-		"Cela me semble difficile",
-		"Je ne vois pas ce qu'il y a \x85 prendre",
-		"j'ai du mal \x85 vous suivre.",
-		// INVENTAIRE (???)
-		"C'est inutile",
-		"Vous avez mieux \x85 faire",
-		"Allons, ne perdons pas de temps",
-		"\x87""a ne me semble pas \x88tre une bonne id\x82""e",
-		// UTILISER
-		"Je ne vois pas pourquoi je ferais cela.",
-		"C'est absolument sans effets",
-		"Cela n'amenerait \x85 rien",
-		"Essayez de trouver autre chose.",
-		// ACTIONNER
-		"Ca ne marche pas",
-		"Supposons que vous essayez et n'en parlons plus.",
-		"Rien n'y fait.",
-		"Vous avez mieux \x85 faire.",
-		// PARLER
-		"Vous lui parlez . Sans r\x82ponse.",
-		"Plus d'actes et moins de Paroles !",
-		"Je serais bien surpris si vous obteniez une r\x82ponse.",
-		"Un mur de silence ..."
-	};
-
-	static const commandeType defaultActionCommand_FR[] = {
-		"EXAMINER",
-		"PRENDRE",
-		"INVENTAIRE",
-		"UTILISER",
-		"ACTIONNER",
-		"PARLER",
-		"NOACTION"
-	};
-
-	static const commandeType systemMenu_FR[] = {
-		"Pause",
-		"Nouvelle partie",
-		"Quitter",
-		"Lecteur de Svg. A:",
-		"Charger une partie",
-		"Sauver la partie"
-	};
-
-	static const commandeType confirmMenu_FR[] = {
-		"Ok , Vas-y ...",
-		"Surtout Pas !"
-	};
-
-	switch (lang) {
-	case Common::FR_FRA:
-		failureMessages = failureMessages_FR;
-		defaultActionCommand = defaultActionCommand_FR;
-		systemMenu = systemMenu_FR;
-		confirmMenu = confirmMenu_FR;
-		commandPrepositionOn = "sur";
-		break;
-	default:
-		failureMessages = failureMessages_EN;
-		defaultActionCommand = defaultActionCommand_EN;
-		systemMenu = systemMenu_EN;
-		confirmMenu = confirmMenu_EN;
-		commandPrepositionOn = "on";
-		break;
-	}
-}
 
 void mainLoopSub3(void) {
 }
@@ -587,7 +446,7 @@ int16 makeLoad(char *saveName) {
 	fHandle = g_saveFileMan->openForLoading(saveName);
 
 	if (!fHandle) {
-		drawString("Cette sauvegarde n'existe pas ...", 0);
+		drawString(otherMessages[0], 0);
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);
@@ -834,7 +693,7 @@ void makeSave(char *saveFileName) {
 	fHandle = g_saveFileMan->openForSaving(saveFileName);
 
 	if (!fHandle) {
-		drawString("Could not create save file ...", 0);
+		drawString(otherMessages[1], 0);
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);
@@ -1072,7 +931,7 @@ void makeSystemMenu(void) {
 		switch (systemCommand) {
 		case 0:
 			{
-				drawString("PAUSE", 0);
+				drawString(otherMessages[2], 0);
 				waitPlayerInput();
 				break;
 			}
@@ -1115,22 +974,22 @@ void makeSystemMenu(void) {
 						if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 							char loadString[256];
 
-							sprintf(loadString, "Chargement de | %s", currentSaveName[selectedSave]);
+							sprintf(loadString, otherMessages[3], currentSaveName[selectedSave]);
 							drawString(loadString, 0);
 
 							makeLoad(saveNameBuffer);
 						} else {
-							drawString("Chargement Annulé ...", 0);
+							drawString(otherMessages[4], 0);
 							waitPlayerInput();
 							checkDataDisk(-1);
 						}
 					} else {
-						drawString("Chargement Annulé ...", 0);
+						drawString(otherMessages[4], 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
 				} else {
-					drawString("Aucune sauvegarde dans le lecteur ...", 0);
+					drawString(otherMessages[5], 0);
 					waitPlayerInput();
 					checkDataDisk(-1);
 				}
@@ -1145,8 +1004,8 @@ void makeSystemMenu(void) {
 
 				if (selectedSave >= 0) {
 					char saveFileName[256];
-					//makeTextEntryMenu("Veuillez entrer le Nom de la Sauvegarde .", &currentSaveName[selectedSave], 120);
-					sprintf(currentSaveName[selectedSave], "temporary save name");
+					//makeTextEntryMenu(otherMessages[7], &currentSaveName[selectedSave], 120);
+					sprintf(currentSaveName[selectedSave], otherMessages[6]);
 
 					if (g_cine->getGameType() == Cine::GType_FW)
 						sprintf(saveFileName, "FW.%1d", selectedSave);
@@ -1167,14 +1026,14 @@ void makeSystemMenu(void) {
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
 
-						sprintf(saveString, "Sauvegarde de |%s", currentSaveName[selectedSave]);
+						sprintf(saveString, otherMessages[3], currentSaveName[selectedSave]);
 						drawString(saveString, 0);
 
 						makeSave(saveFileName);
 
 						checkDataDisk(-1);
 					} else {
-						drawString("Sauvegarde Annulée ...", 0);
+						drawString(otherMessages[4], 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
@@ -2009,7 +1868,7 @@ uint16 executePlayerInput(void) {
 	canUseOnObject = 0;
 
 	if (isInPause) {
-		drawString("PAUSE", 0);
+		drawString(otherMessages[2], 0);
 		waitPlayerInput();
 		isInPause = 0;
 	}

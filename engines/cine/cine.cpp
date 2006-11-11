@@ -115,7 +115,7 @@ static void initialize() {
 
 	setupOpcodes();
 
-	initLanguage(Common::parseLanguage(ConfMan.get("language")));
+	initLanguage(g_cine->getLanguage());
 	init_video();
 
 	textDataPtr = (byte *)malloc(8000);

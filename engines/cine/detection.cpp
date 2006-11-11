@@ -223,7 +223,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 		},
 		GType_FW,
-		0,
+		GF_ALT_FONT,
 	},
 
 	{
@@ -236,7 +236,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 		},
 		GType_FW,
-		0,
+		GF_ALT_FONT,
 	},
 
 	{
@@ -275,7 +275,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 		},
 		GType_FW,
-		0,
+		GF_ALT_FONT,
 	},
 
 	{
