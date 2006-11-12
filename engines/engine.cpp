@@ -51,7 +51,6 @@ Engine::Engine(OSystem *syst)
 
 Engine::~Engine() {
 	_mixer->stopAll(true);
-	delete _saveFileMan;
 
 	g_engine = NULL;
 }
