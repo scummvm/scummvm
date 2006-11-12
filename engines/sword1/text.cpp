@@ -48,7 +48,7 @@ Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_font = (uint8*)_resMan->openFetchRes(_fontId);
 
 	_joinWidth = charWidth( SPACE ) - 2 * OVERLAP;
-	_charHeight = FROM_LE_16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
+	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
 	_textBlocks[0] = _textBlocks[1] = NULL;
 }
 
@@ -92,8 +92,8 @@ void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 
 	memcpy( _textBlocks[slot]->runTimeComp, "Nu  ", 4);
 	_textBlocks[slot]->compSize	= 0;
-	_textBlocks[slot]->width	= TO_LE_16(sprWidth);
-	_textBlocks[slot]->height	= TO_LE_16(sprHeight);
+	_textBlocks[slot]->width	= _resMan->toUint16(sprWidth);
+	_textBlocks[slot]->height	= _resMan->toUint16(sprHeight);
 	_textBlocks[slot]->offsetX	= 0;
 	_textBlocks[slot]->offsetY	= 0;
 
@@ -111,7 +111,7 @@ void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 uint16 Text::charWidth(uint8 ch) {
 	if (ch < SPACE)
 		ch = 64;
-	return FROM_LE_16(_resMan->fetchFrame(_font, ch - SPACE)->width);
+	return _resMan->getUint16(_resMan->fetchFrame(_font, ch - SPACE)->width);
 }
 
 uint16 Text::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
@@ -158,8 +158,8 @@ uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 	FrameHeader *chFrame = _resMan->fetchFrame(_font, ch - SPACE);
 	uint8 *chData = ((uint8*)chFrame) + sizeof(FrameHeader);
 	uint8 *dest = sprPtr;
-	for (uint16 cnty = 0; cnty < FROM_LE_16(chFrame->height); cnty++) {
-		for (uint16 cntx = 0; cntx < FROM_LE_16(chFrame->width); cntx++) {
+	for (uint16 cnty = 0; cnty < _resMan->getUint16(chFrame->height); cnty++) {
+		for (uint16 cntx = 0; cntx < _resMan->getUint16(chFrame->width); cntx++) {
 			if (*chData == LETTER_COL)
 				dest[cntx] = pen;
 			else if ((*chData == BORDER_COL) && (!dest[cntx])) // don't do a border if there's already a color underneath (chars can overlap)
@@ -168,7 +168,7 @@ uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 		}
 		dest += sprWidth;
 	}
-	return FROM_LE_16(chFrame->width);
+	return _resMan->getUint16(chFrame->width);
 }
 
 FrameHeader *Text::giveSpriteData(uint32 textTarget) {

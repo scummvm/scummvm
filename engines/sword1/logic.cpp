@@ -355,7 +355,7 @@ int Logic::speechDriver(Object *compact) {
 	}
 	if (compact->o_anim_resource) {
 		uint8 *animData = ((uint8*)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
-		int32 numFrames = READ_LE_UINT32(animData);
+		int32 numFrames = _resMan->readUint32(animData);
 		animData += 4;
 		compact->o_anim_pc++; // go to next frame of anim
 
@@ -365,10 +365,10 @@ int Logic::speechDriver(Object *compact) {
 
 		AnimUnit *animPtr = (AnimUnit*)(animData + sizeof(AnimUnit) * compact->o_anim_pc);
 		if (!(compact->o_status & STAT_SHRINK)) {
-			compact->o_anim_x = FROM_LE_32(animPtr->animX);
-			compact->o_anim_y = FROM_LE_32(animPtr->animY);
+			compact->o_anim_x = _resMan->getUint32(animPtr->animX);
+			compact->o_anim_y = _resMan->getUint32(animPtr->animY);
 		}
-		compact->o_frame = FROM_LE_32(animPtr->animFrame);
+		compact->o_frame = _resMan->getUint32(animPtr->animFrame);
 		_resMan->resClose(compact->o_anim_resource);
 	}
 	return 0;
@@ -380,13 +380,13 @@ int Logic::fullAnimDriver(Object *compact) {
 		return 1;
 	}
 	uint8 *data = ((uint8*)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
-	uint32 numFrames = READ_LE_UINT32(data);
+	uint32 numFrames = _resMan->readUint32(data);
 	data += 4;
 	AnimUnit *animPtr = (AnimUnit*)(data + compact->o_anim_pc * sizeof(AnimUnit));
 
-	compact->o_anim_x = compact->o_xcoord = FROM_LE_32(animPtr->animX);
-	compact->o_anim_y = compact->o_ycoord = FROM_LE_32(animPtr->animY);
-	compact->o_frame = FROM_LE_32(animPtr->animFrame);
+	compact->o_anim_x = compact->o_xcoord = _resMan->getUint32(animPtr->animX);
+	compact->o_anim_y = compact->o_ycoord = _resMan->getUint32(animPtr->animY);
+	compact->o_frame = _resMan->getUint32(animPtr->animFrame);
 
 	compact->o_anim_pc++;
 	if (compact->o_anim_pc == (int)numFrames)
@@ -402,15 +402,15 @@ int Logic::animDriver(Object *compact) {
 		return 1;
 	}
 	uint8 *data = ((uint8*)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
-	uint32 numFrames = READ_LE_UINT32(data);
+	uint32 numFrames = _resMan->readUint32(data);
 	AnimUnit *animPtr = (AnimUnit*)(data + 4 + compact->o_anim_pc * sizeof(AnimUnit));
 
 	if (!(compact->o_status & STAT_SHRINK)) {
-		compact->o_anim_x = FROM_LE_32(animPtr->animX);
-		compact->o_anim_y = FROM_LE_32(animPtr->animY);
+		compact->o_anim_x = _resMan->getUint32(animPtr->animX);
+		compact->o_anim_y = _resMan->getUint32(animPtr->animY);
 	}
 
-	compact->o_frame = FROM_LE_32(animPtr->animFrame);
+	compact->o_frame = _resMan->getUint32(animPtr->animFrame);
 	compact->o_anim_pc++;
 	if (compact->o_anim_pc == (int)numFrames)
 		compact->o_logic = LOGIC_script;
@@ -828,8 +828,8 @@ int Logic::fnAnim(Object *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f,
 		animTab = (AnimSet*)((uint8*)_resMan->openFetchRes(cdt) + sizeof(Header));
 		animTab += cpt->o_dir;
 
-		cpt->o_anim_resource = FROM_LE_32(animTab->cdt);
-		cpt->o_resource = FROM_LE_32(animTab->spr);
+		cpt->o_anim_resource = _resMan->getUint32(animTab->cdt);
+		cpt->o_resource = _resMan->getUint32(animTab->spr);
 		_resMan->resClose(cdt);
 	} else {
 		cpt->o_anim_resource = cdt;
@@ -862,14 +862,14 @@ int Logic::fnSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo
 	uint8 *data = (uint8*)_resMan->openFetchRes(cdt);
 	data += sizeof(Header);
 	if (frameNo == LAST_FRAME)
-		frameNo = READ_LE_UINT32(data) - 1;
+		frameNo = _resMan->readUint32(data) - 1;
 
 	data += 4;
 	animPtr = (AnimUnit*)(data + frameNo * sizeof(AnimUnit));
 
-	cpt->o_anim_x = FROM_LE_32(animPtr->animX);
-	cpt->o_anim_y = FROM_LE_32(animPtr->animY);
-	cpt->o_frame = FROM_LE_32(animPtr->animFrame);
+	cpt->o_anim_x = _resMan->getUint32(animPtr->animX);
+	cpt->o_anim_y = _resMan->getUint32(animPtr->animY);
+	cpt->o_frame = _resMan->getUint32(animPtr->animFrame);
 
 	cpt->o_resource = spr;
 	cpt->o_status &= ~STAT_SHRINK;
@@ -892,13 +892,13 @@ int Logic::fnFullSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 fra
 	uint8 *data = (uint8*)_resMan->openFetchRes(cdt) + sizeof(Header);
 
 	if (frameNo == LAST_FRAME)
-		frameNo = READ_LE_UINT32(data) - 1;
+		frameNo = _resMan->readUint32(data) - 1;
 	data += 4;
 
 	AnimUnit *animPtr = (AnimUnit*)(data + sizeof(AnimUnit) * frameNo);
-	cpt->o_anim_x = cpt->o_xcoord = FROM_LE_32(animPtr->animX);
-	cpt->o_anim_y = cpt->o_ycoord = FROM_LE_32(animPtr->animY);
-	cpt->o_frame = FROM_LE_32(animPtr->animFrame);
+	cpt->o_anim_x = cpt->o_xcoord = _resMan->getUint32(animPtr->animX);
+	cpt->o_anim_y = cpt->o_ycoord = _resMan->getUint32(animPtr->animY);
+	cpt->o_frame = _resMan->getUint32(animPtr->animFrame);
 
 	cpt->o_resource = spr;
 	cpt->o_status &= ~STAT_SHRINK;
@@ -1116,9 +1116,9 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		AnimSet *animTab = (AnimSet*)((uint8*)_resMan->openFetchRes(cdt) + sizeof(Header));
 		animTab += cpt->o_dir;
 
-		cpt->o_anim_resource = FROM_LE_32(animTab->cdt);
+		cpt->o_anim_resource = _resMan->getUint32(animTab->cdt);
 		if (animTab->cdt)
-			cpt->o_resource = FROM_LE_32(animTab->spr);
+			cpt->o_resource = _resMan->getUint32(animTab->spr);
 		_resMan->resClose(cdt);
 	} else {
 		cpt->o_anim_resource = cdt;
@@ -1158,8 +1158,8 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		textCpt->o_target = textCptId;
 
 		// the graphic is a property of Text, so we don't lock/unlock it.
-		uint16 textSpriteWidth  = FROM_LE_16(_textMan->giveSpriteData(textCpt->o_target)->width);
-		uint16 textSpriteHeight = FROM_LE_16(_textMan->giveSpriteData(textCpt->o_target)->height);
+		uint16 textSpriteWidth  = _resMan->getUint16(_textMan->giveSpriteData(textCpt->o_target)->width);
+		uint16 textSpriteHeight = _resMan->getUint16(_textMan->giveSpriteData(textCpt->o_target)->height);
 
 		cpt->o_text_id = textCptId;
 
@@ -1717,6 +1717,8 @@ void Logic::startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 para
 }
 
 void Logic::runStartScript(const uint8 *data) {
+	// Here data is a static resource defined in staticres.cpp
+	// It is always in little endian
 	uint16 varId = 0;
 	uint8 fnId = 0;
 	uint32 param1 = 0;

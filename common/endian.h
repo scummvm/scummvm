@@ -91,6 +91,9 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	#define FROM_LE_32(a) ((uint32)(a))
 	#define FROM_LE_16(a) ((uint16)(a))
 
+	#define FROM_BE_32(a) SWAP_BYTES_32(a)
+	#define FROM_BE_16(a) SWAP_BYTES_16(a)
+
 	#define TO_LE_32(a) ((uint32)(a))
 	#define TO_LE_16(a) ((uint16)(a))
 
@@ -110,6 +113,9 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 	#define FROM_LE_32(a) SWAP_BYTES_32(a)
 	#define FROM_LE_16(a) SWAP_BYTES_16(a)
+
+	#define FROM_BE_32(a) ((uint32)(a))
+	#define FROM_BE_16(a) ((uint16)(a))
 
 	#define TO_LE_32(a) SWAP_BYTES_32(a)
 	#define TO_LE_16(a) SWAP_BYTES_16(a)

@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/util.h"
 
 #include "sword1/router.h"
@@ -1911,7 +1910,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	fPolygrid += sizeof(Header);
 	memcpy(&floorHeader,fPolygrid,sizeof(WalkGridHeader));
 	fPolygrid += sizeof(WalkGridHeader);
-	_nBars = FROM_LE_32(floorHeader.numBars);
+	_nBars = _resMan->getUint32(floorHeader.numBars);
 
 	if (_nBars >= O_GRID_SIZE)
 	{
@@ -1921,7 +1920,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 		_nBars = 0;
 	}
 
-	_nNodes = FROM_LE_32(floorHeader.numNodes)+1;	//array starts at 0	begins at a start _node has nnodes nodes and a target _node
+	_nNodes = _resMan->getUint32(floorHeader.numNodes)+1;	//array starts at 0	begins at a start _node has nnodes nodes and a target _node
 
 	if (_nNodes >= O_GRID_SIZE)
 	{
@@ -1934,17 +1933,17 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	/*memmove(&_bars[0],fPolygrid,_nBars*sizeof(BarData));
 	fPolygrid += _nBars*sizeof(BarData);//move pointer to start of _node data*/
 	for (cnt = 0; cnt < _nBars; cnt++) {
-		_bars[cnt].x1   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].y1   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].x2   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].y2   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].xmin = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].ymin = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].xmax = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].ymax = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].dx   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].dy   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_bars[cnt].co   = READ_LE_UINT32(fPolygrid); fPolygrid += 4;
+		_bars[cnt].x1   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].y1   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].x2   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].y2   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].xmin = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].ymin = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].xmax = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].ymax = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].dx   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].dy   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_bars[cnt].co   = _resMan->readUint32(fPolygrid); fPolygrid += 4;
 	}
 
 	/*j = 1;// leave _node 0 for start _node
@@ -1954,8 +1953,8 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 		j ++;
 	} while (j < _nNodes);//array starts at 0*/
 	for (cnt = 1; cnt < _nNodes; cnt++) {
-		_node[cnt].x = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
-		_node[cnt].y = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
+		_node[cnt].x = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_node[cnt].y = _resMan->readUint16(fPolygrid); fPolygrid += 2;
 	}
 
 	//ResUnlock(walkGridResourceId);			// mouse wiggle
@@ -1980,17 +1979,17 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	//ResOpen(megaObject->o_mega_resource);			// mouse wiggle
 	//fMegaWalkData = ResLock(megaObject->o_mega_resource);			// mouse wiggle
 	fMegaWalkData = (uint8*)_resMan->openFetchRes(megaObject->o_mega_resource);
+	// Apparently this resource is in little endian in both the Mac and the PC version
 
 	_nWalkFrames = fMegaWalkData[0];
 	_nTurnFrames = fMegaWalkData[1];
 	fMegaWalkData += 2;
-
 	for (cnt = 0; cnt < NO_DIRECTIONS * (_nWalkFrames + 1 + _nTurnFrames); cnt++) {
-		_dx[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+		_dx[cnt] = (int32)_resMan->readLEUint32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
 	for (cnt = 0; cnt < NO_DIRECTIONS * (_nWalkFrames + 1 + _nTurnFrames); cnt++) {
-		_dy[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+		_dy[cnt] = (int32)_resMan->readLEUint32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
 	/*memmove(&_dx[0],fMegaWalkData,NO_DIRECTIONS*(_nWalkFrames+1+_nTurnFrames)*sizeof(int32));
@@ -1999,11 +1998,11 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	fMegaWalkData += NO_DIRECTIONS*(_nWalkFrames+1+_nTurnFrames)*sizeof(int32);*/
 
 	for (cntu = 0; cntu < NO_DIRECTIONS; cntu++) {
-		_modX[cntu] = (int32)READ_LE_UINT32(fMegaWalkData);
+		_modX[cntu] = (int32)_resMan->readLEUint32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
 	for (cntu = 0; cntu < NO_DIRECTIONS; cntu++) {
-		_modY[cntu] = (int32)READ_LE_UINT32(fMegaWalkData);
+		_modY[cntu] = (int32)_resMan->readLEUint32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
 	/*memmove(&_modX[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));

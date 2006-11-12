@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "common/savefile.h"
@@ -118,8 +117,8 @@ ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 f
 	_frameIdx = 0;
 	_resMan->resOpen(_resId);
 	FrameHeader *tmp = _resMan->fetchFrame(_resMan->fetchRes(_resId), 0);
-	_width = FROM_LE_16(tmp->width);
-	_height = FROM_LE_16(tmp->height);
+	_width = _resMan->getUint16(tmp->width);
+	_height = _resMan->getUint16(tmp->height);
 	if ((x == 0) && (y == 0)) { // center the frame (used for panels);
 		_x = (640 - _width) / 2;
 		_y = (480 - _height) / 2;
@@ -140,12 +139,12 @@ void ControlButton::draw(void) {
 	FrameHeader *fHead = _resMan->fetchFrame(_resMan->fetchRes(_resId), _frameIdx);
 	uint8 *src = (uint8*)fHead + sizeof(FrameHeader);
 	uint8 *dst = _dstBuf;
-	for (uint16 cnt = 0; cnt < READ_LE_UINT16(&fHead->height); cnt++) {
-		for (uint16 cntx = 0; cntx < READ_LE_UINT16(&fHead->width); cntx++)
+	for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
+		for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
 			if (src[cntx])
 				dst[cntx] = src[cntx];
 		dst += SCREEN_WIDTH;
-		src += READ_LE_UINT16(&fHead->width);
+		src += _resMan->readUint16(&fHead->width);
 	}
 	_system->copyRectToScreen(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
 }
@@ -485,8 +484,8 @@ void Control::setupMainPanel(void) {
 
 void Control::setupSaveRestorePanel(bool saving) {
 	FrameHeader *savePanel = _resMan->fetchFrame(_resMan->openFetchRes(SR_WINDOW), 0);
-	uint16 panelX = (640 - FROM_LE_16(savePanel->width)) / 2;
-	uint16 panelY = (480 - FROM_LE_16(savePanel->height)) / 2;
+	uint16 panelX = (640 - _resMan->getUint16(savePanel->width)) / 2;
+	uint16 panelY = (480 - _resMan->getUint16(savePanel->height)) / 2;
 	ControlButton *panel = new ControlButton(panelX, panelY, SR_WINDOW, 0, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
@@ -870,7 +869,7 @@ void Control::destroyButtons(void) {
 uint16 Control::getTextWidth(const uint8 *str) {
 	uint16 width = 0;
 	while (*str) {
-		width += FROM_LE_16(_resMan->fetchFrame(_font, *str - 32)->width) - 3;
+		width += _resMan->getUint16(_resMan->fetchFrame(_font, *str - 32)->width) - 3;
 		str++;
 	}
 	return width;
@@ -894,15 +893,15 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 
 		FrameHeader *chSpr = _resMan->fetchFrame(font, *str - 32);
 		uint8 *sprData = (uint8*)chSpr + sizeof(FrameHeader);
-		for (uint16 cnty = 0; cnty < FROM_LE_16(chSpr->height); cnty++) {
-			for (uint16 cntx = 0; cntx < FROM_LE_16(chSpr->width); cntx++) {
+		for (uint16 cnty = 0; cnty < _resMan->getUint16(chSpr->height); cnty++) {
+			for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++) {
 				if (sprData[cntx])
 					dst[cntx] = sprData[cntx];
 			}
-			sprData += FROM_LE_16(chSpr->width);
+			sprData += _resMan->getUint16(chSpr->width);
 			dst += SCREEN_WIDTH;
 		}
-		destX += FROM_LE_16(chSpr->width) - 3;
+		destX += _resMan->getUint16(chSpr->width) - 3;
 		str++;
 	}
 	_system->copyRectToScreen(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
@@ -917,12 +916,12 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 		FrameHeader *frHead = _resMan->fetchFrame(_resMan->openFetchRes(SR_VLIGHT), (vol + 15) >> 4);
 		uint8 *destMem = _screenBuf + destY * SCREEN_WIDTH + destX;
 		uint8 *srcMem = (uint8*)frHead + sizeof(FrameHeader);
-		for (uint16 cnty = 0; cnty < FROM_LE_16(frHead->height); cnty++) {
-			memcpy(destMem, srcMem, FROM_LE_16(frHead->width));
-			srcMem += FROM_LE_16(frHead->width);
+		for (uint16 cnty = 0; cnty < _resMan->getUint16(frHead->height); cnty++) {
+			memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
+			srcMem += _resMan->getUint16(frHead->width);
 			destMem += SCREEN_WIDTH;
 		}
-		_system->copyRectToScreen(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, FROM_LE_16(frHead->width), FROM_LE_16(frHead->height));
+		_system->copyRectToScreen(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, _resMan->getUint16(frHead->width), _resMan->getUint16(frHead->height));
 		_resMan->resClose(SR_VLIGHT);
 		destX += 32;
 	}

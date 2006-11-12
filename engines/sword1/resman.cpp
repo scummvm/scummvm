@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "common/str.h"
@@ -49,9 +48,10 @@ namespace Sword1 {
 
 #define MAX_PATH_LEN 260
 
-ResMan::ResMan(const char *fileName) {
+ResMan::ResMan(const char *fileName, bool isMacFile) {
 	_openCluStart = _openCluEnd = NULL;
 	_openClus = 0;
+	_isBigEndian = isMacFile;
 	_memMan = new MemMan();
 	loadCluDescript(fileName);
 }
@@ -82,6 +82,7 @@ ResMan::~ResMan(void) {
 }
 
 void ResMan::loadCluDescript(const char *fileName) {
+	// The cluster description file is always little endian (even on the mac version, whose cluster files are big endian)
 	Common::File file;
 	file.open(fileName);
 
@@ -223,13 +224,9 @@ Header *ResMan::lockScript(uint32 scrID) {
 		error("Script id %d not found.\n", scrID);
 	scrID = _scriptList[scrID / ITM_PER_SEC];
 #ifdef SCUMM_BIG_ENDIAN
-	MemHandle *memHandle = resHandle(scrID);
-	if (memHandle->cond == MEM_FREED)
-		openScriptResourceBigEndian(scrID);
-	else
-		resOpen(scrID);
+	openScriptResourceBigEndian(scrID);
 #else
-	resOpen(scrID);
+	openScriptResourceLittleEndian(scrID);
 #endif
 	return (Header*)resHandle(scrID)->data;
 }
@@ -240,13 +237,9 @@ void ResMan::unlockScript(uint32 scrID) {
 
 void *ResMan::cptResOpen(uint32 id) {
 #ifdef SCUMM_BIG_ENDIAN
-	MemHandle *memHandle = resHandle(id);
-	if (memHandle->cond == MEM_FREED)
-		openCptResourceBigEndian(id);
-	else
-		resOpen(id);
+	openCptResourceBigEndian(id);
 #else
-	resOpen(id);
+	openCptResourceLittleEndian(id);
 #endif
 	return resHandle(id)->data;
 }
@@ -286,9 +279,15 @@ void ResMan::resClose(uint32 id) {
 FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 	uint8 *frameFile = (uint8*)resourceData;
 	uint8 *idxData = frameFile + sizeof(Header);
-	if (frameNo >= READ_LE_UINT32(idxData))
-		error("fetchFrame:: frame %d doesn't exist in resource.", frameNo);
-	frameFile += READ_LE_UINT32(idxData + (frameNo+1) * 4);
+	if (_isBigEndian) {
+		if (frameNo >= READ_BE_UINT32(idxData))
+			error("fetchFrame:: frame %d doesn't exist in resource.", frameNo);
+		frameFile += READ_BE_UINT32(idxData + (frameNo+1) * 4);
+	} else {
+		if (frameNo >= READ_LE_UINT32(idxData))
+			error("fetchFrame:: frame %d doesn't exist in resource.", frameNo);
+		frameFile += READ_LE_UINT32(idxData + (frameNo+1) * 4);
+	}
 	return (FrameHeader*)frameFile;
 }
 
@@ -304,7 +303,12 @@ Common::File *ResMan::resFile(uint32 id) {
 		}
 		cluster->file = new Common::File();
 		char fileName[15];
-		sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1].label);
+		// Supposes that big endian means mac cluster file and little endian means PC cluster file.
+		// This works, but we may want to separate the file name from the endianess or try .CLM extension if opening.clu file fail.
+		if (_isBigEndian)
+			sprintf(fileName, "%s.CLM", _prj.clu[(id >> 24)-1].label);
+		else
+			sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1].label);
 		cluster->file->open(fileName);
 
 		if (!cluster->file->isOpen()) {
@@ -355,38 +359,113 @@ uint32 ResMan::resOffset(uint32 id) {
 }
 
 void ResMan::openCptResourceBigEndian(uint32 id) {
+	bool needByteSwap = false;
+	if (!_isBigEndian) {
+		// Cluster files are in little endian fomat.
+		// If the resource are not in memory anymore, and therefore will be read
+		// from disk, they will need to be byte swaped.
+		MemHandle *memHandle = resHandle(id);
+		needByteSwap = (memHandle->cond == MEM_FREED);
+	}
 	resOpen(id);
-	MemHandle *handle = resHandle(id);
-	uint32 totSize = handle->size;
-	uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
-	totSize -= sizeof(Header);
-	if (totSize & 3)
-		error("Illegal compact size for id %d: %d", id, totSize);
-	totSize /= 4;
-	for (uint32 cnt = 0; cnt < totSize; cnt++) {
-		*data = READ_LE_UINT32(data);
-		data++;
+	if (needByteSwap) {
+		MemHandle *handle = resHandle(id);
+		uint32 totSize = handle->size;
+		uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
+		totSize -= sizeof(Header);
+		if (totSize & 3)
+			error("Illegal compact size for id %d: %d", id, totSize);
+		totSize /= 4;
+		for (uint32 cnt = 0; cnt < totSize; cnt++) {
+			*data = READ_LE_UINT32(data);
+			data++;
+		}
+	}
+}
+
+void ResMan::openCptResourceLittleEndian(uint32 id) {
+	bool needByteSwap = false;
+	if (_isBigEndian) {
+		// Cluster files are in big endian fomat.
+		// If the resource are not in memory anymore, and therefore will be read
+		// from disk, they will need to be byte swaped.
+		MemHandle *memHandle = resHandle(id);
+		needByteSwap = (memHandle->cond == MEM_FREED);
+	}
+	resOpen(id);
+	if (needByteSwap) {
+		MemHandle *handle = resHandle(id);
+		uint32 totSize = handle->size;
+		uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
+		totSize -= sizeof(Header);
+		if (totSize & 3)
+			error("Illegal compact size for id %d: %d", id, totSize);
+		totSize /= 4;
+		for (uint32 cnt = 0; cnt < totSize; cnt++) {
+			*data = READ_BE_UINT32(data);
+			data++;
+		}
 	}
 }
 
 void ResMan::openScriptResourceBigEndian(uint32 id) {
+	bool needByteSwap = false;
+	if (!_isBigEndian) {
+		// Cluster files are in little endian fomat.
+		// If the resource are not in memory anymore, and therefore will be read
+		// from disk, they will need to be byte swaped.
+		MemHandle *memHandle = resHandle(id);
+		needByteSwap = (memHandle->cond == MEM_FREED);
+	}
 	resOpen(id);
-	MemHandle *handle = resHandle(id);
-	// uint32 totSize = handle->size;
-	Header *head = (Header*)handle->data;
-	head->comp_length = FROM_LE_32(head->comp_length);
-	head->decomp_length = FROM_LE_32(head->decomp_length);
-	head->version = FROM_LE_16(head->version);
-	uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
-	uint32 size = handle->size - sizeof(Header);
-	if (size & 3)
-		error("Odd size during script endian conversion. Resource ID =%d, size = %d", id, size);
-	size >>= 2;
-	for (uint32 cnt = 0; cnt < size; cnt++) {
-		*data = READ_LE_UINT32(data);
-		data++;
+	if (needByteSwap) {	
+		MemHandle *handle = resHandle(id);
+		// uint32 totSize = handle->size;
+		Header *head = (Header*)handle->data;
+		head->comp_length = FROM_LE_32(head->comp_length);
+		head->decomp_length = FROM_LE_32(head->decomp_length);
+		head->version = FROM_LE_16(head->version);
+		uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
+		uint32 size = handle->size - sizeof(Header);
+		if (size & 3)
+			error("Odd size during script endian conversion. Resource ID =%d, size = %d", id, size);
+		size >>= 2;
+		for (uint32 cnt = 0; cnt < size; cnt++) {
+			*data = READ_LE_UINT32(data);
+			data++;
+		}
 	}
 }
+
+void ResMan::openScriptResourceLittleEndian(uint32 id) {
+	bool needByteSwap = false;
+	if (_isBigEndian) {
+		// Cluster files are in big endian fomat.
+		// If the resource are not in memory anymore, and therefore will be read
+		// from disk, they will need to be byte swaped.
+		MemHandle *memHandle = resHandle(id);
+		needByteSwap = (memHandle->cond == MEM_FREED);
+	}
+	resOpen(id);
+	if (needByteSwap) {	
+		MemHandle *handle = resHandle(id);
+		// uint32 totSize = handle->size;
+		Header *head = (Header*)handle->data;
+		head->comp_length = FROM_BE_32(head->comp_length);
+		head->decomp_length = FROM_BE_32(head->decomp_length);
+		head->version = FROM_BE_16(head->version);
+		uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
+		uint32 size = handle->size - sizeof(Header);
+		if (size & 3)
+			error("Odd size during script endian conversion. Resource ID =%d, size = %d", id, size);
+		size >>= 2;
+		for (uint32 cnt = 0; cnt < size; cnt++) {
+			*data = READ_BE_UINT32(data);
+			data++;
+		}
+	}
+}
+
 
 uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control panel file IDs, so we need this array
 	OTHER_SR_FONT,		// SR_FONT

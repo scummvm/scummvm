@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/util.h"
 
 #include "sword1/objectman.h"
@@ -88,7 +87,7 @@ uint8 ObjectMan::fnCheckForTextLine(uint32 textId) {
 
 	uint8 lang = SwordEngine::_systemVars.language;
 	uint32 *textData = (uint32*)((uint8*)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]) + sizeof(Header));
-	if ((textId & ITM_ID) < READ_LE_UINT32(textData)) {
+	if ((textId & ITM_ID) < _resMan->readUint32(textData)) {
 		textData++;
 		if (textData[textId & ITM_ID])
 			retVal = 1;
@@ -100,11 +99,11 @@ uint8 ObjectMan::fnCheckForTextLine(uint32 textId) {
 char *ObjectMan::lockText(uint32 textId) {
 	uint8 lang = SwordEngine::_systemVars.language;
 	char *addr = (char*)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]) + sizeof(Header);
-	if ((textId & ITM_ID) >= READ_LE_UINT32(addr)) {
-		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, READ_LE_UINT32(addr));
+	if ((textId & ITM_ID) >= _resMan->readUint32(addr)) {
+		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, _resMan->readUint32(addr));
 		textId = 0; // get first line instead
 	}
-	uint32 offset = READ_LE_UINT32(addr + ((textId & ITM_ID) + 1)* 4);
+	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1)* 4);
 	if (offset == 0) {
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
 		return _errorStr;
@@ -118,7 +117,7 @@ void ObjectMan::unlockText(uint32 textId) {
 
 uint32 ObjectMan::lastTextNumber(int section) {
 	uint8 *data = (uint8*)_resMan->openFetchRes(_textList[section][SwordEngine::_systemVars.language]) + sizeof(Header);
-	uint32 result = READ_LE_UINT32(data) - 1;
+	uint32 result = _resMan->readUint32(data) - 1;
 	_resMan->resClose(_textList[section][SwordEngine::_systemVars.language]);
 	return result;
 }

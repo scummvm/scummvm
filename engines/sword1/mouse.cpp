@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -199,33 +198,33 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 	if (ptrId) {
 		MousePtr *lugg = NULL;
 		MousePtr *ptr = (MousePtr*)_resMan->openFetchRes(ptrId);
-		uint16 resSizeX = FROM_LE_16(ptr->sizeX);
-		uint16 resSizeY = FROM_LE_16(ptr->sizeY);
-		uint16 noFrames = FROM_LE_16(ptr->numFrames);
+		uint16 resSizeX = _resMan->getLEUint16(ptr->sizeX);
+		uint16 resSizeY = _resMan->getLEUint16(ptr->sizeY);
+		uint16 noFrames = _resMan->getLEUint16(ptr->numFrames);
 		if (luggageId) {
 			lugg = (MousePtr*)_resMan->openFetchRes(luggageId);
-			resSizeX = MAX(resSizeX, (uint16)((resSizeX / 2) + FROM_LE_16(lugg->sizeX)));
-			resSizeY = MAX(resSizeY, (uint16)((resSizeY / 2) + FROM_LE_16(lugg->sizeY)));
+			resSizeX = MAX(resSizeX, (uint16)((resSizeX / 2) + _resMan->getLEUint16(lugg->sizeX)));
+			resSizeY = MAX(resSizeY, (uint16)((resSizeY / 2) + _resMan->getLEUint16(lugg->sizeY)));
 		}
 		_currentPtr = (MousePtr*)malloc(sizeof(MousePtr) + resSizeX * resSizeY * noFrames);
-		_currentPtr->hotSpotX = FROM_LE_16(ptr->hotSpotX);
-		_currentPtr->hotSpotY = FROM_LE_16(ptr->hotSpotY);
+		_currentPtr->hotSpotX = _resMan->getLEUint16(ptr->hotSpotX);
+		_currentPtr->hotSpotY = _resMan->getLEUint16(ptr->hotSpotY);
 		_currentPtr->numFrames = noFrames;
 		_currentPtr->sizeX = resSizeX;
 		_currentPtr->sizeY = resSizeY;
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		memset(ptrData, 255, resSizeX * resSizeY * noFrames);
 		if (luggageId) {
-			uint8 *dstData = ptrData + resSizeX - FROM_LE_16(lugg->sizeX);
+			uint8 *dstData = ptrData + resSizeX - _resMan->getLEUint16(lugg->sizeX);
 			for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
 				uint8 *luggSrc = (uint8*)lugg + sizeof(MousePtr);
-				dstData += (resSizeY - FROM_LE_16(lugg->sizeY)) * resSizeX;
-				for (uint32 cnty = 0; cnty < FROM_LE_16(lugg->sizeY); cnty++) {
-					for (uint32 cntx = 0; cntx < FROM_LE_16(lugg->sizeX); cntx++)
+				dstData += (resSizeY - _resMan->getLEUint16(lugg->sizeY)) * resSizeX;
+				for (uint32 cnty = 0; cnty < _resMan->getLEUint16(lugg->sizeY); cnty++) {
+					for (uint32 cntx = 0; cntx < _resMan->getLEUint16(lugg->sizeX); cntx++)
 						if (luggSrc[cntx])
 							dstData[cntx] = luggSrc[cntx];
 					dstData += resSizeX;
-					luggSrc += FROM_LE_16(lugg->sizeX);
+					luggSrc += _resMan->getLEUint16(lugg->sizeX);
 				}
 			}
 			_resMan->resClose(luggageId);
@@ -233,14 +232,14 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		uint8 *dstData = ptrData;
 		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
 		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
-			for (uint32 cnty = 0; cnty < FROM_LE_16(ptr->sizeY); cnty++) {
-				for (uint32 cntx = 0; cntx < FROM_LE_16(ptr->sizeX); cntx++)
+			for (uint32 cnty = 0; cnty < _resMan->getLEUint16(ptr->sizeY); cnty++) {
+				for (uint32 cntx = 0; cntx < _resMan->getLEUint16(ptr->sizeX); cntx++)
 					if (srcData[cntx])
 						dstData[cntx] = srcData[cntx];
-				srcData += FROM_LE_16(ptr->sizeX);
+				srcData += _resMan->getLEUint16(ptr->sizeX);
 				dstData += resSizeX;
 			}
-			dstData += (resSizeY - FROM_LE_16(ptr->sizeY)) * resSizeX;
+			dstData += (resSizeY - _resMan->getLEUint16(ptr->sizeY)) * resSizeX;
 		}
 		_resMan->resClose(ptrId);
 	}

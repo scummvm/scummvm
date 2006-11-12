@@ -63,6 +63,7 @@ struct SystemVars {
 	uint8	showText;
 	uint8	language;
 	bool    isDemo;
+	bool    isMac;
 
 	uint8	cutscenePackVersion;
 };
@@ -100,7 +101,8 @@ private:
 	Music		*_music;
 	Control		*_control;
 	static const uint8  _cdList[TOTAL_SECTIONS];
-	static const CdFile	_cdFileList[];
+	static const CdFile	_pcCdFileList[];
+	static const CdFile	_macCdFileList[];
 };
 
 } // End of namespace Sword1

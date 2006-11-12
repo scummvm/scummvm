@@ -51,16 +51,27 @@ static const PlainGameDescriptor sword1FullSettings =
 	{"sword1", "Broken Sword 1: The Shadow of the Templars"};
 static const PlainGameDescriptor sword1DemoSettings =
 	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)"};
+static const PlainGameDescriptor sword1MacFullSettings =
+	{"sword1mac", "Broken Sword 1: The Shadow of the Templars (Mac)"};
+static const PlainGameDescriptor sword1MacDemoSettings =
+	{"sword1macdemo", "Broken Sword 1: The Shadow of the Templars (Mac demo)"};
 
 // check these subdirectories (if present)
 static const char *g_dirNames[] = {	"clusters",	"speech" };
 
-#define NUM_FILES_TO_CHECK 5
+#define NUM_COMMON_FILES_TO_CHECK 1
+#define NUM_PC_FILES_TO_CHECK 3
+#define NUM_MAC_FILES_TO_CHECK 3
+#define NUM_DEMO_FILES_TO_CHECK 1
+#define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK
 static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
-	"swordres.rif",
-	"general.clu",
-	"compacts.clu",
-	"scripts.clu",
+	"swordres.rif", // Mac and PC version
+	"general.clu", // PC version only
+	"compacts.clu", // PC version only
+	"scripts.clu", // PC version only
+	"general.clm", // Mac version only
+	"compacts.clm", // Mac version only
+	"scripts.clm", // Mac version only
 	"cows.mad",	// this one should only exist in the demo version
 	// the engine needs several more files to work, but checking these should be sufficient
 };
@@ -69,6 +80,8 @@ GameList Engine_SWORD1_gameIDList() {
 	GameList games;
 	games.push_back(sword1FullSettings);
 	games.push_back(sword1DemoSettings);
+	games.push_back(sword1MacFullSettings);
+	//games.push_back(sword1MacDemoSettings);
 	return games;
 }
 
@@ -77,6 +90,10 @@ GameDescriptor Engine_SWORD1_findGameID(const char *gameid) {
 		return sword1FullSettings;
 	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameid))
 		return sword1DemoSettings;
+	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameid))
+		return sword1MacFullSettings;
+	//if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameid))
+	//	return sword1MacDemoSettings;
 	return GameDescriptor();
 }
 
@@ -99,22 +116,38 @@ void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 }
 
 DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
-	int i;
+	int i, j;
 	DetectedGameList detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
 	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
-
+		
 	Sword1CheckDirectory(fslist, filesFound);
 	bool mainFilesFound = true;
-	for (i = 0; i < NUM_FILES_TO_CHECK -1; i++)
+	bool pcFilesFound = true;
+	bool macFilesFound = true;
+	bool demoFilesFound = true;
+	for (i = 0; i < NUM_COMMON_FILES_TO_CHECK; i++)
 		if (!filesFound[i])
 			mainFilesFound = false;
+	for (j = 0; j < NUM_PC_FILES_TO_CHECK; i++, j++)
+		if (!filesFound[i])
+			pcFilesFound = false;
+	for (j = 0; j < NUM_MAC_FILES_TO_CHECK; i++, j++)
+		if (!filesFound[i])
+			macFilesFound = false;
+	for (j = 0; j < NUM_DEMO_FILES_TO_CHECK; i++, j++)
+		if (!filesFound[i])
+			demoFilesFound = false;
 
-	if (mainFilesFound && filesFound[NUM_FILES_TO_CHECK - 1])
+	if (mainFilesFound && pcFilesFound && demoFilesFound)
 		detectedGames.push_back(sword1DemoSettings);
-	else if (mainFilesFound)
+	else if (mainFilesFound && pcFilesFound)
 		detectedGames.push_back(sword1FullSettings);
+	//else if (mainFilesFound && macFilesFound && demoFilesFound)
+	//	detectedGames.push_back(sword1MacDemoSettings);
+	else if (mainFilesFound && macFilesFound)
+		detectedGames.push_back(sword1MacFullSettings);
 
 	return detectedGames;
 }
@@ -134,11 +167,11 @@ SystemVars SwordEngine::_systemVars;
 SwordEngine::SwordEngine(OSystem *syst)
 	: Engine(syst) {
 
-	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
+	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") ||
+	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
 		_features = GF_DEMO;
 	else
-		_features = 0;
-	
+		_features = 0;	
 
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
@@ -172,11 +205,17 @@ int SwordEngine::init() {
 		initCommonGFX(true);
 		_system->initSize(640, 480);
 	_system->endGFXTransaction();
+	
+	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
+	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
+		_systemVars.isMac = true;
+	else
+		_systemVars.isMac = false;	
 
 	checkCdFiles();
 
 	debug(5, "Starting resource manager");
-	_resMan = new ResMan("swordres.rif");
+	_resMan = new ResMan("swordres.rif", _systemVars.isMac);
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
@@ -287,7 +326,7 @@ static const char *errorMsgs[] = {
 	"Please copy these files from their corresponding CDs:\n"
 };
 
-const CdFile SwordEngine::_cdFileList[] = {
+const CdFile SwordEngine::_pcCdFileList[] = {
 	{ "paris2.clu", FLAG_CD1 },
 	{ "ireland.clu", FLAG_CD2 },
 	{ "paris3.clu", FLAG_CD1 },
@@ -316,29 +355,84 @@ const CdFile SwordEngine::_cdFileList[] = {
 #endif
 };
 
+const CdFile SwordEngine::_macCdFileList[] = {
+	{ "paris2.clm", FLAG_CD1 },
+	{ "ireland.clm", FLAG_CD2 },
+	{ "paris3.clm", FLAG_CD1 },
+	{ "paris4.clm", FLAG_CD1 },
+	{ "scotland.clm", FLAG_CD2 },
+	{ "spain.clm", FLAG_CD2 },
+	{ "syria.clm", FLAG_CD2 },
+	{ "train.clm", FLAG_CD2 },
+	{ "compacts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "general.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "maps.clm", FLAG_CD1 | FLAG_DEMO },
+	{ "paris1.clm", FLAG_CD1 | FLAG_DEMO },
+	{ "scripts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "text.clm", FLAG_CD1 | FLAG_DEMO },
+	{ "cows.mad", FLAG_DEMO },
+	{ "speech1.clu", FLAG_SPEECH1 },
+	 { "speech2.clu", FLAG_SPEECH2 }
+#ifdef USE_MAD
+	,{ "speech1.cl3", FLAG_SPEECH1 },
+	 { "speech2.cl3", FLAG_SPEECH2 }
+#endif
+#ifdef USE_VORBIS
+	,{ "speech1.clv", FLAG_SPEECH1 },
+	 { "speech2.clv", FLAG_SPEECH2 }
+#endif
+};
+
+
 void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 	char msg[1024];
 	int missCnt = 0, missNum = 0;
-	for (int i = 0; i < ARRAYSIZE(_cdFileList); i++)
-		if (!fileExists[i]) {
-			missCnt++;
-			missNum = i;
-		}
-	assert(missCnt > 0); // this function shouldn't get called if there's nothing missing.
-	warning("%d files missing", missCnt);
-	int msgId = (type == TYPE_IMMED) ? 0 : 2;
-	if (missCnt == 1) {
-		sprintf(msg, errorMsgs[msgId],
-				_cdFileList[missNum].name, (_cdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
-		warning(msg);
-	} else {
-		char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
-		warning(msg);
-		for (int i = 0; i < ARRAYSIZE(_cdFileList); i++)
+
+	if (_systemVars.isMac) {
+		for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 			if (!fileExists[i]) {
-				warning("\"%s\" (CD %d)", _cdFileList[i].name, (_cdFileList[i].flags & FLAG_CD2) ? 2 : 1);
-				pos += sprintf(pos, "\"%s\" (CD %d)\n", _cdFileList[i].name, (_cdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+				missCnt++;
+				missNum = i;
 			}
+		assert(missCnt > 0); // this function shouldn't get called if there's nothing missing.
+		warning("%d files missing", missCnt);
+		int msgId = (type == TYPE_IMMED) ? 0 : 2;
+		if (missCnt == 1) {
+			sprintf(msg, errorMsgs[msgId],
+					_macCdFileList[missNum].name, (_macCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
+			warning(msg);
+		} else {
+			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			warning(msg);
+			for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
+				if (!fileExists[i]) {
+					warning("\"%s\" (CD %d)", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+					pos += sprintf(pos, "\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+				}
+		}
+	} else {
+		for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
+			if (!fileExists[i]) {
+				missCnt++;
+				missNum = i;
+			}
+		assert(missCnt > 0); // this function shouldn't get called if there's nothing missing.
+		warning("%d files missing", missCnt);
+		int msgId = (type == TYPE_IMMED) ? 0 : 2;
+		if (missCnt == 1) {
+			sprintf(msg, errorMsgs[msgId],
+					_pcCdFileList[missNum].name, (_pcCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
+			warning(msg);
+		} else {
+			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			warning(msg);
+			for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
+				if (!fileExists[i]) {
+					warning("\"%s\" (CD %d)", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+					pos += sprintf(pos, "\"%s\" (CD %d)\n", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+				}
+		}
 	}
 	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
@@ -356,17 +450,33 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	_systemVars.playSpeech = true;
 
 	// check all files and look out if we can find a file that wouldn't exist if this was the demo version
-	for (int fcnt = 0; fcnt < ARRAYSIZE(_cdFileList); fcnt++) {
-		if (Common::File::exists(_cdFileList[fcnt].name)) {
-			fileExists[fcnt] = true;
-			flagsToBool(foundTypes, _cdFileList[fcnt].flags);
-			if (!(_cdFileList[fcnt].flags & FLAG_DEMO))
-				isFullVersion = true;
-			if (_cdFileList[fcnt].flags & FLAG_CD2)
-				cd2FilesFound = true;
-		} else {
-			flagsToBool(missingTypes, _cdFileList[fcnt].flags);
-			fileExists[fcnt] = false;
+	if (_systemVars.isMac) {
+		for (int fcnt = 0; fcnt < ARRAYSIZE(_macCdFileList); fcnt++) {
+			if (Common::File::exists(_macCdFileList[fcnt].name)) {
+				fileExists[fcnt] = true;
+				flagsToBool(foundTypes, _macCdFileList[fcnt].flags);
+				if (!(_macCdFileList[fcnt].flags & FLAG_DEMO))
+					isFullVersion = true;
+				if (_macCdFileList[fcnt].flags & FLAG_CD2)
+					cd2FilesFound = true;
+			} else {
+				flagsToBool(missingTypes, _macCdFileList[fcnt].flags);
+				fileExists[fcnt] = false;
+			}
+		}
+	} else {
+		for (int fcnt = 0; fcnt < ARRAYSIZE(_pcCdFileList); fcnt++) {
+			if (Common::File::exists(_pcCdFileList[fcnt].name)) {
+				fileExists[fcnt] = true;
+				flagsToBool(foundTypes, _pcCdFileList[fcnt].flags);
+				if (!(_pcCdFileList[fcnt].flags & FLAG_DEMO))
+					isFullVersion = true;
+				if (_pcCdFileList[fcnt].flags & FLAG_CD2)
+					cd2FilesFound = true;
+			} else {
+				flagsToBool(missingTypes, _pcCdFileList[fcnt].flags);
+				fileExists[fcnt] = false;
+			}
 		}
 	}
 
@@ -388,13 +498,23 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 		somethingMissing |= missingTypes[i];
 	if (somethingMissing) { // okay, there *are* files missing
 		// first, update the fileExists[] array depending on our changed missingTypes
-		for (int fileCnt = 0; fileCnt < ARRAYSIZE(_cdFileList); fileCnt++)
-			if (!fileExists[fileCnt]) {
-				fileExists[fileCnt] = true;
-				for (int flagCnt = 0; flagCnt < 8; flagCnt++)
-					if (missingTypes[flagCnt] && ((_cdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
-						fileExists[fileCnt] = false; // this is one of the files we were looking for
-			}
+		if (_systemVars.isMac) {
+			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_macCdFileList); fileCnt++)
+				if (!fileExists[fileCnt]) {
+					fileExists[fileCnt] = true;
+					for (int flagCnt = 0; flagCnt < 8; flagCnt++)
+						if (missingTypes[flagCnt] && ((_macCdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
+							fileExists[fileCnt] = false; // this is one of the files we were looking for
+				}
+		} else {
+			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_pcCdFileList); fileCnt++)
+				if (!fileExists[fileCnt]) {
+					fileExists[fileCnt] = true;
+					for (int flagCnt = 0; flagCnt < 8; flagCnt++)
+						if (missingTypes[flagCnt] && ((_pcCdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
+							fileExists[fileCnt] = false; // this is one of the files we were looking for
+				}
+		}
 		if (missingTypes[TYPE_IMMED]) {
 			// important files missing, can't start the game without them
 			showFileErrorMsg(TYPE_IMMED, fileExists);

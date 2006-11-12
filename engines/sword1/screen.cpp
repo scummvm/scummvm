@@ -21,7 +21,6 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/system.h"
 #include "common/util.h"
 
@@ -407,40 +406,40 @@ void Screen::processImage(uint32 id) {
 	uint16 spriteY = compact->o_anim_y;
 	if (compact->o_status & STAT_SHRINK) {
 		scale = (compact->o_scale_a * compact->o_ycoord + compact->o_scale_b) / 256;
-		spriteX += ((int16)READ_LE_UINT16(&frameHead->offsetX) * scale) / 256;
-		spriteY += ((int16)READ_LE_UINT16(&frameHead->offsetY) * scale) / 256;
+		spriteX += ((int16)_resMan->readUint16(&frameHead->offsetX) * scale) / 256;
+		spriteY += ((int16)_resMan->readUint16(&frameHead->offsetY) * scale) / 256;
 	} else {
 		scale = 256;
-		spriteX += (int16)READ_LE_UINT16(&frameHead->offsetX);
-		spriteY += (int16)READ_LE_UINT16(&frameHead->offsetY);
+		spriteX += (int16)_resMan->readUint16(&frameHead->offsetX);
+		spriteY += (int16)_resMan->readUint16(&frameHead->offsetY);
 	}
 
 	uint8 *tonyBuf = NULL;
 	if (frameHead->runTimeComp[3] == '7') { // RLE7 encoded?
-		decompressRLE7(sprData, READ_LE_UINT32(&frameHead->compSize), _rleBuffer);
+		decompressRLE7(sprData, _resMan->readUint32(&frameHead->compSize), _rleBuffer);
 		sprData = _rleBuffer;
 	} else if (frameHead->runTimeComp[3] == '0') { // RLE0 encoded?
-		decompressRLE0(sprData, READ_LE_UINT32(&frameHead->compSize), _rleBuffer);
+		decompressRLE0(sprData, _resMan->readUint32(&frameHead->compSize), _rleBuffer);
 		sprData = _rleBuffer;
 	} else if (frameHead->runTimeComp[1] == 'I') { // new type
-		tonyBuf = (uint8*)malloc(READ_LE_UINT16(&frameHead->width) * READ_LE_UINT16(&frameHead->height));
-		decompressTony(sprData, READ_LE_UINT32(&frameHead->compSize), tonyBuf);
+		tonyBuf = (uint8*)malloc(_resMan->readUint16(&frameHead->width) * _resMan->readUint16(&frameHead->height));
+		decompressTony(sprData, _resMan->readUint32(&frameHead->compSize), tonyBuf);
 		sprData = tonyBuf;
 	}
 
 	uint16 sprSizeX, sprSizeY;
 	if (compact->o_status & STAT_SHRINK) {
-		sprSizeX = (scale * READ_LE_UINT16(&frameHead->width)) / 256;
-		sprSizeY = (scale * READ_LE_UINT16(&frameHead->height)) / 256;
-		fastShrink(sprData, READ_LE_UINT16(&frameHead->width), READ_LE_UINT16(&frameHead->height), scale, _shrinkBuffer);
+		sprSizeX = (scale * _resMan->readUint16(&frameHead->width)) / 256;
+		sprSizeY = (scale * _resMan->readUint16(&frameHead->height)) / 256;
+		fastShrink(sprData, _resMan->readUint16(&frameHead->width), _resMan->readUint16(&frameHead->height), scale, _shrinkBuffer);
 		sprData = _shrinkBuffer;
 	} else {
-		sprSizeX = READ_LE_UINT16(&frameHead->width);
-		sprSizeY = READ_LE_UINT16(&frameHead->height);
+		sprSizeX = _resMan->readUint16(&frameHead->width);
+		sprSizeY = _resMan->readUint16(&frameHead->height);
 	}
 	if (!(compact->o_status & STAT_OVERRIDE)) {
 		//mouse size linked to exact size & coordinates of sprite box - shrink friendly
-		if (READ_LE_UINT16(&frameHead->offsetX) || READ_LE_UINT16(&frameHead->offsetY)) {
+		if (_resMan->readUint16(&frameHead->offsetX) || _resMan->readUint16(&frameHead->offsetY)) {
 			//for megas the mouse area is reduced to account for sprite not
 			//filling the box size is reduced to 1/2 width, 4/5 height
 			compact->o_mouse_x1 = spriteX + sprSizeX / 4;
@@ -495,7 +494,7 @@ void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 				uint16 *grid = _layerGrid[level] + gridX + blkx + gridY * lGridSizeX;
 				for (int16 blky = bHeight - 1; blky >= 0; blky--) {
 					if (*grid) {
-						uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
+						uint8 *blkData = _layerBlocks[level + 1] + (_resMan->readUint16(grid) - 1) * 128;
 						blitBlockClear(x + blkx, y + blky, blkData);
 					} else
 						break;
@@ -520,7 +519,7 @@ void Screen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
 void Screen::renderParallax(uint8 *data) {
 	ParallaxHeader *header = (ParallaxHeader*)data;
 	uint32 *lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
-	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
+	assert((_resMan->getUint16(header->sizeX) >= SCREEN_WIDTH) && (_resMan->getUint16(header->sizeY) >= SCREEN_DEPTH));
 
 	uint16 paraScrlX, paraScrlY;
 	uint16 scrnScrlX, scrnScrlY;
@@ -533,19 +532,19 @@ void Screen::renderParallax(uint8 *data) {
 	scrnHeight = SCREEN_DEPTH + ABS((int32)_oldScrollY - (int32)Logic::_scriptVars[SCROLL_OFFSET_Y]);
 
 	if (_scrnSizeX != SCREEN_WIDTH) {
-		double scrlfx = (FROM_LE_16(header->sizeX) - SCREEN_WIDTH) / ((double)(_scrnSizeX - SCREEN_WIDTH));
+		double scrlfx = (_resMan->getUint16(header->sizeX) - SCREEN_WIDTH) / ((double)(_scrnSizeX - SCREEN_WIDTH));
 		paraScrlX = (uint16)(scrnScrlX * scrlfx);
 	} else
 		paraScrlX = 0;
 
 	if (_scrnSizeY != SCREEN_DEPTH) {
-		double scrlfy = (FROM_LE_16(header->sizeY) - SCREEN_DEPTH) / ((double)(_scrnSizeY - SCREEN_DEPTH));
+		double scrlfy = (_resMan->getUint16(header->sizeY) - SCREEN_DEPTH) / ((double)(_scrnSizeY - SCREEN_DEPTH));
 		paraScrlY = (uint16)(scrnScrlY * scrlfy);
 	} else
 		paraScrlY = 0;
 
 	for (uint16 cnty = 0; cnty < scrnHeight; cnty++) {
-		uint8 *src = data + READ_LE_UINT32(lineIndexes + cnty + paraScrlY);
+		uint8 *src = data + _resMan->readUint32(lineIndexes + cnty + paraScrlY);
 		uint8 *dest = _screenBuf + scrnScrlX + (cnty + scrnScrlY) * _scrnSizeX;
 		uint16 remain = paraScrlX;
 		uint16 xPos = 0;
@@ -655,7 +654,7 @@ void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 		if (!(cpt->o_status & STAT_SHRINK)) {     // not a boxed mega using shrinking
 			Header *frameRaw = (Header*)_resMan->openFetchRes(cpt->o_resource);
 			FrameHeader *frameHead = _resMan->fetchFrame(frameRaw, cpt->o_frame);
-			_sortList[_sortLength].y += READ_LE_UINT16(&frameHead->height) - 1; // now pointing to base of sprite
+			_sortList[_sortLength].y += _resMan->readUint16(&frameHead->height) - 1; // now pointing to base of sprite
 			_resMan->resClose(cpt->o_resource);
 		}
 		_sortLength++;
@@ -803,9 +802,9 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 		FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(resId), frameNo);
 		uint8 *frameData = ((uint8*)frameHead) + sizeof(FrameHeader);
 
-		for (i = 0; i < FROM_LE_16(frameHead->height); i++) {
-			for (j = 0; j < FROM_LE_16(frameHead->height); j++) {
-				frame[(i + 4) * 40 + j + 2] = frameData[i * FROM_LE_16(frameHead->width) + j];
+		for (i = 0; i < _resMan->getUint16(frameHead->height); i++) {
+			for (j = 0; j < _resMan->getUint16(frameHead->height); j++) {
+				frame[(i + 4) * 40 + j + 2] = frameData[i * _resMan->getUint16(frameHead->width) + j];
 			}
 		}
 
