@@ -36,9 +36,9 @@ class Instrument;
 class InstrumentInternal {
 public:
 	virtual ~InstrumentInternal() {}
-	virtual void saveOrLoad (Serializer *s) = 0;
-	virtual void send (MidiChannel *mc) = 0;
-	virtual void copy_to (Instrument *dest) = 0;
+	virtual void saveOrLoad(Serializer *s) = 0;
+	virtual void send(MidiChannel *mc) = 0;
+	virtual void copy_to(Instrument *dest) = 0;
 	virtual bool is_valid() = 0;
 	virtual operator int() { return 255; }
 };
@@ -58,20 +58,28 @@ public:
 
 	Instrument() : _type (0), _instrument (0) { }
 	~Instrument() { delete _instrument; }
-	static void nativeMT32 (bool native);
+	static void nativeMT32(bool native);
 	static const byte _gmRhythmMap[35];
 
 	void clear();
-	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }
+	void copy_to(Instrument *dest) {
+		if (_instrument)
+			_instrument->copy_to(dest);
+		else
+			dest->clear();
+	}
 
-	void program (byte program, bool mt32);
-	void adlib (const byte *instrument);
-	void roland (const byte *instrument);
+	void program(byte program, bool mt32);
+	void adlib(const byte *instrument);
+	void roland(const byte *instrument);
 
 	byte getType() { return _type; }
 	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }
-	void saveOrLoad (Serializer *s);
-	void send (MidiChannel *mc) { if (_instrument) _instrument->send (mc); }
+	void saveOrLoad(Serializer *s);
+	void send(MidiChannel *mc) {
+		if (_instrument)
+			_instrument->send(mc);
+	}
 };
 
 } // End of namespace Scumm

@@ -30,8 +30,8 @@ namespace Scumm {
 
 class Player;
 
-extern void sysexHandler_Scumm (Player *, const byte *, uint16);
-extern void sysexHandler_SamNMax (Player *, const byte *, uint16);
+extern void sysexHandler_Scumm(Player *, const byte *, uint16);
+extern void sysexHandler_SamNMax(Player *, const byte *, uint16);
 
 } // End of namespace Scumm
 

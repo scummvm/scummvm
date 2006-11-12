@@ -402,7 +402,7 @@ void Player::sysEx(const byte *p, uint16 len) {
 
 void Player::decode_sysex_bytes(const byte *src, byte *dst, int len) {
 	while (len >= 0) {
-		*dst++ = ((src[0] << 4)&0xFF) | (src[1] & 0xF);
+		*dst++ = ((src[0] << 4) & 0xFF) | (src[1] & 0xF);
 		src += 2;
 		len -= 2;
 	}
@@ -885,7 +885,7 @@ int Player::addParameterFader(int param, int target, int time) {
 		break;
 
 	default:
-		debug(0, "Player::addParameterFader (%d, %d, %d): Unknown parameter", param, target, time);
+		debug(0, "Player::addParameterFader(%d, %d, %d): Unknown parameter", param, target, time);
 		return 0; // Should be -1, but we'll let the script think it worked.
 	}
 

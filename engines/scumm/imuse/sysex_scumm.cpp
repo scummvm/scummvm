@@ -37,7 +37,7 @@
 
 namespace Scumm {
 
-void sysexHandler_Scumm (Player *player, const byte *msg, uint16 len) {
+void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 	Part *part;
 	byte a;
 	byte buf[128];
@@ -67,12 +67,12 @@ void sysexHandler_Scumm (Player *player, const byte *msg, uint16 len) {
 		part = player->getPart(p[0] & 0x0F);
 		if (part) {
 			part->set_onoff(p[2] & 0x01);
-			part->effectLevel ((p[2] & 0x02) ? 127 : 0);
+			part->effectLevel((p[2] & 0x02) ? 127 : 0);
 			part->set_pri(p[4]);
 			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
 			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
-			part->pitchBendFactor ((p[13] & 0x0F) << 4 | (p[14] & 0x0F));
+			part->pitchBendFactor((p[13] & 0x0F) << 4 | (p[14] & 0x0F));
 			if (part->_percussion) {
 				if (part->_mc) {
 					part->off();
@@ -93,8 +93,9 @@ void sysexHandler_Scumm (Player *player, const byte *msg, uint16 len) {
 
 	case 1:
 		// Shut down a part. [Bug 1088045, comments]
-		part = player->getPart (p[0]);
-		if (part != NULL) part->uninit();
+		part = player->getPart(p[0]);
+		if (part != NULL)
+			part->uninit();
 		break;
 
 	case 2: // Start of song. Ignore for now.
@@ -189,7 +190,7 @@ void sysexHandler_Scumm (Player *player, const byte *msg, uint16 len) {
 
 	case 96: // Set instrument
 		part = player->getPart(p[0] & 0x0F);
-		a = (p[1] & 0x0F) << 12 |(p[2] & 0x0F) << 8 |(p[3] & 0x0F) << 4 |(p[4] & 0x0F);
+		a = (p[1] & 0x0F) << 12 | (p[2] & 0x0F) << 8 | (p[3] & 0x0F) << 4 | (p[4] & 0x0F);
 		if (part)
 			part->set_instrument(a);
 		break;

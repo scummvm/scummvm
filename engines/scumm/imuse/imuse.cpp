@@ -149,7 +149,7 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return false;
 
-	error("Unknown music type: '%c%c%c%c'", (char)tag>>24, (char)tag>>16, (char)tag>>8, (char)tag);
+	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
 
 	return false;
 }
@@ -191,7 +191,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return true;
 
-	error("Unknown music type: '%c%c%c%c'", (char)tag>>24, (char)tag>>16, (char)tag>>8, (char)tag);
+	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
 
 	return false;
 }
@@ -387,12 +387,12 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 
 bool IMuseInternal::get_sound_active(int sound) const {
 	Common::StackLock lock(_mutex, "IMuseInternal::get_sound_active()");
-	return getSoundStatus_internal (sound, false) != 0;
+	return getSoundStatus_internal(sound, false) != 0;
 }
 
 int32 IMuseInternal::doCommand(int numargs, int a[]) {
 	Common::StackLock lock(_mutex, "IMuseInternal::doCommand()");
-	return doCommand_internal (numargs, a);
+	return doCommand_internal(numargs, a);
 }
 
 void IMuseInternal::setBase(byte **base) {
@@ -452,7 +452,7 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	return 0;
 }
 
-void IMuseInternal::addSysexHandler (byte mfgID, sysexfunc handler) {
+void IMuseInternal::addSysexHandler(byte mfgID, sysexfunc handler) {
 	// TODO: Eventually support multiple sysEx handlers and pay
 	// attention to the client-supplied manufacturer ID.
 	Common::StackLock lock(_mutex, "IMuseInternal::property()");
@@ -467,7 +467,7 @@ void IMuseInternal::addSysexHandler (byte mfgID, sysexfunc handler) {
 //
 ////////////////////////////////////////
 
-void IMuseInternal::setMusicVolume (int vol) {
+void IMuseInternal::setMusicVolume(int vol) {
 	Common::StackLock lock(_mutex, "IMuseInternal::setMusicVolume()");
 	if (vol > 255)
 		vol = 255;
@@ -484,12 +484,12 @@ void IMuseInternal::setMusicVolume (int vol) {
 
 void IMuseInternal::startSound(int sound) {
 	Common::StackLock lock(_mutex, "IMuseInternal::startSound()");
-	startSound_internal (sound);
+	startSound_internal(sound);
 }
 
 void IMuseInternal::stopSound(int sound) {
 	Common::StackLock lock(_mutex, "IMuseInternal::stopSound()");
-	stopSound_internal (sound);
+	stopSound_internal(sound);
 }
 
 void IMuseInternal::stopAllSounds() {
@@ -497,7 +497,7 @@ void IMuseInternal::stopAllSounds() {
 	stopAllSounds_internal();
 }
 
-int IMuseInternal::getSoundStatus (int sound) const {
+int IMuseInternal::getSoundStatus(int sound) const {
 	Common::StackLock lock(_mutex, "IMuseInternal::getSoundStatus()");
 	return getSoundStatus_internal (sound, true);
 }
@@ -557,7 +557,7 @@ void IMuseInternal::terminate() {
 //
 ////////////////////////////////////////
 
-bool IMuseInternal::startSound_internal (int sound) {
+bool IMuseInternal::startSound_internal(int sound) {
 	// Do not start a sound if it is already set to start on an ImTrigger
 	// event. This fixes carnival music problems where a sound has been set
 	// to trigger at the right time, but then is started up immediately
@@ -633,7 +633,7 @@ bool IMuseInternal::startSound_internal (int sound) {
 	return player->startSound(sound, driver, _direct_passthrough);
 }
 
-int IMuseInternal::stopSound_internal (int sound) {
+int IMuseInternal::stopSound_internal(int sound) {
 	int r = -1;
 	Player *player = findActivePlayer(sound);
 	if (player) {
@@ -652,7 +652,7 @@ int IMuseInternal::stopAllSounds_internal() {
 	return 0;
 }
 
-int IMuseInternal::getSoundStatus_internal (int sound, bool ignoreFadeouts) const {
+int IMuseInternal::getSoundStatus_internal(int sound, bool ignoreFadeouts) const {
 	const Player *player = _players;
 	for (int i = ARRAYSIZE(_players); i; i--, player++) {
 		if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut())) {
@@ -713,9 +713,9 @@ int32 IMuseInternal::doCommand_internal (int numargs, int a[]) {
 			debug(0, "IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
 			return _master_volume / 2; // Convert from 0-255 to 0-127
 		case 8:
-			return startSound_internal (a[1]) ? 0 : -1;
+			return startSound_internal(a[1]) ? 0 : -1;
 		case 9:
-			return stopSound_internal (a[1]);
+			return stopSound_internal(a[1]);
 		case 10: // FIXME: Sam and Max - Not sure if this is correct
 			return stopAllSounds_internal();
 		case 11:
@@ -968,7 +968,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 			break;
 		_queue_end = pos;
 
-		doCommand_internal (p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
+		doCommand_internal(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
 
 		if (_queue_cleared)
 			return;
@@ -1231,8 +1231,8 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	// NOTE: We ONLY do this if the sound that will trigger the command is actually
 	// playing. Otherwise, there's a problem when exiting and re-entering the
 	// Bumpusville mansion. Ref Bug #780918.
-	if (trig->command[0] == 8 && getSoundStatus_internal (trig->command[1],true) && getSoundStatus_internal (sound,true))
-		stopSound_internal (trig->command[1]);
+	if (trig->command[0] == 8 && getSoundStatus_internal(trig->command[1],true) && getSoundStatus_internal(sound,true))
+		stopSound_internal(trig->command[1]);
 	return 0;
 }
 
@@ -1257,7 +1257,7 @@ int32 IMuseInternal::ImFireAllTriggers(int sound) {
 	for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
 		if (_snm_triggers[i].sound == sound) {
 			_snm_triggers[i].sound = _snm_triggers[i].id = 0;
-			doCommand_internal (8, _snm_triggers[i].command);
+			doCommand_internal(8, _snm_triggers[i].command);
 			++count;
 		}
 	}
@@ -1384,12 +1384,12 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 	if (native_midi != NULL) {
 		_timer_info_native.imuse = this;
 		_timer_info_native.driver = native_midi;
-		initMidiDriver (&_timer_info_native);
+		initMidiDriver(&_timer_info_native);
 	}
 	if (adlib_midi != NULL) {
 		_timer_info_adlib.imuse = this;
 		_timer_info_adlib.driver = adlib_midi;
-		initMidiDriver (&_timer_info_adlib);
+		initMidiDriver(&_timer_info_adlib);
 	}
 
 	if (!_tempoFactor)
@@ -1408,14 +1408,14 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 	return 0;
 }
 
-void IMuseInternal::initMidiDriver (TimerCallbackInfo *info) {
+void IMuseInternal::initMidiDriver(TimerCallbackInfo *info) {
 	// Open MIDI driver
 	int result = info->driver->open();
 	if (result)
 		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
 
 	// Connect to the driver's timer
-	info->driver->setTimerCallback (info, &IMuseInternal::midiTimerCallback);
+	info->driver->setTimerCallback(info, &IMuseInternal::midiTimerCallback);
 }
 
 void IMuseInternal::initMT32(MidiDriver *midi) {
@@ -1612,7 +1612,7 @@ void IMuseInternal::handleDeferredCommands(MidiDriver *midi) {
 		if (!ptr->time_left)
 			continue;
 		if (ptr->time_left <= advance) {
-			doCommand_internal (ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
+			doCommand_internal(ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
 			ptr->time_left = advance;
 		}
 		ptr->time_left -= advance;
@@ -1671,9 +1671,9 @@ void IMuseInternal::fix_players_after_load(ScummEngine *scumm) {
 //
 ////////////////////////////////////////
 
-void IMuseInternal::midiTimerCallback (void *data) {
-	TimerCallbackInfo *info = (TimerCallbackInfo *) data;
-	info->imuse->on_timer (info->driver);
+void IMuseInternal::midiTimerCallback(void *data) {
+	TimerCallbackInfo *info = (TimerCallbackInfo *)data;
+	info->imuse->on_timer(info->driver);
 }
 
 void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {

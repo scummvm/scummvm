@@ -161,7 +161,7 @@ class Player : public MidiDriver {
  * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
  */
 #ifdef SYSEX_CALLBACK_FUNCTION
-	friend void SYSEX_CALLBACK_FUNCTION (Player *, const byte *, uint16);
+	friend void SYSEX_CALLBACK_FUNCTION(Player *, const byte *, uint16);
 #endif
 
 protected:
@@ -240,7 +240,7 @@ public:
 	Player();
 	virtual ~Player();
 
-	int	 addParameterFader(int param, int target, int time);
+	int addParameterFader(int param, int target, int time);
 	void clear();
 	void clearLoop();
 	void fixAfterLoad();
@@ -384,7 +384,7 @@ class IMuseInternal : public IMuse {
  * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
  */
 #ifdef SYSEX_CALLBACK_FUNCTION
-	friend void SYSEX_CALLBACK_FUNCTION (Player *, const byte *, uint16);
+	friend void SYSEX_CALLBACK_FUNCTION(Player *, const byte *, uint16);
 #endif
 
 protected:
@@ -445,8 +445,8 @@ protected:
 	IMuseInternal();
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 
-	static void midiTimerCallback (void *data);
-	void on_timer (MidiDriver *midi);
+	static void midiTimerCallback(void *data);
+	void on_timer(MidiDriver *midi);
 
 	byte *findStartOfSound(int sound);
 	bool isMT32(int sound);
@@ -454,7 +454,7 @@ protected:
 	int get_queue_sound_status(int sound) const;
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
-	void initMidiDriver (TimerCallbackInfo *info);
+	void initMidiDriver(TimerCallbackInfo *info);
 	void initGM(MidiDriver *midi);
 	void initMT32(MidiDriver *midi);
 	void init_players();
@@ -499,22 +499,22 @@ protected:
 
 protected:
 	// Internal mutex-free versions of the IMuse and MusicEngine methods.
-	bool startSound_internal (int sound);
-	int stopSound_internal (int sound);
+	bool startSound_internal(int sound);
+	int stopSound_internal(int sound);
 	int stopAllSounds_internal();
-	int getSoundStatus_internal (int sound, bool ignoreFadeouts) const;
-	int32 doCommand_internal (int a, int b, int c, int d, int e, int f, int g, int h);
-	int32 doCommand_internal (int numargs, int args[]);
+	int getSoundStatus_internal(int sound, bool ignoreFadeouts) const;
+	int32 doCommand_internal(int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand_internal(int numargs, int args[]);
 
 public:
 	// IMuse interface
 	void pause(bool paused);
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	bool get_sound_active(int sound) const;
-	int32 doCommand (int numargs, int args[]);
+	int32 doCommand(int numargs, int args[]);
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
-	virtual void addSysexHandler (byte mfgID, sysexfunc handler);
+	virtual void addSysexHandler(byte mfgID, sysexfunc handler);
 
 public:
 	// MusicEngine interface
@@ -522,7 +522,7 @@ public:
 	void startSound(int sound);
 	void stopSound(int sound);
 	void stopAllSounds();
-	int getSoundStatus (int sound) const;
+	int getSoundStatus(int sound) const;
 	int getMusicTimer() const;
 	void terminate();
 
