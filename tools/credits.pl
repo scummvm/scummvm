@@ -712,6 +712,7 @@ begin_credits("Credits");
 		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI");
 		  add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
+		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");
 		  add_person("John Doe", "", "Improved DXA compression");
 		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player");
 		  add_person("Benjamin Haisch", "", "Encoder for DXA videos");

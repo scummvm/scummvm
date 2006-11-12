@@ -233,6 +233,8 @@ static const char *credits[] = {
 "\\C\\c2""Decoders for Simon 1 Amiga data files",
 "\\C\\c0""Paolo Costabel",
 "\\C\\c2""PSP port contributions",
+"\\C\\c0""Thierry Crozat",
+"\\C\\c2""Support for Broken Sword 1 Macintosh version",
 "\\C\\c0""John Doe",
 "\\C\\c2""Improved DXA compression",
 "\\C\\c0""Thomas Fach-Pedersen",
