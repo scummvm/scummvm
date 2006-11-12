@@ -204,6 +204,9 @@
 			RelativePath="..\..\engines\agi\picture.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\agi\predictive.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\agi\savegame.cpp">
 		</File>
 		<File

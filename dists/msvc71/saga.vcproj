@@ -227,6 +227,12 @@
 			RelativePath="..\..\engines\saga\saga.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\sagagame.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\sagaresnames.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\saveload.cpp">
 		</File>
 		<File

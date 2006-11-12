@@ -97,7 +97,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib agi_release/agi.lib cine_release/cine.lib gob_release/gob.lib kyra_release/kyra.lib lure_release/lure.lib queen_release/queen.lib saga_release/saga.lib scumm_release/scumm.lib agos_release/agos.lib sky_release/sky.lib sword1_release/sword1.lib sword2_release/sword2.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib agi_release/agi.lib cine_release/cine.lib gob_release/gob.lib kyra_release/kyra.lib lure_release/lure.lib queen_release/queen.lib saga_release/saga.lib scumm_release/scumm.lib agos_release/agos.lib sky_release/sky.lib sword1_release/sword1.lib sword2_release/sword2.lib touche_release/touche.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -142,12 +142,6 @@
 				RelativePath="..\..\base\commandLine.h">
 			</File>
 			<File
-				RelativePath="..\..\base\engine.cpp">
-			</File>
-			<File
-				RelativePath="..\..\base\engine.h">
-			</File>
-			<File
 				RelativePath="..\..\base\game.h">
 			</File>
 			<File
@@ -176,6 +170,12 @@
 			Name="common"
 			Filter="">
 			<File
+				RelativePath="..\..\common\advancedDetector.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\advancedDetector.h">
+			</File>
+			<File
 				RelativePath="..\..\common\array.h">
 			</File>
 			<File
@@ -189,12 +189,6 @@
 			</File>
 			<File
 				RelativePath="..\..\common\config-manager.h">
-			</File>
-			<File
-				RelativePath="..\..\common\debugger.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\debugger.h">
 			</File>
 			<File
 				RelativePath="..\..\common\endian.h">
@@ -213,6 +207,9 @@
 			</File>
 			<File
 				RelativePath="..\..\common\func.h">
+			</File>
+			<File
+				RelativePath="..\..\common\hash-str.h">
 			</File>
 			<File
 				RelativePath="..\..\common\hashmap.cpp">
@@ -466,6 +463,22 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="mods"
+				Filter="">
+				<File
+					RelativePath="..\..\sound\mods\module.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\module.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\protracker.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\protracker.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="txt"
@@ -593,6 +606,12 @@
 				RelativePath="..\..\gui\credits.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\debugger.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\debugger.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\dialog.cpp">
 			</File>
 			<File
@@ -683,10 +702,16 @@
 				RelativePath="..\..\gui\theme.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\themebrowser.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\themebrowser.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\ThemeClassic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\gui\ThemeNew.cpp">
+				RelativePath="..\..\gui\ThemeModern.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp">
@@ -698,12 +723,6 @@
 		<Filter
 			Name="graphics"
 			Filter="">
-			<File
-				RelativePath="..\..\graphics\animation.cpp">
-			</File>
-			<File
-				RelativePath="..\..\graphics\animation.h">
-			</File>
 			<File
 				RelativePath="..\..\graphics\colormasks.h">
 			</File>
@@ -748,6 +767,12 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\imageman.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\mpeg_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\mpeg_player.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\paletteman.cpp">
@@ -873,6 +898,16 @@
 					RelativePath="..\..\graphics\fonts\scummfont.cpp">
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="engines"
+			Filter="">
+			<File
+				RelativePath="..\..\engines\engine.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\engine.h">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -62,10 +62,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agi", "agi.vcproj", "{15DF7
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "touche", "touche.vcproj", "{43C2D921-FEE3-40BE-B58A-A6CA34235731}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{8434CB15-D08F-427D-9E6D-581AE5B28440}.Debug.ActiveCfg = Debug|Win32
@@ -120,6 +126,10 @@ Global
 		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Debug.Build.0 = Debug|Win32
 		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Release.ActiveCfg = Release|Win32
 		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}.Release.Build.0 = Release|Win32
+		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Debug.ActiveCfg = Debug|Win32
+		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Debug.Build.0 = Debug|Win32
+		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Release.ActiveCfg = Release|Win32
+		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -116,12 +116,6 @@
 			RelativePath="..\..\engines\cine\anim.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\auto00.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\auto00.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\cine\bg.cpp">
 		</File>
 		<File
@@ -140,10 +134,7 @@
 			RelativePath="..\..\engines\cine\cine.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\font.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\font.h">
+			RelativePath="..\..\engines\cine\detection.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\cine\gfx.cpp">
