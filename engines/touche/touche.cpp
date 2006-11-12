@@ -43,6 +43,8 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_roomAreaRect = Common::Rect(640, 352);
 	clearDirtyRects();
 
+	memset(_flagsTable, 0, sizeof(_flagsTable));
+
 	_playSoundCounter = 0;
 
 	_processRandomPaletteCounter = 0;
@@ -106,6 +108,8 @@ int ToucheEngine::go() {
 }
 
 void ToucheEngine::restart() {
+	_midiPlayer->stop();
+
 	_displayQuitDialog = false;
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
@@ -1297,6 +1301,7 @@ void ToucheEngine::buildSpriteScalingTable(int z1, int z2) {
 		z2 = 1;
 	}
 
+	memset(_spriteScalingTable, 0, sizeof(_spriteScalingTable));
 	const int scaleInc = z1 * 256 / z2;
 	int scaleSum = 0;
 	for (int i = 0; i < z2; ++i) {
@@ -1307,6 +1312,7 @@ void ToucheEngine::buildSpriteScalingTable(int z1, int z2) {
 		scaleSum += scaleInc;
 	}
 
+	memset(_spriteScalingIndex, 0, sizeof(_spriteScalingIndex));
 	const int16 *p = &_spriteScalingTable[500];
 	int16 z1_s = *p++;
 	int16 z2_s = *p++;
