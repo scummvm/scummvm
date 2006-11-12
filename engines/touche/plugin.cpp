@@ -138,12 +138,10 @@ PluginError Engine_TOUCHE_create(OSystem *system, Engine **engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("ToucheEngine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;
 	}
 	DetectedGameList game = Engine_TOUCHE_detectGames(fslist);
 	if (game.size() != 1) {
-		warning("ToucheEngine: Unable to locate game data in '%s'", dir.path().c_str());
 		return kNoGameDataFoundError;
 	}
 	assert(engine);

@@ -113,7 +113,6 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("Sword2Engine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;
 	}
 
@@ -128,7 +127,6 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 		}
 	}
 
-	warning("Sword2Engine: Unable to locate game data at path '%s'", dir.path().c_str());
 	return kNoGameDataFoundError;
 }
 

@@ -642,7 +642,6 @@ PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("AgiEngine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;
 	}
 
@@ -657,7 +656,6 @@ PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
 		}
 	}
 
-	warning("AgiEngine: Unable to locate game data at path '%s'", dir.path().c_str());
 	return kNoGameDataFoundError;
 }
 
