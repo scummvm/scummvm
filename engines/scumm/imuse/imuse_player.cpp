@@ -211,8 +211,8 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 }
 
 void Player::uninit_parts() {
-	if (_parts && _parts->_player != this)
-		error("asd");
+	assert(!_parts || _parts->_player == this);
+
 	while (_parts)
 		_parts->uninit();
 
