@@ -203,9 +203,13 @@ const PlainGameDescriptor gameList[] = {
 
 } // End of anonymous namespace
 
-ADVANCED_DETECTOR_GAMEID_LIST(KYRA, gameList);
+GameList Engine_KYRA_gameIDList() {
+	return Common::real_ADVANCED_DETECTOR_GAMEID_LIST(gameList);
+}
 
-ADVANCED_DETECTOR_FIND_GAMEID(KYRA, gameList, NULL);
+GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
+	return Common::real_ADVANCED_DETECTOR_FIND_GAMEID(gameid, gameList, 0);
+}
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
@@ -227,14 +231,12 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("KyraEngine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;
 	}
 
 	GameFlags flags;
 	ADList games = detectKyraGames(fslist);
 	if (!setupGameFlags(games, flags)) {
-		warning("KyraEngine: unable to locate game data at path '%s'", dir.path().c_str());
 		return kNoGameDataFoundError;
 	}
 

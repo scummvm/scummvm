@@ -41,17 +41,10 @@ using Common::File;
 static const PlainGameDescriptor cineGames[] = {
 	{"fw", "Future Wars"},
 	{"os", "Operation Stealth"},
-	{NULL, NULL}
+	{0, 0}
 };
 
-ADVANCED_DETECTOR_GAMEID_LIST(CINE, cineGames);
-
-ADVANCED_DETECTOR_FIND_GAMEID(CINE, cineGames, NULL);
-
-ADVANCED_DETECTOR_DETECT_GAMES(CINE, Cine::GAME_detectGames);
-
-ADVANCED_DETECTOR_ENGINE_CREATE(CINE, Cine::CineEngine, "CineEngine", NULL);
-
+ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, Cine::GAME_detectGames, cineGames, 0);
 
 REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
 
@@ -579,10 +572,27 @@ static const CINEGameDescription gameDescriptions[] = {
 
 };
 
-ADVANCED_DETECTOR_TO_DETECTED_GAME(cineGames);
+bool CineEngine::initGame() {
+	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+		(const byte *)gameDescriptions,
+		sizeof(CINEGameDescription),
+		ARRAYSIZE(gameDescriptions),
+		FILE_MD5_BYTES,
+		cineGames
+		);
+	_gameDescription = &gameDescriptions[i];
+	return true;
+}
 
-ADVANCED_DETECTOR_DETECT_INIT_GAME(CineEngine::initGame, gameDescriptions, _gameDescription, Common::ADTrue);
-
-ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(GAME_detectGames, gameDescriptions);
+DetectedGameList GAME_detectGames(const FSList &fslist) {
+	return real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+		fslist,
+		(const byte *)gameDescriptions,
+		sizeof(CINEGameDescription),
+		ARRAYSIZE(gameDescriptions),
+		FILE_MD5_BYTES,
+		cineGames
+	);
+}
 
 } // End of namespace Cine

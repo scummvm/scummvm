@@ -54,7 +54,7 @@ static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon2talkie", "simon2", Common::kPlatformPC},
 	{"simon2mac", "simon2", Common::kPlatformMacintosh},
 	{"simon2win", "simon2",  Common::kPlatformWindows},
-	{NULL, NULL, Common::kPlatformUnknown}
+	{0, 0, Common::kPlatformUnknown}
 };
 
 static const PlainGameDescriptor simonGames[] = {
@@ -68,16 +68,10 @@ static const PlainGameDescriptor simonGames[] = {
 	{"jumble", "Jumble"},
 	{"puzzle", "NoPatience"},
 	{"swampy", "Swampy Adventures"},
-	{NULL, NULL}
+	{0, 0}
 };
 
-ADVANCED_DETECTOR_GAMEID_LIST(AGOS, simonGames);
-
-ADVANCED_DETECTOR_FIND_GAMEID(AGOS, simonGames, obsoleteGameIDsTable);
-
-ADVANCED_DETECTOR_DETECT_GAMES(AGOS, AGOS::GAME_detectGames);
-
-ADVANCED_DETECTOR_ENGINE_CREATE(AGOS, AGOS::AGOSEngine, "AGOSEngine", obsoleteGameIDsTable);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, AGOS::GAME_detectGames, simonGames, obsoleteGameIDsTable);
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
@@ -88,10 +82,27 @@ using Common::ADGameDescription;
 
 #include "agosgame.cpp"
 
-ADVANCED_DETECTOR_TO_DETECTED_GAME(simonGames);
+bool AGOSEngine::initGame() {
+	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+		(const byte *)gameDescriptions,
+		sizeof(AGOSGameDescription),
+		ARRAYSIZE(gameDescriptions),
+		FILE_MD5_BYTES,
+		simonGames
+		);
+	_gameDescription = &gameDescriptions[i];
+	return true;
+}
 
-ADVANCED_DETECTOR_DETECT_INIT_GAME(AGOSEngine::initGame, gameDescriptions, _gameDescription, Common::ADTrue);
-
-ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(GAME_detectGames, gameDescriptions);
+DetectedGameList GAME_detectGames(const FSList &fslist) {
+	return real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+		fslist,
+		(const byte *)gameDescriptions,
+		sizeof(AGOSGameDescription),
+		ARRAYSIZE(gameDescriptions),
+		FILE_MD5_BYTES,
+		simonGames
+	);
+}
 
 } // End of namespace AGOS

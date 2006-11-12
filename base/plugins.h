@@ -35,9 +35,6 @@ class Engine;
 class FSList;
 class OSystem;
 
-/** List of games. */
-typedef Common::Array<GameDescriptor> GameList;
-
 /**
  * A detected game. Carries the GameDescriptor, but also (optionally)
  * information about the language and platform of the detected game.

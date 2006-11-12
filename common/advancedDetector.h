@@ -24,6 +24,10 @@
 
 #include "common/fs.h"
 
+#include "base/game.h"	// For PlainGameDescriptor and GameList
+#include "base/plugins.h"	// For DetectedGameList
+
+
 namespace Common {
 
 struct ADGameFileDescription {
@@ -47,186 +51,105 @@ struct ADObsoleteGameID {
 	Common::Platform platform;
 };
 
-bool ADTrue(void);
-
 typedef Array<int> ADList;
 typedef Array<const ADGameDescription*> ADGameDescList;
 
+// FIXME/TODO: Rename this function to something more sensible.
+// Possibly move it inside class AdvancedDetector ?
+// Maybe rename it to something like asGameList or pgdArrayToGameList,
+// and move it to base/game.h. Or add a constructor to GameList ... ?
+GameList real_ADVANCED_DETECTOR_GAMEID_LIST(const PlainGameDescriptor *list);
+
+// FIXME/TODO: Rename this function to something more sensible.
+// Possibly move it inside class AdvancedDetector ?
+GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
+	const char *gameid,
+	const PlainGameDescriptor *list,
+	const Common::ADObsoleteGameID *obsoleteList
+	);
+
+
+// FIXME/TODO: Rename this function to something more sensible.
+// Possibly move it inside class AdvancedDetector ?
+// Also, we could get rid of the descSize parameter, if we simply terminated the
+// list of game descriptions by an all-zero entry (like the SCUMM engine does in
+// similar cases).
+DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+	const FSList &fslist,
+	const byte *descs,
+	const int descItemSize,
+	const int descItemCount,
+	const int md5Bytes,
+	const PlainGameDescriptor *list
+	);
+
+
+// FIXME/TODO: Rename this function to something more sensible.
+// Possibly move it inside class AdvancedDetector ?
+// Also, we could get rid of the descSize parameter, if we simply terminated the
+// list of game descriptions by an all-zero entry (like the SCUMM engine does in
+// similar cases).
+int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+	const byte *descs,
+	const int descItemSize,
+	const int descItemCount,
+	const int md5Bytes,
+	const PlainGameDescriptor *list
+	);
+
+// FIXME/TODO: Rename this function to something more sensible.
+// Possibly move it inside class AdvancedDetector ?
+PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
+	DetectedGameList (*detectFunc)(const FSList &fslist),
+	const Common::ADObsoleteGameID *obsoleteList
+	);
+
+
 #define ADVANCED_DETECTOR_GAMEID_LIST(engine,list) \
 	GameList Engine_##engine##_gameIDList() { \
-		GameList games; \
-		const PlainGameDescriptor *g = list; \
-		while (g->gameid) { \
-			games.push_back(*g); \
-			g++; \
-		} \
-		 \
-		return games; \
+		return Common::real_ADVANCED_DETECTOR_GAMEID_LIST(list); \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-#define ADVANCED_DETECTOR_FIND_GAMEID(engine,list,obsoleteList)					  \
+#define ADVANCED_DETECTOR_FIND_GAMEID(engine,list,obsoleteList) \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		const PlainGameDescriptor *g = list; \
-		while (g->gameid) { \
-			if (0 == scumm_stricmp(gameid, g->gameid)) \
-				return *g; \
-			g++; \
-		} \
-		 \
-		GameDescriptor gs; \
-		if (obsoleteList) {\
-			const Common::ADObsoleteGameID *o = obsoleteList;	\
-			while (o->from) { \
-				if (0 == scumm_stricmp(gameid, o->from)) { \
-					gs.gameid = gameid; \
-					gs.description = "Obsolete game ID"; \
-					return gs; \
-				} \
-				o++; \
-			} \
-		} else \
-			return *g; \
-		return gs; \
+		return Common::real_ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-#define ADVANCED_DETECTOR_DETECT_GAMES(engine,function) \
+#define ADVANCED_DETECTOR_DETECT_GAMES(engine,detectFunc) \
 	DetectedGameList Engine_##engine##_detectGames(const FSList &fslist) { \
-		return function(fslist);						\
+		return detectFunc(fslist);						\
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-
-#define ADVANCED_DETECTOR_ENGINE_CREATE(engine,createFunction,engineName,obsoleteList) \
+#define ADVANCED_DETECTOR_ENGINE_CREATE(engine,createFunction,detectFunc,obsoleteList) \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		const char *gameid = ConfMan.get("gameid").c_str(); \
-		 \
-		if (obsoleteList) { \
-			for (const Common::ADObsoleteGameID *o = obsoleteList; o->from; ++o) { \
-				if (!scumm_stricmp(gameid, o->from)) { \
-					gameid = o->to; \
-					ConfMan.set("gameid", o->to); \
-					 \
-					if (o->platform != Common::kPlatformUnknown) \
-						ConfMan.set("platform", Common::getPlatformCode(o->platform)); \
-					\
-					warning("Target upgraded from %s to %s", o->from, o->to); \
-					ConfMan.flushToDisk(); \
-					break; \
-				} \
-			} \
-		} \
-		 \
-		FSList fslist; \
-		FilesystemNode dir(ConfMan.get("path")); \
-		if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) { \
-			warning("%s: invalid game path '%s'", engineName, dir.path().c_str()); \
-			return kInvalidPathError; \
-		} \
-		 \
-		DetectedGameList detectedGames = Engine_##engine##_detectGames(fslist); \
-		 \
-		for (uint i = 0; i < detectedGames.size(); i++) { \
-			if (detectedGames[i].gameid == gameid) { \
-				*engine = new createFunction(syst); \
-				return kNoError; \
-			} \
-		} \
-		 \
-		warning("%s: Unable to locate game data at path '%s'", engineName, dir.path().c_str()); \
-		return kNoGameDataFoundError; \
+		PluginError err = real_ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, obsoleteList); \
+		if (err == kNoError) \
+			*engine = new createFunction(syst); \
+		return err; \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-#define ADVANCED_DETECTOR_TO_DETECTED_GAME(list) \
-	DetectedGame toDetectedGame(const ADGameDescription &g) { \
-		const char *title = 0; \
-		\
-		const PlainGameDescriptor *sg = list; \
-		while (sg->gameid) { \
-			if (!scumm_stricmp(g.name, sg->gameid)) \
-				title = sg->description; \
-			sg++; \
-		} \
-		\
-		DetectedGame dg(g.name, title, g.language, g.platform); \
-		dg.updateDesc(g.extra); \
-		return dg; \
-	} \
-	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(function,descriptions) \
-	DetectedGameList function(const FSList &fslist) { \
-		DetectedGameList detectedGames; \
-		Common::AdvancedDetector AdvDetector; \
-		Common::ADList matches; \
-		Common::ADGameDescList descList; \
-		\
-		for (int i = 0; i < ARRAYSIZE(descriptions); i++) \
-			descList.push_back((const ADGameDescription *)&descriptions[i]); \
-		\
-		AdvDetector.registerGameDescriptions(descList); \
-		AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES); \
-		\
-		matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown); \
-		\
-		for (uint i = 0; i < matches.size(); i++) \
-			detectedGames.push_back(toDetectedGame(descriptions[matches[i]].desc)); \
-		\
-		return detectedGames; \
-	} \
-	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_DETECT_INIT_GAME(function,descriptions,varname,postFunction) \
-	bool function() { \
-		int gameNumber = -1; \
-		\
-		DetectedGameList detectedGames; \
-		Common::AdvancedDetector AdvDetector; \
-		Common::ADList matches; \
-		Common::ADGameDescList descList; \
-		\
-		Common::Language language = Common::UNK_LANG; \
-		Common::Platform platform = Common::kPlatformUnknown; \
-		\
-		if (ConfMan.hasKey("language")) \
-			language = Common::parseLanguage(ConfMan.get("language")); \
-		if (ConfMan.hasKey("platform")) \
-			platform = Common::parsePlatform(ConfMan.get("platform")); \
-		\
-		Common::String gameid = ConfMan.get("gameid"); \
-		\
-		for (int i = 0; i < ARRAYSIZE(descriptions); i++) \
-			descList.push_back((const ADGameDescription *)&descriptions[i]); \
-		\
-		AdvDetector.registerGameDescriptions(descList); \
-		AdvDetector.setFileMD5Bytes(FILE_MD5_BYTES); \
-		\
-		matches = AdvDetector.detectGame(NULL, language, platform); \
-		\
-		for (uint i = 0; i < matches.size(); i++) { \
-			if (toDetectedGame(descriptions[matches[i]].desc).gameid == gameid) { \
-				gameNumber = matches[i]; \
-				break; \
-			} \
-		} \
-		\
-		if (gameNumber >= ARRAYSIZE(descriptions) || gameNumber == -1) { \
-			error("%s wrong gameNumber", "##function##");								\
-		} \
-		\
-		debug(2, "Running %s", toDetectedGame(descriptions[gameNumber].desc).description.c_str()); \
-		\
-		varname = &descriptions[gameNumber]; \
-		\
-		return postFunction(); \
-	} \
-	void dummyFuncToAllowTrailingSemicolon()
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,createFunction,detectFunc,list,obsoleteList) \
+	ADVANCED_DETECTOR_GAMEID_LIST(engine, list); \
+	ADVANCED_DETECTOR_FIND_GAMEID(engine, list, obsoleteList); \
+	ADVANCED_DETECTOR_DETECT_GAMES(engine, detectFunc); \
+	ADVANCED_DETECTOR_ENGINE_CREATE(engine, createFunction, detectFunc, obsoleteList)
 
 
+// TODO/FIXME: Fingolfin asks: Why is AdvancedDetector a class, considering that
+// it is only used as follow:
+//  1) Create an instance of it on the stack
+//  2) invoke registerGameDescriptions and setFileMD5Bytes 
+//  3) invoke detectGame *once*
+// Obviously, 2) could also be handled by passing more params to detectGame.
+// So it seem we could replace this class by a simple advancedDetectGame(...)
+// function, w/o a class or instantiating object... ? Or is there a deeper
+// reason I miss?
 class AdvancedDetector {
 
 public:

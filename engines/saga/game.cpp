@@ -48,13 +48,7 @@ static const PlainGameDescriptor saga_games[] = {
 	{0, 0}
 };
 
-ADVANCED_DETECTOR_GAMEID_LIST(SAGA, saga_games);
-
-ADVANCED_DETECTOR_FIND_GAMEID(SAGA, saga_games, NULL);
-
-ADVANCED_DETECTOR_DETECT_GAMES(SAGA, Saga::GAME_detectGames);
-
-ADVANCED_DETECTOR_ENGINE_CREATE(SAGA, Saga::SagaEngine, "SagaEngine", NULL);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, Saga::GAME_detectGames, saga_games, 0);
 
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
@@ -65,8 +59,6 @@ using Common::ADGameFileDescription;
 using Common::ADGameDescription;
 
 #include "sagagame.cpp"
-
-ADVANCED_DETECTOR_TO_DETECTED_GAME(saga_games);
 
 bool SagaEngine::postInitGame() {
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
@@ -79,8 +71,27 @@ bool SagaEngine::postInitGame() {
 	return true;
 }
 
-ADVANCED_DETECTOR_DETECT_INIT_GAME(SagaEngine::initGame, gameDescriptions, _gameDescription, postInitGame);
+bool SagaEngine::initGame() {
+	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+		(const byte *)gameDescriptions,
+		sizeof(SAGAGameDescription),
+		ARRAYSIZE(gameDescriptions),
+		FILE_MD5_BYTES,
+		saga_games
+		);
+	_gameDescription = &gameDescriptions[i];
+	return postInitGame();
+}
 
-ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(GAME_detectGames, gameDescriptions);
+DetectedGameList GAME_detectGames(const FSList &fslist) {
+	return real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+		fslist,
+		(const byte *)gameDescriptions,
+		sizeof(SAGAGameDescription),
+		ARRAYSIZE(gameDescriptions),
+		FILE_MD5_BYTES,
+		saga_games
+	);
+}
 
 } // End of namespace Saga

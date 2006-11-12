@@ -25,6 +25,7 @@
 #define BASE_GAME_H
 
 #include "common/str.h"
+#include "common/array.h"
 
 struct PlainGameDescriptor {
 	const char *gameid;
@@ -52,6 +53,10 @@ struct GameDescriptor {
 	GameDescriptor(const T &g) :
 		gameid(g.gameid), description(g.description) {}
 };
+
+/** List of games. */
+typedef Common::Array<GameDescriptor> GameList;
+
 
 
 class Plugin;
