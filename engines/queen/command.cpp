@@ -36,8 +36,9 @@
 
 namespace Queen {
 
-CmdText::CmdText(bool reversed, uint8 y, QueenEngine *vm)
-	: _isReversed(reversed), _y(y), _vm(vm) {
+CmdText::CmdText(uint8 y, QueenEngine *vm)
+	: _y(y), _vm(vm) {
+	_isReversed = (_vm->resource()->getLanguage() == Common::HB_ISR);
 	clear();
 }
 
@@ -124,7 +125,7 @@ void CmdState::init() {
 
 Command::Command(QueenEngine *vm)
 	: _cmdList(NULL), _cmdArea(NULL), _cmdObject(NULL), _cmdInventory(NULL), _cmdGameState(NULL),
-	_cmdText((vm->resource()->getLanguage() == Common::HB_ISR), CmdText::COMMAND_Y_POS, vm), _vm(vm) {
+	_cmdText(CmdText::COMMAND_Y_POS, vm), _vm(vm) {
 }
 
 Command::~Command() {
@@ -214,7 +215,7 @@ void Command::executeCurrentAction() {
 		// Joe is stuck behind the waterfall due to a walkbox issue. We could
 		// fix the walkbox issue, but then Joe would walk through the waterfall
 		// which wouldn't look that nice, graphically.
-		//		
+		//
 		// Since this command isn't necessary to complete the game and doesn't
 		// really makes sense here, we just skip it for now. The same cutscene
 		// is already played in command 648, so the user don't miss anything
@@ -225,7 +226,7 @@ void Command::executeCurrentAction() {
 		if (comId == 649) {
 			continue;
 		}
-				
+
 		com = &_cmdList[comId];
 
 		// check the Gamestates and set them if necessary

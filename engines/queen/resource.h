@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENRESOURCE_H
-#define QUEENRESOURCE_H
+#ifndef QUEEN_RESOURCE_H
+#define QUEEN_RESOURCE_H
 
 #include "common/file.h"
 #include "common/util.h"
@@ -73,10 +73,10 @@ public:
 	//! returns a reference to a sound file
 	Common::File *giveCompressedSound(const char *filename, uint32 *size);
 
-	bool isDemo() const { return _version.features & GF_DEMO; }
-	bool isInterview() const { return _version.features & GF_INTERVIEW; }
-	bool isFloppy() const { return _version.features & GF_FLOPPY; }
-	bool isCD() const { return _version.features & GF_TALKIE; }
+	bool isDemo() const { return (_version.features & GF_DEMO) != 0; }
+	bool isInterview() const { return (_version.features & GF_INTERVIEW) != 0; }
+	bool isFloppy() const { return (_version.features & GF_FLOPPY) != 0; }
+	bool isCD() const { return (_version.features & GF_TALKIE) != 0; }
 
 	//! returns compression type for audio files
 	uint8 getCompression() const { return _version.compression; }

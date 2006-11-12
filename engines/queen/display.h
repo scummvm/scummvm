@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENDISPLAY_H
-#define QUEENDISPLAY_H
+#ifndef QUEEN_DISPLAY_H
+#define QUEEN_DISPLAY_H
 
 #include "common/str.h"
 #include "common/util.h"
@@ -151,7 +151,7 @@ public:
 
 	//! change the text color for the specified texts list entry
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
-	
+
 	//! Set the focus rectangle to the speaking character
 	void setFocusRect(const Common::Rect& rect);
 

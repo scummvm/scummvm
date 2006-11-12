@@ -70,7 +70,7 @@ Logic::Logic(QueenEngine *vm)
 	_puzzleAttemptCount = 0;
 	_journal = new Journal(vm);
 	_scene = 0;
-	initialise();
+	readQueenJas();
 }
 
 Logic::~Logic() {
@@ -88,7 +88,7 @@ Logic::~Logic() {
 	delete[] _graphicAnim;
 }
 
-void Logic::initialise() {
+void Logic::readQueenJas() {
 	int16 i;
 
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
@@ -1232,7 +1232,7 @@ void Logic::handlePinnacleRoom() {
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
-	CmdText cmdText((_vm->resource()->getLanguage() == Common::HB_ISR), 5, _vm);
+	CmdText cmdText(5, _vm);
 	cmdText.setVerb(VERB_WALK_TO);
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 

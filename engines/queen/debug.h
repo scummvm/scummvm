@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENDEBUG_H
-#define QUEENDEBUG_H
+#ifndef QUEEN_DEBUG_H
+#define QUEEN_DEBUG_H
 
 #include "gui/debugger.h"
 

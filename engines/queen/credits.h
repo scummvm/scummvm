@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CREDITS_H
-#define CREDITS_H
+#ifndef QUEEN_CREDITS_H
+#define QUEEN_CREDITS_H
 
 #include "common/util.h"
 #include "queen/defs.h"

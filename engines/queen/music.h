@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENMUSIC_H
-#define QUEENMUSIC_H
+#ifndef QUEEN_MUSIC_H
+#define QUEEN_MUSIC_H
 
 #include "common/util.h"
 #include "sound/mididrv.h"

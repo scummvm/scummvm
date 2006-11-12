@@ -80,7 +80,7 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				DetectedGame dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, Common::kPlatformPC);
+				DetectedGame dg(queenGameDescriptor, version.language, Common::kPlatformPC);
 				if (version.features & Queen::GF_DEMO) {
 					dg.updateDesc("Demo");
 				} else if (version.features & Queen::GF_INTERVIEW) {

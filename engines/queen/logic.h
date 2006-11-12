@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENLOGIC_H
-#define QUEENLOGIC_H
+#ifndef QUEEN_LOGIC_H
+#define QUEEN_LOGIC_H
 
 #include "common/str.h"
 #include "common/util.h"
@@ -224,7 +224,7 @@ public:
 
 protected:
 
-	void initialise();
+	void readQueenJas();
 
 	void asmMakeJoeUseDress();
 	void asmMakeJoeUseNormalClothes();

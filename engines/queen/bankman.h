@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENBANKMAN_H
-#define QUEENBANKMAN_H
+#ifndef QUEEN_BANKMAN_H
+#define QUEEN_BANKMAN_H
 
 #include "common/util.h"
 #include "queen/structs.h"

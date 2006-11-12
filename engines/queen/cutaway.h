@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENCUTAWAY_H
-#define QUEENCUTAWAY_H
+#ifndef QUEEN_CUTAWAY_H
+#define QUEEN_CUTAWAY_H
 
 #include "common/util.h"
 #include "queen/structs.h"

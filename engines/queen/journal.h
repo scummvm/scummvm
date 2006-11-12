@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENJOURNAL_H
-#define QUEENJOURNAL_H
+#ifndef QUEEN_JOURNAL_H
+#define QUEEN_JOURNAL_H
 
 #include "common/util.h"
 

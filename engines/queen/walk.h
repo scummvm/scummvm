@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENWALK_H
-#define QUEENWALK_H
+#ifndef QUEEN_WALK_H
+#define QUEEN_WALK_H
 
 #include "common/util.h"
 #include "queen/structs.h"

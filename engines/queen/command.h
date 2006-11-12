@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENCOMMAND_H
-#define QUEENCOMMAND_H
+#ifndef QUEEN_COMMAND_H
+#define QUEEN_COMMAND_H
 
 #include "common/util.h"
 #include "queen/structs.h"
@@ -32,7 +32,7 @@ class QueenEngine;
 
 struct CmdText {
 
-	CmdText(bool reversed, uint8 y, QueenEngine *vm);
+	CmdText(uint8 y, QueenEngine *vm);
 
 	//! reset the command sentence
 	void clear();

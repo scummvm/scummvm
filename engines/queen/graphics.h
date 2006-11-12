@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENGRAPHICS_H
-#define QUEENGRAPHICS_H
+#ifndef QUEEN_GRAPHICS_H
+#define QUEEN_GRAPHICS_H
 
 #include "common/util.h"
 #include "queen/structs.h"

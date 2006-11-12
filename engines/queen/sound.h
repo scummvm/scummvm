@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENSOUND_H
-#define QUEENSOUND_H
+#ifndef QUEEN_SOUND_H
+#define QUEEN_SOUND_H
 
 #include "common/util.h"
 #include "sound/mixer.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENGRID_H
-#define QUEENGRID_H
+#ifndef QUEEN_GRID_H
+#define QUEEN_GRID_H
 
 #include "common/util.h"
 #include "queen/structs.h"

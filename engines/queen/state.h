@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENSTATE_H
-#define QUEENSTATE_H
+#ifndef QUEEN_STATE_H
+#define QUEEN_STATE_H
 
 #include "common/util.h"
 #include "queen/defs.h"

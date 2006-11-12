@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENDEFS_H
-#define QUEENDEFS_H
+#ifndef QUEEN_DEFS_H
+#define QUEEN_DEFS_H
 
 namespace Queen {
 

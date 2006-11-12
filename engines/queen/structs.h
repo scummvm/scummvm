@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEENSTRUCTS_H
-#define QUEENSTRUCTS_H
+#ifndef QUEEN_STRUCTS_H
+#define QUEEN_STRUCTS_H
 
 #include "queen/defs.h"
 #include "common/endian.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef QUEEN_INPUT_H
+#define QUEEN_INPUT_H
 
 #include "common/util.h"
 #include "queen/defs.h"
