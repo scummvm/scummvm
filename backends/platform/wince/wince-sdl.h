@@ -170,17 +170,17 @@ private:
 	CEGUI::ToolbarHandler _toolbarHandler;
 
 	SDL_Surface *_toolbarLow;	// toolbar 320x40
-	SDL_Surface *_toolbarHigh;  // toolbar 640x80
+	SDL_Surface *_toolbarHigh;	// toolbar 640x80
 	bool _toolbarHighDrawn;		// cache toolbar 640x80
 
-	uint16 _sampleRate;			// current audio sample rate
+	uint16 _sampleRate;		// current audio sample rate
 
-	bool _freeLook;				// freeLook mode (do not send mouse button events)
+	bool _freeLook;			// freeLook mode (do not send mouse button events)
 
 	bool _forceHideMouse;		// force invisible mouse cursor
 
-	bool _forcePanelInvisible;  // force panel visibility for some cases
-	bool _panelVisible;			// panel visibility
+	bool _forcePanelInvisible;	// force panel visibility for some cases
+	bool _panelVisible;		// panel visibility
 	bool _panelStateForced;		// panel visibility forced by external call
 
 	bool _panelInitialized;		// only initialize the toolbar once
@@ -195,17 +195,17 @@ private:
 	String _saveActiveToolbar;	// save active toolbar when forced
 
 	bool _saveToolbarZoom;		// save visibility when zooming
-	bool _zoomUp;				// zooming up mode
-	bool _zoomDown;				// zooming down mode
+	bool _zoomUp;			// zooming up mode
+	bool _zoomDown;			// zooming down mode
 
-	bool _rbutton;				// double tap -> right button simulation
+	bool _rbutton;			// double tap -> right button simulation
 
 	bool _usesEmulatedMouse;	// emulated mousemove ever been used in this session
 
-	int _scaleFactorXm;			// scaler X *
-	int _scaleFactorXd;			// scaler X /
-	int _scaleFactorYm;			// scaler Y *
-	int _scaleFactorYd;			// scaler Y /
+	int _scaleFactorXm;		// scaler X *
+	int _scaleFactorXd;		// scaler X /
+	int _scaleFactorYm;		// scaler Y *
+	int _scaleFactorYd;		// scaler Y /
 	bool _scalersChanged;
 
 	static int _platformScreenWidth;
@@ -224,10 +224,10 @@ private:
 
 	// Smartphone specific variables
 
-	int _lastKeyPressed;		// last key pressed
+	int _lastKeyPressed;			// last key pressed
 	int _keyRepeat;				// number of time the last key was repeated
 	int _keyRepeatTime;			// elapsed time since the key was pressed
-	int _keyRepeatTrigger;		// minimum time to consider the key was repeated
+	int _keyRepeatTrigger;			// minimum time to consider the key was repeated
 
 	int _repeatX;				// repeat trigger for left and right cursor moves
 	int _repeatY;				// repeat trigger for up and down cursor moves

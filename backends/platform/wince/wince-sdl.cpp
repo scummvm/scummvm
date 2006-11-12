@@ -267,19 +267,6 @@ int OSystem_WINCE3::getScreenHeight() {
 }
 
 void OSystem_WINCE3::initScreenInfos() {
-	/*
-	// Check if we're running Ozone
-	int result;
-	RawFrameBufferInfo frameBufferInfo;
-	HDC hdc = GetDC(NULL);
-	result = ExtEscape(hdc, GETRAWFRAMEBUFFER, 0, NULL, sizeof(RawFrameBufferInfo), (char *)&frameBufferInfo);
-	ReleaseDC(NULL, hdc);
-	_isOzone = (result > 0);
-	// And obtain the real screen size
-	_platformScreenWidth = (result > 0 ? frameBufferInfo.cxPixels : GetSystemMetrics(SM_CXSCREEN));
-	_platformScreenHeight = (result > 0 ? frameBufferInfo.cyPixels : GetSystemMetrics(SM_CYSCREEN));
-	*/
-
 	// sdl port ensures that we use correctly full screen
 	_isOzone = 0;
 	_platformScreenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -597,8 +584,6 @@ void OSystem_WINCE3::switch_zone() {
 
 	EventsBuffer::simulateMouseMove(_mouseXZone[_currentZone], _mouseYZone[_currentZone]);
 }
-//#endif
-
 
 void OSystem_WINCE3::create_toolbar() {
 	PanelKeyboard *keyboard;
@@ -622,7 +607,6 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 	desired.freq = _sampleRate;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
-	//desired.samples = 2048;
 	desired.samples = 128;
 	desired.callback = private_sound_proc;
 	desired.userdata = param;
@@ -697,10 +681,10 @@ void OSystem_WINCE3::get_sample_rate() {
 	}
 
 #ifdef USE_VORBIS
-    // Modify the sample rate on the fly if OGG is involved
-    if (_sampleRate == SAMPLES_PER_SEC_OLD)
-     if (checkOggHighSampleRate())
-		 _sampleRate = SAMPLES_PER_SEC_NEW;
+	// Modify the sample rate on the fly if OGG is involved
+	if (_sampleRate == SAMPLES_PER_SEC_OLD)
+		if (checkOggHighSampleRate())
+			 _sampleRate = SAMPLES_PER_SEC_NEW;
 #endif
 }
 
@@ -717,6 +701,9 @@ void OSystem_WINCE3::setWindowCaption(const char *caption) {
 	get_sample_rate();
 	bool result = setSoundCallback(Audio::Mixer::mixCallback, _mixer);
 	_mixer->setReady(result);
+
+	// handle the actual event
+	OSystem_SDL::setWindowCaption(caption);
 }
 
 bool OSystem_WINCE3::openCD(int drive) {
@@ -731,8 +718,7 @@ const OSystem::GraphicsMode *OSystem_WINCE3::getSupportedGraphicsModes() const {
 }
 
 bool OSystem_WINCE3::hasFeature(Feature f) {
-return
-		(f == kFeatureAutoComputeDirtyRects || f == kFeatureVirtualKeyboard);
+	return (f == kFeatureAutoComputeDirtyRects || f == kFeatureVirtualKeyboard);
 }
 
 void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
@@ -1051,7 +1037,6 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	if (ConfMan.hasKey("landscape"))
 		if (ConfMan.get("landscape")[0] > 57) {
 			_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
-			//ConfMan.removeKey("landscape", String::emptyString);
 			ConfMan.setInt("landscape", _orientationLandscape);
 		} else
 			_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
@@ -1127,10 +1112,8 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	}
 
 	// Check if the scaler can be accepted, if not get back to normal scaler
-	if (_scaleFactor && ((_scaleFactor * _screenWidth > getScreenWidth() &&
-						  _scaleFactor * _screenWidth > getScreenHeight())
-					 || (_scaleFactor * _screenHeight > getScreenWidth() &&
-						_scaleFactor * _screenHeight > getScreenHeight()))) {
+	if (_scaleFactor && ((_scaleFactor * _screenWidth > getScreenWidth() && _scaleFactor * _screenWidth > getScreenHeight())
+		 || (_scaleFactor * _screenHeight > getScreenWidth() &&	_scaleFactor * _screenHeight > getScreenHeight()))) {
 				_scaleFactor = 1;
 				_scalerProc = Normal1x;
 	}
@@ -1173,15 +1156,12 @@ void OSystem_WINCE3::loadGFXMode() {
 	// Recompute scalers if necessary
 	update_scalers();
 
-	//
 	// Create the surface that contains the 8 bit game data
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
 		error("_screen failed");
 
-	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
-	//
 
 	// Always use full screen mode to have a "clean screen"
 	displayWidth = _screenWidth * _scaleFactorXm / _scaleFactorXd;
@@ -1218,9 +1198,7 @@ void OSystem_WINCE3::loadGFXMode() {
 		quit();
 	}
 
-	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
-	//
 
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
@@ -1230,19 +1208,10 @@ void OSystem_WINCE3::loadGFXMode() {
 	initCEScaler();
 
 	// Need some extra bytes around when using 2xSaI
-	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
-						_screenWidth + 3,
-						_screenHeight + 3,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
+	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth + 3, _screenHeight + 3, 16, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 	if (_tmpscreen == NULL)
-		error("_tmpscreen failed");
-
-
+		error("_tmpscreen creation failed");
 
 	// Overlay
 	if (CEDevice::hasDesktopResolution()) {
@@ -1263,29 +1232,18 @@ void OSystem_WINCE3::loadGFXMode() {
 
 	// Toolbar
 	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));
-	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen,
-						320, 40, 16, 320 * 2,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask
-					);
+	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen, 320, 40, 16, 320 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
+
 	if (_toolbarLow == NULL)
 		error("_toolbarLow failed");
 
 	if (_screenHeight > 240) {
 		uint16 *toolbar_screen = (uint16 *)calloc(640 * 80, sizeof(uint16));
-		_toolbarHigh = SDL_CreateRGBSurfaceFrom(toolbar_screen,
-							640, 80, 16, 640 * 2,
-							_hwscreen->format->Rmask,
-							_hwscreen->format->Gmask,
-							_hwscreen->format->Bmask,
-							_hwscreen->format->Amask
-						);
+		_toolbarHigh = SDL_CreateRGBSurfaceFrom(toolbar_screen, 640, 80, 16, 640 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
+
 		if (_toolbarHigh == NULL)
 			error("_toolbarHigh failed");
-	}
-	else
+	} else
 		_toolbarHigh = NULL;
 
 
@@ -1664,7 +1622,7 @@ void OSystem_WINCE3::copyRectToScreen(const byte *src, int pitch, int x, int y, 
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
 
-	if (_screen == NULL)
+	if (_screen == NULL) 
 		return;
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
@@ -2029,7 +1987,7 @@ void OSystem_WINCE3::retrieve_mouse_location(int &x, int &y) {
 }
 
 void OSystem_WINCE3::warpMouse(int x, int y) {
-		if (_mouseCurState.x != x || _mouseCurState.y != y) {
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		SDL_WarpMouse(x * _scaleFactorXm / _scaleFactorXd, y * _scaleFactorYm / _scaleFactorYd);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
@@ -2243,8 +2201,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, false)) {
 				if (!_toolbarHandler.drawn())
 					internUpdateScreen();
-			}
-			else {
+			} else {
 				if (!_freeLook)
 					memcpy(&event, &temp_event, sizeof(Event));
 			}
