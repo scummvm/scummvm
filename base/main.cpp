@@ -145,18 +145,19 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
+	Common::String path;
 	if (ConfMan.hasKey("path")) {
-		Common::String path(ConfMan.get("path"));
+		path = ConfMan.get("path");
 		FilesystemNode dir(path);
 		if (!dir.isDirectory()) {
 			warning("Game directory does not exist (%s)", path.c_str());
 			return 0;
 		}
-		Common::File::addDefaultDirectory(path);
 	} else {
+		path = ".";
 		warning("No path was provided. Assuming the data files are in the current directory");
-		Common::File::addDefaultDirectory(".");
 	}
+	Common::File::addDefaultDirectory(path);
 
 	// Create the game engine
 	Engine *engine = 0;
@@ -166,7 +167,24 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 		// TODO: Also take 'err' into consideration...
 		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
 		//alert.runModal();
-		warning("Failed to instantiate engine for target %s", ConfMan.getActiveDomainName().c_str());
+		const char *errMsg = 0;
+		switch (err) {
+		case kInvalidPathError:
+			errMsg = "Invalid game path";
+			break;
+		case kNoGameDataFoundError:
+			errMsg = "Unable to locate game data";
+			break;
+		default:
+			errMsg = "Unknown error";
+		}
+
+		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
+			plugin->getName(),
+			errMsg,
+			ConfMan.getActiveDomainName().c_str(),
+			path.c_str()
+			);
 		return 0;
 	}
 
