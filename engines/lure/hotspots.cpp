@@ -1665,7 +1665,7 @@ void Hotspot::npcExecScript(HotspotData *hotspot) {
 void Hotspot::npcResetPausedList(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	setCharacterMode(CHARMODE_HESITATE);
-	setDelayCtr(16);
+	setDelayCtr(IDLE_COUNTDOWN_SIZE + 1);
 
 	res.pausedList().reset(hotspotId());
 	endAction();
@@ -2515,7 +2515,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 					room.setCursorState(CS_NONE);
 				if (fields.playerPendingPos().isSet) {
 					h.setCharacterMode(CHARMODE_6);
-					h.setDelayCtr(15);
+					h.setDelayCtr(IDLE_COUNTDOWN_SIZE);
 					return;
 				}
 
@@ -3072,6 +3072,7 @@ bool PathFinder::process() {
 			else if (_xDestPos < 0) 
 				add(LEFT, -_xDestPos);
 
+			_inProgress = false;
 			goto final_step;
 		}
 
@@ -3140,7 +3141,8 @@ bool PathFinder::process() {
 			scanFlag = true;
 			break;
 		}
-	} 
+	}
+	_inProgress = false;
 
 	if (scanFlag || _destOccupied) {
 		// Adjust the end point if necessary to stop character walking into occupied area
