@@ -17,6 +17,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Broken Sword 2:
    - Added support for DXA cutscenes.
 
+ Cine:
+   - Improved support for international versions.
+
  SCUMM:
    - Fixed various actor walking issues.
 
