@@ -28,6 +28,7 @@
 #include "base/main.h"
 #include "base/plugins.h"
 #include "common/timer.h"
+#include "sound/mixer.h"
 
 #include "common/config-manager.h"
 
@@ -79,9 +80,9 @@ static FILE *stdout_file;
 static FILE *stderr_file;
 
 // Static member inits
-
+typedef void (*SoundProc)(void *param, byte *buf, int len);
 bool OSystem_WINCE3::_soundMaster = true;
-OSystem::SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
+SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 
 bool _isSmartphone = false;
 bool _hasSmartphoneResolution = false;
@@ -247,11 +248,14 @@ void OSystem_WINCE3::initBackend()
 
 	loadDeviceConfiguration();
 
-	// FIXME: We are currently not calling OSystem_SDL::initBackend() here.
-	// Maybe on purpose, but this is possibly a bit risky... E.g. _inited
-	// won't be set correctly due to this... Can we change this? Maybe after
-	// some changes to the base SDL backend?
-	//OSystem_SDL::initBackend();
+	// Instantiate our own sound mixer
+	// mixer init is postponed until a game engine is selected.
+	if (_mixer == 0) {
+		_mixer = new Audio::Mixer();
+	}
+
+	// Chain init
+	OSystem_SDL::initBackend();
 }
 
 int OSystem_WINCE3::getScreenWidth() {
@@ -307,6 +311,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
 	create_toolbar();
 
+	_mixer = 0;
 
 	// Mouse backup (temporary code)
 	_mouseBackupOld = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
@@ -604,6 +609,41 @@ void OSystem_WINCE3::create_toolbar() {
 	_toolbarHandler.setVisible(false);
 }
 
+bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
+	SDL_AudioSpec desired;
+	int thread_priority;
+
+	if (_sampleRate == 0)
+		warning("setSoundCallback called with 0 _sampleRate. Audio will not work.");
+
+	memset(&desired, 0, sizeof(desired));
+
+	_originalSoundProc = proc;
+	desired.freq = _sampleRate;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 2;
+	//desired.samples = 2048;
+	desired.samples = 128;
+	desired.callback = private_sound_proc;
+	desired.userdata = param;
+
+	// Add sound thread priority
+	if (!ConfMan.hasKey("sound_thread_priority")) {
+		thread_priority = THREAD_PRIORITY_NORMAL;
+	}
+	else
+		thread_priority = ConfMan.getInt("sound_thread_priority");
+
+	desired.thread_priority = thread_priority;
+
+	if (SDL_OpenAudio(&desired, NULL) != 0) {
+		warning("Could not open audio device: %s", SDL_GetError());
+		return false;
+	}
+	SDL_PauseAudio(0);
+	return true;
+}
+
 void OSystem_WINCE3::private_sound_proc(void *param, byte *buf, int len) {
 	(*_originalSoundProc)(param, buf, len);
 	if (!_soundMaster)
@@ -647,7 +687,7 @@ void OSystem_WINCE3::get_sample_rate() {
 	}
 	// See if the output frequency is forced by the game
 	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" ||
-		strncmp(gameid.c_str(), "sword", 5) == 0 ||	strncmp(gameid.c_str(), "sky", 3) == 0)
+		strncmp(gameid.c_str(), "sword", 5) == 0 || strncmp(gameid.c_str(), "sky", 3) == 0)
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
@@ -669,9 +709,14 @@ int OSystem_WINCE3::getOutputSampleRate() const {
 }
 
 void OSystem_WINCE3::setWindowCaption(const char *caption) {
+//void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
+	
 	//update_game_settings();
-	get_sample_rate(); // called here to initialize mixer
+	// finalize mixer init
+	get_sample_rate();
+	bool result = setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	_mixer->setReady(result);
 }
 
 bool OSystem_WINCE3::openCD(int drive) {
@@ -726,37 +771,6 @@ bool OSystem_WINCE3::getFeatureState(Feature f) {
 			return (_panelStateForced);
 	}
 	return OSystem_SDL::getFeatureState(f);
-}
-
-bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
-	SDL_AudioSpec desired;
-	int thread_priority;
-
-	memset(&desired, 0, sizeof(desired));
-
-	_originalSoundProc = proc;
-	desired.freq = _sampleRate;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	//desired.samples = 2048;
-	desired.samples = 128;
-	desired.callback = private_sound_proc;
-	desired.userdata = param;
-
-	// Add sound thread priority
-	if (!ConfMan.hasKey("sound_thread_priority")) {
-		thread_priority = THREAD_PRIORITY_NORMAL;
-	}
-	else
-		thread_priority = ConfMan.getInt("sound_thread_priority");
-
-	desired.thread_priority = thread_priority;
-
-	if (SDL_OpenAudio(&desired, NULL) != 0) {
-		return false;
-	}
-	SDL_PauseAudio(0);
-	return true;
 }
 
 void OSystem_WINCE3::check_mappings() {

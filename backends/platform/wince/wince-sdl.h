@@ -82,13 +82,15 @@ public:
 	void quit();
 	// Overloaded from SDL_Commmon (master volume and sample rate subtleties)
 	bool setSoundCallback(SoundProc proc, void *param);
+	// Overloaded from OSystem
+	//void engineInit();
 
 	// Overloaded from SDL_Common (FIXME)
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend
 	void undrawMouse();
 	void blitCursor();
 	void setMousePos(int x, int y);
-    void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	void showOverlay();
 	void hideOverlay();

@@ -37,7 +37,14 @@
 #include "SymbianOs.h"
 #endif
 
-#if !defined(_WIN32_WCE) && !defined(__MAEMO__)
+#ifndef __MAEMO__
+
+static Uint32 timer_handler(Uint32 interval, void *param) {
+	((DefaultTimerManager *)param)->handler();
+	return interval;
+}
+
+#ifndef _WIN32_WCE
 
 #if defined (WIN32)
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
@@ -45,11 +52,6 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 	return main(__argc, __argv);
 }
 #endif
-
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
-}
 
 int main(int argc, char *argv[]) {
 
@@ -114,7 +116,8 @@ int main(int argc, char *argv[]) {
 	g_system->quit();	// TODO: Consider removing / replacing this!
 	return res;
 }
-#endif
+#endif	// defined(_WIN32_WCE)
+#endif	// defined(__MAEMO__)
 
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
