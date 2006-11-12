@@ -677,10 +677,10 @@ int32 IMuseInternal::doCommand_internal
 	args[5] = f;
 	args[6] = g;
 	args[7] = h;
-	return doCommand_internal (8, args);
+	return doCommand_internal(8, args);
 }
 
-int32 IMuseInternal::doCommand_internal (int numargs, int a[]) {
+int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 	if (numargs < 1)
 		return -1;
 

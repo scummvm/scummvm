@@ -150,7 +150,7 @@ void Sound::processSoundQueues() {
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
 			if (_vm->_imuse) {
-				_vm->VAR(_vm->VAR_SOUNDRESULT) = (short)_vm->_imuse->doCommand (num, data);
+				_vm->VAR(_vm->VAR_SOUNDRESULT) = (short)_vm->_imuse->doCommand(num, data);
 			}
 		}
 	}
