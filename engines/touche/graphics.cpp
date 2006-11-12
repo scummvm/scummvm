@@ -152,21 +152,12 @@ void Graphics::drawLine(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2
 
 void Graphics::copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, int flags) {
 	if (w != 0 && h != 0) {
-		if (flags & kHFlipped) {
-			srcY += h - 1;
-			srcPitch = -srcPitch;
-		}
-		int u = 1;
-		if (flags & kVFlipped) {
-			srcX += w - 1;
-			u = -1;
-		}
 		dst += dstY * dstPitch + dstX;
 		src += srcY * srcPitch + srcX;
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
-				if ((flags & kTransparent) == 0 || src[u * i] != 0) {
-					dst[i] = src[u * i];
+				if ((flags & kTransparent) == 0 || src[i] != 0) {
+					dst[i] = src[i];
 				}
 			}
 			dst += dstPitch;
@@ -176,16 +167,18 @@ void Graphics::copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint
 }
 
 void Graphics::copyMask(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, uint8 fillColor) {
-	dst += dstY * dstPitch + dstX;
-	src += srcY * srcPitch + srcX;
-	while (h--) {
-		for (int i = 0; i < w; ++i) {
-			if (src[i] != 0) {
-				dst[i] = fillColor;
+	if (w != 0 && h != 0) {
+		dst += dstY * dstPitch + dstX;
+		src += srcY * srcPitch + srcX;
+		while (h--) {
+			for (int i = 0; i < w; ++i) {
+				if (src[i] != 0) {
+					dst[i] = fillColor;
+				}
 			}
+			dst += dstPitch;
+			src += srcPitch;
 		}
-		dst += dstPitch;
-		src += srcPitch;
 	}
 }
 

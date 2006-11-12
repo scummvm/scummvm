@@ -1244,10 +1244,10 @@ int ToucheEngine::getStringWidth(int num) const {
 	return Graphics::getStringWidth16(str);
 }
 
-void ToucheEngine::drawString(uint8 *dst, int dstPitch, uint16 color, int x, int y, int16 num) {
+void ToucheEngine::drawString(uint16 color, int x, int y, int16 num) {
 	if (num) {
 		const char *str = getString(num);
-		Graphics::drawString16(dst, dstPitch, color, x, y, str);
+		Graphics::drawString16(_offscreenBuffer, 640, color, x, y, str);
 	}
 }
 
@@ -1810,9 +1810,9 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 		if (actionsTable[i] == 0) {
 			break;
 		}
-		drawString(_offscreenBuffer, 640, 0xF8F9, offs, y + i * 16, actionsTable[i]);
+		drawString(0xF8F9, offs, y + i * 16, actionsTable[i]);
 	}
-	updateScreenArea(_offscreenBuffer, 640, cursorPosX, cursorPosY, cursorPosX, cursorPosY, cursorW, cursorH);
+	updateScreenArea(cursorPosX, cursorPosY, cursorW, cursorH);
 
 	_redrawScreenCounter1 = 2;
 	Common::Rect rect(0, y, 640, y + h);
@@ -1823,18 +1823,18 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 			if (c != i) {
 				if (i >= 0) {
 					drawY = y + i * 16;
-					drawString(_offscreenBuffer, 640, 0xF8F9, offs, drawY, actionsTable[i]);
-					updateScreenArea(_offscreenBuffer, 640, offs, drawY, offs, drawY, strW, 16);
+					drawString(0xF8F9, offs, drawY, actionsTable[i]);
+					updateScreenArea(offs, drawY, strW, 16);
 				}
 				i = c;
 				drawY = y + i * 16;
-				drawString(_offscreenBuffer, 640, 0xF8FF, offs, drawY, actionsTable[i]);
-				updateScreenArea(_offscreenBuffer, 640, offs, drawY, offs, drawY, strW, 16);
+				drawString(0xF8FF, offs, drawY, actionsTable[i]);
+				updateScreenArea(offs, drawY, strW, 16);
 			}
 		} else if (i >= 0) {
 			drawY = y + i * 16;
-			drawString(_offscreenBuffer, 640, 0xF8F9, offs, drawY, actionsTable[i]);
-			updateScreenArea(_offscreenBuffer, 640, offs, drawY, offs, drawY, strW, 16);
+			drawString(0xF8F9, offs, drawY, actionsTable[i]);
+			updateScreenArea(offs, drawY, strW, 16);
 			i = -1;
 		}
 		processEvents(false);
@@ -2064,7 +2064,7 @@ void ToucheEngine::drawInventory(int index, int flag) {
 			}
 		}
 		drawAmountOfMoneyInInventory();
-		updateScreenArea(_offscreenBuffer, 640, 0, 352, 0, 352, 640, 48);
+		updateScreenArea(0, 352, 640, 48);
 	}
 }
 
@@ -2074,14 +2074,14 @@ void ToucheEngine::drawAmountOfMoneyInInventory() {
 		sprintf(text, "%d", _keyCharsTable[0].money);
 		Graphics::fillRect(_offscreenBuffer, 640, 74, 354, 40, 16, 0xD2);
 		drawGameString(217, 94, 355, text);
-		updateScreenArea(_offscreenBuffer, 640, 74, 354, 74, 354, 40, 16);
+		updateScreenArea(74, 354, 40, 16);
 		Graphics::fillRect(_offscreenBuffer, 640, 150, 353, 40, 41, 0xD2);
 		if (_currentAmountOfMoney != 0) {
 			drawIcon(141, 348, 1);
 			sprintf(text, "%d", _currentAmountOfMoney);
 			drawGameString(217, 170, 378, text);
 		}
-		updateScreenArea(_offscreenBuffer, 640, 150, 353, 150, 353, 40, 41);
+		updateScreenArea(150, 353, 40, 41);
 	}
 }
 
@@ -2432,21 +2432,21 @@ void ToucheEngine::drawCharacterConversation() {
 	}
 	drawConversationPanel();
 	for (int i = 0; i < 4; ++i) {
-		drawString(_offscreenBuffer, 640, 214, 42, 328 + i * 16, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
+		drawString(214, 42, 328 + i * 16, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
 	}
-	updateScreenArea(_offscreenBuffer, 640, 0, 320, 0, 320, 640, 80);
+	updateScreenArea(0, 320, 640, 80);
 	_conversationAreaCleared = false;
 }
 
 void ToucheEngine::drawConversationString(int num, uint16 color) {
 	const int y = 328 + num * 16;
-	drawString(_offscreenBuffer, 640, color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
-	updateScreenArea(_offscreenBuffer, 640, 0, y, 0, y, 640, 16);
+	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
+	updateScreenArea(0, y, 640, 16);
 }
 
 void ToucheEngine::clearConversationArea() {
 	drawConversationPanel();
-	updateScreenArea(_offscreenBuffer, 640, 0, 320, 0, 320, 640, 80);
+	updateScreenArea(0, 320, 640, 80);
 	_conversationAreaCleared = true;
 }
 
@@ -3230,8 +3230,8 @@ void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gS
 	_system->setPalette(&pal[firstColor * 4], firstColor, colorCount);
 }
 
-void ToucheEngine::updateScreenArea(const uint8 *src, int srcPitch, int srcX, int srcY, int dstX, int dstY, int w, int h) {
-	_system->copyRectToScreen(src + srcY * srcPitch + srcX, srcPitch, dstX, dstY, w, h);
+void ToucheEngine::updateScreenArea(int x, int y, int w, int h) {
+	_system->copyRectToScreen(_offscreenBuffer + y * 640 + x, 640, x, y, w, h);
 	_system->updateScreen();
 }
 
@@ -3243,18 +3243,18 @@ void ToucheEngine::updateEntireScreen() {
 
 void ToucheEngine::updateDirtyScreenAreas() {
 	// XXX
-	updateScreenArea(_offscreenBuffer, 640, 0, 0, 0, 0, 640, 400);
+	updateScreenArea(0, 0, 640, 400);
 	if (_fullRedrawCounter) {
 //		updateEntireScreen();
 		--_fullRedrawCounter;
 	} else {
 //		for (int i = 0; i < _dirtyRectsCount; ++i) {
 //			Common::Rect *r = &_dirtyRects[i];
-//			updateScreenArea(_offscreenBuffer, 640, r->x, r->y, r->x, r->y, r->w, r->h);
+//			updateScreenArea(r->x, r->y, r->w, r->h);
 //		}
 		if (_redrawScreenCounter1) {
 			--_redrawScreenCounter1;
-//			updateScreenArea(_offscreenBuffer, 640, _cursorObjectRect.x, _cursorObjectRect.y, _cursorObjectRect.x, _cursorObjectRect.y, _cursorObjectRect.w, _cursorObjectRect.h);
+//			updateScreenArea(_cursorObjectRect.x, _cursorObjectRect.y, _cursorObjectRect.w, _cursorObjectRect.h);
 		}
 	}
 }

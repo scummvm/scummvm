@@ -380,7 +380,7 @@ protected:
 	void setKeyCharMoney();
 	const char *getString(int num) const;
 	int getStringWidth(int num) const;
-	void drawString(uint8 *dst, int dstPitch, uint16 color, int x, int y, int16 num);
+	void drawString(uint16 color, int x, int y, int16 num);
 	void drawGameString(uint16 color, int x1, int y, const char *str);
 	int restartKeyCharScriptOnAction(int action, int obj1, int obj2);
 	void buildSpriteScalingTable(int z1, int z2);
@@ -463,7 +463,7 @@ protected:
 	void addToDirtyRect(const Common::Rect &r);
 	void clearDirtyRects();
 	void setPalette(int firstColor, int colorCount, int redScale, int greenScale, int blueScale);
-	void updateScreenArea(const uint8 *src, int srcPitch, int srcX, int srcY, int dstX, int dstY, int w, int h);
+	void updateScreenArea(int x, int y, int w, int h);
 	void updateEntireScreen();
 	void updateDirtyScreenAreas();
 	void updatePalette();

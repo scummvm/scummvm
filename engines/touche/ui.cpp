@@ -406,7 +406,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					break;
 				}
 			}
-			updateScreenArea(_offscreenBuffer, 640, 90, 102, 90, 102, 460, 196);
+			updateScreenArea(90, 102, 460, 196);
 			_system->updateScreen();
 			_system->delayMillis(50);
 		}
@@ -513,14 +513,14 @@ void ToucheEngine::printStatusString(const char *str) {
 	Graphics::fillRect(_offscreenBuffer, 640, 0, 0, 640, 16, 0xD7);
 	Graphics::drawRect(_offscreenBuffer, 640, 0, 0, 640, 16, 0xD6, 0xD8);
 	Graphics::drawString16(_offscreenBuffer, 640, 0xFF, 0, 0, str);
-	updateScreenArea(_offscreenBuffer, 640, 0, 0, 0, 0, 640, 16);
+	updateScreenArea(0, 0, 640, 16);
 }
 
 void ToucheEngine::clearStatusString() {
 	Graphics::copyRect(_offscreenBuffer, 640, 0, 0,
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
 	  640, 16);
-	updateScreenArea(_offscreenBuffer, 640, 0, 0, 0, 0, 640, 16);
+	updateScreenArea(0, 0, 640, 16);
 }
 
 int ToucheEngine::displayQuitDialog() {

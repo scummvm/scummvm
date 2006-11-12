@@ -28,10 +28,9 @@
 namespace Touche {
 
 struct Graphics {
+
 	enum {
-		kVFlipped    = 1 << 0,
-		kHFlipped    = 1 << 1,
-		kTransparent = 1 << 2
+		kTransparent = 1 << 0
 	};
 
 	static int getStringWidth16(const char *str);
