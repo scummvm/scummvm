@@ -798,7 +798,7 @@ PausedCharacter::PausedCharacter(uint16 SrcCharId, uint16 DestCharId) {
 	srcCharId = SrcCharId;
 	destCharId = DestCharId;
 	counter = IDLE_COUNTDOWN_SIZE;
-	charHotspot = Resources::getReference().getHotspot(SrcCharId);
+	charHotspot = Resources::getReference().getHotspot(DestCharId);
 	assert(charHotspot);
 }
 
@@ -868,19 +868,22 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 
 		// Scan through the pause list to see if there's a record for the
 		// calling character and the impinging list entry
-		for (i = res.pausedList().begin(); i != res.pausedList().end(); ++i) {
+		bool foundEntry = false;
+		for (i = res.pausedList().begin(); !foundEntry && (i != res.pausedList().end()); ++i) {
 			PausedCharacter *rec = *i;
-			if ((rec->srcCharId == charId) && 
-				(rec->destCharId == hotspot->hotspotId()))
-				break;
+			foundEntry = (rec->srcCharId == charId) && 
+				(rec->destCharId == hotspot->hotspotId());
 		}
 
-		if (i != res.pausedList().end())
+		if (foundEntry)
 			// There was, so move to next impinging character entry
 			continue;
 
 		if ((hotspot->hotspotId() == PLAYER_ID) && !hotspot->coveredFlag())
+		{
+			hotspot->updateMovement();
 			return 1;
+		}
 
 		// Add a new paused character entry
 		PausedCharacter *entry = new PausedCharacter(charId, hotspot->hotspotId());
@@ -892,9 +895,9 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 				((charHotspot->pauseCtr() == 0) && 
 				(charHotspot->characterMode() == CHARMODE_NONE))) {
 				hotspot->resource()->use2HotspotId = charId;
-			} else {
-				hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
 			}
+
+			hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
 		}
 
 		result = 2;
