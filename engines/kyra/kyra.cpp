@@ -107,6 +107,18 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_quitFlag = false;
 	_currHeadShape = 0;
+
+	// sets up all engine specific debug levels
+	Common::addSpecialDebugLevel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
+	Common::addSpecialDebugLevel(kDebugLevelScript, "Script", "Script interpreter debug level");
+	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprite debug level");
+	Common::addSpecialDebugLevel(kDebugLevelScreen, "Screen", "Screen debug level");
+	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debug level");
+	Common::addSpecialDebugLevel(kDebugLevelAnimator, "Animator", "Animator debug level");
+	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
+	Common::addSpecialDebugLevel(kDebugLevelGUI, "GUI", "GUI debug level");
+	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
+	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
 }
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
@@ -122,18 +134,6 @@ int KyraEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-
-	// sets up all engine specific debug levels
-	Common::addSpecialDebugLevel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
-	Common::addSpecialDebugLevel(kDebugLevelScript, "Script", "Script interpreter debug level");
-	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprite debug level");
-	Common::addSpecialDebugLevel(kDebugLevelScreen, "Screen", "Screen debug level");
-	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debug level");
-	Common::addSpecialDebugLevel(kDebugLevelAnimator, "Animator", "Animator debug level");
-	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
-	Common::addSpecialDebugLevel(kDebugLevelGUI, "GUI", "GUI debug level");
-	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
-	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
 
 	_screen = new Screen(this, _system);
 	assert(_screen);
