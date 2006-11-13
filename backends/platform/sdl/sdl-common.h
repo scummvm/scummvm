@@ -399,7 +399,10 @@ protected:
 
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
-	int effectiveScreenHeight() const { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
+	int effectiveScreenHeight() const {
+		return (_adjustAspectRatio ? real2Aspect(_screenHeight) : _screenHeight) 
+			* _scaleFactor; 
+	}
 
 	void setupIcon();
 	void handleKbdMouse();

@@ -316,7 +316,7 @@ void OSystem_SDL::loadGFXMode() {
 	_overlayWidth = _screenWidth * _scaleFactor;
 	_overlayHeight = _screenHeight * _scaleFactor;
 
-	if (_screenHeight != 200)
+	if (_screenHeight != 200 && _screenHeight != 400)
 		_adjustAspectRatio = false;
 
 	if (_adjustAspectRatio)
@@ -735,7 +735,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 }
 
 void OSystem_SDL::setAspectRatioCorrection(bool enable) {
-	if ((_screenHeight == 200 && _adjustAspectRatio != enable) ||
+	if (((_screenHeight == 200 || _screenHeight == 400) && _adjustAspectRatio != enable) ||
 		_transactionMode == kTransactionCommit) {
 		Common::StackLock lock(_graphicsMutex);
 
