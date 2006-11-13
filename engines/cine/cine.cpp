@@ -146,11 +146,6 @@ static void initialize() {
 		globalVars[i] = 0;
 	}
 
-	// bypass protection
-	if (g_cine->getGameType() == GType_OS && !ConfMan.getBool("copy_protection")) {
-		globalVars[255] = 1;
-	}
-
 	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
 		scriptTable[i].ptr = NULL;
 		scriptTable[i].size = 0;
