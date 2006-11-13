@@ -361,7 +361,16 @@ int gDebugLevel = -1;
 
 
 
-static void debugHelper(char *buf, bool caret = true) {
+static void debugHelper(const char *in_buf, bool caret = true) {
+	char buf[STRINGBUFLEN];
+
+	// Next, give the active engine (if any) a chance to augment the message
+	if (g_engine) {
+		g_engine->errorString(in_buf, buf);
+	} else {
+		strcpy(buf, in_buf);
+	}
+
 #ifndef _WIN32_WCE
 	if (caret)
 		printf("%s\n", buf);
@@ -448,8 +457,7 @@ void NORETURN CDECL error(const char *s, ...) {
 	va_end(va);
 
 
-	// Next, give the active engine (if any) a chance to augment the
-	// error message
+	// Next, give the active engine (if any) a chance to augment the message
 	if (g_engine) {
 		g_engine->errorString(buf_input, buf_output);
 	} else {
