@@ -253,8 +253,6 @@ void Logic::readQueenJas() {
 	for (i = 1; i <= _numAFile; i++) {
 		_aFile.push_back(queen2jas.nextLine());
 	}
-
-	delete[] buf;
 }
 
 void Logic::start() {
