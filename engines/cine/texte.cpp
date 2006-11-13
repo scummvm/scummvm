@@ -566,4 +566,54 @@ void initLanguage(Common::Language lang) {
 	}
 }
 
+void loadErrmessDat(const char *fname) {
+	Common::File in;
+
+	in.open(fname);
+
+	if (in.isOpen()) {
+		char **ptr = (char **)malloc(sizeof(char *) * 6 * 4 + 60 * 6 * 4);
+
+		for (int i = 0; i < 6 * 4; i++) {
+			ptr[i] = (char *)ptr + (sizeof(char *) * 6 * 4) + 60 * i;
+			in.read(ptr[i], 60);
+		}
+		failureMessages = (const char **)ptr;
+
+		in.close();
+	} else {
+		error("Cannot open file %s for reading", fname);
+	}
+}
+
+void freeErrmessDat() {
+	free(failureMessages);
+	failureMessages = 0;
+}
+
+void loadPoldatDat(const char *fname) {
+	Common::File in;
+
+	in.open(fname);
+
+	if (in.isOpen()) {
+		CharacterEntry *ptr = (CharacterEntry *)malloc(sizeof(CharacterEntry) * 256);
+
+		for (int i = 0; i < 256; i++) {
+			ptr[i].characterIdx = (int)in.readByte();
+			ptr[i].characterWidth = (int)in.readByte();
+		}
+		fontParamTable = ptr;
+
+		in.close();
+	} else {
+		error("Cannot open file %s for reading", fname);
+	}
+}
+
+void freePoldatDat() {
+	free((void *)fontParamTable);
+	fontParamTable = 0;
+}
+
 } // End of namespace Cine

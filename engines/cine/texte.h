@@ -50,6 +50,10 @@ struct CharacterEntry {
 extern const CharacterEntry *fontParamTable;
 
 void loadTextData(const char *pFileName, byte *pDestinationBuffer);
+void loadErrmessDat(const char *fname);
+void freeErrmessDat(void);
+void loadPoldatDat(const char *fname);
+void freePoldatDat(void);
 
 } // End of namespace Cine
 

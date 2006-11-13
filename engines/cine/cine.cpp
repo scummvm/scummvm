@@ -38,6 +38,7 @@
 #include "cine/bg_list.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
+#include "cine/texte.h"
 #include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
 #include "cine/various.h"
@@ -68,6 +69,10 @@ CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 }
 
 CineEngine::~CineEngine() {
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		freePoldatDat();
+		freeErrmessDat();
+	}
 }
 
 int CineEngine::init() {
@@ -131,9 +136,8 @@ static void initialize() {
 		snd_loadBasesonEntries("BASESON.SND");
 		break;
 	case Cine::GType_OS:
-		// TODO
-		// load POLDAT.DAT
-		// load ERRMESS.DAT (default responses to actions)
+		loadPoldatDat("poldat.dat");
+		loadErrmessDat("errmess.dat");
 		break;
 	}
 
