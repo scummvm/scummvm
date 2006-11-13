@@ -593,9 +593,6 @@ protected:
 	 */
 	bool _smushVideoShouldFinish;
 
-	/** This flag is a hack to allow the pause dialog to pause SMUSH playback, too. */
-	bool _smushPaused;
-
 	bool _smushActive;
 
 	Insane *_insane;

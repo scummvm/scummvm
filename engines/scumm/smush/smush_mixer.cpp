@@ -45,14 +45,12 @@ SmushMixer::SmushMixer(Audio::Mixer *m) :
 }
 
 SmushMixer::~SmushMixer() {
-	Common::StackLock lock(_mutex);
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		_mixer->stopHandle(_channels[i].handle);
 	}
 }
 
 SmushChannel *SmushMixer::findChannel(int32 track) {
-	Common::StackLock lock(_mutex);
 	debugC(DEBUG_SMUSH, "SmushMixer::findChannel(%d)", track);
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id == track)
@@ -62,7 +60,6 @@ SmushChannel *SmushMixer::findChannel(int32 track) {
 }
 
 void SmushMixer::addChannel(SmushChannel *c) {
-	Common::StackLock lock(_mutex);
 	int32 track = c->getTrackIdentifier();
 	int i;
 
@@ -91,7 +88,6 @@ void SmushMixer::addChannel(SmushChannel *c) {
 }
 
 bool SmushMixer::handleFrame() {
-	Common::StackLock lock(_mutex);
 	debugC(DEBUG_SMUSH, "SmushMixer::handleFrame()");
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
@@ -136,7 +132,6 @@ bool SmushMixer::handleFrame() {
 }
 
 bool SmushMixer::stop() {
-	Common::StackLock lock(_mutex);
 	debugC(DEBUG_SMUSH, "SmushMixer::stop()");
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
@@ -154,7 +149,6 @@ bool SmushMixer::stop() {
 }
 
 bool SmushMixer::flush() {
-	Common::StackLock lock(_mutex);
 	debugC(DEBUG_SMUSH, "SmushMixer::flush()");
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {

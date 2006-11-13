@@ -91,11 +91,13 @@ private:
 #ifdef __SYMBIAN32__
 	bool _closeOnTextTick;
 #endif
-	Common::Mutex _mutex;
 
 public:
 	SmushPlayer(ScummEngine_v7 *scumm);
 	~SmushPlayer();
+
+	void pause();
+	void unpause();
 
 	void play(const char *filename, int32 speed, int32 offset = 0, int32 startFrame = 0);
 	void release();
@@ -106,6 +108,9 @@ protected:
 	int _width, _height;
 
 	int _origPitch, _origNumStrips;
+	bool _paused;
+	uint32 _pauseStartTime;
+	uint32 _pauseTime;
 
 	void insanity(bool);
 	void setPalette(const byte *palette);
@@ -139,7 +144,7 @@ private:
 	void handleDeltaPalette(Chunk &);
 	void readPalette(byte *, Chunk &);
 
-	static void timerCallback(void *ptr);
+	void timerCallback();
 };
 
 } // End of namespace Scumm

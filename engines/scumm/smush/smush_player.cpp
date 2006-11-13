@@ -27,7 +27,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
-#include "common/timer.h"
 #include "common/util.h"
 
 #include "graphics/cursorman.h"
@@ -220,18 +219,17 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 	return sr;
 }
 
-void SmushPlayer::timerCallback(void *refCon) {
-	SmushPlayer *sp = (SmushPlayer *)refCon;
-	sp->parseNextFrame();
+void SmushPlayer::timerCallback() {
+	parseNextFrame();
 #ifdef _WIN32_WCE
-	sp->_inTimer = true;
-	sp->_inTimerCount++;
+	_inTimer = true;
+	_inTimerCount++;
 #endif
 #ifdef __SYMBIAN32__
-	if (sp->_closeOnTextTick) {
-		delete sp->_base;
-		sp->_base = NULL;
-		sp->_closeOnTextTick = false;
+	if (_closeOnTextTick) {
+		delete _base;
+		_base = NULL;
+		_closeOnTextTick = false;
 	}
 #endif
 }
@@ -267,6 +265,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_skipPalette = false;
 	_IACTstream = NULL;
 	_smixer = _vm->_smixer;
+	_paused = false;
+	_pauseStartTime = 0;
+	_pauseTime = 0;
 #ifdef _WIN32_WCE
 	_inTimer = false;
 	_inTimerCount = 0;
@@ -307,8 +308,6 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_mixer->stopHandle(_IACTchannel);
 	_vm->_smixer->stop();
 
-	_vm->_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
-
 	_initDone = true;
 }
 
@@ -322,7 +321,6 @@ void SmushPlayer::release() {
 		User::After(15624); 
 	}
 #endif
-	_vm->_timer->removeTimerProc(&timerCallback);
 
 	_vm->_smushVideoShouldFinish = true;
 
@@ -1071,12 +1069,7 @@ void SmushPlayer::setupAnim(const char *file) {
 }
 
 void SmushPlayer::parseNextFrame() {
-	Common::StackLock lock(_mutex);
-
 	Chunk *sub;
-
-	if (_vm->_smushPaused)
-		return;
 
 	if (_seekPos >= 0) {
 		if (_smixer)
@@ -1230,8 +1223,6 @@ void SmushPlayer::insanity(bool flag) {
 }
 
 void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
-	Common::StackLock lock(_mutex);
-
 	_seekFile = file ? file : "";
 	_seekPos = pos;
 	_seekFrame = contFrame;
@@ -1274,8 +1265,22 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 #endif
 }
 
-void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
+void SmushPlayer::pause() {
+	if (!_paused) {
+		_paused = true;
+		_pauseStartTime = _vm->_system->getMillis();
+	}
+}
 
+void SmushPlayer::unpause() {
+	if (_paused) {
+		_paused = false;
+		_pauseTime += (_vm->_system->getMillis() - _pauseStartTime);
+		_pauseStartTime = 0;
+	}
+}
+
+void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
 	// Verify the specified file exists
 	ScummFile f;
 	_vm->openFile(f, filename);
@@ -1302,7 +1307,39 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	setupAnim(filename);
 	init(speed);
 
+	uint32 startTime = _vm->_system->getMillis();
+
+	_pauseTime = 0;
+	uint frameNo = 0;
+
+	int skipped = 0;
+
 	for (;;) {
+		uint32 elapsed;
+		bool skipFrame = false;
+
+		if (_vm->_mixer->isSoundHandleActive(_compressedFileSoundHandle)) {
+			// Compressed SMUSH files.
+			elapsed = _vm->_mixer->getSoundElapsedTime(_compressedFileSoundHandle);
+		} else if (_vm->_mixer->isSoundHandleActive(_IACTchannel)) {
+			// Curse of Monkey Island SMUSH files.
+			elapsed = _vm->_mixer->getSoundElapsedTime(_IACTchannel);
+		} else {
+			// For other SMUSH files, we don't necessarily have any
+			// one channel to sync against, so we have to use
+			// elapsed real time.
+			uint32 now = _vm->_system->getMillis() - _pauseTime;
+			elapsed = now - startTime;
+		}
+
+		if (elapsed >= (frameNo * 1000) / _speed) {
+			if (elapsed >= ((frameNo + 1) * 1000) / _speed)
+				skipFrame = true;
+			else
+				skipFrame = false;
+			timerCallback();
+		}
+
 		if (_warpNeeded) {
 			_vm->_system->warpMouse(_warpX, _warpY);
 			_warpNeeded = false;
@@ -1326,25 +1363,36 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 			_palDirtyMax = -1;
 			_palDirtyMin = 256;
+			skipFrame = false;
 		}
+		if (skipFrame) {
+			if (++skipped > 10) {
+				skipFrame = false;
+				skipped = 0;
+			}
+		} else
+			skipped = 0;
 		if (_updateNeeded) {
-			int w = _width, h = _height;
+			if (!skipFrame) {
+				int w = _width, h = _height;
 
-			// Workaround for bug #1386333: "FT DEMO: assertion triggered 
-			// when playing movie". Some frames there are 384 x 224
-			if (w > _vm->_screenWidth)
-				w = _vm->_screenWidth;
+				// Workaround for bug #1386333: "FT DEMO: assertion triggered 
+				// when playing movie". Some frames there are 384 x 224
+				if (w > _vm->_screenWidth)
+					w = _vm->_screenWidth;
 
-			if (h > _vm->_screenHeight)
-				h = _vm->_screenHeight;
+				if (h > _vm->_screenHeight)
+					h = _vm->_screenHeight;
 
-			_vm->_system->copyRectToScreen(_dst, _width, 0, 0, w, h);
-			_vm->_system->updateScreen();
-			_updateNeeded = false;
+				_vm->_system->copyRectToScreen(_dst, _width, 0, 0, w, h);
+				_vm->_system->updateScreen();
+				_updateNeeded = false;
+			}
 #ifdef _WIN32_WCE
 			_inTimer = false;
 			_inTimerCount = 0;
 #endif
+			frameNo++;
 		}
 		if (_endOfFile)
 			break;

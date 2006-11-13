@@ -822,7 +822,6 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 
 	_smushFrameRate = 0;
 	_smushVideoShouldFinish = false;
-	_smushPaused = false;
 	_smushActive = false;
 	_insaneRunning = false;
 	_smixer = NULL;
@@ -2157,13 +2156,9 @@ int ScummEngine::runDialog(Dialog &dialog) {
 
 #ifndef DISABLE_SCUMM_7_8
 int ScummEngine_v7::runDialog(Dialog &dialog) {
-	bool oldSmushPaused = _smushPaused;
-	_smushPaused = true;
-
+	_splayer->pause();
 	int result = ScummEngine::runDialog(dialog);
-
-	_smushPaused = oldSmushPaused;
-
+	_splayer->unpause();
 	return result;
 }
 #endif
