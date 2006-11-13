@@ -592,6 +592,9 @@ void LauncherDialog::updateListing() {
 	_list->setList(l);
 	if (oldSel < (int)l.size())
 		_list->setSelected(oldSel);	// Restore the old selection
+	else if (oldSel != -1)
+		// Select the last entry if the list has been reduced
+		_list->setSelected(_list->getList().size() - 1);
 	updateButtons();
 }
 
