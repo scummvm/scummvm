@@ -215,13 +215,14 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// As a last resort add current directory
 	Common::File::addDefaultDirectory(".");
 
+	// On creation the engine should've set up all debug levels so we can use
+	// the command line arugments here
+	Common::enableSpecialDebugLevelList(edebuglevels);
+
 	int result;
 
 	// Init the engine (this might change the screen parameters
 	result = engine->init();
-
-	// Now the engine should've set up all debug levels so we can use the command line arugments here
-	Common::enableSpecialDebugLevelList(edebuglevels);
 
 	// Run the game engine if the initialization was successful.
 	if (result == 0) {
