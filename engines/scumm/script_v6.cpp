@@ -2524,16 +2524,17 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 
 			// SMUSH movie playback
 			if (args[1] == 0) {
-				assert(getStringAddressVar(VAR_VIDEONAME));
-				if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
+				const char *videoname = (const char *)getStringAddressVar(VAR_VIDEONAME);
+				assert(videoname);
+				if (strcmp(videoname, "sq3.san") == 0)
 					_smushFrameRate = 14;
 
 				// Correct incorrect smush filename in Macintosh FT demo
 				if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
-					(strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "jumpgorge.san") == 0))
+					(strcmp(videoname, "jumpgorge.san") == 0))
 					_splayer->play("jumpgorg.san", _smushFrameRate);
 				else
-					_splayer->play((char *)getStringAddressVar(VAR_VIDEONAME), _smushFrameRate);
+					_splayer->play(videoname, _smushFrameRate);
 
 				if (_game.id == GID_DIG) {
 					_disableFadeInEffect = true;
