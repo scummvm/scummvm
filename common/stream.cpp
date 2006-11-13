@@ -105,7 +105,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 
 		c = readByte();
 	}
-	
+
 	// This should fix a bug while using readLine with Common::File
 	// it seems that it sets the eos flag after an invalid read
 	// and at the same time the ioFailed flag
@@ -118,5 +118,43 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 	return buf;
 }
 
+uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
+	dataSize = MIN(dataSize, _end - _pos);
+
+	dataSize = _parentStream->read(dataPtr, dataSize);
+	_pos += dataSize;
+
+	return dataSize;
+}
+
+SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end)
+	: SubReadStream(parentStream, end),
+	_parentStream(parentStream),
+	_begin(begin) {
+	assert(_begin <= _end);
+	_pos = _begin;
+	_parentStream->seek(_pos);
+}
+
+void SeekableSubReadStream::seek(int32 offset, int whence) {
+	assert(_pos >= _begin);
+	assert(_pos <= _end);
+
+	switch(whence) {
+	case SEEK_END:
+		offset = size() - offset;
+		// fallthrough
+	case SEEK_SET:
+		_pos = _begin + offset;
+		break;
+	case SEEK_CUR:
+		_pos += offset;
+	}
+
+	assert(_pos >= _begin);
+	assert(_pos <= _end);
+
+	_parentStream->seek(_pos);
+}
 
 }	// End of namespace Common

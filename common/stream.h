@@ -210,14 +210,14 @@ public:
  * @todo We really need better error handling here!
  *       Like seek should somehow indicate whether it failed.
  */
-class SeekableReadStream : public ReadStream {
+class SeekableReadStream : virtual public ReadStream {
 public:
 
 	virtual uint32 pos() const = 0;
 	virtual uint32 size() const = 0;
 
 	virtual void seek(int32 offset, int whence = SEEK_SET) = 0;
-	
+
 	void skip(uint32 offset) { seek(offset, SEEK_CUR); }
 
 	/**
@@ -233,6 +233,43 @@ public:
 	virtual char *readLine(char *buf, size_t bufSize);
 };
 
+/**
+ * SubReadStream provides access to a ReadStream restricted to the range
+ * [currentPosition, currentPosition+end).
+ * Manipulating the parent stream directly /will/ mess up a substream.
+ * Likewise, manipulating two substreams of a parent stream will cause them to
+ * step on each others toes.
+ */
+class SubReadStream : virtual public ReadStream {
+protected:
+	ReadStream *_parentStream;
+	uint32 _pos;
+	uint32 _end;
+public:
+	SubReadStream(ReadStream *parentStream, uint32 end)
+		: _parentStream(parentStream), _pos(0), _end(end) {}
+
+	virtual bool eos() const { return _pos == _end; }
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+/*
+ * SeekableSubReadStream provides access to a SeekableReadStream restricted to
+ * the range [begin, end).
+ * The same caveats apply to SeekableSubReadStream as do to SeekableReadStream.
+ */
+class SeekableSubReadStream : public SubReadStream, public SeekableReadStream {
+protected:
+	SeekableReadStream *_parentStream;
+	uint32 _begin;
+public:
+	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end);
+
+	virtual uint32 pos() const { return _pos - _begin; }
+	virtual uint32 size() const { return _end - _begin; }
+
+	virtual void seek(int32 offset, int whence = SEEK_SET);
+};
 
 /**
  * XORReadStream is a wrapper around an arbitrary other ReadStream,
