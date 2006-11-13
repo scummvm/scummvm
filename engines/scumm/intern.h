@@ -584,29 +584,9 @@ protected:
 	} _akosQueue[32];
 	int16 _akosQueuePos;
 
-
-	int _smushFrameRate;
-
-	/**
-	 * Flag which signals that the SMUSH video playback should end now
-	 * (e.g. because it was aborted by the user or it's simply finished).
-	 */
-	bool _smushVideoShouldFinish;
-
-	bool _smushActive;
-
-	Insane *_insane;
-
 	byte _curActor;
 	int _curVerb;
 	int _curVerbSlot;
-
-public:
-	/** This flag tells IMuseDigital that INSANE is running. */
-	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
-
-	SmushMixer *_smixer;
-	SmushPlayer *_splayer;
 
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
@@ -817,7 +797,7 @@ protected:
 	void o6_distObjectObject();
 	void o6_distObjectPt();
 	void o6_distPtPt();
-	void o6_kernelSetFunctions();
+	virtual void o6_kernelSetFunctions();
 	void o6_delayFrames();
 	void o6_pickOneOf();
 	void o6_pickOneOfDefault();
@@ -858,11 +838,34 @@ public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7();
 
+
+protected:
+	int _smushFrameRate;
+
+	/**
+	 * Flag which signals that the SMUSH video playback should end now
+	 * (e.g. because it was aborted by the user or it's simply finished).
+	 */
+	bool _smushVideoShouldFinish;
+
+	bool _smushActive;
+
+	Insane *_insane;
+
+public:
+	/** This flag tells IMuseDigital that INSANE is running. */
+	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
+
+	SmushMixer *_smixer;
+	SmushPlayer *_splayer;
+
+
 	struct LangIndexNode {
 		char tag[12+1];
 		int32 offset;
 	};
 	
+protected:
 	int _verbCharset, _verbLineSpacing;
 	bool _existLanguageFile;
 	char *_languageBuffer;
@@ -887,6 +890,7 @@ public:
 	int _subtitleQueuePos;
 	SubtitleText _subtitleQueue[20];
 
+public:
 	void processSubtitleQueue();
 	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
 	void clearSubtitleQueue();
@@ -924,6 +928,9 @@ protected:
 	void playSpeech(const byte *ptr);
 
 	virtual void drawVerb(int verb, int mode);
+
+
+	virtual void o6_kernelSetFunctions();
 };
 
 class ScummEngine_v8 : public ScummEngine_v7 {

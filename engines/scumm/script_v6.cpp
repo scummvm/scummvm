@@ -2506,6 +2506,103 @@ void ScummEngine_v6::o6_setBlastObjectWindow() {
 	// So, we just handle this as no-op opcode.
 }
 
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v7::o6_kernelSetFunctions() {
+	int args[30];
+	int num;
+	Actor *a;
+
+	num = getStackList(args, ARRAYSIZE(args));
+
+	switch (args[0]) {
+	case 4:
+		grabCursor(args[1], args[2], args[3], args[4]);
+		break;
+	case 6: {
+			if (_smushFrameRate == 0)
+				_smushFrameRate = 14;
+
+			// SMUSH movie playback
+			if (args[1] == 0) {
+				assert(getStringAddressVar(VAR_VIDEONAME));
+				if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
+					_smushFrameRate = 14;
+
+				// Correct incorrect smush filename in Macintosh FT demo
+				if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
+					(strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "jumpgorge.san") == 0))
+					_splayer->play("jumpgorg.san", _smushFrameRate);
+				else
+					_splayer->play((char *)getStringAddressVar(VAR_VIDEONAME), _smushFrameRate);
+
+				if (_game.id == GID_DIG) {
+					_disableFadeInEffect = true;
+				}
+			} else if (_game.id == GID_FT) {
+				const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
+					? 232 : 233;
+
+				_insaneRunning = true;
+				_insane->setSmushParams(_smushFrameRate);
+				_insane->runScene(insaneVarNum);
+				_insaneRunning = false;
+			}
+		}
+		break;
+	case 12:
+		setCursorFromImg(args[1], (uint) - 1, args[2]);
+		break;
+	case 13:
+		derefActor(args[1], "o6_kernelSetFunctions:13")->remapActorPalette(args[2], args[3], args[4], -1);
+		break;
+	case 14:
+		derefActor(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
+		break;
+	case 15:
+		_smushFrameRate = args[1];
+		break;
+	case 16:
+	case 17:
+		enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16));
+		break;
+	case 20:
+		// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
+		break;
+	case 107:
+		a = derefActor(args[1], "o6_kernelSetFunctions: 107");
+		a->setScale((unsigned char)args[2], -1);
+		break;
+	case 108:
+		setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
+		break;
+	case 109:
+		setShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
+		break;
+	case 114:
+		error("o6_kernelSetFunctions: stub114()");
+		break;
+	case 117:
+		freezeScripts(2);
+		break;
+	case 118:
+		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
+		break;
+	case 119:
+		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
+		break;
+	case 124:
+		_saveSound = args[1];
+		break;
+	case 215:
+		ConfMan.setBool("subtitles", args[1] != 0);
+		break;
+	default:
+		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		break;
+	}
+}
+#endif
+
 void ScummEngine_v6::o6_kernelSetFunctions() {
 	int args[30];
 	int num;
@@ -2513,190 +2610,99 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-	if (_game.version >= 7) {
-		switch (args[0]) {
-		case 4:
-			grabCursor(args[1], args[2], args[3], args[4]);
-			break;
-#ifndef DISABLE_SCUMM_7_8
-		case 6: {
-				if (_smushFrameRate == 0)
-					_smushFrameRate = 14;
-
-				// SMUSH movie playback
-				if (args[1] == 0) {
-					assert(getStringAddressVar(VAR_VIDEONAME));
-					if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
-						_smushFrameRate = 14;
-
-					// Correct incorrect smush filename in Macintosh FT demo
-					if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
-					    (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "jumpgorge.san") == 0))
-						_splayer->play("jumpgorg.san", _smushFrameRate);
-					else
-						_splayer->play((char *)getStringAddressVar(VAR_VIDEONAME), _smushFrameRate);
-
-					if (_game.id == GID_DIG) {
-						_disableFadeInEffect = true;
-					}
-				} else if (_game.id == GID_FT) {
-					const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
-						? 232 : 233;
-
-					_insaneRunning = true;
-					_insane->setSmushParams(_smushFrameRate);
-					_insane->runScene(insaneVarNum);
-					_insaneRunning = false;
-				}
-			}
-			break;
-#endif
-		case 12:
-			setCursorFromImg(args[1], (uint) - 1, args[2]);
-			break;
-		case 13:
-			derefActor(args[1], "o6_kernelSetFunctions:13")->remapActorPalette(args[2], args[3], args[4], -1);
-			break;
-		case 14:
-			derefActor(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
-			break;
-		case 15:
-			_smushFrameRate = args[1];
-			break;
-		case 16:
-		case 17:
-			enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16));
-			break;
-		case 20:
-			// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
-			break;
-		case 107:
-			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
-			a->setScale((unsigned char)args[2], -1);
-			break;
-		case 108:
-			setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
-			break;
-		case 109:
-			setShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
-			break;
-		case 114:
-			error("o6_kernelSetFunctions: stub114()");
-			break;
-		case 117:
-			freezeScripts(2);
-			break;
-		case 118:
-			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
-			break;
-		case 119:
-			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
-			break;
-		case 124:
-			_saveSound = args[1];
-			break;
-		case 215:
-			ConfMan.setBool("subtitles", args[1] != 0);
-			break;
-		default:
-			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
-			break;
-		}
-	} else {
-		switch (args[0]) {
-		case 3:
-			// Dummy case
-			break;
-		case 4:
-			grabCursor(args[1], args[2], args[3], args[4]);
-			break;
-		case 5:
-			fadeOut(args[1]);
-			break;
-		case 6:
-			_fullRedraw = true;
-			redrawBGAreas();
-			setActorRedrawFlags();
-			processActors();
-			fadeIn(args[1]);
-			break;
-		case 8:
-			startManiac();
-			break;
-		case 9:
-			killAllScriptsExceptCurrent();
-			break;
-		case 104:									/* samnmax */
-			nukeFlObjects(args[2], args[3]);
-			break;
-		case 107:									/* set actor scale */
-			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
-			a->setScale((unsigned char)args[2], -1);
-			break;
-		case 108:									/* create proc_special_palette */
-		case 109:
-			// Case 108 and 109 share the same function
-			if (num != 6)
-				error("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
-			setShadowPalette(args[3], args[4], args[5], args[1], args[2], 0, 256);
-			break;
-		case 110:
-			_charset->clearCharsetMask();
-			break;
-		case 111:
-			a = derefActor(args[1], "o6_kernelSetFunctions: 111");
-			a->_shadowMode = args[2] + args[3];
-			break;
-		case 112:									/* palette shift? */
-			setShadowPalette(args[3], args[4], args[5], args[1], args[2], args[6], args[7]);
-			break;
-		case 114:
-			// Sam & Max film noir mode
-			if (_game.id == GID_SAMNMAX) {
-				// At this point ScummVM will already have set
-				// variable 0x8000 to indicate that the game is
-				// in film noir mode. All we have to do here is
-				// to mark the palette as "dirty", because
-				// updatePalette() will desaturate the colors
-				// as they are uploaded to the backend.
-				//
-				// This actually works better than the original
-				// interpreter, where actors would sometimes
-				// still be drawn in color.
-				setDirtyColors(0, 255);
-			} else
-				error("stub o6_kernelSetFunctions_114()");
-			break;
-		case 117:
-			// Sam & Max uses this opcode in script-43, right
-			// before a screensaver is selected.
+	switch (args[0]) {
+	case 3:
+		// Dummy case
+		break;
+	case 4:
+		grabCursor(args[1], args[2], args[3], args[4]);
+		break;
+	case 5:
+		fadeOut(args[1]);
+		break;
+	case 6:
+		_fullRedraw = true;
+		redrawBGAreas();
+		setActorRedrawFlags();
+		processActors();
+		fadeIn(args[1]);
+		break;
+	case 8:
+		startManiac();
+		break;
+	case 9:
+		killAllScriptsExceptCurrent();
+		break;
+	case 104:									/* samnmax */
+		nukeFlObjects(args[2], args[3]);
+		break;
+	case 107:									/* set actor scale */
+		a = derefActor(args[1], "o6_kernelSetFunctions: 107");
+		a->setScale((unsigned char)args[2], -1);
+		break;
+	case 108:									/* create proc_special_palette */
+	case 109:
+		// Case 108 and 109 share the same function
+		if (num != 6)
+			error("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
+		setShadowPalette(args[3], args[4], args[5], args[1], args[2], 0, 256);
+		break;
+	case 110:
+		_charset->clearCharsetMask();
+		break;
+	case 111:
+		a = derefActor(args[1], "o6_kernelSetFunctions: 111");
+		a->_shadowMode = args[2] + args[3];
+		break;
+	case 112:									/* palette shift? */
+		setShadowPalette(args[3], args[4], args[5], args[1], args[2], args[6], args[7]);
+		break;
+	case 114:
+		// Sam & Max film noir mode
+		if (_game.id == GID_SAMNMAX) {
+			// At this point ScummVM will already have set
+			// variable 0x8000 to indicate that the game is
+			// in film noir mode. All we have to do here is
+			// to mark the palette as "dirty", because
+			// updatePalette() will desaturate the colors
+			// as they are uploaded to the backend.
 			//
-			// Sam & Max uses variable 132 to specify the number of
-			// minutes of inactivity (no mouse movements) before
-			// starting the screensaver, so setting it to 0 will
-			// help in debugging.
-			freezeScripts(0x80);
-			break;
-		case 119:
-			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
-			break;
-		case 120:
-			swapPalColors(args[1], args[2]);
-			break;
-		case 122:
-			VAR(VAR_SOUNDRESULT) =
-				(short)_imuse->doCommand (num - 1, &args[1]);
-			break;
-		case 123:
-			copyPalColor(args[2], args[1]);
-			break;
-		case 124:
-			_saveSound = args[1];
-			break;
-		default:
-			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
-			break;
-		}
+			// This actually works better than the original
+			// interpreter, where actors would sometimes
+			// still be drawn in color.
+			setDirtyColors(0, 255);
+		} else
+			error("stub o6_kernelSetFunctions_114()");
+		break;
+	case 117:
+		// Sam & Max uses this opcode in script-43, right
+		// before a screensaver is selected.
+		//
+		// Sam & Max uses variable 132 to specify the number of
+		// minutes of inactivity (no mouse movements) before
+		// starting the screensaver, so setting it to 0 will
+		// help in debugging.
+		freezeScripts(0x80);
+		break;
+	case 119:
+		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
+		break;
+	case 120:
+		swapPalColors(args[1], args[2]);
+		break;
+	case 122:
+		VAR(VAR_SOUNDRESULT) =
+			(short)_imuse->doCommand (num - 1, &args[1]);
+		break;
+	case 123:
+		copyPalColor(args[2], args[1]);
+		break;
+	case 124:
+		_saveSound = args[1];
+		break;
+	default:
+		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		break;
 	}
 }
 
