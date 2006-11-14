@@ -670,6 +670,8 @@ void Game::loadImFile(void) {
 
 void Game::start(void) {
 	_collisionAreas = new Collision[250];
+	memset(_collisionAreas, 0, 250 * sizeof(Collision));
+
 	prepareStart();
 	playTot(-2);
 
@@ -778,9 +780,9 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	_totTextData = _totTextDataArray[_curBackupPos];
 	_totFileData = _totFileDataArray[_curBackupPos];
 	_totResourceTable = _totResourceTableArray[_curBackupPos];
+	_imFileData = _imFileDataArray[_curBackupPos];
 	_extTable = _extTableArray[_curBackupPos];
 	_extHandle = _extHandleArray[_curBackupPos];
-	_imFileData = _imFileDataArray[_curBackupPos];
 	_vm->_global->_inter_variables = _variablesArray[_curBackupPos];
 	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
 	strcpy(_curExtFile, _curTotFile);
@@ -945,13 +947,14 @@ void Game::collAreaSub(int16 index, int8 enter) {
 
 	collId = _collisionAreas[index].id & 0xF000;
 
-	if ((collId != 0xA000) && (collId != 0x9000))
-		WRITE_VAR(17, collId);
-	else if (enter == 0)
-		WRITE_VAR(17, _collisionAreas[index].id & 0x0FFF);
-	else
-		WRITE_VAR(17, -(_collisionAreas[index].id & 0x0FFF));
-	
+	if ((collId == 0xA000) || (collId == 0x9000))
+	{
+		if (enter == 0)
+			WRITE_VAR(17, _collisionAreas[index].id & 0x0FFF);
+		else
+			WRITE_VAR(17, -(_collisionAreas[index].id & 0x0FFF));
+	}
+
 	if (enter != 0) {
 		if (_collisionAreas[index].funcEnter != 0)
 			collSub(_collisionAreas[index].funcEnter);

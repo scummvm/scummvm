@@ -88,7 +88,9 @@ void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
 	if (surfDesc == 0)
 		return;
 
-	delete[] surfDesc->vidPtr;
+	// TODO: valgrind shows an "Invalid free() / delete / delete[]" here...
+	// delete[] surfDesc->vidPtr;
+
 	// GOB2: surfDesc != _vm->_draw->_frontSurface (since _frontSurface is set
 	// to _pPrimarySurfDesc in Game::prepareStart(), is there a difference?)
 	if (surfDesc != _vm->_global->_pPrimarySurfDesc) {

@@ -282,13 +282,13 @@ void Game_v2::clearCollisions() {
 
 	_lastCollKey = 0;
 
-	for (i = 0; i < 250; i++) {
-		_collisionAreas[i].id = 0;
+	for (i = 0; i < 150; i++) {
+//		_collisionAreas[i].id = 0;
 		_collisionAreas[i].left = -1;
 	}
 }
 
-void Game_v2::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 bottom,
+int16 Game_v2::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 bottom,
 	    int16 flags, int16 key, int16 funcEnter, int16 funcLeave) {
 	int16 i;
 	Collision *ptr;
@@ -314,9 +314,11 @@ void Game_v2::addNewCollision(int16 id, int16 left, int16 top, int16 right, int1
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
 		ptr->field_12 = 0;
-		return;
+
+		return i;
 	}
 	error("addNewCollision: Collision array full!\n");
+	return 0;
 }
 
 void Game_v2::pushCollisions(char all) {
@@ -325,14 +327,16 @@ void Game_v2::pushCollisions(char all) {
 	int16 size;
 
 	debugC(1, DEBUG_COLLISIONS, "pushCollisions");
-	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1;
-	    srcPtr++) {
-		if (all || (srcPtr->id >= 20))
+	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1; srcPtr++)
+		if (all || (((uint16) srcPtr->id) >= 20))
 			size++;
-	}
 
 	destPtr = new Collision[size];
 	_collStack[_collStackSize] = destPtr;
+
+	if (_vm->_inter->_terminate)
+		return;
+
 	_collStackElemSizes[_collStackSize] = size;
 
 	if (_shouldPushColls != 0)
@@ -342,10 +346,13 @@ void Game_v2::pushCollisions(char all) {
 	_collLasts[_collStackSize].key = _lastCollKey;
 	_collLasts[_collStackSize].id = _lastCollId;
 	_collLasts[_collStackSize].areaIndex = _lastCollAreaIndex;
+	_lastCollKey = 0;
+	_lastCollId = 0;
+	_lastCollAreaIndex = 0;
 	_collStackSize++;
 
 	for (srcPtr = _collisionAreas; srcPtr->left != -1; srcPtr++) {
-		if (all || (srcPtr->id >= 20)) {
+		if (all || (((uint16) srcPtr->id) >= 20)) {
 			memcpy(destPtr, srcPtr, sizeof(Collision));
 			srcPtr->left = -1;
 			destPtr++;
@@ -371,9 +378,7 @@ void Game_v2::popCollisions(void) {
 	for (destPtr = _collisionAreas; destPtr->left != -1; destPtr++);
 
 	srcPtr = _collStack[_collStackSize];
-	memcpy(destPtr, srcPtr,
-	    _collStackElemSizes[_collStackSize] *
-	    sizeof(Collision));
+	memcpy(destPtr, srcPtr, _collStackElemSizes[_collStackSize] * sizeof(Collision));
 
 	delete[] _collStack[_collStackSize];
 }
@@ -414,6 +419,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 	int16 key;
 	int16 oldIndex;
 	int16 oldId;
+	int16 newkey;
 	uint32 timeKey;
 
 	if (deltaTime >= -1) {
@@ -599,15 +605,15 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 
 				oldIndex = _lastCollAreaIndex;
 				oldId = _lastCollId;
-				key = checkMousePoint(1, &_lastCollId, &_lastCollAreaIndex);
+				newkey = checkMousePoint(1, &_lastCollId, &_lastCollAreaIndex);
 
-				if (key != _lastCollKey) {
+				if (newkey != _lastCollKey) {
 					if ((_lastCollKey != 0) && (oldId & 0x8000))
 						collAreaSub(oldIndex, 0);
 
-					_lastCollKey = key;
+					_lastCollKey = newkey;
 
-					if ((key != 0) && (_lastCollId & 0x8000))
+					if ((newkey != 0) && (_lastCollId & 0x8000))
 						collAreaSub(_lastCollAreaIndex, 1);
 				}
 			}
@@ -685,7 +691,7 @@ void Game_v2::prepareStart(void) {
 void Game_v2::collisionsBlock(void) {
 	InputDesc descArray[20];
 	int16 array[250];
-	char count;
+	byte count;
 	int16 collResId;
 	char *startIP;
 	int16 curCmd;
@@ -705,12 +711,13 @@ void Game_v2::collisionsBlock(void) {
 	int16 descIndex;
 	int16 timeVal;
 	int16 offsetIP;
+	int16 collId;
 	char *str;
 	int16 i;
 	int16 counter;
 	int16 var_24;
 	int16 var_26;
-	int16 _collStackPos;
+	int16 collStackPos;
 	Collision *collPtr;
 	Collision *collArea;
 	int16 timeKey;
@@ -749,7 +756,7 @@ void Game_v2::collisionsBlock(void) {
 
 	for (curCmd = 0; curCmd < count; curCmd++) {
 		array[curCmd] = 0;
-		cmd = *_vm->_global->_inter_execPtr++;
+		cmd = (byte) *_vm->_global->_inter_execPtr++;
 
 		if ((cmd & 0x40) != 0) {
 			cmd -= 0x40;
@@ -799,15 +806,14 @@ void Game_v2::collisionsBlock(void) {
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
 			key = curCmd + 0xA000;
 
-			addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
+			collId = addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
 					cmd + cmdHigh, key, startIP - (char *)_totFileData,
 					_vm->_global->_inter_execPtr - (char *)_totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			if (key <= 150)
-				_collisionAreas[key].field_12 = offsetIP;
+			_collisionAreas[collId].field_12 = offsetIP;
 			break;
 
 		case 1:
@@ -821,15 +827,14 @@ void Game_v2::collisionsBlock(void) {
 			if (key == 0)
 				key = curCmd + 0xa000;
 
-			addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
+			collId = addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
 					(flags << 4) + cmd + cmdHigh, key, startIP - (char *)_totFileData,
 					_vm->_global->_inter_execPtr - (char *)_totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			if (key <= 150)
-				_collisionAreas[key].field_12 = offsetIP;
+			_collisionAreas[collId].field_12 = offsetIP;
 			break;
 
 		case 3:
@@ -849,7 +854,7 @@ void Game_v2::collisionsBlock(void) {
 
 			if ((cmd >= 5) && (cmd <= 8)) {
 				descArray[index].ptr = _vm->_global->_inter_execPtr + 2;
-				_vm->_global->_inter_execPtr += _vm->_inter->load16();;
+				_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr) + 2;
 			} else
 				descArray[index].ptr = 0;
 
@@ -912,15 +917,14 @@ void Game_v2::collisionsBlock(void) {
 			array[curCmd] = _vm->_inter->load16();
 			flags = _vm->_inter->load16();
 
-			addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
+			collId = addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
 					(flags << 4) + cmdHigh + 2, key, 0,
 					_vm->_global->_inter_execPtr - (char *)_totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			if (key <= 150)
-				_collisionAreas[key].field_12 = offsetIP;
+			_collisionAreas[collId].field_12 = offsetIP;
 			break;
 
 		case 21:
@@ -928,15 +932,14 @@ void Game_v2::collisionsBlock(void) {
 			array[curCmd] = _vm->_inter->load16();
 			flags = _vm->_inter->load16() & 3;
 
-			addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
+			collId = addNewCollision(curCmd + 0x8000, left, top, left + width - 1, top + height - 1,
 					(flags << 4) + cmdHigh + 2, key,
 					_vm->_global->_inter_execPtr - (char *)_totFileData, 0);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			if (key <= 150)
-				_collisionAreas[key].field_12 = offsetIP;
+			_collisionAreas[collId].field_12 = offsetIP;
 			break;
 		}
 	}
@@ -953,7 +956,7 @@ void Game_v2::collisionsBlock(void) {
 			if (key == 0x1c0d) {
 				for (i = 0; i < 150; i++) {
 					if (_collisionAreas[i].left == -1)
-						continue;
+						break;
 
 					if ((_collisionAreas[i].id & 0xC000) != 0x8000)
 						continue;
@@ -983,7 +986,7 @@ void Game_v2::collisionsBlock(void) {
 			if (key != 0) {
 				for (i = 0; i < 150; i++) {
 					if (_collisionAreas[i].left == -1)
-						continue;
+						break;
 
 					if ((_collisionAreas[i].id & 0xC000) != 0x8000)
 						continue;
@@ -998,7 +1001,7 @@ void Game_v2::collisionsBlock(void) {
 				if (_activeCollResId == 0) {
 					for (i = 0; i < 150; i++) {
 						if (_collisionAreas[i].left == -1)
-							continue;
+							break;
 
 						if ((_collisionAreas[i].id & 0xC000) != 0x8000)
 							continue;
@@ -1019,15 +1022,14 @@ void Game_v2::collisionsBlock(void) {
 				}
 			} else if (deltaTime != 0) {
 				if (stackPos2 != 0) {
-					_collStackPos = 0;
-					collPtr = _collisionAreas;
+					collStackPos = 0;
 
-					for (i = 0, collPtr = _collisionAreas; collPtr->left != -1; i++, collPtr++) {
+					for (i = 0, collPtr = collArea; collPtr->left != -1; i++, collPtr++) {
 						if ((collPtr->id & 0xF000) != 0x8000)
 							continue;
 
-						_collStackPos++;
-						if (_collStackPos != stackPos2)
+						collStackPos++;
+						if (collStackPos != stackPos2)
 							continue;
 
 						_activeCollResId = collPtr->id;
@@ -1050,6 +1052,8 @@ void Game_v2::collisionsBlock(void) {
 
 							if (deltaTime < 2)
 								deltaTime = 2;
+							if (deltaTime > timeVal)
+								deltaTime = timeVal;
 						}
 
 						if (VAR(16) == 0)
@@ -1105,7 +1109,7 @@ void Game_v2::collisionsBlock(void) {
 	while (_activeCollResId == 0 && !_vm->_inter->_terminate && !_vm->_quitRequested);
 
 	if ((_activeCollResId & 0xFFF) == collResId) {
-		_collStackPos = 0;
+		collStackPos = 0;
 		var_24 = 0;
 		var_26 = 1;
 		for (i = 0; i < 150; i++) {
@@ -1160,7 +1164,7 @@ void Game_v2::collisionsBlock(void) {
 						break;
 					}
 				} while (READ_LE_UINT16(descArray[var_24].ptr - 2) > pos);
-				_collStackPos++;
+				collStackPos++;
 			} else {
 				VAR(17 + var_26) = 2;
 			}
@@ -1168,7 +1172,7 @@ void Game_v2::collisionsBlock(void) {
 			var_26++;
 		}
 
-		if (_collStackPos != (int16)VAR(17))
+		if (collStackPos != (int16)VAR(17))
 			WRITE_VAR(17, 0);
 		else
 			WRITE_VAR(17, 1);
@@ -1182,10 +1186,12 @@ void Game_v2::collisionsBlock(void) {
 		savedIP = (char *)_totFileData + _collisionAreas[_activeCollIndex].funcLeave;
 
 		_vm->_inter->storeMouse();
-		if ((_activeCollResId & 0xF000) == 0x8000)
-			WRITE_VAR(16, array[_activeCollResId & 0xFFF]);
-		else
-			WRITE_VAR(16, _activeCollResId & 0xFFF);
+		if (VAR(16) == 0) {
+			if ((_activeCollResId & 0xF000) == 0x8000)
+				WRITE_VAR(16, array[_activeCollResId & 0xFFF]);
+			else
+				WRITE_VAR(16, _activeCollResId & 0xFFF);
+		}
 	}
 
 	for (curCmd = 0; curCmd < count; curCmd++)

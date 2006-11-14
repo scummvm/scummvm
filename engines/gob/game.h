@@ -221,7 +221,7 @@ public:
 
 	virtual void playTot(int16 skipPlay) = 0;
 	virtual void clearCollisions(void) = 0;
-	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
+	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave) = 0;
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
@@ -285,7 +285,7 @@ class Game_v1 : public Game {
 public:
 	virtual void playTot(int16 skipPlay);
 	virtual void clearCollisions(void);
-	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
+	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
@@ -309,7 +309,7 @@ class Game_v2 : public Game_v1 {
 public:
 	virtual void playTot(int16 skipPlay);
 	virtual void clearCollisions(void);
-	virtual void addNewCollision(int16 id, int16 left, int16 top, int16 right,
+	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,

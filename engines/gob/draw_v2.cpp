@@ -269,7 +269,7 @@ void Draw_v2::printText(void) {
 				adjustCoords(0, &rectLeft, &rectTop);
 				adjustCoords(2, &rectRight, &rectBottom);
 				if (colId != -1)
-					_vm->_game->addNewCollision(colId & 0x0D000, rectLeft, rectTop,
+					_vm->_game->addNewCollision(colId + 0xD000, rectLeft, rectTop,
 							rectRight, rectBottom, 2, 0, 0, 0);
 				if (_word_2E8E2 != 2)
 					printTextCentered(extraCmd & 0x0F, rectLeft + 4, rectTop + 4,
@@ -357,7 +357,7 @@ void Draw_v2::printText(void) {
 				rectBottom = destY + (int16)READ_LE_UINT16(ptr + 6);
 				adjustCoords(2, &rectLeft, &rectTop);
 				adjustCoords(2, &rectRight, &rectBottom);
-				_vm->_game->addNewCollision(colId & 0x0D000, rectLeft, rectTop,
+				_vm->_game->addNewCollision(colId + 0x0D000, rectLeft, rectTop,
 						rectRight, rectBottom, 2, 0, 0, 0);
 				ptr += 8;
 			}

@@ -260,7 +260,7 @@ void Game_v1::clearCollisions() {
 	}
 }
 
-void Game_v1::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 bottom,
+int16 Game_v1::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 bottom,
 	    int16 flags, int16 key, int16 funcEnter, int16 funcLeave) {
 	int16 i;
 	Collision *ptr;
@@ -285,9 +285,10 @@ void Game_v1::addNewCollision(int16 id, int16 left, int16 top, int16 right, int1
 		ptr->key = key;
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
-		return;
+		return i;
 	}
 	error("addNewCollision: Collision array full!\n");
+	return 0;
 }
 
 void Game_v1::pushCollisions(char all) {
@@ -660,7 +661,7 @@ void Game_v1::collisionsBlock(void) {
 	int16 counter;
 	int16 var_24;
 	int16 var_26;
-	int16 _collStackPos;
+	int16 collStackPos;
 	Collision *collPtr;
 	int16 timeKey;
 	char *savedIP;
@@ -932,15 +933,15 @@ void Game_v1::collisionsBlock(void) {
 
 				if (deltaTime != 0 && VAR(16) == 0) {
 					if (stackPos2 != 0) {
-						_collStackPos = 0;
+						collStackPos = 0;
 						collPtr = _collisionAreas;
 
 						for (i = 0, collPtr = _collisionAreas; collPtr->left != -1; i++, collPtr++) {
 							if ((collPtr->id & 0x8000) == 0)
 								continue;
 
-							_collStackPos++;
-							if (_collStackPos != stackPos2)
+							collStackPos++;
+							if (collStackPos != stackPos2)
 								continue;
 
 							_activeCollResId = collPtr->id;
@@ -1047,9 +1048,9 @@ void Game_v1::collisionsBlock(void) {
 
 			_shouldPushColls = 1;
 
-			_collStackPos = _collStackSize;
+			collStackPos = _collStackSize;
 			_vm->_inter->funcBlock(0);
-			if (_collStackPos != _collStackSize)
+			if (collStackPos != _collStackSize)
 				popCollisions();
 			_shouldPushColls = 0;
 			_vm->_global->_inter_execPtr = savedIP;
@@ -1061,7 +1062,7 @@ void Game_v1::collisionsBlock(void) {
 	while (_activeCollResId == 0 && !_vm->_inter->_terminate && !_vm->_quitRequested);
 
 	if (((uint16)_activeCollResId & ~0x8000) == collResId) {
-		_collStackPos = 0;
+		collStackPos = 0;
 		var_24 = 0;
 		var_26 = 1;
 		for (i = 0; i < 250; i++) {
@@ -1113,7 +1114,7 @@ void Game_v1::collisionsBlock(void) {
 						break;
 					}
 				} while (READ_LE_UINT16(descArray[var_24].ptr - 2) > pos);
-				_collStackPos++;
+				collStackPos++;
 			} else {
 				VAR(17 + var_26) = 2;
 			}
@@ -1121,7 +1122,7 @@ void Game_v1::collisionsBlock(void) {
 			var_26++;
 		}
 
-		if (_collStackPos != (int16)VAR(17))
+		if (collStackPos != (int16)VAR(17))
 			WRITE_VAR(17, 0);
 		else
 			WRITE_VAR(17, 1);

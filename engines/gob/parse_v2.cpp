@@ -358,7 +358,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 	int16 dimCount;
 	int16 temp;
 	int16 temp2;
-	uint16 offset;
+	int16 offset;
 	int16 dim;
 	char var_1A;
 	int16 stkPos;
