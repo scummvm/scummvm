@@ -947,8 +947,7 @@ void Game::collAreaSub(int16 index, int8 enter) {
 
 	collId = _collisionAreas[index].id & 0xF000;
 
-	if ((collId == 0xA000) || (collId == 0x9000))
-	{
+	if ((collId == 0xA000) || (collId == 0x9000)) {
 		if (enter == 0)
 			WRITE_VAR(17, _collisionAreas[index].id & 0x0FFF);
 		else
