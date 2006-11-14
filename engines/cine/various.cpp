@@ -301,22 +301,21 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 
 static commandeType currentSaveName[10];
 
-int16 loadSaveDirectory(void) {
+bool CineEngine::loadSaveDirectory(void) {
 	Common::InSaveFile *fHandle;
+	char tmp[80];
 
-	if (g_cine->getGameType() == Cine::GType_FW)
-		fHandle = g_saveFileMan->openForLoading("FW.DIR");
-	else
-		fHandle = g_saveFileMan->openForLoading("OS.DIR");
+	snprintf(tmp, 80, "%s.dir", _targetName.c_str());
+	fHandle = g_saveFileMan->openForLoading(tmp);
 
 	if (!fHandle) {
-		return 0;
+		return false;
 	}
 
 	fHandle->read(currentSaveName, 10 * 20);
 	delete fHandle;
 
-	return 1;
+	return true;
 }
 
 int16 currentDisk;
@@ -904,7 +903,7 @@ void makeSave(char *saveFileName) {
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }
 
-void makeSystemMenu(void) {
+void CineEngine::makeSystemMenu(void) {
 	int16 numEntry;
 	int16 mouseButton;
 	int16 mouseX;
@@ -965,10 +964,7 @@ void makeSystemMenu(void) {
 
 					if (selectedSave >= 0) {
 						char saveNameBuffer[256];
-						if (g_cine->getGameType() == Cine::GType_FW)
-							sprintf(saveNameBuffer, "FW.%1d", selectedSave);
-						else
-							sprintf(saveNameBuffer, "OS.%1d", selectedSave);
+						sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), selectedSave);
 
 						getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 						if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
@@ -1007,21 +1003,17 @@ void makeSystemMenu(void) {
 					//makeTextEntryMenu(otherMessages[7], &currentSaveName[selectedSave], 120);
 					sprintf(currentSaveName[selectedSave], otherMessages[6]);
 
-					if (g_cine->getGameType() == Cine::GType_FW)
-						sprintf(saveFileName, "FW.%1d", selectedSave);
-					else
-						sprintf(saveFileName, "OS.%1d", selectedSave);
+					sprintf(saveFileName, "%s.%1d", _targetName.c_str(), selectedSave);
 
 					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-						char saveString[256];
+						char saveString[256], tmp[80];
 
 						Common::OutSaveFile *fHandle;
 
-						if (g_cine->getGameType() == Cine::GType_FW)
-							fHandle = g_saveFileMan->openForSaving("FW.DIR");
-						else
-							fHandle = g_saveFileMan->openForSaving("OS.DIR");
+						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
+
+						fHandle = g_saveFileMan->openForSaving(tmp);
 
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
@@ -1905,7 +1897,7 @@ uint16 executePlayerInput(void) {
 		if (playerCommand != -1) {
 			if (mouseButton & 1) {
 				if (mouseButton & 2) {
-					makeSystemMenu();
+					g_cine->makeSystemMenu();
 				} else {
 					int16 si;
 					do {
@@ -1954,7 +1946,7 @@ uint16 executePlayerInput(void) {
 			} else {
 				if (mouseButton & 2) {
 					if (mouseButton & 1) {
-						makeSystemMenu();
+						g_cine->makeSystemMenu();
 					}
 
 					makeActionMenu();
@@ -1997,7 +1989,7 @@ uint16 executePlayerInput(void) {
 
 					makeCommandLine();
 				} else {
-					makeSystemMenu();
+					g_cine->makeSystemMenu();
 				}
 			} else {
 				if (mouseButton & 1) {
@@ -2025,7 +2017,7 @@ uint16 executePlayerInput(void) {
 							}
 						}
 					} else {
-						makeSystemMenu();
+						g_cine->makeSystemMenu();
 					}
 				}
 			}
@@ -2052,7 +2044,7 @@ uint16 executePlayerInput(void) {
 		}
 
 		if ((mouseButton & 1) && (mouseButton & 2)) {
-			makeSystemMenu();
+			g_cine->makeSystemMenu();
 		}
 	}
 
@@ -2166,10 +2158,10 @@ uint16 executePlayerInput(void) {
 			break;
 		case 9:
 		case 24:
-			makeSystemMenu();
+			g_cine->makeSystemMenu();
 			break;
 		default:
-			//  printf("Unhandled case %d in last part of executePLayerInput\n",var2-59);
+			//  printf("Unhandled case %d in last part of executePlayerInput\n",var2-59);
 			break;
 		}
 	}

@@ -84,6 +84,9 @@ public:
 	Common::Language getLanguage() const { return _gameDescription->desc.language; }
 	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
 
+	bool loadSaveDirectory(void);
+	void makeSystemMenu(void);
+
 	const CINEGameDescription *_gameDescription;
 };
 
