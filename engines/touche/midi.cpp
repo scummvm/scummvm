@@ -105,10 +105,12 @@ void MidiPlayer::close() {
 	_driver->setTimerCallback(NULL, NULL);
 	_mutex.unlock();
 	stop();
-	_parser->setMidiDriver(NULL);
-	delete _parser;
+	_mutex.lock();
 	_driver->close();
 	_driver = 0;
+	_parser->setMidiDriver(NULL);
+	delete _parser;
+	_mutex.unlock();
 }
 
 void MidiPlayer::send(uint32 b) {

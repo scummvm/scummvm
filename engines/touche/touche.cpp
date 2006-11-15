@@ -227,11 +227,10 @@ void ToucheEngine::writeConfigurationSettings() {
 void ToucheEngine::mainLoop() {
 	restart();
 
-	_inp_mousePos.x = 640 / 2;
-	_inp_mousePos.y = 352 / 2;
 	_inp_leftMouseButtonPressed = false;
 	_inp_rightMouseButtonPressed = false;
-	_system->warpMouse(_inp_mousePos.x, _inp_mousePos.y);
+	showCursor(false);
+
 	setPalette(0, 255, 0, 0, 0);
 
 	readConfigurationSettings();
@@ -1381,6 +1380,11 @@ void ToucheEngine::drawHitBoxes() {
 	}
 }
 
+void ToucheEngine::showCursor(bool show) {
+	debugC(9, kDebugEngine, "ToucheEngine::showCursor()");
+	_system->showMouse(show);
+}
+
 void ToucheEngine::setCursor(int num) {
 	debugC(9, kDebugEngine, "ToucheEngine::setCursor(%d)", num);
 	_currentCursorObject = num;
@@ -1388,7 +1392,6 @@ void ToucheEngine::setCursor(int num) {
 	const int cursorH = 42;
 	res_loadImage(num, _mouseData);
 	_system->setMouseCursor(_mouseData, cursorW, cursorH, cursorW / 2, cursorH / 2, 0);
-	_system->showMouse(true);
 }
 
 void ToucheEngine::setDefaultCursor(int num) {

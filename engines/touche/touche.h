@@ -389,6 +389,7 @@ protected:
 	void setKeyCharTalkingFrame(int keyChar);
 	void lockUnlockHitBox(int num, int lock);
 	void drawHitBoxes();
+	void showCursor(bool show);
 	void setCursor(int num);
 	void setDefaultCursor(int num);
 	void handleLeftMouseButtonClickOnInventory();
@@ -773,6 +774,7 @@ protected:
 	615 : room scroll y offset
 	616 : disable room scrolling
 	617 : current speech file number
+	618 : hide mouse cursor
 	621 : enable french version "features"
 	902 : debug/draw walk boxes
 	911 : load scripts/programs from external files

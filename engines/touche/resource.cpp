@@ -411,9 +411,9 @@ void ToucheEngine::res_loadRoom(int num) {
 
 	const uint32 offsInfo = res_getDataOffset(kResourceTypeRoomInfo, num);
 	_fData.seek(offsInfo);
-	_fData.readUint16LE();
+	_fData.skip(2);
 	const int roomImageNum = _fData.readUint16LE();
-	_fData.readUint16LE();
+	_fData.skip(2);
 	for (int i = 0; i < 256; ++i) {
 		_fData.read(&_paletteBuffer[i * 4], 3);
 		_paletteBuffer[i * 4 + 3] = 0;

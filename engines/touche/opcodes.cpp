@@ -411,6 +411,9 @@ void ToucheEngine::op_setFlag() {
 	case 615:
 		_fullRedrawCounter = 1;
 		break;
+	case 618:
+		showCursor(val == 0);
+		break;
 	default:
 		break;
 	}
@@ -476,6 +479,18 @@ void ToucheEngine::op_loadRoom() {
 		//  [008C] (34) LOAD_ROOM(34)
 		//  [xxxx] ...
 		//  [00B4] (84) START_PALETTE_FADE_IN(20)
+		//
+		_flagsTable[115] = 1;
+	}
+	if (_currentEpisodeNum == 100 && num == 1 && _currentRoomNum == 2) {
+		//
+		// Same problem in script 100...
+		//
+		//  [021F] (34) LOAD_ROOM(1)
+		//  [xxxx] ...
+		//  [023D] (13) ST[0] = 1
+		//  [0240] (1E) FLAGS[604] = ST[0]
+		//  [0243] (84) START_PALETTE_FADE_IN(2)
 		//
 		_flagsTable[115] = 1;
 	}
