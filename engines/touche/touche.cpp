@@ -59,7 +59,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	_roomNeedRedraw	= false;
 	_fullRedrawCounter = 0;
-	_redrawScreenCounter1 = 0;
+	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
 	setupOpcodes();
@@ -151,7 +151,6 @@ void ToucheEngine::restart() {
 	_giveItemToObjectNum = 0;
 	_giveItemToCounter = 0;
 
-	clearAreaTable();
 	clearAnimationTable();
 
 	setupInventoryAreas();
@@ -370,8 +369,6 @@ void ToucheEngine::runCycle() {
 	}
 	redrawRoom();
 	clearDirtyRects();
-	processAreaTable();
-	clearAreaTable();
 	updateRoomRegions();
 	if (_flagsTable[612] != 0) {
 		_flagsTable[613] = getRandomNumber(_flagsTable[612]);
@@ -450,7 +447,6 @@ void ToucheEngine::setupEpisode(int num) {
 	_currentObjectNum = -1;
 	if (num != -1) {
 		_updatedRoomAreasTable[0] = 1;
-		clearAreaTable();
 		initKeyChars(-1);
 		for (int i = 200; i < 300; ++i) {
 			_flagsTable[i] = 0;
@@ -496,8 +492,7 @@ void ToucheEngine::drawKeyChar(KeyChar *key) {
 	if (key->num != 0) {
 		Common::Rect r(key->prevBoundingRect);
 		r.extend(key->boundingRect);
-//		r.clip(_roomAreaRect);
-//		addToDirtyRect(r);
+		addToDirtyRect(r);
 	}
 }
 
@@ -613,12 +608,9 @@ void ToucheEngine::initKeyChars(int keyChar) {
 	for (int i = indexStart; i < indexEnd; ++i) {
 		KeyChar *key = &_keyCharsTable[i];
 		if (keyChar != -1 && key->num != 0) {
-			Area keyCharArea;
-			keyCharArea.r = key->prevBoundingRect;
-			keyCharArea.r.extend(key->boundingRect);
-			keyCharArea.srcX = _flagsTable[614] + keyCharArea.r.left;
-			keyCharArea.srcY = _flagsTable[615] + keyCharArea.r.top;
-			addToAreaTable(&keyCharArea);
+			Common::Rect r(key->prevBoundingRect);
+			r.extend(key->boundingRect);
+			addToDirtyRect(r);
 		}
 		key->num = 0;
 		key->strNum = 0;
@@ -1767,7 +1759,7 @@ void ToucheEngine::updateSpeech() {
 }
 
 int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, int y, int str) {
-	if (*actions == 0 || _redrawScreenCounter1 != 0) {
+	if (*actions == 0 || _menuRedrawCounter != 0) {
 		return -26;
 	}
 	int i;
@@ -1823,7 +1815,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	}
 	updateScreenArea(cursorPosX, cursorPosY, cursorW, cursorH);
 
-	_redrawScreenCounter1 = 2;
+	_menuRedrawCounter = 2;
 	Common::Rect rect(0, y, 640, y + h);
 	i = -1;
 	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
@@ -1877,36 +1869,13 @@ void ToucheEngine::redrawBackground() {
 	}
 }
 
-void ToucheEngine::processAreaTable() {
-	debugC(9, kDebugEngine, "ToucheEngine::processAreaTable()");
-//	for (int i = 0; i < _areaTableCount; ++i) {
-//		Rect r(_areaTable[i].r);
-//		if (rectClip(&_roomAreaRect, &r)) {
-//			addToDirtyRect(&r);
-//		}
-//	}
-}
-
-void ToucheEngine::clearAreaTable() {
-	debugC(9, kDebugEngine, "ToucheEngine::clearAreaTable()");
-	_areaTableCount = 0;
-}
-
-void ToucheEngine::addToAreaTable(const Area *area) {
-	debugC(9, kDebugEngine, "ToucheEngine::addToAreaTable()");
-	assert(_areaTableCount < NUM_AREAS);
-	_areaTable[_areaTableCount] = *area;
-	++_areaTableCount;
-}
-
 void ToucheEngine::addRoomArea(int num, int flag) {
 	debugC(9, kDebugEngine, "ToucheEngine::addRoomArea(%d, %d)", num, flag);
 	if (_flagsTable[flag] == 20000) {
 		Area area = _programBackgroundTable[num].area;
+		addToDirtyRect(area.r);
 		area.r.translate(-_flagsTable[614], -_flagsTable[615]);
-		if (area.clip(_roomAreaRect)) {
-			addToAreaTable(&area);
-		}
+		addToDirtyRect(area.r);
 	}
 	_programBackgroundTable[num].area.r.moveTo(_flagsTable[flag], _flagsTable[flag + 1]);
 }
@@ -1930,10 +1899,9 @@ void ToucheEngine::updateRoomAreas(int num, int flags) {
 			  area.r.width(), area.r.height(),
 			  Graphics::kTransparent);
 			if (flags != 0) {
+				addToDirtyRect(area.r);
 				area.r.translate(-_flagsTable[614], -_flagsTable[615]);
-				if (area.clip(_roomAreaRect)) {
-					addToAreaTable(&area);
-				}
+				addToDirtyRect(area.r);
 			}
 		}
 	}
@@ -3179,9 +3147,7 @@ void ToucheEngine::drawAnimationImage(AnimationEntry *anim) {
 		y += dy;
 	}
 	anim->displayRect = Common::Rect(displayRectX1, displayRectY1, displayRectX2 + 58, displayRectY2 + 42);
-//	if (rectClip(&_roomAreaRect, &anim->displayRect)) {
-//		addToDirtyRect(&anim->displayRect);
-//	}
+	addToDirtyRect(anim->displayRect);
 }
 
 void ToucheEngine::processAnimationTable() {
@@ -3212,11 +3178,41 @@ void ToucheEngine::clearAnimationTable() {
 }
 
 void ToucheEngine::addToDirtyRect(const Common::Rect &r) {
-	// XXX
+	if (_fullRedrawCounter == 0 && r.width() > 0 && r.height() > 0 && r.intersects(_roomAreaRect)) {
+		Common::Rect dirtyRect(r);
+		dirtyRect.clip(_roomAreaRect);
+		if (_dirtyRectsTableCount == 0) {
+			_dirtyRectsTable[_dirtyRectsTableCount] = dirtyRect;
+			++_dirtyRectsTableCount;
+		} else {
+			int index = -1;
+			int minRectSurface = 640 * 400;
+			for (int i = 0; i < _dirtyRectsTableCount; ++i) {
+				if (r.intersects(_dirtyRectsTable[i])) {
+					Common::Rect tmpRect(r);
+					tmpRect.extend(_dirtyRectsTable[i]);
+					int rectSurface = tmpRect.width() * tmpRect.height();
+					if (rectSurface < minRectSurface) {
+						minRectSurface = rectSurface;
+						index = i;
+					}
+				}
+			}
+			if (index != -1) {
+				_dirtyRectsTable[index].extend(dirtyRect);
+			} else if (_dirtyRectsTableCount == NUM_DIRTY_RECTS) {
+				// trigger full screen redraw
+				_fullRedrawCounter = 1;
+			} else {
+				_dirtyRectsTable[_dirtyRectsTableCount] = dirtyRect;
+				++_dirtyRectsTableCount;
+			}
+		}
+	}
 }
 
 void ToucheEngine::clearDirtyRects() {
-	// XXX
+	_dirtyRectsTableCount = 0;
 }
 
 void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gScale, int bScale) {
@@ -3251,20 +3247,29 @@ void ToucheEngine::updateEntireScreen() {
 }
 
 void ToucheEngine::updateDirtyScreenAreas() {
-	// XXX
-	updateScreenArea(0, 0, 640, 400);
-	if (_fullRedrawCounter) {
-//		updateEntireScreen();
+//	_fullRedrawCounter = 1;
+	if (_fullRedrawCounter != 0) {
+		updateEntireScreen();
 		--_fullRedrawCounter;
 	} else {
-//		for (int i = 0; i < _dirtyRectsCount; ++i) {
-//			Common::Rect *r = &_dirtyRects[i];
-//			updateScreenArea(r->x, r->y, r->w, r->h);
-//		}
-		if (_redrawScreenCounter1) {
-			--_redrawScreenCounter1;
-//			updateScreenArea(_cursorObjectRect.x, _cursorObjectRect.y, _cursorObjectRect.w, _cursorObjectRect.h);
+		debug(1, "dirtyRectsCount=%d", _dirtyRectsTableCount);
+		for (int i = 0; i < _dirtyRectsTableCount; ++i) {
+			const Common::Rect &r = _dirtyRectsTable[i];
+#if 0
+			const int pts[4] = { r.left, r.top, r.right - 1, r.bottom - 1 };
+			Graphics::drawLine(_offscreenBuffer, 640, pts[0], pts[1], pts[2], pts[1], 0xFF);
+			Graphics::drawLine(_offscreenBuffer, 640, pts[2], pts[1], pts[2], pts[3], 0xFF);
+			Graphics::drawLine(_offscreenBuffer, 640, pts[0], pts[3], pts[2], pts[3], 0xFF);
+			Graphics::drawLine(_offscreenBuffer, 640, pts[0], pts[1], pts[0], pts[3], 0xFF);
+#endif
+			_system->copyRectToScreen(_offscreenBuffer + r.top * 640 + r.left, 640, r.left, r.top, r.width(), r.height());
 		}
+		if (_menuRedrawCounter) {
+			const Common::Rect &r = _cursorObjectRect;
+			_system->copyRectToScreen(_offscreenBuffer + r.top * 640 + r.left, 640, r.left, r.top, r.width(), r.height());
+			--_menuRedrawCounter;
+		}
+		_system->updateScreen();
 	}
 }
 

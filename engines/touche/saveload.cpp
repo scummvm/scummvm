@@ -271,7 +271,6 @@ void ToucheEngine::saveGameStateData(Common::WriteStream *stream) {
 void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	setKeyCharMoney();
 	clearDirtyRects();
-	clearAreaTable();
 	_flagsTable[115] = 0;
 	clearRoomArea();
 	_currentEpisodeNum = stream->readUint16LE();

@@ -328,7 +328,7 @@ public:
 		NUM_TALK_ENTRIES = 16,
 		NUM_ANIMATION_ENTRIES = 4,
 		NUM_INVENTORY_ITEMS = 100,
-		NUM_DIRTY_RECTS = 50,
+		NUM_DIRTY_RECTS = 30,
 		NUM_DIRECTIONS = 135
 	};
 
@@ -405,9 +405,6 @@ protected:
 	int handleActionMenuUnderCursor(const int16 *actions, int offs, int y, int str);
 
 	void redrawBackground();
-	void processAreaTable();
-	void clearAreaTable();
-	void addToAreaTable(const Area *area);
 	void addRoomArea(int num, int flag);
 	void updateRoomAreas(int num, int flags);
 	void setRoomAreaState(int num, uint16 state);
@@ -666,9 +663,6 @@ protected:
 	int _newEpisodeNum;
 	int _currentEpisodeNum;
 
-	Area _areaTable[NUM_AREAS];
-	int _areaTableCount;
-
 	int _currentAmountOfMoney;
 	int _giveItemToKeyCharNum;
 	int _giveItemToObjectNum;
@@ -733,9 +727,11 @@ protected:
 
 	bool _roomNeedRedraw;
 	int _fullRedrawCounter;
-	int _redrawScreenCounter1;
+	int _menuRedrawCounter;
 	uint8 *_offscreenBuffer;
 	uint8 _paletteBuffer[256 * 4];
+	Common::Rect _dirtyRectsTable[NUM_DIRTY_RECTS];
+	int _dirtyRectsTableCount;
 
 	static SpriteData _spritesTable[NUM_SPRITES];
 	static const uint8 _directionsTable[NUM_DIRECTIONS];
