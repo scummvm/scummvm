@@ -426,16 +426,35 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 }
 
 void AGOSEngine::permitInput() {
-	if (!_mortalFlag) {
-		_mortalFlag = true;
-		justifyOutPut(0);
-		_curWindow = 0;
-		if (_windowArray[0] != 0) {
-			_textWindow = _windowArray[0];
-			justifyStart();
+	if (!_mortalFlag)
+		return;
+
+
+	_mortalFlag = true;
+	justifyOutPut(0);
+
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		int n = 0;
+		while (n < 8) {
+			if ((_fcsData1[n]) && (_windowArray[n]) && (_windowArray[n]->flags & 128)) {
+				_textWindow = _windowArray[n];
+				waitWindow(_textWindow);
+				clsCheck(_textWindow);
+			}
+			_fcsData1[n]=0;
+			n++;
 		}
-		_mortalFlag = false;
+
+		restartAnimation();
 	}
+
+	_curWindow = 0;
+	if (_windowArray[0] != 0) {
+		_textWindow = _windowArray[0];
+		justifyStart();
+	}
+	_mortalFlag = false;
+
 }
 
 bool AGOSEngine::processSpecialKeys() {

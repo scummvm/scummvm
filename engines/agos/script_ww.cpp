@@ -59,6 +59,7 @@ void AGOSEngine::setupWaxworksOpcodes(OpcodeProc *op) {
 	op[105] = &AGOSEngine::oww_menu;
 	op[106] = &AGOSEngine::oww_textMenu;
 	op[127] = &AGOSEngine::os1_playTune;
+	op[135] = &AGOSEngine::oww_pauseGame;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
 	op[145] = &AGOSEngine::oe2_setDoorClosed;
 	op[146] = &AGOSEngine::oe2_setDoorLocked;
@@ -166,6 +167,37 @@ void AGOSEngine::oww_textMenu() {
 	// 106: set text menu
 	byte slot = getVarOrByte();
 	_textMenu[slot] = getVarOrByte();
+}
+
+void AGOSEngine::oww_pauseGame() {
+	// 135: pause game
+	HitArea *ha;
+
+	time_t pauseTime = time(NULL);
+	haltAnimation();
+
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
+
+		for (;;) {
+			if (_lastHitArea3 != 0)
+				break;
+			delay(1);
+		}
+
+		ha = _lastHitArea;
+
+		if (ha == NULL) {
+		} else if (ha->id == 200) {
+			break;
+		} else if (ha->id == 201) {
+			break;
+		}
+	}
+
+	restartAnimation();
+	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
 }
 
 void AGOSEngine::oww_boxMessage() {

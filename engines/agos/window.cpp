@@ -196,4 +196,45 @@ void AGOSEngine::windowPutChar(uint a) {
 		windowPutChar(_textWindow, a);
 }
 
+void AGOSEngine::waitWindow(WindowBlock *window) {
+	HitArea *ha;
+	const char *message;
+
+	window->textColumn = (window->width / 2) - 3;
+	window->textRow = window->height - 1;
+	window->textLength = 0;
+
+	message = "[ OK ]";
+	for (; *message; message++)
+		windowPutChar(window, *message);
+
+	ha = findEmptyHitArea();
+	ha->x = 96;
+	ha->y = 62;
+	ha->width = 48;
+	ha->height = 8;
+	ha->flags = kBFBoxInUse;
+	ha->id = 0x7FFF;
+	ha->priority = 999;
+
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
+
+		for (;;) {
+			if (_lastHitArea3 != 0)
+				break;
+			delay(1);
+		}
+
+		ha = _lastHitArea;
+		if (ha == NULL) {
+		} else if (ha->id == 0x7FFF) {
+			break;
+		}
+	}
+
+	undefineBox(0x7FFF);
+}
+
 } // End of namespace AGOS

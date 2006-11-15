@@ -24,6 +24,7 @@
 #include "common/stdafx.h"
 
 #include "agos/agos.h"
+#include "agos/vga.h"
 
 namespace AGOS {
 
@@ -161,7 +162,7 @@ void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
 	op[271] = &AGOSEngine::oe1_stopTune;
 	op[272] = &AGOSEngine::oe1_printPlayerDamage;
 	op[273] = &AGOSEngine::oe1_printMonsterDamage;
-	op[274] = &AGOSEngine::o_pauseGame;
+	op[274] = &AGOSEngine::oe1_pauseGame;
 	op[275] = &AGOSEngine::o_copysf;
 	op[276] = &AGOSEngine::o_restoreIcons;
 	op[277] = &AGOSEngine::oe1_printPlayerHit;
@@ -716,6 +717,77 @@ void AGOSEngine::oe1_printMonsterDamage() {
 	mouseOn();
 }
 
+void AGOSEngine::oe1_pauseGame() {
+	// 274: pause game
+	WindowBlock *window = _windowArray[4];
+	const char *message1, *message2;
+	
+	time_t pauseTime = time(NULL);
+	haltAnimation();
+
+restart:
+	printScroll();
+	window->textColumn = 0;
+	window->textRow = 0;
+	window->textColumnOffset = 0;
+
+	switch (_language) {
+	case Common::FR_FRA:
+		message1 = "    Jeu interrompu.\r\r\r";
+		message2 = " Reprendre    Quitter";
+		break;
+	case Common::DE_DEU:
+		message1 = "         Pause.\r\r\r";
+		message2 = "   Weiter      Ende";
+		break;
+	default:
+		message1 = "     Game Paused\r\r\r";
+		message2 = " Continue      Quit";
+		break;
+	}
+
+	for (; *message1; message1++)
+		windowPutChar(window, *message1);
+	for (; *message2; message2++)
+		windowPutChar(window, *message2);
+
+	if (continueOrQuit() == 0x7FFE) {
+		printScroll();
+		window->textColumn = 0;
+		window->textRow = 0;
+		window->textColumnOffset = 0;
+		
+		switch (_language) {
+		case Common::FR_FRA:
+			message1 = "    Etes-vous s<r ?\r\r\r";
+			message2 = "     Oui      Non";
+			break;
+		case Common::DE_DEU:
+			message1 = "    Bist Du sicher ?\r\r\r";
+			message2 = "     Ja        Nein";
+			break;
+		default:
+			message1 = "    Are you sure ?\r\r\r";
+			message2 = "     Yes       No";
+			break;
+		}
+
+		for (; *message1; message1++)
+			windowPutChar(window, *message1);
+		for (; *message2; message2++)
+			windowPutChar(window, *message2);
+
+		if (confirmQuit() == 0x7FFF) {
+			shutdown();
+		} else {
+			goto restart;
+		}
+	}
+
+	restartAnimation();
+	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
+}
+
 void AGOSEngine::oe1_printPlayerHit() {
 	// 277: print player hit
 	WindowBlock *window = _dummyWindow;
@@ -790,6 +862,131 @@ l1:		i = derefItem(i->next);
 		if (n == 0)
 			showMessageFormat("nothing");
 	}
+}
+
+uint AGOSEngine::confirmQuit() {
+	HitArea *ha;
+
+	ha = findEmptyHitArea();
+	ha->x = 120;
+	ha->y = 62;
+	ha->width = 30;
+	ha->height = 12;
+	ha->flags = kBFBoxInUse;
+	ha->id = 0x7FFF;
+	ha->priority = 999;
+	ha->window = 0;
+
+	ha = findEmptyHitArea();
+	ha->x = 180;
+	ha->y = 62;
+	ha->width = 24;
+	ha->height = 12;
+	ha->flags = kBFBoxInUse;
+	ha->id = 0x7FFE;
+	ha->priority = 999;
+	ha->window = 0;
+
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
+
+		for (;;) {
+			if (_lastHitArea3 != 0)
+				break;
+			delay(1);
+		}
+
+		ha = _lastHitArea;
+
+		if (ha == NULL) {
+		} else if (ha->id == 0x7FFE) {
+			break;
+		} else if (ha->id == 0x7FFF) {
+			break;
+		}
+	}
+
+	undefineBox(0x7FFF);
+	undefineBox(0x7FFE);
+
+	return ha->id;
+}
+
+uint AGOSEngine::continueOrQuit() {
+	HitArea *ha;
+
+	ha = findEmptyHitArea();
+	ha->x = 96;
+	ha->y = 62;
+	ha->width = 60;
+	ha->height = 12;
+	ha->flags = kBFBoxInUse;
+	ha->id = 0x7FFF;
+	ha->priority = 999;
+	ha->window = 0;
+
+	ha = findEmptyHitArea();
+	ha->x = 180;
+	ha->y = 62;
+	ha->width = 36;
+	ha->height = 12;
+	ha->flags = kBFBoxInUse;
+	ha->id = 0x7FFE;
+	ha->priority = 999;
+	ha->window = 0;
+
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
+
+		for (;;) {
+			if (_lastHitArea3 != 0)
+				break;
+			delay(1);
+		}
+
+		ha = _lastHitArea;
+
+		if (ha == NULL) {
+		} else if (ha->id == 0x7FFE) {
+			break;
+		} else if (ha->id == 0x7FFF) {
+			break;
+		}
+	}
+
+	undefineBox(0x7FFF);
+	undefineBox(0x7FFE);
+
+	return ha->id;
+}
+
+void AGOSEngine::printScroll() {
+	VC10_state state;
+	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
+
+	state.depack_src  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
+
+	state.palette = 0;
+	state.x = 10;
+	state.y = 32;
+	state.width = state.draw_width = 10;
+	state.height = state.draw_height = 72;
+	state.flags = kDFCompressed | kDFUseFrontBuf;
+	_windowNum = 3;	
+
+	state.depack_cont = -0x80;
+	state.x_skip = 0;
+	state.y_skip = 0;
+
+	state.surf2_addr = getFrontBuf();
+	state.surf2_pitch = _dxSurfacePitch;
+
+	state.surf_addr = getBackBuf();
+	state.surf_pitch = _dxSurfacePitch;
+
+	drawImages(&state);
 }
 
 } // End of namespace AGOS

@@ -57,6 +57,7 @@ void AGOSEngine::setupElvira2Opcodes(OpcodeProc *op) {
 	op[123] = &AGOSEngine::oe1_setTime;
 	op[124] = &AGOSEngine::oe1_ifTime;
 	op[127] = &AGOSEngine::os1_playTune;
+	op[135] = &AGOSEngine::oe2_pauseGame;
 	op[144] = &AGOSEngine::oe2_setDoorOpen;
 	op[145] = &AGOSEngine::oe2_setDoorClosed;
 	op[146] = &AGOSEngine::oe2_setDoorLocked;
@@ -169,6 +170,35 @@ void AGOSEngine::oe2_doTable() {
 			}
 		}
 	}
+}
+
+void AGOSEngine::oe2_pauseGame() {
+	// 135: pause game
+	HitArea *ha;
+
+	time_t pauseTime = time(NULL);
+	haltAnimation();
+
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
+
+		for (;;) {
+			if (processSpecialKeys() != 0 || _lastHitArea3 != 0)
+				break;
+			delay(1);
+		}
+
+		ha = _lastHitArea;
+
+		if (ha == NULL) {
+		} else if (ha->id == 201) {
+			break;
+		}
+	}
+
+	restartAnimation();
+	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
 }
 
 void AGOSEngine::oe2_setDoorOpen() {

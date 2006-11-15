@@ -42,6 +42,7 @@ void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
 	op[98] = &AGOSEngine::os1_animate;
 	op[99] = &AGOSEngine::oe1_stopAnimate;
 	op[127] = &AGOSEngine::os1_playTune;
+	op[135] = &AGOSEngine::os1_pauseGame;
 	op[161] = &AGOSEngine::os1_screenTextBox;
 	op[162] = &AGOSEngine::os1_screenTextMsg;
 	op[163] = &AGOSEngine::os1_playEffect;
@@ -97,6 +98,60 @@ void AGOSEngine::os1_playTune() {
 		loadMusic(music);
 		midi.startTrack(track);
 	}
+}
+
+void AGOSEngine::os1_pauseGame() {
+	// 135: pause game
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
+	// If all else fails, use English as fallback.
+	byte keyYes = 'y';
+	byte keyNo = 'n';
+
+	switch (_language) {
+	case Common::RU_RUS:
+		break;
+	case Common::PL_POL:
+		keyYes = 't';
+		break;
+	case Common::HB_ISR:
+		keyYes = 'f';
+		break;
+	case Common::ES_ESP:
+		keyYes = 's';
+		break;
+	case Common::IT_ITA:
+		keyYes = 's';
+		break;
+	case Common::FR_FRA:
+		keyYes = 'o';
+		break;
+	case Common::DE_DEU:
+		keyYes = 'j';
+		break;
+	default:
+		break;
+	}
+
+	for (;;) {
+		delay(1);
+#ifdef _WIN32_WCE
+		if (isSmartphone()) {
+			if (_keyPressed) {
+				if (_keyPressed == 13)
+					shutdown();
+				else
+					break;
+			}
+		}
+#endif
+		if (_keyPressed == keyYes || _keyPressed == (keyYes - 32))
+			shutdown();
+		else if (_keyPressed == keyNo || _keyPressed == (keyNo - 32))
+			break;
+	}
+
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void AGOSEngine::os1_screenTextBox() {

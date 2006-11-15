@@ -40,6 +40,7 @@ void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
 	op[98] = &AGOSEngine::os2_animate;
 	op[99] = &AGOSEngine::os2_stopAnimate;
 	op[127] = &AGOSEngine::os2_playTune;
+	op[135] = &AGOSEngine::os1_pauseGame;
 	op[161] = &AGOSEngine::os1_screenTextBox;
 	op[162] = &AGOSEngine::os1_screenTextMsg;
 	op[163] = &AGOSEngine::os1_playEffect;

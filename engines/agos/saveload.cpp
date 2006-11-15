@@ -465,119 +465,89 @@ void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 }
 
 void AGOSEngine::fileError(WindowBlock *window, bool save_error) {
-	HitArea *ha;
-	const char *string1, *string2;
+	const char *message1, *message2;
 
 	if (save_error) {
 		switch (_language) {
 		case Common::RU_RUS:
 			if (getGameType() == GType_SIMON2) {
-				string1 = "\r   Mf sowrap+fts+.";
-				string2 = "\r  Nzjb#a ejs#a.";
+				message1 = "\r   Mf sowrap+fts+.";
+				message2 = "\r  Nzjb#a ejs#a.";
 			} else {
-				string1 = "\r   Mf sowrap]fts].";
-				string2 = "\r   Nzjb_a ejs_a.";
+				message1 = "\r   Mf sowrap]fts].";
+				message2 = "\r   Nzjb_a ejs_a.";
 			}
 			break;
 		case Common::PL_POL:
-			string1 = "\r      Blad zapisu.    ";
-			string2 = "\rBlad dysku.                       ";
+			message1 = "\r      Blad zapisu.    ";
+			message2 = "\rBlad dysku.                       ";
 			break;
 		case Common::ES_ESP:
-			string1 = "\r     Error al salvar";
-			string2 = "\r  Intenta con otro disco";
+			message1 = "\r     Error al salvar";
+			message2 = "\r  Intenta con otro disco";
 			break;
 		case Common::IT_ITA:
-			string1 = "\r  Salvataggio non riuscito";
-			string2 = "\r    Prova un""\x27""altro disco";
+			message1 = "\r  Salvataggio non riuscito";
+			message2 = "\r    Prova un""\x27""altro disco";
 			break;
 		case Common::FR_FRA:
-			string1 = "\r    Echec sauvegarde";
-			string2 = "\rEssayez une autre disquette";
+			message1 = "\r    Echec sauvegarde";
+			message2 = "\rEssayez une autre disquette";
 			break;
 		case Common::DE_DEU:
-			string1 = "\r  Sicherung erfolglos.";
-			string2 = "\rVersuche eine andere     Diskette.";
+			message1 = "\r  Sicherung erfolglos.";
+			message2 = "\rVersuche eine andere     Diskette.";
 			break;
 		default:
-			string1 = "\r       Save failed.";
-			string2 = "\r       Disk error.";
+			message1 = "\r       Save failed.";
+			message2 = "\r       Disk error.";
 			break;
 		}
 	} else {
 		switch (_language) {
 		case Common::RU_RUS:
 			if (getGameType() == GType_SIMON2) {
-				string1 = "\r  Mf ^adruhafts+.";
-				string2 = "\r   Takm pf pakefp.";
+				message1 = "\r  Mf ^adruhafts+.";
+				message2 = "\r   Takm pf pakefp.";
 			} else {
-				string1 = "\r   Mf ^adruhafts].";
-				string2 = "\r   Takm pf pakefp.";
+				message1 = "\r   Mf ^adruhafts].";
+				message2 = "\r   Takm pf pakefp.";
 			}
 			break;
 		case Common::PL_POL:
-			string1 = "\r   Blad odczytu.    ";
-			string2 = "\r  Nie znaleziono pliku.";
+			message1 = "\r   Blad odczytu.    ";
+			message2 = "\r  Nie znaleziono pliku.";
 			break;
 		case Common::ES_ESP:
-			string1 = "\r     Error al cargar";
-			string2 = "\r  Archivo no encontrado";
+			message1 = "\r     Error al cargar";
+			message2 = "\r  Archivo no encontrado";
 			break;
 		case Common::IT_ITA:
-			string1 = "\r  Caricamento non riuscito";
-			string2 = "\r      File non trovato";
+			message1 = "\r  Caricamento non riuscito";
+			message2 = "\r      File non trovato";
 			break;
 		case Common::FR_FRA:
-			string1 = "\r    Echec chargement";
-			string2 = "\r  Fichier introuvable";
+			message1 = "\r    Echec chargement";
+			message2 = "\r  Fichier introuvable";
 			break;
 		case Common::DE_DEU:
-			string1 = "\r    Laden erfolglos.";
-			string2 = "\r  Datei nicht gefunden.";
+			message1 = "\r    Laden erfolglos.";
+			message2 = "\r  Datei nicht gefunden.";
 			break;
 		default:
-			string1 = "\r       Load failed.";
-			string2 = "\r     File not found.";
+			message1 = "\r       Load failed.";
+			message2 = "\r     File not found.";
 			break;
 		}
 	}
 
 	windowPutChar(window, 0xC);
-	for (; *string1; string1++)
-		windowPutChar(window, *string1);
-	for (; *string2; string2++)
-		windowPutChar(window, *string2);
+	for (; *message1; message1++)
+		windowPutChar(window, *message1);
+	for (; *message2; message2++)
+		windowPutChar(window, *message2);
 
-	window->textColumn = (window->width / 2) - 3;
-	window->textRow = window->height - 1;
-	window->textLength = 0;
-
-	string1 = "[ OK ]";
-	for (; *string1; string1++)
-		windowPutChar(window, *string1);
-
-	ha = findEmptyHitArea();
-	ha->x = ((window->width / 2) + (window->x - 3)) * 8;
-	ha->y = (window->height * 8) + window->y - 8;
-	ha->width = 48;
-	ha->height = 8;
-	ha->flags = kBFBoxInUse;
-	ha->id = 0x7FFF;
-	ha->priority = 0x3EF;
-
-loop:;
-	_lastHitArea = _lastHitArea3 = 0;
-
-	do {
-		delay(1);
-	} while (_lastHitArea3 == 0);
-
-	ha = _lastHitArea;
-	if (ha == NULL || ha->id != 0x7FFF)
-		goto loop;
-
-	// Return
-	undefineBox(0x7FFF);
+	waitWindow(window);
 }
 
 uint16 readItemID(Common::SeekableReadStream *f) {

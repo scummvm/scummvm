@@ -122,7 +122,6 @@ void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
 	op[130] = &AGOSEngine::o_setAdjNoun;
 	op[132] = &AGOSEngine::o_saveUserGame;
 	op[133] = &AGOSEngine::o_loadUserGame;
-	op[135] = &AGOSEngine::o_pauseGame;
 	op[136] = &AGOSEngine::o_copysf;
 	op[137] = &AGOSEngine::o_restoreIcons;
 	op[138] = &AGOSEngine::o_freezeZones;
@@ -851,60 +850,6 @@ void AGOSEngine::o_loadUserGame() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void AGOSEngine::o_pauseGame() {
-	// 135: pause game
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-
-	// If all else fails, use English as fallback.
-	byte keyYes = 'y';
-	byte keyNo = 'n';
-
-	switch (_language) {
-	case Common::RU_RUS:
-		break;
-	case Common::PL_POL:
-		keyYes = 't';
-		break;
-	case Common::HB_ISR:
-		keyYes = 'f';
-		break;
-	case Common::ES_ESP:
-		keyYes = 's';
-		break;
-	case Common::IT_ITA:
-		keyYes = 's';
-		break;
-	case Common::FR_FRA:
-		keyYes = 'o';
-		break;
-	case Common::DE_DEU:
-		keyYes = 'j';
-		break;
-	default:
-		break;
-	}
-
-	for (;;) {
-		delay(1);
-#ifdef _WIN32_WCE
-		if (isSmartphone()) {
-			if (_keyPressed) {
-				if (_keyPressed == 13)
-					shutdown();
-				else
-					break;
-			}
-		}
-#endif
-		if (_keyPressed == keyYes || _keyPressed == (keyYes - 32))
-			shutdown();
-		else if (_keyPressed == keyNo || _keyPressed == (keyNo - 32))
-			break;
-	}
-
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-}
-
 void AGOSEngine::o_copysf() {
 	// 136: set var to item unk3
 	Item *item = getNextItemPtr();
@@ -1056,7 +1001,6 @@ int AGOSEngine::runScript() {
 			if (opcode == 0xFF)
 				return 0;
 		}
-		debug(1, "runScript: opcode %d", opcode);
 
 		if (_runScriptReturn1)
 			return 1;
@@ -1067,7 +1011,6 @@ int AGOSEngine::runScript() {
 			if (opcode == 203) {
 				flag = true;
 				opcode = getVarOrWord();
-				debug(1, "runScript: opcode %d", opcode);
 				if (opcode == 10000)
 					return 0;
 			}
@@ -1075,8 +1018,6 @@ int AGOSEngine::runScript() {
 			if (opcode == 0) {
 				flag = true;
 				opcode = getByte();
-				debug(1, "runScript: opcode %d", opcode);
-
 				if (opcode == 0xFF)
 					return 0;
 			}

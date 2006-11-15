@@ -72,7 +72,7 @@ void AGOSEngine::print_char_helper_1(const byte *src, uint len) {
 	}
 }
 
-void AGOSEngine::print_char_helper_5(WindowBlock *window) {
+void AGOSEngine::clsCheck(WindowBlock *window) {
 	uint index = getWindowNum(window);
 	tidyIconArray(index);
 	_fcsData1[index] = 0;
@@ -311,6 +311,13 @@ void AGOSEngine::showMessageFormat(const char *s, ...) {
 	va_end(va);
 
 	if (!_fcsData1[_curWindow]) {
+		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			if (_showMessageFlag) {
+				if (_windowArray[_curWindow]->flags & 128) {
+					haltAnimation();
+				}
+			}
+		}
 		openTextWindow();
 		if (!_showMessageFlag) {
 			_windowArray[0] = _textWindow;
@@ -343,7 +350,7 @@ void AGOSEngine::justifyOutPut(byte chr) {
 		_printCharCurPos = 0;
 		_printCharPixelCount = 0;
 		print_char_helper_1(&chr, 1);
-		print_char_helper_5(_textWindow);
+		clsCheck(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
 		bool fit;
 

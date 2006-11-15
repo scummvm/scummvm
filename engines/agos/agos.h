@@ -698,10 +698,6 @@ protected:
 	// Waxworks specific
 	void moveDirn_ww(Item *i, uint x);
 
-	int16 levelOf(Item *item); 
-	int16 moreText(Item *i);
-	void lobjFunc(Item *i, const char *f);
-
 	int canPlace(Item *x, Item *y);
 	int contains(Item *a, Item *b);
 	int sizeContents(Item *x);
@@ -779,6 +775,7 @@ protected:
 	void closeWindow(uint a);
 	void setTextColor(uint color);
 	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
+	void waitWindow(WindowBlock *window);
 
 	HitArea *findBox(uint hitarea_id);
 	void boxController(uint x, uint y, uint mode);
@@ -1068,7 +1065,6 @@ public:
 	void o_setAdjNoun();
 	void o_saveUserGame();
 	void o_loadUserGame();
-	void o_pauseGame();
 	void o_copysf();
 	void o_restoreIcons();
 	void o_freezeZones();
@@ -1130,9 +1126,16 @@ public:
 	void oe1_stopTune();
 	void oe1_printPlayerDamage();
 	void oe1_printMonsterDamage();
+	void oe1_pauseGame();
 	void oe1_printPlayerHit();
 	void oe1_printMonsterHit();
 
+	int16 levelOf(Item *item); 
+	int16 moreText(Item *i);
+	void lobjFunc(Item *i, const char *f);
+	uint confirmQuit();
+	uint continueOrQuit();
+	void printScroll();
 	void synchChain(Item *i);
 
 	// Opcodes, Elvira 2
@@ -1142,6 +1145,7 @@ public:
 	void oe2_loadGame();
 	void oe2_drawItem();
 	void oe2_doTable();
+	void oe2_pauseGame();
 	void oe2_setDoorOpen();
 	void oe2_setDoorClosed();
 	void oe2_setDoorLocked();
@@ -1186,6 +1190,7 @@ public:
 	void oww_whereTo();
 	void oww_menu();
 	void oww_textMenu();
+	void oww_pauseGame();
 	void oww_boxMessage();
 	void oww_boxMsg();
 	void oww_boxLongText();
@@ -1198,6 +1203,7 @@ public:
 	void oww_printLongText();
 	void os1_animate();
 	void os1_playTune();
+	void os1_pauseGame();
 	void os1_screenTextBox();
 	void os1_screenTextMsg();
 	void os1_playEffect();
@@ -1376,7 +1382,7 @@ protected:
 	void fillBackFromFront(uint x, uint y, uint w, uint h);
 
 	void print_char_helper_1(const byte *src, uint len);
-	void print_char_helper_5(WindowBlock *window);
+	void clsCheck(WindowBlock *window);
 
 	void quickLoadOrSave();
 	void shutdown();
