@@ -960,6 +960,8 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 	_trigger_count--;
 	_queue_cleared = false;
 	do {
+		bool skip_cmd = false;
+
 		pos = (pos + 1) % ARRAYSIZE(_cmd_queue);
 		if (_queue_pos == pos)
 			break;
@@ -968,7 +970,29 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 			break;
 		_queue_end = pos;
 
-		doCommand_internal(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
+		// WORKAROUND for bug #1324106. When playing the "flourishes"
+		// as Rapp's body appears from his ashes, MI2 sets up a trigger
+		// to pause the music, in case the animation plays too slowly,
+		// and then the music is manually unpaused for the next part of
+		// the animation.
+		//
+		// However, with ScummVM the animation finishes slightly too
+		// quickly instead, and the pause command is run *after* the
+		// unpause, so the whole thing is thrown out of sync. I think
+		// we can assume that any platform running ScummVM is fast
+		// enough to keep up with the animation here, so ignore the
+		// pause command.
+		//
+		// Since setting up a trigger is a multi-step operation (first
+		// the trigger, and then the commands), it's probably easiest
+		// to catch it here.
+
+		if (_game_id == GID_MONKEY2 && p[0] == 262 && p[1] == 183 && p[2] == 0) {
+			skip_cmd = true;
+		}
+
+		if (!skip_cmd)
+			doCommand_internal(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
 
 		if (_queue_cleared)
 			return;
