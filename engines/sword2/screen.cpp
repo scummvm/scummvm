@@ -928,13 +928,19 @@ void Screen::rollCredits() {
 			continue;
 		}
 
-		// The German credits contains character code 9. We don't want
-		// the credits to show the 'dud' symbol, so we replace them
-		// with spaces.
+		// Replace invalid character codes to avoid the credits to show
+		// the 'dud' symbol.
 
-		for (char *ptr = line; *ptr; ptr++) {
-			if (*ptr < 32)
+		for (byte *ptr = (byte *)line; *ptr; ptr++) {
+			// The German credits contains character code 9. We
+			// replace them with spaces.
+			if (*ptr == 9)
 				*ptr = 32;
+
+			// The Spanish credits contains character code 170. We
+			// replace them with dots.
+			if (*ptr == 170)
+				*ptr = '.';
 		}
 
 		char *center_mark = strchr(line, '^');
