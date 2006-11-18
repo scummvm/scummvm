@@ -27,6 +27,21 @@
 
 namespace Touche {
 
+void Graphics::setupFont(Common::Language language) {
+	switch (language) {
+	case Common::EN_ANY:
+		_fontOffs = _engFontOffs;
+		_fontSize = _engFontSize;
+		_fontData = _engFontData;
+		break;
+	default: // else default to a localized version
+		_fontOffs = _locFontOffs;
+		_fontSize = _locFontSize;
+		_fontData = _locFontData;
+		break;
+	}
+}
+
 int Graphics::getStringWidth16(const char *str) {
 	int w = 0;
 	while (*str) {
@@ -40,7 +55,7 @@ int Graphics::getStringWidth16(const char *str) {
 }
 
 int Graphics::getCharWidth16(uint8 chr) {
-	assert(chr >= 32 && chr < 174);
+	assert(chr >= 32 && chr < 32 + _fontSize);
 	const uint8 *chrData = _fontData + _fontOffs[chr - 32];
 	return chrData[2];
 }
@@ -56,7 +71,7 @@ int Graphics::drawChar16(uint8 *dst, int dstPitch, uint8 chr, int x, int y, uint
 	dst += y * dstPitch + x;
 	uint8 color1 = color & 0xFF;
 	uint8 color2 = color >> 8;
-	assert(chr >= 32 && chr < 174);
+	assert(chr >= 32 && chr < 32 + _fontSize);
 	const uint8 *chrData = _fontData + _fontOffs[chr - 32];
 	int chrHeight = chrData[1];
 	int chrWidth = chrData[2];

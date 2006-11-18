@@ -63,6 +63,8 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
+	Graphics::setupFont(_language);
+
 	setupOpcodes();
 
 	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");

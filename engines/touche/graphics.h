@@ -27,12 +27,14 @@
 
 namespace Touche {
 
-struct Graphics {
+class Graphics {
+public:
 
 	enum {
 		kTransparent = 1 << 0
 	};
 
+	static void setupFont(Common::Language language);
 	static int getStringWidth16(const char *str);
 	static int getCharWidth16(uint8 chr);
 	static void drawString16(uint8 *dst, int dstPitch, uint16 color, int x, int y, const char *str);
@@ -43,8 +45,19 @@ struct Graphics {
 	static void copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, int flags = 0);
 	static void copyMask(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, uint8 fillColor);
 
-	static const uint16 _fontOffs[];
-	static const uint8 _fontData[];
+private:
+
+	static const uint16 _engFontOffs[];
+	static const int _engFontSize;
+	static const uint8 _engFontData[];
+
+	static const uint16 _locFontOffs[];
+	static const int _locFontSize;
+	static const uint8 _locFontData[];
+
+	static const uint16 *_fontOffs;
+	static int _fontSize;
+	static const uint8 *_fontData;
 };
 
 } // namespace Touche
