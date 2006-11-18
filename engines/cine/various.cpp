@@ -3192,9 +3192,14 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 						currentX += characterWidth + 1;
 					}
 				}
+				// draw cursor here
+				if (inputPos == (int)(j + 2))
+					gfxDrawLine(currentX, localY - 1, currentX, localY + 8, color, page1Raw);
+
 			}
 
-			gfxDrawLine(currentX, localY - 1, currentX, localY + 8, color, page1Raw); // cursor
+			if (strlen(inputString) == 0 || inputPos == 1) // cursor wasn't yet drawn
+				gfxDrawLine(x + 4, localY - 1, x + 4, localY + 8, color, page1Raw);
 
 			blitRawScreen(page1Raw);
 			redraw = false;
@@ -3220,15 +3225,30 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 			}
 			inputPos--;
 			redraw = true;
-			if (inputPos != 1) {
-				strncpy(tempString, inputString, inputPos - 1);
+		case 127: // del
+			if (inputPos <= inputLength) {
+				if (inputPos != 1) {
+					strncpy(tempString, inputString, inputPos - 1);
+				}
+				if (inputPos != inputLength) {
+					strncat(tempString, &inputString[inputPos], inputLength - inputPos);
+				}
+				strcpy(inputString, tempString);
+				inputLength = strlen(inputString);
+				redraw = true;
 			}
-			if (inputPos != inputLength) {
-				strncat(tempString, &inputString[inputPos], inputLength - inputPos);
+			break;
+		case 276: // left
+			if (inputPos > 1) {
+				inputPos--;
+				redraw = true;
 			}
-			strcpy(inputString, tempString);
-			inputLength = strlen(inputString);
-			redraw = true;
+			break;
+		case 275: // right
+			if (inputPos <= inputLength) {
+				inputPos++;
+				redraw = true;
+			}
 			break;
 		default:
 			if (((ascii >= 'a') && (ascii <='z')) ||

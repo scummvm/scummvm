@@ -39,7 +39,7 @@ mouseStatusStruct mouseData;
 uint16 mouseRight = 0;
 uint16 mouseLeft = 0;
 
-char lastKeyStroke = 0;
+int lastKeyStroke = 0;
 
 uint16 mouseUpdateStatus;
 uint16 dummyU16;
@@ -112,7 +112,7 @@ void manageEvents(int count) {
 				}
 				break;
 			default:
-				lastKeyStroke = event.kbd.ascii;
+				lastKeyStroke = event.kbd.keycode;
 				break;
 			}
 			break;
