@@ -540,6 +540,11 @@ begin_credits("Credits");
 		  add_person("Andrew Kurushin", "ajax16384", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
+
+	  begin_section("Touch&eacute;");
+		  add_person("Gregory Montoir", "cyx", "");
+	  end_section();
+
     end_section();
 
 
