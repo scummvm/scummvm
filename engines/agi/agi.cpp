@@ -659,4 +659,4 @@ PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
 	return kNoGameDataFoundError;
 }
 
-REGISTER_PLUGIN(AGI, "AGI Engine", "TODO (C) TODO");
+REGISTER_PLUGIN(AGI, "AGI Engine", "Sierra AGI Games (C) Sierra On-Line, Inc.");
