@@ -51,6 +51,13 @@ static const GameVersion toucheGameVersionsTable[] = {
 		"1caa20bb4d4fc2ce8eb867b6610082b3",
 		Common::FR_FRA,
 		Common::kPlatformPC
+	},
+	{
+		"Touche - Die Abenteuer des funften Musketiers",
+		26625537,
+		"be2ae6454b3325e410946f2322547cd4",
+		Common::DE_DEU,
+		Common::kPlatformPC
 	}
 };
 
