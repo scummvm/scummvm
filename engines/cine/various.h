@@ -138,6 +138,7 @@ extern uint16 mouseUpdateStatus;
 extern uint16 dummyU16;
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY);
+int getKeyData(void);
 
 uint16 processKeyboard(uint16 param);
 
@@ -180,6 +181,8 @@ extern int16 additionalBgVScroll;
 void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
 void resetSeqList();
 void processSeqList(void);
+
+bool makeTextEntryMenu(const char *caption, char *string, int strLen, int y);
 
 } // End of namespace Cine
 

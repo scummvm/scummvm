@@ -226,7 +226,6 @@ void initLanguage(Common::Language lang) {
 		"Loading | %s",
 		"Loading canceled ...",
 		"No baclup in the drive...",
-		"temporary save name",
 		"Please enter the backup name",
 		"on"
 	};
@@ -300,7 +299,6 @@ void initLanguage(Common::Language lang) {
 		"Sauvegarde de | %s",
 		"Sauvegarde Annul\x82""e ...",
 		"Aucune sauvegarde dans le lecteur ...",
-		"temporary save name", //
 		"Veuillez entrer le Nom de la Sauvegarde .",
 		"sur"
 	};
@@ -318,7 +316,7 @@ void initLanguage(Common::Language lang) {
 		"No he debido entenderte",
 		// INVENTORY
 		"Es inutil",
-		"Tienes algo mejor que hacer"
+		"Tienes algo mejor que hacer",
 		"Vamos. No perdamos tiempo",
 		"Esa no es una buena idea",
 		// USE
@@ -364,12 +362,11 @@ void initLanguage(Common::Language lang) {
 
 	static const char *otherMessages_ES[] = {
 		"Esta granacion no existe",
-		"Could not create save file ..." //
+		"Could not create save file ...", //
 		"PAUSE",
 		"Gabacion de| %s",
 		"Rrabacion anulada",
 		"No hay partidas grabadas en este disco...",
-		"temporary save name", //
 		"Teclea el nombre de la partida grabada",
 		"donde"
 	};
@@ -438,7 +435,6 @@ void initLanguage(Common::Language lang) {
 		"Er L\x84""dt | %s",
 		"Ladevorgang Abgebrochen...",
 		"Kein Backup im Laufwerk...",
-		"temporary save name", //
 		"Geben Sie den Namen|der Sicherungsdiskette ein",
 		"gegen"
 	};
@@ -507,7 +503,6 @@ void initLanguage(Common::Language lang) {
 		"Caricamento di| %s",
 		"Caricamento annullato...",
 		"Nessun salvataggio su questo disco...",
-		"temporary save name", //
 		"Vogliate accedere con il nome del salvataggio",
 		"su"
 	};
@@ -519,7 +514,7 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_FR;
 		confirmMenu = confirmMenu_FR;
 		otherMessages = otherMessages_FR;
-		commandPrepositionOn = otherMessages_FR[8];
+		commandPrepositionOn = otherMessages_FR[7];
 		break;
 
 	case Common::ES_ESP:
@@ -528,7 +523,7 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_ES;
 		confirmMenu = confirmMenu_ES;
 		otherMessages = otherMessages_ES;
-		commandPrepositionOn = otherMessages_ES[8];
+		commandPrepositionOn = otherMessages_ES[7];
 		break;
 
 	case Common::DE_DEU:
@@ -537,7 +532,7 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_DE;
 		confirmMenu = confirmMenu_DE;
 		otherMessages = otherMessages_DE;
-		commandPrepositionOn = otherMessages_DE[8];
+		commandPrepositionOn = otherMessages_DE[7];
 		break;
 
 	case Common::IT_ITA:
@@ -546,7 +541,7 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_IT;
 		confirmMenu = confirmMenu_IT;
 		otherMessages = otherMessages_IT;
-		commandPrepositionOn = otherMessages_IT[8];
+		commandPrepositionOn = otherMessages_IT[7];
 		break;
 
 	default:
@@ -555,7 +550,7 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_EN;
 		confirmMenu = confirmMenu_EN;
 		otherMessages = otherMessages_EN;
-		commandPrepositionOn = otherMessages_EN[8];
+		commandPrepositionOn = otherMessages_EN[7];
 		break;
 	}
 
@@ -614,6 +609,67 @@ void loadPoldatDat(const char *fname) {
 void freePoldatDat() {
 	free((void *)fontParamTable);
 	fontParamTable = 0;
+}
+
+uint16 computeMessageLength(const byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
+	const byte *localPtr = ptr;
+
+	uint16 var_2 = 0;
+	uint16 localLineResult = 0;
+	uint16 var_6 = 0;
+	uint16 var_8 = 0;
+	uint16 localMessageWidth = 0;
+	uint16 var_16 = 0;
+	uint16 finished = 0;
+	uint16 si = 0;
+	uint16 di = 0;
+
+	while (!finished) {
+		byte character = *(localPtr++);
+
+		if (character == ' ') {
+			var_8 = var_16;
+			var_6 = localMessageWidth;
+			localLineResult = si;
+			var_2 = di;
+
+			if (si + 5 < width) {
+				var_16++;
+				si += 5;
+			} else {
+				finished = 1;
+			}
+		} else if (character == 0x7C || character == 0) {
+			finished = 1;
+			si = 0;
+		} else {
+			if (fontParamTable[character].characterWidth) {
+				uint16 var_C = fontParamTable[character].characterWidth + 1;
+
+				if (si + var_C < width) {
+					si += var_C;
+					localMessageWidth += var_C;
+				} else {
+					finished = 1;
+
+					if (localLineResult) {
+						var_16 = var_8;
+						localMessageWidth = var_6;
+						si = localLineResult;
+						di = var_2;
+					}
+				}
+			}
+		}
+
+		di++;
+	}
+
+	*numWords = var_16;
+	*messageWidth = localMessageWidth;
+	*lineResult = si;
+
+	return di;
 }
 
 } // End of namespace Cine

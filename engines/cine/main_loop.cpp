@@ -39,6 +39,8 @@ mouseStatusStruct mouseData;
 uint16 mouseRight = 0;
 uint16 mouseLeft = 0;
 
+char lastKeyStroke = 0;
+
 uint16 mouseUpdateStatus;
 uint16 dummyU16;
 
@@ -110,6 +112,7 @@ void manageEvents(int count) {
 				}
 				break;
 			default:
+				lastKeyStroke = event.kbd.ascii;
 				break;
 			}
 			break;
@@ -153,6 +156,14 @@ void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
 	if (mouseData.left) {
 		(*pButton) |= 1;
 	}
+}
+
+int getKeyData() {
+	int k = lastKeyStroke;
+
+	lastKeyStroke = -1;
+
+	return k;
 }
 
 void mainLoop(int bootScriptIdx) {

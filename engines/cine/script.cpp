@@ -2233,8 +2233,6 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			opcode = 0;
 		}
 
-		printf("%X\n", opcode - 1);
-
 		strcpy(lineBuffer, "");
 
 		switch (opcode - 1) {

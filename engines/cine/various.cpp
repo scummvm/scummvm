@@ -1000,8 +1000,13 @@ void CineEngine::makeSystemMenu(void) {
 
 				if (selectedSave >= 0) {
 					char saveFileName[256];
-					//makeTextEntryMenu(otherMessages[7], &currentSaveName[selectedSave], 120);
-					sprintf(currentSaveName[selectedSave], otherMessages[6]);
+					char saveName[20];
+					saveName[0] = 0;
+
+					if (!makeTextEntryMenu(otherMessages[6], saveName, 20, 120))
+						break;
+
+					strncpy(currentSaveName[selectedSave], saveName, 20);
 
 					sprintf(saveFileName, "%s.%1d", _targetName.c_str(), selectedSave);
 
@@ -2246,67 +2251,6 @@ void backupOverlayPage(void) {
 	}
 }
 
-uint16 computeMessageLength(const byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
-	const byte *localPtr = ptr;
-
-	uint16 var_2 = 0;
-	uint16 localLineResult = 0;
-	uint16 var_6 = 0;
-	uint16 var_8 = 0;
-	uint16 localMessageWidth = 0;
-	uint16 var_16 = 0;
-	uint16 finished = 0;
-	uint16 si = 0;
-	uint16 di = 0;
-
-	while (!finished) {
-		byte character = *(localPtr++);
-
-		if (character == ' ') {
-			var_8 = var_16;
-			var_6 = localMessageWidth;
-			localLineResult = si;
-			var_2 = di;
-
-			if (si + 5 < width) {
-				var_16++;
-				si += 5;
-			} else {
-				finished = 1;
-			}
-		} else if (character == 0x7C || character == 0) {
-			finished = 1;
-			si = 0;
-		} else {
-			if (fontParamTable[character].characterWidth) {
-				uint16 var_C = fontParamTable[character].characterWidth + 1;
-
-				if (si + var_C < width) {
-					si += var_C;
-					localMessageWidth += var_C;
-				} else {
-					finished = 1;
-
-					if (localLineResult) {
-						var_16 = var_8;
-						localMessageWidth = var_6;
-						si = localLineResult;
-						di = var_2;
-					}
-				}
-			}
-		}
-
-		di++;
-	}
-
-	*numWords = var_16;
-	*messageWidth = localMessageWidth;
-	*lineResult = si;
-
-	return di;
-}
-
 void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
 	byte color2 = 2;
 	byte endOfMessageReached = 0;
@@ -2455,7 +2399,7 @@ void drawFailureMessage(byte cmd) {
 
 		messagePtr += messageLength;
 
-		messageLength = computeMessageLength((const byte *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
+		messageLength = computeMessageLength((const byte *)messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
 
 		endOfMessagePtr = messagePtr + messageLength;
 
@@ -3102,6 +3046,222 @@ void processSeqList(void) {
 		tempHead = currentHead;
 		currentHead = tempHead->next;
 	}
+}
+
+
+bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxLength, int y) {
+	byte color2 = defaultMenuBoxColor2;
+	byte endOfMessageReached = 0;
+	int16 localX;
+	int16 localY;
+	int16 localWidth;
+	int margins = 16;
+
+	int len = strlen(messagePtr);
+
+	int16 width = 6 * len + 20;
+
+	if (width > 250)
+		width = 250;
+	
+	if (width < 180)
+		width = 180;
+	
+	int16 x = (320 - width) / 2;
+	int16 color = 2;
+
+	gfxDrawPlainBoxRaw(x - margins, y, x + width + margins, y + 4, color2, page1Raw);
+
+	localX = x + 4;
+	localY = y + 4;
+	localWidth = width;
+
+	getKeyData(); // clear input key
+
+	do {
+		uint16 messageLength = 0;
+		uint16 numWords;
+		uint16 messageWidth;
+		uint16 lineResult;
+		const char *endOfMessagePtr;
+		uint16 fullLineWidth;
+		uint16 interWordSize;
+		uint16 interWordSizeRemain;
+		byte currentChar;
+		byte characterWidth;
+
+		while (messagePtr[messageLength] == ' ') {
+			messageLength++;
+		}
+
+		messagePtr += messageLength;
+
+		messageLength = computeMessageLength((const byte *)messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
+
+		endOfMessagePtr = messagePtr + messageLength;
+
+		if (lineResult) {
+			fullLineWidth = localWidth - messageWidth;
+
+			if (numWords) {
+				interWordSize = fullLineWidth / numWords;
+				interWordSizeRemain = fullLineWidth % numWords;
+			} else {
+				interWordSize = 5;
+				interWordSizeRemain = 0;
+			}
+		} else {
+			interWordSize = 5;
+			interWordSizeRemain = 0;
+		}
+
+		gfxDrawPlainBoxRaw(x - margins, localY, x + width + margins, localY + 9, color2, page1Raw);
+
+		do {
+			currentChar = *(messagePtr++);
+
+			if (currentChar == 0) {
+				endOfMessageReached = 1;
+			} else if (currentChar == ' ') {
+				localX += interWordSizeRemain + interWordSize;
+
+				if (interWordSizeRemain)
+					interWordSizeRemain = 0;
+			} else {
+				characterWidth = fontParamTable[currentChar].characterWidth;
+
+				if (characterWidth) {
+					byte characterIdx = fontParamTable[currentChar].characterIdx;
+					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
+					localX += characterWidth + 1;
+				}
+			}
+		} while ((messagePtr < endOfMessagePtr) && !endOfMessageReached);
+
+		localX = x + 4;
+		localY += 9;
+	} while (!endOfMessageReached);
+
+	// Input string
+	gfxDrawPlainBoxRaw(x - margins, localY, x + width + margins, localY + 9, color2, page1Raw);
+	localY += 9;
+
+	x -= margins;
+	width += margins * 2;
+
+	gfxDrawPlainBoxRaw(x, localY, x + width, localY + 4, color2, page1Raw);
+
+	gfxDrawLine(x + 1, y + 1, x + width - 1, y + 1, 0, page1Raw);	// top
+	gfxDrawLine(x + 1, localY + 3, x + width - 1, localY + 3, 0, page1Raw);	// bottom
+	gfxDrawLine(x + 1, y + 1, x + 1, localY + 3, 0, page1Raw);	// left
+	gfxDrawLine(x + width - 1, y + 1, x + width - 1, localY + 3, 0, page1Raw);	// right
+
+	gfxDrawLine(x, y, x + width, y, color, page1Raw);
+	gfxDrawLine(x, localY + 4, x + width, localY + 4, color, page1Raw);
+	gfxDrawLine(x, y, x, localY + 4, color, page1Raw);
+	gfxDrawLine(x + width, y, x + width, localY + 4, color, page1Raw);
+
+	x += margins;
+	width -= margins * 2;
+	localY -= 9;
+
+
+	int quit = 0;
+	bool redraw = true;
+	commandeType tempString;
+	int inputLength = strlen(inputString);
+	int inputPos = inputLength + 1;
+
+	while (!quit) {
+		if (redraw) {
+			gfxDrawPlainBoxRaw(x, localY - 1, x + width, localY + 8, 0, page1Raw);
+
+			int currentX = x + 4;
+
+			for (uint j = 0; j < strlen(inputString); j++) {
+				char currentChar = inputString[j];
+
+				if (currentChar == ' ') {
+					currentX += 5;
+				} else {
+					byte characterWidth = fontParamTable[currentChar].characterWidth;
+
+					if (characterWidth) {
+						byte characterIdx = fontParamTable[currentChar].characterIdx;
+						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, localY);
+						currentX += characterWidth + 1;
+					}
+				}
+			}
+
+			gfxDrawLine(currentX, localY - 1, currentX, localY + 8, color, page1Raw); // cursor
+
+			blitRawScreen(page1Raw);
+			redraw = false;
+		}
+
+		char ch[2];
+		memset(tempString, 0, stringMaxLength);
+		ch[1] = 0;
+
+		manageEvents();
+		int ascii = getKeyData();
+
+		switch (ascii) {
+		case 13:
+			quit = 1;
+			break;
+		case 27: // esc
+			quit = 2;
+			break;
+		case 8: // backspace
+			if (inputPos <= 1) {
+				break;
+			}
+			inputPos--;
+			redraw = true;
+			if (inputPos != 1) {
+				strncpy(tempString, inputString, inputPos - 1);
+			}
+			if (inputPos != inputLength) {
+				strncat(tempString, &inputString[inputPos], inputLength - inputPos);
+			}
+			strcpy(inputString, tempString);
+			inputLength = strlen(inputString);
+			redraw = true;
+			break;
+		default:
+			if (((ascii >= 'a') && (ascii <='z')) ||
+				((ascii >= '0') && (ascii <='9')) ||
+				((ascii >= 'A') && (ascii <='Z')) ||
+				(ascii == ' ')) {
+				if (inputLength < stringMaxLength - 1) {
+					ch[0] = ascii;
+					if (inputPos != 1) {
+						strncpy(tempString, inputString, inputPos - 1);
+						strcat(tempString, ch);
+					}
+					if ((inputLength == 0) || (inputPos == 1)) {
+						strcpy(tempString, ch);
+					}
+					if ((inputLength != 0) && (inputPos != inputLength)) {
+						strncat(tempString, &inputString[inputPos - 1], inputLength - inputPos + 1);
+					}
+					
+					strcpy(inputString, tempString);
+					inputLength = strlen(inputString);
+					inputPos++;
+					redraw = true;
+				}
+			}
+			break;
+		}
+	}
+
+	if (quit == 2)
+		return false;
+
+	return true;
 }
 
 } // End of namespace Cine
