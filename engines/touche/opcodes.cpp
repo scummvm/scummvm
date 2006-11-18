@@ -414,7 +414,8 @@ void ToucheEngine::op_setFlag() {
 	case 618:
 		showCursor(val == 0);
 		break;
-	default:
+	case 619:
+		debug(0, "Unknown music flag %d", val);
 		break;
 	}
 }
@@ -468,32 +469,6 @@ void ToucheEngine::op_initKeyCharTalk() {
 void ToucheEngine::op_loadRoom() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadRoom()");
 	int16 num = _script.readNextWord();
-	if (_currentEpisodeNum == 27 && num == 34 && _currentRoomNum != 58) {
-		//
-		// Workaround to what appears to be a scripting bug. The script
-		// 27 triggers a palette fading just after loading the room 34.
-		// Set flag 115, so that only *one* palette refresh occurs.
-		//
-		//  [0086] (13) ST[0] = 1
-		//  [0089] (1E) FLAGS[606] = ST[0]
-		//  [008C] (34) LOAD_ROOM(34)
-		//  [xxxx] ...
-		//  [00B4] (84) START_PALETTE_FADE_IN(20)
-		//
-		_flagsTable[115] = 1;
-	}
-	if (_currentEpisodeNum == 100 && num == 1 && _currentRoomNum == 2) {
-		//
-		// Same problem in script 100...
-		//
-		//  [021F] (34) LOAD_ROOM(1)
-		//  [xxxx] ...
-		//  [023D] (13) ST[0] = 1
-		//  [0240] (1E) FLAGS[604] = ST[0]
-		//  [0243] (84) START_PALETTE_FADE_IN(2)
-		//
-		_flagsTable[115] = 1;
-	}
 	res_loadRoom(num);
 }
 
@@ -740,7 +715,7 @@ void ToucheEngine::op_setupWaitingKeyChars() {
 }
 
 void ToucheEngine::op_updateRoomAreas() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_setupWaitingKeyChars()");
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_updateRoomAreas()");
 	int16 area = _script.readNextWord();
 	updateRoomAreas(area, 1);
 }

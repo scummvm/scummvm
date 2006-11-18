@@ -41,9 +41,10 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	_screenRect = Common::Rect(640, 400);
 	_roomAreaRect = Common::Rect(640, 352);
-	clearDirtyRects();
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
+
+	clearDirtyRects();
 
 	_playSoundCounter = 0;
 
@@ -114,6 +115,8 @@ void ToucheEngine::restart() {
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
+	clearDirtyRects();
+
 	_currentKeyCharNum = 0;
 	initKeyChars(-1);
 
@@ -183,6 +186,7 @@ void ToucheEngine::restart() {
 	memset(_conversationChoicesTable, 0, sizeof(_conversationChoicesTable));
 
 	_flagsTable[901] = 1;
+//	_flagsTable[902] = 1;
 	if (_language == Common::FR_FRA) {
 		_flagsTable[621] = 1;
 	}
@@ -1660,14 +1664,14 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 			}
 		}
 	} else {
-		if (flag) {
+		if (flag == 0) {
 			drawHitBoxes();
 		}
 	}
 }
 
 void ToucheEngine::handleMouseClickOnInventory(int flag) {
-	if (flag) {
+	if (flag == 0) {
 		drawHitBoxes();
 	}
 	if (_hideInventoryTexts && _giveItemToCounter == 0) {
@@ -1873,7 +1877,6 @@ void ToucheEngine::addRoomArea(int num, int flag) {
 	debugC(9, kDebugEngine, "ToucheEngine::addRoomArea(%d, %d)", num, flag);
 	if (_flagsTable[flag] == 20000) {
 		Area area = _programBackgroundTable[num].area;
-		addToDirtyRect(area.r);
 		area.r.translate(-_flagsTable[614], -_flagsTable[615]);
 		addToDirtyRect(area.r);
 	}
@@ -1899,9 +1902,10 @@ void ToucheEngine::updateRoomAreas(int num, int flags) {
 			  area.r.width(), area.r.height(),
 			  Graphics::kTransparent);
 			if (flags != 0) {
-				addToDirtyRect(area.r);
-				area.r.translate(-_flagsTable[614], -_flagsTable[615]);
-				addToDirtyRect(area.r);
+				debug(0, "updateRoomAreas(num=%d index=%d)", num, i);
+				redrawRoomRegion(i, true);
+//				area.r.translate(-_flagsTable[614], -_flagsTable[615]);
+//				addToDirtyRect(area.r);
 			}
 		}
 	}
@@ -1920,7 +1924,7 @@ void ToucheEngine::findAndRedrawRoomRegion(int num) {
 	debugC(9, kDebugEngine, "ToucheEngine::findAndRedrawRoomRegion(%d)", num);
 	for (uint i = 0; i < _programAreaTable.size(); ++i) {
 		if (_programAreaTable[i].id == num) {
-			redrawRoomRegion(i, 0);
+			redrawRoomRegion(i, false);
 			break;
 		}
 	}
@@ -3201,7 +3205,7 @@ void ToucheEngine::addToDirtyRect(const Common::Rect &r) {
 			if (index != -1) {
 				_dirtyRectsTable[index].extend(dirtyRect);
 			} else if (_dirtyRectsTableCount == NUM_DIRTY_RECTS) {
-				// trigger full screen redraw
+				debug(0, "Too many dirty rects, performing full screen update");
 				_fullRedrawCounter = 1;
 			} else {
 				_dirtyRectsTable[_dirtyRectsTableCount] = dirtyRect;
@@ -3256,11 +3260,7 @@ void ToucheEngine::updateDirtyScreenAreas() {
 		for (int i = 0; i < _dirtyRectsTableCount; ++i) {
 			const Common::Rect &r = _dirtyRectsTable[i];
 #if 0
-			const int pts[4] = { r.left, r.top, r.right - 1, r.bottom - 1 };
-			Graphics::drawLine(_offscreenBuffer, 640, pts[0], pts[1], pts[2], pts[1], 0xFF);
-			Graphics::drawLine(_offscreenBuffer, 640, pts[2], pts[1], pts[2], pts[3], 0xFF);
-			Graphics::drawLine(_offscreenBuffer, 640, pts[0], pts[3], pts[2], pts[3], 0xFF);
-			Graphics::drawLine(_offscreenBuffer, 640, pts[0], pts[1], pts[0], pts[3], 0xFF);
+			Graphics::drawRect(_offscreenBuffer, 640, r.left, r.top, r.width(), r.height(), 0xFF, 0xFF);
 #endif
 			_system->copyRectToScreen(_offscreenBuffer + r.top * 640 + r.left, 640, r.left, r.top, r.width(), r.height());
 		}
