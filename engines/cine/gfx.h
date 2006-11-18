@@ -70,6 +70,8 @@ void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height, by
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
 void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
 
+void fadeToBlack(void);
+
 } // End of namespace Cine
 
 #endif

@@ -1501,8 +1501,8 @@ void o1_blitAndFade() {
 
 void o1_fadeToBlack() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadeout", _currentLine);
-	//fadeToBlack();
-	warning("STUB: o1_fadeToBlack()");
+
+	fadeToBlack();
 }
 
 void o1_transformPaletteRange() {
@@ -1512,7 +1512,7 @@ void o1_transformPaletteRange() {
 	uint16 g = getNextWord();
 	uint16 b = getNextWord();
 
-	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", _currentLine, startColor, numColor, r, g, b);
+	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d)", _currentLine, startColor, numColor, r, g, b);
 
 	transformPaletteRange(startColor, numColor, r, g, b);
 }

@@ -369,4 +369,22 @@ void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height,
 	}
 }
 
+void fadeToBlack() {
+	for (int i = 0; i < 8; i++) {
+		if (colorMode256) {
+			for (int j = 0; j < 256; j++) {
+				palette256[j] = transformColor(palette256[j], -1, -1, -1);
+			}
+		} else {
+			for (int j = 0; j < 16; j++) {
+				c_palette[j] = transformColor(c_palette[j], -1, -1, -1);
+			}
+		}
+		gfxFlipRawPage(page1Raw);
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
+}
+
+
 } // End of namespace Cine
