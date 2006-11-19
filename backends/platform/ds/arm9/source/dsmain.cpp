@@ -55,7 +55,9 @@
 #include "registers_alt.h"
 //#include "compact_flash.h"
 #include "dsoptions.h"
+#ifdef USE_DEBUGGER
 #include "user_debugger.h"
+#endif
 #include "ramsave.h"
 #include "disc_io.h"
 #include "blitters.h"
