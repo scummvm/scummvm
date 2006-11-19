@@ -132,7 +132,20 @@ void Grid::setupNewRoom(uint16 room, uint16 firstRoomObjNum) {
 	zoneNum = 1;
 	for (i = firstRoomObjNum + 1; i <= firstRoomObjNum + maxObjRoom; ++i) {
 		if (_vm->logic()->objectData(i)->name != 0) {
-			setZone(GS_ROOM, zoneNum, _objectBox[i]);
+			if (room == 41 && i == 303) {
+
+				// WORKAROUND bug #1599009: In the room 41, the bounding box of the
+				// stairs (object 303) doesn't match with the room picture. With the
+				// original box dimensions, Joe could walk "above" the stairs, giving
+				// the impression of floating in the air.
+				// To fix this, the bounding box is set relative to the position of
+				// the cabinet (object 295).
+
+				uint16 y1 = _objectBox[295].y2 + 1;
+				setZone(GS_ROOM, zoneNum, _objectBox[i].x1, y1, _objectBox[i].x2, _objectBox[i].y2);
+			} else {
+				setZone(GS_ROOM, zoneNum, _objectBox[i]);
+			}
 		}
 		++zoneNum;
 	}
