@@ -64,6 +64,18 @@ void manageEvents(int count) {
 			break;
 		case OSystem::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
+			case '\n':
+			case '\r':
+			case 261: // Keypad 5
+				if (allowPlayerInput) {
+					mouseLeft = 1;
+				}
+				break;
+			case 27:  // ESC
+				if (allowPlayerInput) {
+					mouseRight = 1;
+				}
+				break;
 			case 282: // F1
 				if (allowPlayerInput) {
 					playerCommand = 0; // EXAMINE
