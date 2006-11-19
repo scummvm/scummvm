@@ -544,4 +544,12 @@ void Draw::printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 	spriteOperation(DRAW_PRINTTEXT);
 }
 
+int32 Draw::getSpriteRectSize(int16 index) {
+	if (_spritesArray[index] == 0)
+		return 0;
+
+	return _vm->_video->getRectSize(_spritesArray[index]->width, _spritesArray[index]->height,
+			0, _vm->_global->_videoMode);
+}
+
 } // End of namespace Gob

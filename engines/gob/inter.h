@@ -318,6 +318,9 @@ protected:
 	void o2_stub0x80(void);
 	void o2_stub0x82(void);
 	void o2_stub0x85(void);
+	bool o2_getFreeMem(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_readData(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_writeData(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_stopSound(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_createSprite(char &cmdCount, int16 &counter, int16 &retFlag);

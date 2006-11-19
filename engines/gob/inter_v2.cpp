@@ -525,7 +525,7 @@ void Inter_v2::setupOpcodes(void) {
 		/* 3C */
 		OPCODE(o1_waitEndPlay),
 		OPCODE(o1_playComposition),
-		OPCODE(o1_getFreeMem),
+		OPCODE(o2_getFreeMem),
 		OPCODE(o2_checkData),
 		/* 40 */
 		{NULL, ""},
@@ -544,8 +544,8 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_loadFont),
 		/* 4C */
 		OPCODE(o1_freeFont),
-		OPCODE(o1_readData),
-		OPCODE(o1_writeData),
+		OPCODE(o2_readData),
+		OPCODE(o2_writeData),
 		OPCODE(o1_manageDataFile),
 	};
 
@@ -1271,20 +1271,175 @@ void Inter_v2::loadMult(void) {
 	}
 }
 
+bool Inter_v2::o2_getFreeMem(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 freeVar;
+	int16 maxFreeVar;
+
+	freeVar = _vm->_parse->parseVarIndex();
+	maxFreeVar = _vm->_parse->parseVarIndex();
+
+	// HACK
+	WRITE_VAR_OFFSET(freeVar, 1000000);
+	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
+	WRITE_VAR(16, READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4);
+	return false;
+}
+
+bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int32 retSize;
+	int32 size;
+	int32 offset;
+	int16 dataVar; // si
+	int16 handle;
+	int16 index;
+	int16 y;
+	char *buf;
+	bool readPal;
+	Video::SurfaceDesc *destDesc;
+	Video::SurfaceDesc *srcDesc;
+
+	readPal = false;
+	evalExpr(0);
+	dataVar = _vm->_parse->parseVarIndex();
+	size = _vm->_parse->parseValExpr();
+	evalExpr(0);
+	offset = _vm->_global->_inter_resVal;
+
+	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf")) {
+		_vm->loadGame(SAVE_CAT, dataVar, size, offset);
+		return false;
+	}
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat")) {
+		_vm->loadGame(SAVE_CAT, dataVar, size, offset);
+		return false;
+	}
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf")) {
+		_vm->loadGame(SAVE_SAV, dataVar, size, offset);
+		return false;
+	}
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf")) {
+		_vm->loadGame(SAVE_BLO, dataVar, size, offset);
+		return false;
+	}
+
+	if (size < 0) {
+		if (size < -1000) {
+			readPal = true;
+			size += 1000;
+		}
+		index = -size - 1;
+		assert((index >= 0) && (index < 50)); // Just to be sure...
+		buf = (char *) _vm->_draw->_spritesArray[index]->vidPtr;
+		size = _vm->_draw->getSpriteRectSize(index);
+		if ((_vm->_draw->_spritesArray[index]->vidMode & 0x80) == 0)
+			size = -size;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
+		buf = _vm->_global->_inter_variables;
+	} else
+		buf = _vm->_global->_inter_variables + dataVar;
+
+	if (_vm->_global->_inter_resStr[0] == 0) {
+		if (readPal)
+			size += 768;
+		WRITE_VAR(1, size);
+		return false;
+	}
+
+	WRITE_VAR(1, 1);
+	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
+
+	if (handle < 0)
+		return false;
+
+	_vm->_draw->animateCursor(4);
+	if (offset < 0)
+		_vm->_dataio->seekData(handle, -offset - 1, 2);
+	else
+		_vm->_dataio->seekData(handle, offset, 0);
+
+	if (readPal) {
+		retSize = _vm->_dataio->readData(handle, (char *) _vm->_global->_pPaletteDesc->vgaPal, 768);
+		_vm->_draw->_applyPal = 1;
+	}
+
+	if (size < 0) {
+		destDesc = _vm->_draw->_spritesArray[index];
+		srcDesc = _vm->_video->initSurfDesc(_vm->_global->_videoMode, destDesc->width, 25, 0);
+		for (y = 0, retSize = 0; y < destDesc->height; y += 25) {
+			int16 height = MIN(25, destDesc->height - y);
+			retSize += _vm->_dataio->readData(handle, (char *) srcDesc->vidPtr, destDesc->width * 25);
+			_vm->_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
+		}
+		_vm->_video->freeSurfDesc(srcDesc);
+	} else
+		retSize = _vm->_dataio->readData(handle, buf, size);
+
+	if (retSize == size)
+		WRITE_VAR(1, 0);
+
+	_vm->_dataio->closeData(handle);
+	return false;
+}
+
+bool Inter_v2::o2_writeData(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int32 offset;
+	int32 size;
+	int16 dataVar;
+
+	evalExpr(0);
+	dataVar = _vm->_parse->parseVarIndex();
+	size = _vm->_parse->parseValExpr();
+	evalExpr(0);
+	offset = _vm->_global->_inter_resVal;
+
+	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
+		_vm->saveGame(SAVE_CAT, dataVar, size, offset);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat"))
+		_vm->saveGame(SAVE_CAT, dataVar, size, offset);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf"))
+		_vm->saveGame(SAVE_SAV, dataVar, size, offset);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf"))
+		_vm->saveGame(SAVE_BLO, dataVar, size, offset);
+	else
+		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
+
+	return false;
+}
+
 bool Inter_v2::o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 handle;
 	int16 varOff;
+	int32 size;
 
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
-	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
+
+	handle = 0;
+	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
+		size = _vm->getSaveSize(SAVE_CAT);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat"))
+		size = _vm->getSaveSize(SAVE_CAT);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf"))
+		size = _vm->getSaveSize(SAVE_SAV);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf"))
+		size = _vm->getSaveSize(SAVE_BLO);
+	else {
+		handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
+
+		if (handle >= 0) {
+			_vm->_dataio->closeData(handle);
+			size = _vm->_dataio->getDataSize(_vm->_global->_inter_resStr);
+		} else
+			size = -1;
+	}
+	if (size == -1)
+		handle = -1;
 
 	WRITE_VAR_OFFSET(varOff, handle);
-	if (handle >= 0) {
-		_vm->_dataio->closeData(handle);
-		WRITE_VAR(16, (uint32) _vm->_dataio->getDataSize(_vm->_global->_inter_resStr));
-	} else
-		WRITE_VAR(16, (uint32) -1);
+	WRITE_VAR(16, (uint32) size);
+
 	return false;
 }
 
@@ -1685,7 +1840,7 @@ void Inter_v2::o2_setRenderFlags(void) {
 		if (expr & 0x4000)
 			_vm->_draw->_renderFlags &= expr & 0x3fff;
 		else
-			_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
+			_vm->_draw->_renderFlags = expr;
 	}
 }
 

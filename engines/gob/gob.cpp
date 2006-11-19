@@ -20,6 +20,7 @@
  *
  */
 #include "common/stdafx.h"
+#include "common/endian.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
@@ -168,6 +169,14 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang,
 		strcat(_startTot0, "0.tot");
 	}
 
+	int i;
+	_saveFiles = new char*[3];
+	for (i = 0; i < 3; i++)
+		_saveFiles[i] = new char[_targetName.size() + 5];
+	sprintf(_saveFiles[0], "%s.cat", _targetName.c_str());
+	sprintf(_saveFiles[1], "%s.sav", _targetName.c_str());
+	sprintf(_saveFiles[2], "%s.blo", _targetName.c_str());
+
 	Common::addSpecialDebugLevel(DEBUG_FUNCOP, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(DEBUG_DRAWOP, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addSpecialDebugLevel(DEBUG_GOBOP, "GoblinOpcodes", "Script GoblinOpcodes debug level");
@@ -202,6 +211,11 @@ GobEngine::~GobEngine() {
 	delete _music;
 	delete[] _startTot;
 	delete[] _startTot0;
+
+	int i;
+	for (i = 0; i < 3; i++)
+		delete[] _saveFiles[i];
+	delete[] _saveFiles;
 }
 
 int GobEngine::go() {
@@ -217,6 +231,218 @@ void GobEngine::shutdown() {
 void GobEngine::writeVarDebug(uint32 offs, uint32 v) {
 	warning("Setting var %d(%d) to %d", offs, offs >> 2, v);
 	(*(uint32 *)(_global->_inter_variables + (offs))) = v;
+}
+
+// Seeking with SEEK_END (and therefore also pos()) doesn't work with
+// gzip'd save files, so reading the whole thing in is necessary
+uint32 GobEngine::getSaveSize(Common::InSaveFile &in) {
+	char buf[1024];
+	uint32 size;
+	uint32 i;
+	uint32 pos;
+
+	size = 0;
+	pos = in.pos();
+	in.seek(0, SEEK_SET);
+	while ((i = in.read(buf, 1024)) > 0)
+		size += i;
+	in.seek(0, pos);
+
+	return size;
+}
+
+int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
+	int32 size;
+	Common::InSaveFile *in;
+
+	if ((in = _saveFileMan->openForLoading(_saveFiles[(int) sFile]))) {
+		size = getSaveSize(*in);
+		delete in;
+	} else
+		size = -1;
+
+	debugC(1, DEBUG_FILEIO, "Requested size of file \"%s\": %d", _saveFiles[(int) sFile], size);
+
+	return size;
+}
+
+void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
+	int32 retSize;
+	int16 index;
+	int16 top;
+	bool writePal;
+	char *sName;
+	char *buf;
+	char *oBuf;
+	int32 iSize;
+	int32 oSize;
+	int32 oOff;
+	Video::SurfaceDesc *destDesc;
+	Video::SurfaceDesc *srcDesc;
+	Common::InSaveFile *in;
+	Common::OutSaveFile *out;
+
+	index = 0;
+	oBuf = 0;
+	in = 0;
+	writePal = false;
+	sName = _saveFiles[(int) sFile];
+
+	// WRITE_VAR(1, 1)
+	*((uint32*)(_global->_inter_variables + 4)) = 1;
+
+	if (size < 0) {
+		if (size < -1000) {
+			writePal = true;
+			size += 1000;
+		}
+		index = -size - 1;
+		assert((index >= 0) && (index < 50)); // Just to be sure...
+		buf = (char *) _draw->_spritesArray[index]->vidPtr;
+		size = _draw->getSpriteRectSize(index);
+		if ((_draw->_spritesArray[index]->vidMode & 0x80) == 0)
+			size = -size;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+		buf = _global->_inter_variables;
+	} else
+		buf = _global->_inter_variables + dataVar;
+
+	if ((in = _saveFileMan->openForLoading(sName)))
+		iSize = getSaveSize(*in);
+	else
+		iSize = 0;
+
+	oOff = offset < 0 ? MAX(0, iSize - (-offset - 1)) : offset;
+	oSize = MAX(iSize, oOff + ABS(size));
+	oBuf = new char[oSize];
+	memset(oBuf, 0, oSize);
+
+	if (in) {
+		in->read(oBuf, iSize);
+		delete in;
+	}
+
+	if(!(out = _saveFileMan->openForSaving(sName))) {
+		warning("Can't write file \"%s\"", sName);
+		delete[] oBuf;
+		return;
+	}
+	
+	if (writePal) {
+		memcpy(oBuf + oOff, (char *) _global->_pPaletteDesc->vgaPal, 768);
+		oOff += 768;
+	}
+
+	if (size < 0) {
+		srcDesc = _draw->_spritesArray[index];
+		destDesc = _video->initSurfDesc(_global->_videoMode, srcDesc->width, 25, 0);
+		for (top = 0, retSize = 0; top < srcDesc->height; top += 25) {
+			int16 height = MIN(25, srcDesc->height - top);
+			_video->drawSprite(srcDesc, destDesc, 0, top, srcDesc->width - 1,
+					top + height - 1, 0, 0, 0);
+			memcpy(oBuf + oOff, (char *) destDesc->vidPtr, srcDesc->width * 25);
+			oOff += srcDesc->width * 25;
+		}
+		_video->freeSurfDesc(destDesc);
+	} else
+		memcpy(oBuf + oOff, buf, size);
+
+	out->write(oBuf, oSize);
+	out->flush();
+
+	if (out->ioFailed())
+		warning("Can't write file \"%s\"", sName);
+	else {
+		debugC(1, DEBUG_FILEIO, "Saved file \"%s\" (%d, %d bytes at %d)",
+				sName, dataVar, size, offset);
+		// WRITE_VAR(1, 0)
+		*((uint32*)(_global->_inter_variables + 4)) = 0;
+	}
+
+	delete out;
+	delete[] oBuf;
+}
+
+void GobEngine::loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
+	int32 sSize;
+	int32 retSize;
+	int16 index;
+	int16 y;
+	char *buf;
+	char *sName;
+	bool readPal;
+	Video::SurfaceDesc *destDesc;
+	Video::SurfaceDesc *srcDesc;
+	Common::InSaveFile *in;
+
+	readPal = false;
+	sName = _saveFiles[(int) sFile];
+	if (size < 0) {
+		if (size < -1000) {
+			readPal = true;
+			size += 1000;
+		}
+		index = -size - 1;
+		assert((index >= 0) && (index < 50)); // Just to be sure...
+		buf = (char *) _draw->_spritesArray[index]->vidPtr;
+		size = _draw->getSpriteRectSize(index);
+		if ((_draw->_spritesArray[index]->vidMode & 0x80) == 0)
+			size = -size;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+		buf = _global->_inter_variables;
+	} else
+		buf = _global->_inter_variables + dataVar;
+
+	if (_global->_inter_resStr[0] == 0) {
+		if (readPal)
+			size += 768;
+		// WRITE_VAR(1, size)
+		*((uint32*)(_global->_inter_variables + 4)) = (uint32) size;
+		return;
+	}
+
+	// WRITE_VAR(1, 1)
+	*((uint32*)(_global->_inter_variables + 4)) = 1;
+	if(!(in = _saveFileMan->openForLoading(sName)))
+		return;
+
+	debugC(1, DEBUG_FILEIO, "Loading file \"%s\" (%d, %d bytes at %d)",
+			sName, dataVar, size, offset);
+
+	sSize = getSaveSize(*in);
+	_draw->animateCursor(4);
+	if (offset < 0)
+		in->seek(sSize - (-offset - 1), 0);
+	else
+		in->seek(offset, 0);
+
+	if (readPal) {
+		retSize = in->read((char *) _global->_pPaletteDesc->vgaPal, 768);
+		_draw->_applyPal = 1;
+	}
+
+	if (size < 0) {
+		destDesc = _draw->_spritesArray[index];
+		srcDesc = _video->initSurfDesc(_global->_videoMode, destDesc->width, 25, 0);
+		for (y = 0, retSize = 0; y < destDesc->height; y += 25) {
+			int16 height = MIN(25, destDesc->height - y);
+			retSize += in->read((char *) srcDesc->vidPtr, destDesc->width * 25);
+			_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
+		}
+		_video->freeSurfDesc(srcDesc);
+	} else
+		retSize = in->read(buf, size);
+
+	if (retSize == size)
+		// WRITE_VAR(1, 0)
+		*((uint32*)(_global->_inter_variables + 4)) = 0;
+
+	delete in;
+	return;
 }
 
 int GobEngine::init() {

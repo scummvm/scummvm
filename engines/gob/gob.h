@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/savefile.h"
 
 #include "engines/engine.h"
 
@@ -81,6 +82,12 @@ enum {
 	DEBUG_COLLISIONS = 1 << 8
 };
 
+enum SaveFiles {
+	SAVE_CAT = 0,
+	SAVE_SAV,
+	SAVE_BLO
+};
+
 class GobEngine : public Engine {
 protected:
 	int go();
@@ -98,6 +105,7 @@ public:
 	Common::Language _language;
 	char *_startTot;
 	char *_startTot0;
+	char **_saveFiles;
 	bool _copyProtection;
 	bool _quitRequested;
 
@@ -123,6 +131,10 @@ public:
 	Music *_music;
 
 	void writeVarDebug(uint32 offs, uint32 v);
+	inline uint32 getSaveSize(Common::InSaveFile &in);
+	int32 getSaveSize(enum SaveFiles sFile);
+	void saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
+	void loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
 };
 
 } // End of namespace Gob

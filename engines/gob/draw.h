@@ -135,6 +135,7 @@ public:
 		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font);
 	void printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 			int16 bottom, char *str, int16 fontIndex, int16 color);
+	int32 getSpriteRectSize(int16 index);
 
 	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) = 0;
 	virtual void printText(void) = 0;

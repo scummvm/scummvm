@@ -195,8 +195,6 @@ public:
 	void freeCollision(int16 id);
 
 	void loadSound(int16 slot, char *dataPtr);
-	int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 backColor,
-			int16 frontColor, char *str, int16 fontIndex, char inpType, int16 *pTotTime);
 	int16 adjustKey(int16 key);
 	void loadTotFile(char *path);
 	void loadExtTable(void);
@@ -226,6 +224,9 @@ public:
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 					InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
+	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
+			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
+			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) = 0;
 	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse) = 0;
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
@@ -290,6 +291,9 @@ public:
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
+	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
+			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
+			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
 	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse);
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
@@ -314,6 +318,9 @@ public:
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
+	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
+			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
+			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
 	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse);
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,

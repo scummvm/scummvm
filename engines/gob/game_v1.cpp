@@ -852,7 +852,7 @@ void Game_v1::collisionsBlock(void) {
 		if (var_22 != 0) {
 			key =
 			    multiEdit(deltaTime, index, &curEditIndex,
-			    descArray, 0, 0);
+			    descArray, &_activeCollResId, &_activeCollIndex);
 
 			if (key == 0x1c0d) {
 				for (i = 0; i < 250; i++) {
@@ -1233,22 +1233,20 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * in
 		    collArea->bottom - collArea->top + 1,
 		    inpDesc[*pCurPos].backColor, inpDesc[*pCurPos].frontColor,
 		    _vm->_global->_inter_variables + collArea->key,
-		    inpDesc[*pCurPos].fontIndex, collArea->flags, &time);
+		    inpDesc[*pCurPos].fontIndex, collArea->flags, &time, collResId, collIndex);
 
 		if (_vm->_inter->_terminate)
 			return 0;
 
 		switch (key) {
 		case 0:
-			if (_activeCollResId == 0)
+			if (*collResId == 0)
 				return 0;
 
-			if ((_collisionAreas[_activeCollIndex].
-				flags & 0x0f) < 3)
+			if ((_collisionAreas[*collIndex].flags & 0x0f) < 3)
 				return 0;
 
-			if ((_collisionAreas[_activeCollIndex].
-				flags & 0x0f) > 10)
+			if ((_collisionAreas[*collIndex].flags & 0x0f) > 10)
 				return 0;
 
 			*pCurPos = 0;
@@ -1267,7 +1265,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * in
 				if ((collArea->flags & 0x0f) > 10)
 					continue;
 
-				if (i == _activeCollIndex)
+				if (i == *collIndex)
 					break;
 
 				pCurPos[0]++;
@@ -1308,6 +1306,236 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * in
 			if (*pCurPos > 0)
 				pCurPos[0]--;
 			break;
+		}
+	}
+}
+
+int16 Game_v1::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
+		int16 backColor, int16 frontColor, char *str, int16 fontIndex,
+		char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) {
+	int16 handleMouse;
+	uint32 editSize;
+	Video::FontDesc *pFont;
+	char curSym;
+	int16 key;
+	const char *str1;
+	const char *str2;
+	int16 i;
+	uint32 pos;
+	int16 flag;
+	int16 savedKey;
+
+	if (_handleMouse != 0 &&
+	    (_vm->_global->_useMouse != 0 || _forceHandleMouse != 0))
+		handleMouse = 1;
+	else
+		handleMouse = 0;
+
+	pos = strlen(str);
+	pFont = _vm->_draw->_fonts[fontIndex];
+	editSize = width / pFont->itemWidth;
+
+	while (1) {
+		strcpy(_tempStr, str);
+		strcat(_tempStr, " ");
+		if (strlen(_tempStr) > editSize)
+			strcpy(_tempStr, str);
+
+		_vm->_draw->_destSpriteX = xPos;
+		_vm->_draw->_destSpriteY = yPos;
+		_vm->_draw->_spriteRight = editSize * pFont->itemWidth;
+		_vm->_draw->_spriteBottom = height;
+
+		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_backColor = backColor;
+		_vm->_draw->_frontColor = frontColor;
+		_vm->_draw->_textToPrint = _tempStr;
+		_vm->_draw->_transparency = 1;
+		_vm->_draw->_fontIndex = fontIndex;
+		_vm->_draw->spriteOperation(DRAW_FILLRECT);
+
+		_vm->_draw->_destSpriteY = yPos + (height - 8) / 2;
+
+		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+		if (pos == editSize)
+			pos--;
+
+		curSym = _tempStr[pos];
+
+		flag = 1;
+
+		while (1) {
+			_tempStr[0] = curSym;
+			_tempStr[1] = 0;
+
+			_vm->_draw->_destSpriteX = xPos + pFont->itemWidth * pos;
+			_vm->_draw->_destSpriteY = yPos + height - 1;
+			_vm->_draw->_spriteRight = pFont->itemWidth;
+			_vm->_draw->_spriteBottom = 1;
+			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_backColor = frontColor;
+			_vm->_draw->spriteOperation(DRAW_FILLRECT);
+
+			if (flag != 0) {
+				key = checkCollisions(handleMouse, -1, collResId, collIndex);
+			}
+			flag = 0;
+
+			key = checkCollisions(handleMouse, -300, collResId, collIndex);
+
+			if (*pTotTime > 0) {
+				*pTotTime -= 300;
+				if (*pTotTime <= 1) {
+					key = 0;
+					*collResId = 0;
+					break;
+				}
+			}
+
+			_tempStr[0] = curSym;
+			_tempStr[1] = 0;
+			_vm->_draw->_destSpriteX = xPos + pFont->itemWidth * pos;
+			_vm->_draw->_destSpriteY = yPos + height - 1;
+			_vm->_draw->_spriteRight = pFont->itemWidth;
+			_vm->_draw->_spriteBottom = 1;
+			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_backColor = backColor;
+			_vm->_draw->_frontColor = frontColor;
+			_vm->_draw->_textToPrint = _tempStr;
+			_vm->_draw->_transparency = 1;
+			_vm->_draw->spriteOperation(DRAW_FILLRECT);
+
+			_vm->_draw->_destSpriteY = yPos + (height - 8) / 2;
+			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+
+			if (key != 0 || *collResId != 0)
+				break;
+
+			key = checkCollisions(handleMouse, -300, collResId, collIndex);
+
+			if (*pTotTime > 0) {
+				*pTotTime -= 300;
+				if (*pTotTime <= 1) {
+					key = 0;
+					*collResId = 0;
+					break;
+				}
+
+			}
+			if (key != 0 || *collResId != 0)
+				break;
+
+			if (_vm->_inter->_terminate)
+				return 0;
+		}
+
+		if (key == 0 || *collResId != 0 || _vm->_inter->_terminate)
+			return 0;
+
+		switch (key) {
+		case 0x4d00:	// Right Arrow
+			if (pos < strlen(str) && pos < editSize - 1) {
+				pos++;
+				continue;
+			}
+			return 0x5000;
+
+		case 0x4b00:	// Left Arrow
+			if (pos > 0) {
+				pos--;
+				continue;
+			}
+			return 0x4800;
+
+		case 0xe08:	// Backspace
+			if (pos > 0) {
+				_vm->_util->cutFromStr(str, pos - 1, 1);
+				pos--;
+				continue;
+			}
+
+		case 0x5300:	// Del
+
+			if (pos >= strlen(str))
+				continue;
+
+			_vm->_util->cutFromStr(str, pos, 1);
+			continue;
+
+		case 0x1c0d:	// Enter
+		case 0x3b00:	// F1
+		case 0x3c00:	// F2
+		case 0x3d00:	// F3
+		case 0x3e00:	// F4
+		case 0x3f00:	// F5
+		case 0x4000:	// F6
+		case 0x4100:	// F7
+		case 0x4200:	// F8
+		case 0x4300:	// F9
+		case 0x4400:	// F10
+		case 0x4800:	// Up arrow
+		case 0x5000:	// Down arrow
+			return key;
+
+		case 0x11b:	// Escape
+			if (_vm->_global->_useMouse != 0)
+				continue;
+
+			_forceHandleMouse = !_forceHandleMouse;
+
+			if (_handleMouse != 0 &&
+			    (_vm->_global->_useMouse != 0 || _forceHandleMouse != 0))
+				handleMouse = 1;
+			else
+				handleMouse = 0;
+
+			if (_vm->_global->_pressedKeys[1] == 0)
+				continue;
+
+			while (_vm->_global->_pressedKeys[1] != 0);
+			continue;
+
+		default:
+
+			savedKey = key;
+			key &= 0xff;
+
+			if ((inpType == 9 || inpType == 10) && key >= ' '
+			    && key <= 0xff) {
+				str1 = "0123456789-.,+ ";
+				str2 = "0123456789-,,+ ";
+
+				if ((savedKey >> 8) > 1
+				    && (savedKey >> 8) < 12)
+					key = ((savedKey >> 8) - 1) % 10 + '0';
+
+				for (i = 0; str1[i] != 0; i++) {
+					if (key == str1[i]) {
+						key = str2[i];
+						break;
+					}
+				}
+
+				if (i == (int16)strlen(str1))
+					key = 0;
+			}
+
+			if (key >= ' ' && key <= 0xff) {
+				if (editSize == strlen(str))
+					_vm->_util->cutFromStr(str, strlen(str) - 1,
+					    1);
+
+				if (key >= 'a' && key <= 'z')
+					key += ('A' - 'a');
+
+				pos++;
+				_tempStr[0] = key;
+				_tempStr[1] = 0;
+
+				_vm->_util->insertStr(_tempStr, str, pos - 1);
+
+				//strupr(str);
+			}
 		}
 	}
 }
