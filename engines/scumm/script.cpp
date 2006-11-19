@@ -346,8 +346,7 @@ void ScummEngine::runScriptNested(int script) {
 		// stopped in the meantime, and if it did not already move on.
 		slot = &vm.slot[nest->slot];
 		if (slot->number == nest->number && slot->where == nest->where &&
-				slot->status != ssDead && (slot->freezeCount == 0 ||
-				_game.version <= 2)) {
+				slot->status != ssDead && slot->freezeCount == 0) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
@@ -859,7 +858,6 @@ void ScummEngine::freezeScripts(int flag) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 			if (_currentScript != i && vm.slot[i].status != ssDead && !vm.slot[i].freezeResistant) {
 				vm.slot[i].status |= 0x80;
-				vm.slot[i].freezeCount = 1;
 			}
 		}
 		return;
@@ -887,7 +885,6 @@ void ScummEngine::unfreezeScripts() {
 	if (_game.version <= 2) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 			vm.slot[i].status &= 0x7F;
-			vm.slot[i].freezeCount = 0;
 		}
 		return;
 	}
