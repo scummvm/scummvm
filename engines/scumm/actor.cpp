@@ -873,11 +873,18 @@ void ScummEngine::putActors() {
 	for (i = 1; i < _numActors; i++) {
 		a = &_actors[i];
 		if (a && a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 	}
 }
 
-void Actor::putActor(int dstX, int dstY, byte newRoom) {
+void Actor::putActor(int dstX, int dstY, int newRoom) {
+	if (dstX == -1)
+		dstX = _pos.x;
+	if (dstY == -1)
+		dstY = _pos.y;
+	if (newRoom == -1)
+		newRoom = _room;
+
 	if (_visible && _vm->_currentRoom != newRoom && _vm->getTalkingActor() == _number) {
 		_vm->stopTalk();
 	}
@@ -915,15 +922,6 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 		if (isInCurrentRoom())
 			showActor();
 	}
-}
-
-int Actor::getActorXYPos(int &xPos, int &yPos) const {
-	if (!isInCurrentRoom())
-		return -1;
-
-	xPos = _pos.x;
-	yPos = _pos.y;
-	return 0;
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
@@ -1080,7 +1078,7 @@ int ScummEngine_v70he::getActorFromPos(int x, int y) {
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
 			&& y >= _actors[i]._top && y <= _actors[i]._bottom
-			&& (_actors[i]._pos.y > _actors[curActor]._pos.y || curActor == 0))
+			&& (_actors[i].getPos().y > _actors[curActor].getPos().y || curActor == 0))
 				curActor = i;
 	}
 
@@ -1230,8 +1228,8 @@ void ScummEngine::processActors() {
 	if (_game.id == GID_SAMNMAX) {
 		for (int j = 0; j < numactors; ++j) {
 			for (int i = 0; i < numactors; ++i) {
-				int sc_actor1 = _sortedActors[j]->_pos.y;
-				int sc_actor2 = _sortedActors[i]->_pos.y;
+				int sc_actor1 = _sortedActors[j]->getPos().y;
+				int sc_actor2 = _sortedActors[i]->getPos().y;
 				if (sc_actor1 == sc_actor2) {
 					sc_actor1 += _sortedActors[j]->_number;
 					sc_actor2 += _sortedActors[i]->_number;
@@ -1244,8 +1242,8 @@ void ScummEngine::processActors() {
 	} else {
 		for (int j = 0; j < numactors; ++j) {
 			for (int i = 0; i < numactors; ++i) {
-				int sc_actor1 = _sortedActors[j]->_pos.y - _sortedActors[j]->_layer * 2000;
-				int sc_actor2 = _sortedActors[i]->_pos.y - _sortedActors[i]->_layer * 2000;
+				int sc_actor1 = _sortedActors[j]->getPos().y - _sortedActors[j]->_layer * 2000;
+				int sc_actor2 = _sortedActors[i]->getPos().y - _sortedActors[i]->_layer * 2000;
 				if (sc_actor1 < sc_actor2) {
 					SWAP(_sortedActors[i], _sortedActors[j]);
 				}
@@ -1712,7 +1710,7 @@ void ScummEngine::setTalkingActor(int value) {
 		_system->clearFocusRectangle();
 	} else {
 		// Work out the screen co-ordinates of the actor
-		int x = _actors[value]._pos.x - (camera._cur.x - (_screenWidth >> 1));
+		int x = _actors[value].getPos().x - (camera._cur.x - (_screenWidth >> 1));
 		int y = _actors[value]._top - (camera._cur.y - (_screenHeight >> 1));
 		
 		// Set the focus area to the calculated position
@@ -2170,8 +2168,8 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 			if (ae->actorNum != -1) {
 				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
 				const uint8 *cost = getResourceAddress(rtCostume, a->_costume);
-				int dy = a->_offsY + a->_pos.y - a->getElevation();
-				int dx = a->_offsX + a->_pos.x;
+				int dy = a->_offsY + a->getPos().y - a->getElevation();
+				int dx = a->_offsX + a->getPos().x;
 
 				const uint8 *akax = findResource(MKID_BE('AKAX'), cost);
 				assert(akax);

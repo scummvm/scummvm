@@ -46,21 +46,6 @@ enum MoveFlags {
 	MF_FROZEN = 0x80
 };
 
-struct ActorWalkData {
-	Common::Point dest;           // Final destination point
-	byte destbox;                 // Final destination box
-	int16 destdir;                // Final destination, direction to face at
-
-	Common::Point cur;            // Last position
-	byte curbox;                  // Last box
-
-	Common::Point next;           // Next position on our way to the destination, i.e. our intermediate destination
-
-	Common::Point point3;
-	int32 deltaXFactor, deltaYFactor;
-	uint16 xfrac, yfrac;
-};
-
 struct CostumeData {
 	byte active[16];
 	uint16 animCounter;
@@ -96,10 +81,11 @@ public:
 
 	static void initActorClass(ScummEngine *scumm);
 
-public:
+protected:
 	/** The position of the actor inside the virtual screen. */
 	Common::Point _pos;
 
+public:
 	/** HE specific: This rect is used to clip actor drawing. */
 	Common::Rect _clipOverride;
 
@@ -109,6 +95,8 @@ public:
 	byte _number;
 	uint16 _costume;
 	byte _room;
+
+public:
 	byte _talkColor;
 	int _talkFrequency;
 	byte _talkPan;
@@ -161,6 +149,22 @@ public:
 	} _heTalkQueue[16];
 
 protected:
+	struct ActorWalkData {
+		Common::Point dest;           // Final destination point
+		byte destbox;                 // Final destination box
+		int16 destdir;                // Final destination, direction to face at
+	
+		Common::Point cur;            // Last position
+		byte curbox;                  // Last box
+	
+		Common::Point next;           // Next position on our way to the destination, i.e. our intermediate destination
+	
+		Common::Point point3;
+		int32 deltaXFactor, deltaYFactor;
+		uint16 xfrac, yfrac;
+	};
+	
+
 	byte _palette[256];
 	int _elevation;
 	uint16 _facing;
@@ -182,7 +186,7 @@ public:
 	void showActor();
 
 	void initActor(int mode);
-	void putActor(int x, int y, byte room);
+	void putActor(int x = -1, int y = -1, int room = -1);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
 	int calcMovementFactor(const Common::Point& next);
@@ -229,7 +233,9 @@ public:
 		return _room == _vm->_currentRoom;
 	}
 
-	int getActorXYPos(int &x, int &y) const;
+	const Common::Point &getPos() const {
+		return _pos;
+	}
 
 	int getRoom() const {
 		return _room;

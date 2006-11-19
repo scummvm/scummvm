@@ -410,7 +410,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 6:
 		j = pop();
 		i = pop();
-		a->putActor(i, j, a->_room);
+		a->putActor(i, j);
 		break;
 	case 8:
 		a->_drawToBackBuf = false;
@@ -418,7 +418,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_needBgReset = true;
 		break;
 	case 9:
-		a->drawActorToBackBuf(a->_pos.x, a->_pos.y);
+		a->drawActorToBackBuf(a->getPos().x, a->getPos().y);
 		break;
 	case 14:
 		a->_charset = pop();
@@ -534,13 +534,13 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_ignoreBoxes = 0;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 		break;
 	case 135:		// SO_IGNORE_BOXES
 		a->_ignoreBoxes = 1;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 		break;
 	case 136:		// SO_ACTOR_IGNORE_TURNS_OFF
 		a->_ignoreTurns = false;

@@ -69,14 +69,14 @@ void ScummEngine::setCameraFollows(Actor *a, bool setCamera) {
 	if (!a->isInCurrentRoom()) {
 		startScene(a->getRoom(), 0, 0);
 		camera._mode = kFollowActorCameraMode;
-		camera._cur.x = a->_pos.x;
+		camera._cur.x = a->getPos().x;
 		setCameraAt(camera._cur.x, 0);
 	}
 
-	t = a->_pos.x / 8 - _screenStartStrip;
+	t = a->getPos().x / 8 - _screenStartStrip;
 
 	if (t < camera._leftTrigger || t  > camera._rightTrigger || setCamera == true)
-		setCameraAt(a->_pos.x, 0);
+		setCameraAt(a->getPos().x, 0);
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i].isInCurrentRoom())
@@ -101,7 +101,7 @@ void ScummEngine::clampCameraPos(Common::Point *pt) {
 
 void ScummEngine::moveCamera() {
 	int pos = camera._cur.x;
-	int actorx, t;
+	int t;
 	Actor *a = NULL;
 
 	camera._cur.x &= 0xFFF8;
@@ -127,7 +127,7 @@ void ScummEngine::moveCamera() {
 	if (camera._mode == kFollowActorCameraMode) {
 		a = derefActor(camera._follows, "moveCamera");
 
-		actorx = a->_pos.x;
+		int actorx = a->getPos().x;
 		t = actorx / 8 - _screenStartStrip;
 
 		if (t < camera._leftTrigger || t > camera._rightTrigger) {
@@ -143,7 +143,7 @@ void ScummEngine::moveCamera() {
 
 	if (camera._movingToActor) {
 		a = derefActor(camera._follows, "moveCamera(2)");
-		camera._dest.x = a->_pos.x;
+		camera._dest.x = a->getPos().x;
 	}
 
 	if (VAR_CAMERA_MIN_X != 0xFF && camera._dest.x < VAR(VAR_CAMERA_MIN_X))
@@ -162,7 +162,7 @@ void ScummEngine::moveCamera() {
 	}
 
 	/* a is set a bit above */
-	if (camera._movingToActor && (camera._cur.x / 8) == (a->_pos.x / 8)) {
+	if (camera._movingToActor && (camera._cur.x / 8) == (a->getPos().x / 8)) {
 		camera._movingToActor = false;
 	}
 
@@ -262,11 +262,11 @@ void ScummEngine_v7::setCameraFollows(Actor *a, bool setCamera) {
 		startScene(a->getRoom(), 0, 0);
 	}
 
-	ax = ABS(a->_pos.x - camera._cur.x);
-	ay = ABS(a->_pos.y - camera._cur.y);
+	ax = ABS(a->getPos().x - camera._cur.x);
+	ay = ABS(a->getPos().y - camera._cur.y);
 
 	if (ax > VAR(VAR_CAMERA_THRESHOLD_X) || ay > VAR(VAR_CAMERA_THRESHOLD_Y) || ax > (_screenWidth / 2) || ay > (_screenHeight / 2)) {
-		setCameraAt(a->_pos.x, a->_pos.y);
+		setCameraAt(a->getPos().x, a->getPos().y);
 	}
 
 	if (a->_number != oldfollow)
@@ -279,13 +279,13 @@ void ScummEngine_v7::moveCamera() {
 
 	if (camera._follows) {
 		a = derefActor(camera._follows, "moveCamera");
-		if (ABS(camera._cur.x - a->_pos.x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
-				ABS(camera._cur.y - a->_pos.y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
+		if (ABS(camera._cur.x - a->getPos().x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
+				ABS(camera._cur.y - a->getPos().y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
 			camera._movingToActor = true;
 			if (VAR(VAR_CAMERA_THRESHOLD_X) == 0)
-				camera._cur.x = a->_pos.x;
+				camera._cur.x = a->getPos().x;
 			if (VAR(VAR_CAMERA_THRESHOLD_Y) == 0)
-				camera._cur.y = a->_pos.y;
+				camera._cur.y = a->getPos().y;
 			clampCameraPos(&camera._cur);
 		}
 	} else {
@@ -293,8 +293,8 @@ void ScummEngine_v7::moveCamera() {
 	}
 
 	if (camera._movingToActor) {
-		VAR(VAR_CAMERA_DEST_X) = camera._dest.x = a->_pos.x;
-		VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = a->_pos.y;
+		VAR(VAR_CAMERA_DEST_X) = camera._dest.x = a->getPos().x;
+		VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = a->getPos().y;
 	}
 
 	assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));

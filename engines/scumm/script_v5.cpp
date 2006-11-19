@@ -499,7 +499,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->_ignoreBoxes = !(_opcode & 1);
 			a->_forceClip = 0;
 			if (a->isInCurrentRoom())
-				a->putActor(a->_pos.x, a->_pos.y, a->_room);
+				a->putActor();
 			break;
 
 		case 22:		// SO_ANIMATION_SPEED
@@ -1316,7 +1316,7 @@ void ScummEngine_v5::o5_isActorInBox() {
 	int box = getVarOrDirectByte(PARAM_2);
 	Actor *a = derefActor(act, "o5_isActorInBox");
 
-	if (!checkXYInBoxBounds(box, a->_pos.x, a->_pos.y))
+	if (!checkXYInBoxBounds(box, a->getPos().x, a->getPos().y))
 		o5_jumpRelative();
 	else
 		ignoreScriptWord();
@@ -1475,7 +1475,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 
 	a = derefActor(VAR(VAR_EGO), "o5_loadRoomWithEgo");
 
-	a->putActor(a->_pos.x, a->_pos.y, room);
+	a->putActor(a->getPos().x, a->getPos().y, room);
 	oldDir = a->getFacing();
 	_egoPositioned = false;
 
@@ -1499,9 +1499,9 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	}
 
 	// This is based on disassembly
-	camera._cur.x = camera._dest.x = a->_pos.x;
+	camera._cur.x = camera._dest.x = a->getPos().x;
 	if ((_game.id == GID_ZAK || _game.id == GID_LOOM) && (_game.platform == Common::kPlatformFMTowns)) {
-		setCameraAt(a->_pos.x, a->_pos.y);
+		setCameraAt(a->getPos().x, a->getPos().y);
 	}
 	setCameraFollows(a);
 
@@ -1621,7 +1621,7 @@ void ScummEngine_v5::o5_putActor() {
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_putActor");
 	x = getVarOrDirectWord(PARAM_2);
 	y = getVarOrDirectWord(PARAM_3);
-	a->putActor(x, y, a->_room);
+	a->putActor(x, y);
 }
 
 void ScummEngine_v5::o5_putActorAtObject() {
@@ -1636,7 +1636,7 @@ void ScummEngine_v5::o5_putActorAtObject() {
 		x = 240;
 		y = 120;
 	}
-	a->putActor(x, y, a->_room);
+	a->putActor(x, y);
 }
 
 void ScummEngine_v5::o5_putActorInRoom() {
@@ -2623,9 +2623,9 @@ implement a proper fix.
 		dist = a->_scalex * a->_width / 0xFF;
 		dist += (a2->_scalex * a2->_width / 0xFF) / 2;
 	}
-	x = a2->_pos.x;
-	y = a2->_pos.y;
-	if (x < a->_pos.x)
+	x = a2->getPos().x;
+	y = a2->getPos().y;
+	if (x < a->getPos().x)
 		x += dist;
 	else
 		x -= dist;

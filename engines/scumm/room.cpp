@@ -185,8 +185,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		a->setDirection(dir + 180);
 		a->stopActorMoving();
 		if (_game.id == GID_SAMNMAX) {
-			camera._cur.x = camera._dest.x = a->_pos.x;
-			setCameraAt(a->_pos.x, a->_pos.y);
+			camera._cur.x = camera._dest.x = a->getPos().x;
+			setCameraAt(a->getPos().x, a->getPos().y);
 		}
 	}
 
@@ -206,7 +206,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	} else if (_game.version >= 7) {
 		if (camera._follows) {
 			a = derefActor(camera._follows, "startScene: follows");
-			setCameraAt(a->_pos.x, a->_pos.y);
+			setCameraAt(a->getPos().x, a->getPos().y);
 		}
 	}
 

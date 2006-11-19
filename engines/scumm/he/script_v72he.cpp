@@ -1123,7 +1123,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 65: // HE 98+
 		j = pop();
 		i = pop();
-		a->putActor(i, j, a->_room);
+		a->putActor(i, j);
 		break;
 	case 68: // HE 90+
 		k = pop();
@@ -1205,13 +1205,13 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_ignoreBoxes = 1;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 		break;
 	case 96:		// SO_FOLLOW_BOXES
 		a->_ignoreBoxes = 0;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 		break;
 	case 97:		// SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
@@ -1245,7 +1245,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->initActor(2);
 		break;
 	case 218:
-		a->drawActorToBackBuf(a->_pos.x, a->_pos.y);
+		a->drawActorToBackBuf(a->getPos().x, a->getPos().y);
 		break;
 	case 219:
 		a->_drawToBackBuf = false;

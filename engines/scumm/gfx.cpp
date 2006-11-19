@@ -1181,8 +1181,8 @@ void ScummEngine_v5::drawFlashlight() {
 		y = _mouse.y - vs->topline;
 	} else {
 		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
-		x = a->_pos.x;
-		y = a->_pos.y;
+		x = a->getPos().x;
+		y = a->getPos().y;
 	}
 	_flashlight.w = _flashlight.xStrips * 8;
 	_flashlight.h = _flashlight.yStrips * 8;

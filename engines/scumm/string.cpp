@@ -432,8 +432,8 @@ void ScummEngine::CHARSET_1() {
 	if (a && _string[0].overhead != 0) {
 		int s;
 
-		_string[0].xpos = a->_pos.x - virtscr[0].xstart;
-		_string[0].ypos = a->_pos.y - a->getElevation() - _screenTop;
+		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 
 		if (_game.version <= 5) {
 

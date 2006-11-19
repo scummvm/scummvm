@@ -1152,7 +1152,7 @@ void ScummEngine_v2::o2_putActor() {
 	if (_game.id == GID_MANIAC && _game.version <= 1 && _game.platform != Common::kPlatformNES)
 		a->setFacing(180);
 
-	a->putActor(x, y, a->_room);
+	a->putActor(x, y);
 }
 
 void ScummEngine_v2::o2_startScript() {
@@ -1222,7 +1222,7 @@ void ScummEngine_v2::o2_putActorAtObject() {
 		y = 120;
 	}
 
-	a->putActor(x, y, a->_room);
+	a->putActor(x, y);
 }
 
 void ScummEngine_v2::o2_putActorInRoom() {
@@ -1380,8 +1380,8 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	a->putActor(x2, y2, _currentRoom);
 	a->setDirection(dir + 180);
 
-	camera._dest.x = camera._cur.x = a->_pos.x;
-	setCameraAt(a->_pos.x, a->_pos.y);
+	camera._dest.x = camera._cur.x = a->getPos().x;
+	setCameraAt(a->getPos().x, a->getPos().y);
 	setCameraFollows(a);
 
 	_fullRedraw = true;

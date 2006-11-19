@@ -335,11 +335,15 @@ int ScummEngine::whereIsObject(int object) const {
 }
 
 int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
+	Actor *act;
+
 	if (object < _numActors) {
-		Actor *act = derefActorSafe(object, "getObjectOrActorXY");
-		if (act)
-			return act->getActorXYPos(x, y);
-		else
+		act = derefActorSafe(object, "getObjectOrActorXY");
+		if (act && act->isInCurrentRoom()) {
+			x = act->getPos().x;
+			y = act->getPos().y;
+			return 0;
+		} else
 			return -1;
 	}
 
@@ -347,10 +351,15 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	case WIO_NOT_FOUND:
 		return -1;
 	case WIO_INVENTORY:
-		if (_objectOwnerTable[object] < _numActors)
-			return derefActor(_objectOwnerTable[object], "getObjectOrActorXY(2)")->getActorXYPos(x, y);
-		else
-			return -1;
+		if (_objectOwnerTable[object] < _numActors) {
+			act = derefActor(_objectOwnerTable[object], "getObjectOrActorXY(2)");
+			if (act && act->isInCurrentRoom()) {
+				x = act->getPos().x;
+				y = act->getPos().y;
+				return 0;
+			}
+		}
+		return -1;
 	}
 	getObjectXYPos(object, x, y);
 	return 0;
@@ -1440,7 +1449,7 @@ int ScummEngine::getObjX(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjX")->_pos.x;
+		return derefActor(obj, "getObjX")->getPos().x;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1454,7 +1463,7 @@ int ScummEngine::getObjY(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjY")->_pos.y;
+		return derefActor(obj, "getObjY")->getPos().y;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;

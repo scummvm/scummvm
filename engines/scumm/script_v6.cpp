@@ -1204,9 +1204,9 @@ void ScummEngine_v6::o6_walkActorToObj() {
 			dist = a2->_scalex * a2->_width / 0xFF;
 			dist += dist / 2;
 		}
-		x = a2->_pos.x;
-		y = a2->_pos.y;
-		if (x < a->_pos.x)
+		x = a2->getPos().x;
+		y = a2->getPos().y;
+		if (x < a->getPos().x)
 			x += dist;
 		else
 			x -= dist;
@@ -1349,7 +1349,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 	VAR(VAR_WALKTO_OBJ) = 0;
 
 	if (_game.version == 6) {
-		camera._cur.x = camera._dest.x = a->_pos.x;
+		camera._cur.x = camera._dest.x = a->getPos().x;
 		setCameraFollows(a, (_game.heversion >= 60));
 	}
 
@@ -1455,7 +1455,7 @@ void ScummEngine_v6::o6_getAnimateVariable() {
 void ScummEngine_v6::o6_isActorInBox() {
 	int box = pop();
 	Actor *a = derefActor(pop(), "o6_isActorInBox");
-	push(checkXYInBoxBounds(box, a->_pos.x, a->_pos.y));
+	push(checkXYInBoxBounds(box, a->getPos().x, a->getPos().y));
 }
 
 void ScummEngine_v6::o6_getActorLayer() {
@@ -1866,13 +1866,13 @@ void ScummEngine_v6::o6_actorOps() {
 		a->_ignoreBoxes = 1;
 		a->_forceClip = (_game.version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 		break;
 	case 96:		// SO_FOLLOW_BOXES
 		a->_ignoreBoxes = 0;
 		a->_forceClip = (_game.version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->_pos.x, a->_pos.y, a->_room);
+			a->putActor();
 		break;
 	case 97:		// SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());

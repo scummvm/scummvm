@@ -650,8 +650,8 @@ void ScummEngine_c64::o_loadRoomWithEgo() {
 	a->putActor(x, y, _currentRoom);
 	a->setDirection(dir + 180);
 
-	camera._dest.x = camera._cur.x = a->_pos.x;
-	setCameraAt(a->_pos.x, a->_pos.y);
+	camera._dest.x = camera._cur.x = a->getPos().x;
+	setCameraAt(a->getPos().x, a->getPos().y);
 	setCameraFollows(a);
 
 	_fullRedraw = true;
@@ -749,7 +749,7 @@ void ScummEngine_c64::o_putActorAtObject() {
 		y = 60;
 	}
 
-	a->putActor(x, y, a->_room);
+	a->putActor(x, y);
 }
 
 void ScummEngine_c64::o_pickupObject() {
