@@ -36,6 +36,7 @@
 namespace Cine {
 
 int16 allowSystemMenu = 0;
+bool inMenu;
 
 int16 commandVar3[4];
 int16 commandVar1;
@@ -911,6 +912,8 @@ void CineEngine::makeSystemMenu(void) {
 	int16 systemCommand;
 
 	if (!allowSystemMenu) {
+		inMenu = true;
+
 		manageEvents();
 		getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton,(uint16 *)&mouseX, (uint16 *)&mouseY);
 
@@ -1038,6 +1041,8 @@ void CineEngine::makeSystemMenu(void) {
 				break;
 			}
 		}
+
+		inMenu = false;
 	}
 }
 
@@ -1841,6 +1846,8 @@ void makeActionMenu(void) {
 	uint16 mouseX;
 	uint16 mouseY;
 
+	inMenu = true;
+
 	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
@@ -1851,8 +1858,10 @@ void makeActionMenu(void) {
 			canUseOnObject = 1;
 		}
 	} else {
-		playerCommand =  makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
+		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
 	}
+
+	inMenu = false;
 }
 
 uint16 executePlayerInput(void) {

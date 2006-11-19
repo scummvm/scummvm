@@ -113,13 +113,13 @@ void manageEvents(int count) {
 				}
 				break;
 			case 290: // F9
-				if (allowPlayerInput) {
+				if (allowPlayerInput && !inMenu) {
 					makeActionMenu();
 					makeCommandLine();
 				}
 				break;
 			case 291: // F10
-				if (allowPlayerInput) {
+				if (allowPlayerInput && !inMenu) {
 					g_cine->makeSystemMenu();
 				}
 				break;
@@ -207,6 +207,7 @@ void mainLoop(int bootScriptIdx) {
 	gfxFuncGen2();
 
 	quitFlag = 0;
+	inMenu = false;
 	allowPlayerInput = 0;
 	checkForPendingDataLoadSwitch = 0;
 

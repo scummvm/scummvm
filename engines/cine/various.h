@@ -40,6 +40,7 @@ void makeCommandLine(void);
 void makeActionMenu(void);
 
 extern int16 allowSystemMenu;
+extern bool inMenu; 
 
 struct unk1Struct {
 	byte *ptr;
