@@ -599,7 +599,6 @@ void LauncherDialog::updateListing() {
 }
 
 void LauncherDialog::addGameRecursive(FilesystemNode dir) {
-printf("addGameRecursive('%s')\n", dir.path().c_str());
 	FSList files;
 	if (!dir.listDir(files, FilesystemNode::kListAll)) {
 		error("browser returned a node that is not a directory: '%s'",
@@ -692,67 +691,67 @@ void LauncherDialog::addGame() {
 
 
 void LauncherDialog::addGameToConf(FilesystemNode dir, DetectedGame result, bool suppressEditDialog) {
-			// The auto detector or the user made a choice.
-			// Pick a domain name which does not yet exist (after all, we
-			// are *adding* a game to the config, not replacing).
-			String domain(result.gameid);
-			if (ConfMan.hasGameDomain(domain)) {
-				int suffixN = 1;
-				char suffix[16];
+	// The auto detector or the user made a choice.
+	// Pick a domain name which does not yet exist (after all, we
+	// are *adding* a game to the config, not replacing).
+	String domain(result.gameid);
+	if (ConfMan.hasGameDomain(domain)) {
+		int suffixN = 1;
+		char suffix[16];
 
-				while (ConfMan.hasGameDomain(domain)) {
-					snprintf(suffix, 16, "-%d", suffixN);
-					domain = result.gameid + suffix;
-					suffixN++;
-				}
-			}
-
-			// Add the name domain
-			ConfMan.addGameDomain(domain);
-			
-			// TODO: Setting the description field here has the drawback
-			// that the user does never notice when we upgrade our descriptions.
-			// It might be nice ot leave this field empty, and only set it to
-			// a value when the user edits the description string. 
-			// However, at this point, that's impractical. Once we have a method
-			// to query all backends for the proper & full description of a given
-			// game target, we can change this (currently, you can only query
-			// for the generic gameid description; it's not possible to obtain
-			// a description which contains extended information like language, etc.).
-			ConfMan.set("description", result.description, domain);
-
-			ConfMan.set("gameid", result.gameid, domain);
-			ConfMan.set("path", dir.path(), domain);
-
-			// Set language if specified
-			if (result.language != Common::UNK_LANG)
-				ConfMan.set("language", Common::getLanguageCode(result.language), domain);
-
-			// Set platform if specified
-			if (result.platform != Common::kPlatformUnknown)
-				ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
-
-			// Display edit dialog for the new entry
-			bool saveit = true;
-			if (!suppressEditDialog) {
-				EditGameDialog editDialog(domain, result.description);
-				saveit = (editDialog.runModal() > 0);
-			}
-			if (saveit) {
-				// User pressed OK, so make changes permanent
-
-				// Write config to disk
-				ConfMan.flushToDisk();
-
-				// Update the ListWidget, select the new item, and force a redraw
-				updateListing();
-				selectGame(domain);
-				draw();
-			} else {
-				// User aborted, remove the the new domain again
-				ConfMan.removeGameDomain(domain);
-			}
+		while (ConfMan.hasGameDomain(domain)) {
+			snprintf(suffix, 16, "-%d", suffixN);
+			domain = result.gameid + suffix;
+			suffixN++;
 		}
+	}
+
+	// Add the name domain
+	ConfMan.addGameDomain(domain);
+			
+	// TODO: Setting the description field here has the drawback
+	// that the user does never notice when we upgrade our descriptions.
+	// It might be nice ot leave this field empty, and only set it to
+	// a value when the user edits the description string. 
+	// However, at this point, that's impractical. Once we have a method
+	// to query all backends for the proper & full description of a given
+	// game target, we can change this (currently, you can only query
+	// for the generic gameid description; it's not possible to obtain
+	// a description which contains extended information like language, etc.).
+	ConfMan.set("description", result.description, domain);
+
+	ConfMan.set("gameid", result.gameid, domain);
+	ConfMan.set("path", dir.path(), domain);
+
+	// Set language if specified
+	if (result.language != Common::UNK_LANG)
+		ConfMan.set("language", Common::getLanguageCode(result.language), domain);
+
+	// Set platform if specified
+	if (result.platform != Common::kPlatformUnknown)
+		ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
+
+	// Display edit dialog for the new entry
+	bool saveit = true;
+	if (!suppressEditDialog) {
+		EditGameDialog editDialog(domain, result.description);
+		saveit = (editDialog.runModal() > 0);
+	}
+	if (saveit) {
+		// User pressed OK, so make changes permanent
+
+		// Write config to disk
+		ConfMan.flushToDisk();
+
+		// Update the ListWidget, select the new item, and force a redraw
+		updateListing();
+		selectGame(domain);
+		draw();
+	} else {
+		// User aborted, remove the the new domain again
+		ConfMan.removeGameDomain(domain);
+	}
+}
 
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
