@@ -2716,8 +2716,6 @@ void removeExtention(char *dest, const char *source) {
 	}
 }
 
-uint16 var22;
-
 uint16 defaultMenuBoxColor2;
 
 uint16 zoneData[NUM_MAX_ZONE];

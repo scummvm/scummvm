@@ -1774,8 +1774,8 @@ void o1_playSample() {
 void o1_allowSystemMenu() {
 	byte param = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: OP79 load var22 to %d -> TODO", _currentLine, param);
-	var22 = param;
+	debugC(5, kCineDebugScript, "Line: %d: allowSystemMenu(%d)", _currentLine, param);
+	allowSystemMenu = param;
 }
 
 void o1_loadMask5() {

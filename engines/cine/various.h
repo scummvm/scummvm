@@ -151,8 +151,6 @@ extern uint16 exitEngine;
 
 void hideMouse(void);
 
-extern uint16 var22;
-
 void removeExtention(char *dest, const char *source);
 
 struct selectedObjStruct {
