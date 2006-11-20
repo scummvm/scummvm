@@ -3218,14 +3218,16 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 		manageEvents();
 		int ascii = getKeyData();
+		uint16 mouseButton, mouseX, mouseY;
+
+		getMouseData(0, &mouseButton, &mouseX, &mouseY);
+
+		if (mouseButton & 2)
+			quit = 2;
+		else if (mouseButton & 1)
+			quit = 1;
 
 		switch (ascii) {
-		case 13:
-			quit = 1;
-			break;
-		case 27: // esc
-			quit = 2;
-			break;
 		case 8: // backspace
 			if (inputPos <= 1) {
 				break;
