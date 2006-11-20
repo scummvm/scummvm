@@ -215,7 +215,6 @@ public:
 	int getGraphicsMode() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
-	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
 
 	void initSize(uint w, uint h);
 	int16 getWidth() { return _screenWidth; }
