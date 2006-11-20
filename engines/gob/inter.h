@@ -51,6 +51,9 @@ public:
 	int16 peek16(char *ptr);
 	int32 peek32(char *ptr);
 
+	char _pasteBuf[300];
+	int16 _pastePos;
+
 	char evalExpr(int16 *pRes);
 	char evalBoolResult(void);
 	void funcBlock(int16 retFlag);
@@ -332,6 +335,8 @@ protected:
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadSound(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_copyVars(void);
+	void o2_pasteVars(void);
 	void o2_loadFontToSprite(void);
 	void o2_renderStatic(void);
 	void o2_loadMapObjects(void);

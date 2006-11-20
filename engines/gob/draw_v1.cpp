@@ -608,4 +608,11 @@ void Draw_v1::animateCursor(int16 cursor) {
 	_cursorY = newY;
 }
 
+void Draw_v1::initScreen(void) {
+	_backSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
+}
+
+void Draw_v1::closeScreen(void) {
+}
+
 } // End of namespace Gob

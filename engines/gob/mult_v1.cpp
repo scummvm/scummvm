@@ -319,9 +319,9 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			delete[] _animArrayData;
 			_animArrayData = 0;
 
-			if (_vm->_anim->_animSurf)
-				_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+			_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 			_vm->_anim->_animSurf = 0;
+			_vm->_draw->_spritesArray[22] = 0;
 
 			_animDataAllocated = 0;
 		}
@@ -891,8 +891,7 @@ void Mult_v1::animate(void) {
 }
 
 void Mult_v1::freeMult(void) {
-	if (_vm->_anim->_animSurf != 0)
-		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+	_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 
 	delete[] _objects;
 	delete[] _renderData;
@@ -902,6 +901,7 @@ void Mult_v1::freeMult(void) {
 	_renderData = 0;
 	_orderArray = 0;
 	_vm->_anim->_animSurf = 0;
+	_vm->_draw->_spritesArray[22] = 0;
 }
 
 void Mult_v1::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
@@ -958,9 +958,9 @@ void Mult_v1::freeMultKeys(void) {
 		delete[] _animArrayData;
 		_animArrayData = 0;
 
-		if (_vm->_anim->_animSurf)
-			_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 		_vm->_anim->_animSurf = 0;
+		_vm->_draw->_spritesArray[22] = 0;
 
 		_animDataAllocated = 0;
 	}

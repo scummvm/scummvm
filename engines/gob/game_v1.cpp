@@ -594,8 +594,7 @@ void Game_v1::prepareStart(void) {
 
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
-	_vm->_draw->_backSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
-
+	_vm->_draw->initScreen();
 	_vm->_video->fillRect(_vm->_draw->_backSurface, 0, 0, 319, 199, 1);
 	_vm->_draw->_frontSurface = _vm->_global->_pPrimarySurfDesc;
 	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0, 319, 199, 1);

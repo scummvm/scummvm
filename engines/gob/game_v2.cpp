@@ -89,8 +89,8 @@ void Game_v2::playTot(int16 skipPlay) {
 				_vm->_mult->initAll();
 				_vm->_mult->zeroMultData();
 
-				for (i = 0; i < 50; i++)
-					_vm->_draw->_spritesArray[i] = 0;
+/*				for (i = 0; i < 50; i++)
+					_vm->_draw->_spritesArray[i] = 0;*/
 
 				_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
 				_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
@@ -241,11 +241,12 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (skipPlay != -1) {
 				_vm->_goblin->freeObjects();
 
-				for (i = 0; i < 20; i++) {
+/*				for (i = 0; i < 50; i++) {
 					if (_vm->_draw->_spritesArray[i] != 0)
 						_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[i]);
 					_vm->_draw->_spritesArray[i] = 0;
-				}
+				}*/
+
 				_vm->_snd->stopSound(0);
 
 				for (i = 0; i < 60; i++)
@@ -474,66 +475,69 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			width = _vm->_draw->_frontSurface->width;
 			height = _vm->_draw->_frontSurface->height;
 			if ((width > _vm->_global->_primaryWidth) || (height > _vm->_global->_primaryHeight)
-					|| ((_off_2E51B != 0) && (height > _off_2E51B->height))) {
+					|| ((_vm->_draw->_off_2E51B != 0) && (height > _vm->_draw->_off_2E51B->height))) {
 				sWidth = _vm->_global->_primaryWidth;
 				sHeight = _vm->_global->_primaryHeight;
-				if (_off_2E51B != 0)
-					sHeight -= _off_2E51B->height;
-				oldWord_2FC9E = _word_2FC9E;
-				oldWord_2FC9C = _word_2FC9C;
-				if ((width > sWidth) && (_vm->_global->_inter_mouseX >= _word_2FC9E)) {
+				if (_vm->_draw->_off_2E51B != 0)
+					sHeight -= _vm->_draw->_off_2E51B->height;
+				oldWord_2FC9E = _vm->_draw->_word_2FC9E;
+				oldWord_2FC9C = _vm->_draw->_word_2FC9C;
+				if ((width > sWidth) && (_vm->_global->_inter_mouseX >= _vm->_draw->_word_2FC9E)) {
 					cursorRight = _vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth;
-					if (cursorRight > (_word_2FC9E + sWidth))
-						_word_2FC9E = MIN(cursorRight - sWidth, width - sWidth);
-				} else if (_vm->_global->_inter_mouseX < _word_2FC9E)
-					_word_2FC9E = _vm->_global->_inter_mouseX;
+					if (cursorRight > (_vm->_draw->_word_2FC9E + sWidth))
+						_vm->_draw->_word_2FC9E = MIN(cursorRight - sWidth, width - sWidth);
+				} else if (_vm->_global->_inter_mouseX < _vm->_draw->_word_2FC9E)
+					_vm->_draw->_word_2FC9E = _vm->_global->_inter_mouseX;
 				height = _vm->_draw->_frontSurface->height;
-				if ((height > sHeight) && (_vm->_global->_inter_mouseY >= _word_2FC9C)) {
+				if ((height > sHeight) && (_vm->_global->_inter_mouseY >= _vm->_draw->_word_2FC9C)) {
 					cursorBottom = _vm->_global->_inter_mouseY + _vm->_draw->_cursorHeight;
-					if (cursorBottom > (_word_2FC9C + sHeight))
-						_word_2FC9C = MIN(cursorBottom - sHeight, height - sHeight);
-				} else if (_vm->_global->_inter_mouseY < _word_2FC9C)
-					_word_2FC9C = _vm->_global->_inter_mouseY;
-				if ((oldWord_2FC9E != _word_2FC9E) || (oldWord_2FC9C != _word_2FC9C)) {
+					if (cursorBottom > (_vm->_draw->_word_2FC9C + sHeight))
+						_vm->_draw->_word_2FC9C = MIN(cursorBottom - sHeight, height - sHeight);
+				} else if (_vm->_global->_inter_mouseY < _vm->_draw->_word_2FC9C)
+					_vm->_draw->_word_2FC9C = _vm->_global->_inter_mouseY;
+				if ((oldWord_2FC9E != _vm->_draw->_word_2FC9E) ||
+						(oldWord_2FC9C != _vm->_draw->_word_2FC9C)) {
 					if (_byte_2FC9B == 0) {
-						_word_2FC9E = oldWord_2FC9E;
-						_word_2FC9C = oldWord_2FC9C;
+						_vm->_draw->_word_2FC9E = oldWord_2FC9E;
+						_vm->_draw->_word_2FC9C = oldWord_2FC9C;
 						if ((_vm->_draw->_frontSurface->width > sWidth) && 
 								(_vm->_global->_inter_mouseX >= oldWord_2FC9E)) {
 							if ((_vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth) >
-									(_word_2FC9E + sWidth))
-								_vm->_global->_inter_mouseX = _word_2FC9E + sWidth - _vm->_draw->_cursorWidth;
+									(_vm->_draw->_word_2FC9E + sWidth))
+								_vm->_global->_inter_mouseX = _vm->_draw->_word_2FC9E +
+									sWidth - _vm->_draw->_cursorWidth;
 						} else if (_vm->_global->_inter_mouseX < oldWord_2FC9E)
 							_vm->_global->_inter_mouseX = oldWord_2FC9E;
 
 						if ((_vm->_draw->_frontSurface->height > sHeight) && 
-								(_vm->_global->_inter_mouseY >= _word_2FC9C)) {
+								(_vm->_global->_inter_mouseY >= _vm->_draw->_word_2FC9C)) {
 							if ((_vm->_global->_inter_mouseY + _vm->_draw->_cursorHeight) >
-									(_word_2FC9C + sHeight))
-								_vm->_global->_inter_mouseY = _word_2FC9C + sHeight - _vm->_draw->_cursorHeight;
+									(_vm->_draw->_word_2FC9C + sHeight))
+								_vm->_global->_inter_mouseY = _vm->_draw->_word_2FC9C +
+									sHeight - _vm->_draw->_cursorHeight;
 						} else if (_vm->_global->_inter_mouseY < oldWord_2FC9E)
-							_vm->_global->_inter_mouseY = _word_2FC9C;
+							_vm->_global->_inter_mouseY = _vm->_draw->_word_2FC9C;
 					} else {
-						if (oldWord_2FC9E > _word_2FC9E) {
-							_vm->_global->_inter_mouseX += (oldWord_2FC9E - _word_2FC9E) / 2;
-							_word_2FC9E += (oldWord_2FC9E - _word_2FC9E) / 2;
+						if (oldWord_2FC9E > _vm->_draw->_word_2FC9E) {
+							_vm->_global->_inter_mouseX += (oldWord_2FC9E - _vm->_draw->_word_2FC9E) / 2;
+							_vm->_draw->_word_2FC9E += (oldWord_2FC9E - _vm->_draw->_word_2FC9E) / 2;
 						} else {
-							_vm->_global->_inter_mouseX -= (_word_2FC9E - oldWord_2FC9E) / 2;
-							_word_2FC9E -= (_word_2FC9E - oldWord_2FC9E) / 2;
+							_vm->_global->_inter_mouseX -= (_vm->_draw->_word_2FC9E - oldWord_2FC9E) / 2;
+							_vm->_draw->_word_2FC9E -= (_vm->_draw->_word_2FC9E - oldWord_2FC9E) / 2;
 						}
-						if (oldWord_2FC9C > _word_2FC9C) {
-							_vm->_global->_inter_mouseY += (oldWord_2FC9C - _word_2FC9C) / 2;
-							_word_2FC9C += (oldWord_2FC9C - _word_2FC9C) / 2;
-							if (_word_2FC9C < 2)
-								_word_2FC9C = 0;
+						if (oldWord_2FC9C > _vm->_draw->_word_2FC9C) {
+							_vm->_global->_inter_mouseY += (oldWord_2FC9C - _vm->_draw->_word_2FC9C) / 2;
+							_vm->_draw->_word_2FC9C += (oldWord_2FC9C - _vm->_draw->_word_2FC9C) / 2;
+							if (_vm->_draw->_word_2FC9C < 2)
+								_vm->_draw->_word_2FC9C = 0;
 						} else {
-							_vm->_global->_inter_mouseY -= (_word_2FC9C - oldWord_2FC9C) / 2;
-							_word_2FC9C -= (_word_2FC9C - oldWord_2FC9C) / 2;
+							_vm->_global->_inter_mouseY -= (_vm->_draw->_word_2FC9C - oldWord_2FC9C) / 2;
+							_vm->_draw->_word_2FC9C -= (_vm->_draw->_word_2FC9C - oldWord_2FC9C) / 2;
 						}
-						if (_off_2E51B == 0)
-							warning("_vid_setPixelShift(_word_2FC9E, _word_2FC9C);");
+						if (_vm->_draw->_off_2E51B == 0)
+							warning("_vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C);");
 						else
-							warning("_vid_setPixelShift(_word_2FC9E, _word_2FC9C + _off_2E51B->height);");
+							warning("_vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C + _vm->_draw->_off_2E51B->height);");
 					}
 					_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 				}
@@ -652,9 +656,7 @@ void Game_v2::prepareStart(void) {
 
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
-	_vm->_draw->_backSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
-
-	sub_ADD2();
+	_vm->_draw->initScreen();
 	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0, 319, 199, 1);
 
 	_vm->_util->setMousePos(152, 92);

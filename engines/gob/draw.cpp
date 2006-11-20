@@ -135,8 +135,13 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 	_cursorTimeKey = 0;
 
-	warning("GOB2 Stub! _word_2E8E2");
+	warning("GOB2 Stub! _word_2E8E2, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517");
 	_word_2E8E2 = 2;
+	_word_2FC9C = 0;
+	_word_2FC9E = 0;
+	_word_2E51F = 0;
+	_off_2E51B = 0;
+	_off_2E517 = 0;
 }
 
 void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
@@ -550,6 +555,14 @@ int32 Draw::getSpriteRectSize(int16 index) {
 
 	return _vm->_video->getRectSize(_spritesArray[index]->width, _spritesArray[index]->height,
 			0, _vm->_global->_videoMode);
+}
+
+void Draw::initSpriteSurf(int16 index, int16 vidMode, int16 width, int16 height, int16 flags) {
+	if (index != 22)
+		_vm->_video->freeSurfDesc(_spritesArray[index]);
+
+	_spritesArray[index] =
+		_vm->_video->initSurfDesc(vidMode, width, height, flags);
 }
 
 } // End of namespace Gob

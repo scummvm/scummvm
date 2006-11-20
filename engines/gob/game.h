@@ -234,14 +234,7 @@ public:
 	virtual void prepareStart(void) = 0;
 
 	int8 _byte_2FC9B;
-	int16 _word_2FC9C;
-	int16 _word_2FC9E;
-	int16 _word_2E51F;
 	int32 _dword_2F2B6;
-	Video::SurfaceDesc *_off_2E51B;
-	Video::SurfaceDesc *_off_2E517;
-	void sub_ADD2(void);
-	void sub_BB28(void);
 
 protected:
 

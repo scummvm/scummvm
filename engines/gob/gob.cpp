@@ -189,9 +189,9 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang,
 }
 
 GobEngine::~GobEngine() {
+	delete _mult;
 	delete _game;
 	delete _snd;
-	delete _video;
 	delete _global;
 	delete _draw;
 	delete _anim;
@@ -201,7 +201,6 @@ GobEngine::~GobEngine() {
 	delete _init;
 	delete _inter;
 	delete _map;
-	delete _mult;
 	delete _pack;
 	delete _palanim;
 	delete _parse;
@@ -209,6 +208,7 @@ GobEngine::~GobEngine() {
 	delete _gtimer;
 	delete _util;
 	delete _music;
+	delete _video;
 	delete[] _startTot;
 	delete[] _startTot0;
 

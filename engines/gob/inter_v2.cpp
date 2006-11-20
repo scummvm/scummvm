@@ -207,8 +207,8 @@ void Inter_v2::setupOpcodes(void) {
 		/* 40 */
 		OPCODE(o2_totSub),
 		OPCODE(o2_switchTotSub),
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_copyVars),
+		OPCODE(o2_pasteVars),
 		/* 44 */
 		{NULL, ""},
 		{NULL, ""},
@@ -671,6 +671,7 @@ bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
 	else
 		return (this->*op) (cmdCount, counter, retFlag);
+
 	return false;
 }
 
@@ -833,7 +834,7 @@ void Inter_v2::o2_stub0x80(void) {
 	else
 		_vm->_video->_extraMode = false;
 	
-	_vm->_game->sub_BB28();
+	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
 	memset(_vm->_global->_redPalette, 0, 256);
 	memset(_vm->_global->_greenPalette, 0, 256);
@@ -869,12 +870,12 @@ void Inter_v2::o2_stub0x80(void) {
 	_vm->_util->clearPalette();
 
 	if (start == 0)
-		_vm->_game->_word_2E51F = 0;
+		_vm->_draw->_word_2E51F = 0;
 	else
-		_vm->_game->_word_2E51F = _vm->_global->_primaryHeight - start;
-	_vm->_game->sub_ADD2();
+		_vm->_draw->_word_2E51F = _vm->_global->_primaryHeight - start;
+	_vm->_draw->initScreen();
 
-	if (_vm->_game->_off_2E51B != 0) {
+	if (_vm->_draw->_off_2E51B != 0) {
 		warning("GOB2 Stub! _vid_setSplit(_vm->_global->_primaryHeight - start);");
 		warning("GOB2 Stub! _vid_setPixelShift(0, start);");
 	}
@@ -889,16 +890,16 @@ void Inter_v2::o2_stub0x82(void) {
 		if (_vm->_game->_byte_2FC9B != 0)
 			_vm->_game->_byte_2FC9B = 1;
 		_vm->_parse->parseValExpr();
-		WRITE_VAR(2, _vm->_game->_word_2FC9E);
-		WRITE_VAR(3, _vm->_game->_word_2FC9C);
+		WRITE_VAR(2, _vm->_draw->_word_2FC9E);
+		WRITE_VAR(3, _vm->_draw->_word_2FC9C);
 	} else {
-		_vm->_game->_word_2FC9E = expr;
-		_vm->_game->_word_2FC9C = _vm->_parse->parseValExpr();
+		_vm->_draw->_word_2FC9E = expr;
+		_vm->_draw->_word_2FC9C = _vm->_parse->parseValExpr();
 	}
-/*	if (_vm->_game->_off_2E51B != 0)
-		warning("GOB2 Stub! _vid_setPixelShift(_vm->_game->_word_2FC9E, _vm->_game->_word_2FC9C + 200 - _vm->_game->_word_2E51F)");
+/*	if (_vm->_draw->_off_2E51B != 0)
+		warning("GOB2 Stub! _vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C + 200 - _vm->_draw->_word_2E51F)");
 	else
-		warning("GOB2 Stub! _vid_setPixelShift(_vm->_game->_word_2FC9E, _vm->_game->_word_2FC9C);");*/
+		warning("GOB2 Stub! _vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C);");*/
 }
 
 void Inter_v2::o2_stub0x85(void) {
@@ -1011,6 +1012,46 @@ int16 Inter_v2::loadSound(int16 search) {
 		_vm->_game->_soundTypes[slot] |= 8;
 
 	return slot;
+}
+
+void Inter_v2::o2_copyVars(void) {
+	byte count;
+	int16 varOff;
+	int i;
+
+	count = *_vm->_global->_inter_execPtr++;
+	for (i = 0; i < count; i++) {
+		if ((*_vm->_global->_inter_execPtr == 25) || (*_vm->_global->_inter_execPtr == 28)) {
+			varOff = _vm->_parse->parseVarIndex();
+			_vm->_global->_inter_execPtr++;
+			memcpy(_pasteBuf + _pastePos, _vm->_global->_inter_variables + varOff,
+					_vm->_global->_inter_animDataSize * 4);
+			_pastePos += _vm->_global->_inter_animDataSize * 4;
+			_pasteBuf[_pastePos] = _vm->_global->_inter_animDataSize * 4;
+		} else {
+			if (evalExpr(&varOff) == 20)
+				_vm->_global->_inter_resVal = 0;
+			memcpy(_pasteBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
+			_pastePos += 4;
+			_pasteBuf[_pastePos] = 4;
+		}
+		_pastePos++;
+	}
+}
+
+void Inter_v2::o2_pasteVars(void) {
+	byte count;
+	int16 varOff;
+	int16 size;
+	int i;
+
+	count = *_vm->_global->_inter_execPtr++;
+	for (i = 0; i < count; i++) {
+		varOff = _vm->_parse->parseVarIndex();
+		size = _pasteBuf[--_pastePos];
+		_pastePos -= size;
+		memcpy(_vm->_global->_inter_variables + varOff, _pasteBuf + _pastePos, size);
+	}
 }
 
 void Inter_v2::o2_loadFontToSprite(void) {
@@ -1903,9 +1944,10 @@ void Inter_v2::o2_initMult(void) {
 	    (oldAnimWidth != _vm->_anim->_areaWidth
 		|| oldAnimHeight != _vm->_anim->_areaHeight)) {
 		if (_vm->_anim->_animSurf->vidMode & 0x80)
-			_vm->_draw->freeSprite(0x16);
+			_vm->_draw->freeSprite(22);
 		else
 			delete _vm->_anim->_animSurf;
+		_vm->_draw->_spritesArray[22] = 0;
 	}
 
 	_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
@@ -1918,6 +1960,7 @@ void Inter_v2::o2_initMult(void) {
 			_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FFF8) - 1;
 			_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
 			_vm->_anim->_animSurf->vidPtr += 0x0C000;
+			_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
 		} else {
 			if (_vm->_global->_videoMode == 20) {
 				if (((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
@@ -1929,10 +1972,13 @@ void Inter_v2::o2_initMult(void) {
 					_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
 					_vm->_anim->_animSurf->vidPtr = _vm->_draw->_backSurface->vidPtr +
 						_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height / 4;
+					_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
 				} else
-					_vm->_draw->initBigSprite(0x16, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+					_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+					_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
 			} else
-				_vm->_draw->initBigSprite(0x16, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+				_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+				_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
 		}
 		if (_terminate)
 			return;
@@ -2059,8 +2105,12 @@ void Inter_v2::o2_initCursor(void) {
 	if (width != _vm->_draw->_cursorWidth || height != _vm->_draw->_cursorHeight ||
 	    _vm->_draw->_cursorSprites->width != width * count) {
 
-		_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
+		_vm->_draw->freeSprite(23);
+		_vm->_draw->_cursorSprites = 0;
+		_vm->_draw->_cursorSpritesBack = 0;
+
 		_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
+		_vm->_draw->_scummvmCursor = 0;
 
 		_vm->_draw->_cursorWidth = width;
 		_vm->_draw->_cursorHeight = height;

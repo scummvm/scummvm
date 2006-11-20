@@ -123,13 +123,8 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_byte_2FC83 = 0;
 	_word_2FC80 = 0;
 
-	warning("GOB2 Stub! _byte_2FC9B, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517, _dword_2F2B6");
+	warning("GOB2 Stub! _byte_2FC9B, _dword_2F2B6");
 	_byte_2FC9B = 0;
-	_word_2FC9C = 0;
-	_word_2FC9E = 0;
-	_word_2E51F = 0;
-	_off_2E51B = 0;
-	_off_2E517 = 0;
 	_dword_2F2B6 = 0;
 }
 
@@ -304,6 +299,7 @@ void Game::capturePop(char doDraw) {
 		_vm->_draw->spriteOperation(0);
 	}
 	_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[30 + _captureCount]);
+	_vm->_draw->_spritesArray[30 + _captureCount] = 0;
 }
 
 char *Game::loadTotResource(int16 id) {
@@ -436,6 +432,8 @@ void Game::loadImFile(void) {
 }
 
 void Game::start(void) {
+	int i;
+
 	_collisionAreas = new Collision[250];
 	memset(_collisionAreas, 0, 250 * sizeof(Collision));
 
@@ -443,10 +441,14 @@ void Game::start(void) {
 	playTot(-2);
 
 	delete[] _collisionAreas;
+	_vm->_draw->closeScreen();
 
-	_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
+	_vm->_draw->_spritesArray[20] = 0;
+	for (i = 0; i < 50; i++) {
+		_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[i]);
+		_vm->_draw->_spritesArray[i] = 0;
+	}
 	_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
-	_vm->_video->freeSurfDesc(_vm->_draw->_backSurface);
 }
 
 // flagbits: 0 = freeInterVariables, 1 = skipPlay
@@ -728,61 +730,6 @@ void Game::collAreaSub(int16 index, int8 enter) {
 		if (_collisionAreas[index].funcLeave != 0)
 			collSub(_collisionAreas[index].funcLeave);
 	}
-}
-
-// "DEVinitscreen"
-void Game::sub_ADD2(void) {
-	_word_2FC9C = 0;
-	_word_2FC9E = 0;
-
-	if (_word_2E51F != 0) {
-		_off_2E51B = new Video::SurfaceDesc;
-		memcpy(_off_2E51B, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
-		_off_2E51B->height = _vm->_global->_primaryHeight - _word_2E51F;
-		_vm->_draw->_frontSurface->height -= _off_2E51B->height;
-		_vm->_draw->_frontSurface->vidPtr =
-			_off_2E51B->vidPtr + ((_off_2E51B->width * _off_2E51B->height) / 4);
-
-		_off_2E517 = new Video::SurfaceDesc;
-		memcpy(_off_2E517, _off_2E51B, sizeof(Video::SurfaceDesc));
-		_off_2E517->width = _vm->_global->_primaryWidth;
-		_off_2E517->vidPtr = _vm->_draw->_frontSurface->vidPtr +
-			((_vm->_draw->_frontSurface->width * _vm->_draw->_frontSurface->height ) / 4);
-	}
-	_vm->_draw->initBigSprite(21, 320, 200, 0);
-	_vm->_draw->_backSurface = _vm->_draw->_spritesArray[21];
-	_vm->_video->clearSurf(_vm->_draw->_backSurface);
-	
-	_vm->_draw->initBigSprite(23, 32, 16, 2);
-	_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[23];
-	_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
-	_vm->_draw->_scummvmCursor =
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
-
-	_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
-	_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
-
-/*	if (_word_2E51F != 0) {
-		dword_2F92D = _off_2E51B;
-		dword_2F931 = _off_2E517;
-	}*/
-}
-
-// "DEVclosescreen"
-void Game::sub_BB28(void) {
-	_vm->_draw->freeSprite(23);
-	_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
-	if (_off_2E51B != 0) {
-		memcpy(_vm->_draw->_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
-		_vm->_draw->_frontSurface->width = 320;
-		_vm->_draw->_frontSurface->height = 200;
-		delete _off_2E51B;
-		delete _off_2E517;
-		_off_2E51B = 0;
-		_off_2E517 = 0;
-	}
-	if (_vm->_draw->_frontSurface != _vm->_draw->_backSurface)
-		_vm->_draw->freeSprite(21);
 }
 
 Snd::SoundDesc *Game::loadSND(const char *path, int8 arg_4) {

@@ -804,7 +804,9 @@ void Inter_v1::o1_initCursor(void) {
 	    _vm->_draw->_cursorSprites->width != width * count) {
 
 		_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
+		_vm->_draw->_spritesArray[23] = 0;
 		_vm->_video->freeSurfDesc(_vm->_draw->_scummvmCursor);
+		_vm->_draw->_scummvmCursor = 0;
 
 		_vm->_draw->_cursorWidth = width;
 		_vm->_draw->_cursorHeight = height;
@@ -1168,9 +1170,11 @@ bool Inter_v1::o1_createSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	flag = load16();
 	if (flag == 1)
-		_vm->_draw->_spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
+//		_vm->_draw->_spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
+		_vm->_draw->initSpriteSurf(index, _vm->_global->_videoMode, width, height, 2);
 	else
-		_vm->_draw->_spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 0);
+//		_vm->_draw->_spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 0);
+		_vm->_draw->initSpriteSurf(index, _vm->_global->_videoMode, width, height, 0);
 
 	_vm->_video->clearSurf(_vm->_draw->_spritesArray[index]);
 	return false;
@@ -1558,12 +1562,12 @@ void Inter_v1::o1_initMult(void) {
 		|| oldAnimHeight != _vm->_anim->_areaHeight)) {
 		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 		_vm->_anim->_animSurf = 0;
+		_vm->_draw->_spritesArray[22] = 0;
 	}
 
 	if (_vm->_anim->_animSurf == 0) {
 		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
 		    _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
-
 		_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
 	}
 

@@ -115,6 +115,11 @@ public:
 	int16 _palLoadData2[4];
 		
 	int16 _word_2E8E2;
+	int16 _word_2FC9C;
+	int16 _word_2FC9E;
+	int16 _word_2E51F;
+	Video::SurfaceDesc *_off_2E51B;
+	Video::SurfaceDesc *_off_2E517;
 
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated(void);
@@ -136,12 +141,15 @@ public:
 	void printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 			int16 bottom, char *str, int16 fontIndex, int16 color);
 	int32 getSpriteRectSize(int16 index);
+	void initSpriteSurf(int16 index, int16 vidMode, int16 width, int16 height, int16 flags);
 
 	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) = 0;
 	virtual void printText(void) = 0;
 	virtual void spriteOperation(int16 operation) = 0;
 	virtual void blitCursor(void) = 0;
 	virtual void animateCursor(int16 cursor) = 0;
+	virtual void initScreen(void) = 0;
+	virtual void closeScreen(void) = 0;
 
 	Draw(GobEngine *vm);
 	virtual ~Draw() {};
@@ -157,6 +165,8 @@ public:
 	virtual void spriteOperation(int16 operation);
 	virtual void blitCursor(void);
 	virtual void animateCursor(int16 cursor);
+	virtual void initScreen(void);
+	virtual void closeScreen(void);
 
 	Draw_v1(GobEngine *vm);
 	virtual ~Draw_v1() {};
@@ -169,6 +179,8 @@ public:
 	virtual void spriteOperation(int16 operation);
 	virtual void blitCursor(void);
 	virtual void animateCursor(int16 cursor);
+	virtual void initScreen(void);
+	virtual void closeScreen(void);
 
 	Draw_v2(GobEngine *vm);
 	virtual ~Draw_v2() {};

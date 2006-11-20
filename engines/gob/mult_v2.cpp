@@ -483,8 +483,11 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 				_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
 				_vm->_anim->_animSurf->vidPtr +=
 					(_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2;
-			} else
+				_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
+			} else {
 				_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+				_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
+			}
 		
 			_vm->_draw->adjustCoords(1, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
 			_vm->_draw->_sourceSurface = 21;
@@ -569,9 +572,9 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			delete[] _orderArray;
 			_orderArray = 0;
 
-			if (_vm->_anim->_animSurf)
-				_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+			_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 			_vm->_anim->_animSurf = 0;
+			_vm->_draw->_spritesArray[22] = 0;
 
 			_animDataAllocated = 0;
 		}

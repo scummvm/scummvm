@@ -56,6 +56,9 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 	_soundStopVal = 0;
 	_breakFromLevel = 0;
 	_nestLevel = 0;
+
+	memset(_pasteBuf, 0, 300);
+	_pastePos = 0;
 }
 
 int16 Inter::load16(void) {

@@ -62,8 +62,7 @@ void Draw_v2::initBigSprite(int16 index, int16 width, int16 height, int16 flags)
 		}
 
 		partsheight = _spritesHeights[index];
-		_spritesArray[index] =
-			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, partsheight, flags);
+		initSpriteSurf(index, _vm->_global->_videoMode, width, partsheight, flags);
 		fragment = 0;
 		while (partsheight < height) {
 			remainheight = height - partsheight;
@@ -82,8 +81,7 @@ void Draw_v2::initBigSprite(int16 index, int16 width, int16 height, int16 flags)
 			fragment++;
 		}
 	} else
-		_spritesArray[index] =
-			_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+		initSpriteSurf(index, _vm->_global->_videoMode, width, height, flags);
 
 	_vm->_video->clearSurf(_spritesArray[index]);
 	// '------
@@ -533,7 +531,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	sourceSurface = _sourceSurface;
 
 //	warning("GOB2 Stub! _off_2E51B");
-	if (_vm->_game->_off_2E51B != 0) {
+	if (_off_2E51B != 0) {
 		if ((_frontSurface->height <= _destSpriteY) &&
 				((_destSurface == 20) || (_destSurface == 21))) {
 			_destSpriteY -= _frontSurface->height;
@@ -544,7 +542,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 			}
 			if (_destSurface == 21)
 				invalidateRect(0, _frontSurface->height, 319,
-						_frontSurface->height + _vm->_game->_off_2E51B->height - 1);
+						_frontSurface->height + _off_2E51B->height - 1);
 			destSurface += 4;
 		}
 		if ((_frontSurface->height <= _spriteTop) && (operation == DRAW_BLITSURF)
@@ -1015,6 +1013,63 @@ void Draw_v2::animateCursor(int16 cursor) {
 		_showCursor = 2;
 	_cursorX = newX;
 	_cursorY = newY;
+}
+
+void Draw_v2::initScreen(void) {
+	_word_2FC9C = 0;
+	_word_2FC9E = 0;
+
+	if (_word_2E51F != 0) {
+		_off_2E51B = new Video::SurfaceDesc;
+		memcpy(_off_2E51B, _frontSurface, sizeof(Video::SurfaceDesc));
+		_off_2E51B->height = _vm->_global->_primaryHeight - _word_2E51F;
+		_frontSurface->height -= _off_2E51B->height;
+		_frontSurface->vidPtr =
+			_off_2E51B->vidPtr + ((_off_2E51B->width * _off_2E51B->height) / 4);
+
+		_off_2E517 = new Video::SurfaceDesc;
+		memcpy(_off_2E517, _off_2E51B, sizeof(Video::SurfaceDesc));
+		_off_2E517->width = _vm->_global->_primaryWidth;
+		_off_2E517->vidPtr = _frontSurface->vidPtr +
+			((_frontSurface->width * _frontSurface->height ) / 4);
+	}
+	initBigSprite(21, 320, 200, 0);
+	_backSurface = _spritesArray[21];
+	_vm->_video->clearSurf(_backSurface);
+	
+	initBigSprite(23, 32, 16, 2);
+	_cursorSpritesBack = _spritesArray[23];
+	_cursorSprites = _cursorSpritesBack;
+	_scummvmCursor =
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
+
+	_spritesArray[20] = _frontSurface;
+	_spritesArray[21] = _backSurface;
+
+/*	if (_word_2E51F != 0) {
+		dword_2F92D = _off_2E51B;
+		dword_2F931 = _off_2E517;
+	}*/
+}
+
+void Draw_v2::closeScreen(void) {
+	freeSprite(23);
+	_cursorSprites = 0;
+	_cursorSpritesBack = 0;
+	_vm->_video->freeSurfDesc(_scummvmCursor);
+	_scummvmCursor = 0;
+	if (_off_2E51B != 0) {
+		memcpy(_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
+		_frontSurface->width = 320;
+		_frontSurface->height = 200;
+		delete _off_2E51B;
+		delete _off_2E517;
+		_off_2E51B = 0;
+		_off_2E517 = 0;
+	}
+	if (_frontSurface != _backSurface)
+		freeSprite(21);
+	_spritesArray[21] = 0;
 }
 
 } // End of namespace Gob
