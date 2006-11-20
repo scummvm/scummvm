@@ -510,8 +510,15 @@ int ScummEngine_v6::getSpecialBox(int x, int y) {
 	return (-1);
 }
 
-bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
-	BoxCoords box = getBoxCoordinates(b);
+bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
+	// Since this method is called by many other methods that take params
+	// from e.g. script opcodes, but do not validate the boxnum, we
+	// make a check here to filter out invalid boxes.
+	// See also bug #1599113.
+	if (boxnum < 0 || boxnum == Actor::kInvalidBox)
+		return false;
+
+	BoxCoords box = getBoxCoordinates(boxnum);
 	const Common::Point p(x, y);
 
 	// Quick check: If the x (resp. y) coordinate of the point is
