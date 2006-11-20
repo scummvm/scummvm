@@ -724,27 +724,36 @@ void ScummEngine::stopObjectCode() {
 	ScriptSlot *ss;
 
 	ss = &vm.slot[_currentScript];
-	if (ss->cutsceneOverride == 255) {	/* FIXME: What does this? */
-		warning("Cutscene for script %d has overflown. Resetting.", ss->number);
-		ss->cutsceneOverride = 0;
-	}
+	if (_game.version <= 2) {
+		if (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) {
+			stopScript(ss->number);
+		} else {
+			ss->number = 0;
+			ss->status = ssDead;
+		}
+	} else if (_game.version <= 5) {
+		if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
+			stopObjectScript(ss->number);
+		} else {
+			if (_game.version >= 4 && ss->cutsceneOverride)
+				error("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 
-	if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
-		if (ss->cutsceneOverride) {
-			if (_game.version >= 5)
-				warning("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
-			ss->cutsceneOverride = 0;
+			ss->number = 0;
+			ss->status = ssDead;
 		}
 	} else {
-		if (ss->cutsceneOverride) {
-			if (_game.version >= 5)
-				warning("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
-			ss->cutsceneOverride = 0;
+		if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
+			if (ss->cutsceneOverride)
+				error("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
+		} else {
+			if (ss->cutsceneOverride)
+				error("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 		}
+		ss->number = 0;
+		ss->status = ssDead;
 	}
+
 	nukeArrays(_currentScript);
-	ss->number = 0;
-	ss->status = ssDead;
 	_currentScript = 0xFF;
 }
 
