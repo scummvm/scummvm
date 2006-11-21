@@ -329,6 +329,10 @@ void Draw_v1::spriteOperation(int16 operation) {
 			}
 			delete[] dataBuf;
 			break;
+		} else if (id >= _vm->_game->_totResourceTable->itemsCount) {
+			warning("Trying to load non-existent sprite (id = %d, count = %d)", id,
+					_vm->_game->_totResourceTable->itemsCount);
+			break;
 		}
 		// Load from .TOT resources
 		itemPtr = &_vm->_game->_totResourceTable->items[id];

@@ -54,6 +54,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	int16 breakFrom;
 	int16 nestLevel;
 	int32 variablesCount;
+	int32 totSize;
 	char *filePtr;
 	char *savedIP;
 	int16 i;
@@ -112,7 +113,7 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (_curTotFile[0] == 0 && _totFileData == 0)
 				break;
 
-			loadTotFile(_curTotFile);
+			totSize = loadTotFile(_curTotFile);
 			if (_totFileData == 0) {
 				_vm->_draw->blitCursor();
 				_vm->_inter->_terminate = 2;
@@ -159,20 +160,35 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			filePtr = (char *)_totFileData + 0x34;
 			_totResourceTable = 0;
+			int32 resSize;
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
 				_totResourceTable = new TotResTable;
 				_totResourceTable->dataPtr = _totFileData + READ_LE_UINT32((char *)_totFileData + 0x34);
 				Common::MemoryReadStream totResTable((byte *) _totResourceTable->dataPtr, 4294967295U);
 
 				_totResourceTable->itemsCount = totResTable.readSint16LE();
-				_totResourceTable->unknown = totResTable.readByte();
+				resSize = _totResourceTable->itemsCount * szGame_TotResItem + szGame_TotResTable;
+				if (totSize > (resSize + 0x34)) {
+					_totResourceTable->unknown = totResTable.readByte();
 
-				_totResourceTable->items = new TotResItem[_totResourceTable->itemsCount];
-				for (i = 0; i < _totResourceTable->itemsCount; ++i) {
-					_totResourceTable->items[i].offset = totResTable.readSint32LE();
-					_totResourceTable->items[i].size = totResTable.readSint16LE();
-					_totResourceTable->items[i].width = totResTable.readSint16LE();
-					_totResourceTable->items[i].height = totResTable.readSint16LE();
+					_totResourceTable->items = new TotResItem[_totResourceTable->itemsCount];
+					for (i = 0; i < _totResourceTable->itemsCount; ++i) {
+						_totResourceTable->items[i].offset = totResTable.readSint32LE();
+						_totResourceTable->items[i].size = totResTable.readSint16LE();
+						_totResourceTable->items[i].width = totResTable.readSint16LE();
+						_totResourceTable->items[i].height = totResTable.readSint16LE();
+					}
+				}
+				else {
+					// WORKAROUND: In the original asm, _totResourceTable is only assigned
+					// in playTot and evaluated later, right before using it. In the
+					// Gobliins 2 demo, there is a dummy tot that loads another tot, overwriting
+					// the dummy pointer with the real one.
+					debugC(1, DEBUG_FILEIO,
+							"Attempted to load invalid resource table (size = %d, totSize = %d)",
+							resSize, totSize);
+					delete _totResourceTable;
+					_totResourceTable = 0;
 				}
 			}
 

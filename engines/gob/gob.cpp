@@ -229,7 +229,7 @@ void GobEngine::shutdown() {
 }
 
 void GobEngine::writeVarDebug(uint32 offs, uint32 v) {
-	warning("Setting var %d(%d) to %d", offs, offs >> 2, v);
+	warning("Setting var %u(%u) to %u", offs, offs >> 2, v);
 	(*(uint32 *)(_global->_inter_variables + (offs))) = v;
 }
 
@@ -314,7 +314,7 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 	else
 		iSize = 0;
 
-	oOff = offset < 0 ? MAX(0, iSize - (-offset - 1)) : offset;
+	oOff = offset < 0 ? MAX((int32) 0, iSize - (-offset - 1)) : offset;
 	oSize = MAX(iSize, oOff + ABS(size));
 	oBuf = new char[oSize];
 	memset(oBuf, 0, oSize);

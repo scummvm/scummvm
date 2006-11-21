@@ -1948,6 +1948,7 @@ void Inter_v2::o2_initMult(void) {
 		else
 			delete _vm->_anim->_animSurf;
 		_vm->_draw->_spritesArray[22] = 0;
+		_vm->_anim->_animSurf = 0;
 	}
 
 	_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
@@ -1962,17 +1963,20 @@ void Inter_v2::o2_initMult(void) {
 			_vm->_anim->_animSurf->vidPtr += 0x0C000;
 			_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
 		} else {
-			if (_vm->_global->_videoMode == 20) {
+			if ((_vm->_global->_videoMode == 0x13) && _vm->_video->_extraMode) { 
 				if (((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
 						+ (_vm->_anim->_areaWidth * _vm->_anim->_areaHeight) / 4) < 65536) {
-					_vm->_anim->_animSurf = new Video::SurfaceDesc;
+					warning("GOB2 Stub! Inter_v2::o2_initMult(), wide frontSurface, using the extra space as animSurf");
+/*					_vm->_anim->_animSurf = new Video::SurfaceDesc;
 					memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
 					_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
 					_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FF8) - 1;
 					_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
 					_vm->_anim->_animSurf->vidPtr = _vm->_draw->_backSurface->vidPtr +
 						_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height / 4;
-					_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
+					_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;*/
+					_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+					_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
 				} else
 					_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
 					_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];

@@ -36,7 +36,7 @@ public:
 
 	struct Mult_AnimData {
 		int8 animation;
-		int8 layer;
+		uint8 layer;
 		int8 frame;
 		int8 animType;
 		int8 order;

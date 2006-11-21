@@ -476,14 +476,17 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			if ((_vm->_global->_videoMode == 0x13) && _vm->_video->_extraMode &&
 				((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
 					+ (_vm->_anim->_areaWidth * _vm->_anim->_areaHeight) / 4) < 64000) {
-				_vm->_anim->_animSurf = new Video::SurfaceDesc;
+				warning("GOB2 Stub! Mult_v2::playMult(), wide frontSurface, using the extra space as animSurf");
+/*				_vm->_anim->_animSurf = new Video::SurfaceDesc;
 				memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
 				_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
 				_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FFF8) - 1;
 				_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
 				_vm->_anim->_animSurf->vidPtr +=
 					(_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2;
-				_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
+				_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;*/
+				_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+				_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
 			} else {
 				_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
 				_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
@@ -1333,6 +1336,7 @@ void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 void Mult_v2::freeMult(void) {
 	if (_vm->_anim->_animSurf != 0)
 		delete _vm->_anim->_animSurf;
+	_vm->_anim->_animSurf = 0;
 
 	delete[] _objects;
 	delete[] _renderData2;
@@ -1341,7 +1345,6 @@ void Mult_v2::freeMult(void) {
 	_objects = 0;
 	_renderData2 = 0;
 	_orderArray = 0;
-	_vm->_anim->_animSurf = 0;
 }
 
 void Mult_v2::freeMultKeys(void) {

@@ -366,16 +366,21 @@ int16 Game::adjustKey(int16 key) {
 	return key - 0x20;
 }
 
-void Game::loadTotFile(char *path) {
+int32 Game::loadTotFile(char *path) {
 	int16 handle;
+	int32 size;
 
+	size = -1;
 	handle = _vm->_dataio->openData(path);
 	if (handle >= 0) {
 		_vm->_dataio->closeData(handle);
+		size = _vm->_dataio->getDataSize(path);
 		_totFileData = _vm->_dataio->getData(path);
 	} else {
 		_totFileData = 0;
 	}
+
+	return size;
 }
 
 void Game::loadExtTable(void) {

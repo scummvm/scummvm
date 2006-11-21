@@ -196,7 +196,7 @@ public:
 
 	void loadSound(int16 slot, char *dataPtr);
 	int16 adjustKey(int16 key);
-	void loadTotFile(char *path);
+	int32 loadTotFile(char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
 	void start(void);
