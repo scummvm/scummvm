@@ -60,8 +60,8 @@ void AGOSEngine::vc17_setPathfinderItem() {
 }
 
 void AGOSEngine::vc22_setPaletteNew() {
-	byte *offs, *palptr, *src;
-	uint16 a = 0, b, num, palSize;
+	byte *offs, *palptr = 0, *src;
+	uint16 a = 0, b, num = 1, palSize = 0;
 
 	a = vcReadNextWord();
 	b = vcReadNextWord();

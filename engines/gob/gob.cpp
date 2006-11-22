@@ -368,7 +368,7 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 void GobEngine::loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
 	int32 sSize;
 	int32 retSize;
-	int16 index;
+	int16 index = 0;
 	int16 y;
 	char *buf;
 	char *sName;

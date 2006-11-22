@@ -34,7 +34,7 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 	if (getGameType() == GType_ELVIRA1) {
 		SubPlayer *p = (SubPlayer *)findChildOfType(y, 3);
 		SubContainer *c = (SubContainer *)findChildOfType(y, 7);
-		int cap;
+		int cap = 0;
 		int wt;
 
 		if ((c == NULL) && (p == NULL))

@@ -1332,7 +1332,7 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int32 offset;
 	int16 dataVar; // si
 	int16 handle;
-	int16 index;
+	int16 index = 0;
 	int16 y;
 	char *buf;
 	bool readPal;

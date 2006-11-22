@@ -336,7 +336,7 @@ int16 findFileInBundle(const char *fileName) {
 			}
 		}
 
-		const char **bPtr;
+		const char **bPtr = 0;
 
 		if (g_cine->getPlatform() == Common::kPlatformPC) {
 			switch (g_cine->getLanguage()) {
