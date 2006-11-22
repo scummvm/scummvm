@@ -63,8 +63,11 @@ bool TextMan::predictiveDialog(void) {
 	};
 	const char *modes[] = { "Pre", "123", "Abc" };
 
-	if (!_dict.size())
+	if (!_dict.size()) {
 		loadDict();
+		if (!_dict.size())
+			return false;
+	}
 
 	draw_window(50, 40, 269, 159);
 	draw_rectangle(62, 54, 249, 66, MSG_BOX_TEXT);
@@ -267,7 +270,8 @@ void TextMan::loadDict(void) {
 	Common::File in;
 	char buf[MAXLINELEN];
 
-	in.open("pred.txt");
+	if (!in.open("pred.txt"))
+		return;
 
 	while (!in.eos()) {
 		if (!in.readLine(buf, MAXLINELEN))
