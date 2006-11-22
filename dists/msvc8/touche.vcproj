@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="agi"
-	ProjectGUID="{F5F57066-CDF4-4F80-B9E7-7F4D21850D6E}"
-	RootNamespace="agi"
+	Name="touche"
+	ProjectGUID="{D4986356-D0BB-4981-924A-854157BDF11F}"
+	RootNamespace="touche"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="agi_Debug"
-			IntermediateDirectory="agi_Debug"
+			OutputDirectory="touche_Debug"
+			IntermediateDirectory="touche_Debug"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agi.lib"
+				OutputFile="$(OutDir)/touche.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -87,8 +87,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="agi_Release"
-			IntermediateDirectory="agi_Release"
+			OutputDirectory="touche_Release"
+			IntermediateDirectory="touche_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agi.lib"
+				OutputFile="$(OutDir)/touche.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -161,179 +161,51 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\agi\agi.cpp"
+			RelativePath="..\..\engines\touche\graphics.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\agi.h"
+			RelativePath="..\..\engines\touche\graphics.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\agi_v2.cpp"
+			RelativePath="..\..\engines\touche\midi.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\agi_v3.cpp"
+			RelativePath="..\..\engines\touche\midi.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\checks.cpp"
+			RelativePath="..\..\engines\touche\opcodes.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\console.cpp"
+			RelativePath="..\..\engines\touche\plugin.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\console.h"
+			RelativePath="..\..\engines\touche\resource.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\cycle.cpp"
+			RelativePath="..\..\engines\touche\saveload.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\font.cpp"
+			RelativePath="..\..\engines\touche\staticres.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\global.cpp"
+			RelativePath="..\..\engines\touche\touche.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\graphics.cpp"
+			RelativePath="..\..\engines\touche\touche.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\id.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\inv.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\keyboard.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\keyboard.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\list.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\logic.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\logic.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\lzw.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\lzw.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\menu.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\motion.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\objects.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\op_cmd.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\op_dbg.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\op_test.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\opcodes.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\patches.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\picture.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\picture.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\predictive.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\savegame.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\savegame.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sprite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sprite.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\text.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\text.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\view.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\view.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\words.cpp"
+			RelativePath="..\..\engines\touche\ui.cpp"
 			>
 		</File>
 	</Files>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -703,6 +703,26 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="mods"
+				>
+				<File
+					RelativePath="..\..\sound\mods\module.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\module.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\protracker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\protracker.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="txt"
@@ -989,7 +1009,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\ThemeNew.cpp"
+				RelativePath="..\..\gui\ThemeModern.cpp"
 				>
 			</File>
 			<File
@@ -1131,7 +1151,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
@@ -1140,7 +1160,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							CommandLine="nasm.exe  -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
@@ -1161,7 +1181,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
@@ -1170,7 +1190,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							CommandLine="nasm.exe -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>

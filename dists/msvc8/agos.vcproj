@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -216,7 +216,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\gfx.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\icons.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\input.cpp"
 			>
 		</File>
 		<File
@@ -225,6 +233,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\items.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\menus.cpp"
 			>
 		</File>
 		<File
@@ -252,11 +264,47 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\res_snd.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\rooms.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_e1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_e2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_ff.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_pp.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_s1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_s2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_ww.cpp"
 			>
 		</File>
 		<File
@@ -288,7 +336,31 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\vga_e2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_ff.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_s1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_s2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_ww.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\window.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\zones.cpp"
 			>
 		</File>
 	</Files>
