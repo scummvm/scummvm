@@ -46,6 +46,13 @@ static const GameVersion toucheGameVersionsTable[] = {
 		Common::kPlatformPC
 	},
 	{
+		"Touche: The Adventures of the Fifth Musketeer",
+		26350190,
+		"95967f0b51d2e813e99ca00325098340",
+		Common::EN_USA,
+		Common::kPlatformPC
+	},
+	{
 		"Touche: Les Aventures du Cinquieme Mousquetaire",
 		26558232,
 		"1caa20bb4d4fc2ce8eb867b6610082b3",
