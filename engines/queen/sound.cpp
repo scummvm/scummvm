@@ -34,7 +34,8 @@
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 
-#define	SB_HEADER_SIZE	110
+#define	SB_HEADER_SIZE_V104 110
+#define	SB_HEADER_SIZE_V110 122
 #define	STOP_MUSIC	-1
 
 namespace Queen {
@@ -188,12 +189,33 @@ bool SilentSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 }
 
 bool SBSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
-	if (_vm->resource()->fileExists(name)) {
-		uint32 size;
-		uint8 *sound = _vm->resource()->loadFile(name, SB_HEADER_SIZE, &size, true);
-		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-		_mixer->playRaw(soundHandle, sound, size, 11025, flags);
-		return true;
+	uint32 size;
+	Common::File *f = _vm->resource()->giveSound(name, &size);
+	if (f) {
+		int headerSize;
+		f->seek(2, SEEK_CUR);
+		uint16 version = f->readUint16LE();
+		switch (version) {
+		case 104:
+			headerSize = SB_HEADER_SIZE_V104;
+			break;
+		case 110:
+			headerSize = SB_HEADER_SIZE_V110;
+			break;
+		default:
+			warning("Unhandled SB file version %d, defaulting to 104\n", version);
+			headerSize = SB_HEADER_SIZE_V104;
+			break;
+		}
+		f->seek(headerSize - 4, SEEK_CUR);
+		size -= headerSize;
+		uint8 *sound = (uint8 *)malloc(size);
+		if (sound) {
+			f->read(sound, size);
+			byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+			_mixer->playRaw(soundHandle, sound, size, 11025, flags);
+			return true;
+		}
 	}
 	return false;
 }
@@ -201,7 +223,7 @@ bool SBSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 #ifdef USE_MAD
 bool MP3Sound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
-	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
+	Common::File *f = _vm->resource()->giveSound(name, &size);
 	if (f) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
 		return true;
@@ -213,7 +235,7 @@ bool MP3Sound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 #ifdef USE_VORBIS
 bool OGGSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
-	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
+	Common::File *f = _vm->resource()->giveSound(name, &size);
 	if (f) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
 		return true;
@@ -225,7 +247,7 @@ bool OGGSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 #ifdef USE_FLAC
 bool FLACSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
-	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
+	Common::File *f = _vm->resource()->giveSound(name, &size);
 	if (f) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
 		return true;
