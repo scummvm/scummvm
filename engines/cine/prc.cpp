@@ -76,6 +76,12 @@ void loadPrc(const char *pPrcName) {
 		}
 	}
 
+	// This is copy protection. Used to hang the machine
+	if (!scumm_stricmp(pPrcName, "L201.ANI")) {
+		exitEngine = 1;
+		return;
+	}
+
 	checkDataDisk(-1);
 	if ((g_cine->getGameType() == Cine::GType_FW) &&
 		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
