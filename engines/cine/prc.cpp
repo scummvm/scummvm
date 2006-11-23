@@ -83,11 +83,13 @@ void loadPrc(const char *pPrcName) {
 	} else {
 		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
 	}
+
 	assert(scriptPtr);
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numScripts = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
+	numScripts = READ_BE_UINT16(scriptPtr);	
+	scriptPtr += 2;
 	assert(numScripts <= NUM_MAX_SCRIPT);
 
 	for (i = 0; i < numScripts; i++) {
@@ -104,6 +106,23 @@ void loadPrc(const char *pPrcName) {
 			computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 		}
 	}
+
+#ifdef DUMP_SCRIPTS
+
+	{
+		uint16 s;
+		char buffer[256];
+
+		for (s = 0; s < numScripts; s++) {
+			if (scriptTable[s].size) {
+				sprintf(buffer, "%s_%03d.txt", pPrcName, s);
+
+				decompileScript(scriptTable[s].ptr, scriptTable[s].stack, scriptTable[s].size, s);
+				dumpScript(buffer);
+			}
+		}
+	}
+#endif
 }
 
 } // End of namespace Cine

@@ -67,6 +67,8 @@ void readFromPart(int16 idx, byte *dataPtr);
 byte *readBundleFile(int16 foundFileIdx);
 byte *readFile(const char *filename);
 
+void dumpBundle(const char *filename);
+
 } // End of namespace Cine
 
 #endif

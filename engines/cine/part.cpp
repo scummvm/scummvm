@@ -437,4 +437,24 @@ byte *readFile(const char *filename) {
 	return dataPtr;
 }
 
+void dumpBundle(const char *fileName) {
+	char tmpPart[15];
+
+	strcpy(tmpPart, currentPartName);
+
+	loadPart(fileName);
+	for (int i = 0; i < numElementInPart; i++) {
+		byte *data = readBundleFile(i);
+
+		Common::File out;
+
+		debug(0, "%s", partBuffer[i].partName);
+		out.open(Common::String("dumps/") + partBuffer[i].partName, Common::File::kFileWriteMode);
+		out.write(data, partBuffer[i].unpackedSize);
+		out.close();
+	}
+
+	loadPart(tmpPart);
+}
+
 } // End of namespace Cine
