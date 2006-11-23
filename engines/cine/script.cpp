@@ -1691,7 +1691,8 @@ void o1_loadMusic() {
 
 	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _currentLine, param);
 
-	if (g_cine->getPlatform() == Common::kPlatformAmiga) {
+	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
+			g_cine->getPlatform() == Common::kPlatformAtariST) {
 		warning("STUB: o1_loadMusic");
 		return;
 	}
@@ -1747,6 +1748,12 @@ void o1_playSample() {
 
 	int16 volume = getNextWord();
 	uint16 flag = getNextWord();
+
+	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
+			g_cine->getPlatform() == Common::kPlatformAtariST) {
+		warning("STUB: o1_playSample");
+		return;
+	}
 
 	if (volume > 63)
 		volume = 63;
