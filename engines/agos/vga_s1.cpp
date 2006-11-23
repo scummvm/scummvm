@@ -61,7 +61,7 @@ void AGOSEngine::vc17_setPathfinderItem() {
 
 void AGOSEngine::vc22_setPaletteNew() {
 	byte *offs, *palptr = 0, *src;
-	uint16 a = 0, b, num = 1, palSize = 0;
+	uint16 a = 0, b, num, palSize = 0;
 
 	a = vcReadNextWord();
 	b = vcReadNextWord();
@@ -71,7 +71,7 @@ void AGOSEngine::vc22_setPaletteNew() {
 		palSize = 768;
 
 		palptr = _displayPalette;
-	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+	} else {
 		num = a == 0 ? 32 : 16;
 		palSize = 96;
 
