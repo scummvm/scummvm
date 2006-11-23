@@ -171,7 +171,8 @@ int handle_controller(int key) {
 			}
 		}
 
-		if ((int)mouse.y >= game.line_user_input * CHAR_LINES &&
+		if (key == BUTTON_LEFT &&
+				(int)mouse.y >= game.line_user_input * CHAR_LINES &&
 				(int)mouse.y <= (game.line_user_input + 1) * CHAR_LINES) {
 			if (_text->predictiveDialog()) {
 				strcpy((char *)game.input_buffer, _text->_predictiveResult);
