@@ -856,6 +856,9 @@ void loadResource(const char *resourceName) {
 	} else if (strstr(resourceName, ".SEQ")) {
 		loadSeq(resourceName);
 		return;
+	} else if (strstr(resourceName, "ECHEC")) {
+		exitEngine = 1;
+		return;
 	}
 
 	error("loadResource: Cannot determine type for '%s'", resourceName);
