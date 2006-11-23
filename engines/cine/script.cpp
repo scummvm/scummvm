@@ -2461,6 +2461,10 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 						sprintf(lineBuffer, "var[%d]=mouse.Y\n", param1);
 					} else if (param2 == 5) {
 						sprintf(lineBuffer, "var[%d]=rand() mod %d\n", param1, param3);
+					} else if (param2 == 8) {
+						sprintf(lineBuffer, "var[%d]=file[%d].packedSize\n", param1, param3);
+					} else if (param2 == 9) {
+						sprintf(lineBuffer, "var[%d]=file[%d].unpackedSize\n", param1, param3);
 					} else {
 						error("decompileScript: 0x09: param2 = %d", param2);
 					}
