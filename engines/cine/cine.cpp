@@ -136,8 +136,10 @@ static void initialize() {
 		snd_loadBasesonEntries("BASESON.SND");
 		break;
 	case Cine::GType_OS:
-		loadPoldatDat("poldat.dat");
-		loadErrmessDat("errmess.dat");
+		if (!(g_cine->getFeatures() & GF_DEMO)) {
+			loadPoldatDat("poldat.dat");
+			loadErrmessDat("errmess.dat");
+		}
 		break;
 	}
 
