@@ -129,9 +129,17 @@ void ToucheEngine::res_allocateTables() {
 	if (!_iconData) {
 		error("Unable to allocate memory for object data");
 	}
+
+	static const int initialSpriteSizeTable[NUM_SPRITES] = {
+		0x34BC0, 0x1E848, 0x1E848, 0x23A50,
+		0x1E848, 0x23940, 0x1E848
+	};
+	memset(_spritesTable, 0, sizeof(_spritesTable));
 	for (int i = 0; i < NUM_SPRITES; ++i) {
-		_spritesTable[i].ptr = (uint8 *)malloc(_spritesTable[i].size);
-		if (!_spritesTable[i].ptr) {
+		SpriteData *spr = &_spritesTable[i];
+		spr->size = initialSpriteSizeTable[i];
+		spr->ptr = (uint8 *)malloc(spr->size);
+		if (!spr->ptr) {
 			error("Unable to allocate memory for sprite %d", i);
 		}
 	}

@@ -616,6 +616,7 @@ protected:
 	int _newSoundDelay;
 	int _newSoundPriority;
 	int _playSoundCounter;
+	bool _speechPlaying;
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
 
@@ -701,12 +702,12 @@ protected:
 	uint8 *_mouseData;
 	uint8 *_iconData;
 
+	SpriteData _spritesTable[NUM_SPRITES];
 	SequenceEntry _sequenceEntryTable[NUM_SEQUENCES];
 	int _currentBitmapWidth;
 	int _currentBitmapHeight;
 	int _currentImageWidth;
 	int _currentImageHeight;
-	bool _speechPlaying;
 	int _roomWidth;
 
 	uint8 *_programTextDataPtr;
@@ -732,7 +733,6 @@ protected:
 	Common::Rect _dirtyRectsTable[NUM_DIRTY_RECTS];
 	int _dirtyRectsTableCount;
 
-	static SpriteData _spritesTable[NUM_SPRITES];
 	static const uint8 _directionsTable[NUM_DIRECTIONS];
 };
 
