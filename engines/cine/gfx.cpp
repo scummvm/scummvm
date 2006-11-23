@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 
 namespace Cine {
 
@@ -87,6 +88,11 @@ static const struct MouseCursor {
 	{ 7, 7, mouseCursorCross }
 };
 
+static const byte cursorPalette[] = {
+	0, 0, 0, 0xff,
+	0xff, 0xff, 0xff, 0xff
+};
+
 void init_video() {
 	screenBuffer = (byte *)malloc(320 * 200 * 3);
 	assert(screenBuffer);
@@ -108,7 +114,7 @@ void setMouseCursor(int cursor) {
 			int offs = i * 8;
 			for (byte mask = 0x80; mask != 0; mask >>= 1) {
 				if (src[0] & mask) {
-					mouseCursor[offs] = 2;
+					mouseCursor[offs] = 1;
 				} else if (src[32] & mask) {
 					mouseCursor[offs] = 0;
 				} else {
@@ -119,6 +125,7 @@ void setMouseCursor(int cursor) {
 			++src;
 		}
 		CursorMan.replaceCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
+		PaletteMan.replaceCursorPalette(cursorPalette, 0, 2);
 		currentMouseCursor = cursor;
 	}
 }
