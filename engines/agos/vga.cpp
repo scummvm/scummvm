@@ -175,7 +175,6 @@ void AGOSEngine::runVgaScript() {
 		if (opcode == 0)
 			return;
 
-		debug(1, "runVgaScript: Video opcode %d", opcode);
 		if (opcode >= _numVideoOpcodes || !_vga_opcode_table[opcode])
 			error("Invalid VGA opcode '%d' encountered", opcode);
 
