@@ -364,11 +364,19 @@ static const ADGameFileDescription SIMON2DOS_IT_GameFiles[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9"},
 };
 
-static const ADGameFileDescription SIMON2DEMO_GameFiles[] = {
+static const ADGameFileDescription SIMON2DEMO_EN_GameFiles[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"3794c15887539b8578bacab694ccf08a"},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
 	{ "simon2.gme",		GAME_GMEFILE,	"f8c9e6df1e55923a749e115ba74210c4"},
 	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6"},
+	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601"},
+};
+
+static const ADGameFileDescription SIMON2DEMO_DE_GameFiles[] = {
+	{ "gsptr30",		GAME_BASEFILE,	"7596ef2644fde56ee5fad0dcd483a01e"},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab"},
+	{ "simon2.gme",		GAME_GMEFILE,	"3f308f201f6b1ddf7c2704c1fc43a3e1"},
+	{ "stripped.txt",	GAME_STRFILE,	"4c68cf64e581a9bd638a56c900b08bfe"},
 	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601"},
 };
 
@@ -1351,9 +1359,25 @@ static const AGOSGameDescription gameDescriptions[] = {
 		{
 			"simon2",
 			"CD Demo",
-			ARRAYSIZE(SIMON2DEMO_GameFiles),
-			SIMON2DEMO_GameFiles,
+			ARRAYSIZE(SIMON2DEMO_EN_GameFiles),
+			SIMON2DEMO_EN_GameFiles,
 			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+
+		GType_SIMON2,
+		GID_SIMON2TALKIE,
+		GF_TALKIE,
+	},
+
+	// Simon the Sorcerer 2 - German DOS CD Demo
+	{
+		{
+			"simon2",
+			"CD Demo",
+			ARRAYSIZE(SIMON2DEMO_DE_GameFiles),
+			SIMON2DEMO_DE_GameFiles,
+			Common::DE_DEU,
 			Common::kPlatformPC,
 		},
 
