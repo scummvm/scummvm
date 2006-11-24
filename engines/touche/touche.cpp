@@ -254,6 +254,8 @@ void ToucheEngine::mainLoop() {
 		if ((cycleCounter % 2) == 0) {
 			fadePaletteFromFlags();
  		}
+
+		_system->updateScreen();
 		int delay = _system->getMillis() - frameTimeStamp;
 		delay = (_fastMode ? 10 : cycleDelay) - delay;
 		if (delay < 1) {
@@ -3243,13 +3245,11 @@ void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gS
 
 void ToucheEngine::updateScreenArea(int x, int y, int w, int h) {
 	_system->copyRectToScreen(_offscreenBuffer + y * 640 + x, 640, x, y, w, h);
-	_system->updateScreen();
 }
 
 void ToucheEngine::updateEntireScreen() {
 	int h = (_flagsTable[606] != 0) ? 400 : 352;
 	_system->copyRectToScreen(_offscreenBuffer, 640, 0, 0, 640, h);
-	_system->updateScreen();
 }
 
 void ToucheEngine::updateDirtyScreenAreas() {
@@ -3271,7 +3271,6 @@ void ToucheEngine::updateDirtyScreenAreas() {
 			_system->copyRectToScreen(_offscreenBuffer + r.top * 640 + r.left, 640, r.left, r.top, r.width(), r.height());
 			--_menuRedrawCounter;
 		}
-		_system->updateScreen();
 	}
 }
 

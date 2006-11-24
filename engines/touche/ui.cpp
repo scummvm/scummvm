@@ -514,6 +514,7 @@ void ToucheEngine::printStatusString(const char *str) {
 	Graphics::drawRect(_offscreenBuffer, 640, 0, 0, 640, 16, 0xD6, 0xD8);
 	Graphics::drawString16(_offscreenBuffer, 640, 0xFF, 0, 0, str);
 	updateScreenArea(0, 0, 640, 16);
+	_system->updateScreen();
 }
 
 void ToucheEngine::clearStatusString() {
