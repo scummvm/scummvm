@@ -414,9 +414,6 @@ void ToucheEngine::res_decodeProgramData() {
 void ToucheEngine::res_loadRoom(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadRoom() num=%d flag115=%d", num, _flagsTable[115]);
 
-	_currentRoomNum = num;
-	_updatedRoomAreasTable[0] = 1;
-
 	debug(0, "Setting up room %d", num);
 
 	const uint32 offsInfo = res_getDataOffset(kResourceTypeRoomInfo, num);
@@ -438,7 +435,8 @@ void ToucheEngine::res_loadRoom(int num) {
 	// Workaround to what appears to be a scripting bug. Scripts 27 and 100 triggers
 	// a palette fading just after loading a room. Catch this, so that only *one*
 	// palette refresh occurs.
-	if ((_currentEpisodeNum == 27 && num == 34) || (_currentEpisodeNum == 100 && num == 1)) {
+	if ((_currentEpisodeNum == 27 && _currentRoomNum == 56 && num == 34) ||
+	    (_currentEpisodeNum == 100 && _currentRoomNum == 2 && num == 1)) {
 		updateScreenPalette = false;
 	}
 
@@ -447,6 +445,9 @@ void ToucheEngine::res_loadRoom(int num) {
 	} else {
 		setPalette(0, 255, 0, 0, 0);
 	}
+
+	_currentRoomNum = num;
+	_updatedRoomAreasTable[0] = 1;
 
 	_fullRedrawCounter = 1;
 	_roomNeedRedraw = true;
