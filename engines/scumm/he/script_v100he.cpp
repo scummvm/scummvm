@@ -260,7 +260,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_findAllObjects),
 		/* AC */
 		OPCODE(o90_findAllObjectsWithClassOf),
-		OPCODE(o6_invalid),
+		OPCODE(o70_findBox),
 		OPCODE(o6_findInventory),
 		OPCODE(o72_findObject),
 		/* B0 */

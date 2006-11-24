@@ -198,6 +198,7 @@ protected:
 	void o70_getStringLenForWidth();
 	void o70_getCharIndexInString();
 	void o70_setFilePath();
+	void o70_findBox();
 	void o70_setSystemMessage();
 	void o70_polygonOps();
 	void o70_polygonHit();

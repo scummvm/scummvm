@@ -354,7 +354,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_writeINI),
 		OPCODE(o70_getStringLenForWidth),
 		OPCODE(o70_getCharIndexInString),
-		OPCODE(o6_invalid),
+		OPCODE(o70_findBox),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),

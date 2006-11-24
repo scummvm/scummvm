@@ -351,7 +351,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o70_writeINI),
 		OPCODE(o70_getStringLenForWidth),
 		OPCODE(o70_getCharIndexInString),
-		OPCODE(o6_invalid),
+		OPCODE(o70_findBox),
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o70_setFilePath),
@@ -1054,6 +1054,12 @@ void ScummEngine_v70he::o70_getCharIndexInString() {
 	}
 
 	push(-1);
+}
+
+void ScummEngine_v70he::o70_findBox() {
+	int y = pop();
+	int x = pop();
+	push(getSpecialBox(x, y));
 }
 
 void ScummEngine_v70he::o70_setFilePath() {
