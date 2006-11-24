@@ -39,7 +39,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 void makeCommandLine(void);
 void makeActionMenu(void);
 
-extern int16 allowSystemMenu;
+extern bool disableSystemMenu;
 extern bool inMenu; 
 
 struct unk1Struct {

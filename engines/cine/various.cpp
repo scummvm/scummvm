@@ -35,7 +35,7 @@
 
 namespace Cine {
 
-int16 allowSystemMenu = 0;
+bool disableSystemMenu = false;
 bool inMenu;
 
 int16 commandVar3[4];
@@ -911,7 +911,7 @@ void CineEngine::makeSystemMenu(void) {
 	int16 mouseY;
 	int16 systemCommand;
 
-	if (!allowSystemMenu) {
+	if (!disableSystemMenu) {
 		inMenu = true;
 
 		manageEvents();
@@ -1332,7 +1332,7 @@ void makeCommandLine(void) {
 		}
 	}
 
-	if (allowSystemMenu == 0) {
+	if (!disableSystemMenu) {
 		isDrawCommandEnabled = 1;
 	}
 }
@@ -1362,7 +1362,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	int16 oldSelection;
 	int16 var_4;
 
-	if (allowSystemMenu)
+	if (disableSystemMenu)
 		return -1;
 
 	paramY = (height * 9) + 10;
@@ -1594,7 +1594,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 	int16 oldSelection;
 	int16 var_4;
 
-	if (allowSystemMenu)
+	if (disableSystemMenu)
 		return -1;
 
 	paramY = (height * 9) + 10;

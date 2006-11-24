@@ -119,7 +119,7 @@ void manageEvents(int count) {
 				}
 				break;
 			case 291: // F10
-				if (allowPlayerInput && !inMenu) {
+				if (!disableSystemMenu && !inMenu) {
 					g_cine->makeSystemMenu();
 				}
 				break;

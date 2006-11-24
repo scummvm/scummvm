@@ -199,7 +199,7 @@ void setupOpcodes() {
 		o1_playSample,
 		/* 78 */
 		o1_playSample,
-		o1_allowSystemMenu,
+		o1_disableSystemMenu,
 		o1_loadMask5,
 		o1_unloadMask5
 	};
@@ -359,7 +359,7 @@ void setupOpcodes() {
 		o1_playSample,
 		/* 78 */
 		o2_op78,
-		o1_allowSystemMenu,
+		o1_disableSystemMenu,
 		o1_loadMask5,
 		o1_unloadMask5,
 		/* 7C */
@@ -1778,11 +1778,11 @@ void o1_playSample() {
 	}
 }
 
-void o1_allowSystemMenu() {
+void o1_disableSystemMenu() {
 	byte param = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: allowSystemMenu(%d)", _currentLine, param);
-	allowSystemMenu = param;
+	debugC(5, kCineDebugScript, "Line: %d: disableSystemMenu(%d)", _currentLine, param);
+	disableSystemMenu = (param != 0);
 }
 
 void o1_loadMask5() {
@@ -3191,7 +3191,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 				param = *(localScriptPtr + position);
 				position++;
 
-				sprintf(lineBuffer, "allowSystemMenu(%d)\n", param);
+				sprintf(lineBuffer, "disableSystemMenu(%d)\n", param);
 
 				break;
 			}

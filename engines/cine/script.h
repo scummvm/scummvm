@@ -139,7 +139,7 @@ void o1_op72();
 void o1_op73();
 void o1_playSample();
 void o1_playSample();
-void o1_allowSystemMenu();
+void o1_disableSystemMenu();
 void o1_loadMask5();
 void o1_unloadMask5();
 
