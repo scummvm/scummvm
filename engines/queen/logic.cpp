@@ -1760,7 +1760,7 @@ void Logic::asmMakeLightningHitPlane() {
 	lightningBob->x = 160;
 	lightningBob->y = 0;
 
-	_vm->sound()->playSfx(currentRoomSfx(), false);
+	_vm->sound()->playSfx(currentRoomSfx());
 
 	_vm->bankMan()->unpack(18, lightningBob->frameNum, 15);
 	_vm->bankMan()->unpack(4,  planeBob    ->frameNum, 15);

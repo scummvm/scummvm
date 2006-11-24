@@ -82,39 +82,27 @@ Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression)
 }
 
 void Sound::waitFinished(bool isSpeech) {
-	if (isSpeech)
-		while (_mixer->isSoundHandleActive(_speechHandle))
-			_vm->input()->delay(10);
-	else
-		while (_mixer->isSoundHandleActive(_sfxHandle))
-			_vm->input()->delay(10);
+	while (_mixer->isSoundHandleActive(isSpeech ? _speechHandle : _sfxHandle))
+		_vm->input()->delay(10);
 }
 
-void Sound::playSfx(uint16 sfx, bool isSpeech) {
-	if (isSpeech && !speechOn()) return;
-	else if (!sfxOn()) return;
-
-	if (sfx != 0) {
-		char name[13];
+void Sound::playSfx(uint16 sfx) {
+	if (sfxOn() && sfx != 0) {
 #ifndef PALMOS_68K
-		strcpy(name, _sfxName[sfx - 1]);
+		playSound(_sfxName[sfx - 1], false);
 #else
-		strncpy(name, _sfxName + 10 * (sfx - 1), 10);	// saved as 8char + /0/0
+		playSound(_sfxName + 10 * (sfx - 1), false);	// saved as 8char + /0/0
 #endif
-		strcat(name, ".SB");
-		waitFinished(isSpeech);
-		if (sfxPlay(name, isSpeech ? &_speechHandle : &_sfxHandle)) {
-			_speechSfxExists = isSpeech;
-		} else {
-			_speechSfxExists = false;
-		}
 	}
 }
 
-void Sound::playSfx(const char *base, bool isSpeech) {
-	if (isSpeech && !speechOn()) return;
-	else if (!sfxOn()) return;
+void Sound::playSpeech(const char *base) {
+	if (speechOn()) {
+		playSound(base, true);
+	}
+}
 
+void Sound::playSound(const char *base, bool isSpeech) {
 	char name[13];
 	strcpy(name, base);
 	// alter filename to add zeros and append ".SB"
@@ -124,7 +112,10 @@ void Sound::playSfx(const char *base, bool isSpeech) {
 	}
 	strcat(name, ".SB");
 	waitFinished(isSpeech);
-	if (sfxPlay(name, isSpeech ? &_speechHandle : &_sfxHandle)) {
+	uint32 size;
+	Common::File *f = _vm->resource()->giveSound(name, &size);
+	if (f) {
+		playSoundData(f, size, isSpeech ? &_speechHandle : &_sfxHandle);
 		_speechSfxExists = isSpeech;
 	} else {
 		_speechSfxExists = false;
@@ -149,8 +140,7 @@ void Sound::playSong(int16 songNum) {
 	}
 
 	if (_tune[newTune].sfx[0]) {
-		if (sfxOn())
-			playSfx(_tune[newTune].sfx[0], false);
+		playSfx(_tune[newTune].sfx[0]);
 		return;
 	}
 
@@ -167,7 +157,6 @@ void Sound::playSong(int16 songNum) {
 		_vm->music()->toggleVChange();
 	default:
 		return;
-		break;
 	}
 
 	_lastOverride = songNum;
@@ -184,75 +173,50 @@ void Sound::loadState(uint32 ver, byte *&ptr) {
 	_lastOverride = (int16)READ_BE_INT16(ptr); ptr += 2;
 }
 
-bool SilentSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
-	return false;
+void SilentSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 }
 
-bool SBSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
-	uint32 size;
-	Common::File *f = _vm->resource()->giveSound(name, &size);
-	if (f) {
-		int headerSize;
-		f->seek(2, SEEK_CUR);
-		uint16 version = f->readUint16LE();
-		switch (version) {
-		case 104:
-			headerSize = SB_HEADER_SIZE_V104;
-			break;
-		case 110:
-			headerSize = SB_HEADER_SIZE_V110;
-			break;
-		default:
-			warning("Unhandled SB file version %d, defaulting to 104\n", version);
-			headerSize = SB_HEADER_SIZE_V104;
-			break;
-		}
-		f->seek(headerSize - 4, SEEK_CUR);
-		size -= headerSize;
-		uint8 *sound = (uint8 *)malloc(size);
-		if (sound) {
-			f->read(sound, size);
-			byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-			_mixer->playRaw(soundHandle, sound, size, 11025, flags);
-			return true;
-		}
+void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	int headerSize;
+	f->seek(2, SEEK_CUR);
+	uint16 version = f->readUint16LE();
+	switch (version) {
+	case 104:
+		headerSize = SB_HEADER_SIZE_V104;
+		break;
+	case 110:
+		headerSize = SB_HEADER_SIZE_V110;
+		break;
+	default:
+		warning("Unhandled SB file version %d, defaulting to 104\n", version);
+		headerSize = SB_HEADER_SIZE_V104;
+		break;
 	}
-	return false;
+	f->seek(headerSize - 4, SEEK_CUR);
+	size -= headerSize;
+	uint8 *sound = (uint8 *)malloc(size);
+	if (sound) {
+		f->read(sound, size);
+		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+		_mixer->playRaw(soundHandle, sound, size, 11025, flags);
+	}
 }
 
 #ifdef USE_MAD
-bool MP3Sound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
-	uint32 size;
-	Common::File *f = _vm->resource()->giveSound(name, &size);
-	if (f) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
-		return true;
-	}
-	return false;
+void MP3Sound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
 }
 #endif
 
 #ifdef USE_VORBIS
-bool OGGSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
-	uint32 size;
-	Common::File *f = _vm->resource()->giveSound(name, &size);
-	if (f) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
-		return true;
-	}
-	return false;
+void OGGSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
 }
 #endif
 
 #ifdef USE_FLAC
-bool FLACSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
-	uint32 size;
-	Common::File *f = _vm->resource()->giveSound(name, &size);
-	if (f) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
-		return true;
-	}
-	return false;
+void FLACSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
 }
 #endif
 

@@ -27,6 +27,10 @@
 #include "sound/mixer.h"
 #include "queen/defs.h"
 
+namespace Common {
+	class File;
+}
+
 namespace Queen {
 
 class Input;
@@ -54,10 +58,9 @@ class Sound {
 public:
 	Sound(Audio::Mixer *mixer, QueenEngine *vm);
 	virtual ~Sound();
-	virtual bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle) = 0;
 	static Sound *giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
-	void playSfx(uint16 sfx, bool isSpeech);
-	void playSfx(const char *base, bool isSpeech);
+	void playSfx(uint16 sfx);
+	void playSpeech(const char *base);
 	void playSong(int16 songNum);
 	void playLastSong()		{ playSong(_lastOverride); }
 	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
@@ -103,6 +106,8 @@ public:
 
 protected:
 	void waitFinished(bool isSpeech);
+	void playSound(const char *base, bool isSpeech);
+	virtual void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) = 0;
 
 	Audio::Mixer *_mixer;
 	QueenEngine *_vm;
@@ -120,20 +125,23 @@ protected:
 class SilentSound : public Sound {
 public:
 	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
 };
 
 class SBSound : public Sound {
 public:
 	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
 };
 
 #ifdef USE_MAD
 class MP3Sound : public Sound {
 public:
 	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
 };
 #endif
 
@@ -141,7 +149,8 @@ public:
 class OGGSound : public Sound {
 public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
 };
 #endif
 
@@ -149,7 +158,8 @@ public:
 class FLACSound : public Sound {
 public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
+protected:
+	void playSoundData(const char *name, Audio::SoundHandle *soundHandle);
 };
 #endif // #ifdef USE_FLAC
 

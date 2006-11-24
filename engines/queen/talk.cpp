@@ -677,7 +677,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 
 		if (frame > 500) {
 			frame -= 500;
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 		}
 
 		if (torso) {
@@ -798,9 +798,8 @@ void Talk::speakSegment(
 
 	// French talkie version has a useless voice file ;	c30e_102 file is the same as c30e_101,
 	// so there is no need to play it. This voice was used in room 30 (N8) when talking to Klunk.
-	if (!(_vm->resource()->getLanguage() == Common::FR_FRA && !strcmp(voiceFileName, "c30e_102"))
-		&& _vm->sound()->speechOn())
-		_vm->sound()->playSfx(voiceFileName, true);
+	if (!(_vm->resource()->getLanguage() == Common::FR_FRA && !strcmp(voiceFileName, "c30e_102")))
+		_vm->sound()->playSpeech(voiceFileName);
 
 	int faceDirectionCommand = 0;
 

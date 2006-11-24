@@ -1242,7 +1242,7 @@ void Cutaway::handleText(
 			char voiceFileName[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFileName);
 			strcat(voiceFileName, "1");
-			_vm->sound()->playSfx(voiceFileName, true);
+			_vm->sound()->playSpeech(voiceFileName);
 		}
 
 		if (OBJECT_TYPE_TEXT_SPEAK == type && _vm->sound()->speechOn() && !_vm->subtitles())
