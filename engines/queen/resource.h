@@ -65,7 +65,7 @@ public:
 	~Resource();
 
 	//! loads the specified from the resource file
-	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, uint32 *size = NULL, bool useMalloc = false);
+	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, uint32 *size = NULL);
 
 	//! returns true if the file is present in the resource
 	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }
