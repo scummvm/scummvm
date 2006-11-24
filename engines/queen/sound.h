@@ -159,7 +159,7 @@ class FLACSound : public Sound {
 public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 protected:
-	void playSoundData(const char *name, Audio::SoundHandle *soundHandle);
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
 };
 #endif // #ifdef USE_FLAC
 
