@@ -138,6 +138,7 @@ bool consoleEnable = true;
 bool gameScreenSwap = false;
 bool cpuScaler = false;
 bool isCpuScalerEnabled();
+//#define HEAVY_LOGGING
 
 MouseMode mouseMode;
 
@@ -348,6 +349,8 @@ void startSound(int freq, int buffer) {
 	int bytes = (2 * (bufferSamples)) + 100;
 	
 	soundBuffer = (s16 *) malloc(bytes * 2);
+	if (!soundBuffer)
+		consolePrintf("Sound buffer alloc failed\n");
 
 
 	soundHiPart = true;
@@ -375,7 +378,9 @@ int getSoundFrequency() {
 void initGame() {
 	// This is a good time to check for left handed mode since the mode change is done as the game starts.
 	// There's probably a better way, but hey.
-//	consolePrintf("initing game\n");
+	#ifdef HEAVY_LOGGING
+	consolePrintf("initing game...");
+	#endif
 
 	static bool firstTime = true;
 
@@ -405,6 +410,9 @@ void initGame() {
 		}
 
 	}
+	#ifdef HEAVY_LOGGING
+	consolePrintf("done\n");
+	#endif
 
 }
 
@@ -430,6 +438,9 @@ void setUnscaledMode(bool enable) {
 
 void displayMode8Bit() {
 
+#ifdef HEAVY_LOGGING
+	consolePrintf("displayMode8Bit...");
+#endif
 	u16 buffer[32 * 32];
 	
 	setKeyboardEnable(false);
@@ -440,32 +451,52 @@ void displayMode8Bit() {
 		}
 	}
 	
+	if (isCpuScalerEnabled())
+	{
+		videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
+		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
+	
+		vramSetBankA(VRAM_A_MAIN_BG_0x6000000);
+		vramSetBankB(VRAM_B_MAIN_BG_0x6020000);
+	
+		vramSetBankC(VRAM_C_SUB_BG_0x6200000);
+		vramSetBankD(VRAM_D_MAIN_BG_0x6040000);
+		
+		vramSetBankH(VRAM_H_LCD);
+	
+		BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(8);
+
+		BG3_XDX = 256;
+	    BG3_XDY = 0;
+	    BG3_YDX = 0;
+	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+	    
+   		SUB_BG3_CR = BG_BMP16_256x256;
+	}
+	else
+	{
+		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
+		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
+	
+		vramSetBankA(VRAM_A_MAIN_BG_0x6000000);
+		vramSetBankB(VRAM_B_MAIN_BG_0x6020000);
+	
+		vramSetBankC(VRAM_C_SUB_BG_0x6200000);
+		vramSetBankD(VRAM_D_MAIN_BG_0x6040000);
+		
+		vramSetBankH(VRAM_H_LCD);
+	
+		BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
+		
+		BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
+	    BG3_XDY = 0;
+	    BG3_YDX = 0;
+	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+
+		SUB_BG3_CR = BG_BMP8_512x256;
+	}	
 	
 
-	videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
-	videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
-
-	vramSetBankA(VRAM_A_MAIN_BG_0x6000000);
-	vramSetBankB(VRAM_B_MAIN_BG_0x6020000);
-
-	vramSetBankC(VRAM_C_SUB_BG_0x6200000);
-	vramSetBankD(VRAM_D_MAIN_BG_0x6040000);
-	
-	vramSetBankH(VRAM_H_LCD);
-
-	BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
-	
-	
-	
-	BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
-    BG3_XDY = 0;
-    BG3_YDX = 0;
-    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
-
-	SUB_BG3_CR = BG_BMP8_512x256;
-	
-	
-	
 	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
     SUB_BG3_XDY = 0;
     SUB_BG3_YDX = 0;
@@ -492,7 +523,10 @@ void displayMode8Bit() {
 	
 	if (!displayModeIs8Bit) restoreGameBackBuffer();
 	displayModeIs8Bit = true;
-	
+	#ifdef HEAVY_LOGGING
+	consolePrintf("done\n");
+	#endif
+
 	POWER_CR &= ~POWER_SWAP_LCDS;
 	
 	keyboardEnable = false;
@@ -581,6 +615,9 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor) {
 
 
 void displayMode16Bit() {
+	#ifdef HEAVY_LOGGING
+	consolePrintf("displayMode16Bit...");
+	#endif
 
 	u16 buffer[32 * 32 * 2];
 
@@ -637,13 +674,18 @@ void displayMode16Bit() {
 	
 	POWER_CR &= ~POWER_SWAP_LCDS;
 
-
-
 	displayModeIs8Bit = false;
+	#ifdef HEAVY_LOGGING
+	consolePrintf("done\n");
+	#endif
+
 }
 
 
 void displayMode16BitFlipBuffer() {
+	#ifdef HEAVY_LOGGING
+	consolePrintf("Flip %s...", displayModeIs8Bit ? "8bpp" : "16bpp");
+	#endif
 	if (!displayModeIs8Bit) {
 		u16* back = get16BitBackBuffer();
 	
@@ -664,6 +706,19 @@ void displayMode16BitFlipBuffer() {
 			}
 		}
 	}
+	else if (isCpuScalerEnabled())
+	{
+		const u8* back = (const u8*)get8BitBackBuffer();
+		u16* base = BG_GFX + 0x10000;
+		DS::Rescale_320x256xPAL8_To_256x256x1555( base,
+											      back,
+											      BG_PALETTE,
+											      256,
+											      512);
+	}
+	#ifdef HEAVY_LOGGING
+	consolePrintf("done\n");
+	#endif
 }
 
 void setShakePos(int shakePos) {
@@ -676,7 +731,10 @@ u16* get16BitBackBuffer() {
 }
 
 u16* get8BitBackBuffer() {
-	return BG_GFX + 0x10000;		// 16bit qty!
+	if (cpuScaler)
+		return BG_GFX;
+	else
+		return BG_GFX + 0x10000;		// 16bit qty!
 }
 
 void setSoundProc(OSystem_DS::SoundProc proc, void* param) {
@@ -690,7 +748,11 @@ void setSoundProc(OSystem_DS::SoundProc proc, void* param) {
 // a horrible bodge.  Any advice on how to change the engine to output mono would be greatly
 // appreciated.
 void doSoundCallback() {
-	if ((soundCallback)) {
+	#ifdef HEAVY_LOGGING
+	consolePrintf("doSoundCallback...");
+	#endif
+
+	if (soundCallback) {
 		lastCallbackFrame = frameCount;
 		
 		for (int r = IPC->playingSection; r < IPC->playingSection + 4; r++) {
@@ -707,6 +769,9 @@ void doSoundCallback() {
 		}
 		
 	}
+	#ifdef HEAVY_LOGGING
+	consolePrintf("done\n");
+	#endif
 }
 
 void doTimerCallback() {
@@ -904,6 +969,9 @@ bool getIsDisplayMode8Bit() {
 }
 
 void addEventsToQueue() {
+	#ifdef HEAVY_LOGGING
+	consolePrintf("addEventsToQueue\n");
+	#endif
 	OSystem_DS* system = OSystem_DS::instance();
 	OSystem::Event event;
 
@@ -1262,7 +1330,7 @@ void setMainScreenScale(int x, int y) {
 		SUB_BG3_YDX = 0;
 		SUB_BG3_YDY = y;
 	} else {
-		if (cpuScaler && (!displayModeIs8Bit) && (x==320))
+		if (cpuScaler && (x==320))
 		{
 			BG3_XDX = 256;
 			BG3_XDY = 0;
@@ -1318,7 +1386,7 @@ void VBlankHandler(void) {
 	//	consolePrintf("Guard band overwritten!");
 //  }
 
-//	consolePri ntf("X:%d Y:%d\n", getPenX(), getPenY());
+	//consolePrintf("X:%d Y:%d\n", getPenX(), getPenY());
 
 	static bool firstTime = true;
 
@@ -1679,10 +1747,16 @@ void initHardware() {
 	
 	
 	// Set up a millisecond timer
+	#ifdef HEAVY_LOGGING
+	consolePrintf("Setting up timer...");
+	#endif
 	TIMER0_CR = 0;
 	TIMER0_DATA = (u32) TIMER_FREQ(1000);
 	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;	
 	REG_IME = 1;
+	#ifdef HEAVY_LOGGING
+	consolePrintf("done\n");
+	#endif
 
 	PALETTE[255] = RGB15(0,0,31);
 
