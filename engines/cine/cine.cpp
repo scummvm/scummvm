@@ -52,8 +52,6 @@ Common::SaveFileManager *g_saveFileMan;
 
 CineEngine *g_cine;
 
-static void initialize();
-
 CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
 
@@ -115,7 +113,7 @@ int CineEngine::go() {
 }
 
 
-static void initialize() {
+void CineEngine::initialize() {
 	uint16 i;
 
 	setupOpcodes();
@@ -194,10 +192,23 @@ static void initialize() {
 
 	freePrcLinkedList();
 
-	loadPrc(BOOT_PRC_NAME);
-	strcpy(currentPrcName, BOOT_PRC_NAME);
+	_preLoad = false;
+	if (ConfMan.hasKey("save_slot")) {
+		char saveNameBuffer[256];
 
-	setMouseCursor(MOUSE_CURSOR_NORMAL);
+		sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+
+		bool res = makeLoad(saveNameBuffer);
+
+		if (res)
+			_preLoad = true;
+	}
+	
+	if (!_preLoad) {
+		loadPrc(BOOT_PRC_NAME);
+		strcpy(currentPrcName, BOOT_PRC_NAME);
+		setMouseCursor(MOUSE_CURSOR_NORMAL);
+	}
 }
 
 } // End of namespace Cine

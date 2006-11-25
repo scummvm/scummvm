@@ -438,7 +438,7 @@ void setupObjectScriptList(void) {
 	}
 }
 
-int16 makeLoad(char *saveName) {
+bool CineEngine::makeLoad(char *saveName) {
 	int16 i;
 	int16 size;
 	Common::InSaveFile *fHandle;
@@ -450,7 +450,7 @@ int16 makeLoad(char *saveName) {
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);
-		return -1;
+		return false;
 	}
 
 	g_sfxPlayer->stop();
@@ -683,7 +683,7 @@ int16 makeLoad(char *saveName) {
 		}*/
 	}
 
-	return 0;
+	return true;
 }
 
 void makeSave(char *saveFileName) {

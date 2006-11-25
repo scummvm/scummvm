@@ -88,6 +88,13 @@ public:
 	void makeSystemMenu(void);
 
 	const CINEGameDescription *_gameDescription;
+
+private:
+	void initialize(void);
+	bool makeLoad(char *saveName);
+	void mainLoop(int bootScriptIdx);
+
+	bool _preLoad;
 };
 
 extern CineEngine *g_cine;

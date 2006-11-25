@@ -178,65 +178,68 @@ int getKeyData() {
 	return k;
 }
 
-void mainLoop(int bootScriptIdx) {
+void CineEngine::mainLoop(int bootScriptIdx) {
 	uint16 var_6;
 	uint16 quitFlag;
 	uint16 i;
 	byte di;
 	uint16 mouseButton;
 
-	freeAnimDataTable();
-	resetMessageHead();
-	resetSeqList();
-	resetglobalScriptsHead();
-	resetObjectScriptHead();
-	resetBgIncrustList();
-
-	setTextWindow(0, 0, 20, 200);
-
-	errorVar = 0;
-
-	addScriptToList0(bootScriptIdx);
-
-	menuVar = 0;
-
-	gfxFuncGen1(page0c, page0, page0c, page0, -1);
-
-	ptrGfxFunc13();
-
-	gfxFuncGen2();
-
 	quitFlag = 0;
-	inMenu = false;
-	allowPlayerInput = 0;
-	checkForPendingDataLoadSwitch = 0;
 
-	fadeRequired = 0;
-	isDrawCommandEnabled = 0;
-	waitForPlayerClick = 0;
-	menuCommandLen = 0;
+	if (_preLoad == false) {
+		freeAnimDataTable();
+		resetMessageHead();
+		resetSeqList();
+		resetglobalScriptsHead();
+		resetObjectScriptHead();
+		resetBgIncrustList();
 
-	playerCommand = -1;
-	strcpy(commandBuffer, "");
+		setTextWindow(0, 0, 20, 200);
 
-	globalVars[0x1F2] = 0;
-	globalVars[0x1F4] = 0;
+		errorVar = 0;
 
-	for (i = 0; i < 16; i++) {
-		c_palette[i] = 0;
+		addScriptToList0(bootScriptIdx);
+
+		menuVar = 0;
+
+		gfxFuncGen1(page0c, page0, page0c, page0, -1);
+
+		ptrGfxFunc13();
+
+		gfxFuncGen2();
+
+		inMenu = false;
+		allowPlayerInput = 0;
+		checkForPendingDataLoadSwitch = 0;
+
+		fadeRequired = 0;
+		isDrawCommandEnabled = 0;
+		waitForPlayerClick = 0;
+		menuCommandLen = 0;
+
+		playerCommand = -1;
+		strcpy(commandBuffer, "");
+
+		globalVars[0x1F2] = 0;
+		globalVars[0x1F4] = 0;
+
+		for (i = 0; i < 16; i++) {
+			c_palette[i] = 0;
+		}
+
+		var17 = 1;
+
+		strcpy(newPrcName, "");
+		strcpy(newRelName, "");
+		strcpy(newObjectName, "");
+		strcpy(newMsgName, "");
+		strcpy(currentBgName[0], "");
+		strcpy(currentCtName, "");
+		strcpy(currentPartName, "");
+
+		g_sfxPlayer->stop();
 	}
-
-	var17 = 1;
-
-	strcpy(newPrcName, "");
-	strcpy(newRelName, "");
-	strcpy(newObjectName, "");
-	strcpy(newMsgName, "");
-	strcpy(currentBgName[0], "");
-	strcpy(currentCtName, "");
-	strcpy(currentPartName, "");
-
-	g_sfxPlayer->stop();
 
 	do {
 		mainLoopSub3();
