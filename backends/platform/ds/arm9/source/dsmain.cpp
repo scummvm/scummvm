@@ -470,8 +470,6 @@ void displayMode8Bit() {
 	    BG3_XDY = 0;
 	    BG3_YDX = 0;
 	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
-	    
-   		SUB_BG3_CR = BG_BMP16_256x256;
 	}
 	else
 	{
@@ -492,11 +490,10 @@ void displayMode8Bit() {
 	    BG3_XDY = 0;
 	    BG3_YDX = 0;
 	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
-
-		SUB_BG3_CR = BG_BMP8_512x256;
 	}	
 	
-
+	SUB_BG3_CR = BG_BMP8_512x256;
+	
 	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
     SUB_BG3_XDY = 0;
     SUB_BG3_YDX = 0;
