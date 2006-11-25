@@ -29,15 +29,18 @@ namespace Touche {
 
 void Graphics::setupFont(Common::Language language) {
 	switch (language) {
-	case Common::EN_ANY:
-		_fontOffs = _engFontOffs;
-		_fontSize = _engFontSize;
-		_fontData = _engFontData;
-		break;
-	default: // else default to a localized version
+	case Common::FR_FRA:
+	case Common::DE_DEU:
 		_fontOffs = _locFontOffs;
 		_fontSize = _locFontSize;
 		_fontData = _locFontData;
+		break;
+	case Common::IT_ITA:
+	case Common::EN_ANY:
+	default:
+		_fontOffs = _engFontOffs;
+		_fontSize = _engFontSize;
+		_fontData = _engFontData;
 		break;
 	}
 }

@@ -38,32 +38,39 @@ struct GameVersion {
 };
 
 static const GameVersion toucheGameVersionsTable[] = {
-	{
+	{ // retail version
 		"Touche: The Adventures of the Fifth Musketeer",
 		26350211,
 		"2af0177f8887e3430f345e6b4d8b1414",
 		Common::EN_ANY,
 		Common::kPlatformPC
 	},
-	{
+	{ // retail version - tracker item #1601818
 		"Touche: The Adventures of the Fifth Musketeer",
 		26350190,
 		"95967f0b51d2e813e99ca00325098340",
-		Common::EN_USA,
-		Common::kPlatformPC
+		Common::EN_ANY,
+		Common::kPlatformWindows
 	},
-	{
+	{ // retail version
 		"Touche: Les Aventures du Cinquieme Mousquetaire",
 		26558232,
 		"1caa20bb4d4fc2ce8eb867b6610082b3",
 		Common::FR_FRA,
 		Common::kPlatformPC
 	},
-	{
+	{ // retail version - tracker item #1598643
 		"Touche - Die Abenteuer des funften Musketiers",
 		26625537,
 		"be2ae6454b3325e410946f2322547cd4",
 		Common::DE_DEU,
+		Common::kPlatformPC
+	},
+	{ // fan-made translation (http://www.iagtg.net/) - tracker item #1602360
+		"Touche: The Adventures of the Fifth Musketeer",
+		26367792,
+		"1f442331d4b327c3488a9f6ffe9bdd25",
+		Common::IT_ITA,
 		Common::kPlatformPC
 	}
 };
@@ -127,6 +134,9 @@ DetectedGameList Engine_TOUCHE_detectGames(const FSList &fslist) {
 	}
 	DetectedGameList detectedGames;
 	if (foundFile) {
+		// Currently, the detection code is based on a MD5 checksum. If all known versions
+		// have a different file size for TOUCHE.DAT, we may consider using this to do the
+		// detection.
 		Common::String md5digest = Engine_TOUCHE_md5digest(file);
 		if (!md5digest.empty()) {
 			for (int i = 0; i < ARRAYSIZE(toucheGameVersionsTable); ++i) {
