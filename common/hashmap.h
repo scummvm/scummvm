@@ -83,12 +83,8 @@ uint nextTableSize(uint x);
  */ 
 template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
+	friend class const_iterator;
 private:
-#if defined (_WIN32_WCE) || defined (_MSC_VER) || defined (__SYMBIAN32__) || defined (PALMOS_MODE) || defined (__MINT__)
-//FIXME evc4, msvc6,msvc7 & GCC 2.9x doesn't like it as private member
-public:
-#endif
-
 	struct Node {
 		Key _key;
 		Val _value;
@@ -114,8 +110,8 @@ public:
 		typedef const HashMap<Key, Val, HashFunc, EqualFunc> * hashmap_t;
 		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
 	protected:
-		hashmap_t _hashmap;
 		uint _idx;
+		hashmap_t _hashmap;
 		const_iterator(uint idx, hashmap_t hashmap) : _idx(idx), _hashmap(hashmap) {}
 
 		const Node *deref() const {
