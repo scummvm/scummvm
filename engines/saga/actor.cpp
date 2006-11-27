@@ -1080,7 +1080,6 @@ void Actor::handleSpeech(int msec) {
 	int i;
 	ActorData *actor;
 	int width, height, height2;
-	Point posPoint;
 
 	if (_activeSpeech.playing) {
 		_activeSpeech.playingTime -= msec;
