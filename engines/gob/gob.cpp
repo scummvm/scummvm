@@ -447,12 +447,9 @@ uint32 GobEngine::writeDataEndian(Common::OutSaveFile &out, char *varBuf, byte *
 
 #ifndef GOB_ORIGSAVES
 
-uint32 written;
-
-#ifdef SCUMM_BIG_ENDIAN
-
 	int i;
 	char tmp[4];
+	uint32 written;
 
 	written = 0;
 	for (i = 0; i < size; i++, varBuf++) {
@@ -471,16 +468,9 @@ uint32 written;
 		i += sizeBuf[i];
 	}
 
-#else // SCUMM_BIG_ENDIAN
-
-	written = out.write(varBuf, size);
-
-#endif // SCUMM_BIG_ENDIAN
-
 	out.write(sizeBuf, size);
 
 	return written;
-
 
 #else // GOB_ORIGSAVES
 
@@ -638,6 +628,7 @@ uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *siz
 	uint32 read;
 	char *vars;
 	char *sizes;
+	int i;
 
 	vars = new char[size];
 	sizes = new char[size];
@@ -650,10 +641,6 @@ uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *siz
 		return 0;
 	}
 
-#ifdef SCUMM_BIG_ENDIAN
-
-	int i;
-
 	for (i = 0; i < size; i++) {
 		if (sizes[i] == 3)
 			*((uint32 *) (vars + i)) = READ_LE_UINT32(vars + i);
@@ -665,8 +652,6 @@ uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *siz
 		}
 		i += sizes[i];
 	}
-
-#endif // SCUMM_BIG_ENDIAN
 
 	memcpy(varBuf, vars, size);
 	memcpy(sizeBuf, sizes, size);
