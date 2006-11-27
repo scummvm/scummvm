@@ -403,7 +403,7 @@ void Draw_v2::printText(void) {
 				sprintf(buf, "%d",  VAR_OFFSET(val));
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
-				strcpy(buf, _vm->_global->_inter_variables + val);
+				strcpy(buf, GET_VARO_STR(val));
 			} else {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 				sprintf(buf, "%d",  VAR_OFFSET(val));
@@ -714,7 +714,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		left = _destSpriteX;
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 			if (_fonts[_fontIndex]->extraData == 0) {
-				if (((signed) _textToPrint[0]) == -1) {
+				if (((signed int) _textToPrint[0]) == -1) {
 					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (i = 0; i < len; i++) {
@@ -895,12 +895,14 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 	_showCursor |= 2;
 
+	/*
 	if (((_backSurface->width - 9) < _vm->_global->_inter_mouseX) ||
 			((_backSurface->height - 4) < _vm->_global->_inter_mouseY)) {
 		_vm->_global->_inter_mouseX = MIN((int) _vm->_global->_inter_mouseX, _backSurface->width - 9);
 		_vm->_global->_inter_mouseY = MIN((int) _vm->_global->_inter_mouseY, _backSurface->height - 4);
 		_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 	}
+	*/
 
 	// .-- _draw_animateCursorSUB1 ---
 	cursorIndex = cursor;

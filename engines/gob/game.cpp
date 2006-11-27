@@ -472,6 +472,7 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	_extHandleArray[_backupedCount] = _extHandle;
 	_imFileDataArray[_backupedCount] = _imFileData;
 	_variablesArray[_backupedCount] = _vm->_global->_inter_variables;
+	_variablesSizesArray[_backupedCount] = _vm->_global->_inter_variablesSizes;
 	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
 
 	curBackupPos = _curBackupPos;
@@ -481,8 +482,10 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	_totTextData = 0;
 	_totFileData = 0;
 	_totResourceTable = 0;
-	if (flags & 1)
+	if (flags & 1) {
 		_vm->_global->_inter_variables = 0;
+		_vm->_global->_inter_variablesSizes = 0;
+	}
 
 	strcpy(_curTotFile, newTotFile);
 	strcat(_curTotFile, ".TOT");
@@ -502,8 +505,10 @@ void Game::totSub(int8 flags, char *newTotFile) {
 
 	popCollisions();
 
-	if ((flags & 1) && (_vm->_global->_inter_variables != 0))
+	if ((flags & 1) && (_vm->_global->_inter_variables != 0)) {
 		delete[] _vm->_global->_inter_variables;
+		delete[] _vm->_global->_inter_variablesSizes;
+	}
 
 	_backupedCount--;
 	_curBackupPos = curBackupPos;
@@ -517,6 +522,7 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	_extHandle = _extHandleArray[_backupedCount];
 	_imFileData = _imFileDataArray[_backupedCount];
 	_vm->_global->_inter_variables = _variablesArray[_backupedCount];
+	_vm->_global->_inter_variablesSizes = _variablesSizesArray[_backupedCount];
 	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
 	strcpy(_curExtFile, _curTotFile);
 	_curExtFile[strlen(_curExtFile)-4] = '\0';
@@ -542,6 +548,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 		_extHandleArray[_backupedCount] = _extHandle;
 		_imFileDataArray[_backupedCount] = _imFileData;
 		_variablesArray[_backupedCount] = _vm->_global->_inter_variables;
+		_variablesSizesArray[_backupedCount] = _vm->_global->_inter_variablesSizes;
 		strcpy(_curTotFileArray[_backupedCount], _curTotFile);
 		_backupedCount++;
 	}
@@ -558,6 +565,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	_extTable = _extTableArray[_curBackupPos];
 	_extHandle = _extHandleArray[_curBackupPos];
 	_vm->_global->_inter_variables = _variablesArray[_curBackupPos];
+	_vm->_global->_inter_variablesSizes = _variablesSizesArray[_curBackupPos];
 	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
 	strcpy(_curExtFile, _curTotFile);
 	_curExtFile[strlen(_curExtFile)-4] = '\0';
@@ -585,6 +593,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	_extHandle = _extHandleArray[_curBackupPos];
 	_imFileData = _imFileDataArray[_curBackupPos];
 	_vm->_global->_inter_variables = _variablesArray[_curBackupPos];
+	_vm->_global->_inter_variablesSizes = _variablesSizesArray[_curBackupPos];
 	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
 	strcpy(_curExtFile, _curTotFile);
 	_curExtFile[strlen(_curExtFile)-4] = '\0';

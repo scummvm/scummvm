@@ -52,6 +52,7 @@ public:
 	int32 peek32(char *ptr);
 
 	char _pasteBuf[300];
+	byte _pasteSizeBuf[300];
 	int16 _pastePos;
 
 	char evalExpr(int16 *pRes);
@@ -319,6 +320,7 @@ protected:
 	void o2_stub0x54(void);
 	void o2_stub0x55(void);
 	void o2_stub0x80(void);
+	void o2_stub0x81(void);
 	void o2_stub0x82(void);
 	void o2_stub0x85(void);
 	bool o2_getFreeMem(char &cmdCount, int16 &counter, int16 &retFlag);

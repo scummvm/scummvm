@@ -286,7 +286,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		/* 80 */
 		OPCODE(o2_stub0x80),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x81),
 		OPCODE(o2_stub0x82),
 		OPCODE(o2_playImd),
 		/* 84 */
@@ -881,6 +881,23 @@ void Inter_v2::o2_stub0x80(void) {
 	}
 }
 
+void Inter_v2::o2_stub0x81(void) {
+	int16 var1;
+	int16 var2;
+	int16 var3;
+	int16 var4;
+	int16 var5;
+	int16 var6;
+
+	var1 = _vm->_parse->parseValExpr();
+	var2 = _vm->_parse->parseValExpr();
+	var3 = _vm->_parse->parseValExpr();
+	var4 = _vm->_parse->parseValExpr();
+	var5 = _vm->_parse->parseValExpr();
+	var6 = _vm->_parse->parseValExpr();
+	warning("GOB2 Stub! o2_stub0x81(%d, %d, %d, %d, %d, %d)", var1, var2, var3, var4, var5, var6);
+}
+
 void Inter_v2::o2_stub0x82(void) {
 	int16 expr;
 
@@ -1026,14 +1043,19 @@ void Inter_v2::o2_copyVars(void) {
 			_vm->_global->_inter_execPtr++;
 			memcpy(_pasteBuf + _pastePos, _vm->_global->_inter_variables + varOff,
 					_vm->_global->_inter_animDataSize * 4);
+			memcpy(_pasteSizeBuf + _pastePos, _vm->_global->_inter_variablesSizes + varOff,
+					_vm->_global->_inter_animDataSize * 4);
 			_pastePos += _vm->_global->_inter_animDataSize * 4;
 			_pasteBuf[_pastePos] = _vm->_global->_inter_animDataSize * 4;
+			_pasteSizeBuf[_pastePos] = _vm->_global->_inter_animDataSize * 4;
 		} else {
 			if (evalExpr(&varOff) == 20)
 				_vm->_global->_inter_resVal = 0;
 			memcpy(_pasteBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
+			memcpy(_pasteSizeBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
 			_pastePos += 4;
 			_pasteBuf[_pastePos] = 4;
+			_pasteSizeBuf[_pastePos] = 4;
 		}
 		_pastePos++;
 	}
@@ -1042,15 +1064,19 @@ void Inter_v2::o2_copyVars(void) {
 void Inter_v2::o2_pasteVars(void) {
 	byte count;
 	int16 varOff;
-	int16 size;
+	int16 sizeV;
+	int16 sizeS;
 	int i;
 
 	count = *_vm->_global->_inter_execPtr++;
 	for (i = 0; i < count; i++) {
 		varOff = _vm->_parse->parseVarIndex();
-		size = _pasteBuf[--_pastePos];
-		_pastePos -= size;
-		memcpy(_vm->_global->_inter_variables + varOff, _pasteBuf + _pastePos, size);
+		sizeV = _pasteBuf[--_pastePos];
+		sizeS = _pasteSizeBuf[_pastePos];
+		assert(sizeV == sizeS);
+		_pastePos -= sizeV;
+		memcpy(_vm->_global->_inter_variables + varOff, _pasteBuf + _pastePos, sizeV);
+		memcpy(_vm->_global->_inter_variablesSizes + varOff, _pasteSizeBuf + _pastePos, sizeS);
 	}
 }
 
@@ -1332,13 +1358,15 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int32 offset;
 	int16 dataVar; // si
 	int16 handle;
-	int16 index = 0;
+	int16 index;
 	int16 y;
 	char *buf;
+	char tmp[4];
 	bool readPal;
 	Video::SurfaceDesc *destDesc;
 	Video::SurfaceDesc *srcDesc;
 
+	index = 0;
 	readPal = false;
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -1347,19 +1375,19 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	offset = _vm->_global->_inter_resVal;
 
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf")) {
-		_vm->loadGame(SAVE_CAT, dataVar, size, offset);
+		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
 		return false;
 	}
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat")) {
-		_vm->loadGame(SAVE_CAT, dataVar, size, offset);
+		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
 		return false;
 	}
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf")) {
-		_vm->loadGame(SAVE_SAV, dataVar, size, offset);
+		_vm->loadGameData(SAVE_SAV, dataVar, size, offset);
 		return false;
 	}
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf")) {
-		_vm->loadGame(SAVE_BLO, dataVar, size, offset);
+		_vm->loadGameData(SAVE_BLO, dataVar, size, offset);
 		return false;
 	}
 
@@ -1374,12 +1402,14 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 		size = _vm->_draw->getSpriteRectSize(index);
 		if ((_vm->_draw->_spritesArray[index]->vidMode & 0x80) == 0)
 			size = -size;
-	} else if (size == 0) {
-		dataVar = 0;
-		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
-		buf = _vm->_global->_inter_variables;
-	} else
+	} else {
+		if (size == 0) {
+			dataVar = 0;
+			size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
+		}
 		buf = _vm->_global->_inter_variables + dataVar;
+		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, size);
+	}
 
 	if (_vm->_global->_inter_resStr[0] == 0) {
 		if (readPal)
@@ -1414,6 +1444,9 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 			_vm->_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
 		}
 		_vm->_video->freeSurfDesc(srcDesc);
+	} else if (((dataVar >> 2) == 59) && (size == 4)) {
+		retSize = _vm->_dataio->readData(handle, tmp, 4);
+		WRITE_VAR(59, READ_LE_UINT32(tmp));
 	} else
 		retSize = _vm->_dataio->readData(handle, buf, size);
 
@@ -1436,13 +1469,13 @@ bool Inter_v2::o2_writeData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	offset = _vm->_global->_inter_resVal;
 
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
-		_vm->saveGame(SAVE_CAT, dataVar, size, offset);
+		_vm->saveGameData(SAVE_CAT, dataVar, size, offset);
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat"))
-		_vm->saveGame(SAVE_CAT, dataVar, size, offset);
+		_vm->saveGameData(SAVE_CAT, dataVar, size, offset);
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf"))
-		_vm->saveGame(SAVE_SAV, dataVar, size, offset);
+		_vm->saveGameData(SAVE_SAV, dataVar, size, offset);
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf"))
-		_vm->saveGame(SAVE_BLO, dataVar, size, offset);
+		_vm->saveGameData(SAVE_BLO, dataVar, size, offset);
 	else
 		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
 
@@ -1619,12 +1652,12 @@ bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) 
 		switch (savedPos[0]) {
 		case 16:
 		case 18:
-			*(_vm->_global->_inter_variables + varOff + i) = _vm->_global->_inter_resVal;
+			WRITE_VARO_UINT8(varOff + i, _vm->_global->_inter_resVal);
 			break;
 
 		case 17:
 		case 27:
-			*(uint16*)(_vm->_global->_inter_variables + varOff + i * 2) = _vm->_global->_inter_resVal;
+			WRITE_VARO_UINT16(varOff + i * 2, _vm->_global->_inter_resVal);
 			break;
 
 		case 23:
@@ -1633,15 +1666,15 @@ bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) 
 			break;
 
 		case 24:
-			*(uint16*)(_vm->_global->_inter_variables + varOff + i * 4) = _vm->_global->_inter_resVal;
+			WRITE_VARO_UINT16(varOff + i * 4, _vm->_global->_inter_resVal);
 			break;
 
 		case 25:
 		case 28:
 			if (token == 20)
-				*(_vm->_global->_inter_variables + varOff) = result;
+				WRITE_VARO_UINT8(varOff, result);
 			else
-				strcpy(_vm->_global->_inter_variables + varOff, _vm->_global->_inter_resStr);
+				WRITE_VARO_STR(varOff, _vm->_global->_inter_resStr);
 			break;
 		}
 	}
@@ -1927,6 +1960,8 @@ void Inter_v2::o2_initMult(void) {
 			_vm->_mult->_objects[i].pAnimData =
 			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables + animDataVar +
 			    i * 4 * _vm->_global->_inter_animDataSize);
+			memset(_vm->_global->_inter_variablesSizes + i * 4 * _vm->_global->_inter_animDataSize, 0,
+					_vm->_global->_inter_animDataSize);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -2056,22 +2091,16 @@ void Inter_v2::o2_freeLIC(void) {
 }
 
 void Inter_v2::o2_getCDTrackPos(void) {
-	int16 trackpospos;
-	int16 tracknamepos;
-	int32 trackpos;
+	int16 varPos;
+	int16 varName;
 
 	_vm->_util->longDelay(1);
 
-	trackpospos = _vm->_parse->parseVarIndex();
-	// The currently playing trackname would be written there to
-	// notice trackbound overruns. Since we stop on trackend and
-	// CDROM::getTrackPos() returns -1 then anyway, we can ignore it.
-	tracknamepos = _vm->_parse->parseVarIndex();
-	trackpos = _vm->_cdrom->getTrackPos();
-	if (trackpos == -1)
-		trackpos = 32767;
+	varPos = _vm->_parse->parseVarIndex();
+	varName = _vm->_parse->parseVarIndex();
 
-	WRITE_VAR(trackpospos >> 2, trackpos);
+	WRITE_VAR_OFFSET(varPos, _vm->_cdrom->getTrackPos());
+	WRITE_VARO_STR(varName, _vm->_cdrom->getCurTrack());
 }
 
 void Inter_v2::o2_playMult(void) {

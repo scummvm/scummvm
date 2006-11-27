@@ -138,7 +138,7 @@ int16 Parse_v1::parseValExpr(unsigned stopToken) {
 				temp = _vm->_inter->load16() * 4;
 				_vm->_global->_inter_execPtr++;
 				temp += parseValExpr(12);
-				*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
+				*valPtr = READ_VARO_UINT8(temp);
 				break;
 
 			case 26:
@@ -157,7 +157,7 @@ int16 Parse_v1::parseValExpr(unsigned stopToken) {
 				} else {
 					_vm->_global->_inter_execPtr++;
 					temp2 = parseValExpr(12);
-					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
+					*valPtr = READ_VARO_UINT8(temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
 				break;
 
@@ -374,7 +374,7 @@ int16 Parse_v1::parseExpr(char stopToken, byte *arg_2) {
 					_vm->_global->_inter_execPtr++;
 					temp += parseValExpr(12);
 					*operPtr = 20;
-					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
+					*valPtr = READ_VARO_UINT8(temp);
 				}
 				break;
 
@@ -401,7 +401,7 @@ int16 Parse_v1::parseExpr(char stopToken, byte *arg_2) {
 					_vm->_global->_inter_execPtr++;
 					temp2 = parseValExpr(12);
 					*operPtr = 20;
-					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
+					*valPtr = READ_VARO_UINT8(temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
 				break;
 

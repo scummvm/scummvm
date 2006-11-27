@@ -215,6 +215,10 @@ int32 CDROM::getTrackPos(void) {
 		return -1;
 }
 
+const char *CDROM::getCurTrack(void) {
+	return _curTrack;
+}
+
 void CDROM::stopPlaying(void) {
 	stop();
 

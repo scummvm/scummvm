@@ -330,9 +330,8 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_vm->_snd->stopSound(10);
 
 		WRITE_VAR(57, (uint32)-1);
-	} else {
+	} else
 		WRITE_VAR(57, _frame - 1 - _frameStart);
-	}
 }
 
 char Mult_v1::drawStatics(char stop) {

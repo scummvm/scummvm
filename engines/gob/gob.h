@@ -52,13 +52,38 @@ class GTimer;
 class Util;
 class Music;
 
+/*
 #define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->_inter_variables + (offs)))
 #define	VAR(var)			VAR_OFFSET((var) << 2)
 #define VAR_ADDRESS(var)		(&VAR(var))
 
-//#define	WRITE_VAR_OFFSET(offs, val)	_vm->writeVarDebug(offs, val)
 #define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = (val))
 #define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var) << 2, (val))
+*/
+
+#define VARP(offs)			(_vm->_global->_inter_variables + (offs))
+#define WRITE_VARO_UINT32(offs, val)	_vm->_global->writeVar(offs, (uint32) (val))
+#define WRITE_VARO_UINT16(offs, val)	_vm->_global->writeVar(offs, (uint16) (val))
+#define WRITE_VARO_UINT8(offs, val)	_vm->_global->writeVar(offs, (uint8) (val))
+#define WRITE_VARO_STR(offs, str)	_vm->_global->writeVar(offs, (const char *) (str))
+#define WRITE_VAR_UINT32(var, val)	WRITE_VARO_UINT32((var) << 2, (val))
+#define WRITE_VAR_UINT16(var, val)	WRITE_VARO_UINT16((var) << 2, (val))
+#define WRITE_VAR_UINT8(var, val)	WRITE_VARO_UINT8((var) << 2, (val))
+#define WRITE_VAR_STR(var, str)		WRITE_VARO_STR((var) << 2, (str))
+#define READ_VARO_UINT32(offs)		(*((uint32 *) VARP(offs)))
+#define READ_VARO_UINT16(offs)		(*((uint16 *) VARP(offs)))
+#define READ_VARO_UINT8(offs)		(*((uint8 *) VARP(offs)))
+#define READ_VAR_UINT32(var)		READ_VARO_UINT32((var) << 2)
+#define READ_VAR_UINT16(var)		READ_VARO_UINT16((var) << 2)
+#define READ_VAR_UINT8(var)		READ_VARO_UINT8((var) << 2)
+#define GET_VARO_STR(offs)		((char *) VARP(offs))
+#define GET_VAR_STR(var)		GET_VARO_STR((var) << 2)
+
+#define WRITE_VAR_OFFSET(offs, val)	WRITE_VARO_UINT32((offs), (val))
+#define WRITE_VAR(var, val)		WRITE_VAR_UINT32((var), (val))
+#define VAR_OFFSET(offs)		READ_VARO_UINT32(offs)
+#define VAR(var)			READ_VAR_UINT32(var)
+#define VAR_ADDRESS(var)		((uint32 *) VARP((var) << 2))
 
 enum {
 	GF_GOB1 = 1 << 0,
@@ -83,15 +108,27 @@ enum {
 };
 
 enum SaveFiles {
-	SAVE_CAT = 0,
-	SAVE_SAV,
-	SAVE_BLO
+	SAVE_CAT = 0, // Saves
+	SAVE_SAV,     // Draw::_backSurface (why?)
+	SAVE_BLO      // Notes
 };
 
 class GobEngine : public Engine {
 protected:
+	char **_saveFiles;
+	char *_saveSlotFile;
+	char _saveIndex[600];
+	byte _saveIndexSizes[600];
+
 	int go();
 	int init();
+
+	inline uint32 getSaveSize(Common::InSaveFile &in);
+	const char *getSaveSlotFile(int slot);
+	bool saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
+	bool loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
+	uint32 writeDataEndian(Common::OutSaveFile &out, char *varBuf, byte *sizeBuf, int32 size);
+	uint32 readDataEndian(Common::InSaveFile &in, char *varBuf, byte *sizeBuf, int32 size);
 
 public:
 	GobEngine(OSystem *syst, uint32 features, Common::Language lang, const char *startTotBase);
@@ -105,7 +142,6 @@ public:
 	Common::Language _language;
 	char *_startTot;
 	char *_startTot0;
-	char **_saveFiles;
 	bool _copyProtection;
 	bool _quitRequested;
 
@@ -129,12 +165,13 @@ public:
 	Util *_util;
 	Inter *_inter;
 	Music *_music;
+	GobEngine *_vm;
 
 	void writeVarDebug(uint32 offs, uint32 v);
-	inline uint32 getSaveSize(Common::InSaveFile &in);
+
 	int32 getSaveSize(enum SaveFiles sFile);
-	void saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
-	void loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
+	void saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
+	void loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
 };
 
 } // End of namespace Gob

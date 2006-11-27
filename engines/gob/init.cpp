@@ -89,8 +89,8 @@ void Init::cleanup(void) {
 
 void Init::initGame(char *totName) {
 	int16 handle2;
-	int16 i;
 	int16 handle;
+	int32 i;
 	char *infBuf;
 	char *infPtr;
 	char *infEnd;
@@ -132,6 +132,7 @@ memBlocks	= word ptr -2*/
 	_vm->_game->_totFileData = 0;
 	_vm->_game->_totResourceTable = 0;
 	_vm->_global->_inter_variables = 0;
+	_vm->_global->_inter_variablesSizes = 0;
 	_palDesc = new Video::PalDesc;
 
 	if (_vm->_global->_videoMode != 0x13)
@@ -204,7 +205,9 @@ memBlocks	= word ptr -2*/
 		_vm->_dataio->closeData(handle);
 
 		_vm->_global->_inter_variables = new char[varsCount * 4];
-		memset(_vm->_global->_inter_variables, 0, varsCount * 4);
+		_vm->_global->_inter_variablesSizes = new byte[varsCount * 4];
+		for (i = 0; i < varsCount; i++)
+			WRITE_VAR(i, 0);
 		WRITE_VAR(58, 1);
 
 		strcpy(_vm->_game->_curTotFile, buffer);
@@ -217,6 +220,7 @@ memBlocks	= word ptr -2*/
 		_vm->_cdrom->freeLICbuffer();
 
 		delete[] _vm->_global->_inter_variables;
+		delete[] _vm->_global->_inter_variablesSizes;
 		delete[] _vm->_game->_totFileData;
 		if (_vm->_game->_totTextData) {
 			if (_vm->_game->_totTextData->items)

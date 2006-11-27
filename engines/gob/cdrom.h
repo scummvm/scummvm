@@ -35,6 +35,7 @@ public:
 	void playMultMusic();
 	void play(uint32 from, uint32 to);
 	int32 getTrackPos(void);
+	const char *getCurTrack(void);
 	void stopPlaying(void);
 	void stop(void);
 	void testCD(int trySubst, const char *label);

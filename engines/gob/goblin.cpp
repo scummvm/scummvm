@@ -166,9 +166,10 @@ Goblin::~Goblin() {
 		if (_goblins[i]) {
 			if (_goblins[i]->stateMach) {
 				for (state = 0; state < (i == 3 ? 70 : 40); state++)
-					for (col = 0; col < 6; col++)
-						if (_goblins[i]->stateMach[state][col])
-							delete _goblins[i]->stateMach[state][col];
+					if (_goblins[i]->stateMach[state])
+						for (col = 0; col < 6; col++)
+							if (_goblins[i]->stateMach[state][col])
+								delete _goblins[i]->stateMach[state][col];
 				delete []_goblins[i]->stateMach;
 			}
 			delete _goblins[i];
@@ -1892,10 +1893,10 @@ void Goblin::sub_19BD3(void) {
 
 	pass = _vm->_map->getPass(gob1X, gob1Y);
 	if ((pass > 17) && (pass < 21))
-		warning("GOB2 Stub! sub_19AB7(anim0);");
+		sub_19AB7(anim0);
 	pass = _vm->_map->getPass(gob2X, gob2Y);
 	if ((pass > 17) && (pass < 21))
-		warning("GOB2 Stub! sub_19B45(anim1);");
+		sub_19B45(anim1);
 
 	if ((di < 0) || (di > 39) || (si < 0) || (si > 39))
 		return;
@@ -2157,6 +2158,70 @@ void Goblin::sub_197A6(int16 destX, int16 destY, int16 objIndex) {
 		}
 	}
 	initiateMove(obj);
+}
+
+void Goblin::sub_19AB7(Mult::Mult_AnimData *animData) {
+	switch(animData->state) {
+	case 2:
+		animData->layer = 8;
+		break;
+
+	case 6:
+		animData->layer = 9;
+		break;
+
+	case 17:
+		animData->layer = 26;
+		break;
+
+	case 18:
+		animData->layer = 32;
+		break;
+
+	case 21:
+		animData->layer = 22;
+		break;
+
+	case 22:
+		animData->layer = 20;
+		break;
+
+	case 23:
+		animData->layer = 21;
+		break;
+	}
+}
+
+void Goblin::sub_19B45(Mult::Mult_AnimData *animData) {
+	switch(animData->state) {
+	case 2:
+		animData->layer = 10;
+		break;
+
+	case 6:
+		animData->layer = 11;
+		break;
+
+	case 17:
+		animData->layer = 29;
+		break;
+
+	case 18:
+		animData->layer = 35;
+		break;
+
+	case 21:
+		animData->layer = 25;
+		break;
+
+	case 22:
+		animData->layer = 23;
+		break;
+
+	case 23:
+		animData->layer = 24;
+		break;
+	}
 }
 
 } // End of namespace Gob

@@ -114,12 +114,18 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	dataPos1 = mapData.pos();
 	mapData.seek(dataPos2);
 	if (variables != _vm->_global->_inter_variables) {
+		byte *sizes;
+
 		_passMap = (int8 *) variables;
 		mapHeight = 200 / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
-		for (i = 0; i < mapHeight; i++)
+		sizes = _vm->_global->_inter_variablesSizes +
+			(((char *) _passMap) - _vm->_global->_inter_variables);
+		for (i = 0; i < mapHeight; i++) {
 			for (j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());
+			memset(sizes + i * _passWidth, 0, mapWidth);
+		}
 	}
 	mapData.seek(dataPos1);
 

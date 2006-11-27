@@ -50,6 +50,10 @@
 
 #include "sound/mididrv.h"
 
+// Use the original saves. Just for testing purposes, will be removed later
+// The new method is more convenient, and, more importantly, endian-safe
+//#define GOB_ORIGSAVES
+
 namespace Gob {
 
 enum {
@@ -176,6 +180,10 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang,
 	sprintf(_saveFiles[0], "%s.cat", _targetName.c_str());
 	sprintf(_saveFiles[1], "%s.sav", _targetName.c_str());
 	sprintf(_saveFiles[2], "%s.blo", _targetName.c_str());
+	_saveSlotFile = new char[_targetName.size() + 5];
+	sprintf(_saveSlotFile, "%s.s00", _targetName.c_str());
+	memset(_saveIndex, 0, 600);
+	memset(_saveIndexSizes, 0, 600);
 
 	Common::addSpecialDebugLevel(DEBUG_FUNCOP, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(DEBUG_DRAWOP, "DrawOpcodes", "Script DrawOpcodes debug level");
@@ -216,6 +224,7 @@ GobEngine::~GobEngine() {
 	for (i = 0; i < 3; i++)
 		delete[] _saveFiles[i];
 	delete[] _saveFiles;
+	delete[] _saveSlotFile;
 }
 
 int GobEngine::go() {
@@ -226,11 +235,6 @@ int GobEngine::go() {
 
 void GobEngine::shutdown() {
 	_quitRequested = true;
-}
-
-void GobEngine::writeVarDebug(uint32 offs, uint32 v) {
-	warning("Setting var %u(%u) to %u", offs, offs >> 2, v);
-	(*(uint32 *)(_global->_inter_variables + (offs))) = v;
 }
 
 // Seeking with SEEK_END (and therefore also pos()) doesn't work with
@@ -255,22 +259,44 @@ int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
 	int32 size;
 	Common::InSaveFile *in;
 
+	size = -1;
+#ifndef GOB_ORIGSAVES
+	int i;
+	if (sFile == SAVE_CAT) {
+		for (i = 14; i >= 0; i--)
+			if ((in = _saveFileMan->openForLoading(getSaveSlotFile(i)))) {
+				size = (i + 1) * READ_LE_UINT32(_game->_totFileData + 0x2C) * 4 + 600;
+				delete in;
+				break;
+			}
+		debugC(1, DEBUG_FILEIO, "Requested save games size: %d", size);
+		return size;
+	}
+#endif // GOB_ORIGSAVES
+
 	if ((in = _saveFileMan->openForLoading(_saveFiles[(int) sFile]))) {
 		size = getSaveSize(*in);
 		delete in;
-	} else
-		size = -1;
+	}
 
 	debugC(1, DEBUG_FILEIO, "Requested size of file \"%s\": %d", _saveFiles[(int) sFile], size);
 
 	return size;
 }
 
-void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
+const char *GobEngine::getSaveSlotFile(int slot) {
+	static char *slotBase = _saveSlotFile + strlen(_targetName.c_str()) + 2;
+
+	snprintf(slotBase, 3, "%02d", slot);
+	return _saveSlotFile;
+}
+
+void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
 	int32 retSize;
 	int16 index;
 	int16 top;
 	bool writePal;
+	bool needEnforceEndian;
 	char *sName;
 	char *buf;
 	char *oBuf;
@@ -287,9 +313,9 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 	in = 0;
 	writePal = false;
 	sName = _saveFiles[(int) sFile];
+	needEnforceEndian = false;
 
-	// WRITE_VAR(1, 1)
-	*((uint32*)(_global->_inter_variables + 4)) = 1;
+	WRITE_VAR(1, 1);
 
 	if (size < 0) {
 		if (size < -1000) {
@@ -302,12 +328,26 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 		size = _draw->getSpriteRectSize(index);
 		if ((_draw->_spritesArray[index]->vidMode & 0x80) == 0)
 			size = -size;
-	} else if (size == 0) {
-		dataVar = 0;
-		size = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
-		buf = _global->_inter_variables;
-	} else
+	} else {
+		int32 varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+
+		if (size == 0) {
+			dataVar = 0;
+			size = varSize;
+		}
 		buf = _global->_inter_variables + dataVar;
+#ifndef GOB_ORIGSAVES
+		if (sFile == SAVE_CAT) {
+			if(saveGame((offset - 600) / varSize, dataVar, size, offset))
+				WRITE_VAR(1, 0);
+			return;
+		} else if (offset != 0) {
+			warning("Can't write file \"%s\": Can't correctly enfore endianness with offset", sName);
+			return;
+		}
+		needEnforceEndian = true;
+#endif // GOB_ORIGSAVES
+	}
 
 	if ((in = _saveFileMan->openForLoading(sName)))
 		iSize = getSaveSize(*in);
@@ -325,7 +365,7 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 	}
 
 	if(!(out = _saveFileMan->openForSaving(sName))) {
-		warning("Can't write file \"%s\"", sName);
+		warning("Can't open file \"%s\" for writing", sName);
 		delete[] oBuf;
 		return;
 	}
@@ -335,21 +375,25 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 		oOff += 768;
 	}
 
-	if (size < 0) {
-		srcDesc = _draw->_spritesArray[index];
-		destDesc = _video->initSurfDesc(_global->_videoMode, srcDesc->width, 25, 0);
-		for (top = 0, retSize = 0; top < srcDesc->height; top += 25) {
-			int16 height = MIN(25, srcDesc->height - top);
-			_video->drawSprite(srcDesc, destDesc, 0, top, srcDesc->width - 1,
-					top + height - 1, 0, 0, 0);
-			memcpy(oBuf + oOff, (char *) destDesc->vidPtr, srcDesc->width * 25);
-			oOff += srcDesc->width * 25;
-		}
-		_video->freeSurfDesc(destDesc);
-	} else
-		memcpy(oBuf + oOff, buf, size);
+	if (!needEnforceEndian) {
+		if (size < 0) {
+			srcDesc = _draw->_spritesArray[index];
+			destDesc = _video->initSurfDesc(_global->_videoMode, srcDesc->width, 25, 0);
+			for (top = 0, retSize = 0; top < srcDesc->height; top += 25) {
+				int16 height = MIN(25, srcDesc->height - top);
+				_video->drawSprite(srcDesc, destDesc, 0, top, srcDesc->width - 1,
+						top + height - 1, 0, 0, 0);
+				memcpy(oBuf + oOff, (char *) destDesc->vidPtr, srcDesc->width * 25);
+				oOff += srcDesc->width * 25;
+			}
+			_video->freeSurfDesc(destDesc);
+		} else
+			memcpy(oBuf + oOff, buf, size);
 
-	out->write(oBuf, oSize);
+		out->write(oBuf, oSize);
+	} else
+		writeDataEndian(*out, buf, _global->_inter_variablesSizes + dataVar, size);
+
 	out->flush();
 
 	if (out->ioFailed())
@@ -357,28 +401,115 @@ void GobEngine::saveGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 	else {
 		debugC(1, DEBUG_FILEIO, "Saved file \"%s\" (%d, %d bytes at %d)",
 				sName, dataVar, size, offset);
-		// WRITE_VAR(1, 0)
-		*((uint32*)(_global->_inter_variables + 4)) = 0;
+		WRITE_VAR(1, 0);
 	}
 
 	delete out;
 	delete[] oBuf;
 }
 
-void GobEngine::loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
+bool GobEngine::saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset) {
+	int32 varSize;
+	char *varBuf;
+	byte *sizeBuf;
+	Common::OutSaveFile *out;
+
+	varBuf = _global->_inter_variables + dataVar;
+	sizeBuf = _global->_inter_variablesSizes + dataVar;
+	varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+	if ((offset == 0) && (size == 600)) {
+		memcpy(_saveIndex, varBuf, size);
+		memcpy(_saveIndexSizes, sizeBuf, size);
+		return true;
+	} else if((((offset - 600) % varSize) == 0) && (size == varSize)) {
+		if (!(out = _saveFileMan->openForSaving(getSaveSlotFile(saveSlot)))) {
+			warning("Can't open file \"%s\" for writing", getSaveSlotFile(saveSlot));
+			return false;
+		}
+		writeDataEndian(*out, _saveIndex + saveSlot * 40, _saveIndexSizes + saveSlot * 40, 40);
+		writeDataEndian(*out, varBuf, sizeBuf, size);
+		out->flush();
+		if (out->ioFailed()) {
+			warning("Can't save to slot %d", saveSlot);
+			return false;
+		}
+		debugC(1, DEBUG_FILEIO, "Saved to slot %d", saveSlot);
+		delete out;
+		return true;
+	} else {
+		warning("Invalid saving procedure");
+		return false;
+	}
+}
+
+uint32 GobEngine::writeDataEndian(Common::OutSaveFile &out, char *varBuf, byte *sizeBuf,
+		int32 size) {
+
+#ifndef GOB_ORIGSAVES
+
+uint32 written;
+
+#ifdef SCUMM_BIG_ENDIAN
+
+	int i;
+	char tmp[4];
+
+	written = 0;
+	for (i = 0; i < size; i++, varBuf++) {
+		if (sizeBuf[i] == 3)
+			WRITE_LE_UINT32(tmp, *((uint32 *) varBuf));
+		else if (sizeBuf[i] == 1)
+			WRITE_LE_UINT16(tmp, *((uint16 *) varBuf));
+		else if (sizeBuf[i] == 0)
+			*tmp = *varBuf;
+		else {
+			warning("Can't write data, corrupted variables sizes");
+			return 0;
+		}
+		written += out.write(tmp, sizeBuf[i] + 1);
+		varBuf += sizeBuf[i];
+		i += sizeBuf[i];
+	}
+
+#else // SCUMM_BIG_ENDIAN
+
+	written = out.write(varBuf, size);
+
+#endif // SCUMM_BIG_ENDIAN
+
+	out.write(sizeBuf, size);
+
+	return written;
+
+
+#else // GOB_ORIGSAVES
+
+	return out.write(varBuf, size);
+
+#endif // GOB_ORIGSAVES
+
+}
+
+void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
 	int32 sSize;
 	int32 retSize;
-	int16 index = 0;
+	int16 index;
 	int16 y;
 	char *buf;
 	char *sName;
 	bool readPal;
+	bool needEnforceEndian;
 	Video::SurfaceDesc *destDesc;
 	Video::SurfaceDesc *srcDesc;
 	Common::InSaveFile *in;
 
+	index = 0;
 	readPal = false;
 	sName = _saveFiles[(int) sFile];
+	needEnforceEndian = false;
+
+	WRITE_VAR(1, 1);
+
 	if (size < 0) {
 		if (size < -1000) {
 			readPal = true;
@@ -390,25 +521,38 @@ void GobEngine::loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 		size = _draw->getSpriteRectSize(index);
 		if ((_draw->_spritesArray[index]->vidMode & 0x80) == 0)
 			size = -size;
-	} else if (size == 0) {
-		dataVar = 0;
-		size = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
-		buf = _global->_inter_variables;
-	} else
+	} else {
+		int32 varSize;
+		varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+		if (size == 0) {
+			dataVar = 0;
+			size = varSize;
+		}
 		buf = _global->_inter_variables + dataVar;
+#ifndef GOB_ORIGSAVES
+		if (sFile == SAVE_CAT) {
+			if(loadGame((offset - 600) / varSize, dataVar, size, offset))
+				WRITE_VAR(1, 0);
+			return;
+		} else if (offset != 0) {
+			warning("Can't read file \"%s\": Can't correctly enfore endianness with offset", sName);
+			return;
+		}
+		needEnforceEndian = true;
+#endif // GOB_ORIGSAVES
+	}
 
 	if (_global->_inter_resStr[0] == 0) {
 		if (readPal)
 			size += 768;
-		// WRITE_VAR(1, size)
-		*((uint32*)(_global->_inter_variables + 4)) = (uint32) size;
+		WRITE_VAR(1, size);
 		return;
 	}
 
-	// WRITE_VAR(1, 1)
-	*((uint32*)(_global->_inter_variables + 4)) = 1;
-	if(!(in = _saveFileMan->openForLoading(sName)))
+	if(!(in = _saveFileMan->openForLoading(sName))) {
+		warning("Can't open file \"%s\" for reading", sName);
 		return;
+	}
 
 	debugC(1, DEBUG_FILEIO, "Loading file \"%s\" (%d, %d bytes at %d)",
 			sName, dataVar, size, offset);
@@ -425,24 +569,117 @@ void GobEngine::loadGame(enum SaveFiles sFile, int16 dataVar, int32 size, int32 
 		_draw->_applyPal = 1;
 	}
 
-	if (size < 0) {
-		destDesc = _draw->_spritesArray[index];
-		srcDesc = _video->initSurfDesc(_global->_videoMode, destDesc->width, 25, 0);
-		for (y = 0, retSize = 0; y < destDesc->height; y += 25) {
-			int16 height = MIN(25, destDesc->height - y);
-			retSize += in->read((char *) srcDesc->vidPtr, destDesc->width * 25);
-			_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
-		}
-		_video->freeSurfDesc(srcDesc);
+	if (!needEnforceEndian) {
+		if (size < 0) {
+			destDesc = _draw->_spritesArray[index];
+			srcDesc = _video->initSurfDesc(_global->_videoMode, destDesc->width, 25, 0);
+			for (y = 0, retSize = 0; y < destDesc->height; y += 25) {
+				int16 height = MIN(25, destDesc->height - y);
+				retSize += in->read((char *) srcDesc->vidPtr, destDesc->width * 25);
+				_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
+			}
+			_video->freeSurfDesc(srcDesc);
+		} else
+			retSize = in->read(buf, size);
 	} else
-		retSize = in->read(buf, size);
+		retSize = readDataEndian(*in, buf, _global->_inter_variablesSizes + dataVar, size);
 
 	if (retSize == size)
-		// WRITE_VAR(1, 0)
-		*((uint32*)(_global->_inter_variables + 4)) = 0;
+		WRITE_VAR(1, 0);
 
 	delete in;
 	return;
+}
+
+bool GobEngine::loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset) {
+	int i;
+	int32 varSize;
+	char *varBuf;
+	byte *sizeBuf;
+	Common::InSaveFile *in;
+
+	varBuf = _global->_inter_variables + dataVar;
+	sizeBuf = _global->_inter_variablesSizes + dataVar;
+	varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+	if ((offset == 0) && (size == 600)) {
+		for (i = 0; i < 15; i++, varBuf += 40) {
+			if ((in = _saveFileMan->openForLoading(getSaveSlotFile(i)))) {
+				in->read(varBuf, 40);
+				delete in;
+			} else
+				memset(varBuf, 0, 40);
+		}
+		return true;
+	} else if((((offset - 600) % varSize) == 0) && (size == varSize)) {
+		if (!(in = _saveFileMan->openForLoading(getSaveSlotFile(saveSlot)))) {
+			warning("Can't load from slot %d", saveSlot);
+			return false;
+		}
+		if (((getSaveSize(*in) / 2) - 40) != (uint32) varSize) {
+			warning("Can't load from slot %d: Wrong size", saveSlot);
+			return false;
+		}
+		in->seek(80);
+		readDataEndian(*in, varBuf, sizeBuf, size);
+		delete in;
+		debugC(1, DEBUG_FILEIO, "Loading from slot %d", saveSlot);
+		return true;
+	} else {
+		warning("Invalid loading procedure");
+		return false;
+	}
+}
+
+uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *sizeBuf,
+		int32 size) {
+
+#ifndef GOB_ORIGSAVES
+
+	uint32 read;
+	char *vars;
+	char *sizes;
+
+	vars = new char[size];
+	sizes = new char[size];
+
+	read = in.read(vars, size);
+	if (in.read(sizes, size) != read) {
+		warning("Can't read data: Corrupted variables sizes");
+		delete[] vars;
+		delete[] sizes;
+		return 0;
+	}
+
+#ifdef SCUMM_BIG_ENDIAN
+
+	int i;
+
+	for (i = 0; i < size; i++) {
+		if (sizes[i] == 3)
+			*((uint32 *) (vars + i)) = READ_LE_UINT32(vars + i);
+		else if (sizes[i] == 1)
+			*((uint16 *) (vars + i)) = READ_LE_UINT16(vars + i);
+		else if (sizes[i] != 0) {
+			warning("Can't read data: Corrupted variables sizes");
+			return 0;
+		}
+		i += sizes[i];
+	}
+
+#endif // SCUMM_BIG_ENDIAN
+
+	memcpy(varBuf, vars, size);
+	memcpy(sizeBuf, sizes, size);
+	delete[] vars;
+	delete[] sizes;
+
+	return read;
+	
+#else // GOB_ORIGSAVES
+
+	return in.read(varBuf, size);
+
+#endif // GOB_ORIGSAVES
 }
 
 int GobEngine::init() {
@@ -487,6 +724,7 @@ int GobEngine::init() {
 		else
 			_music = new Music(this);
 	}
+	_vm = this;
 
 	_system->beginGFXTransaction();
 		initCommonGFX(false);

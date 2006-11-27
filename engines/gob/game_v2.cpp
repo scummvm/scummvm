@@ -55,9 +55,9 @@ void Game_v2::playTot(int16 skipPlay) {
 	int16 nestLevel;
 	int32 variablesCount;
 	int32 totSize;
+	int32 i;
 	char *filePtr;
 	char *savedIP;
-	int16 i;
 
 	oldNestLevel = _vm->_inter->_nestLevel;
 	oldBreakFrom = _vm->_inter->_breakFromLevel;
@@ -199,7 +199,9 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (_vm->_global->_inter_variables == 0) {
 				variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
 				_vm->_global->_inter_variables = new char[variablesCount * 4];
-				memset(_vm->_global->_inter_variables, 0, variablesCount * 4);
+				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
+				for (i = 0; i < variablesCount; i++)
+					WRITE_VAR(i, 0);
 			}
 
 			_vm->_global->_inter_execPtr = (char *)_totFileData;
@@ -479,6 +481,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 							 &_mouseButtons, handleMouse);
 
 		// TODO: What of this is needed?
+		// Scrolling?
 		int16 width;
 		int16 height;
 		int16 sWidth;
@@ -1145,13 +1148,12 @@ void Game_v2::collisionsBlock(void) {
 
 			if ((_collisionAreas[i].flags & 0x0f) > 8) {
 				char *ptr;
-				strcpy(_tempStr,
-				    _vm->_global->_inter_variables + _collisionAreas[i].key);
+				strcpy(_tempStr, GET_VARO_STR(_collisionAreas[i].key));
 				while ((ptr = strchr(_tempStr, ' ')) != 0) {
 					_vm->_util->cutFromStr(_tempStr, (ptr - _tempStr), 1);
 					ptr = strchr(_tempStr, ' ');
 				}
-				strcpy(_vm->_global->_inter_variables + _collisionAreas[i].key, _tempStr);
+				WRITE_VARO_STR(_collisionAreas[i].key, _tempStr);
 				if (_vm->_language == 2) { // loc_16080
 					warning("GOB2 Stub! Game_v2::collisionsBlock(), language == 2");
 				}
@@ -1161,7 +1163,7 @@ void Game_v2::collisionsBlock(void) {
 			    (_collisionAreas[i].flags & 0x0f) <= 8) {
 				str = descArray[var_24].ptr;
 
-				strcpy(_tempStr, _vm->_global->_inter_variables + _collisionAreas[i].key);
+				strcpy(_tempStr, GET_VARO_STR(_collisionAreas[i].key));
 
 				if ((_collisionAreas[i].flags & 0x0f) < 7)
 					_vm->_util->prepareStr(_tempStr);
@@ -1250,7 +1252,7 @@ int16 Game_v2::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * in
 		if ((collArea->flags & 0x0F) > 10)
 			continue;
 
-		strcpy(_tempStr, _vm->_global->_inter_variables + collArea->key);
+		strcpy(_tempStr, GET_VARO_STR(collArea->key));
 
 		_vm->_draw->_destSpriteX = collArea->left;
 		_vm->_draw->_destSpriteY = collArea->top;
@@ -1281,9 +1283,8 @@ int16 Game_v2::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * in
 		descInd++;
 	}
 
-	for (i = 0; i < 40; i++) {
+	for (i = 0; i < 40; i++)
 		WRITE_VAR_OFFSET(i * 4 + 0x44, 0);
-	}
 
 	while (1) {
 		descInd = 0;
@@ -1319,8 +1320,8 @@ int16 Game_v2::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * in
 		    collArea->right - collArea->left + 1,
 		    collArea->bottom - collArea->top + 1,
 		    inpDesc[*pCurPos].backColor, inpDesc[*pCurPos].frontColor,
-		    _vm->_global->_inter_variables + collArea->key,
-		    inpDesc[*pCurPos].fontIndex, collArea->flags, &time, collResId, collIndex);
+		    GET_VARO_STR(collArea->key), inpDesc[*pCurPos].fontIndex,
+				collArea->flags, &time, collResId, collIndex);
 
 		if (_vm->_inter->_terminate)
 			return 0;

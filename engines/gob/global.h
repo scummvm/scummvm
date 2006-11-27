@@ -155,6 +155,7 @@ public:
 	char _inter_resStr[200];
 	int32 _inter_resVal;
 
+	byte *_inter_variablesSizes; // 0: single byte, 1: two bytes, 3: four bytes
 	char *_inter_variables;
 	char *_inter_execPtr;
 	int16 _inter_animDataSize;
@@ -162,10 +163,63 @@ public:
 	int16 _inter_mouseX;
 	int16 _inter_mouseY;
 
+	inline void writeVarSizeStr(uint32 offset, uint32 len) {
+		uint32 i;
+		uint32 inVar;
+		uint32 varOff;
+
+		inVar = offset % 4;
+		varOff = (offset >> 2) << 2;
+		for (i = 0; i < 4; i++) {
+			if (_inter_variablesSizes[varOff + i] == 3)
+				_inter_variablesSizes[varOff + i] = 0;
+			else if ((inVar == (i+1)) && (_inter_variablesSizes[varOff + i] == 1))
+				_inter_variablesSizes[varOff + i] = 0;
+		}
+		memset(_inter_variablesSizes + offset, 0, len);
+	}
+
+	inline void writeVar(uint32 offset, uint32 val) {
+		(*(uint32 *)(_inter_variables + offset)) = val;
+		writeVarSize(offset, 3);
+	}
+	inline void writeVar(uint32 offset, uint16 val) {
+		(*(uint16 *)(_inter_variables + offset)) = val;
+		writeVarSize(offset, 1);
+	}
+	inline void writeVar(uint32 offset, uint8 val) {
+		(*(uint8 *)(_inter_variables + offset)) = val;
+		writeVarSize(offset, 0);
+	}
+	inline void writeVar(uint32 offset, const char *str) {
+		writeVarSizeStr(offset, strlen(str));
+		strcpy(_inter_variables + offset, str);
+	}
+
 	Global(GobEngine *vm);
 
 protected:
 	GobEngine *_vm;
+
+	inline void writeVarSize(uint32 offset, byte n) {
+		uint32 i;
+		uint32 inVar;
+		uint32 varOff;
+
+		inVar = offset % 4;
+		varOff = (offset >> 2) << 2;
+		for (i = 0; i < 4; i++) {
+			if (_inter_variablesSizes[varOff + i] == 3)
+				_inter_variablesSizes[varOff + i] = 0;
+			else if ((inVar == (i+1)) && (_inter_variablesSizes[varOff + i] == 1))
+				_inter_variablesSizes[varOff + i] = 0;
+		}
+
+		_inter_variablesSizes[offset] = n;
+		for (; n > 0; n--)
+			_inter_variablesSizes[offset + n] = 0;
+	}
+
 };
 
 } // End of namespace Gob

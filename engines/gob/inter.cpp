@@ -58,6 +58,7 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 	_nestLevel = 0;
 
 	memset(_pasteBuf, 0, 300);
+	memset(_pasteSizeBuf, 0, 300);
 	_pastePos = 0;
 }
 

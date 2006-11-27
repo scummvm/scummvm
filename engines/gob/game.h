@@ -169,6 +169,7 @@ public:
 	char *_imFileDataArray[5];
 	char *_variablesArray[5];
 	char _curTotFileArray[5][14];
+	byte *_variablesSizesArray[5];
 
 	Imd *_imdFile;
 	char _curImdFile[15];

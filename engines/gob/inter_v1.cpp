@@ -672,9 +672,9 @@ bool Inter_v1::o1_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) 
 	case 25:
 	case 28:
 		if (token == 20)
-			*(_vm->_global->_inter_variables + varOff) = result;
+			WRITE_VARO_UINT8(varOff, result);
 		else
-			strcpy(_vm->_global->_inter_variables + varOff, _vm->_global->_inter_resStr);
+			WRITE_VARO_STR(varOff, _vm->_global->_inter_resStr);
 		break;
 
 	}
@@ -739,7 +739,7 @@ bool Inter_v1::o1_printText(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 			case 25:
 			case 28:
-				sprintf(buf + i, "%s", _vm->_global->_inter_variables + _vm->_parse->parseVarIndex());
+				sprintf(buf + i, "%s", GET_VARO_STR(_vm->_parse->parseVarIndex()));
 				break;
 			}
 			_vm->_global->_inter_execPtr++;
@@ -1010,7 +1010,8 @@ bool Inter_v1::o1_prepareStr(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 var;
 
 	var = _vm->_parse->parseVarIndex();
-	_vm->_util->prepareStr(_vm->_global->_inter_variables + var);
+	_vm->_util->prepareStr(GET_VARO_STR(var));
+	_vm->_global->writeVarSizeStr(var, strlen(GET_VARO_STR(var)));
 	return false;
 }
 
@@ -1021,7 +1022,8 @@ bool Inter_v1::o1_insertStr(char &cmdCount, int16 &counter, int16 &retFlag) {
 	strVar = _vm->_parse->parseVarIndex();
 	evalExpr(0);
 	pos = _vm->_parse->parseValExpr();
-	_vm->_util->insertStr(_vm->_global->_inter_resStr, _vm->_global->_inter_variables + strVar, pos);
+	_vm->_util->insertStr(_vm->_global->_inter_resStr, GET_VARO_STR(strVar), pos);
+	_vm->_global->writeVarSizeStr(strVar, strlen(GET_VARO_STR(strVar)));
 	return false;
 }
 
@@ -1033,7 +1035,7 @@ bool Inter_v1::o1_cutStr(char &cmdCount, int16 &counter, int16 &retFlag) {
 	var = _vm->_parse->parseVarIndex();
 	pos = _vm->_parse->parseValExpr();
 	size = _vm->_parse->parseValExpr();
-	_vm->_util->cutFromStr(_vm->_global->_inter_variables + var, pos, size);
+	_vm->_util->cutFromStr(GET_VARO_STR(var), pos, size);
 	return false;
 }
 
@@ -1046,8 +1048,8 @@ bool Inter_v1::o1_strstr(char &cmdCount, int16 &counter, int16 &retFlag) {
 	evalExpr(0);
 	resVar = _vm->_parse->parseVarIndex();
 
-	char *res = strstr(_vm->_global->_inter_variables + strVar, _vm->_global->_inter_resStr);
-	pos = res ? (res - (_vm->_global->_inter_variables + strVar)) : -1;
+	char *res = strstr(GET_VARO_STR(strVar), _vm->_global->_inter_resStr);
+	pos = res ? (res - (GET_VARO_STR(strVar))) : -1;
 	WRITE_VAR_OFFSET(resVar, pos);
 	return false;
 }
@@ -1062,7 +1064,7 @@ bool Inter_v1::o1_istrlen(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 var;
 
 	var = _vm->_parse->parseVarIndex();
-	len = strlen(_vm->_global->_inter_variables + var);
+	len = strlen(GET_VARO_STR(var));
 	var = _vm->_parse->parseVarIndex();
 
 	WRITE_VAR_OFFSET(var, len);
@@ -1076,7 +1078,7 @@ bool Inter_v1::o1_strToLong(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int32 res;
 
 	strVar = _vm->_parse->parseVarIndex();
-	strcpy(str, _vm->_global->_inter_variables + strVar);
+	strcpy(str, GET_VARO_STR(strVar));
 	res = atol(str);
 
 	destVar = _vm->_parse->parseVarIndex();

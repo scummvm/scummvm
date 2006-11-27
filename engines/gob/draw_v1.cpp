@@ -154,7 +154,7 @@ void Draw_v1::printText(void) {
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
-				strcpy(buf, _vm->_global->_inter_variables + val);
+				strcpy(buf, GET_VARO_STR(val));
 			} else {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
