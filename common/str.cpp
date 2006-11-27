@@ -45,7 +45,11 @@ static int computeCapacity(int len) {
 }
 
 String::String(const char *str, uint32 len)
-: _len(0), _str(_storage), _storage() {
+: _len(0), _str(_storage) {
+
+	// Init _storage member explicitly (ie. without calling its constructor)
+	// for GCC 2.95.x compatibility (see also tracker item #1602879).
+	_storage[0] = 0;
 
 	if (str && *str) {
 		const uint32 tmp = strlen(str);

@@ -96,7 +96,7 @@ public:
 	static const char *emptyString;
 #endif
 
-	String() : _len(0), _str(_storage), _storage() {}
+	String() : _len(0), _str(_storage) { _storage[0] = 0; }
 	String(const char *str, uint32 len = 0);
 	String(const String &str);
 	virtual ~String();
