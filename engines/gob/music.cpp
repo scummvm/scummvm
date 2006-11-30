@@ -28,6 +28,7 @@
 #include "gob/music.h"
 #include "gob/gob.h"
 #include "gob/game.h"
+#include "gob/util.h"
 
 namespace Gob {
 
@@ -56,14 +57,13 @@ const char *Music::_tracks[][2] = {
 	{"avt022.tot", "zombie"}
 };
 
-const char *Music::_tracksToFiles[][2] = {
-	{"campagne", "Musmac2.adl"},
-	{"extsor1", "Musmac3.adl"},
-	{"interieure", "Musmac4.adl"},
-	{"mine", "Musmac5.adl"},
-	{"nuit", "Musmac6.adl"},
-	{"statue", "Musmac2.adl"},
-	{"zombie", "Musmac3.adl"}
+const char *Music::_trackFiles[] = {
+//	"musmac1.adl", // TODO: This track isn't played correctly at all yet
+	"musmac2.adl",
+	"musmac3.adl",
+	"musmac4.adl",
+	"musmac5.adl",
+	"musmac6.adl"
 };
 
 const unsigned char Music::_operators[] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
@@ -445,12 +445,8 @@ void Music::playTrack(const char *trackname) {
 	
 	debugC(1, DEBUG_MUSIC, "Music::playTrack(%s)", trackname);
 	unloadMusic();
-	for (int i = 0; i < ARRAYSIZE(_tracksToFiles); i++)
-		if (!scumm_stricmp(trackname, _tracksToFiles[i][0])) {
-			loadMusic(_tracksToFiles[i][1]);
-			startPlay();
-			break;
-		}
+	loadMusic(_trackFiles[_vm->_util->getRandom(ARRAYSIZE(_trackFiles))]);
+	startPlay();
 }
 
 bool Music::loadMusic(const char *filename) {

@@ -65,7 +65,7 @@ public:
 	
 protected:
 	static const char *_tracks[][2];
-	static const char *_tracksToFiles[][2];
+	static const char *_trackFiles[];
 	static const unsigned char _operators[];
 	static const unsigned char _volRegNums [];
 	FM_OPL *_opl;
