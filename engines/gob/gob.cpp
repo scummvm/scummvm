@@ -94,8 +94,12 @@ static const GameSettings gob_games[] = {
 	{"gob2", "Gobliins 2 (DOS Fra)", GF_GOB2, Common::FR_FRA, "a13ecb4f6d8fd881ebbcc02e45cb5475", "intro"},
 	{"gob2", "Gobliins 2 (DOS Grb)", GF_GOB2, Common::EN_GRB, "b45b984ee8017efd6ea965b9becd4d66", "intro"},
 	{"gob2", "Gobliins 2 (DOS USA)", GF_GOB2, Common::EN_USA, "dedb5d31d8c8050a8cf77abedcc53dae", "intro"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128", "intro"},
+	{"gob2", "Gobliins 2 (DOS Deu)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128", "intro"},
 	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "cd3e1df8b273636ee32e34b7064f50e8", "intro"},
+
+	// Supplied by blackwhiteeagle in bug report #1605235
+	{"gob2", "Gobliins 2 (DOS Deu)", GF_GOB2, Common::DE_DEU, "3e4e7db0d201587dd2df4003b2993ef6", "intro"},
+
 	// CD 1.000.
 	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "9de5fbb41cf97182109e5fecc9d90347", "intro"},
 	// CD 1.01
