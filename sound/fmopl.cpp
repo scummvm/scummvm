@@ -61,7 +61,11 @@ static Common::RandomSource oplRnd;			/* OPL random number generator */
 
 /* sinwave entries */
 /* used static memory = SIN_ENT * 4 (byte) */
+#ifdef __DS__
+#define SIN_ENT 1024
+#else
 #define SIN_ENT 2048
+#endif
 
 /* output level entries (envelope,sinwave) */
 /* envelope counter lower bits */
