@@ -55,7 +55,7 @@ void GBAMPSaveFile::skip(uint32 bytes) {
 
 void GBAMPSaveFile::flushSaveBuffer() {
 	if (bufferPos != 0) {
-//		consolePrintf("Flushing %d bytes\n", bufferPos);
+		consolePrintf("Flushing %d bytes from %x\n", bufferPos, buffer);
 		flushed += bufferPos;
 		DS::std_fwrite(buffer, 1, bufferPos, handle);
 		bufferPos = 0;
@@ -83,7 +83,15 @@ uint32 GBAMPSaveFile::write(const void *buf, uint32 size) {
 	if (bufferPos + size > SAVE_BUFFER_SIZE) {
 		flushSaveBuffer();
 		saveSize += size;
-		DS::std_fwrite(buf, 1, size, handle);
+//		consolePrintf("Writing %d bytes from %x", size, buf);
+//		DS::std_fwrite(buf, 1, size, handle);
+
+		memcpy(buffer + bufferPos, buf, size);
+		bufferPos += size;
+		
+		saveSize += size;
+
+
 /*		int pos = 0;
 		
 		int rest = SAVE_BUFFER_SIZE - bufferPos;

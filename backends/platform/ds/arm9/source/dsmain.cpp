@@ -32,7 +32,17 @@
 
 // - Remove scummconsole.c
 // - Delete files
-// - Fatlib conversion
+// - Fatlib conversion?
+
+// - libcartreset
+// - Alternative controls - tap for left click, double for right
+// - Inherit the Earth?
+// - New Supercard, M3 drivers?
+// - Stereo audio?
+// - Delete saves?
+// - Software scaler?
+// - 100% scale
+
 
 #include <nds.h>
 
@@ -2045,7 +2055,9 @@ int main(void)
 	initHardware();
 	
 #ifdef USE_DEBUGGER
-	swiWaitForVBlank();
+	for (int r = 0; r < 150; r++) {
+		swiWaitForVBlank();
+	}
 	if (!(keysHeld() & KEY_Y)) {
 		initDebugger();
 	}

@@ -41,6 +41,7 @@ ifdef DS_BUILD_A
 	DISABLE_LURE = 1
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
 	BUILD=scummvm-A
 endif
 
@@ -61,6 +62,7 @@ ifdef DS_BUILD_B
 	DISABLE_LURE = 1
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
 	BUILD=scummvm-B
 endif
 
@@ -81,6 +83,7 @@ ifdef DS_BUILD_C
 	DISABLE_LURE = 1
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
 	BUILD=scummvm-C
 endif
 
@@ -164,13 +167,12 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 			$(portdir)/source/fat/io_mpcf.o $(portdir)/source/fat/io_sccf.o\
 			$(portdir)/source/fat/io_m3sd.o\
 			$(portdir)/source/fat/io_nmmc.o $(portdir)/source/fat/io_scsd.o \
-			$(portdir)/source/fat/io_m3sd_asm.o $(portdir)/source/fat/io_scsd_asm.o \
+			$(portdir)/source/fat/io_scsd_asm.o \
 			$(portdir)/source/fat/io_njsd.o \
 			$(portdir)/source/fat/io_mmcf.o \
 			$(portdir)/source/fat/io_sd_common.o \
-			$(portdir)/source/fat/io_m3_common.o 
-
-
+			$(portdir)/source/fat/io_m3_common.o \
+			$(portdir)/source/fat/m3sd.o
 
 #			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
