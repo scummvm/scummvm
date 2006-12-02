@@ -144,27 +144,27 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     u32 bs3 = s3 & 0x1F;
     u32 bs4 = s4 & 0x1F;
     
-    u32 gs0 = (s0 >> 5) & 0x1F;
+    u32 gs0_4 = (s0 >> 3) & 0x7C;
     u32 gs1 = (s1 >> 5) & 0x1F;
     u32 gs2 = (s2 >> 5) & 0x1F;
     u32 gs3 = (s3 >> 5) & 0x1F;
-    u32 gs4 = (s4 >> 5) & 0x1F;
+    u32 gs4_4 = (s4 >> 3) & 0x7C;
     
-    u32 rs0 = (s0 >> 10) & 0x1F;
+    u32 rs0_4 = (s0 >> 8) & 0x7C;
     u32 rs1 = (s1 >> 10) & 0x1F;
     u32 rs2 = (s2 >> 10) & 0x1F;
     u32 rs3 = (s3 >> 10) & 0x1F;
-    u32 rs4 = (s4 >> 10) & 0x1F;
+    u32 rs4_4 = (s4 >> 8) & 0x7C;
     
-    u32 rd0 = 4*rs0 +   rs1;
+    u32 rd0 = rs0_4 +   rs1;
     u32 rd1 = 2*rs1 + rs1 + 2*rs2;
     u32 rd2 = 2*rs2 + 2*rs3 + rs3;
-    u32 rd3 =   rs3 + 4*rs4;
+    u32 rd3 =   rs3 + rs4_4;
     
-    u32 gd0 = 4*gs0 +   gs1;
+    u32 gd0 = gs0_4 +   gs1;
     u32 gd1 = 2*gs1 + gs1 + 2*gs2;
     u32 gd2 = 2*gs2 + 2*gs3 + gs3;
-    u32 gd3 =   gs3 + 4*gs4;
+    u32 gd3 =   gs3 + gs4_4;
     
     u32 bd0 = 4*bs0 +   bs1;
     u32 bd1 = 2*bs1 + bs1 + 2*bs2;
