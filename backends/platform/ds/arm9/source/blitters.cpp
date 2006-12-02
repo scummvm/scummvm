@@ -138,11 +138,11 @@ void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height) {
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
                                                   u16* dest)
 {
-    u32 rs0 = s0 & 0x1F;
-    u32 rs1 = s1 & 0x1F;
-    u32 rs2 = s2 & 0x1F;
-    u32 rs3 = s3 & 0x1F;
-    u32 rs4 = s4 & 0x1F;
+    u32 bs0 = s0 & 0x1F;
+    u32 bs1 = s1 & 0x1F;
+    u32 bs2 = s2 & 0x1F;
+    u32 bs3 = s3 & 0x1F;
+    u32 bs4 = s4 & 0x1F;
     
     u32 gs0 = (s0 >> 5) & 0x1F;
     u32 gs1 = (s1 >> 5) & 0x1F;
@@ -150,25 +150,25 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     u32 gs3 = (s3 >> 5) & 0x1F;
     u32 gs4 = (s4 >> 5) & 0x1F;
     
-    u32 bs0 = (s0 >> 10) & 0x1F;
-    u32 bs1 = (s1 >> 10) & 0x1F;
-    u32 bs2 = (s2 >> 10) & 0x1F;
-    u32 bs3 = (s3 >> 10) & 0x1F;
-    u32 bs4 = (s4 >> 10) & 0x1F;
+    u32 rs0 = (s0 >> 10) & 0x1F;
+    u32 rs1 = (s1 >> 10) & 0x1F;
+    u32 rs2 = (s2 >> 10) & 0x1F;
+    u32 rs3 = (s3 >> 10) & 0x1F;
+    u32 rs4 = (s4 >> 10) & 0x1F;
     
     u32 rd0 = 4*rs0 +   rs1;
-    u32 rd1 = 3*rs1 + 2*rs2;
-    u32 rd2 = 2*rs2 + 3*rs3;
+    u32 rd1 = 2*rs1 + rs1 + 2*rs2;
+    u32 rd2 = 2*rs2 + 2*rs3 + rs3;
     u32 rd3 =   rs3 + 4*rs4;
     
     u32 gd0 = 4*gs0 +   gs1;
-    u32 gd1 = 3*gs1 + 2*gs2;
-    u32 gd2 = 2*gs2 + 3*gs3;
+    u32 gd1 = 2*gs1 + gs1 + 2*gs2;
+    u32 gd2 = 2*gs2 + 2*gs3 + gs3;
     u32 gd3 =   gs3 + 4*gs4;
     
     u32 bd0 = 4*bs0 +   bs1;
-    u32 bd1 = 3*bs1 + 2*bs2;
-    u32 bd2 = 2*bs2 + 3*bs3;
+    u32 bd1 = 2*bs1 + bs1 + 2*bs2;
+    u32 bd2 = 2*bs2 + 2*bs3 + bs3;
     u32 bd3 =   bs3 + 4*bs4;
     
     // Offsetting for correct rounding
@@ -176,14 +176,14 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     gd0 = gd0*2+5; gd1 = gd1*2+5; gd2 = gd2*2+5; gd3 = gd3*2+5;
     bd0 = bd0*2+5; bd1 = bd1*2+5; bd2 = bd2*2+5; bd3 = bd3*2+5;
 
-	rd0 = (rd0 * 25) >> 8; rd1 = (rd1 * 25) >> 8; rd2 = (rd2 * 25) >> 8; rd3 = (rd3 * 25) >> 8;
-	gd0 = (gd0 * 25) >> 8; gd1 = (gd1 * 25) >> 8; gd2 = (gd2 * 25) >> 8; gd3 = (gd3 * 25) >> 8;
-	bd0 = (bd0 * 25) >> 8; bd1 = (bd1 * 25) >> 8; bd2 = (bd2 * 25) >> 8; bd3 = (bd3 * 25) >> 8;
+	rd0 = (rd0 * 51) >> 9; rd1 = (rd1 * 51) >> 9; rd2 = (rd2 * 51) >> 9; rd3 = (rd3 * 51) >> 9;
+	gd0 = (gd0 * 51) >> 9; gd1 = (gd1 * 51) >> 9; gd2 = (gd2 * 51) >> 9; gd3 = (gd3 * 51) >> 9;
+	bd0 = (bd0 * 51) >> 9; bd1 = (bd1 * 51) >> 9; bd2 = (bd2 * 51) >> 9; bd3 = (bd3 * 51) >> 9;
     
-    u32 d0 = 0x8000 | (bd0 << 10) | (gd0 << 5) | rd0;
-    u32 d1 = 0x8000 | (bd1 << 10) | (gd1 << 5) | rd1;
-    u32 d2 = 0x8000 | (bd2 << 10) | (gd2 << 5) | rd2;
-    u32 d3 = 0x8000 | (bd3 << 10) | (gd3 << 5) | rd3;
+    u32 d0 = 0x8000 | (rd0 << 10) | (gd0 << 5) | bd0;
+    u32 d1 = 0x8000 | (rd1 << 10) | (gd1 << 5) | bd1;
+    u32 d2 = 0x8000 | (rd2 << 10) | (gd2 << 5) | bd2;
+    u32 d3 = 0x8000 | (rd3 << 10) | (gd3 << 5) | bd3;
     
     dest[0] = d0;
     dest[1] = d1;
