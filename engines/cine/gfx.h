@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_GFX_H_
-#define CINE_GFX_H_
+#ifndef CINE_GFX_H
+#define CINE_GFX_H
 
 namespace Cine {
 

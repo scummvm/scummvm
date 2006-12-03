@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_PRC_H_
-#define CINE_PRC_H_
+#ifndef CINE_PRC_H
+#define CINE_PRC_H
 
 namespace Cine {
 

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_SOUNDDRIVER_H_
-#define CINE_SOUNDDRIVER_H_
+#ifndef CINE_SOUNDDRIVER_H
+#define CINE_SOUNDDRIVER_H
 
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"

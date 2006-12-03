@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_OBJECT_H_
-#define CINE_OBJECT_H_
+#ifndef CINE_OBJECT_H
+#define CINE_OBJECT_H
 
 namespace Cine {
 

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_SFXPLAYER_H_
-#define CINE_SFXPLAYER_H_
+#ifndef CINE_SFXPLAYER_H
+#define CINE_SFXPLAYER_H
 
 namespace Cine {
 

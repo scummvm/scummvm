@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_BGLIST_H_
-#define CINE_BGLIST_H_
+#ifndef CINE_BGLIST_H
+#define CINE_BGLIST_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_UNPACK_H_
-#define CINE_UNPACK_H_
+#ifndef CINE_UNPACK_H
+#define CINE_UNPACK_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

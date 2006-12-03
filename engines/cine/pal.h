@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_PAL_H_
-#define CINE_PAL_H_
+#ifndef CINE_PAL_H
+#define CINE_PAL_H
 
 namespace Cine {
 

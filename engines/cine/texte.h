@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_TEXTE_H_
-#define CINE_TEXTE_H_
+#ifndef CINE_TEXTE_H
+#define CINE_TEXTE_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

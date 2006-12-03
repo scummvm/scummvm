@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_VARIOUS_H_
-#define CINE_VARIOUS_H_
+#ifndef CINE_VARIOUS_H
+#define CINE_VARIOUS_H
 
 #include "common/stdafx.h"
 #include "common/file.h"

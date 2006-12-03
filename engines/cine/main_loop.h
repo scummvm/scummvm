@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_MAINLOOP_H_
-#define CINE_MAINLOOP_H_
+#ifndef CINE_MAINLOOP_H
+#define CINE_MAINLOOP_H
 
 namespace Cine {
 

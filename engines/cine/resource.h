@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_RESOURCE_H_
-#define CINE_RESOURCE_H_
+#ifndef CINE_RESOURCE_H
+#define CINE_RESOURCE_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
