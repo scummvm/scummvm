@@ -117,7 +117,7 @@ static const ADGameFileDescription OSUS_GameFiles[] = {
 };
 
 static const ADGameFileDescription OSUS256_GameFiles[] = {
-	{ "procs00",	0,	"862a75d76fb7fffec30e52be9ad1c474"},
+	{ "procs00",		0,	"862a75d76fb7fffec30e52be9ad1c474"},
 };
 
 static const ADGameFileDescription OSDE_GameFiles[] = {
