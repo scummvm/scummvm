@@ -178,18 +178,18 @@ void SoundMgr::decode_sound(int resnum) {
 	struct sound_iigs_sample *smp;
 
 	debugC(3, kDebugLevelSound, "(%d)", resnum);
-	type = READ_LE_UINT16(game.sounds[resnum].rdata);
+	type = READ_LE_UINT16(_vm->game.sounds[resnum].rdata);
 
 	if (type == AGI_SOUND_SAMPLE) {
 		/* Convert sample data to 16 bit signed format
 		 */
-		smp = (struct sound_iigs_sample *)game.sounds[resnum].rdata;
+		smp = (struct sound_iigs_sample *)_vm->game.sounds[resnum].rdata;
 		size = ((int)smp->size_hi << 8) + smp->size_lo;
-		src = (uint8 *) game.sounds[resnum].rdata;
+		src = (uint8 *) _vm->game.sounds[resnum].rdata;
 		buf = (int16 *) calloc(1, 54 + (size << 1) + 100);	/* FIXME */
 		memcpy(buf, src, 54);
 		for (; size--; buf[size + 54] = ((int16) src[size + 54] - 0x80) << 4);	/* FIXME */
-		game.sounds[resnum].rdata = (uint8 *) buf;
+		_vm->game.sounds[resnum].rdata = (uint8 *) buf;
 		free(src);
 	}
 #endif				/* USE_IIGS_SOUND */
@@ -223,11 +223,11 @@ void SoundMgr::start_sound(int resnum, int flag) {
 #ifdef USE_IIGS_SOUND
 	case AGI_SOUND_SAMPLE:
 		debugC(3, kDebugLevelSound, "IIGS sample");
-		smp = (struct sound_iigs_sample *)game.sounds[resnum].rdata;
+		smp = (struct sound_iigs_sample *)_vm->game.sounds[resnum].rdata;
 		for (i = 0; i < NUM_CHANNELS; i++) {
 			chn[i].type = type;
 			chn[i].flags = 0;
-			chn[i].ins = (int16 *) & game.sounds[resnum].rdata[54];
+			chn[i].ins = (int16 *) & _vm->game.sounds[resnum].rdata[54];
 			chn[i].size = ((int)smp->size_hi << 8) + smp->size_lo;
 			chn[i].ptr = &play_sample[i];
 			chn[i].timer = 0;

@@ -437,9 +437,8 @@ private:
 	int int_version;
 	AgiEngine *_vm;
 
-	int AgiLoader_v3::load_dir(agi_dir *agid, Common::File *fp,
-						   uint32 offs, uint32 len);
-	uint8 *AgiLoader_v3::load_vol_res(agi_dir *agid);
+	int load_dir(agi_dir *agid, Common::File *fp, uint32 offs, uint32 len);
+	uint8 *load_vol_res(agi_dir *agid);
 
 public:
 

@@ -588,7 +588,7 @@ void AgiEngine::initialize() {
 	game.color_fg = 15;
 	game.color_bg = 0;
 
-	*game.name = NULL;
+	game.name[0] = '\0';
 
 	game.sbuf = (uint8 *)calloc(_WIDTH, _HEIGHT);
 	game.hires = (uint8 *)calloc(_WIDTH * 2, _HEIGHT);

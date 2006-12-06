@@ -146,6 +146,10 @@ public:
 	void play_agi_sound();
 	uint32 mix_sound();
 	int load_instruments(char *fname);
+#ifdef USE_IIGS_SOUND
+	void play_midi_sound();
+	void play_sample_sound();
+#endif
 };
 
 } // End of namespace Agi
