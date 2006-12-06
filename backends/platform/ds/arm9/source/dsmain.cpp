@@ -715,6 +715,12 @@ void displayMode16BitFlipBuffer() {
 	}
 	else if (isCpuScalerEnabled())
 	{
+        //#define SCALER_PROFILE
+
+        #ifdef SCALER_PROFILE
+	    TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
+        u16 t0 = TIMER1_DATA;
+        #endif
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
 		DS::Rescale_320x256xPAL8_To_256x256x1555( base,
@@ -722,6 +728,13 @@ void displayMode16BitFlipBuffer() {
 											      BG_PALETTE,
 											      256,
 											      512);
+        
+        #ifdef SCALER_PROFILE
+        u16 t1 = TIMER1_DATA;
+	    TIMER1_CR &= ~TIMER_ENABLE;
+        u32 dt = t1 - t0;        
+        consolePrintf("%d us\n", (dt * 10240) / 334);
+        #endif
 	}
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
