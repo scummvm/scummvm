@@ -197,15 +197,11 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 	gd0 = (gd0 * 51) >> 9; gd1 = (gd1 * 51) >> 9; gd2 = (gd2 * 51) >> 9; gd3 = (gd3 * 51) >> 9;
 	bd0 = (bd0 * 51) >> 9; bd1 = (bd1 * 51) >> 9; bd2 = (bd2 * 51) >> 9; bd3 = (bd3 * 51) >> 9;
     
-    u32 d0 = 0x8000 | (rd0 << 10) | (gd0 << 5) | bd0;
-    u32 d1 = 0x8000 | (rd1 << 10) | (gd1 << 5) | bd1;
-    u32 d2 = 0x8000 | (rd2 << 10) | (gd2 << 5) | bd2;
-    u32 d3 = 0x8000 | (rd3 << 10) | (gd3 << 5) | bd3;
+    u32 d10 = 0x80008000 | (rd1 << 26) | (gd1 << 21) | (bd1 << 16) | (rd0 << 10) | (gd0 << 5) | bd0;
+    u32 d32 = 0x80008000 | (rd3 << 26) | (gd3 << 21) | (bd3 << 16) | (rd2 << 10) | (gd2 << 5) | bd2;
     
-    dest[0] = d0;
-    dest[1] = d1;
-    dest[2] = d2;
-    dest[3] = d3;
+    ((u32*)dest)[0] = d10;
+    ((u32*)dest)[1] = d32;
 }
 
 // Can't work in place
@@ -241,13 +237,15 @@ void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
 
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
+    /*
 	u16* fastRam = (u16 *) (0x37F8000 + 16384);
 
 	memcpy(fastRam, palette, 256 * 2);
+    */
 
 	for(size_t i=0; i<200; ++i)
 	{
-		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);			
+		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, palette);			
 	}
 }
 
