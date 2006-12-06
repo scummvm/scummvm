@@ -44,7 +44,7 @@ typedef signed int Err;
  */
 #define VERSION __DATE__ " " __TIME__
 
-//#define USE_IIGS_SOUND
+#define USE_IIGS_SOUND
 
 #define	TITLE		"AGI engine"
 
