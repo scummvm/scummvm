@@ -33,8 +33,8 @@ int AgiLoader_v2::version() {
 	return 2;
 }
 
-void AgiLoader_v2::setIntVersion(int version) {
-	int_version = version;
+void AgiLoader_v2::setIntVersion(int ver) {
+	int_version = ver;
 }
 
 int AgiLoader_v2::getIntVersion() {

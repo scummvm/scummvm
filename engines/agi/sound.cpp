@@ -97,9 +97,6 @@ static int playing_sound = -1;
 static uint8 *song;
 static uint8 env;
 
-static void stop_note(int i);
-static void play_note(int i, int freq, int vol);
-
 
 static int16 *snd_buffer;
 static int16 *waveform;

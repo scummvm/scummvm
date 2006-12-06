@@ -392,6 +392,7 @@ private:
 public:
 
 	AgiLoader() {}
+	virtual ~AgiLoader() {}
 
 	virtual int init() = 0;
 	virtual int deinit() = 0;
