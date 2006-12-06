@@ -27,6 +27,7 @@
 #include "sound/mixer.h"
 
 #include "agi/agi.h"
+#include "agi/sound.h"
 
 namespace Agi {
 
@@ -96,15 +97,11 @@ static int playing_sound = -1;
 static uint8 *song;
 static uint8 env;
 
-struct sound_driver *snd;
-
-extern struct sound_driver sound_dummy;
-
 static void stop_note(int i);
 static void play_note(int i, int freq, int vol);
 
 
-int16 *snd_buffer;
+static int16 *snd_buffer;
 static int16 *waveform;
 
 static int16 waveform_ramp[WAVEFORM_SIZE] = {
@@ -160,20 +157,20 @@ static int note_to_period(int note) {
 
 #endif				/* USE_IIGS_SOUND */
 
-void unload_sound(int resnum) {
-	if (game.dir_sound[resnum].flags & RES_LOADED) {
-		if (game.sounds[resnum].flags & SOUND_PLAYING)
+void SoundMgr::unload_sound(int resnum) {
+	if (_vm->game.dir_sound[resnum].flags & RES_LOADED) {
+		if (_vm->game.sounds[resnum].flags & SOUND_PLAYING)
 			/* FIXME: Stop playing */
 			;
 
 		/* Release RAW data for sound */
-		free(game.sounds[resnum].rdata);
-		game.sounds[resnum].rdata = NULL;
-		game.dir_sound[resnum].flags &= ~RES_LOADED;
+		free(_vm->game.sounds[resnum].rdata);
+		_vm->game.sounds[resnum].rdata = NULL;
+		_vm->game.dir_sound[resnum].flags &= ~RES_LOADED;
 	}
 }
 
-void decode_sound(int resnum) {
+void SoundMgr::decode_sound(int resnum) {
 #ifdef USE_IIGS_SOUND
 	int type, size;
 	int16 *buf;
@@ -198,29 +195,29 @@ void decode_sound(int resnum) {
 #endif				/* USE_IIGS_SOUND */
 }
 
-void start_sound(int resnum, int flag) {
+void SoundMgr::start_sound(int resnum, int flag) {
 	int i, type;
 #ifdef USE_IIGS_SOUND
 	struct sound_iigs_sample *smp;
 #endif
 
-	if (game.sounds[resnum].flags & SOUND_PLAYING)
+	if (_vm->game.sounds[resnum].flags & SOUND_PLAYING)
 		return;
 
 	stop_sound();
 
-	if (game.sounds[resnum].rdata == NULL)
+	if (_vm->game.sounds[resnum].rdata == NULL)
 		return;
 
-	type = READ_LE_UINT16(game.sounds[resnum].rdata);
+	type = READ_LE_UINT16(_vm->game.sounds[resnum].rdata);
 
 	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
 		return;
 
-	game.sounds[resnum].flags |= SOUND_PLAYING;
-	game.sounds[resnum].type = type;
+	_vm->game.sounds[resnum].flags |= SOUND_PLAYING;
+	_vm->game.sounds[resnum].type = type;
 	playing_sound = resnum;
-	song = (uint8 *) game.sounds[resnum].rdata;
+	song = (uint8 *)_vm->game.sounds[resnum].rdata;
 
 	switch (type) {
 #ifdef USE_IIGS_SOUND
@@ -278,18 +275,18 @@ void start_sound(int resnum, int flag) {
 
 	/* Nat Budin reports that the flag should be reset when sound starts
 	 */
-	setflag(endflag, false);
+	_vm->setflag(endflag, false);
 
 	/* FIXME: should wait for sound time instead of setting the flag
 	 *        immediately
 	 */
-	if (opt.nosound) {
-		setflag(endflag, true);
+	if (_vm->opt.nosound) {
+		_vm->setflag(endflag, true);
 		stop_sound();
 	}
 }
 
-void stop_sound() {
+void SoundMgr::stop_sound() {
 	int i;
 
 	endflag = -1;
@@ -297,21 +294,21 @@ void stop_sound() {
 		stop_note(i);
 
 	if (playing_sound != -1) {
-		game.sounds[playing_sound].flags &= ~SOUND_PLAYING;
+		_vm->game.sounds[playing_sound].flags &= ~SOUND_PLAYING;
 		playing_sound = -1;
 	}
 }
 
 static int16 *buffer;
 
-int init_sound() {
+int SoundMgr::init_sound() {
 	int r = -1;
 
-	buffer = snd_buffer = (int16 *) calloc(2, BUFFER_SIZE);
+	buffer = snd_buffer = (int16 *)calloc(2, BUFFER_SIZE);
 
 	env = false;
 
-	switch (opt.soundemu) {
+	switch (_vm->opt.soundemu) {
 	case SOUND_EMU_NONE:
 		waveform = waveform_ramp;
 		env = true;
@@ -341,34 +338,27 @@ int init_sound() {
 	return r;
 }
 
-void deinit_sound(void) {
+void SoundMgr::deinit_sound(void) {
 	debugC(3, kDebugLevelSound, "()");
-	if (snd)
-		snd->deinit();
 	free(snd_buffer);
 }
 
-static void stop_note(int i) {
+void SoundMgr::stop_note(int i) {
 	chn[i].adsr = AGI_SOUND_ENV_RELEASE;
 
 #ifdef USE_CHORUS
 	/* Stop chorus ;) */
 	if (chn[i].type == AGI_SOUND_4CHN &&
-	    opt.soundemu == SOUND_EMU_NONE && i < 3) {
+		_vm->opt.soundemu == SOUND_EMU_NONE && i < 3) {
 		stop_note(i + 4);
 	}
 #endif
-
-#ifdef __TURBOC__
-	if (i == 0)
-		nosound();
-#endif
 }
 
-static void play_note(int i, int freq, int vol) {
-	if (!getflag(F_sound_on))
+void SoundMgr::play_note(int i, int freq, int vol) {
+	if (!_vm->getflag(F_sound_on))
 		vol = 0;
-	else if (vol && opt.soundemu == SOUND_EMU_PC)
+	else if (vol && _vm->opt.soundemu == SOUND_EMU_PC)
 		vol = 160;
 
 	chn[i].phase = 0;
@@ -380,7 +370,7 @@ static void play_note(int i, int freq, int vol) {
 #ifdef USE_CHORUS
 	/* Add chorus ;) */
 	if (chn[i].type == AGI_SOUND_4CHN &&
-	    opt.soundemu == SOUND_EMU_NONE && i < 3) {
+		_vm->opt.soundemu == SOUND_EMU_NONE && i < 3) {
 		int newfreq = freq * 1007 / 1000;
 		if (freq == newfreq)
 			newfreq++;
@@ -388,15 +378,11 @@ static void play_note(int i, int freq, int vol) {
 	}
 #endif
 
-#ifdef __TURBOC__
-	if (i == 0)
-		sound(freq);
-#endif
 }
 
 #ifdef USE_IIGS_SOUND
 
-void play_midi_sound() {
+void SoundMgr::play_midi_sound() {
 	uint8 *p;
 	uint8 parm1, parm2;
 	static uint8 cmd, ch;
@@ -457,17 +443,17 @@ void play_midi_sound() {
 	}
 }
 
-void play_sample_sound() {
+void SoundMgr::play_sample_sound() {
 	play_note(0, 11025 * 10, 200);
 	playing = 1;
 }
 
 #endif				/* USE_IIGS_SOUND */
 
-void play_agi_sound() {
+void SoundMgr::play_agi_sound() {
 	int i, freq;
 
-	for (playing = i = 0; i < (opt.soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
+	for (playing = i = 0; i < (_vm->opt.soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
 		playing |= !chn[i].end;
 
 		if (chn[i].end)
@@ -490,7 +476,7 @@ void play_agi_sound() {
 				chn[i].env = 0;
 #ifdef USE_CHORUS
 				/* chorus */
-				if (chn[i].type == AGI_SOUND_4CHN && opt.soundemu == SOUND_EMU_NONE && i < 3) {
+				if (chn[i].type == AGI_SOUND_4CHN && _vm->opt.soundemu == SOUND_EMU_NONE && i < 3) {
 					chn[i + 4].vol = 0;
 					chn[i + 4].env = 0;
 				}
@@ -501,7 +487,7 @@ void play_agi_sound() {
 	}
 }
 
-void play_sound() {
+void SoundMgr::play_sound() {
 	int i;
 
 	if (endflag == -1)
@@ -521,16 +507,16 @@ void play_sound() {
 		for (i = 0; i < NUM_CHANNELS; chn[i++].vol = 0);
 
 		if (endflag != -1)
-			setflag(endflag, true);
+			_vm->setflag(endflag, true);
 
 		if (playing_sound != -1)
-			game.sounds[playing_sound].flags &= ~SOUND_PLAYING;
+			_vm->game.sounds[playing_sound].flags &= ~SOUND_PLAYING;
 		playing_sound = -1;
 		endflag = -1;
 	}
 }
 
-uint32 mix_sound(void) {
+uint32 SoundMgr::mix_sound(void) {
 	register int i, p;
 	int16 *src;
 	int c, b, m;
@@ -573,7 +559,7 @@ uint32 mix_sound(void) {
 		} else {
 			/* Add white noise */
 			for (i = 0; i < BUFFER_SIZE; i++) {
-				b = rnd->getRandomNumber(255) - 128;
+				b = _vm->_rnd->getRandomNumber(255) - 128;
 				snd_buffer[i] += (b * m) >> 4;
 			}
 		}
@@ -608,7 +594,7 @@ uint32 mix_sound(void) {
 #ifdef USE_IIGS_SOUND
 
 #if 0
-int load_instruments(char *fname) {
+int SoundMgr::load_instruments(char *fname) {
 	Common::File fp;
 	int i, j, k;
 	struct sound_instrument ai;
@@ -694,57 +680,57 @@ int load_instruments(char *fname) {
 	return err_OK;
 }
 
-void unload_instruments() {
+void Sound::unload_instruments() {
 	free(instruments);
 }
 #endif
 
 #endif				/* USE_IIGS_SOUND */
 
-static void fill_audio(void *udata, int16 * stream, uint len) {
-	len <<= 2;
-
+static void fillAudio(void *udata, int16 *stream, uint len) {
+	SoundMgr *soundMgr = (SoundMgr *)udata;
 	uint32 p = 0;
 	static uint32 n = 0, s = 0;
 
+	len <<= 2;
+
 	debugC(5, kDebugLevelSound, "(%p, %p, %d)", (void *)udata, (void *)stream, len);
-	memcpy(stream, (uint8 *) buffer + s, p = n);
+	memcpy(stream, (uint8 *)buffer + s, p = n);
 	for (n = 0, len -= p; n < len; p += n, len -= n) {
-		play_sound();
-		n = mix_sound() << 1;
+		soundMgr->play_sound();
+		n = soundMgr->mix_sound() << 1;
 		if (len < n) {
-			memcpy((uint8 *) stream + p, buffer, len);
+			memcpy((uint8 *)stream + p, buffer, len);
 			s = len;
 			n -= s;
 			return;
 		} else {
-			memcpy((uint8 *) stream + p, buffer, n);
+			memcpy((uint8 *)stream + p, buffer, n);
 		}
 	}
-	play_sound();
-	n = mix_sound() << 1;
-	memcpy((uint8 *) stream + p, buffer, s = len);
+	soundMgr->play_sound();
+	n = soundMgr->mix_sound() << 1;
+	memcpy((uint8 *)stream + p, buffer, s = len);
 	n -= s;
 }
 
-AGIMusic::AGIMusic(Audio::Mixer *pMixer) {
+SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
+	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
 	_mixer->setupPremix(this);
 }
 
-void AGIMusic::premixerCall(int16 *data, uint len) {
-	Agi::fill_audio(NULL, data, len);
+void SoundMgr::premixerCall(int16 *data, uint len) {
+	fillAudio(this, data, len);
 }
 
-void AGIMusic::setVolume(uint8 volume) {
+void SoundMgr::setVolume(uint8 volume) {
 	// TODO
 }
 
-AGIMusic::~AGIMusic(void) {
+SoundMgr::~SoundMgr() {
 	_mixer->setupPremix(NULL);
 }
-
-AGIMusic *g_agi_music;
 
 } // End of namespace Agi

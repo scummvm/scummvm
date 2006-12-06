@@ -53,19 +53,16 @@ namespace Agi {
 #define SELECT_Y	24
 #define SELECT_MSG	"Press ENTER to select, ESC to cancel"
 
-static uint8 *intobj = NULL;
-
-static void print_item(int n, int fg, int bg)
-{
-	_text->print_text(object_name(intobj[n]), 0, n % 2 ? 39 - strlen(object_name(intobj[n])) : 1,
+void AgiEngine::printItem(int n, int fg, int bg) {
+	print_text(object_name(intobj[n]), 0, n % 2 ? 39 - strlen(object_name(intobj[n])) : 1,
 			(n / 2) + 2, 40, fg, bg);
 }
 
-static int find_item() {
+int AgiEngine::findItem() {
 	int r, c;
 
-	r = mouse.y / CHAR_LINES;
-	c = mouse.x / CHAR_COLS;
+	r = g_mouse.y / CHAR_LINES;
+	c = g_mouse.x / CHAR_COLS;
 
 	debugC(6, kDebugLevelInventory, "r = %d, c = %d", r, c);
 
@@ -75,31 +72,31 @@ static int find_item() {
 	return (r - 2) * 2 + (c > 20);
 }
 
-static int show_items() {
+int AgiEngine::showItems() {
 	unsigned int x, i;
 
 	for (x = i = 0; x < game.num_objects; x++) {
 		if (object_get_location(x) == EGO_OWNED) {
 			/* add object to our list! */
 			intobj[i] = x;
-			print_item(i, STATUS_FG, STATUS_BG);
+			printItem(i, STATUS_FG, STATUS_BG);
 			i++;
 		}
 	}
 
 	if (i == 0) {
-		_text->print_text(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
+		print_text(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
 	}
 
 	return i;
 }
 
-static void select_items(int n) {
+void AgiEngine::selectItems(int n) {
 	int fsel = 0;
 
-	while (42) {
+	for (;;) {
 		if (n > 0)
-			print_item(fsel, STATUS_BG, STATUS_FG);
+			printItem(fsel, STATUS_BG, STATUS_FG);
 
 		switch (wait_any_key()) {
 		case KEY_ENTER:
@@ -125,13 +122,13 @@ static void select_items(int n) {
 				fsel++;
 			break;
 		case BUTTON_LEFT:{
-				int i = find_item();
+				int i = findItem();
 				if (i >= 0 && i < n) {
 					setvar(V_sel_item, intobj[fsel = i]);
 					debugC(6, kDebugLevelInventory, "item found: %d", fsel);
-					show_items();
-					print_item(fsel, STATUS_BG, STATUS_FG);
-					do_update();
+					showItems();
+					printItem(fsel, STATUS_BG, STATUS_FG);
+					_gfx->doUpdate();
 					goto exit_select;
 				}
 				break;
@@ -140,11 +137,11 @@ static void select_items(int n) {
 			break;
 		}
 
-		show_items();
-		do_update();
+		showItems();
+		_gfx->doUpdate();
 	}
 
- exit_select:
+exit_select:
 	debugC(6, kDebugLevelInventory, "selected: %d", fsel);
 }
 
@@ -155,7 +152,7 @@ static void select_items(int n) {
 /**
  * Display inventory items.
  */
-void inventory() {
+void AgiEngine::inventory() {
 	int old_fg, old_bg;
 	int n;
 
@@ -164,24 +161,24 @@ void inventory() {
 	old_bg = game.color_bg;
 	game.color_fg = 0;
 	game.color_bg = 15;
-	clear_screen(game.color_bg);
+	_gfx->clearScreen(game.color_bg);
 
-	_text->print_text(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
+	print_text(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
 
 	/* FIXME: doesn't check if objects overflow off screen... */
 
 	intobj = (uint8 *) malloc(4 + game.num_objects);
 	memset(intobj, 0, (4 + game.num_objects));
 
-	n = show_items();
+	n = showItems();
 
 	if (getflag(F_status_selects_items)) {
-		_text->print_text(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
+		print_text(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
 	} else {
-		_text->print_text(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
+		print_text(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
 	}
 
-	flush_screen();
+	_gfx->flushScreen();
 
 	/* If flag 13 is set, we want to highlight & select an item.
 	 * opon selection, put objnum in var 25. Then on esc put in
@@ -189,20 +186,20 @@ void inventory() {
 	 */
 
 	if (getflag(F_status_selects_items))
-		select_items(n);
+		selectItems(n);
 
 	free(intobj);
 
 	if (!getflag(F_status_selects_items))
 		wait_any_key();
 
-	clear_screen(0);
-	_text->write_status();
-	show_pic();
+	_gfx->clearScreen(0);
+	write_status();
+	_picture->show_pic();
 	game.color_fg = old_fg;
 	game.color_bg = old_bg;
 	game.has_prompt = 0;
-	_text->flush_lines(game.line_user_input, 24);
+	flush_lines(game.line_user_input, 24);
 }
 
 }                             // End of namespace Agi

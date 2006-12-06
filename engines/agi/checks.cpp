@@ -27,7 +27,7 @@
 
 namespace Agi {
 
-static int check_position(struct vt_entry *v) {
+int AgiEngine::check_position(struct vt_entry *v) {
 	debugC(4, kDebugLevelSprites, "check position @ %d, %d", v->x_pos, v->y_pos);
 
 	if (v->x_pos < 0 ||
@@ -41,7 +41,7 @@ static int check_position(struct vt_entry *v) {
 	}
 
 	/* MH1 needs this, but it breaks LSL1 */
-	if (agi_get_release() >= 0x3000) {
+	if (agiGetRelease() >= 0x3000) {
 		if (v->y_pos < v->y_size)
 			return 0;
 	}
@@ -52,7 +52,7 @@ static int check_position(struct vt_entry *v) {
 /**
  * Check if there's another object on the way
  */
-static int check_collision(struct vt_entry *v) {
+int AgiEngine::check_collision(struct vt_entry *v) {
 	struct vt_entry *u;
 
 	if (v->flags & IGNORE_OBJECTS)
@@ -92,7 +92,7 @@ static int check_collision(struct vt_entry *v) {
 	return 1;
 }
 
-static int check_priority(struct vt_entry *v) {
+int AgiEngine::check_priority(struct vt_entry *v) {
 	int i, trigger, water, pass, pri;
 	uint8 *p0;
 
@@ -136,7 +136,7 @@ static int check_priority(struct vt_entry *v) {
 
 		if (pri == 2) {	/* trigger */
 			debugC(4, kDebugLevelSprites, "stepped on trigger");
-			if (!debug_.ignoretriggers)
+			if (!_debug.ignoretriggers)
 				trigger = 1;
 		}
 	}
@@ -168,7 +168,7 @@ static int check_priority(struct vt_entry *v) {
  * new position must be valid according to the sprite positioning
  * rules, otherwise the previous position will be kept.
  */
-void update_position() {
+void AgiEngine::update_position() {
 	struct vt_entry *v;
 	int x, y, old_x, old_y, border;
 
@@ -206,7 +206,7 @@ void update_position() {
 		if (x < 0) {
 			x = 0;
 			border = 4;
-		} else if (x <= 0 && agi_get_release() == 0x3086) {	/* KQ4 */
+		} else if (x <= 0 && agiGetRelease() == 0x3086) {	/* KQ4 */
 			x = 0;	/* See bug #590462 */
 			border = 4;
 		} else if (v->entry == 0 && x == 0 && v->flags & ADJ_EGO_XY) {
@@ -266,7 +266,7 @@ void update_position() {
  *
  * @param n view table entry number
  */
-void fix_position(int n) {
+void AgiEngine::fix_position(int n) {
 	struct vt_entry *v = &game.view_table[n];
 	int count, dir, size;
 

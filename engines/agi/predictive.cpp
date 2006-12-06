@@ -33,7 +33,7 @@ namespace Agi {
 #define kModeNum 1
 #define kModeAbc 2
 
-bool TextMan::predictiveDialog(void) {
+bool AgiEngine::predictiveDialog(void) {
 	int key, active = 0;
 	bool rc = false;
 	int x;
@@ -70,10 +70,10 @@ bool TextMan::predictiveDialog(void) {
 	}
 
 	draw_window(50, 40, 269, 159);
-	draw_rectangle(62, 54, 249, 66, MSG_BOX_TEXT);
-	flush_block(62, 54, 249, 66);
+	_gfx->drawRectangle(62, 54, 249, 66, MSG_BOX_TEXT);
+	_gfx->flushBlock(62, 54, 249, 66);
 
-	print_character(3, 11, game.cursor_char, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+	_gfx->printCharacter(3, 11, game.cursor_char, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 
 	bx[15] = 73; // Zero/space
 	by[15] = 120;
@@ -103,8 +103,8 @@ bool TextMan::predictiveDialog(void) {
 	}
 
 	/* clear key queue */
-	while (keypress()) {
-		get_key();
+	while (_gfx->keypress()) {
+		_gfx->getKey();
 	}
 
 	_wordPosition = 0;
@@ -131,9 +131,9 @@ bool TextMan::predictiveDialog(void) {
 					color2 = 7;
 				}
 				if (i == 14) {
-					draw_button(bx[i], by[i], modes[mode], i == active, 0, color1, color2);
+					_gfx->drawButton(bx[i], by[i], modes[mode], i == active, 0, color1, color2);
 				} else {
-					draw_button(bx[i], by[i], buttons[i], i == active, 0, color1, color2);
+					_gfx->drawButton(bx[i], by[i], buttons[i], i == active, 0, color1, color2);
 				}
 			}
 
@@ -147,11 +147,11 @@ bool TextMan::predictiveDialog(void) {
 					temp[i] = ' ';
 
 				print_text(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
-				flush_block(62, 54, 249, 66);
+				_gfx->flushBlock(62, 54, 249, 66);
 			}
 		}
 
-		poll_timer();	/* msdos driver -> does nothing */
+		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
 		switch (key) {
 		case KEY_ENTER:
@@ -162,7 +162,7 @@ bool TextMan::predictiveDialog(void) {
 			goto getout;
 		case BUTTON_LEFT:
 			for (int i = 0; buttons[i]; i++) {
-				if (test_button(bx[i], by[i], buttons[i])) {
+				if (_gfx->testButton(bx[i], by[i], buttons[i])) {
 					needRefresh = true;
 					active = i;
 
@@ -237,7 +237,7 @@ bool TextMan::predictiveDialog(void) {
 			needRefresh = true;
 			break;
 		}
-		do_update();
+		_gfx->doUpdate();
 	}
 
  press:
@@ -266,7 +266,7 @@ static char *rtrim(char *t) {
 
 #define MAXLINELEN 80
 
-void TextMan::loadDict(void) {
+void AgiEngine::loadDict(void) {
 	Common::File in;
 	char buf[MAXLINELEN];
 
@@ -307,7 +307,7 @@ void TextMan::loadDict(void) {
 	debug(0, "Loaded %d keys", _dict.size());
 }
 
-bool TextMan::matchWord(void) {
+bool AgiEngine::matchWord(void) {
 	_addIsActive = false;
 
 	if (!_currentCode.size()) {

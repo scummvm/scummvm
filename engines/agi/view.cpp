@@ -27,7 +27,7 @@
 
 namespace Agi {
 
-static void _set_cel(vt_entry *v, int n) {
+void AgiEngine::_set_cel(vt_entry *v, int n) {
 	view_loop *current_vl;
 	view_cel *current_vc;
 
@@ -42,7 +42,7 @@ static void _set_cel(vt_entry *v, int n) {
 		return;
 
 	if (!(v->flags & UPDATE)
-	    && (agi_get_release() >= 0x3000))
+			&& (agiGetRelease() >= 0x3000))
 		return;
 
 	current_vc = &current_vl->cel[n];
@@ -51,7 +51,7 @@ static void _set_cel(vt_entry *v, int n) {
 	v->y_size = current_vc->height;
 }
 
-static void _set_loop(vt_entry *v, int n) {
+void AgiEngine::_set_loop(vt_entry *v, int n) {
 	view_loop *current_vl;
 	debugC(7, kDebugLevelResources, "vt entry #%d, loop = %d", v->entry, n);
 
@@ -68,13 +68,13 @@ static void _set_loop(vt_entry *v, int n) {
 	if (v->current_cel >= v->num_cels)
 		v->current_cel = 0;
 
-	if (!(v->flags & UPDATE) && (agi_get_release() >= 0x3000))
+	if (!(v->flags & UPDATE) && (agiGetRelease() >= 0x3000))
 		return;
 
 	v->loop_data = &game.views[v->current_view].loop[n];
 }
 
-static void update_view(vt_entry *v) {
+void AgiEngine::update_view(vt_entry *v) {
 	int cel, last_cel;
 
 	if (v->flags & DONTUPDATE) {
@@ -133,7 +133,7 @@ static void update_view(vt_entry *v) {
  * and fills the corresponding views array element.
  * @param n number of view resource to decode
  */
-int decode_view(int n) {
+int AgiEngine::decode_view(int n) {
 	int loop, cel;
 	uint8 *v, *lptr;
 	uint16 lofs, cofs;
@@ -204,7 +204,7 @@ int decode_view(int n) {
  * Unloads all data in a view resource
  * @param n number of view resource
  */
-void unload_view(int n) {
+void AgiEngine::unload_view(int n) {
 	int x;
 
 	debugC(5, kDebugLevelResources, "discard view %d", n);
@@ -231,7 +231,7 @@ void unload_view(int n) {
  * @param v pointer to view table entry
  * @param n number of cel
  */
-void set_cel(vt_entry *v, int n) {
+void AgiEngine::set_cel(vt_entry *v, int n) {
 	assert(v->view_data != NULL);
 	assert(v->num_cels >= n);
 
@@ -257,7 +257,7 @@ void set_cel(vt_entry *v, int n) {
  * @param v pointer to view table entry
  * @param n number of loop
  */
-void set_loop(vt_entry *v, int n) {
+void AgiEngine::set_loop(vt_entry *v, int n) {
 	assert(v->view_data != NULL);
 	assert(v->num_loops >= n);
 	_set_loop(v, n);
@@ -269,7 +269,7 @@ void set_loop(vt_entry *v, int n) {
  * @param v pointer to view table entry
  * @param n number of AGI view resource
  */
-void set_view(vt_entry *v, int n) {
+void AgiEngine::set_view(vt_entry *v, int n) {
 	v->view_data = &game.views[n];
 	v->current_view = n;
 	v->num_loops = v->view_data->num_loops;
@@ -280,7 +280,7 @@ void set_view(vt_entry *v, int n) {
  * Set the view table entry as updating.
  * @param v pointer to view table entry
  */
-void start_update(vt_entry *v) {
+void AgiEngine::start_update(vt_entry *v) {
 	if (~v->flags & UPDATE) {
 		_sprites->erase_both();
 		v->flags |= UPDATE;
@@ -292,7 +292,7 @@ void start_update(vt_entry *v) {
  * Set the view table entry as non-updating.
  * @param v pointer to view table entry
  */
-void stop_update(vt_entry *v) {
+void AgiEngine::stop_update(vt_entry *v) {
 	if (v->flags & UPDATE) {
 		_sprites->erase_both();
 		v->flags &= ~UPDATE;
@@ -316,7 +316,7 @@ static int loop_table_4[] = {
  * This function is called at the end of each interpreter cycle
  * to update the view table entries and blit the sprites.
  */
-void update_viewtable() {
+void AgiEngine::update_viewtable() {
 	vt_entry *v;
 	int i, loop;
 
@@ -340,7 +340,7 @@ void update_viewtable() {
 				break;
 			default:
 				/* for KQ4 */
-				if (agi_get_release() == 0x3086)
+				if (agiGetRelease() == 0x3086)
 					loop = loop_table_4[v->direction];
 				break;
 			}
@@ -348,7 +348,7 @@ void update_viewtable() {
 
 		/* AGI 2.272 (ddp, xmas) doesn't test step_time_count! */
 		if (loop != 4 && loop != v->current_loop) {
-			if (agi_get_release() <= 0x2272 ||
+			if (agiGetRelease() <= 0x2272 ||
 			    v->step_time_count == 1) {
 				set_loop(v, loop);
 			}
@@ -375,7 +375,7 @@ void update_viewtable() {
 	}
 }
 
-bool is_ego_view(const vt_entry* v) {
+bool AgiEngine::is_ego_view(const vt_entry* v) {
 	return v == game.view_table;
 }
 

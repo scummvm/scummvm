@@ -44,7 +44,7 @@ static char *my_strndup(char *src, int n) {
 	return tmp;
 }
 
-int load_words(const char *fname) {
+int AgiEngine::load_words(const char *fname) {
 	Common::File fp;
 	uint32 flen;
 	uint8 *mem = NULL;
@@ -75,7 +75,7 @@ int load_words(const char *fname) {
 	return err_OK;
 }
 
-void unload_words() {
+void AgiEngine::unload_words() {
 	if (words != NULL) {
 		free(words);
 		words = NULL;
@@ -89,7 +89,7 @@ void unload_words() {
  *
  * Thomas Åkesson, November 2001
  */
-int find_word(char *word, int *flen) {
+int AgiEngine::find_word(char *word, int *flen) {
 	int mchr = 0;		/* matched chars */
 	int len, fchr, id = -1;
 	uint8 *p = words;
@@ -140,7 +140,7 @@ int find_word(char *word, int *flen) {
 	return id;
 }
 
-void dictionary_words(char *msg) {
+void AgiEngine::dictionary_words(char *msg) {
 	char *p = NULL;
 	char *q = NULL;
 	int wid, wlen;

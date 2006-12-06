@@ -25,7 +25,11 @@
 #ifndef AGI_SOUND_H
 #define AGI_SOUND_H
 
-#include "agi/agi.h"
+#include "sound/audiostream.h"
+
+namespace Audio {
+class Mixer;
+} // End of namespace Audio
 
 namespace Agi {
 
@@ -44,15 +48,6 @@ namespace Agi {
 #define ENV_SUSTAIN     100		/**< envelope sustain level */
 #define ENV_RELEASE	7500		/**< envelope release rate */
 #define NUM_CHANNELS    7		/**< number of sound channels */
-
-/**
- * AGI engine sound driver structure.
- */
-struct sound_driver {
-	char *description;
-	int (*init) (int16 * buffer);
-	void (*deinit) (void);
-};
 
 /**
  * AGI sound resource structure.
@@ -102,38 +97,18 @@ struct channel_info {
 	uint32 env;
 };
 
-void decode_sound(int);
-void unload_sound(int);
-void play_sound(void);
-int init_sound(void);
-void deinit_sound(void);
-void start_sound(int, int);
-void stop_sound(void);
-uint32 mix_sound(void);
-int load_instruments(char *fname);
+class AgiEngine;
 
-extern struct sound_driver *snd;
+class SoundMgr : public Audio::AudioStream {
+	AgiEngine *_vm;
 
-#endif				/* AGI_SOUND_H */
-
-} // End of namespace Agi
-
-#include "sound/audiostream.h"
-
-namespace Audio {
-class Mixer;
-} // End of namespace Audio
-
-namespace Agi {
-
-class AGIMusic : public Audio::AudioStream {
 public:
-	AGIMusic(Audio::Mixer * pMixer);
-	~AGIMusic(void);
+	SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer);
+	~SoundMgr();
 	virtual void setVolume(uint8 volume);
 
 	// AudioStream API
-	int readBuffer(int16 * buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) {
 		premixerCall(buffer, numSamples / 2);
 		return numSamples;
 	}
@@ -152,10 +127,27 @@ public:
 	}
 
 private:
-	Audio::Mixer * _mixer;
+	Audio::Mixer *_mixer;
 	uint32 _sampleRate;
 
-	void premixerCall(int16 * buf, uint len);
+	void premixerCall(int16 *buf, uint len);
+
+public:
+
+	void decode_sound(int);
+	void unload_sound(int);
+	void play_sound();
+	int init_sound();
+	void deinit_sound();
+	void start_sound(int, int);
+	void stop_sound();
+	void stop_note(int i);
+	void play_note(int i, int freq, int vol);
+	void play_agi_sound();
+	uint32 mix_sound();
+	int load_instruments(char *fname);
 };
 
 } // End of namespace Agi
+
+#endif				/* AGI_SOUND_H */

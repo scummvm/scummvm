@@ -27,8 +27,6 @@
 
 #include "common/stdafx.h"
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 /* QNX4 has a KEY_DOWN defined which we don't need to care about */
@@ -74,18 +72,6 @@ namespace Agi {
 #define KEY_ASCII(k)	(k & 0xff)
 
 extern uint8 scancode_table[];
-
-void init_words(void);
-void clean_input(void);
-int do_poll_keyboard(void);
-void clean_keyboard(void);
-void handle_keys(int);
-void handle_getstring(int);
-int handle_controller(int);
-void get_string(int, int, int, int);
-uint16 agi_get_keypress(void);
-int wait_key(void);
-int wait_any_key(void);
 
 }                             // End of namespace Agi
 

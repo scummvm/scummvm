@@ -33,8 +33,15 @@ namespace Agi {
 struct sprite;
 typedef Common::List<sprite*> SpriteList;
 
-class SpritesMan {
+class AgiEngine;
+class GfxMgr;
+class Obejcts;
+
+class SpritesMgr {
 private:
+	GfxMgr *_gfx;
+	AgiEngine *_vm;
+
 	uint8 *sprite_pool;
 	uint8 *pool_top;
 
@@ -56,17 +63,19 @@ private:
 	FORCEINLINE int prio_to_y(int p);
 	sprite *new_sprite(vt_entry *v);
 	void spr_addlist(SpriteList& l, vt_entry *v);
-	void build_list(SpriteList& l, bool (*test) (vt_entry *));
+	void build_list(SpriteList& l, bool (*test) (vt_entry *, AgiEngine *));
 	void build_upd_blitlist();
 	void build_nonupd_blitlist();
 	void free_list(SpriteList& l);
 	void commit_sprites(SpriteList& l);
 	void erase_sprites(SpriteList& l);
 	void blit_sprites(SpriteList& l);	
+	static bool test_updating(vt_entry *v, AgiEngine *);
+	static bool test_not_updating(vt_entry *v, AgiEngine *);
 	
 public:
-	SpritesMan();
-	~SpritesMan();
+	SpritesMgr(AgiEngine *agi, GfxMgr *gfx);
+	~SpritesMgr();
 
 	int init_sprites(void);
 	void deinit_sprites(void);
@@ -83,8 +92,6 @@ public:
 	void show_obj(int);
 	void commit_block(int, int, int, int);
 };
-
-extern SpritesMan *_sprites;
 
 }                             // End of namespace Agi
 

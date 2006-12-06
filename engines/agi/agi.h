@@ -32,6 +32,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/hash-str.h"
 
 #include "engines/engine.h"
 
@@ -95,29 +96,6 @@ typedef signed int Err;
 
 namespace Agi {
 
-int getflag(int);
-void setflag(int, int);
-void flipflag(int);
-int getvar(int);
-void setvar(int, int);
-void decrypt(uint8 * mem, int len);
-void release_sprites(void);
-int main_cycle(void);
-int view_pictures(void);
-int parse_cli(int, char **);
-int run_game(void);
-int init_machine(void);
-int deinit_machine(void);
-int get_direction(int x, int y, int x0, int y0, int s);
-void inventory(void);
-void list_games(void);
-uint32 match_crc(uint32, char *, int);
-int v2id_game(void);
-int v3id_game(void);
-int v4id_game(uint32 ver);
-void update_timer(void);
-int get_app_dir(char *app_dir, unsigned int size);
-
 enum {
 	NO_GAMEDIR = 0,
 	GAMEDIR
@@ -180,7 +158,7 @@ struct game_id_list {
 	char *switches;
 };
 
-struct mouse {
+struct Mouse {
 	int button;
 	unsigned int x;
 	unsigned int y;
@@ -207,41 +185,11 @@ struct agi_options {
 	int agimouse;		/**< AGI Mouse 1.0 emulation */
 };
 
-extern struct agi_options opt;
-extern uint8 *exec_name;
-
-extern volatile uint32 clock_ticks;
-extern volatile uint32 clock_count;
-extern volatile uint32 msg_box_secs2;
-
-extern struct agi_debug debug_;
-extern struct mouse mouse;
-
 #define report printf
 
 enum GameId {
 	GID_AGI = 1
 };
-
-extern Common::RandomSource * rnd;
-extern const char *_savePath;
-
-class AgiEngine : public ::Engine {
-	int _gameId;
-
-protected:
-	int init();
-	int go();
-	void shutdown();
-	void initialize();
-
-
-public:
-	AgiEngine(OSystem * syst);
-	virtual ~ AgiEngine();
-	int getGameId() {
-		return _gameId;
-}};
 
 #define WIN_TO_PIC_X(x) ((x) / 2)
 #define WIN_TO_PIC_Y(y) ((y) < 8 ? 999 : (y) >= (8 + _HEIGHT) ? 999 : (y) - 8)
@@ -436,57 +384,362 @@ struct agi_game {
 	int simple_save;						/**< select simple savegames */
 };
 
-/**
- *
- */
-struct agi_loader {
-	int version;
+class AgiLoader {
+private:
 	int int_version;
-	int (*init) (void);
-	int (*deinit) (void);
-	int (*detect_game) ();
-	int (*load_resource) (int, int);
-	int (*unload_resource) (int, int);
-	int (*load_objects) (const char *);
-	int (*load_words) (const char *);
+	AgiEngine *_vm;
+
+public:
+
+	AgiLoader() {}
+
+	virtual int init() = 0;
+	virtual int deinit() = 0;
+	virtual int detect_game() = 0;
+	virtual int load_resource(int, int) = 0;
+	virtual int unload_resource(int, int) = 0;
+	virtual int load_objects(const char *) = 0;
+	virtual int load_words(const char *) = 0;
+	virtual int version() = 0;
+	virtual void setIntVersion(int) = 0;
+	virtual int getIntVersion() = 0;
 };
 
-extern struct agi_game game;
+class AgiLoader_v2 : public AgiLoader {
+private:
+	int int_version;
+	AgiEngine *_vm;
 
-int agi_init(void);
-int agi_deinit(void);
-int agi_version(void);
-int agi_get_release(void);
-void agi_set_release(int);
-int agi_detect_game();
-int agi_load_resource(int, int);
-int agi_unload_resource(int, int);
-void agi_unload_resources(void);
+	int load_dir(struct agi_dir *agid, const char *fname);
+	uint8 *load_vol_res(struct agi_dir *agid);
 
-/* words */
-int show_words(void);
-int load_words(const char *);
-void unload_words(void);
-int find_word(char *word, int *flen);
-void dictionary_words(char *);
+public:
 
-/* objects */
-int show_objects(void);
-int load_objects(const char *fname);
-int alloc_objects(int);
-void unload_objects(void);
-const char *object_name(unsigned int);
-int object_get_location(unsigned int);
-void object_set_location(unsigned int, int);
+	AgiLoader_v2(AgiEngine *vm) {
+		_vm = vm;
+		int_version = 0;
+	}
 
-void new_input_mode(int);
-void old_input_mode(void);
+	virtual int init();
+	virtual int deinit();
+	virtual int detect_game();
+	virtual int load_resource(int, int);
+	virtual int unload_resource(int, int);
+	virtual int load_objects(const char *);
+	virtual int load_words(const char *);
+	virtual int version();
+	virtual void setIntVersion(int);
+	virtual int getIntVersion();
+};
 
-int run_logic(int);
+class AgiLoader_v3 : public AgiLoader {
+private:
+	int int_version;
+	AgiEngine *_vm;
 
-void agi_timer_low();
-int agi_get_keypress_low();
-int agi_is_keypress_low();
+	int AgiLoader_v3::load_dir(agi_dir *agid, Common::File *fp,
+						   uint32 offs, uint32 len);
+	uint8 *AgiLoader_v3::load_vol_res(agi_dir *agid);
+
+public:
+
+	AgiLoader_v3(AgiEngine *vm) {
+		_vm = vm;
+		int_version = 0;
+	}
+
+	virtual int init();
+	virtual int deinit();
+	virtual int detect_game();
+	virtual int load_resource(int, int);
+	virtual int unload_resource(int, int);
+	virtual int load_objects(const char *);
+	virtual int load_words(const char *);
+	virtual int version();
+	virtual void setIntVersion(int);
+	virtual int getIntVersion();
+};
+
+class GfxMgr;
+class SpritesMgr;
+class Menu;
+class SaveGameMgr;
+
+extern struct Mouse g_mouse;
+
+/* Image stack support */
+struct image_stack_element {
+	uint8 type;
+	uint8 pad;
+	int16 parm1;
+	int16 parm2;
+	int16 parm3;
+	int16 parm4;
+	int16 parm5;
+	int16 parm6;
+	int16 parm7;
+};
+
+struct string_data {
+	int x;
+	int y;
+	int len;
+	int str;
+};
+
+#define TICK_SECONDS 20
+
+#define KEY_QUEUE_SIZE 16
+
+class AgiEngine : public ::Engine {
+	int _gameId;
+
+protected:
+	int init();
+	int go();
+	void shutdown();
+	void initialize();
+
+public:
+	AgiEngine(OSystem *syst);
+	virtual ~AgiEngine();
+	int getGameId() {
+		return _gameId;
+	}
+
+private:
+
+	int _key_queue[KEY_QUEUE_SIZE];
+	int _key_queue_start;
+	int _key_queue_end;
+
+	int check_priority(struct vt_entry *v);
+	int check_collision(struct vt_entry *v);
+	int check_position(struct vt_entry *v);
+
+	uint32 match_version(uint32 crc);
+
+public:
+	struct agi_game game;
+	struct agi_object *objects;	/* objects in the game */
+
+	struct string_data stringdata;
+
+	AgiLoader *loader;	/* loader */
+
+	Common::RandomSource *_rnd;
+	const char *_savePath;
+
+	volatile uint32 clock_count;
+
+	uint8 *intobj;
+
+	Menu* menu;
+
+	char last_sentence[40];
+
+	SpritesMgr *_sprites;
+	GfxMgr *_gfx;
+	SoundMgr *_sound;
+	PictureMgr *_picture;
+	SaveGameMgr *_saveGameMgr;
+
+	#define INITIAL_IMAGE_STACK_SIZE 32
+
+	int stack_size;
+	struct image_stack_element *image_stack;
+	int image_stack_pointer;
+
+	void clear_image_stack();
+	void record_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7);
+	void replay_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7);
+	void release_image_stack();
+
+	struct agi_debug _debug;
+	struct agi_options opt;
+
+	int _key_control;
+	int _key_alt;
+
+	Console *_console;
+
+	int agiInit();
+	int agiDeinit();
+	int agiVersion();
+	int agiGetRelease();
+	void agiSetRelease(int);
+	int agiDetectGame();
+	int agiLoadResource(int, int);
+	int agiUnloadResource(int, int);
+	void agiUnloadResources();
+
+	void agiTimerLow();
+	int agiGetKeypressLow();
+	int agiIsKeypressLow();
+	static void agiTimerFunctionLow(void *refCon);
+	void initPriTable();
+
+	void new_input_mode(int);
+	void old_input_mode();
+
+	int getflag(int);
+	void setflag(int, int);
+	void flipflag(int);
+	int getvar(int);
+	void setvar(int, int);
+	void decrypt(uint8 * mem, int len);
+	void release_sprites();
+	int main_cycle();
+	int view_pictures();
+	int parse_cli(int, char **);
+	int run_game();
+	void inventory();
+	void list_games();
+	uint32 match_crc(uint32, char *, int);
+	int v2id_game();
+	int v3id_game();
+	int v4id_game(uint32 ver);
+	void update_timer();
+	int get_app_dir(char *app_dir, unsigned int size);
+
+	int setup_v2_game(int ver, uint32 crc);
+	int setup_v3_game(int ver, uint32 crc);
+
+	void new_room(int n);
+	void reset_controllers();
+	void interpret_cycle();
+	int play_game();
+
+	void printItem(int n, int fg, int bg);
+	int findItem();
+	int showItems();
+	void selectItems(int n);
+
+	void processEvents();
+
+	// Objects
+	int show_objects();
+	int decode_objects(uint8 *mem, uint32 flen);
+	int load_objects(const char *fname);
+	int alloc_objects(int);
+	void unload_objects();
+	const char *object_name(unsigned int);
+	int object_get_location(unsigned int);
+	void object_set_location(unsigned int, int);
+
+	// Logic
+	int decode_logic(int);
+	void unload_logic(int);
+	int run_logic(int);
+	void patch_logic(int n);
+
+	void debug_console(int, int, const char *);
+	int test_if_code(int);
+	void execute_agi_command(uint8, uint8 *);
+
+	// View
+private:
+
+	void _set_cel(vt_entry *v, int n);
+	void _set_loop(vt_entry *v, int n);
+	void update_view(vt_entry *v);
+
+public:
+
+	void set_cel(vt_entry *, int);
+	void set_loop(vt_entry *, int);
+	void set_view(vt_entry *, int);
+	void start_update(vt_entry *);
+	void stop_update(vt_entry *);
+	void update_viewtable();
+	void unload_view(int);
+	int decode_view(int);
+	void add_to_pic(int, int, int, int, int, int, int);
+	void draw_obj(int);
+	bool is_ego_view(const vt_entry *v);
+
+	// Words
+	int show_words();
+	int load_words(const char *);
+	void unload_words();
+	int find_word(char *word, int *flen);
+	void dictionary_words(char *);
+
+	// Motion
+private:
+	int check_step(int delta, int step);
+	int check_block(int x, int y);
+	void changepos(struct vt_entry *v);
+	void motion_wander(struct vt_entry *v);
+	void motion_followego(struct vt_entry *v);
+	void motion_moveobj(struct vt_entry *v);
+	void check_motion(struct vt_entry *v);
+public:
+	void check_all_motions();
+	void move_obj(vt_entry *);
+	void in_destination(vt_entry *);
+	void fix_position(int);
+	void update_position();
+	int get_direction(int x0, int y0, int x, int y, int s);
+
+	// Keyboard
+	void init_words();
+	void clean_input();
+	int do_poll_keyboard();
+	void clean_keyboard();
+	void handle_keys(int);
+	void handle_getstring(int);
+	int handle_controller(int);
+	void get_string(int, int, int, int);
+	uint16 agi_get_keypress();
+	int wait_key();
+	int wait_any_key();
+
+	// Text
+public:
+	#define MAXWORDLEN 24
+
+	typedef Common::String String;
+
+	int message_box(const char *);
+	int selection_box(const char *, const char **);
+	void close_window(void);
+	void draw_window(int, int, int, int);
+	void print_text(const char *, int, int, int, int, int, int);
+	void print_text_console(const char *, int, int, int, int, int);
+	int print(const char *, int, int, int);
+	char *word_wrap_string(char *, int *);
+	char *agi_sprintf(const char *);
+	void write_status(void);
+	void write_prompt(void);
+	void clear_lines(int, int, int);
+	void flush_lines(int, int);
+	bool predictiveDialog(void);
+
+private:
+	void print_status(const char *message, ...);
+	void print_text2(int l, const char *msg, int foff, int xoff, int yoff, int len, int fg, int bg);
+	void blit_textbox(const char *p, int y, int x, int len);
+	void erase_textbox();
+	char *safe_strcat(char *s, const char *t);
+	void loadDict(void);
+	bool matchWord(void);
+
+	typedef Common::HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> DictMap;
+	DictMap _dict;
+	Common::StringList _dictKeys;
+	String _currentCode;
+	String _currentWord;
+	String _matchedWord;
+	int _wordNumber;
+	uint _wordPosition;
+	bool _nextIsActive;
+	bool _addIsActive;
+public:
+	char _predictiveResult[40];
+};
 
 } // End of namespace Agi
 

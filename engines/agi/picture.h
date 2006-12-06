@@ -37,10 +37,51 @@ struct agi_picture {
 	uint8 *rdata;			/**< raw vector image data */
 };
 
-int decode_picture(int, int);
-int unload_picture(int);
-void show_pic(void);
-uint8 *convert_v3_pic(uint8 *src, uint32 len);
+class AgiEngine;
+class GfxMgr;
+
+class PictureMgr {
+	AgiEngine *_vm;
+	GfxMgr *_gfx;
+
+private:
+
+	void draw_line(int x1, int y1, int x2, int y2, int res);
+	void put_virt_pixel(int x, int y, int res);
+	void dynamic_draw_line(int res);
+	void absolute_draw_line(int res);
+	INLINE int is_ok_fill_here(int x, int y);
+	void fill_scanline(int x, int y);
+	void agi_fill(unsigned int x, unsigned int y);
+	void x_corner(int res);
+	void y_corner(int res);
+	void fill();
+	int plot_pattern_point(int x, int y, int bitpos, int res);
+	void plot_pattern(int x, int y, int res);
+	void plot_brush(int res);
+	void fix_pixel_left(int x, int y);
+	void fix_pixel_bothsides(int x, int y);
+	void fix_pixel_right(int x, int y);
+	void fix_pixel_here(int x, int y);
+	void hires_fill_scanline(int x, int y);
+	void _hires_fill(unsigned int x, unsigned int y);
+	void hires_fill();
+	INLINE int hires_fill_here(int x, int y);
+	void show_hires_pic();
+	void fix_hires_picture();
+	void draw_picture();
+
+public:
+	PictureMgr(AgiEngine *agi, GfxMgr *gfx) {
+		_vm = agi;
+		_gfx = gfx;
+	}
+
+	int decode_picture(int, int);
+	int unload_picture(int);
+	void show_pic();
+	uint8 *convert_v3_pic(uint8 *src, uint32 len);
+};
 
 }                             // End of namespace Agi
 

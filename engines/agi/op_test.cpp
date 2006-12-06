@@ -39,15 +39,18 @@ static uint8 test_controller(uint8);
 static uint8 test_keypressed(void);
 static uint8 test_compare_strings(uint8, uint8);
 
+static AgiEngine *g_agi;
+#define game g_agi->game
+
 #define ip (game.logics[lognum].cIP)
 #define code (game.logics[lognum].data)
 
-#define test_equal(v1,v2)	(getvar(v1) == (v2))
-#define test_less(v1,v2)	(getvar(v1) < (v2))
-#define test_greater(v1,v2)	(getvar(v1) > (v2))
-#define test_isset(flag)	(getflag (flag))
-#define test_has(obj)		(object_get_location (obj) == EGO_OWNED)
-#define test_obj_in_room(obj,v)	(object_get_location (obj) == getvar (v))
+#define test_equal(v1, v2)		(g_agi->getvar(v1) == (v2))
+#define test_less(v1, v2)		(g_agi->getvar(v1) < (v2))
+#define test_greater(v1, v2)	(g_agi->getvar(v1) > (v2))
+#define test_isset(flag)		(g_agi->getflag(flag))
+#define test_has(obj)			(g_agi->object_get_location(obj) == EGO_OWNED)
+#define test_obj_in_room(obj, v)	(g_agi->object_get_location(obj) == g_agi->getvar(v))
 
 extern int timer_hack;		/* For the timer loop in MH1 logic 153 */
 
@@ -111,7 +114,7 @@ static uint8 test_keypressed() {
 	if (!x) {
 		int mode = game.input_mode;
 		game.input_mode = INPUT_NONE;
-		main_cycle();
+		g_agi->main_cycle();
 		game.input_mode = mode;
 	}
 
@@ -164,7 +167,7 @@ static uint8 test_said(uint8 nwords, uint8 *cc) {
 	int c, n = game.num_ego_words;
 	int z = 0;
 
-	if (getflag(F_said_accepted_input) || !getflag(F_entered_cli))
+	if (g_agi->getflag(F_said_accepted_input) || !g_agi->getflag(F_entered_cli))
 		return false;
 
 	/* FR:
@@ -212,12 +215,13 @@ static uint8 test_said(uint8 nwords, uint8 *cc) {
 	if (nwords != 0 && READ_LE_UINT16(cc) != 9999)
 		return false;
 
-	setflag(F_said_accepted_input, true);
+	g_agi->setflag(F_said_accepted_input, true);
 
 	return true;
 }
 
-int test_if_code(int lognum) {
+int AgiEngine::test_if_code(int lognum) {
+	g_agi = this;
 	int ec = true;
 	int retval = true;
 	uint8 op = 0;
@@ -227,7 +231,7 @@ int test_if_code(int lognum) {
 	uint8 p[16] = { 0 };
 
 	while (retval && !game.quit_prog_now) {
-		if (debug_.enabled && (debug_.logic0 || lognum))
+		if (g_agi->_debug.enabled && (g_agi->_debug.logic0 || lognum))
 			debug_console(lognum, lTEST_MODE, NULL);
 
 		last_ip = ip;
@@ -406,7 +410,7 @@ int test_if_code(int lognum) {
 		ip += READ_LE_UINT16(code + ip) + 2;
 	}
 
-	if (debug_.enabled && (debug_.logic0 || lognum))
+	if (g_agi->_debug.enabled && (g_agi->_debug.logic0 || lognum))
 		debug_console(lognum, 0xFF, retval ? "=true" : "=false");
 
 	return retval;

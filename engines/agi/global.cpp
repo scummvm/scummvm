@@ -28,14 +28,14 @@
 
 namespace Agi {
 
-int getflag(int n) {
+int AgiEngine::getflag(int n) {
 	uint8 *set = (uint8 *) &game.flags;
 
 	set += n >> 3;
 	return (*set & (1 << (n & 0x07))) != 0;
 }
 
-void setflag(int n, int v) {
+void AgiEngine::setflag(int n, int v) {
 	uint8 *set = (uint8 *) &game.flags;
 
 	set += n >> 3;
@@ -45,22 +45,22 @@ void setflag(int n, int v) {
 		*set &= ~(1 << (n & 0x07));	/* clear bit */
 }
 
-void flipflag(int n) {
+void AgiEngine::flipflag(int n) {
 	uint8 *set = (uint8 *) & game.flags;
 
 	set += n >> 3;
 	*set ^= 1 << (n & 0x07);	/* flip bit */
 }
 
-void setvar(int var, int val) {
+void AgiEngine::setvar(int var, int val) {
 	game.vars[var] = val;
 }
 
-int getvar(int var) {
+int AgiEngine::getvar(int var) {
 	return game.vars[var];
 }
 
-void decrypt(uint8 *mem, int len) {
+void AgiEngine::decrypt(uint8 *mem, int len) {
 	const uint8 *key;
 	int i;
 

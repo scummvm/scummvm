@@ -39,15 +39,6 @@ extern struct agi_logicnames logic_names_test[];
 extern struct agi_logicnames logic_names_cmd[];
 extern struct agi_logicnames logic_names_if[];
 
-void debug_console(int, int, const char *);
-int test_if_code(int);
-void new_room(int);
-void execute_agi_command(uint8, uint8 *);
-
-#ifdef PATCH_LOGIC
-void patch_logic(int);
-#endif
-
 }                             // End of namespace Agi
 
 #endif				/* AGI_OPCODES_H */

@@ -34,24 +34,17 @@
 
 namespace Agi {
 
-#define TICK_SECONDS	20
-
-struct mouse mouse;
-
-volatile uint32 clock_ticks;
-volatile uint32 clock_count;
-
 /**
  * Set up new room.
  * This function is called when ego enters a new room.
  * @param n room number
  */
-void new_room(int n) {
+void AgiEngine::new_room(int n) {
 	struct vt_entry *v;
 	int i;
 
 	debugC(4, kDebugLevelMain, "*** room %d ***", n);
-	stop_sound();
+	_sound->stop_sound();
 
 	i = 0;
 	for (v = game.view_table; v < &game.view_table[MAX_VIEWTABLE]; v++) {
@@ -64,7 +57,7 @@ void new_room(int n) {
 		v->cycle_time_count = 1;
 		v->step_size = 1;
 	}
-	agi_unload_resources();
+	agiUnloadResources();
 
 	game.player_control = true;
 	game.block.active = false;
@@ -75,7 +68,7 @@ void new_room(int n) {
 	game.vars[V_border_code] = 0;
 	game.vars[V_ego_view_resource] = game.view_table[0].current_view;
 
-	agi_load_resource(rLOGIC, n);
+	agiLoadResource(rLOGIC, n);
 
 	/* Reposition ego in the new room */
 	switch (game.vars[V_border_touch_ego]) {
@@ -98,11 +91,11 @@ void new_room(int n) {
 
 	game.exit_all_logics = true;
 
-	_text->write_status();
-	_text->write_prompt();
+	write_status();
+	write_prompt();
 }
 
-static void reset_controllers() {
+void AgiEngine::reset_controllers() {
 	int i;
 
 	for (i = 0; i < MAX_DIRS; i++) {
@@ -110,7 +103,7 @@ static void reset_controllers() {
 	}
 }
 
-static void interpret_cycle() {
+void AgiEngine::interpret_cycle() {
 	int old_sound, old_score;
 
 	if (game.player_control)
@@ -138,7 +131,7 @@ static void interpret_cycle() {
 	game.view_table[0].direction = game.vars[V_ego_dir];
 
 	if (game.vars[V_score] != old_score || getflag(F_sound_on) != old_sound)
-		_text->write_status();
+		write_status();
 
 	game.vars[V_border_touch_obj] = 0;
 	game.vars[V_border_code] = 0;
@@ -148,14 +141,14 @@ static void interpret_cycle() {
 
 	if (game.gfx_mode) {
 		update_viewtable();
-		do_update();
+		_gfx->doUpdate();
 	}
 }
 
 /**
  * Update AGI interpreter timer.
  */
-void update_timer() {
+void AgiEngine::update_timer() {
 	clock_count++;
 	if (clock_count <= TICK_SECONDS)
 		return;
@@ -185,25 +178,25 @@ void update_timer() {
 
 static int old_mode = -1;
 
-void new_input_mode(int i) {
+void AgiEngine::new_input_mode(int i) {
 	old_mode = game.input_mode;
 	game.input_mode = i;
 }
 
-void old_input_mode() {
+void AgiEngine::old_input_mode() {
 	game.input_mode = old_mode;
 }
 
 /* If main_cycle returns false, don't process more events! */
-int main_cycle() {
+int AgiEngine::main_cycle() {
 	unsigned int key, kascii;
 	struct vt_entry *v = &game.view_table[0];
 
-	poll_timer();		/* msdos driver -> does nothing */
+	_gfx->pollTimer();		/* msdos driver -> does nothing */
 	update_timer();
 
 	if (game.ver == 0) {
-		_text->message_box("Warning: game CRC not listed, assuming AGI version 2.917.");
+		message_box("Warning: game CRC not listed, assuming AGI version 2.917.");
 		game.ver = -1;
 	}
 
@@ -213,22 +206,21 @@ int main_cycle() {
 	 * vars in every interpreter cycle.
 	 */
 	if (opt.agimouse) {
-		game.vars[28] = mouse.x / 2;
-		game.vars[29] = mouse.y;
+		game.vars[28] = g_mouse.x / 2;
+		game.vars[29] = g_mouse.y;
 	}
-
 	if (key == KEY_PRIORITY) {
 		_sprites->erase_both();
-		debug_.priority = !debug_.priority;
-		show_pic();
+		_debug.priority = !_debug.priority;
+		_picture->show_pic();
 		_sprites->blit_both();
 		_sprites->commit_both();
 		key = 0;
 	}
 
 	if (key == KEY_STATUSLN) {
-		debug_.statusline = !debug_.statusline;
-		_text->write_status();
+		_debug.statusline = !_debug.statusline;
+		write_status();
 		key = 0;
 	}
 
@@ -274,7 +266,7 @@ int main_cycle() {
 		break;
 	case INPUT_MENU:
 		menu->keyhandler(key);
-		do_update();
+		_gfx->doUpdate();
 		return false;
 	case INPUT_NONE:
 		handle_controller(key);
@@ -282,8 +274,7 @@ int main_cycle() {
 			game.keypress = key;
 		break;
 	}
-
-	do_update();
+	_gfx->doUpdate();
 
 	if (game.msg_box_ticks > 0)
 		game.msg_box_ticks--;
@@ -291,14 +282,14 @@ int main_cycle() {
 	return true;
 }
 
-static int play_game() {
+int AgiEngine::play_game() {
 	int ec = err_OK;
 
 	debugC(2, kDebugLevelMain, "initializing...");
 	debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
 
-	stop_sound();
-	clear_screen(0);
+	_sound->stop_sound();
+	_gfx->clearScreen(0);
 
 	game.horizon = HORIZON;
 	game.player_control = false;
@@ -329,14 +320,12 @@ static int play_game() {
 		if (!main_cycle())
 			continue;
 
-		if (getvar(V_time_delay) == 0 ||
-		    (1 + clock_count) % getvar(V_time_delay) == 0) {
+		if (getvar(V_time_delay) == 0 || (1 + clock_count) % getvar(V_time_delay) == 0) {
 			if (!game.has_prompt && game.input_mode == INPUT_NORMAL) {
-				_text->write_prompt();
+				write_prompt();
 				game.has_prompt = 1;
-			} else
-			    if (game.has_prompt && game.input_mode == INPUT_NONE) {
-				_text->write_prompt();
+			} else if (game.has_prompt && game.input_mode == INPUT_NONE) {
+				write_prompt();
 				game.has_prompt = 0;
 			}
 
@@ -353,12 +342,12 @@ static int play_game() {
 
 	} while (game.quit_prog_now == 0);
 
-	stop_sound();
+	_sound->stop_sound();
 
 	return ec;
 }
 
-int run_game() {
+int AgiEngine::run_game() {
 	int i, ec = err_OK;
 
 	if (opt.renderMode == Common::kRenderCGA)
@@ -372,7 +361,7 @@ int run_game() {
 		debugC(2, kDebugLevelMain, "game loop");
 		debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
 
-		if (agi_init() != err_OK)
+		if (agiInit() != err_OK)
 			break;
 		if (ec == err_RestartGame)
 			setflag(F_restart_game, true);
@@ -388,7 +377,7 @@ int run_game() {
 		game.state = STATE_RUNNING;
 		ec = play_game();
 		game.state = STATE_LOADED;
-		agi_deinit();
+		agiDeinit();
 	} while (ec == err_RestartGame);
 
 	delete menu;

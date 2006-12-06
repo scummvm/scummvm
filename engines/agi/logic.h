@@ -25,7 +25,8 @@
 #ifndef AGI_LOGIC_H
 #define AGI_LOGIC_H
 
-#include "agi/agi.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 
 namespace Agi {
 
@@ -40,9 +41,6 @@ struct agi_logic {
 	int num_texts;		/**< number of messages */
 	const char **texts;		/**< message list */
 };
-
-int decode_logic(int);
-void unload_logic(int);
 
 }                             // End of namespace Agi
 

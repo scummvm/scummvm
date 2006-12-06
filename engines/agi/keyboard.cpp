@@ -32,20 +32,6 @@
 
 namespace Agi {
 
-char last_sentence[40];
-
-/* FIXME */
-extern int open_dialogue;
-
-struct string_data {
-	int x;
-	int y;
-	int len;
-	int str;
-};
-
-struct string_data stringdata;
-
 /*
  * IBM-PC keyboard scancodes
  */
@@ -78,16 +64,16 @@ uint8 scancode_table[26] = {
 	44			/* Z */
 };
 
-void init_words() {
+void AgiEngine::init_words() {
 	game.num_ego_words = 0;
 }
 
-void clean_input() {
+void AgiEngine::clean_input() {
 	while (game.num_ego_words)
 		free(game.ego_words[--game.num_ego_words].word);
 }
 
-void get_string(int x, int y, int len, int str) {
+void AgiEngine::get_string(int x, int y, int len, int str) {
 	new_input_mode(INPUT_GETSTRING);
 	stringdata.x = x;
 	stringdata.y = y;
@@ -101,19 +87,19 @@ void get_string(int x, int y, int len, int str) {
  * It handles console keys and insulates AGI from the console. In the main
  * loop, handle_keys() handles keyboard input and ego movement.
  */
-int do_poll_keyboard() {
+int AgiEngine::do_poll_keyboard() {
 	int key = 0;
 
 	/* If a key is ready, rip it */
-	if (keypress()) {
-		key = get_key();
+	if (_gfx->keypress()) {
+		key = _gfx->getKey();
 		debugC(3, kDebugLevelInput, "key %02x pressed", key);
 	}
 
 	return key;
 }
 
-int handle_controller(int key) {
+int AgiEngine::handle_controller(int key) {
 	struct vt_entry *v = &game.view_table[0];
 	int i;
 
@@ -133,7 +119,7 @@ int handle_controller(int key) {
 	}
 
 	if (key == BUTTON_LEFT) {
-		if (getflag(F_menus_work) && mouse.y <= CHAR_LINES) {
+		if (getflag(F_menus_work) && g_mouse.y <= CHAR_LINES) {
 			new_input_mode(INPUT_MENU);
 			return true;
 		}
@@ -172,10 +158,10 @@ int handle_controller(int key) {
 		}
 
 		if (key == BUTTON_LEFT &&
-				(int)mouse.y >= game.line_user_input * CHAR_LINES &&
-				(int)mouse.y <= (game.line_user_input + 1) * CHAR_LINES) {
-			if (_text->predictiveDialog()) {
-				strcpy((char *)game.input_buffer, _text->_predictiveResult);
+				(int)g_mouse.y >= game.line_user_input * CHAR_LINES &&
+				(int)g_mouse.y <= (game.line_user_input + 1) * CHAR_LINES) {
+			if (predictiveDialog()) {
+				strcpy((char *)game.input_buffer, _predictiveResult);
 				handle_keys(KEY_ENTER);
 			}
 			return true;
@@ -185,8 +171,8 @@ int handle_controller(int key) {
 			/* Handle mouse button events */
 			if (key == BUTTON_LEFT) {
 				v->flags |= ADJ_EGO_XY;
-				v->parm1 = WIN_TO_PIC_X(mouse.x);
-				v->parm2 = WIN_TO_PIC_Y(mouse.y);
+				v->parm1 = WIN_TO_PIC_X(g_mouse.x);
+				v->parm2 = WIN_TO_PIC_Y(g_mouse.y);
 				return true;
 			}
 		}
@@ -202,7 +188,7 @@ int handle_controller(int key) {
 	return false;
 }
 
-void handle_getstring(int key) {
+void AgiEngine::handle_getstring(int key) {
 	static int pos = 0;	/* Cursor position */
 	static char buf[40];
 
@@ -213,12 +199,12 @@ void handle_getstring(int key) {
 
 	switch (key) {
 	case BUTTON_LEFT:
-		if ((int)mouse.y >= stringdata.y * CHAR_LINES &&
-				(int)mouse.y <= (stringdata.y + 1) * CHAR_LINES) {
-			if (_text->predictiveDialog()) {
-				strcpy(game.strings[stringdata.str], _text->_predictiveResult);
+		if ((int)g_mouse.y >= stringdata.y * CHAR_LINES &&
+				(int)g_mouse.y <= (stringdata.y + 1) * CHAR_LINES) {
+			if (predictiveDialog()) {
+				strcpy(game.strings[stringdata.str], _predictiveResult);
 				new_input_mode(INPUT_NORMAL);
-				print_character(stringdata.x + strlen(game.strings[stringdata.str]) + 1,
+				_gfx->printCharacter(stringdata.x + strlen(game.strings[stringdata.str]) + 1,
 								stringdata.y, ' ', game.color_fg, game.color_bg);
 				return;
 			}
@@ -232,7 +218,7 @@ void handle_getstring(int key) {
 		debugC(3, kDebugLevelInput, "buffer=[%s]", buf);
 		buf[pos = 0] = 0;
 		new_input_mode(INPUT_NORMAL);
-		print_character(stringdata.x + strlen(game.strings[stringdata.str]) + 1,
+		_gfx->printCharacter(stringdata.x + strlen(game.strings[stringdata.str]) + 1,
 				stringdata.y, ' ', game.color_fg, game.color_bg);
 		return;
 	case KEY_ESCAPE:
@@ -247,9 +233,8 @@ void handle_getstring(int key) {
 		if (!pos)
 			break;
 
-		print_character(stringdata.x + (pos + 1), stringdata.y,
+		_gfx->printCharacter(stringdata.x + (pos + 1), stringdata.y,
 				' ', game.color_fg, game.color_bg);
-
 		pos--;
 		buf[pos] = 0;
 		break;
@@ -264,18 +249,18 @@ void handle_getstring(int key) {
 		buf[pos] = 0;
 
 		/* Echo */
-		print_character(stringdata.x + pos, stringdata.y, buf[pos - 1],
+		_gfx->printCharacter(stringdata.x + pos, stringdata.y, buf[pos - 1],
 				game.color_fg, game.color_bg);
 
 		break;
 	}
 
 	/* print cursor */
-	print_character(stringdata.x + pos + 1, stringdata.y,
+	_gfx->printCharacter(stringdata.x + pos + 1, stringdata.y,
 			(char)game.cursor_char, game.color_fg, game.color_bg);
 }
 
-void handle_keys(int key) {
+void AgiEngine::handle_keys(int key) {
 	uint8 *p = NULL;
 	int c = 0;
 	static uint8 formated_entry[256];
@@ -316,8 +301,8 @@ void handle_keys(int key) {
 		game.has_prompt = 0;
 		game.input_buffer[game.cursor_pos = 0] = 0;
 		debugC(3, kDebugLevelInput, "clear lines");
-		_text->clear_lines(l, l + 1, bg);
-		_text->flush_lines(l, l + 1);
+		clear_lines(l, l + 1, bg);
+		flush_lines(l, l + 1);
 
 		break;
 	case KEY_ESCAPE:
@@ -330,10 +315,10 @@ void handle_keys(int key) {
 			break;
 
 		/* erase cursor */
-		print_character(game.cursor_pos + 1, l, ' ', fg, bg);
+		_gfx->printCharacter(game.cursor_pos + 1, l, ' ', fg, bg);
 		game.input_buffer[--game.cursor_pos] = 0;
 		/* Print cursor */
-		print_character(game.cursor_pos + 1, l, game.cursor_char, fg, bg);
+		_gfx->printCharacter(game.cursor_pos + 1, l, game.cursor_char, fg, bg);
 		break;
 	default:
 		/* Ignore invalid keystrokes */
@@ -348,48 +333,48 @@ void handle_keys(int key) {
 		game.input_buffer[game.cursor_pos] = 0;
 
 		/* echo */
-		print_character(game.cursor_pos, l, game.input_buffer[game.cursor_pos - 1], fg, bg);
+		_gfx->printCharacter(game.cursor_pos, l, game.input_buffer[game.cursor_pos - 1], fg, bg);
 
 		/* Print cursor */
-		print_character(game.cursor_pos + 1, l, game.cursor_char, fg, bg);
+		_gfx->printCharacter(game.cursor_pos + 1, l, game.cursor_char, fg, bg);
 		break;
 	}
 }
 
-int wait_key() {
+int AgiEngine::wait_key() {
 	int key;
 
 	/* clear key queue */
-	while (keypress()) {
-		get_key();
+	while (_gfx->keypress()) {
+		_gfx->getKey();
 	}
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	while (42) {
-		poll_timer();	/* msdos driver -> does nothing */
+	for (;;) {
+		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
 		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
 			break;
-		do_update();
+		_gfx->doUpdate();
 	}
 	return key;
 }
 
-int wait_any_key() {
+int AgiEngine::wait_any_key() {
 	int key;
 
 	/* clear key queue */
-	while (keypress()) {
-		get_key();
+	while (_gfx->keypress()) {
+		_gfx->getKey();
 	}
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	while (42) {
-		poll_timer();	/* msdos driver -> does nothing */
+	for (;;) {
+		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
 		if (key)
 			break;
-		do_update();
+		_gfx->doUpdate();
 	}
 	return key;
 }

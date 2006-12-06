@@ -43,78 +43,54 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 #include "agi/savegame.h"
+#include "agi/sound.h"
 
 namespace Agi {
 
-void gfx_set_palette();
+static uint32 g_tick_timer;
+struct Mouse g_mouse;
 
-extern int optind;
+#define key_enqueue(k) do { _key_queue[_key_queue_end++] = (k); \
+	_key_queue_end %= KEY_QUEUE_SIZE; } while (0)
+#define key_dequeue(k) do { (k) = _key_queue[_key_queue_start++]; \
+	_key_queue_start %= KEY_QUEUE_SIZE; } while (0)
 
-struct agi_options opt;
-struct game_id_list game_info;
-struct agi_game game;
-
-static struct agi_loader *loader;	/* loader */
-
-extern struct agi_loader agi_v2;
-extern struct agi_loader agi_v3;
-
-static volatile uint32 tick_timer = 0;
-
-#define TICK_SECONDS 20
-
-static int key_control = 0;
-static int key_alt = 0;
-
-static Console *_console;
-
-#define KEY_QUEUE_SIZE 16
-
-static int key_queue[KEY_QUEUE_SIZE];
-static int key_queue_start = 0;
-static int key_queue_end = 0;
-
-#define key_enqueue(k) do { key_queue[key_queue_end++] = (k); \
-	key_queue_end %= KEY_QUEUE_SIZE; } while (0)
-#define key_dequeue(k) do { (k) = key_queue[key_queue_start++]; \
-	key_queue_start %= KEY_QUEUE_SIZE; } while (0)
-
-static void process_events() {
+void AgiEngine::processEvents() {
 	OSystem::Event event;
 	int key = 0;
 
 	while (g_system->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
-			deinit_video();
-			deinit_machine();
+			_gfx->deinitVideo();
+			_gfx->deinitMachine();
 			g_system->quit();
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
-			mouse.button = 1;
+			g_mouse.button = 1;
 			key_enqueue(key);
-			mouse.x = event.mouse.x;
-			mouse.y = event.mouse.y;
+			g_mouse.x = event.mouse.x;
+			g_mouse.y = event.mouse.y;
 			break;
 		case OSystem::EVENT_RBUTTONDOWN:
 			key = BUTTON_RIGHT;
-			mouse.button = 2;
+			g_mouse.button = 2;
 			key_enqueue(key);
-			mouse.x = event.mouse.x;
-			mouse.y = event.mouse.y;
+			g_mouse.x = event.mouse.x;
+			g_mouse.y = event.mouse.y;
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
-			mouse.x = event.mouse.x;
-			mouse.y = event.mouse.y;
+			g_mouse.x = event.mouse.x;
+			g_mouse.y = event.mouse.y;
 			break;
 		case OSystem::EVENT_LBUTTONUP:
 		case OSystem::EVENT_RBUTTONUP:
-			mouse.button = 0;
+			g_mouse.button = 0;
 			break;
 		case OSystem::EVENT_KEYDOWN:
-			key_control = 0;
-			key_alt = 0;
+			_key_control = 0;
+			_key_alt = 0;
 
 			if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'd') {
 				_console->attach();
@@ -122,10 +98,10 @@ static void process_events() {
 			}
 
 			if (event.kbd.flags & OSystem::KBD_CTRL)
-				key_control = 1;
+				_key_control = 1;
 			
 			if (event.kbd.flags & OSystem::KBD_ALT)
-				key_alt = 1;
+				_key_alt = 1;
 
 			switch (key = event.kbd.keycode) {
 			case 256 + 20:	// left arrow
@@ -222,9 +198,9 @@ static void process_events() {
 						key = event.kbd.ascii;
 					break;
 				}
-				if (key_control)
+				if (_key_control)
 					key = (key & ~0x20) - 0x40;
-				else if (key_alt)
+				else if (_key_alt)
 					key = scancode_table[(key & ~0x20) - 0x41] << 8;
 				else if (event.kbd.flags & OSystem::KBD_SHIFT)
 					key = event.kbd.ascii;
@@ -239,43 +215,102 @@ static void process_events() {
 	}
 }
 
-int agi_is_keypress_low() {
-	process_events();
-	return key_queue_start != key_queue_end;
+int AgiEngine::agiIsKeypressLow() {
+	processEvents();
+	return _key_queue_start != _key_queue_end;
 }
 
-void agi_timer_low() {
+void AgiEngine::agiTimerLow() {
 	static uint32 m = 0;
 	uint32 dm;
 
-	if (tick_timer < m)
+	if (g_tick_timer < m)
 		m = 0;
 
-	while ((dm = tick_timer - m) < 5) {
-		process_events();
+	while ((dm = g_tick_timer - m) < 5) {
+		processEvents();
 		if (_console->isAttached())
 			_console->onFrame();
 		g_system->delayMillis(10);
 		g_system->updateScreen();
 	}
-	m = tick_timer;
+	m = g_tick_timer;
 }
 
-int agi_get_keypress_low() {
+int AgiEngine::agiGetKeypressLow() {
 	int k;
 
-	while (key_queue_start == key_queue_end)	/* block */
-		agi_timer_low();
+	while (_key_queue_start == _key_queue_end)	/* block */
+		agiTimerLow();
 	key_dequeue(k);
 
 	return k;
 }
 
-static void agi_timer_function_low(void *refCon) {
-	tick_timer++;
+void AgiEngine::agiTimerFunctionLow(void *refCon) {
+	g_tick_timer++;
 }
 
-static void init_pri_table() {
+void AgiEngine::clear_image_stack(void) {
+	image_stack_pointer = 0;
+}
+
+void AgiEngine::release_image_stack(void) {
+	if (image_stack)
+		free(image_stack);
+	image_stack = NULL;
+	stack_size = image_stack_pointer = 0;
+}
+
+void AgiEngine::record_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) {
+	struct image_stack_element *pnew;
+
+	if (image_stack_pointer == stack_size) {
+		if (stack_size == 0) {	/* first call */
+			image_stack = (struct image_stack_element *)
+					malloc(INITIAL_IMAGE_STACK_SIZE * sizeof(struct image_stack_element));
+			stack_size = INITIAL_IMAGE_STACK_SIZE;
+		} else {	/* has to grow */
+			struct image_stack_element *new_stack;
+			new_stack = (struct image_stack_element *)
+					malloc(2 * stack_size * sizeof(struct image_stack_element));
+			memcpy(new_stack, image_stack, stack_size * sizeof(struct image_stack_element));
+			free(image_stack);
+			image_stack = new_stack;
+			stack_size *= 2;
+		}
+	}
+
+	pnew = &image_stack[image_stack_pointer];
+	image_stack_pointer++;
+
+	pnew->type = type;
+	pnew->parm1 = p1;
+	pnew->parm2 = p2;
+	pnew->parm3 = p3;
+	pnew->parm4 = p4;
+	pnew->parm5 = p5;
+	pnew->parm6 = p6;
+	pnew->parm7 = p7;
+}
+
+void AgiEngine::replay_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) {
+	switch (type) {
+	case ADD_PIC:
+		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
+		agiLoadResource(rPICTURE, p1);
+		_picture->decode_picture(p1, p2);
+		break;
+	case ADD_VIEW:
+		agiLoadResource(rVIEW, p1);
+		_sprites->add_to_pic(p1, p2, p3, p4, p5, p6, p7);
+		break;
+	}
+}
+
+void AgiEngine::initPriTable() {
 	int i, p, y = 0;
 
 	for (p = 1; p < 15; p++) {
@@ -285,7 +320,7 @@ static void init_pri_table() {
 	}
 }
 
-int agi_init() {
+int AgiEngine::agiInit() {
 	int ec, i;
 
 	debug(2, "initializing");
@@ -303,6 +338,10 @@ int agi_init() {
 		memset(&game.pictures[i], 0, sizeof(struct agi_picture));
 		memset(&game.logics[i], 0, sizeof(struct agi_logic));
 		memset(&game.sounds[i], 0, sizeof(struct agi_sound));
+		memset(&game.dir_view[i], 0, sizeof(struct agi_dir));
+		memset(&game.dir_pic[i], 0, sizeof(struct agi_dir));
+		memset(&game.dir_logic[i], 0, sizeof(struct agi_dir));
+		memset(&game.dir_sound[i], 0, sizeof(struct agi_dir));
 	}
 
 	/* clear view table */
@@ -312,9 +351,9 @@ int agi_init() {
 	init_words();
 
 	if (!menu)
-		menu = new Menu();
+		menu = new Menu(this, _gfx, _picture);
 
-	init_pri_table();
+	initPriTable();
 
 	/* clear string buffer */
 	for (i = 0; i < MAX_STRINGS; i++)
@@ -322,16 +361,16 @@ int agi_init() {
 
 	/* setup emulation */
 
-	switch (loader->int_version >> 12) {
+	switch (loader->getIntVersion() >> 12) {
 	case 2:
 		report("Emulating Sierra AGI v%x.%03x\n",
-				(int)(loader->int_version >> 12) & 0xF,
-				(int)(loader->int_version) & 0xFFF);
+				(int)(loader->version() >> 12) & 0xF,
+				(int)(loader->version()) & 0xFFF);
 		break;
 	case 3:
 		report("Emulating Sierra AGI v%x.002.%03x\n",
-				(int)(loader->int_version >> 12) & 0xF,
-				(int)(loader->int_version) & 0xFFF);
+				(int)(loader->version() >> 12) & 0xF,
+				(int)(loader->version()) & 0xFFF);
 		break;
 	}
 
@@ -367,7 +406,7 @@ int agi_init() {
  * Public functions
  */
 
-void agi_unload_resources() {
+void AgiEngine::agiUnloadResources() {
 	int i;
 
 	/* Make sure logic 0 is always loaded */
@@ -381,11 +420,11 @@ void agi_unload_resources() {
 	}
 }
 
-int agi_deinit() {
+int AgiEngine::agiDeinit() {
 	int ec;
 
 	clean_input();		/* remove all words from memory */
-	agi_unload_resources();	/* unload resources in memory */
+	agiUnloadResources();	/* unload resources in memory */
 	loader->unload_resource(rLOGIC, 0);
 	ec = loader->deinit();
 	unload_objects();
@@ -396,33 +435,33 @@ int agi_deinit() {
 	return ec;
 }
 
-int agi_detect_game() {
+int AgiEngine::agiDetectGame() {
 	int ec = err_OK;
 
-	loader = &agi_v2;
+	loader = new AgiLoader_v2(this);
 	ec = loader->detect_game();
 
 	if (ec != err_OK) {
-		loader = &agi_v3;
+		loader = new AgiLoader_v3(this);
 		ec = loader->detect_game();
 	}
 
 	return ec;
 }
 
-int agi_version() {
-	return loader->version;
+int AgiEngine::agiVersion() {
+	return loader->version();
 }
 
-int agi_get_release() {
-	return loader->int_version;
+int AgiEngine::agiGetRelease() {
+	return loader->getIntVersion();
 }
 
-void agi_set_release(int n) {
-	loader->int_version = n;
+void AgiEngine::agiSetRelease(int n) {
+	loader->setIntVersion(n);
 }
 
-int agi_load_resource(int r, int n) {
+int AgiEngine::agiLoadResource(int r, int n) {
 	int i;
 
 	i = loader->load_resource(r, n);
@@ -434,12 +473,9 @@ int agi_load_resource(int r, int n) {
 	return i;
 }
 
-int agi_unload_resource(int r, int n) {
+int AgiEngine::agiUnloadResource(int r, int n) {
 	return loader->unload_resource(r, n);
 }
-
-const char *_savePath;	// FIXME: Get rid of this
-extern AGIMusic *g_agi_music;
 
 struct GameSettings {
 	const char *gameid;
@@ -456,7 +492,7 @@ static const GameSettings agi_settings[] = {
 
 Common::RandomSource * rnd;
 
-AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
+AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -475,7 +511,7 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
 
-	rnd = new Common::RandomSource();
+	_rnd = new Common::RandomSource();
 
 	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");
@@ -487,8 +523,34 @@ AgiEngine::AgiEngine(OSystem * syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debugging");
 	Common::addSpecialDebugLevel(kDebugLevelText, "Text", "Text output debugging");
 
+
+	memset(&game, 0, sizeof(struct agi_game));
+	memset(&_debug, 0, sizeof(struct agi_debug));
+	memset(&g_mouse, 0, sizeof(struct Mouse));
+
 	game.clock_enabled = false;
 	game.state = STATE_INIT;
+
+	_key_queue_start = 0;
+	_key_queue_end = 0;
+
+	_key_control = 0;
+	_key_alt = 0;
+
+	g_tick_timer = 0;
+
+	intobj = NULL;
+
+	stack_size = 0;
+	image_stack = NULL;
+	image_stack_pointer = 0;
+
+	menu = NULL;
+
+	last_sentence[0] = 0;
+	memset(&stringdata, 0, sizeof(struct string_data));
+
+	objects = NULL;
 }
 
 void AgiEngine::initialize() {
@@ -513,29 +575,33 @@ void AgiEngine::initialize() {
 		opt.renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
 
 	_console = new Console(this);
+	_gfx = new GfxMgr(this);
+	_sound = new SoundMgr(this, _mixer);
+	_picture = new PictureMgr(this, _gfx);
+	_sprites = new SpritesMgr(this, _gfx);
+	_saveGameMgr = new SaveGameMgr(this, _sprites, _gfx, _sound, _picture);
 
-	init_machine();
+	_gfx->initMachine();
+
+	game.game_flags = 0;
 
 	game.color_fg = 15;
 	game.color_bg = 0;
 
-	*game.name = 0;
+	*game.name = NULL;
 
-	game.sbuf = (uint8 *) calloc(_WIDTH, _HEIGHT);
-	game.hires = (uint8 *) calloc(_WIDTH * 2, _HEIGHT);
+	game.sbuf = (uint8 *)calloc(_WIDTH, _HEIGHT);
+	game.hires = (uint8 *)calloc(_WIDTH * 2, _HEIGHT);
 
-	menu = 0;
-	_sprites = new SpritesMan;
-	_text = new TextMan;
-	init_video();
+	_gfx->initVideo();
+	_sound->init_sound();
 
-	tick_timer = 0;
-	_timer->installTimerProc(agi_timer_function_low, 10 * 1000, NULL);
+	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
 	game.ver = -1;		/* Don't display the conf file warning */
 
 	debugC(2, kDebugLevelMain, "Detect game");
-	if (agi_detect_game() == err_OK) {
+	if (agiDetectGame() == err_OK) {
 		game.state = STATE_LOADED;
 		debugC(2, kDebugLevelMain, "game loaded");
 	} else {
@@ -543,19 +609,17 @@ void AgiEngine::initialize() {
 	}
 
 	debugC(2, kDebugLevelMain, "Init sound");
-	init_sound();
-	g_agi_music = new AGIMusic(_mixer);
 }
 
 AgiEngine::~AgiEngine() {
-	agi_deinit();
-	delete g_agi_music;
-	deinit_sound();
-	deinit_video();
+	agiDeinit();
+	_sound->deinit_sound();
+	delete _sound;
+	_gfx->deinitVideo();
 	delete _sprites;
 	free(game.hires);
 	free(game.sbuf);
-	deinit_machine();
+	_gfx->deinitMachine();
 	delete rnd;
 	delete _console;
 }
@@ -569,7 +633,7 @@ int AgiEngine::init() {
 
 	initialize();
 
-	gfx_set_palette();
+	_gfx->gfxSetPalette();
 
 	return 0;
 }
@@ -642,6 +706,7 @@ PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("AgiEngine: invalid game path '%s'", dir.path().c_str());
 		return kInvalidPathError;
 	}
 
@@ -656,7 +721,8 @@ PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
 		}
 	}
 
+	warning("AgiEngine: Unable to locate game data at path '%s'", dir.path().c_str());
 	return kNoGameDataFoundError;
 }
 
-REGISTER_PLUGIN(AGI, "AGI Engine", "Sierra AGI Games (C) Sierra On-Line, Inc.");
+REGISTER_PLUGIN(AGI, "AGI Engine", "TODO (C) TODO");

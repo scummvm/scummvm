@@ -29,38 +29,30 @@
 
 namespace Agi {
 
-static int agi_v2_init(void);
-static int agi_v2_deinit(void);
-static int agi_v2_detect_game();
-static int agi_v2_load_resource(int, int);
-static int agi_v2_unload_resource(int, int);
-static int agi_v2_load_objects(const char *);
-static int agi_v2_load_words(const char *);
+int AgiLoader_v2::version() {
+	return 2;
+}
 
-struct agi_loader agi_v2 = {
-	2,
-	0,
-	agi_v2_init,
-	agi_v2_deinit,
-	agi_v2_detect_game,
-	agi_v2_load_resource,
-	agi_v2_unload_resource,
-	agi_v2_load_objects,
-	agi_v2_load_words
-};
+void AgiLoader_v2::setIntVersion(int version) {
+	int_version = version;
+}
 
-static int agi_v2_detect_game() {
+int AgiLoader_v2::getIntVersion() {
+	return int_version;
+}
+
+int AgiLoader_v2::detect_game() {
 	if (!Common::File::exists(LOGDIR) ||
 			!Common::File::exists(PICDIR) ||
 			!Common::File::exists(SNDDIR) ||
 			!Common::File::exists(VIEWDIR))
 		return err_InvalidAGIFile;
 
-	agi_v2.int_version = 0x2917;	/* setup for 2.917 */
-	return v2id_game();
+	int_version = 0x2917;	/* setup for 2.917 */
+	return _vm->v2id_game();
 }
 
-static int agi_v2_load_dir(struct agi_dir *agid, const char *fname) {
+int AgiLoader_v2::load_dir(struct agi_dir *agid, const char *fname) {
 	Common::File fp;
 	uint8 *mem;
 	uint32 flen;
@@ -76,7 +68,7 @@ static int agi_v2_load_dir(struct agi_dir *agid, const char *fname) {
 	flen = fp.pos();
 	fp.seek(0, SEEK_SET);
 
-	if ((mem = (uint8 *) malloc(flen + 32)) == NULL) {
+	if ((mem = (uint8 *)malloc(flen + 32)) == NULL) {
 		fp.close();
 		return err_NotEnoughMemory;
 	}
@@ -102,22 +94,22 @@ static int agi_v2_load_dir(struct agi_dir *agid, const char *fname) {
 	return err_OK;
 }
 
-static int agi_v2_init() {
+int AgiLoader_v2::init() {
 	int ec = err_OK;
 
 	/* load directory files */
-	ec = agi_v2_load_dir(game.dir_logic, LOGDIR);
+	ec = load_dir(_vm->game.dir_logic, LOGDIR);
 	if (ec == err_OK)
-		ec = agi_v2_load_dir(game.dir_pic, PICDIR);
+		ec = load_dir(_vm->game.dir_pic, PICDIR);
 	if (ec == err_OK)
-		ec = agi_v2_load_dir(game.dir_view, VIEWDIR);
+		ec = load_dir(_vm->game.dir_view, VIEWDIR);
 	if (ec == err_OK)
-		ec = agi_v2_load_dir(game.dir_sound, SNDDIR);
+		ec = load_dir(_vm->game.dir_sound, SNDDIR);
 
 	return ec;
 }
 
-static int agi_v2_deinit() {
+int AgiLoader_v2::deinit() {
 	int ec = err_OK;
 
 #if 0
@@ -131,21 +123,21 @@ static int agi_v2_deinit() {
 	return ec;
 }
 
-static int agi_v2_unload_resource(int t, int n) {
+int AgiLoader_v2::unload_resource(int t, int n) {
 	debugC(3, kDebugLevelResources, "unload resource");
 
 	switch (t) {
 	case rLOGIC:
-		unload_logic(n);
+		_vm->unload_logic(n);
 		break;
 	case rPICTURE:
-		unload_picture(n);
+		_vm->_picture->unload_picture(n);
 		break;
 	case rVIEW:
-		unload_view(n);
+		_vm->unload_view(n);
 		break;
 	case rSOUND:
-		unload_sound(n);
+		_vm->_sound->unload_sound(n);
 		break;
 	}
 
@@ -157,7 +149,7 @@ static int agi_v2_unload_resource(int t, int n) {
  * if further decoding is required, it must be done by another
  * routine. NULL is returned if unsucsessfull.
  */
-static uint8 *agi_v2_load_vol_res(struct agi_dir *agid) {
+uint8 *AgiLoader_v2::load_vol_res(struct agi_dir *agid) {
 	uint8 *data = NULL;
 	char x[MAX_PATH], *path;
 	Common::File fp;
@@ -204,7 +196,7 @@ static uint8 *agi_v2_load_vol_res(struct agi_dir *agid) {
  * Loads a resource into memory, a raw resource is loaded in
  * with above routine, then further decoded here.
  */
-int agi_v2_load_resource(int t, int n) {
+int AgiLoader_v2::load_resource(int t, int n) {
 	int ec = err_OK;
 	uint8 *data = NULL;
 
@@ -214,23 +206,23 @@ int agi_v2_load_resource(int t, int n) {
 
 	switch (t) {
 	case rLOGIC:
-		if (~game.dir_logic[n].flags & RES_LOADED) {
+		if (~_vm->game.dir_logic[n].flags & RES_LOADED) {
 			debugC(3, kDebugLevelResources, "loading logic resource %d", n);
-			agi_v2.unload_resource(rLOGIC, n);
+			unload_resource(rLOGIC, n);
 
 			/* load raw resource into data */
-			data = agi_v2_load_vol_res(&game.dir_logic[n]);
+			data = load_vol_res(&_vm->game.dir_logic[n]);
 
-			game.logics[n].data = data;
-			ec = data ? decode_logic(n) : err_BadResource;
+			_vm->game.logics[n].data = data;
+			ec = data ? _vm->decode_logic(n) : err_BadResource;
 
-			game.logics[n].sIP = 2;
+			_vm->game.logics[n].sIP = 2;
 		}
 
 		/* if logic was cached, we get here */
 		/* reset code pointers incase it was cached */
 
-		game.logics[n].cIP = game.logics[n].sIP;
+		_vm->game.logics[n].cIP = _vm->game.logics[n].sIP;
 		break;
 	case rPICTURE:
 		/* if picture is currently NOT loaded *OR* cacheing is off,
@@ -238,32 +230,32 @@ int agi_v2_load_resource(int t, int n) {
 		 */
 
 		debugC(3, kDebugLevelResources, "loading picture resource %d", n);
-		if (game.dir_pic[n].flags & RES_LOADED)
+		if (_vm->game.dir_pic[n].flags & RES_LOADED)
 			break;
 
 		/* if loaded but not cached, unload it */
 		/* if cached but not loaded, etc */
-		agi_v2.unload_resource(rPICTURE, n);
-		data = agi_v2_load_vol_res(&game.dir_pic[n]);
+		unload_resource(rPICTURE, n);
+		data = load_vol_res(&_vm->game.dir_pic[n]);
 
 		if (data != NULL) {
-			game.pictures[n].rdata = data;
-			game.dir_pic[n].flags |= RES_LOADED;
+			_vm->game.pictures[n].rdata = data;
+			_vm->game.dir_pic[n].flags |= RES_LOADED;
 		} else {
 			ec = err_BadResource;
 		}
 		break;
 	case rSOUND:
 		debugC(3, kDebugLevelResources, "loading sound resource %d", n);
-		if (game.dir_sound[n].flags & RES_LOADED)
+		if (_vm->game.dir_sound[n].flags & RES_LOADED)
 			break;
 
-		data = agi_v2_load_vol_res(&game.dir_sound[n]);
+		data = load_vol_res(&_vm->game.dir_sound[n]);
 
 		if (data != NULL) {
-			game.sounds[n].rdata = data;
-			game.dir_sound[n].flags |= RES_LOADED;
-			decode_sound(n);
+			_vm->game.sounds[n].rdata = data;
+			_vm->game.dir_sound[n].flags |= RES_LOADED;
+			_vm->_sound->decode_sound(n);
 		} else {
 			ec = err_BadResource;
 		}
@@ -274,16 +266,16 @@ int agi_v2_load_resource(int t, int n) {
 		 * can we cache the view? or must we reload it all
 		 * the time?
 		 */
-		if (game.dir_view[n].flags & RES_LOADED)
+		if (_vm->game.dir_view[n].flags & RES_LOADED)
 			break;
 
 		debugC(3, kDebugLevelResources, "loading view resource %d", n);
-		agi_v2.unload_resource(rVIEW, n);
-		data = agi_v2_load_vol_res(&game.dir_view[n]);
+		unload_resource(rVIEW, n);
+		data = load_vol_res(&_vm->game.dir_view[n]);
 		if (data) {
-			game.views[n].rdata = data;
-			game.dir_view[n].flags |= RES_LOADED;
-			ec = decode_view(n);
+			_vm->game.views[n].rdata = data;
+			_vm->game.dir_view[n].flags |= RES_LOADED;
+			ec = _vm->decode_view(n);
 		} else {
 			ec = err_BadResource;
 		}
@@ -296,12 +288,12 @@ int agi_v2_load_resource(int t, int n) {
 	return ec;
 }
 
-static int agi_v2_load_objects(const char *fname) {
-	return load_objects(fname);
+int AgiLoader_v2::load_objects(const char *fname) {
+	return _vm->load_objects(fname);
 }
 
-static int agi_v2_load_words(const char *fname) {
-	return load_words(fname);
+int AgiLoader_v2::load_words(const char *fname) {
+	return _vm->load_words(fname);
 }
 
 }                             // End of namespace Agi

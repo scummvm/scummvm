@@ -27,8 +27,6 @@
 
 #include "common/stdafx.h"
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 #define GFX_WIDTH	320
@@ -36,47 +34,66 @@ namespace Agi {
 #define CHAR_COLS	8
 #define CHAR_LINES	8
 
-extern uint8 palette[];
+class AgiEngine;
 
-/* Transparent layer */
-extern uint8 layer1_data[];
-extern uint8 layer2_data[];
+class GfxMgr {
+private:
+	AgiEngine *_vm;
 
-void gfx_putblock(int x1, int y1, int x2, int y2);
+	uint8 palette[32 * 3];
+	uint8 *agi_screen;
+	unsigned char *screen;
 
-void put_text_character(int, int, int, unsigned int, int, int);
-void shake_screen(int);
-void shake_start(void);
-void shake_end(void);
-void save_screen(void);
-void restore_screen(void);
+	uint8 *shake_h, *shake_v;
 
-int init_video(void);
-int deinit_video(void);
-void schedule_update(int, int, int, int);
-void do_update(void);
-void put_screen(void);
-void flush_block(int, int, int, int);
-void flush_block_a(int, int, int, int);
-void put_pixels_a(int, int, int, uint8 *);
-void flush_screen(void);
-void clear_screen(int);
-void clear_console_screen(int);
-void draw_box(int, int, int, int, int, int, int);
-void draw_button(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
-int test_button(int, int, const char *);
-void draw_rectangle(int, int, int, int, int);
-void save_block(int, int, int, int, uint8 *);
-void restore_block(int, int, int, int, uint8 *);
-void init_palette(uint8 *);
+public:
+	GfxMgr(AgiEngine *vm) {
+		_vm = vm;
+		shake_h = NULL;
+		shake_v = NULL;
+	}
 
-void put_pixel(int, int, int);
+	void gfxPutBlock(int x1, int y1, int x2, int y2);
 
-void put_pixels_hires(int x, int y, int n, uint8 * p);
-int keypress(void);
-int get_key(void);
-void print_character(int, int, char, int, int);
-void poll_timer(void);
+	void putTextCharacter(int, int, int, unsigned int, int, int);
+	void shakeScreen(int);
+	void shakeStart();
+	void shakeEnd();
+	void saveScreen();
+	void restoreScreen();
+
+	int initVideo();
+	int deinitVideo();
+	void scheduleUpdate(int, int, int, int);
+	void doUpdate();
+	void putScreen();
+	void flushBlock(int, int, int, int);
+	void flushBlockA(int, int, int, int);
+	void putPixelsA(int, int, int, uint8 *);
+	void flushScreen();
+	void clearScreen(int);
+	void clearConsoleScreen(int);
+	void drawBox(int, int, int, int, int, int, int);
+	void drawButton(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
+	int testButton(int, int, const char *);
+	void drawRectangle(int, int, int, int, int);
+	void saveBlock(int, int, int, int, uint8 *);
+	void restoreBlock(int, int, int, int, uint8 *);
+	void initPalette(uint8 *);
+	void drawFrame(int x1, int y1, int x2, int y2, int c1, int c2);
+
+	void putPixel(int, int, int);
+	void putBlock(int x1, int y1, int x2, int y2);
+	void gfxSetPalette();
+	void putPixelsHires(int x, int y, int n, uint8 *p);
+
+	int keypress();
+	int getKey();
+	void printCharacter(int, int, char, int, int);
+	void pollTimer();
+	int initMachine();
+	int deinitMachine();
+};
 
 } // End of namespace Agi
 

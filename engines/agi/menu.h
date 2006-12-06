@@ -40,9 +40,17 @@ struct agi_menu_option;
 typedef Common::List<agi_menu*> MenuList;
 typedef Common::List<agi_menu_option*> MenuOptionList;
 
+class GfxMgr;
+class PictureMgr;
+
 class Menu {
+private:
+	AgiEngine *_vm;
+	GfxMgr *_gfx;
+	PictureMgr *_picture;
+
 public:
-	Menu();
+	Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture);
 	~Menu();
 
 	void add(const char *s);
@@ -74,8 +82,6 @@ private:
 	bool mouse_over_text(unsigned int line, unsigned int col, char *s);
 	
 };
-
-extern Menu* menu;
 
 }                             // End of namespace Agi
 

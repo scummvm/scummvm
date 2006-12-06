@@ -30,9 +30,7 @@
 
 namespace Agi {
 
-TextMan *_text;
-
-void TextMan::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
+void AgiEngine::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 						int len, int fg, int bg) {
 	int x1, y1;
 	int maxx, minx, ofoff;
@@ -49,7 +47,7 @@ void TextMan::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 	/* FR: strings with len == 1 were not printed
 	 */
 	if (len == 1) {
-		put_text_character(l, xoff + foff, yoff, *msg, fg, bg);
+		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg);
 		maxx = 1;
 		minx = 0;
 		ofoff = foff;
@@ -75,7 +73,7 @@ void TextMan::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 					if (xpos >= GFX_WIDTH)
 						continue;
 
-					put_text_character(l, xpos, ypos, *m, fg, bg);
+					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg);
 
 					if (x1 > maxx)
 						maxx = x1;
@@ -104,18 +102,18 @@ void TextMan::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
 	minx *= CHAR_COLS;
 
 	if (update) {
-		schedule_update(foff + xoff + minx, yoff, ofoff + xoff + maxx + CHAR_COLS - 1,
+		_gfx->scheduleUpdate(foff + xoff + minx, yoff, ofoff + xoff + maxx + CHAR_COLS - 1,
 				yoff + y1 * CHAR_LINES + CHAR_LINES + 1);
 		/* Making synchronous text updates reduces CPU load
 		 * when updating status line and input area
 		 */
-		do_update();
+		_gfx->doUpdate();
 	}
 }
 
 /* len is in characters, not pixels!!
  */
-void TextMan::blit_textbox(const char *p, int y, int x, int len) {
+void AgiEngine::blit_textbox(const char *p, int y, int x, int len) {
 	/* if x | y = -1, then centre the box */
 	int xoff, yoff, lin, h, w;
 	char *msg, *m;
@@ -163,10 +161,10 @@ void TextMan::blit_textbox(const char *p, int y, int x, int len) {
 
 	free(msg);
 
-	do_update();
+	_gfx->doUpdate();
 }
 
-void TextMan::erase_textbox() {
+void AgiEngine::erase_textbox() {
 	if (!game.window.active) {
 		debugC(3, kDebugLevelText, "no window active");
 		return;
@@ -175,13 +173,13 @@ void TextMan::erase_textbox() {
 	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", game.window.x1,
 			game.window.y1, game.window.x2, game.window.y2);
 
-	restore_block(game.window.x1, game.window.y1,
+	_gfx->restoreBlock(game.window.x1, game.window.y1,
 			game.window.x2, game.window.y2, game.window.buffer);
 
 	free(game.window.buffer);
 	game.window.active = false;
 
-	do_update();
+	_gfx->doUpdate();
 }
 
 /*
@@ -191,7 +189,7 @@ void TextMan::erase_textbox() {
 /**
  * Print text in the AGI engine screen.
  */
-void TextMan::print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
+void AgiEngine::print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
 	f *= CHAR_COLS;
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
@@ -203,7 +201,7 @@ void TextMan::print_text(const char *msg, int f, int x, int y, int len, int fg, 
 /**
  * Print text in the AGI engine console.
  */
-void TextMan::print_text_console(const char *msg, int x, int y, int len, int fg, int bg) {
+void AgiEngine::print_text_console(const char *msg, int x, int y, int len, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= 10;
 
@@ -215,7 +213,7 @@ void TextMan::print_text_console(const char *msg, int x, int y, int len, int fg,
  * @param str  String to wrap.
  * @param len  Length of line.
  */
-char *TextMan::word_wrap_string(char *str, int *len) {
+char *AgiEngine::word_wrap_string(char *str, int *len) {
 	/* If the message has a long word (longer than 31 character) then
 	 * loop in line 239 (for (; *v != ' '; v--, c--);) can wrap
 	 * around 0 and write large number in c. This causes returned
@@ -230,7 +228,7 @@ char *TextMan::word_wrap_string(char *str, int *len) {
 	e = msg + strlen(msg);
 	maxc = 0;
 
-	while (42) {
+	for (;;) {
 		debugC(3, kDebugLevelText, "[%s], %d", msg, maxc);
 		if (strchr(v, ' ') == NULL && (int)strlen(v) > l) {
 			debugC(1, kDebugLevelText | kDebugLevelMain, "Word too long in message");
@@ -277,7 +275,7 @@ char *TextMan::word_wrap_string(char *str, int *len) {
 /**
  * Remove existing window, if any.
  */
-void TextMan::close_window() {
+void AgiEngine::close_window() {
 	debugC(4, kDebugLevelText, "close window");
 	_sprites->erase_both();
 	erase_textbox();	/* remove window, if any */
@@ -292,7 +290,7 @@ void TextMan::close_window() {
  * centered in the screen and waits until a key is pressed.
  * @param p The text to be displayed
  */
-int TextMan::message_box(const char *s) {
+int AgiEngine::message_box(const char *s) {
 	int k;
 
 	_sprites->erase_both();
@@ -312,7 +310,7 @@ int TextMan::message_box(const char *s) {
  * @param p The text to be displayed
  * @param b NULL-terminated list of button labels
  */
-int TextMan::selection_box(const char *m, const char **b) {
+int AgiEngine::selection_box(const char *m, const char **b) {
 	int x, y, i, s;
 	int key, active = 0;
 	int rc = -1;
@@ -347,16 +345,16 @@ int TextMan::selection_box(const char *m, const char **b) {
 	_sprites->blit_both();
 
 	/* clear key queue */
-	while (keypress()) {
-		get_key();
+	while (_gfx->keypress()) {
+		_gfx->getKey();
 	}
 
 	debugC(4, kDebugLevelText, "waiting...");
-	while (42) {
+	for (;;) {
 		for (i = 0; b[i]; i++)
-			draw_button(bx[i], by[i], b[i], i == active, 0);
+			_gfx->drawButton(bx[i], by[i], b[i], i == active, 0);
 
-		poll_timer();	/* msdos driver -> does nothing */
+		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
 		switch (key) {
 		case KEY_ENTER:
@@ -367,7 +365,7 @@ int TextMan::selection_box(const char *m, const char **b) {
 			goto getout;
 		case BUTTON_LEFT:
 			for (i = 0; b[i]; i++) {
-				if (test_button(bx[i], by[i], b[i])) {
+				if (_gfx->testButton(bx[i], by[i], b[i])) {
 					rc = active = i;
 					goto press;
 				}
@@ -379,13 +377,13 @@ int TextMan::selection_box(const char *m, const char **b) {
 			active %= i;
 			break;
 		}
-		do_update();
+		_gfx->doUpdate();
 	}
 
-      press:
+press:
 	debugC(4, kDebugLevelText, "Button pressed: %d", rc);
 
-      getout:
+getout:
 	close_window();
 	debugC(2, kDebugLevelText, "Result = %d", rc);
 
@@ -395,7 +393,7 @@ int TextMan::selection_box(const char *m, const char **b) {
 /**
  *
  */
-int TextMan::print(const char *p, int lin, int col, int len) {
+int AgiEngine::print(const char *p, int lin, int col, int len) {
 	if (p == NULL)
 		return 0;
 
@@ -451,17 +449,13 @@ int TextMan::print(const char *p, int lin, int col, int len) {
 /**
  *
  */
-void TextMan::print_status(const char *message, ...) {
+void AgiEngine::print_status(const char *message, ...) {
 	char x[42];
 	va_list args;
 
 	va_start(args, message);
 
-#ifdef HAVE_VSNPRINTF
-	vsnprintf(x, 41, message, args);
-#else
 	vsprintf(x, message, args);
-#endif
 
 	va_end(args);
 
@@ -469,7 +463,7 @@ void TextMan::print_status(const char *message, ...) {
 	print_text(x, 0, 0, game.line_status, 40, STATUS_FG, STATUS_BG);
 }
 
-char *TextMan::safe_strcat(char *s, const char *t) {
+char *AgiEngine::safe_strcat(char *s, const char *t) {
 	if (t != NULL)
 		strcat(s, t);
 
@@ -484,7 +478,7 @@ char *TextMan::safe_strcat(char *s, const char *t) {
  * @param n  logic number
  */
 #define MAX_LEN 768
-char *TextMan::agi_sprintf(const char *s) {
+char *AgiEngine::agi_sprintf(const char *s) {
 	static char y[MAX_LEN];
 	char x[MAX_LEN];
 	char z[16], *p;
@@ -555,7 +549,7 @@ char *TextMan::agi_sprintf(const char *s) {
 			break;
 
 		default:
-		      literal:
+literal:
 			assert(p < x + MAX_LEN);
 			*p++ = *s++;
 			*p = 0;
@@ -570,14 +564,14 @@ char *TextMan::agi_sprintf(const char *s) {
 /**
  * Write the status line.
  */
-void TextMan::write_status() {
+void AgiEngine::write_status() {
 	char x[64];
 
-	if (debug_.statusline) {
+	if (_debug.statusline) {
 		print_status("%3d(%03d) %3d,%3d(%3d,%3d)               ",
 				getvar(0), getvar(1), game.view_table[0].x_pos,
-				game.view_table[0].y_pos, WIN_TO_PIC_X(mouse.x),
-				WIN_TO_PIC_Y(mouse.y));
+				game.view_table[0].y_pos, WIN_TO_PIC_X(g_mouse.x),
+				WIN_TO_PIC_Y(g_mouse.y));
 		return;
 	}
 
@@ -595,7 +589,7 @@ void TextMan::write_status() {
 /**
  * Print user input prompt.
  */
-void TextMan::write_prompt() {
+void AgiEngine::write_prompt() {
 	int l, fg, bg, pos;
 
 	if (!game.input_enabled || game.input_mode != INPUT_NORMAL)
@@ -612,10 +606,10 @@ void TextMan::write_prompt() {
 	debugC(4, kDebugLevelText, "prompt = '%s'", agi_sprintf(game.strings[0]));
 	print_text(game.strings[0], 0, 0, l, 1, fg, bg);
 	print_text((char *)game.input_buffer, 0, 1, l, pos + 1, fg, bg);
-	print_character(pos + 1, l, game.cursor_char, fg, bg);
+	_gfx->printCharacter(pos + 1, l, game.cursor_char, fg, bg);
 
 	flush_lines(l, l);
-	do_update();
+	_gfx->doUpdate();
 }
 
 /**
@@ -624,7 +618,7 @@ void TextMan::write_prompt() {
  * @param l2  end line
  * @param c   color
  */
-void TextMan::clear_lines(int l1, int l2, int c) {
+void AgiEngine::clear_lines(int l1, int l2, int c) {
 	/* do we need to adjust for +8 on topline?
 	 * inc for endline so it matches the correct num
 	 * ie, from 22 to 24 is 3 lines, not 2 lines.
@@ -634,34 +628,34 @@ void TextMan::clear_lines(int l1, int l2, int c) {
 	l2 *= CHAR_LINES;
 	l2 += CHAR_LINES - 1;
 
-	draw_rectangle(0, l1, GFX_WIDTH - 1, l2, c);
+	_gfx->drawRectangle(0, l1, GFX_WIDTH - 1, l2, c);
 }
 
 /**
  *
  */
-void TextMan::flush_lines(int l1, int l2) {
+void AgiEngine::flush_lines(int l1, int l2) {
 	l1 *= CHAR_LINES;
 	l2 *= CHAR_LINES;
 	l2 += CHAR_LINES - 1;
 
-	flush_block(0, l1, GFX_WIDTH - 1, l2);
+	_gfx->flushBlock(0, l1, GFX_WIDTH - 1, l2);
 }
 
 /**
  *
  */
-void TextMan::draw_window(int x1, int y1, int x2, int y2) {
+void AgiEngine::draw_window(int x1, int y1, int x2, int y2) {
 	game.window.active = true;
 	game.window.x1 = x1;
 	game.window.y1 = y1;
 	game.window.x2 = x2;
 	game.window.y2 = y2;
-	game.window.buffer = (uint8 *) malloc((x2 - x1 + 1) * (y2 - y1 + 1));
+	game.window.buffer = (uint8 *)malloc((x2 - x1 + 1) * (y2 - y1 + 1));
 
 	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", x1, y1, x2, y2);
-	save_block(x1, y1, x2, y2, game.window.buffer);
-	draw_box(x1, y1, x2, y2, MSG_BOX_COLOUR, MSG_BOX_LINE, 2);
+	_gfx->saveBlock(x1, y1, x2, y2, game.window.buffer);
+	_gfx->drawBox(x1, y1, x2, y2, MSG_BOX_COLOUR, MSG_BOX_LINE, 2);
 }
 
 }                             // End of namespace Agi

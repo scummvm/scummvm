@@ -39,10 +39,6 @@ namespace Agi {
 #  define MAX_INT (int)((unsigned)~0 >> 1)
 #endif
 
-static uint8 *agi_screen;
-
-static unsigned char *screen;
-
 extern uint8 cur_font[];
 
 /**
@@ -91,8 +87,6 @@ uint8 new_palette[16 * 3] = {
 	0x3F, 0x3F, 0x3F
 };
 
-uint8 palette[32 * 3];
-
 static uint16 cga_map[16] = {
 	0x0000,			/*  0 - black */
 	0x0d00,			/*  1 - blue */
@@ -136,9 +130,8 @@ static struct update_block update = {
  */
 
 #define SHAKE_MAG 3
-static uint8 *shake_h, *shake_v;
 
-void shake_start() {
+void GfxMgr::shakeStart() {
 	int i;
 
 	if ((shake_h = (uint8 *)malloc(GFX_WIDTH * SHAKE_MAG)) == NULL)
@@ -158,7 +151,7 @@ void shake_start() {
 	}
 }
 
-void shake_screen(int n) {
+void GfxMgr::shakeScreen(int n) {
 	int i;
 
 	if (n == 0) {
@@ -175,7 +168,7 @@ void shake_screen(int n) {
 	}
 }
 
-void shake_end() {
+void GfxMgr::shakeEnd() {
 	int i;
 
 	for (i = 0; i < GFX_HEIGHT - SHAKE_MAG; i++) {
@@ -186,13 +179,13 @@ void shake_end() {
 		memcpy(agi_screen + i * GFX_WIDTH, shake_h + i * GFX_WIDTH, GFX_WIDTH);
 	}
 
-	flush_block(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
+	flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
 
 	free(shake_v);
 	free(shake_h);
 }
 
-void put_text_character(int l, int x, int y, unsigned int c, int fg, int bg) {
+void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int bg) {
 	int x1, y1, xx, yy, cc;
 	uint8 *p;
 
@@ -210,10 +203,10 @@ void put_text_character(int l, int x, int y, unsigned int c, int fg, int bg) {
 	/* FIXME: we don't want this when we're writing on the
 	 *        console!
 	 */
-	flush_block(x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
+	flushBlock(x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
 }
 
-void draw_rectangle(int x1, int y1, int x2, int y2, int c) {
+void GfxMgr::drawRectangle(int x1, int y1, int x2, int y2, int c) {
 	int y, w, h;
 	uint8 *p0;
 
@@ -235,7 +228,7 @@ void draw_rectangle(int x1, int y1, int x2, int y2, int c) {
 	}
 }
 
-static void draw_frame(int x1, int y1, int x2, int y2, int c1, int c2) {
+void GfxMgr::drawFrame(int x1, int y1, int x2, int y2, int c1, int c2) {
 	int y, w;
 	uint8 *p0;
 
@@ -255,22 +248,22 @@ static void draw_frame(int x1, int y1, int x2, int y2, int c1, int c2) {
 	}
 }
 
-void draw_box(int x1, int y1, int x2, int y2, int colour1, int colour2, int m) {
+void GfxMgr::drawBox(int x1, int y1, int x2, int y2, int colour1, int colour2, int m) {
 	x1 += m;
 	y1 += m;
 	x2 -= m;
 	y2 -= m;
 
-	draw_rectangle(x1, y1, x2, y2, colour1);
-	draw_frame(x1 + 2, y1 + 2, x2 - 2, y2 - 2, colour2, colour2);
-	flush_block(x1, y1, x2, y2);
+	drawRectangle(x1, y1, x2, y2, colour1);
+	drawFrame(x1 + 2, y1 + 2, x2 - 2, y2 - 2, colour2, colour2);
+	flushBlock(x1, y1, x2, y2);
 }
 
-void print_character(int x, int y, char c, int fg, int bg) {
+void GfxMgr::printCharacter(int x, int y, char c, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
 
-	put_text_character(0, x, y, c, fg, bg);
+	putTextCharacter(0, x, y, c, fg, bg);
 	// redundant! already inside put_text_character!
 	// flush_block (x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
 }
@@ -282,7 +275,7 @@ void print_character(int x, int y, char c, int fg, int bg) {
  * @param a  set if the button has focus
  * @param p  set if the button is pressed
  */
-void draw_button(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
+void GfxMgr::drawButton(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 
@@ -292,7 +285,7 @@ void draw_button(int x, int y, const char *s, int a, int p, int fgcolor, int bgc
 	y2 = y + CHAR_LINES + 2;
 
 	while (*s) {
-		put_text_character(0, x + (!!p), y + (!!p), *s++, a ? fgcolor : bgcolor, a ? bgcolor : fgcolor);
+		putTextCharacter(0, x + (!!p), y + (!!p), *s++, a ? fgcolor : bgcolor, a ? bgcolor : fgcolor);
 		x += CHAR_COLS;
 	}
 
@@ -301,10 +294,10 @@ void draw_button(int x, int y, const char *s, int a, int p, int fgcolor, int bgc
 	x2 += 2;
 	y2 += 2;
 
-	flush_block(x1, y1, x2, y2);
+	flushBlock(x1, y1, x2, y2);
 }
 
-int test_button(int x, int y, const char *s) {
+int GfxMgr::testButton(int x, int y, const char *s) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 
@@ -313,30 +306,30 @@ int test_button(int x, int y, const char *s) {
 	x2 = x + CHAR_COLS * len + 2;
 	y2 = y + CHAR_LINES + 2;
 
-	if ((int)mouse.x >= x1 && (int)mouse.y >= y1 && (int)mouse.x <= x2 && (int)mouse.y <= y2)
+	if ((int)g_mouse.x >= x1 && (int)g_mouse.y >= y1 && (int)g_mouse.x <= x2 && (int)g_mouse.y <= y2)
 		return true;
 
 	return false;
 }
 
-void put_block(int x1, int y1, int x2, int y2) {
-	gfx_putblock(x1, y1, x2, y2);
+void GfxMgr::putBlock(int x1, int y1, int x2, int y2) {
+	gfxPutBlock(x1, y1, x2, y2);
 }
 
-void put_screen() {
-	put_block(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
+void GfxMgr::putScreen() {
+	putBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
 }
 
-void poll_timer() {
-	agi_timer_low();
+void GfxMgr::pollTimer() {
+	_vm->agiTimerLow();
 }
 
-int get_key() {
-	return agi_get_keypress_low();
+int GfxMgr::getKey() {
+	return _vm->agiGetKeypressLow();
 }
 
-int keypress() {
-	return agi_is_keypress_low();
+int GfxMgr::keypress() {
+	return _vm->agiIsKeypressLow();
 }
 
 /*
@@ -350,7 +343,7 @@ int keypress() {
  * for the interpreter console.
  * @param p  A pointer to the 16-color RGB palette.
  */
-void init_palette(uint8 *p) {
+void GfxMgr::initPalette(uint8 *p) {
 	int i;
 
 	for (i = 0; i < 48; i++) {
@@ -359,7 +352,7 @@ void init_palette(uint8 *p) {
 	}
 }
 
-void gfx_set_palette() {
+void GfxMgr::gfxSetPalette() {
 	int i;
 	byte pal[32 * 4];
 
@@ -373,7 +366,7 @@ void gfx_set_palette() {
 }
 
 /* put a block onto the screen */
-void gfx_putblock(int x1, int y1, int x2, int y2) {
+void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
 	if (x1 >= GFX_WIDTH)
 		x1 = GFX_WIDTH - 1;
 	if (y1 >= GFX_HEIGHT)
@@ -384,7 +377,6 @@ void gfx_putblock(int x1, int y1, int x2, int y2) {
 		y2 = GFX_HEIGHT - 1;
 
 	g_system->copyRectToScreen(screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-	//g_system->copyRectToScreen(screen, 320, 0, 0, 320, 200);
 }
 
 static const byte mouseCursorArrow[] = {
@@ -403,16 +395,16 @@ static const byte mouseCursorArrow[] = {
  *
  * @see deinit_video()
  */
-int init_video() {
-	if (opt.renderMode == Common::kRenderEGA)
-		init_palette(ega_palette);
+int GfxMgr::initVideo() {
+	if (_vm->opt.renderMode == Common::kRenderEGA)
+		initPalette(ega_palette);
 	else
-		init_palette(new_palette);
+		initPalette(new_palette);
 
 	if ((agi_screen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL)
 		return err_NotEnoughMemory;
 
-	gfx_set_palette();
+	gfxSetPalette();
 
 	byte mouseCursor[16 * 16];
 	const byte *src = mouseCursorArrow;
@@ -440,21 +432,20 @@ int init_video() {
  *
  * @see init_video()
  */
-int deinit_video() {
+int GfxMgr::deinitVideo() {
 	free(agi_screen);
 
 	return err_OK;
 }
 
-int init_machine() {
+int GfxMgr::initMachine() {
 	screen = (unsigned char *)malloc(320 * 200);
-	clock_count = 0;
-	clock_ticks = 0;
+	_vm->clock_count = 0;
 
 	return err_OK;
 }
 
-int deinit_machine() {
+int GfxMgr::deinitMachine() {
 	free(screen);
 
 	return err_OK;
@@ -470,29 +461,29 @@ int deinit_machine() {
  * @param n number of pixels in the row
  * @param p pointer to the row start in the AGI screen
  */
-void put_pixels_a(int x, int y, int n, uint8 *p) {
-	if (opt.renderMode == Common::kRenderCGA) {
+void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
+	if (_vm->opt.renderMode == Common::kRenderCGA) {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = (cga_map[(*p & 0xf0) >> 4] << 4) | cga_map[*p & 0x0f];
-			if (debug_.priority)
+			if (_vm->_debug.priority)
 				q >>= 4;
 			*(uint16 *)&agi_screen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	} else {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = ((uint16) * p << 8) | *p;
-			if (debug_.priority)
+			if (_vm->_debug.priority)
 				q >>= 4;
 			*(uint16 *)&agi_screen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	}
 }
 
-void put_pixels_hires(int x, int y, int n, uint8 *p) {
+void GfxMgr::putPixelsHires(int x, int y, int n, uint8 *p) {
 	//y += CHAR_LINES;
 	for (; n--; p++, x++) {
 		uint8 q = *p;
-		if (debug_.priority)
+		if (_vm->_debug.priority)
 			q >>= 4;
 		agi_screen[x + y * GFX_WIDTH] = q & 0x0f;
 	}
@@ -509,7 +500,7 @@ void put_pixels_hires(int x, int y, int n, uint8 *p) {
  *
  * @see do_update()
  */
-void schedule_update(int x1, int y1, int x2, int y2) {
+void GfxMgr::scheduleUpdate(int x1, int y1, int x2, int y2) {
 	if (x1 < update.x1)
 		update.x1 = x1;
 	if (y1 < update.y1)
@@ -527,9 +518,9 @@ void schedule_update(int x1, int y1, int x2, int y2) {
  *
  * @see schedule_update()
  */
-void do_update() {
+void GfxMgr::doUpdate() {
 	if (update.x1 <= update.x2 && update.y1 <= update.y2) {
-		gfx_putblock(update.x1, update.y1, update.x2, update.y2);
+		gfxPutBlock(update.x1, update.y1, update.x2, update.y2);
 	}
 
 	/* reset update block variables */
@@ -550,11 +541,11 @@ void do_update() {
  *
  * @see flush_block_a()
  */
-void flush_block(int x1, int y1, int x2, int y2) {
+void GfxMgr::flushBlock(int x1, int y1, int x2, int y2) {
 	int y, w;
 	uint8 *p0;
 
-	schedule_update(x1, y1, x2, y2);
+	scheduleUpdate(x1, y1, x2, y2);
 
 	p0 = &agi_screen[x1 + y1 * GFX_WIDTH];
 	w = x2 - x1 + 1;
@@ -574,10 +565,10 @@ void flush_block(int x1, int y1, int x2, int y2) {
  *
  * @see flush_block()
  */
-void flush_block_a(int x1, int y1, int x2, int y2) {
+void GfxMgr::flushBlockA(int x1, int y1, int x2, int y2) {
 	//y1 += 8;
 	//y2 += 8;
-	flush_block(DEV_X0(x1), DEV_Y(y1), DEV_X1(x2), DEV_Y(y2));
+	flushBlock(DEV_X0(x1), DEV_Y(y1), DEV_X1(x2), DEV_Y(y2));
 }
 
 /**
@@ -585,8 +576,8 @@ void flush_block_a(int x1, int y1, int x2, int y2) {
  * This function updates the output device with the contents of the AGI
  * screen, handling console transparency.
  */
-void flush_screen() {
-	flush_block(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
+void GfxMgr::flushScreen() {
+	flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
 }
 
 /**
@@ -597,15 +588,15 @@ void flush_screen() {
  * a graphic-only device.
  * @param c  color to clear the screen
  */
-void clear_screen(int c) {
+void GfxMgr::clearScreen(int c) {
 	memset(agi_screen, c, GFX_WIDTH * GFX_HEIGHT);
-	flush_screen();
+	flushScreen();
 }
 
 /**
  * Save a block of the AGI engine screen
  */
-void save_block(int x1, int y1, int x2, int y2, uint8 *b) {
+void GfxMgr::saveBlock(int x1, int y1, int x2, int y2, uint8 *b) {
 	uint8 *p0;
 	int w, h;
 
@@ -622,7 +613,7 @@ void save_block(int x1, int y1, int x2, int y2, uint8 *b) {
 /**
  * Restore a block of the AGI engine screen
  */
-void restore_block(int x1, int y1, int x2, int y2, uint8 *b) {
+void GfxMgr::restoreBlock(int x1, int y1, int x2, int y2, uint8 *b) {
 	uint8 *p0;
 	int w, h;
 
@@ -634,7 +625,7 @@ void restore_block(int x1, int y1, int x2, int y2, uint8 *b) {
 		b += w;
 		p0 += GFX_WIDTH;
 	}
-	flush_block(x1, y1, x2, y2);
+	flushBlock(x1, y1, x2, y2);
 }
 
 } // End of namespace Agi

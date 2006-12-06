@@ -28,18 +28,14 @@
 
 namespace Agi {
 
-extern int decode_objects(uint8 *mem, uint32 flen);
-
-static struct agi_object *objects;	/* objects in the game */
-
-int alloc_objects(int n) {
-	if ((objects = (agi_object *) calloc(n, sizeof(struct agi_object))) == NULL)
+int AgiEngine::alloc_objects(int n) {
+	if ((objects = (agi_object *)calloc(n, sizeof(struct agi_object))) == NULL)
 		return err_NotEnoughMemory;
 
 	return err_OK;
 }
 
-int decode_objects(uint8 *mem, uint32 flen) {
+int AgiEngine::decode_objects(uint8 *mem, uint32 flen) {
 	unsigned int i, so, padsize;
 
 	padsize = game.game_flags & ID_AMIGA ? 4 : 3;
@@ -92,7 +88,7 @@ int decode_objects(uint8 *mem, uint32 flen) {
 
 }
 
-int load_objects(const char *fname) {
+int AgiEngine::load_objects(const char *fname) {
 	Common::File fp;
 	uint32 flen;
 	uint8 *mem;
@@ -110,7 +106,7 @@ int load_objects(const char *fname) {
 	flen = fp.pos();
 	fp.seek(0, SEEK_SET);
 
-	if ((mem = (uint8 *) calloc(1, flen + 32)) == NULL) {
+	if ((mem = (uint8 *)calloc(1, flen + 32)) == NULL) {
 		fp.close();
 		return err_NotEnoughMemory;
 	}
@@ -123,7 +119,7 @@ int load_objects(const char *fname) {
 	return err_OK;
 }
 
-void unload_objects() {
+void AgiEngine::unload_objects() {
 	unsigned int i;
 
 	if (objects != NULL) {
@@ -136,7 +132,7 @@ void unload_objects() {
 	}
 }
 
-void object_set_location(unsigned int n, int i) {
+void AgiEngine::object_set_location(unsigned int n, int i) {
 	if (n >= game.num_objects) {
 		report("Error: Can't access object %d.\n", n);
 		return;
@@ -144,7 +140,7 @@ void object_set_location(unsigned int n, int i) {
 	objects[n].location = i;
 }
 
-int object_get_location(unsigned int n) {
+int AgiEngine::object_get_location(unsigned int n) {
 	if (n >= game.num_objects) {
 		report("Error: Can't access object %d.\n", n);
 		return 0;
@@ -152,7 +148,7 @@ int object_get_location(unsigned int n) {
 	return objects[n].location;
 }
 
-const char *object_name(unsigned int n) {
+const char *AgiEngine::object_name(unsigned int n) {
 	if (n >= game.num_objects) {
 		report("Error: Can't access object %d.\n", n);
 		return "";

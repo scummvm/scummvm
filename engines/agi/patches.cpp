@@ -104,7 +104,7 @@ static const uint8 mh1data_fix[] = {
 	0x0C, 0x05, 0x16, 0x5A, 0x12, 0x99
 };
 
-void patch_logic(int n) {
+void AgiEngine::patch_logic(int n) {
 	switch (n) {
 #if 0
 		/* ALT-X in the questions takes care of that */

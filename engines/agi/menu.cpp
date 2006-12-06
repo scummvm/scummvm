@@ -34,8 +34,6 @@
 
 namespace Agi {
 
-Menu* menu;
-
 // TODO: add constructor/destructor for agi_menu, agi_menu_option
 
 struct agi_menu_option {
@@ -78,13 +76,13 @@ agi_menu_option *Menu::get_menu_option(int i, int j) {
 }
 
 void Menu::draw_menu_bar() {
-	_text->clear_lines(0, 0, MENU_BG);
-	_text->flush_lines(0, 0);
+	_vm->clear_lines(0, 0, MENU_BG);
+	_vm->flush_lines(0, 0);
 
 	MenuList::iterator iter;
 	for (iter = menubar.begin(); iter != menubar.end(); ++iter) {	
 		agi_menu *m = *iter;
-		_text->print_text(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
+		_vm->print_text(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
 	}
 
 }
@@ -92,8 +90,8 @@ void Menu::draw_menu_bar() {
 void Menu::draw_menu_hilite(int cur_menu) {
 	agi_menu *m = get_menu(cur_menu);
 	debugC(6, kDebugLevelMenu, "[%s]", m->text);
-	_text->print_text(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
-	_text->flush_lines(0, 0);
+	_vm->print_text(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
+	_vm->flush_lines(0, 0);
 }
 
 /* draw box and pulldowns. */
@@ -101,13 +99,13 @@ void Menu::draw_menu_option(int h_menu) {
 	/* find which vertical menu it is */
 	agi_menu *m = get_menu(h_menu);
 
-	draw_box(m->wincol * CHAR_COLS, 1 * CHAR_LINES, (m->wincol + m->width + 2) * CHAR_COLS,
+	_gfx->drawBox(m->wincol * CHAR_COLS, 1 * CHAR_LINES, (m->wincol + m->width + 2) * CHAR_COLS,
 			(1 + m->height + 2) * CHAR_LINES, MENU_BG, MENU_LINE, 0);
 
 	MenuOptionList::iterator iter;
 	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
 		agi_menu_option* d = *iter;
-		_text->print_text(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
+		_vm->print_text(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
 				d->enabled ? MENU_FG : MENU_DISABLED, MENU_BG);
 	}
 }
@@ -116,28 +114,28 @@ void Menu::draw_menu_option_hilite(int h_menu, int v_menu) {
 	agi_menu *m = get_menu(h_menu);
 	agi_menu_option *d = get_menu_option(h_menu, v_menu);
 
-	_text->print_text(d->text, 0, m->wincol + 1, v_menu + 2, m->width + 2,
+	_vm->print_text(d->text, 0, m->wincol + 1, v_menu + 2, m->width + 2,
 			MENU_BG, d->enabled ? MENU_FG : MENU_DISABLED);
 }
 
 void Menu::new_menu_selected(int i) {
-	show_pic();
+	_picture->show_pic();
 	draw_menu_bar();
 	draw_menu_hilite(i);
 	draw_menu_option(i);
 }
 
 bool Menu::mouse_over_text(unsigned int line, unsigned int col, char *s) {
-	if (mouse.x < col * CHAR_COLS)
+	if (g_mouse.x < col * CHAR_COLS)
 		return false;
 
-	if (mouse.x > (col + strlen(s)) * CHAR_COLS)
+	if (g_mouse.x > (col + strlen(s)) * CHAR_COLS)
 		return false;
 
-	if (mouse.y < line * CHAR_LINES)
+	if (g_mouse.y < line * CHAR_LINES)
 		return false;
 
-	if (mouse.y >= (line + 1) * CHAR_LINES)
+	if (g_mouse.y >= (line + 1) * CHAR_LINES)
 		return false;
 
 	return true;
@@ -165,9 +163,13 @@ static void add_about_option() {
  * Public functions
  */
 
-Menu::Menu() {
+Menu::Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture) {
+	_vm = vm;
+	_gfx = gfx;
+	_picture = picture;
 	h_index = 0;
 	h_col = 1;
+	h_max_menu = 0;
 	h_cur_menu = 0;
 	v_cur_menu = 0;
 }
@@ -263,22 +265,22 @@ bool Menu::keyhandler(int key) {
 	static int menu_active = false;
 	static int button_used = 0;
 
-	if (!getflag(F_menus_work))
+	if (!_vm->getflag(F_menus_work))
 		return false;
 
 	if (!menu_active) {
-		clock_val = game.clock_enabled;
-		game.clock_enabled = false;
+		clock_val = _vm->game.clock_enabled;
+		_vm->game.clock_enabled = false;
 		draw_menu_bar();
 	}
 	/*
 	 * Mouse handling
 	 */
-	if (mouse.button) {
+	if (g_mouse.button) {
 		int hmenu, vmenu;
 
 		button_used = 1;	/* Button has been used at least once */
-		if (mouse.y <= CHAR_LINES) {
+		if (g_mouse.y <= CHAR_LINES) {
 			/* on the menubar */
 			hmenu = 0;
 
@@ -333,7 +335,7 @@ bool Menu::keyhandler(int key) {
 
 		draw_menu_option_hilite(h_cur_menu, v_cur_menu);
 
-		if (mouse.y <= CHAR_LINES) {
+		if (g_mouse.y <= CHAR_LINES) {
 			/* on the menubar */
 		} else {
 			/* see which option we selected */
@@ -345,8 +347,8 @@ bool Menu::keyhandler(int key) {
 					/* activate that option */
 					if (d->enabled) {
 						debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-						game.ev_keyp[d->event].occured = true;
-						game.ev_keyp[d->event].data = d->event;
+						_vm->game.ev_keyp[d->event].occured = true;
+						_vm->game.ev_keyp[d->event].data = d->event;
 						goto exit_menu;
 					}
 				}
@@ -375,7 +377,7 @@ bool Menu::keyhandler(int key) {
 		agi_menu_option* d = get_menu_option(h_cur_menu, v_cur_menu);
 		if (d->enabled) {
 			debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-			game.ev_keyp[d->event].occured = true;
+			_vm->game.ev_keyp[d->event].occured = true;
 			goto exit_menu;
 		}
 		break;
@@ -411,14 +413,14 @@ bool Menu::keyhandler(int key) {
 
 exit_menu:
 	button_used = 0;
-	show_pic();
-	_text->write_status();
+	_picture->show_pic();
+	_vm->write_status();
 
-	setvar(V_key, 0);
-	game.keypress = 0;
-	game.clock_enabled = clock_val;
-	old_input_mode();
-	debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", game.input_mode);
+	_vm->setvar(V_key, 0);
+	_vm->game.keypress = 0;
+	_vm->game.clock_enabled = clock_val;
+	_vm->old_input_mode();
+	debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", _vm->game.input_mode);
 	menu_active = false;
 
 	return true;

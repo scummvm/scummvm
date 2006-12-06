@@ -43,10 +43,18 @@ namespace Agi {
 #define p5	(p[5])
 #define p6	(p[6])
 
+#define game g_agi->game
+#define g_sprites g_agi->_sprites
+#define g_sound g_agi->_sound
+#define g_text g_agi->_text
+#define g_gfx g_agi->_gfx
+#define g_picture g_agi->_picture
+
 #define ip	cur_logic->cIP
 #define vt	game.view_table[p0]
 
 static struct agi_logic *cur_logic;
+static AgiEngine *g_agi;
 
 int timer_hack;			/* Workaround for timer loop in MH1 */
 
@@ -104,7 +112,7 @@ cmd(div_v) {
 }
 
 cmd(random) {
-	_v[p2] = rnd->getRandomNumber(p1 - p0) + p0;
+	_v[p2] = g_agi->_rnd->getRandomNumber(p1 - p0) + p0;
 }
 
 cmd(lindirectn) {
@@ -120,59 +128,59 @@ cmd(rindirect) {
 }
 
 cmd(set) {
-	setflag(*p, true);
+	g_agi->setflag(*p, true);
 }
 
 cmd(reset) {
-	setflag(*p, false);
+	g_agi->setflag(*p, false);
 }
 
 cmd(toggle) {
-	setflag(*p, !getflag(*p));
+	g_agi->setflag(*p, !g_agi->getflag(*p));
 }
 
 cmd(set_v) {
-	setflag(_v[p0], true);
+	g_agi->setflag(_v[p0], true);
 }
 
 cmd(reset_v) {
-	setflag(_v[p0], false);
+	g_agi->setflag(_v[p0], false);
 }
 
 cmd(toggle_v) {
-	setflag(_v[p0], !getflag(_v[p0]));
+	g_agi->setflag(_v[p0], !g_agi->getflag(_v[p0]));
 }
 
 cmd(new_room) {
-	new_room(p0);
+	g_agi->new_room(p0);
 }
 
 cmd(new_room_f) {
-	new_room(_v[p0]);
+	g_agi->new_room(_v[p0]);
 }
 
 cmd(load_view) {
-	agi_load_resource(rVIEW, p0);
+	g_agi->agiLoadResource(rVIEW, p0);
 }
 
 cmd(load_logic) {
-	agi_load_resource(rLOGIC, p0);
+	g_agi->agiLoadResource(rLOGIC, p0);
 }
 
 cmd(load_sound) {
-	agi_load_resource(rSOUND, p0);
+	g_agi->agiLoadResource(rSOUND, p0);
 }
 
 cmd(load_view_f) {
-	agi_load_resource(rVIEW, _v[p0]);
+	g_agi->agiLoadResource(rVIEW, _v[p0]);
 }
 
 cmd(load_logic_f) {
-	agi_load_resource(rLOGIC, _v[p0]);
+	g_agi->agiLoadResource(rLOGIC, _v[p0]);
 }
 
 cmd(discard_view) {
-	agi_unload_resource(rVIEW, p0);
+	g_agi->agiUnloadResource(rVIEW, p0);
 }
 
 cmd(object_on_anything) {
@@ -246,11 +254,11 @@ cmd(set_upper_left) {				/* do nothing (AGI 2.917) */
 }
 
 cmd(start_update) {
-	start_update(&vt);
+	g_agi->start_update(&vt);
 }
 
 cmd(stop_update) {
-	stop_update(&vt);
+	g_agi->stop_update(&vt);
 }
 
 cmd(current_view) {
@@ -271,30 +279,30 @@ cmd(last_cel) {
 }
 
 cmd(set_cel) {
-	set_cel(&vt, p1);
+	g_agi->set_cel(&vt, p1);
 	vt.flags &= ~DONTUPDATE;
 }
 
 cmd(set_cel_f) {
-	set_cel(&vt, _v[p1]);
+	g_agi->set_cel(&vt, _v[p1]);
 	vt.flags &= ~DONTUPDATE;
 }
 
 cmd(set_view) {
 	debugC(4, kDebugLevelScripts, "o%d, %d", p0, p1);
-	set_view(&vt, p1);
+	g_agi->set_view(&vt, p1);
 }
 
 cmd(set_view_f) {
-	set_view(&vt, _v[p1]);
+	g_agi->set_view(&vt, _v[p1]);
 }
 
 cmd(set_loop) {
-	set_loop(&vt, p1);
+	g_agi->set_loop(&vt, p1);
 }
 
 cmd(set_loop_f) {
-	set_loop(&vt, _v[p1]);
+	g_agi->set_loop(&vt, _v[p1]);
 }
 
 cmd(number_of_loops) {
@@ -348,27 +356,27 @@ cmd(get_dir) {
 }
 
 cmd(get_room_f) {
-	_v[p1] = object_get_location(_v[p0]);
+	_v[p1] = g_agi->object_get_location(_v[p0]);
 }
 
 cmd(put) {
-	object_set_location(p0, _v[p1]);
+	g_agi->object_set_location(p0, _v[p1]);
 }
 
 cmd(put_f) {
-	object_set_location(_v[p0], _v[p1]);
+	g_agi->object_set_location(_v[p0], _v[p1]);
 }
 
 cmd(drop) {
-	object_set_location(p0, 0);
+	g_agi->object_set_location(p0, 0);
 }
 
 cmd(get) {
-	object_set_location(p0, EGO_OWNED);
+	g_agi->object_set_location(p0, EGO_OWNED);
 }
 
 cmd(get_f) {
-	object_set_location(_v[p0], EGO_OWNED);
+	g_agi->object_set_location(_v[p0], EGO_OWNED);
 }
 
 cmd(word_to_string) {
@@ -386,49 +394,49 @@ cmd(close_dialogue) {
 }
 
 cmd(close_window) {
-	_text->close_window();
+	g_agi->close_window();
 }
 
 cmd(status_line_on) {
 	game.status_line = true;
-	_text->write_status();
+	g_agi->write_status();
 }
 
 cmd(status_line_off) {
 	game.status_line = false;
-	_text->write_status();
+	g_agi->write_status();
 }
 
 cmd(show_obj) {
-	_sprites->show_obj(p0);
+	g_sprites->show_obj(p0);
 }
 
 cmd(show_obj_v) {
-	_sprites->show_obj(_v[p0]);
+	g_sprites->show_obj(_v[p0]);
 }
 
 cmd(sound) {
-	start_sound(p0, p1);
+	g_sound->start_sound(p0, p1);
 }
 
 cmd(stop_sound) {
-	stop_sound();
+	g_sound->stop_sound();
 }
 
 cmd(menu_input) {
-	new_input_mode(INPUT_MENU);
+	g_agi->new_input_mode(INPUT_MENU);
 }
 
 cmd(enable_item) {
-	menu->set_item(p0, true);
+	g_agi->menu->set_item(p0, true);
 }
 
 cmd(disable_item) {
-	menu->set_item(p0, false);
+	g_agi->menu->set_item(p0, false);
 }
 
 cmd(submit_menu) {
-	menu->submit();
+	g_agi->menu->submit();
 }
 
 cmd(set_scan_start) {
@@ -440,12 +448,12 @@ cmd(reset_scan_start) {
 }
 
 cmd(save_game) {
-	game.simple_save ? savegame_simple() : savegame_dialog();
+	game.simple_save ? g_agi->_saveGameMgr->savegame_simple() : g_agi->_saveGameMgr->savegame_dialog();
 }
 
 cmd(load_game) {
 	assert(1);
-	game.simple_save ? loadgame_simple() : loadgame_dialog();
+	game.simple_save ? g_agi->_saveGameMgr->loadgame_simple() : g_agi->_saveGameMgr->loadgame_dialog();
 }
 
 cmd(init_disk) {				/* do nothing */
@@ -461,7 +469,7 @@ cmd(trace_info) {				/* do nothing */
 }
 
 cmd(show_mem) {
-	_text->message_box("Enough memory");
+	g_agi->message_box("Enough memory");
 }
 
 cmd(init_joy) { /* do nothing */ ;
@@ -530,10 +538,10 @@ cmd(adj_ego_move_to_x_y) {
 
 cmd(parse) {
 	_v[V_word_not_found] = 0;
-	setflag(F_entered_cli, false);
-	setflag(F_said_accepted_input, false);
+	g_agi->setflag(F_entered_cli, false);
+	g_agi->setflag(F_said_accepted_input, false);
 
-	dictionary_words(_text->agi_sprintf(game.strings[p0]));
+	g_agi->dictionary_words(g_agi->agi_sprintf(game.strings[p0]));
 }
 
 cmd(call) {
@@ -546,7 +554,7 @@ cmd(call) {
 	old_cIP = cur_logic->cIP;
 	old_lognum = game.lognum;
 
-	run_logic(p0);
+	g_agi->run_logic(p0);
 
 	game.lognum = old_lognum;
 	cur_logic = &game.logics[game.lognum];
@@ -559,26 +567,26 @@ cmd(call_f) {
 
 cmd(draw_pic) {
 	debugC(6, kDebugLevelScripts, "=== draw pic %d ===", _v[p0]);
-	_sprites->erase_both();
-	decode_picture(_v[p0], true);
-	_sprites->blit_both();
+	g_sprites->erase_both();
+	g_picture->decode_picture(_v[p0], true);
+	g_sprites->blit_both();
 	game.picture_shown = 0;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", _v[p0]);
 }
 
 cmd(show_pic) {
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
-	setflag(F_output_mode, false);
+	g_agi->setflag(F_output_mode, false);
 	cmd_close_window(NULL);
-	show_pic();
+	g_picture->show_pic();
 	game.picture_shown = 1;
 	debugC(6, kDebugLevelScripts, "--- end of show pic ---");
 }
 
 cmd(load_pic) {
-	_sprites->erase_both();
-	agi_load_resource(rPICTURE, _v[p0]);
-	_sprites->blit_both();
+	g_sprites->erase_both();
+	g_agi->agiLoadResource(rPICTURE, _v[p0]);
+	g_sprites->blit_both();
 }
 
 cmd(discard_pic) {
@@ -588,23 +596,23 @@ cmd(discard_pic) {
 
 cmd(overlay_pic) {
 	debugC(6, kDebugLevelScripts, "--- overlay pic ---");
-	_sprites->erase_both();
-	decode_picture(_v[p0], false);
-	_sprites->blit_both();
+	g_sprites->erase_both();
+	g_picture->decode_picture(_v[p0], false);
+	g_sprites->blit_both();
 	game.picture_shown = 0;
-	_sprites->commit_both();
+	g_sprites->commit_both();
 }
 
 cmd(show_pri_screen) {
-	debug_.priority = 1;
-	_sprites->erase_both();
-	show_pic();
-	_sprites->blit_both();
-	wait_key();
-	debug_.priority = 0;
-	_sprites->erase_both();
-	show_pic();
-	_sprites->blit_both();
+	g_agi->_debug.priority = 1;
+	g_sprites->erase_both();
+	g_picture->show_pic();
+	g_sprites->blit_both();
+	g_agi->wait_key();
+	g_agi->_debug.priority = 0;
+	g_sprites->erase_both();
+	g_picture->show_pic();
+	g_sprites->blit_both();
 }
 
 cmd(animate_obj) {
@@ -634,24 +642,24 @@ cmd(draw) {
 	debugC(4, kDebugLevelScripts, "draw entry %d", vt.entry);
 
 	vt.flags |= UPDATE;
-	if (agi_get_release() >= 0x3000) {
-		set_loop(&vt, vt.current_loop);
-		set_cel(&vt, vt.current_cel);
+	if (g_agi->agiGetRelease() >= 0x3000) {
+		g_agi->set_loop(&vt, vt.current_loop);
+		g_agi->set_cel(&vt, vt.current_cel);
 	}
-	fix_position(p0);
+	g_agi->fix_position(p0);
 	vt.x_pos2 = vt.x_pos;
 	vt.y_pos2 = vt.y_pos;
 	vt.cel_data_2 = vt.cel_data;
-	_sprites->erase_upd_sprites();
+	g_sprites->erase_upd_sprites();
 	vt.flags |= DRAWN;
 
-	if (agi_get_release() <= 0x2440)	/* See bug #546562 */
+	if (g_agi->agiGetRelease() <= 0x2440)	/* See bug #546562 */
 		vt.flags |= ANIMATED;
 
-	_sprites->blit_upd_sprites();
+	g_sprites->blit_upd_sprites();
 	vt.flags &= ~DONTUPDATE;
 
-	_sprites->commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
+	g_sprites->commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
 
 	debugC(4, kDebugLevelScripts, "vt entry #%d flags = %02x", p0, vt.flags);
 }
@@ -660,17 +668,17 @@ cmd(erase) {
 	if (~vt.flags & DRAWN)
 		return;
 
-	_sprites->erase_upd_sprites();
+	g_sprites->erase_upd_sprites();
 	if (vt.flags & UPDATE) {
 		vt.flags &= ~DRAWN;
 	} else {
-		_sprites->erase_nonupd_sprites();
+		g_sprites->erase_nonupd_sprites();
 		vt.flags &= ~DRAWN;
-		_sprites->blit_nonupd_sprites();
+		g_sprites->blit_nonupd_sprites();
 	}
-	_sprites->blit_upd_sprites();
+	g_sprites->blit_upd_sprites();
 
-	_sprites->commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
+	g_sprites->commit_block(vt.x_pos, vt.y_pos - vt.y_size + 1, vt.x_pos + vt.x_size - 1, vt.y_pos);
 }
 
 cmd(position) {
@@ -704,35 +712,35 @@ cmd(reposition) {
 	else
 		vt.y_pos += dy;
 
-	fix_position(p0);
+	g_agi->fix_position(p0);
 }
 
 cmd(reposition_to) {
 	vt.x_pos = p1;
 	vt.y_pos = p2;
 	vt.flags |= UPDATE_POS;
-	fix_position(p0);
+	g_agi->fix_position(p0);
 }
 
 cmd(reposition_to_f) {
 	vt.x_pos = _v[p1];
 	vt.y_pos = _v[p2];
 	vt.flags |= UPDATE_POS;
-	fix_position(p0);
+	g_agi->fix_position(p0);
 }
 
 cmd(add_to_pic) {
-	_sprites->add_to_pic(p0, p1, p2, p3, p4, p5, p6);
+	g_sprites->add_to_pic(p0, p1, p2, p3, p4, p5, p6);
 }
 
 cmd(add_to_pic_f) {
-	_sprites->add_to_pic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
+	g_sprites->add_to_pic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
 }
 
 cmd(force_update) {
-	_sprites->erase_both();
-	_sprites->blit_both();
-	_sprites->commit_both();
+	g_sprites->erase_both();
+	g_sprites->blit_both();
+	g_sprites->commit_both();
 }
 
 cmd(reverse_loop) {
@@ -740,7 +748,7 @@ cmd(reverse_loop) {
 	vt.cycle = CYCLE_REV_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
 	vt.parm1 = p1;
-	setflag(p1, false);
+	g_agi->setflag(p1, false);
 }
 
 cmd(end_of_loop) {
@@ -748,7 +756,7 @@ cmd(end_of_loop) {
 	vt.cycle = CYCLE_END_OF_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
 	vt.parm1 = p1;
-	setflag(p1, false);
+	g_agi->setflag(p1, false);
 }
 
 cmd(block) {
@@ -799,7 +807,7 @@ cmd(follow_ego) {
 	vt.parm1 = p1 > vt.step_size ? p1 : vt.step_size;
 	vt.parm2 = p2;
 	vt.parm3 = 0xff;
-	setflag(p2, false);
+	g_agi->setflag(p2, false);
 	vt.flags |= UPDATE;
 }
 
@@ -815,15 +823,15 @@ cmd(move_obj) {
 	if (p3 != 0)
 		vt.step_size = p3;
 
-	setflag(p4, false);
+	g_agi->setflag(p4, false);
 	vt.flags |= UPDATE;
 
 	if (p0 == 0)
 		game.player_control = false;
 
 	/* AGI 2.272 (ddp, xmas) doesn't call move_obj! */
-	if (agi_get_release() > 0x2272)
-		move_obj(&vt);
+	if (g_agi->agiGetRelease() > 0x2272)
+		g_agi->move_obj(&vt);
 }
 
 cmd(move_obj_f) {
@@ -836,15 +844,15 @@ cmd(move_obj_f) {
 	if (_v[p3] != 0)
 		vt.step_size = _v[p3];
 
-	setflag(p4, false);
+	g_agi->setflag(p4, false);
 	vt.flags |= UPDATE;
 
 	if (p0 == 0)
 		game.player_control = false;
 
 	/* AGI 2.272 (ddp, xmas) doesn't call move_obj! */
-	if (agi_get_release() > 0x2272)
-		move_obj(&vt);
+	if (g_agi->agiGetRelease() > 0x2272)
+		g_agi->move_obj(&vt);
 }
 
 cmd(wander) {
@@ -868,20 +876,20 @@ cmd(pause) {
 	const char *b[] = { "Continue", NULL };
 
 	game.clock_enabled = false;
-	_text->selection_box("  Game is paused.  \n\n\n", b);
+	g_agi->selection_box("  Game is paused.  \n\n\n", b);
 	game.clock_enabled = tmp;
 }
 
 cmd(set_menu) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, cur_logic->num_texts);
 	if (cur_logic->texts != NULL && p0 < cur_logic->num_texts)
-		menu->add(cur_logic->texts[p0 - 1]);
+		g_agi->menu->add(cur_logic->texts[p0 - 1]);
 }
 
 cmd(set_menu_item) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, cur_logic->num_texts);
 	if (cur_logic->texts != NULL && p0 <= cur_logic->num_texts)
-		menu->add_item(cur_logic->texts[p0 - 1], p1);
+		g_agi->menu->add_item(cur_logic->texts[p0 - 1], p1);
 }
 
 cmd(version) {
@@ -899,7 +907,7 @@ cmd(version) {
 	int ver, maj, min;
 	char msg[256];
 
-	ver = agi_get_release();
+	ver = g_agi->agiGetRelease();
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 
@@ -908,7 +916,7 @@ cmd(version) {
 
 	strncpy(q + 1 + ((r - q > 0 ? r - q : 1) / 4), ver_msg, strlen(ver_msg));
 	sprintf(msg, q, maj, min);
-	_text->message_box(msg);
+	g_agi->message_box(msg);
 }
 
 cmd(configure_screen) {
@@ -926,17 +934,17 @@ cmd(text_screen) {
 	 */
 	if (game.color_bg)
 		game.color_bg |= 0x08;
-	clear_screen(game.color_bg);
+	g_gfx->clearScreen(game.color_bg);
 }
 
 cmd(graphics) {
 	debugC(4, kDebugLevelScripts, "switching to graphics mode");
 	if (!game.gfx_mode) {
 		game.gfx_mode = true;
-		clear_screen(0);
-		show_pic();
-		_text->write_status();
-		_text->write_prompt();
+		g_gfx->clearScreen(0);
+		g_picture->show_pic();
+		g_agi->write_status();
+		g_agi->write_prompt();
 	}
 }
 
@@ -953,18 +961,18 @@ cmd(set_text_attribute) {
 }
 
 cmd(status) {
-	inventory();
+	g_agi->inventory();
 }
 
 cmd(quit) {
 	const char *buttons[] = { "Quit", "Continue", NULL };
 
-	stop_sound();
+	g_sound->stop_sound();
 	if (p0) {
 		game.quit_prog_now = true;
 	} else {
-		if (_text->selection_box
-		    (" Quit the game, or continue? \n\n\n", buttons) == 0) {
+		if (g_agi->selection_box
+				(" Quit the game, or continue? \n\n\n", buttons) == 0) {
 			game.quit_prog_now = true;
 		}
 	}
@@ -974,14 +982,14 @@ cmd(restart_game) {
 	const char *buttons[] = { "Restart", "Continue", NULL };
 	int sel;
 
-	stop_sound();
-	sel = getflag(F_auto_restart) ? 1 :
-	    _text->selection_box(" Restart game, or continue? \n\n\n", buttons);
+	g_sound->stop_sound();
+	sel = g_agi->getflag(F_auto_restart) ? 1 :
+		g_agi->selection_box(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
 		game.quit_prog_now = 0xff;
-		setflag(F_restart_game, true);
-		menu->enable_all();
+		g_agi->setflag(F_restart_game, true);
+		g_agi->menu->enable_all();
 	}
 }
 
@@ -1006,13 +1014,13 @@ cmd(distance) {
 
 cmd(accept_input) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
-	new_input_mode(INPUT_NORMAL);
+	g_agi->new_input_mode(INPUT_NORMAL);
 	game.input_enabled = true;
 }
 
 cmd(prevent_input) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "no input");
-	new_input_mode(INPUT_NONE);
+	g_agi->new_input_mode(INPUT_NONE);
 	game.input_enabled = false;
 }
 
@@ -1033,43 +1041,43 @@ cmd(get_string) {
 	if (col > 39)
 		col = 39;
 
-	new_input_mode(INPUT_GETSTRING);
+	g_agi->new_input_mode(INPUT_GETSTRING);
 
 	if (cur_logic->texts != NULL && cur_logic->num_texts >= tex) {
 		int len = strlen(cur_logic->texts[tex]);
-		_text->print_text(cur_logic->texts[tex], 0, col, row, len, game.color_fg, game.color_bg);
-		get_string(col + len - 1, row, p4, p0);
+		g_agi->print_text(cur_logic->texts[tex], 0, col, row, len, game.color_fg, game.color_bg);
+		g_agi->get_string(col + len - 1, row, p4, p0);
 
 		/* SGEO: display input char */
-		print_character((col + len), row, game.cursor_char, game.color_fg, game.color_bg);
+		g_gfx->printCharacter((col + len), row, game.cursor_char, game.color_fg, game.color_bg);
 	}
 
 	do {
-		main_cycle();
+		g_agi->main_cycle();
 	} while (game.input_mode == INPUT_GETSTRING);
 }
 
 cmd(get_num) {
 	debugC(4, kDebugLevelScripts, "%d %d", p0, p1);
-	new_input_mode(INPUT_GETSTRING);
+	g_agi->new_input_mode(INPUT_GETSTRING);
 
 	if (cur_logic->texts != NULL && cur_logic->num_texts >= (p0 - 1)) {
 		int len = strlen(cur_logic->texts[p0 - 1]);
-		_text->print_text(cur_logic->texts[p0 - 1], 0, 0, 22, len, game.color_fg, game.color_bg);
-		get_string(len - 1, 22, 3, MAX_STRINGS);
+		g_agi->print_text(cur_logic->texts[p0 - 1], 0, 0, 22, len, game.color_fg, game.color_bg);
+		g_agi->get_string(len - 1, 22, 3, MAX_STRINGS);
 
 		/* CM: display input char */
-		print_character((p3 + len), 22, game.cursor_char, game.color_fg, game.color_bg);
+		g_gfx->printCharacter((p3 + len), 22, game.cursor_char, game.color_fg, game.color_bg);
 	}
 
 	do {
-		main_cycle();
+		g_agi->main_cycle();
 	} while (game.input_mode == INPUT_GETSTRING);
 
 	_v[p1] = atoi(game.strings[MAX_STRINGS]);
 	debugC(4, kDebugLevelScripts, "[%s] -> %d", game.strings[MAX_STRINGS], _v[p1]);
-	_text->clear_lines(22, 22, game.color_bg);
-	_text->flush_lines(22, 22);
+	g_agi->clear_lines(22, 22, game.color_bg);
+	g_agi->flush_lines(22, 22);
 }
 
 cmd(set_cursor_char) {
@@ -1102,12 +1110,12 @@ cmd(set_string) {
 }
 
 cmd(display) {
-	_text->print_text(cur_logic->texts[p2 - 1], p1, 0, p0, 40, game.color_fg, game.color_bg);
+	g_agi->print_text(cur_logic->texts[p2 - 1], p1, 0, p0, 40, game.color_fg, game.color_bg);
 }
 
 cmd(display_f) {
 	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
-	_text->print_text(cur_logic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, game.color_fg, game.color_bg);
+	g_agi->print_text(cur_logic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, game.color_fg, game.color_bg);
 }
 
 cmd(clear_text_rect) {
@@ -1130,8 +1138,8 @@ cmd(clear_text_rect) {
 	if (y2 > GFX_HEIGHT)
 		y2 = GFX_HEIGHT - 1;
 
-	draw_rectangle(x1, y1, x2, y2, c);
-	flush_block(x1, y1, x2, y2);
+	g_gfx->drawRectangle(x1, y1, x2, y2, c);
+	g_gfx->flushBlock(x1, y1, x2, y2);
 }
 
 cmd(toggle_monitor) {
@@ -1150,36 +1158,36 @@ cmd(clear_lines) {
 	/* Residence 44 calls clear.lines(24,0,0), see bug #558423 */
 	l = p1 ? p1 : p0;
 
-	_text->clear_lines(p0, l, p2);
-	_text->flush_lines(p0, l);
+	g_agi->clear_lines(p0, l, p2);
+	g_agi->flush_lines(p0, l);
 }
 
 cmd(print) {
 	int n = p0 < 1 ? 1 : p0;
-	_text->print(cur_logic->texts[n - 1], 0, 0, 0);
+	g_agi->print(cur_logic->texts[n - 1], 0, 0, 0);
 }
 
 cmd(print_f) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
-	_text->print(cur_logic->texts[n - 1], 0, 0, 0);
+	g_agi->print(cur_logic->texts[n - 1], 0, 0, 0);
 }
 
 cmd(print_at) {
 	int n = p0 < 1 ? 1 : p0;
 	debugC(4, kDebugLevelScripts, "%d %d %d %d", p0, p1, p2, p3);
-	_text->print(cur_logic->texts[n - 1], p1, p2, p3);
+	g_agi->print(cur_logic->texts[n - 1], p1, p2, p3);
 }
 
 cmd(print_at_v) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
-	_text->print(cur_logic->texts[n - 1], p1, p2, p3);
+	g_agi->print(cur_logic->texts[n - 1], p1, p2, p3);
 }
 
 cmd(push_script) {
-	if (opt.agimouse) {
-		game.vars[27] = mouse.button;
-		game.vars[28] = mouse.x / 2;
-		game.vars[29] = mouse.y;
+	if (g_agi->opt.agimouse) {
+		game.vars[27] = g_mouse.button;
+		game.vars[28] = g_mouse.x / 2;
+		game.vars[29] = g_mouse.y;
 	} else
 		report("push.script\n");
 }
@@ -1201,8 +1209,8 @@ cmd(set_pri_base) {
 }
 
 cmd(mouse_posn) {
-	_v[p0] = WIN_TO_PIC_X(mouse.x);
-	_v[p1] = WIN_TO_PIC_Y(mouse.y);
+	_v[p0] = WIN_TO_PIC_X(g_mouse.x);
+	_v[p1] = WIN_TO_PIC_Y(g_mouse.y);
 }
 
 cmd(shake_screen) {
@@ -1211,19 +1219,19 @@ cmd(shake_screen) {
 	/* AGI Mouse 1.1 uses shake.screen values between 100 and 109 to
 	 * set the palette.
 	 */
-	if (opt.agimouse && p0 >= 100 && p0 < 110) {
+	if (g_agi->opt.agimouse && p0 >= 100 && p0 < 110) {
 		report("not implemented: AGI Mouse palettes\n");
 		return;
 	} else
-		shake_start();
+		g_gfx->shakeStart();
 
-	_sprites->commit_both();		/* Fixes SQ1 demo */
+	g_sprites->commit_both();		/* Fixes SQ1 demo */
 	for (i = 4 * p0; i; i--) {
-		shake_screen(i & 1);
-		flush_block(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
-		main_cycle();
+		g_gfx->shakeScreen(i & 1);
+		g_gfx->flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
+		g_agi->main_cycle();
 	}
-	shake_end();
+	g_gfx->shakeEnd();
 }
 
 static void (*agi_command[183]) (uint8 *) = {
@@ -1418,16 +1426,17 @@ static void (*agi_command[183]) (uint8 *) = {
  * Execute a logic script
  * @param n  Number of the logic resource to execute
  */
-int run_logic(int n) {
+int AgiEngine::run_logic(int n) {
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
 	uint8 *code = NULL;
+	g_agi = this;
 	int num = 0;
 
 	/* If logic not loaded, load it */
 	if (~game.dir_logic[n].flags & RES_LOADED) {
 		debugC(4, kDebugLevelScripts, "logic %d not loaded!", n);
-		agi_load_resource(rLOGIC, n);
+		agiLoadResource(rLOGIC, n);
 	}
 
 	game.lognum = n;
@@ -1438,17 +1447,17 @@ int run_logic(int n) {
 
 	timer_hack = 0;
 	while (ip < game.logics[n].size && !game.quit_prog_now) {
-		if (debug_.enabled) {
-			if (debug_.steps > 0) {
-				if (debug_.logic0 || n) {
+		if (g_agi->_debug.enabled) {
+			if (g_agi->_debug.steps > 0) {
+				if (g_agi->_debug.logic0 || n) {
 					debug_console(n, lCOMMAND_MODE, NULL);
-					debug_.steps--;
+					g_agi->_debug.steps--;
 				}
 			} else {
 				_sprites->blit_both();
 				do {
 					main_cycle();
-				} while (!debug_.steps && debug_.enabled);
+				} while (!g_agi->_debug.steps && g_agi->_debug.enabled);
 				_sprites->erase_both();
 			}
 		}
@@ -1464,8 +1473,8 @@ int run_logic(int n) {
 			 * but AGI engine can't do that :(
 			 */
 			if (timer_hack > 20) {
-				poll_timer();
-				update_timer();
+				g_gfx->pollTimer();
+				g_agi->update_timer();
 				timer_hack = 0;
 			}
 			break;
@@ -1488,8 +1497,10 @@ int run_logic(int n) {
 	return 0;		/* after executing new.room() */
 }
 
-void execute_agi_command(uint8 op, uint8 *p) {
+void AgiEngine::execute_agi_command(uint8 op, uint8 *p) {
 	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logic_names_cmd[op].name, p[0], p[1], p[2]);
+	g_agi = this;
+
 	agi_command[op] (p);
 }
 

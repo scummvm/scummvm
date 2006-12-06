@@ -75,7 +75,7 @@ const char *ids_database =
 "0x53971  0x3149  Manhunter SF (PC 3.5) 3.02 7/26/89 [AGI 3.002.149]			\n"
 "0x584F9  0x3149  Manhunter SF (PC 5.25) 3.03 8/17/89 [AGI 3.002.149]			\n"
 "0x5D77C  0x2917  Mixed-Up Mother Goose (PC) [AGI 2.915]						\n"
-"0x5D7C6	 0x2917  Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)			\n"
+"0x5D7C6  0x2917  Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)				\n"
 "0x7F18B  0x2917  Police Quest 1 (PC) 2.0A 10/23/87 [AGI 2.903/2.911]			\n"
 "0x7EF35  0x2917  Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]					\n"
 "0x7EF06  0x2917  Police Quest 1 (PC 5.25/ST) 2.0G 12/03/87 [AGI 2.917]			\n"
@@ -111,7 +111,7 @@ const char *ids_database =
 "0xAF778  0x3086  King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)						\n"
 "0x6E41E  0x2440  Leisure Suit Larry 1 (IIgs) 1.0E								\n"
 "0x4C705  0x3149  Manhunter NY (IIgs) 2.0E 10/05/88 (CE)						\n"
-"0x5F4E8	 0x2917  Mixed Up Mother Goose (IIgs)								\n"
+"0x5F4E8  0x2917  Mixed Up Mother Goose (IIgs)									\n"
 "0x7DB3F  0x2917  Police Quest 1 (IIgs) 2.0A-88318								\n"
 "0x7DBE5  0x2917  Police Quest 1 (IIgs) 2.0B-88421								\n"
 "0x69EC0  0x2917  Space Quest 1 (IIgs) 2.2										\n"
@@ -160,7 +160,7 @@ const char *ids_database =
 "0xB3E1A  0x3149  [A] Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316	\n"
 "0x49C6B  0x2440  [A] King's Quest 1 (Amiga) 1.0U		# 2.082					\n"
 "0x5D395  0x2440  [A] King's Quest 2 (Amiga) 2.0J		# guessed int			\n"
-"0x5BCE6  0x2440	 [A] King's Quest 2 (Amiga) 2.0J (Broken)					\n"
+"0x5BCE6  0x2440  [A] King's Quest 2 (Amiga) 2.0J (Broken)						\n"
 "0x5F4B9  0x2440  [A] King's Quest 2 (Amiga) 2.0J (Broken)	# 2.176				\n"
 "0x888C1  0x2440  [A] King's Quest 3 (Amiga) 1.01 11/8/86						\n"
 "0x84793  0x3086  [A] King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333				\n"
@@ -196,8 +196,8 @@ const char *ids_database =
 "#----------------------------------------------------------------------------	\n"
 "																				\n"
 "0x3F2F7     0x2917	[m] AGI Mouse 0.7 Demo										\n"
-"0x3F744	    0x2917	[m] AGI Mouse 1.0 Demo		# 2.917  6/24/00			\n"
-"0x3F74F	    0x2917	[m] AGI Mouse 1.1 Demo		# 2.917  1/01/01			\n"
+"0x3F744	 0x2917	[m] AGI Mouse 1.0 Demo		# 2.917  6/24/00				\n"
+"0x3F74F	 0x2917	[m] AGI Mouse 1.1 Demo		# 2.917  1/01/01				\n"
 "0x17599     0x2917	[m] Sliding Tile Game v1.00	# 2.917  6/02/01				\n"
 "0x785c4     0x2936	[m] Jolimie v0.6		# 2.936  2000						\n"
 "#Jolimie uses AGIPal only and not AGIMouse; no way to separate these currently	\n"
@@ -226,11 +226,7 @@ const char *ids_database =
 "0x4EE64     0x2917	Monkey Man													\n"
 "";
 
-int setup_v2_game(int ver, uint32 crc);
-int setup_v3_game(int ver, uint32 crc);
-int v4id_game(uint32 crc);
-
-uint32 match_crc(uint32 crc, char *name, int len) {
+uint32 AgiEngine::match_crc(uint32 crc, char *name, int len) {
 	char *c, *t, buf[256];
 	uint32 id, ver;
 
@@ -296,7 +292,7 @@ uint32 match_crc(uint32 crc, char *name, int len) {
 	return 0;
 }
 
-static uint32 match_version(uint32 crc) {
+uint32 AgiEngine::match_version(uint32 crc) {
 	int ver;
 	char name[80];
 
@@ -306,7 +302,7 @@ static uint32 match_version(uint32 crc) {
 	return ver;
 }
 
-int v2id_game() {
+int AgiEngine::v2id_game() {
 	int y, ver;
 	uint32 len, c, crc;
 	uint8 *buff;
@@ -333,7 +329,7 @@ int v2id_game() {
 	game.crc = crc;
 	game.ver = ver;
 	debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
-	agi_set_release(ver);
+	agiSetRelease(ver);
 	return setup_v2_game(ver, crc);
 }
 
@@ -345,7 +341,7 @@ int v2id_game() {
  * 0x0149
  */
 
-int v3id_game() {
+int AgiEngine::v3id_game() {
 	int ec = err_OK, y, ver;
 	uint32 len, c, crc;
 	uint8 *buff;
@@ -388,7 +384,7 @@ int v3id_game() {
 	ver = match_version(crc);
 	game.crc = crc;
 	game.ver = ver;
-	agi_set_release(ver);
+	agiSetRelease(ver);
 
 	ec = setup_v3_game(ver, crc);
 
@@ -398,24 +394,24 @@ int v3id_game() {
 /**
  *
  */
-int setup_v2_game(int ver, uint32 crc) {
+int AgiEngine::setup_v2_game(int ver, uint32 crc) {
 	int ec = err_OK;
 
 	if (ver == 0) {
 		report("Unknown v2 Sierra game: %08x\n\n", crc);
-		agi_set_release(0x2917);
+		agiSetRelease(0x2917);
 	}
 
 	/* setup the differences in the opcodes and other bits in the
 	 * AGI v2 specs
 	 */
 	if (opt.emuversion)
-		agi_set_release(opt.emuversion);
+		agiSetRelease(opt.emuversion);
 
 	if (opt.agds)
-		agi_set_release(0x2440);	/* ALL AGDS games built for 2.440 */
+		agiSetRelease(0x2440);	/* ALL AGDS games built for 2.440 */
 
-	switch (agi_get_release()) {
+	switch (agiGetRelease()) {
 	case 0x2089:
 		logic_names_cmd[0x86].num_args = 0;	/* quit: 0 args */
 		logic_names_cmd[0x97].num_args = 3;	/* print.at: 3 args */
@@ -442,16 +438,16 @@ int setup_v2_game(int ver, uint32 crc) {
 /**
  *
  */
-int setup_v3_game(int ver, uint32 crc) {
+int AgiEngine::setup_v3_game(int ver, uint32 crc) {
 	int ec = err_OK;
 
 	if (ver == 0) {
 		report("Unknown v3 Sierra game: %08x\n\n", crc);
-		agi_set_release(ver = 0x3149);
+		agiSetRelease(ver = 0x3149);
 	}
 
 	if (opt.emuversion)
-		agi_set_release(ver = opt.emuversion);
+		agiSetRelease(ver = opt.emuversion);
 
 	switch (ver) {
 	case 0x3086:

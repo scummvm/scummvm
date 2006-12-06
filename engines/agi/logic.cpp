@@ -34,7 +34,7 @@ namespace Agi {
  * into a message list.
  * @param n  The number of the logic resource to decode.
  */
-int decode_logic(int n) {
+int AgiEngine::decode_logic(int n) {
 	int ec = err_OK;
 	int mstart, mend, mc;
 	uint8 *m0;
@@ -99,7 +99,7 @@ int decode_logic(int n) {
  * memory chunks allocated for this resource.
  * @param n  The number of the logic resource to unload
  */
-void unload_logic(int n) {
+void AgiEngine::unload_logic(int n) {
 	if (game.dir_logic[n].flags & RES_LOADED) {
 		free(game.logics[n].data);
 		if (game.logics[n].num_texts)

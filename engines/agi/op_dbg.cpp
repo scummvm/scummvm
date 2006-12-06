@@ -29,6 +29,9 @@
 
 namespace Agi {
 
+static AgiEngine *g_agi;
+#define game g_agi->game
+
 #define ip	(game.logics[lognum].cIP)
 #define code	(game.logics[lognum].data)
 
@@ -266,8 +269,9 @@ struct agi_logicnames logic_names_cmd[] = {
 	_L(NULL, 0, 0x00)
 };
 
-void debug_console(int lognum, int mode, const char *str) {
-	struct agi_logicnames *x;
+void AgiEngine::debug_console(int lognum, int mode, const char *str) {
+	g_agi = this;
+	agi_logicnames *x;
 	uint8 a, c, z;
 
 	if (str) {
@@ -284,7 +288,7 @@ void debug_console(int lognum, int mode, const char *str) {
 	case 0xFF:
 		x = logic_names_if;
 
-		if (debug_.opcodes) {
+		if (g_agi->_debug.opcodes) {
 			report("%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
 			    "         ",
 			    (uint8) * (code + (0 + ip)) & 0xFF,
@@ -304,7 +308,7 @@ void debug_console(int lognum, int mode, const char *str) {
 		a = (unsigned char)(x + *(code + ip))->num_args;
 		c = (unsigned char)(x + *(code + ip))->arg_mask;
 
-		if (debug_.opcodes) {
+		if (g_agi->_debug.opcodes) {
 			report("%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
 			    "         ",
 			    (uint8) * (code + (0 + ip)) & 0xFF,

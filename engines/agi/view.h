@@ -25,6 +25,9 @@
 #ifndef AGI_VIEW_H
 #define AGI_VIEW_H
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 namespace Agi {
 
 struct view_cel {
@@ -116,28 +119,6 @@ struct vt_entry {
 	uint8 parm3;
 	uint8 parm4;
 };				/* struct vt_entry */
-
-/* Motion */
-void check_all_motions(void);
-void move_obj(vt_entry *);
-void in_destination(vt_entry *);
-void fix_position(int);
-void update_position(void);
-
-/* View table management */
-void set_cel(vt_entry *, int);
-void set_loop(vt_entry *, int);
-void set_view(vt_entry *, int);
-void start_update(vt_entry *);
-void stop_update(vt_entry *);
-void update_viewtable(void);
-
-void unload_view(int);
-int decode_view(int);
-void add_to_pic(int, int, int, int, int, int, int);
-void draw_obj(int);
-
-bool is_ego_view(const vt_entry *v);
 
 }                             // End of namespace Agi
 

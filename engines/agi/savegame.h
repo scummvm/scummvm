@@ -27,23 +27,52 @@
 
 #include "agi/agi.h"
 
+class Common::File;
+
 namespace Agi {
 
-int savegame_dialog(void);
-int loadgame_dialog(void);
-int savegame_simple(void);
-int loadgame_simple(void);
-
-/* Image stack support */
 #define ADD_PIC 1
 #define ADD_VIEW 2
 
-void clear_image_stack(void);
-void record_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7);
-void replay_image_stack_call(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7);
-void release_image_stack(void);
+class AgiEngine;
+class SpritesMgr;
+class GfxMgr;
+class SoundMgr;
+class PictureMgr;
+
+class SaveGameMgr {
+private:
+
+	AgiEngine *_vm;
+	SpritesMgr *_sprites;
+	GfxMgr *_gfx;
+	SoundMgr *_sound;
+	PictureMgr *_picture;
+
+	void write_string(Common::File *f, const char *s);
+	void read_string(Common::File *f, char *s);
+	void write_bytes(Common::File *f, const char *s, int16 size);
+	void read_bytes(Common::File *f, char *s, int16 size);
+	int save_game(char *s, const char *d);
+	int load_game(char *s);
+	int select_slot();
+
+public:
+	SaveGameMgr(AgiEngine *agi, SpritesMgr *sprites,
+				GfxMgr *gfx,
+				SoundMgr *sound, PictureMgr *picture) {
+		_vm = agi;
+		_sprites = sprites;
+		_gfx = gfx;
+		_sound = sound;
+		_picture = picture;
+	}
+
+	int savegame_dialog();
+	int loadgame_dialog();
+	int savegame_simple();
+	int loadgame_simple();
+};
 
 }                             // End of namespace Agi
 

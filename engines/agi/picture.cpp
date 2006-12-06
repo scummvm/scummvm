@@ -43,7 +43,7 @@ static uint8 scr_on;
 static uint8 scr_colour;
 static uint8 pri_colour;
 
-static const uint8 circles[][15] = {	/* agi circle bitmaps */
+static uint8 circles[][15] = {	/* agi circle bitmaps */
 	{0x80},
 	{0xfc},
 	{0x5f, 0xf4},
@@ -54,14 +54,14 @@ static const uint8 circles[][15] = {	/* agi circle bitmaps */
 	{0x18, 0x3c, 0x7e, 0x7e, 0x7e, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x7e, 0x7e, 0x3c, 0x18}
 };
 
-static const uint8 splatter_map[32] = {	/* splatter brush bitmaps */
+static uint8 splatter_map[32] = {	/* splatter brush bitmaps */
 	0x20, 0x94, 0x02, 0x24, 0x90, 0x82, 0xa4, 0xa2,
 	0x82, 0x09, 0x0a, 0x22, 0x12, 0x10, 0x42, 0x14,
 	0x91, 0x4a, 0x91, 0x11, 0x08, 0x12, 0x25, 0x10,
 	0x22, 0xa8, 0x14, 0x24, 0x00, 0x50, 0x24, 0x04
 };
 
-static const uint8 splatter_start[128] = {	/* starting bit position */
+static uint8 splatter_start[128] = {	/* starting bit position */
 	0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
 	0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
 	0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,
@@ -79,16 +79,14 @@ static const uint8 splatter_start[128] = {	/* starting bit position */
 	0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1
 };
 
-static void fix_pixel_bothsides(int x, int y);
-
-static void put_virt_pixel(int x, int y, int res) {
+void PictureMgr::put_virt_pixel(int x, int y, int res) {
 	uint8 *p;
 	int width = _WIDTH * res;
 
 	if (x < 0 || y < 0 || x >= width || y >= _HEIGHT)
 		return;
 
-	p = res > 1 ? &game.hires[y * width + x] : &game.sbuf[y * width + x];
+	p = res > 1 ? &_vm->game.hires[y * width + x] : &_vm->game.sbuf[y * width + x];
 
 	if (pri_on)
 		*p = (pri_colour << 4) | (*p & 0x0f);
@@ -128,7 +126,7 @@ static INLINE uint16 _POP() {
  * @param y2  y coordinate of end point
  * @param res horizontal resolution multiplier
  */
-static void draw_line(int x1, int y1, int x2, int y2, int res) {
+void PictureMgr::draw_line(int x1, int y1, int x2, int y2, int res) {
 	int i, x, y, deltaX, deltaY, stepX, stepY, errorX, errorY, detdelta;
 	int width = _WIDTH * res;
 
@@ -242,7 +240,7 @@ static void draw_line(int x1, int y1, int x2, int y2, int res) {
  * Draws short lines relative to last position. (drawing action 0xF7)
  * @param res  horizontal resolution multiplier
  */
-static void dynamic_draw_line(int res) {
+void PictureMgr::dynamic_draw_line(int res) {
 	int x1, y1, disp, dx, dy;
 
 	x1 = next_byte * res;
@@ -250,7 +248,7 @@ static void dynamic_draw_line(int res) {
 
 	put_virt_pixel(x1, y1, res);
 
-	while (42) {
+	for (;;) {
 		if ((disp = next_byte) >= 0xf0)
 			break;
 
@@ -276,7 +274,7 @@ static void dynamic_draw_line(int res) {
 **
 ** Draws long lines to actual locations (cf. relative) (drawing action 0xF6)
 **************************************************************************/
-static void absolute_draw_line(int res) {
+void PictureMgr::absolute_draw_line(int res) {
 	int x1, y1, x2, y2;
 
 	x1 = next_byte * res;
@@ -302,7 +300,7 @@ static void absolute_draw_line(int res) {
 /**************************************************************************
 ** okToFill
 **************************************************************************/
-static INLINE int is_ok_fill_here(int x, int y) {
+INLINE int PictureMgr::is_ok_fill_here(int x, int y) {
 	uint8 p;
 
 	if (x < 0 || x >= _WIDTH || y < 0 || y >= _HEIGHT)
@@ -311,7 +309,7 @@ static INLINE int is_ok_fill_here(int x, int y) {
 	if (!scr_on && !pri_on)
 		return false;
 
-	p = game.sbuf[y * _WIDTH + x];
+	p = _vm->game.sbuf[y * _WIDTH + x];
 
 	if (!pri_on && scr_on && scr_colour != 15)
 		return (p & 0x0f) == 15;
@@ -325,7 +323,7 @@ static INLINE int is_ok_fill_here(int x, int y) {
 /**************************************************************************
 ** agi_fill
 **************************************************************************/
-static void fill_scanline(int x, int y) {
+void PictureMgr::fill_scanline(int x, int y) {
 	unsigned int c;
 	int newspan_up, newspan_down;
 
@@ -358,7 +356,7 @@ static void fill_scanline(int x, int y) {
 	}
 }
 
-static void agi_fill(unsigned int x, unsigned int y) {
+void PictureMgr::agi_fill(unsigned int x, unsigned int y) {
 	_PUSH(x + 320 * y);
 
 	while (42) {
@@ -382,7 +380,7 @@ static void agi_fill(unsigned int x, unsigned int y) {
 **
 ** Draws an xCorner  (drawing action 0xF5)
 **************************************************************************/
-static void x_corner(int res) {
+void PictureMgr::x_corner(int res) {
 	int x1, x2, y1, y2;
 
 	x1 = next_byte * res;
@@ -415,7 +413,7 @@ static void x_corner(int res) {
 **
 ** Draws an yCorner  (drawing action 0xF4)
 **************************************************************************/
-static void y_corner(int res) {
+void PictureMgr::y_corner(int res) {
 	int x1, x2, y1, y2;
 
 	x1 = next_byte * res;
@@ -449,7 +447,7 @@ static void y_corner(int res) {
 **
 ** AGI flood fill.  (drawing action 0xF8)
 **************************************************************************/
-static void fill() {
+void PictureMgr::fill() {
 	int x1, y1;
 
 	while ((x1 = next_byte) < 0xF0 && (y1 = next_byte) < 0xf0)
@@ -465,15 +463,15 @@ static void fill() {
 ** on the pattern code.
 **************************************************************************/
 
-static int plot_pattern_point(int x, int y, int bitpos, int res) {
+int PictureMgr::plot_pattern_point(int x, int y, int bitpos, int res) {
 	if (pat_code & 0x20) {
 		if ((splatter_map[bitpos >> 3] >> (7 - (bitpos & 7))) & 1) {
 			if (res > 1) {
 				/* extra randomness in hi-res brush fill
 				 */
-				if (rnd->getRandomNumber(3))
+				if (_vm->_rnd->getRandomNumber(3))
 					put_virt_pixel(x * 2, y, 2);
-				if (!rnd->getRandomNumber(3))
+				if (!_vm->_rnd->getRandomNumber(3))
 					put_virt_pixel(x * 2 + 1, y, 2);
 			} else {
 				put_virt_pixel(x, y, 1);
@@ -497,7 +495,7 @@ static int plot_pattern_point(int x, int y, int bitpos, int res) {
 	return bitpos;
 }
 
-static void plot_pattern(int x, int y, int res) {
+void PictureMgr::plot_pattern(int x, int y, int res) {
 	int32 circlePos = 0;
 	uint32 x1, y1, pensize, bitpos = splatter_start[pat_num];
 
@@ -527,7 +525,7 @@ static void plot_pattern(int x, int y, int res) {
 **
 ** Plots points and various brush patterns.
 **************************************************************************/
-static void plot_brush(int res) {
+void PictureMgr::plot_brush(int res) {
 	int x1, y1;
 
 	while (42) {
@@ -549,7 +547,7 @@ static void plot_brush(int res) {
 	foffs--;
 }
 
-static void fix_pixel_bothsides(int x, int y) {
+void PictureMgr::fix_pixel_bothsides(int x, int y) {
 	uint8 *p, *s;
 
 	if (x >= (_WIDTH * 2) - 2)
@@ -559,7 +557,7 @@ static void fix_pixel_bothsides(int x, int y) {
 	 * with lines, and we want to keep this  effect in the
 	 * hi-res pic.
 	 */
-	p = &game.hires[y * (_WIDTH * 2) + x];
+	p = &_vm->game.hires[y * (_WIDTH * 2) + x];
 	if ((*(p - 2) & 0x0f) == scr_colour)
 		put_virt_pixel(x - 1, y, 2);
 	if ((*(p + 2) & 0x0f) == scr_colour)
@@ -570,7 +568,7 @@ static void fix_pixel_bothsides(int x, int y) {
 	 * in some scenes like in front of Lefty's in LSL1, to draw
 	 * the pole. Note: it adds artifacts in some cases.
 	 */
-	s = &game.sbuf[y * _WIDTH + x / 2];
+	s = &_vm->game.sbuf[y * _WIDTH + x / 2];
 	if ((*(p - 1) & 0x0f) != (*(s - 1) & 0x0f))
 		put_virt_pixel(x - 1, y, 2);
 }
@@ -578,7 +576,7 @@ static void fix_pixel_bothsides(int x, int y) {
 /**************************************************************************
 ** okToFill
 **************************************************************************/
-static INLINE int hires_fill_here(int x, int y) {
+INLINE int PictureMgr::hires_fill_here(int x, int y) {
 	uint8 *p, *s;
 
 	if (x < 0 || x >= _WIDTH || y < 0 || y >= _HEIGHT)
@@ -587,8 +585,8 @@ static INLINE int hires_fill_here(int x, int y) {
 	if (!scr_on && !pri_on)
 		return false;
 
-	p = &game.hires[(int32) y * (_WIDTH * 2) + x * 2];
-	s = &game.sbuf[y * _WIDTH + x];
+	p = &_vm->game.hires[(int32) y * (_WIDTH * 2) + x * 2];
+	s = &_vm->game.sbuf[y * _WIDTH + x];
 
 	if (scr_on) {
 		if (scr_colour == 0x0f)
@@ -611,33 +609,33 @@ static INLINE int hires_fill_here(int x, int y) {
 	return true;
 }
 
-static void fix_pixel_left(int x, int y) {
+void PictureMgr::fix_pixel_left(int x, int y) {
 	uint8 *p;
 
 	if (!scr_on)
 		return;
 
-	p = &game.hires[y * (_WIDTH * 2) + x * 2 + 1];
+	p = &_vm->game.hires[y * (_WIDTH * 2) + x * 2 + 1];
 	if ((*p & 0x0f) == 0x0f)
 		put_virt_pixel(2 * x + 1, y, 2);
 	else if ((*p & 0x0f) == (*(p - 1) & 0x0f))
 		put_virt_pixel(2 * x + 1, y, 2);
 }
 
-static void fix_pixel_right(int x, int y) {
+void PictureMgr::fix_pixel_right(int x, int y) {
 	int idx = y * (_WIDTH * 2) + x * 2;
 
 	if (idx >= 160 * 168)
 		return;
 
-	if (scr_on && (game.hires[idx] & 0x0f) == 0x0f)
+	if (scr_on && (_vm->game.hires[idx] & 0x0f) == 0x0f)
 		put_virt_pixel(2 * x, y, 2);
 }
 
-static void fix_pixel_here(int x, int y) {
+void PictureMgr::fix_pixel_here(int x, int y) {
 	uint8 p;
 
-	p = game.hires[y * (_WIDTH * 2) + x * 2 + 1];
+	p = _vm->game.hires[y * (_WIDTH * 2) + x * 2 + 1];
 	if (scr_on && (p & 0x0f) == 0x0f)
 		put_virt_pixel(2 * x + 1, y, 2);
 }
@@ -645,7 +643,7 @@ static void fix_pixel_here(int x, int y) {
 /**************************************************************************
 ** agiFill
 **************************************************************************/
-static void hires_fill_scanline(int x, int y) {
+void PictureMgr::hires_fill_scanline(int x, int y) {
 	unsigned int c;
 	int newspan_up, newspan_down;
 
@@ -683,7 +681,7 @@ static void hires_fill_scanline(int x, int y) {
 	fix_pixel_right(c, y);
 }
 
-static void _hires_fill(unsigned int x, unsigned int y) {
+void PictureMgr::_hires_fill(unsigned int x, unsigned int y) {
 	_PUSH(x + 320 * y);
 
 	while (42) {
@@ -707,7 +705,7 @@ static void _hires_fill(unsigned int x, unsigned int y) {
 **
 ** AGI flood fill.  (drawing action 0xF8)
 **************************************************************************/
-static void hires_fill() {
+void PictureMgr::hires_fill() {
 	int x1, y1;
 
 	while ((x1 = next_byte) < 0xf0 && (y1 = next_byte) < 0xf0) {
@@ -721,28 +719,28 @@ static void hires_fill() {
  * Show AGI picture.
  * This function copies a ``hidden'' AGI picture to the output device.
  */
-void show_hires_pic() {
+void PictureMgr::show_hires_pic() {
 	int y, offset;
 	int32 i;
 
 	i = 0;
-	offset = game.line_min_print * CHAR_LINES;
+	offset = _vm->game.line_min_print * CHAR_LINES;
 	for (y = 0; y < _HEIGHT; y++) {
-		put_pixels_hires(0, y + offset, _WIDTH * 2, &game.hires[i]);
+		_gfx->putPixelsHires(0, y + offset, _WIDTH * 2, &_vm->game.hires[i]);
 		i += _WIDTH * 2;
 	}
 
-	flush_screen();
+	_gfx->flushScreen();
 }
 
-void fix_hires_picture() {
+void PictureMgr::fix_hires_picture() {
 	uint8 *p, *b;
 	int i;
 
-	p = game.hires;
-	b = game.sbuf;
+	p = _vm->game.hires;
+	b = _vm->game.sbuf;
 
-	for (i = 0; p < &game.hires[_WIDTH * _HEIGHT * 2] - 1; p++, i++) {
+	for (i = 0; p < &_vm->game.hires[_WIDTH * _HEIGHT * 2] - 1; p++, i++) {
 		if ((*p & 0x0f) == 0x0f && (*b & 0x0f) != 0x0f) {
 			if ((*(p + 1) & 0x0f) != 0x0f)
 				*p = *(p + 1);
@@ -756,7 +754,7 @@ void fix_hires_picture() {
 	}
 }
 
-static void draw_picture() {
+void PictureMgr::draw_picture() {
 	uint8 act;
 	int drawing;
 	int save_foffs;
@@ -873,7 +871,7 @@ static void draw_picture() {
 /**
  *
  */
-uint8 *convert_v3_pic(uint8 *src, uint32 len) {
+uint8 *PictureMgr::convert_v3_pic(uint8 *src, uint32 len) {
 	uint8 d, old = 0, x, *in, *xdata, *out, mode = 0;
 	uint32 i, ulen;
 
@@ -922,7 +920,7 @@ uint8 *convert_v3_pic(uint8 *src, uint32 len) {
  * @param n      AGI picture resource number
  * @param clear  clear AGI screen before drawing
  */
-int decode_picture(int n, int clear) {
+int PictureMgr::decode_picture(int n, int clear) {
 	debugC(8, kDebugLevelResources, "(%d)", n);
 
 	pat_code = 0;
@@ -931,13 +929,13 @@ int decode_picture(int n, int clear) {
 	scr_colour = 0xF;
 	pri_colour = 0x4;
 
-	data = game.pictures[n].rdata;
-	flen = game.dir_pic[n].len;
+	data = _vm->game.pictures[n].rdata;
+	flen = _vm->game.dir_pic[n].len;
 	foffs = 0;
 
 	if (clear) {
-		memset(game.sbuf, 0x4f, _WIDTH * _HEIGHT);
-		memset(game.hires, 0x4f, _WIDTH * 2 * _HEIGHT);
+		memset(_vm->game.sbuf, 0x4f, _WIDTH * _HEIGHT);
+		memset(_vm->game.hires, 0x4f, _WIDTH * 2 * _HEIGHT);
 	}
 
 	draw_picture();
@@ -945,8 +943,8 @@ int decode_picture(int n, int clear) {
 	fix_hires_picture();
 
 	if (clear)
-		clear_image_stack();
-	record_image_stack_call(ADD_PIC, n, clear, 0, 0, 0, 0, 0);
+		_vm->clear_image_stack();
+	_vm->record_image_stack_call(ADD_PIC, n, clear, 0, 0, 0, 0, 0);
 
 	return err_OK;
 }
@@ -957,11 +955,11 @@ int decode_picture(int n, int clear) {
  * resource data.
  * @param n AGI picture resource number
  */
-int unload_picture(int n) {
+int PictureMgr::unload_picture(int n) {
 	/* remove visual buffer & priority buffer if they exist */
-	if (game.dir_pic[n].flags & RES_LOADED) {
-		free(game.pictures[n].rdata);
-		game.dir_pic[n].flags &= ~RES_LOADED;
+	if (_vm->game.dir_pic[n].flags & RES_LOADED) {
+		free(_vm->game.pictures[n].rdata);
+		_vm->game.dir_pic[n].flags &= ~RES_LOADED;
 	}
 
 	return err_OK;
@@ -971,24 +969,24 @@ int unload_picture(int n) {
  * Show AGI picture.
  * This function copies a ``hidden'' AGI picture to the output device.
  */
-void show_pic() {
+void PictureMgr::show_pic() {
 	int i, y;
 	int offset;
 
 	debugC(8, kDebugLevelMain, "Show picture!");
-	if (opt.hires) {
+	if (_vm->opt.hires) {
 		show_hires_pic();
 		return;
 	}
 
 	i = 0;
-	offset = game.line_min_print * CHAR_LINES;
+	offset = _vm->game.line_min_print * CHAR_LINES;
 	for (y = 0; y < _HEIGHT; y++) {
-		put_pixels_a(0, y + offset, _WIDTH, &game.sbuf[i]);
+		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->game.sbuf[i]);
 		i += _WIDTH;
 	}
 
-	flush_screen();
+	_gfx->flushScreen();
 }
 
 }                             // End of namespace Agi
