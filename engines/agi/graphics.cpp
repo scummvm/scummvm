@@ -285,7 +285,7 @@ void GfxMgr::drawButton(int x, int y, const char *s, int a, int p, int fgcolor, 
 	y2 = y + CHAR_LINES + 2;
 
 	while (*s) {
-		putTextCharacter(0, x + (!!p), y + (!!p), *s++, a ? fgcolor : bgcolor, a ? bgcolor : fgcolor);
+		putTextCharacter(0, x + (!!p), y + (!!p), *s++, a ? bgcolor : fgcolor, a ? fgcolor : bgcolor);
 		x += CHAR_COLS;
 	}
 

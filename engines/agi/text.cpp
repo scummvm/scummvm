@@ -209,7 +209,7 @@ void AgiEngine::print_text_console(const char *msg, int x, int y, int len, int f
 }
 
 /**
- * Wrap text line to the specified width. 
+ * Wrap text line to the specified width.
  * @param str  String to wrap.
  * @param len  Length of line.
  */
@@ -352,7 +352,7 @@ int AgiEngine::selection_box(const char *m, const char **b) {
 	debugC(4, kDebugLevelText, "waiting...");
 	for (;;) {
 		for (i = 0; b[i]; i++)
-			_gfx->drawButton(bx[i], by[i], b[i], i == active, 0);
+			_gfx->drawButton(bx[i], by[i], b[i], i == active, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = do_poll_keyboard();
