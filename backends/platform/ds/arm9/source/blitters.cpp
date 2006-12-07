@@ -134,9 +134,24 @@ void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height) {
 		: "r0", "%0", "%2", "%3");
 }
 
+static bool isDivBy5Ready = false;
+static u32  DIV_BY_5[512];
+
+void ComputeDivBy5TableIFN()
+{
+    if (isDivBy5Ready)
+        return;
+    isDivBy5Ready = true;
+
+    for(int i=0; i<512; ++i)
+    {
+        DIV_BY_5[i] = (2*i+5)/10;
+    }        
+    
+}
 
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
-                                                  u16* dest)
+                                                    u16* dest)
 {
     u32 bs0 = s0 & 0x1F;
     u32 bs1 = s1 & 0x1F;
@@ -188,6 +203,7 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     u32 bd2 = 2*bs2 + 2*bs3 + bs3;
     u32 bd3 =   bs3 + 4*bs4;
     
+#if 0
     // Offsetting for correct rounding
     rd0 = rd0*2+5; rd1 = rd1*2+5; rd2 = rd2*2+5; rd3 = rd3*2+5;
     gd0 = gd0*2+5; gd1 = gd1*2+5; gd2 = gd2*2+5; gd3 = gd3*2+5;
@@ -196,6 +212,11 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 	rd0 = (rd0 * 51) >> 9; rd1 = (rd1 * 51) >> 9; rd2 = (rd2 * 51) >> 9; rd3 = (rd3 * 51) >> 9;
 	gd0 = (gd0 * 51) >> 9; gd1 = (gd1 * 51) >> 9; gd2 = (gd2 * 51) >> 9; gd3 = (gd3 * 51) >> 9;
 	bd0 = (bd0 * 51) >> 9; bd1 = (bd1 * 51) >> 9; bd2 = (bd2 * 51) >> 9; bd3 = (bd3 * 51) >> 9;
+#else
+	rd0 = DIV_BY_5[rd0]; rd1 = DIV_BY_5[rd1]; rd2 = DIV_BY_5[rd2]; rd3 = DIV_BY_5[rd3]; 
+	gd0 = DIV_BY_5[gd0]; gd1 = DIV_BY_5[gd1]; gd2 = DIV_BY_5[gd2]; gd3 = DIV_BY_5[gd3]; 
+	bd0 = DIV_BY_5[bd0]; bd1 = DIV_BY_5[bd1]; bd2 = DIV_BY_5[bd2]; bd3 = DIV_BY_5[bd3]; 
+#endif
     
     u32 d10 = 0x80008000 | (rd1 << 26) | (gd1 << 21) | (bd1 << 16) | (rd0 << 10) | (gd0 << 5) | bd0;
     u32 d32 = 0x80008000 | (rd3 << 26) | (gd3 << 21) | (bd3 << 16) | (rd2 << 10) | (gd2 << 5) | bd2;
@@ -207,32 +228,36 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 // Can't work in place
 void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u16* palette)
 {
-   for(size_t i=0; i<64; ++i)
-   {
-       u16 s0 = palette[src[5*i+0]];
-       u16 s1 = palette[src[5*i+1]];
-       u16 s2 = palette[src[5*i+2]];
-       u16 s3 = palette[src[5*i+3]];
-       u16 s4 = palette[src[5*i+4]];
+    ComputeDivBy5TableIFN();
+    
+    for(size_t i=0; i<64; ++i)
+    {
+        u16 s0 = palette[src[5*i+0]];
+        u16 s1 = palette[src[5*i+1]];
+        u16 s2 = palette[src[5*i+2]];
+        u16 s3 = palette[src[5*i+3]];
+        u16 s4 = palette[src[5*i+4]];
 
-       RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
-   }
+        RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
+    }
 }
 
 
 // Can work in place, because it's a contraction
 void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
 {
-   for(size_t i=0; i<64; ++i)
-   {
-       u16 s0 = src[5*i+0];
-       u16 s1 = src[5*i+1];
-       u16 s2 = src[5*i+2];
-       u16 s3 = src[5*i+3];
-       u16 s4 = src[5*i+4];
+    ComputeDivBy5TableIFN();
+    
+    for(size_t i=0; i<64; ++i)
+    {
+        u16 s0 = src[5*i+0];
+        u16 s1 = src[5*i+1];
+        u16 s2 = src[5*i+2];
+        u16 s3 = src[5*i+3];
+        u16 s4 = src[5*i+4];
 
-       RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
-   }
+        RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
+    }
 }
 
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
