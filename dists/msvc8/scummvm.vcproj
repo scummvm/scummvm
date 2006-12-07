@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -787,6 +787,10 @@
 			<Filter
 				Name="fs"
 				>
+				<File
+					RelativePath="..\..\backends\fs\abstract-fs.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\backends\fs\windows\windows-fs.cpp"
 					>
