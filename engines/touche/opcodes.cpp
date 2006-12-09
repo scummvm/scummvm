@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/system.h"
 
 #include "touche/touche.h"
 
@@ -171,7 +172,7 @@ void ToucheEngine::setupOpcodes() {
 		/* 0x70 */
 		&ToucheEngine::op_startMusic,
 		0,
-		0,
+		&ToucheEngine::op_sleep,
 		0,
 		/* 0x74 */
 		&ToucheEngine::op_delay,
@@ -863,6 +864,14 @@ void ToucheEngine::op_setKeyCharTextColor() {
 void ToucheEngine::op_startMusic() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_startMusic()");
 	_newMusicNum = _script.readNextWord();
+}
+
+void ToucheEngine::op_sleep() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_sleep()");
+	int16 cycles = _script.readNextWord();
+	if (!_fastMode) {
+		_system->delayMillis(50 * cycles);
+	}
 }
 
 void ToucheEngine::op_delay() {

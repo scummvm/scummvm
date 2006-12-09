@@ -547,6 +547,7 @@ protected:
 	void op_startAnimation();
 	void op_setKeyCharTextColor();
 	void op_startMusic();
+	void op_sleep();
 	void op_delay();
 	void op_lockHitBox();
 	void op_removeItemFromInventory();
