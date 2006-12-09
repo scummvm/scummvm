@@ -39,8 +39,8 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
 
-	_screenRect = Common::Rect(640, 400);
-	_roomAreaRect = Common::Rect(640, 352);
+	_screenRect = Common::Rect(kScreenWidth, kScreenHeight);
+	_roomAreaRect = Common::Rect(kScreenWidth, kRoomHeight);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
@@ -86,7 +86,7 @@ ToucheEngine::~ToucheEngine() {
 int ToucheEngine::init() {
 	_system->beginGFXTransaction();
 		initCommonGFX(true);
-		_system->initSize(640, 400);
+		_system->initSize(kScreenWidth, kScreenHeight);
 	_system->endGFXTransaction();
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -247,14 +247,20 @@ void ToucheEngine::mainLoop() {
 
 	const int cycleDelay = 1000 / (1193180 / 32768);
 	uint32 frameTimeStamp = _system->getMillis();
-	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
-		if ((cycleCounter % 3) == 0) {
-			runCycle();
-		}
-		if ((cycleCounter % 2) == 0) {
-			fadePaletteFromFlags();
+	_sleepCycles = 0;
+	uint32 cycleCounter = 0;
+	while (_flagsTable[611] == 0) {
+		if (_sleepCycles) {
+			--_sleepCycles;
+		} else {
+			if ((cycleCounter % 3) == 0) {
+				runCycle();
+			}
+			if ((cycleCounter % 2) == 0) {
+				fadePaletteFromFlags();
+			}
+ 			++cycleCounter;
  		}
-
 		_system->updateScreen();
 		int delay = _system->getMillis() - frameTimeStamp;
 		delay = (_fastMode ? 10 : cycleDelay) - delay;
@@ -352,7 +358,7 @@ void ToucheEngine::runCycle() {
 	if (_conversationEnded) {
 		_disabledInputCounter = 0;
 		_fullRedrawCounter = 1;
-		_roomAreaRect.setHeight(352);
+		_roomAreaRect.setHeight(kRoomHeight);
 		_hideInventoryTexts = false;
 		_conversationEnded = false;
 		drawInventory(_currentKeyCharNum, 1);
@@ -472,7 +478,7 @@ void ToucheEngine::setupEpisode(int num) {
 		_disabledInputCounter = 0;
 	}
 	res_decodeProgramData();
-	_roomAreaRect.setHeight(352);
+	_roomAreaRect.setHeight(kRoomHeight);
 	_disableConversationScript = false;
 	_hideInventoryTexts = false;
 	_conversationEnded = false;
@@ -664,7 +670,7 @@ void ToucheEngine::waitForKeyCharPosition(int keyChar) {
 	KeyChar *key = _sortedKeyCharsTable[keyChar];
 	if (key->num != 0) {
 		key->prevBoundingRect = key->boundingRect;
-		moveKeyChar(_offscreenBuffer, 640, key);
+		moveKeyChar(_offscreenBuffer, kScreenWidth, key);
 		key->boundingRect = _moveKeyCharRect;
 		if (key->delay != 0) {
 			--key->delay;
@@ -766,12 +772,12 @@ bool ToucheEngine::scrollRoom(int keyChar) {
 
 	// vertical scrolling
 	int prevRoomDy = _flagsTable[615];
-	_flagsTable[615] = key->yPos + 32 - 400 / 2;
+	_flagsTable[615] = key->yPos + 32 - kScreenHeight / 2;
 	int roomHeight;
 	if (_hideInventoryTexts) {
-		roomHeight = 352;
+		roomHeight = kRoomHeight;
 	} else {
-		roomHeight = (_flagsTable[606] != 0) ? 400 : 352;
+		roomHeight = (_flagsTable[606] != 0) ? kScreenHeight : kRoomHeight;
 		_roomAreaRect.setHeight(roomHeight);
 	}
 	_flagsTable[615] = CLIP<int16>(_flagsTable[615], 0, _currentBitmapHeight - roomHeight);
@@ -791,7 +797,7 @@ bool ToucheEngine::scrollRoom(int keyChar) {
 			prevRoomDx = 0;
 		}
 	}
-	prevRoomDx = CLIP<int16>(prevRoomDx, 0, _roomWidth - 640);
+	prevRoomDx = CLIP<int16>(prevRoomDx, 0, _roomWidth - kScreenWidth);
 	if (_flagsTable[614] != prevRoomDx) {
 		_flagsTable[614] = prevRoomDx;
 		return true;
@@ -815,7 +821,7 @@ bool ToucheEngine::scrollRoom(int keyChar) {
 
 void ToucheEngine::drawIcon(int x, int y, int num) {
 	res_loadImage(num, _iconData);
-	Graphics::copyRect(_offscreenBuffer, 640, x, y,
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, x, y,
 	  _iconData, 58, 0, 0,
 	  58, 42,
 	  Graphics::kTransparent);
@@ -824,9 +830,9 @@ void ToucheEngine::drawIcon(int x, int y, int num) {
 void ToucheEngine::centerScreenToKeyChar(int keyChar) {
 	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
 	KeyChar *key = &_keyCharsTable[keyChar];
-	_flagsTable[614] = key->xPos - 640 / 2;
-	_flagsTable[615] = key->yPos - 400 / 2;
-	_flagsTable[615] = CLIP<int16>(_flagsTable[615], 0, _currentBitmapHeight - 352);
+	_flagsTable[614] = key->xPos - kScreenWidth / 2;
+	_flagsTable[615] = key->yPos - kScreenHeight / 2;
+	_flagsTable[615] = CLIP<int16>(_flagsTable[615], 0, _currentBitmapHeight - kRoomHeight);
 	scrollRoom(keyChar);
 }
 
@@ -848,11 +854,11 @@ void ToucheEngine::redrawRoom() {
 	if (_currentBitmapWidth == 0 || _currentBitmapHeight == 0) {
 		return;
 	}
-	int w = 640;
+	int w = kScreenWidth;
 	if (_flagsTable[614] < 0 || _flagsTable[614] > _currentBitmapWidth - w) {
 		error("Invalid room_x_offset = %d (w=%d, room_w=%d)", _flagsTable[614], w, _currentBitmapWidth);
 	}
-	int h = (_flagsTable[606] != 0) ? 400 : _roomAreaRect.height();
+	int h = (_flagsTable[606] != 0) ? int(kScreenHeight) : _roomAreaRect.height();
 	if (_flagsTable[615] < 0 || _flagsTable[615] > _currentBitmapHeight - h) {
 		error("Invalid room_y_offset = %d (h=%d, room_h=%d)", _flagsTable[615], h, _currentBitmapHeight);
 	}
@@ -934,7 +940,7 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 	Common::Rect clippingRect(_programRectsTable[clippingRectNum]);
 	clippingRect.translate(-_flagsTable[614], -_flagsTable[615]);
 	if (key->flags & 0x8000) {
-		clippingRect.moveTo(clippingRect.left, 352);
+		clippingRect.moveTo(clippingRect.left, kRoomHeight);
 	}
 	clippingRect.clip(_roomAreaRect);
 	SpriteData *spr = &_spritesTable[key->spriteNum];
@@ -1250,15 +1256,15 @@ int ToucheEngine::getStringWidth(int num) const {
 void ToucheEngine::drawString(uint16 color, int x, int y, int16 num) {
 	if (num) {
 		const char *str = getString(num);
-		Graphics::drawString16(_offscreenBuffer, 640, color, x, y, str);
+		Graphics::drawString16(_offscreenBuffer, kScreenWidth, color, x, y, str);
 	}
 }
 
 void ToucheEngine::drawGameString(uint16 color, int x1, int y, const char *str) {
 	int w = Graphics::getStringWidth16(str);
 	int x = x1 - w / 2;
-	if (x + w >= 640) {
-		x = 640 - w - 1;
+	if (x + w >= kScreenWidth) {
+		x = kScreenWidth - w - 1;
 	}
 	while (*str) {
 		char chr = *str++;
@@ -1270,7 +1276,7 @@ void ToucheEngine::drawGameString(uint16 color, int x1, int y, const char *str) 
 			if (x < 0) {
 				x = 0;
 			}
-			x += Graphics::drawChar16(_offscreenBuffer, 640, chr, x, y, color);
+			x += Graphics::drawChar16(_offscreenBuffer, kScreenWidth, chr, x, y, color);
 		}
 	}
 }
@@ -1498,7 +1504,7 @@ void ToucheEngine::handleRightMouseButtonClickOnInventory() {
 				const ProgramHitBoxData *hitBox = &_programHitBoxTable[i];
 				if (hitBox->item == item) {
 					const int menuX = r.left + r.width() / 2;
-					const int menuY = 352;
+					const int menuY = kRoomHeight;
 					int act = handleActionMenuUnderCursor(hitBox->actions, menuX, menuY, hitBox->str);
 					if (act != 0) {
 						restartKeyCharScriptOnAction(act, hitBox->item, 0);
@@ -1606,7 +1612,7 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 						}
 						int strWidth = getStringWidth(str);
 						int strPosX = _inp_mousePos.x - strWidth / 2;
-						strPosX = CLIP<int>(strPosX, 0, 640 - strWidth - 1);
+						strPosX = CLIP<int>(strPosX, 0, kScreenWidth - strWidth - 1);
 						if (_talkTextSpeed != 0) {
 							--_talkTextSpeed;
 						}
@@ -1728,13 +1734,13 @@ void ToucheEngine::handleMouseClickOnInventory(int flag) {
 }
 
 void ToucheEngine::scrollScreenToPos(int num) {
-	_screenOffset.x = _programPointsTable[num].x - 640 / 2;
-	_screenOffset.y = _programPointsTable[num].y - 400 / 2;
+	_screenOffset.x = _programPointsTable[num].x - kScreenWidth / 2;
+	_screenOffset.y = _programPointsTable[num].y - kScreenHeight / 2;
 }
 
 void ToucheEngine::clearRoomArea() {
-	int h = (_flagsTable[606] != 0) ? 400 : _roomAreaRect.height();
-	Graphics::fillRect(_offscreenBuffer, 640, 0, 0, 640, h, 0);
+	int h = (_flagsTable[606] != 0) ? int(kScreenHeight) : _roomAreaRect.height();
+	Graphics::fillRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, h, 0);
 	updateEntireScreen();
 }
 
@@ -1801,16 +1807,16 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 		}
 	}
 	int cursorW = strW + 28;
-	int cursorPosX = CLIP<int16>(offs - cursorW / 2, 0, 640 - cursorW);
+	int cursorPosX = CLIP<int16>(offs - cursorW / 2, 0, kScreenWidth - cursorW);
 	offs = cursorPosX + 14;
 	h *= 16;
 	int cursorH = h + 28;
-	int cursorPosY = CLIP<int16>(y - 24, 0, 352 - cursorH);
+	int cursorPosY = CLIP<int16>(y - 24, 0, kRoomHeight - cursorH);
 	y = cursorPosY + 24;
 	_cursorObjectRect = Common::Rect(cursorPosX, cursorPosY, cursorPosX + cursorW, cursorPosY + cursorH);
 	addToDirtyRect(_cursorObjectRect);
 
-	Graphics::fillRect(_offscreenBuffer, 640, cursorPosX + 14, cursorPosY + 24, cursorW - 28, cursorH - 40, 0xF8);
+	Graphics::fillRect(_offscreenBuffer, kScreenWidth, cursorPosX + 14, cursorPosY + 24, cursorW - 28, cursorH - 40, 0xF8);
 	drawActionsPanel(cursorPosX, cursorPosY, cursorW, cursorH);
 
 	const char *strData = getString(str);
@@ -1824,7 +1830,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	updateScreenArea(cursorPosX, cursorPosY, cursorW, cursorH);
 
 	_menuRedrawCounter = 2;
-	Common::Rect rect(0, y, 640, y + h);
+	Common::Rect rect(0, y, kScreenWidth, y + h);
 	i = -1;
 	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
 		if (rect.contains(_inp_mousePos)) {
@@ -1861,13 +1867,13 @@ void ToucheEngine::redrawBackground() {
 		if (area.r.top != 20000) {
 			area.r.translate(-_flagsTable[614], -_flagsTable[615]);
 			if (_programBackgroundTable[i].type == 4) {
-				int16 dx = _programBackgroundTable[i].offset - 640 / 2 - _flagsTable[614];
+				int16 dx = _programBackgroundTable[i].offset - kScreenWidth / 2 - _flagsTable[614];
 				dx *= _programBackgroundTable[i].scaleMul;
 				dx /= _programBackgroundTable[i].scaleDiv;
 				area.r.translate(dx, 0);
 			}
 			if (area.clip(_roomAreaRect)) {
-				Graphics::copyRect(_offscreenBuffer, 640, area.r.left, area.r.top,
+				Graphics::copyRect(_offscreenBuffer, kScreenWidth, area.r.left, area.r.top,
 				  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
 				  area.r.width(), area.r.height(),
 				  Graphics::kTransparent);
@@ -1969,7 +1975,7 @@ void ToucheEngine::redrawRoomRegion(int num, bool markForRedraw) {
 	Area area = _programAreaTable[num].area;
 	area.r.translate(-_flagsTable[614], -_flagsTable[615]);
 	if (area.clip(_roomAreaRect)) {
-		Graphics::copyRect(_offscreenBuffer, 640, area.r.left, area.r.top,
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, area.r.left, area.r.top,
 		  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
 		  area.r.width(), area.r.height(),
 		  Graphics::kTransparent);
@@ -2035,7 +2041,7 @@ void ToucheEngine::drawInventory(int index, int flag) {
 		_inventoryVar1 = _inventoryStateTable[index].itemsList;
 		_inventoryVar2 = &_inventoryStateTable[index].displayOffset;
 		_objectDescriptionNum = index;
-		uint8 *dst = _offscreenBuffer + 640 * 352;
+		uint8 *dst = _offscreenBuffer + kScreenWidth * kRoomHeight;
 		res_loadSpriteImage(index + 12, dst);
 		res_loadImageHelper(dst, _currentImageWidth, _currentImageHeight);
 		int firstObjNum = _inventoryVar2[0];
@@ -2049,7 +2055,7 @@ void ToucheEngine::drawInventory(int index, int flag) {
 			}
 		}
 		drawAmountOfMoneyInInventory();
-		updateScreenArea(0, 352, 640, 48);
+		updateScreenArea(0, kRoomHeight, kScreenWidth, kScreenHeight - kRoomHeight);
 	}
 }
 
@@ -2057,10 +2063,10 @@ void ToucheEngine::drawAmountOfMoneyInInventory() {
 	if (_flagsTable[606] == 0 && !_hideInventoryTexts) {
 		char text[10];
 		sprintf(text, "%d", _keyCharsTable[0].money);
-		Graphics::fillRect(_offscreenBuffer, 640, 74, 354, 40, 16, 0xD2);
+		Graphics::fillRect(_offscreenBuffer, kScreenWidth, 74, 354, 40, 16, 0xD2);
 		drawGameString(217, 94, 355, text);
 		updateScreenArea(74, 354, 40, 16);
-		Graphics::fillRect(_offscreenBuffer, 640, 150, 353, 40, 41, 0xD2);
+		Graphics::fillRect(_offscreenBuffer, kScreenWidth, 150, 353, 40, 41, 0xD2);
 		if (_currentAmountOfMoney != 0) {
 			drawIcon(141, 348, 1);
 			sprintf(text, "%d", _currentAmountOfMoney);
@@ -2204,8 +2210,8 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 		y -= 16;
 		if (y < 0) {
 			y = 1;
-		} else if (y > 352) {
-			y = 336;
+		} else if (y > kRoomHeight) {
+			y = kRoomHeight - 16;
 		}
 		if (textWidth > 200) {
 			textWidth = 200;
@@ -2215,8 +2221,8 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 		if (x < 0) {
 			x = 0;
 		}
-		if (x + textWidth >= 640) {
-			x = 640 - textWidth - 1;
+		if (x + textWidth >= kScreenWidth) {
+			x = kScreenWidth - textWidth - 1;
 		}
 		drawGameString(key->textColor, x + textWidth / 2, y, stringData);
 		_talkTextSpeed = 6;
@@ -2419,19 +2425,19 @@ void ToucheEngine::drawCharacterConversation() {
 	for (int i = 0; i < 4; ++i) {
 		drawString(214, 42, 328 + i * 16, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
 	}
-	updateScreenArea(0, 320, 640, 80);
+	updateScreenArea(0, 320, kScreenWidth, 80);
 	_conversationAreaCleared = false;
 }
 
 void ToucheEngine::drawConversationString(int num, uint16 color) {
 	const int y = 328 + num * 16;
 	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
-	updateScreenArea(0, y, 640, 16);
+	updateScreenArea(0, y, kScreenWidth, 16);
 }
 
 void ToucheEngine::clearConversationArea() {
 	drawConversationPanel();
-	updateScreenArea(0, 320, 640, 80);
+	updateScreenArea(0, 320, kScreenWidth, kScreenHeight - 320);
 	_conversationAreaCleared = true;
 }
 
@@ -3104,12 +3110,12 @@ void ToucheEngine::copyAnimationImage(int dstX, int dstY, int w, int h, const ui
 	copyRegion.srcY = srcY;
 	if (copyRegion.clip(_screenRect)) {
 		if (fillColor != -1) {
-			Graphics::copyMask(_offscreenBuffer, 640, copyRegion.r.left, copyRegion.r.top,
+			Graphics::copyMask(_offscreenBuffer, kScreenWidth, copyRegion.r.left, copyRegion.r.top,
 			  src, 58, copyRegion.srcX, copyRegion.srcY,
 			  copyRegion.r.width(), copyRegion.r.height(),
 			  (uint8)fillColor);
 		} else {
-			Graphics::copyRect(_offscreenBuffer, 640, copyRegion.r.left, copyRegion.r.top,
+			Graphics::copyRect(_offscreenBuffer, kScreenWidth, copyRegion.r.left, copyRegion.r.top,
 			  src, 58, copyRegion.srcX, copyRegion.srcY,
 			  copyRegion.r.width(), copyRegion.r.height(),
 			  Graphics::kTransparent);
@@ -3194,7 +3200,7 @@ void ToucheEngine::addToDirtyRect(const Common::Rect &r) {
 			++_dirtyRectsTableCount;
 		} else {
 			int index = -1;
-			int minRectSurface = 640 * 400;
+			int minRectSurface = kScreenWidth * kScreenHeight;
 			for (int i = 0; i < _dirtyRectsTableCount; ++i) {
 				if (r.intersects(_dirtyRectsTable[i])) {
 					Common::Rect tmpRect(r);
@@ -3244,12 +3250,12 @@ void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gS
 }
 
 void ToucheEngine::updateScreenArea(int x, int y, int w, int h) {
-	_system->copyRectToScreen(_offscreenBuffer + y * 640 + x, 640, x, y, w, h);
+	_system->copyRectToScreen(_offscreenBuffer + y * kScreenWidth + x, kScreenWidth, x, y, w, h);
 }
 
 void ToucheEngine::updateEntireScreen() {
-	int h = (_flagsTable[606] != 0) ? 400 : 352;
-	_system->copyRectToScreen(_offscreenBuffer, 640, 0, 0, 640, h);
+	int h = (_flagsTable[606] != 0) ? kScreenHeight : kRoomHeight;
+	_system->copyRectToScreen(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, h);
 }
 
 void ToucheEngine::updateDirtyScreenAreas() {
@@ -3262,13 +3268,13 @@ void ToucheEngine::updateDirtyScreenAreas() {
 		for (int i = 0; i < _dirtyRectsTableCount; ++i) {
 			const Common::Rect &r = _dirtyRectsTable[i];
 #if 0
-			Graphics::drawRect(_offscreenBuffer, 640, r.left, r.top, r.width(), r.height(), 0xFF, 0xFF);
+			Graphics::drawRect(_offscreenBuffer, kScreenWidth, r.left, r.top, r.width(), r.height(), 0xFF, 0xFF);
 #endif
-			_system->copyRectToScreen(_offscreenBuffer + r.top * 640 + r.left, 640, r.left, r.top, r.width(), r.height());
+			_system->copyRectToScreen(_offscreenBuffer + r.top * kScreenWidth + r.left, kScreenWidth, r.left, r.top, r.width(), r.height());
 		}
 		if (_menuRedrawCounter) {
 			const Common::Rect &r = _cursorObjectRect;
-			_system->copyRectToScreen(_offscreenBuffer + r.top * 640 + r.left, 640, r.left, r.top, r.width(), r.height());
+			_system->copyRectToScreen(_offscreenBuffer + r.top * kScreenWidth + r.left, kScreenWidth, r.left, r.top, r.width(), r.height());
 			--_menuRedrawCounter;
 		}
 	}

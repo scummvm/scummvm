@@ -313,6 +313,12 @@ enum InventoryArea {
 	kInventoryScroller2
 };
 
+enum {
+	kScreenWidth = 640,
+	kScreenHeight = 400,
+	kRoomHeight = 352
+};
+
 class MidiPlayer;
 
 class ToucheEngine: public Engine {
@@ -606,6 +612,8 @@ protected:
 	bool _inp_rightMouseButtonPressed;
 	int _disabledInputCounter;
 	bool _hideInventoryTexts;
+
+	int _sleepCycles;
 
 	bool _displayQuitDialog;
 	int _saveLoadCurrentPage;

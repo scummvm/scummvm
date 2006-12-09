@@ -869,12 +869,7 @@ void ToucheEngine::op_startMusic() {
 void ToucheEngine::op_sleep() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_sleep()");
 	int16 cycles = _script.readNextWord();
-	if (!_fastMode) {
-		for (int i = 0; i < cycles; i++) {
-			_system->delayMillis(50);
-			_system->updateScreen();
-		}
-	}
+	_sleepCycles = cycles * 2;
 }
 
 void ToucheEngine::op_delay() {

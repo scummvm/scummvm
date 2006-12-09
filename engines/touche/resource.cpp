@@ -144,7 +144,7 @@ void ToucheEngine::res_allocateTables() {
 		}
 	}
 
-	_offscreenBuffer = (uint8 *)malloc(640 * 400);
+	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	if (!_offscreenBuffer) {
 		error("Unable to allocate memory for offscreen buffer");
 	}

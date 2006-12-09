@@ -142,7 +142,7 @@ static void drawArrow(uint8 *dst, int dstPitch, int x, int y, int delta, uint8 c
 void ToucheEngine::drawButton(void *button) {
 	Button *b = (Button *)button;
 	if (b->flags & kButtonBorder) {
-		Graphics::drawRect(_offscreenBuffer, 640, b->x, b->y, b->w, b->h, 0xF7, 0xF9);
+		Graphics::drawRect(_offscreenBuffer, kScreenWidth, b->x, b->y, b->w, b->h, 0xF7, 0xF9);
 	}
 	if (b->flags & kButtonText) {
 		if (b->data != 0) {
@@ -151,7 +151,7 @@ void ToucheEngine::drawButton(void *button) {
 			const int h = 16;
 			const int x = b->x + (b->w - w) / 2;
 			const int y = b->y + (b->h - h) / 2;
-			Graphics::drawString16(_offscreenBuffer, 640, 0xFF, x, y, str);
+			Graphics::drawString16(_offscreenBuffer, kScreenWidth, 0xFF, x, y, str);
 		}
 	}
 	if (b->flags & kButtonArrow) {
@@ -169,8 +169,8 @@ void ToucheEngine::drawButton(void *button) {
 		}
 		const int x = b->x + b->w / 2;
 		const int y = b->y + b->h / 2;
-		drawArrow(_offscreenBuffer, 640, x, y + dy + 1, dx, 0xD2);
-		drawArrow(_offscreenBuffer, 640, x, y + dy,     dx, 0xFF);
+		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy + 1, dx, 0xD2);
+		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy,     dx, 0xFF);
 	}
 }
 
@@ -254,12 +254,12 @@ static void setupMenu(MenuMode mode, MenuData *menuData) {
 
 void ToucheEngine::redrawMenu(void *menu) {
 	MenuData *menuData = (MenuData *)menu;
-	Graphics::fillRect(_offscreenBuffer, 640, 90, 102, 460, 196, 0xF8);
-	Graphics::drawRect(_offscreenBuffer, 640, 90, 102, 460, 196, 0xF7, 0xF9);
-	Graphics::drawRect(_offscreenBuffer, 640, 106, 118, 340, 164, 0xF9, 0xF7);
+	Graphics::fillRect(_offscreenBuffer, kScreenWidth, 90, 102, 460, 196, 0xF8);
+	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 90, 102, 460, 196, 0xF7, 0xF9);
+	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 106, 118, 340, 164, 0xF9, 0xF7);
 	switch (menuData->mode) {
 	case kMenuSettingsMode:
-		drawVolumeSlideBar(_offscreenBuffer, 640, _midiPlayer->getVolume());
+		drawVolumeSlideBar(_offscreenBuffer, kScreenWidth, _midiPlayer->getVolume());
 		menuData->buttonsTable[5].data = 0;
 		menuData->buttonsTable[6].data = 0;
 		menuData->buttonsTable[7].data = 0;
@@ -267,7 +267,7 @@ void ToucheEngine::redrawMenu(void *menu) {
 		break;
 	case kMenuLoadStateMode:
 	case kMenuSaveStateMode:
-		drawSaveGameStateDescriptions(_offscreenBuffer, 640, menuData, _saveLoadCurrentPage, _saveLoadCurrentSlot);
+		drawSaveGameStateDescriptions(_offscreenBuffer, kScreenWidth, menuData, _saveLoadCurrentPage, _saveLoadCurrentSlot);
 		break;
 	}
 	for (uint i = 0; i < menuData->buttonsCount; ++i) {
@@ -418,19 +418,19 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 }
 
 void ToucheEngine::drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY) {
-	Graphics::copyRect(_offscreenBuffer, 640, dstX, dstY,
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, dstY,
 	  _menuKitData, 42, 0, 0,
 	  14, 24,
 	  Graphics::kTransparent);
-	Graphics::copyRect(_offscreenBuffer, 640, deltaX - 14 + dstX, dstY,
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, deltaX - 14 + dstX, dstY,
 	  _menuKitData, 42, 0, 40,
 	  14, 24,
 	  Graphics::kTransparent);
-	Graphics::copyRect(_offscreenBuffer, 640, dstX, deltaY - 16 + dstY,
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, deltaY - 16 + dstY,
 	  _menuKitData, 42, 0, 24,
 	  14, 16,
 	  Graphics::kTransparent);
-	Graphics::copyRect(_offscreenBuffer, 640, deltaX - 14 + dstX, deltaY - 16 + dstY,
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, deltaX - 14 + dstX, deltaY - 16 + dstY,
 	  _menuKitData, 42, 0, 64,
 	  14, 16,
 	  Graphics::kTransparent);
@@ -438,11 +438,11 @@ void ToucheEngine::drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY) 
 	int x2 = dstX + 14;
 	while (x1 > 0) {
 		int w = (x1 > 14) ? 14 : x1;
-		Graphics::copyRect(_offscreenBuffer, 640, x2, dstY,
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, x2, dstY,
 		  _menuKitData, 42, 0, 80,
 		  w, 24,
 		  Graphics::kTransparent);
-		Graphics::copyRect(_offscreenBuffer, 640, x2, deltaY - 16 + dstY,
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, x2, deltaY - 16 + dstY,
 		  _menuKitData, 42, 0, 104,
 		  w, 16,
 		  Graphics::kTransparent);
@@ -453,11 +453,11 @@ void ToucheEngine::drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY) 
 	x2 = dstY + 24;
 	while (x1 > 0) {
 		int w = (x1 > 120) ? 120 : x1;
-		Graphics::copyRect(_offscreenBuffer, 640, dstX, x2,
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, x2,
 		  _menuKitData, 42, 14, 0,
 		  14, w,
 		  Graphics::kTransparent);
-		Graphics::copyRect(_offscreenBuffer, 640, deltaX - 14 + dstX, x2,
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, deltaX - 14 + dstX, x2,
 		  _menuKitData, 42, 28, 0,
 		  14, w,
 		  Graphics::kTransparent);
@@ -473,13 +473,13 @@ void ToucheEngine::drawConversationPanelBorder(int dstY, int srcX, int srcY) {
 		if (i == 12) {
 			w = 34;
 		}
-		Graphics::copyRect(_offscreenBuffer, 640, dstX, dstY, _convKitData, 152, srcX, srcY, w, 6);
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, dstY, _convKitData, 152, srcX, srcY, w, 6);
 		dstX += w;
 	}
 }
 
 void ToucheEngine::drawConversationPanel() {
-	Graphics::copyRect(_offscreenBuffer, 640, 0, 320, _convKitData, 152, 0, 0, 72, 80);
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 320, _convKitData, 152, 0, 0, 72, 80);
 	int dstX = 54;
 	int dstY = 326;
 	int w = 96;
@@ -487,41 +487,41 @@ void ToucheEngine::drawConversationPanel() {
 		if (i == 5) {
 			w = 50;
 		}
-		Graphics::copyRect(_offscreenBuffer, 640, dstX, dstY, _convKitData, 152, 24, 6, w, 68);
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, dstY, _convKitData, 152, 24, 6, w, 68);
 		dstX += w;
 	}
 	--dstX;
-	Graphics::copyRect(_offscreenBuffer, 640, dstX, 320, _convKitData, 152, 120, 0, 7, 80);
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, 320, _convKitData, 152, 120, 0, 7, 80);
 	dstX -= 3;
 	if (_scrollConversationChoiceOffset != 0) {
 		drawConversationPanelBorder(320, 72, 0);
-		Graphics::copyRect(_offscreenBuffer, 640, 0, 320, _convKitData, 152, 128, 0, 24, 21);
-		Graphics::copyRect(_offscreenBuffer, 640, dstX, 320, _convKitData, 152, 128, 34, 10, 10);
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 320, _convKitData, 152, 128, 0, 24, 21);
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, 320, _convKitData, 152, 128, 34, 10, 10);
 	} else {
 		drawConversationPanelBorder(320, 24, 0);
 	}
 	if (_conversationChoicesTable[_scrollConversationChoiceOffset + 4].msg != 0) {
 		drawConversationPanelBorder(394, 72, 74);
-		Graphics::copyRect(_offscreenBuffer, 640, 0, 379, _convKitData, 152, 128, 59, 24, 21);
-		Graphics::copyRect(_offscreenBuffer, 640, dstX, 394, _convKitData, 152, 128, 46, 10, 6);
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 379, _convKitData, 152, 128, 59, 24, 21);
+		Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, 394, _convKitData, 152, 128, 46, 10, 6);
 	} else {
 		drawConversationPanelBorder(394, 24, 74);
 	}
 }
 
 void ToucheEngine::printStatusString(const char *str) {
-	Graphics::fillRect(_offscreenBuffer, 640, 0, 0, 640, 16, 0xD7);
-	Graphics::drawRect(_offscreenBuffer, 640, 0, 0, 640, 16, 0xD6, 0xD8);
-	Graphics::drawString16(_offscreenBuffer, 640, 0xFF, 0, 0, str);
-	updateScreenArea(0, 0, 640, 16);
+	Graphics::fillRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, 16, 0xD7);
+	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, 16, 0xD6, 0xD8);
+	Graphics::drawString16(_offscreenBuffer, kScreenWidth, 0xFF, 0, 0, str);
+	updateScreenArea(0, 0, kScreenWidth, 16);
 	_system->updateScreen();
 }
 
 void ToucheEngine::clearStatusString() {
-	Graphics::copyRect(_offscreenBuffer, 640, 0, 0,
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 0,
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
-	  640, 16);
-	updateScreenArea(0, 0, 640, 16);
+	  kScreenWidth, 16);
+	updateScreenArea(0, 0, kScreenWidth, 16);
 }
 
 int ToucheEngine::displayQuitDialog() {

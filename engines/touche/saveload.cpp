@@ -321,7 +321,9 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	_inventoryStateTable[1].displayOffset = 0;
 	_inventoryStateTable[2].displayOffset = 0;
 	drawInventory(_currentKeyCharNum, 1);
-	Graphics::copyRect(_offscreenBuffer, 640, 0, 0, _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615], 640, 352);
+	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 0,
+	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
+	  kScreenWidth, kRoomHeight);
 	updateEntireScreen();
 	if (_flagsTable[617] != 0) {
 		res_loadSpeech(_flagsTable[617]);
