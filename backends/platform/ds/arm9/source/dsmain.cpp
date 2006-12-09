@@ -701,10 +701,7 @@ void displayMode16BitFlipBuffer() {
 		
 		if (cpuScaler)
 		{
-			for(int i=0; i<200; ++i)
-			{                 
-				DS::Rescale_320x1555Scanline_To_256x1555Scanline(BG_GFX+i*512, back+i*512);
-			}
+            Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
 		}
 		else
 		{

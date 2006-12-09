@@ -271,7 +271,7 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
 }
 
 // Can't work in place
-void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u32* palette)
+static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u32* palette)
 {
     ComputeDivBy5TableIFN();
     
@@ -289,7 +289,7 @@ void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, cons
 
 
 // Can work in place, because it's a contraction
-void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
+static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
 {
     ComputeDivBy5TableIFN();
     
