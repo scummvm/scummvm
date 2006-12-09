@@ -316,7 +316,8 @@ enum InventoryArea {
 enum {
 	kScreenWidth = 640,
 	kScreenHeight = 400,
-	kRoomHeight = 352
+	kRoomHeight = 352,
+	kStartupEpisode = 90
 };
 
 class MidiPlayer;

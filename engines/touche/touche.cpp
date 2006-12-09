@@ -138,7 +138,7 @@ void ToucheEngine::restart() {
 	_currentEpisodeNum = 0;
 	_newEpisodeNum = ConfMan.getInt("boot_param");
 	if (_newEpisodeNum == 0) {
-		_newEpisodeNum = 90;
+		_newEpisodeNum = kStartupEpisode;
 	}
 
 	_newMusicNum = 0;
@@ -232,10 +232,6 @@ void ToucheEngine::writeConfigurationSettings() {
 void ToucheEngine::mainLoop() {
 	restart();
 
-	_inp_leftMouseButtonPressed = false;
-	_inp_rightMouseButtonPressed = false;
-	showCursor(false);
-
 	setPalette(0, 255, 0, 0, 0);
 
 	readConfigurationSettings();
@@ -244,6 +240,10 @@ void ToucheEngine::mainLoop() {
 		loadGameState(ConfMan.getInt("save_slot"));
 		_newEpisodeNum = _currentEpisodeNum;
 	}
+
+	_inp_leftMouseButtonPressed = false;
+	_inp_rightMouseButtonPressed = false;
+	showCursor(_newEpisodeNum != kStartupEpisode);
 
 	const int cycleDelay = 1000 / (1193180 / 32768);
 	uint32 frameTimeStamp = _system->getMillis();
