@@ -135,7 +135,7 @@ void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height) {
 }
 
 static bool isDivBy5Ready = false;
-static u32  DIV_BY_5[512];
+static u32  DIV_BY_5[160];
 
 void ComputeDivBy5TableIFN()
 {
@@ -143,7 +143,7 @@ void ComputeDivBy5TableIFN()
         return;
     isDivBy5Ready = true;
 
-    for(int i=0; i<512; ++i)
+    for(int i=0; i<160; ++i)
     {
         DIV_BY_5[i] = (2*i+5)/10;
     }        
@@ -270,14 +270,6 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
     ((u32*)dest)[1] = d32;
 }
 
-inline u32 Convert555To8888(u16 pixel)
-{
-    u32 result = pixel & 0x1F;
-    result |= ((pixel >> 5) & 0x1F) << 8;
-    result |= ((pixel >> 10) & 0x1F) << 16;
-    return result;    
-}
-
 // Can't work in place
 void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u32* palette)
 {
@@ -316,8 +308,17 @@ void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
 	u32* fastRam = (u32 *) (0x37F8000 + 16384);
+    
+    // Palette lookup -> 0_888
     for(size_t i=0; i<256; ++i)
-        fastRam[i] = Convert555To8888(palette[i]);        
+    {
+        u32 col = palette[i];
+        u32 result = col & 0x0000001F;
+        result |= (col << 3) & 0x00001F00;
+        result |= (col << 6) & 0x001F0000;
+
+        fastRam[i] = result;
+    }
 
 	for(size_t i=0; i<200; ++i)
 	{
