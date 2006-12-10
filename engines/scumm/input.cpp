@@ -313,6 +313,12 @@ void ScummEngine::processInput() {
 
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(int lastKeyHit) {
+	// Alt-F5 brings up the original save/load dialog
+
+	if (lastKeyHit == 440 && !(_game.features & GF_DEMO)) {
+		lastKeyHit = 315;
+	}
+
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it.
 	if (_keyScriptNo && (_keyScriptKey == lastKeyHit)) {
@@ -435,6 +441,12 @@ void ScummEngine_v2::processKeyboard(int lastKeyHit) {
 			// Fall back to default behavior
 			ScummEngine::processKeyboard(lastKeyHit);
 		}
+
+		// Alt-F5 brings up the original save/load dialog
+
+		if (lastKeyHit == 440) {
+			lastKeyHit = 314+5;
+		}
 	
 		// Store the input type. So far we can't distinguish
 		// between 1, 3 and 5.
@@ -468,6 +480,13 @@ void ScummEngine::processKeyboard(int lastKeyHit) {
 		saveloadkey = 319;	// F5
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
+
+	// Alt-F5 brings up the original save/load dialog.
+
+	if (lastKeyHit == 440 && _game.version > 2 && _game.version < 8) {
+		lastKeyHit = saveloadkey;
+		saveloadkey = -1;
+	}
 
 	if (lastKeyHit == saveloadkey) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)

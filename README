@@ -810,6 +810,12 @@ other games.
         [ and ]                - Music volume, down/up
         - and +                - Text speed, slower/faster
         F5                     - Displays a save/load box
+        Alt-F5                 - Displays the original save/load box, if the
+                                 game has one. This is not intended for saving
+                                 or loading a game, and may even crash ScummVM
+                                 in some games, but it is currently the only
+                                 way to see your IQ points in Indiana Jones and
+                                 the Last Crusade without dying.
         Space                  - Pauses
         Period (.)             - Skips current line of text in some games
         Enter                  - Simulate left mouse button press
