@@ -245,25 +245,18 @@ void ToucheEngine::mainLoop() {
 	_inp_rightMouseButtonPressed = false;
 	showCursor(_newEpisodeNum != kStartupEpisode);
 
-	const int cycleDelay = 1000 / (1193180 / 32768);
 	uint32 frameTimeStamp = _system->getMillis();
-	_sleepCycles = 0;
-	uint32 cycleCounter = 0;
-	while (_flagsTable[611] == 0) {
-		if (_sleepCycles) {
-			--_sleepCycles;
-		} else {
-			if ((cycleCounter % 3) == 0) {
-				runCycle();
-			}
-			if ((cycleCounter % 2) == 0) {
-				fadePaletteFromFlags();
-			}
- 			++cycleCounter;
- 		}
+	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
+		if ((cycleCounter % 3) == 0) {
+			runCycle();
+		}
+		if ((cycleCounter % 2) == 0) {
+			fadePaletteFromFlags();
+		}
+
 		_system->updateScreen();
 		int delay = _system->getMillis() - frameTimeStamp;
-		delay = (_fastMode ? 10 : cycleDelay) - delay;
+		delay = (_fastMode ? 10 : kCycleDelay) - delay;
 		if (delay < 1) {
 			delay = 1;
 		}
@@ -787,8 +780,8 @@ bool ToucheEngine::scrollRoom(int keyChar) {
 
 	// horizontal scrolling
 	int prevRoomDx = _flagsTable[614];
-	if (key->xPos > prevRoomDx + 480) {
-		int dx = key->xPos - (prevRoomDx + 480);
+	if (key->xPos > prevRoomDx + kScreenWidth - 160) {
+		int dx = key->xPos - (prevRoomDx + kScreenWidth - 160);
 		prevRoomDx += dx;
 	} else if (key->xPos < prevRoomDx + 160) {
 		int dx = prevRoomDx + 160 - key->xPos;
@@ -822,8 +815,8 @@ bool ToucheEngine::scrollRoom(int keyChar) {
 void ToucheEngine::drawIcon(int x, int y, int num) {
 	res_loadImage(num, _iconData);
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, x, y,
-	  _iconData, 58, 0, 0,
-	  58, 42,
+	  _iconData, kIconWidth, 0, 0,
+	  kIconWidth, kIconHeight,
 	  Graphics::kTransparent);
 }
 
@@ -1394,10 +1387,8 @@ void ToucheEngine::showCursor(bool show) {
 void ToucheEngine::setCursor(int num) {
 	debugC(9, kDebugEngine, "ToucheEngine::setCursor(%d)", num);
 	_currentCursorObject = num;
-	const int cursorW = 58;
-	const int cursorH = 42;
 	res_loadImage(num, _mouseData);
-	_system->setMouseCursor(_mouseData, cursorW, cursorH, cursorW / 2, cursorH / 2, 0);
+	_system->setMouseCursor(_mouseData, kCursorWidth, kCursorHeight, kCursorWidth / 2, kCursorHeight / 2, 0);
 }
 
 void ToucheEngine::setDefaultCursor(int num) {
@@ -1745,7 +1736,6 @@ void ToucheEngine::clearRoomArea() {
 }
 
 void ToucheEngine::startNewMusic() {
-//	_midiPlayer->setLooping(_flagsTable[619] != 0);
 	if (_newMusicNum != 0 && _newMusicNum != _currentMusicNum) {
 		res_loadMusic(_newMusicNum);
 		_currentMusicNum = _newMusicNum;
@@ -2425,7 +2415,7 @@ void ToucheEngine::drawCharacterConversation() {
 	for (int i = 0; i < 4; ++i) {
 		drawString(214, 42, 328 + i * 16, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
 	}
-	updateScreenArea(0, 320, kScreenWidth, 80);
+	updateScreenArea(0, 320, kScreenWidth, kScreenHeight - 320);
 	_conversationAreaCleared = false;
 }
 
@@ -3111,12 +3101,12 @@ void ToucheEngine::copyAnimationImage(int dstX, int dstY, int w, int h, const ui
 	if (copyRegion.clip(_screenRect)) {
 		if (fillColor != -1) {
 			Graphics::copyMask(_offscreenBuffer, kScreenWidth, copyRegion.r.left, copyRegion.r.top,
-			  src, 58, copyRegion.srcX, copyRegion.srcY,
+			  src, kIconWidth, copyRegion.srcX, copyRegion.srcY,
 			  copyRegion.r.width(), copyRegion.r.height(),
 			  (uint8)fillColor);
 		} else {
 			Graphics::copyRect(_offscreenBuffer, kScreenWidth, copyRegion.r.left, copyRegion.r.top,
-			  src, 58, copyRegion.srcX, copyRegion.srcY,
+			  src, kIconWidth, copyRegion.srcX, copyRegion.srcY,
 			  copyRegion.r.width(), copyRegion.r.height(),
 			  Graphics::kTransparent);
 		}
@@ -3151,7 +3141,7 @@ void ToucheEngine::drawAnimationImage(AnimationEntry *anim) {
 		if (i == 5) {
 			color = -1;
 		}
-		copyAnimationImage(x, y, 58, 42, _iconData, 0, 0, color);
+		copyAnimationImage(x, y, kIconWidth, kIconHeight, _iconData, 0, 0, color);
 		--color;
 		displayRectX1 = MIN(x, displayRectX1);
 		displayRectX2 = MAX(x, displayRectX2);
@@ -3160,7 +3150,7 @@ void ToucheEngine::drawAnimationImage(AnimationEntry *anim) {
 		x += dx;
 		y += dy;
 	}
-	anim->displayRect = Common::Rect(displayRectX1, displayRectY1, displayRectX2 + 58, displayRectY2 + 42);
+	anim->displayRect = Common::Rect(displayRectX1, displayRectY1, displayRectX2 + kIconWidth, displayRectY2 + kIconHeight);
 	addToDirtyRect(anim->displayRect);
 }
 

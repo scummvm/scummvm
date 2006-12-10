@@ -175,7 +175,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_sleep,
 		0,
 		/* 0x74 */
-		&ToucheEngine::op_delay,
+		&ToucheEngine::op_setKeyCharDelay,
 		&ToucheEngine::op_lockHitBox,
 		&ToucheEngine::op_removeItemFromInventory,
 		&ToucheEngine::op_unlockHitBox,
@@ -192,7 +192,7 @@ void ToucheEngine::setupOpcodes() {
 		/* 0x80 */
 		&ToucheEngine::op_unsetKeyCharFlags,
 		&ToucheEngine::op_drawSpriteOnBackdrop,
-		&ToucheEngine::op_loadVoice,
+		&ToucheEngine::op_loadSpeechSegment,
 		0,
 		/* 0x84 */
 		&ToucheEngine::op_startPaletteFadeIn,
@@ -868,12 +868,18 @@ void ToucheEngine::op_startMusic() {
 
 void ToucheEngine::op_sleep() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_sleep()");
-	int16 cycles = _script.readNextWord();
-	_sleepCycles = cycles * 2;
+	// this should probably be turned into a no-op/debug-op...
+	int cycles = _script.readNextWord() * 2;
+	if (!_fastMode) {
+		for (; cycles > 0; --cycles) {
+			_system->delayMillis(kCycleDelay);
+			_system->updateScreen();
+		}
+	}
 }
 
-void ToucheEngine::op_delay() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_delay()");
+void ToucheEngine::op_setKeyCharDelay() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setKeyCharDelay()");
 	int16 delay = _script.readNextWord();
 	_keyCharsTable[_script.keyCharNum].delay = delay;
 	_script.quitFlag = 3;
@@ -927,8 +933,8 @@ void ToucheEngine::op_unsetKeyCharFlags() {
 	_keyCharsTable[keyChar].flags &= ~flags;
 }
 
-void ToucheEngine::op_loadVoice() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadVoice()");
+void ToucheEngine::op_loadSpeechSegment() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_loadSpeechSegment()");
 	int16 num = _script.readNextWord();
 	res_loadSpeech(num);
 }

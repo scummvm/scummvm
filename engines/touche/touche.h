@@ -317,7 +317,12 @@ enum {
 	kScreenWidth = 640,
 	kScreenHeight = 400,
 	kRoomHeight = 352,
-	kStartupEpisode = 90
+	kStartupEpisode = 90,
+	kCycleDelay = 1000 / (1193180 / 32768),
+	kIconWidth = 58,
+	kIconHeight = 42,
+	kCursorWidth = 58,
+	kCursorHeight = 42
 };
 
 class MidiPlayer;
@@ -555,14 +560,14 @@ protected:
 	void op_setKeyCharTextColor();
 	void op_startMusic();
 	void op_sleep();
-	void op_delay();
+	void op_setKeyCharDelay();
 	void op_lockHitBox();
 	void op_removeItemFromInventory();
 	void op_unlockHitBox();
 	void op_addRoomArea();
 	void op_setKeyCharFlags();
 	void op_unsetKeyCharFlags();
-	void op_loadVoice();
+	void op_loadSpeechSegment();
 	void op_drawSpriteOnBackdrop();
 	void op_startPaletteFadeIn();
 	void op_startPaletteFadeOut();
@@ -613,8 +618,6 @@ protected:
 	bool _inp_rightMouseButtonPressed;
 	int _disabledInputCounter;
 	bool _hideInventoryTexts;
-
-	int _sleepCycles;
 
 	bool _displayQuitDialog;
 	int _saveLoadCurrentPage;

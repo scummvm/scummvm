@@ -120,12 +120,12 @@ void ToucheEngine::res_allocateTables() {
 		error("Unable to allocate memory for program data");
 	}
 
-	_mouseData = (uint8 *)malloc(58 * 42);
+	_mouseData = (uint8 *)malloc(kCursorWidth * kCursorHeight);
 	if (!_mouseData) {
 		error("Unable to allocate memory for mouse data");
 	}
 
-	_iconData = (uint8 *)malloc(58 * 42);
+	_iconData = (uint8 *)malloc(kIconWidth * kIconHeight);
 	if (!_iconData) {
 		error("Unable to allocate memory for object data");
 	}
