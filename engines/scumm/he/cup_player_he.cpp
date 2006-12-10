@@ -43,6 +43,7 @@ bool CUP_Player::open(const char *filename) {
 			debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 			_offscreenBuffer = (uint8 *)malloc(_width * _height);
 			memset(_offscreenBuffer, 0, _width * _height);
+			_paletteChanged = false;
 			opened = true;
 		}
 	}
@@ -108,9 +109,7 @@ void CUP_Player::play() {
 			} else {
 				_system->delayMillis(1);
 			}
-			_system->setPalette(_paletteData, 0, 256);
-			_system->copyRectToScreen(_offscreenBuffer, _width, 0, 0, _width, _height);
-			_system->updateScreen();
+			updateScreen();
 			_vm->parseEvents();
 
 			ticks = _system->getMillis();
@@ -119,6 +118,19 @@ void CUP_Player::play() {
 		_currentChunkData += size;
 		_currentChunkSize -= size;
 	}
+}
+
+void CUP_Player::setDirtyScreenRect(const Common::Rect &r) {
+	const uint8 *src = _offscreenBuffer + r.top * _width + r.left;
+	_system->copyRectToScreen(src, _width, r.left, r.top, r.width() + 1, r.height() + 1);
+}
+
+void CUP_Player::updateScreen() {
+	if (_paletteChanged) {
+		_system->setPalette(_paletteData, 0, 256);
+		_paletteChanged = false;
+	}
+	_system->updateScreen();
 }
 
 void CUP_Player::parseNextTag(const uint8 *data, uint32 &tag, uint32 &size) {
@@ -183,6 +195,7 @@ void CUP_Player::handleRGBS(const uint8 *data, uint32 dataSize) {
 		*ptr++ = *data++;
 		*ptr++ = 0;
 	}
+	_paletteChanged = true;
 }
 
 void CUP_Player::handleFRAM(uint8 *dst, const uint8 *data, uint32 size) {
@@ -191,15 +204,16 @@ void CUP_Player::handleFRAM(uint8 *dst, const uint8 *data, uint32 size) {
 	if (flags & 1) {
 		type = *data++;
 	}
-	Common::Rect dstRect;
+	Common::Rect r;
 	if (flags & 2) {
-		dstRect.left   = READ_LE_UINT16(data); data += 2;
-		dstRect.top    = READ_LE_UINT16(data); data += 2;
-		dstRect.right  = READ_LE_UINT16(data); data += 2;
-		dstRect.bottom = READ_LE_UINT16(data); data += 2;
+		r.left   = READ_LE_UINT16(data); data += 2;
+		r.top    = READ_LE_UINT16(data); data += 2;
+		r.right  = READ_LE_UINT16(data); data += 2;
+		r.bottom = READ_LE_UINT16(data); data += 2;
 	}
 	if (flags & 0x80) {
-		decodeFRAM(dst, dstRect, data, type);
+		decodeFRAM(dst, r, data, type);
+		setDirtyScreenRect(r);
 	}
 }
 
@@ -240,13 +254,15 @@ void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect &dstRect, const uint8 *data
 }
 
 void CUP_Player::handleSRLE(uint8 *dst, const uint8 *data, uint32 size) {
-//	x1 = READ_LE_UINT16(data + 0);
-//	y1 = READ_LE_UINT16(data + 2);
-//	x2 = READ_LE_UINT16(data + 4);
-//	y2 = READ_LE_UINT16(data + 6);
-	const uint8 *colorMap = data + 8;
-	int unpackedSize = READ_LE_UINT32(data + 40);
-	decodeSRLE(dst, colorMap, data + 44, unpackedSize);
+	Common::Rect r;
+	r.left   = READ_LE_UINT16(data); data += 2;
+	r.top    = READ_LE_UINT16(data); data += 2;
+	r.right  = READ_LE_UINT16(data); data += 2;
+	r.bottom = READ_LE_UINT16(data); data += 2;
+	const uint8 *colorMap = data;
+	int unpackedSize = READ_LE_UINT32(data + 32);
+	decodeSRLE(dst, colorMap, data + 36, unpackedSize);
+	setDirtyScreenRect(r);
 }
 
 void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data, int unpackedSize) {

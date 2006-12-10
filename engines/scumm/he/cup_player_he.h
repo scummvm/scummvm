@@ -38,6 +38,7 @@ struct CUP_Player {
 	uint32 _currentChunkSize;
 	uint8 *_bufferLzssData;
 	uint32 _bufferLzssSize;
+	bool _paletteChanged;
 
 	ScummEngine_vCUPhe *_vm;
 	Audio::Mixer *_mixer;
@@ -58,6 +59,8 @@ struct CUP_Player {
 	uint32 loadNextChunk();
 	void parseHeaderTags();
 	void play();
+	void setDirtyScreenRect(const Common::Rect &r);
+	void updateScreen();
 	void parseNextTag(const uint8 *data, uint32 &tag, uint32 &size);
 	void handleHEAD(const uint8 *data, uint32 dataSize);
 	void handleSFXB(const uint8 *data, uint32 dataSize);
