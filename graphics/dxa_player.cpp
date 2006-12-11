@@ -292,9 +292,10 @@ void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
 
 	int codeSize = _width * _curHeight / 16;
 	int dataSize, motSize, maskSize;
-	memcpy(&dataSize, data, 4);
-	memcpy(&motSize, &data[4], 4);
-	memcpy(&maskSize, &data[8], 4);
+
+	dataSize = READ_BE_UINT32(&data[0]);
+	motSize  = READ_BE_UINT32(&data[4]);
+	maskSize = READ_BE_UINT32(&data[8]);
 
 	codeBuf = &data[12];
 	dataBuf = &codeBuf[codeSize];
@@ -311,7 +312,7 @@ void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
 				break;
 
 			case 1: {
-				uint16 diffMap = *(unsigned short*)maskBuf;
+				uint16 diffMap = READ_BE_UINT16(maskBuf);
 				maskBuf += 2;
 
 				for (int yc = 0; yc < BLOCKH; yc++) {
@@ -427,11 +428,11 @@ void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
 				int count = type - 30;
 				uint8 pixels[4];
 
-				for (int i = 0; i < count; i++)
-					pixels[i] = *dataBuf++;
+				memcpy(pixels, dataBuf, count);
+				dataBuf += count;
 
 				if (count == 2) {
-					uint16 code = *(uint16*)maskBuf;
+					uint16 code = READ_BE_UINT16(maskBuf);
 					maskBuf += 2;
 					for (int yc = 0; yc < BLOCKH; yc++) {
 						for (int xc = 0; xc < BLOCKW; xc++) {
@@ -441,7 +442,7 @@ void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
 						b2 += _width;
 					}
 				} else {
-					uint32 code = *(uint32*)maskBuf;
+					uint32 code = READ_BE_UINT32(maskBuf);
 					maskBuf += 4;
 					for (int yc = 0; yc < BLOCKH; yc++) {
 						for (int xc = 0; xc < BLOCKW; xc++) {
