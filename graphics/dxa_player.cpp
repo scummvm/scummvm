@@ -127,7 +127,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 
 	if (_scaleMode != S_NONE) {
 		_scaledBuffer = (uint8 *)malloc(_frameSize);
-		if (_scaledBuffer)
+		if (!_scaledBuffer)
 			error("Error allocating scale buffer (size %d)", _frameSize);
 	}
 
