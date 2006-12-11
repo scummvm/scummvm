@@ -32,20 +32,28 @@ namespace Common {
 
 namespace Graphics {
 
+enum ScaleMode {
+	S_NONE,
+	S_INTERLACED,
+	S_DOUBLE
+};
+
 class DXAPlayer {
 protected:
 	Common::File _fd;
 
 	byte *_frameBuffer1;
 	byte *_frameBuffer2;
+	byte *_scaledBuffer;
 	uint16 _width;
-	uint16 _height;
+	uint16 _height, _curHeight;
 	uint16 _framesCount;
 	uint32 _framesPerSec;
 	uint16 _frameNum;
 	uint32 _frameSize;
 	uint16 _frameSkipped;
 	uint32 _frameTicks;
+	ScaleMode _scaleMode;
 
 public:
 	DXAPlayer();
@@ -110,6 +118,7 @@ protected:
 
 	void decodeZlib(byte *data, int size, int totalSize);
 	void decode12(byte *data, int size, int totalSize);
+	void decode13(byte *data, int size, int totalSize);
 };
  
 } // End of namespace Graphics

@@ -34,6 +34,7 @@ namespace Graphics {
 DXAPlayer::DXAPlayer() {
 	_frameBuffer1 = 0;
 	_frameBuffer2 = 0;
+	_scaledBuffer = 0;
 
 	_width = 0;
 	_height = 0;
@@ -44,6 +45,8 @@ DXAPlayer::DXAPlayer() {
 	_framesPerSec = 0;
 	_frameSkipped = 0;
 	_frameTicks = 0;
+
+	_scaleMode = S_NONE;
 }
 
 DXAPlayer::~DXAPlayer() {
@@ -84,7 +87,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 	tag = _fd.readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
 
-	_fd.readByte();
+	uint8 flags = _fd.readByte();
 	_framesCount = _fd.readUint16BE();
 	frameRate = _fd.readUint32BE();
 
@@ -103,13 +106,29 @@ bool DXAPlayer::loadFile(const char *filename) {
 	_width = _fd.readUint16BE();
 	_height = _fd.readUint16BE();
 
+	if (flags & 0x80) {
+		_scaleMode = S_INTERLACED;
+		_curHeight = _height / 2;
+	} else if (flags & 0x40) {
+		_scaleMode = S_DOUBLE;
+		_curHeight = _height / 2;
+	} else {
+		_scaleMode = S_NONE;
+		_curHeight = _height;
+	}
+                
 	debug(2, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _framesPerSec, _frameTicks);
 
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
-	if (!_frameBuffer1 || !_frameBuffer2) {
-		error("error allocating frame tables, size %d\n", _frameSize);
+	if (!_frameBuffer1 || !_frameBuffer2)
+		error("Error allocating frame buffers (size %d)", _frameSize);
+
+	if (_scaleMode != S_NONE) {
+		_scaledBuffer = (uint8 *)malloc(_frameSize);
+		if (_scaledBuffer)
+			error("Error allocating scale buffer (size %d)", _frameSize);
 	}
 
 	_frameNum = 0;
@@ -125,14 +144,35 @@ void DXAPlayer::closeFile() {
 	_fd.close();
 	free(_frameBuffer1);
 	free(_frameBuffer2);
+	free(_scaledBuffer);
 }
 
 void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
+	byte *src;
+
+	switch (_scaleMode) {
+	case S_INTERLACED:
+		memset(_scaledBuffer, 0, _width * _height);
+		for (int cy = 0; cy < _curHeight; cy++)
+			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+		src = _scaledBuffer;
+		break;
+	case S_DOUBLE:
+		for (int cy = 0; cy < _curHeight; cy++) {
+			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+			memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
+		}
+		src = _scaledBuffer;
+		break;
+	case S_NONE:
+		src = _frameBuffer1;
+		break;
+	}
+
 	uint h = _height;
 	uint w = _width;
 
 	dst += y * pitch + x;
-	byte *src = _frameBuffer1;
 
 	do {
 		memcpy(dst, src, w);
@@ -254,6 +294,192 @@ void DXAPlayer::decode12(byte *data, int size, int totalSize) {
 			}
 			case 5:
 				break;
+			default:
+				error("decode12: Unknown type %d", type);
+			}
+		}
+	}
+
+	memcpy(data, frame2, totalSize);
+	free(frame2);
+#endif
+}
+
+void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
+#ifdef USE_ZLIB
+	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
+
+	/* decompress the input data */
+	decodeZlib(data, size, totalSize);
+
+	uint8 *frame2 = (uint8*)malloc(totalSize);
+	memcpy(frame2, _frameBuffer1, totalSize);
+
+	int codeSize = _width * _curHeight / 16;
+	int dataSize, motSize, maskSize;
+	memcpy(&dataSize, data, 4);
+	memcpy(&motSize, &data[4], 4);
+	memcpy(&maskSize, &data[8], 4);
+
+	codeBuf = &data[12];
+	dataBuf = &codeBuf[codeSize];
+	motBuf = &dataBuf[dataSize];
+	maskBuf = &motBuf[motSize];
+
+	for (int by = 0; by < _curHeight; by += BLOCKH) {
+		for (int bx = 0; bx < _width; bx += BLOCKW) {
+			uint8 type = *codeBuf++;
+			uint8 *b2 = (uint8*)frame2 + bx + by * _width;
+
+			switch (type) {
+			case 0:
+				break;
+
+			case 1: {
+				uint16 diffMap = *(unsigned short*)maskBuf;
+				maskBuf += 2;
+
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					for (int xc = 0; xc < BLOCKW; xc++) {
+						if (diffMap & 0x8000) {
+							b2[xc] = *dataBuf++;
+						}
+						diffMap <<= 1;
+					}
+					b2 += _width;
+				}
+				break;
+			}
+			case 2: {
+				uint8 color = *dataBuf++;
+
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					for (int xc = 0; xc < BLOCKW; xc++) {
+						b2[xc] = color;
+					}
+					b2 += _width;
+				}
+				break;
+			}
+			case 3: {
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					for (int xc = 0; xc < BLOCKW; xc++) {
+						b2[xc] = *dataBuf++;
+					}
+					b2 += _width;
+				}
+				break;
+			}
+			case 4: {
+				uint8 mbyte = *motBuf++;
+
+				int mx = (mbyte >> 4) & 0x07;
+				if (mbyte & 0x80)
+					mx = -mx;
+				int my = mbyte & 0x07;
+				if (mbyte & 0x08)
+					my = -my;
+
+				uint8 *b1 = (uint8*)_frameBuffer1 + (bx+mx) + (by+my) * _width;
+				for (int yc = 0; yc < BLOCKH; yc++) {
+					memcpy(b2, b1, BLOCKW);
+					b1 += _width;
+					b2 += _width;
+				}
+				break;
+			}
+			case 8: {
+				static const int subX[4] = {0, 2, 0, 2};
+				static const int subY[4] = {0, 0, 2, 2};
+
+				uint8 subMask = *maskBuf++;
+
+				for (int subBlock = 0; subBlock < 4; subBlock++) {
+					int sx = bx + subX[subBlock], sy = by + subY[subBlock];
+					b2 = (uint8*)frame2 + sx + sy * _width;
+					switch (subMask & 0xC0) {
+					// 00: skip
+					case 0x00:
+						break;
+					// 01: solid color
+					case 0x40: {
+						uint8 subColor = *dataBuf++;
+						for (int yc = 0; yc < BLOCKH / 2; yc++) {
+							for (int xc = 0; xc < BLOCKW / 2; xc++) {
+								b2[xc] = subColor;
+							}
+							b2 += _width;
+						}
+						break;
+					}
+					// 02: motion vector
+					case 0x80: {
+						uint8 mbyte = *motBuf++;
+
+						int mx = (mbyte >> 4) & 0x07;
+						if (mbyte & 0x80)
+							mx = -mx;
+
+						int my = mbyte & 0x07;
+						if (mbyte & 0x08)
+							my = -my;
+
+						uint8 *b1 = (uint8*)_frameBuffer1 + (sx+mx) + (sy+my) * _width;
+						for (int yc = 0; yc < BLOCKH / 2; yc++) {
+							memcpy(b2, b1, BLOCKW / 2);
+							b1 += _width;
+							b2 += _width;
+						}
+						break;
+					}
+					// 03: raw
+					case 0xC0:
+						for (int yc = 0; yc < BLOCKH / 2; yc++) {
+							for (int xc = 0; xc < BLOCKW / 2; xc++) {
+								b2[xc] = *dataBuf++;
+							}
+							b2 += _width;
+						}
+						break;
+					}
+					subMask <<= 2;
+				}
+                        break;
+                        }
+			case 32:
+			case 33:
+			case 34: {
+				int count = type - 30;
+				uint8 pixels[4];
+
+				for (int i = 0; i < count; i++)
+					pixels[i] = *dataBuf++;
+
+				if (count == 2) {
+					uint16 code = *(uint16*)maskBuf;
+					maskBuf += 2;
+					for (int yc = 0; yc < BLOCKH; yc++) {
+						for (int xc = 0; xc < BLOCKW; xc++) {
+							b2[xc] = pixels[code & 1];
+							code >>= 1;
+						}
+						b2 += _width;
+					}
+				} else {
+					uint32 code = *(uint32*)maskBuf;
+					maskBuf += 4;
+					for (int yc = 0; yc < BLOCKH; yc++) {
+						for (int xc = 0; xc < BLOCKW; xc++) {
+							b2[xc] = pixels[code & 3];
+							code >>= 2;
+						}
+						b2 += _width;
+					}
+				}
+				break;
+			}
+			default:
+				error("decode13: Unknown type %d", type);
 			}
 		}
 	}
@@ -289,10 +515,13 @@ void DXAPlayer::decodeNextFrame() {
 		case 12:
 			decode12(_frameBuffer2, size, _frameSize);
 			break;
+		case 13:
+			decode13(_frameBuffer2, size, _frameSize);
+			break;
 		default:
 			error("decodeFrame: Unknown compression type %d", type);
 		}
-		if (type == 2 || type == 4 || type == 12) {
+		if (type == 2 || type == 4 || type == 12 || type == 13) {
 			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
 		} else {
 			for (int j = 0; j < _height; ++j) {
