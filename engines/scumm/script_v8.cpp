@@ -856,14 +856,18 @@ void ScummEngine_v8::o8_roomOps() {
 		setCurrentPalette(a);
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
+		_saveSound = 0;
 		_saveTemporaryState = true;
 		_saveLoadSlot = 1;
 		_saveLoadFlag = 1;
 		break;
 	case 0x5E:		// SO_ROOM_LOAD_GAME Load game
-		_saveTemporaryState = true;
-		_saveLoadSlot = 1;
-		_saveLoadFlag = 2;
+		_saveSound = pop();
+		if (!_saveLoadFlag) {
+			_saveTemporaryState = true;
+			_saveLoadSlot = 1;
+			_saveLoadFlag = 2;
+		}
 		break;
 	case 0x5F:		// SO_ROOM_SATURATION Set saturation of room colors
 		e = pop();
@@ -1230,32 +1234,31 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		removeBlastTexts();
 		break;
 	case 25: {	// saveGameReadName
-		char *address = (char*)getStringAddress(args[2]);
 		char name[30];
+		if (getSavegameName(args[1], name)) {
+			int size = resStrLen((const byte *)name) + 1;
+			_res->nukeResource(rtString, args[2]);
 
-		if (!address) {
-			error("o8_kernelSetFunctions: saveGameReadName failed finding slot string %d", args[2]);
-			break;
+			ArrayHeader *ah = (ArrayHeader *)_res->createResource(rtString, args[2], size + sizeof(ArrayHeader));
+			ah->type = TO_LE_16(kStringArray);
+			ah->dim1 = TO_LE_16(size + 1);
+			ah->dim2 = TO_LE_16(1);
+
+			memcpy(getStringAddress(args[2]), name, size);
 		}
-		getSavegameName(args[1] - 1, name);
-		if (strlen(name) > 0 && strlen(name) < 30)
-			strcpy(address, name);
 		break;
 	}
-	case 26: {	// saveGame?
-		//char *address = (char*)getStringAddress(args[2]);
-		char address[30];
-		debug(0, "o8_kernelSetFunctions: saveGame?(%d, %s)", args[1], address);
+	case 26: { // saveGameWrite
+		// FIXME: This doesn't work
+		char *address = (char*)getStringAddress(args[2]);
+		debug(0, "o8_kernelSetFunctions: saveGame(%d, %s)", args[1], address);
 		break;
 	}
-	case 27: {	// FIXME: This doesn't work
-			// saveGameRead
+	case 27: // saveGameRead
 		_saveLoadSlot = args[1];
 		_saveLoadFlag = 2;
 		_saveTemporaryState = false;
-		debug(0, "Sgl: %d", args[1]);
 		break;
-	}
 	case 28:	// saveGameStampScreenshot
 		debug(0, "o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
