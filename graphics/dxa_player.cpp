@@ -98,8 +98,8 @@ bool DXAPlayer::loadFile(const char *filename) {
 	else
 		_framesPerSec = 10;
 
-        if (frameRate < 0)
-                _frameTicks = -frameRate / 100;
+	if (frameRate < 0)
+		_frameTicks = -frameRate / 100;
 	else
 		_frameTicks = frameRate;
 
@@ -116,7 +116,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 		_scaleMode = S_NONE;
 		_curHeight = _height;
 	}
-                
+
 	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d ticks %d", flags, _framesCount, _width, _height, _framesPerSec, _frameTicks);
 
 	_frameSize = _width * _height;
@@ -212,7 +212,7 @@ void DXAPlayer::decode12(byte *data, int size, int totalSize) {
 					static const struct { uint8 sh1, sh2; } shiftTbl[6] = {
 						{0, 0},	{8, 0},	{8, 8},	{8, 4},	{4, 0},	{4, 4}
 					};
-					diffMap = ((*dat & 0xF0) << shiftTbl[type-10].sh1) | 
+					diffMap = ((*dat & 0xF0) << shiftTbl[type-10].sh1) |
 						  ((*dat & 0x0F) << shiftTbl[type-10].sh2);
 					dat++;
 				} else {
@@ -419,8 +419,8 @@ void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
 					}
 					subMask <<= 2;
 				}
-                        break;
-                        }
+				break;
+			}
 			case 32:
 			case 33:
 			case 34: {
