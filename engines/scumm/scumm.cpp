@@ -1897,25 +1897,23 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		const char *errMsg = 0;
 		char filename[256];
 
+		if (_game.version == 8 && _saveTemporaryState)
+			VAR(VAR_GAME_LOADED) = 0;
+
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
 				errMsg = "Failed to save game state to file:\n\n%s";
 
-			// Ender: Disabled for small_header games, as can overwrite game
-			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
-			// because of odd timing issue with scripts and the variable reset
-			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER) && _game.version < 8)
+			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
 				errMsg = "Failed to load game state from file:\n\n%s";
 
-			// Ender: Disabled for small_header games, as can overwrite game
-			//  variables (eg, Zak256 cashcard values).
-			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER))
-				VAR(VAR_GAME_LOADED) = 203;
+			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF)
+				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
 		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
