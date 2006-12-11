@@ -1734,7 +1734,6 @@ int ScummEngine::scummLoop(int delta) {
 load_game:
 	scummLoop_handleSaveLoad();
 
-
 	if (_completeScreenRedraw) {
 		_charset->clearCharsetMask();
 		_charset->_hasMask = false;
@@ -1937,6 +1936,14 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		_lastSaveTime = _system->getMillis();
 	}
 }
+
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v8::scummLoop_handleSaveLoad() {
+	ScummEngine::scummLoop_handleSaveLoad();
+
+	removeBlastObjects();
+}
+#endif
 
 void ScummEngine::scummLoop_handleDrawing() {
 	if (camera._cur != camera._last || _bgNeedsRedraw || _fullRedraw) {

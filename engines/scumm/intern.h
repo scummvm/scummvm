@@ -961,6 +961,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void scummLoop_handleSaveLoad();
+
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 	virtual void decodeParseString(int m, int n);
