@@ -117,19 +117,14 @@ bool DXAPlayer::loadFile(const char *filename) {
 		_curHeight = _height;
 	}
                 
-	debug(2, "frames_count %d width %d height %d rate %d ticks %d", _framesCount, _width, _height, _framesPerSec, _frameTicks);
+	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d ticks %d", flags, _framesCount, _width, _height, _framesPerSec, _frameTicks);
 
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
-	if (!_frameBuffer1 || !_frameBuffer2)
-		error("Error allocating frame buffers (size %d)", _frameSize);
-
-	if (_scaleMode != S_NONE) {
-		_scaledBuffer = (uint8 *)malloc(_frameSize);
-		if (!_scaledBuffer)
-			error("Error allocating scale buffer (size %d)", _frameSize);
-	}
+	_scaledBuffer = (uint8 *)malloc(_frameSize);
+	if (!_frameBuffer1 || !_frameBuffer2 || !_scaledBuffer)
+		error("DXAPlayer: Error allocating buffers (size %d)", _frameSize);
 
 	_frameNum = 0;
 	_frameSkipped = 0;
@@ -148,30 +143,10 @@ void DXAPlayer::closeFile() {
 }
 
 void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
-	byte *src;
-
-	switch (_scaleMode) {
-	case S_INTERLACED:
-		memset(_scaledBuffer, 0, _width * _height);
-		for (int cy = 0; cy < _curHeight; cy++)
-			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
-		src = _scaledBuffer;
-		break;
-	case S_DOUBLE:
-		for (int cy = 0; cy < _curHeight; cy++) {
-			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
-			memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
-		}
-		src = _scaledBuffer;
-		break;
-	case S_NONE:
-		src = _frameBuffer1;
-		break;
-	}
-
 	uint h = _height;
 	uint w = _width;
 
+	byte *src = _scaledBuffer;
 	dst += y * pitch + x;
 
 	do {
@@ -524,12 +499,29 @@ void DXAPlayer::decodeNextFrame() {
 		if (type == 2 || type == 4 || type == 12 || type == 13) {
 			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
 		} else {
-			for (int j = 0; j < _height; ++j) {
+			for (int j = 0; j < _curHeight; ++j) {
 				for (int i = 0; i < _width; ++i) {
 					const int offs = j * _width + i;
 					_frameBuffer1[offs] ^= _frameBuffer2[offs];
 				}
 			}
+		}
+
+		switch (_scaleMode) {
+		case S_INTERLACED:
+			memset(_scaledBuffer, 0, _width * _height);
+			for (int cy = 0; cy < _curHeight; cy++)
+				memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+			break;
+		case S_DOUBLE:
+			for (int cy = 0; cy < _curHeight; cy++) {
+				memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+				memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
+			}
+			break;
+		case S_NONE:
+			memcpy(_scaledBuffer, _frameBuffer1, _width * _height);
+			break;
 		}
 	}
 }

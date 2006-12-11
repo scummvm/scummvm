@@ -348,9 +348,9 @@ void MoviePlayerDXA::processFrame(void) {
 }
 
 void MoviePlayerDXA::updateScreen(void) {
-	// Using _frameBuffer1 directly should work, as long as we don't do any
+	// Using _scaledBuffer directly should work, as long as we don't do any
 	// post-processing of the frame.
-	_sys->copyRectToScreen(_frameBuffer1, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
+	_sys->copyRectToScreen(_scaledBuffer, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
 	_sys->updateScreen();
 }
 
