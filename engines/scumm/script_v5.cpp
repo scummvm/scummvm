@@ -910,8 +910,8 @@ void ScummEngine_v5::loadVars() {
 			debug(0, "stub loadVars: vars %d -> %d", a, b);
 			break;
 		case 0x02: // read a range of string variables
-			a = getVarOrDirectByte(0x80);
-			b = getVarOrDirectByte(0x40);
+			a = getVarOrDirectByte(PARAM_1);
+			b = getVarOrDirectByte(PARAM_2);
 			debug(0, "stub loadVars: strings %d -> %d", a, b);
 			break;
 		case 0x03: // open file
@@ -1147,10 +1147,10 @@ void ScummEngine_v5::o5_saveLoadGame() {
 			result = 5; // failed to load
 		break;
 	case 0x80: // save
-		if (saveState(slot, _saveTemporaryState))
-			result = 0;
-		else
-			result = 2;
+		//if (saveState(slot, _saveTemporaryState))
+		//	result = 0; // sucess
+		//else
+			result = 2; // failed to save
 		break;
 	case 0xC0: // test if save exists
 		bool avail_saves[100];
@@ -2068,8 +2068,8 @@ void ScummEngine_v5::o5_setObjectName() {
 void ScummEngine_v5::o5_setOwnerOf() {
 	int obj, owner;
 
-	obj = getVarOrDirectWord(0x80);
-	owner = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	owner = getVarOrDirectByte(PARAM_2);
 
 	setOwnerOf(obj, owner);
 }
