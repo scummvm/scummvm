@@ -1955,8 +1955,8 @@ void Inter_v2::o2_initMult(void) {
 		for (i = 0; i < _vm->_mult->_objCount; i++) {
 			_vm->_mult->_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);
 			_vm->_mult->_objects[i].pPosY = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posYVar / 4) * 4);
-			if ((i == 0) || (i == 1))
-				warning("=> Goblin %d: %d (%d) (%d)", i, animDataVar + i * 4 * _vm->_global->_inter_animDataSize, (animDataVar + i * 4 * _vm->_global->_inter_animDataSize) / 4, _vm->_global->_inter_animDataSize);
+//			if ((i == 0) || (i == 1))
+//				warning("=> Goblin %d: %d %d %d %d %d (%d) (%d)", i, i * 4 + (posXVar / 4) * 4, i + (posXVar / 4), i * 4 + (posYVar / 4) * 4, i + (posYVar / 4), animDataVar + i * 4 * _vm->_global->_inter_animDataSize, (animDataVar + i * 4 * _vm->_global->_inter_animDataSize) / 4, _vm->_global->_inter_animDataSize);
 			_vm->_mult->_objects[i].pAnimData =
 			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables + animDataVar +
 			    i * 4 * _vm->_global->_inter_animDataSize);

@@ -2036,6 +2036,9 @@ void Goblin::sub_11984(Mult::Mult_Object *obj) {
 			animData->field_15--;
 	}
 
+	if (animData->frame < framesCount)
+		return;
+
 	if (animData->field_F != -1) {
 		animData->frame = 0;
 		animData->state = animData->field_F;

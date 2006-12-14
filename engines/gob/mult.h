@@ -35,9 +35,9 @@ public:
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct Mult_AnimData {
-		int8 animation;
+		uint8 animation;
 		uint8 layer;
-		int8 frame;
+		uint8 frame;
 		int8 animType;
 		int8 order;
 		int8 isPaused;
@@ -47,7 +47,7 @@ public:
 		int8 newLayer;
 		int8 newAnimation;
 		byte intersected;
-		int8 newCycle;
+		uint8 newCycle;
 		int8 state;              // New in GOB2
 		int8 nextState;          // New in GOB2
 		int8 field_F;            // New in GOB2
@@ -61,7 +61,7 @@ public:
 		int8 field_17;           // New in GOB2
 		int8 somethingAnimation; // New in GOB2
 		int8 somethingLayer;     // New in GOB2
-		int8 somethingFrame;     // New in GOB2
+		uint8 somethingFrame;     // New in GOB2
 	};
 
 	struct Mult_GobState {
