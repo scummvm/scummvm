@@ -35,6 +35,7 @@ DXAPlayer::DXAPlayer() {
 	_frameBuffer1 = 0;
 	_frameBuffer2 = 0;
 	_scaledBuffer = 0;
+	_drawBuffer = 0;
 
 	_width = 0;
 	_height = 0;
@@ -146,7 +147,7 @@ void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint h = _height;
 	uint w = _width;
 
-	byte *src = _scaledBuffer;
+	byte *src = _drawBuffer;
 	dst += y * pitch + x;
 
 	do {
@@ -510,18 +511,21 @@ void DXAPlayer::decodeNextFrame() {
 
 		switch (_scaleMode) {
 		case S_INTERLACED:
-			memset(_scaledBuffer, 0, _width * _height);
-			for (int cy = 0; cy < _curHeight; cy++)
+			for (int cy = 0; cy < _curHeight; cy++) {
 				memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+				memset(&_scaledBuffer[((2 * cy) + 1) * _width], 0, _width);
+			}
+			_drawBuffer = _scaledBuffer;
 			break;
 		case S_DOUBLE:
 			for (int cy = 0; cy < _curHeight; cy++) {
 				memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
 				memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
 			}
+			_drawBuffer = _scaledBuffer;
 			break;
 		case S_NONE:
-			memcpy(_scaledBuffer, _frameBuffer1, _width * _height);
+			_drawBuffer = _frameBuffer1;
 			break;
 		}
 	}

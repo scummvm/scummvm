@@ -45,6 +45,7 @@ protected:
 	byte *_frameBuffer1;
 	byte *_frameBuffer2;
 	byte *_scaledBuffer;
+	byte *_drawBuffer;
 	uint16 _width;
 	uint16 _height, _curHeight;
 	uint16 _framesCount;
