@@ -123,9 +123,14 @@ bool DXAPlayer::loadFile(const char *filename) {
 	_frameSize = _width * _height;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
-	_scaledBuffer = (uint8 *)malloc(_frameSize);
-	if (!_frameBuffer1 || !_frameBuffer2 || !_scaledBuffer)
-		error("DXAPlayer: Error allocating buffers (size %d)", _frameSize);
+	if (!_frameBuffer1 || !_frameBuffer2)
+		error("DXAPlayer: Error frame buffers (size %d)", _frameSize);
+
+	if (_scaleMode != S_NONE) {
+		_scaledBuffer = (uint8 *)malloc(_frameSize);
+		if (!_scaledBuffer)
+			error("Error allocating scale buffer (size %d)", _frameSize);
+	}
 
 	_frameNum = 0;
 	_frameSkipped = 0;
