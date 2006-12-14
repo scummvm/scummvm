@@ -61,9 +61,10 @@ static const char *g_dirNames[] = {	"clusters",	"speech" };
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
-#define NUM_MAC_FILES_TO_CHECK 3
+#define NUM_MAC_FILES_TO_CHECK 4
 #define NUM_DEMO_FILES_TO_CHECK 1
-#define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK
+#define NUM_MAC_DEMO_FILES_TO_CHECK 1
+#define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK
 static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
 	"swordres.rif", // Mac and PC version
 	"general.clu", // PC version only
@@ -72,7 +73,9 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 	"general.clm", // Mac version only
 	"compacts.clm", // Mac version only
 	"scripts.clm", // Mac version only
+	"paris2.clm", // Mac version (full game only)
 	"cows.mad",	// this one should only exist in the demo version
+	"scripts.clm", // Mac version both demo and full game
 	// the engine needs several more files to work, but checking these should be sufficient
 };
 
@@ -81,7 +84,7 @@ GameList Engine_SWORD1_gameIDList() {
 	games.push_back(sword1FullSettings);
 	games.push_back(sword1DemoSettings);
 	games.push_back(sword1MacFullSettings);
-	//games.push_back(sword1MacDemoSettings);
+	games.push_back(sword1MacDemoSettings);
 	return games;
 }
 
@@ -92,8 +95,8 @@ GameDescriptor Engine_SWORD1_findGameID(const char *gameid) {
 		return sword1DemoSettings;
 	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameid))
 		return sword1MacFullSettings;
-	//if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameid))
-	//	return sword1MacDemoSettings;
+	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameid))
+		return sword1MacDemoSettings;
 	return GameDescriptor();
 }
 
@@ -127,6 +130,7 @@ DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	bool pcFilesFound = true;
 	bool macFilesFound = true;
 	bool demoFilesFound = true;
+	bool macDemoFilesFound = true;
 	for (i = 0; i < NUM_COMMON_FILES_TO_CHECK; i++)
 		if (!filesFound[i])
 			mainFilesFound = false;
@@ -139,15 +143,18 @@ DetectedGameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	for (j = 0; j < NUM_DEMO_FILES_TO_CHECK; i++, j++)
 		if (!filesFound[i])
 			demoFilesFound = false;
+	for (j = 0; j < NUM_DEMO_FILES_TO_CHECK; i++, j++)
+		if (!filesFound[i])
+			macDemoFilesFound = false;
 
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
 		detectedGames.push_back(sword1DemoSettings);
 	else if (mainFilesFound && pcFilesFound)
 		detectedGames.push_back(sword1FullSettings);
-	//else if (mainFilesFound && macFilesFound && demoFilesFound)
-	//	detectedGames.push_back(sword1MacDemoSettings);
 	else if (mainFilesFound && macFilesFound)
 		detectedGames.push_back(sword1MacFullSettings);
+	else if (mainFilesFound && macDemoFilesFound)
+		detectedGames.push_back(sword1MacDemoSettings);
 
 	return detectedGames;
 }
@@ -371,7 +378,6 @@ const CdFile SwordEngine::_macCdFileList[] = {
 	{ "scripts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "text.clm", FLAG_CD1 | FLAG_DEMO },
-	{ "cows.mad", FLAG_DEMO },
 	{ "speech1.clu", FLAG_SPEECH1 },
 	 { "speech2.clu", FLAG_SPEECH2 }
 #ifdef USE_MAD
