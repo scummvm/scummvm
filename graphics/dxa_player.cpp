@@ -534,6 +534,9 @@ void DXAPlayer::decodeNextFrame() {
 			break;
 		}
 	}
+
+	if (tag == MKID_BE('NULL'))
+		_drawBuffer = _frameBuffer1;
 }
 
 } // End of namespace Graphics
