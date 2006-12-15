@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "sound/mixer.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/he/intern_he.h"
@@ -39,11 +40,16 @@ bool CUP_Player::open(const char *filename) {
 			_playbackRate = 66;
 			_width = 640;
 			_height = 480;
-			parseHeaderTags();
-			debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 			_offscreenBuffer = (uint8 *)malloc(_width * _height);
 			memset(_offscreenBuffer, 0, _width * _height);
 			_paletteChanged = false;
+			_sfxCount = 0;
+			_sfxBuffer = 0;
+			_sfxHandleTable = 0;
+			memset(_sfxQueue, 0, sizeof(_sfxQueue));
+			_sfxQueuePos = 0;
+			parseHeaderTags();
+			debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 			opened = true;
 		}
 	}
@@ -53,6 +59,8 @@ bool CUP_Player::open(const char *filename) {
 void CUP_Player::close() {
 	_fd.close();
 	free(_offscreenBuffer);
+	free(_sfxBuffer);
+	delete[] _sfxHandleTable;
 }
 
 uint32 CUP_Player::loadNextChunk() {
@@ -109,6 +117,7 @@ void CUP_Player::play() {
 			} else {
 				_system->delayMillis(1);
 			}
+			updateSfx();
 			updateScreen();
 			_vm->parseEvents();
 
@@ -131,6 +140,39 @@ void CUP_Player::updateScreen() {
 		_paletteChanged = false;
 	}
 	_system->updateScreen();
+}
+
+void CUP_Player::updateSfx() {
+	for (int i = 0; i < _sfxQueuePos; ++i) {
+		const CUP_Sfx *sfx = &_sfxQueue[i];
+		int index;
+		if (sfx->num == -1) {
+			for (index = 0; index < _sfxCount; ++index) {
+				if (_mixer->isSoundHandleActive(_sfxHandleTable[index])) {
+					break;
+				}
+			}
+			if (index == _sfxCount) {
+				continue;
+			}
+		} else {
+			index = sfx->num - 1;
+		}
+		assert(index >= 0 && index < _sfxCount);
+		if (!_mixer->isSoundHandleActive(_sfxHandleTable[index]) || (sfx->mode & 2) != 0) {
+			if ((sfx->flags & 0x8000) == 0) {
+				warning("Unhandled Sfx looping");
+				continue;
+			}
+			uint32 offset = READ_LE_UINT32(_sfxBuffer + index * 4) - 8;
+			uint8 *soundData = _sfxBuffer + offset;
+			if (READ_BE_UINT32(soundData) == MKID_BE('DATA')) {
+				uint32 soundSize = READ_BE_UINT32(soundData + 4);
+				_mixer->playRaw(&_sfxHandleTable[index], soundData + 8, soundSize - 8, 11025, Audio::Mixer::FLAG_UNSIGNED);
+			}
+		}
+	}
+	_sfxQueuePos = 0;
 }
 
 void CUP_Player::parseNextTag(const uint8 *data, uint32 &tag, uint32 &size) {
@@ -181,8 +223,19 @@ void CUP_Player::handleHEAD(const uint8 *data, uint32 dataSize) {
 }
 
 void CUP_Player::handleSFXB(const uint8 *data, uint32 dataSize) {
-	// TODO
-	warning("unhandled SFXB");
+	if (dataSize > 16) { // WRAP and OFFS chunks
+		if (READ_BE_UINT32(data) == MKID_BE('WRAP')) {
+			data += 8;
+			if (READ_BE_UINT32(data) == MKID_BE('OFFS')) {
+				_sfxCount = (READ_BE_UINT32(data + 4) - 8) / 4;
+				_sfxBuffer = (uint8 *)malloc(dataSize - 16);
+				if (_sfxBuffer) {
+					memcpy(_sfxBuffer, data + 8, dataSize - 16);
+				}
+				_sfxHandleTable = new Audio::SoundHandle[_sfxCount];
+			}
+		}
+	}
 }
 
 void CUP_Player::handleRGBS(const uint8 *data, uint32 dataSize) {
@@ -366,12 +419,14 @@ void CUP_Player::handleRATE(const uint8 *data, uint32 dataSize) {
 }
 
 void CUP_Player::handleSNDE(const uint8 *data, uint32 dataSize) {
-	// TODO
-	warning("unhandled SNDE");
-	// READ_LE_UINT32
-	// READ_LE_UINT16
-	// READ_LE_UINT16
-	// READ_LE_UINT16
+	if (_sfxQueuePos < ARRAYSIZE(_sfxQueue)) {
+		CUP_Sfx *sfx = &_sfxQueue[_sfxQueuePos];
+		sfx->mode = READ_LE_UINT32(data);
+		sfx->num = (int16)READ_LE_UINT16(data + 4);
+		// READ_LE_UINT16(data + 6); // unused
+		sfx->flags = READ_LE_UINT16(data + 8);
+		++_sfxQueuePos;
+	}
 }
 
 void CUP_Player::handleTOIL(const uint8 *data, uint32 dataSize) {
@@ -390,25 +445,17 @@ void CUP_Player::handleTOIL(const uint8 *data, uint32 dataSize) {
 			case 1:
 				_vm->_quit = true;
 				break;
-			case 2:
-				// display copyright/information messagebox
+			case 7: { // pause playback
+					int sfxSync = READ_LE_UINT32(data);
+					warning("Unhandled playback pause %d", sfxSync);
+				}
 				break;
-			case 3:
-				// READ_LE_UINT32(data);
-				break;
-			case 4:
-				// restart playback
-				break;
-			case 5:
-				// disable normal screen update
-				break;
-			case 6:
-				// perform offscreen buffers swapping
-				break;
-			case 7:
-				// pause playback at specific frame
-				// READ_LE_UINT32(data);
-				break;
+			case 2: // display copyright/information messagebox
+			case 3: // no-op in the original
+			case 4: // restart playback
+			case 5: // disable normal screen update
+			case 6: // perform offscreen buffers swapping
+				// these are never triggered
 			default:
 				warning("Unhandled TOIL code=%d", code);
 				break;

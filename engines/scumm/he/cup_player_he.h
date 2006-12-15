@@ -26,6 +26,12 @@
 
 namespace Scumm {
 
+struct CUP_Sfx {
+	int num;
+	int mode;
+	uint16 flags;
+};
+
 struct CUP_Player {
 	Common::File _fd;
 	uint32 _dataSize;
@@ -39,6 +45,11 @@ struct CUP_Player {
 	uint8 *_bufferLzssData;
 	uint32 _bufferLzssSize;
 	bool _paletteChanged;
+	int _sfxCount;
+	uint8 *_sfxBuffer;
+	Audio::SoundHandle *_sfxHandleTable;
+	CUP_Sfx _sfxQueue[16];
+	int _sfxQueuePos;
 
 	ScummEngine_vCUPhe *_vm;
 	Audio::Mixer *_mixer;
@@ -61,6 +72,7 @@ struct CUP_Player {
 	void play();
 	void setDirtyScreenRect(const Common::Rect &r);
 	void updateScreen();
+	void updateSfx();
 	void parseNextTag(const uint8 *data, uint32 &tag, uint32 &size);
 	void handleHEAD(const uint8 *data, uint32 dataSize);
 	void handleSFXB(const uint8 *data, uint32 dataSize);
