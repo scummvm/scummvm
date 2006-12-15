@@ -174,8 +174,7 @@ SystemVars SwordEngine::_systemVars;
 SwordEngine::SwordEngine(OSystem *syst)
 	: Engine(syst) {
 
-	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") ||
-	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
+	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;	
