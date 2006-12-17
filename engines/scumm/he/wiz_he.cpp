@@ -354,6 +354,14 @@ void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		dst += r2.left + r2.top * dstw;
+		if (flags & kWIFFlipY) {
+			const int dy = (srcy < 0) ? srcy : (srch - r1.height());
+			r1.translate(0, dy);
+		}
+		if (flags & kWIFFlipX) {
+			const int dx = (srcx < 0) ? srcx : (srcw - r1.width());
+			r1.translate(dx, 0);
+		}
 		decompressWizImage(dst, dstw, r2, src, r1, flags, palPtr, xmapPtr);
 	}
 }
@@ -487,17 +495,8 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	// HACK: Skip every second bit for now
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (flags & kWIFFlipX) {
-			int l = r1.left;
-			int r = r1.right;
-			r1.left = srcw - r;
-			r1.right = srcw - l;
-		}
-		if (flags & kWIFFlipY) {
-			int t = r1.top;
-			int b = r1.bottom;
-			r1.top = srch - b;
-			r1.bottom = srch - t;
+		if (flags & (kWIFFlipY | kWIFFlipX)) {
+			warning("Unhandled Wiz flags (kWIFFlipY | kWIFFlipX)");
 		}
 		byte imagePal[256];
 		if (!palPtr) {
@@ -506,20 +505,16 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth,
 			}
 			palPtr = imagePal;
 		}
-
 		int h = r1.height();
 		int w = r1.width();
 		src += r1.left + r1.top * srcw * 2;
 		dst += r2.left + r2.top * dstw;
-
 		while (h--) {
-			const uint8 *p = src;
 			for (int i = 0; i < w; ++i) {
-				uint8 col = *p;
+				uint8 col = src[2 * i];
 				if (transColor == -1 || transColor != col) {
 					dst[i] = palPtr[col];
 				}
-				p += 2;
 			}
 			src += srcw * 2;
 			dst += dstw;
@@ -531,17 +526,8 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth,
 void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (flags & kWIFFlipX) {
-			int l = r1.left;
-			int r = r1.right;
-			r1.left = srcw - r;
-			r1.right = srcw - l;
-		}
-		if (flags & kWIFFlipY) {
-			int t = r1.top;
-			int b = r1.bottom;
-			r1.top = srch - b;
-			r1.bottom = srch - t;
+		if (flags & (kWIFFlipY | kWIFFlipX)) {
+			warning("Unhandled Wiz flags (kWIFFlipY | kWIFFlipX)");
 		}
 		byte imagePal[256];
 		if (!palPtr) {
@@ -555,9 +541,8 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 		src += r1.left + r1.top * srcw;
 		dst += r2.left + r2.top * dstw;
 		while (h--) {
-			const uint8 *p = src;
 			for (int i = 0; i < w; ++i) {
-				uint8 col = *p++;
+				uint8 col = src[i];
 				if (transColor == -1 || transColor != col) {
 					dst[i] = palPtr[col];
 				}
@@ -569,16 +554,9 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 }
 
 void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
-	if (flags & kWIFFlipX) {
-		debug(1, "decompressWizImage: Unhandled flag kWIFFlipX");
-	}
-	if (flags & kWIFFlipY) {
-		debug(1, "decompressWizImage: Unhandled flag kWIFFlipY");
-	}
-
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code, *dstPtr, *dstPtrNext;
-	int h, w, xoff;
+	int h, w, xoff, dstInc;
 	uint16 off;
 
 	byte imagePal[256];
@@ -602,6 +580,16 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	if (h <= 0 || w <= 0)
 		return;
 
+	if (flags & kWIFFlipY) {
+		dstPtr += (h - 1) * dstPitch;
+		dstPitch = -dstPitch;
+	}
+	dstInc = 1;
+	if (flags & kWIFFlipX) {
+		dstPtr += w - 1;
+		dstInc = -1;
+	}
+
 	while (h--) {
 		xoff = srcRect.left;
 		w = srcRect.width();
@@ -620,8 +608,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 
 						code = -xoff;
 					}
-
-					dstPtr += code;
+					dstPtr += dstInc * code;
 					w -= code;
 				} else if (code & 2) {
 					code = (code >> 2) + 1;
@@ -641,10 +628,10 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 					while (code--) {
 						if (xmapPtr) {
 							*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
-							dstPtr++;
 						} else {
-							*dstPtr++ = palPtr[*dataPtr];
+							*dstPtr = palPtr[*dataPtr];
 						}
+						dstPtr += dstInc;
 					}
 					dataPtr++;
 				} else {
@@ -665,10 +652,10 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 					while (code--) {
 						if (xmapPtr) {
 							*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
-							dstPtr++;
 						} else {
-							*dstPtr++ = palPtr[*dataPtr++];
+							*dstPtr = palPtr[*dataPtr++];
 						}
+						dstPtr += dstInc;
 					}
 				}
 			}
@@ -676,7 +663,6 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 		dataPtr = dataPtrNext;
 		dstPtr = dstPtrNext;
 	}
-
 }
 
 int Wiz::isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h) {
