@@ -2,6 +2,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include <stddef.h>
 
 #include <common/pack-start.h>	// START STRUCT PACKING
 
@@ -15,7 +16,7 @@ struct TestStruct {
 
 #include <common/pack-end.h>	// END STRUCT PACKING
 
-#define OFFS(type,item) (int)(&((type*)0)->type::item)
+#define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->type::item))-42) 
 
 class PackTestSuite : public CxxTest::TestSuite
 {
