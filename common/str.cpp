@@ -223,7 +223,7 @@ void String::deleteChar(uint32 p) {
 	// Call ensureCapacity to make sure we actually *own* the storage
 	// to which _str points to -- we wouldn't want to modify a storage
 	// which other string objects are sharing, after all.
-	ensureCapacity(_len - 1, true);
+	ensureCapacity(_len, true);
 	while (p++ < _len)
 		_str[p-1] = _str[p];
 	_len--;
