@@ -491,7 +491,6 @@ the section on reporting bugs.
             normal.
 
      Broken Sword 1:
-          - Macintosh version isn't supported
           - PlayStation 1 version isn't supported
 
      Broken Sword 2:
@@ -501,7 +500,7 @@ the section on reporting bugs.
           - Amiga versions aren't supported
 
      Inherit the Earth: Quest for the Orb
-          - Amiga CD version isn't supported
+          - Amiga versions aren't supported
 
      Simon the Sorcerer 1:
           - Amiga versions aren't supported
@@ -517,6 +516,10 @@ the section on reporting bugs.
      The Feeble Files:
           - Subtitles are often incomplete, they were always disabled in the
             original game.
+
+     The Legend of Kyrandia:
+          - Amiga versions aren't supported
+          - FM-Towns version isn't supported
 
      Humongous Entertainment games:
           - No support for printing images
