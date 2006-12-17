@@ -118,6 +118,7 @@ void Draw_v2::printText(void) {
 	int16 strPosBak;
 	int16 maskChar;
 	int16 width;
+	int16 size;
 
 	index = _vm->_inter->load16();
 
@@ -126,6 +127,7 @@ void Draw_v2::printText(void) {
 	if ((_vm->_game->_totTextData == 0) || (_vm->_game->_totTextData->dataPtr == 0))
 		return;
 
+	size = _vm->_game->_totTextData->items[index].size;
 	dataPtr = _vm->_game->_totTextData->dataPtr + _vm->_game->_totTextData->items[index].offset;
 	ptr = dataPtr;
 
@@ -158,7 +160,7 @@ void Draw_v2::printText(void) {
 
 	ptr += 8;
 
-	_backColor = *ptr++;
+	_backColor = (byte) *ptr++;
 	_transparency = 1;
 
 	spriteOperation(DRAW_CLEARRECT);
@@ -189,7 +191,9 @@ void Draw_v2::printText(void) {
 	}
 	ptr += 2;
 
-	for (ptr2 = ptr; *ptr2 != 1; ptr2++) {
+	// Adding the boundary check *shouldn't* pose any problems, since access behind
+	// that point should be forbidden anyway.
+	for (i = 0, ptr2 = ptr; ((ptr2 - dataPtr) < size) && (*ptr2 != 1); ptr2++, i++) {
 		if ((_vm->_game->_totFileData[0x29] < 0x32) && (*ptr2 > 3) && (*ptr2 < 32))
 			*ptr2 = 32;
 
@@ -226,7 +230,7 @@ void Draw_v2::printText(void) {
 			break;
 
 		case 10:
-			ptr2 += (ptr2[1] * 2) + 2;
+			ptr2 += (((byte) ptr2[1]) * 2) + 2;
 			break;
 
 		default:
@@ -337,7 +341,7 @@ void Draw_v2::printText(void) {
 
 		case 4:
 			ptr++;
-			frontColor = *ptr++;
+			frontColor = (byte) *ptr++;
 			break;
 
 		case 6:
