@@ -1257,9 +1257,9 @@ void Mult_v2::animate(void) {
 
 						case 1:
 							animData1->frame = 0;
-							*(_objects[i].pPosX) +=
+							*(animObj1->pPosX) +=
 								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].animDeltaX;
-							*(_objects[i].pPosY) +=
+							*(animObj1->pPosY) +=
 								_vm->_scenery->_animations[(int)animData1->animation].layers[animData1->layer].animDeltaY;
 							break;
 
