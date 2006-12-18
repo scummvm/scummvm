@@ -535,8 +535,12 @@ void DXAPlayer::decodeNextFrame() {
 		}
 	}
 
-	if (tag == MKID_BE('NULL'))
-		_drawBuffer = _frameBuffer1;
+	if (tag == MKID_BE('NULL')) {
+		if (_scaleMode == S_NONE)
+			_drawBuffer = _frameBuffer1;
+		else
+			_drawBuffer = _scaledBuffer;
+	}
 }
 
 } // End of namespace Graphics
