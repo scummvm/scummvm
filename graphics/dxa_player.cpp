@@ -124,7 +124,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
 	if (!_frameBuffer1 || !_frameBuffer2)
-		error("DXAPlayer: Error frame buffers (size %d)", _frameSize);
+		error("DXAPlayer: Error allocating frame buffers (size %d)", _frameSize);
 
 	if (_scaleMode != S_NONE) {
 		_scaledBuffer = (uint8 *)malloc(_frameSize);
@@ -513,33 +513,26 @@ void DXAPlayer::decodeNextFrame() {
 				}
 			}
 		}
-
-		switch (_scaleMode) {
-		case S_INTERLACED:
-			for (int cy = 0; cy < _curHeight; cy++) {
-				memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
-				memset(&_scaledBuffer[((2 * cy) + 1) * _width], 0, _width);
-			}
-			_drawBuffer = _scaledBuffer;
-			break;
-		case S_DOUBLE:
-			for (int cy = 0; cy < _curHeight; cy++) {
-				memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
-				memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
-			}
-			_drawBuffer = _scaledBuffer;
-			break;
-		case S_NONE:
-			_drawBuffer = _frameBuffer1;
-			break;
-		}
 	}
 
-	if (tag == MKID_BE('NULL')) {
-		if (_scaleMode == S_NONE)
-			_drawBuffer = _frameBuffer1;
-		else
-			_drawBuffer = _scaledBuffer;
+	switch (_scaleMode) {
+	case S_INTERLACED:
+		for (int cy = 0; cy < _curHeight; cy++) {
+			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+			memset(&_scaledBuffer[((2 * cy) + 1) * _width], 0, _width);
+		}
+		_drawBuffer = _scaledBuffer;
+		break;
+	case S_DOUBLE:
+		for (int cy = 0; cy < _curHeight; cy++) {
+			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
+			memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
+		}
+		_drawBuffer = _scaledBuffer;
+		break;
+	case S_NONE:
+		_drawBuffer = _frameBuffer1;
+		break;
 	}
 }
 
