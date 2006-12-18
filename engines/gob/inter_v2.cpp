@@ -469,7 +469,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		/* 10 */
 		{NULL, ""},
-		OPCODE(o1_printText),
+		OPCODE(o2_printText),
 		OPCODE(o2_loadTot),
 		OPCODE(o2_palLoad),
 		/* 14 */
@@ -1490,7 +1490,7 @@ bool Inter_v2::o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
 
-	handle = 0;
+	handle = 1;
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
 		size = _vm->getSaveSize(SAVE_CAT);
 	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat"))
@@ -1678,6 +1678,66 @@ bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) 
 			break;
 		}
 	}
+
+	return false;
+}
+
+bool Inter_v2::o2_printText(char &cmdCount, int16 &counter, int16 &retFlag) {
+	char buf[60];
+	int16 i;
+
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+
+	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_fontIndex = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_textToPrint = buf;
+	_vm->_draw->_transparency = 0;
+
+	if (_vm->_draw->_backColor == 16) {
+		_vm->_draw->_backColor = 0;
+		_vm->_draw->_transparency = 1;
+	}
+
+	do {
+		for (i = 0; *_vm->_global->_inter_execPtr != '.' && (byte)*_vm->_global->_inter_execPtr != 200;
+			 i++, _vm->_global->_inter_execPtr++) {
+			buf[i] = *_vm->_global->_inter_execPtr;
+		}
+
+		if ((byte)*_vm->_global->_inter_execPtr != 200) {
+			_vm->_global->_inter_execPtr++;
+			switch (*_vm->_global->_inter_execPtr) {
+			case 16:
+			case 18:
+				sprintf(buf + i, "%d", (int8) READ_VARO_UINT8(_vm->_parse->parseVarIndex()));
+				break;
+
+			case 17:
+			case 24:
+			case 27:
+				sprintf(buf + i, "%d", (int16) READ_VARO_UINT16(_vm->_parse->parseVarIndex()));
+				break;
+
+			case 23:
+			case 26:
+				sprintf(buf + i, "%d", VAR_OFFSET(_vm->_parse->parseVarIndex()));
+				break;
+
+			case 25:
+			case 28:
+				sprintf(buf + i, "%s", GET_VARO_STR(_vm->_parse->parseVarIndex()));
+				break;
+			}
+			_vm->_global->_inter_execPtr++;
+		} else {
+			buf[i] = 0;
+		}
+		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+	} while ((byte)*_vm->_global->_inter_execPtr != 200);
+	_vm->_global->_inter_execPtr++;
 
 	return false;
 }
@@ -2238,8 +2298,7 @@ void Inter_v2::o2_totSub(void) {
 		totFile[i] = 0;
 	}
 
-	_vm->_global->_inter_execPtr++;
-	flags = *_vm->_global->_inter_execPtr;
+	flags = (byte) *_vm->_global->_inter_execPtr++;
 	_vm->_game->totSub(flags, totFile);
 }
 

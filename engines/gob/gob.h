@@ -109,7 +109,8 @@ enum {
 
 enum SaveFiles {
 	SAVE_CAT = 0, // Saves
-	SAVE_SAV,     // Draw::_backSurface (why?)
+	SAVE_SAV,     // Draw::_backSurface (as a temporary buffer when using the notepad
+	              // and changing the font. TODO: That probably should be worked around
 	SAVE_BLO      // Notes
 };
 

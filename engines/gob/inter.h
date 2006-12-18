@@ -333,6 +333,7 @@ protected:
 	bool o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_printText(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);

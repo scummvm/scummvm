@@ -575,6 +575,11 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 			_video->freeSurfDesc(srcDesc);
 		} else
 			retSize = in->read(buf, size);
+		if (index == 21) {
+			_video->drawSprite(_draw->_backSurface, _draw->_frontSurface, 0, 0,
+					_draw->_frontSurface->width - 1, _draw->_frontSurface->height - 1, 0, 0, 0);
+			_video->waitRetrace(_global->_videoMode);
+		}
 	} else
 		retSize = readDataEndian(*in, buf, _global->_inter_variablesSizes + dataVar, size);
 

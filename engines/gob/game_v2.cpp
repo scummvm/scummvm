@@ -71,7 +71,8 @@ void Game_v2::playTot(int16 skipPlay) {
 
 	if (skipPlay <= 0) {
 		while (!_vm->_quitRequested) {
-			_vm->_draw->animateCursor(4);
+			if (_vm->_global->_inter_variables != 0)
+				_vm->_draw->animateCursor(4);
 			if (_vm->_features & GF_MAC)
 				_vm->_music->stopPlay();
 			else
