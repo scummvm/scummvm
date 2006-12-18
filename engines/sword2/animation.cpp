@@ -39,12 +39,6 @@
 
 namespace Sword2 {
 
-// TODO: The interaction between the basic cutscene player class and the
-//       specific plyers is sometimes a bit awkward, since our classes for
-//       DXA and MPEG decoding are so fundamentally different. The DXA decoder
-//       is just a decoder, while the MPEG decoder has delusions of being a
-//       player. This could probably be simplified quite a bit.
-
 ///////////////////////////////////////////////////////////////////////////////
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
