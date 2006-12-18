@@ -1335,12 +1335,12 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 flag;
 	int16 key;
 
-	// Gob2 busy-waits here, so add a delay
-	_vm->_util->longDelay(1);
-
 	flag = load16();
 	animPalette();
 	_vm->_draw->blitInvalidated();
+
+	// Gob2 busy-waits here, so add a delay
+	_vm->_util->longDelay(1);
 
 	if (flag != 0) {
 

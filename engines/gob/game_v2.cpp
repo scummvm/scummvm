@@ -475,6 +475,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 				_vm->_draw->animateCursor(-1);
 			else
 				_vm->_draw->blitInvalidated();
+			_vm->_video->waitRetrace(_vm->_global->_videoMode);
 		}
 
 		key = checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY,
