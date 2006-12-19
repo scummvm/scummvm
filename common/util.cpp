@@ -193,6 +193,8 @@ const PlatformDescription g_platforms[] = {
 	{"segacd", "segacd", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "Windows", kPlatformWindows},
 
+	{"2GS", "2gs", "Apple IIgs", kPlatformApple2GS },
+
 	{0, 0, "Default", kPlatformUnknown}
 };
 
@@ -320,7 +322,7 @@ bool enableSpecialDebugLevel(const String &option) {
 void enableSpecialDebugLevelList(const String &option) {
 	uint start = 0;
 	uint end = 0;
-	
+
 	const char *str = option.c_str();
 	for (end = start + 1; end <= option.size(); ++end) {
 		if (str[end] == ',' || end == option.size()) {
