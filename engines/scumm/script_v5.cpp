@@ -868,6 +868,15 @@ void ScummEngine_v5::o5_saveLoadVars() {
 void ScummEngine_v5::saveVars() {
 	int a, b;
 
+	// FIXME: This opcode is currently a stub. It is needed for at least two things:
+	// * storing save game names in Indy 3 (and maybe others)
+	// * storing the global IQ (Indy Quotient) in Indy 3
+	// The former is not so important as we have our own save system, but the
+	// latter one of course is a desirable feature.
+	// So implementing this would be nice indeed. Not sure what the filename
+	// should be -- either base it on the target name, or base it on the gameid.
+	// Both approaches have their merits, though.
+
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
 		case 0x01: // write a range of variables
@@ -898,6 +907,8 @@ void ScummEngine_v5::saveVars() {
 
 void ScummEngine_v5::loadVars() {
 	int a, b;
+
+	// FIXME: See ScummEngine_v5::saveVars
 
 //	Common::hexdump(_scriptPointer, 64);
 	while ((_opcode = fetchScriptByte()) != 0) {
@@ -1153,14 +1164,16 @@ void ScummEngine_v5::o5_saveLoadGame() {
 			result = 2; // failed to save
 		break;
 	case 0xC0: // test if save exists
+		Common::InSaveFile *file;
 		bool avail_saves[100];
 		char filename[256];
 
 		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 		makeSavegameName(filename, slot, false);
-		if (avail_saves[slot] && (_saveFileMan->openForLoading(filename)))
+		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename))) {
 			result = 6; // save file exists
-		else
+			delete file;
+		} else
 			result = 7; // save file does not exist
 		break;
 	default:
