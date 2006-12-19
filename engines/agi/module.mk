@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	checks.o \
 	console.o \
 	cycle.o \
+	detection.o \
 	font.o \
 	global.o \
 	graphics.o \
