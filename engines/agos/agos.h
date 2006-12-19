@@ -181,7 +181,7 @@ public:
 	Common::Language getLanguage() const { return _gameDescription->desc.language; }
 	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
 	const char *getFileName(int type) const { 
-		for (int i = 0; i < _gameDescription->desc.filesCount; i++) {
+		for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileType; i++) {
 			if (_gameDescription->desc.filesDescriptions[i].fileType == type)
 				return _gameDescription->desc.filesDescriptions[i].fileName; 
 		}

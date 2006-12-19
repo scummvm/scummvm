@@ -50,59 +50,73 @@ namespace {
 #define ENTRY(f, x) { f, 0, x } 
 
 const ADGameFileDescription kyra1EnglishFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879")
+	ENTRY("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1EnglishFloppy2[] = {
-	ENTRY("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673")
+	ENTRY("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1FrenchFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24")
+	ENTRY("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1GermanFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049")
+	ENTRY("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1GermanFloppy2[] = {
-	ENTRY("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9")
+	ENTRY("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1SpanishFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01")
+	ENTRY("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1SpanishFloppy2[] = {
-	ENTRY("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093")
+	ENTRY("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1ItalianFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df")
+	ENTRY("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1EnglishCD1[] = {
-	ENTRY("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f")
+	ENTRY("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1GermanCD1[] = {
-	ENTRY("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722")
+	ENTRY("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1FrenchCD1[] = {
-	ENTRY("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a")
+	ENTRY("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra1EnglishDemo1[] = {
-	ENTRY("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648")
+	ENTRY("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra2UnknownUnknown1[] = {
-	ENTRY("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032")
+	ENTRY("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
+	{ NULL, 0, NULL}
 };
 
 const ADGameFileDescription kyra3CD1[] = {
-	ENTRY("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587")
+	ENTRY("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
+	{ NULL, 0, NULL}
 };
 
 #define FLAGS(x, y, z, w, id) { UNK_LANG, kPlatformUnknown, x, y, z, w, id }
@@ -116,25 +130,25 @@ const ADGameFileDescription kyra3CD1[] = {
 #define KYRA3_CD_FLAGS FLAGS(false, false, false, true, GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1EnglishFloppy1), kyra1EnglishFloppy1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1EnglishFloppy2), kyra1EnglishFloppy2, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1FrenchFloppy1) , kyra1FrenchFloppy1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1GermanFloppy1) , kyra1GermanFloppy1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1GermanFloppy2) , kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from Arne.F
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1SpanishFloppy1), kyra1SpanishFloppy1, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from VooD
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1SpanishFloppy2), kyra1SpanishFloppy2, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
-	{ { "The Legend of Kyrandia", 0, ARRAYSIZE(kyra1ItalianFloppy1), kyra1ItalianFloppy1, IT_ITA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from gourry
+	{ { "The Legend of Kyrandia", 0, kyra1EnglishFloppy1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
+	{ { "The Legend of Kyrandia", 0, kyra1EnglishFloppy2, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
+	{ { "The Legend of Kyrandia", 0, kyra1FrenchFloppy1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
+	{ { "The Legend of Kyrandia", 0, kyra1GermanFloppy1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
+	{ { "The Legend of Kyrandia", 0, kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from Arne.F
+	{ { "The Legend of Kyrandia", 0, kyra1SpanishFloppy1, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from VooD
+	{ { "The Legend of Kyrandia", 0, kyra1SpanishFloppy2, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
+	{ { "The Legend of Kyrandia", 0, kyra1ItalianFloppy1, IT_ITA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from gourry
 
-	{ { "The Legend of Kyrandia", "CD", ARRAYSIZE(kyra1EnglishCD1), kyra1EnglishCD1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
-	{ { "The Legend of Kyrandia", "CD", ARRAYSIZE(kyra1GermanCD1) , kyra1GermanCD1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
-	{ { "The Legend of Kyrandia", "CD", ARRAYSIZE(kyra1FrenchCD1) , kyra1FrenchCD1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
+	{ { "The Legend of Kyrandia", "CD", kyra1EnglishCD1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
+	{ { "The Legend of Kyrandia", "CD", kyra1GermanCD1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
+	{ { "The Legend of Kyrandia", "CD", kyra1FrenchCD1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
 
-	{ { "The Legend of Kyrandia", "Demo", ARRAYSIZE(kyra1EnglishDemo1), kyra1EnglishDemo1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_DEMO_FLAGS },
+	{ { "The Legend of Kyrandia", "Demo", kyra1EnglishDemo1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_DEMO_FLAGS },
 
-	{ { "The Legend of Kyrandia: The Hand of Fate", 0, ARRAYSIZE(kyra2UnknownUnknown1), kyra2UnknownUnknown1, UNK_LANG, kPlatformPC }, "kyra2", KYRA2_UNK_FLAGS }, // check this! (cd version?)
+	{ { "The Legend of Kyrandia: The Hand of Fate", 0, kyra2UnknownUnknown1, UNK_LANG, kPlatformPC }, "kyra2", KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
-	{ { "The Legend of Kyrandia: Malcolm's Revenge", 0, ARRAYSIZE(kyra3CD1), kyra3CD1, UNK_LANG, kPlatformPC }, "kyra3", KYRA3_CD_FLAGS },
-	{ { NULL, NULL, 0, NULL, UNK_LANG, kPlatformUnknown }, NULL, KYRA2_UNK_FLAGS }
+	{ { "The Legend of Kyrandia: Malcolm's Revenge", 0, kyra3CD1, UNK_LANG, kPlatformPC }, "kyra3", KYRA3_CD_FLAGS },
+	{ { NULL, NULL, NULL, UNK_LANG, kPlatformUnknown }, NULL, KYRA2_UNK_FLAGS }
 };
 
 ADGameDescList getADDescList() {
@@ -170,8 +184,13 @@ bool setupGameFlags(const ADList &list, GameFlags &flags) {
 		int curID = 0;
 		// get's the entry which has most files to check (most specialized)
 		for (ADList::const_iterator i = list.begin(); i != list.end(); ++i, ++curID) {
-			if (filesCount < adGameDescs[*i].desc.filesCount) {
-				filesCount = adGameDescs[*i].desc.filesCount;
+			int fCount = 0;
+
+			for (int j = 0; adGameDescs[*i].desc.filesDescriptions[j].fileName; j++)
+				fCount++;
+
+			if (filesCount < fCount) {
+				filesCount = fCount;
 				id = curID;
 			}
 		}

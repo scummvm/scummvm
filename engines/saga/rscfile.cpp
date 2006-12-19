@@ -340,7 +340,11 @@ bool Resource::loadContext(ResourceContext *context) {
 bool Resource::createContexts() {
 	int i;
 	ResourceContext *context;
-	_contextsCount = _vm->getGameDescription()->desc.filesCount;
+
+	_contextsCount = 0;
+	for (i = 0; _vm->getGameDescription()->desc.filesDescriptions[i].fileName; i++)
+		_contextsCount++;
+
 	_contexts = (ResourceContext*)calloc(_contextsCount, sizeof(*_contexts));
 
 	for (i = 0; i < _contextsCount; i++) {

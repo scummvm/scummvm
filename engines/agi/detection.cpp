@@ -61,23 +61,29 @@ using Common::File;
 // Kings Quest I entries
 static const ADGameFileDescription AGI_KQ1_PC_20F_GameFiles[] = {
 	{ "logdir",		0,	"10ad66e2ecbd66951534a50aedcd0128"},
+	{ NULL, 0, NULL}
 };
 static const ADGameFileDescription AGI_KQ1_2GS_10S_GameFiles[] = {
 	{ "logdir",		0,	"f4277aa34b43d37382bc424c81627617"},
+	{ NULL, 0, NULL}
 };
 static const ADGameFileDescription AGI_KQ1_MAC_20C_GameFiles[] = {
 	{ "logdir",		0,	"d4c4739d4ac63f7dbd29255425077d48"},
+	{ NULL, 0, NULL}
 };
 
 // Kings Quest II Entries
 static const ADGameFileDescription AGI_KQ2_PC_22_GameFiles[] = {
 	{ "logdir",		0,	"b944c4ff18fb8867362dc21cc688a283"},
+	{ NULL, 0, NULL}
 };
 static const ADGameFileDescription AGI_KQ2_AMIGA_20F_GameFiles[] = {
 	{ "logdir",		0,	"b866f0fab2fad91433a637a828cfa410"},
+	{ NULL, 0, NULL}
 };
 static const ADGameFileDescription AGI_KQ2_MAC_20R_GameFiles[] = {
 	{ "logdir",		0,	"cbdb0083317c8e7cfb7ac35da4bc7fdc"},
+	{ NULL, 0, NULL}
 };
 
 
@@ -87,7 +93,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 1 (PC 5.25\"/3.5\") 2.0F [AGI 2.917]",
-			ARRAYSIZE(AGI_KQ1_PC_20F_GameFiles),
 			AGI_KQ1_PC_20F_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -102,7 +107,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 1 (IIgs) 1.0S-88223",
-			ARRAYSIZE(AGI_KQ1_2GS_10S_GameFiles),
 			AGI_KQ1_2GS_10S_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
@@ -118,7 +122,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 1 (Mac) 2.0C",
-			ARRAYSIZE(AGI_KQ1_MAC_20C_GameFiles),
 			AGI_KQ1_MAC_20C_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -134,7 +137,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 2 (PC 5.25\"/3.5\") 2.2 [AGI 2.426]",
-			ARRAYSIZE(AGI_KQ2_PC_22_GameFiles),
 			AGI_KQ2_PC_22_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -149,7 +151,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 2 (Amiga) 2.0J",
-			ARRAYSIZE(AGI_KQ2_AMIGA_20F_GameFiles),
 			AGI_KQ2_AMIGA_20F_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -164,7 +165,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 2 (Mac) 2.0R",
-			ARRAYSIZE(AGI_KQ2_MAC_20R_GameFiles),
 			AGI_KQ2_MAC_20R_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -174,7 +174,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2440,
 	},
 
-	{ { NULL, NULL, 0, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
+	{ { NULL, NULL, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };
 
 bool AgiEngine::initGame() {

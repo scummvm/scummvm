@@ -181,7 +181,8 @@ static const ADGameFileDescription ITE_DEMO_G_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932"},
 	//{"ite.dmo",	GAME_DEMOFILE},						"0b9a70eb4e120b6f00579b46c8cae29e"
 	{"scripts.rsc", GAME_SCRIPTFILE,					"d5697dd3240a3ceaddaa986c47e1a2d7"},
-	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0"}
+	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0"},
+	{ NULL, 0, NULL}
 };
 
 static const GameFontDescription ITEDEMO_GameFonts[] = {
@@ -204,14 +205,16 @@ static const ADGameFileDescription ITE_WINDEMO2_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c"},
-	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4"}
+	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_WINDEMO1_GameFiles[] = {
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac"},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a"},
-	{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3"}
+	{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3"},
+	{ NULL, 0, NULL}
 };
 
 static const GameFontDescription ITEWINDEMO_GameFonts[] = {
@@ -252,7 +255,8 @@ static const ADGameFileDescription ITE_MACDEMO2_GameFiles[] = {
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c"},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4"},
-	{"musicd.rsc",		GAME_MUSICFILE,		"495bdde51fd9f4bea2b9c911091b1ab2"}
+	{"musicd.rsc",		GAME_MUSICFILE,		"495bdde51fd9f4bea2b9c911091b1ab2"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_MACDEMO1_GameFiles[] = {
@@ -260,7 +264,8 @@ static const ADGameFileDescription ITE_MACDEMO1_GameFiles[] = {
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c"},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4"},
-	{"musicd.rsc",		GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f"}
+	{"musicd.rsc",		GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f"},
+	{ NULL, 0, NULL}
 };
 
 static const GameSoundInfo ITEMACDEMO_GameVoice = {
@@ -296,7 +301,8 @@ static const ADGameFileDescription ITE_LINDEMO_GameFiles[] = {
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb"},
 	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c"},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4"},
-	{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"}
+	{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 static const GameSoundInfo ITELINDEMO_GameMusic = {
@@ -315,7 +321,8 @@ static const ADGameFileDescription ITE_LINCD_GameFiles[] = {
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
 	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"},
-	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"}
+	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 // Inherit the Earth - Wyrmkeep combined Windows/Mac/Linux version. This
@@ -329,7 +336,8 @@ static const ADGameFileDescription ITE_MULTICD_GameFiles[] = {
 	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",					GAME_SOUNDFILE,						"e2ccb61c325d6d1ead3be0e731fe29fe"},
 	{"inherit the earth voices",	GAME_VOICEFILE | GAME_SWAPENDIAN,	"c14c4c995e7a0d3828e3812a494301b7"},
-	{"music.rsc",					GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"}
+	{"music.rsc",					GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_MACCD_G_GameFiles[] = {
@@ -337,7 +345,8 @@ static const ADGameFileDescription ITE_MACCD_G_GameFiles[] = {
 	{"ite scripts.bin",		GAME_SCRIPTFILE | GAME_MACBINARY,	"af0d7a2588e09ad3ecbc5b474ea238bf"},
 	{"ite sounds.bin",		GAME_SOUNDFILE | GAME_MACBINARY,	"441426c6bb2a517f65c7e49b57f7a345"},
 	{"ite music.bin",		GAME_MUSICFILE_GM | GAME_MACBINARY,	"c1d20324b7cdf1650e67061b8a93251c"},
-	{"ite voices.bin",		GAME_VOICEFILE | GAME_MACBINARY,	"dba92ae7d57e942250fe135609708369"}
+	{"ite voices.bin",		GAME_VOICEFILE | GAME_MACBINARY,	"dba92ae7d57e942250fe135609708369"},
+	{ NULL, 0, NULL}
 };
 
 static const GameSoundInfo ITEMACCD_G_GameSound = {
@@ -355,7 +364,8 @@ static const ADGameFileDescription ITE_MACCD_GameFiles[] = {
 	{"scripts.rsc",					GAME_SCRIPTFILE,	"adf1f46c1d0589083996a7060c798ad0"},
 	{"sounds.rsc",					GAME_SOUNDFILE,		"95863b89a0916941f6c5e1789843ba14"},
 	{"inherit the earth voices",	GAME_VOICEFILE,		"c14c4c995e7a0d3828e3812a494301b7"},
-	{"music.rsc",					GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f"}
+	{"music.rsc",					GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f"},
+	{ NULL, 0, NULL}
 };
 
 static const GameSoundInfo ITEMACCD_GameSound = {
@@ -380,27 +390,31 @@ static const GameSoundInfo ITEMACCD_GameMusic = {
 static const ADGameFileDescription ITE_DISK_DE_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
-	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"0c9113e630f97ef0996b8c3114badb08"}
+	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"0c9113e630f97ef0996b8c3114badb08"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_DISK_G_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
-	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d"}
+	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_DISK_DE2_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"0c9113e630f97ef0996b8c3114badb08"},
-	{"music.rsc",	GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"}
+	{"music.rsc",	GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_DISK_G2_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef"},
 	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d"},
-	{"music.rsc",	GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"}
+	{"music.rsc",	GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 static const GameFontDescription ITEDISK_GameFonts[] = {
@@ -423,14 +437,16 @@ static const ADGameFileDescription ITE_WINCD_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
-	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"}
+	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_CD_G_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
-	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"}
+	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"},
+	{ NULL, 0, NULL}
 };
 
 // reported by mld. Bestsellergamers cover disk
@@ -438,14 +454,16 @@ static const ADGameFileDescription ITE_CD_DE_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
-	{"voices.rsc",	GAME_VOICEFILE,		"2fbad5d10b9b60a3415dc4aebbb11718"}
+	{"voices.rsc",	GAME_VOICEFILE,		"2fbad5d10b9b60a3415dc4aebbb11718"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_CD_GameFiles[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54"},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
-	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"}
+	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"},
+	{ NULL, 0, NULL}
 };
 
 
@@ -454,7 +472,8 @@ static const ADGameFileDescription ITE_CD_G2_GameFiles[] = {
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
 	{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6"},
-	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"}
+	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription ITE_CD_DE2_GameFiles[] = {
@@ -462,7 +481,8 @@ static const ADGameFileDescription ITE_CD_DE2_GameFiles[] = {
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84"},
 	{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe"},
 	{"voices.rsc",	GAME_VOICEFILE,		"2fbad5d10b9b60a3415dc4aebbb11718"},
-	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"}
+	{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4"},
+	{ NULL, 0, NULL}
 };
 
 
@@ -699,7 +719,8 @@ static const ADGameFileDescription IHNM_DEMO_GameFiles[] = {
 	{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6"},
 	{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a"},
 	{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269"},
-	{"voicesd.res",		GAME_VOICEFILE,		"3bbc16a8f741dbb511da506c660a0b54"}
+	{"voicesd.res",		GAME_VOICEFILE,		"3bbc16a8f741dbb511da506c660a0b54"},
+	{ NULL, 0, NULL}
 };
 
 // I Have No Mouth and I Must Scream - Retail CD version
@@ -717,7 +738,8 @@ static const ADGameFileDescription IHNM_CD_GameFiles[] = {
 	{"voices3.res",	GAME_VOICEFILE,						"3bbc16a8f741dbb511da506c660a0b54"},
 	{"voices4.res",	GAME_VOICEFILE,						"ebfa160122d2247a676ca39920e5d481"},
 	{"voices5.res",	GAME_VOICEFILE,						"1f501ce4b72392bdd1d9ec38f6eec6da"},
-	{"voices6.res",	GAME_VOICEFILE,						"f580ed7568c7d6ef34e934ba20adf834"}
+	{"voices6.res",	GAME_VOICEFILE,						"f580ed7568c7d6ef34e934ba20adf834"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription IHNM_CD_ES_GameFiles[] = {
@@ -733,7 +755,8 @@ static const ADGameFileDescription IHNM_CD_ES_GameFiles[] = {
 	{"voices3.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c"},
 	{"voices4.res",	GAME_VOICEFILE,						"0f87400b804232a58dd22e404420cc45"},
 	{"voices5.res",	GAME_VOICEFILE,						"172668cfc5d8c305cb5b1a9b4d995fc0"},
-	{"voices6.res",	GAME_VOICEFILE,						"96c9bda9a5f41d6bc232ed7bf6d371d9"}
+	{"voices6.res",	GAME_VOICEFILE,						"96c9bda9a5f41d6bc232ed7bf6d371d9"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription IHNM_CD_RU_GameFiles[] = {
@@ -749,7 +772,8 @@ static const ADGameFileDescription IHNM_CD_RU_GameFiles[] = {
 	{"voices3.res",	GAME_VOICEFILE,						"ebb9501283047f27a0f54e27b3c8ba1e"},
 	{"voices4.res",	GAME_VOICEFILE,						"4c145da5fa6d1306162a7ca8ce5a4f2e"},
 	{"voices5.res",	GAME_VOICEFILE,						"871a559644281917677eca4af1b05620"},
-	{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6"}
+	{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6"},
+	{ NULL, 0, NULL}
 };
 
 // I Have No Mouth and I Must Scream - Censored CD version (without Nimdok)
@@ -767,7 +791,8 @@ static const ADGameFileDescription IHNM_CD_DE_GameFiles[] = {
 	{"voices2.res",	GAME_VOICEFILE,						"c270e0980782af43641a86e4a14e2a32"},
 	{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9"},
 	{"voices5.res",	GAME_VOICEFILE,						"c477443c52a0aa56e686ebd8d051e4ab"},
-	{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4"}
+	{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription IHNM_CD_FR_GameFiles[] = {
@@ -782,7 +807,8 @@ static const ADGameFileDescription IHNM_CD_FR_GameFiles[] = {
 	{"voices2.res",	GAME_VOICEFILE,						"c2d93a35d2c2def9c3d6d242576c794b"},
 	{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9"},
 	{"voices5.res",	GAME_VOICEFILE,						"f4c415de7c03de86b73f9a12b8bd632f"},
-	{"voices6.res",	GAME_VOICEFILE,						"3fc5358a5d8eee43bdfab2740276572e"}
+	{"voices6.res",	GAME_VOICEFILE,						"3fc5358a5d8eee43bdfab2740276572e"},
+	{ NULL, 0, NULL}
 };
 
 static const GameFontDescription IHNMDEMO_GameFonts[] = {
@@ -819,7 +845,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Demo", // Game title
-			ARRAYSIZE(ITE_DEMO_G_GameFiles), // Game datafiles
 			ITE_DEMO_G_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -844,7 +869,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Demo",
-			ARRAYSIZE(ITE_MACDEMO2_GameFiles),
 			ITE_MACDEMO2_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -869,7 +893,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"early Demo",
-			ARRAYSIZE(ITE_MACDEMO1_GameFiles),
 			ITE_MACDEMO1_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -894,7 +917,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD",
-			ARRAYSIZE(ITE_MACCD_G_GameFiles),
 			ITE_MACCD_G_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -919,7 +941,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Wyrmkeep CD",
-			ARRAYSIZE(ITE_MACCD_GameFiles),
 			ITE_MACCD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -945,7 +966,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Demo",
-			ARRAYSIZE(ITE_LINDEMO_GameFiles),
 			ITE_LINDEMO_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformLinux,
@@ -970,7 +990,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Demo",
-			ARRAYSIZE(ITE_WINDEMO2_GameFiles),
 			ITE_WINDEMO2_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -995,7 +1014,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"early Demo",
-			ARRAYSIZE(ITE_WINDEMO1_GameFiles),
 			ITE_WINDEMO1_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1020,7 +1038,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Multi-OS CD Version",
-			ARRAYSIZE(ITE_MULTICD_GameFiles),
 			ITE_MULTICD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
@@ -1045,7 +1062,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_LINCD_GameFiles),
 			ITE_LINCD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformLinux,
@@ -1070,7 +1086,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_WINCD_GameFiles),
 			ITE_WINCD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1095,7 +1110,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_CD_G_GameFiles),
 			ITE_CD_G_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1120,7 +1134,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_CD_G2_GameFiles),
 			ITE_CD_G2_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1145,7 +1158,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_CD_DE_GameFiles),
 			ITE_CD_DE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -1170,7 +1182,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_CD_DE2_GameFiles),
 			ITE_CD_DE2_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -1195,7 +1206,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"CD Version",
-			ARRAYSIZE(ITE_CD_GameFiles),
 			ITE_CD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1220,7 +1230,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Floppy",
-			ARRAYSIZE(ITE_DISK_DE_GameFiles),
 			ITE_DISK_DE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -1245,7 +1254,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Floppy",
-			ARRAYSIZE(ITE_DISK_DE2_GameFiles),
 			ITE_DISK_DE2_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -1270,7 +1278,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Floppy",
-			ARRAYSIZE(ITE_DISK_G_GameFiles),
 			ITE_DISK_G_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1295,7 +1302,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ite",
 			"Floppy",
-			ARRAYSIZE(ITE_DISK_G2_GameFiles),
 			ITE_DISK_G2_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1320,7 +1326,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ihnm",
 			"Demo",
-			ARRAYSIZE(IHNM_DEMO_GameFiles),
 			IHNM_DEMO_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1345,7 +1350,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ihnm",
 			"",
-			ARRAYSIZE(IHNM_CD_GameFiles),
 			IHNM_CD_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -1370,7 +1374,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ihnm",
 			"",
-			ARRAYSIZE(IHNM_CD_DE_GameFiles),
 			IHNM_CD_DE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -1395,7 +1398,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ihnm",
 			"",
-			ARRAYSIZE(IHNM_CD_ES_GameFiles),
 			IHNM_CD_ES_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -1420,7 +1422,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ihnm",
 			"",
-			ARRAYSIZE(IHNM_CD_RU_GameFiles),
 			IHNM_CD_RU_GameFiles,
 			Common::RU_RUS,
 			Common::kPlatformPC,
@@ -1445,7 +1446,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{
 			"ihnm",
 			"",
-			ARRAYSIZE(IHNM_CD_FR_GameFiles),
 			IHNM_CD_FR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformPC,
@@ -1464,5 +1464,5 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
-	{ { NULL, NULL, 0, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
+	{ { NULL, NULL, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
 };

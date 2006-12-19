@@ -217,8 +217,6 @@ String AdvancedDetector::getDescription(int num) const {
 }
 
 ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Platform platform) {
-	int filesCount;
-
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -243,7 +241,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 
 	// First we compose list of files which we need MD5s for
 	for (i = 0; i < _gameDescriptions.size(); i++) {
-		for (j = 0; j < _gameDescriptions[i]->filesCount; j++) {
+		for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
 			tstr = String(_gameDescriptions[i]->filesDescriptions[j].fileName);
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
@@ -293,11 +291,10 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 	}
 
 	for (i = 0; i < _gameDescriptions.size(); i++) {
-		filesCount = _gameDescriptions[i]->filesCount;		
 		fileMissing = false;
 
 		// Try to open all files for this game
-		for (j = 0; j < filesCount; j++) {
+		for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
 			fileDesc = &_gameDescriptions[i]->filesDescriptions[j];
 			tstr = fileDesc->fileName;
 			tstr.toLowercase();
@@ -336,7 +333,10 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 		// Search max number
 		int maxcount = 0;
 		for (i = 0; i < matchedCount; i++) {
-			maxcount = MAX(_gameDescriptions[matched[i]]->filesCount, maxcount);
+			int fCount = 0;
+			for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++)
+				fCount++;
+			maxcount = MAX(fCount, maxcount);
 		}
 
 		// Now purge targets with number of files lesser than max
@@ -348,7 +348,11 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 				continue;
 			}
 
-			if (_gameDescriptions[matched[i]]->filesCount < maxcount) {
+			int fCount = 0;
+			for (j = 0; _gameDescriptions[matched[i]]->filesDescriptions[j].fileName; j++)
+				fCount++;
+
+			if (fCount < maxcount) {
 				debug(2, "Purged: %s", getDescription(matched[i]).c_str());
 				matched[i] = -1;
 			}

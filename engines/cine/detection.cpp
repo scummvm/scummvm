@@ -56,124 +56,154 @@ using Common::ADGameDescription;
 
 static const ADGameFileDescription FW_GameFiles[] = {
 	{ "part01",		0,	"61d003202d301c29dd399acfb1354310"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWALT_GameFiles[] = {
 	{ "part01",		0,	"91d7271155520eae6915a9dd2dac120c"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWDE_GameFiles[] = {
 	{ "part01",		0,	"f5e98fcca3fb5e7afa284c81c39d8b14"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWES_GameFiles[] = {
 	{ "part01",		0,	"570109f965c7f53984b98c83d86eb206"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWFR_GameFiles[] = {
 	{ "part01",		0,	"5d1acb97abe9591f9008e00d07add95a"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWAmiga_GameFiles[] = {
 	{ "part01",		0,	"57afd280b598b4180fda6689fbedc4b8"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWAmigaDE_GameFiles[] = {
 	{ "part01",		0,	"3a87a913e0e33963a48a7f822ca0eb0e"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWAmigaES_GameFiles[] = {
 	{ "part01",		0,	"5ad0007ccd5f7b3dd6b15ea7f281f9e1"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWAmigaFR_GameFiles[] = {
 	{ "part01",		0,	"460f2da8793bc581a2d4b6fc19ccb5ae"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWAmigaIT_GameFiles[] = {
 	{ "part01",		0,	"1c8e5207743172134409ac58860021af"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWAmigaDemo_GameFiles[] = {
 	{ "demo",		0,	"0f50767cd964e302d3af0ba2528df8c4"},
 	{ "demo.prc",		0,	"d2ac3a743d288359c63644ea7071edae"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWST_GameFiles[] = {
 	{ "part01",		0,	"36050db13af57e462ca1adc4df99de4e"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription FWSTFR_GameFiles[] = {
 	{ "part01",		0,	"ef245573b7dab0d4825ceb98e37cef4d"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OS_GameFiles[] = {
 	{ "procs00",		0,	"d6752e7d25924cb866b61eb7cb0c8b56"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSUS_GameFiles[] = {
 	{ "procs1",		0,	"d8c3a9d05a63e4cfa801826a7063a126"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSUS256_GameFiles[] = {
 	{ "procs00",		0,	"862a75d76fb7fffec30e52be9ad1c474"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSDE_GameFiles[] = {
 	{ "procs1",		0,	"39b91ae35d1297ce0a76a1a803ca1593"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSES_GameFiles[] = {
 	{ "procs1",		0,	"74c2dabd9d212525fca8875a5f6d8994"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSESCD_GameFiles[] = {
 	{ "procs1",		0,	"74c2dabd9d212525fca8875a5f6d8994"},
 	{ "sds1",		0,	"75443ba39cdc95667e07d7118e5c151c"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSFR_GameFiles[] = {
 	{ "procs00",		0,	"f143567f08cfd1a9b1c9a41c89eadfef"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSIT_GameFiles[] = {
 	{ "procs1",		0,	"da066e6b8dd93f2502c2a3755f08dc12"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmiga_GameFiles[] = {
 	{ "procs0",		0,	"a9da5531ead0ebf9ad387fa588c0cbb0"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmigaAlt_GameFiles[] = {
 	{ "procs0",		0,	"8a429ced2f4acff8a15ae125174042e8"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmigaUS_GameFiles[] = {
 	{ "procs0",		0,	"d5f27e33fc29c879f36f15b86ccfa58c"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmigaDE_GameFiles[] = {
 	{ "procs0",		0,	"8b7dce249821d3a62b314399c4334347"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmigaES_GameFiles[] = {
 	{ "procs0",		0,	"35fc295ddd0af9da932d256ba799a4b0"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmigaFR_GameFiles[] = {
 	{ "procs0",		0,	"d4ea4a97e01fa67ea066f9e785050ed2"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSAmigaDemo_GameFiles[] = {
 	{ "demo",		0,	"8d3a750d1c840b1b1071e42f9e6f6aa2"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSST_GameFiles[] = {
 	{ "procs0",		0,	"1501d5ae364b2814a33ed19347c3fcae"},
+	{ NULL, 0, NULL}
 };
 
 static const ADGameFileDescription OSSTFR_GameFiles[] = {
 	{ "procs0",		0,	"2148d25de3219dd4a36580ca735d0afa"},
+	{ NULL, 0, NULL}
 };
 
 
@@ -182,7 +212,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FW_GameFiles),
 			FW_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -196,7 +225,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWALT_GameFiles),
 			FWALT_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -209,7 +237,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWDE_GameFiles),
 			FWDE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -222,7 +249,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWES_GameFiles),
 			FWES_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -235,7 +261,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWFR_GameFiles),
 			FWFR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformPC,
@@ -248,7 +273,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWAmiga_GameFiles),
 			FWAmiga_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -261,7 +285,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWAmigaDE_GameFiles),
 			FWAmigaDE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
@@ -274,7 +297,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWAmigaES_GameFiles),
 			FWAmigaES_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
@@ -287,7 +309,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWAmigaFR_GameFiles),
 			FWAmigaFR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
@@ -300,7 +321,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWAmigaIT_GameFiles),
 			FWAmigaIT_GameFiles,
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
@@ -313,7 +333,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"Demo",
-			ARRAYSIZE(FWAmigaDemo_GameFiles),
+
 			FWAmigaDemo_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -326,7 +346,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWST_GameFiles),
 			FWST_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
@@ -339,7 +358,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"",
-			ARRAYSIZE(FWSTFR_GameFiles),
 			FWSTFR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
@@ -352,7 +370,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"256 colors",
-			ARRAYSIZE(OS_GameFiles),
 			OS_GameFiles,
 			Common::EN_GRB,
 			Common::kPlatformPC,
@@ -365,7 +382,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSUS_GameFiles),
 			OSUS_GameFiles,
 			Common::EN_USA,
 			Common::kPlatformPC,
@@ -378,7 +394,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"256 colors",
-			ARRAYSIZE(OSUS256_GameFiles),
 			OSUS256_GameFiles,
 			Common::EN_USA,
 			Common::kPlatformPC,
@@ -391,7 +406,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSDE_GameFiles),
 			OSDE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -404,7 +418,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSES_GameFiles),
 			OSES_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -417,7 +430,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"256 colors",
-			ARRAYSIZE(OSESCD_GameFiles),
 			OSESCD_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -430,7 +442,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"256 colors",
-			ARRAYSIZE(OSFR_GameFiles),
 			OSFR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformPC,
@@ -443,7 +454,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSIT_GameFiles),
 			OSIT_GameFiles,
 			Common::IT_ITA,
 			Common::kPlatformPC,
@@ -456,7 +466,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSAmiga_GameFiles),
 			OSAmiga_GameFiles,
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
@@ -469,7 +478,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"alt",
-			ARRAYSIZE(OSAmigaAlt_GameFiles),
 			OSAmigaAlt_GameFiles,
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
@@ -482,7 +490,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSAmigaUS_GameFiles),
 			OSAmigaUS_GameFiles,
 			Common::EN_USA,
 			Common::kPlatformAmiga,
@@ -495,7 +502,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSAmigaDE_GameFiles),
 			OSAmigaDE_GameFiles,
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
@@ -508,7 +514,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSAmigaES_GameFiles),
 			OSAmigaES_GameFiles,
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
@@ -521,7 +526,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSAmigaFR_GameFiles),
 			OSAmigaFR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
@@ -534,7 +538,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"Demo",
-			ARRAYSIZE(OSAmigaDemo_GameFiles),
 			OSAmigaDemo_GameFiles,
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
@@ -547,7 +550,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSST_GameFiles),
 			OSST_GameFiles,
 			Common::EN_GRB,
 			Common::kPlatformAtariST,
@@ -560,7 +562,6 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"",
-			ARRAYSIZE(OSSTFR_GameFiles),
 			OSSTFR_GameFiles,
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
@@ -569,7 +570,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ { NULL, NULL, 0, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
+	{ { NULL, NULL, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
 };
 
 bool CineEngine::initGame() {
