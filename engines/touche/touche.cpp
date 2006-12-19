@@ -1556,7 +1556,7 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 				if (keyChar->num != 0) {
 					if ((keyChar->flags & 0x4000) == 0) {
 						if (keyChar->strNum != 0) {
-							str = keyChar->strNum;
+							str = _programHitBoxTable[i].defaultStr;
 						}
 						hitBox = &keyChar->prevBoundingRect;
 						hitPosX = _inp_mousePos.x;
