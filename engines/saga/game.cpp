@@ -60,17 +60,6 @@ using Common::ADGameDescription;
 
 #include "sagagame.cpp"
 
-bool SagaEngine::postInitGame() {
-	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
-	_displayClip.right = _gameDisplayInfo.logicalWidth;
-	_displayClip.bottom = _gameDisplayInfo.logicalHeight;
-
-	if (!_resource->createContexts()) {
-		return false;
-	}
-	return true;
-}
-
 bool SagaEngine::initGame() {
 	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		(const byte *)gameDescriptions,
@@ -79,7 +68,12 @@ bool SagaEngine::initGame() {
 		saga_games
 		);
 	_gameDescription = &gameDescriptions[i];
-	return postInitGame();
+
+	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
+	_displayClip.right = _gameDisplayInfo.logicalWidth;
+	_displayClip.bottom = _gameDisplayInfo.logicalHeight;
+
+	return _resource->createContexts();
 }
 
 DetectedGameList GAME_detectGames(const FSList &fslist) {
