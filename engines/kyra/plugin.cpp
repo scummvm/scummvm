@@ -39,7 +39,7 @@ enum {
 };
 
 struct KYRAGameDescription {
-	ADGameDescription desc;
+	Common::ADGameDescription desc;
 
 	const char *id;
 	GameFlags flags;
@@ -151,27 +151,23 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { NULL, NULL, NULL, UNK_LANG, kPlatformUnknown }, NULL, KYRA2_UNK_FLAGS }
 };
 
-ADGameDescList getADDescList() {
-	ADGameDescList gameDesc;
+static ADList detectKyraGames(const FSList &fslist) {
+	Common::AdvancedDetector ad;
+	Common::ADList matches;
+	Common::ADGameDescList descList;
 
 	for (int i = 0; i < ARRAYSIZE(adGameDescs) - 1; ++i) {
-		gameDesc.push_back(&adGameDescs[i].desc);
+		descList.push_back(&adGameDescs[i].desc);
 	}
 
-	return gameDesc;
-}
-
-ADList detectKyraGames(const FSList &fslist) {
-	AdvancedDetector ad;
-
-	ad.registerGameDescriptions(getADDescList());
+	ad.registerGameDescriptions(descList);
 	ad.setFileMD5Bytes(kMD5FileSizeLimit);
 
-	ADList list = ad.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
-	return list;
+	matches = ad.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
+	return matches;
 }
 
-bool setupGameFlags(const ADList &list, GameFlags &flags) {
+static bool setupGameFlags(const ADList &list, GameFlags &flags) {
 	if (!list.size()) {
 		// maybe add non md5 based detection again?
 		return false;
@@ -224,7 +220,7 @@ const PlainGameDescriptor gameList[] = {
 } // End of anonymous namespace
 
 GameList Engine_KYRA_gameIDList() {
-	return Common::real_ADVANCED_DETECTOR_GAMEID_LIST(gameList);
+	return GameList(gameList);
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {

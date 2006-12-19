@@ -72,16 +72,6 @@ PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
 	return kNoGameDataFoundError;
 }
 
-GameList real_ADVANCED_DETECTOR_GAMEID_LIST(const PlainGameDescriptor *list) {
-	GameList games;
-	const PlainGameDescriptor *g = list;
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
-	return games;
-}
-
 GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
 	const char *gameid,
 	const PlainGameDescriptor *list,
@@ -110,7 +100,7 @@ GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
 	return gs;
 }
 
-DetectedGame toDetectedGame(const ADGameDescription &g, const PlainGameDescriptor *sg) {
+static DetectedGame toDetectedGame(const ADGameDescription &g, const PlainGameDescriptor *sg) {
 	const char *title = 0;
 
 	while (sg->gameid) {
@@ -132,7 +122,7 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const PlainGameDescriptor *list
 	) {
 	DetectedGameList detectedGames;
-	Common::AdvancedDetector AdvDetector;
+	Common::AdvancedDetector ad;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
 	const byte *descPtr;
@@ -140,12 +130,12 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	for (descPtr = descs; *descPtr != 0; descPtr += descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
-	AdvDetector.registerGameDescriptions(descList);
-	AdvDetector.setFileMD5Bytes(md5Bytes);
+	ad.registerGameDescriptions(descList);
+	ad.setFileMD5Bytes(md5Bytes);
 
 	debug(3, "%s: cnt: %d", ((const ADGameDescription *)descs)->name,  descList.size());
 
-	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
+	matches = ad.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
 		detectedGames.push_back(toDetectedGame(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list));
@@ -162,7 +152,7 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	int gameNumber = -1;
 
 	DetectedGameList detectedGames;
-	Common::AdvancedDetector AdvDetector;
+	Common::AdvancedDetector ad;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
 	const byte *descPtr;
@@ -180,10 +170,10 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	for (descPtr = descs; *descPtr != 0; descPtr += descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
-	AdvDetector.registerGameDescriptions(descList);
-	AdvDetector.setFileMD5Bytes(md5Bytes);
+	ad.registerGameDescriptions(descList);
+	ad.setFileMD5Bytes(md5Bytes);
 
-	matches = AdvDetector.detectGame(0, language, platform);
+	matches = ad.detectGame(0, language, platform);
 
 	for (uint i = 0; i < matches.size(); i++) {
 		if (toDetectedGame(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list).gameid == gameid) {

@@ -55,7 +55,17 @@ struct GameDescriptor {
 };
 
 /** List of games. */
-typedef Common::Array<GameDescriptor> GameList;
+class GameList : public Common::Array<GameDescriptor> {
+public:
+	GameList() {}
+	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
+	GameList(const PlainGameDescriptor *g) {
+		while (g->gameid) {
+			push_back(*g);
+			g++;
+		}
+	}
+};
 
 
 
