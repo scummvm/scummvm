@@ -41,7 +41,6 @@ enum {
 struct KYRAGameDescription {
 	Common::ADGameDescription desc;
 
-	const char *id;
 	GameFlags flags;
 };
 
@@ -129,26 +128,26 @@ const ADGameFileDescription kyra3CD1[] = {
 
 #define KYRA3_CD_FLAGS FLAGS(false, false, false, true, GI_KYRA3)
 
-const KYRAGameDescription adGameDescs[] = {
-	{ { "The Legend of Kyrandia", 0, kyra1EnglishFloppy1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, kyra1EnglishFloppy2, EN_ANY, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, kyra1FrenchFloppy1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, kyra1GermanFloppy1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS },
-	{ { "The Legend of Kyrandia", 0, kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from Arne.F
-	{ { "The Legend of Kyrandia", 0, kyra1SpanishFloppy1, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from VooD
-	{ { "The Legend of Kyrandia", 0, kyra1SpanishFloppy2, ES_ESP, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
-	{ { "The Legend of Kyrandia", 0, kyra1ItalianFloppy1, IT_ITA, kPlatformPC }, "kyra1", KYRA1_FLOPPY_FLAGS }, // from gourry
+static const KYRAGameDescription adGameDescs[] = {
+	{ { "kyra1", 0, kyra1EnglishFloppy1, EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, kyra1EnglishFloppy2, EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, kyra1FrenchFloppy1 , FR_FRA, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, kyra1GermanFloppy1 , DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from Arne.F
+	{ { "kyra1", 0, kyra1SpanishFloppy1, ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from VooD
+	{ { "kyra1", 0, kyra1SpanishFloppy2, ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
+	{ { "kyra1", 0, kyra1ItalianFloppy1, IT_ITA, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
 
-	{ { "The Legend of Kyrandia", "CD", kyra1EnglishCD1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
-	{ { "The Legend of Kyrandia", "CD", kyra1GermanCD1 , DE_DEU, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
-	{ { "The Legend of Kyrandia", "CD", kyra1FrenchCD1 , FR_FRA, kPlatformPC }, "kyra1", KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", kyra1EnglishCD1, EN_ANY, kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", kyra1GermanCD1 , DE_DEU, kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", kyra1FrenchCD1 , FR_FRA, kPlatformPC }, KYRA1_CD_FLAGS },
 
-	{ { "The Legend of Kyrandia", "Demo", kyra1EnglishDemo1, EN_ANY, kPlatformPC }, "kyra1", KYRA1_DEMO_FLAGS },
+	{ { "kyra1", "Demo", kyra1EnglishDemo1, EN_ANY, kPlatformPC }, KYRA1_DEMO_FLAGS },
 
-	{ { "The Legend of Kyrandia: The Hand of Fate", 0, kyra2UnknownUnknown1, UNK_LANG, kPlatformPC }, "kyra2", KYRA2_UNK_FLAGS }, // check this! (cd version?)
+	{ { "kyra2", 0, kyra2UnknownUnknown1, UNK_LANG, kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
-	{ { "The Legend of Kyrandia: Malcolm's Revenge", 0, kyra3CD1, UNK_LANG, kPlatformPC }, "kyra3", KYRA3_CD_FLAGS },
-	{ { NULL, NULL, NULL, UNK_LANG, kPlatformUnknown }, NULL, KYRA2_UNK_FLAGS }
+	{ { "kyra3", 0, kyra3CD1, UNK_LANG, kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { NULL, NULL, NULL, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
 };
 
 static ADList detectKyraGames(const FSList &fslist) {
@@ -227,17 +226,13 @@ GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
 }
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	ADList games = detectKyraGames(fslist);
-
-	for (ADList::const_iterator pos = games.begin(); pos != games.end(); ++pos) {
-		// FIXME: The 'gameid' field is being abused as a description field here!
-		DetectedGame game(adGameDescs[*pos].id, adGameDescs[*pos].desc.gameid, adGameDescs[*pos].desc.language, adGameDescs[*pos].desc.platform);
-		game.updateDesc(adGameDescs[*pos].desc.extra);
-		detectedGames.push_back(game);
-	}
-
-	return detectedGames;
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+		fslist,
+		(const byte *)adGameDescs,
+		sizeof(KYRAGameDescription),
+		kMD5FileSizeLimit,
+		gameList
+	);
 }
 
 PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
