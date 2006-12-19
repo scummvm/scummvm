@@ -2029,6 +2029,8 @@ void Inter_v2::o2_initMult(void) {
 			_vm->_mult->_objects[i].lastRight = -1;
 			_vm->_mult->_objects[i].lastTop = -1;
 			_vm->_mult->_objects[i].lastBottom = -1;
+			_vm->_mult->_objects[i].goblinX = 1;
+			_vm->_mult->_objects[i].goblinY = 1;
 		}
 	} else if (oldObjCount != _vm->_mult->_objCount) {
 		error("o2_initMult: Object count changed, but storage didn't (old count = %d, new count = %d)",
