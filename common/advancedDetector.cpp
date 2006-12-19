@@ -137,7 +137,7 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	Common::ADGameDescList descList;
 	const byte *descPtr;
 
-	for (descPtr = descs; *descPtr != NULL; descPtr += descItemSize)
+	for (descPtr = descs; *descPtr != 0; descPtr += descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
 	AdvDetector.registerGameDescriptions(descList);
@@ -177,7 +177,7 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	for (descPtr = descs; *descPtr != NULL; descPtr += descItemSize)
+	for (descPtr = descs; *descPtr != 0; descPtr += descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
 	AdvDetector.registerGameDescriptions(descList);
