@@ -83,7 +83,7 @@ using Common::ADGameDescription;
 #include "agosgame.cpp"
 
 bool AGOSEngine::initGame() {
-	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		(const byte *)gameDescriptions,
 		sizeof(AGOSGameDescription),
 		FILE_MD5_BYTES,
@@ -94,7 +94,7 @@ bool AGOSEngine::initGame() {
 }
 
 DetectedGameList GAME_detectGames(const FSList &fslist) {
-	return real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 		fslist,
 		(const byte *)gameDescriptions,
 		sizeof(AGOSGameDescription),

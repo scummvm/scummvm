@@ -114,7 +114,7 @@ static DetectedGame toDetectedGame(const ADGameDescription &g, const PlainGameDe
 	return dg;
 }
 
-DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+DetectedGameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
 	const int descItemSize,
@@ -142,7 +142,7 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	return detectedGames;
 }
 
-int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const byte *descs,
 	const int descItemSize,
 	const int md5Bytes,

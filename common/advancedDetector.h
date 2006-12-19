@@ -101,7 +101,7 @@ GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+DetectedGameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
 	const int descItemSize,
@@ -112,7 +112,7 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
+int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const byte *descs,
 	const int descItemSize,
 	const int md5Bytes,
