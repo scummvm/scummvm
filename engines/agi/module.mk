@@ -1,7 +1,6 @@
 MODULE := engines/agi
 
 MODULE_OBJS = \
-	detection.o \
 	agi.o \
 	agi_v2.o \
 	agi_v3.o \
