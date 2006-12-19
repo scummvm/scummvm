@@ -607,7 +607,7 @@ void loadPoldatDat(const char *fname) {
 }
 
 void freePoldatDat() {
-	free((void *)fontParamTable);
+	free(const_cast<Cine::CharacterEntry *>(fontParamTable));
 	fontParamTable = 0;
 }
 
