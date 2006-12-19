@@ -67,19 +67,13 @@ typedef Array<const ADGameDescription*> ADGameDescList;
 class AdvancedDetector {
 
 public:
-	AdvancedDetector();
-	~AdvancedDetector() {};
+	AdvancedDetector() {}
+	~AdvancedDetector() {}
 
 
 	void registerGameDescriptions(ADGameDescList gameDescriptions) {
 		_gameDescriptions = gameDescriptions;
 	}
-
-	/**
-	 * Specify number of bytes which are used to calculate MD5.
-	 * Default value is 0 which means whole file.
-	 */
-	void setFileMD5Bytes(int bytes) { _fileMD5Bytes = bytes; }
 
 	/**
 	 * Detect games in specified directory.
@@ -88,16 +82,15 @@ public:
 	 *
 	 * @param fslist	FSList to scan or NULL for scanning all specified
 	 *  default directories.
+	 * @param md5Bytes	number of bytes which are used to calculate MD5
 	 * @param language	restrict results to specified language only
 	 * @param platform	restrict results to specified platform only
 	 * @return	list of indexes to GameDescriptions of matched games
 	 */
-	ADList detectGame(const FSList *fslist, Language language, Platform platform);
+	ADList detectGame(const FSList *fslist, int md5Bytes, Language language, Platform platform);
 
 private:
 	ADGameDescList _gameDescriptions;
-
-	int _fileMD5Bytes;
 
 	String getDescription(int num) const;
 };

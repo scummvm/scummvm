@@ -161,9 +161,8 @@ static ADList detectKyraGames(const FSList &fslist) {
 	}
 
 	ad.registerGameDescriptions(descList);
-	ad.setFileMD5Bytes(kMD5FileSizeLimit);
 
-	matches = ad.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
+	matches = ad.detectGame(&fslist, kMD5FileSizeLimit, Common::UNK_LANG, Common::kPlatformUnknown);
 	return matches;
 }
 

@@ -131,11 +131,10 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 		descList.push_back((const ADGameDescription *)descPtr);
 
 	ad.registerGameDescriptions(descList);
-	ad.setFileMD5Bytes(md5Bytes);
 
 	debug(3, "%s: cnt: %d", ((const ADGameDescription *)descs)->name,  descList.size());
 
-	matches = ad.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
+	matches = ad.detectGame(&fslist, md5Bytes, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
 		detectedGames.push_back(toDetectedGame(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list));
@@ -171,9 +170,8 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		descList.push_back((const ADGameDescription *)descPtr);
 
 	ad.registerGameDescriptions(descList);
-	ad.setFileMD5Bytes(md5Bytes);
 
-	matches = ad.detectGame(0, language, platform);
+	matches = ad.detectGame(0, md5Bytes, language, platform);
 
 	for (uint i = 0; i < matches.size(); i++) {
 		if (toDetectedGame(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list).gameid == gameid) {
@@ -192,10 +190,6 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 }
 
 
-AdvancedDetector::AdvancedDetector() {
-	_fileMD5Bytes = 0;
-}
-
 String AdvancedDetector::getDescription(int num) const {
 	char tmp[256];
 	const ADGameDescription *g = _gameDescriptions[num];
@@ -206,7 +200,7 @@ String AdvancedDetector::getDescription(int num) const {
 	return String(tmp);
 }
 
-ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Platform platform) {
+ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -219,15 +213,11 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 	int j;
 	char md5str[32+1];
 	uint8 md5sum[16];
-	int *matched;
 
-	uint matchedCount = 0;
 	bool fileMissing;
 	const ADGameFileDescription *fileDesc;
 
 	assert(_gameDescriptions.size());
-
-	matched = new int[_gameDescriptions.size()];
 
 	// First we compose list of files which we need MD5s for
 	for (i = 0; i < _gameDescriptions.size(); i++) {
@@ -249,7 +239,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 
 			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
 
-			if (!md5_file(*file, md5sum, _fileMD5Bytes)) continue;
+			if (!md5_file(*file, md5sum, md5Bytes)) continue;
 			for (j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
@@ -268,7 +258,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 				if (testFile.open(file->_key)) {
 					testFile.close();
 
-					if (md5_file(file->_key.c_str(), md5sum, _fileMD5Bytes)) {
+					if (md5_file(file->_key.c_str(), md5sum, md5Bytes)) {
 						for (j = 0; j < 16; j++) {
 							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 						}
@@ -280,9 +270,19 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 		}
 	}
 
+	ADList matched;
+	int maxFilesMatched = 0;
+
 	for (i = 0; i < _gameDescriptions.size(); i++) {
 		fileMissing = false;
 
+		// Do not even bother to look at entries which do not have matching
+		// language and platform (if specified).
+		if ((_gameDescriptions[i]->language != language && language != UNK_LANG) ||
+			(_gameDescriptions[i]->platform != platform && platform != kPlatformUnknown)) {
+			continue;
+		}
+		
 		// Try to open all files for this game
 		for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
 			fileDesc = &_gameDescriptions[i]->filesDescriptions[j];
@@ -302,13 +302,30 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 		}
 		if (!fileMissing) {
 			debug(2, "Found game: %s (%d)", getDescription(i).c_str(), i);
-			matched[matchedCount++] = i;
+
+			// Count the number of matching files. Then, only keep those
+			// entries which match a maximal amount of files.
+			int curFilesMatched = 0;
+			for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++)
+				curFilesMatched++;
+			
+			if (curFilesMatched > maxFilesMatched) {
+				debug(2, " ... new best match, removing all previous candidates");
+				maxFilesMatched = curFilesMatched;
+				matched.clear();
+				matched.push_back(i);
+			} else if (curFilesMatched == maxFilesMatched) {
+				matched.push_back(i);
+			} else {
+				debug(2, " ... skipped");
+			}
+
 		} else {
 			debug(5, "Skipping game: %s (%d)", getDescription(i).c_str(), i);
 		}
 	}
 
-	if (!filesMD5.empty() && (matchedCount == 0)) {
+	if (!filesMD5.empty() && matched.empty()) {
 		printf("MD5s of your game version are unknown. Please, report following data to\n");
 		printf("ScummVM team along with your game name and version:\n");
 
@@ -316,47 +333,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
 	}
 
-	// We have some resource sets which are superpositions of other
-	// Now remove lesser set if bigger matches too
-
-	if (matchedCount > 1) {
-		// Search max number
-		int maxcount = 0;
-		for (i = 0; i < matchedCount; i++) {
-			int fCount = 0;
-			for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++)
-				fCount++;
-			maxcount = MAX(fCount, maxcount);
-		}
-
-		// Now purge targets with number of files lesser than max
-		for (i = 0; i < matchedCount; i++) {
-			if ((_gameDescriptions[matched[i]]->language != language && language != UNK_LANG) ||
-				(_gameDescriptions[matched[i]]->platform != platform && platform != kPlatformUnknown)) {
-				debug(2, "Purged %s", getDescription(matched[i]).c_str());
-				matched[i] = -1;
-				continue;
-			}
-
-			int fCount = 0;
-			for (j = 0; _gameDescriptions[matched[i]]->filesDescriptions[j].fileName; j++)
-				fCount++;
-
-			if (fCount < maxcount) {
-				debug(2, "Purged: %s", getDescription(matched[i]).c_str());
-				matched[i] = -1;
-			}
-		}
-	}
-
-
-	ADList returnMatches;
-	for (i = 0; i < matchedCount; i++)
-		if (matched[i] != -1)
-			returnMatches.push_back(matched[i]);
-
-	delete[] matched;
-	return returnMatches;
+	return matched;
 }
 
 }	// End of namespace Common
