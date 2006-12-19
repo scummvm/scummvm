@@ -1339,8 +1339,9 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	animPalette();
 	_vm->_draw->blitInvalidated();
 
+	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 	// Gob2 busy-waits here, so add a delay
-	_vm->_util->longDelay(1);
+	_vm->_util->delay(1);
 
 	if (flag != 0) {
 
@@ -2795,6 +2796,31 @@ void Inter_v1::loadMult(void) {
 			_vm->_global->_inter_execPtr++;
 		}
 	}
+}
+
+void Inter_v1::storeKey(int16 key) {
+	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
+
+	storeMouse();
+	WRITE_VAR(1, _vm->_snd->_playingSound);
+
+	if (key == 0x4800)
+		key = 0x0B;
+	else if (key == 0x5000)
+		key = 0x0A;
+	else if (key == 0x4D00)
+		key = 0x09;
+	else if (key == 0x4B00)
+		key = 0x08;
+	else if (key == 0x011B)
+		key = 0x1B;
+	else if ((key & 0xFF) != 0)
+		key &= 0xFF;
+
+	WRITE_VAR(0, key);
+
+	if (key != 0)
+		_vm->_util->waitKey();
 }
 
 void Inter_v1::storeMouse(void) {

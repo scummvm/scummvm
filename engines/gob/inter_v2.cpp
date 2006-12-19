@@ -2312,6 +2312,35 @@ void Inter_v2::o2_switchTotSub(void) {
 	_vm->_game->switchTotSub(index, skipPlay);
 }
 
+void Inter_v2::storeKey(int16 key) {
+	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
+
+	storeMouse();
+	WRITE_VAR(1, _vm->_snd->_playingSound);
+
+	if (key == 0x4800)
+		key = 0x0B;
+	else if (key == 0x5000)
+		key = 0x0A;
+	else if (key == 0x4D00)
+		key = 0x09;
+	else if (key == 0x4B00)
+		key = 0x08;
+	else if (key == 0x011B)
+		key = 0x1B;
+	else if (key == 0x0E08)
+		key = 0x19;
+	else if (key == 0x5300)
+		key = 0x1A;
+	else if ((key & 0xFF) != 0)
+		key &= 0xFF;
+
+	WRITE_VAR(0, key);
+
+	if (key != 0)
+		_vm->_util->waitKey();
+}
+
 void Inter_v2::storeMouse(void) {
 	int16 x;
 	int16 y;

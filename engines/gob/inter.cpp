@@ -189,31 +189,6 @@ void Inter::funcBlock(int16 retFlag) {
 	return;
 }
 
-void Inter::storeKey(int16 key) {
-	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
-
-	storeMouse();
-	WRITE_VAR(1, _vm->_snd->_playingSound);
-
-	if (key == 0x4800)
-		key = 0x0b;
-	else if (key == 0x5000)
-		key = 0x0a;
-	else if (key == 0x4d00)
-		key = 0x09;
-	else if (key == 0x4b00)
-		key = 0x08;
-	else if (key == 0x011b)
-		key = 0x1b;
-	else if ((key & 0xff) != 0)
-		key &= 0xff;
-
-	WRITE_VAR(0, key);
-
-	if (key != 0)
-		_vm->_util->waitKey();
-}
-
 void Inter::checkSwitchTable(char **ppExec) {
 	int16 i;
 	int16 len;
