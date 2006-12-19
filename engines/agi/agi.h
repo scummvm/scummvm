@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/advancedDetector.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -95,6 +96,30 @@ typedef signed int Err;
 #include "agi/sound.h"
 
 namespace Agi {
+
+
+enum AgiGameType {
+	GType_V2 = 1,
+	GType_V3
+};
+
+enum AgiGameFeatures {
+	AGI_AMIGA = 1 << 0,
+	AGI_MOUSE = 1 << 1,
+	AGI_AGDS = 1 << 2
+
+};
+
+struct AGIGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	uint32 features;
+	uint16 version;
+};
+
+
+
 
 enum {
 	NO_GAMEDIR = 0,
@@ -500,12 +525,16 @@ protected:
 	void shutdown();
 	void initialize();
 
+	bool initGame();
+
 public:
 	AgiEngine(OSystem *syst);
 	virtual ~AgiEngine();
 	int getGameId() {
 		return _gameId;
 	}
+
+	const AGIGameDescription *_gameDescription;
 
 private:
 

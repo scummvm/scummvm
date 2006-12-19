@@ -125,12 +125,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Crc(int argc, const char **argv) {
-	char name[80];
-	DebugPrintf("0x%05x\n", _vm->game.crc);
-	if (_vm->match_crc(_vm->game.crc, name, 80))
-		DebugPrintf("%s\n", name);
-	else
-		DebugPrintf("Unknown game\n");
+	DebugPrintf("command removed from scummvm\n");
 
 	return true;
 }
@@ -216,7 +211,7 @@ bool Console::Cmd_Trigger(int argc, const char **argv) {
 		DebugPrintf("Usage: trigger on|off\n");
 		return false;
 	}
-	_vm->_debug.ignoretriggers = strcmp (argv[1], "on"); 
+	_vm->_debug.ignoretriggers = strcmp (argv[1], "on");
 
 	return true;
 }

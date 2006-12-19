@@ -1,6 +1,7 @@
 MODULE := engines/agi
 
 MODULE_OBJS = \
+	detection.o \
 	agi.o \
 	agi_v2.o \
 	agi_v3.o \
@@ -31,10 +32,11 @@ MODULE_OBJS = \
 	view.o \
 	words.o
 
+
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
 endif
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

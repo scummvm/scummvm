@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
@@ -44,6 +45,8 @@
 #include "agi/menu.h"
 #include "agi/savegame.h"
 #include "agi/sound.h"
+
+
 
 namespace Agi {
 
@@ -99,7 +102,7 @@ void AgiEngine::processEvents() {
 
 			if (event.kbd.flags & OSystem::KBD_CTRL)
 				_key_control = 1;
-			
+
 			if (event.kbd.flags & OSystem::KBD_ALT)
 				_key_alt = 1;
 
@@ -364,8 +367,8 @@ int AgiEngine::agiInit() {
 	switch (loader->getIntVersion() >> 12) {
 	case 2:
 		report("Emulating Sierra AGI v%x.%03x\n",
-				(int)(loader->version() >> 12) & 0xF,
-				(int)(loader->version()) & 0xFFF);
+				(int)(agiGetRelease() >> 12) & 0xF,
+				(int)(agiGetRelease()) & 0xFFF);
 		break;
 	case 3:
 		report("Emulating Sierra AGI v%x.002.%03x\n",
@@ -438,10 +441,25 @@ int AgiEngine::agiDeinit() {
 int AgiEngine::agiDetectGame() {
 	int ec = err_OK;
 
-	loader = new AgiLoader_v2(this);
-	ec = loader->detect_game();
+	assert(this->_gameDescription != NULL);
 
-	if (ec != err_OK) {
+	if( (this->_gameDescription->features & AGI_AMIGA) == AGI_AMIGA)
+		opt.amiga = true;
+
+	if( (this->_gameDescription->features & AGI_AGDS) == AGI_AGDS)
+		opt.agds = true;
+
+	if( (this->_gameDescription->features & AGI_MOUSE) == AGI_MOUSE)
+		opt.agimouse = true;
+
+
+	if(this->_gameDescription->version <= 0x2999)
+	{
+		loader = new AgiLoader_v2(this);
+		ec = loader->detect_game();
+	}
+	else
+	{
 		loader = new AgiLoader_v3(this);
 		ec = loader->detect_game();
 	}
@@ -601,6 +619,8 @@ void AgiEngine::initialize() {
 	game.ver = -1;		/* Don't display the conf file warning */
 
 	debugC(2, kDebugLevelMain, "Detect game");
+
+
 	if (agiDetectGame() == err_OK) {
 		game.state = STATE_LOADED;
 		debugC(2, kDebugLevelMain, "game loaded");
@@ -625,6 +645,14 @@ AgiEngine::~AgiEngine() {
 }
 
 int AgiEngine::init() {
+
+	// Detect game
+	if (!initGame()) {
+		GUIErrorMessage("No valid games were found in the specified directory.");
+		return -1;
+	}
+
+
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -657,72 +685,4 @@ int AgiEngine::go() {
 
 }                             // End of namespace Agi
 
-GameList Engine_AGI_gameIDList() {
-	GameList games;
-	const Agi::GameSettings *g = Agi::agi_settings;
 
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
-
-	return games;
-}
-
-GameDescriptor Engine_AGI_findGameID(const char *gameid) {
-	const Agi::GameSettings *g = Agi::agi_settings;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-	return *g;
-}
-
-DetectedGameList Engine_AGI_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	const Agi::GameSettings * g;
-
-	for (g = Agi::agi_settings; g->gameid; ++g) {
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin();
-		    file != fslist.end(); ++file) {
-			const char *fileName = file->name().c_str();
-
-			if (0 == scumm_stricmp(g->detectname, fileName)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
-				break;
-			}
-		}
-	}
-	return detectedGames;
-}
-
-PluginError Engine_AGI_create(OSystem *syst, Engine **engine) {
-	assert(syst);
-	assert(engine);
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("AgiEngine: invalid game path '%s'", dir.path().c_str());
-		return kInvalidPathError;
-	}
-
-	// Invoke the detector
-	Common::String gameid = ConfMan.get("gameid");
-	DetectedGameList detectedGames = Engine_AGI_detectGames(fslist);
-
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid == gameid) {
-			*engine = new Agi::AgiEngine(syst);
-			return kNoError;
-		}
-	}
-
-	warning("AgiEngine: Unable to locate game data at path '%s'", dir.path().c_str());
-	return kNoGameDataFoundError;
-}
-
-REGISTER_PLUGIN(AGI, "AGI Engine", "TODO (C) TODO");
