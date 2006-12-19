@@ -75,7 +75,6 @@ bool SagaEngine::initGame() {
 	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		(const byte *)gameDescriptions,
 		sizeof(SAGAGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		saga_games
 		);
@@ -88,7 +87,6 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 		fslist,
 		(const byte *)gameDescriptions,
 		sizeof(SAGAGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		saga_games
 	);

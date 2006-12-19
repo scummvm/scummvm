@@ -569,13 +569,13 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ { NULL, NULL, 0, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
 };
 
 bool CineEngine::initGame() {
 	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		(const byte *)gameDescriptions,
 		sizeof(CINEGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		cineGames
 		);
@@ -588,7 +588,6 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 		fslist,
 		(const byte *)gameDescriptions,
 		sizeof(CINEGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		cineGames
 	);

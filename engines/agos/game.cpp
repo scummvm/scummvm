@@ -86,7 +86,6 @@ bool AGOSEngine::initGame() {
 	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		(const byte *)gameDescriptions,
 		sizeof(AGOSGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		simonGames
 		);
@@ -99,7 +98,6 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 		fslist,
 		(const byte *)gameDescriptions,
 		sizeof(AGOSGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		simonGames
 	);

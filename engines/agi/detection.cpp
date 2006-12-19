@@ -174,14 +174,13 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2440,
 	},
 
-
+	{ { NULL, NULL, 0, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };
 
 bool AgiEngine::initGame() {
 	int i = Common::real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		(const byte *)gameDescriptions,
 		sizeof(AGIGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		agiGames
 		);
@@ -194,7 +193,6 @@ DetectedGameList GAME_detectGames(const FSList &fslist) {
 		fslist,
 		(const byte *)gameDescriptions,
 		sizeof(AGIGameDescription),
-		ARRAYSIZE(gameDescriptions),
 		FILE_MD5_BYTES,
 		agiGames
 	);

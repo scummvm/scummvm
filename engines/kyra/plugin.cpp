@@ -133,13 +133,14 @@ const KYRAGameDescription adGameDescs[] = {
 
 	{ { "The Legend of Kyrandia: The Hand of Fate", 0, ARRAYSIZE(kyra2UnknownUnknown1), kyra2UnknownUnknown1, UNK_LANG, kPlatformPC }, "kyra2", KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
-	{ { "The Legend of Kyrandia: Malcolm's Revenge", 0, ARRAYSIZE(kyra3CD1), kyra3CD1, UNK_LANG, kPlatformPC }, "kyra3", KYRA3_CD_FLAGS }
+	{ { "The Legend of Kyrandia: Malcolm's Revenge", 0, ARRAYSIZE(kyra3CD1), kyra3CD1, UNK_LANG, kPlatformPC }, "kyra3", KYRA3_CD_FLAGS },
+	{ { NULL, NULL, 0, NULL, UNK_LANG, kPlatformUnknown }, NULL, KYRA2_UNK_FLAGS }
 };
 
 ADGameDescList getADDescList() {
 	ADGameDescList gameDesc;
 
-	for (int i = 0; i < ARRAYSIZE(adGameDescs); ++i) {
+	for (int i = 0; i < ARRAYSIZE(adGameDescs) - 1; ++i) {
 		gameDesc.push_back(&adGameDescs[i].desc);
 	}
 

@@ -1464,4 +1464,5 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
+	{ { NULL, NULL, 0, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
 };

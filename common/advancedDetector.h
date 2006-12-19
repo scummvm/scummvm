@@ -78,7 +78,6 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
 	const int descItemSize,
-	const int descItemCount,
 	const int md5Bytes,
 	const PlainGameDescriptor *list
 	);
@@ -92,7 +91,6 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const byte *descs,
 	const int descItemSize,
-	const int descItemCount,
 	const int md5Bytes,
 	const PlainGameDescriptor *list
 	);

@@ -128,7 +128,6 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
 	const int descItemSize,
-	const int descItemCount,
 	const int md5Bytes,
 	const PlainGameDescriptor *list
 	) {
@@ -136,12 +135,15 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	Common::AdvancedDetector AdvDetector;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
+	const byte *descPtr;
 
-	for (int i = 0; i < descItemCount; i++)
-		descList.push_back((const ADGameDescription *)(descs + i * descItemSize));
+	for (descPtr = descs; *descPtr != NULL; descPtr += descItemSize)
+		descList.push_back((const ADGameDescription *)descPtr);
 
 	AdvDetector.registerGameDescriptions(descList);
 	AdvDetector.setFileMD5Bytes(md5Bytes);
+
+	debug(3, "%s: cnt: %d", ((const ADGameDescription *)descs)->name,  descList.size());
 
 	matches = AdvDetector.detectGame(&fslist, Common::UNK_LANG, Common::kPlatformUnknown);
 
@@ -154,7 +156,6 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const byte *descs,
 	const int descItemSize,
-	const int descItemCount,
 	const int md5Bytes,
 	const PlainGameDescriptor *list
 	) {
@@ -164,6 +165,7 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	Common::AdvancedDetector AdvDetector;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
+	const byte *descPtr;
 
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
@@ -175,8 +177,8 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	for (int i = 0; i < descItemCount; i++)
-		descList.push_back((const ADGameDescription *)(descs + i * descItemSize));
+	for (descPtr = descs; *descPtr != NULL; descPtr += descItemSize)
+		descList.push_back((const ADGameDescription *)descPtr);
 
 	AdvDetector.registerGameDescriptions(descList);
 	AdvDetector.setFileMD5Bytes(md5Bytes);
@@ -190,8 +192,8 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		}
 	}
 
-	if (gameNumber >= descItemCount || gameNumber == -1) {
-		error("TODO invalid gameNumber %d (max. expected value: %d)", gameNumber, descItemCount );
+	if (gameNumber >= (int)descList.size() || gameNumber == -1) {
+		error("TODO invalid gameNumber %d (max. expected value: %d)", gameNumber, descList.size());
 	}
 
 	debug(2, "Running %s", toDetectedGame(*(const ADGameDescription *)(descs + gameNumber * descItemSize), list).description.c_str());
@@ -312,8 +314,10 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, Language language, Pla
 			debug(3, "Matched file: %s", tstr.c_str());
 		}
 		if (!fileMissing) {
-			debug(2, "Found game: %s", getDescription(i).c_str());
+			debug(2, "Found game: %s (%d)", getDescription(i).c_str(), i);
 			matched[matchedCount++] = i;
+		} else {
+			debug(5, "Skipping game: %s (%d)", getDescription(i).c_str(), i);
 		}
 	}
 
