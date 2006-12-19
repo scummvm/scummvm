@@ -231,7 +231,8 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	ADList games = detectKyraGames(fslist);
 
 	for (ADList::const_iterator pos = games.begin(); pos != games.end(); ++pos) {
-		DetectedGame game(adGameDescs[*pos].id, adGameDescs[*pos].desc.name, adGameDescs[*pos].desc.language, adGameDescs[*pos].desc.platform);
+		// FIXME: The 'gameid' field is being abused as a description field here!
+		DetectedGame game(adGameDescs[*pos].id, adGameDescs[*pos].desc.gameid, adGameDescs[*pos].desc.language, adGameDescs[*pos].desc.platform);
 		game.updateDesc(adGameDescs[*pos].desc.extra);
 		detectedGames.push_back(game);
 	}

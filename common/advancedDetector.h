@@ -37,7 +37,7 @@ struct ADGameFileDescription {
 };
 
 struct ADGameDescription {
-	const char *name;
+	const char *gameid;
 	const char *extra;
 	const ADGameFileDescription *filesDescriptions;
 	Language language;
@@ -65,11 +65,7 @@ typedef Array<const ADGameDescription*> ADGameDescList;
 // function, w/o a class or instantiating object... ? Or is there a deeper
 // reason I miss?
 class AdvancedDetector {
-
 public:
-	AdvancedDetector() {}
-	~AdvancedDetector() {}
-
 
 	void registerGameDescriptions(ADGameDescList gameDescriptions) {
 		_gameDescriptions = gameDescriptions;
@@ -91,8 +87,6 @@ public:
 
 private:
 	ADGameDescList _gameDescriptions;
-
-	String getDescription(int num) const;
 };
 
 
@@ -107,9 +101,6 @@ GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-// Also, we could get rid of the descSize parameter, if we simply terminated the
-// list of game descriptions by an all-zero entry (like the SCUMM engine does in
-// similar cases).
 DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
@@ -121,9 +112,6 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-// Also, we could get rid of the descSize parameter, if we simply terminated the
-// list of game descriptions by an all-zero entry (like the SCUMM engine does in
-// similar cases).
 int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const byte *descs,
 	const int descItemSize,
@@ -139,13 +127,16 @@ PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
 	);
 
 
-#define ADVANCED_DETECTOR_DETECT_GAMES(engine,detectFunc) \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,createFunction,detectFunc,list,obsoleteList) \
+	GameList Engine_##engine##_gameIDList() { \
+		return GameList(list); \
+	} \
+	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
+		return Common::real_ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
+	} \
 	DetectedGameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return detectFunc(fslist);						\
 	} \
-	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_ENGINE_CREATE(engine,createFunction,detectFunc,obsoleteList) \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
@@ -155,16 +146,6 @@ PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
 		return err; \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,createFunction,detectFunc,list,obsoleteList) \
-	GameList Engine_##engine##_gameIDList() { \
-		return GameList(list); \
-	} \
-	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::real_ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
-	} \
-	ADVANCED_DETECTOR_DETECT_GAMES(engine, detectFunc); \
-	ADVANCED_DETECTOR_ENGINE_CREATE(engine, createFunction, detectFunc, obsoleteList)
 
 
 }	// End of namespace Common

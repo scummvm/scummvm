@@ -104,12 +104,12 @@ static DetectedGame toDetectedGame(const ADGameDescription &g, const PlainGameDe
 	const char *title = 0;
 
 	while (sg->gameid) {
-		if (!scumm_stricmp(g.name, sg->gameid))
+		if (!scumm_stricmp(g.gameid, sg->gameid))
 			title = sg->description;
 		sg++;
 	}
 
-	DetectedGame dg(g.name, title, g.language, g.platform);
+	DetectedGame dg(g.gameid, title, g.language, g.platform);
 	dg.updateDesc(g.extra);
 	return dg;
 }
@@ -132,7 +132,7 @@ DetectedGameList real_ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 
 	ad.registerGameDescriptions(descList);
 
-	debug(3, "%s: cnt: %d", ((const ADGameDescription *)descs)->name,  descList.size());
+	debug(3, "%s: cnt: %d", ((const ADGameDescription *)descs)->gameid,  descList.size());
 
 	matches = ad.detectGame(&fslist, md5Bytes, Common::UNK_LANG, Common::kPlatformUnknown);
 
@@ -190,11 +190,10 @@ int real_ADVANCED_DETECTOR_DETECT_INIT_GAME(
 }
 
 
-String AdvancedDetector::getDescription(int num) const {
+static String getDescription(const ADGameDescription *g) {
 	char tmp[256];
-	const ADGameDescription *g = _gameDescriptions[num];
 
-	snprintf(tmp, 256, "%s (%s %s/%s)", g->name, g->extra,
+	snprintf(tmp, 256, "%s (%s %s/%s)", g->gameid, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language));
 
 	return String(tmp);
@@ -274,18 +273,19 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language
 	int maxFilesMatched = 0;
 
 	for (i = 0; i < _gameDescriptions.size(); i++) {
+		const ADGameDescription *g = _gameDescriptions[i];
 		fileMissing = false;
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
-		if ((_gameDescriptions[i]->language != language && language != UNK_LANG) ||
-			(_gameDescriptions[i]->platform != platform && platform != kPlatformUnknown)) {
+		if ((g->language != language && language != UNK_LANG) ||
+			(g->platform != platform && platform != kPlatformUnknown)) {
 			continue;
 		}
 		
 		// Try to open all files for this game
-		for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
-			fileDesc = &_gameDescriptions[i]->filesDescriptions[j];
+		for (j = 0; g->filesDescriptions[j].fileName; j++) {
+			fileDesc = &g->filesDescriptions[j];
 			tstr = fileDesc->fileName;
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
@@ -301,12 +301,12 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language
 			debug(3, "Matched file: %s", tstr.c_str());
 		}
 		if (!fileMissing) {
-			debug(2, "Found game: %s (%d)", getDescription(i).c_str(), i);
+			debug(2, "Found game: %s (%d)", getDescription(g).c_str(), i);
 
 			// Count the number of matching files. Then, only keep those
 			// entries which match a maximal amount of files.
 			int curFilesMatched = 0;
-			for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++)
+			for (j = 0; g->filesDescriptions[j].fileName; j++)
 				curFilesMatched++;
 			
 			if (curFilesMatched > maxFilesMatched) {
@@ -321,7 +321,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language
 			}
 
 		} else {
-			debug(5, "Skipping game: %s (%d)", getDescription(i).c_str(), i);
+			debug(5, "Skipping game: %s (%d)", getDescription(g).c_str(), i);
 		}
 	}
 
