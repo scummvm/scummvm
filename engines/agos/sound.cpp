@@ -245,15 +245,14 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 
 	int i = 1;
 	while (_offsets[sound + i] == _offsets[sound])
-			i++;
+		i++;
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
 	return Audio::makeMP3Stream(_file, size);
 }
 
-void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
-{
+void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 #endif
@@ -281,8 +280,7 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 	return Audio::makeVorbisStream(_file, size);
 }
 
-void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
-{
+void VorbisSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 #endif
@@ -310,8 +308,7 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 	return Audio::makeFlacStream(_file, size);
 }
 
-void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
-{
+void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new CompAudioStream(this, sound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 #endif
