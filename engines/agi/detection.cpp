@@ -86,13 +86,54 @@ static const ADGameFileDescription AGI_KQ2_MAC_20R_GameFiles[] = {
 	{ NULL, 0, NULL}
 };
 
+// Kings Quest III
+static const ADGameFileDescription AGI_KQ3_PC_101_GameFiles[] = {
+	{ "logdir",		0,	"9c2b34e7ffaa89c8e2ecfeb3695d444b"},
+	{ NULL, 0, NULL}
+};
+static const ADGameFileDescription AGI_KQ3_PC_200_GameFiles[] = {
+	{ "logdir",		0,	"18aad8f7acaaff760720c5c6885b6bab"},
+	{ NULL, 0, NULL}
+};
+static const ADGameFileDescription AGI_KQ3_PC_214A_GameFiles[] = {
+	{ "logdir",		0,	"7650e659c7bc0f1e9f8a410b7a2e9de6"},
+	{ NULL, 0, NULL}
+};
+static const ADGameFileDescription AGI_KQ3_PC_214B_GameFiles[] = {
+	{ "logdir",		0,	"d3d17b77b3b3cd13246749231d9473cd"},
+	{ NULL, 0, NULL}
+};
+
+// Kings Quest IV AGI v3
+static const ADGameFileDescription AGI_KQ4_PC_20_GameFiles[] = {
+	{ "kq4dir",		0,	"fe44655c42f16c6f81046fdf169b6337"},
+	{ NULL, 0, NULL}
+};
+static const ADGameFileDescription AGI_KQ4_PC_22_GameFiles[] = {
+	{ "kq4dir",		0,	"7470b3aeb49d867541fc66cc8454fb7d"},
+	{ NULL, 0, NULL}
+};
+
+// Groza : AGDS
+static const ADGameFileDescription AGI_Groza_PC_GameFiles[] = {
+	{ "logdir",		0,	"421da3a18004122a966d64ab6bd86d2e"},
+	{ NULL, 0, NULL}
+};
+
+// Donald Ducks Playground
+static const ADGameFileDescription AGI_DDP_PC_10A_GameFiles[] = {
+	{ "logdir",		0,	"64388812e25dbd75f7af1103bc348596"},
+	{ NULL, 0, NULL}
+};
+
+
 
 static const AGIGameDescription gameDescriptions[] = {
 	{
 		// kings quest 1 : pc : 2.0F
 		{
 			"agi",
-			"King's Quest 1 (PC 5.25\"/3.5\") 2.0F [AGI 2.917]",
+			"King's Quest 1 (PC) 2.0F [AGI 2.917]",
 			AGI_KQ1_PC_20F_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -136,7 +177,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// kings quest 2 : PC : 2.2
 		{
 			"agi",
-			"King's Quest 2 (PC 5.25\"/3.5\") 2.2 [AGI 2.426]",
+			"King's Quest 2 (PC) 2.2 [AGI 2.426]",
 			AGI_KQ2_PC_22_GameFiles,
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -173,6 +214,126 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2440,
 	},
+
+
+
+	{
+		// kings quest 3 : PC : 1.01
+		{
+			"agi",
+			"King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]",
+			AGI_KQ3_PC_101_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
+	{
+		// kings quest 3 : PC : 2.00
+		{
+			"agi",
+			"King's Quest 3 (PC) 2.00 5/25/87 [AGI 2.435]",
+			AGI_KQ3_PC_200_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+	{
+		// kings quest 3 : PC : 2.14-A
+		{
+			"agi",
+			"King's Quest 3 (PC) 2.14 3/15/88 [AGI 2.936]",
+			AGI_KQ3_PC_214A_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2936,
+	},
+
+	{
+		// kings quest 3 : PC : 2.14-B
+		{
+			"agi",
+			"King's Quest 3 (PC) 2.14 3/15/88 [AGI 2.936]",
+			AGI_KQ3_PC_214B_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2936,
+	},
+
+
+
+	{
+		// kings quest 4 : PC : 2.0
+		{
+			"agi",
+			"King's Quest 4 (PC) 2.0 7/27/88 [AGI 3.002.086]",
+			AGI_KQ4_PC_20_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3086,
+	},
+
+	{
+		// kings quest 4 : PC : 2.0
+		{
+			"agi",
+			"King's Quest 4 (PC) 2.2 9/27/88 [AGI 3.002.086]",
+			AGI_KQ4_PC_22_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3086,
+	},
+
+
+	// AGDS : GROZA
+	{
+		// kings quest 4 : PC : 2.0
+		{
+			"agi",
+			"Groza : Russian AGDS",
+			AGI_Groza_PC_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		AGI_AGDS,
+		0x2440,
+	},
+
+
+	{
+		// Donald Ducks Playground : PC : 2.001 ** CURRENTLY UNSUPPORTED **
+		{
+			"agi",
+			"Donald Ducks Playground 1.0A ** UNSUPPORTED **",
+			AGI_DDP_PC_10A_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2089,
+	},
+
 
 	{ { NULL, NULL, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };

@@ -372,8 +372,8 @@ int AgiEngine::agiInit() {
 		break;
 	case 3:
 		report("Emulating Sierra AGI v%x.002.%03x\n",
-				(int)(loader->version() >> 12) & 0xF,
-				(int)(loader->version()) & 0xFFF);
+				(int)(agiGetRelease() >> 12) & 0xF,
+				(int)(agiGetRelease()) & 0xFFF);
 		break;
 	}
 

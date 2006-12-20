@@ -79,6 +79,8 @@ int AgiEngine::setup_v2_game(int ver, uint32 crc) {
 	if (opt.agds)
 		agiSetRelease(0x2440);	/* ALL AGDS games built for 2.440 */
 
+	report("Seting up for version 0x%04X\n", ver);
+
 	switch (agiGetRelease()) {
 	case 0x2089:
 		logic_names_cmd[0x86].num_args = 0;	/* quit: 0 args */
@@ -117,7 +119,9 @@ int AgiEngine::setup_v3_game(int ver, uint32 crc) {
 	if (opt.emuversion)
 		agiSetRelease(ver = opt.emuversion);
 
-	switch (ver) {
+	report("Seting up for version 0x%04X\n", ver);
+
+	switch (agiGetRelease()) {
 	case 0x3086:
 		logic_names_cmd[0xad].num_args = 1;	/* 173 : 1 args */
 		break;
