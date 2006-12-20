@@ -132,6 +132,7 @@ Other Games:
      Broken Sword 2: The Smoking Mirror          [sword2]
      Flight of the Amazon Queen                  [queen]
      Gobliiins                                   [gob1]
+     Gobliins 2                                  [gob2]
      Inherit the Earth: Quest for the Orb        [ite]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
@@ -409,10 +410,11 @@ OGG or FLAC.
 
 3.10) Gobliiins notes:
 ----- ----------------
-The CD version of Gobliiins contains one big audio track which you need to rip
-(See the section on using compressed audio files) and copy into the game
-directory if you want to have in-game music without the CD in the drive
-all the time.
+The CD versions of the Gobliiins series contain one big audio track which you
+need to rip (See the section on using compressed audio files) and copy into
+the game directory if you want to have in-game music without the CD in the
+drive all the time. The speech is also in that track and its volume is
+therefore changed with the music volume control as well.
 
 
 3.11) Inherit the Earth: Quest for the Orb notes:
