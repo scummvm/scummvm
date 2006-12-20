@@ -5,6 +5,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
    - Added Touche: The Adventures of the Fifth Musketeer engine.
+   - Added support for Gobliins2.
 
  General:
    - Better compression for DXA movies.
