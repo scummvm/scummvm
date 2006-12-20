@@ -547,7 +547,7 @@ protected:
 	void op_unlockWalkPath();
 	void op_addItemToInventoryAndRedraw();
 	void op_giveItemTo();
-	void op_resetHitBoxes();
+	void op_setHitBoxText();
 	void op_fadePalette();
 	void op_getInventoryItemFlags();
 	void op_drawInventory();

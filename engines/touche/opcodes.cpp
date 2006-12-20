@@ -136,7 +136,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_addItemToInventoryAndRedraw,
 		/* 0x54 */
 		&ToucheEngine::op_giveItemTo,
-		&ToucheEngine::op_resetHitBoxes,
+		&ToucheEngine::op_setHitBoxText,
 		&ToucheEngine::op_fadePalette,
 		0,
 		/* 0x58 */
@@ -477,6 +477,23 @@ void ToucheEngine::op_updateRoom() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_updateRoom()");
 	int16 area = _script.readNextWord();
 	updateRoomAreas(area, 0);
+
+	// Workaround for bug #1618700. Beggar sign (area 25) should be displayed even
+	// if Henri isn't present in the room.
+	//
+	//  [00B3] (1D) ST[0] = FLAGS[2]
+	//  [00B6] (06) PUSH
+	//  [00B7] (13) ST[0] = 0
+	//  [00BA] (11) ST[0] = ST[1] == ST[0]
+	//  [00BB] (02) JZ 0xF6
+	//  [xxxx] ...
+	//  [0192] (35) UPDATE_ROOM(16, 0)
+	//  [0195] (35) UPDATE_ROOM(19, 0)
+
+	if (_currentEpisodeNum == 91 && area == 19 && _flagsTable[2] != 0) {
+		debug(0, "Workaround beggar sign disappearing bug");
+		updateRoomAreas(25, 0);
+	}
 }
 
 void ToucheEngine::op_startTalk() {
@@ -749,8 +766,8 @@ void ToucheEngine::op_giveItemTo() {
 	_script.quitFlag = 3;
 }
 
-void ToucheEngine::op_resetHitBoxes() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_resetHitBoxes()");
+void ToucheEngine::op_setHitBoxText() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_setHitBoxText()");
 	int16 num = _script.readNextWord();
 	if (num & 0x4000) {
 		num &= 0xFF;
