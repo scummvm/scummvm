@@ -150,21 +150,6 @@ static const KYRAGameDescription adGameDescs[] = {
 	{ { NULL, NULL, NULL, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
 };
 
-static ADList detectKyraGames(const FSList &fslist) {
-	Common::AdvancedDetector ad;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-
-	for (int i = 0; i < ARRAYSIZE(adGameDescs) - 1; ++i) {
-		descList.push_back(&adGameDescs[i].desc);
-	}
-
-	ad.registerGameDescriptions(descList);
-
-	matches = ad.detectGame(&fslist, kMD5FileSizeLimit, Common::UNK_LANG, Common::kPlatformUnknown);
-	return matches;
-}
-
 static bool setupGameFlags(const ADList &list, GameFlags &flags) {
 	if (!list.size()) {
 		// maybe add non md5 based detection again?
@@ -173,6 +158,8 @@ static bool setupGameFlags(const ADList &list, GameFlags &flags) {
 
 	int id = list[0];
 
+	// FIXME: Isn't the following check/loop obsolete (i.e. I was/am under the
+	// impression that AdvancedDetector already performs this check).
 	if (list.size() > 1) {
 		int filesCount = 0;
 		int curID = 0;
@@ -222,7 +209,7 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::real_ADVANCED_DETECTOR_FIND_GAMEID(gameid, gameList, 0);
+	return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid, gameList, 0);
 }
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
@@ -246,8 +233,19 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	}
 
 	GameFlags flags;
-	ADList games = detectKyraGames(fslist);
-	if (!setupGameFlags(games, flags)) {
+	Common::AdvancedDetector ad;
+	Common::ADList matches;
+	Common::ADGameDescList descList;
+
+	for (int i = 0; i < ARRAYSIZE(adGameDescs) - 1; ++i) {
+		descList.push_back(&adGameDescs[i].desc);
+	}
+
+	ad.registerGameDescriptions(descList);
+
+	matches = ad.detectGame(&fslist, kMD5FileSizeLimit, Common::UNK_LANG, Common::kPlatformUnknown);
+
+	if (!setupGameFlags(matches, flags)) {
 		return kNoGameDataFoundError;
 	}
 

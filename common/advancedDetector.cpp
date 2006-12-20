@@ -33,7 +33,7 @@
 
 namespace Common {
 
-PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
+PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	DetectedGameList (*detectFunc)(const FSList &fslist),
 	const Common::ADObsoleteGameID *obsoleteList
 	) {
@@ -72,7 +72,7 @@ PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
 	return kNoGameDataFoundError;
 }
 
-GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
+GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 	const char *gameid,
 	const PlainGameDescriptor *list,
 	const Common::ADObsoleteGameID *obsoleteList
@@ -174,7 +174,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	matches = ad.detectGame(0, md5Bytes, language, platform);
 
 	for (uint i = 0; i < matches.size(); i++) {
-		if (toDetectedGame(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list).gameid == gameid) {
+		if (((const ADGameDescription *)(descs + matches[i] * descItemSize))->gameid == gameid) {
 			gameNumber = matches[i];
 			break;
 		}

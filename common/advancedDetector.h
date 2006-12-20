@@ -92,7 +92,7 @@ private:
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-GameDescriptor real_ADVANCED_DETECTOR_FIND_GAMEID(
+GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 	const char *gameid,
 	const PlainGameDescriptor *list,
 	const Common::ADObsoleteGameID *obsoleteList
@@ -121,7 +121,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
+PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	DetectedGameList (*detectFunc)(const FSList &fslist),
 	const Common::ADObsoleteGameID *obsoleteList
 	);
@@ -132,7 +132,7 @@ PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
 		return GameList(list); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::real_ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
+		return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
 	} \
 	DetectedGameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return detectFunc(fslist);						\
@@ -140,7 +140,7 @@ PluginError real_ADVANCED_DETECTOR_ENGINE_CREATE(
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		PluginError err = real_ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, obsoleteList); \
+		PluginError err = ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, obsoleteList); \
 		if (err == kNoError) \
 			*engine = new createFunction(syst); \
 		return err; \
