@@ -147,7 +147,6 @@ void CDROM::playMultMusic() {
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
 		if (!scumm_stricmp(_vm->_game->_curTotFile, tracks[i][0])) {
-			_cdPlaying = true;
 			startTrack(tracks[i][_vm->_global->_language + 1]);
 			break;
 		}
@@ -203,13 +202,14 @@ void CDROM::play(uint32 from, uint32 to) {
 	// plus frame, minus 150
 	debugC(1, DEBUG_MUSIC, "play(%d, %d)", from, to);
 
-	AudioCD.play(1, 0, from, to - from + 1);
+	AudioCD.play(1, 1, from, to - from + 1);
+	_cdPlaying = true;
 }
 
 int32 CDROM::getTrackPos(void) {
 	uint32 curPos = _vm->_util->getTimeKey() - _startTime;
 
-	if (AudioCD.isPlaying() && (_vm->_util->getTimeKey() < _trackStop))
+	if (_cdPlaying && (_vm->_util->getTimeKey() < _trackStop))
 		return curPos * 3 / 40;
 	else
 		return -1;
@@ -229,6 +229,7 @@ void CDROM::stop(void) {
 	debugC(1, DEBUG_MUSIC, "stop()");
 
 	AudioCD.stop();
+	_cdPlaying = false;
 }
 
 void CDROM::testCD(int trySubst, const char *label) {
