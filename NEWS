@@ -6,6 +6,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
    - Added Touche: The Adventures of the Fifth Musketeer engine.
    - Added support for Gobliins2.
+   - Added support for Simon the Sorcerer's Puzzle Pack
 
  General:
    - Better compression for DXA movies.
