@@ -749,7 +749,7 @@ void ScummEngine_c64::o_putActorAtObject() {
 		y = 60;
 	}
 
-	a->putActor(x, y, a->_room);
+	a->putActor(x, y);
 }
 
 void ScummEngine_c64::o_pickupObject() {

@@ -383,11 +383,11 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		a->_ignoreBoxes = (value > 0);
 		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->_ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {
-		a->putActor(value, a->getPos().y, a->_room);
+		a->putActor(value, a->getPos().y);
 		DebugPrintf("Actor[%d].x = %d\n", actnum, a->getPos().x);
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "y")) {
-		a->putActor(a->getPos().x, value, a->_room);
+		a->putActor(a->getPos().x, value);
 		DebugPrintf("Actor[%d].y = %d\n", actnum, a->getPos().y);
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "_elevation")) {
