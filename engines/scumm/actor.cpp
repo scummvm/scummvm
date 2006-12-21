@@ -878,13 +878,6 @@ void ScummEngine::putActors() {
 }
 
 void Actor::putActor(int dstX, int dstY, int newRoom) {
-	if (dstX == -1)
-		dstX = _pos.x;
-	if (dstY == -1)
-		dstY = _pos.y;
-	if (newRoom == -1)
-		newRoom = _room;
-
 	if (_visible && _vm->_currentRoom != newRoom && _vm->getTalkingActor() == _number) {
 		_vm->stopTalk();
 	}
@@ -1712,7 +1705,7 @@ void ScummEngine::setTalkingActor(int value) {
 		// Work out the screen co-ordinates of the actor
 		int x = _actors[value].getPos().x - (camera._cur.x - (_screenWidth >> 1));
 		int y = _actors[value]._top - (camera._cur.y - (_screenHeight >> 1));
-		
+
 		// Set the focus area to the calculated position
 		// TODO: Make the size adjust depending on what it's focusing on.
 		Common::Rect rect(x - 96, y - 64, x + 96, y + 64);

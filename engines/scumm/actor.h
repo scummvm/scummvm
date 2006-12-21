@@ -153,17 +153,17 @@ protected:
 		Common::Point dest;           // Final destination point
 		byte destbox;                 // Final destination box
 		int16 destdir;                // Final destination, direction to face at
-	
+
 		Common::Point cur;            // Last position
 		byte curbox;                  // Last box
-	
+
 		Common::Point next;           // Next position on our way to the destination, i.e. our intermediate destination
-	
+
 		Common::Point point3;
 		int32 deltaXFactor, deltaYFactor;
 		uint16 xfrac, yfrac;
 	};
-	
+
 
 	byte _palette[256];
 	int _elevation;
@@ -186,7 +186,16 @@ public:
 	void showActor();
 
 	void initActor(int mode);
-	void putActor(int x = -1, int y = -1, int room = -1);
+
+	void putActor() {
+		putActor(_pos.x, _pos.y, _room);
+	}
+
+	void putActor(int x, int y) {
+		putActor(x, y, _room);
+	}
+
+	void putActor(int x, int y, int room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
 	int calcMovementFactor(const Common::Point& next);
