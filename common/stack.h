@@ -49,23 +49,27 @@ public:
 		assert(_size < MAX_SIZE);
 		_stack[_size++] = x;
 	}
-	T top() const {
-		if (_size > 0)
-			return _stack[_size - 1];
-		else
-			return 0;
+	const T& top() const {
+		assert(_size > 0);
+		return _stack[_size - 1];
+	}
+	T& top() {
+		assert(_size > 0);
+		return _stack[_size - 1];
 	}
 	T pop() {
-		T tmp;
-		assert(_size > 0);
-		tmp = _stack[_size - 1];
-		_stack[--_size] = 0;
+		T tmp = top();
+		--_size;
 		return tmp;
 	}
 	int size() const {
 		return _size;
 	}
-	T operator [](int i) {
+	T& operator [](int i) {
+		assert(0 <= i && i < MAX_SIZE);
+		return _stack[i];
+	}
+	const T& operator [](int i) const {
 		assert(0 <= i && i < MAX_SIZE);
 		return _stack[i];
 	}
