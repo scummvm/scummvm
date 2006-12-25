@@ -207,14 +207,9 @@ void Actor::setupActorScale() {
 
 
 void ScummEngine::walkActors() {
-	int i;
-
-	for (i = 1; i < _numActors; i++) {
+	for (int i = 1; i < _numActors; ++i) {
 		if (_actors[i]->isInCurrentRoom())
-			if (_game.version <= 3)
-				_actors[i]->walkActorOld();
-			else
-				_actors[i]->walkActor();
+			_actors[i]->walkActor();
 	}
 }
 
@@ -576,7 +571,7 @@ void Actor::walkActorV12() {
 }
 */
 
-void Actor::walkActorOld() {
+void ActorOldWalk::walkActor() {
 	Common::Point p2, p3;	// Gate locations
 	int new_dir, next_box;
 

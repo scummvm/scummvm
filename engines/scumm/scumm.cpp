@@ -1248,6 +1248,8 @@ void ScummEngine::resetScumm() {
 	for (i = 0; i < _numActors; ++i) {
 		if (_game.version == 0)
 			_actors[i] = new ActorC64(i);
+		else if (_game.version <= 3)
+			_actors[i] = new ActorOldWalk(i);
 		else
 			_actors[i] = new Actor(i);
 		_actors[i]->initActor(1);

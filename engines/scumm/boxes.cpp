@@ -1135,7 +1135,7 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	return false;
 }
 
-void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Point &p2, Common::Point &p3) {
+void ActorOldWalk::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Point &p2, Common::Point &p3) {
 	Common::Point pt;
 	Common::Point gateA[2];
 	Common::Point gateB[2];
