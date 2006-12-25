@@ -1246,8 +1246,10 @@ void ScummEngine::resetScumm() {
 	_actors = new Actor * [_numActors];
 	_sortedActors = new Actor * [_numActors];
 	for (i = 0; i < _numActors; ++i) {
-		_actors[i] = new Actor();
-		_actors[i]->_number = i;
+		if (_game.version == 0)
+			_actors[i] = new ActorC64(i);
+		else
+			_actors[i] = new Actor(i);
 		_actors[i]->initActor(1);
 
 		// this is from IDB

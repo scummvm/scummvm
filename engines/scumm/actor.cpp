@@ -51,25 +51,49 @@ void Actor::initActorClass(ScummEngine *scumm) {
 	}
 }
 
-Actor::Actor() {
+Actor::Actor(int id) {
 	assert(_vm != 0);
-	_number = 0;
+	_number = id;
 
 	initActor(-1);
 }
 
 void Actor::initActor(int mode) {
+	// begin HE specific
+	if (mode == -1) {
+		_heSkipLimbs = false;
+		memset(_heTalkQueue, 0, sizeof(_heTalkQueue));
+	}
+
+	if (mode == 1 || mode == -1) {
+		_heCondMask = 1;
+		_heNoTalkAnimation = 0;
+		_heSkipLimbs = false;
+	} else if (mode == 2) {
+		_heCondMask = 1;
+		_heSkipLimbs = false;
+	}
+
+	_heXmapNum = 0;
+	_hePaletteNum = 0;
+	_heFlags = 0;
+	_heTalking = false;
+	// end HE specific
+	
+
 	if (mode == -1) {
 		_offsX = _offsY = 0;
 		_top = _bottom = 0;
-		_needRedraw = _needBgReset = _costumeNeedsInit = _visible = false;
+		_needRedraw = false;
+		_needBgReset = false;
+		_costumeNeedsInit = false;
+		_visible = false;
 		_flip = false;
 		_speedx = 8;
 		_speedy = 2;
 		_frame = 0;
 		_walkbox = 0;
 		_animProgress = 0;
-		_heSkipLimbs = false;
 		_drawToBackBuf = false;
 		memset(_animVariable, 0, sizeof(_animVariable));
 		memset(_palette, 0, sizeof(_palette));
@@ -78,27 +102,18 @@ void Actor::initActor(int mode) {
 		memset(&_walkdata, 0, sizeof(ActorWalkData));
 		_walkdata.point3.x = 32000;
 		_walkScript = 0;
-		memset(_heTalkQueue, 0, sizeof(_heTalkQueue));
-		_miscflags = 0;
-
-		mode = 1;
 	}
 
-	if (mode == 1) {
+	if (mode == 1 || mode == -1) {
 		_costume = 0;
 		_room = 0;
 		_pos.x = 0;
 		_pos.y = 0;
 		_facing = 180;
-		_heCondMask = 1;
-		_heNoTalkAnimation = 0;
 		if (_vm->_game.version >= 7)
 			_visible = false;
-		_heSkipLimbs = false;
 	} else if (mode == 2) {
 		_facing = 180;
-		_heCondMask = 1;
-		_heSkipLimbs = false;
 	}
 	_elevation = 0;
 	_width = 24;
@@ -110,11 +125,10 @@ void Actor::initActor(int mode) {
 	memset(_sound, 0, sizeof(_sound));
 	_targetFacing = _facing;
 
-	stopActorMoving();
-
-	_heXmapNum = 0;
 	_shadowMode = 0;
 	_layer = 0;
+
+	stopActorMoving();
 
 	setActorWalkSpeed(8, 2);
 	_animSpeed = 0;
@@ -146,15 +160,12 @@ void Actor::initActor(int mode) {
 		_talkStopFrame = 5;
 	}
 
-	_heTalking = false;
 	_walkScript = 0;
 	_talkScript = 0;
 
 	_clipOverride = _vm->_actorClipOverride;
 
 	_auxBlock.reset();
-	_hePaletteNum = 0;
-	_heFlags = 0;
 
 	_vm->_classData[_number] = (_vm->_game.version >= 7) ? _vm->_classData[0] : 0;
 }

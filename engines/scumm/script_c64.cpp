@@ -791,7 +791,7 @@ void ScummEngine_c64::o_setActorBitVar() {
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
 
-	Actor *a = derefActor(act, "o_setActorBitVar");
+	ActorC64 *a = (ActorC64 *)derefActor(act, "o_setActorBitVar");
 	if (mod)
 		a->_miscflags |= mask;
 	else
@@ -805,7 +805,7 @@ void ScummEngine_c64::o_getActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 
-	Actor *a = derefActor(act, "o_getActorBitVar");
+	ActorC64 *a = (ActorC64 *)derefActor(act, "o_getActorBitVar");
 	setResult((a->_miscflags & mask) ? 1 : 0);
 
 	debug(0, "o_getActorBitVar(%d, %d, %d)", act, mask, (a->_miscflags & mask));

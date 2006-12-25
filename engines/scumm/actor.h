@@ -127,9 +127,6 @@ public:
 	uint16 _sound[32];
 	CostumeData _cost;
 
-	/* C64 maniac specific */
-	byte _miscflags;
-
 	/* HE specific */
 	bool _heNoTalkAnimation;
 	bool _heSkipLimbs;
@@ -179,13 +176,14 @@ protected:
 
 public:
 
-	Actor();
+	Actor(int id);
+	virtual ~Actor() {}
 
 //protected:
 	void hideActor();
 	void showActor();
 
-	void initActor(int mode);
+	virtual void initActor(int mode);
 
 	void putActor() {
 		putActor(_pos.x, _pos.y, _room);
@@ -319,6 +317,24 @@ protected:
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 };
+
+class ActorC64 : public Actor {
+public:
+	// FIXME: This flag is never saved, which might lead to broken save states.
+	byte _miscflags;
+
+public:
+	ActorC64(int id) : Actor(id) {}
+	virtual void initActor(int mode) {
+		if (mode == -1) {
+			_miscflags = 0;
+		}
+	}
+
+protected:
+	
+};
+
 
 } // End of namespace Scumm
 
