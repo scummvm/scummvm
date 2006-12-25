@@ -39,7 +39,7 @@ int AGOSEngine::countSaveGames() {
 	uint i = 1;
 	bool marks[256];
 
-	char *prefix = genSaveName(999);
+	char *prefix = genSaveName(998);
 	prefix[strlen(prefix)-3] = '\0';
 	_saveFileMan->listSavefiles(prefix, marks, 256);
 
