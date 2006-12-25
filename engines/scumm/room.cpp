@@ -96,7 +96,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	nukeArrays(0xFF);
 
 	for (i = 1; i < _numActors; i++) {
-		_actors[i].hideActor();
+		_actors[i]->hideActor();
 	}
 
 	if (_game.version >= 7) {

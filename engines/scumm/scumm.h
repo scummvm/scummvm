@@ -527,7 +527,7 @@ protected:
 	byte _fastMode;
 
 	byte _numActors;
-	Actor *_actors;	// Has _numActors elements
+	Actor **_actors;	// Has _numActors elements
 	Actor **_sortedActors;
 
 	byte *_arraySlot;

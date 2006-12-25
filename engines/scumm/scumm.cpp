@@ -512,6 +512,8 @@ ScummEngine::~ScummEngine() {
 
 	_mixer->stopAll();
 
+	for (int i = 0; i < _numActors; ++i)
+		delete _actors[i];
 	delete [] _actors;
 	delete [] _sortedActors;
 
@@ -1241,15 +1243,16 @@ void ScummEngine::resetScumm() {
 
 	// Allocate and Initialize actors
 	Actor::initActorClass(this);
-	_actors = new Actor[_numActors];
+	_actors = new Actor * [_numActors];
 	_sortedActors = new Actor * [_numActors];
-	for (i = 0; i < _numActors; i++) {
-		_actors[i]._number = i;
-		_actors[i].initActor(1);
+	for (i = 0; i < _numActors; ++i) {
+		_actors[i] = new Actor();
+		_actors[i]->_number = i;
+		_actors[i]->initActor(1);
 
 		// this is from IDB
 		if ((_game.version <= 1) || (_game.id == GID_MANIAC && (_game.features & GF_DEMO)))
-			_actors[i].setActorCostume(i);
+			_actors[i]->setActorCostume(i);
 	}
 
 	if (_game.id == GID_MANIAC && _game.version <= 1) {
@@ -1257,12 +1260,12 @@ void ScummEngine::resetScumm() {
 	} else if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO)) {
 		// HACK Some palette changes needed for demo script
 		// in Maniac Mansion (Enhanced)
-		_actors[3].setPalette(3, 1);
-		_actors[9]._talkColor = 15;
-		_actors[10]._talkColor = 7;
-		_actors[11]._talkColor = 2;
-		_actors[13]._talkColor = 5;
-		_actors[23]._talkColor = 14;
+		_actors[3]->setPalette(3, 1);
+		_actors[9]->_talkColor = 15;
+		_actors[10]->_talkColor = 7;
+		_actors[11]->_talkColor = 2;
+		_actors[13]->_talkColor = 5;
+		_actors[23]->_talkColor = 14;
 	}
 
 	vm.numNestedScripts = 0;

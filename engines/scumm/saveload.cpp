@@ -934,7 +934,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Save/load actors
 	//
 	for (i = 0; i < _numActors; i++)
-		_actors[i].saveLoadWithSerializer(s);
+		_actors[i]->saveLoadWithSerializer(s);
 
 
 	//

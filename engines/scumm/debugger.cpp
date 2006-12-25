@@ -189,7 +189,7 @@ bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 	if (argc > 1) {
 		int room = atoi(argv[1]);
-		_vm->_actors[_vm->VAR(_vm->VAR_EGO)]._room = room;
+		_vm->_actors[_vm->VAR(_vm->VAR_EGO)]->_room = room;
 		_vm->_sound->stopAllSounds();
 		_vm->startScene(room, 0, 0);
 		_vm->_fullRedraw = true;
@@ -367,7 +367,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		return true;
 	}
 
-	a = &_vm->_actors[actnum];
+	a = _vm->_actors[actnum];
 	if (argc > 3)
 		value = atoi(argv[3]);
 	if (argc > 4)
@@ -424,7 +424,7 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	DebugPrintf("|# |  x |  y | w |elev|cos|box|mov| zp|frm|scl|dir|   cls   |\n");
 	DebugPrintf("+--+----+----+---+----+---+---+---+---+---+---+---+---------+\n");
 	for (i = 1; i < _vm->_numActors; i++) {
-		a = &_vm->_actors[i];
+		a = _vm->_actors[i];
 		if (a->_visible)
 			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
 						 a->_number, a->getPos().x, a->getPos().y, a->_width, a->getElevation(),

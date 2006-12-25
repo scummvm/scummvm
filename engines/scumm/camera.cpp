@@ -79,8 +79,8 @@ void ScummEngine::setCameraFollows(Actor *a, bool setCamera) {
 		setCameraAt(a->getPos().x, 0);
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i].isInCurrentRoom())
-			_actors[i]._needRedraw = true;
+		if (_actors[i]->isInCurrentRoom())
+			_actors[i]->_needRedraw = true;
 	}
 	runInventoryScript(0);
 }

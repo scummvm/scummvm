@@ -199,11 +199,11 @@ void ScummEngine::walkActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i].isInCurrentRoom())
+		if (_actors[i]->isInCurrentRoom())
 			if (_game.version <= 3)
-				_actors[i].walkActorOld();
+				_actors[i]->walkActorOld();
 			else
-				_actors[i].walkActor();
+				_actors[i]->walkActor();
 	}
 }
 
@@ -871,7 +871,7 @@ void ScummEngine::putActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		a = &_actors[i];
+		a = _actors[i];
 		if (a && a->isInCurrentRoom())
 			a->putActor();
 	}
@@ -1051,7 +1051,7 @@ int ScummEngine::getActorFromPos(int x, int y) {
 
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]._top && y <= _actors[i]._bottom) {
+			&& y >= _actors[i]->_top && y <= _actors[i]->_bottom) {
 			if (_game.version > 2 || i != VAR(VAR_EGO))
 				return i;
 		}
@@ -1070,8 +1070,8 @@ int ScummEngine_v70he::getActorFromPos(int x, int y) {
 	curActor = 0;
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]._top && y <= _actors[i]._bottom
-			&& (_actors[i].getPos().y > _actors[curActor].getPos().y || curActor == 0))
+			&& y >= _actors[i]->_top && y <= _actors[i]->_bottom
+			&& (_actors[i]->getPos().y > _actors[curActor]->getPos().y || curActor == 0))
 				curActor = i;
 	}
 
@@ -1129,8 +1129,8 @@ void ScummEngine::showActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i].isInCurrentRoom())
-			_actors[i].showActor();
+		if (_actors[i]->isInCurrentRoom())
+			_actors[i]->showActor();
 	}
 }
 
@@ -1139,11 +1139,11 @@ void ScummEngine::playActorSounds() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i]._cost.soundCounter && _actors[i].isInCurrentRoom() && _actors[i]._sound) {
+		if (_actors[i]->_cost.soundCounter && _actors[i]->isInCurrentRoom() && _actors[i]->_sound) {
 			_currentScript = 0xFF;
-			_sound->addSoundToQueue(_actors[i]._sound[0]);
+			_sound->addSoundToQueue(_actors[i]->_sound[0]);
 			for (i = 1; i < _numActors; i++) {
-				_actors[i]._cost.soundCounter = 0;
+				_actors[i]->_cost.soundCounter = 0;
 			}
 			return;
 		}
@@ -1151,7 +1151,7 @@ void ScummEngine::playActorSounds() {
 }
 
 bool ScummEngine::isValidActor(int id) const {
-	return id >= 0 && id < _numActors && _actors[id]._number == id;
+	return id >= 0 && id < _numActors && _actors[id]->_number == id;
 }
 
 Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
@@ -1165,7 +1165,7 @@ Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
 		else
 			error("Invalid actor %d", id);
 	}
-	return &_actors[id];
+	return _actors[id];
 }
 
 Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
@@ -1178,7 +1178,7 @@ Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 			 id, errmsg, vm.slot[_currentScript].number, _opcode);
 		return NULL;
 	}
-	return &_actors[id];
+	return _actors[id];
 }
 
 
@@ -1192,10 +1192,10 @@ void ScummEngine::processActors() {
 
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
-		if (_game.version == 8 && _actors[i]._layer < 0)
+		if (_game.version == 8 && _actors[i]->_layer < 0)
 			continue;
-		if (_actors[i].isInCurrentRoom()) {
-			_sortedActors[numactors++] = &_actors[i];
+		if (_actors[i]->isInCurrentRoom()) {
+			_sortedActors[numactors++] = _actors[i];
 		}
 	}
 	if (!numactors) {
@@ -1304,9 +1304,9 @@ void ScummEngine::processUpperActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i].isInCurrentRoom() && _actors[i]._costume && _actors[i]._layer < 0) {
-			_actors[i].drawActorCostume();
-			_actors[i].animateCostume();
+		if (_actors[i]->isInCurrentRoom() && _actors[i]->_costume && _actors[i]->_layer < 0) {
+			_actors[i]->drawActorCostume();
+			_actors[i]->animateCostume();
 		}
 	}
 }
@@ -1602,11 +1602,11 @@ void Actor::animateLimb(int limb, int f) {
 #endif
 
 void ScummEngine::redrawAllActors() {
-	int j;
+	int i;
 
-	for (j = 1; j < _numActors; j++) {
-		_actors[j]._needRedraw = true;
-		_actors[j]._needBgReset = true;
+	for (i = 1; i < _numActors; ++i) {
+		_actors[i]->_needRedraw = true;
+		_actors[i]->_needBgReset = true;
 	}
 }
 
@@ -1617,7 +1617,7 @@ void ScummEngine::setActorRedrawFlags() {
 	// Also redraw all actors in COMI (see bug #1066329 for details).
 	if (_fullRedraw || _game.version == 8 || (VAR_REDRAW_ALL_ACTORS != 0xFF && VAR(VAR_REDRAW_ALL_ACTORS) != 0)) {
 		for (j = 1; j < _numActors; j++) {
-			_actors[j]._needRedraw = true;
+			_actors[j]->_needRedraw = true;
 		}
 	} else {
 		for (i = 0; i < _gdi->_numStrips; i++) {
@@ -1625,7 +1625,7 @@ void ScummEngine::setActorRedrawFlags() {
 			if (testGfxAnyUsageBits(strip)) {
 				for (j = 1; j < _numActors; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
-						_actors[j]._needRedraw = true;
+						_actors[j]->_needRedraw = true;
 					}
 				}
 			}
@@ -1641,20 +1641,20 @@ void ScummEngine::resetActorBgs() {
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
 		for (j = 1; j < _numActors; j++) {
-			if (_actors[j]._heFlags & 1)
+			if (_actors[j]->_heFlags & 1)
 				continue;
 
 			if (testGfxUsageBit(strip, j) &&
-				((_actors[j]._top != 0x7fffffff && _actors[j]._needRedraw) || _actors[j]._needBgReset)) {
+				((_actors[j]->_top != 0x7fffffff && _actors[j]->_needRedraw) || _actors[j]->_needBgReset)) {
 				clearGfxUsageBit(strip, j);
-				if ((_actors[j]._bottom - _actors[j]._top) >= 0)
-					_gdi->resetBackground(_actors[j]._top, _actors[j]._bottom, i);
+				if ((_actors[j]->_bottom - _actors[j]->_top) >= 0)
+					_gdi->resetBackground(_actors[j]->_top, _actors[j]->_bottom, i);
 			}
 		}
 	}
 
 	for (i = 1; i < _numActors; i++) {
-		_actors[i]._needBgReset = false;
+		_actors[i]->_needBgReset = false;
 	}
 }
 
@@ -1697,14 +1697,14 @@ int ScummEngine::getTalkingActor() {
 		return VAR(VAR_TALK_ACTOR);
 }
 
-void ScummEngine::setTalkingActor(int value) {
+void ScummEngine::setTalkingActor(int i) {
 
-	if (value == 255) {
+	if (i == 255) {
 		_system->clearFocusRectangle();
 	} else {
 		// Work out the screen co-ordinates of the actor
-		int x = _actors[value].getPos().x - (camera._cur.x - (_screenWidth >> 1));
-		int y = _actors[value]._top - (camera._cur.y - (_screenHeight >> 1));
+		int x = _actors[i]->getPos().x - (camera._cur.x - (_screenWidth >> 1));
+		int y = _actors[i]->_top - (camera._cur.y - (_screenHeight >> 1));
 
 		// Set the focus area to the calculated position
 		// TODO: Make the size adjust depending on what it's focusing on.
@@ -1713,9 +1713,9 @@ void ScummEngine::setTalkingActor(int value) {
 	}
 
 	if (_game.id == GID_MANIAC && _game.version <= 1 && !(_game.platform == Common::kPlatformNES))
-		_V1TalkingActor = value;
+		_V1TalkingActor = i;
 	else
-		VAR(VAR_TALK_ACTOR) = value;
+		VAR(VAR_TALK_ACTOR) = i;
 }
 
 static const int c64MMActorTalkColor[25] = {
@@ -1730,9 +1730,9 @@ void ScummEngine::resetV1ActorTalkColor() {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_game.platform == Common::kPlatformC64) {
-			_actors[i]._talkColor = c64MMActorTalkColor[i];
+			_actors[i]->_talkColor = c64MMActorTalkColor[i];
 		} else {
-			_actors[i]._talkColor = v1MMActorTalkColor[i];
+			_actors[i]->_talkColor = v1MMActorTalkColor[i];
 		}
 	}
 }
