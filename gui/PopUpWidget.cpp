@@ -193,8 +193,10 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	if (item >= 0 && _popUpBoss->_entries[item].name.size() == 0)
 		item = -1;
 
-	if (item == -1 && !isMouseDown())
+	if (item == -1 && !isMouseDown()) {
+		setSelection(_popUpBoss->_selectedItem);
 		return;
+	}
 
 	// ...and update the selection accordingly
 	setSelection(item);
@@ -202,6 +204,8 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 
 void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (keycode == 27) {	// escape
+		// Don't change the previous selection
+		setResult(-1);
 		close();
 		return;
 	}
