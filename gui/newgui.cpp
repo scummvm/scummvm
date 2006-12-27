@@ -210,8 +210,14 @@ void NewGui::redraw() {
 	_theme->drawAll();
 }
 
+Dialog *NewGui::getTopDialog() const {
+	if (_dialogStack.empty())
+		return 0;
+	return _dialogStack.top();
+}
+
 void NewGui::runLoop() {
-	Dialog *activeDialog = _dialogStack.top();
+	Dialog *activeDialog = getTopDialog();
 	bool didSaveState = false;
 	int button;
 
@@ -228,7 +234,7 @@ void NewGui::runLoop() {
 			setupCursor();
 	}
 
-	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
+	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		if (_needRedraw) {
 			redraw();
 			_needRedraw = false;
@@ -248,7 +254,7 @@ void NewGui::runLoop() {
 		uint32 time = _system->getMillis();
 
 		while (_system->pollEvent(event)) {
-			if (activeDialog != _dialogStack.top() && event.type != OSystem::EVENT_QUIT && event.type != OSystem::EVENT_SCREEN_CHANGED)
+			if (activeDialog != getTopDialog() && event.type != OSystem::EVENT_QUIT && event.type != OSystem::EVENT_SCREEN_CHANGED)
 				continue;
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
@@ -325,7 +331,7 @@ void NewGui::runLoop() {
 		}
 
 		// check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != 0 && activeDialog == _dialogStack.top()) {
+		if (_currentKeyDown.keycode != 0 && activeDialog == getTopDialog()) {
 			if (_keyRepeatTime < time) {
 				// fire event
 				activeDialog->handleKeyDown(_currentKeyDown.ascii, _currentKeyDown.keycode, _currentKeyDown.flags);
@@ -440,7 +446,8 @@ WidgetSize NewGui::getWidgetSize() {
 }
 
 void NewGui::clearDragWidget() {
-	_dialogStack.top()->_dragWidget = 0;
+	if (!_dialogStack.empty())
+		_dialogStack.top()->_dragWidget = 0;
 }
 
 void NewGui::screenChange() {
