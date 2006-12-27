@@ -240,6 +240,10 @@ protected:
 	Common::ConfigFile _configFile;
 	Common::ConfigFile _defaultConfig;
 
+public:
+	bool needThemeReload() { return ((_loadedThemeX != g_system->getOverlayWidth()) ||
+									 (_loadedThemeY != g_system->getOverlayHeight())); }
+
 private:
 	static const char *_defaultConfigINI;
 	int _loadedThemeX, _loadedThemeY;

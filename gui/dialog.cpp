@@ -51,6 +51,18 @@ Dialog::Dialog(const Common::String &name, bool dimsInactive_)
 	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0),
 	  _dimsInactive(dimsInactive_) {
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
+
+	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
+	// game will be forced to 1x. At this stage GUI will not be aware of
+	// resolution change, so widgets will be off screen. This forces it to
+	// recompute
+	//
+	// Fixes bug #1590596: "HE: When 3x graphics are choosen, F5 crashes game"
+	// and bug #1595627: "SCUMM: F5 crashes game (640x480)"
+	if (g_gui.theme()->needThemeReload()) {
+		debug(2, "Theme forced to reload");
+		g_gui.screenChange();
+	}
 }
 
 Dialog::~Dialog() {
