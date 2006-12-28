@@ -45,9 +45,9 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 	//MACRO			DISABLE_SCUMM_HE
 	//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 	//MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
-	//MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+	//MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
 	//MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-	//MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+	//MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 	//MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 	//MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 	//MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
@@ -109,5 +109,6 @@ sourcepath ..\..\..\..
 source	   backends\timer\default\default-timer.cpp
 source	   backends\saves\savefile.cpp
 source	   backends\saves\default\default-saves.cpp
+source 	   engines\engine.cpp
 // backend specific includes
 // backend specific includes

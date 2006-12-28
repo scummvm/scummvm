@@ -64,3 +64,7 @@
 	"AGI "
 #endif
 
+#ifndef DISABLE_TOUCHE
+	"Touche "
+#endif
+
