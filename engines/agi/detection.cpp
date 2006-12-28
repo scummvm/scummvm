@@ -55,6 +55,23 @@ using Common::ADGameFileDescription;
 using Common::ADGameDescription;
 
 using Common::File;
+// Leisure Suit Larry I entries
+static const ADGameFileDescription AGI_LSL1_PC_100_GameFiles[] = {
+	{ "logdir",		0,	"1fe764e66857e7f305a5f03ca3f4971d"},
+	{ NULL, 0, NULL}
+};
+
+// Space Quest I entries
+static const ADGameFileDescription AGI_SQ1_PC_22_GameFiles[] = {
+	{ "logdir",		0,	"5d67630aba008ec5f7f9a6d0a00582f4"},
+	{ NULL, 0, NULL}
+};
+
+// Police Quest I entries
+static const ADGameFileDescription AGI_PQ1_PC_20G_GameFiles[] = {
+	{ "logdir",		0,	"231f3e28170d6e982fc0ced4c98c5c1c"},
+	{ NULL, 0, NULL}
+};
 
 // Kings Quest I entries
 static const ADGameFileDescription AGI_KQ1_PC_20F_GameFiles[] = {
@@ -127,6 +144,49 @@ static const ADGameFileDescription AGI_DDP_PC_10A_GameFiles[] = {
 
 
 static const AGIGameDescription gameDescriptions[] = {
+	{
+		// leisure suit larry 1 : pc : 1.00
+		{
+			"agi",
+			"Leisure Suit Larry 1 (PC) 1.00 [AGI 2.440]",
+			AGI_LSL1_PC_100_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+	{
+		// space quest 1 : pc : 2.2
+		{
+			"agi",
+			"Space Quest 1 (PC) 2.2 [AGI 2.917]",
+			AGI_SQ1_PC_22_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+	{
+		// police quest 1 : pc : 2.0G
+		{
+			"agi",
+			"Police Quest 1 (PC) 2.0G [AGI 2.917]",
+			AGI_PQ1_PC_20G_GameFiles,
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
 	{
 		// kings quest 1 : pc : 2.0F
 		{
