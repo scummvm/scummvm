@@ -157,6 +157,12 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	}
 }
 
+// Overloaded from SDL_Commmon
+void OSystem_SDL_Symbian::quit() {
+	delete GUI_Actions::Instance();
+	OSystem_SDL::quit();
+}
+
 bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
 
 	// First save the proc and param

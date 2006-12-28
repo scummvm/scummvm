@@ -59,6 +59,8 @@ public:
 	//
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
 
+	// Overloaded from SDL_Commmon
+	void quit();
 protected:
 	//
 	// The mixer callback function, passed on to OSystem::setSoundCallback().
