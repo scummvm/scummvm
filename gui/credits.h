@@ -141,6 +141,8 @@ static const char *credits[] = {
 "\\C\\c1""Documentation",
 "\\C\\c0""Joachim Eberhard",
 "\\C\\c2""Documentation manager",
+"\\C\\c0""Matthew Hoops",
+"\\C\\c2""Wiki editor",
 "\\C\\c0""",
 "\\C\\c1""Retired Team Members",
 "\\C\\c0""Tore Anderson",
