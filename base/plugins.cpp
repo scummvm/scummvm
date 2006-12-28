@@ -150,7 +150,7 @@ public:
 		#ifndef DISABLE_AGI
 		LINK_PLUGIN(AGI)
 		#endif
-		#ifndef '
+		#ifndef DISABLE_TOUCHE
 		LINK_PLUGIN(TOUCHE)
 		#endif
 
