@@ -101,11 +101,9 @@ int MidiPlayer::open() {
 }
 
 void MidiPlayer::close() {
-	_mutex.lock();
-	_driver->setTimerCallback(NULL, NULL);
-	_mutex.unlock();
 	stop();
 	_mutex.lock();
+	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
 	_driver = 0;
 	_parser->setMidiDriver(NULL);
