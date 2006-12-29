@@ -588,7 +588,7 @@ void ToucheEngine::runCurrentKeyCharScript(int mode) {
 }
 
 void ToucheEngine::executeScriptOpcode(int16 param) {
-	debugC(9, kDebugEngine, "executeScriptOpcode(%d) offset=%04X", param, _script.dataOffset);
+	debugC(9, kDebugOpcodes, "ToucheEngine::executeScriptOpcode(%d) offset=%04X", param, _script.dataOffset);
 	_script.keyCharNum = param;
 	_script.opcodeNum = _script.readNextByte();
 	if (_script.opcodeNum < _numOpcodes) {
@@ -1279,7 +1279,7 @@ int ToucheEngine::restartKeyCharScriptOnAction(int action, int obj1, int obj2) {
 	for (uint i = 0; i < _programActionScriptOffsetTable.size(); ++i) {
 		const ProgramActionScriptOffsetData *pasod = &_programActionScriptOffsetTable[i];
 		if (pasod->object1 == obj1 && pasod->action == action && pasod->object2 == obj2) {
-			debug(0, "Found matching action i=%d %d,%d,%d", i, pasod->action, pasod->object1, pasod->object2);
+			debug(0, "Found matching action i=%d %d,%d,%d offset=0x%X", i, pasod->action, pasod->object1, pasod->object2, pasod->offset);
 			KeyChar *key = &_keyCharsTable[_currentKeyCharNum];
 			key->scriptDataOffset = pasod->offset;
 			key->scriptStackPtr = &key->scriptStackTable[39];

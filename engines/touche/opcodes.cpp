@@ -544,6 +544,19 @@ void ToucheEngine::op_initKeyCharScript() {
 	int16 f3 = _script.readNextWord();
 	setKeyCharTextColor(keyChar, color);
 	initKeyCharScript(keyChar, f1, f2, f3);
+
+	// Workaround for bug #1622114. KeyChar 3 script must be running in order to complete the
+	// rope+torch puzzle.
+	//
+	// FLAG[500] : 1 if Cardinal cutscene has already been played
+	// FLAG[501] : 1 if cathedral is lightened (by the two torches)
+	//
+	// [00D3] (38) INIT_KEY_CHAR_SCRIPT(keychar=1, 254, 1, 1, 0)
+
+	if (_currentEpisodeNum == 109 && keyChar == 1 && _flagsTable[500] == 1 && _flagsTable[501] == 1 && _keyCharsTable[3].scriptDataOffset == 0) {
+		debug(0, "Workaround disappearing rope bug");
+		initKeyCharScript(3, 3, 3, 0);
+	}
 }
 
 void ToucheEngine::op_setKeyCharFrame() {
