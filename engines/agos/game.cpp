@@ -35,8 +35,6 @@ namespace AGOS {
 static DetectedGameList GAME_detectGames(const FSList &fslist);
 }
 
-using Common::File;
-
 /**
  * Conversion table mapping old obsolete target names to the
  * corresponding new target and platform combination.
@@ -76,9 +74,6 @@ ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, AGOS::GAME_detectGames, 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
 namespace AGOS {
-
-using Common::ADGameFileDescription;
-using Common::ADGameDescription;
 
 #include "agosgame.cpp"
 

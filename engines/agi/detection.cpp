@@ -34,8 +34,6 @@ namespace Agi {
 static DetectedGameList GAME_detectGames(const FSList &fslist);
 }
 
-using Common::File;
-
 static const PlainGameDescriptor agiGames[] = {
 	{"agi", "Sierra AGI Engine" },
 
@@ -51,105 +49,13 @@ namespace Agi {
 
 #define FILE_MD5_BYTES 5000
 
-using Common::ADGameFileDescription;
-using Common::ADGameDescription;
-
-using Common::File;
-// Leisure Suit Larry I entries
-static const ADGameFileDescription AGI_LSL1_PC_100_GameFiles[] = {
-	{ "logdir",		0,	"1fe764e66857e7f305a5f03ca3f4971d"},
-	{ NULL, 0, NULL}
-};
-
-// Space Quest I entries
-static const ADGameFileDescription AGI_SQ1_PC_22_GameFiles[] = {
-	{ "logdir",		0,	"5d67630aba008ec5f7f9a6d0a00582f4"},
-	{ NULL, 0, NULL}
-};
-
-// Police Quest I entries
-static const ADGameFileDescription AGI_PQ1_PC_20G_GameFiles[] = {
-	{ "logdir",		0,	"231f3e28170d6e982fc0ced4c98c5c1c"},
-	{ NULL, 0, NULL}
-};
-
-// Kings Quest I entries
-static const ADGameFileDescription AGI_KQ1_PC_20F_GameFiles[] = {
-	{ "logdir",		0,	"10ad66e2ecbd66951534a50aedcd0128"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ1_2GS_10S_GameFiles[] = {
-	{ "logdir",		0,	"f4277aa34b43d37382bc424c81627617"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ1_MAC_20C_GameFiles[] = {
-	{ "logdir",		0,	"d4c4739d4ac63f7dbd29255425077d48"},
-	{ NULL, 0, NULL}
-};
-
-// Kings Quest II Entries
-static const ADGameFileDescription AGI_KQ2_PC_22_GameFiles[] = {
-	{ "logdir",		0,	"b944c4ff18fb8867362dc21cc688a283"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ2_AMIGA_20F_GameFiles[] = {
-	{ "logdir",		0,	"b866f0fab2fad91433a637a828cfa410"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ2_MAC_20R_GameFiles[] = {
-	{ "logdir",		0,	"cbdb0083317c8e7cfb7ac35da4bc7fdc"},
-	{ NULL, 0, NULL}
-};
-
-// Kings Quest III
-static const ADGameFileDescription AGI_KQ3_PC_101_GameFiles[] = {
-	{ "logdir",		0,	"9c2b34e7ffaa89c8e2ecfeb3695d444b"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ3_PC_200_GameFiles[] = {
-	{ "logdir",		0,	"18aad8f7acaaff760720c5c6885b6bab"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ3_PC_214A_GameFiles[] = {
-	{ "logdir",		0,	"7650e659c7bc0f1e9f8a410b7a2e9de6"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ3_PC_214B_GameFiles[] = {
-	{ "logdir",		0,	"d3d17b77b3b3cd13246749231d9473cd"},
-	{ NULL, 0, NULL}
-};
-
-// Kings Quest IV AGI v3
-static const ADGameFileDescription AGI_KQ4_PC_20_GameFiles[] = {
-	{ "kq4dir",		0,	"fe44655c42f16c6f81046fdf169b6337"},
-	{ NULL, 0, NULL}
-};
-static const ADGameFileDescription AGI_KQ4_PC_22_GameFiles[] = {
-	{ "kq4dir",		0,	"7470b3aeb49d867541fc66cc8454fb7d"},
-	{ NULL, 0, NULL}
-};
-
-// Groza : AGDS
-static const ADGameFileDescription AGI_Groza_PC_GameFiles[] = {
-	{ "logdir",		0,	"421da3a18004122a966d64ab6bd86d2e"},
-	{ NULL, 0, NULL}
-};
-
-// Donald Ducks Playground
-static const ADGameFileDescription AGI_DDP_PC_10A_GameFiles[] = {
-	{ "logdir",		0,	"64388812e25dbd75f7af1103bc348596"},
-	{ NULL, 0, NULL}
-};
-
-
-
 static const AGIGameDescription gameDescriptions[] = {
 	{
 		// leisure suit larry 1 : pc : 1.00
 		{
 			"agi",
 			"Leisure Suit Larry 1 (PC) 1.00 [AGI 2.440]",
-			AGI_LSL1_PC_100_GameFiles,
+			AD_ENTRY1("logdir", "1fe764e66857e7f305a5f03ca3f4971d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -163,7 +69,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"Space Quest 1 (PC) 2.2 [AGI 2.917]",
-			AGI_SQ1_PC_22_GameFiles,
+			AD_ENTRY1("logdir", "5d67630aba008ec5f7f9a6d0a00582f4"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -177,7 +83,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"Police Quest 1 (PC) 2.0G [AGI 2.917]",
-			AGI_PQ1_PC_20G_GameFiles,
+			AD_ENTRY1("logdir", "231f3e28170d6e982fc0ced4c98c5c1c"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -192,7 +98,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 1 (PC) 2.0F [AGI 2.917]",
-			AGI_KQ1_PC_20F_GameFiles,
+			AD_ENTRY1("logdir", "10ad66e2ecbd66951534a50aedcd0128"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -206,7 +112,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 1 (IIgs) 1.0S-88223",
-			AGI_KQ1_2GS_10S_GameFiles,
+			AD_ENTRY1("logdir", "f4277aa34b43d37382bc424c81627617"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
 		},
@@ -221,7 +127,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 1 (Mac) 2.0C",
-			AGI_KQ1_MAC_20C_GameFiles,
+			AD_ENTRY1("logdir", "d4c4739d4ac63f7dbd29255425077d48"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 		},
@@ -236,7 +142,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 2 (PC) 2.2 [AGI 2.426]",
-			AGI_KQ2_PC_22_GameFiles,
+			AD_ENTRY1("logdir", "b944c4ff18fb8867362dc21cc688a283"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -250,7 +156,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 2 (Amiga) 2.0J",
-			AGI_KQ2_AMIGA_20F_GameFiles,
+			AD_ENTRY1("logdir", "b866f0fab2fad91433a637a828cfa410"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -264,7 +170,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 2 (Mac) 2.0R",
-			AGI_KQ2_MAC_20R_GameFiles,
+			AD_ENTRY1("logdir", "cbdb0083317c8e7cfb7ac35da4bc7fdc"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 		},
@@ -280,7 +186,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]",
-			AGI_KQ3_PC_101_GameFiles,
+			AD_ENTRY1("logdir", "9c2b34e7ffaa89c8e2ecfeb3695d444b"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -294,7 +200,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 3 (PC) 2.00 5/25/87 [AGI 2.435]",
-			AGI_KQ3_PC_200_GameFiles,
+			AD_ENTRY1("logdir", "18aad8f7acaaff760720c5c6885b6bab"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -308,7 +214,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 3 (PC) 2.14 3/15/88 [AGI 2.936]",
-			AGI_KQ3_PC_214A_GameFiles,
+			AD_ENTRY1("logdir", "7650e659c7bc0f1e9f8a410b7a2e9de6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -322,7 +228,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 3 (PC) 2.14 3/15/88 [AGI 2.936]",
-			AGI_KQ3_PC_214B_GameFiles,
+			AD_ENTRY1("logdir", "d3d17b77b3b3cd13246749231d9473cd"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -338,7 +244,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 4 (PC) 2.0 7/27/88 [AGI 3.002.086]",
-			AGI_KQ4_PC_20_GameFiles,
+			AD_ENTRY1("kq4dir", "fe44655c42f16c6f81046fdf169b6337"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -352,7 +258,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"King's Quest 4 (PC) 2.2 9/27/88 [AGI 3.002.086]",
-			AGI_KQ4_PC_22_GameFiles,
+			AD_ENTRY1("kq4dir", "7470b3aeb49d867541fc66cc8454fb7d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -368,7 +274,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"Groza : Russian AGDS",
-			AGI_Groza_PC_GameFiles,
+			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -383,7 +289,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"agi",
 			"Donald Ducks Playground 1.0A ** UNSUPPORTED **",
-			AGI_DDP_PC_10A_GameFiles,
+			AD_ENTRY1("logdir", "64388812e25dbd75f7af1103bc348596"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -393,7 +299,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 
-	{ { NULL, NULL, NULL, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
+	{ { NULL, NULL, {NULL, 0, NULL}, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };
 
 bool AgiEngine::initGame() {

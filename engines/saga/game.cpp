@@ -55,9 +55,6 @@ REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainme
 
 namespace Saga {
 
-using Common::ADGameFileDescription;
-using Common::ADGameDescription;
-
 #include "sagagame.cpp"
 
 bool SagaEngine::initGame() {

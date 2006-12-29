@@ -46,78 +46,6 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define ENTRY(f, x) { f, 0, x } 
-
-const ADGameFileDescription kyra1EnglishFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1EnglishFloppy2[] = {
-	ENTRY("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1FrenchFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1GermanFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1GermanFloppy2[] = {
-	ENTRY("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1SpanishFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1SpanishFloppy2[] = {
-	ENTRY("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1ItalianFloppy1[] = {
-	ENTRY("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1EnglishCD1[] = {
-	ENTRY("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1GermanCD1[] = {
-	ENTRY("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1FrenchCD1[] = {
-	ENTRY("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra1EnglishDemo1[] = {
-	ENTRY("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra2UnknownUnknown1[] = {
-	ENTRY("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
-	{ NULL, 0, NULL}
-};
-
-const ADGameFileDescription kyra3CD1[] = {
-	ENTRY("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
-	{ NULL, 0, NULL}
-};
-
 #define FLAGS(x, y, z, w, id) { UNK_LANG, kPlatformUnknown, x, y, z, w, id }
 
 #define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, GI_KYRA1)
@@ -129,25 +57,25 @@ const ADGameFileDescription kyra3CD1[] = {
 #define KYRA3_CD_FLAGS FLAGS(false, false, false, true, GI_KYRA3)
 
 static const KYRAGameDescription adGameDescs[] = {
-	{ { "kyra1", 0, kyra1EnglishFloppy1, EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, kyra1EnglishFloppy2, EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, kyra1FrenchFloppy1 , FR_FRA, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, kyra1GermanFloppy1 , DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, kyra1GermanFloppy2 , DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from Arne.F
-	{ { "kyra1", 0, kyra1SpanishFloppy1, ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from VooD
-	{ { "kyra1", 0, kyra1SpanishFloppy2, ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
-	{ { "kyra1", 0, kyra1ItalianFloppy1, IT_ITA, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"), EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"), EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"), FR_FRA, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"), DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"), DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from Arne.F
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"), ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from VooD
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"), ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), IT_ITA, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
 
-	{ { "kyra1", "CD", kyra1EnglishCD1, EN_ANY, kPlatformPC }, KYRA1_CD_FLAGS },
-	{ { "kyra1", "CD", kyra1GermanCD1 , DE_DEU, kPlatformPC }, KYRA1_CD_FLAGS },
-	{ { "kyra1", "CD", kyra1FrenchCD1 , FR_FRA, kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"), EN_ANY, kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), DE_DEU, kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a"), FR_FRA, kPlatformPC }, KYRA1_CD_FLAGS },
 
-	{ { "kyra1", "Demo", kyra1EnglishDemo1, EN_ANY, kPlatformPC }, KYRA1_DEMO_FLAGS },
+	{ { "kyra1", "Demo", AD_ENTRY1("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"), EN_ANY, kPlatformPC }, KYRA1_DEMO_FLAGS },
 
-	{ { "kyra2", 0, kyra2UnknownUnknown1, UNK_LANG, kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
+	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), UNK_LANG, kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
-	{ { "kyra3", 0, kyra3CD1, UNK_LANG, kPlatformPC }, KYRA3_CD_FLAGS },
-	{ { NULL, NULL, NULL, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
+	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), UNK_LANG, kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { NULL, NULL, {NULL, 0, NULL}, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
 };
 
 static bool setupGameFlags(const ADList &list, GameFlags &flags) {

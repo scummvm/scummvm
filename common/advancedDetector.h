@@ -39,7 +39,7 @@ struct ADGameFileDescription {
 struct ADGameDescription {
 	const char *gameid;
 	const char *extra;
-	const ADGameFileDescription *filesDescriptions;
+	const ADGameFileDescription filesDescriptions[14];
 	Language language;
 	Platform platform;
 };
@@ -53,6 +53,7 @@ struct ADObsoleteGameID {
 typedef Array<int> ADList;
 typedef Array<const ADGameDescription*> ADGameDescList;
 
+#define AD_ENTRY1(f, x) {{ f, 0, x }, {NULL, 0, NULL}}
 
 
 // TODO/FIXME: Fingolfin asks: Why is AdvancedDetector a class, considering that
