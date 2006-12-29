@@ -334,13 +334,14 @@ public:
 public:
 	ActorC64(int id) : ActorOldWalk(id) {}
 	virtual void initActor(int mode) {
+		ActorOldWalk::initActor(mode);
 		if (mode == -1) {
 			_miscflags = 0;
 		}
 	}
 
 protected:
-	
+
 };
 
 
