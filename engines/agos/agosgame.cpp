@@ -12,12 +12,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED,
+		GF_OLD_BUNDLE | GF_CRUNCHED
 	},
 
 	// Elvira 1 - English Amiga Demo
@@ -33,12 +33,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED | GF_DEMO,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_DEMO
 	},
 
 	// Elvira 1 - English Atari ST Floppy
@@ -54,12 +54,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAtariST,
+			Common::kPlatformAtariST
 		},
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED,
+		GF_OLD_BUNDLE | GF_CRUNCHED
 	},
 
 	// Elvira 1 - English DOS Floppy
@@ -75,12 +75,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Elvira 1 - German DOS Floppy
@@ -96,12 +96,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Elvira 1 - French DOS Floppy
@@ -117,12 +117,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Elvira 2 - English Amiga Floppy
@@ -140,12 +140,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE | GF_CRUNCHED,
+		GF_OLD_BUNDLE | GF_CRUNCHED
 	},
 
 	// Elvira 2 - English Atari ST Floppy
@@ -163,12 +163,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAtariST,
+			Common::kPlatformAtariST
 		},
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE | GF_CRUNCHED,
+		GF_OLD_BUNDLE | GF_CRUNCHED
 	},
 
 	// Elvira 2 - English DOS Floppy
@@ -186,12 +186,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Elvira 2 - English DOS Floppy, Alternate
@@ -209,12 +209,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Elvira 2 - German DOS Floppy
@@ -232,12 +232,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Elvira 2 - French DOS Floppy
@@ -255,12 +255,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Waxworks - English Amiga Floppy
@@ -279,12 +279,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_WW,
 		GID_WAXWORKS,
-		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC
 	},
 
 	// Waxworks - English DOS Floppy
@@ -304,12 +304,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_WW,
 		GID_WAXWORKS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English Acorn CD Demo
@@ -327,12 +327,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAcorn,
+			Common::kPlatformAcorn
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - English Acorn CD
@@ -350,12 +350,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAcorn,
+			Common::kPlatformAcorn
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - English Amiga ECS Floppy
@@ -372,12 +372,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE,
+		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English Amiga ECS Demo
@@ -394,12 +394,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_DEMO,
+		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_DEMO
 	},
 
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy
@@ -416,12 +416,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE,
+		GF_CRUNCHED | GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - French Amiga AGA Floppy
@@ -438,12 +438,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE,
+		GF_CRUNCHED | GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - German Amiga AGA Floppy
@@ -460,12 +460,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE,
+		GF_CRUNCHED | GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32
@@ -482,12 +482,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1CD32,
-		GF_TALKIE | GF_OLD_BUNDLE,
+		GF_TALKIE | GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32 alternative?
@@ -504,12 +504,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_SIMON1,
 		GID_SIMON1CD32,
-		GF_TALKIE | GF_OLD_BUNDLE,
+		GF_TALKIE | GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy Demo
@@ -526,12 +526,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE | GF_DEMO,
+		GF_OLD_BUNDLE | GF_DEMO
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy
@@ -548,12 +548,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy with Russian patch
@@ -570,12 +570,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::RU_RUS,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy (Infocom)
@@ -592,12 +592,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy (Infocom) with Russian patch
@@ -614,12 +614,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::RU_RUS,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - French DOS Floppy
@@ -636,12 +636,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - German DOS Floppy
@@ -658,12 +658,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - Italian DOS Floppy
@@ -680,12 +680,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - Spanish DOS Floppy
@@ -702,12 +702,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		GF_OLD_BUNDLE,
+		GF_OLD_BUNDLE
 	},
 
 	// Simon the Sorcerer 1 - English DOS CD
@@ -725,12 +725,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - English DOS CD alternate?
@@ -748,12 +748,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - French DOS CD
@@ -771,12 +771,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - German DOS CD
@@ -794,12 +794,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - Hebrew DOS CD
@@ -817,12 +817,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::HB_ISR,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - Italian DOS CD
@@ -840,12 +840,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - Italian DOS CD alternate
@@ -864,12 +864,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			},
 			// FIXME: DOS version which uses WAV format
 			Common::IT_ITA,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - Spanish DOS CD
@@ -887,12 +887,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - English Windows CD
@@ -910,12 +910,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - English Windows CD with Russian patch
@@ -933,12 +933,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::RU_RUS,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 1 - German Windows CD
@@ -956,12 +956,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy
@@ -979,12 +979,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		0,
+		0
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy with Russian patch
@@ -1002,12 +1002,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::RU_RUS,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		0,
+		0
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy alternate?
@@ -1025,12 +1025,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		0,
+		0
 	},
 
 	// Simon the Sorcerer 2 - English DOS Floppy alternate? with Russian patch
@@ -1048,12 +1048,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::RU_RUS,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		0,
+		0
 	},
 
 	// Simon the Sorcerer 2 - German DOS Floppy
@@ -1071,12 +1071,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		0,
+		0
 	},
 
 	// Simon the Sorcerer 2 - Italian DOS Floppy
@@ -1094,12 +1094,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		0,
+		0
 	},
 
 	// Simon the Sorcerer 2 - English DOS CD Demo
@@ -1117,12 +1117,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - German DOS CD Demo
@@ -1140,12 +1140,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - English DOS CD
@@ -1163,12 +1163,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - English DOS CD alternate?
@@ -1186,12 +1186,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - French DOS CD
@@ -1209,12 +1209,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - German DOS CD
@@ -1232,12 +1232,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - German DOS CD alternate?
@@ -1255,12 +1255,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - Hebrew DOS CD
@@ -1278,12 +1278,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::HB_ISR,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - Italian DOS CD
@@ -1302,12 +1302,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			},
 			// FIXME: DOS version which uses WAV format
 			Common::IT_ITA,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - Spanish DOS CD
@@ -1325,12 +1325,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformPC
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - Czech Windows CD
@@ -1348,12 +1348,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::CZ_CZE,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - English Windows CD
@@ -1371,12 +1371,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - German Windows CD
@@ -1394,12 +1394,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - German Windows CD 1.1
@@ -1417,12 +1417,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// Simon the Sorcerer 2 - Polish Windows CD
@@ -1440,12 +1440,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::PL_POL,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		GF_TALKIE,
+		GF_TALKIE
 	},
 
 	// The Feeble Files - English Amiga CD
@@ -1461,12 +1461,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE
 	},
 
 	// The Feeble Files - German Amiga CD
@@ -1482,12 +1482,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformAmiga,
+			Common::kPlatformAmiga
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE
 	},
 
 	// The Feeble Files - English Macintosh CD
@@ -1503,12 +1503,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformMacintosh,
+			Common::kPlatformMacintosh
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE
 	},
 
 	// The Feeble Files - French Macintosh CD
@@ -1524,12 +1524,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformMacintosh,
+			Common::kPlatformMacintosh
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE
 	},
 
 	// The Feeble Files - German Macintosh CD
@@ -1545,12 +1545,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformMacintosh,
+			Common::kPlatformMacintosh
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE
 	},
 
 	// The Feeble Files - Spanish Macintosh CD
@@ -1566,12 +1566,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::ES_ESP,
-			Common::kPlatformMacintosh,
+			Common::kPlatformMacintosh
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_ZLIBCOMP | GF_TALKIE
 	},
 
 	// The Feeble Files - English Windows 2CD
@@ -1586,12 +1586,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// The Feeble Files - English Windows 4CD
@@ -1606,12 +1606,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// The Feeble Files - French Windows 4CD
@@ -1626,12 +1626,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::FR_FRA,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// The Feeble Files - German Windows 4CD
@@ -1646,12 +1646,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// The Feeble Files - Italian Windows 4CD
@@ -1666,12 +1666,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::IT_ITA,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// The Feeble Files - Spanish Windows 4CD
@@ -1686,12 +1686,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::ES_ESP,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Demon in my Pocket
@@ -1705,12 +1705,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_PP,
 		GID_DIMP,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Jumble
@@ -1724,12 +1724,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_PP,
 		GID_JUMBLE,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - NoPatience
@@ -1743,12 +1743,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_PP,
 		GID_PUZZLE,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures - English
@@ -1762,12 +1762,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_PP,
 		GID_SWAMPY,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
 	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures - German
@@ -1781,12 +1781,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::DE_DEU,
-			Common::kPlatformWindows,
+			Common::kPlatformWindows
 		},
 
 		GType_PP,
 		GID_SWAMPY,
-		GF_OLD_BUNDLE | GF_TALKIE,
+		GF_OLD_BUNDLE | GF_TALKIE
 	},
 	{ { NULL, NULL,	{ { NULL, 0, NULL }, { NULL, 0, NULL } }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };
