@@ -1751,7 +1751,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE,
 	},
 
-	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures
+	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures - English
 	{
 		{
 			"swampy",
@@ -1762,6 +1762,25 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL}
 			},
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+
+		GType_PP,
+		GID_SWAMPY,
+		GF_OLD_BUNDLE | GF_TALKIE,
+	},
+
+	// Simon the Sorcerer's Puzzle Pack - Swampy Adventures - German
+	{
+		{
+			"swampy",
+			"CD",
+
+			{
+	{ "Gswampy",		GAME_BASEFILE,	"4b44f26f51c9c4a16210b4ff9875d24c"},
+	{ NULL, 0, NULL}
+			},
+			Common::DE_DEU,
 			Common::kPlatformWindows,
 		},
 
