@@ -836,7 +836,10 @@ int AGOSEngine::go() {
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);
-	openGameFile();
+
+	if (getFileName(GAME_GMEFILE) != NULL) {
+		openGameFile();
+	}
 
 	if (getGameType() == GType_FF) {
 		loadIconData();

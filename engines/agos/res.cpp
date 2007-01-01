@@ -466,25 +466,22 @@ uint fileReadItemID(Common::SeekableReadStream *in) {
 }
 
 void AGOSEngine::openGameFile() {
-	if (getFileName(GAME_GMEFILE) != NULL) {
-		_gameFile = new File();
-		_gameFile->open(getFileName(GAME_GMEFILE));
+	_gameFile = new File();
+	_gameFile->open(getFileName(GAME_GMEFILE));
 
-		if (_gameFile->isOpen() == false)
-			error("openGameFile: Can't load game file '%s'", getFileName(GAME_GMEFILE));
+	if (!_gameFile->isOpen())
+		error("openGameFile: Can't load game file '%s'", getFileName(GAME_GMEFILE));
 
-		uint32 size = _gameFile->readUint32LE();
+	uint32 size = _gameFile->readUint32LE();
 
-		_gameOffsetsPtr = (uint32 *)malloc(size);
-		if (_gameOffsetsPtr == NULL)
-			error("openGameFile: Out of memory, game offsets");
+	_gameOffsetsPtr = (uint32 *)malloc(size);
+	if (_gameOffsetsPtr == NULL)
+		error("openGameFile: Out of memory, game offsets");
 
-		readGameFile(_gameOffsetsPtr, 0, size);
-#if defined(SCUMM_BIG_ENDIAN)
-		for (uint r = 0; r < size / 4; r++)
-			_gameOffsetsPtr[r] = FROM_LE_32(_gameOffsetsPtr[r]);
-#endif
-	}
+	_gameFile->seek(0, SEEK_SET);
+
+	for (uint r = 0; r < size / 4; r++)
+		_gameOffsetsPtr[r] = _gameFile->readUint32LE();
 }
 
 void AGOSEngine::readGameFile(void *dst, uint32 offs, uint32 size) {

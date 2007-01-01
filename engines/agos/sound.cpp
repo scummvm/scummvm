@@ -51,8 +51,8 @@ protected:
 	bool _freeOffsets;
 
 public:
-	BaseSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
-	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
+	BaseSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false);
+	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigEndian = false);
 	virtual ~BaseSound();
 	virtual void playSound(uint sound, Audio::SoundHandle *handle, byte flags) = 0;
 #if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
@@ -62,23 +62,23 @@ public:
 
 class WavSound : public BaseSound {
 public:
-	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
+	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
 	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
 	void playSound(uint sound, Audio::SoundHandle *handle, byte flags);
 };
 
 class VocSound : public BaseSound {
 public:
-	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
+	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
 	void playSound(uint sound, Audio::SoundHandle *handle, byte flags);
 };
 class RawSound : public BaseSound {
 public:
-	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
+	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
 	void playSound(uint sound, Audio::SoundHandle *handle, byte flags);
 };
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendian) {
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian) {
 	_mixer = mixer;
 	_file = file;
 
@@ -86,7 +86,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendia
 	uint32 size;
 
 	_file->seek(base + sizeof(uint32), SEEK_SET);
-	if (bigendian)
+	if (bigEndian)
 		size = _file->readUint32BE();
 	else
 		size = _file->readUint32LE();
@@ -102,24 +102,18 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendia
 
 	_file->seek(base, SEEK_SET);
 
-	if (_file->read(_offsets, size) != size)
-		error("BaseSound: Can't read offsets");
-
 	for (uint i = 0; i < res; i++) {
-#if defined(SCUMM_BIG_ENDIAN)
-	if (!(bigendian))
-		_offsets[i] = FROM_LE_32(_offsets[i]);
-#endif
-	if (bigendian)
-			_offsets[i] = TO_BE_32(_offsets[i]);
-		_offsets[i] += base;
+		if (bigEndian)
+			_offsets[i] = base + _file->readUint32BE();
+		else
+			_offsets[i] = base + _file->readUint32LE();
 	}
 
 	// only needed for mp3
 	_offsets[res] = _file->size();
 }
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigendian) {
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigEndian) {
 	_mixer = mixer;
 	_file = file;
 	_offsets = offsets;
