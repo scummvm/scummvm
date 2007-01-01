@@ -1392,10 +1392,10 @@ protected:
 
 	Item *getNextItemPtrStrange();
 
-	bool loadGame_e1(const char *filename);
+	bool loadGame_e1(const char *filename, bool restartMode = false);
 	bool saveGame_e1(const char *filename);
 
-	bool loadGame(const char *filename);
+	bool loadGame(const char *filename, bool restartMode = false);
 	bool saveGame(uint slot, const char *caption);
 
 	void openTextWindow();

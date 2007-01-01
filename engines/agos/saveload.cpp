@@ -115,15 +115,7 @@ char *AGOSEngine::genSaveName(int slot) {
 	} else if (getGameType() == GType_PP) {
 		sprintf(buf, "swampy.sav");
 	} else if (getGameType() == GType_FF) {
-		if (slot == 999) {
-			// Restart state
-			if (getPlatform() == Common::kPlatformWindows)
-				sprintf(buf, "save.%.3d", slot);
-			else
-				sprintf(buf, "setup");
-		} else {
-			sprintf(buf, "feeble.%.3d", slot);
-		}
+		sprintf(buf, "feeble.%.3d", slot);
 	} else if (getGameType() == GType_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
 	} else {
@@ -564,20 +556,19 @@ void writeItemID(Common::WriteStream *f, uint16 val) {
 		f->writeUint32BE(val - 1);
 }
 
-bool AGOSEngine::loadGame_e1(const char *filename) {
+bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
 
 	_lockWord |= 0x100;
 
-	// Load restart state
-	Common::File *file = new Common::File();
-	file->open(filename, Common::File::kFileReadMode);
-	if (!file->isOpen()) {
-		delete file;
-		f = _saveFileMan->openForLoading(filename);
-	} else {
+	if (restartMode) {
+		// Load restart state
+		Common::File *file = new Common::File();
+		file->open(filename, Common::File::kFileReadMode);
 		f = file;
+	} else {
+		f = _saveFileMan->openForLoading(filename);
 	}
 
 	if (f == NULL) {
@@ -735,21 +726,20 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 	return result;
 }
 
-bool AGOSEngine::loadGame(const char *filename) {
+bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
 
 	_lockWord |= 0x100;
 
-	// Load restart state
-	Common::File *file = new Common::File();
-	file->open(filename, Common::File::kFileReadMode);
-	if (!file->isOpen()) {
-		delete file;
-		f = _saveFileMan->openForLoading(filename);
-	} else {
+	if (restartMode) {
+		// Load restart state
+		Common::File *file = new Common::File();
+		file->open(filename, Common::File::kFileReadMode);
 		f = file;
+	} else {
+		f = _saveFileMan->openForLoading(filename);
 	}
 
 	if (f == NULL) {

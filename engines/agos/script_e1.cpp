@@ -477,9 +477,13 @@ void AGOSEngine::oe1_saveGame() {
 void AGOSEngine::oe1_loadGame() {
 	// 202: load game
 	uint16 stringId = getNextStringID();
-
 	debug(0, "oe1_loadGame: stub (%s)", (const char *)getStringPtrByID(stringId));
-	loadGame_e1((const char *)getStringPtrByID(stringId));
+
+	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
+		loadGame_e1(getFileName(GAME_RESTFILE), true);
+	} else {
+		loadGame_e1((const char *)getStringPtrByID(stringId));
+	}
 }
 
 void AGOSEngine::oe1_clearUserItem() {

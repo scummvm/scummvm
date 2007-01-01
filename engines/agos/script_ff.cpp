@@ -216,7 +216,11 @@ void AGOSEngine::off_saveUserGame() {
 
 void AGOSEngine::off_loadUserGame() {
 	// 133: load game
-	loadGame(genSaveName(readVariable(55)));
+	if (readVariable(55) == 999) {
+		loadGame(getFileName(GAME_RESTFILE), true);
+	} else {
+		loadGame(genSaveName(readVariable(55)));
+	}
 }
 
 void AGOSEngine::off_listSaveGames() {
