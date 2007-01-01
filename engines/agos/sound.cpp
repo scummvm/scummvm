@@ -53,11 +53,11 @@ protected:
 public:
 	BaseSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false);
 	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigEndian = false);
-	void playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
-		playSound(sound, sound, handle, flags);
+	void playSound(uint sound, Audio::SoundHandle *handle, byte flags, int vol = 0) {
+		playSound(sound, sound, handle, flags, vol);
 	}
 	virtual ~BaseSound();
-	virtual void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) = 0;
+	virtual void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0) = 0;
 	virtual Audio::AudioStream *makeAudioStream(uint sound) { return NULL; }
 };
 
@@ -119,20 +119,20 @@ public:
 	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
 	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags);
+	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 class VocSound : public BaseSound {
 public:
 	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags);
+	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 class RawSound : public BaseSound {
 public:
 	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
-	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags);
+	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian) {
@@ -183,6 +183,50 @@ BaseSound::~BaseSound() {
 	delete _file;
 }
 
+void convertVolume(int &vol) {
+	// DirectSound was orginally used, which specifies volume
+	// and panning differently than ScummVM does, using a logarithmic scale
+	// rather than a linear one.
+	//
+	// Volume is a value between -10,000 and 0.
+	//
+	// In both cases, the -10,000 represents -100 dB. When panning, only
+	// one speaker's volume is affected - just like in ScummVM - with
+	// negative values affecting the left speaker, and positive values
+	// affecting the right speaker. Thus -10,000 means the left speaker is
+	// silent.
+
+	int v = CLIP(vol, -10000, 0);
+	if (v) {
+		vol = (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, (double)v / 2000.0) + 0.5);
+	} else {
+		vol = Audio::Mixer::kMaxChannelVolume;
+	}
+}
+
+void convertPan(int &pan) {
+	// DirectSound was orginally used, which specifies volume
+	// and panning differently than ScummVM does, using a logarithmic scale
+	// rather than a linear one.
+	//
+	// Panning is a value between -10,000 and 10,000.
+	//
+	// In both cases, the -10,000 represents -100 dB. When panning, only
+	// one speaker's volume is affected - just like in ScummVM - with
+	// negative values affecting the left speaker, and positive values
+	// affecting the right speaker. Thus -10,000 means the left speaker is
+	// silent.
+
+	int p = CLIP(pan, -10000, 10000);
+	if (p < 0) {
+		pan = (int)(255.0 * pow(10.0, (double)p / 2000.0) + 127.5);
+	} else if (p > 0) {
+		pan = (int)(255.0 * pow(10.0, (double)p / -2000.0) - 127.5);
+	} else {
+		pan = 0;
+	}
+}
+
 Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 	if (_offsets == NULL)
 		return NULL;
@@ -191,8 +235,9 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 	return Audio::makeWAVStream(*_file);
 }
 
-void WavSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
+void WavSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
+	convertVolume(vol);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound, vol);
 }
 
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
@@ -203,11 +248,11 @@ Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 	return Audio::makeVOCStream(*_file);
 }
 
-void VocSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) {
+void VocSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
 }
 
-void RawSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) {
+void RawSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
 	if (_offsets == NULL)
 		return;
 
@@ -225,7 +270,7 @@ class MP3Sound : public BaseSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags);
+	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
@@ -243,8 +288,9 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 	return Audio::makeMP3Stream(_file, size);
 }
 
-void MP3Sound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
+void MP3Sound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
+	convertVolume(vol);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound, vol);
 }
 #endif
 
@@ -253,7 +299,7 @@ class VorbisSound : public BaseSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags);
+	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
@@ -271,8 +317,9 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 	return Audio::makeVorbisStream(_file, size);
 }
 
-void VorbisSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
+void VorbisSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
+	convertVolume(vol);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound, vol);
 }
 #endif
 
@@ -281,7 +328,7 @@ class FlacSound : public BaseSound {
 public:
 	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags);
+	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
@@ -299,8 +346,9 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 	return Audio::makeFlacStream(_file, size);
 }
 
-void FlacSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
+void FlacSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
+	convertVolume(vol);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound, vol);
 }
 #endif
 
@@ -540,10 +588,10 @@ void Sound::playVoice(uint sound) {
 
 	_mixer->stopHandle(_voiceHandle);
 	if (_vm->getGameType() == GType_PP) {
-		uint loopSound = sound;
 		if (sound < 11)
-			loopSound++;
-		_voice->playSound(sound, loopSound, &_voiceHandle, Audio::Mixer::FLAG_LOOP);
+			_voice->playSound(sound, sound + 1, &_voiceHandle, Audio::Mixer::FLAG_LOOP, -1500);
+		else
+			_voice->playSound(sound, sound, &_voiceHandle, Audio::Mixer::FLAG_LOOP);
 	} else if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
 		_voice->playSound(sound, &_voiceHandle, 0);
 	} else {
@@ -673,37 +721,8 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
 		error("playSoundData: Not a valid WAV data");
 
-	// The Feeble Files originally used DirectSound, which specifies volume
-	// and panning differently than ScummVM does, using a logarithmic scale
-	// rather than a linear one.
-	//
-	// Volume is a value between -10,000 and 0.
-	// Panning is a value between -10,000 and 10,000.
-	//
-	// In both cases, the -10,000 represents -100 dB. When panning, only
-	// one speaker's volume is affected - just like in ScummVM - with
-	// negative values affecting the left speaker, and positive values
-	// affecting the right speaker. Thus -10,000 means the left speaker is
-	// silent.
-
-	int v, p;
-
-	vol = CLIP(vol, -10000, 0);
-	pan = CLIP(pan, -10000, 10000);
-
-	if (vol) {
-		v = (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, (double)vol / 2000.0) + 0.5);
-	} else {
-		v = Audio::Mixer::kMaxChannelVolume;
-	}
-
-	if (pan < 0) {
-		p = (int)(255.0 * pow(10.0, (double)pan / 2000.0) + 127.5);
-	} else if (pan > 0) {
-		p = (int)(255.0 * pow(10.0, (double)pan / -2000.0) - 127.5);
-	} else {
-		p = 0;
-	}
+	convertVolume(vol);
+	convertPan(pan);
 
 	if (loop == true)
 		flags |= Audio::Mixer::FLAG_LOOP;
@@ -719,7 +738,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		memcpy(buffer, soundData + stream.pos(), size);
 	}
 
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound, v, p);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound, vol, pan);
 }
 
 void Sound::stopSfx5() {
