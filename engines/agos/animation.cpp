@@ -69,7 +69,7 @@ bool MoviePlayer::load(const char *filename) {
 			memset(shortName, 0, sizeof(shortName));
 			memcpy(shortName, filename, 6);
 	
-			sprintf(shortName, "%s~1", shortName);
+			sprintf(shortName, "%s~1.dxa", shortName);
 
 			if (!loadFile(shortName))
 				error("Failed to load video file %s or %s", videoName, shortName);
