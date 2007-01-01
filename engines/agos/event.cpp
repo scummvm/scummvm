@@ -369,6 +369,13 @@ void AGOSEngine::delay(uint amount) {
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
+
+				_keyRepeatTime = _system->getMillis() + 400;
+				_keyRepeatKey = _keyPressed;
+				break;
+			case OSystem::EVENT_KEYUP:
+				_keyRepeatKey = 0;
+				_keyRepeatTime = 0;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_sdlMouseX = event.mouse.x;
@@ -420,6 +427,11 @@ void AGOSEngine::delay(uint amount) {
 
 		cur = _system->getMillis();
 	} while (cur < start + amount);
+
+	if (_keyPressed == 0 && _keyRepeatKey != 0 && _keyRepeatTime != 0 && cur >= _keyRepeatTime) {
+		_keyPressed = _keyRepeatKey;
+		_keyRepeatTime = cur + 100;
+	}
 }
 
 void AGOSEngine::timer_callback() {

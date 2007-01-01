@@ -81,6 +81,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_debugger = 0;
 
 	_keyPressed = 0;
+	_keyRepeatKey = 0;
+	_keyRepeatTime = 0;
 
 	_gameFile = 0;
 
