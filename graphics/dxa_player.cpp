@@ -126,6 +126,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 	if (!_frameBuffer1 || !_frameBuffer2)
 		error("DXAPlayer: Error allocating frame buffers (size %d)", _frameSize);
 
+	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
 		_scaledBuffer = (uint8 *)malloc(_frameSize);
 		if (!_scaledBuffer)
