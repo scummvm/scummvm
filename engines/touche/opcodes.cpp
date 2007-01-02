@@ -760,13 +760,40 @@ void ToucheEngine::op_unlockWalkPath() {
 
 void ToucheEngine::op_addItemToInventoryAndRedraw() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_addItemToInventoryAndRedraw()");
-	int16 inventory = _script.readNextWord();
+	int16 keyChar = _script.readNextWord();
 	int16 item = *_script.stackDataPtr;
-	if (inventory == 256) {
-		inventory = _currentKeyCharNum;
+	if (keyChar == 256) {
+		keyChar = _currentKeyCharNum;
 	}
-	addItemToInventory(inventory, item);
-	if (_currentKeyCharNum == inventory && !_hideInventoryTexts) {
+
+	// Workaround for bug #1623356. The original script allows you to either use the
+	// "waxy knife" (object 72) or the dagger (object 7) on the rope. But in both
+	// situations, only the dagger is put back in the inventory.
+	//
+	//  [1A35] (1D) ST[0] = FLAGS[119]
+	//  [1A38] (06) PUSH
+	//  [1A39] (13) ST[0] = 7
+	//  [1A3C] (11) ST[0] = ST[1] == ST[0]
+	//  [1A3D] (06) PUSH
+	//  [1A3E] (1D) ST[0] = FLAGS[119]
+	//  [1A41] (06) PUSH
+	//  [1A42] (13) ST[0] = 72
+	//  [1A45] (11) ST[0] = ST[1] == ST[0]
+	//  [1A46] (0E) OR
+	//  [1A47] (02) JZ 0x1B1B
+	//  [xxxx] ...
+	//  [1B05] (13) ST[0] = 7
+	//  [1B08] (53) ADD_ITEM_TO_INVENTORY_AND_REDRAW(keychar=1)
+
+	if (_currentEpisodeNum == 92 && keyChar == 1 && item == 7) {
+		if (_flagsTable[119] == 72) {
+			debug(0, "Workaround waxy knife not re-appearing in the inventory");
+			item = 72;
+		}
+	}
+
+	addItemToInventory(keyChar, item);
+	if (_currentKeyCharNum == keyChar && !_hideInventoryTexts) {
 		drawInventory(_currentKeyCharNum, 1);
 	}
 }
