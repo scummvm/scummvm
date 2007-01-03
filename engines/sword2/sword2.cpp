@@ -42,6 +42,8 @@
 #include "sword2/screen.h"
 #include "sword2/sound.h"
 
+#define FRAMES_PER_SECOND 12
+
 namespace Sword2 {
 
 struct GameSettings {
@@ -175,6 +177,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_graphicsLevelFudged = false;
 
 	_gameCycle = 0;
+	_gameSpeed = 1;
 
 	_quit = false;
 }
@@ -225,6 +228,10 @@ void Sword2Engine::writeSettings() {
 	ConfMan.setInt("reverse_stereo", _sound->isReverseStereo());
 
 	ConfMan.flushToDisk();
+}
+
+int Sword2Engine::getFramesPerSecond() {
+	return _gameSpeed * FRAMES_PER_SECOND;
 }
 
 /**
@@ -513,6 +520,14 @@ void Sword2Engine::parseInputEvents() {
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
+			if (event.kbd.flags == OSystem::KBD_CTRL) {
+				if (event.kbd.keycode == 'f') {
+					if (_gameSpeed == 1)
+						_gameSpeed = 2;
+					else
+						_gameSpeed = 1;
+				}
+			}
 			if (!(_inputEventFilter & RD_KEYDOWN)) {
 				_keyboardEvent.pending = true;
 				_keyboardEvent.repeat = now + 400;

@@ -116,6 +116,7 @@ private:
 	uint32 _startRes;
 
 	bool _useSubtitles;
+	int _gameSpeed;
 
 	StartUp _startList[MAX_starts];
 
@@ -124,6 +125,8 @@ public:
 	~Sword2Engine();
 	int go();
 	int init();
+
+	int getFramesPerSecond();
 
 	void registerDefaultSettings();
 	void readSettings();

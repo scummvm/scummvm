@@ -31,7 +31,6 @@
 
 namespace Sword2 {
 
-#define MILLISECSPERCYCLE  83
 #define RENDERAVERAGETOTAL 4
 
 void Screen::updateRect(Common::Rect *r) {
@@ -297,7 +296,7 @@ void Screen::renderParallax(byte *ptr, int16 l) {
 
 void Screen::initialiseRenderCycle() {
 	_initialTime = _vm->_system->getMillis();
-	_totalTime = _initialTime + MILLISECSPERCYCLE;
+	_totalTime = _initialTime + (1000 / _vm->getFramesPerSecond());
 }
 
 /**
@@ -354,7 +353,7 @@ bool Screen::endRenderCycle() {
 	}
 
 	if (_startTime + _renderAverageTime >= _totalTime) {
-		_totalTime += MILLISECSPERCYCLE;
+		_totalTime += (1000 / _vm->getFramesPerSecond());
 		_initialTime = time;
 		return true;
 	}
@@ -365,7 +364,7 @@ bool Screen::endRenderCycle() {
 		// rest of the render cycle.
 		_vm->sleepUntil(_totalTime);
 		_initialTime = _vm->_system->getMillis();
-		_totalTime += MILLISECSPERCYCLE;
+		_totalTime += (1000 / _vm->getFramesPerSecond());
 		return true;
 	}
 #endif

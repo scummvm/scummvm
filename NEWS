@@ -18,6 +18,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Broken Sword 2:
    - Added support for DXA cutscenes.
+   - Added "fast mode" (use Ctrl-f to toggle).
 
  Cine:
    - Improved support for international versions.

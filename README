@@ -851,6 +851,7 @@ other games.
 
     Broken Sword 2:
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         c                      - Display the credits
         p                      - Pauses
 

@@ -219,7 +219,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 				// effects, however, it's the average number of
 				// seconds between playing the sound, so we
 				// have to multiply by the frame rate.
-				delay *= 12;
+				delay *= _vm->getFramesPerSecond();
 			}
 
 			volume = (volume * Audio::Mixer::kMaxChannelVolume) / 16;
