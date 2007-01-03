@@ -459,30 +459,36 @@ void AGOSEngine::permitInput() {
 }
 
 bool AGOSEngine::processSpecialKeys() {
+	bool verbCode = false;
+
 	switch (_keyPressed) {
 	case 17: // Up
 		if (getGameType() == GType_PP)
 			_verbHitArea = 302;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 239;
+		verbCode = true;
 		break;
 	case 18: // Down
 		if (getGameType() == GType_PP)
 			_verbHitArea = 304;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 241;
+		verbCode = true;
 		break;
 	case 19: // Right
 		if (getGameType() == GType_PP)
 			_verbHitArea = 303;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 240;
+		verbCode = true;
 		break;
 	case 20: // Left
 		if (getGameType() == GType_PP)
 			_verbHitArea = 301;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 242;
+		verbCode = true;
 		break;
 	case 27: // escape
 		_exitCutscene = true;
@@ -585,9 +591,8 @@ bool AGOSEngine::processSpecialKeys() {
 		break;
 	}
 
-	bool result = (_keyPressed != 0);
 	_keyPressed = 0;
-	return result;
+	return verbCode;
 }
 
 } // End of namespace AGOS
