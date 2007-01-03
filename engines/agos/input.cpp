@@ -194,7 +194,8 @@ startOver:
 			if (getGameType() != GType_FF && getGameType() != GType_PP && _keyPressed == 35)
 				displayBoxStars();
 			if (processSpecialKeys() != 0) {
-				if (getGameType() == GType_WW || getGameType() == GType_PP)
+				if ((getGameType() == GType_PP && getGameId() != GID_DIMP) ||
+					getGameType() == GType_WW)
 					goto out_of_here;
 			}
 			if (_lastHitArea3 == (HitArea *) -1)
