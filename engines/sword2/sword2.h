@@ -22,6 +22,8 @@
 #ifndef	SWORD2_H
 #define	SWORD2_H
 
+#define FRAMES_PER_SECOND 12
+
 // Enable this to make it possible to clear the mouse cursor luggage by
 // right-clicking. The original didn't do this, but it feels natural to me.
 // However, I'm afraid that it'll interfer badly with parts of the game, so

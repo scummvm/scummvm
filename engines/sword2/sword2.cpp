@@ -42,8 +42,6 @@
 #include "sword2/screen.h"
 #include "sword2/sound.h"
 
-#define FRAMES_PER_SECOND 12
-
 namespace Sword2 {
 
 struct GameSettings {
