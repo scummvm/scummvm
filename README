@@ -742,6 +742,11 @@ ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
 The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1 and
 Simon the Sorcerer 1 and 2.
 
+Note that with the exception of TODO, using this option does *not*
+change the languge of the game (which usually is hard coded), but
+rather is only used to select the appropriate font (e.g. for a German version
+of a game, one containing umlauts).
+
 Maniac Mansion and Zak McKracken
         en  - English (default)
         de  - German
@@ -825,8 +830,9 @@ for example:
 
     scummvm -gadvmame2x monkey2
 
-Note #1: Not all backends support all or any filters. The ones listed above
-are for the default SDL backend.
+Note #1: Not all backends support all (or even any) of the filters listed above;
+some may support additional ones. The filters listed above are those supported
+by the default SDL backend.
 
 Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
@@ -834,11 +840,21 @@ using any form of anti-aliasing/linear filtering.
 
 Note #3: The FM-TOWNS version of Zak McKracken uses an original resolution
 of 320x240, hence for this game scalers will scale to 640x480 or 960x720.
+Likewise, games that originally were using 640x480 (such as COMI or Broken Sword)
+will be scaled to 1280x960 and 1920x1440.
 
 
 5.4) Hot Keys:
 ---- ---------
-ScummVM supports various in game hotkeys. They differ between SCUMM games and
+TODO
+TODO: Rework this section to clearly state which hotkeys are implemented in *all*
+TODO  game (and for which backends).
+TODO: It would also be nice to add information about control on devices w/o a keyboard;
+TODO  I.e. document how input on DC, DS, PSP, PS2, PalmOS, WinCE, ... works for each game
+TODO  Or at the very least give points as to were one can read up on these.
+TODO
+
+ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
 
     Common:
@@ -935,7 +951,7 @@ other games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
 
-Note that using ctrl-f and ctrl-g are not recommended: games can crash when
+Note that using ctrl-f or ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
