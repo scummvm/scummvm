@@ -104,8 +104,10 @@ static const GameSettings gob_games[] = {
 	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "9de5fbb41cf97182109e5fecc9d90347", "intro"},
 	// CD 1.01
 	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::UNK_LANG, "24a6b32757752ccb1917ce92fd7c2a04", "intro"},
+
 	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "8b1c98ff2ab2e14f47a1b891e9b92217", "usa"},
 	{"gob2", "Gobliins 2 (Interactive Demo)", GF_GOB2, Common::UNK_LANG, "cf1c95b2939bd8ff58a25c756cb6125e", "intro"},
+	{"gob2", "Gobliins 2 (Amiga Interactive Demo)", GF_GOB2, Common::UNK_LANG, "4b278c2678ea01383fd5ca114d947eea", "intro"},
 
 	{"gob2", "Ween: The Prohpecy", GF_GOB2, Common::UNK_LANG, "2bb8878a8042244dd2b96ff682381baa", "intro"},
 	{"gob2", "Ween: The Prophecy (Fr)", GF_GOB2, Common::UNK_LANG, "4b10525a3782aa7ecd9d833b5c1d308b", "intro"},
