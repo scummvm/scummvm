@@ -971,27 +971,32 @@ The platforms that currently have a different default directory are:
 
 6.1) Autosaves:
 ---- ----------
-Because ScummVM is still a beta product, it -can- crash and/or hang
-occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not,
-however, occur with Simon the Sorcerer 1 and 2, nor with Broken Sword 1 and 2.
+For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
+Queen" and all SCUMM games), ScummVM will by default automatically
+save the current state every five minutes (adjustable via the
+"autosave_period" config setting). For the SCUMM enbgine, it will save
+in Slot 0. This savestate can then be loaded again via Ctrl-0, or the
+F5 menu.
 
 
 7.0) Music and Sound:
 ---- ----------------
-By default, on most operating systems, ScummVM will automatically use Adlib
-emulation. MIDI may not be available on all operating systems or may need
-manual configuration. If you ARE using MIDI, you have several different
-choices of output, depending on your operating system and configuration.
+
+On most operating systems and for most games, ScummVM will by default
+use Adlib emulation for music playback. MIDI may not be available on
+all operating systems or may need manual configuration. If you want to
+use  MIDI, you have several different choices of output, depending on
+your operating system and configuration.
 
         null       - Null output. Don't play any music.
 
         adlib      - Internal Adlib emulation (default)
         fluidsynth - FluidSynth MIDI emulation
         mt32       - Internal MT-32 emulation
-        pcjr       - Internal PCjr emulation
+        pcjr       - Internal PCjr emulation (only usable in SCUMM games)
         pcspk      - Internal PC Speaker emulation
         towns      - Internal FM-TOWNS YM2612 emulation
+                     (only usable in SCUMM FM-TOWNS games)
 
         alsa       - Output using ALSA sequencer device. See below.
         core       - CoreAudio sound, for Mac OS X users.
@@ -1001,8 +1006,8 @@ choices of output, depending on your operating system and configuration.
         seq        - Use /dev/sequencer for MIDI, *nix users. See below.
         windows    - Windows MIDI. Uses built-in sequencer, for Windows users
 
-To select a sound driver, pass its name via the '-e' option to scummvm,
-for example:
+To select a sound driver, select it in the Launcher, or pass its name
+via the '-e' option to scummvm, for example:
 
     scummvm -eadlib monkey2
 
@@ -1476,12 +1481,14 @@ The Legend of Kyrandia adds the following non-standard keyword:
 
 9.0) Compiling:
 ---- ----------
-You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and
-a supported compiler. Several compilers, including GCC, mingw and Microsoft
-Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
-.SOU files, you will need to install the MAD library and define
-USE_MAD. Tools for compressing .SOU files to .SO3 files can be
-found in the 'tools' SVN module, or in the 'scummvm-tools' package.
+
+You need SDL-1.2.2 or newer (older versions may work, but are
+unsupported), and a supported compiler. Several compilers, including
+GCC, mingw and recent versions of Microsoft Visual C++ are
+supported. If you wish to use MP3-compressed CD tracks or .SOU files,
+you will need to install the MAD library; likewise you will need the
+appropriatelibraries for Ogg Vorbis and FLAC compressed sound. For
+MPEG2 support, libmpeg2 is required. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized versions
 written in assembler. If you wish to use this option, you will need to install
@@ -1490,6 +1497,12 @@ MMX optimized versions, and they will not compile on other processors.
 
 On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
+
+TODO
+TODO: The following lists is partially outdated, and incomplete.
+TODO  We could either try to update it, and/or refer to the relevant
+TODO  Wiki pages...
+TODO
 
     GCC:
         * Type ./configure
@@ -1538,9 +1551,9 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Type ./configure in the ScummVM directory
         * You can now type 'make' to create a command line binary.
         * To get a version you can run from Finder, type 'make bundle' which
-          will create ScummVM.app (this only works if you installed SDL
-          etc. via Fink and into /sw. If you have installed SDL
-          in another way, you'll have to edit the Makefile).
+          will create ScummVM.app (this only works out of the box if you
+          installed SDL into /sw (as happens if you are using Fink). If you
+          have installed SDL in another way, you'll have to edit the Makefile).
 
     AmigaOS 4 (Cross-compiling with Cygwin):
         * Make sure that you have SDL installed, you may also need
