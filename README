@@ -10,7 +10,7 @@ at: http://www.scummvm.org/
 Table of Contents:
 ------------------
 1.0) About
-2.0) Contacting
+2.0) Contact
  * 2.1 Reporting Bugs
 3.0) Supported Games
  * 3.1 Copy Protection
@@ -51,16 +51,25 @@ Table of Contents:
 
 1.0) About:
 ---- ------
-ScummVM is a collection of interpreters, capable of emulating several
-adventure game engines. ScummVM mainly supports games created using
-SCUMM (Script Creation Utility for Maniac Mansion), used in various
-LucasArts games such as Monkey Island and numerous Humongous Entertainment
-games.
+ScummVM is a program which allows you to run certain classic graphical
+point-and-click adventure games, provided you already have their data
+files. The clever part about this: ScummVM just replaces the
+executables shipped with the game, allowing you to play them on
+systems for which they were never designed!
 
-ScummVM also contains interpreters for several non-SCUMM games. Currently
-these are Beneath a Steel Sky, Broken Sword 1 and 2, Flight of the
-Amazon Queen, Gobliiins, Inherit the Earth: Quest for the Orb,
-Simon the Sorcerer 1 and 2, The Feeble Files and The Legend of Kyrandia.
+Some of the adventures ScummVM supports include Adventure Soft's Simon
+the Sorcerer 1 and 2; Revolution's Beneath A Steel Sky, Broken Sword 1
+and Broken Sword 2; Flight of the Amazon Queen; Wyrmkeep's Inherit the
+Earth; Coktel Vision's Gobliiins; Westwood Studios' The Legend of
+Kyrandia and games based on LucasArts' SCUMM (Script Creation Utility
+for Maniac Mansion) system such as Monkey Island, Day of the Tentacle,
+Sam and Max and more. You can find a thorough list with details on
+which games are supported and how well on the compatibility
+page. ScummVM is continually improving, so check back often.
+
+Among the systems on which you can play those games are Windows,
+Linux, Mac OS X, Dreamcast, PocketPC, PalmOS, AmigaOS, BeOS, OS/2,
+PSP, PS2, SymbianOS/EPOC and many more.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -71,13 +80,13 @@ ScummVM homepage. This will help us buy utilities needed to develop ScummVM
 easier and quicker. If you cannot donate, help and contribute a patch!
 
 
-2.0) Contacting:
----- ----------
-The easiest way to contact the ScummVM team is by submitting bug reports or
-commenting in our forums. You can also join and e-mail the scummvm-devel
-mailing list, or chat with us on IRC (#scummvm on irc.freenode.net)
-Please do not ask us to support an unsupported game -- read the FAQ on our
-web site first.
+2.0) Contact:
+---- --------
+The easiest way to contact the ScummVM team is by submitting bug reports
+(see section 2.1) or by using our forums <http://forums.scummvm.org>.
+You can also join and e-mail the scummvm-devel mailing list, or chat with
+us on IRC (#scummvm on irc.freenode.net) Please do not ask us to support
+an unsupported game -- read the FAQ on our web site first.
 
 
 2.1) Reporting Bugs:
@@ -131,6 +140,7 @@ Other Games:
      Broken Sword 1: The Shadow of the Templars  [sword1]
      Broken Sword 2: The Smoking Mirror          [sword2]
      Flight of the Amazon Queen                  [queen]
+     Future Wars                                 [fw]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
      Inherit the Earth: Quest for the Orb        [ite]
@@ -146,6 +156,8 @@ Other Games:
          - Swampy Adventures                     [swampy]
      The Feeble Files                            [feeble]
      The Legend of Kyrandia                      [kyra1]
+     Touche: The Adventures of the Fifth
+         Musketeer                               [touche]
 
 SCUMM Games by Humongous Entertainment:
      Backyard Football                           [football]
@@ -189,10 +201,10 @@ SCUMM Games by Humongous Entertainment:
      SPY Fox in Cheese Chase                     [chase]
      SPY Fox in Hold the Mustard                 [mustard]
 
-The following games should load, but are not yet fully playable. Play these at
-your own risk, and please do not file bug reports about them. If you want
-the latest updates on game compatibility, visit our web site and view the
-compatibility chart.
+The following games should load, but are not yet fully playable. Play
+these at your own risk, and please do not file bug reports about them.
+If you want the latest updates on game compatibility, visit our web
+site and view the compatibility chart.
 
      Backyard Baseball                           [baseball]
      Backyard Soccer                             [soccer]
@@ -200,7 +212,8 @@ compatibility chart.
      Blue's Birthday Adventure                   [BluesBirthday]
      SPY Fox 3: Operation Ozone                  [spyozon]
 
-The following games are SCUMM engine, but NOT supported by ScummVM (yet):
+The following games are based on the SCUMM engine, but NOT supported
+by ScummVM (yet):
 
      Other Humongous Entertainment games
 
@@ -212,39 +225,47 @@ encounter such a bug in a 'supported' game.
 
 3.1) Copy Protection:
 ---- ----------------
-The ScummVM team does not condone piracy. However, there are cases when
-LucasArts themselves bundled cracked interpreters with their own games --
-the data files still contain the copy protection scripts, but the interpreter
-bypasses them. There is no way for us to tell the difference between legitimate
-and pirated data files, so for the games where we know the original interpreter
-may have been cracked ScummVM will always have to bypass the copy protection.
+The ScummVM team does not condone piracy. However, there are cases
+where the game companies (such as LucasArts) themselves bundled
+'cracked' executables with their games -- in these cases the data
+files still contain the copy protection scripts, but the interpreter
+bypasses them (similar to what an illegaly cracked version might do,
+only that here the producer of the game did it). There is no way for
+us to tell the difference between legitimate and pirated data files,
+so for the games where we know that a cracked version the original
+interpreter was sold at some point, ScummVM will always have to bypass
+the copy protection.
 
-In some cases ScummVM will still show the copy protection screen. Try entering
-any answer. Chances are that it will work.
+In some cases ScummVM will still show the copy protection screen. Try
+entering any answer. Chances are that it will work.
 
 ScummVM will skip copy protection in the following games:
 
-Maniac Mansion
-Zak McKracken and the Alien Mindbenders
-Loom (EGA)
-The Secret of Monkey Island (VGA)
-Monkey Island 2: LeChuck's Revenge
-
-Beneath a Steel Sky bypassed with kind permission from Revolution Software.
-
-Inherit the Earth: Quest for the Orb (Floppy version) bypassed with kind
-permission from Wyrmkeep Entertainment, since it was bypassed in all CD
-releases of the game.
+  * Maniac Mansion
+  * Zak McKracken and the Alien Mindbenders
+  * Loom (EGA)
+  * The Secret of Monkey Island (VGA)
+  * Monkey Island 2: LeChuck's Revenge
+  * Beneath a Steel Sky
+      -- bypassed with kind permission from Revolution Software.
+  * Inherit the Earth: Quest for the Orb (Floppy version)
+      -- bypassed with kind permission from Wyrmkeep Entertainment,
+         since it was bypassed in all CD releases of the game.
 
 
 3.2) Commodore64 games notes:
 ---- ------------------------
-Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
-playable. Either use extract_mm_c64 from the tools package (but then the
-game will not be autodetected by ScummVM) or name the D64 disks as
-"maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64" respectively.
-If you add the game manually, make sure that the platform is set to
-Commodore64.
+Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not
+yet playable. Simply name the D64 disks "maniac1.d64" and
+"maniac2.d64" respectively "zak1.d64" and "zak2.d64", then ScummVM
+should be able to automatically detect the game if you point it at the
+right directory.
+
+Alternatively, you can use extract_mm_c64 from the tools package to
+extract the data files. But then the game will not be properly
+autodetected by ScummVM, and you must make sure that the platform is
+set to Commodore64. We recommend using the much simpler approach
+described in the previous paragraph.
 
 
 3.3) Maniac Mansion NES notes:
@@ -265,9 +286,9 @@ If you add the game manually make sure that the platform is set to NES.
 
 Most common mistakes which prevents the game from running:
 
-  o Bad file
-  o ROM extracted with the 0.7.0 tools
-  o You try to feed ScummVM with the FULL ROM and not just the PRG section.
+  * Bad file
+  * ROM extracted with the 0.7.0 tools
+  * You try to feed ScummVM with the FULL ROM and not just the PRG section.
 
 It is also possible to extract the separate LFL files from the PRG section.
 To do so use the extract_mm_nes utility from the tools package.
@@ -278,15 +299,20 @@ To do so use the extract_mm_nes utility from the tools package.
 All LucasArts SCUMM based adventures except COMI also exist in versions for the
 Macintosh. ScummVM can use most (all?) of them, however, in some cases some
 additional work is required. First off, if you are not using a Macintosh for
-this, accessing the CD/floppy data might be tricky, since the mac uses a
-special disk format called HFS which other systems usually do not support.
-However, there are various free tools on the net which allow reading such HFS
-volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
-other Unix-like operating systems).
+this, accessing the CD/floppy data might be tricky. The reason for this is
+that the mac uses a special disk format called HFS which other systems usually
+do not support. However, there are various free tools which allow reading such
+HFS volumes. For example "HFVExplorer" for Windows and "hfsutils" for Linux and
+other Unix-like operating systems.
 
-Secondly, most of the newer games shipped only with a  single data file on the
-Macintosh. You used to have to manually convert that data file, but this is no
-longer necessary, as ScummVM can now open and understand the format natively.
+Most of the newer games on the Macintosh shipped with only a single data file
+(note that in some cases this data file was made invisible, so you may need
+extra tools in order to copy it). ScummVM is able to directly use such a data file;
+simpy point ScummVM at the directory containing it, and it should work (just like
+with every other supported game).
+
+We also provide a tool called 'rescumm' in the tools package to extract the
+data from these data files, but this is neither required nor recommended.
 
 For further information on copying Macintosh game files to your hard disk see:
 
@@ -298,8 +324,8 @@ For further information on copying Macintosh game files to your hard disk see:
 In general, ScummVM does not deal very well with Multi-CD games. This is
 because ScummVM assumes everything about a game can be found in one directory.
 Even if ScummVM does make some provisions for asking the user to change CD, the
-original games usually install a small number of files to the hard disk. Unless
-these files can be found on all the CDs, ScummVM will be in trouble.
+original game executables usually installed a small number of files to the hard
+disk. Unless these files can be found on all the CDs, ScummVM will be in trouble.
 
 Fortunately, ScummVM has no problems running the games entirely from hard disk,
 if you create a directory with the correct combination of files. Usually, when
@@ -321,9 +347,9 @@ For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
 comi.la0 file can be found on either CD, but since they are identical it
 doesn't matter which one of them you use.
 
-In addition, you'll need a resource subdirectory with all of the files from the
-resource subdirectories on both CDs. Some of the files appear on both CDs, but
-again they're identical.
+In addition, you'll need to create a "resource" subdirectory containing all
+of the files from -both- "resource" subdirectories on the two CDs. Some of
+the files appear on both CDs, but again they're identical.
 
 
 3.7) Broken Sword notes:
@@ -339,6 +365,10 @@ re-encoded Broken Sword cutscenes for download on our website:
 These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
 Viewing these cutscenes thus requires a version of ScummVM compiled
 with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
+
+TODO
+TODO: What about DXA??? Mention it here, too???
+TODO
 
 The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or reburning
@@ -387,8 +417,8 @@ copy them.
 Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to run
 Beneath a Steel Sky.
 
-This file is available on the 'Compatibility' page of the ScummVM
-website, you can place it in either the directory containing the other
+This file is available on the 'Downloads' page of the ScummVM
+website. You can place it in either the directory containing the other
 game data files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory
 where your ScummVM executable resides.
 
@@ -397,7 +427,7 @@ where your ScummVM executable resides.
 ---- ---------------------------------
 In order to use a non-freeware version of Flight of the Amazon Queen (from
 original CD), you will need to place the 'queen.tbl' file (available from the
-Compatibility page on our website) in either the directory containing the
+'Downloads' page on our website) in either the directory containing the
 'queen.1' game data file, in your extrapath, or in the directory where your
 ScummVM executable resides.
 
@@ -411,7 +441,7 @@ OGG or FLAC.
 3.10) Gobliiins notes:
 ----- ----------------
 The CD versions of the Gobliiins series contain one big audio track which you
-need to rip (See the section on using compressed audio files) and copy into
+need to rip (see the section on using compressed audio files) and copy into
 the game directory if you want to have in-game music without the CD in the
 drive all the time. The speech is also in that track and its volume is
 therefore changed with the music volume control as well.
@@ -451,12 +481,21 @@ Many of the files necessary for the game are stored in an InstallShield file
 called data1.cab, which ScummVM is unable to unpack. You will need to use the
 original installer or i5comp to unpack the contents of this file.
 
+TODO
+TODO: What is i5comp, where does one get it? -> Add this!
+TODO
+
 The game uses Smacker cutscenes extensively, which we can't support directly,
 due to reasons described above. The cutscenes have to be re-encoded to DXA,
 which is the format used by the cutscenes in the Amiga and Macintosh versions.
 See the tools README for a brief guide on converting the cutscenes.
 
-The original speech files will need to be renamed, to use with ScummVM.
+TODO
+TODO: Maybe we should add a section dedicated to Smacker and DXA, and refer
+TODO  to it from here, and also from section 3.7 (Broken Sword) ?
+TODO
+
+To use the speech files with ScummVM, they need to be renamed as follows:
 Rename voices.wav on CD1 to voices1.wav
 Rename voices.wav on CD2 to voices2.wav
 Rename voices.wav on CD3 to voices3.wav
@@ -466,7 +505,7 @@ Rename voices.wav on CD4 to voices4.wav
 3.14) The Legend of Kyrandia notes:
 ----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat' file,
-which can be found in the downloads section of the ScummVM website.
+which can be found on the 'Downloads' page of the ScummVM website.
 
 
 3.15) Known Problems:
@@ -556,6 +595,7 @@ Supported platforms include (but are not limited to):
         AmigaOS
         BeOS
         Dreamcast
+        Nintendo DS
         PalmOS
         Playstation 2
         Playstation Portable
@@ -583,8 +623,9 @@ We have reports about unofficial ports to the following platforms. Please
 note that these are not made by us, so we neither endorse nor support them.
 Use at your own risk!
 
-        Nintendo DS
+        Playstation 3
         Xbox
+        Xbox 360
 
 
 5.0) Running ScummVM:
