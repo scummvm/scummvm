@@ -101,9 +101,9 @@ static const GameSettings gob_games[] = {
 	{"gob2", "Gobliins 2 (DOS Deu)", GF_GOB2, Common::DE_DEU, "3e4e7db0d201587dd2df4003b2993ef6", "intro"},
 
 	// CD 1.000.
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::EN_USA, "9de5fbb41cf97182109e5fecc9d90347", "intro"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2 | GF_CD, Common::EN_USA, "9de5fbb41cf97182109e5fecc9d90347", "intro"},
 	// CD 1.01
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, Common::UNK_LANG, "24a6b32757752ccb1917ce92fd7c2a04", "intro"},
+	{"gob2", "Gobliins 2 (CD)", GF_GOB2 | GF_CD, Common::UNK_LANG, "24a6b32757752ccb1917ce92fd7c2a04", "intro"},
 
 	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "8b1c98ff2ab2e14f47a1b891e9b92217", "usa"},
 	{"gob2", "Gobliins 2 (Interactive Demo)", GF_GOB2, Common::UNK_LANG, "cf1c95b2939bd8ff58a25c756cb6125e", "intro"},
