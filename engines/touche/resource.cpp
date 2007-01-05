@@ -115,7 +115,7 @@ void ToucheEngine::res_allocateTables() {
 		}
 	}
 
-	_programData = (uint8 *)malloc(61440);
+	_programData = (uint8 *)malloc(kMaxProgramDataSize);
 	if (!_programData) {
 		error("Unable to allocate memory for program data");
 	}
@@ -240,6 +240,7 @@ void ToucheEngine::res_loadProgram(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadProgram() num=%d", num);
 	const uint32 offs = res_getDataOffset(kResourceTypeProgram, num, &_programDataSize);
 	_fData.seek(offs);
+	assert(_programDataSize < kMaxProgramDataSize);
 	_fData.read(_programData, _programDataSize);
 }
 
@@ -622,7 +623,7 @@ void ToucheEngine::res_loadSpeech(int num) {
 
 void ToucheEngine::res_loadSpeechSegment(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadSpeechSegment() num=%d", num);
-	if (_talkTextMode != kTalkModeTextOnly) {
+	if (_talkTextMode != kTalkModeTextOnly && _flagsTable[617] != 0) {
 		Audio::AudioStream *stream = 0;
 		if (_compressedSpeechData < 0) { // uncompressed speech data
 			int i = 0;

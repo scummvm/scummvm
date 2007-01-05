@@ -382,7 +382,7 @@ void ToucheEngine::op_endConversation() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_endConversation()");
 	_script.quitFlag = 1;
 	_conversationEnded = true;
-	_disabledInputCounter = false;
+	_disabledInputCounter = 0;
 }
 
 void ToucheEngine::op_stopScript() {

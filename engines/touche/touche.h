@@ -322,7 +322,8 @@ enum {
 	kIconWidth = 58,
 	kIconHeight = 42,
 	kCursorWidth = 58,
-	kCursorHeight = 42
+	kCursorHeight = 42,
+	kMaxProgramDataSize = 61440
 };
 
 class MidiPlayer;
