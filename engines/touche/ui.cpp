@@ -87,6 +87,7 @@ struct MenuData {
 	Button *buttonsTable;
 	uint buttonsCount;
 	bool quit;
+	bool exit;
 	bool saveLoadMarks[100];
 	char saveLoadDescriptionsTable[100][33];
 
@@ -355,6 +356,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 		MenuData menuData;
 		memset(&menuData, 0, sizeof(MenuData));
 		menuData.quit = false;
+		menuData.exit = false;
 		menuData.mode = kMenuSettingsMode;
 		int curMode = -1;
 		while (!menuData.quit) {
@@ -380,6 +382,8 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				switch (event.type) {
 				case OSystem::EVENT_QUIT:
 					menuData.quit = true;
+					menuData.exit = true;
+					_flagsTable[611] = 1;
 					break;
 				case OSystem::EVENT_LBUTTONDOWN:
 					button = menuData.findButtonUnderCursor(event.mouse.x, event.mouse.y);
@@ -411,7 +415,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 			_system->delayMillis(50);
 		}
 		_fullRedrawCounter = 2;
-		if (_flagsTable[611] != 0) {
+		if (!menuData.exit && _flagsTable[611] != 0) {
 			_flagsTable[611] = displayQuitDialog();
 		}
 	}
