@@ -32,9 +32,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/global.h"
-#include "gob/util.h"
 #include "gob/parse.h"
-#include "gob/cdrom.h"
 
 namespace Gob {
 
@@ -393,13 +391,6 @@ int16 Scenery::loadAnim(char search) {
 	uint32 layerPos;
 
 	extData = 0;
-	if (_vm->_cdrom->_cdPlaying) {
-		while (_vm->_cdrom->getTrackPos() != -1)
-		    _vm->_util->longDelay(50);
-
-		_vm->_cdrom->_cdPlaying = false;
-	}
-
 	_vm->_inter->evalExpr(&sceneryIndex);
 	picsCount = _vm->_inter->load16();
 	resId = _vm->_inter->load16();

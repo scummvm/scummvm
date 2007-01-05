@@ -129,10 +129,10 @@ public:
 	void freeStatic(int16 index);
 	void renderStatic(int16 scenery, int16 layer);
 	void updateStatic(int16 orderFrom);
-	int16 loadAnim(char search);
 	void freeAnim(int16 animation);
 	void interStoreParams(void);
 
+	virtual int16 loadAnim(char search);
 	virtual void updateAnim(int16 layer, int16 frame, int16 animation,
 			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw) = 0;
 
@@ -145,6 +145,7 @@ protected:
 
 class Scenery_v1 : public Scenery {
 public:
+	virtual int16 loadAnim(char search);
 	virtual void updateAnim(int16 layer, int16 frame, int16 animation,
 			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
 
@@ -154,6 +155,7 @@ public:
 
 class Scenery_v2 : public Scenery_v1 {
 public:
+	virtual int16 loadAnim(char search);
 	virtual void updateAnim(int16 layer, int16 frame, int16 animation,
 			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
 
