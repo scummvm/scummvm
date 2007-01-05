@@ -54,8 +54,6 @@ void Actor::initActorClass(ScummEngine *scumm) {
 Actor::Actor(int id) {
 	assert(_vm != 0);
 	_number = id;
-
-	initActor(-1);
 }
 
 void Actor::initActor(int mode) {

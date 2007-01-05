@@ -1242,6 +1242,7 @@ void ScummEngine::resetScumm() {
 			_actors[i] = new ActorOldWalk(i);
 		else
 			_actors[i] = new Actor(i);
+		_actors[i]->initActor(-1);
 		_actors[i]->initActor(1);
 
 		// this is from IDB
