@@ -1487,7 +1487,18 @@ void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {
 	}
 }
 
-void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch) {
+void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool noXor) {
+	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d, %d)", (const void *)dst, (const void *)src, pitch, noXor);
+	
+	if (noXor) {
+		wrapped_decodeFrameDeltaPage<true>(dst, src, pitch);
+	} else {
+		wrapped_decodeFrameDeltaPage<false>(dst, src, pitch);
+	}
+}
+
+template<bool noXor>
+void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
 	int count = 0;
 	uint8 *dstNext = dst;
@@ -1497,7 +1508,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch)
 			uint8 len = *src++;
 			code = *src++;
 			while (len--) {
-				*dst++ ^= code;
+				if (noXor) {
+					*dst++ = code;
+				} else {
+					*dst++ ^= code;
+				}
 				if (++count == pitch) {
 					count = 0;
 					dstNext += SCREEN_W;
@@ -1525,7 +1540,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch)
 						uint16 len = subcode - 0x4000;
 						code = *src++;
 						while (len--) {
-							*dst++ ^= code;
+							if (noXor) {
+								*dst++ = code;
+							} else {
+								*dst++ ^= code;
+							}
 							if (++count == pitch) {
 								count = 0;
 								dstNext += SCREEN_W;
@@ -1534,7 +1553,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch)
 						}
 					} else {
 						while (subcode--) {
-							*dst++ ^= *src++;
+							if (noXor) {
+								*dst++ = *src++;
+							} else {
+								*dst++ ^= *src++;
+							}
 							if (++count == pitch) {
 								count = 0;
 								dstNext += SCREEN_W;
@@ -1556,87 +1579,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch)
 			}
 		} else {
 			while (code--) {
-				*dst++ ^= *src++;
-				if (++count == pitch) {
-					count = 0;
-					dstNext += SCREEN_W;
-					dst = dstNext;
-				}
-			}
-		}
-	}
-}
-
-void Screen::decodeFrameDeltaPageNoXor(uint8 *dst, const uint8 *src, const int pitch) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPageNoXor(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
-	int count = 0;
-	uint8 *dstNext = dst;
-	while (1) {
-		uint8 code = *src++;
-		if (code == 0) {
-			uint8 len = *src++;
-			code = *src++;
-			while (len--) {
-				*dst++ = code;
-				if (++count == pitch) {
-					count = 0;
-					dstNext += SCREEN_W;
-					dst = dstNext;
-				}
-			}
-		} else if (code & 0x80) {
-			code -= 0x80;
-			if (code != 0) {
-				dst += code;
-				
-				count += code;
-				while (count >= pitch) {
-					count -= pitch;
-					dstNext += SCREEN_W;
-					dst = dstNext + count;
-				}
-			} else {
-				uint16 subcode = READ_LE_UINT16(src); src += 2;
-				if (subcode == 0) {
-					break;
-				} else if (subcode & 0x8000) {
-					subcode -= 0x8000;
-					if (subcode & 0x4000) {
-						uint16 len = subcode - 0x4000;
-						code = *src++;
-						while (len--) {
-							*dst++ = code;
-							if (++count == pitch) {
-								count = 0;
-								dstNext += SCREEN_W;
-								dst = dstNext;
-							}
-						}
-					} else {
-						while (subcode--) {
-							*dst++ = *src++;
-							if (++count == pitch) {
-								count = 0;
-								dstNext += SCREEN_W;
-								dst = dstNext;
-							}
-						}
-					}
+				if (noXor) {
+					*dst++ = *src++;
 				} else {
-					dst += subcode;
-					
-					count += subcode;
-					while (count >= pitch) {
-						count -= pitch;
-						dstNext += SCREEN_W;
-						dst = dstNext + count;
-					}
-					
+					*dst++ ^= *src++;
 				}
-			}
-		} else {
-			while (code--) {
-				*dst++ = *src++;
 				if (++count == pitch) {
 					count = 0;
 					dstNext += SCREEN_W;

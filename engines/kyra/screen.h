@@ -136,8 +136,7 @@ public:
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
-	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
-	static void decodeFrameDeltaPageNoXor(uint8 *dst, const uint8 *src, const int pitch);
+	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
 	
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
@@ -207,6 +206,8 @@ private:
 	void copyMouseToScreen();
 	void copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr);
 	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
+
+	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
 	uint8 *_pagePtrs[16];
 	uint8 *_saveLoadPage[8];

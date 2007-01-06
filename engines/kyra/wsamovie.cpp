@@ -143,7 +143,7 @@ void WSAMovieV1::displayFrame(int frameNum) {
 			if (_flags & WF_OFFSCREEN_DECODE) {
 				Screen::decodeFrameDelta(dst, _deltaBuffer);
 			} else {
-				Screen::decodeFrameDeltaPageNoXor(dst, _deltaBuffer, _width);
+				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, true);
 			}
 		}
 		_currentFrame = 0;
@@ -206,7 +206,7 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 	if (_flags & WF_OFFSCREEN_DECODE) {
 		Screen::decodeFrameDelta(dst, _deltaBuffer);
 	} else {
-		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width);
+		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, false);
 	}
 }
 
