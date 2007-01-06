@@ -143,7 +143,7 @@ void WSAMovieV1::displayFrame(int frameNum) {
 			if (_flags & WF_OFFSCREEN_DECODE) {
 				Screen::decodeFrameDelta(dst, _deltaBuffer);
 			} else {
-				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, 1);
+				Screen::decodeFrameDeltaPageNoXor(dst, _deltaBuffer, _width);
 			}
 		}
 		_currentFrame = 0;
@@ -206,7 +206,7 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 	if (_flags & WF_OFFSCREEN_DECODE) {
 		Screen::decodeFrameDelta(dst, _deltaBuffer);
 	} else {
-		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, 0);
+		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width);
 	}
 }
 
@@ -244,6 +244,11 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 		if (palBuf) {
 			memcpy(palBuf, wsaData + 8 + ((_numFrames << 2) & 0xFFFF), 0x300);
 		}
+	}
+	
+	if (flags & 2)
+	{
+		_flags |= WF_MASKED_BLIT;
 	}
 	
 	if (!(unk1 & 2)) {

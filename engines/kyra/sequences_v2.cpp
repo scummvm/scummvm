@@ -115,7 +115,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 				break;
 			else {
 				uint32 loopTime = currTime - startTime;
-				delay(loopTime > _tickLength ? loopTime : _tickLength);
+				delay(loopTime < _tickLength ? loopTime : _tickLength);
 			}
 		}
 

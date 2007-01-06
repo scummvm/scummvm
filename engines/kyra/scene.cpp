@@ -147,7 +147,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	
 	_currentRoom = sceneId;
 	
-	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
+	int tableId = _roomTable[sceneId].nameIndex;
 	char fileNameBuffer[32];
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".DAT");

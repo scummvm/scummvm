@@ -677,8 +677,9 @@ void ScreenAnimator::animRefreshNPC(int character) {
 		animObj->x1 = ch->x1;
 		animObj->y1 = ch->y1;
 		
-		_brandonScaleX = _vm->_scaleTable[ch->y1];
-		_brandonScaleY = _vm->_scaleTable[ch->y1];
+		int newScale = _vm->_scaleTable[ch->y1];
+		_brandonScaleX = newScale;
+		_brandonScaleY = newScale;
 
 		animObj->x1 += (_brandonScaleX * xOffset) >> 8;
 		animObj->y1 += (_brandonScaleY * yOffset) >> 8;

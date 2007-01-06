@@ -69,14 +69,16 @@ public:
 	virtual int frames() { return _opened ? _numFrames : -1; }
 
 	virtual void displayFrame(int frameNum);
-protected:
-	virtual void processFrame(int frameNum, uint8 *dst);
 
 	enum WSAFlags {
+		WF_MASKED_BLIT = 0x1,		
 		WF_OFFSCREEN_DECODE = 0x10,
 		WF_NO_FIRST_FRAME = 0x40,
 		WF_HAS_PALETTE = 0x100
 	};
+
+protected:
+	virtual void processFrame(int frameNum, uint8 *dst);
 
 	uint16 _currentFrame;
 	uint16 _numFrames;

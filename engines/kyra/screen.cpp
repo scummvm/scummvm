@@ -1410,14 +1410,12 @@ void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 			break;
 		}
 		uint8 code = *src++;
-		if (!(code & 0x80)) {
-			int len = MIN(count, (code >> 4) + 3);
-			int offs = ((code & 0xF) << 8) | *src++;
+		if (!(code & 0x80)) { // 8th bit isn't set
+			int len = MIN(count, (code >> 4) + 3); //upper half of code is the length		
+			int offs = ((code & 0xF) << 8) | *src++; //lower half of code as byte 2 of offset.
 			const uint8 *dstOffs = dst - offs;
-			while (len--) {
-				*dst++ = *dstOffs++;
-			}
-		} else if (code & 0x40) {
+			memcpy(dst, dstOffs, len); dst += len;
+		} else if (code & 0x40) { // 7th bit is set
 			int len = (code & 0x3F) + 3;
 			if (code == 0xFE) {
 				len = READ_LE_UINT16(src); src += 2;
@@ -1434,15 +1432,12 @@ void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 					len = count;
 				}
 				const uint8 *dstOffs = dstOrig + offs;
-				while (len--) {
-					*dst++ = *dstOffs++;
-				}
+				memcpy(dst, dstOffs, len); dst += len;
 			}
-		} else if (code != 0x80) {
+		} else if (code != 0x80) { // not just the 8th bit set.
+			//Copy some bytes from source to dest.
 			int len = MIN(count, code & 0x3F);
-			while (len--) {
-				*dst++ = *src++;
-			}
+			memcpy(dst, src, len); dst += len; src += len;
 		} else {
 			break;
 		}
@@ -1492,8 +1487,8 @@ void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {
 	}
 }
 
-void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int noXor) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d, %d)", (const void *)dst, (const void *)src, pitch, noXor);
+void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch) {
+	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
 	int count = 0;
 	uint8 *dstNext = dst;
 	while (1) {
@@ -1502,11 +1497,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int n
 			uint8 len = *src++;
 			code = *src++;
 			while (len--) {
-				if (noXor) {
-					*dst++ = code;
-				} else {
-					*dst++ ^= code;
-				}
+				*dst++ ^= code;
 				if (++count == pitch) {
 					count = 0;
 					dstNext += SCREEN_W;
@@ -1534,11 +1525,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int n
 						uint16 len = subcode - 0x4000;
 						code = *src++;
 						while (len--) {
-							if (noXor) {
-								*dst++ = code;
-							} else {
-								*dst++ ^= code;
-							}
+							*dst++ ^= code;
 							if (++count == pitch) {
 								count = 0;
 								dstNext += SCREEN_W;
@@ -1547,11 +1534,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int n
 						}
 					} else {
 						while (subcode--) {
-							if (noXor) {
-								*dst++ = *src++;
-							} else {
-								*dst++ ^= *src++;
-							}
+							*dst++ ^= *src++;
 							if (++count == pitch) {
 								count = 0;
 								dstNext += SCREEN_W;
@@ -1573,11 +1556,87 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int n
 			}
 		} else {
 			while (code--) {
-				if (noXor) {
-					*dst++ = *src++;
-				} else {
-					*dst++ ^= *src++;
+				*dst++ ^= *src++;
+				if (++count == pitch) {
+					count = 0;
+					dstNext += SCREEN_W;
+					dst = dstNext;
 				}
+			}
+		}
+	}
+}
+
+void Screen::decodeFrameDeltaPageNoXor(uint8 *dst, const uint8 *src, const int pitch) {
+	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPageNoXor(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
+	int count = 0;
+	uint8 *dstNext = dst;
+	while (1) {
+		uint8 code = *src++;
+		if (code == 0) {
+			uint8 len = *src++;
+			code = *src++;
+			while (len--) {
+				*dst++ = code;
+				if (++count == pitch) {
+					count = 0;
+					dstNext += SCREEN_W;
+					dst = dstNext;
+				}
+			}
+		} else if (code & 0x80) {
+			code -= 0x80;
+			if (code != 0) {
+				dst += code;
+				
+				count += code;
+				while (count >= pitch) {
+					count -= pitch;
+					dstNext += SCREEN_W;
+					dst = dstNext + count;
+				}
+			} else {
+				uint16 subcode = READ_LE_UINT16(src); src += 2;
+				if (subcode == 0) {
+					break;
+				} else if (subcode & 0x8000) {
+					subcode -= 0x8000;
+					if (subcode & 0x4000) {
+						uint16 len = subcode - 0x4000;
+						code = *src++;
+						while (len--) {
+							*dst++ = code;
+							if (++count == pitch) {
+								count = 0;
+								dstNext += SCREEN_W;
+								dst = dstNext;
+							}
+						}
+					} else {
+						while (subcode--) {
+							*dst++ = *src++;
+							if (++count == pitch) {
+								count = 0;
+								dstNext += SCREEN_W;
+								dst = dstNext;
+							}
+						}
+					}
+				} else {
+					dst += subcode;
+					
+					count += subcode;
+					while (count >= pitch) {
+						count -= pitch;
+						dstNext += SCREEN_W;
+						dst = dstNext + count;
+					}
+					
+				}
+			}
+		} else {
+			while (code--) {
+				*dst++ = *src++;
 				if (++count == pitch) {
 					count = 0;
 					dstNext += SCREEN_W;
