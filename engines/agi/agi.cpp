@@ -574,7 +574,6 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 void AgiEngine::initialize() {
 	memset(&opt, 0, sizeof(struct agi_options));
 	opt.gamerun = GAMERUN_RUNGAME;
-	opt.hires = 0;
 
 	// TODO: Some sound emulation modes do not fit our current music
 	//       drivers, and I'm not sure what they are. For now, they might

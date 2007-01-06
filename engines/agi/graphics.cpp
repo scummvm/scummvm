@@ -489,16 +489,6 @@ void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
 	}
 }
 
-void GfxMgr::putPixelsHires(int x, int y, int n, uint8 *p) {
-	//y += CHAR_LINES;
-	for (; n--; p++, x++) {
-		uint8 q = *p;
-		if (_vm->_debug.priority)
-			q >>= 4;
-		agi_screen[x + y * GFX_WIDTH] = q & 0x0f;
-	}
-}
-
 /**
  * Schedule blocks for blitting on the output device.
  * This function gets the coordinates of a block in the AGI screen and

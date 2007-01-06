@@ -85,7 +85,6 @@ public:
 	void putPixel(int, int, int);
 	void putBlock(int x1, int y1, int x2, int y2);
 	void gfxSetPalette();
-	void putPixelsHires(int x, int y, int n, uint8 *p);
 
 	int keypress();
 	int getKey();

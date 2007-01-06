@@ -205,7 +205,6 @@ struct agi_options {
 	int amiga;			/**< enable Amiga mode */
 	int nosound;		/**< disable sound */
 	Common::RenderMode renderMode;
-	int hires;			/**< use hi-res pictures */
 	int soundemu;		/**< sound emulation mode */
 	int agimouse;		/**< AGI Mouse 1.0 emulation */
 };
