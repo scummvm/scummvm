@@ -246,8 +246,7 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 		}
 	}
 	
-	if (flags & 2)
-	{
+	if (flags & 2) {
 		_flags |= WF_MASKED_BLIT;
 	}
 	
