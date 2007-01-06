@@ -71,7 +71,8 @@ namespace Scumm {
  * what our OFFS macro does. Now, for non-POD types this is not really legal, because
  * member need not be at a fixed offset relative to the variable, even if they are in
  * current reality (many of our complex structs are non-POD; for an explanation of
- * what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
+ * what POD means refer to <http://en.wikipedia.org/wiki/Plain_Old_Data_Structures> or
+ * to <http://www.informit.com/guides/content.asp?g=cplusplus&seqNum=32&rl=1>)
  */
 #define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->type::item))-42)
 
