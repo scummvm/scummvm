@@ -66,7 +66,7 @@ int BrowserDialog::runModal() {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
 
 	// Temporarily show the real mouse
-	ShowCursor();
+	CGDisplayShowCursor(kCGDirectMainDisplay);
 
 	err = NavGetDefaultDialogCreationOptions(&options);
 	assert(err == noErr);
@@ -85,7 +85,7 @@ int BrowserDialog::runModal() {
 	err = NavDialogRun(dialogRef);
 	assert(err == noErr);
 
-	HideCursor();
+	CGDisplayHideCursor(kCGDirectMainDisplay);
 
 	result = NavDialogGetUserAction(dialogRef);
 
