@@ -608,7 +608,6 @@ void AgiEngine::initialize() {
 	game.name[0] = '\0';
 
 	game.sbuf = (uint8 *)calloc(_WIDTH, _HEIGHT);
-	game.hires = (uint8 *)calloc(_WIDTH * 2, _HEIGHT);
 
 	_gfx->initVideo();
 	_sound->init_sound();
@@ -636,7 +635,6 @@ AgiEngine::~AgiEngine() {
 	delete _sound;
 	_gfx->deinitVideo();
 	delete _sprites;
-	free(game.hires);
 	free(game.sbuf);
 	_gfx->deinitMachine();
 	delete rnd;

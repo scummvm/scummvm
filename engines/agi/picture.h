@@ -46,28 +46,19 @@ class PictureMgr {
 
 private:
 
-	void draw_line(int x1, int y1, int x2, int y2, int res);
-	void put_virt_pixel(int x, int y, int res);
-	void dynamic_draw_line(int res);
-	void absolute_draw_line(int res);
+	void draw_line(int x1, int y1, int x2, int y2);
+	void put_virt_pixel(int x, int y);
+	void dynamic_draw_line();
+	void absolute_draw_line();
 	INLINE int is_ok_fill_here(int x, int y);
 	void fill_scanline(int x, int y);
 	void agi_fill(unsigned int x, unsigned int y);
-	void x_corner(int res);
-	void y_corner(int res);
+	void x_corner();
+	void y_corner();
 	void fill();
-	int plot_pattern_point(int x, int y, int bitpos, int res);
-	void plot_pattern(int x, int y, int res);
-	void plot_brush(int res);
-	void fix_pixel_left(int x, int y);
-	void fix_pixel_bothsides(int x, int y);
-	void fix_pixel_right(int x, int y);
-	void fix_pixel_here(int x, int y);
-	void hires_fill_scanline(int x, int y);
-	void _hires_fill(unsigned int x, unsigned int y);
-	void hires_fill();
-	INLINE int hires_fill_here(int x, int y);
-	void fix_hires_picture();
+	int plot_pattern_point(int x, int y, int bitpos);
+	void plot_pattern(int x, int y);
+	void plot_brush();
 	void draw_picture();
 
 public:
