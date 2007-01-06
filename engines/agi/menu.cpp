@@ -387,9 +387,9 @@ bool Menu::keyhandler(int key) {
 		v_cur_menu += key == KEY_DOWN ? 1 : -1;
 
 		if (v_cur_menu < 0)
-			v_cur_menu = 0;
-		if (v_cur_menu > v_max_menu[h_cur_menu])
 			v_cur_menu = v_max_menu[h_cur_menu];
+		if (v_cur_menu > v_max_menu[h_cur_menu])
+			v_cur_menu = 0;
 
 		draw_menu_option(h_cur_menu);
 		draw_menu_option_hilite(h_cur_menu, v_cur_menu);
