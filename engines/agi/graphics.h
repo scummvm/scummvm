@@ -55,7 +55,7 @@ public:
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
 
-	void putTextCharacter(int, int, int, unsigned int, int, int);
+	void putTextCharacter(int, int, int, unsigned int, int, int, bool checkerboard = false);
 	void shakeScreen(int);
 	void shakeStart();
 	void shakeEnd();

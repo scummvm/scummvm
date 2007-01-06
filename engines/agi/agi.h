@@ -736,7 +736,7 @@ public:
 	int selection_box(const char *, const char **);
 	void close_window(void);
 	void draw_window(int, int, int, int);
-	void print_text(const char *, int, int, int, int, int, int);
+	void print_text(const char *, int, int, int, int, int, int, bool checkerboard = false);
 	void print_text_console(const char *, int, int, int, int, int);
 	int print(const char *, int, int, int);
 	char *word_wrap_string(char *, int *);
@@ -749,7 +749,7 @@ public:
 
 private:
 	void print_status(const char *message, ...);
-	void print_text2(int l, const char *msg, int foff, int xoff, int yoff, int len, int fg, int bg);
+	void print_text2(int l, const char *msg, int foff, int xoff, int yoff, int len, int fg, int bg, bool checkerboard = false);
 	void blit_textbox(const char *p, int y, int x, int len);
 	void erase_textbox();
 	char *safe_strcat(char *s, const char *t);

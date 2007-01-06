@@ -185,7 +185,7 @@ void GfxMgr::shakeEnd() {
 	free(shake_h);
 }
 
-void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int bg) {
+void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int bg, bool checkerboard) {
 	int x1, y1, xx, yy, cc;
 	uint8 *p;
 
@@ -200,6 +200,16 @@ void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int b
 
 		p++;
 	}
+
+	// Simple checkerboard effect to simulate "greyed out" text.
+	// This is what Sierra's interpreter does for things like menu items
+	// that aren't selectable (such as separators). -- dsymonds
+	if (checkerboard) {
+		for (yy = y; yy < y + CHAR_LINES; yy++)
+			for (xx = x + (~yy & 1); xx < x + CHAR_COLS; xx += 2)
+				agi_screen[xx + yy * GFX_WIDTH] = 15;
+	}
+
 	/* FIXME: we don't want this when we're writing on the
 	 *        console!
 	 */

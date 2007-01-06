@@ -31,7 +31,7 @@
 namespace Agi {
 
 void AgiEngine::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
-						int len, int fg, int bg) {
+				int len, int fg, int bg, bool checkerboard) {
 	int x1, y1;
 	int maxx, minx, ofoff;
 	int update;
@@ -47,7 +47,7 @@ void AgiEngine::print_text2(int l, const char *msg, int foff, int xoff, int yoff
 	/* FR: strings with len == 1 were not printed
 	 */
 	if (len == 1) {
-		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg);
+		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg, checkerboard);
 		maxx = 1;
 		minx = 0;
 		ofoff = foff;
@@ -73,7 +73,7 @@ void AgiEngine::print_text2(int l, const char *msg, int foff, int xoff, int yoff
 					if (xpos >= GFX_WIDTH)
 						continue;
 
-					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg);
+					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard);
 
 					if (x1 > maxx)
 						maxx = x1;
@@ -189,13 +189,13 @@ void AgiEngine::erase_textbox() {
 /**
  * Print text in the AGI engine screen.
  */
-void AgiEngine::print_text(const char *msg, int f, int x, int y, int len, int fg, int bg) {
+void AgiEngine::print_text(const char *msg, int f, int x, int y, int len, int fg, int bg, bool checkerboard) {
 	f *= CHAR_COLS;
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
 
 	debugC(4, kDebugLevelText, "%s, %d, %d, %d, %d, %d, %d", msg, f, x, y, len, fg, bg);
-	print_text2(0, agi_sprintf(msg), f, x, y, len, fg, bg);
+	print_text2(0, agi_sprintf(msg), f, x, y, len, fg, bg, checkerboard);
 }
 
 /**

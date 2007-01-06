@@ -106,7 +106,7 @@ void Menu::draw_menu_option(int h_menu) {
 	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
 		agi_menu_option* d = *iter;
 		_vm->print_text(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
-				d->enabled ? MENU_FG : MENU_DISABLED, MENU_BG);
+				MENU_FG, MENU_BG, !d->enabled);
 	}
 }
 
@@ -114,8 +114,10 @@ void Menu::draw_menu_option_hilite(int h_menu, int v_menu) {
 	agi_menu *m = get_menu(h_menu);
 	agi_menu_option *d = get_menu_option(h_menu, v_menu);
 
+	// Disabled menu items are "greyed out" with a checkerboard effect,
+	// rather than having a different colour. -- dsymonds
 	_vm->print_text(d->text, 0, m->wincol + 1, v_menu + 2, m->width + 2,
-			MENU_BG, d->enabled ? MENU_FG : MENU_DISABLED);
+			MENU_BG, MENU_FG, !d->enabled);
 }
 
 void Menu::new_menu_selected(int i) {
