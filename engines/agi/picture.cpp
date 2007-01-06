@@ -715,24 +715,6 @@ void PictureMgr::hires_fill() {
 	foffs--;
 }
 
-/**
- * Show AGI picture.
- * This function copies a ``hidden'' AGI picture to the output device.
- */
-void PictureMgr::show_hires_pic() {
-	int y, offset;
-	int32 i;
-
-	i = 0;
-	offset = _vm->game.line_min_print * CHAR_LINES;
-	for (y = 0; y < _HEIGHT; y++) {
-		_gfx->putPixelsHires(0, y + offset, _WIDTH * 2, &_vm->game.hires[i]);
-		i += _WIDTH * 2;
-	}
-
-	_gfx->flushScreen();
-}
-
 void PictureMgr::fix_hires_picture() {
 	uint8 *p, *b;
 	int i;
@@ -974,10 +956,6 @@ void PictureMgr::show_pic() {
 	int offset;
 
 	debugC(8, kDebugLevelMain, "Show picture!");
-	if (_vm->opt.hires) {
-		show_hires_pic();
-		return;
-	}
 
 	i = 0;
 	offset = _vm->game.line_min_print * CHAR_LINES;

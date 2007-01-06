@@ -67,7 +67,6 @@ private:
 	void _hires_fill(unsigned int x, unsigned int y);
 	void hires_fill();
 	INLINE int hires_fill_here(int x, int y);
-	void show_hires_pic();
 	void fix_hires_picture();
 	void draw_picture();
 

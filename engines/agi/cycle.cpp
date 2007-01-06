@@ -350,9 +350,6 @@ int AgiEngine::play_game() {
 int AgiEngine::run_game() {
 	int i, ec = err_OK;
 
-	if (opt.renderMode == Common::kRenderCGA)
-		opt.hires = 0;
-
 	for (i = 0; i < MAX_DIRS; i++)
 		memset(&game.ev_keyp[i], 0, sizeof(struct agi_event));
 
