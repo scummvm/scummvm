@@ -28,6 +28,7 @@ static const char *credits[] = {
 "\\C\\c1""AGI",
 "\\C\\c0""Pawel Kolodziejski",
 "\\C\\c0""Eugene Sandulenko",
+"\\C\\c0""David Symonds",
 "\\C\\c0""",
 "\\C\\c1""AGOS",
 "\\C\\c0""Torbj\366rn Andersson",

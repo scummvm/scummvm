@@ -482,6 +482,7 @@ begin_credits("Credits");
 	  begin_section("AGI");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("David Symonds", "dsymonds", "");
 	  end_section();
 
 	  begin_section("AGOS");
