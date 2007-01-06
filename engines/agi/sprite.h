@@ -55,7 +55,6 @@ private:
 	void *pool_alloc(int size);
 	void pool_release(void *s);
 	void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden);
-	int blit_hires_cel(int x, int y, int spr, view_cel *c);
 	int blit_cel(int x, int y, int spr, view_cel *c);
 	void objs_savearea(sprite *s);
 	void objs_restorearea(sprite *s);

@@ -134,40 +134,6 @@ void SpritesMgr::blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width,
 }
 
 
-#define X_FACT 2		/* Horizontal hires factor */
-
-int SpritesMgr::blit_hires_cel(int x, int y, int spr, view_cel *c) {
-	uint8 *q = NULL;
-	uint8 *h0, *h, *end;
-	int i, j, t, m, col;
-	int hidden = true;
-
-	q = c->data;
-	t = c->transparency;
-	m = c->mirror;
-	spr <<= 4;
-	h0 = &_vm->game.hires[(x + y * _WIDTH + m * (c->width - 1)) * X_FACT];
-
-	end = _vm->game.hires + _WIDTH * X_FACT * _HEIGHT;
-
-	for (i = 0; i < c->height; i++) {
-		h = h0;
-		while (*q) {
-			col = (*q & 0xf0) >> 4;
-			for (j = *q & 0x0f; j; j--, h += X_FACT * (1 - 2 * m)) {
-				if (col != t) {
-					blit_pixel(h, end, col, spr, _WIDTH * X_FACT, &hidden);
-					blit_pixel(h + 1, end, col, spr, _WIDTH * X_FACT, &hidden);
-				}
-			}
-			q++;
-		}
-		h0 += _WIDTH * X_FACT;
-		q++;
-	}
-	return hidden;
-}
-
 int SpritesMgr::blit_cel(int x, int y, int spr, view_cel *c) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
@@ -182,9 +148,6 @@ int SpritesMgr::blit_cel(int x, int y, int spr, view_cel *c) {
 		y = _HEIGHT - 1;
 	if (x >= _WIDTH)
 		x = _WIDTH - 1;
-
-	if (_vm->opt.hires)
-		blit_hires_cel(x, y, spr, c);
 
 	q = c->data;
 	t = c->transparency;
@@ -289,9 +252,6 @@ void SpritesMgr::objs_restorearea(sprite *s) {
 		q += x_size;
 		p0 += _WIDTH;
 		memcpy(h0, k, x_size * 2);
-		if (_vm->opt.hires) {
-			_gfx->putPixelsHires(x_pos * 2, y_pos + y + offset, x_size * 2, h0);
-		}
 		k += x_size * 2;
 		h0 += _WIDTH * 2;
 	}
@@ -789,9 +749,6 @@ void SpritesMgr::commit_block(int x1, int y1, int x2, int y2) {
 	for (i = y1; i <= y2; i++) {
 		_gfx->putPixelsA(x1, i + offset, w, q);
 		q += _WIDTH;
-		if (_vm->opt.hires) {
-			_gfx->putPixelsHires(x1 * 2, i + offset, w * 2, h);
-		}
 		h += _WIDTH * 2;
 	}
 
