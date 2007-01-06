@@ -150,11 +150,12 @@ Game::~Game() {
 		delete[] _word_2FC80;
 }
 
-char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
+char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize) {
 	int16 commonHandle;
 	int16 itemsCount;
 	int32 offset;
 	uint32 size;
+	uint32 realSize;
 	ExtItem *item;
 	char isPacked;
 	int16 handle;
@@ -206,6 +207,7 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 
 	debugC(7, DEBUG_FILEIO, "off: %d size: %d", offset, tableSize);
 	_vm->_dataio->seekData(handle, offset + tableSize, SEEK_SET);
+	realSize = size;
 	// CHECKME: is the below correct?
 	if (isPacked)
 		dataBuf = new char[size];
@@ -227,13 +229,15 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 
 	if (isPacked != 0) {
 		packedBuf = dataBuf;
-		dataBuf = new char[READ_LE_UINT32(packedBuf)];
+		realSize = READ_LE_UINT32(packedBuf);
+		dataBuf = new char[realSize];
 		_vm->_pack->unpackData(packedBuf, dataBuf);
 		delete[] packedBuf;
 	}
 
+	if (dataSize)
+		*dataSize = realSize;
 	return dataBuf;
-
 }
 
 void Game::freeCollision(int16 id) {
@@ -302,12 +306,14 @@ void Game::capturePop(char doDraw) {
 	_vm->_draw->_spritesArray[30 + _captureCount] = 0;
 }
 
-char *Game::loadTotResource(int16 id) {
+char *Game::loadTotResource(int16 id, int16 *dataSize) {
 	TotResItem *itemPtr;
 	int32 offset;
 
 	itemPtr = &_totResourceTable->items[id];
 	offset = itemPtr->offset;
+	if (dataSize)
+		*dataSize = itemPtr->size;
 	if (offset >= 0) {
 		return _totResourceTable->dataPtr + szGame_TotResTable +
 		    szGame_TotResItem * _totResourceTable->itemsCount + offset;
@@ -316,20 +322,22 @@ char *Game::loadTotResource(int16 id) {
 	}
 }
 
-void Game::loadSound(int16 slot, char *dataPtr) {
+void Game::loadSound(int16 slot, char *dataPtr, uint32 dataSize) {
 	Snd::SoundDesc *soundDesc;
+	byte *data = (byte *) dataPtr;
 
 	soundDesc = new Snd::SoundDesc;
 
 	_soundSamples[slot] = soundDesc;
 
-	soundDesc->frequency = (dataPtr[4] << 8) + dataPtr[5];
-	soundDesc->size = (dataPtr[1] << 16) + (dataPtr[2] << 8) + dataPtr[3];
+	soundDesc->frequency = (data[4] << 8) + data[5];
+	// Somehow, one sound in one CD version has a wrong size, leading to statics and crashes
+	soundDesc->size = MIN((uint32) ((data[1] << 16) + (data[2] << 8) + data[3]), dataSize - 6);
 	soundDesc->data = dataPtr + 6;
 	soundDesc->timerTicks = (int32)1193180 / (int32)soundDesc->frequency;
-
 	soundDesc->inClocks = (soundDesc->frequency * 10) / 182;
 	soundDesc->flag = 0;
+
 }
 
 void Game::freeSoundSlot(int16 slot) {
@@ -350,13 +358,13 @@ void Game::freeSoundSlot(int16 slot) {
 		char* data = _soundSamples[slot]->data;
 
 		_vm->_snd->freeSoundDesc(_soundSamples[slot], false);
-		_soundSamples[slot] = 0;
 
 		if (_soundFromExt[slot] == 1) {
 			delete[] (data - 6);
 			_soundFromExt[slot] = 0;
 		}
 	}
+	_soundSamples[slot] = 0;
 }
 
 int16 Game::adjustKey(int16 key) {
@@ -748,7 +756,7 @@ void Game::collAreaSub(int16 index, int8 enter) {
 
 Snd::SoundDesc *Game::loadSND(const char *path, int8 arg_4) {
 	Snd::SoundDesc *soundDesc;
-	int32 dsize;
+	uint32 dsize;
 	char *data;
 	char *dataPtr;
 

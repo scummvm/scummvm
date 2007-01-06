@@ -933,7 +933,7 @@ void Inter_v2::o2_stub0x85(void) {
 int16 Inter_v2::loadSound(int16 search) {
 	int16 id; // si
 	int16 slot; // di
-	int32 i;
+	uint32 i;
 	bool isADL;
 	char sndfile[14];
 	char *extData;
@@ -1003,21 +1003,25 @@ int16 Inter_v2::loadSound(int16 search) {
 				_vm->_game->_soundSamples[slot] = soundDesc;
 				_vm->_game->_soundFromExt[slot] = 1;
 			} else { // loc_99BC
-				extData = _vm->_game->loadExtData(id, 0, 0);
+				uint32 dataSize;
+
+				extData = _vm->_game->loadExtData(id, 0, 0, &dataSize);
 				if (extData == 0)
 					return slot;
 				_vm->_game->_soundTypes[slot] = 1;
 				if (!isADL)
-					_vm->_game->loadSound(slot, extData);
+					_vm->_game->loadSound(slot, extData, dataSize);
 				else
 					// TODO: This is very ugly
 					_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 				_vm->_game->_soundFromExt[slot] = 1;
 			}
 		} else { // loc_9A13
-			extData = _vm->_game->loadTotResource(id);
+			int16 dataSize;
+
+			extData = _vm->_game->loadTotResource(id, &dataSize);
 			if (!isADL)
-				_vm->_game->loadSound(slot, extData);
+				_vm->_game->loadSound(slot, extData, dataSize);
 			else
 				// TODO: This is very ugly
 				_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;

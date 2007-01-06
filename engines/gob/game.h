@@ -186,8 +186,8 @@ public:
 	Game(GobEngine *vm);
 	virtual ~Game();
 
-	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight);
-	char *loadTotResource(int16 id);
+	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
+	char *loadTotResource(int16 id, int16 *dataSize = 0);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 
@@ -195,7 +195,7 @@ public:
 	void freeSoundSlot(int16 slot);
 	void freeCollision(int16 id);
 
-	void loadSound(int16 slot, char *dataPtr);
+	void loadSound(int16 slot, char *dataPtr, uint32 dataSize = 4294967295U);
 	int16 adjustKey(int16 key);
 	int32 loadTotFile(char *path);
 	void loadExtTable(void);

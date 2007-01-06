@@ -33,7 +33,7 @@ public:
 	struct SoundDesc {
 		Audio::SoundHandle handle;
 		char *data;
-		int32 size;
+		uint32 size;
 		int16 repCount;
 		int16 timerTicks;
 		int16 inClocks;

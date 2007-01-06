@@ -173,8 +173,7 @@ void Game_v1::playTot(int16 skipPlay) {
 				variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
 				_vm->_global->_inter_variables = new char[variablesCount * 4];
 				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
-				for (i = 0; i < variablesCount; i++)
-					WRITE_VAR(i, 0);
+				_vm->_global->clearVars(variablesCount);
 			}
 
 			_vm->_global->_inter_execPtr = (char *)_totFileData;

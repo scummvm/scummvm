@@ -163,6 +163,22 @@ public:
 	int16 _inter_mouseX;
 	int16 _inter_mouseY;
 
+	inline void clearVars(uint32 count)
+	{
+		uint32 i;
+
+		for (i = 0; i < count; i++) {
+			_inter_variablesSizes[i * 4] = 3;
+			_inter_variablesSizes[i * 4 + 1] = 0;
+			_inter_variablesSizes[i * 4 + 2] = 0;
+			_inter_variablesSizes[i * 4 + 3] = 0;
+			_inter_variables[i * 4] = 0;
+			_inter_variables[i * 4 + 1] = 0;
+			_inter_variables[i * 4 + 2] = 0;
+			_inter_variables[i * 4 + 3] = 0;
+		}
+	}
+
 	inline void writeVarSizeStr(uint32 offset, uint32 len) {
 		uint32 i;
 		uint32 inVar;

@@ -1339,9 +1339,8 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	animPalette();
 	_vm->_draw->blitInvalidated();
 
-	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 	// Gob2 busy-waits here, so add a delay
-	_vm->_util->delay(1);
+	_vm->_util->longDelay(1);
 
 	if (flag != 0) {
 
