@@ -201,12 +201,12 @@ struct agi_options {
 #define GAMERUN_CRC	5
 	int gamerun;		/**< game run mode*/
 	int emuversion;		/**< AGI version to emulate */
-	int agds;			/**< enable AGDS mode */
-	int amiga;			/**< enable Amiga mode */
-	int nosound;		/**< disable sound */
+	bool agdsMode;		/**< enable AGDS mode */
+	bool amigaMode;		/**< enable Amiga mode */
+	bool nosound;		/**< disable sound */
 	Common::RenderMode renderMode;
 	int soundemu;		/**< sound emulation mode */
-	int agimouse;		/**< AGI Mouse 1.0 emulation */
+	bool agimouse;		/**< AGI Mouse 1.0 emulation */
 };
 
 #define report printf

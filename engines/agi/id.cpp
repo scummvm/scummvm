@@ -76,7 +76,7 @@ int AgiEngine::setup_v2_game(int ver, uint32 crc) {
 	if (opt.emuversion)
 		agiSetRelease(opt.emuversion);
 
-	if (opt.agds)
+	if (opt.agdsMode)
 		agiSetRelease(0x2440);	/* ALL AGDS games built for 2.440 */
 
 	report("Seting up for version 0x%04X\n", ver);

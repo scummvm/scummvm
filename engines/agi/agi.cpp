@@ -377,8 +377,8 @@ int AgiEngine::agiInit() {
 		break;
 	}
 
-	game.game_flags |= opt.amiga ? ID_AMIGA : 0;
-	game.game_flags |= opt.agds ? ID_AGDS : 0;
+	game.game_flags |= opt.amigaMode ? ID_AMIGA : 0;
+	game.game_flags |= opt.agdsMode ? ID_AGDS : 0;
 
 	if (game.game_flags & ID_AMIGA)
 		report("Amiga padded game detected.\n");
@@ -441,28 +441,19 @@ int AgiEngine::agiDeinit() {
 int AgiEngine::agiDetectGame() {
 	int ec = err_OK;
 
-	assert(this->_gameDescription != NULL);
+	assert(_gameDescription != NULL);
 
-	if( (this->_gameDescription->features & AGI_AMIGA) == AGI_AMIGA)
-		opt.amiga = true;
-
-	if( (this->_gameDescription->features & AGI_AGDS) == AGI_AGDS)
-		opt.agds = true;
-
-	if( (this->_gameDescription->features & AGI_MOUSE) == AGI_MOUSE)
-		opt.agimouse = true;
+	opt.amigaMode = ((_gameDescription->features & AGI_AMIGA) == AGI_AMIGA);
+	opt.agdsMode = ((_gameDescription->features & AGI_AGDS) == AGI_AGDS);
+	opt.agimouse = ((_gameDescription->features & AGI_MOUSE) == AGI_MOUSE);
 
 
-	if(this->_gameDescription->version <= 0x2999)
-	{
+	if(_gameDescription->version <= 0x2999) {
 		loader = new AgiLoader_v2(this);
-		ec = loader->detect_game();
-	}
-	else
-	{
+	} else {
 		loader = new AgiLoader_v3(this);
-		ec = loader->detect_game();
 	}
+	ec = loader->detect_game();
 
 	return ec;
 }
@@ -680,6 +671,4 @@ int AgiEngine::go() {
 	return 0;
 }
 
-}                             // End of namespace Agi
-
-
+} // End of namespace Agi

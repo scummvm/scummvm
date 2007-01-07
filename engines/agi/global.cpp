@@ -64,10 +64,11 @@ void AgiEngine::decrypt(uint8 *mem, int len) {
 	const uint8 *key;
 	int i;
 
-	key = opt.agds ? (const uint8 *)CRYPT_KEY_AGDS : (const uint8 *)CRYPT_KEY_SIERRA;
+	key = opt.agdsMode ? (const uint8 *)CRYPT_KEY_AGDS
+	                   : (const uint8 *)CRYPT_KEY_SIERRA;
 
 	for (i = 0; i < len; i++)
 		*(mem + i) ^= *(key + (i % 11));
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi
