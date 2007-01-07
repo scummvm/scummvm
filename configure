@@ -59,7 +59,7 @@ _build_gob=yes
 _build_kyra=yes
 _build_lure=no
 _build_cine=yes
-_build_agi=no
+_build_agi=yes
 _build_touche=yes
 _need_memalign=no
 _build_plugins=no
@@ -332,7 +332,7 @@ Optional Features:
   --disable-kyra           don't build the Legend of Kyrandia engine
   --enable-lure            build the Lure of the Temptress engine
   --disable-cine           don't build the Cinematique engine evo 1
-  --enable-agi             build the AGI engine
+  --disable-agi            don't build the AGI engine
   --disable-touche         don't build the Touche: The Adventures of the Fifth Musketeer engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
@@ -401,7 +401,7 @@ for ac_option in $@; do
       --disable-kyra)           _build_kyra=no ;;
       --enable-lure)            _build_lure=yes ;;
       --disable-cine)           _build_cine=no ;;
-      --enable-agi)             _build_agi=yes ;;
+      --disable-agi)            _build_agi=no ;;
       --disable-touche)         _build_touche=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
