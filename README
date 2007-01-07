@@ -343,11 +343,11 @@ able to find the files.
 
 3.6) The Curse of Monkey Island notes:
 ---- ---------------------------------
-For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
+For this game, you will need the comi.la0, comi.la1 and comi.la2 files. The
 comi.la0 file can be found on either CD, but since they are identical it
 doesn't matter which one of them you use.
 
-In addition, you'll need to create a "resource" subdirectory containing all
+In addition, you will need to create a "resource" subdirectory containing all
 of the files from -both- "resource" subdirectories on the two CDs. Some of
 the files appear on both CDs, but again they're identical.
 
@@ -381,9 +381,9 @@ now.
 
 3.7.1) Broken Sword 1:
 ------ ---------------
-For this game, you'll need all of the files from the clusters directories on
+For this game, you will need all of the files from the clusters directories on
 both CDs. You will also need the speech.clu files from the speech directories,
-but since they are not identical you'll need to rename them speech1.clu and
+but since they are not identical you will need to rename them speech1.clu and
 speech2.clu for CD 1 and 2 respectively.
 
 In addition, you will need a music subdirectory with all of the files from the
@@ -397,7 +397,7 @@ copy them.
 
 3.7.2) Broken Sword 2:
 ------ ---------------
-For this game, you'll need all of the files from the clusters directories on
+For this game, you will need all of the files from the clusters directories on
 both CDs. (Actually, a few of them may not be strictly necessary, but the ones
 that I'm uncertain about are all fairly small.) You will need to rename the
 speech.clu and music.clu files speech1.clu, speech2.clu, music1.clu and
@@ -676,7 +676,7 @@ arguments -- see the next section.
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
   -r, --speech-volume=NUM  Set the voice volume, 0-255 (default: 192)
-  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:100)
+  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default: 100)
                            (only supported by some MIDI drivers)
   -n, --subtitles          Enable subtitles (use with games that have voice)
   -b, --boot-param=NUM     Pass number to the boot script (boot param)
@@ -686,8 +686,7 @@ arguments -- see the next section.
 
   --cdrom=NUM              CD drive to play CD audio from (default: 0 = first
                            drive)
-  --joystick[=NUM]         Enable input with joystick (default: 0 = first
-                           joystick)
+  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)
   --platform=WORD          Specify version of game (allowed values: 3do, acorn,
                            amiga, atari, c64, fmtowns, mac, nes, pc, segacd,
                            windows)
@@ -712,15 +711,15 @@ arguments -- see the next section.
   --talkspeed=NUM          Set talk speed for games
 
 
-The meaning of most long options can be inverted by prefixing them with "no-",
-e.g. --no-aspect-ratio. This is useful if you want to override a setting in the
-configuration file.
+The meaning of most long options (that is, those options starting with a
+double-dash) can be inverted by prefixing them with "no-". For example,
+--no-aspect-ratio will turn aspectio ratio correction off. This is useful
+if you want to override a setting in the configuration file.
 
 The short game name ('game target') you see at the end of the command
-line is very important. A short list is contained at the top of this
-file. You can also get the current list of games and game names at:
-
-  http://www.scummvm.org/compatibility_stable.php
+line specifies which game is started. It either corresponds to an arbitrary
+user defined target (from the configuration file), or to a built-in gameid.
+A brief list of the latter can be found in section 3.0.
 
 Examples:
  * Win32:
@@ -809,7 +808,7 @@ certain fixed factor (usually 2x or 3x) before displaying them to you.
 So for example, if the game originally run at a resolution of 320x200
 (typical for most of the SCUMM games), then using a filter with scale
 factor 2x will effectively yield 640x400 graphics. Likewise with a
-3x filter you'll get 960x600.
+3x filter you will get 960x600.
 
 They are:
         1x         - No filtering, no scaling. Fastest.
@@ -1175,7 +1174,7 @@ command as described earlier in this section.
 ------ -----------------------------
 Use LAME or some other MP3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
-to use this option. You'll need to rip the file from the CD as a WAV file,
+to use this option. You will need to rip the file from the CD as a WAV file,
 then encode the MP3 files in constant bit rate. This can be done with the
 following LAME command line:
 
@@ -1186,7 +1185,7 @@ following LAME command line:
 ------ ------------------------------------
 Use oggenc or some other vorbis encoder to encode the audio tracks to files.
 Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
-support to use this option. You'll need to rip the files from the CD as a WAV
+support to use this option. You will need to rip the files from the CD as a WAV
 file, then encode the vorbis files. This can be done with the following oggenc
 command line with the value after q specifying the desired quality from
 0 to 10:
@@ -1199,7 +1198,7 @@ command line with the value after q specifying the desired quality from
 Use flac or some other flac encoder to encode the audio tracks to files.
 Name the files track1.flac track2.flac etc. In your filesystem only allows
 three letter extensions, name the files track1.fla track2.fla etc.
-ScummVM must be compiled with flac support to use this option. You'll need to
+ScummVM must be compiled with flac support to use this option. You will need to
 rip the files from the CD as a WAV file, then encode the flac files. This can
 be done with the following flac command line:
 
@@ -1284,7 +1283,7 @@ The compress_sword1 tool from the scummvm-tools package can encode music and
 speech to MP3 as well as Ogg Vorbis.
 The easiest way to encode the files is simply copying the executable into your
 BS1 directory (together with the lame encoder) and run it from there.
-This way, it'll automatically encode everything to MP3.
+This way, it will automatically encode everything to MP3.
 Afterwards, you can manually remove the SPEECH?.CLU files and the wave music
 files.
 
@@ -1553,7 +1552,7 @@ TODO
         * To get a version you can run from Finder, type 'make bundle' which
           will create ScummVM.app (this only works out of the box if you
           installed SDL into /sw (as happens if you are using Fink). If you
-          have installed SDL in another way, you'll have to edit the Makefile).
+          have installed SDL in another way, you will have to edit the Makefile).
 
     AmigaOS 4 (Cross-compiling with Cygwin):
         * Make sure that you have SDL installed, you may also need
