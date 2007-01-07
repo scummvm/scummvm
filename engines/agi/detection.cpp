@@ -621,6 +621,21 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
+		// Police Quest 1 (PC) 2.0G 12/3/87; entry from DAGII, but missing from Sarien?
+		{
+			"agi",
+			"Police Quest 1 (IBM) 2.0G 12/03/87",	// not sure about disk format -- dsymonds
+			AD_ENTRY1("logdir", "d194e5d88363095f55d5096b8e32fbbb"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
 		// Sarien Name == Space Quest 1 (PC) 1.0X [AGI 2.089]
 		{
 			"agi",
