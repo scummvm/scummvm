@@ -485,13 +485,18 @@ void ScummEngine::checkExecVerbs() {
 
 	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
 		/* Check keypresses */
-		vs = &_verbs[1];
-		for (i = 1; i < _numVerbs; i++, vs++) {
-			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
-				if (_mouseAndKeyboardStat == vs->key) {
-					// Trigger verb as if the user clicked it
-					runInputScript(1, vs->verbid, 1);
-					return;
+		if (!(_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)) {
+			// This is disabled in the SegaCD version as the "vs->key" values setup
+			// by script-17 conflict with the values expected by the generic keyboard
+			// input script
+			vs = &_verbs[1];
+			for (i = 1; i < _numVerbs; i++, vs++) {
+				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
+					if (_mouseAndKeyboardStat == vs->key) {
+						// Trigger verb as if the user clicked it
+						runInputScript(1, vs->verbid, 1);
+						return;
+					}
 				}
 			}
 		}
@@ -623,7 +628,7 @@ void ScummEngine::verbMouseOver(int verb) {
 		if (_verbs[_verbMouseOver].type != kImageVerbType) {
 			drawVerb(_verbMouseOver, 0);
 		}
-	
+
 		if (_verbs[verb].type != kImageVerbType && _verbs[verb].hicolor) {
 			drawVerb(verb, 1);
 			_verbMouseOver = verb;
