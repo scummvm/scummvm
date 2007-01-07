@@ -351,6 +351,21 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
+		// King's Quest 2 (PC) 2.1 [AGI 2.411]; entry from DAGII, but missing from Sarien?
+		{
+			"agi",
+			"King's Quest 2 (IBM) 2.1",
+			AD_ENTRY1("logdir", "759e39f891a0e1d86dd29d7de485c6ac"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2440,		// XXX: any major differences from 2.411 to 2.440?
+	},
+
+
+	{
 		// Sarien Name == King's Quest 2 (PC 5.25"/3.5") 2.2 [AGI 2.426]
 		{
 			"agi",
