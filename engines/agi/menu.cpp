@@ -440,7 +440,8 @@ void Menu::set_item(int event, int state) {
 			agi_menu_option *d = *iterv;
 			if (d->event == event) {
 				d->enabled = state;
-				return;
+				// keep going; we need to set the state of every menu item
+				// with this event code. -- dsymonds
 			}
 		}
 	}
