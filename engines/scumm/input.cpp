@@ -102,6 +102,12 @@ void ScummEngine::parseEvents() {
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			}
 
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+				if (event.kbd.ascii >= 273 && event.kbd.ascii <= 276) {
+					_keyPressed = event.kbd.ascii - 273 + 54;
+				}
+			}
+
 			if (_game.heversion >= 80) {
 				// Keyboard is controlled via variable
 				int _keyState = 0;
