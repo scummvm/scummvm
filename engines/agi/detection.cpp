@@ -500,6 +500,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 
+#if 0
 	{
 		// Sarien Name == Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
 		{
@@ -513,6 +514,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2917,
 	},
+#endif
 
 
 	{
