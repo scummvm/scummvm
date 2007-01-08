@@ -240,7 +240,7 @@ void ToucheEngine::res_loadProgram(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadProgram() num=%d", num);
 	const uint32 offs = res_getDataOffset(kResourceTypeProgram, num, &_programDataSize);
 	_fData.seek(offs);
-	assert(_programDataSize < kMaxProgramDataSize);
+	assert(_programDataSize <= kMaxProgramDataSize);
 	_fData.read(_programData, _programDataSize);
 }
 

@@ -90,7 +90,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_getKeyCharWalkBox,
 		&ToucheEngine::op_startSound,
 		/* 0x30 */
-		&ToucheEngine::op_initKeyCharTalk,
+		&ToucheEngine::op_moveKeyCharToPos,
 		0,
 		0,
 		0,
@@ -443,8 +443,8 @@ void ToucheEngine::op_startSound() {
 	_newSoundPriority = 1;
 }
 
-void ToucheEngine::op_initKeyCharTalk() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_initKeyCharTalk()");
+void ToucheEngine::op_moveKeyCharToPos() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_moveKeyCharToPos()");
 	int16 keyChar = _script.readNextWord();
 	if (keyChar == 256) {
 		keyChar = _currentKeyCharNum;

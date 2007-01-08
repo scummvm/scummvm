@@ -516,7 +516,7 @@ protected:
 	void op_fetchScriptByte();
 	void op_getKeyCharWalkBox();
 	void op_startSound();
-	void op_initKeyCharTalk();
+	void op_moveKeyCharToPos();
 	void op_loadRoom();
 	void op_updateRoom();
 	void op_startTalk();
