@@ -488,7 +488,7 @@ void ScummEngine::checkExecVerbs() {
 		if (!(_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)) {
 			// This is disabled in the SegaCD version as the "vs->key" values setup
 			// by script-17 conflict with the values expected by the generic keyboard
-			// input script
+			// input script. See tracker item #1193185.
 			vs = &_verbs[1];
 			for (i = 1; i < _numVerbs; i++, vs++) {
 				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
@@ -508,11 +508,11 @@ void ScummEngine::checkExecVerbs() {
 			// part of the "Passport to Adventure" demo expects the same keyboard
 			// mapping, even though the full game doesn't.
 			static const int numpad[10] = {
-					'0',
-					335, 336, 337,
-					331, 332, 333,
-					327, 328, 329
-				};
+				'0',
+				335, 336, 337,
+				331, 332, 333,
+				327, 328, 329
+			};
 			_mouseAndKeyboardStat = numpad[_mouseAndKeyboardStat - '0'];
 		}
 
