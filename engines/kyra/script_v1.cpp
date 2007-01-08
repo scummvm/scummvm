@@ -1316,6 +1316,7 @@ int KyraEngine::o1_drawItemShapeIntoScene(ScriptState *script) {
 		_screen->drawShape(2, _shapes[220+item], x, y, 0, flags);
 		_screen->drawShape(0, _shapes[220+item], x, y, 0, flags);
 		_animator->flagAllObjectsForBkgdChange();
+		_animator->preserveAnyChangedBackgrounds();
 		_animator->flagAllObjectsForRefresh();
 		_animator->updateAllObjectShapes();
 		_screen->showMouse();
