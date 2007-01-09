@@ -181,7 +181,7 @@ void KyraEngine::backupChatPartnerAnimFrame(int8 charNum) {
 	if (_scaleMode != 0)
 		_currentCharacter->currentAnimFrame = 7;
 	else
-		_currentCharacter->currentAnimFrame = _currentCharAnimFrame;
+		_currentCharacter->currentAnimFrame = 16;
 
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
@@ -253,7 +253,7 @@ void KyraEngine::characterSays(const char *chatStr, int8 charNum, int8 chatDurat
 	convoInitialized = initCharacterChat(charNum);	
 	chatPartnerNum = getChatPartnerNum();
 
-	if (chatPartnerNum != -1 && chatPartnerNum < 5)
+	if (chatPartnerNum >= 0 && chatPartnerNum < 5)
 		backupChatPartnerAnimFrame(chatPartnerNum);
 
 	if (charNum < 5) {
