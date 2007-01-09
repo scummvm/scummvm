@@ -48,36 +48,23 @@ REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line
 namespace Agi {
 
 #define FILE_MD5_BYTES 5000
-#define FANMADE_V(name,md5,ver) {					\
+#define FANMADE_LV(name,md5,lang,ver) {			\
 		{ \
 			"agi", \
 			name, \
 			AD_ENTRY1("logdir", md5), \
-			Common::EN_ANY, \
+			lang, \
 			Common::kPlatformPC, \
 		}, \
 		GType_V2, \
 		0, \
 		ver, \
 	}
-#define FANMADE(name,md5) FANMADE_V(name,md5,0x2917)
+#define FANMADE_V(name,md5,ver) FANMADE_LV(name,md5,Common::EN_ANY,ver)
+#define FANMADE_L(name,md5,lang) FANMADE_LV(name,md5,lang,0x2917)
+#define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
 
 static const AGIGameDescription gameDescriptions[] = {
-	{
-		// Sarien Name == Groza
-		{
-			"agi",
-			"Groza (russian) [AGDS sample]",
-			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V2,
-		AGI_AGDS,
-		0x2440,
-	},
-
-
 	{
 		// Sarien Name == Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
 		{
@@ -783,7 +770,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_V("AGI Trek (Demo)", "c02882b8a8245b629c91caf7eb78eafe", 0x2440),
 	FANMADE("AGI256 Demo", "79261ac143b2e2773b2753674733b0d5"),
 	FANMADE("AGI256-2 Demo", "3cad9b3aff1467cebf0c5c5b110985c5"),
-	FANMADE("Abrah, L'Orphelin De L'Espace (v1.2)", "b7b6d1539e14d5a26fa3088288e1badc"),
+	FANMADE_L("Abrah, L'Orphelin De L'Espace (v1.2)", "b7b6d1539e14d5a26fa3088288e1badc", Common::FR_FRA),
 	FANMADE("Acidopolis", "7017db1a4b726d0d59e65e9020f7d9f7"),
 	FANMADE("Agent 0055 (v1.0)", "c2b34a0c77acb05482781dda32895f24"),
 	FANMADE("Agent 06 vs. The Super Nazi", "136f89ca9f117c617e88a85119777529"),
@@ -810,12 +797,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Caitlyn's Destiny", "818469c484cae6dad6f0e9a353f68bf8"),
 	FANMADE("Car Driver (v1.1)", "2311611d2d36d20ccc9da806e6cba157"),
 	FANMADE("Coco Coq (English) - Coco Coq In Grostesteing's Base (v.1.0.3)", "97631f8e710544a58bd6da9e780f9320"),
-	FANMADE("Coco Coq (French) - Coco Coq Dans la Base de Grostesteing (v1.0.2)", "ef579ebccfe5e356f9a557eb3b2d8649"),
+	FANMADE_V("Coco Coq (French) - Coco Coq Dans la Base de Grostesteing (v1.0.2)", "ef579ebccfe5e356f9a557eb3b2d8649", Common::FR_FRA),
 	FANMADE("Corby's Murder Mystery (v1.0)", "4ebe62ac24c5a8c7b7898c8eb070efe5"),
 	FANMADE("DG: The AGIMouse Adventure (English v1.1)", "efe453b92bc1487ea69fbebede4d5f26"),
-	FANMADE("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a"),
+	FANMADE_V("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a", Common::FR_FRA),
 	FANMADE("DG: The Adventure Game (English v1.1)", "0d6376d493fa7a21ec4da1a063e12b25"),
-	FANMADE("DG: The Adventure Game (French v1.1)", "258bdb3bb8e61c92b71f2f456cc69e23"),
+	FANMADE_V("DG: The Adventure Game (French v1.1)", "258bdb3bb8e61c92b71f2f456cc69e23", Common::FR_FRA),
 	FANMADE("Dashiki (16 Colors)", "9b2c7b9b0283ab9f12bedc0cb6770a07"),
 	FANMADE("Dashiki (256 Colors)", "c68052bb209e23b39b55ff3d759958e6"),
 	FANMADE("Date Quest 1 (v1.0)", "ba3dcb2600645be53a13170aa1a12e69"),
@@ -841,11 +828,25 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Get Outta Space Quest", "aaea5b4a348acb669d13b0e6f22d4dc9"),
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
-	FANMADE("Groza", "421da3a18004122a966d64ab6bd86d2e"),
+
+	{
+		// Sarien Name == Groza
+		{
+			"agi",
+			"Groza (russian) [AGDS sample]",
+			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		AGI_AGDS,
+		0x2440,
+	},
+
 	FANMADE("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c"),
 	FANMADE("Hank's Quest (v1.0 English) - Victim of Society", "64c15b3d0483d17888129100dc5af213"),
 	FANMADE("Hank's Quest (v1.1 English) - Victim of Society", "86d1f1dd9b0c4858d096e2a60cca8a14"),
-	FANMADE("Hank's Quest (v1.81 Dutch) - Slachtoffer Van Het Gebeuren", "41e53972d55ff3dff9e90d15fe1b659f"),
+	FANMADE_L("Hank's Quest (v1.81 Dutch) - Slachtoffer Van Het Gebeuren", "41e53972d55ff3dff9e90d15fe1b659f", Common::NL_NLD),
 	FANMADE("Hank's Quest (v1.81 English) - Victim of Society", "7a776383282f62a57c3a960dafca62d1"),
 	FANMADE("Herbao (v0.2)", "6a5186fc8383a9060517403e85214fc2"),
 	FANMADE("Hitler's Legacy (v.0004q)", "a412881269ba34584bd0a3268e5a9863"),
@@ -859,8 +860,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Jiggy Jiggy Uh! Uh!", "bc331588a71e7a1c8840f6cc9b9487e4"),
 	FANMADE("Jimmy In: The Alien Attack (v0.1)", "a4e9db0564a494728de7873684a4307c"),
 	FANMADE("Joe McMuffin In \"What's Cooking, Doc\" (v1.0)", "8a3de7e61a99cb605fa6d233dd91c8e1"),
-	FANMADE_V("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", 0x2936),
-	FANMADE_V("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", 0x2936),
+	FANMADE_LV("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, 0x2936),
+	FANMADE_LV("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, 0x2936),
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
@@ -878,7 +879,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Napalm Quest (v0.5)", "b659afb491d967bb34810d1c6ce22093"),
 	FANMADE("Naturette 1 (English v1.2)", "0a75884e7f010974a230bdf269651117"),
 	FANMADE("Naturette 1 (English v1.3)", "f15bbf999ac55ebd404aa1eb84f7c1d9"),
-	FANMADE("Naturette 1 (French v1.2)", "d3665622cc41aeb9c7ecf4fa43f20e53"),
+	FANMADE_L("Naturette 1 (French v1.2)", "d3665622cc41aeb9c7ecf4fa43f20e53", Common::FR_FRA),
 	FANMADE("Naturette 2: Daughter of the Moon (v1.0)", "bdf76a45621c7f56d1c9d40292c6137a"),
 	FANMADE("Naturette 3: Adventure in Treeworld (v1.0a)", "6dbb0e7fc75fec442e6d9e5a06f1530e"),
 	FANMADE("Naturette 4: From a Planet to Another Planet (Not Finished)", "13be8cd9cf35aeff0a39b8757057fbc8"),
@@ -897,7 +898,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Prince Quest", "266248d75c3130c8ccc9c9bf2ad30a0d"),
 	FANMADE("Professor (English) - The Professor is Missing (Mar 17)", "6232de31cc204affdf2e92dfe3dc0e4d"),
 	FANMADE("Professor (English) - The Professor is Missing (Mar 22)", "b5fcf0ca2f0d1c073be82f01e2170961"),
-	FANMADE("Professor (French) - Le Professeur a Disparu", "7d9f8a4d4610bb9b0b97caa17590c2d3"),
+	FANMADE_L("Professor (French) - Le Professeur a Disparu", "7d9f8a4d4610bb9b0b97caa17590c2d3", Common::FR_FRA),
 	FANMADE("Quest for Glory VI - Hero's Adventure", "d26765c3075064c80d284c5e06e33a7e"),
 	FANMADE("Quest for Home", "d2895dc1cd3930f2489af0f843b144b3"),
 	FANMADE("Quest for Ladies (demo v1.1 Apr 1)", "3f6e02f16e1154a0daf296c8895edd97"),
