@@ -1414,7 +1414,9 @@ void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 			int len = MIN(count, (code >> 4) + 3); //upper half of code is the length		
 			int offs = ((code & 0xF) << 8) | *src++; //lower half of code as byte 2 of offset.
 			const uint8 *dstOffs = dst - offs;
-			memcpy(dst, dstOffs, len); dst += len;
+			while (len--) {
+				*dst++ = *dstOffs++;
+			}
 		} else if (code & 0x40) { // 7th bit is set
 			int len = (code & 0x3F) + 3;
 			if (code == 0xFE) {
@@ -1432,12 +1434,16 @@ void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 					len = count;
 				}
 				const uint8 *dstOffs = dstOrig + offs;
-				memcpy(dst, dstOffs, len); dst += len;
+				while (len--) {
+					*dst++ = *dstOffs++;
+				}
 			}
 		} else if (code != 0x80) { // not just the 8th bit set.
 			//Copy some bytes from source to dest.
 			int len = MIN(count, code & 0x3F);
-			memcpy(dst, src, len); dst += len; src += len;
+			while (len--) {
+				*dst++ = *src++;
+			}
 		} else {
 			break;
 		}
@@ -1499,7 +1505,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 
 template<bool noXor>
 void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
+	debugC(9, kDebugLevelScreen, "Screen::wrapped_decodeFrameDeltaPage(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
 	int count = 0;
 	uint8 *dstNext = dst;
 	while (1) {
