@@ -274,6 +274,30 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Elvira 2 - Spanish DOS Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"bfcd74d704ad481d75eb6ba5b828333a"},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
+	{ "start",		GAME_RESTFILE,	"4d380a35ba941d03ee5084c71d20055b"},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7"},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
+	{ NULL, 0, NULL}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE
+	},
+
 	// Waxworks - English Amiga Floppy
 	{
 		{
