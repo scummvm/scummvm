@@ -735,6 +735,7 @@ spyozon	SPY Fox 3: Operation Ozone
 	600abd3e9f47e63e670188b7e4e86ac7	47128	us	All	-	-	-	Kirben
 	96a3069a3c63caa7329588ce1fef41ee	-1	ru	All	-	-	-	sev
 	10d8e66cd11049ce64815ebb9fd76eb3	-1	fr	Windows	-	-	-	gist974
+	7015b059ab72cff3a0ef9fb4d5e9889d	-1	de	Windows	-	-	-	andy482
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
 	ebd0b2c8a387f18887282afe6cad894a	-1	en	All	-	Demo	-	Kirben

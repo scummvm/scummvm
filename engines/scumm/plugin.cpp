@@ -789,10 +789,12 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "Spy Ozone Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "SPYFoxAIW", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "SPYFoxSOS", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyozon", "ozonepre.cup", kGenUnchanged, UNK_LANG, UNK, "HE CUP" },
+
 
 	{ "thinker1", "1grademo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "thinker1", "thinker1", kGenHEPC, UNK_LANG, UNK, 0 },
