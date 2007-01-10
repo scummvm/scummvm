@@ -626,6 +626,7 @@ puttcircus	Putt-Putt Joins the Circus
 	ab0693e9324cfcf498fdcbb12acf8bb4	-1	en	All	-	-	-	sev
 	7bad72e332a59f9fcc1d437f4edad32a	-1	ru	All	-	-	-	sev
 	d0ad929def3e9cfe39dea55bd12098d4	-1	fr	Windows	-	-	-	gist974
+	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
 
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
 
