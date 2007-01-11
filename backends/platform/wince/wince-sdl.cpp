@@ -31,6 +31,7 @@
 #include "sound/mixer.h"
 
 #include "common/config-manager.h"
+#include "backends/timer/default/default-timer.h"
 
 #include "scumm/scumm.h"
 
@@ -238,6 +239,11 @@ void drawError(char *error) {
 }
 
 // ********************************************************************************************
+static DefaultTimerManager *_int_timer = NULL;
+static Uint32 timer_handler_wrapper(Uint32 interval) {
+	_int_timer->handler();
+	return interval;
+}
 
 void OSystem_WINCE3::initBackend()
 {
@@ -253,6 +259,13 @@ void OSystem_WINCE3::initBackend()
 	if (_mixer == 0) {
 		_mixer = new Audio::Mixer();
 	}
+
+	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
+	// We work around this by using the SetTimer function, since we only use
+	// one timer in scummvm (for the time being)
+	_timer = _int_timer = new DefaultTimerManager();
+	_timerID = NULL;	// OSystem_SDL will call removetimer with this, it's ok
+	SDL_SetTimer(10, &timer_handler_wrapper);
 
 	// Chain init
 	OSystem_SDL::initBackend();
@@ -670,8 +683,7 @@ void OSystem_WINCE3::get_sample_rate() {
 		}
 	}
 	// See if the output frequency is forced by the game
-	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" ||
-		strncmp(gameid.c_str(), "sword", 5) == 0 || strncmp(gameid.c_str(), "sky", 3) == 0)
+	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" || gameid == "sword")
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
@@ -2071,20 +2083,17 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 	CEDevice::wakeUp();
 
-	//if (_isSmartphone)
-		currentTime = GetTickCount();
+	currentTime = GetTickCount();
 
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
-				//if (_isSmartphone) {
-					keyEvent = true;
-					_lastKeyPressed = ev.key.keysym.sym;
-					_keyRepeatTime = currentTime;
-					_keyRepeat = 0;
-				//}
+				keyEvent = true;
+				_lastKeyPressed = ev.key.keysym.sym;
+				_keyRepeatTime = currentTime;
+				_keyRepeat = 0;
 
 				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, true))
 					return true;
@@ -2102,10 +2111,8 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 		case SDL_KEYUP:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
-				//if (_isSmartphone) {
-					keyEvent = true;
-					_lastKeyPressed = 0;
-				//}
+				keyEvent = true;
+				_lastKeyPressed = 0;
 
 				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, false))
 					return true;
@@ -2175,8 +2182,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					setGraphicsMode(GFX_NORMAL);
 					hotswapGFXMode();
 				}
-			}
-			else {
+			} else {
 				if (!_freeLook)
 					memcpy(&event, &temp_event, sizeof(Event));
 			}
@@ -2220,17 +2226,13 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 	// Simulate repeated key for Smartphones
 
-	if (!keyEvent) {
-		//if (_isSmartphone) {
-			if (_lastKeyPressed) {
-				if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
-					_keyRepeatTime = currentTime;
-					_keyRepeat++;
-					GUI_Actions::Instance()->performMapped(_lastKeyPressed, true);
-				}
+	if (!keyEvent)
+		if (_lastKeyPressed)
+			if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
+				_keyRepeatTime = currentTime;
+				_keyRepeat++;
+				GUI_Actions::Instance()->performMapped(_lastKeyPressed, true);
 			}
-		//}
-	}
 
 	return false;
 }
