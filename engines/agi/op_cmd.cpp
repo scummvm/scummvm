@@ -30,7 +30,6 @@
 #include "agi/keyboard.h"
 #include "agi/opcodes.h"
 #include "agi/menu.h"
-#include "agi/savegame.h"
 #include "agi/text.h"
 
 namespace Agi {
@@ -448,12 +447,12 @@ cmd(reset_scan_start) {
 }
 
 cmd(save_game) {
-	game.simple_save ? g_agi->_saveGameMgr->savegame_simple() : g_agi->_saveGameMgr->savegame_dialog();
+	game.simple_save ? g_agi->saveGameSimple() : g_agi->saveGameDialog();
 }
 
 cmd(load_game) {
 	assert(1);
-	game.simple_save ? g_agi->_saveGameMgr->loadgame_simple() : g_agi->_saveGameMgr->loadgame_dialog();
+	game.simple_save ? g_agi->loadGameSimple() : g_agi->loadGameDialog();
 }
 
 cmd(init_disk) {				/* do nothing */

@@ -43,7 +43,6 @@
 #include "agi/opcodes.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
-#include "agi/savegame.h"
 #include "agi/sound.h"
 
 
@@ -531,6 +530,7 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugLevelScripts, "Scripts", "Scripts debugging");
 	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debugging");
 	Common::addSpecialDebugLevel(kDebugLevelText, "Text", "Text output debugging");
+	Common::addSpecialDebugLevel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 
 
 	memset(&game, 0, sizeof(struct agi_game));
@@ -587,7 +587,6 @@ void AgiEngine::initialize() {
 	_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
 	_sprites = new SpritesMgr(this, _gfx);
-	_saveGameMgr = new SaveGameMgr(this, _sprites, _gfx, _sound, _picture);
 
 	_gfx->initMachine();
 

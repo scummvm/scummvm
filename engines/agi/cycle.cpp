@@ -30,7 +30,6 @@
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
-#include "agi/savegame.h"
 
 namespace Agi {
 

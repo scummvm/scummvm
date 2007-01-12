@@ -26,7 +26,6 @@
 #include "agi/sprite.h"
 #include "agi/graphics.h"
 #include "agi/text.h"
-#include "agi/savegame.h"
 
 namespace Agi {
 

@@ -86,6 +86,9 @@ typedef signed int Err;
 #define	STATUS_BG	0x0f		/* White */
 #define PATCH_LOGIC				/* disable copy protection on some games */
 
+#define ADD_PIC 1
+#define ADD_VIEW 2
+
 } // End of namespace Agi
 
 /* AGI resources */
@@ -152,7 +155,8 @@ enum kDebugLevels {
 	kDebugLevelMenu =      1 << 5,
 	kDebugLevelScripts =   1 << 6,
 	kDebugLevelSound =     1 << 7,
-	kDebugLevelText =      1 << 8
+	kDebugLevelText =      1 << 8,
+	kDebugLevelSavegame =  1 << 9
 };
 
 /**
@@ -486,7 +490,6 @@ public:
 class GfxMgr;
 class SpritesMgr;
 class Menu;
-class SaveGameMgr;
 
 extern struct Mouse g_mouse;
 
@@ -557,6 +560,15 @@ public:
 	Common::RandomSource *_rnd;
 	const char *_savePath;
 
+	const char *getSavegameFilename(int num);
+	int selectSlot();
+	int saveGame(const char *fileName, const char *saveName);
+	int saveGameDialog();
+	int saveGameSimple();
+	int loadGame(const char *fileName);
+	int loadGameDialog();
+	int loadGameSimple();
+
 	volatile uint32 clock_count;
 
 	uint8 *intobj;
@@ -569,7 +581,6 @@ public:
 	GfxMgr *_gfx;
 	SoundMgr *_sound;
 	PictureMgr *_picture;
-	SaveGameMgr *_saveGameMgr;
 
 	#define INITIAL_IMAGE_STACK_SIZE 32
 
