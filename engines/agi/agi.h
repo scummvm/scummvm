@@ -44,7 +44,6 @@ typedef signed int Err;
 /*
  * Version and other definitions
  */
-#define VERSION __DATE__ " " __TIME__
 
 #define USE_IIGS_SOUND
 

@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "base/version.h"
 
 #include "agi/agi.h"
 #include "agi/sprite.h"
@@ -892,11 +893,11 @@ cmd(set_menu_item) {
 }
 
 cmd(version) {
-	char ver_msg[] = TITLE " v" VERSION;
+	char ver_msg[64];
 	char ver2_msg[] =
 	    "\n"
-	    "                             \n\n"
-	    "Emulating Sierra AGI v%x.%03x\n";
+	    "                               \n\n"
+	    "  Emulating Sierra AGI v%x.%03x\n";
 	char ver3_msg[] =
 	    "\n"
 	    "                             \n\n"
@@ -905,6 +906,10 @@ cmd(version) {
 	char *r, *q;
 	int ver, maj, min;
 	char msg[256];
+	int gap;
+	int len;
+
+	sprintf(ver_msg, TITLE " v%s", gScummVMVersion);
 
 	ver = g_agi->agiGetRelease();
 	maj = (ver >> 12) & 0xf;
@@ -913,7 +918,15 @@ cmd(version) {
 	q = maj == 2 ? ver2_msg : ver3_msg;
 	r = strchr(q + 1, '\n');
 
-	strncpy(q + 1 + ((r - q > 0 ? r - q : 1) / 4), ver_msg, strlen(ver_msg));
+	/* insert our version into the other version */
+	len = strlen(ver_msg);
+	gap = r - q;
+	if(gap < 0)
+		gap = 0;
+	else
+		gap = (gap - len) / 2;
+
+	strncpy(q + 1 + gap, ver_msg, strlen(ver_msg));
 	sprintf(msg, q, maj, min);
 	g_agi->message_box(msg);
 }
