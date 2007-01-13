@@ -184,15 +184,15 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight, uint3
 	if (pResWidth != 0) {
 		*pResWidth = item->width & 0x7fff;
 		*pResHeight = item->height;
-		debugC(7, DEBUG_FILEIO, "loadExtData(%d, %d, %d)", itemId, *pResWidth, *pResHeight);
+		debugC(7, kDebugFileIO, "loadExtData(%d, %d, %d)", itemId, *pResWidth, *pResHeight);
 	}
 
-	debugC(7, DEBUG_FILEIO, "loadExtData(%d, 0, 0)", itemId);
+	debugC(7, kDebugFileIO, "loadExtData(%d, 0, 0)", itemId);
 
 	if (item->height == 0)
 		size += (item->width & 0x7fff) << 16;
 
-	debugC(7, DEBUG_FILEIO, "size: %d off: %d", size, offset);
+	debugC(7, kDebugFileIO, "size: %d off: %d", size, offset);
 	if (offset >= 0) {
 		handle = _extHandle;
 	} else {
@@ -205,7 +205,7 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight, uint3
 		handle = commonHandle;
 	}
 
-	debugC(7, DEBUG_FILEIO, "off: %d size: %d", offset, tableSize);
+	debugC(7, kDebugFileIO, "off: %d size: %d", offset, tableSize);
 	_vm->_dataio->seekData(handle, offset + tableSize, SEEK_SET);
 	realSize = size;
 	// CHECKME: is the below correct?

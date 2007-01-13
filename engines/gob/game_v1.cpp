@@ -126,8 +126,8 @@ void Game_v1::playTot(int16 skipPlay) {
 			_curExtFile[strlen(_curExtFile) - 4] = 0;
 			strcat(_curExtFile, ".ext");
 
-			debugC(4, DEBUG_FILEIO, "IMA: %s", _curImaFile);
-			debugC(4, DEBUG_FILEIO, "EXT: %s", _curExtFile);
+			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
+			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
 
 			filePtr = (char *)_totFileData + 0x30;
 
@@ -265,11 +265,11 @@ int16 Game_v1::addNewCollision(int16 id, int16 left, int16 top, int16 right, int
 	int16 i;
 	Collision *ptr;
 
-	debugC(5, DEBUG_COLLISIONS, "addNewCollision");
-	debugC(5, DEBUG_COLLISIONS, "id = %x", id);
-	debugC(5, DEBUG_COLLISIONS, "left = %d, top = %d, right = %d, bottom = %d", left, top, right, bottom);
-	debugC(5, DEBUG_COLLISIONS, "flags = %x, key = %x", flags, key);
-	debugC(5, DEBUG_COLLISIONS, "funcEnter = %d, funcLeave = %d", funcEnter, funcLeave);
+	debugC(5, kDebugCollisions, "addNewCollision");
+	debugC(5, kDebugCollisions, "id = %x", id);
+	debugC(5, kDebugCollisions, "left = %d, top = %d, right = %d, bottom = %d", left, top, right, bottom);
+	debugC(5, kDebugCollisions, "flags = %x, key = %x", flags, key);
+	debugC(5, kDebugCollisions, "funcEnter = %d, funcLeave = %d", funcEnter, funcLeave);
 
 	for (i = 0; i < 250; i++) {
 		if (_collisionAreas[i].left != -1)
@@ -296,7 +296,7 @@ void Game_v1::pushCollisions(char all) {
 	Collision *destPtr;
 	int16 size;
 
-	debugC(1, DEBUG_COLLISIONS, "pushCollisions");
+	debugC(1, kDebugCollisions, "pushCollisions");
 	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1;
 	    srcPtr++) {
 		if (all || (srcPtr->id & 0x8000))
@@ -321,7 +321,7 @@ void Game_v1::popCollisions(void) {
 	Collision *destPtr;
 	Collision *srcPtr;
 
-	debugC(1, DEBUG_COLLISIONS, "popCollision");
+	debugC(1, kDebugCollisions, "popCollision");
 
 	_collStackSize--;
 	for (destPtr = _collisionAreas; destPtr->left != -1; destPtr++);
@@ -715,7 +715,7 @@ void Game_v1::collisionsBlock(void) {
 		}
 		cmd &= 0x7f;
 
-		debugC(1, DEBUG_COLLISIONS, "collisionsBlock(%d)", cmd);
+		debugC(1, kDebugCollisions, "collisionsBlock(%d)", cmd);
 
 		switch (cmd) {
 		case 3:

@@ -650,7 +650,7 @@ void Goblin::switchGoblin(int16 index) {
 	int16 next;
 	int16 tmp;
 
-	debugC(4, DEBUG_GAMEFLOW, "switchGoblin");
+	debugC(4, kDebugGameFlow, "switchGoblin");
 	if (VAR(59) != 0)
 		return;
 

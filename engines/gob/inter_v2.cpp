@@ -647,7 +647,7 @@ void Inter_v2::setupOpcodes(void) {
 }
 
 void Inter_v2::executeDrawOpcode(byte i) {
-	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
+	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcV2 op = _opcodesDrawV2[i].proc;
 
@@ -658,7 +658,7 @@ void Inter_v2::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
+	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -676,7 +676,7 @@ bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 }
 
 void Inter_v2::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
+	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcV2 op = NULL;
 
@@ -1270,7 +1270,7 @@ void Inter_v2::loadMult(void) {
 	Mult::Mult_Object *obj;
 	Mult::Mult_AnimData *objAnim;
 
-	debugC(4, DEBUG_GAMEFLOW, "Inter_v2::loadMult(): Loading...");
+	debugC(4, kDebugGameFlow, "Inter_v2::loadMult(): Loading...");
 
 	objIndex = _vm->_parse->parseValExpr();
 	val = _vm->_parse->parseValExpr();
@@ -2101,9 +2101,9 @@ void Inter_v2::o2_initMult(void) {
 	_vm->_draw->_destSpriteY = 0;
 	_vm->_draw->spriteOperation(0);
 
-	debugC(4, DEBUG_GRAPHICS, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
+	debugC(4, kDebugGraphics, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
-	debugC(4, DEBUG_GRAPHICS, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
+	debugC(4, kDebugGraphics, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
 }
 
 void Inter_v2::o2_getObjAnimSize(void) {

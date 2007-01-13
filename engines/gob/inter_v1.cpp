@@ -1578,9 +1578,9 @@ void Inter_v1::o1_initMult(void) {
 	    _vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1,
 	    _vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1, 0, 0, 0);
 
-	debugC(4, DEBUG_GRAPHICS, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
+	debugC(4, kDebugGraphics, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
-	debugC(4, DEBUG_GRAPHICS, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
+	debugC(4, kDebugGraphics, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
 }
 
 void Inter_v1::o1_multFreeMult(void) {
@@ -1687,7 +1687,7 @@ void Inter_v1::o1_freeFontToSprite(void) {
 }
 
 void Inter_v1::executeDrawOpcode(byte i) {
-	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
+	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcV1 op = _opcodesDrawV1[i].proc;
 
@@ -1698,7 +1698,7 @@ void Inter_v1::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
+	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -1715,7 +1715,7 @@ bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 }
 
 void Inter_v1::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
+	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcV1 op = NULL;
 
@@ -1759,12 +1759,12 @@ bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 //	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 	uint16 offset = READ_LE_UINT16(_vm->_global->_inter_execPtr);
-	debugC(5, DEBUG_GAMEFLOW, "tot = \"%s\", offset = %d", _vm->_game->_curTotFile, offset);
+	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d", _vm->_game->_curTotFile, offset);
 
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->_features & GF_GOB1) && (offset == 3905)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot)) {
-		debugC(2, DEBUG_GAMEFLOW, "Skipping copy protection screen");
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		_vm->_global->_inter_execPtr += 2;
 		return false;
 	}
@@ -1772,7 +1772,7 @@ bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 	if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1746)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
 		warning("=> Skipping copy protection screen");
-		debugC(2, DEBUG_GAMEFLOW, "Skipping copy protection screen");
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		_vm->_global->_inter_execPtr += 2;
 		return false;
 	}
@@ -1824,7 +1824,7 @@ bool Inter_v1::o1_callBool(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
-		debugC(5, DEBUG_GAMEFLOW, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
+		debugC(5, kDebugGameFlow, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
 		cmd = (byte)(*_vm->_global->_inter_execPtr) >> 4;
 		_vm->_global->_inter_execPtr++;
 		if (cmd != 12)
@@ -1834,7 +1834,7 @@ bool Inter_v1::o1_callBool(char &cmdCount, int16 &counter, int16 &retFlag) {
 	} else {
 		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
-		debugC(5, DEBUG_GAMEFLOW, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
+		debugC(5, kDebugGameFlow, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
 		cmd = (byte)(*_vm->_global->_inter_execPtr) >> 4;
 		_vm->_global->_inter_execPtr++;
 		if (cmd != 12)
@@ -2778,7 +2778,7 @@ void Inter_v1::loadMult(void) {
 	int16 i;
 	char *lmultData;
 
-	debugC(4, DEBUG_GAMEFLOW, "Inter_v1::loadMult(): Loading...");
+	debugC(4, kDebugGameFlow, "Inter_v1::loadMult(): Loading...");
 
 	evalExpr(&objIndex);
 	evalExpr(&val);

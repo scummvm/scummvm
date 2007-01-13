@@ -192,15 +192,15 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang,
 	memset(_saveIndex, 0, 600);
 	memset(_saveIndexSizes, 0, 600);
 
-	Common::addSpecialDebugLevel(DEBUG_FUNCOP, "FuncOpcodes", "Script FuncOpcodes debug level");
-	Common::addSpecialDebugLevel(DEBUG_DRAWOP, "DrawOpcodes", "Script DrawOpcodes debug level");
-	Common::addSpecialDebugLevel(DEBUG_GOBOP, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	Common::addSpecialDebugLevel(DEBUG_MUSIC, "Music", "CD and adlib music debug level");
-	Common::addSpecialDebugLevel(DEBUG_PARSER, "Parser", "Parser debug level");
-	Common::addSpecialDebugLevel(DEBUG_GAMEFLOW, "Gameflow", "Gameflow debug level");
-	Common::addSpecialDebugLevel(DEBUG_FILEIO, "FileIO", "File Input/Output debug level");
-	Common::addSpecialDebugLevel(DEBUG_GRAPHICS, "Graphics", "Graphics debug level");
-	Common::addSpecialDebugLevel(DEBUG_COLLISIONS, "Collisions", "Collisions debug level");
+	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
+	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
+	Common::addSpecialDebugLevel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
+	Common::addSpecialDebugLevel(kDebugMusic, "Music", "CD and adlib music debug level");
+	Common::addSpecialDebugLevel(kDebugParser, "Parser", "Parser debug level");
+	Common::addSpecialDebugLevel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
+	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
+	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
+	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
 }
 
 GobEngine::~GobEngine() {
@@ -276,7 +276,7 @@ int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
 				delete in;
 				break;
 			}
-		debugC(1, DEBUG_FILEIO, "Requested save games size: %d", size);
+		debugC(1, kDebugFileIO, "Requested save games size: %d", size);
 		return size;
 	}
 #endif // GOB_ORIGSAVES
@@ -286,7 +286,7 @@ int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
 		delete in;
 	}
 
-	debugC(1, DEBUG_FILEIO, "Requested size of file \"%s\": %d", _saveFiles[(int) sFile], size);
+	debugC(1, kDebugFileIO, "Requested size of file \"%s\": %d", _saveFiles[(int) sFile], size);
 
 	return size;
 }
@@ -406,7 +406,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	if (out->ioFailed())
 		warning("Can't write file \"%s\"", sName);
 	else {
-		debugC(1, DEBUG_FILEIO, "Saved file \"%s\" (%d, %d bytes at %d)",
+		debugC(1, kDebugFileIO, "Saved file \"%s\" (%d, %d bytes at %d)",
 				sName, dataVar, size, offset);
 		WRITE_VAR(1, 0);
 	}
@@ -440,7 +440,7 @@ bool GobEngine::saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 			warning("Can't save to slot %d", saveSlot);
 			return false;
 		}
-		debugC(1, DEBUG_FILEIO, "Saved to slot %d", saveSlot);
+		debugC(1, kDebugFileIO, "Saved to slot %d", saveSlot);
 		delete out;
 		return true;
 	} else {
@@ -551,7 +551,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		return;
 	}
 
-	debugC(1, DEBUG_FILEIO, "Loading file \"%s\" (%d, %d bytes at %d)",
+	debugC(1, kDebugFileIO, "Loading file \"%s\" (%d, %d bytes at %d)",
 			sName, dataVar, size, offset);
 
 	sSize = getSaveSize(*in);
@@ -624,7 +624,7 @@ bool GobEngine::loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 		in->seek(80);
 		readDataEndian(*in, varBuf, sizeBuf, size);
 		delete in;
-		debugC(1, DEBUG_FILEIO, "Loading from slot %d", saveSlot);
+		debugC(1, kDebugFileIO, "Loading from slot %d", saveSlot);
 		return true;
 	} else {
 		warning("Invalid loading procedure");

@@ -105,7 +105,7 @@ void Mult_v2::loadMult(int16 resId) {
 	hbstaticCount = (staticCount & 0x80) != 0;
 	staticCount &= 0x7F;
 
-	debugC(7, DEBUG_GRAPHICS, "statics: %u, anims: %u, hb: %u", staticCount, animCount, hbstaticCount);
+	debugC(7, kDebugGraphics, "statics: %u, anims: %u, hb: %u", staticCount, animCount, hbstaticCount);
 	for (i = 0; i < staticCount; i++, data.seek(14, SEEK_CUR)) {
 		_multData2->staticIndices[i] = _vm->_scenery->loadStatic(1);
 
@@ -278,7 +278,7 @@ void Mult_v2::setMultData(uint16 multindex) {
 	if (multindex > 7)
 		error("Multindex out of range");
 
-	debugC(4, DEBUG_GAMEFLOW, "Switching to mult %d", multindex);
+	debugC(4, kDebugGameFlow, "Switching to mult %d", multindex);
 	_multData2 = _multDatas[multindex];
 	_frameStart = _multData2->frameStart; // Temporarily to sync _frameStart and _multData2->frameStart
 }
@@ -297,7 +297,7 @@ void Mult_v2::multSub(uint16 multindex) {
 	if (multindex > 7)
 		error("Multindex out of range");
 
-	debugC(4, DEBUG_GAMEFLOW, "Sub mult %d", multindex);
+	debugC(4, kDebugGameFlow, "Sub mult %d", multindex);
 	_multData2 = _multDatas[multindex];
 	_frameStart = _multData2->frameStart; // Temporarily to sync _frameStart and _multData2->frameStart
 

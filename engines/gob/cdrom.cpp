@@ -158,7 +158,7 @@ void CDROM::startTrack(const char *trackname) {
 	if (!_LICbuffer)
 		return;
 
-	debugC(1, DEBUG_MUSIC, "startTrack(%s)", trackname);
+	debugC(1, kDebugMusic, "startTrack(%s)", trackname);
 
 	matchPtr = 0;
 	curPtr = _LICbuffer;
@@ -200,7 +200,7 @@ void CDROM::play(uint32 from, uint32 to) {
 	// HSG encodes frame information into a double word:
 	// minute multiplied by 4500, plus second multiplied by 75,
 	// plus frame, minus 150
-	debugC(1, DEBUG_MUSIC, "play(%d, %d)", from, to);
+	debugC(1, kDebugMusic, "play(%d, %d)", from, to);
 
 	AudioCD.play(1, 1, from, to - from + 1);
 	_cdPlaying = true;
@@ -226,7 +226,7 @@ void CDROM::stopPlaying(void) {
 }
 
 void CDROM::stop(void) {
-	debugC(1, DEBUG_MUSIC, "stop()");
+	debugC(1, kDebugMusic, "stop()");
 
 	AudioCD.stop();
 	_cdPlaying = false;

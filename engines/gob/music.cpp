@@ -162,7 +162,7 @@ void Music::premixerCall(int16 *buf, uint len) {
 }
 
 void Music::writeOPL(byte reg, byte val) {
-	debugC(6, DEBUG_MUSIC, "writeOPL(%02X, %02X)", reg, val);
+	debugC(6, kDebugMusic, "writeOPL(%02X, %02X)", reg, val);
 	OPLWriteReg(_opl, reg, val);
 }
 
@@ -443,7 +443,7 @@ void Music::playBgMusic(void) {
 void Music::playTrack(const char *trackname) {
 	if (_playing) return;
 	
-	debugC(1, DEBUG_MUSIC, "Music::playTrack(%s)", trackname);
+	debugC(1, kDebugMusic, "Music::playTrack(%s)", trackname);
 	unloadMusic();
 	loadMusic(_trackFiles[_vm->_util->getRandom(ARRAYSIZE(_trackFiles))]);
 	startPlay();
