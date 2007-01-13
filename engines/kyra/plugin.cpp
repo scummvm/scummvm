@@ -112,7 +112,7 @@ static bool setupGameFlags(const ADList &list, GameFlags &flags) {
 		flags.platform = platform;
 	}
 	Language lang = parseLanguage(ConfMan.get("language"));
-	if (lang != UNK_LANG && flags.lang != UNK_LANG) {
+	if (lang != UNK_LANG && flags.lang == UNK_LANG) {
 		flags.lang = lang;
 	}
 
