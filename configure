@@ -737,6 +737,18 @@ if test -n "$_host"; then
 			CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 			LDFLAGS="$LDFLAGS -mcrt=newlib"
 			;;
+		m68k-atari-mint)
+			echo "Cross-compiling to $_host, forcing endianness,
+alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+			_def_endianness='#define SCUMM_BIG_ENDIAN'
+			_def_align='#define     SCUMM_NEED_ALIGNMENT'
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='long'
+			_ranlib=m68k-atari-mint-ranlib
+			_ar=m68k-atari-mint-ar
+			;;
 		*)
 			echo "Cross-compiling to unknown target $_host, please add your target to configure."
 			exit 1
@@ -779,8 +791,7 @@ else
 			DEFINES="$DEFINES -DUNIX"
 			;;
 		mint*)
-			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE" 
-			CXXFLAGS="$CXXFLAGS -m68020-60 -fomit-frame-pointer"
+			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			;;
 		# given this is a shell script assume some type of unix
 		*)
