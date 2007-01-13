@@ -436,6 +436,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
 	0855496dde35356b1a9691e22ba84cdc	-1	en	Windows	HE 73	Demo	-	khalek
 	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
+	f5228b0cc1c19e6ea8268ba2eeb61f60	-1	fr	Windows	HE 73	Demo	-	Mevi
 	cf4ef315214c7d8cdab6302cdb7e50db	-1	de	Windows	HE 73	Demo	-	Joachim Eberhard
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
@@ -476,11 +477,13 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	7c2e76087027eeee9c8f8985f93a1cc5	13584	en	All	-	Demo	-	khalek
 	c25755b08a8d0d47695e05f1e2111bfc	-1	us	All	-	Demo	-	sev
 	ebd324dcf06a4c49e1ba5c231eee1060	-1	us	All	HE 99	Demo	-	sev
-	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
 	688328c5bdc4c8ec4145688dfa077bf2	-1	de	All	HE 99	Demo	-	Joachim Eberhard
+	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
 	16effd200aa6b8abe9c569c3e578814d	-1	nl	Windows	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	-1	nl	Windows	HE 99	Demo	-	adutchguy
 	e03ed1474ec14de78359970e0457a820	-1	gb	Windows	HE 99	Demo	-	eriktorbjorn
+	d54622d31255619d207dd245d3f92327 	-1	fr	Windows	HE 99	Demo	-	Mevi
+	dcf0119a90451a7d6e0f1920931ba130 	-1	fr	Windows	HE 99	Demo	-	Mevi
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
@@ -573,6 +576,8 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	a9f2f04b1ecaab9495b59befffe9bf88	-1	us	All	-	Demo	-	sev
 	0c45eb4baff0c12c3d9dfa889c8070ab	-1	de	All	-	Demo	-	Joachim Eberhard
 	4fe6a2e8df3c4536b278fdd2fbcb181e	-1	en	Windows	-	Mini Game	-	Trekky
+	679855cf61932f9bf995c8f3677380ed	-1	fr	Windows	-	Demo	-	Mevi
+	c8c5baadcbfc8d0372ed4335abace8a7	-1	fr	Windows	-	Demo	-	Mevi
 	3e48298920fab9b7aec5a971e1bd1fab	-1	gb	Windows	-	Demo	-	eriktorbjorn
 	cf90b4db5486ef798db78fe6fbf897e5	-1	us	Windows	-	Demo	-	khalek
 
@@ -607,6 +612,8 @@ puttrace	Putt-Putt Enters the Race
 	6af2419fe3db5c2fdb091ae4e5833770	-1	nl	All	HE 98.5	Demo	-	Kirben
 	663743c03ae0c007f3d665cf631c0e6b	13135	de	All	HE 99	Demo	-	Joachim Eberhard
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
+	0bf1a3eb198ca1bd2ebe104825cec770	-1	fr	Windows	HE 98.5	Demo	-	Mevi
+	c8575e0b973ff1723aba6cd92c642db2	-1	fr	Windows	HE 98.5	Demo	-	Mevi
 	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
 	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Demo	-	sev
 
@@ -629,6 +636,7 @@ puttcircus	Putt-Putt Joins the Circus
 	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
 
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
+	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
 
 puttputt	Putt-Putt Joins the Parade
 	0b3222aaa7efcf283eb621e0cefd26cc	-1	ru	DOS	HE 60	-	-	sev
@@ -739,6 +747,7 @@ spyozon	SPY Fox 3: Operation Ozone
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
 	ebd0b2c8a387f18887282afe6cad894a	-1	en	All	-	Demo	-	Kirben
+	a99c39ba65b6086be28aef576da69595	-1	fr	Windows	-	Demo	-	Mevi
 	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Demo	-	sev
 
 chase	SPY Fox in Cheese Chase

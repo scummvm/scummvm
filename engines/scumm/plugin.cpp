@@ -597,6 +597,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "FreddiHRBG", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "FreddiMini", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "MaliceMRC", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "freddi4", "Mm4demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 
 	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -658,6 +659,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "FPJ3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "pajama3", "GPJ3Demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama3", "PajamaHTF", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "Pajama Sam 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -679,6 +681,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "puttcircus", "puttcircus", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttcircus", "circdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttcircus", "CircusDemo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttcircus", "PouceDLC", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttcircus", "Putt Circus Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttcircus", "Putt Circus", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -689,6 +692,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttrace", "500demo", kGenHEPC, Common::NL_NLD, UNK, 0 },
 	{ "puttrace", "course", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "puttrace", "CourseDemo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttrace", "racedemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttrace", "RaceDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "Rennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
@@ -788,13 +792,13 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "SF3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyozon", "Spy Ozone Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyozon", "SPYFoxAIW", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "SPYFoxSOS", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyozon", "ozonepre.cup", kGenUnchanged, UNK_LANG, UNK, "HE CUP" },
-
 
 	{ "thinker1", "1grademo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "thinker1", "thinker1", kGenHEPC, UNK_LANG, UNK, 0 },
