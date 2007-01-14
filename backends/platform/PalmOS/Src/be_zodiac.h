@@ -79,7 +79,6 @@ public:
 	int getDefaultGraphicsMode() const;
 
 	void updateScreen();
-	bool grabRawScreen(Graphics::Surface *surf);
 
 	void setCursorPalette(const byte *colors, uint start, uint num);
 

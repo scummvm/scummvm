@@ -24,7 +24,6 @@
 
 #include "be_zodiac.h"
 #include "common/config-manager.h"
-#include "graphics/surface.h"
 #include "rumble.h"
 
 #ifdef PALMOS_68K
@@ -268,17 +267,8 @@ void OSystem_PalmZodiac::updateScreen() {
 	undraw_mouse();
 }
 
-bool OSystem_PalmZodiac::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
-	
-	surf->create(_screenWidth, _screenHeight, 1);
-	MemMove(surf->pixels, _offScreenP, _screenWidth * _screenHeight);
-	
-	return true;
-}
-
 void OSystem_PalmZodiac::extras_palette(uint8 index, uint8 r, uint8 g, uint8 b) {
-	_nativePal[index] = TwGfxMakeDisplayRGB( r, g, b);
+	_nativePal[index] = TwGfxMakeDisplayRGB(r, g, b);
 }
 
 void OSystem_PalmZodiac::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {

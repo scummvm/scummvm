@@ -147,6 +147,7 @@ public:
 
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void clearScreen();
+	bool grabRawScreen(Graphics::Surface *surf);
 
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);

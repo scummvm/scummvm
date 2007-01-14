@@ -23,6 +23,7 @@
  */
 
 #include "be_os5.h"
+#include "graphics/surface.h"
 #include <PenInputMgr.h>
 #include <palmOneResources.h>
 
@@ -246,6 +247,15 @@ void OSystem_PalmOS5::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 	}
 }
 
+bool OSystem_PalmOS5::grabRawScreen(Graphics::Surface *surf) {
+	assert(surf);
+
+	surf->create(_screenWidth, _screenHeight, 1);
+	MemMove(surf->pixels, _offScreenP, _screenWidth * _screenHeight);
+	
+	return true;
+}
+
 void OSystem_PalmOS5::int_updateScreen() {
 	RectangleType r;
 	PointType p;
@@ -267,7 +277,7 @@ void OSystem_PalmOS5::clearScreen() {
 }
 
 void OSystem_PalmOS5::extras_palette(uint8 index, uint8 r, uint8 g, uint8 b) {
-	_nativePal[index] = gfxMakeDisplayRGB( r, g, b);
+	_nativePal[index] = gfxMakeDisplayRGB(r, g, b);
 }
 
 void OSystem_PalmOS5::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {
