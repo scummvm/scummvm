@@ -67,39 +67,32 @@ int AgiEngine::setup_v2_game(int ver, uint32 crc) {
 
 	if (ver == 0) {
 		report("Unknown v2 Sierra game: %08x\n\n", crc);
-		agiSetRelease(0x2917);
+		agiSetRelease(ver = 0x2917);
 	}
 
 	/* setup the differences in the opcodes and other bits in the
 	 * AGI v2 specs
 	 */
 	if (opt.emuversion)
-		agiSetRelease(opt.emuversion);
+		agiSetRelease(ver = opt.emuversion);
 
+	// Should this go above the previous lines, so we can force emulation versions
+	// even for AGDS games? -- dsymonds
 	if (opt.agdsMode)
-		agiSetRelease(0x2440);	/* ALL AGDS games built for 2.440 */
+		agiSetRelease(ver = 0x2440);	/* ALL AGDS games built for 2.440 */
 
 	report("Seting up for version 0x%04X\n", ver);
 
-	switch (agiGetRelease()) {
-	case 0x2089:
-		logic_names_cmd[0x86].num_args = 0;	/* quit: 0 args */
-		logic_names_cmd[0x97].num_args = 3;	/* print.at: 3 args */
-		logic_names_cmd[0x98].num_args = 3;	/* print.at.v: 3 args */
-		break;
-	case 0x2272:
-		/* KQ3 0x88673 (2.272) requires print.at with 4 arguments */
-		break;
-	case 0x2440:
-		break;
-	case 0x2917:
-		break;
-	case 0x2936:
-		break;
-	default:
-		report("** Cannot setup for unknown version\n");
-		ec = err_UnknownAGIVersion;
-		break;
+	// 'quit' takes 0 args for 2.089
+	if (ver == 0x2089)
+		logic_names_cmd[0x86].num_args = 0;
+
+	// 'print.at' and 'print.at.v' take 3 args before 2.272
+	// This is documented in the specs as only < 2.440, but it seems
+	// that KQ3 (2.272) needs a 'print.at' taking 4 args.
+	if (ver < 0x2272) {
+		logic_names_cmd[0x97].num_args = 3;
+		logic_names_cmd[0x98].num_args = 3;
 	}
 
 	return ec;
@@ -121,17 +114,12 @@ int AgiEngine::setup_v3_game(int ver, uint32 crc) {
 
 	report("Seting up for version 0x%04X\n", ver);
 
-	switch (agiGetRelease()) {
-	case 0x3086:
-		logic_names_cmd[0xad].num_args = 1;	/* 173 : 1 args */
-		break;
-	case 0x3149:
-		logic_names_cmd[0xad].num_args = 0;	/* 173 : 0 args */
-		break;
-	default:
-		report("Error: cannot setup for unknown version\n");
-		ec = err_UnknownAGIVersion;
-		break;
+	// 'unknown176' takes 1 arg for 3.002.086, not 0 args.
+	// 'unknown173' also takes 1 arg for 3.002.068, not 0 args.
+	// Is this actually used anywhere? -- dsymonds
+	if (ver == 0x3086) {
+		logic_names_cmd[0xb0].num_args = 1;
+		logic_names_cmd[0xad].num_args = 1;
 	}
 
 	return ec;
