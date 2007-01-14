@@ -25,9 +25,10 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
-#define curItemVersion sysMakeROMVersion(3,5,6,0,0)	// Changed : Simon -> AGOS
+#define curItemVersion sysMakeROMVersion(3,5,7,0,0)	// Added : Apple IIgs
 
 
+#define itemVersion_356 sysMakeROMVersion(3,5,6,0,0)	// Changed : Simon -> AGOS
 #define itemVersion_355 sysMakeROMVersion(3,5,5,0,0)	// Added : AGI engine
 #define itemVersion_354 sysMakeROMVersion(3,5,4,0,0)	// Added : Default/Auto music driver
 #define itemVersion_353 sysMakeROMVersion(3,5,3,0,0)	// Added : CinE engine and 3DO platform

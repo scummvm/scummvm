@@ -53,6 +53,7 @@ typedef	struct {
 		UInt32 cacheSize;
 		Boolean useCache;
 		Boolean showLED;
+		Boolean autoDetect;
 		Boolean moveDB;
 		Boolean deleteDB;
 		Boolean confirmMoveDB;

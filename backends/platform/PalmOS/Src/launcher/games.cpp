@@ -69,7 +69,8 @@ static Err GamUpdateList() {
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_355 ||
+				if (version == itemVersion_356 ||
+					version == itemVersion_355 ||
 					version == itemVersion_354 ||
 					version == itemVersion_353 ||
 					version == itemVersion_352 ||
@@ -196,6 +197,11 @@ static Err GamUpdateList() {
 								gitCur.engine++;				// renamed Simon -> AGOS
 								if (gitCur.engine == ENGINE_COUNT)
 									gitCur.engine = ENGINE_AGOS;
+						}
+
+						if (version <= itemVersion_356) {
+							if (gitCur.platform >= 3)
+								gitCur.platform++;
 						}
 
 						if (gitCur.musicInfo.volume.palm > 100)

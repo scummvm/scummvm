@@ -23,6 +23,7 @@
  */
 
 #include <PalmOS.h>
+#include <PmPalmOSNVFS.h>
 #include "StarterRsc.h"
 
 #include "games.h"
@@ -52,15 +53,20 @@
 	StrCat(filename, h);	\
 	StrCat(filename, m);
 
+#define FIND_FILE() \
+	if (*volRefNum == vfsInvalidVolRef) \
+		*volRefNum = ModFind(filename);
+
+
 #define CHECK_FILE(m) \
-	e = VFSFileOpen(volRefNum, filename, vfsModeRead, &file);	\
+	e = VFSFileOpen(*volRefNum, filename, vfsModeRead, &file);	\
 	if (e)	\
 		BUILD_ERROR(m)	\
 	else	\
 		VFSFileClose(file);
 
 #define IMPRT_FILE(m) \
-	e = VFSImportDatabaseFromFile(volRefNum, filename, &cardNo, &dbID);	\
+	e = VFSImportDatabaseFromFile(*volRefNum, filename, &cardNo, &dbID);	\
 	if (e)	\
 		BUILD_ERROR(m)
 
@@ -75,6 +81,22 @@ void ModDelete() {
 	DELET_FILE("Glbs::Common");
 	DELET_FILE("Glbs::Engine");
 	DELET_FILE("ScummVM-Engine");
+}
+
+UInt16 ModFind(const Char *f) {
+	Err e;
+	UInt16 volRefNum;
+	FileRef r;
+	UInt32 volIterator = vfsIteratorStart|vfsIncludePrivateVolumes;
+	while (volIterator != vfsIteratorStop) {
+		e = VFSVolumeEnumerate(&volRefNum, &volIterator);
+
+		if (!e)	e = VFSFileOpen(volRefNum, f, vfsModeRead, &r);
+		if (!e) e = VFSFileClose(r);
+		if (!e) break;
+	}
+	
+	return volRefNum;
 }
 
 static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
@@ -103,7 +125,7 @@ static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
 	}
 }
 
-static Err ModImport(UInt16 volRefNum, UInt8 engine, Boolean *armP) {
+static Err ModImport(UInt16 *volRefNum, UInt8 engine, Boolean *armP) {
 #ifndef _DEBUG_ENGINE
 	char filename[256];
 	UInt16 cardNo;
@@ -124,6 +146,7 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine, Boolean *armP) {
 #ifndef _DEBUG_ENGINE
 	// engine file ?
 	BUILD_FILE(engines[engine].fileP, ".engine");
+	FIND_FILE ();
 	CHECK_FILE("ScummVM engine file was not found !");
 	IMPRT_FILE("Cannot import engine file !");
 
@@ -132,6 +155,7 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine, Boolean *armP) {
 	e = SysAppLaunch(cardNo, dbID, 0, sysAppLaunchCustomEngineGetInfo, 0, &result);
 	*armP = ((result & GET_MODEARM) == GET_MODEARM);
 
+/*	ARM ONLY FOR NOW, NOT REQUIRED
 	// common file ?
 	if (!e && (result & GET_DATACOMMON)) {
 		BUILD_FILE("common", ".data");
@@ -144,6 +168,7 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine, Boolean *armP) {
 		CHECK_FILE("Engine data file was not found !");
 		IMPRT_FILE("Cannot import engine data file !");
 	}
+*/
 #endif
 	// if error, cleanup
 	if (e) ModDelete();
@@ -303,6 +328,7 @@ Boolean StartScummVM() {
 				"3do",
 				"acorn",
 				"amiga",
+				"2gs",
 				"atari",
 				"c64",
 				"pc",
@@ -429,7 +455,7 @@ Boolean StartScummVM() {
 
 	// gVars values 
 	// (gVars->HRrefNum defined in checkHRmode on Clié)
-	gVars->VFS.volRefNum	= gPrefs->card.volRefNum;
+	gVars->VFS.volRefNum	= (gPrefs->card.autoDetect ? vfsInvalidVolRef : gPrefs->card.volRefNum);
 	gVars->vibrator			= gPrefs->vibrator;
 	gVars->stdPalette		= gPrefs->stdPalette;
 	gVars->VFS.cacheSize	= (gPrefs->card.useCache ? gPrefs->card.cacheSize : 0);
@@ -460,7 +486,7 @@ Boolean StartScummVM() {
 		HWR_SET(INIT_PA1LIB);
 	}
 */
-	if (ModImport(gVars->VFS.volRefNum, engine, &isARM) != errNone) {
+	if (ModImport(&gVars->VFS.volRefNum, engine, &isARM) != errNone) {
 		if (bDirectMode) {
 			// and force exit if nothing selected
 			EventType event;

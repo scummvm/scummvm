@@ -269,6 +269,7 @@ Err AppStart(void) {
 		gPrefs->card.cacheSize = 4096;
 		gPrefs->card.useCache = true;
 		gPrefs->card.showLED = true;
+		gPrefs->card.autoDetect = true;
 
 		gPrefs->autoOff = true;
 		gPrefs->vibrator = RumbleExists();

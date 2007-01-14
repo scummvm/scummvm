@@ -191,6 +191,7 @@ static void ConfigTabInit(Boolean update = false) {
 		FldSetTextHandle(fld1P, cacheH);
 		CtlSetValue((ControlType *)GetObjectPtr(TabCardConfigCacheCheckbox), gPrefs->card.useCache);
 		CtlSetValue((ControlType *)GetObjectPtr(TabCardConfigLedCheckbox), gPrefs->card.showLED);
+		CtlSetValue((ControlType *)GetObjectPtr(TabCardConfigDetectCheckbox), gPrefs->card.autoDetect);
 	// update ? redraw the list
 	} else {
 		WinScreenLock(winLockCopy);
@@ -200,7 +201,7 @@ static void ConfigTabInit(Boolean update = false) {
 }
 
 static UInt16 ConfigTabSave() {
-	ControlType *cckP[2];
+	ControlType *cckP[3];
 	FieldType *fld1P;
 	ListPtr listP;
 	FormPtr frmP;
@@ -208,9 +209,11 @@ static UInt16 ConfigTabSave() {
 
 	cckP[0] = (ControlType *)GetObjectPtr(TabCardConfigCacheCheckbox);
 	cckP[1] = (ControlType *)GetObjectPtr(TabCardConfigLedCheckbox);
+	cckP[2] = (ControlType *)GetObjectPtr(TabCardConfigDetectCheckbox);
 
 	gPrefs->card.useCache = CtlGetValue(cckP[0]);
 	gPrefs->card.showLED = CtlGetValue(cckP[1]);
+	gPrefs->card.autoDetect = CtlGetValue(cckP[2]);
 
 	fld1P = (FieldType *)GetObjectPtr(TabCardConfigCacheSizeField);
 	frmP = FrmGetActiveForm();
