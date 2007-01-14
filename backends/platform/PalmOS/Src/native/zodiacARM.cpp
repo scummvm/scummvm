@@ -48,6 +48,8 @@ GlobalsDataType g_vars;
 GlobalsDataPtr gVars = &g_vars;
 UInt32 g_stackSize;
 
+extern "C" void __destroy_global_chain(void);
+
 static void palm_main(int argc, char **argvP)  {
 #ifdef COMPILE_OS5
 	if (gVars->advancedMode)
@@ -142,6 +144,9 @@ extern UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 		StkSwap(g_oldStack, 0);
 		free(g_newStack);
 	}
+
+	// Destroy all constructed global objects
+	__destroy_global_chain();
 
 	return 0;
 }

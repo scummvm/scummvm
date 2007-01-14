@@ -56,6 +56,7 @@ UInt32 __ARMlet_Startup__(const void*, void*, Call68KFuncType*);
  * mark the start and end of the various data sections.
  */
 extern long __DataStart__[];
+extern long __sinit__[];
 extern long __RODataStart__[];
 extern long __BSSStart__[];
 extern long __BSSEnd__[];
@@ -63,6 +64,9 @@ extern long __CodeRelocStart__[];
 extern long __CodeRelocEnd__[];
 extern long __DataRelocStart__[];
 extern long __DataRelocEnd__[];
+
+/*	simple function pointer	*/
+typedef void (*StaticInitializer)(void);
 
 /*
  * This function performs relocation for Tapwave Native Application.
@@ -72,6 +76,14 @@ static void relocate(void)
     // this symbol points to the very beginning of current application
     long base = (long) __ARMlet_Startup__;
     long *cur, *end;
+
+	// handle static initializers
+	if (__sinit__) {
+		long s, *p;
+
+		for (p = __sinit__; p && (s = *p) != 0; p++)
+			((StaticInitializer)(s + base))();
+	}
 
     // handle code-to-data relocation
     cur = __CodeRelocStart__;
