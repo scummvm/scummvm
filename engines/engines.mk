@@ -84,3 +84,9 @@ DEFINES += -DDISABLE_TOUCHE
 else
 MODULES += engines/touche
 endif
+
+ifdef DISABLE_PARALLACTION
+DEFINES += -DDISABLE_PARALLACTION
+else
+MODULES += engines/parallaction
+endif

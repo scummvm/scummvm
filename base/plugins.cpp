@@ -153,6 +153,9 @@ public:
 		#ifndef DISABLE_TOUCHE
 		LINK_PLUGIN(TOUCHE)
 		#endif
+		#ifndef DISABLE_PARALLACTION
+		LINK_PLUGIN(PARALLACTION)
+		#endif
 
 		return pl;
 	}

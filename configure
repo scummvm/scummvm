@@ -61,6 +61,7 @@ _build_lure=no
 _build_cine=yes
 _build_agi=yes
 _build_touche=yes
+_build_parallaction=yes
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -334,6 +335,7 @@ Optional Features:
   --disable-cine           don't build the Cinematique engine evo 1
   --disable-agi            don't build the AGI engine
   --disable-touche         don't build the Touche: The Adventures of the Fifth Musketeer engine
+  --enable-parallaction    build the Parallaction engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -403,6 +405,7 @@ for ac_option in $@; do
       --disable-cine)           _build_cine=no ;;
       --disable-agi)            _build_agi=no ;;
       --disable-touche)         _build_touche=no ;;
+      --enable-parallaction)    _build_parallaction=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -674,23 +677,24 @@ fi;
 #
 # Engine selection
 #
-add_flag_to_config_mk $_build_scumm       'DISABLE_SCUMM'
-add_flag_to_config_mk $_build_scumm_7_8   'DISABLE_SCUMM_7_8'
-add_flag_to_config_mk $_build_he          'DISABLE_HE'
-add_flag_to_config_mk $_build_agos        'DISABLE_AGOS'
-add_flag_to_config_mk $_build_sky         'DISABLE_SKY'
-add_flag_to_config_mk $_build_sword1      'DISABLE_SWORD1'
-add_flag_to_config_mk $_build_sword2      'DISABLE_SWORD2'
-add_flag_to_config_mk $_build_queen       'DISABLE_QUEEN'
-add_flag_to_config_mk $_build_kyra        'DISABLE_KYRA'
-add_flag_to_config_mk $_build_saga        'DISABLE_SAGA'
-add_flag_to_config_mk $_build_gob         'DISABLE_GOB'
-add_flag_to_config_mk $_build_lure        'DISABLE_LURE'
-add_flag_to_config_mk $_build_cine        'DISABLE_CINE'
-add_flag_to_config_mk $_build_agi         'DISABLE_AGI'
-add_flag_to_config_mk $_build_touche      'DISABLE_TOUCHE'
-add_flag_to_config_mk $_build_hq_scalers  'DISABLE_HQ_SCALERS'
-add_flag_to_config_mk $_build_scalers     'DISABLE_SCALERS'
+add_flag_to_config_mk $_build_scumm        'DISABLE_SCUMM'
+add_flag_to_config_mk $_build_scumm_7_8    'DISABLE_SCUMM_7_8'
+add_flag_to_config_mk $_build_he           'DISABLE_HE'
+add_flag_to_config_mk $_build_agos         'DISABLE_AGOS'
+add_flag_to_config_mk $_build_sky          'DISABLE_SKY'
+add_flag_to_config_mk $_build_sword1       'DISABLE_SWORD1'
+add_flag_to_config_mk $_build_sword2       'DISABLE_SWORD2'
+add_flag_to_config_mk $_build_queen        'DISABLE_QUEEN'
+add_flag_to_config_mk $_build_kyra         'DISABLE_KYRA'
+add_flag_to_config_mk $_build_saga         'DISABLE_SAGA'
+add_flag_to_config_mk $_build_gob          'DISABLE_GOB'
+add_flag_to_config_mk $_build_lure         'DISABLE_LURE'
+add_flag_to_config_mk $_build_cine         'DISABLE_CINE'
+add_flag_to_config_mk $_build_agi          'DISABLE_AGI'
+add_flag_to_config_mk $_build_touche       'DISABLE_TOUCHE'
+add_flag_to_config_mk $_build_parallaction 'DISABLE_PARALLACTION'
+add_flag_to_config_mk $_build_hq_scalers   'DISABLE_HQ_SCALERS'
+add_flag_to_config_mk $_build_scalers      'DISABLE_SCALERS'
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
@@ -1290,6 +1294,9 @@ if test "$_build_agi" = yes ; then
 fi
 if test "$_build_touche" = yes ; then
 	echo "    Touche: The Adventures of the Fifth Musketeer"
+fi
+if test "$_build_parallaction" = yes ; then
+	echo "    Parallaction"
 fi
 
 echo
