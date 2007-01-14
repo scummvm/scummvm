@@ -594,12 +594,14 @@ Parallaction::InputData *Parallaction::translateInput() {
 
 			_hoverZone = z;
 			_input._event = kEvEnterZone;
+			// FIXME: casting pointer to int32
 			_input._data= (int32)&z->_label;
 			return &_input;
 		}
 
 		if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
 
+			// FIXME: casting pointer to int32
 			_input._data = (int32)z;
 			if (z->_flags & kFlagsNoWalk) {
 //				printf("7.1\n");

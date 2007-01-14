@@ -71,6 +71,7 @@ void playMusic() {
 	_music_command(17, 1, 0, 0);    // set source segment
 	_music_command(7, 1, 0, 0);     // set source offset and do SOMETHING
 
+	// FIXME: casting pointer to uint32
 	_music_command(2, (uint32)_musicBits, 0, 0);    // play
 
 	_playing = true;
