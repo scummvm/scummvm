@@ -85,6 +85,10 @@ template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = Eq
 class HashMap {
 	friend class const_iterator;
 private:
+#if defined (PALMOS_MODE)
+public:
+#endif
+
 	struct Node {
 		Key _key;
 		Val _value;
