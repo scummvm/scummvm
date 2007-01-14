@@ -213,7 +213,7 @@ int Parallaction::init() {
 	_yourself._zone._type = kZoneYou;
 
 	_yourself._zone._label._data0 = NULL;
-	_yourself._zone._name = "yourself";
+	_yourself._zone._name = strdup("yourself");
 
 	addNode(&_animations, &_yourself._zone._node);
 	_graphics = new Graphics(this);
