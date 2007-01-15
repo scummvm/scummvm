@@ -186,14 +186,14 @@ int Parallaction::init() {
 		return -1;
 	}
 
-	strcpy(_location, "night");
-	strcpy(_characterName, "drki");
-	strcpy(_languageDir, "it/");
-	_skipMenu = true;
+//	strcpy(_location, "night");
+//	strcpy(_characterName, "drki");
+//	strcpy(_languageDir, "it/");
+//	_skipMenu = true;
 
 	_engineFlags = 0;
 
-//	strcpy(_characterName, "dough");
+	strcpy(_characterName, "dough");
 	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
 
