@@ -1108,15 +1108,6 @@ void Graphics::freeStaticCnv(StaticCnv *cnv) {
 //	* path data [bit 8] (walkable areas)
 //
 
-uint16 _swap_16(uint16 *v) {
-
-	uint16 v2 = *v;
-	uint16 v3 = *v & 0xFF;
-	*v = (v3 << 8) | ((v2 >> 8) & 0xFF);
-
-	return *v;
-}
-
 
 void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
 
@@ -1143,7 +1134,9 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	byte v150[4];
 	readArchivedFile(file, _palette, PALETTE_SIZE);
 	readArchivedFile(file, &v150, 4);
-	readArchivedFile(file, _palettefx, sizeof(PaletteFxRange)*6);
+
+	byte tempfx[sizeof(PaletteFxRange)*6];
+	readArchivedFile(file, &tempfx, sizeof(PaletteFxRange)*6);
 
 //	setPalette(palette);
 
@@ -1153,10 +1146,13 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 		_bgLayers[_si] = _al;
 	}
 
+    Common::MemoryReadStream sread(tempfx, sizeof(PaletteFxRange)*6);
 	for (_si = 0; _si < 6; _si++) {
-		_swap_16(&_palettefx[_si]._timer);
-		_swap_16(&_palettefx[_si]._step);
-		_swap_16(&_palettefx[_si]._flags);
+	    _palettefx[_si]._timer = sread.readUint16BE();
+	    _palettefx[_si]._step = sread.readUint16BE();
+	    _palettefx[_si]._flags = sread.readUint16BE();
+	    _palettefx[_si]._first = sread.readByte();
+	    _palettefx[_si]._last = sread.readByte();
 	}
 
 #if 0
