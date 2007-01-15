@@ -374,7 +374,8 @@ void displayCharacterComment(ExamineData *data) {
 	v3C._width = _characterFace._width;
 	v3C._height = _characterFace._height;
 	v3C._data0 = _characterFace._array[0];
-//	v3C._data1 = _characterFace.field_8[0];
+	v3C._data1 = NULL; //_characterFace.field_8[0];
+	v3C._data2 = NULL;
 
 	_vm->_graphics->loadExternalCnv("comiccnv", &Graphics::_font);
 	_vm->_graphics->flatBlitCnv(&v3C, 190, 80, Graphics::kBitFront, v3C._data1);
