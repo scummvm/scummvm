@@ -419,7 +419,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ { NULL, NULL, {NULL, 0, NULL}, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
+	{ { NULL, NULL, AD_ENTRY1(NULL, NULL), Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
 };
 
 bool CineEngine::initGame() {
