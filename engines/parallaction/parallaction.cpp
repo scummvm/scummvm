@@ -428,8 +428,8 @@ void Parallaction::processInput(InputData *data) {
 		_graphics->_labelPosition[1]._y = -1000;
 		_graphics->_labelPosition[0]._x = -1000;
 		_graphics->_labelPosition[0]._y = -1000;
-		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_data, JOBPRIORITY_DRAWLABEL);
-		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_data, JOBPRIORITY_HIDEINVENTORY);
+		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_cnv, JOBPRIORITY_DRAWLABEL);
+		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_cnv, JOBPRIORITY_HIDEINVENTORY);
 		break;
 
 	case kEvExitZone:
@@ -442,7 +442,7 @@ void Parallaction::processInput(InputData *data) {
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
 		pauseJobs();
-		z = (Zone*)data->_data;
+		z = data->_zone;
 		if (runZone(z) == 0) {
 			runCommands( z->_commands, z );
 		}
@@ -466,9 +466,9 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvCloseInventory: // closes inventory and possibly select item
 		closeInventory();
-		if ((data->_data != -1) && (_inventory[data->_data]._id != 0)) {
+		if ((data->_inventoryIndex != -1) && (_inventory[data->_inventoryIndex]._id != 0)) {
 			// activates item
-			changeCursor(data->_data);
+			changeCursor(data->_inventoryIndex);
 		}
 		_jRunScripts = addJob(&jobRunScripts, 0, JOBPRIORITY_RUNSTUFF);
 		addJob(&jobHideInventory, 0, JOBPRIORITY_HIDEINVENTORY);
@@ -477,8 +477,8 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvHoverInventory:
 		highlightInventoryItem(_procCurrentHoverItem, 12);	// disable
-		highlightInventoryItem(data->_data, 19);						// enable
-		_procCurrentHoverItem = data->_data;
+		highlightInventoryItem(data->_inventoryIndex, 19);						// enable
+		_procCurrentHoverItem = data->_inventoryIndex;
 		break;
 
 	case kEvWalk:
@@ -594,15 +594,13 @@ Parallaction::InputData *Parallaction::translateInput() {
 
 			_hoverZone = z;
 			_input._event = kEvEnterZone;
-			// FIXME: casting pointer to int32
-			_input._data= (int32)&z->_label;
+			_input._cnv = &z->_label;
 			return &_input;
 		}
 
 		if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
 
-			// FIXME: casting pointer to int32
-			_input._data = (int32)z;
+			_input._zone = z;
 			if (z->_flags & kFlagsNoWalk) {
 //				printf("7.1\n");
 
@@ -645,13 +643,13 @@ Parallaction::InputData *Parallaction::translateInput() {
 		// right up hides inventory
 
 		_input._event = kEvCloseInventory;
-		_input._data = getHoverInventoryItem(_mousePos._x, _mousePos._y);
+		_input._inventoryIndex = getHoverInventoryItem(_mousePos._x, _mousePos._y);
 		highlightInventoryItem(_transCurrentHoverItem, 12); 		// disable
 
 		if ((_engineFlags & kEngineDragging) == 0) return &_input;
 
 		_engineFlags &= ~kEngineDragging;
-		Zone *z = hitZone(kZoneMerge, _activeItem._index, _inventory[_input._data]._index);
+		Zone *z = hitZone(kZoneMerge, _activeItem._index, _inventory[_input._inventoryIndex]._index);
 
 		if (z != NULL) {
 			dropItem(z->u.merge->_obj1 - 4);
@@ -667,7 +665,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 
 	_transCurrentHoverItem = _si;
 	_input._event = kEvHoverInventory;
-	_input._data = _si;
+	_input._inventoryIndex = _si;
 	return &_input;
 
 }

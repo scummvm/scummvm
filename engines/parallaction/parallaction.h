@@ -252,7 +252,10 @@ protected:		// data
 	struct InputData {
 		uint16		_event;
 		Point		_mousePos;
-		int32		_data;
+
+		int16       _inventoryIndex;
+		Zone*       _zone;
+        StaticCnv*  _cnv;
 	};
 
 	bool		_skipMenu;
