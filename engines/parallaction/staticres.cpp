@@ -47,7 +47,7 @@ byte Graphics::_mouseArrow[256] = {
 //
 //	proportional font glyphs width
 //
-byte _glyphWidths[126] = {
+const byte _glyphWidths[126] = {
   0x04, 0x03, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x04, 0x04, 0x06, 0x06, 0x03, 0x05, 0x03, 0x05,
   0x06, 0x06, 0x06, 0x06, 0x07, 0x06, 0x06, 0x06, 0x06, 0x06, 0x03, 0x03, 0x05, 0x04, 0x05, 0x05,
   0x03, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x03, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
@@ -58,7 +58,7 @@ byte _glyphWidths[126] = {
   0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x06, 0x05, 0x05, 0x05, 0x05
 };
 
-char *_zoneFlagNames[] = {
+const char *_zoneFlagNames[] = {
 	"closed",
 	"active",
 	"remove",
@@ -73,7 +73,8 @@ char *_zoneFlagNames[] = {
 	"nowalk",
 	0
 };
-char *_zoneTypeNames[] = {
+
+const char *_zoneTypeNames[] = {
 	"examine",
 	"door",
 	"get",
@@ -102,7 +103,7 @@ const char _gameNames[10][20] = {
 	"GAME10"
 };
 
-char *commands_names[] = {
+const char *commands_names[] = {
 	"set",
 	"clear",
 	"start",
@@ -122,7 +123,7 @@ char *commands_names[] = {
 	0
 };
 
-char *_instructionNames[] = {
+const char *_instructionNames[] = {
 	"on",
 	"off",
 	"x",
@@ -144,7 +145,7 @@ char *_instructionNames[] = {
 	0
 };
 
-char *_callableNames[] = {
+const char *_callableNames[] = {
 	"HBOff",
 	"Projector",
 	"StartIntro",

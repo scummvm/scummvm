@@ -150,7 +150,7 @@ void Parallaction::parseLocation(const char *filename) {
 				_si = 1;
 
 				do {
-					byte _al = searchTable(_tokens[_si], _localFlagNames);
+					byte _al = searchTable(_tokens[_si], (const char **)_localFlagNames);
 					_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
 
 					_si++;

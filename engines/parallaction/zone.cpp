@@ -86,7 +86,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
-				z->_type = (4 + searchTable(_tokens[2], _objectsNames)) << 16;
+				z->_type = (4 + searchTable(_tokens[2], (const char **)_objectsNames)) << 16;
 			}
 			int16 _si = searchTable(_tokens[1], _zoneTypeNames);
 			if (_si != -1) {
@@ -307,19 +307,19 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 			}
 
 			if (!scumm_stricmp(_tokens[0], "icon")) {
-				u->get->_icon = 4 + searchTable(_tokens[1], _objectsNames);
+				u->get->_icon = 4 + searchTable(_tokens[1], (const char **)_objectsNames);
 			}
 			break;
 
 		case kZoneMerge: // merge Zone init
 			if (!scumm_stricmp(_tokens[0], "obj1")) {
-				u->merge->_obj1 = 4 + searchTable(_tokens[1], _objectsNames);
+				u->merge->_obj1 = 4 + searchTable(_tokens[1], (const char **)_objectsNames);
 			}
 			if (!scumm_stricmp(_tokens[0], "obj2")) {
-				u->merge->_obj2 = 4 + searchTable(_tokens[1], _objectsNames);
+				u->merge->_obj2 = 4 + searchTable(_tokens[1], (const char **)_objectsNames);
 			}
 			if (!scumm_stricmp(_tokens[0], "newobj")) {
-				u->merge->_obj3 = 4 + searchTable(_tokens[1], _objectsNames);
+				u->merge->_obj3 = 4 + searchTable(_tokens[1], (const char **)_objectsNames);
 			}
 			break;
 

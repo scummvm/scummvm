@@ -114,7 +114,7 @@ void Parallaction::freeTable(char** table) {
 
 }
 
-int16 Parallaction::searchTable(const char *s, char **table) {
+int16 Parallaction::searchTable(const char *s, const char **table) {
 
 	int16 count = 0;
 

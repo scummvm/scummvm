@@ -114,13 +114,13 @@ extern char *_locationComment;
 extern char *_locationEndComment;
 
 extern char *_objectsNames[];
-extern char *_zoneTypeNames[];
-extern char *_zoneFlagNames[];
+extern const char *_zoneTypeNames[];
+extern const char *_zoneFlagNames[];
 extern char *_localFlagNames[];
-extern char *commands_names[];
+extern const char *commands_names[];
 
-extern char *_instructionNames[];
-extern char *_callableNames[];
+extern const char *_instructionNames[];
+extern const char *_callableNames[];
 
 void waitUntilLeftClick();
 
@@ -216,9 +216,9 @@ public:
 
 	void waitTime(uint32 t);
 
-	void initTable(const char *path, char **table);
-	void freeTable(char** table);
-	int16 searchTable(const char *s, char **table);
+	static void initTable(const char *path, char **table);
+	static void freeTable(char** table);
+	static int16 searchTable(const char *s, const char **table);
 
 	void parseLocation(const char *filename);
 	void changeCursor(int32 index);

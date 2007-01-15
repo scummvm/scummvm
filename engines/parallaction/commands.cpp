@@ -44,8 +44,6 @@ namespace Parallaction {
 #define CMD_MOVE			15
 #define CMD_STOP			16
 
-extern char *_callableNames[];
-
 
 Command *parseCommands(ArchivedFile *file) {
 //	printf("parseCommands()\n");
@@ -70,9 +68,9 @@ Command *parseCommands(ArchivedFile *file) {
 		case CMD_SET:	// set
 		case CMD_CLEAR: // clear
 		case CMD_TOGGLE:	// toggle
-			if (_vm->searchTable(_tokens[1], _globalTable) == -1) {
+			if (_vm->searchTable(_tokens[1], (const char **)_globalTable) == -1) {
 				do {
-					char _al = _vm->searchTable(_tokens[_si], _localFlagNames);
+					char _al = _vm->searchTable(_tokens[_si], (const char **)_localFlagNames);
 					_si++;
 					cmd->u._flags |= 1 << (_al - 1);
 				} while (!scumm_stricmp(_tokens[_si++], "|"));
@@ -80,7 +78,7 @@ Command *parseCommands(ArchivedFile *file) {
 			} else {
 				cmd->u._flags |= kFlagsGlobal;
 				do {
-					char _al = _vm->searchTable(_tokens[1], _globalTable);
+					char _al = _vm->searchTable(_tokens[1], (const char **)_globalTable);
 					_si++;
 					cmd->u._flags |= 1 << (_al - 1);
 				} while (!scumm_stricmp(_tokens[_si++], "|"));
@@ -121,7 +119,7 @@ Command *parseCommands(ArchivedFile *file) {
 			break;
 
 		case CMD_DROP:	// drop
-			cmd->u._object = _vm->searchTable(_tokens[_si], _objectsNames);
+			cmd->u._object = _vm->searchTable(_tokens[_si], (const char **)_objectsNames);
 			_si++;
 			break;
 
@@ -148,10 +146,10 @@ Command *parseCommands(ArchivedFile *file) {
 					cmd->_flagsOn |= kFlagsEnter;
 				} else
 				if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-					byte _al = _vm->searchTable(&_tokens[_si][2], _localFlagNames);
+					byte _al = _vm->searchTable(&_tokens[_si][2], (const char **)_localFlagNames);
 					cmd->_flagsOff |= 1 << (_al - 1);
 				} else {
-					byte _al = _vm->searchTable(_tokens[_si], _localFlagNames);
+					byte _al = _vm->searchTable(_tokens[_si], (const char **)_localFlagNames);
 					cmd->_flagsOn |= 1 << (_al - 1);
 				}
 
@@ -173,10 +171,10 @@ Command *parseCommands(ArchivedFile *file) {
 					cmd->_flagsOn |= kFlagsEnter;
 				} else
 				if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-					byte _al = _vm->searchTable(&_tokens[_si][2], _globalTable);
+					byte _al = _vm->searchTable(&_tokens[_si][2], (const char **)_globalTable);
 					cmd->_flagsOff |= 1 << (_al - 1);
 				} else {
-					byte _al = _vm->searchTable(_tokens[_si], _localFlagNames);
+					byte _al = _vm->searchTable(_tokens[_si], (const char **)_localFlagNames);
 					cmd->_flagsOn |= 1 << (_al - 1);
 				}
 

@@ -56,8 +56,10 @@ char	   *_locationComment = NULL;
 char	   *_locationEndComment = NULL;
 uint32		_localFlags[120] = { 0 };
 
+static char tmp_visited_str[] = "visited";
+
 char *_localFlagNames[32] = {
-	"visited",
+	tmp_visited_str, // "visited",
 	0,
 	0,
 	0,
