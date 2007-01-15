@@ -52,6 +52,8 @@
 #pragma warning( disable : 4512 ) // turn off "assignment operator could not be generated" warning
 #pragma warning( disable : 4351 ) // turn off "new behavior ... will be default initialized" warning
 #pragma warning( disable : 4505 ) // turn off "unreferenced local function has been removed"
+#pragma warning( disable : 4510 ) // turn off "default constructor could not be generated"
+#pragma warning( disable : 4610 ) // turn off "struct can never be instantiated - user defined constructor required"
 
 // FIXME: 4702 & 4706 - may be enabled
 #pragma warning( disable : 4702 ) // turn off "unreachable code" warning
