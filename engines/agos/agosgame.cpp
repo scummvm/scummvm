@@ -236,7 +236,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "gamepc",		GAME_BASEFILE,	"d1979d2fbc5fb5276563578ca55cbcec"},
 	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9"},
 	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955"},
-	{ "start",		GAME_RESTFILE,	"4d380a35ba941d03ee5084c71d20055b"},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270"},
 	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7"},
 	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5"},
 	{ NULL, 0, NULL}
