@@ -342,7 +342,7 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 		fillScanline(x, y);
 	}
 
-	stackPtr = NULL;
+	stackPtr = 0;
 }
 
 /**************************************************************************
