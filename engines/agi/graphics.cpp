@@ -39,7 +39,7 @@ namespace Agi {
 #  define MAX_INT (int)((unsigned)~0 >> 1)
 #endif
 
-extern uint8 cur_font[];
+#include "agi/font.h"
 
 /**
  * 16 color RGB palette (plus 16 transparent colors).
@@ -187,9 +187,9 @@ void GfxMgr::shakeEnd() {
 
 void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int bg, bool checkerboard) {
 	int x1, y1, xx, yy, cc;
-	uint8 *p;
+	const uint8 *p;
 
-	p = cur_font + ((unsigned int)c * CHAR_LINES);
+	p = Agi::cur_font + ((unsigned int)c * CHAR_LINES);
 	for (y1 = 0; y1 < CHAR_LINES; y1++) {
 		for (x1 = 0; x1 < CHAR_COLS; x1++) {
 			xx = x + x1;
