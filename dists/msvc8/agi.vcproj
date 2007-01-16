@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -197,7 +197,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\font.cpp"
+			RelativePath="..\..\engines\agi\font.h"
 			>
 		</File>
 		<File
@@ -226,10 +226,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\keyboard.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\list.h"
 			>
 		</File>
 		<File
@@ -301,10 +297,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\savegame.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\agi\sound.cpp"
 			>
 		</File>
@@ -322,10 +314,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\text.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\text.h"
 			>
 		</File>
 		<File
