@@ -31,7 +31,6 @@
 #include "agi/keyboard.h"
 #include "agi/opcodes.h"
 #include "agi/menu.h"
-#include "agi/text.h"
 
 namespace Agi {
 

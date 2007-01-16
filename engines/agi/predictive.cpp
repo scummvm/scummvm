@@ -23,7 +23,6 @@
 #include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
-#include "agi/text.h"
 
 #include "common/func.h"
 

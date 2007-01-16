@@ -25,7 +25,6 @@
 #include "common/stdafx.h"
 
 #include "agi/agi.h"
-#include "agi/text.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"

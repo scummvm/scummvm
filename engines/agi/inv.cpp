@@ -28,8 +28,6 @@
 #include "agi/sprite.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
-#include "agi/text.h"
-#include "agi/keyboard.h"
 
 namespace Agi {
 

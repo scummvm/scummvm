@@ -26,7 +26,6 @@
 #include "agi/sprite.h"		/* for commit_both() */
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
-#include "agi/text.h"
 
 namespace Agi {
 

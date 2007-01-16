@@ -29,7 +29,6 @@
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
-#include "agi/text.h"
 #include "common/list.h"
 
 namespace Agi {

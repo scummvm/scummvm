@@ -38,7 +38,6 @@
 #include "sound/mixer.h"
 
 #include "agi/agi.h"
-#include "agi/text.h"
 #include "agi/graphics.h"
 #include "agi/sprite.h"
 #include "agi/opcodes.h"
@@ -263,7 +262,7 @@ void AgiEngine::releaseImageStack(void) {
 		free(_imageStack);
 	_imageStack = NULL;
 	_stackSize = 0;
-	_imageStackPointer = NULL;
+	_imageStackPointer = 0;
 }
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
