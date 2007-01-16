@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/agi/font.cpp $
- * $Id: font.cpp 22609 2006-05-24 14:00:08Z aquadran $
+ * $URL$
+ * $Id$
  *
  */
 
