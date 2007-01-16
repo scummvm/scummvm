@@ -27,7 +27,7 @@
 
 namespace Agi {
 
-void LZW_expand(uint8 *, uint8 *, int32);
+void lzwExpand(uint8 *, uint8 *, int32);
 
 }				// End of namespace Agi
 

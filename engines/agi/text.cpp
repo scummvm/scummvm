@@ -30,7 +30,7 @@
 
 namespace Agi {
 
-void AgiEngine::print_text2(int l, const char *msg, int foff, int xoff, int yoff,
+void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 				int len, int fg, int bg, bool checkerboard) {
 	int x1, y1;
 	int maxx, minx, ofoff;
@@ -113,14 +113,14 @@ void AgiEngine::print_text2(int l, const char *msg, int foff, int xoff, int yoff
 
 /* len is in characters, not pixels!!
  */
-void AgiEngine::blit_textbox(const char *p, int y, int x, int len) {
+void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 	/* if x | y = -1, then centre the box */
 	int xoff, yoff, lin, h, w;
 	char *msg, *m;
 
 	debugC(3, kDebugLevelText, "x=%d, y=%d, len=%d", x, y, len);
-	if (game.window.active)
-		close_window();
+	if (_game.window.active)
+		closeWindow();
 
 	if (x == 0 && y == 0 && len == 0)
 		x = y = -1;
@@ -132,7 +132,7 @@ void AgiEngine::blit_textbox(const char *p, int y, int x, int len) {
 	yoff = y * CHAR_LINES;
 	len--;
 
-	m = msg = word_wrap_string(agi_sprintf(p), &len);
+	m = msg = wordWrapString(agiSprintf(p), &len);
 
 	for (lin = 1; *m; m++) {
 		/* Test \r for MacOS 8 */
@@ -154,9 +154,9 @@ void AgiEngine::blit_textbox(const char *p, int y, int x, int len) {
 	if (yoff < 0)
 		yoff = (GFX_HEIGHT - 3 * CHAR_LINES - h) / 2;
 
-	draw_window(xoff, yoff, xoff + w - 1, yoff + h - 1);
+	drawWindow(xoff, yoff, xoff + w - 1, yoff + h - 1);
 
-	print_text2(2, msg, 0, CHAR_COLS + xoff, CHAR_LINES + yoff,
+	printText2(2, msg, 0, CHAR_COLS + xoff, CHAR_LINES + yoff,
 			len + 1, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	free(msg);
@@ -164,20 +164,20 @@ void AgiEngine::blit_textbox(const char *p, int y, int x, int len) {
 	_gfx->doUpdate();
 }
 
-void AgiEngine::erase_textbox() {
-	if (!game.window.active) {
+void AgiEngine::eraseTextbox() {
+	if (!_game.window.active) {
 		debugC(3, kDebugLevelText, "no window active");
 		return;
 	}
 
-	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", game.window.x1,
-			game.window.y1, game.window.x2, game.window.y2);
+	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", _game.window.x1,
+			_game.window.y1, _game.window.x2, _game.window.y2);
 
-	_gfx->restoreBlock(game.window.x1, game.window.y1,
-			game.window.x2, game.window.y2, game.window.buffer);
+	_gfx->restoreBlock(_game.window.x1, _game.window.y1,
+			_game.window.x2, _game.window.y2, _game.window.buffer);
 
-	free(game.window.buffer);
-	game.window.active = false;
+	free(_game.window.buffer);
+	_game.window.active = false;
 
 	_gfx->doUpdate();
 }
@@ -189,23 +189,23 @@ void AgiEngine::erase_textbox() {
 /**
  * Print text in the AGI engine screen.
  */
-void AgiEngine::print_text(const char *msg, int f, int x, int y, int len, int fg, int bg, bool checkerboard) {
+void AgiEngine::printText(const char *msg, int f, int x, int y, int len, int fg, int bg, bool checkerboard) {
 	f *= CHAR_COLS;
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
 
 	debugC(4, kDebugLevelText, "%s, %d, %d, %d, %d, %d, %d", msg, f, x, y, len, fg, bg);
-	print_text2(0, agi_sprintf(msg), f, x, y, len, fg, bg, checkerboard);
+	printText2(0, agiSprintf(msg), f, x, y, len, fg, bg, checkerboard);
 }
 
 /**
  * Print text in the AGI engine console.
  */
-void AgiEngine::print_text_console(const char *msg, int x, int y, int len, int fg, int bg) {
+void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= 10;
 
-	print_text2(1, msg, 0, x, y, len, fg, bg);
+	printText2(1, msg, 0, x, y, len, fg, bg);
 }
 
 /**
@@ -213,7 +213,7 @@ void AgiEngine::print_text_console(const char *msg, int x, int y, int len, int f
  * @param str  String to wrap.
  * @param len  Length of line.
  */
-char *AgiEngine::word_wrap_string(char *str, int *len) {
+char *AgiEngine::wordWrapString(char *str, int *len) {
 	/* If the message has a long word (longer than 31 character) then
 	 * loop in line 239 (for (; *v != ' '; v--, c--);) can wrap
 	 * around 0 and write large number in c. This causes returned
@@ -275,13 +275,13 @@ char *AgiEngine::word_wrap_string(char *str, int *len) {
 /**
  * Remove existing window, if any.
  */
-void AgiEngine::close_window() {
+void AgiEngine::closeWindow() {
 	debugC(4, kDebugLevelText, "close window");
-	_sprites->erase_both();
-	erase_textbox();	/* remove window, if any */
-	_sprites->blit_both();
-	_sprites->commit_both();		/* redraw sprites */
-	game.has_window = false;
+	_sprites->eraseBoth();
+	eraseTextbox();	/* remove window, if any */
+	_sprites->blitBoth();
+	_sprites->commitBoth();		/* redraw sprites */
+	_game.hasWindow = false;
 }
 
 /**
@@ -290,15 +290,15 @@ void AgiEngine::close_window() {
  * centered in the screen and waits until a key is pressed.
  * @param p The text to be displayed
  */
-int AgiEngine::message_box(const char *s) {
+int AgiEngine::messageBox(const char *s) {
 	int k;
 
-	_sprites->erase_both();
-	blit_textbox(s, -1, -1, -1);
-	_sprites->blit_both();
-	k = wait_key();
+	_sprites->eraseBoth();
+	blitTextbox(s, -1, -1, -1);
+	_sprites->blitBoth();
+	k = waitKey();
 	debugC(4, kDebugLevelText, "wait_key returned %02x", k);
-	close_window();
+	closeWindow();
 
 	return k;
 }
@@ -310,18 +310,18 @@ int AgiEngine::message_box(const char *s) {
  * @param p The text to be displayed
  * @param b NULL-terminated list of button labels
  */
-int AgiEngine::selection_box(const char *m, const char **b) {
+int AgiEngine::selectionBox(const char *m, const char **b) {
 	int x, y, i, s;
 	int key, active = 0;
 	int rc = -1;
 	int bx[5], by[5];
 
-	_sprites->erase_both();
-	blit_textbox(m, -1, -1, -1);
+	_sprites->eraseBoth();
+	blitTextbox(m, -1, -1, -1);
 
-	x = game.window.x1 + 5 * CHAR_COLS / 2;
-	y = game.window.y2 - 5 * CHAR_LINES / 2;
-	s = game.window.x2 - game.window.x1 + 1 - 5 * CHAR_COLS;
+	x = _game.window.x1 + 5 * CHAR_COLS / 2;
+	y = _game.window.y2 - 5 * CHAR_LINES / 2;
+	s = _game.window.x2 - _game.window.x1 + 1 - 5 * CHAR_COLS;
 	debugC(3, kDebugLevelText, "s = %d", s);
 
 	/* Automatically position buttons */
@@ -342,7 +342,7 @@ int AgiEngine::selection_box(const char *m, const char **b) {
 		x += CHAR_COLS * strlen(b[i]) + s;
 	}
 
-	_sprites->blit_both();
+	_sprites->blitBoth();
 
 	/* clear key queue */
 	while (_gfx->keypress()) {
@@ -355,7 +355,7 @@ int AgiEngine::selection_box(const char *m, const char **b) {
 			_gfx->drawButton(bx[i], by[i], b[i], i == active, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
-		key = do_poll_keyboard();
+		key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
 			rc = active;
@@ -384,7 +384,7 @@ press:
 	debugC(4, kDebugLevelText, "Button pressed: %d", rc);
 
 getout:
-	close_window();
+	closeWindow();
 	debugC(2, kDebugLevelText, "Result = %d", rc);
 
 	return rc;
@@ -405,43 +405,43 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 	if (len == 0)
 		len = 30;
 
-	blit_textbox(p, lin, col, len);
+	blitTextbox(p, lin, col, len);
 
-	if (getflag(F_output_mode)) {
+	if (getflag(fOutputMode)) {
 		/* non-blocking window */
-		setflag(F_output_mode, false);
+		setflag(fOutputMode, false);
 		return 1;
 	}
 
 	/* blocking */
 
-	if (game.vars[V_window_reset] == 0) {
+	if (_game.vars[vWindowReset] == 0) {
 		int k;
-		setvar(V_key, 0);
-		k = wait_key();
-		close_window();
+		setvar(vKey, 0);
+		k = waitKey();
+		closeWindow();
 		return k;
 	}
 
 	/* timed window */
 
 	debugC(3, kDebugLevelText, "f15==0, v21==%d => timed", getvar(21));
-	game.msg_box_ticks = getvar(V_window_reset) * 10;
-	setvar(V_key, 0);
+	_game.msgBoxTicks = getvar(vWindowReset) * 10;
+	setvar(vKey, 0);
 
 	do {
-		main_cycle();
-		if (game.keypress == KEY_ENTER) {
+		mainCycle();
+		if (_game.keypress == KEY_ENTER) {
 			debugC(4, kDebugLevelText, "KEY_ENTER");
-			setvar(V_window_reset, 0);
-			game.keypress = 0;
+			setvar(vWindowReset, 0);
+			_game.keypress = 0;
 			break;
 		}
-	} while (game.msg_box_ticks > 0);
+	} while (_game.msgBoxTicks > 0);
 
-	setvar(V_window_reset, 0);
+	setvar(vWindowReset, 0);
 
-	close_window();
+	closeWindow();
 
 	return 0;
 }
@@ -449,7 +449,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 /**
  *
  */
-void AgiEngine::print_status(const char *message, ...) {
+void AgiEngine::printStatus(const char *message, ...) {
 	char x[42];
 	va_list args;
 
@@ -460,10 +460,10 @@ void AgiEngine::print_status(const char *message, ...) {
 	va_end(args);
 
 	debugC(4, kDebugLevelText, "fg=%d, bg=%d", STATUS_FG, STATUS_BG);
-	print_text(x, 0, 0, game.line_status, 40, STATUS_FG, STATUS_BG);
+	printText(x, 0, 0, _game.lineStatus, 40, STATUS_FG, STATUS_BG);
 }
 
-char *AgiEngine::safe_strcat(char *s, const char *t) {
+char *AgiEngine::safeStrcat(char *s, const char *t) {
 	if (t != NULL)
 		strcat(s, t);
 
@@ -478,12 +478,12 @@ char *AgiEngine::safe_strcat(char *s, const char *t) {
  * @param n  logic number
  */
 #define MAX_LEN 768
-char *AgiEngine::agi_sprintf(const char *s) {
+char *AgiEngine::agiSprintf(const char *s) {
 	static char y[MAX_LEN];
 	char x[MAX_LEN];
 	char z[16], *p;
 
-	debugC(3, kDebugLevelText, "logic %d, '%s'", game.lognum, s);
+	debugC(3, kDebugLevelText, "logic %d, '%s'", _game.lognum, s);
 	p = x;
 
 	for (*p = 0; *s;) {
@@ -517,28 +517,28 @@ char *AgiEngine::agi_sprintf(const char *s) {
 				} else {
 					i = 15 - i;
 				}
-				safe_strcat(p, z + i);
+				safeStrcat(p, z + i);
 				break;
 			case '0':
 				i = strtoul(s, NULL, 10) - 1;
-				safe_strcat(p, object_name(i));
+				safeStrcat(p, objectName(i));
 				break;
 			case 'g':
 				i = strtoul(s, NULL, 10) - 1;
-				safe_strcat(p, game.logics[0].texts[i]);
+				safeStrcat(p, _game.logics[0].texts[i]);
 				break;
 			case 'w':
 				i = strtoul(s, NULL, 10) - 1;
-				safe_strcat(p, game.ego_words[i].word);
+				safeStrcat(p, _game.egoWords[i].word);
 				break;
 			case 's':
 				i = strtoul(s, NULL, 10);
-				safe_strcat(p, game.strings[i]);
+				safeStrcat(p, _game.strings[i]);
 				break;
 			case 'm':
 				i = strtoul(s, NULL, 10) - 1;
-				if (game.logics[game.lognum].num_texts > i)
-					safe_strcat(p, agi_sprintf(game. logics[game.lognum].texts[i]));
+				if (_game.logics[_game.lognum].numTexts > i)
+					safeStrcat(p, agiSprintf(_game. logics[_game.lognum].texts[i]));
 				break;
 			}
 
@@ -564,51 +564,51 @@ literal:
 /**
  * Write the status line.
  */
-void AgiEngine::write_status() {
+void AgiEngine::writeStatus() {
 	char x[64];
 
 	if (_debug.statusline) {
-		print_status("%3d(%03d) %3d,%3d(%3d,%3d)               ",
-				getvar(0), getvar(1), game.view_table[0].x_pos,
-				game.view_table[0].y_pos, WIN_TO_PIC_X(g_mouse.x),
+		printStatus("%3d(%03d) %3d,%3d(%3d,%3d)               ",
+				getvar(0), getvar(1), _game.viewTable[0].xPos,
+				_game.viewTable[0].yPos, WIN_TO_PIC_X(g_mouse.x),
 				WIN_TO_PIC_Y(g_mouse.y));
 		return;
 	}
 
-	if (!game.status_line) {
-		int l = game.line_status;
-		clear_lines(l, l, 0);
-		flush_lines(l, l);
+	if (!_game.statusLine) {
+		int l = _game.lineStatus;
+		clearLines(l, l, 0);
+		flushLines(l, l);
 		return;
 	}
 
-	sprintf(x, " Score:%i of %-3i", game.vars[V_score], game.vars[V_max_score]);
-	print_status("%-17s             Sound:%s ", x, getflag(F_sound_on) ? "on " : "off");
+	sprintf(x, " Score:%i of %-3i", _game.vars[vScore], _game.vars[vMaxScore]);
+	printStatus("%-17s             Sound:%s ", x, getflag(fSoundOn) ? "on " : "off");
 }
 
 /**
  * Print user input prompt.
  */
-void AgiEngine::write_prompt() {
+void AgiEngine::writePrompt() {
 	int l, fg, bg, pos;
 
-	if (!game.input_enabled || game.input_mode != INPUT_NORMAL)
+	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL)
 		return;
 
-	l = game.line_user_input;
-	fg = game.color_fg;
-	bg = game.color_bg;
-	pos = game.cursor_pos;
+	l = _game.lineUserInput;
+	fg = _game.colorFg;
+	bg = _game.colorBg;
+	pos = _game.cursorPos;
 
 	debugC(4, kDebugLevelText, "erase line %d", l);
-	clear_lines(l, l, game.color_bg);
+	clearLines(l, l, _game.colorBg);
 
-	debugC(4, kDebugLevelText, "prompt = '%s'", agi_sprintf(game.strings[0]));
-	print_text(game.strings[0], 0, 0, l, 1, fg, bg);
-	print_text((char *)game.input_buffer, 0, 1, l, pos + 1, fg, bg);
-	_gfx->printCharacter(pos + 1, l, game.cursor_char, fg, bg);
+	debugC(4, kDebugLevelText, "prompt = '%s'", agiSprintf(_game.strings[0]));
+	printText(_game.strings[0], 0, 0, l, 1, fg, bg);
+	printText((char *)_game.inputBuffer, 0, 1, l, pos + 1, fg, bg);
+	_gfx->printCharacter(pos + 1, l, _game.cursorChar, fg, bg);
 
-	flush_lines(l, l);
+	flushLines(l, l);
 	_gfx->doUpdate();
 }
 
@@ -618,7 +618,7 @@ void AgiEngine::write_prompt() {
  * @param l2  end line
  * @param c   color
  */
-void AgiEngine::clear_lines(int l1, int l2, int c) {
+void AgiEngine::clearLines(int l1, int l2, int c) {
 	/* do we need to adjust for +8 on topline?
 	 * inc for endline so it matches the correct num
 	 * ie, from 22 to 24 is 3 lines, not 2 lines.
@@ -634,7 +634,7 @@ void AgiEngine::clear_lines(int l1, int l2, int c) {
 /**
  *
  */
-void AgiEngine::flush_lines(int l1, int l2) {
+void AgiEngine::flushLines(int l1, int l2) {
 	l1 *= CHAR_LINES;
 	l2 *= CHAR_LINES;
 	l2 += CHAR_LINES - 1;
@@ -645,17 +645,17 @@ void AgiEngine::flush_lines(int l1, int l2) {
 /**
  *
  */
-void AgiEngine::draw_window(int x1, int y1, int x2, int y2) {
-	game.window.active = true;
-	game.window.x1 = x1;
-	game.window.y1 = y1;
-	game.window.x2 = x2;
-	game.window.y2 = y2;
-	game.window.buffer = (uint8 *)malloc((x2 - x1 + 1) * (y2 - y1 + 1));
+void AgiEngine::drawWindow(int x1, int y1, int x2, int y2) {
+	_game.window.active = true;
+	_game.window.x1 = x1;
+	_game.window.y1 = y1;
+	_game.window.x2 = x2;
+	_game.window.y2 = y2;
+	_game.window.buffer = (uint8 *)malloc((x2 - x1 + 1) * (y2 - y1 + 1));
 
 	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", x1, y1, x2, y2);
-	_gfx->saveBlock(x1, y1, x2, y2, game.window.buffer);
+	_gfx->saveBlock(x1, y1, x2, y2, _game.window.buffer);
 	_gfx->drawBox(x1, y1, x2, y2, MSG_BOX_COLOUR, MSG_BOX_LINE, 2);
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

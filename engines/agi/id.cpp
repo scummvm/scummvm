@@ -29,15 +29,15 @@
 
 namespace Agi {
 
-int AgiEngine::v2id_game() {
+int AgiEngine::v2IdGame() {
 	int ver;
 
-	ver = this->_gameDescription->version;
-	game.ver = ver;
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
+	ver = _gameDescription->version;
+	_game.ver = ver;
+	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
 	agiSetRelease(ver);
 
-	return setup_v2_game(ver, 0);
+	return setupV2Game(ver, 0);
 }
 
 /*
@@ -48,22 +48,22 @@ int AgiEngine::v2id_game() {
  * 0x0149
  */
 
-int AgiEngine::v3id_game() {
+int AgiEngine::v3IdGame() {
 	int ver;
 
-	ver = this->_gameDescription->version;
-	game.ver = ver;
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
+	ver = _gameDescription->version;
+	_game.ver = ver;
+	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
 	agiSetRelease(ver);
 
-	return setup_v3_game(ver, 0);
+	return setupV3Game(ver, 0);
 }
 
 /**
  *
  */
-int AgiEngine::setup_v2_game(int ver, uint32 crc) {
-	int ec = err_OK;
+int AgiEngine::setupV2Game(int ver, uint32 crc) {
+	int ec = errOK;
 
 	if (ver == 0) {
 		report("Unknown v2 Sierra game: %08x\n\n", crc);
@@ -73,26 +73,26 @@ int AgiEngine::setup_v2_game(int ver, uint32 crc) {
 	/* setup the differences in the opcodes and other bits in the
 	 * AGI v2 specs
 	 */
-	if (opt.emuversion)
-		agiSetRelease(ver = opt.emuversion);
+	if (_opt.emuversion)
+		agiSetRelease(ver = _opt.emuversion);
 
 	// Should this go above the previous lines, so we can force emulation versions
 	// even for AGDS games? -- dsymonds
-	if (opt.agdsMode)
+	if (_opt.agdsMode)
 		agiSetRelease(ver = 0x2440);	/* ALL AGDS games built for 2.440 */
 
 	report("Seting up for version 0x%04X\n", ver);
 
 	// 'quit' takes 0 args for 2.089
 	if (ver == 0x2089)
-		logic_names_cmd[0x86].num_args = 0;
+		logicNamesCmd[0x86].numArgs = 0;
 
 	// 'print.at' and 'print.at.v' take 3 args before 2.272
 	// This is documented in the specs as only < 2.440, but it seems
 	// that KQ3 (2.272) needs a 'print.at' taking 4 args.
 	if (ver < 0x2272) {
-		logic_names_cmd[0x97].num_args = 3;
-		logic_names_cmd[0x98].num_args = 3;
+		logicNamesCmd[0x97].numArgs = 3;
+		logicNamesCmd[0x98].numArgs = 3;
 	}
 
 	return ec;
@@ -101,16 +101,16 @@ int AgiEngine::setup_v2_game(int ver, uint32 crc) {
 /**
  *
  */
-int AgiEngine::setup_v3_game(int ver, uint32 crc) {
-	int ec = err_OK;
+int AgiEngine::setupV3Game(int ver, uint32 crc) {
+	int ec = errOK;
 
 	if (ver == 0) {
 		report("Unknown v3 Sierra game: %08x\n\n", crc);
 		agiSetRelease(ver = 0x3149);
 	}
 
-	if (opt.emuversion)
-		agiSetRelease(ver = opt.emuversion);
+	if (_opt.emuversion)
+		agiSetRelease(ver = _opt.emuversion);
 
 	report("Seting up for version 0x%04X\n", ver);
 
@@ -118,11 +118,11 @@ int AgiEngine::setup_v3_game(int ver, uint32 crc) {
 	// 'unknown173' also takes 1 arg for 3.002.068, not 0 args.
 	// Is this actually used anywhere? -- dsymonds
 	if (ver == 0x3086) {
-		logic_names_cmd[0xb0].num_args = 1;
-		logic_names_cmd[0xad].num_args = 1;
+		logicNamesCmd[0xb0].numArgs = 1;
+		logicNamesCmd[0xad].numArgs = 1;
 	}
 
 	return ec;
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

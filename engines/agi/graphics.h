@@ -40,17 +40,17 @@ class GfxMgr {
 private:
 	AgiEngine *_vm;
 
-	uint8 palette[32 * 3];
-	uint8 *agi_screen;
-	unsigned char *screen;
+	uint8 _palette[32 * 3];
+	uint8 *_agiScreen;
+	unsigned char *_screen;
 
-	uint8 *shake_h, *shake_v;
+	uint8 *_shakeH, *_shakeV;
 
 public:
 	GfxMgr(AgiEngine *vm) {
 		_vm = vm;
-		shake_h = NULL;
-		shake_v = NULL;
+		_shakeH = NULL;
+		_shakeV = NULL;
 	}
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
@@ -96,4 +96,4 @@ public:
 
 } // End of namespace Agi
 
-#endif				/* AGI_GRAPHICS_H */
+#endif /* AGI_GRAPHICS_H */

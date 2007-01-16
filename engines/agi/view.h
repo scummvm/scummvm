@@ -30,26 +30,26 @@
 
 namespace Agi {
 
-struct view_cel {
+struct ViewCel {
 	uint8 height;
 	uint8 width;
 	uint8 transparency;
-	uint8 mirror_loop;
+	uint8 mirrorLoop;
 	uint8 mirror;
 	uint8 *data;
 };
 
-struct view_loop {
-	int num_cels;
-	struct view_cel *cel;
+struct ViewLoop {
+	int numCels;
+	struct ViewCel *cel;
 };
 
 /**
  * AGI view resource structure.
  */
-struct agi_view {
-	int num_loops;
-	struct view_loop *loop;
+struct AgiView {
+	int numLoops;
+	struct ViewLoop *loop;
 	char *descr;
 	uint8 *rdata;
 };
@@ -57,29 +57,29 @@ struct agi_view {
 /**
  * AGI view table entry
  */
-struct vt_entry {
-	uint8 step_time;
-	uint8 step_time_count;
+struct VtEntry {
+	uint8 stepTime;
+	uint8 stepTimeCount;
 	uint8 entry;
-	int16 x_pos;
-	int16 y_pos;
-	uint8 current_view;
-	struct agi_view *view_data;
-	uint8 current_loop;
-	uint8 num_loops;
-	struct view_loop *loop_data;
-	uint8 current_cel;
-	uint8 num_cels;
-	struct view_cel *cel_data;
-	struct view_cel *cel_data_2;
-	int16 x_pos2;
-	int16 y_pos2;
+	int16 xPos;
+	int16 yPos;
+	uint8 currentView;
+	struct AgiView *viewData;
+	uint8 currentLoop;
+	uint8 numLoops;
+	struct ViewLoop *loopData;
+	uint8 currentCel;
+	uint8 numCels;
+	struct ViewCel *celData;
+	struct ViewCel *celData2;
+	int16 xPos2;
+	int16 yPos2;
 	void *s;
-	int16 x_size;
-	int16 y_size;
-	uint8 step_size;
-	uint8 cycle_time;
-	uint8 cycle_time_count;
+	int16 xSize;
+	int16 ySize;
+	uint8 stepSize;
+	uint8 cycleTime;
+	uint8 cycleTimeCount;
 	uint8 direction;
 
 #define MOTION_NORMAL		0
@@ -118,8 +118,8 @@ struct vt_entry {
 	uint8 parm2;
 	uint8 parm3;
 	uint8 parm4;
-};				/* struct vt_entry */
+}; /* struct vt_entry */
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
-#endif				/* AGI_VIEW_H */
+#endif /* AGI_VIEW_H */

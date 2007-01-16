@@ -29,16 +29,16 @@
 
 namespace Agi {
 
-struct agi_logicnames {
+struct AgiLogicnames {
 	const char *name;
-	uint16 num_args;
-	uint16 arg_mask;
+	uint16 numArgs;
+	uint16 argMask;
 };
 
-extern struct agi_logicnames logic_names_test[];
-extern struct agi_logicnames logic_names_cmd[];
-extern struct agi_logicnames logic_names_if[];
+extern AgiLogicnames logicNamesTest[];
+extern AgiLogicnames logicNamesCmd[];
+extern AgiLogicnames logicNamesIf[];
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 #endif				/* AGI_OPCODES_H */

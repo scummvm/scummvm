@@ -28,20 +28,20 @@
 
 namespace Agi {
 
-int AgiEngine::alloc_objects(int n) {
-	if ((objects = (agi_object *)calloc(n, sizeof(struct agi_object))) == NULL)
-		return err_NotEnoughMemory;
+int AgiEngine::allocObjects(int n) {
+	if ((_objects = (AgiObject *)calloc(n, sizeof(struct AgiObject))) == NULL)
+		return errNotEnoughMemory;
 
-	return err_OK;
+	return errOK;
 }
 
-int AgiEngine::decode_objects(uint8 *mem, uint32 flen) {
+int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 	unsigned int i, so, padsize;
 
-	padsize = game.game_flags & ID_AMIGA ? 4 : 3;
+	padsize = _game.gameFlags & ID_AMIGA ? 4 : 3;
 
-	game.num_objects = 0;
-	objects = NULL;
+	_game.numObjects = 0;
+	_objects = NULL;
 
 	/* check if first pointer exceeds file size
 	 * if so, its encrypted, else it is not
@@ -58,49 +58,48 @@ int AgiEngine::decode_objects(uint8 *mem, uint32 flen) {
 	 */
 	if (READ_LE_UINT16(mem) / padsize >= 256) {
 		/* die with no error! AGDS game needs not to die to work!! :( */
-		return err_OK;
+		return errOK;
 	}
 
-	game.num_objects = READ_LE_UINT16(mem) / padsize;
-	debugC(5, kDebugLevelResources, "num_objects = %d (padsize = %d)", game.num_objects, padsize);
+	_game.numObjects = READ_LE_UINT16(mem) / padsize;
+	debugC(5, kDebugLevelResources, "num_objects = %d (padsize = %d)", _game.numObjects, padsize);
 
-	if (alloc_objects(game.num_objects) != err_OK)
-		return err_NotEnoughMemory;
+	if (allocObjects(_game.numObjects) != errOK)
+		return errNotEnoughMemory;
 
 	/* build the object list */
-	for (i = 0, so = padsize; i < game.num_objects; i++, so += padsize) {
+	for (i = 0, so = padsize; i < _game.numObjects; i++, so += padsize) {
 		int offset;
 
-		(objects + i)->location = *(mem + so + 2);
+		(_objects + i)->location = *(mem + so + 2);
 		offset = READ_LE_UINT16(mem + so) + padsize;
 
 		if ((uint) offset < flen) {
-			(objects + i)->name = (char *)strdup((const char *)mem + offset);
+			(_objects + i)->name = (char *)strdup((const char *)mem + offset);
 		} else {
 			printf("ERROR: object %i name beyond object filesize! "
 					"(%04x > %04x)\n", i, offset, flen);
-			(objects + i)->name = strdup("");
+			(_objects + i)->name = strdup("");
 		}
 	}
-	report("Reading objects: %d objects read.\n", game.num_objects);
+	report("Reading objects: %d objects read.\n", _game.numObjects);
 
-	return err_OK;
-
+	return errOK;
 }
 
-int AgiEngine::load_objects(const char *fname) {
+int AgiEngine::loadObjects(const char *fname) {
 	Common::File fp;
 	uint32 flen;
 	uint8 *mem;
 
-	objects = NULL;
-	game.num_objects = 0;
+	_objects = NULL;
+	_game.numObjects = 0;
 
 	debugC(5, kDebugLevelResources, "(fname = %s)", fname);
 	report("Loading objects: %s\n", fname);
 
 	if (!fp.open(fname))
-		return err_BadFileOpen;
+		return errBadFileOpen;
 
 	fp.seek(0, SEEK_END);
 	flen = fp.pos();
@@ -108,52 +107,52 @@ int AgiEngine::load_objects(const char *fname) {
 
 	if ((mem = (uint8 *)calloc(1, flen + 32)) == NULL) {
 		fp.close();
-		return err_NotEnoughMemory;
+		return errNotEnoughMemory;
 	}
 
 	fp.read(mem, flen);
 	fp.close();
 
-	decode_objects(mem, flen);
+	decodeObjects(mem, flen);
 	free(mem);
-	return err_OK;
+	return errOK;
 }
 
-void AgiEngine::unload_objects() {
+void AgiEngine::unloadObjects() {
 	unsigned int i;
 
-	if (objects != NULL) {
-		for (i = 0; i < game.num_objects; i++) {
-			free(objects[i].name);
-			objects[i].name = NULL;
+	if (_objects != NULL) {
+		for (i = 0; i < _game.numObjects; i++) {
+			free(_objects[i].name);
+			_objects[i].name = NULL;
 		}
-		free(objects);
-		objects = NULL;
+		free(_objects);
+		_objects = NULL;
 	}
 }
 
-void AgiEngine::object_set_location(unsigned int n, int i) {
-	if (n >= game.num_objects) {
+void AgiEngine::objectSetLocation(unsigned int n, int i) {
+	if (n >= _game.numObjects) {
 		report("Error: Can't access object %d.\n", n);
 		return;
 	}
-	objects[n].location = i;
+	_objects[n].location = i;
 }
 
-int AgiEngine::object_get_location(unsigned int n) {
-	if (n >= game.num_objects) {
+int AgiEngine::objectGetLocation(unsigned int n) {
+	if (n >= _game.numObjects) {
 		report("Error: Can't access object %d.\n", n);
 		return 0;
 	}
-	return objects[n].location;
+	return _objects[n].location;
 }
 
-const char *AgiEngine::object_name(unsigned int n) {
-	if (n >= game.num_objects) {
+const char *AgiEngine::objectName(unsigned int n) {
+	if (n >= _game.numObjects) {
 		report("Error: Can't access object %d.\n", n);
 		return "";
 	}
-	return objects[n].name;
+	return _objects[n].name;
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

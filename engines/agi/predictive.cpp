@@ -69,11 +69,11 @@ bool AgiEngine::predictiveDialog(void) {
 			return false;
 	}
 
-	draw_window(50, 40, 269, 159);
+	drawWindow(50, 40, 269, 159);
 	_gfx->drawRectangle(62, 54, 249, 66, MSG_BOX_TEXT);
 	_gfx->flushBlock(62, 54, 249, 66);
 
-	_gfx->printCharacter(3, 11, game.cursor_char, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+	_gfx->printCharacter(3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 
 	bx[15] = 73; // Zero/space
 	by[15] = 120;
@@ -118,7 +118,7 @@ bool AgiEngine::predictiveDialog(void) {
 
 	bool needRefresh = true;
 
-	while (42) {
+	for (;;) {
 		if (needRefresh) {
 			for (int i = 0; buttons[i]; i++) {
 				int color1 = colors[i * 2];
@@ -146,13 +146,13 @@ bool AgiEngine::predictiveDialog(void) {
 				for (int i = prefix.size() + _currentCode.size(); i < MAXWORDLEN; i++)
 					temp[i] = ' ';
 
-				print_text(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
+				printText(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
 				_gfx->flushBlock(62, 54, 249, 66);
 			}
 		}
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
-		key = do_poll_keyboard();
+		key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
 			rc = true;
@@ -246,7 +246,7 @@ bool AgiEngine::predictiveDialog(void) {
 	_predictiveResult[prefix.size() + _currentCode.size() + 1] = 0;
 
  getout:
-	close_window();
+	closeWindow();
 
 	return rc;
 }
@@ -348,7 +348,5 @@ bool AgiEngine::matchWord(void) {
 
 	return false;
 }
-
-
 
 } // End of namespace Agi

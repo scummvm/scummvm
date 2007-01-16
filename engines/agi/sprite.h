@@ -30,8 +30,8 @@
 namespace Agi {
 
 
-struct sprite;
-typedef Common::List<sprite*> SpriteList;
+struct Sprite;
+typedef Common::List<Sprite*> SpriteList;
 
 class AgiEngine;
 class GfxMgr;
@@ -42,56 +42,56 @@ private:
 	GfxMgr *_gfx;
 	AgiEngine *_vm;
 
-	uint8 *sprite_pool;
-	uint8 *pool_top;
+	uint8 *_spritePool;
+	uint8 *_poolTop;
 
 	/*
 	 * Sprite management functions
 	 */
 
-	SpriteList spr_upd;
-	SpriteList spr_nonupd;
+	SpriteList _sprUpd;
+	SpriteList _sprNonupd;
 
-	void *pool_alloc(int size);
-	void pool_release(void *s);
-	void blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden);
-	int blit_cel(int x, int y, int spr, view_cel *c);
-	void objs_savearea(sprite *s);
-	void objs_restorearea(sprite *s);
+	void *poolAlloc(int size);
+	void poolRelease(void *s);
+	void blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden);
+	int blitCel(int x, int y, int spr, ViewCel *c);
+	void objsSaveArea(Sprite *s);
+	void objsRestoreArea(Sprite *s);
 	
-	FORCEINLINE int prio_to_y(int p);
-	sprite *new_sprite(vt_entry *v);
-	void spr_addlist(SpriteList& l, vt_entry *v);
-	void build_list(SpriteList& l, bool (*test) (vt_entry *, AgiEngine *));
-	void build_upd_blitlist();
-	void build_nonupd_blitlist();
-	void free_list(SpriteList& l);
-	void commit_sprites(SpriteList& l);
-	void erase_sprites(SpriteList& l);
-	void blit_sprites(SpriteList& l);	
-	static bool test_updating(vt_entry *v, AgiEngine *);
-	static bool test_not_updating(vt_entry *v, AgiEngine *);
+	FORCEINLINE int prioToY(int p);
+	Sprite *newSprite(VtEntry *v);
+	void sprAddlist(SpriteList &l, VtEntry *v);
+	void buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *));
+	void buildUpdBlitlist();
+	void buildNonupdBlitlist();
+	void freeList(SpriteList &l);
+	void commitSprites(SpriteList &l);
+	void eraseSprites(SpriteList &l);
+	void blitSprites(SpriteList &l);	
+	static bool testUpdating(VtEntry *v, AgiEngine *);
+	static bool testNotUpdating(VtEntry *v, AgiEngine *);
 	
 public:
 	SpritesMgr(AgiEngine *agi, GfxMgr *gfx);
 	~SpritesMgr();
 
-	int init_sprites(void);
-	void deinit_sprites(void);
-	void erase_upd_sprites(void);
-	void erase_nonupd_sprites(void);
-	void erase_both(void);
-	void blit_upd_sprites(void);
-	void blit_nonupd_sprites(void);
-	void blit_both(void);
-	void commit_upd_sprites(void);
-	void commit_nonupd_sprites(void);
-	void commit_both(void);
-	void add_to_pic(int, int, int, int, int, int, int);
-	void show_obj(int);
-	void commit_block(int, int, int, int);
+	int initSprites();
+	void deinitSprites();
+	void eraseUpdSprites();
+	void eraseNonupdSprites();
+	void eraseBoth();
+	void blitUpdSprites();
+	void blitNonupdSprites();
+	void blitBoth();
+	void commitUpdSprites();
+	void commitNonupdSprites();
+	void commitBoth();
+	void addToPic(int, int, int, int, int, int, int);
+	void showObj(int);
+	void commitBlock(int, int, int, int);
 };
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
-#endif				/* AGI_SPRITE_H */
+#endif /* AGI_SPRITE_H */

@@ -30,31 +30,31 @@
 
 namespace Agi {
 
-static uint8 test_obj_right(uint8, uint8, uint8, uint8, uint8);
-static uint8 test_obj_centre(uint8, uint8, uint8, uint8, uint8);
-static uint8 test_obj_in_box(uint8, uint8, uint8, uint8, uint8);
-static uint8 test_posn(uint8, uint8, uint8, uint8, uint8);
-static uint8 test_said(uint8, uint8 *);
-static uint8 test_controller(uint8);
-static uint8 test_keypressed(void);
-static uint8 test_compare_strings(uint8, uint8);
+static uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
+static uint8 testObjCentre(uint8, uint8, uint8, uint8, uint8);
+static uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
+static uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
+static uint8 testSaid(uint8, uint8 *);
+static uint8 testController(uint8);
+static uint8 testKeypressed(void);
+static uint8 testCompareStrings(uint8, uint8);
 
 static AgiEngine *g_agi;
-#define game g_agi->game
+#define game g_agi->_game
 
 #define ip (game.logics[lognum].cIP)
 #define code (game.logics[lognum].data)
 
-#define test_equal(v1, v2)		(g_agi->getvar(v1) == (v2))
-#define test_less(v1, v2)		(g_agi->getvar(v1) < (v2))
-#define test_greater(v1, v2)	(g_agi->getvar(v1) > (v2))
-#define test_isset(flag)		(g_agi->getflag(flag))
-#define test_has(obj)			(g_agi->object_get_location(obj) == EGO_OWNED)
-#define test_obj_in_room(obj, v)	(g_agi->object_get_location(obj) == g_agi->getvar(v))
+#define testEqual(v1, v2)		(g_agi->getvar(v1) == (v2))
+#define testLess(v1, v2)		(g_agi->getvar(v1) < (v2))
+#define testGreater(v1, v2)	(g_agi->getvar(v1) > (v2))
+#define testIsSet(flag)		(g_agi->getflag(flag))
+#define testHas(obj)			(g_agi->objectGetLocation(obj) == EGO_OWNED)
+#define testObjInRoom(obj, v)	(g_agi->objectGetLocation(obj) == g_agi->getvar(v))
 
-extern int timer_hack;		/* For the timer loop in MH1 logic 153 */
+extern int timerHack;		/* For the timer loop in MH1 logic 153 */
 
-static uint8 test_compare_strings(uint8 s1, uint8 s2) {
+static uint8 testCompareStrings(uint8 s1, uint8 s2) {
 	char ms1[MAX_STRINGLEN];
 	char ms2[MAX_STRINGLEN];
 	int j, k, l;
@@ -107,15 +107,15 @@ static uint8 test_compare_strings(uint8 s1, uint8 s2) {
 	return !strcmp(ms1, ms2);
 }
 
-static uint8 test_keypressed() {
+static uint8 testKeypressed() {
 	int x = game.keypress;
 
 	game.keypress = 0;
 	if (!x) {
-		int mode = game.input_mode;
-		game.input_mode = INPUT_NONE;
-		g_agi->main_cycle();
-		game.input_mode = mode;
+		int mode = game.inputMode;
+		game.inputMode = INPUT_NONE;
+		g_agi->mainCycle();
+		game.inputMode = mode;
 	}
 
 	if (x)
@@ -124,50 +124,50 @@ static uint8 test_keypressed() {
 	return x;
 }
 
-static uint8 test_controller(uint8 cont) {
-	return game.ev_keyp[cont].occured;
+static uint8 testController(uint8 cont) {
+	return game.evKeyp[cont].occured;
 }
 
-static uint8 test_posn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct vt_entry *v = &game.view_table[n];
+static uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	struct VtEntry *v = &game.viewTable[n];
 	uint8 r;
 
-	r = v->x_pos >= x1 && v->y_pos >= y1 && v->x_pos <= x2 && v->y_pos <= y2;
+	r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
 
-	debugC(7, kDebugLevelScripts, "(%d,%d) in (%d,%d,%d,%d): %s", v->x_pos, v->y_pos, x1, y1, x2, y2, r ? "true" : "false");
+	debugC(7, kDebugLevelScripts, "(%d,%d) in (%d,%d,%d,%d): %s", v->xPos, v->yPos, x1, y1, x2, y2, r ? "true" : "false");
 
 	return r;
 }
 
-static uint8 test_obj_in_box(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct vt_entry *v = &game.view_table[n];
+static uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	struct VtEntry *v = &game.viewTable[n];
 
-	return v->x_pos >= x1 &&
-	    v->y_pos >= y1 && v->x_pos + v->x_size - 1 <= x2 && v->y_pos <= y2;
+	return v->xPos >= x1 &&
+	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
 }
 
 /* if n is in centre of box */
-static uint8 test_obj_centre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct vt_entry *v = &game.view_table[n];
+static uint8 testObjCentre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	struct VtEntry *v = &game.viewTable[n];
 
-	return v->x_pos + v->x_size / 2 >= x1 &&
-			v->x_pos + v->x_size / 2 <= x2 && v->y_pos >= y1 && v->y_pos <= y2;
+	return v->xPos + v->xSize / 2 >= x1 &&
+			v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 /* if nect N is in right corner */
-static uint8 test_obj_right(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct vt_entry *v = &game.view_table[n];
+static uint8 testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	struct VtEntry *v = &game.viewTable[n];
 
-	return v->x_pos + v->x_size - 1 >= x1 &&
-			v->x_pos + v->x_size - 1 <= x2 && v->y_pos >= y1 && v->y_pos <= y2;
+	return v->xPos + v->xSize - 1 >= x1 &&
+			v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 /* When player has entered something, it is parsed elsewhere */
-static uint8 test_said(uint8 nwords, uint8 *cc) {
-	int c, n = game.num_ego_words;
+static uint8 testSaid(uint8 nwords, uint8 *cc) {
+	int c, n = game.numEgoWords;
 	int z = 0;
 
-	if (g_agi->getflag(F_said_accepted_input) || !g_agi->getflag(F_entered_cli))
+	if (g_agi->getflag(fSaidAcceptedInput) || !g_agi->getflag(fEnteredCli))
 		return false;
 
 	/* FR:
@@ -199,7 +199,7 @@ static uint8 test_said(uint8 nwords, uint8 *cc) {
 		case 1:	/* any word */
 			break;
 		default:
-			if (game.ego_words[c].id != z)
+			if (game.egoWords[c].id != z)
 				return false;
 			break;
 		}
@@ -215,26 +215,26 @@ static uint8 test_said(uint8 nwords, uint8 *cc) {
 	if (nwords != 0 && READ_LE_UINT16(cc) != 9999)
 		return false;
 
-	g_agi->setflag(F_said_accepted_input, true);
+	g_agi->setflag(fSaidAcceptedInput, true);
 
 	return true;
 }
 
-int AgiEngine::test_if_code(int lognum) {
+int AgiEngine::testIfCode(int lognum) {
 	g_agi = this;
 	int ec = true;
 	int retval = true;
 	uint8 op = 0;
-	uint8 not_test = false;
-	uint8 or_test = false;
-	uint16 last_ip = ip;
+	uint8 notTest = false;
+	uint8 orTest = false;
+	uint16 lastIp = ip;
 	uint8 p[16] = { 0 };
 
-	while (retval && !game.quit_prog_now) {
-		if (g_agi->_debug.enabled && (g_agi->_debug.logic0 || lognum))
-			debug_console(lognum, lTEST_MODE, NULL);
+	while (retval && !game.quitProgNow) {
+		if (_debug.enabled && (_debug.logic0 || lognum))
+			debugConsole(lognum, lTEST_MODE, NULL);
 
-		last_ip = ip;
+		lastIp = ip;
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
 
@@ -242,94 +242,94 @@ int AgiEngine::test_if_code(int lognum) {
 		case 0xFF:	/* END IF, TEST true */
 			goto end_test;
 		case 0xFD:
-			not_test = !not_test;
+			notTest = !notTest;
 			continue;
 		case 0xFC:	/* OR */
 			/* if or_test is ON and we hit 0xFC, end of OR, then
 			 * or is STILL false so break.
 			 */
-			if (or_test) {
+			if (orTest) {
 				ec = false;
 				retval = false;
 				goto end_test;
 			}
 
-			or_test = true;
+			orTest = true;
 			continue;
 
 		case 0x00:
 			/* return true? */
 			goto end_test;
 		case 0x01:
-			ec = test_equal(p[0], p[1]);
+			ec = testEqual(p[0], p[1]);
 			if (p[0] == 11)
-				timer_hack++;
+				timerHack++;
 			break;
 		case 0x02:
-			ec = test_equal(p[0], getvar(p[1]));
+			ec = testEqual(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timer_hack++;
+				timerHack++;
 			break;
 		case 0x03:
-			ec = test_less(p[0], p[1]);
+			ec = testLess(p[0], p[1]);
 			if (p[0] == 11)
-				timer_hack++;
+				timerHack++;
 			break;
 		case 0x04:
-			ec = test_less(p[0], getvar(p[1]));
+			ec = testLess(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timer_hack++;
+				timerHack++;
 			break;
 		case 0x05:
-			ec = test_greater(p[0], p[1]);
+			ec = testGreater(p[0], p[1]);
 			if (p[0] == 11)
-				timer_hack++;
+				timerHack++;
 			break;
 		case 0x06:
-			ec = test_greater(p[0], getvar(p[1]));
+			ec = testGreater(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timer_hack++;
+				timerHack++;
 			break;
 		case 0x07:
-			ec = test_isset(p[0]);
+			ec = testIsSet(p[0]);
 			break;
 		case 0x08:
-			ec = test_isset(getvar(p[0]));
+			ec = testIsSet(getvar(p[0]));
 			break;
 		case 0x09:
-			ec = test_has(p[0]);
+			ec = testHas(p[0]);
 			break;
 		case 0x0A:
-			ec = test_obj_in_room(p[0], p[1]);
+			ec = testObjInRoom(p[0], p[1]);
 			break;
 		case 0x0B:
-			ec = test_posn(p[0], p[1], p[2], p[3], p[4]);
+			ec = testPosn(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		case 0x0C:
-			ec = test_controller(p[0]);
+			ec = testController(p[0]);
 			break;
 		case 0x0D:
-			ec = test_keypressed();
+			ec = testKeypressed();
 			break;
 		case 0x0E:
-			ec = test_said(p[0], (uint8 *) code + (ip + 1));
-			ip = last_ip;
+			ec = testSaid(p[0], (uint8 *) code + (ip + 1));
+			ip = lastIp;
 			ip++;	/* skip opcode */
 			ip += p[0] * 2;	/* skip num_words * 2 */
 			ip++;	/* skip num_words opcode */
 			break;
 		case 0x0F:
 			debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", game.strings[p[0]], game.strings[p[1]]);
-			ec = test_compare_strings(p[0], p[1]);
+			ec = testCompareStrings(p[0], p[1]);
 			break;
 		case 0x10:
-			ec = test_obj_in_box(p[0], p[1], p[2], p[3], p[4]);
+			ec = testObjInBox(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		case 0x11:
-			ec = test_obj_centre(p[0], p[1], p[2], p[3], p[4]);
+			ec = testObjCentre(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		case 0x12:
-			ec = test_obj_right(p[0], p[1], p[2], p[3], p[4]);
+			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		default:
 			ec = false;
@@ -337,16 +337,16 @@ int AgiEngine::test_if_code(int lognum) {
 		}
 
 		if (op <= 0x12)
-			ip += logic_names_test[op].num_args;
+			ip += logicNamesTest[op].numArgs;
 
 		/* exchange ec value */
-		if (not_test)
+		if (notTest)
 			ec = !ec;
 
 		/* not is only enabled for 1 test command */
-		not_test = false;
+		notTest = false;
 
-		if (or_test && ec) {
+		if (orTest && ec) {
 			/* a true inside an OR statement passes
 			 * ENTIRE statement scan for end of OR
 			 */
@@ -377,15 +377,15 @@ int AgiEngine::test_if_code(int lognum) {
 				}
 
 				if (*(code + ip) < 0xFC)
-					ip += logic_names_test[*(code + ip)].num_args;
+					ip += logicNamesTest[*(code + ip)].numArgs;
 				ip++;
 			}
 			ip++;
 
-			or_test = false;
+			orTest = false;
 			retval = true;
 		} else {
-			retval = or_test ? retval || ec : retval && ec;
+			retval = orTest ? retval || ec : retval && ec;
 		}
 	}
       end_test:
@@ -394,13 +394,13 @@ int AgiEngine::test_if_code(int lognum) {
 	if (retval)
 		ip += 2;
 	else {
-		ip = last_ip;
+		ip = lastIp;
 		while (*(code + ip) != 0xff) {
 			if (*(code + ip) == 0x0e) {
 				ip++;
 				ip += (*(code + ip)) * 2 + 1;
 			} else if (*(code + ip) < 0xfc) {
-				ip += logic_names_test[*(code + ip)].num_args;
+				ip += logicNamesTest[*(code + ip)].numArgs;
 				ip++;
 			} else {
 				ip++;
@@ -410,8 +410,8 @@ int AgiEngine::test_if_code(int lognum) {
 		ip += READ_LE_UINT16(code + ip) + 2;
 	}
 
-	if (g_agi->_debug.enabled && (g_agi->_debug.logic0 || lognum))
-		debug_console(lognum, 0xFF, retval ? "=true" : "=false");
+	if (_debug.enabled && (_debug.logic0 || lognum))
+		debugConsole(lognum, 0xFF, retval ? "=true" : "=false");
 
 	return retval;
 }

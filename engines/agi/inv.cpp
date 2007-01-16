@@ -54,7 +54,7 @@ namespace Agi {
 #define SELECT_MSG	"Press ENTER to select, ESC to cancel"
 
 void AgiEngine::printItem(int n, int fg, int bg) {
-	print_text(object_name(intobj[n]), 0, n % 2 ? 39 - strlen(object_name(intobj[n])) : 1,
+	printText(objectName(_intobj[n]), 0, n % 2 ? 39 - strlen(objectName(_intobj[n])) : 1,
 			(n / 2) + 2, 40, fg, bg);
 }
 
@@ -75,17 +75,17 @@ int AgiEngine::findItem() {
 int AgiEngine::showItems() {
 	unsigned int x, i;
 
-	for (x = i = 0; x < game.num_objects; x++) {
-		if (object_get_location(x) == EGO_OWNED) {
+	for (x = i = 0; x < _game.numObjects; x++) {
+		if (objectGetLocation(x) == EGO_OWNED) {
 			/* add object to our list! */
-			intobj[i] = x;
+			_intobj[i] = x;
 			printItem(i, STATUS_FG, STATUS_BG);
 			i++;
 		}
 	}
 
 	if (i == 0) {
-		print_text(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
+		printText(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
 	}
 
 	return i;
@@ -98,12 +98,12 @@ void AgiEngine::selectItems(int n) {
 		if (n > 0)
 			printItem(fsel, STATUS_BG, STATUS_FG);
 
-		switch (wait_any_key()) {
+		switch (waitAnyKey()) {
 		case KEY_ENTER:
-			setvar(V_sel_item, intobj[fsel]);
+			setvar(vSelItem, _intobj[fsel]);
 			goto exit_select;
 		case KEY_ESCAPE:
-			setvar(V_sel_item, 0xff);
+			setvar(vSelItem, 0xff);
 			goto exit_select;
 		case KEY_UP:
 			if (fsel >= 2)
@@ -124,7 +124,7 @@ void AgiEngine::selectItems(int n) {
 		case BUTTON_LEFT:{
 				int i = findItem();
 				if (i >= 0 && i < n) {
-					setvar(V_sel_item, intobj[fsel = i]);
+					setvar(vSelItem, _intobj[fsel = i]);
 					debugC(6, kDebugLevelInventory, "item found: %d", fsel);
 					showItems();
 					printItem(fsel, STATUS_BG, STATUS_FG);
@@ -153,29 +153,29 @@ exit_select:
  * Display inventory items.
  */
 void AgiEngine::inventory() {
-	int old_fg, old_bg;
+	int oldFg, oldBg;
 	int n;
 
 	/* screen is white with black text */
-	old_fg = game.color_fg;
-	old_bg = game.color_bg;
-	game.color_fg = 0;
-	game.color_bg = 15;
-	_gfx->clearScreen(game.color_bg);
+	oldFg = _game.colorFg;
+	oldBg = _game.colorBg;
+	_game.colorFg = 0;
+	_game.colorBg = 15;
+	_gfx->clearScreen(_game.colorBg);
 
-	print_text(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
+	printText(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
 
 	/* FIXME: doesn't check if objects overflow off screen... */
 
-	intobj = (uint8 *) malloc(4 + game.num_objects);
-	memset(intobj, 0, (4 + game.num_objects));
+	_intobj = (uint8 *)malloc(4 + _game.numObjects);
+	memset(_intobj, 0, (4 + _game.numObjects));
 
 	n = showItems();
 
-	if (getflag(F_status_selects_items)) {
-		print_text(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
+	if (getflag(fStatusSelectsItems)) {
+		printText(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
 	} else {
-		print_text(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
+		printText(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
 	}
 
 	_gfx->flushScreen();
@@ -185,21 +185,21 @@ void AgiEngine::inventory() {
 	 * var 25 = 0xff.
 	 */
 
-	if (getflag(F_status_selects_items))
+	if (getflag(fStatusSelectsItems))
 		selectItems(n);
 
-	free(intobj);
+	free(_intobj);
 
-	if (!getflag(F_status_selects_items))
-		wait_any_key();
+	if (!getflag(fStatusSelectsItems))
+		waitAnyKey();
 
 	_gfx->clearScreen(0);
-	write_status();
-	_picture->show_pic();
-	game.color_fg = old_fg;
-	game.color_bg = old_bg;
-	game.has_prompt = 0;
-	flush_lines(game.line_user_input, 24);
+	writeStatus();
+	_picture->showPic();
+	_game.colorFg = oldFg;
+	_game.colorBg = oldBg;
+	_game.hasPrompt = 0;
+	flushLines(_game.lineUserInput, 24);
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

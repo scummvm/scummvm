@@ -27,22 +27,22 @@
 
 namespace Agi {
 
-int AgiEngine::check_position(struct vt_entry *v) {
-	debugC(4, kDebugLevelSprites, "check position @ %d, %d", v->x_pos, v->y_pos);
+int AgiEngine::checkPosition(struct VtEntry *v) {
+	debugC(4, kDebugLevelSprites, "check position @ %d, %d", v->xPos, v->yPos);
 
-	if (v->x_pos < 0 ||
-			v->x_pos + v->x_size > _WIDTH ||
-			v->y_pos - v->y_size + 1 < 0 ||
-			v->y_pos >= _HEIGHT ||
-			((~v->flags & IGNORE_HORIZON) && v->y_pos <= game.horizon)) {
+	if (v->xPos < 0 ||
+			v->xPos + v->xSize > _WIDTH ||
+			v->yPos - v->ySize + 1 < 0 ||
+			v->yPos >= _HEIGHT ||
+			((~v->flags & IGNORE_HORIZON) && v->yPos <= _game.horizon)) {
 		debugC(4, kDebugLevelSprites, "check position failed: x=%d, y=%d, h=%d, w=%d",
-				v->x_pos, v->y_pos, v->x_size, v->y_size);
+				v->xPos, v->yPos, v->xSize, v->ySize);
 		return 0;
 	}
 
 	/* MH1 needs this, but it breaks LSL1 */
 	if (agiGetRelease() >= 0x3000) {
-		if (v->y_pos < v->y_size)
+		if (v->yPos < v->ySize)
 			return 0;
 	}
 
@@ -52,13 +52,13 @@ int AgiEngine::check_position(struct vt_entry *v) {
 /**
  * Check if there's another object on the way
  */
-int AgiEngine::check_collision(struct vt_entry *v) {
-	struct vt_entry *u;
+int AgiEngine::checkCollision(struct VtEntry *v) {
+	struct VtEntry *u;
 
 	if (v->flags & IGNORE_OBJECTS)
 		return 0;
 
-	for (u = game.view_table; u < &game.view_table[MAX_VIEWTABLE]; u++) {
+	for (u = _game.viewTable; u < &_game.viewTable[MAX_VIEWTABLE]; u++) {
 		if ((u->flags & (ANIMATED | DRAWN)) != (ANIMATED | DRAWN))
 			continue;
 
@@ -70,17 +70,16 @@ int AgiEngine::check_collision(struct vt_entry *v) {
 			continue;
 
 		/* No horizontal overlap, check next */
-		if (v->x_pos + v->x_size < u->x_pos ||
-				v->x_pos > u->x_pos + u->x_size)
+		if (v->xPos + v->xSize < u->xPos || v->xPos > u->xPos + u->xSize)
 			continue;
 
 		/* Same y, return error! */
-		if (v->y_pos == u->y_pos)
+		if (v->yPos == u->yPos)
 			goto return_1;
 
 		/* Crossed the baseline, return error! */
-		if ((v->y_pos > u->y_pos && v->y_pos2 < u->y_pos2) ||
-				(v->y_pos < u->y_pos && v->y_pos2 > u->y_pos2)) {
+		if ((v->yPos > u->yPos && v->yPos2 < u->yPos2) ||
+				(v->yPos < u->yPos && v->yPos2 > u->yPos2)) {
 			goto return_1;
 		}
 	}
@@ -92,13 +91,13 @@ int AgiEngine::check_collision(struct vt_entry *v) {
 	return 1;
 }
 
-int AgiEngine::check_priority(struct vt_entry *v) {
+int AgiEngine::checkPriority(VtEntry *v) {
 	int i, trigger, water, pass, pri;
 	uint8 *p0;
 
 	if (~v->flags & FIXED_PRIORITY) {
 		/* Priority bands */
-		v->priority = game.pri_table[v->y_pos];
+		v->priority = _game.priTable[v->yPos];
 	}
 
 	trigger = 0;
@@ -106,13 +105,13 @@ int AgiEngine::check_priority(struct vt_entry *v) {
 	pass = 1;
 
 	if (v->priority == 0x0f)
-		goto _check_ego;
+		goto check_ego;
 
 	water = 1;
 
-	p0 = &game.sbuf[v->x_pos + v->y_pos * _WIDTH];
+	p0 = &_game.sbuf[v->xPos + v->yPos * _WIDTH];
 
-	for (i = 0; i < v->x_size; i++, p0++) {
+	for (i = 0; i < v->xSize; i++, p0++) {
 		pri = *p0 >> 4;
 
 		if (pri == 0) {	/* unconditional black. no go at all! */
@@ -148,10 +147,10 @@ int AgiEngine::check_priority(struct vt_entry *v) {
 			pass = 0;
 	}
 
-      _check_ego:
+check_ego:
 	if (v->entry == 0) {
-		setflag(F_ego_touched_p2, trigger ? true : false);
-		setflag(F_ego_water, water ? true : false);
+		setflag(fEgoTouchedP2, trigger ? true : false);
+		setflag(fEgoWater, water ? true : false);
 	}
 
 	return pass;
@@ -168,35 +167,35 @@ int AgiEngine::check_priority(struct vt_entry *v) {
  * new position must be valid according to the sprite positioning
  * rules, otherwise the previous position will be kept.
  */
-void AgiEngine::update_position() {
-	struct vt_entry *v;
-	int x, y, old_x, old_y, border;
+void AgiEngine::updatePosition() {
+	struct VtEntry *v;
+	int x, y, oldX, oldY, border;
 
-	game.vars[V_border_code] = 0;
-	game.vars[V_border_touch_ego] = 0;
-	game.vars[V_border_touch_obj] = 0;
+	_game.vars[vBorderCode] = 0;
+	_game.vars[vBorderTouchEgo] = 0;
+	_game.vars[vBorderTouchObj] = 0;
 
-	for (v = game.view_table; v < &game.view_table[MAX_VIEWTABLE]; v++) {
+	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
 		if ((v->flags & (ANIMATED | UPDATE | DRAWN)) != (ANIMATED | UPDATE | DRAWN)) {
 			continue;
 		}
 
-		if (v->step_time_count != 0) {
-			if (--v->step_time_count != 0)
+		if (v->stepTimeCount != 0) {
+			if (--v->stepTimeCount != 0)
 				continue;
 		}
 
-		v->step_time_count = v->step_time;
+		v->stepTimeCount = v->stepTime;
 
-		x = old_x = v->x_pos;
-		y = old_y = v->y_pos;
+		x = oldX = v->xPos;
+		y = oldY = v->yPos;
 
 		/* If object has moved, update its position */
 		if (~v->flags & UPDATE_POS) {
 			int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
 			int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
-			x += v->step_size * dx[v->direction];
-			y += v->step_size * dy[v->direction];
+			x += v->stepSize * dx[v->direction];
+			y += v->stepSize * dy[v->direction];
 		}
 
 		/* Now check if it touched the borders */
@@ -213,43 +212,43 @@ void AgiEngine::update_position() {
 			/* Extra test to walk west clicking the mouse */
 			x = 0;
 			border = 4;
-		} else if (x + v->x_size > _WIDTH) {
-			x = _WIDTH - v->x_size;
+		} else if (x + v->xSize > _WIDTH) {
+			x = _WIDTH - v->xSize;
 			border = 2;
 		}
 
 		/* Check top/bottom borders. */
-		if (y - v->y_size + 1 < 0) {
-			y = v->y_size - 1;
+		if (y - v->ySize + 1 < 0) {
+			y = v->ySize - 1;
 			border = 1;
 		} else if (y > _HEIGHT - 1) {
 			y = _HEIGHT - 1;
 			border = 3;
-		} else if ((~v->flags & IGNORE_HORIZON) && y <= game.horizon) {
-			debugC(4, kDebugLevelSprites, "y = %d, horizon = %d", y, game.horizon);
-			y = game.horizon + 1;
+		} else if ((~v->flags & IGNORE_HORIZON) && y <= _game.horizon) {
+			debugC(4, kDebugLevelSprites, "y = %d, horizon = %d", y, _game.horizon);
+			y = _game.horizon + 1;
 			border = 1;
 		}
 
 		/* Test new position. rollback if test fails */
-		v->x_pos = x;
-		v->y_pos = y;
-		if (check_collision(v) || !check_priority(v)) {
-			v->x_pos = old_x;
-			v->y_pos = old_y;
+		v->xPos = x;
+		v->yPos = y;
+		if (checkCollision(v) || !checkPriority(v)) {
+			v->xPos = oldX;
+			v->yPos = oldY;
 			border = 0;
-			fix_position(v->entry);
+			fixPosition(v->entry);
 		}
 
 		if (border != 0) {
-			if (is_ego_view(v)) {
-				game.vars[V_border_touch_ego] = border;
+			if (isEgoView(v)) {
+				_game.vars[vBorderTouchEgo] = border;
 			} else {
-				game.vars[V_border_code] = v->entry;
-				game.vars[V_border_touch_obj] = border;
+				_game.vars[vBorderCode] = v->entry;
+				_game.vars[vBorderTouchObj] = border;
 			}
 			if (v->motion == MOTION_MOVE_OBJ) {
-				in_destination(v);
+				inDestination(v);
 			}
 		}
 
@@ -266,42 +265,42 @@ void AgiEngine::update_position() {
  *
  * @param n view table entry number
  */
-void AgiEngine::fix_position(int n) {
-	struct vt_entry *v = &game.view_table[n];
+void AgiEngine::fixPosition(int n) {
+	VtEntry *v = &_game.viewTable[n];
 	int count, dir, size;
 
-	debugC(4, kDebugLevelSprites, "adjusting view table entry #%d (%d,%d)", n, v->x_pos, v->y_pos);
+	debugC(4, kDebugLevelSprites, "adjusting view table entry #%d (%d,%d)", n, v->xPos, v->yPos);
 
 	/* test horizon */
-	if ((~v->flags & IGNORE_HORIZON) && v->y_pos <= game.horizon)
-		v->y_pos = game.horizon + 1;
+	if ((~v->flags & IGNORE_HORIZON) && v->yPos <= _game.horizon)
+		v->yPos = _game.horizon + 1;
 
 	dir = 0;
 	count = size = 1;
 
-	while (!check_position(v) || check_collision(v) || !check_priority(v)) {
+	while (!checkPosition(v) || checkCollision(v) || !checkPriority(v)) {
 		switch (dir) {
 		case 0:	/* west */
-			v->x_pos--;
+			v->xPos--;
 			if (--count)
 				continue;
 			dir = 1;
 			break;
 		case 1:	/* south */
-			v->y_pos++;
+			v->yPos++;
 			if (--count)
 				continue;
 			dir = 2;
 			size++;
 			break;
 		case 2:	/* east */
-			v->x_pos++;
+			v->xPos++;
 			if (--count)
 				continue;
 			dir = 3;
 			break;
 		case 3:	/* north */
-			v->y_pos--;
+			v->yPos--;
 			if (--count)
 				continue;
 			dir = 0;
@@ -312,7 +311,7 @@ void AgiEngine::fix_position(int n) {
 		count = size;
 	}
 
-	debugC(4, kDebugLevelSprites, "view table entry #%d position adjusted to (%d,%d)", n, v->x_pos, v->y_pos);
+	debugC(4, kDebugLevelSprites, "view table entry #%d position adjusted to (%d,%d)", n, v->xPos, v->yPos);
 }
 
 } // End of namespace Agi

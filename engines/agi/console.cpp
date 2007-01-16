@@ -94,17 +94,17 @@ bool Console::Cmd_SetObj(int argc, const char **argv) {
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
-	_vm->object_set_location(p1, p2);
+	_vm->objectSetLocation(p1, p2);
 
 	return true;
 }
 
 bool Console::Cmd_RunOpcode(int argc, const char **argv) {
-	for (int i = 0; logic_names_cmd[i].name; i++) {
-		if (!strcmp(argv[1], logic_names_cmd[i].name)) {
+	for (int i = 0; logicNamesCmd[i].name; i++) {
+		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
 			uint8 p[16];
-			if ((argc - 2)!= logic_names_cmd[i].num_args) {
-				DebugPrintf("AGI command wants %d arguments\n", logic_names_cmd[i].num_args);
+			if ((argc - 2)!= logicNamesCmd[i].numArgs) {
+				DebugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].numArgs);
 				return 0;
 			}
 			p[0] = argv[2] ? (char)strtoul(argv[2], NULL, 0) : 0;
@@ -113,9 +113,9 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 			p[3] = argv[5] ? (char)strtoul(argv[5], NULL, 0) : 0;
 			p[4] = argv[6] ? (char)strtoul(argv[6], NULL, 0) : 0;
 
-			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", logic_names_cmd[i].name, argv[1], argv[2], argv[3]);
+			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", logicNamesCmd[i].name, argv[1], argv[2], argv[3]);
 
-			_vm->execute_agi_command(i, p);
+			_vm->executeAgiCommand(i, p);
 
 			return true;
 		}
@@ -177,8 +177,8 @@ bool Console::Cmd_Vars(int argc, const char **argv) {
 bool Console::Cmd_Objs(int argc, const char **argv) {
 	unsigned int i;
 
-	for (i = 0; i < _vm->game.num_objects; i++) {
-		DebugPrintf("%3d]%-24s(%3d)\n", i, _vm->object_name(i), _vm->object_get_location(i));
+	for (i = 0; i < _vm->_game.numObjects; i++) {
+		DebugPrintf("%3d]%-24s(%3d)\n", i, _vm->objectName(i), _vm->objectGetLocation(i));
 	}
 
 	return true;
@@ -243,4 +243,4 @@ bool Console::Cmd_Cont(int argc, const char **argv) {
 	return true;
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

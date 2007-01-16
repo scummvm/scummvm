@@ -52,7 +52,7 @@ namespace Agi {
 /**
  * AGI sound resource structure.
  */
-struct agi_sound {
+struct AgiSound {
 	uint32 flen;		/**< size of raw data */
 	uint8 *rdata;		/**< raw sound data */
 	uint8 flags;		/**< sound flags */
@@ -62,23 +62,23 @@ struct agi_sound {
 /**
  * AGI sound note structure.
  */
-struct agi_note {
-	uint8 dur_lo;		/**< LSB of note duration */
-	uint8 dur_hi;			/**< MSB of note duration */
-	uint8 frq_0;			/**< LSB of note frequency */
-	uint8 frq_1;			/**< MSB of note frequency */
+struct AgiNote {
+	uint8 durLo;		/**< LSB of note duration */
+	uint8 durHi;			/**< MSB of note duration */
+	uint8 frq0;			/**< LSB of note frequency */
+	uint8 frq1;			/**< MSB of note frequency */
 	uint8 vol;			/**< note volume */
 };
 
 /**
  * AGI engine sound channel structure.
  */
-struct channel_info {
+struct ChannelInfo {
 #define AGI_SOUND_SAMPLE	0x0001
 #define AGI_SOUND_MIDI		0x0002
 #define AGI_SOUND_4CHN		0x0008
 	uint32 type;
-	struct agi_note *ptr;
+	struct AgiNote *ptr;
 	int16 *ins;
 	int32 size;
 	uint32 phase;
@@ -134,24 +134,24 @@ private:
 
 public:
 
-	void decode_sound(int);
-	void unload_sound(int);
-	void play_sound();
-	int init_sound();
-	void deinit_sound();
-	void start_sound(int, int);
-	void stop_sound();
-	void stop_note(int i);
-	void play_note(int i, int freq, int vol);
-	void play_agi_sound();
-	uint32 mix_sound();
-	int load_instruments(char *fname);
+	void decodeSound(int);
+	void unloadSound(int);
+	void playSound();
+	int initSound();
+	void deinitSound();
+	void startSound(int, int);
+	void stopSound();
+	void stopNote(int i);
+	void playNote(int i, int freq, int vol);
+	void playAgiSound();
+	uint32 mixSound();
+	int loadInstruments(char *fname);
 #ifdef USE_IIGS_SOUND
-	void play_midi_sound();
-	void play_sample_sound();
+	void playMidiSound();
+	void playSampleSound();
 #endif
 };
 
 } // End of namespace Agi
 
-#endif				/* AGI_SOUND_H */
+#endif /* AGI_SOUND_H */

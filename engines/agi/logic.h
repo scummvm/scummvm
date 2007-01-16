@@ -33,12 +33,12 @@ namespace Agi {
 /**
  * AGI logic resource structure.
  */
-struct agi_logic {
+struct AgiLogic {
 	uint8 *data;		/**< raw resource data */
 	int size;		/**< size of data */
 	int sIP;		/**< saved IP */
 	int cIP;		/**< current IP */
-	int num_texts;		/**< number of messages */
+	int numTexts;		/**< number of messages */
 	const char **texts;		/**< message list */
 };
 

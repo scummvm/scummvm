@@ -28,43 +28,43 @@
 
 namespace Agi {
 
-int AgiEngine::check_step(int delta, int step) {
+int AgiEngine::checkStep(int delta, int step) {
 	return (-step >= delta) ? 0 : (step <= delta) ? 2 : 1;
 }
 
-int AgiEngine::check_block(int x, int y) {
-	if (x <= game.block.x1 || x >= game.block.x2)
+int AgiEngine::checkBlock(int x, int y) {
+	if (x <= _game.block.x1 || x >= _game.block.x2)
 		return false;
 
-	if (y <= game.block.y1 || y >= game.block.y2)
+	if (y <= _game.block.y1 || y >= _game.block.y2)
 		return false;
 
 	return true;
 }
 
-void AgiEngine::changepos(struct vt_entry *v) {
+void AgiEngine::changePos(struct VtEntry *v) {
 	int b, x, y;
 	int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
 	int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 
-	x = v->x_pos;
-	y = v->y_pos;
-	b = check_block(x, y);
+	x = v->xPos;
+	y = v->yPos;
+	b = checkBlock(x, y);
 
-	x += v->step_size * dx[v->direction];
-	y += v->step_size * dy[v->direction];
+	x += v->stepSize * dx[v->direction];
+	y += v->stepSize * dy[v->direction];
 
-	if (check_block(x, y) == b) {
+	if (checkBlock(x, y) == b) {
 		v->flags &= ~MOTION;
 	} else {
 		v->flags |= MOTION;
 		v->direction = 0;
-		if (is_ego_view(v))
-			game.vars[V_ego_dir] = 0;
+		if (isEgoView(v))
+			_game.vars[vEgoDir] = 0;
 	}
 }
 
-void AgiEngine::motion_wander(struct vt_entry *v) {
+void AgiEngine::motionWander(struct VtEntry *v) {
 	if (v->parm1--) {
 		if (~v->flags & DIDNT_MOVE)
 			return;
@@ -72,27 +72,27 @@ void AgiEngine::motion_wander(struct vt_entry *v) {
 
 	v->direction = _rnd->getRandomNumber(8);
 
-	if (is_ego_view(v)) {
-		game.vars[V_ego_dir] = v->direction;
+	if (isEgoView(v)) {
+		_game.vars[vEgoDir] = v->direction;
 		while (v->parm1 < 6) {
 			v->parm1 = _rnd->getRandomNumber(50);	/* huh? */
 		}
 	}
 }
 
-void AgiEngine::motion_followego(struct vt_entry *v) {
-	int ego_x, ego_y;
-	int obj_x, obj_y;
+void AgiEngine::motionFollowEgo(struct VtEntry *v) {
+	int egoX, egoY;
+	int objX, objY;
 	int dir;
 
-	ego_x = game.view_table[0].x_pos + game.view_table[0].x_size / 2;
-	ego_y = game.view_table[0].y_pos;
+	egoX = _game.viewTable[0].xPos + _game.viewTable[0].xSize / 2;
+	egoY = _game.viewTable[0].yPos;
 
-	obj_x = v->x_pos + v->x_size / 2;
-	obj_y = v->y_pos;
+	objX = v->xPos + v->xSize / 2;
+	objY = v->yPos;
 
 	/* Get direction to reach ego */
-	dir = get_direction(obj_x, obj_y, ego_x, ego_y, v->parm1);
+	dir = getDirection(objX, objY, egoX, egoY, v->parm1);
 
 	/* Already at ego coordinates */
 	if (dir == 0) {
@@ -110,14 +110,14 @@ void AgiEngine::motion_followego(struct vt_entry *v) {
 		while ((v->direction = _rnd->getRandomNumber(8)) == 0) {
 		}
 
-		d = (abs(ego_y - obj_y) + abs(ego_x - obj_x)) / 2;
+		d = (abs(egoY - objY) + abs(egoX - objX)) / 2;
 
-		if (d < v->step_size) {
-			v->parm3 = v->step_size;
+		if (d < v->stepSize) {
+			v->parm3 = v->stepSize;
 			return;
 		}
 
-		while ((v->parm3 = _rnd->getRandomNumber(d)) < v->step_size) {
+		while ((v->parm3 = _rnd->getRandomNumber(d)) < v->stepSize) {
 		}
 		return;
 	}
@@ -132,7 +132,7 @@ void AgiEngine::motion_followego(struct vt_entry *v) {
 		 *      v->parm3 = 0;
 		 */
 		k = v->parm3;
-		k -= v->step_size;
+		k -= v->stepSize;
 		v->parm3 = k;
 
 		if ((int8) v->parm3 < 0)
@@ -142,32 +142,32 @@ void AgiEngine::motion_followego(struct vt_entry *v) {
 	}
 }
 
-void AgiEngine::motion_moveobj(struct vt_entry *v) {
-	v->direction = get_direction(v->x_pos, v->y_pos, v->parm1, v->parm2, v->step_size);
+void AgiEngine::motionMoveObj(struct VtEntry *v) {
+	v->direction = getDirection(v->xPos, v->yPos, v->parm1, v->parm2, v->stepSize);
 
 	/* Update V6 if ego */
-	if (is_ego_view(v))
-		game.vars[V_ego_dir] = v->direction;
+	if (isEgoView(v))
+		_game.vars[vEgoDir] = v->direction;
 
 	if (v->direction == 0)
-		in_destination(v);
+		inDestination(v);
 }
 
-void AgiEngine::check_motion(struct vt_entry *v) {
+void AgiEngine::checkMotion(struct VtEntry *v) {
 	switch (v->motion) {
 	case MOTION_WANDER:
-		motion_wander(v);
+		motionWander(v);
 		break;
 	case MOTION_FOLLOW_EGO:
-		motion_followego(v);
+		motionFollowEgo(v);
 		break;
 	case MOTION_MOVE_OBJ:
-		motion_moveobj(v);
+		motionMoveObj(v);
 		break;
 	}
 
-	if ((game.block.active && (~v->flags & IGNORE_BLOCKS)) && v->direction)
-		changepos(v);
+	if ((_game.block.active && (~v->flags & IGNORE_BLOCKS)) && v->direction)
+		changePos(v);
 }
 
 /*
@@ -177,13 +177,13 @@ void AgiEngine::check_motion(struct vt_entry *v) {
 /**
  *
  */
-void AgiEngine::check_all_motions() {
-	struct vt_entry *v;
+void AgiEngine::checkAllMotions() {
+	struct VtEntry *v;
 
-	for (v = game.view_table; v < &game.view_table[MAX_VIEWTABLE]; v++) {
+	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
 		if ((v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | UPDATE | DRAWN)
-				&& v->step_time_count == 1) {
-			check_motion(v);
+				&& v->stepTimeCount == 1) {
+			checkMotion(v);
 		}
 	}
 }
@@ -194,14 +194,14 @@ void AgiEngine::check_all_motions() {
  * type motion that * has reached its final destination coordinates.
  * @param  v  Pointer to view table entry
  */
-void AgiEngine::in_destination(struct vt_entry *v) {
+void AgiEngine::inDestination(struct VtEntry *v) {
 	if (v->motion == MOTION_MOVE_OBJ) {
-		v->step_size = v->parm3;
+		v->stepSize = v->parm3;
 		setflag(v->parm4, true);
 	}
 	v->motion = MOTION_NORMAL;
-	if (is_ego_view(v))
-		game.player_control = true;
+	if (isEgoView(v))
+		_game.playerControl = true;
 }
 
 /**
@@ -210,8 +210,8 @@ void AgiEngine::in_destination(struct vt_entry *v) {
  * after setting the motion mode to MOTION_MOVE_OBJ.
  * @param  v  Pointer to view table entry
  */
-void AgiEngine::move_obj(struct vt_entry *v) {
-	motion_moveobj(v);
+void AgiEngine::moveObj(struct VtEntry *v) {
+	motionMoveObj(v);
 }
 
 /**
@@ -224,9 +224,9 @@ void AgiEngine::move_obj(struct vt_entry *v) {
  * @param  y   y coordinate of the object
  * @param  s   step size
  */
-int AgiEngine::get_direction(int x0, int y0, int x, int y, int s) {
-	int dir_table[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
-	return dir_table[check_step(x - x0, s) + 3 * check_step(y - y0, s)];
+int AgiEngine::getDirection(int x0, int y0, int x, int y, int s) {
+	int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
+	return dirTable[checkStep(x - x0, s) + 3 * checkStep(y - y0, s)];
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

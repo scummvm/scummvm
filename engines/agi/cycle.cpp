@@ -38,108 +38,108 @@ namespace Agi {
  * This function is called when ego enters a new room.
  * @param n room number
  */
-void AgiEngine::new_room(int n) {
-	struct vt_entry *v;
+void AgiEngine::newRoom(int n) {
+	VtEntry *v;
 	int i;
 
 	debugC(4, kDebugLevelMain, "*** room %d ***", n);
-	_sound->stop_sound();
+	_sound->stopSound();
 
 	i = 0;
-	for (v = game.view_table; v < &game.view_table[MAX_VIEWTABLE]; v++) {
+	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
 		v->entry = i++;
 		v->flags &= ~(ANIMATED | DRAWN);
 		v->flags |= UPDATE;
-		v->step_time = 1;
-		v->step_time_count = 1;
-		v->cycle_time = 1;
-		v->cycle_time_count = 1;
-		v->step_size = 1;
+		v->stepTime = 1;
+		v->stepTimeCount = 1;
+		v->cycleTime = 1;
+		v->cycleTimeCount = 1;
+		v->stepSize = 1;
 	}
 	agiUnloadResources();
 
-	game.player_control = true;
-	game.block.active = false;
-	game.horizon = 36;
-	game.vars[V_prev_room] = game.vars[V_cur_room];
-	game.vars[V_cur_room] = n;
-	game.vars[V_border_touch_obj] = 0;
-	game.vars[V_border_code] = 0;
-	game.vars[V_ego_view_resource] = game.view_table[0].current_view;
+	_game.playerControl = true;
+	_game.block.active = false;
+	_game.horizon = 36;
+	_game.vars[vPrevRoom] = _game.vars[vCurRoom];
+	_game.vars[vCurRoom] = n;
+	_game.vars[vBorderTouchObj] = 0;
+	_game.vars[vBorderCode] = 0;
+	_game.vars[vEgoViewResource] = _game.viewTable[0].currentView;
 
 	agiLoadResource(rLOGIC, n);
 
 	/* Reposition ego in the new room */
-	switch (game.vars[V_border_touch_ego]) {
+	switch (_game.vars[vBorderTouchEgo]) {
 	case 1:
-		game.view_table[0].y_pos = _HEIGHT - 1;
+		_game.viewTable[0].yPos = _HEIGHT - 1;
 		break;
 	case 2:
-		game.view_table[0].x_pos = 0;
+		_game.viewTable[0].xPos = 0;
 		break;
 	case 3:
-		game.view_table[0].y_pos = HORIZON + 1;
+		_game.viewTable[0].yPos = HORIZON + 1;
 		break;
 	case 4:
-		game.view_table[0].x_pos = _WIDTH - game.view_table[0].x_size;
+		_game.viewTable[0].xPos = _WIDTH - _game.viewTable[0].xSize;
 		break;
 	}
 
-	game.vars[V_border_touch_ego] = 0;
-	setflag(F_new_room_exec, true);
+	_game.vars[vBorderTouchEgo] = 0;
+	setflag(fNewRoomExec, true);
 
-	game.exit_all_logics = true;
+	_game.exitAllLogics = true;
 
-	write_status();
-	write_prompt();
+	writeStatus();
+	writePrompt();
 }
 
-void AgiEngine::reset_controllers() {
+void AgiEngine::resetControllers() {
 	int i;
 
 	for (i = 0; i < MAX_DIRS; i++) {
-		game.ev_keyp[i].occured = false;
+		_game.evKeyp[i].occured = false;
 	}
 }
 
-void AgiEngine::interpret_cycle() {
-	int old_sound, old_score;
+void AgiEngine::interpretCycle() {
+	int oldSound, oldScore;
 
-	if (game.player_control)
-		game.vars[V_ego_dir] = game.view_table[0].direction;
+	if (_game.playerControl)
+		_game.vars[vEgoDir] = _game.viewTable[0].direction;
 	else
-		game.view_table[0].direction = game.vars[V_ego_dir];
+		_game.viewTable[0].direction = _game.vars[vEgoDir];
 
-	check_all_motions();
+	checkAllMotions();
 
-	old_score = game.vars[V_score];
-	old_sound = getflag(F_sound_on);
+	oldScore = _game.vars[vScore];
+	oldSound = getflag(fSoundOn);
 
-	game.exit_all_logics = false;
-	while (run_logic(0) == 0 && !game.quit_prog_now) {
-		game.vars[V_word_not_found] = 0;
-		game.vars[V_border_touch_obj] = 0;
-		game.vars[V_border_code] = 0;
-		old_score = game.vars[V_score];
-		setflag(F_entered_cli, false);
-		game.exit_all_logics = false;
-		reset_controllers();
+	_game.exitAllLogics = false;
+	while (runLogic(0) == 0 && !_game.quitProgNow) {
+		_game.vars[vWordNotFound] = 0;
+		_game.vars[vBorderTouchObj] = 0;
+		_game.vars[vBorderCode] = 0;
+		oldScore = _game.vars[vScore];
+		setflag(fEnteredCli, false);
+		_game.exitAllLogics = false;
+		resetControllers();
 	}
-	reset_controllers();
+	resetControllers();
 
-	game.view_table[0].direction = game.vars[V_ego_dir];
+	_game.viewTable[0].direction = _game.vars[vEgoDir];
 
-	if (game.vars[V_score] != old_score || getflag(F_sound_on) != old_sound)
-		write_status();
+	if (_game.vars[vScore] != oldScore || getflag(fSoundOn) != oldSound)
+		writeStatus();
 
-	game.vars[V_border_touch_obj] = 0;
-	game.vars[V_border_code] = 0;
-	setflag(F_new_room_exec, false);
-	setflag(F_restart_game, false);
-	setflag(F_restore_just_ran, false);
+	_game.vars[vBorderTouchObj] = 0;
+	_game.vars[vBorderCode] = 0;
+	setflag(fNewRoomExec, false);
+	setflag(fRestartGame, false);
+	setflag(fRestoreJustRan, false);
 
-	if (game.gfx_mode) {
-		update_viewtable();
+	if (_game.gfxMode) {
+		updateViewtable();
 		_gfx->doUpdate();
 	}
 }
@@ -147,101 +147,101 @@ void AgiEngine::interpret_cycle() {
 /**
  * Update AGI interpreter timer.
  */
-void AgiEngine::update_timer() {
-	clock_count++;
-	if (clock_count <= TICK_SECONDS)
+void AgiEngine::updateTimer() {
+	_clockCount++;
+	if (_clockCount <= TICK_SECONDS)
 		return;
 
-	clock_count -= TICK_SECONDS;
+	_clockCount -= TICK_SECONDS;
 
-	if (!game.clock_enabled)
+	if (!_game.clockEnabled)
 		return;
 
-	setvar(V_seconds, getvar(V_seconds) + 1);
-	if (getvar(V_seconds) < 60)
+	setvar(vSeconds, getvar(vSeconds) + 1);
+	if (getvar(vSeconds) < 60)
 		return;
 
-	setvar(V_seconds, 0);
-	setvar(V_minutes, getvar(V_minutes) + 1);
-	if (getvar(V_minutes) < 60)
+	setvar(vSeconds, 0);
+	setvar(vMinutes, getvar(vMinutes) + 1);
+	if (getvar(vMinutes) < 60)
 		return;
 
-	setvar(V_minutes, 0);
-	setvar(V_hours, getvar(V_hours) + 1);
-	if (getvar(V_hours) < 24)
+	setvar(vMinutes, 0);
+	setvar(vHours, getvar(vHours) + 1);
+	if (getvar(vHours) < 24)
 		return;
 
-	setvar(V_hours, 0);
-	setvar(V_days, getvar(V_days) + 1);
+	setvar(vHours, 0);
+	setvar(vDays, getvar(vDays) + 1);
 }
 
-static int old_mode = -1;
-
-void AgiEngine::new_input_mode(int i) {
-	old_mode = game.input_mode;
-	game.input_mode = i;
+void AgiEngine::newInputMode(int i) {
+	_oldMode = _game.inputMode;
+	_game.inputMode = i;
 }
 
-void AgiEngine::old_input_mode() {
-	game.input_mode = old_mode;
+void AgiEngine::oldInputMode() {
+	_game.inputMode = _oldMode;
 }
 
 /* If main_cycle returns false, don't process more events! */
-int AgiEngine::main_cycle() {
+int AgiEngine::mainCycle() {
 	unsigned int key, kascii;
-	struct vt_entry *v = &game.view_table[0];
+	struct VtEntry *v = &_game.viewTable[0];
 
 	_gfx->pollTimer();		/* msdos driver -> does nothing */
-	update_timer();
+	updateTimer();
 
-	if (game.ver == 0) {
-		message_box("Warning: game CRC not listed, assuming AGI version 2.917.");
-		game.ver = -1;
+	if (_game.ver == 0) {
+		messageBox("Warning: game CRC not listed, assuming AGI version 2.917.");
+		_game.ver = -1;
 	}
 
-	key = do_poll_keyboard();
+	key = doPollKeyboard();
 
 	/* In AGI Mouse emulation mode we must update the mouse-related
 	 * vars in every interpreter cycle.
 	 */
-	if (opt.agimouse) {
-		game.vars[28] = g_mouse.x / 2;
-		game.vars[29] = g_mouse.y;
+	if (_opt.agimouse) {
+		_game.vars[28] = g_mouse.x / 2;
+		_game.vars[29] = g_mouse.y;
 	}
 	if (key == KEY_PRIORITY) {
-		_sprites->erase_both();
+		_sprites->eraseBoth();
 		_debug.priority = !_debug.priority;
-		_picture->show_pic();
-		_sprites->blit_both();
-		_sprites->commit_both();
+		_picture->showPic();
+		_sprites->blitBoth();
+		_sprites->commitBoth();
 		key = 0;
 	}
 
 	if (key == KEY_STATUSLN) {
 		_debug.statusline = !_debug.statusline;
-		write_status();
+		writeStatus();
 		key = 0;
 	}
 
 	/* Click-to-walk mouse interface */
-	if (game.player_control && v->flags & ADJ_EGO_XY) {
-		v->direction = get_direction(v->x_pos, v->y_pos, v->parm1, v->parm2, v->step_size);
+	if (_game.playerControl && v->flags & ADJ_EGO_XY) {
+		v->direction = getDirection(v->xPos, v->yPos, v->parm1, v->parm2, v->stepSize);
 
 		if (v->direction == 0)
-			in_destination(v);
+			inDestination(v);
 	}
 
 	kascii = KEY_ASCII(key);
 
 	if (kascii)
-		setvar(V_key, kascii);
-	process_key:
-	switch (game.input_mode) {
+		setvar(vKey, kascii);
+
+process_key:
+
+	switch (_game.inputMode) {
 	case INPUT_NORMAL:
-		if (!handle_controller(key)) {
-			if (key == 0 || !game.input_enabled)
+		if (!handleController(key)) {
+			if (key == 0 || !_game.inputEnabled)
 				break;
-			handle_keys(key);
+			handleKeys(key);
 
 			/* if ESC pressed, activate menu before
 			 * accept.input from the interpreter cycle
@@ -259,129 +259,129 @@ int AgiEngine::main_cycle() {
 		}
 		break;
 	case INPUT_GETSTRING:
-		handle_controller(key);
-		handle_getstring(key);
-		setvar(V_key, 0);	/* clear ENTER key */
+		handleController(key);
+		handleGetstring(key);
+		setvar(vKey, 0);	/* clear ENTER key */
 		break;
 	case INPUT_MENU:
-		menu->keyhandler(key);
+		_menu->keyhandler(key);
 		_gfx->doUpdate();
 		return false;
 	case INPUT_NONE:
-		handle_controller(key);
+		handleController(key);
 		if (key)
-			game.keypress = key;
+			_game.keypress = key;
 		break;
 	}
 	_gfx->doUpdate();
 
-	if (game.msg_box_ticks > 0)
-		game.msg_box_ticks--;
+	if (_game.msgBoxTicks > 0)
+		_game.msgBoxTicks--;
 
 	return true;
 }
 
-int AgiEngine::play_game() {
-	int ec = err_OK;
+int AgiEngine::playGame() {
+	int ec = errOK;
 
 	debugC(2, kDebugLevelMain, "initializing...");
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
+	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
 
-	_sound->stop_sound();
+	_sound->stopSound();
 	_gfx->clearScreen(0);
 
-	game.horizon = HORIZON;
-	game.player_control = false;
+	_game.horizon = HORIZON;
+	_game.playerControl = false;
 
-	setflag(F_logic_zero_firsttime, true);	/* not in 2.917 */
-	setflag(F_new_room_exec, true);	/* needed for MUMG and SQ2! */
-	setflag(F_sound_on, true);	/* enable sound */
-	setvar(V_time_delay, 2);	/* "normal" speed */
+	setflag(fLogicZeroFirsttime, true);	/* not in 2.917 */
+	setflag(fNewRoomExec, true);	/* needed for MUMG and SQ2! */
+	setflag(fSoundOn, true);	/* enable sound */
+	setvar(vTimeDelay, 2);	/* "normal" speed */
 
-	game.gfx_mode = true;
-	game.quit_prog_now = false;
-	game.clock_enabled = true;
-	game.line_user_input = 22;
+	_game.gfxMode = true;
+	_game.quitProgNow = false;
+	_game.clockEnabled = true;
+	_game.lineUserInput = 22;
 
-	if (opt.agimouse)
+	if (_opt.agimouse)
 		report("Using AGI Mouse 1.0 protocol\n");
 
 	report("Running AGI script.\n");
 
-	setflag(F_entered_cli, false);
-	setflag(F_said_accepted_input, false);
-	game.vars[V_word_not_found] = 0;
-	game.vars[V_key] = 0;
+	setflag(fEnteredCli, false);
+	setflag(fSaidAcceptedInput, false);
+	_game.vars[vWordNotFound] = 0;
+	_game.vars[vKey] = 0;
 
 	debugC(2, kDebugLevelMain, "Entering main loop");
 	do {
 
-		if (!main_cycle())
+		if (!mainCycle())
 			continue;
 
-		if (getvar(V_time_delay) == 0 || (1 + clock_count) % getvar(V_time_delay) == 0) {
-			if (!game.has_prompt && game.input_mode == INPUT_NORMAL) {
-				write_prompt();
-				game.has_prompt = 1;
-			} else if (game.has_prompt && game.input_mode == INPUT_NONE) {
-				write_prompt();
-				game.has_prompt = 0;
+		if (getvar(vTimeDelay) == 0 || (1 + _clockCount) % getvar(vTimeDelay) == 0) {
+			if (!_game.hasPrompt && _game.inputMode == INPUT_NORMAL) {
+				writePrompt();
+				_game.hasPrompt = 1;
+			} else if (_game.hasPrompt && _game.inputMode == INPUT_NONE) {
+				writePrompt();
+				_game.hasPrompt = 0;
 			}
 
-			interpret_cycle();
+			interpretCycle();
 
-			setflag(F_entered_cli, false);
-			setflag(F_said_accepted_input, false);
-			game.vars[V_word_not_found] = 0;
-			game.vars[V_key] = 0;
+			setflag(fEnteredCli, false);
+			setflag(fSaidAcceptedInput, false);
+			_game.vars[vWordNotFound] = 0;
+			_game.vars[vKey] = 0;
 		}
 
-		if (game.quit_prog_now == 0xff)
-			ec = err_RestartGame;
+		if (_game.quitProgNow == 0xff)
+			ec = errRestartGame;
 
-	} while (game.quit_prog_now == 0);
+	} while (_game.quitProgNow == 0);
 
-	_sound->stop_sound();
+	_sound->stopSound();
 
 	return ec;
 }
 
-int AgiEngine::run_game() {
-	int i, ec = err_OK;
+int AgiEngine::runGame() {
+	int i, ec = errOK;
 
 	for (i = 0; i < MAX_DIRS; i++)
-		memset(&game.ev_keyp[i], 0, sizeof(struct agi_event));
+		memset(&_game.evKeyp[i], 0, sizeof(struct AgiEvent));
 
 	/* Execute the game */
 	do {
 		debugC(2, kDebugLevelMain, "game loop");
-		debugC(2, kDebugLevelMain, "game.ver = 0x%x", game.ver);
+		debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
 
-		if (agiInit() != err_OK)
+		if (agiInit() != errOK)
 			break;
-		if (ec == err_RestartGame)
-			setflag(F_restart_game, true);
+		if (ec == errRestartGame)
+			setflag(fRestartGame, true);
 
-		setvar(V_computer, 0);	/* IBM PC (4 = Atari ST) */
-		setvar(V_soundgen, 1);	/* IBM PC SOUND */
-		setvar(V_monitor, 0x3);	/* EGA monitor */
-		setvar(V_max_input_chars, 38);
-		game.input_mode = INPUT_NONE;
-		game.input_enabled = 0;
-		game.has_prompt = 0;
+		setvar(vComputer, 0);	/* IBM PC (4 = Atari ST) */
+		setvar(vSoundgen, 1);	/* IBM PC SOUND */
+		setvar(vMonitor, 0x3);	/* EGA monitor */
+		setvar(vMaxInputChars, 38);
+		_game.inputMode = INPUT_NONE;
+		_game.inputEnabled = 0;
+		_game.hasPrompt = 0;
 
-		game.state = STATE_RUNNING;
-		ec = play_game();
-		game.state = STATE_LOADED;
+		_game.state = STATE_RUNNING;
+		ec = playGame();
+		_game.state = STATE_LOADED;
 		agiDeinit();
-	} while (ec == err_RestartGame);
+	} while (ec == errRestartGame);
 
-	delete menu;
-	menu = 0;
+	delete _menu;
+	_menu = NULL;
 
-	release_image_stack();
+	releaseImageStack();
 
 	return ec;
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

@@ -31,7 +31,7 @@ namespace Agi {
 
 class AgiEngine;
 
-struct agi_debug {
+struct AgiDebug {
 	int enabled;
 	int opcodes;
 	int logic0;
@@ -73,4 +73,4 @@ private:
 
 }                             // End of namespace Agi
 
-#endif				/* AGI_CONSOLE_H */
+#endif /* AGI_CONSOLE_H */

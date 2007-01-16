@@ -35,12 +35,12 @@ namespace Agi {
  * a rectangular area of the AGI screen. Sprites are chained in two
  * circular lists, one for updating and other for non-updating sprites.
  */
-struct sprite {
-	vt_entry *v;		/**< pointer to view table entry */
-	int16 x_pos;			/**< x coordinate of the sprite */
-	int16 y_pos;			/**< y coordinate of the sprite */
-	int16 x_size;			/**< width of the sprite */
-	int16 y_size;			/**< height of the sprite */
+struct Sprite {
+	VtEntry *v;		/**< pointer to view table entry */
+	int16 xPos;			/**< x coordinate of the sprite */
+	int16 yPos;			/**< y coordinate of the sprite */
+	int16 xSize;			/**< width of the sprite */
+	int16 ySize;			/**< height of the sprite */
 	uint8 *buffer;			/**< buffer to store background data */
 };
 
@@ -53,7 +53,7 @@ struct sprite {
 #define POOL_SIZE 68000		/* Gold Rush mine room needs > 50000 */
 	/* Speeder bike challenge needs > 67000 */
 
-void *SpritesMgr::pool_alloc(int size) {
+void *SpritesMgr::poolAlloc(int size) {
 	uint8 *x;
 
 	/* Adjust size to 32-bit boundary to prevent data misalignment
@@ -61,12 +61,12 @@ void *SpritesMgr::pool_alloc(int size) {
 	 */
 	size = (size + 3) & ~3;
 
-	x = pool_top;
-	pool_top += size;
+	x = _poolTop;
+	_poolTop += size;
 
-	if (pool_top >= (uint8 *)sprite_pool + POOL_SIZE) {
+	if (_poolTop >= (uint8 *)_spritePool + POOL_SIZE) {
 		debugC(1, kDebugLevelMain | kDebugLevelResources, "not enough memory");
-		pool_top = x;
+		_poolTop = x;
 		return NULL;
 	}
 
@@ -76,8 +76,8 @@ void *SpritesMgr::pool_alloc(int size) {
 /* Note: it's critical that pool_release() is called in the exact
          reverse order of pool_alloc()
 */
-void SpritesMgr::pool_release(void *s) {
-	pool_top = (uint8 *)s;
+void SpritesMgr::poolRelease(void *s) {
+	_poolTop = (uint8 *)s;
 }
 
 /*
@@ -86,7 +86,7 @@ void SpritesMgr::pool_release(void *s) {
 
 /* Blit one pixel considering the priorities */
 
-void SpritesMgr::blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden) {
+void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden) {
 	int epr = 0, pr = 0;	/* effective and real priorities */
 
 	/* CM: priority 15 overrides control lines and is ignored when
@@ -132,7 +132,7 @@ void SpritesMgr::blit_pixel(uint8 *p, uint8 *end, uint8 col, int spr, int width,
 }
 
 
-int SpritesMgr::blit_cel(int x, int y, int spr, view_cel *c) {
+int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
 	int hidden = true;
@@ -151,9 +151,9 @@ int SpritesMgr::blit_cel(int x, int y, int spr, view_cel *c) {
 	t = c->transparency;
 	m = c->mirror;
 	spr <<= 4;
-	p0 = &_vm->game.sbuf[x + y * _WIDTH + m * (c->width - 1)];
+	p0 = &_vm->_game.sbuf[x + y * _WIDTH + m * (c->width - 1)];
 
-	end = _vm->game.sbuf + _WIDTH * _HEIGHT;
+	end = _vm->_game.sbuf + _WIDTH * _HEIGHT;
 
 	for (i = 0; i < c->height; i++) {
 		p = p0;
@@ -161,7 +161,7 @@ int SpritesMgr::blit_cel(int x, int y, int spr, view_cel *c) {
 			col = (*q & 0xf0) >> 4;
 			for (j = *q & 0x0f; j; j--, p += 1 - 2 * m) {
 				if (col != t) {
-					blit_pixel(p, end, col, spr, _WIDTH, &hidden);
+					blitPixel(p, end, col, spr, _WIDTH, &hidden);
 				}
 			}
 			q++;
@@ -173,72 +173,72 @@ int SpritesMgr::blit_cel(int x, int y, int spr, view_cel *c) {
 	return hidden;
 }
 
-void SpritesMgr::objs_savearea(sprite *s) {
+void SpritesMgr::objsSaveArea(Sprite *s) {
 	int y;
-	int16 x_pos = s->x_pos, y_pos = s->y_pos;
-	int16 x_size = s->x_size, y_size = s->y_size;
+	int16 xPos = s->xPos, yPos = s->yPos;
+	int16 xSize = s->xSize, ySize = s->ySize;
 	uint8 *p0, *q;
 
-	if (x_pos + x_size > _WIDTH)
-		x_size = _WIDTH - x_pos;
+	if (xPos + xSize > _WIDTH)
+		xSize = _WIDTH - xPos;
 
-	if (x_pos < 0) {
-		x_size += x_pos;
-		x_pos = 0;
+	if (xPos < 0) {
+		xSize += xPos;
+		xPos = 0;
 	}
 
-	if (y_pos + y_size > _HEIGHT)
-		y_size = _HEIGHT - y_pos;
+	if (yPos + ySize > _HEIGHT)
+		ySize = _HEIGHT - yPos;
 
-	if (y_pos < 0) {
-		y_size += y_pos;
-		y_pos = 0;
+	if (yPos < 0) {
+		ySize += yPos;
+		yPos = 0;
 	}
 
-	if (x_size <= 0 || y_size <= 0)
+	if (xSize <= 0 || ySize <= 0)
 		return;
 
-	p0 = &_vm->game.sbuf[x_pos + y_pos * _WIDTH];
+	p0 = &_vm->_game.sbuf[xPos + yPos * _WIDTH];
 	q = s->buffer;
-	for (y = 0; y < y_size; y++) {
-		memcpy(q, p0, x_size);
-		q += x_size;
+	for (y = 0; y < ySize; y++) {
+		memcpy(q, p0, xSize);
+		q += xSize;
 		p0 += _WIDTH;
 	}
 }
 
-void SpritesMgr::objs_restorearea(sprite *s) {
+void SpritesMgr::objsRestoreArea(Sprite *s) {
 	int y, offset;
-	int16 x_pos = s->x_pos, y_pos = s->y_pos;
-	int16 x_size = s->x_size, y_size = s->y_size;
+	int16 xPos = s->xPos, yPos = s->yPos;
+	int16 xSize = s->xSize, ySize = s->ySize;
 	uint8 *p0, *q;
 
-	if (x_pos + x_size > _WIDTH)
-		x_size = _WIDTH - x_pos;
+	if (xPos + xSize > _WIDTH)
+		xSize = _WIDTH - xPos;
 
-	if (x_pos < 0) {
-		x_size += x_pos;
-		x_pos = 0;
+	if (xPos < 0) {
+		xSize += xPos;
+		xPos = 0;
 	}
 
-	if (y_pos + y_size > _HEIGHT)
-		y_size = _HEIGHT - y_pos;
+	if (yPos + ySize > _HEIGHT)
+		ySize = _HEIGHT - yPos;
 
-	if (y_pos < 0) {
-		y_size += y_pos;
-		y_pos = 0;
+	if (yPos < 0) {
+		ySize += yPos;
+		yPos = 0;
 	}
 
-	if (x_size <= 0 || y_size <= 0)
+	if (xSize <= 0 || ySize <= 0)
 		return;
 
-	p0 = &_vm->game.sbuf[x_pos + y_pos * _WIDTH];
+	p0 = &_vm->_game.sbuf[xPos + yPos * _WIDTH];
 	q = s->buffer;
-	offset = _vm->game.line_min_print * CHAR_LINES;
-	for (y = 0; y < y_size; y++) {
-		memcpy(p0, q, x_size);
-		_gfx->putPixelsA(x_pos, y_pos + y + offset, x_size, p0);
-		q += x_size;
+	offset = _vm->_game.lineMinPrint * CHAR_LINES;
+	for (y = 0; y < ySize; y++) {
+		memcpy(p0, q, xSize);
+		_gfx->putPixelsA(xPos, yPos + y + offset, xSize, p0);
+		q += xSize;
 		p0 += _WIDTH;
 	}
 }
@@ -247,9 +247,9 @@ void SpritesMgr::objs_restorearea(sprite *s) {
 /**
  * Condition to determine whether a sprite will be in the 'updating' list.
  */
-bool SpritesMgr::test_updating(vt_entry *v, AgiEngine *agi) {
+bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
 	/* Sanity check (see bug #779302) */
-	if (~agi->game.dir_view[v->current_view].flags & RES_LOADED)
+	if (~agi->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
 	return (v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | UPDATE | DRAWN);
@@ -258,9 +258,9 @@ bool SpritesMgr::test_updating(vt_entry *v, AgiEngine *agi) {
 /**
  * Condition to determine whether a sprite will be in the 'non-updating' list.
  */
-bool SpritesMgr::test_not_updating(vt_entry *v, AgiEngine *agi) {
+bool SpritesMgr::testNotUpdating(VtEntry *v, AgiEngine *vm) {
 	/* Sanity check (see bug #779302) */
-	if (~agi->game.dir_view[v->current_view].flags & RES_LOADED)
+	if (~vm->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
 	return (v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | DRAWN);
@@ -269,14 +269,14 @@ bool SpritesMgr::test_not_updating(vt_entry *v, AgiEngine *agi) {
 /**
  * Convert sprite priority to y value.
  */
-INLINE int SpritesMgr::prio_to_y(int p) {
+INLINE int SpritesMgr::prioToY(int p) {
 	int i;
 
 	if (p == 0)
 		return -1;
 
 	for (i = 167; i >= 0; i--) {
-		if (_vm->game.pri_table[i] < p)
+		if (_vm->_game.priTable[i] < p)
 			return i;
 	}
 
@@ -286,18 +286,18 @@ INLINE int SpritesMgr::prio_to_y(int p) {
 /**
  * Create and initialize a new sprite structure.
  */
-sprite *SpritesMgr::new_sprite(vt_entry *v) {
-	sprite *s;
-	s = (sprite *)pool_alloc(sizeof(sprite));
+Sprite *SpritesMgr::newSprite(VtEntry *v) {
+	Sprite *s;
+	s = (Sprite *)poolAlloc(sizeof(Sprite));
 	if (s == NULL)
 		return NULL;
 
 	s->v = v;		/* link sprite to associated view table entry */
-	s->x_pos = v->x_pos;
-	s->y_pos = v->y_pos - v->y_size + 1;
-	s->x_size = v->x_size;
-	s->y_size = v->y_size;
-	s->buffer = (uint8 *) pool_alloc(s->x_size * s->y_size);
+	s->xPos = v->xPos;
+	s->yPos = v->yPos - v->ySize + 1;
+	s->xSize = v->xSize;
+	s->ySize = v->ySize;
+	s->buffer = (uint8 *)poolAlloc(s->xSize * s->ySize);
 	v->s = s;		/* link view table entry to this sprite */
 
 	return s;
@@ -306,29 +306,29 @@ sprite *SpritesMgr::new_sprite(vt_entry *v) {
 /**
  * Insert sprite in the specified sprite list.
  */
-void SpritesMgr::spr_addlist(SpriteList& l, vt_entry *v) {
-	sprite *s = new_sprite(v);
+void SpritesMgr::sprAddlist(SpriteList &l, VtEntry *v) {
+	Sprite *s = newSprite(v);
 	l.push_back(s);
 }
 
 /**
  * Sort sprites from lower y values to build a sprite list.
  */
-void SpritesMgr::build_list(SpriteList& l, bool (*test) (vt_entry *, AgiEngine *)) {
+void SpritesMgr::buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *)) {
 	int i, j, k;
-	vt_entry *v;
-	vt_entry *entry[0x100];
-	int y_val[0x100];
-	int min_y = 0xff, min_index = 0;
+	VtEntry *v;
+	VtEntry *entry[0x100];
+	int yVal[0x100];
+	int minY = 0xff, minIndex = 0;
 
 	/* fill the arrays with all sprites that satisfy the 'test'
 	 * condition and their y values
 	 */
 	i = 0;
-	for (v = _vm->game.view_table; v < &_vm->game.view_table[MAX_VIEWTABLE]; v++) {
+	for (v = _vm->_game.viewTable; v < &_vm->_game.viewTable[MAX_VIEWTABLE]; v++) {
 		if ((*test)(v, _vm)) {
 			entry[i] = v;
-			y_val[i] = v->flags & FIXED_PRIORITY ? prio_to_y(v->priority) : v->y_pos;
+			yVal[i] = v->flags & FIXED_PRIORITY ? prioToY(v->priority) : v->yPos;
 			i++;
 		}
 	}
@@ -337,42 +337,42 @@ void SpritesMgr::build_list(SpriteList& l, bool (*test) (vt_entry *, AgiEngine *
 	 * sprite in the list
 	 */
 	for (j = 0; j < i; j++) {
-		min_y = 0xff;
+		minY = 0xff;
 		for (k = 0; k < i; k++) {
-			if (y_val[k] < min_y) {
-				min_index = k;
-				min_y = y_val[k];
+			if (yVal[k] < minY) {
+				minIndex = k;
+				minY = yVal[k];
 			}
 		}
 
-		y_val[min_index] = 0xff;
-		spr_addlist(l, entry[min_index]);
+		yVal[minIndex] = 0xff;
+		sprAddlist(l, entry[minIndex]);
 	}
 }
 
 /**
  * Build list of updating sprites.
  */
-void SpritesMgr::build_upd_blitlist() {
-	build_list(spr_upd, test_updating);
+void SpritesMgr::buildUpdBlitlist() {
+	buildList(_sprUpd, testUpdating);
 }
 
 /**
  * Build list of non-updating sprites.
  */
-void SpritesMgr::build_nonupd_blitlist() {
-	build_list(spr_nonupd, test_not_updating);
+void SpritesMgr::buildNonupdBlitlist() {
+	buildList(_sprNonupd, testNotUpdating);
 }
 
 /**
  * Clear the given sprite list.
  */
-void SpritesMgr::free_list(SpriteList& l) {
+void SpritesMgr::freeList(SpriteList &l) {
 	SpriteList::iterator iter;
 	for (iter = l.reverse_begin(); iter != l.end(); ) {
-		sprite* s = *iter;
-		pool_release(s->buffer);
-		pool_release(s);
+		Sprite* s = *iter;
+		poolRelease(s->buffer);
+		poolRelease(s);
 		iter = l.reverse_erase(iter);
 	}
 }
@@ -381,49 +381,49 @@ void SpritesMgr::free_list(SpriteList& l) {
  * Copy sprites from the pic buffer to the screen buffer, and check if
  * sprites of the given list have moved.
  */
-void SpritesMgr::commit_sprites(SpriteList& l) {
+void SpritesMgr::commitSprites(SpriteList &l) {
 	SpriteList::iterator iter;
 	for (iter = l.begin(); iter != l.end(); ++iter) {
-		sprite *s = *iter;
+		Sprite *s = *iter;
 		int x1, y1, x2, y2, w, h;
 
-		w = (s->v->cel_data->width > s->v->cel_data_2->width) ?
-				s->v->cel_data->width : s->v->cel_data_2->width;
+		w = (s->v->celData->width > s->v->celData2->width) ?
+				s->v->celData->width : s->v->celData2->width;
 
-		h = (s->v->cel_data->height >
-				s->v->cel_data_2->height) ? s->v->cel_data->
-				height : s->v->cel_data_2->height;
+		h = (s->v->celData->height >
+				s->v->celData2->height) ? s->v->celData->
+				height : s->v->celData2->height;
 
-		s->v->cel_data_2 = s->v->cel_data;
+		s->v->celData2 = s->v->celData;
 
-		if (s->v->x_pos < s->v->x_pos2) {
-			x1 = s->v->x_pos;
-			x2 = s->v->x_pos2 + w - 1;
+		if (s->v->xPos < s->v->xPos2) {
+			x1 = s->v->xPos;
+			x2 = s->v->xPos2 + w - 1;
 		} else {
-			x1 = s->v->x_pos2;
-			x2 = s->v->x_pos + w - 1;
+			x1 = s->v->xPos2;
+			x2 = s->v->xPos + w - 1;
 		}
 
-		if (s->v->y_pos < s->v->y_pos2) {
-			y1 = s->v->y_pos - h + 1;
-			y2 = s->v->y_pos2;
+		if (s->v->yPos < s->v->yPos2) {
+			y1 = s->v->yPos - h + 1;
+			y2 = s->v->yPos2;
 		} else {
-			y1 = s->v->y_pos2 - h + 1;
-			y2 = s->v->y_pos;
+			y1 = s->v->yPos2 - h + 1;
+			y2 = s->v->yPos;
 		}
 
-		commit_block(x1, y1, x2, y2);
+		commitBlock(x1, y1, x2, y2);
 
-		if (s->v->step_time_count != s->v->step_time)
+		if (s->v->stepTimeCount != s->v->stepTime)
 			continue;
 
-		if (s->v->x_pos == s->v->x_pos2 && s->v->y_pos == s->v->y_pos2) {
+		if (s->v->xPos == s->v->xPos2 && s->v->yPos == s->v->yPos2) {
 			s->v->flags |= DIDNT_MOVE;
 			continue;
 		}
 
-		s->v->x_pos2 = s->v->x_pos;
-		s->v->y_pos2 = s->v->y_pos;
+		s->v->xPos2 = s->v->xPos;
+		s->v->yPos2 = s->v->yPos;
 		s->v->flags &= ~DIDNT_MOVE;
 	}
 }
@@ -431,29 +431,29 @@ void SpritesMgr::commit_sprites(SpriteList& l) {
 /**
  * Erase all sprites in the given list.
  */
-void SpritesMgr::erase_sprites(SpriteList& l) {
+void SpritesMgr::eraseSprites(SpriteList &l) {
 	SpriteList::iterator iter;
 	for (iter = l.reverse_begin(); iter != l.end(); --iter) {
-		sprite *s = *iter;
-		objs_restorearea(s);
+		Sprite *s = *iter;
+		objsRestoreArea(s);
 	}
 
-	free_list(l);
+	freeList(l);
 }
 
 /**
  * Blit all sprites in the given list.
  */
-void SpritesMgr::blit_sprites(SpriteList& l) {
+void SpritesMgr::blitSprites(SpriteList& l) {
 	int hidden;
 	SpriteList::iterator iter;
 	for (iter = l.begin(); iter != l.end(); ++iter) {
-		sprite *s = *iter;
-		objs_savearea(s);
+		Sprite *s = *iter;
+		objsSaveArea(s);
 		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
-		hidden = blit_cel(s->x_pos, s->y_pos, s->v->priority, s->v->cel_data);
+		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData);
 		if (s->v->entry == 0) {	/* if ego, update f1 */
-			_vm->setflag(F_ego_invisible, hidden);
+			_vm->setflag(fEgoInvisible, hidden);
 		}
 	}
 }
@@ -462,18 +462,18 @@ void SpritesMgr::blit_sprites(SpriteList& l) {
  * Public functions
  */
 
-void SpritesMgr::commit_upd_sprites() {
-	commit_sprites(spr_upd);
+void SpritesMgr::commitUpdSprites() {
+	commitSprites(_sprUpd);
 }
 
-void SpritesMgr::commit_nonupd_sprites() {
-	commit_sprites(spr_nonupd);
+void SpritesMgr::commitNonupdSprites() {
+	commitSprites(_sprNonupd);
 }
 
 /* check moves in both lists */
-void SpritesMgr::commit_both() {
-	commit_upd_sprites();
-	commit_nonupd_sprites();
+void SpritesMgr::commitBoth() {
+	commitUpdSprites();
+	commitNonupdSprites();
 }
 
 /**
@@ -485,8 +485,8 @@ void SpritesMgr::commit_both() {
  * @see erase_nonupd_sprites()
  * @see erase_both()
  */
-void SpritesMgr::erase_upd_sprites() {
-	erase_sprites(spr_upd);
+void SpritesMgr::eraseUpdSprites() {
+	eraseSprites(_sprUpd);
 }
 
 /**
@@ -498,8 +498,8 @@ void SpritesMgr::erase_upd_sprites() {
  * @see erase_upd_sprites()
  * @see erase_both()
  */
-void SpritesMgr::erase_nonupd_sprites() {
-	erase_sprites(spr_nonupd);
+void SpritesMgr::eraseNonupdSprites() {
+	eraseSprites(_sprNonupd);
 }
 
 /**
@@ -511,9 +511,9 @@ void SpritesMgr::erase_nonupd_sprites() {
  * @see erase_upd_sprites()
  * @see erase_nonupd_sprites()
  */
-void SpritesMgr::erase_both() {
-	erase_upd_sprites();
-	erase_nonupd_sprites();
+void SpritesMgr::eraseBoth() {
+	eraseUpdSprites();
+	eraseNonupdSprites();
 }
 
 /**
@@ -524,10 +524,10 @@ void SpritesMgr::erase_both() {
  * @see blit_nonupd_sprites()
  * @see blit_both()
  */
-void SpritesMgr::blit_upd_sprites() {
+void SpritesMgr::blitUpdSprites() {
 	debugC(7, kDebugLevelSprites, "blit updating");
-	build_upd_blitlist();
-	blit_sprites(spr_upd);
+	buildUpdBlitlist();
+	blitSprites(_sprUpd);
 }
 
 /**
@@ -538,10 +538,10 @@ void SpritesMgr::blit_upd_sprites() {
  * @see blit_upd_sprites()
  * @see blit_both()
  */
-void SpritesMgr::blit_nonupd_sprites() {
+void SpritesMgr::blitNonupdSprites() {
 	debugC(7, kDebugLevelSprites, "blit non-updating");
-	build_nonupd_blitlist();
-	blit_sprites(spr_nonupd);
+	buildNonupdBlitlist();
+	blitSprites(_sprNonupd);
 }
 
 /**
@@ -552,9 +552,9 @@ void SpritesMgr::blit_nonupd_sprites() {
  * @see blit_upd_sprites()
  * @see blit_nonupd_sprites()
  */
-void SpritesMgr::blit_both() {
-	blit_nonupd_sprites();
-	blit_upd_sprites();
+void SpritesMgr::blitBoth() {
+	blitNonupdSprites();
+	blitUpdSprites();
 }
 
 /**
@@ -570,23 +570,23 @@ void SpritesMgr::blit_both() {
  * @param pri   priority to use
  * @param mar   if < 4, create a margin around the the base of the cel
  */
-void SpritesMgr::add_to_pic(int view, int loop, int cel, int x, int y, int pri, int mar) {
-	view_cel *c = NULL;
+void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, int mar) {
+	ViewCel *c = NULL;
 	int x1, y1, x2, y2, y3;
 	uint8 *p1, *p2;
 
 	debugC(3, kDebugLevelSprites, "v=%d, l=%d, c=%d, x=%d, y=%d, p=%d, m=%d", view, loop, cel, x, y, pri, mar);
 
-	_vm->record_image_stack_call(ADD_VIEW, view, loop, cel, x, y, pri, mar);
+	_vm->recordImageStackCall(ADD_VIEW, view, loop, cel, x, y, pri, mar);
 
 	/*
 	 * Was hardcoded to 8, changed to pri_table[y] to fix Gold
 	 * Rush (see bug #587558)
 	 */
 	if (pri == 0)
-		pri = _vm->game.pri_table[y];
+		pri = _vm->_game.priTable[y];
 
-	c = &_vm->game.views[view].loop[loop].cel[cel];
+	c = &_vm->_game.views[view].loop[loop].cel[cel];
 
 	x1 = x;
 	y1 = y - c->height + 1;
@@ -606,10 +606,10 @@ void SpritesMgr::add_to_pic(int view, int loop, int cel, int x, int y, int pri, 
 	if (y2 >= _HEIGHT)
 		y2 = _HEIGHT - 1;
 
-	erase_both();
+	eraseBoth();
 
 	debugC(4, kDebugLevelSprites, "blit_cel (%d, %d, %d, c)", x, y, pri);
-	blit_cel(x1, y1, pri, c);
+	blitCel(x1, y1, pri, c);
 
 	/* If margin is 0, 1, 2, or 3, the base of the cel is
 	 * surrounded with a rectangle of the corresponding priority.
@@ -627,8 +627,8 @@ void SpritesMgr::add_to_pic(int view, int loop, int cel, int x, int y, int pri, 
 		// don't let box extend below y.
 		if (y3 > y2) y3 = y2;
 
-		p1 = &_vm->game.sbuf[x1 + y3 * _WIDTH];
-		p2 = &_vm->game.sbuf[x2 + y3 * _WIDTH];
+		p1 = &_vm->_game.sbuf[x1 + y3 * _WIDTH];
+		p2 = &_vm->_game.sbuf[x2 + y3 * _WIDTH];
 
 		for (y = y3; y <= y2; y++) {
 			if ((*p1 >> 4) >= 4)
@@ -640,8 +640,8 @@ void SpritesMgr::add_to_pic(int view, int loop, int cel, int x, int y, int pri, 
 		}
 
 		debugC(4, kDebugLevelSprites, "pri box: %d %d %d %d (%d)", x1, y3, x2, y2, mar);
-		p1 = &_vm->game.sbuf[x1 + y3 * _WIDTH];
-		p2 = &_vm->game.sbuf[x1 + y2 * _WIDTH];
+		p1 = &_vm->_game.sbuf[x1 + y3 * _WIDTH];
+		p2 = &_vm->_game.sbuf[x1 + y2 * _WIDTH];
 		for (x = x1; x <= x2; x++) {
 			if ((*p1 >> 4) >= 4)
 				*p1 = (mar << 4) | (*p1 & 0x0f);
@@ -652,10 +652,10 @@ void SpritesMgr::add_to_pic(int view, int loop, int cel, int x, int y, int pri, 
 		}
 	}
 
-	blit_both();
+	blitBoth();
 
 	debugC(4, kDebugLevelSprites, "commit_block (%d, %d, %d, %d)", x1, y1, x2, y2);
-	commit_block(x1, y1, x2, y2);
+	commitBlock(x1, y1, x2, y2);
 }
 
 /**
@@ -664,13 +664,13 @@ void SpritesMgr::add_to_pic(int view, int loop, int cel, int x, int y, int pri, 
  * a message box with the object description.
  * @param n  Number of the object to show
  */
-void SpritesMgr::show_obj(int n) {
-	view_cel *c;
-	sprite s;
+void SpritesMgr::showObj(int n) {
+	ViewCel *c;
+	Sprite s;
 	int x1, y1, x2, y2;
 
 	_vm->agiLoadResource(rVIEW, n);
-	if (!(c = &_vm->game.views[n].loop[0].cel[0]))
+	if (!(c = &_vm->_game.views[n].loop[0].cel[0]))
 		return;
 
 	x1 = (_WIDTH - c->width) / 2;
@@ -678,27 +678,27 @@ void SpritesMgr::show_obj(int n) {
 	x2 = x1 + c->width - 1;
 	y2 = y1 + c->height - 1;
 
-	s.x_pos = x1;
-	s.y_pos = y1;
-	s.x_size = c->width;
-	s.y_size = c->height;
-	s.buffer = (uint8 *)malloc(s.x_size * s.y_size);
+	s.xPos = x1;
+	s.yPos = y1;
+	s.xSize = c->width;
+	s.ySize = c->height;
+	s.buffer = (uint8 *)malloc(s.xSize * s.ySize);
 
-	objs_savearea(&s);
-	blit_cel(x1, y1, s.x_size, c);
-	commit_block(x1, y1, x2, y2);
-	_vm->message_box(_vm->game.views[n].descr);
-	objs_restorearea(&s);
-	commit_block(x1, y1, x2, y2);
+	objsSaveArea(&s);
+	blitCel(x1, y1, s.xSize, c);
+	commitBlock(x1, y1, x2, y2);
+	_vm->messageBox(_vm->_game.views[n].descr);
+	objsRestoreArea(&s);
+	commitBlock(x1, y1, x2, y2);
 
 	free(s.buffer);
 }
 
-void SpritesMgr::commit_block(int x1, int y1, int x2, int y2) {
+void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	int i, w, offset;
 	uint8 *q;
 
-	if (!_vm->game.picture_shown)
+	if (!_vm->_game.pictureShown)
 		return;
 
 	/* Clipping */
@@ -722,8 +722,8 @@ void SpritesMgr::commit_block(int x1, int y1, int x2, int y2) {
 	debugC(7, kDebugLevelSprites, "%d, %d, %d, %d", x1, y1, x2, y2);
 
 	w = x2 - x1 + 1;
-	q = &_vm->game.sbuf[x1 + _WIDTH * y1];
-	offset = _vm->game.line_min_print * CHAR_LINES;
+	q = &_vm->_game.sbuf[x1 + _WIDTH * y1];
+	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (i = y1; i <= y2; i++) {
 		_gfx->putPixelsA(x1, i + offset, w, q);
 		q += _WIDTH;
@@ -736,12 +736,12 @@ SpritesMgr::SpritesMgr(AgiEngine *agi, GfxMgr *gfx) {
 	_vm = agi;
 	_gfx = gfx;
 
-	sprite_pool = (uint8 *)malloc(POOL_SIZE);
-	pool_top = sprite_pool;
+	_spritePool = (uint8 *)malloc(POOL_SIZE);
+	_poolTop = _spritePool;
 }
 
 SpritesMgr::~SpritesMgr() {
-	free(sprite_pool);
+	free(_spritePool);
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

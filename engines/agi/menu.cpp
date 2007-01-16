@@ -36,14 +36,14 @@ namespace Agi {
 
 // TODO: add constructor/destructor for agi_menu, agi_menu_option
 
-struct agi_menu_option {
+struct AgiMenuOption {
 	int enabled;			/**< option is enabled or disabled */
 	int event;			/**< menu event */
 	int index;			/**< number of option in this menu */
 	char *text;			/**< text of menu option */
 };
 
-struct agi_menu {
+struct AgiMenu {
 	MenuOptionList down;		/**< list head for menu options */
 	int index;			/**< number of menu in menubar */
 	int width;			/**< width of menu in characters */
@@ -53,21 +53,21 @@ struct agi_menu {
 	char *text;			/**< menu name */
 };
 
-agi_menu *Menu::get_menu(int i) {
+AgiMenu *Menu::getMenu(int i) {
 	MenuList::iterator iter;
-	for (iter = menubar.begin(); iter != menubar.end(); ++iter) {
-		agi_menu *m = *iter;
+	for (iter = _menubar.begin(); iter != _menubar.end(); ++iter) {
+		AgiMenu *m = *iter;
 		if (m->index == i)
 			return m;
 	}
 	return NULL;
 }
 
-agi_menu_option *Menu::get_menu_option(int i, int j) {
-	agi_menu *m = get_menu(i);
+AgiMenuOption *Menu::getMenuOption(int i, int j) {
+	AgiMenu *m = getMenu(i);
 	MenuOptionList::iterator iter;
 	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
-		agi_menu_option* d = *iter;
+		AgiMenuOption* d = *iter;
 		if (d->index == j)
 			return d;
 	}
@@ -75,59 +75,59 @@ agi_menu_option *Menu::get_menu_option(int i, int j) {
 	return NULL;
 }
 
-void Menu::draw_menu_bar() {
-	_vm->clear_lines(0, 0, MENU_BG);
-	_vm->flush_lines(0, 0);
+void Menu::drawMenuBar() {
+	_vm->clearLines(0, 0, MENU_BG);
+	_vm->flushLines(0, 0);
 
 	MenuList::iterator iter;
-	for (iter = menubar.begin(); iter != menubar.end(); ++iter) {	
-		agi_menu *m = *iter;
-		_vm->print_text(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
+	for (iter = _menubar.begin(); iter != _menubar.end(); ++iter) {	
+		AgiMenu *m = *iter;
+		_vm->printText(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
 	}
 
 }
 
-void Menu::draw_menu_hilite(int cur_menu) {
-	agi_menu *m = get_menu(cur_menu);
+void Menu::drawMenuHilite(int curMenu) {
+	AgiMenu *m = getMenu(curMenu);
 	debugC(6, kDebugLevelMenu, "[%s]", m->text);
-	_vm->print_text(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
-	_vm->flush_lines(0, 0);
+	_vm->printText(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
+	_vm->flushLines(0, 0);
 }
 
 /* draw box and pulldowns. */
-void Menu::draw_menu_option(int h_menu) {
+void Menu::drawMenuOption(int hMenu) {
 	/* find which vertical menu it is */
-	agi_menu *m = get_menu(h_menu);
+	AgiMenu *m = getMenu(hMenu);
 
 	_gfx->drawBox(m->wincol * CHAR_COLS, 1 * CHAR_LINES, (m->wincol + m->width + 2) * CHAR_COLS,
 			(1 + m->height + 2) * CHAR_LINES, MENU_BG, MENU_LINE, 0);
 
 	MenuOptionList::iterator iter;
 	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
-		agi_menu_option* d = *iter;
-		_vm->print_text(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
+		AgiMenuOption* d = *iter;
+		_vm->printText(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
 				MENU_FG, MENU_BG, !d->enabled);
 	}
 }
 
-void Menu::draw_menu_option_hilite(int h_menu, int v_menu) {
-	agi_menu *m = get_menu(h_menu);
-	agi_menu_option *d = get_menu_option(h_menu, v_menu);
+void Menu::drawMenuOptionHilite(int hMenu, int vMenu) {
+	AgiMenu *m = getMenu(hMenu);
+	AgiMenuOption *d = getMenuOption(hMenu, vMenu);
 
 	// Disabled menu items are "greyed out" with a checkerboard effect,
 	// rather than having a different colour. -- dsymonds
-	_vm->print_text(d->text, 0, m->wincol + 1, v_menu + 2, m->width + 2,
+	_vm->printText(d->text, 0, m->wincol + 1, vMenu + 2, m->width + 2,
 			MENU_BG, MENU_FG, !d->enabled);
 }
 
-void Menu::new_menu_selected(int i) {
-	_picture->show_pic();
-	draw_menu_bar();
-	draw_menu_hilite(i);
-	draw_menu_option(i);
+void Menu::newMenuSelected(int i) {
+	_picture->showPic();
+	drawMenuBar();
+	drawMenuHilite(i);
+	drawMenuOption(i);
 }
 
-bool Menu::mouse_over_text(unsigned int line, unsigned int col, char *s) {
+bool Menu::mouseOverText(unsigned int line, unsigned int col, char *s) {
 	if (g_mouse.x < col * CHAR_COLS)
 		return false;
 
@@ -169,21 +169,21 @@ Menu::Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture) {
 	_vm = vm;
 	_gfx = gfx;
 	_picture = picture;
-	h_index = 0;
-	h_col = 1;
-	h_max_menu = 0;
-	h_cur_menu = 0;
-	v_cur_menu = 0;
+	_hIndex = 0;
+	_hCol = 1;
+	_hMaxMenu = 0;
+	_hCurMenu = 0;
+	_vCurMenu = 0;
 }
 
 Menu::~Menu() {
 	MenuList::iterator iterh;
-	for (iterh = menubar.reverse_begin(); iterh != menubar.end(); ) {
-		agi_menu *m = *iterh;
+	for (iterh = _menubar.reverse_begin(); iterh != _menubar.end(); ) {
+		AgiMenu *m = *iterh;
 		debugC(3, kDebugLevelMenu, "deiniting hmenu %s", m->text);
 		MenuOptionList::iterator iterv;
 		for (iterv = m->down.reverse_begin(); iterv != m->down.end(); ) {
-			agi_menu_option *d = *iterv;
+			AgiMenuOption *d = *iterv;
 			debugC(3, kDebugLevelMenu, "  deiniting vmenu %s", d->text);
 			free(d->text);
 			delete d;
@@ -191,44 +191,44 @@ Menu::~Menu() {
 		}
 		free(m->text);
 		delete m;
-		iterh = menubar.reverse_erase(iterh);
+		iterh = _menubar.reverse_erase(iterh);
 	}
 }
 
 void Menu::add(const char *s) {
-	agi_menu *m = new agi_menu;
+	AgiMenu *m = new AgiMenu;
 	m->text = strdup(s);
 	while (m->text[strlen(m->text) - 1] == ' ')
 		m->text[strlen(m->text) - 1] = 0;
 	m->width = 0;
 	m->height = 0;
-	m->index = h_index++;
-	m->col = h_col;
-	m->wincol = h_col - 1;
-	v_index = 0;
-	v_max_menu[m->index] = 0;
-	h_col += strlen(m->text) + 1;
-	h_max_menu = m->index;
+	m->index = _hIndex++;
+	m->col = _hCol;
+	m->wincol = _hCol - 1;
+	_vIndex = 0;
+	_vMaxMenu[m->index] = 0;
+	_hCol += strlen(m->text) + 1;
+	_hMaxMenu = m->index;
 
 	debugC(3, kDebugLevelMenu, "add menu: '%s' %02x", s, m->text[strlen(m->text)]);
-	menubar.push_back(m);
+	_menubar.push_back(m);
 }
 
-void Menu::add_item(const char *s, int code) {
+void Menu::addItem(const char *s, int code) {
 	int l;
 
-	agi_menu_option* d = new agi_menu_option;
+	AgiMenuOption* d = new AgiMenuOption;
 	d->text = strdup(s);
 	d->enabled = true;
 	d->event = code;
-	d->index = v_index++;
+	d->index = _vIndex++;
 
 	// add to last menu in list
-	assert(menubar.reverse_begin() != menubar.end());
-	agi_menu *m = *menubar.reverse_begin();
+	assert(_menubar.reverse_begin() != _menubar.end());
+	AgiMenu *m = *_menubar.reverse_begin();
 	m->height++;
 
-	v_max_menu[m->index] = d->index;
+	_vMaxMenu[m->index] = d->index;
 
 	l = strlen(d->text);
 	if (l > 40)
@@ -249,13 +249,13 @@ void Menu::submit() {
 
 	/* If a menu has no options, delete it */
 	MenuList::iterator iter;
-	for (iter = menubar.reverse_begin(); iter != menubar.end(); ) {
-		agi_menu *m = *iter;
+	for (iter = _menubar.reverse_begin(); iter != _menubar.end(); ) {
+		AgiMenu *m = *iter;
 		if (m->down.empty()) {
 			free(m->text);
 			delete m;
-			h_max_menu--;
-			iter = menubar.reverse_erase(iter);
+			_hMaxMenu--;
+			iter = _menubar.reverse_erase(iter);
 		} else {
 			--iter;
 		}
@@ -263,17 +263,17 @@ void Menu::submit() {
 }
 
 bool Menu::keyhandler(int key) {
-	static int clock_val;
-	static int menu_active = false;
-	static int button_used = 0;
+	static int clockVal;
+	static int menuActive = false;
+	static int buttonUsed = 0;
 
-	if (!_vm->getflag(F_menus_work))
+	if (!_vm->getflag(fMenusWork))
 		return false;
 
-	if (!menu_active) {
-		clock_val = _vm->game.clock_enabled;
-		_vm->game.clock_enabled = false;
-		draw_menu_bar();
+	if (!menuActive) {
+		clockVal = _vm->_game.clockEnabled;
+		_vm->_game.clockEnabled = false;
+		drawMenuBar();
 	}
 	/*
 	 * Mouse handling
@@ -281,76 +281,76 @@ bool Menu::keyhandler(int key) {
 	if (g_mouse.button) {
 		int hmenu, vmenu;
 
-		button_used = 1;	/* Button has been used at least once */
+		buttonUsed = 1;	/* Button has been used at least once */
 		if (g_mouse.y <= CHAR_LINES) {
 			/* on the menubar */
 			hmenu = 0;
 
 			MenuList::iterator iterh;
-			for (iterh = menubar.begin(); iterh != menubar.end(); ++iterh) {
-				agi_menu *m = *iterh;
-				if (mouse_over_text(0, m->col, m->text)) {
+			for (iterh = _menubar.begin(); iterh != _menubar.end(); ++iterh) {
+				AgiMenu *m = *iterh;
+				if (mouseOverText(0, m->col, m->text)) {
 					break;
 				} else {
 					hmenu++;
 				}
 			}
 
-			if (hmenu <= h_max_menu) {
-				if (h_cur_menu != hmenu) {
-					v_cur_menu = -1;
-					new_menu_selected(hmenu);
+			if (hmenu <= _hMaxMenu) {
+				if (_hCurMenu != hmenu) {
+					_vCurMenu = -1;
+					newMenuSelected(hmenu);
 				}
-				h_cur_menu = hmenu;
+				_hCurMenu = hmenu;
 			}
 		} else {
 			/* not in menubar */
 			vmenu = 0;
 
-			agi_menu *m = get_menu(h_cur_menu);
+			AgiMenu *m = getMenu(_hCurMenu);
 			MenuOptionList::iterator iterv;
 			for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-				agi_menu_option *do1 = *iterv;
-				if (mouse_over_text(2 + do1->index, m->wincol + 1, do1->text)) {
+				AgiMenuOption *do1 = *iterv;
+				if (mouseOverText(2 + do1->index, m->wincol + 1, do1->text)) {
 					break;
 				} else {
 					vmenu++;
 				}
 			}
 
-			if (vmenu <= v_max_menu[h_cur_menu]) {
-				if (v_cur_menu != vmenu) {
-					draw_menu_option(h_cur_menu);
-					draw_menu_option_hilite(h_cur_menu, vmenu);
+			if (vmenu <= _vMaxMenu[_hCurMenu]) {
+				if (_vCurMenu != vmenu) {
+					drawMenuOption(_hCurMenu);
+					drawMenuOptionHilite(_hCurMenu, vmenu);
 				}
-				v_cur_menu = vmenu;
+				_vCurMenu = vmenu;
 			}
 		}
-	} else if (button_used) {
+	} else if (buttonUsed) {
 		/* Button released */
-		button_used = 0;
+		buttonUsed = 0;
 
 		debugC(6, kDebugLevelMenu | kDebugLevelInput, "button released!");
 
-		if (v_cur_menu < 0)
-			v_cur_menu = 0;
+		if (_vCurMenu < 0)
+			_vCurMenu = 0;
 
-		draw_menu_option_hilite(h_cur_menu, v_cur_menu);
+		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
 
 		if (g_mouse.y <= CHAR_LINES) {
 			/* on the menubar */
 		} else {
 			/* see which option we selected */
-			agi_menu *m = get_menu(h_cur_menu);
+			AgiMenu *m = getMenu(_hCurMenu);
 			MenuOptionList::iterator iterv;
 			for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-				agi_menu_option *d = *iterv;
-				if (mouse_over_text(2 + d->index, m->wincol + 1, d->text)) {
+				AgiMenuOption *d = *iterv;
+				if (mouseOverText(2 + d->index, m->wincol + 1, d->text)) {
 					/* activate that option */
 					if (d->enabled) {
 						debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-						_vm->game.ev_keyp[d->event].occured = true;
-						_vm->game.ev_keyp[d->event].data = d->event;
+						_vm->_game.evKeyp[d->event].occured = true;
+						_vm->_game.evKeyp[d->event].data = d->event;
 						goto exit_menu;
 					}
 				}
@@ -359,14 +359,14 @@ bool Menu::keyhandler(int key) {
 		}
 	}
 
-	if (!menu_active) {
-		if (h_cur_menu >= 0) {
-			draw_menu_hilite(h_cur_menu);
-			draw_menu_option(h_cur_menu);
-			if (!button_used && v_cur_menu >= 0)
-				draw_menu_option_hilite(h_cur_menu, v_cur_menu);
+	if (!menuActive) {
+		if (_hCurMenu >= 0) {
+			drawMenuHilite(_hCurMenu);
+			drawMenuOption(_hCurMenu);
+			if (!buttonUsed && _vCurMenu >= 0)
+				drawMenuOptionHilite(_hCurMenu, _vCurMenu);
 		}
-		menu_active = true;
+		menuActive = true;
 	}
 
 	switch (key) {
@@ -376,68 +376,68 @@ bool Menu::keyhandler(int key) {
 	case KEY_ENTER:
 	{
 		debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ENTER");
-		agi_menu_option* d = get_menu_option(h_cur_menu, v_cur_menu);
+		AgiMenuOption* d = getMenuOption(_hCurMenu, _vCurMenu);
 		if (d->enabled) {
 			debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-			_vm->game.ev_keyp[d->event].occured = true;
+			_vm->_game.evKeyp[d->event].occured = true;
 			goto exit_menu;
 		}
 		break;
 	}
 	case KEY_DOWN:
 	case KEY_UP:
-		v_cur_menu += key == KEY_DOWN ? 1 : -1;
+		_vCurMenu += key == KEY_DOWN ? 1 : -1;
 
-		if (v_cur_menu < 0)
-			v_cur_menu = v_max_menu[h_cur_menu];
-		if (v_cur_menu > v_max_menu[h_cur_menu])
-			v_cur_menu = 0;
+		if (_vCurMenu < 0)
+			_vCurMenu = _vMaxMenu[_hCurMenu];
+		if (_vCurMenu > _vMaxMenu[_hCurMenu])
+			_vCurMenu = 0;
 
-		draw_menu_option(h_cur_menu);
-		draw_menu_option_hilite(h_cur_menu, v_cur_menu);
+		drawMenuOption(_hCurMenu);
+		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
 		break;
 	case KEY_RIGHT:
 	case KEY_LEFT:
-		h_cur_menu += key == KEY_RIGHT ? 1 : -1;
+		_hCurMenu += key == KEY_RIGHT ? 1 : -1;
 
-		if (h_cur_menu < 0)
-			h_cur_menu = h_max_menu;
-		if (h_cur_menu > h_max_menu)
-			h_cur_menu = 0;
+		if (_hCurMenu < 0)
+			_hCurMenu = _hMaxMenu;
+		if (_hCurMenu > _hMaxMenu)
+			_hCurMenu = 0;
 
-		v_cur_menu = 0;
-		new_menu_selected(h_cur_menu);
-		draw_menu_option_hilite(h_cur_menu, v_cur_menu);
+		_vCurMenu = 0;
+		newMenuSelected(_hCurMenu);
+		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
 		break;
 	}
 
 	return true;
 
 exit_menu:
-	button_used = 0;
-	_picture->show_pic();
-	_vm->write_status();
+	buttonUsed = 0;
+	_picture->showPic();
+	_vm->writeStatus();
 
-	_vm->setvar(V_key, 0);
-	_vm->game.keypress = 0;
-	_vm->game.clock_enabled = clock_val;
-	_vm->old_input_mode();
-	debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", _vm->game.input_mode);
-	menu_active = false;
+	_vm->setvar(vKey, 0);
+	_vm->_game.keypress = 0;
+	_vm->_game.clockEnabled = clockVal;
+	_vm->oldInputMode();
+	debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", _vm->_game.inputMode);
+	menuActive = false;
 
 	return true;
 }
 
-void Menu::set_item(int event, int state) {
+void Menu::setItem(int event, int state) {
 	/* scan all menus for event number # */
 
 	debugC(6, kDebugLevelMenu, "event = %d, state = %d", event, state);
 	MenuList::iterator iterh;
-	for (iterh = menubar.begin(); iterh != menubar.end(); ++iterh) {
-		agi_menu *m = *iterh;
+	for (iterh = _menubar.begin(); iterh != _menubar.end(); ++iterh) {
+		AgiMenu *m = *iterh;
 		MenuOptionList::iterator iterv;
 		for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-			agi_menu_option *d = *iterv;
+			AgiMenuOption *d = *iterv;
 			if (d->event == event) {
 				d->enabled = state;
 				// keep going; we need to set the state of every menu item
@@ -447,16 +447,16 @@ void Menu::set_item(int event, int state) {
 	}
 }
 
-void Menu::enable_all() {
+void Menu::enableAll() {
 	MenuList::iterator iterh;
-	for (iterh = menubar.begin(); iterh != menubar.end(); ++iterh) {
-		agi_menu *m = *iterh;
+	for (iterh = _menubar.begin(); iterh != _menubar.end(); ++iterh) {
+		AgiMenu *m = *iterh;
 		MenuOptionList::iterator iterv;
 		for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-			agi_menu_option *d = *iterv;
+			AgiMenuOption *d = *iterv;
 			d->enabled = true;
 		}
 	}
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

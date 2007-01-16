@@ -32,19 +32,19 @@
 namespace Agi {
 
 static uint8 *words;		/* words in the game */
-static uint32 words_flen;	/* length of word memory */
+static uint32 wordsFlen;	/* length of word memory */
 
 /*
  * Local implementation to avoid problems with strndup() used by
  * gcc 3.2 Cygwin (see #635984)
  */
-static char *my_strndup(char *src, int n) {
+static char *myStrndup(char *src, int n) {
 	char *tmp = strncpy((char *)malloc(n + 1), src, n);
 	tmp[n] = 0;
 	return tmp;
 }
 
-int AgiEngine::load_words(const char *fname) {
+int AgiEngine::loadWords(const char *fname) {
 	Common::File fp;
 	uint32 flen;
 	uint8 *mem = NULL;
@@ -53,18 +53,18 @@ int AgiEngine::load_words(const char *fname) {
 
 	if (!fp.open(fname)) {
 		report("Warning: can't open %s\n", fname);
-		return err_OK /*err_BadFileOpen */ ;
+		return errOK /*err_BadFileOpen */ ;
 	}
 	report("Loading dictionary: %s\n", fname);
 
 	fp.seek(0, SEEK_END);
 	flen = fp.pos();
-	words_flen = flen;
+	wordsFlen = flen;
 	fp.seek(0, SEEK_SET);
 
 	if ((mem = (uint8 *)calloc(1, flen + 32)) == NULL) {
 		fp.close();
-		return err_NotEnoughMemory;
+		return errNotEnoughMemory;
 	}
 
 	fp.read(mem, flen);
@@ -72,10 +72,10 @@ int AgiEngine::load_words(const char *fname) {
 
 	words = mem;
 
-	return err_OK;
+	return errOK;
 }
 
-void AgiEngine::unload_words() {
+void AgiEngine::unloadWords() {
 	if (words != NULL) {
 		free(words);
 		words = NULL;
@@ -89,11 +89,11 @@ void AgiEngine::unload_words() {
  *
  * Thomas Åkesson, November 2001
  */
-int AgiEngine::find_word(char *word, int *flen) {
+int AgiEngine::findWord(char *word, int *flen) {
 	int mchr = 0;		/* matched chars */
 	int len, fchr, id = -1;
 	uint8 *p = words;
-	uint8 *q = words + words_flen;
+	uint8 *q = words + wordsFlen;
 	*flen = 0;
 
 	debugC(2, kDebugLevelScripts, "find_word(%s)", word);
@@ -140,33 +140,33 @@ int AgiEngine::find_word(char *word, int *flen) {
 	return id;
 }
 
-void AgiEngine::dictionary_words(char *msg) {
+void AgiEngine::dictionaryWords(char *msg) {
 	char *p = NULL;
 	char *q = NULL;
 	int wid, wlen;
 
 	debugC(2, kDebugLevelScripts, "msg = \"%s\"", msg);
 
-	clean_input();
+	cleanInput();
 
-	for (p = msg; p && *p && getvar(V_word_not_found) == 0;) {
+	for (p = msg; p && *p && getvar(vWordNotFound) == 0;) {
 		if (*p == 0x20)
 			p++;
 
 		if (*p == 0)
 			break;
 
-		wid = find_word(p, &wlen);
+		wid = findWord(p, &wlen);
 		debugC(2, kDebugLevelScripts, "find_word(p) == %d", wid);
 
 		switch (wid) {
 		case -1:
 			debugC(2, kDebugLevelScripts, "unknown word");
-			game.ego_words[game.num_ego_words].word = strdup(p);
-			q = game.ego_words[game.num_ego_words].word;
-			game.ego_words[game.num_ego_words].id = 19999;
-			setvar(V_word_not_found, 1 + game.num_ego_words);
-			game.num_ego_words++;
+			_game.egoWords[_game.numEgoWords].word = strdup(p);
+			q = _game.egoWords[_game.numEgoWords].word;
+			_game.egoWords[_game.numEgoWords].id = 19999;
+			setvar(vWordNotFound, 1 + _game.numEgoWords);
+			_game.numEgoWords++;
 			p += strlen(p);
 			break;
 		case 0:
@@ -178,9 +178,9 @@ void AgiEngine::dictionary_words(char *msg) {
 		default:
 			/* an OK word */
 			debugC(3, kDebugLevelScripts, "ok word (%d)", wid);
-			game.ego_words[game.num_ego_words].id = wid;
-			game.ego_words[game.num_ego_words].word = my_strndup(p, wlen);
-			game.num_ego_words++;
+			_game.egoWords[_game.numEgoWords].id = wid;
+			_game.egoWords[_game.numEgoWords].word = myStrndup(p, wlen);
+			_game.numEgoWords++;
 			p += wlen;
 			break;
 		}
@@ -200,11 +200,11 @@ void AgiEngine::dictionary_words(char *msg) {
 		}
 	}
 
-	debugC(4, kDebugLevelScripts, "num_ego_words = %d", game.num_ego_words);
-	if (game.num_ego_words > 0) {
-		setflag(F_entered_cli, true);
-		setflag(F_said_accepted_input, false);
+	debugC(4, kDebugLevelScripts, "num_ego_words = %d", _game.numEgoWords);
+	if (_game.numEgoWords > 0) {
+		setflag(fEnteredCli, true);
+		setflag(fSaidAcceptedInput, false);
 	}
 }
 
-}                             // End of namespace Agi
+}// End of namespace Agi

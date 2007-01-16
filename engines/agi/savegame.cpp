@@ -52,13 +52,13 @@ static const uint32 AGIflag=MKID_BE('AGI:');
 int AgiEngine::saveGame(const char *fileName, const char *description) {
 	char gameIDstring[8]="gameIDX";
 	int i;
-	struct image_stack_element *ptr = image_stack;
+	struct ImageStackElement *ptr = _imageStack;
 	Common::OutSaveFile *out;
 
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName, description);
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		warning("Can't create file '%s', game not saved", fileName);
-		return err_BadFileOpen;
+		return errBadFileOpen;
 	} else {
 		debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for writing", fileName);
 	}
@@ -69,70 +69,70 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	out->writeByte(SAVEGAME_VERSION);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save game version (%d)", SAVEGAME_VERSION);
 
-	out->writeByte(game.state);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", game.state);
+	out->writeByte(_game.state);
+	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", _game.state);
 	
-	strcpy(gameIDstring, game.id);
+	strcpy(gameIDstring, _game.id);
 	out->write(gameIDstring, 8);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, game.id);
+	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 
 	for (i = 0; i < MAX_FLAGS; i++)
-		out->writeByte(game.flags[i]);
+		out->writeByte(_game.flags[i]);
 	for (i = 0; i < MAX_VARS; i++)
-		out->writeByte(game.vars[i]);
+		out->writeByte(_game.vars[i]);
 
-	out->writeSint16BE((int8)game.horizon);
-	out->writeSint16BE((int16)game.line_status);
-	out->writeSint16BE((int16)game.line_user_input);
-	out->writeSint16BE((int16)game.line_min_print);
+	out->writeSint16BE((int8)_game.horizon);
+	out->writeSint16BE((int16)_game.lineStatus);
+	out->writeSint16BE((int16)_game.lineUserInput);
+	out->writeSint16BE((int16)_game.lineMinPrint);
 
-	out->writeSint16BE((int16)game.input_mode);
-	out->writeSint16BE((int16)game.lognum);
+	out->writeSint16BE((int16)_game.inputMode);
+	out->writeSint16BE((int16)_game.lognum);
 
-	out->writeSint16BE((int16)game.player_control);
-	out->writeSint16BE((int16)game.quit_prog_now);
-	out->writeSint16BE((int16)game.status_line);
-	out->writeSint16BE((int16)game.clock_enabled);
-	out->writeSint16BE((int16)game.exit_all_logics);
-	out->writeSint16BE((int16)game.picture_shown);
-	out->writeSint16BE((int16)game.has_prompt);
-	out->writeSint16BE((int16)game.game_flags);
+	out->writeSint16BE((int16)_game.playerControl);
+	out->writeSint16BE((int16)_game.quitProgNow);
+	out->writeSint16BE((int16)_game.statusLine);
+	out->writeSint16BE((int16)_game.clockEnabled);
+	out->writeSint16BE((int16)_game.exitAllLogics);
+	out->writeSint16BE((int16)_game.pictureShown);
+	out->writeSint16BE((int16)_game.hasPrompt);
+	out->writeSint16BE((int16)_game.gameFlags);
 
-	out->writeSint16BE((int16)game.input_enabled);
+	out->writeSint16BE((int16)_game.inputEnabled);
 
 	for (i = 0; i < _HEIGHT; i++)
-		out->writeByte(game.pri_table[i]);
+		out->writeByte(_game.priTable[i]);
 	
-	out->writeSint16BE((int16)game.gfx_mode);
-	out->writeByte(game.cursor_char);
-	out->writeSint16BE((int16)game.color_fg);
-	out->writeSint16BE((int16)game.color_bg);
+	out->writeSint16BE((int16)_game.gfxMode);
+	out->writeByte(_game.cursorChar);
+	out->writeSint16BE((int16)_game.colorFg);
+	out->writeSint16BE((int16)_game.colorBg);
 
 	/* game.hires */
 	/* game.sbuf */
 	/* game.ego_words */
 	/* game.num_ego_words */
 
-	out->writeSint16BE((int16)game.num_objects);
-	for (i = 0; i < (int16)game.num_objects; i++)
-		out->writeSint16BE((int16)object_get_location(i));
+	out->writeSint16BE((int16)_game.numObjects);
+	for (i = 0; i < (int16)_game.numObjects; i++)
+		out->writeSint16BE((int16)objectGetLocation(i));
 
 	/* game.ev_keyp */
 	for (i = 0; i < MAX_STRINGS; i++)
-		out->write(game.strings[i], MAX_STRINGLEN);
+		out->write(_game.strings[i], MAX_STRINGLEN);
 
 	/* record info about loaded resources */
 	for (i = 0; i < MAX_DIRS; i++) {
-		out->writeByte(game.dir_logic[i].flags);
-		out->writeSint16BE((int16)game.logics[i].sIP);
-		out->writeSint16BE((int16)game.logics[i].cIP);
+		out->writeByte(_game.dirLogic[i].flags);
+		out->writeSint16BE((int16)_game.logics[i].sIP);
+		out->writeSint16BE((int16)_game.logics[i].cIP);
 	}
 	for (i = 0; i < MAX_DIRS; i++)
-		out->writeByte(game.dir_pic[i].flags);
+		out->writeByte(_game.dirPic[i].flags);
 	for (i = 0; i < MAX_DIRS; i++)
-		out->writeByte(game.dir_view[i].flags);
+		out->writeByte(_game.dirView[i].flags);
 	for (i = 0; i < MAX_DIRS; i++)
-		out->writeByte(game.dir_sound[i].flags);
+		out->writeByte(_game.dirSound[i].flags);
 
 	/* game.pictures */
 	/* game.logics */
@@ -140,38 +140,38 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	/* game.sounds */
 
 	for (i = 0; i < MAX_VIEWTABLE; i++) {
-		struct vt_entry *v = &game.view_table[i];
+		VtEntry *v = &_game.viewTable[i];
 
-		out->writeByte(v->step_time);
-		out->writeByte(v->step_time_count);
+		out->writeByte(v->stepTime);
+		out->writeByte(v->stepTimeCount);
 		out->writeByte(v->entry);
-		out->writeSint16BE(v->x_pos);
-		out->writeSint16BE(v->y_pos);
-		out->writeByte(v->current_view);
+		out->writeSint16BE(v->xPos);
+		out->writeSint16BE(v->yPos);
+		out->writeByte(v->currentView);
 
 		/* v->view_data */
 
-		out->writeByte(v->current_loop);
-		out->writeByte(v->num_loops);
+		out->writeByte(v->currentLoop);
+		out->writeByte(v->numLoops);
 
 		/* v->loop_data */
 
-		out->writeByte(v->current_cel);
-		out->writeByte(v->num_cels);
+		out->writeByte(v->currentCel);
+		out->writeByte(v->numCels);
 
 		/* v->cel_data */
 		/* v->cel_data_2 */
 
-		out->writeSint16BE(v->x_pos2);
-		out->writeSint16BE(v->y_pos2);
+		out->writeSint16BE(v->xPos2);
+		out->writeSint16BE(v->yPos2);
 
 		/* v->s */
 
-		out->writeSint16BE(v->x_size);
-		out->writeSint16BE(v->y_size);
-		out->writeByte(v->step_size);
-		out->writeByte(v->cycle_time);
-		out->writeByte(v->cycle_time_count);
+		out->writeSint16BE(v->xSize);
+		out->writeSint16BE(v->ySize);
+		out->writeByte(v->stepSize);
+		out->writeByte(v->cycleTime);
+		out->writeByte(v->cycleTimeCount);
 		out->writeByte(v->direction);
 
 		out->writeByte(v->motion);
@@ -188,8 +188,8 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 
 	/* Save image stack */
 
-	for (i = 0; i < image_stack_pointer; i++) {
-		ptr = &image_stack[i];
+	for (i = 0; i < _imageStackPointer; i++) {
+		ptr = &_imageStack[i];
 		out->writeByte(ptr->type);
 		out->writeSint16BE(ptr->parm1);
 		out->writeSint16BE(ptr->parm2);
@@ -209,12 +209,12 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	
 	delete out;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);
-	return err_OK;
+	return errOK;
 }
 
 int AgiEngine::loadGame(const char *fileName) {
 	char description[31], saveVersion, loadId[8];
-	int i, vt_entries = MAX_VIEWTABLE;
+	int i, vtEntries = MAX_VIEWTABLE;
 	uint8 t;
 	int16 parm[7];
 	Common::InSaveFile *in;
@@ -223,7 +223,7 @@ int AgiEngine::loadGame(const char *fileName) {
 
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		warning("Can't open file '%s', game not loaded", fileName);
-		return err_BadFileOpen;
+		return errBadFileOpen;
 	} else {
 		debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName);
 	}
@@ -234,7 +234,7 @@ int AgiEngine::loadGame(const char *fileName) {
 	} else {
 		warning("This doesn't appear to be an AGI savegame, game not restored");
 		delete in;	
-		return err_OK;
+		return errOK;
 	} 
 
 	in->read(description, 31);
@@ -245,59 +245,59 @@ int AgiEngine::loadGame(const char *fileName) {
 	if (saveVersion != SAVEGAME_VERSION)
 		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_VERSION);
 
-	game.state = in->readByte();
+	_game.state = in->readByte();
 	
 	in->read(loadId, 8);
-	if (strcmp(loadId, game.id)) {
+	if (strcmp(loadId, _game.id)) {
 		delete in;	
-		warning("This save seems to be from a different AGI game (save from %s, running %s), not loaded", loadId, game.id);
-		return err_BadFileOpen;
+		warning("This save seems to be from a different AGI game (save from %s, running %s), not loaded", loadId, _game.id);
+		return errBadFileOpen;
 	}
 
 	for (i = 0; i < MAX_FLAGS; i++)
-		game.flags[i] = in->readByte();
+		_game.flags[i] = in->readByte();
 	for (i = 0; i < MAX_VARS; i++)
-		game.vars[i] = in->readByte();
+		_game.vars[i] = in->readByte();
 
-	game.horizon = in->readSint16BE();
-	game.line_status = in->readSint16BE();
-	game.line_user_input = in->readSint16BE();
-	game.line_min_print = in->readSint16BE();
+	_game.horizon = in->readSint16BE();
+	_game.lineStatus = in->readSint16BE();
+	_game.lineUserInput = in->readSint16BE();
+	_game.lineMinPrint = in->readSint16BE();
 	
 	/* These are never saved */
-	game.cursor_pos = 0;
-	game.input_buffer[0] = 0;
-	game.echo_buffer[0] = 0;
-	game.keypress = 0;
+	_game.cursorPos = 0;
+	_game.inputBuffer[0] = 0;
+	_game.echoBuffer[0] = 0;
+	_game.keypress = 0;
 
-	game.input_mode = in->readSint16BE();
-	game.lognum = in->readSint16BE();
+	_game.inputMode = in->readSint16BE();
+	_game.lognum = in->readSint16BE();
 
-	game.player_control = in->readSint16BE();
-	game.quit_prog_now = in->readSint16BE();
-	game.status_line = in->readSint16BE();
-	game.clock_enabled = in->readSint16BE();
-	game.exit_all_logics = in->readSint16BE();
-	game.picture_shown = in->readSint16BE();
-	game.has_prompt = in->readSint16BE();
-	game.game_flags = in->readSint16BE();
-	game.input_enabled = in->readSint16BE();
+	_game.playerControl = in->readSint16BE();
+	_game.quitProgNow = in->readSint16BE();
+	_game.statusLine = in->readSint16BE();
+	_game.clockEnabled = in->readSint16BE();
+	_game.exitAllLogics = in->readSint16BE();
+	_game.pictureShown = in->readSint16BE();
+	_game.hasPrompt = in->readSint16BE();
+	_game.gameFlags = in->readSint16BE();
+	_game.inputEnabled = in->readSint16BE();
 
 	for (i = 0; i < _HEIGHT; i++)
-		game.pri_table[i] = in->readByte();
+		_game.priTable[i] = in->readByte();
 
-	if (game.has_window)
-		close_window();
+	if (_game.hasWindow)
+		closeWindow();
 
-	game.msg_box_ticks = 0;
-	game.block.active = false;
+	_game.msgBoxTicks = 0;
+	_game.block.active = false;
 	/* game.window - fixed by close_window() */
 	/* game.has_window - fixed by close_window() */
 
-	game.gfx_mode = in->readSint16BE();
-	game.cursor_char = in->readByte();
-	game.color_fg = in->readSint16BE();
-	game.color_bg = in->readSint16BE();
+	_game.gfxMode = in->readSint16BE();
+	_game.cursorChar = in->readByte();
+	_game.colorFg = in->readSint16BE();
+	_game.colorBg = in->readSint16BE();
 
 	/* game.hires - rebuilt from image stack */
 	/* game.sbuf - rebuilt from image stack */
@@ -305,25 +305,25 @@ int AgiEngine::loadGame(const char *fileName) {
 	/* game.ego_words - fixed by clean_input */
 	/* game.num_ego_words - fixed by clean_input */
 
-	game.num_objects = in->readSint16BE();
-	for (i = 0; i < (int16)game.num_objects; i++)
-		object_set_location(i, in->readSint16BE());
+	_game.numObjects = in->readSint16BE();
+	for (i = 0; i < (int16)_game.numObjects; i++)
+		objectSetLocation(i, in->readSint16BE());
 
 	/* Those are not serialized */
 	for (i = 0; i < MAX_DIRS; i++) {
-		game.ev_keyp[i].occured = false;
+		_game.evKeyp[i].occured = false;
 	}
 
 	for (i = 0; i < MAX_STRINGS; i++)
-		in->read(game.strings[i], MAX_STRINGLEN);
+		in->read(_game.strings[i], MAX_STRINGLEN);
 
 	for (i = 0; i < MAX_DIRS; i++) {
 		if (in->readByte() & RES_LOADED)
 			agiLoadResource(rLOGIC, i);
 		else
 			agiUnloadResource(rLOGIC, i);
-		game.logics[i].sIP = in->readSint16BE();
-		game.logics[i].cIP = in->readSint16BE();
+		_game.logics[i].sIP = in->readSint16BE();
+		_game.logics[i].cIP = in->readSint16BE();
 	}
 
 	for (i = 0; i < MAX_DIRS; i++) {
@@ -352,39 +352,39 @@ int AgiEngine::loadGame(const char *fileName) {
 	/* game.views - loaded above */
 	/* game.sounds - loaded above */
 
-	for (i = 0; i < vt_entries; i++) {
-		struct vt_entry *v = &game.view_table[i];
+	for (i = 0; i < vtEntries; i++) {
+		struct VtEntry *v = &_game.viewTable[i];
 
-		v->step_time = in->readByte();
-		v->step_time_count = in->readByte();
+		v->stepTime = in->readByte();
+		v->stepTimeCount = in->readByte();
 		v->entry = in->readByte();
-		v->x_pos = in->readSint16BE();
-		v->y_pos = in->readSint16BE();
-		v->current_view = in->readByte();
+		v->xPos = in->readSint16BE();
+		v->yPos = in->readSint16BE();
+		v->currentView = in->readByte();
 
 		/* v->view_data - fixed below  */
 
-		v->current_loop = in->readByte();
-		v->num_loops = in->readByte();
+		v->currentLoop = in->readByte();
+		v->numLoops = in->readByte();
 
 		/* v->loop_data - fixed below  */
 
-		v->current_cel = in->readByte();
-		v->num_cels = in->readByte();
+		v->currentCel = in->readByte();
+		v->numCels = in->readByte();
 
 		/* v->cel_data - fixed below  */
 		/* v->cel_data_2 - fixed below  */
 
-		v->x_pos2 = in->readSint16BE();
-		v->y_pos2 = in->readSint16BE();
+		v->xPos2 = in->readSint16BE();
+		v->yPos2 = in->readSint16BE();
 
 		/* v->s - fixed below */
 
-		v->x_size = in->readSint16BE();
-		v->y_size = in->readSint16BE();
-		v->step_size = in->readByte();
-		v->cycle_time = in->readByte();
-		v->cycle_time_count = in->readByte();
+		v->xSize = in->readSint16BE();
+		v->ySize = in->readSint16BE();
+		v->stepSize = in->readByte();
+		v->cycleTime = in->readByte();
+		v->cycleTimeCount = in->readByte();
 		v->direction = in->readByte();
 
 		v->motion = in->readByte();
@@ -398,58 +398,58 @@ int AgiEngine::loadGame(const char *fileName) {
 		v->parm3 = in->readByte();
 		v->parm4 = in->readByte();
 	}
-	for (i = vt_entries; i < MAX_VIEWTABLE; i++) {
-		memset(&game.view_table[i], 0, sizeof(struct vt_entry));
+	for (i = vtEntries; i < MAX_VIEWTABLE; i++) {
+		memset(&_game.viewTable[i], 0, sizeof(struct VtEntry));
 	}
 
 	/* Fix some pointers in viewtable */
 
 	for (i = 0; i < MAX_VIEWTABLE; i++) {
-		struct vt_entry *v = &game.view_table[i];
+		struct VtEntry *v = &_game.viewTable[i];
 
-		if (game.dir_view[v->current_view].offset == _EMPTY)
+		if (_game.dirView[v->currentView].offset == _EMPTY)
 			continue;
 
-		if (!(game.dir_view[v->current_view].flags & RES_LOADED))
-			agiLoadResource(rVIEW, v->current_view);
+		if (!(_game.dirView[v->currentView].flags & RES_LOADED))
+			agiLoadResource(rVIEW, v->currentView);
 
-		set_view(v, v->current_view);	/* Fix v->view_data */
-		set_loop(v, v->current_loop);	/* Fix v->loop_data */
-		set_cel(v, v->current_cel);	/* Fix v->cel_data */
-		v->cel_data_2 = v->cel_data;
+		setView(v, v->currentView);	/* Fix v->view_data */
+		setLoop(v, v->currentLoop);	/* Fix v->loop_data */
+		setCel(v, v->currentCel);	/* Fix v->cel_data */
+		v->celData2 = v->celData;
 		v->s = NULL;	/* not sure if it is used... */
 	}
 
-	_sprites->erase_both();
+	_sprites->eraseBoth();
 
 	/* Clear input line */
 	_gfx->clearScreen(0);
-	write_status();
+	writeStatus();
 
 	/* Recreate background from saved image stack */
-	clear_image_stack();
+	clearImageStack();
 	while ((t = in->readByte()) != 0) {
 		for (i = 0; i < 7; i++)
 			parm[i] = in->readSint16BE();
-		replay_image_stack_call(t, parm[0], parm[1], parm[2],
+		replayImageStackCall(t, parm[0], parm[1], parm[2],
 				parm[3], parm[4], parm[5], parm[6]);
 	}
 
 	delete in;	
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);
 
-	setflag(F_restore_just_ran, true);
+	setflag(fRestoreJustRan, true);
 
-	game.has_prompt = 0;	/* force input line repaint if necessary */
-	clean_input();
+	_game.hasPrompt = 0;	/* force input line repaint if necessary */
+	cleanInput();
 
-	_sprites->erase_both();
-	_sprites->blit_both();
-	_sprites->commit_both();
-	_picture->show_pic();
+	_sprites->eraseBoth();
+	_sprites->blitBoth();
+	_sprites->commitBoth();
+	_picture->showPic();
 	_gfx->doUpdate();
 
-	return err_OK;
+	return errOK;
 }
 
 #define NUM_SLOTS 12
@@ -494,18 +494,18 @@ int AgiEngine::selectSlot() {
 		char dstr[64];
 		for (i = 0; i < NUM_SLOTS; i++) {
 			sprintf(dstr, "[%-32.32s]", desc[i]);
-			print_text(dstr, 0, hm + 1, vm + 4 + i,
+			printText(dstr, 0, hm + 1, vm + 4 + i,
 					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
 					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
 
 		}
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
-		key = do_poll_keyboard();
+		key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
 			rc = active;
-			strncpy(game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
+			strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
 			goto press;
 		case KEY_ESCAPE:
 			rc = -1;
@@ -529,7 +529,7 @@ press:
 	debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
 
 getout:
-	close_window();
+	closeWindow();
 	return rc;
 }
 
@@ -550,41 +550,41 @@ int AgiEngine::saveGameDialog() {
 
 	sprintf(fileName, "%s", getSavegameFilename(slot));
 
-	draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	print_text("Select a slot in which you wish to save the game:",
+	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
+	printText("Select a slot in which you wish to save the game:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
-	print_text("Press ENTER to select, ESC cancels",
+	printText("Press ENTER to select, ESC cancels",
 			0, hm + 1, vm + 17, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = selectSlot();
 	if (slot < 0)	
-		return err_OK;
+		return errOK;
 
-	draw_window(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
+	drawWindow(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
 			GFX_HEIGHT - vp - 9 * CHAR_LINES);
-	print_text("Enter a description for this game:",
+	printText("Enter a description for this game:",
 			0, hm + 1, vm + 6, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 	_gfx->drawRectangle(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
 			37 * CHAR_COLS, 12 * CHAR_LINES, MSG_BOX_TEXT);
 	_gfx->flushBlock(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
 			37 * CHAR_COLS, 12 * CHAR_LINES);
 
-	get_string(2, 11, 33, MAX_STRINGS);
-	_gfx->printCharacter(3, 11, game.cursor_char, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+	getString(2, 11, 33, MAX_STRINGS);
+	_gfx->printCharacter(3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 	do {
-		main_cycle();
-	} while (game.input_mode == INPUT_GETSTRING);
-	close_window();
+		mainCycle();
+	} while (_game.inputMode == INPUT_GETSTRING);
+	closeWindow();
 
-	desc = game.strings[MAX_STRINGS];
+	desc = _game.strings[MAX_STRINGS];
 	sprintf(dstr, "Are you sure you want to save the game "
 			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, slot);
 
-	rc = selection_box(dstr, buttons);
+	rc = selectionBox(dstr, buttons);
 
 	if (rc != 0) {
-		message_box("Game NOT saved.");
-		return err_OK;
+		messageBox("Game NOT saved.");
+		return errOK;
 	}
 
 	sprintf(fileName, "%s", getSavegameFilename(slot));
@@ -592,9 +592,9 @@ int AgiEngine::saveGameDialog() {
 
 	saveGame(fileName, desc);
 
-	message_box("Game saved.");
+	messageBox("Game saved.");
 
-	return err_OK;
+	return errOK;
 }
 
 int AgiEngine::saveGameSimple() {
@@ -603,7 +603,7 @@ int AgiEngine::saveGameSimple() {
 	sprintf(fileName, "%s", getSavegameFilename(0));
 	saveGame(fileName, "Default savegame");
 
-	return err_OK;
+	return errOK;
 }
 
 int AgiEngine::loadGameDialog() {
@@ -620,30 +620,30 @@ int AgiEngine::loadGameDialog() {
 
 	sprintf(fileName, "%s", getSavegameFilename(slot));
 
-	_sprites->erase_both();
-	_sound->stop_sound();
+	_sprites->eraseBoth();
+	_sound->stopSound();
 
-	draw_window(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	print_text("Select a game which you wish to\nrestore:",
+	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
+	printText("Select a game which you wish to\nrestore:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
-	print_text("Press ENTER to select, ESC cancels",
+	printText("Press ENTER to select, ESC cancels",
 			0, hm + 1, vm + 17, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = selectSlot();
 
 	if (slot < 0) {
-		message_box("Game NOT restored.");
-		return err_OK;
+		messageBox("Game NOT restored.");
+		return errOK;
 	}
 
 	sprintf(fileName, "%s", getSavegameFilename(slot));
 
-	if ((rc = loadGame(fileName)) == err_OK) {
-		message_box("Game restored.");
-		game.exit_all_logics = 1;
-		menu->enable_all();
+	if ((rc = loadGame(fileName)) == errOK) {
+		messageBox("Game restored.");
+		_game.exitAllLogics = 1;
+		_menu->enableAll();
 	} else {
-		message_box("Error restoring game.");
+		messageBox("Error restoring game.");
 	}
 
 	return rc;
@@ -655,19 +655,19 @@ int AgiEngine::loadGameSimple() {
 
 	sprintf(fileName, "%s", getSavegameFilename(0));
 
-	_sprites->erase_both();
-	_sound->stop_sound();
-	close_window();
+	_sprites->eraseBoth();
+	_sound->stopSound();
+	closeWindow();
 
-	if ((rc = loadGame(fileName)) == err_OK) {
-		message_box("Game restored.");
-		game.exit_all_logics = 1;
-		menu->enable_all();
+	if ((rc = loadGame(fileName)) == errOK) {
+		messageBox("Game restored.");
+		_game.exitAllLogics = 1;
+		_menu->enableAll();
 	} else {
-		message_box("Error restoring game.");
+		messageBox("Error restoring game.");
 	}
 
 	return rc;
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

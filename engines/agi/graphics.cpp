@@ -46,7 +46,7 @@ namespace Agi {
  * This array contains the 6-bit RGB values of the EGA palette exported
  * to the console drivers.
  */
-uint8 ega_palette[16 * 3] = {
+uint8 egaPalette[16 * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0x00, 0x2a,
 	0x00, 0x2a, 0x00,
@@ -68,7 +68,7 @@ uint8 ega_palette[16 * 3] = {
 /**
  * 16 color amiga-ish palette.
  */
-uint8 new_palette[16 * 3] = {
+uint8 newPalette[16 * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0x00, 0x3f,
 	0x00, 0x2A, 0x00,
@@ -87,7 +87,7 @@ uint8 new_palette[16 * 3] = {
 	0x3F, 0x3F, 0x3F
 };
 
-static uint16 cga_map[16] = {
+static uint16 cgaMap[16] = {
 	0x0000,			/*  0 - black */
 	0x0d00,			/*  1 - blue */
 	0x0b00,			/*  2 - green */
@@ -106,12 +106,12 @@ static uint16 cga_map[16] = {
 	0x0f0f			/* 15 - white */
 };
 
-struct update_block {
+struct UpdateBlock {
 	int x1, y1;
 	int x2, y2;
 };
 
-static struct update_block update = {
+static struct UpdateBlock update = {
 	MAX_INT, MAX_INT, 0, 0
 };
 
@@ -134,20 +134,20 @@ static struct update_block update = {
 void GfxMgr::shakeStart() {
 	int i;
 
-	if ((shake_h = (uint8 *)malloc(GFX_WIDTH * SHAKE_MAG)) == NULL)
+	if ((_shakeH = (uint8 *)malloc(GFX_WIDTH * SHAKE_MAG)) == NULL)
 		return;
 
-	if ((shake_v = (uint8 *)malloc(SHAKE_MAG * (GFX_HEIGHT - SHAKE_MAG))) == NULL) {
-		free(shake_h);
+	if ((_shakeV = (uint8 *)malloc(SHAKE_MAG * (GFX_HEIGHT - SHAKE_MAG))) == NULL) {
+		free(_shakeH);
 		return;
 	}
 
 	for (i = 0; i < GFX_HEIGHT - SHAKE_MAG; i++) {
-		memcpy(shake_v + i * SHAKE_MAG, agi_screen + i * GFX_WIDTH, SHAKE_MAG);
+		memcpy(_shakeV + i * SHAKE_MAG, _agiScreen + i * GFX_WIDTH, SHAKE_MAG);
 	}
 
 	for (i = 0; i < SHAKE_MAG; i++) {
-		memcpy(shake_h + i * GFX_WIDTH, agi_screen + i * GFX_WIDTH, GFX_WIDTH);
+		memcpy(_shakeH + i * GFX_WIDTH, _agiScreen + i * GFX_WIDTH, GFX_WIDTH);
 	}
 }
 
@@ -156,14 +156,14 @@ void GfxMgr::shakeScreen(int n) {
 
 	if (n == 0) {
 		for (i = 0; i < (GFX_HEIGHT - SHAKE_MAG); i++) {
-			memmove(&agi_screen[GFX_WIDTH * i],
-					&agi_screen[GFX_WIDTH * (i + SHAKE_MAG) + SHAKE_MAG],
+			memmove(&_agiScreen[GFX_WIDTH * i],
+					&_agiScreen[GFX_WIDTH * (i + SHAKE_MAG) + SHAKE_MAG],
 					GFX_WIDTH - SHAKE_MAG);
 		}
 	} else {
 		for (i = GFX_HEIGHT - SHAKE_MAG - 1; i >= 0; i--) {
-			memmove(&agi_screen[GFX_WIDTH * (i + SHAKE_MAG) + SHAKE_MAG],
-					&agi_screen[GFX_WIDTH * i], GFX_WIDTH - SHAKE_MAG);
+			memmove(&_agiScreen[GFX_WIDTH * (i + SHAKE_MAG) + SHAKE_MAG],
+					&_agiScreen[GFX_WIDTH * i], GFX_WIDTH - SHAKE_MAG);
 		}
 	}
 }
@@ -172,30 +172,30 @@ void GfxMgr::shakeEnd() {
 	int i;
 
 	for (i = 0; i < GFX_HEIGHT - SHAKE_MAG; i++) {
-		memcpy(agi_screen + i * GFX_WIDTH, shake_v + i * SHAKE_MAG, SHAKE_MAG);
+		memcpy(_agiScreen + i * GFX_WIDTH, _shakeV + i * SHAKE_MAG, SHAKE_MAG);
 	}
 
 	for (i = 0; i < SHAKE_MAG; i++) {
-		memcpy(agi_screen + i * GFX_WIDTH, shake_h + i * GFX_WIDTH, GFX_WIDTH);
+		memcpy(_agiScreen + i * GFX_WIDTH, _shakeH + i * GFX_WIDTH, GFX_WIDTH);
 	}
 
 	flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
 
-	free(shake_v);
-	free(shake_h);
+	free(_shakeV);
+	free(_shakeH);
 }
 
 void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int bg, bool checkerboard) {
 	int x1, y1, xx, yy, cc;
 	const uint8 *p;
 
-	p = Agi::cur_font + ((unsigned int)c * CHAR_LINES);
+	p = Agi::curFont + ((unsigned int)c * CHAR_LINES);
 	for (y1 = 0; y1 < CHAR_LINES; y1++) {
 		for (x1 = 0; x1 < CHAR_COLS; x1++) {
 			xx = x + x1;
 			yy = y + y1;
 			cc = (*p & (1 << (7 - x1))) ? fg : bg;
-			agi_screen[xx + yy * GFX_WIDTH] = cc;
+			_agiScreen[xx + yy * GFX_WIDTH] = cc;
 		}
 
 		p++;
@@ -207,7 +207,7 @@ void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int b
 	if (checkerboard) {
 		for (yy = y; yy < y + CHAR_LINES; yy++)
 			for (xx = x + (~yy & 1); xx < x + CHAR_COLS; xx += 2)
-				agi_screen[xx + yy * GFX_WIDTH] = 15;
+				_agiScreen[xx + yy * GFX_WIDTH] = 15;
 	}
 
 	/* FIXME: we don't want this when we're writing on the
@@ -231,7 +231,7 @@ void GfxMgr::drawRectangle(int x1, int y1, int x2, int y2, int c) {
 
 	w = x2 - x1 + 1;
 	h = y2 - y1 + 1;
-	p0 = &agi_screen[x1 + y1 * GFX_WIDTH];
+	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
 	for (y = 0; y < h; y++) {
 		memset(p0, c, w);
 		p0 += GFX_WIDTH;
@@ -244,17 +244,17 @@ void GfxMgr::drawFrame(int x1, int y1, int x2, int y2, int c1, int c2) {
 
 	/* top line */
 	w = x2 - x1 + 1;
-	p0 = &agi_screen[x1 + y1 * GFX_WIDTH];
+	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
 	memset(p0, c1, w);
 
 	/* bottom line */
-	p0 = &agi_screen[x1 + y2 * GFX_WIDTH];
+	p0 = &_agiScreen[x1 + y2 * GFX_WIDTH];
 	memset(p0, c2, w);
 
 	/* side lines */
 	for (y = y1; y <= y2; y++) {
-		agi_screen[x1 + y * GFX_WIDTH] = c1;
-		agi_screen[x2 + y * GFX_WIDTH] = c2;
+		_agiScreen[x1 + y * GFX_WIDTH] = c1;
+		_agiScreen[x2 + y * GFX_WIDTH] = c2;
 	}
 }
 
@@ -357,8 +357,8 @@ void GfxMgr::initPalette(uint8 *p) {
 	int i;
 
 	for (i = 0; i < 48; i++) {
-		palette[i] = p[i];
-		palette[i + 48] = (p[i] + 0x30) >> 2;
+		_palette[i] = p[i];
+		_palette[i + 48] = (p[i] + 0x30) >> 2;
 	}
 }
 
@@ -367,9 +367,9 @@ void GfxMgr::gfxSetPalette() {
 	byte pal[32 * 4];
 
 	for (i = 0; i < 32; i++) {
-		pal[i * 4 + 0] = palette[i * 3 + 0] << 2;
-		pal[i * 4 + 1] = palette[i * 3 + 1] << 2;
-		pal[i * 4 + 2] = palette[i * 3 + 2] << 2;
+		pal[i * 4 + 0] = _palette[i * 3 + 0] << 2;
+		pal[i * 4 + 1] = _palette[i * 3 + 1] << 2;
+		pal[i * 4 + 2] = _palette[i * 3 + 2] << 2;
 		pal[i * 4 + 3] = 0;
 	}
 	g_system->setPalette(pal, 0, 32);
@@ -386,7 +386,7 @@ void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
 	if (y2 >= GFX_HEIGHT)
 		y2 = GFX_HEIGHT - 1;
 
-	g_system->copyRectToScreen(screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+	g_system->copyRectToScreen(_screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
 static const byte mouseCursorArrow[] = {
@@ -406,13 +406,13 @@ static const byte mouseCursorArrow[] = {
  * @see deinit_video()
  */
 int GfxMgr::initVideo() {
-	if (_vm->opt.renderMode == Common::kRenderEGA)
-		initPalette(ega_palette);
+	if (_vm->_opt.renderMode == Common::kRenderEGA)
+		initPalette(egaPalette);
 	else
-		initPalette(new_palette);
+		initPalette(newPalette);
 
-	if ((agi_screen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL)
-		return err_NotEnoughMemory;
+	if ((_agiScreen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL)
+		return errNotEnoughMemory;
 
 	gfxSetPalette();
 
@@ -434,7 +434,7 @@ int GfxMgr::initVideo() {
 	}
 	CursorMan.replaceCursor(mouseCursor, 16, 16, 1, 1);
 
-	return err_OK;
+	return errOK;
 }
 
 /**
@@ -443,22 +443,22 @@ int GfxMgr::initVideo() {
  * @see init_video()
  */
 int GfxMgr::deinitVideo() {
-	free(agi_screen);
+	free(_agiScreen);
 
-	return err_OK;
+	return errOK;
 }
 
 int GfxMgr::initMachine() {
-	screen = (unsigned char *)malloc(320 * 200);
-	_vm->clock_count = 0;
+	_screen = (unsigned char *)malloc(320 * 200);
+	_vm->_clockCount = 0;
 
-	return err_OK;
+	return errOK;
 }
 
 int GfxMgr::deinitMachine() {
-	free(screen);
+	free(_screen);
 
-	return err_OK;
+	return errOK;
 }
 
 /**
@@ -472,19 +472,19 @@ int GfxMgr::deinitMachine() {
  * @param p pointer to the row start in the AGI screen
  */
 void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
-	if (_vm->opt.renderMode == Common::kRenderCGA) {
+	if (_vm->_opt.renderMode == Common::kRenderCGA) {
 		for (x *= 2; n--; p++, x += 2) {
-			register uint16 q = (cga_map[(*p & 0xf0) >> 4] << 4) | cga_map[*p & 0x0f];
+			register uint16 q = (cgaMap[(*p & 0xf0) >> 4] << 4) | cgaMap[*p & 0x0f];
 			if (_vm->_debug.priority)
 				q >>= 4;
-			*(uint16 *)&agi_screen[x + y * GFX_WIDTH] = q & 0x0f0f;
+			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	} else {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = ((uint16) * p << 8) | *p;
 			if (_vm->_debug.priority)
 				q >>= 4;
-			*(uint16 *)&agi_screen[x + y * GFX_WIDTH] = q & 0x0f0f;
+			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	}
 }
@@ -547,11 +547,11 @@ void GfxMgr::flushBlock(int x1, int y1, int x2, int y2) {
 
 	scheduleUpdate(x1, y1, x2, y2);
 
-	p0 = &agi_screen[x1 + y1 * GFX_WIDTH];
+	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
 	w = x2 - x1 + 1;
 
 	for (y = y1; y <= y2; y++) {
-		memcpy(screen + 320 * y + x1, p0, w);
+		memcpy(_screen + 320 * y + x1, p0, w);
 		p0 += GFX_WIDTH;
 	}
 }
@@ -589,7 +589,7 @@ void GfxMgr::flushScreen() {
  * @param c  color to clear the screen
  */
 void GfxMgr::clearScreen(int c) {
-	memset(agi_screen, c, GFX_WIDTH * GFX_HEIGHT);
+	memset(_agiScreen, c, GFX_WIDTH * GFX_HEIGHT);
 	flushScreen();
 }
 
@@ -600,7 +600,7 @@ void GfxMgr::saveBlock(int x1, int y1, int x2, int y2, uint8 *b) {
 	uint8 *p0;
 	int w, h;
 
-	p0 = &agi_screen[x1 + GFX_WIDTH * y1];
+	p0 = &_agiScreen[x1 + GFX_WIDTH * y1];
 	w = x2 - x1 + 1;
 	h = y2 - y1 + 1;
 	while (h--) {
@@ -617,7 +617,7 @@ void GfxMgr::restoreBlock(int x1, int y1, int x2, int y2, uint8 *b) {
 	uint8 *p0;
 	int w, h;
 
-	p0 = &agi_screen[x1 + GFX_WIDTH * y1];
+	p0 = &_agiScreen[x1 + GFX_WIDTH * y1];
 	w = x2 - x1 + 1;
 	h = y2 - y1 + 1;
 	while (h--) {

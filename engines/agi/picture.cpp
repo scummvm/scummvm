@@ -29,18 +29,18 @@
 
 namespace Agi {
 
-#define next_byte data[foffs++]
+#define nextByte data[foffs++]
 
 static uint8 *data;
 static uint32 flen;
 static uint32 foffs;
 
-static uint8 pat_code;
-static uint8 pat_num;
-static uint8 pri_on;
-static uint8 scr_on;
-static uint8 scr_colour;
-static uint8 pri_colour;
+static uint8 patCode;
+static uint8 patNum;
+static uint8 priOn;
+static uint8 scrOn;
+static uint8 scrColour;
+static uint8 priColour;
 
 static uint8 circles[][15] = {	/* agi circle bitmaps */
 	{0x80},
@@ -53,14 +53,14 @@ static uint8 circles[][15] = {	/* agi circle bitmaps */
 	{0x18, 0x3c, 0x7e, 0x7e, 0x7e, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x7e, 0x7e, 0x3c, 0x18}
 };
 
-static uint8 splatter_map[32] = {	/* splatter brush bitmaps */
+static uint8 splatterMap[32] = {	/* splatter brush bitmaps */
 	0x20, 0x94, 0x02, 0x24, 0x90, 0x82, 0xa4, 0xa2,
 	0x82, 0x09, 0x0a, 0x22, 0x12, 0x10, 0x42, 0x14,
 	0x91, 0x4a, 0x91, 0x11, 0x08, 0x12, 0x25, 0x10,
 	0x22, 0xa8, 0x14, 0x24, 0x00, 0x50, 0x24, 0x04
 };
 
-static uint8 splatter_start[128] = {	/* starting bit position */
+static uint8 splatterStart[128] = {	/* starting bit position */
 	0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
 	0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
 	0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,
@@ -78,40 +78,40 @@ static uint8 splatter_start[128] = {	/* starting bit position */
 	0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1
 };
 
-void PictureMgr::put_virt_pixel(int x, int y) {
+void PictureMgr::putVirtPixel(int x, int y) {
 	uint8 *p;
 
 	if (x < 0 || y < 0 || x >= _WIDTH || y >= _HEIGHT)
 		return;
 
-	p = &_vm->game.sbuf[y * _WIDTH + x];
+	p = &_vm->_game.sbuf[y * _WIDTH + x];
 
-	if (pri_on)
-		*p = (pri_colour << 4) | (*p & 0x0f);
-	if (scr_on)
-		*p = scr_colour | (*p & 0xf0);
+	if (priOn)
+		*p = (priColour << 4) | (*p & 0x0f);
+	if (scrOn)
+		*p = scrColour | (*p & 0xf0);
 }
 
 /* For the flood fill routines */
 
 /* MH2 needs stack size > 300 */
 #define STACK_SIZE 512
-static unsigned int stack_ptr;
+static unsigned int stackPtr;
 static uint16 stack[STACK_SIZE];
 
-static INLINE void _PUSH(uint16 c) {
-	assert(stack_ptr < STACK_SIZE);
+static INLINE void lpush(uint16 c) {
+	assert(stackPtr < STACK_SIZE);
 
-	stack[stack_ptr] = c;
-	stack_ptr++;
+	stack[stackPtr] = c;
+	stackPtr++;
 }
 
-static INLINE uint16 _POP() {
-	if (stack_ptr == 0)
+static INLINE uint16 lpop() {
+	if (stackPtr == 0)
 		return 0xffff;
 
-	stack_ptr--;
-	return stack[stack_ptr];
+	stackPtr--;
+	return stack[stackPtr];
 }
 
 /**
@@ -123,7 +123,7 @@ static INLINE uint16 _POP() {
  * @param x2  x coordinate of end point
  * @param y2  y coordinate of end point
  */
-void PictureMgr::draw_line(int x1, int y1, int x2, int y2) {
+void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 	int i, x, y, deltaX, deltaY, stepX, stepY, errorX, errorY, detdelta;
 
 	/* CM: Do clipping */
@@ -143,7 +143,7 @@ void PictureMgr::draw_line(int x1, int y1, int x2, int y2) {
 		}
 
 		for (; y1 <= y2; y1++)
-			put_virt_pixel(x1, y1);
+			putVirtPixel(x1, y1);
 
 		return;
 	}
@@ -157,7 +157,7 @@ void PictureMgr::draw_line(int x1, int y1, int x2, int y2) {
 			x2 = x;
 		}
 		for (; x1 <= x2; x1++)
-			put_virt_pixel(x1, y1);
+			putVirtPixel(x1, y1);
 		return;
 	}
 
@@ -190,7 +190,7 @@ void PictureMgr::draw_line(int x1, int y1, int x2, int y2) {
 		errorY = deltaX / 2;
 	}
 
-	put_virt_pixel(x, y);
+	putVirtPixel(x, y);
 
 	do {
 		errorY += deltaY;
@@ -205,7 +205,7 @@ void PictureMgr::draw_line(int x1, int y1, int x2, int y2) {
 			x += stepX;
 		}
 
-		put_virt_pixel(x, y);
+		putVirtPixel(x, y);
 		i--;
 	} while (i > 0);
 }
@@ -214,16 +214,16 @@ void PictureMgr::draw_line(int x1, int y1, int x2, int y2) {
  * Draw a relative AGI line.
  * Draws short lines relative to last position. (drawing action 0xF7)
  */
-void PictureMgr::dynamic_draw_line() {
+void PictureMgr::dynamicDrawLine() {
 	int x1, y1, disp, dx, dy;
 
-	x1 = next_byte;
-	y1 = next_byte;
+	x1 = nextByte;
+	y1 = nextByte;
 
-	put_virt_pixel(x1, y1);
+	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if ((disp = next_byte) >= 0xf0)
+		if ((disp = nextByte) >= 0xf0)
 			break;
 
 		dx = ((disp & 0xf0) >> 4) & 0x0f;
@@ -234,7 +234,7 @@ void PictureMgr::dynamic_draw_line() {
 		if (dy & 0x08)
 			dy = -(dy & 0x07);
 
-		draw_line(x1, y1, x1 + dx, y1 + dy);
+		drawLine(x1, y1, x1 + dx, y1 + dy);
 		x1 += dx;
 		y1 += dy;
 	}
@@ -246,21 +246,21 @@ void PictureMgr::dynamic_draw_line() {
 **
 ** Draws long lines to actual locations (cf. relative) (drawing action 0xF6)
 **************************************************************************/
-void PictureMgr::absolute_draw_line() {
+void PictureMgr::absoluteDrawLine() {
 	int x1, y1, x2, y2;
 
-	x1 = next_byte;
-	y1 = next_byte;
-	put_virt_pixel(x1, y1);
+	x1 = nextByte;
+	y1 = nextByte;
+	putVirtPixel(x1, y1);
 
-	while (42) {
-		if ((x2 = next_byte) >= 0xf0)
+	for (;;) {
+		if ((x2 = nextByte) >= 0xf0)
 			break;
 
-		if ((y2 = next_byte) >= 0xf0)
+		if ((y2 = nextByte) >= 0xf0)
 			break;
 
-		draw_line(x1, y1, x2, y2);
+		drawLine(x1, y1, x2, y2);
 		x1 = x2;
 		y1 = y2;
 	}
@@ -270,67 +270,67 @@ void PictureMgr::absolute_draw_line() {
 /**************************************************************************
 ** okToFill
 **************************************************************************/
-INLINE int PictureMgr::is_ok_fill_here(int x, int y) {
+INLINE int PictureMgr::isOkFillHere(int x, int y) {
 	uint8 p;
 
 	if (x < 0 || x >= _WIDTH || y < 0 || y >= _HEIGHT)
 		return false;
 
-	if (!scr_on && !pri_on)
+	if (!scrOn && !priOn)
 		return false;
 
-	p = _vm->game.sbuf[y * _WIDTH + x];
+	p = _vm->_game.sbuf[y * _WIDTH + x];
 
-	if (!pri_on && scr_on && scr_colour != 15)
+	if (!priOn && scrOn && scrColour != 15)
 		return (p & 0x0f) == 15;
 
-	if (pri_on && !scr_on && pri_colour != 4)
+	if (priOn && !scrOn && priColour != 4)
 		return (p >> 4) == 4;
 
-	return (scr_on && (p & 0x0f) == 15 && scr_colour != 15);
+	return (scrOn && (p & 0x0f) == 15 && scrColour != 15);
 }
 
 /**************************************************************************
 ** agi_fill
 **************************************************************************/
-void PictureMgr::fill_scanline(int x, int y) {
+void PictureMgr::fillScanline(int x, int y) {
 	unsigned int c;
-	int newspan_up, newspan_down;
+	int newspanUp, newspanDown;
 
-	if (!is_ok_fill_here(x, y))
+	if (!isOkFillHere(x, y))
 		return;
 
 	/* Scan for left border */
-	for (c = x - 1; is_ok_fill_here(c, y); c--);
+	for (c = x - 1; isOkFillHere(c, y); c--);
 
-	newspan_up = newspan_down = 1;
-	for (c++; is_ok_fill_here(c, y); c++) {
-		put_virt_pixel(c, y);
-		if (is_ok_fill_here(c, y - 1)) {
-			if (newspan_up) {
-				_PUSH(c + 320 * (y - 1));
-				newspan_up = 0;
+	newspanUp = newspanDown = 1;
+	for (c++; isOkFillHere(c, y); c++) {
+		putVirtPixel(c, y);
+		if (isOkFillHere(c, y - 1)) {
+			if (newspanUp) {
+				lpush(c + 320 * (y - 1));
+				newspanUp = 0;
 			}
 		} else {
-			newspan_up = 1;
+			newspanUp = 1;
 		}
 
-		if (is_ok_fill_here(c, y + 1)) {
-			if (newspan_down) {
-				_PUSH(c + 320 * (y + 1));
-				newspan_down = 0;
+		if (isOkFillHere(c, y + 1)) {
+			if (newspanDown) {
+				lpush(c + 320 * (y + 1));
+				newspanDown = 0;
 			}
 		} else {
-			newspan_down = 1;
+			newspanDown = 1;
 		}
 	}
 }
 
-void PictureMgr::agi_fill(unsigned int x, unsigned int y) {
-	_PUSH(x + 320 * y);
+void PictureMgr::agiFill(unsigned int x, unsigned int y) {
+	lpush(x + 320 * y);
 
-	while (42) {
-		uint16 c = _POP();
+	for (;;) {
+		uint16 c = lpop();
 
 		/* Exit if stack is empty */
 		if (c == 0xffff)
@@ -339,10 +339,10 @@ void PictureMgr::agi_fill(unsigned int x, unsigned int y) {
 		x = c % 320;
 		y = c / 320;
 
-		fill_scanline(x, y);
+		fillScanline(x, y);
 	}
 
-	stack_ptr = 0;
+	stackPtr = NULL;
 }
 
 /**************************************************************************
@@ -350,27 +350,27 @@ void PictureMgr::agi_fill(unsigned int x, unsigned int y) {
 **
 ** Draws an xCorner  (drawing action 0xF5)
 **************************************************************************/
-void PictureMgr::x_corner() {
+void PictureMgr::xCorner() {
 	int x1, x2, y1, y2;
 
-	x1 = next_byte;
-	y1 = next_byte;
-	put_virt_pixel(x1, y1);
+	x1 = nextByte;
+	y1 = nextByte;
+	putVirtPixel(x1, y1);
 
-	while (42) {
-		x2 = next_byte;
+	for (;;) {
+		x2 = nextByte;
 
 		if (x2 >= 0xf0)
 			break;
 
-		draw_line(x1, y1, x2, y1);
+		drawLine(x1, y1, x2, y1);
 		x1 = x2;
-		y2 = next_byte;
+		y2 = nextByte;
 
 		if (y2 >= 0xf0)
 			break;
 
-		draw_line(x1, y1, x1, y2);
+		drawLine(x1, y1, x1, y2);
 		y1 = y2;
 	}
 	foffs--;
@@ -381,27 +381,27 @@ void PictureMgr::x_corner() {
 **
 ** Draws an yCorner  (drawing action 0xF4)
 **************************************************************************/
-void PictureMgr::y_corner() {
+void PictureMgr::yCorner() {
 	int x1, x2, y1, y2;
 
-	x1 = next_byte;
-	y1 = next_byte;
-	put_virt_pixel(x1, y1);
+	x1 = nextByte;
+	y1 = nextByte;
+	putVirtPixel(x1, y1);
 
-	while (42) {
-		y2 = next_byte;
+	for (;;) {
+		y2 = nextByte;
 
 		if (y2 >= 0xF0)
 			break;
 
-		draw_line(x1, y1, x1, y2);
+		drawLine(x1, y1, x1, y2);
 		y1 = y2;
-		x2 = next_byte;
+		x2 = nextByte;
 
 		if (x2 >= 0xf0)
 			break;
 
-		draw_line(x1, y1, x2, y1);
+		drawLine(x1, y1, x2, y1);
 		x1 = x2;
 	}
 
@@ -416,8 +416,8 @@ void PictureMgr::y_corner() {
 void PictureMgr::fill() {
 	int x1, y1;
 
-	while ((x1 = next_byte) < 0xF0 && (y1 = next_byte) < 0xf0)
-		agi_fill(x1, y1);
+	while ((x1 = nextByte) < 0xF0 && (y1 = nextByte) < 0xf0)
+		agiFill(x1, y1);
 
 	foffs--;
 }
@@ -429,25 +429,25 @@ void PictureMgr::fill() {
 ** on the pattern code.
 **************************************************************************/
 
-int PictureMgr::plot_pattern_point(int x, int y, int bitpos) {
-	if (pat_code & 0x20) {
-		if ((splatter_map[bitpos >> 3] >> (7 - (bitpos & 7))) & 1) {
-			put_virt_pixel(x, y);
+int PictureMgr::plotPatternPoint(int x, int y, int bitpos) {
+	if (patCode & 0x20) {
+		if ((splatterMap[bitpos >> 3] >> (7 - (bitpos & 7))) & 1) {
+			putVirtPixel(x, y);
 		}
 		bitpos++;
 		if (bitpos == 0xff)
 			bitpos = 0;
 	} else
-		put_virt_pixel(x, y);
+		putVirtPixel(x, y);
 
 	return bitpos;
 }
 
-void PictureMgr::plot_pattern(int x, int y) {
+void PictureMgr::plotPattern(int x, int y) {
 	int32 circlePos = 0;
-	uint32 x1, y1, pensize, bitpos = splatter_start[pat_num];
+	uint32 x1, y1, pensize, bitpos = splatterStart[patNum];
 
-	pensize = (pat_code & 7);
+	pensize = (patCode & 7);
 
 	if (x < (int)pensize)
 		x = pensize - 1;
@@ -456,11 +456,11 @@ void PictureMgr::plot_pattern(int x, int y) {
 
 	for (y1 = y - pensize; y1 <= y + pensize; y1++) {
 		for (x1 = x - (pensize + 1) / 2; x1 <= x + pensize / 2; x1++) {
-			if (pat_code & 0x10) {	/* Square */
-				bitpos = plot_pattern_point (x1, y1, bitpos);
+			if (patCode & 0x10) {	/* Square */
+				bitpos = plotPatternPoint (x1, y1, bitpos);
 			} else {	/* Circle */
-				if ((circles[pat_code & 7][circlePos >> 3] >> (7 - (circlePos & 7))) & 1) {
-					bitpos = plot_pattern_point(x1, y1, bitpos);
+				if ((circles[patCode & 7][circlePos >> 3] >> (7 - (circlePos & 7))) & 1) {
+					bitpos = plotPatternPoint(x1, y1, bitpos);
 				}
 				circlePos++;
 			}
@@ -473,23 +473,23 @@ void PictureMgr::plot_pattern(int x, int y) {
 **
 ** Plots points and various brush patterns.
 **************************************************************************/
-void PictureMgr::plot_brush() {
+void PictureMgr::plotBrush() {
 	int x1, y1;
 
-	while (42) {
-		if (pat_code & 0x20) {
-			if ((pat_num = next_byte) >= 0xF0)
+	for (;;) {
+		if (patCode & 0x20) {
+			if ((patNum = nextByte) >= 0xF0)
 				break;
-			pat_num = (pat_num >> 1) & 0x7f;
+			patNum = (patNum >> 1) & 0x7f;
 		}
 
-		if ((x1 = next_byte) >= 0xf0)
+		if ((x1 = nextByte) >= 0xf0)
 			break;
 
-		if ((y1 = next_byte) >= 0xf0)
+		if ((y1 = nextByte) >= 0xf0)
 			break;
 
-		plot_pattern(x1, y1);
+		plotPattern(x1, y1);
 	}
 
 	foffs--;
@@ -501,58 +501,58 @@ void PictureMgr::plot_brush() {
 ** AGI flood fill.  (drawing action 0xF8)
 **************************************************************************/
 
-void PictureMgr::draw_picture() {
+void PictureMgr::drawPicture() {
 	uint8 act;
 	int drawing;
 
-	pat_code = 0;
-	pat_num = 0;
-	pri_on = scr_on = false;
-	scr_colour = 0xf;
-	pri_colour = 0x4;
+	patCode = 0;
+	patNum = 0;
+	priOn = scrOn = false;
+	scrColour = 0xf;
+	priColour = 0x4;
 
 	drawing = 1;
 
 	debugC(8, kDebugLevelMain, "Drawing picture");
 	for (drawing = 1; drawing && foffs < flen;) {
-		act = next_byte;
+		act = nextByte;
 		switch (act) {
 		case 0xf0:	/* set colour on screen */
-			scr_colour = next_byte;
-			scr_colour &= 0xF;	/* for v3 drawing diff */
-			scr_on = true;
+			scrColour = nextByte;
+			scrColour &= 0xF;	/* for v3 drawing diff */
+			scrOn = true;
 			break;
 		case 0xf1:	/* disable screen drawing */
-			scr_on = false;
+			scrOn = false;
 			break;
 		case 0xf2:	/* set colour on priority */
-			pri_colour = next_byte;
-			pri_colour &= 0xf;	/* for v3 drawing diff */
-			pri_on = true;
+			priColour = nextByte;
+			priColour &= 0xf;	/* for v3 drawing diff */
+			priOn = true;
 			break;
 		case 0xf3:	/* disable priority screen */
-			pri_on = false;
+			priOn = false;
 			break;
 		case 0xf4:	/* y-corner */
-			y_corner();
+			yCorner();
 			break;
 		case 0xf5:	/* x-corner */
-			x_corner();
+			xCorner();
 			break;
 		case 0xf6:	/* absolute draw lines */
-			absolute_draw_line();
+			absoluteDrawLine();
 			break;
 		case 0xf7:	/* dynamic draw lines */
-			dynamic_draw_line();
+			dynamicDrawLine();
 			break;
 		case 0xf8:	/* fill */
 			fill();
 			break;
 		case 0xf9:	/* set pattern */
-			pat_code = next_byte;
+			patCode = nextByte;
 			break;
 		case 0xfA:	/* plot brush */
-			plot_brush();
+			plotBrush();
 			break;
 		case 0xFF:	/* end of pic data */
 		default:
@@ -569,11 +569,11 @@ void PictureMgr::draw_picture() {
 /**
  *
  */
-uint8 *PictureMgr::convert_v3_pic(uint8 *src, uint32 len) {
+uint8 *PictureMgr::convertV3Pic(uint8 *src, uint32 len) {
 	uint8 d, old = 0, x, *in, *xdata, *out, mode = 0;
 	uint32 i, ulen;
 
-	xdata = (uint8 *) malloc(len + len / 2);
+	xdata = (uint8 *)malloc(len + len / 2);
 
 	out = xdata;
 	in = src;
@@ -618,29 +618,29 @@ uint8 *PictureMgr::convert_v3_pic(uint8 *src, uint32 len) {
  * @param n      AGI picture resource number
  * @param clear  clear AGI screen before drawing
  */
-int PictureMgr::decode_picture(int n, int clear) {
+int PictureMgr::decodePicture(int n, int clear) {
 	debugC(8, kDebugLevelResources, "(%d)", n);
 
-	pat_code = 0;
-	pat_num = 0;
-	pri_on = scr_on = false;
-	scr_colour = 0xF;
-	pri_colour = 0x4;
+	patCode = 0;
+	patNum = 0;
+	priOn = scrOn = false;
+	scrColour = 0xF;
+	priColour = 0x4;
 
-	data = _vm->game.pictures[n].rdata;
-	flen = _vm->game.dir_pic[n].len;
+	data = _vm->_game.pictures[n].rdata;
+	flen = _vm->_game.dirPic[n].len;
 	foffs = 0;
 
 	if (clear)
-		memset(_vm->game.sbuf, 0x4f, _WIDTH * _HEIGHT);
+		memset(_vm->_game.sbuf, 0x4f, _WIDTH * _HEIGHT);
 
-	draw_picture();
+	drawPicture();
 
 	if (clear)
-		_vm->clear_image_stack();
-	_vm->record_image_stack_call(ADD_PIC, n, clear, 0, 0, 0, 0, 0);
+		_vm->clearImageStack();
+	_vm->recordImageStackCall(ADD_PIC, n, clear, 0, 0, 0, 0, 0);
 
-	return err_OK;
+	return errOK;
 }
 
 /**
@@ -649,34 +649,34 @@ int PictureMgr::decode_picture(int n, int clear) {
  * resource data.
  * @param n AGI picture resource number
  */
-int PictureMgr::unload_picture(int n) {
+int PictureMgr::unloadPicture(int n) {
 	/* remove visual buffer & priority buffer if they exist */
-	if (_vm->game.dir_pic[n].flags & RES_LOADED) {
-		free(_vm->game.pictures[n].rdata);
-		_vm->game.dir_pic[n].flags &= ~RES_LOADED;
+	if (_vm->_game.dirPic[n].flags & RES_LOADED) {
+		free(_vm->_game.pictures[n].rdata);
+		_vm->_game.dirPic[n].flags &= ~RES_LOADED;
 	}
 
-	return err_OK;
+	return errOK;
 }
 
 /**
  * Show AGI picture.
  * This function copies a ``hidden'' AGI picture to the output device.
  */
-void PictureMgr::show_pic() {
+void PictureMgr::showPic() {
 	int i, y;
 	int offset;
 
 	debugC(8, kDebugLevelMain, "Show picture!");
 
 	i = 0;
-	offset = _vm->game.line_min_print * CHAR_LINES;
+	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (y = 0; y < _HEIGHT; y++) {
-		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->game.sbuf[i]);
+		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->_game.sbuf[i]);
 		i += _WIDTH;
 	}
 
 	_gfx->flushScreen();
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

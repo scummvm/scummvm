@@ -30,7 +30,7 @@
 namespace Agi {
 
 static AgiEngine *g_agi;
-#define game g_agi->game
+#define game g_agi->_game
 
 #define ip	(game.logics[lognum].cIP)
 #define code	(game.logics[lognum].data)
@@ -41,7 +41,7 @@ static AgiEngine *g_agi;
 
 #define _L(a,b,c) { a, b, c }
 
-struct agi_logicnames logic_names_test[] = {
+struct AgiLogicnames logicNamesTest[] = {
 	_L("", 0, 0x00),
 	_L("equaln", 2, 0x80),
 	_L("equalv", 2, 0xC0),
@@ -66,14 +66,14 @@ struct agi_logicnames logic_names_test[] = {
 	_L("right.posn", 5, 0x00)
 };
 
-struct agi_logicnames logic_names_if[] = {
+struct AgiLogicnames logicNamesIf[] = {
 	_L("OR", 0, 0x00),
 	_L("NOT", 0, 0x00),
 	_L("ELSE", 0, 0x00),
 	_L("IF", 0, 0x00)
 };
 
-struct agi_logicnames logic_names_cmd[] = {
+struct AgiLogicnames logicNamesCmd[] = {
 	_L("return", 0, 0x00),	/* 00 */
 	_L("increment", 1, 0x80),	/* 01 */
 	_L("decrement", 1, 0x80),	/* 02 */
@@ -269,9 +269,9 @@ struct agi_logicnames logic_names_cmd[] = {
 	_L(NULL, 0, 0x00)
 };
 
-void AgiEngine::debug_console(int lognum, int mode, const char *str) {
+void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 	g_agi = this;
-	agi_logicnames *x;
+	AgiLogicnames *x;
 	uint8 a, c, z;
 
 	if (str) {
@@ -286,9 +286,9 @@ void AgiEngine::debug_console(int lognum, int mode, const char *str) {
 	case 0xFD:
 	case 0xFE:
 	case 0xFF:
-		x = logic_names_if;
+		x = logicNamesIf;
 
-		if (g_agi->_debug.opcodes) {
+		if (_debug.opcodes) {
 			report("%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
 			    "         ",
 			    (uint8) * (code + (0 + ip)) & 0xFF,
@@ -304,22 +304,22 @@ void AgiEngine::debug_console(int lognum, int mode, const char *str) {
 		report("%s ", (x + *(code + ip) - 0xFC)->name);
 		break;
 	default:
-		x = mode == lCOMMAND_MODE ? logic_names_cmd : logic_names_test;
-		a = (unsigned char)(x + *(code + ip))->num_args;
-		c = (unsigned char)(x + *(code + ip))->arg_mask;
+		x = mode == lCOMMAND_MODE ? logicNamesCmd : logicNamesTest;
+		a = (unsigned char)(x + *(code + ip))->numArgs;
+		c = (unsigned char)(x + *(code + ip))->argMask;
 
-		if (g_agi->_debug.opcodes) {
+		if (_debug.opcodes) {
 			report("%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
 			    "         ",
-			    (uint8) * (code + (0 + ip)) & 0xFF,
-			    (uint8) * (code + (1 + ip)) & 0xFF,
-			    (uint8) * (code + (2 + ip)) & 0xFF,
-			    (uint8) * (code + (3 + ip)) & 0xFF,
-			    (uint8) * (code + (4 + ip)) & 0xFF,
-			    (uint8) * (code + (5 + ip)) & 0xFF,
-			    (uint8) * (code + (6 + ip)) & 0xFF,
-			    (uint8) * (code + (7 + ip)) & 0xFF,
-			    (uint8) * (code + (8 + ip)) & 0xFF);
+			    (uint8)*(code + (0 + ip)) & 0xFF,
+			    (uint8)*(code + (1 + ip)) & 0xFF,
+			    (uint8)*(code + (2 + ip)) & 0xFF,
+			    (uint8)*(code + (3 + ip)) & 0xFF,
+			    (uint8)*(code + (4 + ip)) & 0xFF,
+			    (uint8)*(code + (5 + ip)) & 0xFF,
+			    (uint8)*(code + (6 + ip)) & 0xFF,
+			    (uint8)*(code + (7 + ip)) & 0xFF,
+			    (uint8)*(code + (8 + ip)) & 0xFF);
 		}
 		report("%s ", (x + *(code + ip))->name);
 
@@ -340,4 +340,4 @@ void AgiEngine::debug_console(int lognum, int mode, const char *str) {
 	report("\n");
 }
 
-}                             // End of namespace Agi
+} // End of namespace Agi

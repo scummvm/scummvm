@@ -29,14 +29,14 @@
 namespace Agi {
 
 int AgiEngine::getflag(int n) {
-	uint8 *set = (uint8 *) &game.flags;
+	uint8 *set = (uint8 *)&_game.flags;
 
 	set += n >> 3;
 	return (*set & (1 << (n & 0x07))) != 0;
 }
 
 void AgiEngine::setflag(int n, int v) {
-	uint8 *set = (uint8 *) &game.flags;
+	uint8 *set = (uint8 *)&_game.flags;
 
 	set += n >> 3;
 	if (v)
@@ -46,25 +46,25 @@ void AgiEngine::setflag(int n, int v) {
 }
 
 void AgiEngine::flipflag(int n) {
-	uint8 *set = (uint8 *) & game.flags;
+	uint8 *set = (uint8 *)&_game.flags;
 
 	set += n >> 3;
 	*set ^= 1 << (n & 0x07);	/* flip bit */
 }
 
 void AgiEngine::setvar(int var, int val) {
-	game.vars[var] = val;
+	_game.vars[var] = val;
 }
 
 int AgiEngine::getvar(int var) {
-	return game.vars[var];
+	return _game.vars[var];
 }
 
 void AgiEngine::decrypt(uint8 *mem, int len) {
 	const uint8 *key;
 	int i;
 
-	key = opt.agdsMode ? (const uint8 *)CRYPT_KEY_AGDS
+	key = _opt.agdsMode ? (const uint8 *)CRYPT_KEY_AGDS
 	                   : (const uint8 *)CRYPT_KEY_SIERRA;
 
 	for (i = 0; i < len; i++)

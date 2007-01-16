@@ -31,22 +31,22 @@ namespace Agi {
 
 #ifdef PATCH_LOGIC
 
-#define ip (game.logics[n].cIP)
-#define code (game.logics[n].data)
-#define size (game.logics[n].size)
+#define ip (_game.logics[n].cIP)
+#define code (_game.logics[n].data)
+#define size (_game.logics[n].size)
 
 /*
  * Patches
  */
 
-static const uint8 kq4data_find[] = {
+static const uint8 kq4dataFind[] = {
 	0x0C, 0x04, 0xFF, 0x07, 0x05, 0xFF, 0x15, 0x00,
 	0x03, 0x0A, 0x00, 0x77, 0x83, 0x71, 0x0D, 0x97,
 	0x03, 0x98, 0xCE, 0x18, 0x98, 0x19, 0x98, 0x1B,
 	0x98, 0x0C, 0x5A, 0x1A, 0x00
 };
 
-static const uint8 kq4data_fix[] = {
+static const uint8 kq4dataFix[] = {
 	/* v19 = 0
 	 * new.room(96)
 	 * return
@@ -54,14 +54,14 @@ static const uint8 kq4data_fix[] = {
 	0x03, 0x13, 0x0, 0x12, 0x60, 0x00
 };
 
-static const uint8 grdata_find[] = {
+static const uint8 grdataFind[] = {
 	0x0C, 0x04, 0xFF, 0x07, 0x05, 0xFF, 0x16, 0x00,
 	0x0C, 0x96, 0x03, 0x0A, 0x00, 0x77, 0x83, 0x71,
 	0x0D, 0xD9, 0x03, 0xDC, 0xBF, 0x18, 0xDC, 0x19,
 	0xDC, 0x1B, 0xDC, 0x0C, 0x95, 0x1A
 };
 
-static const uint8 grdata_fix[] = {
+static const uint8 grdataFix[] = {
 	/* reset(227)
 	 * v19 = 0
 	 * v246 = 1
@@ -73,14 +73,14 @@ static const uint8 grdata_fix[] = {
 };
 
 #if 0
-static const uint8 lsl1data_find[] = {
+static const uint8 lsl1dataFind[] = {
 	0xFF, 0xFD, 0x07, 0x1E, 0xFC, 0x07, 0x6D, 0x01,
 	0x5F, 0x03, 0xFC, 0xFF, 0x12, 0x00, 0x0C, 0x6D,
 	0x78, 0x8A, 0x77, 0x69, 0x16, 0x18, 0x00, 0x0D,
 	0x30, 0x0D, 0x55, 0x78, 0x65, 0x0A
 };
 
-static const uint8 lsl1data_fix[] = {
+static const uint8 lsl1dataFix[] = {
 	/* set(109)
 	 * reset(48)
 	 * reset(85)
@@ -92,7 +92,7 @@ static const uint8 lsl1data_fix[] = {
 };
 #endif
 
-static const uint8 mh1data_find[] = {
+static const uint8 mh1dataFind[] = {
 	0xFF, 0x07, 0x05, 0xFF, 0xE6, 0x00,
 	0x03, 0x0A, 0x02, 0x77, 0x83, 0x71,
 	0x6F, 0x01, 0x17, 0x00, 0x03, 0x00,
@@ -100,40 +100,40 @@ static const uint8 mh1data_find[] = {
 	0x03, 0x03, 0x3B, 0x00, 0x6C, 0x03
 };
 
-static const uint8 mh1data_fix[] = {
+static const uint8 mh1dataFix[] = {
 	0x0C, 0x05, 0x16, 0x5A, 0x12, 0x99
 };
 
-void AgiEngine::patch_logic(int n) {
+void AgiEngine::patchLogic(int n) {
 	switch (n) {
 #if 0
 		/* ALT-X in the questions takes care of that */
 	case 6:
 		/* lsl1 bypass questions */
-		if (!strcmp(game.id, "LLLLL")) {
-			if (!memcmp(lsl1data_find, (code + ip), 30))
-				memmove((code + ip), lsl1data_fix, 9);
+		if (!strcmp(_game.id, "LLLLL")) {
+			if (!memcmp(lsl1dataFind, (code + ip), 30))
+				memmove((code + ip), lsl1dataFix, 9);
 		}
 		break;
 #endif
 	case 125:
 		/* gold rush code break */
-		if (!strcmp(game.id, "GR")) {
-			if (!memcmp(grdata_find, (code + ip), 30))
-				memmove((code + ip), grdata_fix, 12);
+		if (!strcmp(_game.id, "GR")) {
+			if (!memcmp(grdataFind, (code + ip), 30))
+				memmove((code + ip), grdataFix, 12);
 		}
 		break;
 	case 140:
 		/* kings quest 4 code break */
-		if (!strcmp(game.id, "KQ4")) {
-			if (memcmp(kq4data_find, (code + ip), 29) == 0)
-				memmove((code + ip), kq4data_fix, 6);
+		if (!strcmp(_game.id, "KQ4")) {
+			if (memcmp(kq4dataFind, (code + ip), 29) == 0)
+				memmove((code + ip), kq4dataFix, 6);
 		}
 		break;
 	case 159:
 		/* manhunter 1 amiga */
-		if (ip + 30 < size && !memcmp(mh1data_find, (code + ip), 30)) {
-			memmove((code + ip), mh1data_fix, 6);
+		if (ip + 30 < size && !memcmp(mh1dataFind, (code + ip), 30)) {
+			memmove((code + ip), mh1dataFix, 6);
 		}
 		break;
 	}
@@ -141,4 +141,4 @@ void AgiEngine::patch_logic(int n) {
 
 #endif
 
-}                             // End of namespace Agi
+} // End of namespace Agi

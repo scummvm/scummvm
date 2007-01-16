@@ -35,10 +35,10 @@ namespace Agi {
 #define MENU_FG		0x00	/* Black */
 #define MENU_LINE	0x00	/* Black */
 
-struct agi_menu;	
-struct agi_menu_option;
-typedef Common::List<agi_menu*> MenuList;
-typedef Common::List<agi_menu_option*> MenuOptionList;
+struct AgiMenu;
+struct AgiMenuOption;
+typedef Common::List<AgiMenu*> MenuList;
+typedef Common::List<AgiMenuOption*> MenuOptionList;
 
 class GfxMgr;
 class PictureMgr;
@@ -54,35 +54,35 @@ public:
 	~Menu();
 
 	void add(const char *s);
-	void add_item(const char *s, int code);
+	void addItem(const char *s, int code);
 	void submit();
-	void set_item(int event, int state);
+	void setItem(int event, int state);
 	bool keyhandler(int key);
-	void enable_all();
+	void enableAll();
 
 private:
-	MenuList menubar;
+	MenuList _menubar;
 
-	int h_cur_menu;
-	int v_cur_menu;
+	int _hCurMenu;
+	int _vCurMenu;
 
-	int h_index;
-	int v_index;
-	int h_col;
-	int h_max_menu;
-	int v_max_menu[10];
+	int _hIndex;
+	int _vIndex;
+	int _hCol;
+	int _hMaxMenu;
+	int _vMaxMenu[10];
 
-	agi_menu* get_menu(int i);
-	agi_menu_option *get_menu_option(int i, int j);
-	void draw_menu_bar();
-	void draw_menu_hilite(int cur_menu);
-	void draw_menu_option(int h_menu);
-	void draw_menu_option_hilite(int h_menu, int v_menu);
-	void new_menu_selected(int i);
-	bool mouse_over_text(unsigned int line, unsigned int col, char *s);
+	AgiMenu* getMenu(int i);
+	AgiMenuOption *getMenuOption(int i, int j);
+	void drawMenuBar();
+	void drawMenuHilite(int curMenu);
+	void drawMenuOption(int hMenu);
+	void drawMenuOptionHilite(int hMenu, int vMenu);
+	void newMenuSelected(int i);
+	bool mouseOverText(unsigned int line, unsigned int col, char *s);
 	
 };
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
-#endif				/* AGI_MENU_H */
+#endif /* AGI_MENU_H */
