@@ -172,6 +172,16 @@ Parallaction::Parallaction(OSystem *syst) :
 
 	Common::File::addDefaultDirectory( _gameDataPath );
 
+/*    Common::addSpecialDebugLevel(kDebugAnimation, "Animation", "Animations debug level");
+    Common::addSpecialDebugLevel(kDebugZone, "Zone", "Zones debug level");
+    Common::addSpecialDebugLevel(kDebugCommand, "Command", "Commands debug level");
+    Common::addSpecialDebugLevel(kDebugDialogue, "Dialogue", "Dialogues debug level");
+    Common::addSpecialDebugLevel(kDebugIntro, "Intro", "Intro debug level");
+    Common::addSpecialDebugLevel(kDebugInventory, "Inventory", "Inventory debug level");
+    Common::addSpecialDebugLevel(kDebugLocation, "Location", "Locations debug level");
+*/
+    Common::addSpecialDebugLevel(kDebugDisk, "Disk", "Disk debug level");
+    Common::addSpecialDebugLevel(kDebugWalk, "Walk", "Walk debug level");
 }
 
 

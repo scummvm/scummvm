@@ -49,7 +49,7 @@ int32 dotProduct(Point *p1, Point *p2) {
 //	x, y: mouse click (foot) coordinates
 //
 WalkNode *buildWalkPath(uint16 x, uint16 y) {
-//	printf("buildWalkPath(%i, %i)\n", x, y);
+    debugC(1, kDebugWalk, "buildWalkPath to (%i, %i)", x, y);
 
 	int16 to_x = x;
 	int16 to_y = y;
@@ -63,7 +63,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		do {
 			right++;
-		} while ((queryPath(right, to_y) == 0) && (x < SCREEN_WIDTH));
+		} while ((queryPath(right, to_y) == 0) && (right < SCREEN_WIDTH));
 
 		do {
 			left--;
@@ -107,8 +107,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		}
 
 	}
-//	printf("closest path Point: %i, %i\n", to_x, to_y);
-
+    debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to_x, to_y);
 
 	WalkNode *v48 = (WalkNode*)memAlloc(sizeof(WalkNode));
 	WalkNode *v44 = (WalkNode*)memAlloc(sizeof(WalkNode));
@@ -121,12 +120,13 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	uint16 v38 = walkFunc1(to_x, to_y, v44);
 	if (v38 == 1) {
 		// destination directly reachable
-//		printf("moving to destination (%i, %i)\n", to_x, to_y);
+        debugC(1, kDebugWalk, "direct move to (%i, %i)", to_x, to_y);
 		memFree(v44);
 		return v48;
 	}
 
 	// path is obstructed: find alternative
+    debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to_x, to_y);
 
 	WalkNode	v58;
 	memset(&v58, 0, sizeof(WalkNode));
@@ -191,6 +191,9 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 			v34 = v30 = (_si - v20._x) * (_si - v20._x) + (_di - v20._y) * (_di - v20._y);
 
+
+            debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
+
 			addNode(&v48->_node, &_newnode->_node);
 			v48 = _newnode;
 		}
@@ -200,7 +203,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		if (v38 != 0 && v34 > v38) {
 			// no alternative path (gap?)
 			freeNodeList(v58._node._next);
-//			printf("can't reach destination, moving to (%i, %i)\n", v44->_x, v44->_y);
+            debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
 			return v44;
 		} else {
 			_si = ((WalkNode*)(v58._node._next))->_x;
@@ -211,14 +214,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	} while (true);
 
-	// alternative path exists
-	WalkNode *tmp = (WalkNode*)v58._node._next;
-//	printf("moving along path ");
-	while (tmp) {
-//		printf(" -> (%i, %i)", tmp->_x, tmp->_y);
-		tmp = (WalkNode*)tmp->_node._next;
-	}
-//	printf("\n");
+    debugC(1, kDebugWalk, "walk path completed");
 
 	memFree(v44);
 	return (WalkNode*)v58._node._next;
@@ -311,11 +307,12 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 
 void jobWalk(void *parm, Job *j) {
-
 	WalkNode *node = (WalkNode*)parm;
 
 	int16 _si = _yourself._zone.pos._position._x;
 	int16 _di = _yourself._zone.pos._position._y;
+
+    debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _yourself._cnv._width / 2, node->_y + _yourself._cnv._height);
 
 	_yourself._zone.pos._oldposition._x = _si;
 	_yourself._zone.pos._oldposition._y = _di;
@@ -410,7 +407,6 @@ void jobWalk(void *parm, Job *j) {
 
 	} else {
 
-//		printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
 		_yourself._frame = v16 + walkData2 + 1;
 
 	}

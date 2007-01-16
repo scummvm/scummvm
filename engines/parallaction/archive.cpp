@@ -40,7 +40,7 @@ static uint32			_handle = MAX_ARCHIVE_ENTRIES;
 
 
 void openArchive(const char *file) {
-//	printf("openArchive(%s)\n", file);
+	debugC(1, kDebugDisk, "open archive '%s'", file);
 
 	uint32	offset = DIRECTORY_OFFSET_IN_FILE;
 	char	path[PATH_LEN];
@@ -72,7 +72,7 @@ void openArchive(const char *file) {
 
 
 void closeArchive() {
-//	printf("closeArchive()\n");
+	debugC(1, kDebugDisk, "close current archive");
 
 	if (!_archive.isOpen()) return;
 
@@ -81,7 +81,6 @@ void closeArchive() {
 
 
 ArchivedFile *openArchivedFile(const char *name) {
-//	printf("openArchivedFile(%s)\n", name);
 
 	uint16 i = 0;
 	for ( ; i < MAX_ARCHIVE_ENTRIES; i++) {
@@ -89,12 +88,12 @@ ArchivedFile *openArchivedFile(const char *name) {
 	}
 	if (i == MAX_ARCHIVE_ENTRIES) return NULL;
 
-	printf("found file %s in slot %i\n", name, i);
+	debugC(1, kDebugDisk, "file '%s' found in slot %i", name, i);
 
 	ArchivedFile *file = (ArchivedFile*)memAlloc(sizeof(ArchivedFile));
 
 	if (!file)
-		printf("can't allocate archive file\n");
+        error("openArchivedFile: can't allocate buffer for '%s'", name);
 
 	file->_index = i;
 	file->_offset = _archiveOffsets[i];
