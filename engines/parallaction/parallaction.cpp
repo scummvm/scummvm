@@ -180,8 +180,8 @@ Parallaction::Parallaction(OSystem *syst) :
     Common::addSpecialDebugLevel(kDebugInventory, "Inventory", "Inventory debug level");
     Common::addSpecialDebugLevel(kDebugLocation, "Location", "Locations debug level");
 */
-    Common::addSpecialDebugLevel(kDebugDisk, "Disk", "Disk debug level");
-    Common::addSpecialDebugLevel(kDebugWalk, "Walk", "Walk debug level");
+	Common::addSpecialDebugLevel(kDebugDisk, "Disk", "Disk debug level");
+	Common::addSpecialDebugLevel(kDebugWalk, "Walk", "Walk debug level");
 }
 
 

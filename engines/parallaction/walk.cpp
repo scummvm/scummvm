@@ -49,7 +49,7 @@ int32 dotProduct(Point *p1, Point *p2) {
 //	x, y: mouse click (foot) coordinates
 //
 WalkNode *buildWalkPath(uint16 x, uint16 y) {
-    debugC(1, kDebugWalk, "buildWalkPath to (%i, %i)", x, y);
+	debugC(1, kDebugWalk, "buildWalkPath to (%i, %i)", x, y);
 
 	int16 to_x = x;
 	int16 to_y = y;
@@ -107,7 +107,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		}
 
 	}
-    debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to_x, to_y);
+	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to_x, to_y);
 
 	WalkNode *v48 = (WalkNode*)memAlloc(sizeof(WalkNode));
 	WalkNode *v44 = (WalkNode*)memAlloc(sizeof(WalkNode));
@@ -126,7 +126,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	}
 
 	// path is obstructed: find alternative
-    debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to_x, to_y);
+	debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to_x, to_y);
 
 	WalkNode	v58;
 	memset(&v58, 0, sizeof(WalkNode));
@@ -192,7 +192,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 			v34 = v30 = (_si - v20._x) * (_si - v20._x) + (_di - v20._y) * (_di - v20._y);
 
 
-            debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
+			debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
 
 			addNode(&v48->_node, &_newnode->_node);
 			v48 = _newnode;
@@ -203,7 +203,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		if (v38 != 0 && v34 > v38) {
 			// no alternative path (gap?)
 			freeNodeList(v58._node._next);
-            debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
+			debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
 			return v44;
 		} else {
 			_si = ((WalkNode*)(v58._node._next))->_x;
@@ -214,7 +214,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	} while (true);
 
-    debugC(1, kDebugWalk, "walk path completed");
+	debugC(1, kDebugWalk, "walk path completed");
 
 	memFree(v44);
 	return (WalkNode*)v58._node._next;

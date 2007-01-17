@@ -101,8 +101,8 @@ void beep();
 char *skip_whitespace(char *s);
 
 enum {
-    kDebugDisk = 1 << 0,
-    kDebugWalk = 1 << 1
+	kDebugDisk = 1 << 0,
+	kDebugWalk = 1 << 1
 };
 
 } // namespace Parallaction
