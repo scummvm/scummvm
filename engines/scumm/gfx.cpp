@@ -570,7 +570,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	if (_game.version < 7) {
 		// Handle the text mask in older games; newer (V7/V8) games do not use it anymore.
-		const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
+		const byte *text = (byte *)_charset->_textSurface.getBasePtr(x, y);
 	
 #ifdef __DS__
 		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _charset->_textSurface.pitch);
@@ -904,7 +904,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
-			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (rect.top - _screenTop) + rect.left;
+			byte *mask = (byte *)_charset->_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
 			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
@@ -1098,7 +1098,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			error("can only copy bg to main window");
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 		if (_charset->_hasMask) {
-			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (y - _screenTop) + x;
+			byte *mask = (byte *)_charset->_textSurface.getBasePtr(x, y - _screenTop);
 			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else if (_game.heversion == 100) {
