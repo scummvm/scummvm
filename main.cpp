@@ -40,15 +40,19 @@
 #include <SDL.h>
 #include <SDL_video.h>
 
-// Hacky global toggles for experimental/debug code
-bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
-enDebugLevels debugLevel = DEBUG_NONE;
-
 #if defined (WIN32) && !defined (_MSC_VER)
 int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
     return main(__argc, __argv);
 }
 #endif
+
+#ifdef _MSC_VER
+	#undef main
+#endif
+
+// Hacky global toggles for experimental/debug code
+bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
+enDebugLevels debugLevel = DEBUG_NONE;
 
 static bool g_lua_initialized = false;
 Driver *g_driver = NULL;
@@ -80,10 +84,6 @@ static bool parseBoolStr(const char *val) {
 }
 
 void quit();
-
-#ifdef _MSC_VER
-	#undef main
-#endif
 
 int main(int argc, char *argv[]) {
 	int i;
