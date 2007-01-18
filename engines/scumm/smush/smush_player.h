@@ -53,11 +53,13 @@ private:
 	byte *_specialBuffer;
 
 	Common::String _seekFile;
+	uint32 _startFrame;
+	uint32 _startTime;
 	int32 _seekPos;
-	int32 _seekFrame;
+	uint32 _seekFrame;
 
 	bool _skipNext;
-	int32 _frame;
+	uint32 _frame;
 
 	Audio::SoundHandle _IACTchannel;
 	Audio::AppendableAudioStream *_IACTstream;

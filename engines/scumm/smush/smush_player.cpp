@@ -1101,6 +1101,8 @@ void SmushPlayer::parseNextFrame() {
 
 		_base->seek(_seekPos, SEEK_SET);
 		_frame = _seekFrame;
+		_startFrame = _frame;
+		_startTime = _vm->_system->getMillis();
 
 		_seekPos = -1;
 	}
@@ -1307,18 +1309,24 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	setupAnim(filename);
 	init(speed);
 
-	uint32 startTime = _vm->_system->getMillis();
+	_startTime = _vm->_system->getMillis();
+	_startFrame = startFrame;
+	_frame = startFrame;
 
 	_pauseTime = 0;
-	uint frameNo = 0;
 
 	int skipped = 0;
 
 	for (;;) {
-		uint32 elapsed;
+		uint32 now, elapsed;
 		bool skipFrame = false;
 
-		if (_vm->_mixer->isSoundHandleActive(_compressedFileSoundHandle)) {
+		if (_insanity) {
+			// Seeking makes a mess of trying to sync the audio to
+			// the sound. Synt to time instead.
+			now = _vm->_system->getMillis() - _pauseTime;
+			elapsed = now - _startTime;
+		} else if (_vm->_mixer->isSoundHandleActive(_compressedFileSoundHandle)) {
 			// Compressed SMUSH files.
 			elapsed = _vm->_mixer->getSoundElapsedTime(_compressedFileSoundHandle);
 		} else if (_vm->_mixer->isSoundHandleActive(_IACTchannel)) {
@@ -1328,12 +1336,12 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			// For other SMUSH files, we don't necessarily have any
 			// one channel to sync against, so we have to use
 			// elapsed real time.
-			uint32 now = _vm->_system->getMillis() - _pauseTime;
-			elapsed = now - startTime;
+			now = _vm->_system->getMillis() - _pauseTime;
+			elapsed = now - _startTime;
 		}
 
-		if (elapsed >= (frameNo * 1000) / _speed) {
-			if (elapsed >= ((frameNo + 1) * 1000) / _speed)
+		if (elapsed >= ((_frame - _startFrame) * 1000) / _speed) {
+			if (elapsed >= ((_frame + 1) * 1000) / _speed)
 				skipFrame = true;
 			else
 				skipFrame = false;
@@ -1392,7 +1400,6 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			_inTimer = false;
 			_inTimerCount = 0;
 #endif
-			frameNo++;
 		}
 		if (_endOfFile)
 			break;
