@@ -872,6 +872,18 @@ EOF
 			# Hardcode alignment requirements for Alpha processsors
 			_need_memalign=yes
 			;;
+		sh*)
+			# Hardcode alignment requirements for SH processsors.
+			# While these can emulate unaligned memory access, this
+			# emulation is rather slow.
+			_need_memalign=yes
+			;;
+		mips*)
+			# Hardcode alignment requirements for MIPS processsors.
+			# While these can emulate unaligned memory access, this
+			# emulation is rather slow.
+			_need_memalign=yes
+			;;
 		*)
 			# Try to auto-detect....
 			cat > $TMPC << EOF
