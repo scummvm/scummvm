@@ -43,6 +43,7 @@
 // - Software scaler?
 // - 100% scale
 
+#define USE_LIBCARTRESET
 
 #include <nds.h>
 
@@ -71,6 +72,7 @@
 #include "ramsave.h"
 #include "disc_io.h"
 #include "blitters.h"
+#include "cartreset_nolibfat.h"
 
 namespace DS {
 
@@ -2035,6 +2037,58 @@ void debug_print_stub(char *string) {
 }
 #endif
 
+#ifdef USE_LIBCARTRESET
+void reboot() {
+	int deviceType = -1;
+
+	switch (disc_getDeviceId()) {
+		case DEVICE_M3SD: {
+			deviceType = DEVICE_TYPE_M3SD;
+			break;
+		}
+		case DEVICE_MMCF: {
+			deviceType = -1;
+			break;
+		}
+		case DEVICE_M3CF: {
+			deviceType = DEVICE_TYPE_M3CF;
+			break;
+		}
+		case DEVICE_MPCF: {
+			deviceType = DEVICE_TYPE_MPCF;
+			break;
+		}
+		case DEVICE_SCCF: {
+			deviceType = DEVICE_TYPE_SCCF;
+			break;
+		}
+		case DEVICE_NJSD: {
+			deviceType = -1;
+			break;
+		}
+		case DEVICE_SCSD: {
+			deviceType = DEVICE_TYPE_SCSD;
+			break;
+		}
+		case DEVICE_NMMC: {
+			deviceType = DEVICE_TYPE_NMMC;
+			break;
+		}
+	}
+
+	consolePrintf("Device: %x\n", deviceType);
+
+	if (deviceType == -1) {
+		IPC->reset = true;				// Send message to ARM7 to turn power off
+	} else {
+		cartSetMenuMode(deviceType);
+		passmeloopEnter();
+	}
+
+	while (true);		// Stop the program continuing beyond this point
+}
+#endif
+
 void powerOff() {
 	while (keysHeld() != 0) {		// Wait for all keys to be released.
 		swiWaitForVBlank();			// Allow you to read error before the power
@@ -2047,8 +2101,13 @@ void powerOff() {
 	if (ConfMan.hasKey("disablepoweroff", "ds") && ConfMan.getBool("disablepoweroff", "ds")) {
 		while (true);
 	} else {
+
+#ifdef USE_LIBCARTRESET
+		reboot();
+#else
 		IPC->reset = true;				// Send message to ARM7 to turn power off
 		while (true);		// Stop the program continuing beyond this point
+#endif
 	}
 }
 
@@ -2059,11 +2118,12 @@ void powerOff() {
 
 int main(void)
 {
+
 	soundCallback = NULL;
-	
 
 	initHardware();
-	
+
+
 #ifdef USE_DEBUGGER
 	for (int r = 0; r < 150; r++) {
 		swiWaitForVBlank();

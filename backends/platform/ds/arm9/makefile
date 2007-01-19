@@ -118,7 +118,8 @@ LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt
 
 INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source -I$(portdir)/source/compressor -I$(portdir)/source/fat \
 			-I$(srcdir)/backends/fs  -I$(srcdir)/backends/fs/ds -I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
-			-I$(srcdir)/scumm -I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad
+			-I$(srcdir)/scumm -I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
+			-I$(portdir)/source/libcartreset
 			
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
@@ -172,16 +173,19 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 			$(portdir)/source/fat/io_mmcf.o \
 			$(portdir)/source/fat/io_sd_common.o \
 			$(portdir)/source/fat/io_m3_common.o \
+			$(portdir)/source/fat/io_dldi.o \
 			$(portdir)/source/fat/m3sd.o
+
 
 #			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
 #			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o 
 
+LIBCARTRESET_OBJS := $(portdir)/source/libcartreset/cartreset.o
 			
 			
 			
-OBJS := $(DATA_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
+OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
 		
 
 		

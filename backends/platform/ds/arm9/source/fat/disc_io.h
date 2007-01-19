@@ -15,16 +15,18 @@
 
 // Device support options, added by www.neoflash.com
 
-#define SUPPORT_NMMC		// comment out this line to remove Neoflash MK2 MMC Card support
-#define SUPPORT_MPCF		// comment out this line to remove GBA Movie Player support
-#define SUPPORT_M3CF		// comment out this line to remove M3 Perfect CF support
-#define SUPPORT_M3SD		// comment out this line to remove M3 Perfect SD support
-#define SUPPORT_SCCF		// comment out this line to remove Supercard CF support
-#define SUPPORT_SCSD		// comment out this line to remove Supercard SD support
+//#define SUPPORT_MPCF		// comment out this line to remove GBA Movie Player support
+//#define SUPPORT_M3CF		// comment out this line to remove M3 Perfect CF support
+//#define SUPPORT_M3SD		// comment out this line to remove M3 Perfect SD support
+//#define SUPPORT_SCCF		// comment out this line to remove Supercard CF support
+//#define SUPPORT_SCSD		// comment out this line to remove Supercard SD support
+//#define SUPPORT_NJSD
+//#define SUPPORT_MMCF
+
 //#define SUPPORT_EFA2		// comment out this line to remove EFA2 linker support
-#define SUPPORT_FCSR		// comment out this line to remove GBA Flash Cart support
-#define SUPPORT_NJSD
-#define SUPPORT_MMCF
+//#define SUPPORT_FCSR		// comment out this line to remove GBA Flash Cart support
+//#define SUPPORT_NMMC		// comment out this line to remove Neoflash MK2 MMC Card support
+
 
 // Disk caching options, added by www.neoflash.com
 // Each additional sector cache uses 512 bytes of memory
@@ -72,6 +74,20 @@
 extern "C" {
 #endif
 
+
+typedef enum {
+	DEVICE_NONE = 0,
+	DEVICE_M3SD,
+	DEVICE_MMCF,
+	DEVICE_M3CF,
+	DEVICE_MPCF,
+	DEVICE_SCCF,
+	DEVICE_NJSD,
+	DEVICE_SCSD,
+	DEVICE_NMMC,
+	DEVICE_DLDI
+} FATDevice;
+
 /*-----------------------------------------------------------------
 disc_Init
 Detects the inserted hardware and initialises it if necessary
@@ -88,6 +104,8 @@ extern bool disc_IsInserted(void) ;
 
 
 extern void disc_setEnable(int en);
+extern FATDevice disc_getDeviceId();
+
 /*-----------------------------------------------------------------
 disc_ReadSectors
 Read 512 byte sector numbered "sector" into "buffer"
@@ -160,6 +178,7 @@ static inline bool disc_CacheFlush(void)
 #define FEATURE_MEDIUM_CANWRITE		0x00000002
 #define FEATURE_SLOT_GBA			0x00000010
 #define FEATURE_SLOT_NDS			0x00000020
+
 
 typedef bool (* FN_MEDIUM_STARTUP)(void) ;
 typedef bool (* FN_MEDIUM_ISINSERTED)(void) ;

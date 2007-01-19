@@ -26,6 +26,8 @@
 
 #include "io_scsd.h"
 
+#ifdef SUPPORT_SCSD
+
 /*-----------------------------------------------------------------
 Since all CF addresses and commands are the same for the GBAMP,
 simply use it's functions instead.
@@ -101,3 +103,4 @@ LPIO_INTERFACE SCSD_GetInterface(void) {
 	return &io_scsd ;
 } ;
 
+#endif

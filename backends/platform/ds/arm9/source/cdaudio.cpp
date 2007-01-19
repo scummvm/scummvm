@@ -114,7 +114,7 @@ void allocBuffers() {
 }
 
 void setActive(bool active) {
-	active = active;
+	DS::CD::active = active;
 }
 
 bool getActive() {
@@ -232,7 +232,7 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	
 	//decompressBlock();
 	playNextBlock();
-	numLoops = numLoops;
+	DS::CD::numLoops = numLoops;
 }
 
 void update() {

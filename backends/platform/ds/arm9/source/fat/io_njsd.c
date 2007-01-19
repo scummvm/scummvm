@@ -35,6 +35,7 @@
 
 #include "io_njsd.h"
 
+#ifdef SUPPORT_NJSD
 #ifdef NDS
 
 #include <nds.h>
@@ -677,3 +678,4 @@ LPIO_INTERFACE NJSD_GetInterface(void) {
 } ;
 
 #endif // defined NDS
+#endif
