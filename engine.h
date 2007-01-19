@@ -125,6 +125,7 @@ public:
 	void registerTextObject(TextObject *a) { _textObjects.push_back(a); }
 	void killTextObject(TextObject *a) {
 		_textObjects.remove(a);
+		delete a;
 	}
 	void killTextObjects() {
 		while (!_textObjects.empty()) {

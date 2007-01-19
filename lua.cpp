@@ -2439,10 +2439,7 @@ static void BlastText() {
 	if (lua_istable(tableObj))
 		getTextObjectParams(textObject, tableObj);
 
-	while (TextObjectExists((char *)text.c_str()) != NULL)
-		text += TEXT_NULL;
-
-	//printf("Make: %s\n", (char *)text.c_str());
+	//printf("Blast: %s\n", (char *)text.c_str());
 
 	textObject->setText((char *)text.c_str());
 	textObject->createBitmap();

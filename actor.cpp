@@ -342,7 +342,6 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 
 	if (_sayLineText) {
 		g_engine->killTextObject(_sayLineText);
-		delete _sayLineText;
 		_sayLineText = NULL;
 	}
 
@@ -391,7 +390,6 @@ void Actor::shutUp() {
 
 	if (_sayLineText != NULL) {
 		g_engine->killTextObject(_sayLineText);
-		delete _sayLineText;
 		_sayLineText = NULL;
 	}
 }
