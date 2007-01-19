@@ -25,6 +25,7 @@
 // -- modified by Darkain and others
 //////////////////////////////////////////////////////////////////////
 
+#define USE_LIBCARTRESET
  
 #include <nds.h>
  
@@ -40,6 +41,7 @@
 #include <dswifi7.h>
 #endif
 
+#include "cartreset_nolibfat.h"
 
 #define TOUCH_CAL_X1 (*(vs16*)0x027FFCD8)
 #define TOUCH_CAL_Y1 (*(vs16*)0x027FFCDA)
@@ -344,6 +346,9 @@ void performSleep() {
   powerManagerWrite(0, 0x30, false);
 }
 
+void powerOff() {
+	powerManagerWrite(0, 0x40, true);
+}
 //////////////////////////////////////////////////////////////////////
 
   
@@ -558,6 +563,13 @@ void initDebugger() {
 }
 #endif
 
+#ifdef USE_LIBCARTRESET
+void reboot() {
+	cartExecute();
+}
+#endif
+
+
 int main(int argc, char ** argv) {
 	
 #ifdef USE_DEBUGGER
@@ -605,20 +617,29 @@ int main(int argc, char ** argv) {
   DISP_SR = DISP_VBLANK_IRQ;
   REG_IME = 1;
   */
+
  
 #ifdef USE_DEBUGGER  
   initDebugger();
 #endif  
 
   // Keep the ARM7 out of main RAM
-  while (1) {
+  while ((1)) {
 	if (needSleep) {
 		performSleep();
 		needSleep = false;
 	}
-//	if (IPC->reset) {
-//		swiSoftReset();
-//	}
+
+#ifdef USE_LIBCARTRESET
+	if (passmeloopQuery()) {
+		reboot();
+	}
+#endif
+
+	if (IPC->reset) {
+		powerOff();
+	}
+	swiWaitForVBlank();
   }
   return 0;
 }

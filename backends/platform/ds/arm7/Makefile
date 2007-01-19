@@ -10,11 +10,12 @@
 #---------------------------------------------------------------------------------
 TARGET	:=	arm7
 BUILD		:=	build
-SOURCES	:=	gfx source data  
+SOURCES	:=	gfx source source/libcartreset data
 INCLUDES	:=	include build
 
+
 # Enable support for debugger (must be the same as in the arm9 makefile)
-USE_DEBUGGER = 1
+#USE_DEBUGGER = 1
  
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -91,7 +92,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 export LD		:=	$(CXX)
 #export LD		:=	$(CC)
  
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
+CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))  
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 PCXFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.pcx)))
@@ -99,6 +100,8 @@ BINFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.bin)))
 PALFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.pal)))
 RAWFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.raw)))
 MAPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.map)))
+
+
  
 export OFILES	:=	$(MAPFILES:.map=.o) $(RAWFILES:.raw=.o) $(PALFILES:.pal=.o) $(BINFILES:.bin=.o) $(PCXFILES:.pcx=.o)\
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
@@ -106,7 +109,7 @@ export OFILES	:=	$(MAPFILES:.map=.o) $(RAWFILES:.raw=.o) $(PALFILES:.pal=.o) $(B
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) -I- -I$(CURDIR)/../commoninclude\
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include/nds)\
-					-I$(CURDIR)/$(BUILD) 
+					-I$(CURDIR)/$(BUILD) -I$(CURDIR)/source/libcartreset
  
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
  
@@ -115,6 +118,8 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
+	@echo $(OFILES)
+	@echo $(CFILES)
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
  
 #---------------------------------------------------------------------------------
@@ -146,6 +151,7 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 %.elf:
 	echo ELF
+	@echo $(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
 	@$(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
  
  
@@ -153,7 +159,7 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 # Compile Targets for C/C++
 #---------------------------------------------------------------------------------
- 
+
 #---------------------------------------------------------------------------------
 %.o : %.cpp
 	@echo $(notdir $<)
@@ -164,6 +170,7 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 %.o : %.c
 	@echo $(notdir $<)
+	@echo $(CC)  $(CFLAGS) -c $< -o$@
 	@$(CC) -MM $(CFLAGS) -o $*.d $<
 	@$(CC)  $(CFLAGS) -c $< -o$@
  
