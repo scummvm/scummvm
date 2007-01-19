@@ -89,6 +89,8 @@ private:
 public:
 #endif
 
+	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
+
 	struct Node {
 		Key _key;
 		Val _value;
@@ -106,6 +108,7 @@ public:
 	mutable int _collisions, _lookups;
 #endif
 
+	void assign(const HM_t& map);
 	int lookup(const Key &key) const;
 	void expand_array(uint newsize);
 
@@ -143,9 +146,19 @@ public:
 			return *this;
 		}
 	};
-
+	
 	HashMap();
+	HashMap(const HM_t& map);
 	~HashMap();
+
+	HM_t &operator =(const HM_t &map) {
+		// Remove the previous content and ...
+		clear();
+		delete[] _arr;
+		// ... copy the new stuff.
+		assign(map);
+		return *this;
+	}
 
 	bool contains(const Key &key) const;
 
@@ -188,6 +201,9 @@ public:
 //-------------------------------------------------------
 // HashMap functions
 
+/**
+ * Base constructor, creates an empty hashmap.
+ */
 template <class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
 	_arrsize = nextTableSize(0);
@@ -203,20 +219,54 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
 #endif
 }
 
+/**
+ * Copy constructor, creates a full copy of the given hashmap.
+ * We must provide a custom copy constructor as we use pointers
+ * to heap buffers for the internal storage.
+ */
+template <class Key, class Val, class HashFunc, class EqualFunc>
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map) {
+	assign(map);
+}
+
+/**
+ * Destructor, frees all used memory.
+ */
 template <class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
-	uint ctr;
-
-	for (ctr = 0; ctr < _arrsize; ctr++)
+	for (uint ctr = 0; ctr < _arrsize; ++ctr)
 		if (_arr[ctr] != NULL)
 			delete _arr[ctr];
 
 	delete[] _arr;
 }
 
+/**
+ * Internal method for assigning the content of another HashMap
+ * to this one.
+ *
+ * @note We do *not* deallocate the previous storage here -- the caller is
+ *       responsible for doing that!
+ */
+template <class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t& map) {
+	_arrsize = map._arrsize;
+	_arr = new Node *[_arrsize];
+	assert(_arr != NULL);
+	memset(_arr, 0, _arrsize * sizeof(Node *));
+
+	// Simply clone the map given to us, one by one.
+	_nele = map._nele;
+	for (uint ctr = 0; ctr < _arrsize; ++ctr)
+		if (map._arr[ctr] != NULL) {
+			_arr[ctr] = new Node(*map._arr[ctr]);
+		}
+}
+
+
 template <class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
-	for (uint ctr = 0; ctr < _arrsize; ctr++) {
+	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
 		if (_arr[ctr] != NULL) {
 			delete _arr[ctr];
 			_arr[ctr] = NULL;
@@ -254,7 +304,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	_nele = 0;
 
 	// rehash all the old elements
-	for (ctr = 0; ctr < old_arrsize; ctr++) {
+	for (ctr = 0; ctr < old_arrsize; ++ctr) {
 		if (old_arr[ctr] == NULL)
 			continue;
 
