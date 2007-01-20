@@ -43,6 +43,40 @@ OSystem_PalmOS5::OSystem_PalmOS5() : OSystem_PalmBase() {
 	_soundEx.sound = &_sound;
 }
 
+void OSystem_PalmOS5::calc_scale() {
+	for (int y = 0; y < _screenDest.h; y++) {
+		int ys = y * _screenHeight / _screenDest.h;
+		_scaleTableY[y] = ys * _screenWidth;
+	}
+
+	for (int x = 0; x < _screenDest.w; x++) {
+		int xs = x * _screenWidth / _screenDest.w;
+		_scaleTableX[x] = xs;
+	}
+}
+
+void OSystem_PalmOS5::calc_rect(Boolean fullscreen) {
+	Int32 w, h;
+
+	if (fullscreen) {
+		w = (_ratio.adjustAspect == kRatioWidth) ? _ratio.width : gVars->screenFullWidth;
+		h = (_ratio.adjustAspect == kRatioHeight) ? _ratio.height : gVars->screenFullHeight;
+
+		_screenOffset.x = (_ratio.adjustAspect == kRatioWidth) ? (gVars->screenFullWidth - _ratio.width) / 2 : 0;
+		_screenOffset.y = (_ratio.adjustAspect == kRatioHeight) ? (gVars->screenFullHeight - _ratio.height) / 2 : 0;
+
+	} else {
+		w = gVars->screenWidth;
+		h = gVars->screenHeight - MIN_OFFSET * 2;
+
+		_screenOffset.x = 0;
+		_screenOffset.y = MIN_OFFSET;		
+	}
+	
+	_screenDest.w = w;
+	_screenDest.h = h;
+}
+
 void OSystem_PalmOS5::int_initBackend() {
 	if (OPTIONS_TST(kOpt5WayNavigatorV1)) {
 		_keyMouse.bitUp		= keyBitPageUp;
@@ -69,6 +103,28 @@ bool OSystem_PalmOS5::hasFeature(Feature f) {
 	}
 
 	return false;
+}
+
+void OSystem_PalmOS5::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+/*		case kFeatureFullscreenMode:
+			if (_gfxLoaded)
+				if (OPTIONS_TST(kOptModeWide) && _initMode != GFX_WIDE) {
+					_fullscreen = enable;
+					hotswap_gfx_mode(_mode);
+				}
+			break;
+*/
+		case kFeatureAspectRatioCorrection:
+			if (_mode == GFX_WIDE) {
+				_ratio.adjustAspect = (_ratio.adjustAspect + 1) % 3;
+				//calc_rect(true);
+				hotswap_gfx_mode(_mode);
+//				TwGfxSetClip(_palmScreenP, &_dstRect);
+				clearScreen();
+			}
+			break;
+	}
 }
 
 void OSystem_PalmOS5::setWindowCaption(const char *caption) {

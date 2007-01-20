@@ -30,14 +30,23 @@ void OSystem_PalmOS5::get_coordinates(EventPtr ev, Coord &x, Coord &y) {
 	
 	x = (ev->screenX - _screenOffset.x);
 	y = (ev->screenY - _screenOffset.y);
-	
+
 	if (_stretched) {
-		if (OPTIONS_TST(kOptModeLandscape)) {
-			x = (x * 2 / 3);
-			y = (y * 2 / 3);
+		Int32 w, h;
+
+		if (_mode == GFX_NORMAL) {
+
+			h = gVars->screenHeight - MIN_OFFSET * 2;
+			w = gVars->screenWidth;
+			x = (_screenWidth * x) / w;
+			y = (_screenHeight * y) / h;
+
 		} else {
-			y =       ((ev->screenX - _screenOffset.y) * 2) / 3;
-			x = 320 - ((ev->screenY - _screenOffset.x) * 2) / 3 - 1;	
+
+			h = (_ratio.adjustAspect == kRatioHeight ? _ratio.height : gVars->screenFullHeight);
+			w = (_ratio.adjustAspect == kRatioWidth ? _ratio.width : gVars->screenFullWidth);
+			x = (_screenWidth * x) / w;
+			y = (_screenHeight * y) / h;
 		}
 	}
 }
@@ -56,21 +65,17 @@ bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
 		if (_keyMouse.hasMore) {
 			switch (ev->data.keyDown.chr) {
 			// hot swap gfx
-			case 0x1B04:
+//			case 0x1B04:
 			case vchrHard1:
 				printf("swap\n");
 				if (OPTIONS_TST(kOptCollapsible))
 					hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 				return false; // not a key
 
-			// ESC key
+//			case 0x1B05:
 			case vchrHard2:
-				_lastKey = kKeyNone;
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = 27;
-				event.kbd.ascii = 27;
-				event.kbd.flags = 0;
-				return true;
+			setFeatureState(kFeatureAspectRatioCorrection, 0);
+			return false; // not a key
 			
 			// F5 = menu
 			case vchrHard3:

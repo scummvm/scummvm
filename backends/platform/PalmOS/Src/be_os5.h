@@ -27,6 +27,8 @@
 
 #include "be_base.h"
 
+#define MIN_OFFSET	20
+
 #if !defined(SYSTEM_CALLBACK) || defined(PALMOS_68K)
 #	define SYSTEM_CALLBACK
 #	ifdef PALMOS_ARM
@@ -100,6 +102,9 @@ extern SoundExType _soundEx;
 
 class OSystem_PalmOS5 : public OSystem_PalmBase {
 private:
+	uint16 _scaleTableX[512];
+	uint32 _scaleTableY[512];
+
 	typedef void (OSystem_PalmOS5::*RendererProc)(RectangleType &r, PointType &p);
 	RendererProc _render;
 
@@ -123,7 +128,10 @@ private:
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y);
 	virtual bool check_event(Event &event, EventPtr ev);
 	virtual void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
+	void calc_rect(Boolean fullscreen);
+	void calc_scale();
 
+	void render_landscapeAny(RectangleType &r, PointType &p);
 	void render_landscape(RectangleType &r, PointType &p);
 	void render_portrait(RectangleType &r, PointType &p);
 	void render_1x(RectangleType &r, PointType &p);
@@ -139,11 +147,23 @@ protected:
 	UInt16 _sysOldCoord, _sysOldOrientation;
 	Boolean _stretched, _cursorPaletteDisabled;
 
+	enum {
+		kRatioNone = 0,
+		kRatioHeight,
+		kRatioWidth
+	};
+	struct {
+		UInt8 adjustAspect;
+		Coord width;	// (width x 320)
+		Coord height;	// (480 x height)
+	} _ratio;
+
 public:
 	OSystem_PalmOS5();
 	static OSystem *create();
 
 	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
 
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void clearScreen();

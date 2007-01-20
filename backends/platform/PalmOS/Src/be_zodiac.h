@@ -32,16 +32,6 @@
 
 class OSystem_PalmZodiac : public OSystem_PalmOS5Ex {
 private:
-	enum {
-		kRatioNone = 0,
-		kRatioHeight,
-		kRatioWidth
-	};
-	struct {
-		UInt8 adjustAspect;
-		Coord width;	// (width x 320)
-		Coord height;	// (480 x height)
-	} _ratio;
 
 	TwGfxType *_gfxH;
 	TwGfxSurfaceType *_palmScreenP, *_tmpScreenP;

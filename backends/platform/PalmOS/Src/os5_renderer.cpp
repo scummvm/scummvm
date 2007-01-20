@@ -48,109 +48,30 @@ void OSystem_PalmOS5::render_1x(RectangleType &r, PointType &p) {
 	RctSetRectangle(&r, 0, 0, _screenWidth, _screenHeight - o);
 }
 
-void OSystem_PalmOS5::render_landscape(RectangleType &r, PointType &p) {
+void OSystem_PalmOS5::render_landscapeAny(RectangleType &r, PointType &p) {
 	Coord x, y, o = 0;
 	int16 *dst =  _workScreenP;
 
 	if (_overlayVisible) {
-		int16 *src = _overlayP;
-
-		for (y = 0; y < 100; y++) {
-			// draw 2 lines
-			for (x = 0; x < 320; x++) {
-				*dst++ = *src++;
-				*dst++ = *src;
-				*dst++ = *src++;
+		for (y = 0; y < _screenDest.h; y++) {
+			int16 *src = _overlayP + *(_scaleTableY + y);
+			for (x = 0; x < _screenDest.w; x++) {
+				*dst++ = *(src + *(_scaleTableX + x));
 			}
-			// copy the second to the next line
-			MemMove(dst, dst - 480, 480 * 2);
-			dst += 480;
 		}
 
 	} else {
-		byte *src = _offScreenP;
 		o = _current_shake_pos;
 
-		for (y = 0; y < 100; y++) {
-			// draw 2 lines
-			for (x = 0; x < 320; x++) {
-				*dst++ = _nativePal[*src++];
-				*dst++ = _nativePal[*src];
-				*dst++ = _nativePal[*src++];
+		for (y = 0; y < _screenDest.h; y++) {
+			byte *src = _offScreenP + *(_scaleTableY + y);
+			for (x = 0; x < _screenDest.w; x++) {
+				*dst++ = *(_nativePal + *(src + *(_scaleTableX + x)));
 			}
-			// copy the second to the next line
-			MemMove(dst, dst - 480, 480 * 2);
-			dst += 480;
 		}
 	}
 
 	p.x = _screenOffset.x;
 	p.y = _screenOffset.y + o;
-	RctSetRectangle(&r, 0, 0, 480, 300 - o);
+	RctSetRectangle(&r, 0, 0,  _screenDest.w,  _screenDest.h - o);
 }
-
-void OSystem_PalmOS5::render_portrait(RectangleType &r, PointType &p) {
-	Coord x, y, o = 0;
-	int16 *dst =  _workScreenP;
-
-	if (_overlayVisible) {
-		int16 *src = _overlayP + 320 - 1;
-		int16 *src2 = src;
-
-		for (x = 0; x < 160; x++) {
-			for (y = 0; y < 100; y++) {
-				*dst++ = *src;
-				src += 320;
-				*dst++ = *src;
-				*dst++ = *src;
-				src += 320;
-			}
-			src = --src2;
-
-			for (y = 0; y < 100; y++) {
-				*dst++ = *src;
-				src += 320;
-				*dst++ = *src;
-				*dst++ = *src;
-				src += 320;
-			}
-			src = --src2;
-
-			MemMove(dst, dst - 300, 300 * 2);	// 300 = 200 x 1.5
-			dst += 300;
-		}
-
-	} else {
-		byte *src = _offScreenP + 320 - 1;
-		byte *src2 = src;
-		o = _current_shake_pos;
-
-		for (x = 0; x < 160; x++) {
-			for (y = 0; y < 100; y++) {
-				*dst++ = _nativePal[*src];
-				src += 320;
-				*dst++ = _nativePal[*src];
-				*dst++ = _nativePal[*src];
-				src += 320;
-			}
-			src = --src2;
-
-			for (y = 0; y < 100; y++) {
-				*dst++ = _nativePal[*src];
-				src += 320;
-				*dst++ = _nativePal[*src];
-				*dst++ = _nativePal[*src];
-				src += 320;
-			}
-			src = --src2;
-
-			MemMove(dst, dst - 300, 300 * 2);	// 300 = 200 x 1.5
-			dst += 300;
-		}
-	}
-
-	p.y = _screenOffset.x;
-	p.x = _screenOffset.y + o;
-	RctSetRectangle(&r, 0, 0, 300 - o, 480);
-}
-
