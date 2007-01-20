@@ -25,9 +25,10 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
-#define curItemVersion sysMakeROMVersion(3,5,7,0,0)	// Added : Apple IIgs
+#define curItemVersion sysMakeROMVersion(3,5,8,0,0)	// Parallaction engine
 
 
+#define itemVersion_357 sysMakeROMVersion(3,5,7,0,0)	// Added : Apple IIgs
 #define itemVersion_356 sysMakeROMVersion(3,5,6,0,0)	// Changed : Simon -> AGOS
 #define itemVersion_355 sysMakeROMVersion(3,5,5,0,0)	// Added : AGI engine
 #define itemVersion_354 sysMakeROMVersion(3,5,4,0,0)	// Added : Default/Auto music driver
@@ -164,6 +165,7 @@ enum {
 	ENGINE_LURE,
 	ENGINE_GOB,
 	ENGINE_KYRA,
+	ENGINE_PARALLACTION,
 	ENGINE_SAGA,
 	ENGINE_SCUMM,
 	ENGINE_AGI,
@@ -175,19 +177,20 @@ static const struct {
 	const char *fileP;
 	const char *nameP;
 } engines[] = {
-	{ "agos",	"AGOS Engine" },
-	{ "sky",	"Beneath a Steel Sky" },
-	{ "sword1",	"Broken Sword 1" },
-	{ "sword2",	"Broken Sword 2" },
-	{ "cine",	"Delphine Cinematique v1.0" },
-	{ "queen",	"Flight of the Amazon Queen" },
-	{ "lure",	"Lure of the Tempress" },
-	{ "gob",	"Gobliiins" },
-	{ "kyra",	"Kyrandia" },
-	{ "saga",	"SAGA Engine" },
-	{ "scumm",	"Scumm Games" },
-	{ "agi",	"Sierra AGI" },
-	{ "touche",	"Touche: The Adventures of the Fifth Musketeer" },
+	{ "agos",			"AGOS Engine" },
+	{ "sky",			"Beneath a Steel Sky" },
+	{ "sword1",			"Broken Sword 1" },
+	{ "sword2",			"Broken Sword 2" },
+	{ "cine",			"Delphine Cinematique v1.0" },
+	{ "queen",			"Flight of the Amazon Queen" },
+	{ "lure",			"Lure of the Tempress" },
+	{ "gob",			"Gobliiins" },
+	{ "kyra",			"Kyrandia" },
+	{ "parallaction",	"Parallaction" },
+	{ "saga",			"SAGA Engine" },
+	{ "scumm",			"Scumm Games" },
+	{ "agi",			"Sierra AGI" },
+	{ "touche",			"Touche: The Adventures of the Fifth Musketeer" },
 };
 
 
