@@ -42,6 +42,7 @@
 #define DISABLE_CINE
 #define DISABLE_AGI
 #define DISABLE_TOUCHE
+#define DISABLE_PARALLACTION
 
 // ScummVM
 #define DISABLE_HQ_SCALERS
@@ -54,8 +55,8 @@
 //#define _DEBUG
 
 #define PALMOS_MODE
-#define COMPILE_ZODIAC
-//#define COMPILE_OS5
+//#define COMPILE_ZODIAC
+#define COMPILE_OS5
 
 //#define DISABLE_ADLIB
 //#define DISABLE_LIGHTSPEED
