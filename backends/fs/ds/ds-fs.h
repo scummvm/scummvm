@@ -123,7 +123,8 @@ struct fileHandle {
 //
 // A #define is the only way, as redefinig the functions would cause linker errors.
 
-// These functions need to be #undef'ed, as their definition is done with #includes
+// These functions need to be #undef'ed, as their original definition 
+// in devkitarm is done with #includes (ugh!)
 #undef feof
 #undef stderr
 #undef stdout
@@ -175,6 +176,11 @@ int 	std_ferror(FILE* handle);
 #define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)
 #define ferror(handle)						DS::std_ferror(handle)
 
+#ifdef assert
+#undef assert
+#endif
+
+#define assert(s) if (!(s)) consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__)
 
 }
 

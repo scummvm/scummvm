@@ -517,7 +517,7 @@ void displayMode8Bit() {
 	BG0_Y0 = 0;
 	
 	// Restore palette entry used by text in the front-end	
-	PALETTE_SUB[255] = savedPalEntry255;
+//	PALETTE_SUB[255] = savedPalEntry255;
 	
 	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(0), (u16*)CHAR_BASE_BLOCK(1), 16);
 	consolePrintSet(0, 23);
