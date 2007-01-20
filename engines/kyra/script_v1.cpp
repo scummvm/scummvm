@@ -594,8 +594,16 @@ int KyraEngine::o1_popBrandonIntoScene(ScriptState *script) {
 }
 
 int KyraEngine::o1_restoreAllObjectBackgrounds(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o1_restoreAllObjectBackgrounds(%p) ()", (const void *)script);
+	debugC(3, kDebugLevelScriptFuncs, "o1_restoreAllObjectBackgrounds(%p) (%d)", (const void *)script, stackPos(0));
+	int disable = stackPos(0);
+	int activeBackup = 0;
+	if (disable) {
+		activeBackup = _animator->actors()->active;
+		_animator->actors()->active = 0;
+	}
 	_animator->restoreAllObjectBackgrounds();
+	if (disable)
+		_animator->actors()->active = activeBackup;
 	return 0;
 }
 
